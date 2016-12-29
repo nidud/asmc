@@ -1,0 +1,28 @@
+<HTML>
+<HEAD><TITLE>   3.13 Directive OPTION CODEVIEW</TITLE></HEAD>
+<BODY>
+<H1>   3.13 Directive OPTION CODEVIEW</H1>
+
+    The OPTION CODEVIEW directive allows to fine-tune the generation of symbolic
+    debugging information. It has no effect at all if commandline option <A HREF="CMDOPTZI.htm">-Zi</A> isn't set. Syntax:
+<DL style="color:#008040"> 
+<DD>       OPTION CODEVIEW:<i>switches</i>
+</DL>
+<P>    There is currently only one switch :
+<P>
+<DL>
+<DD>     [bit 0]: If 1, create symbols with indices S_[L|G]THREAD32 instead of S_[L|G]DATA32
+         for data items that are stored in segments with class 'TLS'. This allows the debugger
+         to display the correct value of static TLS ( Thread Local Storage ) variables. Example:
+<pre><font color="#008040">
+    option codeview:1
+
+_TLS segment dword alias(".tls") public 'TLS'
+tvar DD -1      ;codeview symbol tvar will be S_LTHREAD32
+_TLS ends
+</font></pre>
+</DL>
+<P> 
+
+</BODY>
+</HTML>

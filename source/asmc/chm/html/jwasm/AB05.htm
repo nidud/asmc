@@ -1,0 +1,63 @@
+<HTML>
+<HEAD><TITLE>Win32_7 - Usage of OPTION DLLIMPORT and -Fd Switch</TITLE></HEAD>
+<BODY>
+<H1>Win32_7 - Usage of OPTION DLLIMPORT and -Fd Switch</H1>
+
+<TABLE BORDER=0 CELLSPACING=4 CELLPADDING=4 WIDTH="100%">
+<TR BGCOLOR="#E0E0E0"><TD>
+<pre>
+
+;<font color="#808080">--- Win32_7 - Shows how to use OPTION DLLIMPORT and switch -Fd.</font>
+;<font color="#808080">---           No import libraries are needed in the link step.</font>
+;<font color="#808080">---</font>
+;<font color="#808080">--- assemble: JWasm -coff -Fd Win32_7.ASM</font>
+;<font color="#808080">--- link:     JWlink format windows pe f Win32_7.OBJ</font>
+
+    <b>.386</b>
+    <b>.model</b> FLAT, stdcall
+    <b>option</b> casemap:none
+
+STD_OUTPUT_HANDLE <b>equ</b> -11
+
+   <b>option</b> dllimport:&lt;kernel32&gt;
+WriteConsoleA <b>proto</b> :dword, :dword, :dword, :dword, :dword
+GetStdHandle  <b>proto</b> :dword
+ExitProcess   <b>proto</b> :dword
+   <b>option</b> dllimport:&lt;user32&gt;
+MessageBoxA   <b>proto</b> :dword, :dword, :dword, :dword
+   <b>option</b> dllimport:&lt;none&gt;
+
+    <b>.const</b>
+
+msg <b>db</b> 13,10,"hello, world.",13,10
+    <b>db</b> 0
+
+    <b>.code</b>
+
+main <b>proc</b>
+
+<b>local</b>   written:dword
+
+    <b>invoke</b>  GetStdHandle, STD_OUTPUT_HANDLE
+    mov ebx, eax
+    <b>invoke</b>  WriteConsoleA, ebx, addr msg, sizeof msg,
+                addr written, 0
+    <b>invoke</b>  MessageBoxA, 0, addr msg, 0, 0
+    ret
+
+main <b>endp</b>
+
+;<font color="#808080">--- entry</font>
+
+start:
+
+    <b>invoke</b>  main
+    <b>invoke</b>  ExitProcess, 0
+
+    <b>end</b> start
+</pre>
+</TD></TR>
+</TABLE>
+
+</BODY>
+</HTML>

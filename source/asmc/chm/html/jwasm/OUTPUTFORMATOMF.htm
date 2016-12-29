@@ -1,0 +1,50 @@
+<HTML>
+<HEAD><TITLE>   6.1 OMF Output Format</TITLE></HEAD>
+<BODY>
+<H1>   6.1 OMF Output Format</H1>
+
+   The OMF format fully supports the segmented architecture of the x86 cpu. The specification has been extended
+   around 1990 to support 32-bit, including the FLAT memory model. However, since it's a bit old now, there's
+   no support of some of the new relocations introduced for 64-bit. 
+<UL>
+<LI>OMF won't support the IMAGEREL and SECTIONREL operators.</LI>
+<LI>JWasm currently won't emit OMF LIDATA records ( unlike Masm). This means that if the assembly source contains
+lots of arrays defined with DUP, the object module might become significantly larger than a similiar object module written
+by Masm.</LI>
+<LI>JWasm emits a few COMENT records that Masm won't. These are remnants of Open Watcom's WASM; they may be suppressed with
+commandline options <A HREF="CMDOPTZLOMF.htm">-zlc</A> and <A HREF="CMDOPTZLOMF.htm">-zld</A>. They shouldn't do any harm, though.</LI>
+</UL>
+
+The OMF object module consists of records of certain types.  JWasm writes those records in the following order:
+<TABLE CELLPADDING="4" CELLSPACING="2">
+<TR BGCOLOR="#C8C8C8"><TH>Type</TH><TH></TH><TH>Description</TH></TR>
+<TR BGCOLOR="#E8E8E8"><TD>THEADR</TD><TD>1</TD><TD>Marks the start of an object module, contains the name of the source file.</TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD>COMENT, class A1h</TD><TD>1</TD><TD>MS extension; tells linker the CodeView version number. Emitted if -Zi option is active.</TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD>COMENT, class E9h</TD><TD>n</TD><TD>Borland-style auto-dependency record(s). Emitted if -Zd or -Zi options are active.</TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD>COMENT, class 9Eh</TD><TD>1</TD><TD>MS extension; directs the linker to use a "standardized" segment ordering. Emitted if the .DOSSEG directive is found in the source.</TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD>COMENT, class 9Fh</TD><TD>n</TD><TD>Default library search name(s). Emitted if INCLUDELIB directives are used.</TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD>LNAMES</TD><TD>n</TD><TD>Defines names for segments and groups ( optionally also for externals, communals and publics ).</TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD>SEGDEF</TD><TD>n</TD><TD>Defines segment(s).</TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD>COMENT, class FEh</TD><TD>n</TD><TD>Tells WLink to do FARCALL optimization for a specific segment. Suppressed with -zld.</TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD>GRPDEF</TD><TD>n</TD><TD>Defines group(s).</TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD>EXTDEF</TD><TD>n</TD><TD>Defines external(s).</TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD>COMENT, class A8h</TD><TD>n</TD><TD>Defines weak external(s). Emitted if EXTERN directive is used with "altname".</TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD>COMDEF</TD><TD>n</TD><TD>Defines communal(s).</TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD>ALIAS</TD><TD>n</TD><TD>Defines alias(es).</TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD>PUBDEF</TD><TD>n</TD><TD>Defines public(s).</TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD>COMENT, class A0h</TD><TD>n</TD><TD>Defines export(s). Emitted if the EXPORT attribute is used in a PROC directive.</TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD>COMENT, class A2h</TD><TD>1</TD><TD>Link Pass Separator. Emitted if no entry point is defined in this object module.</TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD>LEDATA</TD><TD>n</TD><TD>Data record; defines segment content(s).</TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD>FIXUPP</TD><TD>n</TD><TD>Contains information to make the linker resolve references between object modules.</TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD>LINNUM</TD><TD>n</TD><TD>Line number information. Emitted if -Zd or -Zi option is active.</TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD>COMENT, class FDh</TD><TD>n</TD><TD>Tells disassembler that a code segment contains data. Suppressed with -zlc.</TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD>MODEND</TD><TD>1</TD><TD>Marks the end of the object module; optionally defines the entry point.</TD></TR>
+</TABLE>
+LEDATA, FIXUPP and LINNUM records usually are intermixed; a FIXUPP and/or a LINNUM record appears immediately after
+the LEDATA record to which it refers.<br>
+Since v2.11, multiple THEADR records are written if cmdline options -Zd or -Zi are set and line number information
+is written for more than one source file; this conforms to MASM behavior.
+<P> 
+
+</BODY>
+</HTML>

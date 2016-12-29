@@ -1,0 +1,51 @@
+<HTML>
+<HEAD><TITLE>   3.6 Directive OPTION PROCALIGN</TITLE></HEAD>
+<BODY>
+<H1>   3.6 Directive OPTION PROCALIGN</H1>
+
+    With OPTION PROCALIGN parameter it's possible to automatically
+    align procedures. Syntax is:
+<DL style="color:#008040"> 
+<DD>      OPTION PROCALIGN: [1|2|4|8|16|32]
+</DL>
+    The default value is 1. The current value can be saved/restored with directives
+    <A HREF="DIRPUSHCONTEXT.htm">PUSHCONTEXT / POPCONTEXT ALIGNMENT</A>,
+<P>
+    Example:
+<P><PRE>
+    .386
+    .model flat, stdcall
+    option PROCALIGN:16
+    .code
+
+proc1 PROC
+    ret
+proc1 endp
+
+proc2 PROC
+    ret
+proc2 endp
+
+    end
+</PRE>
+
+<P>The listing shows that start address of <i>proc2</i> is aligned to 16 (=10h):
+
+<P><PRE>
+00000000                        proc1 PROC
+00000000                            ret
+00000000  C3                *   retn
+00000001                        proc1 endp
+
+00000010                        proc2 PROC
+00000010                            ret
+00000010  C3                *   retn
+00000011                        proc2 endp
+</PRE>
+
+<P>Note: to ensure that the procedures are aligned in the final binary as 
+it is supposed by the OPTION PROCALIGN value, the alignment of the current
+code segment must be at least the value of OPTION PROCALIGN.
+
+</BODY>
+</HTML>

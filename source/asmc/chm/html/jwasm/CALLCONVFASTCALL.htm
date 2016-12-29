@@ -1,0 +1,27 @@
+<HTML>
+<HEAD><TITLE>   3.2 FASTCALL Register Calling Convention</TITLE></HEAD>
+<BODY>
+<H1>   3.2 FASTCALL Register Calling Convention</H1>
+
+    In <b>16- and 32-bit mode</b>, one may use either the Microsoft or the
+    Watcom register calling convention. It's selected by option <A HREF="CMDOPTZF.htm">-zf</A>.
+<P> 
+    The Microsoft FASTCALL convention uses registers AX, DX and BX in 16-bit
+    for the first 3 parameters, and registers ECX and EDX in 32-bit for
+    the first 2 parameters which are small enough to fit into a register.
+<P> 
+    The Open Watcom fastcall convention uses up to four registers ( E/AX,
+    E/DX, E/BX, E/CX ). 
+<P> 
+    In <b>64-bit mode</b>, FASTCALL means the standard Windows 64 ABI if output format is not ELF.
+    For <A HREF="CMDOPTELF64.htm">-elf64</A>, there is no FASTCALL support implemented yet.
+<P> 
+    To make FASTCALL the default calling convention, there are 3 ways:
+<UL>
+<LI>    Commandline options <A HREF="CMDOPTGCDRZ.htm">-Gr</A> ( or <A HREF="CMDOPTWIN64.htm">-win64</A> )</LI>
+<LI>    Second argument of the .MODEL directive: .MODEL FLAT, FASTCALL</LI>
+<LI>    Directive OPTION LANGUAGE: FASTCALL</LI>
+</UL>
+
+</BODY>
+</HTML>

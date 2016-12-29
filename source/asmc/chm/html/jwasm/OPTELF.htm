@@ -1,0 +1,32 @@
+<HTML>
+<HEAD><TITLE>   3.8 Directive OPTION ELF</TITLE></HEAD>
+<BODY>
+<H1>   3.8 Directive OPTION ELF</H1>
+
+    Directive OPTION ELF allows to fine-tune the values written to the
+    ELF header if output format ELF (see <A HREF="CMDOPTELF.htm">-elf</A> or <A HREF="CMDOPTELF64.htm">-elf64</A>) is selected. For other output formats,
+    this option has no effect. The syntax for the directive is:
+<DL style="color:#008040"> 
+<DD>      OPTION ELF:osabi
+</DL> 
+    The only argument &lt;osabi&gt; will be copied to the ELF header field EI_OSABI.
+    It's a numeric constant, and according to the elf specs some valid values are:
+<P>
+<TABLE CELLSPACING="1">
+<TR><TD>
+<TABLE CELLPADDING="4" CELLSPACING="1">
+<TR BGCOLOR="#E8E8E8"><TD> 0</TD><TD>ELFOSABI_NONE   </TD><TD>unspecified</TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD> 1</TD><TD>ELFOSABI_HPUX   </TD><TD>HP-UX      </TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD> 2</TD><TD>ELFOSABI_NETBSD </TD><TD>NetBSD     </TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD> 3</TD><TD>ELFOSABI_LINUX  </TD><TD>Linux, <b>default</b></TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD> 6</TD><TD>ELFOSABI_SOLARIS</TD><TD>Sun Solaris</TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD> 7</TD><TD>ELFOSABI_AIX    </TD><TD>IBM AIX    </TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD> 9</TD><TD>ELFOSABI_FREEBSD</TD><TD>FreeBSD    </TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD>12</TD><TD>ELFOSABI_OPENBSD</TD><TD>OpenBSD    </TD></TR>
+</TABLE>
+</TD></TR>
+</TABLE>
+<P> 
+<P> 
+</BODY>
+</HTML>

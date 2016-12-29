@@ -1,0 +1,28 @@
+<HTML>
+<HEAD><TITLE>   3.3 IDs enclosed in Back Quotes</TITLE></HEAD>
+<BODY>
+<H1>   3.3 IDs enclosed in Back Quotes</H1>
+
+    IDs can be enclosed in back quotes (`) and thus they can contain
+    characters not allowed in "normal" IDs. However, there is at least one case
+    where IDs in back quotes won't be recognized: if the expansion operator (%)
+    is located at position 0 in a line.
+<P>
+    Example using back quotes:
+<P>
+    Module 1:
+<pre><font color="#008040">    `functionname.with.dots` PROC C PUBLIC a1:dword</font></pre>
+<P>
+    Module 2:
+<pre><font color="#008040">    `functionname.with.dots` PROTO C :dword
+    .code
+    INVOKE `functionname.with.dots`, 1</font></pre>
+<P> 
+    Since IDs in back quotes are not 100% compatible with "normal" IDs, it might
+    be considered to use the <b>ALIAS</b> directive instead. Be aware that,
+    since the alias handling is a linker task, it is necessary to define both names,
+    the alias name and the target name, as public.
+<P>
+
+</BODY>
+</HTML>

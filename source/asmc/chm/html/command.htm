@@ -1,0 +1,75 @@
+<html><head><title>Asmc Command-Line Reference</title></head>
+<body>
+Doszip Macro Assembler Reference
+<H2>Asmc Command-Line Reference</H2>
+
+<p>Assembles and links one or more assembly-language source files.
+The command-line options are case sensitive. The options listed here
+is additions or modified switches included in <a href="html/jwasm/CHAPCMDOPT.htm">JWasm</a>.</p>
+
+<p><b>ASMC</b> [[options]] filename [[ [[options]] filename]]</p>
+
+
+<p><I>options</I></p>
+<DD>
+  <p>The options listed in the following table.</p>
+  <TABLE cellSpacing=0>
+    <TR vAlign=top>
+      <TD width="20%"><B>/Cs</B></TD>
+      <TD width="80%">Push user registers before <a href="dir_cstack.htm">stack-frame</a> is created in a proc.
+      </TD></TR>
+    <TR>
+      <TD><B>/r</B></TD>
+      <TD>Recurse subdirectories with use of wild args.</TD></TR>
+    <TR>
+      <TD><B>/swc</B></TD>
+      <TD>Emulate a <a href="dir_switch.htm">C-switch</a> with fall through.</TD></TR>
+    <TR>
+      <TD><B>/swn</B></TD>
+      <TD>No jump-table creation in <a href="dir_switch.htm">.SWITCH</a></TD></TR>
+    <TR>
+      <TD><B>/swp</B></TD>
+      <TD>Emulate a <a href="dir_switch.htm">Pascal-switch</a>.</TD></TR>
+    <TR>
+      <TD><B>/swr</B></TD>
+      <TD>Use register [R|E]AX in <a href="dir_switch.htm">switch</a> code.</TD></TR>
+    <TR>
+      <TD><B>/swt</B></TD>
+      <TD>Force jump-table creation in <a href="dir_switch.htm">.SWITCH</a></TD></TR>
+    <TR>
+      <TD><B>/w</B></TD>
+      <TD>Same as <B>/W0</B>.</TD></TR>
+    <TR>
+      <TD><B>/W</B><I>level</I></TD>
+      <TD>Sets the warning level, where <I>level</I> = 0, 1, 2, or 3.</TD></TR>
+    <TR>
+      <TD><B>/WX</B></TD>
+      <TD>Returns an error code if warnings are generated.</TD></TR>
+    <TR>
+      <TD><B>/Xc</B></TD>
+      <TD>Disable <a href="extensions.htm">Asmc extensions</a>.</TD></TR>
+ </TABLE>
+</DD>
+<p><I>filename</I></p>
+
+  <DD>The name of the file.</DD>
+
+<H4>Environment Variables</H4>
+<DD>
+ <TABLE cellSpacing=0>
+  <TR vAlign=top>
+    <TD width="31%">INCLUDE</TD>
+    <TD width="69%">Specifies search path for include files.</TD></TR>
+  <TR vAlign=top>
+    <TD width="31%">ASMC</TD>
+    <TD width="69%">Specifies default command-line options.</TD></TR>
+  <TR vAlign=top>
+    <TD width="31%">TEMP</TD>
+    <TD width="69%">Specifies path for temporary files.</TD>
+  </TR>
+ </TABLE>
+</DD>
+
+<H4>See Also</H4>
+<A href="error.htm">ASMC Error Messages</A>
+</BODY></HTML>

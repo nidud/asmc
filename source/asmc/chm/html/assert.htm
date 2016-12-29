@@ -1,0 +1,94 @@
+<HTML><HEAD><TITLE>Directive ASSERT</TITLE></HEAD>
+<BODY>
+Doszip Macro Assembler Reference
+<H3>ASSERT</H3>
+
+<pre>
+.ASSERT &lt;assert_expression&gt;
+.ASSERT:[&lt;handler&gt; | ON | OFF | PUSH | POP | PUSHF | POPF | CODE | ENDS]
+</pre>
+
+<p>Size of return code (64-bit only)</p>
+<pre>
+.ASSERT foo() == -1	; cmp rax,-1
+.ASSERTD foo() == -1	; cmp eax,-1
+.ASSERTW foo() == -1	; cmp ax,-1
+.ASSERTB foo() == -1	; cmp al,-1
+</pre>
+
+<H4>Options</H4>
+<DL>
+  <DT>Handler</A>
+  <DD>The assert macro calls this routine if the assert expression is
+      true.  By placing the assert code in a subroutine instead of within
+      the body of the macro, programs that call assert multiple times will
+      save space. The default handler name is assert_exit.
+  <DT>ON/OFF
+  <DD>Main switch. Same as OPTION ASMC:0x81/0x01.
+  <DT>PUSH/POP
+  <DD>Save and restore the ASMC flag. Stack level is 128.
+  <DT>PUSHF/POPF
+  <DD>Saves flags using PUSHF[D|Q] before calling handler if set.
+  <DT>CODE/ENDS
+  <DD>Same as &lt;IF (ASSERT EQ ON)&gt; and &lt;ENDIF&gt;.
+</DL>
+
+<H4>Define a assert(exp) proc.</H4>
+
+<pre>
+assert_exit:
+	pop	rax
+	PrintAssertMsg( rax, rax )
+	exit( 1 )
+
+	.assert:assert_exit	; no need: the default name is assert_exit
+</pre>
+
+<H4>Define a assert(exp) macro.</H4>
+
+<pre>
+assert	macro
+	lea	rcx,$
+	lea	rdx,@F
+	PrintAssertMsg( rcx, rdx )
+	exit( 1 )
+@@:
+	exitm&lt;&gt;
+	endm
+
+	.assert:assert		; install new macro handler
+</pre>
+
+<p>The "continue" offset is at the end of the message:</p>
+
+<pre>
+	.if  !( expression )
+		assert_exit()
+		db "TEST(43): "
+		db "eax == 0"
+		db 0
+	.endif
+</pre>
+
+<p>To continue:</p>
+
+<pre>
+assert_exit:
+	pop	rax ; offset message == IP
+	.while	byte ptr [rax]
+		inc	rax
+	.endw
+	inc	rax
+	jmp	rax	; continue..
+</pre>
+
+<p>.ASSERT &lt;expression&gt; is equal to .IF &lt;expression&gt;:</p>
+<pre>
+	.assert strlen( "\n" ) == 1
+</pre>
+
+
+<h4>See Also</h4>
+<a href="directives.htm">Directives Reference</a>
+</BODY>
+</HTML>

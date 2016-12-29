@@ -1,0 +1,235 @@
+<HTML>
+<HEAD><TITLE>Win32_5 - Create a Win32 Binary with -bin</TITLE></HEAD>
+<BODY>
+<H1>Win32_5 - Create a Win32 Binary with -bin</H1>
+
+<TABLE BORDER=0 CELLSPACING=4 CELLPADDING=4 WIDTH="100%">
+<TR BGCOLOR="#E0E0E0"><TD>
+<pre>
+
+;<font color="#808080">--- Win32 "hello world" console application.</font>
+;<font color="#808080">--- Uses JWasm's bin output format, so no linker needed.</font>
+;<font color="#808080">--- assemble: JWasm -bin -Fo Win32_5.exe Win32_5.ASM</font>
+
+    <b>.386</b>
+    <b>option</b> casemap:none
+
+    <b>.nolist</b>
+    <b>include</b> winnt.inc   ;<font color="#808080">include PE image definitions</font>
+    <b>.list</b>
+
+STD_OUTPUT_HANDLE <b>equ</b> -11
+
+IMAGEBASE <b>equ</b> 400000h
+
+PEHDR <b>segment</b> dword FLAT
+
+;<font color="#808080">--- define the DOS "MZ" header</font>
+
+    <b>org</b> IMAGEBASE
+
+    IMAGE_DOS_HEADER &lt;"ZM", 80h, 1, 0,4,0,-1,0,200h,0,0,0,0,0,&lt;0&gt;,0,0,&lt;0&gt;,IMAGEREL PEHdr&gt;
+
+    <b>db</b> 0Eh         ;<font color="#808080">push cs</font>
+    <b>db</b> 1Fh         ;<font color="#808080">pop ds</font>
+    <b>db</b> 0BAh,0Eh,0  ;<font color="#808080">mov dx,text</font>
+    <b>db</b> 0B4h,09h    ;<font color="#808080">mov ah,9</font>
+    <b>db</b> 0CDh,21h    ;<font color="#808080">int 21h</font>
+    <b>db</b> 0B8h,01h,4Ch;<font color="#808080">mov ax,4c01h</font>
+    <b>db</b> 0CDh,21h    ;<font color="#808080">int 21h</font>
+    <b>db</b> "This program cannot be run in DOS mode",13,10,'$'
+
+    <b>org</b> IMAGEBASE+80h
+
+;<font color="#808080">--- define the Win32 "PE" header</font>
+
+PEHdr <b>label</b> byte
+    <b>db</b> "PE",0,0
+    IMAGE_FILE_HEADER &lt;IMAGE_FILE_MACHINE_I386, num_sections, 0, 0, 0, sizeof IMAGE_OPTIONAL_HEADER32,
+        IMAGE_FILE_RELOCS_STRIPPED or IMAGE_FILE_EXECUTABLE_IMAGE or IMAGE_FILE_32BIT_MACHINE or IMAGE_FILE_LOCAL_SYMS_STRIPPED&gt;
+
+    IMAGE_OPTIONAL_HEADER32 { 10Bh, ;<font color="#808080">magic</font>
+        6,0,                        ;<font color="#808080">linker major, minor</font>
+        1000h,1000h,0,              ;<font color="#808080">sizeof code, initialized data, uninitialized data</font>
+        IMAGEREL mainCRTStartup,    ;<font color="#808080">entry point</font>
+        IMAGEREL start_text, IMAGEREL start_rdata,  ;<font color="#808080">baseof code, data</font>
+        IMAGEBASE,    ;<font color="#808080">imagebase</font>
+        1000h,200h,   ;<font color="#808080">section alignment, file alignment</font>
+        4,0,          ;<font color="#808080">OS major, minor</font>
+        0,0,          ;<font color="#808080">Image major, minor</font>
+        4,0,          ;<font color="#808080">Subsys major, minor</font>
+        0,            ;<font color="#808080">win32 version</font>
+        3000h,        ;<font color="#808080">sizeof image</font>
+        1000h,        ;<font color="#808080">sizeof header</font>
+        0,            ;<font color="#808080">checksum</font>
+        IMAGE_SUBSYSTEM_WINDOWS_CUI,
+        0,            ;<font color="#808080">dll characteristics</font>
+        100000h,1000h,;<font color="#808080">stack res,com</font>
+        100000h,1000h,;<font color="#808080">heap res, com</font>
+        0,            ;<font color="#808080">loader flags</font>
+        16,           ;<font color="#808080">number of directories</font>
+        &lt;&lt;0,0&gt;,       ;exports
+        &lt; IMAGEREL start_idata, SECTIONREL endof_idata &gt;, ;<font color="#808080">imports</font>
+        &lt;0,0&gt;,&lt;0,0&gt;,     ;<font color="#808080">resource, exception</font>
+        &lt;&gt;,&lt;&gt;,&lt;&gt;,&lt;&gt;,     ;<font color="#808080">security, baserelocs, debug, architecture</font>
+        &lt;&gt;,&lt;&gt;,&lt;&gt;,&lt;&gt;,     ;<font color="#808080">globalptr, tls, load_config, bound_import</font>
+        &lt;&gt;,&lt;&gt;,&lt;&gt;,&lt;&gt;&gt;}    ;<font color="#808080">iat, delay_import, com descriptor, reserved</font>
+
+;<font color="#808080">--- define the section table</font>
+
+sectiontable <b>label</b> byte
+    IMAGE_SECTION_HEADER &lt;".text", &lt;sizeof_text&gt;, IMAGEREL start_text, sizeof_text,
+        200h, 0, 0, 0, 0, 060000020h &gt;
+    IMAGE_SECTION_HEADER &lt;".rdata", &lt;SECTIONREL endof_idata + sizeof_const&gt;, IMAGEREL start_rdata, SECTIONREL endof_idata + sizeof_const,
+        400h, 0, 0, 0, 0, 040000040h &gt;
+num_sections <b>equ</b> ( $ -  sectiontable ) / sizeof IMAGE_SECTION_HEADER
+
+    <b>org</b> IMAGEBASE+200h   ;<font color="#808080">forces physical size of header to 200h and sets VA to 400200h</font>
+
+PEHDR <b>ends</b>
+
+;<font color="#808080">--- the ALIGNx segments are needed because</font>
+;<font color="#808080">--- section alignment and file alignment are different</font>
+
+ALIGN1 <b>segment</b> dword public FLAT 'DATA'
+    <b>org</b> 0E00h   ;<font color="#808080"> change pc to RVA 1000h</font>
+ALIGN1 <b>ends</b>
+
+_TEXT <b>segment</b> dword public FLAT 'CODE'
+_TEXT <b>ends</b>
+
+ALIGN2 <b>segment</b> dword public FLAT 'DATA'
+    <b>org</b> 0E00h   ;<font color="#808080"> change pc to RVA 2000h</font>
+ALIGN2 <b>ends</b>
+
+_IDATA <b>segment</b> dword public FLAT 'DATA'
+start_rdata <b>label</b> byte
+start_idata <b>label</b> byte
+;<font color="#808080">--- import descriptors go here</font>
+_IDATA <b>ends</b>
+_IDATA$1 <b>segment</b> dword public FLAT 'DATA'
+    IMAGE_IMPORT_DESCRIPTOR &lt;&lt;0&gt;,0,0,0,0&gt;
+;<font color="#808080">--- ILT entries go here</font>
+_IDATA$1 <b>ends</b>
+_IDATA$2 <b>segment</b> dword public FLAT 'DATA'
+    <b>dd</b> 0    ;<font color="#808080">--- end of last ILT</font>
+;<font color="#808080">--- IAT entries go here</font>
+_IDATA$2 <b>ends</b>
+_IDATA$3 <b>segment</b> dword public FLAT 'DATA'
+    <b>dd</b> 0    ;<font color="#808080">--- end of last IAT</font>
+;<font color="#808080">--- import name strings go here</font>
+_IDATA$3 <b>ends</b>
+_IDATA$4 <b>segment</b> dword public FLAT 'DATA'
+endof_idata <b>equ</b> $
+_IDATA$4 <b>ends</b>
+
+CONST <b>segment</b> dword public FLAT 'DATA'
+start_const <b>label</b> byte
+CONST <b>ends</b>
+
+DefineImpDll <b>macro</b> name
+_IDATA <b>segment</b>
+    IMAGE_IMPORT_DESCRIPTOR &lt;&lt;IMAGEREL name&amp;ILT&gt;,0,0,IMAGEREL name, IMAGEREL name&amp;IAT&gt;
+_IDATA <b>ends</b>
+_IDATA$1 <b>segment</b>
+<b>ifdef</b> ImportDefined
+    <b>dd</b> 0  ;<font color="#808080">terminate previous ILT</font>
+<b>endif</b>
+<b>name</b>&amp;ILT label dword
+_IDATA$1 <b>ends</b>
+_IDATA$2 <b>segment</b>
+<b>ifdef</b> ImportDefined
+    <b>dd</b> 0  ;<font color="#808080">terminate previous IAT</font>
+<b>endif</b>
+<b>name</b>&amp;IAT label dword
+_IDATA$2 <b>ends</b>
+_IDATA$3 <b>segment</b>
+<b>name</b> db @CatStr(!",name, !"),0
+    <b>align</b> 4
+_IDATA$3 <b>ends</b>
+ImportDefined <b>equ</b> 1
+    <b>endm</b>
+
+DefineImport <b>macro</b> name
+_IDATA$1 <b>segment</b>
+    <b>dd</b> IMAGEREL n&amp;name
+_IDATA$1 <b>ends</b>
+_IDATA$2 <b>segment</b>
+lp&amp;<b>name</b> typedef ptr pr&amp;name
+<b>name</b>    lp&amp;name IMAGEREL n&amp;name
+_IDATA$2 <b>ends</b>
+_IDATA$3 <b>segment</b>
+n&amp;<b>name</b> dw 0
+    <b>db</b> @CatStr(!",name, !"),0
+    <b>align</b> 4
+_IDATA$3 <b>ends</b>
+    <b>endm</b>
+
+prWriteConsoleA <b>typedef</b> proto stdcall :dword, :dword, :dword, :dword, :dword
+prGetStdHandle  <b>typedef</b> proto stdcall :dword
+prExitProcess   <b>typedef</b> proto stdcall :dword
+
+    DefineImpDll kernel32
+    DefineImport ExitProcess
+    DefineImport WriteConsoleA
+    DefineImport GetStdHandle
+
+<b>if</b> 0 ;<font color="#808080">if further dlls are to be imported</font>
+prMessageBoxA   <b>typedef</b> proto stdcall :dword, :dword, :dword, :dword
+
+    DefineImpDll user32
+    DefineImport MessageBoxA
+<b>endif</b>
+
+CONST <b>segment</b>
+
+string  <b>db</b> 13,10,"hello, world.",13,10
+
+sizeof_const <b>equ</b> $ - start_const
+
+CONST <b>ends</b>
+
+_TEXT <b>segment</b>
+
+    <b>assume</b> ds:FLAT,es:FLAT
+
+start_text <b>label</b> near
+
+;<font color="#808080">--- start of program</font>
+
+main <b>proc</b>
+
+<b>local</b> dwWritten:dword
+<b>local</b> hConsole:dword
+
+    <b>invoke</b>  GetStdHandle, STD_OUTPUT_HANDLE
+    mov     hConsole,eax
+
+    <b>invoke</b>  WriteConsoleA, hConsole, addr string, sizeof string, addr dwWritten, 0
+
+    xor     eax,eax
+    ret
+main <b>endp</b>
+
+;<font color="#808080">--- entry</font>
+
+mainCRTStartup <b>proc</b> c
+
+    <b>invoke</b>  main
+    <b>invoke</b>  ExitProcess, eax
+
+mainCRTStartup <b>endp</b>
+
+sizeof_text <b>equ</b> $ - start_text
+
+    <b>org</b> 200h    ;<font color="#808080">align size of _TEXT to next 512 byte boundary</font>
+
+_TEXT <b>ends</b>
+
+    <b>end</b>
+</pre>
+</TD></TR>
+</TABLE>
+
+</BODY>
+</HTML>

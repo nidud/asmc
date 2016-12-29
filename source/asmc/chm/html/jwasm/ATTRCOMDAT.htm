@@ -1,0 +1,56 @@
+<HTML>
+<HEAD><TITLE>   3.22 Segment Attribute COMDAT</TITLE></HEAD>
+<BODY>
+<H1>   3.22 Segment Attribute COMDAT</H1>
+
+    With segment attribute COMDAT one may define COMDAT sections. A COMDAT section is a section
+    that can be defined by more than one object file. A COMDAT section must contain at least
+    one symbol, the <b>COMDAT symbol</b>. The syntax to define the section is:
+
+<P><pre><font color="#008040"> 
+    segname SEGMENT <b>COMDAT( selection [, assoc_segment ] )</b> ...
+</font></pre><P> 
+    The <b>selection</b> argument tells the linker what to do if multiple definitions of a COMDAT symbol are
+    found; the accepted values are:
+
+<TABLE CELLPADDING="4" CELLSPACING="2">
+<th BGCOLOR="#C8C8C8">Value</th><th BGCOLOR="#C8C8C8"></th><th BGCOLOR="#C8C8C8">Description</th>
+<TR BGCOLOR="#E8E8E8"><TD>1</TD><TD>no duplicates</TD><TD>If the symbol is already defined, the linker issues a "multiply defined symbol" error.</TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD>2</TD><TD>any</TD>          <TD>Any section that defines the same COMDAT symbol can be linked; the rest are removed.</TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD>3</TD><TD>same size</TD>    <TD>The linker chooses an arbitrary section among the definitions for this symbol. If all definitions are not the same size, a "multiply defined symbol" error is issued.</TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD>4</TD><TD>exact match</TD>  <TD>The linker chooses an arbitrary section among the definitions for this symbol. If all definitions do not match exactly, a "multiply defined symbol" error is issued.</TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD>5</TD><TD>associative</TD>  <TD>The section is linked if a certain other COMDAT section ( see the <b>assoc_segment</b> in the syntax description ) is linked.</TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD>6</TD><TD>largest</TD>      <TD>The linker chooses the largest definition from among all of the definitions for this symbol. If multiple definitions have this size, the choice between them is arbitrary.</TD></TR>
+</TABLE>
+<P>
+    Currently support for COMDAT is restricted to COFF.
+<P>
+    JWasm won't do anything special with COMDAT sections; in future releases this may change: cmdline options 
+    similar to the Microsoft VC compiler options -Gf or -Gy may be added.
+<P>
+    To create an object module that places each function in its own COMDAT section ( as it is done by MS VC if the -Gy option
+    is given ), it is recommended to use COMDAT in conjunction with ALIAS:
+
+<P><pre><font color="#008040"> 
+    _TEXT_proc1 segment flat comdat(1) alias(".text")
+    proc1 proc c
+        ...
+    proc1 endp
+    _TEXT1_proc1 ends
+
+    _TEXT_proc2 segment flat comdat(1) alias(".text")
+    proc2 proc c private
+        ...
+    proc2 endp
+    _TEXT2_proc2 ends
+
+    _TEXT_proc3 segment flat comdat(1) alias(".text")
+    proc3 proc c
+        ...
+    proc3 endp
+    _TEXT_proc3 ends
+</font></pre><P> 
+
+
+</BODY>
+</HTML>

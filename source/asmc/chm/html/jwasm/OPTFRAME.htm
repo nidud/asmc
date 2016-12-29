@@ -1,0 +1,23 @@
+<HTML>
+<HEAD><TITLE>   3.10 Directive OPTION FRAME</TITLE></HEAD>
+<BODY>
+<H1>   3.10 Directive OPTION FRAME</H1>
+
+    This option affects 64-bit only. It allows to make JWasm automatically
+    generate prologues and epilogues for procedures with the FRAME attribute.
+    Thus the code complies to the rules of <A HREF="WIN64SEH.htm">Win64 SEH</A> (Structured Exception
+    Handling). Syntax is
+<DL style="color:#008040"> 
+<DD>        OPTION FRAME:&lt;AUTO | NOAUTO&gt;
+</DL> 
+    AUTO will enable this feature, NOAUTO (which is default) disables it.
+<P>
+    The unwind information which is generated is "complete", that is, it
+    contains the ".endprologue" pseudo-op already. To allow to save all
+    non-volatile registers in the prologue, the "USES" phrase is more
+    capable in this mode and will accept XMM registers to be saved and
+    restored.
+<P>
+<P>
+</BODY>
+</HTML>

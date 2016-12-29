@@ -1,0 +1,39 @@
+<HTML>
+<HEAD><TITLE>   Option -Zi: Emit Symbolic Debugging Info</TITLE></HEAD>
+<BODY>
+<H1>   Option -Zi: Emit Symbolic Debugging Info</H1>
+
+    Option -Zi generates symbolic debugging info in CodeView V4 style for OMF and
+    COFF output format. For other formats, this option is accepted, but
+    ignored. Note that -Zi will always enable <A HREF="CMDOPTZD.htm">-Zd</A> ( line number information ). 
+    Debuggers which have been verified to work with this option:
+<P>
+<TABLE CELLPADDING="4" CELLSPACING="2">
+<TR BGCOLOR="#E8E8E8"><TD>MS CodeView</TD> <TD>16-bit, Windows and DOS</TD> </TR>
+<TR BGCOLOR="#E8E8E8"><TD>MS CDB or NTSD</TD> <TD>32- and 64-bit, Windows</TD> </TR>
+<TR BGCOLOR="#E8E8E8"><TD>MS WinDbg</TD> <TD>32- and 64-bit, Windows</TD> </TR>
+<TR BGCOLOR="#E8E8E8"><TD>MS Visual Studio 2008</TD> <TD>32-bit<sup>[1]</sup>, Windows</TD> </TR>
+<TR BGCOLOR="#E8E8E8"><TD>MS Visual Studio 2010</TD> <TD>32-bit<sup>[1]</sup>, Windows</TD> </TR>
+<TR BGCOLOR="#E8E8E8"><TD>Open Watcom WD/WDW</TD> <TD>16- and 32-bit, Windows and DOS</TD> </TR>
+<TR BGCOLOR="#E8E8E8"><TD>Pelles C IDE</TD> <TD>32-bit<sup>[1]</sup>, Windows</TD> </TR>
+</TABLE>
+[1]: the 64-bit version of this software should also be able to debug 64-bit debuggees.
+<P>
+    Usually both the assembler and the linker must be told that symbolic debugging information
+    is to be generated ( with MS link, the linker option is /DEBUG ).
+<P>
+    The -Zi option accepts an <b>optional numeric argument</b> to control the volume of 
+    information that is emitted. The values currently accepted are:
+<P>
+<TABLE CELLPADDING="4" CELLSPACING="2">
+<TR BGCOLOR="#E8E8E8"><TD>0</TD><TD>Just global symbols will be written.</TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD>1</TD><TD>Global &amp; local symbols will be written.
+    No user-defined types are included. Usually this reduction does no harm, but may decrease linking time - if lots of modules
+    are to be linked, the effect may be quite significant.</TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD>2</TD><TD>This is the default. Global &amp; local symbols and user-defined types are written.</TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD>3</TD><TD>Additionally to 2, symbolic constants (equates) will be written.</TD></TR>
+</TABLE>
+<P>Also see <A HREF="OPTCODEVIEW.htm">OPTION CODEVIEW</A> for additional switches to control symbolic debugging output.
+
+</BODY>
+</HTML>

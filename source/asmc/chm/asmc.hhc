@@ -1,0 +1,423 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD></HEAD>
+<BODY>
+<OBJECT type="text/site properties">
+<param name="Window Styles" value="0x800025">
+	<param name="ImageType" value="Folder">
+</OBJECT>
+<UL>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="ASMC">
+    <param name="Local" value="html/index.htm">
+    </OBJECT>
+ <UL>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Asmc Command-Line Reference">
+    <param name="Local" value="html/command.htm">
+    </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Asmc Error Messages">
+    <param name="Local" value="html/error.htm">
+    </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Asmc Extensions">
+    <param name="Local" value="html/extensions.htm">
+    </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Directives Reference">
+    <param name="Local" value="html/directives.htm">
+    </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="Symbols Reference">
+    <param name="Local" value="html/symbols.htm">
+    </OBJECT>
+ </UL>
+</UL>
+
+<UL>
+  <LI><OBJECT TYPE="text/sitemap">
+    <PARAM NAME="Name" VALUE="JWASM">
+    <PARAM NAME="Local" VALUE="html/jwasm/CHAPCONTENTS.htm">
+    </OBJECT>
+
+ <UL>
+  <OBJECT TYPE="text/site properties">
+  <PARAM NAME="ImageType" VALUE="Folder">
+  </OBJECT>
+
+  <LI><OBJECT TYPE="text/sitemap">
+    <PARAM NAME="Name" VALUE="   1. About">
+    <PARAM NAME="Local" VALUE="html/jwasm/CHAPABOUT.htm">
+    </OBJECT>
+  <LI><OBJECT TYPE="text/sitemap">
+    <PARAM NAME="Name" VALUE="   2. Commandline Options">
+    <PARAM NAME="Local" VALUE="html/jwasm/CHAPCMDOPT.htm">
+    </OBJECT>
+ <UL>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   Options -0, -1, -2,  ..., -10: Select Cpu">
+<PARAM NAME="Local" VALUE="html/jwasm/CMDOPT0.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   Option -bin: Select Output Format Binary">
+<PARAM NAME="Local" VALUE="html/jwasm/CMDOPTBIN.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   Option -coff: Select Output Format COFF">
+<PARAM NAME="Local" VALUE="html/jwasm/CMDOPTCOFF.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   Option -djgpp: Select Output Format for DJGPP (optional)">
+<PARAM NAME="Local" VALUE="html/jwasm/CMDOPTDJGPP.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   Option -e: Set error limit">
+<PARAM NAME="Local" VALUE="html/jwasm/CMDOPTE.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   Option -elf: Select 32-bit Output Format ELF">
+<PARAM NAME="Local" VALUE="html/jwasm/CMDOPTELF.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   Option -elf64: Select 64-bit Output Format ELF">
+<PARAM NAME="Local" VALUE="html/jwasm/CMDOPTELF64.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   Option -eq: Suppress Error Messages on Screen">
+<PARAM NAME="Local" VALUE="html/jwasm/CMDOPTEQ.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   Option -Fd: Write Import Definitions">
+<PARAM NAME="Local" VALUE="html/jwasm/CMDOPTFD.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   Option -FPi: Activate Floating-Point Emulation">
+<PARAM NAME="Local" VALUE="html/jwasm/CMDOPTFPI.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   Option -Fw: Set Error File Name">
+<PARAM NAME="Local" VALUE="html/jwasm/CMDOPTFW.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   Options -Gc, -Gd, -Gr, -Gz: Set Default Calling Convention">
+<PARAM NAME="Local" VALUE="html/jwasm/CMDOPTGCDRZ.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   Option -m: Select Memory Model">
+<PARAM NAME="Local" VALUE="html/jwasm/CMDOPTM.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   Option -mz: Select Output Format MZ">
+<PARAM NAME="Local" VALUE="html/jwasm/CMDOPTMZ.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   Option -nc: Set Code Class Name">
+<PARAM NAME="Local" VALUE="html/jwasm/CMDOPTNC.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   Options -nd and -nt: Set DATA and CODE Segment Names">
+<PARAM NAME="Local" VALUE="html/jwasm/CMDOPTNDNT.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   Option -nm: Set Module Name">
+<PARAM NAME="Local" VALUE="html/jwasm/CMDOPTNM.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   Option -pe: Create a PE Binary">
+<PARAM NAME="Local" VALUE="html/jwasm/CMDOPTPE.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   Option -win64: Select Output Format Win64">
+<PARAM NAME="Local" VALUE="html/jwasm/CMDOPTWIN64.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   Option -zc: Set Name Decoration for C">
+<PARAM NAME="Local" VALUE="html/jwasm/CMDOPTZC.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   Option -Zd: Emit Line Number Debugging Info">
+<PARAM NAME="Local" VALUE="html/jwasm/CMDOPTZD.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   Option -zf: Select FASTCALL Type">
+<PARAM NAME="Local" VALUE="html/jwasm/CMDOPTZF.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   Option -Zg: Masm-compatible Code Generation">
+<PARAM NAME="Local" VALUE="html/jwasm/CMDOPTZG.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   Option -Zi: Emit Symbolic Debugging Info">
+<PARAM NAME="Local" VALUE="html/jwasm/CMDOPTZI.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   Options -zlc and -zld: Control Content of OMF Output Module">
+<PARAM NAME="Local" VALUE="html/jwasm/CMDOPTZLOMF.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   Options -zlf, -zlp and -zls: Control Content of COFF Output Module">
+<PARAM NAME="Local" VALUE="html/jwasm/CMDOPTZLCOFF.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   Option -Zm: Enable Masm v5 Compatibility">
+<PARAM NAME="Local" VALUE="html/jwasm/CMDOPTZM.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   Option -Zne: Disable JWasm Syntax Extensions">
+<PARAM NAME="Local" VALUE="html/jwasm/CMDOPTZNE.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   Option -zt: Set Name Decoration for STDCALL">
+<PARAM NAME="Local" VALUE="html/jwasm/CMDOPTZT.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   Option -Zv8: Enable Masm v8 Procedure Visibility">
+<PARAM NAME="Local" VALUE="html/jwasm/CMDOPTZV8.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   Option -zze: Disable Export Name Decoration">
+<PARAM NAME="Local" VALUE="html/jwasm/CMDOPTZZE.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   Option -zzs: Avoid Wlink COFF Incompatibility">
+<PARAM NAME="Local" VALUE="html/jwasm/CMDOPTZZS.htm">
+</OBJECT>
+</UL>
+
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   3. Syntax Extensions">
+<PARAM NAME="Local" VALUE="html/jwasm/CHAPSYNTAXEXT.htm">
+</OBJECT>
+<UL>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   3.1 Directive INCBIN">
+<PARAM NAME="Local" VALUE="html/jwasm/DIRINCBIN.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   3.2 FASTCALL Register Calling Convention">
+<PARAM NAME="Local" VALUE="html/jwasm/CALLCONVFASTCALL.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   3.3 IDs enclosed in Back Quotes">
+<PARAM NAME="Local" VALUE="html/jwasm/BACKQUOTEIDS.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   3.4 Floating-Point Immediates in Instructions">
+<PARAM NAME="Local" VALUE="html/jwasm/FPIMMEDIATE.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   3.5 Directive OPTION FIELDALIGN">
+<PARAM NAME="Local" VALUE="html/jwasm/OPTFIELDALIGN.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   3.6 Directive OPTION PROCALIGN">
+<PARAM NAME="Local" VALUE="html/jwasm/OPTPROCALIGN.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   3.7 Directive OPTION MZ">
+<PARAM NAME="Local" VALUE="html/jwasm/OPTMZ.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   3.8 Directive OPTION ELF">
+<PARAM NAME="Local" VALUE="html/jwasm/OPTELF.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   3.9 Directive OPTION WIN64">
+<PARAM NAME="Local" VALUE="html/jwasm/OPTWIN64.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   3.10 Directive OPTION FRAME">
+<PARAM NAME="Local" VALUE="html/jwasm/OPTFRAME.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   3.11 Directive OPTION RENAMEKEYWORD">
+<PARAM NAME="Local" VALUE="html/jwasm/OPTRENAMEKEYWORD.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   3.12 Directive OPTION DLLIMPORT">
+<PARAM NAME="Local" VALUE="html/jwasm/OPTDLLIMPORT.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   3.13 Directive OPTION CODEVIEW">
+<PARAM NAME="Local" VALUE="html/jwasm/OPTCODEVIEW.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   3.13 Directive OPTION STACKBASE">
+<PARAM NAME="Local" VALUE="html/jwasm/OPTSTACKBASE.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   3.15 Directives PUSHCONTEXT / POPCONTEXT ALIGNMENT">
+<PARAM NAME="Local" VALUE="html/jwasm/DIRPUSHCONTEXT.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   3.16 Directives .X64 and .X64p">
+<PARAM NAME="Local" VALUE="html/jwasm/DIRX64.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   3.17 Attribute LABEL for first Macro Parameter">
+<PARAM NAME="Local" VALUE="html/jwasm/LABELATTR.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   3.18 Member Argument for IF[N]DEF and .ERR[N]DEF Directives">
+<PARAM NAME="Local" VALUE="html/jwasm/MBRARG.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   3.19 Initialization of Data Items with Type MMWORD/XMMWORD">
+<PARAM NAME="Local" VALUE="html/jwasm/INITMMXMM.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   3.20 Optional Array Size for LABEL Directive">
+<PARAM NAME="Local" VALUE="html/jwasm/LABELARRAY.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   3.21 Optional Name Argument for Simplified Segment Directives">
+<PARAM NAME="Local" VALUE="html/jwasm/SIMSEGARG.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   3.22 Segment Attribute COMDAT">
+<PARAM NAME="Local" VALUE="html/jwasm/ATTRCOMDAT.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   3.23 Attribute VARARGML for last Macro Parameter">
+<PARAM NAME="Local" VALUE="html/jwasm/VARARGMLATTR.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   3.24 Miscellaneous">
+<PARAM NAME="Local" VALUE="html/jwasm/OTHERDIFF.htm">
+</OBJECT>
+
+<UL>
+ <LI><OBJECT TYPE="text/sitemap">
+ <PARAM NAME="Name" VALUE="   3.24.1 Numeric constant __JWASM__">
+ <PARAM NAME="Local" VALUE="html/jwasm/OTHERDIFF1.htm">
+ </OBJECT>
+ <LI><OBJECT TYPE="text/sitemap">
+ <PARAM NAME="Name" VALUE="   3.24.2 Operating System Argument for .MODEL">
+ <PARAM NAME="Local" VALUE="html/jwasm/OTHERDIFF2.htm">
+ </OBJECT>
+ <LI><OBJECT TYPE="text/sitemap">
+ <PARAM NAME="Name" VALUE="   3.24.3 Accepted Parameters for IF[N]DEF Directive">
+ <PARAM NAME="Local" VALUE="html/jwasm/OTHERDIFF3.htm">
+ </OBJECT>
+ <LI><OBJECT TYPE="text/sitemap">
+ <PARAM NAME="Name" VALUE="   3.24.4 Visibility of Procedures">
+ <PARAM NAME="Local" VALUE="html/jwasm/OTHERDIFF4.htm">
+ </OBJECT>
+ <LI><OBJECT TYPE="text/sitemap">
+ <PARAM NAME="Name" VALUE="   3.24.5 Non-RIP-Relative Addressing in 64-Bit">
+ <PARAM NAME="Local" VALUE="html/jwasm/OTHERDIFF5.htm">
+ </OBJECT>
+</UL>
+</UL>
+
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   4. Instruction Sets">
+<PARAM NAME="Local" VALUE="html/jwasm/CHAPINSTRSET.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   5. Code Generation Differences">
+<PARAM NAME="Local" VALUE="html/jwasm/CHAPCODEGENDIFF.htm">
+</OBJECT>
+<UL>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   5.1 Forward References in Macro Expressions">
+<PARAM NAME="Local" VALUE="html/jwasm/FWDREFINMACRO.htm">
+</OBJECT>
+</UL>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   6. Output Formats">
+<PARAM NAME="Local" VALUE="html/jwasm/CHAPOUTPUTFORMATS.htm">
+</OBJECT>
+<UL>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   6.1 OMF Output Format">
+<PARAM NAME="Local" VALUE="html/jwasm/OUTPUTFORMATOMF.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   6.2 COFF Output Format">
+<PARAM NAME="Local" VALUE="html/jwasm/OUTPUTFORMATCOFF.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   6.3 Win64 Output Format">
+<PARAM NAME="Local" VALUE="html/jwasm/OUTPUTFORMATWIN64.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   6.4 Binary Output Format">
+<PARAM NAME="Local" VALUE="html/jwasm/OUTPUTFORMATBIN.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   6.5 PE Output Format">
+<PARAM NAME="Local" VALUE="html/jwasm/OUTPUTFORMATPE.htm">
+</OBJECT>
+</UL>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   7. Masm bugs fixed in JWasm">
+<PARAM NAME="Local" VALUE="html/jwasm/CHAPMASMBUGS.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   8. Optional Features">
+<PARAM NAME="Local" VALUE="html/jwasm/CHAPOPTFEAT.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   9. Known Bugs and missing Features">
+<PARAM NAME="Local" VALUE="html/jwasm/CHAPKNOWNBUGS.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="   10. License">
+<PARAM NAME="Local" VALUE="html/jwasm/CHAPLICENSE.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="Appendix A. JWasm Reserved Words">
+<PARAM NAME="Local" VALUE="html/jwasm/AA.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="Appendix B. Source Samples">
+<PARAM NAME="Local" VALUE="html/jwasm/AB.htm">
+</OBJECT>
+<UL>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="Win64_3 - SEH Support in Win64">
+<PARAM NAME="Local" VALUE="html/jwasm/AB01.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="Win64_3e - SEH Support in Win64 (JWasm specific)">
+<PARAM NAME="Local" VALUE="html/jwasm/AB02.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="DOS64 - Switch to Long Mode and Back">
+<PARAM NAME="Local" VALUE="html/jwasm/AB03.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="Win32_5 - Create a Win32 Binary with -bin">
+<PARAM NAME="Local" VALUE="html/jwasm/AB04.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="Win32_7 - Usage of OPTION DLLIMPORT and -Fd Switch">
+<PARAM NAME="Local" VALUE="html/jwasm/AB05.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="Win64_8 - Create a Win64 Binary with -pe">
+<PARAM NAME="Local" VALUE="html/jwasm/AB06.htm">
+</OBJECT>
+</UL>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="Appendix C. Errors and Warnings">
+<PARAM NAME="Local" VALUE="html/jwasm/AC.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="Appendix D. Differences between Masm 6 and Masm 8">
+<PARAM NAME="Local" VALUE="html/jwasm/AD.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="Appendix E. Restrictions of precompiled 16-bit Binary JWASMR.EXE">
+<PARAM NAME="Local" VALUE="html/jwasm/AE.htm">
+</OBJECT>
+<LI><OBJECT TYPE="text/sitemap">
+<PARAM NAME="Name" VALUE="Appendix F. Additional Features of JWasm's Debug Version">
+<PARAM NAME="Local" VALUE="html/jwasm/AF.htm">
+</OBJECT>
+ </UL>
+</UL>
+
+</BODY></HTML>

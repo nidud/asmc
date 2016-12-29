@@ -1,0 +1,68 @@
+<HTML><HEAD><TITLE>OPTION CSTACK</TITLE></HEAD>
+<BODY>
+Doszip Macro Assembler Reference
+<H3>OPTION CSTACK</H2>
+
+<pre>OPTION CSTACK:[ ON | OFF ]</pre>
+
+<p>The CSTACK option control the stack-frame creation
+by <a href="invoke.htm">invoke</a>. The default setting is OFF.</p>
+
+<p>Example</p>
+
+<pre>
+	OPTION CSTACK: ON
+
+	cstack PROC USES esi edi ebx arg
+	sub	esp,arg
+	ret
+	cstack ENDP
+
+	OPTION CSTACK: OFF
+
+	astack PROC USES esi edi ebx arg
+	sub	esp,arg
+	ret
+	astack ENDP
+</pre>
+
+<p>Generated code</p>
+
+<pre>
+	cstack PROC USES esi edi ebx arg
+	push	esi
+	push	edi
+	push	ebx
+	push	ebp
+	mov	ebp,esp
+	sub	esp,arg
+	leave
+	pop	ebx
+	pop	edi
+	pop	esi
+	retn	4
+	cstack ENDP
+
+	OPTION CSTACK: OFF
+
+	astack PROC USES esi edi ebx arg
+	push	ebp
+	mov	ebp,esp
+	push	esi
+	push	edi
+	push	ebx
+	sub	esp,arg
+	pop	ebx
+	pop	edi
+	pop	esi
+	leave
+	retn 4
+	astack ENDP
+</pre>
+
+
+<h4>See Also</h4>
+<a href="directives.htm">Directives Reference</a> |
+<a href="transfer.txt">Sample code</a>
+</BODY>
+</HTML>

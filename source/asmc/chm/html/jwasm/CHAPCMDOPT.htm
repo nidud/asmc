@@ -1,0 +1,26 @@
+<HTML>
+<HEAD><TITLE>   2. Commandline Options</TITLE></HEAD>
+<BODY>
+<H1>   2. Commandline Options</H1>
+ 
+    Entering 'JWasm -?' or 'JWasm -h' will make JWasm display the options
+    it understands. A lot of them exist in both Masm and JWasm, but some
+    are valid for JWasm only; OTOH, a few options are missing in JWasm.
+<P> 
+    Options are usually entered via the command line. Additionally, when
+    starting, JWasm will search for <b>environment variable JWASM</b>
+    and handle it similar to the way Masm handles variable ML. Hence it is
+    also possible to enter options via this method.
+<P> 
+    The options specific to JWasm - and also the options which are handled
+    somewhat differently by JWasm compared to Masm - will be handled in the
+    following chapters.
+<P> 
+    One major difference should be mentioned here: JWasm does never launch a
+    linker on its own ( which Masm does unless option -c is given ). This
+    makes a few Masm options useless for JWasm, and hence they are not implemented;
+    see Chapter <A HREF="CHAPKNOWNBUGS.htm">Known Bugs and missing Features</A> for
+    details.
+
+</BODY>
+</HTML>

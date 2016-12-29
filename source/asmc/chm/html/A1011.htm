@@ -1,0 +1,24 @@
+<html><head><title>ASMC Fatal Error A1011</title></head>
+<body>
+Doszip Macro Assembler Reference
+<h2>ASMC Fatal Error A1011</h2>
+
+<h4>Directive must be in control block</h4>
+
+<p>The assembler found a high-level directive where one was not expected.
+One of the following directives was found:</p>
+
+<UL>
+    <li>.ELSE without .IF</li>
+    <li>.ENDIF without .IF</li>
+    <li>.ENDW without .WHILE</li>
+    <li>.UNTIL[[CXZ]] without .REPEAT</li>
+    <li>.CONTINUE without .WHILE or .REPEAT</li>
+    <li>.BREAK without .WHILE or .REPEAT</li>
+    <li>.ELSE following .ELSE</li>
+</UL>
+
+<small><i>* ML 6.0 compatible error</i></small>
+<h4>See Also</h4>
+<A href="error.htm">ASMC Error Messages</A>
+</BODY></HTML>

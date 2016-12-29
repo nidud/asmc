@@ -1,0 +1,82 @@
+<HTML>
+<HEAD><TITLE>   3.12 Directive OPTION DLLIMPORT</TITLE></HEAD>
+<BODY>
+<H1>   3.12 Directive OPTION DLLIMPORT</H1>
+
+<H3>    a) Using OPTION DLLIMPORT </H3>
+
+    This option makes the assembler assume that all PROTOs that follow
+    this directive represent functions located in a dll. Syntax:
+<DL style="color:#008040"> 
+<DD>       OPTION DLLIMPORT:&lt;dll_name&gt; | NONE
+</DL> 
+     &lt;dll_name&gt; must be enclosed in angle brackets. Argument NONE
+     will switch back to the default mode.
+<P> 
+
+<H3>    b) Code Generation Effects </H3>
+
+    The effects of setting this options are subtle and useful only for 
+    MS Windows applications: if the function described by the prototype is
+    called via INVOKE, slightly more efficient code than normal is generated,
+    because the function's address in the IAT is used. Example:
+<DL style="color:#008040"> 
+<DD>       INVOKE GetModuleHandle, NULL
+</DL> 
+    code generation with OPTION DLLIMPORT:
+<pre><font color="#008040"> 
+        push NULL
+        call DWORD PTR [_imp__GetModuleHandle@4]
+</font></pre> 
+    code generation without OPTION DLLIMPORT:
+<pre><font color="#008040"> 
+        push NULL
+        call _GetModuleHandle@4
+        ...
+    _GetModuleHandle@4:
+        jmp DWORD PTR [_imp__GetModuleHandle@4]  ;stub added by the linker
+</font></pre> 
+
+<H3>    c) OPTION DLLIMPORT in Conjunction with -Fd Switch </H3>
+
+    Optionally, by using cmdline option <A HREF="CMDOPTFD.htm">-Fd</A>, JWasm will write
+    the import information received through OPTION DLLIMPORT lines to either
+    a file or directly into the object module (COFF and ELF only). Example:
+<pre><font color="#008040"> 
+        .386
+        .model flat,stdcall
+        option dllimport:&lt;kernel32&gt;
+    GetModuleHandleA proto :dword
+    ExitProcess proto :dword
+        option dllimport:none
+        .code
+        invoke GetModuleHandleA, 0
+        invoke ExitProcess, 0
+        end
+</font></pre> 
+<DL>
+<DD>      JWasm -coff <b>-Fd=lnk.rsp</b> sample.asm
+</DL> 
+    After the assembly step, file <i>lnk.rsp</i> will contain:
+<DL style="color:#008040"> 
+<DD>    import '_ExitProcess@4'  kernel32.ExitProcess
+<DD>    import '_GetModuleHandleA@4'  kernel32.GetModuleHandleA
+</DL>
+    Both Open Watcom's Wlink and JWlink will be able to directly use this 
+    information and hence, as a result, no further Windows import libraries 
+    are needed in the link step:
+<DL> 
+<DD>      Wlink format windows pe file sample.obj <b>@lnk.rsp</b>
+</DL> 
+    JWlink may even go one step further - it's able to read import definitions
+    contained in a COFF or ELF module's linker directive section ( named
+    ".drectve" ). Therefore one can omit the filename argument for -Fd. 
+    Sample <A HREF="AB05.htm">Win32_7</A> demonstrates the usage.
+<P> 
+<H3>    d) OPTION DLLIMPORT in Conjunction with -pe Switch </H3>
+
+    If output format PE is selected, using OPTION DLLIMPORT is the only way
+    to resolve external references; see <A HREF="OUTPUTFORMATPE.htm">PE Output Format</A> for more information.
+
+</BODY>
+</HTML>

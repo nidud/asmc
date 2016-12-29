@@ -1,0 +1,1553 @@
+<HTML>
+<HEAD><TITLE>Appendix C. Errors and Warnings</TITLE></HEAD>
+<BODY>
+<H1>Appendix C. Errors and Warnings</H1>
+
+    The warning and error numbers emitted by JWasm differ from Masm's.
+    However, the texts of the messages are pretty much identical.<br>
+    As in Masm, the first digit shows the severity of the issue: 
+    range 1xxx reports a fatal error ( assembly process is stopped ),
+    range 2xxx indicates an error ( assembly process continues, but no object module will be created )
+    and 4xxx are warnings.
+    
+
+<TABLE CELLSPACING=4 CELLPADDING=4 > 
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x029</b></TD>
+<TD>Multiple base registers not allowed</TD>
+<TD>In 16-bit code, one cannot use both BX and BP in indirect addressing; 
+in 32/64-bit code, ESP/RSP can only appear once in indirect addressing.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x030</b></TD>
+<TD>Instruction or register not accepted in current CPU mode</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x031</b></TD>
+<TD>Invalid addressing mode with current CPU setting</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x032</b></TD>
+<TD>Cannot use TRn-TRn with current CPU setting</TD>
+<TD>The TRx special registers were restricted to 80386 and 80486 cpus.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x033</b></TD>
+<TD>Must be index or base register</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x034</b></TD>
+<TD>Multiple index registers not allowed</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x035</b></TD>
+<TD></TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x036</b></TD>
+<TD>Scale factor must be 1, 2, 4 or 8</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x037</b></TD>
+<TD>Cannot be used as index register: &lt;register&gt;</TD>
+<TD>Index registers are restricted. In 16-bit mode, only SI and DI can be index registers.
+In 32-bit mode, all general-purpose registers except ESP can be index registers.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x038</b></TD>
+<TD>Base and index register differ in size</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x039</b></TD>
+<TD>Expecting comma</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x040</b></TD>
+<TD>ORG needs a constant or local offset</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x041</b></TD>
+<TD>POP CS is not allowed</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x042</b></TD>
+<TD>Only MOV can use special register</TD>
+<TD>The special registers CRx, DRx and TRx can only be moved to/from general purpose registers.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x043</b></TD>
+<TD>Cannot use SHORT with CALL</TD>
+<TD>Distance of CALL operands must be NEAR or FAR.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x044</b></TD>
+<TD>Only SHORT jump distance is allowed</TD>
+<TD>Some jump instructions accept short distances only (JCXZ, JECXZ, LOOPx).</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x045</b></TD>
+<TD>Syntax error</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x046</b></TD>
+<TD>Prefix must be followed by an instruction</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x047</b></TD>
+<TD>Syntax error: Unexpected colon</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x048</b></TD>
+<TD>Operands must be the same size: &lt;size op1&gt; - &lt;size op2&gt;</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x049</b></TD>
+<TD>Invalid instruction operands</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x050</b></TD>
+<TD>Jump distance not possible in current CPU mode</TD>
+<TD>Jcc instructions won't accept type coercions that increase the jump distance (i.e. "jz NEAR PTR <i>label</i>") if current cpu is &lt; 80386.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x051</b></TD>
+<TD>Immediate data out of range</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x052</b></TD>
+<TD>Can not use short or near modifiers with this instruction</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x053</b></TD>
+<TD>Jump out of range by &lt;num&gt; byte(s)</TD>
+<TD>A short distance must be in the range -128 to +127.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x054</b></TD>
+<TD>Displacement out of range: &lt;displacement&gt;</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x055</b></TD>
+<TD>Initializer value too large</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x056</b></TD>
+<TD>Symbol already defined: &lt;symbol&gt;</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x057</b></TD>
+<TD>Offset magnitude too large for specified size</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x058</b></TD>
+<TD>Magnitude of offset exceeds 16 bit</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x059</b></TD>
+<TD>Operand 2 too big</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x060</b></TD>
+<TD>Operand 1 too small</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x061</b></TD>
+<TD>Line too long</TD>
+<TD>Size of a line ( after concatenation) is restricted to 600.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x062</b></TD>
+<TD>Too many tokens in a line</TD>
+<TD>The number of tokens in a line is restricted to 150.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x063</b></TD>
+<TD></TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x064</b></TD>
+<TD>Operand is expected</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x065</b></TD>
+<TD>Constant expected</TD>
+<TD>A constant (numeric) value is expected in the current context. Note that a label 
+- more exactly: the offset part of a label's address - is not a constant value, since
+the final value is calculated by the linker ( or the OS loader ) only.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x066</b></TD>
+<TD>Constant operand is expected</TD>
+<TD>The expression evaluator accepts a constant only in the current context.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x067</b></TD>
+<TD>.ELSE clause already occured in this .IF block</TD>
+<TD>An .IF block may contain 0 or 1 .ELSE clauses and it must be the last clause before .ENDIF.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x068</b></TD>
+<TD>Multiple overrides</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x069</b></TD>
+<TD>Segment, group or segment register expected</TD>
+<TD>The operand before the colon operator (:) must be a segment, group or segment register.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x070</b></TD>
+<TD>Identifier too long</TD>
+<TD>Identifer names are restricted to 247. This is a hard limit for OMF output format. For other formats,
+the limit may be extended by adjusting and recompiling the source code.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x071</b></TD>
+<TD>Invalid operand size for instruction</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x072</b></TD>
+<TD>Not supported: &lt;directive&gt;</TD>
+<TD>Message is displayed if one of the follwing options is specified: OPTION READONLY, OPTION EXPR16, OPTION OLDMACROS.
+Those are currently not supported.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x073</b></TD>
+<TD>Size not specified, assuming: &lt;type&gt</TD>
+<TD>this is a warning. &lt;type&gt; may be BYTE, WORD or DWORD. The message may occur if an
+	immediate value is written to an untyped memory reference:
+<P><pre><font color="#008040"> 
+       mov [ebx], 1
+</font></pre><P> 
+    JWasm makes a guess and displays the warning, while Masm will display an
+    error in such cases.
+</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x074</b></TD>
+<TD>Floating-point initializer ignored</TD>
+<TD></TD>
+</TR>
+
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x075</b></TD>
+<TD>Only SHORT and NEAR jump distance is allowed</TD>
+<TD>Conditional jump (Jcc) instruction destination cannot be far.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x076</b></TD>
+<TD>Initializer magnitude too large for specified size</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x077</b></TD>
+<TD>Segment attribute is defined already: &lt;attribute&gt;</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x078</b></TD>
+<TD>Segment definition changed: %s, %s</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x079</b></TD>
+<TD>Class name too long</TD>
+<TD>Segment class names are restricted to 255 in size.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x080</b></TD>
+<TD>Block nesting error: %s</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x081</b></TD>
+<TD>Segment attribute is unknown: %s</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x082</b></TD>
+<TD>Must be in segment block</TD>
+<TD>Instructions and directives that generate code or data must be inside a segment block.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x083</b></TD>
+<TD>Segment not defined: &lt;segment&gt;</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x084</b></TD>
+<TD>Colon is expected</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x085</b></TD>
+<TD>Invalid qualified type: %s</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x086</b></TD>
+<TD>Qualified type is expected</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x087</b></TD>
+<TD></TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x088</b></TD>
+<TD>Library name is missing</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x089</b></TD>
+<TD>Cannot access label through segment registers: &lt;label&gt;</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x090</b></TD>
+<TD>Line too long after expansion: &lt;line&gt;</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x091</b></TD>
+<TD>Language type must be specified</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x092</b></TD>
+<TD>PROC, MACRO or macro loop directive must precede LOCAL</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x093</b></TD>
+<TD>Cannot nest procedures</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x094</b></TD>
+<TD>VARARG requires C calling convention</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x095</b></TD>
+<TD>Multiple .MODEL directives, .MODEL ignored</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x096</b></TD>
+<TD>Model is not declared</TD>
+<TD>Without a model, simplified segment directives ( .CODE, .DATA, .CONST, .DATA?, .STACK, .FARDATA and .FARDATA? )
+and directives .STARTUP, .EXIT cannot be used.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x097</b></TD>
+<TD>Backquote missing: `&lt;identifier&gt;</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x098</b></TD>
+<TD>COMMENT delimiter expected</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x099</b></TD>
+<TD>END directive required at end of file</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x100</b></TD>
+<TD>Nesting level too deep</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x101</b></TD>
+<TD>Macro nesting level too deep</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x102</b></TD>
+<TD>Symbol not defined : &lt;symbol&gt;</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x103</b></TD>
+<TD></TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x104</b></TD>
+<TD>No filename specified.</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x105</b></TD>
+<TD>Out of Memory</TD>
+<TD>This is a fatal error. With the 8086-version of jwasm, JWASMR, you'll see this error 
+if you try to assemble something that contains a few thousand symbols. The 32- or 64-bit
+versions of jwasm should always have enough memory on modern machines.
+</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x106</b></TD>
+<TD>Cannot open file: "&lt;file&gt;" [&lt;error code&gt;]</TD>
+<TD>Error code ENOENT means "file not found". Other error codes are displayed as numbers</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x107</b></TD>
+<TD>Cannot close file: &lt;file&gt; [&lt;error code&gt;]</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x108</b></TD>
+<TD>File write error: &lt;file&gt; [&lt;error code&gt;]</TD>
+<TD>Usually happens if output media is read-only or full.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x109</b></TD>
+<TD>Invalid command-line option: &lt;option&gt;</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x110</b></TD>
+<TD>Internal error in &lt;source file&gt;(&lt;line&gt;)</TD>
+<TD>This error shouldn't be seen in the release version. It's displayed if the
+internal assert() function is called, which usually is done when a "virtually impossible"
+error condition has occurred.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x111</b></TD>
+<TD>Expecting closing square bracket</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x112</b></TD>
+<TD>Expecting file name</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x113</b></TD>
+<TD>Too many errors</TD>
+<TD>Use <A HREF="CMDOPTE.htm">commandline option -e</A> to set the max. number of errors that are displayed</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x114</b></TD>
+<TD>forced error &lt;message&gt;</TD>
+<TD>Generic "forced error" message</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x115</b></TD>
+<TD>forced error: Value not equal to 0: &lt;value&gt; &lt;text&gt;</TD>
+<TD>Error emitted by the .ERRNZ directive.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x116</b></TD>
+<TD>forced error: Value equal to 0: &lt;value&gt; &lt;text&gt;</TD>
+<TD>Error emitted by the .ERRE directive.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x117</b></TD>
+<TD>forced error: symbol defined: &lt;symbol&gt;</TD>
+<TD>Error emitted by the .ERRDEF directive.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x118</b></TD>
+<TD>forced error: symbol not defined: &lt;symbol&gt;</TD>
+<TD>Error emitted by the .ERRNDEF directive.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x119</b></TD>
+<TD>forced error: string blank : &lt;string&gt;</TD>
+<TD>Error emitted by the .ERRB directive.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x120</b></TD>
+<TD>forced error: string not blank : &lt;string&gt;</TD>
+<TD>Error emitted by the .ERRNB directive.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x121</b></TD>
+<TD>forced error: strings not equal : &lt;string&gt; : &lt;string&gt;</TD>
+<TD>Error emitted by the .ERRDIF and .ERRDIFI directives.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x122</b></TD>
+<TD>forced error: strings equal : &lt;string&gt; : &lt;string&gt;</TD>
+<TD>Error emitted by the .ERRIDN and .ERRIDNI directives.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x123</b></TD>
+<TD>&lt;file&gt;(&lt;line&gt;): Included by</TD>
+<TD>Additional error information if error occured in an include file.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x124</b></TD>
+<TD>&lt;file&gt;(&lt;line&gt;)[&lt;macro&gt;]: Macro called from</TD>
+<TD>Additional error information if error occured inside a macro.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x125</b></TD>
+<TD>&lt;file&gt;(&lt;line&gt;): iteration &lt;iteration&gt;: Macro called from</TD>
+<TD>Additional error information if error occured inside a loop macro (FOR, FORC, REPEAT, ...).</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x126</b></TD>
+<TD>&lt;file&gt;(&lt;line&gt;): Main line code</TD>
+<TD>Additional error information if error occured inside an include file or a macro.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x127</b></TD>
+<TD>Extending jump</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x128</b></TD>
+<TD>Directive ignored: %s</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x129</b></TD>
+<TD>number must be a power of 2</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x130</b></TD>
+<TD>Incompatible with segment alignment: %s</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x131</b></TD>
+<TD>Segment expected: %s</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x132</b></TD>
+<TD>Incompatible CPU mode for 32-bit segment</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x133</b></TD>
+<TD>Far call is converted to near call.</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x134</b></TD>
+<TD>CPU option %s is not valid for selected CPU.</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x135</b></TD>
+<TD>Segment '%s' is in another group already</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x136</b></TD>
+<TD>Symbol type conflict: %s</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x137</b></TD>
+<TD>Conflicting parameter definition: %s</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x138</b></TD>
+<TD>PROC and PROTO calling convention conflict</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x139</b></TD>
+<TD>Non-benign %s redefinition: %s</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x140</b></TD>
+<TD>Too many bits in RECORD: %s</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x141</b></TD>
+<TD>Statement not allowed inside structure definition</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x142</b></TD>
+<TD>Unmatched block nesting: %s</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x143</b></TD>
+<TD>Symbol redefinition: %s</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x144</b></TD>
+<TD>Text item required</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x145</b></TD>
+<TD>INVOKE argument type mismatch: argument %u</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x146</b></TD>
+<TD>Too few arguments to INVOKE: %s</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x147</b></TD>
+<TD>VARARG parameter must be last</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x148</b></TD>
+<TD>LABEL parameter must be first</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x149</b></TD>
+<TD>Too many arguments in macro call: %s</TD>
+<TD>This is a warning. Macro is invoked with more arguments than expected.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x150</b></TD>
+<TD>Missing operator in expression</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x151</b></TD>
+<TD>Unexpected literal found in expression: %s</TD>
+<TD>Literals enclosed in &lt;&gt; or {} are items processed by the preprocessor or to
+initialize "structured" data items. If they're used otherwise, this error will occur.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x152</b></TD>
+<TD>Initializer must be a string or single item: %s</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x153</b></TD>
+<TD>Too many initial values for structure: %s</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x154</b></TD>
+<TD>Too many initial values for array: %s</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x155</b></TD>
+<TD>String or text literal too long</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x156</b></TD>
+<TD>PROLOGUE must be macro function</TD>
+<TD>The user-defined prologue macro must be a macro function, that is, there must
+be an EXITM somewhere inside that returns a literal.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x157</b></TD>
+<TD>EPILOGUE must be macro procedure: %s</TD>
+<TD>The user-defined epilogue macro must be a macro procedure, that is, there must NOT
+be an EXITM somewhere inside that returns a literal.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x158</b></TD>
+<TD>Reserved word expected</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x159</b></TD>
+<TD>INVOKE requires prototype for procedure</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x160</b></TD>
+<TD>Invalid type for data declaration: %s</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x161</b></TD>
+<TD>Operand must be RECORD type or field</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x162</b></TD>
+<TD>Unmatched macro nesting</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x163</b></TD>
+<TD>Empty (null) string</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x164</b></TD>
+<TD>No segment information to create fixup: %s</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x165</b></TD>
+<TD>Register value overwritten by INVOKE</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x166</b></TD>
+<TD>Missing quotation mark in string</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x167</b></TD>
+<TD>Divide by zero in expression</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x168</b></TD>
+<TD>General Failure</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x169</b></TD>
+<TD>Cannot have implicit far jump or call to near label</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x170</b></TD>
+<TD>Invalid use of register</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x171</b></TD>
+<TD>Distance invalid for current segment</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x172</b></TD>
+<TD>Initializer magnitude too large: %s</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x173</b></TD>
+<TD>Cannot add two relocatable labels</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x174</b></TD>
+<TD>Cannot define as public or external: &lt;symbol_name&gt;</TD>
+<TD>Text macros, macros, stack variables, structure fields or segment/groups cannot be
+public or external.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x175</b></TD>
+<TD>Positive value expected</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x176</b></TD>
+<TD>FAR not allowed in FLAT model COMM variables</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x177</b></TD>
+<TD>Too many arguments to INVOKE</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x178</b></TD>
+<TD>Directive must appear inside a macro</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x179</b></TD>
+<TD>Invalid type expression</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x180</b></TD>
+<TD>Cannot declare scoped code label as PUBLIC: &lt;label&gt;</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x181</b></TD>
+<TD>Invalid radix tag</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x182</b></TD>
+<TD>Instruction operand must have size</TD>
+<TD>The instruction allows operands with more than just one size, and the wanted size
+cannot be guessed from the current operands.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x183</b></TD>
+<TD>Use of register assumed to ERROR</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x184</b></TD>
+<TD>Instructions and initialized data not supported in &lt;seg_type&gt; segments</TD>
+<TD>&lt;seg_type&gt; may be BSS or AT. Such segments don't have data.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x185</b></TD>
+<TD>Literal expected after '='</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x186</b></TD>
+<TD>No 4k Page-aligned segments in MS386 OMF</TD>
+<TD>A 4K page-aligned segment isn't compatible with MS OMF format, it's a Phar Lab extension.
+This warning won't appear in the standard version.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x187</b></TD>
+<TD></TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x188</b></TD>
+<TD>Operand must be relocatable</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x189</b></TD>
+<TD>Constant or relocatable label expected</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x190</b></TD>
+<TD>[ELSE]IF2/.ERR2 not allowed, single-pass assembler</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x191</b></TD>
+<TD>Expression too complex for UNTILCXZ</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x192</b></TD>
+<TD>Operands must be in same segment</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x193</b></TD>
+<TD>Invalid use of external symbol: &lt;symbol_name&gt;</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x194</b></TD>
+<TD>For -coff leading underscore required for start label: &lt;start_label&gt;</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x195</b></TD>
+<TD>Invalid command-line value, default is used: %s</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x196</b></TD>
+<TD>Unknown fixup type: %u at &lt;segment&gt;.&lt;offset&gt;</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x197</b></TD>
+<TD>Unsupported fixup type for &lt;format&gt;: &lt;type&gt;</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x198</b></TD>
+<TD>Invalid fixup type for &lt;format&gt; &lt;type&gt; at location &lt;segment&gt;.&lt;offset&gt;</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x199</b></TD>
+<TD>Syntax error in control-flow directive</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x200</b></TD>
+<TD>Invalid .model parameter for flat model</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x201</b></TD>
+<TD>Output format doesn't support externals: &lt;symbol&gt;</TD>
+<TD>In formats BIN and MZ all references must be local to the module.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x202</b></TD>
+<TD>Invalid start label for -bin</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x203</b></TD>
+<TD>No start label defined</TD>
+<TD>Warning, format MZ only: MZ-binaries usually have a start label.
+In some cases (i.e. overlays) a missing start label may be ok.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x204</b></TD>
+<TD>No stack defined</TD>
+<TD>Warning, format MZ only: MZ-binaries usually have a stack.
+In some cases (i.e. overlays) a missing stack may be ok.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x205</b></TD>
+<TD>Invalid alignment - value must be 2^n (n=4..15)</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x206</b></TD>
+<TD>Index value past end of string: &lt;value&gt;</TD>
+<TD>The index argument of SUBSTR or INSTR is beyond the string argument length</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x207</b></TD>
+<TD>Count value too large</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x208</b></TD>
+<TD>Count must be positive or zero</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x209</b></TD>
+<TD>Syntax error: &lt;item&gt;</TD>
+<TD>The parser found an item that has no meaning in the current context</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x210</b></TD>
+<TD></TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x211</b></TD>
+<TD></TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x212</b></TD>
+<TD>Must use floating-point initializer</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x213</b></TD>
+<TD>ORG directive not allowed in unions</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x214</b></TD>
+<TD>Struct alignment must be 1, 2, 4, 8, 16 or 32</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x215</b></TD>
+<TD>Structure cannot be instanced</TD>
+<TD>A structure that has size 0 or that contains an ORG directive cannot be instanced.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x216</b></TD>
+<TD>Missing angle bracket or brace in literal</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x217</b></TD>
+<TD>Nondigit in number: &lt;number&gt;</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x218</b></TD>
+<TD>16bit fixup for 32bit label: %s</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x219</b></TD>
+<TD>Too many macro placeholders</TD>
+<TD>The number of parameters and locals for a macro must not exceed 256</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x220</b></TD>
+<TD>Missing macro argument: %s, parameter %u</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x221</b></TD>
+<TD>Doesn't work with 32-bit segments: &lt;directive&gt;</TD>
+<TD>Directives .STARTUP and .EXIT work for 16-bit only.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x222</b></TD>
+<TD>Segment exceeds 64k limit: %s</TD>
+<TD>In MZ format, 16-bit segments are restricted to 64k.<TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x223</b></TD>
+<TD>Not supported with OMF format: %s</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x224</b></TD>
+<TD>Not supported with current output format: %s</TD>
+<TD>The directive or feature isn't supported by all formats. For example, segment-related
+directives or attributes won't make much sense for flat formats like COFF or ELF.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x225</b></TD>
+<TD>Unknown default prologue argument: %s</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x226</b></TD>
+<TD>LOADDS ignored in flat model</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x227</b></TD>
+<TD>Missing right parenthesis in expression</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x228</b></TD>
+<TD>Invalid operand for &lt;operator&gt;: &lt;operand&gt;</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x229</b></TD>
+<TD>Structure improperly initialized: %s</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x230</b></TD>
+<TD>Expected: %s</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x231</b></TD>
+<TD>Invalid data initializer</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x232</b></TD>
+<TD>Expected data label</TD>
+<TD>Some operators ( LENGTH, SIZE ) work with data labels only.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x233</b></TD>
+<TD>Expression must be a code address</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x234</b></TD>
+<TD>-n Option needs a valid name parameter</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x235</b></TD>
+<TD>Constant value too large: &lt;value&gt;</TD>
+<TD>the value of the constant doesn't fit in 64 or - if it is a number to be assigned to a 
+symbolic constant - 32 bits.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x236</b></TD>
+<TD>Text macro was used before definition</TD>
+<TD>this is a warning only. However, using text macros before they have been defined will force
+    JWasm to do a full second pass, which increases assembly time.
+</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x237</b></TD>
+<TD>Offset size incompatible with current segment</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x238</b></TD>
+<TD>Instruction form requires 80386</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x239</b></TD>
+<TD>Group/Segment offset size conflict: &lt;group offset&gt; - &lt;segment offset&gt;</TD>
+<TD>Segments within a group must all have the same offset size.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x240</b></TD>
+<TD>Assembly passes reached: &lt;passes&gt;</TD>
+<TD>Although this is a warning only it usually indicates a severe problem.
+The assembler is very probably unable to calculate "final" values of all labels and has
+to be terminated by pressing Ctrl-C.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x241</b></TD>
+<TD>Filename parameter must be enclosed in &lt;&gt; or quotes</TD>
+<TD>The INCBIN directive requires delimiters for its filename.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x242</b></TD>
+<TD>Start address on END directive ignored with .STARTUP</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x243</b></TD>
+<TD>Invalid symbol type in expression: &lt;symbol&gt;</TD>
+<TD>The expression evaluator has encountered a symbol that is meaningless in expressions, for
+example a (text) macro.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x244</b></TD>
+<TD>Missing right parenthesis</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x245</b></TD>
+<TD>Directive must be in control block</TD>
+<TD>.ELSE, .ELSEIF and .ENDIF are valid inside .IF-blocks,  .BREAK, .CONTINUE may occur
+inside .WHILE- or .REPEAT-blocks, .ENDW needs a preceding .WHILE and .UNTIL needs a
+preceding .REPEAT.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x246</b></TD>
+<TD>Expected: memory model</TD>
+<TD>the .MODEL directive needs at least one parameter, the memory model.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x247</b></TD>
+<TD>Type is wrong size for register</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x248</b></TD>
+<TD>IF[n]DEF expects a plain symbol as argument</TD>
+<TD>this is a warning.
+    Masm accepts any expression as argument for directives [ELSE]IF[N]DEF, but
+    the result probably isn't always what has been expected. 
+</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x249</b></TD>
+<TD>Jump destination must specify a label</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x250</b></TD>
+<TD>Ignored: &lt;attribute&gt;</TD>
+<TD>An attribute or parameter of a directive was found, but not handled.
+See <A HREF="10.htm">Known Bugs and missing Features</A> for details about what features aren't implemented yet.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x251</b></TD>
+<TD>Missing argument for cmdline option</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x252</b></TD>
+<TD>Invalid coprocessor register</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x253</b></TD>
+<TD>Registers AH-DH may not be used with SPL-DIL or R8-R15</TD>
+<TD>64-bit only.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x254</b></TD>
+<TD>.ENDPROLOG found before EH directives</TD>
+<TD>64-bit only.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x255</b></TD>
+<TD>Missing FRAME in PROC, no unwind code will be generated</TD>
+<TD>64-bit only.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x256</b></TD>
+<TD>Bad alignment for offset in unwind code</TD>
+<TD>64-bit only.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x257</b></TD>
+<TD>Nonzero value expected</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x258</b></TD>
+<TD>Size of prolog too big, must be < 256 bytes</TD>
+<TD>64-bit only.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x259</b></TD>
+<TD>Missing .ENDPROLOG: %s</TD>
+<TD>64-bit only.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x260</b></TD>
+<TD>.SAFESEH argument must be a PROC</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x261</b></TD>
+<TD>Directive ignored without -%s switch</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x262</b></TD>
+<TD>ELF GNU extensions (8/16-bit relocations) used</TD>
+<TD>This is a warning only. The extensions are not "official", but the GNU linker LD will
+understand them.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x263</b></TD>
+<TD>Syntax error in expression</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x264</b></TD>
+<TD>Macro label not defined: %s</TD>
+<TD>The target of a GOTO must be within the very same macro.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x265</b></TD>
+<TD>Procedure argument or local not referenced: %s</TD>
+<TD>This warning is displayed only if at least -W3 is specified.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x266</b></TD>
+<TD>Group definition too large, truncated: &lt;group_name&gt;</TD>
+<TD>The size of the OMF record that is to define a group would exceed 4 kB. However, to see this
+error you'll have to define a group that is to comprise more than 1000 segments, </TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x267</b></TD>
+<TD>COMM variable exceeds 64K: &lt;variable&gt;</TD>
+<TD>in 16-bit, the size of a COMM variable is restricted to 64 kB.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x268</b></TD>
+<TD>Must be public or external: %s</TD>
+<TD>Names that are to be known by the linker must be public or external.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x269</b></TD>
+<TD>parameter/local name is reserved word: %s</TD>
+<TD>This is a warning. The names of macro parameters or locals have highest priority and
+hence the reserved word will become inaccessible within the macro.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x270</b></TD>
+<TD>real or BCD number not allowed</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x271</b></TD>
+<TD>structure field expected</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x272</b></TD>
+<TD>Constant value too large: &lt;value&gt;</TD>
+<TD>the value of the constant doesn't fit in 64 or - if it is a number to be assigned to a 
+symbolic constant - 32 bits.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x273</b></TD>
+<TD>ELSE clause already occured in this IF block</TD>
+<TD>An IF block may contain 0 or 1 ELSE clauses and it must be the last clause before ENDIF.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x274</b></TD>
+<TD>Illegal use of segment register</TD>
+<TD></TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x275</b></TD>
+<TD>Group exceeds 64K: &lt;group&gt;</TD>
+<TD>MZ format only: a group that contains 16-bit segments cannot be larger than 64 kB, because the 
+group must fit into a physical segment.</TD>
+</TR>
+
+<TR BGCOLOR="#F0F0F0">
+<TD><b>x276</b></TD>
+<TD>EXPORT must be FAR: &lt;symbol&gt;</TD>
+<TD>A 16-bit procedure that is to be exported must be declared with the FAR distance attribute.</TD>
+</TR>
+
+</TABLE>
+
+</BODY>
+</HTML>

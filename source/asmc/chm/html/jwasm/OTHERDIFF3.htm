@@ -1,0 +1,16 @@
+<HTML>
+<HEAD><TITLE>   3.24.3 Accepted Parameters for IF[N]DEF Directive</TITLE></HEAD>
+<BODY>
+<H1>   3.24.3 Accepted Parameters for IF[N]DEF Directive</H1>
+
+    Masm's IF[N]DEF directive accepts user-defined symbols and registers,
+    but fails for instructions, directives and other reserved words. JWasm's
+    IF[N}DEF implementation accepts those symbols as well. OTOH, JWasm is
+    a bit more picky and will display a warning if more than one item is 
+    found behind the directive - Masm just takes the first and silently skips
+    the rest.
+<P>
+    Also see <A HREF="MBGARG.htm">Member Argument for IF[N]DEF and .ERR[N]DEF Directives</A>.
+
+</BODY>
+</HTML>

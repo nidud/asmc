@@ -1,0 +1,178 @@
+<HTML>
+<HEAD><TITLE>Win64_3e - SEH Support in Win64 (JWasm specific)</TITLE></HEAD>
+<BODY>
+<H1>Win64_3e - SEH Support in Win64 (JWasm specific)</H1>
+
+<TABLE BORDER=0 CELLSPACING="4" CELLPADDING="4">
+<TR BGCOLOR="#E0E0E0"><TD>
+<pre>
+
+;<font color="#808080">--- SEH support in Win64. Unlike Win64_3, </font>
+;<font color="#808080">--- this version uses hll directives, so it cannot be assembled</font>
+;<font color="#808080">--- with Masm64. Also, OPTION FRAME:AUTO is used.</font>
+;<font color="#808080">---</font>
+;<font color="#808080">--- to create the binary enter:</font>
+;<font color="#808080">---   JWasm -win64 Win64_3e.asm</font>
+;<font color="#808080">---   Link Win64_3e.obj</font>
+
+    <b>option</b> casemap:none
+    <b>option</b> frame:auto    ;<font color="#808080">generate SEH-compatible prologues and epilogues</font>
+
+    <b>includelib</b> kernel32.lib
+    <b>includelib</b> user32.lib
+
+HINSTANCE <b>typedef</b> QWORD
+HWND      <b>typedef</b> QWORD
+HMENU     <b>typedef</b> QWORD
+HICON     <b>typedef</b> QWORD
+HBRUSH    <b>typedef</b> QWORD
+HCURSOR   <b>typedef</b> QWORD
+WPARAM    <b>typedef</b> QWORD
+LPARAM    <b>typedef</b> QWORD
+LPSTR     <b>typedef</b> QWORD
+LPVOID    <b>typedef</b> QWORD
+UINT      <b>typedef</b> DWORD
+
+NULL           <b>equ</b> 0
+WS_OVERLAPPEDWINDOW <b>equ</b> 0CF0000h
+CW_USEDEFAULT  <b>equ</b> 80000000h
+SW_SHOWDEFAULT <b>equ</b> 10
+SW_SHOWNORMAL  <b>equ</b> 1
+IDC_ARROW      <b>equ</b> 32512
+IDI_APPLICATION <b>equ</b> 32512
+WM_DESTROY     <b>equ</b> 2
+CS_VREDRAW     <b>equ</b> 1
+CS_HREDRAW     <b>equ</b> 2
+COLOR_WINDOW   <b>equ</b> 5
+
+proto_WNDPROC <b>typedef</b> proto :HWND,:QWORD,:WPARAM,:LPARAM
+WNDPROC <b>typedef</b> ptr proto_WNDPROC
+
+WNDCLASSEXA <b>struct</b> 8
+cbSize          DWORD   ?
+style           DWORD   ?
+lpfnWndProc     WNDPROC ?
+cbClsExtra      DWORD   ?
+cbWndExtra      DWORD   ?
+hInstance       HINSTANCE ?
+hIcon           HICON   ?
+hCursor         HCURSOR ?
+hbrBackground   HBRUSH  ?
+lpszMenuName    LPSTR   ?
+lpszClassName   LPSTR   ?
+hIconSm         HICON   ?
+WNDCLASSEXA <b>ends</b>
+
+POINT   <b>struct</b>
+x   SDWORD  ?
+y   SDWORD  ?
+POINT   <b>ends</b>
+
+MSG <b>struct</b> 8
+hwnd    HWND    ?
+message DWORD   ?
+wParam  WPARAM  ?
+lParam  LPARAM  ?
+time    DWORD   ?
+pt      POINT   &lt;&gt;
+MSG <b>ends</b>
+
+GetModuleHandleA <b>proto</b> :LPSTR
+GetCommandLineA  <b>proto</b>
+ExitProcess      <b>proto</b> :UINT
+LoadIconA        <b>proto</b> :HINSTANCE, :LPSTR
+LoadCursorA      <b>proto</b> :HINSTANCE, :LPSTR
+RegisterClassExA <b>proto</b> :ptr WNDCLASSEXA
+CreateWindowExA  <b>proto</b> :DWORD, :LPSTR, :LPSTR, :DWORD, :SDWORD, :SDWORD, :SDWORD, :SDWORD, :HWND, :HMENU, :HINSTANCE, :LPVOID
+ShowWindow       <b>proto</b> :HWND, :SDWORD
+UpdateWindow     <b>proto</b> :HWND
+GetMessageA      <b>proto</b> :ptr MSG, :HWND, :SDWORD, :SDWORD
+TranslateMessage <b>proto</b> :ptr MSG
+DispatchMessageA <b>proto</b> :ptr MSG
+PostQuitMessage  <b>proto</b> :SDWORD
+DefWindowProcA   <b>proto</b> :HWND, :UINT, :WPARAM, :LPARAM
+
+WinMain <b>proto</b> :HINSTANCE, :HINSTANCE, :LPSTR, :UINT
+
+    <b>.data</b>
+
+ClassName <b>db</b> "SimpleWinClass",0
+AppName  <b>db</b> "Our First Window",0
+
+    <b>.data?</b>
+
+hInstance HINSTANCE ?
+CommandLine LPSTR ?
+
+    <b>.code</b>
+
+WinMainCRTStartup <b>proc</b> FRAME
+
+    <b>invoke</b> GetModuleHandleA, NULL
+    <font color="#0000E0">mov</font>    hInstance, rax
+    <b>invoke</b> GetCommandLineA
+    <font color="#0000E0">mov</font>    CommandLine, rax
+    <b>invoke</b> WinMain, hInstance, NULL, CommandLine, SW_SHOWDEFAULT
+    <b>invoke</b> ExitProcess, eax
+
+WinMainCRTStartup <b>endp</b>
+
+WinMain <b>proc</b> FRAME hInst:HINSTANCE, hPrevInst:HINSTANCE, CmdLine:LPSTR, CmdShow:UINT
+
+    <b>local</b> wc:WNDCLASSEXA
+    <b>local</b> msg:MSG
+    <b>local</b> hwnd:HWND
+
+    <font color="#0000E0">mov</font>   hInst, rcx
+    <font color="#0000E0">mov</font>   wc.cbSize, SIZEOF WNDCLASSEXA
+    <font color="#0000E0">mov</font>   wc.style, CS_HREDRAW <font color="#0000E0">or</font> CS_VREDRAW
+    <font color="#0000E0">lea</font>   rax, [WndProc]
+    <font color="#0000E0">mov</font>   wc.lpfnWndProc, rax
+    <font color="#0000E0">mov</font>   wc.cbClsExtra, NULL
+    <font color="#0000E0">mov</font>   wc.cbWndExtra, NULL
+    <font color="#0000E0">mov</font>   wc.hInstance, rcx
+    <font color="#0000E0">mov</font>   wc.hbrBackground, COLOR_WINDOW+1
+    <font color="#0000E0">mov</font>   wc.lpszMenuName, NULL
+    <font color="#0000E0">lea</font>   rax, [ClassName]
+    <font color="#0000E0">mov</font>   wc.lpszClassName, rax
+    <b>invoke</b> LoadIconA, NULL, IDI_APPLICATION
+    <font color="#0000E0">mov</font>   wc.hIcon, rax
+    <font color="#0000E0">mov</font>   wc.hIconSm, rax
+    <b>invoke</b> LoadCursorA, NULL, IDC_ARROW
+    <font color="#0000E0">mov</font>   wc.hCursor,rax
+    <b>invoke</b> RegisterClassExA, addr wc
+    <b>invoke</b> CreateWindowExA, NULL, ADDR ClassName, ADDR AppName,\
+           WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,\
+           CW_USEDEFAULT, CW_USEDEFAULT,CW_USEDEFAULT, NULL, NULL,\
+           hInst, NULL
+    <font color="#0000E0">mov</font>   hwnd,rax
+    <b>invoke</b> ShowWindow, hwnd, SW_SHOWNORMAL
+    <b>invoke</b> UpdateWindow, hwnd
+    <b>.while</b> (1)
+        <b>invoke</b> GetMessageA, ADDR msg, NULL, 0, 0
+        <b>.break</b> .if (!rax)
+        <b>invoke</b> TranslateMessage, ADDR msg
+        <b>invoke</b> DispatchMessageA, ADDR msg
+    <b>.endw</b>
+    <font color="#0000E0">mov</font>   rax, msg.wParam
+    <font color="#0000E0">ret</font>
+WinMain <b>endp</b>
+
+WndProc <b>proc</b> FRAME hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
+
+    <b>.if</b> ( edx == WM_DESTROY )
+        <b>invoke</b> PostQuitMessage, NULL
+        <font color="#0000E0">xor</font> rax,rax
+    <b>.else</b>
+        <b>invoke</b> DefWindowProcA, rcx, edx, r8, r9
+    <b>.endif</b>
+    <font color="#0000E0">ret</font>
+WndProc <b>endp</b>
+
+<b>end</b> WinMainCRTStartup
+</pre>
+</TD></TR>
+</TABLE>
+
+</BODY>
+</HTML>

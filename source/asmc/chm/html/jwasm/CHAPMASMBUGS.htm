@@ -1,0 +1,87 @@
+<HTML>
+<HEAD><TITLE>   7. Masm bugs fixed in JWasm</TITLE></HEAD>
+<BODY>
+<H1>   7. Masm bugs fixed in JWasm</H1>
+
+<TABLE CELLPADDING="4" CELLSPACING="2">
+
+<TR BGCOLOR="#C8C8C8"><TH>#</TH><TH>Description</TH><TH>Fixed Masm Version</TH></TR>
+<TR BGCOLOR="#E8E8E8"><TD>1</TD><TD>the infamous "invoke" bug: if an argument for invoke has to be expanded
+       (from BYTE or WORD to DWORD, for example ), bad code was generated.
+</TD><TD>9</TD></TR>
+<TR BGCOLOR="#E0E0E0"><TD>2</TD><TD>PROTOs contained twice in the source caused an EXTDEF entry to be
+      generated in the object module.
+</TD><TD>-</TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD>3</TD><TD>"TYPE xmm0" will return 10 in Masm v6 and v7 - the correct value is 16.
+</TD><TD>8</TD></TR>
+<TR BGCOLOR="#E0E0E0"><TD>4</TD><TD>a nested structure might cause a GPF in Masm if the embedded STRUCT's
+      starting offset has to be adjusted due to alignment.
+</TD><TD>-</TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD>5</TD><TD>defining huge arrays in Masm is very slow and might even cause a
+      deadlock if COFF has been selected as output format.
+</TD><TD>-</TD></TR>
+<TR BGCOLOR="#E0E0E0"><TD>6</TD><TD>for Masm v6 and v7, if an array > 64 kB is defined and output
+      format OMF is selected, the array's size will be mod 0x10000 only.
+</TD><TD>8</TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD>7</TD><TD>Masm doesn't flag invalid numbers in struct/array initializer strings.
+</TD><TD>-</TD></TR>
+<TR BGCOLOR="#E0E0E0"><TD>8</TD><TD>if an ALIAS is defined somewhere in the source and the symbol table
+      is listed, a 'General Failure' error occurs in Masm if output format
+      is OMF.
+</TD><TD>-</TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD>9</TD><TD>Type "coerces" for DWORD data items defined in a 32bit segment are
+      ignored by Masm, i.e., "dd far16 ptr &lt;symbol&gt;" will generate a
+      near32 fixup instead of a far16 one.
+</TD><TD>-</TD></TR>
+<TR BGCOLOR="#E0E0E0"><TD>10</TD><TD>if the ALIGN directive has to add 5 bytes in 32bit code segments,
+      Masm includes an "add eax,0" opcode, which isn't a no-op because
+      flags are modified.
+</TD><TD>-</TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD>11</TD><TD>silent truncation of immediate constants: Masm v6 and v7 will accept
+      line "mov [word_variable],12345h" without error.
+</TD><TD>8</TD></TR>
+<TR BGCOLOR="#E0E0E0"><TD>12</TD><TD>preprocessed output with option -EP may erroneously contain text
+      macros and macro function calls if the macros are located in the
+      initialization string of a structured variable.
+</TD><TD>-</TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD>13</TD><TD>Masm generates wrong code if a conditional jump is coupled with a
+      type coercion which modifies offset magnitude. Examples: "jz near32
+      ptr ..." in 16bit code or "jz near16 ptr ..." in 32bit code).
+</TD><TD>-</TD></TR>
+<TR BGCOLOR="#E0E0E0"><TD>14</TD><TD>if the arguments given to Masm end with an option which expects
+      a parameter (i.e. "ml -c -Fo"), a 'General Failure' may occur.
+</TD><TD>-</TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD>15</TD><TD>floating-point data items in Masm can be followed by any suffix
+      (example: REAL4 1.0foo, 2.0bar). JWasm won't accept this.
+</TD><TD>-</TD></TR>
+<TR BGCOLOR="#E0E0E0"><TD>16</TD><TD>If a local is defined inside a macro, Masm will create a unique name
+      for it. The name is constructed by using '??' as prefix, followed by
+      a hexadecimal number with 4 digits. There is no check for overflow,
+      however, so if the total of locals in all macros exceeds 65536,
+      strange errors will occur.
+</TD><TD>-</TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD>17</TD><TD>If a weak external is defined for -coff with the ALIAS directive,
+      an invalid fixup - and also a strange entry in the module's symbol table - is created.
+</TD><TD>-</TD></TR>
+<TR BGCOLOR="#E0E0E0"><TD>18</TD><TD>If a section contains more than 0xffff relocations in COFF,
+      the number of relocations that is stored in the object module is just the value of the lower 16-bit half of
+      the relocation count.
+</TD><TD>8</TD></TR>
+<TR BGCOLOR="#E8E8E8"><TD>19</TD><TD>If a symbolic constant (=equate) is made public in OMF format, 
+      Masm will store the symbol's value in a 16-bit record if it is in the range -32768 ... 65535. If the
+      symbol is referenced in another module as a 32-bit number, it is always zero-extended, never
+      sign-extended; hence values -1 ... -32768 will become 65535 ... 32768.
+</TD><TD>-</TD></TR>
+<TR BGCOLOR="#E0E0E0"><TD>20</TD><TD>if data labels become public by the -Zf option ( and not by the PUBLIC
+      directive ), their names are not decorated. Also, if format is COFF, they won't become true publics,
+      they're just included in the symbol table with class "static",
+</TD><TD>-</TD></TR>
+</TABLE>
+
+    It's slightly dangerous to fix old Masm bugs, since some code might
+    work only if the bugs exists. So no, JWasm won't achieve 100% Masm
+    compatibility.
+<P> 
+<P> 
+</BODY>
+</HTML>

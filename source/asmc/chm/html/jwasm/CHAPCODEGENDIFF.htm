@@ -1,0 +1,19 @@
+<HTML>
+<HEAD><TITLE>   5. Code Generation Differences</TITLE></HEAD>
+<BODY>
+<H1>   5. Code Generation Differences</H1>
+
+    JWasm might generate slightly different code than Masm on some occasions.
+    Commandline option <A HREF="CMDOPTZG.htm">-Zg</A> should eliminate most of these differences.
+    However, some differences are due to fixed Masm bugs (see below), in
+    which case option -Zg won't have any effect.
+<P>
+    For a few instructions, the encoding differs between Masm versions.
+<P> Example:
+<PRE><font color="#008040">    cmp al,dl
+</font></PRE><P>
+    is encoded <TT>38 D0</TT> in Masm v6, but <TT>3A C2</TT> in Masm v8.
+    In such cases, JWasm will prefer to copy the encoding of Masm v8. 
+
+</BODY>
+</HTML>

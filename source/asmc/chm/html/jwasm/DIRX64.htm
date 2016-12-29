@@ -1,0 +1,24 @@
+<HTML>
+<HEAD><TITLE>   3.16 Directives .X64 and .X64p</TITLE></HEAD>
+<BODY>
+<H1>   3.16 Directives .X64 and .X64p</H1>
+
+    These directives select a 64-bit (x86-64) cpu.
+    In contrast to .X64, .X64p will allow to use privileged instructions.
+<P>
+    The .X64 directive isn't needed usually, because for output formats WIN64
+    (see <A HREF="CMDOPTWIN64.htm">-win64</A>) and ELF64 (see <A HREF="CMDOPTELF64.htm">-elf64</A>),
+    .X64 is the default.
+<P>
+    The .X64p directive is useful for mixed-model binaries or system software (see example <A HREF="AB03.htm">DOS64</A> ).
+<P>
+     When the cpu is set to 64-bit, the SEGMENT directive accepts a new
+    'size' value: USE64. It tells the assembler that this segment's offset
+    is 64-bit wide and uses 64-bit instructions.
+<P>
+     The SYSCALL calling convention is renamed to SYSCALL_ when 64-bit is on,
+    because there exists a SYSCALL instruction mnemonic in this mode.
+
+
+</BODY>
+</HTML>

@@ -1,0 +1,371 @@
+<HTML>
+<HEAD><TITLE>Win64_8 - Create a Win64 Binary with -pe</TITLE></HEAD>
+<BODY>
+<H1>Win64_8 - Create a Win64 Binary with -pe</H1>
+
+<TABLE BORDER=0 CELLSPACING=4 CELLPADDING=4 WIDTH="100%">
+<TR BGCOLOR="#E0E0E0"><TD>
+<pre>
+
+;<font color="#808080">--- create a 64-bit binary with -pe cmdline option</font>
+;<font color="#808080">---</font>
+;<font color="#808080">---   JWasm -pe Win64_8.asm</font>
+
+    <b>.x64</b>                ;<font color="#808080"> -pe requires to set cpu, model &amp; language</font>
+    <b>.model</b> flat, fastcall
+
+    <b>option</b> casemap:none
+    <b>option</b> frame:auto   ;<font color="#808080"> generate SEH-compatible prologues and epilogues</font>
+    <b>option</b> win64:3      ;<font color="#808080"> init shadow space, reserve stack at PROC level</font>
+
+;<font color="#808080">--- resource IDs</font>
+IDR_MENU1   <b>equ</b> 100
+IDR_BITMAP1 <b>equ</b> 101
+IDM_EXIT    <b>equ</b> 1000
+
+NULL      <b>equ</b> 0
+LPSTR     <b>typedef</b> <font color="#808000">ptr</font>
+LPVOID    <b>typedef</b> <font color="#808000">ptr</font>
+UINT      <b>typedef</b> <font color="#800000">dword</font>
+BOOL      <b>typedef</b> <font color="#800000">dword</font>
+
+;<font color="#808080">--- winbase definitions</font>
+HINSTANCE <b>typedef</b> <font color="#808000">ptr</font>
+
+;<font color="#808080">--- winuser definitions</font>
+HWND      <b>typedef</b> <font color="#808000">ptr</font>
+HMENU     <b>typedef</b> <font color="#808000">ptr</font>
+HICON     <b>typedef</b> <font color="#808000">ptr</font>
+HBRUSH    <b>typedef</b> <font color="#808000">ptr</font>
+HCURSOR   <b>typedef</b> <font color="#808000">ptr</font>
+HDC       <b>typedef</b> <font color="#808000">ptr</font>
+HBITMAP   <b>typedef</b> <font color="#808000">ptr</font>
+WPARAM    <b>typedef</b> <font color="#808000">ptr</font>
+LPARAM    <b>typedef</b> <font color="#800000">qword</font>
+
+WS_OVERLAPPEDWINDOW <b>equ</b> 0CF0000h
+CW_USEDEFAULT  <b>equ</b> 80000000h
+SW_SHOWDEFAULT <b>equ</b> 10
+SW_SHOWNORMAL  <b>equ</b> 1
+IDC_ARROW      <b>equ</b> 32512
+IDI_APPLICATION <b>equ</b> 32512
+CS_VREDRAW     <b>equ</b> 1
+CS_HREDRAW     <b>equ</b> 2
+COLOR_WINDOW   <b>equ</b> 5
+
+WM_DESTROY     <b>equ</b> 2
+WM_PAINT       <b>equ</b> 000Fh
+WM_COMMAND     <b>equ</b> 0111h
+
+proto_WNDPROC <b>typedef</b> proto :HWND,:<font color="#800000">qword</font>,:WPARAM,:LPARAM
+WNDPROC <b>typedef</b> <font color="#808000">ptr</font> proto_WNDPROC
+
+WNDCLASSEXA <b>struct</b> 8
+cbSize          <font color="#800000">dword</font>   ?
+style           <font color="#800000">dword</font>   ?
+lpfnWndProc     WNDPROC ?
+cbClsExtra      <font color="#800000">dword</font>   ?
+cbWndExtra      <font color="#800000">dword</font>   ?
+hInstance       HINSTANCE ?
+hIcon           HICON   ?
+hCursor         HCURSOR ?
+hbrBackground   HBRUSH  ?
+lpszMenuName    LPSTR   ?
+lpszClassName   LPSTR   ?
+hIconSm         HICON   ?
+WNDCLASSEXA <b>ends</b>
+
+POINT   <b>struct</b>
+x   <font color="#800000">sdword</font>  ?
+y   <font color="#800000">sdword</font>  ?
+POINT   <b>ends</b>
+
+MSG <b>struct</b> 8
+hwnd    HWND    ?
+message <font color="#800000">dword</font>   ?
+wParam  WPARAM  ?
+lParam  LPARAM  ?
+time    <font color="#800000">dword</font>   ?
+pt      POINT   &lt;&gt;
+MSG <b>ends</b>
+
+RECT <b>struct</b>
+left    <font color="#800000">sdword</font>  ?
+top     <font color="#800000">sdword</font>  ?
+right   <font color="#800000">sdword</font>  ?
+bottom  <font color="#800000">sdword</font>  ?
+RECT <b>ends</b>
+
+PAINTSTRUCT <b>struct</b> 8
+hdc         HDC  ?
+fErase      BOOL ?
+rcPaint     RECT &lt;&gt;
+fRestore    BOOL ?
+fIncUpdate  BOOL ?
+rgbReserved <font color="#800000">byte</font> 32 <font color="#808000">dup</font> (?)
+PAINTSTRUCT <b>ends</b>
+
+;<font color="#808080">--- wingdi definitions</font>
+
+DIB_RGB_COLORS  <b>equ</b> 0
+SRCCOPY         <b>equ</b> 00CC0020h
+
+HGDIOBJ  <b>typedef</b> <font color="#808000">ptr</font>
+
+BITMAPINFOHEADER <b>struct</b>
+biSize          <font color="#800000">dword</font>   ?
+biWidth         <font color="#800000">sdword</font>  ?
+biHeight        <font color="#800000">sdword</font>  ?
+biPlanes        <font color="#800000">word</font>    ?
+biBitCount      <font color="#800000">word</font>    ?
+biCompression   <font color="#800000">dword</font>   ?
+biSizeImage     <font color="#800000">dword</font>   ?
+biXPelsPerMeter <font color="#800000">sdword</font>  ?
+biYPelsPerMeter <font color="#800000">sdword</font>  ?
+biClrUsed       <font color="#800000">dword</font>   ?
+biClrImportant  <font color="#800000">dword</font>   ?
+BITMAPINFOHEADER <b>ends</b>
+
+    <b>option</b> dllimport:&lt;kernel32&gt;
+GetModuleHandleA <b>proto</b> :LPSTR
+GetCommandLineA  <b>proto</b>
+ExitProcess      <b>proto</b> :UINT
+
+    <b>option</b> dllimport:&lt;user32&gt;
+BeginPaint       <b>proto</b> :HWND, :<font color="#808000">ptr</font> PAINTSTRUCT
+CreateWindowExA  <b>proto</b> :<font color="#800000">dword</font>, :LPSTR, :LPSTR, :<font color="#800000">dword</font>, :<font color="#800000">sdword</font>, :<font color="#800000">sdword</font>, :<font color="#800000">sdword</font>, :<font color="#800000">sdword</font>, :HWND, :HMENU, :HINSTANCE, :LPVOID
+DefWindowProcA   <b>proto</b> :HWND, :UINT, :WPARAM, :LPARAM
+DestroyWindow    <b>proto</b> :HWND
+DispatchMessageA <b>proto</b> :<font color="#808000">ptr</font> MSG
+EndPaint         <b>proto</b> :HWND, :<font color="#808000">ptr</font> PAINTSTRUCT
+GetClientRect    <b>proto</b> :HWND, :<font color="#808000">ptr</font> RECT
+GetMessageA      <b>proto</b> :<font color="#808000">ptr</font> MSG, :HWND, :<font color="#800000">sdword</font>, :<font color="#800000">sdword</font>
+LoadBitmapA      <b>proto</b> :HINSTANCE, :LPSTR
+LoadCursorA      <b>proto</b> :HINSTANCE, :LPSTR
+LoadIconA        <b>proto</b> :HINSTANCE, :LPSTR
+PostQuitMessage  <b>proto</b> :<font color="#800000">sdword</font>
+RegisterClassExA <b>proto</b> :<font color="#808000">ptr</font> WNDCLASSEXA
+ShowWindow       <b>proto</b> :HWND, :<font color="#800000">sdword</font>
+TranslateMessage <b>proto</b> :<font color="#808000">ptr</font> MSG
+UpdateWindow     <b>proto</b> :HWND
+
+    <b>option</b> DLLIMPORT:&lt;gdi32&gt;
+BitBlt             <b>proto</b> :HDC, :<font color="#800000">dword</font>, :<font color="#800000">dword</font>, :<font color="#800000">dword</font>, :<font color="#800000">dword</font>, :HDC, :<font color="#800000">dword</font>, :<font color="#800000">dword</font>, :<font color="#800000">dword</font>
+CreateCompatibleDC <b>proto</b> :HDC
+DeleteDC           <b>proto</b> :HDC
+GetDIBits          <b>proto</b> :HDC, :HBITMAP, :<font color="#800000">dword</font>, :<font color="#800000">dword</font>, :<font color="#808000">ptr</font>, :<font color="#808000">ptr</font> BITMAPINFO, :<font color="#800000">dword</font>
+SelectObject       <b>proto</b> :HDC, :HGDIOBJ
+    <b>option</b> dllimport:none
+
+WinMain <b>proto</b> :HINSTANCE, :HINSTANCE, :LPSTR, :UINT
+
+    <b>.data</b>
+
+ClassName <b>db</b> "SimpleWinClass",0
+AppName  <b>db</b> "Bitmap rendering",0
+
+    <b>.data?</b>
+
+hInstance HINSTANCE ?
+hBitmap   HBITMAP ?
+CommandLine LPSTR ?
+
+    <b>.code</b>
+
+WinMainCRTStartup <b>proc</b> FRAME
+
+    <b>invoke</b> GetModuleHandleA, NULL
+    <font color="#0000E0">mov</font>    hInstance, <font color="#00B000">rax</font>
+    <b>invoke</b> GetCommandLineA
+    <font color="#0000E0">mov</font>    CommandLine, <font color="#00B000">rax</font>
+    <b>invoke</b> WinMain, hInstance, NULL, CommandLine, SW_SHOWDEFAULT
+    <b>invoke</b> ExitProcess, <font color="#00B000">eax</font>
+
+WinMainCRTStartup <b>endp</b>
+
+WinMain <b>proc</b> FRAME hInst:HINSTANCE, hPrevInst:HINSTANCE, CmdLine:LPSTR, CmdShow:UINT
+
+    <b>local</b> wc:WNDCLASSEXA
+    <b>local</b> msg:MSG
+    <b>local</b> hwnd:HWND
+
+    <b>invoke</b> LoadBitmapA, hInst, IDR_BITMAP1
+    <font color="#0000E0">mov</font>   hBitmap, <font color="#00B000">rax</font>
+
+    <font color="#0000E0">mov</font>   wc.cbSize, <font color="#808000">sizeof</font> WNDCLASSEXA
+    <font color="#0000E0">mov</font>   wc.style, CS_HREDRAW <font color="#0000E0">or</font> CS_VREDRAW
+    <font color="#0000E0">lea</font>   <font color="#00B000">rax</font>, [WndProc]
+    <font color="#0000E0">mov</font>   wc.lpfnWndProc, <font color="#00B000">rax</font>
+    <font color="#0000E0">mov</font>   wc.cbClsExtra, NULL
+    <font color="#0000E0">mov</font>   wc.cbWndExtra, NULL
+    <font color="#0000E0">mov</font>   <font color="#00B000">rcx</font>, hInst
+    <font color="#0000E0">mov</font>   wc.hInstance, <font color="#00B000">rcx</font>
+    <font color="#0000E0">mov</font>   wc.hbrBackground, COLOR_WINDOW+1
+    <font color="#0000E0">mov</font>   wc.lpszMenuName, IDR_MENU1
+    <font color="#0000E0">lea</font>   <font color="#00B000">rax</font>, [ClassName]
+    <font color="#0000E0">mov</font>   wc.lpszClassName, <font color="#00B000">rax</font>
+    <b>invoke</b> LoadIconA, NULL, IDI_APPLICATION
+    <font color="#0000E0">mov</font>   wc.hIcon, <font color="#00B000">rax</font>
+    <font color="#0000E0">mov</font>   wc.hIconSm, <font color="#00B000">rax</font>
+    <b>invoke</b> LoadCursorA, NULL, IDC_ARROW
+    <font color="#0000E0">mov</font>   wc.hCursor,<font color="#00B000">rax</font>
+    <b>invoke</b> RegisterClassExA, addr wc
+    <b>invoke</b> CreateWindowExA, NULL, ADDR ClassName, ADDR AppName,
+           WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
+           CW_USEDEFAULT, CW_USEDEFAULT,CW_USEDEFAULT, NULL, NULL,
+           hInst, NULL
+    <font color="#0000E0">mov</font>   hwnd,<font color="#00B000">rax</font>
+    <b>invoke</b> ShowWindow, hwnd, SW_SHOWNORMAL
+    <b>invoke</b> UpdateWindow, hwnd
+    <b>.while</b> (1)
+        <b>invoke</b> GetMessageA, ADDR msg, NULL, 0, 0
+        <b>.break</b> .if (!<font color="#00B000">eax</font>)
+        <b>invoke</b> TranslateMessage, ADDR msg
+        <b>invoke</b> DispatchMessageA, ADDR msg
+    <b>.endw</b>
+    <font color="#0000E0">mov</font>   <font color="#00B000">rax</font>, msg.wParam
+    <font color="#0000E0">ret</font>
+WinMain <b>endp</b>
+
+WndProc <b>proc</b> FRAME hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
+
+<b>local</b> hdc2:HDC
+<b>local</b> ps:PAINTSTRUCT
+<b>local</b> rect:RECT
+<b>local</b> bmi:BITMAPINFOHEADER
+
+    <b>.if</b> <font color="#00B000">edx</font> == WM_DESTROY
+        <b>invoke</b> PostQuitMessage, NULL
+        <font color="#0000E0">xor</font> <font color="#00B000">rax</font>,<font color="#00B000">rax</font>
+    <b>.elseif</b> <font color="#00B000">edx</font> == WM_COMMAND
+        <b>.if</b> wParam == IDM_EXIT
+            <b>invoke</b> DestroyWindow, hWnd
+        <b>.endif</b>
+        <font color="#0000E0">xor</font> <font color="#00B000">eax</font>, <font color="#00B000">eax</font>
+    <b>.elseif</b> <font color="#00B000">edx</font> == WM_PAINT
+        <b>invoke</b> BeginPaint, hWnd, addr ps
+        <b>invoke</b> CreateCompatibleDC, ps.hdc
+        <font color="#0000E0">mov</font> hdc2, <font color="#00B000">rax</font>
+        <b>invoke</b> SelectObject, hdc2, hBitmap
+        <font color="#0000E0">mov</font> bmi.biSize, <font color="#808000">sizeof</font> BITMAPINFOHEADER
+        <font color="#0000E0">mov</font> bmi.biBitCount, 0
+        <b>invoke</b> GetDIBits, hdc2, hBitmap, 0, 0, 0, addr bmi, DIB_RGB_COLORS
+        <b>invoke</b> GetClientRect, hWnd, addr rect
+        <font color="#0000E0">mov</font> <font color="#00B000">r8d</font>, rect.right
+        <font color="#0000E0">sub</font> <font color="#00B000">r8d</font>, bmi.biWidth
+        <font color="#0000E0">jnc</font> @F
+        <font color="#0000E0">xor</font> <font color="#00B000">r8d</font>, <font color="#00B000">r8d</font>
+@@:
+        <font color="#0000E0">shr</font> <font color="#00B000">r8d</font>, 1
+        <font color="#0000E0">mov</font> <font color="#00B000">r9d</font>, rect.bottom
+        <font color="#0000E0">sub</font> <font color="#00B000">r9d</font>, bmi.biHeight
+        <font color="#0000E0">jnc</font> @F
+        <font color="#0000E0">xor</font> <font color="#00B000">r9d</font>, <font color="#00B000">r9d</font>
+@@:
+        <font color="#0000E0">shr</font> <font color="#00B000">r9d</font>, 1
+        <b>invoke</b> BitBlt, ps.hdc, <font color="#00B000">r8d</font>, <font color="#00B000">r9d</font>, bmi.biWidth, bmi.biHeight, hdc2, 0, 0, SRCCOPY
+        <b>invoke</b> DeleteDC, hdc2
+        <b>invoke</b> EndPaint, hWnd, addr ps
+
+        <font color="#0000E0">xor</font> <font color="#00B000">eax</font>,<font color="#00B000">eax</font>
+    <b>.else</b>
+        <b>invoke</b> DefWindowProcA, <font color="#00B000">rcx</font>, <font color="#00B000">edx</font>, <font color="#00B000">r8</font>, <font color="#00B000">r9</font>
+    <b>.endif</b>
+    <font color="#0000E0">ret</font>
+WndProc <b>endp</b>
+
+<b>if</b> 1 ;<font color="#808080">for -pe</font>
+
+RT_BITMAP <b>equ</b> 2
+RT_MENU   <b>equ</b> 4
+
+;<font color="#808080">--- menu resource flags</font>
+MF_POPUP   <b>equ</b> 10h
+MF_END     <b>equ</b> 80h
+
+IMAGE_RESOURCE_DIRECTORY <b>struct</b>
+Characteristics      <font color="#800000">dword</font> ?
+TimeDateStamp        <font color="#800000">dword</font> ?
+MajorVersion         <font color="#800000">word</font>  ?
+MinorVersion         <font color="#800000">word</font>  ?
+NumberOfNamedEntries <font color="#800000">word</font>  ?
+NumberOfIdEntries    <font color="#800000">word</font>  ?
+IMAGE_RESOURCE_DIRECTORY <b>ends</b>
+
+IMAGE_RESOURCE_DIRECTORY_ENTRY <b>struct</b>
+<b>union</b>
+r0      <b>record</b> NameIsString:1, NameOffset:31
+Name_   <font color="#800000">dword</font>   ?
+Id      <font color="#800000">word</font>    ?
+<b>ends</b>
+<b>union</b>
+OffsetToData <font color="#800000">dword</font>   ?
+r1           <b>record</b>	DataIsDirectory:1, OffsetToDirectory:31
+<b>ends</b>
+IMAGE_RESOURCE_DIRECTORY_ENTRY <b>ends</b>
+
+IMAGE_RESOURCE_DATA_ENTRY <b>struct</b>
+OffsetToData <font color="#800000">dword</font> ?
+Size_        <font color="#800000">dword</font> ?
+CodePage     <font color="#800000">dword</font> ?
+Reserved     <font color="#800000">dword</font> ?
+IMAGE_RESOURCE_DATA_ENTRY <b>ends</b>
+
+    <b>option</b> dotname
+
+.rsrc <b>segment</b> <font color="#800000">dword</font> FLAT public read 'RSRC'
+
+;<font color="#808080">--- define menu IDR_MENU1 and bitmap IDR_BITMAP1</font>
+
+;<font color="#808080">--- root level: enum the resource types</font>
+      IMAGE_RESOURCE_DIRECTORY &lt;0,0,0,0,0,2&gt;
+      IMAGE_RESOURCE_DIRECTORY_ENTRY &lt; &lt;RT_BITMAP&gt;, &lt;SECTIONREL bms   + 80000000h&gt; &gt;
+      IMAGE_RESOURCE_DIRECTORY_ENTRY &lt; &lt;RT_MENU&gt;,   &lt;SECTIONREL menus + 80000000h&gt; &gt;
+
+;<font color="#808080">--- second level: enum the IDs of resource type X</font>
+bms   IMAGE_RESOURCE_DIRECTORY &lt;0,0,0,0,0,1&gt;
+      IMAGE_RESOURCE_DIRECTORY_ENTRY &lt; &lt;IDR_BITMAP1&gt;, &lt;SECTIONREL bm1   + 80000000h&gt; &gt;
+menus IMAGE_RESOURCE_DIRECTORY &lt;0,0,0,0,0,1&gt;
+      IMAGE_RESOURCE_DIRECTORY_ENTRY &lt; &lt;IDR_MENU1&gt;,   &lt;SECTIONREL menu1 + 80000000h&gt; &gt;
+
+;<font color="#808080">--- third level: enum the languages of ID X</font>
+bm1   IMAGE_RESOURCE_DIRECTORY &lt;0,0,0,0,0,1&gt;
+      IMAGE_RESOURCE_DIRECTORY_ENTRY &lt; &lt;409h&gt;, &lt;SECTIONREL bm1_l1&gt; &gt;
+menu1 IMAGE_RESOURCE_DIRECTORY &lt;0,0,0,0,0,1&gt;
+      IMAGE_RESOURCE_DIRECTORY_ENTRY &lt; &lt;409h&gt;, &lt;SECTIONREL m1_l1&gt; &gt;
+
+;<font color="#808080">--- last level: define the resource data</font>
+;<font color="#808080">--- data for menu IDR_MENU1, language 409h</font>
+m1_l1 IMAGE_RESOURCE_DATA_ENTRY &lt;IMAGEREL m1_l1_data, size_m1_l1, 0, 0&gt;
+m1_l1_data <b>dw</b> 0,0	;<font color="#808080">menu header</font>
+    <b>dw</b> MF_POPUP <font color="#0000E0">or</font> MF_END, '&amp;','F','i','l','e',0
+    <b>dw</b> MF_END, IDM_EXIT,   'E','&amp;','x','i','t',0
+size_m1_l1 <b>equ</b> $ - m1_l1_data
+    <b>align</b> 4
+
+;<font color="#808080">--- data for bitmap IDR_BITMAP1</font>
+bm1_l1 IMAGE_RESOURCE_DATA_ENTRY &lt;IMAGEREL bm1_l1_data, size_bm1_l1, 0, 0&gt;
+bm1_l1_data <b>label</b> <font color="#800000">word</font>
+    <b>incbin</b> &lt;Win32_8.bmp&gt;,14	;<font color="#808080">skip bitmap file header</font>
+size_bm1_l1 <b>equ</b> $ - ( bm1_l1_data )
+
+.rsrc <b>ends</b>
+
+;<font color="#808080">--- set /subsystem:windows</font>
+;<font color="#808080">--- the PE header is stored in section .hdr$2</font>
+    <b>option</b> dotname
+.hdr$2 <b>segment</b> <font color="#800000">dword</font> FLAT public 'HDR'
+    <b>org</b> 5Ch ;<font color="#808080">position to IMAGE_NT_HEADER64.OptionalHeader.Subsystem</font>
+    <b>dw</b> 2    ;<font color="#808080">2=subsystem windows</font>
+.hdr$2 <b>ends</b>
+
+<b>endif</b>
+
+<b>end</b> WinMainCRTStartup
+</pre>
+</TD></TR>
+</TABLE>
+
+
+</BODY>
+</HTML>

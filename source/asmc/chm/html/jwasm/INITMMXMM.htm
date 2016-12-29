@@ -1,0 +1,33 @@
+<HTML>
+<HEAD><TITLE>   3.19 Initialization of Data Items with Type MMWORD/XMMWORD</TITLE></HEAD>
+<BODY>
+<H1>   3.19 Initialization of Data Items with Type MMWORD/XMMWORD</H1>
+
+    For data items of types MMWORD or XMMWORD, JWasm will accept integer
+    values for initialization:
+<P><pre><font color="#008040"> 
+    vmm1  MMWORD  1122334455667788h
+    vxmm1 XMMWORD 112233445566778899AABBCCDDEEFFh
+</font></pre><P> 
+    Masm will accept just floating-point initializers for data items of
+    type [X]MMWORD. It's even worse, since floating-point initializers are
+    <b>silently</b> ignored for data items with  sizes != 4, 8 and 10; since
+    XMMWORD has size 16, it's impossible to initialize such an item directly.
+    JWasm copies this Masm behavior, but to allow to initialize a XMMWORD 
+    with a floating-point value, one may use type coercion:
+<P><pre><font color="#008040"> 
+    vxmm1 XMMWORD real4 ptr 1.0   ;bytes 4-15 will be 0
+    vxmm2 XMMWORD real8 ptr 1.0   ;bytes 8-15 will be 0
+</font></pre><P>
+    Variants that work in both JWasm and Masm, and also allow to
+    initialize the full XMMWORD are:
+<P><pre><font color="#008040"> 
+    vxmm1 LABEL XMMWORD
+      real4 1.0, 2.0, 3.0, 4.0
+    vxmm2 LABEL XMMWORD
+      real8 1.0, 2.0
+</font></pre><P> 
+<P>
+
+</BODY>
+</HTML>

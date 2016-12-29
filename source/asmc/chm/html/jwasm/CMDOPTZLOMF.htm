@@ -1,0 +1,22 @@
+<HTML>
+<HEAD><TITLE>   Options -zlc and -zld: Control Content of OMF Output Module</TITLE></HEAD>
+<BODY>
+<H1>   Options -zlc and -zld: Control Content of OMF Output Module</H1>
+
+    Options -zlc and -zld do reduce size of the OMF output module.
+    They might be useful if lots of - small - modules are to be assembled
+    and put into a static library. Also, the OMF coment records written
+    if -zlc or -zld is NOT set may not be accepted by all linkers.
+<P> 
+<DL>
+<DT>    Option -zlc:</DT>
+<DD>    suppresses writing OMF coment records about data in Code segments. 
+    These records may help a disassembler to produce nicer listings.
+<DT>    Option -zld:</DT>
+<DD>    suppresses writing an OMF coment record for each Code segment telling the 
+    linker that far calls to targets in the same segments should be optimized. 
+    This is more or less a feature for 16-bit code only.
+</DL>
+
+</BODY>
+</HTML>

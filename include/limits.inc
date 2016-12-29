@@ -1,0 +1,27 @@
+.xlist
+
+CHAR_BIT	equ 8		; number of bits in a char
+ifdef _CHAR_UNSIGNED
+CHAR_MAX	equ 255
+CHAR_MIN	equ 0
+else
+CHAR_MAX	equ 127
+CHAR_MIN	equ (-128)
+endif
+SCHAR_MAX	equ 127
+SCHAR_MIN	equ (-128)
+UCHAR_MAX	equ 255
+
+SHRT_MAX	equ 0x7FFF
+SHRT_MIN	equ 0x8000
+USHRT_MAX	equ 0xFFFF
+
+INT_MAX		equ 0x7FFFFFFF
+INT_MIN		equ 0x80000000
+UINT_MAX	equ 0xFFFFFFFF
+LONG_MAX	equ 0x7FFFFFFF
+LONG_MIN	equ 0x80000000
+
+MB_LEN_MAX	equ 1
+
+.list

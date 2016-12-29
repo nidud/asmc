@@ -1,0 +1,1 @@
+\watcom\binnt\rc.exe -nologo -I\watcom\h\win asmc.rc

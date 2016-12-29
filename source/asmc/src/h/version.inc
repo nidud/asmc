@@ -1,0 +1,3 @@
+ASMC_VERSION equ 221
+ASMC_VERSSTR equ <"2.21">
+

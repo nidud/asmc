@@ -781,69 +781,78 @@ GetAndExpression PROC USES esi edi ebx,
 	buffer:		LPSTR,
 	hllop:		PTR hll_opnd
 
-local	truelabel:	SINT
+local	truelabel:	SINT,
+	nlabel:		SINT,
+	olabel:		SINT,
+	buff[16]:	SBYTE
 
 	mov	edi,hllop
 	mov	esi,buffer
-	mov	ebx,tokenarray
 	mov	truelabel,0
 
-	GetSimpleExpression( hll, i, ebx, ilabel, is_true, esi, edi )
-	cmp	eax,ERROR
-	je	toend
+	.while	1
 
-	.repeat
-		mov	eax,i
-		mov	eax,[eax]
+		GetSimpleExpression( hll, i, tokenarray, ilabel, is_true, esi, edi )
+		cmp	eax,ERROR
+		je	toend
+		mov	ebx,i
+		mov	eax,[ebx]
 		shl	eax,4
-		add	eax,ebx
+		add	eax,tokenarray
 		.break .if GetCOp( eax ) != COP_AND
+		inc	DWORD PTR [ebx]
+		mov	ebx,[edi].hll_opnd.lastjmp
+		.if	ebx && is_true
 
-		mov	eax,i
-		inc	DWORD PTR [eax]
+			InvertJump( ebx )
 
-		.if	is_true
-			mov	eax,[edi].hll_opnd.lastjmp
-			.if	eax
-				InvertJump( eax )
-				.if	truelabel == 0
-					mov truelabel,GetHllLabel()
-				.endif
-				;
-				; v2.11: there might be a 0 at lastjmp
-				; v2.12: there may be a label trailing behind here
-				; so a test is added. see HLL3.ASM
-				;
-				; I assume p == "jmp " in this case ?
-				;
-				mov	edx,[edi].hll_opnd.lastjmp
-				.if	BYTE PTR [edx] && strlen( edx ) < 4+6+1
-					;
-					; skip 'jcc ' or 'jmp '
-					;
-					add	edx,4
-					GetLabelStr( truelabel, edx )
-					strcat( eax, addr EOLSTR )
-				.endif
+			.if	truelabel == 0
+
+				mov	truelabel,GetHllLabel()
+			.endif
+			;
+			; v2.11: there might be a 0 at lastjmp
+			;
+			.if	BYTE PTR [ebx]
+
+				strcat( GetLabelStr( truelabel, addr [ebx+4] ), addr EOLSTR )
+			.endif
+			;
+			; v2.22 .while	(eax || edx) && ecx -- failed
+			;	.while !(eax || edx) && ecx -- failed
+			;
+			mov	ebx,esi
+			.if	[edi].hll_opnd.lasttruelabel
+
+				ReplaceLabel( ebx, [edi].hll_opnd.lasttruelabel, truelabel )
+			.endif
+
+			mov	eax,hll
+			.if	[eax].hll_item.cmd == HLL_WHILE
+
+				mov	nlabel,GetHllLabel()
+				mov	olabel,GetLabel( hll, ilabel )
+				strlen( ebx )
+				add	ebx,eax
+				sprintf( ebx, "%s%s%s", GetLabelStr( olabel, addr buff ), addr LABELQUAL, addr EOLSTR )
+				ReplaceLabel( buffer, olabel, nlabel )
+			.else
 
 				ReplaceLabel( buffer, GetLabel( hll, ilabel ), truelabel )
-				mov	[edi].hll_opnd.lastjmp,0
 			.endif
+			mov	[edi].hll_opnd.lastjmp,0
 		.endif
+
 		strlen( esi )
 		add	esi,eax
 		mov	[edi].hll_opnd.lasttruelabel,0
-		GetSimpleExpression( hll, i, ebx, ilabel, is_true, esi, edi )
-		cmp	eax,ERROR
-		je	toend
-	.until	0
+	.endw
 
-	.if	truelabel > 0
+	.if	truelabel
+
 		strlen( esi )
 		add	esi,eax
-		GetLabelStr( truelabel, esi )
-		strcat( esi, addr LABELQUAL )
-		strcat( esi, addr EOLSTR )
+		strcat( strcat( GetLabelStr( truelabel, esi ), addr LABELQUAL ), addr EOLSTR )
 		mov	[edi].hll_opnd.lastjmp,0
 	.endif
 	mov	 eax,NOT_ERROR
@@ -869,18 +878,18 @@ local	truelabel:	SINT,
 
 	mov	esi,buffer
 	mov	edi,hllop
-	mov	ebx,tokenarray
 	mov	truelabel,0
 
-	GetAndExpression( hll, i, ebx, ilabel, is_true, esi, edi )
-	cmp	eax,ERROR
-	je	toend
+	.while	1
 
-	.repeat
-		mov	eax,i
-		mov	eax,[eax]
+		GetAndExpression( hll, i, tokenarray, ilabel, is_true, esi, edi )
+		cmp	eax,ERROR
+		je	toend
+
+		mov	ebx,i
+		mov	eax,[ebx]
 		shl	eax,4
-		add	eax,ebx
+		add	eax,tokenarray
 		.break .if GetCOp( eax ) != COP_OR
 		;
 		; the generated code of last simple expression has to be modified
@@ -894,67 +903,68 @@ local	truelabel:	SINT,
 		; 4a. create a new label
 		; 4b. replace the "false" label in the generated code by the new label
 		;
-		mov	eax,i
-		inc	DWORD PTR [eax]
+		inc	DWORD PTR [ebx]
+		mov	ebx,[edi].hll_opnd.lastjmp
 
-		.if	!is_true
-			mov	eax,[edi].hll_opnd.lastjmp
-			.if	eax
-				mov	ebx,eax
-				InvertJump( eax )
-				.if	truelabel == 0
-					mov	truelabel,GetHllLabel()
-				.endif
-				.if	BYTE PTR [ebx]
-					add	ebx,4
-					GetLabelStr( truelabel, ebx )
-					strcat( ebx, addr EOLSTR )
-				.endif
-				mov	ebx,esi
-				.if	[edi].hll_opnd.lasttruelabel
-					ReplaceLabel( ebx, [edi].hll_opnd.lasttruelabel, truelabel )
-				.endif
-				mov	[edi].hll_opnd.lastjmp,0
-				mov	nlabel,GetHllLabel()
-				GetLabel( hll, ilabel )
-				mov	olabel,eax
-				strlen( ebx )
-				add	ebx,eax
-				mov	eax,hll
-				.if	[eax].hll_item.cmd == HLL_REPEAT
-					ReplaceLabel( buffer, olabel, nlabel )
-					sprintf( ebx, "%s%s%s", GetLabelStr( nlabel, addr buff ), addr LABELQUAL, addr EOLSTR )
-				.else
-					sprintf( ebx, "%s%s%s", GetLabelStr( olabel, addr buff ), addr LABELQUAL, addr EOLSTR )
-					ReplaceLabel( buffer, olabel, nlabel )
-				.endif
-				mov	ebx,tokenarray
+		.if	ebx && !is_true
+
+			InvertJump( ebx )
+
+			.if	truelabel == 0
+
+				mov	truelabel,GetHllLabel()
+			.endif
+
+			.if	BYTE PTR [ebx]
+
+				strcat( GetLabelStr( truelabel, addr [ebx+4] ), addr EOLSTR )
+			.endif
+
+			mov	ebx,esi
+			.if	[edi].hll_opnd.lasttruelabel
+
+				ReplaceLabel( ebx, [edi].hll_opnd.lasttruelabel, truelabel )
+			.endif
+
+			mov	[edi].hll_opnd.lastjmp,0
+			mov	nlabel,GetHllLabel()
+			mov	olabel,GetLabel( hll, ilabel )
+			strlen( ebx )
+			add	ebx,eax
+			mov	eax,hll
+			.if	[eax].hll_item.cmd == HLL_REPEAT
+
+				ReplaceLabel( buffer, olabel, nlabel )
+				sprintf( ebx, "%s%s%s", GetLabelStr( nlabel, addr buff ), addr LABELQUAL, addr EOLSTR )
+			.else
+
+				sprintf( ebx, "%s%s%s", GetLabelStr( olabel, addr buff ), addr LABELQUAL, addr EOLSTR )
+				ReplaceLabel( buffer, olabel, nlabel )
 			.endif
 		.endif
 		strlen( esi )
 		add	esi,eax
 		mov	[edi].hll_opnd.lasttruelabel,0
-		GetAndExpression( hll, i, ebx, ilabel, is_true, esi, edi )
-		cmp	eax,ERROR
-		je	toend
-	.until	0
+	.endw
 
-	.if	truelabel > 0
+	.if	truelabel
+
 		mov	ebx,[edi].hll_opnd.lastjmp
 		.if	ebx && [edi].hll_opnd.lasttruelabel
 			ReplaceLabel( esi, [edi].hll_opnd.lasttruelabel, truelabel )
 			strchr( ebx, EOLCHAR )
 			mov	BYTE PTR [eax+1],0
 		.endif
+
 		strlen( esi )
 		add	esi,eax
-		GetLabelStr( truelabel, esi )
-		strcat( esi, addr LABELQUAL )
-		strcat( eax, addr EOLSTR )
+		strcat( strcat( GetLabelStr( truelabel, esi ), addr LABELQUAL ), addr EOLSTR )
 		mov	eax,truelabel
 		mov	[edi].hll_opnd.lasttruelabel,eax
 	.endif
+
 	mov	eax,NOT_ERROR
+
 toend:
 	ret
 GetExpression ENDP

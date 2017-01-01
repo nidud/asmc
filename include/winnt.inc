@@ -1,4 +1,4 @@
-; COFF.INC--
+; WINNT.INC--
 ;
 ; Some of the MS COFF declarations
 ; The full declarations can be found in MS PSDK, WinNT.h.

@@ -2,6 +2,10 @@ HISTORY.TXT--
 Change Log File for ASMC
 ========================
 
+Changes in 2.22 - xx xxx 2017
+- fixed bug in .WHILE (eax || edx) && ecx
+- fixed bug in .WHILE !(eax || edx) && ecx
+
 Changes in 2.21 - 12 Oct 2016
 - added .ASSERT directive
 - added .IFD to down-size a 64-bit function call return -- .ifd api() == -1

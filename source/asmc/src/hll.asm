@@ -826,20 +826,12 @@ local	truelabel:	SINT,
 
 				ReplaceLabel( ebx, [edi].hll_opnd.lasttruelabel, truelabel )
 			.endif
-
-			mov	eax,hll
-			.if	[eax].hll_item.cmd == HLL_WHILE
-
-				mov	nlabel,GetHllLabel()
-				mov	olabel,GetLabel( hll, ilabel )
-				strlen( ebx )
-				add	ebx,eax
-				sprintf( ebx, "%s%s%s", GetLabelStr( olabel, addr buff ), addr LABELQUAL, addr EOLSTR )
-				ReplaceLabel( buffer, olabel, nlabel )
-			.else
-
-				ReplaceLabel( buffer, GetLabel( hll, ilabel ), truelabel )
-			.endif
+			mov	nlabel,GetHllLabel()
+			mov	olabel,GetLabel( hll, ilabel )
+			strlen( ebx )
+			add	ebx,eax
+			sprintf( ebx, "%s%s%s", GetLabelStr( olabel, addr buff ), addr LABELQUAL, addr EOLSTR )
+			ReplaceLabel( buffer, olabel, nlabel )
 			mov	[edi].hll_opnd.lastjmp,0
 		.endif
 

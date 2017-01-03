@@ -1,0 +1,60 @@
+# SRCPATH--
+# root directory 16-bit
+#
+srcpath = %ASMCDIR%
+WATCOM	= %WATCOM%
+
+lib_dir = $(srcpath)\lib
+inc_dir = $(srcpath)\include\dos
+src_dir = $(srcpath)\source\dos
+
+!ifdef bin
+bin_dir = $(bin)
+!else
+bin_dir = .
+!endif
+
+ASM	= asmc
+RCC	= iddc
+CC	= wcc
+LIB	= libw
+LINK	= linkw
+
+LIBFILE = $(lib_dir)\cl
+!ifdef cpp
+STARTUP = $(lib_dir)\w0l
+!else
+STARTUP = $(lib_dir)\c0l
+!endif
+
+AFLAGS	= -q -I$(inc_dir) -Zd
+CFLAGS	= -q -ml -s -ecp -zdp -zu -j -zls -I$(inc_dir)
+LFLAGS	= OP Q, M, NOCASE, NOD System dos
+RFLAGS	= -ml
+OFLAGS	= -q -b -n -c $@
+
+!ifdef name
+# BUILD--
+# target defined
+#
+!ifndef OBJS
+OBJS = $(name).obj
+!endif
+
+$(bin_dir)\$(name).exe: $(OBJS)
+	$(LINK) $(LFLAGS) @<<
+N $@
+F { $(STARTUP).obj $(OBJS) }
+LIBP $(lib_dir)
+L $(LIBFILE).lib
+<<
+	del *.obj
+
+.EXTENSIONS: .idd
+.c.obj:
+	$(CC) $(CFLAGS) $<
+.asm.obj:
+	$(ASM) $(AFLAGS) $<
+.idd.obj:
+	$(RCC) $(RFLAGS) $<
+!endif

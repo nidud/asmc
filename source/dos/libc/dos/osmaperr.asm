@@ -1,0 +1,206 @@
+; OSMAPERR.ASM--
+; Copyright (C) 2015 Doszip Developers
+
+include dos.inc
+include errno.inc
+
+;public errnotable
+;public doserrtable
+
+ER_INVALID_FUNCTION		equ 1
+ER_FILE_NOT_FOUND		equ 2
+ER_PATH_NOT_FOUND		equ 3
+ER_TOO_MANY_OPEN_FILES		equ 4
+ER_ACCESS_DENIED		equ 5
+ER_INVALID_HANDLE		equ 6
+ER_ARENA_TRASHED		equ 7
+ER_NOT_ENOUGH_MEMORY		equ 8
+ER_INVALID_BLOCK		equ 9
+ER_BAD_ENVIRONMENT		equ 10
+ER_BAD_FORMAT			equ 11
+ER_INVALID_ACCESS		equ 12
+ER_INVALID_DATA			equ 13
+ER_INVALID_DRIVE		equ 15
+ER_CURRENT_DIRECTORY		equ 16
+ER_NOT_SAME_DEVICE		equ 17
+ER_NO_MORE_FILES		equ 18
+ER_WRITE_PROTECT		equ 19
+ER_NOT_ENOUGH_QUOTA		equ 24
+ER_LOCK_VIOLATION		equ 33
+ER_SHARINGBUF_EXCEEDED		equ 36
+ER_BAD_NETPATH			equ 53
+ER_NETWORK_ACCESS_DENIED	equ 65
+ER_BAD_NET_NAME			equ 67
+ER_FILE_EXISTS			equ 80
+ER_CANNOT_MAKE			equ 82
+ER_FAIL_I24			equ 83
+ER_INVALID_PARAMETER		equ 87
+ER_NO_PROC_SLOTS		equ 89
+ER_DRIVE_LOCKED			equ 108
+ER_BROKEN_PIPE			equ 109
+ER_DISK_FULL			equ 112
+ER_INVALID_TARGET_HANDLE	equ 114
+ER_INVALID_LEVEL		equ 124
+ER_WAIT_NO_CHILDREN		equ 128
+ER_CHILD_NOT_COMPLETE		equ 129
+ER_DIRECT_ACCESS_HANDLE		equ 130
+ER_NEGATIVE_SEEK		equ 131
+ER_SEEK_ON_DEVICE		equ 132
+ER_DIR_NOT_EMPTY		equ 145
+ER_NOT_LOCKED			equ 158
+ER_BAD_PATHNAME			equ 161
+ER_MAX_THRDS_REACHED		equ 164
+ER_LOCK_FAILED			equ 167
+ER_ALREADY_EXISTS		equ 183
+ER_INVALID_CODESEG		equ 188
+ER_LOOP_IN_RELOC_CHAIN		equ 202
+ER_FILENAME_EXCED_RANGE		equ 206
+ER_NESTING_NOT_ALLOWED		equ 215
+
+	.data
+
+errnotable label BYTE
+	db EINVAL
+	db ENOENT
+	db ENOENT
+	db EMFILE
+	db EACCES
+	db EBADF
+	db ENOMEM
+	db ENOMEM
+	db ENOMEM
+	db E2BIG
+	db ENOEXEC
+	db EINVAL
+	db EINVAL
+	db ENOENT
+	db EACCES
+	db EXDEV
+	db ENOENT
+	db EACCES
+	db ENOENT
+	db EACCES
+	db ENOENT
+	db EEXIST
+	db EACCES
+	db EACCES
+	db EINVAL
+	db EAGAIN
+	db EACCES
+	db EPIPE
+	db ENOSPC
+	db EBADF
+	db EINVAL
+	db ECHILD
+	db ECHILD
+	db EBADF
+	db EINVAL
+	db EACCES
+	db ENOTEMPTY
+	db EACCES
+	db ENOENT
+	db EAGAIN
+	db EACCES
+	db EEXIST
+	db ENOENT
+	db EAGAIN
+	db ENOMEM
+
+doserrtable label BYTE
+	db ER_INVALID_FUNCTION
+	db ER_FILE_NOT_FOUND
+	db ER_PATH_NOT_FOUND
+	db ER_TOO_MANY_OPEN_FILES
+	db ER_ACCESS_DENIED
+	db ER_INVALID_HANDLE
+	db ER_ARENA_TRASHED
+	db ER_NOT_ENOUGH_MEMORY
+	db ER_INVALID_BLOCK
+	db ER_BAD_ENVIRONMENT
+	db ER_BAD_FORMAT
+	db ER_INVALID_ACCESS
+	db ER_INVALID_DATA
+	db ER_INVALID_DRIVE
+	db ER_CURRENT_DIRECTORY
+	db ER_NOT_SAME_DEVICE
+	db ER_NO_MORE_FILES
+	db ER_LOCK_VIOLATION
+	db ER_BAD_NETPATH
+	db ER_NETWORK_ACCESS_DENIED
+	db ER_BAD_NET_NAME
+	db ER_FILE_EXISTS
+	db ER_CANNOT_MAKE
+	db ER_FAIL_I24
+	db ER_INVALID_PARAMETER
+	db ER_NO_PROC_SLOTS
+	db ER_DRIVE_LOCKED
+	db ER_BROKEN_PIPE
+	db ER_DISK_FULL
+	db ER_INVALID_TARGET_HANDLE
+	db ER_INVALID_HANDLE
+	db ER_WAIT_NO_CHILDREN
+	db ER_CHILD_NOT_COMPLETE
+	db ER_DIRECT_ACCESS_HANDLE
+	db ER_NEGATIVE_SEEK
+	db ER_SEEK_ON_DEVICE
+	db ER_DIR_NOT_EMPTY
+	db ER_NOT_LOCKED
+	db ER_BAD_PATHNAME
+	db ER_MAX_THRDS_REACHED
+	db ER_LOCK_FAILED
+	db ER_ALREADY_EXISTS
+	db ER_FILENAME_EXCED_RANGE
+	db ER_NESTING_NOT_ALLOWED
+	db ER_NOT_ENOUGH_QUOTA
+
+	.code
+
+osmaperr PROC PUBLIC
+	push	bx
+	push	ds
+	push	dx
+	push	cx
+	push	ss
+	pop	ds
+	mov	dx,ax
+	mov	doserrno,ax
+	sub	cx,cx
+	jmp	osmaperr_loop
+    osmaperr_next:
+	mov	bx,cx
+	cmp	dl,[bx+doserrtable]
+	jnz	osmaperr_01
+	sub	ax,ax
+	mov	al,errnotable[bx]
+	mov	errno,ax
+	jmp	osmaperr_end
+    osmaperr_01:
+	inc	cx
+    osmaperr_loop:
+	cmp	cx,45
+	jl	osmaperr_next
+	cmp	dx,ER_WRITE_PROTECT
+	jb	osmaperr_37
+	cmp	dx,ER_SHARINGBUF_EXCEEDED
+	ja	osmaperr_37
+	mov	errno,EACCES
+	jmp	osmaperr_end
+    osmaperr_37:
+	cmp	dx,ER_INVALID_CODESEG
+	jb	osmaperr_22
+	cmp	dx,ER_LOOP_IN_RELOC_CHAIN
+	ja	osmaperr_22
+	mov	errno,ENOEXEC
+	jmp	osmaperr_end
+    osmaperr_22:
+	mov	errno,EINVAL
+    osmaperr_end:
+	pop	cx
+	pop	dx
+	pop	ds
+	pop	bx
+	mov	ax,-1
+	ret
+osmaperr ENDP
+
+	END

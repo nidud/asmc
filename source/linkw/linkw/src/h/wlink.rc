@@ -1,0 +1,21 @@
+/*************************************************************************/
+/*                          WLINK RESOURCE FILE                          */
+/*************************************************************************/
+#ifndef MSG_BASE
+#define MSG_BASE        0
+#endif
+#include "wlmsgs.h"
+#include "wreslang.h"
+#include "rcmsg.gh"
+
+STRINGTABLE
+BEGIN
+
+#undef pick
+#define pick( code, string )  code, string
+
+#include "lnkerror.msg"
+#include "wlink.msg"
+#include "rc.msg"
+
+END

@@ -1,0 +1,11 @@
+LINKW.TXT--
+LINKW Version 1.0
+
+    LINKW is a modified version of JWlink v19beta13 and the source is released
+    under the Sybase Open Watcom Public License. See license.txt for details.
+
+    For more information about JWlink: http://sourceforge.net/projects/jwlink/
+
+    The only changes is to spawn LIBW instead of JWlib. This is launched by
+    LINKW to create an import library. LIBW is a modified version of JWlib
+    

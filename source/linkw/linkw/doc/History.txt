@@ -1,0 +1,109 @@
+
+   changes v19beta13, 08/2013:
+
+   -  version 19beta12 contained a nasty bug, that may have made it ignore 
+      fixups in read-only sections.
+
+   changes v19beta12, 08/2013:
+
+   -  attribute SEGMENT READONLY supported for Win32/Win64.
+   -  read-only segments are added to ".rdata" and removed from DGROUP for
+      PE format.
+
+   changes v19beta11, 04/2013:
+
+   -  bugfix, 64-bit COFF: a GPF may have occured if there were externals that
+      did reference the IAT directly and others that caused transfer code to
+      be generated.
+   -  bugfix: module name in import directive was supposed to contain no dot.
+
+   changes v19beta10, 04/2013:
+
+   -  bugfix: 32-bit flag was never set in Win16 NE segment flags.
+   -  bugfix: DATA flag in Win16 NE segment flags had higher priority than 
+      CODE flag - if both DATA and CODE were put in ONE group, it became DATA.
+   -  bugfix: codeview debug info may have been corrupted - and, as a 
+      consequence, CVPACK failed - if a group had size 0.
+   -  bugfix, OMF format: a fixup with segment/group/external index of 0 caused
+      an access violation. Now error msg 'invalid segment/group/external index
+      in relocation' is displayed ( test-case: ML with -Zi ).
+   -  bugfix, 64-bit COFF: relocation type IMAGE_REL_AMD64_SECTION was rejected.
+
+   changes v19beta9, 12/2012:
+
+   -  bugfix: JWlib was incapable to make 64-bit coff import libraries.
+
+   changes v19beta8, 09/2012:
+
+   -  Wlib renamed to JWlib to avoid confusion with the original OW Wlib.
+
+   changes v19beta7, 09/2012:
+
+   -  bugfix: resource language ID wasn't set, resulting in just
+      one resource with default language stored in the binary.
+
+   changes v19beta6, 07/2012:
+
+   -  bugfix: format RAW was inadvertently removed.
+
+   changes v19beta5, 06/2012:
+
+   -  bugfix: PE32+ binaries were linked incorrectly if the IAT was
+      addressed directly by a call instruction.
+
+   changes v19beta4, 02/2012:
+
+   -  bugfix: in OMF modules, combine type STACK was ignored; the only way to
+      define a stack segment was to set the segment's class name to "STACK". 
+   -  bugfix: segments without class (class name == "") were grouped together,
+      which may have caused problems (Oberon/M).
+
+   changes v19beta3, 07/2011:
+
+   -  support for PE32+ (Win64 binaries) added
+   -  bugfix: image- and section-relative fixups won't make JWlink create
+      a base fixup.
+   -  PE: new options LARGEaddressaware and NOLARGEaddressaware
+   -  PE, ELF: DATA and BSS sections will share pages.
+   -  PE: default base for dlls changed from 0x400000 to 0x10000000.
+   -  multiple entry points are accepted, just a warning is displayed.
+   -  multiple static symbols with the same name in a module are allowed
+      for COFF now.
+   -  PE: linker "-import" directive in section .drectve supported.
+   -  for ELF binaries, default file alignment is 0 now; the linker will
+      ensure that the actual alignment of a section doesn't hurt segment
+      alignment.
+   -  support for ELF64 added.
+   -  relocations in OMF LIDATA no longer rejected.
+   -  ANONYMOUSEXPORT works for PE.
+   -  new FUZZYEXPORT option.
+   -  PE: unused entries in linker-generated segment "TRANSFER CODE" removed.
+
+  changes v19beta2, 09/2009:
+
+   -  new option KNOWEAS.
+   -  JWlink won't force a DOS EXE's minimum stack size to 0x200.
+   -  no warning if a 32bit module is linked into the binary.
+
+   -  default reserved stack size is 0x100000 ( MS link compatible ).
+   -  default reserved heap size is 0x100000 ( MS link compatible ).
+   -  constant data put into section "rdata" ( MS link compatible ).
+   -  .idata section merged with ".rdata" ( MS link compatible ).
+   -  .edata section merged with ".rdata" ( MS link compatible ).
+   -  linker "-export" directives in section ".drectve" ( COFF modules only )
+      may contain an "internal name" addition ( MS link compatible ).
+   -  linker "-entry" directive in section ".drectve" ( COFF modules only )
+      doesn't need a leading underscore.
+   -  for dlls, the base relocation table isn't removed if no relocations
+      exist.
+   -  if an import library is to be written, format COFF is used as
+      default if a PE binary is linked.
+   -  Wlib.exe: OW Wlib v1.8 contains a bug which makes it create COFF 
+      import libraries which are incompatible with MS link. This has been
+      fixed.
+   -  Wlib.exe: if COFF import libraries are to be created, the "short"
+      format is used now.
+
+   -  bugfix: size of codeview debugging information can be larger than 0xFFFF.
+      (for Wlink, the bug was fixed in v1.9).
+

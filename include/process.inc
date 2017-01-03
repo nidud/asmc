@@ -23,6 +23,12 @@ externdef	__pCommandArg:LPSTR	; "/C "
 
 __initcomspec	proto	; Auto install..
 
+CreateConsole	PROTO :LPSTR, :DWORD
+CreateBatch	PROTO :LPSTR, :DWORD, :DWORD
+ExecuteSection	PROTO :LPSTR
+CmdIsExe	PROTO :LPSTR
+getcomspec	PROTO :dword
+
 ;;;;;;;;;;;;;;;;;;;;;;; kernel32.dll
 
 INFINITE		equ -1

@@ -75,6 +75,22 @@ __STToTime	PROTO :LPSYSTEMTIME
 __TimeToFT	PROTO :TIME_T, :LPFILETIME
 __TimeToST	PROTO :TIME_T, :LPSYSTEMTIME
 
+DaysInFebruary	proto :dword
+DaysInMonth	proto :dword, :dword
+GetDayCount	proto :dword, :dword, :dword
+GetWeekDay	proto :dword, :dword, :dword
+
+atotime		PROTO :LPSTR
+atodate		PROTO :LPSTR
+strtime		PROTO :LPSTR, :TIME_T
+strdate		PROTO :LPSTR, :TIME_T
+strsdate	PROTO :LPSTR, :LPSYSTEMTIME
+strstime	PROTO :LPSTR, :LPSYSTEMTIME
+strftime	PROTO :LPSTR, :UINT, :LPSTR, :LPTIME
+
+fdatetostr	PROTO :LPSTR, :LPFILETIME
+ftimetostr	PROTO :LPSTR, :LPFILETIME
+
 ;;;;;;;;;;;;;;;;;;;;;;; kernel32.dll
 
 TIME_ZONE_INFORMATION	STRUC

@@ -1,5 +1,5 @@
-LIBDIR = \Asmc\lib\x64
-INCDIR = \Asmc\include
+LIBDIR = %AsmcDir%\lib\x64
+INCDIR = %AsmcDir%\include
 
 all: $(LIBDIR)\libc.lib $(LIBDIR)\libd.lib
 

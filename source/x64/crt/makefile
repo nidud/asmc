@@ -1,5 +1,5 @@
-LIBDIR = \Asmc\lib\x64
-INCDIR = \Asmc\include
+LIBDIR = %AsmcDir%\lib\x64
+INCDIR = %AsmcDir%\include
 
 $(LIBDIR)\c0.obj:
 	asmc -nologo -I$(INCDIR) -win64 -D_WIN64 -Fo $(LIBDIR)\c0.obj crt.asm

@@ -2,6 +2,7 @@ LIBDIR = ..\..\lib
 INCDIR = ..\..\include
 
 $(LIBDIR)\libo.lib:
+	iddc -r *.idd
 	asmc -nologo -Cs -I$(INCDIR) -r *.asm
 	libw -q -t -s -b -n -c $@ *.obj
 	del *.obj

@@ -1,3 +1,3 @@
 ti.exe:
 	asmc -q $*.asm
-	linkw N $@ F \asmc\lib\c0, $*.obj
+	linkw N $@ F ..\..\..\lib\c0, $*.obj

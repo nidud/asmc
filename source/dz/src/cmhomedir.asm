@@ -1,0 +1,25 @@
+; CMHOMEDIR.ASM--
+; Copyright (C) 2016 Doszip Developers -- see LICENSE.TXT
+
+include doszip.inc
+
+	.code
+
+cmhomedir PROC	; Ctrl-Home
+	mov eax,cpanel
+	.if panel_state()
+		mov	edx,[eax].S_PANEL.pn_wsub
+		mov	eax,[edx].S_WSUB.ws_flag
+		or	eax,_W_ROOTDIR
+		and	eax,not _W_ARCHIVE
+		mov	[edx].S_WSUB.ws_flag,eax
+		mov	eax,[edx].S_WSUB.ws_arch
+		mov	BYTE PTR [eax],0
+		mov	eax,cpanel
+		panel_read()
+		panel_putitem( cpanel, 0 )
+	.endif
+	ret
+cmhomedir ENDP
+
+	END

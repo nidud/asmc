@@ -340,6 +340,7 @@ externdef	_scrrow:	DWORD	; Screen rows - 1
 externdef	_scrcol:	DWORD	; Screen columns
 externdef	hCurrentWindow: HANDLE
 
+setasymbol	PROTO
 SetMaxConsole	PROTO ; (80..255, 16..255)
 SetConsoleSize	PROTO cols:DWORD, rows:DWORD
 ConsoleIdle	PROTO

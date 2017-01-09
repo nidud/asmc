@@ -6,7 +6,9 @@ remove	PROC file:LPSTR
 
 	.if DeleteFile( file )
 
-		xor eax,eax
+		mov	eax,1
+		mov	_diskflag,eax
+		dec	eax
 	.else
 		osmaperr()
 	.endif

@@ -49,6 +49,20 @@ setfext		PROTO :LPSTR, :LPSTR
 strfcat		PROTO :LPSTR, :LPSTR, :LPSTR
 memxchg		PROTO :LPSTR, :LPSTR, :SIZE_T
 
+memzero		PROTO :LPSTR, :SIZE_T
+cmpwarg		PROTO :LPSTR, :LPSTR
+cmpwargs	PROTO :LPSTR, :LPSTR
+dostounix	PROTO :LPSTR
+unixtodos	PROTO :LPSTR
+strxchg		PROTO :LPSTR, :LPSTR, :LPSTR
+strpath		PROTO :LPSTR
+strnzcpy	PROTO :LPSTR, :LPSTR, :SIZE_T
+strstart	PROTO :LPSTR
+strspace	PROTO :LPSTR
+strtrim		PROTO :LPSTR
+strtoken	PROTO :LPSTR
+strstri		PROTO :LPSTR, :LPSTR
+
 ;;;;;;;;;;;;;;; kernel32
 
 lstrcatA	PROTO :LPSTR, :LPSTR

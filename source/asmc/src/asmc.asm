@@ -20,7 +20,7 @@ close_files	PROTO
 
 .data
 
-cp_logo		db "Doszip Macro Assembler Version ",ASMC_VERSSTR, 10
+cp_logo		db "Asmc Macro Assembler Version ",ASMC_VERSSTR, 10
 		db "Portions Copyright (c) 1992-2002 Sybase, Inc. All Rights Reserved.",10,10,0
 cp_usage	db "USAGE: %s [ options ] filelist",10
 		db "Use option /? for more info",10,0

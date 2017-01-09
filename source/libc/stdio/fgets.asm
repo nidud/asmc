@@ -2,35 +2,45 @@ include stdio.inc
 
 	.code
 
-fgets PROC USES edi,
-	buf:	LPSTR,
-	count:	SIZE_T,
-	fp:	LPFILE
+	ASSUME	ebx:ptr S_FILE
 
-	mov	eax,count
-	cmp	eax,0
+fgets PROC USES ebx buf:LPSTR, count:SIZE_T, fp:LPFILE
+	mov	edx,buf
+	mov	ecx,count
+	mov	ebx,fp
+	cmp	ecx,0
 	jle	error
-	mov	edi,buf
-	dec	eax
+	dec	ecx
 	jz	done
-lup:
-	fgetc ( fp )
-	cmp	eax,-1
-	je	@F
-	mov	[edi],al
-	inc	edi
+lupe:
+	dec	[ebx].iob_cnt
+	jl	fbuf
+	mov	eax,[ebx].iob_ptr
+	inc	[ebx].iob_ptr
+	mov	al,[eax]
+next:
+	mov	[edx],al
+	inc	edx
 	cmp	al,10
-	jne	lup
-	jmp	done
-@@:
-	cmp	edi,buf
-	je	error
+	je	done
+	dec	ecx
+	jnz	lupe
 done:
-	mov	byte ptr [edi],0
+	mov	byte ptr [edx],0
 	mov	eax,buf
 	test	eax,eax
 toend:
 	ret
+fbuf:
+	push	edx
+	push	ecx
+	_filbuf(ebx)
+	pop	ecx
+	pop	edx
+	cmp	eax,-1
+	jne	next
+	cmp	edx,buf
+	jne	done
 error:
 	xor	eax,eax
 	jmp	toend

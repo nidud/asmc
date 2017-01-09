@@ -11,6 +11,7 @@ _wrmdir proc directory:LPWSTR
 	test	eax,eax
 	jz	error
 	xor	eax,eax
+	mov	_diskflag,1
 toend:
 	ret	4
 error:

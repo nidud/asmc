@@ -4,7 +4,6 @@ include alloc.inc
 include crtl.inc
 
 PUBLIC	_pgmpath
-strpath proto :dword
 
 	.data
 	_pgmpath LPSTR 0

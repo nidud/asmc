@@ -9,7 +9,7 @@ _EXEC_COM	equ 2
 _EXEC_EXE	equ 3
 _EXEC_CMD	equ 4
 
-externdef	OldErrorMode:DWORD
+externdef	OldErrorMode:dword
 
 __isexec	PROTO :LPSTR
 __setenvp	PROTO :LPSTR

@@ -5,8 +5,6 @@ include direct.inc
 include crtl.inc
 
 externdef envpath: DWORD
-filexist  proto :dword
-strpath	  proto :dword
 
 	.data
 exetype label byte

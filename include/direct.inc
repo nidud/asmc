@@ -29,6 +29,59 @@ externdef	_diskflag:DWORD
 
 __allocwpath	PROTO :LPSTR
 
+;;;;;;;;;;;;;;; disk
+
+MAXDRIVES	equ 26
+WMAXPATH	equ 2048
+
+_DISK_LOCAL	equ 0x0001
+_DISK_FLOPPY	equ 0x0100
+_DISK_NETWORK	equ 0x0200
+_DISK_SUBST	equ 0x0400
+_DISK_CDROOM	equ 0x0800
+
+DRIVE_REMOVABLE equ 2
+DRIVE_FIXED	equ 3
+DRIVE_REMOTE	equ 4
+DRIVE_CDROM	equ 5
+DRIVE_RAMDISK	equ 6
+
+S_DISK		STRUC
+di_flag		dd ?
+di_time		dd ?
+di_size		dq ?
+di_name		db 32 dup(?)
+S_DISK		ENDS
+
+externdef	drvinfo:	S_DISK
+externdef	cp_stdpath:	SBYTE
+externdef	cp_stdmask:	SBYTE
+externdef	fp_maskp:	LPSTR
+externdef	fp_directory:	PVOID	; int (*fp_directory)(char *);
+externdef	fp_fileblock:	PVOID	; int (*fp_fileblock)(char *, wfblk *);
+externdef	OldErrorMode:	DWORD
+
+validdrive	PROTO :SINT
+_fullpath	PROTO :LPSTR, :LPSTR, :UINT
+
+scansub		PROTO :LPSTR, :LPSTR, :UINT
+scan_files	PROTO :LPSTR
+scan_directory	PROTO :UINT, :LPSTR
+recursive	PROTO :LPSTR, :LPSTR, :LPSTR
+
+_disk_read	PROTO
+_disk_exist	PROTO :UINT
+_disk_init	PROTO :UINT
+_disk_type	PROTO :UINT
+_disk_test	PROTO :UINT
+_disk_ready	PROTO :UINT
+_disk_retry	PROTO :UINT
+_disk_select	PROTO :LPSTR
+
+GetVolumeID	PROTO :LPSTR, :LPSTR
+GetFileSystemName PROTO :LPSTR, :LPSTR
+
+
 ;;;;;;;;;;;;;;; kernel32.dll
 
 SECURITY_ATTRIBUTES	STRUC SIZE_T

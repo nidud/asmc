@@ -13,7 +13,7 @@ include stdlib.inc
 include string.inc
 include consx.inc
 include time.inc
-include coff.inc
+include winnt.inc
 
 MAXIDDSIZE	equ 2048
 OMF_THEADR	equ 080h

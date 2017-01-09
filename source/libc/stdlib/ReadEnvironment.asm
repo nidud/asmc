@@ -9,8 +9,6 @@ include stdlib.inc
 include string.inc
 include alloc.inc
 
-GetEnvironmentSize proto :dword
-
 	.code
 
 ReadEnvironment PROC USES esi edi ebx FileName:LPSTR

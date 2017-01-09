@@ -8,10 +8,6 @@ include direct.inc
 include stdlib.inc
 include string.inc
 
-GetEnvironmentSize proto :dword
-
-WMAXPATH equ 2048
-
 	.code
 
 SaveEnvironment PROC USES esi edi ebx FileName:LPSTR

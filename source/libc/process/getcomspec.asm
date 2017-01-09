@@ -7,7 +7,6 @@ include process.inc
 include crtl.inc
 
 externdef	__comspec:byte
-expenviron	proto :LPSTR
 
 	.code
 

@@ -55,6 +55,7 @@ local	PI:PROCESS_INFORMATION,
 	mov	hStdInput,  GetStdHandle( STD_INPUT_HANDLE )
 	SetConsoleMode( eax, ConsoleMode )
 	SetErrorMode( SEM_FAILCRITICALERRORS )
+	mov	byte ptr _diskflag,3
 	mov	eax,edi
 	ret
 process ENDP

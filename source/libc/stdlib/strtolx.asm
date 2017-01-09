@@ -6,8 +6,6 @@
 ;
 include stdlib.inc
 
-xtol	proto :dword
-
 	.code
 
 	OPTION	PROLOGUE:NONE, EPILOGUE:NONE

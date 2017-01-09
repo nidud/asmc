@@ -1,0 +1,262 @@
+; This file contains all the variables that "customize"
+; Doszip to your particular needs.
+;
+; The entries have the following format:
+;
+; [<Section name>]
+; <Entry name>=<properties>
+;
+; Space and tabs may appear before or after the equal sign.
+;
+
+[Environ]
+;0=<var>=<value>
+
+[Path]
+;0=%DZ%\BIN
+;1=%PATH%
+
+[Comspec]
+0=%SystemRoot%\system32\cmd.exe
+1=/C
+
+[Load]
+;0=echo Welcome
+[Exit]
+;0=echo Goodbye
+
+[Filetype]
+txt=%edit%
+asm=%edit%
+inc=%edit%
+ini=%edit%
+h=%edit%
+c=%edit%
+mak=make -f
+makefile=make -f
+
+[FileColor]
+;exe=4
+;zip=B
+
+[View]
+;F3=
+;Alt=
+;Ctrl=
+;Shift=
+
+[Edit]
+;F3=
+;Alt=
+;Ctrl=
+;Shift=
+
+[Directory]
+0=Doszip &Directory,%doszip%
+1=&Config Directory,%dz%
+2=<>
+3=System &Root,%SYSTEMROOT%
+4=&Program Files,%PROGRAMFILES%
+5=<>
+6=&Temp Directory,%TEMP%
+
+[Tools]
+0=&Add tool,%edit% %dz%\dz.ini
+1=<>
+2=View &DZ.TXT,%view% %dz%\dz.txt
+
+[Filter]
+0=&Source code,*.asm *.inc *.c *.h
+
+[MKList]
+0=Default &List,filelist.bat@%f\n
+1=&Obj List,obj.mif@%n.obj \\\n
+
+[AltF3]
+asm=asmc -X -I%dz%\lib\inc
+
+[Compress]
+0=7-Zip
+1=ARJ
+2=RAR
+[7-Zip]
+0=7za u -y
+2=.7z
+[ARJ]
+0=arj u -jm -y
+1=!
+2=.arj
+[RAR]
+0=rar u -y
+2=.rar
+
+[Decompress]
+0=.7z
+1=.ARJ
+2=.RAR
+[.7z]
+0=7za x -y
+1=-o
+[.ARJ]
+0=arj x -y
+[.RAR]
+0=rar x -y
+
+[Style]
+asm=style_asm
+inc=style_asm
+ini=style_asm
+cpp=style_c
+hpp=style_c
+c=style_c
+h=style_c
+pas=style_pas
+bas=style_bas
+mak=style_mak
+makefile=style_mak
+bat=style_bat
+cmd=style_bat
+
+[style_default]
+0=.st_control
+1=.st_number
+2=.st_$
+3=.st_operator
+4=.st_quote
+
+[style_c]
+0=.C_A_16
+1=.C_B_X2
+2=.C_B_X8
+3=.C_W_XF
+4=[style_default]
+5=.C_N_X8
+
+[style_pas]
+0=.PAS_W_XF
+1=[style_default]
+2=.PAS_N_X8
+3=.PAS_N_X8_2
+
+[style_bas]
+0=.BAS_W_XF
+1=[style_default]
+2=.BAS_B_X8
+
+[style_asm]
+0=.asm_A_07
+1=.asm_B_X2
+2=.asm_B_X8
+3=.asm_W_X2
+4=.asm_W_X3
+5=.asm_W_X4
+6=.asm_W_X5
+7=.asm_W_X6
+8=.asm_W_X9
+9=.asm_W_XF
+10=[style_default]
+
+[style_mak]
+0=.MAK_A_07
+1=.C_B_X2
+2=.MAK_W_XF
+3=.MAK_B_X2
+4=.MAK_N_X6
+5=[style_default]
+
+[style_bat]
+0=.BAT_W_XF
+1=[style_default]
+2=.BAT_B_X8
+
+[.st_control]
+0=O 40
+[.st_number]
+0=D XB
+[.st_$]
+0=C XB $\
+[.st_operator]
+0=C XF ".:!|/<[{()}]>,-*+?%&=^~;"
+[.st_quote]
+0=Q XB
+
+[.asm_A_07]
+0=A 07
+[.asm_B_X2]
+0=B X2 ifdef ifndef include
+[.asm_B_X8]
+0=B X8 ";"
+[.asm_W_X2]
+0=W X2 if else elseif endif while break endw
+1=rcx rdx rsp ecx edx esp cx dx sp cl dl ch dh
+[.asm_W_X3]
+0=W X3 mov movzx movsx xchg cwb cbw
+1=push pop popa pusha lea les lds
+2=and or xor not neg add adc sub sbb shl shr dec inc
+3=cmp test cld std clc stc mul div imul idiv
+4=rep repe repne repz repnz in out aam org
+[.asm_W_X4]
+0=W X4 rax eax ax ah al
+[.asm_W_X5]
+0=W X5 cs ds es ss
+[.asm_W_X6]
+0=W X6 rbp rsi rdi rbx ebp esi edi ebx bp si di bx bh bl
+1=scasb scasw lodsb stosb lodsw stosw movsb movsw
+2=scasd lodsd stosd movsd
+3=call invoke int ret iret retn retf
+[.asm_W_X9]
+0=W X9 jmp ja jb jc jz jna jnb jnc jnz jna jnz je
+1=jne jae jbe jl jg jle jge js jns
+[.asm_W_XF]
+0=W XF seg segment offset near far ends end
+1=model tiny small compact large flat c pascal stdcall
+2=label proto proc public private uses local endp
+3=ptr byte word dword qword db dw dd dq struc option
+4=externdef extrn assume align size sizeof length dup
+5=code data stack _text _data macro endm equ textequ
+
+[.C_A_16]
+0=A 16
+[.C_B_X2]
+0=B X2 #
+[.C_B_X8]
+0=B X8 //
+[.C_N_X8]
+0=N X8 /* */
+[.C_W_XF]
+0=W XF const operator char int long void typedef struct
+1=if else for do while break continue goto return
+2=switch case default public extern signed unsigned
+3=static enum union short
+
+[.PAS_W_XF]
+0=W XF program unit interface uses integer function procedure
+1=implementation begin end var const type byte word dword string
+2=record far external if then or with do pointer longint exit
+3=stdcall false true
+[.PAS_N_X8]
+0=N X8 (* *)
+[.PAS_N_X8_2]
+0=N X8 { }
+
+[.BAS_B_X8]
+0=B X8 '
+[.BAS_W_XF]
+0=W XF END SUB PRINT USING DECLARE FUNCTION SUB
+1=AS LONG INTEGER TYPE CONST DECLARE DIM STRING
+2=if then else
+
+[.MAK_A_07]
+0=A 07
+[.MAK_W_XF]
+0=W XF SUFFIXES OBJ C ASM IDD
+[.MAK_N_X6]
+0=N X6 $( )
+[.MAK_B_X2]
+0=B X2 !
+
+[.BAT_B_X8]
+0=B X8 rem
+[.BAT_W_XF]
+0=W XF for in echo off on call do if errorlevel goto
+1=exit

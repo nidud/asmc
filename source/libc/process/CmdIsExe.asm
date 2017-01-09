@@ -3,8 +3,6 @@ include string.inc
 include stdlib.inc
 include crtl.inc
 
-searchp proto :dword
-
 	.code
 
 CmdIsExe PROC USES esi edi ebx cmd:LPSTR

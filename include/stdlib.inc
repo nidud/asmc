@@ -26,6 +26,18 @@ malloc		proto :SIZE_T
 realloc		PROTO :PVOID, :SIZE_T
 free		proto :PVOID
 
+xtol		PROTO :LPSTR
+mkbstring	PROTO :LPSTR, :QWORD
+strtolx		PROTO :LPSTR
+searchp		PROTO :LPSTR
+getenvp		PROTO :LPSTR
+expenviron	PROTO :LPSTR
+SaveEnvironment PROTO :LPSTR
+ReadEnvironment PROTO :LPSTR
+GetEnvironmentTEMP PROTO
+GetEnvironmentPATH PROTO
+GetEnvironmentSize PROTO :LPSTR
+
 ;;;;;;;;;;;;;;; kernel32.dll
 
 ;BOOL

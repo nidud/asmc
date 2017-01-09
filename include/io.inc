@@ -52,6 +52,7 @@ _finddata_t	ENDS	; 284 byte
 externdef	_nfile:DWORD
 externdef	_osfile:BYTE
 externdef	_osfhnd:HANDLE
+externdef	_diskflag:DWORD
 
 A_CREATE	equ 1 ; fails if exists
 A_CREATETRUNC	equ 2 ; trunc if exists
@@ -97,6 +98,8 @@ osmaperr	PROTO
 getfattr	PROTO :LPTSTR
 setfattr	PROTO :LPTSTR, :UINT
 __FTToTime	PROTO :PTR FILETIME
+filexist	PROTO :LPSTR
+
 IFDEF __DZ__
 externdef	console:DWORD
 externdef	_diskflag:DWORD
@@ -219,7 +222,7 @@ endif
 ReadFile proto \
 	hFile:			HANDLE, ; handle of file to read
 	lpBuffer:		PVOID,	; pointer to buffer that receives data
-	nNumberOfBytesToRead:	DWORD,	; number of bytes to read
+	nNumberOfBytesToRead:	SIZE_T, ; number of bytes to read
 	lpNumberOfBytesRead:	LPDWORD,; pointer to number of bytes read
 	lpOverlapped:		PTR	; pointer to structure for data - LPOVERLAPPED
 ;BOOL

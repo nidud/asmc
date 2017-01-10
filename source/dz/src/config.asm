@@ -91,7 +91,7 @@ _bufin		label BYTE
 		;-----------------------------------------------
 	db 128 dup(0)
 default_ini label BYTE
-incbin	<dzini.txt>
+incbin	<dzini.bin>
 	db 0
 if ($ - _bufin) le 1000h
 	db 1000h - ($ - _bufin) dup('x')

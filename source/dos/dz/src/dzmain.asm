@@ -125,9 +125,9 @@ _bufin		label BYTE
 
 default_ini label BYTE
 ifdef __DZ__
-incbin <dz.ini>
+incbin <dz.bin>
 else
-incbin <dztiny.ini>
+incbin <dztiny.bin>
 endif
 	db 0
 

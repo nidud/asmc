@@ -1,0 +1,45 @@
+# generic linkw.lnk file
+
+# default if no format is defined and 16-bit module is found
+system begin 286
+    format dos
+end
+
+# default if no format is defined and 32-bit module is found
+system begin 386
+    option  osname='Windows NT character-mode'
+    option  map
+    libpath %AsmCDir%\lib
+    library libo,kernel32,user32
+    format  windows nt
+    runtime console=4.0
+end
+
+# DOS 16-bit
+system begin dos
+#   option  osname='DOS 16-bit'
+    libpath %AsmCDir%\lib
+    library cl
+    format  dos ^
+end
+system begin com
+    option osname='DOS 16-bit .COM application'
+    format dos com
+end
+
+# Windows 32- and 64-bit
+system begin pe_con
+#    option osname='Win32/64 console application'
+    format windows pe ^
+    runtime console=4.0
+end
+system begin pe_gui
+#    option osname='Win32/64 GUI application'
+    format windows pe ^
+    runtime windows=4.0
+end
+system begin pe_dll
+#    option osname='Win32/64 Dll'
+    format windows pe dll ^
+    runtime windows=4.0
+end

@@ -9,7 +9,7 @@ REM
 SET MLBASE=%AsmcDir%\bin\asmc.exe
 if NOT (%1)==() SET MLBASE=%1
 
-SET OWLINK=%AsmcDir%\linkw.exe
+SET OWLINK=%AsmcDir%\bin\linkw.exe
 
 REM MS LINK >= 8.0 is needed for testing SAFESEH
 SET MSLINK=%DZDRIVE%\VC9\bin\link.exe

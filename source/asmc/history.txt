@@ -3,6 +3,7 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.22 - xx xxx 2017
+- disabled asmc-added HLL directives when switch /Xc used
 - fixed bug in .WHILE (eax || edx) && ecx
 - fixed bug in .WHILE !(eax || edx) && ecx
 

@@ -1,22 +1,19 @@
 @echo off
 
 REM
-REM BUILDEXP [<ASMC>[<JWLINK>[<LINK>]]]
+REM BUILDEXP [<ASMC> [<MSLINK>]]
 REM
 REM Use a version that passed the test as base
 REM
-SET MLBASE=C:\Asmc\bin\asmc.exe
+
+SET MLBASE=%AsmcDir%\bin\asmc.exe
 if NOT (%1)==() SET MLBASE=%1
 
-REM
-REM Optional linker for the test
-REM
-SET OWLINK=C:\jwasm\jwlink.exe
-if NOT (%2)==() SET OWLINK=%2
+SET OWLINK=%AsmcDir%\linkw.exe
 
 REM MS LINK >= 8.0 is needed for testing SAFESEH
-SET MSLINK=C:\VC9\bin\link.exe
-if NOT (%3)==() SET MSLINK=%3
+SET MSLINK=%DZDRIVE%\VC9\bin\link.exe
+if NOT (%2)==() SET MSLINK=%2
 
 cd ..
 if not exist tmp md tmp
@@ -40,6 +37,7 @@ for %%f in (..\src\ifdef\*.asm) do call :ifdef %%f
 for %%f in (..\src\elf\*.asm) do call :elf %%f
 for %%f in (..\src\omf2\*.asm) do call :omf2 %%f
 for %%f in (..\src\omfcu\*.asm) do call :omfcu %%f
+for %%f in (..\src\Xc\*.asm) do call :Xc %%f
 
 call :safeseh
 call :dllimp
@@ -138,5 +136,10 @@ goto end
 :binerr
 %MLBASE% -q -eq -bin %1
 copy %~n1.err ..\exp\%~n1.err
+goto end
+
+:Xc
+%MLBASE% -q -Xc -bin %1
+copy %~n1.bin ..\exp\%~n1.bin
 
 :end

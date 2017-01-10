@@ -3,7 +3,7 @@
 ; REM MALLOC start end step [loop_count]
 ; REM
 ;
-; SET CC=\Asmc\bin\asmc.exe
+; SET CC=%AsmcDir%\bin\asmc.exe
 ; if not exist %CC% (
 ;	@echo ASMC not found: %CC%
 ;	exit /b 1

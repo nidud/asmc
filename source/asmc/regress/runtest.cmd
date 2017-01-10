@@ -1,18 +1,13 @@
 @echo off
-REM
-REM Set version to test
-REM
+
 SET ASMX=%1
 if (%1)==() SET ASMX=..\..\asmc.exe
-REM
-REM Optional linker for the test
-REM
-SET OWLINK=C:\jwasm\jwlink.exe
-REM SET OWLINK=C:\asmc\bin\linkw.exe
-REM
+
+SET OWLINK=%AsmcDir%\bin\linkw.exe
+
 REM MS LINK >= 8.0 is needed for testing SAFESEH.
-REM
-SET MSLINK=C:\VC9\bin\link.exe
+SET MSLINK=%DZDRIVE%\VC9\bin\link.exe
+
 if not exist tmp md tmp
 cd tmp
 
@@ -34,6 +29,7 @@ for %%f in (..\src\ifdef\*.asm) do call :ifdef %%f
 for %%f in (..\src\elf\*.asm) do call :elf %%f
 for %%f in (..\src\omf2\*.asm) do call :omf2 %%f
 for %%f in (..\src\omfcu\*.asm) do call :omfcu %%f
+for %%f in (..\src\Xc\*.asm) do call :Xc %%f
 
 call :safeseh
 call :dllimp
@@ -210,6 +206,12 @@ fcmp %~n1.ERR ..\exp\%~n1.err
 if errorlevel 1 goto end
 del %~n1.ERR
 goto end
+
+:Xc
+%ASMX% -q -Xc -bin %1
+fcmp %~n1.bin ..\exp\%~n1.bin
+if errorlevel 1 goto end
+del %~n1.bin
 
 :end
 

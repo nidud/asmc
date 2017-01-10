@@ -44,6 +44,10 @@ inientry PROC USES esi edi ebx edx section:LPSTR, entry:LPSTR
 	mov	al,[edi]
 	cmp	al,'['
 	je	fail
+	cmp	al,13
+	je	@03
+	cmp	al,10
+	je	@03
 	cmp	al,';'
 	je	@03
 @@:

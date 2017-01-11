@@ -3,6 +3,9 @@ ifndef __LIBC_INC
 endif
 
 .xlist
+IFDEF __PE__
+option		dllimport:<msvcrt>
+ENDIF
 
 _NFILE_		equ 20
 
@@ -105,6 +108,9 @@ externdef	console:DWORD
 externdef	_diskflag:DWORD
 ENDIF
 
+IFDEF __PE__
+option		dllimport:<kernel32>
+ENDIF
 ;;;;;;;;;;;;;;; kernel32.dll
 
 CREATE_NEW		equ 1
@@ -185,16 +191,16 @@ cAlternateFileName	SWORD 14 dup(?)
 WIN32_FIND_DATAW	ENDS
 
 ;UINT
-SetErrorMode proto \
+SetErrorMode proto _CType \
 	uMode:		UINT
 ;HANDLE
-GetStdHandle proto \
+GetStdHandle proto _CType \
 	nStdHandle:	DWORD
 ;BOOL
-CloseHandle proto \
+CloseHandle proto _CType \
 	hObject:	HANDLE
 ;BOOL
-SetFilePointer proto \
+SetFilePointer proto _CType \
 	hFile:			HANDLE,
 	lDistanceToMove:	sdword,
 	lpDistanceToMoveHigh:	ptr sdword,
@@ -202,56 +208,56 @@ SetFilePointer proto \
 
 ifdef __WXP__
 ;BOOL
-SetFilePointerEx proto \
+SetFilePointerEx proto _CType \
 	hFile:			HANDLE,
 	liDistanceToMove:	sqword, ; LARGE_INTEGER
 	lpNewFilePointer:	ptr sqword,
 	dwMoveMethod:		dword
 ;BOOL
-GetFileSizeEx proto \
+GetFileSizeEx proto _CType \
 	hFile:		HANDLE,
 	lpFileSize:	ptr sqword	; PLARGE_INTEGER
 GetFileSize		equ <GetFileSizeEx>
 else
-GetFileSize proto \
+GetFileSize proto _CType \
 	hFile:		HANDLE,
 	lpFileSizeHigh: ptr dword
 endif
 
 ;BOOL
-ReadFile proto \
+ReadFile proto _CType \
 	hFile:			HANDLE, ; handle of file to read
 	lpBuffer:		PVOID,	; pointer to buffer that receives data
 	nNumberOfBytesToRead:	SIZE_T, ; number of bytes to read
 	lpNumberOfBytesRead:	LPDWORD,; pointer to number of bytes read
 	lpOverlapped:		PTR	; pointer to structure for data - LPOVERLAPPED
 ;BOOL
-WriteFile proto \
+WriteFile proto _CType \
 	hFile:			HANDLE,
 	lpBuffer:		PVOID,
 	nNumberOfBytesToWrite:	DWORD,
 	lpNumberOfBytesWritten: LPDWORD,
 	lpOverlapped:		PTR	; LPOVERLAPPED
 ;BOOL
-SetEndOfFile proto \
+SetEndOfFile proto _CType \
 	hFile:		HANDLE
 ;UINT
-GetFileType proto \
+GetFileType proto _CType \
 	hFile:		HANDLE ; _isatty()
 ;BOOL
-GetFileTime proto \
+GetFileTime proto _CType \
 	hFile:			HANDLE,		; handle to the file
 	lpCreationTime:		PTR,; FILETIME	; address of creation time
 	lpLastAccessTime:	PTR,; FILETIME	; address of last access time
 	lpLastWriteTime:	PTR ; FILETIME	; address of last write time
 ;BOOL
-SetFileTime proto \
+SetFileTime proto _CType \
 	hFile:			HANDLE,		; handle to the file
 	lpCreationTime:		PTR,; FILETIME	; time the file was created
 	lpLastAccessTime:	PTR,; FILETIME	; time the file was last accessed
 	lpLastWriteTime:	PTR ; FILETIME	; time the file was last written
 ;HANDLE
-CreateFileA proto \
+CreateFileA proto _CType \
 	lpFileName:		LPSTR,
 	dwDesiredAccess:	DWORD,
 	dwShareMode:		DWORD,
@@ -259,7 +265,7 @@ CreateFileA proto \
 	dwCreationDisposition:	DWORD,
 	dwFlagsAndAttributes:	DWORD,
 	hTemplateFile:		HANDLE
-CreateFileW proto \
+CreateFileW proto _CType \
 	lpFileName:		LPWSTR,
 	dwDesiredAccess:	DWORD,
 	dwShareMode:		DWORD,
@@ -268,52 +274,52 @@ CreateFileW proto \
 	dwFlagsAndAttributes:	DWORD,
 	hTemplateFile:		HANDLE
 ;HANDLE
-FindFirstFileA proto \
+FindFirstFileA proto _CType \
 	lpFileName:	LPSTR,	; pointer to name of file to search for
 	lpFindFileData: PTR WIN32_FIND_DATA ; pointer to returned information
-FindFirstFileW proto \
+FindFirstFileW proto _CType \
 	lpFileName:	LPWSTR,
 	lpFindFileData: PTR WIN32_FIND_DATAW
 ;BOOL
-FindNextFileA proto \
+FindNextFileA proto _CType \
 	hFindFile:	HANDLE, ; handle to search
 	lpFindFileData: PTR WIN32_FIND_DATA ; pointer to structure for data on found file
-FindNextFileW proto \
+FindNextFileW proto _CType \
 	hFindFile:	HANDLE,
 	lpFindFileData: PTR WIN32_FIND_DATAW
 ;BOOL
-FindClose proto \
+FindClose proto _CType \
 	hFile:		HANDLE
 ;DWORD
-GetFileAttributesA proto \
+GetFileAttributesA proto _CType \
 	lpFileName:	LPSTR	; pointer to the name of a file or directory
-GetFileAttributesW proto \
+GetFileAttributesW proto _CType \
 	lpFileName:	LPWSTR
 ;BOOL
-SetFileAttributesA proto \
+SetFileAttributesA proto _CType \
 	lpFileName:	LPSTR,	; pointer to filename
 	dwFileAttributes:DWORD	; attributes to set
-SetFileAttributesW proto \
+SetFileAttributesW proto _CType \
 	lpFileName:	LPWSTR,
 	dwFileAttributes:DWORD
 ;BOOL
-DeleteFileA proto \
+DeleteFileA proto _CType \
 	lpFileName:	LPSTR	; pointer to name of file to delete
-DeleteFileW proto \
+DeleteFileW proto _CType \
 	lpFileName:	LPWSTR
 ;BOOL
-MoveFileA proto \
+MoveFileA proto _CType \
 	lpExistingFileName:	LPSTR,	; pointer to the name of the existing file
 	lpNewFileName:		LPSTR	; pointer to the new name for the file
-MoveFileW proto \
+MoveFileW proto _CType \
 	lpExistingFileName:	LPWSTR,
 	lpNewFileName:		LPWSTR
 ;BOOL
-MoveFileExA proto \
+MoveFileExA proto _CType \
 	lpExistingFileName:	LPSTR,	; pointer to the name of the existing file
 	lpNewFileName:		LPSTR,	; pointer to the new name for the file
 	dwFlags:		DWORD	; flag that specifies how to move file
-MoveFileExW proto \
+MoveFileExW proto _CType \
 	lpExistingFileName:	LPWSTR,
 	lpNewFileName:		LPWSTR,
 	dwFlags:		DWORD

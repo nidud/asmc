@@ -2,6 +2,9 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 .xlist
+IFDEF __PE__
+option		dllimport:<msvcrt>
+ENDIF
 
 SEEK_CUR	equ 1
 SEEK_END	equ 2
@@ -84,6 +87,9 @@ setvbuf		PROTO :LPFILE, :LPSTR, :SIZE_T, :SIZE_T
 setbuf		PROTO :LPFILE, :LPSTR
 
 ;;;;;;;;;;;;;;; kernel32.lib
+IFDEF __PE__
+option	dllimport:<kernel32>
+ENDIF
 
 FILE_TYPE_UNKNOWN   equ 0x0000	; The type of the specified file is unknown.
 FILE_TYPE_DISK	    equ 0x0001	; The specified file is a disk file.
@@ -94,14 +100,14 @@ FILE_TYPE_PIPE	    equ 0x0003	; The specified file is either a named or
 FILE_TYPE_REMOTE    equ 0x8000
 
 ; DWORD
-GetFileType proto \
+GetFileType proto _CType \
 	hFile:		HANDLE	; file handle
 ; int
-wvsprintfA proto \
+wvsprintfA proto _CType \
 	lpOutput:	LPSTR,	; pointer to buffer for output
 	lpFormat:	LPSTR,	; pointer to format-control string
 	va_list:	PVOID	; variable list of format-control arguments
-wvsprintfW proto \
+wvsprintfW proto _CType \
 	lpOutput:	LPWSTR,
 	lpFormat:	LPWSTR,
 	va_list:	PVOID

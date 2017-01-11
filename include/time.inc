@@ -3,6 +3,9 @@ ifndef __LIBC_INC
 endif
 
 .xlist
+IFDEF __PE__
+option	dllimport:<msvcrt>
+ENDIF
 ;
 ; ISO 8601:	YYYY-MM-DD hh:mm:ss
 ; Short form:	YY-MM-DD hh:mm
@@ -91,6 +94,9 @@ strftime	PROTO :LPSTR, :UINT, :LPSTR, :LPTIME
 fdatetostr	PROTO :LPSTR, :LPFILETIME
 ftimetostr	PROTO :LPSTR, :LPFILETIME
 
+IFDEF __PE__
+option		dllimport:<kernel32>
+ENDIF
 ;;;;;;;;;;;;;;;;;;;;;;; kernel32.dll
 
 TIME_ZONE_INFORMATION	STRUC
@@ -104,38 +110,38 @@ DaylightBias		DD ?
 TIME_ZONE_INFORMATION	ENDS
 
 ;VOID
-Sleep proto \
+Sleep proto _CType \
 	dwMilliseconds: DWORD	; sleep time in milliseconds
 ;DWORD
-GetTickCount proto
+GetTickCount proto _CType
 ;VOID
-GetLocalTime proto \
+GetLocalTime proto _CType \
 	lpSystemTime:	LPSYSTEMTIME	; address of system time structure
 ;BOOL
-FileTimeToSystemTime proto \
+FileTimeToSystemTime proto _CType \
 	lpFileTime:	LPFILETIME,	; pointer to file time to convert
 	lpSystemTime:	LPSYSTEMTIME	; pointer to structure to receive system time
 ;BOOL
-SystemTimeToFileTime proto \
+SystemTimeToFileTime proto _CType \
 	lpSystemTime:	LPSYSTEMTIME,	; address of system time to convert
 	lpFileTime:	LPFILETIME	; address of buffer for converted file time
 ;BOOL
-FileTimeToLocalFileTime proto \
+FileTimeToLocalFileTime proto _CType \
 	lpFileTime:	LPFILETIME,	; pointer to UTC file time to convert
 	lpLocalFileTime:LPFILETIME	; pointer to converted file time
 ;BOOL
-LocalFileTimeToFileTime proto \
+LocalFileTimeToFileTime proto _CType \
 	lpLocalFileTime:LPFILETIME,	; address of local file time to convert
 	lpFileTime:	LPFILETIME	; address of converted file time
 ;int
-GetTimeFormatA proto \
+GetTimeFormatA proto _CType \
 	Locale:		DWORD,		; (LCID) locale for which time is to be formatted
 	dwFlags:	DWORD,		; flags specifying function options
 	lpTime:		LPSYSTEMTIME,	; time to be formatted
 	lpFormat:	LPSTR,		; time format string
 	lpTimeStr:	LPSTR,		; buffer for storing formatted string
 	cchTime:	DWORD		; size, in bytes or characters, of the buffer
-GetTimeFormatW proto \
+GetTimeFormatW proto _CType \
 	Locale:		DWORD,
 	dwFlags:	DWORD,
 	lpTime:		LPSYSTEMTIME,
@@ -143,14 +149,14 @@ GetTimeFormatW proto \
 	lpTimeStr:	LPWSTR,
 	cchTime:	DWORD
 ;int
-GetDateFormatA proto \
+GetDateFormatA proto _CType \
 	Locale:		DWORD,		; (LCID) locale for which date is to be formatted
 	dwFlags:	DWORD,		; flags specifying function options
 	lpDate:		LPSYSTEMTIME,	; date to be formatted
 	lpFormat:	LPSTR,		; date format string
 	lpDateStr:	LPSTR,		; buffer for storing formatted string
 	cchDate:	DWORD		; size of buffer
-GetDateFormatW proto \
+GetDateFormatW proto _CType \
 	Locale:		DWORD,
 	dwFlags:	DWORD,
 	lpDate:		LPSYSTEMTIME,
@@ -158,9 +164,9 @@ GetDateFormatW proto \
 	lpDateStr:	LPWSTR,
 	cchDate:	DWORD
 ;LCID
-GetUserDefaultLCID proto
+GetUserDefaultLCID proto _CType
 ;DWORD
-GetTimeZoneInformation proto \
+GetTimeZoneInformation proto _CType \
 	lpTimeZoneInformation:	PTR TIME_ZONE_INFORMATION ; address of time-zone settings
 
 IFDEF _UNICODE
@@ -174,12 +180,12 @@ ENDIF
 delay		equ	<Sleep>
 
 ; BOOL - 16-bit date and time
-DosDateTimeToFileTime proto \
+DosDateTimeToFileTime proto _CType \
 	wFatDate:	DWORD,		; (WORD) 16-bit MS-DOS date
 	wFatTime:	DWORD,		; (WORD) 16-bit MS-DOS time
 	lpFileTime:	LPFILETIME	; pointer to buffer for 64-bit file time
 ; BOOL
-FileTimeToDosDateTime proto \
+FileTimeToDosDateTime proto _CType \
 	lpFileTime:	LPFILETIME,	; pointer to 64-bit file time
 	lpFatDate:	LPWORD,		; pointer to variable for MS-DOS date
 	lpFatTime:	LPWORD		; pointer to variable for MS-DOS time

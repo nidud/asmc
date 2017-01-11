@@ -1,6 +1,9 @@
 ifndef __LIBC_INC
  include libc.inc
 endif
+IFDEF __PE__
+option		dllimport:<msvcrt>
+ENDIF
 
 _MAX_PATH	equ 260
 _MAX_DRIVE	equ 3
@@ -24,6 +27,8 @@ _wgetcwd	PROTO :LPWSTR, :SINT
 _wgetdcwd	PROTO :SINT, :LPWSTR, :SINT
 
 externdef	_diskflag:DWORD
+
+IFNDEF __PE__
 
 ;;;;;;;;;;;;;;; crtl
 
@@ -81,7 +86,9 @@ _disk_select	PROTO :LPSTR
 GetVolumeID	PROTO :LPSTR, :LPSTR
 GetFileSystemName PROTO :LPSTR, :LPSTR
 
-
+ELSE
+option		dllimport:<kernel32>
+ENDIF
 ;;;;;;;;;;;;;;; kernel32.dll
 
 SECURITY_ATTRIBUTES	STRUC SIZE_T
@@ -95,12 +102,12 @@ CP_ACP			equ 0
 SEM_FAILCRITICALERRORS	equ 1
 
 ;UINT
-SetErrorMode proto \
+SetErrorMode proto _CType \
 	uMode:		UINT
 ;DWORD
-GetLogicalDrives proto
+GetLogicalDrives proto _CType
 ;int
-MultiByteToWideChar proto \
+MultiByteToWideChar proto _CType \
 	CodePage:	UINT,
 	dwFlags:	DWORD,
 	lpMultiByteStr: LPSTR,	; Pointer to the character string to convert
@@ -108,83 +115,83 @@ MultiByteToWideChar proto \
 	lpWideCharStr:	LPWSTR, ; Pointer to a buffer that receives the converted string
 	cchWideChar:	SINT	; character count of lpWideCharStr
 ;DWORD
-GetShortPathNameA proto \
+GetShortPathNameA proto _CType \
 	lpszLongPath:	LPSTR,	; pointer to a null-terminated path string
 	lpszShortPath:	LPSTR,	; pointer to a buffer to receive the
 				; null-terminated short form of the path
 	cchBuffer:	DWORD	; specifies the size of the buffer pointed
 				; to by lpszShortPath
-GetShortPathNameW proto \
+GetShortPathNameW proto _CType \
 	lpszLongPath:	LPWSTR,
 	lpszShortPath:	LPWSTR,
 	cchBuffer:	DWORD
 ;DWORD
-GetFullPathNameA proto \
+GetFullPathNameA proto _CType \
 	lpFileName:	LPSTR,	; pointer to name of file to find path for
 	nBufferLength:	DWORD,	; size, in characters, of path buffer
 	lpBuffer:	LPSTR,	; pointer to path buffer
 	lpFilePart:	LPSTR	; pointer to filename in path
-GetFullPathNameW proto \
+GetFullPathNameW proto _CType \
 	lpFileName:	LPWSTR,
 	nBufferLength:	DWORD,
 	lpBuffer:	LPWSTR,
 	lpFilePart:	LPWSTR
 ;BOOL
-RemoveDirectoryA proto \
+RemoveDirectoryA proto _CType \
 	lpPathName:	LPSTR	; pointer to directory to remove
-RemoveDirectoryW proto \
+RemoveDirectoryW proto _CType \
 	lpPathName:	LPWSTR
 ;BOOL
-CreateDirectoryA proto \
+CreateDirectoryA proto _CType \
 	lpPathName:	LPSTR,	; pointer to directory path string
 	lpSecurityAttributes:LPSECURITY_ATTRIBUTES
-CreateDirectoryW proto \
+CreateDirectoryW proto _CType \
 	lpPathName:	LPWSTR,
 	lpSecurityAttributes:LPSECURITY_ATTRIBUTES
 ;BOOL
-SetCurrentDirectoryA proto \
+SetCurrentDirectoryA proto _CType \
 	lpPathName:	LPSTR	; pointer to name of new current directory
-SetCurrentDirectoryW proto \
+SetCurrentDirectoryW proto _CType \
 	lpPathName:	LPWSTR
 ;DWORD
-GetCurrentDirectoryA proto \
+GetCurrentDirectoryA proto _CType \
 	nBufferLength:	DWORD,	; size, in characters, of directory buffer
 	lpBuffer:	LPSTR	; pointer to buffer for current directory
-GetCurrentDirectoryW proto \
+GetCurrentDirectoryW proto _CType \
 	nBufferLength:	DWORD,
 	lpBuffer:	LPWSTR
 ;UINT
-GetDriveTypeA proto \
+GetDriveTypeA proto _CType \
 	lpRootPathName: LPSTR	; pointer to root path
-GetDriveTypeW proto \
+GetDriveTypeW proto _CType \
 	lpRootPathName: LPWSTR
 ;BOOL
-GetDiskFreeSpaceA proto \
+GetDiskFreeSpaceA proto _CType \
 	lpRootPathName:		LPSTR,	; pointer to root path
 	lpSectorsPerCluster:	LPDWORD,; pointer to sectors per cluster
 	lpBytesPerSector:	LPDWORD,; pointer to bytes per sector
 	lpNumberOfFreeClusters: LPDWORD,; pointer to number of free clusters
 	lpTotalNumberOfClusters:LPDWORD ; pointer to total number of clusters
-GetDiskFreeSpaceW proto \
+GetDiskFreeSpaceW proto _CType \
 	lpRootPathName:		LPWSTR,
 	lpSectorsPerCluster:	LPDWORD,
 	lpBytesPerSector:	LPDWORD,
 	lpNumberOfFreeClusters: LPDWORD,
 	lpTotalNumberOfClusters:LPDWORD
 ;BOOL
-GetDiskFreeSpaceExA proto \
+GetDiskFreeSpaceExA proto _CType \
 	lpDirectoryName:	      LPSTR,	; pointer to the directory name
 	lpFreeBytesAvailableToCaller: PTR QWORD,; receives the number of bytes on
 						; disk available to the caller
 	lpTotalNumberOfBytes:	      PTR QWORD,; receives the number of bytes on disk
 	lpTotalNumberOfFreeBytes:     PTR QWORD ; receives the free bytes on disk
-GetDiskFreeSpaceExW proto \
+GetDiskFreeSpaceExW proto _CType \
 	lpDirectoryName:	      LPWSTR,
 	lpFreeBytesAvailableToCaller: PTR QWORD,
 	lpTotalNumberOfBytes:	      PTR QWORD,
 	lpTotalNumberOfFreeBytes:     PTR QWORD
 ;BOOL
-GetVolumeInformationA proto \
+GetVolumeInformationA proto _CType \
 	lpRootPathName:		LPSTR,	; address of root directory of the file system
 	lpVolumeNameBuffer:	LPSTR,	; address of name of the volume
 	nVolumeNameSize:	DWORD,	; length of lpVolumeNameBuffer
@@ -193,7 +200,7 @@ GetVolumeInformationA proto \
 	lpFileSystemFlags:	LPDWORD,; address of file system flags
 	lpFileSystemNameBuffer: LPSTR,	; address of name of file system
 	nFileSystemNameSize:	DWORD	; length of lpFileSystemNameBuffer
-GetVolumeInformationW proto \
+GetVolumeInformationW proto _CType \
 	lpRootPathName:		LPWSTR, ; address of root directory of the file system
 	lpVolumeNameBuffer:	LPWSTR, ; address of name of the volume
 	nVolumeNameSize:	DWORD,	; length of lpVolumeNameBuffer

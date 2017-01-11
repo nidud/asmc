@@ -3,6 +3,9 @@ ifndef __LIBC_INC
 endif
 
 .xlist
+IFDEF __PE__
+option		dllimport:<msvcrt>
+ENDIF
 
 _UPPER		equ 01h		; upper case letter
 _LOWER		equ 02h		; lower case letter

@@ -10,7 +10,11 @@ IFDEF _WIN64
 	OPTION	WIN64:3		; Standard stack frame
 ELSE
 	.486
+ IFDEF __PE__
+	.MODEL	FLAT, C
+ ELSE
 	.MODEL	FLAT, STDCALL
+ ENDIF
  IFDEF __SSE__
 	.686
 	.XMM
@@ -23,10 +27,12 @@ FALSE	EQU 0
 NULL	EQU 0
 
 IFDEF _WIN64
+_CType	EQU <>	; fastcall
 _CDecl	EQU <>	; fastcall
 __WXP__ EQU 1	; Windows XP++
 ELSE
-_CDecl	EQU <C> ; c
+_CType	EQU <STDCALL>
+_CDecl	EQU <C>
 ENDIF
 
 IFDEF _WIN64

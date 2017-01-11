@@ -2,6 +2,9 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 .xlist
+IFDEF __PE__
+option	dllimport:<msvcrt>
+ENDIF
 ;
 ; All allocations are of size n * _GRANULARITY
 ;
@@ -36,6 +39,10 @@ malloc		proto :size_t
 realloc		PROTO :ptr, :size_t
 free		proto :ptr
 calloc		proto :dword, :dword
+_aligned_malloc proto dwSize:size_t, alignment:UINT
+
+IFNDEF __PE__
+
 _alloca64	proto :dword, :dword
 ifdef _WIN64
 alloca	macro dwSize:req, ReservedStack:=<@ReservedStack>
@@ -45,11 +52,14 @@ else
 alloca		proto :dword
 endif
 salloc		proto :LPSTR
-_aligned_malloc proto dwSize:size_t, alignment:UINT
 
 __coreleft	proto
 __purgeheap	proto
 
+ELSE
+alloca		proto :dword
+option		dllimport:<kernel32>
+ENDIF
 ;;;;;;;;;;;;;;; kernel32
 
 PAGE_NOACCESS		equ 0x01
@@ -202,185 +212,185 @@ ullAvailVirtual		dq ?
 ullAvailExtendedVirtual dq ?	; Reserved. This value is always 0.
 MEMORYSTATUSEX		ENDS
 
-GlobalAlloc proto \
+GlobalAlloc proto _CType \
 	uFlags:		UINT,
 	dwBytes:	SIZE_T
 
-GlobalFree proto \
+GlobalFree proto _CType \
 	hMem:		HANDLE
 
-GlobalReAlloc proto \
+GlobalReAlloc proto _CType \
 	hMem:		HANDLE,
 	dwBytes:	SIZE_T,
 	uFlags:		UINT
 
-GlobalSize proto \
+GlobalSize proto _CType \
 	hMem:		HANDLE
 
-GlobalFlags proto \
+GlobalFlags proto _CType \
 	hMem:		HANDLE
 
-GlobalHandle proto \
+GlobalHandle proto _CType \
 	pMem:		PVOID
 
-GlobalLock proto \
+GlobalLock proto _CType \
 	hMem:		HANDLE
 
-GlobalUnlock proto \
+GlobalUnlock proto _CType \
 	hMem:		HANDLE
 
-GlobalCompact proto \
+GlobalCompact proto _CType \
 	dwMinFree:	SIZE_T
 
-GlobalFix proto \
+GlobalFix proto _CType \
 	hMem:		HANDLE
 
-GlobalUnfix proto \
+GlobalUnfix proto _CType \
 	hMem:		HANDLE
 
-GlobalWire proto \
+GlobalWire proto _CType \
 	hMem:		HANDLE
 
-GlobalUnWire proto \
+GlobalUnWire proto _CType \
 	hMem:		HANDLE
 
-GlobalMemoryStatus proto \
+GlobalMemoryStatus proto _CType \
 	lpBuffer:	PTR MEMORYSTATUS
 
-GlobalMemoryStatusEx proto \
+GlobalMemoryStatusEx proto _CType \
 	lpBuffer:	PTR MEMORYSTATUSEX
 
-LocalAlloc proto \
+LocalAlloc proto _CType \
 	uFlags:		UINT,
 	uBytes:		SIZE_T
 
-LocalReAlloc proto \
+LocalReAlloc proto _CType \
 	hMem:		HANDLE,
 	uBytes:		SIZE_T,
 	uFlags:		UINT
 
-LocalLock proto \
+LocalLock proto _CType \
 	hMem:		HANDLE
 
-LocalHandle proto \
+LocalHandle proto _CType \
 	pMem:		PVOID
 
-LocalUnlock proto \
+LocalUnlock proto _CType \
 	hMem:		HANDLE
 
-LocalSize proto \
+LocalSize proto _CType \
 	hMem:		HANDLE
 
-LocalFlags proto \
+LocalFlags proto _CType \
 	hMem:		HANDLE
 
-LocalFree proto \
+LocalFree proto _CType \
 	hMem:		HANDLE
 
-LocalShrink proto \
+LocalShrink proto _CType \
 	hMem:		HANDLE,
 	cbNewSize:	SIZE_T
 
-LocalCompact proto \
+LocalCompact proto _CType \
 	uMinFree:	SIZE_T
 
-GetProcessHeap proto
+GetProcessHeap proto _CType
 
-GetProcessHeaps proto \
+GetProcessHeaps proto _CType \
 	NumberOfHeaps:	DWORD,
 	ProcessHeaps:	PVOID
 
-HeapCreate proto \
+HeapCreate proto _CType \
 	flOptions:	DWORD,
 	dwInitialSize:	SIZE_T,
 	dwMaximumSize:	SIZE_T
 
-HeapDestroy proto \
+HeapDestroy proto _CType \
 	hHeap:		HANDLE
 
-HeapAlloc proto \
+HeapAlloc proto _CType \
 	hHeap:		HANDLE,
 	dwFlags:	DWORD,
 	dwBytes:	SIZE_T
 
-HeapReAlloc proto \
+HeapReAlloc proto _CType \
 	hHeap:		HANDLE,
 	dwFlags:	DWORD,
 	lpMem:		PVOID,
 	dwBytes:	SIZE_T
 
-HeapFree proto \
+HeapFree proto _CType \
 	hHeap:		HANDLE,
 	dwFlags:	DWORD,
 	lpMem:		PVOID
 
-HeapSize proto \
+HeapSize proto _CType \
 	hHeap:		HANDLE,
 	dwFlags:	DWORD,
 	lpMem:		PVOID
 
-HeapValidate proto \
+HeapValidate proto _CType \
 	hHeap:		HANDLE,
 	dwFlags:	DWORD,
 	lpMem:		PVOID
 
-HeapCompact proto \
+HeapCompact proto _CType \
 	hHeap:		HANDLE,
 	dwFlags:	DWORD
 
-HeapLock proto \
+HeapLock proto _CType \
 	hHeap:		HANDLE
 
-HeapUnlock proto \
+HeapUnlock proto _CType \
 	hHeap:		HANDLE
 
-HeapWalk proto \
+HeapWalk proto _CType \
 	hHeap:		HANDLE,
 	lpEntry:	PTR LPPROCESS_HEAP_ENTRY
 
-VirtualAlloc proto \
+VirtualAlloc proto _CType \
 	lpAddress:	PVOID,
 	dwSize:		SIZE_T,
 	flAllocationType:DWORD,
 	flProtect:	DWORD
 
-VirtualFree proto \
+VirtualFree proto _CType \
 	lpAddress:	PVOID,
 	dwSize:		SIZE_T,
 	dwFreeType:	DWORD
 
-VirtualProtect proto \
+VirtualProtect proto _CType \
 	lpAddress:	PVOID,
 	dwSize:		SIZE_T,
 	flNewProtect:	DWORD,
 	lpflOldProtect: PTR DWORD
 
-VirtualQuery proto \
+VirtualQuery proto _CType \
 	lpAddress:	PVOID,
 	lpBuffer:	PTR MEMORY_BASIC_INFORMATION,
 	dwLength:	SIZE_T
 
-VirtualAllocEx proto \
+VirtualAllocEx proto _CType \
 	hProcess:	HANDLE,
 	lpAddress:	PVOID,
 	dwSize:		SIZE_T,
 	flAllocationType:DWORD,
 	flProtect:	DWORD
 
-VirtualFreeEx proto \
+VirtualFreeEx proto _CType \
 	hProcess:	HANDLE,
 	lpAddress:	PVOID,
 	dwSize:		SIZE_T,
 	dwFreeType:	DWORD
 
-VirtualProtectEx proto \
+VirtualProtectEx proto _CType \
 	hProcess:	HANDLE,
 	lpAddress:	PVOID,
 	dwSize:		SIZE_T,
 	flNewProtect:	DWORD,
 	lpflOldProtect: PTR DWORD
 
-VirtualQueryEx proto \
+VirtualQueryEx proto _CType \
 	hProcess:	HANDLE,
 	lpAddress:	PVOID,
 	lpBuffer:	PTR MEMORY_BASIC_INFORMATION,

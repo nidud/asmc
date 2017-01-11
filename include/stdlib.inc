@@ -2,6 +2,9 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 .xlist
+IFDEF __PE__
+option	dllimport:<msvcrt>
+ENDIF
 
 _MAX_PATH	equ 260
 _MAX_DRIVE	equ 3
@@ -37,6 +40,12 @@ ReadEnvironment PROTO :LPSTR
 GetEnvironmentTEMP PROTO
 GetEnvironmentPATH PROTO
 GetEnvironmentSize PROTO :LPSTR
+
+IFDEF __PE__
+__getmainargs	proto :ptr, :ptr, :ptr, :ptr, :ptr
+__iob_func	proto
+option		dllimport:<kernel32>
+ENDIF
 
 ;;;;;;;;;;;;;;; kernel32.dll
 

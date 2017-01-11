@@ -3,6 +3,9 @@ ifndef __LIBC_INC
 endif
 
 .xlist
+IFDEF __PE__
+option		dllimport:<msvcrt>
+ENDIF
 
 memchr		PROTO :LPSTR, :SIZE_T,:SIZE_T
 memcpy		PROTO :LPSTR, :LPSTR, :SIZE_T
@@ -43,6 +46,7 @@ wcspbrk		PROTO :LPWSTR, :LPWSTR
 
 ;;;;;;;;;;;;;;; crtl
 
+IFNDEF __PE__
 strfn		PROTO :LPSTR
 strext		PROTO :LPSTR
 setfext		PROTO :LPSTR, :LPSTR
@@ -62,21 +66,24 @@ strspace	PROTO :LPSTR
 strtrim		PROTO :LPSTR
 strtoken	PROTO :LPSTR
 strstri		PROTO :LPSTR, :LPSTR
+ELSE
+option		dllimport:<kernel32>
+ENDIF
 
 ;;;;;;;;;;;;;;; kernel32
 
-lstrcatA	PROTO :LPSTR, :LPSTR
-lstrcatW	PROTO :LPWSTR, :LPWSTR
-lstrcmpA	PROTO :LPSTR, :LPSTR
-lstrcmpW	PROTO :LPWSTR, :LPWSTR
-lstrcmpiA	PROTO :LPSTR, :LPSTR
-lstrcmpiW	PROTO :LPWSTR, :LPWSTR
-lstrcpyA	PROTO :LPSTR, :LPSTR
-lstrcpyW	PROTO :LPWSTR, :LPWSTR
-lstrcpynA	PROTO :LPSTR, :LPSTR, :SIZE_T
-lstrcpynW	PROTO :LPWSTR, :LPWSTR, :SIZE_T
-lstrlenA	PROTO :LPSTR
-lstrlenW	PROTO :LPWSTR
+lstrcatA	PROTO _CType :LPSTR, :LPSTR
+lstrcatW	PROTO _CType :LPWSTR, :LPWSTR
+lstrcmpA	PROTO _CType :LPSTR, :LPSTR
+lstrcmpW	PROTO _CType :LPWSTR, :LPWSTR
+lstrcmpiA	PROTO _CType :LPSTR, :LPSTR
+lstrcmpiW	PROTO _CType :LPWSTR, :LPWSTR
+lstrcpyA	PROTO _CType :LPSTR, :LPSTR
+lstrcpyW	PROTO _CType :LPWSTR, :LPWSTR
+lstrcpynA	PROTO _CType :LPSTR, :LPSTR, :SIZE_T
+lstrcpynW	PROTO _CType :LPWSTR, :LPWSTR, :SIZE_T
+lstrlenA	PROTO _CType :LPSTR
+lstrlenW	PROTO _CType :LPWSTR
 
 IFDEF _UNICODE
 lstrcat		equ <lstrcatW>

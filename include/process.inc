@@ -3,6 +3,9 @@ ifndef __LIBC_INC
 endif
 
 .xlist
+IFDEF __PE__
+option		dllimport:<msvcrt>
+ENDIF
 
 _P_WAIT		equ 0
 _P_NOWAIT	equ 1
@@ -30,6 +33,9 @@ CmdIsExe	PROTO :LPSTR
 getcomspec	PROTO :dword
 
 ;;;;;;;;;;;;;;;;;;;;;;; kernel32.dll
+IFDEF __PE__
+option	dllimport:<kernel32>
+ENDIF
 
 INFINITE		equ -1
 STARTF_USESHOWWINDOW	equ 001h
@@ -84,19 +90,19 @@ LPSECURITY_ATTRIBUTES	TYPEDEF PTR SECURITY_ATTRIBUTES
 LPPROCESS_INFORMATION	TYPEDEF PTR PROCESS_INFORMATION
 
 ; HANDLE
-GetCurrentProcess proto
+GetCurrentProcess proto _CType
 ; BOOL
-GetExitCodeProcess proto \
+GetExitCodeProcess proto _CType \
 	hProcess:	HANDLE, ; handle to the process
 	lpExitCode:	LPDWORD ; address to receive termination status
 ; BOOL
-CreatePipe proto \
+CreatePipe proto _CType \
 	hReadPipe:	PHANDLE,		; pointer to read handle
 	hWritePipe:	PHANDLE,		; pointer to write handle
 	lpPipeAttributes:LPSECURITY_ATTRIBUTES, ; pointer to security attributes
 	nSize:		DWORD			; pipe size
 ; BOOL
-DuplicateHandle proto \
+DuplicateHandle proto _CType \
 	hSourceProcessHandle:	HANDLE, ; handle to the source process
 	hSourceHandle:		HANDLE, ; handle to duplicate
 	hTargetProcessHandle:	HANDLE, ; handle to process to duplicate to
@@ -105,15 +111,15 @@ DuplicateHandle proto \
 	bInheritHandle:		DWORD,	; (BOOL) handle inheritance flag
 	dwOptions:		DWORD	; optional actions
 ; DWORD
-WaitForSingleObject proto \
+WaitForSingleObject proto _CType \
 	hHandle:	HANDLE, ; handle to object to wait for
 	dwMilliseconds: DWORD	; time-out interval in milliseconds
 ; VOID
-GetStartupInfoA proto \
+GetStartupInfoA proto _CType \
 	lpStartupInfo:	LPSTARTUPINFO	; address of STARTUPINFO structure
-GetStartupInfoW proto :LPSTARTUPINFO
+GetStartupInfoW proto _CType :LPSTARTUPINFO
 ; BOOL
-CreateProcessA proto \
+CreateProcessA proto _CType \
 	lpApplicationName:	LPSTR,; pointer to name of executable module
 	lpCommandLine:		LPSTR, ; pointer to command line string
 	lpProcessAttributes:	LPSECURITY_ATTRIBUTES,
@@ -124,16 +130,16 @@ CreateProcessA proto \
 	lpCurrentDirectory:	LPSTR,; pointer to current directory name
 	lpStartupInfo:		LPSTARTUPINFO,
 	lpProcessInformation:	LPPROCESS_INFORMATION
-CreateProcessW proto :PTR, :PTR, :PTR, :PTR, :DWORD, :DWORD, :PTR, :PTR, : PTR, :PTR
+CreateProcessW proto _CType :PTR, :PTR, :PTR, :PTR, :DWORD, :DWORD, :PTR, :PTR, : PTR, :PTR
 ; HINSTANCE
-ShellExecuteA proto \
+ShellExecuteA proto _CType \
 	hwnd:		HANDLE, ; HWND
 	lpOperation:	LPSTR,
 	lpFile:		LPSTR,
 	lpParameters:	LPSTR,
 	lpDirectory:	LPSTR,
 	nShowCmd:	DWORD
-ShellExecuteW proto :HANDLE, :LPSTR, :LPSTR, :LPSTR, :LPSTR, :DWORD
+ShellExecuteW proto _CType :HANDLE, :LPSTR, :LPSTR, :LPSTR, :LPSTR, :DWORD
 
 IFDEF _UNICODE
  GetStartupInfo		equ <GetStartupInfoW>

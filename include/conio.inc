@@ -7,6 +7,10 @@ endif
 ifndef __INC_CONIO
 __INC_CONIO	EQU 1
 
+IFDEF __PE__
+option	dllimport:<msvcrt>
+ENDIF
+
 ifndef _WCHAR_T_DEFINED
 _WCHAR_T_DEFINED EQU 1
 WCHAR_T TYPEDEF WORD
@@ -68,6 +72,9 @@ externdef hStdOutput: HANDLE
 externdef hStdError:  HANDLE
 
 ;;;;;;;;;;;;;;; kernel32.dll
+IFDEF __PE__
+option	dllimport:<kernel32>
+ENDIF
 
 ENABLE_WINDOW_INPUT	equ 8
 ENABLE_MOUSE_INPUT	equ 16
@@ -120,81 +127,81 @@ CONSOLE_CURSOR_INFO	ENDS
 PCONSOLE_CURSOR_INFO	TYPEDEF PTR CONSOLE_CURSOR_INFO
 
 ;BOOL
-FillConsoleOutputAttribute proto \
+FillConsoleOutputAttribute proto _CType \
 	hConsoleOutput:		HANDLE, ; handle to screen buffer
 	wAttribute:		DWORD,	; color attribute to write (WORD)
 	nLength:		DWORD,	; number of character cells to write to
 	dwWriteCoord:		COORD,	; x- and y-coordinates of first cell
 	lpNumberOfAttrsWritten: LPDWORD ; pointer to number of cells written to
 ;BOOL
-FlushConsoleInputBuffer proto \
+FlushConsoleInputBuffer proto _CType \
 	hConsoleInput:	HANDLE	; handle to console input buffer
 ;BOOL
-GetConsoleCursorInfo proto \
+GetConsoleCursorInfo proto _CType \
 	hConsoleOutput:		HANDLE, ; handle to console screen buffer
 	lpConsoleCursorInfo:	PCONSOLE_CURSOR_INFO
 ;BOOL
-GetConsoleMode proto \
+GetConsoleMode proto _CType \
 	hConsoleHandle: HANDLE, ; handle to console input or screen buffer
 	lpMode:		LPDWORD ; current mode flags
 ;BOOL
-GetConsoleScreenBufferInfo proto \
+GetConsoleScreenBufferInfo proto _CType \
 	hConsoleOutput:	  HANDLE, ; handle to console screen buffer
 	lpConsoleScreenBufferInfo:PCONSOLE_SCREEN_BUFFER_INFO ; address of screen buffer info
 ;HWND
-GetConsoleWindow proto
+GetConsoleWindow proto _CType
 ;HWND
-GetForegroundWindow proto
+GetForegroundWindow proto _CType
 ;COORD
-GetLargestConsoleWindowSize proto \
+GetLargestConsoleWindowSize proto _CType \
 	hConsoleOutput: HANDLE	; handle to console screen buffer
 ;BOOL
-ReadConsoleOutputAttribute proto \
+ReadConsoleOutputAttribute proto _CType \
 	hConsoleOutput:		HANDLE, ; handle to a console screen buffer
 	lpAttribute:		LPWORD, ; address of buffer to receive attributes
 	nLength:		DWORD,	; number of character cells to read from
 	dwReadCoord:		COORD,	; coordinates of first cell to read from
 	lpNumberOfAttrsRead:	LPDWORD ; address of number of cells read from
 ;BOOL
-SetConsoleActiveScreenBuffer proto \
+SetConsoleActiveScreenBuffer proto _CType \
 	hConsoleOutput: HANDLE	; handle to console screen buffer
 ;BOOL
-SetConsoleCP proto \
+SetConsoleCP proto _CType \
 	wCodePageID:	UINT	; code page to set
 ;BOOL
-SetConsoleCtrlHandler proto \
+SetConsoleCtrlHandler proto _CType \
 	HandlerRoutine: ptr,;PHANDLER_ROUTINE, ; address of handler function
 	_Add:		DWORD	; handler to add or remove
 ;BOOL
-SetConsoleCursorInfo proto \
+SetConsoleCursorInfo proto _CType \
 	hConsoleOutput: HANDLE, ; handle to console screen buffer
 	lpConsoleCursorInfo:	PCONSOLE_CURSOR_INFO ; address of cursor information
 ;BOOL
-SetConsoleCursorPosition proto \
+SetConsoleCursorPosition proto _CType \
 	hConsoleOutput:		HANDLE, ; handle to console screen buffer
 	dwCursorPosition:	COORD	; new cursor position coordinates
 ;BOOL
-SetConsoleMode proto \
+SetConsoleMode proto _CType \
 	hConsoleHandle: HANDLE, ; handle to console input or screen buffer
 	dwMode:		DWORD	; input or output mode to set
 ;BOOL
-SetConsoleOutputCP proto \
+SetConsoleOutputCP proto _CType \
 	wCodePageID:	UINT	; code page to set
 ;BOOL
-SetConsoleScreenBufferSize proto \
+SetConsoleScreenBufferSize proto _CType \
 	hConsoleOutput: HANDLE, ; handle to console screen buffer
 	dwSize:		COORD	; new size in character rows and cols.
 ;BOOL
-SetConsoleTextAttribute proto \
+SetConsoleTextAttribute proto _CType \
 	hConsoleOutput: HANDLE, ; handle to console screen buffer
 	wAttributes:	DWORD	; (WORD) text and background colors
 ;BOOL
-SetConsoleWindowInfo proto \
+SetConsoleWindowInfo proto _CType \
 	hConsoleOutput:		HANDLE, ; handle to console screen buffer
 	bAbsolute:		DWORD,	; (BOOL) coordinate type flag
 	lpConsoleWindow:	PTR SMALL_RECT ; address of new window rectangle
 ;BOOL
-SetWindowPos proto \
+SetWindowPos proto _CType \
 	hWnd:		HANDLE, ; HWND
 	hWndInsertAfter:HANDLE, ; HWND
 	X:		UINT,
@@ -203,56 +210,64 @@ SetWindowPos proto \
 	_cy:		UINT,
 	uFlags:		UINT
 ;BOOL
-WriteConsoleOutputAttribute proto \
+WriteConsoleA proto _CType \
+	hConsoleOutput:		HANDLE,
+	lpBuffer:		PVOID,
+	nNumberOfCharsToWrite:	DWORD,
+	lpNumberOfCharsWritten: LPDWORD,
+	lpReserved:		PVOID
+WriteConsoleW proto _CType	:HANDLE, :PVOID, :DWORD, :LPDWORD, :PVOID
+;BOOL
+WriteConsoleOutputAttribute proto _CType \
 	hConsoleOutput:		HANDLE, ; handle to a console screen buffer
 	lpAttribute:		PTR WORD,; pointer to buffer to write attributes from
 	nLength:		DWORD,	; number of character cells to write to
 	wWriteCoord:		COORD,	; coordinates of first cell to write to
 	lpNumberOfAttrsWritten: LPDWORD ; pointer to number of cells written to
 ;BOOL
-FillConsoleOutputCharacterA proto \
+FillConsoleOutputCharacterA proto _CType \
 	hConsoleOutput:		HANDLE, ; handle to screen buffer
 	cCharacter:		DWORD,	; (TCHAR) character to write
 	nLength:		DWORD,	; number of character cells to write to
 	dwWriteCoord:		COORD,	; x- and y-coordinates of first cell
 	lpNumberOfCharsWritten: LPDWORD ; pointer to number of cells written to
-FillConsoleOutputCharacterW proto :HANDLE, :DWORD, :DWORD, :COORD, :LPDWORD
+FillConsoleOutputCharacterW proto _CType :HANDLE, :DWORD, :DWORD, :COORD, :LPDWORD
 ;BOOL
-ReadConsoleOutputA proto \
+ReadConsoleOutputA proto _CType \
 	hConsoleOutput: HANDLE,		; handle to a console screen buffer
 	lpBuffer:	PCHAR_INFO,	; address of buffer that receives data
 	dwBufferSize:	COORD,		; column-row size of destination buffer
 	dwBufferCoord:	COORD,		; upper-left cell to write to
 	lpReadRegion:	PSMALL_RECT	; address of rectangle to read from
-ReadConsoleOutputW proto :HANDLE, :PCHAR_INFO, :COORD, :COORD, :PSMALL_RECT
+ReadConsoleOutputW proto _CType :HANDLE, :PCHAR_INFO, :COORD, :COORD, :PSMALL_RECT
 ;BOOL
-ReadConsoleOutputCharacterA proto \
+ReadConsoleOutputCharacterA proto _CType \
 	hConsoleOutput:		HANDLE, ; handle to a console screen buffer
 	lpCharacter:		LPSTR,	; address of buffer to receive characters
 	nLength:		DWORD,	; number of character cells to read from
 	dwReadCoord:		COORD,	; coordinates of first cell to read from
 	lpNumberOfCharsRead:	LPDWORD ; address of number of cells read from
-ReadConsoleOutputCharacterW proto :HANDLE, :LPWSTR, :DWORD, :COORD, :LPDWORD
+ReadConsoleOutputCharacterW proto _CType :HANDLE, :LPWSTR, :DWORD, :COORD, :LPDWORD
 ;BOOL
-SetConsoleTitleA proto \
+SetConsoleTitleA proto _CType \
 	lpConsoleTitle: LPSTR	; address of new title
-SetConsoleTitleW proto :LPWSTR
+SetConsoleTitleW proto _CType :LPWSTR
 ;BOOL
-WriteConsoleOutputA proto \
+WriteConsoleOutputA proto _CType \
 	hConsoleOutput: HANDLE,		; handle to a console screen buffer
 	lpBuffer:	PCHAR_INFO,	; pointer to buffer with data to write
 	dwBufferSize:	COORD,		; column-row size of source buffer
 	dwBufferCoord:	COORD,		; upper-left cell to write from
 	lpWriteRegion:	PSMALL_RECT	; pointer to rectangle to write to
-WriteConsoleOutputW proto :HANDLE, :PCHAR_INFO, :COORD, :COORD, :PSMALL_RECT
+WriteConsoleOutputW proto _CType :HANDLE, :PCHAR_INFO, :COORD, :COORD, :PSMALL_RECT
 ;BOOL
-WriteConsoleOutputCharacterA proto \
+WriteConsoleOutputCharacterA proto _CType \
 	hConsoleOutput:		HANDLE, ; handle to a console screen buffer
 	lpCharacter:		LPSTR,	; pointer to buffer to write characters from
 	nLength:		DWORD,	; number of character cells to write to
 	dwWriteCoord:		COORD,	; coordinates of first cell to write to
 	lpNumberOfCharsWritten: LPDWORD ; pointer to number of cells written to
-WriteConsoleOutputCharacterW proto :HANDLE, :LPWSTR, :DWORD, :COORD, :LPDWORD
+WriteConsoleOutputCharacterW proto _CType :HANDLE, :LPWSTR, :DWORD, :COORD, :LPDWORD
 
 ifdef __W95__
  externdef pGetForegroundWindow:dword
@@ -269,6 +284,7 @@ ifdef _UNICODE
  ReadConsoleOutput		equ <ReadConsoleOutputW>
  ReadConsoleOutputCharacter	equ <ReadConsoleOutputCharacterW>
  SetConsoleTitle		equ <SetConsoleTitleW>
+ WriteConsole			equ <WriteConsoleW>
  WriteConsoleOutput		equ <WriteConsoleOutputW>
  WriteConsoleOutputCharacter	equ <WriteConsoleOutputCharacterW>
 else
@@ -276,6 +292,7 @@ else
  ReadConsoleOutput		equ <ReadConsoleOutputA>
  ReadConsoleOutputCharacter	equ <ReadConsoleOutputCharacterA>
  SetConsoleTitle		equ <SetConsoleTitleA>
+ WriteConsole			equ <WriteConsoleA>
  WriteConsoleOutput		equ <WriteConsoleOutputA>
  WriteConsoleOutputCharacter	equ <WriteConsoleOutputCharacterA>
 endif
@@ -329,36 +346,59 @@ INPUT_RECORD		ENDS
 PINPUT_RECORD		TYPEDEF PTR INPUT_RECORD
 
 ; BOOL
-GetNumberOfConsoleInputEvents proto \
+GetNumberOfConsoleInputEvents proto _CType \
 	hConsoleInput:		HANDLE, ; handle to console input buffer
 	lpcNumberOfEvents:	LPDWORD ; address for number of events
 ; BOOL
-ReadConsoleInputA proto \
+ReadConsoleInputA proto _CType \
 	hConsoleInput:		HANDLE,		; handle to a console input buffer
 	lpBuffer:		PINPUT_RECORD,	; address of the buffer for read data
 	nLength:		DWORD,		; number of records to read
 	lpNumberOfEventsRead:	LPDWORD		; address of number of records read
-ReadConsoleInputW proto :HANDLE, :PINPUT_RECORD, :DWORD, :LPDWORD
+ReadConsoleInputW proto _CType :HANDLE, :PINPUT_RECORD, :DWORD, :LPDWORD
 ; BOOL
-PeekConsoleInputA proto \
+PeekConsoleInputA proto _CType \
 	hConsoleInput:		HANDLE,		; handle to a console input buffer
 	lpBuffer:		PINPUT_RECORD,	; pointer to the buffer for peek data
 	nLength:		DWORD,		; number of records to read
 	lpNumberOfEventsRead:	LPDWORD		; pointer to number of records read
-PeekConsoleInputW proto :HANDLE, :PINPUT_RECORD, :DWORD, :LPDWORD
+PeekConsoleInputW proto _CType :HANDLE, :PINPUT_RECORD, :DWORD, :LPDWORD
 ; BOOL
-WriteConsoleInputA proto \
+WriteConsoleInputA proto _CType \
 	hConsoleInput:		HANDLE,		; handle to a console input buffer
 	lpBuffer:		PINPUT_RECORD,	; pointer to the buffer for write data
 	nLength:		DWORD,		; number of records to write
 	lpNumberOfEventsWritten:LPDWORD		; pointer to number of records written
-WriteConsoleInputW proto :HANDLE, :PINPUT_RECORD, :DWORD, :LPDWORD
+WriteConsoleInputW proto _CType :HANDLE, :PINPUT_RECORD, :DWORD, :LPDWORD
 
 ifdef __W95__
  externdef pGetKeyState:dword
 else
  pGetKeyState equ <GetKeyState>
 endif
+
+;;;;;;;;;;;;;;; user32.dll
+IFDEF __PE__
+option	dllimport:<user32>
+ENDIF
+
+VK_LSHIFT	equ 0xA0
+VK_RSHIFT	equ 0xA1
+VK_LCONTROL	equ 0xA2
+VK_RCONTROL	equ 0xA3
+VK_ESCAPE	equ 0x1B
+
+; SHORT
+GetAsyncKeyState proto _CType \
+	vKey:		SINT
+; SHORT
+GetKeyState proto _CType \
+	nVirtKey:	SINT
+;UINT
+MapVirtualKeyA proto _CType \
+	uCode:		UINT,
+	uMapType:	UINT
+MapVirtualKeyW proto _CType :UINT, :UINT
 
 ifdef _UNICODE
  ReadConsoleInput	equ <ReadConsoleInputW>
@@ -371,27 +411,6 @@ else
  WriteConsoleInput	equ <WriteConsoleInputA>
  MapVirtualKey		equ <MapVirtualKeyA>
 endif
-
-;;;;;;;;;;;;;;; user32.dll
-
-VK_LSHIFT	equ 0xA0
-VK_RSHIFT	equ 0xA1
-VK_LCONTROL	equ 0xA2
-VK_RCONTROL	equ 0xA3
-VK_ESCAPE	equ 0x1B
-
-; SHORT
-GetAsyncKeyState proto \
-	vKey:		SINT
-; SHORT
-GetKeyState proto \
-	nVirtKey:	SINT
-;UINT
-MapVirtualKeyA proto \
-	uCode:		UINT,
-	uMapType:	UINT
-MapVirtualKeyW proto :UINT, :UINT
-
 endif	; __INC_CONIO
 
 .list

@@ -43,26 +43,27 @@ db "/EP Output preprocessed listing to stdout  /Sx List false conditionals",10
 db "/eq Don't display error messages           /w Same as /W0 /WX",10
 db "/Fd[file] Write import definition file     /W<number> Set warning level",10
 db "/Fi<file> Force <file> to be included      /win64 Generate 64-bit COFF object",10
-db "/Fl[file] Generate listing                 /WX Treat all warnings as errors",10
-db "/Fo<file> Name object file                 /X Ignore INCLUDE environment path",10
-db "/Fw<file> Set errors file name             /Xc Disable ASMC extensions",10
-db "/FPi Generate 80x87 emulator encoding      /zcw No decoration for C symbols",10
-db "/FPi87 80x87 instructions (default)        /Zd Add line number debug info",10
-db "/fpc Disallow floating-point instructions  /Zf Make all symbols public",10
-db "/fp<n> Set FPU: 0=8087, 2=80287, 3=80387   /zf<0|1> Set FASTCALL type: MS/OW",10
-db "/G<c|d|z> Use Pascal, C, or Stdcall calls  /Zg Generate code to match Masm",10
-db "/I<name> Add include path                  /Zi[0|1|2|3] Add symbolic debug info",10
-db "/m<t|s|c|m|l|h|f> Set memory model         /zlc No OMF records of data in code",10
-db "/mz Generate DOS MZ binary file            /zld No OMF records of far call",10
-db "/nc<name> Set class name of code segment   /zl<f|p|s> Suppress items in COFF",10
-db "/nd<name> Set name of data segment         /Zm Enable MASM 5.10 compatibility",10
-db "/nm<name> Set name of module               /Zne Disable non Masm extensions",10
-db "/nt<name> Set name of text segment         /Zp[n] Set structure alignment",10
-db "/pe Generate PE binary file, 32/64-bit     /Zs Perform syntax check only",10
-db "/q, /nologo Suppress copyright message     /zt<0|1|2> Set STDCALL decoration",10
-db "/r Recurse subdirectories                  /Zv8 Enable Masm v8+ PROC visibility",10
-db "/Sa Maximize source listing                /zze No export symbol decoration",10
-db "/safeseh Assert exception handlers         /zzs Store name of start address",10
+db "/Fl[file] Generate listing                 /ws Store quoted strings as unicode",10
+db "/Fo<file> Name object file                 /WX Treat all warnings as errors",10
+db "/Fw<file> Set errors file name             /X Ignore INCLUDE environment path",10
+db "/FPi Generate 80x87 emulator encoding      /Xc Disable ASMC extensions",10
+db "/FPi87 80x87 instructions (default)        /zcw No decoration for C symbols",10
+db "/fpc Disallow floating-point instructions  /Zd Add line number debug info",10
+db "/fp<n> Set FPU: 0=8087, 2=80287, 3=80387   /Zf Make all symbols public",10
+db "/G<c|d|z> Use Pascal, C, or Stdcall calls  /zf<0|1> Set FASTCALL type: MS/OW",10
+db "/I<name> Add include path                  /Zg Generate code to match Masm",10
+db "/m<t|s|c|m|l|h|f> Set memory model         /Zi[0|1|2|3] Add symbolic debug info",10
+db "/mz Generate DOS MZ binary file            /zlc No OMF records of data in code",10
+db "/nc<name> Set class name of code segment   /zld No OMF records of far call",10
+db "/nd<name> Set name of data segment         /zl<f|p|s> Suppress items in COFF",10
+db "/nm<name> Set name of module               /Zm Enable MASM 5.10 compatibility",10
+db "/nt<name> Set name of text segment         /Zne Disable non Masm extensions",10
+db "/pe Generate PE binary file, 32/64-bit     /Zp[n] Set structure alignment",10
+db "/q, /nologo Suppress copyright message     /Zs Perform syntax check only",10
+db "/r Recurse subdirectories                  /zt<0|1|2> Set STDCALL decoration",10
+db "/Sa Maximize source listing                /Zv8 Enable Masm v8+ PROC visibility",10
+db "/safeseh Assert exception handlers         /zze No export symbol decoration",10
+db "/zzs Store name of start address",10
 db 0
 
 szCVCompiler	db "ASMC v",ASMC_VERSSTR,0
@@ -122,7 +123,8 @@ Options		global_options <	\
 		0,			\ ; .c_stack_frame
 		0,			\ ; .hll_switch
 		0,			\ ; .loopalign
-		0			\ ; .casealign
+		0,			\ ; .casealign
+		0			\ ; .wstring
 		>
 
 DefaultDir	dd NUM_FILE_TYPES dup(0)
@@ -415,6 +417,7 @@ ParseCmdline PROC USES esi edi ebx numargs
 			  .case 'tws':	or  [edi].hll_switch,SWITCH_TABLE	: .endc
 			  .case 'efas': mov [edi].safeseh,1			: .endc
 			  .case 'w':	mov [edi].warning_level,0		: .endc
+			  .case 'sw':	mov [edi].wstring,1			: .endc
 			  .case 'XW':	mov [edi].warning_error,1		: .endc
 			  .case '6niw': mov [edi].output_format,OFORMAT_COFF
 					mov [edi].sub_format,SFORMAT_64BIT

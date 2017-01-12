@@ -682,6 +682,24 @@ OPTFUNC( SetCStack )
     return NOT_ERROR;
 }
 
+/* OPTION WSTRING: ON | OFF
+ */
+OPTFUNC( SetWString )
+/*****************/
+{
+    int i = *pi;
+
+    if ( 0 == _stricmp( tokenarray[i].string_ptr, "ON" ) ) {
+	ModuleInfo.wstring = 1;
+    } else if ( 0 == _stricmp( tokenarray[i].string_ptr, "OFF" ) ) {
+	ModuleInfo.wstring = 0;
+    } else {
+	return( asmerr(2008, tokenarray[i].string_ptr ) );
+    }
+    *pi = i + 1;
+    return NOT_ERROR;
+}
+
 /* OPTION SWITCH: C | PASCAL | TABLE | NOTABLE | REGAX | NOREGS | NOTEST
  */
 OPTFUNC( SetSwitch )
@@ -941,6 +959,7 @@ static const struct asm_option optiontab[] = {
     { "SWITCH",	      SetSwitch	     },
     { "LOOPALIGN",    SetLoopAlign   }, /* LOOPALIGN: <value> */
     { "CASEALIGN",    SetCaseAlign   }, /* CASEALIGN: <value> */
+    { "WSTRING",      SetWString     }, /* WSTRING: <ON|OFF> */
 };
 
 #define TABITEMS sizeof( optiontab) / sizeof( optiontab[0] )

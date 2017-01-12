@@ -606,7 +606,9 @@ next_item:  /* <--- continue scan if a comma has been detected */
 	    /* else it is regarded as ONE item */
 	    if( no_of_bytes != 1 ) {
 		if( string_len > no_of_bytes ) {
-		    return( asmerr( 2071 ) );
+		    /* v2.22 - unicode */
+		    if ( inside_struct || !(ModuleInfo.wstring && no_of_bytes == 2) )
+			return( asmerr( 2071 ) );
 		}
 	    }
 
@@ -621,14 +623,37 @@ next_item:  /* <--- continue scan if a comma has been detected */
 			first = FALSE; /* avoid to touch first_xxx fields below */
 		    }
 		}
+#if 0
+		else if ( ModuleInfo.wstring && no_of_bytes == 2 && string_len > 1 ) {
+		    total += ( string_len*2 - 2 );
+		    sym->isarray = TRUE; /* v2.07: added */
+		    if ( first ) {
+			sym->first_length = 2;
+			sym->first_size = 2;
+			first = FALSE; /* avoid to touch first_xxx fields below */
+		    }
+		}
+#endif
 	    }
 
 	    if( !inside_struct ) {
 		/* anything bigger than a byte must be stored in little-endian
 		 * format -- LSB first */
-		if ( string_len > 1 && no_of_bytes > 1 )
-		    pchar = little_endian( (const char *)pchar, string_len );
-		OutputDataBytes( pchar, string_len );
+		/* v2.22 - unicode */
+		if ( ModuleInfo.wstring && string_len > 1 && no_of_bytes == 2 ) {
+
+			uint_8 *p = pchar;
+			int q = string_len;
+			while ( q-- ) {
+
+				OutputBytes( p++, 1, NULL );
+				FillDataBytes( 0, 1 );
+			}
+		} else {
+		    if ( string_len > 1 && no_of_bytes > 1 )
+			pchar = little_endian( (const char *)pchar, string_len );
+		    OutputDataBytes( pchar, string_len );
+		}
 		if ( no_of_bytes > string_len )
 		    FillDataBytes( 0, no_of_bytes - string_len );
 	    }

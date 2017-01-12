@@ -58,12 +58,15 @@ _outp		proto :UINT, :UINT
 _outpw		proto :UINT, :UINT
 _outpd		proto :UINT, :ULONG
 _putch		proto :UINT
-_putwch		proto :UINT ; WCHAR_T
 _textbackground proto :UINT
 _textcolor	proto :UINT
 _ungetch	proto :UINT
 _wherex		proto
 _wherey		proto
+
+_cputws		proto :LPWSTR
+_putwch		proto :UINT ; WCHAR_T
+_getwch		proto
 
 ;;;;;;;;;;;;;;; crtl
 

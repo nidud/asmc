@@ -23,6 +23,7 @@ LPSSTR	TYPEDEF PTR str_item
 
 InsertLine PROC PRIVATE USES esi line:LPSTR
   local oldstat:input_status
+
 	PushInputStatus( addr oldstat )
 	mov	esi,ModuleInfo.GeneratedCode
 	mov	ModuleInfo.GeneratedCode,0
@@ -35,6 +36,7 @@ InsertLine PROC PRIVATE USES esi line:LPSTR
 	PopInputStatus( addr oldstat )
 	mov	eax,esi
 	ret
+
 InsertLine ENDP
 
 ParseCString PROC PRIVATE USES esi edi ebx lbuf:LPSTR, buffer:LPSTR, string:LPSTR
@@ -191,19 +193,29 @@ ParseCString PROC PRIVATE USES esi edi ebx lbuf:LPSTR, buffer:LPSTR, string:LPST
 	mov	ebx,eax
 	mov	esi,ModuleInfo.StrStack
 	xor	edi,edi
+
 	.while	esi
+
 		mov	edx,[esi].str_item.string
 		.if	strlen( edx ) >= ebx
+
 			.if	eax > ebx
+
 				add	edx,eax
 				sub	edx,ebx
 			.endif
 			.if	!strcmp( addr sbuf, edx )
+
 				sub	edx,[esi].str_item.string
 				mov	eax,[esi].str_item.index
 				.if	edx
+
+					.if	ModuleInfo.wstring
+						add	edx,edx
+					.endif
 					sprintf( lbuf, "DS%04X[%d]", eax, edx )
 				.else
+
 					sprintf( lbuf, "DS%04X", eax )
 				.endif
 				xor	eax,eax
@@ -335,8 +347,17 @@ GenerateCString PROC USES esi edi ebx i, tokenarray:PTR asm_tok
 				.endif
 
 				.if	new_str
-					sprintf( addr b_data, " %s db %s,0", addr b_label, addr buffer )
+
+					.if	ModuleInfo.wstring
+
+						sprintf( addr b_data, " %s dw %s,0", addr b_label, addr buffer )
+					.else
+
+						sprintf( addr b_data, " %s db %s,0", addr b_label, addr buffer )
+					.endif
+
 				.elseif ModuleInfo.list
+
 					and ModuleInfo.line_flags,NOT LOF_LISTED
 				.endif
 
@@ -416,7 +437,15 @@ CString PROC USES esi edi ebx buffer:LPSTR, tokenarray:PTR asm_tok
 			strcpy( buffer, "offset " )
 			strcat( buffer, addr dlabel )
 			.if	esi
-				sprintf( addr cursrc, " %s db %s,0", addr dlabel, addr string )
+
+				.if	ModuleInfo.wstring
+
+					sprintf( addr cursrc, " %s dw %s,0", addr dlabel, addr string )
+				.else
+
+					sprintf( addr cursrc, " %s db %s,0", addr dlabel, addr string )
+				.endif
+
 				InsertLine( ".data" )
 				InsertLine( addr cursrc )
 				InsertLine( ".code" )

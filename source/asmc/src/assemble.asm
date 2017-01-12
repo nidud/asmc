@@ -483,6 +483,8 @@ ModulePassInit PROC USES esi
 	.endif
 	mov	al,Options.hll_switch
 	mov	ModuleInfo.hll_switch,al
+	mov	al,Options.wstring
+	mov	ModuleInfo.wstring,al
 	mov	al,Options.c_stack_frame
 	mov	ModuleInfo.c_stack_frame,al
 	mov	al,Options.asmc_syntax

@@ -33,7 +33,7 @@ wsreadwf PROC PRIVATE USES esi edi ebx wsub:PTR S_WSUB, attrib
 			word ptr [edi].S_WFBLK.wf_name == dx || \
 			word ptr [edi].S_WFBLK.wf_name[1] == dx
 
-			wfindnext(edi, esi)
+			.break .if wfindnext(edi, esi)
 			mov edx,'.'
 		.endw
 

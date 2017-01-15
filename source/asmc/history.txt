@@ -3,7 +3,22 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.22 - xx xxx 2017
+- fixed bug in switch -D, -I and -Fi used with -I"quoted text"
 - disabled asmc-added HLL directives when switch /Xc used
+  same as:
+    option nokeyword:<.switch>
+    option nokeyword:<.case>
+    option nokeyword:<.endc>
+    option nokeyword:<.default>
+    option nokeyword:<.endsw>
+    option nokeyword:<.ifb>
+    option nokeyword:<.ifw>
+    option nokeyword:<.ifd>
+    option nokeyword:<.assert>
+    option nokeyword:<.assertb>
+    option nokeyword:<.assertw>
+    option nokeyword:<.assertd>
+  Note: OPTION ASMC:OFF do not disable these keywords
 - fixed bug in .WHILE (eax || edx) && ecx
 - fixed bug in .WHILE !(eax || edx) && ecx
 

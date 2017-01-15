@@ -393,6 +393,7 @@ unsigned char	c_stack_frame;		/* -Cs option */
 unsigned char	hll_switch;		/* -sw[c|p|a|t|nt] option */
 unsigned char	loopalign;		/* OPTION:LOOPALIGN setting */
 unsigned char	casealign;		/* OPTION:CASEALIGN setting */
+unsigned char	wstring;		/* -ws */
 };
 
 /* if the structure changes, option.c, SetMZ() might need adjustment! */
@@ -542,6 +543,7 @@ struct module_info {
     unsigned char	loopalign;		/* OPTION:LOOPALIGN setting */
     unsigned char	casealign;		/* OPTION:CASEALIGN setting */
     char *		assert_proc;		/* .assert:<handler> */
+    unsigned char	wstring;		/* -ws OPTION WSTRING:[ON|OFF] */
 };
 
 #define CurrSource	ModuleInfo.currsource

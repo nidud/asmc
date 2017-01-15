@@ -201,24 +201,40 @@ GetNumber ENDP
 ; queue a text macro, include path or "forced" include files.
 ; this is called for cmdline options -D, -I and -Fi
 
-queue_item PROC i, string
-	strlen( string )
+queue_item PROC USES esi i, string
+
+	mov	esi,string
+	.while	BYTE PTR [esi] == '"'
+
+		.if strrchr( strcpy( esi, addr [esi+1] ), '"' )
+
+			mov BYTE PTR [eax],0
+		.endif
+	.endw
+
+	strlen( esi )
 	add	eax,sizeof( qitem )
 	MemAlloc( eax )
 	mov	[eax].qitem.next,0
 	mov	edx,eax
-	strcpy( addr [edx].qitem.value, string )
+	strcpy( addr [edx].qitem.value, esi )
+
 	mov	eax,i
 	mov	ecx,Options.queues[eax*4]
 	.if	ecx
+
 		.while	[ecx].qitem.next
+
 			mov ecx,[ecx].qitem.next
 		.endw
 		mov	[ecx].qitem.next,edx
 	.else
+
 		mov	Options.queues[eax*4],edx
 	.endif
+
 	ret
+
 queue_item ENDP
 
 get_fname PROC USES esi edi ebx i, string

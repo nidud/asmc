@@ -946,6 +946,7 @@ c_stack_frame		db ?	; -Cs option
 hll_switch		db ?	; -sw[c|p|a|t|nt] option
 loopalign		db ?	; OPTION:LOOPALIGN setting
 casealign		db ?	; OPTION:CASEALIGN setting
+wstring			db ?	; -ws
 global_options		ENDS
 
 M_MODULEVARS		MACRO
@@ -1073,6 +1074,7 @@ hll_switch		db ?	; -sw[c|p|a|t|nt] option
 loopalign		db ?	; OPTION:LOOPALIGN setting
 casealign		db ?	; OPTION:CASEALIGN setting
 assert_proc		dd ?	; .assert:<proc/macro name>
+wstring			db ?	; OPTION WSTRING:[ON|OFF]
 module_info		ENDS
 
 equ_item		STRUC

@@ -4,6 +4,8 @@ Change Log File for ASMC
 
 Changes in 2.22 - xx xxx 2017
 - fixed bug in switch -D, -I and -Fi used with -I"quoted text"
+- added command line switch /ws - Create Unicode strings
+- added OPTION WSTRING:[ON|OFF] - Toggle ASCII/Unicode
 - disabled asmc-added HLL directives when switch /Xc used
   same as:
     option nokeyword:<.switch>

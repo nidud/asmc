@@ -20,12 +20,15 @@ close_files	PROTO
 
 .data
 
-cp_logo		db "Asmc Macro Assembler Version ",ASMC_VERSSTR, 10
-		db "Portions Copyright (c) 1992-2002 Sybase, Inc. All Rights Reserved.",10,10,0
-cp_usage	db "USAGE: %s [ options ] filelist",10
-		db "Use option /? for more info",10,0
+cp_logo label byte
+%	db "Asmc Macro Assembler Version ",ASMC_VERSSTR,'E-&@Date', 10
+	db "Portions Copyright (c) 1992-2002 Sybase, Inc. All Rights Reserved.",10,10,0
 
-cp_options	label BYTE
+cp_usage label byte
+	db "USAGE: %s [ options ] filelist",10
+	db "Use option /? for more info",10,0
+
+cp_options label byte
 
 db "         %s [ /options ] filelist",10
 db 10
@@ -139,10 +142,6 @@ argv0		dd cp_asmc
 argc		dd 0
 argv		dd 0
 
-ifdef GET_STRING_LENGTS
-	string_lengths dd 1024 dup(0)
-	public	string_lengths
-endif
 	.code
 
 	OPTION PROCALIGN:4
@@ -238,9 +237,12 @@ queue_item PROC USES esi i, string
 queue_item ENDP
 
 get_fname PROC USES esi edi ebx i, string
+
   local fname[_MAX_PATH]:BYTE
+
 	mov	ebx,string
 	.if	BYTE PTR [ebx] == '='
+
 		inc	ebx
 	.endif
 	strfn ( ebx )
@@ -251,19 +253,22 @@ get_fname PROC USES esi edi ebx i, string
 	; to be a directory name only.
 	;
 	.if	BYTE PTR [eax] == 0
-		.if	edi < NUM_FILE_TYPES
-			.if	BYTE PTR [ebx] != 0
-				mov	eax,DefaultDir[edi*4]
-				.if	eax
-					free( eax )
-				.endif
-				salloc( ebx )
-				mov	DefaultDir[edi*4],eax
+
+		.if edi < NUM_FILE_TYPES && BYTE PTR [ebx]
+
+			mov	eax,DefaultDir[edi*4]
+			.if	eax
+
+				free( eax )
 			.endif
+			salloc( ebx )
+			mov	DefaultDir[edi*4],eax
 		.endif
 	.else
+
 		mov	fname,0
 		.if	esi == ebx && edi < NUM_FILE_TYPES && DefaultDir[edi*4]
+
 			strcpy( addr fname, DefaultDir[edi*4] )
 		.endif
 		strcat( addr fname, ebx )
@@ -275,21 +280,26 @@ get_fname PROC USES esi edi ebx i, string
 get_fname ENDP
 
 set_option_n_name PROC idx, string
+
 	mov	edx,string
 	movzx	eax,BYTE PTR [edx]
 	.if	eax != '.'
+
 		islabel( eax )
 	.endif
 	.if	eax
+
 		mov	eax,idx
 		free  ( Options.names[eax*4] )
 		salloc( edx )
 		mov	edx,idx
 		mov	Options.names[edx*4],eax
 	.else
+
 		asmerr( 1006, esi )
 	.endif
 	ret
+
 set_option_n_name ENDP
 
 	OPTION	CSTACK:ON
@@ -303,6 +313,7 @@ ParseCmdline PROC USES esi edi ebx numargs
 
 	xor	esi,esi
 	.while	esi < NUM_FILE_TYPES
+
 		mov	eax,[edi].names[esi*4]
 		mov	[edi].names[esi*4],0
 		inc	esi
@@ -313,43 +324,350 @@ ParseCmdline PROC USES esi edi ebx numargs
 
 		mov	esi,eax
 		movzx	eax,BYTE PTR [esi]
+
 		.switch eax
+
 		  .case '/'
 		  .case '-'
 			mov	eax,[esi+1]
+			.switch al
+			  .case 'D'	; /D<name>[=text]
+				lea	eax,[esi+2]
+				.if	getfilearg()
+
+					queue_item( OPTQ_MACRO, eax )
+				.endif
+				.continue
+			  .case 'I'	; /I<name>
+				lea	eax,[esi+2]
+				.if	getfilearg()
+
+					queue_item( OPTQ_INCPATH, eax )
+				.endif
+				.continue
+			.endsw
+
+			;
+			; array for options -0..10
+			;
+			.data
+			cpuoption dd P_86, P_186, P_286, P_386
+				  dd P_486, P_586, P_686, P_686 or P_MMX
+				  dd P_686 or P_MMX or P_SSE1
+				  dd P_686 or P_MMX or P_SSE1 or P_SSE2
+				  dd P_64
+			.code
+
 			.if	!ah
+
 				movzx	eax,al
 			.elseif !( eax & 00FF0000h )
+
 				movzx	eax,ax
 			.endif
 
 			.switch eax
 
-			  .case '?'
-			  .case 'h'
-				call	write_logo
-				printf( addr cp_options, argv0 )
-				exit  ( 1 )
+			  .case 'c'	; /c
+				.endc
 
-				;
-				; array for options -0..10
-				;
-				.data
-				cpuoption dd P_86, P_186, P_286, P_386
-					  dd P_486, P_586, P_686, P_686 or P_MMX
-					  dd P_686 or P_MMX or P_SSE1
-					  dd P_686 or P_MMX or P_SSE1 or P_SSE2
-					  dd P_64
-				.code
+			  .case 'ffoc'	; /coff
+				mov	[edi].output_format,OFORMAT_COFF
+				mov	[edi].sub_format,SFORMAT_NONE
+				.endc
 
-			  .case 'p01'
+			  .case 'PE'	; /EP
+				mov	[edi].preprocessor_stdout,1
+
+			  .case 'q'	; /q
+				mov	[edi].quiet,1
+
+			  .case 'olon'	; /nologo
+				mov	banner_printed,1
+				.endc
+
+			  .case 'nib'	; /bin
+				mov	[edi].output_format,OFORMAT_BIN
+				mov	[edi].sub_format,SFORMAT_NONE
+				.endc
+
+			  .case 'pC'	; /Cp
+				mov	[edi].case_sensitive,1
+				mov	[edi].convert_uppercase,0
+				.endc
+
+			  .case 'sC'	; /Cs
+				mov	[edi].c_stack_frame,1
+				.endc
+
+			  .case 'uC'	; /Cu
+				mov	[edi].case_sensitive,0
+				mov	[edi].convert_uppercase,1
+				.endc
+
+			  .case 'xC'	; /Cx
+				mov	[edi].case_sensitive,0
+				mov	[edi].convert_uppercase,0
+				.endc
+
+			  .case 'qe'	; /eq
+				mov	[edi].no_error_disp,1
+				.endc
+
+			  .case '6fle'	; /elf64
+				mov	[edi].output_format,OFORMAT_ELF
+				mov	[edi].sub_format,SFORMAT_64BIT
+				.endc
+
+			  .case 'fle'	; /elf
+				mov	[edi].output_format,OFORMAT_ELF
+				mov	[edi].sub_format,SFORMAT_NONE
+				.endc
+
+			  .case '8iPF'	; /FPi87
+				mov	[edi].floating_point,FPO_NO_EMULATION
+				.endc
+
+			  .case 'iPF'	; /Fpi
+				mov	[edi].floating_point,FPO_EMULATION
+				.endc
+
+			  .case '0pf'	; /fp0
+				mov	[edi].cpu,P_87
+				.endc
+
+			  .case '2pf'	; /fp2
+				mov	[edi].cpu,P_287
+				.endc
+
+			  .case '3pf'	; /fp3
+				mov	[edi].cpu,P_387
+				.endc
+
+			  .case 'cpf'	; /fpc
+				mov	[edi].cpu,P_NO87
+				.endc
+
+			  .case 'cg'	; /gc
+				mov	[edi].langtype,LANG_PASCAL
+				.endc
+
+			  .case 'dg'	; /gd
+				mov	[edi].langtype,LANG_C
+				.endc
+
+			  .case 'rg'	; /gr
+				mov	[edi].langtype,LANG_FASTCALL
+				.endc
+
+			  .case 'zg'	; /gz
+				mov	[edi].langtype,LANG_STDCALL
+				.endc
+
+			  .case 'zm'	; /mz
+				mov	[edi].output_format,OFORMAT_BIN
+				mov	[edi].sub_format,SFORMAT_MZ
+				.endc
+
+			  .case 'cm'	; /mc
+				mov	[edi]._model,MODEL_COMPACT
+				.endc
+
+			  .case 'fm'	; /mf
+				mov	[edi]._model,MODEL_FLAT
+				.endc
+
+			  .case 'hm'	; /mh
+				mov	[edi]._model,MODEL_HUGE
+				.endc
+
+			  .case 'lm'	; /ml
+				mov	[edi]._model,MODEL_LARGE
+				.endc
+
+			  .case 'mm'	; /mm
+				mov	[edi]._model,MODEL_MEDIUM
+				.endc
+
+			  .case 'sm'	; /ms
+				mov	[edi]._model,MODEL_SMALL
+				.endc
+
+			  .case 'tm'	; /mt
+				mov	[edi]._model,MODEL_TINY
+				.endc
+
+			  .case 'fmo'	; /omf
+				mov	[edi].output_format,OFORMAT_OMF
+				mov	[edi].sub_format,SFORMAT_NONE
+				.endc
+
+			  .case 'ep'	; /pe
+				mov	[edi].output_format,OFORMAT_BIN
+				mov	[edi].sub_format,SFORMAT_PE
+				.endc
+
+			  .case 'r'	; /r
+				mov	[edi].process_subdir,1
+				.endc
+
+			  .case 'aS'	; /Sa
+				.endc
+
+			  .case 'fS'	; /Sf
+				mov	[edi].first_pass_listing,1
+				.endc
+
+			  .case 'gS'	; /Sg
+				mov	[edi].list_generated_code,1
+				.endc
+
+			  .case 'nS'	; /Sn
+				mov	[edi].no_symbol_listing,1
+				.endc
+
+			  .case 'xS'	; /Sx
+				mov	[edi].listif,1
+				.endc
+
+			  .case 'pws'	; /swp
+				or	[edi].hll_switch,SWITCH_PASCAL
+				.endc
+
+			  .case 'cws'	; /swc
+				and	[edi].hll_switch,NOT SWITCH_PASCAL
+				.endc
+
+			  .case 'rws'	; /swr
+				or	[edi].hll_switch,SWITCH_REGAX
+				.endc
+
+			  .case 'nws'	; /swn
+				and	[edi].hll_switch,NOT SWITCH_TABLE
+				.endc
+
+			  .case 'tws'	; /swt
+				or	[edi].hll_switch,SWITCH_TABLE
+				.endc
+
+			  .case 'efas'	; /safeseh
+				mov	[edi].safeseh,1
+				.endc
+
+			  .case 'w'	; /w
+				mov	[edi].warning_level,0
+				.endc
+
+			  .case 'sw'	; /ws
+				mov	[edi].wstring,1
+				.endc
+
+			  .case 'XW'	; /WX
+				mov	[edi].warning_error,1
+				.endc
+
+			  .case '6niw'	; /win64
+				mov	[edi].output_format,OFORMAT_COFF
+				mov	[edi].sub_format,SFORMAT_64BIT
+				.endc
+
+			  .case 'X'	; /X
+				mov	[edi].ignore_include,1
+				.endc
+
+			  .case 'cX'	; /Xc
+				mov	[edi].asmc_syntax,0
+				.endc
+
+			  .case 'mcz'	; /zcm
+				mov	[edi].no_cdecl_decoration,0
+				.endc
+
+			  .case 'wcz'	; /zcw
+				mov	[edi].no_cdecl_decoration,1
+				.endc
+
+			  .case 'fZ'	; /Zf
+				mov	[edi].all_symbols_public,1
+				.endc
+
+			  .case '0fz'	; /zf0
+				mov	[edi].fctype,0
+				.endc
+
+			  .case '1fz'	; /zf1
+				mov	[edi].fctype,1
+				.endc
+
+			  .case 'gZ'	; /Zg
+				mov	[edi].masm_compat_gencode,1
+				.endc
+
+			  .case 'dZ'	; /Zd
+				mov	[edi].line_numbers,1
+				.endc
+
+			  .case 'clz'	; /zlc
+				mov	[edi].no_comment_in_code_rec,1
+				.endc
+
+			  .case 'dlz'	; /zld
+				mov	[edi].no_opt_farcall,1
+				.endc
+
+			  .case 'flz'	; /zlf
+				mov	[edi].no_file_entry,1
+				.endc
+
+			  .case 'piz'	; /zip
+				mov	[edi].no_static_procs,1
+				.endc
+
+			  .case 'slz'	; /zls
+				mov [edi].no_section_aux_entry,1
+				.endc
+
+			  .case 'mZ'	; /Zm
+				mov	 [edi].masm51_compat,1
+			  .case 'enZ'	; /Zne
+				mov	[edi].strict_masm_compat,1
+				mov	[edi].asmc_syntax,0
+				.endc
+
+			  .case 'sZ'	; /Zs
+				mov	[edi].syntax_check_only,1
+				.endc
+
+			  .case '0tz'	; /zt0
+				mov	[edi].stdcall_decoration,0
+				.endc
+			  .case '1tz'	; /zt1
+				mov	[edi].stdcall_decoration,1
+				.endc
+			  .case '2tz'	; /zt2
+				mov	[edi].stdcall_decoration,2
+				.endc
+
+			  .case '8vZ'	; /Zv8
+				mov	[edi].masm8_proc_visibility,1
+				.endc
+
+			  .case 'ezz'	; /zze
+				mov	[edi].no_export_decoration,1
+				.endc
+
+			  .case 'szz'	; /zzs
+				mov	[edi].entry_decorated,1
+				.endc
+
+			  .case 'p01'		; /10p
 				mov	ah,'0'+'p'
-			  .case '01'
+			  .case '01'		; /10
 				sub	ah,'0'
 				mov	al,'9'+1
 
-			  .case 'p0' .. 'p9'
-			  .case	 '0' ..	 '9'
+			  .case 'p0' .. 'p9'	; /0p../9p
+			  .case	 '0' ..	 '9'	; /0../9
 
 				sub	al,'0'
 				movzx	ecx,al
@@ -358,180 +676,108 @@ ParseCmdline PROC USES esi edi ebx numargs
 				and	[edi].cpu,NOT ( P_CPU_MASK or P_EXT_MASK or P_PM )
 				or	[edi].cpu,ecx
 				.if	ah == 'p' && [edi].cpu >= P_286
+
 					or [edi].cpu,P_PM
 				.endif
 				.endc
 
-			  .case 'nib':	mov [edi].output_format,OFORMAT_BIN
-					mov [edi].sub_format,SFORMAT_NONE
-			  .case 'c':	.endc
-			  .case 'ffoc': mov [edi].output_format,OFORMAT_COFF
-					mov [edi].sub_format,SFORMAT_NONE
-					.endc
-			  .case 'pC':	mov [edi].case_sensitive,1
-					mov [edi].convert_uppercase,0
-					.endc
-			  .case 'sC':	mov [edi].c_stack_frame,1
-					.endc
-			  .case 'uC':	mov [edi].case_sensitive,0
-					mov [edi].convert_uppercase,1
-					.endc
-			  .case 'xC':	mov [edi].case_sensitive,0
-					mov [edi].convert_uppercase,0
-					.endc
-			  .case 'qe':	mov [edi].no_error_disp,1
-					.endc
-			  .case '6fle': mov [edi].output_format,OFORMAT_ELF
-					mov [edi].sub_format,SFORMAT_64BIT
-					.endc
-			  .case 'fle':	mov [edi].output_format,OFORMAT_ELF
-					mov [edi].sub_format,SFORMAT_NONE
-					.endc
-			  .case '8iPF': mov [edi].floating_point,FPO_NO_EMULATION
-					.endc
-			  .case 'iPF':	mov [edi].floating_point,FPO_EMULATION
-					.endc
-
-			  .case '0pf':	mov [edi].cpu,P_87		: .endc
-			  .case '2pf':	mov [edi].cpu,P_287		: .endc
-			  .case '3pf':	mov [edi].cpu,P_387		: .endc
-			  .case 'cpf':	mov [edi].cpu,P_NO87		: .endc
-			  .case 'cg':	mov [edi].langtype,LANG_PASCAL	: .endc
-			  .case 'dg':	mov [edi].langtype,LANG_C	: .endc
-			  .case 'rg':	mov [edi].langtype,LANG_FASTCALL: .endc
-			  .case 'zg':	mov [edi].langtype,LANG_STDCALL : .endc
-
-			  .case 'zm':	mov [edi].output_format,OFORMAT_BIN
-					mov [edi].sub_format,SFORMAT_MZ
-					.endc
-			  .case 'cm':	mov [edi]._model,MODEL_COMPACT	: .endc
-			  .case 'fm':	mov [edi]._model,MODEL_FLAT	: .endc
-			  .case 'hm':	mov [edi]._model,MODEL_HUGE	: .endc
-			  .case 'lm':	mov [edi]._model,MODEL_LARGE	: .endc
-			  .case 'mm':	mov [edi]._model,MODEL_MEDIUM	: .endc
-			  .case 'sm':	mov [edi]._model,MODEL_SMALL	: .endc
-			  .case 'tm':	mov [edi]._model,MODEL_TINY	: .endc
-			  .case 'PE':	mov [edi].preprocessor_stdout,1
-			  .case 'q':	mov [edi].quiet,1
-			  .case 'olon': mov banner_printed,1		: .endc
-			  .case 'fmo':	mov [edi].output_format,OFORMAT_OMF
-					mov [edi].sub_format,SFORMAT_NONE
-					.endc
-			  .case 'ep':	mov [edi].output_format,OFORMAT_BIN
-					mov [edi].sub_format,SFORMAT_PE
-					.endc
-			  .case 'r':	mov [edi].process_subdir,1	: .endc
-			  .case 'aS':	.endc
-			  .case 'fS':	mov [edi].first_pass_listing,1	: .endc
-			  .case 'gS':	mov [edi].list_generated_code,1 : .endc
-			  .case 'nS':	mov [edi].no_symbol_listing,1	: .endc
-			  .case 'xS':	mov [edi].listif,1		: .endc
-			  .case 'pws':	or  [edi].hll_switch,SWITCH_PASCAL	: .endc
-			  .case 'cws':	and [edi].hll_switch,NOT SWITCH_PASCAL	: .endc
-			  .case 'rws':	or  [edi].hll_switch,SWITCH_REGAX	: .endc
-			  .case 'nws':	and [edi].hll_switch,NOT SWITCH_TABLE	: .endc
-			  .case 'tws':	or  [edi].hll_switch,SWITCH_TABLE	: .endc
-			  .case 'efas': mov [edi].safeseh,1			: .endc
-			  .case 'w':	mov [edi].warning_level,0		: .endc
-			  .case 'sw':	mov [edi].wstring,1			: .endc
-			  .case 'XW':	mov [edi].warning_error,1		: .endc
-			  .case '6niw': mov [edi].output_format,OFORMAT_COFF
-					mov [edi].sub_format,SFORMAT_64BIT
-					.endc
-			  .case 'X':	mov [edi].ignore_include,1		: .endc
-			  .case 'cX':	mov [edi].asmc_syntax,0			: .endc
-			  .case 'mcz':	mov [edi].no_cdecl_decoration,0		: .endc
-			  .case 'wcz':	mov [edi].no_cdecl_decoration,1		: .endc
-			  .case 'fZ':	mov [edi].all_symbols_public,1		: .endc
-			  .case '0fz':	mov [edi].fctype,0			: .endc
-			  .case '1fz':	mov [edi].fctype,1			: .endc
-			  .case 'gZ':	mov [edi].masm_compat_gencode,1		: .endc
-			  .case 'dZ':	mov [edi].line_numbers,1		: .endc
-			  .case 'clz':	mov [edi].no_comment_in_code_rec,1	: .endc
-			  .case 'dlz':	mov [edi].no_opt_farcall,1		: .endc
-			  .case 'flz':	mov [edi].no_file_entry,1		: .endc
-			  .case 'piz':	mov [edi].no_static_procs,1		: .endc
-			  .case 'slz':	mov [edi].no_section_aux_entry,1	: .endc
-			  .case 'mZ':	mov [edi].masm51_compat,1
-			  .case 'enZ':	mov [edi].strict_masm_compat,1
-					mov [edi].asmc_syntax,0
-					.endc
-			  .case 'sZ':	mov [edi].syntax_check_only,1		: .endc
-			  .case '0tz':	mov [edi].stdcall_decoration,0		: .endc
-			  .case '1tz':	mov [edi].stdcall_decoration,1		: .endc
-			  .case '2tz':	mov [edi].stdcall_decoration,2		: .endc
-			  .case '8vZ':	mov [edi].masm8_proc_visibility,1	: .endc
-			  .case 'ezz':	mov [edi].no_export_decoration,1	: .endc
-			  .case 'szz':	mov [edi].entry_decorated,1		: .endc
 			  .default
+
 				movzx	ecx,ah
 				movzx	eax,al
+
 				.switch eax
-				  .case 'D'
-					lea	eax,[esi+2]
-					.if	getfilearg()
-						queue_item( OPTQ_MACRO, eax )
-					.endif
-					.endc
+					;
+					; /e<number>
+					;
 				  .case 'e'
 					call	GetNumber
 					mov	[edi].error_limit,eax
 					.endc
+					;
+					; /F
+					;
 				  .case 'F'
+
 					lea	eax,[esi+3]
+
 					.switch ecx
-					  .case 'd'
+
+					  .case 'd'	; /Fd
 						mov	[edi].write_impdef,1
 						get_fname( OPTN_LNKDEF_FN, eax )
 						.endc
-					  .case 'i'
+
+					  .case 'i'	; /Fi
 						.if	getfilearg()
+
 							queue_item( OPTQ_FINCLUDE, eax )
 						.endif
 						.endc
-					  .case 'l'
+
+					  .case 'l'	; /Fl
 						mov	[edi].write_listing,1
 						get_fname( OPTN_LST_FN, eax )
 						.endc
-					  .case 'o'
+
+					  .case 'o'	; /Fo
 						.if	getfilearg()
+
 							get_fname( OPTN_OBJ_FN, eax )
 						.endif
 						.endc
 					.endsw
 					.endc
-				  .case 'I'
-					lea	eax,[esi+2]
-					.if	getfilearg()
-						queue_item( OPTQ_INCPATH, eax )
-					.endif
-					.endc
+					;
+					; /n
+					;
 				  .case 'n'
 					lea	eax,[esi+3]
 					.switch ecx
-					  .case 'c': set_option_n_name( OPTN_CODE_CLASS,  eax ) : .endc
-					  .case 'd': set_option_n_name( OPTN_DATA_SEG,	  eax ) : .endc
-					  .case 'm': set_option_n_name( OPTN_MODULE_NAME, eax ) : .endc
-					  .case 't': set_option_n_name( OPTN_TEXT_SEG,	  eax ) : .endc
+					  .case 'c'	; /nc<name>
+						set_option_n_name( OPTN_CODE_CLASS, eax )
+						.endc
+					  .case 'd'	; /nd<name>
+						set_option_n_name( OPTN_DATA_SEG, eax )
+						.endc
+					  .case 'm'	; /nm<name>
+						set_option_n_name( OPTN_MODULE_NAME, eax )
+						.endc
+					  .case 't'	; /nt<name>
+						set_option_n_name( OPTN_TEXT_SEG, eax )
+						.endc
 					.endsw
 					.endc
+					;
+					; /W<number>
+					;
 				  .case 'W'
 					movzx	eax,BYTE PTR [esi+2]
 					.if	eax < '0'
+
 						asmerr( 8000, esi )
 					.elseif eax > '3'
+
 						asmerr( 4008, esi )
 					.else
+
 						sub	eax,'0'
 						mov	[edi].warning_level,al
 					.endif
 					.endc
+					;
+					; /Z
+					;
 				  .case 'Z'
 					.if	ecx == 'p'
+						;
+						; /Zp[n]
+						;
 						call	GetNumber
 						jz	error
 						xor	ecx,ecx
 						mov	edx,eax
+
 						.repeat
 							mov	eax,1
 							shl	eax,cl
@@ -539,12 +785,16 @@ ParseCmdline PROC USES esi edi ebx numargs
 							cmp	eax,MAX_STRUCT_ALIGN
 							ja	error
 						.until	eax == edx
+
 						dec	ecx
 						mov	[edi].fieldalign,cl
 						.endc
 					.endif
 
 					.if	ecx == 'i'
+						;
+						; /Zi[0|1|2|3]
+						;
 						mov	[edi].debug_symbols,1;CV_SIGNATURE
 						mov	[edi].debug_ext,CVEX_NORMAL
 						call	GetNumber
@@ -554,6 +804,9 @@ ParseCmdline PROC USES esi edi ebx numargs
 							mov	[edi].debug_ext,al
 						.endif
 					.endif
+					;
+					; [/Zd]
+					;
 					mov	[edi].line_numbers,1
 					.endc
 
@@ -561,13 +814,15 @@ ParseCmdline PROC USES esi edi ebx numargs
 					jmp	error
 				.endsw
 			.endsw
+
 			mov	eax,numargs
 			inc	DWORD PTR [eax]
 			.endc
+			;
+			; @<file>
+			;
 		  .case '@'
-			lea	ecx,[esi+1]
-			osopen( ecx, _A_NORMAL, M_RDONLY, A_OPEN )
-			mov	handle,eax
+			mov	handle,osopen( addr [esi+1], _A_NORMAL, M_RDONLY, A_OPEN )
 			cmp	eax,-1
 			je	error
 			_filelength( eax )
@@ -586,12 +841,13 @@ ParseCmdline PROC USES esi edi ebx numargs
 			add	eax,ebx
 			mov	argv,eax
 			.endc
+
 		  .default
 			mov	eax,numargs
 			inc	DWORD PTR [eax]
 			salloc( esi )
 			mov	Options.names[ASM*4],eax
-			jmp	toend
+			.break
 		.endsw
 	.endw
 
@@ -604,9 +860,12 @@ error:
 ParseCmdline ENDP
 
 CmdlineFini PROC USES esi edi ebx
+
 	xor	esi,esi
 	xor	ebx,ebx
+
 	.while	esi < NUM_FILE_TYPES
+
 		mov	eax,DefaultDir[esi*4]
 		mov	DefaultDir[esi*4],ebx
 		free  ( eax )
@@ -614,10 +873,13 @@ CmdlineFini PROC USES esi edi ebx
 		mov	Options.names[esi*4],ebx
 		inc	esi
 	.endw
+
 	xor	esi,esi
 	.while	esi < OPTQ_LAST
+
 		mov	edi,Options.queues[esi*4]
 		.while	edi
+
 			mov	eax,[edi].qitem.next
 			free  ( edi )
 			mov	edi,eax
@@ -626,6 +888,7 @@ CmdlineFini PROC USES esi edi ebx
 		inc	esi
 	.endw
 	ret
+
 CmdlineFini ENDP
 
 AssembleSubdir PROC USES esi edi ebx directory, wild
@@ -652,13 +915,17 @@ AssembleSubdir PROC USES esi edi ebx directory, wild
 	.endif
 
 	.if	Options.process_subdir
+
 		.if	FindFirstFile( strfcat( esi, directory, "*.*" ), edi ) != -1
+
 			mov	h,eax
 			.repeat
 				mov	eax,[ebx]
 				and	eax,00FFFFFFh
 				.if	ff.dwFileAttributes & _A_SUBDIR && ax != '.' && eax != '..'
+
 					.if	AssembleSubdir( strfcat( esi, directory, ebx ), wild )
+
 						mov	rc,eax
 					.endif
 				.endif
@@ -669,11 +936,14 @@ AssembleSubdir PROC USES esi edi ebx directory, wild
 	.endif
 	mov	eax,rc
 	ret
+
 AssembleSubdir ENDP
 
 GeneralFailure PROC signo
+
 	mov	eax,signo
 	.if	eax != SIGTERM
+
 		mov	eax,pCurrentException
 		PrintContext(
 			[eax].EXCEPTION_POINTERS.ContextRecord,
@@ -683,6 +953,7 @@ GeneralFailure PROC signo
 	close_files()
 	exit( 1 )
 	ret
+
 GeneralFailure ENDP
 
 main PROC C USES esi edi ebx
@@ -691,9 +962,6 @@ main PROC C USES esi edi ebx
 
 ifndef	DEBUG
 	mov	ebx,GeneralFailure
-	;
-	; TODO: math
-	;
 ;	signal( SIGINT,	  ebx ) ; interrupt
 	signal( SIGILL,	  ebx ) ; illegal instruction - invalid function image
 	signal( SIGFPE,	  ebx ) ; floating point exception
@@ -720,15 +988,18 @@ endif
 	or	ecx,20202020h
 
 	.if	eax == 'e.lm'
+
 		mov	argv0,offset cp_ml
 		mov	Options.strict_masm_compat,1
 		mov	Options.asmc_syntax,0
 	.elseif eax == 'sawj' && ecx == 'xe.m'
+
 		mov	argv0,offset cp_jwasm
 		mov	Options.asmc_syntax,0
 	.endif
 
 	.if	getenv( argv0 ) ; v2.21 -- getenv() error..
+
 		__setargv( addr argc, argv, eax )
 	.endif
 
@@ -768,31 +1039,6 @@ endif
 	.elseif !numFiles
 		asmerr( 1017 )
 	.endif
-ifdef GET_STRING_LENGTS
-	mov	ecx,1023
-	xor	ebx,ebx ; total length
-	xor	esi,esi ; total used
-	xor	edi,edi ; max used len
-	xor	edx,edx ; max used count
-	.repeat
-		mov	eax,string_lengths[ecx*4]
-		add	esi,eax
-		push	edx
-		mul	ecx
-		pop	edx
-		add	ebx,eax
-		.if	eax > edx
-			mov	edx,eax
-			mov	edi,ecx
-		.endif
-		dec	ecx
-	.until	ecx == -1
-	mov	ecx,edx
-	mov	eax,ebx
-	xor	edx,edx
-	div	esi
-	_print( "Avarage string lengths: %d, total calls %d, length: %d, count: %d\n", eax, esi, edi, ecx )
-endif
 	mov	eax,1
 	sub	eax,rc
 	ret

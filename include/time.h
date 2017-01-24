@@ -31,6 +31,26 @@ _CRTIMP clock_t _CType clock(void);
 
 #define time	_time
 
+typedef struct {
+	DWORD	dwLowDateTime;
+	DWORD	dwHighDateTime;
+      } FILETIME;
+
+typedef struct {
+	WORD	wYear;
+	WORD	wMonth;
+	WORD	wDayOfWeek;
+	WORD	wDay;
+	WORD	wHour;
+	WORD	wMinute;
+	WORD	wSecond;
+	WORD	wMilliseconds;
+      } SYSTEMTIME;
+
+void	_CType Sleep(int __dwMilliseconds);
+DWORD	_CType GetTickCount(void);
+void	_CType GetLocalTime(SYSTEMTIME *);
+
 #ifdef __cplusplus
  }
 #endif

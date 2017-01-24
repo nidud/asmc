@@ -37,6 +37,8 @@ _CRTIMP void *	_CType calloc(size_t, size_t);
 _CRTIMP void	_CType free(void *);
 _CRTIMP int	_CType system(const char *);
 
+long	_CType xtol(const char *);
+
 #ifdef __cplusplus
  }
 #endif

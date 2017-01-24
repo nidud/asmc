@@ -6,7 +6,7 @@ include stdlib.inc
 include io.inc
 include errno.inc
 include direct.inc
-include ini.inc
+include cfini.inc
 include wsub.inc
 include process.inc
 
@@ -89,10 +89,12 @@ ParseLine PROC USES ecx edi esi ebx
 				strnzcpy( addr [ebx].m_file, edi, _MAX_PATH-1 )
 
 				.if	BYTE PTR [eax+1] != ':'
+
 					GetFullPathName( eax, _MAX_PATH, eax, 0 )
 				.endif
 
 				.if	strchr( esi, ':' )
+
 					inc	eax
 					mov	esi,eax
 				.endif
@@ -109,9 +111,7 @@ ParseLine ENDP
 
 ParseOutput PROC USES esi edi ebx
 
-	local	pBuffer,
-		bSize,
-		FName[_MAX_PATH]:BYTE
+local	pBuffer, bSize, FName[_MAX_PATH]:BYTE
 
 	call	clear_error
 
@@ -119,49 +119,48 @@ ParseOutput PROC USES esi edi ebx
 	mov	eax,[edx].S_TINFO.ti_file
 	lea	edi,FName
 
-	.if	filexist( setfext( strcpy( edi, strfn( eax ) ), ".err" ) ) == 1
+	.if	osopen( setfext( strcpy( edi, strfn( eax ) ), ".err" ), 0, M_RDONLY, A_OPEN ) != -1
 
-		.if	osopen( edi, 0, M_RDONLY, A_OPEN ) != -1
+		mov	esi,eax
+		inc	_filelength(esi)
+		mov	bSize,eax
 
-			mov	esi,eax
-			_filelength( esi )
-			inc	eax
-			mov	bSize,eax
-			.if	malloc( eax )
+		.if	malloc( eax )
 
-				mov	pBuffer,eax
-				mov	edi,eax
-				mov	ebx,bSize
-				dec	ebx
-				osread( esi, eax, ebx )
-				mov	BYTE PTR [edi+ebx],0
-				_close( esi )
+			mov	pBuffer,eax
+			mov	edi,eax
+			mov	ebx,bSize
+			dec	ebx
+			osread( esi, eax, ebx )
+			mov	BYTE PTR [edi+ebx],0
+			_close( esi )
 
-				.if	malloc( MAXERROR*SIZE ERFILE )
+			.if	malloc( MAXERROR*SIZE ERFILE )
 
-					mov	err_file,eax
-					memset( eax, 0, MAXERROR*SIZE ERFILE )
-					mov	esi,edi
-					mov	ecx,bSize
+				mov	err_file,eax
+				memset( eax, 0, MAXERROR*SIZE ERFILE )
+				mov	esi,edi
+				mov	ecx,bSize
 
-					.while	error_count < MAXERROR-1
-						mov	al,10
-						repne	scasb
-						.break .if !ecx
-						mov	BYTE PTR [edi-2],0
-						call	ParseLine
-						mov	esi,edi
-					.endw
+				.while	error_count < MAXERROR-1
+
+					mov	al,10
+					repne	scasb
+					.break .if !ecx
+					mov	BYTE PTR [edi-2],0
 					call	ParseLine
-				.endif
-				free  ( pBuffer )
-			.else
-				_close( esi )
+					mov	esi,edi
+				.endw
+				call	ParseLine
 			.endif
+			free  ( pBuffer )
+		.else
+			_close( esi )
 		.endif
 	.endif
 	mov	eax,error_count
 	ret
+
 ParseOutput ENDP
 
 GetMessageId PROC id
@@ -220,6 +219,7 @@ LoadMessageFile PROC USES esi edi ebx M
 
 	mov	eax,[edi].ERFILE.m_line
 	.if	eax
+
 		dec	eax
 	.endif
 
@@ -227,19 +227,15 @@ LoadMessageFile PROC USES esi edi ebx M
 	tiputs	( esi )
 
 	lea	eax,[edi].ERFILE.m_info
-	mov	ebx,[esi].S_TINFO.ti_yoff
+	mov	ebx,[esi].S_TINFO.ti_ypos
+	add	ebx,[esi].S_TINFO.ti_yoff
 	inc	ebx
-
-	.if	[esi].S_TINFO.ti_flag & _T_USEMENUS
-
-		inc	ebx
-	.endif
-
 	.if	ebx > [esi].S_TINFO.ti_rows
+
 		sub	ebx,2
 	.endif
 
-	scputs( 0, ebx, 4Fh, [esi].S_TINFO.ti_cols, eax )
+	scputs( [esi].S_TINFO.ti_xpos, ebx, 4Fh, [esi].S_TINFO.ti_cols, eax )
 	xor	eax,eax
 	mov	[esi].S_TINFO.ti_scrc,eax
 	inc	eax
@@ -264,12 +260,13 @@ cmspawnini PROC USES ebx IniSection
 			tiflush( ebx )
 		.endif
 
-		.if	inicommand( __srcfile, [ebx].S_TINFO.ti_file, IniSection )
+		.if	CFExpandCmd( __srcfile, [ebx].S_TINFO.ti_file, IniSection )
 
 			mov	ebx,eax
 			dlshow( addr screen )
 
 			.if	!CreateConsole( ebx, _P_WAIT )
+
 				mov	eax,errno
 				mov	eax,sys_errlist[eax*4]
 				ermsg( 0, "Unable to execute command:\n\n%s\n\n'%s'", __srcfile, eax )
@@ -311,9 +308,12 @@ tipreviouserror PROC
 		.if	GetMessageId( error_id )
 
 			LoadMessageFile( eax )
+
 			.if	error_id
+
 				dec	error_id
 			.else
+
 				mov	eax,error_count
 				dec	eax
 				mov	error_id,eax
@@ -332,9 +332,11 @@ tinexterror PROC
 		.if	GetMessageId( error_id )
 
 			LoadMessageFile( eax )
+
 			mov	eax,error_id
 			inc	eax
 			.if	eax >= error_count
+
 				xor	eax,eax
 			.endif
 			mov	error_id,eax
@@ -409,6 +411,7 @@ titransfer PROC USES esi edi ebx
 		mov	BYTE PTR [eax],0
 		inc	eax
 		.if	BYTE PTR [eax]
+
 			strcpy( ebx, eax )
 		.endif
 	.endif
@@ -419,33 +422,46 @@ titransfer PROC USES esi edi ebx
 		lea	eax,[esi+'0']
 		mov	cp_AltX,al
 
-		.if	inientry( addr cp_AltFX, ebx )
-			mov	edx,eax
-			strlen( eax )
-			add	eax,12
-			alloca( eax )
-			stosd
-			sprintf( eax, "[%s]   %s", addr cp_AltFX, edx )
-			inc	ll.ll_count
+		.if	CFGetSection( addr cp_AltFX )
+
+			.if	CFGetEntry( eax, ebx )
+
+				mov	edx,eax
+				strlen( eax )
+				add	eax,12
+				alloca( eax )
+				stosd
+				sprintf( eax, "[%s]   %s", addr cp_AltFX, edx )
+				inc	ll.ll_count
+			.endif
 		.endif
+
 		inc	esi
 		.if	esi == 7
+
 			mov	esi,9
 		.endif
 	.endw
 
 	mov	esi,1
 	.while	esi < 10
+
 		lea	eax,[esi+'0']
 		mov	cp_ShiftX,al
-		.if	inientry( addr cp_ShiftFX, ebx )
-			mov	edx,eax
-			strlen( eax )
-			add	eax,12
-			alloca( eax )
-			stosd
-			sprintf( eax, "[%s] %s", addr cp_ShiftFX, edx )
-			inc	ll.ll_count
+
+		.if	CFGetSection( addr cp_ShiftX )
+
+			.if	CFGetEntry( eax, ebx )
+
+				mov	[edi],eax
+				strlen( eax )
+				add	eax,12
+				alloca( eax )
+				mov	edx,[edi]
+				stosd
+				sprintf( eax, "[%s] %s", addr cp_ShiftFX, edx )
+				inc	ll.ll_count
+			.endif
 		.endif
 		inc	esi
 	.endw
@@ -480,6 +496,7 @@ titransfer PROC USES esi edi ebx
 			inc	eax
 			mov	BYTE PTR [eax+7],0
 			.if	BYTE PTR [eax+5] == ']'
+
 				mov BYTE PTR [eax+5],0
 			.endif
 			call	tiexecuteini

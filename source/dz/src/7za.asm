@@ -6,7 +6,7 @@
 
 include doszip.inc
 
-include ini.inc
+include cfini.inc
 include errno.inc
 include alloc.inc
 include io.inc
@@ -674,7 +674,7 @@ toend:
 	ret
 find:
 	lea	edi,config_label[ecx*8]
-	.if	!inientryid( "7ZA", ecx )
+	.if	!CFGetSectionID( "7ZA", ecx )
 		mov	eax,[edi]
 	.endif
 	mov	edi,[edi+4]

@@ -4,7 +4,7 @@
 include doszip.inc
 include string.inc
 include stdlib.inc
-include ini.inc
+include cfini.inc
 
 	.code
 
@@ -15,7 +15,7 @@ cmpath PROC PRIVATE ini_id
 
 	.switch
 	  .case !panel_state()
-	  .case !inientryid( addr cp_directory, ini_id )
+	  .case !CFGetSectionID( addr cp_directory, ini_id )
 	  .case WORD PTR [eax] == '><'
 	  .case !strchr( eax, ',' )
 		.endc

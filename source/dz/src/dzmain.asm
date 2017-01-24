@@ -10,16 +10,15 @@ include io.inc
 include iost.inc
 include progress.inc
 include process.inc
-include ini.inc
-;include math.inc
+include cfini.inc
 
 config_create	PROTO
 MakeDirectory	PROTO :DWORD
 
 	.data
 
-	panel_A dd 0
-	panel_B dd 0
+	panel_A		dd 0
+	panel_B		dd 0
 
 	.code
 
@@ -50,12 +49,16 @@ test_path PROC
 	mov	cx,[esi]	; path in EDI used if fail
 	.if	cl
 		.if	cx == '\\'
+
 			inc	eax
 		.elseif ch == ':'
+
 			movzx	eax,cl
 			or	al,' '
 			sub	al,'a' - 1
+
 			.if	_disk_exist( eax )
+
 				.if	filexist( esi ) == 2
 					;
 					; disk and path exist
@@ -63,19 +66,23 @@ test_path PROC
 					; if exist, remove trailing slash from path
 					;
 					.if	strrchr( esi, '\' )
+
 						mov	ecx,'\'
 						.if	[eax] == cx && BYTE PTR [eax-1] != ':'
+
 							mov	[eax],ch
 						.endif
 					.endif
 					mov	eax,1
 				.else
+
 					xor	eax,eax
 				.endif
 			.endif
 		.endif
 	.endif
 	.if	!eax
+
 		strcpy( esi,edi )
 		xor	eax,eax
 	.endif
@@ -115,66 +122,93 @@ doszip_init PROC USES esi edi ebx argv
 		config_create()
 		and	cflag,not _C_DELHISTORY
 	.endif
-	iniopen( __srcfile )
+
+	CFRead( __srcfile )
 
 	;
 	; Read section [Environ]
 	;
 	xor	edi,edi
 	mov	esi,__srcfile
-	.while	inientryid( "Environ", edi )
-		strcpy( esi, eax )
-		inc	edi
-		expenviron( esi )
-		strchr( esi, '=' )
-		.break .if ZERO?
-		mov	BYTE PTR [eax],0
-		inc	eax
+	.if	CFGetSection( "Environ" )
+
 		mov	ebx,eax
-		strtrim( esi )
-		SetEnvironmentVariable( esi, strstart( ebx ) )
-	.endw
+
+		.while	CFGetEntryID( ebx, edi )
+
+			strcpy( esi, eax )
+			inc	edi
+			expenviron( esi )
+			.break .if !strchr( esi, '=' )
+			mov	BYTE PTR [eax],0
+			inc	eax
+			push	eax
+			strtrim( esi )
+			call	strstart
+			SetEnvironmentVariable( esi, eax )
+		.endw
+	.endif
 
 	;
 	; Read section [Path]
 	;
 	xor	edi,edi
 	mov	[esi],edi
-	.while	inientryid( "Path", edi )
-		mov	edx,eax
-		strcat( strcat( esi, ";" ), edx )
-		inc	edi
-	.endw
-	.if	[esi] != al
-		inc	esi
-		expenviron( esi )
-		SetEnvironmentVariable( "PATH", esi )
+
+	.if	CFGetSection( "Path" )
+
+		mov	ebx,eax
+
+		.while	CFGetEntryID( ebx, edi )
+
+			mov	edx,eax
+			strcat( strcat( esi, ";" ), edx )
+			inc	edi
+		.endw
+
+		.if	[esi] != al
+
+			inc	esi
+			expenviron( esi )
+			SetEnvironmentVariable( "PATH", esi )
+		.endif
 	.endif
 
 	call	config_read
 	call	setasymbol
+
 	mov	eax,console
 	and	eax,CON_NTCMD
-	getcomspec( eax )
+	CFGetComspec( eax )
+
 	and	config.c_apath.ws_flag,not _W_ARCHEXT
 	and	config.c_bpath.ws_flag,not _W_ARCHEXT
 	;
 	; argv is .ZIP file or directory
 	;
 	mov	ebx,argv
+
 	.if	ebx
+
 		.if	filexist( ebx ) == 1
+
 			strfn ( ebx )
 			lea	edi,[eax-S_FBLK.fb_name]
 			readword( ebx )
+
 			.if	ax == 4B50h
+
 				mov	eax,_W_ARCHZIP
 			.elseif warctest( edi, eax ) == 1
+
 				mov	eax,_W_ARCHEXT
 			.else
+
 				xor	eax,eax
 			.endif
+
 			.if	eax
+
 				and	config.c_apath.ws_flag,not (_W_ARCHIVE or _W_ROOTDIR)
 				and	config.c_bpath.ws_flag,not (_W_ARCHIVE or _W_ROOTDIR)
 				or	eax,_W_VISIBLE
@@ -183,13 +217,16 @@ doszip_init PROC USES esi edi ebx argv
 				mov	BYTE PTR [eax],0
 				add	edi,S_FBLK.fb_name
 				strcpy( config.c_apath.ws_file, edi )
+
 				.if	edi != ebx
+
 					mov	BYTE PTR [edi-1],0
 					jmp	chdir_arg
 				.endif
 				and	cflag,not _C_PANELID
 				_getcwd( config.c_apath.ws_path, WMAXPATH )
 			.endif
+
 		.elseif eax
 		 chdir_arg:
 
@@ -211,7 +248,10 @@ doszip_init PROC USES esi edi ebx argv
 	;
 	; Read section [Load]
 	;
-	ExecuteSection( "Load" )
+	.if	CFGetSection( "Load" )
+
+		CFExecute( eax )
+	.endif
 
 	mov	thelp,cmhelp
 	mov	oupdate,ioupdate
@@ -219,7 +259,7 @@ doszip_init PROC USES esi edi ebx argv
 	mov	wsmaxfbb,eax
 	mov	wsmaxfba,eax
 
-	call	consinit
+	call	ConsolePush
 	mov	eax,ConsoleIdle
 	mov	tdidle,eax
 ifdef __CI__
@@ -242,7 +282,9 @@ doszip_open PROC USES esi edi ebx
 	mov	mainswitch,eax
 
 	setconfirmflag()
+
 	.if	cflag & _C_DELTEMP
+
 		removetemp( addr cp_ziplst )
 		and	cflag,not _C_DELTEMP
 	.endif
@@ -262,16 +304,19 @@ doszip_open PROC USES esi edi ebx
 	lea	edx,cp_stdmask
 	mov	ecx,config.c_apath.ws_mask
 	.if	[ecx] == al
+
 		strcpy( config.c_apath.ws_mask, edx )
 	.endif
 	mov	ecx,config.c_bpath.ws_mask
 	.if	BYTE PTR [ecx] == 0
+
 		strcpy( config.c_bpath.ws_mask, edx )
 	.endif
 	;
 	; Init Desktop
 	;
 	.if	console & CON_IMODE || _scrcol < 80
+
 		apimode()
 	.endif
 
@@ -283,24 +328,28 @@ doszip_open PROC USES esi edi ebx
 	call	prect_open_ab
 	lea	eax,spanelb
 	.if	cpanel == eax
+
 		lea eax,spanela
 	.endif
 	call	panel_openmsg
 	mov	edi,_pgmpath
 	mov	esi,path_a.ws_path
 	.if	!test_path()
+
 		and path_a.ws_flag,not _W_ARCHIVE
 	.endif
 	mov	esi,path_b.ws_path
 	.if	!test_path()
+
 		and path_b.ws_flag,not _W_ARCHIVE
 	.endif
 	.if	cflag & _C_COMMANDLINE
+
 		CursorOn()
 	.endif
 	call	panel_open_ab
 
-	topenh( strfcat( addr path, _pgmpath, addr DZ_CFGFILE ) )
+	topenh( ".open_files" )
 	ret
 
 doszip_open ENDP

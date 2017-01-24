@@ -585,11 +585,12 @@ get_special_symbol PROC FASTCALL USES esi edi ebx buf, p
 					mov	ecx,T_HLL_PROC
 					.endc
 
+				  .case edx == SYM_STACK
+				  .case edx == SYM_INTERNAL
 				  .case edx == SYM_EXTERNAL
 				  .case [eax].asym.flag & SFL_ISPROC
 					mov	ecx,T_HLL_PROC
 					.endc
-				  .case edx == SYM_INTERNAL
 				  .case edx == SYM_UNDEFINED
 					.endc	.if BYTE PTR [edi+1] != ')'
 					mov	ecx,T_HLL_PROC

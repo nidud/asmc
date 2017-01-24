@@ -3,6 +3,7 @@ include process.inc
 include string.inc
 include direct.inc
 include consx.inc
+include cfini.inc
 
 externdef	cp_quote:byte
 
@@ -14,7 +15,7 @@ CreateConsole PROC USES esi edi string:LPSTR, flag
 
 	mov	esi,console
 	and	esi,CON_NTCMD
-	getcomspec( esi )
+	CFGetComspec( esi )
 	mov	ecx,eax
 
 	lea	edi,cmd

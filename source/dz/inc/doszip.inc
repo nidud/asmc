@@ -11,18 +11,16 @@ include time.inc
 DOSZIP_VERSION	equ 0348h
 DOSZIP_MINVERS	equ 0342h
 DOSZIP_VSTRING	equ <"3.48">
-DOSZIP_VSTRPRE	equ <" Pre-0">
+DOSZIP_VSTRPRE	equ <" Pre-1">
 
 MAXHISTORY	equ 32
 MAXDOSKEYS	equ 64
 
 DOSZIP_INIFILE	equ <"dz.ini">	; config file
-DOSZIP_CFGFILE	equ <"dz.cfg">	; history file
 DOSZIP_TXTFILE	equ <"dz.txt">	; readme file
 
 externdef	DZ_Title:DWORD
 externdef	DZ_INIFILE:BYTE
-externdef	DZ_CFGFILE:BYTE
 externdef	DZ_TXTFILE:BYTE
 
 HELPID_02	equ 0751h	; <> Compressed File Support
@@ -64,6 +62,7 @@ _C_CONFRDONLY	equ 00200000h
 _C_CONFEXIT	equ 00400000h
 _C_ZINCSUBDIR	equ 00800000h
 _C_VISUALUPDATE equ 01000000h
+_C_PANELEDIT	equ 02000000h
 _C_DEFAULT	equ 017F74A4h
 
 _MKL_APPEND	equ 0001h	; add to list or create new
@@ -254,6 +253,7 @@ externdef mainswitch:		DWORD
 externdef dzexitcode:		DWORD
 externdef numfblock:		DWORD	; number of file pointers allocated
 externdef global_key:		DWORD
+externdef pConfigFile:		DWORD
 
 externdef prect_a:		S_XCEL
 externdef prect_b:		S_XCEL
@@ -538,31 +538,15 @@ cmloadpath		PROTO	; Alt-P
 cmcalendar		PROTO	; Ctrl-G
 cmmkzip			PROTO	; Shift-F7
 ifdef DEBUG
-cmdebug		PROTO	; Shift-F1
+cmdebug			PROTO	; Shift-F1
 endif
-cmsysteminfo	PROTO	; Alt-M
-cmhomedir	PROTO
-cmwindowlist	PROTO
-cmenviron	PROTO	; Shift-F6
+cmsysteminfo		PROTO	; Alt-M
+cmhomedir		PROTO
+cmwindowlist		PROTO
+cmenviron		PROTO	; Shift-F6
 
-expcommand	PROTO :LPSTR, :LPSTR
-
-eropen		PROTO :LPSTR
-ermkdir		PROTO :LPSTR
-erdelete	PROTO :LPSTR
-errnomsg	PROTO :LPSTR, :LPSTR, :LPSTR
-getsyserr	PROTO :SIZE_T
-
-getfattr	PROTO :LPSTR
-setfattr	PROTO :LPSTR, :DWORD
-readword	PROTO :LPSTR
-
-notsup		PROTO
-
-consinit	PROTO
-conssetl	PROTO :DWORD
-consuser	PROTO
-setasymbol	PROTO
-editattrib	PROTO
+conssetl		PROTO :DWORD
+consuser		PROTO
+editattrib		PROTO
 
 .list

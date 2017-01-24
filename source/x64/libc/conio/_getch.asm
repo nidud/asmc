@@ -1,5 +1,4 @@
-include consx.inc
-include stdio.inc
+include conio.inc
 
 	.code
 

@@ -46,7 +46,6 @@ _clrscr		proto
 _cprintf	proto _CDecl :LPSTR, :VARARG
 _cputs		proto :LPSTR
 _cscanf		proto _CDecl :LPSTR, :VARARG
-_cwprintf	proto _CDecl :LPWSTR, :VARARG
 _getch		proto
 _getche		proto
 _gotoxy		proto :UINT, :UINT
@@ -67,6 +66,13 @@ _wherey		proto
 _cputws		proto :LPWSTR
 _putwch		proto :UINT ; WCHAR_T
 _getwch		proto
+_getwche	proto
+_cgetws		proto :LPWSTR, :SIZE_T, :PVOID
+_ungetwch	proto :UINT
+_cputws		proto :LPWSTR
+_cwprintf	proto _CDecl :LPWSTR, :VARARG
+_cwscanf	proto _CDecl :LPWSTR, :VARARG
+_vcwprintf	proto :LPWSTR, :PVOID
 
 ;;;;;;;;;;;;;;; crtl
 

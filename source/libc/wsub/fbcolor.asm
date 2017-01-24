@@ -1,6 +1,6 @@
 include consx.inc
 include io.inc
-include ini.inc
+include cfini.inc
 include string.inc
 include stdlib.inc
 include wsub.inc
@@ -9,43 +9,64 @@ strtolx proto :LPSTR
 
 	.code
 
-fbcolor PROC USES edx ecx fp:PTR S_FBLK
-	mov	edx,fp
+fbcolor PROC USES esi edi edx ecx fp:PTR S_FBLK
 
-	test	[edx].S_FBLK.fb_flag,_A_SUBDIR
-	jnz	default_color
+	mov	esi,fp
 
-	lea	ecx,[edx].S_FBLK.fb_name
-	.if	strext( ecx )
-		lea	ecx,[eax+1]
-	.endif
-	.if	inientry( "FileColor", ecx )
-		strtolx( eax )
-		cmp	eax,15
-		ja	default_color
-		shl	eax,4
-		cmp	al,at_background[B_Panel]
-		je	default_color
-		shr	eax,4
-		jmp	done
-	.endif
+	.while	1
 
-default_color:
-	mov	eax,[edx].S_FBLK.fb_flag
-	.switch
-	  .case eax & _FB_SELECTED : mov al,at_foreground[F_Panel]  : .endc
-	  .case eax & _FB_UPDIR	   : mov al,7			    : .endc
-	  .case eax & _FB_ROOTDIR
-	  .case eax & _A_SYSTEM	   : mov al,at_foreground[F_System] : .endc
-	  .case eax & _A_HIDDEN	   : mov al,at_foreground[F_Hidden] : .endc
-	  .case eax & _A_SUBDIR	   : mov al,at_foreground[F_Subdir] : .endc
-	  .default
-		mov al,at_foreground[F_Files]
-	.endsw
-done:
+		.if	!([esi].S_FBLK.fb_flag & _A_SUBDIR)
+
+			lea	edi,[esi].S_FBLK.fb_name
+			.if	strext( edi )
+
+				lea	edi,[eax+1]
+			.endif
+
+			.if	CFGetSection( "FileColor" )
+
+				.if	CFGetEntry( eax, edi )
+
+					.if	strtolx( eax ) <= 15
+
+						shl	eax,4
+						.if	al != at_background[B_Panel]
+
+							shr	eax,4
+							.break
+						.endif
+					.endif
+				.endif
+			.endif
+		.endif
+
+		mov	eax,[esi].S_FBLK.fb_flag
+		.switch
+		  .case eax & _FB_SELECTED
+			mov	al,at_foreground[F_Panel]
+			.break
+		  .case eax & _FB_UPDIR
+			mov	al,7
+			.break
+		  .case eax & _FB_ROOTDIR
+		  .case eax & _A_SYSTEM
+			mov	al,at_foreground[F_System]
+			.break
+		  .case eax & _A_HIDDEN
+			mov	al,at_foreground[F_Hidden]
+			.break
+		  .case eax & _A_SUBDIR
+			mov	al,at_foreground[F_Subdir]
+			.break
+		  .default
+			mov	al,at_foreground[F_Files]
+			.break
+		.endsw
+	.endw
 	or	al,at_background[B_Panel]
 	movzx	eax,al
 	ret
+
 fbcolor ENDP
 
 	END

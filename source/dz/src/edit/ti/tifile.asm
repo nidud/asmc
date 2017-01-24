@@ -5,7 +5,7 @@ include wsub.inc
 include direct.inc
 include io.inc
 include iost.inc
-include ini.inc
+include cfini.inc
 include stdlib.inc
 include ctype.inc
 
@@ -256,8 +256,8 @@ local	path[_MAX_PATH]:BYTE
 				setfext( strcpy( addr path, ecx ), ".ini" )
 				.if !_stricmp( [esi].S_TINFO.ti_file, eax )
 
-					iniclose()
-					iniopen( addr path )
+					CFClose()
+					CFRead( addr path )
 				.endif
 			.endif
 		.else
@@ -317,7 +317,8 @@ cp_typech	db 'aoqdcsbwn',0
 tireadlabel PROC USES esi edi
 
 	lea	esi,[ebp].st_label
-	inientryid( esi, ID_TYPE )
+	CFGetSectionID( esi, ID_TYPE )
+	test	eax,eax
 	jz	toend
 	mov	edi,[ebp].st_sp
 	cmp	edi,[ebp].st_eof
@@ -351,20 +352,23 @@ tireadlabel PROC USES esi edi
 	push	esi
 	mov	esi,ebx
 
-	.repeat
+	.while	1
+
 		lodsb
-		.if	al == ' '
+		.switch
+		  .case al == ' '
 			mov	eax,esi
 			pop	esi
-		.else
-			.continue .if al
+			.endc
+		  .case al
+			.continue
+		  .default
 			pop	esi
-			mov	eax,ID_ATTRIB
-			mov	edx,ebx
-			inientryid( edx, eax )
+			CFGetSectionID( ebx, ID_ATTRIB )
 			mov	ecx,1
 			.break .if ZERO?
-		.endif
+		.endsw
+
 		mov	ebx,eax
 		add	eax,2
 		push	eax
@@ -452,7 +456,7 @@ tireadlabel PROC USES esi edi
 				inc	esi
 				mov	ah,al
 			.endif
-			.repeat
+			.while	1
 				mov	al,[esi]
 				inc	esi
 				.if	edi < ecx
@@ -476,7 +480,7 @@ tireadlabel PROC USES esi edi
 					.endif
 				.endif
 				.break
-			.until	0
+			.endw
 		.endif
 
 		mov	esi,ebx
@@ -484,10 +488,10 @@ tireadlabel PROC USES esi edi
 		mov	eax,esi
 		lea	edx,[ebp].st_label
 		inc	esi
-		inientryid( edx, eax )
+		CFGetSectionID( edx, eax )
 		.break .if ZERO?
 		jmp	getentryid
-	.until	0
+	.endw
 
 	xor	eax,eax
 	.if	[edi-1] != al
@@ -501,31 +505,40 @@ toend:
 tireadlabel ENDP
 
 tidosection PROC
+
 	push	esi
 	push	edi
+
 	sub	esp,64
 	mov	edi,esp
 	memcpy( edi, addr [ebp].st_section, 64 )
+
 	xor	esi,esi
-	.repeat
+
+	.while	1
 		mov	eax,esi
 		inc	esi
 		lea	edx,[ebp].st_section
-		inientryid( edx, eax )
-		.break .if ZERO?
+
+		.break .if !CFGetSectionID( edx, eax )
+
 		mov	edi,eax
 		mov	al,[edi]
+
 		.if	al == '['
+
 			mov	ebx,esi
 			mov	edx,edi
 			mov	esi,edi
 			inc	esi
 			lea	edi,[ebp].st_section
+
 			.repeat
 				lodsb
 				stosb
 				.break .if !al
 			.until	al == ']'
+
 			dec	edi
 			sub	eax,eax
 			stosb
@@ -535,14 +548,17 @@ tidosection PROC
 			mov	edx,esp
 			strcpy( addr [ebp].st_section, edx )
 		.else
+
 			strcpy( addr [ebp].st_label, edi )
 			call	tireadlabel
 		.endif
-	.until	0
+	.endw
+
 	add	esp,64
 	pop	edi
 	pop	esi
 	ret
+
 tidosection ENDP
 
 	ASSUME	ebp : NOTHING
@@ -574,30 +590,44 @@ tireadstyle PROC USES esi edi ebx ti:PTINFO
 	strcpy( addr file, strfn( [esi].S_TINFO.ti_file ) )
 	mov	edi,eax
 
-	strlen( eax )
-	lea	edx,cp_style
-	.if	BYTE PTR [edi+eax-1] == '.'
+	.if	BYTE PTR [edi+strlen(edi)-1] == '.'
+
 		mov	BYTE PTR [edi+eax-1],0
 	.endif
 
-	inientry( edx, edi )
-	jnz	copy
+	.if	CFGetSection( addr cp_style )
 
-	strext( edi )			; *.ext
-	jz	dosection
+		mov	ebx,eax
+		;
+		; FILENAME
+		;
+		.if	!CFGetEntry( ebx, edi )
+			;
+			; FILENAME.EXT
+			;
+			.if	strext( edi )
 
-	lea	ebx,[eax+1]
-	mov	BYTE PTR [eax],0
-	inientry( edx, ebx )
-	jnz	copy
+				lea	edx,[eax+1]
+				mov	BYTE PTR [eax],0
+				;
+				; FILENAME.[EXT]
+				;
+				.if	!CFGetEntry( ebx, edx )
+					;
+					; [FILENAME].EXT
+					;
+					CFGetEntry( ebx, edi )
+				.endif
+			.endif
+		.endif
+	.endif
 
-	inientry( edx, edi )
-	jz	dosection
-copy:
-	lea	ecx,[ebp].S_RDST.st_section
-	strcpy( ecx, eax )
+	.if	eax
 
-dosection:
+		lea	ecx,[ebp].S_RDST.st_section
+		strcpy( ecx, eax )
+	.endif
+
 	call	tidosection
 	mov	edi,[ebp].S_RDST.st_sp
 	xor	eax,eax
@@ -605,6 +635,7 @@ dosection:
 	inc	eax
 	pop	ebp
 	ret
+
 tireadstyle ENDP
 
 	ASSUME	esi: PTR S_TINFO

@@ -27,7 +27,7 @@ include string.inc
 include alloc.inc
 include errno.inc
 include stdlib.inc
-include ini.inc
+include cfini.inc
 include tview.inc
 include tinfo.inc
 
@@ -391,22 +391,36 @@ CIPutSection PROC USES esi edi ebx
 CIPutSection ENDP
 
 CINextFile PROC USES esi edi ebx
+
 	mov	ebx,cifileid
 	inc	ebx
-	.if	!inientryid( addr cp_CodeInfo, ebx )
-		xor	ebx,ebx
-		inientryid( addr cp_CodeInfo, ebx )
+
+	.if	CFGetSection( addr cp_CodeInfo )
+
+		mov	edi,eax
+
+		.if	!CFGetEntryID( edi, ebx )
+
+			xor	ebx,ebx
+			CFGetEntryID( edi, ebx )
+		.endif
 	.endif
+
 	.if	eax
+
 		mov	edi,eax
 		call	CIWrite
 		mov	dx,[edi]
+
 		.if	dl == '%' || dl == '\' || dl == '/' || dh == ':'
+
 			strcpy( addr cifile, edi )
 		.else
+
 			strfcat( addr cifile, _pgmpath, edi )
 		.endif
 		expenviron( eax )
+
 		mov	cifileid,ebx
 		call	CIRead
 		mov	txtval,0
@@ -422,29 +436,31 @@ CIReadSection PROC USES esi edi ebx section
 
 local	tmp[MAXLABEL]:BYTE
 
-	lea edi,tmp
-	mov esi,section
-	lea ebx,cisection
+	lea	edi,tmp
+	mov	esi,section
+	lea	ebx,cisection
 
-	.if strcmp( ebx, esi )
+	.if	strcmp(ebx, esi)
 
-		memmove( addr cilstack, ebx, sizeof(S_LABEL) * MAXLSTACK )
+		memmove(addr cilstack, ebx, sizeof(S_LABEL) * MAXLSTACK)
 	.endif
 
-	strncpy( edi, esi, MAXLABEL-1 )
-	mov byte ptr [eax+MAXLABEL-1],0
-	strncpy( ebx, edi, MAXLABEL )
+	strncpy(edi, esi, MAXLABEL-1)
+	mov	byte ptr [eax+MAXLABEL-1],0
+	strncpy(ebx, edi, MAXLABEL)
 
-	.if CIFindSection( eax )
+	.if	CIFindSection(eax)
 
-		memcpy( ebx, eax, sizeof( S_LABEL ) )
-		mov txtval,gettxtval()
+		memcpy(ebx, eax, sizeof(S_LABEL))
+		mov	txtval,gettxtval()
 	.else
-		mov txtval,0
+		mov	txtval,0
 	.endif
+
 	puttxtval()
 	CIPutSection()
 	ret
+
 CIReadSection ENDP
 
 CISaveSection PROC section
@@ -1242,12 +1258,16 @@ CIIdle	ENDP
 OPTION	PROC: PUBLIC
 
 CodeInfo PROC
+
 	mov	eax,tdidle
 	mov	idleh,eax
 	mov	tdidle,CIIdle
-	.if	inientryid( addr cp_CodeInfo, 0 )
+
+	.if	CFGetSectionID( addr cp_CodeInfo, 0 )
+
 		mov	edx,[eax]
 		.if	dl == '%' || dl == '\' || dl == '/' || dh == ':'
+
 			strcpy( addr cifile, eax )
 		.else
 			strfcat( addr cifile, _pgmpath, eax )

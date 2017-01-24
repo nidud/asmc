@@ -23,6 +23,11 @@ _CRTIMP wchar_t * _CType _wgetdcwd(int, wchar_t *, int);
 _CRTIMP int _CType _wmkdir(const wchar_t *);
 _CRTIMP int _CType _wrmdir(const wchar_t *);
 
+/**/
+
+char * _CType wlongpath(const char *__path, const char *__file);
+char * _CType wlongname(const char *__path, const char *__file);
+
 #ifdef __cplusplus
  }
 #endif

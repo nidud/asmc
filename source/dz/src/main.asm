@@ -9,6 +9,7 @@ include io.inc
 include string.inc
 include process.inc
 include signal.inc
+include cfini.inc
 
 doszip_init	PROTO :DWORD
 doszip_open	PROTO
@@ -150,10 +151,16 @@ else
 		doszip_modal()
 		doszip_close()
 		.if	cflag & _C_DELHISTORY
-			historyremove()
+
+			;historyremove()
 		.endif
 		tcloseall()
-		ExecuteSection( "Exit" )
+
+		.if	CFGetSection( "Exit" )
+
+			CFExecute( eax )
+		.endif
+		;ExecuteSection( "Exit" )
 		xor	eax,eax
 endif
 	.endif

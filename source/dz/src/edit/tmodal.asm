@@ -39,30 +39,25 @@ tmodal	PROC USES esi edi ebx
 	local	cursor:S_CURSOR, update, ftime
 
 	.while	mousep()
-
 	.endw
 
 	mov	esi,tinfo
-
 	.if	tistate( esi )
 
 		mov	eax,tupdate
 		mov	update,eax
 		mov	tupdate,tiupdate
-
 		GetCursor( addr cursor )
 		tishow( esi )
-		tiftime( esi )
-		mov	ftime,eax
 
-		tevent()
-		mov	edi,eax
-
+		mov	ftime,tiftime( esi )
+		mov	edi,tevent()
 		mov	eax,tinfo
 		cmp	eax,esi
 		mov	esi,0
 
 		.if	ZERO?
+
 			tiftime( eax )
 			mov	esi,ftime
 			sub	esi,eax
@@ -77,6 +72,7 @@ tmodal	PROC USES esi edi ebx
 		test	eax,eax
 	.endif
 	ret
+
 tmodal	ENDP
 
 	END

@@ -3,7 +3,7 @@
 
 include doszip.inc
 include io.inc
-include ini.inc
+include cfini.inc
 include time.inc
 include consx.inc
 include stdlib.inc
@@ -364,7 +364,7 @@ apiidle ENDP
 apiopen PROC
 	mov	Statusline_C1,5
 	mov	Menusline_C1,4
-	call	consinit
+	call	ConsolePush
 	movzx	eax,console_cu.y
 	mov	com_info.ti_ypos,eax
 	mov	eax,_scrrow
@@ -493,100 +493,107 @@ modal_idd ENDP
 
 readtools PROC PRIVATE USES esi edi ebx section, dialog, index, lsize
 
+local	handle
+
 	mov	eax,dialog
 	mov	ebx,[eax].S_DOBJ.dl_object
 	mov	edi,index
 
-	.while	inientryid( section, edi )
+	.if	CFGetSection( section )
 
-		mov	esi,eax
-		push	eax
-		strstart( esi )
-		mov	esi,eax
-		push	esi
-		mov	ecx,36
+		mov	handle,eax
 
-		.repeat
+		.while	CFGetEntryID( handle, edi )
 
-			lodsb
-			.switch al
+			mov	esi,eax
+			push	eax
+			strstart( esi )
+			mov	esi,eax
+			push	esi
+			mov	ecx,36
 
-			  .case ','
-				mov byte ptr [esi-1],0	; terminate text line
-				strstart( esi )		; start of command tail
-				mov	esi,eax
-				mov	ecx,lsize
-				mov	edx,[ebx].S_TOBJ.to_data
-				xchg	edi,edx
-				xor	eax,eax
-				.while	ecx
-					lodsb
-					.break .if !al
-					.break .if al == ']'
-					.if	al == '['
-						mov ah,al
-						.continue
-					.endif
+			.repeat
+
+				lodsb
+				.switch al
+
+				  .case ','
+					mov byte ptr [esi-1],0	; terminate text line
+					strstart( esi )		; start of command tail
+					mov	esi,eax
+					mov	ecx,lsize
+					mov	edx,[ebx].S_TOBJ.to_data
+					xchg	edi,edx
+					xor	eax,eax
+					.while	ecx
+						lodsb
+						.break .if !al
+						.break .if al == ']'
+						.if	al == '['
+							mov ah,al
+							.continue
+						.endif
+						stosb
+						dec ecx
+					.endw
+					mov	ecx,1
+					mov	al,0
 					stosb
-					dec ecx
-				.endw
-				mov	ecx,1
-				mov	al,0
-				stosb
-				mov	edi,edx
-				.endc .if !ah
-				or	[ebx].S_TOBJ.to_flag,_O_FLAGB
-				.endc
+					mov	edi,edx
+					.endc .if !ah
+					or	[ebx].S_TOBJ.to_flag,_O_FLAGB
+					.endc
 
-			  .case '<'
-				mov	ecx,1
-				.endc
+				  .case '<'
+					mov	ecx,1
+					.endc
 
-			  .case 0
-			   error:
-				pop	eax
-				pop	esi
-				inierror( section, eax )
-				xor	edi,edi
-				jmp	toend
-			.endsw
+				  .case 0
+				   error:
+					pop	eax
+					pop	esi
+					CFError( section, eax )
+					xor	edi,edi
+					jmp	toend
+				.endsw
 
-		.untilcxz
+			.untilcxz
 
-		pop	esi
-		mov	eax,76
-		mul	edi
-		add	eax,78
-		mov	edx,dialog
-		mov	edx,[edx].S_DOBJ.dl_wp
-		add	edx,eax
+			pop	esi
+			mov	eax,76
+			mul	edi
+			add	eax,78
+			mov	edx,dialog
+			mov	edx,[edx].S_DOBJ.dl_wp
+			add	edx,eax
 
-		.if	BYTE PTR [esi] == '<'
+			.if	BYTE PTR [esi] == '<'
 
-			wcputw( edx, 38, 00C4h )
-			and	[ebx].S_TOBJ.to_flag,not _O_FLAGB
+				wcputw( edx, 38, 00C4h )
+				and	[ebx].S_TOBJ.to_flag,not _O_FLAGB
 
-		.else
+			.else
 
-			add	edx,4
-			wcputs( edx, 0, 32, esi )
-			mov	eax,not _O_STATE
-			and	[ebx].S_TOBJ.to_flag,ax
+				add	edx,4
+				wcputs( edx, 0, 32, esi )
+				mov	eax,not _O_STATE
+				and	[ebx].S_TOBJ.to_flag,ax
 
-			.if	strchr( esi, '&' )
-				mov	al,[eax+1]
-				mov	[ebx].S_TOBJ.to_ascii,al
-				pop	esi
-				inc	esi
-				push	esi
+				.if	strchr( esi, '&' )
+					mov	al,[eax+1]
+					mov	[ebx].S_TOBJ.to_ascii,al
+					pop	esi
+					inc	esi
+					push	esi
+				.endif
 			.endif
-		.endif
 
-		pop	esi
-		add	ebx,16
-		inc	edi
-		.break .if edi >= 20
-	.endw
+			pop	esi
+			add	ebx,16
+			inc	edi
+			.break .if edi >= 20
+		.endw
+	.endif
 toend:
 	mov	eax,edi
 	ret
@@ -654,21 +661,31 @@ tools_idd PROC USES esi edi ebx lsize, p, section
 tools_idd ENDP
 
 cmtool PROC PRIVATE
+
 local	tool[128]:BYTE
-	.if	inientryid( addr cp_tools, eax )
+
+	.if	CFGetSectionID( addr cp_tools, eax )
+
 		mov	edx,eax
 		mov	eax,[eax]
+
 		.if	ax != '><'
+
 			.if	strchr( edx, ',' )
+
 				inc	eax
 				strstart( eax )
 				mov	edx,eax
 				strnzcpy( addr tool, edx, 128-1 )
+
 				.if	tool != '['
+
 					command( eax )
 				.else
+
 					lea	ecx,[eax+1]
 					.if	strchr( strcpy( eax, ecx ), ']' )
+
 						mov	BYTE PTR [eax],0
 						tools_idd( 128, 0, addr tool )
 					.endif
@@ -677,6 +694,7 @@ local	tool[128]:BYTE
 		.endif
 	.endif
 	ret
+
 cmtool	ENDP
 
 CMTOOLP macro q

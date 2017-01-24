@@ -8,8 +8,9 @@ TIMAXFILE	equ 200000h	; max file size
 TIMAXFILES	equ 300		; max open files
 TITABCHAR	equ 0Bh		; expand tabs with this char (Vertical Tab)
 TIMAXTABSIZE	equ 16		; max Tab size
-STYLESIZE	equ 4096
+STYLESIZE	equ 1000h
 
+_T_PANELB	equ 0001h
 _T_MALLOC	equ 0002h
 _T_TEDIT	equ 0004h
 _T_FILE		equ 0008h
@@ -25,10 +26,6 @@ _T_USECRLF	equ 1000h	;*[x]
 _T_PROMPTONREP	equ 2000h	; [x]
 _T_USECONTROL	equ 4000h
 _T_SHOWTABS	equ 8000h
-
-_T_WINDOWA	equ 10000h
-_T_WINDOWB	equ 20000h
-_T_WINDOWS	equ _T_WINDOWA or _T_WINDOWB
 
 _T_TEDEFAULT	equ 3FE0h
 _T_TECFGMASK	equ 3FE0h
@@ -55,7 +52,6 @@ ti_cleo		dd ?	; Clipboard end offset
 ti_clsl		dd ?	; Clipboard start line
 ti_clel		dd ?	; Clipboard end line
 ti_rows		dd ?	; number of lines on screen
-ti_cursor	S_CURSOR <?>
 ti_loff		dd ?	; line offset in buffer
 ti_yoff		dd ?	; y offset on screen
 
@@ -184,8 +180,8 @@ tclosefile	PROTO
 tmodal		PROTO
 tevent		PROTO
 tedit		PROTO :LPSTR, :DWORD
-topenh		PROTO :LPSTR
-tsaveh		PROTO :SINT
+topenh		PROTO __section:LPSTR
+tsaveh		PROTO __ini:DWORD, __section:LPSTR
 topensession	PROTO
 topenedi	PROTO :LPSTR
 tloadfiles	PROTO
@@ -198,29 +194,8 @@ tinexterror	PROTO
 tipreviouserror PROTO
 titransfer	PROTO
 twindows	PROTO
-tsplitscreen	PROTO
-
-strins		PROTO :LPSTR, :LPSTR
-strtolx		PROTO :LPSTR
-strmove		PROTO :LPSTR, :LPSTR
-strchri		PROTO :LPSTR, :SIZE_T
-strstri		PROTO :LPSTR, :LPSTR
-streol		PROTO :LPSTR
-strnzcpy	PROTO :LPSTR, :LPSTR, :SIZE_T
-memstri		PROTO :LPSTR, :SIZE_T, :LPSTR, :SIZE_T
-memrchr		PROTO :LPSTR, :SIZE_T, :SIZE_T
-memquote	PROTO :LPSTR, :SIZE_T
-
-getftime	PROTO :SINT
-getftime_access PROTO :SINT
-getftime_create PROTO :SINT
-setftime	PROTO :SINT, :DWORD
-setftime_access PROTO :SINT, :DWORD
-setftime_create PROTO :SINT, :DWORD
-getfattr	PROTO :LPSTR
-setfattr	PROTO :LPSTR, :DWORD
-filexist	PROTO :LPSTR
-
-inicommand	PROTO :LPSTR, :LPSTR, :LPSTR
+twindowsize	PROTO
+tgetrect	PROTO
+tsetrect	proto :PTINFO, :S_RECT
 
 .list

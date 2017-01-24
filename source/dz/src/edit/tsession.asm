@@ -1,138 +1,139 @@
+include alloc.inc
 include tinfo.inc
-include string.inc
-include stdio.inc
-include stdlib.inc
 include io.inc
 include direct.inc
-include ini.inc
+include cfini.inc
 include wsub.inc
 
 	.code
 
-topenh_atol PROC
-	.if	strchr( esi, ',' )
-		inc	eax
-		mov	esi,eax
-		atol  ( esi )
-		or	esi,esi
-		mov	edx,eax
-		mov	eax,1
-	.endif
-	ret
-topenh_atol ENDP
+topenh	PROC USES esi edi section:LPSTR
 
-topenh PROC USES esi edi ebx fname:LPSTR
+local	b,x,y,l,index
 
-	local	entry, loff, boff, xoff
+	.if	CFGetSection( section )
 
-	mov	edi,cinifile
+		mov	edi,eax
+		mov	index,0
 
-	.if	iniopen( fname )
-
-		mov	entry,0
-
-		.while	inientryid( ".", entry )
+		.while	CFReadFileName( edi, addr index, 1 )
 
 			mov	esi,eax
-			inc	entry
-			atol  ( esi )
-			mov	loff,eax
+			.break .if !topen(esi)
 
-			.break .if !topenh_atol()
-			mov	ebx,edx
-			.break .if !topenh_atol()
-			mov	boff,edx
-			.break .if !topenh_atol()
-			mov	xoff,edx
-
-			.break .if !strchr( esi, ',' )
-			lea	esi,[eax+1]
-			expenviron( esi )
-
-			.continue .if filexist( esi ) != 1
-
-			push	cinifile
-			mov	cinifile,edi
-			topen ( esi )
-			pop	ecx
-			mov	cinifile,ecx
-			.break .if !eax
+			mov	tinfo,eax
+			free  ( esi )
 
 			ASSUME	esi: PTR S_TINFO
 
-			mov	tinfo,eax
-			mov	esi,eax
-			mov	eax,loff
+			mov	esi,tinfo
+			mov	eax,l
 			mov	[esi].ti_loff,eax
-			mov	[esi].ti_yoff,ebx
-			mov	eax,xoff
+			mov	eax,y
+			mov	[esi].ti_yoff,eax
+			mov	eax,x
 			mov	[esi].ti_xoff,eax
-			mov	eax,boff
+			mov	eax,b
 			mov	[esi].ti_boff,eax
 		.endw
-		call	iniclose
+
 		mov	eax,tinfo
 		test	eax,eax
 	.endif
-	mov	cinifile,edi
 	ret
+
 topenh ENDP
 
-tsaveh	PROC USES esi edi ebx handle:SINT
+tsaveh	PROC USES esi edi ebx __ini, section:LPSTR
 
-	local	buf[512]:BYTE
+local	buffer[1024]:	sbyte,
+	handle:		dword
 
-	tigetfile( tinfo )
-	mov	esi,eax
-	mov	edi,edx
+	.if	tigetfile(tinfo)
 
-	oswrite( handle, "[.]\r\n", 5 )
-	xor	ebx,ebx
+		mov	esi,eax
+		mov	edi,edx
 
-	.while	esi
+		mov	eax,__ini
+		.if	eax
 
-		sprintf( addr buf, "%d=%d,%d,%d,%d,%s\r\n", ebx,
-			[esi].ti_loff,
-			[esi].ti_yoff,
-			[esi].ti_boff,
-			[esi].ti_xoff,
-			[esi].ti_file )
+			.if	__CFAddSection( eax, section )
 
-		strlen( addr buf )
-		mov	ecx,eax
-		oswrite( handle, addr buf, ecx )
-		inc	ebx
-		.break .if esi == edi
-		mov	esi,[esi].ti_next
-		.break .if !tistate( esi )
-	.endw
+				mov	handle,eax
+				xor	ebx,ebx
+
+				.while	esi
+
+					CFAddEntryX( handle, "%d=%X,%X,%X,%X,%s", ebx,
+						[esi].ti_loff,
+						[esi].ti_yoff,
+						[esi].ti_boff,
+						[esi].ti_xoff,
+						[esi].ti_file )
+
+					inc	ebx
+					.break .if esi == edi
+					mov	esi,[esi].ti_next
+					.break .if !tistate(esi)
+				.endw
+			.endif
+		.endif
+	.endif
 	ret
+
 tsaveh	ENDP
 
 	ASSUME	esi: NOTHING
 
-topenedi PROC fname:LPSTR
+topenedi PROC USES esi edi ebx fname:LPSTR
 
-	local	cu:S_CURSOR
+local	cursor:S_CURSOR
 
-	GetCursor( addr cu )
+	.if	__CFRead( 0, fname )
 
-	.if	tistate( tinfo )
-		tihide( tinfo )
+		mov	esi,eax
+
+		.if	__CFGetSection( esi, "." )
+
+			mov	edi,eax
+
+			.if	CFAddSection( "." )
+
+				mov	ebx,eax
+
+				mov	eax,[edi].S_CFINI.cf_info
+				mov	[ebx].S_CFINI.cf_info,eax
+
+				GetCursor( addr cursor )
+
+				.if	tistate( tinfo )
+
+					tihide( tinfo )
+				.endif
+
+				topenh( "." )
+
+				mov	[ebx].S_CFINI.cf_info,0
+
+				.if	tistate( tinfo )
+
+					tishow( tinfo )
+					tmodal()
+				.endif
+
+				SetCursor( addr cursor )
+			.endif
+		.endif
+
+		__CFClose( esi )
 	.endif
 
-	topenh( fname )
-
-	.if	tistate( tinfo )
-		tishow( tinfo )
-		tmodal()
-	.endif
-	SetCursor( addr cu )
 	mov	eax,tinfo
 	ret
+
 topenedi ENDP
 
-tloadfiles PROC
+tloadfiles PROC USES esi edi ebx
 
 	local	path[_MAX_PATH]:BYTE
 
@@ -140,23 +141,49 @@ tloadfiles PROC
 
 		_close( eax )
 
-		.if	tistate( tinfo )
-			tihide ( tinfo )
-		.endif
+		.if	__CFRead( 0, addr path )
 
-		topenh( addr path )
+			mov	esi,eax
 
-		.if	tistate( tinfo )
-			tishow ( tinfo )
+			.if	__CFGetSection( esi, "." )
+
+				mov	edi,eax
+
+				.if	CFAddSection( "." )
+
+					mov	ebx,eax
+
+					mov	eax,[edi].S_CFINI.cf_info
+					mov	[ebx].S_CFINI.cf_info,eax
+
+					.if	tistate( tinfo )
+
+						tihide ( tinfo )
+					.endif
+
+					topenh( "." )
+
+					mov	[ebx].S_CFINI.cf_info,0
+
+					.if	tistate( tinfo )
+
+						tishow ( tinfo )
+					.endif
+				.endif
+			.endif
+
+			__CFClose( esi )
 		.endif
 	.endif
+
 	mov	eax,_TI_CONTINUE
 	ret
+
 tloadfiles ENDP
 
 topensession PROC
 
-	local	cu:S_CURSOR
+local	cu:S_CURSOR
 
 	GetCursor( addr cu )
 	call	tloadfiles
@@ -168,15 +195,22 @@ topensession PROC
 
 topensession ENDP
 
-tsavefiles PROC
+tsavefiles PROC USES esi edi ebx
 
-	local	path[_MAX_PATH]:BYTE
+local	path[_MAX_PATH]:BYTE
 
 	.if	wgetfile( addr path, "*.edi", 2 )
 
-		push	eax
-		tsaveh( eax )
-		call	_close
+		_close( eax )
+
+		.if	__CFAlloc()
+
+			mov	esi,eax
+
+			tsaveh( esi, "." )
+			__CFWrite( esi, addr path )
+			__CFClose( esi )
+		.endif
 	.endif
 	mov	eax,_TI_CONTINUE
 	ret

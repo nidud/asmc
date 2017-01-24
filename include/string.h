@@ -53,6 +53,8 @@ char *	_CType strfn(const char *);
 char *	_CType strfcat(char *, const char *, const char *);
 char *	_CType setfext(char *, const char *);
 char *	_CType strext(const char *);
+int	_CType strtrim(char *);
+char *	_CType strstart(const char *);
 
 #define stricmp	 _stricmp
 #define strnicmp _strnicmp

@@ -28,53 +28,24 @@ tiopen	PROC USES esi ti:PTINFO, tabsize:UINT, flags:UINT
 	mov	al,' '
 	mov	[esi].ti_clat,eax
 	mov	[esi].ti_stat,eax
-	inc	[esi].ti_cursor.bVisible
-	mov	[esi].ti_cursor.dwSize,CURSOR_NORMAL
-
+	mov	eax,flags
+	mov	[esi].ti_flag,eax
 	;
 	; adapt to current screen
 	;
-	mov	eax,_scrrow
-	inc	eax
-	mov	[esi].ti_rows,eax
-	mov	[esi].ti_DOBJ.dl_rect.rc_row,al
-	mov	edx,ti
-	mov	eax,_scrcol
+	tsetrect( esi, tgetrect() )
 
-	.if	edx && [edx].ti_flag & _T_WINDOWS
-		shr	eax,1
-		.if	[edx].ti_flag & _T_WINDOWA
-			or	[esi].ti_flag,_T_WINDOWB
-			mov	[esi].ti_xpos,eax
-			mov	[esi].ti_DOBJ.dl_rect.rc_x,al
-		.else
-			or	[esi].ti_flag,_T_WINDOWA
-		.endif
-	.endif
-
-	mov	[esi].ti_cols,eax
-	mov	[esi].ti_DOBJ.dl_rect.rc_col,al
 	mov	[esi].ti_bcol,TIMAXLINE
 	mov	[esi].ti_blen,TIMAXFILE
 
 	.if	tialloc( esi )
 
-		.if tigetfile( ti )
+		.if	tigetfile( ti )
 			;
 			; link to last file
 			;
 			mov [esi].ti_prev,edx
 			mov [edx].ti_next,esi
-		.endif
-
-		mov	eax,flags
-		or	[esi].ti_flag,eax
-
-		.if	[esi].ti_flag & _T_USEMENUS
-
-			inc [esi].ti_ypos
-			inc [esi].ti_cursor.y
-			dec [esi].ti_rows
 		.endif
 
 		mov	eax,esi
@@ -113,15 +84,19 @@ ticlose PROC USES esi edi ebx ti:PTINFO
 		mov	[esi].ti_next,0
 
 		.if	ebx && [ebx].ti_prev == esi
-			mov [ebx].ti_prev,edi
+
+			mov	[ebx].ti_prev,edi
 		.endif
 
 		.if	edi
+
 			.if [edi].ti_next == esi
-				mov [edi].ti_next,ebx
+
+				mov	[edi].ti_next,ebx
 			.endif
 		.else
-			mov edi,ebx
+
+			mov	edi,ebx
 		.endif
 	.endif
 
@@ -137,58 +112,22 @@ tihide	PROC ti:PTINFO
 
 	mov	ecx,ti
 	.if	ecx
+
 		mov	[ecx].S_TINFO.ti_scrc,0
 		dlclose( addr [ecx].S_TINFO.ti_DOBJ )
 	.endif
 	ret
+
 tihide	ENDP
 
 	ASSUME esi: PTR S_TINFO
 
-tihideall PROC USES esi edi ebx ti:PTINFO
+tihideall PROC ti:PTINFO
 
 	.if	tigetfile( ti )
 
-		push	ecx
-		push	eax
-		mov	esi,eax
-		mov	edi,edx
-
 		tihide( ti )
-
-		.if	[esi].ti_flag & _T_WINDOWS
-
-			mov	edx,_scrrow
-			inc	edx
-			mov	eax,_scrcol
-			mov	ebx,eax
-			mov	bh,dl
-			shl	ebx,16
-			xor	ecx,ecx
-
-			.while	esi
-
-				push	eax
-				push	edx
-				tihide( esi )
-				pop	edx
-				pop	eax
-
-				and	[esi].ti_flag,NOT _T_WINDOWS
-				mov	[esi].ti_cols,eax
-				mov	[esi].ti_rows,edx
-				mov	[esi].ti_DOBJ.dl_rect,ebx
-				mov	[esi].ti_xpos,0
-
-				.break .if esi == edi
-				mov	esi,[esi].ti_next
-			.endw
-		.endif
-
-		pop	eax
-		pop	ecx
 	.endif
-	mov	edx,edi
 	ret
 
 tihideall ENDP
@@ -222,9 +161,11 @@ timenus PROC USES esi ebx ti:PTINFO
 
 			mov	eax,' '
 			.if	[esi].ti_flag & _T_MODIFIED
+
 				mov	al,'*'
 			.endif
-			scputw( 0, ecx, 1, eax )
+			movzx	edx,[ebx].S_DOBJ.dl_rect.rc_x
+			scputw( edx, ecx, 1, eax )
 		.endif
 	.endif
 	xor	eax,eax
@@ -238,11 +179,12 @@ tishow	PROC USES esi edi ebx ti:PTINFO
 	mov	esi,ti
 
 	.if	esi
+
 		lea	edi,[esi].S_TINFO.ti_DOBJ
-
 		.if	!( [edi].dl_flag & _D_DOPEN )
-			mov	edx,[esi].ti_clat
 
+			tsetrect( esi, tgetrect() )
+			mov	edx,[esi].ti_clat
 			.if	[esi].ti_flag & _T_USESTYLE
 
 				mov	edx,[esi].ti_stat
@@ -258,31 +200,17 @@ tishow	PROC USES esi edi ebx ti:PTINFO
 
 		.if	[edi].dl_flag & _D_DOPEN
 
-			dlshow( edi )
-			SetCursor( addr [esi].ti_cursor )
+			.if	!([edi].dl_flag & _D_ONSCR)
 
+				dlshow( edi )
+			.endif
 			xor	eax,eax
 			mov	[esi].ti_scrc,eax
 
-			mov	al,[edi].dl_rect.rc_col
-			mov	[esi].ti_cols,eax
-
-			mov	al,[edi].dl_rect.rc_row
-			movzx	ebx,[edi].dl_rect.rc_y
-
 			.if	[esi].ti_flag & _T_USEMENUS
 
-				lea	ebx,[ebx+1]
-				lea	eax,[eax-1]
-			.endif
-
-			mov	[esi].ti_ypos,ebx
-			mov	[esi].ti_rows,eax
-
-			.if	!ZERO?
-
-				dec	ebx
 				movzx	edx,[edi].dl_rect.rc_x
+				movzx	ebx,[edi].dl_rect.rc_y
 				mov	ecx,[esi].ti_cols
 				mov	ah,at_background[B_Menus]
 				or	ah,at_foreground[F_Menus]
@@ -313,9 +241,8 @@ titogglemenus PROC USES esi ti:PTINFO
 		mov	eax,[esi].ti_flag
 		xor	eax,_T_USEMENUS
 		mov	[esi].ti_flag,eax
+		.if	eax & _T_USEMENUS
 
-		and	eax,_T_USEMENUS
-		.if	!ZERO?
 			inc	edx
 			dec	ecx
 		.endif
@@ -339,44 +266,31 @@ titogglefile PROC USES esi edi ebx old:PTINFO, new:PTINFO
 	mov	esi,eax
 
 	.if	esi != edi && [esi].ti_flag & _T_TEDIT
+		if 0
+		.if	edi && \
+			[edi].ti_flag & _T_PANELB && \
+			[edi].ti_DOBJ.dl_flag & _D_ONSCR
+
+			dlclose( addr [edi].ti_DOBJ )
+		.endif
+		endif
 
 		mov	ebx,esi
+		tishow( esi )
 
-		.if	!( [edi].ti_flag & _T_WINDOWS )
+		.if	[esi].ti_DOBJ.dl_flag & _D_DOPEN
 
-			flip_buffer:
-			tishow( esi )
-
-			.if	[esi].ti_DOBJ.dl_flag & _D_DOPEN
-
-				and	[edi].ti_DOBJ.dl_flag,NOT (_D_DOPEN OR _D_ONSCR)
-				free  ( [esi].ti_DOBJ.dl_wp )
-				mov	eax,[edi].ti_DOBJ.dl_wp
-				mov	[esi].ti_DOBJ.dl_wp,eax
-			.else
-				mov	ebx,edi
-			.endif
+			and	[edi].ti_DOBJ.dl_flag,NOT (_D_DOPEN OR _D_ONSCR)
+			free  ( [esi].ti_DOBJ.dl_wp )
+			mov	eax,[edi].ti_DOBJ.dl_wp
+			mov	[esi].ti_DOBJ.dl_wp,eax
 		.else
-
-			mov	eax,[esi].ti_DOBJ.dl_rect
-			.while	[edi].ti_prev
-				mov	edi,[edi].ti_prev
-			.endw
-			.while	edi
-				.if	eax == [edi].ti_DOBJ.dl_rect && \
-					[edi].ti_DOBJ.dl_flag & _D_DOPEN && \
-					edi != esi
-
-					jmp	flip_buffer
-				.endif
-				mov	edi,[edi].ti_next
-			.endw
-
-			tishow( esi )
+			mov	ebx,edi
 		.endif
 	.endif
 	mov	eax,ebx
 	ret
+
 titogglefile ENDP
 
 	END

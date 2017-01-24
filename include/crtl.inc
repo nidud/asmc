@@ -17,10 +17,6 @@ __setargv	PROTO :SIZE_T, :PVOID, :LPSTR
 __initialize	PROTO :PVOID, :PVOID
 __allocwpath	PROTO :LPSTR
 
-getfattr	PROTO :LPTSTR
-setfattr	PROTO :LPTSTR, :UINT
-
-
 SSE_MMX		equ 0x0001
 SSE_SSE		equ 0x0002
 SSE_SSE2	equ 0x0004

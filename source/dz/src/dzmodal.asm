@@ -323,18 +323,7 @@ mouseevent PROC PRIVATE USES esi edi ebx
 mouseevent ENDP
 
 doszip_modal PROC USES esi
-	;
-	; _diskflag set on disk change
-	;
-	; mkdir():	1
-	; rmdir():	1
-	; osopen(WR):	1
-	; remove():	1
-	; rename():	1
-	; setfattr():	2
-	; setftime():	2
-	; process():	3
-	;
+
 	xor	eax,eax
 	mov	_diskflag,eax
 	inc	eax
@@ -343,28 +332,43 @@ doszip_modal PROC USES esi
 	.while	mainswitch
 
 		mov	eax,_diskflag
+
 		.if	eax
+			;
+			; 1. mkdir(),rmdir(),osopen(),remove(),rename()
+			; 2. setfattr(),setftime()
+			; 3. process()
+			;
 			.if	eax == 3
 				;
 				; Update after extern command
 				;
 				SetConsoleTitle( DZ_Title )
+
 				.if	cflag & _C_DELTEMP
+
 					removetemp( addr cp_ziplst )
 					and	cflag,not _C_DELTEMP
 				.endif
+
 				mov	eax,cpanel
 				mov	esi,[eax].S_PANEL.pn_wsub
+
 				.if	filexist( [esi].S_WSUB.ws_path ) != 2
+
 					mov	eax,[esi].S_WSUB.ws_path
 					mov	BYTE PTR [eax],0
 					and	[esi].S_WSUB.ws_flag,not _W_ROOTDIR
 				.endif
+
 				.if	[esi].S_WSUB.ws_flag & _W_ARCHIVE
+
 					.if	filexist( [esi].S_WSUB.ws_file ) != 1
+
 						and	[esi].S_WSUB.ws_flag,not _W_ARCHIVE
 					.endif
 				.endif
+
 				cominit( esi )
 			.endif
 			;
@@ -374,50 +378,68 @@ doszip_modal PROC USES esi
 			reread_panels()
 		.endif
 
-		menus_getevent()
-		mov	esi,eax
+
+		mov	esi,menus_getevent()
+
 		.if	(eax == KEY_ENTER || eax == KEY_KPENTER) \
 			&& com_base && cflag & _C_COMMANDLINE
 
 			.if	doskeysave()
-				command( addr com_base )
+
+				.continue .if command( addr com_base )
 			.endif
-			.continue .if eax
+
 			comevent( KEY_END )
 			.continue
-		.elseif com_base && cflag & _C_COMMANDLINE
+		.endif
+
+		.if	com_base && cflag & _C_COMMANDLINE
 
 			.continue .if comevent( esi )
 		.endif
-		cpanel_state()
-		.if	!ZERO?
+
+		.if	cpanel_state()
+
 			.continue .if panel_event( cpanel, esi )
 		.endif
 
-		.break .if mainswitch == 0
+		.break .if !mainswitch
+
 		.if	esi == MOUSECMD
+
 			mouseevent()
 			msloop()
+
 			.continue
 		.endif
+
 		.if	esi == KEY_TAB
+
 			panel_toggleact()
+
 			.continue
 		.endif
 
 		lea	edx,global_key
 		mov	eax,[edx].S_GLCMD.gl_key
+
 		.while	eax
+
 			.if	eax == esi
+
 				call	[edx].S_GLCMD.gl_proc
 				mov	eax,1
 				.break
 			.endif
+
 			add	edx,SIZE S_GLCMD
 			mov	eax,[edx].S_GLCMD.gl_key
 		.endw
+
 		.if	eax
+
 			msloop()
+
 			.continue
 		.endif
 

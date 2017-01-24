@@ -47,17 +47,17 @@ wcspbrk		PROTO :LPWSTR, :LPWSTR
 ;;;;;;;;;;;;;;; crtl
 
 IFNDEF __PE__
+
+memxchg		PROTO :LPSTR, :LPSTR, :SIZE_T
+memstri		PROTO :LPSTR, :SIZE_T, :LPSTR, :SIZE_T
+memrchr		PROTO :LPSTR, :SIZE_T, :SIZE_T
+memquote	PROTO :LPSTR, :SIZE_T
+memzero		PROTO :LPSTR, :SIZE_T
+
 strfn		PROTO :LPSTR
 strext		PROTO :LPSTR
 setfext		PROTO :LPSTR, :LPSTR
 strfcat		PROTO :LPSTR, :LPSTR, :LPSTR
-memxchg		PROTO :LPSTR, :LPSTR, :SIZE_T
-
-memzero		PROTO :LPSTR, :SIZE_T
-cmpwarg		PROTO :LPSTR, :LPSTR
-cmpwargs	PROTO :LPSTR, :LPSTR
-dostounix	PROTO :LPSTR
-unixtodos	PROTO :LPSTR
 strxchg		PROTO :LPSTR, :LPSTR, :LPSTR
 strpath		PROTO :LPSTR
 strnzcpy	PROTO :LPSTR, :LPSTR, :SIZE_T
@@ -66,8 +66,21 @@ strspace	PROTO :LPSTR
 strtrim		PROTO :LPSTR
 strtoken	PROTO :LPSTR
 strstri		PROTO :LPSTR, :LPSTR
+strins		PROTO :LPSTR, :LPSTR
+strtolx		PROTO :LPSTR
+strmove		PROTO :LPSTR, :LPSTR
+strchri		PROTO :LPSTR, :SIZE_T
+streol		PROTO :LPSTR
+
+cmpwarg		PROTO :LPSTR, :LPSTR
+cmpwargs	PROTO :LPSTR, :LPSTR
+dostounix	PROTO :LPSTR
+unixtodos	PROTO :LPSTR
+
 ELSE
+
 option		dllimport:<kernel32>
+
 ENDIF
 
 ;;;;;;;;;;;;;;; kernel32

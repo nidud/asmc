@@ -3,9 +3,10 @@ Change Log File for DOSZIP - Win32
 ==================================
 
 Changes in 3.48 - xx xxx 2016
-- added key F7 to Edit - Split Screen
+- removed dz.cfg --> moved to dz.ini
+- added key F7 to Toggle Edit Panel/Full Screen
 - fixed bug in Save Session -- one file short
-- fixed bug in reading DZ.INI with missing CR -- CR/LF to LF (Unix)
+- fixed bug in reading Unix .INI files -- LF / CR, LF
 
 Changes in 3.47 - 15 May 2016
 - added Ctrl-C to the edit help menu for the Transfer dialog...

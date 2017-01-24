@@ -3,6 +3,7 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.22 - xx xxx 2017
+- added use of proto typedefs in HLL
 - fixed bug in switch -D, -I and -Fi used with -I"quoted text"
 - added command line switch /ws - Create Unicode strings
 - added OPTION WSTRING:[ON|OFF] - Toggle ASCII/Unicode

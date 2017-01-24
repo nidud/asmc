@@ -40,7 +40,6 @@ include errno.inc
 include iost.inc
 include consx.inc
 include crtl.inc
-include ini.inc
 include time.inc
 include tview.inc
 

@@ -20,19 +20,25 @@ load_tedit PROC USES esi ebx file, etype
 
 	lea	esi,path
 	.if	!strchr( strcpy( esi, file ), '.' )
+
 		strcat( esi, addr cp_dotdot[1] )
 	.endif
+
 	.if	!loadiniproc( "Edit", esi, etype )
+
 		call	clrcmdl
 		mov	eax,cpanel
 		.if	panel_findnext()
+
 			mov	ebx,cpanel
 			mov	ebx,[ebx].S_PANEL.pn_wsub
 			wedit( [ebx].S_WSUB.ws_fcb, [ebx].S_WSUB.ws_count )
 		.else
 			.if	BYTE PTR [esi] == '"'
+
 				inc	esi
-				.if	strchr(esi,'"')
+				.if	strrchr(esi,'"')
+
 					mov	BYTE PTR [eax],0
 				.endif
 			.endif
@@ -126,12 +132,16 @@ cmwindowlist PROC
 cmwindowlist ENDP
 
 cmtmodal PROC
+
 	.if	tistate( tinfo )
+
 		call	tmodal
 	.else
+
 		call	topensession
 	.endif
 	ret
+
 cmtmodal ENDP
 
 	END

@@ -10,9 +10,8 @@ ER_BROKEN_PIPE	 equ 109
 
 	.code
 
-	OPTION	WIN64:3, STACKBASE:rsp
+_read	PROC USES rsi rdi rbx r12 r13 h:SINT, b:PVOID, count:SIZE_T
 
-_read	PROC USES rbx rsi rdi r12 r13 h:SINT, b:PVOID, count:SIZE_T
 	xor	rsi,rsi			; nothing read yet
 	mov	rdi,rdx
 	mov	rbx,rcx
@@ -31,9 +30,11 @@ _read	PROC USES rbx rsi rdi r12 r13 h:SINT, b:PVOID, count:SIZE_T
 	mov	oserrno,eax
 
 	.if	cl & FH_PIPE or FH_DEVICE
+
 		lea	rcx,pipech
 		mov	al,[rcx+rbx]
 		.if	al != 10
+
 			mov	[rdi],al
 			mov	BYTE PTR [rcx+rbx],10
 			inc	rdi
@@ -51,24 +52,30 @@ _read	PROC USES rbx rsi rdi r12 r13 h:SINT, b:PVOID, count:SIZE_T
 	mov	al,[r13]
 
 	.if	al & FH_TEXT
+
 		and	al,not FH_CRLF
 		.if	byte ptr [rdi] == 10
+
 			or al,FH_CRLF
 		.endif
 		mov	[r13],al
 		mov	r12,rdi
+
 		.while	1
+
 			mov	rax,b
 			add	rax,rsi
 			.break .if rdi >= rax
 
 			mov	al,[rdi]
 			.if	al == 26
+
 				.break .if BYTE PTR[r13] & FH_DEVICE
 				or	BYTE PTR [r13],FH_EOF
 				.break
 			.endif
 			.if	al != 13
+
 				mov	[r12],al
 				inc	rdi
 				inc	r12
@@ -77,10 +84,13 @@ _read	PROC USES rbx rsi rdi r12 r13 h:SINT, b:PVOID, count:SIZE_T
 			mov	rax,b
 			lea	rax,[rax+rsi-1]
 			.if	rdi < rax
+
 				.if	byte ptr [rdi+1] == 10
+
 					add	rdi,2
 					mov	al,10
 				.else
+
 					mov	al,[rdi]
 					inc	rdi
 				.endif
@@ -94,16 +104,20 @@ _read	PROC USES rbx rsi rdi r12 r13 h:SINT, b:PVOID, count:SIZE_T
 			osread( ebx, addr peekchr, 1 )
 
 			.if	!rax || oserrno
+
 				mov	al,13
 			.elseif BYTE PTR [r13] & FH_DEVICE or FH_PIPE
+
 				mov	al,10
 				.if	peekchr != al
+
 					mov	al,peekchr
 					lea	rcx,pipech
 					mov	[rcx+rbx],al
 					mov	al,13
 				.endif
 			.else
+
 				mov	al,10
 				.if	b != r12 || peekchr != al
 

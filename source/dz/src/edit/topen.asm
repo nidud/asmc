@@ -11,13 +11,16 @@ include errno.inc
 	.code
 
 	ASSUME	esi: PTR S_TINFO
+	ASSUME	edi: PTR S_TINFO
 
 topen	PROC USES esi edi file:LPSTR
 
 	.if	tiopen( tinfo, titabsize, tiflags )
 
+
 		mov	esi,eax
 		or	[esi].ti_flag,_T_FILE
+		mov	edi,[esi].ti_prev
 		mov	tinfo,eax
 
 		mov	eax,file
@@ -32,6 +35,7 @@ topen	PROC USES esi edi file:LPSTR
 
 				tiread( esi )
 			.else
+
 				ermsg ( 0, addr CP_ENOMEM )
 
 				ticlose( esi )
@@ -39,22 +43,26 @@ topen	PROC USES esi edi file:LPSTR
 			.endif
 
 		.else
+
 			inc	[esi].S_TINFO.ti_lcnt	; set line count to 1
 			.repeat
+
 				inc	new_id
 				sprintf( [esi].ti_file, "New (%d)", new_id )
 				filexist( [esi].ti_file )
 			.until	eax != 1
 
-			mov	edi,[esi].ti_prev
 			.if	edi
-				memcpy( [esi].ti_style, [edi].S_TINFO.ti_style, STYLESIZE )
-				mov	eax,[edi].S_TINFO.ti_stat
+
+				memcpy( [esi].ti_style, [edi].ti_style, STYLESIZE )
+				mov	eax,[edi].ti_stat
 				mov	[esi].ti_stat,eax
 			.else
+
 				tireadstyle( esi )
 			.endif
 		.endif
+
 		mov	eax,esi
 	.endif
 	test	eax,eax
@@ -75,6 +83,7 @@ tclose	PROC
 		ticlose( tinfo )
 		mov	tinfo,eax
 	.else
+
 		mov	new_id,eax
 	.endif
 	ret

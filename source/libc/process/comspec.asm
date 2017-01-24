@@ -23,17 +23,18 @@ __initcomspec PROC
 
 	local buffer[1024]:BYTE
 
-	.if comspec_type
+	.if	comspec_type
 
-		SearchPath( NULL, "cmd.exe", NULL, 1024, addr buffer, NULL )
+		SearchPath(NULL, "cmd.exe", NULL, 1024, addr buffer, NULL)
 	.else
-		GetEnvironmentVariable( addr __comspec, addr buffer, 1024 )
+
+		GetEnvironmentVariable(addr __comspec, addr buffer, 1024)
 	.endif
 
-	.if eax
+	.if	eax
 
-		free( __pCommandCom )
-		mov __pCommandCom,salloc( addr buffer )
+		free(__pCommandCom)
+		mov  __pCommandCom,salloc(addr buffer)
 	.endif
 	ret
 

@@ -154,7 +154,7 @@ tiputl	ENDP
 
 tiputs	PROC USES esi edi ebx ti:PTR S_TINFO
 
-  local wc, ci, wcols, bz:COORD, rc:SMALL_RECT
+  local wc, ci, wcols, bz:COORD, rc:SMALL_RECT, cursor:S_CURSOR
 
 	mov	esi,ti
 
@@ -163,11 +163,11 @@ tiputs	PROC USES esi edi ebx ti:PTR S_TINFO
 	mov	ecx,[esi].ti_ypos
 	add	ecx,[esi].ti_yoff
 
-	mov	[esi].ti_cursor.x,ax
-	mov	[esi].ti_cursor.y,cx
-	mov	[esi].ti_cursor.bVisible,1
-	mov	[esi].ti_cursor.dwSize,CURSOR_NORMAL
-	SetCursor( addr [esi].ti_cursor )
+	mov	cursor.x,ax
+	mov	cursor.y,cx
+	mov	cursor.bVisible,1
+	mov	cursor.dwSize,CURSOR_NORMAL
+	SetCursor( addr cursor )
 
 	mov	eax,[esi].ti_cols
 	mul	[esi].ti_rows

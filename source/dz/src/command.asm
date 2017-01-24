@@ -10,6 +10,7 @@ include stdio.inc
 include stdlib.inc
 include io.inc
 include crtl.inc
+include cfini.inc
 
 	.data
 
@@ -182,7 +183,7 @@ command PROC USES esi edi ebx cmd ; BOOL
 
 	mov	eax,console
 	and	eax,CON_NTCMD
-	getcomspec( eax )
+	CFGetComspec( eax )
 
 	alloca( 8000h + _MAX_PATH*2 + 32 )
 	mov	edi,eax

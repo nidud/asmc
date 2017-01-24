@@ -100,13 +100,18 @@ osmaperr	PROTO
 
 getfattr	PROTO :LPTSTR
 setfattr	PROTO :LPTSTR, :UINT
-__FTToTime	PROTO :PTR FILETIME
 filexist	PROTO :LPSTR
+readword	PROTO :LPSTR
+getftime	PROTO :SINT
+getftime_access PROTO :SINT
+getftime_create PROTO :SINT
+setftime	PROTO :SINT, :DWORD
+setftime_access PROTO :SINT, :DWORD
+setftime_create PROTO :SINT, :DWORD
+__FTToTime	PROTO :PTR FILETIME
 
-IFDEF __DZ__
 externdef	console:DWORD
 externdef	_diskflag:DWORD
-ENDIF
 
 IFDEF __PE__
 option		dllimport:<kernel32>

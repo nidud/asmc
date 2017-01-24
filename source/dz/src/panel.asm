@@ -11,6 +11,7 @@ include stdlib.inc
 include process.inc
 include time.inc
 include crtl.inc
+include cfini.inc
 
 PUBLIC	cp_copyselected
 EXTRN	cp_quote:BYTE
@@ -175,6 +176,7 @@ prect_open PROC USES esi edi ebx ; EAX = panel
 	mov	ebx,[esi].S_PANEL.pn_dialog
 
 	.if	[ebx].S_DOBJ.dl_flag & _D_DOPEN
+
 		dlclose( [esi].S_PANEL.pn_xl )
 		dlclose( ebx )
 	.endif
@@ -1419,8 +1421,8 @@ panel_putinfo PROC USES esi edi ebx
 
 			strcpy( addr path, [esi].S_WSUB.ws_path )
 			.if	[esi].S_WSUB.ws_flag & _W_ARCHIVE or _W_ROOTDIR
-				mov	ecx,eax
-				strfcat( ecx, [esi].S_WSUB.ws_file, [esi].S_WSUB.ws_arch )
+
+				strfcat( eax, [esi].S_WSUB.ws_file, [esi].S_WSUB.ws_arch )
 			.endif
 
 			mov	edx,eax
@@ -1432,6 +1434,7 @@ panel_putinfo PROC USES esi edi ebx
 			mov	esi,[esi].S_WSUB.ws_path
 			mov	al,[esi]
 			scputw( ebx, ecx, 1, eax )
+
 			mov	ecx,len
 			push	ecx
 			push	edx
@@ -1441,6 +1444,7 @@ panel_putinfo PROC USES esi edi ebx
 			mov	al,205
 			mov	dl,bh
 			scputw( ebx, edx, ecx, eax )
+
 			pop	edx
 			strlen( edx )
 			xchg	edx,eax
@@ -1448,11 +1452,13 @@ panel_putinfo PROC USES esi edi ebx
 			mov	cl,at_background[B_Panel]
 
 			.if	edi == cpanel
+
 				mov	cl,at_background[B_InvPanel]
 			.endif
 			or	cl,at_foreground[F_Frame]
 			dec	ebx
 			.if	edx >= ebx
+
 				push	eax
 				mov	ah,cl
 				mov	al,' '
@@ -1467,6 +1473,7 @@ panel_putinfo PROC USES esi edi ebx
 				pop	eax
 				scpath( ebx, edx, ecx, eax )
 			.else
+
 				mov	esi,eax
 				mov	al,bl
 				shr	dl,1
@@ -1518,11 +1525,13 @@ panel_putmini PROC USES esi edi ebx
 			.if	eax & _W_MINISTATUS
 
 				.if	eax & _W_DRVINFO
+
 					mov	edx,x
 					mov	ecx,y
 					sub	ecx,2
 					inc	edx
 					.if	cflag & _C_HORIZONTAL
+
 						add	edx,40
 					.endif
 					call	clear
@@ -1530,12 +1539,14 @@ panel_putmini PROC USES esi edi ebx
 					call	clear
 					inc	ecx
 					.if	cflag & _C_HORIZONTAL
+
 						sub	edx,40
 						call	clear
 					.endif
 					mov	edx,x
 					add	edx,1
 					.if	cflag & _C_HORIZONTAL
+
 						add	edx,40
 					.endif
 					mov	ecx,y
@@ -1550,18 +1561,23 @@ panel_putmini PROC USES esi edi ebx
 					mov	eax,[eax]
 					mov	cp_disk,al
 					.if	al && ah == ':'
+
 						and	al,not 20h
 						mov	cp_disk,al
 						sub	al,'A' - 1
 						movzx	eax,al
 						mov	DiskID,eax
+
 						.if	GetVolumeID( addr cp_disk, addr VolumeID )
+
 							.if	_disk_exist( DiskID )
+
 								add	eax,S_DISK.di_name[3]
 								mov	edx,eax
 								mov	BYTE PTR [eax-1],' '
 								strnzcpy( edx, addr VolumeID, 27 )
 							.endif
+
 							mov	cl,at_background[B_Panel]
 							or	cl,at_foreground[F_Files]
 							mov	edx,y
@@ -1570,6 +1586,7 @@ panel_putmini PROC USES esi edi ebx
 							inc	ebx
 
 							.if	!( cflag & _C_HORIZONTAL )
+
 								dec	edx
 							.endif
 							scputs( ebx, edx, ecx, 30, addr VolumeID )
@@ -1577,6 +1594,7 @@ panel_putmini PROC USES esi edi ebx
 					.endif
 
 					.if	GetFileSystemName( addr cp_disk, addr FileSystemName )
+
 						mov	cl,at_background[B_Panel]
 						or	cl,at_foreground[F_Subdir]
 						mov	ebx,y
@@ -1584,14 +1602,21 @@ panel_putmini PROC USES esi edi ebx
 						mov	edx,x
 						add	edx,12
 						.if	!( cflag & _C_HORIZONTAL )
+
 							dec	ebx
 						.endif
 						scputf( edx, ebx, ecx, 24, "%24s", addr FileSystemName )
 					.endif
-					GetDiskFreeSpaceEx( addr cp_disk, addr FreeBytesAvailable,
-					    addr TotalNumberOfBytes, addr TotalNumberOfFreeBytes )
+
+					GetDiskFreeSpaceEx(
+						addr cp_disk,
+						addr FreeBytesAvailable,
+						addr TotalNumberOfBytes,
+						addr TotalNumberOfFreeBytes )
+
 					mkbstring( addr cFreeBytesAvailable, FreeBytesAvailable )
 					mkbstring( addr cTotalNumberOfBytes, TotalNumberOfBytes )
+
 					mov	cl,at_background[B_Panel]
 					or	cl,at_foreground[F_Files]
 					mov	edx,x
@@ -1599,42 +1624,52 @@ panel_putmini PROC USES esi edi ebx
 					sub	ebx,2
 					add	edx,11
 					.if	cflag & _C_HORIZONTAL
+
 						add	edx,40
 					.endif
 					scputf( edx, ebx, ecx, 20, addr formats, addr cTotalNumberOfBytes )
 					inc	ebx
 					scputf( edx, ebx, ecx, 20, addr formats, addr cFreeBytesAvailable )
 				.endif
+
 				mov	ah,at_background[B_Panel]
 				or	ah,at_foreground[F_Hidden]
 				mov	al,' '
 				scputw( x, y, l, eax )
 				movzx	ecx,ah
 				.if	![esi].S_PANEL.pn_fcb_count
+
 					mov	eax,[esi].S_PANEL.pn_wsub
 					mov	eax,[eax].S_WSUB.ws_path
 					mov	al,[eax]
 					scputf( x, y, 0, 0, "[%c:] Empty disk", eax )
 				.else
+
 					mov	eax,[esi].S_PANEL.pn_fcb_index
 					add	eax,[esi].S_PANEL.pn_cel_index
 					wsfblk( [esi].S_PANEL.pn_wsub, eax )
 					mov	fb,eax
 					mov	eax,esi
 					.if	panel_selected()
+
 						xor	eax,eax
 						xor	edx,edx
 						mov	ecx,[esi].S_PANEL.pn_fcb_count
 						.if	ecx
+
 							mov	ebx,[esi].S_PANEL.pn_wsub
 							.if	[ebx].S_WSUB.ws_fcb != eax
+
 								xor	edi,edi
 								mov	esi,[ebx].S_WSUB.ws_fcb
 								.repeat
+
 									mov	ebx,[esi]
 									.if	[ebx].S_FBLK.fb_flag & _FB_SELECTED
+
 										inc	edi
 										.if	!( [ebx].S_FBLK.fb_flag & _A_SUBDIR )
+
 											add	eax,DWORD PTR [ebx].S_FBLK.fb_size
 											adc	edx,DWORD PTR [ebx].S_FBLK.fb_size[4]
 										.endif
@@ -1655,9 +1690,11 @@ panel_putmini PROC USES esi edi ebx
 							.endif
 						.endif
 					.else
+
 						fbputfile( fb, x, y, l )
 						mov	eax,fb
 						.if	[eax].S_FBLK.fb_flag & _FB_UPDIR
+
 							scputw( x, y, 2, ' ' )
 							mov	esi,[esi].S_PANEL.pn_wsub
 							strfn( [esi].S_WSUB.ws_path )
@@ -1677,48 +1714,60 @@ clear:
 	mov	al,' '
 	scputw( edx, ecx, 37, eax )
 	retn
+
 panel_putmini ENDP
 
 	OPTION	PROC: PRIVATE
 
 fbputsize PROC USES ebx edx
+
 	mov	ebx,[ebp+20]
 	fbcolor(ebx)
 	shl	eax,8
 	mov	ecx,eax
 	lea	eax,format_10lu
+
 	.if	[ebx].S_FBLK.fb_flag & _A_VOLID
+
 		mov	ch,at_foreground[F_Subdir]
 		or	ch,at_background[B_Panel]
 		lea	eax,format_02lX
 	.endif
 	wcputf( edx, [ebp+28], ecx, eax, [ebx].S_FBLK.fb_size )
 	ret
+
 fbputsize ENDP
 
 fbputsystem PROC USES ebx
+
 	mov	edx,eax
 	mov	ebx,[ebp+20]
 	mov	eax,[ebx].S_FBLK.fb_flag
+
 	.if	al & _A_HIDDEN or _A_SYSTEM
+
 		fbcolor(ebx)
 		mov	ah,al
 		mov	al,'°'
 		wcputw( edx, 1, eax )
 	.endif
 	ret
+
 fbputsystem ENDP
 
 fbputmax PROC USES ebx
+
 	mov	ebx,eax
 	mov	al,'¯'
 	mov	ah,at_foreground[F_Panel]
 	or	ah,at_background[B_Panel]
 	wcputw( ebx, 1, eax )
 	ret
+
 fbputmax ENDP
 
 fbputtime PROC USES ebx fb, wp
+
 	mov	ebx,fb
 	mov	eax,[ebx].S_FBLK.fb_time
 	shr	eax,5
@@ -1733,6 +1782,7 @@ fbputtime PROC USES ebx fb, wp
 	wcputf( wp, 0, eax, addr cp_timefrm )
 	add	esp,8
 	ret
+
 fbputtime ENDP
 
 fbputdate PROC USES esi edi ebx fb, wp
@@ -1743,13 +1793,16 @@ fbputdate PROC USES esi edi ebx fb, wp
 	mov	esi,eax
 
 	.if	edi & _FB_ROOTDIR
+
 		or edi,_A_SYSTEM
 	.endif
 
 	shr	eax,9
 	.if	eax >= 20
+
 		sub eax,20
 	.else
+
 		add eax,80
 	.endif
 
@@ -1769,15 +1822,18 @@ fbputdate PROC USES esi edi ebx fb, wp
 fbputdate ENDP
 
 fbputdatetime PROC
+
 	push	eax
 	add	eax,18
 	fbputtime( [ebp+20], eax )
 	pop	eax
 	fbputdate( [ebp+20], eax )
 	ret
+
 fbputdatetime ENDP
 
 fbloadbock PROC
+
 	mov	eax,[ebp+20]
 	mov	ebx,eax
 	add	eax,S_FBLK.fb_name
@@ -1788,21 +1844,27 @@ fbloadbock PROC
 	fbcolor(ebx)
 	shl	eax,8
 	ret
+
 fbloadbock ENDP
 
 fbput83 PROC USES edx xl, wp, at, fname
 
 	mov	eax,fname
 	.if	WORD PTR [eax] == '..'
+
 		xor	eax,eax
 	.else
+
 		strext( eax )
 	.endif
+
 	push	eax
 	mov	ecx,xl
 	.if	!ZERO?
+
 		sub	eax,fname
 		.if	al <= cl
+
 			mov	cl,al
 		.endif
 	.endif
@@ -1812,6 +1874,7 @@ fbput83 PROC USES edx xl, wp, at, fname
 
 	pop	eax
 	.if	eax
+
 		inc	eax
 		mov	edx,wp
 		add	edx,xl
@@ -1824,45 +1887,59 @@ fbput83 PROC USES edx xl, wp, at, fname
 fbput83 ENDP
 
 putupdir PROC
+
 	.if	ecx & _FB_UPDIR
+
 		wcputs( edx, 0, ebx, addr cp_updir )
 	.elseif ecx & _A_SUBDIR
+
 		wcputs( edx, 0, ebx, addr cp_subdir )
 	.else
+
 		fbputsize()
 	.endif
 	ret
+
 putupdir ENDP
 
 	OPTION	PROC: PUBLIC
 
 fbputsl PROC USES esi edi ebx fb, wp, l
+
 	call	fbloadbock
 	shr	eax,8
 	mov	ebx,eax
 	mov	eax,l
 	.if	eax > 30
+
 		sub	eax,30
 	.else
+
 		mov	eax,8
 	.endif
+
 	fbput83( eax, wp, ebx, edi )
 	mov	edx,wp
 	mov	eax,l
 	add	edx,eax
 	add	edx,eax
+
 	.if	esi > eax
+
 		mov	eax,edx
 		sub	eax,10
 		call	fbputmax
 	.endif
+
 	mov	eax,edx
 	sub	eax,8
 	call	fbputsystem
 	ret
+
 fbputsl ENDP
 
 fbputsd PROC USES esi edi ebx fb, wp, l
+
 	call	fbloadbock
 	mov	ebx,eax
 	mov	edx,wp
@@ -1879,18 +1956,23 @@ fbputsd PROC USES esi edi ebx fb, wp, l
 	call	fbputsystem
 	mov	eax,l
 	sub	eax,26
+
 	.if	esi > eax
+
 		mov	eax,edx
 		sub	eax,2
 		call	fbputmax
 	.endif
+
 	mov	eax,edx
 	add	eax,32
 	call	fbputdatetime
 	ret
+
 fbputsd ENDP
 
 fbputll PROC USES esi edi ebx fb, wp, l:DWORD
+
 	call	fbloadbock
 	mov	ecx,l
 	dec	ecx
@@ -1900,7 +1982,9 @@ fbputll PROC USES esi edi ebx fb, wp, l:DWORD
 	mov	ebx,wp
 	add	ebx,ecx
 	add	ebx,ecx
+
 	.if	esi > ecx
+
 		mov	eax,ebx
 		sub	eax,2
 		call	fbputmax
@@ -1908,6 +1992,7 @@ fbputll PROC USES esi edi ebx fb, wp, l:DWORD
 	mov	eax,ebx
 	call	fbputsystem
 	ret
+
 fbputll ENDP
 
 fbputld PROC USES esi edi ebx fb, wp, l
@@ -1916,6 +2001,7 @@ fbputld PROC USES esi edi ebx fb, wp, l
 
 	xor	eax,eax
 	.if	cflag & _C_HORIZONTAL	; Long Horizontal Detail
+
 		mov eax,12
 	.endif
 	mov	dist,eax
@@ -1940,6 +2026,7 @@ fbputld PROC USES esi edi ebx fb, wp, l
 	sub	eax,21
 	sub	eax,dist
 	.if	esi > eax
+
 		mov	eax,edx
 		sub	eax,2
 		call	fbputmax
@@ -1948,9 +2035,11 @@ fbputld PROC USES esi edi ebx fb, wp, l
 	add	eax,l
 	add	eax,l
 	.if	cflag & _C_HORIZONTAL
+
 		sub	eax,28
 		call	fbputdatetime
 	.else
+
 		sub	eax,16
 		fbputdate( fb, eax )
 	.endif
@@ -2010,6 +2099,7 @@ prect_clear PROC PRIVATE USES esi edi ebx dialog, rc:S_RECT, ptype
 		.repeat
 			mov	al,[edx]
 			.if	al != 179
+
 				mov	al,' '
 				mov	[edx],ax
 			.endif
@@ -2050,10 +2140,13 @@ panel_putitem PROC USES esi edi ebx panel, index
 		mov	eax,[eax].S_WSUB.ws_flag
 
 		.if	eax & _W_MINISTATUS
+
 			sub	rc.rc_row,2
 			.if	eax & _W_DRVINFO
+
 				sub	rc.rc_row,3
 				.if	cflag & _C_HORIZONTAL
+
 					inc	rc.rc_row
 				.endif
 			.endif
@@ -2065,6 +2158,7 @@ panel_putitem PROC USES esi edi ebx panel, index
 			mov	ebx,eax
 			mov	eax,[esi].S_PANEL.pn_fcb_count
 			.if	eax
+
 				dlclose( [esi].S_PANEL.pn_xl )
 				mov	result,eax
 				mov	eax,esi
@@ -2077,9 +2171,11 @@ panel_putitem PROC USES esi edi ebx panel, index
 					inc	count
 					mov	eax,count
 					.if	eax >= [esi].S_PANEL.pn_cel_count
+
 						rcwrite( rc, ebx )
 						free( ebx )
 						.if	result
+
 							mov	eax,esi
 							pcell_show()
 						.endif
@@ -2097,13 +2193,16 @@ panel_putitem PROC USES esi edi ebx panel, index
 					mov	edx,eax
 					mov	eax,index
 					.if	eax == 1
+
 						mov	ecx,[esi].S_PANEL.pn_xl
 						mov	eax,edi
 						add	al,[ecx].S_XCEL.xl_rows
 						dec	al
 					.elseif eax == 2
+
 						mov	eax,edi
 					.else
+
 						mov	al,rcxc.rc_y
 					.endif
 					.continue .if rcxc.rc_y != al
@@ -2120,6 +2219,7 @@ panel_putitem PROC USES esi edi ebx panel, index
 					call	[esi].S_PANEL.pn_putfcb
 				.until	0
 			.else
+
 				dlclose( [esi].S_PANEL.pn_xl )
 				mov	eax,esi
 				pcell_set()
@@ -2152,14 +2252,19 @@ panel_putitemax ENDP
 pcell_update PROC USES esi edi ebx
 	mov	esi,eax
 	.if	dlclose( [esi].S_PANEL.pn_xl )
+
 		mov	eax,esi
 		pcell_set()
 		mov	eax,esi
+
 		.if	panel_curobj()
+
 			mov	ebx,[esi].S_PANEL.pn_xl
 			mov	ebx,[ebx].S_XCEL.xl_rect
 			mov	edi,edx
+
 			.if	rcalloc( ebx, 0 )
+
 				push	eax
 				rcread( ebx, eax )
 				pop	eax
@@ -2174,6 +2279,7 @@ pcell_update PROC USES esi edi ebx
 				rcwrite( ebx, edi )
 				free( edi )
 			.endif
+
 			mov	eax,esi
 			call	pcell_open
 			dlshow( [esi].S_PANEL.pn_xl )
@@ -2183,18 +2289,24 @@ pcell_update PROC USES esi edi ebx
 		.endif
 	.endif
 	ret
+
 pcell_update ENDP
 
 pcell_select PROC USES esi
+
 	mov	esi,eax
+
 	.if	panel_curobj()
+
 		.if	fblk_invert( edx )
+
 			mov	eax,esi
 			call	pcell_update
 			mov	eax,1
 		.endif
 	.endif
 	ret
+
 pcell_select ENDP
 
 ;----------------------------------------------------------------------------
@@ -2224,10 +2336,12 @@ panel_event PROC USES esi edi ebx panel, event
 	.switch eax
 
 	  .case KEY_LEFT
+
 		mov	ecx,[esi].pn_xl
 		xor	edx,edx
 		movzx	eax,[ecx].S_XCEL.xl_rows ; number of lines in panel
 		mov	ecx,[esi].pn_cel_index
+
 		.switch
 		  .case eax <= ecx
 			sub	ecx,eax
@@ -2247,9 +2361,11 @@ panel_event PROC USES esi edi ebx panel, event
 			xor	eax,eax
 			call	panel_putitemax
 		.endsw
+
 		.endc
 
 	  .case KEY_RIGHT
+
 		mov	eax,[esi].pn_xl
 		movzx	ecx,[eax].S_XCEL.xl_rows
 		mov	eax,[esi].pn_cel_index
@@ -2257,22 +2373,27 @@ panel_event PROC USES esi edi ebx panel, event
 		mov	edx,[esi].pn_cel_count
 		dec	edx
 		.if	eax <= edx
+
 			add	[esi].pn_cel_index,ecx
 			mov	eax,esi
 			call	pcell_update
 		.else
+
 			mov	eax,[esi].pn_cel_index
 			add	eax,[esi].pn_fcb_index
 			add	eax,ecx
 			.if	eax < [esi].pn_fcb_count
+
 				add	[esi].pn_fcb_index,ecx
 				xor	eax,eax
 				call	panel_putitemax
 			.elseif [esi].pn_cel_index < edx
+
 				mov	[esi].pn_cel_index,edx
 				mov	eax,esi
 				call	pcell_update
 			.else
+
 				xor	eax,eax
 			.endif
 		.endif
@@ -2282,10 +2403,12 @@ panel_event PROC USES esi edi ebx panel, event
 	   case_UP:
 		xor	eax,eax
 		.if	[esi].pn_cel_index != eax
+
 			dec	[esi].pn_cel_index
 			mov	eax,esi
 			call	pcell_update
 		.elseif [esi].pn_fcb_index != eax
+
 			dec	[esi].pn_fcb_index
 			mov	eax,2
 			call	panel_putitemax
@@ -2295,6 +2418,7 @@ panel_event PROC USES esi edi ebx panel, event
 	  .case KEY_INS
 		mov	eax,keyshift
 		.if	BYTE PTR [eax] & 3
+
 			xor	eax,eax
 			.endc
 		.endif
@@ -2310,14 +2434,17 @@ panel_event PROC USES esi edi ebx panel, event
 		dec	ecx
 		xor	eax,eax
 		.if	ecx > [esi].pn_cel_index
+
 			inc	[esi].pn_cel_index
 			mov	eax,esi
 			call	pcell_update
 		.elseif ZERO?
+
 			mov	ecx,[esi].pn_fcb_count
 			sub	ecx,[esi].pn_fcb_index
 			sub	ecx,[esi].pn_cel_index
 			.if	SDWORD PTR ecx > 1
+
 				inc	[esi].pn_fcb_index
 				mov	eax,1
 				call	panel_putitemax
@@ -2329,6 +2456,7 @@ panel_event PROC USES esi edi ebx panel, event
 		mov	edx,[esi].pn_cel_count
 		mov	eax,[esi].pn_fcb_count
 		.if	edx < eax
+
 			sub	eax,edx
 			mov	[esi].pn_fcb_index,eax
 			dec	edx
@@ -2336,9 +2464,11 @@ panel_event PROC USES esi edi ebx panel, event
 			xor	eax,eax
 			call	panel_putitemax
 		.else
+
 			xor	eax,eax
 			dec	edx
 			.if	edx > [esi].pn_cel_index
+
 				mov	[esi].pn_cel_index,edx
 				mov	[esi].pn_fcb_index,eax
 				call	panel_putitemax
@@ -2351,6 +2481,7 @@ panel_event PROC USES esi edi ebx panel, event
 		mov	edx,[esi].pn_cel_index
 		or	edx,[esi].pn_fcb_index
 		.if	!ZERO?
+
 			mov	[esi].pn_cel_index,eax
 			mov	[esi].pn_fcb_index,eax
 			call	panel_putitemax
@@ -2362,19 +2493,24 @@ panel_event PROC USES esi edi ebx panel, event
 		mov	edx,[esi].pn_cel_index
 		or	edx,[esi].pn_fcb_index
 		.if	!ZERO?
+
 			.if	[esi].pn_cel_index != eax
+
 				mov	[esi].pn_cel_index,eax
 				mov	eax,esi
 				call	pcell_update
 			.else
+
 				mov	ecx,eax
 				mov	edx,[esi].pn_xl
 				mov	al,[edx+2]
 				mov	cl,[edx+3]
 				imul	ecx
 				.if	eax <= [esi].pn_fcb_index
+
 					sub [esi].pn_fcb_index,eax
 				.else
+
 					mov [esi].pn_fcb_index,0
 				.endif
 				xor	eax,eax
@@ -2387,17 +2523,21 @@ panel_event PROC USES esi edi ebx panel, event
 		mov	eax,[esi].pn_cel_count
 		dec	eax
 		.if	eax != [esi].pn_cel_index
+
 			mov	[esi].pn_cel_index,eax
 			mov	eax,esi
 			call	pcell_update
 		.else
+
 			xor	ecx,ecx
 			add	eax,[esi].pn_fcb_index
 			inc	eax
 			.if	eax != [esi].pn_fcb_count
+
 				mov	eax,[esi].pn_fcb_index
 				add	eax,[esi].pn_cel_count
 				.if	eax < [esi].pn_fcb_count
+
 					mov	eax,[esi].pn_cel_count
 					dec	eax
 					add	[esi].pn_fcb_index,eax
@@ -2451,20 +2591,25 @@ panel_event PROC USES esi edi ebx panel, event
 			mov	eax,[edi].ws_path
 			mov	al,[eax+1]
 			.if	!( al == ':' || al == '\' )
+
 				error_directory()
 				.endc
 			.endif
 
 			.if	!( ecx & _FB_ARCHIVE )
+
 				historysave()
 			.endif
 			mov	pe.pe_file,0
 
 			.if	ecx & _FB_UPDIR
+
 				mov	eax,[edi].ws_path
 				.if	[edi].ws_flag & _W_ARCHIVE or _W_ROOTDIR
+
 					mov	eax,[edi].ws_arch
 					.if	BYTE PTR [eax] == 0
+
 						mov	eax,[edi].ws_file
 					.endif
 				.endif
@@ -2476,46 +2621,62 @@ panel_event PROC USES esi edi ebx panel, event
 			.endif
 
 			.if	ecx & _FB_ARCHIVE
+
 				mov	eax,[edi].ws_arch
 				.if	ecx & _FB_UPDIR
+
 					.if	BYTE PTR [eax] == 0
+
 						and	[edi].ws_flag,not (_W_ARCHIVE or _W_ROOTDIR)
 					.else
+
 						mov	edi,eax
 						reduce_path()
 					.endif
 				.else
+
 					mov edi,eax
 					add_to_path()
 				.endif
 			.else
+
 				mov	eax,[edi].ws_path
 				.if	byte ptr [eax+1] == ':'
+
 					.if	!( pe.pe_flag & _FB_ROOTDIR )
+
 						strfcat( addr pe.pe_path, [edi].ws_path, pe.pe_name )
 						.if	SetCurrentDirectory( eax )
+
 							GetCurrentDirectory( WMAXPATH, [edi].ws_path )
 						.endif
 						.if	!eax
+
 							osmaperr()
 							error_directory()
 							.endc
 						.endif
 					.else
+
 						mov	eax,[edi].ws_arch
 						mov	BYTE PTR [eax],0
 						.if	!( ecx & _FB_UPDIR )
+
 							strcpy( [edi].ws_arch, pe.pe_name )
 						.endif
 						or  [edi].ws_flag,_W_ROOTDIR
 					.endif
 				.else
+
 					mov	edi,[edi].ws_path
 					.if	ecx & _FB_UPDIR
+
 						.if	strrchr( addr [edi+2], '\' )
+
 							reduce_path()
 						.endif
 					.else
+
 						add_to_path()
 					.endif
 				.endif
@@ -2526,11 +2687,15 @@ panel_event PROC USES esi edi ebx panel, event
 			call	panel_read
 
 			.if	!( pe.pe_flag & _FB_ROOTDIR )
+
 				xor	eax,eax
 				mov	[esi].pn_cel_index,eax
 				mov	[esi].pn_fcb_index,eax
+
 				.if	pe.pe_file != al
+
 					.if	wsearch( [esi].pn_wsub, addr pe.pe_file ) != -1
+
 						mov	edx,eax
 						mov	eax,esi
 						panel_setid()
@@ -2573,6 +2738,7 @@ panel_event PROC USES esi edi ebx panel, event
 				; case .EXE, .COM, .BAT, .CMD
 				;
 				.if	strchr( ebx, ' ' )
+
 					strcpy( addr pe.pe_path, addr cp_quote )
 					strcat( strcat( eax, ebx ), addr cp_quote )
 					mov ebx,eax
@@ -2582,7 +2748,7 @@ panel_event PROC USES esi edi ebx panel, event
 				.endc
 			.endif
 
-			.if	inicommand( ebx, pe.pe_name, "Filetype" )
+			.if	CFExpandCmd( ebx, pe.pe_name, "Filetype" )
 				;
 				; case DZ.INI type
 				;
@@ -2596,6 +2762,7 @@ panel_event PROC USES esi edi ebx panel, event
 				; case EDit Info file (.EDI) ?
 				;
 				.if	!_stricmp( eax, ".edi" )
+
 					topenedi( ebx )
 					mov	eax,1
 					.endc
@@ -2618,6 +2785,7 @@ panel_event PROC USES esi edi ebx panel, event
 					;
 					mov	eax,_W_ARCHEXT
 				.else
+
 					xor	eax,eax
 				.endif
 			.endif
@@ -2627,14 +2795,17 @@ panel_event PROC USES esi edi ebx panel, event
 				; case System OS type
 				;
 				.if	console & CON_NTCMD
+
 					CreateConsole( ebx, _P_NOWAIT )
 					mov eax,1
 				.endif
 			.else
+
 				mov	ecx,path_a.ws_flag
 				or	ecx,path_b.ws_flag
 				and	ecx,_W_ARCHIVE
 				.if	ZERO?
+
 					mov	edi,[esi].pn_wsub
 					mov	ecx,[edi].ws_arch
 					mov	BYTE PTR [ecx],0
@@ -2646,6 +2817,7 @@ panel_event PROC USES esi edi ebx panel, event
 					call	panel_putinfozx
 					mov	eax,1
 				.else
+
 					xor	eax,eax
 				.endif
 			.endif
@@ -2662,8 +2834,10 @@ add_to_path:
 	add	edx,S_FBLK.fb_name
 	xor	eax,eax
 	.if	[edi] == al
+
 		strcpy( edi, edx )
 	.else
+
 		strfcat( edi, eax, edx )
 	.endif
 	retn
@@ -2671,6 +2845,7 @@ add_to_path:
 reduce_path:
 	mov	edx,edi
 	.if	strrchr( edi, '\' )
+
 		mov	edx,eax
 		xor	eax,eax
 	.endif
@@ -2720,11 +2895,14 @@ pcell_move PROC PRIVATE USES esi edi ebx panel
 			mov	mouse,eax	; else Copy
 
 			.if	selected
+
 				mov	rect.rc_col,15
 			.else
+
 				mov	eax,[ebx].S_PANEL.pn_wsub
 				mov	eax,[eax].S_WSUB.ws_flag
 				.if	eax & _W_DETAIL
+
 					sub	rect.rc_col,26
 				.endif
 				.repeat
@@ -2747,8 +2925,10 @@ pcell_move PROC PRIVATE USES esi edi ebx panel
 			mov	ecx,selected
 
 			.if	ecx
+
 				wcputf( edx, 0, 0, addr cp_copyselected, ecx )
 			.else
+
 				mov	cl,rect.rc_col
 				dec	cl
 				mov	eax,fblk
@@ -2766,6 +2946,7 @@ pcell_move PROC PRIVATE USES esi edi ebx panel
 			dec	cl
 			mov	eax,'+'
 			.if	BYTE PTR mouse
+
 				mov	al,' '
 			.endif
 			scputw( ecx, edx, 1, eax )
@@ -2773,18 +2954,22 @@ pcell_move PROC PRIVATE USES esi edi ebx panel
 			; Move the object
 			;
 			.while	getmouse() == 1
+
 				mov	eax,edi
 				mov	ecx,esi
 				.if	al != rect.rc_x || cl != rect.rc_y
+
 					rcmove( addr rect, dialog, dlflag, edi, esi )
 				.endif
 				mov	eax,keyshift
 				mov	eax,[eax]
 				and	eax,3
 				.if	eax != mouse
+
 					mov	mouse,eax
 					mov	ecx,'+'
 					.if	eax
+
 						mov	ecx,' '
 					.endif
 					mov	eax,rect
@@ -2803,17 +2988,22 @@ pcell_move PROC PRIVATE USES esi edi ebx panel
 			mov	edx,panela
 
 			.if	!( eax & _W_PANELID )
+
 				mov	edx,panelb
 			.endif
 			.if	panel_xycmd( edx, edi, esi )
+
 				.if	mouse
+
 					call	cmmove
 				.else
+
 					call	cmcopy
 				.endif
 				mov	eax,1
 			.else
 				.if	statusline_xy( edi, esi, 9, addr MOBJ_Statusline )
+
 					.switch ecx	;
 							; 9 cmhelp
 							; 8 cmrename

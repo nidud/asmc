@@ -345,6 +345,7 @@ SetMaxConsole	PROTO ; (80..255, 16..255)
 SetConsoleSize	PROTO cols:DWORD, rows:DWORD
 ConsoleIdle	PROTO
 GetScreenRect	PROTO
+ConsolePush	PROTO
 
 ;;;;;;;;;;;;;;; keyb
 

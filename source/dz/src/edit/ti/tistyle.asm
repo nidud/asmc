@@ -1,7 +1,6 @@
 include tinfo.inc
 include ctype.inc
 include string.inc
-include crtl.inc
 
 	.data
 

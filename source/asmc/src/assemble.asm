@@ -861,6 +861,11 @@ ReswTableInit PROC PRIVATE
 		DisableKeyword( T_DOT_ASSERTB )
 		DisableKeyword( T_DOT_ASSERTW )
 		DisableKeyword( T_DOT_ASSERTD )
+
+		DisableKeyword( T_DOT_IFS )
+		DisableKeyword( T_DOT_IFSB )
+		DisableKeyword( T_DOT_IFSW )
+		DisableKeyword( T_DOT_IFSD )
 	.endif
 
 	ret

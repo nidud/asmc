@@ -4,16 +4,12 @@
 include doszip.inc
 include iost.inc
 include tview.inc
-include tinfo.inc
 include io.inc
-include stdio.inc
 include string.inc
 include alloc.inc
 include confirm.inc
 include cfini.inc
 include stdlib.inc
-
-topenh_atol	PROTO
 
 PUBLIC	console
 PUBLIC	searchstring
@@ -91,7 +87,7 @@ _bufin		label BYTE
 		;-----------------------------------------------
 	db 128 dup(0)
 default_ini label BYTE
-incbin	<dzini.txt>
+incbin	<dzini.bin>
 	db 0
 if ($ - _bufin) le 1000h
 	db 1000h - ($ - _bufin) dup('x')

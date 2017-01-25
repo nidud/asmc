@@ -3,9 +3,9 @@ include string.inc
 
 	.code
 
-qsort	PROC USES esi edi ebx p:PVOID, n:SIZE_T, w:SIZE_T, compare:PVOID
+qsort	PROC USES esi edi ebx p:PVOID, n:SIZE_T, w:SIZE_T, compare:LPQSORTCMD
 
-local	q
+local	stack_level
 
 	mov	eax,n
 	.if	eax > 1
@@ -14,7 +14,7 @@ local	q
 		mul	w
 		mov	esi,p
 		lea	edi,[esi+eax]
-		mov	q,0
+		mov	stack_level,0
 
 		.while	1
 
@@ -31,26 +31,15 @@ local	q
 			.endif
 
 			lea	ebx,[esi+eax]
-			push	ebx
-			push	esi
-			call	compare
-			.if	SDWORD PTR eax > 0
+			.ifs	compare( esi, ebx ) > 0
 
-				memxchg( ebx, esi, w )
+				memxchg( esi, ebx, w )
 			.endif
+			.ifs	compare( esi, edi ) > 0
 
-			push	edi
-			push	esi
-			call	compare
-			.if	SDWORD PTR eax > 0
-
-				memxchg( edi, esi, w )
+				memxchg( esi, edi, w )
 			.endif
-
-			push	edi
-			push	ebx
-			call	compare
-			.if	SDWORD PTR eax > 0
+			.ifs	compare( ebx, edi ) > 0
 
 				memxchg( ebx, edi, w )
 			.endif
@@ -64,10 +53,7 @@ local	q
 				add	p,eax
 				.if	p < edi
 
-					push	ebx
-					push	p
-					call	compare
-					.continue .if SDWORD PTR eax <= 0
+					.continue .ifs compare( p, ebx ) <= 0
 				.endif
 
 				.while	1
@@ -76,10 +62,7 @@ local	q
 					sub	n,eax
 
 					.break .if n <= ebx
-					push	ebx
-					push	n
-					call	compare
-					.break .if SDWORD PTR eax <= 0
+					.break .ifs compare( n, ebx ) <= 0
 				.endw
 
 				mov	edx,n
@@ -103,11 +86,7 @@ local	q
 				sub	n,eax
 
 				.break .if n <= esi
-
-				push	ebx
-				push	n
-				call	compare
-				.break .if eax
+				.break .if compare( n, ebx )
 			.endw
 
 			mov	edx,p
@@ -116,7 +95,7 @@ local	q
 			mov	ecx,edi
 			sub	ecx,edx
 
-			.if	SDWORD PTR eax < ecx
+			.ifs	eax < ecx
 
 				mov	ecx,n
 
@@ -124,7 +103,7 @@ local	q
 
 					push	edx
 					push	edi
-					inc	q
+					inc	stack_level
 				.endif
 
 				.if	esi < ecx
@@ -139,7 +118,7 @@ local	q
 
 					push	esi
 					push	ecx
-					inc	q
+					inc	stack_level
 				.endif
 
 				.if	edx < edi
@@ -149,8 +128,9 @@ local	q
 				.endif
 			.endif
 
-			.break .if !q
-			dec	q
+			.break .if !stack_level
+
+			dec	stack_level
 			pop	edi
 			pop	esi
 		.endw

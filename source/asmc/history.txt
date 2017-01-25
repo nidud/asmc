@@ -3,6 +3,8 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.22 - xx xxx 2017
+- added Signed compare: .IFS, .IFSB, .IFSW, .IFSB
+- extended .IFB/.IFW to 32-bit, .IFB to 16-bit
 - added use of proto typedefs in HLL
 - fixed bug in switch -D, -I and -Fi used with -I"quoted text"
 - added command line switch /ws - Create Unicode strings
@@ -21,6 +23,10 @@ Changes in 2.22 - xx xxx 2017
     option nokeyword:<.assertb>
     option nokeyword:<.assertw>
     option nokeyword:<.assertd>
+    option nokeyword:<.ifs>
+    option nokeyword:<.ifsb>
+    option nokeyword:<.ifsw>
+    option nokeyword:<.ifsd>
   Note: OPTION ASMC:OFF do not disable these keywords
 - fixed bug in .WHILE (eax || edx) && ecx
 - fixed bug in .WHILE !(eax || edx) && ecx

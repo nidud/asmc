@@ -1,24 +1,28 @@
-regress = 1
+# Makefile for Asmc using Open Watcom
+
+# In order to use the regression test the expected output
+# has to be build. See the regress\exp\buildexp.cmd file
+# for more details.
+Regress = 0
+CC	= wcc386 -q -Isrc\h -d2 -bt=nt -bc -ecd -3r -obmilrt -s
 
 asmc.exe:
 	if exist *.obj del *.obj
-	set asmc=-nologo
-	set include=-src\h;%include%
 	asmc -q -Isrc\h -mz res\stub.asm
 	asmc -q -Isrc\h -coff src\*.asm
-	for %%q in (src\*.c) do wcc386 -q -Isrc\h -d2 -bt=nt -bc -ecd -3r -obmilrt -s %%q
+	for %%q in (src\*.c) do $(CC) %%q
 	linkw @<<
-name	$@
-option	q
-option	m
-option	stub=stub.exe
-file	{ ..\..\lib\C0.obj *.obj }
+Name	$@
+Option	Q
+Option	Map
+Option	Stub=stub.exe
+File	{ ..\..\lib\C0.obj *.obj }
 <<
 	wrc -q res\$*.res $@
 	del stub.exe
 	del *.obj
-!if $(regress)
+!IF $(Regress)
 	if not exist .\asmc.exe exit
 	cd regress
-	runtest ..\..\asmc.exe
-!endif
+	runtest
+!ENDIF

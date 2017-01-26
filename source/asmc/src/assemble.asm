@@ -849,23 +849,13 @@ ReswTableInit PROC PRIVATE
 		;
 		; added v2.22 - HSE
 		;
-		DisableKeyword( T_DOT_SWITCH )
-		DisableKeyword( T_DOT_CASE )
-		DisableKeyword( T_DOT_ENDC )
-		DisableKeyword( T_DOT_DEFAULT )
-		DisableKeyword( T_DOT_ENDSW )
-		DisableKeyword( T_DOT_IFB )
-		DisableKeyword( T_DOT_IFW )
-		DisableKeyword( T_DOT_IFD )
-		DisableKeyword( T_DOT_ASSERT )
-		DisableKeyword( T_DOT_ASSERTB )
-		DisableKeyword( T_DOT_ASSERTW )
-		DisableKeyword( T_DOT_ASSERTD )
-
-		DisableKeyword( T_DOT_IFS )
-		DisableKeyword( T_DOT_IFSB )
-		DisableKeyword( T_DOT_IFSW )
-		DisableKeyword( T_DOT_IFSD )
+		push	ebx
+		mov	ebx,T_DOT_IFA
+		.repeat
+			DisableKeyword( ebx )
+			add	ebx,1
+		.until	ebx > T_DOT_ENDSW
+		pop	ebx
 	.endif
 
 	ret

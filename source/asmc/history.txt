@@ -3,6 +3,38 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.22 - xx xxx 2017
+- added switch /h and /? -- went missing..
+- added HLL directives for pre-existing flag conditions
+	.IFA	- if Above
+	.IFAE	- if Above or Equal
+	.IFB	- if Below
+	.IFBE	- if Not Below or Equal
+	.IFC	- if Carry
+	.IFE	- if Equal
+	.IFG	- if Greater (signed)
+	.IFGE	- if Greater or Equal (signed)
+	.IFL	- if Less (signed)
+	.IFLE	- if Less or Equal (signed)
+	.IFNA	- if Not Above
+	.IFNAE	- if Not Above or Equal
+	.IFNB	- if Not Below
+	.IFNBE	- if Not Below or Equal
+	.IFNC	- if Not Carry
+	.IFNE	- if Not Equal
+	.IFNG	- if Not Greater (signed)
+	.IFNGE	- if Not Greater or Equal (signed)
+	.IFNL	- if Not Less (signed)
+	.IFNLE	- if Not Less or Equal (signed)
+	.IFNO	- if Not Overflow (signed)
+	.IFNP	- if No Parity
+	.IFNS	- if Not Signed (signed)
+	.IFNZ	- if Not Zero
+	.IFO	- if Overflow (signed)
+	.IFP	- if Parity
+	.IFPE	- if Parity Even
+	.IFPO	- if Parity Odd
+	.IFS	- if Signed (signed)
+	.IFZ	- if Zero
 - added Signed compare: .IFS, .IFSB, .IFSW, .IFSB
 - extended .IFB/.IFW to 32-bit, .IFB to 16-bit
 - added use of proto typedefs in HLL
@@ -10,23 +42,6 @@ Changes in 2.22 - xx xxx 2017
 - added command line switch /ws - Create Unicode strings
 - added OPTION WSTRING:[ON|OFF] - Toggle ASCII/Unicode
 - disabled asmc-added HLL directives when switch /Xc used
-  same as:
-    option nokeyword:<.switch>
-    option nokeyword:<.case>
-    option nokeyword:<.endc>
-    option nokeyword:<.default>
-    option nokeyword:<.endsw>
-    option nokeyword:<.ifb>
-    option nokeyword:<.ifw>
-    option nokeyword:<.ifd>
-    option nokeyword:<.assert>
-    option nokeyword:<.assertb>
-    option nokeyword:<.assertw>
-    option nokeyword:<.assertd>
-    option nokeyword:<.ifs>
-    option nokeyword:<.ifsb>
-    option nokeyword:<.ifsw>
-    option nokeyword:<.ifsd>
   Note: OPTION ASMC:OFF do not disable these keywords
 - fixed bug in .WHILE (eax || edx) && ecx
 - fixed bug in .WHILE !(eax || edx) && ecx

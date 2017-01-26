@@ -2482,6 +2482,44 @@ toend:
 	ret
 RenderSwitch ENDP
 
+GetJumpString proc cmd
+
+	mov	eax,cmd
+	.switch eax
+	  .case T_DOT_IFA
+	  .case T_DOT_IFNBE:	mov eax,@CStr( "jbe" ): .endc
+	  .case T_DOT_IFB
+	  .case T_DOT_IFC
+	  .case T_DOT_IFNAE:	mov eax,@CStr( "jae" ): .endc
+	  .case T_DOT_IFE
+	  .case T_DOT_IFZ:	mov eax,@CStr( "jne" ): .endc
+	  .case T_DOT_IFG
+	  .case T_DOT_IFNLE:	mov eax,@CStr( "jle" ): .endc
+	  .case T_DOT_IFL
+	  .case T_DOT_IFNGE:	mov eax,@CStr( "jge" ): .endc
+	  .case T_DOT_IFNB
+	  .case T_DOT_IFNC
+	  .case T_DOT_IFAE:	mov eax,@CStr( "jb " ): .endc
+	  .case T_DOT_IFBE
+	  .case T_DOT_IFNA:	mov eax,@CStr( "ja " ): .endc
+	  .case T_DOT_IFGE
+	  .case T_DOT_IFNL:	mov eax,@CStr( "jl " ): .endc
+	  .case T_DOT_IFLE
+	  .case T_DOT_IFNG:	mov eax,@CStr( "jg " ): .endc
+	  .case T_DOT_IFS:	mov eax,@CStr( "jns" ): .endc
+	  .case T_DOT_IFNS:	mov eax,@CStr( "js " ): .endc
+	  .case T_DOT_IFNE
+	  .case T_DOT_IFNZ:	mov eax,@CStr( "jz " ): .endc
+	  .case T_DOT_IFO:	mov eax,@CStr( "jno" ): .endc
+	  .case T_DOT_IFNO:	mov eax,@CStr( "jo " ): .endc
+	  .case T_DOT_IFP
+	  .case T_DOT_IFPE:	mov eax,@CStr( "jnp" ): .endc
+	  .case T_DOT_IFNP
+	  .case T_DOT_IFPO:	mov eax,@CStr( "jp " ): .endc
+	.endsw
+	ret
+GetJumpString endp
+
 	OPTION	PROC:	PUBLIC
 	ASSUME	ebx:	PTR asm_tok
 	ASSUME	esi:	PTR hll_item
@@ -2504,6 +2542,14 @@ local	rc:		SINT,
 
 	mov	eax,i
 	shl	eax,4
+	;
+	; added v2.22 to seperate:
+	;
+	; .IFS from .IFS <expression>
+	; .IFB from .IFB <expression>
+	;
+	movzx	ecx,[ebx+eax+16].token
+	push	ecx
 	mov	eax,[ebx+eax].tokval
 	mov	cmd,eax
 	;
@@ -2514,7 +2560,9 @@ local	rc:		SINT,
 	; v2.06: is there an item on the free stack?
 	;
 	mov	esi,ModuleInfo.HllFree
+
 	.if	!esi
+
 		LclAlloc( sizeof( hll_item ) )
 		mov	esi,eax
 	.endif
@@ -2553,27 +2601,57 @@ local	rc:		SINT,
 	mov	[esi].labels[LEXIT*4],eax
 	mov	[esi].flags,eax
 	mov	eax,cmd
+	pop	ecx
+
 	.switch eax
 
 	  .case T_DOT_IFS
-		or	[esi].flags,HLLF_IFS
-		jmp	_DOT_IF
+		.if	ecx != T_FINAL
+
+			or	[esi].flags,HLLF_IFS
+			jmp	case_IF
+		.endif
+		jmp	case_IFx
+	  .case T_DOT_IFB
+		.if	ecx != T_FINAL
+
+			or	[esi].flags,HLLF_IFB
+			jmp	case_IF
+		.endif
+	  .case T_DOT_IFA
+	  .case T_DOT_IFAE
+	  .case T_DOT_IFBE .. T_DOT_IFPO
+	  .case T_DOT_IFZ
+
+	     case_IFx:
+		mov	[esi].cmd,HLL_IF
+		mov	[esi].labels[LSTART*4],0
+		mov	[esi].labels[LTEST*4],GetHllLabel()
+
+		GetLabelStr( [esi].labels[LTEST*4], addr buff )
+		.if	GetJumpString( cmd )
+
+			strcat( strcpy( addr buffer, eax ), " " )
+			lea	ecx,buff
+			AddLineQueue( strcat( eax, ecx ) )
+		.endif
+		.endc
+
 	  .case T_DOT_IFSD
 		or	[esi].flags,HLLF_IFS
 	  .case T_DOT_IFD
 		or	[esi].flags,HLLF_IFD
-		jmp	_DOT_IF
+		jmp	case_IF
 	  .case T_DOT_IFSW
 		or	[esi].flags,HLLF_IFS
 	  .case T_DOT_IFW
 		or	[esi].flags,HLLF_IFW
-		jmp	_DOT_IF
+		jmp	case_IF
 	  .case T_DOT_IFSB
-		or	[esi].flags,HLLF_IFS
-	  .case T_DOT_IFB
-		or	[esi].flags,HLLF_IFB
+		or	[esi].flags,HLLF_IFB OR HLLF_IFS
 	  .case T_DOT_IF
-		_DOT_IF:
+
+	     case_IF:
 
 		mov	[esi].cmd,HLL_IF
 		mov	[esi].labels[LSTART*4],0 ; not used by .IF
@@ -2933,9 +3011,12 @@ local	rc:		SINT,
 		AddLineQueueX( "%s%s", GetLabelStr( [esi].labels[LSTART*4], addr buff ), addr LABELQUAL )
 		.endc
 	.endsw
+
 	mov	eax,i
 	shl	eax,4
+
 	.if	![esi].flags && ([ebx+eax].asm_tok.token != T_FINAL && rc == NOT_ERROR)
+
 		asmerr( 2008, [ebx+eax].asm_tok.tokpos )
 		mov	rc,eax
 	.endif
@@ -2943,6 +3024,7 @@ local	rc:		SINT,
 	; v2.06: remove the item from the free stack
 	;
 	.if	esi == ModuleInfo.HllFree
+
 		mov	eax,[esi].next
 		mov	ModuleInfo.HllFree,eax
 	.endif
@@ -2953,10 +3035,12 @@ local	rc:		SINT,
 unlink_hll:
 
 	.if	ModuleInfo.list
+
 		LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
 	.endif
 
 	.if	ModuleInfo.line_queue.head	; might be NULL! (".if 1")
+
 		RunLineQueue()
 	.endif
 
@@ -3202,6 +3286,7 @@ HllExitDir PROC USES esi edi ebx i, tokenarray:PTR asm_tok
 
 local	rc:	SINT,
 	cmd:	SINT,
+	buff	[16]:SBYTE,
 	buffer	[MAX_LINE_LEN]:SBYTE
 
 	mov	esi,ModuleInfo.HllStack
@@ -3549,15 +3634,36 @@ local	rc:	SINT,
 				mov	eax,[ebx].tokval
 				.switch eax
 				  .case T_DOT_IFS
+					.if	[ebx+16].token != T_FINAL
+
+						or	edx,HLLF_IFS
+					.endif
+				  .case T_DOT_IFB
+					cmp	[ebx+16].token,T_FINAL
+					jne	case_IF
+				  .case T_DOT_IFA
+				  .case T_DOT_IFAE
+				  .case T_DOT_IFBE .. T_DOT_IFPO
+				  .case T_DOT_IFZ
+
+					inc	i
+					GetLabelStr( [esi].labels[ecx*4], addr buff )
+					strcpy( edi, GetJumpString( [ebx].tokval ) )
+					strcat( edi, " " )
+					strcat( edi, addr buff )
+					InvertJump( edi )
+					AddLineQueue( edi )
+					.endc
+
 				  .case T_DOT_IFSB
 				  .case T_DOT_IFSW
 				  .case T_DOT_IFSD
 					or	edx,HLLF_IFS
 				  .case T_DOT_IF
-				  .case T_DOT_IFB
 				  .case T_DOT_IFW
 				  .case T_DOT_IFD
 
+				     case_IF:
 					push	[esi].cmd
 					push	[esi].condlines
 					push	[esi].flags

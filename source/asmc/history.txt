@@ -35,6 +35,37 @@ Changes in 2.22 - xx xxx 2017
 	.IFPO	- if Parity Odd
 	.IFS	- if Signed (signed)
 	.IFZ	- if Zero
+- added HLL directives for .UNTILx
+	.UNTILA	  - until Above
+	.UNTILAE  - until Above or Equal
+	.UNTILB	  - until Below
+	.UNTILBE  - until Not Below or Equal
+	.UNTILC	  - until Carry
+	.UNTILE	  - until Equal
+	.UNTILG	  - until Greater (signed)
+	.UNTILGE  - until Greater or Equal (signed)
+	.UNTILL	  - until Less (signed)
+	.UNTILLE  - until Less or Equal (signed)
+	.UNTILNA  - until Not Above
+	.UNTILNAE - until Not Above or Equal
+	.UNTILNB  - until Not Below
+	.UNTILNBE - until Not Below or Equal
+	.UNTILNC  - until Not Carry
+	.UNTILNE  - until Not Equal
+	.UNTILNG  - until Not Greater (signed)
+	.UNTILNGE - until Not Greater or Equal (signed)
+	.UNTILNL  - until Not Less (signed)
+	.UNTILNLE - until Not Less or Equal (signed)
+	.UNTILNO  - until Not Overflow (signed)
+	.UNTILNP  - until No Parity
+	.UNTILNS  - until Not Signed (signed)
+	.UNTILNZ  - until Not Zero
+	.UNTILO	  - until Overflow (signed)
+	.UNTILP	  - until Parity
+	.UNTILPE  - until Parity Even
+	.UNTILPO  - until Parity Odd
+	.UNTILS	  - until Signed (signed)
+	.UNTILZ	  - until Zero
 - added Signed compare: .IFS, .IFSB, .IFSW, .IFSB
 - extended .IFB/.IFW to 32-bit, .IFB to 16-bit
 - added use of proto typedefs in HLL

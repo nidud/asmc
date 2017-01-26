@@ -2486,34 +2486,64 @@ GetJumpString proc cmd
 
 	mov	eax,cmd
 	.switch eax
+	  .case T_DOT_UNTILA
+	  .case T_DOT_UNTILNBE
 	  .case T_DOT_IFA
 	  .case T_DOT_IFNBE:	mov eax,@CStr( "jbe" ): .endc
+	  .case T_DOT_UNTILB
+	  .case T_DOT_UNTILC
+	  .case T_DOT_UNTILNAE
 	  .case T_DOT_IFB
 	  .case T_DOT_IFC
 	  .case T_DOT_IFNAE:	mov eax,@CStr( "jae" ): .endc
+	  .case T_DOT_UNTILE
+	  .case T_DOT_UNTILZ
 	  .case T_DOT_IFE
 	  .case T_DOT_IFZ:	mov eax,@CStr( "jne" ): .endc
+	  .case T_DOT_UNTILNLE
+	  .case T_DOT_UNTILG
 	  .case T_DOT_IFG
 	  .case T_DOT_IFNLE:	mov eax,@CStr( "jle" ): .endc
+	  .case T_DOT_UNTILL
+	  .case T_DOT_UNTILNGE
 	  .case T_DOT_IFL
 	  .case T_DOT_IFNGE:	mov eax,@CStr( "jge" ): .endc
+	  .case T_DOT_UNTILNB
+	  .case T_DOT_UNTILNC
+	  .case T_DOT_UNTILAE
 	  .case T_DOT_IFNB
 	  .case T_DOT_IFNC
 	  .case T_DOT_IFAE:	mov eax,@CStr( "jb " ): .endc
+	  .case T_DOT_UNTILBE
+	  .case T_DOT_UNTILNA
 	  .case T_DOT_IFBE
 	  .case T_DOT_IFNA:	mov eax,@CStr( "ja " ): .endc
+	  .case T_DOT_UNTILGE
+	  .case T_DOT_UNTILNL
 	  .case T_DOT_IFGE
 	  .case T_DOT_IFNL:	mov eax,@CStr( "jl " ): .endc
+	  .case T_DOT_UNTILLE
+	  .case T_DOT_UNTILNG
 	  .case T_DOT_IFLE
 	  .case T_DOT_IFNG:	mov eax,@CStr( "jg " ): .endc
+	  .case T_DOT_UNTILS
 	  .case T_DOT_IFS:	mov eax,@CStr( "jns" ): .endc
+	  .case T_DOT_UNTILNS
 	  .case T_DOT_IFNS:	mov eax,@CStr( "js " ): .endc
+	  .case T_DOT_UNTILNE
+	  .case T_DOT_UNTILNZ
 	  .case T_DOT_IFNE
 	  .case T_DOT_IFNZ:	mov eax,@CStr( "jz " ): .endc
+	  .case T_DOT_UNTILO
 	  .case T_DOT_IFO:	mov eax,@CStr( "jno" ): .endc
+	  .case T_DOT_UNTILNO
 	  .case T_DOT_IFNO:	mov eax,@CStr( "jo " ): .endc
+	  .case T_DOT_UNTILP
+	  .case T_DOT_UNTILPE
 	  .case T_DOT_IFP
 	  .case T_DOT_IFPE:	mov eax,@CStr( "jnp" ): .endc
+	  .case T_DOT_UNTILNP
+	  .case T_DOT_UNTILPO
 	  .case T_DOT_IFNP
 	  .case T_DOT_IFPO:	mov eax,@CStr( "jp " ): .endc
 	.endsw
@@ -3057,11 +3087,14 @@ HllStartDir ENDP
 HllEndDir PROC USES esi edi ebx i:SINT, tokenarray:PTR asm_tok
 
 local	rc:		SINT,
+	cmd:		SINT,
 	buffer		[MAX_LINE_LEN]:SBYTE,
 	l_exit[16]:	SBYTE	; exit or default label
 
 	mov	esi,ModuleInfo.HllStack
+
 	.if	!esi
+
 		asmerr( 1011 )
 		jmp	toend
 	.endif
@@ -3078,6 +3111,7 @@ local	rc:		SINT,
 	mov	edx,i
 	shl	edx,4
 	mov	eax,[ebx+edx].tokval
+	mov	cmd,eax
 
 	.switch eax
 
@@ -3217,8 +3251,41 @@ local	rc:		SINT,
 		.endif
 		.endc
 
+	  .case T_DOT_UNTILA
+	  .case T_DOT_UNTILAE
+	  .case T_DOT_UNTILB
+	  .case T_DOT_UNTILBE
+	  .case T_DOT_UNTILC
+	  .case T_DOT_UNTILE
+	  .case T_DOT_UNTILG
+	  .case T_DOT_UNTILGE
+	  .case T_DOT_UNTILL
+	  .case T_DOT_UNTILLE
+	  .case T_DOT_UNTILNA
+	  .case T_DOT_UNTILNAE
+	  .case T_DOT_UNTILNB
+	  .case T_DOT_UNTILNBE
+	  .case T_DOT_UNTILNC
+	  .case T_DOT_UNTILNE
+	  .case T_DOT_UNTILNG
+	  .case T_DOT_UNTILNGE
+	  .case T_DOT_UNTILNL
+	  .case T_DOT_UNTILNLE
+	  .case T_DOT_UNTILNO
+	  .case T_DOT_UNTILNP
+	  .case T_DOT_UNTILNS
+	  .case T_DOT_UNTILNZ
+	  .case T_DOT_UNTILO
+	  .case T_DOT_UNTILP
+	  .case T_DOT_UNTILPE
+	  .case T_DOT_UNTILPO
+	  .case T_DOT_UNTILS
+	  .case T_DOT_UNTILZ
+
 	  .case T_DOT_UNTIL
+
 		.if	ecx != HLL_REPEAT
+
 			asmerr( 1010, [ebx+edx].string_ptr )
 			jmp	toend
 		.endif
@@ -3226,7 +3293,9 @@ local	rc:		SINT,
 		inc	i
 		lea	ebx,[ebx+edx+16]
 		mov	eax,[esi].labels[LTEST*4]
+
 		.if	eax	; v2.11: LTEST only needed if .CONTINUE has occured
+
 			AddLineQueueX( "%s%s", GetLabelStr( eax, edi ), addr LABELQUAL )
 		.endif
 		;
@@ -3234,11 +3303,21 @@ local	rc:		SINT,
 		; if expression is missing, just generate nothing
 		;
 		.if	[ebx].token != T_FINAL
+
 			EvaluateHllExpression( esi, addr i, tokenarray, LSTART, 0, edi )
 			mov	rc,eax
+
 			.if	eax == NOT_ERROR
+
 				QueueTestLines( edi )	; write condition lines
 			.endif
+		.elseif cmd != T_DOT_UNTIL
+
+			GetLabelStr( [esi].labels[LSTART*4], addr [edi+20] )
+			strcpy( edi, GetJumpString( cmd ) )
+			strcat( edi, " " )
+			strcat( edi, addr [edi+20] )
+			AddLineQueue( edi )
 		.endif
 		.endc
 	.endsw
@@ -3248,6 +3327,7 @@ local	rc:		SINT,
 	;
 	mov	eax,[esi].labels[LEXIT*4]
 	.if	eax
+
 		AddLineQueueX( "%s%s", GetLabelStr( eax, edi ), addr LABELQUAL )
 	.endif
 

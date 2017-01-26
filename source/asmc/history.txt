@@ -8,7 +8,7 @@ Changes in 2.22 - xx xxx 2017
 	.IFA	- if Above
 	.IFAE	- if Above or Equal
 	.IFB	- if Below
-	.IFBE	- if Not Below or Equal
+	.IFBE	- if Below or Equal
 	.IFC	- if Carry
 	.IFE	- if Equal
 	.IFG	- if Greater (signed)
@@ -39,7 +39,7 @@ Changes in 2.22 - xx xxx 2017
 	.UNTILA	  - until Above
 	.UNTILAE  - until Above or Equal
 	.UNTILB	  - until Below
-	.UNTILBE  - until Not Below or Equal
+	.UNTILBE  - until Below or Equal
 	.UNTILC	  - until Carry
 	.UNTILE	  - until Equal
 	.UNTILG	  - until Greater (signed)
@@ -66,6 +66,37 @@ Changes in 2.22 - xx xxx 2017
 	.UNTILPO  - until Parity Odd
 	.UNTILS	  - until Signed (signed)
 	.UNTILZ	  - until Zero
+- added HLL directives for .WHILEx
+	.WHILEA	  - while Above
+	.WHILEAE  - while Above or Equal
+	.WHILEB	  - while Below
+	.WHILEBE  - while Below or Equal
+	.WHILEC	  - while Carry
+	.WHILEE	  - while Equal
+	.WHILEG	  - while Greater (signed)
+	.WHILEGE  - while Greater or Equal (signed)
+	.WHILEL	  - while Less (signed)
+	.WHILELE  - while Less or Equal (signed)
+	.WHILENA  - while Not Above
+	.WHILENAE - while Not Above or Equal
+	.WHILENB  - while Not Below
+	.WHILENBE - while Not Below or Equal
+	.WHILENC  - while Not Carry
+	.WHILENE  - while Not Equal
+	.WHILENG  - while Not Greater (signed)
+	.WHILENGE - while Not Greater or Equal (signed)
+	.WHILENL  - while Not Less (signed)
+	.WHILENLE - while Not Less or Equal (signed)
+	.WHILENO  - while Not Overflow (signed)
+	.WHILENP  - while No Parity
+	.WHILENS  - while Not Signed (signed)
+	.WHILENZ  - while Not Zero
+	.WHILEO	  - while Overflow (signed)
+	.WHILEP	  - while Parity
+	.WHILEPE  - while Parity Even
+	.WHILEPO  - while Parity Odd
+	.WHILES	  - while Signed (signed)
+	.WHILEZ	  - while Zero
 - added Signed compare: .IFS, .IFSB, .IFSW, .IFSB
 - extended .IFB/.IFW to 32-bit, .IFB to 16-bit
 - added use of proto typedefs in HLL

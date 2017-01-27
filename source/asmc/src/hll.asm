@@ -3287,8 +3287,13 @@ local	rc:		SINT,
 		.endif
 		.endc
 
+	  .case T_DOT_UNTILAXZ
+	  .case T_DOT_UNTILBXZ
 	  .case T_DOT_UNTILCXZ
+	  .case T_DOT_UNTILDXZ
+
 		.if	ecx != HLL_REPEAT
+
 			asmerr( 1010, [ebx+edx].string_ptr )
 			jmp	toend
 		.endif
@@ -3298,34 +3303,55 @@ local	rc:		SINT,
 
 		mov	eax,[esi].labels[LTEST*4]
 		.if	eax ; v2.11: LTEST only needed if .CONTINUE has occured
+
 			AddLineQueueX( "%s%s", GetLabelStr( eax, edi ), addr LABELQUAL )
 		.endif
 		;
 		; read in optional (simple) expression
 		;
 		.if	[ebx].token != T_FINAL
+
 			EvaluateHllExpression( esi, addr i, tokenarray, LSTART, 0, edi )
 			mov	rc,eax
 			.if	eax == NOT_ERROR
+
 				CheckCXZLines( edi )
 				mov	rc,eax
 				.if	eax == NOT_ERROR
+
 					QueueTestLines( edi )	; write condition lines
 				.else
 					asmerr( 2062 )
 				.endif
 			.endif
 		.else
-			.if	Options.masm_compat_gencode
+			.if	Options.masm_compat_gencode && cmd == T_DOT_UNTILCXZ
+
 				AddLineQueueX( "loop %s", GetLabelStr( [esi].labels[LSTART*4], edi ) )
 			.else
-				.if	ModuleInfo.Ofssize == USE32
-					strcpy( edi, "ecx" )
+				mov	eax,cmd
+				.switch eax
+				  .case T_DOT_UNTILAXZ
+					mov	eax,@CStr( "eax" )
+					.endc
+				  .case T_DOT_UNTILBXZ
+					mov	eax,@CStr( "ebx" )
+					.endc
+				  .case T_DOT_UNTILCXZ
+					mov	eax,@CStr( "ecx" )
+					.endc
+				  .case T_DOT_UNTILDXZ
+					mov	eax,@CStr( "edx" )
+					.endc
+				.endsw
+
+				.if	ModuleInfo.Ofssize == USE64
+					mov	BYTE PTR [eax],'r'
 				.elseif ModuleInfo.Ofssize == USE16
-					strcpy( edi, "cx" )
-				.else
-					strcpy( edi, "rcx" )
+					mov	BYTE PTR [eax],' '
 				.endif
+
+				strcpy( edi, eax )
 				AddLineQueueX( " dec %s", edi )
 				AddLineQueueX( " jnz %s", GetLabelStr( [esi].labels[LSTART*4], edi ) )
 			.endif

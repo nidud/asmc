@@ -3,6 +3,7 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.22 - xx xxx 2017
+- added .UNTILAXZ, .UNTILDXZ, and .UNTILBXZ
 - added switch /h and /? -- went missing..
 - added HLL directives for pre-existing flag conditions
 	.IFA	- if Above

@@ -173,6 +173,10 @@ res(DOT_ENDC,	    .endc,	 DF_CGEN,				       DRT_HLLEXIT,  0, P_86, 0)
 res(DOT_DEFAULT,    .default,	 DF_CGEN|DF_CEXPR,			       DRT_HLLEXIT,  0, P_86, 0)
 res(DOT_ENDSW,	    .endsw,	 DF_CGEN,				       DRT_HLLEND,   0, P_86, 0)
 
+res(DOT_UNTILAXZ,   .untilaxz,	 DF_CGEN|DF_CEXPR,			       DRT_HLLEND,   0, P_86, 0)
+res(DOT_UNTILBXZ,   .untilbxz,	 DF_CGEN|DF_CEXPR,			       DRT_HLLEND,   0, P_86, 0)
+res(DOT_UNTILDXZ,   .untildxz,	 DF_CGEN|DF_CEXPR,			       DRT_HLLEND,   0, P_86, 0)
+
 res(DOT_EXIT,	    .exit,	 DF_CGEN|DF_STORE,  DRT_STARTEXIT,  0,	 P_86, 0)
 res(DOT_STARTUP,    .startup,	 DF_CGEN|DF_STORE,  DRT_STARTEXIT,  0,	 P_86, 0)
 res(DOT_MODEL,	    .model,	 DF_CGEN,   DRT_MODEL,	0,   P_86, 0)

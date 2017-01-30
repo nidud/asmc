@@ -34,12 +34,10 @@ ASMCFLAG_ASSERT		equ 80h ; Generate .assert code
 ;-------------------------------------------------------------------------------
 ; HLL flags
 ;-------------------------------------------------------------------------------
-T_HLL_IF		equ 01h ; tokenarray[0]: IF
-T_HLL_DELAY		equ 02h ; tokenarray[0]: ELSEIF/WHILE/CASE
-T_HLL_MACRO		equ 04h ; macro()
-T_HLL_PROC		equ 08h ; proc()
-T_HLL_DELAYED		equ 10h ; tokenarray[0]: delayed
-T_HLL_PARSED		equ 20h ; tokenarray[0]: parsed
+T_HLL_DELAY		equ 01h ; tokenarray[0]: ELSEIF/WHILE/CASE
+T_HLL_MACRO		equ 02h ; macro()
+T_HLL_PROC		equ 04h ; proc()
+T_HLL_DELAYED		equ 08h ; tokenarray[0]: delayed
 
 ;-------------------------------------------------------------------------------
 ; .SWITCH options
@@ -593,7 +591,7 @@ SMAC_ALABEL		equ 04h
 SMAC_MULTILINE		equ 08h
 SMAC_PURGED		equ 10h
 
-LPASYM	TYPEDEF PTR asym
+LPASYM			TYPEDEF PTR asym
 
 asym			STRUC
 nextitem		dd ?
@@ -677,6 +675,7 @@ UNION
     nextparam		dd ?
 ENDS
 dsym			ENDS
+LPDSYM			TYPEDEF PTR dsym
 
 seg_item		STRUC
 next			dd ?
@@ -831,7 +830,7 @@ ENDS
 string_ptr		LPSTR ?
 tokpos			LPSTR ?
 asm_tok			ENDS
-
+LPTOKEN			TYPEDEF PTR asm_tok
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -860,27 +859,28 @@ UNION				; value of expression
     uvalue		dd ?
     value64		dq ?
     fvalue		dd ?
-    st_idx		dd ?	; EXPR_REG: index if reg is ST
+    st_idx		dd ?		; EXPR_REG: index if reg is ST
     chararray		db 16 dup(?)
 ENDS
 UNION
-    quoted_string	dd ?	; for EXPR_CONST + quoted strings only
-    float_tok		dd ?	; for EXPR_FLOAT only
+    quoted_string	LPTOKEN ?	; for EXPR_CONST + quoted strings only
+    float_tok		LPTOKEN ?	; for EXPR_FLOAT only
 ENDS
-base_reg		dd ?	; EXPR_ADDR: base register token
-				; EXPR_REG: register token
-idx_reg			dd ?	; EXPR_ADDR: index register token
+base_reg		LPTOKEN ?	; EXPR_ADDR: base register token
+					; EXPR_REG: register token
+idx_reg			LPTOKEN ?	; EXPR_ADDR: index register token
 UNION
-    label_tok		dd ?	; token holding the label (EXPR_ADDR, used for overrides, inside expreval only)
-    type_tok		dd ?	; v2.10: token if target type of a label (SYM_STACK, MT_PTR) is to be stored
+    label_tok		LPTOKEN ?	; token holding the label (EXPR_ADDR, used for overrides, inside expreval only)
+    type_tok		LPTOKEN ?	; v2.10: token if target type of a label (SYM_STACK, MT_PTR) is to be stored
 ENDS
-override		dd ?	; EXPR_ADDR: token holding the override label or segment register
-_instr			dd ?	; operator token
-kind			dd ?	; Type of expression
-mem_type		db ?	;
-scale			db ?	; EXPR_ADDR: scaling factor 1, 2, 4, or 8 - 386 code only
-Ofssize			db ?	; 16,32,64 bit if MT_NEAR, MT_FAR
-flags			db ?	; bit-flag
+override		LPTOKEN ?	; EXPR_ADDR: token holding the override label or segment register
+_instr			dd ?		; operator token
+kind			dd ?		; Type of expression
+mem_type		db ?		;
+scale			db ?		; EXPR_ADDR: scaling factor 1, 2, 4, or 8 - 386 code only
+Ofssize			db ?		; 16,32,64 bit if MT_NEAR, MT_FAR
+
+flags			db ?		; bit-flag
 EXF_INDIRECT		equ 01h ; indirect addressing used
 EXF_EXPLICIT		equ 02h ; Whether expression type explicitly given (to be removed!)
 EXF_IS_ABS		equ 04h ; external ABS
@@ -889,9 +889,10 @@ EXF_IS_OPEATTR		equ 10h ; current operator is OPATTR
 EXF_NEGATIVE		equ 20h ; for EXPR_FLOAT only
 EXF_ASSUMECHECK		equ 40h ; v2.07: for ASSUMEd std registers
 EXF_IS_DOT		equ 80h ; v2.10: see regression test dotop5.asm
-sym			dd ?	; label used
-mbr			dd ?	; struct member
-_type			dd ?	; for DOT operator. Must be last (see TokenAssign)!
+
+sym			LPASYM ?; label used
+mbr			LPASYM ?; struct member
+_type			LPASYM ?; for DOT operator. Must be last (see TokenAssign)!
 expr			ENDS
 
 global_options		STRUC

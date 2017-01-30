@@ -1107,6 +1107,7 @@ AssembleModule PROC USES esi edi ebx source
 	.endw
 
 	.if	Parse_Pass > PASS_1 && write_to_file
+
 		WriteModule( addr ModuleInfo )
 	.endif
 

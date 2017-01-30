@@ -142,7 +142,7 @@ $label:
 	  .default
 	.endsw
 
-if 0
+if 1
 
 	mov	ecx,10
 	.switch cl
@@ -369,6 +369,40 @@ endif
 	  .case $label	   : mov al,2
 	  .case $label + 1 : mov al,3
 	  .case $label + 2 : mov al,4
+	.endsw
+
+	OPTION	SWITCH:C
+
+	.switch eax
+	  .case 'A','C','D','E','F','G','H','I'
+	  .default
+	.endsw
+
+	OPTION SWITCH:PASCAL, SWITCH:TABLE
+
+	.switch eax
+	  .case 'A','C','D','E','F','G','H','I'
+	  .default
+	.endsw
+
+	OPTION SWITCH:REGAX
+	OPTION SWITCH:NOTEST
+
+	.switch eax
+	  .case 'A','C','D','E','F','G','H','I'
+	  .default
+	.endsw
+
+	.switch al
+	  .case 'A','C','D','E','F','G','H','I'
+	  .default
+	.endsw
+
+	OPTION SWITCH:NOTEST
+
+	.switch al
+	  .case 'A','C','D','E','F','G','H','I'
+	  .default
 	.endsw
 
 	end

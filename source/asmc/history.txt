@@ -3,101 +3,30 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.22 - xx xxx 2017
-- added .UNTILAXZ, .UNTILDXZ, and .UNTILBXZ
+- added .UNTIL[SB|SW|SD]
+- added .WHILE[SB|SW|SD]
+- added .UNTIL[B|W|D]
+- added .WHILE[B|W|D]
+- added .UNTILAXZ, DX, and BX
 - added switch /h and /? -- went missing..
-- added HLL directives for pre-existing flag conditions
+- added .IFxx
 	.IFA	- if Above
-	.IFAE	- if Above or Equal
 	.IFB	- if Below
-	.IFBE	- if Below or Equal
-	.IFC	- if Carry
-	.IFE	- if Equal
 	.IFG	- if Greater (signed)
-	.IFGE	- if Greater or Equal (signed)
 	.IFL	- if Less (signed)
-	.IFLE	- if Less or Equal (signed)
+	.IFO	- if Overflow (signed)
+	.IFP	- if Parity
+	.IFS	- if Signed (signed)
+	.IFZ	- if Zero
 	.IFNA	- if Not Above
-	.IFNAE	- if Not Above or Equal
 	.IFNB	- if Not Below
-	.IFNBE	- if Not Below or Equal
-	.IFNC	- if Not Carry
-	.IFNE	- if Not Equal
 	.IFNG	- if Not Greater (signed)
-	.IFNGE	- if Not Greater or Equal (signed)
 	.IFNL	- if Not Less (signed)
-	.IFNLE	- if Not Less or Equal (signed)
 	.IFNO	- if Not Overflow (signed)
 	.IFNP	- if No Parity
 	.IFNS	- if Not Signed (signed)
 	.IFNZ	- if Not Zero
-	.IFO	- if Overflow (signed)
-	.IFP	- if Parity
-	.IFPE	- if Parity Even
-	.IFPO	- if Parity Odd
-	.IFS	- if Signed (signed)
-	.IFZ	- if Zero
-- added HLL directives for .UNTILx
-	.UNTILA	  - until Above
-	.UNTILAE  - until Above or Equal
-	.UNTILB	  - until Below
-	.UNTILBE  - until Below or Equal
-	.UNTILC	  - until Carry
-	.UNTILE	  - until Equal
-	.UNTILG	  - until Greater (signed)
-	.UNTILGE  - until Greater or Equal (signed)
-	.UNTILL	  - until Less (signed)
-	.UNTILLE  - until Less or Equal (signed)
-	.UNTILNA  - until Not Above
-	.UNTILNAE - until Not Above or Equal
-	.UNTILNB  - until Not Below
-	.UNTILNBE - until Not Below or Equal
-	.UNTILNC  - until Not Carry
-	.UNTILNE  - until Not Equal
-	.UNTILNG  - until Not Greater (signed)
-	.UNTILNGE - until Not Greater or Equal (signed)
-	.UNTILNL  - until Not Less (signed)
-	.UNTILNLE - until Not Less or Equal (signed)
-	.UNTILNO  - until Not Overflow (signed)
-	.UNTILNP  - until No Parity
-	.UNTILNS  - until Not Signed (signed)
-	.UNTILNZ  - until Not Zero
-	.UNTILO	  - until Overflow (signed)
-	.UNTILP	  - until Parity
-	.UNTILPE  - until Parity Even
-	.UNTILPO  - until Parity Odd
-	.UNTILS	  - until Signed (signed)
-	.UNTILZ	  - until Zero
-- added HLL directives for .WHILEx
-	.WHILEA	  - while Above
-	.WHILEAE  - while Above or Equal
-	.WHILEB	  - while Below
-	.WHILEBE  - while Below or Equal
-	.WHILEC	  - while Carry
-	.WHILEE	  - while Equal
-	.WHILEG	  - while Greater (signed)
-	.WHILEGE  - while Greater or Equal (signed)
-	.WHILEL	  - while Less (signed)
-	.WHILELE  - while Less or Equal (signed)
-	.WHILENA  - while Not Above
-	.WHILENAE - while Not Above or Equal
-	.WHILENB  - while Not Below
-	.WHILENBE - while Not Below or Equal
-	.WHILENC  - while Not Carry
-	.WHILENE  - while Not Equal
-	.WHILENG  - while Not Greater (signed)
-	.WHILENGE - while Not Greater or Equal (signed)
-	.WHILENL  - while Not Less (signed)
-	.WHILENLE - while Not Less or Equal (signed)
-	.WHILENO  - while Not Overflow (signed)
-	.WHILENP  - while No Parity
-	.WHILENS  - while Not Signed (signed)
-	.WHILENZ  - while Not Zero
-	.WHILEO	  - while Overflow (signed)
-	.WHILEP	  - while Parity
-	.WHILEPE  - while Parity Even
-	.WHILEPO  - while Parity Odd
-	.WHILES	  - while Signed (signed)
-	.WHILEZ	  - while Zero
+- added .BREAKxx, CONTINUExx, UNTILxx, and WHILExx
 - added Signed compare: .IFS, .IFSB, .IFSW, .IFSB
 - extended .IFB/.IFW to 32-bit, .IFB to 16-bit
 - added use of proto typedefs in HLL

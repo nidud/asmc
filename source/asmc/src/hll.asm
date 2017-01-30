@@ -61,11 +61,16 @@ HLLF_ARG3264	equ 1000h	; .switch eax in 64-bit assumend rax
 HLLF_NUM	equ 2000h	; .case arg is const
 HLLF_TABLE	equ 4000h	; .case is in jump table
 HLLF_ENDCOCCUR	equ 8000h	; jmp exit in .case omitted
-
-HLLF_IFB	equ 10000h	; .ifb proc() == -1 - rax --> al return
-HLLF_IFW	equ 20000h	; .ifw proc() == -1 - rax --> ax return
-HLLF_IFD	equ 40000h	; .ifd proc() == -1 - rax --> eax return
-HLLF_IFS	equ 80000h	; .ifs proc() > 0   - rax --> sqword ptr rax
+;
+; Return type
+;
+HLLF_IFB	equ 0x00010000	; .ifb proc() --> .if al
+HLLF_IFW	equ 0x00020000	; .ifw proc() --> .if ax
+HLLF_IFD	equ 0x00040000	; .ifd proc() --> .if eax
+;
+; Signed compare
+;
+HLLF_IFS	equ 0x00080000	; Signed CMP REG,val
 
 ;
 ; item for .IF, .WHILE, .REPEAT, ...
@@ -213,6 +218,7 @@ GetCOp	PROC FASTCALL item;:PTR asm_tok
 	.endif
 
 	.if	[ecx].token != T_ID
+
 		mov	eax,COP_NONE
 		ret
 	.endif
@@ -227,10 +233,12 @@ GetCOp	PROC FASTCALL item;:PTR asm_tok
 		.switch eax
 		  .case 5
 			.if	ecx == "OREZ"
+
 				mov	eax,COP_ZERO
 				ret
 			.endif
 			.if	ecx == "NGIS"
+
 				mov	eax,COP_SIGN
 				ret
 			.endif
@@ -239,6 +247,7 @@ GetCOp	PROC FASTCALL item;:PTR asm_tok
 			movzx	eax,BYTE PTR [edx+4]
 			and	eax,not 20h
 			.if	eax == "Y" && ecx == "RRAC"
+
 				mov	eax,COP_CARRY
 				ret
 			.endif
@@ -247,6 +256,7 @@ GetCOp	PROC FASTCALL item;:PTR asm_tok
 			movzx	eax,WORD PTR [edx+4]
 			and	eax,not 2020h
 			.if	eax == "YT" && ecx == "IRAP"
+
 				mov	eax,COP_PARITY
 				ret
 			.endif
@@ -255,6 +265,7 @@ GetCOp	PROC FASTCALL item;:PTR asm_tok
 			mov	eax,[edx+4]
 			and	eax,not 20202020h
 			.if	eax == "WOLF" && ecx == "REVO"
+
 				mov	eax,COP_OVERFLOW
 				ret
 			.endif
@@ -304,6 +315,7 @@ RenderInstr PROC USES esi edi ebx,
 	mov	eax,start2
 
 	.if	eax != EMPTY
+
 		mov	WORD PTR [edi],' ,'
 		add	edi,2
 		;
@@ -316,6 +328,7 @@ RenderInstr PROC USES esi edi ebx,
 		sub	ecx,esi
 		rep	movsb
 	.elseif ecx != EMPTY
+
 		sprintf(edi, ", %d", ecx)
 		add	edi,eax
 	.endif
@@ -338,24 +351,30 @@ RenderJcc PROC USES edi dst, cc, _neg, _label
 	; create the jump opcode: j[n]cc
 	;
 	mov	edi,dst
+
 	mov	eax,'j'
 	stosb
 	mov	ecx,_neg
 	.if	ecx
+
 		mov	eax,'n'
 		stosb
 	.endif
+
 	mov	eax,cc
 	stosb
 	mov	eax,' '
 	.if	!ecx
+
 		stosb		; make sure there's room for the inverse jmp
 	.endif
 	stosb
+
 	sprintf( edi, "@C%04X", _label )
 	lea	eax,[edi+eax+1]
 	mov	WORD PTR [eax-1],EOLCHAR
 	ret
+
 RenderJcc ENDP
 
 ;
@@ -375,11 +394,13 @@ LGetToken PROC USES esi edi ebx hll:PTR hll_item, i, tokenarray, opnd:PTR expr
 	add	ebx,tokenarray
 
 	.while	edi < ModuleInfo.token_count
+
 		.break .if GetCOp( ebx ) != COP_NONE
 		add	edi,1
 		add	ebx,16
 	.endw
 	.if	edi == [esi]
+
 		mov	eax,opnd
 		mov	[eax].expr.kind,EXPR_EMPTY
 		mov	eax,NOT_ERROR
@@ -394,6 +415,7 @@ LGetToken PROC USES esi edi ebx hll:PTR hll_item, i, tokenarray, opnd:PTR expr
 	; May happen for expressions like ".if 1 + CARRY?"
 	;
 	.if	[esi] > edi
+
 		asmerr( 2154 )
 	.else
 		mov	eax,NOT_ERROR
@@ -403,8 +425,10 @@ toend:
 LGetToken ENDP
 
 GetLabel PROC FASTCALL hll, index
+
 	mov	eax,[ecx].hll_item.labels[edx*4]
 	ret
+
 GetLabel ENDP
 
 ; a "simple" expression is
@@ -448,8 +472,10 @@ local	op:		SINT,
 	mov	ebx,edi
 	shl	ebx,4
 	add	ebx,tokenarray
+
 	mov	eax,[ebx].string_ptr
 	.while	WORD PTR [eax] == '!'
+
 		add	edi,1
 		add	ebx,16
 		mov	eax,1
@@ -470,31 +496,53 @@ local	op:		SINT,
 		add	ebx,16
 		movzx	eax,[ebx].token
 		.while	eax != T_FINAL
+
+			if 0
+			.if	eax != T_OP_BRACKET && \
+				eax != T_CL_BRACKET
+
+				.break .if GetCOp( ebx ) != COP_NONE
+			.elseif eax == T_CL_BRACKET
+
+				sub	esi,1
+				.break .ifz	; a standard Masm expression?
+			.else
+				add	esi,1
+			.endif
+			else
 			.if	eax == T_OP_BRACKET
+
 				add	esi,1
 			.elseif eax == T_CL_BRACKET
+
 				sub	esi,1
 				.break .if ZERO?	; a standard Masm expression?
 			.else
 				.break .if GetCOp( ebx ) != COP_NONE
 			.endif
+			endif
 			add	ebx,16
 			movzx	eax,[ebx].token
 		.endw
 		mov	eax,esi
 		mov	esi,i
 		.if	eax
+
 			inc	DWORD PTR [esi]
+
 			GetExpression( hll, esi, tokenarray, ilabel, is_true, buffer, hllop )
 			cmp	eax,ERROR
 			je	toend
+
 			mov	ebx,[esi]
 			shl	ebx,4
 			add	ebx,tokenarray
 			.if	[ebx].token != T_CL_BRACKET
+
 				asmerr( 2154 )
 				jmp	toend
 			.endif
+
 			inc	DWORD PTR [esi]
 			mov	eax,NOT_ERROR
 			jmp	toend
@@ -520,8 +568,10 @@ local	op:		SINT,
 	; lower precedence operator ( && or || ) detected?
 	;
 	.if	eax == COP_AND || eax == COP_OR
+
 		mov	eax,COP_NONE
 	.elseif eax != COP_NONE
+
 		inc	edi
 		mov	[esi],edi
 	.endif
@@ -535,10 +585,13 @@ local	op:		SINT,
 	;
 	mov	edx,op
 	.if	edx >= COP_ZERO
+
 		.if	op1.kind != EXPR_EMPTY
+
 			asmerr( 2154 )
 			jmp	toend
 		.endif
+
 		mov	ecx,hllop
 		mov	eax,buffer
 		mov	[ecx].hll_opnd.lastjmp,eax
@@ -564,11 +617,14 @@ local	op:		SINT,
 		.switch eax
 		  .case EXPR_REG
 			.if	!( op1.flags & EXF_INDIRECT )
+
+				mov	eax,@CStr( "test" )
 				.if	Options.masm_compat_gencode
-					RenderInstr( buffer, "or",   op1_pos, op1_end, op1_pos, op1_end, ebx )
-				.else
-					RenderInstr( buffer, "test", op1_pos, op1_end, op1_pos, op1_end, ebx )
+
+					mov	eax,@CStr( "or" )
 				.endif
+				RenderInstr( buffer, eax, op1_pos, op1_end,
+					op1_pos, op1_end, ebx )
 				mov	edx,hllop
 				mov	[edx].hll_opnd.lastjmp,eax
 				RenderJcc( eax, 'z', is_true, _label )
@@ -585,21 +641,26 @@ local	op:		SINT,
 			.endc
 		  .case EXPR_CONST
 			.if	op1.hvalue != 0 && op1.hvalue != -1
+
 				EmitConstError( addr op1 )
 				jmp	toend
 			.endif
+
 			mov	ecx,hllop
 			mov	eax,buffer
 			mov	[ecx].hll_opnd.lastjmp,eax
 			mov	edx,is_true
 			xor	edx,1
+
 			.if	(( is_true && op1.value ) || ( edx && op1.value == 0 ))
+
 				sprintf( buffer, "jmp @C%04X%s", _label, addr EOLSTR )
 			.else
 				mov	BYTE PTR [eax],NULLC
 			.endif
 			.endc
 		.endsw
+
 		mov	eax,NOT_ERROR
 		jmp	toend
 	.endif
@@ -623,14 +684,20 @@ local	op:		SINT,
 	mov	op2_end,edi
 
 	ASSUME	ebx: NOTHING
-
 	;
 	; now generate ASM code for expression
 	;
 	mov	ecx,op
 	.if	ecx == COP_ANDB
+		;
+		; v2.22 - switch /Zg to OR
+		;
+		mov	eax,@CStr( "test" )
+		.if	Options.masm_compat_gencode
 
-		RenderInstr( buffer, "test", op1_pos, op1_end, op2_pos, op2_end, ebx )
+			mov	eax,@CStr( "or" )
+		.endif
+		RenderInstr( buffer, eax, op1_pos, op1_end, op2_pos, op2_end, ebx )
 
 		mov	ecx,hllop
 		mov	[ecx].hll_opnd.lastjmp,eax
@@ -643,29 +710,44 @@ local	op:		SINT,
 		; optimisation: generate 'or EAX,EAX' instead of 'cmp EAX,0'.
 		; v2.11: use op2.value64 instead of op2.value
 		;
-		.if	Options.masm_compat_gencode	   && \
-			( ecx == COP_EQ || ecx == COP_NE ) && \
-			op1.kind == EXPR_REG		   && \
-			!( op1.flags & EXF_INDIRECT )	   && \
-			op2.kind == EXPR_CONST		   && \
-			DWORD PTR op2.value64 == 0	   && \
-			DWORD PTR op2.value64[4] == 0
+		mov	eax,DWORD PTR op2.value64
+		or	eax,DWORD PTR op2.value64[4]
 
-			RenderInstr( buffer, "test", op1_pos, op1_end, op1_pos, op1_end, ebx )
+		.if	!eax && (ecx == COP_EQ || ecx == COP_NE) && op1.kind == EXPR_REG && \
+			!( op1.flags & EXF_INDIRECT ) && op2.kind == EXPR_CONST
+			;
+			; v2.22 - switch /Zg to OR
+			;
+			mov	eax,@CStr( "test" )
+			.if	Options.masm_compat_gencode
+
+				mov	eax,@CStr( "or" )
+			.endif
+			RenderInstr( buffer, eax, op1_pos, op1_end, op1_pos, op1_end, ebx )
 		.else
 			RenderInstr( buffer, "cmp",  op1_pos, op1_end, op2_pos, op2_end, ebx )
 		.endif
-
-		mov	ecx,hll
+		;
+		; v2.22 - signed compare S, SB, SW, SD
+		;
+		mov	edx,hll
 		xor	edi,edi
-		.if	[ecx].hll_item.flags & HLLF_IFS
+		mov	ecx,[edx].hll_item.flags
 
+		.if	ecx & HLLF_IFS or HLLF_IFB or HLLF_IFW or HLLF_IFD
+			;
+			; assume .ifx proc() --> .ifx reg
+			;
 			.if	op1.kind != EXPR_REG
 
 				asmerr( 2154 )
 				jmp	toend
 			.endif
-			inc	edi	; v2.22 - Signed Compare
+		.endif
+
+		.if	ecx & HLLF_IFS
+
+			inc	edi
 		.endif
 
 		mov	ecx,op
@@ -1089,16 +1171,15 @@ local	b[MAX_LINE_LEN]:SBYTE
 		add	ebx,16
 	.endw
 
-	.if	ModuleInfo.Ofssize == USE32
+	mov	ebx,@CStr( " eax" )
+	.if	ModuleInfo.Ofssize == USE64
 
-		strcat( eax, " eax" )
+		mov	ebx,@CStr( " rax" )
 	.elseif ModuleInfo.Ofssize == USE16
 
-		strcat( eax, " ax" );
-	.else
-
-		strcat( eax, " rax" )
+		mov	ebx,@CStr( " ax" )
 	.endif
+	strcat( eax, ebx )
 
 	mov	ebx,e
 	shl	ebx,4
@@ -1369,46 +1450,110 @@ local	hllop:		hll_opnd,
 			and	eax,HLLF_IFD or HLLF_IFW or HLLF_IFB
 
 			.if	eax && BYTE PTR [edi]
-
-				; "cmp ax ," ...
-
+				;
+				; Parse a "cmp ax" or "test ax,ax" and resize
+				; to B/W/D ([r|e]ax).
+				;
 				mov	edx,buffer
-				mov	ecx," xa "
-				.if	ModuleInfo.Ofssize == USE64
+				mov	ecx,[edx]
+				.while	BYTE PTR [edx] > ' '
 
-					mov	ecx,"xar "
-				.elseif	 ModuleInfo.Ofssize == USE32
+					add	edx,1
+				.endw
+				.while	BYTE PTR [edx] == ' '
 
-					mov	ecx,"xae "
+					add	edx,1
+				.endw
+
+				mov	ebx,[edx]
+				.if	bl == 'e' || bl == 'r'
+
+					shr	ebx,8
 				.endif
 
-				.if	[edx+3] == ecx
+				.if	bh == 'x'
+
+					mov	ebx,buffer
+					.if	ecx == 'tset'
+
+						xor	ecx,ecx
+					.endif
+					;
+					; ax , ax   -< eax,eax>
+					; rax , rax -<	al ,  al>
+					;
+					lea	ebx,[edx+4]
+					.while	byte ptr [ebx] == ' ' || \
+						byte ptr [ebx] == ','
+						inc	ebx
+					.endw
+					.while	byte ptr [edx] == ' '
+						inc	edx
+					.endw
 
 					.switch eax
 
 					  .case HLLF_IFD
-						.if	ModuleInfo.Ofssize != USE64
+						.if	ModuleInfo.Ofssize == USE64
 
-							asmerr( 2085 )
-							jmp	toend
+							mov	BYTE PTR [edx],'e'
+							.if	!ecx
+
+								mov BYTE PTR [ebx],'e'
+							.endif
+
+						.elseif ModuleInfo.Ofssize == USE16
+
+							mov	ax,[edx]
+							.if	BYTE PTR [edx+2] != ' '
+
+								.if	ecx
+
+									mov DWORD PTR [edx-4],'ro '
+								.else
+									mov DWORD PTR [edx-5],' dna'
+								.endif
+								dec	edx
+							.endif
+							mov	[edx+1],ax
+							mov	BYTE PTR [edx],'e'
+							.if	!ecx
+
+								mov	BYTE PTR [ebx-1],'e'
+							.endif
 						.endif
-						mov	BYTE PTR [edx+4],'e'
 						.endc
 
 					  .case HLLF_IFW
-						.if	ModuleInfo.Ofssize == USE16
+						.if	ModuleInfo.Ofssize != USE16
 
-							asmerr( 2085 )
-							jmp	toend
+							mov	eax,' '
+							mov	[edx],al
+							.if	!ecx
+
+								mov [ebx],al
+							.endif
 						.endif
-						mov	BYTE PTR [edx+4],' '
 						.endc
+
 					  .case HLLF_IFB
+						mov	eax,' l'
 						.if	ModuleInfo.Ofssize == USE16
 
-							mov	BYTE PTR [edx+5],'l'
+							mov	[edx+1],al
+							.if	!ecx
+
+								mov	[ebx+1],al
+							.endif
 						.else
-							mov	DWORD PTR [edx+4],'la  '
+							mov	[edx],ah
+							mov	[edx+2],al
+
+							.if	!ecx
+
+								mov [ebx],ah
+								mov [ebx+2],al
+							.endif
 						.endif
 						.endc
 					.endsw
@@ -1431,62 +1576,6 @@ toend:
 
 EvaluateHllExpression ENDP
 
-; for .UNTILCXZ: check if expression is simple enough.
-; what's acceptable is ONE condition, and just operators == and !=
-; Constants (0 or != 0) are also accepted.
-
-CheckCXZLines PROC USES esi edi ebx p
-
-	mov	esi,p
-	mov	edi,1
-	xor	ebx,ebx
-	;
-	; syntax ".untilcxz 1" has a problem: there's no "jmp" generated at all.
-	; if this syntax is to be supported, activate the #if below.
-	;
-	mov	eax,[esi]
-	.while	al
-		.if	al == EOLCHAR
-			mov	edi,1
-			add	ebx,edi
-		.elseif edi
-			xor	edi,edi
-			.if	al == 'j'
-				shr	eax,8
-				.if	al == 'm' && !ebx
-					mov	edx,2	; 2 chars, to replace "jmp" by "loope"
-				.elseif ebx == 1 && ( al == 'z' || (al == 'n' && ah == 'z') )
-					mov	edx,3	; 3 chars, to replace "jz"/"jnz" by "loopz"/"loopnz"
-				.else			; anything else is "too complex"
-					mov	eax,ERROR
-					jmp	toend
-				.endif
-				strlen( esi )
-				.while	SDWORD PTR eax >= 0
-					add	esi,eax
-					mov	cl,[esi]
-					mov	[esi+edx],cl
-					sub	esi,eax
-					dec	eax
-				.endw
-				mov	eax,"pool"
-				mov	[esi],eax
-				.if	edx == 2
-					mov	BYTE PTR [esi+4],'e'
-				.endif
-			.endif
-		.endif
-		add	esi,1
-		mov	eax,[esi]
-	.endw
-	mov	eax,NOT_ERROR
-	.if	ebx > 2
-		mov	eax,ERROR
-	.endif
-toend:
-	ret
-CheckCXZLines ENDP
-
 ExpandHllExpression PROC USES esi edi ebx,
 	hll:		PTR hll_item,
 	i:		PTR,
@@ -1506,8 +1595,10 @@ local	rc:		DWORD,
 	PushInputStatus( addr oldstat )
 
 	.if	[esi].hll_item.flags & HLLF_WHILE
+
 		mov	edi,[esi].hll_item.condlines
 	.endif
+
 	strcpy( ModuleInfo.currsource, edi )
 	Tokenize( ModuleInfo.currsource, 0, ebx, TOK_DEFAULT )
 	mov	ModuleInfo.token_count,eax
@@ -1515,32 +1606,42 @@ local	rc:		DWORD,
 	.if	Parse_Pass == PASS_1
 
 		.if	ModuleInfo.line_queue.head
+
 			RunLineQueue()
 		.endif
+
 		.if	[esi].hll_item.flags & HLLF_DELAYED
+
 			mov	NoLineStore,1
 			ExpandLine( ModuleInfo.currsource, ebx )
 			mov	NoLineStore,0
 			cmp	eax,NOT_ERROR
 			jne	toend
 		.endif
+
 		.if	[esi].hll_item.flags & HLLF_WHILE
+
 			and	[esi].hll_item.flags,not HLLF_WHILE
 		.endif
+
 		EvaluateHllExpression( hll, i, ebx, ilabel, is_true, buffer )
 		mov	rc,eax
 		QueueTestLines( buffer )
 
-	.elseif Parse_Pass != PASS_1
-
+	.else
 		.if	ModuleInfo.list
+
 			LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
 		.endif
+
 		RunLineQueue()
 		ExpandLine( ModuleInfo.currsource, ebx )
 		mov	rc,eax
+
 		.if	eax == NOT_ERROR
+
 			.if	[esi].hll_item.flags & HLLF_WHILE
+
 				and	[esi].hll_item.flags,not HLLF_WHILE
 			.endif
 			EvaluateHllExpression( esi, i, ebx, ilabel, is_true, buffer )
@@ -1562,14 +1663,18 @@ ExpandHllExpression ENDP
 	ASSUME	esi:PTR hll_item
 
 RenderCase PROC USES esi edi ebx hll:PTR hll_item, case:PTR hll_item, buffer:LPSTR
+
 	mov	esi,hll
 	mov	ebx,case
 	mov	edi,buffer
 	mov	edx,[ebx].hll_item.condlines
+
 	.if	!edx
+
 		AddLineQueueX( "jmp %s", GetLabelStr( [ebx].hll_item.labels[LSTART*4], edi ) )
 	.else
 		.if	strchr( edx, '.' ) && BYTE PTR [eax+1] == '.'
+
 			mov	BYTE PTR [eax],0
 			add	eax,2
 			push	eax
@@ -1586,61 +1691,76 @@ RenderCase PROC USES esi edi ebx hll:PTR hll_item, case:PTR hll_item, buffer:LPS
 		.endif
 	.endif
 	ret
+
 RenderCase ENDP
 
 RenderCCMP PROC USES esi edi ebx hll:PTR hll_item, buffer:LPSTR
+
 	mov	esi,hll
 	mov	edi,buffer
 	AddLineQueueX( "%s%s", edi, addr LABELQUAL )
 	mov	ebx,[esi].caselist
 	.while	ebx
+
 		RenderCase( esi, ebx, edi )
 		mov	ebx,[ebx].hll_item.caselist
 	.endw
 	ret
+
 RenderCCMP ENDP
 
 GetLowCount PROC hll:PTR hll_item, min, dist
+
 	mov	ecx,min
 	add	ecx,dist
 	mov	edx,hll
 	xor	eax,eax
 	mov	edx,[edx].hll_item.caselist
+
 	.while	edx
 		.if	[edx].hll_item.flags & HLLF_TABLE && \
 			SDWORD PTR ecx >= [edx].hll_item.labels
+
 			add	eax,1
 		.endif
 		mov	edx,[edx].hll_item.caselist
 	.endw
 	ret
+
 GetLowCount ENDP
 
 GetHighCount PROC hll:PTR hll_item, max, dist
+
 	mov	ecx,max
 	sub	ecx,dist
 	mov	edx,hll
 	xor	eax,eax
 	mov	edx,[edx].hll_item.caselist
+
 	.while	edx
 		.if	[edx].hll_item.flags & HLLF_TABLE && \
 			SDWORD PTR ecx <= [edx].hll_item.labels
+
 			add	eax,1
 		.endif
 		mov	edx,[edx].hll_item.caselist
 	.endw
 	ret
+
 GetHighCount ENDP
 
 SetLowCount PROC USES esi hll:PTR hll_item, count, min, dist
+
 	mov	ecx,min
 	mov	edx,count
 	add	ecx,dist
 	xor	eax,eax
 	mov	esi,hll
 	mov	esi,[esi].caselist
+
 	.while	esi
 		.if	[esi].flags & HLLF_TABLE && SDWORD PTR ecx < [esi].labels
+
 			and	[esi].flags,NOT HLLF_TABLE
 			dec	DWORD PTR [edx]
 			add	eax,1
@@ -1649,17 +1769,22 @@ SetLowCount PROC USES esi hll:PTR hll_item, count, min, dist
 	.endw
 	mov	edx,[edx]
 	ret
+
 SetLowCount ENDP
 
 SetHighCount PROC USES esi hll:PTR hll_item, count, max, dist
+
 	mov	ecx,max
 	mov	edx,count
 	sub	ecx,dist
 	xor	eax,eax
 	mov	esi,hll
 	mov	esi,[esi].caselist
+
 	.while	esi
+
 		.if	[esi].flags & HLLF_TABLE && SDWORD PTR ecx > [esi].labels
+
 			and	[esi].flags,NOT HLLF_TABLE
 			dec	DWORD PTR [edx]
 			add	eax,1
@@ -1668,27 +1793,35 @@ SetHighCount PROC USES esi hll:PTR hll_item, count, max, dist
 	.endw
 	mov	edx,[edx]
 	ret
+
 SetHighCount ENDP
 
 GetCaseVal PROC FASTCALL hll, val
+
 	mov	eax,[ecx].hll_item.caselist
 	.while	eax
+
 		.if	[eax].hll_item.flags & HLLF_TABLE && \
 			[eax].hll_item.labels == edx
+
 			.break
 		.endif
 		mov	ecx,eax
 		mov	eax,[eax].hll_item.caselist
 	.endw
 	ret
+
 GetCaseVal ENDP
 
 RemoveVal PROC FASTCALL hll, val
+
 	.if	GetCaseVal()
+
 		and	[eax].hll_item.flags,NOT HLLF_TABLE
 		mov	eax,1
 	.endif
 	ret
+
 RemoveVal ENDP
 
 GetCaseValue PROC USES esi edi ebx hll, tokenarray, dcount, scount
@@ -1699,8 +1832,11 @@ GetCaseValue PROC USES esi edi ebx hll, tokenarray, dcount, scount
 
 	mov	esi,hll
 	mov	esi,[esi].caselist
+
 	.while	esi
+
 		.if	[esi].flags & HLLF_NUM
+
 			or	[esi].flags,HLLF_TABLE
 			Tokenize( [esi].condlines, 0, tokenarray, TOK_DEFAULT )
 			mov	ModuleInfo.token_count,eax
@@ -1708,9 +1844,11 @@ GetCaseValue PROC USES esi edi ebx hll, tokenarray, dcount, scount
 			mov	ecx,eax
 			EvalOperand( addr i, tokenarray, ecx, addr opnd, EXPF_NOERRMSG )
 			.break .if eax != NOT_ERROR
+
 			mov	eax,DWORD PTR opnd.value64
 			mov	edx,DWORD PTR opnd.value64[4]
 			.if	opnd.kind == EXPR_ADDR
+
 				mov	ecx,opnd.sym
 				add	eax,[ecx].asym._offset
 				xor	edx,edx
@@ -1719,10 +1857,12 @@ GetCaseValue PROC USES esi edi ebx hll, tokenarray, dcount, scount
 			mov	[esi].labels[LEXIT*4],edx
 			inc	ebx
 		.elseif [esi].condlines
+
 			inc	edi
 		.endif
 		mov	esi,[esi].caselist
 	.endw
+
 	Tokenize( ModuleInfo.currsource, 0, tokenarray, TOK_DEFAULT )
 	mov	ModuleInfo.token_count,eax
 
@@ -1734,12 +1874,17 @@ GetCaseValue PROC USES esi edi ebx hll, tokenarray, dcount, scount
 	; error A3022 : .CASE redefinition : %s(%d) : %s(%d)
 	;
 	.if	ebx && Parse_Pass != PASS_1
+
 		mov	esi,hll
 		mov	esi,[esi].caselist
 		mov	edi,[esi].caselist
+
 		.while	edi
+
 			.if	[esi].flags & HLLF_NUM
+
 				.if	GetCaseVal( esi, [esi].labels )
+
 					asmerr( 3022,
 						[esi].condlines,
 						[esi].labels,
@@ -1763,14 +1908,19 @@ GetMaxCaseValue PROC USES esi edi ebx hll, min, max, min_table, max_table
 	mov	eax,80000000h
 	mov	edx,7FFFFFFFh
 	mov	esi,[esi].caselist
+
 	.while	esi
+
 		.if	[esi].flags & HLLF_TABLE
+
 			inc	edi
 			mov	ecx,[esi].labels
 			.if	SDWORD PTR eax <= ecx
+
 				mov	eax,ecx
 			.endif
 			.if	SDWORD PTR edx >= ecx
+
 				mov	edx,ecx
 			.endif
 		.endif
@@ -1778,6 +1928,7 @@ GetMaxCaseValue PROC USES esi edi ebx hll, min, max, min_table, max_table
 	.endw
 
 	.if	!edi
+
 		mov	eax,edi
 		mov	edx,edi
 	.endif
@@ -1790,12 +1941,16 @@ GetMaxCaseValue PROC USES esi edi ebx hll, min, max, min_table, max_table
 	mov	esi,hll
 	mov	ecx,1
 	mov	eax,MIN_JTABLE
+
 	.if	!( [esi].flags & HLLF_ARGREG )
+
 		add	eax,2
 		add	ecx,1
 		.if	!( [esi].flags & HLLF_ARG16 or HLLF_ARG32 or HLLF_ARG64 )
+
 			add	eax,1
 			.if	!( ModuleInfo.hll_switch & SWITCH_REGAX )
+
 				add	eax,10
 			.endif
 		.endif
@@ -1815,16 +1970,24 @@ GetMaxCaseValue PROC USES esi edi ebx hll, min, max, min_table, max_table
 GetMaxCaseValue ENDP
 
 RenderCaseExit PROC FASTCALL hll, buffer
+
 	mov	eax,hll
 	.while	[eax].hll_item.caselist
+
 		mov	eax,[eax].hll_item.caselist
 	.endw
+
 	.if	eax != hll
+
 		.if	!( [eax].hll_item.flags & HLLF_ENDCOCCUR )
-			.if	Parse_Pass == PASS_1 && !( ModuleInfo.hll_switch & SWITCH_PASCAL )
+
+			.if	Parse_Pass == PASS_1 && \
+				!( ModuleInfo.hll_switch & SWITCH_PASCAL )
+
 				asmerr( 7007 )
 			.endif
-			AddLineQueueX( "jmp %s", GetLabelStr( [hll].hll_item.labels[LEXIT*4], buffer ) )
+			AddLineQueueX( "jmp %s",
+				GetLabelStr( [hll].hll_item.labels[LEXIT*4], buffer ) )
 		.endif
 	.endif
 	ret
@@ -1924,6 +2087,7 @@ local	result:		DWORD,
 		mov	ebx,tokenarray
 		xor	eax,eax
 		.while	[ebx].token != T_FINAL
+
 			add	eax,1
 			add	ebx,16
 		.endw
@@ -1935,6 +2099,7 @@ local	result:		DWORD,
 			and	ModuleInfo.hll_switch,NOT SWITCH_PASCAL
 
 			.if	ModuleInfo.list
+
 				LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
 			.endif
 			RunLineQueue()
@@ -1974,13 +2139,16 @@ GetSwitchArg PROC USES ebx reg, flags, arg
 		mov	ecx,ModuleInfo.curr_cpu
 		and	ecx,P_CPU_MASK
 		.if	ecx >= P_386
+
 			.if	eax & HLLF_ARGMEM
+
 				AddLineQueueX( "movsx %s,BYTE PTR %s", edx, ebx )
 			.else
 				AddLineQueueX( "movsx %s,%s", edx, ebx )
 			.endif
 		.else
 			.if	_stricmp( "al", ebx )
+
 				AddLineQueueX( "mov al,%s", ebx )
 			.endif
 			AddLineQueue ( "cbw" )
@@ -1991,12 +2159,16 @@ GetSwitchArg PROC USES ebx reg, flags, arg
 		; WORD value
 		;
 		.if	ModuleInfo.Ofssize == USE16
+
 			.if	eax & HLLF_ARGMEM
+
 				AddLineQueueX( "mov %s,WORD PTR %s", edx, ebx )
 			.elseif _stricmp( ebx, edx )
+
 				AddLineQueueX( "mov %s,%s", edx, ebx )
 			.endif
 		.elseif eax & HLLF_ARGMEM
+
 			AddLineQueueX( "movsx %s,WORD PTR %s", edx, ebx )
 		.else
 			AddLineQueueX( "movsx %s,%s", edx, ebx )
@@ -2007,12 +2179,16 @@ GetSwitchArg PROC USES ebx reg, flags, arg
 		; DWORD value
 		;
 		.if	ModuleInfo.Ofssize == USE32
+
 			.if	eax & HLLF_ARGMEM
+
 				AddLineQueueX( "mov %s,DWORD PTR %s", edx, ebx )
 			.elseif _stricmp( ebx, edx )
+
 				AddLineQueueX( "mov %s,%s", edx, ebx )
 			.endif
 		.elseif eax & HLLF_ARGMEM
+
 			AddLineQueueX( "movsx %s,DWORD PTR %s", edx, ebx )
 		.else
 			AddLineQueueX( "movsx %s,%s", edx, ebx )
@@ -2209,37 +2385,49 @@ local	r_dw:		DWORD,	; dw/dd/dq
 
 		  .case cl == USE16
 			.if	!( eax & HLLF_NOTEST )
+
 				CompareMaxMin( ebx, max, min, edi )
 			.endif
 			.if	!( ModuleInfo.hll_switch & SWITCH_REGAX )
+
 				AddLineQueue( "push ax" )
 			.endif
 			.if	[esi].flags & HLLF_ARGREG
 
 				.if	ModuleInfo.hll_switch & SWITCH_REGAX
+
 					.if	_stricmp( "ax", ebx )
+
 						AddLineQueueX( "mov ax,%s", ebx )
 					.endif
 					AddLineQueue( "xchg ax,bx" )
 				.else
+
 					AddLineQueue( "push bx" )
 					AddLineQueue( "push ax" )
+
 					.if	_stricmp( "bx", ebx )
+
 						AddLineQueueX( "mov bx,%s", ebx )
 					.endif
 				.endif
 			.else
 				.if	!( ModuleInfo.hll_switch & SWITCH_REGAX )
+
 					AddLineQueue( "push bx" )
 				.endif
+
 				GetSwitchArg( "ax", [esi].flags, ebx )
+
 				.if	ModuleInfo.hll_switch & SWITCH_REGAX
+
 					AddLineQueue( "xchg ax,bx" )
 				.else
 					AddLineQueue( "mov bx,ax" )
 				.endif
 			.endif
 			.if	min
+
 				AddLineQueueX( "sub bx,%d", min )
 			.endif
 			AddLineQueue ( "add bx,bx" )
@@ -2270,24 +2458,37 @@ local	r_dw:		DWORD,	; dw/dd/dq
 
 				lea	ebx,r_ax
 				.if	use_index
+
 					.if	dist < 256
-						AddLineQueueX( "movzx %s,BYTE PTR [%s+IT%s-(%d)]", ebx, ebx, addr l_jtab, min )
+
+						AddLineQueueX(
+							"movzx %s,BYTE PTR [%s+IT%s-(%d)]",
+							ebx, ebx, addr l_jtab, min )
 					.else
-						AddLineQueueX( "movzx %s,WORD PTR [%s*2+IT%s-(%d*2)]", ebx, ebx, addr l_jtab, min )
+						AddLineQueueX(
+							"movzx %s,WORD PTR [%s*2+IT%s-(%d*2)]",
+							ebx, ebx, addr l_jtab, min )
 					.endif
 					.if	ModuleInfo.hll_switch & SWITCH_REGAX
-						AddLineQueueX( "jmp [%s*%d+%s]", ebx, r_size, addr l_jtab )
+
+						AddLineQueueX( "jmp [%s*%d+%s]",
+							ebx, r_size, addr l_jtab )
 					.else
-						AddLineQueueX( "mov %s,[%s*%d+%s]", ebx, ebx, r_size, addr l_jtab )
+						AddLineQueueX( "mov %s,[%s*%d+%s]",
+							ebx, ebx, r_size, addr l_jtab )
 					.endif
 				.else
 					.if	ModuleInfo.hll_switch & SWITCH_REGAX
-						AddLineQueueX( "jmp [%s*%d+%s-(%d*%d)]", ebx, r_size, addr l_jtab, min, r_size )
+
+						AddLineQueueX( "jmp [%s*%d+%s-(%d*%d)]",
+							ebx, r_size, addr l_jtab, min, r_size )
 					.else
-						AddLineQueueX( "mov %s,[%s*%d+%s-(%d*%d)]", ebx, ebx, r_size, addr l_jtab, min, r_size )
+						AddLineQueueX( "mov %s,[%s*%d+%s-(%d*%d)]",
+							ebx, ebx, r_size, addr l_jtab, min, r_size )
 					.endif
 				.endif
 				.if	!( ModuleInfo.hll_switch & SWITCH_REGAX )
+
 					AddLineQueueX( "xchg %s,[%s]", ebx, addr r_sp )
 					AddLineQueue ( "retn" )
 				.endif
@@ -2300,26 +2501,37 @@ local	r_dw:		DWORD,	; dw/dd/dq
 		  .default
 
 			.if	!( eax & HLLF_NOTEST )
+
 				CompareMaxMin( ebx, max, min, edi )
 			.endif
 			.if	use_index
+
 				.if	!( ModuleInfo.hll_switch & SWITCH_REGAX )
+
 					AddLineQueueX( "push %s", ebx )
 				.endif
 				.if	dist < 256
-					AddLineQueueX( "movzx %s,BYTE PTR [%s+IT%s-(%d)]", ebx, ebx, addr l_jtab, min )
+
+					AddLineQueueX(
+						"movzx %s,BYTE PTR [%s+IT%s-(%d)]",
+						ebx, ebx, addr l_jtab, min )
 				.else
-					AddLineQueueX( "movzx %s,WORD PTR [%s*2+IT%s-(%d*2)]", ebx, ebx, addr l_jtab, min )
+					AddLineQueueX(
+						"movzx %s,WORD PTR [%s*2+IT%s-(%d*2)]",
+						ebx, ebx, addr l_jtab, min )
 				.endif
 				.if	ModuleInfo.hll_switch & SWITCH_REGAX
+
 					AddLineQueueX( "jmp [%s*%d+%s]", ebx, r_size, addr l_jtab )
 				.else
-					AddLineQueueX( "mov %s,[%s*%d+%s]", ebx, ebx, r_size, addr l_jtab )
+					AddLineQueueX( "mov %s,[%s*%d+%s]",
+						ebx, ebx, r_size, addr l_jtab )
 					AddLineQueueX( "xchg %s,[%s]", ebx, addr r_sp )
 					AddLineQueue ( "retn" )
 				.endif
 			.else
-				AddLineQueueX( "jmp [%s*%d+%s-(%d*%d)]", ebx, r_size, addr l_jtab, min, r_size )
+				AddLineQueueX( "jmp [%s*%d+%s-(%d*%d)]",
+					ebx, r_size, addr l_jtab, min, r_size )
 			.endif
 			.endc
 		.endsw
@@ -2356,6 +2568,7 @@ local	r_dw:		DWORD,	; dw/dd/dq
 				.endif
 				mov	esi,[esi].caselist
 			.endw
+
 			mov	edx,esi
 			inc	edi
 			mov	lcount,edi
@@ -2388,7 +2601,9 @@ local	r_dw:		DWORD,	; dw/dd/dq
 			mov	icount,eax
 			mov	ebx,"BD"
 			.if	eax > 256
+
 				.if	ModuleInfo.Ofssize == USE16
+
 					asmerr( 2022, 1, 2 )
 					jmp	toend
 				.endif
@@ -2464,6 +2679,7 @@ local	r_dw:		DWORD,	; dw/dd/dq
 
 			mov	ebx,[esi].caselist
 			.while	ebx
+
 				or	[ebx].flags,HLLF_TABLE
 				mov	ebx,[ebx].caselist
 			.endw
@@ -2472,10 +2688,12 @@ local	r_dw:		DWORD,	; dw/dd/dq
 
 	mov	ebx,[esi].caselist
 	.while	ebx
+
 		RenderCase( esi, ebx, buffer )
 		mov	ebx,[ebx].caselist
 	.endw
 	.if	default && [esi].caselist
+
 		AddLineQueueX( "jmp %s", l_exit )
 	.endif
 toend:
@@ -2486,127 +2704,119 @@ GetJumpString proc cmd
 
 	mov	eax,cmd
 	.switch eax
-	  .case T_DOT_UNTILA
-	  .case T_DOT_UNTILNBE
-	  .case T_DOT_WHILEA
-	  .case T_DOT_WHILENBE
+
 	  .case T_DOT_IFA
-	  .case T_DOT_IFNBE
+	  .case T_DOT_UNTILA
+	  .case T_DOT_WHILEA
+	  .case T_DOT_BREAKA
+	  .case T_DOT_CONTINUEA
 		mov	eax,@CStr( "jbe" )
 		.endc
-	  .case T_DOT_UNTILB
-	  .case T_DOT_UNTILC
-	  .case T_DOT_UNTILNAE
-	  .case T_DOT_WHILEB
-	  .case T_DOT_WHILEC
-	  .case T_DOT_WHILENAE
 	  .case T_DOT_IFB
-	  .case T_DOT_IFC
-	  .case T_DOT_IFNAE
+	  .case T_DOT_UNTILB
+	  .case T_DOT_WHILEB
+	  .case T_DOT_BREAKB
+	  .case T_DOT_CONTINUEB
 		mov	eax,@CStr( "jae" )
 		.endc
-	  .case T_DOT_UNTILE
-	  .case T_DOT_UNTILZ
-	  .case T_DOT_WHILEE
-	  .case T_DOT_WHILEZ
-	  .case T_DOT_IFE
-	  .case T_DOT_IFZ
-		mov	eax,@CStr( "jne" )
-		.endc
-	  .case T_DOT_UNTILG
-	  .case T_DOT_UNTILNLE
-	  .case T_DOT_WHILEG
-	  .case T_DOT_WHILENLE
 	  .case T_DOT_IFG
-	  .case T_DOT_IFNLE
+	  .case T_DOT_UNTILG
+	  .case T_DOT_WHILEG
+	  .case T_DOT_BREAKG
+	  .case T_DOT_CONTINUEG
 		mov	eax,@CStr( "jle" )
 		.endc
-	  .case T_DOT_UNTILL
-	  .case T_DOT_UNTILNGE
-	  .case T_DOT_WHILEL
-	  .case T_DOT_WHILENGE
 	  .case T_DOT_IFL
-	  .case T_DOT_IFNGE
+	  .case T_DOT_UNTILL
+	  .case T_DOT_WHILEL
+	  .case T_DOT_BREAKL
+	  .case T_DOT_CONTINUEL
 		mov	eax,@CStr( "jge" )
 		.endc
-	  .case T_DOT_UNTILNB
-	  .case T_DOT_UNTILNC
-	  .case T_DOT_UNTILAE
-	  .case T_DOT_WHILENC
-	  .case T_DOT_WHILENB
-	  .case T_DOT_WHILEAE
-	  .case T_DOT_IFNB
-	  .case T_DOT_IFNC
-	  .case T_DOT_IFAE
-		mov	eax,@CStr( "jb " )
-		.endc
-	  .case T_DOT_UNTILBE
-	  .case T_DOT_UNTILNA
-	  .case T_DOT_WHILEBE
-	  .case T_DOT_WHILENA
-	  .case T_DOT_IFBE
-	  .case T_DOT_IFNA
-		mov	eax,@CStr( "ja " )
-		.endc
-	  .case T_DOT_UNTILGE
-	  .case T_DOT_UNTILNL
-	  .case T_DOT_WHILEGE
-	  .case T_DOT_WHILENL
-	  .case T_DOT_IFGE
-	  .case T_DOT_IFNL
-		mov	eax,@CStr( "jl " )
-		.endc
-	  .case T_DOT_UNTILLE
-	  .case T_DOT_UNTILNG
-	  .case T_DOT_WHILELE
-	  .case T_DOT_WHILENG
-	  .case T_DOT_IFLE
-	  .case T_DOT_IFNG
-		mov	eax,@CStr( "jg " )
-		.endc
-	  .case T_DOT_UNTILS
-	  .case T_DOT_WHILES
-	  .case T_DOT_IFS
-		mov	eax,@CStr( "jns" )
-		.endc
-	  .case T_DOT_UNTILNS
-	  .case T_DOT_WHILENS
-	  .case T_DOT_IFNS
-		mov	eax,@CStr( "js " )
-		.endc
-	  .case T_DOT_UNTILNE
-	  .case T_DOT_UNTILNZ
-	  .case T_DOT_WHILENE
-	  .case T_DOT_WHILENZ
-	  .case T_DOT_IFNE
-	  .case T_DOT_IFNZ
-		mov	eax,@CStr( "jz " )
-		.endc
+	  .case T_DOT_IFO
 	  .case T_DOT_UNTILO
 	  .case T_DOT_WHILEO
-	  .case T_DOT_IFO
+	  .case T_DOT_BREAKO
+	  .case T_DOT_CONTINUEO
 		mov	eax,@CStr( "jno" )
 		.endc
-	  .case T_DOT_UNTILNO
-	  .case T_DOT_WHILENO
-	  .case T_DOT_IFNO
-		mov	eax,@CStr( "jo " )
-		.endc
-	  .case T_DOT_UNTILP
-	  .case T_DOT_UNTILPE
-	  .case T_DOT_WHILEP
-	  .case T_DOT_WHILEPE
 	  .case T_DOT_IFP
-	  .case T_DOT_IFPE
+	  .case T_DOT_UNTILP
+	  .case T_DOT_WHILEP
+	  .case T_DOT_BREAKP
+	  .case T_DOT_CONTINUEP
 		mov	eax,@CStr( "jnp" )
 		.endc
-	  .case T_DOT_UNTILNP
-	  .case T_DOT_UNTILPO
-	  .case T_DOT_WHILENP
-	  .case T_DOT_WHILEPO
+	  .case T_DOT_IFS
+	  .case T_DOT_UNTILS
+	  .case T_DOT_WHILES
+	  .case T_DOT_BREAKS
+	  .case T_DOT_CONTINUES
+		mov	eax,@CStr( "jns" )
+		.endc
+	  .case T_DOT_IFZ
+	  .case T_DOT_WHILEZ
+	  .case T_DOT_UNTILZ
+	  .case T_DOT_BREAKZ
+	  .case T_DOT_CONTINUEZ
+		mov	eax,@CStr( "jne" )
+		.endc
+
+	  .case T_DOT_IFNA
+	  .case T_DOT_UNTILNA
+	  .case T_DOT_WHILENA
+	  .case T_DOT_BREAKNA
+	  .case T_DOT_CONTINUENA
+		mov	eax,@CStr( "ja " )
+		.endc
+	  .case T_DOT_IFNB
+	  .case T_DOT_UNTILNB
+	  .case T_DOT_WHILENB
+	  .case T_DOT_BREAKNB
+	  .case T_DOT_CONTINUENB
+		mov	eax,@CStr( "jb " )
+		.endc
+	  .case T_DOT_IFNG
+	  .case T_DOT_UNTILNG
+	  .case T_DOT_WHILENG
+	  .case T_DOT_BREAKNG
+	  .case T_DOT_CONTINUENG
+		mov	eax,@CStr( "jg " )
+		.endc
+	  .case T_DOT_IFNL
+	  .case T_DOT_UNTILNL
+	  .case T_DOT_WHILENL
+	  .case T_DOT_BREAKNL
+	  .case T_DOT_CONTINUENL
+		mov	eax,@CStr( "jl " )
+		.endc
+	  .case T_DOT_IFNO
+	  .case T_DOT_UNTILNO
+	  .case T_DOT_WHILENO
+	  .case T_DOT_BREAKNO
+	  .case T_DOT_CONTINUENO
+		mov	eax,@CStr( "jo " )
+		.endc
 	  .case T_DOT_IFNP
-	  .case T_DOT_IFPO
+	  .case T_DOT_UNTILNP
+	  .case T_DOT_WHILENP
+	  .case T_DOT_BREAKNP
+	  .case T_DOT_CONTINUENP
 		mov	eax,@CStr( "jp " )
+		.endc
+	  .case T_DOT_IFNS
+	  .case T_DOT_UNTILNS
+	  .case T_DOT_WHILENS
+	  .case T_DOT_BREAKNS
+	  .case T_DOT_CONTINUENS
+		mov	eax,@CStr( "js " )
+		.endc
+	  .case T_DOT_IFNZ
+	  .case T_DOT_WHILENZ
+	  .case T_DOT_UNTILNZ
+	  .case T_DOT_BREAKNZ
+	  .case T_DOT_CONTINUENZ
+		mov	eax,@CStr( "jz " )
 		.endc
 	.endsw
 	ret
@@ -2710,10 +2920,7 @@ local	rc:		SINT,
 			or	[esi].flags,HLLF_IFB
 			jmp	case_IF
 		.endif
-	  .case T_DOT_IFA
-	  .case T_DOT_IFAE
-	  .case T_DOT_IFBE .. T_DOT_IFPO
-	  .case T_DOT_IFZ
+	  .case T_DOT_IFA .. T_DOT_IFNZ
 
 	     case_IFx:
 		mov	[esi].cmd,HLL_IF
@@ -2882,7 +3089,9 @@ local	rc:		SINT,
 		strcpy( addr cmdstr, [ebx+edx].tokpos )
 
 		.if	ModuleInfo.asmc_syntax & ASMCFLAG_PUSHF
+
 			.if	ModuleInfo.Ofssize == USE64
+
 				AddLineQueue( "pushfq" )
 				AddLineQueue( "sub rsp,28h" )
 			.else
@@ -2906,17 +3115,23 @@ local	rc:		SINT,
 		QueueTestLines( edi )
 
 		.if	ModuleInfo.asmc_syntax & ASMCFLAG_PUSHF
+
 			.if	ModuleInfo.Ofssize == USE64
+
 				AddLineQueue( "add rsp,28h" )
 				AddLineQueue( "popfq" )
 			.else
 				AddLineQueue( "popfd" )
 			.endif
 		.endif
+
 		AddLineQueueX( "jmp %s", addr buff )
 		AddLineQueueX( "%s%s", GetLabelStr( [esi].labels[LTEST*4], edi ), addr LABELQUAL )
+
 		.if	ModuleInfo.asmc_syntax & ASMCFLAG_PUSHF
+
 			.if	ModuleInfo.Ofssize == USE64
+
 				AddLineQueue( "add rsp,28h" )
 				AddLineQueue( "popfq" )
 			.else
@@ -2927,6 +3142,7 @@ local	rc:		SINT,
 		; if no lines have been created, the LTEST label isn't needed
 		;
 		.if	BYTE PTR [edi] == NULLC
+
 			jmp	unlink_hll
 		.endif
 
@@ -2947,6 +3163,7 @@ local	rc:		SINT,
 			xchg	ebx,eax
 			inc	ebx
 			.if	byte ptr [eax]
+
 				AddLineQueueX( "db \"%s\",22h", eax )
 			.else
 				AddLineQueue( "db 22h" )
@@ -2967,6 +3184,7 @@ local	rc:		SINT,
 		mov	[esi].cmd,HLL_SWITCH
 		mov	[esi].flags,HLLF_WHILE
 		.if	ModuleInfo.hll_switch & SWITCH_NOTEST
+
 			or	[esi].flags,HLLF_NOTEST
 			and	ModuleInfo.hll_switch,NOT SWITCH_NOTEST
 		.endif
@@ -2980,11 +3198,13 @@ local	rc:		SINT,
 		mov	eax,i
 		shl	eax,4
 		.if	[ebx+eax].asm_tok.token != T_FINAL
+
 			ExpandHllProc( edi, i, ebx )
 			cmp	eax,ERROR
 			je	toend
 
 			.if	BYTE PTR [edi]
+
 				QueueTestLines( edi )
 				or	[esi].flags,HLLF_ARGREG
 				jmp	set_arg_size
@@ -2996,23 +3216,27 @@ local	rc:		SINT,
 				  .case T_AX .. T_DI
 					or	[esi].flags,HLLF_ARG16
 					.if	ModuleInfo.Ofssize == USE16
+
 						or	[esi].flags,HLLF_ARGREG
 					.endif
 				  .case T_AL .. T_BH
 					.endc
 				  .case T_EAX
 					.if	ModuleInfo.Ofssize == USE64
+
 						or	[esi].flags,HLLF_ARG3264
 					.endif
 				  .case T_ECX .. T_EDI
 					or	[esi].flags,HLLF_ARG32
 					.if	ModuleInfo.Ofssize == USE32
+
 						or	[esi].flags,HLLF_ARGREG
 					.endif
 					.endc
 				  .case T_RAX .. T_R15
 					or	[esi].flags,HLLF_ARG64
 					.if	ModuleInfo.Ofssize == USE64
+
 						or	[esi].flags,HLLF_ARGREG
 					.endif
 					.endc
@@ -3020,19 +3244,25 @@ local	rc:		SINT,
 					or	[esi].flags,HLLF_ARGMEM
 					mov	eax,[ebx+ecx].asm_tok.string_ptr
 					.if	SymFind( eax )
+
 						mov	eax,[eax].asym.total_size
 						.if	eax == 2
+
 							or	[esi].flags,HLLF_ARG16
 						.elseif eax == 4
+
 							or	[esi].flags,HLLF_ARG32
 						.elseif eax == 8
+
 							or	[esi].flags,HLLF_ARG64
 						.endif
 					.else
 					set_arg_size:
 						.if	ModuleInfo.Ofssize == USE16
+
 							or	[esi].flags,HLLF_ARG16
 						.elseif ModuleInfo.Ofssize == USE32
+
 							or	[esi].flags,HLLF_ARG32
 						.else
 							or	[esi].flags,HLLF_ARG64
@@ -3051,15 +3281,19 @@ local	rc:		SINT,
 		.endif
 		.endc
 
-	  .case T_DOT_WHILEA .. T_DOT_WHILEZ
+	  .case T_DOT_WHILEA .. T_DOT_WHILESD
 	  .case T_DOT_WHILE
+		case_WHILE:
 		or	[esi].flags,HLLF_WHILE
 	  .case T_DOT_REPEAT
 		;
 		; create the label to start of loop
 		;
 		mov	[esi].labels[LSTART*4],GetHllLabel()
-		mov	[esi].labels[LTEST*4],0 ; v2.11: test label is created only if needed
+		;
+		; v2.11: test label is created only if needed
+		;
+		mov	[esi].labels[LTEST*4],0
 
 		.if	cmd != T_DOT_REPEAT
 
@@ -3070,6 +3304,30 @@ local	rc:		SINT,
 
 			.if	[ebx+eax].asm_tok.token != T_FINAL
 
+				mov	ecx,[esi].flags
+				mov	eax,cmd
+
+				.switch eax
+				  .case T_DOT_WHILESB
+					or	ecx,HLLF_IFS
+				  .case T_DOT_WHILEB
+					or	ecx,HLLF_IFB
+					.endc
+				  .case T_DOT_WHILESW
+					or	ecx,HLLF_IFS
+				  .case T_DOT_WHILEW
+					or	ecx,HLLF_IFW
+					.endc
+				  .case T_DOT_WHILESD
+					or	ecx,HLLF_IFS
+				  .case T_DOT_WHILED
+					or	ecx,HLLF_IFD
+					.endc
+				  .case T_DOT_WHILES
+					or	ecx,HLLF_IFS
+					.endc
+				.endsw
+				mov	[esi].flags,ecx
 				EvaluateHllExpression( esi, addr i, ebx, LSTART, 1, edi )
 				mov	rc,eax
 
@@ -3115,6 +3373,7 @@ local	rc:		SINT,
 
 		mov	cl,ModuleInfo.loopalign
 		.if	cl
+
 			mov	eax,1
 			shl	eax,cl
 			AddLineQueueX( "ALIGN %d", eax )
@@ -3161,6 +3420,112 @@ toend:
 	ret
 HllStartDir ENDP
 
+CheckCXZLines PROC USES esi edi ebx p
+	;
+	; for .UNTILCXZ: check if expression is simple enough. what's acceptable
+	; is ONE condition, and just operators == and != Constants (0 or != 0)
+	; are also accepted
+	;
+	mov	esi,p
+	mov	edi,1
+	xor	ebx,ebx
+	;
+	; syntax ".untilcxz 1" has a problem: there's no "jmp" generated at all
+	; if this syntax is to be supported, activate the #if below.
+	;
+	mov	eax,[esi]
+
+	.while	al
+
+		.if	al == EOLCHAR
+
+			mov	edi,1
+			add	ebx,edi
+
+		.elseif edi
+
+			xor	edi,edi
+			.if	al == 'j'
+
+				shr	eax,8
+				.if	al == 'm' && !ebx
+					;
+					; 2 chars, to replace "jmp" by "loope"
+					;
+					mov	edx,2
+				.elseif ebx == 1 && (al == 'z' || ax == 'zn')
+					;
+					; 3 chars, to replace "jz"/"jnz" by
+					; "loopz"/"loopnz"
+					;
+					mov	edx,3
+				.else
+					; anything else is "too complex"
+					mov	ebx,3
+					.break
+				.endif
+
+				strlen( esi )
+				.while	SDWORD PTR eax >= 0
+
+					add	esi,eax
+					mov	cl,[esi]
+					mov	[esi+edx],cl
+					sub	esi,eax
+					dec	eax
+				.endw
+
+				mov	eax,"pool"
+				mov	[esi],eax
+				.if	edx == 2
+
+					mov	BYTE PTR [esi+4],'e'
+				.endif
+			.endif
+		.endif
+
+		add	esi,1
+		mov	eax,[esi]
+	.endw
+
+	mov	eax,NOT_ERROR
+	.if	ebx > 2
+
+		mov	eax,ERROR
+	.endif
+	ret
+
+CheckCXZLines ENDP
+
+RenderUntilXX PROC USES edi hll:PTR hll_item, cmd:UINT
+
+local	buffer[32]:SBYTE
+
+	mov	eax,cmd
+	mov	DWORD PTR buffer,'xce'
+
+	.switch eax
+	  .case T_DOT_UNTILAXZ : mov buffer[1],'a' : .endc
+	  .case T_DOT_UNTILBXZ : mov buffer[1],'b' : .endc
+	  .case T_DOT_UNTILDXZ : mov buffer[1],'d' : .endc
+	.endsw
+
+	.if	ModuleInfo.Ofssize == USE64
+
+		mov	buffer,'r'
+	.elseif ModuleInfo.Ofssize == USE16
+
+		mov	buffer,' '
+	.endif
+	AddLineQueueX( " dec %s", addr buffer )
+
+	mov	edx,hll
+	mov	ecx,[edx].hll_item.labels[LSTART*4]
+	AddLineQueueX( " jnz %s", GetLabelStr( ecx, addr buffer ) )
+	ret
+
+RenderUntilXX ENDP
+
 ;
 ; .ENDIF, .ENDW, .UNTIL and .UNTILCXZ directives.
 ; These directives end a .IF, .WHILE or .REPEAT block.
@@ -3198,6 +3563,7 @@ local	rc:		SINT,
 
 	  .case T_DOT_ENDIF
 		.if	ecx != HLL_IF
+
 			asmerr( 1011 )
 			jmp	toend
 		.endif
@@ -3207,23 +3573,31 @@ local	rc:		SINT,
 		;
 		mov	eax,[esi].labels[LTEST*4]
 		.if	eax
+
 			AddLineQueueX( "%s%s", GetLabelStr( eax, edi ), addr LABELQUAL )
 		.endif
 		.endc
 
 	  .case T_DOT_ENDSW
 		.if	ecx != HLL_SWITCH
+
 			asmerr( 1011 )
 			jmp	toend
 		.endif
+
 		inc	i
 		.endc .if [esi].labels[LTEST*4] == 0
+
 		.if	[esi].labels[LSTART*4] == 0
+
 			mov	[esi].labels[LSTART*4],GetHllLabel()
 		.endif
+
 		.if	[esi].labels[LEXIT*4] == 0
+
 			mov	[esi].labels[LEXIT*4],GetHllLabel()
 		.endif
+
 		GetLabelStr( [esi].labels[LEXIT*4], edi )
 		RenderCaseExit( esi, edi )
 		strcpy( addr l_exit, edi )
@@ -3234,6 +3608,7 @@ local	rc:		SINT,
 
 		mov	cl,ModuleInfo.casealign
 		.if	cl
+
 			mov	eax,1
 			shl	eax,cl
 			AddLineQueueX( "ALIGN %d", eax )
@@ -3244,10 +3619,13 @@ local	rc:		SINT,
 			AddLineQueueX( "%s%s", edi, addr LABELQUAL )
 
 			.while	ebx
+
 				.if	![ebx].condlines
+
 					AddLineQueueX( "jmp %s", GetLabelStr( [ebx].labels[LSTART*4], edi ) )
 				.else
 					.if [ebx].flags & HLLF_EXPRESSION
+
 						mov	i,1
 						or	[ebx].flags,HLLF_WHILE
 						ExpandHllExpression( ebx, addr i, tokenarray, LSTART, 1, edi )
@@ -3268,6 +3646,7 @@ local	rc:		SINT,
 
 	  .case T_DOT_ENDW
 		.if	ecx != HLL_WHILE
+
 			asmerr( 1011 )
 			jmp	toend
 		.endif
@@ -3277,11 +3656,16 @@ local	rc:		SINT,
 		mov	eax,[esi].labels[LTEST*4]
 		.if	eax
 
-			AddLineQueueX( "%s%s", GetLabelStr( eax, edi ), addr LABELQUAL )
+			AddLineQueueX( "%s%s",
+				GetLabelStr( eax, edi ), addr LABELQUAL )
 		.endif
+
 		inc	i
+
 		.if	[esi].flags & HLLF_EXPRESSION
-			ExpandHllExpression( esi, addr i, tokenarray, LSTART, 1, edi )
+
+			ExpandHllExpression(
+				esi, addr i, tokenarray, LSTART, 1, edi )
 		.else
 			QueueTestLines( [esi].condlines )
 		.endif
@@ -3302,63 +3686,70 @@ local	rc:		SINT,
 		lea	ebx,[ebx+edx+16]
 
 		mov	eax,[esi].labels[LTEST*4]
-		.if	eax ; v2.11: LTEST only needed if .CONTINUE has occured
-
-			AddLineQueueX( "%s%s", GetLabelStr( eax, edi ), addr LABELQUAL )
+		.if	eax
+			;
+			; v2.11: LTEST only needed if .CONTINUE has occured
+			;
+			AddLineQueueX( "%s%s",
+				GetLabelStr( eax, edi ), addr LABELQUAL )
 		.endif
 		;
 		; read in optional (simple) expression
 		;
 		.if	[ebx].token != T_FINAL
 
-			EvaluateHllExpression( esi, addr i, tokenarray, LSTART, 0, edi )
+			mov	ecx,LSTART
+			.if	!Options.masm_compat_gencode && \
+				ModuleInfo.asmc_syntax
+				;
+				; <expression> ? .BREAK
+				;
+				.if	![esi].labels[LEXIT*4]
+
+					mov	[esi].labels[LEXIT*4],GetHllLabel()
+				.endif
+				mov	ecx,LEXIT
+			.endif
+
+			EvaluateHllExpression( esi, addr i, tokenarray, ecx, 0, edi )
 			mov	rc,eax
+
 			.if	eax == NOT_ERROR
 
-				CheckCXZLines( edi )
-				mov	rc,eax
-				.if	eax == NOT_ERROR
+				.if	!ModuleInfo.asmc_syntax || \
+					(Options.masm_compat_gencode && \
+					cmd == T_DOT_UNTILCXZ)
 
-					QueueTestLines( edi )	; write condition lines
+					mov	rc,CheckCXZLines(edi)
+				.endif
+
+				.if	eax == NOT_ERROR
+					;
+					; write condition lines
+					;
+					QueueTestLines( edi )
+					.if	!Options.masm_compat_gencode && \
+						ModuleInfo.asmc_syntax
+
+						RenderUntilXX( esi, cmd )
+					.endif
 				.else
 					asmerr( 2062 )
 				.endif
 			.endif
 		.else
-			.if	Options.masm_compat_gencode && cmd == T_DOT_UNTILCXZ
+			.if	!ModuleInfo.asmc_syntax || \
+				Options.masm_compat_gencode ;&& cmd == T_DOT_UNTILCXZ
 
 				AddLineQueueX( "loop %s", GetLabelStr( [esi].labels[LSTART*4], edi ) )
 			.else
-				mov	eax,cmd
-				.switch eax
-				  .case T_DOT_UNTILAXZ
-					mov	eax,@CStr( "eax" )
-					.endc
-				  .case T_DOT_UNTILBXZ
-					mov	eax,@CStr( "ebx" )
-					.endc
-				  .case T_DOT_UNTILCXZ
-					mov	eax,@CStr( "ecx" )
-					.endc
-				  .case T_DOT_UNTILDXZ
-					mov	eax,@CStr( "edx" )
-					.endc
-				.endsw
 
-				.if	ModuleInfo.Ofssize == USE64
-					mov	BYTE PTR [eax],'r'
-				.elseif ModuleInfo.Ofssize == USE16
-					mov	BYTE PTR [eax],' '
-				.endif
-
-				strcpy( edi, eax )
-				AddLineQueueX( " dec %s", edi )
-				AddLineQueueX( " jnz %s", GetLabelStr( [esi].labels[LSTART*4], edi ) )
+				RenderUntilXX( esi, cmd )
 			.endif
 		.endif
 		.endc
 
-	  .case T_DOT_UNTILA .. T_DOT_UNTILZ
+	  .case T_DOT_UNTILA .. T_DOT_UNTILSD
 	  .case T_DOT_UNTIL
 
 		.if	ecx != HLL_REPEAT
@@ -3380,6 +3771,40 @@ local	rc:		SINT,
 		; if expression is missing, just generate nothing
 		;
 		.if	[ebx].token != T_FINAL
+
+			mov	ecx,[esi].flags
+			mov	eax,cmd
+
+			.switch eax
+			  .case T_DOT_UNTILSB
+				or	ecx,HLLF_IFS
+			  .case T_DOT_UNTILB
+				or	ecx,HLLF_IFB
+				.endc
+			  .case T_DOT_UNTILSW
+				or	ecx,HLLF_IFS
+			  .case T_DOT_UNTILW
+				or	ecx,HLLF_IFW
+				.endc
+			  .case T_DOT_UNTILSD
+				or	ecx,HLLF_IFS
+			  .case T_DOT_UNTILD
+				or	ecx,HLLF_IFD
+				.endc
+			  .case T_DOT_UNTILS
+				or	ecx,HLLF_IFS
+				.endc
+			.endsw
+			mov	[esi].flags,ecx
+
+			.switch eax
+			  .case T_DOT_UNTILB
+				or	[esi].flags,HLLF_IFB
+				.endc
+			  .case T_DOT_UNTILS
+				or	[esi].flags,HLLF_IFS
+				.endc
+			.endsw
 
 			EvaluateHllExpression( esi, addr i, tokenarray, LSTART, 0, edi )
 			mov	rc,eax
@@ -3448,6 +3873,7 @@ local	rc:	SINT,
 
 	mov	esi,ModuleInfo.HllStack
 	.if	!esi
+
 		asmerr( 1011 )
 		jmp	toend
 	.endif
@@ -3493,16 +3919,22 @@ local	rc:	SINT,
 			AddLineQueueX( "jmp %s", GetLabelStr( [esi].labels[LSTART*4], edi ) )
 		.else
 			.if ModuleInfo.hll_switch & SWITCH_PASCAL
+
 				.if	[esi].labels[LEXIT*4] == 0
+
 					mov	[esi].labels[LEXIT*4],GetHllLabel()
 				.endif
 				RenderCaseExit( esi, edi )
+
 			.elseif Parse_Pass == PASS_1
+
 				mov	eax,esi
 				.while	[eax].hll_item.caselist
+
 					mov	eax,[eax].hll_item.caselist
 				.endw
 				.if	eax != esi && !( [eax].hll_item.flags & HLLF_ENDCOCCUR )
+
 					asmerr( 7007 )
 				.endif
 			.endif
@@ -3515,10 +3947,12 @@ local	rc:	SINT,
 
 		mov	cl,ModuleInfo.casealign
 		.if	cl
+
 			mov	eax,1
 			shl	eax,cl
 			AddLineQueueX( "ALIGN %d", eax )
 		.endif
+
 		inc	[esi].labels[LTEST*4]
 		mov	ecx,GetHllLabel()
 		push	ecx
@@ -3529,7 +3963,9 @@ local	rc:	SINT,
 		mov	esi,eax
 		mov	eax,[edx].hll_item.condlines
 		mov	[esi].labels[LSTART*4],ecx
+
 		.while	[edx].hll_item.caselist
+
 			mov	edx,[edx].hll_item.caselist
 		.endw
 		mov	[edx].hll_item.caselist,esi
@@ -3540,11 +3976,14 @@ local	rc:	SINT,
 		push	eax	; handle .case <expression> : ...
 		push	ebx
 		push	esi
+
 		;add	ebx,16	; skip past <expression>
 		xor	esi,esi
 		.while	IsCaseColon( ebx )
+
 			mov	ebx,eax
 			.if	esi
+
 				mov	eax,[ebx].tokpos
 				mov	BYTE PTR [eax],0
 				AddLineQueue( esi )
@@ -3559,6 +3998,7 @@ local	rc:	SINT,
 			mov	esi,[ebx].tokpos
 		.endw
 		.if	esi
+
 			AddLineQueue( esi )
 		.endif
 		pop	esi
@@ -3566,6 +4006,7 @@ local	rc:	SINT,
 		pop	eax
 
 		.if	eax && cmd != T_DOT_DEFAULT
+
 			push	eax
 			push	ebx
 			push	edi
@@ -3581,7 +4022,9 @@ local	rc:	SINT,
 
 				  .case T_CL_BRACKET
 					.if	edi == 1
+
 						.if	[ebx+16].token == T_FINAL
+
 							or	[esi].flags,HLLF_NUM
 							.break
 						.endif
@@ -3609,16 +4052,19 @@ local	rc:	SINT,
 					jmp	STRING
 				  .case T_ID
 					.if	SymFind( [ebx].string_ptr )
+
 						.break	.if [eax].asym.state != SYM_INTERNAL
 						.break	.if !([eax].asym.mem_type == MT_NEAR || \
 							      [eax].asym.mem_type == MT_EMPTY)
 					.elseif Parse_Pass != PASS_1
+
 						.break
 					.endif
 				  .case T_STRING
 				  .case T_NUM
 					STRING:
 					.if	[ebx+16].token == T_FINAL
+
 						or [esi].flags,HLLF_NUM
 						.break
 					.endif
@@ -3644,13 +4090,16 @@ local	rc:	SINT,
 		.endif
 
 		.if	cmd == T_DOT_DEFAULT
+
 			or	[esi].flags,HLLF_DEFAULT
 		.else
 			.if	[ebx].token == T_FINAL
+
 				asmerr( 2008, [ebx-16].tokpos )
 				jmp	toend
 			.endif
 			.if	!eax
+
 				mov	ebx,i
 				EvaluateHllExpression( esi, addr i, tokenarray, LSTART, 1, edi )
 				mov	i,ebx
@@ -3681,6 +4130,7 @@ local	rc:	SINT,
 		or	[esi].flags,HLLF_ELSEIF
 	  .case T_DOT_ELSE
 		.if	[esi].cmd != HLL_IF
+
 			asmerr( 1010, [ebx].string_ptr )
 			jmp	toend
 		.endif
@@ -3688,6 +4138,7 @@ local	rc:	SINT,
 		; v2.08: check for multiple ELSE clauses
 		;
 		.if	[esi].flags & HLLF_ELSEOCCUR
+
 			asmerr( 2142 )
 			jmp	toend
 		.endif
@@ -3697,11 +4148,13 @@ local	rc:	SINT,
 		; That's why it is created delayed.
 		;
 		.if	[esi].labels[LEXIT*4] == 0
+
 			mov	[esi].labels[LEXIT*4],GetHllLabel()
 		.endif
 		AddLineQueueX( "jmp %s", GetLabelStr( [esi].labels[LEXIT*4], edi ) )
 
 		.if	[esi].labels[LTEST*4] > 0
+
 			AddLineQueueX( "%s%s", GetLabelStr( [esi].labels[LTEST*4], edi ), addr LABELQUAL )
 			mov	[esi].labels[LTEST*4],0
 		.endif
@@ -3715,7 +4168,9 @@ local	rc:	SINT,
 			EvaluateHllExpression( esi, addr i, tokenarray, LTEST, 0, edi )
 			mov	rc,eax
 			.if	eax == NOT_ERROR
+
 				.if	[esi].flags & HLLF_EXPRESSION
+
 					ExpandHllExpression( esi, addr i, tokenarray, LTEST, 0, edi )
 					mov	eax,ModuleInfo.token_count
 					mov	i,eax
@@ -3728,6 +4183,9 @@ local	rc:	SINT,
 		.endif
 		.endc
 
+	  .case T_DOT_BREAKA .. T_DOT_BREAKNZ
+		mov	eax,T_DOT_BREAK
+	  .case T_DOT_CONTINUEA .. T_DOT_CONTINUENZ
 	  .case T_DOT_BREAK
 	  .case T_DOT_CONTINUE
 
@@ -3783,7 +4241,23 @@ local	rc:	SINT,
 		;
 		inc	i
 		add	ebx,16
-		.if	[ebx].token != T_FINAL
+
+		.if	cmd >= T_DOT_BREAKA && cmd <= T_DOT_CONTINUENZ
+
+			.if	[ebx].token != T_FINAL
+
+				asmerr( 2111, [ebx].tokpos )
+				jmp	toend
+			.endif
+
+			GetLabelStr( [esi].labels[ecx*4], addr [edi+20] )
+			strcpy( edi, GetJumpString( cmd ) )
+			strcat( edi, " " )
+			strcat( edi, addr [edi+20] )
+			InvertJump( edi )
+			AddLineQueue( edi )
+
+		.elseif [ebx].token != T_FINAL
 
 			.if	[ebx].token == T_DIRECTIVE
 
@@ -3794,14 +4268,16 @@ local	rc:	SINT,
 					.if	[ebx+16].token != T_FINAL
 
 						or	edx,HLLF_IFS
+						jmp	case_IF
 					.endif
 				  .case T_DOT_IFB
-					cmp	[ebx+16].token,T_FINAL
-					jne	case_IF
-				  .case T_DOT_IFA
-				  .case T_DOT_IFAE
-				  .case T_DOT_IFBE .. T_DOT_IFPO
-				  .case T_DOT_IFZ
+					.if	[ebx+16].token != T_FINAL
+
+						or	edx,HLLF_IFB
+						jmp	case_IF
+					.endif
+
+				  .case T_DOT_IFA .. T_DOT_IFNZ
 
 					inc	i
 					GetLabelStr( [esi].labels[ecx*4], addr buff )
@@ -3813,12 +4289,18 @@ local	rc:	SINT,
 					.endc
 
 				  .case T_DOT_IFSB
+					or	edx,HLLF_IFS or HLLF_IFB
+					jmp	case_IF
 				  .case T_DOT_IFSW
+					or	edx,HLLF_IFS
+				  .case T_DOT_IFW
+					or	edx,HLLF_IFW
+					jmp	case_IF
 				  .case T_DOT_IFSD
 					or	edx,HLLF_IFS
-				  .case T_DOT_IF
-				  .case T_DOT_IFW
 				  .case T_DOT_IFD
+					or	edx,HLLF_IFD
+				  .case T_DOT_IF
 
 				     case_IF:
 					push	[esi].cmd
@@ -3842,9 +4324,11 @@ local	rc:	SINT,
 				.endsw
 			.endif
 		.else
+
 			push	edx
 			AddLineQueueX( "jmp %s", GetLabelStr( [esi].hll_item.labels[ecx*4], edi ) )
 			pop	edx
+
 			.if	[edx].hll_item.cmd == HLL_SWITCH
 				;
 				; unconditional jump from .case
@@ -3852,31 +4336,39 @@ local	rc:	SINT,
 				;
 				mov	esi,edx
 				mov	eax,esi
+
 				.while	[esi].caselist
+
 					mov	esi,[esi].caselist
 				.endw
 				.if	eax != esi
+
 					or	[esi].flags,HLLF_ENDCOCCUR
 				.endif
 			.endif
 		.endif
 		.endc
 	.endsw
+
 	mov	ebx,i
 	shl	ebx,4
 	add	ebx,tokenarray
+
 	.if	[ebx].token != T_FINAL && rc == NOT_ERROR
-		asmerr(2008, [ebx].tokpos )
+
+		asmerr( 2008, [ebx].tokpos )
 		mov	rc,ERROR
 	.endif
 
 	.if	ModuleInfo.list
+
 		LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
 	.endif
 	;
 	; v2.11: always run line-queue if it's not empty.
 	;
 	.if	ModuleInfo.line_queue.head
+
 		RunLineQueue()
 	.endif
 
@@ -3888,17 +4380,22 @@ HllExitDir ENDP
 ; check if an hll block has been left open. called after pass 1
 
 HllCheckOpen PROC
+
 	.if	ModuleInfo.HllStack
+
 		asmerr( 1010, ".if-.repeat-.while" )
 	.endif
 	ret
+
 HllCheckOpen ENDP
 
 ; HllInit() is called for each pass
 
 HllInit PROC pass
+
 	mov	ModuleInfo.hll_label,0	; init hll label counter
 	ret
+
 HllInit ENDP
 
 	END

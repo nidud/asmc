@@ -19,9 +19,27 @@ bar	macro const:req		; no code generated
 	exitm	<string>
 	endm
 
-ifdef __ASMC__
+bar2	macro const:req
+	local string
+	string equ <>
+	forc	q, <const>
+		string catstr <q>, string
+		endm
+	exitm	<string>
+	endm
+
+bar3	macro const:req
+	local string
+	string equ <>
+	forc	q, <const>
+		string catstr <q>, string
+		endm
+	exitm	<string>
+	endm
+
+
 	option asmc:on
-endif
+
 	.while	eax == bar("abc")
 		nop
 	.endw
@@ -41,5 +59,31 @@ endif
 	.while	foo(eax) || ( eax == bar("cba") && eax == bar("123") )
 		nop
 	.endw
+
+	.while	eax == bar2('abcd') && ecx
+		nop
+	.endw
+
+	repeat	7
+	.while	eax == bar3('abcd')
+		nop
+	.endw
+	endm
+
+	.while	eax==bar(".hlp") || \
+		eax==bar(".chm") || \
+		eax==bar(".rtf") || \
+		eax==bar(".com")
+		nop
+	.endw
+
+	.if	edx
+		nop
+	.elseif eax==bar(".hlp") || \
+		eax==bar(".chm") || \
+		eax==bar(".rtf") || \
+		eax==bar(".com")
+		nop
+	.endif
 
 	END

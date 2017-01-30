@@ -1,5 +1,5 @@
-	.x64
-	.model	flat, fastcall
+	.486
+	.model flat
 
 foo	macro reg
 	bswap reg
@@ -16,7 +16,7 @@ bar	macro const:req
 	endm
 
 	.data
-dlabel	label qword
+dlabel	label dword
 mem8	label byte
 mem16	label word
 mem32	label dword
@@ -37,16 +37,20 @@ opt_4	db 0
 	.endif
 
 clabel:
-	call	rax
+	call	ax
+	call	eax
 	call	dlabel
 	call	clabel
 	call	xlabel
 
-	rax()
+	ax()
+	eax()
 	dlabel()
 	clabel()
 	xlabel()
-	.if rax()
+	.if ax()
+	.endif
+	.if eax()
 	.endif
 	.if	dlabel()
 	.elseif clabel()
@@ -58,14 +62,14 @@ clabel:
 	.endw
 xlabel:
 
-p1	proc arg:qword
+p1	proc c arg
 	ret
 p1	endp
-p2	proc a1:qword, a2:qword
+p2	proc stdcall a1, a2
 	ret
 p2	endp
 
-	.while	p1( rax )
+	.while	p1( eax )
 		nop
 	.endw
 
@@ -86,7 +90,7 @@ p2	endp
 
 _A_	equ 2
 _B_	equ <foo>
-_S_	equ sqword ptr
+_S_	equ sdword ptr
 
 	.if	eax
 		nop
@@ -106,9 +110,9 @@ _S_	equ sqword ptr
 		nop
 	.endw
 
-	.if	_S_ rbx < 0
+	.if	_S_ ebx < 0
 		nop
-	.elseif _S_ rbx < 0
+	.elseif _S_ ebx < 0
 		nop
 	.endif
 
@@ -129,54 +133,9 @@ m2	macro a
 	.endif
 
 	invoke	p2, p1( 1 ), 2
-	invoke	p2( rbx, "string\n" )
+	invoke	p2( ebx, "string\n" )
 	p2( "if first token is a proc()", "invoke()\n" )
 
-	.while	rax == bar("abc")
-		nop
-	.endw
-	.while	foo(eax)
-		nop
-	.endw
-	.while	foo(eax) || ecx == bar("123")
-		nop
-	.endw
-
-	.while	eax == bar("abc") || ( edx == bar("cba") && ecx == bar("123") )
-		nop
-	.endw
-	.while	eax == bar("abc") && ( eax == bar("cba") || eax == bar("123") )
-		nop
-	.endw
-	.while	foo(eax) || ( eax == bar("cba") && eax == bar("123") )
-		nop
-	.endw
-
-	.while	eax == bar('abcd') && ecx
-		nop
-	.endw
-
-	repeat	7
-	.while	eax == bar('abcd')
-		nop
-	.endw
-	endm
-
-	.while	eax==bar(".hlp") || \
-		eax==bar(".chm") || \
-		eax==bar(".rtf") || \
-		eax==bar(".com")
-		nop
-	.endw
-
-	.if	edx
-		nop
-	.elseif eax==bar(".hlp") || \
-		eax==bar(".chm") || \
-		eax==bar(".rtf") || \
-		eax==bar(".com")
-		nop
-	.endif
 
 	end
 

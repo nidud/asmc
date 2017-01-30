@@ -12,5 +12,16 @@
 	.UNTILCXZ
 	.REPEAT
 	.UNTILDXZ
+	;
+	; same functionality as .if <expression>
+	;
+	.REPEAT
+	.UNTILAXZ (edx > 2 || ebx) && ecx
+	.REPEAT
+	.UNTILBXZ (eax > 2 || edx) && ecx
+	.REPEAT
+	.UNTILCXZ (eax > 2 || ebx) && edx
+	.REPEAT
+	.UNTILDXZ (eax > 2 || ebx) && ecx
 
 	END

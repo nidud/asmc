@@ -54,5 +54,6 @@ include instruct.inc
 	echo VEX_START	equ T_VBROADCASTSS ; first VEX encoded item
 	echo ;
 include ..\instravx.h
+	echo .list
 
 	end

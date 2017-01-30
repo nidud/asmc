@@ -64,12 +64,10 @@ enum tok_type {
     T_PERCENT	    = '%'
 };
 
-#define T_HLL_IF	0x01	/* token is .if */
-#define T_HLL_DELAY	0x02	/* token is .while or .elseif */
-#define T_HLL_MACRO	0x04	/* - macro(args) */
-#define T_HLL_PROC	0x08	/* - proc(args)/label() */
-#define T_HLL_DELAYED	0x10	/* delayed */
-#define T_HLL_PARSED	0x20	/* parsed */
+#define T_HLL_DELAY	0x01	/* token is .while or .elseif */
+#define T_HLL_MACRO	0x02	/* - macro(args) */
+#define T_HLL_PROC	0x04	/* - label(args) */
+#define T_HLL_DELAYED	0x08	/* delayed */
 
 struct asm_tok {
     unsigned char token;

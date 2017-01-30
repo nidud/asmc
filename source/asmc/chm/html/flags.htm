@@ -1,0 +1,43 @@
+<HTML><HEAD><TITLE>Flag conditions</TITLE></HEAD>
+<BODY>
+Asmc Macro Assembler Reference
+<H2>Flag conditions</H2>
+
+<p>The options listed may be used as directive
+<b>.IF</b><i>xx</i>, <b>.WHILE</b><i>xx</i>,
+<b>.UNTIL</b><i>xx</i>, <b>.CONTINUE</b><i>xx</i>, and <b>.BREAK</b><i>xx</i>.</p>
+
+<DD>
+  <TABLE cellSpacing=0; width="80%">
+    <TR vAlign=top; width="80%">
+      <TD width="10%"><I>xx</I></TD>
+      <TD width="10%"></TD>
+      <TD width="80%"></TD>
+    </TR>
+    <TR><TD></TD><TD></TD><TD></TD></TR>
+    <TR><TD><B>A</B></TD><TD><I>NBE</I></TD><TD>Above | <I>Not Below or Equal</I></TD></TR>
+    <TR><TD><B>B</B></TD><TD><I>C/NAE</I></TD><TD>Below | <I>Carry</I> | <I>Not Above or Equal</I></TD></TR>
+    <TR><TD><B>G</B></TD><TD><I>NLE</I></TD><TD>Greater | <I>Not Less or Equal</I> (signed)</TD></TR>
+    <TR><TD><B>L</B></TD><TD><I>NGE</I></TD><TD>Less | <I>Not Greater or Equal</I> (signed)</TD></TR>
+    <TR><TD><B>O</B></TD><TD></TD><TD>Overflow (signed)</TD></TR>
+    <TR><TD><B>P</B></TD><TD><I>PE</I></TD><TD>Parity | <I>Parity Even</I></TD></TR>
+    <TR><TD><B>S</B></TD><TD></TD><TD>Signed (signed)</TD></TR>
+    <TR><TD><B>Z</B></TD><TD><I>E</I></TD><TD>Zero | <I>Equal</I></TD></TR>
+    <TR><TD><B>NA</B></TD><TD><I>BE</I></TD><TD>Not Above | <I>Not Below or Equal</I></TD></TR>
+    <TR><TD><B>NB</B></TD><TD><I>NC/AE</I></TD><TD>Not Below | <I>Not Carry</I> | <I>Above or Equal</I></TD></TR>
+    <TR><TD><B>NG</B></TD><TD><I>LE</I></TD><TD>Not Greater | <I>Less or Equal</I> (signed)</TD></TR>
+    <TR><TD><B>NL</B></TD><TD><I>GE</I></TD><TD>Not Less | <I>Greater or Equal</I> (signed)</TD></TR>
+    <TR><TD><B>NO</B></TD><TD></TD><TD>Not Overflow (signed)</TD></TR>
+    <TR><TD><B>NP</B></TD><TD><I>PO</I></TD><TD>No Parity | <I>Parity Odd</I></TD></TR>
+    <TR><TD><B>NS</B></TD><TD></TD><TD>Not Signed (signed)</TD></TR>
+    <TR><TD><B>NZ</B></TD><TD><I>NE</I></TD><TD>Not Zero | <I>Not Equal</I></TD></TR>
+</TABLE>
+
+<p>Note that if used with <i>condition</i> the directive may have a different meaning.</p>
+
+<h4>See Also</h4>
+<a href="directives.htm">Directives Reference</a> |
+<a href="signed.htm">Signed compare</a> |
+<a href="return.htm">Return code</a>
+</BODY>
+</HTML>

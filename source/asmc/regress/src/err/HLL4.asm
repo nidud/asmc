@@ -1,8 +1,5 @@
-;
-; SWITCH syntax error
-;
 	.386
-	.model	flat
+	.model flat
 	.code
 
 	.switch eax

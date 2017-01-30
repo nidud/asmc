@@ -333,5 +333,39 @@ $label:
 	  .case 1,0,2,3,4,5,6
 	.endsw
 
+	OPTION SWITCH:C, SWITCH:NOTABLE, SWITCH:NOREGS
+
+	.switch ax
+	  .case 'A','C','D','E','F','G','H','I'
+	  .default
+	.endsw
+
+	OPTION SWITCH:PASCAL, SWITCH:TABLE
+
+	.switch ax
+	  .case 'A','C','D','E','F','G','H','I'
+	  .default
+	.endsw
+
+	OPTION SWITCH:REGAX
+	OPTION SWITCH:NOTEST
+
+	.switch ax
+	  .case 'A','C','D','E','F','G','H','I'
+	  .default
+	.endsw
+
+	.switch al
+	  .case 'A','C','D','E','F','G','H','I'
+	  .default
+	.endsw
+
+	OPTION SWITCH:NOTEST
+
+	.switch al
+	  .case 'A','C','D','E','F','G','H','I'
+	  .default
+	.endsw
+
 	end
 

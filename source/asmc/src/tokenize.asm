@@ -447,6 +447,7 @@ get_string PROC USES esi edi ebx buf, p
 	.endsw
 
 	.if	ecx == MAX_STRING_LEN
+
 		asmerr( 2041 )
 	.else
 		xor	eax,eax
@@ -480,6 +481,7 @@ get_special_symbol PROC FASTCALL USES esi edi ebx buf, p
 		lea	ecx,__dcolon
 
 		.if	ah == ':'
+
 			inc	[esi].input
 			mov	[ebx].token,T_DBL_COLON
 			mov	[ebx].string_ptr,ecx
@@ -988,6 +990,7 @@ get_id	PROC FASTCALL USES esi edi ebx buf, p
 	sub	ecx,[edx].output
 
 	.if	ecx > MAX_ID_LEN
+
 		asmerr( 2043 )
 		mov	edi,[edx].output
 		add	edi,MAX_ID_LEN
@@ -999,6 +1002,7 @@ get_id	PROC FASTCALL USES esi edi ebx buf, p
 	mov	al,[eax]
 
 	.if	ecx == 1 && al == '?'
+
 		mov	[edx].input,esi
 		mov	[ebx].token,T_QUESTION_MARK
 		mov	[ebx].string_ptr,offset __quest
@@ -1012,9 +1016,11 @@ get_id	PROC FASTCALL USES esi edi ebx buf, p
 	pop	edx
 
 	.if	!eax
+
 		mov	eax,[edx].output
 		mov	al,[eax]
 		.if	al == '.' && !ModuleInfo.dotname
+
 			mov	[ebx].token,T_DOT
 			lea	eax,stokstr1[('.' - '(') * 2]
 			mov	[ebx].string_ptr,eax
@@ -1033,15 +1039,14 @@ get_id	PROC FASTCALL USES esi edi ebx buf, p
 	mov	[ebx].tokval,eax
 
 	.if	eax == T_DOT_ELSEIF || eax == T_DOT_WHILE || eax == T_DOT_CASE
+
 		mov	[ebx].hll_flags,T_HLL_DELAY
 	.endif
 
-	.if	eax == T_DOT_IF
-		mov	[ebx].hll_flags,T_HLL_IF
-	.endif
-
 	.if	eax >= SPECIAL_LAST
+
 		.if	ModuleInfo.m510
+
 			mov   eax,[ebx].tokval
 			sub   eax,SPECIAL_LAST
 			movzx eax,optable_idx[eax*2]
@@ -1054,6 +1059,7 @@ get_id	PROC FASTCALL USES esi edi ebx buf, p
 			and   edi,P_CPU_MASK
 			and   esi,P_EXT_MASK
 			.if	eax > edi || ecx > esi
+
 				mov [ebx].token,T_ID
 				mov [ebx].idarg,0
 				jmp toend
@@ -1062,6 +1068,7 @@ get_id	PROC FASTCALL USES esi edi ebx buf, p
 		mov	[ebx].token,T_INSTRUCTION
 		jmp	toend
 	.endif
+
 	mov	ecx,edx
 	mov	edx,sizeof(special_item)
 	mov	eax,[ebx].tokval
@@ -1071,6 +1078,7 @@ get_id	PROC FASTCALL USES esi edi ebx buf, p
 	mov	al,SpecialTable[esi].bytval
 	mov	[ebx].bytval,al
 	movzx	eax,SpecialTable[esi]._type
+
 	.switch eax
 	  .case RWT_REG
 		mov	ecx,T_REG
@@ -1098,7 +1106,6 @@ get_id	PROC FASTCALL USES esi edi ebx buf, p
 		mov	[ebx].idarg,0
 	.endsw
 	mov	[ebx].token,cl
-
 toend:
 	xor	eax,eax
 	ret
@@ -1111,9 +1118,11 @@ StartComment PROC FASTCALL p
 
 	mov	eax,p
 	.if	M_EAT_SPACE( ecx, eax )
+
 		mov	ModuleInfo.inside_comment,cl
 		add	eax,1
 		.if	strchr( eax, ecx )
+
 			mov ModuleInfo.inside_comment,0
 		.endif
 		ret
@@ -1161,6 +1170,7 @@ GetToken PROC FASTCALL tokenarray, p
 		movzx	eax,[ecx-16].asm_tok.token
 		.if	![edx].index || \
 			(eax != T_REG && eax != T_CL_BRACKET && eax != T_CL_SQ_BRACKET && eax != T_ID)
+
 			jmp get_id
 		.endif
 	.endsw
@@ -1191,10 +1201,13 @@ Tokenize PROC USES esi edi ebx line, start, tokenarray:PTR asm_tok, flags
 	mov	_cstring,0
 
 	.if	!eax
+
 		mov	eax,token_stringbuf
 		mov	p.output,eax
 		.if	ModuleInfo.inside_comment
+
 			.if	strchr( line, ModuleInfo.inside_comment )
+
 				mov ModuleInfo.inside_comment,0
 			.endif
 			jmp	skipline

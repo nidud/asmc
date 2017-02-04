@@ -5,44 +5,44 @@ Asmc Macro Assembler Reference
 
 <pre>
 .<b>CONTINUE</b>[1|2|3] [[.<b>IF</b> <i>condition</i>]]
-.<b>CONTL</b>[0|1|2|3] [[.<b>IF</b> <i>condition</i>]]
-.<b>CONTL0</b>[1|2|3] [[.<b>IF</b> <i>condition</i>]]</pre>
+.<b>CONT</b>[0|1|2|3] [[.<b>IF</b> <i>condition</i>]]
+.<b>CONT0</b>[1|2|3] [[.<b>IF</b> <i>condition</i>]]</pre>
 
 <p>Generates code to jump to the top of a <a href="while.htm">.WHILE</a>
 or <a href="repeat.htm">.REPEAT</a> block if <i>condition</i> is true.</p>
 
-<p><b>.CONTL</b>[1|2|3] is optional nesting level to continue.</p>
+<p><b>.CONT</b>[1|2|3] is optional nesting level to continue.</p>
 
 <pre>
 	.while 1
 	    .continue		; continue .while 1
 	    .while 2
-		.contl1		; continue .while 1
+		.cont1		; continue .while 1
 		.while 3
-		    .contl2	; continue .while 1
+		    .cont2	; continue .while 1
 		    .while 4
-			.contl3 ; continue .while 1
-			.contl2 ; continue .while 2
-			.contl1 ; continue .while 3
+			.cont3	; continue .while 1
+			.cont2	; continue .while 2
+			.cont1	; continue .while 3
 		    .endw
 		.endw
 	    .endw
 	.endw
 </pre>
 
-<p><b>.CONTL0[1|2|3]</b> jump's directly to START label: no TEST.</p>
+<p><b>.CONT0[1|2|3]</b> jump's directly to START label: no TEST.</p>
 
 <pre>
 	.while 1
-	    .contl0		; Jump to START label
+	    .cont0		; Jump to START label
 	    .continue		; Jump to START label
 	.endw
 	.while eax
-	    .contl0		; Jump to START label
+	    .cont0		; Jump to START label
 	    .continue		; Jump to TEST label
 	.endw
 	.repeat
-	    .contl0		; Jump to START label
+	    .cont0		; Jump to START label
 	    .continue		; Jump to EXIT label
 	    .break		; Jump to EXIT label
 	.until 1

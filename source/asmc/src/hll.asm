@@ -1330,20 +1330,56 @@ RenderHllProc ENDP
 AddLineQueue PROTO :LPSTR
 
 QueueTestLines PROC PUBLIC USES esi edi src
+
 	mov	esi,src
+
 	.while	esi
+
 		mov	edi,esi
 		.if	strchr( esi, EOLCHAR )
+
 			mov	BYTE PTR [eax],0
 			inc	eax
 		.endif
 		mov	esi,eax
+
 		.if	BYTE PTR [edi]
-			AddLineQueue( edi )
+if 0
+			xor	edx,edx
+			.if	esi
+
+				mov	eax,[esi]
+				mov	ecx,[edi]
+				;
+				; jmp @C0003
+				; jmp @C0003
+				;
+				.if	eax == ' pmj' && eax == ecx
+
+					mov	eax,[esi+4]
+					.if	eax == [edi+4]
+						mov	ax,[esi+8]
+						.if	ax == [edi+8]
+
+							inc	edx
+						.endif
+					.endif
+				.endif
+			.endif
+
+			.if	!edx
+
+				AddLineQueue( edi )
+			.endif
+else
+				AddLineQueue( edi )
+endif
 		.endif
 	.endw
+
 	mov	eax,NOT_ERROR
 	ret
+
 QueueTestLines ENDP
 
 ExpandHllProc PROC PUBLIC USES esi edi dst, i, tokenarray:PTR asm_tok
@@ -4211,16 +4247,16 @@ local	rc:	SINT,
 		mov	eax,T_DOT_BREAK
 	  .case T_DOT_CONTINUEA .. T_DOT_CONTINUENZ
 
-	  .case T_DOT_CONTL3
-	  .case T_DOT_CONTL2
-	  .case T_DOT_CONTL1
-	  .case T_DOT_CONTL0
+	  .case T_DOT_CONT3
+	  .case T_DOT_CONT2
+	  .case T_DOT_CONT1
+	  .case T_DOT_CONT0
 	  .case T_DOT_BREAK3
 	  .case T_DOT_BREAK2
 	  .case T_DOT_BREAK1
-	  .case T_DOT_CONTL01
-	  .case T_DOT_CONTL02
-	  .case T_DOT_CONTL03
+	  .case T_DOT_CONT01
+	  .case T_DOT_CONT02
+	  .case T_DOT_CONT03
 
 	  .case T_DOT_BREAK
 	  .case T_DOT_CONTINUE
@@ -4233,20 +4269,20 @@ local	rc:	SINT,
 
 		xor	ecx,ecx
 		.switch eax
-		  .case T_DOT_CONTL03
+		  .case T_DOT_CONT03
 			inc	ecx
-		  .case T_DOT_CONTL02
+		  .case T_DOT_CONT02
 			inc	ecx
-		  .case T_DOT_CONTL01
+		  .case T_DOT_CONT01
 			inc	ecx
-		  .case T_DOT_CONTL0
+		  .case T_DOT_CONT0
 			mov	eax,T_DOT_CONTINUE
 			.endc
-		  .case T_DOT_CONTL3
+		  .case T_DOT_CONT3
 			inc	ecx
-		  .case T_DOT_CONTL2
+		  .case T_DOT_CONT2
 			inc	ecx
-		  .case T_DOT_CONTL1
+		  .case T_DOT_CONT1
 			inc	ecx
 			mov	eax,T_DOT_CONTINUE
 			mov	cmd,eax
@@ -4310,10 +4346,10 @@ local	rc:	SINT,
 			mov	ecx,LSTART
 			mov	eax,cmd
 			.switch eax
-			  .case T_DOT_CONTL0
-			  .case T_DOT_CONTL01
-			  .case T_DOT_CONTL02
-			  .case T_DOT_CONTL03
+			  .case T_DOT_CONT0
+			  .case T_DOT_CONT01
+			  .case T_DOT_CONT02
+			  .case T_DOT_CONT03
 				mov	cmd,T_DOT_CONTINUE
 				.endc
 			  .default

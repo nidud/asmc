@@ -4218,6 +4218,9 @@ local	rc:	SINT,
 	  .case T_DOT_BREAK3
 	  .case T_DOT_BREAK2
 	  .case T_DOT_BREAK1
+	  .case T_DOT_CONTL01
+	  .case T_DOT_CONTL02
+	  .case T_DOT_CONTL03
 
 	  .case T_DOT_BREAK
 	  .case T_DOT_CONTINUE
@@ -4230,6 +4233,12 @@ local	rc:	SINT,
 
 		xor	ecx,ecx
 		.switch eax
+		  .case T_DOT_CONTL03
+			inc	ecx
+		  .case T_DOT_CONTL02
+			inc	ecx
+		  .case T_DOT_CONTL01
+			inc	ecx
 		  .case T_DOT_CONTL0
 			mov	eax,T_DOT_CONTINUE
 			.endc
@@ -4299,14 +4308,20 @@ local	rc:	SINT,
 				mov	[esi].labels[LTEST*4],GetHllLabel()
 			.endif
 			mov	ecx,LSTART
-			.if	cmd == T_DOT_CONTL0
-
+			mov	eax,cmd
+			.switch eax
+			  .case T_DOT_CONTL0
+			  .case T_DOT_CONTL01
+			  .case T_DOT_CONTL02
+			  .case T_DOT_CONTL03
 				mov	cmd,T_DOT_CONTINUE
+				.endc
+			  .default
+				.if	[esi].labels[LTEST*4]
 
-			.elseif [esi].labels[LTEST*4]
-
-				mov	ecx,LTEST
-			.endif
+					mov	ecx,LTEST
+				.endif
+			.endsw
 		.endif
 		;
 		; .BREAK .IF ... or .CONTINUE .IF ?

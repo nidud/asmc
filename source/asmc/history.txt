@@ -3,6 +3,7 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.22 - xx xxx 2017
+- added .CONTL0[1|2|3]
 - added .CONTL[0|1|2|3] and .BREAK[1|2|3]
 - added .ENDCxx
 - added .UNTIL[SB|SW|SD]

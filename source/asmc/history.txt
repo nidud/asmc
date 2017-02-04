@@ -3,12 +3,15 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.22 - xx xxx 2017
+- added .CONTL[0|1|2|3] and .BREAK[1|2|3]
+- added .ENDCxx
 - added .UNTIL[SB|SW|SD]
 - added .WHILE[SB|SW|SD]
 - added .UNTIL[B|W|D]
 - added .WHILE[B|W|D]
 - added .UNTILAXZ, DX, and BX
 - added switch /h and /? -- went missing..
+- added .BREAKxx, CONTINUExx, UNTILxx, and WHILExx
 - added .IFxx
 	.IFA	- if Above
 	.IFB	- if Below
@@ -26,7 +29,6 @@ Changes in 2.22 - xx xxx 2017
 	.IFNP	- if No Parity
 	.IFNS	- if Not Signed (signed)
 	.IFNZ	- if Not Zero
-- added .BREAKxx, CONTINUExx, UNTILxx, and WHILExx
 - added Signed compare: .IFS, .IFSB, .IFSW, .IFSB
 - extended .IFB/.IFW to 32-bit, .IFB to 16-bit
 - added use of proto typedefs in HLL

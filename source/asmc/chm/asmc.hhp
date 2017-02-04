@@ -22,10 +22,11 @@ html/command.htm
 html/error.htm
 html/directives.htm
 html/symbols.htm
-
 html/if.htm
 html/while.htm
 html/repeat.htm
+html/break.htm
+html/continue.htm
 html/untilaxz.htm
 html/untilbxz.htm
 html/untilcxz.htm

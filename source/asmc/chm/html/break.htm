@@ -1,0 +1,34 @@
+<HTML><HEAD><TITLE>.BREAK</TITLE></HEAD>
+<BODY>
+Asmc Macro Assembler Reference
+<H2>.BREAK</H2>
+
+<pre>.<b>BREAK</b>[1|2|3] [[.<b>IF</b> <i>condition</i>]]</pre>
+
+<p>Generates code to terminate a <a href="while.htm">.WHILE</a>
+or <a href="repeat.htm">.REPEAT</a> block if <i>condition</i> is true.</p>
+
+<p><b>BREAK</b>[1|2|3] is optional nesting level to terminate.</p>
+
+<pre>
+	.while 1
+	    .break		; break .while 1
+	    .while 2
+		.break1		; break .while 1
+		.while 3
+		    .break2	; break .while 1
+		    .while 4
+			.break3 ; break .while 1
+			.break2 ; break .while 2
+			.break1 ; break .while 3
+		    .endw
+		.endw
+	    .endw
+	.endw
+</pre>
+
+<h4>See Also</h4>
+<a href="directives.htm">Directives Reference</a> |
+<a href="continue.htm">.CONTINUE</a>
+</BODY>
+</HTML>

@@ -64,13 +64,11 @@ HLLF_ENDCOCCUR	equ 8000h	; jmp exit in .case omitted
 ;
 ; Return type
 ;
-HLLF_IFB	equ 0x00010000	; .ifb proc() --> .if al
-HLLF_IFW	equ 0x00020000	; .ifw proc() --> .if ax
-HLLF_IFD	equ 0x00040000	; .ifd proc() --> .if eax
-;
-; Signed compare
-;
-HLLF_IFS	equ 0x00080000	; Signed CMP REG,val
+HLLF_IFB	equ 0x00010000	; .ifb proc() --> al
+HLLF_IFW	equ 0x00020000	; .ifw proc() --> ax
+HLLF_IFD	equ 0x00040000	; .ifd proc() --> eax
+HLLF_IFS	equ 0x00080000	; Signed compare --> CMP REG,val
+
 
 ;
 ; item for .IF, .WHILE, .REPEAT, ...
@@ -2702,6 +2700,8 @@ RenderSwitch ENDP
 
 GetJumpString proc cmd
 
+	option switch:table
+
 	mov	eax,cmd
 	.switch eax
 
@@ -2710,6 +2710,7 @@ GetJumpString proc cmd
 	  .case T_DOT_WHILEA
 	  .case T_DOT_BREAKA
 	  .case T_DOT_CONTINUEA
+	  .case T_DOT_ENDCA
 		mov	eax,@CStr( "jbe" )
 		.endc
 	  .case T_DOT_IFB
@@ -2717,6 +2718,7 @@ GetJumpString proc cmd
 	  .case T_DOT_WHILEB
 	  .case T_DOT_BREAKB
 	  .case T_DOT_CONTINUEB
+	  .case T_DOT_ENDCB
 		mov	eax,@CStr( "jae" )
 		.endc
 	  .case T_DOT_IFG
@@ -2724,6 +2726,7 @@ GetJumpString proc cmd
 	  .case T_DOT_WHILEG
 	  .case T_DOT_BREAKG
 	  .case T_DOT_CONTINUEG
+	  .case T_DOT_ENDCG
 		mov	eax,@CStr( "jle" )
 		.endc
 	  .case T_DOT_IFL
@@ -2731,6 +2734,7 @@ GetJumpString proc cmd
 	  .case T_DOT_WHILEL
 	  .case T_DOT_BREAKL
 	  .case T_DOT_CONTINUEL
+	  .case T_DOT_ENDCL
 		mov	eax,@CStr( "jge" )
 		.endc
 	  .case T_DOT_IFO
@@ -2738,6 +2742,7 @@ GetJumpString proc cmd
 	  .case T_DOT_WHILEO
 	  .case T_DOT_BREAKO
 	  .case T_DOT_CONTINUEO
+	  .case T_DOT_ENDCO
 		mov	eax,@CStr( "jno" )
 		.endc
 	  .case T_DOT_IFP
@@ -2745,6 +2750,7 @@ GetJumpString proc cmd
 	  .case T_DOT_WHILEP
 	  .case T_DOT_BREAKP
 	  .case T_DOT_CONTINUEP
+	  .case T_DOT_ENDCP
 		mov	eax,@CStr( "jnp" )
 		.endc
 	  .case T_DOT_IFS
@@ -2752,6 +2758,7 @@ GetJumpString proc cmd
 	  .case T_DOT_WHILES
 	  .case T_DOT_BREAKS
 	  .case T_DOT_CONTINUES
+	  .case T_DOT_ENDCS
 		mov	eax,@CStr( "jns" )
 		.endc
 	  .case T_DOT_IFZ
@@ -2759,6 +2766,7 @@ GetJumpString proc cmd
 	  .case T_DOT_UNTILZ
 	  .case T_DOT_BREAKZ
 	  .case T_DOT_CONTINUEZ
+	  .case T_DOT_ENDCZ
 		mov	eax,@CStr( "jne" )
 		.endc
 
@@ -2767,6 +2775,7 @@ GetJumpString proc cmd
 	  .case T_DOT_WHILENA
 	  .case T_DOT_BREAKNA
 	  .case T_DOT_CONTINUENA
+	  .case T_DOT_ENDCNA
 		mov	eax,@CStr( "ja " )
 		.endc
 	  .case T_DOT_IFNB
@@ -2774,6 +2783,7 @@ GetJumpString proc cmd
 	  .case T_DOT_WHILENB
 	  .case T_DOT_BREAKNB
 	  .case T_DOT_CONTINUENB
+	  .case T_DOT_ENDCNB
 		mov	eax,@CStr( "jb " )
 		.endc
 	  .case T_DOT_IFNG
@@ -2781,6 +2791,7 @@ GetJumpString proc cmd
 	  .case T_DOT_WHILENG
 	  .case T_DOT_BREAKNG
 	  .case T_DOT_CONTINUENG
+	  .case T_DOT_ENDCNG
 		mov	eax,@CStr( "jg " )
 		.endc
 	  .case T_DOT_IFNL
@@ -2788,6 +2799,7 @@ GetJumpString proc cmd
 	  .case T_DOT_WHILENL
 	  .case T_DOT_BREAKNL
 	  .case T_DOT_CONTINUENL
+	  .case T_DOT_ENDCNL
 		mov	eax,@CStr( "jl " )
 		.endc
 	  .case T_DOT_IFNO
@@ -2795,6 +2807,7 @@ GetJumpString proc cmd
 	  .case T_DOT_WHILENO
 	  .case T_DOT_BREAKNO
 	  .case T_DOT_CONTINUENO
+	  .case T_DOT_ENDCNO
 		mov	eax,@CStr( "jo " )
 		.endc
 	  .case T_DOT_IFNP
@@ -2802,6 +2815,7 @@ GetJumpString proc cmd
 	  .case T_DOT_WHILENP
 	  .case T_DOT_BREAKNP
 	  .case T_DOT_CONTINUENP
+	  .case T_DOT_ENDCNP
 		mov	eax,@CStr( "jp " )
 		.endc
 	  .case T_DOT_IFNS
@@ -2809,6 +2823,7 @@ GetJumpString proc cmd
 	  .case T_DOT_WHILENS
 	  .case T_DOT_BREAKNS
 	  .case T_DOT_CONTINUENS
+	  .case T_DOT_ENDCNS
 		mov	eax,@CStr( "js " )
 		.endc
 	  .case T_DOT_IFNZ
@@ -2816,6 +2831,7 @@ GetJumpString proc cmd
 	  .case T_DOT_UNTILNZ
 	  .case T_DOT_BREAKNZ
 	  .case T_DOT_CONTINUENZ
+	  .case T_DOT_ENDCNZ
 		mov	eax,@CStr( "jz " )
 		.endc
 	.endsw
@@ -3892,10 +3908,12 @@ local	rc:	SINT,
 
 	  .case T_DOT_DEFAULT
 		.if	[esi].flags & HLLF_ELSEOCCUR
+
 			asmerr( 2142 )
 			jmp	toend
 		.endif
 		.if	[ebx+16].token != T_FINAL
+
 			asmerr( 2008, [ebx].tokpos )
 			jmp	toend
 		.endif
@@ -3914,29 +3932,32 @@ local	rc:	SINT,
 		.endif
 
 		.if	[esi].labels[LSTART*4] == 0
-
+			;
+			; First case..
+			;
 			mov	[esi].labels[LSTART*4],GetHllLabel()
 			AddLineQueueX( "jmp %s", GetLabelStr( [esi].labels[LSTART*4], edi ) )
-		.else
-			.if ModuleInfo.hll_switch & SWITCH_PASCAL
 
-				.if	[esi].labels[LEXIT*4] == 0
+		.elseif ModuleInfo.hll_switch & SWITCH_PASCAL
 
-					mov	[esi].labels[LEXIT*4],GetHllLabel()
-				.endif
-				RenderCaseExit( esi, edi )
+			.if	[esi].labels[LEXIT*4] == 0
 
-			.elseif Parse_Pass == PASS_1
+				mov	[esi].labels[LEXIT*4],GetHllLabel()
+			.endif
+			RenderCaseExit( esi, edi )
 
-				mov	eax,esi
-				.while	[eax].hll_item.caselist
+		.elseif Parse_Pass == PASS_1
+			;
+			; error A7007: .CASE without .ENDC: assumed fall through
+			;
+			mov	eax,esi
+			.while	[eax].hll_item.caselist
 
-					mov	eax,[eax].hll_item.caselist
-				.endw
-				.if	eax != esi && !( [eax].hll_item.flags & HLLF_ENDCOCCUR )
+				mov	eax,[eax].hll_item.caselist
+			.endw
+			.if	eax != esi && !( [eax].hll_item.flags & HLLF_ENDCOCCUR )
 
-					asmerr( 7007 )
-				.endif
+				asmerr( 7007 )
 			.endif
 		.endif
 
@@ -3977,7 +3998,6 @@ local	rc:	SINT,
 		push	ebx
 		push	esi
 
-		;add	ebx,16	; skip past <expression>
 		xor	esi,esi
 		.while	IsCaseColon( ebx )
 
@@ -4183,9 +4203,22 @@ local	rc:	SINT,
 		.endif
 		.endc
 
+	  .case T_DOT_ENDCA .. T_DOT_ENDCNZ
+		mov	eax,T_DOT_ENDC
+		jmp	case_endc
+
 	  .case T_DOT_BREAKA .. T_DOT_BREAKNZ
 		mov	eax,T_DOT_BREAK
 	  .case T_DOT_CONTINUEA .. T_DOT_CONTINUENZ
+
+	  .case T_DOT_CONTL3
+	  .case T_DOT_CONTL2
+	  .case T_DOT_CONTL1
+	  .case T_DOT_CONTL0
+	  .case T_DOT_BREAK3
+	  .case T_DOT_BREAK2
+	  .case T_DOT_BREAK1
+
 	  .case T_DOT_BREAK
 	  .case T_DOT_CONTINUE
 
@@ -4195,18 +4228,53 @@ local	rc:	SINT,
 			mov	esi,[esi].next
 		.endw
 
+		xor	ecx,ecx
+		.switch eax
+		  .case T_DOT_CONTL0
+			mov	eax,T_DOT_CONTINUE
+			.endc
+		  .case T_DOT_CONTL3
+			inc	ecx
+		  .case T_DOT_CONTL2
+			inc	ecx
+		  .case T_DOT_CONTL1
+			inc	ecx
+			mov	eax,T_DOT_CONTINUE
+			mov	cmd,eax
+			.endc
+		  .case T_DOT_BREAK3
+			inc	ecx
+		  .case T_DOT_BREAK2
+			inc	ecx
+		  .case T_DOT_BREAK1
+			inc	ecx
+			mov	eax,T_DOT_BREAK
+			mov	cmd,eax
+		.endsw
+
+		.while	esi && ecx
+
+			mov	esi,[esi].next
+			.while	esi && ( [esi].cmd == HLL_IF || [esi].cmd == HLL_SWITCH )
+
+				mov	esi,[esi].next
+			.endw
+			dec	ecx
+		.endw
+
 	  .case T_DOT_ENDC
+		case_endc:
 
 		.if	eax == T_DOT_ENDC
 
 			mov	edx,esi
-			.while	esi && [esi].cmd == HLL_IF
+			.while	esi && [esi].cmd != HLL_SWITCH
 
 				mov	esi,[esi].next
 			.endw
 		.endif
 
-		.if	!esi || ( eax == T_DOT_ENDC && [esi].cmd != HLL_SWITCH )
+		.if	!esi
 
 			asmerr( 1011 )
 			jmp	toend
@@ -4231,7 +4299,11 @@ local	rc:	SINT,
 				mov	[esi].labels[LTEST*4],GetHllLabel()
 			.endif
 			mov	ecx,LSTART
-			.if	[esi].labels[LTEST*4]
+			.if	cmd == T_DOT_CONTL0
+
+				mov	cmd,T_DOT_CONTINUE
+
+			.elseif [esi].labels[LTEST*4]
 
 				mov	ecx,LTEST
 			.endif
@@ -4242,7 +4314,7 @@ local	rc:	SINT,
 		inc	i
 		add	ebx,16
 
-		.if	cmd >= T_DOT_BREAKA && cmd <= T_DOT_CONTINUENZ
+		.if	cmd >= T_DOT_BREAKA && cmd <= T_DOT_ENDCNZ
 
 			.if	[ebx].token != T_FINAL
 

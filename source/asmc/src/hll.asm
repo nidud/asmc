@@ -2745,7 +2745,7 @@ GetJumpString proc cmd
 	  .case T_DOT_UNTILA
 	  .case T_DOT_WHILEA
 	  .case T_DOT_BREAKA
-	  .case T_DOT_CONTINUEA
+	  .case T_DOT_CONTA
 	  .case T_DOT_ENDCA
 		mov	eax,@CStr( "jbe" )
 		.endc
@@ -2753,7 +2753,7 @@ GetJumpString proc cmd
 	  .case T_DOT_UNTILB
 	  .case T_DOT_WHILEB
 	  .case T_DOT_BREAKB
-	  .case T_DOT_CONTINUEB
+	  .case T_DOT_CONTB
 	  .case T_DOT_ENDCB
 		mov	eax,@CStr( "jae" )
 		.endc
@@ -2761,7 +2761,7 @@ GetJumpString proc cmd
 	  .case T_DOT_UNTILG
 	  .case T_DOT_WHILEG
 	  .case T_DOT_BREAKG
-	  .case T_DOT_CONTINUEG
+	  .case T_DOT_CONTG
 	  .case T_DOT_ENDCG
 		mov	eax,@CStr( "jle" )
 		.endc
@@ -2769,7 +2769,7 @@ GetJumpString proc cmd
 	  .case T_DOT_UNTILL
 	  .case T_DOT_WHILEL
 	  .case T_DOT_BREAKL
-	  .case T_DOT_CONTINUEL
+	  .case T_DOT_CONTL
 	  .case T_DOT_ENDCL
 		mov	eax,@CStr( "jge" )
 		.endc
@@ -2777,7 +2777,7 @@ GetJumpString proc cmd
 	  .case T_DOT_UNTILO
 	  .case T_DOT_WHILEO
 	  .case T_DOT_BREAKO
-	  .case T_DOT_CONTINUEO
+	  .case T_DOT_CONTO
 	  .case T_DOT_ENDCO
 		mov	eax,@CStr( "jno" )
 		.endc
@@ -2785,7 +2785,7 @@ GetJumpString proc cmd
 	  .case T_DOT_UNTILP
 	  .case T_DOT_WHILEP
 	  .case T_DOT_BREAKP
-	  .case T_DOT_CONTINUEP
+	  .case T_DOT_CONTP
 	  .case T_DOT_ENDCP
 		mov	eax,@CStr( "jnp" )
 		.endc
@@ -2793,7 +2793,7 @@ GetJumpString proc cmd
 	  .case T_DOT_UNTILS
 	  .case T_DOT_WHILES
 	  .case T_DOT_BREAKS
-	  .case T_DOT_CONTINUES
+	  .case T_DOT_CONTS
 	  .case T_DOT_ENDCS
 		mov	eax,@CStr( "jns" )
 		.endc
@@ -2801,7 +2801,7 @@ GetJumpString proc cmd
 	  .case T_DOT_WHILEZ
 	  .case T_DOT_UNTILZ
 	  .case T_DOT_BREAKZ
-	  .case T_DOT_CONTINUEZ
+	  .case T_DOT_CONTZ
 	  .case T_DOT_ENDCZ
 		mov	eax,@CStr( "jne" )
 		.endc
@@ -2810,7 +2810,7 @@ GetJumpString proc cmd
 	  .case T_DOT_UNTILNA
 	  .case T_DOT_WHILENA
 	  .case T_DOT_BREAKNA
-	  .case T_DOT_CONTINUENA
+	  .case T_DOT_CONTNA
 	  .case T_DOT_ENDCNA
 		mov	eax,@CStr( "ja " )
 		.endc
@@ -2818,7 +2818,7 @@ GetJumpString proc cmd
 	  .case T_DOT_UNTILNB
 	  .case T_DOT_WHILENB
 	  .case T_DOT_BREAKNB
-	  .case T_DOT_CONTINUENB
+	  .case T_DOT_CONTNB
 	  .case T_DOT_ENDCNB
 		mov	eax,@CStr( "jb " )
 		.endc
@@ -2826,7 +2826,7 @@ GetJumpString proc cmd
 	  .case T_DOT_UNTILNG
 	  .case T_DOT_WHILENG
 	  .case T_DOT_BREAKNG
-	  .case T_DOT_CONTINUENG
+	  .case T_DOT_CONTNG
 	  .case T_DOT_ENDCNG
 		mov	eax,@CStr( "jg " )
 		.endc
@@ -2834,7 +2834,7 @@ GetJumpString proc cmd
 	  .case T_DOT_UNTILNL
 	  .case T_DOT_WHILENL
 	  .case T_DOT_BREAKNL
-	  .case T_DOT_CONTINUENL
+	  .case T_DOT_CONTNL
 	  .case T_DOT_ENDCNL
 		mov	eax,@CStr( "jl " )
 		.endc
@@ -2842,7 +2842,7 @@ GetJumpString proc cmd
 	  .case T_DOT_UNTILNO
 	  .case T_DOT_WHILENO
 	  .case T_DOT_BREAKNO
-	  .case T_DOT_CONTINUENO
+	  .case T_DOT_CONTNO
 	  .case T_DOT_ENDCNO
 		mov	eax,@CStr( "jo " )
 		.endc
@@ -2850,7 +2850,7 @@ GetJumpString proc cmd
 	  .case T_DOT_UNTILNP
 	  .case T_DOT_WHILENP
 	  .case T_DOT_BREAKNP
-	  .case T_DOT_CONTINUENP
+	  .case T_DOT_CONTNP
 	  .case T_DOT_ENDCNP
 		mov	eax,@CStr( "jp " )
 		.endc
@@ -2858,7 +2858,7 @@ GetJumpString proc cmd
 	  .case T_DOT_UNTILNS
 	  .case T_DOT_WHILENS
 	  .case T_DOT_BREAKNS
-	  .case T_DOT_CONTINUENS
+	  .case T_DOT_CONTNS
 	  .case T_DOT_ENDCNS
 		mov	eax,@CStr( "js " )
 		.endc
@@ -2866,7 +2866,7 @@ GetJumpString proc cmd
 	  .case T_DOT_WHILENZ
 	  .case T_DOT_UNTILNZ
 	  .case T_DOT_BREAKNZ
-	  .case T_DOT_CONTINUENZ
+	  .case T_DOT_CONTNZ
 	  .case T_DOT_ENDCNZ
 		mov	eax,@CStr( "jz " )
 		.endc
@@ -3939,6 +3939,7 @@ local	rc:	SINT,
 	add	ebx,tokenarray
 	mov	eax,[ebx].tokval
 	mov	cmd,eax
+	xor	ecx,ecx		; exit level 0,1,2,3
 
 	.switch eax
 
@@ -4239,25 +4240,6 @@ local	rc:	SINT,
 		.endif
 		.endc
 
-	  .case T_DOT_ENDCA .. T_DOT_ENDCNZ
-		mov	eax,T_DOT_ENDC
-		jmp	case_endc
-
-	  .case T_DOT_BREAKA .. T_DOT_BREAKNZ
-		mov	eax,T_DOT_BREAK
-	  .case T_DOT_CONTINUEA .. T_DOT_CONTINUENZ
-
-	  .case T_DOT_CONT3
-	  .case T_DOT_CONT2
-	  .case T_DOT_CONT1
-	  .case T_DOT_CONT0
-	  .case T_DOT_BREAK3
-	  .case T_DOT_BREAK2
-	  .case T_DOT_BREAK1
-	  .case T_DOT_CONT01
-	  .case T_DOT_CONT02
-	  .case T_DOT_CONT03
-
 	  .case T_DOT_BREAK
 	  .case T_DOT_CONTINUE
 
@@ -4266,37 +4248,6 @@ local	rc:	SINT,
 
 			mov	esi,[esi].next
 		.endw
-
-		xor	ecx,ecx
-		.switch eax
-		  .case T_DOT_CONT03
-			inc	ecx
-		  .case T_DOT_CONT02
-			inc	ecx
-		  .case T_DOT_CONT01
-			inc	ecx
-		  .case T_DOT_CONT0
-			mov	eax,T_DOT_CONTINUE
-			.endc
-		  .case T_DOT_CONT3
-			inc	ecx
-		  .case T_DOT_CONT2
-			inc	ecx
-		  .case T_DOT_CONT1
-			inc	ecx
-			mov	eax,T_DOT_CONTINUE
-			mov	cmd,eax
-			.endc
-		  .case T_DOT_BREAK3
-			inc	ecx
-		  .case T_DOT_BREAK2
-			inc	ecx
-		  .case T_DOT_BREAK1
-			inc	ecx
-			mov	eax,T_DOT_BREAK
-			mov	cmd,eax
-		.endsw
-
 		.while	esi && ecx
 
 			mov	esi,[esi].next
@@ -4308,7 +4259,6 @@ local	rc:	SINT,
 		.endw
 
 	  .case T_DOT_ENDC
-		case_endc:
 
 		.if	eax == T_DOT_ENDC
 
@@ -4316,6 +4266,15 @@ local	rc:	SINT,
 			.while	esi && [esi].cmd != HLL_SWITCH
 
 				mov	esi,[esi].next
+			.endw
+			.while	esi && ecx
+
+				mov	esi,[esi].next
+				.while	esi && [esi].cmd != HLL_SWITCH
+
+					mov	esi,[esi].next
+				.endw
+				dec	ecx
 			.endw
 		.endif
 
@@ -4334,6 +4293,16 @@ local	rc:	SINT,
 				mov	[esi].labels[LEXIT*4],GetHllLabel()
 			.endif
 			mov	ecx,LEXIT
+			mov	eax,cmd
+			.switch eax
+			  .case T_DOT_GOTOSW
+			  .case T_DOT_GOTOSW1
+			  .case T_DOT_GOTOSW2
+			  .case T_DOT_GOTOSW3
+				mov	cmd,T_DOT_ENDC
+				mov	ecx,LSTART
+				.endc
+			.endsw
 		.else
 			;
 			; 'test' is not created for .WHILE loops here; because
@@ -4471,6 +4440,46 @@ local	rc:	SINT,
 			.endif
 		.endif
 		.endc
+
+	  .case T_DOT_BREAK3
+		inc	ecx
+	  .case T_DOT_BREAK2
+		inc	ecx
+	  .case T_DOT_BREAK1
+		inc	ecx
+		mov	cmd,eax
+	  .case T_DOT_BREAKA .. T_DOT_BREAKNZ
+		mov	eax,T_DOT_BREAK
+		.gotosw
+	  .case T_DOT_CONT3
+		inc	ecx
+	  .case T_DOT_CONT2
+		inc	ecx
+	  .case T_DOT_CONT1
+		inc	ecx
+		mov	eax,T_DOT_CONTINUE
+		mov	cmd,eax
+		.gotosw
+	  .case T_DOT_CONT03
+		inc	ecx
+	  .case T_DOT_CONT02
+		inc	ecx
+	  .case T_DOT_CONT01
+		inc	ecx
+	  .case T_DOT_CONT0
+	  .case T_DOT_CONTA .. T_DOT_CONTNZ
+		mov	eax,T_DOT_CONTINUE
+		.gotosw
+	  .case T_DOT_GOTOSW3
+		inc	ecx
+	  .case T_DOT_GOTOSW2
+		inc	ecx
+	  .case T_DOT_GOTOSW1
+		inc	ecx
+	  .case T_DOT_GOTOSW
+	  .case T_DOT_ENDCA .. T_DOT_ENDCNZ
+		mov	eax,T_DOT_ENDC
+		.gotosw
 	.endsw
 
 	mov	ebx,i

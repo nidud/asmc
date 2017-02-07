@@ -1,0 +1,53 @@
+<HTML><HEAD><TITLE>.GOTOSW</TITLE></HEAD>
+<BODY>
+Asmc Macro Assembler Reference
+<H2>.GOTOSW</H2>
+
+<pre>
+.<b>GOTOSW</b>[1|2|3] [[.<b>IF</b> <i>condition</i>]]</pre>
+
+<p>Generates code to jump to the top of a <a href="switch.htm">.SWITCH</a>
+block if <i>condition</i> is true.</p>
+
+<p><b>.GOTOSW</b> jump's directly to the TEST label.</p>
+
+<pre>
+	.switch al
+	  .case 1
+	  ...
+	  .case 9
+	    mov al,1
+	    .gotosw		; "Jump" to case 1
+</pre>
+
+<p><b>GOTOSW</b>[1|2|3] is optional nesting level to continue.</p>
+
+<pre>
+	.switch al
+	  .case 1
+	    .gotosw		; continue .switch al
+	    .switch bl
+	      .case 1
+		.gotosw1	; continue .switch al
+		.switch cl
+		  .case 1
+		    .gotosw2	; continue .switch al
+		    .switch dl
+		      .case 1
+			.gotosw3 ; continue .switch al
+			.gotosw2 ; continue .switch bl
+			.gotosw1 ; continue .switch cl
+		    .endsw
+		.endsw
+	    .endsw
+	.endsw
+</pre>
+
+<p><b>GOTOSW</b> can be used in combination with .<b>IF</b> <i>condition</i></p>
+
+<h4>See Also</h4>
+<a href="directives.htm">Directives Reference</a> |
+<a href="endc.htm">.ENDC</a> |
+<a href="switch.htm">.SWITCH</a>
+</BODY>
+</HTML>

@@ -3,10 +3,9 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.22 - xx xxx 2017
-- renamed to .CONT[0|1|2|3]
-- renamed to .CONT0[1|2|3]
-- added .CONTL0[1|2|3]
-- added .CONTL[0|1|2|3] and .BREAK[1|2|3]
+- added .GOTOSW[1|2|3]
+- added .CONT[1|2|3] and .BREAK[1|2|3]
+- added .CONT0[1|2|3]
 - added .ENDCxx
 - added .UNTIL[SB|SW|SD]
 - added .WHILE[SB|SW|SD]
@@ -14,7 +13,7 @@ Changes in 2.22 - xx xxx 2017
 - added .WHILE[B|W|D]
 - added .UNTILAXZ, DX, and BX
 - added switch /h and /? -- went missing..
-- added .BREAKxx, CONTINUExx, UNTILxx, and WHILExx
+- added .BREAKxx, CONTxx, UNTILxx, and WHILExx
 - added .IFxx
 	.IFA	- if Above
 	.IFB	- if Below

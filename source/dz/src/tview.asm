@@ -1645,12 +1645,14 @@ mouse_event ENDP
 tview_event PROC
 	xor	edx,edx
 	mov	ecx,local_count
-	.if edx == DWORD PTR STDI.ios_fsize
+	.if	edx == DWORD PTR STDI.ios_fsize
+
 		mov	ecx,global_count
 	.endif
 	.repeat
 		.if eax == key_global[edx]
-			jmp	key_global[edx+4]
+
+			jmp key_global[edx+4]
 		.endif
 		add	edx,8
 	.untilcxz

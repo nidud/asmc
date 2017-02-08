@@ -43,8 +43,7 @@ ticliptostart PROC USES edi ti:PTINFO
 	mov	ecx,edi
 	add	ecx,eax
 	sub	ecx,[edx].ti_clsl
-
-	.if	!ZERO?
+	.ifnz
 		.if	eax >= ecx
 			sub	eax,ecx ; move cursor up
 		.else
@@ -108,7 +107,7 @@ ticlipdel PROC USES ebx ti:PTINFO
 					or	[edx].ti_flag,_T_MODIFIED
 					mov	eax,[edx].ti_clel
 					sub	eax,[edx].ti_clsl
-					.if	!ZERO?
+					.ifnz
 						.if	eax <= [edx].ti_lcnt
 							sub [edx].ti_lcnt,eax
 						.else
@@ -163,9 +162,9 @@ ticlippaste PROC USES esi edi ebx ti:PTINFO
 			tiputc( ti, eax )
 			cmp	eax,_TI_CONTINUE
 			pop	eax
-			.break	.if !ZERO?
+			.breaknz
 			dec	esi
-			.break	.if ZERO?
+			.breakz
 			test	__ctype[eax+1],_SPACE
 			jnz	@B
 
@@ -377,43 +376,35 @@ tihome	PROC ti:PTINFO
 	ret
 tihome	ENDP
 
-titoend PROC ti:PTINFO
+titoend PROC USES esi edi ti:PTINFO
 	mov	edx,ti
+	ticurlp(edx )
+	.ifnz
+		tistripend( eax )
+		.ifnz
+			mov	[edx].ti_bcnt,ecx
+			mov	eax,ecx
+			sub	eax,[edx].ti_boff
+			.if	eax < [edx].ti_cols
 
-	tihome( edx )
-	ticurlp( edx )
-	jz	fail
+				mov	[edx].ti_xoff,eax
+			.else
+				mov	eax,[edx].ti_cols
+				dec	eax
+				.if	ecx <= eax
 
-	tistripend( eax )
-	jz	toend
-
-	mov	eax,[edx].ti_cols
-	dec	eax
-	cmp	ecx,eax
-	jg	@F
-	mov	eax,ecx
-@@:
-	mov	[edx].ti_xoff,eax
-	mov	ecx,[edx].ti_bcnt
-	sub	ecx,[edx].ti_cols
-	inc	ecx
-	sub	eax,eax
-	cmp	eax,ecx
-	jg	@F
-	mov	eax,ecx
-@@:
-	mov	[edx].ti_boff,eax
-	add	eax,[edx].ti_xoff
-	cmp	eax,[edx].ti_bcnt
-	jbe	toend
-	dec	[edx].ti_boff
-toend:
-	xor	eax,eax
-@@:
+					mov	eax,ecx
+				.endif
+				mov	[edx].ti_xoff,eax
+				sub	ecx,eax
+				mov	[edx].ti_boff,ecx
+			.endif
+		.endif
+		xor	eax,eax
+	.else
+		mov	eax,_TI_CMFAILED
+	.endif
 	ret
-fail:
-	mov	eax,_TI_CMFAILED
-	jmp	@B
 titoend ENDP
 
 tileft	PROC ti:PTINFO
@@ -506,12 +497,11 @@ tiputc	PROC USES esi edi ebx ti:PTINFO, char:UINT
 				add	ecx,1
 			.endw
 			sub	ecx,[edx].ti_lp			; add indent
-			.if	!ZERO?
-
+			.ifnz
 				.repeat
 
 					tiincx( edx )
-					.break .if ZERO?
+					.breakz
 
 					__st_putc( esi, eax )
 					jc	error
@@ -552,7 +542,7 @@ tiputc	PROC USES esi edi ebx ti:PTINFO, char:UINT
 					.while	1
 
 						tidecx( edx )
-						.break	.if ZERO?
+						.breakz
 
 						sub	ecx,1
 						.break	.if eax == ecx
@@ -571,7 +561,7 @@ tiputc	PROC USES esi edi ebx ti:PTINFO, char:UINT
 						.endif
 
 						tiincx( edx )
-						.break	.if ZERO?
+						.breakz
 
 						add	ecx,1
 						.break	.if eax == ecx
@@ -599,10 +589,10 @@ tibacksp PROC USES esi edi ebx ti:PTINFO
 	mov	eax,[edx].ti_xoff
 	add	eax,[edx].ti_boff
 
-	.if	ZERO?
+	.ifz
 		mov	eax,[edx].ti_loff
 		add	eax,[edx].ti_yoff
-		.if	ZERO?
+		.ifz
 			mov	eax,_TI_CMFAILED
 			jmp	toend
 		.endif
@@ -647,7 +637,7 @@ tibacksp PROC USES esi edi ebx ti:PTINFO
 		sub	edi,1
 
 		tigetline( edx, edi )
-		.break .if ZERO?
+		.breakz
 
 		.if	BYTE PTR [eax]	; get indent
 
@@ -885,6 +875,7 @@ tievent PROC USES esi edi ebx ti:PTINFO, event:UINT
 			mov	[ebx+7],al
 
 			.if	rsmodal( ebx )
+
 				PushEvent( QuickMenuKeys[eax*4-4] )
 				msloop()
 			.endif
@@ -916,8 +907,8 @@ tievent PROC USES esi edi ebx ti:PTINFO, event:UINT
 					cmp	eax,KEY_MSLEFT
 					jne	return_event
 
-					call	msvalidate
-					.continue .if ZERO?
+					msvalidate()
+					.contz
 
 					sub	ebx,[edx].ti_ypos
 					sub	ecx,[edx].ti_xpos
@@ -930,7 +921,7 @@ tievent PROC USES esi edi ebx ti:PTINFO, event:UINT
 						mov [edx].ti_clso,ecx
 					.else
 						mov [edx].ti_cleo,ecx
-						.if	ZERO?
+						.ifz
 							mov [edx].ti_clso,ecx
 						.endif
 					.endif
@@ -938,7 +929,7 @@ tievent PROC USES esi edi ebx ti:PTINFO, event:UINT
 						mov	[edx].ti_clsl,ebx
 					.else
 						mov	[edx].ti_clel,ebx
-						.if	ZERO?
+						.ifz
 							mov [edx].ti_clsl,ebx
 						.endif
 					.endif
@@ -1140,50 +1131,59 @@ handle_event:
 		.endc
 
 	  .case KEY_CTRLLEFT
-		tiprevword:
-		.if	ticurlp( edx )
-			mov	ecx,eax
-			mov	eax,[edx].ti_boff
-			add	eax,[edx].ti_xoff
-			.if	ZERO?
-				.if	!tiup( edx )
-					titoend( edx )
-					jmp tiprevword
+		.repeat
+			.if	ticurlp( edx )
+
+				mov	ecx,eax
+				mov	eax,[edx].ti_boff
+				add	eax,[edx].ti_xoff
+				.ifz
+					.if	!tiup( edx )
+
+						titoend( edx )
+						.continue
+					.endif
+					.endc
 				.endif
-				.endc
-			.endif
-			lea	edx,[ecx+eax]
-			.if	eax
-				sub	edx,1
-			.endif
-			movzx	eax,BYTE PTR [edx]
-			.while	ecx < edx && !( __ltype[eax+1] & _LABEL or _DIGIT )
-				sub	edx,1
-				mov	al,[edx]
-			.endw
-			.while	ecx < edx && __ltype[eax+1] & _LABEL or _DIGIT
-				sub	edx,1
-				mov	al,[edx]
-			.endw
-			.if	!( __ltype[eax+1] & _LABEL or _DIGIT )
-				mov	al,[edx+1]
-				.if	__ltype[eax+1] & _LABEL or _DIGIT
-					add	edx,1
+				lea	edx,[ecx+eax]
+				.if	eax
+
+					sub	edx,1
+				.endif
+				movzx	eax,BYTE PTR [edx]
+				.while	ecx < edx && !( __ltype[eax+1] & _LABEL or _DIGIT )
+
+					sub	edx,1
+					mov	al,[edx]
+				.endw
+				.while	ecx < edx && __ltype[eax+1] & _LABEL or _DIGIT
+
+					sub	edx,1
+					mov	al,[edx]
+				.endw
+				.if	!( __ltype[eax+1] & _LABEL or _DIGIT )
+
+					mov	al,[edx+1]
+					.if	__ltype[eax+1] & _LABEL or _DIGIT
+
+						add	edx,1
+					.endif
+				.endif
+				mov	eax,edx
+				mov	edx,ti
+				add	ecx,[edx].ti_boff
+				add	ecx,[edx].ti_xoff
+				sub	ecx,eax
+				.if	ecx > [edx].ti_xoff
+
+					sub	ecx,[edx].ti_xoff
+					mov	[edx].ti_xoff,0
+					sub	[edx].ti_boff,ecx
+				.else
+					sub	[edx].ti_xoff,ecx
 				.endif
 			.endif
-			mov	eax,edx
-			mov	edx,tinfo
-			add	ecx,[edx].ti_boff
-			add	ecx,[edx].ti_xoff
-			sub	ecx,eax
-			.if	ecx > [edx].ti_xoff
-				sub	ecx,[edx].ti_xoff
-				mov	[edx].ti_xoff,0
-				sub	[edx].ti_boff,ecx
-			.else
-				sub	[edx].ti_xoff,ecx
-			.endif
-		.endif
+		.until	1
 		xor	eax,eax
 		.endc
 
@@ -1193,11 +1193,9 @@ handle_event:
 
 	  .case KEY_RIGHT
 		tiincx( edx )
-		jz	@F
-		xor	eax,eax
-		.endc
-	     @@:
 		mov	eax,_TI_CMFAILED
+		.endcz
+		xor	eax,eax
 		.endc
 
 	  .case KEY_HOME
@@ -1318,19 +1316,17 @@ handle_event:
 		inc	eax
 		cmp	eax,[edx].ti_lcnt
 		mov	eax,_TI_CMFAILED
-		jae	@F
+		.endcnb
 		inc	[edx].ti_loff
 		xor	eax,eax
-	     @@:
 		.endc
 
 	  .case KEY_MOUSEUP
 		mov	eax,_TI_CMFAILED
 		mov	ecx,3
-		.if	ecx <= [edx].ti_loff
-			sub	[edx].ti_loff,ecx
-			xor	eax,eax
-		.endif
+		.endc  .if ecx > [edx].ti_loff
+		sub	[edx].ti_loff,ecx
+		xor	eax,eax
 		.endc
 
 	  .case KEY_MOUSEDN
@@ -1338,6 +1334,7 @@ handle_event:
 		add	eax,[edx].ti_yoff
 		add	eax,3
 		.if	eax < [edx].ti_lcnt
+
 			add	[edx].ti_loff,3
 			xor	eax,eax
 			.endc

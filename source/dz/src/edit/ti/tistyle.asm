@@ -2,957 +2,972 @@ include tinfo.inc
 include ctype.inc
 include string.inc
 
-	.data
+IFDEF DEBUG
+;__TIMEIT__ equ 1
+ENDIF
+include timeit.inc
 
-	;----------------------------------------------------------------------
-	; Output syntax color
-	;----------------------------------------------------------------------
-
+ST_ATTRIB	equ 1	; attrib	<at> [<char>]
+ST_CONTROL	equ 2	; control	<at>
+ST_QUOTE	equ 3	; quote		<at>
+ST_NUMBER	equ 4	; number	<at>
+ST_CHAR		equ 5	; char		<at> <chars>
+ST_STRING	equ 6	; string	<at> <string>
+ST_START	equ 7	; start		<at> <string>
+ST_WORD		equ 8	; word		<at> <words> ...
+ST_NESTED	equ 9	; nested	<at> <string1> <string2>
 ST_COUNT	equ 9
 
-S_STYLE		STRUC
-st_line		dd ?	; current line index
-st_bp		dd ?	; current line adress
-st_boff		dd ?	; offset start of visible line
-st_bend		dd ?	; end of visible line
-st_wbuf		dd ?	; screen buffer (int *)
-st_type		db ?	; current type
-st_attr		db ?	; current attrib
-st_slen		dd ?	; length of line
-st_string	dd ?	; offset of first word
-st_begin	dd ?	; offset of Begin word
-st_tinfo	dd ?
-S_STYLE		ENDS
+_X_QUOTE	equ 1
+_X_COMMENT	equ 2
+_X_BEGIN	equ 4
 
-format_label	dd tidoattrib	; 1. A Attrib
-		dd tidocontrol	; 2. O Control
-		dd tidoquote	; 3. Q Quote
-		dd tidonumber	; 4. D Digit
-		dd tidochar	; 5. C Char
-		dd tidostring	; 6. S String
-		dd tidostart	; 7. B Begin
-		dd tidoword	; 8. W Word
-		dd tidonested	; 9. N Nested
+ISCHAR	MACRO reg
+	EXITM<__ctype[reg+1] & (_UPPER or _LOWER or _DIGIT)>
+	ENDM
+
+TOUPPER MACRO	reg
+	sub	al,'a'
+	cmp	al,'z'-'a'+1
+	sbb	dl,dl
+	and	dl,'a'-'A'
+	sub	al,dl
+	add	al,'a'
+	EXITM  <reg>
+	ENDM
+
+TOLOWER MACRO	reg
+	sub	al,'A'
+	cmp	al,'Z'-'A'+1
+	sbb	dl,dl
+	and	dl,'a'-'A'
+	add	al,dl
+	add	al,'A'
+	EXITM  <reg>
+	ENDM
 
 	.code
 
-	ASSUME	ebp : PTR S_STYLE
-	OPTION	PROC: PRIVATE
+TIStyleIsQuote PROC PRIVATE USES esi edi ebx ecx line, string
 
-getnexttoken PROC ; "1",0,"2",0,"n",0,0
-	xor	eax,eax
-	.repeat
-		cmp	al,[esi]
-		lea	esi,[esi+1]
-	.until	ZERO?
-	cmp	al,[esi]
-	ret
-getnexttoken ENDP
-
-tisetat PROC USES eax ebx
-
-	mov	eax,edi
-	dec	eax			; = offset in text line
-
-	.if	eax >= [ebp].st_boff
-		.if	eax > [ebp].st_bend
-			stc
-		.else
-			sub	eax,[ebp].st_boff
-			add	eax,eax
-			add	eax,[ebp].st_wbuf	; = offset in screen line (*int)
-			mov	bl,[ebp].st_attr
-			mov	[eax+1],bl		; set attrib for this char
-			clc
-		.endif
-	.else
-		clc
-	.endif
-	ret
-tisetat ENDP
-
-strisquote PROC USES esi edi ebx ecx line, string
 	mov	edi,line
-lupe:
-	xor	esi,esi
-	xor	ebx,ebx			; current quote
-	mov	eax,string
-	sub	eax,edi
-	jle	toend
-	memquote( edi, eax )
-	mov	esi,eax			; first offset of quote
-	jz	toend
-	or	bl,[eax]
-	lea	edi,[eax+1]
-@@:
-	cmp	edi,string
-	jae	toend
-	mov	ecx,string
-	sub	ecx,edi
-	memchr( edi, ebx, ecx )
-	jz	toend
-	lea	edi,[eax+1]
-	cmp	bl,'"'
-	jne	lupe
-	cmp	byte ptr [eax-1],'\'	; "case \"quoted text\""
-	jne	lupe
-	cmp	byte ptr [eax-2],'\'	; case "C:\\"
-	je	lupe
-	jmp	@B
-toend:
-	mov	eax,esi		; return offset first quote
-	test	ebx,ebx		; set ZF to result
-	ret
-strisquote ENDP
 
-	;----------------------------------------------------------------------
-	; 1. A Attrib
-	;----------------------------------------------------------------------
+	.while	1
+		xor	esi,esi
+		xor	ebx,ebx ; current quote
+		mov	eax,string
+		sub	eax,edi
+		.breakng
+		;
+		; first offset of quote
+		;
+		mov	esi,memquote(edi, eax)
+		.breakz
 
-tidoattrib PROC
-	mov	al,[esi-1]
-	mov	ebx,[ebp].st_tinfo
-	mov	BYTE PTR [ebx+1].S_TINFO.ti_stat,al
-	mov	al,[esi]
-	.if	al
-		mov	BYTE PTR [ebx].S_TINFO.ti_stat,al
-	.endif
-	ret
-tidoattrib ENDP
+		or	bl,[eax]
+		lea	edi,[eax+1]
 
-	;----------------------------------------------------------------------
-	; 5. C Char
-	;----------------------------------------------------------------------
+		.while	1
+			.break1 .if edi >= string
+			mov	ecx,string
+			sub	ecx,edi
+			mov	al,bl
+			repnz	scasb
+			.break1 .ifnz
 
-tidochar PROC
+			.break .if bl != '"'
+			;
+			; "case \"quoted text\""
+			;
+			.break .if byte ptr [edi-2] != '\'
+			;
+			; case "C:\\"
+			;
+			.break .if byte ptr [edi-3] == '\'
+		.endw
+	.endw
 
-	;----------------------------
-	; timeit_start 5, "tidochar"
-	;----------------------------
-
-	mov	eax,[ebp].st_boff
-	cmp	eax,[ebp].st_begin
-	jae	toend
-
-ifdef __SSE__
-
-	.data
-	ALIGN	4
-	tidochar_p dd _rtl_tidochar
-
-	.code
-
-	jmp	tidochar_p
-
-_rtl_tidochar:
-	mov	eax,tidochar_386
-	.if	sselevel & SSE_SSE2
-		mov	eax,tidochar_SSE2
-	.endif
-	mov	tidochar_p,eax
-	jmp	eax
-
-	ALIGN	4
-
-tidochar_SSE2:
-
-	mov	edi,[ebp].st_boff
-	movzx	eax,BYTE PTR [esi]
-	inc	esi
-	test	al,al
-	jz	toend
-	cmp	al,"'"
-	je	tidochar_SSE2
-	cmp	al,'"'
-	je	tidochar_SSE2
-
-	imul	eax,eax,01010101h
-	movd	xmm0,eax
-	pshufd	xmm0,xmm0,0
-
-	ALIGN	4
-@@:
-	movups	xmm1,[edi]
-	movaps	xmm2,xmm0
-	pcmpeqb xmm2,xmm1
-	pcmpeqb xmm1,xmm2
-	pmaxub	xmm1,xmm2
-	pmovmskb eax,xmm1
-	add	edi,16
-	test	eax,eax
-	jz	@B
-
-	bsf	eax,eax
-	lea	edi,[edi+eax-16]
-
-	cmp	BYTE PTR [edi],0
-	je	tidochar_SSE2
-	cmp	edi,[ebp].st_begin
-	jae	tidochar_SSE2
-
-	inc	edi
-	call	tisetat
-	jnc	@B
-	jmp	tidochar_SSE2
-
-	ALIGN	4
-
-tidochar_386:
-
-endif
-
-	strlen( esi )
-	jz	toend
-	mov	ebx,eax
-	mov	edx,[ebp].st_bp
-	xor	eax,eax
-@@:
-	mov	al,[edx]
-	inc	edx
-	test	al,al
-	jz	toend
-	test	__ctype[eax+1],_SPACE
-	jnz	@B
-	mov	edi,esi
-	mov	ecx,ebx
-	repne	scasb
-	jne	@B
-	mov	edi,edx
-	cmp	edx,[ebp].st_begin
-	ja	toend
-	call	tisetat
-	jnc	@B
-toend:
-	;-------------------------
-	; timeit_end 5
-	;-------------------------
-	ret
-tidochar ENDP
-
-	;----------------------------------------------------------------------
-	; 7. B Begin - XX string -- set color XX from string to end of line
-	;----------------------------------------------------------------------
-
-tidostart PROC
-
-	;-------------------------
-	; timeit_start 2, "tidostart"
-	;-------------------------
-
-dostart:
-	mov	edi,edx
-	movzx	ebx,BYTE PTR [esi]
-	mov	bl,__ctype[ebx+1]
-	memquote( edi, [ebp].st_slen )
-	jz	do
-	inc	bh
-do:
-	strstri( edi, esi )
-	jnz	@F
-	call	getnexttoken
-	jnz	do
-	ret
-@@:
-	lea	edi,[eax+1]
-	test	ebx,_UPPER or _LOWER
-	jz	test_quote
-
-	cmp	eax,[ebp].st_bp
-	je	test_end
-	movzx	eax,BYTE PTR [eax-1]
-	test	__ctype[eax+1],_SPACE
-	jz	do
-test_end:
-	strlen( esi )
-	movzx	eax,byte ptr [edi+eax-1]
-	test	eax,eax
-	jz	test_quote
-	test	__ctype[eax+1],_SPACE
-	jz	do
-
-test_quote:
-	test	ebx,0100h
-	jz	no_quote
-	cmp	BYTE PTR [esi],"'"
-	je	no_quote
-	lea	eax,[edi-1]
-	strisquote( edx, eax )
-	jnz	do
-
-no_quote:
-
-	lea	eax,[edi-1]
-	cmp	eax,[ebp].st_begin
-	ja	set_attrib
-	mov	[ebp].st_begin,eax
-
-set_attrib:
-	call	tisetat
-	jc	toend
-	mov	al,[edi]
-	inc	edi
-	test	al,al
-	jnz	set_attrib
-toend:
-	;-------------------------
-	; timeit_end 2
-	;-------------------------
-
-	ret
-tidostart ENDP
-
-	;----------------------------------------------------------------------
-	; 9. N Nested -- /* */
-	;----------------------------------------------------------------------
-
-tidonested PROC
-
-	;------------------------------
-	; timeit_start 9, "tidonested"
-	;------------------------------
-
-	mov	edi,edx		; find start condition
-	mov	eax,[ebp].st_line
-	test	eax,eax
-	jz	find_arg1	; first line..
-
-	call	find_token	; seek back to last first arg (/*)
-	jz	find_arg1
-	mov	ebx,eax		; EBX first arg
-	call	getnexttoken	; ESI to next token
-	jz	@F		; start, no end - ok
-	call	find_token	; find end */
-	jz	@F		; start, no end
-	cmp	eax,ebx		; end > start ?
-	ja	find_arg1
-@@:
-	inc	edi
-	mov	ecx,[ebp].st_slen
-	jmp	find_arg2
-
-find_arg1:
-	mov	esi,[ebp].st_string
-	mov	ecx,[ebp].st_slen
-	mov	eax,edi
-	sub	eax,[ebp].st_bp
-	sub	ecx,eax
-	jle	toend
-	mov	al,[esi]
-	repne	scasb
-	jne	toend
-	inc	esi
-	xor	eax,eax
-	xor	ebx,ebx
-@@:
-	inc	ebx
-	xor	al,[esi+ebx-1]
-	jz	@F
-	sub	al,[edi+ebx-1]
-	jz	@B
-	jmp	find_arg1
-@@:
-	strisquote( edx, edi )
-	jnz	find_arg1
-@@:
-	call	tisetat
-	jc	toend
-	inc	edi
-	mov	al,[esi]
-	inc	esi
-	test	al,al
-	jz	find_arg2
-	dec	ecx
-	jnz	@B
-	call	tisetat
-
-find_arg2:
-	test	ecx,ecx
-	jz	toend
-	mov	ax,[esi]
-	test	al,al
-	jz	clear_ECX
-@@:
-	call	tisetat
-	jc	toend
-	dec	ecx
-	jz	toend
-	inc	edi
-	cmp	al,[edi-2]
-	jne	@B
-	test	ah,ah
-	jz	find_arg1
-	cmp	ah,[edi-1]
-	jne	@B
-	strisquote( edx, edi )
-	jnz	find_arg2
-	xor	eax,eax
-	xor	ebx,ebx
-@@:
-	call	tisetat
-	jc	toend
-	dec	ecx
-	jz	toend
-	inc	edi
-	inc	ebx
-	xor	al,[esi+ebx+2]
-	jz	find_arg1
-	sub	al,[edi+ebx-1]
-	jz	@B
-	call	tisetat
-	jmp	find_arg2
-
-clear_ECX:
-	inc	edi
-	call	tisetat
-	jc	toend
-	dec	ecx
-	jnz	clear_ECX
-	jmp	find_arg1
-
-toend:
-	;-------------------------
-	; timeit_end 9
-	;-------------------------
+	mov	eax,ebx ; return quote type
 	ret
 
-arg2_not_found:
-	dec	edi
-	mov	eax,edi
-	sub	eax,[ebp].st_bp
-	mov	ecx,[ebp].st_slen
-	sub	ecx,eax
-	jg	clear_ECX
-	jmp	toend
-
-	;--------------------------------------
-	; seek back to get offset of /* and */
-	;--------------------------------------
-
-find_token:
-	push	edi
-	push	ebx
-	push	edx
-
-	strlen( esi )
-	mov	ebx,eax
-	jz	end_find
-
-	mov	eax,[ebp].st_tinfo
-	mov	edi,[eax].S_TINFO.ti_flp
-	mov	edx,[eax].S_TINFO.ti_bp
-	mov	eax,edi
-	sub	eax,edx
-	jz	end_find
-	dec	edi
-
-token_loop:
-	movzx	eax,BYTE PTR [esi]
-	mov	ecx,edi
-	sub	ecx,edx
-	memrchr( edx, eax, ecx )
-	jz	end_find
-
-	mov	edi,eax
-	strncmp( esi, edi, ebx )
-	jnz	token_loop
-	;
-	; token found, now find start of line to make
-	; sure EDI is not indside " /* quotes */ "
-	;
-	mov	ecx,edi
-	sub	ecx,edx
-	memrchr( edx, 10, ecx )
-	lea	eax,[eax+1]
-	jnz	@F
-	mov	eax,edx
-@@:
-	strisquote( eax, edi )
-	jz	token_found
-	;
-	; ' is found but /* it's maybe a fake */
-	;
-	streol( edi )	; get end of line
-	cmp	eax,edi
-	je	token_found
-	sub	eax,edi
-	jz	end_find
-	memquote( edi, eax )
-	jnz	token_loop
-token_found:
-	mov	eax,edi
-	inc	ebx
-end_find:
-	pop	edx
-	pop	ebx
-	pop	edi
-	retn
-tidonested ENDP
-
-	;----------------------------------------------------------------------
-	; 8. W Word - match on all equal words
-	;----------------------------------------------------------------------
-
-tidoword PROC
-
-	;----------------------------
-	; timeit_start 8, "tidoword"
-	;----------------------------
-
-ifdef __SSE__
-
-	.data
-	ALIGN	4
-	tidoword_p dd _rtl_tidoword
-	  doword_p dd doword_386
-
-
-	.code
-
-	jmp	tidoword_p
-
-_rtl_tidoword:
-	mov	eax,tidoword_386
-	mov	ecx,doword_386
-	.if	sselevel & SSE_SSE2
-		mov	eax,tidoword_SSE2
-		mov	ecx,doword_SSE2
-	.endif
-	mov	tidoword_p,eax
-	mov	doword_p,ecx
-	jmp	eax
-
-	ALIGN	4
-
-tidoword_SSE2:
-
-	mov	eax,20202020h	; preset SIMD values
-	movd	xmm3,eax
-	pshufd	xmm3,xmm3,0
-	pxor	xmm4,xmm4
-
-	jmp	tidoword_386
-
-doword_SSE2:
-
-	;---------------------------
-	; strchr(edi, [esi])
-	;---------------------------
-	movzx	eax,BYTE PTR [esi]
-	or	eax,20h
-	imul	eax,eax,01010101h
-	movd	xmm2,eax
-	pshufd	xmm2,xmm2,0
-	push	edi
-	push	edx
-	mov	edx,edi
-SSECHR:
-	;---------------------------
-	; skip if already painted
-	;---------------------------
-	cmp	edx,[ebp].st_begin
-	jae	SSECHR_DONE
-	movdqu	xmm0,[edx]
-	movdqa	xmm1,xmm0
-	pcmpeqb xmm1,xmm4
-	pmovmskb ecx,xmm1
-	orps	xmm0,xmm3
-	pcmpeqb xmm0,xmm2
-	pmovmskb eax,xmm0
-	lea	edx,[edx+16]
-	or	ecx,eax
-	jz	SSECHR
-	;---------------------------
-	; char or zero found
-	;---------------------------
-	bsf	ecx,ecx
-	lea	edx,[edx+ecx-16]
-	cmp	BYTE PTR [edx],0
-	je	SSECHR_DONE
-	cmp	edx,[ebp].st_begin
-	jae	SSECHR_DONE
-	;---------------------------
-	; compare string
-	;---------------------------
-	mov	edi,edx
-	inc	edx
-	xor	ecx,ecx
-	lea	eax,[esi+1]
-  SSECHR_COMPARE:
-	xor	cl,[eax]
-	jz	SSECHR_FOUND
-	mov	ch,[edx]
-	or	cx,2020h
-	sub	cl,ch
-	jnz	SSECHR
-	inc	eax
-	inc	edx
-	jmp	SSECHR_COMPARE
-  SSECHR_FOUND:
-	mov	ecx,eax
-	mov	eax,edi
-	sub	ecx,esi
-	test	eax,eax
-	pop	edx
-	pop	edi
-	jmp	set_attrib
-
-  SSECHR_DONE:
-	pop	edx
-	pop	edi
-	jmp	get_next_word
-
-tidoword_386:
-
-endif
-	cmp	edx,[ebp].st_begin
-	jae	toend
-
-doword:
-	mov	edi,edx
-
-find_next_word:
-	cmp	edi,[ebp].st_begin
-	jae	get_next_word
-	cmp	edi,[ebp].st_bend
-	ja	get_next_word
-	cmp	BYTE PTR [edi],0
-	je	get_next_word
-ifdef __SSE__
-
-	jmp	doword_p
-
-doword_386:
-
-endif
-	strlen( esi )
-	push	eax
-	push	eax
-	strlen( edi )
-	pop	ecx
-	memstri( edi, eax, esi, ecx )
-	pop	ecx
-	jz	get_next_word
-	cmp	eax,[ebp].st_begin
-	jb	set_attrib
-
-get_next_word:
-	call	getnexttoken
-	jnz	doword
-toend:
-	;
-	; timeit_end 8
-	;
-	ret
-
-set_attrib:
-	;
-	; first char or !X in front
-	; end is !X or end of line
-	; X: UPPER | LOWER | DIGIT | '_'
-	;
-	cmp	eax,[ebp].st_bp
-	lea	edi,[eax+1]
-	je	@F
-	;
-	; then test char in front
-	;
-	movzx	eax,BYTE PTR [edi-2]
-	test	__ctype[eax+1],_UPPER or _LOWER or _DIGIT
-	jnz	find_next_word
-	cmp	al,'_'
-	je	find_next_word
-     @@:
-	;
-	; test last char + one
-	;
-	movzx	eax,BYTE PTR [edi+ecx-1]
-	test	__ctype[eax+1],_UPPER or _LOWER or _DIGIT
-	jnz	find_next_word
-	cmp	al,'_'
-	je	find_next_word
-     @@:
-	call	tisetat
-	jc	get_next_word
-	inc	edi
-	dec	ecx
-	jnz	@B
-	jmp	find_next_word
-tidoword ENDP
-
-	;----------------------------------------------------------------------
-	; 2. O Control - match on all control chars
-	;----------------------------------------------------------------------
-
-tidocontrol PROC
-	;
-	; timeit_start 2, "tidocontrol"
-	;
-	mov	edi,[ebp].st_boff
-	xor	eax,eax
-	.if	edi < [ebp].st_begin
-		.repeat
-			mov	al,[edi]
-			inc	edi
-			.break .if !al
-			.if	__ctype[eax+1] & _CONTROL
-				.if	al != 9
-					mov	ebx,[ebp].st_tinfo
-					.if	[ebx].S_TINFO.ti_flag & _T_SHOWTABS
-						call	tisetat
-						.break .if CARRY?
-					.endif
-				.endif
-			.endif
-		.until	edi >= [ebp].st_bend
-	.endif
-	;
-	; timeit_end 2
-	;
-	ret
-tidocontrol ENDP
-
-	;----------------------------------------------------------------------
-	; 6. S String - match on all equal strings if not inside quote
-	;----------------------------------------------------------------------
-
-tidostring PROC
-	;
-	; timeit_start 6, "tidostring"
-	;
-	.repeat
-		mov	edi,edx
-		.repeat
-			strstr( edi, esi )
-			.break .if ZERO?
-			lea	edi,[eax+1]
-			mov	ecx,esi
-			.while	edi < [ebp].st_begin
-				call	tisetat
-				.if	CARRY?
-					xor	eax,eax
-					.break
-				.endif
-				inc	edi
-				inc	ecx
-				.break .if BYTE PTR [ecx] < 1
-			.endw
-		.until	ZERO?
-		call	getnexttoken
-	.until	ZERO?
-	;
-	; timeit_end 6
-	;
-	ret
-tidostring ENDP
-
-	;----------------------------------------------------------------------
-	; 3. Q Quote - match on '"' and "'"
-	;----------------------------------------------------------------------
-
-tidoquote PROC
-	;
-	; timeit_start 3, "tidoquote"
-	;
-	mov	edi,edx
-	mov	eax,[ebp].st_slen
-doquote:
-	memquote( edi, eax )
-	jz	toend
-	lea	edi,[eax+1]
-	mov	bl,[eax]	; save quote in BL
-@@:
-	cmp	edi,[ebp].st_begin
-	ja	toend
-	call	tisetat
-	jc	toend
-	mov	al,[edi]
-	inc	edi
-	test	al,al
-	jz	done
-	cmp	al,bl
-	jne	@B
-	cmp	al,'"'		; case C string \"
-	jne	@F
-	cmp	BYTE PTR [edi-2],'\'
-	jne	@F
-	cmp	byte ptr [edi-3],'\'	; case "C:\\"
-	jne	@B
-@@:
-	call	tisetat
-	jc	toend
-	strlen( edi )
-	jnz	doquote
-toend:
-	;
-	; timeit_end 3
-	;
-	ret
-done:
-	call	tisetat
-	jmp	toend
-tidoquote ENDP
-
-	;----------------------------------------------------------------------
-	; 4. D Digit - match on 0x 0123456789ABCDEF and Xh
-	;----------------------------------------------------------------------
-
-tidonumber PROC
-	;
-	; timeit_start 4, "tidonumber"
-	;
-	mov	edi,[ebp].st_boff
-	xor	eax,eax
-donumber:
-	cmp	edi,[ebp].st_begin
-	jae	toend
-	mov	al,[edi]
-	inc	edi
-	test	al,al
-	jz	toend
-	test	__ctype[eax+1],_DIGIT
-	jnz	digit
-next:
-	cmp	edi,[ebp].st_bend
-	jb	donumber
-toend:
-	;
-	; timeit_end 4
-	;
-	ret
-digit:
-	lea	ecx,[edi-1]
-	cmp	ecx,[ebp].st_bp
-	je	@F
-	movzx	ecx,BYTE PTR [ecx-1]
-	cmp	ecx,'_'
-	je	next
-	test	ecx,ecx
-	jz	next
-	test	__ctype[ecx+1],_UPPER or _LOWER or _DIGIT
-	jnz	next
-@@:
-	mov	esi,edi
-	cmp	al,'0'
-	jne	@F
-	mov	al,[esi]
-	inc	esi
-	or	al,20h
-	cmp	al,'x'
-	je	@F
-	dec	esi
-@@:
-	mov	al,[esi]
-	inc	esi
-	test	al,al
-	jz	setat
-	test	__ctype[eax+1],_HEX
-	jnz	@B
-	or	al,20h
-	cmp	al,'u'		; 0x00000000UL
-	je	@B
-	cmp	al,'i'		; 0x8000000000000000i64
-	je	@B
-	cmp	al,'l'		; 0x00000000UL[L]
-	je	@B
-	inc	esi
-	cmp	al,'h'		; 80000000h
-	je	setat
-	dec	esi
-@@:
-	mov	al,[esi-1]
-	test	__ctype[eax+1],_UPPER or _LOWER
-	jnz	next
-setat:
-	sub	esi,edi
-@@:
-	call	tisetat
-	inc	edi
-	dec	esi
-	jnz	@B
-	jmp	next
-tidonumber ENDP
-
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-	ASSUME	ebp : NOTHING
-	OPTION	PROC: PUBLIC
+TIStyleIsQuote ENDP
 
 tistyle PROC USES esi edi ebx,
 	ti:		PTINFO,
 	line_id:	DWORD,
 	line_ptr:	LPSTR,
-	line_size:	DWORD,
+	line_size:	DWORD,	; length of line
 	out_buffer:	PTR WORD
 
-local	style:		S_STYLE
-	;
-	; timeit_start 1, "tistyle"
-	;
+local	buffer:		LPSTR,	; start of line
+	endbuf:		LPSTR,	; end of line
+	string:		LPSTR,
+	ccount:		UINT,	; length of visible line
+	coffset:	UINT,	; number of non-visible chars <= 8
+	attrib[2]:	BYTE,	; current attrib
+	ctype[2]:	BYTE,	; current type
+	quote1:		LPSTR,	; pointer to first quote
+	ctable[256]:	BYTE,	; LUT of char offset in line
+	xtable[256]:	BYTE	; inside "quotes"
+
+	timeit_start 1, "tistyle"
 
 	mov	esi,ti
-	mov	ebx,line_id
+	mov	edx,[esi].S_TINFO.ti_boff
 	mov	eax,line_ptr
+	add	eax,edx
+	mov	buffer,eax
 	mov	ecx,line_size
-	mov	edx,out_buffer
+	sub	ecx,edx
+	.if	ecx > [esi].S_TINFO.ti_cols
 
-	push	ebp
-	lea	ebp,style
-
-	mov	[ebp].S_STYLE.st_line,ebx	; line id
-	mov	[ebp].S_STYLE.st_bp,eax		; pointer to line
-	mov	[ebp].S_STYLE.st_wbuf,edx	; output buffer *WORD
-	mov	[ebp].S_STYLE.st_slen,ecx	; length of line
-	mov	[ebp].S_STYLE.st_tinfo,esi
-
-	add	eax,[esi].S_TINFO.ti_boff	; start of line
-	mov	[ebp].S_STYLE.st_boff,eax
-	mov	edx,eax
+		mov ecx,[esi].S_TINFO.ti_cols
+	.endif
+	mov	ccount,ecx
 	add	eax,ecx
-	add	edx,TIMAXSCRLINE
+	mov	endbuf,eax
 
-	.if	eax >= edx
-		mov	eax,edx
-		dec	eax
+	xor	eax,eax
+	mov	ecx,256*2
+	lea	edi,xtable
+	rep	stosb
+
+	.if	edx
+
+		mov	ecx,8
 	.endif
 
-	mov	[ebp].S_STYLE.st_bend,eax	; end of line
-	mov	[ebp].S_STYLE.st_begin,eax
+	.if	edx >= 8
 
-	mov	esi,[esi].S_TINFO.ti_style	; ESI style
+		mov	edx,8
+	.endif
+	mov	coffset,edx
 
-	.if	esi
+	mov	ecx,ccount	; offset of last char + 1
+	add	ecx,edx		; + <= 8 byte overlap
+	mov	ebx,buffer
+	sub	ebx,edx
+	mov	edi,endbuf
+	.while	edi > ebx
+
+		dec	edi
+		mov	al,[edi]
+		mov	ctable[TOUPPER(eax)],cl
+		mov	ctable[TOLOWER(eax)],cl
+		dec	ecx
+	.endw
+
+	mov	quote1,memquote( line_ptr, line_size )
+
+	.if	eax
+
+		mov	edi,eax
+		mov	bl,[edi] ; save quote in BL
+
+		.while	edi < endbuf
+
+			movzx	eax,BYTE PTR [edi]
+			add	edi,1
+			.break .if !eax
+
+			.if	edi > buffer
+
+				mov	ecx,edi
+				sub	ecx,buffer
+				or	xtable[ecx-1],1
+			.endif
+
+			.if	[edi] == bl
+				;
+				; case C string \"
+				;
+				.if	bl == '"' && BYTE PTR [edi-2] == '\'
+					;
+					; case "C:\\"
+					;
+					.continue .if BYTE PTR [edi-3] != '\'
+				.endif
+				inc	edi
+				.if	edi > buffer
+
+					mov	ecx,edi
+					sub	ecx,buffer
+					or	xtable[ecx-1],1
+				.endif
+				mov	ecx,line_size
+				add	ecx,line_ptr
+				sub	ecx,edi
+				.break .if !memquote( edi, ecx )
+				mov	bl,[eax]
+				mov	edi,eax
+			.endif
+		.endw
+	.endif
+
+	.repeat
+
+		mov	esi,[esi].S_TINFO.ti_style
+
+		.break .if !esi
+		.break .if !ccount
 
 		.while	1
 
-			xor	eax,eax
-			lodsw
-			mov	[ebp].S_STYLE.st_attr,ah
-			mov	[ebp].S_STYLE.st_type,al
+			movzx	eax,BYTE PTR [esi]
+			movzx	ebx,BYTE PTR [esi+1]
+			add	esi,2
 
-			.break .if !al
+			mov	ctype,al
+			mov	attrib,bl
 
-			mov	ah,0
-			dec	eax
-			.break .if al >= ST_COUNT
+			.break .if !eax
+			.break .if eax > ST_COUNT
 
-			mov	[ebp].S_STYLE.st_string,esi
-			mov	edx,[ebp].S_STYLE.st_bp
-			push	esi
-			call	format_label[eax*4]
-			pop	esi
+			mov	string,esi
+			mov	edx,endbuf
+			.break	.if edx <= buffer
 
+			.switch al
+			  .case ST_ATTRIB
+				;-----------------------------------------------
+				; 1. A Attrib	<at> [<char>]
+				;-----------------------------------------------
+				mov	edx,ti
+				mov	BYTE PTR [edx+1].S_TINFO.ti_stat,bl
+				mov	al,[esi]
+				.if	al
+
+					mov BYTE PTR [edx].S_TINFO.ti_stat,al
+				.endif
+				.endc
+
+			  .case ST_CONTROL
+				;-----------------------------------------------
+				; 2. O Control - match on all control chars
+				;-----------------------------------------------
+				timeit_start 2, "docontrol"
+
+				mov	eax,ti
+				.endc	.if !([eax].S_TINFO.ti_flag & _T_SHOWTABS)
+
+				mov	edi,buffer
+				.while	edi < endbuf
+
+					movzx	eax,BYTE PTR [edi]
+					add	edi,1
+
+					.endc	.if !eax
+					.if	eax != 9 && \
+						__ctype[eax+1] & _CONTROL
+
+						lea	eax,[edi-1]
+						sub	eax,buffer
+						add	eax,eax
+						add	eax,out_buffer
+						mov	[eax+1],bl
+					.endif
+				.endw
+
+				timeit_end 2
+				.endc
+
+			  .case ST_QUOTE
+				;-----------------------------------------------
+				; 3. Q Quote - match on '"' and "'"
+				;-----------------------------------------------
+				timeit_start 3, "doquote"
+
+				mov	ecx,ccount
+				mov	edx,out_buffer
+				xor	eax,eax
+				mov	edi,buffer
+
+				.repeat
+					.break .if edi >= endbuf
+					.if	xtable[eax] & _X_QUOTE
+
+						.if	!(xtable[eax] & _X_COMMENT)
+
+							mov [edx+eax*2][1],bl
+						.endif
+					.endif
+					add	eax,1
+					add	edi,1
+				.untilcxz
+
+				timeit_end 3
+				.endc
+
+			  .case ST_NUMBER
+				;-------------------------------------------------
+				; 4. D Digit - match on 0x 0123456789ABCDEF and Xh
+				;-------------------------------------------------
+
+				timeit_start 4, "donumber"
+
+				mov	edi,buffer
+				.while	edi < endbuf
+
+					movzx	eax,BYTE PTR [edi]
+					add	edi,1
+
+					.endc	.if !eax
+
+					.if	__ctype[eax+1] & _DIGIT
+
+						lea	edx,[edi-1]
+						.if	edx > line_ptr
+
+							movzx	ecx,BYTE PTR [edx-1]
+
+							.continue .if !ecx
+							.continue .if ecx == '_'
+							.continue .if ISCHAR(ecx)
+						.endif
+						mov	esi,edi
+						.if	al == '0'
+
+							mov	cl,[esi]
+							or	cl,0x20
+							.if	cl == 'x'
+
+								inc	esi
+							.endif
+						.endif
+						xor	ecx,ecx
+						.while	1
+							lodsb
+							.break	  .if !eax
+							.continue .if __ctype[eax+1] & _HEX
+							or	al,0x20
+							.continue .if al == 'u' ; ..UL
+							.continue .if al == 'i' ; ..I64
+							.continue .if al == 'l' ; ..UL[L]
+							inc	esi
+							.break .if al == 'h'	; ..H
+							dec	esi
+							mov	al,[esi-1]
+							.break .if !(__ctype[eax+1] & _UPPER or _LOWER)
+							inc	ecx
+							.break
+						.endw
+						.continue .if ecx
+
+						sub	esi,edi
+						.while	esi
+
+							lea	eax,[edi-1]
+							.break .if eax >= endbuf
+							.if	eax >= buffer
+								sub	eax,buffer
+								.if	!xtable[eax]
+									add	eax,eax
+									add	eax,out_buffer
+									mov	[eax+1],bl
+								.endif
+							.endif
+							inc	edi
+							dec	esi
+						.endw
+					.endif
+				.endw
+
+				timeit_end 4
+				.endc
+
+			  .case ST_CHAR
+				;-----------------------------------------------
+				; 5. C Char	<at> <chars>
+				;-----------------------------------------------
+
+				timeit_start 5, "dochar"
+
+				.while	1
+					movzx	eax,BYTE PTR [esi]
+					add	esi,1
+
+					.break	.if !eax
+
+					.if	ctable[eax]
+
+						mov	ecx,ccount
+						mov	edi,buffer
+						movzx	edx,ctable[eax]
+						sub	edx,coffset
+						add	edi,edx
+						sub	ecx,edx
+						.endcs
+
+						.while	edi <= endbuf
+
+							lea	edx,[edi-1]
+							.if	edx >= buffer
+								sub	edx,buffer
+								.if	!xtable[edx]
+
+									add	edx,edx
+									add	edx,out_buffer
+									mov	[edx+1],bl
+								.endif
+							.endif
+							repnz	scasb
+							.breaknz
+						.endw
+					.endif
+				.endw
+
+				timeit_end 5
+				.endc
+
+			  .case ST_STRING
+				;-------------------------------------------------------------
+				; 6. S String - match on all equal strings if not inside quote
+				;-------------------------------------------------------------
+
+				timeit_start 6, "dostring"
+
+				.while	BYTE PTR [esi]
+
+					mov	edi,line_ptr
+					.while	strstr( edi, esi )
+
+						lea	edi,[eax+1]
+						.if	eax >= buffer
+
+							mov	edx,esi
+							mov	ecx,eax
+							sub	eax,buffer
+							add	eax,eax
+							add	eax,out_buffer
+							inc	eax
+
+							.while	ecx < endbuf && \
+								BYTE PTR [edx]
+
+								mov	[eax],bl
+								add	edx,1
+								add	ecx,1
+								add	eax,2
+							.endw
+						.endif
+					.endw
+					.repeat
+						lodsb
+						test	al,al
+					.untilz
+				.endw
+
+				timeit_end 6
+				.endc
+
+			  .case ST_START
+				;-----------------------------------------------
+				; 7. B Begin - XX string
+				;    set color XX from string to end of line
+				;-----------------------------------------------
+
+				timeit_start 7, "dostart"
+
+				.while	BYTE PTR [esi]
+
+					mov	eax,endbuf
+					.break	.if eax <= buffer
+					sub	eax,buffer
+					.if	eax < 256 && xtable[eax-1] & _X_COMMENT; or _X_BEGIN
+
+						dec	endbuf
+						.cont0
+					.endif
+
+					.repeat
+						movzx	edx,BYTE PTR [esi]
+						movzx	eax,ctable[edx]
+						.break .if !eax
+
+						mov	edi,buffer
+						sub	eax,coffset
+						add	edi,eax
+
+						lea	eax,[edi-1]
+						.if	eax >= endbuf
+
+							mov	eax,endbuf
+							dec	eax
+						.endif
+						.if	eax < buffer
+
+							mov	eax,buffer
+						.endif
+						sub	eax,buffer
+						and	eax,0xFF
+						.break .if xtable[eax] & _X_QUOTE && edx != "'"
+
+						mov	bh,__ctype[edx+1]
+						and	bh,_UPPER or _LOWER
+
+						lea	eax,[edi-1]
+						.if	eax > line_ptr && bh
+
+							movzx	eax,BYTE PTR [eax-1]
+							.break .if !(__ctype[eax+1] & _SPACE)
+						.endif
+
+						.while	1
+
+							mov	edx,esi
+							lea	ecx,[edi-1]
+							.repeat
+								add	edx,1
+								add	ecx,1
+								mov	al,[edx]
+								.break .if !al
+								.cont0 .if al == [ecx]
+								mov	ah,[ecx]
+								or	eax,0x2020
+								.cont0 .if al == ah
+							.until	1
+
+							.repeat
+								.break .if al
+
+								.if	bh
+
+									movzx	eax,BYTE PTR [ecx]
+									.break .if eax == '_'
+									.break .if __ctype[eax+1] & _UPPER or _LOWER
+								.endif
+
+								mov	al,bl
+								and	al,0x0F
+								.if	al == 8
+									mov	bh,_X_COMMENT
+								.else
+									mov	bh,_X_BEGIN
+								.endif
+
+								lea	eax,[edi-1]
+								mov	ecx,endbuf
+								mov	edx,eax
+								.if	eax < buffer
+
+									mov	eax,buffer
+								.endif
+								mov	endbuf,eax
+								sub	edx,buffer
+
+								.while	edi <= ecx
+
+									.if	edi >= buffer && \
+										edx < 256
+
+										.if	!(xtable[edx] & _X_COMMENT)
+
+											lea	eax,[edx*2]
+											add	eax,out_buffer
+											mov	[eax+1],bl
+										.endif
+										or	xtable[edx],bh
+									.endif
+									add	edi,1
+									add	edx,1
+								.endw
+
+							.until	1
+
+							.break .if edi > endbuf
+							;
+							; continue search
+							;
+							mov	al,[esi]
+							mov	cl,TOUPPER(al)
+							mov	ch,TOLOWER(al)
+							xor	edx,edx
+							.while	edi < endbuf
+
+								mov	al,[edi]
+								add	edi,1
+								inc	edx
+								.break .if al == cl
+								.break .if al == ch
+								dec	edx
+							.endw
+							.break .if !edx
+						.endw
+					.until	1
+					.repeat
+						lodsb
+						test	al,al
+					.untilz
+				.endw
+
+				timeit_end 7
+				.endc
+
+			  .case ST_WORD
+				;-----------------------------------------------
+				; 8. W Word - match on all equal words
+				;-----------------------------------------------
+
+				timeit_start 8, "doword"
+
+				.while	BYTE PTR [esi]
+
+					mov	eax,endbuf
+					.break	.if eax <= buffer
+					sub	eax,buffer
+					.if	xtable[eax-1] ;& _X_COMMENT or _X_BEGIN
+
+						dec	endbuf
+						.cont0
+					.endif
+
+					.repeat
+						movzx	eax,BYTE PTR [esi]
+						.break .if !ctable[eax]
+
+						mov	edi,buffer
+						movzx	edx,ctable[eax]
+						sub	edx,coffset
+						add	edi,edx
+
+						.while	1
+
+							mov	edx,esi
+							lea	ecx,[edi-1]
+							.repeat
+								add	edx,1
+								add	ecx,1
+								mov	al,[edx]
+								.break .if !al
+								.cont0 .if al == [ecx]
+								mov	ah,[ecx]
+								or	eax,0x2020
+								.cont0 .if al == ah
+							.until	1
+
+							.repeat
+								.break .if al
+
+								lea	edx,[edi-1]
+								.if	edx >= buffer
+
+									mov	eax,edx
+									sub	eax,buffer
+									and	eax,0xFF
+									.break .if xtable[eax] & _X_QUOTE
+								.endif
+								.if	edx > line_ptr
+
+									movzx	eax,BYTE PTR [edx-1]
+									.break .if eax == '_'
+									.break .if ISCHAR(eax)
+								.endif
+
+								movzx	eax,BYTE PTR [ecx]
+								.break .if al == '_'
+								.break .if ISCHAR(eax)
+
+								sub	ecx,edi
+								lea	eax,[edi-1]
+								sub	eax,buffer
+								mov	edx,eax
+								add	eax,eax
+								add	eax,out_buffer
+								inc	eax
+								inc	ecx
+
+								.repeat
+									.break .if edi > endbuf
+
+									.if	edi >= buffer
+
+										.if	!xtable[edx]
+											;!(xtable[edx] & _X_COMMENT or _X_QUOTE)
+
+											mov	[eax],bl
+										.endif
+									.endif
+
+									add	eax,2
+									add	edi,1
+									add	edx,1
+								.untilcxz
+
+							.until	1
+
+							.break .if edi > endbuf
+							;
+							; continue search
+							;
+							mov	al,[esi]
+							mov	cl,TOUPPER(al)
+							mov	ch,TOLOWER(al)
+							xor	edx,edx
+							.while	edi < endbuf
+
+								mov	al,[edi]
+								add	edi,1
+								inc	edx
+								.break .if al == cl
+								.break .if al == ch
+								dec	edx
+							.endw
+							.break .if !edx
+						.endw
+					.until	1
+					.repeat
+						lodsb
+						test	al,al
+					.untilz
+				.endw
+
+				timeit_end 8
+				.endc
+
+			  .case ST_NESTED
+				;-----------------------------------------------
+				; 9. N Nested -- /* */
+				;-----------------------------------------------
+
+				timeit_start 9, "donested"
+
+
+				mov	edi,line_ptr	; find start condition
+				mov	eax,line_id
+				xor	ebx,ebx
+
+				.if	eax		; first line ?
+					;
+					; seek back to last first arg (/*)
+					;
+					.if	find_token()
+
+						mov	ebx,eax ; EBX first arg
+						.repeat		; ESI to next token
+							lodsb
+							test	al,al
+						.untilz
+						movzx	eax,BYTE PTR [esi]
+						;
+						; start, no end - ok
+						;
+						.if	eax
+							;
+							; find end */
+							;
+							.if	find_token() > ebx
+
+								xor	eax,eax
+							.else
+								inc	eax
+							.endif
+						.else
+							inc	eax
+						.endif
+					.endif
+				.endif
+
+				.if	eax
+					inc	edi
+					mov	ecx,line_size
+					call	find_arg2
+				.else
+					call	find_arg1
+				.endif
+
+				timeit_end 9
+				.endc
+
+			.endsw
+
+			mov	esi,string
 			.repeat
 				lodsb
 				.continue .if al
 				lodsb
 			.until	!al
 		.endw
-	.endif
-	pop	ebp
-	;
-	; timeit_end 1
-	;
+	.until	1
+
+	timeit_end 1
 	ret
+
+	;--------------------------------------
+	; seek back to get offset of /* and */
+	;--------------------------------------
+
+find_token:
+
+	push	edi
+	push	ebx
+	push	edx
+
+	.repeat
+		mov	ebx,strlen(esi)
+		.breakz
+
+		mov	eax,ti
+		mov	edi,[eax].S_TINFO.ti_flp
+		mov	edx,[eax].S_TINFO.ti_bp
+		mov	eax,edi
+		sub	eax,edx
+		.breakz
+		dec	edi
+
+		.while	1
+
+			movzx	eax,BYTE PTR [esi]
+			mov	ecx,edi
+			sub	ecx,edx
+			.break .if !memrchr(edx, eax, ecx)
+
+			mov	edi,eax
+			.continue .if strncmp(esi, edi, ebx)
+			;
+			; token found, now find start of line to make
+			; sure EDI is not indside " /* quotes */ "
+			;
+			mov	ecx,edi
+			sub	ecx,edx
+			memrchr(edx, 10, ecx)
+			lea	eax,[eax+1]
+			.ifz
+				mov eax,edx
+			.endif
+			;mov	edx,edi
+			.if	TIStyleIsQuote(edx, edi);strisquote()
+				;
+				; ' is found but /* it's maybe a fake */
+				;
+				.if	streol(edi) != edi ; get end of line
+
+					sub	eax,edi
+					.breakz
+
+					.continue .if memquote(edi, eax)
+				.endif
+			.endif
+			mov	eax,edi
+			.break
+		.endw
+	.until	1
+	pop	edx
+	pop	ebx
+	pop	edi
+	retn
+
+set_attrib:
+
+	.if	edi > buffer
+
+		.if	edi > endbuf
+
+			pop	eax
+			xor	eax,eax
+			retn
+		.endif
+
+		push	ecx
+		push	eax
+		lea	eax,[edi-1]	; = offset in text line
+		sub	eax,buffer
+		or	xtable[eax],_X_COMMENT
+		add	eax,eax
+		add	eax,out_buffer	; = offset in screen line (*int)
+		mov	cl,attrib
+		mov	[eax+1],cl	; set attrib for this char
+		pop	eax
+		pop	ecx
+	.endif
+	retn
+
+clear_loop:
+	.repeat
+
+		inc	edi
+		set_attrib()
+	.untilcxz
+
+find_arg1:
+	.repeat
+
+		mov	esi,string
+		mov	ecx,line_size
+		mov	eax,edi
+		sub	eax,line_ptr
+		sub	ecx,eax
+		.ifng
+			retn
+		.endif
+		mov	al,[esi]
+		repnz	scasb
+		.ifnz
+			retn
+		.endif
+		inc	esi
+		xor	eax,eax
+		xor	ebx,ebx
+
+		.while	1
+			inc	ebx
+			xor	al,[esi+ebx-1]
+			.breakz
+			sub	al,[edi+ebx-1]
+
+			.cont01 .ifnz
+		.endw
+
+		.cont0 .if TIStyleIsQuote(line_ptr, edi)
+
+		.repeat
+			set_attrib()
+			add	edi,1
+			mov	al,[esi]
+			add	esi,1
+			.break1 .if !al
+		.untilcxz
+
+		set_attrib()
+
+	.until	1
+
+find_arg2:
+
+	.while	ecx
+
+		mov	ax,[esi]
+		test	al,al
+		jz	clear_loop
+
+		.repeat
+			set_attrib()
+			sub	ecx,1
+			.break1 .ifz
+
+			add	edi,1
+			.continue .if al != [edi-2]
+			.cont1	  .if !ah
+		.until	ah == [edi-1]
+
+		.continue .if TIStyleIsQuote(line_ptr, edi)
+
+		xor	eax,eax
+		xor	ebx,ebx
+		.repeat
+			set_attrib()
+			sub	ecx,1
+			.break1 .ifz
+			add	edi,1
+			add	ebx,1
+			xor	al,[esi+ebx+2]
+			jz	find_arg1
+			sub	al,[edi+ebx-1]
+		.untilnz
+
+		set_attrib()
+	.endw
+	retn
+
 tistyle ENDP
 
 	END

@@ -107,7 +107,8 @@ local	cursor:		S_CURSOR,
 		mov	index,ebx
 		mov	result,ebx
 
-		search_count()
+		strcat( addr section, "?" )
+		PushEvent( KEY_BKSP )
 
 		.while	1
 
@@ -222,14 +223,15 @@ local	cursor:		S_CURSOR,
 			  .case KEY_ENTER
 			  .case KEY_KPENTER
 
-				mov	ecx,cur_x
-				sub	ecx,dlg_x
 				mov	edx,name_table
 				mov	ebx,index
+if 0
+				mov	ecx,cur_x
+				sub	ecx,dlg_x
 				mov	esi,[edx+ebx*4]
 				lea	edi,section
 
-				.if	!ZERO?
+				.ifnz
 IFDEF _CMPCASE
 					repz	cmpsb
 ELSE
@@ -245,7 +247,7 @@ ELSE
 ENDIF
 					jnz	event_loop
 				.endif
-
+endif
 				mov	eax,[edx+ebx*4]
 				mov	result,eax
 				.break

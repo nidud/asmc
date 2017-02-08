@@ -5,11 +5,10 @@ include string.inc
 
 	.code
 
-CFAddEntry PROC USES esi edi ebx __ini:PCFINI, __string:LPSTR
-
+CFAddEntry PROC USES esi edi ebx cf:PCFINI, string:LPSTR
 
 	xor	edi,edi
-	mov	esi,__string
+	mov	esi,string
 
 	movzx	eax,byte ptr [esi]
 	.while	__ctype[eax+1] & _SPACE
@@ -18,84 +17,86 @@ CFAddEntry PROC USES esi edi ebx __ini:PCFINI, __string:LPSTR
 		mov	al,[esi]
 	.endw
 
-	.if	al == ';'
+	.repeat
 
-		.if	__CFAlloc()
+		.if	al == ';'
+
+			.break .if !__CFAlloc()
 
 			mov	edi,eax
 			strtrim(esi)
 			mov	[edi].S_CFINI.cf_flag,_CFCOMMENT
 			mov	[edi].S_CFINI.cf_name,salloc(esi)
-		.endif
+			mov	eax,edi
 
-	.elseif strchr(esi, '=')
+		.elseif strchr(esi, '=')
 
-		mov	byte ptr [eax],0
-		lea	edi,[eax+1]
+			mov	byte ptr [eax],0
+			lea	edi,[eax+1]
 
-		movzx	eax,byte ptr [edi]
-		.while	__ctype[eax+1] & _SPACE
+			movzx	eax,byte ptr [edi]
+			.while	__ctype[eax+1] & _SPACE
 
-			add	edi,1
-			mov	al,[edi]
-		.endw
-
-		.if	strtrim(esi)
-
-			mov	ebx,eax
-			.if	strtrim(edi)
-
-				lea	ebx,[ebx+eax+2]
-				.if	CFGetEntry( __ini, esi )
-
-					free( [eax].S_CFINI.cf_name )
-				.else
-
-					__CFAlloc()
-				.endif
-
-				.if	eax
-
-					xchg	ebx,eax
-					.if	malloc( eax )
-
-						mov	[ebx].S_CFINI.cf_name,eax
-						strcat( strcat( strcpy( eax, esi ), "=" ), edi )
-						strchr( eax, '=' )
-						mov	byte ptr [eax],0
-						inc	eax
-						mov	[ebx].S_CFINI.cf_info,eax
-
-						mov	eax,ebx
-						test	[ebx].S_CFINI.cf_flag,_CFENTRY
-						jnz	toend
-
-						mov	edi,ebx
-						mov	[ebx].S_CFINI.cf_flag,_CFENTRY
-					.endif
-				.endif
-			.endif
-		.endif
-	.endif
-
-	.if	eax
-
-		mov	eax,edi
-		mov	ebx,__ini
-		mov	edx,[ebx].S_CFINI.cf_info
-		.if	edx
-
-			.while	[edx].S_CFINI.cf_next
-
-				mov	edx,[edx].S_CFINI.cf_next
+				add	edi,1
+				mov	al,[edi]
 			.endw
-			mov	[edx].S_CFINI.cf_next,eax
+
+			.break .if !strtrim(esi)
+			mov	ebx,eax
+			.break .if !strtrim(edi)
+			lea	ebx,[ebx+eax+2]
+
+			.if	CFGetEntry( cf, esi )
+
+				mov	eax,[ecx].S_CFINI.cf_next
+				.if	!edx
+
+					mov	edx,cf
+					mov	[edx].S_CFINI.cf_info,eax
+				.else
+					mov	[edx].S_CFINI.cf_next,eax
+				.endif
+				mov	eax,ecx
+				free  ( [ecx].S_CFINI.cf_name )
+				free  ( eax )
+			.endif
+
+			.break .if !__CFAlloc()
+
+			xchg	ebx,eax
+			.break .if !malloc( eax )
+
+			mov	[ebx].S_CFINI.cf_name,eax
+			strcat( strcat( strcpy( eax, esi ), "=" ), edi )
+			strchr( eax, '=' )
+			mov	byte ptr [eax],0
+			inc	eax
+			mov	[ebx].S_CFINI.cf_info,eax
+
+			mov	eax,ebx
+			mov	[eax].S_CFINI.cf_flag,_CFENTRY
+		.endif
+
+		mov	edx,cf
+		mov	ecx,[edx].S_CFINI.cf_info
+if 0
+		mov	[eax].S_CFINI.cf_next,ecx
+		mov	[edx].S_CFINI.cf_info,eax
+else
+		.if	ecx
+
+			.while	[ecx].S_CFINI.cf_next
+
+				mov	ecx,[ecx].S_CFINI.cf_next
+			.endw
+			mov	[ecx].S_CFINI.cf_next,eax
 		.else
 
-			mov	[ebx].S_CFINI.cf_info,eax
+			mov	[edx].S_CFINI.cf_info,eax
 		.endif
-	.endif
-toend:
+endif
+	.until	1
+
 	ret
 
 CFAddEntry ENDP

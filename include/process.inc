@@ -35,6 +35,9 @@ IFDEF __PE__
 option	dllimport:<kernel32>
 ENDIF
 
+NORMAL_PRIORITY_CLASS	equ 20h
+HIGH_PRIORITY_CLASS	equ 80h
+
 INFINITE		equ -1
 STARTF_USESHOWWINDOW	equ 001h
 STARTF_USESTDHANDLES	equ 100h
@@ -118,14 +121,14 @@ GetStartupInfoA proto _CType \
 GetStartupInfoW proto _CType :LPSTARTUPINFO
 ; BOOL
 CreateProcessA proto _CType \
-	lpApplicationName:	LPSTR,; pointer to name of executable module
-	lpCommandLine:		LPSTR, ; pointer to command line string
+	lpApplicationName:	LPSTR,	; pointer to name of executable module
+	lpCommandLine:		LPSTR,	; pointer to command line string
 	lpProcessAttributes:	LPSECURITY_ATTRIBUTES,
 	lpThreadAttributes:	LPSECURITY_ATTRIBUTES,
 	bInheritHandles:	DWORD,	; (BOOL) handle inheritance flag
 	dwCreationFlags:	DWORD,	; creation flags
-	lpEnvironment:		PVOID, ; pointer to new environment block
-	lpCurrentDirectory:	LPSTR,; pointer to current directory name
+	lpEnvironment:		PVOID,	; pointer to new environment block
+	lpCurrentDirectory:	LPSTR,	; pointer to current directory name
 	lpStartupInfo:		LPSTARTUPINFO,
 	lpProcessInformation:	LPPROCESS_INFORMATION
 CreateProcessW proto _CType :PTR, :PTR, :PTR, :PTR, :DWORD, :DWORD, :PTR, :PTR, : PTR, :PTR
@@ -138,6 +141,17 @@ ShellExecuteA proto _CType \
 	lpDirectory:	LPSTR,
 	nShowCmd:	DWORD
 ShellExecuteW proto _CType :HANDLE, :LPSTR, :LPSTR, :LPSTR, :LPSTR, :DWORD
+
+; BOOL
+SetPriorityClass proto _CType \
+	hProcess:	HANDLE, ; handle to the process
+	dwPriorityClass:DWORD	; priority class value
+; BOOL
+QueryPerformanceFrequency proto _CType \
+	lpFrequency:	PVOID	; LARGE_INTEGER * address of current frequency
+; BOOL
+QueryPerformanceCounter proto _CType \
+	lpPerformanceCount:PVOID; LARGE_INTEGER * pointer to counter value
 
 IFDEF _UNICODE
  GetStartupInfo		equ <GetStartupInfoW>

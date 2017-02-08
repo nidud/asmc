@@ -11,7 +11,7 @@ include time.inc
 DOSZIP_VERSION	equ 0348h
 DOSZIP_MINVERS	equ 0342h
 DOSZIP_VSTRING	equ <"3.48">
-DOSZIP_VSTRPRE	equ <" Pre-1">
+DOSZIP_VSTRPRE	equ <" Pre-2">
 
 MAXHISTORY	equ 32
 MAXDOSKEYS	equ 64
@@ -63,7 +63,7 @@ _C_CONFEXIT	equ 00400000h
 _C_ZINCSUBDIR	equ 00800000h
 _C_VISUALUPDATE equ 01000000h
 _C_PANELEDIT	equ 02000000h
-_C_DEFAULT	equ 017F74A4h
+_C_DEFAULT	equ 017F70A4h
 
 _MKL_APPEND	equ 0001h	; add to list or create new
 _MKL_UNIX	equ 0002h	; convert to unix
@@ -291,9 +291,9 @@ warcview		PROTO :DWORD, :DWORD
 warcdelete		PROTO :DWORD, :DWORD
 
 setconfirmflag		PROTO
-getcfgfile		PROTO
 config_read		PROTO
 config_save		PROTO
+config_open		PROTO
 
 historyread		PROTO
 historywrite		PROTO

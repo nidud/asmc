@@ -103,14 +103,18 @@ doszip_init PROC USES esi edi ebx argv
 	mov	__outpath,eax
 	add	eax,WMAXPATH
 	mov	entryname,eax	; archive->name
+
 	wsopen( addr path_a )	; panels
 	wsopen( addr path_b )
+
 	mov	edi,_pgmpath	; %DZ%
 	SetEnvironmentVariable( "DZ", edi )
+
 	mov	bl,[edi+2]
 	mov	BYTE PTR [edi+2],0
 	SetEnvironmentVariable( "DZDRIVE", edi )
 	mov	[edi+2],bl
+
 	mov	ebx,edi
 	;
 	; Create and read the DZ.INI file
@@ -347,9 +351,9 @@ doszip_open PROC USES esi edi ebx
 
 		CursorOn()
 	.endif
-	call	panel_open_ab
 
-	topenh( ".open_files" )
+	panel_open_ab()
+	config_open()
 	ret
 
 doszip_open ENDP

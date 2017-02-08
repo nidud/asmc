@@ -20,7 +20,6 @@ local	i_fh, i_bp, i_i, i_c, o_bp, o_i, o_c
 		mov	i_c,eax
 		mov	o_i,eax
 		mov	o_c,eax
-
 		.if	eax == __ini
 
 			mov	__ini,__CFAlloc()

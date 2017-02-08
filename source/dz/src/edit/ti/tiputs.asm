@@ -74,7 +74,7 @@ tiputl PROC PRIVATE USES esi edi ebx wc, line, ti:PTR S_TINFO
 
 				.if	BYTE PTR [eax]
 
-					tistyle( edx, line, eax, llen, wc )
+					tistyle(edx, line, eax, llen, wc)
 				.endif
 			.endif
 		.endif

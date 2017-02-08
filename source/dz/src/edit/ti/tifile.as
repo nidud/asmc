@@ -287,25 +287,24 @@ ID_TYPE		equ 0
 ID_ATTRIB	equ 1
 
 ST_ATTRIB	equ 1	; attrib	<at> [<char>]
-ST_CONTROL	equ 2	; control	<at>
-ST_QUOTE	equ 3	; quote		<at>
-ST_NUMBER	equ 4	; number	<at>
-ST_CHAR		equ 5	; char		<at> <chars>
-ST_STRING	equ 6	; string	<at> <string>
-ST_START	equ 7	; start		<at> <string>
-ST_WORD		equ 8	; word		<at> <words> ...
-ST_NESTED	equ 9	; nested	<at> <string1> <string2>
-ST_COUNT	equ 9
+ST_CHAR		equ 2	; char		<at> <chars>
+ST_WORD		equ 3	; word		<at> <words> ...
+ST_START	equ 4	; start		<at> <string>
+ST_NESTED	equ 5	; nested	<at> <string1> <string2>
+ST_CONTROL	equ 6	; control	<at>
+;ST_STRING	equ 7	; string	<at> <string>
+ST_QUOTE	equ 8	; quote		<at>
+ST_NUMBER	equ 9	; number	<at>
+ST_COUNT	equ ST_NUMBER
 
 	.data
 	cp_typech db "aoqdcsbwn",0
-
 
 	.code
 
 	option	proc:private
 
-TIReadLabel PROC USES esi edi ebx section, buffer, endbuf, attrib
+tireadlabel PROC USES esi edi ebx section, buffer, endbuf, attrib
 
 local	st_type,i,p,q
 
@@ -430,7 +429,7 @@ local	st_type,i,p,q
 	.until	1
 	ret
 
-TIReadLabel ENDP
+tireadlabel ENDP
 
 TIDoSection PROC USES esi edi ebx cfile, sname, buffer, endbuf, attrib
 
@@ -438,67 +437,7 @@ local	file[_MAX_PATH]:  SBYTE,
 	entry[_MAX_PATH]: SBYTE,
 	section, index
 
-	mov	esi,sname
-	lea	edi,entry
-
-	.if	BYTE PTR [esi] == '['
-		;
-		; [Section]	  - this file
-		; [#File]	  - extern file [.]
-		; [#File#Section] - extern file [<Section>]
-		;
-		inc	esi
-		mov	ebx,edi
-		;
-		; copy <Section>
-		;
-		.repeat
-			lodsb
-			stosb
-			.break .if !al
-		.until	al == ']'
-		mov	BYTE PTR [edi-1],0
-		;
-		; do a recursive call
-		;
-		.if	BYTE PTR [ebx] == '#'
-
-			inc	ebx
-			mov	eax,[ebx]
-			.switch
-			  .case ah == ':'
-			  .case al == '%'
-			  .case al == '\'
-			  .case al == '/'
-			  .case ax == '..'
-				strcpy( addr file, ebx )
-				.endc
-			  .default
-				strfcat( addr file, _pgmpath, ebx )
-			.endsw
-
-			mov	esi,eax
-			mov	edi,@CStr( "." )
-
-			.if	strchr( expenviron( eax ), '#' )
-
-				mov	BYTE PTR [eax],0
-				lea	edi,[eax+1]
-			.endif
-
-			.if	__CFRead( 0, esi )
-
-				mov	esi,eax
-
-				TIDoSection( esi, edi, buffer, endbuf, attrib )
-				__CFClose( esi )
-			.endif
-		.else
-
-			TIDoSection( cfile, ebx, buffer, endbuf, attrib )
-		.endif
-
-	.elseif __CFGetSection( cfile, esi )
+	.if	__CFGetSection( cfile, sname )
 
 		mov	section,eax
 		mov	index,0
@@ -506,14 +445,60 @@ local	file[_MAX_PATH]:  SBYTE,
 		.while	CFGetEntryID( section, index )
 
 			inc	index
+			mov	esi,eax
 
-			.if	BYTE PTR [eax] == '['
+			.if	BYTE PTR [esi] == '['
 
-				TIDoSection( cfile, eax, buffer, endbuf, attrib )
+				inc	esi
+				lea	edi,entry
+				.repeat
+					lodsb
+					stosb
+					.break .if !al
+				.until	al == ']'
+				mov	BYTE PTR [edi-1],0
+				lea	ebx,entry
 
-			.elseif __CFGetSection( cfile, eax )
+				.if	BYTE PTR [ebx] == '#'
 
-				TIReadLabel( eax, buffer, endbuf, attrib )
+					inc	ebx
+					mov	eax,[ebx]
+					.switch
+					  .case ah == ':'
+					  .case al == '%'
+					  .case al == '\'
+					  .case al == '/'
+					  .case ax == '..'
+						strcpy( addr file, ebx )
+						.endc
+					  .default
+						strfcat( addr file, _pgmpath, ebx )
+					.endsw
+
+					mov	esi,eax
+					mov	edi,@CStr( "." )
+
+					.if	strchr( expenviron( eax ), '#' )
+
+						mov	BYTE PTR [eax],0
+						lea	edi,[eax+1]
+					.endif
+
+					.if	__CFRead( 0, esi )
+
+						mov	esi,eax
+
+						TIDoSection( esi, edi, buffer, endbuf, attrib )
+						__CFClose( esi )
+					.endif
+				.else
+
+					TIDoSection( cfile, addr entry, buffer, endbuf, attrib )
+				.endif
+
+			.elseif __CFGetSection( cfile, esi )
+
+				tireadlabel( eax, buffer, endbuf, attrib )
 			.endif
 		.endw
 	.endif
@@ -554,12 +539,17 @@ local	endbuf:		PVOID	; style + SIZE style - 2
 	.if	CFGetSection( "Style" )
 
 		mov	ebx,eax
-		.if	!CFGetEntry( ebx, edi ) ; FILENAME[.EXT]
+		.if	!CFGetEntry( ebx, edi ) ; FILENAME
 
-			.if	strext( edi )	; .EXT ?
+			.if	strext( edi )	; FILENAME.EXT
 
-				inc	eax
-				CFGetEntry( ebx, eax )
+				lea	edx,[eax+1]
+				mov	BYTE PTR [eax],0
+						; FILENAME.[EXT]
+				.if	!CFGetEntry( ebx, edx )
+						; [FILENAME].EXT
+					CFGetEntry( ebx, edi )
+				.endif
 			.endif
 		.endif
 	.endif

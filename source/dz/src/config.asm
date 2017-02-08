@@ -358,46 +358,52 @@ config_save PROC USES esi edi ebx
 
 	.if	CFAddSection( ".directory" )
 
-		mov	ebx,eax
-		mov	edi,history
-		.if	edi
+		.if	!(cflag & _C_DELHISTORY)
 
-			xor	esi,esi
-			.while	[edi].S_DIRECTORY.path
+			mov	ebx,eax
+			mov	edi,history
+			.if	edi
 
-				CFAddEntryX( ebx, "%d=%X,%X,%X,%s", esi,
-					[edi].S_DIRECTORY.flag,
-					[edi].S_DIRECTORY.fcb_index,
-					[edi].S_DIRECTORY.cel_index,
-					[edi].S_DIRECTORY.path )
+				xor	esi,esi
+				.while	[edi].S_DIRECTORY.path
 
-				add	edi,SIZE S_DIRECTORY
-				inc	esi
-				.break .if esi == MAXHISTORY
-			.endw
+					CFAddEntryX( ebx, "%d=%X,%X,%X,%s", esi,
+						[edi].S_DIRECTORY.flag,
+						[edi].S_DIRECTORY.fcb_index,
+						[edi].S_DIRECTORY.cel_index,
+						[edi].S_DIRECTORY.path )
+
+					add	edi,SIZE S_DIRECTORY
+					inc	esi
+					.break .if esi == MAXHISTORY
+				.endw
+			.endif
 		.endif
 	.endif
 
 	.if	CFAddSection( ".doskey" )
 
-		mov	ebx,eax
-		mov	eax,history
-		.if	eax
+		.if	!(cflag & _C_DELHISTORY)
 
-			lea	esi,[eax].S_HISTORY.h_doskey
-			xor	edi,edi
+			mov	ebx,eax
+			mov	eax,history
+			.if	eax
 
-			.while	edi < MAXDOSKEYS
+				lea	esi,[eax].S_HISTORY.h_doskey
+				xor	edi,edi
 
-				lodsd
+				.while	edi < MAXDOSKEYS
 
-				.break .if !eax
-				.break .if BYTE PTR [eax] == 0
+					lodsd
 
-				CFAddEntryX(ebx, "%d=%s", edi, eax)
+					.break .if !eax
+					.break .if BYTE PTR [eax] == 0
 
-				inc	edi
-			.endw
+					CFAddEntryX(ebx, "%d=%s", edi, eax)
+
+					inc	edi
+				.endw
+			.endif
 		.endif
 	.endif
 
@@ -408,6 +414,19 @@ config_save PROC USES esi edi ebx
 	mov	eax,1
 	ret
 config_save ENDP
+
+config_open PROC
+
+	topenh( ".openfiles" )
+	;
+	; Remove section
+	;
+	__CFDelSection( __CFBase, ".openfiles" )
+
+	mov	eax,1
+	ret
+
+config_open ENDP
 
 setconfirmflag PROC
 

@@ -1,31 +1,40 @@
+; XTOL.ASM--
+;
+; long xtol(const char *);
+;
+; Change history:
+; 2009-11-03 - created
+;
 include stdlib.inc
 
 	.code
 
-xtol	PROC USES esi ecx string:LPSTR
-	mov	esi,string
+xtol	PROC string:LPSTR
+
+	mov	edx,string
 	xor	eax,eax
 	xor	ecx,ecx
-	xor	edx,edx
+
 	.while	1
-		mov	al,[esi]
-		add	esi,1
-		or	al,0x20
-		.break .if al < '0'
-		.break .if al > 'f'
-		.if	al > '9'
-			.break .if al < 'a'
-			sub	al,'a' - 10
-		.else
-			sub	al,'0'
+
+		mov	cl,[edx]
+		add	edx,1
+		and	cl,0xDF
+
+		.break .if cl < 0x10
+		.break .if cl > 'F'
+
+		.if	cl > 0x19
+
+			.break .if cl < 'A'
+			sub cl,'A' - 0x1A
 		.endif
-		shld	edx,ecx,4
-		shl	ecx,4
-		add	ecx,eax
-		adc	edx,0
+		sub	cl,0x10
+		shl	eax,4
+		add	eax,ecx
 	.endw
-	mov	eax,ecx
 	ret
+
 xtol	ENDP
 
 	END

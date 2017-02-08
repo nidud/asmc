@@ -8,7 +8,7 @@ TIMAXFILE	equ 200000h	; max file size
 TIMAXFILES	equ 300		; max open files
 TITABCHAR	equ 0Bh		; expand tabs with this char (Vertical Tab)
 TIMAXTABSIZE	equ 16		; max Tab size
-STYLESIZE	equ 1000h
+STYLESIZE	equ 4000h
 
 _T_PANELB	equ 0001h
 _T_MALLOC	equ 0002h

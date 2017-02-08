@@ -23,6 +23,8 @@ html/error.htm
 html/directives.htm
 html/symbols.htm
 html/if.htm
+html/for.htm
+html/endf.htm
 html/while.htm
 html/repeat.htm
 html/break.htm

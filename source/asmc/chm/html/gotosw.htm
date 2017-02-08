@@ -4,7 +4,7 @@ Asmc Macro Assembler Reference
 <H2>.GOTOSW</H2>
 
 <pre>
-.<b>GOTOSW</b>[1|2|3] [[.<b>IF</b> <i>condition</i>]]</pre>
+.<b>GOTOSW</b>[1|2|3] [[(&lt;<i>case_val</i>&gt;)] | [.<b>IF</b> <i>condition</i>]]</pre>
 
 <p>Generates code to jump to the top of a <a href="switch.htm">.SWITCH</a>
 block if <i>condition</i> is true.</p>
@@ -37,13 +37,18 @@ block if <i>condition</i> is true.</p>
 			.gotosw3 ; continue .switch al
 			.gotosw2 ; continue .switch bl
 			.gotosw1 ; continue .switch cl
+			;
+			; Direct jump to .switch cl / case 1
+			;
+			.gotosw1(1)
 		    .endsw
 		.endsw
 	    .endsw
 	.endsw
 </pre>
 
-<p><b>GOTOSW</b> can be used in combination with .<b>IF</b> <i>condition</i></p>
+<p><b>GOTOSW</b> can be used in combination with .<b>IF</b> <i>condition</i>, or
+a direct jump to .<b>GOTOSW</b>(&lt;<i>case_val</i>&gt;).</p>
 
 <h4>See Also</h4>
 <a href="directives.htm">Directives Reference</a> |

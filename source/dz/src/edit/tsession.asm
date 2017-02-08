@@ -9,7 +9,7 @@ include wsub.inc
 
 topenh	PROC USES esi edi section:LPSTR
 
-local	b,x,y,l,index
+local	x,b,y,l,index
 
 	.if	CFGetSection( section )
 

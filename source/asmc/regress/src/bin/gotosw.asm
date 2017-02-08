@@ -7,9 +7,11 @@
 	.SWITCH al
 	  .CASE 1
 		.GOTOSW
+		.GOTOSW(2)
 		.GOTOSW .IF cl
 		.ENDC
 	  .CASE 2
+		.GOTOSW(1)
 		.SWITCH al
 		  .CASE 1
 			.GOTOSW
@@ -44,6 +46,9 @@
 				  .CASE 4
 					.GOTOSW3
 					.GOTOSW3 .IF cl
+				  .CASE 5
+					.GOTOSW3(1)
+					.GOTOSW3(2)
 					.ENDC
 				.ENDSW
 			.ENDSW

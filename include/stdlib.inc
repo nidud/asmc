@@ -34,6 +34,7 @@ realloc		PROTO :PVOID, :SIZE_T
 free		proto :PVOID
 
 xtol		PROTO :LPSTR
+_xtoi64		PROTO :LPSTR
 mkbstring	PROTO :LPSTR, :QWORD
 strtolx		PROTO :LPSTR
 searchp		PROTO :LPSTR

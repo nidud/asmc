@@ -30,7 +30,6 @@ HLL_WHILE	equ 1
 HLL_REPEAT	equ 2
 HLL_BREAK	equ 3	; .IF behind .BREAK or .CONTINUE
 HLL_SWITCH	equ 4
-HLL_FOR		equ 5
 ;
 ; index values for struct hll_item.labels[]
 ;
@@ -2901,13 +2900,11 @@ GetNextComma PROC string:LPSTR
 				mov	[ecx],dl
 				mov	al,[ecx-1]
 				.if	al == ' ' || al == 9
-
 					mov	[ecx-1],dl
 				.endif
 				inc	ecx
 				mov	al,[ecx]
 				.while	al == ' ' || al == 9
-
 					inc	ecx
 					mov	al,[ecx]
 				.endw

@@ -9,7 +9,7 @@ CFGetEntry PROC USES esi edi __ini:PCFINI, __entry:LPSTR
 	xor	edi,edi
 	xor	eax,eax
 
-	.if	[edx].S_CFINI.cf_flag & _CFSECTION
+	.if	edx && [edx].S_CFINI.cf_flag & _CFSECTION
 
 		mov	eax,[edx].S_CFINI.cf_info
 

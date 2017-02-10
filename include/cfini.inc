@@ -31,7 +31,7 @@ CFDelEntries	PROTO :PCFINI
 CFAddEntry	PROTO :PCFINI, :LPSTR
 CFAddEntryX	PROTO _CDecl :PCFINI, :LPSTR, :VARARG
 CFReadFileName	PROTO :PCFINI, :PVOID, :UINT
-CFFindSection	PROTO :PCFINI, __section:LPSTR
+CFFindSection	PROTO :PCFINI, __section:LPSTR, __entry:LPSTR
 
 CFExecute	PROTO :PCFINI
 CFExpandMac	PROTO __buffer:LPSTR, __file:LPSTR

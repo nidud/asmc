@@ -28,7 +28,7 @@ ENDIF
 
 compare ENDP
 
-CFFindSection PROC USES esi edi ebx cfini:PCFINI, __section:LPSTR
+CFFindSection PROC USES esi edi ebx cfini:PCFINI, __section:LPSTR, __entry:LPSTR
 
 local	cursor:		S_CURSOR,
 	dialog:		PTR S_DOBJ,
@@ -161,30 +161,17 @@ local	cursor:		S_CURSOR,
 
 					scputs( ebx, y, 0, 28, [esi] )
 
-					.if	CFGetSection( [esi] )
+					.if	CFGetEntry( __CFGetSection( cfini, [esi] ), __entry )
 
-						mov	eax,[eax].S_CFINI.cf_info
-						.while	eax
-
-							.if	[eax].S_CFINI.cf_flag & _CFENTRY
-
-								mov	eax,[eax].S_CFINI.cf_info
-								.if	eax
-
-									mov	ecx,ebx
-									add	ecx,30
-									scputs( ecx, y, 0, 35, eax )
-									.break
-								.endif
-							.endif
-							mov	eax,[eax].S_CFINI.cf_next
-						.endw
+						mov	ecx,ebx
+						add	ecx,30
+						scputs( ecx, y, 0, 35, eax )
 					.endif
 
 					inc	y
 					add	esi,4
 					dec	edi
-				.until	ZERO?
+				.untilz
 
 				add	ebx,45
 				mov	edx,dlg_y

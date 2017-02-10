@@ -99,6 +99,18 @@ option		dllimport:<kernel32>
 ENDIF
 ;;;;;;;;;;;;;;;;;;;;;;; kernel32.dll
 
+TIME_NOMINUTESORSECONDS equ 1	; do not use minutes or seconds
+TIME_NOSECONDS		equ 2	; do not use seconds
+TIME_NOTIMEMARKER	equ 4	; do not use time marker
+TIME_FORCE24HOURFORMAT	equ 8	; always use 24 hour format
+;
+;  Date Flags for GetDateFormat.
+;
+DATE_SHORTDATE		equ 1	; use short date picture
+DATE_LONGDATE		equ 2	; use long date picture
+DATE_USE_ALT_CALENDAR	equ 4	; use alternate calendar (if any)
+DATE_YEARMONTH		equ 8	; use year month
+
 TIME_ZONE_INFORMATION	STRUC
 Bias			DD ?
 StandardName		DW 32 dup(?)

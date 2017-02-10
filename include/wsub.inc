@@ -118,10 +118,17 @@ wsearch		PROTO :PTR S_WSUB, :LPSTR
 wsfblk		PROTO :PTR S_WSUB, :DWORD
 wsffirst	PROTO :PTR S_WSUB
 wsmkdir		PROTO :LPSTR
-wdlgopen	PROTO :LPSTR, :LPSTR, :DWORD
-wgetfile	PROTO :LPSTR, :LPSTR, :DWORD
 wscopy_open	PROTO ; eax, edx (__srcfile, __outfile)
 wscopy_remove	PROTO ; eax (__outfile)
+
+_WOPEN		equ 0x01
+_WSAVE		equ 0x02
+_WLOCAL		equ 0x04 ; use program or current directory
+_WLOCK		equ 0x08 ; lock to this directory
+_WNEWFILE	equ 0x10
+
+wdlgopen	PROTO :LPSTR, :LPSTR, :DWORD
+wgetfile	PROTO :LPSTR, :LPSTR, :DWORD
 
 ;;;;;;;;;;;;;;;;; __ZIP__
 

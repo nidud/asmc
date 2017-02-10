@@ -13,9 +13,6 @@ ID_L_DN		equ ID_CNT+5
 O_PATH		equ ID_PATH*16+16
 O_FILE		equ ID_FILE*16+16
 
-FLAG_OPEN	equ 1
-FLAG_LOCK	equ 2
-
 	.data
 
 extrn	IDD_WOpenFile:dword
@@ -43,13 +40,18 @@ wdlgopen PROC USES esi edi ebx apath:LPSTR, amask:LPSTR, asave
 	mov	ecx,sizeof( S_LOBJ )
 	xor	eax,eax
 	rep	stosb
+
 	mov	wsub.ws_flag,eax
 	mov	wsub.ws_maxfb,5000
+
 	.if	wsopen( o_wsub )
+
 		strcpy( wsub.ws_mask, amask )
 		strcpy( wsub.ws_path, apath )
 		xor	edi,edi
+
 		.if	rsopen( IDD_WOpenFile )
+
 			mov	ebx,eax
 			mov	dialog,eax
 			dlshow( eax )
@@ -64,43 +66,54 @@ wdlgopen PROC USES esi edi ebx apath:LPSTR, amask:LPSTR, asave
 			mov	list.ll_celoff,ID_CNT
 			mov	eax,wsub.ws_fcb
 			mov	list.ll_list,eax
-			.if !( a_open & FLAG_OPEN )
+
+			.if	a_open & _WSAVE
+
 				mov	dl,[ebx+5]
 				mov	al,[ebx+4]
 				add	al,21
 				scputs( eax, edx, 0, 0, "Save" )
 			.endif
-			call	read_wsub
-			call	init_list
+
+			read_wsub()
+			init_list()
 			dlinit( ebx )
+
 			.while	dllevent( ebx, addr list )
+
 				.if	eax <= ID_CNT
+
 					case_files()
-					.continue .if ZERO?
+				.else
+					strfcat( wsub.ws_path, 0, [ebx].S_TOBJ.to_data[O_FILE] )
+					mov	edi,eax
+					.if	a_open & _WSAVE && !(a_open & _WNEWFILE)
+
+						.if	!strext( eax )
+
+							mov	eax,amask
+							inc	eax
+							strcat( edi, eax )
+						.endif
+					.endif
+					.break
 				.endif
-				strfcat( wsub.ws_path, 0, [ebx].S_TOBJ.to_data[O_FILE] )
-				mov	edi,eax
-				.break .if !( a_open & FLAG_LOCK )
-				strext( eax )
-				.break .if !ZERO?
-				mov	eax,amask
-				inc	eax
-				strcat( edi, eax )
-				.break
 			.endw
 			dlclose( ebx )
 		.endif
+
 		wsclose( addr wsub )
 		mov	eax,edi
 		test	eax,eax
 	.endif
-toend:
+
 	ret
 
 init_list:
 	push	esi
 	push	edi
 	push	ebx
+
 	mov	ecx,ID_CNT
 	mov	ebx,o_list
 	mov	[ebx].S_LOBJ.ll_numcel,0
@@ -112,21 +125,24 @@ init_list:
 	add	bx,[edi+20] ; object x,y
 	mov	edi,[edi].S_DOBJ.dl_object
 	mov	esi,eax
+
 	.repeat
 		lodsd
 		or	[edi].S_TOBJ.to_flag,_O_STATE
 		.if	eax
+
 			push	eax
 			mov	al,[eax]
 			and	al,_A_SUBDIR
 			mov	al,at_foreground[F_Dialog]
-			.if	!ZERO?
+			.ifnz
 				mov al,at_foreground[F_Inactive];F_Subdir]
 			.endif
 			mov	dl,bh
 			scputfg( ebx, edx, 28, eax )
 			inc	bh
 			pop	eax
+
 			add	eax,S_FBLK.fb_name
 			and	[edi].S_TOBJ.to_flag,not _O_STATE
 			mov	edx,o_list
@@ -135,6 +151,7 @@ init_list:
 		mov	[edi].S_TOBJ.to_data,eax
 		add	edi,SIZE S_TOBJ
 	.untilcxz
+
 	pop	ebx
 	pop	edi
 	pop	esi
@@ -156,24 +173,31 @@ read_wsub:
 	mov	edx,o_list
 	mov	[edx].S_LOBJ.ll_count,eax
 	.if	eax > 1
+
 		wssort( o_wsub )
 	.endif
 	retn
 
 event_file:
+
 	mov	eax,dialog
 	mov	eax,[eax].S_TOBJ.to_data[O_FILE]
-	.if	!( a_open & FLAG_OPEN )
+
+	.if	a_open & _WSAVE
+
 		push	eax
-		strrchr( eax, '*' )
+		strrchr(eax, '*')
 		pop	eax
-		.if	ZERO?
+		.ifz
+			push	eax
 			strrchr( eax, '?' )
+			pop	eax
 			jz	return
 		.endif
-		test	a_open,FLAG_LOCK
+		test	a_open,_WLOCK
 		jnz	normal
 	.endif
+
 	mov	ecx,o_wsub
 	push	eax
 	push	ecx
@@ -199,6 +223,7 @@ case_files:
 	push	esi
 	push	edi
 	push	ebx
+
 	mov	ebx,o_list
 	mov	eax,[ebx].S_LOBJ.ll_index
 	add	eax,[ebx].S_LOBJ.ll_celoff
@@ -206,12 +231,15 @@ case_files:
 	add	eax,[ebx].S_LOBJ.ll_list
 	mov	edi,[eax]
 	mov	eax,[edi]
+
 	.if	!( al & _A_SUBDIR )
+
 		mov	ebx,dialog
 		mov	[ebx].S_DOBJ.dl_index,ID_FILE
 		lea	eax,[edi].S_FBLK.fb_name
 		strcpy( [ebx].S_TOBJ.to_data[O_FILE], eax )
 		.if	event_file() == _C_RETURN
+
 			inc	eax
 		.else
 			xor	eax,eax
@@ -219,22 +247,27 @@ case_files:
 	.else
 		mov	ebx,o_wsub
 		and	eax,_FB_UPDIR
-		.if	!ZERO?
+		.ifnz
 			.if	strfn( [ebx].S_WSUB.ws_path )
+
 				mov	esi,eax
 				xor	eax,eax
 				mov	[esi-1],al
 				mov	ebx,o_list
 				mov	[ebx].S_LOBJ.ll_celoff,eax
-				call	event_path
+
+				event_path()
+
 				.if	wsearch( o_wsub, esi ) != -1
+
 					.if	eax < ID_CNT
+
 						mov	ecx,dialog
 						mov	[ecx].S_DOBJ.dl_index,al
 					.else
 						mov	[ebx].S_LOBJ.ll_index,eax
 					.endif
-					call	event_list
+					event_list()
 					xor	eax,eax
 				.endif
 			.endif
@@ -243,14 +276,17 @@ case_files:
 			mov	[ecx].S_DOBJ.dl_index,al
 			lea	eax,[edi].S_FBLK.fb_name
 			strfcat( [ebx].S_WSUB.ws_path, 0, eax )
-			call	event_path
+
+			event_path()
 			xor	eax,eax
 		.endif
 	.endif
+
 	pop	ebx
 	pop	edi
 	pop	esi
 	retn
+
 wdlgopen ENDP
 
 	END

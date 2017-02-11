@@ -1,4 +1,5 @@
-AFLAGS = -D__W95__ -D__CI__ -D__BMP__
+#AFLAGS = -D__W95__ -D__CI__ -D__BMP__
+AFLAGS = -D__W95__
 
 dz.exe:
 	iddc -r res\*.idd

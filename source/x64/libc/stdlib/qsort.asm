@@ -3,137 +3,138 @@ include string.inc
 
 	.code
 
-	OPTION	WIN64:3, STACKBASE:rsp
+qsort	PROC USES rsi rdi rbx p:PVOID, n:SIZE_T, w:SIZE_T, compare:LPQSORTCMD
 
-qsort	PROC USES rsi rdi rbx p:PVOID, n:SIZE_T, w:SIZE_T, compare:PVOID
-	mov	rax,n
-	cmp	rax,1
-	jbe	toend
-	dec	rax
-	mul	w
-	mov	rsi,p
-	lea	rdi,[rsi+rax]
-	push	0
-recurse:
-	mov	rcx,w
-	lea	rax,[rdi+rcx]	; middle from (hi - lo) / 2
-	sub	rax,rsi
-	jz	@F
-	sub	rdx,rdx
-	div	rcx
-	shr	rax,1
-	mul	rcx
-     @@:
-	lea	rbx,[rsi+rax]
+local	stack_level
 
-	push	rbx
-	push	rsi
-	call	compare
-	cmp	rax,0
-	jle	@F
-	memxchg( rbx, rsi, w )
-     @@:
-	push	rdi
-	push	rsi
-	call	compare
-	cmp	rax,0
-	jle	@F
-	memxchg( rdi, rsi, w )
-     @@:
-	push	rdi
-	push	rbx
-	call	compare
-	cmp	rax,0
-	jle	@F
-	memxchg( rbx, rdi, w )
-     @@:
-	mov	p,rsi
-	mov	n,rdi
-lup:
-	mov	rax,w
-	add	p,rax
-	cmp	p,rdi
-	jae	@F
-	push	rbx
-	push	p
-	call	compare
-	cmp	rax,0
-	jle	lup
-     @@:
-	mov	rax,w
-	sub	n,rax
-	cmp	n,rbx
-	jbe	@F
-	push	rbx
-	push	n
-	call	compare
-	cmp	rax,0
-	jg	@B
-     @@:
-	mov	rax,p
-	cmp	n,rax
-	jb	break
-	memxchg( n, p, w )
-	cmp	rbx,n
-	jne	lup
-	mov	rbx,p
-	jmp	lup
-break:
-	mov	rax,w
-	add	n,rax
-     @@:
-	mov	rax,w
-	sub	n,rax
-	cmp	n,rsi
-	jbe	recursion
-	push	rbx
-	push	n
-	call	compare
-	test	rax,rax
-	jz	@B
-recursion:
 	mov	rax,n
-	sub	rax,rsi
-	mov	rcx,rdi
-	sub	rcx,p
-	cmp	rax,rcx
-	jl	lower
-	cmp	rsi,n
-	jae	@F
-	pop	rax
-	push	rsi
-	push	n
-	inc	rax
-	push	rax
-     @@:
-	cmp	p,rdi
-	jae	pending
-	mov	rsi,p
-	jmp	recurse
-lower:
-	cmp	p,rdi
-	jae	@F
-	pop	rax
-	push	p
-	push	rdi
-	inc	rax
-	push	rax
-     @@:
-	cmp	rsi,n
-	jae	pending
-	mov	rdi,n
-	jmp	recurse
-pending:
-	pop	rax
-	test	rax,rax
-	jz	toend
-	dec	rax
-	pop	rdi
-	pop	rsi
-	push	rax
-	jmp	recurse
-toend:
+	.if	rax > 1
+
+		dec	rax
+		mul	w
+		mov	rsi,p
+		lea	rdi,[rsi+rax]
+		mov	stack_level,0
+
+		.while	1
+
+			mov	rcx,w
+			lea	rax,[rdi+rcx]	; middle from (hi - lo) / 2
+			sub	rax,rsi
+			.ifnz
+				xor	rdx,rdx
+				div	rcx
+				shr	rax,1
+				mul	rcx
+			.endif
+
+			lea	rbx,[rsi+rax]
+			.ifs	compare( rsi, rbx ) > 0
+
+				memxchg( rsi, rbx, w )
+			.endif
+			.ifs	compare( rsi, rdi ) > 0
+
+				memxchg( rsi, rdi, w )
+			.endif
+			.ifs	compare( rbx, rdi ) > 0
+
+				memxchg( rbx, rdi, w )
+			.endif
+
+			mov	p,rsi
+			mov	n,rdi
+
+			.while	1
+
+				mov	rax,w
+				add	p,rax
+				.if	p < rdi
+
+					.continue .ifs compare( p, rbx ) <= 0
+				.endif
+
+				.while	1
+
+					mov	rax,w
+					sub	n,rax
+
+					.break .if n <= rbx
+					.break .ifs compare( n, rbx ) <= 0
+				.endw
+
+				mov	rdx,n
+				mov	rax,p
+				.break .if rdx < rax
+
+				memxchg( rdx, rax, w )
+
+				.if	rbx == n
+
+					mov	rbx,p
+				.endif
+			.endw
+
+			mov	rax,w
+			add	n,rax
+
+			.while	1
+
+				mov	rax,w
+				sub	n,rax
+
+				.break .if n <= rsi
+				.break .if compare( n, rbx )
+			.endw
+
+			mov	rdx,p
+			mov	rax,n
+			sub	rax,rsi
+			mov	rcx,rdi
+			sub	rcx,rdx
+
+			.ifs	rax < rcx
+
+				mov	rcx,n
+
+				.if	rdx < rdi
+
+					push	rdx
+					push	rdi
+					inc	stack_level
+				.endif
+
+				.if	rsi < rcx
+
+					mov	rdi,rcx
+					.continue
+				.endif
+			.else
+				mov	rcx,n
+
+				.if	rsi < rcx
+
+					push	rsi
+					push	rcx
+					inc	stack_level
+				.endif
+
+				.if	rdx < rdi
+
+					mov	rsi,rdx
+					.continue
+				.endif
+			.endif
+
+			.break .if !stack_level
+
+			dec	stack_level
+			pop	rdi
+			pop	rsi
+		.endw
+	.endif
 	ret
+
 qsort	ENDP
 
 	END

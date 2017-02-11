@@ -88,6 +88,7 @@ setbuf		PROTO :LPFILE, :LPSTR
 
 ;;;;;;;;;;;;;;; kernel32.lib
 IFDEF __PE__
+_iobuf	equ <S_FILE>
 option	dllimport:<kernel32>
 ENDIF
 

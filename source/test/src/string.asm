@@ -2,7 +2,7 @@ include string.inc
 include direct.inc
 
 	.data
-buf	db 4096 dup(?)
+buf	db 4096 dup(0)
 cp_A	db 'A'
 cp_X	db 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
 cp_B	db 'B'
@@ -13,6 +13,8 @@ cp_9	db 9
 main	proc c
 
 	lea	edi,buf
+	.assert strlen	(edi) == 0
+	.assert ZERO?
 	.assert strlen	("1") == 1
 	.assert strcpy	(edi,"abc") == edi
 	.assert strlen	(edi) == 3

@@ -14,7 +14,9 @@
 ; Change history:
 ; 2013-10-23 - created for the regression test of ASMC
 ;
-include pe/crt32.inc
+include io.inc
+include stdio.inc
+include stdlib.inc
 include fcntl.inc
 
 	.data
@@ -44,12 +46,19 @@ fp		dd 0	; default to stdout
 
 
 	.code
+ifndef	__PE__
+CRT32:
+endif
 
 main	proc
 local	h1, h2, m1, m2, z1, z2
 
+ifdef	__PE__
 	__iob_func()	; [1] = stdout
 	add	eax,sizeof(_iobuf)
+else
+	lea	eax,stdout
+endif
 	mov	fp,eax
 
 	mov	edi,_argc
@@ -232,4 +241,30 @@ compare:
 	retn
 main	endp
 
+ifdef	__PE__
+
+	option	dllimport:none
+	option	cstack:on
+
+	.data
+	_argc		dd 0
+	_argv		dd 0
+	_environ	dd 0
+	.code
+
+CRT32	proc
+local	newmode:	dword,
+	startinfo:	dword
+
+	xor	eax,eax
+	mov	newmode,eax
+	lea	eax,newmode
+	mov	startinfo,eax
+
+	__getmainargs( addr _argc, addr _argv, addr _environ, 0, eax )
+	exit( main() )
+	ret
+
+CRT32	endp
+endif
 	end	CRT32

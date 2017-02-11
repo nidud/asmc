@@ -1,4 +1,4 @@
 fcmp.exe:
-	asmc -pe $*.asm
+	asmc -D__PE__ -pe $*.asm
 
 

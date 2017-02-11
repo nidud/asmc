@@ -269,15 +269,13 @@ endif
 
 	.if	CFGetSection( ".doskey" )
 
+		mov	ebx,eax
 		mov	eax,history
 		.if	eax
 
 			lea	edi,[eax].S_HISTORY.h_doskey
 			mov	esi,MAXDOSKEYS
-			xor	ebx,ebx
-
 			mov	entry,0
-			mov	ebx,eax
 
 			.while	CFGetEntryID( ebx, entry )
 
@@ -285,7 +283,7 @@ endif
 				stosd
 				inc	entry
 				dec	esi
-				.break .if ZERO?
+				.breakz
 			.endw
 		.endif
 	.endif
@@ -327,6 +325,8 @@ config_save PROC USES esi edi ebx
 	.if	CFAddSection( ".config" )
 
 		mov	ebx,eax
+		CFDelEntries( eax )
+
 		xor	edi,edi
 		CFAddEntryX( ebx, "%d=%X", edi, DOSZIP_VERSION )
 
@@ -361,6 +361,8 @@ config_save PROC USES esi edi ebx
 		.if	!(cflag & _C_DELHISTORY)
 
 			mov	ebx,eax
+			CFDelEntries( eax )
+
 			mov	edi,history
 			.if	edi
 
@@ -386,6 +388,8 @@ config_save PROC USES esi edi ebx
 		.if	!(cflag & _C_DELHISTORY)
 
 			mov	ebx,eax
+			CFDelEntries( eax )
+
 			mov	eax,history
 			.if	eax
 
@@ -407,8 +411,7 @@ config_save PROC USES esi edi ebx
 		.endif
 	.endif
 
-	tsaveh( __CFBase, ".openfiles" )
-
+	TISaveSession( __CFBase, ".openfiles" )
 	CFWrite( strfcat( __srcfile, _pgmpath, addr DZ_INIFILE ) )
 
 	mov	eax,1
@@ -417,7 +420,7 @@ config_save ENDP
 
 config_open PROC
 
-	topenh( ".openfiles" )
+	TIOpenSession( __CFBase, ".openfiles" )
 	;
 	; Remove section
 	;

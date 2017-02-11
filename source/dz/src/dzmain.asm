@@ -13,7 +13,6 @@ include process.inc
 include cfini.inc
 
 config_create	PROTO
-MakeDirectory	PROTO :DWORD
 
 	.data
 

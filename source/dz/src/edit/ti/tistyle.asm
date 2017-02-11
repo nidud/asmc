@@ -181,11 +181,11 @@ local	buffer:		LPSTR,	; start of line
 				;
 				; case C string \"
 				;
-				.if	bl == '"' && BYTE PTR [edi-2] == '\'
+				.if	bl == '"' && BYTE PTR [edi-1] == '\'
 					;
 					; case "C:\\"
 					;
-					.continue .if BYTE PTR [edi-3] != '\'
+					.continue .if BYTE PTR [edi-2] != '\'
 				.endif
 				inc	edi
 				.if	edi > buffer
@@ -359,8 +359,10 @@ local	buffer:		LPSTR,	; start of line
 							lea	eax,[edi-1]
 							.break .if eax >= endbuf
 							.if	eax >= buffer
+
 								sub	eax,buffer
 								.if	!xtable[eax]
+
 									add	eax,eax
 									add	eax,out_buffer
 									mov	[eax+1],bl
@@ -473,7 +475,7 @@ local	buffer:		LPSTR,	; start of line
 					mov	eax,endbuf
 					.break	.if eax <= buffer
 					sub	eax,buffer
-					.if	eax < 256 && xtable[eax-1] & _X_COMMENT; or _X_BEGIN
+					.if	eax < 256 && xtable[eax-1] & _X_COMMENT
 
 						dec	endbuf
 						.cont0
@@ -738,7 +740,7 @@ local	buffer:		LPSTR,	; start of line
 
 				.if	eax		; first line ?
 					;
-					; seek back to last first arg (/*)
+					; seek back to last first arg (/*) */
 					;
 					.if	find_token()
 
@@ -807,15 +809,17 @@ find_token:
 		.breakz
 
 		mov	eax,ti
-		mov	edi,[eax].S_TINFO.ti_flp
-		mov	edx,[eax].S_TINFO.ti_bp
+		mov	edx,[eax].S_TINFO.ti_bp		; top of file
+		mov	edi,[eax].S_TINFO.ti_flp	; current line
 		mov	eax,edi
 		sub	eax,edx
 		.breakz
 		dec	edi
 
 		.while	1
-
+			;
+			; Find the first token searching backwards
+			;
 			movzx	eax,BYTE PTR [esi]
 			mov	ecx,edi
 			sub	ecx,edx
@@ -834,8 +838,9 @@ find_token:
 			.ifz
 				mov eax,edx
 			.endif
-			;mov	edx,edi
-			.if	TIStyleIsQuote(edx, edi);strisquote()
+			.if	TIStyleIsQuote(eax, edi)
+
+				.continue .if al == '"'
 				;
 				; ' is found but /* it's maybe a fake */
 				;

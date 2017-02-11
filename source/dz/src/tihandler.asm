@@ -54,7 +54,7 @@ tihandler PROC
 	  .case KEY_ALTF1
 		push	esi
 		mov	esi,edx
-		.if	topen(strfcat( __srcfile, _pgmpath, addr DZ_INIFILE))
+		.if	topen(strfcat( __srcfile, _pgmpath, addr DZ_INIFILE), 0)
 
 			mov tinfo,titogglefile(esi, eax)
 		.endif

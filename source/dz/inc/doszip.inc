@@ -9,7 +9,7 @@ include time.inc
 	.xlist
 
 DOSZIP_VERSION	equ 0348h
-DOSZIP_MINVERS	equ 0342h
+DOSZIP_MINVERS	equ 0348h
 DOSZIP_VSTRING	equ <"3.48">
 DOSZIP_VSTRPRE	equ <" Pre-2">
 
@@ -27,16 +27,16 @@ HELPID_02	equ 0751h	; <> Compressed File Support
 HELPID_03	equ 08D4h	; <> Viewer Support
 HELPID_04	equ 0B20h	; <> Editor Support
 HELPID_05	equ 0C6Fh	; <> Internal Editor
-HELPID_06	equ 1984h	; <> Extension and Filename Support
-HELPID_07	equ 1D6Ch	; <> Doszip Commander Environment Variables
-HELPID_08	equ 23C0h	; <> Installing Commander under Windows
-HELPID_09	equ 2503h	; <> Creating a tools menu
-HELPID_10	equ 2A57h	; <> The File Search utility
-HELPID_11	equ 302Eh	; <> Create List File
-HELPID_12	equ 3355h	; <> Operation Filter
-HELPID_13	equ 35D0h	; <> Shortcut keys
-HELPID_14	equ 2D42h	; <> Compare Directories
-HELPID_15	equ 4404h	; <> Configuration Defaults
+HELPID_06	equ 199Fh	; <> Extension and Filename Support
+HELPID_07	equ 1D87h	; <> Doszip Commander Environment Variables
+HELPID_08	equ 23DBh	; <> Installing Commander under Windows
+HELPID_09	equ 251Eh	; <> Creating a tools menu
+HELPID_10	equ 2A72h	; <> The File Search utility
+HELPID_11	equ 3049h	; <> Create List File
+HELPID_12	equ 3370h	; <> Operation Filter
+HELPID_13	equ 35EBh	; <> Shortcut keys
+HELPID_14	equ 2D5Dh	; <> Compare Directories
+HELPID_15	equ 441Fh	; <> Configuration Defaults
 
 _C_PANELID	equ 0001h	; config.c_cflag
 _C_HORIZONTAL	equ 0002h

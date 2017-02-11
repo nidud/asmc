@@ -399,6 +399,8 @@ titoend PROC USES esi edi ti:PTINFO
 				sub	ecx,eax
 				mov	[edx].ti_boff,ecx
 			.endif
+		.else
+			tihome( edx )
 		.endif
 		xor	eax,eax
 	.else

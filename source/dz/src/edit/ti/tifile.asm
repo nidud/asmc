@@ -47,20 +47,24 @@ tigetfile PROC USES ebx ti:PTINFO
 tigetfile ENDP
 
 tigetfilename PROC USES esi edi ti:PTINFO
+
 	mov	esi,ti
 	lea	edi,_bufin
 	.if	strfn( strcpy( edi, [esi].S_TINFO.ti_file ) ) == edi
+
 		mov	BYTE PTR [edi],0
 		GetCurrentDirectory( _MAX_PATH, edi )
 		mov	eax,[esi].S_TINFO.ti_file
 	.else
 		mov	BYTE PTR [eax-1],0
 	.endif
-	.if	wdlgopen( edi, eax, 0 )
+	.if	wdlgopen( edi, eax, _WSAVE or _WNEWFILE)
+
 		strcpy( [esi].S_TINFO.ti_file, eax )
 	.endif
 	test	eax,eax
 	ret
+
 tigetfilename ENDP
 
 tiftime PROC USES esi edi ti:PTINFO

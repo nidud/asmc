@@ -332,7 +332,6 @@ doszip_modal PROC USES esi
 	.while	mainswitch
 
 		mov	eax,_diskflag
-
 		.if	eax
 			;
 			; 1. mkdir(),rmdir(),osopen(),remove(),rename()
@@ -405,47 +404,122 @@ doszip_modal PROC USES esi
 
 		.break .if !mainswitch
 
-		.if	esi == MOUSECMD
+		option switch: pascal
 
-			mouseevent()
-			msloop()
-
-			.continue
-		.endif
-
-		.if	esi == KEY_TAB
-
-			panel_toggleact()
-
-			.continue
-		.endif
-
-		lea	edx,global_key
-		mov	eax,[edx].S_GLCMD.gl_key
-
-		.while	eax
-
-			.if	eax == esi
-
-				call	[edx].S_GLCMD.gl_proc
-				mov	eax,1
-				.break
-			.endif
-
-			add	edx,SIZE S_GLCMD
-			mov	eax,[edx].S_GLCMD.gl_key
-		.endw
-
-		.if	eax
-
-			msloop()
-
-			.continue
-		.endif
-
-		comevent( esi )
+		mov	eax,esi
+		.switch eax
+  ifdef DEBUG
+		  .case 0x5400:		cmdebug()	; Shift-F1
+  endif
+		  .case MOUSECMD:	mouseevent()
+		  .case KEY_TAB:	panel_toggleact()
+		  .case KEY_ESC:	cmclrcmdl()
+		  .case KEY_F1:		cmhelp()
+		  .case KEY_F2:		cmrename()
+		  .case KEY_F3:		cmview()
+		  .case KEY_F4:		cmedit()
+		  .case KEY_F5:		cmcopy()
+		  .case KEY_F6:		cmmove()
+		  .case KEY_F7:		cmmkdir()
+		  .case KEY_F8:		cmdelete()
+		  .case KEY_F9:		cmtmodal()
+		  .case KEY_F10:	cmexit()
+		  .case KEY_F11:	cmtogglesz()
+		  .case KEY_F12:	cmtogglehz()
+		  .case KEY_SHIFTF2:	cmcopycell()
+		  .case KEY_SHIFTF3:	cmview()
+		  .case KEY_SHIFTF4:	cmedit()
+		  .case KEY_SHIFTF5:	cmcompsub()
+		  .case KEY_SHIFTF6:	cmenviron()
+		  .case KEY_SHIFTF7:	cmmkzip()
+		  .case KEY_SHIFTF9:	cmsavesetup()
+		  .case KEY_SHIFTF10:	cmlastmenu()
+		  .case KEY_ALTC:	cmxorcmdline()
+		  .case KEY_ALTL:	cmmklist()
+		  .case KEY_ALTP:	cmloadpath()
+		  .case KEY_ALTX:	cmquit()
+		  .case KEY_ALT0:	cmwindowlist()
+		  .case KEY_ALT1:	cmtool1()
+		  .case KEY_ALT2:	cmtool2()
+		  .case KEY_ALT3:	cmtool3()
+		  .case KEY_ALT4:	cmtool4()
+		  .case KEY_ALT5:	cmtool5()
+		  .case KEY_ALT6:	cmtool6()
+		  .case KEY_ALT7:	cmtool7()
+		  .case KEY_ALT8:	cmtool8()
+		  .case KEY_ALT9:	cmtool9()
+		  .case KEY_ALTUP:	cmpsizeup()
+		  .case KEY_ALTDN:	cmpsizedn()
+		  .case KEY_ALTF1:	cmachdrv()
+		  .case KEY_ALTF2:	cmbchdrv()
+		  .case KEY_ALTF3:	cmview()
+		  .case KEY_ALTF4:	cmedit()
+		  .case KEY_ALTF5:	cmcompress()
+		  .case KEY_ALTF6:	cmdecompress()
+		  .case KEY_ALTF8:	cmhistory()
+		  .case KEY_ALTF9:	cmegaline()
+		  .case KEY_ALTF7:	cmsearch()
+		  .case KEY_CTRLTAB:	cmsearch()
+		  .case KEY_CTRL0:	cmpath0()
+		  .case KEY_CTRL1:	cmpath1()
+		  .case KEY_CTRL2:	cmpath2()
+		  .case KEY_CTRL3:	cmpath3()
+		  .case KEY_CTRL4:	cmpath4()
+		  .case KEY_CTRL5:	cmpath5()
+		  .case KEY_CTRL6:	cmpath6()
+		  .case KEY_CTRL7:	cmpath7()
+		  .case KEY_CTRL8:	cmpathatocmd()
+		  .case KEY_CTRL9:	cmpathbtocmd()
+		  .case KEY_CTRLF1:	cmatoggle()
+		  .case KEY_CTRLF2:	cmbtoggle()
+		  .case KEY_CTRLF3:	cmview()
+		  .case KEY_CTRLF4:	cmedit()
+		  .case KEY_CTRLF5:	cmcname()
+		  .case KEY_CTRLF6:	toption()
+		  .case KEY_CTRLF7:	cmscreen()
+		  .case KEY_CTRLF8:	cmsystem()
+		  .case KEY_CTRLF9:	cmoptions()
+		  .case KEY_CTRLA:	cmattrib()
+		  .case KEY_CTRLB:	cmuserscreen()
+		  .case KEY_CTRLC:	cmcompare()
+		  .case KEY_CTRLD:	cmcdate()
+		  .case KEY_CTRLE:	cmctype()
+		  .case KEY_CTRLF:	cmconfirm()
+		  .case KEY_CTRLG:	cmcalendar()
+		  .case KEY_CTRLH:	cmchidden()
+		  .case KEY_CTRLI:	cmsubinfo()
+		  .case KEY_CTRLJ:	cmcompression()
+		  .case KEY_CTRLK:	cmxorkeybar()
+		  .case KEY_CTRLL:	cmclong()
+		  .case KEY_CTRLM:	cmcmini()
+		  .case KEY_CTRLN:	cmcname()
+		  .case KEY_CTRLO:	cmtoggleon()
+		  .case KEY_CTRLP:	cmpanel()
+		  .case KEY_CTRLQ:	cmquicksearch()
+		  .case KEY_CTRLR:	cmcupdate()
+		  .case KEY_CTRLS:	cmsearch()
+		  .case KEY_CTRLT:	cmcdetail()
+		  .case KEY_CTRLU:	cmcnosort()
+		  .case KEY_CTRLV:	cmvolinfo()
+		  .case KEY_CTRLW:	cmswap()
+		  .case KEY_CTRLX:	cmxormenubar()
+		  .case KEY_CTRLZ:	cmcsize()
+		  .case KEY_CTRLUP:	cmdoskeyup()
+		  .case KEY_CTRLDN:	cmdoskeydown()
+		  .case KEY_CTRLPGUP:	cmupdir()
+		  .case KEY_CTRLPGDN:	cmsubdir()
+		  .case KEY_CTRLENTER:	cmcfblktocmd()
+		  .case KEY_KPPLUS:	cmselect()
+		  .case KEY_KPMIN:	cmdeselect()
+		  .case KEY_KPSTAR:	cminvert()
+		  .case KEY_ALTW:	cmcwideview()
+		  .case KEY_ALTM:	cmsysteminfo()
+		  .case KEY_CTRLHOME:	cmhomedir()
+		  .default
+			comevent(esi)
+		.endsw
+		msloop()
 	.endw
-toend:
 	ret
 
 doszip_modal ENDP

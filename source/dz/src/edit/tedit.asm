@@ -12,7 +12,7 @@ tedit	PROC fname:LPSTR, line
 	timeit_init
 	timeit_start 0, "tedit"
 
-	.if	topen( fname )
+	.if	topen( fname, 0 )
 
 		tialigny( tinfo, line )
 		tmodal()

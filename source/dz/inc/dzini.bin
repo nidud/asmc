@@ -176,7 +176,7 @@ cmd=style_bat
 [.st_$]
 0=C XB $\
 [.st_operator]
-0=C XF ".:!|/<[{()}]>,-*+?%&=^~;"
+0=C XF .:!|/<[{()}]>,-*+?%&=^~;"
 [.st_quote]
 0=Q XB
 
@@ -185,7 +185,7 @@ cmd=style_bat
 [.asm_B_X2]
 0=B X2 ifdef ifndef include
 [.asm_B_X8]
-0=B X8 ";"
+0=B X8 ;
 [.asm_W_X2]
 0=W X2 if else elseif endif while break endw
 1=rcx rdx rsp ecx edx esp cx dx sp cl dl ch dh

@@ -25,7 +25,6 @@ event_keys	dd KEY_F2,  event_add
 		dd KEY_F5,  event_save
 		dd KEY_F8,  event_delete
 		dd 0
-cp_env		db '*.env',0
 
 	.code
 
@@ -175,33 +174,46 @@ event_xcell ENDP
      ;--------------------------------------
 
 event_edit PROC USES esi edi ebx
-	local	variable[256]:BYTE
-	local	value[2048]:BYTE
+
+local	variable[256]:BYTE
+local	value[2048]:BYTE
+
 	.if	getcurobj()
+
 		mov	esi,eax
 		lea	ebx,value
 		lea	edi,variable
 		xor	edx,edx
 		mov	[ebx],dl
+
 		.if	strchr( esi, '=' )
+
 			mov	BYTE PTR [eax],0
 			mov	edx,eax
 			inc	eax
 			strcpy( ebx, eax )
 		.endif
 		strcpy( edi, esi )
+
 		.if	edx
+
 			mov BYTE PTR [edx],'='
 		.endif
 		mov	esi,edx
+
 		.if	tgetline( edi, ebx, 60, 2048 )
+
 			.if	BYTE PTR [ebx]
+
 				.if	esi
+
 					inc	esi
 					strcmp( esi, ebx )
 					jz	toend
 				.endif
+
 				.if	SetEnvironmentVariable( edi, ebx )
+
 					call	read_environ
 					call	update_cellid
 				.endif
@@ -214,15 +226,22 @@ toend:
 event_edit ENDP
 
 event_add PROC USES esi edi ebx
-	local	environ[2048]:BYTE
+
+local	environ[2048]:BYTE
+
 	lea	ebx,environ
 	mov	BYTE PTR [ebx],0
+
 	.if	tgetline( "Format: <variable>=<value>", ebx, 60, 2048 )
+
 		.if	BYTE PTR [ebx]
+
 			.if	strchr( ebx, '=' )
+
 				mov	BYTE PTR [eax],0
 				inc	eax
 				.if	SetEnvironmentVariable( ebx, eax )
+
 					read_environ()
 					update_cellid()
 				.endif
@@ -231,38 +250,51 @@ event_add PROC USES esi edi ebx
 	.endif
 	mov	eax,_C_NORMAL
 	ret
+
 event_add ENDP
 
 event_delete PROC USES esi ebx
 
 	.if	getcurobj()
+
 		mov	esi,eax
 		.if	strchr( eax, '=' )
+
 			mov	BYTE PTR [eax],0
 			mov	ebx,eax
 			SetEnvironmentVariable( esi, 0 )
 			mov	BYTE PTR [ebx],'='
+
 			.if	eax
+
 				mov	ebx,FCB_Environ
 				.if	!read_environ()
+
 					mov	[ebx].S_LOBJ.ll_index,eax
 					mov	[ebx].S_LOBJ.ll_celoff,eax
 				.else
 					mov	edx,[ebx].S_LOBJ.ll_index
 					mov	ecx,[ebx].S_LOBJ.ll_celoff
+
 					.if	edx
+
 						mov	esi,eax
 						sub	esi,edx
+
 						.if esi < CELLCOUNT
+
 							dec	edx
 							inc	ecx
 						.endif
 					.endif
+
 					sub	eax,edx
 					.if	eax >= CELLCOUNT
+
 						mov	eax,CELLCOUNT
 					.endif
 					.if	ecx >= eax
+
 						dec	ecx
 					.endif
 
@@ -272,7 +304,7 @@ event_delete PROC USES esi ebx
 					mov	ebx,DLG_Environ
 					test	eax,eax
 					mov	al,cl
-					.if	ZERO?
+					.ifz
 						mov	al,CELLCOUNT-1
 					.endif
 					mov	[ebx].S_DOBJ.dl_index,al
@@ -283,11 +315,15 @@ event_delete PROC USES esi ebx
 	.endif
 	mov	eax,_C_NORMAL
 	ret
+
 event_delete ENDP
 
 event_load PROC
-	local	path[_MAX_PATH]:SBYTE
-	.if	wgetfile( addr path, addr cp_env, 3 )
+
+local	path[_MAX_PATH]:SBYTE
+
+	.if	wgetfile( addr path, "*.env", _WOPEN )
+
 		_close( eax )
 		ReadEnvironment( addr path )
 		read_environ()
@@ -295,37 +331,49 @@ event_load PROC
 	.endif
 	mov	eax,_C_NORMAL
 	ret
+
 event_load ENDP
 
 event_save PROC
-	local	path[_MAX_PATH]:SBYTE
-	.if	wgetfile( addr path, addr cp_env, 2 )
+
+local	path[_MAX_PATH]:SBYTE
+
+	.if	wgetfile( addr path, "*.env", _WSAVE )
+
 		_close( eax )
 		SaveEnvironment( addr path )
 	.endif
 	mov	eax,_C_NORMAL
 	ret
+
 event_save ENDP
 
 	OPTION	PROC: PUBLIC
 
 cmenviron PROC USES esi edi ebx
-	local	cursor:S_CURSOR
-	local	ll:S_LOBJ
+
+local	cursor:S_CURSOR
+local	ll:S_LOBJ
+
 	lea	edx,ll
 	mov	FCB_Environ,edx
 	mov	edi,edx
 	xor	eax,eax
 	mov	ecx,SIZE S_LOBJ
 	rep	stosb
+
 	mov	[edx].S_LOBJ.ll_dcount,CELLCOUNT
 	mov	[edx].S_LOBJ.ll_proc,event_list
+
 	.if	malloc( ( MAXHIT * 4 ) + 4 )
+
 		lea	edx,ll
 		mov	[edx].S_LOBJ.ll_list,eax
 		call	clrcmdl
 		GetCursor( addr cursor )
+
 		.if	rsopen( IDD_DZEnviron )
+
 			mov	DLG_Environ,eax
 			mov	ebx,eax
 			mov	edi,[ebx].S_DOBJ.dl_object
@@ -337,12 +385,15 @@ cmenviron PROC USES esi edi ebx
 				mov	[edx],eax
 				add	edx,SIZE S_TOBJ
 			.untilcxz
+
 			dlshow( ebx )
 			mov	eax,FCB_Environ
 			mov	tdllist,eax
 			call	read_environ
 			call	update_cellid
+
 			.while	rsevent( IDD_DZEnviron, ebx )
+
 				.switch eax
 				  .case 1..19
 					.break .if event_edit() != _C_NORMAL
@@ -360,17 +411,19 @@ cmenviron PROC USES esi edi ebx
 					call	event_save
 					.endc
 				.endsw
-
 			.endw
 			dlclose( ebx )
 		.endif
+
 		mov	ebx,FCB_Environ
 		mov	eax,[ebx].S_LOBJ.ll_list
 		.if	eax
+
 			xor	edx,edx
 			mov	eax,[ebx].S_LOBJ.ll_list
 			.while	edx < [ebx].S_LOBJ.ll_count
 				free( [eax+edx*4] )
+
 				inc	edx
 			.endw
 			free( [ebx].S_LOBJ.ll_list )
@@ -378,11 +431,13 @@ cmenviron PROC USES esi edi ebx
 	.else
 		ermsg( 0, addr CP_ENOMEM )
 	.endif
+
 	GetEnvironmentTEMP()
 	GetEnvironmentPATH()
 	SetCursor( addr cursor )
 	xor	eax,eax
 	ret
+
 cmenviron ENDP
 
 	END

@@ -173,15 +173,15 @@ tisaveas	PROTO :PTINFO
 tdlgopen	PROTO
 tihandler	PROTO
 toption		PROTO
-topen		PROTO :LPSTR
+topen		PROTO :LPSTR, :UINT
 tclose		PROTO
 tcloseall	PROTO
 tclosefile	PROTO
 tmodal		PROTO
 tevent		PROTO
 tedit		PROTO :LPSTR, :DWORD
-topenh		PROTO __section:LPSTR
-tsaveh		PROTO __ini:DWORD, __section:LPSTR
+TIOpenSession	PROTO __ini:DWORD, __section:LPSTR
+TISaveSession	PROTO __ini:DWORD, __section:LPSTR
 topensession	PROTO
 topenedi	PROTO :LPSTR
 tloadfiles	PROTO

@@ -13,15 +13,20 @@ include errno.inc
 	ASSUME	esi: PTR S_TINFO
 	ASSUME	edi: PTR S_TINFO
 
-topen	PROC USES esi edi file:LPSTR
+topen	PROC USES esi edi file:LPSTR, tflag:UINT
 
 	.if	tiopen( tinfo, titabsize, tiflags )
-
 
 		mov	esi,eax
 		or	[esi].ti_flag,_T_FILE
 		mov	edi,[esi].ti_prev
 		mov	tinfo,eax
+		mov	eax,tflag
+		.if	eax
+
+			and	[esi].ti_flag,NOT _T_TECFGMASK
+			or	[esi].ti_flag,eax
+		.endif
 
 		mov	eax,file
 		.if	eax
@@ -41,9 +46,7 @@ topen	PROC USES esi edi file:LPSTR
 				ticlose( esi )
 				xor esi,esi
 			.endif
-
 		.else
-
 			inc	[esi].S_TINFO.ti_lcnt	; set line count to 1
 			.repeat
 
@@ -62,11 +65,12 @@ topen	PROC USES esi edi file:LPSTR
 				tireadstyle( esi )
 			.endif
 		.endif
-
 		mov	eax,esi
 	.endif
+
 	test	eax,eax
 	ret
+
 topen	ENDP
 
 tclose	PROC

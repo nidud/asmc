@@ -155,29 +155,40 @@ event_reload PROC
 event_reload ENDP
 
 event_loadcolor PROC USES esi
-  local path[_MAX_PATH]:BYTE
-	.if wgetfile( addr path, addr cp_pal, 3 )
-		push	eax
-		osread( eax, addr at_foreground, SIZE S_COLOR )
+
+local	path[_MAX_PATH]:BYTE
+
+	.if	wgetfile( addr path, addr cp_pal, _WOPEN )
+
 		mov	esi,eax
-		call	_close
+		osread( esi, addr at_foreground, SIZE S_COLOR )
+		xchg	eax,esi
+		_close( eax )
 		mov	eax,_C_NORMAL
-		.if esi == SIZE S_COLOR
+
+		.if	esi == SIZE S_COLOR
+
 			event_reload()
 		.endif
 	.endif
 	ret
+
 event_loadcolor ENDP
 
 event_savecolor PROC
-  local path[_MAX_PATH]:BYTE
-	.if wgetfile( addr path, addr cp_pal, 2 )
+
+local	path[_MAX_PATH]:BYTE
+
+	.if	wgetfile( addr path, addr cp_pal, _WSAVE )
+
 		push	eax
 		oswrite( eax, addr at_foreground, SIZE S_COLOR )
 		call	_close
 	.endif
+
 	mov	eax,_C_NORMAL
 	ret
+
 event_savecolor ENDP
 
 ifdef __AT__

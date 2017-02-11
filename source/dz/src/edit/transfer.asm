@@ -204,7 +204,7 @@ LoadMessageFile PROC USES esi edi ebx M
 
 	.if	!tifindfile( addr [edi].ERFILE.m_file )
 
-		.if	!topen( addr [edi].ERFILE.m_file )
+		.if	!topen( addr [edi].ERFILE.m_file, 0 )
 
 			jmp	toend
 		.endif
@@ -449,7 +449,7 @@ titransfer PROC USES esi edi ebx
 		lea	eax,[esi+'0']
 		mov	cp_ShiftX,al
 
-		.if	CFGetSection( addr cp_ShiftX )
+		.if	CFGetSection( addr cp_ShiftFX )
 
 			.if	CFGetEntry( eax, ebx )
 

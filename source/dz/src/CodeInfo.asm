@@ -380,7 +380,7 @@ CIEditFile PROC USES edi ci:PCIDATA, file:LPSTR
 	mov	edi,tinfo
 	mov	tinfo,0
 
-	.if	topen(file)
+	.if	topen(file, 0)
 
 		tmodal()
 		tclose()
@@ -564,7 +564,7 @@ CIEventFind PROC USES esi edi ebx
 
 	mov	esi,CIFile
 
-	.if	CFFindSection( [esi].ci_file, esi )
+	.if	CFFindSection( [esi].ci_file, esi, "12" )
 
 		.if	__CFGetSection( [esi].ci_file, eax )
 

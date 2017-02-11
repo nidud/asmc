@@ -5,7 +5,7 @@ include tinfo.inc
 tnewfile PROC USES esi
 
 	mov	esi,tinfo
-	.if	topen( 0 )
+	.if	topen( 0, 0 )
 
 		titogglefile( esi, eax )
 		mov tinfo,eax

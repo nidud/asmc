@@ -116,23 +116,23 @@ cmmove	PROC USES edi
 
 	.if cpanel_findfirst()
 
-		mov	edi,edx
+		mov edi,edx
 
 		.if ecx & (_FB_ARCHZIP or _FB_UPDIR)
 			;
-			;
+			; ...
 			;
 		.elseif init_copy( edi, 0 )
 
 			.if !( copy_flag & _COPY_IARCHIVE or _COPY_OARCHIVE )
 
-				mov	jmp_count,0
-				mov	fp_fileblock,fp_movefile
+				mov jmp_count,0
+				mov fp_fileblock,fp_movefile
 				progress_open( addr cp_move, addr cp_move )
 
 				mov eax,[edi]
 				.if eax & _FB_SELECTED
-					.repeat
+					.while	1
 						.if eax & _A_SUBDIR
 							fblk_movedirectory( edi )
 						.else
@@ -142,13 +142,12 @@ cmmove	PROC USES edi
 							fblk_movefile( edi )
 						.endif
 						.break .if eax
-						mov	eax,not _FB_SELECTED
-						and	[edi],eax
-						mov	eax,cpanel
-						.break .if !panel_findnext()
-						mov	edi,edx
-						mov	eax,ecx
-					.until	0
+						mov eax,not _FB_SELECTED
+						and [edi],eax
+						.break .if !panel_findnext(cpanel)
+						mov edi,edx
+						mov eax,ecx
+					.endw
 				.else
 					.if eax & _A_SUBDIR
 						fblk_movedirectory( edi )
@@ -156,8 +155,8 @@ cmmove	PROC USES edi
 						fblk_movefile( edi )
 					.endif
 				.endif
-				call	progress_close
-				mov	eax,1
+				progress_close()
+				mov eax,1
 			.endif
 		.endif
 	.endif

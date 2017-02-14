@@ -649,12 +649,15 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 	    for( tn = ti.symtype; tn && tn->type; tn = tn->type );
 	    /* v2.12: don't assume pointer type if mem_type is != MT_TYPE!
 	     * regression test proc9.asm.
+	     * v2.23: proto fastcall :type - fast32.asm
 	     */
-	    //to = ( paracurr->sym.mem_type == MT_TYPE ) ? paracurr->sym.type : paracurr->sym.target_type;
+	    if ( proc->sym.langtype == LANG_FASTCALL && ModuleInfo.Ofssize == USE32 )
+		paracurr->sym.target_type = NULL;
 	    if ( paracurr->sym.mem_type == MT_TYPE )
 		to = paracurr->sym.type;
 	    else
 		to = ( paracurr->sym.mem_type == MT_PTR ? paracurr->sym.target_type : NULL );
+
 	    for( ; to && to->type; to = to->type );
 	    oo = ( paracurr->sym.Ofssize != USE_EMPTY ) ? paracurr->sym.Ofssize : ModuleInfo.Ofssize;
 	    on = ( ti.Ofssize != USE_EMPTY ) ? ti.Ofssize : ModuleInfo.Ofssize;

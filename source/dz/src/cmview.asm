@@ -151,8 +151,7 @@ TVGetCurrentFile PROC USES edi buffer
 		mov edi,3
 	.endif
 
-	mov	eax,cpanel
-	.if	panel_curobj()
+	.if	panel_curobj(cpanel)
 
 		xchg	eax,ecx
 		.if	eax & _FB_ARCHIVE

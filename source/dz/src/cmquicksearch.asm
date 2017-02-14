@@ -38,39 +38,43 @@ psearch PROC PRIVATE USES esi edi ebx cname, l, direction
 		mov	esi,edi
 	.endif
 
-	.repeat
-		.if esi >= edi
+	.while	1
+
+		.if	esi >= edi
+
 			xor	esi,esi
 			mov	edi,lindex
 			mov	lindex,esi
 			.continue .if edi
+
 			xor	eax,eax
 			.break
 		.endif
+
 		mov	ebx,fcb
 		mov	ebx,[ebx+esi*4]
 	  ifdef SKIPSUBDIR
 		.if !( BYTE PTR [ebx] & _A_SUBDIR )
 	  endif
-		.if !_strnicmp( cname, addr [ebx].S_FBLK.fb_name, l )
-			mov	ebx,cpanel
-			dlclose( [ebx].S_PANEL.pn_xl )
-			mov	eax,ebx
-			mov	edx,esi
-			call	panel_setid
-			panel_putitem( ebx, 0 )
-			mov	eax,ebx
-			call	pcell_show
-			mov	eax,1
+		.if !_strnicmp(cname, addr [ebx].S_FBLK.fb_name, l)
+
+			mov ebx,cpanel
+			dlclose([ebx].S_PANEL.pn_xl)
+			panel_setid(ebx, esi)
+			panel_putitem(ebx, 0)
+			pcell_show(ebx)
+			mov eax,1
 			.break
 		.endif
 	  ifdef SKIPSUBDIR
 		.endif
 	  endif
 		inc	esi
-	.until	0
+	.endw
+
 	mov	edx,cindex
 	ret
+
 psearch ENDP
 
 cmquicksearch PROC USES esi edi ebx

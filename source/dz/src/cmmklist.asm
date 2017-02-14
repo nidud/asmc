@@ -313,67 +313,72 @@ mksublist PROC PRIVATE USES esi edi zip_list, path
 	or	mklist.mkl_flag,_MKL_MACRO
 
 	.if zip_list == 1
-		or	mklist.mkl_flag,_MKL_EXCL_CD
-		lea	eax,cp_ziplst
-		xor	mklist.mkl_flag,_MKL_MACRO
+		or  mklist.mkl_flag,_MKL_EXCL_CD
+		lea eax,cp_ziplst
+		xor mklist.mkl_flag,_MKL_MACRO
 	.else
-		call	mklistidd
-		lea	eax,filelist_bat
-		jz	toend
+		mklistidd()
+		lea eax,filelist_bat
+		jz  toend
 	.endif
 	progress_open( eax, 0 )
 	strlen( path )
-	mov	edx,path
-	add	edx,eax
-	mov	fp_fileblock,offset fp_mklist
-	mov	fp_directory,offset scan_files
+	mov edx,path
+	add edx,eax
+	mov fp_fileblock,offset fp_mklist
+	mov fp_directory,offset scan_files
 
 	.if BYTE PTR [edx-1] != '\'
-		inc	eax
+
+		inc eax
 	.endif
-	mov	mklist.mkl_offspath,eax
+	mov mklist.mkl_offspath,eax
 
 	.if cpanel_findfirst()
 
 		.if ecx & _FB_ARCHEXT
-			mov	mklist.mkl_offspath,0
+
+			mov mklist.mkl_offspath,0
 		.endif
 
 		.repeat
 
-			mov	edi,ecx
-			mov	esi,edx
+			mov edi,ecx
+			mov esi,edx
 
 			.break .if progress_set( 0, strfcat( __outpath, path, eax ), 1 )
 
 			.if edi & _A_SUBDIR
+
 				.if edi & _FB_ARCHIVE
+
 					strcat( __outpath, addr BACK$ )
 					.if BYTE PTR mklist.mkl_flag & _MKL_MASK
-						mov	edx,cpanel
-						mov	edx,[edx].S_PANEL.pn_wsub
+
+						mov edx,cpanel
+						mov edx,[edx].S_PANEL.pn_wsub
 						strcat( eax, [edx].S_WSUB.ws_mask )
 					.endif
-					call	mklistadd
-					inc	mklsubcnt
+					mklistadd()
+					inc mklsubcnt
 				.else
 					.break .if scansub( __outpath, addr cp_stdmask, 0 )
 				.endif
 			.else
 				.if filter_fblk( esi )
-					mov	eax,__outpath
-					call	mklistadd
+
+					mov eax,__outpath
+					mklistadd()
 				.endif
 			.endif
-			and	[esi].S_FBLK.fb_flag,not _FB_SELECTED
-			mov	eax,cpanel
-			call	panel_findnext
-		.until	ZERO?
+			and [esi].S_FBLK.fb_flag,not _FB_SELECTED
+			panel_findnext(cpanel)
+		.untilz
 	.endif
-	push	eax
-	call	progress_close
+	push eax
+	progress_close()
 	_close( mklist.mkl_handle )
-	pop	eax
+	pop eax
 toend:
 	ret
 mksublist ENDP

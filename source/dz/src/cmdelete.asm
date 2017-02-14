@@ -103,45 +103,47 @@ cmdelete PROC USES ebx
 	  .case ecx & _FB_ARCHZIP
 		xor	eax,eax
 		mov	ebx,edx
-		call	open_progress
+		open_progress()
 		.repeat
 			mov	eax,cpanel
 			mov	eax,[eax].S_PANEL.pn_wsub
 			mov	edx,ebx
 			.break .if wzipdel()
 			and	[ebx].S_FBLK.fb_flag,not _FB_SELECTED
-			mov	eax,cpanel
-			call	panel_findnext
+			panel_findnext(cpanel)
 			mov	ebx,edx
-		.until	ZERO?
-		call	progress_close
+		.untilz
+		progress_close()
 		.endc
 	  .default
-		mov	ebx,edx
-		mov	eax,cpanel
-		mov	edx,[eax].S_PANEL.pn_wsub
-		mov	eax,[edx].S_WSUB.ws_path
-		mov	__spath,eax
-		mov	fp_maskp,offset cp_stdmask
-		mov	fp_fileblock,fp_remove_file
-		mov	fp_directory,fp_remove_directory
-		call	open_progress
-		mov	edx,ebx
-		mov	ecx,[edx].S_FBLK.fb_flag
-		lea	eax,[edx].S_FBLK.fb_name
-		.if	!( ecx & _FB_SELECTED )
-			call	cmdelete_remove
+		mov ebx,edx
+		mov eax,cpanel
+		mov edx,[eax].S_PANEL.pn_wsub
+		mov eax,[edx].S_WSUB.ws_path
+		mov __spath,eax
+
+		mov fp_maskp,offset cp_stdmask
+		mov fp_fileblock,fp_remove_file
+		mov fp_directory,fp_remove_directory
+
+		open_progress()
+		mov edx,ebx
+		mov ecx,[edx].S_FBLK.fb_flag
+		lea eax,[edx].S_FBLK.fb_name
+
+		.if !( ecx & _FB_SELECTED )
+
+			cmdelete_remove()
 		.else
 			.repeat
-				call	cmdelete_remove
-				.break .if !ZERO?
-				and	[ebx].S_FBLK.fb_flag,not _FB_SELECTED
-				mov	eax,cpanel
-				call	panel_findnext
-				mov	ebx,edx
-			.until	ZERO?
+				cmdelete_remove()
+				.breaknz
+				and [ebx].S_FBLK.fb_flag,not _FB_SELECTED
+				panel_findnext(cpanel)
+				mov ebx,edx
+			.untilz
 		.endif
-		call	progress_close
+		progress_close()
 	.endsw
 	ret
 cmdelete ENDP

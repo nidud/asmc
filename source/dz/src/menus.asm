@@ -72,6 +72,7 @@ cp_toggleon	db 'Toggle panels - on/off',0
 cp_togglehz	db 'Toggle panels - horizontal/vertical',0
 cp_togglesz	db 'Toggle Panels - size',0
 cp_egaline	db 'Toggle 25-50 lines',0
+cp_consolesize	db 'Set console size',0
 cp_swappanels	db 'Swap panels',0
 cp_confirm	db 'Confirmations options',0
 cp_screen	db 'Screen options',0
@@ -145,6 +146,7 @@ MENUS_SETUP	dd cp_toggleml, cmxormenubar
 		dd cp_togglecl, cmxorcmdline
 		dd cp_togglesl, cmxorkeybar
 		dd cp_egaline,	cmegaline
+		dd cp_consolesize, cmscreensize
 		dd cp_swappanels, cmswap
 		dd cp_confirm,	cmconfirm
 		dd cp_panel,	cmpanel

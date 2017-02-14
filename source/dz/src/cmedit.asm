@@ -16,35 +16,35 @@ loadiniproc	PROTO :DWORD, :DWORD, :DWORD
 
 load_tedit PROC USES esi ebx file, etype
 
-	local	path[_MAX_PATH*2]:BYTE
+local	path[_MAX_PATH*2]:BYTE
 
-	lea	esi,path
-	.if	!strchr( strcpy( esi, file ), '.' )
+	lea esi,path
+	.if !strchr( strcpy( esi, file ), '.' )
 
 		strcat( esi, addr cp_dotdot[1] )
 	.endif
 
-	.if	!loadiniproc( "Edit", esi, etype )
+	.if !loadiniproc( "Edit", esi, etype )
 
-		call	clrcmdl
-		mov	eax,cpanel
-		.if	panel_findnext()
+		clrcmdl()
 
-			mov	ebx,cpanel
-			mov	ebx,[ebx].S_PANEL.pn_wsub
+		.if panel_findnext(cpanel)
+
+			mov ebx,cpanel
+			mov ebx,[ebx].S_PANEL.pn_wsub
 			wedit( [ebx].S_WSUB.ws_fcb, [ebx].S_WSUB.ws_count )
 		.else
-			.if	BYTE PTR [esi] == '"'
+			.if BYTE PTR [esi] == '"'
 
-				inc	esi
-				.if	strrchr(esi,'"')
+				inc esi
+				.if strrchr(esi,'"')
 
-					mov	BYTE PTR [eax],0
+					mov BYTE PTR [eax],0
 				.endif
 			.endif
 			tedit( esi, 0 )
 		.endif
-		xor	eax,eax
+		xor eax,eax
 	.endif
 	ret
 load_tedit ENDP
@@ -135,10 +135,10 @@ cmtmodal PROC
 
 	.if	tistate( tinfo )
 
-		call	tmodal
+		tmodal()
 	.else
 
-		call	topensession
+		topensession()
 	.endif
 	ret
 

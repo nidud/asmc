@@ -283,15 +283,19 @@ command PROC USES esi edi ebx cmd ; BOOL
 		.endif
 	.endif
 	.if	ecx
+
 		mov	esi,edx
 		.while	BYTE PTR [esi] == ' '
+
 			add esi,1
 		.endw
+
 		.if SetCurrentDirectory( esi )
+
 			.if GetCurrentDirectory( _MAX_PATH, esi )
-				mov	eax,esi
-				call	cpanel_setpath
-				mov	_diskflag,3
+
+				cpanel_setpath(esi)
+				mov _diskflag,3
 			.endif
 		.endif
 		jmp	toend
@@ -417,8 +421,8 @@ execute_command:
 	.endif
 
 	.if	UpdateEnviron && edi
-		mov	eax,edi
-		cpanel_setpath()
+
+		cpanel_setpath(edi)
 	.endif
 	pop	eax
 toend:

@@ -6,22 +6,23 @@ include doszip.inc
 	.code
 
 cmalong PROC
-	mov	eax,panela
-	jmp	cmlong
+	mov ecx,panela
+	jmp cmlong
 cmalong ENDP
 
 cmblong PROC
-	mov	eax,panelb
-	jmp	cmlong
+	mov ecx,panelb
+	jmp cmlong
 cmblong ENDP
 
 cmclong PROC
-	mov	eax,cpanel
+	mov ecx,cpanel
 cmclong ENDP
 
 cmlong:
-	mov	edx,[eax].S_PANEL.pn_wsub
-	xor	[edx].S_WSUB.ws_flag,_W_LONGNAME
-	jmp	panel_update
+	mov edx,[ecx].S_PANEL.pn_wsub
+	xor [edx].S_WSUB.ws_flag,_W_LONGNAME
+	panel_update(ecx)
+	ret
 
 	END

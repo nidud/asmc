@@ -3,6 +3,7 @@ Change Log File for DOSZIP - Win32
 ==================================
 
 Changes in 3.48 - xx xxx 2016
+- added Desktop Size -- Alt-Z
 - removed dz.cfg --> moved to dz.ini
 - added key F7 to Toggle Edit Panel/Full Screen
 - fixed bug in Save Session -- one file short

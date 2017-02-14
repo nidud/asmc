@@ -6,38 +6,32 @@ include doszip.inc
 	.code
 
 cmamini PROC
-	mov	eax,panela
-	call	panel_xormini
+	panel_xormini(panela)
 	ret
 cmamini ENDP
 
 cmbmini PROC
-	mov	eax,panelb
-	call	panel_xormini
+	panel_xormini(panelb)
 	ret
 cmbmini ENDP
 
 cmcmini PROC
-	mov	eax,cpanel
-	call	panel_xormini
+	panel_xormini(cpanel)
 	ret
 cmcmini ENDP
 
 cmvolinfo PROC
-	mov	eax,cpanel
-	call	panel_xorinfo
+	panel_xorinfo(cpanel)
 	ret
 cmvolinfo ENDP
 
 cmavolinfo PROC
-	mov	eax,panela
-	call	panel_xorinfo
+	panel_xorinfo(panela)
 	ret
 cmavolinfo ENDP
 
 cmbvolinfo PROC
-	mov	eax,panelb
-	call	panel_xorinfo
+	panel_xorinfo(panelb)
 	ret
 cmbvolinfo ENDP
 

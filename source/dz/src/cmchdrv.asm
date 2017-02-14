@@ -22,19 +22,21 @@ cmbchdrv PROC
 	mov	cp_selectdrv_X,'B'
 cmbchdrv ENDP
 
-cmchdrv:
-	push	esi
-	mov	esi,eax
-	.if	panel_state()
-		mov	errno,0
-		.if	_disk_select( addr cp_selectdrv )
-			push	eax
-			panel_sethdd( esi, eax )
-			call	msloop
-			pop	eax
+cmchdrv proc private uses esi
+
+	mov esi,eax
+	.if panel_state(eax)
+
+		mov errno,0
+		.if _disk_select(addr cp_selectdrv)
+
+			push eax
+			panel_sethdd(esi, eax)
+			msloop()
+			pop eax
 		.endif
 	.endif
-	pop	esi
 	ret
+cmchdrv endp
 
 	END

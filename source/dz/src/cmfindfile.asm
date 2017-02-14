@@ -768,25 +768,28 @@ toend:
 ff_close ENDP
 
 ff_close_dlg PROC
-	mov	BYTE PTR fsflag,ah
-	movzx	eax,[ebx].S_DOBJ.dl_index
+
+	mov BYTE PTR fsflag,ah
+	movzx eax,[ebx].S_DOBJ.dl_index
 	dlclose( ebx )
-	.if	edx == ID_GOTO
-		mov	ebx,tdllist
-		.if	[ebx].S_LOBJ.ll_count
-			mov	eax,cpanel
-			call	panel_state
-			.if	!ZERO?
-				mov	eax,[ebx].S_LOBJ.ll_index
-				add	eax,[ebx].S_LOBJ.ll_celoff
-				mov	ebx,[ebx].S_LOBJ.ll_list
-				mov	ebx,[ebx+eax*4]
-				add	ebx,S_SBLK.sb_file
-				strrchr( ebx, '\' )
-				.if	!ZERO?
-					mov	BYTE PTR [eax],0
-					mov	eax,ebx
-					call	cpanel_setpath
+
+	.if edx == ID_GOTO
+
+		mov ebx,tdllist
+		.if [ebx].S_LOBJ.ll_count
+
+			.if panel_state(cpanel)
+
+				mov eax,[ebx].S_LOBJ.ll_index
+				add eax,[ebx].S_LOBJ.ll_celoff
+				mov ebx,[ebx].S_LOBJ.ll_list
+				mov ebx,[ebx+eax*4]
+				add ebx,S_SBLK.sb_file
+
+				.if strrchr( ebx, '\' )
+
+					mov BYTE PTR [eax],0
+					cpanel_setpath(ebx)
 				.endif
 			.endif
 		.endif

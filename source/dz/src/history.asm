@@ -102,14 +102,19 @@ historysave endp
 
 DirectoryToCurrentPanel proc uses esi edi directory
 
-	mov	esi,directory
-	xor	eax,eax
-	.if	esi
-		.if	eax != [esi]
-			mov	edi,cpanel
-			mov	edi,[edi]
-			mov	edx,[edi]
-			.if	!( edx & _W_ARCHIVE or _W_ROOTDIR )
+	mov esi,directory
+	xor eax,eax
+
+	.if esi
+
+		.if eax != [esi]
+
+			mov edi,cpanel
+			mov edi,[edi]
+			mov edx,[edi]
+
+			.if !( edx & _W_ARCHIVE or _W_ROOTDIR )
+
 				mov	eax,edx
 				and	eax,_P_FLAGMASK
 				or	eax,[esi].S_DIRECTORY.flag
@@ -119,16 +124,16 @@ DirectoryToCurrentPanel proc uses esi edi directory
 				mov	ecx,cpanel
 				mov	[ecx].S_PANEL.pn_fcb_index,eax
 				mov	[ecx].S_PANEL.pn_cel_index,edx
-				mov	eax,[esi]
-				call	cpanel_setpath
-				mov	eax,cpanel
-				call	panel_redraw
+
+				cpanel_setpath([esi])
+				panel_redraw(cpanel)
 				mov	eax,1
 			.endif
 		.endif
 	.endif
 	test	eax,eax
 	ret
+
 DirectoryToCurrentPanel endp
 
 cmpathleft proc		; Alt-Left - Previous Directory

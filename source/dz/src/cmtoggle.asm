@@ -6,103 +6,92 @@ include doszip.inc
 	.code
 
 cmatoggle PROC
-	mov	eax,panela
-	jmp	panel_toggle
+	panel_toggle(panela)
+	ret
 cmatoggle ENDP
 
 cmbtoggle PROC
-	mov	eax,panelb
-	jmp	panel_toggle
+	panel_toggle(panelb)
+	ret
 cmbtoggle ENDP
 
 cmtoggleon PROC USES esi edi
-	sub	esi,esi
-	sub	edi,edi
-	mov	eax,panela
-	.if panel_state()
-		inc esi
-	.endif
-	mov	eax,panelb
-	.if panel_state()
-		inc edi
-	.endif
-	.if edi != esi
-		.if esi
-			call cmatoggle
-		.else
-			call cmbtoggle
-		.endif
+
+	mov esi,panel_state(panela)
+	mov edi,panel_state(panelb)
+	.if !edi && esi
+		cmatoggle()
+	.elseif edi && !esi
+		cmbtoggle()
 	.elseif edi
-		mov eax,cpanel
-		.if eax != panelb
-			push panelb
-		.else
-			push panela
+		mov esi,cpanel
+		mov edi,panela
+		.if esi == edi
+			mov edi,panelb
 		.endif
-		call	panel_hide
-		pop	eax
-		call	panel_hide
+		panel_hide(esi)
+		panel_hide(edi)
 	.else
-		call	comhide
-		mov	eax,cpanel
-		push	eax
-		push	eax
-		.if eax == panelb
-			mov eax,panela
-		.else
-			mov eax,panelb
+		comhide()
+		mov esi,cpanel
+		mov edi,panela
+		.if esi == edi
+			mov edi,panelb
 		.endif
-		call	panel_show
-		pop	eax
-		call	panel_show
-		pop	eax
-		call	panel_setactive
+		panel_show(edi)
+		panel_show(esi)
+		panel_setactive(esi)
 	.endif
 	xor	eax,eax
 	ret
 cmtoggleon ENDP
 
 cmtogglehz PROC
-	mov	eax,config.c_panelsize
-	mov	ecx,cflag
+	mov eax,config.c_panelsize
+	mov ecx,cflag
 	.if ecx & _C_WIDEVIEW && ecx & _C_HORIZONTAL
-		and	ecx,not _C_WIDEVIEW
-		shl	al,1
+		and ecx,not _C_WIDEVIEW
+		shl al,1
 	.elseif ecx & _C_HORIZONTAL
-		and	ecx,not _C_HORIZONTAL
-		shl	al,1
+		and ecx,not _C_HORIZONTAL
+		shl al,1
 	.else
-		or	ecx,_C_WIDEVIEW or _C_HORIZONTAL
+		or  ecx,_C_WIDEVIEW or _C_HORIZONTAL
 	.endif
 	mov	cflag,ecx
 	mov	config.c_panelsize,eax
-	jmp	redraw_panels
+	redraw_panels()
+	ret
 cmtogglehz ENDP
 
 cmtogglesz PROC
-	xor	eax,eax
+	xor eax,eax
 	.if eax == config.c_panelsize
-		mov	eax,_scrrow
-		shr	eax,1
-		dec	eax
+		mov eax,_scrrow
+		shr eax,1
+		dec eax
 	.endif
-	mov	config.c_panelsize,eax
-	jmp	redraw_panels
+	mov config.c_panelsize,eax
+	redraw_panels()
+	ret
 cmtogglesz ENDP
 
 cmxorcmdline PROC
-	xor	cflag,_C_COMMANDLINE
-	jmp	apiupdate
+	xor cflag,_C_COMMANDLINE
+	apiupdate()
+	ret
 cmxorcmdline ENDP
 
 cmxorkeybar PROC
-	xor	cflag,_C_STATUSLINE
-	jmp	apiupdate
+	xor cflag,_C_STATUSLINE
+	apiupdate()
+	ret
 cmxorkeybar ENDP
 
 cmxormenubar PROC
-	xor	cflag,_C_MENUSLINE
-	jmp	apiupdate
+	xor cflag,_C_MENUSLINE
+	apiupdate()
+	ret
 cmxormenubar ENDP
 
 	END

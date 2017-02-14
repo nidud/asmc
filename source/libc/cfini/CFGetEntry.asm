@@ -20,18 +20,20 @@ CFGetEntry PROC USES esi edi __ini:PCFINI, __entry:LPSTR
 				mov	esi,eax
 				mov	edx,[eax].S_CFINI.cf_name
 				mov	ecx,__entry
-				mov	al,[ecx]
 
-				.while	al == [edx]
+				.while	1
 
+					mov	al,[ecx]
+					mov	ah,[edx]
 					.break .if !al
 
 					add	ecx,1
 					add	edx,1
-					mov	al,[ecx]
+					or	eax,0x2020
+					.break .if al != ah
 				.endw
 
-				.if	al == [edx]
+				.if	al == ah
 
 					mov	edx,edi ; mother
 					mov	ecx,esi ; entry

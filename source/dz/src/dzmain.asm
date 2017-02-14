@@ -27,63 +27,63 @@ ioupdate PROC stream
 	;
 	; This is called on each flush (copy)
 	;
-	mov	eax,DWORD PTR STDO.ios_total
-	mov	edx,DWORD PTR STDO.ios_total[4]
-	.if	BYTE PTR stream == 0
-		mov	eax,DWORD PTR STDI.ios_total
-		mov	edx,DWORD PTR STDI.ios_total[4]
+	mov eax,DWORD PTR STDO.ios_total
+	mov edx,DWORD PTR STDO.ios_total[4]
+	.if BYTE PTR stream == 0
+		mov eax,DWORD PTR STDI.ios_total
+		mov edx,DWORD PTR STDI.ios_total[4]
 	.endif
-	.if	progress_update( edx::eax )
-		xor	eax,eax ; User break (ESC)
+	.if progress_update(edx::eax)
+		xor eax,eax ; User break (ESC)
 	.else
-		xor	eax,eax
-		inc	eax
+		xor eax,eax
+		inc eax
 	.endif
 	ret
 ioupdate ENDP
 
 test_path PROC
 
-	xor	eax,eax ; validate path in ESI
-	mov	cx,[esi]	; path in EDI used if fail
-	.if	cl
-		.if	cx == '\\'
+	xor eax,eax	; validate path in ESI
+	mov cx,[esi]	; path in EDI used if fail
+	.if cl
+		.if cx == '\\'
 
-			inc	eax
+			inc eax
 		.elseif ch == ':'
 
-			movzx	eax,cl
-			or	al,' '
-			sub	al,'a' - 1
+			movzx eax,cl
+			or  al,' '
+			sub al,'a' - 1
 
-			.if	_disk_exist( eax )
+			.if _disk_exist(eax)
 
-				.if	filexist( esi ) == 2
+				.if filexist(esi) == 2
 					;
 					; disk and path exist
 					;
 					; if exist, remove trailing slash from path
 					;
-					.if	strrchr( esi, '\' )
+					.if strrchr(esi, '\')
 
-						mov	ecx,'\'
-						.if	[eax] == cx && BYTE PTR [eax-1] != ':'
+						mov ecx,'\'
+						.if [eax] == cx && BYTE PTR [eax-1] != ':'
 
-							mov	[eax],ch
+							mov [eax],ch
 						.endif
 					.endif
-					mov	eax,1
+					mov eax,1
 				.else
 
-					xor	eax,eax
+					xor eax,eax
 				.endif
 			.endif
 		.endif
 	.endif
-	.if	!eax
+	.if !eax
 
-		strcpy( esi,edi )
-		xor	eax,eax
+		strcpy(esi, edi)
+		xor eax,eax
 	.endif
 	ret
 test_path ENDP
@@ -92,184 +92,182 @@ test_path ENDP
 
 doszip_init PROC USES esi edi ebx argv
 
-	malloc( 5*WMAXPATH )	; directory buffers
-	mov	__srcfile,eax	; source
-	add	eax,WMAXPATH
-	mov	__srcpath,eax
-	add	eax,WMAXPATH
-	mov	__outfile,eax	; target
-	add	eax,WMAXPATH
-	mov	__outpath,eax
-	add	eax,WMAXPATH
-	mov	entryname,eax	; archive->name
+	malloc(5*WMAXPATH)	; directory buffers
+	mov __srcfile,eax	; source
+	add eax,WMAXPATH
+	mov __srcpath,eax
+	add eax,WMAXPATH
+	mov __outfile,eax	; target
+	add eax,WMAXPATH
+	mov __outpath,eax
+	add eax,WMAXPATH
+	mov entryname,eax	; archive->name
 
-	wsopen( addr path_a )	; panels
-	wsopen( addr path_b )
+	wsopen(addr path_a)	; panels
+	wsopen(addr path_b)
 
-	mov	edi,_pgmpath	; %DZ%
-	SetEnvironmentVariable( "DZ", edi )
+	mov edi,_pgmpath	; %DZ%
+	SetEnvironmentVariable("DZ", edi)
 
-	mov	bl,[edi+2]
-	mov	BYTE PTR [edi+2],0
-	SetEnvironmentVariable( "DZDRIVE", edi )
-	mov	[edi+2],bl
+	mov bl,[edi+2]
+	mov BYTE PTR [edi+2],0
+	SetEnvironmentVariable("DZDRIVE", edi)
+	mov [edi+2],bl
 
-	mov	ebx,edi
+	mov ebx,edi
 	;
 	; Create and read the DZ.INI file
 	;
-	.if	!filexist( strfcat( __srcfile, ebx, addr DZ_INIFILE ) )
+	.if !filexist(strfcat(__srcfile, ebx, addr DZ_INIFILE))
 		;
 		; virgin call..
 		;
 		config_create()
-		and	cflag,not _C_DELHISTORY
+		and cflag,not _C_DELHISTORY
 	.endif
 
-	CFRead( __srcfile )
+	CFRead(__srcfile)
 
 	;
 	; Read section [Environ]
 	;
-	xor	edi,edi
-	mov	esi,__srcfile
-	.if	CFGetSection( "Environ" )
+	xor edi,edi
+	mov esi,__srcfile
+	.if CFGetSection("Environ")
 
-		mov	ebx,eax
+		mov ebx,eax
 
-		.while	CFGetEntryID( ebx, edi )
+		.while	CFGetEntryID(ebx, edi)
 
-			strcpy( esi, eax )
-			inc	edi
-			expenviron( esi )
-			.break .if !strchr( esi, '=' )
-			mov	BYTE PTR [eax],0
-			inc	eax
-			push	eax
-			strtrim( esi )
-			call	strstart
-			SetEnvironmentVariable( esi, eax )
+			strcpy(esi, eax)
+			inc edi
+			expenviron(esi)
+			.break .if !strchr(esi, '=')
+			mov BYTE PTR [eax],0
+			inc eax
+			push eax
+			strtrim(esi)
+			strstart()
+			SetEnvironmentVariable(esi, eax)
 		.endw
 	.endif
 
 	;
 	; Read section [Path]
 	;
-	xor	edi,edi
-	mov	[esi],edi
+	xor edi,edi
+	mov [esi],edi
 
-	.if	CFGetSection( "Path" )
+	.if CFGetSection("Path")
 
-		mov	ebx,eax
+		mov ebx,eax
 
-		.while	CFGetEntryID( ebx, edi )
+		.while	CFGetEntryID(ebx, edi)
 
-			mov	edx,eax
-			strcat( strcat( esi, ";" ), edx )
-			inc	edi
+			mov edx,eax
+			strcat(strcat(esi, ";"), edx)
+			inc edi
 		.endw
 
 		.if	[esi] != al
 
-			inc	esi
-			expenviron( esi )
-			SetEnvironmentVariable( "PATH", esi )
+			inc esi
+			expenviron(esi)
+			SetEnvironmentVariable("PATH", esi)
 		.endif
 	.endif
 
-	call	config_read
-	call	setasymbol
+	config_read()
+	setasymbol()
 
-	mov	eax,console
-	and	eax,CON_NTCMD
-	CFGetComspec( eax )
+	mov eax,console
+	and eax,CON_NTCMD
+	CFGetComspec(eax)
 
-	and	config.c_apath.ws_flag,not _W_ARCHEXT
-	and	config.c_bpath.ws_flag,not _W_ARCHEXT
+	and config.c_apath.ws_flag,not _W_ARCHEXT
+	and config.c_bpath.ws_flag,not _W_ARCHEXT
 	;
 	; argv is .ZIP file or directory
 	;
-	mov	ebx,argv
+	mov ebx,argv
 
-	.if	ebx
+	.if ebx
 
-		.if	filexist( ebx ) == 1
+		.if filexist(ebx) == 1
 
-			strfn ( ebx )
-			lea	edi,[eax-S_FBLK.fb_name]
-			readword( ebx )
+			lea edi,[strfn(ebx)-S_FBLK.fb_name]
+			readword(ebx)
 
-			.if	ax == 4B50h
+			.if ax == 4B50h
 
-				mov	eax,_W_ARCHZIP
-			.elseif warctest( edi, eax ) == 1
+				mov eax,_W_ARCHZIP
+			.elseif warctest(edi, eax) == 1
 
-				mov	eax,_W_ARCHEXT
+				mov eax,_W_ARCHEXT
 			.else
-
-				xor	eax,eax
+				xor eax,eax
 			.endif
 
-			.if	eax
+			.if eax
 
-				and	config.c_apath.ws_flag,not (_W_ARCHIVE or _W_ROOTDIR)
-				and	config.c_bpath.ws_flag,not (_W_ARCHIVE or _W_ROOTDIR)
-				or	eax,_W_VISIBLE
-				or	config.c_apath.ws_flag,eax
-				mov	eax,config.c_apath.ws_arch
-				mov	BYTE PTR [eax],0
-				add	edi,S_FBLK.fb_name
-				strcpy( config.c_apath.ws_file, edi )
+				and config.c_apath.ws_flag,not (_W_ARCHIVE or _W_ROOTDIR)
+				and config.c_bpath.ws_flag,not (_W_ARCHIVE or _W_ROOTDIR)
+				or  eax,_W_VISIBLE
+				or  config.c_apath.ws_flag,eax
+				mov eax,config.c_apath.ws_arch
+				mov BYTE PTR [eax],0
+				add edi,S_FBLK.fb_name
+				strcpy(config.c_apath.ws_file, edi)
 
-				.if	edi != ebx
+				.if edi != ebx
 
-					mov	BYTE PTR [edi-1],0
-					jmp	chdir_arg
+					mov BYTE PTR [edi-1],0
+					jmp chdir_arg
 				.endif
-				and	cflag,not _C_PANELID
-				_getcwd( config.c_apath.ws_path, WMAXPATH )
+				and cflag,not _C_PANELID
+				_getcwd(config.c_apath.ws_path, WMAXPATH)
 			.endif
 
 		.elseif eax
 		 chdir_arg:
 
-			and	cflag,not _C_PANELID
-			mov	eax,':'
+			and cflag,not _C_PANELID
+			mov eax,':'
 
-			.if	[ebx+1] == al
+			.if [ebx+1] == al
 
-				mov	al,[ebx]
-				or	al,20h
-				sub	al,'a' - 1
+				mov al,[ebx]
+				or  al,20h
+				sub al,'a' - 1
 
-				_chdrive( eax )
+				_chdrive(eax)
 			.endif
-			_chdir( ebx )
+			_chdir(ebx)
 		.endif
 	.endif
 
 	;
 	; Read section [Load]
 	;
-	.if	CFGetSection( "Load" )
+	.if CFGetSection("Load")
 
-		CFExecute( eax )
+		CFExecute(eax)
 	.endif
 
-	mov	thelp,cmhelp
-	mov	oupdate,ioupdate
-	mov	eax,numfblock
-	mov	wsmaxfbb,eax
-	mov	wsmaxfba,eax
+	mov thelp,cmhelp
+	mov oupdate,ioupdate
+	mov eax,numfblock
+	mov wsmaxfbb,eax
+	mov wsmaxfba,eax
 
-	call	ConsolePush
-	mov	eax,ConsoleIdle
-	mov	tdidle,eax
+	ConsolePush()
+	mov eax,ConsoleIdle
+	mov tdidle,eax
 ifdef __CI__
-	call	CodeInfo
+	CodeInfo()
 endif
 ifdef __BMP__
-	call	CaptureScreen
+	CaptureScreen()
 endif
 	xor	eax,eax
 	ret
@@ -278,75 +276,80 @@ doszip_init ENDP
 
 doszip_open PROC USES esi edi ebx
 
-	local	path[_MAX_PATH]:SBYTE
+local	path[_MAX_PATH]:SBYTE
 
-	xor	eax,eax
-	mov	dzexitcode,eax
-	mov	mainswitch,eax
+	xor eax,eax
+	mov dzexitcode,eax
+	mov mainswitch,eax
 
 	setconfirmflag()
 
-	.if	cflag & _C_DELTEMP
+	.if cflag & _C_DELTEMP
 
-		removetemp( addr cp_ziplst )
-		and	cflag,not _C_DELTEMP
+		removetemp(addr cp_ziplst)
+		and cflag,not _C_DELTEMP
 	.endif
 	;
 	; Init panels
 	;
-	mov	eax,config.c_fcb_indexa
-	mov	spanela.pn_fcb_index,eax
-	mov	eax,config.c_fcb_indexb
-	mov	spanelb.pn_fcb_index,eax
-	mov	eax,config.c_cel_indexa
-	mov	spanela.pn_cel_index,eax
-	mov	eax,config.c_cel_indexb
-	mov	spanelb.pn_cel_index,eax
+	mov eax,config.c_fcb_indexa
+	mov spanela.pn_fcb_index,eax
+	mov eax,config.c_fcb_indexb
+	mov spanelb.pn_fcb_index,eax
+	mov eax,config.c_cel_indexa
+	mov spanela.pn_cel_index,eax
+	mov eax,config.c_cel_indexb
+	mov spanelb.pn_cel_index,eax
 
-	xor	eax,eax
-	lea	edx,cp_stdmask
-	mov	ecx,config.c_apath.ws_mask
-	.if	[ecx] == al
+	xor eax,eax
+	lea edx,cp_stdmask
+	mov ecx,config.c_apath.ws_mask
+	.if [ecx] == al
 
-		strcpy( config.c_apath.ws_mask, edx )
+		strcpy(config.c_apath.ws_mask, edx)
 	.endif
-	mov	ecx,config.c_bpath.ws_mask
-	.if	BYTE PTR [ecx] == 0
 
-		strcpy( config.c_bpath.ws_mask, edx )
+	mov ecx,config.c_bpath.ws_mask
+	.if BYTE PTR [ecx] == 0
+
+		strcpy(config.c_bpath.ws_mask, edx)
 	.endif
 	;
 	; Init Desktop
 	;
-	.if	console & CON_IMODE || _scrcol < 80
+	.if console & CON_IMODE || _scrcol < 80
 
 		apimode()
 	.endif
 
-	call	apiopen
-	mov	tupdate,apiidle
-	call	apiidle
-	or	console,CON_SLEEP
-	call	CursorOff
-	call	prect_open_ab
-	lea	eax,spanelb
-	.if	cpanel == eax
+	apiopen()
+	mov tupdate,apiidle
+	apiidle()
+	or console,CON_SLEEP
+	CursorOff()
+	prect_open_ab()
 
-		lea eax,spanela
+	lea ecx,spanelb
+	.if ecx == cpanel
+
+		lea ecx,spanela
 	.endif
-	call	panel_openmsg
-	mov	edi,_pgmpath
-	mov	esi,path_a.ws_path
-	.if	!test_path()
+	panel_openmsg(ecx)
+
+	mov edi,_pgmpath
+	mov esi,path_a.ws_path
+	.if !test_path()
 
 		and path_a.ws_flag,not _W_ARCHIVE
 	.endif
-	mov	esi,path_b.ws_path
-	.if	!test_path()
+
+	mov esi,path_b.ws_path
+	.if !test_path()
 
 		and path_b.ws_flag,not _W_ARCHIVE
 	.endif
-	.if	cflag & _C_COMMANDLINE
+
+	.if cflag & _C_COMMANDLINE
 
 		CursorOn()
 	.endif
@@ -358,45 +361,46 @@ doszip_open PROC USES esi edi ebx
 doszip_open ENDP
 
 doszip_hide PROC
-	.if	cflag & _C_AUTOSAVE
+
+	.if cflag & _C_AUTOSAVE
+
 		config_save()
 	.endif
-	call	apiclose
-	mov	eax,panelb
-	call	prect_hide
-	mov	panel_B,eax
-	mov	eax,panela
-	call	prect_hide
-	mov	panel_A,eax
+
+	apiclose()
+	mov panel_B,prect_hide(panelb)
+	mov panel_A,prect_hide(panela)
 	ret
+
 doszip_hide ENDP
 
 doszip_show PROC
+
 	apiopen()
-	.if	panel_A
-		mov	eax,panela
-		redraw_panel()
+	.if panel_A
+
+		redraw_panel(panela)
 	.endif
-	.if	panel_B
-		mov	eax,panelb
-		redraw_panel()
+	.if panel_B
+
+		redraw_panel(panelb)
 	.endif
 	ret
+
 doszip_show ENDP
 
 doszip_close PROC
-	mov	tupdate,tdummy
-	.if	cflag & _C_AUTOSAVE
+	mov tupdate,tdummy
+	.if cflag & _C_AUTOSAVE
+
 		config_save()
 	.endif
-	mov	eax,panela
-	call	panel_close
-	mov	eax,panelb
-	call	panel_close
-	call	apiclose
-	_gotoxy( 0, com_info.ti_ypos )
+	panel_close(panela)
+	panel_close(panelb)
+	apiclose()
+	_gotoxy(0, com_info.ti_ypos)
 tdummy:
-	xor	eax,eax
+	xor eax,eax
 	ret
 doszip_close ENDP
 

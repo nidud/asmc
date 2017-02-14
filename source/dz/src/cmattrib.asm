@@ -277,7 +277,7 @@ cmattrib PROC
 	mov	eax,cpanel
 
 	.switch
-	  .case !panel_curobj()
+	  .case !panel_curobj(eax)
 	  .case ecx & _FB_ROOTDIR
 		.endc
 	  .case ecx & _FB_ARCHIVE

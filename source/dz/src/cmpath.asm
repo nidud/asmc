@@ -8,13 +8,11 @@ include cfini.inc
 
 	.code
 
-cmpath PROC PRIVATE ini_id
-
-	local	path[_MAX_PATH]:BYTE
-	mov	eax,cpanel
+cmpath	PROC PRIVATE ini_id
+local	path[_MAX_PATH]:BYTE
 
 	.switch
-	  .case !panel_state()
+	  .case !panel_state(cpanel)
 	  .case !CFGetSectionID( addr cp_directory, ini_id )
 	  .case WORD PTR [eax] == '><'
 	  .case !strchr( eax, ',' )
@@ -26,8 +24,7 @@ cmpath PROC PRIVATE ini_id
 		strnzcpy( addr path, ecx, _MAX_PATH-1 )
 		expenviron( eax )
 		.endc .if path == '['
-		lea	eax,path
-		call	cpanel_setpath
+		cpanel_setpath(addr path)
 		.endc
 	.endsw
 	ret

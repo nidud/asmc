@@ -21,6 +21,7 @@ ST_COUNT	equ 9
 _X_QUOTE	equ 1
 _X_COMMENT	equ 2
 _X_BEGIN	equ 4
+_X_WORD		equ 8
 
 ISCHAR	MACRO reg
 	EXITM<__ctype[reg+1] & (_UPPER or _LOWER or _DIGIT)>
@@ -101,6 +102,7 @@ tistyle PROC USES esi edi ebx,
 
 local	buffer:		LPSTR,	; start of line
 	endbuf:		LPSTR,	; end of line
+	endbufw:	LPSTR,	; end of line (words)
 	string:		LPSTR,
 	ccount:		UINT,	; length of visible line
 	coffset:	UINT,	; number of non-visible chars <= 8
@@ -126,6 +128,7 @@ local	buffer:		LPSTR,	; start of line
 	mov	ccount,ecx
 	add	eax,ecx
 	mov	endbuf,eax
+	mov	endbufw,eax
 
 	xor	eax,eax
 	mov	ecx,256*2
@@ -247,26 +250,19 @@ local	buffer:		LPSTR,	; start of line
 				;-----------------------------------------------
 				timeit_start 2, "docontrol"
 
-				mov	eax,ti
-				.endc	.if !([eax].S_TINFO.ti_flag & _T_SHOWTABS)
+				mov  eax,ti
+				.endc .if !([eax].S_TINFO.ti_flag & _T_SHOWTABS)
 
-				mov	edi,buffer
-				.while	edi < endbuf
+				.for edx = out_buffer,
+				     edi = buffer : edi < endbuf : edi++, edx += 2
 
 					movzx	eax,BYTE PTR [edi]
-					add	edi,1
+					.break	.if !eax
+					.if	eax != 9 && __ctype[eax+1] & _CONTROL
 
-					.endc	.if !eax
-					.if	eax != 9 && \
-						__ctype[eax+1] & _CONTROL
-
-						lea	eax,[edi-1]
-						sub	eax,buffer
-						add	eax,eax
-						add	eax,out_buffer
-						mov	[eax+1],bl
+						mov [edx+1],bl
 					.endif
-				.endw
+				.endf
 
 				timeit_end 2
 				.endc
@@ -277,13 +273,11 @@ local	buffer:		LPSTR,	; start of line
 				;-----------------------------------------------
 				timeit_start 3, "doquote"
 
-				mov	ecx,ccount
-				mov	edx,out_buffer
-				xor	eax,eax
-				mov	edi,buffer
+				xor  eax,eax
+				.for ecx = ccount,
+				     edx = out_buffer,
+				     edi = buffer : edi < endbuf, ecx : eax++, edi++, ecx--
 
-				.repeat
-					.break .if edi >= endbuf
 					.if	xtable[eax] & _X_QUOTE
 
 						.if	!(xtable[eax] & _X_COMMENT)
@@ -291,9 +285,7 @@ local	buffer:		LPSTR,	; start of line
 							mov [edx+eax*2][1],bl
 						.endif
 					.endif
-					add	eax,1
-					add	edi,1
-				.untilcxz
+				.endf
 
 				timeit_end 3
 				.endc
@@ -402,17 +394,17 @@ local	buffer:		LPSTR,	; start of line
 
 						.while	edi <= endbuf
 
-							lea	edx,[edi-1]
-							.if	edx >= buffer
-								sub	edx,buffer
-								.if	!xtable[edx]
+							lea edx,[edi-1]
+							.if edx >= buffer
+								sub edx,buffer
+								.if !xtable[edx]
 
-									add	edx,edx
-									add	edx,out_buffer
-									mov	[edx+1],bl
+									add edx,edx
+									add edx,out_buffer
+									mov [edx+1],bl
 								.endif
 							.endif
-							repnz	scasb
+							repnz scasb
 							.breaknz
 						.endw
 					.endif
@@ -472,12 +464,12 @@ local	buffer:		LPSTR,	; start of line
 
 				.while	BYTE PTR [esi]
 
-					mov	eax,endbuf
+					mov	eax,endbufw
 					.break	.if eax <= buffer
 					sub	eax,buffer
 					.if	eax < 256 && xtable[eax-1] & _X_COMMENT
 
-						dec	endbuf
+						dec	endbufw
 						.cont0
 					.endif
 
@@ -491,9 +483,9 @@ local	buffer:		LPSTR,	; start of line
 						add	edi,eax
 
 						lea	eax,[edi-1]
-						.if	eax >= endbuf
+						.if	eax >= endbufw
 
-							mov	eax,endbuf
+							mov	eax,endbufw
 							dec	eax
 						.endif
 						.if	eax < buffer
@@ -548,13 +540,13 @@ local	buffer:		LPSTR,	; start of line
 								.endif
 
 								lea	eax,[edi-1]
-								mov	ecx,endbuf
+								mov	ecx,endbufw
 								mov	edx,eax
 								.if	eax < buffer
 
 									mov	eax,buffer
 								.endif
-								mov	endbuf,eax
+								mov	endbufw,eax
 								sub	edx,buffer
 
 								.while	edi <= ecx
@@ -575,25 +567,7 @@ local	buffer:		LPSTR,	; start of line
 								.endw
 
 							.until	1
-
-							.break .if edi > endbuf
-							;
-							; continue search
-							;
-							mov	al,[esi]
-							mov	cl,TOUPPER(al)
-							mov	ch,TOLOWER(al)
-							xor	edx,edx
-							.while	edi < endbuf
-
-								mov	al,[edi]
-								add	edi,1
-								inc	edx
-								.break .if al == cl
-								.break .if al == ch
-								dec	edx
-							.endw
-							.break .if !edx
+							jmp	next_word
 						.endw
 					.until	1
 					.repeat
@@ -614,12 +588,12 @@ local	buffer:		LPSTR,	; start of line
 
 				.while	BYTE PTR [esi]
 
-					mov	eax,endbuf
+					mov	eax,endbufw
 					.break	.if eax <= buffer
 					sub	eax,buffer
-					.if	xtable[eax-1] ;& _X_COMMENT or _X_BEGIN
+					.if	xtable[eax-1]
 
-						dec	endbuf
+						dec	endbufw
 						.cont0
 					.endif
 
@@ -679,25 +653,25 @@ local	buffer:		LPSTR,	; start of line
 								inc	ecx
 
 								.repeat
-									.break .if edi > endbuf
+									.break .if edi > endbufw
+									.if edi >= buffer
 
-									.if	edi >= buffer
+										.if !xtable[edx]
 
-										.if	!xtable[edx]
-											;!(xtable[edx] & _X_COMMENT or _X_QUOTE)
-
-											mov	[eax],bl
+											or  xtable[edx],_X_WORD
+											mov [eax],bl
 										.endif
 									.endif
-
-									add	eax,2
-									add	edi,1
-									add	edx,1
+									add eax,2
+									add edi,1
+									add edx,1
 								.untilcxz
 
 							.until	1
 
-							.break .if edi > endbuf
+							next_word:
+
+							.break .if edi > endbufw
 							;
 							; continue search
 							;
@@ -705,7 +679,7 @@ local	buffer:		LPSTR,	; start of line
 							mov	cl,TOUPPER(al)
 							mov	ch,TOLOWER(al)
 							xor	edx,edx
-							.while	edi < endbuf
+							.while	edi < endbufw
 
 								mov	al,[edi]
 								add	edi,1
@@ -770,11 +744,12 @@ local	buffer:		LPSTR,	; start of line
 				.endif
 
 				.if	eax
-					inc	edi
-					mov	ecx,line_size
-					call	find_arg2
+
+					inc edi
+					mov ecx,line_size
+					find_arg2()
 				.else
-					call	find_arg1
+					find_arg1()
 				.endif
 
 				timeit_end 9
@@ -838,15 +813,16 @@ find_token:
 			.ifz
 				mov eax,edx
 			.endif
-			.if	TIStyleIsQuote(eax, edi)
+
+			.if TIStyleIsQuote(eax, edi)
 
 				.continue .if al == '"'
 				;
 				; ' is found but /* it's maybe a fake */
 				;
-				.if	streol(edi) != edi ; get end of line
+				.if streol(edi) != edi ; get end of line
 
-					sub	eax,edi
+					sub eax,edi
 					.breakz
 
 					.continue .if memquote(edi, eax)
@@ -867,8 +843,8 @@ set_attrib:
 
 		.if	edi > endbuf
 
-			pop	eax
-			xor	eax,eax
+			pop eax
+			xor eax,eax
 			retn
 		.endif
 
@@ -940,7 +916,7 @@ find_arg2:
 
 	.while	ecx
 
-		mov	ax,[esi]
+		mov	ax,[esi]	; find next token
 		test	al,al
 		jz	clear_loop
 
@@ -950,8 +926,8 @@ find_arg2:
 			.break1 .ifz
 
 			add	edi,1
-			.continue .if al != [edi-2]
-			.cont1	  .if !ah
+			.cont0 .if al != [edi-2]
+			.cont1 .if !ah
 		.until	ah == [edi-1]
 
 		.continue .if TIStyleIsQuote(line_ptr, edi)
@@ -962,11 +938,12 @@ find_arg2:
 			set_attrib()
 			sub	ecx,1
 			.break1 .ifz
+
 			add	edi,1
 			add	ebx,1
-			xor	al,[esi+ebx+2]
+			xor	al,[esi+ebx+1]
 			jz	find_arg1
-			sub	al,[edi+ebx-1]
+			sub	al,[edi-1]
 		.untilnz
 
 		set_attrib()

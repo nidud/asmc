@@ -70,6 +70,7 @@ fb_time		dd ?	; date:time
 fb_size		dq ?
 fb_name		db 4 dup(?)
 S_FBLK		ENDS
+LPFBLK		TYPEDEF PTR S_FBLK
 
 S_WSUB		STRUC
 ws_flag		SIZE_T ?
@@ -81,6 +82,7 @@ ws_arch		SIZE_T ?
 ws_path		SIZE_T ?
 ws_fcb		SIZE_T ?
 S_WSUB		ENDS	; 32 byte
+LPWSUB		TYPEDEF PTR S_WSUB
 
 externdef	cp_stdmask: SBYTE
 externdef	cp_warning: SBYTE
@@ -98,25 +100,25 @@ externdef	_pgmpath:SIZE_T
 fballoc		PROTO :LPSTR, :DWORD, :QWORD, :DWORD
 fballocwf	PROTO :PVOID, :DWORD
 fbupdir		PROTO :DWORD
-fbinvert	PROTO :PTR S_FBLK
-fbselect	PROTO :PTR S_FBLK
+fbinvert	PROTO :LPFBLK
+fbselect	PROTO :LPFBLK
 fbffirst	PROTO :PVOID, :DWORD
 fballocff	PROTO :DWORD, :DWORD
-fbcolor		PROTO :PTR S_FBLK
+fbcolor		PROTO :LPFBLK
 
 wsalloc		PROTO :DWORD, :DWORD
-wsopen		PROTO :PTR S_WSUB
-wsclose		PROTO :PTR S_WSUB
-wsinit		PROTO :PTR S_WSUB
-wsfree		PROTO :PTR S_WSUB
-wsread		PROTO :PTR S_WSUB
-wssort		PROTO :PTR S_WSUB
-wssetflag	PROTO :PTR S_WSUB
-wslocal		PROTO :PTR S_WSUB
-wschdrv		PROTO :PTR S_WSUB, :DWORD
-wsearch		PROTO :PTR S_WSUB, :LPSTR
-wsfblk		PROTO :PTR S_WSUB, :DWORD
-wsffirst	PROTO :PTR S_WSUB
+wsopen		PROTO :LPWSUB
+wsclose		PROTO :LPWSUB
+wsinit		PROTO :LPWSUB
+wsfree		PROTO :LPWSUB
+wsread		PROTO :LPWSUB
+wssort		PROTO :LPWSUB
+wssetflag	PROTO :LPWSUB
+wslocal		PROTO :LPWSUB
+wschdrv		PROTO :LPWSUB, :DWORD
+wsearch		PROTO :LPWSUB, :LPSTR
+wsfblk		PROTO :LPWSUB, :DWORD
+wsffirst	PROTO :LPWSUB
 wsmkdir		PROTO :LPSTR
 wscopy_open	PROTO ; eax, edx (__srcfile, __outfile)
 wscopy_remove	PROTO ; eax (__outfile)
@@ -145,7 +147,7 @@ ER_READARCH	equ -2
 
 externdef	entryname:SIZE_T
 
-wsopenarch	PROTO :PTR S_WSUB
+wsopenarch	PROTO :LPWSUB
 wzipread	PROTO :DWORD
 wzipopen	PROTO
 wzipclose	PROTO

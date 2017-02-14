@@ -6,26 +6,27 @@ include doszip.inc
 	.code
 
 cmadetail PROC
-	mov	edx,panela
+	mov	ecx,panela
 	jmp	cmdetail
 cmadetail ENDP
 
 cmbdetail PROC
-	mov	edx,panelb
+	mov	ecx,panelb
 	jmp	cmdetail
 cmbdetail ENDP
 
 cmcdetail PROC
-	mov	edx,cpanel
+	mov	ecx,cpanel
 cmcdetail ENDP
 
 cmdetail:
-	mov	ecx,[edx].S_PANEL.pn_wsub
-	mov	eax,[ecx].S_WSUB.ws_flag
+	mov	edx,[ecx].S_PANEL.pn_wsub
+	mov	eax,[edx].S_WSUB.ws_flag
 	and	eax,not _W_WIDEVIEW
 	xor	eax,_W_DETAIL
-	mov	[ecx].S_WSUB.ws_flag,eax
-	mov	eax,edx
-	jmp	panel_redraw
+	mov	[edx].S_WSUB.ws_flag,eax
+
+	panel_redraw(ecx)
+	ret
 
 	END

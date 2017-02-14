@@ -509,8 +509,7 @@ copyselected PROC PRIVATE
 		.endif
 		.break .if eax
 		cpanel_deselect( edi )
-		mov	eax,cpanel
-		call	panel_findnext
+		panel_findnext(cpanel)
 		mov	edi,edx
 	.until	ZERO?
 	mov	edx,eax

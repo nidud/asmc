@@ -15,8 +15,9 @@ default_zip db "default.zip"
 	.code
 
 cmmkzip PROC USES esi edi
-	local	path[_MAX_PATH]:BYTE
-	lea	edi,path
+local	path[_MAX_PATH]:BYTE
+
+	lea edi,path
 
 	.if cpanel_state()
 
@@ -24,33 +25,37 @@ cmmkzip PROC USES esi edi
 
 			.if BYTE PTR [edi]
 
-				.if SDWORD PTR ogetouth( edi, M_WRONLY ) > 0
+				.ifs ogetouth(edi, M_WRONLY) > 0
 
-					mov	esi,eax
-					strcpy( addr default_zip, edi )
-					mov	eax,cpanel
-					mov	edx,[eax].S_PANEL.pn_wsub
-					mov	eax,[edx].S_WSUB.ws_arch
-					mov	BYTE PTR [eax],0
-					mov	eax,[edx].S_WSUB.ws_flag
-					and	eax,not _W_ARCHIVE
-					or	eax,_W_ARCHZIP
-					mov	[edx].S_WSUB.ws_flag,eax
-					mov	edx,[edx].S_WSUB.ws_file
-					strcpy( edx, addr path )
-					mov	edx,edi
-					mov	eax,06054B50h
+					mov esi,eax
+					strcpy(addr default_zip, edi)
+
+					mov eax,cpanel
+					mov edx,[eax].S_PANEL.pn_wsub
+					mov eax,[edx].S_WSUB.ws_arch
+					mov BYTE PTR [eax],0
+					mov eax,[edx].S_WSUB.ws_flag
+					and eax,not _W_ARCHIVE
+					or  eax,_W_ARCHZIP
+					mov [edx].S_WSUB.ws_flag,eax
+					mov edx,[edx].S_WSUB.ws_file
+					strcpy(edx, addr path)
+
+					mov edx,edi
+					mov eax,06054B50h
 					stosd
-					xor	eax,eax
-					mov	ecx,5
-					rep	stosd
-					oswrite( esi, edx, SIZE S_ZEND )
-					_close( esi )
+					xor eax,eax
+					mov ecx,5
+					rep stosd
+
+					oswrite(esi, edx, SIZE S_ZEND)
+					_close(esi)
 				.endif
 			.endif
 		.endif
 	.endif
 	ret
+
 cmmkzip ENDP
 
 	END

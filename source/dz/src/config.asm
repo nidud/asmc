@@ -57,7 +57,7 @@ opfilter	S_FILT	<-1,0,0,0,0,'*.*'>
 at_foreground	db 00h,0Fh,0Fh,07h,08h,00h,00h,07h
 		db 08h,00h,0Ah,0Bh,00h,0Fh,0Fh,0Fh
 at_background	db 00h,10h,70h,70h,40h,30h,30h,70h
-		db 30h,30h,00h,00h,10h,10h,07h,06h
+		db 30h,30h,30h,00h,10h,10h,07h,06h
 mklist		S_MKLST <0,0,0,-1,0>
 
 
@@ -411,6 +411,7 @@ config_save PROC USES esi edi ebx
 		.endif
 	.endif
 
+	__CFDelSection( __CFBase, ".openfiles" )
 	TISaveSession( __CFBase, ".openfiles" )
 	CFWrite( strfcat( __srcfile, _pgmpath, addr DZ_INIFILE ) )
 

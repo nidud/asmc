@@ -8,7 +8,8 @@ include doszip.inc
 cmegaline PROC
 	call	doszip_hide
 	mov	eax,49
-	.if cflag & _C_EGALINE
+	.if	cflag & _C_EGALINE
+
 		mov al,24
 	.endif
 	conssetl( eax )

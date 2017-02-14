@@ -113,110 +113,124 @@ di_SubInfo ENDP
 
 di_SelectedFiles PROC PRIVATE USES esi edi s1
 
-	inc	di_subdcount
-	xor	esi,esi
-	.repeat
-		mov	eax,1
-		mov	edx,cpanel
+	inc di_subdcount
+	xor esi,esi
+
+	.while	1
+		mov eax,1
+		mov edx,cpanel
 		.break .if esi >= [edx].S_PANEL.pn_fcb_count
-		mov	eax,[edx].S_PANEL.pn_wsub
-		mov	eax,[eax].S_WSUB.ws_fcb
-		mov	eax,[eax+esi*4]
-		mov	ecx,[eax]
-		inc	esi
+
+		mov eax,[edx].S_PANEL.pn_wsub
+		mov eax,[eax].S_WSUB.ws_fcb
+		mov eax,[eax+esi*4]
+		mov ecx,[eax]
+		inc esi
+
 		.continue .if !( ecx &_FB_SELECTED )
 
-		.if	ecx & _A_SUBDIR
-			mov	edx,cpanel
-			mov	edx,[edx].S_PANEL.pn_wsub
-			add	eax,S_FBLK.fb_name
-			strfcat( s1, [edx].S_WSUB.ws_path, eax )
+		.if ecx & _A_SUBDIR
+
+			mov edx,cpanel
+			mov edx,[edx].S_PANEL.pn_wsub
+			add eax,S_FBLK.fb_name
+			strfcat(s1, [edx].S_WSUB.ws_path, eax)
 			di_ReadDirectory()
 			.break .if eax
 		.else
-			mov	edx,DWORD PTR [eax].S_FBLK.fb_size[4]
-			mov	eax,DWORD PTR [eax].S_FBLK.fb_size
-			add	qeax,eax
-			adc	qedx,edx
-			inc	di_filecount
+			mov edx,DWORD PTR [eax].S_FBLK.fb_size[4]
+			mov eax,DWORD PTR [eax].S_FBLK.fb_size
+			add qeax,eax
+			adc qedx,edx
+			inc di_filecount
 		.endif
-	.until	0
+	.endw
 
-	.if	eax
-		mov	eax,cpanel
-		mov	eax,[eax].S_PANEL.pn_wsub
-		di_SubInfo( strcpy( s1, [eax].S_WSUB.ws_path ), "Selected Files" )
+	.if eax
+
+		mov eax,cpanel
+		mov eax,[eax].S_PANEL.pn_wsub
+		di_SubInfo(strcpy( s1, [eax].S_WSUB.ws_path ), "Selected Files")
 	.endif
 
 	ret
 di_SelectedFiles ENDP
 
 di_cmSubInfo PROC PRIVATE USES esi edi ebx panel
-	local	path[_MAX_PATH]:BYTE
 
-	mov	esi,panel
-	lea	edi,path
-	mov	eax,esi
+local	path[_MAX_PATH]:BYTE
 
-	.if	panel_state()
+	mov esi,panel
+	lea edi,path
 
-		mov	ebx,[esi]
-		mov	eax,[ebx]
+	.if panel_state(esi)
 
-		.if	!(eax & _W_ARCHIVE or _W_ROOTDIR)
+		mov ebx,[esi]
+		mov eax,[ebx]
 
-			call	di_Init
-			mov	eax,esi
+		.if !(eax & _W_ARCHIVE or _W_ROOTDIR)
 
-			.if	panel_findnext()
-				di_SelectedFiles( edi )
+			di_Init()
+
+			.if panel_findnext(esi)
+
+				di_SelectedFiles(edi)
 			.else
-				mov	ebx,[esi].S_PANEL.pn_wsub
-				strcpy( edi, [ebx].S_WSUB.ws_path )
+				mov ebx,[esi].S_PANEL.pn_wsub
+				strcpy(edi, [ebx].S_WSUB.ws_path)
 				di_ReadDirectory()
-				.if	!eax
-					di_SubInfo( edi, addr cp_subsize )
+				.if !eax
+
+					di_SubInfo(edi, addr cp_subsize)
 				.endif
 			.endif
 		.else
-			xor	eax,eax
+			xor eax,eax
 		.endif
 	.endif
 	ret
 di_cmSubInfo ENDP
 
 cmsubinfo PROC
-	di_cmSubInfo( cpanel )
+	di_cmSubInfo(cpanel)
 	ret
 cmsubinfo ENDP
 
 cmasubinfo PROC
-	di_cmSubInfo( panela )
+	di_cmSubInfo(panela)
 	ret
 cmasubinfo ENDP
 
 cmbsubinfo PROC
-	di_cmSubInfo( panelb )
+	di_cmSubInfo(panelb)
 	ret
 cmbsubinfo ENDP
 
 cmsubsize PROC
-  local path[_MAX_PATH]:BYTE
-	call	di_Init
-	mov	eax,cpanel
-	.if	panel_curobj()
-		.if	!( ecx & _FB_ARCHIVE or _FB_UPDIR )
-			mov	edx,cpanel
-			mov	edx,[edx].S_PANEL.pn_wsub
-			mov	ecx,eax
-			strfcat( addr path, [edx].S_WSUB.ws_path, ecx )
-			.if	!di_ReadDirectory()
-				di_SubInfo( addr path, addr cp_subsize )
+
+local	path[_MAX_PATH]:BYTE
+
+	di_Init()
+
+	.if panel_curobj(cpanel)
+
+		.if !( ecx & _FB_ARCHIVE or _FB_UPDIR )
+
+			mov edx,cpanel
+			mov edx,[edx].S_PANEL.pn_wsub
+			mov ecx,eax
+			strfcat(addr path, [edx].S_WSUB.ws_path, ecx)
+
+			.if !di_ReadDirectory()
+
+				di_SubInfo(addr path, addr cp_subsize)
 			.endif
 		.endif
 	.endif
-	xor	eax,eax
+
+	xor eax,eax
 	ret
+
 cmsubsize ENDP
 
 	END

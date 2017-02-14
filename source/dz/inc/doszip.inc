@@ -23,20 +23,20 @@ externdef	DZ_Title:DWORD
 externdef	DZ_INIFILE:BYTE
 externdef	DZ_TXTFILE:BYTE
 
-HELPID_02	equ 0751h	; <> Compressed File Support
-HELPID_03	equ 08D4h	; <> Viewer Support
-HELPID_04	equ 0B20h	; <> Editor Support
-HELPID_05	equ 0C6Fh	; <> Internal Editor
-HELPID_06	equ 199Fh	; <> Extension and Filename Support
-HELPID_07	equ 1D87h	; <> Doszip Commander Environment Variables
-HELPID_08	equ 23DBh	; <> Installing Commander under Windows
-HELPID_09	equ 251Eh	; <> Creating a tools menu
-HELPID_10	equ 2A72h	; <> The File Search utility
-HELPID_11	equ 3049h	; <> Create List File
-HELPID_12	equ 3370h	; <> Operation Filter
-HELPID_13	equ 35EBh	; <> Shortcut keys
-HELPID_14	equ 2D5Dh	; <> Compare Directories
-HELPID_15	equ 441Fh	; <> Configuration Defaults
+HELPID_02	equ 0692h	; <> Compressed File Support
+HELPID_03	equ 0815h	; <> Viewer Support
+HELPID_04	equ 0A61h	; <> Editor Support
+HELPID_05	equ 0BB0h	; <> Internal Editor
+HELPID_06	equ 18E0h	; <> Extension and Filename Support
+HELPID_07	equ 1CC8h	; <> Doszip Commander Environment Variables
+HELPID_08	equ 231Ch	; <> Installing Commander under Windows
+HELPID_09	equ 245Fh	; <> Creating a tools menu
+HELPID_10	equ 29B3h	; <> The File Search utility
+HELPID_11	equ 2F8Ah	; <> Create List File
+HELPID_12	equ 32B1h	; <> Operation Filter
+HELPID_13	equ 352Ch	; <> Shortcut keys
+HELPID_14	equ 2C9Eh	; <> Compare Directories
+HELPID_15	equ 437Bh	; <> Configuration Defaults
 
 _C_PANELID	equ 0001h	; config.c_cflag
 _C_HORIZONTAL	equ 0002h
@@ -196,6 +196,7 @@ externdef IDD_DZScreenOptions:	DWORD
 externdef IDD_DZSubInfo:	DWORD
 externdef IDD_DZSystemOptions:	DWORD
 externdef IDD_DZZipAttributes:	DWORD
+externdef IDD_ConsoleSize:	DWORD
 
 externdef cp_copy:		BYTE
 externdef cp_compress:		BYTE
@@ -304,61 +305,48 @@ historytocpanel		PROTO
 doskeytocommand		PROTO
 doskeysave		PROTO
 
-fblk_select		PROTO :DWORD
-fblk_invert		PROTO :DWORD
+LPPANEL TYPEDEF PTR S_PANEL
 
-prect_hide		PROTO
-prect_close		PROTO
-prect_open		PROTO
+fblk_select		PROTO :LPFBLK
+fblk_invert		PROTO :LPFBLK
+prect_hide		PROTO :LPPANEL
 prect_open_ab		PROTO
-
-pcell_select		PROTO
-pcell_set		PROTO
-pcell_open		PROTO
-pcell_show		PROTO
-pcell_update		PROTO
-pcell_setxy		PROTO :DWORD, :DWORD, :DWORD
-pcell_getrect		PROTO :DWORD, :DWORD
+pcell_show		PROTO :LPPANEL
+pcell_update		PROTO :LPPANEL
+pcell_setxy		PROTO :LPPANEL, :UINT, :UINT
 
 cpanel_state		PROTO
 cpanel_findfirst	PROTO
 cpanel_gettarget	PROTO
-cpanel_setpath		PROTO
-cpanel_deselect		PROTO :DWORD
-;cpanel_setcwd		PROTO
+cpanel_setpath		PROTO :LPSTR
+cpanel_deselect		PROTO :LPFBLK
 
-panel_state		PROTO
-panel_close		PROTO
-panel_hide		PROTO
-panel_show		PROTO
-panel_setactive		PROTO
-panel_curobj		PROTO
-panel_findnext		PROTO
-panel_openmsg		PROTO
-panel_putinfo		PROTO
-panel_putmini		PROTO
-panel_read		PROTO
-panel_reread		PROTO
-panel_redraw		PROTO
-panel_toggle		PROTO
-panel_update		PROTO
-panel_xormini		PROTO
-panel_xorinfo		PROTO
-panel_selected		PROTO
-panel_setid		PROTO
-panel_putitem		PROTO :DWORD, :DWORD
-panel_putitemax		PROTO
-panel_putinfoax		PROTO
-panel_putinfozx		PROTO
-panel_xycmd		PROTO :DWORD, :DWORD, :DWORD
-panel_sethdd		PROTO :DWORD, :DWORD
-panel_event		PROTO :DWORD, :DWORD
+panel_state		PROTO :LPPANEL
+panel_close		PROTO :LPPANEL
+panel_hide		PROTO :LPPANEL
+panel_show		PROTO :LPPANEL
+panel_setactive		PROTO :LPPANEL
+panel_curobj		PROTO :LPPANEL
+panel_findnext		PROTO :LPPANEL
+panel_openmsg		PROTO :LPPANEL
+panel_read		PROTO :LPPANEL
+panel_reread		PROTO :LPPANEL
+panel_redraw		PROTO :LPPANEL
+panel_toggle		PROTO :LPPANEL
+panel_update		PROTO :LPPANEL
+panel_xormini		PROTO :LPPANEL
+panel_xorinfo		PROTO :LPPANEL
+panel_setid		PROTO :LPPANEL, :UINT
+panel_putitem		PROTO :LPPANEL, :UINT
+panel_xycmd		PROTO :LPPANEL, :UINT, :UINT
+panel_sethdd		PROTO :LPPANEL, :UINT
+panel_event		PROTO :LPPANEL, :UINT
 panel_stateab		PROTO
 panel_open_ab		PROTO
 panel_getb		PROTO
 panel_toggleact		PROTO
 
-redraw_panel		PROTO
+redraw_panel		PROTO :LPPANEL
 redraw_panels		PROTO
 reread_panels		PROTO
 
@@ -537,13 +525,14 @@ cmmklist		PROTO	; Alt-L
 cmloadpath		PROTO	; Alt-P
 cmcalendar		PROTO	; Ctrl-G
 cmmkzip			PROTO	; Shift-F7
-ifdef DEBUG
+IFDEF DEBUG
 cmdebug			PROTO	; Shift-F1
-endif
+ENDIF
 cmsysteminfo		PROTO	; Alt-M
 cmhomedir		PROTO
 cmwindowlist		PROTO
 cmenviron		PROTO	; Shift-F6
+cmscreensize		PROTO
 
 conssetl		PROTO :DWORD
 consuser		PROTO

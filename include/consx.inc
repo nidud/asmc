@@ -338,6 +338,8 @@ externdef	ASCII_RADIO:	BYTE
 
 externdef	_scrrow:	DWORD	; Screen rows - 1
 externdef	_scrcol:	DWORD	; Screen columns
+externdef	_scrmax:	DWORD	; Max screen columns,rows
+
 externdef	hCurrentWindow: HANDLE
 
 setasymbol	PROTO
@@ -515,9 +517,11 @@ KEY_ALTC	equ 0x2E00
 KEY_ALTL	equ 0x2600
 KEY_ALTM	equ 0x3200
 KEY_ALTP	equ 0x1900
+KEY_ALTQ	equ 0x1000
 KEY_ALTS	equ 0x1F00
 KEY_ALTW	equ 0x1100
 KEY_ALTX	equ 0x2D00
+KEY_ALTZ	equ 0x2C00
 
 KEY_SHIFTF1	equ 0x5400
 KEY_SHIFTF2	equ 0x5500

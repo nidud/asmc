@@ -21,8 +21,7 @@ wedit	PROC fcb, count
 		.endif
 	.endw
 
-	mov	eax,cpanel
-	call	panel_redraw
+	panel_redraw(cpanel)
 	xor	eax,eax
 	call	tmodal
 	ret

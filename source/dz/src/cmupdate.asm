@@ -6,20 +6,17 @@ include doszip.inc
 	.code
 
 cmaupdate PROC
-	mov	eax,panela
-	call	panel_reread
+	panel_reread(panela)
 	ret
 cmaupdate ENDP
 
 cmbupdate PROC
-	mov	eax,panelb
-	call	panel_reread
+	panel_reread(panelb)
 	ret
 cmbupdate ENDP
 
 cmcupdate PROC
-	mov	eax,cpanel
-	call	panel_reread
+	panel_reread(cpanel)
 	ret
 cmcupdate ENDP
 

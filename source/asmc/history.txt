@@ -2,7 +2,10 @@ HISTORY.TXT--
 Change Log File for ASMC
 ========================
 
-Changes in 2.22 - xx xxx 2017
+Changes in 2.23 - xx xxx 2017
+- fixed error in proto fastcall :type -- fast32.asm
+
+Changes in 2.22 - 11 Feb 2017
 - added .FOR[S] [<initialization>] : [<condition>] : [<increment/decrement>]
 - added .GOTOSW[1|2|3] [[(<case_val>)] | [.IF <condition>]]
 - added .CONT[1|2|3] and .BREAK[1|2|3]

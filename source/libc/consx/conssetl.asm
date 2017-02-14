@@ -3,6 +3,9 @@ include stdio.inc
 
 SWPFLAG equ SWP_NOSIZE or SWP_NOACTIVATE or SWP_NOZORDER
 
+	.data
+	_scrmax dd 0,0
+
 	.code
 
 conssetl PROC	l	; line: 24..max
@@ -40,10 +43,17 @@ conssetl PROC	l	; line: 24..max
 				push	ecx
 				push	eax
 				call	pSetWindowPos;,eax,0,0,0,0,0,SWPFLAG
-				GetLargestConsoleWindowSize( hStdOutput )
-				mov	edx,eax
-				shr	edx,16
-				movzx	eax,ax
+
+				.if	_scrmax
+					mov	eax,_scrmax
+					mov	edx,_scrmax[4]
+				.else
+					mov	edx,GetLargestConsoleWindowSize( hStdOutput )
+					shr	edx,16
+					movzx	eax,ax
+				.endif
+				and	eax,-2
+
 				.if	eax < 80 || edx < 16
 					mov eax,80
 					mov edx,25

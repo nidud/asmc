@@ -397,7 +397,7 @@ local	buffer:		LPSTR,	; start of line
 							lea edx,[edi-1]
 							.if edx >= buffer
 								sub edx,buffer
-								.if !xtable[edx]
+								.if !(xtable[edx] & (_X_COMMENT or _X_QUOTE) )
 
 									add edx,edx
 									add edx,out_buffer
@@ -567,7 +567,25 @@ local	buffer:		LPSTR,	; start of line
 								.endw
 
 							.until	1
-							jmp	next_word
+
+							.break .if edi > endbufw
+							;
+							; continue search
+							;
+							mov	al,[esi]
+							mov	cl,TOUPPER(al)
+							mov	ch,TOLOWER(al)
+							xor	edx,edx
+							.while	edi < endbufw
+
+								mov	al,[edi]
+								add	edi,1
+								inc	edx
+								.break .if al == cl
+								.break .if al == ch
+								dec	edx
+							.endw
+							.break .if !edx
 						.endw
 					.until	1
 					.repeat
@@ -668,8 +686,6 @@ local	buffer:		LPSTR,	; start of line
 								.untilcxz
 
 							.until	1
-
-							next_word:
 
 							.break .if edi > endbufw
 							;

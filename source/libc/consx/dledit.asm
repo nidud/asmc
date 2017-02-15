@@ -235,7 +235,7 @@ control:
 	jmp	toend
 event_add ENDP
 
-setcursor PROC
+_setcursor PROC
   local cursor:S_CURSOR
 	mov	edx,TI
 	mov	eax,[edx].ti_xpos
@@ -247,7 +247,7 @@ setcursor PROC
 	mov	cursor.dwSize,CURSOR_NORMAL
 	SetCursor( addr cursor )
 	ret
-setcursor ENDP
+_setcursor ENDP
 
 event_nextword PROC USES esi
 	call	curlptr
@@ -381,7 +381,7 @@ event_mouse PROC USES ebx
 	mov	eax,ecx
 @@:
 	mov	[edx].ti_xoff,eax
-	call	setcursor
+	call	_setcursor
 	call	msloop
 	sub	eax,eax
 toend:
@@ -660,10 +660,13 @@ toend:
 ClipEvent ENDP
 
 putline PROC USES esi edi ebx
-  local ci[256]:DWORD
-  local bz:COORD
-  local rc:SMALL_RECT
-	call	setcursor
+
+local	ci[256]:DWORD,
+	bz:	COORD,
+	rc:	SMALL_RECT
+
+	_setcursor()
+
 	lea	edi,ci
 	mov	edx,TI
 	mov	ebx,[edx].ti_cols
@@ -674,11 +677,14 @@ putline PROC USES esi edi ebx
 	mov	al,cl
 	mov	ecx,ebx
 	rep	stosd
+
 	mov	esi,[edx].ti_bp
 	.if	strlen( esi ) > [edx].ti_boff
+
 		add	esi,[edx].ti_boff
 		mov	ecx,ebx
 		lea	edi,ci
+
 		.repeat
 			mov	al,[esi]
 			.break .if !al
@@ -687,28 +693,40 @@ putline PROC USES esi edi ebx
 			add	edi,4
 		.untilcxz
 	.endif
-	mov	edi,[edx].ti_boff
-	mov	ecx,[edx].ti_cleo
-	.if	edi < ecx
-		sub	ecx,edi
-		.if	!ZERO?
-			mov	eax,[edx].ti_clso
-			sub	eax,edi
-			sub	ecx,eax
-			.if	!ZERO?
-				.if	ecx >= ebx
-					mov ecx,ebx
-				.endif
-				lea	edi,ci
-				lea	edi,[edi+eax*4+2]
-				mov	al,at_background[B_Inverse]
-				.repeat
-					mov [edi],al
-					add edi,4
-				.untilcxz
+
+	mov edi,[edx].ti_boff
+	mov ecx,[edx].ti_cleo
+
+	.if edi < ecx
+
+		sub ecx,edi
+		xor eax,eax
+		.if ecx >= ebx
+
+			mov ecx,ebx
+		.endif
+		.if [edx].ti_clso >= edi
+
+			mov eax,[edx].ti_clso
+			sub eax,edi
+			.if eax <= ecx
+				sub ecx,eax
+			.else
+				xor ecx,ecx
 			.endif
 		.endif
+		.if ecx
+
+			lea edi,ci
+			lea edi,[edi+eax*4+2]
+			mov al,at_background[B_Inverse]
+			.repeat
+				mov [edi],al
+				add edi,4
+			.untilcxz
+		.endif
 	.endif
+
 	mov	ecx,ebx
 	mov	bz.x,cx
 	mov	eax,[edx].ti_xpos
@@ -720,6 +738,7 @@ putline PROC USES esi edi ebx
 	mov	rc.Top,ax
 	mov	rc.Bottom,ax
 	mov	bz.y,1
+
 	WriteConsoleOutput( hStdOutput, addr ci, bz, 0, addr rc )
 	ret
 putline ENDP
@@ -774,7 +793,7 @@ dledit	PROC USES edi b:LPSTR, rc, bz, oflag
 	and	eax,_O_CONTR or _O_DLGED
 	or	eax,_TE_OVERWRITE
 	mov	t.ti_flag,eax
-	call	setcursor
+	call	_setcursor
 	getxya( t.ti_xpos, t.ti_ypos )
 	shl	eax,8
 	mov	al,tclrascii

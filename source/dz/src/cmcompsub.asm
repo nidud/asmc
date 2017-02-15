@@ -74,6 +74,7 @@ GCMD_search	dd KEY_F2,	event_mklist
 		dd KEY_F10,	event_advanced
 		dd KEY_DEL,	event_delete
 		dd KEY_ALTX,	ff_event_exit
+		dd KEY_CTRLW,	event_flip
 		dd 0
 ff_table	dd 0
 ff_count	dd 0
@@ -556,6 +557,17 @@ event_advanced proc uses esi edi
 	ret
 
 event_advanced endp
+
+event_flip proc
+
+	PushEvent(KEY_ENTER)
+	PushEvent(KEY_F6)
+	PushEvent(KEY_SHIFTF5)
+	PushEvent(KEY_CTRLW)
+	mov	eax,_C_ESCAPE
+	ret
+
+event_flip endp
 
 cmcompsub PROC PUBLIC USES esi edi ebx
 

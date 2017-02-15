@@ -32,11 +32,11 @@ HELPID_07	equ 1CC8h	; <> Doszip Commander Environment Variables
 HELPID_08	equ 231Ch	; <> Installing Commander under Windows
 HELPID_09	equ 245Fh	; <> Creating a tools menu
 HELPID_10	equ 29B3h	; <> The File Search utility
-HELPID_11	equ 2FDDh	; <> Create List File
-HELPID_12	equ 3304h	; <> Operation Filter
-HELPID_13	equ 357Fh	; <> Shortcut keys
+HELPID_11	equ 3022h	; <> Create List File
+HELPID_12	equ 3349h	; <> Operation Filter
+HELPID_13	equ 35C4h	; <> Shortcut keys
 HELPID_14	equ 2C9Eh	; <> Compare Directories
-HELPID_15	equ 43CEh	; <> Configuration Defaults
+HELPID_15	equ 4413h	; <> Configuration Defaults
 
 _C_PANELID	equ 0001h	; config.c_cflag
 _C_HORIZONTAL	equ 0002h

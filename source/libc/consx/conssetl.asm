@@ -44,13 +44,14 @@ conssetl PROC	l	; line: 24..max
 				push	eax
 				call	pSetWindowPos;,eax,0,0,0,0,0,SWPFLAG
 
-				.if	_scrmax
+				mov	edx,GetLargestConsoleWindowSize( hStdOutput )
+				shr	edx,16
+				movzx	eax,ax
+				mov	ecx,_scrmax
+				.if	ecx <= eax && ecx >= 80
+
 					mov	eax,_scrmax
 					mov	edx,_scrmax[4]
-				.else
-					mov	edx,GetLargestConsoleWindowSize( hStdOutput )
-					shr	edx,16
-					movzx	eax,ax
 				.endif
 				and	eax,-2
 

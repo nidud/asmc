@@ -10,6 +10,7 @@ include crtl.inc
 include errno.inc
 include stdio.inc
 include alloc.inc
+include cfini.inc
 
 command		PROTO :DWORD
 __AT__		equ 1
@@ -549,6 +550,14 @@ cmscreensize proc uses esi edi ebx
 
 				mov _scrmax,ecx
 				mov _scrmax[4],eax
+				mov esi,ecx
+				mov edi,eax
+				.if CFAddSection(".maxscreen")
+
+					xchg esi,eax
+					CFAddEntryX(esi, "0=%d", eax)
+					CFAddEntryX(esi, "1=%d", edi)
+				.endif
 				and cflag,NOT _C_EGALINE
 				PushEvent(KEY_ALTF9)
 				mov eax,1

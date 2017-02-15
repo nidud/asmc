@@ -439,9 +439,11 @@ Welcome to Doszip Commander Version 3.48!
     F3	 - View current file - same as Enter.
     F4	 - Edit current file - exit and execute external editor.
     F5	 - Launch the Operation Filter dialog.
+    F6	 - Copy Panel directories to Source/Target.
     F7	 - Start a new search.
     F8	 - Delete file from list.
     F9	 - Load predefined file mask from .INI file.
+    F10	 - Advanced settings.
     Esc	 - Exit program.
 
 

@@ -799,19 +799,20 @@ ff_close_dlg ENDP
 
 ff_rsevent PROC idd, find
 	.repeat
-		mov	[edx],eax
-		add	edx,SIZE S_TOBJ
+		mov [edx],eax
+		add edx,SIZE S_TOBJ
 	.untilcxz
 	dlshow( ebx )
 	dlinit( ebx )
 	mov	filter,0
 	.while	rsevent( idd, ebx )
+
 		mov	esi,eax
 		mov	edi,ecx
 		mov	al,[ebx].S_DOBJ.dl_index
-		.if al < ID_FILE
-			.break .if ff_event_view() != _C_NORMAL
+		.if	al < ID_FILE
 
+			.break .if ff_event_view() != _C_NORMAL
 		.else
 			.break .if al == ID_GOTO
 			call	find

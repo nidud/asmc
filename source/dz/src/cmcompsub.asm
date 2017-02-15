@@ -9,6 +9,8 @@ include progress.inc
 include string.inc
 include syserrls.inc
 include time.inc
+include cfini.inc
+include stdlib.inc
 
 ifdef __WIN95__
 MAXHIT		equ 100000
@@ -65,9 +67,11 @@ GCMD_search	dd KEY_F2,	event_mklist
 		dd KEY_F3,	ff_event_view
 		dd KEY_F4,	ff_event_edit
 		dd KEY_F5,	ff_event_filter
+		dd KEY_F6,	event_path
 		dd KEY_F7,	event_find
 		dd KEY_F8,	event_delete
 		dd KEY_F9,	cmfilter_load
+		dd KEY_F10,	event_advanced
 		dd KEY_DEL,	event_delete
 		dd KEY_ALTX,	ff_event_exit
 		dd 0
@@ -76,6 +80,19 @@ ff_count	dd 0
 ff_recursive	dd 0
 source		dd 0
 target		dd 0
+
+_COMP_NAME	equ 0x01 ; Compare File names
+_COMP_CREATE	equ 0x02 ; Compare File creation time
+_COMP_ACCESS	equ 0x04 ; Compare Last access time
+_COMP_WRITE	equ 0x08 ; Compare Last modification time
+_COMP_DATA	equ 0x10 ; Compare File content
+_COMP_ATTRIB	equ 0x20 ; Compare File Attributes
+_COMP_EQUAL	equ 0x40 ; Find equal/differ
+_COMP_SUBDIR	equ 0x80 ; Scan subdirectories
+
+flags		dd _COMP_NAME or _COMP_WRITE or _COMP_SUBDIR
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 	.code
 
@@ -115,103 +132,175 @@ ff_alloc PROC USES esi edi ebx path, fb
 	ret
 ff_alloc ENDP
 
+CompareFileData proc uses esi edi ebx A:LPSTR, B:LPSTR
+
+local	h1,h2,b1,b2
+
+	mov	b1,alloca(0x8000)
+	add	eax,0x4000
+	mov	b2,eax
+
+	.repeat
+		mov	h1,osopen(A, 0, M_RDONLY, A_OPEN)
+		.break	.if eax == -1
+		mov	h2,osopen(B, 0, M_RDONLY, A_OPEN)
+		.if	eax == -1
+
+			_close(h1)
+			mov eax,-1
+			.break
+		.endif
+
+		.while	osread(h1, b1, 0x4000)
+
+			mov	ebx,eax
+			.if	osread(h2, b2, 0x4000) != ebx
+
+				mov eax,-1
+				.break
+			.endif
+
+			mov	eax,-1
+			mov	ecx,ebx
+			mov	esi,b1
+			mov	edi,b2
+			repz	cmpsb
+
+			.breaknz
+		.endw
+
+		mov ebx,eax
+		_close(h1)
+		_close(h2)
+		mov eax,ebx
+	.until	1
+	ret
+
+CompareFileData endp
+
 ff_fileblock PROC USES esi edi ebx directory, wfblk
 
-	local	path[_MAX_PATH*2]:BYTE
-	local	ioflag:BYTE
-	local	result:DWORD
-	local	ftime:DWORD
-	local	found:BYTE
+local	path[_MAX_PATH*2]:SBYTE,
+	result:DWORD,
+	found[4]:BYTE
 
-	xor eax,eax
-	xor esi,esi
-	mov result,eax
+	xor	eax,eax
+	mov	result,eax
 
-	.if eax != ff_count
+	.repeat
 
-		mov found,al
-		mov edi,wfblk
-		mov edx,MAXHIT
-		mov result,edx
-		mov ebx,tdllist
+		.break	.if eax == ff_count
 
-		.if [ebx].S_LOBJ.ll_count < edx
+		mov	found,al
+		mov	edi,wfblk
+		mov	edx,MAXHIT
+		mov	result,edx
+		mov	ebx,tdllist
 
-			mov result,eax
-			.if filter_wblk( edi )
+		.if	[ebx].S_LOBJ.ll_count >= edx
 
-				add edi,S_WFBLK.wf_name
-				strfcat( addr path, directory, edi )
-				.if cmpwarg( edi, fp_maskp )
-
-					test_userabort()
-					mov result,eax
-					.if ZERO?
-						inc esi
-					.endif
-				.endif
-			.endif
-		.else
 			stdmsg( addr cp_warning, addr cp_emaxfb, edx, edx )
-			mov result,2
+			mov	result,2
+			.break
 		.endif
-	.endif
 
-	.if esi
+		mov	result,eax
+		.break	.if !filter_wblk(edi)
 
-		mov ebx,wfblk
-		__FTToTime( addr [ebx].S_WFBLK.wf_time )
+		add	edi,S_WFBLK.wf_name
+		strfcat(addr path, directory, edi)
+		.break	.if !cmpwarg(edi, fp_maskp)
 
-		mov ftime,eax
-		mov eax,DLG_FindFile
-		mov al,[eax+OF_EQUAL]
-		and al,_O_RADIO
-		mov ioflag,al
-		mov edi,ff_count
-		mov esi,ff_table
+		mov	result,test_userabort()
+		.breaknz
 
-		.repeat
-			mov edx,[esi]
-			add esi,4
-			mov eax,ftime
-			.if eax == [edx].S_FBLK.fb_time
+		.for	ebx = wfblk, edi = ff_count, esi = ff_table : edi : edi--, esi += 4
 
-				mov eax,DWORD PTR [edx].S_FBLK.fb_size[4]
-				.if eax == DWORD PTR [ebx].S_WFBLK.wf_size[4]
+			mov	edx,[esi]
+			mov	eax,DWORD PTR [edx].S_FBLK.fb_size
+			.continue .if eax != DWORD PTR [ebx].S_WFBLK.wf_size
+			mov	eax,DWORD PTR [edx].S_FBLK.fb_size[4]
+			.continue .if eax != DWORD PTR [ebx].S_WFBLK.wf_size[4]
 
-					mov eax,DWORD PTR [edx].S_FBLK.fb_size
-					.if eax == DWORD PTR [ebx].S_WFBLK.wf_size
+			.if	flags & _COMP_ATTRIB	; Compare File Attributes
 
+				mov	eax,[edx].S_FBLK.fb_flag
+				.continue .if eax != [ebx].S_WFBLK.wf_attrib
+			.endif
 
-						mov ecx,strfn( addr [edx].S_FBLK.fb_name )
-						.if !_stricmp( addr [ebx].S_WFBLK.wf_name, ecx )
+			.if	flags & _COMP_WRITE	; Compare Last modification time
 
-							mov found,1
-							cmp ioflag,_O_RADIO
-							je  addblock
-						.endif
-					.endif
+				__FTToTime( addr [ebx].S_WFBLK.wf_time )
+				mov	edx,[esi]
+				.continue .if eax != [edx].S_FBLK.fb_time
+			.endif
+
+			.if	flags & _COMP_CREATE	; Compare File creation time
+
+				.if	osopen( addr [edx].S_FBLK.fb_name, 0, M_RDONLY, A_OPEN ) != -1
+
+					push	eax
+					getftime_create(eax)
+					pop	ecx
+					push	eax
+					_close( ecx )
+					__FTToTime(addr [ebx].S_WFBLK.wf_timecreate)
+					pop	ecx
+					.continue .if eax != ecx
 				.endif
+				mov	edx,[esi]
 			.endif
-			dec edi
-		.until	ZERO?
 
-		.if !found && ioflag != _O_RADIO
+			.if	flags & _COMP_ACCESS	; Compare Last access time
 
-		addblock:
+				.if	osopen( addr [edx].S_FBLK.fb_name, 0, M_RDONLY, A_OPEN ) != -1
 
-			ff_alloc( addr path, edx )
-
-			.if ZERO?
-
-				clear_table()
-				ermsg( 0, addr CP_ENOMEM )
-				mov result,-1
+					push	eax
+					getftime_access(eax)
+					pop	ecx
+					push	eax
+					_close( ecx )
+					__FTToTime( addr [ebx].S_WFBLK.wf_timeaccess )
+					pop	ecx
+					.continue .if eax != ecx
+				.endif
+				mov	edx,[esi]
 			.endif
+
+			.if	flags & _COMP_NAME	; Compare File names
+
+				mov	ecx,strfn( addr [edx].S_FBLK.fb_name )
+				.continue .if _stricmp( addr [ebx].S_WFBLK.wf_name, ecx )
+			.endif
+
+			.if	flags & _COMP_DATA	; Compare File content
+
+				.continue .if CompareFileData(addr [edx].S_FBLK.fb_name, addr path)
+				mov	edx,[esi]
+			.endif
+
+			mov	found,1
+			.break
+		.endf
+
+		mov	eax,DLG_FindFile
+		movzx	eax,[eax].S_TOBJ.to_flag[OF_EQUAL]
+		and	eax,_O_RADIO
+
+		.break	.if eax && !found
+		.break	.if !eax && found
+
+		.if	!ff_alloc(addr path, edx)
+
+			clear_table()
+			ermsg(0, addr CP_ENOMEM)
+			mov result,-1
 		.endif
-	.endif
+
+	.until	1
 	mov	eax,result
 	ret
+
 ff_fileblock ENDP
 
 clear_table PROC
@@ -429,20 +518,84 @@ event_delete PROC
 	ret
 event_delete ENDP
 
-	OPTION PROC: PUBLIC
+event_path proc
+	mov	eax,panela ; Source - Panel-A
+	mov	ecx,[eax].S_PANEL.pn_wsub
+	strcpy(source, [ecx].S_WSUB.ws_path)
+	mov	eax,panelb ; Target - Panel-B
+	mov	ecx,[eax].S_PANEL.pn_wsub
+	strcpy(target, [ecx].S_WSUB.ws_path)
+	mov	eax,DLG_FindFile
+	.if	eax
+		dlinit( eax )
+	.endif
+	mov	eax,_C_NORMAL
+	ret
+event_path endp
 
-cmcompsub PROC USES esi edi ebx
+event_advanced proc uses esi edi
 
-local	cursor:		S_CURSOR,
-	ll:		S_LOBJ,
-	old_thelp:	DWORD
+	.if rsopen( IDD_CompareOptions )
+
+		mov esi,eax
+		tosetbitflag([esi].S_DOBJ.dl_object, 6, _O_FLAGB, flags)
+		dlinit(esi)
+		rsevent(IDD_CompareOptions, esi)
+		mov edi,eax
+		togetbitflag([esi].S_DOBJ.dl_object, 6, _O_FLAGB)
+		xchg eax,esi
+		dlclose(eax)
+
+		.if	edi
+
+			and flags,11000000B
+			or  flags,esi
+		.endif
+	.endif
+	mov	eax,_C_NORMAL
+	ret
+
+event_advanced endp
+
+cmcompsub PROC PUBLIC USES esi edi ebx
+
+local	cursor:S_CURSOR,
+	ll:S_LOBJ,
+	old_thelp:DWORD,
+	fmask[_MAX_PATH]:SBYTE,
+	tpath[_MAX_PATH]:SBYTE,
+	spath[_MAX_PATH]:SBYTE
+
+	lea	eax,tpath
+	mov	target,eax
+	lea	eax,spath
+	mov	source,eax
+	mov	DLG_FindFile,0
+	strcpy(addr fmask, addr cp_stdmask)
+	event_path()
+
+	.if CFGetSection(".compsubdir")
+		mov ebx,eax
+		.if CFGetEntryID(ebx, 0)
+			mov flags,xtol(eax)
+		.endif
+		.if CFGetEntryID(ebx, 1)
+			strcpy(addr fmask, eax)
+		.endif
+		.if CFGetEntryID(ebx, 2)
+			strcpy(source, eax)
+		.endif
+		.if CFGetEntryID(ebx, 3)
+			strcpy(target, eax)
+		.endif
+	.endif
 
 	mov	ff_count,0
 	mov	eax,thelp
 	mov	old_thelp,eax
 	mov	thelp,event_help
 	call	clrcmdl
-	GetCursor( addr cursor )
+	GetCursor(addr cursor)
 	lea	edx,ll
 	mov	tdllist,edx
 	mov	edi,edx
@@ -452,59 +605,89 @@ local	cursor:		S_CURSOR,
 	mov	[edx].S_LOBJ.ll_dcount,ID_FILE
 	mov	[edx].S_LOBJ.ll_proc,event_list
 
-	.if	malloc( ( MAXHIT * 8 ) + 4 )
+	.if	malloc((MAXHIT * 8) + 4)
+
 		mov	ll.ll_list,eax
 		add	eax,(MAXHIT*4)+4
 		mov	ff_table,eax
-		.if	rsopen( IDD_DZCompareDirectories )
+
+		.if	rsopen(IDD_DZCompareDirectories)
+
 			mov	DLG_FindFile,eax
 			mov	ebx,eax
 			mov	[ebx].S_TOBJ.to_data[OF_GCMD],offset GCMD_search
-			lea	eax,comparemask
+			mov	[ebx].S_TOBJ.to_count[OF_MASK],256/16
+			mov	[ebx].S_TOBJ.to_count[OF_SOURCE],256/16
+			mov	[ebx].S_TOBJ.to_count[OF_TARGET],256/16
+			lea	eax,fmask
 			mov	[ebx].S_TOBJ.to_data[OF_MASK],eax
-			.if	BYTE PTR [eax] == 0
-				strcpy( eax, addr cp_stdmask )
-			.endif
-			mov	edx,panela	; The default Source is Panel-A
-			mov	edi,panelb	; The default Target is Panel-B
-			mov	edx,[edx].S_PANEL.pn_wsub
-			mov	edi,[edi].S_PANEL.pn_wsub
-			strcpy( [ebx].S_TOBJ.to_data[OF_SOURCE], [edx].S_WSUB.ws_path )
-			mov	source,eax
-			strcpy( [ebx].S_TOBJ.to_data[OF_TARGET], [edi].S_WSUB.ws_path )
-			mov	target,eax
+			mov	eax,source
+			mov	[ebx].S_TOBJ.to_data[OF_SOURCE],eax
+			mov	eax,target
+			mov	[ebx].S_TOBJ.to_data[OF_TARGET],eax
 			mov	[ebx].S_TOBJ.to_proc[OF_FIND],event_find
 			mov	[ebx].S_TOBJ.to_proc[OF_FILT],ff_event_filter
 			mov	[ebx].S_TOBJ.to_proc[OF_SAVE],event_mklist
-			mov	ah,BYTE PTR fsflag
+
+			mov	ecx,flags
 			mov	al,_O_RADIO
-			or	[ebx+OF_EQUAL],al
-			.if	ah & IO_SEARCHSUB
-				or BYTE PTR [ebx+OF_SUBD],_O_FLAGB
+			.if	cl & _COMP_EQUAL
+				or [ebx+OF_EQUAL],al
+			.else
+				or [ebx+OF_DIFFER],al
 			.endif
+
+			and	fsflag,not IO_SEARCHSUB
+			.if	cl & _COMP_SUBDIR
+
+				or BYTE PTR [ebx+OF_SUBD],_O_FLAGB
+				or fsflag,IO_SEARCHSUB
+			.endif
+
 			lea	edx,[ebx].S_TOBJ.to_proc[SIZE S_TOBJ]
 			mov	ecx,ID_FILE
 			mov	eax,ff_event_xcell
+
 			ff_rsevent( IDD_DZCompareDirectories, event_find )
+
 			and	ah,not IO_SEARCHSUB
-			mov	al,_O_FLAGB
-			.if	[ebx+OF_SUBD] & al
+			and	flags,NOT (_COMP_EQUAL or _COMP_SUBDIR)
+			.if	BYTE PTR [ebx+OF_EQUAL] & _O_RADIO
+
+				or flags,_COMP_EQUAL
+			.endif
+			.if	BYTE PTR [ebx+OF_SUBD] & _O_FLAGB
+
+				or flags,_COMP_SUBDIR
 				or ah,IO_SEARCHSUB
 			.endif
-			call	ff_close_dlg
-			call	clear_list
-			call	clear_table
+
+			ff_close_dlg()
+			clear_list()
+			clear_table()
 		.else
 			ermsg( 0, addr CP_ENOMEM )
 		.endif
 		free( ll.ll_list )
 		__purgeheap()
 	.endif
+
+	.if CFAddSection(".compsubdir")
+
+		mov ebx,eax
+		CFAddEntryX(ebx, "0=%X", flags)
+		CFAddEntryX(ebx, "1=%s", addr fmask)
+		CFAddEntryX(ebx, "2=%s", addr spath)
+		CFAddEntryX(ebx, "3=%s", addr tpath)
+	.endif
+
 	SetCursor( addr cursor )
 	mov	eax,old_thelp
 	mov	thelp,eax
+
 	xor	eax,eax
 	ret
+
 cmcompsub ENDP
 
 	END

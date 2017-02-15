@@ -16,7 +16,6 @@ PUBLIC	searchstring
 PUBLIC	replacestring
 PUBLIC	findfilemask
 PUBLIC	findfilepath
-PUBLIC	comparemask
 PUBLIC	filelist_bat
 PUBLIC	format_lst
 PUBLIC	mklist
@@ -72,8 +71,6 @@ format_lst	db "%f\n"
 findfilemask	db "*.*"
 		db _MAX_PATH-3 dup(0)
 findfilepath	db _MAX_PATH dup(0)
-comparemask	db "*.*"
-		db _MAX_PATH-3 dup(0)
 
 cpanel		dd spanela
 panela		dd spanela
@@ -151,7 +148,6 @@ config_table_s	dd config.c_filter.of_include
 		dd format_lst
 		dd findfilemask
 		dd findfilepath
-		dd comparemask
 		dd default_arc
 		dd default_zip
 		dd 0

@@ -11,7 +11,7 @@ include time.inc
 DOSZIP_VERSION	equ 0348h
 DOSZIP_MINVERS	equ 0348h
 DOSZIP_VSTRING	equ <"3.48">
-DOSZIP_VSTRPRE	equ <" Pre-2">
+DOSZIP_VSTRPRE	equ <"D     ">
 
 MAXHISTORY	equ 32
 MAXDOSKEYS	equ 64
@@ -32,11 +32,11 @@ HELPID_07	equ 1CC8h	; <> Doszip Commander Environment Variables
 HELPID_08	equ 231Ch	; <> Installing Commander under Windows
 HELPID_09	equ 245Fh	; <> Creating a tools menu
 HELPID_10	equ 29B3h	; <> The File Search utility
-HELPID_11	equ 2F8Ah	; <> Create List File
-HELPID_12	equ 32B1h	; <> Operation Filter
-HELPID_13	equ 352Ch	; <> Shortcut keys
+HELPID_11	equ 2FDDh	; <> Create List File
+HELPID_12	equ 3304h	; <> Operation Filter
+HELPID_13	equ 357Fh	; <> Shortcut keys
 HELPID_14	equ 2C9Eh	; <> Compare Directories
-HELPID_15	equ 437Bh	; <> Configuration Defaults
+HELPID_15	equ 43CEh	; <> Configuration Defaults
 
 _C_PANELID	equ 0001h	; config.c_cflag
 _C_HORIZONTAL	equ 0002h
@@ -197,6 +197,7 @@ externdef IDD_DZSubInfo:	DWORD
 externdef IDD_DZSystemOptions:	DWORD
 externdef IDD_DZZipAttributes:	DWORD
 externdef IDD_ConsoleSize:	DWORD
+externdef IDD_CompareOptions:	DWORD
 
 externdef cp_copy:		BYTE
 externdef cp_compress:		BYTE
@@ -223,7 +224,6 @@ externdef at_background:	BYTE
 externdef at_foreground:	BYTE
 externdef findfilemask:		BYTE
 externdef findfilepath:		BYTE
-externdef comparemask:		BYTE
 externdef filelist_bat:		BYTE
 externdef format_lst:		BYTE
 externdef searchstring:		BYTE

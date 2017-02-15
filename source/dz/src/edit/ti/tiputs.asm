@@ -39,8 +39,7 @@ tiputl PROC PRIVATE USES esi edi ebx wc, line, ti:PTR S_TINFO
 		tigetline( edx, eax )
 	.endif
 
-	.if	!ZERO?
-
+	.ifnz
 		mov	esi,eax
 		mov	llen,ecx
 
@@ -97,19 +96,25 @@ tiputl PROC PRIVATE USES esi edi ebx wc, line, ti:PTR S_TINFO
 
 					dec	edx
 					mov	clen,edx
-					mov	edx,eax
+					push	eax
 					mov	eax,[esi].ti_clso
-					sub	eax,[esi].ti_boff
-					mov	clst,eax
+					mov	edx,[esi].ti_boff
+					.if	eax >= edx
 
-					.if	edx == [esi].ti_clel
+						sub	eax,edx
+					.else
+						xor	eax,eax
+					.endif
+					mov	clst,eax
+					pop	eax
+
+					.if	eax == [esi].ti_clel
 
 						mov	eax,[esi].ti_cleo
 						sub	eax,[esi].ti_boff
 						mov	clen,eax
 					.endif
 				.else
-
 					mov	clst,edx
 
 					.if	eax == [esi].ti_clel

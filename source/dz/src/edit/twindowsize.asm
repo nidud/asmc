@@ -90,6 +90,11 @@ twindowsize PROC USES esi edi ebx
 				.if	cflag & _C_PANELEDIT
 
 					or	[esi].ti_flag,_T_PANELB
+					and	[esi].ti_flag,NOT _T_USEMENUS
+					and	tiflags,NOT _T_USEMENUS
+				.else
+					or	[esi].ti_flag,_T_USEMENUS
+					or	tiflags,_T_USEMENUS
 				.endif
 				tsetrect( esi, ebx )
 

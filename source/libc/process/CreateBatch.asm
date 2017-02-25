@@ -28,7 +28,7 @@ CreateBatch PROC USES ebx cmd, CallBatch, UpdateEnviron
 		oswrite( ebx, cmd, strlen( cmd ) )
 		oswrite( ebx, addr CRLF, 2 )
 		.if	UpdateEnviron
-			mov	ecx,_argv
+			mov	ecx,__argv
 			strcpy( addr argv0, [ecx] )
 			strcat( eax, " /E:" )
 			strcat( eax, envtemp )

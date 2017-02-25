@@ -8,17 +8,17 @@ include io.inc
 fclose	PROC fp:LPFILE
 	push	ebx
 	mov	ebx,[esp+8]
-	mov	eax,[ebx].S_FILE.iob_flag
+	mov	eax,[ebx]._iobuf._flag
 	and	eax,_IOREAD or _IOWRT or _IORW
 	jz	error
 	fflush( ebx )
 	push	eax
 	_freebuf( ebx )
 	xor	eax,eax
-	mov	[ebx].S_FILE.iob_flag,eax
-	mov	ecx,[ebx].S_FILE.iob_file
+	mov	[ebx]._iobuf._flag,eax
+	mov	ecx,[ebx]._iobuf._file
 	dec	eax
-	mov	[ebx].S_FILE.iob_file,eax
+	mov	[ebx]._iobuf._file,eax
 	_close( ecx )
 	test	eax,eax
 	pop	eax

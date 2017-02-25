@@ -4,14 +4,14 @@ include consx.inc
 
 consuser PROC
 local	cursor:S_CURSOR
-	GetCursor( addr cursor )
-	SetCursor( addr console_cu )
+	CursorGet( addr cursor )
+	CursorSet( addr console_cu )
 	dlshow( addr console_dl )
 	.while !getkey()
 
 	.endw
 	dlhide( addr console_dl )
-	SetCursor( addr cursor )
+	CursorSet( addr cursor )
 	xor	eax,eax
 	ret
 consuser ENDP

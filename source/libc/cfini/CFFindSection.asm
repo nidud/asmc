@@ -43,7 +43,7 @@ local	cursor:		S_CURSOR,
 	result:		UINT,
 	section[64]:	SBYTE
 
-	GetCursor( addr cursor )
+	CursorGet( addr cursor )
 	CursorOn()
 
 	mov	result,0
@@ -384,7 +384,7 @@ endif
 
 	.endif
 
-	SetCursor( addr cursor )
+	CursorSet( addr cursor )
 
 	mov	eax,result
 	ret

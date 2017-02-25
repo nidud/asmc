@@ -16,7 +16,7 @@ strtoken PROC string:LPSTR
 @@:
 	mov	al,[ecx]
 	inc	ecx
-	test	[eax + __ctype + 1],_SPACE
+	test	byte ptr _ctype[eax*2+2],_SPACE
 	jnz	@B
 	dec	ecx
 	mov	token,ecx
@@ -27,7 +27,7 @@ strtoken PROC string:LPSTR
 	inc	ecx
 	test	al,al
 	jz	@F
-	test	[eax + __ctype + 1],_SPACE
+	test	byte ptr _ctype[eax*2+2],_SPACE
 	jz	@B
 	mov	[ecx-1],ah
 	inc	ecx

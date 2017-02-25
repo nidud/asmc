@@ -1,16 +1,22 @@
 include stdio.inc
-
+IFDEF	_UNICODE
+VFPRINTF equ <vfwprintf>
+OUTPUT	 equ <_woutput>
+ELSE
+VFPRINTF equ <vfprintf>
+OUTPUT	 equ <_output>
+ENDIF
 	.code
 
-vfprintf PROC file:LPFILE, format:LPSTR, args:PVOID
+VFPRINTF PROC file:LPFILE, format:LPTSTR, args:PVOID
 	_stbuf( file )
 	push	eax
-	_output( file, format, args )
+	OUTPUT( file, format, args )
 	pop	ecx
 	push	eax
 	_ftbuf( ecx, file )
 	pop	eax
 	ret
-vfprintf ENDP
+VFPRINTF ENDP
 
 	END

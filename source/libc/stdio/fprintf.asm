@@ -1,20 +1,22 @@
 include stdio.inc
-
+IFDEF	_UNICODE
+FPRINTF equ <fwprintf>
+OUTPUT	equ <_woutput>
+ELSE
+FPRINTF equ <fprintf>
+OUTPUT	equ <_output>
+ENDIF
 	.code
 
-fprintf PROC C,
-	file:	LPFILE,
-	format: LPSTR,
-	argptr: VARARG
-
+FPRINTF PROC C file:LPFILE, format:LPTSTR, argptr:VARARG
 	_stbuf( file )
 	push	eax
-	_output( file, format, addr argptr )
+	OUTPUT( file, format, addr argptr )
 	pop	edx
 	push	eax
 	_ftbuf( edx, file )
 	pop	eax
 	ret
-fprintf ENDP
+FPRINTF ENDP
 
 	END

@@ -112,7 +112,7 @@ local	cursor:S_CURSOR
 
 		.if	__CFGetSection( esi, "." )
 
-			GetCursor( addr cursor )
+			CursorGet( addr cursor )
 
 			.if	tistate( tinfo )
 
@@ -127,7 +127,7 @@ local	cursor:S_CURSOR
 				tmodal()
 			.endif
 
-			SetCursor( addr cursor )
+			CursorSet( addr cursor )
 		.endif
 		__CFClose( esi )
 	.endif
@@ -176,11 +176,11 @@ topensession PROC
 
 local	cu:S_CURSOR
 
-	GetCursor( addr cu )
+	CursorGet( addr cu )
 	call	tloadfiles
 	xor	eax,eax
 	call	tmodal
-	SetCursor( addr cu )
+	CursorSet( addr cu )
 	mov	eax,_TI_CONTINUE
 	ret
 

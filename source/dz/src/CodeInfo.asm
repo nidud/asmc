@@ -690,7 +690,7 @@ CIEditEvent PROC USES esi edi ebx
 
 local	cursor:S_CURSOR
 
-	GetCursor( addr cursor )
+	CursorGet( addr cursor )
 
 	mov	esi,CIFile
 	mov	edx,[esi].ci_dialog
@@ -707,7 +707,7 @@ local	cursor:S_CURSOR
 	mov	edi,[edi].S_TOBJ.to_data
 	mov	ebx,dledit(edi,edx,ecx,eax)
 
-	SetCursor( addr cursor )
+	CursorSet( addr cursor )
 
 	.if	ebx == KEY_ENTER
 

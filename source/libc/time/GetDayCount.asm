@@ -1,4 +1,5 @@
 include time.inc
+include winbase.inc
 
 	.code
 

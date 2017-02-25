@@ -4,8 +4,8 @@ include ctype.inc
 
 	OPTION PROLOGUE:NONE, EPILOGUE:NONE
 
-isascii PROC char
-	mov	eax,[esp+4]
+isascii PROC char:SINT
+	movzx	eax,BYTE PTR [esp+4]
 	and	eax,80h
 	setz	al
 	ret	4

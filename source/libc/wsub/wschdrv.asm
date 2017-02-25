@@ -1,6 +1,6 @@
-include direct.inc
 include wsub.inc
 include string.inc
+include winbase.inc
 
 	.code
 

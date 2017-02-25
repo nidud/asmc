@@ -47,7 +47,7 @@ tmodal	PROC USES esi edi ebx
 		mov	eax,tupdate
 		mov	update,eax
 		mov	tupdate,tiupdate
-		GetCursor( addr cursor )
+		CursorGet( addr cursor )
 		tishow( esi )
 
 		mov	ftime,tiftime( esi )
@@ -65,7 +65,7 @@ tmodal	PROC USES esi edi ebx
 
 		mov	eax,update
 		mov	tupdate,eax
-		SetCursor( addr cursor )
+		CursorSet( addr cursor )
 
 		mov	edx,esi		; zero if not modified
 		mov	eax,edi		; returned key value

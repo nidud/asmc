@@ -23,7 +23,7 @@ ConsolePush PROC USES ebx
 		shr	eax,16
 		dec	eax
 		mov	_scrrow,eax
-		GetCursor( addr console_cu )
+		CursorGet( addr console_cu )
 		lea	ebx,console_dl
 		free( [ebx].S_DOBJ.dl_wp )
 		mov	eax,_scrrow

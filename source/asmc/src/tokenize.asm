@@ -416,7 +416,7 @@ get_string PROC USES esi edi ebx buf, p
 			movzx	eax,BYTE PTR [esi]
 
 			.break .if !eax
-			.break .if __ctype[eax+1] & _SPACE
+			.break .if BYTE PTR _ctype[eax*2+2] & _SPACE
 			.break .if eax == ','
 			.break .if eax == ')'
 			.break .if eax == '%'
@@ -1156,7 +1156,7 @@ GetToken PROC FASTCALL tokenarray, p
 	movzx	eax,BYTE PTR [eax]
 
 	.switch
-	  .case __ctype[eax+1] & _DIGIT
+	  .case BYTE PTR _ctype[eax*2+2] & _DIGIT
 		jmp	get_number
 	  .case __ltype[eax+1] & _LABEL
 		jmp	get_id
@@ -1228,7 +1228,7 @@ Tokenize PROC USES esi edi ebx line, start, tokenarray:PTR asm_tok, flags
 
 			.while	edx > line
 				movzx	eax,BYTE PTR [edx-1]
-				.break	.if !__ctype[eax+1] & _SPACE
+				.break	.if !BYTE PTR _ctype[eax*2+2] & _SPACE
 				sub	edx,1
 			.endw
 

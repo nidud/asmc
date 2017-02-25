@@ -3,9 +3,11 @@ include share.inc
 
 	.code
 
-_open	PROC c path:LPSTR, oflag:SIZE_T, args:VARARG
+_open	proc c path:LPSTR, oflag:SINT, args:VARARG
+
 	_sopen( path, oflag, SH_DENYNO, addr args )
 	ret
-_open	ENDP
+
+_open	endp
 
 	END

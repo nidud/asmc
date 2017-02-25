@@ -1,7 +1,7 @@
-include io.inc
 include direct.inc
 include string.inc
 include alloc.inc
+include winbase.inc
 
 	.code
 

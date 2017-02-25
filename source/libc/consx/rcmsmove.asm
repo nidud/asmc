@@ -2,7 +2,7 @@ include consx.inc
 
 	.code
 
-rcmsmove PROC USES esi edi ebx rc:PRECT, wp:PVOID, fl:DWORD
+rcmsmove PROC USES esi edi ebx rc:ptr S_RECT, wp:PVOID, fl:DWORD
 
 	local	xpos,ypos
 	local	relx,rely
@@ -22,7 +22,7 @@ rcmsmove PROC USES esi edi ebx rc:PRECT, wp:PVOID, fl:DWORD
 	mov	relx,eax
 	sub	dl,bh
 	mov	rely,edx
-	GetCursor( addr cursor )
+	CursorGet( addr cursor )
 	CursorOff()
 
 	.while	mousep() == 1
@@ -61,7 +61,7 @@ rcmsmove PROC USES esi edi ebx rc:PRECT, wp:PVOID, fl:DWORD
 			mov	xpos,eax
 		.endif
 	.endw
-	SetCursor( addr cursor )
+	CursorSet( addr cursor )
 	.if	fl & _D_SHADE
 		rcsetshade( ebx, wp )
 	.endif

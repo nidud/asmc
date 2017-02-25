@@ -393,7 +393,7 @@ do:
 	je	break
 	cmp	al,13
 	je	break
-	test	__ctype[eax+1],_SPACE
+	test	BYTE PTR _ctype[eax*2+2],_SPACE
 	jz	do
 @@:
 	lodsb
@@ -401,7 +401,7 @@ do:
 	je	break
 	cmp	al,13
 	je	break
-	test	__ctype[eax+1],_SPACE
+	test	BYTE PTR _ctype[eax*2+2],_SPACE
 	jnz	@B
 @@:
 	dec	esi

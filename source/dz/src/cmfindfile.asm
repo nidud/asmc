@@ -439,7 +439,7 @@ event_find PROC PRIVATE USES esi edi ebx
 	.endif
 	mov	ebx,DLG_FindFile
 	.if !( [ebx].S_TOBJ.to_flag[OF_GOTO] & _O_STATE )
-		GetCursor( addr cursor )
+		CursorGet( addr cursor )
 		call	CursorOff
 		mov	edi,tdllist
 		mov	esi,[edi].S_LOBJ.ll_count
@@ -466,7 +466,7 @@ event_find PROC PRIVATE USES esi edi ebx
 		progress_set( eax, 0, MAXHIT+2 )
 		call	ff_searchpath
 		call	progress_close
-		SetCursor( addr cursor )
+		CursorSet( addr cursor )
 		mov	eax,[edi].S_LOBJ.ll_count
 		.if eax >= ID_FILE
 			mov	eax,ID_FILE
@@ -848,7 +848,7 @@ FindFile PROC USES esi edi ebx wspath
 	rep	stosb
 
 	call	clrcmdl
-	GetCursor( addr cursor )
+	CursorGet( addr cursor )
 	rsopen( IDD_DZFindFile )
 	jz	somem
 
@@ -900,7 +900,7 @@ FindFile PROC USES esi edi ebx wspath
 toend:
 	pop	eax
 	mov	thelp,eax
-	SetCursor( addr cursor )
+	CursorSet( addr cursor )
 	mov	eax,esi		; Exit code
 	mov	ecx,edi		; Exit key
 	ret

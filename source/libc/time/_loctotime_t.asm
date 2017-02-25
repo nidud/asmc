@@ -9,7 +9,7 @@ _loctotime_t PROC uses esi edi ebx,
 	hour:	SINT,
 	minute: SINT,
 	second: SINT
-local	tb:	S_TM
+local	tb:	tm
 
 	mov	eax,year
 	sub	eax,1900

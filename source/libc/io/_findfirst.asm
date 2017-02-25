@@ -1,40 +1,40 @@
 include crtl.inc
 include io.inc
 include time.inc
+include winbase.inc
 
 	.code
 
-_findnext PROC USES esi edi handle:HANDLE, ff:PTR _finddata_t
+_findnext proc uses esi edi handle:HANDLE, ff:ptr _finddata_t
 
-local	FindFileData:WIN32_FIND_DATA
+local	FindFileData:WIN32_FIND_DATAA
 
-	mov	edi,ff
-	lea	esi,FindFileData
+	mov edi,ff
+	lea esi,FindFileData
 
-	.if	FindNextFileA( handle, esi )
+	.if FindNextFileA(handle, esi)
 
 		copyblock()
-		xor	eax,eax
+		xor eax,eax
 	.else
-
 		osmaperr()
 	.endif
 	ret
 
-_findnext ENDP
+_findnext endp
 
-_findfirst PROC USES esi edi ebx lpFileName:LPSTR, ff:PTR _finddata_t
+_findfirst proc uses esi edi ebx lpFileName:LPSTR, ff:ptr _finddata_t
 
-local	FindFileData:	WIN32_FIND_DATAW,
-	result:		DWORD
+local	FindFileData:WIN32_FIND_DATAW,
+	result:DWORD
 
-	mov	edi,ff
-	lea	esi,FindFileData
+	mov edi,ff
+	lea esi,FindFileData
 	;
 	; single file fails in FindFirstFileW
 	;
-	mov	eax,lpFileName
-	.if	BYTE PTR [eax+1] == ':'
+	mov eax,lpFileName
+	.if BYTE PTR [eax+1] == ':'
 
 		.if	FindFirstFileW( __allocwpath( eax ), esi ) != -1
 
@@ -52,33 +52,19 @@ local	FindFileData:	WIN32_FIND_DATAW,
 		FindFirstFileA( eax, esi )
 	.endif
 
-	mov	result,eax
-	.if	eax != -1
+	mov result,eax
+	.if eax != -1
 
 		copyblock()
 	.else
-
 		osmaperr()
 	.endif
-	mov	eax,result
+	mov eax,result
 	ret
 
-_findfirst ENDP
+_findfirst endp
 
-_findclose PROC h:HANDLE
-
-	.if	!FindClose( h )
-
-		osmaperr()
-	.else
-
-		xor eax,eax
-	.endif
-	ret
-
-_findclose ENDP
-
-	ASSUME	esi:ptr WIN32_FIND_DATA
+	ASSUME	esi:ptr WIN32_FIND_DATAA
 	ASSUME	edi:ptr _finddata_t
 
 copyblock:

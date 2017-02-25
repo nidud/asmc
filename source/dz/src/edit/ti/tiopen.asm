@@ -266,14 +266,6 @@ titogglefile PROC USES esi edi ebx old:PTINFO, new:PTINFO
 	mov	esi,eax
 
 	.if	esi != edi && [esi].ti_flag & _T_TEDIT
-		if 0
-		.if	edi && \
-			[edi].ti_flag & _T_PANELB && \
-			[edi].ti_DOBJ.dl_flag & _D_ONSCR
-
-			dlclose( addr [edi].ti_DOBJ )
-		.endif
-		endif
 
 		mov	ebx,esi
 		tishow( esi )

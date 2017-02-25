@@ -4,8 +4,8 @@ include ctype.inc
 
 	OPTION PROLOGUE:NONE, EPILOGUE:NONE
 
-isprint PROC char
-	mov	eax,[esp+4]
+isprint PROC char:SINT
+	movzx	eax,BYTE PTR [esp+4]
 	cmp	eax,20h
 	jb	@F
 	cmp	eax,7Fh

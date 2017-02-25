@@ -28,7 +28,7 @@ _kbhit	PROC USES ebx edi esi
 			.if [ebx].INPUT_RECORD.EventType == KEY_EVENT && \
 			    [ebx].INPUT_RECORD.KeyEvent.bKeyDown
 
-				movzx edi,[ebx].INPUT_RECORD.KeyEvent.Char
+				movzx edi,[ebx].INPUT_RECORD.KeyEvent.AsciiChar
 				.break .if edi
 			.endif
 

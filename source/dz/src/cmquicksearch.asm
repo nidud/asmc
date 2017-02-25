@@ -85,7 +85,7 @@ cmquicksearch PROC USES esi edi ebx
 
 	.if cpanel_state()
 
-		GetCursor( addr cursor )
+		CursorGet( addr cursor )
 		CursorOn()
 		wcpushst( addr stline, addr cp_quicksearch )
 
@@ -171,7 +171,7 @@ cmquicksearch PROC USES esi edi ebx
 			.endsw
 		.until	eax
 		wcpopst( addr stline )
-		SetCursor( addr cursor )
+		CursorSet( addr cursor )
 	.endif
 	xor	eax,eax
 	ret

@@ -32,22 +32,26 @@ _IOFLRTN	equ 0x1000
 _IOCTRLZ	equ 0x2000
 _IOCOMMIT	equ 0x4000
 
-S_FILE		STRUC SIZE_T
-iob_ptr		LPSTR ?
-iob_cnt		dd ?
-iob_base	LPSTR ?
-iob_flag	dd ?
-iob_file	dd ?
-iob_charbuf	dd ?
-iob_bufsize	dd ?
-iob_tmpfname	LPSTR ?
-S_FILE		ENDS
-LPFILE		TYPEDEF PTR S_FILE
+ifndef _FILE_DEFINED
+_iobuf		STRUC SIZE_T
+_ptr		LPSTR ?
+_cnt		SINT ?
+_base		LPSTR ?
+_flag		SINT ?
+_file		SINT ?
+_charbuf	SINT ?
+_bufsiz		SINT ?
+_tmpfname	LPSTR ?
+_iobuf		ENDS
+FILE		typedef _iobuf
+_FILE_DEFINED	equ 1
+endif
+LPFILE		TYPEDEF PTR _iobuf
 
 externdef	_bufin:BYTE
-externdef	_iob:S_FILE
-externdef	stdout:S_FILE
-externdef	stderr:S_FILE
+externdef	_iob:_iobuf
+externdef	stdout:_iobuf
+externdef	stderr:_iobuf
 externdef	_osfhnd:HANDLE
 externdef	hStdInput:HANDLE
 externdef	hStdOutput:HANDLE
@@ -68,9 +72,9 @@ vfprintf	PROTO :LPFILE,:LPSTR, :PVOID
 fread		PROTO :LPSTR, :SINT, :SINT, :LPFILE
 fwrite		PROTO :LPSTR, :SINT, :SINT, :LPFILE
 fseek		PROTO :LPFILE,:SIZE_T, :SIZE_T
-fgets		PROTO :LPSTR, :SIZE_T, :LPFILE
+fgets		PROTO :LPSTR, :SINT, :LPFILE
 fputs		PROTO :LPSTR, :LPFILE
-fputc		PROTO :SIZE_T, :LPFILE
+fputc		PROTO :SINT, :LPFILE
 feof		PROTO :LPFILE
 ftell		PROTO :LPFILE
 perror		PROTO :LPSTR
@@ -80,37 +84,67 @@ _flsbuf		PROTO :SIZE_T, :LPFILE
 _freebuf	PROTO :LPFILE
 _filbuf		PROTO :LPFILE
 _getst		PROTO
-_ftbuf		PROTO :SIZE_T, :LPFILE
+_ftbuf		PROTO :ULONG, :LPFILE
 _stbuf		PROTO :LPFILE
 _getbuf		PROTO :LPFILE
 setvbuf		PROTO :LPFILE, :LPSTR, :SIZE_T, :SIZE_T
 setbuf		PROTO :LPFILE, :LPSTR
+ungetc		PROTO :SINT, :LPFILE
 
-;;;;;;;;;;;;;;; kernel32.lib
-IFDEF __PE__
-_iobuf	equ <S_FILE>
-option	dllimport:<kernel32>
-ENDIF
+ifndef _WSTDIO_DEFINED
+ifndef _WCHAR_T_DEFINED
+wchar_t			typedef WORD
+_WCHAR_T_DEFINED	equ 1
+endif
+ifndef _WCTYPE_T_DEFINED
+wint_t			typedef wchar_t
+wctype_t		typedef wchar_t
+_WCTYPE_T_DEFINED	equ 1
+endif
+ifdef  _POSIX_
+_wfsopenproto	proto :ptr wchar_t, :ptr wchar_t
+else
+_wfsopenproto	proto :ptr wchar_t, :ptr wchar_t, :SINT
+endif
 
-FILE_TYPE_UNKNOWN   equ 0x0000	; The type of the specified file is unknown.
-FILE_TYPE_DISK	    equ 0x0001	; The specified file is a disk file.
-FILE_TYPE_CHAR	    equ 0x0002	; The specified file is a character file,
-				; typically an LPT device or a console.
-FILE_TYPE_PIPE	    equ 0x0003	; The specified file is either a named or
-				; anonymous pipe.
-FILE_TYPE_REMOTE    equ 0x8000
+fgetwc		proto :ptr FILE
+_fgetwchar	proto
+fputwc		proto :wint_t, :ptr FILE
+_fputwchar	proto :wint_t
+getwc		proto :ptr FILE
+getwchar	proto
+putwc		proto :wint_t, :ptr FILE
+putwchar	proto :wint_t
+ungetwc		proto :wint_t, :ptr FILE
+fgetws		proto :ptr wchar_t, :SINT, :ptr FILE
+fputws		proto :ptr wchar_t, :ptr FILE
+_getws		proto :ptr wchar_t
+_putws		proto :ptr wchar_t
+fwprintf	proto _CDecl :ptr FILE, :ptr wchar_t, :VARARG
+wprintf		proto _CDecl :ptr wchar_t, :VARARG
+_snwprintf	proto _CDecl :ptr wchar_t, :size_t, :ptr wchar_t, :VARARG
+swprintf	proto _CDecl :ptr wchar_t, :ptr wchar_t, :VARARG
+vfwprintf	proto :ptr FILE, :ptr wchar_t, :PVOID
+vwprintf	proto :ptr wchar_t, :PVOID
+_vsnwprintf	proto :ptr wchar_t, :size_t, :ptr wchar_t, :PVOID
+vswprintf	proto :ptr wchar_t, :ptr wchar_t, :PVOID
+fwscanf		proto _CDecl :ptr FILE, :ptr wchar_t, :VARARG
+swscanf		proto _CDecl :ptr wchar_t, :ptr wchar_t, :VARARG
+wscanf		proto _CDecl :ptr wchar_t, :VARARG
 
-; DWORD
-GetFileType proto _CType \
-	hFile:		HANDLE	; file handle
-; int
-wvsprintfA proto _CType \
-	lpOutput:	LPSTR,	; pointer to buffer for output
-	lpFormat:	LPSTR,	; pointer to format-control string
-	va_list:	PVOID	; variable list of format-control arguments
-wvsprintfW proto _CType \
-	lpOutput:	LPWSTR,
-	lpFormat:	LPWSTR,
-	va_list:	PVOID
+_wfdopen	proto :SINT, :ptr wchar_t
+_wfopen		proto :ptr wchar_t, :ptr wchar_t
+_wfreopen	proto :ptr wchar_t, :ptr wchar_t, :ptr FILE
+_wperror	proto :ptr wchar_t
+_wpopen		proto :ptr wchar_t, :ptr wchar_t
+_wremove	proto :ptr wchar_t
+_wtempnam	proto :ptr wchar_t, :ptr wchar_t
+_wtmpnam	proto :ptr wchar_t
 
-	.list
+_flswbuf	proto :SINT, :LPFILE
+_filwbuf	proto :LPFILE
+_woutput	proto :LPFILE, :LPWSTR, :PVOID
+_WSTDIO_DEFINED equ 1
+endif
+
+.list

@@ -11,7 +11,7 @@ CFAddEntry PROC USES esi edi ebx cf:PCFINI, string:LPSTR
 	mov	esi,string
 
 	movzx	eax,byte ptr [esi]
-	.while	__ctype[eax+1] & _SPACE
+	.while	_ctype[eax*2+2] & _SPACE
 
 		add	esi,1
 		mov	al,[esi]
@@ -35,7 +35,7 @@ CFAddEntry PROC USES esi edi ebx cf:PCFINI, string:LPSTR
 			lea	edi,[eax+1]
 
 			movzx	eax,byte ptr [edi]
-			.while	__ctype[eax+1] & _SPACE
+			.while	_ctype[eax*2+2] & _SPACE
 
 				add	edi,1
 				mov	al,[edi]

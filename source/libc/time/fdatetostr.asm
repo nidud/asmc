@@ -1,7 +1,6 @@
 include time.inc
 include stdio.inc
-
-strsdate proto :LPSTR, :LPSYSTEMTIME
+include winbase.inc
 
 	.code
 
@@ -12,7 +11,7 @@ local	ftime:FILETIME,
 
 	FileTimeToLocalFileTime( ft, addr ftime )
 	FileTimeToSystemTime( addr ftime, addr stime )
-	strsdate( string, addr stime )
+	SystemDateToString( string, addr stime )
 	ret
 
 fdatetostr ENDP

@@ -1,5 +1,6 @@
 include crtl.inc
 include stdlib.inc
+include winbase.inc
 
 _EXIT	SEGMENT DWORD FLAT PUBLIC 'EXIT'
 _EXIT	ENDS

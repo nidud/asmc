@@ -7,79 +7,74 @@ include io.inc
 
 _filbuf PROC USES esi edi fp:LPFILE
 
-	mov	esi,fp
-	mov	edi,[esi].iob_flag
+	mov esi,fp
+	mov edi,[esi]._flag
 
-	.switch
-	  .case !( edi & _IOREAD or _IOWRT or _IORW )
-	  .case edi & _IOSTRG
-		mov	eax,-1
-		jmp	toend
-	  .case edi & _IOWRT
-		or	[esi].iob_flag,_IOERR
-		mov	eax,-1
-		jmp	toend
-	.endsw
+	.repeat
+		or	eax,-1
+		.switch
+		  .case !( edi & _IOREAD or _IOWRT or _IORW )
+		  .case edi & _IOSTRG
+			.break
+		  .case edi & _IOWRT
+			or [esi]._flag,_IOERR
+			.break
+		.endsw
 
-	or	edi,_IOREAD
-	mov	[esi].iob_flag,edi
+		or  edi,_IOREAD
+		mov [esi]._flag,edi
 
-	.if	!( edi & _IOMYBUF or _IONBF or _IOYOURBUF )
+		.if !( edi & _IOMYBUF or _IONBF or _IOYOURBUF )
 
-		_getbuf( fp )
-		mov	edi,[esi].iob_flag
-	.else
-
-		mov	eax,[esi].iob_base
-		mov	[esi].iob_ptr,eax
-	.endif
-
-	_read(	[esi].iob_file,
-		[esi].iob_base,
-		[esi].iob_bufsize )
-	mov	[esi].iob_cnt,eax
-
-	.if	sdword ptr eax < 2
-
-		.if	eax
-
-			mov	eax,_IOERR
+			_getbuf( fp )
+			mov edi,[esi]._flag
 		.else
-			mov	eax,_IOEOF
+			mov eax,[esi]._base
+			mov [esi]._ptr,eax
 		.endif
 
-		or	[esi].iob_flag,eax
-		xor	eax,eax
-		mov	[esi].iob_cnt,eax
-		dec	eax
-		jmp	toend
-	.endif
+		mov [esi]._cnt,_read([esi]._file, [esi]._base, [esi]._bufsiz)
 
-	.if	!( edi & _IOWRT or _IORW )
+		.ifs eax < 2
 
-		lea	eax,_osfile
-		add	eax,[esi].iob_file
-		mov	al,[eax]
-		and	al,FH_TEXT or FH_EOF
-		.if	al == FH_TEXT or FH_EOF
+			.if eax
+				mov eax,_IOERR
+			.else
+				mov eax,_IOEOF
+			.endif
 
-			or [esi].iob_flag,_IOCTRLZ
+			or  [esi]._flag,eax
+			xor eax,eax
+			mov [esi]._cnt,eax
+			dec eax
+			.break
 		.endif
-	.endif
 
-	mov	eax,[esi].iob_bufsize
-	.if	eax == _MINIOBUF && edi & _IOMYBUF && !( edi & _IOSETVBUF )
+		.if !( edi & _IOWRT or _IORW )
 
-		mov	[esi].iob_bufsize,_INTIOBUF
-	.endif
+			lea eax,_osfile
+			add eax,[esi]._file
+			mov al,[eax]
+			and al,FH_TEXT or FH_EOF
+			.if al == FH_TEXT or FH_EOF
 
-	dec	[esi].iob_cnt
-	inc	[esi].iob_ptr
-	mov	esi,[esi].iob_ptr
-	dec	esi
-	movzx	eax,byte ptr [esi]
-toend:
+				or [esi]._flag,_IOCTRLZ
+			.endif
+		.endif
+
+		mov eax,[esi]._bufsiz
+		.if eax == _MINIOBUF && edi & _IOMYBUF && !( edi & _IOSETVBUF )
+
+			mov [esi]._bufsiz,_INTIOBUF
+		.endif
+
+		sub [esi]._cnt,1
+		add [esi]._ptr,1
+		mov esi,[esi]._ptr
+		movzx eax,byte ptr [esi-1]
+	.until	1
 	ret
+
 _filbuf ENDP
 
 	END

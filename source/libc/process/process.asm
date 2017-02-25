@@ -4,6 +4,7 @@ include process.inc
 include string.inc
 include crtl.inc
 include conio.inc
+include winbase.inc
 
 	.data
 	errorlevel dd 0

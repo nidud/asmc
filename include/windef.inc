@@ -1,0 +1,276 @@
+;
+; Basic Windows Type Definitions
+;
+ifndef __LIBC_INC
+ include libc.inc
+endif
+
+.xlist
+ifndef _WINDEF_
+_WINDEF_ equ 1
+
+ifndef NO_STRICT
+ifndef STRICT
+STRICT equ 1
+endif
+endif
+
+ifndef WINVER
+WINVER equ 0x0500
+endif
+
+;
+; BASETYPES is defined in ntdef.h if these types are already defined
+;
+
+ifndef BASETYPES
+BASETYPES	equ 1
+ULONG		typedef dword
+PULONG		typedef ptr ULONG
+USHORT		typedef word
+PUSHORT		typedef ptr USHORT
+UCHAR		typedef byte
+PUCHAR		typedef ptr UCHAR
+PSZ		typedef ptr sbyte
+endif
+
+MAX_PATH	equ 260
+
+ifndef NULL
+NULL		equ 0
+endif
+
+ifndef FALSE
+FALSE		equ 0
+endif
+
+ifndef TRUE
+TRUE		equ 1
+endif
+
+ifndef OPTIONAL
+OPTIONAL	equ 1
+endif
+
+CDECL		equ <c>
+
+ifdef _STDCALL_SUPPORTED
+CALLBACK	equ <stdcall>
+WINAPI		equ <stdcall>
+WINAPIV		equ <c>
+APIENTRY	equ <WINAPI>
+APIPRIVATE	equ <stdcall>
+else
+CALLBACK	equ <>
+WINAPI		equ <>
+WINAPIV		equ <>
+APIENTRY	equ <WINAPI>
+APIPRIVATE	equ <>
+endif
+
+BOOL		typedef sdword
+FLOAT		typedef REAL4
+PFLOAT		typedef ptr FLOAT
+PBOOL		typedef ptr BOOL
+LPBOOL		typedef ptr BOOL
+PBYTE		typedef ptr BYTE
+LPBYTE		typedef ptr BYTE
+PINT		typedef ptr SINT
+LPINT		typedef ptr SINT
+PWORD		typedef ptr WORD
+LPWORD		typedef ptr WORD
+LPLONG		typedef ptr SDWORD
+PDWORD		typedef ptr DWORD
+LPDWORD		typedef ptr DWORD
+LPVOID		typedef ptr
+LPCVOID		typedef ptr
+
+UINT		typedef dword
+PUINT		typedef ptr dword
+
+ifndef _WINNT_
+include winnt.inc
+.xlist
+endif
+
+; Types use for passing & returning polymorphic values
+WPARAM		typedef UINT
+LPARAM		typedef SDWORD
+LRESULT		typedef SDWORD
+
+NOMINMAX equ 1
+ifndef NOMINMAX
+ifndef	max
+max	macro a, b
+	if a GT b
+	  exitm <a>
+	endif
+	exitm <b>
+	endm
+endif
+ifndef	min
+min	macro a, b
+	if a LT b
+	  exitm <a>
+	endif
+	exitm <b>
+	endm
+endif
+endif
+
+ifndef WIN_INTERNAL
+HWND		typedef HANDLE
+HHOOK		typedef HANDLE
+ifdef WINABLE
+HEVENT		typedef HANDLE
+endif
+endif
+
+ATOM		typedef WORD
+
+SPHANDLE	typedef PTR HANDLE
+LPHANDLE	typedef PTR HANDLE
+HGLOBAL		typedef HANDLE
+HLOCAL		typedef HANDLE
+GLOBALHANDLE	typedef HANDLE
+LOCALHANDLE	typedef HANDLE
+
+WPROC_T		typedef PROTO WINAPI
+FARPROC		typedef PTR WPROC_T
+NEARPROC	typedef PTR WPROC_T
+
+ifndef GDI_INTERNAL
+ifdef STRICT
+HGDIOBJ		typedef ptr
+else
+HGDIOBJ		typedef HANDLE
+endif
+endif
+
+ifndef WIN_INTERNAL
+HACCEL		typedef HANDLE
+endif
+ifndef GDI_INTERNAL
+HBITMAP		typedef HANDLE
+HBRUSH		typedef HANDLE
+endif
+if WINVER GE 0x0400
+HCOLORSPACE	typedef HANDLE
+endif
+ifndef GDI_INTERNAL
+HDC		typedef HANDLE
+endif
+HGLRC		typedef HANDLE
+HDESK		typedef HANDLE
+HENHMETAFILE	typedef HANDLE
+ifndef GDI_INTERNAL
+HFONT		typedef HANDLE
+endif
+HICON		typedef HANDLE
+ifndef WIN_INTERNAL
+HMENU		typedef HANDLE
+endif
+HMETAFILE	typedef HANDLE
+HINSTANCE	typedef HANDLE
+HMODULE		typedef HINSTANCE	; HMODULEs can be used in place of HINSTANCEs
+ifndef GDI_INTERNAL
+HPALETTE	typedef HANDLE
+HPEN		typedef HANDLE
+endif
+HRGN		typedef HANDLE
+HRSRC		typedef HANDLE
+HSTR		typedef HANDLE
+HTASK		typedef HANDLE
+HWINSTA		typedef HANDLE
+HKL		typedef HANDLE
+if WINVER GE 0x0500
+HMONITOR	typedef HANDLE
+HTERMINAL	typedef HANDLE
+HWINEVENTHOOK	typedef HANDLE
+endif
+
+HFILE		typedef SINT
+HCURSOR		typedef HICON ; HICONs & HCURSORs are polymorphic
+COLORREF	typedef DWORD
+LPCOLORREF	typedef PTR DWORD
+
+HFILE_ERROR	equ -1
+
+RECT		STRUC
+left		dd ?
+top		dd ?
+right		dd ?
+bottom		dd ?
+RECT		ENDS
+
+PRECT		typedef ptr RECT
+NPRECT		typedef ptr RECT
+LPRECT		typedef ptr RECT
+LPCRECT		typedef ptr RECT
+RECTL		typedef RECT
+PRECTL		typedef ptr RECT
+LPRECTL		typedef ptr RECT
+LPCRECTL	typedef ptr RECTL
+
+POINT		STRUC
+x		dd ?
+y		dd ?
+POINT		ENDS
+
+PPOINT		typedef ptr POINT
+NPPOINT		typedef ptr POINT
+LPPOINT		typedef ptr POINT
+
+POINTL		typedef POINT
+PPOINTL		typedef ptr POINT
+
+tagSIZE		typedef POINT
+PSIZE		typedef ptr POINT
+LPSIZE		typedef ptr POINT
+
+SIZEL		typedef POINT
+PSIZEL		typedef ptr POINT
+LPSIZEL		typedef ptr POINT
+
+POINTS		STRUC
+x		dw ?
+y		dw ?
+POINTS		ENDS
+
+PPOINTS		typedef ptr POINTS
+LPPOINTS	typedef ptr POINTS
+
+; mode selections for the device mode function
+DM_UPDATE	    equ 1
+DM_COPY		    equ 2
+DM_PROMPT	    equ 4
+DM_MODIFY	    equ 8
+
+DM_IN_BUFFER	    equ DM_MODIFY
+DM_IN_PROMPT	    equ DM_PROMPT
+DM_OUT_BUFFER	    equ DM_COPY
+DM_OUT_DEFAULT	    equ DM_UPDATE
+
+; device capabilities indices
+DC_FIELDS	    equ 1
+DC_PAPERS	    equ 2
+DC_PAPERSIZE	    equ 3
+DC_MINEXTENT	    equ 4
+DC_MAXEXTENT	    equ 5
+DC_BINS		    equ 6
+DC_DUPLEX	    equ 7
+DC_SIZE		    equ 8
+DC_EXTRA	    equ 9
+DC_VERSION	    equ 10
+DC_DRIVER	    equ 11
+DC_BINNAMES	    equ 12
+DC_ENUMRESOLUTIONS  equ 13
+DC_FILEDEPENDENCIES equ 14
+DC_TRUETYPE	    equ 15
+DC_PAPERNAMES	    equ 16
+DC_ORIENTATION	    equ 17
+DC_COPIES	    equ 18
+
+endif ; _WINDEF_
+
+.list

@@ -2,19 +2,20 @@ include stdio.inc
 
 	.code
 
-fputc	PROC char:SIZE_T, fp:LPFILE
-	mov	eax,fp
-	dec	[eax].S_FILE.iob_cnt
-	jl	flush
-	mov	edx,[eax].S_FILE.iob_ptr
-	inc	[eax].S_FILE.iob_ptr
+fputc	PROC char:SINT, fp:LPFILE
+
 	mov	eax,char
-	mov	[edx],al
-toend:
+	mov	ecx,fp
+	dec	[ecx]._iobuf._cnt
+	.ifl
+		_flsbuf(eax, ecx)
+	.else
+		mov edx,[ecx]._iobuf._ptr
+		add [ecx]._iobuf._ptr,1
+		mov [edx],al
+	.endif
 	ret
-flush:
-	_flsbuf( char, eax )
-	jmp	toend
+
 fputc	ENDP
 
 	END

@@ -6,10 +6,10 @@ include stdio.inc
 
 fgetc	PROC fp:LPFILE
 	mov	eax,[esp+4]
-	dec	[eax].S_FILE.iob_cnt
+	dec	[eax]._iobuf._cnt
 	jl	fbuf
-	inc	[eax].S_FILE.iob_ptr
-	mov	eax,[eax].S_FILE.iob_ptr
+	add	[eax]._iobuf._ptr,1
+	mov	eax,[eax]._iobuf._ptr
 	movzx	eax,byte ptr [eax-1]
 toend:
 	ret	4

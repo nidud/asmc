@@ -1,5 +1,6 @@
 include io.inc
 include crtl.inc
+include winbase.inc
 
 public	hStdInput
 public	hStdOutput

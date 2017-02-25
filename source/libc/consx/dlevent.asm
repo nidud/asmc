@@ -151,7 +151,7 @@ test_event ENDP
 
 LoadCurrentObjectSaveCursor PROC
 	push	eax
-	GetCursor( addr ocurs )
+	CursorGet( addr ocurs )
 	pop	eax
 LoadCurrentObjectSaveCursor ENDP
 
@@ -903,7 +903,7 @@ toend:
 xorradioflag ENDP
 
 ORETURN PROC
-	SetCursor( addr ocurs )
+	CursorSet( addr ocurs )
 	ret
 ORETURN ENDP
 
@@ -1028,7 +1028,7 @@ dlpbuttevent PROC USES esi edi
 	call	tgetevent
 	push	eax
 	call	xbuttxchg
-	SetCursor( addr ocurs )
+	CursorSet( addr ocurs )
 	pop	eax
 	ret
 dlpbuttevent ENDP
@@ -1113,7 +1113,7 @@ lupe:
 	jz	done
 	mov	esi,10
 	.while	!ZERO?
-		delay ( 16 )
+		Sleep ( 16 )
 		call	mousep
 		.break .if !ZERO?
 		dec	esi
@@ -1183,7 +1183,7 @@ dlmenusevent PROC
 		mov eax,KEY_DOWN
 	.endif
 	TDDeselectObject()
-	SetCursor( addr ocurs )
+	CursorSet( addr ocurs )
 	ret
 dlmenusevent ENDP
 
@@ -1204,7 +1204,7 @@ dlevent PROC USES esi edi ebx dialog:PTR S_DOBJ
 		jz	toend
 	.endif
 
-	GetCursor( addr cursor )
+	CursorGet( addr cursor )
 	CursorOff()
 	movzx	eax,[ebx].S_DOBJ.dl_count
 	.if	eax
@@ -1270,7 +1270,7 @@ dlevent PROC USES esi edi ebx dialog:PTR S_DOBJ
 			.endif
 		.until	edi
 	.endif
-	SetCursor( addr cursor )
+	CursorSet( addr cursor )
 	mov	eax,event
 toend:
 	mov	edx,eax

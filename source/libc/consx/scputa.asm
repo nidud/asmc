@@ -9,7 +9,7 @@ scputa	PROC USES eax edx ecx x, y, l, a
 	movzx	edx,BYTE PTR y
 	shl	edx,16
 	mov	dx,ax
-	FillConsoleOutputAttribute( hStdOutput, ecx, l, edx, addr pcx )
+	FillConsoleOutputAttribute( hStdOutput, cx, l, edx, addr pcx )
 	ret
 scputa	ENDP
 

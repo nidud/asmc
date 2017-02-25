@@ -21,12 +21,12 @@ setvbuf PROC USES esi ebx,
 	.endif
 	fflush( ebx )
 	_freebuf( ebx )
-	mov	esi,[ebx].iob_flag
+	mov	esi,[ebx]._flag
 	and	esi,not (_IOMYBUF or _IOYOURBUF or _IONBF or _IOSETVBUF or _IOFEOF or _IOFLRTN or _IOCTRLZ)
 	mov	eax,tp
 	.if	eax & _IONBF
 		or	esi,_IONBF
-		lea	eax,[ebx].iob_charbuf
+		lea	eax,[ebx]._charbuf
 		mov	buf,eax
 		mov	bsize,4
 	.elseif buf == 0
@@ -39,14 +39,14 @@ setvbuf PROC USES esi ebx,
 	.else
 		or	esi,_IOYOURBUF or _IOSETVBUF
 	.endif
-	mov	[ebx].iob_flag,esi
+	mov	[ebx]._flag,esi
 	mov	eax,bsize
-	mov	[ebx].iob_bufsize,eax
+	mov	[ebx]._bufsiz,eax
 	mov	eax,buf
-	mov	[ebx].iob_ptr,eax
-	mov	[ebx].iob_base,eax
+	mov	[ebx]._ptr,eax
+	mov	[ebx]._base,eax
 	xor	eax,eax
-	mov	[ebx].iob_cnt,eax
+	mov	[ebx]._cnt,eax
 toend:
 	ret
 setvbuf ENDP

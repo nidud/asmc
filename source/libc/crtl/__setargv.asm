@@ -9,17 +9,23 @@
 ; this expands to (second call):
 ;	PROG @<file> -a -b -c -x -y *.txt
 ;
-; On the second call the local argc is 3 and argv points to [-x] (&_argv[2])
-; On return the local argc is 6 and argv points to [-a] (&_argv[2])
+; On the second call the local argc is 3 and argv points to [-x] (&__argv[2])
+; On return the local argc is 6 and argv points to [-a] (&__argv[2])
 ;
-; Note: The main array (_argv) is allocated in _argv.asm
+; Note: The main array (__argv) is allocated in _argv.asm
 ;
 include stdlib.inc
 include string.inc
 include ctype.inc
 include alloc.inc
 include direct.inc
-
+IFDEF	_UNICODE
+XC	equ <ax>
+ARGV	equ <__wargv>
+ELSE
+XC	equ <al>
+ARGV	equ <__argv>
+ENDIF
 _ARGV_MAX equ 64
 
 	.data
@@ -43,43 +49,59 @@ __setargv PROC USES esi edi ebx argc, argv:PVOID, cmdline:LPSTR
 
 	.repeat
 		xor	eax,eax ; Add a new argument
-		mov	[edi],al
-		.repeat
-			lodsb	; skip space
-		.until !( __ctype[eax+1] & _SPACE )
+		mov	[edi],XC
+		mov	XC,[esi]
+		add	esi,TCHAR
+
+		.for : eax == ' ' || (eax >= 9 && eax <= 13) : esi += TCHAR
+
+			mov XC,[esi]
+		.endf
 		.break .if !eax ; end of command string
 
 		xor	edx,edx ; "quote from start" in EDX - remove
 		xor	ecx,ecx ; -I"quoted text"    in ECX - keep
 
 		.if	eax == '"'
+
 			add	edx,1
-			lodsb
+			mov	XC,[esi]
+			add	esi,TCHAR
 		.endif
+
 		.while	eax == '"'	; ""A" B"
 			add	ecx,1
-			stosb
-			lodsb
+			mov	[edi],XC
+			mov	XC,[esi]
+			add	esi,TCHAR
+			add	edi,TCHAR
 		.endw
+
 		.while	eax
-			.break .if !edx && !ecx && __ctype[eax+1] & _SPACE
+			.break .if !edx && !ecx && (eax == ' ' || (eax >= 9 && eax <= 13))
 			.if	eax == '"'
 				.if	ecx
-					dec	ecx
+					dec ecx
 				.elseif edx
 					.break
 				.else
-					inc	ecx
+					inc ecx
 				.endif
 			.endif
-			stosb
-			lodsb
+			mov	[edi],XC
+			mov	XC,[esi]
+			add	esi,TCHAR
+			add	edi,TCHAR
 		.endw
 		xor	eax,eax
-		mov	[edi],al
+		mov	[edi],XC
+		lea	ebx,[edi+TCHAR]
 		mov	edi,base
-		.break .if al == [edi]
-		salloc( edi )
+		.break .if XC == [edi]
+
+		sub	ebx,edi
+		memcpy( malloc( ebx ), edi, ebx )
+
 		mov	edx,argv
 		mov	ecx,[edx]
 		mov	[edx],eax
@@ -92,7 +114,7 @@ __setargv PROC USES esi edi ebx argc, argv:PVOID, cmdline:LPSTR
 			mov	ecx,eax
 			dec	ebx
 		.endw
-		lea	ecx,_argc
+		lea	ecx,__argc
 		mov	eax,argc
 		inc	DWORD PTR [eax]
 		.if	eax != ecx
@@ -105,8 +127,8 @@ __setargv PROC USES esi edi ebx argc, argv:PVOID, cmdline:LPSTR
 			mov	argc_max,eax
 			shl	eax,2
 			.break .if !malloc( eax )
-			mov	ebx,_argv
-			mov	_argv,eax
+			mov	ebx,ARGV
+			mov	ARGV,eax
 			mov	ecx,argc_max
 			shl	ecx,1
 			memcpy( eax, ebx, ecx )
@@ -115,7 +137,7 @@ __setargv PROC USES esi edi ebx argc, argv:PVOID, cmdline:LPSTR
 			add	eax,ecx
 			mov	argv,eax
 		.endif
-	.until	BYTE PTR [esi-1] == 0
+	.until	TCHAR PTR [esi-TCHAR] == 0
 	ret
 __setargv ENDP
 

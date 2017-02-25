@@ -1,11 +1,12 @@
 include time.inc
 
 	.data
-tb	S_TM <>
+tb	tm <>
 
 	.code
 
 gmtime	PROC USES esi edi ebx timp: LPTIME
+
 	xor	ebx,ebx
 	mov	eax,timp
 	mov	eax,[eax]

@@ -8,6 +8,7 @@ include direct.inc
 include alloc.inc
 include signal.inc
 include crtl.inc
+include winbase.inc
 
 include asmc.inc
 
@@ -189,7 +190,7 @@ GetNumber PROC
 		inc	edx
 		test	al,al
 		jz	toend
-	.until	__ctype[eax+1] & _DIGIT
+	.until	BYTE PTR _ctype[eax*2+2] & _DIGIT
 	dec	edx
 	atol  ( edx )
 	test	eax,eax
@@ -841,9 +842,9 @@ ParseCmdline PROC USES esi edi ebx numargs
 			mov	BYTE PTR [eax],0
 			_close( handle )
 			mov	ebx,argv
-			sub	ebx,_argv
+			sub	ebx,__argv
 			__setargv( addr argc, argv, buffer )
-			mov	eax,_argv
+			mov	eax,__argv
 			add	eax,ebx
 			mov	argv,eax
 			.endc
@@ -980,10 +981,10 @@ endif
 	mov	rc,eax
 	mov	numArgs,eax
 	mov	numFiles,eax
-	mov	eax,_argc
+	mov	eax,__argc
 	dec	eax
 	mov	argc,eax
-	mov	eax,_argv
+	mov	eax,__argv
 	mov	ecx,[eax]
 	add	eax,4
 	mov	argv,eax

@@ -104,10 +104,10 @@ filter_edit PROC USES esi edi ebx filt:ptr, glcmd:ptr
 		mov	[edi].S_TOBJ.to_data[ID_OK],eax
 		mov	[edi].S_TOBJ.to_proc[ID_CLEAR],event_clear
 		.if	[esi].S_FILT.of_min_date
-			strdate( [edi].S_TOBJ.to_data[ID_MIN_DATE], [esi].S_FILT.of_min_date )
+			TDateToString( [edi].S_TOBJ.to_data[ID_MIN_DATE], [esi].S_FILT.of_min_date )
 		.endif
 		.if	[esi].S_FILT.of_max_date
-			strdate( [edi].S_TOBJ.to_data[ID_MAX_DATE], [esi].S_FILT.of_max_date )
+			TDateToString( [edi].S_TOBJ.to_data[ID_MAX_DATE], [esi].S_FILT.of_max_date )
 		.endif
 		.if	[esi].S_FILT.of_min_size
 			sprintf( [edi].S_TOBJ.to_data[ID_MIN_SIZE], addr format_lu,[esi].S_FILT.of_min_size )

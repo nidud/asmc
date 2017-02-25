@@ -21,7 +21,7 @@ UpdateKeyEvent PROC USES esi ebx pInput:ptr INPUT_RECORD
 	mov	al,byte ptr [ebx].KeyEvent.wVirtualScanCode
 	mov	keybscan,al
 	movzx	ecx,al
-	mov	al,byte ptr [ebx].KeyEvent.Char
+	mov	al,byte ptr [ebx].KeyEvent.AsciiChar
 	mov	keybchar,al
 	mov	eax,keyshift
 	mov	edx,[eax]

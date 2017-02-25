@@ -9,6 +9,7 @@ include stdio.inc
 include errno.inc
 include stdlib.inc
 include syserrls.inc
+include winbase.inc
 
 MAXHIT		equ 128
 CELLCOUNT	equ 18
@@ -370,7 +371,7 @@ local	ll:S_LOBJ
 		lea	edx,ll
 		mov	[edx].S_LOBJ.ll_list,eax
 		call	clrcmdl
-		GetCursor( addr cursor )
+		CursorGet( addr cursor )
 
 		.if	rsopen( IDD_DZEnviron )
 
@@ -434,7 +435,7 @@ local	ll:S_LOBJ
 
 	GetEnvironmentTEMP()
 	GetEnvironmentPATH()
-	SetCursor( addr cursor )
+	CursorSet( addr cursor )
 	xor	eax,eax
 	ret
 

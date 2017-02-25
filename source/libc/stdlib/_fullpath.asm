@@ -1,9 +1,9 @@
-include stdlib.inc
 include direct.inc
 include alloc.inc
 include string.inc
 include errno.inc
 include ctype.inc
+include winbase.inc
 
 	.code
 
@@ -65,7 +65,7 @@ _fullpath PROC USES esi edi ebx buf:LPSTR, path:LPSTR, maxlen:UINT
 		mov	drive,0
 		push	eax
 		movzx	eax,al
-		test	__ctype[eax+1],_UPPER or _LOWER
+		test	byte ptr _ctype[eax*2+2],_UPPER or _LOWER
 		pop	eax
 		.if	!ZERO? && ah == ':'
 			mov	[edi],ax

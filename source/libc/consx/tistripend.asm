@@ -12,7 +12,7 @@ tistripend PROC USES esi string:LPSTR
 		.repeat
 			dec	esi
 			mov	al,[esi]
-			mov	al,__ctype[eax+1]
+			mov	al,byte ptr _ctype[eax*2+2]
 			.break .if !( al & _SPACE )
 			mov	[esi],ah
 		.untilcxz

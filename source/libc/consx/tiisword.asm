@@ -4,7 +4,7 @@ include ctype.inc
 
 tiisword PROC
 	movzx	eax,al
-	mov	ah,__ctype[eax+1]
+	mov	ah,byte ptr _ctype[eax*2+2]
 	test	ah,_UPPER or _LOWER or _DIGIT
 	jnz	toend
 	cmp	al,'_'

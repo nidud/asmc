@@ -1,5 +1,5 @@
-include direct.inc
 include alloc.inc
+include winnls.inc
 
 	.code
 

@@ -9,17 +9,7 @@ SetMaxConsole PROC
 	;
 	; japheth 2014-01-10 - reposition to desktop position 0,0
 	;
-	call	pGetConsoleWindow
-	xor	ecx,ecx
-	push	SWPFLAG
-	push	ecx
-	push	ecx
-	push	ecx
-	push	ecx
-	push	ecx
-	push	eax
-	call	pSetWindowPos
-
+	SetWindowPos(GetConsoleWindow(),0,0,0,0,0,SWPFLAG)
 	GetLargestConsoleWindowSize( hStdOutput )
 	mov	edx,eax
 	shr	edx,16

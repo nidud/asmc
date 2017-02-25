@@ -12,6 +12,7 @@ include process.inc
 include time.inc
 include crtl.inc
 include cfini.inc
+include winbase.inc
 
 PUBLIC	cp_copyselected
 EXTRN	cp_quote:BYTE
@@ -3132,7 +3133,7 @@ local	rect:S_RECT
 					mov	edi,10
 					.repeat
 
-						delay(16)
+						Sleep(16)
 						.break .if mousep()
 
 						dec edi

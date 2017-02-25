@@ -1,24 +1,30 @@
 include stdio.inc
 include limits.inc
-
+IFDEF	_UNICODE
+SPRINTF equ <swprintf>
+OUTPUT	equ <_woutput>
+ELSE
+SPRINTF equ <sprintf>
+OUTPUT	equ <_output>
+ENDIF
 	.code
 
-sprintf PROC C USES ecx string:LPSTR, format:LPSTR, argptr:VARARG
+SPRINTF PROC C USES ecx string:LPTSTR, format:LPTSTR, argptr:VARARG
 
-local	o:S_FILE
+local	o:_iobuf
 
-	mov	o.iob_flag,_IOWRT or _IOSTRG
-	mov	o.iob_cnt,INT_MAX
+	mov	o._flag,_IOWRT or _IOSTRG
+	mov	o._cnt,INT_MAX
 	mov	eax,string
-	mov	o.iob_ptr,eax
-	mov	o.iob_base,eax
+	mov	o._ptr,eax
+	mov	o._base,eax
 
-	_output( addr o, format, addr argptr )
+	OUTPUT( addr o, format, addr argptr )
 
-	mov	ecx,o.iob_ptr
-	mov	byte ptr [ecx],0
+	mov	ecx,o._ptr
+	mov	TCHAR ptr [ecx],0
 	ret
 
-sprintf ENDP
+SPRINTF ENDP
 
 	END

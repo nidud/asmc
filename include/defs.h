@@ -45,6 +45,8 @@ typedef unsigned short _ino_t;
 typedef unsigned short wchar_t;
 typedef unsigned int _dev_t;
 typedef char * va_list;
+typedef wchar_t wint_t;
+typedef wchar_t wctype_t;
 
 #define NULL	0
 

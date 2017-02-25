@@ -1,5 +1,6 @@
 include time.inc
 include consx.inc
+include winnls.inc
 
 	.data
 	_sec	dd 61

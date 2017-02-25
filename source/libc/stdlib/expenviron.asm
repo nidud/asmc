@@ -1,6 +1,7 @@
 include stdlib.inc
 include string.inc
 include alloc.inc
+include winbase.inc
 
 	.code ; expand '%TEMP%' to 'C:\TEMP'
 

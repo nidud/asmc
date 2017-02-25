@@ -3,6 +3,7 @@ include alloc.inc
 include string.inc
 include stdlib.inc
 include cfini.inc
+include winbase.inc
 
 	.code
 

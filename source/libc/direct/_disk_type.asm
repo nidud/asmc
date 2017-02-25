@@ -7,7 +7,7 @@
 ; 5 CD-ROM disk drive
 ; 6 RAM disk drive
 ;
-include direct.inc
+include winbase.inc
 
 	.code
 

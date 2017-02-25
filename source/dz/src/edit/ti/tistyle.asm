@@ -24,7 +24,7 @@ _X_BEGIN	equ 4
 _X_WORD		equ 8
 
 ISCHAR	MACRO reg
-	EXITM<__ctype[reg+1] & (_UPPER or _LOWER or _DIGIT)>
+	EXITM<BYTE PTR _ctype[reg*2+2] & (_UPPER or _LOWER or _DIGIT)>
 	ENDM
 
 TOUPPER MACRO	reg
@@ -258,7 +258,7 @@ local	buffer:		LPSTR,	; start of line
 
 					movzx	eax,BYTE PTR [edi]
 					.break	.if !eax
-					.if	eax != 9 && __ctype[eax+1] & _CONTROL
+					.if	eax != 9 && BYTE PTR _ctype[eax*2+2] & _CONTROL
 
 						mov [edx+1],bl
 					.endif
@@ -278,9 +278,9 @@ local	buffer:		LPSTR,	; start of line
 				     edx = out_buffer,
 				     edi = buffer : edi < endbuf, ecx : eax++, edi++, ecx--
 
-					.if	xtable[eax] & _X_QUOTE
+					.if xtable[eax] & _X_QUOTE
 
-						.if	!(xtable[eax] & _X_COMMENT)
+						.if !(xtable[eax] & (_X_COMMENT or _X_BEGIN))
 
 							mov [edx+eax*2][1],bl
 						.endif
@@ -305,7 +305,7 @@ local	buffer:		LPSTR,	; start of line
 
 					.endc	.if !eax
 
-					.if	__ctype[eax+1] & _DIGIT
+					.if	BYTE PTR _ctype[eax*2+2] & _DIGIT
 
 						lea	edx,[edi-1]
 						.if	edx > line_ptr
@@ -330,7 +330,7 @@ local	buffer:		LPSTR,	; start of line
 						.while	1
 							lodsb
 							.break	  .if !eax
-							.continue .if __ctype[eax+1] & _HEX
+							.continue .if BYTE PTR _ctype[eax*2+2] & _HEX
 							or	al,0x20
 							.continue .if al == 'u' ; ..UL
 							.continue .if al == 'i' ; ..I64
@@ -339,7 +339,7 @@ local	buffer:		LPSTR,	; start of line
 							.break .if al == 'h'	; ..H
 							dec	esi
 							mov	al,[esi-1]
-							.break .if !(__ctype[eax+1] & _UPPER or _LOWER)
+							.break .if !(_ctype[eax*2+2] & _UPPER or _LOWER)
 							inc	ecx
 							.break
 						.endw
@@ -397,7 +397,7 @@ local	buffer:		LPSTR,	; start of line
 							lea edx,[edi-1]
 							.if edx >= buffer
 								sub edx,buffer
-								.if !(xtable[edx] & (_X_COMMENT or _X_QUOTE) )
+								.if !(xtable[edx] & (_X_COMMENT or _X_QUOTE or _X_BEGIN) )
 
 									add edx,edx
 									add edx,out_buffer
@@ -496,14 +496,14 @@ local	buffer:		LPSTR,	; start of line
 						and	eax,0xFF
 						.break .if xtable[eax] & _X_QUOTE && edx != "'"
 
-						mov	bh,__ctype[edx+1]
+						mov	bh,BYTE PTR _ctype[edx*2+2]
 						and	bh,_UPPER or _LOWER
 
 						lea	eax,[edi-1]
 						.if	eax > line_ptr && bh
 
 							movzx	eax,BYTE PTR [eax-1]
-							.break .if !(__ctype[eax+1] & _SPACE)
+							.break .if !(BYTE PTR _ctype[eax*2+2] & _SPACE)
 						.endif
 
 						.while	1
@@ -528,7 +528,7 @@ local	buffer:		LPSTR,	; start of line
 
 									movzx	eax,BYTE PTR [ecx]
 									.break .if eax == '_'
-									.break .if __ctype[eax+1] & _UPPER or _LOWER
+									.break .if BYTE PTR _ctype[eax*2+2] & _UPPER or _LOWER
 								.endif
 
 								mov	al,bl
@@ -546,7 +546,10 @@ local	buffer:		LPSTR,	; start of line
 
 									mov	eax,buffer
 								.endif
-								mov	endbufw,eax
+								.if	bh == _X_COMMENT
+
+									mov	endbufw,eax
+								.endif
 								sub	edx,buffer
 
 								.while	edi <= ecx
@@ -943,7 +946,8 @@ find_arg2:
 
 			add	edi,1
 			.cont0 .if al != [edi-2]
-			.cont1 .if !ah
+			test	ah,ah
+			jz	find_arg1
 		.until	ah == [edi-1]
 
 		.continue .if TIStyleIsQuote(line_ptr, edi)

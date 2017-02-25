@@ -165,7 +165,7 @@ ticlippaste PROC USES esi edi ebx ti:PTINFO
 			.breaknz
 			dec	esi
 			.breakz
-			test	__ctype[eax+1],_SPACE
+			test	BYTE PTR _ctype[eax*2+2],_SPACE
 			jnz	@B
 
 			.if	esi >= 128
@@ -439,7 +439,7 @@ tiputc	PROC USES esi edi ebx ti:PTINFO, char:UINT
 	lea	esi,ts
 	movzx	eax,BYTE PTR char
 
-	.if	__ctype[eax+1] & _CONTROL
+	.if	BYTE PTR _ctype[eax*2+2] & _CONTROL
 
 		.if	eax != 9 && eax != 10
 			.if	eax == 13
@@ -730,7 +730,7 @@ tidelete PROC USES esi edi ebx ti:PTINFO
 	add	ecx,1
 	test	ebx,ebx
 	jz	@F
-	or	al,__ctype[ebx+1]
+	or	al,BYTE PTR _ctype[ebx*2+2]
 	jmp	@B
 @@:
 	sub	ecx,ts.ts_line_ptr

@@ -11,6 +11,7 @@ include stdlib.inc
 include io.inc
 include crtl.inc
 include cfini.inc
+include winbase.inc
 
 	.data
 

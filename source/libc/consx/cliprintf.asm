@@ -9,14 +9,14 @@ include limits.inc
 cliprintf PROC C USES esi edi ebx,
 	format: LPSTR,
 	args:	VARARG
-local	o:	S_FILE
-	mov	o.iob_flag,_IOWRT or _IOSTRG
-	mov	o.iob_cnt,INT_MAX
+local	o:	_iobuf
+	mov	o._flag,_IOWRT or _IOSTRG
+	mov	o._cnt,INT_MAX
 	lea	eax,_bufin
-	mov	o.iob_ptr,eax
-	mov	o.iob_base,eax
+	mov	o._ptr,eax
+	mov	o._base,eax
 	_output( addr o, format, addr args )
-	mov	ecx,o.iob_ptr
+	mov	ecx,o._ptr
 	mov	BYTE PTR [ecx],0
 	.if	eax
 		mov	edi,eax

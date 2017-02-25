@@ -256,7 +256,7 @@ local	path[_MAX_PATH]:BYTE
 				;
 				; update .INI file ?
 				;
-				mov	eax,_argv
+				mov	eax,__argv
 				mov	ecx,[eax]
 
 				setfext( strcpy( addr path, ecx ), ".ini" )
@@ -344,7 +344,7 @@ local	st_type,i,p,q
 
 			.continue .if al == '_'
 
-		.until !( __ctype[eax+1] & _UPPER or _LOWER or _DIGIT )
+		.until !( BYTE PTR _ctype[eax*2+2] & _UPPER or _LOWER or _DIGIT )
 
 		.repeat
 			lodsb

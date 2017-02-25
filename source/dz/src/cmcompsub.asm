@@ -402,7 +402,7 @@ ff_directory ENDP
 
 event_find PROC USES esi edi ebx
   local cursor:S_CURSOR
-	GetCursor( addr cursor )
+	CursorGet( addr cursor )
 	call	CursorOff
 	call	clear_table
 	call	clear_list
@@ -447,7 +447,7 @@ event_find PROC USES esi edi ebx
 		mov	[edx].S_LOBJ.ll_numcel,eax
 		call	update_cellid
 	.endif
-	SetCursor( addr cursor )
+	CursorSet( addr cursor )
 	ret
 event_find ENDP
 
@@ -607,7 +607,7 @@ local	cursor:S_CURSOR,
 	mov	old_thelp,eax
 	mov	thelp,event_help
 	call	clrcmdl
-	GetCursor(addr cursor)
+	CursorGet(addr cursor)
 	lea	edx,ll
 	mov	tdllist,edx
 	mov	edi,edx
@@ -693,7 +693,7 @@ local	cursor:S_CURSOR,
 		CFAddEntryX(ebx, "3=%s", addr tpath)
 	.endif
 
-	SetCursor( addr cursor )
+	CursorSet( addr cursor )
 	mov	eax,old_thelp
 	mov	thelp,eax
 

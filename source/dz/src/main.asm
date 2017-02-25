@@ -71,9 +71,9 @@ main	PROC C USES esi edi ebx
 	mov	esi,1
 	xor	edi,edi ; pointer to <filename>
 
-	.while	esi < _argc
+	.while	esi < __argc
 
-		mov	eax,_argv
+		mov	eax,__argv
 		mov	ebx,[eax+esi*4]
 		mov	eax,[ebx]
 

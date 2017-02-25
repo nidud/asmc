@@ -1,8 +1,7 @@
-include direct.inc
 include errno.inc
-include stdlib.inc
 include consx.inc
 include wsub.inc
+include winbase.inc
 
 	.data
 	cp_erinitsub db 'Error init directory',10,'%s',0

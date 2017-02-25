@@ -1567,7 +1567,7 @@ mouse_scroll_event ENDP
 
 mouse_scroll_delay PROC
 	.if edi
-		delay( edi )
+		Sleep( edi )
 	.endif
 	ret
 mouse_scroll_delay ENDP
@@ -1584,7 +1584,7 @@ tvhelp	PROC
 	ret
 tvhelp	ENDP
 
-mouse_event PROC
+event_mouse PROC
 	call	mousep
 	jz	@07
 	cmp	eax,2
@@ -1640,7 +1640,7 @@ mouse_event PROC
 @09:	call	cmmcopy
 	call	msloop
 	ret
-mouse_event ENDP
+event_mouse ENDP
 
 tview_event PROC
 	xor	edx,edx
@@ -1758,7 +1758,7 @@ tview PROC USES esi edi ebx filename, offs
 			.if	!( tvflag & _TV_USEMLINE )
 				dlhide( [ebp].tv_menusline )
 			.endif
-			GetCursor( addr [ebp].tv_cursor )
+			CursorGet( addr [ebp].tv_cursor )
 			_gotoxy( 0, 1 )
 			call	CursorOff
 			push	tupdate
@@ -1769,7 +1769,7 @@ tview PROC USES esi edi ebx filename, offs
 			call	reread
 			.while	[ebp].tv_switch == 0
 				.if	tgetevent() == MOUSECMD
-					call	mouse_event
+					call	event_mouse
 					call	msloop
 				.else
 					call	tview_event
@@ -1780,7 +1780,7 @@ tview PROC USES esi edi ebx filename, offs
 			dlclose( [ebp].tv_statusline )
 			dlclose( [ebp].tv_menusline )
 			dlclose( [ebp].tv_dialog )
-			SetCursor( addr [ebp].tv_cursor )
+			CursorSet( addr [ebp].tv_cursor )
 			pop	eax
 			mov	tupdate,eax
 			xor	eax,eax

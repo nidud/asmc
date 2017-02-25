@@ -1,8 +1,13 @@
 include io.inc
-
+include winbase.inc
+IFDEF	_UNICODE
+RENAME	equ <_wrename>
+ELSE
+RENAME	equ <rename>
+ENDIF
 	.code
 
-rename	PROC Oldname:LPSTR, Newname:LPSTR
+RENAME	PROC Oldname:LPTSTR, Newname:LPTSTR
 
 	.if MoveFile( Oldname, Newname )
 
@@ -13,6 +18,7 @@ rename	PROC Oldname:LPSTR, Newname:LPSTR
 		osmaperr()
 	.endif
 	ret
-rename	ENDP
+
+RENAME	ENDP
 
 	END

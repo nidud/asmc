@@ -119,7 +119,7 @@ ParseCString PROC PRIVATE USES esi edi ebx lbuf:LPSTR, buffer:LPSTR, string:LPST
 				jmp	case_format
 			  .case 'x'
 				movzx	eax,BYTE PTR [esi+1]
-				.if	__ctype[eax+1] & _HEX
+				.if	BYTE PTR _ctype[eax*2+2] & _HEX
 					add	esi,1
 					and	eax,not 30h
 					bt	eax,6
@@ -127,7 +127,7 @@ ParseCString PROC PRIVATE USES esi edi ebx lbuf:LPSTR, buffer:LPSTR, string:LPST
 					and	ecx,55
 					sub	eax,ecx
 					movzx	ecx,BYTE PTR [esi+1]
-					.if	__ctype[ecx+1] & _HEX
+					.if	BYTE PTR _ctype[ecx*2+2] & _HEX
 						add	esi,1
 						shl	eax,4
 						and	ecx,not 30h

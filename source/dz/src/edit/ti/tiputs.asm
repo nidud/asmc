@@ -172,7 +172,7 @@ tiputs	PROC USES esi edi ebx ti:PTR S_TINFO
 	mov	cursor.y,cx
 	mov	cursor.bVisible,1
 	mov	cursor.dwSize,CURSOR_NORMAL
-	SetCursor( addr cursor )
+	CursorSet( addr cursor )
 
 	mov	eax,[esi].ti_cols
 	mul	[esi].ti_rows

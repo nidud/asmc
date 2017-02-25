@@ -1,6 +1,5 @@
 include time.inc
-
-strstime proto :LPSTR, :LPSYSTEMTIME
+include winbase.inc
 
 	.code
 
@@ -11,7 +10,7 @@ local	ftime:FILETIME,
 
 	FileTimeToLocalFileTime( ft, addr ftime )
 	FileTimeToSystemTime( addr ftime, addr stime )
-	strstime( string, addr stime )
+	SystemTimeToString( string, addr stime )
 	ret
 
 ftimetostr ENDP

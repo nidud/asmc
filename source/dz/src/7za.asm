@@ -17,6 +17,7 @@ include stdlib.inc
 include process.inc
 include time.inc
 include confirm.inc
+include winbase.inc
 
 IDTYPE_7Z	equ 0
 IDTYPE_GZ	equ 1

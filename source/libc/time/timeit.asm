@@ -2,6 +2,7 @@ include stdio.inc
 include time.inc
 include timeit.inc
 include process.inc
+include winbase.inc
 
 S_TIMEIT	STRUC
 begin		dq ?
@@ -160,8 +161,8 @@ counter_exit PROC USES esi edi ebx edx ecx eax count, text
 local	t:SYSTEMTIME, time[16]:SBYTE, date[16]:SBYTE
 
 	GetLocalTime( addr t )
-	strsdate( addr date, addr t )
-	strstime( addr time, addr t )
+	SystemDateToString( addr date, addr t )
+	SystemTimeToString( addr time, addr t )
 
 	.if	fopen( "timeit.txt", "at+" )
 

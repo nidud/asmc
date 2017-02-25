@@ -2,7 +2,7 @@ include time.inc
 
 	.code
 
-__TimeToST PROC USES edx ecx time:TIME_T, lpSystemTime:LPSYSTEMTIME
+__TimeToST PROC USES edx ecx time:time_t, lpSystemTime:LPSYSTEMTIME
 	mov	ecx,lpSystemTime
 	mov	[ecx].SYSTEMTIME.wDayOfWeek,0
 	mov	[ecx].SYSTEMTIME.wMilliseconds,0

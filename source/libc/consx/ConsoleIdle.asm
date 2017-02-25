@@ -1,6 +1,5 @@
 include consx.inc
-include io.inc
-include stdlib.inc
+include winuser.inc
 
 	.code
 
@@ -13,12 +12,12 @@ ConsoleIdle PROC
 ifdef DEBUG
 		mov eax,hCurrentWindow
 else
-		.if pGetForegroundWindow() != hCurrentWindow
+		.if LPGetForegroundWindow() != hCurrentWindow
 
 			mov eax,keyshift
 			and DWORD PTR [eax],not 0x00FF030F
 
-			.while	pGetForegroundWindow() != hCurrentWindow
+			.while	LPGetForegroundWindow() != hCurrentWindow
 
 				Sleep( CON_SLEEP_TIME * 10 )
 				.break .if tupdate()

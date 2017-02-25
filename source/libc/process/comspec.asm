@@ -2,6 +2,7 @@ include crtl.inc
 include stdlib.inc
 include process.inc
 include alloc.inc
+include winbase.inc
 
 PUBLIC	__pCommandCom
 PUBLIC	__pCommandArg

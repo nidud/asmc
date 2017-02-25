@@ -1253,7 +1253,7 @@ _atoow			PROTO :LPSTR, :LPSTR, :SINT, :SINT
 
 M_SKIP_SPACE MACRO reg, base
 	movzx reg,BYTE PTR [base]
-	.while __ctype[reg+1] & _SPACE
+	.while BYTE PTR _ctype[reg*2+2] & _SPACE
 		add   base,1
 		ifidni <reg>,<eax>
 			mov   al,[base]
@@ -1269,7 +1269,7 @@ M_SKIP_SPACE MACRO reg, base
 
 M_SKIP_SPACE_R MACRO reg, base
 	movzx reg,BYTE PTR [base]
-	.while __ctype[reg+1] & _SPACE
+	.while BYTE PTR _ctype[reg*2+2] & _SPACE
 		sub   base,1
 	    ifidni <reg>,<eax>
 		mov   al,[base]

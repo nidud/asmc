@@ -9,16 +9,16 @@ _getbuf PROC fp:LPFILE
 	malloc( _INTIOBUF )
 	mov	edx,fp
 	.if	!ZERO?
-		or	[edx].iob_flag,_IOMYBUF
-		mov	[edx].iob_bufsize,_INTIOBUF
+		or	[edx]._flag,_IOMYBUF
+		mov	[edx]._bufsiz,_INTIOBUF
 	.else
-		or	[edx].iob_flag,_IONBF
-		mov	[edx].iob_bufsize,4
-		lea	eax,[edx].iob_charbuf
+		or	[edx]._flag,_IONBF
+		mov	[edx]._bufsiz,4
+		lea	eax,[edx]._charbuf
 	.endif
-	mov	[edx].iob_ptr,eax
-	mov	[edx].iob_base,eax
-	mov	[edx].iob_cnt,0
+	mov	[edx]._ptr,eax
+	mov	[edx]._base,eax
+	mov	[edx]._cnt,0
 	ret
 _getbuf ENDP
 

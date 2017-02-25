@@ -2,6 +2,7 @@ include direct.inc
 include errno.inc
 include string.inc
 include alloc.inc
+include winbase.inc
 
 	.code
 

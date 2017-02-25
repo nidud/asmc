@@ -3,9 +3,9 @@ ifndef __LIBC_INC
 endif
 
 .xlist
-IFDEF __PE__
+ifdef __PE__
 option	dllimport:<msvcrt>
-ENDIF
+endif
 ;
 ; ISO 8601:	YYYY-MM-DD hh:mm:ss
 ; Short form:	YY-MM-DD hh:mm
@@ -28,7 +28,9 @@ FILETIME	STRUC
 dwLowDateTime	dd ?
 dwHighDateTime	dd ?
 FILETIME	ENDS
+LPFILETIME	typedef ptr FILETIME
 
+ifndef LPSYSTEMTIME
 SYSTEMTIME	STRUC
 wYear		dw ?
 wMonth		dw ?
@@ -39,31 +41,58 @@ wMinute		dw ?
 wSecond		dw ?
 wMilliseconds	dw ?
 SYSTEMTIME	ENDS
+LPSYSTEMTIME	typedef ptr SYSTEMTIME
+endif
 
-S_TM		STRUC
-tm_sec		dd ?	; seconds after the minute - [0,59]
-tm_min		dd ?	; minutes after the hour - [0,59]
-tm_hour		dd ?	; hours since midnight - [0,23]
-tm_mday		dd ?	; day of the month - [1,31]
-tm_mon		dd ?	; months since January - [0,11]
-tm_year		dd ?	; years since 1900
-tm_wday		dd ?	; days since Sunday - [0,6]
-tm_yday		dd ?	; days since January 1 - [0,365]
-tm_isdst	dd ?	; daylight savings time flag
-S_TM		ENDS
+ifndef _TM_DEFINED
+tm		STRUC
+tm_sec		SINT ?	;; seconds after the minute - [0,59]
+tm_min		SINT ?	;; minutes after the hour - [0,59]
+tm_hour		SINT ?	;; hours since midnight - [0,23]
+tm_mday		SINT ?	;; day of the month - [1,31]
+tm_mon		SINT ?	;; months since January - [0,11]
+tm_year		SINT ?	;; years since 1900
+tm_wday		SINT ?	;; days since Sunday - [0,6]
+tm_yday		SINT ?	;; days since January 1 - [0,365]
+tm_isdst	SINT ?	;; daylight savings time flag
+tm		ENDS
+_TM_DEFINED	equ 1
+endif
 
-TIME_T		TYPEDEF SDWORD
-LPTIME		TYPEDEF PTR TIME_T
-LPFILETIME	TYPEDEF PTR FILETIME
-LPSYSTEMTIME	TYPEDEF PTR SYSTEMTIME
+time_t		typedef sdword
+LPTIME		typedef ptr time_t
 
-localtime	PROTO :LPTIME
-gmtime		PROTO :LPTIME
-_time		PROTO :LPTIME
-_tzset		PROTO
-_isindst	PROTO :PTR S_TM
-_loctotime_t	PROTO y:SINT, m:SINT, d:SINT, h:SINT, m:SINT, s:SINT
-clock		PROTO
+asctime		proto :ptr tm
+ctime		proto :ptr time_t
+clock		proto
+csftime		proto :ptr sbyte, :size_t, :ptr sbyte, :ptr tm
+strdate		proto :ptr sbyte
+strtime		proto :ptr sbyte
+difftime	proto :time_t, :time_t
+
+gmtime		proto :ptr time_t
+localtime	proto :ptr time_t
+mktime		proto :ptr tm
+strftime	proto :ptr sbyte, :size_t, :ptr sbyte, :ptr tm
+_strdate	proto :ptr sbyte
+_strtime	proto :ptr sbyte
+_tzset		proto
+_time		proto :ptr time_t
+_isindst	proto :ptr tm
+_loctotime_t	proto y:SINT, m:SINT, d:SINT, h:SINT, m:SINT, s:SINT
+
+ifndef _WTIME_DEFINED
+
+_wasctime	proto :ptr tm
+_wctime		proto :ptr time_t
+wcsftime	proto :ptr wchar_t, :size_t, :ptr wchar_t, :ptr tm
+_wstrdate	proto :ptr wchar_t
+_wstrtime	proto :ptr wchar_t
+
+_WTIME_DEFINED	equ 1
+endif
+
+ifndef __PE__
 
 externdef	_days:DWORD
 externdef	_lpdays:DWORD
@@ -73,133 +102,25 @@ externdef	_tzname:LPSTR
 externdef	__dnames:BYTE
 externdef	__mnames:BYTE
 
-__FTToTime	PROTO :LPFILETIME
-__STToTime	PROTO :LPSYSTEMTIME
-__TimeToFT	PROTO :TIME_T, :LPFILETIME
-__TimeToST	PROTO :TIME_T, :LPSYSTEMTIME
+__FTToTime	proto :LPFILETIME
+__STToTime	proto :LPSYSTEMTIME
+__TimeToFT	proto :time_t, :LPFILETIME
+__TimeToST	proto :time_t, :LPSYSTEMTIME
 
 DaysInFebruary	proto :dword
 DaysInMonth	proto :dword, :dword
 GetDayCount	proto :dword, :dword, :dword
 GetWeekDay	proto :dword, :dword, :dword
 
-atotime		PROTO :LPSTR
-atodate		PROTO :LPSTR
-strtime		PROTO :LPSTR, :TIME_T
-strdate		PROTO :LPSTR, :TIME_T
-strsdate	PROTO :LPSTR, :LPSYSTEMTIME
-strstime	PROTO :LPSTR, :LPSYSTEMTIME
-strftime	PROTO :LPSTR, :UINT, :LPSTR, :LPTIME
+atotime		proto :LPSTR
+atodate		proto :LPSTR
+fdatetostr	proto :LPSTR, :LPFILETIME
+ftimetostr	proto :LPSTR, :LPFILETIME
 
-fdatetostr	PROTO :LPSTR, :LPFILETIME
-ftimetostr	PROTO :LPSTR, :LPFILETIME
+TDateToString		proto :ptr sbyte, :time_t
+SystemTimeToString	proto :ptr sbyte, :LPSYSTEMTIME
+SystemDateToString	proto :ptr sbyte, :LPSYSTEMTIME
 
-IFDEF __PE__
-option		dllimport:<kernel32>
-ENDIF
-;;;;;;;;;;;;;;;;;;;;;;; kernel32.dll
-
-TIME_NOMINUTESORSECONDS equ 1	; do not use minutes or seconds
-TIME_NOSECONDS		equ 2	; do not use seconds
-TIME_NOTIMEMARKER	equ 4	; do not use time marker
-TIME_FORCE24HOURFORMAT	equ 8	; always use 24 hour format
-;
-;  Date Flags for GetDateFormat.
-;
-DATE_SHORTDATE		equ 1	; use short date picture
-DATE_LONGDATE		equ 2	; use long date picture
-DATE_USE_ALT_CALENDAR	equ 4	; use alternate calendar (if any)
-DATE_YEARMONTH		equ 8	; use year month
-
-TIME_ZONE_INFORMATION	STRUC
-Bias			DD ?
-StandardName		DW 32 dup(?)
-StandardDate		SYSTEMTIME <>
-StandardBias		DD ?
-DaylightName		DW 32 dup(?)
-DaylightDate		SYSTEMTIME <>
-DaylightBias		DD ?
-TIME_ZONE_INFORMATION	ENDS
-
-;VOID
-Sleep proto _CType \
-	dwMilliseconds: DWORD	; sleep time in milliseconds
-;DWORD
-GetTickCount proto _CType
-;VOID
-GetLocalTime proto _CType \
-	lpSystemTime:	LPSYSTEMTIME	; address of system time structure
-;BOOL
-FileTimeToSystemTime proto _CType \
-	lpFileTime:	LPFILETIME,	; pointer to file time to convert
-	lpSystemTime:	LPSYSTEMTIME	; pointer to structure to receive system time
-;BOOL
-SystemTimeToFileTime proto _CType \
-	lpSystemTime:	LPSYSTEMTIME,	; address of system time to convert
-	lpFileTime:	LPFILETIME	; address of buffer for converted file time
-;BOOL
-FileTimeToLocalFileTime proto _CType \
-	lpFileTime:	LPFILETIME,	; pointer to UTC file time to convert
-	lpLocalFileTime:LPFILETIME	; pointer to converted file time
-;BOOL
-LocalFileTimeToFileTime proto _CType \
-	lpLocalFileTime:LPFILETIME,	; address of local file time to convert
-	lpFileTime:	LPFILETIME	; address of converted file time
-;int
-GetTimeFormatA proto _CType \
-	Locale:		DWORD,		; (LCID) locale for which time is to be formatted
-	dwFlags:	DWORD,		; flags specifying function options
-	lpTime:		LPSYSTEMTIME,	; time to be formatted
-	lpFormat:	LPSTR,		; time format string
-	lpTimeStr:	LPSTR,		; buffer for storing formatted string
-	cchTime:	DWORD		; size, in bytes or characters, of the buffer
-GetTimeFormatW proto _CType \
-	Locale:		DWORD,
-	dwFlags:	DWORD,
-	lpTime:		LPSYSTEMTIME,
-	lpFormat:	LPWSTR,
-	lpTimeStr:	LPWSTR,
-	cchTime:	DWORD
-;int
-GetDateFormatA proto _CType \
-	Locale:		DWORD,		; (LCID) locale for which date is to be formatted
-	dwFlags:	DWORD,		; flags specifying function options
-	lpDate:		LPSYSTEMTIME,	; date to be formatted
-	lpFormat:	LPSTR,		; date format string
-	lpDateStr:	LPSTR,		; buffer for storing formatted string
-	cchDate:	DWORD		; size of buffer
-GetDateFormatW proto _CType \
-	Locale:		DWORD,
-	dwFlags:	DWORD,
-	lpDate:		LPSYSTEMTIME,
-	lpFormat:	LPWSTR,
-	lpDateStr:	LPWSTR,
-	cchDate:	DWORD
-;LCID
-GetUserDefaultLCID proto _CType
-;DWORD
-GetTimeZoneInformation proto _CType \
-	lpTimeZoneInformation:	PTR TIME_ZONE_INFORMATION ; address of time-zone settings
-
-IFDEF _UNICODE
-GetTimeFormat	equ	<GetTimeFormatW>
-GetDateFormat	equ	<GetDateFormatW>
-ELSE
-GetTimeFormat	equ	<GetTimeFormatA>
-GetDateFormat	equ	<GetDateFormatA>
-ENDIF
-
-delay		equ	<Sleep>
-
-; BOOL - 16-bit date and time
-DosDateTimeToFileTime proto _CType \
-	wFatDate:	DWORD,		; (WORD) 16-bit MS-DOS date
-	wFatTime:	DWORD,		; (WORD) 16-bit MS-DOS time
-	lpFileTime:	LPFILETIME	; pointer to buffer for 64-bit file time
-; BOOL
-FileTimeToDosDateTime proto _CType \
-	lpFileTime:	LPFILETIME,	; pointer to 64-bit file time
-	lpFatDate:	LPWORD,		; pointer to variable for MS-DOS date
-	lpFatTime:	LPWORD		; pointer to variable for MS-DOS time
+endif	;; __PE__
 
 .list

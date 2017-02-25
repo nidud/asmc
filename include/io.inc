@@ -4,7 +4,7 @@ endif
 
 .xlist
 IFDEF __PE__
-option		dllimport:<msvcrt>
+option	dllimport:<msvcrt>
 ENDIF
 
 _NFILE_		equ 20
@@ -52,6 +52,15 @@ ff_size		dq ?	; QWORD File size
 ff_name		db 260 dup(?)
 _finddata_t	ENDS	; 284 byte
 
+_wfinddata_t	STRUC
+ff_attrib	dd ?	; DWORD File attributes
+ff_time_create	dd ?	; DWORD File creation time
+ff_time_access	dd ?	; DWORD Last access time
+ff_time_write	dd ?	; DWORD Last modification time
+ff_size		dq ?	; QWORD File size
+ff_name		dw 260 dup(?)
+_wfinddata_t	ENDS
+
 externdef	_nfile:DWORD
 externdef	_osfile:BYTE
 externdef	_osfhnd:HANDLE
@@ -68,286 +77,85 @@ M_RDONLY	equ 0x80000000
 M_WRONLY	equ 0x40000000
 M_RDWR		equ M_RDONLY or M_WRONLY
 
-_open		PROTO _CDecl :LPSTR, :UINT, :VARARG
-_sopen		PROTO _CDecl :LPSTR, :UINT, :UINT, :VARARG
-_read		PROTO :SINT, :PVOID, :SIZE_T
-_creat		PROTO :LPSTR, :UINT
-_close		PROTO :SINT
-_lseek		PROTO :SINT, :SIZE_T, :UINT
-_write		PROTO :SINT, :PVOID, :SIZE_T
-_access		PROTO :LPSTR, :UINT
-_isatty		PROTO :SINT
-_eof		PROTO :SINT
-_chsize		PROTO :SINT, :SIZE_T
-_filelength	PROTO :SINT
-_findfirst	PROTO :LPSTR, :PTR _finddata_t
-_findnext	PROTO :HANDLE, :PTR _finddata_t
-_findclose	PROTO :HANDLE
-_tell		PROTO :SINT
-_osopen		PROTO :LPSTR, :UINT, :UINT, :PVOID, :UINT, :UINT
-_lseeki64	PROTO :SINT, :QWORD, :UINT
-remove		PROTO :LPSTR
-rename		PROTO :LPSTR, :LPSTR
+_open		proto _CDecl :LPSTR, :SINT, :VARARG
+_sopen		proto _CDecl :LPSTR, :UINT, :UINT, :VARARG
+_read		proto :SINT, :PVOID, :SIZE_T
+_creat		proto :LPSTR, :UINT
+_close		proto :SINT
+_lseek		proto :SINT, :SIZE_T, :UINT
+_write		proto :SINT, :PVOID, :SIZE_T
+_access		proto :LPSTR, :UINT
+_isatty		proto :SINT
+_eof		proto :SINT
+_chsize		proto :SINT, :SIZE_T
+_filelength	proto :SINT
+_findfirst	proto :LPSTR, :PTR _finddata_t
+_findnext	proto :HANDLE, :PTR _finddata_t
+_findclose	proto :HANDLE
+_tell		proto :SINT
+_lseeki64	proto :SINT, :QWORD, :UINT
+remove		proto :LPSTR
+rename		proto :LPSTR, :LPSTR
 
-osopen		PROTO :LPSTR, :UINT, :UINT, :UINT
-osread		PROTO :SINT, :PVOID, :SIZE_T
-oswrite		PROTO :SINT, :PVOID, :SIZE_T
+ifndef _WIO_DEFINED
 
-getosfhnd	PROTO :SINT
-osmaperr	PROTO
+_waccess	proto :ptr wchar_t, :SINT
+_wchmod		proto :ptr wchar_t, :SINT
+_wcreat		proto :ptr wchar_t, :SINT
+_wfindfirst	proto :ptr wchar_t, :ptr _wfinddata_t
+_wfindnext	proto :SINT, :ptr _wfinddata_t
+_wunlink	proto :ptr wchar_t
+_wrename	proto :ptr wchar_t, :ptr wchar_t
+_wopen		proto _CDecl :ptr wchar_t, :SINT, :VARARG
+_wsopen		proto _CDecl :ptr wchar_t, :SINT, :SINT, :VARARG
+_wmktemp	proto :ptr wchar_t
+if 0
+if _INTEGRAL_MAX_BITS GE 64
+_wfindfirsti64	proto :ptr wchar_t, :ptr _wfinddatai64_t
+_wfindnexti64	proto :LONG, :ptr _wfinddatai64_t
+endif
+endif
+_WIO_DEFINED	equ 1
+endif
+
+ifndef __PE__
+
+osopenA		proto :LPSTR, :UINT, :UINT, :UINT
+osopenW		proto :LPWSTR, :UINT, :UINT, :UINT
+_osopenA	proto :LPSTR, :UINT, :UINT, :PVOID, :UINT, :UINT
+_osopenW	proto :LPWSTR, :UINT, :UINT, :PVOID, :UINT, :UINT
+ifdef _UNICODE
+osopen		equ <osopenW>
+_osopen		equ <_osopenW>
+else
+osopen		equ <osopenA>
+_osopen		equ <_osopenA>
+endif
+
+osread		proto :SINT, :PVOID, :SIZE_T
+oswrite		proto :SINT, :PVOID, :SIZE_T
+getosfhnd	proto :SINT
+osmaperr	proto
 
 ;;;;;;;;;;;;;;; crtl
 
-getfattr	PROTO :LPTSTR
-setfattr	PROTO :LPTSTR, :UINT
-filexist	PROTO :LPSTR
-readword	PROTO :LPSTR
-getftime	PROTO :SINT
-getftime_access PROTO :SINT
-getftime_create PROTO :SINT
-setftime	PROTO :SINT, :DWORD
-setftime_access PROTO :SINT, :DWORD
-setftime_create PROTO :SINT, :DWORD
-__FTToTime	PROTO :PTR FILETIME
+getfattr	proto :LPSTR
+_wgetfattr	proto :LPWSTR
+
+setfattr	proto :LPTSTR, :UINT
+filexist	proto :LPSTR
+readword	proto :LPSTR
+getftime	proto :SINT
+getftime_access proto :SINT
+getftime_create proto :SINT
+setftime	proto :SINT, :DWORD
+setftime_access proto :SINT, :DWORD
+setftime_create proto :SINT, :DWORD
+__FTToTime	proto :PTR FILETIME
 
 externdef	console:DWORD
 externdef	_diskflag:DWORD
 
-IFDEF __PE__
-option		dllimport:<kernel32>
-ENDIF
-;;;;;;;;;;;;;;; kernel32.dll
-
-CREATE_NEW		equ 1
-CREATE_ALWAYS		equ 2
-OPEN_EXISTING		equ 3
-OPEN_ALWAYS		equ 4
-TRUNCATE_EXISTING	equ 5
-
-GENERIC_WRITE		equ M_WRONLY
-GENERIC_READ		equ M_RDONLY
-
-SHARE_READ		equ 1
-SHARE_WRITE		equ 2
-
-FILE_TYPE_UNKNOWN	equ 0
-FILE_TYPE_DISK		equ 1
-FILE_TYPE_CHAR		equ 2
-FILE_TYPE_PIPE		equ 3
-FILE_TYPE_REMOTE	equ 8000h
-
-STD_INPUT_HANDLE	equ -10
-STD_OUTPUT_HANDLE	equ -11
-STD_ERROR_HANDLE	equ -12
-
-SEM_FAILCRITICALERRORS	equ 1
-
-INVALID_SET_FILE_POINTER	equ -1
-
-FILE_ATTRIBUTE_READONLY		equ 1h
-FILE_ATTRIBUTE_HIDDEN		equ 2h
-FILE_ATTRIBUTE_SYSTEM		equ 4h
-FILE_ATTRIBUTE_DIRECTORY	equ 10h
-FILE_ATTRIBUTE_ARCHIVE		equ 20h
-FILE_ATTRIBUTE_NORMAL		equ 80h
-FILE_ATTRIBUTE_TEMPORARY	equ 100h
-FILE_ATTRIBUTE_COMPRESSED	equ 800h
-
-FILE_FLAG_WRITE_THROUGH		equ 80000000h	; CreateFile()
-FILE_FLAG_OVERLAPPED		equ 40000000h
-FILE_FLAG_NO_BUFFERING		equ 20000000h
-FILE_FLAG_RANDOM_ACCESS		equ 10000000h
-FILE_FLAG_SEQUENTIAL_SCAN	equ 8000000h
-FILE_FLAG_DELETE_ON_CLOSE	equ 4000000h
-FILE_FLAG_BACKUP_SEMANTICS	equ 2000000h
-FILE_FLAG_POSIX_SEMANTICS	equ 1000000h
-
-SECURITY_ATTRIBUTES	STRUC SIZE_T
-nLength			DWORD ?
-lpSecurityDescriptor	SIZE_T ?
-bInheritHandle		DWORD ?
-SECURITY_ATTRIBUTES	ENDS
-LPSECURITY_ATTRIBUTES	TYPEDEF PTR SECURITY_ATTRIBUTES
-
-WIN32_FIND_DATA		STRUC ;SIZE_T
-dwFileAttributes	DWORD ?
-ftCreationTime		QWORD ?
-ftLastAccessTime	QWORD ?
-ftLastWriteTime		QWORD ?
-nFileSizeHigh		DWORD ?
-nFileSizeLow		DWORD ?
-dwReserved0		DWORD ?
-dwReserved1		DWORD ?
-cFileName		SBYTE 260 dup(?)
-cAlternateFileName	SBYTE 14 dup(?)
-WIN32_FIND_DATA		ENDS
-
-WIN32_FIND_DATAW	STRUC ;SIZE_T
-dwFileAttributes	DWORD ?
-ftCreationTime		QWORD ?
-ftLastAccessTime	QWORD ?
-ftLastWriteTime		QWORD ?
-nFileSizeHigh		DWORD ?
-nFileSizeLow		DWORD ?
-dwReserved0		DWORD ?
-dwReserved1		DWORD ?
-cFileName		SWORD 260 dup(?)
-cAlternateFileName	SWORD 14 dup(?)
-WIN32_FIND_DATAW	ENDS
-
-;UINT
-SetErrorMode proto _CType \
-	uMode:		UINT
-;HANDLE
-GetStdHandle proto _CType \
-	nStdHandle:	DWORD
-;BOOL
-CloseHandle proto _CType \
-	hObject:	HANDLE
-;BOOL
-SetFilePointer proto _CType \
-	hFile:			HANDLE,
-	lDistanceToMove:	sdword,
-	lpDistanceToMoveHigh:	ptr sdword,
-	dwMoveMethod:		dword
-
-ifdef __WXP__
-;BOOL
-SetFilePointerEx proto _CType \
-	hFile:			HANDLE,
-	liDistanceToMove:	sqword, ; LARGE_INTEGER
-	lpNewFilePointer:	ptr sqword,
-	dwMoveMethod:		dword
-;BOOL
-GetFileSizeEx proto _CType \
-	hFile:		HANDLE,
-	lpFileSize:	ptr sqword	; PLARGE_INTEGER
-GetFileSize		equ <GetFileSizeEx>
-else
-GetFileSize proto _CType \
-	hFile:		HANDLE,
-	lpFileSizeHigh: ptr dword
-endif
-
-;BOOL
-ReadFile proto _CType \
-	hFile:			HANDLE, ; handle of file to read
-	lpBuffer:		PVOID,	; pointer to buffer that receives data
-	nNumberOfBytesToRead:	SIZE_T, ; number of bytes to read
-	lpNumberOfBytesRead:	LPDWORD,; pointer to number of bytes read
-	lpOverlapped:		PTR	; pointer to structure for data - LPOVERLAPPED
-;BOOL
-WriteFile proto _CType \
-	hFile:			HANDLE,
-	lpBuffer:		PVOID,
-	nNumberOfBytesToWrite:	DWORD,
-	lpNumberOfBytesWritten: LPDWORD,
-	lpOverlapped:		PTR	; LPOVERLAPPED
-;BOOL
-SetEndOfFile proto _CType \
-	hFile:		HANDLE
-;UINT
-GetFileType proto _CType \
-	hFile:		HANDLE ; _isatty()
-;BOOL
-GetFileTime proto _CType \
-	hFile:			HANDLE,		; handle to the file
-	lpCreationTime:		PTR,; FILETIME	; address of creation time
-	lpLastAccessTime:	PTR,; FILETIME	; address of last access time
-	lpLastWriteTime:	PTR ; FILETIME	; address of last write time
-;BOOL
-SetFileTime proto _CType \
-	hFile:			HANDLE,		; handle to the file
-	lpCreationTime:		PTR,; FILETIME	; time the file was created
-	lpLastAccessTime:	PTR,; FILETIME	; time the file was last accessed
-	lpLastWriteTime:	PTR ; FILETIME	; time the file was last written
-;HANDLE
-CreateFileA proto _CType \
-	lpFileName:		LPSTR,
-	dwDesiredAccess:	DWORD,
-	dwShareMode:		DWORD,
-	lpSecurityAttributes:	LPSECURITY_ATTRIBUTES,
-	dwCreationDisposition:	DWORD,
-	dwFlagsAndAttributes:	DWORD,
-	hTemplateFile:		HANDLE
-CreateFileW proto _CType \
-	lpFileName:		LPWSTR,
-	dwDesiredAccess:	DWORD,
-	dwShareMode:		DWORD,
-	lpSecurityAttributes:	LPSECURITY_ATTRIBUTES,
-	dwCreationDisposition:	DWORD,
-	dwFlagsAndAttributes:	DWORD,
-	hTemplateFile:		HANDLE
-;HANDLE
-FindFirstFileA proto _CType \
-	lpFileName:	LPSTR,	; pointer to name of file to search for
-	lpFindFileData: PTR WIN32_FIND_DATA ; pointer to returned information
-FindFirstFileW proto _CType \
-	lpFileName:	LPWSTR,
-	lpFindFileData: PTR WIN32_FIND_DATAW
-;BOOL
-FindNextFileA proto _CType \
-	hFindFile:	HANDLE, ; handle to search
-	lpFindFileData: PTR WIN32_FIND_DATA ; pointer to structure for data on found file
-FindNextFileW proto _CType \
-	hFindFile:	HANDLE,
-	lpFindFileData: PTR WIN32_FIND_DATAW
-;BOOL
-FindClose proto _CType \
-	hFile:		HANDLE
-;DWORD
-GetFileAttributesA proto _CType \
-	lpFileName:	LPSTR	; pointer to the name of a file or directory
-GetFileAttributesW proto _CType \
-	lpFileName:	LPWSTR
-;BOOL
-SetFileAttributesA proto _CType \
-	lpFileName:	LPSTR,	; pointer to filename
-	dwFileAttributes:DWORD	; attributes to set
-SetFileAttributesW proto _CType \
-	lpFileName:	LPWSTR,
-	dwFileAttributes:DWORD
-;BOOL
-DeleteFileA proto _CType \
-	lpFileName:	LPSTR	; pointer to name of file to delete
-DeleteFileW proto _CType \
-	lpFileName:	LPWSTR
-;BOOL
-MoveFileA proto _CType \
-	lpExistingFileName:	LPSTR,	; pointer to the name of the existing file
-	lpNewFileName:		LPSTR	; pointer to the new name for the file
-MoveFileW proto _CType \
-	lpExistingFileName:	LPWSTR,
-	lpNewFileName:		LPWSTR
-;BOOL
-MoveFileExA proto _CType \
-	lpExistingFileName:	LPSTR,	; pointer to the name of the existing file
-	lpNewFileName:		LPSTR,	; pointer to the new name for the file
-	dwFlags:		DWORD	; flag that specifies how to move file
-MoveFileExW proto _CType \
-	lpExistingFileName:	LPWSTR,
-	lpNewFileName:		LPWSTR,
-	dwFlags:		DWORD
-
-
-ifdef _UNICODE
- FindFirstFile		equ <FindFirstFileW>
- FindNextFile		equ <FindNextFileW>
- SetFileAttributes	equ <SetFileAttributesW>
- GetFileAttributes	equ <GetFileAttributesW>
- DeleteFile		equ <DeleteFileW>
- MoveFile		equ <MoveFileW>
- MoveFileEX		equ <MoveFileExW>
- CreateFile		equ <CreateFileW>
-else
- FindFirstFile		equ <FindFirstFileA>
- FindNextFile		equ <FindNextFileA>
- SetFileAttributes	equ <SetFileAttributesA>
- GetFileAttributes	equ <GetFileAttributesA>
- DeleteFile		equ <DeleteFileA>
- MoveFile		equ <MoveFileA>
- MoveFileEx		equ <MoveFileExA>
- CreateFile		equ <CreateFileA>
 endif
 
 .list

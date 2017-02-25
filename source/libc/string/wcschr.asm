@@ -2,7 +2,7 @@ include string.inc
 
 	.code
 
-wcschr	PROC USES edi s1:LPWSTR, w:SIZE_T
+wcschr	PROC USES edi s1:ptr wchar_t, w:wchar_t
 	xor	eax,eax
 	mov	edi,s1
 @@:

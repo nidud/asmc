@@ -23,7 +23,7 @@ ClipboardCopy PROC USES esi edi ebx string:LPSTR, len
 	mov	edi,len
 	call	ClipboardFree
 	mov	eax,console
-ifdef __W95__
+ifdef _WIN95
 	and	eax,CON_WIN95 or CON_CLIPB
 	.if	eax == CON_CLIPB
 else
@@ -63,7 +63,7 @@ ClipboardCopy ENDP
 
 ClipboardPaste PROC USES ebx
 	mov	eax,console
-ifdef __W95__
+ifdef _WIN95
 	and	eax,CON_WIN95 or CON_CLIPB
 	.if	eax == CON_CLIPB
 else

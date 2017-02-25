@@ -1,6 +1,6 @@
 include stdio.inc
-include io.inc
 include errno.inc
+include winbase.inc
 
 	.code
 
@@ -17,12 +17,12 @@ fseek	PROC USES ebx,
 		jmp	error
 	.endif
 	mov	edx,eax
-	mov	eax,[ebx].iob_flag
+	mov	eax,[ebx]._flag
 	.if	!( eax & _IOREAD or _IOWRT or _IORW )
 		jmp	error
 	.endif
 	and	eax,not _IOEOF
-	mov	[ebx].iob_flag,eax
+	mov	[ebx]._flag,eax
 	.if	edx == SEEK_CUR
 		ftell ( ebx )
 		add	off,eax
@@ -30,15 +30,15 @@ fseek	PROC USES ebx,
 	.endif
 	fflush( ebx )
 
-	mov	eax,[ebx].iob_flag
+	mov	eax,[ebx]._flag
 	.if	eax & _IORW
 		and	eax,not (_IOWRT or _IOREAD)
-		mov	[ebx].iob_flag,eax
+		mov	[ebx]._flag,eax
 	.elseif eax & _IOREAD && eax & _IOMYBUF && !( eax & _IOSETVBUF )
-		mov	[ebx].iob_bufsize,_MINIOBUF
+		mov	[ebx]._bufsiz,_MINIOBUF
 	.endif
 
-	mov	eax,[ebx].iob_file
+	mov	eax,[ebx]._file
 	mov	eax,_osfhnd[eax*4]
 	.if	SetFilePointer( eax, off, 0, whence ) == -1
 		call	osmaperr

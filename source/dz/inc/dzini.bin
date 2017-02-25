@@ -126,11 +126,11 @@ cmd=style_bat
 
 [style_c]
 0=.C_A_16
-1=.C_B_X2
+1=.C_N_X8
 2=.C_B_X8
-3=.C_W_XF
-4=[style_default]
-5=.C_N_X8
+3=.C_B_X2
+4=.C_W_XF
+5=[style_default]
 
 [style_pas]
 0=.PAS_W_XF
@@ -145,8 +145,8 @@ cmd=style_bat
 
 [style_asm]
 0=.asm_A_07
-1=.asm_B_X2
-2=.asm_B_X8
+1=.asm_B_X8
+2=.asm_B_X2
 3=.asm_W_X2
 4=.asm_W_X3
 5=.asm_W_X4
@@ -176,7 +176,7 @@ cmd=style_bat
 [.st_$]
 0=C XB $\
 [.st_operator]
-0=C XF .:!|/<[{()}]>,-*+?%&=^~;"
+0=C XF .:!|/<[{()}]>,-*+?%&=^~;
 [.st_quote]
 0=Q XB
 

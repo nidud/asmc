@@ -1,5 +1,6 @@
 include alloc.inc
 include string.inc
+include winbase.inc
 
 include asmc.inc
 ;

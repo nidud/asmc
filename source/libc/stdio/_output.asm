@@ -433,10 +433,10 @@ OPST_normal:
 
 OUTPUT_PUTC PROC
 	mov	edx,[ebp].OP_filep
-	dec	[edx].S_FILE.iob_cnt
+	dec	[edx]._iobuf._cnt
 	jl	flush
-	inc	[edx].S_FILE.iob_ptr
-	mov	edx,[edx].S_FILE.iob_ptr
+	inc	[edx]._iobuf._ptr
+	mov	edx,[edx]._iobuf._ptr
 	mov	[edx-1],al
 toend:
 	inc	[ebp].OP_charsout

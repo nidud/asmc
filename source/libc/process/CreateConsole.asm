@@ -1,9 +1,8 @@
-include stdlib.inc
 include process.inc
 include string.inc
-include direct.inc
 include consx.inc
 include cfini.inc
+include winbase.inc
 
 externdef	cp_quote:byte
 

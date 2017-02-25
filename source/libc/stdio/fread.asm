@@ -5,13 +5,9 @@ include string.inc
 
 	.code
 
-	ASSUME	ebx: ptr S_FILE
+	ASSUME	ebx: ptr _iobuf
 
-fread PROC USES esi edi ebx,
-	buf:	LPSTR,
-	rsize:	SINT,
-	num:	SINT,
-	fp:	LPFILE
+fread PROC USES esi edi ebx buf:LPSTR, rsize:SINT, num:SINT, fp:LPFILE
 local	total:	SIZE_T,
 	bufsize:SIZE_T,
 	nbytes: SIZE_T
@@ -27,21 +23,21 @@ local	total:	SIZE_T,
 	jz	toend
 	mov	edx,_MAXIOBUF
 
-	.if	[ebx].iob_flag & _IOMYBUF or _IONBF or _IOYOURBUF
-		mov	edx,[ebx].iob_bufsize
+	.if	[ebx]._flag & _IOMYBUF or _IONBF or _IOYOURBUF
+		mov	edx,[ebx]._bufsiz
 	.endif
 	mov	bufsize,edx
 
 	.while	edi
-		mov	edx,[ebx].iob_cnt
-		.if	[ebx].iob_flag & _IOMYBUF or _IOYOURBUF && edx
+		mov	edx,[ebx]._cnt
+		.if	[ebx]._flag & _IOMYBUF or _IOYOURBUF && edx
 			.if	edi < edx
 				mov	edx,edi
 			.endif
-			memcpy( esi, [ebx].iob_ptr, edx )
+			memcpy( esi, [ebx]._ptr, edx )
 			sub	edi,edx
-			sub	[ebx].iob_cnt,edx
-			add	[ebx].iob_ptr,edx
+			sub	[ebx]._cnt,edx
+			add	[ebx]._ptr,edx
 			add	esi,edx
 		.elseif edi >= bufsize
 			mov	eax,edi
@@ -54,7 +50,7 @@ local	total:	SIZE_T,
 			.endif
 			mov	nbytes,eax
 
-			.if	!_read( [ebx].iob_file, esi, eax )
+			.if	!_read( [ebx]._file, esi, eax )
 				jmp	error
 			.elseif eax == -1
 				jmp	error
@@ -68,7 +64,7 @@ local	total:	SIZE_T,
 			mov	[esi],al
 			inc	esi
 			dec	edi
-			mov	eax,[ebx].iob_bufsize
+			mov	eax,[ebx]._bufsiz
 			mov	bufsize,eax
 		.endif
 	.endw
@@ -76,7 +72,7 @@ local	total:	SIZE_T,
 toend:
 	ret
 error:
-	or	[ebx].iob_flag,_IOEOF
+	or	[ebx]._flag,_IOEOF
 break:
 	mov	eax,total
 	sub	eax,edi

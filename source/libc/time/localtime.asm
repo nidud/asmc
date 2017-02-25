@@ -28,13 +28,13 @@ localtime PROC USES esi edi ptime: LPTIME
 	add	ltime,3600
 	gmtime( addr ltime )
 	mov	ptm,eax
-	mov	[eax].S_TM.tm_isdst,1
+	mov	[eax].tm.tm_isdst,1
 	jmp	done
 @@:
 	gmtime( ptime )
 	mov	ptm,eax
 	mov	esi,eax
-	mov	eax,[eax].S_TM.tm_sec
+	mov	eax,[eax].tm.tm_sec
 	sub	eax,_timezone
 	mov	edi,eax
 	xor	edx,edx
@@ -45,11 +45,11 @@ localtime PROC USES esi edi ptime: LPTIME
 	add	edx,ecx
 	sub	edi,ecx
 @@:
-	mov	[esi].S_TM.tm_sec,edx
+	mov	[esi].tm.tm_sec,edx
 	mov	eax,edi
 	xor	edx,edx
 	idiv	ecx
-	add	eax,[esi].S_TM.tm_min
+	add	eax,[esi].tm.tm_min
 	mov	edi,eax
 	xor	edx,edx
 	idiv	ecx
@@ -58,11 +58,11 @@ localtime PROC USES esi edi ptime: LPTIME
 	add	edx,ecx
 	sub	edi,ecx
 @@:
-	mov	[esi].S_TM.tm_min,edx
+	mov	[esi].tm.tm_min,edx
 	mov	eax,edi
 	xor	edx,edx
 	idiv	ecx
-	add	eax,[esi].S_TM.tm_hour
+	add	eax,[esi].tm.tm_hour
 	mov	edi,eax
 	xor	edx,edx
 	mov	ecx,24
@@ -72,42 +72,42 @@ localtime PROC USES esi edi ptime: LPTIME
 	add	edx,ecx
 	sub	edi,ecx
 @@:
-	mov	[esi].S_TM.tm_hour,edx
+	mov	[esi].tm.tm_hour,edx
 	mov	eax,edi
 	xor	edx,edx
 	idiv	ecx
 	mov	edi,eax
 	cmp	eax,0
 	jng	@F
-	mov	eax,[esi].S_TM.tm_wday
+	mov	eax,[esi].tm.tm_wday
 	add	eax,edi
 	mov	ecx,7
 	xor	edx,edx
 	idiv	ecx
-	mov	[esi].S_TM.tm_wday,edx
-	add	[esi].S_TM.tm_mday,edi
-	add	[esi].S_TM.tm_yday,edi
+	mov	[esi].tm.tm_wday,edx
+	add	[esi].tm.tm_mday,edi
+	add	[esi].tm.tm_yday,edi
 	jmp	done
 @@:
 	jnl	done
-	mov	eax,[esi].S_TM.tm_wday
+	mov	eax,[esi].tm.tm_wday
 	add	eax,edi
 	mov	ecx,7
 	add	eax,ecx
 	xor	edx,edx
 	idiv	ecx
-	mov	[esi].S_TM.tm_wday,edx
-	add	[esi].S_TM.tm_mday,edi
-	mov	eax,[esi].S_TM.tm_mday
+	mov	[esi].tm.tm_wday,edx
+	add	[esi].tm.tm_mday,edi
+	mov	eax,[esi].tm.tm_mday
 	cmp	eax,0
 	jg	@F
-	add	[esi].S_TM.tm_mday,32
-	mov	[esi].S_TM.tm_yday,365
-	mov	[esi].S_TM.tm_mon,11
-	dec	[esi].S_TM.tm_year
+	add	[esi].tm.tm_mday,32
+	mov	[esi].tm.tm_yday,365
+	mov	[esi].tm.tm_mon,11
+	dec	[esi].tm.tm_year
 	jmp	done
 @@:
-	add	[esi].S_TM.tm_yday,edi
+	add	[esi].tm.tm_yday,edi
 done:
 	mov	eax,ptm
 toend:

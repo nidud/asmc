@@ -7,11 +7,7 @@ include string.inc
 
 	ASSUME	ebx: LPFILE
 
-fwrite PROC USES esi edi ebx,
-	buf:	LPSTR,
-	rsize:	SINT,
-	num:	SINT,
-	fp:	LPFILE
+fwrite PROC USES esi edi ebx buf:LPSTR, rsize:SINT, num:SINT, fp:LPFILE
 local	total:	SINT,
 	bufsize:SINT,
 	nbytes: SINT
@@ -23,23 +19,23 @@ local	total:	SINT,
 	mov	edi,eax
 	mov	total,eax
 	mov	edx,_MAXIOBUF
-	.if	[ebx].iob_flag & _IOMYBUF or _IONBF or _IOYOURBUF
-		mov edx,[ebx].S_FILE.iob_bufsize
+	.if	[ebx]._flag & _IOMYBUF or _IONBF or _IOYOURBUF
+		mov edx,[ebx]._iobuf._bufsiz
 	.endif
 	mov	bufsize,edx
 	.while	edi
-		mov	edx,[ebx].iob_cnt
-		.if	[ebx].iob_flag & _IOMYBUF or _IOYOURBUF && edx
+		mov	edx,[ebx]._cnt
+		.if	[ebx]._flag & _IOMYBUF or _IOYOURBUF && edx
 			.if	edi < edx
 				mov edx,edi
 			.endif
-			memcpy( [ebx].iob_ptr, esi, edx )
+			memcpy( [ebx]._ptr, esi, edx )
 			sub	edi,edx
-			sub	[ebx].iob_cnt,edx
-			add	[ebx].iob_ptr,edx
+			sub	[ebx]._cnt,edx
+			add	[ebx]._ptr,edx
 			add	esi,edx
 		.elseif edi >= bufsize
-			.if	[ebx].iob_flag & _IOMYBUF or _IOYOURBUF
+			.if	[ebx]._flag & _IOMYBUF or _IOYOURBUF
 				fflush( ebx )
 				test	eax,eax
 				jnz	break
@@ -53,7 +49,7 @@ local	total:	SINT,
 				sub	eax,edx
 			.endif
 			mov	nbytes,eax
-			_write( [ebx].iob_file, esi, eax )
+			_write( [ebx]._file, esi, eax )
 			cmp	eax,-1
 			je	error
 			sub	edi,eax
@@ -67,7 +63,7 @@ local	total:	SINT,
 			je	break
 			inc	esi
 			dec	edi
-			mov	eax,[ebx].iob_bufsize
+			mov	eax,[ebx]._bufsiz
 			.if	!eax
 				mov eax,1
 			.endif
@@ -78,7 +74,7 @@ local	total:	SINT,
 toend:
 	ret
 error:
-	or	[ebx].iob_flag,_IOERR
+	or	[ebx]._flag,_IOERR
 break:
 	mov	eax,total
 	sub	eax,edi

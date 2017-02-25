@@ -5,30 +5,36 @@ include errno.inc
 
 	.code
 
-_creat	PROC path:LPSTR, flag:SIZE_T
-	mov	edx,_A_NORMAL
-	mov	ecx,O_WRONLY
-	mov	eax,flag
-	and	eax,S_IREAD or S_IWRITE
-	cmp	eax,S_IWRITE
-	je	@F
-	mov	ecx,O_RDWR
-	cmp	eax,S_IREAD or S_IWRITE
-	je	@F
-	cmp	eax,S_IREAD
-	jne	error
-	mov	eax,O_RDONLY
-	mov	edx,_A_RDONLY
-@@:
-	osopen( path, edx, ecx, A_CREATETRUNC )
-toend:
+_creat	PROC path:LPSTR, flag
+
+	mov edx,_A_NORMAL
+	mov ecx,O_WRONLY
+	mov eax,flag
+	and eax,S_IREAD or S_IWRITE
+
+	.repeat
+		.if eax != S_IWRITE
+
+			mov ecx,O_RDWR
+			.if eax != S_IREAD or S_IWRITE
+
+				.if eax == S_IREAD
+
+					mov eax,O_RDONLY
+					mov edx,_A_RDONLY
+				.else
+					mov errno,EINVAL
+					xor eax,eax
+					mov oserrno,eax
+					dec eax
+					.break
+				.endif
+			.endif
+		.endif
+		osopen( path, edx, ecx, A_CREATETRUNC )
+	.until	1
 	ret
-error:
-	mov	errno,EINVAL
-	xor	eax,eax
-	mov	oserrno,eax
-	dec	eax
-	jmp	toend
+
 _creat	ENDP
 
 	END

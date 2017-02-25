@@ -202,44 +202,44 @@ LoadMessageFile PROC USES esi edi ebx M
 	mov	esi,tinfo
 	mov	edi,M
 
-	.if	!tifindfile( addr [edi].ERFILE.m_file )
+	.repeat
+		.if	!tifindfile( addr [edi].ERFILE.m_file )
 
-		.if	!topen( addr [edi].ERFILE.m_file, 0 )
+			.break .if !topen( addr [edi].ERFILE.m_file, 0 )
 
-			jmp	toend
+			mov	eax,tinfo
 		.endif
-		mov	eax,tinfo
-	.endif
 
-	.if	eax != esi
+		.if	eax != esi
 
-		titogglefile( esi, eax )
-		mov	esi,tinfo
-	.endif
+			mov	tinfo,esi
+			mov	tinfo,titogglefile(esi, eax)
+			mov	esi,tinfo
+		.endif
 
-	mov	eax,[edi].ERFILE.m_line
-	.if	eax
+		mov	eax,[edi].ERFILE.m_line
+		.if	eax
 
-		dec	eax
-	.endif
+			dec	eax
+		.endif
 
-	tialigny( esi, eax )
-	tiputs	( esi )
+		tialigny(esi, eax)
+		tiputs(esi)
 
-	lea	eax,[edi].ERFILE.m_info
-	mov	ebx,[esi].S_TINFO.ti_ypos
-	add	ebx,[esi].S_TINFO.ti_yoff
-	inc	ebx
-	.if	ebx > [esi].S_TINFO.ti_rows
+		lea	eax,[edi].ERFILE.m_info
+		mov	ebx,[esi].S_TINFO.ti_ypos
+		add	ebx,[esi].S_TINFO.ti_yoff
+		inc	ebx
+		.if	ebx > [esi].S_TINFO.ti_rows
 
-		sub	ebx,2
-	.endif
+			sub	ebx,2
+		.endif
 
-	scputs( [esi].S_TINFO.ti_xpos, ebx, 4Fh, [esi].S_TINFO.ti_cols, eax )
-	xor	eax,eax
-	mov	[esi].S_TINFO.ti_scrc,eax
-	inc	eax
-toend:
+		scputs( [esi].S_TINFO.ti_xpos, ebx, 4Fh, [esi].S_TINFO.ti_cols, eax )
+		xor	eax,eax
+		mov	[esi].S_TINFO.ti_scrc,eax
+		inc	eax
+	.until	1
 	ret
 
 LoadMessageFile ENDP
@@ -249,7 +249,7 @@ cmspawnini PROC USES ebx IniSection
 	local	screen:S_DOBJ,
 		cursor:S_CURSOR
 
-	GetCursor( addr cursor )
+	CursorGet( addr cursor )
 
 	mov	ebx,tinfo
 	.if	dlscreen( addr screen, 0007h ) ; edx
@@ -277,7 +277,7 @@ cmspawnini PROC USES ebx IniSection
 		mov	eax,edx
 	.endif
 	push	eax
-	SetCursor( addr cursor )
+	CursorSet( addr cursor )
 	pop	eax
 	ret
 

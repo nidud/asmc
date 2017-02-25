@@ -33,16 +33,8 @@ conssetl PROC	l	; line: 24..max
 				;
 				; japheth 2014-01-10 - reposition to desktop position 0,0
 				;
-				call	pGetConsoleWindow
-				xor	ecx,ecx
-				push	SWPFLAG
-				push	ecx
-				push	ecx
-				push	ecx
-				push	ecx
-				push	ecx
-				push	eax
-				call	pSetWindowPos;,eax,0,0,0,0,0,SWPFLAG
+				GetConsoleWindow()
+				SetWindowPos(eax,0,0,0,0,0,SWPFLAG)
 
 				mov	edx,GetLargestConsoleWindowSize( hStdOutput )
 				shr	edx,16

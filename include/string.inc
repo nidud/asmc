@@ -3,9 +3,9 @@ ifndef __LIBC_INC
 endif
 
 .xlist
-IFDEF __PE__
+ifdef __PE__
 option		dllimport:<msvcrt>
-ENDIF
+endif
 
 memchr		PROTO :LPSTR, :SIZE_T,:SIZE_T
 memcpy		PROTO :LPSTR, :LPSTR, :SIZE_T
@@ -28,25 +28,62 @@ _strrev		PROTO :LPSTR
 _strlwr		PROTO :LPSTR
 strrchr		PROTO :LPSTR, :SIZE_T
 strstr		PROTO :LPSTR, :LPSTR
+_mbspbrk	PROTO :LPSTR, :LPSTR
 
-; _UNICODE
+ifndef _WSTRING_DEFINED
 
-wcscat		PROTO :LPWSTR, :LPWSTR
-wcslen		PROTO :LPWSTR
-wcschr		PROTO :LPWSTR, :SIZE_T
-wcscmp		PROTO :LPWSTR, :LPWSTR
-wcscpy		PROTO :LPWSTR, :LPWSTR
-wcsstr		PROTO :LPWSTR, :LPWSTR
-wcstok		PROTO :LPWSTR, :LPWSTR
-wcsncpy		PROTO :LPWSTR, :LPWSTR, :SIZE_T
-wcsncmp		PROTO :LPWSTR, :LPWSTR, :SIZE_T
-wcsncat		PROTO :LPWSTR, :LPWSTR, :SIZE_T
-wcsrchr		PROTO :LPWSTR, :SIZE_T
-wcspbrk		PROTO :LPWSTR, :LPWSTR
+wcscat		proto :ptr wchar_t, :ptr wchar_t
+wcschr		proto :ptr wchar_t, :wchar_t
+wcscmp		proto :ptr wchar_t, :ptr wchar_t
+wcscpy		proto :ptr wchar_t, :ptr wchar_t
+wcscspn		proto :ptr wchar_t, :ptr wchar_t
+wcslen		proto :ptr wchar_t
+wcsncat		proto :ptr wchar_t, :ptr wchar_t, :size_t
+wcsncmp		proto :ptr wchar_t, :ptr wchar_t, :size_t
+wcsncpy		proto :ptr wchar_t, :ptr wchar_t, :size_t
+wcspbrk		proto :ptr wchar_t, :ptr wchar_t
+wcsrchr		proto :ptr wchar_t, :wchar_t
+wcsspn		proto :ptr wchar_t, :ptr wchar_t
+wcsstr		proto :ptr wchar_t, :ptr wchar_t
+wcstok		proto :ptr wchar_t, :ptr wchar_t
+_wcsdup		proto :ptr wchar_t
+_wcsicmp	proto :ptr wchar_t, :ptr wchar_t
+_wcsnicmp	proto :ptr wchar_t, :ptr wchar_t, :size_t
+_wcsnset	proto :ptr wchar_t, :wchar_t, :size_t
+_wcsrev		proto :ptr wchar_t
+_wcsset		proto :ptr wchar_t, :wchar_t
+_wcslwr		proto :ptr wchar_t
+_wcsupr		proto :ptr wchar_t
+wcsxfrm		proto :ptr wchar_t, :ptr wchar_t, :size_t
+wcscoll		proto :ptr wchar_t, :ptr wchar_t
+_wcsicoll	proto :ptr wchar_t, :ptr wchar_t
+_wcsncoll	proto :ptr wchar_t, :ptr wchar_t, :size_t
+_wcsnicoll	proto :ptr wchar_t, :ptr wchar_t, :size_t
+
+;; Old names
+wcswcs		equ <wcsstr>
+
+ifndef __STDC__
+
+;; prototypes for oldnames.lib functions
+wcsdup		proto :ptr wchar_t
+wcsicmp		proto :ptr wchar_t, :ptr wchar_t
+wcsnicmp	proto :ptr wchar_t, :ptr wchar_t, :size_t
+wcsnset		proto :ptr wchar_t, :wchar_t, :size_t
+wcsrev		proto :ptr wchar_t
+wcsset		proto :ptr wchar_t, :wchar_t
+wcslwr		proto :ptr wchar_t
+wcsupr		proto :ptr wchar_t
+wcsicoll	proto :ptr wchar_t, :ptr wchar_t
+
+endif  ;; NOT __STDC__
+
+_WSTRING_DEFINED equ 1
+endif
 
 ;;;;;;;;;;;;;;; crtl
 
-IFNDEF __PE__
+ifndef __PE__
 
 memxchg		PROTO :LPSTR, :LPSTR, :SIZE_T
 memstri		PROTO :LPSTR, :SIZE_T, :LPSTR, :SIZE_T
@@ -77,41 +114,6 @@ cmpwargs	PROTO :LPSTR, :LPSTR
 dostounix	PROTO :LPSTR
 unixtodos	PROTO :LPSTR
 
-ELSE
-
-option		dllimport:<kernel32>
-
-ENDIF
-
-;;;;;;;;;;;;;;; kernel32
-
-lstrcatA	PROTO _CType :LPSTR, :LPSTR
-lstrcatW	PROTO _CType :LPWSTR, :LPWSTR
-lstrcmpA	PROTO _CType :LPSTR, :LPSTR
-lstrcmpW	PROTO _CType :LPWSTR, :LPWSTR
-lstrcmpiA	PROTO _CType :LPSTR, :LPSTR
-lstrcmpiW	PROTO _CType :LPWSTR, :LPWSTR
-lstrcpyA	PROTO _CType :LPSTR, :LPSTR
-lstrcpyW	PROTO _CType :LPWSTR, :LPWSTR
-lstrcpynA	PROTO _CType :LPSTR, :LPSTR, :SIZE_T
-lstrcpynW	PROTO _CType :LPWSTR, :LPWSTR, :SIZE_T
-lstrlenA	PROTO _CType :LPSTR
-lstrlenW	PROTO _CType :LPWSTR
-
-IFDEF _UNICODE
-lstrcat		equ <lstrcatW>
-lstrcmp		equ <lstrcmpW>
-lstrcmpi	equ <lstrcmpiW>
-lstrcpy		equ <lstrcpyW>
-lstrcpyn	equ <lstrcpynW>
-lstrlen		equ <lstrlenW>
-ELSE
-lstrcat		equ <lstrcatA>
-lstrcmp		equ <lstrcmpA>
-lstrcmpi	equ <lstrcmpiA>
-lstrcpy		equ <lstrcpyA>
-lstrcpyn	equ <lstrcpynA>
-lstrlen		equ <lstrlenA>
-ENDIF
+endif
 
 .list

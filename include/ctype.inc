@@ -16,25 +16,62 @@ _CONTROL	equ 20h		; control character
 _BLANK		equ 40h		; space char
 _HEX		equ 80h		; hexadecimal digit
 
-externdef	__ctype: SBYTE	; Character type array
+_LEADBYTE	equ 0x8000	; multibyte leadbyte
+_ALPHA		equ 0x0100 or _UPPER or _LOWER ; alphabetic character
 
-isspace		PROTO :SIZE_T	; space, tab, carriage return, new line, vertical tab,
+externdef	_ctype:WORD	; Character type array
+externdef	_pctype:LPWORD
+externdef	_pwctype:LPWORD
+
+isspace		PROTO :SINT	; space, tab, carriage return, new line, vertical tab,
 				; or formfeed (0x09 to 0x0D, 0x20)
-isupper		PROTO :SIZE_T	; uppercase letter (A to Z)
-isalpha		PROTO :SIZE_T	; letter (A to Z or a to z)
-isalnum		PROTO :SIZE_T	; letter (A to Z or a to z) + digit (0 to 9)
-isascii		PROTO :SIZE_T	; the low order byte of c is in the range 0 to 127
+isupper		PROTO :SINT	; uppercase letter (A to Z)
+isalpha		PROTO :SINT	; letter (A to Z or a to z)
+isalnum		PROTO :SINT	; letter (A to Z or a to z) + digit (0 to 9)
+isascii		PROTO :SINT	; the low order byte of c is in the range 0 to 127
 				; (0x00--0x7F)
-iscntrl		PROTO :SIZE_T	; delete character or ordinary control character
+iscntrl		PROTO :SINT	; delete character or ordinary control character
 				; (0x7F or 0x00 to 0x1F)
-isdigit		PROTO :SIZE_T	; digit (0 to 9)
-isgraph		PROTO :SIZE_T	; printing character, like isprint, except that
+isdigit		PROTO :SINT	; digit (0 to 9)
+isgraph		PROTO :SINT	; printing character, like isprint, except that
 				; a space character is excluded
-islower		PROTO :SIZE_T	; lowercase letter (a to z)
-isprint		PROTO :SIZE_T	; printing character (0x20 to 0x7E)
-ispunct		PROTO :SIZE_T	; punctuation character (iscntrl or isspace)
-isxdigit	PROTO :SIZE_T	; hexadecimal digit (0 to 9, A to F, a to f)
-toupper		PROTO :SIZE_T
-tolower		PROTO :SIZE_T
+islower		PROTO :SINT	; lowercase letter (a to z)
+isprint		PROTO :SINT	; printing character (0x20 to 0x7E)
+ispunct		PROTO :SINT	; punctuation character (iscntrl or isspace)
+isxdigit	PROTO :SINT	; hexadecimal digit (0 to 9, A to F, a to f)
+toupper		PROTO :SINT
+tolower		PROTO :SINT
+
+_isctype	PROTO :SINT, :SINT
+_tolower	PROTO :SINT
+_toupper	PROTO :SINT
+__isascii	PROTO :SINT
+__toascii	PROTO :SINT
+__iscsymf	PROTO :SINT
+__iscsym	PROTO :SINT
+
+ifndef _WCTYPE_DEFINED
+
+iswalpha	proto :wint_t
+iswupper	proto :wint_t
+iswlower	proto :wint_t
+iswdigit	proto :wint_t
+iswxdigit	proto :wint_t
+iswspace	proto :wint_t
+iswpunct	proto :wint_t
+iswalnum	proto :wint_t
+iswprint	proto :wint_t
+iswgraph	proto :wint_t
+iswcntrl	proto :wint_t
+iswascii	proto :wint_t
+isleadbyte	proto :SINT
+
+towupper	proto :wchar_t
+towlower	proto :wchar_t
+
+iswctype	proto :wint_t, :wctype_t
+
+_WCTYPE_DEFINED equ 1
+endif
 
 .list

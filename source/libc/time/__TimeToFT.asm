@@ -1,8 +1,9 @@
 include time.inc
+include winbase.inc
 
 	.code
 
-__TimeToFT PROC USES edx ecx time:TIME_T, lpFileTime:LPFILETIME
+__TimeToFT PROC USES edx ecx time:time_t, lpFileTime:LPFILETIME
 
 local	SystemTime:SYSTEMTIME
 

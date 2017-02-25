@@ -1,5 +1,6 @@
 include crtl.inc
 include io.inc
+include winbase.inc
 
 	.code
 

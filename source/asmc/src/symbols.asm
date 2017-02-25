@@ -675,14 +675,14 @@ if USESTRFTIME
 	strftime( addr szDate, 9, "%D", esi )	; POSIX date (mm/dd/yy)
 	strftime( addr szTime, 9, "%T", esi )	; POSIX time (HH:MM:SS)
 else
-	mov	eax,[esi].S_TM.tm_year
+	mov	eax,[esi].tm.tm_year
 	sub	eax,100
-	mov	ecx,[esi].S_TM.tm_mon
+	mov	ecx,[esi].tm.tm_mon
 	add	ecx,1
-;	sprintf(addr szDate, "%02u/%02u/%02u", ecx, [esi].S_TM.tm_mday, eax)
+;	sprintf(addr szDate, "%02u/%02u/%02u", ecx, [esi].tm.tm_mday, eax)
 	add	eax,2000
-	sprintf(addr szDate, "%u-%02u-%02u", eax, ecx, [esi].S_TM.tm_mday )
-	sprintf(addr szTime, "%02u:%02u:%02u", [esi].S_TM.tm_hour, [esi].S_TM.tm_min, [esi].S_TM.tm_sec)
+	sprintf(addr szDate, "%u-%02u-%02u", eax, ecx, [esi].tm.tm_mday )
+	sprintf(addr szTime, "%02u:%02u:%02u", [esi].tm.tm_hour, [esi].tm.tm_min, [esi].tm.tm_sec)
 endif
 	lea	esi,tmtab
 	.while [esi].tmitem._name

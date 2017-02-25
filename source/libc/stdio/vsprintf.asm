@@ -1,21 +1,25 @@
 include stdio.inc
 include limits.inc
-
+IFDEF	_UNICODE
+VSPRINTF equ <vswprintf>
+OUTPUT	 equ <_woutput>
+ELSE
+VSPRINTF equ <vsprintf>
+OUTPUT	 equ <_output>
+ENDIF
 	.code
 
-vsprintf PROC USES ecx string:LPSTR, format:LPSTR, vargs:PVOID
-local	o:S_FILE
-
-	mov	o.iob_flag,_IOWRT or _IOSTRG
-	mov	o.iob_cnt,INT_MAX
+VSPRINTF PROC USES ecx string:LPTSTR, format:LPTSTR, vargs:PVOID
+local	o:_iobuf
+	mov	o._flag,_IOWRT or _IOSTRG
+	mov	o._cnt,INT_MAX
 	mov	eax,string
-	mov	o.iob_ptr,eax
-	mov	o.iob_base,eax
-	_output( addr o, format, vargs )
-	mov	ecx,o.iob_ptr
-	mov	BYTE PTR [ecx],0
-
+	mov	o._ptr,eax
+	mov	o._base,eax
+	OUTPUT( addr o, format, vargs )
+	mov	ecx,o._ptr
+	mov	TCHAR PTR [ecx],0
 	ret
-vsprintf ENDP
+VSPRINTF ENDP
 
 	END

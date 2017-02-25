@@ -405,15 +405,15 @@ NOTE	dd N0000,N0001,N0002,N0003
 	.code
 
 print_err PROC PRIVATE USES esi edi ebx erbuf, format, args
-  local iob:S_FILE
+  local iob:_iobuf
 	call	write_logo
 	mov	esi,erbuf
-	mov	iob.iob_flag,_IOWRT or _IOSTRG
-	mov	iob.iob_cnt,INT_MAX
-	mov	iob.iob_ptr,esi
-	mov	iob.iob_base,esi
+	mov	iob._flag,_IOWRT or _IOSTRG
+	mov	iob._cnt,INT_MAX
+	mov	iob._ptr,esi
+	mov	iob._base,esi
 	_output( addr iob, format, args )
-	mov	eax,iob.iob_ptr
+	mov	eax,iob._ptr
 	mov	byte ptr [eax],0
 	;
 	; v2.05: new option -eq

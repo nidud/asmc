@@ -11,7 +11,7 @@ include time.inc
 DOSZIP_VERSION	equ 0348h
 DOSZIP_MINVERS	equ 0348h
 DOSZIP_VSTRING	equ <"3.48">
-DOSZIP_VSTRPRE	equ <"D     ">
+DOSZIP_VSTRPRE	equ <"      ">
 
 MAXHISTORY	equ 32
 MAXDOSKEYS	equ 64

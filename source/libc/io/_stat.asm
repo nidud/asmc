@@ -7,6 +7,7 @@ include string.inc
 include stdlib.inc
 include alloc.inc
 include crtl.inc
+include winbase.inc
 
 A_D	equ 10h
 
@@ -76,7 +77,7 @@ _stat	PROC USES esi edi ebx fname:LPSTR, buf:PVOID
 		mov	ff.dwFileAttributes,A_D
 		mov	ff.nFileSizeHigh,eax
 		mov	ff.nFileSizeLow,eax
-		mov	ff.cFileName,al
+		mov	ff.cFileName,0
 		_loctotime_t( 80, 1, 1, 0, 0, 0 )
 		mov	[edi].S_STAT.st_mtime,eax
 		mov	[edi].S_STAT.st_atime,eax

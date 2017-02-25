@@ -392,7 +392,7 @@ WritePreprocessedLine PROC string
 	.if	ModuleInfo.token_count > 0
 		mov	eax,string
 		movzx	ecx,BYTE PTR [eax]
-		.while	__ctype[ecx+1] & _SPACE
+		.while	BYTE PTR _ctype[ecx*2+2] & _SPACE
 			add	eax,1
 			mov	cl,[eax]
 		.endw

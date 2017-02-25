@@ -196,7 +196,7 @@ event_add PROC USES ebx
 	call	getline
 	jz	nocando
 	movzx	eax,bl
-	test	__ctype[eax+1],_CONTROL
+	test	byte ptr _ctype[eax*2+2],_CONTROL
 	jnz	control
 add_char:
 	mov	eax,[edx].ti_bcnt
@@ -245,7 +245,7 @@ _setcursor PROC
 	mov	cursor.y,cx
 	mov	cursor.bVisible,1
 	mov	cursor.dwSize,CURSOR_NORMAL
-	SetCursor( addr cursor )
+	CursorSet( addr cursor )
 	ret
 _setcursor ENDP
 
@@ -769,7 +769,7 @@ dledit	PROC USES edi b:LPSTR, rc, bz, oflag
   local t:S_TEDIT
   local cursor:S_CURSOR
 
-	GetCursor( addr cursor )
+	CursorGet( addr cursor )
 
 	lea	edi,t
 	xor	eax,eax
@@ -807,7 +807,7 @@ dledit	PROC USES edi b:LPSTR, rc, bz, oflag
 	call	modal
 	push	eax
 	call	putline
-	SetCursor( addr cursor )
+	CursorSet( addr cursor )
 	pop	eax
 	mov	TI,edi
 	ret

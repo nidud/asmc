@@ -1,5 +1,5 @@
 include consx.inc
-include stdlib.inc
+include winbase.inc
 
 	.code
 

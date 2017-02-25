@@ -119,7 +119,7 @@ StoreLine PROC USES esi edi ebx sline, flags, lst_position
 		; v2.08: don't store % operator at pos 0
 		;
 		movzx	eax,BYTE PTR [ecx]
-		.while	__ctype[eax+1] & _SPACE
+		.while	BYTE PTR _ctype[eax*2+2] & _SPACE
 			inc	ecx
 			mov	al,[ecx]
 		.endw

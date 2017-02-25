@@ -4,7 +4,7 @@ include ctype.inc
 
 	OPTION PROLOGUE:NONE, EPILOGUE:NONE
 
-toupper PROC char
+toupper PROC char:SINT
 	mov	eax,[esp+4]
 	sub	al,'a'
 	cmp	al,'z'-'a'+1

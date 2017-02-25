@@ -6,7 +6,9 @@ include alloc.inc
 include crtl.inc
 include string.inc
 include stdlib.inc
-ifdef __W95__
+include winbase.inc
+
+ifdef _WIN95
 
 externdef kernel32_dll:BYTE
 endif
@@ -20,7 +22,7 @@ externdef IDD_DZSystemInfo:DWORD
 	.code
 
 UpdateMemoryStatus PROC PRIVATE USES esi edi ebx dialog
-ifdef __W95__
+ifdef _WIN95
 	local	M:MEMORYSTATUS
 endif
 	local	MS:MEMORYSTATUSEX
@@ -32,7 +34,7 @@ endif
 	rep	stosb
 	mov	MS.dwLength,sizeof( MEMORYSTATUSEX )
 
-ifdef __W95__
+ifdef _WIN95
 	.if GetModuleHandle( addr kernel32_dll )
 		.if GetProcAddress( eax, "GlobalMemoryStatusEx" )
 			lea	ecx,MS

@@ -177,7 +177,7 @@ config_read PROC USES esi edi ebx
 
   local xoff, boff, yoff, loff, entry
 
-ifdef __W95__
+ifdef _WIN95
 	push	console
 endif
 	mov	history,malloc( SIZE S_HISTORY )
@@ -298,7 +298,7 @@ endif
 	.endif
 
 toend:
-ifdef __W95__
+ifdef _WIN95
 	pop	eax
 	and	eax,CON_WIN95
 	or	console,eax

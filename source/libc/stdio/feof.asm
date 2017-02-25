@@ -4,7 +4,7 @@ include stdio.inc
 
 feof	PROC stream:LPFILE
 	mov	eax,stream
-	mov	eax,[eax].S_FILE.iob_flag
+	mov	eax,[eax]._iobuf._flag
 	and	eax,_IOEOF
 	ret
 feof	ENDP

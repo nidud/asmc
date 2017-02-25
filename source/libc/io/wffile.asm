@@ -3,6 +3,7 @@ include string.inc
 include alloc.inc
 include consx.inc
 include wsub.inc
+include winbase.inc
 
 WMAXPATH		equ 2048
 ERROR_NO_MORE_FILES	equ 18
@@ -40,7 +41,7 @@ wfindfirst PROC USES esi edi ebx fmask:LPSTR, fblk:PTR S_WFBLK, attrib:SIZE_T
 	mov	eax,fmask
 	mov	ax,[eax]
 	cmp	ah,':'
-ifdef __W95__
+ifdef _WIN95
 	jne	@F
 	test	console,CON_WIN95
 endif

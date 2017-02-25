@@ -10,18 +10,6 @@ include stdlib.inc
 include progress.inc
 include process.inc
 
-	.data
-
-cp_F3		db 'F3',0
-cp_F4		db 'F4',0
-cp_Alt		db 'Alt',0
-cp_Ctrl		db 'Ctrl',0
-cp_Shift	db 'Shift',0
-cp_section_view db 'View',0
-cp_argerror	db 'TVIEW error: %s',0
-cp_unziptotemp	db 'Unzip file to TEMP',0
-cp_missingTEMP	db 'Bad or missing TEMP directory',0
-
 	.code
 
 ; type 4: F4	- edit
@@ -36,18 +24,18 @@ loadiniproc PROC USES esi edi section, filename, itype
 
 	mov	edi,filename
 	mov	eax,itype
-	lea	esi,cp_F3
+	mov	esi,@CStr("F3")
 
 	.switch al
-	  .case 4 : lea esi,cp_F4    : .endc
-	  .case 3 : lea esi,cp_Alt   : .endc
-	  .case 2 : lea esi,cp_Ctrl  : .endc
-	  .case 1 : lea esi,cp_Shift : .endc
+	  .case 4 : mov esi,@CStr("F4")	   : .endc
+	  .case 3 : mov esi,@CStr("Alt")   : .endc
+	  .case 2 : mov esi,@CStr("Ctrl")  : .endc
+	  .case 1 : mov esi,@CStr("Shift") : .endc
 	.endsw
 
 	.if	CFGetSection( section )
 
-		.if	CFGetEntryID( eax, esi )
+		.if	CFGetEntry( eax, esi )
 
 			mov	esi,eax
 			mov	esi,strlen(strnzcpy(addr path, esi, _MAX_PATH - 1))
@@ -72,7 +60,7 @@ load_tview PROC USES esi edi filename, etype
 	local	offs
 	mov	edi,filename
 
-	.if	!loadiniproc( addr cp_section_view, edi, etype )
+	.if	!loadiniproc( "View", edi, etype )
 
 		call	clrcmdl
 		mov	esi,edi
@@ -129,7 +117,7 @@ load_tview PROC USES esi edi filename, etype
 toend:
 	ret
 error:
-	ermsg( 0, addr cp_argerror, edi )
+	ermsg( 0, "TVIEW error: %s", edi )
 	xor	eax,eax
 	jmp	toend
 load_tview ENDP
@@ -194,7 +182,7 @@ unzip_to_temp PROC USES esi edi fblk, name_buffer
 
 	.if	envtemp
 
-		progress_open( addr cp_unziptotemp, addr cp_copy )
+		progress_open( "Unzip file to TEMP", addr cp_copy )
 		progress_set( addr [edi].S_FBLK.fb_name, envtemp, [edi].S_FBLK.fb_size )
 		mov eax,cpanel
 		wsdecomp( [eax].S_PANEL.pn_wsub, edi, envtemp )
@@ -209,7 +197,7 @@ unzip_to_temp PROC USES esi edi fblk, name_buffer
 		.endif
 	.else
 
-		ermsg( 0, addr cp_missingTEMP )
+		ermsg( 0, "Bad or missing TEMP directory" )
 	.endif
 
 	test	eax,eax

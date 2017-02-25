@@ -1,8 +1,14 @@
 include io.inc
+include winbase.inc
 
+IFDEF	_UNICODE
+REMOVE	equ <_wremove>
+ELSE
+REMOVE	equ <remove>
+ENDIF
 	.code
 
-remove	PROC file:LPSTR
+REMOVE	PROC file:LPTSTR
 
 	.if DeleteFile( file )
 
@@ -14,6 +20,6 @@ remove	PROC file:LPSTR
 	.endif
 	ret
 
-remove	ENDP
+REMOVE	ENDP
 
 	END

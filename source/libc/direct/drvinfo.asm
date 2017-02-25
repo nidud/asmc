@@ -1,9 +1,8 @@
 include direct.inc
-include io.inc
-include string.inc
 include time.inc
 include crtl.inc
 include wsub.inc
+include winbase.inc
 
 PUBLIC	drvinfo
 

@@ -214,7 +214,6 @@ externdef	at_foreground:BYTE
 externdef	tclrascii:BYTE
 externdef	clipbsize:SIZE_T
 
-PRECT		TYPEDEF PTR S_RECT
 TIMAXSCRLINE	equ 256		; max screen size
 
 rcpush		PROTO :UINT
@@ -234,7 +233,7 @@ rcmovedn	PROTO :DWORD, :PVOID, :DWORD
 rcmoveleft	PROTO :DWORD, :PVOID, :DWORD
 rcmoveright	PROTO :DWORD, :PVOID, :DWORD
 rcmove		PROTO :PVOID, :PVOID, :DWORD, :DWORD, :DWORD
-rcmsmove	PROTO :PRECT, :PVOID, :UINT
+rcmsmove	PROTO :ptr S_RECT, :PVOID, :UINT
 rcaddrc		PROTO :PVOID, :DWORD, :DWORD
 rcbprc		PROTO :DWORD, :PVOID, :DWORD
 rcbprcrc	PROTO :DWORD, :DWORD, :PVOID, :DWORD
@@ -325,8 +324,8 @@ scroll_delay	PROTO
 
 CursorOn	PROTO
 CursorOff	PROTO
-GetCursor	PROTO :PCURSOR
-SetCursor	PROTO :PCURSOR
+CursorGet	PROTO :PCURSOR
+CursorSet	PROTO :PCURSOR
 
 externdef	ASCII_DOT:	BYTE
 externdef	ASCII_RIGHT:	BYTE
@@ -584,25 +583,5 @@ ClipboardPaste	PROTO
 ClipboardFree	PROTO
 
 cliprintf	PROTO _CDecl :LPSTR, :VARARG
-
-;;;;;;;;;;;;;;; user32.dll
-
-; BOOL
-OpenClipboard proto \
-	hWndNewOwner:	HANDLE	; HWND
-; BOOL
-EmptyClipboard proto
-; BOOL
-CloseClipboard proto
-; HANDLE
-GetClipboardData proto \
-	uFormat:	UINT
-; HANDLE
-SetClipboardData proto \
-	uFormat:	UINT,
-	hMem:		HANDLE
-; BOOL
-IsClipboardFormatAvailable proto \
-	format:		UINT
 
 .list

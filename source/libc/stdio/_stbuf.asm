@@ -2,56 +2,76 @@ include stdio.inc
 include io.inc
 include alloc.inc
 include crtl.inc
-
+IFDEF	_UNICODE
+OFLUSH	equ <woutput_flush>
+ELSE
+OFLUSH	equ <output_flush>
+ENDIF
 extrn	_stdbuf:dword
-extrn	output_flush:dword
+extrn	OFLUSH:dword
 
 	.code
 
-_stbuf	PROC USES ebx fp:LPFILE
-	mov	ebx,fp
-	.if	_isatty( [ebx].S_FILE.iob_file )
-		xor	eax,eax
-		xor	edx,edx
-		.if	ebx != offset stdout
-			.if	ebx != offset stderr
-				jmp	@F
-			.endif
-			inc	edx
+_stbuf	PROC USES esi edi fp:LPFILE
+
+	mov	esi,fp
+	assume	esi:ptr _iobuf
+
+	.repeat
+		;
+		; exit if not a tty device
+		;
+		.break .if !_isatty( [esi]._file )
+
+		xor	eax,eax ; return 0
+		xor	edi,edi ; _stdbuf index
+		;
+		; is stream stdout or stderr ?
+		;
+		.if esi != offset stdout
+
+			.break .if esi != offset stderr
+			inc	edi
 		.endif
-		mov	ecx,[ebx].S_FILE.iob_flag
+		;
+		; already buffered ?
+		;
+		mov	ecx,[esi]._flag
 		and	ecx,_IOMYBUF or _IONBF or _IOYOURBUF
-		jnz	@F
+		.breaknz
+
 		or	ecx,_IOWRT or _IOYOURBUF or _IOFLRTN
-		mov	[ebx].S_FILE.iob_flag,ecx
-		shl	edx,2
-		add	edx,offset _stdbuf
-		mov	eax,[edx]
+		mov	[esi]._flag,ecx
+		shl	edi,2
+		add	edi,offset _stdbuf
+		mov	eax,[edi]
 		mov	ecx,_INTIOBUF
+
 		.if	!eax
-			push	edx
-			malloc( ecx )
-			pop	edx
-			mov	[edx],eax
+
+			mov	[edi],malloc(ecx)
 			mov	ecx,_INTIOBUF
-			.if	ZERO?
-				lea	eax,[ebx].S_FILE.iob_charbuf
-				mov	ecx,4
+
+			.if	!eax
+
+				lea eax,[esi]._charbuf
+				mov ecx,4
 			.endif
 		.endif
-		mov	[ebx].S_FILE.iob_ptr,eax
-		mov	[ebx].S_FILE.iob_base,eax
-		mov	[ebx].S_FILE.iob_bufsize,ecx
+
+		mov	[esi]._ptr,eax
+		mov	[esi]._base,eax
+		mov	[esi]._bufsiz,ecx
 		mov	eax,1
-	.endif
-@@:
+
+	.until	1
 	ret
+
 _stbuf	ENDP
 
-
 __STDIO:
-	mov	eax,_flsbuf
-	mov	output_flush,eax
+	mov eax,_flsbuf
+	mov OFLUSH,eax
 	ret
 
 pragma_init __STDIO, 2

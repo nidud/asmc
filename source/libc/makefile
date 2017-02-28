@@ -1,18 +1,27 @@
-LIBDIR = ..\..\lib
-INCDIR = ..\..\include
+!include srcpath
 
-$(LIBDIR)\libo.lib:
-	iddc -r *.idd
-	asmc -nologo -Cs -I$(INCDIR) -r *.asm
-	libw -q -t -s -b -n -c $@ *.obj
+all: .libc .libcd .libcw .libcwd
+
+AFLAGS	= /q /coff /Cs /I$(inc_dir) /r
+LFLAGS	= /q /b /n /c /fac
+
+.libc:
+	iddc -coff -r *.idd
+	asmc $(AFLAGS) -D_WIN95 *.asm
+	libw $(LFLAGS) $(lib_dir)\libc.lib *.obj
 	del *.obj
-
-$(LIBDIR)\libc.lib:
-	asmc -nologo -Cs -I$(INCDIR) -D__WXP__ -coff -r *.asm
-	libw -q -b -n -c -fac $@ *.obj
+.libcw:
+	iddc -coff -r *.idd
+	asmc $(AFLAGS) -ws -D_UNICODE *.asm
+	libw $(LFLAGS) $(lib_dir)\libcw.lib *.obj
 	del *.obj
-
-$(LIBDIR)\libd.lib:
-	asmc -nologo -Cs -I$(INCDIR) -Zi -DDEBUG -coff -r *.asm
-	libw -q -b -n -c -fac $@ *.obj
+.libcd:
+	iddc -coff -r *.idd
+	asmc $(AFLAGS) -Zi -DDEBUG *.asm
+	libw $(LFLAGS) $(lib_dir)\libcd.lib $(src_dir)\libc\*.obj
+	del *.obj
+.libcwd:
+	iddc -coff -r *.idd
+	asmc $(AFLAGS) -ws -D_UNICODE -Zi -DDEBUG *.asm
+	libw $(LFLAGS) $(lib_dir)\libcwd.lib $(src_dir)\libc\*.obj
 	del *.obj

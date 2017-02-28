@@ -1,6 +1,7 @@
 include string.inc
 include stdio.inc
 include alloc.inc
+include winbase.inc
 
 TEST_OVERLAP	equ 1
 strnicmp	equ <_strnicmp>

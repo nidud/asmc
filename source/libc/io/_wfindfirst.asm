@@ -52,16 +52,16 @@ _wfindfirst ENDP
 
 copyblock:
 	mov	eax,[esi].dwFileAttributes
-	mov	[edi].ff_attrib,eax
+	mov	[edi].attrib,eax
 	mov	eax,[esi].nFileSizeLow
 	mov	edx,[esi].nFileSizeHigh
-	mov	DWORD PTR [edi].ff_size,eax
-	mov	DWORD PTR [edi].ff_size[4],edx
-	mov	[edi].ff_time_create,__FTToTime( addr [esi].ftCreationTime )
-	mov	[edi].ff_time_access,__FTToTime( addr [esi].ftLastAccessTime )
-	mov	[edi].ff_time_write, __FTToTime( addr [esi].ftLastWriteTime )
+	mov	DWORD PTR [edi]._size,eax
+	mov	DWORD PTR [edi]._size[4],edx
+	mov	[edi].time_create,__FTToTime( addr [esi].ftCreationTime )
+	mov	[edi].time_access,__FTToTime( addr [esi].ftLastAccessTime )
+	mov	[edi].time_write, __FTToTime( addr [esi].ftLastWriteTime )
 	lea	esi,[esi].cFileName
-	lea	edi,[edi].ff_name
+	lea	edi,[edi]._name
 	mov	ecx,260/2
 	rep	movsd
 	ret

@@ -3,13 +3,24 @@
 ;
 .xlist
 ifndef __LIBC_INC
-__LIBC_INC	equ 1
+__LIBC_INC equ 1
+
 ;
 ; Version management functions, types, and definitions
 ;
-TRUE		equ 1
-FALSE		equ 0
-NULL		equ 0
+
+TRUE	equ 1
+FALSE	equ 0
+NULL	equ 0
+
+defined macro x
+	ifdef x
+	    exitm<1>
+	else
+	    exitm<0>
+	endif
+	endm
+
 ;;
 ;; _WIN32_WINNT version constants
 ;;
@@ -38,6 +49,9 @@ endif
 ifndef _WIN32_WINNT
 _WIN32_WINNT equ WINVER
 endif
+ifndef __STDC__
+__STDC__  equ 1
+endif
 
 ifdef _WIN64
 ifdef __PE__		; For Asmc -pe
@@ -49,7 +63,7 @@ endif	; __PE__
 else	;; !_WIN64
 
 	.486
-ifdef __PE__
+if defined(_MSVCRT) or defined(__PE__)
 	.model	flat, c
 else
 	.model	flat, stdcall
@@ -119,14 +133,6 @@ _CType		equ <STDCALL>
 _CDecl		equ <C>
 endif
 
-
-defined macro x
-	ifdef x
-	    exitm<1>
-	else
-	    exitm<0>
-	endif
-	endm
 
 ifdef	DEBUG
 	assert_exit proto

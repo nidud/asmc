@@ -1,5 +1,5 @@
 include ctype.inc
-include local.inc
+include locale.inc
 include winnls.inc
 
 __GetStringTypeA proto _CType \

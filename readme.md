@@ -20,7 +20,7 @@
    These people contributed to JWasm/Asmc (additions, bugfixes, bug reports):
 
     agner, BlackVortex, dosfan01, drizz, Paul Edwards, filofel, Peter Flass,
-    James C. Fuller, gfalen, habran, Japheth, Jimg, jj2007, John Hankinson,
+    James C. Fuller, gfalen, habran, HSE, Japheth, Jimg, jj2007, John Hankinson,
     Khusraw, Alex Kozlov, Peter Kuznetsov, misca, Michal Necasek, H. Nidudsson,
     Nikitakita, Jose Pascoa, Terry Philips, qWord, RotateRight, Ito Toshimitsu,
     Vortex.

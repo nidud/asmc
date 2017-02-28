@@ -732,6 +732,7 @@ local	op:		SINT,
 		xor	edi,edi
 		mov	ecx,[edx].hll_item.flags
 
+		if 0 ; v2.23 removed..
 		.if	ecx & HLLF_IFS or HLLF_IFB or HLLF_IFW or HLLF_IFD
 			;
 			; assume .ifx proc() --> .ifx reg
@@ -742,6 +743,7 @@ local	op:		SINT,
 				jmp	toend
 			.endif
 		.endif
+		endif
 
 		.if	ecx & HLLF_IFS
 
@@ -2919,6 +2921,80 @@ GetNextComma PROC string:LPSTR
 
 GetNextComma ENDP
 
+ParseAssignment proc uses ecx edx esi edi ebx buffer, source
+
+	mov	esi,buffer
+	mov	ebx,source
+	mov	ecx,[ebx]
+
+	.switch cx
+
+	  .case '--'
+		add	ebx,2
+		strcat( esi, "dec " )
+		strcat( esi, ebx )
+		strcat( esi, "\n" )
+		.endc
+
+	  .case '++'
+		add	ebx,2
+		strcat( esi, "inc " )
+		strcat( esi, ebx )
+		strcat( esi, "\n" )
+		.endc
+
+	  .default
+
+		.if !_mbspbrk(ebx, "+-=")
+
+			asmerr( 2008, ebx )
+			xor	eax,eax
+			.endc
+		.endif
+		mov	ecx,[eax]
+		mov	BYTE PTR [eax],0
+		add	eax,2
+		.switch
+		  .case cx == '++'
+			mov	ecx,@CStr( "inc " )
+			.endc
+		  .case cx == '--'
+			mov	ecx,@CStr( "dec " )
+			.endc
+		  .case cx == '=+'
+			mov	ecx,@CStr( "add " )
+			.endc
+		  .case cx == '=-'
+			mov	ecx,@CStr( "sub " )
+			.endc
+		  .case cl == '='
+			mov	ecx,@CStr( "mov " )
+			sub	eax,1
+			.endc
+		  .default
+			asmerr( 2008, ebx )
+			xor	ecx,ecx
+			xor	eax,eax
+		.endsw
+		.endc	.if !ecx
+
+		push	eax
+		strcat( esi, ecx )
+		strcat( esi, ebx )
+		pop	eax
+		.if	BYTE PTR [strstart(eax)]
+
+			push	eax
+			strcat( esi, "," )
+			pop	eax
+			strcat( esi, eax )
+		.endif
+		strcat( esi, "\n" )
+	.endsw
+	ret
+
+ParseAssignment endp
+
 	OPTION	PROC:	PUBLIC
 	ASSUME	ebx:	PTR asm_tok
 	ASSUME	esi:	PTR hll_item
@@ -3065,11 +3141,11 @@ local	rc:		SINT,
 		strtrim(edi)
 		strtrim(p)
 
-		.if	[ebx-16].token == T_OP_BRACKET
+		.if [ebx-16].token == T_OP_BRACKET
 
-			.if	strrchr(q, ')')
+			.if strrchr(q, ')')
 
-				mov	BYTE PTR [eax],0
+				mov BYTE PTR [eax],0
 				strtrim(q)
 			.endif
 		.endif
@@ -3085,19 +3161,18 @@ local	rc:		SINT,
 			;
 			; get the C-style expression, convert to ASM code lines
 			;
-			mov	cmdstr,0
-			.if	ExpandHllProc( addr cmdstr, 0, tokenarray ) != ERROR && cmdstr
+			mov cmdstr,0
+			.if ExpandHllProc( addr cmdstr, 0, tokenarray ) != ERROR && cmdstr
 
 				QueueTestLines( addr cmdstr )
-				mov	ebx,tokenarray
-				mov	ebx,[ebx].tokpos
+				mov ebx,tokenarray
+				mov ebx,[ebx].tokpos
 			.endif
 
-			.if	strchr( ebx, '=' )
+			mov cmdstr,0
+			.if ParseAssignment(addr cmdstr, ebx)
 
-				mov	BYTE PTR [eax],0
-				inc	eax
-				AddLineQueueX( "mov %s,%s", ebx, eax )
+				AddLineQueue( eax )
 			.endif
 			pop	edi
 		.endw
@@ -3109,71 +3184,10 @@ local	rc:		SINT,
 		lea	edi,buffer
 		push	esi
 		lea	esi,cmdstr
-
 		.while	GetNextComma(ebx)
 
 			push	ecx
-			mov	ebx,edx
-			mov	ecx,[edx]
-
-			.switch cx
-			  .case '--'
-				add	ebx,2
-				strcat( esi, "dec " )
-				strcat( esi, ebx )
-				strcat( esi, "\n" )
-				.endc
-			  .case '++'
-				add	ebx,2
-				strcat( esi, "inc " )
-				strcat( esi, ebx )
-				strcat( esi, "\n" )
-				.endc
-			  .default
-				.if	!strchr( ebx, '+' )
-
-					strchr( ebx, '-' )
-				.endif
-				.if	!eax
-
-					asmerr( 2008, ebx )
-					.endc
-				.endif
-				mov	ecx,[eax]
-				mov	BYTE PTR [eax],0
-				add	eax,2
-				.switch cx
-				  .case '++'
-					mov	ecx,@CStr( "inc " )
-					.endc
-				  .case '--'
-					mov	ecx,@CStr( "dec " )
-					.endc
-				  .case '=+'
-					mov	ecx,@CStr( "add " )
-					.endc
-				  .case '=-'
-					mov	ecx,@CStr( "sub " )
-					.endc
-				  .default
-					asmerr( 2008, ebx )
-					xor	ecx,ecx
-				.endsw
-				.endc	.if !ecx
-
-				push	eax
-				strcat( esi, ecx )
-				strcat( esi, ebx )
-				pop	eax
-				.if	BYTE PTR [strstart(eax)]
-
-					push	eax
-					strcat( esi, "," )
-					pop	eax
-					strcat( esi, eax )
-				.endif
-				strcat( esi, "\n" )
-			.endsw
+			ParseAssignment(esi, edx)
 			pop	ebx
 		.endw
 		pop	esi

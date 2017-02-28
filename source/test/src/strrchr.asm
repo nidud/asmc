@@ -1,7 +1,7 @@
 include string.inc
 include stdio.inc
 include alloc.inc
-;include math.inc
+include winbase.inc
 
 ;	__MSVC__ equ 1
 

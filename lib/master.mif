@@ -1,0 +1,86 @@
+# MASTER.MIF--
+# Default makefile for win32
+#
+# Arguments:
+#
+#   name	- build if defined
+#   objs	- if more than one file
+#   af1		- asmc switch
+#   unicode	- unicode
+#   debug	- debug
+#   bin_dir	- target output directory
+#   dll		- .dll or .exe
+#   system	- console/windows
+#
+!include srcpath
+
+!ifndef system
+system	= console
+!endif
+
+AFLAGS	= -q -coff -Cs -I$(inc_dir)
+CFLAGS	= -c -nologo -Gz -I$(inc_dir)
+CC	= cl
+!ifdef	debug
+LIB	= lib
+LINK	= link /debug /map /subsystem:$(system) /out:$@ /libpath:$(lib_dir)
+AFLAGS	+= -Zi -DDEBUG
+CFLAGS	+= -Zi -DDEBUG
+debug	= d
+!else
+LIB	= libw
+LINK	= linkw OP q, m Name $@ LibPath $(lib_dir)
+!endif
+
+!ifdef	unicode
+AFLAGS	+= -ws -D_UNICODE
+unicode = w
+!endif
+!ifdef	af1
+AFLAGS	+= $(af1)
+!endif
+!ifdef	dll
+LFLAGS	+= /dll
+dll	= dll
+!endif
+
+STARTUP = crt$(dll)$(unicode)$(debug)
+LIBFILE = libc$(unicode)$(debug)
+#kernel32.lib user32.lib /nodefaultlib
+!ifdef	debug
+LFLAGS	= $(LIBFILE).lib $(STARTUP).obj $(OBJS)
+!else
+LFLAGS	= L $(LIBFILE) F { $(lib_dir)\$(STARTUP) $(OBJS) }
+!endif
+
+!ifdef name
+# BUILD--
+# target defined
+#
+
+.EXTENSIONS: .idd
+.c.obj:
+	$(CC) $(CFLAGS) $<
+.asm.obj:
+	asmc $(AFLAGS) $<
+.idd.obj:
+	iddc -coff $<
+
+!ifndef OBJS
+OBJS	= $(name).obj
+!endif
+!ifndef bin_dir
+bin_dir = .
+!endif
+!ifdef	dll
+t_ext	= dll
+!else
+t_ext	= exe
+!endif
+
+$(bin_dir)\$(name).$(t_ext): $(OBJS)
+	$(LINK) $(LFLAGS)
+!ifndef noclean
+	del *.obj
+!endif
+!endif

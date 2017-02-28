@@ -6,7 +6,7 @@ include consx.inc
 	.code
 
 main	proc c
-	GetCursor(addr co)
+	CursorGet(addr co)
 	CursorOn()
 	_gotoxy(0,24)
 test_	macro x,y
@@ -20,11 +20,11 @@ test_	macro x,y
 	rep	movsb
 	mov	cu.x,20
 	mov	cu.y,2
-	SetCursor(addr cu)
+	CursorSet(addr cu)
 	test_	20,2
 	movzx	esi,co.y
 	movzx	edi,co.x
-	SetCursor(addr co)
+	CursorSet(addr co)
 	test_	edi,esi
 	sub	eax,eax
 	ret

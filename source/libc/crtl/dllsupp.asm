@@ -8,10 +8,6 @@ PUBLIC	_real87
 PUBLIC	fltused_
 PUBLIC	_init_387_emulator
 
-output_formatE	PROTO
-output_formatEU PROTO
-externdef	output_proctab:DWORD
-
 _except_list	equ 0		; FS:[offset]
 _fltused	equ 0x9876
 _ldused		equ 0x9876
@@ -30,14 +26,6 @@ _fltinit:
 	fninit
 	fwait
 	fldcw	_8087cw
-	lea	eax,output_proctab
-	lea	ecx,output_formatE
-	mov	[eax+4*3],ecx
-	mov	[eax+4*4],ecx
-	mov	[eax+4*5],ecx
-	lea	ecx,output_formatEU
-	mov	[eax+4*13],ecx
-	mov	[eax+4*14],ecx
 	ret
 
 pragma_init	_fltinit, 20

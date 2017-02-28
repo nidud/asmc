@@ -1,7 +1,6 @@
-system.exe:
-	asmc -q $*.asm
-	linkw OP q N $@ F ..\..\..\lib\c0, $*.obj
-	del $*.obj
+name = system
+
+!include master.mif
 	$@
 	pause
 

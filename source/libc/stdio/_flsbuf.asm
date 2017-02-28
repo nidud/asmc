@@ -6,9 +6,7 @@ include winbase.inc
 
 	ASSUME	esi: LPFILE
 
-_flsbuf PROC USES esi edi ebx,
-	char:	SIZE_T,
-	fp:	LPFILE
+_flsbuf PROC USES esi edi ebx char:SIZE_T, fp:LPFILE
 
 	mov	esi,fp
 	mov	edi,[esi]._flag

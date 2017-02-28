@@ -1,0 +1,3 @@
+VERSION equ 0x0223
+VERSSTR equ <'2.23'>
+

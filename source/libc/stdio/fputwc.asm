@@ -6,7 +6,7 @@ fputwc	PROC wc:wint_t, fp:LPFILE
 
 	movzx	eax,wc
 	mov	ecx,fp
-	dec	[ecx]._iobuf._cnt
+	sub	[ecx]._iobuf._cnt,2
 	.ifl
 		_flswbuf(eax, ecx)
 	.else

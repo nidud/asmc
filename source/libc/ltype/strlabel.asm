@@ -7,7 +7,7 @@ include ctype.inc
 strlabel PROC string:LPSTR, usedot:UINT
 	mov	ecx,[esp+4]
 	movzx	eax,BYTE PTR [ecx]
-	test	__ctype[eax+1],_UPPER or _LOWER
+	test	BYTE PTR _ctype[eax*2+2],_UPPER or _LOWER
 	jnz	@F
 	cmp	eax,'_'
 	je	@F
@@ -24,7 +24,7 @@ strlabel PROC string:LPSTR, usedot:UINT
 @@:
 	add	ecx,1
 	movzx	eax,BYTE PTR [ecx]
-	test	__ctype[eax+1],_UPPER or _LOWER or _DIGIT
+	test	byte ptr _ctype[eax*2+2],_UPPER or _LOWER or _DIGIT
 	jnz	@B
 	test	eax,eax
 	jz	done

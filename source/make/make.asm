@@ -1,3 +1,12 @@
+; MAKE.ASM--
+; Copyright (c) 2016 GNU General Public License www.gnu.org/licenses
+;
+; Change history:
+; 2017-02-25 - added switch -I -- include path
+; 2017-02-25 - fixed bug in .xxx.obj: only one cmd-line used..
+; 2017-02-25 - added .EXTENSIONS and .SUFFIXES
+; 2017-02-25 - added include path : %AsmcDir%\lib | %DZ%\lib
+;
 include stdio.inc
 include stdlib.inc
 include alloc.inc
@@ -8,22 +17,24 @@ include io.inc
 include process.inc
 include ctype.inc
 include crtl.inc
+include winbase.inc
 
 LINEBREAKCH	equ 5Eh ; '^'
 
-	.data
+.data
 
 externdef	__pCommandCom:LPSTR
 externdef	envtemp:DWORD
 externdef	errorlevel:DWORD
 
-cpinfo		db "Doszip Make Version 1.2 Copyright (c) 2016 GNU General Public License",10,10,0
+cpinfo		db "Doszip Make Version 1.3 Copyright (c) 2017 GNU General Public License",10,10,0
 cpusage		db "USAGE: MAKE [-/options] [macro=text] [target(s)]",10
 		db 10
 		db " -a    build all targets (always set)",10
 		db " -d    debug - echo progress of work",10
 		db " -f#   full pathname of make file",10
 		db " -h    do not print program header",10
+		db " -I#   set include path",10
 		db " -s    silent mode (do not print commands)",10
 		db 10,0
 
@@ -70,6 +81,12 @@ linefeed	dd linefeed_unix
 
 commandfile	db _MAX_PATH dup(0)
 responsefile	db _MAX_PATH dup(0)
+includepath	db _MAX_PATH dup(0)
+currentfile	db _MAX_PATH dup(0)
+
+default_ext	db ".obj",0
+suffixes	dd default_ext
+		dd 32 dup(0)
 
 file_asm	db ".asm",0
 file_idd	db ".idd",0
@@ -77,7 +94,7 @@ file_c		db ".c",0
 extensions	dd file_asm
 		dd file_idd
 		dd file_c
-		dd 5 dup(0)
+		dd 32 dup(0)
 
 null_string	db 0
 cmdexe		db "%SystemRoot%\system32\cmd.exe"
@@ -96,60 +113,54 @@ token_equal	db '=',0
 
 	.code
 
-ltoken	PROC string:ptr sbyte
-	mov	eax,string
-	mov	ecx,token
-	.if	eax
-		mov	ecx,eax
-		xor	eax,eax
+ltoken	PROC USES esi edi ebx string:ptr sbyte
+
+	mov	esi,token
+	.if	string
+		mov esi,string
 	.endif
-	mov	al,[ecx]
-	.while	__ctype[eax+1] & _SPACE
-		inc	ecx
-		mov	al,[ecx]
-	.endw
-	mov	token,ecx
-	test	al,al
-	jz	toend
-lupe:
-	mov	al,[ecx]
-	inc	ecx
-	test	al,al
-	jz	@F
-	cmp	al,'='
-	je	equal
-	test	__ctype[eax+1],_SPACE
-	jz	lupe
-	mov	[ecx-1],ah
-	inc	ecx
-@@:
-	dec	ecx
-	mov	eax,token
-	mov	token,ecx
-	jmp	toend
-equal:
-	.if	al == '-'
-		lea	edx,[ecx-1]
-		.if	edx != token
-			strcpy( ecx, edx )
-			mov	BYTE PTR [eax-1],0
-			mov	ecx,token
-			mov	token,eax
-			xchg	eax,ecx
-		.else
-			.if	BYTE PTR [ecx] == '='
-				inc	ecx
+	mov	esi,strstart(esi)
+	mov	token,esi
+	xor	eax,eax
+
+	.while	1
+		lodsb
+		.switch
+		  .case !eax
+			lea ecx,[esi-1]
+			.if ecx == token
+			    xor eax,eax
+			    .break
 			.endif
-			inc	ecx
-			mov	token,ecx
-			strcpy( ecx, addr [ecx-1] )
-			mov	BYTE PTR [eax-1],0
-			mov	eax,edx
-		.endif
-	.endif
-toend:
+			mov eax,token
+			mov token,ecx
+			.break
+		  .case eax == '='
+			lea ecx,[esi-1]
+			lea eax,token_equal
+			.if ecx == token
+				.if byte ptr [esi] == '='
+					inc esi
+					dec eax
+				.endif
+				mov token,esi
+				.break
+			.endif
+			dec esi
+			mov BYTE PTR [esi],0
+			salloc(token)
+			mov BYTE PTR [esi],'='
+			mov token,esi
+			.break
+		  .case _ctype[eax*2+2] & _SPACE
+			mov eax,token
+			mov token,esi
+			.break
+		.endsw
+	.endw
 	test	eax,eax
 	ret
+
 ltoken	ENDP
 
 istarget PROC USES edi ebx line:ptr sbyte
@@ -172,7 +183,7 @@ istarget PROC USES edi ebx line:ptr sbyte
 	movzx	eax,BYTE PTR [eax+1]
 	test	eax,eax
 	jz	target
-	mov	al,__ctype[eax+1]
+	mov	al,byte ptr _ctype[eax*2+2]
 	and	al,_SPACE
 toend:
 	ret
@@ -254,9 +265,11 @@ error:
 addsymbol ENDP
 
 expandsymbol PROC USES esi edi ebx string:ptr sbyte
-  local base
-  local symbol_name
-  local symbol_macro
+
+local	base
+local	symbol_name
+local	symbol_macro
+
 	alloca( MAXTARGET )
 	mov	base,eax
 	mov	esi,eax
@@ -358,112 +371,155 @@ toend:
 skipiftag ENDP
 
 readline PROC USES esi edi ebx
-  local base
-  local symbol
-	alloca( MAXTARGET )
-	mov	base,eax
-	add	eax,MAXTARGET-256
-	mov	symbol,eax
-lineloop:
-	mov	eax,line_fp
-	test	eax,eax
-	jz	toend
-	mov	esi,line_ptr
-	mov	edi,esi
-	mov	ecx,512
-add_line:
-	fgets ( edi, ecx, eax )
-	test	eax,eax
-	jz	prevfile
 
-	inc	line_id
-	strtrim( eax )
-	jz	lineloop
-if 0
-	.if	BYTE PTR [esi+eax-1] == LINEBREAKCH
-		lea	edi,[esi+eax-1]
-		mov	ecx,512
-		sub	ecx,eax
-		mov	eax,line_fp
-		jmp	add_line
-	.endif
-endif
-	strstart( esi )
-	mov	edi,eax			; EDI to start of line
-	ltoken( strcpy( base, eax ) )
-	mov	esi,eax			; ESI to first token
-	mov	eax,[edi]
-	cmp	al,'#'
-	je	lineloop
-	cmp	al,'!'
-	je	case_hll
-return_EDI:
-	mov	eax,edi
-	test	eax,eax
-toend:
+local	base
+local	symbol
+
+	mov base,alloca(MAXTARGET)
+	add eax,MAXTARGET-256
+	mov symbol,eax
+
+	.while 1
+
+		mov eax,line_fp
+		.break .if !eax
+
+		mov esi,line_ptr
+		mov edi,esi
+		mov ecx,512
+		.if !fgets(edi, ecx, eax)
+
+			fclose(line_fp)
+			lea edx,line_fp
+			memcpy(edx, addr [edx+4], MAXMAKEFILES*4)
+			.continue
+		.endif
+
+		inc line_id
+		.continue .if !strtrim(eax)
+
+
+		mov edi,strstart(esi)		  ; EDI to start of line
+		mov esi,ltoken(strcpy(base, eax)) ; ESI to first token
+		mov eax,[edi]
+		.continue .if al == '#'
+
+		.if al != '!'
+
+			mov eax,edi
+			.break
+		.endif
+
+		push	expandsymbol(addr [edi+1])
+		strcpy( base, eax )
+		call	free
+		mov	edi,strstart(eax)
+
+		.switch
+		  .case !_strnicmp(edi, "include", 7)
+
+			mov ebx,expandsymbol(strstart(addr [edi+8]))
+			.if !fopen(eax, "rt") && includepath
+				fopen(strfcat(addr currentfile, addr includepath, ebx), "rt")
+			.endif
+			free(ebx)
+			.if !eax
+
+				perror(edi)
+				exit(1)
+			.endif
+
+			mov ebx,eax
+			lea edx,line_fp
+			memmove(addr [edx+4], edx, MAXMAKEFILES*4-4)
+			mov [edx],ebx
+			.continue
+
+		  .case !_strnicmp(edi, "endif", 5)
+
+			dec if_level
+			.continue
+
+		  .case !_strnicmp(edi, "else", 4)
+
+			movzx ebx,if_level
+			.if if_state[ebx-1] == 0
+
+				skipiftag()
+			.endif
+			.continue
+		.endsw
+
+		mov ax,[edi]
+		or  ax,2020h
+		.if ax != 'fi'
+
+			syntax_error()
+		.endif
+
+		movzx ebx,if_level
+		mov if_state[ebx],1
+		inc if_level
+
+		.if !_strnicmp(edi, "ifdef", 5)
+
+			.if ltoken(addr [edi+6])
+
+				.if !findsymbol(eax)
+
+					skipiftag()
+				.else
+					mov if_state[ebx],0
+				.endif
+				.continue
+			.endif
+
+			syntax_error()
+		.endif
+
+		.if !_strnicmp( edi,"ifndef", 6 )
+
+			.if !ltoken(addr [edi+7])
+
+				syntax_error()
+			.endif
+			.if findsymbol(eax)
+
+				skipiftag()
+			.else
+				mov if_state[ebx],0
+			.endif
+			.continue
+		.endif
+
+		.if _strnicmp( edi, "ifeq", 4 )
+
+			mov al,[edi+2]
+			.if al != ' ' && al != 9
+
+				syntax_error()
+			.endif
+
+			.if !ltoken(addr [edi+3])
+
+				syntax_error()
+			.endif
+			mov edi,eax
+			case_if_loop()
+		.else
+			case_ifeq()
+		.endif
+	.endw
 	ret
-case_include:	; !include <>
-	expandsymbol( strstart( addr [edi+8] ) )
-	mov	ebx,eax
-	fopen ( eax, "rt" )
-	free  ( ebx )
-	test	eax,eax
-	jz	error_open
-	mov	ebx,eax
-	lea	edx,line_fp
-	memmove( addr [edx+4], edx, MAXMAKEFILES*4-4 )
-	mov	[edx],ebx
-	jmp	lineloop
-error_open:
-	perror( edi )
-	exit  ( 1 )
-prevfile:
-	fclose( line_fp )
-	lea	edx,line_fp
-	memcpy( edx, addr [edx+4], MAXMAKEFILES*4 )
-	jmp	lineloop
-case_hll:
-	expandsymbol( addr [edi+1] )
-	push	eax
-	strcpy( base, eax )
-	call	free
-	strstart( eax )
-	mov	edi,eax
-	_strnicmp( edi, "include", 7 )
-	jz	case_include
-	_strnicmp( edi, "endif", 5 )
-	jz	case_endif
-	_strnicmp( edi, "else", 4 )
-	jz	case_else
-	mov	ax,[edi]
-	or	ax,2020h
-	cmp	ax,'fi'
-	jne	syntax_error
-	movzx	ebx,if_level
-	mov	if_state[ebx],1
-	inc	if_level
-	_strnicmp( edi, "ifdef", 5 )
-	jz	case_ifdef
-	_strnicmp( edi,"ifndef", 6 )
-	jz	case_ifndef
-	_strnicmp( edi, "ifeq", 4 )
-	jz	case_ifeq
-	mov	al,[edi+2]
-	cmp	al,' '
-	je	@F
-	cmp	al,9
-	jne	syntax_error
-     @@:	; !if <> [[==,>=,<=,&&,||] ..]
-	ltoken( addr [edi+3] )
-	jz	syntax_error
-	mov	edi,eax
 
 case_if_loop:	; !if <> == <> || <> ..
+
 	ltoken( 0 )
 	jz	case_if_a
 	mov	esi,eax
 	ltoken( 0 )
 	jz	syntax_error
+
 	xchg	esi,eax
 	mov	eax,[eax]
 	.switch al
@@ -498,9 +554,7 @@ case_if_loop:	; !if <> == <> || <> ..
 		jne	case_if_true
 		jmp	case_if_false
 	  .default
-	   syntax_error:
-		perror( edi )
-		exit( 1 )
+		jmp	syntax_error
 	.endsw
 
 case_ifeq:
@@ -514,13 +568,13 @@ case_if_a_eq_b:
 	call	find_and_compare
 	jne	case_if_false
 case_if_true:
-	ltoken( 0 )
-	jz	@F
-	cmp	BYTE PTR [eax],'&'
-	je	case_if_next
-     @@:
-	mov	if_state[ebx],0
-	jmp	lineloop
+	.if ltoken(0)
+
+		mov if_state[ebx],0
+	.elseif BYTE PTR [eax] == '&'
+		jmp case_if_next
+	.endif
+	retn
 case_if_false:
 	ltoken( 0 )
 	jz	case_skipdef
@@ -532,50 +586,32 @@ case_if_next:
 	mov	edi,eax
 	jmp	case_if_loop
 case_if_a:
-	findsymbol( edi )
-	jnz	@F
-	mov	eax,edi
-     @@:
-	cmp	BYTE PTR [eax],'0'
-	je	case_skipdef
-	mov	if_state[ebx],0
-	jmp	lineloop
-case_ifdef:	; !ifdef <>
-	ltoken( addr [edi+6] )
-	jz	syntax_error
-	findsymbol( eax )
-	jz	case_skipdef
-	mov	if_state[ebx],0
-	jmp	lineloop
-case_ifndef:	; !ifndef <>
-	ltoken( addr [edi+7] )
-	jz	syntax_error
-	findsymbol( eax )
-	jnz	case_skipdef
-	mov	if_state[ebx],0
-	jmp	lineloop
-case_else:	; !else
-	movzx	ebx,if_level
-	cmp	if_state[ebx-1],0
-	je	case_skipdef
-	jmp	lineloop
+	.if !findsymbol(edi)
+
+		mov eax,edi
+	.endif
+	.if BYTE PTR [eax] != '0'
+
+		mov if_state[ebx],0
+		retn
+	.endif
 case_skipdef:
-	call	skipiftag
-	jmp	lineloop
-case_endif:	; !endif
-	dec	if_level
-	jmp	lineloop
-find_and_compare:
-	findsymbol( edi )
-	jz	@F
-	mov	edi,eax
-     @@:
-	findsymbol( esi )
-	jz	@F
-	mov	esi,eax
-     @@:
-	_stricmp( edi, esi )
+	skipiftag()
 	retn
+find_and_compare:
+	.if findsymbol(edi)
+
+		mov edi,eax
+	.endif
+	.if findsymbol(esi)
+
+		mov esi,eax
+	.endif
+	_stricmp(edi, esi)
+	retn
+syntax_error:
+	perror(edi)
+	exit(1)
 readline ENDP
 
 issymbol PROC USES esi line:ptr sbyte
@@ -604,10 +640,12 @@ nosymbol:
 issymbol ENDP
 
 getline PROC USES esi edi ebx
-  local base
-  local symbol
-	alloca( MAXTARGET )
-	mov	base,eax
+
+local	base
+local	symbol
+
+	mov base,alloca( MAXTARGET )
+
 	add	eax,MAXTARGET-256
 	mov	symbol,eax
 lineloop:
@@ -626,21 +664,21 @@ toend:
 	ret
 
 case_dot:
-	_strnicmp( esi, ".DEFAULT", 8 )
+	_strnicmp( edi, ".DEFAULT", 8 )
 	jz	CASE_DEFAULT
-	_strnicmp( esi, ".DONE", 5 )
+	_strnicmp( edi, ".DONE", 5 )
 	jz	CASE_DONE
-	_strnicmp( esi, ".IGNORE", 7 )
+	_strnicmp( edi, ".IGNORE", 7 )
 	jz	CASE_IGNORE
-	_strnicmp( esi, ".INIT", 5 )
+	_strnicmp( edi, ".INIT", 5 )
 	jz	CASE_INIT
-	_strnicmp( esi, ".SILENT", 7 )
+	_strnicmp( edi, ".SILENT", 7 )
 	jz	CASE_SILENT
-	_strnicmp( esi, ".RESPONSE", 9 )
+	_strnicmp( edi, ".RESPONSE", 9 )
 	jz	CASE_RESPONSE
-	_strnicmp( esi, ".EXTENSIONS", 11 )
+	_strnicmp( edi, ".EXTENSIONS", 11 )
 	jz	CASE_EXTENSIONS
-	_strnicmp( esi, ".SUFFIXES", 9 )
+	_strnicmp( edi, ".SUFFIXES", 9 )
 	jz	CASE_SUFFIXES
 	;.xxx.obj:
 	jmp	return_EDI
@@ -649,11 +687,50 @@ CASE_DEFAULT:	; define default rule to build target
 CASE_DONE:	; target to build, after all other targets are build
 CASE_IGNORE:	; ignore all error codes during building of targets
 CASE_INIT:	; first target to build, before any target is build
+	jmp	lineloop
 CASE_SILENT:	; do not echo commands
+	inc	option_s
+	jmp	lineloop
 CASE_RESPONSE:	; define a response file for long ( > 128) command lines
+	jmp	lineloop
 CASE_SUFFIXES:	; the suffixes list for selecting implicit rules
+
+	strtoken( edi )
+	.if	!strtoken(0)
+		push	edi
+		lea	edi,suffixes
+		xor	eax,eax
+		mov	ecx,32
+		rep	stosd
+		pop	edi
+		jmp	lineloop
+	.endif
+	lea	esi,suffixes
+	mov	edx,eax
+	.while	eax
+		lodsd
+	.endw
+	mov	eax,edx
+	.while	eax
+		.break .if byte ptr [eax] != '.'
+		mov	[esi-4],salloc(eax)
+		add	esi,4
+		strtoken(0)
+	.endw
+	jmp	lineloop
+
 CASE_EXTENSIONS:; add extensions to the suffixes list
 
+	strtoken( edi )
+	lea	esi,extensions
+	.while	eax
+		lodsd
+	.endw
+	.while	strtoken(0)
+		.break .if byte ptr [eax] != '.'
+		mov [esi-4],salloc(eax)
+		add esi,4
+	.endw
 	jmp	lineloop
 
 case_macro:
@@ -698,107 +775,144 @@ add_macro:
 getline ENDP
 
 addtarget PROC USES esi edi ebx target:ptr sbyte
-  local base
-  local target_name
-  local target_string
-  local target_command
-  local target_srcpath
 
-	alloca( MAXTARGET )
-	mov	base,eax
-	mov	edi,eax
-	mov	esi,target
-	strtrim( esi )
-	salloc( strstart( esi ) )
-	jz	error_memory
-	mov	target_string,eax
-	ltoken( strcpy( edi, eax ) )
-	strrchr( edi, ':' )
-	jz	syntax_error
-	mov	BYTE PTR [eax],0
-	strtrim( edi )
+local	base
+local	target_name
+local	target_string
+local	target_command
+local	target_srcpath
 
-	expandsymbol( edi )
-	mov	target_name,eax
-	mov	esi,line_ptr
-	xor	eax,eax
-	mov	target_srcpath,eax
-	mov	target_command,eax
-	mov	[esi],al
-	mov	ah,[edi]
-	mov	[edi],al
-	cmp	ah,'{'
-	jne	@F
-	mov	ebx,target_name
-	strchr( ebx, '}' )
-	jz	@F
-	mov	BYTE PTR [eax],0
-	lea	edx,[eax+1]
-	push	edx
-	salloc( addr [ebx+1] )
-	pop	edx
-	jz	error_memory
-	mov	target_srcpath,eax
-	strstart( edx )
-	strcpy( ebx, eax )
-@@:
-	call	getline
-	jz	alloc_target
-command_loop:
-	istarget( esi )
-	jnz	command_end
-	strcat( edi, strstart( esi ) )
-	strcat( edi, linefeed )
-	call	getline
-	jnz	command_loop
-	mov	BYTE PTR [esi],0
-command_end:
-	cmp	BYTE PTR [edi],0
-	je	alloc_target
-	salloc( edi )
-	jz	error_memory
-	mov	target_command,eax
-alloc_target:
-	malloc( SIZE S_TARGET )
-	jz	error_memory
-	mov	ebx,eax
-	mov	eax,target_table
-	mov	[ebx].S_TARGET.t_next,eax
-	mov	[ebx].S_TARGET.t_prev,0
-	test	eax,eax
-	jz	@F
-	mov	[eax].S_TARGET.t_prev,ebx
-@@:
-	mov	eax,target_name
-	mov	[ebx].S_TARGET.t_target,eax
-	mov	eax,target_string
-	mov	[ebx].S_TARGET.t_string,eax
-	mov	eax,target_command
-	mov	[ebx].S_TARGET.t_command,eax
-	mov	eax,target_srcpath
-	mov	[ebx].S_TARGET.t_srcpath,eax
-	inc	target_count
-	mov	target_table,ebx
-	_stricmp( target_name, "all" )
-	jnz	@F
-	mov	[ebx].S_TARGET.t_type,_T_ALL
-	jmp	next_target
-@@:
-	mov	[ebx].S_TARGET.t_type,_T_TARGET
-	mov	eax,target_name
-	cmp	BYTE PTR [eax],'.'
-	jne	next_target
-	inc	eax
-	strstri( eax, ".obj" )
-	jz	next_target
-	mov	[ebx].S_TARGET.t_type,_T_METHOD
-next_target:
-	istarget( esi )
-	jz	toend
-	mov	esp,ebp
-	addtarget( esi )
-toend:
+	mov base,alloca( MAXTARGET )
+
+	.repeat
+		mov edi,base
+		mov esi,target
+		strtrim(esi)
+
+		.if !salloc(strstart(esi))
+
+			perror("To many targets..")
+			exit(1)
+		.endif
+
+		mov target_string,eax
+		ltoken(strcpy(edi, eax))
+		.if !strrchr(edi, ':')
+
+			perror(esi)
+			exit(1)
+		.endif
+
+		mov BYTE PTR [eax],0
+		strtrim(edi)
+		mov target_name,expandsymbol(edi)
+		mov esi,line_ptr
+		xor eax,eax
+		mov target_srcpath,eax
+		mov target_command,eax
+
+		mov [esi],al
+		mov ah,[edi]
+		mov [edi],al
+		.if ah == '{'
+
+			mov ebx,target_name
+			.if strchr(ebx, '}')
+
+				mov BYTE PTR [eax],0
+				lea edx,[eax+1]
+				push edx
+				.if !salloc( addr [ebx+1] )
+
+					perror("To many targets..")
+					exit(1)
+				.endif
+				pop edx
+				mov target_srcpath,eax
+				strcpy(ebx, strstart(edx))
+			.endif
+		.endif
+
+		.while	getline()
+
+			.break .if istarget(esi)
+			strcat(edi, strstart(esi))
+			strcat(edi, linefeed)
+		.endw
+		.if !eax
+
+			mov [esi],al
+		.endif
+
+		.if BYTE PTR [edi]
+
+			.if !salloc( edi )
+
+				perror("To many targets..")
+				exit(1)
+			.endif
+			mov target_command,eax
+		.endif
+
+		.if !malloc( SIZE S_TARGET )
+
+			perror("To many targets..")
+			exit(1)
+		.endif
+
+		mov ebx,eax
+		mov eax,target_table
+		mov [ebx].S_TARGET.t_next,eax
+		mov [ebx].S_TARGET.t_prev,0
+		.if eax
+
+			mov [eax].S_TARGET.t_prev,ebx
+		.endif
+
+		mov eax,target_name
+		mov [ebx].S_TARGET.t_target,eax
+		mov eax,target_string
+		mov [ebx].S_TARGET.t_string,eax
+		mov eax,target_command
+		mov [ebx].S_TARGET.t_command,eax
+		mov eax,target_srcpath
+		mov [ebx].S_TARGET.t_srcpath,eax
+		inc target_count
+		mov target_table,ebx
+
+		.if !_stricmp(target_name, "all")
+
+			mov [ebx].S_TARGET.t_type,_T_ALL
+			.break
+		.endif
+
+		mov [ebx].S_TARGET.t_type,_T_TARGET
+		mov eax,target_name
+		.break .if BYTE PTR [eax] != '.'
+
+		inc	eax
+		push	esi
+		lea	esi,suffixes
+		mov	edi,eax
+		lodsd
+		.while	eax
+			.break .if strstri(edi, eax)
+			lodsd
+		.endw
+		pop	esi
+
+		.break .if !eax
+		mov [ebx].S_TARGET.t_type,_T_METHOD
+
+	.until	1
+
+	.if istarget(esi)
+
+		mov esp,ebp
+		addtarget(esi)
+	.endif
 	ret
+
 error_memory:
 	perror( "To many targets.." )
 	exit ( 1 )
@@ -840,34 +954,49 @@ error:
 findtarget ENDP
 
 build_object PROC USES esi edi ebx object:ptr sbyte
-  local srcname[_MAX_PATH]:BYTE
-  local srcfile[_MAX_PATH]:BYTE
-  local command[_MAX_PATH]:BYTE
+
+local	srcname[_MAX_PATH]:BYTE
+local	srcfile[_MAX_PATH]:BYTE
+local	command[_MAX_PATH]:BYTE
+local	p,q,r
+
 	lea	ebx,srcname
 	lea	edi,srcfile
 	lea	esi,extensions
-	strcpy( ebx, object )
-	.if strext( ebx )
+	.if	strext( strcpy( ebx, object ) )
+
 		mov BYTE PTR [eax],0
 	.endif
+	lea	ebx,suffixes
+nextsuffix:
+	mov	eax,[ebx]
+	test	eax,eax
+	jz	error_EBX
+	mov	p,eax
+	add	ebx,4
+	lea	esi,extensions
 findsrcfile:
 	lodsd
 	test	eax,eax
-	jz	error_EBX
-	mov	edx,eax
-	strcat( strcpy( edi, eax ), ".obj" )
-	findtarget( edi )
+	jz	nextsuffix
+	mov	q,eax
+
+	findtarget( strcat( strcpy( edi, eax ), p ) )
 	jz	findsrcfile
 	push	eax
-	strcat( strcpy( edi, ebx ), edx )
+	strcat( strcpy( edi, addr srcname ), q )
 	pop	edx
 	mov	ecx,[edx].S_TARGET.t_srcpath
-	.if ecx
+	.if	ecx
+
 		strcpy( edi, strfcat( addr command, ecx, edi ) )
 	.endif
-	filexist( eax )
+	push	edx
+	filexist(eax)
+	pop	edx
 	dec	eax
 	jnz	findsrcfile
+	lea	ebx,srcname
 
 	mov	eax,[edx].S_TARGET.t_command
 	test	eax,eax
@@ -876,15 +1005,30 @@ findsrcfile:
 
 	strxchg( strcpy( esi, eax ), "$*", ebx )
 	strxchg( esi, "$<", edi )
-	setfext( edi, ".obj" )
+
+	setfext( edi, suffixes )
 	strxchg( esi, "$@", edi )
 
 	expandsymbol( esi )
 	mov	esi,eax
 	.if	option_d
+
 		printf( "%s\n", esi )
 	.else
+		.while	strchr( esi, 10 )
+
+			lea ebx,[eax+1]
+			mov BYTE PTR [eax],0
+			.if !option_s
+
+				printf( "\t%s\n", esi )
+			.endif
+			system( esi )
+			mov BYTE PTR [ebx-1],10
+			mov esi,ebx
+		.endw
 		.if !option_s
+
 			printf( "\t%s\n", esi )
 		.endif
 		system( esi )
@@ -899,7 +1043,7 @@ error_EDI:
 	perror( edi )
 	exit ( 1  )
 error_EBX:
-	perror( ebx )
+	perror( addr srcname )
 	exit ( 1 )
 build_object ENDP
 
@@ -1002,34 +1146,38 @@ parse_command:
 	mov	eax,[esi].S_TARGET.t_command
 	test	eax,eax		; all: <target1> [<target2>] ...
 	jz	toend		;  <no command>
-	expandsymbol( eax )
-	mov	esi,eax
-	strcpy( base, eax )
-	mov	edi,eax
+
+
+	mov	esi,expandsymbol( eax )
+	mov	edi,strcpy( base, eax )
 	free( esi )
 	strxchg( edi, "$@", target_name )
 	strxchg( edi, "$*", target_file )
 
-;	invoke	expandsymbol,eax
-;	mov	esi,eax
 	mov	esi,edi
 	strstr( esi, "@<<" )
 	jz	no_responsefile
+
 	lea	ebx,[eax+3]
 	mov	BYTE PTR [ebx-2],0
 	strchr( ebx, 10 )
 	jz	error
+
 	lea	ebx,[eax+1]
 	strstr( ebx, "<<" )
 	jz	no_responsefile
+
 	mov	BYTE PTR [eax],0
 	lea	edi,[eax+2]
 	opentemp( addr responsefile, "$$$" )
 	jz	error
+
 	push	eax
 	fprintf( eax, ebx )
 	call	fclose
-	.if option_d
+
+	.if	option_d
+
 		printf( "%s:\n%s\n", addr responsefile, ebx )
 	.endif
 	strcat( esi, addr responsefile )
@@ -1039,14 +1187,18 @@ parse_command:
 
 no_responsefile:
 
-	.if option_d
+	.if	option_d
+
 		printf( "%s\n", esi )
 		xor	eax,eax
 	.else
-		.if !option_s
+		.if	!option_s
+
 			mov	edi,esi
 			printf( "%s\n", target_path )
+
 			.while	strchr( edi, 10 )
+
 				lea	ebx,[eax+1]
 				mov	BYTE PTR [eax],0
 				printf( "\t%s\n", edi )
@@ -1057,7 +1209,8 @@ no_responsefile:
 		.endif
 
 		xor	edi,edi
-		.if opentemp( addr commandfile, "cmd" )
+		.if	opentemp( addr commandfile, "cmd" )
+
 			push	eax
 			fprintf( eax, "@echo off\n%s\n", esi )
 			call	fclose
@@ -1066,8 +1219,9 @@ no_responsefile:
 			add	edi,eax
 			add	edi,errorlevel
 		.endif
-		remove( addr responsefile )
-		remove( addr commandfile )
+
+		;remove( addr responsefile )
+		;remove( addr commandfile )
 		test	edi,edi
 		jnz	error
 	.endif
@@ -1107,59 +1261,63 @@ addtargetarg ENDP
 
 make	PROC USES esi edi ebx file:ptr sbyte, target:ptr sbyte
 
-	.if !fopen( file, "rt" )
-		perror( file )
-		exit( 1 )
+	.if !fopen(file, "rt")
+
+		perror(file)
+		exit(1)
 	.endif
-	mov	line_fp,eax
+	mov line_fp,eax
+
 	.while	getline()
-		mov	esi,eax
-		.break .if !istarget( esi )
-		addtarget( esi )
+
+		mov esi,eax
+		.break .if !istarget(esi)
+		addtarget(esi)
 	.endw
 
-	mov esi,target_args
-	.if !esi
-		mov eax,target_count
-		.if !eax
-			perror( "Missing target.." )
-			exit( 1 )
+	mov	esi,target_args
+	.if    !esi
+
+		.if !target_count
+
+			perror("Missing target..")
+			exit(1)
 		.endif
 
-		mov	eax,target_table
-		.while	eax
-			mov	edi,eax
-			mov	eax,[eax].S_TARGET.t_next
-		.endw
+		xor  eax,eax
+		xor  ebx,ebx
+		xor  edi,edi
+		.for ecx = target_table: [ecx].S_TARGET.t_next: ecx = [ecx].S_TARGET.t_next
+		.endf
+		.for : ecx && !eax: ecx = [ecx].S_TARGET.t_prev
 
-		mov	ecx,edi
-		.repeat
-			mov	edi,ecx
-			mov	eax,[ecx].S_TARGET.t_type
+			mov edi,ecx
+			mov eax,[ecx].S_TARGET.t_type
 			.break .if eax == _T_ALL
-			cmp	eax,_T_METHOD
-			mov	eax,[ecx].S_TARGET.t_command
-			.if ZERO?
-				xor eax,eax
-			.endif
-			mov	ecx,[ecx].S_TARGET.t_prev
-			.break .if !ecx
-		.until	eax
 
-		.if !eax
-			perror( [edi].S_TARGET.t_target )
-			exit( 1 )
+			.if eax == _T_METHOD
+				mov ebx,ecx
+				xor eax,eax
+			.else
+				mov eax,[ecx].S_TARGET.t_command
+			.endif
+		.endf
+		.if  !eax && !ebx
+
+			perror([edi].S_TARGET.t_target)
+			exit(1)
 		.endif
-		addtargetarg( [edi].S_TARGET.t_target )
-		mov	esi,target_args
+		addtargetarg([edi].S_TARGET.t_target)
+		mov esi,target_args
 	.endif
 
-	.while	esi
-		.break .if !findtarget( [esi].S_ARGS.a_name )
-		build_target( eax )
-		mov	esi,[esi].S_ARGS.a_next
-	.endw
+	.for : esi: esi = [esi].S_ARGS.a_next
+
+		.break .if !findtarget([esi].S_ARGS.a_name)
+		build_target(eax)
+	.endf
 	ret
+
 make	ENDP
 
 ;-------------------------------------------------------------------------------
@@ -1191,14 +1349,21 @@ addmakefile ENDP
 
 main	PROC C
 
-;	int 3
 	malloc( MAXSYMBOLS*4*2 )
 	mov	symbol_table,eax
 	expenviron( addr cmdexe )
 	mov	__pCommandCom,eax
 
-	mov	edi,_argc
-	mov	esi,_argv
+	.if    !getenv( "AsmcDir" )
+		getenv( "DZ" )
+	.endif
+	.if	eax
+		strcpy(addr includepath, eax)
+		strcat(eax, "\\lib" )
+	.endif
+
+	mov	edi,__argc
+	mov	esi,__argv
 	.while	edi > 1
 		dec	edi
 		add	esi,4
@@ -1212,6 +1377,10 @@ main	PROC C
 			  .case 'd': inc option_d: .endc
 			  .case 'h': inc option_h: .endc
 			  .case 's': inc option_s: .endc
+			  .case 'I'
+				strcpy(addr includepath, addr [edx+2])
+				.endc
+
 			  .case 'f'
 				add	edx,2
 				.if	eax & 00FF0000h

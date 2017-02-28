@@ -12,12 +12,12 @@ ConsoleIdle PROC
 ifdef DEBUG
 		mov eax,hCurrentWindow
 else
-		.if LPGetForegroundWindow() != hCurrentWindow
+		.if GetForegroundWindow() != hCurrentWindow
 
 			mov eax,keyshift
 			and DWORD PTR [eax],not 0x00FF030F
 
-			.while	LPGetForegroundWindow() != hCurrentWindow
+			.while	GetForegroundWindow() != hCurrentWindow
 
 				Sleep( CON_SLEEP_TIME * 10 )
 				.break .if tupdate()

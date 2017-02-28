@@ -3,7 +3,12 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.23 - xx xxx 2017
+- added ++/--/+=/-= to "initialization" of .FOR loop
+- removed "if the first operand is a register" in .FOR loop
 - fixed error in proto fastcall :type -- fast32.asm
+- fixed switch /zlp -- renamed from /zip
+- added assign option to the .for loop inc/dec section:
+	.for eax = table: [eax].t_next: eax = [eax].t_next
 
 Changes in 2.22 - 11 Feb 2017
 - added .FOR[S] [<initialization>] : [<condition>] : [<increment/decrement>]

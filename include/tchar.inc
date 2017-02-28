@@ -4,11 +4,6 @@
 ifndef _INC_TCHAR
 _INC_TCHAR equ 1
 
-ifdef _WIN32
-rax equ <eax>
-rdx equ <edx>
-endif
-
 _ftcscat		equ <_tcscat>
 _ftcschr		equ <_tcschr>
 _ftcscpy		equ <_tcscpy>

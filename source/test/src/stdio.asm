@@ -24,9 +24,11 @@ test_f	macro z,r,s,v:VARARG
 	test_f 8,"89ABCDEF","%X",89ABCDEFh
 	test_f 8,"89ABCDEF","%p",89ABCDEFh
 	test_f 16,"1123456789ABCDEF","%016I64X",89ABCDEFh,11234567h
-	test_f 1,"1","%b",1
-	test_f 3,"011","%03b",3
-	test_f 16,"1000000000000000","%lb",8000h
+	test_f 16,"1123456789ABCDEF","%016llX",89ABCDEFh,11234567h
+	test_f 16,"1123456789ABCDEF","%016LX",89ABCDEFh,11234567h
+;	test_f 1,"1","%b",1
+;	test_f 3,"011","%03b",3
+;	test_f 16,"1000000000000000","%lb",8000h
 	test_f 2,"-1","%i",0FFFFFFFFh
 	test_f 10,"4294967295","%u",0FFFFFFFFh
 	.assert atol("247") == 247

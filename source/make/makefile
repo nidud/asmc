@@ -1,9 +1,11 @@
 make.exe:
-	asmc -q $*.asm
+	asmc -q -Cs $*.asm
 	linkw @<<
 name	$@
 option	q
 option	m
-file	{ ..\..\lib\c0 *.obj }
+Lib	libc
+file	{ ..\..\lib\crt *.obj }
 <<
+	wrc -q res\$*.res $@
 	del *.obj

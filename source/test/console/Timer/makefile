@@ -1,6 +1,4 @@
-Timer.exe:
-	iddc -r *.idd
-	asmc -q $*.asm
-	linkw N $@ F %AsmcDir%\lib\c0, *.obj
-	del *.obj
+Name = Timer
+Objs = Timer.obj About.obj Help1.obj Help2.obj TMain.obj
 
+!include master.mif

@@ -10,7 +10,6 @@ ifndef _WINDOWS_
 _WINDOWS_ equ 1
 
 _X86_	  equ 1
-__STDC__  equ 1
 _MSC_VER  equ 1000
 
 _INTEGRAL_MAX_BITS equ 64

@@ -13,6 +13,7 @@ include string.inc
 include stdio.inc
 include stdlib.inc
 include process.inc
+include winbase.inc
 
 STARTYEAR	equ 0
 MAXYEAR		equ 3000
@@ -203,8 +204,8 @@ set_time ENDP
 ;
 ; Print Date Time Month string
 ;
-PutDate PROC USES esi edi ebx y, tm
-	mov	esi,tm
+PutDate PROC USES esi edi ebx y, SystemTime
+	mov	esi,SystemTime
 	movzx	eax,[esi].SYSTEMTIME.wDay
 	movzx	ecx,[esi].SYSTEMTIME.wMonth
 	movzx	edx,[esi].SYSTEMTIME.wYear
@@ -474,7 +475,9 @@ parse_time ENDP
 ; Edit Time
 ;
 event_gettime PROC USES esi edi ebx
-	local	wc[4]
+
+local	wc[4]
+
 	mov	esi,DLG_TMain
 	mov	ebx,[esi+2*16].S_TOBJ.to_data
 	lea	edi,wc
@@ -484,12 +487,15 @@ event_gettime PROC USES esi edi ebx
 	mov	edi,[esi+2*16].S_TOBJ.to_rect
 	add	di,WORD PTR [esi].S_DOBJ.dl_rect
 	rcxchg( edi, addr wc )
-	strstime( ebx, addr c_time )
+	SystemTimeToString( ebx, addr c_time )
+
 	.if	dledit( ebx, edi, 64, 0 ) == KEY_ENTER || eax == KEY_KPENTER
+
 		parse_time( ebx )
 	.endif
 	rcxchg( edi, addr wc )
 	ret
+
 event_gettime ENDP
 ;
 ; Edit Date
@@ -520,14 +526,14 @@ event_getdate ENDP
 ;
 main	PROC C
 local	cursor:S_CURSOR
-	GetCursor( addr cursor )
+	CursorGet( addr cursor )
 	CursorOff()
 
 	mov	tupdate,TimerUpdate
 	mov	tdidle,ConsoleIdle
 	or	console,CON_SLEEP
 
-	mov	ebx,_argv
+	mov	ebx,__argv
 	mov	eax,[ebx]
 	strcpy ( strfn( strcpy( addr cp_command, eax ) ), addr cp_batch )
 
@@ -535,7 +541,7 @@ local	cursor:S_CURSOR
 	mov	c_time.wSecond,0
 
 	mov	edi,1
-	.while	edi < _argc
+	.while	edi < __argc
 		mov	esi,[ebx+edi*4]
 		mov	eax,[esi]
 		.if	al == '-' || al == '/'
@@ -549,7 +555,7 @@ local	cursor:S_CURSOR
 				mov	eax,[ebx]
 				strcpy( addr cp_command, eax )
 				add	edi,1
-				.while	edi < _argc
+				.while	edi < __argc
 					strcat( eax, " " )
 					strcat( eax, [ebx+edi*4] )
 					add	edi,1
@@ -771,7 +777,7 @@ local	cursor:S_CURSOR
 		SetConsoleSize( o_scrcol, o_scrrow )
 	.endif
 toend:
-	SetCursor( addr cursor )
+	CursorSet( addr cursor )
 	xor	eax,eax
 	ret
 main	ENDP

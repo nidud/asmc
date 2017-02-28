@@ -16,7 +16,8 @@ Name	$@
 Option	Q
 Option	Map
 Option	Stub=stub.exe
-File	{ ..\..\lib\C0.obj *.obj }
+Lib	libc
+File	{ ..\..\lib\crt.obj *.obj }
 <<
 	wrc -q res\$*.res $@
 	del stub.exe

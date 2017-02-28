@@ -56,7 +56,7 @@ event:
 	mov	eax,edx
 	shr	eax,16
 	and	eax,3
-	jnz	mouse_event
+	jnz	event_mouse
 	mov	eax,y
 	cmp	eax,keybmouse_y
 	jne	@F
@@ -77,7 +77,7 @@ event:
 	add	ecx,1
 	scputf( edx, ecx, 0, 10, "[0x%02X %3d]", eax, eax )
 	jmp	event
-mouse_event:
+event_mouse:
 	push	eax
 	call	getmchar
 	pop	ecx

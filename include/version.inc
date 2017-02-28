@@ -1,3 +1,0 @@
-VERSION equ 0348h
-VERSSTR equ <'3.48'>
-

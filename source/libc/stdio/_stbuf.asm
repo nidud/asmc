@@ -2,13 +2,9 @@ include stdio.inc
 include io.inc
 include alloc.inc
 include crtl.inc
-IFDEF	_UNICODE
-OFLUSH	equ <woutput_flush>
-ELSE
-OFLUSH	equ <output_flush>
-ENDIF
+
 extrn	_stdbuf:dword
-extrn	OFLUSH:dword
+;extrn	output_flush:dword
 
 	.code
 
@@ -68,12 +64,12 @@ _stbuf	PROC USES esi edi fp:LPFILE
 	ret
 
 _stbuf	ENDP
-
+if 0
 __STDIO:
 	mov eax,_flsbuf
-	mov OFLUSH,eax
+	mov output_flush,eax
 	ret
 
 pragma_init __STDIO, 2
-
+endif
 	END

@@ -12,7 +12,7 @@ _MAX_DIR	equ 256
 _MAX_FNAME	equ 256
 _MAX_EXT	equ 256
 
-externdef	__argc:SIZE_T
+externdef	__argc:dword
 externdef	__argv:SIZE_T
 externdef	_environ:SIZE_T
 externdef	_pgmptr:SIZE_T
@@ -83,9 +83,9 @@ endif
 _WSTDLIB_DEFINED equ 1
 endif
 
-IFDEF __PE__
+if defined(_MSVCRT) or defined(__PE__)
 __getmainargs	proto :ptr, :ptr, :ptr, :ptr, :ptr
 __iob_func	proto
-ENDIF
+endif
 
 .list

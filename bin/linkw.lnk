@@ -10,7 +10,7 @@ system begin 386
     option  osname='Windows NT character-mode'
     option  map
     libpath %AsmCDir%\lib
-    library libo,kernel32,user32
+    library kernel32,user32
     format  windows nt
     runtime console=4.0
 end

@@ -15,7 +15,7 @@ local	ci:CONSOLE_SCREEN_BUFFER_INFO
 
 	GetConsoleMode( hStdInput, addr OldConsoleMode )
 
-	mov	hCurrentWindow,LPGetForegroundWindow()
+	mov	hCurrentWindow,GetForegroundWindow()
 	mov	eax,ENABLE_WINDOW_INPUT
 	.if	console & CON_MOUSE
 

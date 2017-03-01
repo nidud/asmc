@@ -98,6 +98,7 @@ targets = \
 	userenv.lib	\
 	usp10.lib	\
 	uxtheme.lib	\
+	version.lib	\
 	virtdisk.lib	\
 	webservices.lib \
 	winbio.lib	\

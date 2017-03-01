@@ -6,6 +6,15 @@ IFDEF __PE__
 option	dllimport:<msvcrt>
 ENDIF
 
+;
+; Maximum number of bytes in multi-byte character in the current locale
+; (also defined in ctype.h).
+;
+ifndef MB_CUR_MAX
+MB_CUR_MAX equ <__mb_cur_max>
+externdef __mb_cur_max:dword
+endif
+
 _MAX_PATH	equ 260
 _MAX_DRIVE	equ 3
 _MAX_DIR	equ 256
@@ -23,6 +32,7 @@ atol		PROTO :LPSTR
 _atoi64		PROTO :LPSTR
 mbtowc		PROTO :LPWSTR, :LPSTR, :SIZE_T
 mbstowcs	PROTO :LPWSTR, :LPSTR, :SIZE_T
+wctomb		proto :LPSTR, :wchar_t
 
 QSORTCMD_T	TYPEDEF PROTO :PVOID, :PVOID
 LPQSORTCMD	TYPEDEF PTR QSORTCMD_T
@@ -84,8 +94,9 @@ _WSTDLIB_DEFINED equ 1
 endif
 
 if defined(_MSVCRT) or defined(__PE__)
-__getmainargs	proto :ptr, :ptr, :ptr, :ptr, :ptr
-__iob_func	proto
+__getmainargs	_CDecl proto :ptr, :ptr, :ptr, :ptr, :ptr
+__wgetmainargs	_CDecl proto :ptr, :ptr, :ptr, :ptr, :ptr
+__iob_func	_CDecl proto
 endif
 
 .list

@@ -1,7 +1,7 @@
 ifndef DLL_FOR_WIN32S
 
-include locale.inc
 include setlocal.inc
+include winnls.inc
 
 .data
 ;

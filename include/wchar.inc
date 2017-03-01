@@ -90,21 +90,21 @@ endif
 ifndef _WFINDDATA_T_DEFINED
 
 _wfinddata_t		STRUC
-attrib			dword ?
+attrib			dd ?
 time_create		time_t ?	;; -1 for FAT file systems
 time_access		time_t ?	;; -1 for FAT file systems
 time_write		time_t ?
-_size			_fsize_t ?
+_size			dq ?
 _name			wchar_t 260 dup(?)
 _wfinddata_t		ENDS
 
 if     _INTEGRAL_MAX_BITS GE 64
 _wfinddatai64_t		STRUC
-attrib			dword ?
+attrib			dd ?
 time_create		time_t ?	;; -1 for FAT file systems
 time_access		time_t ?	;; -1 for FAT file systems
 time_write		time_t ?
-_size			qword ?
+_size			dq ?
 _name			wchar_t 260 dup(?)
 _wfinddatai64_t		ENDS
 endif

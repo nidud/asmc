@@ -13,6 +13,7 @@ externdef	OldErrorMode:dword
 
 __isexec	PROTO :LPSTR
 __setenvp	PROTO :LPSTR
+__wsetenvp	PROTO :LPWSTR
 __setargv	PROTO :SIZE_T, :PVOID, :LPSTR
 __initialize	PROTO :PVOID, :PVOID
 __allocwpath	PROTO :LPSTR

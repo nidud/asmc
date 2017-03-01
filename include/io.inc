@@ -3,9 +3,9 @@ ifndef __LIBC_INC
 endif
 
 .xlist
-IFDEF __PE__
+ifdef __PE__
 option	dllimport:<msvcrt>
-ENDIF
+endif
 
 _NFILE_		equ 20
 
@@ -43,23 +43,44 @@ dwLowDateTime	dd ?
 dwHighDateTime	dd ?
 FILETIME	ENDS
 
-_finddata_t	STRUC
-ff_attrib	dd ?	; DWORD File attributes
-ff_time_create	dd ?	; DWORD File creation time
-ff_time_access	dd ?	; DWORD Last access time
-ff_time_write	dd ?	; DWORD Last modification time
-ff_size		dq ?	; QWORD File size
-ff_name		db 260 dup(?)
-_finddata_t	ENDS	; 284 byte
+ifndef _INTEGRAL_MAX_BITS
+_INTEGRAL_MAX_BITS equ 64
+endif
+ifndef _TIME_T_DEFINED
+time_t		typedef sdword
+_TIME_T_DEFINED equ 1
+endif
 
+_finddata_t	STRUC
+ff_attrib	dd ?
+ff_time_create	time_t ?	; File creation time
+ff_time_access	time_t ?	; Last access time
+ff_time_write	time_t ?	; Last modification time
+ff_size		dq ?
+ff_name		db 260 dup(?)
+_finddata_t	ENDS
+
+ifndef _WFINDDATA_T_DEFINED
 _wfinddata_t	STRUC
-ff_attrib	dd ?	; DWORD File attributes
-ff_time_create	dd ?	; DWORD File creation time
-ff_time_access	dd ?	; DWORD Last access time
-ff_time_write	dd ?	; DWORD Last modification time
-ff_size		dq ?	; QWORD File size
-ff_name		dw 260 dup(?)
+attrib		dd ?
+time_create	time_t ?	;; -1 for FAT file systems
+time_access	time_t ?	;; -1 for FAT file systems
+time_write	time_t ?
+_size		dq ?
+_name		wchar_t 260 dup(?)
 _wfinddata_t	ENDS
+if _INTEGRAL_MAX_BITS GE 64
+_wfinddatai64_t STRUC
+attrib		dd ?
+time_create	time_t ?	;; -1 for FAT file systems
+time_access	time_t ?	;; -1 for FAT file systems
+time_write	time_t ?
+_size		dq ?
+_name		wchar_t 260 dup(?)
+_wfinddatai64_t ENDS
+endif
+_WFINDDATA_T_DEFINED	equ 1
+endif
 
 externdef	_nfile:DWORD
 externdef	_osfile:BYTE

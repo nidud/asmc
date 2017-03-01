@@ -1,4 +1,5 @@
 include stdlib.inc
+include winnls.inc
 include errno.inc
 include setlocal.inc
 

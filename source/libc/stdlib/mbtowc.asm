@@ -6,6 +6,8 @@ include locale.inc
 include setlocal.inc
 include crtl.inc
 
+extern __invalid_mb_chars:SINT
+
 	.code
 
 mbtowc	proc pwc:LPWSTR, s:LPSTR, n:SIZE_T

@@ -1,4 +1,4 @@
-include local.inc
+include locale.inc
 
 .xlist
 

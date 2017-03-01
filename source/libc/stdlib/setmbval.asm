@@ -1,6 +1,8 @@
 include crtl.inc
 include winnls.inc
 
+public __invalid_mb_chars
+
 .data
 __invalid_mb_chars dd 0
 

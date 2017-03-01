@@ -6,6 +6,7 @@ include stdio.inc
 include stdlib.inc
 include string.inc
 include process.inc
+include winbase.inc
 
 .data
 
@@ -21,8 +22,8 @@ main	proc c uses ebx edi esi
 local	cmd[_MAX_PATH]:byte
 local	com[_MAX_PATH]:byte
 
-	mov	edi,_argc
-	mov	esi,_argv
+	mov	edi,__argc
+	mov	esi,__argv
 	.if	edi > 1
 
 		lea	ebx,cmd

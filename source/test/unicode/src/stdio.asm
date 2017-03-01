@@ -2,12 +2,13 @@ include io.inc
 include stdio.inc
 include stdlib.inc
 include string.inc
+include tchar.inc
 
 	.data
 	buf dw 4096 dup(?)
 	.code
 
-main	proc c
+_tmain	proc c
 
 	lea edi,buf
 test_f	macro z,r,s,v:VARARG
@@ -30,6 +31,7 @@ test_f	macro z,r,s,v:VARARG
 	test_f 16,"1000000000000000","%lb",8000h
 	test_f 2,"-1","%i",0FFFFFFFFh
 	test_f 10,"4294967295","%u",0FFFFFFFFh
+	test_f 3,"003","%u",3
 
 	.assert _wtol("247") == 247
 	.assert _wfopen("test.fil","w")
@@ -42,6 +44,6 @@ test_f	macro z,r,s,v:VARARG
 	.assert !wcsncmp(addr buf,"003",3)
 	.assert !_wremove("test.fil")
 	ret
-main	endp
+_tmain	endp
 
 	end

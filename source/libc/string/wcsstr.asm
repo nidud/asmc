@@ -13,7 +13,7 @@ wcsstr	PROC USES esi edi ebx s1:LPWSTR, s2:LPWSTR
 			.for cx = [esi] ::
 
 				mov ax,[edi]
-				.break2 .if !eax
+				.break(2) .if !eax
 				add edi,2
 				.break .if ax == cx
 			.endf
@@ -25,7 +25,7 @@ wcsstr	PROC USES esi edi ebx s1:LPWSTR, s2:LPWSTR
 				.break .if ax != [ebx]
 			.endf
 			mov esi,s2
-			.break1 .ifz
+			.break(1) .ifz
 		.endw
 		mov eax,edi
 		sub eax,2

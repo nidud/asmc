@@ -26,9 +26,9 @@
 	 .FOR::
 	  .FOR::
 	   .FOR::
-		.CONT3
-		.CONT03
-		.BREAK3
+		.CONTINUE(3)
+		.CONTINUE(03)
+		.BREAK(3)
 	   .ENDF
 	  .ENDF
 	 .ENDF

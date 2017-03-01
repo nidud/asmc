@@ -34,7 +34,7 @@ _stbuf	PROC USES esi edi fp:LPFILE
 		;
 		mov	ecx,[esi]._flag
 		and	ecx,_IOMYBUF or _IONBF or _IOYOURBUF
-		.breaknz
+		.break .ifnz
 
 		or	ecx,_IOWRT or _IOYOURBUF or _IOFLRTN
 		mov	[esi]._flag,ecx

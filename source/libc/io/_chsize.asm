@@ -49,7 +49,7 @@ _chsize PROC USES edi esi handle:SINT, new_size
 					mov errno,ERROR_DISK_FULL
 					mov eax,-1
 
-					.break1
+					.break(1)
 				.endif
 			.endw
 		.endif

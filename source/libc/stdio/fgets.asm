@@ -37,7 +37,7 @@ FGETS	PROC USES ebx buf:LPTSTR, count:SINT, fp:LPFILE
 					.break .if edx != buf
 
 					xor eax,eax
-					.break1
+					.break(1)
 				.endif
 			.else
 				mov	eax,[ebx]._ptr

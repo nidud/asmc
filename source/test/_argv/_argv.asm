@@ -1,6 +1,7 @@
 include io.inc
 include string.inc
 include stdlib.inc
+include winbase.inc
 
 .code
 
@@ -10,8 +11,8 @@ local	lf,
 	lpNumberOfBytesWritten,
 	hStdOut
 
-	mov	esi,_argv
-	mov	edi,_argc
+	mov	esi,__argv
+	mov	edi,__argc
 	mov	lf,0A0Dh
 	mov	hStdOut,GetStdHandle( STD_OUTPUT_HANDLE )
 

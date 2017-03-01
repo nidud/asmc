@@ -3,6 +3,10 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.23 - xx xxx 2017
+- removed .BREAKxx and CONTxx
+- removed .ENDCxx
+- added .break(1..n) -- removed .break[1|2|3]
+- added .continue(0..n) -- removed .cont[0|1|2|3]
 - added ++/--/+=/-= to "initialization" of .FOR loop
 - removed "if the first operand is a register" in .FOR loop
 - fixed error in proto fastcall :type -- fast32.asm

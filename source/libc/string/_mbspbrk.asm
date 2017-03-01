@@ -11,7 +11,7 @@ _mbspbrk PROC USES esi edi s1:LPSTR, s2:LPSTR
 	not	ecx
 	dec	ecx
 	.repeat
-		.breakz
+		.break .ifz
 		.for esi = s1, al = [esi] : eax : esi++
 
 			mov	edi,s2
@@ -20,7 +20,7 @@ _mbspbrk PROC USES esi edi s1:LPSTR, s2:LPSTR
 			mov	ecx,edx
 			.ifz
 				mov eax,esi
-				.break1
+				.break(1)
 			.endif
 			mov	al,[esi+1]
 		.endf

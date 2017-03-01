@@ -12,7 +12,7 @@ wcspbrk PROC USES esi edi s1:LPWSTR, s2:LPWSTR
 	dec	ecx
 
 	.repeat
-		.breakz
+		.break .ifz
 		.for esi = s1, ax = [esi] : eax : esi += 2
 
 			mov	edi,s2
@@ -21,7 +21,7 @@ wcspbrk PROC USES esi edi s1:LPWSTR, s2:LPWSTR
 			mov	ecx,edx
 			.ifz
 				mov eax,esi
-				.break1
+				.break(1)
 			.endif
 			mov	ax,[esi+2]
 		.endf

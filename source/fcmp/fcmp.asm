@@ -61,8 +61,8 @@ else
 endif
 	mov	fp,eax
 
-	mov	edi,_argc
-	mov	esi,_argv
+	mov	edi,__argc
+	mov	esi,__argv
 	cmp	edi,1
 	jna	printusage
 
@@ -247,8 +247,8 @@ ifdef	__PE__
 	option	cstack:on
 
 	.data
-	_argc		dd 0
-	_argv		dd 0
+	__argc		dd 0
+	__argv		dd 0
 	_environ	dd 0
 	.code
 
@@ -261,7 +261,7 @@ local	newmode:	dword,
 	lea	eax,newmode
 	mov	startinfo,eax
 
-	__getmainargs( addr _argc, addr _argv, addr _environ, 0, eax )
+	__getmainargs( addr __argc, addr __argv, addr _environ, 0, eax )
 	exit( main() )
 	ret
 

@@ -1,5 +1,6 @@
 include string.inc
 include direct.inc
+include tchar.inc
 
 	.data
 buf	dw 4096 dup(0)
@@ -10,7 +11,7 @@ cp_9	dw 9
 	dw 0
 	.code
 
-main	proc c
+_tmain	proc c
 
 	lea edi,buf
 	lea esi,buf[4]
@@ -38,6 +39,6 @@ main	proc c
 	xor	eax,eax
 	ret
 
-main	endp
+_tmain	endp
 
 	end

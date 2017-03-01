@@ -2880,72 +2880,82 @@ ParseAssignment proc uses ecx edx esi edi ebx buffer, source
 
 	mov	esi,buffer
 	mov	ebx,source
-	mov	ecx,[ebx]
 
-	.switch cx
-
-	  .case '--'
-		add	ebx,2
-		strcat( esi, "dec " )
-		strcat( esi, ebx )
-		strcat( esi, "\n" )
-		.endc
-
-	  .case '++'
-		add	ebx,2
-		strcat( esi, "inc " )
-		strcat( esi, ebx )
-		strcat( esi, "\n" )
-		.endc
-
-	  .default
-
+	.repeat
 		.if !_mbspbrk(ebx, "+-=")
 
 			asmerr( 2008, ebx )
 			xor	eax,eax
-			.endc
+			.break
 		.endif
-		mov	ecx,[eax]
-		mov	BYTE PTR [eax],0
-		add	eax,2
-		.switch
-		  .case cx == '++'
-			mov	ecx,@CStr( "inc " )
+		mov	edi,eax
+		.if	byte ptr [eax+1] == ' '
+
+			lea ecx,[eax+2]
+			inc eax
+			strcpy(eax, ecx)
+		.endif
+
+		mov	ecx,[ebx]
+		.switch cx
+
+		  .case '--'
+			add	ebx,2
+			strcat( esi, "dec " )
+			strcat( esi, ebx )
+			strcat( esi, "\n" )
 			.endc
-		  .case cx == '--'
-			mov	ecx,@CStr( "dec " )
+
+		  .case '++'
+			add	ebx,2
+			strcat( esi, "inc " )
+			strcat( esi, ebx )
+			strcat( esi, "\n" )
 			.endc
-		  .case cx == '=+'
-			mov	ecx,@CStr( "add " )
-			.endc
-		  .case cx == '=-'
-			mov	ecx,@CStr( "sub " )
-			.endc
-		  .case cl == '='
-			mov	ecx,@CStr( "mov " )
-			sub	eax,1
-			.endc
+
 		  .default
-			asmerr( 2008, ebx )
-			xor	ecx,ecx
-			xor	eax,eax
+
+			mov	ecx,[edi]
+			mov	BYTE PTR [edi],0
+			add	edi,2
+			.switch
+			  .case cx == '++'
+				mov	ecx,@CStr( "inc " )
+				.endc
+			  .case cx == '--'
+				mov	ecx,@CStr( "dec " )
+				.endc
+			  .case cx == '=+'
+				mov	ecx,@CStr( "add " )
+				.endc
+			  .case cx == '=-'
+				mov	ecx,@CStr( "sub " )
+				.endc
+			  .case cl == '='
+				mov	ecx,@CStr( "mov " )
+				sub	edi,1
+				.endc
+			  .default
+				asmerr( 2008, ebx )
+				xor	ecx,ecx
+				xor	eax,eax
+			.endsw
+			.endc	.if !ecx
+
+
+			strcat( esi, ecx )
+			strcat( esi, ebx )
+
+			.if	BYTE PTR [strstart(edi)]
+
+				push	eax
+				strcat( esi, "," )
+				pop	eax
+				strcat( esi, eax )
+			.endif
+			strcat( esi, "\n" )
 		.endsw
-		.endc	.if !ecx
-
-		push	eax
-		strcat( esi, ecx )
-		strcat( esi, ebx )
-		pop	eax
-		.if	BYTE PTR [strstart(eax)]
-
-			push	eax
-			strcat( esi, "," )
-			pop	eax
-			strcat( esi, eax )
-		.endif
-		strcat( esi, "\n" )
-	.endsw
+	.until	1
 	ret
 
 ParseAssignment endp

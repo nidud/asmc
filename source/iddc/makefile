@@ -1,10 +1,3 @@
-iddc.exe:
-	asmc -q $*.asm
-	linkw @<<
-name	$@
-option	q
-option	m
-file	{ ..\..\lib\c0 *.obj }
-<<
+name = iddc
 
-	del *.obj
+!include master.mif

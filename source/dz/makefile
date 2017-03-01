@@ -5,7 +5,7 @@ dz.exe:
 	iddc -r res\*.idd
 	asmc -Cs $(AFLAGS) -Iinc -r src\*.asm
 	libw $*.lib *.obj
-	linkw N $@ Op M, stub=res\dz.bin L dz F ..\..\lib\C0
+	linkw N $@ Op M, stub=res\dz.bin L libc, dz F ..\..\lib\crt
 	wrc -q res\dz.res $@
 	del dz.lib
 	del *.obj

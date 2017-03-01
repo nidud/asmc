@@ -652,8 +652,8 @@ AssembleSubdir ENDP
 
 main	PROC c
 local	path[_MAX_PATH]:BYTE
-	mov	edi,_argc
-	mov	esi,_argv
+	mov	edi,__argc
+	mov	esi,__argv
 	.if edi == 1
 		call arg_option_?
 		ret

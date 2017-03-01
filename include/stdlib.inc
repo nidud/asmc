@@ -94,9 +94,9 @@ _WSTDLIB_DEFINED equ 1
 endif
 
 if defined(_MSVCRT) or defined(__PE__)
-__getmainargs	_CDecl proto :ptr, :ptr, :ptr, :ptr, :ptr
-__wgetmainargs	_CDecl proto :ptr, :ptr, :ptr, :ptr, :ptr
-__iob_func	_CDecl proto
+__getmainargs	proto _CDecl :ptr, :ptr, :ptr, :ptr, :ptr
+__wgetmainargs	proto _CDecl :ptr, :ptr, :ptr, :ptr, :ptr
+__iob_func	proto _CDecl
 endif
 
 .list

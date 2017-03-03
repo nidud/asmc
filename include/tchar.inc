@@ -1,3 +1,7 @@
+ifndef __LIBC_INC
+ include libc.inc
+endif
+.xlist
 ;
 ; definitions for generic international text functions
 ;
@@ -100,6 +104,7 @@ _tmain			equ <wmain>
 _tWinMain		equ <wWinMain>
 _tenviron		equ <_wenviron>
 __targv			equ <__wargv>
+_tgetmainargs		equ <__wgetmainargs>
 
 ;; Formatted i/o
 
@@ -424,6 +429,7 @@ else
 _tenviron		equ <_environ>
 endif
 __targv			equ <__argv>
+_tgetmainargs		equ <__getmainargs>
 
 
 ;; Formatted i/o
@@ -1124,4 +1130,46 @@ _TEXT	macro x
 	exitm<__T(x)>
 	endm
 endif
+
+ifdef	_WIN32
+	RAX	equ <eax>
+	RBX	equ <ebx>
+	RCX	equ <ecx>
+	RDX	equ <edx>
+	RDI	equ <edi>
+	RSI	equ <esi>
+	RBP	equ <ebp>
+	RSP	equ <esp>
+endif
+ifdef __PE__
+	.data
+	__argc	  dd 0
+	__targv	  SIZE_T 0
+	_tenviron SIZE_T 0
+	_startup  db 100 dup(0)
+	.code
+mainCRTStartup PROC
+	.if !_tgetmainargs( addr __argc, addr __targv, addr _tenviron, 0, addr _startup )
+	mov	ecx,__argc
+ifdef	_WIN64
+		mov	rdx,__targv
+		mov	r8,_tenviron
+else
+		mov	edx,__targv
+		mov	ebx,_tenviron
+		push	ebx
+		push	edx
+		push	ecx
+endif
+		_tmain()
+	.endif
+	exit(eax)
+mainCRTStartup endp
+_tstart equ <mainCRTStartup>
+else
+_tstart equ <>
+endif
+
 endif  ;; _INC_TCHAR
+
+.list

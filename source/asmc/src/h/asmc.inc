@@ -8,7 +8,7 @@ include ltype.inc
 
 	OPTION	ASMC:ON, FIELDALIGN:4, LOOPALIGN:4
 
-MAX_LINE_LEN		equ 1024		; no restriction for this number
+MAX_LINE_LEN		equ 2048		; no restriction for this number
 MAX_STRING_LEN		equ MAX_LINE_LEN - 32	; must be < MAX_LINE_LEN
 MAX_ID_LEN		equ 247			; must be < MAX_LINE_LEN
 MAX_TOKEN		equ MAX_LINE_LEN / 4	; max tokens in one line

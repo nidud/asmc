@@ -1,0 +1,521 @@
+ifndef __LIBC_INC
+ include libc.inc
+endif
+.xlist
+;;
+;; Interface for the Windows Property Sheet Pages
+;;
+ifndef _PRSHT_H_
+_PRSHT_H_ equ 1
+
+ifndef _WIN32_IE
+_WIN32_IE equ 0x0400
+else
+if (_WIN32_IE LT 0x0400) AND defined(_WIN32_WINNT) AND (_WIN32_WINNT GE 0x0500)
+.err <_WIN32_IE setting conflicts with _WIN32_WINNT setting>
+endif
+endif
+
+;;
+;; Define API decoration for direct importing of DLL references.
+;;
+ifndef WINCOMMCTRLAPI
+if NOT defined(_COMCTL32_) AND defined(_WIN32)
+WINCOMMCTRLAPI		equ DECSPEC_IMPORT
+else
+WINCOMMCTRLAPI equ 1
+endif
+endif ;; WINCOMMCTRLAPI
+
+ifndef CCSIZEOF_STRUCT
+CCSIZEOF_STRUCT macro structname, member
+	exitm<sizeof(structname.member)>
+	endm
+endif
+
+;;
+;; For compilers that don't support nameless unions
+;;
+ifndef DUMMYUNIONNAME
+DUMMYUNIONNAME equ 1
+DUMMYUNIONNAME2 equ 1
+DUMMYUNIONNAME3 equ 1
+DUMMYUNIONNAME4 equ 1
+DUMMYUNIONNAME5 equ 1
+endif ;; DUMMYUNIONNAME
+
+ifndef SNDMSG
+SNDMSG			equ <SendMessage>
+endif ;; ifndef SNDMSG
+
+MAXPROPPAGES		equ 100
+HPROPSHEETPAGE		typedef ptr
+
+ifndef MIDL_PASS
+;PROPSHEETPAGEA;	 STRUC
+;PROPSHEETPAGEW;	 STRUC
+endif
+
+;UINT
+LPFNPSPCALLBACKA_T typedef proto _CType \
+		  hwnd: HWND,
+		  uMsg: UINT,
+		  ppsp: PVOID
+LPFNPSPCALLBACKA typedef ptr LPFNPSPCALLBACKA_T
+LPFNPSPCALLBACKW_T typedef proto _CType \
+		  hwnd: HWND,
+		  uMsg: UINT,
+		  ppsp: PVOID
+LPFNPSPCALLBACKW typedef ptr LPFNPSPCALLBACKW_T
+
+ifdef _UNICODE
+LPFNPSPCALLBACK		equ <LPFNPSPCALLBACKW>
+else
+LPFNPSPCALLBACK		equ <LPFNPSPCALLBACKA>
+endif
+
+PSP_DEFAULT		equ 0x00000000
+PSP_DLGINDIRECT		equ 0x00000001
+PSP_USEHICON		equ 0x00000002
+PSP_USEICONID		equ 0x00000004
+PSP_USETITLE		equ 0x00000008
+PSP_RTLREADING		equ 0x00000010
+
+PSP_HASHELP		equ 0x00000020
+PSP_USEREFPARENT	equ 0x00000040
+PSP_USECALLBACK		equ 0x00000080
+PSP_PREMATURE		equ 0x00000400
+
+if (_WIN32_IE GE 0x0400)
+;;----- New flags for wizard97 --------------
+PSP_HIDEHEADER		equ 0x00000800
+PSP_USEHEADERTITLE	equ 0x00001000
+PSP_USEHEADERSUBTITLE	equ 0x00002000
+;;-------------------------------------------
+endif
+
+
+PSPCB_RELEASE		equ 1
+PSPCB_CREATE		equ 2
+
+PROPSHEETPAGEA_V1_SIZE	equ CCSIZEOF_STRUCT(PROPSHEETPAGEA, pcRefParent)
+PROPSHEETPAGEW_V1_SIZE	equ CCSIZEOF_STRUCT(PROPSHEETPAGEW, pcRefParent)
+
+PROPSHEETPAGEA		STRUC
+dwSize			dd ?
+dwFlags			dd ?
+hInstance		HINSTANCE ?
+UNION DUMMYUNIONNAME
+ pszTemplate		LPCSTR ?
+ifdef _WIN32
+ pResource		LPCDLGTEMPLATE ?
+else
+ pResource		PVOID ?
+endif
+ENDS
+UNION DUMMYUNIONNAME2
+  hIcon			HICON ?
+  pszIcon		LPCSTR ?
+ENDS
+pszTitle		LPCSTR ?
+pfnDlgProc		DLGPROC ?
+lParam			LPARAM ?
+pfnCallback		LPFNPSPCALLBACKA ?
+pcRefParent		LPDWORD ?
+if (_WIN32_IE GE 0x0400)
+pszHeaderTitle		LPCSTR ?	;; this is displayed in the header
+pszHeaderSubTitle	LPCSTR ?	;;
+endif
+PROPSHEETPAGEA		ENDS
+LPPROPSHEETPAGEA	typedef ptr PROPSHEETPAGEA
+LPCPROPSHEETPAGEA	typedef ptr PROPSHEETPAGEA
+
+PROPSHEETPAGEW		STRUC
+dwSize			dd ?
+dwFlags			dd ?
+hInstance		HINSTANCE ?
+UNION DUMMYUNIONNAME
+  pszTemplate		LPCWSTR ?
+ifdef _WIN32
+  pResource		LPCDLGTEMPLATE ?
+else
+  pResource		PVOID ?
+endif
+ENDS
+UNION DUMMYUNIONNAME2
+ hIcon			HICON ?
+ pszIcon		LPCWSTR ?
+ENDS
+pszTitle		LPCWSTR ?
+pfnDlgProc		DLGPROC ?
+lParam			LPARAM ?
+pfnCallback		LPFNPSPCALLBACKW ?
+pcRefParent		PVOID ?;UINT ?
+
+if (_WIN32_IE GE 0x0400)
+pszHeaderTitle		LPCWSTR ?	;; this is displayed in the header
+pszHeaderSubTitle	LPCWSTR ?	;;/
+endif
+PROPSHEETPAGEW		ENDS
+LPPROPSHEETPAGEW	typedef ptr PROPSHEETPAGEW
+LPCPROPSHEETPAGEW	typedef ptr PROPSHEETPAGEW
+
+ifdef _UNICODE
+PROPSHEETPAGE		equ PROPSHEETPAGEW
+LPPROPSHEETPAGE		equ LPPROPSHEETPAGEW
+LPCPROPSHEETPAGE	equ LPCPROPSHEETPAGEW
+PROPSHEETPAGE_V1_SIZE	equ PROPSHEETPAGEW_V1_SIZE
+else
+PROPSHEETPAGE		equ PROPSHEETPAGEA
+LPPROPSHEETPAGE		equ LPPROPSHEETPAGEA
+LPCPROPSHEETPAGE	equ LPCPROPSHEETPAGEA
+PROPSHEETPAGE_V1_SIZE	equ PROPSHEETPAGEA_V1_SIZE
+endif
+
+
+PSH_DEFAULT		equ 0x00000000
+PSH_PROPTITLE		equ 0x00000001
+PSH_USEHICON		equ 0x00000002
+PSH_USEICONID		equ 0x00000004
+PSH_PROPSHEETPAGE	equ 0x00000008
+PSH_WIZARDHASFINISH	equ 0x00000010
+PSH_WIZARD		equ 0x00000020
+PSH_USEPSTARTPAGE	equ 0x00000040
+PSH_NOAPPLYNOW		equ 0x00000080
+PSH_USECALLBACK		equ 0x00000100
+PSH_HASHELP		equ 0x00000200
+PSH_MODELESS		equ 0x00000400
+PSH_RTLREADING		equ 0x00000800
+PSH_WIZARDCONTEXTHELP	equ 0x00001000
+
+if (_WIN32_IE GE 0x0400)
+;;----- New flags for wizard97 -----------
+PSH_WIZARD97		equ 0x00002000
+;; 0x00004000 was not used by any previous release
+PSH_WATERMARK		equ 0x00008000
+PSH_USEHBMWATERMARK	equ 0x00010000	;; user pass in a hbmWatermark instead of pszbmWatermark
+PSH_USEHPLWATERMARK	equ 0x00020000	;;
+PSH_STRETCHWATERMARK	equ 0x00040000	;; stretchwatermark also applies for the header
+PSH_HEADER		equ 0x00080000
+PSH_USEHBMHEADER	equ 0x00100000
+PSH_USEPAGELANG		equ 0x00200000	;; use frame dialog template matched to page
+;;----------------------------------------
+endif
+
+
+; int
+PFNPROPSHEETCALLBACK_T typedef proto _CType \
+		      : HWND,
+		      : UINT,
+		      : LPARAM
+PFNPROPSHEETCALLBACK typedef ptr PFNPROPSHEETCALLBACK_T
+
+PROPSHEETHEADERA_V1_SIZE equ CCSIZEOF_STRUCT(PROPSHEETHEADERA, pfnCallback)
+PROPSHEETHEADERW_V1_SIZE equ CCSIZEOF_STRUCT(PROPSHEETHEADERW, pfnCallback)
+
+PROPSHEETHEADERA	STRUC
+dwSize			dd ?
+dwFlags			dd ?
+hwndParent		HWND ?
+hInstance		HINSTANCE ?
+UNION DUMMYUNIONNAME
+ hIcon			HICON ?
+ pszIcon		LPCSTR ?
+ENDS
+pszCaption		LPCSTR ?
+nPages			UINT ?
+UNION DUMMYUNIONNAME2
+ nStartPage		UINT ?
+ pStartPage		LPCSTR ?
+ENDS
+UNION DUMMYUNIONNAME3
+ ppsp			LPCPROPSHEETPAGEA ?
+ phpage			PVOID ?;HPROPSHEETPAGE ?
+ENDS
+pfnCallback		PFNPROPSHEETCALLBACK ?
+if (_WIN32_IE GE 0x0400)
+UNION DUMMYUNIONNAME4
+ hbmWatermark		HBITMAP ?
+ pszbmWatermark		LPCSTR ?
+ENDS
+hplWatermark		HPALETTE ?
+UNION DUMMYUNIONNAME5
+ hbmHeader		HBITMAP ?	;; Header  bitmap shares the palette with watermark
+ pszbmHeader		LPCSTR ?
+ENDS
+endif
+PROPSHEETHEADERA	ENDS
+LPPROPSHEETHEADERA	typedef ptr PROPSHEETHEADERA
+LPCPROPSHEETHEADERA	typedef ptr PROPSHEETHEADERA
+
+PROPSHEETHEADERW	STRUC
+dwSize			dd ?
+dwFlags			dd ?
+hwndParent		HWND ?
+hInstance		HINSTANCE ?
+UNION DUMMYUNIONNAME
+ hIcon			 HICON ?
+ pszIcon		 LPCWSTR ?
+ENDS
+pszCaption		LPCWSTR ?
+nPages			UINT ?
+UNION DUMMYUNIONNAME2
+ nStartPage		 UINT ?
+ pStartPage		 LPCWSTR ?
+ENDS
+UNION DUMMYUNIONNAME3
+ ppsp			LPCPROPSHEETPAGEW ?
+ phpage			PVOID ?;HPROPSHEETPAGE ?
+ENDS
+pfnCallback		PFNPROPSHEETCALLBACK ?
+if (_WIN32_IE GE 0x0400)
+UNION DUMMYUNIONNAME4
+ hbmWatermark		HBITMAP ?
+ pszbmWatermark		LPCWSTR ?
+ENDS
+hplWatermark		HPALETTE ?
+UNION DUMMYUNIONNAME5
+ hbmHeader		HBITMAP ?
+ pszbmHeader		LPCWSTR ?
+ENDS
+endif
+PROPSHEETHEADERW	ENDS
+LPPROPSHEETHEADERW	typedef ptr PROPSHEETHEADERW
+LPCPROPSHEETHEADERW	typedef ptr PROPSHEETHEADERW
+
+ifdef _UNICODE
+PROPSHEETHEADER		equ PROPSHEETHEADERW
+LPPROPSHEETHEADER	equ LPPROPSHEETHEADERW
+LPCPROPSHEETHEADER	equ LPCPROPSHEETHEADERW
+PROPSHEETHEADER_V1_SIZE equ PROPSHEETHEADERW_V1_SIZE
+else
+PROPSHEETHEADER		equ PROPSHEETHEADERA
+LPPROPSHEETHEADER	equ LPPROPSHEETHEADERA
+LPCPROPSHEETHEADER	equ LPCPROPSHEETHEADERA
+PROPSHEETHEADER_V1_SIZE equ PROPSHEETHEADERA_V1_SIZE
+endif
+
+
+PSCB_INITIALIZED	equ 1
+PSCB_PRECREATE		equ 2
+
+;HPROPSHEETPAGE
+;HPROPSHEETPAGE
+;BOOL
+;int
+;int
+
+ifdef _UNICODE
+CreatePropertySheetPage equ <CreatePropertySheetPageW>
+PropertySheet		equ <PropertySheetW>
+else
+CreatePropertySheetPage equ <CreatePropertySheetPageA>
+PropertySheet		equ <PropertySheetA>
+endif
+
+
+;BOOL
+LPFNADDPROPSHEETPAGE_T typedef proto _CType \
+		      : HPROPSHEETPAGE,
+		      : LPARAM
+LPFNADDPROPSHEETPAGE  typedef ptr LPFNADDPROPSHEETPAGE_T
+;BOOL
+LPFNADDPROPSHEETPAGES_T typedef proto _CType \
+			: LPVOID,
+			: LPFNADDPROPSHEETPAGE,
+			: LPARAM
+LPFNADDPROPSHEETPAGES  typedef ptr LPFNADDPROPSHEETPAGES_T
+
+
+PSHNOTIFY		STRUC
+hdr			NMHDR <>
+lParam			LPARAM ?
+PSHNOTIFY		ENDS
+LPPSHNOTIFY		typedef ptr PSHNOTIFY
+
+PSN_FIRST		equ (0U-200U)
+PSN_LAST		equ (0U-299U)
+
+
+PSN_SETACTIVE		equ (PSN_FIRST-0)
+PSN_KILLACTIVE		equ (PSN_FIRST-1)
+;; #define PSN_VALIDATE		   (PSN_FIRST-1)
+PSN_APPLY		equ (PSN_FIRST-2)
+PSN_RESET		equ (PSN_FIRST-3)
+;; #define PSN_CANCEL		   (PSN_FIRST-3)
+PSN_HELP		equ (PSN_FIRST-5)
+PSN_WIZBACK		equ (PSN_FIRST-6)
+PSN_WIZNEXT		equ (PSN_FIRST-7)
+PSN_WIZFINISH		equ (PSN_FIRST-8)
+PSN_QUERYCANCEL		equ (PSN_FIRST-9)
+if (_WIN32_IE GE 0x0400)
+PSN_GETOBJECT		equ (PSN_FIRST-10)
+endif ;; 0x0400
+
+PSNRET_NOERROR		equ 0
+PSNRET_INVALID		equ 1
+PSNRET_INVALID_NOCHANGEPAGE equ 2
+
+
+PSM_SETCURSEL		equ (WM_USER + 101)
+PropSheet_SetCurSel macro hDlg, hpage, index
+	exitm<SNDMSG(hDlg, PSM_SETCURSE, index, hpage)>
+	endm
+
+
+PSM_REMOVEPAGE		equ (WM_USER + 102)
+PropSheet_RemovePage macro hDlg, index, hpage
+	exitm<SNDMSG(hDlg, PSM_REMOVEPAGE, index, hpage)>
+	endm
+
+
+PSM_ADDPAGE		equ (WM_USER + 103)
+PropSheet_AddPage macro hDlg, hpage
+	exitm<SNDMSG(hDlg, PSM_ADDPAGE, 0, hpage)>
+	endm
+
+
+PSM_CHANGED		equ (WM_USER + 104)
+PropSheet_Changed macro hDlg, hwnd
+	exitm<SNDMSG(hDlg, PSM_CHANGED, hwnd, 0)>
+	endm
+
+
+PSM_RESTARTWINDOWS	equ (WM_USER + 105)
+PropSheet_RestartWindows macro hDlg
+	exitm<SNDMSG(hDlg, PSM_RESTARTWINDOWS, 0, 0)>
+	endm
+
+
+PSM_REBOOTSYSTEM	equ (WM_USER + 106)
+PropSheet_RebootSystem macro hDlg
+	exitm<SNDMSG(hDlg, PSM_REBOOTSYSTEM, 0, 0)>
+	endm
+
+
+PSM_CANCELTOCLOSE	equ (WM_USER + 107)
+PropSheet_CancelToClose macro hDlg
+	exitm<PostMessage(hDlg, PSM_CANCELTOCLOSE, 0, 0)>
+	endm
+
+
+PSM_QUERYSIBLINGS	equ (WM_USER + 108)
+PropSheet_QuerySiblings macro hDlg, wParam, lParam
+	exitm<SNDMSG(hDlg, PSM_QUERYSIBINGS, wParam, lParam)>
+	endm
+
+
+PSM_UNCHANGED		equ (WM_USER + 109)
+PropSheet_UnChanged macro hDlg, hwnd
+	exitm<SNDMSG(hDlg, PSM_UNCHANGED, hwnd, 0)>
+	endm
+
+
+PSM_APPLY		equ (WM_USER + 110)
+PropSheet_Apply macro hDlg
+	exitm<SNDMSG(hDlg, PSM_APPLY, 0, 0)>
+	endm
+
+
+PSM_SETTITLEA		equ (WM_USER + 111)
+PSM_SETTITLEW		equ (WM_USER + 120)
+
+ifdef _UNICODE
+PSM_SETTITLE		equ PSM_SETTITLEW
+else
+PSM_SETTITLE		equ PSM_SETTITLEA
+endif
+
+PropSheet_SetTitle macro hDlg, wStyle, lpszText
+	exitm<SNDMSG(hDlg, PSM_SETTITLE, wStyle, lpszText)>
+	endm
+
+
+PSM_SETWIZBUTTONS	equ (WM_USER + 112)
+PropSheet_SetWizButtons macro hDlg, dwFlags
+	exitm<PostMessage(hDlg, PSM_SETWIZBUTTONS, 0, dwFlags)>
+	endm
+
+
+PSWIZB_BACK		equ 0x00000001
+PSWIZB_NEXT		equ 0x00000002
+PSWIZB_FINISH		equ 0x00000004
+PSWIZB_DISABLEDFINISH	equ 0x00000008
+
+
+PSM_PRESSBUTTON		equ (WM_USER + 113)
+PropSheet_PressButton macro hDlg, iButton
+	exitm<PostMessage(hDlg, PSM_PRESSBUTTON, iButton, 0)>
+	endm
+
+
+PSBTN_BACK		equ 0
+PSBTN_NEXT		equ 1
+PSBTN_FINISH		equ 2
+PSBTN_OK		equ 3
+PSBTN_APPLYNOW		equ 4
+PSBTN_CANCEL		equ 5
+PSBTN_HELP		equ 6
+PSBTN_MAX		equ 6
+
+
+
+PSM_SETCURSELID		equ (WM_USER + 114)
+PropSheet_SetCurSelByID macro hDlg, id
+	exitm<SNDMSG(hDlg, PSM_SETCURSEID, 0, id)>
+	endm
+
+
+PSM_SETFINISHTEXTA	equ (WM_USER + 115)
+PSM_SETFINISHTEXTW	equ (WM_USER + 121)
+
+ifdef _UNICODE
+PSM_SETFINISHTEXT	equ PSM_SETFINISHTEXTW
+else
+PSM_SETFINISHTEXT	equ PSM_SETFINISHTEXTA
+endif
+
+PropSheet_SetFinishText macro hDlg, lpszText
+	exitm<SNDMSG(hDlg, PSM_SETFINISHTEXT, 0, lpszText)>
+	endm
+
+
+PSM_GETTABCONTROL	equ (WM_USER + 116)
+PropSheet_GetTabControl macro hDlg
+	exitm<SNDMSG(hDlg, PSM_GETTABCONTROL, 0, 0)>
+	endm
+
+PSM_ISDIALOGMESSAGE	equ (WM_USER + 117)
+PropSheet_IsDialogMessage macro hDlg, pMsg
+	exitm<SNDMSG(hDlg, PSM_ISDIAOGMESSAGE, 0, pMsg)>
+	endm
+
+PSM_GETCURRENTPAGEHWND	equ (WM_USER + 118)
+PropSheet_GetCurrentPageHwnd macro hDlg
+	exitm<SNDMSG(hDlg, PSM_GETCURRENTPAGEHWND, 0, 0)>
+	endm
+
+ID_PSRESTARTWINDOWS	equ 0x2
+ID_PSREBOOTSYSTEM	equ (ID_PSRESTARTWINDOWS OR 0x1)
+
+
+WIZ_CXDLG		equ 276
+WIZ_CYDLG		equ 140
+
+WIZ_CXBMP		equ 80
+
+WIZ_BODYX		equ 92
+WIZ_BODYCX		equ 184
+
+PROP_SM_CXDLG		equ 212
+PROP_SM_CYDLG		equ 188
+
+PROP_MED_CXDLG		equ 227
+PROP_MED_CYDLG		equ 215
+
+PROP_LG_CXDLG		equ 252
+PROP_LG_CYDLG		equ 218
+
+endif	;; _PRSHT_H_
+
+.list

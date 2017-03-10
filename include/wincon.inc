@@ -6,8 +6,8 @@ ifndef _WINDEF_
 endif
 .xlist
 ;
-; module contains the public data structures, data types, This ?
-; procedures exported by the NT console subsystem. and ?
+; This module contains the public data structures, data types,
+; and procedures exported by the NT console subsystem.
 ;
 ifndef _WINCON_
 _WINCON_ equ 1

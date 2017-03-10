@@ -1,11 +1,13 @@
+ifndef _DDEHEADER_INCLUDED_
+.xlist
 ;
 ; Dynamic Data Exchange structures and definitions
 ;
-ifndef _DDEHEADER_INCLUDED_
 _DDEHEADER_INCLUDED_ equ 1
 
 ifndef _WINDEF_
 include windef.inc
+.xlist
 endif
 
 ;; DDE window messages
@@ -179,7 +181,7 @@ ReuseDDElParam proto _CType \
 		msgOut: UINT,
 		  uiLo: UINT,
 		  uiHi: UINT
-
+.list
 endif ;; _DDEHEADER_INCLUDED_
 
-.list
+

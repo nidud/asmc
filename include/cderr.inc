@@ -1,8 +1,9 @@
+ifndef _CDERR_
+.xlist
+_CDERR_ equ 1
 ;
 ; Common dialog error return codes
 ;
-ifndef _CDERR_
-_CDERR_ equ 1
 
 CDERR_DIALOGFAILURE	equ 0xFFFF
 
@@ -48,4 +49,5 @@ FRERR_BUFFERLENGTHZERO	equ 0x4001
 
 CCERR_CHOOSECOLORCODES	equ 0x5000
 
+.list
 endif  ;; NOT _CDERR_

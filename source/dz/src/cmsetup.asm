@@ -515,67 +515,159 @@ cmoptions PROC USES esi ebx
 	ret
 cmoptions ENDP
 
+ID_MIN_X	equ 1*16
+ID_MIN_Y	equ 2*16
+ID_MIN_COL	equ 3*16
+ID_MIN_ROW	equ 4*16
+ID_MAX_X	equ 5*16
+ID_MAX_Y	equ 6*16
+ID_MAX_COL	equ 7*16
+ID_MAX_ROW	equ 8*16
+ID_DEFAULT	equ 9*16
+
 cmscreensize proc uses esi edi ebx
 
-	.if rsopen(IDD_ConsoleSize)
+local	ci:CONSOLE_SCREEN_BUFFER_INFO
+local	rc:RECT
+local	maxcol,maxrow
 
+	.repeat
+
+		.break .if !GetConsoleScreenBufferInfo(hStdOutput, addr ci)
+		mov	ecx,GetConsoleWindow()
+		.break .if !GetWindowRect(ecx, addr rc)
+		.break .if !rsopen(IDD_ConsoleSize)
 		mov	ebx,eax
-		mov	edi,GetLargestConsoleWindowSize(hStdOutput)
-		shr	edi,16
-		movzx	esi,ax
 
-		sprintf( [ebx+16].S_TOBJ.to_data, "%d", _scrcol )
-		mov	eax,_scrrow
-		inc	eax
-		sprintf( [ebx+32].S_TOBJ.to_data, "%d", eax )
+		strcpy([ebx+ID_MIN_X].S_TOBJ.to_data, "0")
+		strcpy([ebx+ID_MIN_Y].S_TOBJ.to_data, "0")
+		strcpy([ebx+ID_MAX_X].S_TOBJ.to_data, "0")
+		strcpy([ebx+ID_MAX_Y].S_TOBJ.to_data, "0")
+		strcpy([ebx+ID_MIN_COL].S_TOBJ.to_data, "40")
+		strcpy([ebx+ID_MIN_ROW].S_TOBJ.to_data, "16")
+		movzx	eax,ci.dwMaximumWindowSize.x
+		sprintf([ebx+ID_MAX_COL].S_TOBJ.to_data, "%d", eax)
+		movzx	eax,ci.dwMaximumWindowSize.y
+		sprintf([ebx+ID_MAX_ROW].S_TOBJ.to_data, "%d", eax)
+
+		.if CFGetSection(".consolesize")
+
+			.for esi=eax, edi=0: edi < 8, CFGetEntryID(esi, edi): edi++
+
+				lea ecx,[edi+1]
+				shl ecx,4
+				strcpy([ebx+ecx].S_TOBJ.to_data, eax)
+			.endf
+			.if CFGetEntryID(esi, 8)
+
+				.if byte ptr [eax] == '1'
+
+					or [ebx+ID_DEFAULT].S_TOBJ.to_flag,_O_FLAGB
+				.endif
+			.endif
+		.endif
 
 		dlinit(ebx)
 		dlshow(ebx)
 
-		movzx	ecx,[ebx].S_DOBJ.dl_rect.rc_x
-		movzx	edx,[ebx].S_DOBJ.dl_rect.rc_y
-		add	ecx,19
-		add	edx,1
-		scputf( ecx, edx, 0, 0, "%d", esi )
-		add	edx,1
-		scputf( ecx, edx, 0, 0, "%d", edi )
+
+		movzx	esi,[ebx].S_DOBJ.dl_rect.rc_x
+		movzx	edi,[ebx].S_DOBJ.dl_rect.rc_y
+		add	esi,11
+		add	edi,9
+		mov	edx,GetLargestConsoleWindowSize(hStdOutput)
+		shr	edx,16
+		movzx	eax,ax
+		mov	maxrow,edx
+		mov	maxcol,eax
+		mov	ecx,rc.top
+		mov	eax,rc.left
+		scputf( esi, edi, 0, 0, "%d\n%d", eax, ecx )
+		movzx	eax,ci.dwSize.x
+		movzx	ecx,ci.dwSize.y
+		dec	ecx
+		mov	_scrcol,eax
+		mov	_scrrow,ecx
+		inc	ecx
+		add	edi,2
+		scputf( esi, edi, 0, 0, "%d\n%d", eax, ecx )
+		add	esi,24
+		scputf( esi, edi, 0, 0, "%d\n%d", maxcol, maxrow )
 
 		.while	rsevent(IDD_ConsoleSize, ebx)
 
-			push	atol([ebx+16].S_TOBJ.to_data)
-				atol([ebx+32].S_TOBJ.to_data)
-			pop	ecx
-			.if	ecx <= esi && ecx >= 80 && \
-				eax <= edi && eax >= 16
+			xor esi,esi
+			.if atol([ebx+ID_MIN_ROW].S_TOBJ.to_data) < DZMINROWS
 
-				mov _scrmax,ecx
-				mov _scrmax[4],eax
-				mov esi,ecx
-				mov edi,eax
-				.if CFAddSection(".maxscreen")
+				sprintf([ebx+ID_MIN_ROW].S_TOBJ.to_data, "%d", DZMINROWS)
+				inc esi
 
-					xchg esi,eax
-					CFAddEntryX(esi, "0=%d", eax)
-					CFAddEntryX(esi, "1=%d", edi)
-				.endif
-				and cflag,NOT _C_EGALINE
-				PushEvent(KEY_ALTF9)
-				mov eax,1
-				.break
+			.elseif eax > DZMAXROWS
+
+				sprintf([ebx+ID_MIN_ROW].S_TOBJ.to_data, "%d", DZMAXROWS)
+				inc esi
 			.endif
-			.if	ecx > esi
 
-				sprintf([ebx+16].S_TOBJ.to_data, "%d", esi)
-			.elseif eax > edi
+			.if atol([ebx+ID_MIN_COL].S_TOBJ.to_data) < DZMINCOLS
 
-				sprintf([ebx+32].S_TOBJ.to_data, "%d", edi)
+				sprintf([ebx+ID_MIN_COL].S_TOBJ.to_data, "%d", DZMINCOLS)
+				inc esi
+
+			.elseif eax > DZMAXCOLS
+
+				sprintf([ebx+ID_MIN_COL].S_TOBJ.to_data, "%d", DZMAXCOLS)
+				inc esi
+			.endif
+
+			.if atol([ebx+ID_MAX_ROW].S_TOBJ.to_data) < DZMINROWS
+
+				sprintf([ebx+ID_MAX_ROW].S_TOBJ.to_data, "%d", DZMINROWS)
+				inc esi
+
+			.elseif eax > DZMAXROWS
+
+				sprintf([ebx+ID_MAX_ROW].S_TOBJ.to_data, "%d", DZMAXROWS)
+				inc esi
+			.endif
+
+			.if atol([ebx+ID_MAX_COL].S_TOBJ.to_data) < DZMINCOLS
+
+				sprintf([ebx+ID_MAX_COL].S_TOBJ.to_data, "%d", DZMINCOLS)
+				inc esi
+
+			.elseif eax > DZMAXCOLS
+
+				sprintf([ebx+ID_MAX_COL].S_TOBJ.to_data, "%d", DZMAXCOLS)
+				inc esi
+			.endif
+
+
+			.if !esi
+
+				.if CFAddSection(".consolesize")
+
+					.for esi=eax, edi=0: edi < 8: edi++
+
+						lea ecx,[edi+1]
+						shl ecx,4
+						CFAddEntryX(esi, "%d=%s", edi, [ebx+ecx].S_TOBJ.to_data)
+					.endf
+					xor eax,eax
+					.if [ebx+ID_DEFAULT].S_TOBJ.to_flag & _O_FLAGB
+
+						inc eax
+					.endif
+					CFAddEntryX(esi, "8=%d", eax)
+				.endif
+				mov	eax,1
+				.break
+
 			.endif
 			dlinit(ebx)
 		.endw
-
 		dlclose(ebx)
 		mov	eax,edx
-	.endif
+	.until	1
 	ret
 
 cmscreensize endp

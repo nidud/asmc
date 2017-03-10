@@ -2,7 +2,10 @@ HISTORY.TXT--
 Change Log File for DOSZIP - Win32
 ==================================
 
-Changes in 3.48 - xx xxx 2016
+Changes in 3.49 - xx xxx 2017
+- fixed bug edit.style() -- buffer overflow
+
+Changes in 3.48 - 15 Feb 2017
 - added Advansed Settings to Compare Directories -- Shift-F5
 - added Desktop Size -- Alt-Z
 - removed dz.cfg --> moved to dz.ini

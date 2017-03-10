@@ -2505,7 +2505,7 @@ panel_event PROC USES esi edi ebx panel:LPPANEL, event:UINT
 		.endif
 		pcell_select(esi)
 
-		.endcz
+		.endc .ifz
 		.endc .if !(cflag & _C_INSMOVDN)
 
 	  .case KEY_DOWN

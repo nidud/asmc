@@ -16,6 +16,11 @@ DOSZIP_VSTRPRE	equ <"      ">
 MAXHISTORY	equ 32
 MAXDOSKEYS	equ 64
 
+DZMINROWS	equ 25
+DZMINCOLS	equ 80
+DZMAXROWS	equ 240
+DZMAXCOLS	equ 240
+
 DOSZIP_INIFILE	equ <"dz.ini">	; config file
 DOSZIP_TXTFILE	equ <"dz.txt">	; readme file
 

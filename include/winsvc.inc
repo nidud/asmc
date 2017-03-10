@@ -1,14 +1,13 @@
-;
-; Header file for the Service Control Manager
-;
 ifndef __LIBC_INC
  include libc.inc
 endif
 ifndef _WINDEF_
  include windef.inc
 endif
-
 .xlist
+;
+; Header file for the Service Control Manager
+;
 ifndef _WINSVC_
 _WINSVC_ equ 1
 

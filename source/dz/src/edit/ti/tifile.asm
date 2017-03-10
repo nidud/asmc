@@ -324,7 +324,7 @@ local	st_type,i,p,q
 		mov	ecx,sizeof(cp_typech)
 		repnz	scasb
 
-		.breaknz
+		.break .ifnz
 		mov	eax,edi
 		sub	eax,offset cp_typech
 		mov	st_type,eax

@@ -34,23 +34,110 @@
 	 .ENDF
 	.ENDF
 
-proto_t typedef proto :ptr, :ptr
-proto_p typedef ptr proto_t
+proto_1 typedef proto :byte
+proto_4 typedef proto :byte, :word, :dword, :qword
+proto_a typedef ptr proto_1
+proto_b typedef ptr proto_4
 
-	foo	proto_p 0
+	foo	proto_b 0
+	bar	proto_a 0
+
 		;
 		; <initialization>
 		;
-	.FOR	edx = foo(1,2),
-		ecx = foo(1,3),
-		ebx = foo(1,4) ::
-	.ENDF
+	.for	edx = bar(1),
+		ecx = bar(2),
+		ebx = bar(3):,
 		;
 		; <condition>
 		;
-	.FOR	: edx > foo(1,2),
-		  ecx > foo(1,3),
-		  ebx > foo(1,4) :
-	.ENDF
+		edx > bar(1),
+		ecx > bar(2),
+		ebx > bar(3):,
+		;
+		; <increment/decrement>
+		;
+		edx = bar(1),
+		ecx = bar(2),
+		ebx = bar(3)
+	.endf
+
+		;
+		; Return size
+		;
+	.for	edx = foo(bar(al),0,0,0),	; al
+		ecx = foo(0,bar(al),0,0),	; ax
+		ebx = foo(0,0,bar(al),0),	; eax
+		eax = foo(0,0,0,bar(al)):,	; edx::eax
+		edx > foo(bar(al),0,0,0),
+		ecx > foo(0,bar(al),0,0),
+		ebx > foo(0,0,bar(al),0),
+		eax > foo(0,0,0,bar(al)):,
+		edx = foo(bar(al),0,0,0),
+		ecx = foo(0,bar(al),0,0),
+		ebx = foo(0,0,bar(al),0),
+		eax = foo(0,0,0,bar(al))
+	.endf
+
+	.for	eax = &foo,	; lea eax,foo
+		eax =& foo,	; ...
+		ecx =~ eax,	; mov ecx,not eax
+		ebx = ~bar(0),
+		ecx = ~eax ::	; ...
+	.endf
+
+		;
+		; reg = 0 --> xor reg,reg
+		;
+	.for	 al = 0,
+		 bl = 0,
+		 cl = 0,
+		 dl = 0,
+		 ah = 0,
+		 bh = 0,
+		 ch = 0,
+		 dh = 0,
+		 ax = 0,
+		 bx = 0,
+		 cx = 0,
+		 dx = 0,
+		 si = 0,
+		 di = 0,
+		 bp = 0,
+		 sp = 0,
+		eax = 0,
+		ebx = 0,
+		ecx = 0,
+		edx = 0,
+		esi = 0,
+		edi = 0,
+		ebp = 0,
+		esp = 0 ::,
+		 al = 0,
+		 bl = 0,
+		 cl = 0,
+		 dl = 0,
+		 ah = 0,
+		 bh = 0,
+		 ch = 0,
+		 dh = 0,
+		 ax = 0,
+		 bx = 0,
+		 cx = 0,
+		 dx = 0,
+		 si = 0,
+		 di = 0,
+		 bp = 0,
+		 sp = 0,
+		eax = 0,
+		ebx = 0,
+		ecx = 0,
+		edx = 0,
+		esi = 0,
+		edi = 0,
+		ebp = 0,
+		esp = 0
+
+	.endf
 
 	END

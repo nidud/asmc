@@ -1148,7 +1148,7 @@ ifdef __PE__
 	_tenviron SIZE_T 0
 	_startup  db 100 dup(0)
 	.code
-mainCRTStartup PROC
+mainCRTStartup proc
 	.if !_tgetmainargs( addr __argc, addr __targv, addr _tenviron, 0, addr _startup )
 	mov	ecx,__argc
 ifdef	_WIN64

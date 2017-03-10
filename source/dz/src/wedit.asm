@@ -17,7 +17,7 @@ wedit	PROC fcb, count
 
 			add	eax,S_FBLK.fb_name
 			topen ( eax, 0 )
-			.breakz
+			.break .ifz
 		.endif
 	.endw
 

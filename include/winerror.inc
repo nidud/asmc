@@ -1,10 +1,9 @@
+ifndef _WINERROR_
+.xlist
 ;
 ; DOS and OS/2 Compatible Error Code definitions returned by the Win32 Base
 ; API functions.
 ;
-.xlist
-
-ifndef _WINERROR_
 _WINERROR_ equ 1
 
 
@@ -12952,6 +12951,7 @@ SPAPI_E_INVALID_FILTER_DRIVER equ _HRESULT_TYPEDEF_(0x800F022C)
 ;;
 SPAPI_E_ERROR_NOT_INSTALLED equ _HRESULT_TYPEDEF_(0x800F1000)
 
+.list
 endif ;; _WINERROR_
 
-.list
+

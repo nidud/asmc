@@ -162,9 +162,9 @@ ticlippaste PROC USES esi edi ebx ti:PTINFO
 			tiputc( ti, eax )
 			cmp	eax,_TI_CONTINUE
 			pop	eax
-			.breaknz
+			.break .ifnz
 			dec	esi
-			.breakz
+			.break .ifz
 			test	BYTE PTR _ctype[eax*2+2],_SPACE
 			jnz	@B
 
@@ -503,7 +503,7 @@ tiputc	PROC USES esi edi ebx ti:PTINFO, char:UINT
 				.repeat
 
 					tiincx( edx )
-					.breakz
+					.break .ifz
 
 					__st_putc( esi, eax )
 					jc	error
@@ -544,7 +544,7 @@ tiputc	PROC USES esi edi ebx ti:PTINFO, char:UINT
 					.while	1
 
 						tidecx( edx )
-						.breakz
+						.break .ifz
 
 						sub	ecx,1
 						.break	.if eax == ecx
@@ -563,7 +563,7 @@ tiputc	PROC USES esi edi ebx ti:PTINFO, char:UINT
 						.endif
 
 						tiincx( edx )
-						.breakz
+						.break .ifz
 
 						add	ecx,1
 						.break	.if eax == ecx
@@ -639,7 +639,7 @@ tibacksp PROC USES esi edi ebx ti:PTINFO
 		sub	edi,1
 
 		tigetline( edx, edi )
-		.breakz
+		.break .ifz
 
 		.if	BYTE PTR [eax]	; get indent
 
@@ -910,7 +910,7 @@ tievent PROC USES esi edi ebx ti:PTINFO, event:UINT
 					jne	return_event
 
 					msvalidate()
-					.contz
+					.continue .ifz
 
 					sub	ebx,[edx].ti_ypos
 					sub	ecx,[edx].ti_xpos
@@ -1196,7 +1196,7 @@ handle_event:
 	  .case KEY_RIGHT
 		tiincx( edx )
 		mov	eax,_TI_CMFAILED
-		.endcz
+		.endc .ifz
 		xor	eax,eax
 		.endc
 
@@ -1318,7 +1318,7 @@ handle_event:
 		inc	eax
 		cmp	eax,[edx].ti_lcnt
 		mov	eax,_TI_CMFAILED
-		.endcnb
+		.endc	.ifnb
 		inc	[edx].ti_loff
 		xor	eax,eax
 		.endc

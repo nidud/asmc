@@ -2,9 +2,9 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 .xlist
-IFDEF __PE__
+ifdef __PE__
 option	dllimport:<msvcrt>
-ENDIF
+endif
 
 ;
 ; Maximum number of bytes in multi-byte character in the current locale
@@ -21,10 +21,12 @@ _MAX_DIR	equ 256
 _MAX_FNAME	equ 256
 _MAX_EXT	equ 256
 
+ifndef __PE__
 externdef	__argc:dword
 externdef	__argv:SIZE_T
 externdef	_environ:SIZE_T
 externdef	_pgmptr:SIZE_T
+endif
 
 abort		PROTO
 exit		PROTO :DWORD

@@ -279,21 +279,8 @@ endif
 				stosd
 				inc	entry
 				dec	esi
-				.breakz
+				.break .ifz
 			.endw
-		.endif
-	.endif
-
-	.if	CFGetSection( ".maxscreen" )
-
-		mov	ebx,eax
-		.if	CFGetEntryID( ebx, 0 )
-
-			mov _scrmax,atol(eax)
-		.endif
-		.if	CFGetEntryID( ebx, 1 )
-
-			mov _scrmax[4],atol(eax)
 		.endif
 	.endif
 

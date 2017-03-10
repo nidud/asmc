@@ -269,6 +269,18 @@ endif
 ifdef __BMP__
 	CaptureScreen()
 endif
+	.if CFGetSection( ".consolesize" )
+
+		.if CFGetEntryID(eax, 8)
+
+			.if BYTE PTR [eax] == '1'
+
+				xor cflag,_C_EGALINE
+				PushEvent(KEY_ALTF9)
+			.endif
+		.endif
+	.endif
+
 	xor	eax,eax
 	ret
 

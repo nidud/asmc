@@ -167,7 +167,7 @@ local	h1,h2,b1,b2
 			mov	edi,b2
 			repz	cmpsb
 
-			.breaknz
+			.break .ifnz
 		.endw
 
 		mov ebx,eax
@@ -213,7 +213,7 @@ local	path[_MAX_PATH*2]:SBYTE,
 		.break	.if !cmpwarg(edi, fp_maskp)
 
 		mov	result,test_userabort()
-		.breaknz
+		.break .ifnz
 
 		.for	ebx = wfblk, edi = ff_count, esi = ff_table : edi : edi--, esi += 4
 

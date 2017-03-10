@@ -1147,50 +1147,204 @@ toend:
 
 ExpandCStrings ENDP
 
+
+;SymFind proto fastcall :DWORD
+
+
+GetProc proc private token:LPSTR
+
+	.repeat
+		.if !SymFind(token)
+
+			asmerr( 2190 )
+			xor eax,eax
+			.break
+		.endif
+		;
+		; the most simple case: symbol is a PROC
+		;
+		.break .if [eax].asym.flag & SFL_ISPROC
+
+		mov ecx,[eax].asym.target_type
+		mov dl,[eax].asym.mem_type
+		.if dl == MT_PTR && ecx && [ecx].asym.flag & SFL_ISPROC
+
+			mov eax,ecx
+			.break
+		.endif
+
+		.if dl == MT_PTR && ecx && [ecx].asym.mem_type == MT_PROC
+
+			mov eax,[eax].asym.target_type
+			jmp isfnproto
+		.endif
+
+		mov ecx,[eax].asym._type
+		.if dl == MT_TYPE && ( [ecx].asym.mem_type == MT_PTR || [ecx].asym.mem_type == MT_PROC )
+			;
+			; second case: symbol is a (function?) pointer
+			;
+			mov eax,ecx
+			.if [eax].asym.mem_type != MT_PROC
+				jmp isfnptr
+			.endif
+		.endif
+
+		isfnproto:
+		;
+		; pointer target must be a PROTO typedef
+		;
+		.if [eax].asym.mem_type != MT_PROC
+
+			asmerr( 2190 )
+			xor eax,eax
+			.break
+		.endif
+
+		isfnptr:
+		;
+		; get the pointer target
+		;
+		mov eax,[eax].asym.target_type
+		.if !eax
+
+			asmerr( 2190 )
+			xor eax,eax
+			.break
+		.endif
+	.until	1
+	ret
+
+GetProc endp
+
 StripSource PROC USES esi edi ebx,
 	i:		UINT,		; index first token
 	e:		UINT,		; index last token
-	tokenarray:	PTR asm_tok
+	tokenarray:	ptr asm_tok
+local	sym:		ptr asym
+local	info:		ptr proc_info
+local	curr:		ptr asym
+local	proc_id:	ptr asm_tok
+local	parg_id:	SINT
 local	b[MAX_LINE_LEN]:SBYTE
 
-	mov	b,0
-	lea	eax,b
+	xor eax,eax
+	mov b,al
+	mov proc_id,eax ; foo( 1, bar(...), ...)
+	mov parg_id,eax ; foo.paralist[1] = return type[al|ax|eax|[edx::eax|rax]]
+	lea eax,b
 
-	mov	ebx,tokenarray
-	mov	edi,ebx
-	xor	esi,esi
+	mov ebx,tokenarray
+	mov edi,ebx
+	xor esi,esi
 
 	.while	esi < i
 
-		.if	esi && [ebx].token != T_COMMA && [ebx].token != T_DOT
+		.if esi && [ebx].token != T_DOT
+		    .if [ebx].token == T_COMMA
 
+			.if proc_id
+
+				inc parg_id
+			.endif
+		    .else
+			.if [ebx].hll_flags & T_HLL_PROC
+
+				mov proc_id,ebx
+				mov parg_id,0
+			.endif
 			strcat( eax, " " )
+		    .endif
 		.endif
-
 		strcat( eax, [ebx].string_ptr )
-		add	esi,1
-		add	ebx,16
+		add esi,1
+		add ebx,16
 	.endw
 
-	mov	ebx,@CStr( " eax" )
+	mov	esi,@CStr( " eax" )
 	.if	ModuleInfo.Ofssize == USE64
 
-		mov	ebx,@CStr( " rax" )
+		mov	esi,@CStr( " rax" )
 	.elseif ModuleInfo.Ofssize == USE16
 
-		mov	ebx,@CStr( " ax" )
+		mov	esi,@CStr( " ax" )
 	.endif
-	strcat( eax, ebx )
 
-	mov	ebx,e
-	shl	ebx,4
+	mov eax,proc_id
+	.if eax
+	    .if GetProc([eax].asm_tok.string_ptr)
 
-	.if	[ebx+edi].token != T_FINAL
+		mov sym,eax
+		mov edx,[eax].dsym.procinfo
+		mov info,edx
+		mov ecx,[edx].proc_info.paralist
+
+		movzx eax,[eax].asym.langtype
+		.if eax == LANG_C || eax == LANG_SYSCALL || eax == LANG_STDCALL || \
+		   (eax == LANG_FASTCALL && ModuleInfo.Ofssize != USE64)
+
+			.while ecx && [ecx].dsym.nextparam
+
+				mov ecx,[ecx].dsym.nextparam
+			.endw
+		.endif
+		mov curr,ecx
+
+		.while ecx && parg_id
+			;
+			; set paracurr to next parameter
+			;
+			mov	eax,sym
+			movzx	eax,[eax].asym.langtype
+			.if	eax == LANG_C || eax == LANG_SYSCALL || eax == LANG_STDCALL || \
+			       (eax == LANG_FASTCALL && ModuleInfo.Ofssize != USE64)
+
+				.for eax=curr, ecx=[edx].proc_info.paralist: ecx,
+				     [ecx].dsym.nextparam != eax: ecx=[ecx].dsym.nextparam
+				.endf
+				mov curr,ecx
+			.else
+				mov ecx,[ecx].dsym.nextparam
+			.endif
+			dec parg_id
+		.endw
+
+		.if	ecx
+			mov	eax,[ecx].asym.total_size
+			.switch eax
+			  .case 1: mov esi,@CStr(" al"):  .endc
+			  .case 2: mov esi,@CStr(" ax"):  .endc
+			  .case 4: mov esi,@CStr(" eax"): .endc
+			  .case 8
+				.if ModuleInfo.Ofssize == USE64
+
+					mov esi,@CStr(" rax")
+				.else
+					mov esi,@CStr(" edx::eax")
+				.endif
+				.endc
+		       .endsw
+		.endif
+	    .endif
+	.endif
+
+	lea eax,b
+	strcat( eax, esi )
+
+	mov ebx,e
+	shl ebx,4
+	.if [ebx+edi].token != T_FINAL
 
 		strcat( eax, " " )
 		strcat( eax, [ebx+edi].tokpos )
 	.endif
 
+	.if ModuleInfo.list
+
+		push	eax
+		LstSetPosition()
+		pop	eax
+	.endif
 	strcpy( ModuleInfo.currsource, eax )
 	Tokenize( eax, 0, edi, TOK_DEFAULT )
 	mov	ModuleInfo.token_count,eax
@@ -2849,26 +3003,42 @@ GetNextComma PROC string:LPSTR
 		mov	al,[ecx]
 		.break	.if !al
 		.if	al == '('
-			inc	edx
+
+			inc edx
 		.elseif al == ')'
-			dec	edx
+
+			dec edx
 		.elseif al == ','
-			.if	!edx
-				mov	[ecx],dl
-				mov	al,[ecx-1]
-				.if	al == ' ' || al == 9
-					mov	[ecx-1],dl
+
+			.if !edx
+
+				mov [ecx],dl
+				mov al,[ecx-1]
+				.if al == ' ' || al == 9
+
+					mov [ecx-1],dl
 				.endif
-				inc	ecx
-				mov	al,[ecx]
+
+				inc ecx
+				mov al,[ecx]
 				.while	al == ' ' || al == 9
-					inc	ecx
-					mov	al,[ecx]
+					inc ecx
+					mov al,[ecx]
 				.endw
+				;
+				; case ',' is line break -- :,
+				;
+				mov edx,string
+				.if BYTE PTR [edx] == 0 && al
+
+					mov string,ecx
+					xor edx,edx
+					.continue
+				.endif
 				.break
 			.endif
 		.endif
-		add	ecx,1
+		add ecx,1
 	.endw
 	mov	edx,string
 	movzx	eax,BYTE PTR [edx]
@@ -2876,10 +3046,11 @@ GetNextComma PROC string:LPSTR
 
 GetNextComma ENDP
 
-ParseAssignment proc uses ecx edx esi edi ebx buffer, source
+ParseAssignment proc uses ecx edx esi edi ebx buffer:ptr sbyte, tokenarray:ptr asm_tok
 
-	mov	esi,buffer
-	mov	ebx,source
+	mov esi,buffer
+	mov edx,tokenarray
+	mov ebx,[edx].asm_tok.tokpos
 
 	.repeat
 		.if !_mbspbrk(ebx, "+-=")
@@ -2915,23 +3086,26 @@ ParseAssignment proc uses ecx edx esi edi ebx buffer, source
 
 		  .default
 
-			mov	ecx,[edi]
+			mov	eax,[edi]
 			mov	BYTE PTR [edi],0
 			add	edi,2
 			.switch
-			  .case cx == '++'
+			  .case ax == '&='
+				mov	ecx,@CStr( "lea " )
+				.endc
+			  .case ax == '++'
 				mov	ecx,@CStr( "inc " )
 				.endc
-			  .case cx == '--'
+			  .case ax == '--'
 				mov	ecx,@CStr( "dec " )
 				.endc
-			  .case cx == '=+'
+			  .case ax == '=+'
 				mov	ecx,@CStr( "add " )
 				.endc
-			  .case cx == '=-'
+			  .case ax == '=-'
 				mov	ecx,@CStr( "sub " )
 				.endc
-			  .case cl == '='
+			  .case al == '='
 				mov	ecx,@CStr( "mov " )
 				sub	edi,1
 				.endc
@@ -2942,16 +3116,57 @@ ParseAssignment proc uses ecx edx esi edi ebx buffer, source
 			.endsw
 			.endc	.if !ecx
 
+			push	eax
+			push	ecx
+			mov	edi,strstart(edi)
+			strtrim(ebx)
+			strtrim(edi)
+			pop	ecx
+			pop	eax
+			;
+			; = &# --> lea #
+			; = ~# --> mov reg,# : not reg
+			;
+			; mov reg,0 --> xor reg,reg
+			;
+			.if	al == '='
 
+				.if BYTE PTR [edi] == '&'
+
+					inc	edi
+					mov	ecx,@CStr( "lea " )
+
+				.elseif BYTE PTR [edi] == '~'
+
+					inc	edi
+					strcat( esi, ecx )
+					strcat( esi, ebx )
+					strcat( esi, ", " )
+					strcat( esi, edi )
+					strcat( esi, "\n" )
+					mov	BYTE PTR [edi],0
+					mov	ecx,@CStr( "not " )
+
+				.elseif WORD PTR [edi] == '0'
+
+					mov edx,tokenarray
+					mov eax,[edx].asm_tok.tokval
+
+					.if (eax >= T_AL && eax <= T_EDI) || \
+					    (ModuleInfo.Ofssize == USE64 && \
+					    eax >= T_R8B && eax <= T_R15)
+
+						mov ecx,@CStr( "xor " )
+						mov edi,ebx
+					.endif
+				.endif
+			.endif
 			strcat( esi, ecx )
 			strcat( esi, ebx )
+			.if	BYTE PTR [edi]
 
-			.if	BYTE PTR [strstart(edi)]
-
-				push	eax
-				strcat( esi, "," )
-				pop	eax
-				strcat( esi, eax )
+				strcat( esi, ", " )
+				strcat( esi, edi )
 			.endif
 			strcat( esi, "\n" )
 		.endsw
@@ -2964,6 +3179,7 @@ ParseAssignment endp
 RenderAssignment proc uses esi edi ebx dest:ptr sbyte, source:ptr sbyte, tokenarray:ptr asm_tok
 
 local	buffer[MAX_LINE_LEN]:SBYTE
+local	tokbuf[MAX_LINE_LEN]:SBYTE
 
 	mov	edi,source
 	lea	esi,buffer
@@ -2974,7 +3190,7 @@ local	buffer[MAX_LINE_LEN]:SBYTE
 
 		mov	ebx,ecx ; next expression
 		mov	edi,edx ; this expression
-		lea	edx,[esi+MAX_LINE_LEN/2]
+		lea	edx,tokbuf
 		Tokenize( strcpy( edx, edi ), 0, tokenarray, TOK_DEFAULT )
 		mov	ModuleInfo.token_count,eax
 		.break .if ExpandHllProc( esi, 0, tokenarray ) == ERROR
@@ -2985,9 +3201,7 @@ local	buffer[MAX_LINE_LEN]:SBYTE
 			mov byte ptr [esi],0
 		.endif
 
-		mov	edx,tokenarray
-		.break .if !ParseAssignment(esi, [edx].asm_tok.tokpos)
-
+		.break .if !ParseAssignment(esi, tokenarray)
 		strcat( strcat( dest, esi ), "\n" )
 		mov	edi,ebx
 	.endw
@@ -3011,7 +3225,8 @@ local	rc:		SINT,
 	q:		LPSTR,
 	buff[16]:	SBYTE,
 	buffer[MAX_LINE_LEN]:SBYTE,
-	cmdstr[MAX_LINE_LEN]:SBYTE
+	cmdstr[MAX_LINE_LEN]:SBYTE,
+	tokbuf[MAX_LINE_LEN]:SBYTE
 
 	mov	rc,NOT_ERROR
 	mov	ebx,tokenarray
@@ -3179,7 +3394,7 @@ local	rc:		SINT,
 			push	ecx
 			mov	edi,edx
 
-			lea	edx,cmdstr[MAX_LINE_LEN/2]
+			lea	edx,tokbuf
 			Tokenize( strcat( strcpy( edx, ".if " ), edi ), 0, tokenarray, TOK_DEFAULT )
 			mov	ModuleInfo.token_count,eax
 			;

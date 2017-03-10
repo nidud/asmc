@@ -137,7 +137,7 @@ cmdelete PROC USES ebx
 		.else
 			.repeat
 				cmdelete_remove()
-				.breaknz
+				.break .ifnz
 				and [ebx].S_FBLK.fb_flag,not _FB_SELECTED
 				panel_findnext(cpanel)
 				mov ebx,edx

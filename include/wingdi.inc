@@ -1,15 +1,13 @@
-;
-; GDI procedure declarations, constant definitions and macros
-;
 ifndef __LIBC_INC
  include libc.inc
 endif
 ifndef _WINDEF_
  include windef.inc
 endif
-
 .xlist
-
+;
+; GDI procedure declarations, constant definitions and macros
+;
 ifndef _WINGDI_
 _WINGDI_ equ 1
 
@@ -4867,13 +4865,7 @@ WGL_SWAPMULTIPLE_MAX	equ 16
 wglSwapMultipleBuffers proto _CType :UINT, :LPWGLSWAP
 
 endif ;; (WINVER GE 0x0500)
-
 endif ;; NOGDI
-
-ifdef __cplusplus
-	ENDS
-endif
-
-
 endif ;; _WINGDI_
+
 .list

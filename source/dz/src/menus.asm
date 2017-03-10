@@ -342,10 +342,10 @@ apimode ENDP
 
 apiega	PROC
 
-	and	cflag,not _C_EGALINE
-	.if	_scrrow > 24
+	and cflag,not _C_EGALINE
+	.if _scrrow != DZMINROWS-1 || _scrcol != DZMINCOLS
 
-		or	cflag,_C_EGALINE
+		or cflag,_C_EGALINE
 	.endif
 	ret
 
@@ -479,7 +479,7 @@ local	handle, p, buffer[512]:SBYTE
 				   error:
 					CFError( section, p )
 					xor	edi,edi
-					.break1
+					.break(1)
 				.endsw
 
 			.untilcxz

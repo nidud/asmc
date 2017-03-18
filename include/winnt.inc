@@ -1,152 +1,535 @@
+ifndef _WINNT_
+_WINNT_ equ <>
+include ctype.inc
+include string.inc
+include basetsd.inc
+.xlist
+
 ;
 ; This module defines the 32-Bit Windows types and constants that are
 ; defined by NT, but exposed through the Win32 API.
 ;
-include ctype.inc
-include string.inc
-include basetsd.inc
+ifndef _WIN32_FUSION
+_WIN32_FUSION	equ 0
+endif
 
-.xlist
+ifndef pragma
+pragma	macro x:vararg
+	endm
+endif
+ifndef __declspec
+__declspec macro x:vararg
+	endm
+endif
 
-ifndef _WINNT_
-_WINNT_ equ 1
+if _MSC_VER GE 1200
+pragma warning(push)
+endif
+pragma warning(disable:4201) ;; named type definition in parentheses
+pragma warning(disable:4214) ;; bit field types other than int
 
-ANYSIZE_ARRAY equ 1
+ANYSIZE_ARRAY		equ 1
+
+;include specstrings.inc
+;include kernelspecs.inc
+
+ifdef STRICT_GS_ENABLED
+pragma strict_gs_check(push, on)
+endif
+
+if defined(_M_MRX000) AND NOT defined(MIDL_PASS)
+RESTRICTED_POINTER	equ <__restrict>
+else
+RESTRICTED_POINTER	equ <>
+endif
+
+if defined(_M_MRX000) OR defined(_M_ALPHA) OR defined(_M_PPC) OR defined(_M_IA64) OR defined(_M_AMD64)
+ALIGNMENT_MACHINE	equ <>
+UNALIGNED		equ <__unaligned>
+if defined(_WIN64)
+UNALIGNED64		equ <__unaligned>
+else
+UNALIGNED64		equ <>
+endif
+else
+;undef ALIGNMENT_MACHINE
+UNALIGNED		equ <>
+UNALIGNED64		equ <>
+endif
 
 if defined(_WIN64) or defined(_M_ALPHA)
-MAX_NATURAL_ALIGNMENT equ sizeof(QWORD)
+MAX_NATURAL_ALIGNMENT		equ sizeof(QWORD)
+MEMORY_ALLOCATION_ALIGNMENT	equ 16
 else
-MAX_NATURAL_ALIGNMENT equ sizeof(DWORD)
+MAX_NATURAL_ALIGNMENT		equ sizeof(DWORD)
+MEMORY_ALLOCATION_ALIGNMENT	equ 8
 endif
 
 ;
 ; TYPE_ALIGNMENT will return the alignment requirements of a given type for
 ; the current platform.
 ;
-
 TYPE_ALIGNMENT macro t
-	exitm<option fieldalign:sizeof(t)>
+	local S1
+	S1 STRUC
+	l1 db ?
+	l2 t ?
+	S1 ENDS
+	exitm<S1.l2>
 	endm
 
-;
-; C_ASSERT() can be used to perform many compile-time assertions:
-;	     type sizes, field offsets, etc.
-;
-; An assertion failure results in error C2118: negative subscript.
-;
-
-C_ASSERT macro e
-	; typedef char __C_ASSERT__[(e)?1:-1]
-	endm
-
-POINTER_64	equ <ptr>
-POINTER_32	equ <ptr>
+PROBE_ALIGNMENT macro _s
 ifdef _WIN64
-POINTER_64_INT	typedef QWORD ; unsigned __int64
+ifdef _AMD64_
+	exitm<TYPE_ALIGNMENT(DWORD)>
+elseifdef _IA64_
+	if TYPE_ALIGNMENT(_s) GT TYPE_ALIGNMENT(DWORD)
+	   exitm<TYPE_ALIGNMENT(_s)
+	else
+	   exitm<TYPE_ALIGNMENT(DWORD)>
+	endif
 else
-POINTER_64_INT	typedef DWORD ; unsigned long
+	.err <No Target Architecture>
+endif
+	endm
+PROBE_ALIGNMENT32 macro _s
+	exitm<TYPE_ALIGNMENT(DWORD)>
+else
+	exitm<TYPE_ALIGNMENT(DWORD)>
+endif
+	endm
+
+;;
+;; C_ASSERT() can be used to perform many compile-time assertions:
+;;	      type sizes, field offsets, etc.
+;;
+;; An assertion failure results in error C2118: negative subscript.
+;;
+if 0
+;ifndef SORTPP_PASS
+C_ASSERT macro e
+	if e
+	    exitm<__C_ASSERT__[1]>
+	else
+	    exitm<__C_ASSERT__[-1]>
+	endif
+	endm
+else
+C_ASSERT macro e
+	endm ;; nothing
 endif
 
-PVOID		typedef ptr
-PVOID64		typedef ptr
-
-
-if defined(_WIN32) or defined(_STDCALL_SUPPORTED)
-NTAPI		equ <stdcall>
+if (defined(_M_IX86) OR defined(_M_IA64) OR defined(_M_AMD64)) AND NOT defined(MIDL_PASS)
+DECLSPEC_IMPORT		equ <__declspec(dllimport)>
 else
-NTAPI		equ <fastcall>
+DECLSPEC_IMPORT		equ <>
 endif
 
-;
-; Define API decoration for direct importing system DLL references.
-;
+ifndef DECLSPEC_NORETURN
+if (_MSC_VER GE 1200) AND NOT defined(MIDL_PASS)
+DECLSPEC_NORETURN	equ <__declspec(noreturn)>
+else
+DECLSPEC_NORETURN	equ <>
+endif
+endif
+
+ifndef DECLSPEC_NOTHROW
+if (_MSC_VER GE 1200) AND NOT defined(MIDL_PASS)
+DECLSPEC_NOTHROW	equ <__declspec(nothrow)>
+else
+DECLSPEC_NOTHROW	equ <>
+endif
+endif
+
+ifndef DECLSPEC_ALIGN
+DECLSPEC_ALIGN macro x
+if (_MSC_VER GE 1300) AND NOT defined(MIDL_PASS)
+	exitm<__declspec(align(x))>
+endif
+	endm
+endif
+
+ifndef SYSTEM_CACHE_ALIGNMENT_SIZE
+if defined(_AMD64_) or defined(_X86_)
+SYSTEM_CACHE_ALIGNMENT_SIZE equ 64
+else
+SYSTEM_CACHE_ALIGNMENT_SIZE equ 128
+endif
+endif
+
+ifndef DECLSPEC_CACHEALIGN
+DECLSPEC_CACHEALIGN	equ DECLSPEC_ALIGN(SYSTEM_CACHE_ALIGNMENT_SIZE)
+endif
+
+ifndef DECLSPEC_UUID
+DECLSPEC_UUID macro x
+if (_MSC_VER GE 1100) AND defined (__cplusplus)
+	exitm<__declspec(uuid(x))>
+endif
+	endm
+endif
+
+ifndef DECLSPEC_NOVTABLE
+if (_MSC_VER GE 1100) AND defined(__cplusplus)
+DECLSPEC_NOVTABLE	equ <__declspec(novtable)>
+else
+DECLSPEC_NOVTABLE	equ <>
+endif
+endif
+
+ifndef DECLSPEC_SELECTANY
+if (_MSC_VER GE 1100)
+DECLSPEC_SELECTANY	equ <__declspec(selectany)>
+else
+DECLSPEC_SELECTANY	equ <>
+endif
+endif
+
+ifndef NOP_FUNCTION
+if (_MSC_VER GE 1210)
+NOP_FUNCTION		equ <__noop>
+else
+NOP_FUNCTION		equ <>
+endif
+endif
+
+ifndef DECLSPEC_ADDRSAFE
+if (_MSC_VER GE 1200) AND (defined(_M_ALPHA) OR defined(_M_AXP64))
+DECLSPEC_ADDRSAFE	equ <__declspec(address_safe)>
+else
+DECLSPEC_ADDRSAFE	equ <>
+endif
+endif
+
+ifndef DECLSPEC_NOINLINE
+if (_MSC_VER GE 1300)
+DECLSPEC_NOINLINE	equ <__declspec(noinline)>
+else
+DECLSPEC_NOINLINE	equ <>
+endif
+endif
+
+ifndef FORCEINLINE
+if (_MSC_VER GE 1200)
+FORCEINLINE		equ <__forceinline>
+else
+FORCEINLINE		equ <__inline>
+endif
+endif
+
+ifndef DECLSPEC_DEPRECATED
+if (_MSC_VER GE 1300) AND NOT defined(MIDL_PASS)
+DECLSPEC_DEPRECATED	equ <__declspec(deprecated)>
+DEPRECATE_SUPPORTED	equ <>
+else
+DECLSPEC_DEPRECATED	equ <>
+;undef	DEPRECATE_SUPPORTED
+endif
+endif
+
+ifdef DEPRECATE_DDK_FUNCTIONS
+ifdef _NTDDK_
+DECLSPEC_DEPRECATED_DDK equ DECSPEC_DEPRECATED
+ifdef DEPRECATE_SUPPORTED
+PRAGMA_DEPRECATED_DDK	equ 1
+endif
+else
+DECLSPEC_DEPRECATED_DDK equ 1
+PRAGMA_DEPRECATED_DDK	equ 1
+endif
+else
+DECLSPEC_DEPRECATED_DDK equ 1
+PRAGMA_DEPRECATED_DDK	equ 0
+endif
+
+;;
+;; Void
+;;
+
+PVOID			typedef ptr
+PVOID64			typedef ptr
+
+if (_MSC_VER GE 800) OR defined(_STDCALL_SUPPORTED)
+NTAPI			equ <__stdcall>
+else
+__cdecl			equ <>
+NTAPI			equ <>
+endif
+
+ifndef _M_CEE_PURE
+NTAPI_INLINE		equ <NTAPI>
+else
+NTAPI_INLINE		equ <>
+endif
+
+;;
+;; Define API decoration for direct importing system DLL references.
+;;
 
 ifndef _NTSYSTEM_
-NTSYSAPI	equ <>
+NTSYSAPI		equ <DECSPEC_IMPORT>
+NTSYSCALLAPI		equ <DECSPEC_IMPORT>
 else
-NTSYSAPI	equ <>
+NTSYSAPI		equ <>
+ifdef _NTDLLBUILD_
+NTSYSCALLAPI		equ <>
+else
+NTSYSCALLAPI		equ <DECSPEC_ADDRSAFE>
+endif
 endif
 
-;
-; Basics
-;
+;;
+;; Basics
+;;
 
 ifndef VOID
-VOID		equ <>
-CHAR		typedef sbyte
-LONG		typedef sdword
+VOID			equ <>
+CHAR			typedef sbyte
+;SHORT			typedef sword
+LONG			typedef sdword
+;ifndef MIDL_PASS
+;INT			typedef sdword
+;endif
 endif
 
-;
-; UNICODE (Wide Character) types
-;
+;;
+;; UNICODE (Wide Character) types
+;;
 
-WCHAR		typedef wchar_t ; wc,	16-bit UNICODE character
-PWCHAR		typedef ptr wchar_t
-LPWCH		typedef ptr wchar_t
-PWCH		typedef ptr wchar_t
-LPCWCH		typedef ptr wchar_t
-PCWCH		typedef ptr wchar_t
-NWPSTR		typedef ptr wchar_t
-LPWSTR		typedef ptr wchar_t
-PWSTR		typedef ptr wchar_t
-LPCWSTR		typedef ptr wchar_t
-PCWSTR		typedef ptr wchar_t
+WCHAR			typedef word ; 16-bit UNICODE character
 
-;
-; ANSI (Multi-byte Character) types
-;
-PCHAR		typedef ptr sbyte
-LPCH		typedef ptr sbyte
-PCH		typedef ptr sbyte
-LPCCH		typedef ptr sbyte
-PCCH		typedef ptr sbyte
+PWCH			typedef ptr WCHAR
+LPWCH			typedef ptr WCHAR
+PWCHAR			typedef ptr WCHAR
+PCWCH			typedef ptr WCHAR
+LPCWCH			typedef ptr WCHAR
+NWPSTR			typedef ptr WCHAR
+LPWSTR			typedef ptr WCHAR
+PWSTR			typedef ptr WCHAR
+PZPWSTR			typedef ptr PWSTR
+PCZPWSTR		typedef ptr PWSTR
+LPUWSTR			typedef ptr WCHAR
+PUWSTR			typedef ptr WCHAR
+LPCWSTR			typedef ptr WCHAR
+PCWSTR			typedef ptr WCHAR
+PZPCWSTR		typedef ptr PCWSTR
+LPCUWSTR		typedef ptr WCHAR
+PCUWSTR			typedef ptr WCHAR
 
-NPSTR		typedef ptr sbyte
-LPSTR		typedef ptr sbyte
-PSTR		typedef ptr sbyte
-LPCSTR		typedef ptr sbyte
-PCSTR		typedef ptr sbyte
+PZZWSTR			typedef ptr WCHAR
+PCZZWSTR		typedef ptr WCHAR
+PUZZWSTR		typedef ptr WCHAR ;UNALIGNED
+PCUZZWSTR		typedef ptr WCHAR ;UNALIGNED
 
-;
-; Neutral ANSI/UNICODE types and macros
-;
-ifdef  _UNICODE
+PNZWCH			typedef ptr WCHAR
+PCNZWCH			typedef ptr WCHAR
+PUNZWCH			typedef ptr WCHAR ;UNALIGNED
+PCUNZWCH		typedef ptr WCHAR ;UNALIGNED
+
+if _WIN32_WINNT GE 0x0600 OR (defined(__cplusplus) AND defined(WINDOWS_ENABLE_CPLUSPLUS))
+
+PCWCHAR			typedef ptr WCHAR
+PCUWCHAR		typedef ptr WCHAR ;UNALIGNED
+
+;;
+;;  UCS (Universal Character Set) types
+;;
+
+UCSCHAR			typedef dword
+
+;;
+;;  Even pre-Unicode agreement, UCS values are always in the
+;;  range U+00000000 to U+7FFFFFFF, so we'll pick an obvious
+;;  value.
+
+UCSCHAR_INVALID_CHARACTER equ 0xffffffff
+
+MIN_UCSCHAR		equ 0
+
+;;
+;;  We'll assume here that the ISO-10646 / Unicode agreement
+;;  not to assign code points after U+0010FFFF holds so that
+;;  we do not have to have separate "UCSCHAR" and "UNICODECHAR"
+;;  types.
+;;
+
+MAX_UCSCHAR		equ 0x0010FFFF
+
+PUCSCHAR		typedef ptr UCSCHAR
+PCUCSCHAR		typedef ptr UCSCHAR
+
+PUCSSTR			typedef ptr UCSCHAR
+PUUCSSTR		typedef ptr UCSCHAR ;UNALIGNED
+
+PCUCSSTR		typedef ptr UCSCHAR
+PCUUCSSTR		typedef ptr UCSCHAR ;UNALIGNED
+
+PUUCSCHAR		typedef ptr UCSCHAR ;UNALIGNED
+PCUUCSCHAR		typedef ptr UCSCHAR ;UNALIGNED
+
+endif ;; _WIN32_WINNT GE 0x0600
+
+;;
+;; ANSI (Multi-byte Character) types
+;;
+PCH			typedef ptr CHAR
+LPCH			typedef ptr CHAR
+PCCH			typedef ptr CHAR
+PCHAR			typedef ptr CHAR
+LPCCH			typedef ptr CHAR
+NPSTR			typedef ptr CHAR
+LPSTR			typedef ptr CHAR
+PSTR			typedef ptr CHAR
+PZPSTR			typedef ptr PSTR
+PCZPSTR			typedef ptr PSTR
+LPCSTR			typedef ptr CHAR
+PCSTR			typedef ptr CHAR
+PZPCSTR			typedef ptr PCSTR
+PZZSTR			typedef ptr CHAR
+PCZZSTR			typedef ptr CHAR
+PNZCH			typedef ptr CHAR
+PCNZCH			typedef ptr CHAR
+
+;;
+;; Neutral ANSI/UNICODE types and macros
+;;
+ifdef _UNICODE
 ifndef _TCHAR_DEFINED
-TCHAR		typedef wchar_t
-PTCHAR		typedef ptr wchar_t
-PTBYTE		typedef ptr wchar_t
-_TCHAR_DEFINED	equ 1
+TBYTE			typedef WCHAR
+TCHAR			typedef WCHAR
+PTCHAR			typedef ptr WCHAR
+PTBYTE			typedef ptr WCHAR
+_TCHAR_DEFINED		equ <>
 endif
-LPTCH		typedef LPWSTR
-PTCH		typedef LPWSTR
-PTSTR		typedef LPWSTR
-LPTSTR		typedef ptr wchar_t
-LPCTSTR		typedef LPCWSTR
+
+PTCH			typedef LPWCH
+LPTCH			typedef LPWCH
+PCTCH			typedef LPCWCH
+LPCTCH			typedef LPCWCH
+PTSTR			typedef LPWSTR
+LPTSTR			typedef LPWSTR
+PCTSTR			typedef LPCWSTR
+LPCTSTR			typedef LPCWSTR
+LPUTSTR			typedef LPUWSTR
+PUTSTR			typedef LPUWSTR
+PCUTSTR			typedef LPCUWSTR
+LPCUTSTR		typedef LPCUWSTR
+;LP			typedef LPWSTR
+
+PZZTSTR			typedef PZZWSTR
+PCZZTSTR		typedef PCZZWSTR
+PUZZTSTR		typedef PUZZWSTR
+PCUZZTSTR		typedef PCUZZWSTR
+PNZTCH			typedef PNZWCH
+PCNZTCH			typedef PCNZWCH
+PUNZTCH			typedef PUNZWCH
+PCUNZTCH		typedef PCUNZWCH
+
+__TEXT macro quote
+	exitm<L&quote&>
+	endm
+
+else ;; !_UNICODE
+ifndef _TCHAR_DEFINED
+TBYTE			typedef CHAR
+TCHAR			typedef CHAR
+PTCHAR			typedef ptr CHAR
+PTBYTE			typedef ptr CHAR
+_TCHAR_DEFINED		equ <>
+endif
+
+PTCH			typedef LPCH
+LPTCH			typedef LPCH
+PCTCH			typedef LPCCH
+LPCTCH			typedef LPCCH
+PTSTR			typedef LPSTR
+LPTSTR			typedef LPSTR
+PUTSTR			typedef LPSTR
+LPUTSTR			typedef LPSTR
+PCTSTR			typedef LPCSTR
+LPCTSTR			typedef LPCSTR
+PCUTSTR			typedef LPCSTR
+LPCUTSTR		typedef LPCSTR
+;LP			typedef LPSTR
+PZZTSTR			typedef PZZSTR
+PUZZTSTR		typedef PZZSTR
+PCZZTSTR		typedef PCZZSTR
+PCUZZTSTR		typedef PCZZSTR
+PNZTCH			typedef PNZCH
+PUNZTCH			typedef PNZCH
+PCNZTCH			typedef PCNZCH
+PCUNZTCH		typedef PCNZCH
+
+__TEXT	macro quote
+	exitm<quote>
+	endm
+
+endif ;; _UNICODE
+
+TEXT	macro quote
+	exitm<__TEXT(quote)>
+	endm
+
+PSHORT			typedef ptr sword
+PLONG			typedef ptr LONG
+
+ALL_PROCESSOR_GROUPS	equ 0xffff
+
+;;
+;; Structure to represent a system wide processor number. It contains a
+;; group number and relative processor number within the group.
+;;
+
+PROCESSOR_NUMBER	STRUC
+_Group			dw ?
+Number			db ?
+Reserved		db ?
+PROCESSOR_NUMBER	ENDS
+PPROCESSOR_NUMBER	typedef ptr PROCESSOR_NUMBER
+
+;;
+;; Structure to represent a group-specific affinity, such as that of a
+;; thread.  Specifies the group number and the affinity within that group.
+;;
+
+GROUP_AFFINITY		STRUC
+_Mask			KAFFINITY ?
+_Group			dw ?
+Reserved		dw 3 dup(?)
+GROUP_AFFINITY		ENDS
+PGROUP_AFFINITY		typedef ptr GROUP_AFFINITY
+
+;;
+;; Handle to an Object
+;;
+
+ifdef STRICT
+HANDLE		typedef ptr
+if 0 AND (_MSC_VER GT 1000)
+DECLARE_HANDLE macro h_name
+	exitm<h_name typedef ptr>
+	endm
 else
-ifndef _TCHAR_DEFINED
-TCHAR		typedef sbyte
-PTCHAR		typedef ptr sbyte
-PTBYTE		typedef ptr byte
-_TCHAR_DEFINED	equ 1
+DECLARE_HANDLE macro h_name
+&h_name&__ struc
+unused	SINT ?
+&h_name&__ ends
+	exitm<h_name typedef ptr &h_name&__>
+	endm
 endif
-
-LPTCH		typedef LPSTR
-PTCH		typedef LPSTR
-PTSTR		typedef LPSTR
-LPTSTR		typedef ptr sbyte
-LPCTSTR		typedef LPCSTR
+else
+HANDLE	typedef PVOID
+DECLARE_HANDLE macro name
+	exitm<name typedef HANDLE>
+	endm
 endif
+PHANDLE typedef ptr HANDLE
 
-PSHORT		typedef PTR SWORD
-PLONG		typedef PTR SDWORD
 
-HANDLE		typedef PTR
-PHANDLE		typedef PTR HANDLE
+;;
+;; Flag (bit) fields
+;;
 
-;
-; Flag (bit) fields
-;
 
 FCHAR		typedef BYTE
 FSHORT		typedef WORD
@@ -155,9 +538,23 @@ FLONG		typedef DWORD
 ; Component Object Model defines, and macros
 
 ifndef _HRESULT_DEFINED
-_HRESULT_DEFINED equ 1
-HRESULT		typedef SINT
-endif
+_HRESULT_DEFINED	equ <>
+ifdef __midl
+HRESULT			typedef LONG
+else
+HRESULT			typedef LONG;__success(return >= 0) long
+endif ;; __midl
+endif ;; NOT _HRESULT_DEFINED
+
+
+if defined(_M_IA64) AND NOT defined(MIDL_PASS)
+
+STDMETHODCALLTYPE	equ <fastcall>
+STDMETHODVCALLTYPE	equ <fastcall>
+STDAPICALLTYPE		equ <fastcall>
+STDAPIVCALLTYPE		equ <fastcall>
+
+else
 
 if defined(_WIN32) or defined(_MPPC_)
 
@@ -168,43 +565,59 @@ STDMETHODCALLTYPE	equ <c>
 else
 STDMETHODCALLTYPE	equ <stdcall>
 endif
+
 STDMETHODVCALLTYPE	equ <c>
 STDAPICALLTYPE		equ <stdcall>
 STDAPIVCALLTYPE		equ <c>
 else
-STDMETHODCALLTYPE	equ <fastcall>
+STDMETHODCALLTYPE	equ <stdcall>
 STDMETHODVCALLTYPE	equ <c>
-STDAPICALLTYPE		equ <fastcall>
+STDAPICALLTYPE		equ <stdcall>
 STDAPIVCALLTYPE		equ <c>
-endif
 
-STDAPI	equ STDAPICALLTYPE
+endif ;; defined(_WIN32) or defined(_MPPC_)
+endif ;; defined(_M_IA64) AND NOT defined(MIDL_PASS)
+
+STDAPI			equ <STDAPICALLTYPE>
+STDMETHODIMP		equ <STDMETHODCALLTYPE>
+STDOVERRIDEMETHODIMP	equ <STDMETHODIMP> ; __override
+IFACEMETHODIMP		equ <STDMETHODIMP> ; __override
+STDAPIV			equ <STDAPIVCALLTYPE>
+STDMETHODIMPV		equ <STDMETHODVCALLTYPE>
+STDOVERRIDEMETHODIMPV	equ <STDMETHODIMPV> ; __override
+IFACEMETHODIMPV		equ <STDMETHODIMPV> ; __override
+
 STDAPI_ macro x
 	exitm<x STDAPICALLTYPE>
 	endm
-
-STDMETHODIMP equ STDMETHODCALLTYPE
 STDMETHODIMP_ macro x
 	exitm<x STDMETHODCALLTYPE>
 	endm
-
+STDOVERRIDEMETHODIMP_ macro _type
+	exitm<STDMETHODIMP_(_type)> ; __override
+	endm
+IFACEMETHODIMP_ macro _type
+	exitm<STDMETHODIMP_(_type)> ; __override
+	endm
 ; The 'V' versions allow Variable Argument lists.
-
-STDAPIV equ STDAPIVCALLTYPE
 STDAPIV_ macro x
 	exitm<x STDAPIVCALLTYPE>
 	endm
-
-STDMETHODIMPV equ STDMETHODVCALLTYPE
 STDMETHODIMPV_ macro x
 	exitm<x STDMETHODVCALLTYPE>
 	endm
+STDOVERRIDEMETHODIMPV_ macro _type
+	exitm<STDMETHODIMPV_(_type)> ; __override
+	endm
+IFACEMETHODIMPV_ macro _type
+	exitm<STDMETHODIMPV_(_type)> ; __override
+	endm
 
-PDWORD	typedef ptr DWORD
-CCHAR	typedef CHAR
-LCID	typedef DWORD
-PLCID	typedef PDWORD
-LANGID	typedef WORD
+PDWORD		typedef ptr DWORD
+CCHAR		typedef CHAR
+LCID		typedef DWORD
+PLCID		typedef PDWORD
+LANGID		typedef WORD
 
 
 
@@ -214,72 +627,88 @@ ERROR_SEVERITY_INFORMATIONAL equ 0x40000000
 ERROR_SEVERITY_WARNING	     equ 0x80000000
 ERROR_SEVERITY_ERROR	     equ 0xC0000000
 
-;
-; _M_IX86 included so that EM CONTEXT structure compiles with
-; x86 programs. *** TBD should this be for all architectures?
-;
+;;
+;; _M_IX86 included so that EM CONTEXT structure compiles with
+;; x86 programs. *** TBD should this be for all architectures?
+;;
 
-;
-; 16 byte aligned type for 128 bit floats
-;
+;;
+;; 16 byte aligned type for 128 bit floats
+;;
 
-; *** TBD **** when compiler support is available:
-; typedef __float80 FLOAT128;
-; For we define a 128 bit structure and use force_align pragma to
-; align to 128 bits.
-;
+;;
+;; For we define a 128 bit structure and use __declspec(align(16)) pragma to
+;; align to 128 bits.
+;;
+
+if defined(_M_IA64) AND NOT defined(MIDL_PASS)
+;__declspec(align(16))
+endif
 
 FLOAT128	STRUC
 LowPart		dq ?
 HighPart	dq ?
 FLOAT128	ENDS
-
 PFLOAT128	typedef PTR FLOAT128
 
-;
-; __int64 is only supported by 2.0 and later midl.
-; __midl is set by the 2.0 midl and not by 1.0 midl.
-;
+;;
+;; __int64 is only supported by 2.0 and later midl.
+;; __midl is set by the 2.0 midl and not by 1.0 midl.
+;;
 
-_ULONGLONG_	equ 1
+_ULONGLONG_	equ <>
 
-LONGLONG	typedef SQWORD
-ULONGLONG	typedef QWORD
+;if (NOT defined(MIDL_PASS) OR defined(__midl)) AND ( NOT defined(_M_IX86) OR (defined(_INTEGRAL_MAX_BITS) AND _INTEGRAL_MAX_BITS GE 64))
+
+if defined(_M_IA64) AND NOT defined(MIDL_PASS)
+
+LONGLONG	typedef sqword
+ULONGLONG	typedef qword
+MAXLONGLONG	equ 0x7fffffffffffffff
+else
+LONGLONG	typedef sqword ; double - REAL8
+ULONGLONG	typedef qword  ; double - REAL8
+endif
 PLONGLONG	typedef PTR LONGLONG
 PULONGLONG	typedef PTR ULONGLONG
-ifdef _WIN64
-MAXLONGLONG	equ 0x7fffffffffffffff
-endif
+
 
 ; Update Sequence Number
 
 USN		typedef LONGLONG
 
+ifdef MIDL_PASS
+LARGE_INTEGER	STRUC
+else ;; MIDL_PASS
 LARGE_INTEGER	UNION
-STRUC
- LowPart	DWORD ?
- HighPart	SINT ?
-ENDS
-STRUC u
- LowPart	DWORD ?
- HighPart	SINT ?
-ENDS
-QuadPart	LONGLONG ?
+    STRUC
+      LowPart	dd ?
+      HighPart	LONG ?
+    ENDS
+    STRUC u
+      LowPart	dd ?
+      HighPart	LONG ?
+    ENDS
+endif ;; MIDL_PASS
+    QuadPart	LONGLONG ?
 LARGE_INTEGER	ENDS
-
-ULARGE_INTEGER	UNION
-STRUC
- LowPart	DWORD ?
- HighPart	DWORD ?
-ENDS
-STRUC u
- LowPart	DWORD ?
- HighPart	DWORD ?
-ENDS
-QuadPart	ULONGLONG ?
-ULARGE_INTEGER	ENDS
-
 PLARGE_INTEGER	typedef PTR LARGE_INTEGER
+
+ifdef MIDL_PASS
+ULARGE_INTEGER	STRUC
+else ;; MIDL_PASS
+ULARGE_INTEGER	UNION
+    STRUC
+      LowPart	dd ?
+      HighPart	dd ?
+    ENDS
+    STRUC u
+      LowPart	dd ?
+      HighPart	dd ?
+    ENDS
+endif ;; MIDL_PASS
+    QuadPart	ULONGLONG ?
+ULARGE_INTEGER	ENDS
 PULARGE_INTEGER typedef PTR ULARGE_INTEGER
 
 ;
@@ -287,7 +716,7 @@ PULARGE_INTEGER typedef PTR ULARGE_INTEGER
 ;
 
 LUID		STRUC
-LowPart		DWORD ?
+LowPart		dd ?
 HighPart	LONG ?
 LUID		ENDS
 
@@ -298,18 +727,91 @@ _DWORDLONG_	equ 1
 DWORDLONG	typedef ULONGLONG
 PDWORDLONG	typedef PTR DWORDLONG
 
-;
-; Define operations to logically shift an int64 by 0..31 bits and to multiply
-; 32-bits by 32-bits to form a 64-bit product.
-;
-ifdef _WIN32
-Int32x32To64	proto _CType Multiplier:LONG, Multiplicand:LONG
-UInt32x32To64	proto _CType Multiplier:DWORD, Multiplicand:DWORD
-ifdef __PE__
-Int64ShllMod32	proto _CType Value:ULONGLONG, ShiftCount:DWORD
-Int64ShraMod32	proto _CType Value:ULONGLONG, ShiftCount:DWORD
-Int64ShrlMod32	proto _CType Value:ULONGLONG, ShiftCount:DWORD
+;;
+;; Define operations to logically shift an int64 by 0..31 bits and to multiply
+;; 32-bits by 32-bits to form a 64-bit product.
+;;
+
+if defined(MIDL_PASS) OR defined(RC_INVOKED) OR defined(_M_CEE_PURE) \
+   OR defined(_68K_) OR defined(_MPPC_) \
+   OR defined(_M_IA64) OR defined(_M_AMD64)
+
+;;
+;; Midl does not understand inline assembler. Therefore, the Rtl functions
+;; are used for shifts by 0..31 and multiplies of 32-bits times 32-bits to
+;; form a 64-bit product.
+;;
+;;
+;; IA64 and AMD64 have native 64-bit operations that are just as fast as their
+;; 32-bit counter parts. Therefore, the int64 data type is used directly to form
+;; shifts of 0..31 and multiplies of 32-bits times 32-bits to form a 64-bit
+;; product.
+;;
+Int32x32To64 macro a, b
+;	exitm<(((__int64)((long)(a))) * ((__int64)((long)(b))))>
+	endm
+UInt32x32To64 macro a, b
+;	exitm<(((unsigned __int64)((unsigned int)(a))) * ((unsigned __int64)((unsigned int)(b))))>
+	endm
+Int64ShllMod32 macro a, b
+;	exitm<(((unsigned __int64)(a)) SHL (b))>
+	endm
+Int64ShraMod32 macro a, b
+;	exitm<(((__int64)(a)) SHR (b))>
+	endm
+Int64ShrlMod32 macro a, b
+;	exitm<(((unsigned __int64)(a)) SHR (b))>
+	endm
+
+elseifdef _M_IX86
+
+;;
+;; The x86 C compiler understands inline assembler. Therefore, inline functions
+;; that employ inline assembler are used for shifts of 0..31.  The multiplies
+;; rely on the compiler recognizing the cast of the multiplicand to int64 to
+;; generate the optimal code inline.
+;;
+if 0
+Int32x32To64 macro a, b
+;	exitm<((__int64)(((__int64)((long)(a))) * ((long)(b))))>
+	endm
+UInt32x32To64 macro a, b
+;	exitm<((unsigned __int64)(((unsigned __int64)((unsigned int)(a))) * ((unsigned int)(b))))>
+	endm
 else
+Int32x32To64 proto _CType \
+    Multiplier: LONG,
+  Multiplicand: LONG
+
+UInt32x32To64 proto _CType \
+    Multiplier: DWORD,
+  Multiplicand: DWORD
+endif
+
+if _MSC_VER GE 1200
+;pragma warning(push)
+endif
+;pragma warning(disable:4035 4793)		 ;; re-enable below
+
+if 0;DECLSPEC_NOINLINE
+
+;ULONGLONG
+Int64ShllMod32 proto _CType \
+	 Value: ULONGLONG,
+    ShiftCount: DWORD
+
+;LONGLONG
+Int64ShraMod32 proto _CType \
+	 Value: ULONGLONG,
+    ShiftCount: DWORD
+
+;ULONGLONG
+Int64ShrlMod32 proto _CType \
+	 Value: ULONGLONG,
+    ShiftCount: DWORD
+
+else
+
 Int64ShllMod32 macro Value, ShiftCount
 	mov	ecx, ShiftCount
 	mov	eax, dword ptr [Value]
@@ -317,6 +819,7 @@ Int64ShllMod32 macro Value, ShiftCount
 	shld	edx, eax, cl
 	shl	eax, cl
 	endm
+
 Int64ShraMod32 macro Value, ShiftCount
 	mov	ecx, ShiftCount
 	mov	eax, dword ptr [Value]
@@ -324,6 +827,7 @@ Int64ShraMod32 macro Value, ShiftCount
 	shrd	eax, edx, cl
 	sar	edx, cl
 	endm
+
 Int64ShrlMod32 macro Value, ShiftCount
 	mov	ecx, ShiftCount
 	mov	eax, dword ptr [Value]
@@ -331,24 +835,100 @@ Int64ShrlMod32 macro Value, ShiftCount
 	shrd	eax, edx, cl
 	shr	edx, cl
 	endm
+
+endif ;; DECLSPEC_NOINLINE
+
+if _MSC_VER GE 1200
+;pragma warning(pop)
+else
+;pragma warning(default:4035 4793)
 endif
-endif	; _WIN32
+
+else
+
+.err <Must define a target architecture.>
+
+endif ;; _M_IX86
+
+ifdef _M_AMD64
+
+RotateLeft8		equ <_rotl8>
+RotateLeft16		equ <_rotl16>
+RotateRight8		equ <_rotr8>
+RotateRight16		equ <_rotr16>
+
+;unsigned char
+_rotl8 proto _CType \
+		 Value: BYTE,
+		 Shift: BYTE
+;unsigned short
+_rotl16 proto _CType \
+		 Value: WORD,
+		 Shift: BYTE
+;unsigned char
+_rotr8 proto _CType \
+		 Value: BYTE,
+		 Shift: BYTE
+;unsigned short
+_rotr16 proto _CType \
+		 Value: WORD,
+		 Shift: BYTE
+
+;pragma intrinsic(_rotl8)
+;pragma intrinsic(_rotl16)
+;pragma intrinsic(_rotr8)
+;pragma intrinsic(_rotr16)
+
+endif ;; _M_AMD64
+
+if _MSC_VER GE 1300
+
+RotateLeft32		equ <_rotl>
+RotateLeft64		equ <_rotl64>
+RotateRight32		equ <_rotr>
+RotateRight64		equ <_rotr64>
+
+;unsigned int
+_rotl proto _CType \
+		 Value: dword,
+		 Shift: SINT
+;unsigned __int64
+_rotl64 proto _CType \
+		 Value: qword,
+		 Shift: SINT
+;unsigned int
+_rotr proto _CType \
+		 Value: dword,
+		 Shift: SINT
+;unsigned __int64
+_rotr64 proto _CType \
+		 Value: qword,
+		 Shift: SINT
+
+;pragma intrinsic(_rotl)
+;pragma intrinsic(_rotl64)
+;pragma intrinsic(_rotr)
+;pragma intrinsic(_rotr64)
+
+endif ;; _MSC_VER GE 1300
 
 ANSI_NULL	equ 0
 UNICODE_NULL	equ 0
 BOOLEAN		typedef BYTE
 PBOOLEAN	typedef PTR BOOLEAN
 
-;
-;  Doubly linked list structure.  Can be used as either a list head, or
-;  as link words.
-;
+UNICODE_STRING_MAX_BYTES equ 65534
+UNICODE_STRING_MAX_CHARS equ 32767
+
+;;
+;;  Doubly linked list structure.  Can be used as either a list head, or
+;;  as link words.
+;;
 
 LIST_ENTRY	STRUC
 Flink		PVOID ?
 Blink		PVOID ?
 LIST_ENTRY	ENDS
-
 PLIST_ENTRY	TYPEDEF PTR LIST_ENTRY
 PRLIST_ENTRY	TYPEDEF PTR LIST_ENTRY
 
@@ -360,23 +940,26 @@ PRLIST_ENTRY	TYPEDEF PTR LIST_ENTRY
 SINGLE_LIST_ENTRY STRUC
 Next		PVOID ?
 SINGLE_LIST_ENTRY ENDS
-
 PSINGLE_LIST_ENTRY TYPEDEF PTR SINGLE_LIST_ENTRY
 
-;
-; Base data structures for OLE support
-;
+;;
+;; These are needed for portable debugger support.
+;;
 
-ifndef GUID_DEFINED
-GUID_DEFINED	equ 1
+LIST_ENTRY32		STRUC
+Flink			dd ?
+Blink			dd ?
+LIST_ENTRY32		ENDS
+PLIST_ENTRY32		typedef ptr LIST_ENTRY32
 
-GUID		STRUC	; size is 16
-Data1		dd ?
-Data2		dw ?
-Data3		dw ?
-Data4		db 8 dup(?)
-GUID		ENDS
-endif
+LIST_ENTRY64		STRUC
+Flink			ULONGLONG ?
+Blink			ULONGLONG ?
+LIST_ENTRY64		ENDS
+PLIST_ENTRY64		typedef ptr LIST_ENTRY64
+
+
+include guiddef.inc
 
 ifndef __OBJECTID_DEFINED
 __OBJECTID_DEFINED equ 1
@@ -405,14 +988,260 @@ FIELD_OFFSET macro x, field
 	exitm<x.field>
 	endm
 
-;
-; Calculate the address of the base of the structure given its type, and an
-; address of a field within the structure.
-;
+;;
+;; Calculate the size of a field in a structure of type type, without
+;; knowing or stating the type of the field.
+;;
+RTL_FIELD_SIZE macro type, field
+	exitm<sizeof(type.field)>
+	endm
+
+;;
+;; Calculate the size of a structure of type type up through and
+;; including a field.
+;;
+RTL_SIZEOF_THROUGH_FIELD macro type, field
+	exitm<FIELD_OFFSET(type, field) + RTL_FIELD_SIZE(type, field)>
+	endm
+
+;;
+;;  RTL_CONTAINS_FIELD usage:
+;;
+;;	if (RTL_CONTAINS_FIELD(pBlock, pBlock->cbSize, dwMumble)) { // safe to use pBlock->dwMumble
+;;
+RTL_CONTAINS_FIELD macro Struct, Size, Field
+	exitm<Struct.Field + sizeof(Struct.Field) LE Struct+Size>
+	endm
+
+;;
+;; Return the number of elements in a statically sized array.
+;;   DWORD Buffer[100];
+;;   RTL_NUMBER_OF(Buffer) == 100
+;; This is also popularly known as: NUMBER_OF, ARRSIZE, _countof, NELEM, etc.
+;;
+RTL_NUMBER_OF_V1 macro A
+	exitm<(sizeof(A)/sizeof((A)[0]))>
+	endm
+
+RTL_NUMBER_OF_V2 macro A
+	exitm<RTL_NUMBER_OF_V1(A)>
+	endm
+
+ifdef ENABLE_RTL_NUMBER_OF_V2
+RTL_NUMBER_OF macro A
+	exitm<RTL_NUMBER_OF_V2(A)>
+	endm
+else
+RTL_NUMBER_OF macro A
+	exitm<RTL_NUMBER_OF_V1(A)>
+	endm
+endif
+
+;;
+;; ARRAYSIZE is more readable version of RTL_NUMBER_OF_V2, and uses
+;; it regardless of ENABLE_RTL_NUMBER_OF_V2
+;;
+;; _ARRAYSIZE is a version useful for anonymous types
+;;
+ARRAYSIZE macro A
+	exitm<RTL_NUMBER_OF_V2(A)>
+	endm
+_ARRAYSIZE macro A
+	exitm<RTL_NUMBER_OF_V1(A)>
+	endm
+
+;;
+;; An expression that yields the type of a field in a struct.
+;;
+RTL_FIELD_TYPE macro type, field
+	exitm<type.field>
+	endm
+
+;; RTL_ to avoid collisions in the global namespace.
+;;
+;; Given typedef struct _FOO { BYTE Bar[123]; } FOO;
+;; RTL_NUMBER_OF_FIELD(FOO, Bar) == 123
+;;
+RTL_NUMBER_OF_FIELD macro type, field
+	exitm<RTL_NUMBER_OF(RTL_FIED_TYPE(type, field))>
+	endm
+
+;;
+;; eg:
+;; typedef struct FOO {
+;;   DWORD Integer;
+;;   PVOID Pointer;
+;; } FOO;
+;;
+;; RTL_PADDING_BETWEEN_FIELDS(FOO, Integer, Pointer) == 0 for Win32, 4 for Win64
+;;
+RTL_PADDING_BETWEEN_FIELDS macro T, F1, F2
+	if FIELD_OFFSET(T, F2) GT FIELD_OFFSET(T, F1)
+	    exitm<(FIELD_OFFSET(T, F2) - FIELD_OFFSET(T, F1) - RTL_FIELD_SIZE(T, F1))>
+	else
+	    exitm<(FIELD_OFFSET(T, F1) - FIELD_OFFSET(T, F2) - RTL_FIELD_SIZE(T, F2))>
+	endif
+	endm
+
+;; like sizeof
+;; usually this would be * CHAR_BIT, but we don't necessarily have #include <limits.h>
+RTL_BITS_OF macro sizeOfArg
+	exitm<(sizeof(sizeOfArg) * 8)>
+	endm
+
+RTL_BITS_OF_FIELD macro type, field
+	exitm<(RTL_BITS_OF(RTL_FIED_TYPE(type, field)))>
+	endm
+
+;;
+;; Calculate the address of the base of the structure given its type, and an
+;; address of a field within the structure.
+;;
 
 CONTAINING_RECORD macro address, x, field
 	exitm<address-x.field>
 	endm
+
+;;
+;; Exception handler routine definition.
+;;
+
+include excpt.inc
+
+EXCEPTION_MAXIMUM_PARAMETERS	equ 15	; maximum number of exception parameters
+
+;;
+;; Exception record definition.
+;;
+
+EXCEPTION_RECORD	STRUC SIZE_T
+ExceptionCode		dd ?
+ExceptionFlags		dd ?
+ExceptionRecord		PVOID ? ; EXCEPTION_RECORD *
+ExceptionAddress	PVOID ?
+NumberParameters	dd ?
+ExceptionInformation	PVOID EXCEPTION_MAXIMUM_PARAMETERS dup(?)
+EXCEPTION_RECORD	ENDS
+PEXCEPTION_RECORD	TYPEDEF PTR EXCEPTION_RECORD
+
+EXCEPTION_ROUTINE typedef proto _CType \
+       ExceptionRecord: ptr EXCEPTION_RECORD,
+      EstablisherFrame: PVOID,
+	 ContextRecord: ptr CONTEXT,
+     DispatcherContext: PVOID
+
+PEXCEPTION_ROUTINE	typedef ptr EXCEPTION_ROUTINE
+
+
+VER_SERVER_NT		equ 0x80000000
+VER_WORKSTATION_NT	equ 0x40000000
+VER_SUITE_SMALLBUSINESS equ 0x00000001
+VER_SUITE_ENTERPRISE	equ 0x00000002
+VER_SUITE_BACKOFFICE	equ 0x00000004
+VER_SUITE_COMMUNICATIONS equ 0x00000008
+VER_SUITE_TERMINAL	equ 0x00000010
+VER_SUITE_SMALLBUSINESS_RESTRICTED equ 0x00000020
+VER_SUITE_EMBEDDEDNT	equ 0x00000040
+VER_SUITE_DATACENTER	equ 0x00000080
+VER_SUITE_SINGLEUSERTS	equ 0x00000100
+VER_SUITE_PERSONAL	equ 0x00000200
+VER_SUITE_BLADE		equ 0x00000400
+VER_SUITE_EMBEDDED_RESTRICTED equ 0x00000800
+VER_SUITE_SECURITY_APPLIANCE equ 0x00001000
+VER_SUITE_STORAGE_SERVER equ 0x00002000
+VER_SUITE_COMPUTE_SERVER equ 0x00004000
+VER_SUITE_WH_SERVER	equ 0x00008000
+
+;;
+;; Product types
+;; This list grows with each OS release.
+;;
+;; There is no ordering of values to ensure callers
+;; do an equality test i.e. greater-than and less-than
+;; comparisons are not useful.
+;;
+;; NOTE: Values in this list should never be deleted.
+;;	 When a product-type 'X' gets dropped from a
+;;	 OS release onwards, the value of 'X' continues
+;;	 to be used in the mapping table of GetProductInfo.
+;;
+
+PRODUCT_UNDEFINED	equ 0x00000000
+
+PRODUCT_ULTIMATE	equ 0x00000001
+PRODUCT_HOME_BASIC	equ 0x00000002
+PRODUCT_HOME_PREMIUM	equ 0x00000003
+PRODUCT_ENTERPRISE	equ 0x00000004
+PRODUCT_HOME_BASIC_N	equ 0x00000005
+PRODUCT_BUSINESS	equ 0x00000006
+PRODUCT_STANDARD_SERVER equ 0x00000007
+PRODUCT_DATACENTER_SERVER equ 0x00000008
+PRODUCT_SMALLBUSINESS_SERVER equ 0x00000009
+PRODUCT_ENTERPRISE_SERVER equ 0x0000000A
+PRODUCT_STARTER		equ 0x0000000B
+PRODUCT_DATACENTER_SERVER_CORE equ 0x0000000C
+PRODUCT_STANDARD_SERVER_CORE equ 0x0000000D
+PRODUCT_ENTERPRISE_SERVER_CORE equ 0x0000000E
+PRODUCT_ENTERPRISE_SERVER_IA64 equ 0x0000000F
+PRODUCT_BUSINESS_N	equ 0x00000010
+PRODUCT_WEB_SERVER	equ 0x00000011
+PRODUCT_CLUSTER_SERVER	equ 0x00000012
+PRODUCT_HOME_SERVER	equ 0x00000013
+PRODUCT_STORAGE_EXPRESS_SERVER equ 0x00000014
+PRODUCT_STORAGE_STANDARD_SERVER equ 0x00000015
+PRODUCT_STORAGE_WORKGROUP_SERVER equ 0x00000016
+PRODUCT_STORAGE_ENTERPRISE_SERVER equ 0x00000017
+PRODUCT_SERVER_FOR_SMALLBUSINESS equ 0x00000018
+PRODUCT_SMALLBUSINESS_SERVER_PREMIUM equ 0x00000019
+PRODUCT_HOME_PREMIUM_N	equ 0x0000001A
+PRODUCT_ENTERPRISE_N	equ 0x0000001B
+PRODUCT_ULTIMATE_N	equ 0x0000001C
+PRODUCT_WEB_SERVER_CORE equ 0x0000001D
+PRODUCT_MEDIUMBUSINESS_SERVER_MANAGEMENT equ 0x0000001E
+PRODUCT_MEDIUMBUSINESS_SERVER_SECURITY equ 0x0000001F
+PRODUCT_MEDIUMBUSINESS_SERVER_MESSAGING equ 0x00000020
+PRODUCT_SERVER_FOUNDATION equ 0x00000021
+PRODUCT_HOME_PREMIUM_SERVER equ 0x00000022
+PRODUCT_SERVER_FOR_SMALLBUSINESS_V equ 0x00000023
+PRODUCT_STANDARD_SERVER_V equ 0x00000024
+PRODUCT_DATACENTER_SERVER_V equ 0x00000025
+PRODUCT_ENTERPRISE_SERVER_V equ 0x00000026
+PRODUCT_DATACENTER_SERVER_CORE_V equ 0x00000027
+PRODUCT_STANDARD_SERVER_CORE_V equ 0x00000028
+PRODUCT_ENTERPRISE_SERVER_CORE_V equ 0x00000029
+PRODUCT_HYPERV		equ 0x0000002A
+PRODUCT_STORAGE_EXPRESS_SERVER_CORE equ 0x0000002B
+PRODUCT_STORAGE_STANDARD_SERVER_CORE equ 0x0000002C
+PRODUCT_STORAGE_WORKGROUP_SERVER_CORE equ 0x0000002D
+PRODUCT_STORAGE_ENTERPRISE_SERVER_CORE equ 0x0000002E
+PRODUCT_STARTER_N	equ 0x0000002F
+PRODUCT_PROFESSIONAL	equ 0x00000030
+PRODUCT_PROFESSIONAL_N	equ 0x00000031
+PRODUCT_SB_SOLUTION_SERVER equ 0x00000032
+PRODUCT_SERVER_FOR_SB_SOLUTIONS equ 0x00000033
+PRODUCT_STANDARD_SERVER_SOLUTIONS equ 0x00000034
+PRODUCT_STANDARD_SERVER_SOLUTIONS_CORE equ 0x00000035
+PRODUCT_SB_SOLUTION_SERVER_EM equ 0x00000036
+PRODUCT_SERVER_FOR_SB_SOLUTIONS_EM equ 0x00000037
+PRODUCT_SOLUTION_EMBEDDEDSERVER equ 0x00000038
+PRODUCT_SOLUTION_EMBEDDEDSERVER_CORE equ 0x00000039
+PRODUCT_SMALLBUSINESS_SERVER_PREMIUM_CORE equ 0x0000003F
+PRODUCT_ESSENTIALBUSINESS_SERVER_MGMT equ 0x0000003B
+PRODUCT_ESSENTIALBUSINESS_SERVER_ADDL equ 0x0000003C
+PRODUCT_ESSENTIALBUSINESS_SERVER_MGMTSVC equ 0x0000003D
+PRODUCT_ESSENTIALBUSINESS_SERVER_ADDLSVC equ 0x0000003E
+PRODUCT_CLUSTER_SERVER_V equ 0x00000040
+PRODUCT_EMBEDDED	equ 0x00000041
+PRODUCT_STARTER_E	equ 0x00000042
+PRODUCT_HOME_BASIC_E	equ 0x00000043
+PRODUCT_HOME_PREMIUM_E	equ 0x00000044
+PRODUCT_PROFESSIONAL_E	equ 0x00000045
+PRODUCT_ENTERPRISE_E	equ 0x00000046
+PRODUCT_ULTIMATE_E	equ 0x00000047
+
+PRODUCT_UNLICENSED	equ 0xABCDABCD
+
+;include <sdkddkver.h>
 
 ;
 ;  Language IDs.
@@ -427,205 +1256,418 @@ CONTAINING_RECORD macro address, x, field
 ;    LANG_NEUTRAL	   SUBLANG_SYS_DEFAULT System default language
 ;
 
-;
-;  Primary language IDs.
-;
-
+;;
+;;  Primary language IDs.
+;;
+;;  WARNING: These aren't always unique.  Bosnian, Serbian & Croation for example.
+;;
+;;  It is recommended that applications test for locale names or actual LCIDs.
+;;
+;;  Note that the LANG, SUBLANG construction is not always consistent.
+;;  The named locale APIs (eg GetLocaleInfoEx) are recommended.
+;;
 LANG_NEUTRAL		equ 0x00
+LANG_INVARIANT		equ 0x7f
 
 LANG_AFRIKAANS		equ 0x36
 LANG_ALBANIAN		equ 0x1c
+LANG_ALSATIAN		equ 0x84
+LANG_AMHARIC		equ 0x5e
 LANG_ARABIC		equ 0x01
 LANG_ARMENIAN		equ 0x2b
 LANG_ASSAMESE		equ 0x4d
 LANG_AZERI		equ 0x2c
+LANG_BASHKIR		equ 0x6d
 LANG_BASQUE		equ 0x2d
 LANG_BELARUSIAN		equ 0x23
 LANG_BENGALI		equ 0x45
+LANG_BRETON		equ 0x7e
+LANG_BOSNIAN		equ 0x1a   ;; Use with SUBANG_BOSNIAN_* Sublanguage IDs
+LANG_BOSNIAN_NEUTRAL	equ 0x781a   ;; Use with the ConvertDefaultLocale function
 LANG_BULGARIAN		equ 0x02
 LANG_CATALAN		equ 0x03
-LANG_CHINESE		equ 0x04
+LANG_CHINESE		equ 0x04   ;; Use with SUBANG_CHINESE_* Sublanguage IDs
+LANG_CHINESE_SIMPLIFIED equ 0x04   ;; Use with the ConvertDefaultLocale function
+LANG_CHINESE_TRADITIONAL equ 0x7c04   ;; Use with the ConvertDefaultLocale function
+LANG_CORSICAN		equ 0x83
 LANG_CROATIAN		equ 0x1a
 LANG_CZECH		equ 0x05
 LANG_DANISH		equ 0x06
+LANG_DARI		equ 0x8c
+LANG_DIVEHI		equ 0x65
 LANG_DUTCH		equ 0x13
 LANG_ENGLISH		equ 0x09
 LANG_ESTONIAN		equ 0x25
 LANG_FAEROESE		equ 0x38
-LANG_FARSI		equ 0x29
+LANG_FARSI		equ 0x29   ;; Deprecated: use LANG_PERSIAN instead
+LANG_FILIPINO		equ 0x64
 LANG_FINNISH		equ 0x0b
 LANG_FRENCH		equ 0x0c
+LANG_FRISIAN		equ 0x62
+LANG_GALICIAN		equ 0x56
 LANG_GEORGIAN		equ 0x37
 LANG_GERMAN		equ 0x07
 LANG_GREEK		equ 0x08
+LANG_GREENLANDIC	equ 0x6f
 LANG_GUJARATI		equ 0x47
+LANG_HAUSA		equ 0x68
 LANG_HEBREW		equ 0x0d
 LANG_HINDI		equ 0x39
 LANG_HUNGARIAN		equ 0x0e
 LANG_ICELANDIC		equ 0x0f
+LANG_IGBO		equ 0x70
 LANG_INDONESIAN		equ 0x21
+LANG_INUKTITUT		equ 0x5d
+LANG_IRISH		equ 0x3c   ;; Use with the SUBLANG_IRISH_IREAND Sublanguage ID
 LANG_ITALIAN		equ 0x10
 LANG_JAPANESE		equ 0x11
 LANG_KANNADA		equ 0x4b
 LANG_KASHMIRI		equ 0x60
 LANG_KAZAK		equ 0x3f
+LANG_KHMER		equ 0x53
+LANG_KICHE		equ 0x86
+LANG_KINYARWANDA	equ 0x87
 LANG_KONKANI		equ 0x57
 LANG_KOREAN		equ 0x12
+LANG_KYRGYZ		equ 0x40
+LANG_LAO		equ 0x54
 LANG_LATVIAN		equ 0x26
 LANG_LITHUANIAN		equ 0x27
-LANG_MACEDONIAN		equ 0x2f
+LANG_LOWER_SORBIAN	equ 0x2e
+LANG_LUXEMBOURGISH	equ 0x6e
+LANG_MACEDONIAN		equ 0x2f   ;; the Former Yugoslav Republic of Macedonia
 LANG_MALAY		equ 0x3e
 LANG_MALAYALAM		equ 0x4c
+LANG_MALTESE		equ 0x3a
 LANG_MANIPURI		equ 0x58
+LANG_MAORI		equ 0x81
+LANG_MAPUDUNGUN		equ 0x7a
 LANG_MARATHI		equ 0x4e
+LANG_MOHAWK		equ 0x7c
+LANG_MONGOLIAN		equ 0x50
 LANG_NEPALI		equ 0x61
 LANG_NORWEGIAN		equ 0x14
+LANG_OCCITAN		equ 0x82
 LANG_ORIYA		equ 0x48
+LANG_PASHTO		equ 0x63
+LANG_PERSIAN		equ 0x29
 LANG_POLISH		equ 0x15
 LANG_PORTUGUESE		equ 0x16
 LANG_PUNJABI		equ 0x46
+LANG_QUECHUA		equ 0x6b
 LANG_ROMANIAN		equ 0x18
+LANG_ROMANSH		equ 0x17
 LANG_RUSSIAN		equ 0x19
+LANG_SAMI		equ 0x3b
 LANG_SANSKRIT		equ 0x4f
-LANG_SERBIAN		equ 0x1a
+LANG_SCOTTISH_GAELIC	equ 0x91
+LANG_SERBIAN		equ 0x1a   ;; Use with the SUBANG_SERBIAN_* Sublanguage IDs
+LANG_SERBIAN_NEUTRAL	equ 0x7c1a   ;; Use with the ConvertDefaultLocale function
 LANG_SINDHI		equ 0x59
+LANG_SINHALESE		equ 0x5b
 LANG_SLOVAK		equ 0x1b
 LANG_SLOVENIAN		equ 0x24
+LANG_SOTHO		equ 0x6c
 LANG_SPANISH		equ 0x0a
 LANG_SWAHILI		equ 0x41
 LANG_SWEDISH		equ 0x1d
+LANG_SYRIAC		equ 0x5a
+LANG_TAJIK		equ 0x28
+LANG_TAMAZIGHT		equ 0x5f
 LANG_TAMIL		equ 0x49
 LANG_TATAR		equ 0x44
 LANG_TELUGU		equ 0x4a
 LANG_THAI		equ 0x1e
+LANG_TIBETAN		equ 0x51
+LANG_TIGRIGNA		equ 0x73
+LANG_TSWANA		equ 0x32
 LANG_TURKISH		equ 0x1f
+LANG_TURKMEN		equ 0x42
+LANG_UIGHUR		equ 0x80
 LANG_UKRAINIAN		equ 0x22
+LANG_UPPER_SORBIAN	equ 0x2e
 LANG_URDU		equ 0x20
 LANG_UZBEK		equ 0x43
 LANG_VIETNAMESE		equ 0x2a
+LANG_WELSH		equ 0x52
+LANG_WOLOF		equ 0x88
+LANG_XHOSA		equ 0x34
+LANG_YAKUT		equ 0x85
+LANG_YI			equ 0x78
+LANG_YORUBA		equ 0x6a
+LANG_ZULU		equ 0x35
 
-;
-;  Sublanguage IDs.
-;
-;  The name immediately following SUBLANG_ dictates which primary
-;  language ID that sublanguage ID can be combined with to form a
-;  valid language ID.
-;
+;;
+;;  Sublanguage IDs.
+;;
+;;  The name immediately following SUBLANG_ dictates which primary
+;;  language ID that sublanguage ID can be combined with to form a
+;;  valid language ID.
+;;
+;;  Note that the LANG, SUBLANG construction is not always consistent.
+;;  The named locale APIs (eg GetLocaleInfoEx) are recommended.
+;;
 
-SUBLANG_NEUTRAL			 equ 0x00	 ; language neutral
-SUBLANG_DEFAULT			 equ 0x01	 ; user default
-SUBLANG_SYS_DEFAULT		 equ 0x02	 ; system default
+SUBLANG_NEUTRAL		equ 0x00    ;; language neutral
+SUBLANG_DEFAULT		equ 0x01    ;; user default
+SUBLANG_SYS_DEFAULT	equ 0x02    ;; system default
+SUBLANG_CUSTOM_DEFAULT	equ 0x03    ;; default custom language/locale
+SUBLANG_CUSTOM_UNSPECIFIED equ 0x04    ;; custom language/locale
+SUBLANG_UI_CUSTOM_DEFAULT equ 0x05    ;; Default custom MUI language/locale
 
-SUBLANG_ARABIC_SAUDI_ARABIA	 equ 0x01	 ; Arabic (Saudi Arabia)
-SUBLANG_ARABIC_IRAQ		 equ 0x02	 ; Arabic (Iraq)
-SUBLANG_ARABIC_EGYPT		 equ 0x03	 ; Arabic (Egypt)
-SUBLANG_ARABIC_LIBYA		 equ 0x04	 ; Arabic (Libya)
-SUBLANG_ARABIC_ALGERIA		 equ 0x05	 ; Arabic (Algeria)
-SUBLANG_ARABIC_MOROCCO		 equ 0x06	 ; Arabic (Morocco)
-SUBLANG_ARABIC_TUNISIA		 equ 0x07	 ; Arabic (Tunisia)
-SUBLANG_ARABIC_OMAN		 equ 0x08	 ; Arabic (Oman)
-SUBLANG_ARABIC_YEMEN		 equ 0x09	 ; Arabic (Yemen)
-SUBLANG_ARABIC_SYRIA		 equ 0x0a	 ; Arabic (Syria)
-SUBLANG_ARABIC_JORDAN		 equ 0x0b	 ; Arabic (Jordan)
-SUBLANG_ARABIC_LEBANON		 equ 0x0c	 ; Arabic (Lebanon)
-SUBLANG_ARABIC_KUWAIT		 equ 0x0d	 ; Arabic (Kuwait)
-SUBLANG_ARABIC_UAE		 equ 0x0e	 ; Arabic (U.A.E)
-SUBLANG_ARABIC_BAHRAIN		 equ 0x0f	 ; Arabic (Bahrain)
-SUBLANG_ARABIC_QATAR		 equ 0x10	 ; Arabic (Qatar)
-SUBLANG_AZERI_LATIN		 equ 0x01	 ; Azeri (Latin)
-SUBLANG_AZERI_CYRILLIC		 equ 0x02	 ; Azeri (Cyrillic)
-SUBLANG_CHINESE_TRADITIONAL	 equ 0x01	 ; Chinese (Taiwan Region)
-SUBLANG_CHINESE_SIMPLIFIED	 equ 0x02	 ; Chinese (PR China)
-SUBLANG_CHINESE_HONGKONG	 equ 0x03	 ; Chinese (Hong Kong)
-SUBLANG_CHINESE_SINGAPORE	 equ 0x04	 ; Chinese (Singapore)
-SUBLANG_CHINESE_MACAU		 equ 0x05	 ; Chinese (Macau)
-SUBLANG_DUTCH			 equ 0x01	 ; Dutch
-SUBLANG_DUTCH_BELGIAN		 equ 0x02	 ; Dutch (Belgian)
-SUBLANG_ENGLISH_US		 equ 0x01	 ; English (USA)
-SUBLANG_ENGLISH_UK		 equ 0x02	 ; English (UK)
-SUBLANG_ENGLISH_AUS		 equ 0x03	 ; English (Australian)
-SUBLANG_ENGLISH_CAN		 equ 0x04	 ; English (Canadian)
-SUBLANG_ENGLISH_NZ		 equ 0x05	 ; English (New Zealand)
-SUBLANG_ENGLISH_EIRE		 equ 0x06	 ; English (Irish)
-SUBLANG_ENGLISH_SOUTH_AFRICA	 equ 0x07	 ; English (South Africa)
-SUBLANG_ENGLISH_JAMAICA		 equ 0x08	 ; English (Jamaica)
-SUBLANG_ENGLISH_CARIBBEAN	 equ 0x09	 ; English (Caribbean)
-SUBLANG_ENGLISH_BELIZE		 equ 0x0a	 ; English (Belize)
-SUBLANG_ENGLISH_TRINIDAD	 equ 0x0b	 ; English (Trinidad)
-SUBLANG_ENGLISH_ZIMBABWE	 equ 0x0c	 ; English (Zimbabwe)
-SUBLANG_ENGLISH_PHILIPPINES	 equ 0x0d	 ; English (Philippines)
-SUBLANG_FRENCH			 equ 0x01	 ; French
-SUBLANG_FRENCH_BELGIAN		 equ 0x02	 ; French (Belgian)
-SUBLANG_FRENCH_CANADIAN		 equ 0x03	 ; French (Canadian)
-SUBLANG_FRENCH_SWISS		 equ 0x04	 ; French (Swiss)
-SUBLANG_FRENCH_LUXEMBOURG	 equ 0x05	 ; French (Luxembourg)
-SUBLANG_FRENCH_MONACO		 equ 0x06	 ; French (Monaco)
-SUBLANG_GERMAN			 equ 0x01	 ; German
-SUBLANG_GERMAN_SWISS		 equ 0x02	 ; German (Swiss)
-SUBLANG_GERMAN_AUSTRIAN		 equ 0x03	 ; German (Austrian)
-SUBLANG_GERMAN_LUXEMBOURG	 equ 0x04	 ; German (Luxembourg)
-SUBLANG_GERMAN_LIECHTENSTEIN	 equ 0x05	 ; German (Liechtenstein)
-SUBLANG_ITALIAN			 equ 0x01	 ; Italian
-SUBLANG_ITALIAN_SWISS		 equ 0x02	 ; Italian (Swiss)
-SUBLANG_KASHMIRI_INDIA		 equ 0x02	 ; Kashmiri (India)
-SUBLANG_KOREAN			 equ 0x01	 ; Korean (Extended Wansung)
-SUBLANG_LITHUANIAN		 equ 0x01	 ; Lithuanian
-SUBLANG_LITHUANIAN_CLASSIC	 equ 0x02	 ; Lithuanian (Classic)
-SUBLANG_MALAY_MALAYSIA		 equ 0x01	 ; Malay (Malaysia)
-SUBLANG_MALAY_BRUNEI_DARUSSALAM	 equ 0x02	 ; Malay (Brunei Darussalam)
-SUBLANG_NEPALI_INDIA		 equ 0x02	 ; Nepali (India)
-SUBLANG_NORWEGIAN_BOKMAL	 equ 0x01	 ; Norwegian (Bokmal)
-SUBLANG_NORWEGIAN_NYNORSK	 equ 0x02	 ; Norwegian (Nynorsk)
-SUBLANG_PORTUGUESE		 equ 0x02	 ; Portuguese
-SUBLANG_PORTUGUESE_BRAZILIAN	 equ 0x01	 ; Portuguese (Brazilian)
-SUBLANG_SERBIAN_LATIN		 equ 0x02	 ; Serbian (Latin)
-SUBLANG_SERBIAN_CYRILLIC	 equ 0x03	 ; Serbian (Cyrillic)
-SUBLANG_SPANISH			 equ 0x01	 ; Spanish (Castilian)
-SUBLANG_SPANISH_MEXICAN		 equ 0x02	 ; Spanish (Mexican)
-SUBLANG_SPANISH_MODERN		 equ 0x03	 ; Spanish (Modern)
-SUBLANG_SPANISH_GUATEMALA	 equ 0x04	 ; Spanish (Guatemala)
-SUBLANG_SPANISH_COSTA_RICA	 equ 0x05	 ; Spanish (Costa Rica)
-SUBLANG_SPANISH_PANAMA		 equ 0x06	 ; Spanish (Panama)
-SUBLANG_SPANISH_DOMINICAN_REPUBLIC equ 0x07	 ; Spanish (Dominican Republic)
-SUBLANG_SPANISH_VENEZUELA	 equ 0x08	 ; Spanish (Venezuela)
-SUBLANG_SPANISH_COLOMBIA	 equ 0x09	 ; Spanish (Colombia)
-SUBLANG_SPANISH_PERU		 equ 0x0a	 ; Spanish (Peru)
-SUBLANG_SPANISH_ARGENTINA	 equ 0x0b	 ; Spanish (Argentina)
-SUBLANG_SPANISH_ECUADOR		 equ 0x0c	 ; Spanish (Ecuador)
-SUBLANG_SPANISH_CHILE		 equ 0x0d	 ; Spanish (Chile)
-SUBLANG_SPANISH_URUGUAY		 equ 0x0e	 ; Spanish (Uruguay)
-SUBLANG_SPANISH_PARAGUAY	 equ 0x0f	 ; Spanish (Paraguay)
-SUBLANG_SPANISH_BOLIVIA		 equ 0x10	 ; Spanish (Bolivia)
-SUBLANG_SPANISH_EL_SALVADOR	 equ 0x11	 ; Spanish (El Salvador)
-SUBLANG_SPANISH_HONDURAS	 equ 0x12	 ; Spanish (Honduras)
-SUBLANG_SPANISH_NICARAGUA	 equ 0x13	 ; Spanish (Nicaragua)
-SUBLANG_SPANISH_PUERTO_RICO	 equ 0x14	 ; Spanish (Puerto Rico)
-SUBLANG_SWEDISH			 equ 0x01	 ; Swedish
-SUBLANG_SWEDISH_FINLAND		 equ 0x02	 ; Swedish (Finland)
-SUBLANG_URDU_PAKISTAN		 equ 0x01	 ; Urdu (Pakistan)
-SUBLANG_URDU_INDIA		 equ 0x02	 ; Urdu (India)
-SUBLANG_UZBEK_LATIN		 equ 0x01	 ; Uzbek (Latin)
-SUBLANG_UZBEK_CYRILLIC		 equ 0x02	 ; Uzbek (Cyrillic)
 
-;
-;  Sorting IDs.
-;
+SUBLANG_AFRIKAANS_SOUTH_AFRICA equ 0x01	   ;; Afrikaans (South Africa) 0x0436 af-ZA
+SUBLANG_ALBANIAN_ALBANIA equ 0x01    ;; Albanian (Albania) 0x041c sq-A
+SUBLANG_ALSATIAN_FRANCE equ 0x01    ;; Alsatian (France) 0x0484
+SUBLANG_AMHARIC_ETHIOPIA equ 0x01    ;; Amharic (Ethiopia) 0x045e
+SUBLANG_ARABIC_SAUDI_ARABIA equ 0x01	;; Arabic (Saudi Arabia)
+SUBLANG_ARABIC_IRAQ	equ 0x02    ;; Arabic (Iraq)
+SUBLANG_ARABIC_EGYPT	equ 0x03    ;; Arabic (Egypt)
+SUBLANG_ARABIC_LIBYA	equ 0x04    ;; Arabic (Libya)
+SUBLANG_ARABIC_ALGERIA	equ 0x05    ;; Arabic (Algeria)
+SUBLANG_ARABIC_MOROCCO	equ 0x06    ;; Arabic (Morocco)
+SUBLANG_ARABIC_TUNISIA	equ 0x07    ;; Arabic (Tunisia)
+SUBLANG_ARABIC_OMAN	equ 0x08    ;; Arabic (Oman)
+SUBLANG_ARABIC_YEMEN	equ 0x09    ;; Arabic (Yemen)
+SUBLANG_ARABIC_SYRIA	equ 0x0a    ;; Arabic (Syria)
+SUBLANG_ARABIC_JORDAN	equ 0x0b    ;; Arabic (Jordan)
+SUBLANG_ARABIC_LEBANON	equ 0x0c    ;; Arabic (Lebanon)
+SUBLANG_ARABIC_KUWAIT	equ 0x0d    ;; Arabic (Kuwait)
+SUBLANG_ARABIC_UAE	equ 0x0e    ;; Arabic (U.A.E)
+SUBLANG_ARABIC_BAHRAIN	equ 0x0f    ;; Arabic (Bahrain)
+SUBLANG_ARABIC_QATAR	equ 0x10    ;; Arabic (Qatar)
+SUBLANG_ARMENIAN_ARMENIA equ 0x01    ;; Armenian (Armenia) 0x042b hy-AM
+SUBLANG_ASSAMESE_INDIA	equ 0x01    ;; Assamese (India) 0x044d
+SUBLANG_AZERI_LATIN	equ 0x01    ;; Azeri (Latin)
+SUBLANG_AZERI_CYRILLIC	equ 0x02    ;; Azeri (Cyrillic)
+SUBLANG_BASHKIR_RUSSIA	equ 0x01    ;; Bashkir (Russia) 0x046d ba-RU
+SUBLANG_BASQUE_BASQUE	equ 0x01    ;; Basque (Basque) 0x042d eu-ES
+SUBLANG_BELARUSIAN_BELARUS equ 0x01    ;; Belarusian (Belarus) 0x0423 be-BY
+SUBLANG_BENGALI_INDIA	equ 0x01    ;; Bengali (India)
+SUBLANG_BENGALI_BANGLADESH equ 0x02    ;; Bengali (Bangladesh)
+SUBLANG_BOSNIAN_BOSNIA_HERZEGOVINA_LATIN equ 0x05    ;; Bosnian (Bosnia and Herzegovina - Latin) 0x141a bs-BA-Latn
+SUBLANG_BOSNIAN_BOSNIA_HERZEGOVINA_CYRILLIC equ 0x08	;; Bosnian (Bosnia and Herzegovina - Cyrillic) 0x201a bs-BA-Cyrl
+SUBLANG_BRETON_FRANCE	equ 0x01    ;; Breton (France) 0x047e
+SUBLANG_BULGARIAN_BULGARIA equ 0x01    ;; Bulgarian (Bulgaria) 0x0402
+SUBLANG_CATALAN_CATALAN equ 0x01    ;; Catalan (Catalan) 0x0403
+SUBLANG_CHINESE_TRADITIONAL equ 0x01	;; Chinese (Taiwan) 0x0404 zh-TW
+SUBLANG_CHINESE_SIMPLIFIED equ 0x02    ;; Chinese (PR China) 0x0804 zh-CN
+SUBLANG_CHINESE_HONGKONG equ 0x03    ;; Chinese (Hong Kong S.A.R., P.R.C.) 0x0c04 zh-HK
+SUBLANG_CHINESE_SINGAPORE equ 0x04    ;; Chinese (Singapore) 0x1004 zh-SG
+SUBLANG_CHINESE_MACAU	equ 0x05    ;; Chinese (Macau S.A.R.) 0x1404 zh-MO
+SUBLANG_CORSICAN_FRANCE equ 0x01    ;; Corsican (France) 0x0483
+SUBLANG_CZECH_CZECH_REPUBLIC equ 0x01	 ;; Czech (Czech Republic) 0x0405
+SUBLANG_CROATIAN_CROATIA equ 0x01    ;; Croatian (Croatia)
+SUBLANG_CROATIAN_BOSNIA_HERZEGOVINA_LATIN equ 0x04    ;; Croatian (Bosnia and Herzegovina - Latin) 0x101a hr-BA
+SUBLANG_DANISH_DENMARK	equ 0x01    ;; Danish (Denmark) 0x0406
+SUBLANG_DARI_AFGHANISTAN equ 0x01    ;; Dari (Afghanistan)
+SUBLANG_DIVEHI_MALDIVES equ 0x01    ;; Divehi (Maldives) 0x0465 div-MV
+SUBLANG_DUTCH		equ 0x01    ;; Dutch
+SUBLANG_DUTCH_BELGIAN	equ 0x02    ;; Dutch (Belgian)
+SUBLANG_ENGLISH_US	equ 0x01    ;; English (USA)
+SUBLANG_ENGLISH_UK	equ 0x02    ;; English (UK)
+SUBLANG_ENGLISH_AUS	equ 0x03    ;; English (Australian)
+SUBLANG_ENGLISH_CAN	equ 0x04    ;; English (Canadian)
+SUBLANG_ENGLISH_NZ	equ 0x05    ;; English (New Zealand)
+SUBLANG_ENGLISH_EIRE	equ 0x06    ;; English (Irish)
+SUBLANG_ENGLISH_SOUTH_AFRICA equ 0x07	 ;; English (South Africa)
+SUBLANG_ENGLISH_JAMAICA equ 0x08    ;; English (Jamaica)
+SUBLANG_ENGLISH_CARIBBEAN equ 0x09    ;; English (Caribbean)
+SUBLANG_ENGLISH_BELIZE	equ 0x0a    ;; English (Belize)
+SUBLANG_ENGLISH_TRINIDAD equ 0x0b    ;; English (Trinidad)
+SUBLANG_ENGLISH_ZIMBABWE equ 0x0c    ;; English (Zimbabwe)
+SUBLANG_ENGLISH_PHILIPPINES equ 0x0d	;; English (Philippines)
+SUBLANG_ENGLISH_INDIA	equ 0x10    ;; English (India)
+SUBLANG_ENGLISH_MALAYSIA equ 0x11    ;; English (Malaysia)
+SUBLANG_ENGLISH_SINGAPORE equ 0x12    ;; English (Singapore)
+SUBLANG_ESTONIAN_ESTONIA equ 0x01    ;; Estonian (Estonia) 0x0425 et-EE
+SUBLANG_FAEROESE_FAROE_ISLANDS equ 0x01	   ;; Faroese (Faroe Islands) 0x0438 fo-FO
+SUBLANG_FILIPINO_PHILIPPINES equ 0x01	 ;; Filipino (Philippines) 0x0464 fil-PH
+SUBLANG_FINNISH_FINLAND equ 0x01    ;; Finnish (Finland) 0x040b
+SUBLANG_FRENCH		equ 0x01    ;; French
+SUBLANG_FRENCH_BELGIAN	equ 0x02    ;; French (Belgian)
+SUBLANG_FRENCH_CANADIAN equ 0x03    ;; French (Canadian)
+SUBLANG_FRENCH_SWISS	equ 0x04    ;; French (Swiss)
+SUBLANG_FRENCH_LUXEMBOURG equ 0x05    ;; French (Luxembourg)
+SUBLANG_FRENCH_MONACO	equ 0x06    ;; French (Monaco)
+SUBLANG_FRISIAN_NETHERLANDS equ 0x01	;; Frisian (Netherlands) 0x0462 fy-NL
+SUBLANG_GALICIAN_GALICIAN equ 0x01    ;; Galician (Galician) 0x0456 gl-ES
+SUBLANG_GEORGIAN_GEORGIA equ 0x01    ;; Georgian (Georgia) 0x0437 ka-GE
+SUBLANG_GERMAN		equ 0x01    ;; German
+SUBLANG_GERMAN_SWISS	equ 0x02    ;; German (Swiss)
+SUBLANG_GERMAN_AUSTRIAN equ 0x03    ;; German (Austrian)
+SUBLANG_GERMAN_LUXEMBOURG equ 0x04    ;; German (Luxembourg)
+SUBLANG_GERMAN_LIECHTENSTEIN equ 0x05	 ;; German (Liechtenstein)
+SUBLANG_GREEK_GREECE	equ 0x01    ;; Greek (Greece)
+SUBLANG_GREENLANDIC_GREENLAND equ 0x01	  ;; Greenlandic (Greenland) 0x046f kl-GL
+SUBLANG_GUJARATI_INDIA	equ 0x01    ;; Gujarati (India (Gujarati Script)) 0x0447 gu-IN
+SUBLANG_HAUSA_NIGERIA_LATIN equ 0x01	;; Hausa (Latin, Nigeria) 0x0468 ha-NG-Latn
+SUBLANG_HEBREW_ISRAEL	equ 0x01    ;; Hebrew (Israel) 0x040d
+SUBLANG_HINDI_INDIA	equ 0x01    ;; Hindi (India) 0x0439 hi-IN
+SUBLANG_HUNGARIAN_HUNGARY equ 0x01    ;; Hungarian (Hungary) 0x040e
+SUBLANG_ICELANDIC_ICELAND equ 0x01    ;; Icelandic (Iceland) 0x040f
+SUBLANG_IGBO_NIGERIA	equ 0x01    ;; Igbo (Nigeria) 0x0470 ig-NG
+SUBLANG_INDONESIAN_INDONESIA equ 0x01	 ;; Indonesian (Indonesia) 0x0421 id-ID
+SUBLANG_INUKTITUT_CANADA equ 0x01    ;; Inuktitut (Syllabics) (Canada) 0x045d iu-CA-Cans
+SUBLANG_INUKTITUT_CANADA_LATIN equ 0x02	   ;; Inuktitut (Canada - Latin)
+SUBLANG_IRISH_IRELAND	equ 0x02    ;; Irish (Ireland)
+SUBLANG_ITALIAN		equ 0x01    ;; Italian
+SUBLANG_ITALIAN_SWISS	equ 0x02    ;; Italian (Swiss)
+SUBLANG_JAPANESE_JAPAN	equ 0x01    ;; Japanese (Japan) 0x0411
+SUBLANG_KANNADA_INDIA	equ 0x01    ;; Kannada (India (Kannada Script)) 0x044b kn-IN
+SUBLANG_KASHMIRI_SASIA	equ 0x02    ;; Kashmiri (South Asia)
+SUBLANG_KASHMIRI_INDIA	equ 0x02    ;; For app compatibility only
+SUBLANG_KAZAK_KAZAKHSTAN equ 0x01    ;; Kazakh (Kazakhstan) 0x043f kk-KZ
+SUBLANG_KHMER_CAMBODIA	equ 0x01    ;; Khmer (Cambodia) 0x0453 kh-KH
+SUBLANG_KICHE_GUATEMALA equ 0x01    ;; K'iche (Guatemala)
+SUBLANG_KINYARWANDA_RWANDA equ 0x01    ;; Kinyarwanda (Rwanda) 0x0487 rw-RW
+SUBLANG_KONKANI_INDIA	equ 0x01    ;; Konkani (India) 0x0457 kok-IN
+SUBLANG_KOREAN		equ 0x01    ;; Korean (Extended Wansung)
+SUBLANG_KYRGYZ_KYRGYZSTAN equ 0x01    ;; Kyrgyz (Kyrgyzstan) 0x0440 ky-KG
+SUBLANG_LAO_LAO		equ 0x01    ;; Lao (Lao PDR) 0x0454 lo-LA
+SUBLANG_LATVIAN_LATVIA	equ 0x01    ;; Latvian (Latvia) 0x0426 lv-LV
+SUBLANG_LITHUANIAN	equ 0x01    ;; Lithuanian
+SUBLANG_LOWER_SORBIAN_GERMANY equ 0x02	  ;; Lower Sorbian (Germany) 0x082e wee-DE
+SUBLANG_LUXEMBOURGISH_LUXEMBOURG equ 0x01    ;; Luxembourgish (Luxembourg) 0x046e lb-LU
+SUBLANG_MACEDONIAN_MACEDONIA equ 0x01	 ;; Macedonian (Macedonia (FYROM)) 0x042f mk-MK
+SUBLANG_MALAY_MALAYSIA	equ 0x01    ;; Malay (Malaysia)
+SUBLANG_MALAY_BRUNEI_DARUSSALAM equ 0x02    ;; Malay (Brunei Darussalam)
+SUBLANG_MALAYALAM_INDIA equ 0x01    ;; Malayalam (India (Malayalam Script) ) 0x044c ml-IN
+SUBLANG_MALTESE_MALTA	equ 0x01    ;; Maltese (Malta) 0x043a mt-MT
+SUBLANG_MAORI_NEW_ZEALAND equ 0x01    ;; Maori (New Zealand) 0x0481 mi-NZ
+SUBLANG_MAPUDUNGUN_CHILE equ 0x01    ;; Mapudungun (Chile) 0x047a arn-C
+SUBLANG_MARATHI_INDIA	equ 0x01    ;; Marathi (India) 0x044e mr-IN
+SUBLANG_MOHAWK_MOHAWK	equ 0x01    ;; Mohawk (Mohawk) 0x047c moh-CA
+SUBLANG_MONGOLIAN_CYRILLIC_MONGOLIA equ 0x01	;; Mongolian (Cyrillic, Mongolia)
+SUBLANG_MONGOLIAN_PRC	equ 0x02    ;; Mongolian (PRC)
+SUBLANG_NEPALI_INDIA	equ 0x02    ;; Nepali (India)
+SUBLANG_NEPALI_NEPAL	equ 0x01    ;; Nepali (Nepal) 0x0461 ne-NP
+SUBLANG_NORWEGIAN_BOKMAL equ 0x01    ;; Norwegian (Bokmal)
+SUBLANG_NORWEGIAN_NYNORSK equ 0x02    ;; Norwegian (Nynorsk)
+SUBLANG_OCCITAN_FRANCE	equ 0x01    ;; Occitan (France) 0x0482 oc-FR
+SUBLANG_ORIYA_INDIA	equ 0x01    ;; Oriya (India (Oriya Script)) 0x0448 or-IN
+SUBLANG_PASHTO_AFGHANISTAN equ 0x01    ;; Pashto (Afghanistan)
+SUBLANG_PERSIAN_IRAN	equ 0x01    ;; Persian (Iran) 0x0429 fa-IR
+SUBLANG_POLISH_POLAND	equ 0x01    ;; Polish (Poland) 0x0415
+SUBLANG_PORTUGUESE	equ 0x02    ;; Portuguese
+SUBLANG_PORTUGUESE_BRAZILIAN equ 0x01	 ;; Portuguese (Brazilian)
+SUBLANG_PUNJABI_INDIA	equ 0x01    ;; Punjabi (India (Gurmukhi Script)) 0x0446 pa-IN
+SUBLANG_QUECHUA_BOLIVIA equ 0x01    ;; Quechua (Bolivia)
+SUBLANG_QUECHUA_ECUADOR equ 0x02    ;; Quechua (Ecuador)
+SUBLANG_QUECHUA_PERU	equ 0x03    ;; Quechua (Peru)
+SUBLANG_ROMANIAN_ROMANIA equ 0x01    ;; Romanian (Romania) 0x0418
+SUBLANG_ROMANSH_SWITZERLAND equ 0x01	;; Romansh (Switzerland) 0x0417 rm-CH
+SUBLANG_RUSSIAN_RUSSIA	equ 0x01    ;; Russian (Russia) 0x0419
+SUBLANG_SAMI_NORTHERN_NORWAY equ 0x01	 ;; Northern Sami (Norway)
+SUBLANG_SAMI_NORTHERN_SWEDEN equ 0x02	 ;; Northern Sami (Sweden)
+SUBLANG_SAMI_NORTHERN_FINLAND equ 0x03	  ;; Northern Sami (Finland)
+SUBLANG_SAMI_LULE_NORWAY equ 0x04    ;; Lule Sami (Norway)
+SUBLANG_SAMI_LULE_SWEDEN equ 0x05    ;; Lule Sami (Sweden)
+SUBLANG_SAMI_SOUTHERN_NORWAY equ 0x06	 ;; Southern Sami (Norway)
+SUBLANG_SAMI_SOUTHERN_SWEDEN equ 0x07	 ;; Southern Sami (Sweden)
+SUBLANG_SAMI_SKOLT_FINLAND equ 0x08    ;; Skolt Sami (Finland)
+SUBLANG_SAMI_INARI_FINLAND equ 0x09    ;; Inari Sami (Finland)
+SUBLANG_SANSKRIT_INDIA	equ 0x01    ;; Sanskrit (India) 0x044f sa-IN
+SUBLANG_SCOTTISH_GAELIC equ 0x01    ;; Scottish Gaelic (United Kingdom) 0x0491 gd-GB
+SUBLANG_SERBIAN_BOSNIA_HERZEGOVINA_LATIN equ 0x06    ;; Serbian (Bosnia and Herzegovina - Latin)
+SUBLANG_SERBIAN_BOSNIA_HERZEGOVINA_CYRILLIC equ 0x07	;; Serbian (Bosnia and Herzegovina - Cyrillic)
+SUBLANG_SERBIAN_MONTENEGRO_LATIN equ 0x0b    ;; Serbian (Montenegro - Latn)
+SUBLANG_SERBIAN_MONTENEGRO_CYRILLIC equ 0x0c	;; Serbian (Montenegro - Cyrillic)
+SUBLANG_SERBIAN_SERBIA_LATIN equ 0x09	 ;; Serbian (Serbia - Latin)
+SUBLANG_SERBIAN_SERBIA_CYRILLIC equ 0x0a    ;; Serbian (Serbia - Cyrillic)
+SUBLANG_SERBIAN_CROATIA equ 0x01    ;; Croatian (Croatia) 0x041a hr-HR
+SUBLANG_SERBIAN_LATIN	equ 0x02    ;; Serbian (Latin)
+SUBLANG_SERBIAN_CYRILLIC equ 0x03    ;; Serbian (Cyrillic)
+SUBLANG_SINDHI_INDIA	equ 0x01    ;; Sindhi (India) reserved 0x0459
+SUBLANG_SINDHI_PAKISTAN equ 0x02    ;; Sindhi (Pakistan) reserved 0x0859
+SUBLANG_SINDHI_AFGHANISTAN equ 0x02    ;; For app compatibility only
+SUBLANG_SINHALESE_SRI_LANKA equ 0x01	;; Sinhalese (Sri Lanka)
+SUBLANG_SOTHO_NORTHERN_SOUTH_AFRICA equ 0x01	;; Northern Sotho (South Africa)
+SUBLANG_SLOVAK_SLOVAKIA equ 0x01    ;; Slovak (Slovakia) 0x041b sk-SK
+SUBLANG_SLOVENIAN_SLOVENIA equ 0x01    ;; Slovenian (Slovenia) 0x0424 sl-SI
+SUBLANG_SPANISH		equ 0x01    ;; Spanish (Castilian)
+SUBLANG_SPANISH_MEXICAN equ 0x02    ;; Spanish (Mexican)
+SUBLANG_SPANISH_MODERN	equ 0x03    ;; Spanish (Modern)
+SUBLANG_SPANISH_GUATEMALA equ 0x04    ;; Spanish (Guatemala)
+SUBLANG_SPANISH_COSTA_RICA equ 0x05    ;; Spanish (Costa Rica)
+SUBLANG_SPANISH_PANAMA	equ 0x06    ;; Spanish (Panama)
+SUBLANG_SPANISH_DOMINICAN_REPUBLIC equ 0x07    ;; Spanish (Dominican Republic)
+SUBLANG_SPANISH_VENEZUELA equ 0x08    ;; Spanish (Venezuela)
+SUBLANG_SPANISH_COLOMBIA equ 0x09    ;; Spanish (Colombia)
+SUBLANG_SPANISH_PERU	equ 0x0a    ;; Spanish (Peru)
+SUBLANG_SPANISH_ARGENTINA equ 0x0b    ;; Spanish (Argentina)
+SUBLANG_SPANISH_ECUADOR equ 0x0c    ;; Spanish (Ecuador)
+SUBLANG_SPANISH_CHILE	equ 0x0d    ;; Spanish (Chile)
+SUBLANG_SPANISH_URUGUAY equ 0x0e    ;; Spanish (Uruguay)
+SUBLANG_SPANISH_PARAGUAY equ 0x0f    ;; Spanish (Paraguay)
+SUBLANG_SPANISH_BOLIVIA equ 0x10    ;; Spanish (Bolivia)
+SUBLANG_SPANISH_EL_SALVADOR equ 0x11	;; Spanish (El Salvador)
+SUBLANG_SPANISH_HONDURAS equ 0x12    ;; Spanish (Honduras)
+SUBLANG_SPANISH_NICARAGUA equ 0x13    ;; Spanish (Nicaragua)
+SUBLANG_SPANISH_PUERTO_RICO equ 0x14	;; Spanish (Puerto Rico)
+SUBLANG_SPANISH_US	equ 0x15    ;; Spanish (United States)
+SUBLANG_SWAHILI_KENYA	equ 0x01    ;; Swahili (Kenya) 0x0441 sw-KE
+SUBLANG_SWEDISH		equ 0x01    ;; Swedish
+SUBLANG_SWEDISH_FINLAND equ 0x02    ;; Swedish (Finland)
+SUBLANG_SYRIAC_SYRIA	equ 0x01    ;; Syriac (Syria) 0x045a syr-SY
+SUBLANG_TAJIK_TAJIKISTAN equ 0x01    ;; Tajik (Tajikistan) 0x0428 tg-TJ-Cyrl
+SUBLANG_TAMAZIGHT_ALGERIA_LATIN equ 0x02    ;; Tamazight (Latin, Algeria) 0x085f tmz-DZ-Latn
+SUBLANG_TAMIL_INDIA	equ 0x01    ;; Tamil (India)
+SUBLANG_TATAR_RUSSIA	equ 0x01    ;; Tatar (Russia) 0x0444 tt-RU
+SUBLANG_TELUGU_INDIA	equ 0x01    ;; Telugu (India (Telugu Script)) 0x044a te-IN
+SUBLANG_THAI_THAILAND	equ 0x01    ;; Thai (Thailand) 0x041e th-TH
+SUBLANG_TIBETAN_PRC	equ 0x01    ;; Tibetan (PRC)
+SUBLANG_TIGRIGNA_ERITREA equ 0x02    ;; Tigrigna (Eritrea)
+SUBLANG_TSWANA_SOUTH_AFRICA equ 0x01	;; Setswana / Tswana (South Africa) 0x0432 tn-ZA
+SUBLANG_TURKISH_TURKEY	equ 0x01    ;; Turkish (Turkey) 0x041f tr-TR
+SUBLANG_TURKMEN_TURKMENISTAN equ 0x01	 ;; Turkmen (Turkmenistan) 0x0442 tk-TM
+SUBLANG_UIGHUR_PRC	equ 0x01    ;; Uighur (PRC) 0x0480 ug-CN
+SUBLANG_UKRAINIAN_UKRAINE equ 0x01    ;; Ukrainian (Ukraine) 0x0422 uk-UA
+SUBLANG_UPPER_SORBIAN_GERMANY equ 0x01	  ;; Upper Sorbian (Germany) 0x042e wen-DE
+SUBLANG_URDU_PAKISTAN	equ 0x01    ;; Urdu (Pakistan)
+SUBLANG_URDU_INDIA	equ 0x02    ;; Urdu (India)
+SUBLANG_UZBEK_LATIN	equ 0x01    ;; Uzbek (Latin)
+SUBLANG_UZBEK_CYRILLIC	equ 0x02    ;; Uzbek (Cyrillic)
+SUBLANG_VIETNAMESE_VIETNAM equ 0x01    ;; Vietnamese (Vietnam) 0x042a vi-VN
+SUBLANG_WELSH_UNITED_KINGDOM equ 0x01	 ;; Welsh (United Kingdom) 0x0452 cy-GB
+SUBLANG_WOLOF_SENEGAL	equ 0x01    ;; Wolof (Senegal)
+SUBLANG_XHOSA_SOUTH_AFRICA equ 0x01    ;; isiXhosa / Xhosa (South Africa) 0x0434 xh-ZA
+SUBLANG_YAKUT_RUSSIA	equ 0x01    ;; Yakut (Russia) 0x0485 sah-RU
+SUBLANG_YI_PRC		equ 0x01    ;; Yi (PRC)) 0x0478
+SUBLANG_YORUBA_NIGERIA	equ 0x01    ;; Yoruba (Nigeria) 046a yo-NG
+SUBLANG_ZULU_SOUTH_AFRICA equ 0x01    ;; isiZulu / Zulu (South Africa) 0x0435 zu-ZA
 
-SORT_DEFAULT			 equ 0x0	 ; sorting default
-SORT_JAPANESE_XJIS		 equ 0x0	 ; Japanese XJIS order
-SORT_JAPANESE_UNICODE		 equ 0x1	 ; Japanese Unicode order
-SORT_CHINESE_BIG5		 equ 0x0	 ; Chinese BIG5 order
-SORT_CHINESE_PRCP		 equ 0x0	 ; PRC Chinese Phonetic order
-SORT_CHINESE_UNICODE		 equ 0x1	 ; Chinese Unicode order
-SORT_CHINESE_PRC		 equ 0x2	 ; PRC Chinese Stroke Count order
-SORT_CHINESE_BOPOMOFO		 equ 0x3	 ; Traditional Chinese Bopomofo order
-SORT_KOREAN_KSC			 equ 0x0	 ; Korean KSC order
-SORT_KOREAN_UNICODE		 equ 0x1	 ; Korean Unicode order
-SORT_GERMAN_PHONE_BOOK		 equ 0x1	 ; German Phone Book order
-SORT_HUNGARIAN_DEFAULT		 equ 0x0	 ; Hungarian Default order
-SORT_HUNGARIAN_TECHNICAL	 equ 0x1	 ; Hungarian Technical order
-SORT_GEORGIAN_TRADITIONAL	 equ 0x0	 ; Georgian Traditional order
-SORT_GEORGIAN_MODERN		 equ 0x1	 ; Georgian Modern order
+;;
+;;  Sorting IDs.
+;;
+;;  Note that the named locale APIs (eg CompareStringExEx) are recommended.
+;;
+
+SORT_DEFAULT		equ 0x0	    ;; sorting default
+
+SORT_INVARIANT_MATH	equ 0x1	    ;; Invariant (Mathematical Symbols)
+
+SORT_JAPANESE_XJIS	equ 0x0	    ;; Japanese XJIS order
+SORT_JAPANESE_UNICODE	equ 0x1	    ;; Japanese Unicode order (no longer supported)
+SORT_JAPANESE_RADICALSTROKE equ 0x4	;; Japanese radical/stroke order
+
+SORT_CHINESE_BIG5	equ 0x0	    ;; Chinese BIG5 order
+SORT_CHINESE_PRCP	equ 0x0	    ;; PRC Chinese Phonetic order
+SORT_CHINESE_UNICODE	equ 0x1	    ;; Chinese Unicode order (no longer supported)
+SORT_CHINESE_PRC	equ 0x2	    ;; PRC Chinese Stroke Count order
+SORT_CHINESE_BOPOMOFO	equ 0x3	    ;; Traditional Chinese Bopomofo order
+SORT_CHINESE_RADICALSTROKE equ 0x4     ;; Traditional Chinese radical/stroke order.
+
+SORT_KOREAN_KSC		equ 0x0	    ;; Korean KSC order
+SORT_KOREAN_UNICODE	equ 0x1	    ;; Korean Unicode order (no longer supported)
+
+SORT_GERMAN_PHONE_BOOK	equ 0x1	    ;; German Phone Book order
+
+SORT_HUNGARIAN_DEFAULT	equ 0x0	    ;; Hungarian Default order
+SORT_HUNGARIAN_TECHNICAL equ 0x1     ;; Hungarian Technical order
+
+SORT_GEORGIAN_TRADITIONAL equ 0x0     ;; Georgian Traditional order
+SORT_GEORGIAN_MODERN	equ 0x1	    ;; Georgian Modern order
 
 ;
 ;  A language ID is a 16 bit value which is the combination of a
@@ -702,9 +1744,19 @@ SORTVERSIONFROMLCID macro lcid
 	endm
 
 
-;
-;  Default System and User IDs for language and locale.
-;
+;; 8 characters for language
+;; 8 characters for region
+;; 64 characters for suffix (script)
+;; 2 characters for '-' separators
+;; 2 characters for prefix like "i-" or "x-"
+;; 1 null termination
+LOCALE_NAME_MAX_LENGTH	equ 85
+
+;;
+;;  Default System and User IDs for language and locale.
+;;  Locale names such as LOCALE_NAME_SYSTEM_DEFAULT, LOCALE_NAME_USER_DEFAULT,
+;;  and LOCALE_NAME_INVARIANT are preferred.
+;;
 
 LANG_SYSTEM_DEFAULT	equ MAKELANGID(LANG_NEUTRAL, SUBLANG_SYS_DEFAULT)
 LANG_USER_DEFAULT	equ MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT)
@@ -712,44 +1764,176 @@ LANG_USER_DEFAULT	equ MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT)
 LOCALE_SYSTEM_DEFAULT	equ MAKELCID(LANG_SYSTEM_DEFAULT, SORT_DEFAULT)
 LOCALE_USER_DEFAULT	equ MAKELCID(LANG_USER_DEFAULT, SORT_DEFAULT)
 
-LOCALE_NEUTRAL	equ MAKELCID(MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL), SORT_DEFAULT)
+;;
+;;  Other special IDs for language and locale.
+;;
+LOCALE_CUSTOM_DEFAULT	equ \
+MAKELCID(MAKELANGID(LANG_NEUTRAL, SUBLANG_CUSTOM_DEFAULT), SORT_DEFAULT)
+
+LOCALE_CUSTOM_UNSPECIFIED equ \
+MAKELCID(MAKELANGID(LANG_NEUTRAL, SUBLANG_CUSTOM_UNSPECIFIED), SORT_DEFAULT)
+
+LOCALE_CUSTOM_UI_DEFAULT equ \
+MAKELCID(MAKELANGID(LANG_NEUTRAL, SUBLANG_UI_CUSTOM_DEFAULT), SORT_DEFAULT)
+
+LOCALE_NEUTRAL		equ \
+MAKELCID(MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL), SORT_DEFAULT)
+
+LOCALE_INVARIANT	equ \
+MAKELCID(MAKELANGID(LANG_INVARIANT, SUBLANG_NEUTRAL), SORT_DEFAULT)
+
+;; begin_ntminiport begin_ntndis begin_ntminitape
+
+;;
+;; Macros used to eliminate compiler warning generated when formal
+;; parameters or local variables are not declared.
+;;
+;; Use DBG_UNREFERENCED_PARAMETER() when a parameter is not yet
+;; referenced but will be once the module is completely developed.
+;;
+;; Use DBG_UNREFERENCED_LOCAL_VARIABLE() when a local variable is not yet
+;; referenced but will be once the module is completely developed.
+;;
+;; Use UNREFERENCED_PARAMETER() if a parameter will never be referenced.
+;;
+;; DBG_UNREFERENCED_PARAMETER and DBG_UNREFERENCED_LOCAL_VARIABLE will
+;; eventually be made into a null macro to help determine whether there
+;; is unfinished work.
+;;
+
+ifndef lint
+UNREFERENCED_PARAMETER macro P
+;	exitm<(P)>
+	endm
+DBG_UNREFERENCED_PARAMETER macro P
+;	exitm<(P)>
+	endm
+DBG_UNREFERENCED_LOCAL_VARIABLE macro V
+;	exitm<(V)>
+	endm
+
+else ;; lint
+
+;; Note: lint -e530 says don't complain about uninitialized variables for
+;; this varible.  Error 527 has to do with unreachable code.
+;; -restore restores checking to the -save state
+
+UNREFERENCED_PARAMETER macro P
+;;lint -save -e527 -e530
+;	exitm<(P) = (P)>
+	endm
+;;lint -restore
+DBG_UNREFERENCED_PARAMETER macro P
+;;lint -save -e527 -e530
+;	exitm<(P) = (P)>
+	endm
+;;lint -restore
+DBG_UNREFERENCED_LOCAL_VARIABLE macro V
+;;lint -save -e527 -e530
+;	exitm<(V) = (V)>
+	endm
+;;lint -restore
+
+endif ;; lint
+
+;;
+;; Macro used to eliminate compiler warning 4715 within a switch statement
+;; when all possible cases have already been accounted for.
+;;
+;; switch (a & 3) {
+;;     case 0: return 1;
+;;     case 1: return Foo();
+;;     case 2: return Bar();
+;;     case 3: return 1;
+;;     DEFAULT_UNREACHABLE;
+;;
+
+if (_MSC_VER GT 1200)
+DEFAULT_UNREACHABLE	equ <default: __assume(0)>
+else
+
+;;
+;; Older compilers do not support __assume(), and there is no other free
+;; method of eliminating the warning.
+;;
+
+DEFAULT_UNREACHABLE	equ <>
+
+endif
+
+DEFINE_ENUM_FLAG_OPERATORS macro ENUMTYPE
+	endm ;; NOP, C allows these operators.
+
+;; Compile-time macros for initializing flag values in const data.
+;;
+;; When using DEFINE_ENUM_FLAG_OPERATORS for enum values you should use the macros below
+;; when you need to initialize global const data.  Without these macros the inline operators
+;; from DEFINE_ENUM_FLAG_OPERATORS force a runtime initialization rather than a
+;; compile time initialization.	 This applies even if you have declared the data as const.
+COMPILETIME_OR_2FLAGS macro a,b
+	exitm<((a) OR (b))>
+	endm
+COMPILETIME_OR_3FLAGS macro a,b,c
+	exitm<((a) OR (b) OR (c))>
+	endm
+COMPILETIME_OR_4FLAGS macro a,b,c,d
+	exitm<((a) OR (b) OR (c) OR (d))>
+	endm
+COMPILETIME_OR_5FLAGS macro a,b,c,d,e
+	exitm<((a) OR (b) OR (c) OR (d) OR (e))>
+	endm
 
 ifndef WIN32_NO_STATUS
 
-STATUS_WAIT_0			 equ 0x00000000
-STATUS_ABANDONED_WAIT_0		 equ 0x00000080
-STATUS_USER_APC			 equ 0x000000C0
-STATUS_TIMEOUT			 equ 0x00000102
-STATUS_PENDING			 equ 0x00000103
-STATUS_SEGMENT_NOTIFICATION	 equ 0x40000005
-STATUS_GUARD_PAGE_VIOLATION	 equ 0x80000001
-STATUS_DATATYPE_MISALIGNMENT	 equ 0x80000002
-STATUS_BREAKPOINT		 equ 0x80000003
-STATUS_SINGLE_STEP		 equ 0x80000004
-STATUS_ACCESS_VIOLATION		 equ 0xC0000005
-STATUS_IN_PAGE_ERROR		 equ 0xC0000006
-STATUS_INVALID_HANDLE		 equ 0xC0000008
-STATUS_NO_MEMORY		 equ 0xC0000017
-STATUS_ILLEGAL_INSTRUCTION	 equ 0xC000001D
-STATUS_NONCONTINUABLE_EXCEPTION	 equ 0xC0000025
-STATUS_INVALID_DISPOSITION	 equ 0xC0000026
-STATUS_ARRAY_BOUNDS_EXCEEDED	 equ 0xC000008C
-STATUS_FLOAT_DENORMAL_OPERAND	 equ 0xC000008D
-STATUS_FLOAT_DIVIDE_BY_ZERO	 equ 0xC000008E
-STATUS_FLOAT_INEXACT_RESULT	 equ 0xC000008F
-STATUS_FLOAT_INVALID_OPERATION	 equ 0xC0000090
-STATUS_FLOAT_OVERFLOW		 equ 0xC0000091
-STATUS_FLOAT_STACK_CHECK	 equ 0xC0000092
-STATUS_FLOAT_UNDERFLOW		 equ 0xC0000093
-STATUS_INTEGER_DIVIDE_BY_ZERO	 equ 0xC0000094
-STATUS_INTEGER_OVERFLOW		 equ 0xC0000095
-STATUS_PRIVILEGED_INSTRUCTION	 equ 0xC0000096
-STATUS_STACK_OVERFLOW		 equ 0xC00000FD
-STATUS_CONTROL_C_EXIT		 equ 0xC000013A
-STATUS_FLOAT_MULTIPLE_FAULTS	 equ 0xC00002B4
-STATUS_FLOAT_MULTIPLE_TRAPS	 equ 0xC00002B5
-STATUS_ILLEGAL_VLM_REFERENCE	 equ 0xC00002C0
+STATUS_WAIT_0			equ 0x00000000
+STATUS_ABANDONED_WAIT_0		equ 0x00000080
+STATUS_USER_APC			equ 0x000000C0
+STATUS_TIMEOUT			equ 0x00000102
+STATUS_PENDING			equ 0x00000103
+STATUS_SEGMENT_NOTIFICATION	equ 0x40000005
+STATUS_GUARD_PAGE_VIOLATION	equ 0x80000001
+STATUS_DATATYPE_MISALIGNMENT	equ 0x80000002
+STATUS_BREAKPOINT		equ 0x80000003
+STATUS_SINGLE_STEP		equ 0x80000004
+STATUS_LONGJUMP			equ 0x80000026
+STATUS_UNWIND_CONSOLIDATE	equ 0x80000029
+STATUS_ACCESS_VIOLATION		equ 0xC0000005
+STATUS_IN_PAGE_ERROR		equ 0xC0000006
+STATUS_INVALID_HANDLE		equ 0xC0000008
+STATUS_INVALID_PARAMETER	equ 0xC000000D
+STATUS_NO_MEMORY		equ 0xC0000017
+STATUS_ILLEGAL_INSTRUCTION	equ 0xC000001D
+STATUS_NONCONTINUABLE_EXCEPTION equ 0xC0000025
+STATUS_INVALID_DISPOSITION	equ 0xC0000026
+STATUS_ARRAY_BOUNDS_EXCEEDED	equ 0xC000008C
+STATUS_FLOAT_DENORMAL_OPERAND	equ 0xC000008D
+STATUS_FLOAT_DIVIDE_BY_ZERO	equ 0xC000008E
+STATUS_FLOAT_INEXACT_RESULT	equ 0xC000008F
+STATUS_FLOAT_INVALID_OPERATION	equ 0xC0000090
+STATUS_FLOAT_OVERFLOW		equ 0xC0000091
+STATUS_FLOAT_STACK_CHECK	equ 0xC0000092
+STATUS_FLOAT_UNDERFLOW		equ 0xC0000093
+STATUS_INTEGER_DIVIDE_BY_ZERO	equ 0xC0000094
+STATUS_INTEGER_OVERFLOW		equ 0xC0000095
+STATUS_PRIVILEGED_INSTRUCTION	equ 0xC0000096
+STATUS_STACK_OVERFLOW		equ 0xC00000FD
+STATUS_DLL_NOT_FOUND		equ 0xC0000135
+STATUS_ORDINAL_NOT_FOUND	equ 0xC0000138
+STATUS_ENTRYPOINT_NOT_FOUND	equ 0xC0000139
+STATUS_CONTROL_C_EXIT		equ 0xC000013A
+STATUS_DLL_INIT_FAILED		equ 0xC0000142
+STATUS_FLOAT_MULTIPLE_FAULTS	equ 0xC00002B4
+STATUS_FLOAT_MULTIPLE_TRAPS	equ 0xC00002B5
+STATUS_ILLEGAL_VLM_REFERENCE	equ 0xC00002C0
+STATUS_REG_NAT_CONSUMPTION	equ 0xC00002C9
+STATUS_STACK_BUFFER_OVERRUN	equ 0xC0000409
+STATUS_INVALID_CRUNTIME_PARAMETER equ 0xC0000417
+STATUS_ASSERTION_FAILURE	equ 0xC0000420
 
+if defined(STATUS_SUCCESS) OR (_WIN32_WINNT GT 0x0500) OR (_WIN32_FUSION GE 0x0100)
+STATUS_SXS_EARLY_DEACTIVATION	equ 0xC015000F
+STATUS_SXS_INVALID_DEACTIVATION equ 0xC0150010
+endif
 endif
 
 MAXIMUM_WAIT_OBJECTS	equ 64		; Maximum number of wait objects
@@ -758,12 +1942,1693 @@ MAXIMUM_SUSPEND_COUNT	equ MAXCHAR	; Maximum times thread can be suspended
 KSPIN_LOCK	typedef UINT_PTR
 PKSPIN_LOCK	typedef PTR KSPIN_LOCK
 
-ifdef _WIN32
-;
-; Disable these two pramas that evaluate to "sti" "cli" on x86 so that driver
-; writers to not leave them inadvertantly in their code.
-;
+;;
+;; Define 128-bit 16-byte aligned xmm register type.
+;;
 
+DECLSPEC_ALIGN(16)
+M128A		STRUC
+_Low		ULONGLONG ?
+_High		LONGLONG ?
+M128A		ENDS
+PM128A		typedef ptr M128A
+
+;;
+;; Format of data for (F)XSAVE/(F)XRSTOR instruction
+;;
+
+DECLSPEC_ALIGN(16)
+XSAVE_FORMAT		STRUC
+ControlWord		dw ?
+StatusWord		dw ?
+TagWord			db ?
+Reserved1		db ?
+ErrorOpcode		dw ?
+ErrorOffset		dd ?
+ErrorSelector		dw ?
+Reserved2		dw ?
+DataOffset		dd ?
+DataSelector		dw ?
+Reserved3		dw ?
+MxCsr			dd ?
+MxCsr_Mask		dd ?
+FloatRegisters		M128A 8 dup(<>)
+
+ifdef _WIN64
+
+XmmRegisters		M128A 16 dup(<>)
+Reserved4		db 96 dup(?)
+
+else
+
+XmmRegisters		M128A 8 dup(<>)
+Reserved4		db 192 dup(?)
+
+    ;; The fields below are not part of XSAVE/XRSTOR format.
+    ;; They are written by the OS which is relying on a fact that
+    ;; neither (FX)SAVE nor (F)XSTOR used this area.
+
+StackControl		dd 7 dup(?)	;; KERNEL_STACK_CONTROL structure actualy
+Cr0NpxState		dd ?
+
+endif
+
+XSAVE_FORMAT		ENDS
+PXSAVE_FORMAT		typedef ptr XSAVE_FORMAT
+
+DECLSPEC_ALIGN(8)
+XSAVE_AREA_HEADER	STRUC
+_Mask			dd ?
+Reserved		dd 7 dup(?)
+XSAVE_AREA_HEADER	ENDS
+PXSAVE_AREA_HEADER	typedef ptr XSAVE_AREA_HEADER
+
+DECLSPEC_ALIGN(16)
+XSAVE_AREA		STRUC
+LegacyState		XSAVE_FORMAT <>
+Header			XSAVE_AREA_HEADER <>
+XSAVE_AREA		ENDS
+PXSAVE_AREA		typedef ptr XSAVE_AREA
+
+XSTATE_CONTEXT		STRUC
+_Mask			dd ?
+_Length			dd ?
+Reserved1		dd ?
+Area			PXSAVE_AREA ? ; __field_bcount_opt(Length) ?
+ifdef _X86_
+Reserved2		dd ?
+endif
+Buffer			PVOID ?
+ifdef _X86_
+Reserved3		dd ?
+endif
+XSTATE_CONTEXT		ENDS
+PXSTATE_CONTEXT		typedef ptr XSTATE_CONTEXT
+
+
+XSAVE_ALIGN		equ 64
+MINIMAL_XSTATE_AREA_LENGTH equ sizeof(XSAVE_AREA)
+
+;;
+;; This structure specifies an offset (from the beginning of CONTEXT_EX
+;; structure) and size of a single chunk of an extended context structure.
+;;
+;; N.B. Offset may be negative.
+;;
+
+CONTEXT_CHUNK		STRUC
+_Offset			LONG ?
+_Length			dd ?
+CONTEXT_CHUNK		ENDS
+PCONTEXT_CHUNK		typedef ptr CONTEXT_CHUNK
+
+;;
+;; CONTEXT_EX structure is an extension to CONTEXT structure. It defines
+;; a context record as a set of disjoint variable-sized buffers (chunks)
+;; each containing a portion of processor state. Currently there are only
+;; two buffers (chunks) are defined:
+;;
+;;   - Legacy, that stores traditional CONTEXT structure;
+;;   - XState, that stores XSAVE save area buffer starting from
+;;     XSAVE_AREA_HEADER, i.e. without the first 512 bytes.
+;;
+;; There a few assumptions exists that simplify conversion of PCONTEXT
+;; pointer to PCONTEXT_EX pointer.
+;;
+;; 1. APIs that work with PCONTEXT pointers assume that CONTEXT_EX is
+;;    stored right after the CONTEXT structure. It is also assumed that
+;;    CONTEXT_EX is present if and only if corresponding CONTEXT_XXX
+;;    flags are set in CONTEXT.ContextFlags.
+;;
+;; 2. CONTEXT_EX.Legacy is always present if CONTEXT_EX structure is
+;;    present. All other chunks are optional.
+;;
+;; 3. CONTEXT.ContextFlags unambigiously define which chunks are
+;;    present. I.e. if CONTEXT_XSTATE is set CONTEXT_EX.XState is valid.
+;;
+
+CONTEXT_EX		STRUC
+
+    ;; The total length of the structure starting from the chunk with
+    ;; the smallest offset. N.B. that the offset may be negative.
+
+All			CONTEXT_CHUNK <>
+
+    ;; Wrapper for the traditional CONTEXT structure. N.B. the size of
+    ;; the chunk may be less than sizeof(CONTEXT) is some cases (when
+    ;; CONTEXT_EXTENDED_REGISTERS is not set on x86 for instance).
+
+Legacy			CONTEXT_CHUNK <>
+
+    ;; CONTEXT_XSTATE: Extended processor state chunk. The state is
+    ;; stored in the same format XSAVE operation strores it with
+    ;; exception of the first 512 bytes, i.e. staring from
+    ;; XSAVE_AREA_HEADER. The lower two bits corresponding FP and
+    ;; SSE state must be zero.
+
+XState			CONTEXT_CHUNK <>
+
+CONTEXT_EX		ENDS
+PCONTEXT_EX		typedef ptr CONTEXT_EX
+
+CONTEXT_EX_LENGTH	equ ALIGN_UP_BY(sizeof(CONTEXT_EX), STACK_AIGN)
+
+;;
+;; These macros make context chunks manupulations easier.
+;;
+
+RTL_CONTEXT_EX_OFFSET macro ContextEx, Chunk
+;	exitm<((ContextEx)->Chunk.Offset)>
+	endm
+
+RTL_CONTEXT_EX_LENGTH macro ContextEx, Chunk
+;	exitm<((ContextEx).Chunk._Length)>
+	endm
+
+RTL_CONTEXT_EX_CHUNK macro Base, Layout, Chunk
+;	exitm<((PVOID)((PCHAR)(Base) + RTL_CONTEXT_EX_OFFSET(Layout, Chunk)))>
+	endm
+
+RTL_CONTEXT_OFFSET macro Context, Chunk
+;	exitm<RTL_CONTEXT_EX_OFFSET((PCONTEXT_EX)(Context + 1), Chunk)>
+	endm
+
+RTL_CONTEXT_LENGTH macro Context, Chunk
+;	exitm<RTL_CONTEXT_EX_LENGTH((PCONTEXT_EX)(Context + 1), Chunk)>
+	endm
+
+RTL_CONTEXT_CHUNK macro Context, Chunk
+;	exitm<RTL_CONTEXT_EX_CHUNK((PCONTEXT_EX)(Context + 1),(PCONTEXT_EX)(Context + 1),Chunk)>
+	endm
+
+if NOT defined(__midl) AND NOT defined(MIDL_PASS)
+
+;;
+;; XSAVE/XRSTOR save area should be aligned on 64 byte boundary
+;;
+
+C_ASSERT((sizeof(XSAVE_FORMAT) & (XSAVE_ALIGN - 1)) == 0)
+C_ASSERT((FIELD_OFFSET(XSAVE_AREA, Header) & (XSAVE_ALIGN - 1)) == 0)
+
+;; XSAVE_AREA structure must be sized uniformly on all architectures
+C_ASSERT(MINIMAL_XSTATE_AREA_LENGTH == 512 + 64)
+
+endif
+
+ifdef _AMD64_
+
+if defined(_M_AMD64) AND NOT defined(RC_INVOKED) AND NOT defined(MIDL_PASS)
+
+;;
+;; Define bit test intrinsics.
+;;
+
+BitTest			equ <_bittest>
+BitTestAndComplement	equ <_bittestandcomplement>
+BitTestAndSet		equ <_bittestandset>
+BitTestAndReset		equ <_bittestandreset>
+InterlockedBitTestAndSet equ <_interlockedbittestandset>
+InterlockedBitTestAndReset equ <_interlockedbittestandreset>
+
+BitTest64		equ <_bittest64>
+BitTestAndComplement64	equ <_bittestandcomplement64>
+BitTestAndSet64		equ <_bittestandset64>
+BitTestAndReset64	equ <_bittestandreset64>
+InterlockedBitTestAndSet64 equ <_interlockedbittestandset64>
+InterlockedBitTestAndReset64 equ <_interlockedbittestandreset64>
+
+;BOOLEAN
+_bittest proto _CType \
+		  Base: ptr LONG,
+	       _Offset: LONG
+;BOOLEAN
+_bittestandcomplement proto _CType \
+		  Base: ptr LONG,
+	       _Offset: LONG
+;BOOLEAN
+_bittestandset proto _CType \
+		  Base: ptr LONG,
+	       _Offset: LONG
+;BOOLEAN
+_bittestandreset proto _CType \
+		  Base: ptr LONG,
+	       _Offset: LONG
+;BOOLEAN
+_interlockedbittestandset proto _CType \
+		  Base: ptr LONG,
+	       _Offset: LONG
+;BOOLEAN
+_interlockedbittestandreset proto _CType \
+		  Base: ptr LONG,
+	       _Offset: LONG
+;BOOLEAN
+_bittest64 proto _CType \
+		  Base: ptr LONG64,
+	       _Offset: LONG64
+;BOOLEAN
+_bittestandcomplement64 proto _CType \
+		  Base: ptr LONG64,
+	       _Offset: LONG64
+;BOOLEAN
+_bittestandset64 proto _CType \
+		  Base: ptr LONG64,
+	       _Offset: LONG64
+;BOOLEAN
+_bittestandreset64 proto _CType \
+		  Base: ptr LONG64,
+	       _Offset: LONG64
+;BOOLEAN
+_interlockedbittestandset64 proto _CType \
+		  Base: ptr LONG64,
+	       _Offset: LONG64
+;BOOLEAN
+_interlockedbittestandreset64 proto _CType \
+		  Base: ptr LONG64,
+	       _Offset: LONG64
+
+
+;pragma intrinsic(_bittest)
+;pragma intrinsic(_bittestandcomplement)
+;pragma intrinsic(_bittestandset)
+;pragma intrinsic(_bittestandreset)
+;pragma intrinsic(_interlockedbittestandset)
+;pragma intrinsic(_interlockedbittestandreset)
+
+;pragma intrinsic(_bittest64)
+;pragma intrinsic(_bittestandcomplement64)
+;pragma intrinsic(_bittestandset64)
+;pragma intrinsic(_bittestandreset64)
+;pragma intrinsic(_interlockedbittestandset64)
+;pragma intrinsic(_interlockedbittestandreset64)
+
+;;
+;; Define bit scan intrinsics.
+;;
+
+BitScanForward		equ <_BitScanForward>
+BitScanReverse		equ <_BitScanReverse>
+BitScanForward64	equ <_BitScanForward64>
+BitScanReverse64	equ <_BitScanReverse64>
+
+;BOOLEAN
+_BitScanForward proto _CType \
+		 Index: ptr dword,
+		 _Mask: dword
+;BOOLEAN
+_BitScanReverse proto _CType \
+		 Index: ptr dword,
+		 _Mask: dword
+;BOOLEAN
+_BitScanForward64 proto _CType \
+		 Index: ptr dword,
+		 _Mask: DWORD64
+;BOOLEAN
+_BitScanReverse64 proto _CType \
+		 Index: ptr dword,
+		 _Mask: DWORD64
+
+;pragma intrinsic(_BitScanForward)
+;pragma intrinsic(_BitScanReverse)
+;pragma intrinsic(_BitScanForward64)
+;pragma intrinsic(_BitScanReverse64)
+
+;;
+;; Interlocked intrinsic functions.
+;;
+
+InterlockedIncrement16	equ <_InterlockedIncrement16>
+InterlockedDecrement16	equ <_InterlockedDecrement16>
+InterlockedCompareExchange16 equ <_InterlockedCompareExchange16>
+
+InterlockedAnd		equ <_InterlockedAnd>
+InterlockedAndAcquire	equ <_InterlockedAnd>
+InterlockedAndRelease	equ <_InterlockedAnd>
+InterlockedOr		equ <_InterlockedOr>
+InterlockedOrAcquire	equ <_InterlockedOr>
+InterlockedOrRelease	equ <_InterlockedOr>
+InterlockedXor		equ <_InterlockedXor>
+InterlockedIncrement	equ <_InterlockedIncrement>
+InterlockedIncrementAcquire equ <InterlockedIncrement>
+InterlockedIncrementRelease equ <InterlockedIncrement>
+InterlockedDecrement	equ <_InterlockedDecrement>
+InterlockedDecrementAcquire equ <InterlockedDecrement>
+InterlockedDecrementRelease equ <InterlockedDecrement>
+InterlockedAdd		equ <_InterlockedAdd>
+InterlockedExchange	equ <_InterlockedExchange>
+InterlockedExchangeAdd	equ <_InterlockedExchangeAdd>
+InterlockedCompareExchange equ <_InterlockedCompareExchange>
+InterlockedCompareExchangeAcquire equ <InterlockedCompareExchange>
+InterlockedCompareExchangeRelease equ <InterlockedCompareExchange>
+
+InterlockedAnd64	equ <_InterlockedAnd64>
+InterlockedAnd64Acquire equ <_InterlockedAnd64>
+InterlockedAnd64Release equ <_InterlockedAnd64>
+InterlockedAndAffinity	equ <InterlockedAnd64>
+InterlockedOr64		equ <_InterlockedOr64>
+InterlockedOr64Acquire	equ <_InterlockedOr64>
+InterlockedOr64Release	equ <_InterlockedOr64>
+InterlockedOrAffinity	equ <InterlockedOr64>
+InterlockedXor64	equ <_InterlockedXor64>
+InterlockedIncrement64	equ <_InterlockedIncrement64>
+InterlockedDecrement64	equ <_InterlockedDecrement64>
+InterlockedAdd64	equ <_InterlockedAdd64>
+InterlockedExchange64	equ <_InterlockedExchange64>
+InterlockedExchangeAcquire64 equ <InterlockedExchange64>
+InterlockedExchangeAdd64 equ <_InterlockedExchangeAdd64>
+InterlockedCompareExchange64 equ <_InterlockedCompareExchange64>
+InterlockedCompareExchangeAcquire64 equ <InterlockedCompareExchange64>
+InterlockedCompareExchangeRelease64 equ <InterlockedCompareExchange64>
+
+InterlockedExchangePointer equ <_InterlockedExchangePointer>
+InterlockedCompareExchangePointer equ <_InterlockedCompareExchangePointer>
+InterlockedCompareExchangePointerAcquire equ <_InterlockedCompareExchangePointer>
+InterlockedCompareExchangePointerRelease equ <_InterlockedCompareExchangePointer>
+
+InterlockedExchangeAddSizeT macro a, b
+	exitm<InterlockedExchangeAdd64(a, b)>
+	endm
+InterlockedIncrementSizeT macro a
+	exitm<InterlockedIncrement64(a)>
+	endm
+InterlockedDecrementSizeT macro a
+	exitm<InterlockedDecrement64(a)>
+	endm
+
+; SHORT
+InterlockedIncrement16 proto _CType \
+		Addend: ptr word,
+		 Value: LONG
+;SHORT
+InterlockedDecrement16 proto _CType \
+		Addend: ptr word
+;SHORT
+InterlockedCompareExchange16 proto _CType \
+	   Destination: ptr word,
+	      ExChange: word,
+	     Comperand: word
+;LONG
+InterlockedAnd proto _CType \
+	   Destination: ptr LONG,
+		 Value: LONG
+;LONG
+InterlockedOr proto _CType \
+	   Destination: ptr LONG,
+		 Value: LONG
+;LONG
+InterlockedXor proto _CType \
+	   Destination: ptr LONG,
+		 Value: LONG
+;LONG64
+InterlockedAnd64 proto _CType \
+	   Destination: ptr LONG64,
+		 Value: LONG64
+;LONG64
+InterlockedOr64 proto _CType \
+	   Destination: ptr LONG64,
+		 Value: LONG64
+;LONG64
+InterlockedXor64 proto _CType \
+	   Destination: ptr LONG64,
+		 Value: LONG64
+;LONG
+InterlockedIncrement proto _CType \
+		Addend: ptr LONG
+;LONG
+InterlockedDecrement proto _CType \
+		Addend: ptr LONG
+;LONG
+InterlockedExchange proto _CType \
+		Target: ptr LONG,
+		 Value: LONG
+;LONG
+InterlockedExchangeAdd proto _CType \
+		Addend: ptr LONG,
+		 Value: LONG
+ifndef _X86AMD64_
+;__forceinline
+;LONG
+InterlockedAdd macro Addend, Value
+;	exitm<InterlockedExchangeAdd(Addend, Value) + Value>
+	endm
+endif
+;LONG
+InterlockedCompareExchange proto _CType \
+	   Destination: ptr LONG,
+	      Exchange: LONG,
+	     Comperand: LONG
+;LONG64
+InterlockedIncrement64 proto _CType \
+		Addend: ptr LONG64
+;LONG64
+InterlockedDecrement64 proto _CType \
+		Addend: ptr LONG64
+;LONG64
+InterlockedExchange64 proto _CType \
+		Target: ptr LONG64,
+		 Value: LONG64
+;LONG64
+InterlockedExchangeAdd64 proto _CType \
+		Addend: ptr LONG64,
+		 Value: LONG64
+
+ifndef _X86AMD64_
+;__forceinline
+;LONG64
+InterlockedAdd64 macro Addend, Value
+	add InterlockedExchangeAdd64(Addend, Value),Value
+	exitm<rax>
+	endm
+endif
+
+;LONG64
+InterlockedCompareExchange64 proto _CType \
+	   Destination: ptr LONG64,
+	      Exchange: LONG64,
+	     Comperand: LONG64
+;PVOID
+InterlockedCompareExchangePointer proto _CType \
+	   Destination: PVOID,
+	      Exchange: PVOID,
+	     Comperand: PVOID
+;PVOID
+InterlockedExchangePointer proto _CType \
+		Target: PVOID,
+		 Value: PVOID
+
+pragma intrinsic(_InterlockedIncrement16)
+pragma intrinsic(_InterlockedDecrement16)
+pragma intrinsic(_InterlockedCompareExchange16)
+pragma intrinsic(_InterlockedAnd)
+pragma intrinsic(_InterlockedOr)
+pragma intrinsic(_InterlockedXor)
+pragma intrinsic(_InterlockedIncrement)
+pragma intrinsic(_InterlockedDecrement)
+pragma intrinsic(_InterlockedExchange)
+pragma intrinsic(_InterlockedExchangeAdd)
+pragma intrinsic(_InterlockedCompareExchange)
+pragma intrinsic(_InterlockedAnd64)
+pragma intrinsic(_InterlockedOr64)
+pragma intrinsic(_InterlockedXor64)
+pragma intrinsic(_InterlockedIncrement64)
+pragma intrinsic(_InterlockedDecrement64)
+pragma intrinsic(_InterlockedExchange64)
+pragma intrinsic(_InterlockedExchangeAdd64)
+pragma intrinsic(_InterlockedCompareExchange64)
+pragma intrinsic(_InterlockedExchangePointer)
+pragma intrinsic(_InterlockedCompareExchangePointer)
+
+
+if _MSC_FULL_VER GE 140041204
+
+InterlockedAnd8		equ <_InterlockedAnd8>
+InterlockedOr8		equ <_InterlockedOr8>
+InterlockedXor8		equ <_InterlockedXor8>
+InterlockedAnd16	equ <_InterlockedAnd16>
+InterlockedOr16		equ <_InterlockedOr16>
+InterlockedXor16	equ <_InterlockedXor16>
+
+;char
+InterlockedAnd8 proto _CType \
+	   Destination: LPSTR,
+		 Value: CHAR
+;char
+InterlockedOr8 proto _CType \
+	   Destination: LPSTR,
+		 Value: CHAR
+;char
+InterlockedXor8 proto _CType \
+	   Destination: LPSTR,
+		 Value: CHAR
+;SHORT
+InterlockedAnd16 proto _CType \
+	   Destination: LPWORD,
+		 Value: WORD
+;SHORT
+InterlockedOr16 proto _CType \
+	   Destination: LPWORD,
+		 Value: WORD
+;SHORT
+InterlockedXor16 proto _CType \
+	   Destination: LPWORD,
+		 Value: WORD
+
+pragma intrinsic (_InterlockedAnd8)
+pragma intrinsic (_InterlockedOr8)
+pragma intrinsic (_InterlockedXor8)
+pragma intrinsic (_InterlockedAnd16)
+pragma intrinsic (_InterlockedOr16)
+pragma intrinsic (_InterlockedXor16)
+
+endif
+
+;;
+;; Define function to flush a cache line.
+;;
+
+CacheLineFlush macro Address
+	exitm<_mm_clflush(Address)>
+	endm
+
+;VOID
+_mm_clflush proto _CType \
+	       Address: PVOID
+
+pragma intrinsic(_mm_clflush)
+
+;VOID
+_ReadWriteBarrier proto _CType
+
+pragma intrinsic(_ReadWriteBarrier)
+
+;;
+;; Define memory fence intrinsics
+;;
+
+FastFence		equ <__faststorefence>
+LoadFence		equ <_mm_lfence>
+MemoryFence		equ <_mm_mfence>
+StoreFence		equ <_mm_sfence>
+
+;VOID
+__faststorefence proto _CType
+
+;VOID
+_mm_lfence proto _CType
+
+;VOID
+_mm_mfence proto _CType
+
+;VOID
+_mm_sfence proto _CType
+
+;VOID
+_mm_pause proto _CType
+
+;VOID
+_mm_prefetch proto _CType \
+		     a: LPSTR,
+		   sel: SINT
+
+;VOID
+_m_prefetchw proto _CType \
+		Source: PVOID
+
+
+;;
+;; Define constants for use with _mm_prefetch.
+;;
+
+_MM_HINT_T0		equ 1
+_MM_HINT_T1		equ 2
+_MM_HINT_T2		equ 3
+_MM_HINT_NTA		equ 0
+
+pragma intrinsic(__faststorefence)
+pragma intrinsic(_mm_pause)
+pragma intrinsic(_mm_prefetch)
+pragma intrinsic(_mm_lfence)
+pragma intrinsic(_mm_mfence)
+pragma intrinsic(_mm_sfence)
+pragma intrinsic(_m_prefetchw)
+
+YieldProcessor		equ <_mm_pause>
+MemoryBarrier		equ <__faststorefence>
+PreFetchCacheLine macro l, a
+	exitm<_mm_prefetch(a, l)>
+	endm
+PrefetchForWrite macro p
+	exitm<_m_prefetchw(p)>
+	endm
+ReadForWriteAccess macro p
+	exitm<(_m_prefetchw(p), *(p))>
+	endm
+
+;;
+;; PreFetchCacheLine level defines.
+;;
+
+PF_TEMPORAL_LEVEL_1	equ _MM_HINT_T0
+PF_TEMPORAL_LEVEL_2	equ _MM_HINT_T1
+PF_TEMPORAL_LEVEL_3	equ _MM_HINT_T2
+PF_NON_TEMPORAL_LEVEL_ALL equ _MM_HINT_NTA
+
+;;
+;; Define get/set MXCSR intrinsics.
+;;
+
+ReadMxCsr		equ <_mm_getcsr>
+WriteMxCsr		equ <_mm_setcsr>
+
+;unsigned int
+_mm_getcsr proto _CType
+
+;VOID
+_mm_setcsr proto _CType \
+		 MxCsr: UINT
+
+pragma intrinsic(_mm_getcsr)
+pragma intrinsic(_mm_setcsr)
+
+;;
+;; Assert exception.
+;;
+
+;VOID
+__int2c proto _CType
+
+pragma intrinsic(__int2c)
+
+;FORCEINLINE
+;VOID
+DbgRaiseAssertionFailure macro
+	exitm<__int2c()>
+	endm
+
+;;
+;; Define function to get the caller's EFLAGs value.
+;;
+
+GetCallersEflags macro
+	exitm<__getcallerseflags()>
+	endm
+
+;unsigned __int32
+__getcallerseflags proto _CType
+
+pragma intrinsic(__getcallerseflags)
+
+;;
+;; Define function to get segment limit.
+;;
+
+GetSegmentLimit equ <__segmentlimit>
+
+;DWORD
+__segmentlimit proto _CType \
+	      Selector: DWORD
+
+pragma intrinsic(__segmentlimit)
+
+;;
+;; Define function to read the value of a performance counter.
+;;
+
+ReadPMC equ <__readpmc>
+
+;DWORD64
+__readpmc proto _CType \
+	       Counter: DWORD
+
+pragma intrinsic(__readpmc)
+
+;;
+;; Define function to read the value of the time stamp counter
+;;
+
+ReadTimeStampCounter macro
+	exitm<__rdtsc()>
+	endm
+
+;DWORD64
+__rdtsc proto _CType
+
+pragma intrinsic(__rdtsc)
+
+;;
+;; Define functions to move strings as bytes, words, dwords, and qwords.
+;;
+
+;VOID
+__movsb proto _CType \
+	   Destination: PBYTE,
+		Source: ptr BYTE,
+		 Count: SIZE_T
+;VOID
+__movsw proto _CType \
+	   Destination: PWORD,
+		Source: ptr WORD,
+		 Count: SIZE_T
+;VOID
+__movsd proto _CType \
+	   Destination: PDWORD,
+		Source: ptr DWORD,
+		 Count: SIZE_T
+;VOID
+__movsq proto _CType \
+	   Destination: PDWORD64,
+		Source: ptr DWORD64,
+		 Count: SIZE_T
+
+pragma intrinsic(__movsb)
+pragma intrinsic(__movsw)
+pragma intrinsic(__movsd)
+pragma intrinsic(__movsq)
+
+;;
+;; Define functions to store strings as bytes, words, dwords, and qwords.
+;;
+
+VOID
+__stosb (
+    __out_ecount_full(Count) PBYTE  Destination,
+    __in BYTE  Value,
+    __in SIZE_T Count
+    );
+
+VOID
+__stosw (
+    __out_ecount_full(Count) PWORD   Destination,
+    __in WORD	Value,
+    __in SIZE_T Count
+    );
+
+VOID
+__stosd (
+    __out_ecount_full(Count) PDWORD Destination,
+    __in DWORD Value,
+    __in SIZE_T Count
+    );
+
+VOID
+__stosq (
+    __out_ecount_full(Count) PDWORD64 Destination,
+    __in DWORD64 Value,
+    __in SIZE_T Count
+    );
+
+pragma intrinsic(__stosb)
+pragma intrinsic(__stosw)
+pragma intrinsic(__stosd)
+pragma intrinsic(__stosq)
+
+;;
+;; Define functions to capture the high 64-bits of a 128-bit multiply.
+;;
+
+MultiplyHigh		equ <__mulh>
+UnsignedMultiplyHigh	equ <__umulh>
+
+;LONGLONG
+__mulh proto _CType \
+	    Multiplier: LONG64,
+	  Multiplicand: LONG64
+;ULONGLONG
+__umulh proto _CType \
+	    Multiplier: DWORD64,
+	  Multiplicand: DWORD64
+
+pragma intrinsic(__mulh)
+pragma intrinsic(__umulh)
+
+;;
+;; Define functions to perform 128-bit shifts
+;;
+
+ShiftLeft128	equ <__shiftleft128>
+ShiftRight128	equ <__shiftright128>
+
+;DWORD64
+__shiftleft128 proto _CType \
+	       LowPart: DWORD64,
+	      HighPart: DWORD64,
+		 Shift: BYTE
+;DWORD64
+__shiftright128 proto _CType \
+	       LowPart: DWORD64,
+	      HighPart: DWORD64,
+		 Shift: BYTE
+
+pragma intrinsic(__shiftleft128)
+pragma intrinsic(__shiftright128)
+
+;;
+;; Define functions to perform 128-bit multiplies.
+;;
+
+Multiply128	equ <_mul128>
+
+;LONG64
+_mul128 proto _CType \
+	    Multiplier: LONG64,
+	  Multiplicand: LONG64,
+	   HighProduct: ptr LONG64
+
+
+pragma intrinsic(_mul128)
+
+ifndef UnsignedMultiply128
+
+UnsignedMultiply128	equ <_umul128>
+
+;DWORD64
+_umul128 proto _CType \
+	    Multiplier: DWORD64,
+	  Multiplicand: DWORD64,
+	   HighProduct: ptr DWORD64
+
+pragma intrinsic(_umul128)
+
+endif
+
+;__forceinline
+;LONG64
+Multiply128 proto _CType \
+	    Multiplier: LONG64,
+	  Multiplicand: LONG64,
+	   HighProduct: ptr LONG64
+
+;__forceinline
+;DWORD64
+UnsignedMultiplyExtract128 proto _CType \
+	    Multiplier: LONG64,
+	  Multiplicand: LONG64,
+		 Shift: BYTE
+;;
+;; Define functions to read and write the uer TEB and the system PCR/PRCB.
+;;
+
+;BYTE
+__readgsbyte proto _CType \
+	       _Offset: DWORD
+;WORD
+__readgsword proto _CType \
+	       _Offset: DWORD
+;DWORD
+__readgsdword proto _CType \
+	       _Offset: DWORD
+;DWORD64
+__readgsqword proto _CType \
+	       _Offset: DWORD
+;VOID
+__writegsbyte proto _CType \
+	       _Offset: DWORD,
+		  Data: BYTE
+;VOID
+__writegsword proto _CType \
+	       _Offset: DWORD,
+		  Data: WORD
+;VOID
+__writegsdword proto _CType \
+	       _Offset: DWORD,
+		  Data: DWORD
+;VOID
+__writegsqword proto _CType \
+	       _Offset: DWORD,
+		  Data: DWORD64
+
+
+pragma intrinsic(__readgsbyte)
+pragma intrinsic(__readgsword)
+pragma intrinsic(__readgsdword)
+pragma intrinsic(__readgsqword)
+pragma intrinsic(__writegsbyte)
+pragma intrinsic(__writegsword)
+pragma intrinsic(__writegsdword)
+pragma intrinsic(__writegsqword)
+
+if NOT defined(_MANAGED)
+
+;VOID
+__incgsbyte proto _CType \
+	       _Offset: DWORD
+;VOID
+__addgsbyte proto _CType \
+	       _Offset: DWORD,
+		 Value: BYTE
+;VOID
+__incgsword proto _CType \
+	       _Offset: DWORD
+;VOID
+__addgsword proto _CType \
+	       _Offset: DWORD,
+		 Value: WORD
+;VOID
+__incgsdword proto _CType \
+	       _Offset: DWORD
+;VOID
+__addgsdword proto _CType \
+	       _Offset: DWORD,
+		 Value: DWORD
+;VOID
+__incgsqword proto _CType \
+	       _Offset: DWORD
+;VOID
+__addgsqword proto _CType \
+	       _Offset: DWORD,
+		 Value: DWORD64
+
+
+if 0
+pragma intrinsic(__incgsbyte)
+pragma intrinsic(__addgsbyte)
+pragma intrinsic(__incgsword)
+pragma intrinsic(__addgsword)
+pragma intrinsic(__incgsdword)
+pragma intrinsic(__addgsdword)
+pragma intrinsic(__incgsqword)
+pragma intrinsic(__addgsqword)
+endif
+
+endif ;; !defined(_MANAGED)
+
+endif ;; defined(_M_AMD64) AND NOT defined(RC_INVOKED) AND NOT defined(MIDL_PASS)
+
+;;
+;; The following values specify the type of access in the first parameter
+;; of the exception record whan the exception code specifies an access
+;; violation.
+;;
+
+EXCEPTION_READ_FAULT	equ 0	       ;; exception caused by a read
+EXCEPTION_WRITE_FAULT	equ 1	      ;; exception caused by a write
+EXCEPTION_EXECUTE_FAULT equ 8	    ;; exception caused by an instruction fetch
+
+;;
+;; The following flags control the contents of the CONTEXT structure.
+;;
+
+CONTEXT_AMD64		equ 0x100000
+
+CONTEXT_CONTROL		equ (CONTEXT_AMD64 OR 0x1)
+CONTEXT_INTEGER		equ (CONTEXT_AMD64 OR 0x2)
+CONTEXT_SEGMENTS	equ (CONTEXT_AMD64 OR 0x4)
+CONTEXT_FLOATING_POINT	equ (CONTEXT_AMD64 OR 0x8)
+CONTEXT_DEBUG_REGISTERS equ (CONTEXT_AMD64 OR 0x10)
+
+CONTEXT_FULL		equ (CONTEXT_CONTROL OR CONTEXT_INTEGER OR CONTEXT_FOATING_POINT)
+
+CONTEXT_ALL		equ (CONTEXT_CONTROL OR CONTEXT_INTEGER OR CONTEXT_SEGMENTS OR CONTEXT_FOATING_POINT OR CONTEXT_DEBUG_REGISTERS)
+
+CONTEXT_XSTATE		equ (CONTEXT_AMD64 OR 0x20)
+
+CONTEXT_EXCEPTION_ACTIVE equ 0x8000000
+CONTEXT_SERVICE_ACTIVE	equ 0x10000000
+CONTEXT_EXCEPTION_REQUEST equ 0x40000000
+CONTEXT_EXCEPTION_REPORTING equ 0x80000000
+
+;;
+;; Define initial MxCsr and FpCsr control.
+;;
+
+INITIAL_MXCSR		equ 0x1f80	      ;; initial MXCSR value
+INITIAL_FPCSR		equ 0x027f	      ;; initial FPCSR value
+
+PXMM_SAVE_AREA32	typedef ptr XSAVE_FORMAT XMM_SAVE_AREA32,
+
+;;
+;; Context Frame
+;;
+;;  This frame has a several purposes: 1) it is used as an argument to
+;;  NtContinue, 2) it is used to constuct a call frame for APC delivery,
+;;  and 3) it is used in the user level thread creation routines.
+;;
+;;
+;; The flags field within this record controls the contents of a CONTEXT
+;; record.
+;;
+;; If the context record is used as an input parameter, then for each
+;; portion of the context record controlled by a flag whose value is
+;; set, it is assumed that that portion of the context record contains
+;; valid context. If the context record is being used to modify a threads
+;; context, then only that portion of the threads context is modified.
+;;
+;; If the context record is used as an output parameter to capture the
+;; context of a thread, then only those portions of the thread's context
+;; corresponding to set flags will be returned.
+;;
+;; CONTEXT_CONTROL specifies SegSs, Rsp, SegCs, Rip, and EFlags.
+;;
+;; CONTEXT_INTEGER specifies Rax, Rcx, Rdx, Rbx, Rbp, Rsi, Rdi, and R8-R15.
+;;
+;; CONTEXT_SEGMENTS specifies SegDs, SegEs, SegFs, and SegGs.
+;;
+;; CONTEXT_FLOATING_POINT specifies Xmm0-Xmm15.
+;;
+;; CONTEXT_DEBUG_REGISTERS specifies Dr0-Dr3 and Dr6-Dr7.
+;;
+
+DECLSPEC_ALIGN(16)
+CONTEXT			STRUC
+
+    ;; Register parameter home addresses.
+    ;; N.B. These fields are for convience - they could be used to extend the
+    ;; context record in the future.
+
+P1Home			dd ?
+P2Home			dd ?
+P3Home			dd ?
+P4Home			dd ?
+P5Home			dd ?
+P6Home			dd ?
+
+    ;; Control flags.
+
+ContextFlags		dd ?
+MxCsr			dd ?
+
+    ;; Segment Registers and processor flags.
+
+SegCs			dw ?
+SegDs			dw ?
+SegEs			dw ?
+SegFs			dw ?
+SegGs			dw ?
+SegSs			dw ?
+EFlags			dd ?
+
+    ;; Debug registers
+
+_Dr0			dd ?
+_Dr1			dd ?
+_Dr2			dd ?
+_Dr3			dd ?
+_Dr6			dd ?
+_Dr7			dd ?
+
+    ;; Integer registers.
+
+_Rax			dd ?
+_Rcx			dd ?
+_Rdx			dd ?
+_Rbx			dd ?
+_Rsp			dd ?
+_Rbp			dd ?
+_Rsi			dd ?
+_Rdi			dd ?
+_R8			dd ?
+_R9			dd ?
+_R10			dd ?
+_R11			dd ?
+_R12			dd ?
+_R13			dd ?
+_R14			dd ?
+_R15			dd ?
+
+    ;; Program counter.
+
+_Rip			dd ?
+
+    ;; Floating point state.
+
+UNION
+ FltSave		XMM_SAVE_AREA32 <>
+ STRUC
+  Header		M128A 2 dup(<>)
+  Legacy		M128A 8 dup(<>)
+  _Xmm0			M128A <>
+  _Xmm1			M128A <>
+  _Xmm2			M128A <>
+  _Xmm3			M128A <>
+  _Xmm4			M128A <>
+  _Xmm5			M128A <>
+  _Xmm6			M128A <>
+  _Xmm7			M128A <>
+  _Xmm8			M128A <>
+  _Xmm9			M128A <>
+  _Xmm10		M128A <>
+  _Xmm11		M128A <>
+  _Xmm12		M128A <>
+  _Xmm13		M128A <>
+  _Xmm14		M128A <>
+  _Xmm15		M128A <>
+ ENDS ;DUMMYSTRUCTNAME
+ENDS ;DUMMYUNIONNAME
+
+    ;; Vector registers.
+
+VectorRegister		M128A 26 dup(<>)
+VectorControl		dd ?
+
+    ;; Special debug control registers.
+
+DebugControl		dd ?
+LastBranchToRip		dd ?
+LastBranchFromRip	dd ?
+LastExceptionToRip	dd ?
+LastExceptionFromRip	dd ?
+CONTEXT			ENDS
+PCONTEXT		typedef ptr CONTEXT
+
+;;
+;; Define function table entry - a function table entry is generated for
+;; each frame function.
+;;
+
+RUNTIME_FUNCTION_INDIRECT equ 0x1
+
+RUNTIME_FUNCTION	STRUC
+BeginAddress		dd ?
+EndAddress		dd ?
+UnwindData		dd ?
+RUNTIME_FUNCTION	ENDS
+PRUNTIME_FUNCTION	typedef ptr RUNTIME_FUNCTION
+
+;;
+;; Define unwind history table structure.
+;;
+
+UNWIND_HISTORY_TABLE_SIZE equ 12
+
+UNWIND_HISTORY_TABLE_ENTRY  STRUC
+ImageBase		dd ?
+FunctionEntry		PRUNTIME_FUNCTION ?
+UNWIND_HISTORY_TABLE_ENTRY ENDS
+PUNWIND_HISTORY_TABLE_ENTRY typedef ptr UNWIND_HISTORY_TABLE_ENTRY
+
+UNWIND_HISTORY_TABLE	STRUC
+Count			dd ?
+LocalHint		db ?
+GlobalHint		db ?
+Search			db ?
+Once			db ?
+LowAddress		dd ?
+HighAddress		dd ?
+Entry			UNWIND_HISTORY_TABLE_ENTRY UNWIND_HISTORY_TABLE_SIZE dup(<>)
+UNWIND_HISTORY_TABLE	ENDS
+PUNWIND_HISTORY_TABLE	typedef ptr UNWIND_HISTORY_TABLE
+
+;;
+;; Define dynamic function table entry.
+;;
+
+;typedef
+;PRUNTIME_FUNCTION
+GET_RUNTIME_FUNCTION_CALLBACK typedef proto _CType \
+	     ControlPc: DWORD64,
+	       Context: PVOID
+
+PGET_RUNTIME_FUNCTION_CALLBACK typedef ptr GET_RUNTIME_FUNCTION_CALLBACK
+
+;typedef
+;DWORD
+OUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK typedef proto _CType \
+	       Process: HANDLE,
+	  TableAddress: PVOID,
+	       Entries: PDWORD,
+		      : PRUNTIME_FUNCTION
+
+POUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK typedef ptr OUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK
+
+OUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK_EXPORT_NAME equ <"OutOfProcessFunctionTableCallback">
+
+;;
+;; Define runtime exception handling prototypes.
+;;
+
+;NTSYSAPI
+;VOID
+RtlRestoreContext proto _CType \
+	 ContextRecord: PCONTEXT,
+       ExceptionRecord: ptr EXCEPTION_RECORD
+
+;BOOLEAN
+RtlAddFunctionTable proto _CType \
+	 FunctionTable: PRUNTIME_FUNCTION,
+	    EntryCount: DWORD,
+	   BaseAddress: DWORD64
+
+;PRUNTIME_FUNCTION
+RtlLookupFunctionEntry proto _CType \
+	     ControlPc: DWORD64,
+	     ImageBase: PDWORD64,
+	  HistoryTable: PUNWIND_HISTORY_TABLE
+
+;;
+;; Nonvolatile context pointer record.
+;;
+
+KNONVOLATILE_CONTEXT_POINTERS  STRUC
+UNION
+ FloatingContext	PM128A 16 dup(<>)
+ STRUC
+  _Xmm0			PM128A <>
+  _Xmm1			PM128A <>
+  _Xmm2			PM128A <>
+  _Xmm3			PM128A <>
+  _Xmm4			PM128A <>
+  _Xmm5			PM128A <>
+  _Xmm6			PM128A <>
+  _Xmm7			PM128A <>
+  _Xmm8			PM128A <>
+  _Xmm9			PM128A <>
+  _Xmm10		PM128A <>
+  _Xmm11		PM128A <>
+  _Xmm12		PM128A <>
+  _Xmm13		PM128A <>
+  _Xmm14		PM128A <>
+  _Xmm15		PM128A <>
+ ENDS ;DUMMYSTRUCTNAME
+ENDS ;DUMMYUNIONNAME
+
+UNION
+ IntegerContext		PDWORD64 16 dup(?)
+ STRUC
+  _Rax			PDWORD64 ?
+  _Rcx			PDWORD64 ?
+  _Rdx			PDWORD64 ?
+  _Rbx			PDWORD64 ?
+  _Rsp			PDWORD64 ?
+  _Rbp			PDWORD64 ?
+  _Rsi			PDWORD64 ?
+  _Rdi			PDWORD64 ?
+  _R8			PDWORD64 ?
+  _R9			PDWORD64 ?
+  _R10			PDWORD64 ?
+  _R11			PDWORD64 ?
+  _R12			PDWORD64 ?
+  _R13			PDWORD64 ?
+  _R14			PDWORD64 ?
+  _R15			PDWORD64 ?
+ ENDS ;DUMMYSTRUCTNAME
+ENDS ;DUMMYUNIONNAME2
+
+KNONVOLATILE_CONTEXT_POINTERS ENDS
+PKNONVOLATILE_CONTEXT_POINTERS typedef ptr KNONVOLATILE_CONTEXT_POINTERS
+
+;NTSYSAPI
+;PEXCEPTION_ROUTINE
+RtlVirtualUnwind proto _CType \
+	   HandlerType: DWORD,
+	     ImageBase: DWORD64,
+	     ControlPc: DWORD64,
+	 FunctionEntry: PRUNTIME_FUNCTION,
+	 ContextRecord: PCONTEXT,
+	   HandlerData: PVOID,
+      EstablisherFrame: PDWORD64,
+       ContextPointers: PKNONVOLATILE_CONTEXT_POINTERS
+
+;BOOLEAN
+RtlInstallFunctionTableCallback proto _CType \
+       TableIdentifier: DWORD64,
+	   BaseAddress: DWORD64,
+	       _Length: DWORD,
+	      Callback: PGET_RUNTIME_FUNCTION_CALLBACK,
+	       Context: PVOID,
+OutOfProcessCallbackDll: PCWSTR
+
+;BOOLEAN
+RtlDeleteFunctionTable proto _CType \
+	 FunctionTable: PRUNTIME_FUNCTION
+
+endif ;; _AMD64_
+
+ifdef _X86_
+
+;;
+;; Disable these two pragmas that evaluate to "sti" "cli" on x86 so that driver
+;; writers to not leave them inadvertantly in their code.
+;;
+
+ifndef MIDL_PASS
+;ifndef RC_INVOKED
+
+if _MSC_VER GE 1200
+pragma warning(push)
+endif
+pragma warning(disable:4164)   ;; disable C4164 warning so that apps that
+				;; build with /Od don't get weird errors !
+ifdef _M_IX86
+pragma function(_enable)
+pragma function(_disable)
+endif
+
+if _MSC_VER GE 1200
+pragma warning(pop)
+else
+pragma warning(default:4164)   ;; reenable C4164 warning
+endif
+
+;endif ;; !RC_INVOKED
+endif ;; !MIDL_PASS
+
+;if defined(_M_IX86) AND NOT defined(RC_INVOKED) AND NOT defined(MIDL_PASS)
+if defined(_M_IX86) AND NOT defined(MIDL_PASS)
+
+if (_MSC_FULL_VER GE 14000101)
+
+;;
+;; Define bit test intrinsics.
+;;
+
+BitTest			equ <_bittest>
+BitTestAndComplement	equ <_bittestandcomplement>
+BitTestAndSet		equ <_bittestandset>
+BitTestAndReset		equ <_bittestandreset>
+InterlockedBitTestAndSet equ <_interlockedbittestandset>
+InterlockedBitTestAndReset equ <_interlockedbittestandreset>
+
+;BOOLEAN
+_bittest proto _CType \
+		  Base: ptr LONG,
+	       _Offset: LONG
+;BOOLEAN
+_bittestandcomplement proto _CType \
+		  Base: ptr LONG,
+	       _Offset: LONG
+;BOOLEAN
+_bittestandset proto _CType \
+		  Base: ptr LONG,
+	       _Offset: LONG
+;BOOLEAN
+_bittestandreset proto _CType \
+		  Base: ptr LONG,
+	       _Offset: LONG
+;BOOLEAN
+_interlockedbittestandset proto _CType \
+		  Base: ptr LONG,
+	       _Offset: LONG
+;BOOLEAN
+_interlockedbittestandreset proto _CType \
+		  Base: ptr LONG,
+	       _Offset: LONG
+
+
+pragma intrinsic(_bittest)
+pragma intrinsic(_bittestandcomplement)
+pragma intrinsic(_bittestandset)
+pragma intrinsic(_bittestandreset)
+pragma intrinsic(_interlockedbittestandset)
+pragma intrinsic(_interlockedbittestandreset)
+
+;;
+;; Define bit scan intrinsics.
+;;
+
+BitScanForward		equ <_BitScanForward>
+BitScanReverse		equ <_BitScanReverse>
+
+;BOOLEAN
+_BitScanForward proto _CType \
+		 Index: ptr dword,
+		 _Mask: dword
+;BOOLEAN
+_BitScanReverse proto _CType \
+		 Index: ptr dword,
+		 _Mask: dword
+
+pragma intrinsic(_BitScanForward)
+pragma intrinsic(_BitScanReverse)
+
+else ;; (_MSC_FULL_VER GE 14000101)
+
+pragma warning(push)
+pragma warning(disable:4035 4793)
+
+;FORCEINLINE
+;BOOLEAN
+InterlockedBitTestAndSet macro Base, Bit
+	mov	eax,Bit
+	mov	ecx,Base
+	lock	bts [ecx],eax
+	setc	al
+	endm
+
+;BOOLEAN
+InterlockedBitTestAndReset macro Base, Bit
+	mov	eax,Bit
+	mov	ecx,Base
+	lock	btr [ecx],eax
+	setc	al
+	endm
+
+pragma warning(pop)
+
+endif ;; _MSC_FULL_VER >= 14000101
+
+;;
+;; [pfx_parse] - guard against PREfix intrinsic error
+;;
+if (_MSC_FULL_VER GE 140040816) OR (defined(_PREFAST_) AND (_MSC_VER GE 1400))
+
+InterlockedAnd16	equ <_InterlockedAnd16>
+InterlockedCompareExchange16 equ <_InterlockedCompareExchange16>
+InterlockedOr16		equ <_InterlockedOr16>
+
+;SHORT
+InterlockedAnd16 proto _CType \
+	   Destination: LPWORD,
+		 Value: WORD
+;SHORT
+_InterlockedCompareExchange16 proto _CType \
+	   Destination: LPWORD,
+	      ExChange: WORD,
+	     Comperand: WORD
+;SHORT
+InterlockedOr16 proto _CType \
+	   Destination: LPWORD,
+		 Value: WORD
+
+pragma intrinsic(_InterlockedAnd16)
+pragma intrinsic(_InterlockedCompareExchange16)
+pragma intrinsic(_InterlockedOr16)
+
+endif  ;; _MSC_FULL_VER GE 140040816
+
+if NOT defined(_M_CEE_PURE)
+pragma warning(push)
+pragma warning(disable:4035 4793)
+
+;FORCEINLINE
+;BOOLEAN
+InterlockedBitTestAndComplement macro Base, Bit
+	mov	eax,Bit
+	mov	ecx,Base
+	lock	btc [ecx], eax
+	setc	al
+	endm
+pragma warning(pop)
+endif	;; _M_CEE_PURE
+
+;;
+;; [pfx_parse]
+;; guard against __readfsbyte parsing error
+;;
+if (_MSC_FULL_VER GE 13012035) OR defined(_PREFIX_) OR defined(_PREFAST_)
+
+;;
+;; Define FS referencing intrinsics
+;;
+
+;BYTE
+__readfsbyte proto _CType \
+	       _Offset: DWORD
+;WORD
+__readfsword proto _CType \
+	       _Offset: DWORD
+;DWORD
+__readfsdword proto _CType \
+	       _Offset: DWORD
+;VOID
+__writefsbyte proto _CType \
+	       _Offset: DWORD,
+		  Data: BYTE
+;VOID
+__writefsword proto _CType \
+	       _Offset: DWORD,
+		  Data: WORD
+;VOID
+__writefsdword proto _CType \
+	       _Offset: DWORD,
+		  Data: DWORD
+
+pragma intrinsic(__readfsbyte)
+pragma intrinsic(__readfsword)
+pragma intrinsic(__readfsdword)
+pragma intrinsic(__writefsbyte)
+pragma intrinsic(__writefsword)
+pragma intrinsic(__writefsdword)
+
+endif ;; _MSC_FULL_VER GE 13012035
+
+if (_MSC_FULL_VER GE 140050727) OR defined(_PREFIX_) OR defined(_PREFAST_)
+
+ifndef _MANAGED
+
+;VOID
+__incfsbyte proto _CType \
+	       _Offset: DWORD
+;VOID
+__addfsbyte proto _CType \
+	       _Offset: DWORD,
+		 Value: BYTE
+;VOID
+__incfsword proto _CType \
+	       _Offset: DWORD
+;VOID
+__addfsword proto _CType \
+	       _Offset: DWORD,
+		 Value: WORD
+;VOID
+__incfsdword proto _CType \
+	       _Offset: DWORD
+;VOID
+__addfsdword proto _CType \
+	       _Offset: DWORD,
+		 Value: DWORD
+
+pragma intrinsic(__incfsbyte)
+pragma intrinsic(__addfsbyte)
+pragma intrinsic(__incfsword)
+pragma intrinsic(__addfsword)
+pragma intrinsic(__incfsdword)
+pragma intrinsic(__addfsdword)
+
+endif ;; !_MANAGED
+endif ;; _MSC_FULL_VER GE 140050727
+
+if (_MSC_FULL_VER GE 140041204) OR defined(_PREFIX_) OR defined(_PREFAST_)
+
+;VOID
+_mm_pause proto _CType
+
+pragma intrinsic(_mm_pause)
+
+YieldProcessor	equ <_mm_pause>
+
+else
+
+ifndef _M_CEE_PURE
+YieldProcessor macro
+	exitm<rep nop>
+	endm
+endif  ;; NOT defined(_M_CEE_PURE)
+endif  ;; (_MSC_FULL_VER GE 140041204)
+
+endif  ;; NOT defined(MIDL_PASS) OR defined(_M_IX86)
+
+if NOT defined(MIDL_PASS) AND defined(_M_IX86)
+
+ifndef _M_CEE_PURE
+
+pragma warning( push )
+pragma warning( disable : 4793 )
+;FORCEINLINE
+;VOID
+MemoryBarrier macro
+;    local Barrier
+;    xchg Barrier,eax
+    endm
+
+pragma warning( pop )
+
+endif ;; _M_CEE_PURE
+
+;;
+;; Prefetch is not supported on all x86 procssors.
+;;
+
+PreFetchCacheLine macro l, a
+	endm
+PrefetchForWrite macro p
+	endm
+ReadForWriteAccess macro p
+;	exitm<[p]>
+	endm
+
+;;
+;; PreFetchCacheLine level defines.
+;;
+
+PF_TEMPORAL_LEVEL_1 equ 1
+PF_NON_TEMPORAL_LEVEL_ALL equ 1
+
+;;
+;; Define function to read the value of a performance counter.
+;;
+
+if _MSC_FULL_VER GE 140050727
+
+ReadPMC equ <__readpmc>
+
+;DWORD64
+__readpmc proto _CType \
+	       Counter: DWORD
+
+
+pragma intrinsic(__readpmc)
+
+else
+;FORCEINLINE
+;DWORD64
+__readpmc macro Counter
+	mov ecx,Counter
+	rdpmc
+	endm
+endif
+
+;;
+;; Define function to read the value of the time stamp counter
+;;
+
+if _MSC_FULL_VER GE 140040310
+
+ReadTimeStampCounter macro
+	exitm<__rdtsc()>
+	endm
+
+;DWORD64
+__rdtsc proto _CType
+
+pragma intrinsic(__rdtsc)
+
+else
+;FORCEINLINE
+;DWORD64
+__rdtsc macro
+	rdtsc
+	endm
+endif
+
+
+;if defined(_X86_) AND defined(_M_IX86) AND NOT defined(RC_INVOKED) AND NOT defined(MIDL_PASS)
+if defined(_X86_) AND defined(_M_IX86) AND NOT defined(MIDL_PASS)
+
+if _MSC_FULL_VER GE 140030222
+
+;VOID
+__int2c proto _CType
+
+pragma intrinsic(__int2c)
+
+;FORCEINLINE
+;VOID
+DbgRaiseAssertionFailure macro
+	__int2c()
+	endm
+else
+pragma warning( push )
+pragma warning( disable : 4793 )
+
+;FORCEINLINE
+;VOID
+__int2c macro
+	int 0x2c
+	endm
+
+pragma warning( pop )
+
+endif ;; _MSC_FULL_VER GE 140030222
+
+endif ;; _X86_
+
+if (_MSC_FULL_VER GE 13012035)
+
+;__inline PVOID
+GetFiberData macro
+	exitm<__readfsdword(0x10)>
+	endm
+;__inline PVOID
+GetCurrentFiber macro
+	exitm<__readfsdword(0x10)>
+	endm
+else
+
+if _MSC_VER GE 1200
+pragma warning(push)
+endif
+pragma warning (disable:4035 4793)	  ;; disable 4035 (function must return something)
+
+;__inline PVOID
 GetFiberData macro
 	assume fs:nothing
 	mov eax,fs:[0x10]
@@ -776,32 +3641,49 @@ GetCurrentFiber macro
 	mov eax,fs:[0x10]
 	exitm<eax>
 	endm
+if _MSC_VER GE 1200
+pragma warning(pop)
+else
+pragma warning (default:4035 4793)	  ;; Reenable it
+endif
+endif ;; (_MSC_FULL_VER GE 13012035)
 
-;
-;  Define the size of the 80387 save area, which is in the context frame.
-;
+endif ;; NOT defined(MIDL_PASS) AND defined(_M_IX86)
+
+;;
+;; The following values specify the type of failing access when the status is
+;; STATUS_ACCESS_VIOLATION and the first parameter in the execpetion record.
+;;
+
+EXCEPTION_READ_FAULT	equ 0 ;; Access violation was caused by a read
+EXCEPTION_WRITE_FAULT	equ 1 ;; Access violation was caused by a write
+EXCEPTION_EXECUTE_FAULT equ 8 ;; Access violation was caused by an instruction fetch
 
 SIZE_OF_80387_REGISTERS equ 80
 
-;
-; The following flags control the contents of the CONTEXT structure.
-;
+;;
+;; The following flags control the contents of the CONTEXT structure.
+;;
 
-CONTEXT_i386	equ 0x00010000	; this assumes that i386 and
-CONTEXT_i486	equ 0x00010000	; i486 have identical context records
+;if NOT defined(RC_INVOKED)
 
-; end_wx86
+CONTEXT_i386		equ 0x00010000	  ;; this assumes that i386 and
+CONTEXT_i486		equ 0x00010000	  ;; i486 have identical context records
 
-CONTEXT_CONTROL			equ CONTEXT_i386 or 0x00000001	; SS:SP, CS:IP, FLAGS, BP
-CONTEXT_INTEGER			equ CONTEXT_i386 or 0x00000002	; AX, BX, CX, DX, SI, DI
-CONTEXT_SEGMENTS		equ CONTEXT_i386 or 0x00000004	; DS, ES, FS, GS
-CONTEXT_FLOATING_POINT		equ CONTEXT_i386 or 0x00000008	; 387 state
-CONTEXT_DEBUG_REGISTERS		equ CONTEXT_i386 or 0x00000010	; DB 0-3,6,7
-CONTEXT_EXTENDED_REGISTERS	equ CONTEXT_i386 or 0x00000020	; cpu specific extensions
+CONTEXT_CONTROL		equ CONTEXT_i386 OR 0x00000001 ;; SS:SP, CS:IP, FAGS, BP
+CONTEXT_INTEGER		equ CONTEXT_i386 OR 0x00000002 ;; AX, BX, CX, DX, SI, DI
+CONTEXT_SEGMENTS	equ CONTEXT_i386 OR 0x00000004 ;; DS, ES, FS, GS
+CONTEXT_FLOATING_POINT	equ CONTEXT_i386 OR 0x00000008 ;; 387 state
+CONTEXT_DEBUG_REGISTERS equ CONTEXT_i386 OR 0x00000010 ;; DB 0-3,6,7
+CONTEXT_EXTENDED_REGISTERS equ CONTEXT_i386 OR 0x00000020 ;; cpu specific extensions
+CONTEXT_FULL		equ CONTEXT_CONTROL OR CONTEXT_INTEGER OR CONTEXT_SEGMENTS
+CONTEXT_ALL		equ CONTEXT_CONTROL OR CONTEXT_INTEGER OR CONTEXT_SEGMENTS OR \
+			    CONTEXT_DEBUG_REGISTERS OR CONTEXT_FLOATING_POINT OR \
+			    CONTEXT_EXTENDED_REGISTERS
+CONTEXT_XSTATE		equ CONTEXT_i386 OR 0x00000040
 
-CONTEXT_FULL equ CONTEXT_CONTROL or CONTEXT_INTEGER or CONTEXT_SEGMENTS
 
-MAXIMUM_SUPPORTED_EXTENSION	equ 512
+MAXIMUM_SUPPORTED_EXTENSION equ 512
 
 FLOATING_SAVE_AREA	STRUC SIZE_T
 ControlWord		dd ?
@@ -814,94 +3696,86 @@ DataSelector		dd ?
 RegisterArea		db SIZE_OF_80387_REGISTERS dup(?)
 Cr0NpxState		dd ?
 FLOATING_SAVE_AREA	ENDS
-
 PFLOATING_SAVE_AREA	typedef PTR FLOATING_SAVE_AREA
 
-;
-; Context Frame
-;
-;  This frame has a several purposes: 1) it is used as an argument to
-;  NtContinue, 2) is is used to constuct a call frame for APC delivery,
-;  and 3) it is used in the user level thread creation routines.
-;
-;  The layout of the record conforms to a standard call frame.
-;
+if NOT defined(__midl) AND NOT defined(MIDL_PASS)
 
-CONTEXT STRUC
+C_ASSERT(sizeof(XSAVE_FORMAT) == MAXIMUM_SUPPORTED_EXTENSION)
 
-    ;
-    ; The flags values within this flag control the contents of
-    ; a CONTEXT record.
-    ;
-    ; If the context record is used as an input parameter, then
-    ; for each portion of the context record controlled by a flag
-    ; whose value is set, it is assumed that that portion of the
-    ; context record contains valid context. If the context record
-    ; is being used to modify a threads context, then only that
-    ; portion of the threads context will be modified.
-    ;
-    ; If the context record is used as an IN OUT parameter to capture
-    ; the context of a thread, then only those portions of the thread's
-    ; context corresponding to set flags will be returned.
-    ;
-    ; The context record is never used as an OUT only parameter.
-    ;
+endif
 
-    ContextFlags dd ?
+;include "pshpack4.h"
 
-    ;
-    ; This section is specified/returned if CONTEXT_DEBUG_REGISTERS is
-    ; set in ContextFlags.  Note that CONTEXT_DEBUG_REGISTERS is NOT
-    ; included in CONTEXT_FULL.
-    ;
+;;
+;; Context Frame
+;;
+;;  This frame has a several purposes: 1) it is used as an argument to
+;;  NtContinue, 2) is is used to constuct a call frame for APC delivery,
+;;  and 3) it is used in the user level thread creation routines.
+;;
+;;  The layout of the record conforms to a standard call frame.
+;;
 
-    _Dr0 dd ?
-    _Dr1 dd ?
-    _Dr2 dd ?
-    _Dr3 dd ?
-    _Dr6 dd ?
-    _Dr7 dd ?
+CONTEXT			STRUC
 
-    ;
-    ; This section is specified/returned if the
-    ; ContextFlags word contians the flag CONTEXT_FLOATING_POINT.
-    ;
+    ;; The flags values within this flag control the contents of
+    ;; a CONTEXT record.
+    ;; If the context record is used as an input parameter, then
+    ;; for each portion of the context record controlled by a flag
+    ;; whose value is set, it is assumed that that portion of the
+    ;; context record contains valid context. If the context record
+    ;; is being used to modify a threads context, then only that
+    ;; portion of the threads context will be modified.
+    ;; If the context record is used as an IN OUT parameter to capture
+    ;; the context of a thread, then only those portions of the thread's
+    ;; context corresponding to set flags will be returned.
+    ;; The context record is never used as an OUT only parameter.
 
-    FloatSave FLOATING_SAVE_AREA <>
+    ContextFlags	dd ?
 
-    ;
-    ; This section is specified/returned if the
-    ; ContextFlags word contians the flag CONTEXT_SEGMENTS.
-    ;
+    ;; This section is specified/returned if CONTEXT_DEBUG_REGISTERS is
+    ;; set in ContextFlags.  Note that CONTEXT_DEBUG_REGISTERS is NOT
+    ;; included in CONTEXT_FULL.
 
-    SegGs dd ?
-    SegFs dd ?
-    SegEs dd ?
-    SegDs dd ?
+    _Dr0		dd ?
+    _Dr1		dd ?
+    _Dr2		dd ?
+    _Dr3		dd ?
+    _Dr6		dd ?
+    _Dr7		dd ?
+
+    ;; This section is specified/returned if the
+    ;; ContextFlags word contians the flag CONTEXT_FLOATING_POINT.
+
+    FloatSave	FLOATING_SAVE_AREA <>
+
+    ;; This section is specified/returned if the
+    ;; ContextFlags word contians the flag CONTEXT_SEGMENTS.
+
 
     ;
     ; This section is specified/returned if the
     ; ContextFlags word contians the flag CONTEXT_INTEGER.
     ;
 
-    _Edi dd ?
-    _Esi dd ?
-    _Ebx dd ?
-    _Edx dd ?
-    _Ecx dd ?
-    _Eax dd ?
+    _Edi	dd ?
+    _Esi	dd ?
+    _Ebx	dd ?
+    _Edx	dd ?
+    _Ecx	dd ?
+    _Eax	dd ?
 
     ;
     ; This section is specified/returned if the
     ; ContextFlags word contians the flag CONTEXT_CONTROL.
     ;
 
-    _Ebp   dd ?
-    _Eip   dd ?
-    SegCs  dd ? ; MUST BE SANITIZED
-    EFlags dd ? ; MUST BE SANITIZED
-    _Esp   dd ?
-    SegSs  dd ?
+    _Ebp	dd ?
+    _Eip	dd ?
+    SegCs	dd ? ; MUST BE SANITIZED
+    EFlags	dd ? ; MUST BE SANITIZED
+    _Esp	dd ?
+    SegSs	dd ?
 
     ;
     ; This section is specified/returned if the ContextFlags word
@@ -913,118 +3787,15 @@ CONTEXT STRUC
 
 CONTEXT ENDS
 
-else
-
-CONTEXT_IA64			equ 0x00080000	  ; IA64 context
-
-CONTEXT_CONTROL			equ CONTEXT_IA64 or 0x00000001
-CONTEXT_LOWER_FLOATING_POINT	equ CONTEXT_IA64 or 0x00000002
-CONTEXT_HIGHER_FLOATING_POINT	equ CONTEXT_IA64 or 0x00000004
-CONTEXT_INTEGER			equ CONTEXT_IA64 or 0x00000008
-CONTEXT_DEBUG			equ CONTEXT_IA64 or 0x00000010
-
-CONTEXT_FLOATING_POINT		equ CONTEXT_LOWER_FLOATING_POINT or CONTEXT_HIGHER_FLOATING_POINT
-CONTEXT_FULL			equ CONTEXT_CONTROL or CONTEXT_FLOATING_POINT or CONTEXT_INTEGER
-
-LEGACY_SAVE_AREA	STRUC
-ControlWord		dw ?
-Reserved0		dw ?
-StatusWord		dw ?
-Reserved1		dw ?
-TagWord			dw ?
-Reserved2		dw ?
-ErrorOffset		dd ?
-ErrorSelector		dw ?
-ErrorOpcode		dw ?
-DataOffset		dd ?
-DataSelector		dw ?
-Reserved3		dw ?
-FloatRegisters		db 8*10 dup (?)
-LEGACY_SAVE_AREA	ENDS
-
-CONTEXT STRUC
-
-    P1Home	dq ?
-    P2Home	dq ?
-    P3Home	dq ?
-    P4Home	dq ?
-    P5Home	dq ?
-    P6Home	dq ?
-
-    ContextFlags dd ?
-
-    MxCsr	dd ?
-    SegCs	dw ?
-    SegDs	dw ?
-    SegEs	dw ?
-    SegFs	dw ?
-    SegGs	dw ?
-    SegSs	dw ?
-    EFlags	dd ?
-
-    _Dr0	dq ?
-    _Dr1	dq ?
-    _Dr2	dq ?
-    _Dr3	dq ?
-    _Dr6	dq ?
-    _Dr7	dq ?
-
-    _Rax	dq ?
-    _Rcx	dq ?
-    _Rdx	dq ?
-    _Rbx	dq ?
-    _Rsp	dq ?
-    _Rbp	dq ?
-    _Rsi	dq ?
-    _Rdi	dq ?
-    _R8		dq ?
-    _R9		dq ?
-    _R10	dq ?
-    _R11	dq ?
-    _R12	dq ?
-    _R13	dq ?
-    _R14	dq ?
-    _R15	dq ?
-
-    _Rip	dq ?
-
-    _Xmm0	dq 2 dup(?)
-    _Xmm1	dq 2 dup(?)
-    _Xmm2	dq 2 dup(?)
-    _Xmm3	dq 2 dup(?)
-    _Xmm4	dq 2 dup(?)
-    _Xmm5	dq 2 dup(?)
-    _Xmm6	dq 2 dup(?)
-    _Xmm7	dq 2 dup(?)
-    _Xmm8	dq 2 dup(?)
-    _Xmm9	dq 2 dup(?)
-    _Xmm10	dq 2 dup(?)
-    _Xmm11	dq 2 dup(?)
-    _Xmm12	dq 2 dup(?)
-    _Xmm13	dq 2 dup(?)
-    _Xmm14	dq 2 dup(?)
-    _Xmm15	dq 2 dup(?)
-
-    FltSave	LEGACY_SAVE_AREA <>
-
-    Fill	dd ?
-
-    DebugControl	 dq ?
-    LastBranchToRip	 dq ?
-    LastBranchFromRip	 dq ?
-    LastExceptionToRip	 dq ?
-    LastExceptionFromRip dq ?
-
-    HighFill	dq ?
-
-CONTEXT ENDS
-
-endif ; _WIN64
-
 PCONTEXT typedef ptr CONTEXT
 
+;include "poppack.h"
+
+endif ;;_X86_
+
+
 ifndef _LDT_ENTRY_DEFINED
-_LDT_ENTRY_DEFINED equ 1
+_LDT_ENTRY_DEFINED	equ <>
 
 LDT_ENTRY_R0 RECORD \
 	    ldt_BaseHi:		8,
@@ -1057,81 +3828,1710 @@ PLDT_ENTRY	typedef ptr LDT_ENTRY
 
 endif
 
+;if defined(_M_IA64) AND NOT defined(RC_INVOKED) AND NOT defined(MIDL_PASS)
+if defined(_M_IA64) AND NOT defined(MIDL_PASS)
+
+;;
+;; Define bit test intrinsics.
+;;
+
+BitTest			equ <_bittest>
+BitTestAndComplement	equ <_bittestandcomplement>
+BitTestAndSet		equ <_bittestandset>
+BitTestAndReset		equ <_bittestandreset>
+
+BitTest64		equ <_bittest64>
+BitTestAndComplement64	equ <_bittestandcomplement64>
+BitTestAndSet64		equ <_bittestandset64>
+BitTestAndReset64	equ <_bittestandreset64>
+
+;BOOLEAN
+_bittest proto _CType \
+		  Base: ptr LONG,
+	       _Offset: LONG
+;BOOLEAN
+_bittestandcomplement proto _CType \
+		  Base: ptr LONG,
+	       _Offset: LONG
+;BOOLEAN
+_bittestandset proto _CType \
+		  Base: ptr LONG,
+	       _Offset: LONG
+;BOOLEAN
+_bittestandreset proto _CType \
+		  Base: ptr LONG,
+	       _Offset: LONG
+
+;BOOLEAN
+_bittest64 proto _CType \
+		  Base: ptr LONG64,
+	       _Offset: LONG64
+;BOOLEAN
+_bittestandcomplement64 proto _CType \
+		  Base: ptr LONG64,
+	       _Offset: LONG64
+;BOOLEAN
+_bittestandset64 proto _CType \
+		  Base: ptr LONG64,
+	       _Offset: LONG64
+;BOOLEAN
+_bittestandreset64 proto _CType \
+		  Base: ptr LONG64,
+	       _Offset: LONG64
+
+pragma intrinsic(_bittest)
+pragma intrinsic(_bittestandcomplement)
+pragma intrinsic(_bittestandset)
+pragma intrinsic(_bittestandreset)
+
+pragma intrinsic(_bittest64)
+pragma intrinsic(_bittestandcomplement64)
+pragma intrinsic(_bittestandset64)
+pragma intrinsic(_bittestandreset64)
+
+;;
+;; Define bit scan intrinsics.
+;;
+
+BitScanForward		equ <_BitScanForward>
+BitScanReverse		equ <_BitScanReverse>
+BitScanForward64	equ <_BitScanForward64>
+BitScanReverse64	equ <_BitScanReverse64>
+
+;BOOLEAN
+_BitScanForward proto _CType \
+		 Index: ptr dword,
+		 _Mask: dword
+;BOOLEAN
+_BitScanReverse proto _CType \
+		 Index: ptr dword,
+		 _Mask: dword
+;BOOLEAN
+_BitScanForward64 proto _CType \
+		 Index: ptr dword,
+		 _Mask: DWORD64
+;BOOLEAN
+_BitScanReverse64 proto _CType \
+		 Index: ptr dword,
+		 _Mask: DWORD64
+
+pragma intrinsic(_BitScanForward)
+pragma intrinsic(_BitScanReverse)
+pragma intrinsic(_BitScanForward64)
+pragma intrinsic(_BitScanReverse64)
+
+InterlockedCompareExchange16 equ <_InterlockedCompareExchange16>
+
+;SHORT
+_InterlockedCompareExchange16 proto _CType \
+	   Destination: ptr word,
+	      ExChange: word,
+	     Comperand: word
+
+pragma intrinsic(_InterlockedCompareExchange16)
+
+InterlockedAdd		equ <_InterlockedAdd>
+InterlockedAddAcquire	equ <_InterlockedAdd_acq>
+InterlockedAddRelease	equ <_InterlockedAdd_rel>
+
+InterlockedIncrement	equ <_InterlockedIncrement>
+InterlockedIncrementAcquire equ <_InterlockedIncrement_acq>
+InterlockedIncrementRelease equ <_InterlockedIncrement_rel>
+
+InterlockedDecrement	equ <_InterlockedDecrement>
+InterlockedDecrementAcquire equ <_InterlockedDecrement_acq>
+InterlockedDecrementRelease equ <_InterlockedDecrement_rel>
+
+InterlockedExchange	equ <_InterlockedExchange>
+InterlockedExchangeAcquire equ <_InterlockedExchange_acq>
+
+InterlockedExchangeAdd	equ <_InterlockedExchangeAdd>
+InterlockedExchangeAddAcquire equ <_InterlockedExchangeAdd_acq>
+InterlockedExchangeAddRelease equ <_InterlockedExchangeAdd_rel>
+
+InterlockedAdd64	equ <_InterlockedAdd64>
+InterlockedAddAcquire64 equ <_InterlockedAdd64_acq>
+InterlockedAddRelease64 equ <_InterlockedAdd64_rel>
+
+InterlockedIncrement64	equ <_InterlockedIncrement64>
+InterlockedIncrementAcquire64 equ <_InterlockedIncrement64_acq>
+InterlockedIncrementRelease64 equ <_InterlockedIncrement64_rel>
+
+InterlockedDecrement64	equ <_InterlockedDecrement64>
+InterlockedDecrementAcquire64 equ <_InterlockedDecrement64_acq>
+InterlockedDecrementRelease64 equ <_InterlockedDecrement64_rel>
+
+InterlockedExchange64	equ <_InterlockedExchange64>
+InterlockedExchangeAcquire64 equ <_InterlockedExchange64_acq>
+
+InterlockedExchangeAdd64 equ <_InterlockedExchangeAdd64>
+InterlockedExchangeAddAcquire64 equ <_InterlockedExchangeAdd64_acq>
+InterlockedExchangeAddRelease64 equ <_InterlockedExchangeAdd64_rel>
+
+InterlockedCompareExchange64 equ <_InterlockedCompareExchange64>
+InterlockedCompareExchangeAcquire64 equ <_InterlockedCompareExchange64_acq>
+InterlockedCompareExchangeRelease64 equ <_InterlockedCompareExchange64_rel>
+
+InterlockedCompare64Exchange128 equ <_InterlockedCompare64Exchange128>
+InterlockedCompare64ExchangeAcquire128 equ <_InterlockedCompare64Exchange128_acq>
+InterlockedCompare64ExchangeRelease128 equ <_InterlockedCompare64Exchange128_rel>
+
+InterlockedCompareExchange equ <_InterlockedCompareExchange>
+InterlockedCompareExchangeAcquire equ <_InterlockedCompareExchange_acq>
+InterlockedCompareExchangeRelease equ <_InterlockedCompareExchange_rel>
+
+InterlockedExchangePointer equ <_InterlockedExchangePointer>
+InterlockedExchangePointerAcquire equ <_InterlockedExchangePointer_acq>
+
+InterlockedCompareExchangePointer equ <_InterlockedCompareExchangePointer>
+InterlockedCompareExchangePointerRelease equ <_InterlockedCompareExchangePointer_rel>
+InterlockedCompareExchangePointerAcquire equ <_InterlockedCompareExchangePointer_acq>
+
+
+InterlockedExchangeAddSizeT macro a, b
+	exitm<InterlockedExchangeAdd64(a, b)>
+	endm
+InterlockedIncrementSizeT macro a
+	exitm<InterlockedIncrement64(a)>
+	endm
+InterlockedDecrementSizeT macro a
+	exitm<InterlockedDecrement64(a)>
+	endm
+
+InterlockedOr		equ <_InterlockedOr>
+InterlockedOrAcquire	equ <_InterlockedOr_acq>
+InterlockedOrRelease	equ <_InterlockedOr_rel>
+InterlockedOr8		equ <_InterlockedOr8>
+InterlockedOr8Acquire	equ <_InterlockedOr8_acq>
+InterlockedOr8Release	equ <_InterlockedOr8_rel>
+InterlockedOr16		equ <_InterlockedOr16>
+InterlockedOr16Acquire	equ <_InterlockedOr16_acq>
+InterlockedOr16Release	equ <_InterlockedOr16_rel>
+InterlockedOr64		equ <_InterlockedOr64>
+InterlockedOr64Acquire	equ <_InterlockedOr64_acq>
+InterlockedOr64Release	equ <_InterlockedOr64_rel>
+InterlockedXor		equ <_InterlockedXor>
+InterlockedXorAcquire	equ <_InterlockedXor_acq>
+InterlockedXorRelease	equ <_InterlockedXor_rel>
+InterlockedXor8		equ <_InterlockedXor8>
+InterlockedXor8Acquire	equ <_InterlockedXor8_acq>
+InterlockedXor8Release	equ <_InterlockedXor8_rel>
+InterlockedXor16	equ <_InterlockedXor16>
+InterlockedXor16Acquire equ <_InterlockedXor16_acq>
+InterlockedXor16Release equ <_InterlockedXor16_rel>
+InterlockedXor64	equ <_InterlockedXor64>
+InterlockedXor64Acquire equ <_InterlockedXor64_acq>
+InterlockedXor64Release equ <_InterlockedXor64_rel>
+InterlockedAnd		equ <_InterlockedAnd>
+InterlockedAndAcquire	equ <_InterlockedAnd_acq>
+InterlockedAndRelease	equ <_InterlockedAnd_rel>
+InterlockedAnd8		equ <_InterlockedAnd8>
+InterlockedAnd8Acquire	equ <_InterlockedAnd8_acq>
+InterlockedAnd8Release	equ <_InterlockedAnd8_rel>
+InterlockedAnd16	equ <_InterlockedAnd16>
+InterlockedAnd16Acquire equ <_InterlockedAnd16_acq>
+InterlockedAnd16Release equ <_InterlockedAnd16_rel>
+InterlockedAnd64	equ <_InterlockedAnd64>
+InterlockedAnd64Acquire equ <_InterlockedAnd64_acq>
+InterlockedAnd64Release equ <_InterlockedAnd64_rel>
+
+;LONG
+InterlockedAdd proto _CType \
+		Addend: ptr LONG,
+		 Value: LONG
+;LONG
+InterlockedAddAcquire proto _CType \
+		Addend: ptr LONG,
+		 Value: LONG
+;LONG
+InterlockedAddRelease proto _CType \
+		Addend: ptr LONG,
+		 Value: LONG
+;LONGLONG
+InterlockedAdd64 proto _CType \
+		Addend: ptr LONGLONG,
+		 Value: LONGLONG
+;LONGLONG
+InterlockedAddAcquire64 proto _CType \
+		Addend: ptr LONGLONG,
+		 Value: LONGLONG
+;LONGLONG
+InterlockedAddRelease64 proto _CType \
+		Addend: ptr LONGLONG,
+		 Value: LONGLONG
+;LONG
+InterlockedIncrement proto _CType \
+		Addend: ptr LONG
+;LONG
+InterlockedDecrement proto _CType \
+		Addend: ptr LONG
+;LONG
+InterlockedIncrementAcquire proto _CType \
+		Addend: ptr LONG
+;LONG
+InterlockedDecrementAcquire proto _CType \
+		Addend: ptr LONG
+;LONG
+InterlockedIncrementRelease proto _CType \
+		Addend: ptr LONG
+;LONG
+InterlockedDecrementRelease proto _CType \
+		Addend: ptr LONG
+;LONG
+InterlockedExchange proto _CType \
+		Target: ptr LONG,
+		 Value: LONG
+;LONG
+InterlockedExchangeAcquire proto _CType \
+		Target: ptr LONG,
+		 Value: LONG
+;LONG
+InterlockedExchangeAdd proto _CType \
+		Addend: ptr LONG,
+		 Value: LONG
+;LONG
+InterlockedExchangeAddAcquire proto _CType \
+		Addend: ptr LONG,
+		 Value: LONG
+;LONG
+InterlockedExchangeAddRelease proto _CType \
+		Addend: ptr LONG,
+		 Value: LONG
+;LONG
+InterlockedCompareExchange proto _CType \
+	   Destination: ptr LONG,
+	      ExChange: LONG,
+	     Comperand: LONG
+;LONG
+InterlockedCompareExchangeRelease proto _CType \
+	   Destination: ptr LONG,
+	      ExChange: LONG,
+	     Comperand: LONG
+;LONG
+InterlockedCompareExchangeAcquire proto _CType \
+	   Destination: ptr LONG,
+	      ExChange: LONG,
+	     Comperand: LONG
+;LONGLONG
+InterlockedIncrement64 proto _CType \
+		Addend: ptr LONGLONG
+;LONGLONG
+InterlockedIncrementAcquire64 proto _CType \
+		Addend: ptr LONGLONG
+;LONGLONG
+InterlockedIncrementRelease64 proto _CType \
+		Addend: ptr LONGLONG
+;LONGLONG
+InterlockedDecrement64 proto _CType \
+		Addend: ptr LONGLONG
+;LONGLONG
+InterlockedDecrementAcquire64 proto _CType \
+		Addend: ptr LONGLONG
+;LONGLONG
+InterlockedDecrementRelease64 proto _CType \
+		Addend: ptr LONGLONG
+;LONGLONG
+InterlockedExchange64 proto _CType \
+		Target: ptr LONGLONG,
+		 Value: LONGLONG
+;LONGLONG
+InterlockedExchangeAcquire64 proto _CType \
+		Target: ptr LONGLONG,
+		 Value: LONGLONG
+;LONGLONG
+InterlockedExchangeAdd64 proto _CType \
+		Addend: ptr LONGLONG,
+		 Value: LONGLONG
+;LONGLONG
+InterlockedExchangeAddAcquire64 proto _CType \
+		Addend: ptr LONGLONG,
+		 Value: LONGLONG
+;LONGLONG
+InterlockedExchangeAddRelease64 proto _CType \
+		Addend: ptr LONGLONG,
+		 Value: LONGLONG
+;LONGLONG
+InterlockedCompareExchange64 proto _CType \
+	   Destination: ptr LONGLONG,
+	      Exchange: LONGLONG,
+	     Comperand: LONGLONG
+;LONGLONG
+InterlockedCompareExchangeAcquire64 proto _CType \
+	   Destination: ptr LONGLONG,
+	      Exchange: LONGLONG,
+	     Comperand: LONGLONG
+;LONGLONG
+InterlockedCompareExchangeRelease64 proto _CType \
+	   Destination: ptr LONGLONG,
+	      Exchange: LONGLONG,
+	     Comperand: LONGLONG
+;LONG64
+InterlockedCompare64Exchange128 proto _CType \
+	   Destination: ptr LONG64,
+	  ExchangeHigh: LONG64,
+	   ExchangeLow: LONG64,
+	     Comperand: LONG64
+;LONG64
+InterlockedCompare64ExchangeAcquire128 proto _CType \
+	   Destination: ptr LONG64,
+	  ExchangeHigh: LONG64,
+	   ExchangeLow: LONG64,
+	     Comperand: LONG64
+;LONG64
+InterlockedCompare64ExchangeRelease128 proto _CType \
+	   Destination: ptr LONG64,
+	  ExchangeHigh: LONG64,
+	   ExchangeLow: LONG64,
+	     Comperand: LONG64
+;PVOID
+InterlockedCompareExchangePointer proto _CType \
+	   Destination: PVOID,
+	      Exchange: PVOID,
+	     Comperand: PVOID
+;PVOID
+InterlockedCompareExchangePointerAcquire proto _CType \
+	   Destination: PVOID,
+	      Exchange: PVOID,
+	     Comperand: PVOID
+;PVOID
+InterlockedCompareExchangePointerRelease proto _CType \
+	   Destination: PVOID,
+	      Exchange: PVOID,
+	     Comperand: PVOID
+;PVOID
+InterlockedExchangePointer proto _CType \
+		Target: PVOID,
+		 Value: PVOID
+;PVOID
+InterlockedExchangePointerAcquire proto _CType \
+		Target: PVOID,
+		 Value: PVOID
+;LONG
+InterlockedOr proto _CType \
+	   Destination: ptr LONG,
+		 Value: LONG
+;LONG
+InterlockedOrAcquire proto _CType \
+	   Destination: ptr LONG,
+		 Value: LONG
+;LONG
+InterlockedOrRelease proto _CType \
+	   Destination: ptr LONG,
+		 Value: LONG
+;CHAR
+;InterlockedOr8
+InterlockedOr8 proto _CType \
+	   Destination: LPSTR,
+		 Value: CHAR
+;CHAR
+InterlockedOr8Acquire proto _CType \
+	   Destination: LPSTR,
+		 Value: CHAR
+;CHAR
+InterlockedOr8Release proto _CType \
+	   Destination: LPSTR,
+		 Value: CHAR
+;SHORT
+InterlockedOr16 proto _CType \
+	   Destination: ptr sword,
+		 Value: sword
+;SHORT
+InterlockedOr16Acquire proto _CType \
+	   Destination: ptr sword,
+		 Value: sword
+;SHORT
+InterlockedOr16Release proto _CType \
+	   Destination: ptr sword,
+		 Value: sword
+;LONGLONG
+InterlockedOr64 proto _CType \
+	   Destination: ptr LONGLONG,
+		 Value: LONGLONG
+;LONGLONG
+InterlockedOr64Acquire proto _CType \
+	   Destination: ptr LONGLONG,
+		 Value: LONGLONG
+;LONGLONG
+InterlockedOr64Release proto _CType \
+	   Destination: ptr LONGLONG,
+		 Value: LONGLONG
+;LONG
+InterlockedXor proto _CType \
+	   Destination: ptr LONG,
+		 Value: LONG
+;LONG
+InterlockedXorAcquire proto _CType \
+	   Destination: ptr LONG,
+		 Value: LONG
+;LONG
+InterlockedXorRelease proto _CType \
+	   Destination: ptr LONG,
+		 Value: LONG
+;CHAR
+InterlockedXor8 proto _CType \
+	   Destination: LPSTR,
+		 Value: CHAR
+;CHAR
+InterlockedXor8Acquire proto _CType \
+	   Destination: LPSTR,
+		 Value: CHAR
+;CHAR
+InterlockedXor8Release proto _CType \
+	   Destination: LPSTR,
+		 Value: CHAR
+;SHORT
+InterlockedXor16 proto _CType \
+	   Destination: ptr sword,
+		 Value: sword
+;SHORT
+InterlockedXor16Acquire proto _CType \
+	   Destination: ptr sword,
+		 Value: sword
+;SHORT
+InterlockedXor16Release proto _CType \
+	   Destination: ptr sword,
+		 Value: sword
+;LONGLONG
+InterlockedXor64 proto _CType \
+	   Destination: ptr LONGLONG,
+		 Value: LONGLONG
+;LONGLONG
+InterlockedXor64Acquire proto _CType \
+	   Destination: ptr LONGLONG,
+		 Value: LONGLONG
+;LONGLONG
+InterlockedXor64Release proto _CType \
+	   Destination: ptr LONGLONG,
+		 Value: LONGLONG
+;LONG
+InterlockedAnd proto _CType \
+	   Destination: ptr LONG,
+		 Value: LONG
+;LONG
+InterlockedAndAcquire proto _CType \
+	   Destination: ptr LONG,
+		 Value: LONG
+;LONG
+InterlockedAndRelease proto _CType \
+	   Destination: ptr LONG,
+		 Value: LONG
+;CHAR
+InterlockedAnd8 proto _CType \
+	   Destination: LPSTR,
+		 Value: CHAR
+;CHAR
+InterlockedAnd8Acquire proto _CType \
+	   Destination: LPSTR,
+		 Value: CHAR
+;CHAR
+InterlockedAnd8Release proto _CType \
+	   Destination: LPSTR,
+		 Value: CHAR
+;SHORT
+InterlockedAnd16 proto _CType \
+	   Destination: ptr sword,
+		 Value: sword
+;SHORT
+InterlockedAnd16Acquire proto _CType \
+	   Destination: ptr sword,
+		 Value: sword
+;SHORT
+InterlockedAnd16Release proto _CType \
+	   Destination: ptr sword,
+		 Value: sword
+;LONGLONG
+InterlockedAnd64 proto _CType \
+	   Destination: ptr LONGLONG,
+		 Value: LONGLONG
+;LONGLONG
+InterlockedAnd64Acquire proto _CType \
+	   Destination: ptr LONGLONG,
+		 Value: LONGLONG
+;LONGLONG
+InterlockedAnd64Release proto _CType \
+	   Destination: ptr LONGLONG,
+		 Value: LONGLONG
+
+pragma intrinsic(_InterlockedAdd)
+pragma intrinsic(_InterlockedIncrement)
+pragma intrinsic(_InterlockedIncrement_acq)
+pragma intrinsic(_InterlockedIncrement_rel)
+pragma intrinsic(_InterlockedDecrement)
+pragma intrinsic(_InterlockedDecrement_acq)
+pragma intrinsic(_InterlockedDecrement_rel)
+pragma intrinsic(_InterlockedExchange)
+pragma intrinsic(_InterlockedCompareExchange)
+pragma intrinsic(_InterlockedCompareExchange_acq)
+pragma intrinsic(_InterlockedCompareExchange_rel)
+pragma intrinsic(_InterlockedExchangeAdd)
+pragma intrinsic(_InterlockedAdd64)
+pragma intrinsic(_InterlockedIncrement64)
+pragma intrinsic(_InterlockedDecrement64)
+pragma intrinsic(_InterlockedExchange64)
+pragma intrinsic(_InterlockedExchange64_acq)
+pragma intrinsic(_InterlockedCompareExchange64)
+pragma intrinsic(_InterlockedCompareExchange64_acq)
+pragma intrinsic(_InterlockedCompareExchange64_rel)
+pragma intrinsic(_InterlockedCompare64Exchange128)
+pragma intrinsic(_InterlockedCompare64Exchange128_acq)
+pragma intrinsic(_InterlockedCompare64Exchange128_rel)
+pragma intrinsic(_InterlockedExchangeAdd64)
+pragma intrinsic(_InterlockedExchangePointer)
+pragma intrinsic(_InterlockedCompareExchangePointer)
+pragma intrinsic(_InterlockedCompareExchangePointer_acq)
+pragma intrinsic(_InterlockedCompareExchangePointer_rel)
+pragma intrinsic(_InterlockedAdd_acq)
+pragma intrinsic(_InterlockedAdd_rel)
+pragma intrinsic(_InterlockedExchange_acq)
+pragma intrinsic(_InterlockedExchangeAdd_acq)
+pragma intrinsic(_InterlockedExchangeAdd_rel)
+pragma intrinsic(_InterlockedAdd64_acq)
+pragma intrinsic(_InterlockedAdd64_rel)
+pragma intrinsic(_InterlockedIncrement64_acq)
+pragma intrinsic(_InterlockedIncrement64_rel)
+pragma intrinsic(_InterlockedDecrement64_acq)
+pragma intrinsic(_InterlockedDecrement64_rel)
+pragma intrinsic(_InterlockedExchangeAdd64_acq)
+pragma intrinsic(_InterlockedExchangeAdd64_rel)
+pragma intrinsic(_InterlockedExchangePointer_acq)
+pragma intrinsic(_InterlockedOr)
+pragma intrinsic(_InterlockedOr_acq)
+pragma intrinsic(_InterlockedOr_rel)
+pragma intrinsic(_InterlockedOr8)
+pragma intrinsic(_InterlockedOr8_acq)
+pragma intrinsic(_InterlockedOr8_rel)
+pragma intrinsic(_InterlockedOr16)
+pragma intrinsic(_InterlockedOr16_acq)
+pragma intrinsic(_InterlockedOr16_rel)
+pragma intrinsic(_InterlockedOr64)
+pragma intrinsic(_InterlockedOr64_acq)
+pragma intrinsic(_InterlockedOr64_rel)
+pragma intrinsic(_InterlockedXor)
+pragma intrinsic(_InterlockedXor_acq)
+pragma intrinsic(_InterlockedXor_rel)
+pragma intrinsic(_InterlockedXor8)
+pragma intrinsic(_InterlockedXor8_acq)
+pragma intrinsic(_InterlockedXor8_rel)
+pragma intrinsic(_InterlockedXor16)
+pragma intrinsic(_InterlockedXor16_acq)
+pragma intrinsic(_InterlockedXor16_rel)
+pragma intrinsic(_InterlockedXor64)
+pragma intrinsic(_InterlockedXor64_acq)
+pragma intrinsic(_InterlockedXor64_rel)
+pragma intrinsic(_InterlockedAnd)
+pragma intrinsic(_InterlockedAnd_acq)
+pragma intrinsic(_InterlockedAnd_rel)
+pragma intrinsic(_InterlockedAnd8)
+pragma intrinsic(_InterlockedAnd8_acq)
+pragma intrinsic(_InterlockedAnd8_rel)
+pragma intrinsic(_InterlockedAnd16)
+pragma intrinsic(_InterlockedAnd16_acq)
+pragma intrinsic(_InterlockedAnd16_rel)
+pragma intrinsic(_InterlockedAnd64)
+pragma intrinsic(_InterlockedAnd64_acq)
+pragma intrinsic(_InterlockedAnd64_rel)
+
+ifndef InterlockedAnd64
+
+InterlockedAnd64	equ <InterlockedAnd64_Inline>
+
+;LONGLONG
+InterlockedAnd64_Inline proto _CType \
+	   Destination: ptr LONGLONG,
+		 Value: LONGLONG
+;    LONGLONG Old;
+;    do {
+;	 Old = *Destination;
+;    } while (InterlockedCompareExchange64(Destination,
+;					   Old | Value,
+;					   Old) != Old);
+;    return Old;
+endif
+
+InterlockedAndAffinity	equ <InterlockedAnd64>
+
+ifndef InterlockedOr64
+
+InterlockedOr64		equ <InterlockedOr64_Inline>
+
+;LONGLONG
+InterlockedOr64_Inline proto _CType \
+	   Destination: ptr LONGLONG,
+		 Value: LONGLONG
+;    LONGLONG Old;
+;    do {
+;	 Old = *Destination;
+;    } while (InterlockedCompareExchange64(Destination,
+;					   Old | Value,
+;					   Old) != Old);
+;    return Old;
+endif
+
+InterlockedOrAffinity	equ <InterlockedOr64>
+
+ifndef InterlockedXor64
+
+InterlockedXor64	equ <InterlockedXor64_Inline>
+
+;LONGLONG
+InterlockedXor64_Inline proto _CType \
+	   Destination: ptr LONGLONG,
+		 Value: LONGLONG
+;    LONGLONG Old;
+;    do {
+;	 Old = *Destination;
+;    } while (InterlockedCompareExchange64(Destination,
+;					   Old ^ Value,
+;					   Old) != Old);
+;    return Old;
+endif
+
+ifndef InterlockedBitTestAndSet
+
+InterlockedBitTestAndSet equ <InterlockedBitTestAndSet_Inline>
+
+;BOOLEAN
+InterlockedBitTestAndSet_Inline proto _CType \
+		  Base: ptr LONG,
+		   Bit: LONG
+;    LONG tBit;
+;
+;    tBit = 1<<(Bit & (sizeof (*Base)*8-1));
+;    return (BOOLEAN) ((InterlockedOr (&Base[Bit/(sizeof (*Base)*8)], tBit)&tBit) != 0);
+endif
+
+ifndef InterlockedBitTestAndReset
+
+InterlockedBitTestAndReset equ <InterlockedBitTestAndReset_Inline>
+
+;BOOLEAN
+InterlockedBitTestAndReset_Inline proto _CType \
+		  Base: ptr LONG,
+		   Bit: LONG
+;    LONG tBit;
+;
+;    tBit = 1<<(Bit & (sizeof (*Base)*8-1));
+;    return (BOOLEAN) ((InterlockedAnd (&Base[Bit/(sizeof (*Base)*8)], ~tBit)&tBit) != 0);
+endif
+
+ifndef InterlockedBitTestAndSet64
+
+InterlockedBitTestAndSet64 equ <InterlockedBitTestAndSet64_Inline>
+
+;BOOLEAN
+InterlockedBitTestAndSet64_Inline proto _CType \
+		  Base: ptr LONG64,
+		   Bit: LONG64
+;    LONG64 tBit;
+;
+;    tBit = 1i64<<(Bit & (sizeof (*Base)*8-1));
+;    return (BOOLEAN) ((InterlockedOr64 (&Base[Bit/(sizeof (*Base)*8)], tBit)&tBit) != 0);
+endif
+
+ifndef InterlockedBitTestAndReset64
+
+InterlockedBitTestAndReset64 equ <InterlockedBitTestAndReset64_Inline>
+
+;BOOLEAN
+InterlockedBitTestAndReset64_Inline proto _CType \
+		  Base: ptr LONG64,
+		   Bit: LONG64
+;    LONG64 tBit;
+;
+;    tBit = 1i64<<(Bit & (sizeof (*Base)*8-1));
+;    return (BOOLEAN) ((InterlockedAnd64 (&Base[Bit/(sizeof (*Base)*8)], ~tBit)&tBit) != 0);
+endif
+
+ifndef InterlockedBitTestAndComplement
+
+InterlockedBitTestAndComplement equ <InterlockedBitTestAndComplement_Inline>
+
+;BOOLEAN
+InterlockedBitTestAndComplement_Inline proto _CType \
+		  Base: ptr LONG,
+		   Bit: LONG
+
+;    LONG tBit;
+;
+;    tBit = 1<<(Bit & (sizeof (*Base)*8-1));
+;    return (BOOLEAN) ((InterlockedXor (&Base[Bit/(sizeof (*Base)*8)], tBit)&tBit) != 0);
+endif
+
+ifndef InterlockedBitTestAndComplement64
+
+InterlockedBitTestAndComplement64 equ <InterlockedBitTestAndComplement64_Inline>
+
+;BOOLEAN
+InterlockedBitTestAndComplement64_Inline proto _CType \
+		  Base: ptr LONG64,
+		   Bit: LONG64
+;    LONG64 tBit;
+;
+;    tBit = 1i64<<(Bit & (sizeof (*Base)*8-1));
+;    return (BOOLEAN) ((InterlockedXor64 (&Base[Bit/(sizeof (*Base)*8)], tBit)&tBit) != 0);
+endif
+
+endif ;; defined(_M_IA64) AND NOT defined(RC_INVOKED) AND NOT defined(MIDL_PASS)
+
+
+if NOT defined(__midl) AND NOT defined(GENUTIL) AND NOT defined(_GENIA64_) AND defined(_IA64_)
+
+;void *
+_rdteb proto _CType
+
+;void *
+_rdtebex proto _CType
+
+ifdef _M_IA64
+
+pragma intrinsic(_rdteb)
+pragma intrinsic(_rdtebex)	;; _rdtebex() is a kernel safe version of _rdteb()
+
+NtCurrentTeb macro
+	exitm<_rdtebex()>
+	endm
+
+;;
+;; Define functions to get the address of the current fiber and the
+;; current fiber data.
+;;
+
+GetCurrentFiber macro
+	exitm<[NtCurrentTeb()].FiberData>
+	endm
+GetFiberData macro
+	mov rax,GetCurrentFiber()
+	mov rax,[rax]
+	exitm<rax>
+	endm
+
+if defined(_IA64_) AND defined(_M_IA64) AND NOT defined(MIDL_PASS)
+
+;void
+__break proto _CType \
+		 StIIM: SINT
+
+pragma intrinsic (__break)
+
+BREAK_DEBUG_BASE	equ 0x080000
+ASSERT_BREAKPOINT	equ (BREAK_DEBUG_BASE+3)  ;; Cause a STATUS_ASSERTION_FAILURE exception to be raised.
+
+;FORCEINLINE
+;VOID
+DbgRaiseAssertionFailure macro
+    __break(ASSERT_BREAKPOINT)
+    endm
+
+endif
+
+;void
+__yield proto _CType
+;void
+__mf proto _CType
+;void
+__lfetch proto _CType \
+		 Level: SINT,
+	       Address: PVOID
+;void
+__lfetchfault proto _CType \
+		 Level: SINT,
+	       Address: PVOID
+;void
+__lfetch_excl proto _CType \
+		 Level: SINT,
+	       Address: PVOID
+;void
+__lfetchfault_excl proto _CType \
+		 Level: SINT,
+	       Address: PVOID
+
+;;
+;; __lfetch control defines.
+;;
+
+MD_LFHINT_NONE		equ 0x00
+MD_LFHINT_NT1		equ 0x01
+MD_LFHINT_NT2		equ 0x02
+MD_LFHINT_NTA		equ 0x03
+
+pragma intrinsic (__yield)
+pragma intrinsic (__lfetch)
+pragma intrinsic (__lfetchfault)
+pragma intrinsic (__lfetchfault_excl)
+pragma intrinsic (__lfetch_excl)
+pragma intrinsic (__mf)
+
+;;
+;; Define function to read the value of the time stamp counter
+;;
+;; N.B. The register number for the time stamp counter is CV_IA64_ApITC which
+;;	is 3116.
+;;
+
+ReadTimeStampCounter macro
+	exitm<__getReg(3116)>
+	endm
+
+;unsigned __int64
+__getReg proto _CType \
+		Number: SINT
+
+pragma intrinsic(__getReg)
+
+YieldProcessor		equ <__yield>
+MemoryBarrier		equ <__mf>
+PreFetchCacheLine	equ <__lfetch>
+PrefetchForWrite macro p
+	endm
+
+ReadForWriteAccess macro p
+	exitm<(__lfetch_excl(MD_LFHINT_NONE, p), *p)>
+	endm
+
+;;
+;; PreFetchCacheLine level defines.
+;;
+
+PF_TEMPORAL_LEVEL_1	equ MD_LFHINT_NONE
+PF_TEMPORAL_LEVEL_2	equ MD_LFHINT_NT1
+PF_TEMPORAL_LEVEL_3	equ MD_LFHINT_NT2
+PF_NON_TEMPORAL_LEVEL_ALL equ MD_LFHINT_NTA
+
+;;
+;; Define functions to capture the high 64-bits of a 128-bit multiply.
+;;
+
+UnsignedMultiplyHigh	equ <__UMULH>
+
+;ULONGLONG
+__UMULH proto _CType \
+	    Multiplier: ULONGLONG,
+	  Multiplicand: ULONGLONG
+
+pragma intrinsic(__UMULH)
+
+if (_MSC_VER GE 1400)
+
+UnsignedMultiply128	equ <_umul128>
+
+;DWORD64
+_umul128 proto _CType \
+	    Multiplier: qword,
+	  Multiplicand: qword,
+	   HighProduct: ptr qword
+
+pragma intrinsic(_umul128)
+
+endif
+
+else
+
+;STRUC TEB *
+NtCurrentTeb proto _CType
+
+endif ;; _M_IA64
+
+endif  ;; NOT defined(__midl) AND NOT defined(GENUTIL) AND NOT defined(_GENIA64_) AND defined(_M_IA64)
+
+ifdef _IA64_
+
+;;
+;; The following values specify the type of failing access when the status is
+;; STATUS_ACCESS_VIOLATION and the first parameter in the exception record.
+;;
+
+EXCEPTION_READ_FAULT	equ 0 ;; Access violation was caused by a read
+EXCEPTION_WRITE_FAULT	equ 1 ;; Access violation was caused by a write
+EXCEPTION_EXECUTE_FAULT equ 2 ;; Access violation was caused by an instruction fetch
+
+;;
+;; The following flags control the contents of the CONTEXT structure.
+;;
+
+;if NOT defined(RC_INVOKED)
+
+CONTEXT_IA64		equ 0x00080000
+
+CONTEXT_CONTROL		equ CONTEXT_IA64 OR 0x00000001
+CONTEXT_LOWER_FLOATING_POINT equ CONTEXT_IA64 OR 0x00000002
+CONTEXT_HIGHER_FLOATING_POINT equ CONTEXT_IA64 OR 0x00000004
+CONTEXT_INTEGER		equ CONTEXT_IA64 OR 0x00000008
+CONTEXT_DEBUG		equ CONTEXT_IA64 OR 0x00000010
+CONTEXT_IA32_CONTROL	equ CONTEXT_IA64 OR 0x00000020	;; Includes StIPSR
+
+
+CONTEXT_FLOATING_POINT	equ CONTEXT_LOWER_FLOATING_POINT OR CONTEXT_HIGHER_FOATING_POINT
+CONTEXT_FULL		equ CONTEXT_CONTROL OR CONTEXT_FLOATING_POINT OR \
+			    CONTEXT_INTEGER OR CONTEXT_IA32_CONTROL
+CONTEXT_ALL		equ CONTEXT_CONTROL OR CONTEXT_FLOATING_POINT OR \
+			    CONTEXT_INTEGER OR CONTEXT_DEBUG OR CONTEXT_IA32_CONTROL
+
+CONTEXT_EXCEPTION_ACTIVE    equ 0x8000000
+CONTEXT_SERVICE_ACTIVE	    equ 0x10000000
+CONTEXT_EXCEPTION_REQUEST   equ 0x40000000
+CONTEXT_EXCEPTION_REPORTING equ 0x80000000
+
+;endif ;; NOT defined(RC_INVOKED)
+
+;;
+;; Context Frame
+;;
+;;  This frame has a several purposes: 1) it is used as an argument to
+;;  NtContinue, 2) it is used to construct a call frame for APC delivery,
+;;  3) it is used to construct a call frame for exception dispatching
+;;  in user mode, 4) it is used in the user level thread creation
+;;  routines, and 5) it is used to to pass thread state to debuggers.
+;;
+;;  N.B. Because this record is used as a call frame, it must be EXACTLY
+;;  a multiple of 16 bytes in length and aligned on a 16-byte boundary.
+;;
+
+CONTEXT			STRUC
+
+    ;; The flags values within this flag control the contents of
+    ;; a CONTEXT record.
+    ;; If the context record is used as an input parameter, then
+    ;; for each portion of the context record controlled by a flag
+    ;; whose value is set, it is assumed that that portion of the
+    ;; context record contains valid context. If the context record
+    ;; is being used to modify a thread's context, then only that
+    ;; portion of the threads context will be modified.
+    ;; If the context record is used as an __inout parameter to capture
+    ;; the context of a thread, then only those portions of the thread's
+    ;; context corresponding to set flags will be returned.
+    ;; The context record is never used as an __out only parameter.
+
+ContextFlags		dd ?
+Fill1			dd 3 dup(?) ;; for alignment of following on 16-byte boundary
+
+    ;; This section is specified/returned if the ContextFlags word contains
+    ;; the flag CONTEXT_DEBUG.
+    ;; N.B. CONTEXT_DEBUG is *not* part of CONTEXT_FULL.
+
+DbI0			ULONGLONG ?
+DbI1			ULONGLONG ?
+DbI2			ULONGLONG ?
+DbI3			ULONGLONG ?
+DbI4			ULONGLONG ?
+DbI5			ULONGLONG ?
+DbI6			ULONGLONG ?
+DbI7			ULONGLONG ?
+
+DbD0			ULONGLONG ?
+DbD1			ULONGLONG ?
+DbD2			ULONGLONG ?
+DbD3			ULONGLONG ?
+DbD4			ULONGLONG ?
+DbD5			ULONGLONG ?
+DbD6			ULONGLONG ?
+DbD7			ULONGLONG ?
+
+    ;; This section is specified/returned if the ContextFlags word contains
+    ;; the flag CONTEXT_LOWER_FLOATING_POINT.
+
+FltS0			FLOAT128 <>
+FltS1			FLOAT128 <>
+FltS2			FLOAT128 <>
+FltS3			FLOAT128 <>
+FltT0			FLOAT128 <>
+FltT1			FLOAT128 <>
+FltT2			FLOAT128 <>
+FltT3			FLOAT128 <>
+FltT4			FLOAT128 <>
+FltT5			FLOAT128 <>
+FltT6			FLOAT128 <>
+FltT7			FLOAT128 <>
+FltT8			FLOAT128 <>
+FltT9			FLOAT128 <>
+
+    ;; This section is specified/returned if the ContextFlags word contains
+    ;; the flag CONTEXT_HIGHER_FLOATING_POINT.
+
+FltS4			FLOAT128 <>
+FltS5			FLOAT128 <>
+FltS6			FLOAT128 <>
+FltS7			FLOAT128 <>
+FltS8			FLOAT128 <>
+FltS9			FLOAT128 <>
+FltS10			FLOAT128 <>
+FltS11			FLOAT128 <>
+FltS12			FLOAT128 <>
+FltS13			FLOAT128 <>
+FltS14			FLOAT128 <>
+FltS15			FLOAT128 <>
+FltS16			FLOAT128 <>
+FltS17			FLOAT128 <>
+FltS18			FLOAT128 <>
+FltS19			FLOAT128 <>
+
+FltF32			FLOAT128 <>
+FltF33			FLOAT128 <>
+FltF34			FLOAT128 <>
+FltF35			FLOAT128 <>
+FltF36			FLOAT128 <>
+FltF37			FLOAT128 <>
+FltF38			FLOAT128 <>
+FltF39			FLOAT128 <>
+
+FltF40			FLOAT128 <>
+FltF41			FLOAT128 <>
+FltF42			FLOAT128 <>
+FltF43			FLOAT128 <>
+FltF44			FLOAT128 <>
+FltF45			FLOAT128 <>
+FltF46			FLOAT128 <>
+FltF47			FLOAT128 <>
+FltF48			FLOAT128 <>
+FltF49			FLOAT128 <>
+
+FltF50			FLOAT128 <>
+FltF51			FLOAT128 <>
+FltF52			FLOAT128 <>
+FltF53			FLOAT128 <>
+FltF54			FLOAT128 <>
+FltF55			FLOAT128 <>
+FltF56			FLOAT128 <>
+FltF57			FLOAT128 <>
+FltF58			FLOAT128 <>
+FltF59			FLOAT128 <>
+
+FltF60			FLOAT128 <>
+FltF61			FLOAT128 <>
+FltF62			FLOAT128 <>
+FltF63			FLOAT128 <>
+FltF64			FLOAT128 <>
+FltF65			FLOAT128 <>
+FltF66			FLOAT128 <>
+FltF67			FLOAT128 <>
+FltF68			FLOAT128 <>
+FltF69			FLOAT128 <>
+
+FltF70			FLOAT128 <>
+FltF71			FLOAT128 <>
+FltF72			FLOAT128 <>
+FltF73			FLOAT128 <>
+FltF74			FLOAT128 <>
+FltF75			FLOAT128 <>
+FltF76			FLOAT128 <>
+FltF77			FLOAT128 <>
+FltF78			FLOAT128 <>
+FltF79			FLOAT128 <>
+
+FltF80			FLOAT128 <>
+FltF81			FLOAT128 <>
+FltF82			FLOAT128 <>
+FltF83			FLOAT128 <>
+FltF84			FLOAT128 <>
+FltF85			FLOAT128 <>
+FltF86			FLOAT128 <>
+FltF87			FLOAT128 <>
+FltF88			FLOAT128 <>
+FltF89			FLOAT128 <>
+
+FltF90			FLOAT128 <>
+FltF91			FLOAT128 <>
+FltF92			FLOAT128 <>
+FltF93			FLOAT128 <>
+FltF94			FLOAT128 <>
+FltF95			FLOAT128 <>
+FltF96			FLOAT128 <>
+FltF97			FLOAT128 <>
+FltF98			FLOAT128 <>
+FltF99			FLOAT128 <>
+
+FltF100			FLOAT128 <>
+FltF101			FLOAT128 <>
+FltF102			FLOAT128 <>
+FltF103			FLOAT128 <>
+FltF104			FLOAT128 <>
+FltF105			FLOAT128 <>
+FltF106			FLOAT128 <>
+FltF107			FLOAT128 <>
+FltF108			FLOAT128 <>
+FltF109			FLOAT128 <>
+
+FltF110			FLOAT128 <>
+FltF111			FLOAT128 <>
+FltF112			FLOAT128 <>
+FltF113			FLOAT128 <>
+FltF114			FLOAT128 <>
+FltF115			FLOAT128 <>
+FltF116			FLOAT128 <>
+FltF117			FLOAT128 <>
+FltF118			FLOAT128 <>
+FltF119			FLOAT128 <>
+
+FltF120			FLOAT128 <>
+FltF121			FLOAT128 <>
+FltF122			FLOAT128 <>
+FltF123			FLOAT128 <>
+FltF124			FLOAT128 <>
+FltF125			FLOAT128 <>
+FltF126			FLOAT128 <>
+FltF127			FLOAT128 <>
+
+    ;; This section is specified/returned if the ContextFlags word contains
+    ;; the flag CONTEXT_LOWER_FLOATING_POINT | CONTEXT_HIGHER_FLOATING_POINT | CONTEXT_CONTROL.
+
+StFPSR			ULONGLONG ?	;;  FP status
+
+    ;; This section is specified/returned if the ContextFlags word contains
+    ;; the flag CONTEXT_INTEGER.
+    ;; N.B. The registers gp, sp, rp are part of the control context
+
+IntGp			ULONGLONG ?	;;  r1, volatile
+IntT0			ULONGLONG ?	;;  r2-r3, volatile
+IntT1			ULONGLONG ?	;;
+IntS0			ULONGLONG ?	;;  r4-r7, preserved
+IntS1			ULONGLONG ?
+IntS2			ULONGLONG ?
+IntS3			ULONGLONG ?
+IntV0			ULONGLONG ?	;;  r8, volatile
+IntT2			ULONGLONG ?	;;  r9-r11, volatile
+IntT3			ULONGLONG ?
+IntT4			ULONGLONG ?
+IntSp			ULONGLONG ?	;;  stack pointer (r12), special
+IntTeb			ULONGLONG ?	;;  teb (r13), special
+IntT5			ULONGLONG ?	;;  r14-r31, volatile
+IntT6			ULONGLONG ?
+IntT7			ULONGLONG ?
+IntT8			ULONGLONG ?
+IntT9			ULONGLONG ?
+IntT10			ULONGLONG ?
+IntT11			ULONGLONG ?
+IntT12			ULONGLONG ?
+IntT13			ULONGLONG ?
+IntT14			ULONGLONG ?
+IntT15			ULONGLONG ?
+IntT16			ULONGLONG ?
+IntT17			ULONGLONG ?
+IntT18			ULONGLONG ?
+IntT19			ULONGLONG ?
+IntT20			ULONGLONG ?
+IntT21			ULONGLONG ?
+IntT22			ULONGLONG ?
+
+IntNats			ULONGLONG ?	;;  Nat bits for r1-r31
+			    ;; r1-r31 in bits 1 thru 31.
+Preds			ULONGLONG ?	;;  predicates, preserved
+
+BrRp			ULONGLONG ?	;;  return pointer, b0, preserved
+BrS0			ULONGLONG ?	;;  b1-b5, preserved
+BrS1			ULONGLONG ?
+BrS2			ULONGLONG ?
+BrS3			ULONGLONG ?
+BrS4			ULONGLONG ?
+BrT0			ULONGLONG ?	;;  b6-b7, volatile
+BrT1			ULONGLONG ?
+
+    ;; This section is specified/returned if the ContextFlags word contains
+    ;; the flag CONTEXT_CONTROL.
+
+    ;; Other application registers
+ApUNAT			ULONGLONG ?	;;  User Nat collection register, preserved
+ApLC			ULONGLONG ?	;;  Loop counter register, preserved
+ApEC			ULONGLONG ?	;;  Epilog counter register, preserved
+ApCCV			ULONGLONG ?	;;  CMPXCHG value register, volatile
+ApDCR			ULONGLONG ?	;;  Default control register (TBD)
+
+    ;; Register stack info
+RsPFS			ULONGLONG ?	;;  Previous function state, preserved
+RsBSP			ULONGLONG ?	;;  Backing store pointer, preserved
+RsBSPSTORE		ULONGLONG ?
+RsRSC			ULONGLONG ?	;;  RSE configuration, volatile
+RsRNAT			ULONGLONG ?	;;  RSE Nat collection register, preserved
+
+    ;; Trap Status Information
+StIPSR			ULONGLONG ?	;;  Interruption Processor Status
+StIIP			ULONGLONG ?	;;  Interruption IP
+StIFS			ULONGLONG ?	;;  Interruption Function State
+
+    ;; iA32 related control registers
+StFCR			ULONGLONG ?	;;  copy of Ar21
+Eflag			ULONGLONG ?	;;  Eflag copy of Ar24
+SegCSD			ULONGLONG ?	;;  iA32 CSDescriptor (Ar25)
+SegSSD			ULONGLONG ?	;;  iA32 SSDescriptor (Ar26)
+Cflag			ULONGLONG ?	;;  Cr0+Cr4 copy of Ar27
+StFSR			ULONGLONG ?	;;  x86 FP status (copy of AR28)
+StFIR			ULONGLONG ?	;;  x86 FP status (copy of AR29)
+StFDR			ULONGLONG ?	;;  x86 FP status (copy of AR30)
+
+UNUSEDPACK		ULONGLONG ?	;;  added to pack StFDR to 16-bytes
+
+CONTEXT			ENDS
+PCONTEXT		typedef ptr CONTEXT
+
+;;
+;; Plabel descriptor structure definition
+;;
+
+PLABEL_DESCRIPTOR	STRUC
+EntryPoint		ULONGLONG ?
+GlobalPointer		ULONGLONG ?
+PLABEL_DESCRIPTOR	ENDS
+PPLABEL_DESCRIPTOR	typedef ptr PLABEL_DESCRIPTOR
+
+;;
+;; Function table entry structure definition.
+;;
+
+RUNTIME_FUNCTION	STRUC
+BeginAddress		dd ?
+EndAddress		dd ?
+UnwindInfoAddress	dd ?
+RUNTIME_FUNCTION	ENDS
+PRUNTIME_FUNCTION	typedef ptr RUNTIME_FUNCTION
+
+;;
+;; Define unwind history table structure.
+;;
+
+UNWIND_HISTORY_TABLE_SIZE equ 12
+
+UNWIND_HISTORY_TABLE_ENTRY  STRUC
+ImageBase		dd ?
+Gp			dd ?
+FunctionEntry		PRUNTIME_FUNCTION ?
+UNWIND_HISTORY_TABLE_ENTRY ENDS
+PUNWIND_HISTORY_TABLE_ENTRY typedef ptr UNWIND_HISTORY_TABLE_ENTRY
+
+UNWIND_HISTORY_TABLE	STRUC
+Count			dd ?
+LocalHint		db ?
+GlobalHint		db ?
+Search			db ?
+Once			db ?
+LowAddress		dd ?
+HighAddress		dd ?
+Entry			UNWIND_HISTORY_TABLE_ENTRY UNWIND_HISTORY_TABLE_SIZE dup(<>)
+UNWIND_HISTORY_TABLE	ENDS
+PUNWIND_HISTORY_TABLE	typedef ptr UNWIND_HISTORY_TABLE
+
+;;
+;; Define dynamic function table entry.
+;;
+
+;typedef
+;PRUNTIME_FUNCTION
+GET_RUNTIME_FUNCTION_CALLBACK typedef proto _CType \
+	     ControlPc: DWORD64,
+	       Context: PVOID
+
+PGET_RUNTIME_FUNCTION_CALLBACK typedef ptr GET_RUNTIME_FUNCTION_CALLBACK
+
+;typedef
+;DWORD
+OUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK typedef proto _CType \
+	       Process: HANDLE,
+	  TableAddress: PVOID,
+	       Entries: PDWORD,
+	     Functions: PRUNTIME_FUNCTION
+
+POUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK typedef ptr OUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK
+OUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK_EXPORT_NAME equ <"OutOfProcessFunctionTableCallback">
+
+;;
+;; Define runtime exception handling prototypes.
+;;
+
+;NTSYSAPI
+;VOID
+RtlRestoreContext proto _CType \
+	 ContextRecord: PCONTEXT,
+       ExceptionRecord: ptr EXCEPTION_RECORD
+
+;BOOLEAN
+RtlAddFunctionTable proto _CType \
+	 FunctionTable: PRUNTIME_FUNCTION,
+	    EntryCount: DWORD,
+	   BaseAddress: DWORD64
+
+;PRUNTIME_FUNCTION
+RtlLookupFunctionEntry proto _CType \
+	     ControlPc: DWORD64,
+	     ImageBase: PDWORD64,
+	  HistoryTable: PUNWIND_HISTORY_TABLE
+
+
+;;
+;; Nonvolatile context pointer record.
+;;
+;; The IA64 architecture currently doesn't have any nonvolatile kernel context
+;; as we capture everything in either the trap or exception frames on
+;; transition from user to kernel mode. We allocate a single bogus
+;; pointer field as usually this structure is made up of pointers to
+;; places in the kernel stack where the various nonvolatile items were
+;; pushed on to the kernel stack.
+;;
+;; TBD *** Need to fill in this structure with the relevant fields
+;;	   when we start storing the nonvolatile information only when
+;;	   necessary.
+;;
+
+KNONVOLATILE_CONTEXT_POINTERS  STRUC
+FltS0			PFLOAT128 ?
+FltS1			PFLOAT128 ?
+FltS2			PFLOAT128 ?
+FltS3			PFLOAT128 ?
+HighFloatingContext	PFLOAT128 10 dup(?)
+FltS4			PFLOAT128 ?
+FltS5			PFLOAT128 ?
+FltS6			PFLOAT128 ?
+FltS7			PFLOAT128 ?
+FltS8			PFLOAT128 ?
+FltS9			PFLOAT128 ?
+FltS10			PFLOAT128 ?
+FltS11			PFLOAT128 ?
+FltS12			PFLOAT128 ?
+FltS13			PFLOAT128 ?
+FltS14			PFLOAT128 ?
+FltS15			PFLOAT128 ?
+FltS16			PFLOAT128 ?
+FltS17			PFLOAT128 ?
+FltS18			PFLOAT128 ?
+FltS19			PFLOAT128 ?
+
+IntS0			PULONGLONG ?
+IntS1			PULONGLONG ?
+IntS2			PULONGLONG ?
+IntS3			PULONGLONG ?
+IntSp			PULONGLONG ?
+IntS0Nat		PULONGLONG ?
+IntS1Nat		PULONGLONG ?
+IntS2Nat		PULONGLONG ?
+IntS3Nat		PULONGLONG ?
+IntSpNat		PULONGLONG ?
+
+Preds			PULONGLONG ?
+
+BrRp			PULONGLONG ?
+BrS0			PULONGLONG ?
+BrS1			PULONGLONG ?
+BrS2			PULONGLONG ?
+BrS3			PULONGLONG ?
+BrS4			PULONGLONG ?
+
+ApUNAT			PULONGLONG ?
+ApLC			PULONGLONG ?
+ApEC			PULONGLONG ?
+RsPFS			PULONGLONG ?
+
+StFSR			PULONGLONG ?
+StFIR			PULONGLONG ?
+StFDR			PULONGLONG ?
+Cflag			PULONGLONG ?
+
+StFPSR			PULONGLONG ?
+
+KNONVOLATILE_CONTEXT_POINTERS ENDS
+PKNONVOLATILE_CONTEXT_POINTERS typedef ptr KNONVOLATILE_CONTEXT_POINTERS
+
+FRAME_POINTERS		STRUC
+MemoryStackFp		ULONGLONG ?
+BackingStoreFp		ULONGLONG ?
+FRAME_POINTERS		ENDS
+PFRAME_POINTERS		typedef ptr FRAME_POINTERS
+
+;NTSYSAPI
+;ULONGLONG
+RtlVirtualUnwind proto _CType \
+	     ImageBase: ULONGLONG,
+	     ControlPc: ULONGLONG,
+	 FunctionEntry: PRUNTIME_FUNCTION,
+	 ContextRecord: PCONTEXT,
+	    InFunction: PBOOLEAN,
+      EstablisherFrame: PFRAME_POINTERS,
+       ContextPointers: PKNONVOLATILE_CONTEXT_POINTERS
+
+;VOID
+RtlRestoreContext proto _CType \
+	 ContextRecord: PCONTEXT,
+       ExceptionRecord: ptr EXCEPTION_RECORD
+
+;VOID
+__jump_unwind proto _CType \
+	 TargetMsFrame: ULONGLONG,
+	 TargetBsFrame: ULONGLONG,
+	      TargetPc: ULONGLONG
+
+endif ;; _IA64_
+
+;if NOT defined(RC_INVOKED)
+
+WOW64_CONTEXT_i386	equ 0x00010000	  ;; this assumes that i386 and
+WOW64_CONTEXT_i486	equ 0x00010000	  ;; i486 have identical context records
+
+WOW64_CONTEXT_CONTROL	equ WOW64_CONTEXT_i386 OR 0x00000001 ;; SS:SP, CS:IP, FAGS, BP
+WOW64_CONTEXT_INTEGER	equ WOW64_CONTEXT_i386 OR 0x00000002 ;; AX, BX, CX, DX, SI, DI
+WOW64_CONTEXT_SEGMENTS	equ WOW64_CONTEXT_i386 OR 0x00000004 ;; DS, ES, FS, GS
+WOW64_CONTEXT_FLOATING_POINT equ WOW64_CONTEXT_i386 OR 0x00000008 ;; 387 state
+WOW64_CONTEXT_DEBUG_REGISTERS equ WOW64_CONTEXT_i386 OR 0x00000010 ;; DB 0-3,6,7
+WOW64_CONTEXT_EXTENDED_REGISTERS equ WOW64_CONTEXT_i386 OR 0x00000020 ;; cpu specific extensions
+
+WOW64_CONTEXT_FULL	equ WOW64_CONTEXT_CONTROL OR WOW64_CONTEXT_INTEGER OR \
+			    WOW64_CONTEXT_SEGMENTS
+WOW64_CONTEXT_ALL	equ WOW64_CONTEXT_CONTROL OR WOW64_CONTEXT_INTEGER OR \
+			    WOW64_CONTEXT_SEGMENTS OR WOW64_CONTEXT_DEBUG_REGISTERS OR \
+			    WOW64_CONTEXT_FLOATING_POINT
+WOW64_CONTEXT_XSTATE	equ WOW64_CONTEXT_i386 OR 0x00000040
+
+;endif ;; NOT defined(RC_INVOKED)
+
+;;
+;;  Define the size of the 80387 save area, which is in the context frame.
+;;
+
+WOW64_SIZE_OF_80387_REGISTERS equ 80
+
+WOW64_MAXIMUM_SUPPORTED_EXTENSION equ 512
+
+WOW64_FLOATING_SAVE_AREA  STRUC
+ControlWord		dd ?
+StatusWord		dd ?
+TagWord			dd ?
+ErrorOffset		dd ?
+ErrorSelector		dd ?
+DataOffset		dd ?
+DataSelector		dd ?
+RegisterArea		db WOW64_SIZE_OF_80387_REGISTERS dup(?)
+Cr0NpxState		dd ?
+WOW64_FLOATING_SAVE_AREA ENDS
+PWOW64_FLOATING_SAVE_AREA typedef ptr WOW64_FLOATING_SAVE_AREA
+
+;include "pshpack4.h"
+
+;;
+;; Context Frame
+;;
+;;  This frame has a several purposes: 1) it is used as an argument to
+;;  NtContinue, 2) is is used to constuct a call frame for APC delivery,
+;;  and 3) it is used in the user level thread creation routines.
+;;
+;;  The layout of the record conforms to a standard call frame.
+;;
+
+WOW64_CONTEXT		STRUC
+
+    ;; The flags values within this flag control the contents of
+    ;; a CONTEXT record.
+    ;; If the context record is used as an input parameter, then
+    ;; for each portion of the context record controlled by a flag
+    ;; whose value is set, it is assumed that that portion of the
+    ;; context record contains valid context. If the context record
+    ;; is being used to modify a threads context, then only that
+    ;; portion of the threads context will be modified.
+    ;; If the context record is used as an IN OUT parameter to capture
+    ;; the context of a thread, then only those portions of the thread's
+    ;; context corresponding to set flags will be returned.
+    ;; The context record is never used as an OUT only parameter.
+
+ContextFlags		dd ?
+
+    ;; This section is specified/returned if CONTEXT_DEBUG_REGISTERS is
+    ;; set in ContextFlags.  Note that CONTEXT_DEBUG_REGISTERS is NOT
+    ;; included in CONTEXT_FULL.
+
+_Dr0			dd ?
+_Dr1			dd ?
+_Dr2			dd ?
+_Dr3			dd ?
+_Dr6			dd ?
+_Dr7			dd ?
+
+    ;; This section is specified/returned if the
+    ;; ContextFlags word contians the flag CONTEXT_FLOATING_POINT.
+
+FloatSave		WOW64_FLOATING_SAVE_AREA <>
+
+    ;; This section is specified/returned if the
+    ;; ContextFlags word contians the flag CONTEXT_SEGMENTS.
+
+SegGs			dd ?
+SegFs			dd ?
+SegEs			dd ?
+SegDs			dd ?
+
+    ;; This section is specified/returned if the
+    ;; ContextFlags word contians the flag CONTEXT_INTEGER.
+
+_Edi			dd ?
+_Esi			dd ?
+_Ebx			dd ?
+_Edx			dd ?
+_Ecx			dd ?
+_Eax			dd ?
+
+    ;; This section is specified/returned if the
+    ;; ContextFlags word contians the flag CONTEXT_CONTROL.
+
+_Ebp			dd ?
+_Eip			dd ?
+SegCs			dd ?	;; MUST BE SANITIZED
+EFlags			dd ?	;; MUST BE SANITIZED
+_Esp			dd ?
+SegSs			dd ?
+
+    ;; This section is specified/returned if the ContextFlags word
+    ;; contains the flag CONTEXT_EXTENDED_REGISTERS.
+    ;; The format and contexts are processor specific
+
+ExtendedRegisters	db WOW64_MAXIMUM_SUPPORTED_EXTENSION dup(?)
+WOW64_CONTEXT		ENDS
+PWOW64_CONTEXT		typedef ptr WOW64_CONTEXT
+
+;include "poppack.h"
+
+LDT_ENTRY_R0 RECORD \
+	    ldt_BaseHi:		8,
+	    ldt_Granularity:	1,
+	    ldt_ldt_Default_Big:1,
+	    ldt_Reserved_0:	1,
+	    ldt_Sys:		1,
+	    ldt_LimitHi:	4,
+	    ldt_Pres:		1,
+	    ldt_Dpl:		2,
+	    ldt_Type:		5,
+	    ldt_BaseMid:	8
+
+WOW64_LDT_ENTRY		STRUC
+LimitLow		dw ?
+BaseLow			dw ?
+UNION ;HighWord
+  STRUC ;Bytes
+    BaseMid		db ?
+    Flags1		db ?	; Declare as bytes to avoid alignment
+    Flags2		db ?	; Problems.
+    BaseHi		db ?
+  ENDS
+  STRUC ;Bits
+    Bits		LDT_ENTRY_R0 <>
+  ENDS
+ENDS
+WOW64_LDT_ENTRY		ENDS
+PWOW64_LDT_ENTRY	typedef ptr WOW64_LDT_ENTRY
+
+WOW64_DESCRIPTOR_TABLE_ENTRY  STRUC
+Selector		dd ?
+Descriptor		WOW64_LDT_ENTRY <>
+WOW64_DESCRIPTOR_TABLE_ENTRY ENDS
+PWOW64_DESCRIPTOR_TABLE_ENTRY typedef ptr WOW64_DESCRIPTOR_TABLE_ENTRY
 
 EXCEPTION_NONCONTINUABLE	equ 0x1 ; Noncontinuable exception
-EXCEPTION_MAXIMUM_PARAMETERS	equ 15	; maximum number of exception parameters
 
-;
-; Exception record definition.
-;
+EXCEPTION_RECORD32	STRUC
+ExceptionCode		dd ?
+ExceptionFlags		dd ?
+ExceptionRecord		dd ?
+ExceptionAddress	dd ?
+NumberParameters	dd ?
+ExceptionInformation	dd EXCEPTION_MAXIMUM_PARAMETERS dup(?)
+EXCEPTION_RECORD32	ENDS
+PEXCEPTION_RECORD32	typedef ptr EXCEPTION_RECORD32
 
-EXCEPTION_RECORD	STRUC SIZE_T
-ExceptionCode		DWORD ?
-ExceptionFlags		DWORD ?
-ExceptionRecord		PVOID ? ; EXCEPTION_RECORD *
-ExceptionAddress	PVOID ?
-NumberParameters	DWORD ?
-ExceptionInformation	PVOID EXCEPTION_MAXIMUM_PARAMETERS dup(?)
-EXCEPTION_RECORD	ENDS
+EXCEPTION_RECORD64	STRUC
+ExceptionCode		dd ?
+ExceptionFlags		dd ?
+ExceptionRecord		DWORD64 ?
+ExceptionAddress	DWORD64 ?
+NumberParameters	dd ?
+__unusedAlignment	dd ?
+ExceptionInformation	DWORD64 EXCEPTION_MAXIMUM_PARAMETERS dup(?)
+EXCEPTION_RECORD64	ENDS
+PEXCEPTION_RECORD64	typedef ptr EXCEPTION_RECORD64
 
-PEXCEPTION_RECORD	TYPEDEF PTR EXCEPTION_RECORD
+;;
+;; Typedef for pointer returned by exception_info()
+;;
 
-;
-; Typedef for pointer returned by exception_info()
-;
-
-EXCEPTION_POINTERS	STRUC SIZE_T
-ExceptionRecord		SIZE_T ?
-ContextRecord		SIZE_T ?
+EXCEPTION_POINTERS	STRUC
+ExceptionRecord		PEXCEPTION_RECORD ?
+ContextRecord		PCONTEXT ?
 EXCEPTION_POINTERS	ENDS
+PEXCEPTION_POINTERS	typedef ptr EXCEPTION_POINTERS
 
 EXCEPTION_REGISTRATION	STRUC SIZE_T
 prev			SIZE_T ?
 handler			SIZE_T ?
 EXCEPTION_REGISTRATION	ENDS
 
-PEXCEPTION_POINTERS	TYPEDEF PTR EXCEPTION_POINTERS
+;VOID
+RtlUnwind proto _CType \
+	   TargetFrame: PVOID,
+	      TargetIp: PVOID,
+       ExceptionRecord: PEXCEPTION_RECORD,
+	   ReturnValue: PVOID
+
+ifdef _IA64_
+;VOID
+RtlUnwind2 proto _CType \
+	   TargetFrame: FRAME_POINTERS,
+	      TargetIp: PVOID,
+       ExceptionRecord: PEXCEPTION_RECORD,
+	   ReturnValue: PVOID,
+	 ContextRecord: PCONTEXT
+endif
+
+ifdef _AMD64_
+;VOID
+RtlUnwindEx proto _CType \
+	   TargetFrame: PVOID,
+	      TargetIp: PVOID,
+       ExceptionRecord: PEXCEPTION_RECORD,
+	   ReturnValue: PVOID,
+	 ContextRecord: PCONTEXT,
+	  HistoryTable: PUNWIND_HISTORY_TABLE
+elseifdef _IA64_
+;VOID
+RtlUnwindEx proto _CType \
+	   TargetFrame: FRAME_POINTERS,
+	      TargetIp: PVOID,
+       ExceptionRecord: PEXCEPTION_RECORD,
+	   ReturnValue: PVOID,
+	 ContextRecord: PCONTEXT,
+	  HistoryTable: PUNWIND_HISTORY_TABLE
+endif
 
 PACCESS_TOKEN		typedef PVOID
 PSECURITY_DESCRIPTOR	typedef PVOID
 PSID			typedef PVOID
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;								    ;;
-;;			      ACCESS MASK			    ;;
-;;								    ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
-;  Define the access mask as a longword sized structure divided up as
-;  follows:
-;
-;	3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1
-;	1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-;      +---------------+---------------+-------------------------------+
-;      |G|G|G|G|Res'd|A| StandardRights|         SpecificRights        |
-;      |R|W|E|A|     |S|	       |			       |
-;      +-+-------------+---------------+-------------------------------+
-;
-;      typedef struct _ACCESS_MASK {
-;	   WORD	  SpecificRights;
-;	   BYTE	 StandardRights;
-;	   BYTE	 AccessSystemAcl : 1;
-;	   BYTE	 Reserved : 3;
-;	   BYTE	 GenericAll : 1;
-;	   BYTE	 GenericExecute : 1;
-;	   BYTE	 GenericWrite : 1;
-;	   BYTE	 GenericRead : 1;
-;      } ACCESS_MASK;
-;      typedef ACCESS_MASK *PACCESS_MASK;
-;
-;  but to make life simple for programmer's we'll allow them to specify
-;  a desired access mask by simply OR'ing together mulitple single rights
-;  and treat an access mask as a DWORD.	 For example
-;
-;      DesiredAccess = DELETE | READ_CONTROL
-;
-;  So we'll declare ACCESS_MASK as DWORD
-;
+;;//////////////////////////////////////////////////////////////////////
+;;								      //
+;;			       ACCESS MASK			      //
+;;								      //
+;;//////////////////////////////////////////////////////////////////////
+
+;;
+;;  Define the access mask as a longword sized structure divided up as
+;;  follows:
+;;
+;;	 3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1
+;;	 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+;;	+---------------+---------------+-------------------------------+
+;;	|G|G|G|G|Res'd|A| StandardRights|         SpecificRights        |
+;;	|R|W|E|A|     |S|		|				|
+;;	+-+-------------+---------------+-------------------------------+
+;;
+;;	typedef struct _ACCESS_MASK {
+;;	    WORD   SpecificRights;
+;;	    BYTE  StandardRights;
+;;	    BYTE  AccessSystemAcl : 1;
+;;	    BYTE  Reserved : 3;
+;;	    BYTE  GenericAll : 1;
+;;	    BYTE  GenericExecute : 1;
+;;	    BYTE  GenericWrite : 1;
+;;	    BYTE  GenericRead : 1;
+;;	} ACCESS_MASK;
+;;	typedef ACCESS_MASK *PACCESS_MASK;
+;;
+;;  but to make life simple for programmer's we'll allow them to specify
+;;  a desired access mask by simply OR'ing together mulitple single rights
+;;  and treat an access mask as a DWORD.  For example
+;;
+;;	DesiredAccess = DELETE | READ_CONTROL
+;;
+;;  So we'll declare ACCESS_MASK as DWORD
+;;
 
 ACCESS_MASK	typedef DWORD
 PACCESS_MASK	typedef PTR ACCESS_MASK
@@ -1204,15 +5604,17 @@ PGENERIC_MAPPING typedef PTR GENERIC_MAPPING
 ;;
 ;;
 
+;include <pshpack4.h>
+
 LUID_AND_ATTRIBUTES STRUC 4
 Luid		LUID <>
-Attributes	DWORD ?
+Attributes	dd ?
 LUID_AND_ATTRIBUTES ENDS
-
 PLUID_AND_ATTRIBUTES typedef ptr LUID_AND_ATTRIBUTES
-
 LUID_AND_ATTRIBUTES_ARRAY typedef LUID_AND_ATTRIBUTES
 PLUID_AND_ATTRIBUTES_ARRAY typedef ptr LUID_AND_ATTRIBUTES_ARRAY
+
+;include <poppack.h>
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;								      ;;
@@ -1256,37 +5658,64 @@ SID			STRUC
 Revision		BYTE ?
 SubAuthorityCount	BYTE ?
 IdentifierAuthority	SID_IDENTIFIER_AUTHORITY <>
+ifdef MIDL_PASS
+;SubAuthority		dd [SubAuthorityCount] dup(?)
 SubAuthority		dd ANYSIZE_ARRAY dup(?)
+else ;; MIDL_PASS
+SubAuthority		dd ANYSIZE_ARRAY dup(?)
+endif;; MIDL_PASS
 SID			ENDS
 PISID			typedef ptr SID
 endif
 
-SID_REVISION			 equ 1	; Current revision level
-SID_MAX_SUB_AUTHORITIES		 equ 15 ;
-SID_RECOMMENDED_SUB_AUTHORITIES	 equ 1	; Will change to around 6
+ifndef MIDL_PASS
+SECURITY_MAX_SID_SIZE	equ \
+(sizeof(SID) - sizeof(DWORD) + (SID_MAX_SUB_AUTHORITIES * sizeof(DWORD)))
+endif ;; MIDL_PASS
 
-SID_NAME_USE			typedef DWORD
-PSID_NAME_USE			typedef ptr SID_NAME_USE
+SID_REVISION		equ 1	; Current revision level
+SID_MAX_SUB_AUTHORITIES equ 15
+SID_RECOMMENDED_SUB_AUTHORITIES equ 1	; Will change to around 6
 
-SidTypeUser			equ 1
-SidTypeGroup			equ 2
-SidTypeDomain			equ 3
-SidTypeAlias			equ 4
-SidTypeWellKnownGroup		equ 5
-SidTypeDeletedAccount		equ 6
-SidTypeInvalid			equ 7
-SidTypeUnknown			equ 8
-SidTypeComputer			equ 9
+SID_NAME_USE		typedef DWORD
+PSID_NAME_USE		typedef ptr SID_NAME_USE
 
-SID_AND_ATTRIBUTES STRUC
-Sid		PSID ?
-Attributes	DWORD ?
-SID_AND_ATTRIBUTES ENDS
+SidTypeUser		equ 1
+SidTypeGroup		equ 2
+SidTypeDomain		equ 3
+SidTypeAlias		equ 4
+SidTypeWellKnownGroup	equ 5
+SidTypeDeletedAccount	equ 6
+SidTypeInvalid		equ 7
+SidTypeUnknown		equ 8
+SidTypeComputer		equ 9
 
-PSID_AND_ATTRIBUTES		typedef ptr SID_AND_ATTRIBUTES
+SID_AND_ATTRIBUTES	STRUC
+ifdef MIDL_PASS
+Sid			PISID ?
+else ;; MIDL_PASS
+Sid			PSID ?
+endif ;; MIDL_PASS
+Attributes		dd ?
+SID_AND_ATTRIBUTES	ENDS
+PSID_AND_ATTRIBUTES	typedef ptr SID_AND_ATTRIBUTES
 
-SID_AND_ATTRIBUTES_ARRAY	typedef SID_AND_ATTRIBUTES
-PSID_AND_ATTRIBUTES_ARRAY	typedef PTR SID_AND_ATTRIBUTES_ARRAY
+SID_AND_ATTRIBUTES_ARRAY STRUC
+SID_AND_ATTRIBUTES ANYSIZE_ARRAY dup(<>)
+SID_AND_ATTRIBUTES_ARRAY ENDS
+;SID_AND_ATTRIBUTES_ARRAY  typedef SID_AND_ATTRIBUTES;[ANYSIZE_ARRAY]
+PSID_AND_ATTRIBUTES_ARRAY typedef PTR SID_AND_ATTRIBUTES_ARRAY
+
+SID_HASH_SIZE		equ 32
+SID_HASH_ENTRY		typedef ULONG_PTR
+PSID_HASH_ENTRY		typedef ptr ULONG_PTR
+
+SID_AND_ATTRIBUTES_HASH STRUC
+SidCount		dd ?
+SidAttr			PSID_AND_ATTRIBUTES ?
+_Hash			SID_HASH_ENTRY SID_HASH_SIZE dup(?)
+SID_AND_ATTRIBUTES_HASH ENDS
+PSID_AND_ATTRIBUTES_HASH typedef ptr SID_AND_ATTRIBUTES_HASH
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;									   ;;
@@ -1309,6 +5738,7 @@ SECURITY_WORLD_SID_AUTHORITY	  equ <{0,0,0,0,0,1}>
 SECURITY_LOCAL_SID_AUTHORITY	  equ <{0,0,0,0,0,2}>
 SECURITY_CREATOR_SID_AUTHORITY	  equ <{0,0,0,0,0,3}>
 SECURITY_NON_UNIQUE_AUTHORITY	  equ <{0,0,0,0,0,4}>
+SECURITY_RESOURCE_MANAGER_AUTHORITY equ <{0,0,0,0,0,9}>
 
 SECURITY_NULL_RID		  equ 0x00000000
 SECURITY_WORLD_RID		  equ 0x00000000
@@ -1316,35 +5746,57 @@ SECURITY_LOCAL_RID		  equ 0X00000000
 
 SECURITY_CREATOR_OWNER_RID	  equ 0x00000000
 SECURITY_CREATOR_GROUP_RID	  equ 0x00000001
+SECURITY_LOCAL_LOGON_RID	  equ 0x00000001
 
 SECURITY_CREATOR_OWNER_SERVER_RID equ 0x00000002
 SECURITY_CREATOR_GROUP_SERVER_RID equ 0x00000003
+SECURITY_CREATOR_OWNER_RIGHTS_RID equ 0x00000004
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;									   ;;
-;; NT well-known SIDs							   ;;
-;;									   ;;
-;;     NT Authority	    S-1-5					   ;;
-;;     Dialup		    S-1-5-1					   ;;
-;;									   ;;
-;;     Network		    S-1-5-2					   ;;
-;;     Batch		    S-1-5-3					   ;;
-;;     Interactive	    S-1-5-4					   ;;
-;;     Service		    S-1-5-6					   ;;
-;;     AnonymousLogon	    S-1-5-7	  (aka null logon session)	   ;;
-;;     Proxy		    S-1-5-8					   ;;
-;;     ServerLogon	    S-1-5-9	  (aka domain controller account)  ;;
-;;     Self		    S-1-5-10	  (self RID)			   ;;
-;;     Authenticated User    S-1-5-11	  (Authenticated user somewhere)   ;;
-;;     Restricted Code	    S-1-5-12	  (Running restricted code)	   ;;
-;;									   ;;
-;;     (Logon IDs)	    S-1-5-5-X-Y					   ;;
-;;									   ;;
-;;     (NT non-unique IDs)   S-1-5-0x15-...				   ;;
-;;									   ;;
-;;     (Built-in domain)	    s-1-5-0x20				   ;;
-;;									   ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;									     //
+;; NT well-known SIDs							     //
+;;									     //
+;;     NT Authority	       S-1-5					     //
+;;     Dialup		       S-1-5-1					     //
+;;									     //
+;;     Network		       S-1-5-2					     //
+;;     Batch		       S-1-5-3					     //
+;;     Interactive	       S-1-5-4					     //
+;;     (Logon IDs)	       S-1-5-5-X-Y				     //
+;;     Service		       S-1-5-6					     //
+;;     AnonymousLogon	       S-1-5-7	     (aka null logon session)	     //
+;;     Proxy		       S-1-5-8					     //
+;;     Enterprise DC (EDC)     S-1-5-9	     (aka domain controller account) //
+;;     Self		       S-1-5-10	     (self RID)			     //
+;;     Authenticated User      S-1-5-11	     (Authenticated user somewhere)  //
+;;     Restricted Code	       S-1-5-12	     (Running restricted code)	     //
+;;     Terminal Server	       S-1-5-13	     (Running on Terminal Server)    //
+;;     Remote Logon	       S-1-5-14	     (Remote Interactive Logon)	     //
+;;     This Organization       S-1-5-15					     //
+;;									     //
+;;     IUser		       S-1-5-17
+;;     Local System	       S-1-5-18					     //
+;;     Local Service	       S-1-5-19					     //
+;;     Network Service	       S-1-5-20					     //
+;;									     //
+;;     (NT non-unique IDs)     S-1-5-0x15-... (NT Domain Sids)		     //
+;;									     //
+;;     (Built-in domain)       S-1-5-0x20				     //
+;;									     //
+;;     (Security Package IDs)  S-1-5-0x40				     //
+;;     NTLM Authentication     S-1-5-0x40-10				     //
+;;     SChannel Authentication S-1-5-0x40-14				     //
+;;     Digest Authentication   S-1-5-0x40-21				     //
+;;									     //
+;;     Other Organization      S-1-5-1000    (>=1000 can not be filtered)    //
+;;									     //
+;;									     //
+;; NOTE: the relative identifier values (RIDs) determine which security	     //
+;;	 boundaries the SID is allowed to cross.  Before adding new RIDs,    //
+;;	 a determination needs to be made regarding which range they should  //
+;;	 be added to in order to ensure proper "SID filtering"		     //
+;;									     //
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 SECURITY_NT_AUTHORITY		equ <{0,0,0,0,0,5}>	;; ntifs
@@ -1353,6 +5805,8 @@ SECURITY_DIALUP_RID		equ 0x00000001
 SECURITY_NETWORK_RID		equ 0x00000002
 SECURITY_BATCH_RID		equ 0x00000003
 SECURITY_INTERACTIVE_RID	equ 0x00000004
+SECURITY_LOGON_IDS_RID		equ 0x00000005
+SECURITY_LOGON_IDS_RID_COUNT	equ 3
 SECURITY_SERVICE_RID		equ 0x00000006
 SECURITY_ANONYMOUS_LOGON_RID	equ 0x00000007
 SECURITY_PROXY_RID		equ 0x00000008
@@ -1361,15 +5815,55 @@ SECURITY_SERVER_LOGON_RID	equ SECURITY_ENTERPRISE_CONTROLLERS_RID
 SECURITY_PRINCIPAL_SELF_RID	equ 0x0000000A
 SECURITY_AUTHENTICATED_USER_RID equ 0x0000000B
 SECURITY_RESTRICTED_CODE_RID	equ 0x0000000C
-
-SECURITY_LOGON_IDS_RID		equ 0x00000005
-SECURITY_LOGON_IDS_RID_COUNT	equ 3
-
+SECURITY_TERMINAL_SERVER_RID	equ 0x0000000D
+SECURITY_REMOTE_LOGON_RID	equ 0x0000000E
+SECURITY_THIS_ORGANIZATION_RID	equ 0x0000000F
+SECURITY_IUSER_RID		equ 0x00000011
 SECURITY_LOCAL_SYSTEM_RID	equ 0x00000012
-
 SECURITY_NT_NON_UNIQUE		equ 0x00000015
-
+SECURITY_LOCAL_SERVICE_RID	equ 0x00000013
+SECURITY_NETWORK_SERVICE_RID	equ 0x00000014
+SECURITY_NT_NON_UNIQUE		equ 0x00000015
+SECURITY_NT_NON_UNIQUE_SUB_AUTH_COUNT equ 3
+SECURITY_ENTERPRISE_READONLY_CONTROLLERS_RID equ 0x00000016
 SECURITY_BUILTIN_DOMAIN_RID	equ 0x00000020
+SECURITY_WRITE_RESTRICTED_CODE_RID equ 0x00000021
+
+
+SECURITY_PACKAGE_BASE_RID	equ 0x00000040
+SECURITY_PACKAGE_RID_COUNT	equ 2
+SECURITY_PACKAGE_NTLM_RID	equ 0x0000000A
+SECURITY_PACKAGE_SCHANNEL_RID	equ 0x0000000E
+SECURITY_PACKAGE_DIGEST_RID	equ 0x00000015
+
+SECURITY_CRED_TYPE_BASE_RID	equ 0x00000041
+SECURITY_CRED_TYPE_RID_COUNT	equ 2
+SECURITY_CRED_TYPE_THIS_ORG_CERT_RID equ 0x00000001
+
+SECURITY_MIN_BASE_RID		equ 0x00000050
+SECURITY_SERVICE_ID_BASE_RID	equ 0x00000050
+SECURITY_SERVICE_ID_RID_COUNT	equ 6
+
+SECURITY_RESERVED_ID_BASE_RID	equ 0x00000051
+SECURITY_APPPOOL_ID_BASE_RID	equ 0x00000052
+SECURITY_APPPOOL_ID_RID_COUNT	equ 6
+
+SECURITY_VIRTUALSERVER_ID_BASE_RID equ 0x00000053
+SECURITY_VIRTUALSERVER_ID_RID_COUNT equ 6
+
+SECURITY_USERMODEDRIVERHOST_ID_BASE_RID equ 0x00000054
+SECURITY_USERMODEDRIVERHOST_ID_RID_COUNT equ 6
+
+SECURITY_CLOUD_INFRASTRUCTURE_SERVICES_ID_BASE_RID equ 0x00000055
+SECURITY_CLOUD_INFRASTRUCTURE_SERVICES_ID_RID_COUNT equ 6
+
+SECURITY_WMIHOST_ID_BASE_RID	equ 0x00000056
+SECURITY_WMIHOST_ID_RID_COUNT	equ 6
+
+SECURITY_TASK_ID_BASE_RID	equ 0x00000057
+SECURITY_NFS_ID_BASE_RID	equ 0x00000058
+SECURITY_COM_ID_BASE_RID	equ 0x00000059
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;									   ;;
@@ -1382,6 +5876,7 @@ SECURITY_BUILTIN_DOMAIN_RID	equ 0x00000020
 DOMAIN_USER_RID_ADMIN	       equ 0x000001F4
 DOMAIN_USER_RID_GUEST	       equ 0x000001F5
 DOMAIN_USER_RID_KRBTGT	       equ 0x000001F6
+DOMAIN_USER_RID_MAX	       equ 0x000003E7
 
 ;; well-known groups ...
 
@@ -1392,6 +5887,9 @@ DOMAIN_GROUP_RID_COMPUTERS     equ 0x00000203
 DOMAIN_GROUP_RID_CONTROLLERS   equ 0x00000204
 DOMAIN_GROUP_RID_CERT_ADMINS   equ 0x00000205
 DOMAIN_GROUP_RID_SCHEMA_ADMINS equ 0x00000206
+DOMAIN_GROUP_RID_ENTERPRISE_ADMINS equ 0x00000207
+DOMAIN_GROUP_RID_POLICY_ADMINS equ 0x00000208
+DOMAIN_GROUP_RID_READONLY_CONTROLLERS equ 0x00000209
 
 ;; well-known aliases ...
 
@@ -1399,22 +5897,151 @@ DOMAIN_ALIAS_RID_ADMINS	       equ 0x00000220
 DOMAIN_ALIAS_RID_USERS	       equ 0x00000221
 DOMAIN_ALIAS_RID_GUESTS	       equ 0x00000222
 DOMAIN_ALIAS_RID_POWER_USERS   equ 0x00000223
-
 DOMAIN_ALIAS_RID_ACCOUNT_OPS   equ 0x00000224
 DOMAIN_ALIAS_RID_SYSTEM_OPS    equ 0x00000225
 DOMAIN_ALIAS_RID_PRINT_OPS     equ 0x00000226
 DOMAIN_ALIAS_RID_BACKUP_OPS    equ 0x00000227
-
 DOMAIN_ALIAS_RID_REPLICATOR    equ 0x00000228
+
+DOMAIN_ALIAS_RID_RAS_SERVERS			equ 0x00000229
+DOMAIN_ALIAS_RID_PREW2KCOMPACCESS		equ 0x0000022A
+DOMAIN_ALIAS_RID_REMOTE_DESKTOP_USERS		equ 0x0000022B
+DOMAIN_ALIAS_RID_NETWORK_CONFIGURATION_OPS	equ 0x0000022C
+DOMAIN_ALIAS_RID_INCOMING_FOREST_TRUST_BUILDERS equ 0x0000022D
+
+DOMAIN_ALIAS_RID_MONITORING_USERS		equ 0x0000022E
+DOMAIN_ALIAS_RID_LOGGING_USERS			equ 0x0000022F
+DOMAIN_ALIAS_RID_AUTHORIZATIONACCESS		equ 0x00000230
+DOMAIN_ALIAS_RID_TS_LICENSE_SERVERS		equ 0x00000231
+DOMAIN_ALIAS_RID_DCOM_USERS			equ 0x00000232
+DOMAIN_ALIAS_RID_IUSERS				equ 0x00000238
+DOMAIN_ALIAS_RID_CRYPTO_OPERATORS		equ 0x00000239
+DOMAIN_ALIAS_RID_CACHEABLE_PRINCIPALS_GROUP	equ 0x0000023B
+DOMAIN_ALIAS_RID_NON_CACHEABLE_PRINCIPALS_GROUP equ 0x0000023C
+DOMAIN_ALIAS_RID_EVENT_LOG_READERS_GROUP	equ 0x0000023D
+DOMAIN_ALIAS_RID_CERTSVC_DCOM_ACCESS_GROUP	equ 0x0000023E
+
+SECURITY_MANDATORY_LABEL_AUTHORITY	    equ <{0,0,0,0,0,16}>
+SECURITY_MANDATORY_UNTRUSTED_RID	    equ 0x00000000
+SECURITY_MANDATORY_LOW_RID		    equ 0x00001000
+SECURITY_MANDATORY_MEDIUM_RID		    equ 0x00002000
+SECURITY_MANDATORY_MEDIUM_PLUS_RID	    equ (SECURITY_MANDATORY_MEDIUM_RID + 0x100)
+SECURITY_MANDATORY_HIGH_RID		    equ 0x00003000
+SECURITY_MANDATORY_SYSTEM_RID		    equ 0x00004000
+SECURITY_MANDATORY_PROTECTED_PROCESS_RID    equ 0x00005000
+
+;;
+;; SECURITY_MANDATORY_MAXIMUM_USER_RID is the highest RID that
+;; can be set by a usermode caller.
+;;
+
+SECURITY_MANDATORY_MAXIMUM_USER_RID equ SECURITY_MANDATORY_SYSTEM_RID
+
+MANDATORY_LEVEL_TO_MANDATORY_RID macro IL
+	exitm<(IL * 0x1000)>
+	endm
+
+;;
+;; Well known SID definitions for lookup.
+;;
+
+WELL_KNOWN_SID_TYPE typedef sdword ; enum {
+
+    WinNullSid					equ 0
+    WinWorldSid					equ 1
+    WinLocalSid					equ 2
+    WinCreatorOwnerSid				equ 3
+    WinCreatorGroupSid				equ 4
+    WinCreatorOwnerServerSid			equ 5
+    WinCreatorGroupServerSid			equ 6
+    WinNtAuthoritySid				equ 7
+    WinDialupSid				equ 8
+    WinNetworkSid				equ 9
+    WinBatchSid					equ 10
+    WinInteractiveSid				equ 11
+    WinServiceSid				equ 12
+    WinAnonymousSid				equ 13
+    WinProxySid					equ 14
+    WinEnterpriseControllersSid			equ 15
+    WinSelfSid					equ 16
+    WinAuthenticatedUserSid			equ 17
+    WinRestrictedCodeSid			equ 18
+    WinTerminalServerSid			equ 19
+    WinRemoteLogonIdSid				equ 20
+    WinLogonIdsSid				equ 21
+    WinLocalSystemSid				equ 22
+    WinLocalServiceSid				equ 23
+    WinNetworkServiceSid			equ 24
+    WinBuiltinDomainSid				equ 25
+    WinBuiltinAdministratorsSid			equ 26
+    WinBuiltinUsersSid				equ 27
+    WinBuiltinGuestsSid				equ 28
+    WinBuiltinPowerUsersSid			equ 29
+    WinBuiltinAccountOperatorsSid		equ 30
+    WinBuiltinSystemOperatorsSid		equ 31
+    WinBuiltinPrintOperatorsSid			equ 32
+    WinBuiltinBackupOperatorsSid		equ 33
+    WinBuiltinReplicatorSid			equ 34
+    WinBuiltinPreWindows2000CompatibleAccessSid equ 35
+    WinBuiltinRemoteDesktopUsersSid		equ 36
+    WinBuiltinNetworkConfigurationOperatorsSid	equ 37
+    WinAccountAdministratorSid			equ 38
+    WinAccountGuestSid				equ 39
+    WinAccountKrbtgtSid				equ 40
+    WinAccountDomainAdminsSid			equ 41
+    WinAccountDomainUsersSid			equ 42
+    WinAccountDomainGuestsSid			equ 43
+    WinAccountComputersSid			equ 44
+    WinAccountControllersSid			equ 45
+    WinAccountCertAdminsSid			equ 46
+    WinAccountSchemaAdminsSid			equ 47
+    WinAccountEnterpriseAdminsSid		equ 48
+    WinAccountPolicyAdminsSid			equ 49
+    WinAccountRasAndIasServersSid		equ 50
+    WinNTLMAuthenticationSid			equ 51
+    WinDigestAuthenticationSid			equ 52
+    WinSChannelAuthenticationSid		equ 53
+    WinThisOrganizationSid			equ 54
+    WinOtherOrganizationSid			equ 55
+    WinBuiltinIncomingForestTrustBuildersSid	equ 56
+    WinBuiltinPerfMonitoringUsersSid		equ 57
+    WinBuiltinPerfLoggingUsersSid		equ 58
+    WinBuiltinAuthorizationAccessSid		equ 59
+    WinBuiltinTerminalServerLicenseServersSid	equ 60
+    WinBuiltinDCOMUsersSid			equ 61
+    WinBuiltinIUsersSid				equ 62
+    WinIUserSid					equ 63
+    WinBuiltinCryptoOperatorsSid		equ 64
+    WinUntrustedLabelSid			equ 65
+    WinLowLabelSid				equ 66
+    WinMediumLabelSid				equ 67
+    WinHighLabelSid				equ 68
+    WinSystemLabelSid				equ 69
+    WinWriteRestrictedCodeSid			equ 70
+    WinCreatorOwnerRightsSid			equ 71
+    WinCacheablePrincipalsGroupSid		equ 72
+    WinNonCacheablePrincipalsGroupSid		equ 73
+    WinEnterpriseReadonlyControllersSid		equ 74
+    WinAccountReadonlyControllersSid		equ 75
+    WinBuiltinEventLogReadersGroup		equ 76
+    WinNewEnterpriseReadonlyControllersSid	equ 77
+    WinBuiltinCertSvcDComAccessGroup		equ 78
+    WinMediumPlusLabelSid			equ 79
+    WinLocalLogonSid				equ 80
+    WinConsoleLogonSid				equ 81
+    WinThisOrganizationCertificateSid		equ 82
 
 
 ;;
 ;; Allocate the System Luid.  The first 1000 LUIDs are reserved.
-;; Use #999 here (0x3E7 = 999)
+;; Use #999 here (0x3e7 = 999)
 ;;
 
 SYSTEM_LUID			equ <{ 0x3E7, 0x0 }>
 ANONYMOUS_LOGON_LUID		equ <{ 0x3e6, 0x0 }>
+LOCALSERVICE_LUID		equ <{ 0x3e5, 0x0 }>
+NETWORKSERVICE_LUID		equ <{ 0x3e4, 0x0 }>
+IUSER_LUID			equ <{ 0x3e3, 0x0 }>
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;								      ;;
@@ -1431,7 +6058,21 @@ SE_GROUP_ENABLED_BY_DEFAULT	equ 0x00000002
 SE_GROUP_ENABLED		equ 0x00000004
 SE_GROUP_OWNER			equ 0x00000008
 SE_GROUP_USE_FOR_DENY_ONLY	equ 0x00000010
+
+SE_GROUP_INTEGRITY		equ 0x00000020
+SE_GROUP_INTEGRITY_ENABLED	equ 0x00000040
 SE_GROUP_LOGON_ID		equ 0xC0000000
+SE_GROUP_RESOURCE		equ 0x20000000
+
+SE_GROUP_VALID_ATTRIBUTES	equ SE_GROUP_MANDATORY		OR \
+				    SE_GROUP_ENABLED_BY_DEFAULT OR \
+				    SE_GROUP_ENABLED		OR \
+				    SE_GROUP_OWNER		OR \
+				    SE_GROUP_USE_FOR_DENY_ONLY	OR \
+				    SE_GROUP_LOGON_ID		OR \
+				    SE_GROUP_RESOURCE		OR \
+				    SE_GROUP_INTEGRITY		OR \
+				    SE_GROUP_INTEGRITY_ENABLED
 
 ;;
 ;; User attributes
@@ -1474,21 +6115,20 @@ ACL_REVISION_DS	 equ 4
 ;; This is the history of ACL revisions. Add a new one whenever
 ;; ACL_REVISION is updated
 
-ACL_REVISION1	equ 1
-MIN_ACL_REVISION equ ACL_REVISION2
-ACL_REVISION2	equ 2
-ACL_REVISION3	equ 3
-ACL_REVISION4	equ 4
-MAX_ACL_REVISION equ ACL_REVISION4
+ACL_REVISION1		equ 1
+MIN_ACL_REVISION	equ ACL_REVISION2
+ACL_REVISION2		equ 2
+ACL_REVISION3		equ 3
+ACL_REVISION4		equ 4
+MAX_ACL_REVISION	equ ACL_REVISION4
 
 ACL		STRUC
-AclRevision	BYTE ?
-Sbz1		BYTE ?
-AclSize		WORD ?
-AceCount	WORD ?
-Sbz2		WORD ?
+AclRevision	db ?
+Sbz1		db ?
+AclSize		dw ?
+AceCount	dw ?
+Sbz2		dw ?
 ACL		ENDS
-
 PACL		typedef PTR ACL
 
 ;;
@@ -1510,11 +6150,10 @@ PACL		typedef PTR ACL
 ;;  AceFlags are the Ace flags for audit and inheritance, defined shortly.
 
 ACE_HEADER	STRUC
-AceType		BYTE ?
-AceFlags	BYTE ?
-AceSize		WORD ?
+AceType		db ?
+AceFlags	db ?
+AceSize		dw ?
 ACE_HEADER	ENDS
-
 PACE_HEADER	typedef PTR ACE_HEADER
 
 ;;
@@ -1541,6 +6180,18 @@ ACCESS_MAX_MS_OBJECT_ACE_TYPE		equ 0x8
 
 ACCESS_MAX_MS_V4_ACE_TYPE		equ 0x8
 ACCESS_MAX_MS_ACE_TYPE			equ 0x8
+
+ACCESS_ALLOWED_CALLBACK_ACE_TYPE	equ 0x9
+ACCESS_DENIED_CALLBACK_ACE_TYPE		equ 0xA
+ACCESS_ALLOWED_CALLBACK_OBJECT_ACE_TYPE equ 0xB
+ACCESS_DENIED_CALLBACK_OBJECT_ACE_TYPE	equ 0xC
+SYSTEM_AUDIT_CALLBACK_ACE_TYPE		equ 0xD
+SYSTEM_ALARM_CALLBACK_ACE_TYPE		equ 0xE
+SYSTEM_AUDIT_CALLBACK_OBJECT_ACE_TYPE	equ 0xF
+SYSTEM_ALARM_CALLBACK_OBJECT_ACE_TYPE	equ 0x10
+
+SYSTEM_MANDATORY_LABEL_ACE_TYPE		equ 0x11
+ACCESS_MAX_MS_V5_ACE_TYPE		equ 0x11
 
 ;;
 ;;  The following are the inherit flags that go into the AceFlags field
@@ -1608,73 +6259,169 @@ FAILED_ACCESS_ACE_FLAG		 equ 0x80
 ;;  which structure is appropriate to use for casting.
 
 
-ACCESS_ALLOWED_ACE STRUC
-Header		ACE_HEADER <>
-_Mask		ACCESS_MASK ?
-SidStart	DWORD ?
-ACCESS_ALLOWED_ACE ENDS
-PACCESS_ALLOWED_ACE typedef PTR ACCESS_ALLOWED_ACE
+ACCESS_ALLOWED_ACE	STRUC
+Header			ACE_HEADER <>
+_Mask			ACCESS_MASK ?
+SidStart		dd ?
+ACCESS_ALLOWED_ACE	ENDS
+PACCESS_ALLOWED_ACE	typedef PTR ACCESS_ALLOWED_ACE
 
-ACCESS_DENIED_ACE STRUC
-Header		ACE_HEADER <>
-_Mask		ACCESS_MASK ?
-SidStart	DWORD ?
-ACCESS_DENIED_ACE ENDS
-PACCESS_DENIED_ACE typedef PTR ACCESS_DENIED_ACE
+ACCESS_DENIED_ACE	STRUC
+Header			ACE_HEADER <>
+_Mask			ACCESS_MASK ?
+SidStart		dd ?
+ACCESS_DENIED_ACE	ENDS
+PACCESS_DENIED_ACE	typedef PTR ACCESS_DENIED_ACE
 
-SYSTEM_AUDIT_ACE STRUC
-Header		ACE_HEADER <>
-_Mask		ACCESS_MASK ?
-SidStart	DWORD ?
-SYSTEM_AUDIT_ACE ENDS
-PSYSTEM_AUDIT_ACE typedef PTR SYSTEM_AUDIT_ACE
+SYSTEM_AUDIT_ACE	STRUC
+Header			ACE_HEADER <>
+_Mask			ACCESS_MASK ?
+SidStart		dd ?
+SYSTEM_AUDIT_ACE	ENDS
+PSYSTEM_AUDIT_ACE	typedef PTR SYSTEM_AUDIT_ACE
 
-SYSTEM_ALARM_ACE STRUC
-Header		ACE_HEADER <>
-_Mask		ACCESS_MASK ?
-SidStart	DWORD ?
-SYSTEM_ALARM_ACE ENDS
-PSYSTEM_ALARM_ACE typedef PTR SYSTEM_ALARM_ACE
+SYSTEM_ALARM_ACE	STRUC
+Header			ACE_HEADER <>
+_Mask			ACCESS_MASK ?
+SidStart		dd ?
+SYSTEM_ALARM_ACE	ENDS
+PSYSTEM_ALARM_ACE	typedef PTR SYSTEM_ALARM_ACE
+
+SYSTEM_MANDATORY_LABEL_ACE STRUC
+Header			ACE_HEADER <>
+_Mask			ACCESS_MASK ?
+SidStart		dd ?
+SYSTEM_MANDATORY_LABEL_ACE ENDS
+PSYSTEM_MANDATORY_LABEL_ACE typedef ptr SYSTEM_MANDATORY_LABEL_ACE
+
+SYSTEM_MANDATORY_LABEL_NO_WRITE_UP   equ 0x1
+SYSTEM_MANDATORY_LABEL_NO_READ_UP    equ 0x2
+SYSTEM_MANDATORY_LABEL_NO_EXECUTE_UP equ 0x4
+
+SYSTEM_MANDATORY_LABEL_VALID_MASK equ SYSTEM_MANDATORY_LABEL_NO_WRITE_UP OR \
+				      SYSTEM_MANDATORY_LABEL_NO_READ_UP	 OR \
+				      SYSTEM_MANDATORY_LABEL_NO_EXECUTE_UP
 
 ACCESS_ALLOWED_OBJECT_ACE STRUC
-Header		ACE_HEADER <>
-_Mask		ACCESS_MASK ?
-Flags		DWORD ?
-ObjectType	GUID <>
-InheritedObjectType GUID <>
-SidStart	DWORD ?
+Header			ACE_HEADER <>
+_Mask			ACCESS_MASK ?
+Flags			dd ?
+ObjectType		GUID <>
+InheritedObjectType	GUID <>
+SidStart		dd ?
 ACCESS_ALLOWED_OBJECT_ACE ENDS
 PACCESS_ALLOWED_OBJECT_ACE TYPEDEF PTR ACCESS_ALLOWED_OBJECT_ACE
 
 ACCESS_DENIED_OBJECT_ACE STRUC
-Header		ACE_HEADER <>
-_Mask		ACCESS_MASK ?
-Flags		DWORD ?
-ObjectType	GUID <>
-InheritedObjectType GUID <>
-SidStart	DWORD ?
+Header			ACE_HEADER <>
+_Mask			ACCESS_MASK ?
+Flags			dd ?
+ObjectType		GUID <>
+InheritedObjectType	GUID <>
+SidStart		dd ?
 ACCESS_DENIED_OBJECT_ACE ENDS
 PACCESS_DENIED_OBJECT_ACE TYPEDEF PTR ACCESS_DENIED_OBJECT_ACE
 
 SYSTEM_AUDIT_OBJECT_ACE STRUC
-Header		ACE_HEADER <>
-_Mask		ACCESS_MASK ?
-Flags		DWORD ?
-ObjectType	GUID <>
-InheritedObjectType GUID <>
-SidStart	DWORD ?
+Header			ACE_HEADER <>
+_Mask			ACCESS_MASK ?
+Flags			dd ?
+ObjectType		GUID <>
+InheritedObjectType	GUID <>
+SidStart		dd ?
 SYSTEM_AUDIT_OBJECT_ACE ENDS
 PSYSTEM_AUDIT_OBJECT_ACE TYPEDEF PTR SYSTEM_AUDIT_OBJECT_ACE
 
 SYSTEM_ALARM_OBJECT_ACE STRUC
-Header		ACE_HEADER <>
-_Mask		ACCESS_MASK ?
-Flags		DWORD ?
-ObjectType	GUID <>
-InheritedObjectType GUID <>
-SidStart	DWORD ?
+Header			ACE_HEADER <>
+_Mask			ACCESS_MASK ?
+Flags			dd ?
+ObjectType		GUID <>
+InheritedObjectType	GUID <>
+SidStart		dd ?
 SYSTEM_ALARM_OBJECT_ACE ENDS
 PSYSTEM_ALARM_OBJECT_ACE TYPEDEF PTR SYSTEM_ALARM_OBJECT_ACE
+
+;;
+;; Callback ace support in post Win2000.
+;; Resource managers can put their own data after Sidstart + Length of the sid
+;;
+
+ACCESS_ALLOWED_CALLBACK_ACE STRUC
+Header			ACE_HEADER <>
+_Mask			ACCESS_MASK ?
+SidStart		dd ?
+;; Opaque resouce manager specific data
+ACCESS_ALLOWED_CALLBACK_ACE ENDS
+PACCESS_ALLOWED_CALLBACK_ACE typedef ptr ACCESS_ALLOWED_CALLBACK_ACE
+
+ACCESS_DENIED_CALLBACK_ACE STRUC
+Header			ACE_HEADER <>
+_Mask			ACCESS_MASK ?
+SidStart		dd ?
+;; Opaque resouce manager specific data
+ACCESS_DENIED_CALLBACK_ACE ENDS
+PACCESS_DENIED_CALLBACK_ACE typedef ptr ACCESS_DENIED_CALLBACK_ACE
+
+SYSTEM_AUDIT_CALLBACK_ACE STRUC
+Header			ACE_HEADER <>
+_Mask			ACCESS_MASK ?
+SidStart		dd ?
+;; Opaque resouce manager specific data
+SYSTEM_AUDIT_CALLBACK_ACE ENDS
+PSYSTEM_AUDIT_CALLBACK_ACE typedef ptr SYSTEM_AUDIT_CALLBACK_ACE
+
+SYSTEM_ALARM_CALLBACK_ACE STRUC
+Header			ACE_HEADER <>
+_Mask			ACCESS_MASK ?
+SidStart		dd ?
+;; Opaque resouce manager specific data
+SYSTEM_ALARM_CALLBACK_ACE ENDS
+PSYSTEM_ALARM_CALLBACK_ACE typedef ptr SYSTEM_ALARM_CALLBACK_ACE
+
+ACCESS_ALLOWED_CALLBACK_OBJECT_ACE STRUC
+Header			ACE_HEADER <>
+_Mask			ACCESS_MASK ?
+Flags			dd ?
+ObjectType		GUID <>
+InheritedObjectType	GUID <>
+SidStart		dd ?
+;; Opaque resouce manager specific data
+ACCESS_ALLOWED_CALLBACK_OBJECT_ACE ENDS
+PACCESS_ALLOWED_CALLBACK_OBJECT_ACE typedef ptr ACCESS_ALLOWED_CALLBACK_OBJECT_ACE
+
+ACCESS_DENIED_CALLBACK_OBJECT_ACE STRUC
+Header			ACE_HEADER <>
+_Mask			ACCESS_MASK ?
+Flags			dd ?
+ObjectType		GUID <>
+InheritedObjectType	GUID <>
+SidStart		dd ?
+;; Opaque resouce manager specific data
+ACCESS_DENIED_CALLBACK_OBJECT_ACE ENDS
+PACCESS_DENIED_CALLBACK_OBJECT_ACE typedef ptr ACCESS_DENIED_CALLBACK_OBJECT_ACE
+
+SYSTEM_AUDIT_CALLBACK_OBJECT_ACE STRUC
+Header			ACE_HEADER <>
+_Mask			ACCESS_MASK ?
+Flags			dd ?
+ObjectType		GUID <>
+InheritedObjectType	GUID <>
+SidStart		dd ?
+;; Opaque resouce manager specific data
+SYSTEM_AUDIT_CALLBACK_OBJECT_ACE ENDS
+PSYSTEM_AUDIT_CALLBACK_OBJECT_ACE typedef ptr SYSTEM_AUDIT_CALLBACK_OBJECT_ACE
+
+SYSTEM_ALARM_CALLBACK_OBJECT_ACE STRUC
+Header			ACE_HEADER <>
+_Mask			ACCESS_MASK ?
+Flags			dd ?
+ObjectType		GUID <>
+InheritedObjectType	GUID <>
+SidStart		dd ?
+;; Opaque resouce manager specific data
+SYSTEM_ALARM_CALLBACK_OBJECT_ACE ENDS
+PSYSTEM_ALARM_CALLBACK_OBJECT_ACE typedef ptr SYSTEM_ALARM_CALLBACK_OBJECT_ACE
 
 ;;
 ;; Currently define Flags for "OBJECT" ACE types.
@@ -1689,7 +6436,7 @@ ACE_INHERITED_OBJECT_TYPE_PRESENT equ 0x2
 ;;  the user.
 ;;
 
-ACL_INFORMATION_CLASS	typedef DWORD
+ACL_INFORMATION_CLASS	typedef SDWORD
 
 AclRevisionInformation	equ 1
 AclSizeInformation	equ 2
@@ -1748,6 +6495,7 @@ SE_DACL_AUTO_INHERITED		 equ 0x0400
 SE_SACL_AUTO_INHERITED		 equ 0x0800
 SE_DACL_PROTECTED		 equ 0x1000
 SE_SACL_PROTECTED		 equ 0x2000
+SE_RM_CONTROL_VALID		 equ 0x4000
 SE_SELF_RELATIVE		 equ 0x8000
 
 ;;
@@ -1824,24 +6572,24 @@ SE_SELF_RELATIVE		 equ 0x8000
 ;;
 
 SECURITY_DESCRIPTOR_RELATIVE STRUC
-Revision		BYTE ?
-Sbz1			BYTE ?
+Revision		db ?
+Sbz1			db ?
 Control			SECURITY_DESCRIPTOR_CONTROL ?
-Owner			DWORD ?
-_Group			DWORD ?
-Sacl			DWORD ?
-Dacl			DWORD ?
+Owner			dd ?
+_Group			dd ?
+Sacl			dd ?
+Dacl			dd ?
 SECURITY_DESCRIPTOR_RELATIVE ENDS
 PISECURITY_DESCRIPTOR_RELATIVE typedef ptr SECURITY_DESCRIPTOR_RELATIVE
 
 SECURITY_DESCRIPTOR	STRUC
-Revision		BYTE ?
-Sbz1			BYTE ?
+Revision		db ?
+Sbz1			db ?
 Control			SECURITY_DESCRIPTOR_CONTROL ?
-Owner			DWORD ?
-_Group			DWORD ?
-Sacl			DWORD ?
-Dacl			DWORD ?
+Owner			dd ?
+_Group			dd ?
+Sacl			dd ?
+Dacl			dd ?
 SECURITY_DESCRIPTOR	ENDS
 PISECURITY_DESCRIPTOR	typedef ptr SECURITY_DESCRIPTOR
 
@@ -1894,8 +6642,8 @@ PISECURITY_DESCRIPTOR	typedef ptr SECURITY_DESCRIPTOR
 
 LPGUID			typedef ptr GUID
 OBJECT_TYPE_LIST	STRUC
-Level			WORD ?
-Sbz			WORD ?
+Level			dw ?
+Sbz			dw ?
 ObjectType		LPGUID ?
 OBJECT_TYPE_LIST	ENDS
 POBJECT_TYPE_LIST	typedef ptr OBJECT_TYPE_LIST
@@ -1941,7 +6689,12 @@ AUDIT_EVENT_TYPE			typedef sdword
 
 SE_PRIVILEGE_ENABLED_BY_DEFAULT equ 0x00000001
 SE_PRIVILEGE_ENABLED		equ 0x00000002
+SE_PRIVILEGE_REMOVED		equ 0X00000004
 SE_PRIVILEGE_USED_FOR_ACCESS	equ 0x80000000
+SE_PRIVILEGE_VALID_ATTRIBUTES	equ SE_PRIVILEGE_ENABLED_BY_DEFAULT OR \
+				    SE_PRIVILEGE_ENABLED	    OR \
+				    SE_PRIVILEGE_REMOVED	    OR \
+				    SE_PRIVILEGE_USED_FOR_ACCESS
 
 ;;
 ;; Privilege Set Control flags
@@ -1959,12 +6712,72 @@ PRIVILEGE_SET_ALL_NECESSARY    equ 1
 ;;
 
 PRIVILEGE_SET	STRUC
-PrivilegeCount	DWORD ?
-Control		DWORD ?
+PrivilegeCount	dd ?
+Control		dd ?
 Privilege	LUID_AND_ATTRIBUTES ANYSIZE_ARRAY dup(<?>)
 PRIVILEGE_SET	ENDS
 PPRIVILEGE_SET	typedef ptr PRIVILEGE_SET
 
+ACCESS_REASON_TYPE_MASK		equ 0xffff0000
+ACCESS_REASON_DATA_MASK		equ 0x0000ffff
+
+ACCESS_REASON_TYPE		typedef sdword ; enum {
+
+    AccessReasonNone		equ 0x00000000	;; Indicate no reason for the bit. The bit may not be checked, or just no known reason.
+    AccessReasonAllowedAce	equ 0x00010000	;; Granted a permission.
+    AccessReasonDeniedAce	equ 0x00020000	;; Denied a permission.
+    AccessReasonAllowedParentAce equ 0x00030000 ;; Granted a permission from parent ACE
+    AccessReasonDeniedParentAce equ 0x00040000	;; Denied a permission from parent ACE
+    AccessReasonMissingPrivilege equ 0x00100000
+    AccessReasonFromPrivilege	equ 0x00200000
+    AccessReasonIntegrityLevel	equ 0x00300000
+    AccessReasonOwnership	equ 0x00400000
+    AccessReasonNullDacl	equ 0x00500000
+    AccessReasonEmptyDacl	equ 0x00600000
+    AccessReasonNoSD		equ 0x00700000
+    AccessReasonNoGrant		equ 0x00800000	;; this access bit is not granted by any ACE.
+
+ACCESS_REASON		typedef DWORD
+ACCESS_REASONS		STRUC
+Data			ACCESS_REASON 32 dup(?)
+ACCESS_REASONS		ENDS
+PACCESS_REASONS		typedef ptr ACCESS_REASONS
+
+
+SE_SECURITY_DESCRIPTOR_FLAG_NO_OWNER_ACE    equ 0x00000001
+SE_SECURITY_DESCRIPTOR_FLAG_NO_LABEL_ACE    equ 0x00000002
+SE_SECURITY_DESCRIPTOR_VALID_FLAGS	    equ 0x00000003
+
+SE_SECURITY_DESCRIPTOR	STRUC
+_Size			dd ?
+Flags			dd ?
+SecurityDescriptor	PSECURITY_DESCRIPTOR ?
+SE_SECURITY_DESCRIPTOR	ENDS
+PSE_SECURITY_DESCRIPTOR typedef ptr SE_SECURITY_DESCRIPTOR
+
+SE_ACCESS_REQUEST	STRUC
+_Size			dd ?
+SecurityDescriptor	PSECURITY_DESCRIPTOR ?
+DesiredAccess		ACCESS_MASK ?
+PreviouslyGrantedAccess ACCESS_MASK ?
+PrincipalSelfSid	PSID ?	; Need to watch how this field affects the cache.
+GenericMapping		PGENERIC_MAPPING ?
+ObjectTypeListCount	dd ?
+ObjectTypeList		POBJECT_TYPE_LIST ?
+SE_ACCESS_REQUEST	ENDS
+PSE_ACCESS_REQUEST	typedef ptr SE_ACCESS_REQUEST
+
+SE_ACCESS_REPLY		STRUC
+_Size			dd ?
+ResultListCount		dd ?	; Indicate the array size of GrantedAccess and
+				; AccessStatus, it only can be either 1 or
+				; ObjectTypeListCount.
+GrantedAccess		PACCESS_MASK ?
+AccessStatus		PDWORD ?
+AccessReason		PACCESS_REASONS ?
+Privileges		PPRIVILEGE_SET ?
+SE_ACCESS_REPLY		ENDS
+PSE_ACCESS_REPLY	typedef ptr SE_ACCESS_REPLY
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;								     ;;
@@ -1996,6 +6809,17 @@ SE_AUDIT_NAME			equ <TEXT("SeAuditPrivilege")>
 SE_SYSTEM_ENVIRONMENT_NAME	equ <TEXT("SeSystemEnvironmentPrivilege")>
 SE_CHANGE_NOTIFY_NAME		equ <TEXT("SeChangeNotifyPrivilege")>
 SE_REMOTE_SHUTDOWN_NAME		equ <TEXT("SeRemoteShutdownPrivilege")>
+SE_UNDOCK_NAME			equ <TEXT("SeUndockPrivilege")>
+SE_SYNC_AGENT_NAME		equ <TEXT("SeSyncAgentPrivilege")>
+SE_ENABLE_DELEGATION_NAME	equ <TEXT("SeEnableDelegationPrivilege")>
+SE_MANAGE_VOLUME_NAME		equ <TEXT("SeManageVolumePrivilege")>
+SE_IMPERSONATE_NAME		equ <TEXT("SeImpersonatePrivilege")>
+SE_CREATE_GLOBAL_NAME		equ <TEXT("SeCreateGlobalPrivilege")>
+SE_TRUSTED_CREDMAN_ACCESS_NAME	equ <TEXT("SeTrustedCredManAccessPrivilege")>
+SE_RELABEL_NAME			equ <TEXT("SeRelabelPrivilege")>
+SE_INC_WORKING_SET_NAME		equ <TEXT("SeIncreaseWorkingSetPrivilege")>
+SE_TIME_ZONE_NAME		equ <TEXT("SeTimeZonePrivilege")>
+SE_CREATE_SYMBOLIC_LINK_NAME	equ <TEXT("SeCreateSymbolicLinkPrivilege")>
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;								 ;;
@@ -2016,11 +6840,16 @@ SecurityIdentification	equ 1
 SecurityImpersonation	equ 2
 SecurityDelegation	equ 3
 
+SECURITY_IMPERSONATION_LEVEL	typedef sdword ; enum
+PSECURITY_IMPERSONATION_LEVEL	typedef ptr SECURITY_IMPERSONATION_LEVEL
+
 SECURITY_MAX_IMPERSONATION_LEVEL equ SecurityDelegation
+SECURITY_MIN_IMPERSONATION_LEVEL equ SecurityAnonymous
+DEFAULT_IMPERSONATION_LEVEL	 equ SecurityImpersonation
+VALID_IMPERSONATION_LEVEL macro L
+	exitm<((L GE SECURITY_MIN_IMPERSONATION_LEVEL) AND (L LE SECURITY_MAX_IMPERSONATION_LEVEL))>
+	endm
 
-DEFAULT_IMPERSONATION_LEVEL equ SecurityImpersonation
-
-SECURITY_IMPERSONATION_LEVEL typedef dword
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;								 ;;
@@ -2042,7 +6871,7 @@ TOKEN_ADJUST_GROUPS	equ 0x0040
 TOKEN_ADJUST_DEFAULT	equ 0x0080
 TOKEN_ADJUST_SESSIONID	equ 0x0100
 
-TOKEN_ALL_ACCESS equ STANDARD_RIGHTS_REQUIRED  or \
+TOKEN_ALL_ACCESS_P equ STANDARD_RIGHTS_REQUIRED	 or \
 		     TOKEN_ASSIGN_PRIMARY      or \
 		     TOKEN_DUPLICATE	       or \
 		     TOKEN_IMPERSONATE	       or \
@@ -2050,8 +6879,12 @@ TOKEN_ALL_ACCESS equ STANDARD_RIGHTS_REQUIRED  or \
 		     TOKEN_QUERY_SOURCE	       or \
 		     TOKEN_ADJUST_PRIVILEGES   or \
 		     TOKEN_ADJUST_GROUPS       or \
-		     TOKEN_ADJUST_SESSIONID    or \
 		     TOKEN_ADJUST_DEFAULT
+if(_WIN32_WINNT GT 0x0400)
+TOKEN_ALL_ACCESS equ TOKEN_ALL_ACCESS_P OR TOKEN_ADJUST_SESSIONID
+else
+TOKEN_ALL_ACCESS equ TOKEN_ALL_ACCESS_P
+endif
 
 TOKEN_READ	equ STANDARD_RIGHTS_READ or TOKEN_QUERY
 TOKEN_WRITE	equ STANDARD_RIGHTS_WRITE   or \
@@ -2071,10 +6904,18 @@ TOKEN_TYPE	typedef DWORD
     TokenPrimary		equ 1
     TokenImpersonation		equ 2
 
+    TOKEN_ELEVATION_TYPE	typedef dword
+    PTOKEN_ELEVATION_TYPE	typedef ptr TOKEN_ELEVATION_TYPE
+
+    TokenElevationTypeDefault	equ 1
+    TokenElevationTypeFull	equ 2
+    TokenElevationTypeLimited	equ 3
+
 ;;
 ;; Token Information Classes.
 ;;
     TOKEN_INFORMATION_CLASS	typedef dword
+    PTOKEN_INFORMATION_CLASS	typedef ptr TOKEN_INFORMATION_CLASS
 
     TokenUser			equ 1
     TokenGroups			equ 2
@@ -2088,7 +6929,23 @@ TOKEN_TYPE	typedef DWORD
     TokenStatistics		equ 10
     TokenRestrictedSids		equ 11
     TokenSessionId		equ 12
-
+    TokenGroupsAndPrivileges	equ 13
+    TokenSessionReference	equ 14
+    TokenSandBoxInert		equ 15
+    TokenAuditPolicy		equ 16
+    TokenOrigin			equ 17
+    TokenElevationType		equ 18
+    TokenLinkedToken		equ 19
+    TokenElevation		equ 20
+    TokenHasRestrictions	equ 21
+    TokenAccessInformation	equ 22
+    TokenVirtualizationAllowed	equ 23
+    TokenVirtualizationEnabled	equ 24
+    TokenIntegrityLevel		equ 25
+    TokenUIAccess		equ 26
+    TokenMandatoryPolicy	equ 27
+    TokenLogonSid		equ 28
+    MaxTokenInfoClass		equ 29 ;; MaxTokenInfoClass should always be the last enum
 
 ;;
 ;; Token information class structures
@@ -2132,6 +6989,68 @@ DefaultDacl		PACL ?
 TOKEN_DEFAULT_DACL	ENDS
 PTOKEN_DEFAULT_DACL	typedef ptr TOKEN_DEFAULT_DACL
 
+TOKEN_GROUPS_AND_PRIVILEGES STRUC
+SidCount		dd ?
+SidLength		dd ?
+Sids			PSID_AND_ATTRIBUTES ?
+RestrictedSidCount	dd ?
+RestrictedSidLength	dd ?
+RestrictedSids		PSID_AND_ATTRIBUTES ?
+PrivilegeCount		dd ?
+PrivilegeLength		dd ?
+Privileges		PLUID_AND_ATTRIBUTES ?
+AuthenticationId	LUID <>
+TOKEN_GROUPS_AND_PRIVILEGES ENDS
+PTOKEN_GROUPS_AND_PRIVILEGES typedef ptr TOKEN_GROUPS_AND_PRIVILEGES
+
+TOKEN_LINKED_TOKEN	STRUC
+LinkedToken		HANDLE ?
+TOKEN_LINKED_TOKEN	ENDS
+PTOKEN_LINKED_TOKEN	typedef ptr TOKEN_LINKED_TOKEN
+
+TOKEN_ELEVATION		STRUC
+TokenIsElevated		dd ?
+TOKEN_ELEVATION		ENDS
+PTOKEN_ELEVATION	typedef ptr TOKEN_ELEVATION
+
+TOKEN_MANDATORY_LABEL	STRUC
+_Label			SID_AND_ATTRIBUTES <>
+TOKEN_MANDATORY_LABEL	ENDS
+PTOKEN_MANDATORY_LABEL	typedef ptr TOKEN_MANDATORY_LABEL
+
+TOKEN_MANDATORY_POLICY_OFF	       equ 0x0
+TOKEN_MANDATORY_POLICY_NO_WRITE_UP     equ 0x1
+TOKEN_MANDATORY_POLICY_NEW_PROCESS_MIN equ 0x2
+TOKEN_MANDATORY_POLICY_VALID_MASK      equ TOKEN_MANDATORY_POLICY_NO_WRITE_UP OR \
+					   TOKEN_MANDATORY_POLICY_NEW_PROCESS_MIN
+TOKEN_MANDATORY_POLICY	STRUC
+Policy			dd ?
+TOKEN_MANDATORY_POLICY	ENDS
+PTOKEN_MANDATORY_POLICY typedef ptr TOKEN_MANDATORY_POLICY
+
+TOKEN_ACCESS_INFORMATION STRUC
+SidHash			PSID_AND_ATTRIBUTES_HASH ?
+RestrictedSidHash	PSID_AND_ATTRIBUTES_HASH ?
+Privileges		PTOKEN_PRIVILEGES ?
+AuthenticationId	LUID <>
+TokenType		TOKEN_TYPE ?
+ImpersonationLevel	SECURITY_IMPERSONATION_LEVEL ?
+MandatoryPolicy		TOKEN_MANDATORY_POLICY <>
+Flags			dd ?
+TOKEN_ACCESS_INFORMATION ENDS
+PTOKEN_ACCESS_INFORMATION typedef ptr TOKEN_ACCESS_INFORMATION
+
+;;
+;; Valid bits for each TOKEN_AUDIT_POLICY policy mask field.
+;;
+
+POLICY_AUDIT_SUBCATEGORY_COUNT equ 53
+
+TOKEN_AUDIT_POLICY	STRUC
+PerUserPolicy		db ((POLICY_AUDIT_SUBCATEGORY_COUNT) SHR 1) + 1 dup(?)
+TOKEN_AUDIT_POLICY	ENDS
+PTOKEN_AUDIT_POLICY	typedef ptr TOKEN_AUDIT_POLICY
+
 TOKEN_SOURCE_LENGTH	equ 8
 
 TOKEN_SOURCE		STRUC
@@ -2140,17 +7059,16 @@ SourceIdentifier	LUID <>
 TOKEN_SOURCE		ENDS
 PTOKEN_SOURCE		typedef ptr TOKEN_SOURCE
 
-
 TOKEN_STATISTICS	STRUC
 TokenId			LUID <>
 AuthenticationId	LUID <>
 ExpirationTime		LARGE_INTEGER <>
 TokenType		TOKEN_TYPE ?
 ImpersonationLevel	SECURITY_IMPERSONATION_LEVEL ?
-DynamicCharged		DWORD ?
-DynamicAvailable	DWORD ?
-GroupCount		DWORD ?
-PrivilegeCount		DWORD ?
+DynamicCharged		dd ?
+DynamicAvailable	dd ?
+GroupCount		dd ?
+PrivilegeCount		dd ?
 ModifiedId		LUID <>
 TOKEN_STATISTICS	ENDS
 PTOKEN_STATISTICS	typedef ptr TOKEN_STATISTICS
@@ -2163,6 +7081,23 @@ ModifiedId		LUID <>
 TokenSource		TOKEN_SOURCE <>
 TOKEN_CONTROL		ENDS
 PTOKEN_CONTROL		typedef ptr TOKEN_CONTROL
+
+TOKEN_ORIGIN		STRUC
+OriginatingLogonSession LUID <>
+TOKEN_ORIGIN		ENDS
+PTOKEN_ORIGIN		typedef ptr TOKEN_ORIGIN
+
+
+    MANDATORY_LEVEL	typedef sdword ; enum
+    PMANDATORY_LEVEL	typedef ptr MANDATORY_LEVEL
+
+    MandatoryLevelUntrusted	equ 0
+    MandatoryLevelLow		equ 1
+    MandatoryLevelMedium	equ 2
+    MandatoryLevelHigh		equ 3
+    MandatoryLevelSystem	equ 4
+    MandatoryLevelSecureProcess equ 5
+    MandatoryLevelCount		equ 6
 
 ;;
 ;; Security Tracking Mode
@@ -2198,13 +7133,26 @@ Level				SECURITY_IMPERSONATION_LEVEL ?
 SE_IMPERSONATION_STATE		ENDS
 PSE_IMPERSONATION_STATE		typedef ptr SE_IMPERSONATION_STATE
 
+DISABLE_MAX_PRIVILEGE		equ 0x1
+SANDBOX_INERT			equ 0x2
+LUA_TOKEN			equ 0x4
+WRITE_RESTRICTED		equ 0x8
+
 SECURITY_INFORMATION		typedef DWORD
 PSECURITY_INFORMATION		typedef ptr DWORD
+
+
+PROTECTED_DACL_SECURITY_INFORMATION   equ 0x80000000
+PROTECTED_SACL_SECURITY_INFORMATION   equ 0x40000000
+UNPROTECTED_DACL_SECURITY_INFORMATION equ 0x20000000
+UNPROTECTED_SACL_SECURITY_INFORMATION equ 0x10000000
 
 OWNER_SECURITY_INFORMATION	equ 0x00000001
 GROUP_SECURITY_INFORMATION	equ 0x00000002
 DACL_SECURITY_INFORMATION	equ 0x00000004
 SACL_SECURITY_INFORMATION	equ 0x00000008
+LABEL_SECURITY_INFORMATION	equ 0x00000010
+
 PROCESS_TERMINATE		equ 0x0001
 PROCESS_CREATE_THREAD		equ 0x0002
 PROCESS_SET_SESSIONID		equ 0x0004
@@ -2216,9 +7164,21 @@ PROCESS_CREATE_PROCESS		equ 0x0080
 PROCESS_SET_QUOTA		equ 0x0100
 PROCESS_SET_INFORMATION		equ 0x0200
 PROCESS_QUERY_INFORMATION	equ 0x0400
-PROCESS_ALL_ACCESS		equ STANDARD_RIGHTS_REQUIRED or SYNCHRONIZE or 0xFFF
 
-MAXIMUM_PROCESSORS		equ 32
+PROCESS_SUSPEND_RESUME		  equ 0x0800
+PROCESS_QUERY_LIMITED_INFORMATION equ 0x1000
+if (NTDDI_VERSION GE NTDDI_VISTA)
+PROCESS_ALL_ACCESS equ STANDARD_RIGHTS_REQUIRED OR SYNCHRONIZE OR 0xFFFF
+else
+PROCESS_ALL_ACCESS equ STANDARD_RIGHTS_REQUIRED OR SYNCHRONIZE OR 0xFFF
+endif
+
+ifdef _WIN64
+MAXIMUM_PROC_PER_GROUP		equ 64
+else
+MAXIMUM_PROC_PER_GROUP		equ 32
+endif
+MAXIMUM_PROCESSORS		equ MAXIMUM_PROC_PER_GROUP
 
 THREAD_TERMINATE		equ 0x0001
 THREAD_SUSPEND_RESUME		equ 0x0002
@@ -2229,7 +7189,14 @@ THREAD_QUERY_INFORMATION	equ 0x0040
 THREAD_SET_THREAD_TOKEN		equ 0x0080
 THREAD_IMPERSONATE		equ 0x0100
 THREAD_DIRECT_IMPERSONATION	equ 0x0200
-THREAD_ALL_ACCESS		equ STANDARD_RIGHTS_REQUIRED or SYNCHRONIZE or 0x3FF
+
+THREAD_SET_LIMITED_INFORMATION	 equ 0x0400  ;; winnt
+THREAD_QUERY_LIMITED_INFORMATION equ 0x0800  ;; winnt
+if (NTDDI_VERSION GE NTDDI_VISTA)
+THREAD_ALL_ACCESS equ STANDARD_RIGHTS_REQUIRED OR SYNCHRONIZE OR 0xFFFF
+else
+THREAD_ALL_ACCESS equ STANDARD_RIGHTS_REQUIRED OR SYNCHRONIZE OR 0x3FF
+endif
 
 JOB_OBJECT_ASSIGN_PROCESS	equ 0x0001
 JOB_OBJECT_SET_ATTRIBUTES	equ 0x0002
@@ -2237,6 +7204,15 @@ JOB_OBJECT_QUERY		equ 0x0004
 JOB_OBJECT_TERMINATE		equ 0x0008
 JOB_OBJECT_SET_SECURITY_ATTRIBUTES equ 0x0010
 JOB_OBJECT_ALL_ACCESS		equ STANDARD_RIGHTS_REQUIRED or SYNCHRONIZE or 0x1F
+
+JOB_SET_ARRAY			STRUC
+JobHandle			HANDLE ?; Handle to job object to insert
+MemberLevel			dd ?	; Level of this job in the set. Must be > 0. Can be sparse.
+Flags				dd ?	; Unused. Must be zero
+JOB_SET_ARRAY			ENDS
+PJOB_SET_ARRAY			typedef ptr JOB_SET_ARRAY
+
+FLS_MAXIMUM_AVAILABLE		equ 128
 TLS_MINIMUM_AVAILABLE		equ 64
 
 NT_TIB				STRUC
@@ -2244,33 +7220,128 @@ ExceptionList			PVOID ? ; EXCEPTION_REGISTRATION_RECORD *
 StackBase			PVOID ?
 StackLimit			PVOID ?
 SubSystemTib			PVOID ?
+ifdef _MSC_EXTENSIONS
 UNION
   FiberData			PVOID ?
-  Version			DWORD ?
+  Version			dd ?
 ENDS
+else
+FiberData			PVOID ?
+endif
 ArbitraryUserPointer		PVOID ?
 Self				PVOID ?
 NT_TIB				ENDS
 PNT_TIB				typedef ptr NT_TIB
 
-if not defined(_X86_) and not defined(_IA64_)
-WX86				equ 1
+NT_TIB32			STRUC
+ExceptionList			dd ?
+StackBase			dd ?
+StackLimit			dd ?
+SubSystemTib			dd ?
+ifdef _MSC_EXTENSIONS
+UNION
+  FiberData			dd ?
+  Version			dd ?
+ENDS
+else
+FiberData			dd ?
 endif
+ArbitraryUserPointer		dd ?
+Self				dd ?
+NT_TIB32			ENDS
+PNT_TIB32			typedef ptr NT_TIB32
+
+NT_TIB64			STRUC
+ExceptionList			dq ?
+StackBase			dq ?
+StackLimit			dq ?
+SubSystemTib			dq ?
+ifdef _MSC_EXTENSIONS
+UNION
+  FiberData			dq ?
+  Version			dq ?
+ENDS
+else
+FiberData			dq ?
+endif
+ArbitraryUserPointer		dq ?
+Self				dq ?
+NT_TIB64			ENDS
+PNT_TIB64			typedef ptr NT_TIB64
 
 THREAD_BASE_PRIORITY_LOWRT	equ 15	;; value that gets a thread to LowRealtime-1
 THREAD_BASE_PRIORITY_MAX	equ 2	;; maximum thread base priority boost
 THREAD_BASE_PRIORITY_MIN	equ -2	;; minimum thread base priority boost
 THREAD_BASE_PRIORITY_IDLE	equ -15 ;; value that gets a thread to idle
 
+UMS_CREATE_THREAD_ATTRIBUTES	STRUC
+UmsVersion			dd ?
+UmsContext			PVOID ?
+UmsCompletionList		PVOID ?
+UMS_CREATE_THREAD_ATTRIBUTES	ENDS
+PUMS_CREATE_THREAD_ATTRIBUTES	typedef ptr UMS_CREATE_THREAD_ATTRIBUTES
+
 QUOTA_LIMITS			STRUC
 PagedPoolLimit			SIZE_T ?
 NonPagedPoolLimit		SIZE_T ?
-MinimumWorkingSetSize		DWORD  ?
-MaximumWorkingSetSize		DWORD  ?
+MinimumWorkingSetSize		SIZE_T ?
+MaximumWorkingSetSize		SIZE_T ?
 PagefileLimit			SIZE_T ?
 TimeLimit			LARGE_INTEGER <>
 QUOTA_LIMITS			ENDS
 PQUOTA_LIMITS			typedef ptr QUOTA_LIMITS
+
+QUOTA_LIMITS_HARDWS_MIN_ENABLE	equ 0x00000001
+QUOTA_LIMITS_HARDWS_MIN_DISABLE equ 0x00000002
+QUOTA_LIMITS_HARDWS_MAX_ENABLE	equ 0x00000004
+QUOTA_LIMITS_HARDWS_MAX_DISABLE equ 0x00000008
+QUOTA_LIMITS_USE_DEFAULT_LIMITS equ 0x00000010
+
+RATE_QUOTA_LIMIT_R0 RECORD \
+	rateql_Reserved0:   25,
+	rateql_RatePercent:  7
+
+RATE_QUOTA_LIMIT		STRUC
+RateData			dd ?
+STRUC
+ R0				RATE_QUOTA_LIMIT_R0 <>
+ENDS
+RATE_QUOTA_LIMIT		ENDS
+PRATE_QUOTA_LIMIT		typedef ptr RATE_QUOTA_LIMIT
+
+QUOTA_LIMITS_EX			STRUC
+PagedPoolLimit			SIZE_T ?
+NonPagedPoolLimit		SIZE_T ?
+MinimumWorkingSetSize		SIZE_T ?
+MaximumWorkingSetSize		SIZE_T ?
+PagefileLimit			SIZE_T ?   ;; Limit expressed in pages
+TimeLimit			LARGE_INTEGER <>
+WorkingSetLimit			SIZE_T ?   ;; Limit expressed in pages
+Reserved2			SIZE_T ?
+Reserved3			SIZE_T ?
+Reserved4			SIZE_T ?
+Flags				dd ?
+CpuRateLimit			RATE_QUOTA_LIMIT <>
+QUOTA_LIMITS_EX			ENDS
+PQUOTA_LIMITS_EX		typedef ptr QUOTA_LIMITS_EX
+
+IO_COUNTERS			STRUC
+ReadOperationCount		ULONGLONG ?
+WriteOperationCount		ULONGLONG ?
+OtherOperationCount		ULONGLONG ?
+ReadTransferCount		ULONGLONG ?
+WriteTransferCount		ULONGLONG ?
+OtherTransferCount		ULONGLONG ?
+IO_COUNTERS			ENDS
+PIO_COUNTERS			typedef ptr IO_COUNTERS
+
+MAX_HW_COUNTERS			equ 16
+THREAD_PROFILING_FLAG_DISPATCH	equ 0x00000001
+
+HARDWARE_COUNTER_TYPE		typedef dword ; enum
+PHARDWARE_COUNTER_TYPE		typedef ptr HARDWARE_COUNTER_TYPE
+PMCCounter			equ 0
+MaxHardwareCounterType		equ 1
 
 JOBOBJECT_BASIC_ACCOUNTING_INFORMATION STRUC
 TotalUserTime			LARGE_INTEGER <>
@@ -2288,18 +7359,28 @@ JOBOBJECT_BASIC_LIMIT_INFORMATION STRUC
 PerProcessUserTimeLimit		LARGE_INTEGER <>
 PerJobUserTimeLimit		LARGE_INTEGER <>
 LimitFlags			dd ?
-MinimumWorkingSetSize		dd ?
-MaximumWorkingSetSize		dd ?
+MinimumWorkingSetSize		SIZE_T ?
+MaximumWorkingSetSize		SIZE_T ?
 ActiveProcessLimit		dd ?
-Affinity			dd ?
+Affinity			ULONG_PTR ?
 PriorityClass			dd ?
 JOBOBJECT_BASIC_LIMIT_INFORMATION ENDS
 PJOBOBJECT_BASIC_LIMIT_INFORMATION typedef ptr JOBOBJECT_BASIC_LIMIT_INFORMATION
 
+JOBOBJECT_EXTENDED_LIMIT_INFORMATION STRUC
+BasicLimitInformation		JOBOBJECT_BASIC_LIMIT_INFORMATION <>
+IoInfo				IO_COUNTERS <>
+ProcessMemoryLimit		SIZE_T ?
+JobMemoryLimit			SIZE_T ?
+PeakProcessMemoryUsed		SIZE_T ?
+PeakJobMemoryUsed		SIZE_T ?
+JOBOBJECT_EXTENDED_LIMIT_INFORMATION ENDS
+PJOBOBJECT_EXTENDED_LIMIT_INFORMATION typedef ptr JOBOBJECT_EXTENDED_LIMIT_INFORMATION
+
 JOBOBJECT_BASIC_PROCESS_ID_LIST STRUC
 NumberOfAssignedProcesses	dd ?
 NumberOfProcessIdsInList	dd ?
-ProcessIdLis			UINT_PTR ?
+ProcessIdLis			ULONG_PTR ?
 JOBOBJECT_BASIC_PROCESS_ID_LIST ENDS
 PJOBOBJECT_BASIC_PROCESS_ID_LIST typedef ptr JOBOBJECT_BASIC_PROCESS_ID_LIST
 
@@ -2308,8 +7389,11 @@ UIRestrictionsClass		dd ?
 JOBOBJECT_BASIC_UI_RESTRICTIONS ENDS
 PJOBOBJECT_BASIC_UI_RESTRICTIONS typedef ptr JOBOBJECT_BASIC_UI_RESTRICTIONS
 
+;;
+;; N.B. The JOBOBJECT_SECURITY_LIMIT_INFORMATION information class is no longer supported.
+;;
 JOBOBJECT_SECURITY_LIMIT_INFORMATION STRUC
-SecurityLimitFlags		DWORD ?
+SecurityLimitFlags		dd ?
 JobToken			HANDLE ?
 SidsToDisable			PTOKEN_GROUPS ?
 PrivilegesToDelete		PTOKEN_PRIVILEGES ?
@@ -2318,7 +7402,7 @@ JOBOBJECT_SECURITY_LIMIT_INFORMATION ENDS
 PJOBOBJECT_SECURITY_LIMIT_INFORMATION typedef ptr JOBOBJECT_SECURITY_LIMIT_INFORMATION
 
 JOBOBJECT_END_OF_JOB_TIME_INFORMATION STRUC
-EndOfJobTimeAction		DWORD ?
+EndOfJobTimeAction		dd ?
 JOBOBJECT_END_OF_JOB_TIME_INFORMATION ENDS
 PJOBOBJECT_END_OF_JOB_TIME_INFORMATION typedef ptr JOBOBJECT_END_OF_JOB_TIME_INFORMATION
 
@@ -2327,6 +7411,17 @@ CompletionKey			PVOID ?
 CompletionPort			HANDLE ?
 JOBOBJECT_ASSOCIATE_COMPLETION_PORT ENDS
 PJOBOBJECT_ASSOCIATE_COMPLETION_PORT typedef ptr JOBOBJECT_ASSOCIATE_COMPLETION_PORT
+
+JOBOBJECT_BASIC_AND_IO_ACCOUNTING_INFORMATION STRUC
+BasicInfo			JOBOBJECT_BASIC_ACCOUNTING_INFORMATION <>
+IoInfo				IO_COUNTERS <>
+JOBOBJECT_BASIC_AND_IO_ACCOUNTING_INFORMATION ENDS
+PJOBOBJECT_BASIC_AND_IO_ACCOUNTING_INFORMATION typedef ptr JOBOBJECT_BASIC_AND_IO_ACCOUNTING_INFORMATION
+
+JOBOBJECT_JOBSET_INFORMATION	STRUC
+MemberLevel			dd ?
+JOBOBJECT_JOBSET_INFORMATION	ENDS
+PJOBOBJECT_JOBSET_INFORMATION	typedef ptr JOBOBJECT_JOBSET_INFORMATION
 
 JOB_OBJECT_TERMINATE_AT_END_OF_JOB	equ 0
 JOB_OBJECT_POST_AT_END_OF_JOB		equ 1
@@ -2341,6 +7436,11 @@ JOB_OBJECT_MSG_END_OF_JOB_TIME		equ 1
 JOB_OBJECT_MSG_END_OF_PROCESS_TIME	equ 2
 JOB_OBJECT_MSG_ACTIVE_PROCESS_LIMIT	equ 3
 JOB_OBJECT_MSG_ACTIVE_PROCESS_ZERO	equ 4
+JOB_OBJECT_MSG_NEW_PROCESS		equ 6
+JOB_OBJECT_MSG_EXIT_PROCESS		equ 7
+JOB_OBJECT_MSG_ABNORMAL_EXIT_PROCESS	equ 8
+JOB_OBJECT_MSG_PROCESS_MEMORY_LIMIT	equ 9
+JOB_OBJECT_MSG_JOB_MEMORY_LIMIT		equ 10
 
 
 JOB_OBJECT_LIMIT_WORKINGSET		equ 0x00000001
@@ -2350,8 +7450,28 @@ JOB_OBJECT_LIMIT_ACTIVE_PROCESS		equ 0x00000008
 JOB_OBJECT_LIMIT_AFFINITY		equ 0x00000010
 JOB_OBJECT_LIMIT_PRIORITY_CLASS		equ 0x00000020
 JOB_OBJECT_LIMIT_PRESERVE_JOB_TIME	equ 0x00000040
+JOB_OBJECT_LIMIT_SCHEDULING_CLASS	equ 0x00000080
+;;
+;; Extended Limits
+;;
+JOB_OBJECT_LIMIT_PROCESS_MEMORY		    equ 0x00000100
+JOB_OBJECT_LIMIT_JOB_MEMORY		    equ 0x00000200
+JOB_OBJECT_LIMIT_DIE_ON_UNHANDLED_EXCEPTION equ 0x00000400
+JOB_OBJECT_LIMIT_BREAKAWAY_OK		    equ 0x00000800
+JOB_OBJECT_LIMIT_SILENT_BREAKAWAY_OK	    equ 0x00001000
+JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE	    equ 0x00002000
 
-JOB_OBJECT_LIMIT_VALID_FLAGS		equ 0x0000007f
+JOB_OBJECT_LIMIT_SUBSET_AFFINITY	    equ 0x00004000
+JOB_OBJECT_LIMIT_RESERVED3		    equ 0x00008000
+JOB_OBJECT_LIMIT_RESERVED4		    equ 0x00010000
+JOB_OBJECT_LIMIT_RESERVED5		    equ 0x00020000
+JOB_OBJECT_LIMIT_RESERVED6		    equ 0x00040000
+
+
+JOB_OBJECT_LIMIT_VALID_FLAGS		equ 0x0007ffff
+JOB_OBJECT_BASIC_LIMIT_VALID_FLAGS	equ 0x000000ff
+JOB_OBJECT_EXTENDED_LIMIT_VALID_FLAGS	equ 0x00007fff
+JOB_OBJECT_RESERVED_LIMIT_VALID_FLAGS	equ 0x0007ffff
 
 ;;
 ;; UI restrictions for jobs
@@ -2386,9 +7506,13 @@ JOB_OBJECT_SECURITY_VALID_FLAGS		equ 0x0000000f
     JobObjectSecurityLimitInformation	equ 5
     JobObjectEndOfJobTimeInformation	equ 6
     JobObjectAssociateCompletionPortInformation equ 7
-    MaxJobObjectInfoClass		equ 8
+    JobObjectBasicAndIoAccountingInformation equ 8
+    JobObjectExtendedLimitInformation	equ 9
+    JobObjectJobSetInformation		equ 10
+    JobObjectGroupInformation		equ 11
+    MaxJobObjectInfoClass		equ 12
 
-JOBOBJECTINFOCLASS	typedef SINT
+JOBOBJECTINFOCLASS	typedef sdword ; enum
 
 EVENT_MODIFY_STATE	equ 0x0002
 EVENT_ALL_ACCESS	equ STANDARD_RIGHTS_REQUIRED or SYNCHRONIZE or 0x3
@@ -2412,9 +7536,116 @@ TIME_ZONE_ID_UNKNOWN	equ 0
 TIME_ZONE_ID_STANDARD	equ 1
 TIME_ZONE_ID_DAYLIGHT	equ 2
 
+    LOGICAL_PROCESSOR_RELATIONSHIP typedef sdword ; enum _
+
+    RelationProcessorCore	equ 0
+    RelationNumaNode		equ 1
+    RelationCache		equ 2
+    RelationProcessorPackage	equ 3
+    RelationGroup		equ 4
+    RelationAll			equ 0xffff
+
+LTP_PC_SMT		equ 0x1
+
+    PROCESSOR_CACHE_TYPE	typedef sdword ; enum _
+
+    CacheUnified	equ 0
+    CacheInstruction	equ 1
+    CacheData		equ 2
+    CacheTrace		equ 3
+
+CACHE_FULLY_ASSOCIATIVE equ 0xFF
+
+CACHE_DESCRIPTOR	STRUC
+Level			db ?
+Associativity		db ?
+LineSize		dw ?
+_Size			dd ?
+_Type			PROCESSOR_CACHE_TYPE ?
+CACHE_DESCRIPTOR	ENDS
+PCACHE_DESCRIPTOR	typedef ptr CACHE_DESCRIPTOR
+
+SYSTEM_LOGICAL_PROCESSOR_INFORMATION STRUC
+ProcessorMask		ULONG_PTR ?
+Relationship		LOGICAL_PROCESSOR_RELATIONSHIP ?
+UNION
+ STRUC ProcessorCore
+  Flags			db ?
+ ENDS
+ STRUC NumaNode
+  NodeNumber		dd ?
+ ENDS
+ Cache			CACHE_DESCRIPTOR <>
+ Reserved		ULONGLONG 2 dup(?)
+ENDS
+SYSTEM_LOGICAL_PROCESSOR_INFORMATION ENDS
+PSYSTEM_LOGICAL_PROCESSOR_INFORMATION typedef ptr SYSTEM_LOGICAL_PROCESSOR_INFORMATION
+
+PROCESSOR_RELATIONSHIP	STRUC
+Flags			db ?
+Reserved		db 21 dup(?)
+GroupCount		dw ?
+GroupMask		GROUP_AFFINITY ANYSIZE_ARRAY dup(<>)
+PROCESSOR_RELATIONSHIP	ENDS
+PPROCESSOR_RELATIONSHIP typedef ptr PROCESSOR_RELATIONSHIP
+
+NUMA_NODE_RELATIONSHIP	STRUC
+NodeNumber		dd ?
+Reserved		db 20 dup(?)
+GroupMask		GROUP_AFFINITY <>
+NUMA_NODE_RELATIONSHIP	ENDS
+PNUMA_NODE_RELATIONSHIP typedef ptr NUMA_NODE_RELATIONSHIP
+
+CACHE_RELATIONSHIP	STRUC
+Level			db ?
+Associativity		db ?
+LineSize		dw ?
+CacheSize		dd ?
+_Type			PROCESSOR_CACHE_TYPE ?
+Reserved		db 20 dup(?)
+GroupMask		GROUP_AFFINITY <>
+CACHE_RELATIONSHIP	ENDS
+PCACHE_RELATIONSHIP	typedef ptr CACHE_RELATIONSHIP
+
+PROCESSOR_GROUP_INFO	STRUC
+MaximumProcessorCount	db ?
+ActiveProcessorCount	db ?
+Reserved		db 38 dup(?)
+ActiveProcessorMask	KAFFINITY ?
+PROCESSOR_GROUP_INFO	ENDS
+PPROCESSOR_GROUP_INFO	typedef ptr PROCESSOR_GROUP_INFO
+
+GROUP_RELATIONSHIP	STRUC
+MaximumGroupCount	dw ?
+ActiveGroupCount	dw ?
+Reserved		db 20 dup(?)
+GroupInfo		PROCESSOR_GROUP_INFO ANYSIZE_ARRAY dup(<>)
+GROUP_RELATIONSHIP	ENDS
+PGROUP_RELATIONSHIP	typedef ptr GROUP_RELATIONSHIP
+
+SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX STRUC
+Relationship		LOGICAL_PROCESSOR_RELATIONSHIP ?
+_Size			dd ?
+UNION
+Processor		PROCESSOR_RELATIONSHIP <>
+NumaNode		NUMA_NODE_RELATIONSHIP <>
+Cache			CACHE_RELATIONSHIP <>
+_Group			GROUP_RELATIONSHIP <>
+ENDS
+SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX ENDS
+PSYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX typedef ptr SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX
+
+SYSTEM_PROCESSOR_CYCLE_TIME_INFORMATION STRUC
+CycleTime		DWORD64 ?
+SYSTEM_PROCESSOR_CYCLE_TIME_INFORMATION ENDS
+PSYSTEM_PROCESSOR_CYCLE_TIME_INFORMATION typedef ptr SYSTEM_PROCESSOR_CYCLE_TIME_INFORMATION
+
+
 PROCESSOR_INTEL_386	equ 386
 PROCESSOR_INTEL_486	equ 486
 PROCESSOR_INTEL_PENTIUM equ 586
+PROCESSOR_INTEL_IA64	equ 2200
+PROCESSOR_AMD_X8664	equ 8664
 PROCESSOR_MIPS_R4000	equ 4000	;; incl R4101 & R3910 for Windows CE
 PROCESSOR_ALPHA_21064	equ 21064
 PROCESSOR_PPC_601	equ 601
@@ -2432,6 +7663,7 @@ PROCESSOR_ARM720	equ 1824	;; Windows CE - 0x720
 PROCESSOR_ARM820	equ 2080	;; Windows CE - 0x820
 PROCESSOR_ARM920	equ 2336	;; Windows CE - 0x920
 PROCESSOR_ARM_7TDMI	equ 70001	;; Windows CE
+PROCESSOR_OPTIL		equ 0x494f	;; MSIL
 
 PROCESSOR_ARCHITECTURE_INTEL		equ 0
 PROCESSOR_ARCHITECTURE_MIPS		equ 1
@@ -2441,6 +7673,9 @@ PROCESSOR_ARCHITECTURE_SHX		equ 4
 PROCESSOR_ARCHITECTURE_ARM		equ 5
 PROCESSOR_ARCHITECTURE_IA64		equ 6
 PROCESSOR_ARCHITECTURE_ALPHA64		equ 7
+PROCESSOR_ARCHITECTURE_MSIL		equ 8
+PROCESSOR_ARCHITECTURE_AMD64		equ 9
+PROCESSOR_ARCHITECTURE_IA32_ON_WIN64	equ 10
 PROCESSOR_ARCHITECTURE_UNKNOWN		equ 0xFFFF
 
 PF_FLOATING_POINT_PRECISION_ERRATA	equ 0
@@ -2451,19 +7686,86 @@ PF_PPC_MOVEMEM_64BIT_OK			equ 4
 PF_ALPHA_BYTE_INSTRUCTIONS		equ 5
 PF_XMMI_INSTRUCTIONS_AVAILABLE		equ 6
 PF_AMD3D_INSTRUCTIONS_AVAILABLE		equ 7
-SYSTEM_FLAG_REMOTE_BOOT_CLIENT		equ 0x00000001
-SYSTEM_FLAG_DISKLESS_CLIENT		equ 0x00000002
+PF_RDTSC_INSTRUCTION_AVAILABLE		equ 8
+PF_PAE_ENABLED				equ 9
+PF_XMMI64_INSTRUCTIONS_AVAILABLE	equ 10
+PF_SSE_DAZ_MODE_AVAILABLE		equ 11
+PF_NX_ENABLED				equ 12
+PF_SSE3_INSTRUCTIONS_AVAILABLE		equ 13
+PF_COMPARE_EXCHANGE128			equ 14
+PF_COMPARE64_EXCHANGE128		equ 15
+PF_CHANNELS_ENABLED			equ 16
+PF_XSAVE_ENABLED			equ 17
+
+;;
+;; Known extended CPU state feature IDs
+;;
+
+XSTATE_LEGACY_FLOATING_POINT		equ 0
+XSTATE_LEGACY_SSE			equ 1
+XSTATE_GSSE				equ 2
+
+XSTATE_MASK_LEGACY_FLOATING_POINT	equ (1 shl (XSTATE_LEGACY_FLOATING_POINT))
+XSTATE_MASK_LEGACY_SSE			equ (1 shl (XSTATE_LEGACY_SSE))
+XSTATE_MASK_LEGACY			equ XSTATE_MASK_LEGACY_FLOATING_POINT or XSTATE_MASK_LEGACY_SSE
+XSTATE_MASK_GSSE			equ (1 shl (XSTATE_GSSE))
+
+MAXIMUM_XSTATE_FEATURES			equ 64
+
+;;
+;; Extended processor state configuration
+;;
+
+XSTATE_FEATURE		STRUC
+_Offset			dd ?
+_Size			dd ?
+XSTATE_FEATURE		ENDS
+PXSTATE_FEATURE		typedef ptr XSTATE_FEATURE
+
+XSTATE_CONFIGURATION	STRUC
+EnabledFeatures		DWORD64 ? ;; Mask of enabled features
+_Size			dd ?	;; Total size of the save area
+OptimizedSave		dd ?	;: 1;
+				;; List of features
+Features		XSTATE_FEATURE MAXIMUM_XSTATE_FEATURES dup(<>)
+XSTATE_CONFIGURATION	ENDS
+PXSTATE_CONFIGURATION	typedef ptr XSTATE_CONFIGURATION
+
+SYSTEM_FLAG_REMOTE_BOOT_CLIENT	equ 0x00000001
+SYSTEM_FLAG_DISKLESS_CLIENT	equ 0x00000002
 
 MEMORY_BASIC_INFORMATION	STRUC SIZE_T
 BaseAddress			PVOID ?
 AllocationBase			PVOID ?
-AllocationProtect		DWORD ?
+AllocationProtect		dd ?
 RegionSize			SIZE_T ?
-State				DWORD ?
-Protect				DWORD ?
-_Type				DWORD ?
+State				dd ?
+Protect				dd ?
+_Type				dd ?
 MEMORY_BASIC_INFORMATION	ENDS
 PMEMORY_BASIC_INFORMATION	typedef ptr MEMORY_BASIC_INFORMATION
+
+MEMORY_BASIC_INFORMATION32	STRUC 4
+BaseAddress			dd ?
+AllocationBase			dd ?
+AllocationProtect		dd ?
+RegionSize			dd ?
+State				dd ?
+Protect				dd ?
+_Type				dd ?
+MEMORY_BASIC_INFORMATION32	ENDS
+PMEMORY_BASIC_INFORMATION32	typedef ptr MEMORY_BASIC_INFORMATION32
+
+MEMORY_BASIC_INFORMATION64	STRUC 8
+BaseAddress			ULONGLONG ?
+AllocationBase			ULONGLONG ?
+AllocationProtect		dd ?
+RegionSize			ULONGLONG ?
+State				dd ?
+Protect				dd ?
+_Type				dd ?
+MEMORY_BASIC_INFORMATION64	ENDS
+PMEMORY_BASIC_INFORMATION64	typedef ptr MEMORY_BASIC_INFORMATION64
 
 MEMORY_BASIC_INFORMATION_VLM	STRUC
 UNION
@@ -2482,47 +7784,63 @@ _Type				dd ?
 MEMORY_BASIC_INFORMATION_VLM	ENDS
 PMEMORY_BASIC_INFORMATION_VLM	typedef ptr MEMORY_BASIC_INFORMATION_VLM
 
-SECTION_QUERY			equ 0x0001
-SECTION_MAP_WRITE		equ 0x0002
-SECTION_MAP_READ		equ 0x0004
-SECTION_MAP_EXECUTE		equ 0x0008
-SECTION_EXTEND_SIZE		equ 0x0010
+SECTION_QUERY		equ 0x0001
+SECTION_MAP_WRITE	equ 0x0002
+SECTION_MAP_READ	equ 0x0004
+SECTION_MAP_EXECUTE	equ 0x0008
+SECTION_EXTEND_SIZE	equ 0x0010
 
-SECTION_ALL_ACCESS		equ STANDARD_RIGHTS_REQUIRED or SECTION_QUERY or \
-				    SECTION_MAP_WRITE	or \
-				    SECTION_MAP_READ	or \
-				    SECTION_MAP_EXECUTE or \
-				    SECTION_EXTEND_SIZE
+SECTION_ALL_ACCESS	equ STANDARD_RIGHTS_REQUIRED or SECTION_QUERY or \
+			    SECTION_MAP_WRITE	or \
+			    SECTION_MAP_READ	or \
+			    SECTION_MAP_EXECUTE or \
+			    SECTION_EXTEND_SIZE
 
-PAGE_NOACCESS			equ 0x01
-PAGE_READONLY			equ 0x02
-PAGE_READWRITE			equ 0x04
-PAGE_WRITECOPY			equ 0x08
-PAGE_EXECUTE			equ 0x10
-PAGE_EXECUTE_READ		equ 0x20
-PAGE_EXECUTE_READWRITE		equ 0x40
-PAGE_EXECUTE_WRITECOPY		equ 0x80
-PAGE_GUARD			equ 0x100
-PAGE_NOCACHE			equ 0x200
-PAGE_WRITECOMBINE		equ 0x400
+SESSION_QUERY_ACCESS	equ 0x0001
+SESSION_MODIFY_ACCESS	equ 0x0002
 
-MEM_COMMIT			equ 0x1000
-MEM_RESERVE			equ 0x2000
-MEM_DECOMMIT			equ 0x4000
-MEM_RELEASE			equ 0x8000
-MEM_FREE			equ 0x10000
-MEM_PRIVATE			equ 0x20000
-MEM_MAPPED			equ 0x40000
-MEM_RESET			equ 0x80000
-MEM_TOP_DOWN			equ 0x100000
-MEM_4MB_PAGES			equ 0x80000000
-SEC_FILE			equ 0x800000
-SEC_IMAGE			equ 0x1000000
-SEC_VLM				equ 0x2000000
-SEC_RESERVE			equ 0x4000000
-SEC_COMMIT			equ 0x8000000
-SEC_NOCACHE			equ 0x10000000
-MEM_IMAGE			equ SEC_IMAGE
+SESSION_ALL_ACCESS	equ STANDARD_RIGHTS_REQUIRED OR \
+			    SESSION_QUERY_ACCESS OR \
+			    SESSION_MODIFY_ACCESS
+
+PAGE_NOACCESS		equ 0x01
+PAGE_READONLY		equ 0x02
+PAGE_READWRITE		equ 0x04
+PAGE_WRITECOPY		equ 0x08
+PAGE_EXECUTE		equ 0x10
+PAGE_EXECUTE_READ	equ 0x20
+PAGE_EXECUTE_READWRITE	equ 0x40
+PAGE_EXECUTE_WRITECOPY	equ 0x80
+PAGE_GUARD		equ 0x100
+PAGE_NOCACHE		equ 0x200
+PAGE_WRITECOMBINE	equ 0x400
+
+MEM_COMMIT		equ 0x1000
+MEM_RESERVE		equ 0x2000
+MEM_DECOMMIT		equ 0x4000
+MEM_RELEASE		equ 0x8000
+MEM_FREE		equ 0x10000
+MEM_PRIVATE		equ 0x20000
+MEM_MAPPED		equ 0x40000
+MEM_RESET		equ 0x80000
+MEM_TOP_DOWN		equ 0x100000
+MEM_WRITE_WATCH		equ 0x200000
+MEM_PHYSICAL		equ 0x400000
+MEM_ROTATE		equ 0x800000
+MEM_LARGE_PAGES		equ 0x20000000
+MEM_4MB_PAGES		equ 0x80000000
+
+SEC_FILE		equ 0x800000
+SEC_IMAGE		equ 0x1000000
+SEC_PROTECTED_IMAGE	equ 0x2000000
+SEC_VLM			equ 0x2000000
+SEC_RESERVE		equ 0x4000000
+SEC_COMMIT		equ 0x8000000
+SEC_NOCACHE		equ 0x10000000
+SEC_WRITECOMBINE	equ 0x40000000
+SEC_LARGE_PAGES		equ 0x80000000
+MEM_IMAGE		equ SEC_IMAGE
+WRITE_WATCH_FLAG_RESET	equ 0x01
 
 ;;
 ;; Define access rights to files and directories
@@ -2614,6 +7932,14 @@ FILE_SUPPORTS_REMOTE_STORAGE	equ 0x00000100
 FILE_VOLUME_IS_COMPRESSED	equ 0x00008000
 FILE_SUPPORTS_OBJECT_IDS	equ 0x00010000
 FILE_SUPPORTS_ENCRYPTION	equ 0x00020000
+FILE_NAMED_STREAMS		equ 0x00040000
+FILE_READ_ONLY_VOLUME		equ 0x00080000
+FILE_SEQUENTIAL_WRITE_ONCE	equ 0x00100000
+FILE_SUPPORTS_TRANSACTIONS	equ 0x00200000
+FILE_SUPPORTS_HARD_LINKS	equ 0x00400000
+FILE_SUPPORTS_EXTENDED_ATTRIBUTES equ 0x00800000
+FILE_SUPPORTS_OPEN_BY_FILE_ID	equ 0x01000000
+FILE_SUPPORTS_USN_JOURNAL	equ 0x02000000
 
 ;;
 ;; Define the file notification information structure
@@ -2776,58 +8102,707 @@ IsReparseTagHighLatency macro _tag
 IsReparseTagNameSurrogate macro _tag
 	exitm<_tag and 0x20000000>
 	endm
-;;
-;; The following constant represents the bits that are valid to use in
-;; reparse tags.
-;;
 
-IO_REPARSE_TAG_VALID_VALUES	equ 0xE000FFFF
-
-;;
-;; Macro to determine whether a reparse tag is a valid tag.
-;;
-IsReparseTagValid macro _tag
-	exitm<not (_tag and (not IO_REPARSE_TAG_VALID_VALUES)) and (_tag GT IO_REPARSE_TAG_RESERVED_RANGE)>
-	endm
-
-;;
-;; Microsoft tags for reparse points.
-;;
-
-IO_REPARSE_TAG_SYMBOLIC_LINK	equ IO_REPARSE_TAG_RESERVED_ZERO
 IO_REPARSE_TAG_MOUNT_POINT	equ 0xA0000003
 IO_REPARSE_TAG_HSM		equ 0xC0000004
-IO_REPARSE_TAG_NSS		equ 0x80000005
-IO_REPARSE_TAG_NSSRECOVER	equ 0x80000006
+IO_REPARSE_TAG_HSM2		equ 0x80000006
 IO_REPARSE_TAG_SIS		equ 0x80000007
-IO_REPARSE_TAG_DFS		equ 0x80000008
+IO_REPARSE_TAG_WIM		equ 0x80000008
+IO_REPARSE_TAG_CSV		equ 0x80000009
+IO_REPARSE_TAG_DFS		equ 0x8000000A
+IO_REPARSE_TAG_SYMLINK		equ 0xA000000C
+IO_REPARSE_TAG_DFSR		equ 0x80000012
+
+;;
+;; I/O Completion Specific Access Rights.
+;;
 
 IO_COMPLETION_MODIFY_STATE	equ 0x0002
-IO_COMPLETION_ALL_ACCESS	equ STANDARD_RIGHTS_REQUIRED or SYNCHRONIZE or 0x3
+IO_COMPLETION_ALL_ACCESS	equ STANDARD_RIGHTS_REQUIRED OR SYNCHRONIZE OR 0x3
+
+;;
+;; Object Manager Symbolic Link Specific Access Rights.
+;;
+
 DUPLICATE_CLOSE_SOURCE		equ 0x00000001
 DUPLICATE_SAME_ACCESS		equ 0x00000002
+
+;;
+;; =========================================
+;; Define GUIDs which represent well-known power schemes
+;; =========================================
+;;
+
+;; ...
+PROCESSOR_PERF_BOOST_POLICY_DISABLED	equ 0
+PROCESSOR_PERF_BOOST_POLICY_MAX		equ 100
+;; ...
+CORE_PARKING_POLICY_CHANGE_IDEAL	equ 0
+CORE_PARKING_POLICY_CHANGE_SINGLE	equ 1
+CORE_PARKING_POLICY_CHANGE_ROCKET	equ 2
+;CORE_PARKING_POLICY_CHANGE_MAX CORE_PARKING_POLICY_CHANGE_ROCKET
+;; ...
+POWER_DEVICE_IDLE_POLICY_PERFORMANCE	equ 0
+POWER_DEVICE_IDLE_POLICY_CONSERVATIVE	equ 1
+;; ...
+
+SYSTEM_POWER_STATE		typedef sdword ; enum
+PSYSTEM_POWER_STATE		typedef ptr SYSTEM_POWER_STATE
+
+    PowerSystemUnspecified	equ 0
+    PowerSystemWorking		equ 1
+    PowerSystemSleeping1	equ 2
+    PowerSystemSleeping2	equ 3
+    PowerSystemSleeping3	equ 4
+    PowerSystemHibernate	equ 5
+    PowerSystemShutdown		equ 6
+    PowerSystemMaximum		equ 7
+
+POWER_SYSTEM_MAXIMUM		equ 7
+
+POWER_ACTION			typedef sdword ; enum
+PPOWER_ACTION			typedef ptr POWER_ACTION
+
+    PowerActionNone		equ 0
+    PowerActionReserved		equ 1
+    PowerActionSleep		equ 2
+    PowerActionHibernate	equ 3
+    PowerActionShutdown		equ 4
+    PowerActionShutdownReset	equ 5
+    PowerActionShutdownOff	equ 6
+    PowerActionWarmEject	equ 7
+
+
+DEVICE_POWER_STATE		typedef sdword ; enum
+PDEVICE_POWER_STATE		typedef ptr DEVICE_POWER_STATE
+
+    PowerDeviceUnspecified	equ 0
+    PowerDeviceD0		equ 1
+    PowerDeviceD1		equ 2
+    PowerDeviceD2		equ 3
+    PowerDeviceD3		equ 4
+    PowerDeviceMaximum		equ 5
+
+MONITOR_DISPLAY_STATE		typedef sdword ; enum
+PMONITOR_DISPLAY_STATE		typedef ptr MONITOR_DISPLAY_STATE
+
+    PowerMonitorOff		equ 0
+    PowerMonitorOn		equ 1
+    PowerMonitorDim		equ 2
 
 ES_SYSTEM_REQUIRED		equ 0x00000001
 ES_DISPLAY_REQUIRED		equ 0x00000002
 ES_USER_PRESENT			equ 0x00000004
+ES_AWAYMODE_REQUIRED		equ 0x00000040
 ES_CONTINUOUS			equ 0x80000000
 
 EXECUTION_STATE			typedef DWORD
-LATENCY_TIME			typedef DWORD
+PEXECUTION_STATE		typedef ptr DWORD
 
+LATENCY_TIME			typedef sdword ; enum {
 LT_DONT_CARE			equ 0
 LT_LOWEST_LATENCY		equ 1
 
-;; wmi
-POWER_DEVICE_TIMEOUTS	STRUC
-ConservationIdleTime	dd ?
-PerformanceIdleTime	dd ?
-POWER_DEVICE_TIMEOUTS	ENDS
-PPOWER_DEVICE_TIMEOUTS	typedef ptr POWER_DEVICE_TIMEOUTS
+
+if (_WIN32_WINNT GE _WIN32_WINNT_WIN7)
+
+DIAGNOSTIC_REASON_VERSION	equ 0
+
+DIAGNOSTIC_REASON_SIMPLE_STRING		equ 0x00000001
+DIAGNOSTIC_REASON_DETAILED_STRING	equ 0x00000002
+DIAGNOSTIC_REASON_NOT_SPECIFIED		equ 0x80000000
+DIAGNOSTIC_REASON_INVALID_FLAGS		equ (not 0x80000003)
+
+endif ;; (_WIN32_WINNT >= _WIN32_WINNT_WIN7)
+
+POWER_REQUEST_CONTEXT_VERSION		equ 0
+
+POWER_REQUEST_CONTEXT_SIMPLE_STRING	equ 0x00000001
+POWER_REQUEST_CONTEXT_DETAILED_STRING	equ 0x00000002
 
 ;;
-;; Image Format
+;; N.B. The maximum is a macro (rather than part of enum) for cgen to be able
+;; to parse power.h correctly. When a new power request type is added, the
+;; PowerRequestMaximum should be manually incremented.
 ;;
+
+POWER_REQUEST_TYPE		typedef sdword ; enum _
+PPOWER_REQUEST_TYPE		typedef ptr POWER_REQUEST_TYPE
+
+PowerRequestDisplayRequired	equ 0
+PowerRequestSystemRequired	equ 1
+PowerRequestAwayModeRequired	equ 2
+PowerRequestMaximum		equ 3
+
+if (NTDDI_VERSION GE NTDDI_WINXP)
+
+;;-----------------------------------------------------------------------------
+;; Device Power Information
+;; Accessable via CM_Get_DevInst_Registry_Property_Ex(CM_DRP_DEVICE_POWER_DATA)
+;;-----------------------------------------------------------------------------
+
+PDCAP_D0_SUPPORTED		equ 0x00000001
+PDCAP_D1_SUPPORTED		equ 0x00000002
+PDCAP_D2_SUPPORTED		equ 0x00000004
+PDCAP_D3_SUPPORTED		equ 0x00000008
+PDCAP_WAKE_FROM_D0_SUPPORTED	equ 0x00000010
+PDCAP_WAKE_FROM_D1_SUPPORTED	equ 0x00000020
+PDCAP_WAKE_FROM_D2_SUPPORTED	equ 0x00000040
+PDCAP_WAKE_FROM_D3_SUPPORTED	equ 0x00000080
+PDCAP_WARM_EJECT_SUPPORTED	equ 0x00000100
+
+CM_POWER_DATA		STRUC
+PD_Size			dd ?
+PD_MostRecentPowerState DEVICE_POWER_STATE ?
+PD_Capabilities		dd ?
+PD_D1Latency		dd ?
+PD_D2Latency		dd ?
+PD_D3Latency		dd ?
+PD_PowerStateMapping	DEVICE_POWER_STATE POWER_SYSTEM_MAXIMUM dup(?)
+PD_DeepestSystemWake	SYSTEM_POWER_STATE ?
+CM_POWER_DATA		ENDS
+PCM_POWER_DATA		typedef ptr CM_POWER_DATA
+
+endif ;; (NTDDI_VERSION GE NTDDI_WINXP)
+
+;;
+;; Power Setting definitions
+;;
+
+SYSTEM_POWER_CONDITION	typedef sdword ; enum {
+PoAc			equ 0
+PoDc			equ 1
+PoHot			equ 2
+PoConditionMaximum	equ 3
+
+SET_POWER_SETTING_VALUE STRUC
+
+    ;; Version of this structure.  Currently should be set to
+    ;; POWER_SETTING_VALUE_VERSION.
+Version			dd ?
+
+
+    ;; GUID representing the power setting being applied.
+Guid			GUID <>
+
+
+    ;; What power state should this setting be applied to?  E.g.
+    ;; AC, DC, thermal, ...
+PowerCondition		SYSTEM_POWER_CONDITION ?
+
+    ;; Length (in bytes) of the 'Data' member.
+DataLength		dd ?
+
+    ;; Data which contains the actual setting value.
+Data			db ANYSIZE_ARRAY dup(?)
+SET_POWER_SETTING_VALUE ENDS
+PSET_POWER_SETTING_VALUE typedef ptr SET_POWER_SETTING_VALUE
+
+POWER_SETTING_VALUE_VERSION equ 1
+
+NOTIFY_USER_POWER_SETTING STRUC
+Guid			GUID <>
+NOTIFY_USER_POWER_SETTING ENDS
+PNOTIFY_USER_POWER_SETTING typedef ptr NOTIFY_USER_POWER_SETTING
+
+APPLICATIONLAUNCH_SETTING_VALUE	 STRUC
+ActivationTime		LARGE_INTEGER <>
+Flags			dd ?
+ButtonInstanceID	dd ?
+APPLICATIONLAUNCH_SETTING_VALUE ENDS
+PAPPLICATIONLAUNCH_SETTING_VALUE typedef ptr APPLICATIONLAUNCH_SETTING_VALUE
+
+;;
+;; define platform roles
+;;
+
+POWER_PLATFORM_ROLE	typedef sdword ; enum {
+PlatformRoleUnspecified		equ 0
+PlatformRoleDesktop		equ 1
+PlatformRoleMobile		equ 2
+PlatformRoleWorkstation		equ 3
+PlatformRoleEnterpriseServer	equ 4
+PlatformRoleSOHOServer		equ 5
+PlatformRoleAppliancePC		equ 6
+PlatformRolePerformanceServer	equ 7
+PlatformRoleMaximum		equ 8
+
+;;
+;; System power manager capabilities
+;;
+
+if (NTDDI_VERSION GE NTDDI_WINXP) OR NOT defined(_BATCLASS_)
+BATTERY_REPORTING_SCALE STRUC
+Granularity		dd ?
+Capacity		dd ?
+BATTERY_REPORTING_SCALE ENDS
+PBATTERY_REPORTING_SCALE typedef ptr BATTERY_REPORTING_SCALE
+endif ;; (NTDDI_VERSION GE NTDDI_WINXP) OR NOT defined(_BATCLASS_)
+
+PPM_WMI_LEGACY_PERFSTATE STRUC
+Frequency		dd ?
+Flags			dd ?
+PercentFrequency	dd ?
+PPM_WMI_LEGACY_PERFSTATE ENDS
+PPPM_WMI_LEGACY_PERFSTATE typedef ptr PPM_WMI_LEGACY_PERFSTATE
+
+PPM_WMI_IDLE_STATE	STRUC
+Latency			dd ?
+Power			dd ?
+TimeCheck		dd ?
+PromotePercent		db ?
+DemotePercent		db ?
+StateType		db ?
+Reserved		db ?
+StateFlags		dd ?
+Context			dd ?
+IdleHandler		dd ?
+Reserved1		dd ?	;; reserved for future use
+PPM_WMI_IDLE_STATE	ENDS
+PPPM_WMI_IDLE_STATE	typedef ptr PPM_WMI_IDLE_STATE
+
+PPM_WMI_IDLE_STATES	STRUC
+_Type			dd ?
+Count			dd ?
+TargetState		dd ?	;; current idle state
+OldState		dd ?	;; previous idle state
+TargetProcessors	dd ?
+State			PPM_WMI_IDLE_STATE ANYSIZE_ARRAY dup(<>)
+PPM_WMI_IDLE_STATES	ENDS
+PPPM_WMI_IDLE_STATES	typedef ptr PPM_WMI_IDLE_STATES
+
+PPM_WMI_IDLE_STATES_EX	STRUC
+_Type			dd ?
+Count			dd ?
+TargetState		dd ?	;; current idle state
+OldState		dd ?	;; previous idle state
+TargetProcessors	PVOID ?
+State			PPM_WMI_IDLE_STATE ANYSIZE_ARRAY dup(<>)
+PPM_WMI_IDLE_STATES_EX	ENDS
+PPPM_WMI_IDLE_STATES_EX typedef ptr PPM_WMI_IDLE_STATES_EX
+
+PPM_WMI_PERF_STATE	STRUC
+Frequency		dd ?	;; in Mhz
+Power			dd ?	;; in milliwatts
+PercentFrequency	db ?
+IncreaseLevel		db ?	;; goto higher state
+DecreaseLevel		db ?	;; goto lower state
+_Type			db ?	;; performance or throttle
+IncreaseTime		dd ?	;; in tick counts
+DecreaseTime		dd ?	;; in tick counts
+Control			dd ?	;; control value
+Status			dd ?	;; control value
+HitCount		dd ?
+Reserved1		dd ?	;; reserved for future use
+Reserved2		dd ?
+Reserved3		dd ?
+PPM_WMI_PERF_STATE	ENDS
+PPPM_WMI_PERF_STATE	typedef ptr PPM_WMI_PERF_STATE
+
+PPM_WMI_PERF_STATES	STRUC
+Count			dd ?
+MaxFrequency		dd ?
+CurrentState		dd ?	;; current state
+MaxPerfState		dd ?	;; fastest state considering policy restrictions
+MinPerfState		dd ?	;; slowest state considering policy restrictions
+LowestPerfState		dd ?	;; slowest perf state, fixed, aka the "knee"
+ThermalConstraint	dd ?
+BusyAdjThreshold	db ?
+PolicyType		db ?	;; domain coordination
+_Type			db ?
+Reserved		db ?
+TimerInterval		dd ?
+TargetProcessors	dd ?	;; domain affinity
+PStateHandler		dd ?
+PStateContext		dd ?
+TStateHandler		dd ?
+TStateContext		dd ?
+FeedbackHandler		dd ?
+Reserved1		dd ?
+Reserved2		dd ?
+State			PPM_WMI_IDLE_STATE ANYSIZE_ARRAY dup(<>)
+PPM_WMI_PERF_STATES	ENDS
+PPPM_WMI_PERF_STATES	typedef ptr PPM_WMI_PERF_STATES
+
+PPM_WMI_PERF_STATES_EX	STRUC
+Count			dd ?
+MaxFrequency		dd ?
+CurrentState		dd ?	;; current state
+MaxPerfState		dd ?	;; fastest state considering policy restrictions
+MinPerfState		dd ?	;; slowest state considering policy restrictions
+LowestPerfState		dd ?	;; slowest perf state, fixed, aka the "knee"
+ThermalConstraint	dd ?
+BusyAdjThreshold	db ?
+PolicyType		db ?	;; domain coordination
+_Type			db ?
+Reserved		db ?
+TimerInterval		dd ?
+TargetProcessors	PVOID ? ;; domain affinity
+PStateHandler		dd ?
+PStateContext		dd ?
+TStateHandler		dd ?
+TStateContext		dd ?
+FeedbackHandler		dd ?
+Reserved1		dd ?
+Reserved2		dd ?
+State			PPM_WMI_PERF_STATE ANYSIZE_ARRAY dup(<>)
+PPM_WMI_PERF_STATES_EX	ENDS
+PPPM_WMI_PERF_STATES_EX typedef ptr PPM_WMI_PERF_STATES_EX
+
+;;
+;; Legacy processor idle accounting.
+;;
+
+PROC_IDLE_BUCKET_COUNT	equ 6
+
+PPM_IDLE_STATE_ACCOUNTING STRUC
+IdleTransitions		dd ?
+FailedTransitions	dd ?
+InvalidBucketIndex	dd ?
+TotalTime		dd ?
+IdleTimeBuckets		dd PROC_IDLE_BUCKET_COUNT dup(?)
+PPM_IDLE_STATE_ACCOUNTING ENDS
+PPPM_IDLE_STATE_ACCOUNTING typedef ptr PPM_IDLE_STATE_ACCOUNTING
+
+PPM_IDLE_ACCOUNTING	STRUC
+StateCount		dd ?
+TotalTransitions	dd ?
+ResetCount		dd ?
+StartTime		dd ?
+State			PPM_IDLE_STATE_ACCOUNTING ANYSIZE_ARRAY dup(<>)
+PPM_IDLE_ACCOUNTING	ENDS
+PPPM_IDLE_ACCOUNTING	typedef ptr PPM_IDLE_ACCOUNTING
+
+;;
+;; Processor idle accounting.
+;;
+
+PROC_IDLE_BUCKET_COUNT_EX equ 16
+
+PPM_IDLE_STATE_BUCKET_EX STRUC
+TotalTimeUs		dd ?
+MinTimeUs		dd ?
+MaxTimeUs		dd ?
+Count			dd ?
+PPM_IDLE_STATE_BUCKET_EX ENDS
+PPPM_IDLE_STATE_BUCKET_EX typedef ptr PPM_IDLE_STATE_BUCKET_EX
+
+PPM_IDLE_STATE_ACCOUNTING_EX STRUC
+TotalTime		dd ?
+IdleTransitions		dd ?
+FailedTransitions	dd ?
+InvalidBucketIndex	dd ?
+MinTimeUs		dd ?
+MaxTimeUs		dd ?
+IdleTimeBuckets		PPM_IDLE_STATE_BUCKET_EX PROC_IDLE_BUCKET_COUNT_EX dup(<>)
+PPM_IDLE_STATE_ACCOUNTING_EX ENDS
+PPPM_IDLE_STATE_ACCOUNTING_EX typedef ptr PPM_IDLE_STATE_ACCOUNTING_EX
+
+PPM_IDLE_ACCOUNTING_EX	STRUC
+StateCount		dd ?
+TotalTransitions	dd ?
+ResetCount		dd ?
+StartTime		dd ?
+State			PPM_IDLE_STATE_ACCOUNTING_EX ANYSIZE_ARRAY dup(<>)
+PPM_IDLE_ACCOUNTING_EX	ENDS
+PPPM_IDLE_ACCOUNTING_EX typedef ptr PPM_IDLE_ACCOUNTING_EX
+
+;;
+;; Definitions of coordination types for _PSD, _TSD, and _CSD BIOS objects from
+;; the Acpi 3.0 specification
+;;
+
+ACPI_PPM_SOFTWARE_ALL	equ 0xFC
+ACPI_PPM_SOFTWARE_ANY	equ 0xFD
+ACPI_PPM_HARDWARE_ALL	equ 0xFE
+
+;;
+;; Definition of Microsoft PPM coordination types.
+;;
+
+MS_PPM_SOFTWARE_ALL	equ 0x1
+
+;;
+;; Processor firmware rundown feature bit definitions.
+;;
+
+PPM_FIRMWARE_ACPI1C2	equ 0x00000001
+PPM_FIRMWARE_ACPI1C3	equ 0x00000002
+PPM_FIRMWARE_ACPI1TSTATES equ 0x00000004
+PPM_FIRMWARE_CST	equ 0x00000008
+PPM_FIRMWARE_CSD	equ 0x00000010
+PPM_FIRMWARE_PCT	equ 0x00000020
+PPM_FIRMWARE_PSS	equ 0x00000040
+PPM_FIRMWARE_XPSS	equ 0x00000080
+PPM_FIRMWARE_PPC	equ 0x00000100
+PPM_FIRMWARE_PSD	equ 0x00000200
+PPM_FIRMWARE_PTC	equ 0x00000400
+PPM_FIRMWARE_TSS	equ 0x00000800
+PPM_FIRMWARE_TPC	equ 0x00001000
+PPM_FIRMWARE_TSD	equ 0x00002000
+PPM_FIRMWARE_PCCH	equ 0x00004000
+PPM_FIRMWARE_PCCP	equ 0x00008000
+
+PPM_PERFSTATE_EVENT	STRUC
+State			dd ?
+Status			dd ?
+Latency			dd ?
+Speed			dd ?
+Processor		dd ?
+PPM_PERFSTATE_EVENT	ENDS
+PPPM_PERFSTATE_EVENT	typedef ptr PPM_PERFSTATE_EVENT
+
+PPM_PERFSTATE_DOMAIN_EVENT STRUC
+State			dd ?
+Latency			dd ?
+Speed			dd ?
+Processors		dd ?
+PPM_PERFSTATE_DOMAIN_EVENT ENDS
+PPPM_PERFSTATE_DOMAIN_EVENT typedef ptr PPM_PERFSTATE_DOMAIN_EVENT
+
+PPM_IDLESTATE_EVENT	STRUC
+NewState		dd ?
+OldState		dd ?
+Processors		dd ?
+PPM_IDLESTATE_EVENT	ENDS
+PPPM_IDLESTATE_EVENT	typedef ptr PPM_IDLESTATE_EVENT
+
+PPM_THERMALCHANGE_EVENT STRUC
+ThermalConstraint	dd ?
+Processors		dd ?
+PPM_THERMALCHANGE_EVENT ENDS
+PPPM_THERMALCHANGE_EVENT typedef ptr PPM_THERMALCHANGE_EVENT
+
+pragma warning(push)
+pragma warning(disable:4121)
+
+PPM_THERMAL_POLICY_EVENT STRUC
+Mode			db ?
+Processors		dd ?
+PPM_THERMAL_POLICY_EVENT ENDS
+PPPM_THERMAL_POLICY_EVENT typedef ptr PPM_THERMAL_POLICY_EVENT
+
+pragma warning(pop)
+
+;;
+;; Power Policy Management interfaces
+;;
+
+POWER_ACTION_POLICY	STRUC
+Action			POWER_ACTION ?
+Flags			dd ?
+EventCode		dd ?
+POWER_ACTION_POLICY	ENDS
+PPOWER_ACTION_POLICY	typedef ptr POWER_ACTION_POLICY
+
+;; POWER_ACTION_POLICY->Flags:
+POWER_ACTION_QUERY_ALLOWED	equ 0x00000001
+POWER_ACTION_UI_ALLOWED		equ 0x00000002
+POWER_ACTION_OVERRIDE_APPS	equ 0x00000004
+POWER_ACTION_PSEUDO_TRANSITION	equ 0x08000000
+POWER_ACTION_LIGHTEST_FIRST	equ 0x10000000
+POWER_ACTION_LOCK_CONSOLE	equ 0x20000000
+POWER_ACTION_DISABLE_WAKES	equ 0x40000000
+POWER_ACTION_CRITICAL		equ 0x80000000
+
+;; POWER_ACTION_POLICY->EventCode flags
+POWER_LEVEL_USER_NOTIFY_TEXT	equ 0x00000001
+POWER_LEVEL_USER_NOTIFY_SOUND	equ 0x00000002
+POWER_LEVEL_USER_NOTIFY_EXEC	equ 0x00000004
+POWER_USER_NOTIFY_BUTTON	equ 0x00000008
+POWER_USER_NOTIFY_SHUTDOWN	equ 0x00000010
+POWER_USER_NOTIFY_FORCED_SHUTDOWN equ 0x00000020
+POWER_FORCE_TRIGGER_RESET	equ 0x80000000
+
+;; Note: for battery alarm EventCodes, the ID of the battery alarm << 16 is ORed
+;; into the flags.  For example: DISCHARGE_POLICY_LOW << 16
+
+;;
+;; The GUID_BATTERY_DISCHARGE_FLAGS_x power settings use a subset of EventCode
+;; flags.  The POWER_FORCE_TRIGGER_RESET flag doesn't make sense for a battery
+;; alarm so it is overloaded for other purposes (gerneral enable/disable).
+BATTERY_DISCHARGE_FLAGS_EVENTCODE_MASK equ 0x00000007
+BATTERY_DISCHARGE_FLAGS_ENABLE equ 0x80000000
+
+;; system battery drain policies
+SYSTEM_POWER_LEVEL	STRUC
+Enable			BOOLEAN ?
+Spare			db 3 dup(?)
+BatteryLevel		dd ?
+PowerPolicy		POWER_ACTION_POLICY <>
+MinSystemState		SYSTEM_POWER_STATE ?
+SYSTEM_POWER_LEVEL	ENDS
+PSYSTEM_POWER_LEVEL	typedef ptr SYSTEM_POWER_LEVEL
+
+;; Discharge policy constants
+NUM_DISCHARGE_POLICIES	equ 4
+DISCHARGE_POLICY_CRITICAL equ 0
+DISCHARGE_POLICY_LOW	equ 1
+
+
+;; system power policies
+SYSTEM_POWER_POLICY	STRUC
+Revision		dd ?	;; 1
+PowerButton		POWER_ACTION_POLICY <>
+SleepButton		POWER_ACTION_POLICY <>
+LidClose		POWER_ACTION_POLICY <>
+LidOpenWake		SYSTEM_POWER_STATE ?
+Reserved		dd ?
+Idle			POWER_ACTION_POLICY <>
+IdleTimeout		dd ?
+IdleSensitivity		db ?
+DynamicThrottle		db ?
+Spare2			db 2 dup(?)
+MinSleep		SYSTEM_POWER_STATE ?
+MaxSleep		SYSTEM_POWER_STATE ?
+ReducedLatencySleep	SYSTEM_POWER_STATE ?
+WinLogonFlags		dd ?
+Spare3			dd ?
+DozeS4Timeout		dd ?
+BroadcastCapacityResolution dd ?
+DischargePolicy		SYSTEM_POWER_LEVEL NUM_DISCHARGE_POLICIES dup(<>)
+VideoTimeout		dd ?
+VideoDimDisplay		BOOLEAN ?
+VideoReserved		dd 3 dup(?)
+SpindownTimeout		dd ?
+OptimizeForPower	BOOLEAN ?
+FanThrottleTolerance	db ?
+ForcedThrottle		db ?
+MinThrottle		db ?
+OverThrottled		POWER_ACTION_POLICY <>
+SYSTEM_POWER_POLICY	ENDS
+PSYSTEM_POWER_POLICY	typedef ptr SYSTEM_POWER_POLICY
+
+;; processor power policy state
+
+;;
+;; Processor Idle State Policy.
+;;
+
+PROCESSOR_IDLESTATE_POLICY_COUNT equ 0x3
+
+PROCESSOR_IDLESTATE_INFO STRUC
+TimeCheck		dd ?
+DemotePercent		db ?
+PromotePercent		db ?
+Spare			db 2 dup(?)
+PROCESSOR_IDLESTATE_INFO ENDS
+PPROCESSOR_IDLESTATE_INFO typedef ptr PROCESSOR_IDLESTATE_INFO
+
+PROCESSOR_IDLESTATE_POLICY STRUC
+Revision		dw ?
+UNION Flags
+ AsWORD			 dw ?
+if 0
+ STRUC
+  AllowScaling : 1	 dw ?
+  Disabled : 1		 dw ?
+  Reserved : 14		 dw ?
+ ENDS
+endif
+ENDS
+PolicyCount		dd ?
+Policy			PROCESSOR_IDLESTATE_INFO PROCESSOR_IDLESTATE_POLICY_COUNT dup(<>)
+PROCESSOR_IDLESTATE_POLICY ENDS
+PPROCESSOR_IDLESTATE_POLICY typedef ptr PROCESSOR_IDLESTATE_POLICY
+
+;;
+;; Legacy Processor Policy.  This is only provided to allow legacy
+;; applications to compile.  New applications must use
+;; PROCESSOR_IDLESTATE_POLICY.
+;;
+
+PO_THROTTLE_NONE	equ 0
+PO_THROTTLE_CONSTANT	equ 1
+PO_THROTTLE_DEGRADE	equ 2
+PO_THROTTLE_ADAPTIVE	equ 3
+PO_THROTTLE_MAXIMUM	equ 4	;; not a policy, just a limit
+
+
+PROCESSOR_POWER_POLICY_INFO  STRUC
+TimeCheck		dd ?	;; in US
+DemoteLimit		dd ?	;; in US
+PromoteLimit		dd ?	;; in US
+DemotePercent		db ?
+PromotePercent		db ?
+Spare			db 2 dup(?)
+Flags			dd ?
+;AllowDemotion:1	dd ?
+;AllowPromotion:1	dd ?
+;Reserved:30		dd ?
+PROCESSOR_POWER_POLICY_INFO ENDS
+PPROCESSOR_POWER_POLICY_INFO typedef ptr PROCESSOR_POWER_POLICY_INFO
+
+PROCESSOR_POWER_POLICY	STRUC	;; processor power policy
+Revision		dd ?	;; 1
+DynamicThrottle		db ?	;; Dynamic Throttling Policy
+Spare			db 3 dup(?)
+Flags			dd ?
+;DisableCStates:1	 dd ?
+;Reserved:31		 dd ?
+PolicyCount		dd ?
+Policy			PROCESSOR_POWER_POLICY_INFO 3 dup(<>)
+PROCESSOR_POWER_POLICY	ENDS
+PPROCESSOR_POWER_POLICY typedef ptr PROCESSOR_POWER_POLICY
+
+;;
+;; Processor Perf State Policy.
+;;
+
+PROCESSOR_PERFSTATE_POLICY STRUC
+Revision		dd ?
+MaxThrottle		db ?
+MinThrottle		db ?
+BusyAdjThreshold	db ?
+UNION
+ Spare			db ?
+ UNION
+  AsBYTE		db ?
+if 0
+  STRUC Flags
+   NoDomainAccounting:1 db ?
+   IncreasePolicy: 2	db ?
+   DecreasePolicy: 2	db ?
+   Reserved: 3		db ?
+  ENDS
+endif
+ ENDS
+ENDS
+TimeCheck		dd ?
+IncreaseTime		dd ?
+DecreaseTime		dd ?
+IncreasePercent		dd ?
+DecreasePercent		dd ?
+PROCESSOR_PERFSTATE_POLICY ENDS
+PPROCESSOR_PERFSTATE_POLICY typedef ptr PROCESSOR_PERFSTATE_POLICY
+
+;; administrator power policy overrides
+ADMINISTRATOR_POWER_POLICY  STRUC
+MinSleep		SYSTEM_POWER_STATE ?
+MaxSleep		SYSTEM_POWER_STATE ?
+MinVideoTimeout		dd ?
+MaxVideoTimeout		dd ?
+MinSpindownTimeout	dd ?
+MaxSpindownTimeout	dd ?
+ADMINISTRATOR_POWER_POLICY ENDS
+PADMINISTRATOR_POWER_POLICY typedef ptr ADMINISTRATOR_POWER_POLICY
+
+SYSTEM_BATTERY_STATE	STRUC
+AcOnLine		BOOLEAN ?
+BatteryPresent		BOOLEAN ?
+Charging		BOOLEAN ?
+Discharging		BOOLEAN ?
+Spare1			BOOLEAN 4 dup(?)
+MaxCapacity		dd ?
+RemainingCapacity	dd ?
+Rate			dd ?
+EstimatedTime		dd ?
+DefaultAlert1		dd ?
+DefaultAlert2		dd ?
+SYSTEM_BATTERY_STATE	ENDS
+PSYSTEM_BATTERY_STATE	typedef ptr SYSTEM_BATTERY_STATE
+
+;include "pshpack2.h"			;; 16 bit headers are 2 byte packed
 
 IMAGE_DOS_SIGNATURE	equ 0x5A4D	;; MZ
 IMAGE_OS2_SIGNATURE	equ 0x454E	;; NE
@@ -2835,7 +8810,7 @@ IMAGE_OS2_SIGNATURE_LE	equ 0x454C	;; LE
 IMAGE_VXD_SIGNATURE	equ 0x454C	;; LE
 IMAGE_NT_SIGNATURE	equ 0x00004550	;; PE00
 
-IMAGE_DOS_HEADER	STRUC 2 ;; 16 bit headers are 2 byte packed
+IMAGE_DOS_HEADER	STRUC WORD	;; 16 bit headers are 2 byte packed
 e_magic			dw ?		;; Magic number
 e_cblp			dw ?		;; Bytes on last page of file
 e_cp			dw ?		;; Pages in file
@@ -2883,8 +8858,8 @@ ne_nrestab		LONG ?		;; Offset of Non-resident Names Table
 ne_cmovent		WORD ?		;; Count of movable entries
 ne_align		WORD ?		;; Segment alignment shift count
 ne_cres			WORD ?		;; Count of resource segments
-ne_exetyp		BYTE ?		;; Target Operating system
-ne_flagsothers		BYTE ?		;; Other .EXE flags
+ne_exetyp		db ?		;; Target Operating system
+ne_flagsothers		db ?		;; Other .EXE flags
 ne_pretthunks		WORD ?		;; offset to return thunks
 ne_psegrefbytes		WORD ?		;; offset to segment ref. bytes
 ne_swaparea		WORD ?		;; Minimum code swap area size
@@ -2947,6 +8922,8 @@ e32_ddkver		dw ?		;; DDK version for VxD
 IMAGE_VXD_HEADER	ENDS
 PIMAGE_VXD_HEADER	typedef ptr IMAGE_VXD_HEADER
 
+;include "poppack.h"			;; Back to 4 byte packing
+
 ;;
 ;; File header format.
 ;;
@@ -2992,20 +8969,28 @@ IMAGE_FILE_MACHINE_R4000	equ 0x0166 ;; MIPS little-endian
 IMAGE_FILE_MACHINE_R10000	equ 0x0168 ;; MIPS little-endian
 IMAGE_FILE_MACHINE_WCEMIPSV2	equ 0x0169 ;; MIPS little-endian WCE v2
 IMAGE_FILE_MACHINE_ALPHA	equ 0x0184 ;; Alpha_AXP
-IMAGE_FILE_MACHINE_POWERPC	equ 0x01F0 ;; IBM PowerPC Little-Endian
 IMAGE_FILE_MACHINE_SH3		equ 0x01a2 ;; SH3 little-endian
+IMAGE_FILE_MACHINE_SH3DSP	equ 0x01a3
 IMAGE_FILE_MACHINE_SH3E		equ 0x01a4 ;; SH3E little-endian
 IMAGE_FILE_MACHINE_SH4		equ 0x01a6 ;; SH4 little-endian
+IMAGE_FILE_MACHINE_SH5		equ 0x01a8 ;; SH5
 IMAGE_FILE_MACHINE_ARM		equ 0x01c0 ;; ARM Little-Endian
 IMAGE_FILE_MACHINE_THUMB	equ 0x01c2
+IMAGE_FILE_MACHINE_AM33		equ 0x01d3
+IMAGE_FILE_MACHINE_POWERPC	equ 0x01F0 ;; IBM PowerPC Little-Endian
+IMAGE_FILE_MACHINE_POWERPCFP	equ 0x01f1
 IMAGE_FILE_MACHINE_IA64		equ 0x0200 ;; Intel 64
 IMAGE_FILE_MACHINE_MIPS16	equ 0x0266 ;; MIPS
+IMAGE_FILE_MACHINE_ALPHA64	equ 0x0284 ;; ALPHA64
 IMAGE_FILE_MACHINE_MIPSFPU	equ 0x0366 ;; MIPS
 IMAGE_FILE_MACHINE_MIPSFPU16	equ 0x0466 ;; MIPS
-IMAGE_FILE_MACHINE_ALPHA64	equ 0x0284 ;; ALPHA64
 IMAGE_FILE_MACHINE_AXP64	equ IMAGE_FILE_MACHINE_ALPHA64
-
-IMAGE_FILE_MACHINE_AMD64	equ 0x8664  ; AMD64 (K8)
+IMAGE_FILE_MACHINE_TRICORE	equ 0x0520 ;; Infineon
+IMAGE_FILE_MACHINE_CEF		equ 0x0CEF
+IMAGE_FILE_MACHINE_EBC		equ 0x0EBC ;; EFI Byte Code
+IMAGE_FILE_MACHINE_AMD64	equ 0x8664 ;; AMD64 (K8)
+IMAGE_FILE_MACHINE_M32R		equ 0x9041 ;; M32R little-endian
+IMAGE_FILE_MACHINE_CEE		equ 0xC0EE
 
 ;;
 ;; Directory format.
@@ -3093,7 +9078,7 @@ SizeOfInitializedData		dd ?
 SizeOfUninitializedData		dd ?
 AddressOfEntryPoint		dd ?
 BaseOfCode			dd ?
-ImageBase			dq ?
+ImageBase			ULONGLONG ?
 SectionAlignment		dd ?
 FileAlignment			dd ?
 MajorOperatingSystemVersion	dw ?
@@ -3108,20 +9093,20 @@ SizeOfHeaders			dd ?
 CheckSum			dd ?
 Subsystem			dw ?
 DllCharacteristics		dw ?
-SizeOfStackReserve		dq ?
-SizeOfStackCommit		dq ?
-SizeOfHeapReserve		dq ?
-SizeOfHeapCommit		dq ?
+SizeOfStackReserve		ULONGLONG ?
+SizeOfStackCommit		ULONGLONG ?
+SizeOfHeapReserve		ULONGLONG ?
+SizeOfHeapCommit		ULONGLONG ?
 LoaderFlags			dd ?
 NumberOfRvaAndSizes		dd ?
 DataDirectory			IMAGE_DATA_DIRECTORY IMAGE_NUMBEROF_DIRECTORY_ENTRIES dup(<>)
 IMAGE_OPTIONAL_HEADER64		ENDS
 PIMAGE_OPTIONAL_HEADER64	typedef ptr IMAGE_OPTIONAL_HEADER64
 
-IMAGE_SIZEOF_ROM_OPTIONAL_HEADER	equ 56
-IMAGE_SIZEOF_STD_OPTIONAL_HEADER	equ 28
-IMAGE_SIZEOF_NT_OPTIONAL32_HEADER	equ 224
-IMAGE_SIZEOF_NT_OPTIONAL64_HEADER	equ 240
+IMAGE_SIZEOF_ROM_OPTIONAL_HEADER  equ 56
+IMAGE_SIZEOF_STD_OPTIONAL_HEADER  equ 28
+IMAGE_SIZEOF_NT_OPTIONAL32_HEADER equ 224
+IMAGE_SIZEOF_NT_OPTIONAL64_HEADER equ 240
 
 IMAGE_NT_OPTIONAL_HDR32_MAGIC	equ 0x10b
 IMAGE_NT_OPTIONAL_HDR64_MAGIC	equ 0x20b
@@ -3155,34 +9140,28 @@ PIMAGE_NT_HEADERS32	typedef ptr IMAGE_NT_HEADERS32
 
 IMAGE_ROM_HEADERS	STRUC
 FileHeader		IMAGE_FILE_HEADER <>
-OptionalHeader		IMAGE_OPTIONAL_HEADER <>
+OptionalHeader		IMAGE_ROM_OPTIONAL_HEADER <>
 IMAGE_ROM_HEADERS	ENDS
 PIMAGE_ROM_HEADERS	typedef ptr IMAGE_ROM_HEADERS
-
-IMAGE_FIRST_SECTION64 macro ntheader
-	exitm<((ntheader + FIELD_OFFSET( IMAGE_NT_HEADERS64, OptionalHeader ) + \
-	((PIMAGE_NT_HEADERS64)(ntheader))->FileHeader.SizeOfOptionalHeader))>
-	endm
-
-IMAGE_FIRST_SECTION32 macro ntheader
-	exitm<((PIMAGE_SECTION_HEADER) ((UINT_PTR)ntheader + \
-		FIELD_OFFSET( IMAGE_NT_HEADERS32, OptionalHeader ) + \
-		((PIMAGE_NT_HEADERS32)(ntheader))->FileHeader.SizeOfOptionalHeader))>
-	endm
 
 ifdef _WIN64
 IMAGE_NT_HEADERS	typedef IMAGE_NT_HEADERS64
 PIMAGE_NT_HEADERS	typedef PIMAGE_NT_HEADERS64
-IMAGE_FIRST_SECTION macro ntheader
-	exitm<IMAGE_FIRST_SECTION64(ntheader)>
-	endm
 else
 IMAGE_NT_HEADERS	typedef IMAGE_NT_HEADERS32
 PIMAGE_NT_HEADERS	typedef PIMAGE_NT_HEADERS32
-IMAGE_FIRST_SECTION macro ntheader
-	exitm<IMAGE_FIRST_SECTION32(ntheader)>
-	endm
 endif
+
+;; IMAGE_FIRST_SECTION doesn't need 32/64 versions since the file header is the
+;; same either way.
+
+IMAGE_FIRST_SECTION macro ntheader
+ifdef _WIN64
+;	exitm<IMAGE_FIRST_SECTION64(ntheader)>
+else
+;	exitm<IMAGE_FIRST_SECTION32(ntheader)>
+endif
+	endm
 
 
 ;; Subsystem Values
@@ -3195,14 +9174,27 @@ IMAGE_SUBSYSTEM_OS2_CUI		equ 5	 ;; image runs in the OS/2 character subsystem.
 IMAGE_SUBSYSTEM_POSIX_CUI	equ 7	 ;; image runs in the Posix character subsystem.
 IMAGE_SUBSYSTEM_NATIVE_WINDOWS	equ 8	 ;; image is a native Win9x driver.
 IMAGE_SUBSYSTEM_WINDOWS_CE_GUI	equ 9	 ;; Image runs in the Windows CE subsystem.
+IMAGE_SUBSYSTEM_EFI_APPLICATION equ 10	 ;;
+IMAGE_SUBSYSTEM_EFI_BOOT_SERVICE_DRIVER equ 11
+IMAGE_SUBSYSTEM_EFI_RUNTIME_DRIVER equ 12
+IMAGE_SUBSYSTEM_EFI_ROM		equ 13
+IMAGE_SUBSYSTEM_XBOX		equ 14
+IMAGE_SUBSYSTEM_WINDOWS_BOOT_APPLICATION equ 16
 
 ;; DllCharacteristics Entries
 
-;IMAGE_LIBRARY_PROCESS_INIT		equ 0x0001	;; Reserved.
-;IMAGE_LIBRARY_PROCESS_TERM		equ 0x0002	;; Reserved.
-;IMAGE_LIBRARY_THREAD_INIT		equ 0x0004	;; Reserved.
-;IMAGE_LIBRARY_THREAD_TERM		equ 0x0008	;; Reserved.
-IMAGE_DLLCHARACTERISTICS_WDM_DRIVER	equ 0x2000 ;; Driver uses WDM model
+;IMAGE_LIBRARY_PROCESS_INIT		equ 0x0001  ;; Reserved.
+;IMAGE_LIBRARY_PROCESS_TERM		equ 0x0002  ;; Reserved.
+;IMAGE_LIBRARY_THREAD_INIT		equ 0x0004  ;; Reserved.
+;IMAGE_LIBRARY_THREAD_TERM		equ 0x0008  ;; Reserved.
+IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE	equ 0x0040  ;; DLL can move.
+IMAGE_DLLCHARACTERISTICS_FORCE_INTEGRITY equ 0x0080 ;; Code Integrity Image
+IMAGE_DLLCHARACTERISTICS_NX_COMPAT	equ 0x0100  ;; Image is NX compatible
+IMAGE_DLLCHARACTERISTICS_NO_ISOLATION	equ 0x0200  ;; Image understands isolation and doesn't want it
+IMAGE_DLLCHARACTERISTICS_NO_SEH		equ 0x0400  ;; Image does not use SEH.	No SE handler may reside in this image
+IMAGE_DLLCHARACTERISTICS_NO_BIND	equ 0x0800  ;; Do not bind this image.
+IMAGE_DLLCHARACTERISTICS_WDM_DRIVER	equ 0x2000  ;; Driver uses WDM model
+IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE equ 0x8000
 
 ;; Directory Entries
 
@@ -3222,6 +9214,51 @@ IMAGE_DIRECTORY_ENTRY_BOUND_IMPORT	equ 11	  ;; Bound Import Directory in headers
 IMAGE_DIRECTORY_ENTRY_IAT		equ 12	  ;; Import Address Table
 IMAGE_DIRECTORY_ENTRY_DELAY_IMPORT	equ 13	  ;; Delay Load Import Descriptors
 IMAGE_DIRECTORY_ENTRY_COM_DESCRIPTOR	equ 14	  ;; COM Runtime descriptor
+
+;;
+;; Non-COFF Object file header
+;;
+
+ANON_OBJECT_HEADER	STRUC
+Sig1			dw ?	;; Must be IMAGE_FILE_MACHINE_UNKNOWN
+Sig2			dw ?	;; Must be 0xffff
+Version			dw ?	;; >= 1 (implies the CLSID field is present)
+Machine			dw ?
+TimeDateStamp		dd ?
+ClassID			CLSID <> ;; Used to invoke CoCreateInstance
+SizeOfData		dd ?	;; Size of data that follows the header
+ANON_OBJECT_HEADER	ENDS
+
+ANON_OBJECT_HEADER_V2	STRUC
+Sig1			dw ?	;; Must be IMAGE_FILE_MACHINE_UNKNOWN
+Sig2			dw ?	;; Must be 0xffff
+Version			dw ?	;; >= 2 (implies the Flags field is present - otherwise V1)
+Machine			dw ?
+TimeDateStamp		dd ?
+ClassID			CLSID <> ;; Used to invoke CoCreateInstance
+SizeOfData		dd ?	;; Size of data that follows the header
+Flags			dd ?	;; 0x1 -> contains metadata
+MetaDataSize		dd ?	;; Size of CLR metadata
+MetaDataOffset		dd ?	;; Offset of CLR metadata
+ANON_OBJECT_HEADER_V2	ENDS
+
+ANON_OBJECT_HEADER_BIGOBJ  STRUC
+;; same as ANON_OBJECT_HEADER_V2
+Sig1			dw ?	;; Must be IMAGE_FILE_MACHINE_UNKNOWN
+Sig2			dw ?	;; Must be 0xffff
+Version			dw ?	;; >= 2 (implies the Flags field is present)
+Machine			dw ?	;; Actual machine - IMAGE_FILE_MACHINE_xxx
+TimeDateStamp		dd ?
+ClassID			CLSID <> ;; {D1BAA1C7-BAEE-4ba9-AF20-FAF66AA4DCB8}
+SizeOfData		dd ?	;; Size of data that follows the header
+Flags			dd ?	;; 0x1 -> contains metadata
+MetaDataSize		dd ?	;; Size of CLR metadata
+MetaDataOffset		dd ?	;; Offset of CLR metadata
+				;; bigobj specifics
+NumberOfSections	dd ?	;; extended from WORD
+PointerToSymbolTable	dd ?
+NumberOfSymbols		dd ?
+ANON_OBJECT_HEADER_BIGOBJ ENDS
 
 ;;
 ;; Section header format.
@@ -3292,6 +9329,7 @@ IMAGE_SCN_ALIGN_2048BYTES	equ 0x00C00000	 ;;
 IMAGE_SCN_ALIGN_4096BYTES	equ 0x00D00000	 ;;
 IMAGE_SCN_ALIGN_8192BYTES	equ 0x00E00000	 ;;
 ;; Unused			equ 0x00F00000
+IMAGE_SCN_ALIGN_MASK		equ 0x00F00000
 
 IMAGE_SCN_LNK_NRELOC_OVFL	equ 0x01000000	 ;; Section contains extended relocations.
 IMAGE_SCN_MEM_DISCARDABLE	equ 0x02000000	 ;; Section can be discarded.
@@ -3311,7 +9349,7 @@ IMAGE_SCN_SCALE_INDEX	equ 0x00000001	 ;; Tls index is scaled
 ;; Symbol format.
 ;;
 
-IMAGE_SYMBOL		STRUC 2 ;; Symbols, relocs, and linenumbers are 2 byte packed
+IMAGE_SYMBOL		STRUC WORD ;; Symbols, relocs, and linenumbers are 2 byte packed
 UNION
     ShortName		db 8 dup(?)
     STRUC
@@ -3330,6 +9368,23 @@ PIMAGE_SYMBOL		typedef ptr IMAGE_SYMBOL
 
 IMAGE_SIZEOF_SYMBOL	equ 18
 
+IMAGE_SYMBOL_EX		STRUC
+UNION
+    ShortName		db 8 dup(?)
+    STRUC
+	_Short		dd ?	;; if 0, use LongName
+	_Long		dd ?	;; offset into string table
+    ENDS
+    LongName		dd 2 dup(?)
+ENDS
+Value			dd ?
+SectionNumber		LONG ?
+_Type			dw ?
+StorageClass		db ?
+NumberOfAuxSymbols	db ?
+IMAGE_SYMBOL_EX		ENDS
+PIMAGE_SYMBOL_EX	typedef ptr IMAGE_SYMBOL_EX
+
 ;;
 ;; Section values.
 ;;
@@ -3340,6 +9395,8 @@ IMAGE_SIZEOF_SYMBOL	equ 18
 IMAGE_SYM_UNDEFINED		equ 0		;; Symbol is undefined or is common.
 IMAGE_SYM_ABSOLUTE		equ -1		;; Symbol is an absolute value.
 IMAGE_SYM_DEBUG			equ -2		;; Symbol is a special debug item.
+IMAGE_SYM_SECTION_MAX		equ 0xFEFF	;; Values 0xFF00-0xFFFF are special
+IMAGE_SYM_SECTION_MAX_EX	equ MAXLONG
 
 ;;
 ;; Type (fundamental) values.
@@ -3460,6 +9517,18 @@ DECREF	macro x
 	endm
 endif
 
+;include <pshpack2.h>
+
+IMAGE_AUX_SYMBOL_TOKEN_DEF STRUC WORD
+bAuxType		db ?	;; IMAGE_AUX_SYMBOL_TYPE
+bReserved		db ?	;; Must be 0
+SymbolTableIndex	dd ?
+rgbReserved		db 12 dup(?) ;; Must be 0
+IMAGE_AUX_SYMBOL_TOKEN_DEF ENDS
+PIMAGE_AUX_SYMBOL_TOKEN_DEF typedef ptr IMAGE_AUX_SYMBOL_TOKEN_DEF
+
+;include <poppack.h>
+
 ;;
 ;; Auxiliary entry format.
 ;;
@@ -3507,6 +9576,40 @@ STRUC
 ENDS
 IMAGE_AUX_SYMBOL	ENDS
 PIMAGE_AUX_SYMBOL	typedef ptr IMAGE_AUX_SYMBOL
+
+IMAGE_AUX_SYMBOL_EX	UNION
+STRUC Sym
+ WeakDefaultSymIndex	dd ?	;; the weak extern default symbol index
+ WeakSearchType		dd ?
+ rgbReserved		db 12 dup(?)
+ENDS
+STRUC File
+ _Name			db sizeof(IMAGE_SYMBOL_EX) dup(?)
+ENDS
+STRUC Section
+ _Length		dd ?
+ NumberOfRelocations	dw ?
+ NumberOfLinenumbers	dw ?
+ CheckSum		dd ?
+ Number			dw ?
+ Selection		db ?
+ bReserved		db ?
+ HighNumber		dw ?
+ rgbReserved		db 2 dup(?)
+ENDS
+STRUC
+ TokenDef		IMAGE_AUX_SYMBOL_TOKEN_DEF <>
+ rgbReserved		db 2 dup(?)
+ENDS
+STRUC CRC
+ crc			dd ?
+ rgbReserved		db 16 dup(?)
+ENDS
+IMAGE_AUX_SYMBOL_EX	ENDS
+PIMAGE_AUX_SYMBOL_EX	typedef ptr IMAGE_AUX_SYMBOL_EX
+
+IMAGE_AUX_SYMBOL_TYPE	typedef sdword ; enum
+IMAGE_AUX_SYMBOL_TYPE_TOKEN_DEF equ 1
 
 IMAGE_SIZEOF_AUX_SYMBOL equ 18
 
@@ -3562,27 +9665,9 @@ IMAGE_REL_I386_TOKEN		equ 000Ch ; CLR token
 IMAGE_REL_I386_SECREL7		equ 000Dh ; 7bit offset
 IMAGE_REL_I386_REL32		equ 0x0014 ;; PC-relative 32-bit reference to the symbols virtual address
 
-; X86-64 relocations
-
-IMAGE_REL_AMD64_ABSOLUTE	equ 0000h ; Reference is absolute, no relocation is necessary
-IMAGE_REL_AMD64_ADDR64		equ 0001h ; 64-bit address (VA)
-IMAGE_REL_AMD64_ADDR32		equ 0002h ; 32-bit address (VA)
-IMAGE_REL_AMD64_ADDR32NB	equ 0003h ; 32-bit address w/o image base (RVA)
-IMAGE_REL_AMD64_REL32		equ 0004h ; 32-bit relative address from byte following reloc
-IMAGE_REL_AMD64_REL32_1		equ 0005h ; 32-bit relative address from byte distance 1 from reloc
-IMAGE_REL_AMD64_REL32_2		equ 0006h ; 32-bit relative address from byte distance 2 from reloc
-IMAGE_REL_AMD64_REL32_3		equ 0007h ; 32-bit relative address from byte distance 3 from reloc
-IMAGE_REL_AMD64_REL32_4		equ 0008h ; 32-bit relative address from byte distance 4 from reloc
-IMAGE_REL_AMD64_REL32_5		equ 0009h ; 32-bit relative address from byte distance 5 from reloc
-IMAGE_REL_AMD64_SECTION		equ 000Ah ; Section index
-IMAGE_REL_AMD64_SECREL		equ 000Bh ; 32 bit offset from base of section containing target
-IMAGE_REL_AMD64_SECREL7		equ 000Ch ; 7 bit unsigned offset from base of section containing target
-IMAGE_REL_AMD64_TOKEN		equ 000Dh ; 32 bit metadata token
-
 ;;
 ;; MIPS relocation types.
 ;;
-
 IMAGE_REL_MIPS_ABSOLUTE		equ 0x0000 ;; Reference is absolute, no relocation is necessary
 IMAGE_REL_MIPS_REFHALF		equ 0x0001
 IMAGE_REL_MIPS_REFWORD		equ 0x0002
@@ -3595,6 +9680,7 @@ IMAGE_REL_MIPS_SECTION		equ 0x000A
 IMAGE_REL_MIPS_SECREL		equ 0x000B
 IMAGE_REL_MIPS_SECRELLO		equ 0x000C ;; Low 16-bit section relative referemce (used for >32k TLS)
 IMAGE_REL_MIPS_SECRELHI		equ 0x000D ;; High 16-bit section relative reference (used for >32k TLS)
+IMAGE_REL_MIPS_TOKEN		equ 0x000E ;; clr token
 IMAGE_REL_MIPS_JMPADDR16	equ 0x0010
 IMAGE_REL_MIPS_REFWORDNB	equ 0x0022
 IMAGE_REL_MIPS_PAIR		equ 0x0025
@@ -3656,6 +9742,7 @@ IMAGE_REL_PPC_PAIR		equ 0x0012
 IMAGE_REL_PPC_SECRELLO		equ 0x0013 ;; Low 16-bit section relative reference (used for >32k TLS)
 IMAGE_REL_PPC_SECRELHI		equ 0x0014 ;; High 16-bit section relative reference (used for >32k TLS)
 IMAGE_REL_PPC_GPREL		equ 0x0015
+IMAGE_REL_PPC_TOKEN		equ 0x0016 ;; clr token
 
 IMAGE_REL_PPC_TYPEMASK		equ 0x00FF ;; mask to isolate above values in IMAGE_RELOCATION.Type
 
@@ -3686,14 +9773,62 @@ IMAGE_REL_SH3_SIZEOF_SECTION	equ 0x000D ;; Size of EXE section
 IMAGE_REL_SH3_SECTION		equ 0x000E ;; Section table index
 IMAGE_REL_SH3_SECREL		equ 0x000F ;; Offset within section
 IMAGE_REL_SH3_DIRECT32_NB	equ 0x0010 ;; 32 bit direct not based
+IMAGE_REL_SH3_GPREL4_LONG	equ 0x0011 ;; GP-relative addressing
+IMAGE_REL_SH3_TOKEN		equ 0x0012 ;; clr token
+IMAGE_REL_SHM_PCRELPT		equ 0x0013 ;; Offset from current
+IMAGE_REL_SHM_REFLO		equ 0x0014 ;; Low bits of 32-bit address
+IMAGE_REL_SHM_REFHALF		equ 0x0015 ;; High bits of 32-bit address
+IMAGE_REL_SHM_RELLO		equ 0x0016 ;; Low bits of relative reference
+IMAGE_REL_SHM_RELHALF		equ 0x0017 ;; High bits of relative reference
+IMAGE_REL_SHM_PAIR		equ 0x0018 ;; offset operand for relocation
+
+IMAGE_REL_SH_NOMODE		equ 0x8000 ;; relocation ignores section mode
 
 IMAGE_REL_ARM_ABSOLUTE		equ 0x0000 ;; No relocation required
 IMAGE_REL_ARM_ADDR32		equ 0x0001 ;; 32 bit address
 IMAGE_REL_ARM_ADDR32NB		equ 0x0002 ;; 32 bit address w/o image base
 IMAGE_REL_ARM_BRANCH24		equ 0x0003 ;; 24 bit offset << 2 & sign ext.
 IMAGE_REL_ARM_BRANCH11		equ 0x0004 ;; Thumb: 2 11 bit offsets
+IMAGE_REL_ARM_TOKEN		equ 0x0005 ;; clr token
+IMAGE_REL_ARM_GPREL12		equ 0x0006 ;; GP-relative addressing (ARM)
+IMAGE_REL_ARM_GPREL7		equ 0x0007 ;; GP-relative addressing (Thumb)
+IMAGE_REL_ARM_BLX24		equ 0x0008
+IMAGE_REL_ARM_BLX11		equ 0x0009
 IMAGE_REL_ARM_SECTION		equ 0x000E ;; Section table index
 IMAGE_REL_ARM_SECREL		equ 0x000F ;; Offset within section
+
+IMAGE_REL_AM_ABSOLUTE		equ 0x0000
+IMAGE_REL_AM_ADDR32		equ 0x0001
+IMAGE_REL_AM_ADDR32NB		equ 0x0002
+IMAGE_REL_AM_CALL32		equ 0x0003
+IMAGE_REL_AM_FUNCINFO		equ 0x0004
+IMAGE_REL_AM_REL32_1		equ 0x0005
+IMAGE_REL_AM_REL32_2		equ 0x0006
+IMAGE_REL_AM_SECREL		equ 0x0007
+IMAGE_REL_AM_SECTION		equ 0x0008
+IMAGE_REL_AM_TOKEN		equ 0x0009
+
+;;
+;; x64 relocations
+;;
+
+IMAGE_REL_AMD64_ABSOLUTE	equ 0000h ; Reference is absolute, no relocation is necessary
+IMAGE_REL_AMD64_ADDR64		equ 0001h ; 64-bit address (VA)
+IMAGE_REL_AMD64_ADDR32		equ 0002h ; 32-bit address (VA)
+IMAGE_REL_AMD64_ADDR32NB	equ 0003h ; 32-bit address w/o image base (RVA)
+IMAGE_REL_AMD64_REL32		equ 0004h ; 32-bit relative address from byte following reloc
+IMAGE_REL_AMD64_REL32_1		equ 0005h ; 32-bit relative address from byte distance 1 from reloc
+IMAGE_REL_AMD64_REL32_2		equ 0006h ; 32-bit relative address from byte distance 2 from reloc
+IMAGE_REL_AMD64_REL32_3		equ 0007h ; 32-bit relative address from byte distance 3 from reloc
+IMAGE_REL_AMD64_REL32_4		equ 0008h ; 32-bit relative address from byte distance 4 from reloc
+IMAGE_REL_AMD64_REL32_5		equ 0009h ; 32-bit relative address from byte distance 5 from reloc
+IMAGE_REL_AMD64_SECTION		equ 000Ah ; Section index
+IMAGE_REL_AMD64_SECREL		equ 000Bh ; 32 bit offset from base of section containing target
+IMAGE_REL_AMD64_SECREL7		equ 000Ch ; 7 bit unsigned offset from base of section containing target
+IMAGE_REL_AMD64_TOKEN		equ 000Dh ; 32 bit metadata token
+IMAGE_REL_AMD64_SREL32		equ 0x000E ;; 32 bit signed span-dependent value emitted into object
+IMAGE_REL_AMD64_PAIR		equ 0x000F
+IMAGE_REL_AMD64_SSPAN32		equ 0x0010 ;; 32 bit signed span-dependent value applied at link time
 
 ;;
 ;; IA64 relocation types.
@@ -3714,15 +9849,64 @@ IMAGE_REL_IA64_SECTION		equ 0x000B
 IMAGE_REL_IA64_SECREL22		equ 0x000C
 IMAGE_REL_IA64_SECREL64I	equ 0x000D
 IMAGE_REL_IA64_SECREL32		equ 0x000E
-IMAGE_REL_IA64_LTOFF64		equ 0x000F
 IMAGE_REL_IA64_DIR32NB		equ 0x0010
-IMAGE_REL_IA64_RESERVED_11	equ 0x0011
-IMAGE_REL_IA64_RESERVED_12	equ 0x0012
-IMAGE_REL_IA64_RESERVED_13	equ 0x0013
-IMAGE_REL_IA64_RESERVED_14	equ 0x0014
-IMAGE_REL_IA64_RESERVED_15	equ 0x0015
-IMAGE_REL_IA64_RESERVED_16	equ 0x0016
+IMAGE_REL_IA64_SREL14		equ 0x0011
+IMAGE_REL_IA64_SREL22		equ 0x0012
+IMAGE_REL_IA64_SREL32		equ 0x0013
+IMAGE_REL_IA64_UREL32		equ 0x0014
+IMAGE_REL_IA64_PCREL60X		equ 0x0015 ;; This is always a BRL and never converted
+IMAGE_REL_IA64_PCREL60B		equ 0x0016 ;; If possible, convert to MBB bundle with NOP.B in slot 1
+IMAGE_REL_IA64_PCREL60F		equ 0x0017 ;; If possible, convert to MFB bundle with NOP.F in slot 1
+IMAGE_REL_IA64_PCREL60I		equ 0x0018 ;; If possible, convert to MIB bundle with NOP.I in slot 1
+IMAGE_REL_IA64_PCREL60M		equ 0x0019 ;; If possible, convert to MMB bundle with NOP.M in slot 1
+IMAGE_REL_IA64_IMMGPREL64	equ 0x001A
+IMAGE_REL_IA64_TOKEN		equ 0x001B ;; clr token
+IMAGE_REL_IA64_GPREL32		equ 0x001C
 IMAGE_REL_IA64_ADDEND		equ 0x001F
+
+;;
+;; CEF relocation types.
+;;
+IMAGE_REL_CEF_ABSOLUTE	equ 0x0000	;; Reference is absolute, no relocation is necessary
+IMAGE_REL_CEF_ADDR32	equ 0x0001	;; 32-bit address (VA).
+IMAGE_REL_CEF_ADDR64	equ 0x0002	;; 64-bit address (VA).
+IMAGE_REL_CEF_ADDR32NB	equ 0x0003	;; 32-bit address w/o image base (RVA).
+IMAGE_REL_CEF_SECTION	equ 0x0004	;; Section index
+IMAGE_REL_CEF_SECREL	equ 0x0005	;; 32 bit offset from base of section containing target
+IMAGE_REL_CEF_TOKEN	equ 0x0006	;; 32 bit metadata token
+
+;;
+;; clr relocation types.
+;;
+IMAGE_REL_CEE_ABSOLUTE	equ 0x0000	;; Reference is absolute, no relocation is necessary
+IMAGE_REL_CEE_ADDR32	equ 0x0001	;; 32-bit address (VA).
+IMAGE_REL_CEE_ADDR64	equ 0x0002	;; 64-bit address (VA).
+IMAGE_REL_CEE_ADDR32NB	equ 0x0003	;; 32-bit address w/o image base (RVA).
+IMAGE_REL_CEE_SECTION	equ 0x0004	;; Section index
+IMAGE_REL_CEE_SECREL	equ 0x0005	;; 32 bit offset from base of section containing target
+IMAGE_REL_CEE_TOKEN	equ 0x0006	;; 32 bit metadata token
+
+IMAGE_REL_M32R_ABSOLUTE equ 0x0000	;; No relocation required
+IMAGE_REL_M32R_ADDR32	equ 0x0001	;; 32 bit address
+IMAGE_REL_M32R_ADDR32NB equ 0x0002	;; 32 bit address w/o image base
+IMAGE_REL_M32R_ADDR24	equ 0x0003	;; 24 bit address
+IMAGE_REL_M32R_GPREL16	equ 0x0004	;; GP relative addressing
+IMAGE_REL_M32R_PCREL24	equ 0x0005	;; 24 bit offset SHL 2 AND sign ext.
+IMAGE_REL_M32R_PCREL16	equ 0x0006	;; 16 bit offset SHL 2 AND sign ext.
+IMAGE_REL_M32R_PCREL8	equ 0x0007	;; 8 bit offset SHL 2 AND sign ext.
+IMAGE_REL_M32R_REFHALF	equ 0x0008	;; 16 MSBs
+IMAGE_REL_M32R_REFHI	equ 0x0009	;; 16 MSBs; adj for LSB sign ext.
+IMAGE_REL_M32R_REFLO	equ 0x000A	;; 16 LSBs
+IMAGE_REL_M32R_PAIR	equ 0x000B	;; Link HI and LO
+IMAGE_REL_M32R_SECTION	equ 0x000C	;; Section table index
+IMAGE_REL_M32R_SECREL32 equ 0x000D	;; 32 bit section relative reference
+IMAGE_REL_M32R_TOKEN	equ 0x000E	;; clr token
+
+IMAGE_REL_EBC_ABSOLUTE	equ 0x0000	;; No relocation required
+IMAGE_REL_EBC_ADDR32NB	equ 0x0001	;; 32 bit address w/o image base
+IMAGE_REL_EBC_REL32	equ 0x0002	;; 32-bit relative address from byte following reloc
+IMAGE_REL_EBC_SECTION	equ 0x0003	;; Section table index
+IMAGE_REL_EBC_SECREL	equ 0x0004	;; Offset within section
 
 EXT_IMM64 macro Value,Address,Size,InstPos,ValPos
 	exitm <Value  or  = ( ( ( ( * ( Address )  shr	InstPos )  and	( ( 1  shl  Size ) - 1 ) ) )  shl  ValPos ) >
@@ -3770,6 +9954,56 @@ EMARCH_ENC_I17_SIGN_INST_WORD_X		equ 3
 EMARCH_ENC_I17_SIGN_SIZE_X		equ 1
 EMARCH_ENC_I17_SIGN_INST_WORD_POS_X	equ 27
 EMARCH_ENC_I17_SIGN_VAL_POS_X		equ 63
+
+X3_OPCODE_INST_WORD_X	equ 3  ;; Intel-IA64-Filler
+X3_OPCODE_SIZE_X	equ 4  ;; Intel-IA64-Filler
+X3_OPCODE_INST_WORD_POS_X equ 28 ;; Intel-IA64-Filler
+X3_OPCODE_SIGN_VAL_POS_X equ 0	;; Intel-IA64-Filler
+
+X3_I_INST_WORD_X	equ 3  ;; Intel-IA64-Filler
+X3_I_SIZE_X		equ 1  ;; Intel-IA64-Filler
+X3_I_INST_WORD_POS_X	equ 27 ;; Intel-IA64-Filler
+X3_I_SIGN_VAL_POS_X	equ 59 ;; Intel-IA64-Filler
+
+X3_D_WH_INST_WORD_X	equ 3  ;; Intel-IA64-Filler
+X3_D_WH_SIZE_X		equ 3  ;; Intel-IA64-Filler
+X3_D_WH_INST_WORD_POS_X equ 24 ;; Intel-IA64-Filler
+X3_D_WH_SIGN_VAL_POS_X	equ 0  ;; Intel-IA64-Filler
+
+X3_IMM20_INST_WORD_X	equ 3  ;; Intel-IA64-Filler
+X3_IMM20_SIZE_X		equ 20 ;; Intel-IA64-Filler
+X3_IMM20_INST_WORD_POS_X equ 4	;; Intel-IA64-Filler
+X3_IMM20_SIGN_VAL_POS_X equ 0  ;; Intel-IA64-Filler
+
+X3_IMM39_1_INST_WORD_X	equ 2  ;; Intel-IA64-Filler
+X3_IMM39_1_SIZE_X	equ 23 ;; Intel-IA64-Filler
+X3_IMM39_1_INST_WORD_POS_X equ 0  ;; Intel-IA64-Filler
+X3_IMM39_1_SIGN_VAL_POS_X equ 36 ;; Intel-IA64-Filler
+
+X3_IMM39_2_INST_WORD_X	equ 1  ;; Intel-IA64-Filler
+X3_IMM39_2_SIZE_X	equ 16 ;; Intel-IA64-Filler
+X3_IMM39_2_INST_WORD_POS_X equ 16 ;; Intel-IA64-Filler
+X3_IMM39_2_SIGN_VAL_POS_X equ 20 ;; Intel-IA64-Filler
+
+X3_P_INST_WORD_X	equ 3  ;; Intel-IA64-Filler
+X3_P_SIZE_X		equ 4  ;; Intel-IA64-Filler
+X3_P_INST_WORD_POS_X	equ 0  ;; Intel-IA64-Filler
+X3_P_SIGN_VAL_POS_X	equ 0  ;; Intel-IA64-Filler
+
+X3_TMPLT_INST_WORD_X	equ 0  ;; Intel-IA64-Filler
+X3_TMPLT_SIZE_X		equ 4  ;; Intel-IA64-Filler
+X3_TMPLT_INST_WORD_POS_X equ 0	;; Intel-IA64-Filler
+X3_TMPLT_SIGN_VAL_POS_X equ 0  ;; Intel-IA64-Filler
+
+X3_BTYPE_QP_INST_WORD_X equ 2  ;; Intel-IA64-Filler
+X3_BTYPE_QP_SIZE_X	equ 9  ;; Intel-IA64-Filler
+X3_BTYPE_QP_INST_WORD_POS_X equ 23 ;; Intel-IA64-Filler
+X3_BTYPE_QP_INST_VAL_POS_X equ 0  ;; Intel-IA64-Filler
+
+X3_EMPTY_INST_WORD_X	equ 1  ;; Intel-IA64-Filler
+X3_EMPTY_SIZE_X		equ 2  ;; Intel-IA64-Filler
+X3_EMPTY_INST_WORD_POS_X equ 14 ;; Intel-IA64-Filler
+X3_EMPTY_INST_VAL_POS_X equ 0  ;; Intel-IA64-Filler
 
 ;;
 ;; Line number format.
@@ -4248,6 +10482,7 @@ IMAGE_DEBUG_TYPE_OMAP_TO_SRC	equ 7
 IMAGE_DEBUG_TYPE_OMAP_FROM_SRC	equ 8
 IMAGE_DEBUG_TYPE_BORLAND	equ 9
 IMAGE_DEBUG_TYPE_RESERVED10	equ 10
+IMAGE_DEBUG_TYPE_CLSID		equ 11
 
 
 IMAGE_COFF_SYMBOLS_HEADER	STRUC
@@ -4305,17 +10540,6 @@ PIMAGE_DEBUG_MISC	typedef ptr IMAGE_DEBUG_MISC
 ;; each entry needed by a debugger.
 ;;
 
-if defined(_IA64_)
-
-IMAGE_FUNCTION_ENTRY	STRUC
-StartingAddress		dd ?
-EndingAddress		dd ?
-UnwindInfoAddress	dd ?
-IMAGE_FUNCTION_ENTRY	ENDS
-PIMAGE_FUNCTION_ENTRY	typedef ptr IMAGE_FUNCTION_ENTRY
-
-else
-
 IMAGE_FUNCTION_ENTRY	STRUC
 StartingAddress		dd ?
 EndingAddress		dd ?
@@ -4323,12 +10547,13 @@ EndOfPrologue		dd ?
 IMAGE_FUNCTION_ENTRY	ENDS
 PIMAGE_FUNCTION_ENTRY	typedef ptr IMAGE_FUNCTION_ENTRY
 
-endif
-
 IMAGE_FUNCTION_ENTRY64	STRUC
 StartingAddress		dq ?
 EndingAddress		dq ?
-EndOfPrologue		dq ?
+UNION
+   EndOfPrologue	dq ?
+   UnwindInfoAddress	dq ?
+ENDS
 IMAGE_FUNCTION_ENTRY64	ENDS
 PIMAGE_FUNCTION_ENTRY64 typedef ptr IMAGE_FUNCTION_ENTRY64
 
@@ -4369,10 +10594,25 @@ Reserved			dd 2 dup(?)
 IMAGE_SEPARATE_DEBUG_HEADER	ENDS
 PIMAGE_SEPARATE_DEBUG_HEADER	typedef ptr IMAGE_SEPARATE_DEBUG_HEADER
 
+NON_PAGED_DEBUG_INFO	STRUC
+Signature		dw ?
+Flags			dw ?
+_Size			dd ?
+Machine			dw ?
+Characteristics		dw ?
+TimeDateStamp		dd ?
+CheckSum		dd ?
+SizeOfImage		dd ?
+ImageBase		dq ?
+NON_PAGED_DEBUG_INFO	ENDS
+PNON_PAGED_DEBUG_INFO	typedef ptr NON_PAGED_DEBUG_INFO
+
 ifndef _MAC
 IMAGE_SEPARATE_DEBUG_SIGNATURE equ 0x4944
+NON_PAGED_DEBUG_SIGNATURE      equ 0x494E
 else
 IMAGE_SEPARATE_DEBUG_SIGNATURE equ 0x4449
+NON_PAGED_DEBUG_SIGNATURE      equ 0x4E49 ;; NI
 endif
 
 IMAGE_SEPARATE_DEBUG_FLAGS_MASK equ 0x8000
@@ -4431,15 +10671,98 @@ ENDS
 r0			IMPORT_OBJECT_HEADER_R0 <>
 IMPORT_OBJECT_HEADER	ENDS
 
+IMPORT_OBJECT_TYPE		typedef sdword ; enum
 IMPORT_OBJECT_CODE		equ 0
 IMPORT_OBJECT_DATA		equ 1
 IMPORT_OBJECT_CONST		equ 2
 
+IMPORT_OBJECT_NAME_TYPE		typedef sdword ; enum
 IMPORT_OBJECT_ORDINAL		equ 0	;; Import by ordinal
 IMPORT_OBJECT_NAME		equ 1	;; Import name == public symbol name.
 IMPORT_OBJECT_NAME_NO_PREFIX	equ 2	;; Import name == public symbol name skipping leading ?, @, or optionally _.
 IMPORT_OBJECT_NAME_UNDECORATE	equ 3	;; Import name == public symbol name skipping leading ?, @, or optionally _
 					;; and truncating at first @
+
+ifndef __IMAGE_COR20_HEADER_DEFINED__
+__IMAGE_COR20_HEADER_DEFINED__ equ <>
+
+ReplacesCorHdrNumericDefines	typedef sdword ; enum
+
+;; COM+ Header entry point flags.
+    COMIMAGE_FLAGS_ILONLY		equ 0x00000001
+    COMIMAGE_FLAGS_32BITREQUIRED	equ 0x00000002
+    COMIMAGE_FLAGS_IL_LIBRARY		equ 0x00000004
+    COMIMAGE_FLAGS_STRONGNAMESIGNED	equ 0x00000008
+    COMIMAGE_FLAGS_NATIVE_ENTRYPOINT	equ 0x00000010
+    COMIMAGE_FLAGS_TRACKDEBUGDATA	equ 0x00010000
+
+;; Version flags for image.
+    COR_VERSION_MAJOR_V2		equ 2
+    COR_VERSION_MAJOR			equ COR_VERSION_MAJOR_V2
+    COR_VERSION_MINOR			equ 0
+    COR_DELETED_NAME_LENGTH		equ 8
+    COR_VTABLEGAP_NAME_LENGTH		equ 8
+
+;; Maximum size of a NativeType descriptor.
+    NATIVE_TYPE_MAX_CB			equ 1
+    COR_ILMETHOD_SECT_SMALL_MAX_DATASIZE equ 0xFF
+
+;; #defines for the MIH FLAGS
+    IMAGE_COR_MIH_METHODRVA		equ 0x01
+    IMAGE_COR_MIH_EHRVA			equ 0x02
+    IMAGE_COR_MIH_BASICBLOCK		equ 0x08
+
+;; V-table constants
+    COR_VTABLE_32BIT			equ 0x01	;; V-table slots are 32-bits in size.
+    COR_VTABLE_64BIT			equ 0x02	;; V-table slots are 64-bits in size.
+    COR_VTABLE_FROM_UNMANAGED		equ 0x04	;; If set, transition from unmanaged.
+    COR_VTABLE_FROM_UNMANAGED_RETAIN_APPDOMAIN	equ 0x08;; If set, transition from unmanaged with keeping the current appdomain.
+    COR_VTABLE_CALL_MOST_DERIVED	equ 0x10	;; Call most derived method described by
+
+;; EATJ constants
+    IMAGE_COR_EATJ_THUNK_SIZE		equ 32		;; Size of a jump thunk reserved range.
+
+;; Max name lengths
+    ;;@todo: Change to unlimited name lengths.
+    MAX_CLASS_NAME			equ 1024
+    MAX_PACKAGE_NAME			equ 1024
+
+;; CLR 2.0 header structure.
+IMAGE_COR20_HEADER		STRUC
+
+    ;; Header versioning
+    cb				dd ?
+    MajorRuntimeVersion		dw ?
+    MinorRuntimeVersion		dw ?
+
+    ;; Symbol table and startup information
+    MetaData			IMAGE_DATA_DIRECTORY <>
+    Flags			dd ?
+
+    ;; If COMIMAGE_FLAGS_NATIVE_ENTRYPOINT is not set, EntryPointToken represents a managed entrypoint.
+    ;; If COMIMAGE_FLAGS_NATIVE_ENTRYPOINT is set, EntryPointRVA represents an RVA to a native entrypoint.
+    UNION
+	EntryPointToken		dd ?
+	EntryPointRVA		dd ?
+    ENDS
+
+    ;; Binding information
+    Resources			IMAGE_DATA_DIRECTORY <>
+    StrongNameSignature		IMAGE_DATA_DIRECTORY <>
+
+    ;; Regular fixup and binding information
+    CodeManagerTable		IMAGE_DATA_DIRECTORY <>
+    VTableFixups		IMAGE_DATA_DIRECTORY <>
+    ExportAddressTableJumps	IMAGE_DATA_DIRECTORY <>
+
+    ;; Precompiled image info (internal use only - set to zero)
+    ManagedNativeHeader		IMAGE_DATA_DIRECTORY <>
+
+IMAGE_COR20_HEADER		ENDS
+PIMAGE_COR20_HEADER	typedef ptr IMAGE_COR20_HEADER
+
+endif ;; __IMAGE_COR20_HEADER_DEFINED__
+
 ;;
 ;; End Image Format
 ;;
@@ -4447,6 +10770,213 @@ IMPORT_OBJECT_NAME_UNDECORATE	equ 3	;; Import name == public symbol name skippin
 ;;
 ;; for move macros
 ;;
+
+ifdef _MAC
+ifndef __STRING_INC
+include string.inc
+endif ;; _INC_STRING
+else
+ifndef __STRING_INC
+include string.inc
+.xlist
+endif
+endif ;; _MAC
+
+ifdef _WIN64
+
+;;
+;; The type SINGLE_LIST_ENTRY is not suitable for use with SLISTs.  For
+;; WIN64, an entry on an SLIST is required to be 16-byte aligned, while a
+;; SINGLE_LIST_ENTRY structure has only 8 byte alignment.
+;;
+;; Therefore, all SLIST code should use the SLIST_ENTRY type instead of the
+;; SINGLE_LIST_ENTRY type.
+;;
+
+pragma warning(push)
+pragma warning(disable:4324) ;; structure padded due to align()
+DECLSPEC_ALIGN(16)
+SLIST_ENTRY		STRUC
+Next			PVOID ?;PSLIST_ENTRY ?
+SLIST_ENTRY		ENDS
+PSLIST_ENTRY		typedef ptr SLIST_ENTRY
+pragma warning(pop)
+
+SLIST_ENTRY32		STRUC
+Next			dd ?
+SLIST_ENTRY32		ENDS
+PSLIST_ENTRY32		typedef ptr SLIST_ENTRY32
+
+else
+
+SLIST_ENTRY		equ <SINGLE_LIST_ENTRY>
+PSLIST_ENTRY		equ <PSINGLE_LIST_ENTRY>
+
+SLIST_ENTRY32		typedef SLIST_ENTRY
+PSLIST_ENTRY32		typedef ptr SLIST_ENTRY
+
+endif ;; _WIN64
+
+ifdef _WIN64
+
+DECLSPEC_ALIGN(16)
+SLIST_HEADER		UNION
+STRUC ;; original struct
+ Alignment		ULONGLONG ?
+ Region			ULONGLONG ?
+ENDS
+STRUC Header8 ;; 8-byte header
+ R0			ULONGLONG ?
+if 0
+	ULONGLONG Depth:16;
+	ULONGLONG Sequence:9;
+	ULONGLONG NextEntry:39;
+	ULONGLONG HeaderType:1; // 0: 8-byte; 1: 16-byte
+	ULONGLONG Init:1;	// 0: uninitialized; 1: initialized
+	ULONGLONG Reserved:59;
+	ULONGLONG Region:3;
+endif
+ENDS
+STRUC Header16 ;; ia64 16-byte header
+ R0			ULONGLONG ?
+if 0
+	ULONGLONG Depth:16;
+	ULONGLONG Sequence:48;
+	ULONGLONG HeaderType:1; // 0: 8-byte; 1: 16-byte
+	ULONGLONG Init:1;	// 0: uninitialized; 1: initialized
+	ULONGLONG Reserved:2;
+	ULONGLONG NextEntry:60; // last 4 bits are always 0's
+endif
+ENDS
+STRUC HeaderX64 ;; x64 16-byte header
+ R0			ULONGLONG ?
+if 0
+	ULONGLONG Depth:16;
+	ULONGLONG Sequence:48;
+	ULONGLONG HeaderType:1; // 0: 8-byte; 1: 16-byte
+	ULONGLONG Reserved:3;
+	ULONGLONG NextEntry:60; // last 4 bits are always 0's
+endif
+ENDS
+SLIST_HEADER		ENDS
+PSLIST_HEADER		typedef ptr SLIST_HEADER
+
+SLIST_HEADER32		STRUC
+Alignment		ULONGLONG ?
+STRUC
+ Next			SLIST_ENTRY32 <>
+ Depth			dw ?
+ Sequence		dw ?
+ENDS
+SLIST_HEADER32		ENDS
+PSLIST_HEADER32		typedef ptr SLIST_HEADER32
+
+else
+
+SLIST_HEADER		UNION
+Alignment		ULONGLONG ?
+STRUC
+ Next			SLIST_ENTRY <>
+ Depth			dw ?
+ Sequence		dw ?
+ENDS
+SLIST_HEADER		ENDS
+PSLIST_HEADER		typedef ptr SLIST_HEADER
+SLIST_HEADER32		typedef SLIST_HEADER
+PSLIST_HEADER32		typedef ptr SLIST_HEADER
+
+endif ;; _WIN64
+
+endif ;; _SLIST_HEADER_
+
+;NTSYSAPI
+;VOID
+RtlInitializeSListHead proto _CType \
+	      ListHead: PSLIST_HEADER
+;PSLIST_ENTRY
+RtlFirstEntrySList proto _CType \
+	      ListHead: PSLIST_HEADER
+;PSLIST_ENTRY
+RtlInterlockedPopEntrySList proto _CType \
+	      ListHead: PSLIST_HEADER
+;PSLIST_ENTRY
+RtlInterlockedPushEntrySList proto _CType \
+	      ListHead: PSLIST_HEADER,
+	     ListEntry: PSLIST_ENTRY
+;PSLIST_ENTRY
+RtlInterlockedFlushSList proto _CType \
+	      ListHead: PSLIST_HEADER
+;WORD
+RtlQueryDepthSList proto _CType \
+	      ListHead: PSLIST_HEADER
+ifdef _IA64_
+;PSLIST_ENTRY32
+RtlInterlockedPopEntrySList32 proto _CType \
+	      ListHead: PSLIST_HEADER32
+endif
+
+ifndef _RTL_RUN_ONCE_DEF
+_RTL_RUN_ONCE_DEF equ <>
+
+;;
+;; Run once
+;;
+
+RTL_RUN_ONCE_INIT equ <{0}> ;; Static initializer
+
+;;
+;; Run once flags
+;;
+
+RTL_RUN_ONCE_CHECK_ONLY	    equ 0x00000001
+RTL_RUN_ONCE_ASYNC	    equ 0x00000002
+RTL_RUN_ONCE_INIT_FAILED    equ 0x00000004
+
+;;
+;; The context stored in the run once structure must leave the following number
+;; of low order bits unused.
+;;
+
+RTL_RUN_ONCE_CTX_RESERVED_BITS equ 2
+
+RTL_RUN_ONCE		UNION
+_Ptr			PVOID ?
+RTL_RUN_ONCE		ENDS
+PRTL_RUN_ONCE		typedef ptr RTL_RUN_ONCE
+
+;DWORD
+RTL_RUN_ONCE_INIT_FN typedef proto _CType \
+	       RunOnce: PRTL_RUN_ONCE,
+	     Parameter: PVOID,
+	       Context: PVOID
+
+PRTL_RUN_ONCE_INIT_FN	typedef ptr RTL_RUN_ONCE_INIT_FN
+
+endif ;; _RTL_RUN_ONCE_DEF
+
+if (NTDDI_VERSION GE NTDDI_LONGHORN)
+
+;VOID
+RtlRunOnceInitialize proto _CType \
+	       RunOnce: PRTL_RUN_ONCE
+;DWORD
+RtlRunOnceExecuteOnce proto _CType \
+	       RunOnce: PRTL_RUN_ONCE,
+		InitFn: PRTL_RUN_ONCE_INIT_FN,
+	     Parameter: PVOID,
+	       Context: PVOID
+;DWORD
+RtlRunOnceBeginInitialize proto _CType \
+	       RunOnce: PRTL_RUN_ONCE,
+		 Flags: DWORD,
+	       Context: PVOID
+;DWORD
+RtlRunOnceComplete proto _CType \
+	       RunOnce: PRTL_RUN_ONCE,
+		 Flags: DWORD,
+	       Context: PVOID
+
+endif ;; NTDDI_VERSION >= NTDDI_LONGHORN
 
 HEAP_NO_SERIALIZE		equ 0x00000001
 HEAP_GROWABLE			equ 0x00000002
@@ -4462,9 +10992,29 @@ HEAP_MAXIMUM_TAG		equ 0x0FFF
 HEAP_PSEUDO_TAG_FLAG		equ 0x8000
 HEAP_TAG_SHIFT			equ 18
 
-HEAP_MAKE_TAG_FLAGS macro b, o
-	exitm<b + (o shl 18)>
-	endm
+ifndef MIDL_PASS
+;FORCEINLINE
+;DWORD
+HEAP_MAKE_TAG_FLAGS macro TagBase, Tag
+;    __assume_bound(TagBase);
+;    return ((DWORD)((TagBase) + ((Tag) << HEAP_TAG_SHIFT)));
+    endm
+endif
+
+if (NTDDI_VERSION GT NTDDI_WINXP)
+;WORD
+RtlCaptureStackBackTrace proto _CType \
+	  FramesToSkip: DWORD,
+       FramesToCapture: DWORD,
+	     BackTrace: PVOID,
+	 BackTraceHash: PDWORD
+endif
+
+if (NTDDI_VERSION GT NTDDI_WIN2K)
+;VOID
+RtlCaptureContext proto _CType \
+	 ContextRecord: PCONTEXT
+endif
 
 IS_TEXT_UNICODE_ASCII16			equ 0x0001
 IS_TEXT_UNICODE_REVERSE_ASCII16		equ 0x0010
@@ -4493,69 +11043,317 @@ COMPRESSION_FORMAT_DEFAULT	equ 0x0001
 COMPRESSION_FORMAT_LZNT1	equ 0x0002
 COMPRESSION_ENGINE_STANDARD	equ 0x0000
 COMPRESSION_ENGINE_MAXIMUM	equ 0x0100
+COMPRESSION_ENGINE_HIBER	equ 0x0200
 
-RtlCompareMemory proto _CType :ptr, :ptr, :size_t
-
-if defined(_M_AXP64) or defined(_M_IA64)
-
-RtlEqualMemory macro S1, S2, L
-	exitm<RtlCompareMemory(S1,S2,L) == L>
+ifdef _DBG_MEMCPY_INLINE_
+if _DBG_MEMCPY_INLINE_ and not defined(MIDL_PASS) and not defined(_MEMCPY_INLINE_) and not defined(_CRTBLD)
+_MEMCPY_INLINE_ equ <>
+;FORCEINLINE
+;PVOID
+memcpy_inline macro dst, src, _size
+;    //
+;    // Make sure the source and destination do not overlap such that the
+;    // move destroys the destination.
+;    //
+;    if (((char *)dst > (char *)src) &&
+;	((char *)dst < ((char *)src + size))) {
+;	__debugbreak();
+;    }
+;    return memcpy(dst, src, size);
 	endm
-RtlCopyMemory proto _CType :ptr, :ptr, :size_t
-RtlCopyMemory32 proto _CType :ptr, :ptr, :dword
-RtlMoveMemory proto _CType :ptr, :ptr, :size_t
-RtlFillMemory proto _CType :ptr, :size_t, :byte
-RtlZeroMemory proto _CType :ptr, :size_t
+;memcpy equ <memcpy_inline>
+endif
+endif
 
+if (NTDDI_VERSION GE NTDDI_WIN2K)
+;SIZE_T
+RtlCompareMemory proto _CType \
+	      Source1: PVOID,
+	      Source2: PVOID,
+	      _Length: SIZE_T
+endif
+
+RtlEqualMemory macro Destination, Source, L
+	.if !memcmp(Destination,Source,L)
+	    inc eax
+	.else
+	    mov eax,0
+	.endif
+	exitm<eax>
+	endm
+RtlMoveMemory equ <memmove>
+RtlCopyMemor  equ <memcpy>
+RtlFillMemory macro Destination, L, Fill
+	exitm<memset(Destination,Fill,L)>
+	endm
+RtlZeroMemory macro Destination, L
+	exitm<memset(Destination,0,L)>
+	endm
+
+ifndef MIDL_PASS
+;FORCEINLINE
+;PVOID
+RtlSecureZeroMemory macro vptr, cnt
+ifdef _M_AMD64
+    __stosb(vptr, 0, cnt)
 else
-RtlEqualMemory macro D, S, L
-	exitm<!memcmp(D,S,L)>
-	endm
-RtlMoveMemory macro D, S, L
-	exitm<memmove(D,S,L)>
-	endm
-RtlCopyMemory macro D, S, L
-	exitm<memcpy(D,S,L)>
-	endm
-RtlFillMemory macro D, L, F
-	exitm<memset(D,F,L)>
-	endm
-RtlZeroMemory macro D, L
-	exitm<memset(D,0,L)>
-	endm
+    .for : cnt : vptr++, cnt--
+	mov byte ptr [vptr],0
+    .endf
+endif
+    exitm<vptr>
+endif
+    endm
+
+SEF_DACL_AUTO_INHERIT		  equ 0x01
+SEF_SACL_AUTO_INHERIT		  equ 0x02
+SEF_DEFAULT_DESCRIPTOR_FOR_OBJECT equ 0x04
+SEF_AVOID_PRIVILEGE_CHECK	  equ 0x08
+SEF_AVOID_OWNER_CHECK		  equ 0x10
+SEF_DEFAULT_OWNER_FROM_PARENT	  equ 0x20
+SEF_DEFAULT_GROUP_FROM_PARENT	  equ 0x40
+SEF_MACL_NO_WRITE_UP		  equ 0x100
+SEF_MACL_NO_READ_UP		  equ 0x200
+SEF_MACL_NO_EXECUTE_UP		  equ 0x400
+SEF_AVOID_OWNER_RESTRICTION	  equ 0x1000
+
+SEF_MACL_VALID_FLAGS	equ SEF_MACL_NO_WRITE_UP OR \
+			    SEF_MACL_NO_READ_UP	 OR \
+			    SEF_MACL_NO_EXECUTE_UP
+
+MESSAGE_RESOURCE_ENTRY	STRUC
+_Length			dw ?
+Flags			dw ?
+Text			db ?
+MESSAGE_RESOURCE_ENTRY	ENDS
+PMESSAGE_RESOURCE_ENTRY typedef ptr MESSAGE_RESOURCE_ENTRY
+
+MESSAGE_RESOURCE_UNICODE equ 0x0001
+
+MESSAGE_RESOURCE_BLOCK	STRUC
+LowId			dd ?
+HighId			dd ?
+OffsetToEntries		dd ?
+MESSAGE_RESOURCE_BLOCK	ENDS
+PMESSAGE_RESOURCE_BLOCK typedef ptr MESSAGE_RESOURCE_BLOCK
+
+MESSAGE_RESOURCE_DATA	STRUC
+NumberOfBlocks		dd ?
+Blocks			MESSAGE_RESOURCE_BLOCK <>
+MESSAGE_RESOURCE_DATA	ENDS
+PMESSAGE_RESOURCE_DATA	typedef ptr MESSAGE_RESOURCE_DATA
+
+;PVOID
+RtlPcToFileHeader proto _CType \
+	       PcValue: PVOID,
+	   BaseOfImage: PVOID
+
+OSVERSIONINFOA		STRUC
+dwOSVersionInfoSize	dd ?
+dwMajorVersion		dd ?
+dwMinorVersion		dd ?
+dwBuildNumber		dd ?
+dwPlatformId		dd ?
+szCSDVersion		db 128 dup(?) ; Maintenance string for PSS usage
+OSVERSIONINFOA		ENDS
+POSVERSIONINFOA		TYPEDEF PTR OSVERSIONINFOA
+LPOSVERSIONINFOA	TYPEDEF PTR OSVERSIONINFOA
+OSVERSIONINFOW		STRUC
+dwOSVersionInfoSize	dd ?
+dwMajorVersion		dd ?
+dwMinorVersion		dd ?
+dwBuildNumber		dd ?
+dwPlatformId		dd ?
+szCSDVersion		dw 128 dup(?) ; Maintenance string for PSS usage
+OSVERSIONINFOW		ENDS
+POSVERSIONINFOW		TYPEDEF PTR OSVERSIONINFOW
+LPOSVERSIONINFOW	TYPEDEF PTR OSVERSIONINFOW
+ifdef _UNICODE
+OSVERSIONINFO	typedef OSVERSIONINFOW
+POSVERSIONINFO	typedef POSVERSIONINFOW
+LPOSVERSIONINFO typedef LPOSVERSIONINFOW
+else
+OSVERSIONINFO	typedef OSVERSIONINFOA
+POSVERSIONINFO	typedef POSVERSIONINFOA
+LPOSVERSIONINFO typedef LPOSVERSIONINFOA
 endif
 
-
-if defined(_ALPHA_) or defined(_M_IA64)
-
-RtlMoveMemory64 proto _CType :ptr, :ptr, :qword
-RtlFillMemory64 proto _CType :ptr, :qword, :byte
-RtlZeroMemory64 proto _CType :ptr, :qword
-
+OSVERSIONINFOEXA	STRUC
+dwOSVersionInfoSize	dd ?
+dwMajorVersion		dd ?
+dwMinorVersion		dd ?
+dwBuildNumber		dd ?
+dwPlatformId		dd ?
+szCSDVersion		db 128 dup(?)	; Maintenance string for PSS usage
+wServicePackMajor	dw ?
+wServicePackMinor	dw ?
+wReserved		dw 2 dup(?)
+OSVERSIONINFOEXA	ENDS
+POSVERSIONINFOEXA	typedef PTR OSVERSIONINFOEXA
+LPOSVERSIONINFOEXA	typedef PTR OSVERSIONINFOEXA
+OSVERSIONINFOEXW	STRUC
+dwOSVersionInfoSize	dd ?
+dwMajorVersion		dd ?
+dwMinorVersion		dd ?
+dwBuildNumber		dd ?
+dwPlatformId		dd ?
+szCSDVersion		dw 128 dup(?)	; Maintenance string for PSS usage
+wServicePackMajor	dw ?
+wServicePackMinor	dw ?
+wReserved		dw 2 dup(?)
+OSVERSIONINFOEXW	ENDS
+POSVERSIONINFOEXW	typedef PTR OSVERSIONINFOEXW
+LPOSVERSIONINFOEXW	typedef PTR OSVERSIONINFOEXW
+ifdef _UNICODE
+OSVERSIONINFOEX		typedef OSVERSIONINFOEXW
+POSVERSIONINFOEX	typedef POSVERSIONINFOEXW
+LPOSVERSIONINFOEX	typedef LPOSVERSIONINFOEXW
+else
+OSVERSIONINFOEX		typedef OSVERSIONINFOEXA
+POSVERSIONINFOEX	typedef POSVERSIONINFOEXA
+LPOSVERSIONINFOEX	typedef LPOSVERSIONINFOEXA
 endif
 
-MESSAGE_RESOURCE_ENTRY		STRUC
-_Length				dw ?
-Flags				dw ?
-Text				db ?
-MESSAGE_RESOURCE_ENTRY		ENDS
-PMESSAGE_RESOURCE_ENTRY		typedef ptr MESSAGE_RESOURCE_ENTRY
+;;
+;; RtlVerifyVersionInfo() conditions
+;;
 
-MESSAGE_RESOURCE_UNICODE	equ 0x0001
+VER_EQUAL		equ 1
+VER_GREATER		equ 2
+VER_GREATER_EQUAL	equ 3
+VER_LESS		equ 4
+VER_LESS_EQUAL		equ 5
+VER_AND			equ 6
+VER_OR			equ 7
 
-MESSAGE_RESOURCE_BLOCK		STRUC
-LowId				dd ?
-HighId				dd ?
-OffsetToEntries			dd ?
-MESSAGE_RESOURCE_BLOCK		ENDS
-PMESSAGE_RESOURCE_BLOCK		typedef ptr MESSAGE_RESOURCE_BLOCK
+VER_CONDITION_MASK	equ 7
+VER_NUM_BITS_PER_CONDITION_MASK equ 3
 
-MESSAGE_RESOURCE_DATA		STRUC
-NumberOfBlocks			dd ?
-Blocks				MESSAGE_RESOURCE_BLOCK <>
-MESSAGE_RESOURCE_DATA		ENDS
-PMESSAGE_RESOURCE_DATA		typedef ptr MESSAGE_RESOURCE_DATA
+;;
+;; RtlVerifyVersionInfo() type mask bits
+;;
 
+VER_MINORVERSION	equ 0x0000001
+VER_MAJORVERSION	equ 0x0000002
+VER_BUILDNUMBER		equ 0x0000004
+VER_PLATFORMID		equ 0x0000008
+VER_SERVICEPACKMINOR	equ 0x0000010
+VER_SERVICEPACKMAJOR	equ 0x0000020
+VER_SUITENAME		equ 0x0000040
+VER_PRODUCT_TYPE	equ 0x0000080
+
+;;
+;; RtlVerifyVersionInfo() os product type values
+;;
+
+VER_NT_WORKSTATION	equ 0x0000001
+VER_NT_DOMAIN_CONTROLLER equ 0x0000002
+VER_NT_SERVER		equ 0x0000003
+
+;;
+;; dwPlatformId defines:
+;;
+
+VER_PLATFORM_WIN32s	equ 0
+VER_PLATFORM_WIN32_WINDOWS equ 1
+VER_PLATFORM_WIN32_NT	equ 2
+
+
+;;
+;;
+;; VerifyVersionInfo() macro to set the condition mask
+;;
+;; For documentation sakes here's the old version of the macro that got
+;; changed to call an API
+;; #define VER_SET_CONDITION(_m_,_t_,_c_)  _m_=(_m_|(_c_<<(1<<_t_)))
+;;
+
+VER_SET_CONDITION macro _m_,_t_,_c_
+	exitm<mov _m_,VerSetConditionMask(_m_,_t_,_c_)>
+	endm
+
+
+if (NTDDI_VERSION GE NTDDI_WIN2K)
+;NTSYSAPI
+;ULONGLONG
+VerSetConditionMask proto _CType \
+	 ConditionMask: ULONGLONG,
+	      TypeMask: DWORD,
+	     Condition: BYTE
+endif
+
+if (NTDDI_VERSION GE NTDDI_VISTA)
+;BOOLEAN
+RtlGetProductInfo proto _CType \
+	OSMajorVersion: DWORD,
+	OSMinorVersion: DWORD,
+	SpMajorVersion: DWORD,
+	SpMinorVersion: DWORD,
+   ReturnedProductType: PDWORD
+endif
+
+RTL_UMS_VERSION		equ 0x0100
+
+RTL_UMS_THREAD_INFO_CLASS typedef sdword ; enum
+PRTL_UMS_THREAD_INFO_CLASS typedef ptr RTL_UMS_THREAD_INFO_CLASS
+UmsThreadInvalidInfoClass	equ 0
+UmsThreadUserContext		equ 1
+UmsThreadPriority		equ 2
+UmsThreadAffinity		equ 3
+UmsThreadTeb			equ 4
+UmsThreadIsSuspended		equ 5
+UmsThreadIsTerminated		equ 6
+UmsThreadMaxInfoClass		equ 7
+
+RTL_UMS_SCHEDULER_REASON	typedef sdword ; enum
+PRTL_UMS_SCHEDULER_REASON	typedef ptr RTL_UMS_SCHEDULER_REASON
+UmsSchedulerStartup		equ 0
+UmsSchedulerThreadBlocked	equ 1
+UmsSchedulerThreadYield		equ 2
+
+;VOID
+RTL_UMS_SCHEDULER_ENTRY_POINT typedef proto _CType \
+		Reason: RTL_UMS_SCHEDULER_REASON,
+     ActivationPayload: ULONG_PTR,
+	SchedulerParam: PVOID
+
+PRTL_UMS_SCHEDULER_ENTRY_POINT typedef ptr RTL_UMS_SCHEDULER_ENTRY_POINT
+
+if (NTDDI_VERSION GE NTDDI_WIN7)
+;DWORD
+RtlCopyExtendedContext proto _CType \
+	   Destination: PCONTEXT_EX,
+	  ContextFlags: DWORD,
+		Source: PCONTEXT_EX
+;DWORD
+RtlInitializeExtendedContext proto _CType \
+	       Context: PVOID,
+	  ContextFlags: DWORD,
+	     ContextEx: PCONTEXT_EX
+;DWORD64
+RtlGetEnabledExtendedFeatures proto _CType \
+	   FeatureMask: DWORD64
+;DWORD
+RtlGetExtendedContextLength proto _CType \
+	  ContextFlags: DWORD,
+	 ContextLength: PDWORD
+;DWORD64
+RtlGetExtendedFeaturesMask proto _CType \
+	     ContextEx: PCONTEXT_EX
+;PVOID
+RtlLocateExtendedFeature proto _CType \
+	     ContextEx: PCONTEXT_EX,
+	     FeatureId: DWORD,
+	       _Length: PDWORD
+;PCONTEXT
+RtlLocateLegacyContext proto _CType \
+	     ContextEx: PCONTEXT_EX,
+	       _Length: PDWORD
+;VOID
+RtlSetExtendedFeaturesMask proto _CType \
+	     ContextEx: PCONTEXT_EX,
+	   FeatureMask: DWORD64
+endif
 
 RTL_CRITICAL_SECTION_DEBUG	STRUC
 _Type				dw ?
@@ -4564,36 +11362,100 @@ CriticalSection			PVOID ?;PRTL_CRITICAL_SECTION ?
 ProcessLocksList		LIST_ENTRY <>
 EntryCount			dd ?
 ContentionCount			dd ?
-Spare				dd 2 dup(?)
+Flags				dd ?
+CreatorBackTraceIndexHigh	dw ?
+SpareWORD			dw ?
 RTL_CRITICAL_SECTION_DEBUG	ENDS
 PRTL_CRITICAL_SECTION_DEBUG	typedef ptr RTL_CRITICAL_SECTION_DEBUG
 RTL_RESOURCE_DEBUG		typedef RTL_CRITICAL_SECTION_DEBUG
 PRTL_RESOURCE_DEBUG		typedef ptr RTL_CRITICAL_SECTION_DEBUG
 
-RTL_CRITSECT_TYPE		equ 0
-RTL_RESOURCE_TYPE		equ 1
+RTL_CRITSECT_TYPE	equ 0
+RTL_RESOURCE_TYPE	equ 1
 
-RTL_CRITICAL_SECTION		STRUC
-DebugInfo			PRTL_CRITICAL_SECTION_DEBUG ?
+;;
+;; These flags define the upper byte of the critical section SpinCount field
+;;
+RTL_CRITICAL_SECTION_FLAG_NO_DEBUG_INFO equ 0x01000000
+RTL_CRITICAL_SECTION_FLAG_DYNAMIC_SPIN	equ 0x02000000
+RTL_CRITICAL_SECTION_FLAG_STATIC_INIT	equ 0x04000000
+RTL_CRITICAL_SECTION_ALL_FLAG_BITS	equ 0xFF000000
+RTL_CRITICAL_SECTION_FLAG_RESERVED	equ (RTL_CRITICAL_SECTION_ALL_FLAG_BITS AND \
+	( NOT (RTL_CRITICAL_SECTION_FLAG_NO_DEBUG_INFO OR \
+	RTL_CRITICAL_SECTION_FLAG_DYNAMIC_SPIN OR RTL_CRITICAL_SECTION_FAG_STATIC_INIT))
 
-    ;;
-    ;;	The following three fields control entering and exiting the critical
-    ;;	section for the resource
-    ;;
+;;
+;; These flags define possible values stored in the Flags field of a critsec debuginfo.
+;;
+RTL_CRITICAL_SECTION_DEBUG_FLAG_STATIC_INIT equ 0x00000001
 
-LockCount			LONG ?
-RecursionCount			LONG ?
-OwningThread			HANDLE ? ;; from the thread's ClientId->UniqueThread
 
-LockSemaphore			HANDLE ?
-SpinCount			dd ?
-RTL_CRITICAL_SECTION		ENDS
-PRTL_CRITICAL_SECTION		typedef ptr RTL_CRITICAL_SECTION
+;pragma pack(push, 8)
 
-SEF_DACL_AUTO_INHERIT		equ 0x1
-SEF_SACL_AUTO_INHERIT		equ 0x2
-SEF_DEFAULT_DESCRIPTOR_FOR_OBJECT equ 0x4
-SEF_AVOID_PRIVILEGE_CHECK	equ 0x8
+RTL_CRITICAL_SECTION	STRUC
+DebugInfo		PRTL_CRITICAL_SECTION_DEBUG ?
+
+    ;; The following three fields control entering and exiting the critical
+    ;; section for the resource
+
+LockCount		LONG ?
+RecursionCount		LONG ?
+OwningThread		HANDLE ?	;; from the thread's ClientId->UniqueThread
+LockSemaphore		HANDLE ?
+SpinCount		ULONG_PTR ?	;; force size on 64-bit systems when packed
+RTL_CRITICAL_SECTION	ENDS
+PRTL_CRITICAL_SECTION	typedef ptr RTL_CRITICAL_SECTION
+
+;pragma pack(pop)
+
+RTL_SRWLOCK		STRUC
+_Ptr			PVOID ?
+RTL_SRWLOCK		ENDS
+PRTL_SRWLOCK		typedef ptr RTL_SRWLOCK
+
+RTL_SRWLOCK_INIT	equ <{0}>
+
+RTL_CONDITION_VARIABLE	STRUC
+_Ptr			PVOID ?
+RTL_CONDITION_VARIABLE	ENDS
+PRTL_CONDITION_VARIABLE typedef ptr RTL_CONDITION_VARIABLE
+
+RTL_CONDITION_VARIABLE_INIT equ <{0}>
+RTL_CONDITION_VARIABLE_LOCKMODE_SHARED equ 0x1
+
+;VOID
+PAPCFUNC_T typedef proto _CType \
+	     Parameter: ULONG_PTR
+PAPCFUNC typedef ptr PAPCFUNC_T
+;LONG
+PVECTORED_EXCEPTION_HANDLER_T typedef proto _CType \
+	 ExceptionInfo: ptr EXCEPTION_POINTERS
+PVECTORED_EXCEPTION_HANDLER typedef ptr PVECTORED_EXCEPTION_HANDLER_T
+
+HEAP_INFORMATION_CLASS	typedef sdword ; enum _
+HeapCompatibilityInformation	  equ 0
+HeapEnableTerminationOnCorruption equ 1
+
+HEAP_INFORMATION_CLASS	typedef sdword ; enum _
+HeapCompatibilityInformation	  equ 0
+HeapEnableTerminationOnCorruption equ 1
+
+
+WAITORTIMERCALLBACK_T		typedef proto :PVOID, :BOOLEAN
+WAITORTIMERCALLBACKFUNC		typedef ptr WAITORTIMERCALLBACK_T
+WORKERCALLBACK_T		typedef proto :PVOID
+WORKERCALLBACKFUNC		typedef ptr WORKERCALLBACK_T
+APC_CALLBACK_FUNCTION_T		typedef proto :DWORD, :PVOID, :PVOID
+APC_CALLBACK_FUNCTION		typedef ptr APC_CALLBACK_FUNCTION_T
+PFLS_CALLBACK_FUNCTION_T	typedef proto :PVOID
+PFLS_CALLBACK_FUNCTION		typedef ptr PFLS_CALLBACK_FUNCTION_T
+PSECURE_MEMORY_CACHE_CALLBACK_T typedef proto :PVOID, :SIZE_T
+PSECURE_MEMORY_CACHE_CALLBACK	typedef ptr PSECURE_MEMORY_CACHE_CALLBACK_T
+
+
+WT_SET_MAX_THREADPOOL_THREADS macro Flags, Limit
+	exitm<((Flags) OR ((Limit) SHL 16)))>
+	endm
 
 WT_EXECUTEDEFAULT		equ 0x00000000
 WT_EXECUTEINIOTHREAD		equ 0x00000001
@@ -4601,16 +11463,182 @@ WT_EXECUTEINUITHREAD		equ 0x00000002
 WT_EXECUTEINWAITTHREAD		equ 0x00000004
 WT_EXECUTEDELETEWAIT		equ 0x00000008
 WT_EXECUTEINLONGTHREAD		equ 0x00000010
+WT_EXECUTEINTIMERTHREAD		equ 0x00000020
+WT_EXECUTEINPERSISTENTIOTHREAD	equ 0x00000040
+WT_EXECUTEINPERSISTENTTHREAD	equ 0x00000080
+WT_TRANSFER_IMPERSONATION	equ 0x00000100
 
-WAITORTIMERCALLBACK_T		typedef proto :PVOID, :BOOLEAN
-WAITORTIMERCALLBACKFUNC		typedef ptr WAITORTIMERCALLBACK_T
-WORKERCALLBACK_T		typedef proto :PVOID
-WORKERCALLBACKFUNC		typedef ptr WORKERCALLBACK_T
+ACTIVATION_CONTEXT	typedef ptr
 
-DLL_PROCESS_ATTACH		equ 1
-DLL_THREAD_ATTACH		equ 2
-DLL_THREAD_DETACH		equ 3
-DLL_PROCESS_DETACH		equ 0
+ACTIVATION_CONTEXT_INFO_CLASS typedef sdword ; enum _
+
+    ActivationContextBasicInformation			    equ 1
+    ActivationContextDetailedInformation		    equ 2
+    AssemblyDetailedInformationInActivationContext	    equ 3
+    FileInformationInAssemblyOfAssemblyInActivationContext  equ 4
+    RunlevelInformationInActivationContext		    equ 5
+    CompatibilityInformationInActivationContext		    equ 6
+    ActivationContextManifestResourceName		    equ 7
+    MaxActivationContextInfoClass			    equ 8
+    ;;
+    ;; compatibility with old names
+    ;;
+    AssemblyDetailedInformationInActivationContxt	    equ 3
+    FileInformationInAssemblyOfAssemblyInActivationContxt   equ 4
+
+ACTIVATIONCONTEXTINFOCLASS equ ACTIVATION_CONTEXT_INFO_CASS
+
+ACTIVATION_CONTEXT_QUERY_INDEX STRUC
+ulAssemblyIndex		dd ?
+ulFileIndexInAssembly	dd ?
+ACTIVATION_CONTEXT_QUERY_INDEX ENDS
+PACTIVATION_CONTEXT_QUERY_INDEX typedef ptr ACTIVATION_CONTEXT_QUERY_INDEX
+PCACTIVATION_CONTEXT_QUERY_INDEX typedef ptr ACTIVATION_CONTEXT_QUERY_INDEX
+
+
+ACTIVATION_CONTEXT_PATH_TYPE_NONE	 equ 1
+ACTIVATION_CONTEXT_PATH_TYPE_WIN32_FILE	 equ 2
+ACTIVATION_CONTEXT_PATH_TYPE_URL	 equ 3
+ACTIVATION_CONTEXT_PATH_TYPE_ASSEMBLYREF equ 4
+
+ASSEMBLY_FILE_DETAILED_INFORMATION  STRUC
+ulFlags			dd ?
+ulFilenameLength	dd ?
+ulPathLength		dd ?
+lpFileName		PCWSTR ?
+lpFilePath		PCWSTR ?
+ASSEMBLY_FILE_DETAILED_INFORMATION ENDS
+PASSEMBLY_FILE_DETAILED_INFORMATION typedef ptr ASSEMBLY_FILE_DETAILED_INFORMATION
+PCASSEMBLY_FILE_DETAILED_INFORMATION typedef ptr ASSEMBLY_FILE_DETAILED_INFORMATION
+
+;;
+;; compatibility with old names
+;; The new names use "file" consistently.
+;;
+_ASSEMBLY_DLL_REDIRECTION_DETAILED_INFORMATION	equ _ASSEMBLY_FILE_DETAILED_INFORMATION
+ASSEMBLY_DLL_REDIRECTION_DETAILED_INFORMATION	equ ASSEMBLY_FILE_DETAILED_INFORMATION
+PASSEMBLY_DLL_REDIRECTION_DETAILED_INFORMATION	equ PASSEMBLY_FILE_DETAILED_INFORMATION
+PCASSEMBLY_DLL_REDIRECTION_DETAILED_INFORMATION equ PCASSEMBLY_FILE_DETAILED_INFORMATION
+
+ACTIVATION_CONTEXT_ASSEMBLY_DETAILED_INFORMATION STRUC
+ulFlags				dd ?
+ulEncodedAssemblyIdentityLength dd ?	;; in bytes
+ulManifestPathType		dd ?	;; ACTIVATION_CONTEXT_PATH_TYPE_*
+ulManifestPathLength		dd ?	;; in bytes
+liManifestLastWriteTime		LARGE_INTEGER <> ;; FILETIME
+ulPolicyPathType		dd ?	;; ACTIVATION_CONTEXT_PATH_TYPE_*
+ulPolicyPathLength		dd ?	;; in bytes
+liPolicyLastWriteTime		LARGE_INTEGER <> ;; FILETIME
+ulMetadataSatelliteRosterIndex	dd ?
+ulManifestVersionMajor		dd ?	;; 1
+ulManifestVersionMinor		dd ?	;; 0
+ulPolicyVersionMajor		dd ?	;; 0
+ulPolicyVersionMinor		dd ?	;; 0
+ulAssemblyDirectoryNameLength	dd ?	;; in bytes
+lpAssemblyEncodedAssemblyIdentity PCWSTR ?
+lpAssemblyManifestPath		PCWSTR ?
+lpAssemblyPolicyPath		PCWSTR ?
+lpAssemblyDirectoryName		PCWSTR ?
+ulFileCount			dd ?
+ACTIVATION_CONTEXT_ASSEMBLY_DETAILED_INFORMATION ENDS
+PACTIVATION_CONTEXT_ASSEMBLY_DETAILED_INFORMATION typedef ptr ACTIVATION_CONTEXT_ASSEMBLY_DETAILED_INFORMATION
+PCACTIVATION_CONTEXT_ASSEMBLY_DETAILED_INFORMATION typedef ptr ACTIVATION_CONTEXT_ASSEMBLY_DETAILED_INFORMATION
+
+ACTCTX_REQUESTED_RUN_LEVEL typedef sdword ; enum {
+ACTCTX_RUN_LEVEL_UNSPECIFIED	   equ 0
+ACTCTX_RUN_LEVEL_AS_INVOKER	   equ 1
+ACTCTX_RUN_LEVEL_HIGHEST_AVAILABLE equ 2
+ACTCTX_RUN_LEVEL_REQUIRE_ADMIN	   equ 3
+ACTCTX_RUN_LEVEL_NUMBERS	   equ 4
+
+ACTIVATION_CONTEXT_RUN_LEVEL_INFORMATION  STRUC
+ulFlags			dd ?
+RunLevel		ACTCTX_REQUESTED_RUN_LEVEL ?
+UiAccess		dd ?
+ACTIVATION_CONTEXT_RUN_LEVEL_INFORMATION ENDS
+PACTIVATION_CONTEXT_RUN_LEVEL_INFORMATION typedef ptr ACTIVATION_CONTEXT_RUN_LEVEL_INFORMATION
+
+ACTCTX_COMPATIBILITY_ELEMENT_TYPE typedef sdword ; enum {
+ACTCTX_COMPATIBILITY_ELEMENT_TYPE_UNKNOWN    equ 0
+ACTCTX_COMPATIBILITY_ELEMENT_TYPE_OS	     equ 1
+ACTCTX_COMPATIBILITY_ELEMENT_TYPE_MITIGATION equ 2
+
+COMPATIBILITY_CONTEXT_ELEMENT STRUC
+Id			GUID <>
+_Type			ACTCTX_COMPATIBILITY_ELEMENT_TYPE ?
+COMPATIBILITY_CONTEXT_ELEMENT ENDS
+PCOMPATIBILITY_CONTEXT_ELEMENT typedef ptr COMPATIBILITY_CONTEXT_ELEMENT
+PCCOMPATIBILITY_CONTEXT_ELEMENT typedef ptr COMPATIBILITY_CONTEXT_ELEMENT
+
+pragma warning(push)
+pragma warning(disable:4200)
+
+ACTIVATION_CONTEXT_COMPATIBILITY_INFORMATION STRUC
+ElementCount		dd ?
+Elements		COMPATIBILITY_CONTEXT_ELEMENT <>
+ACTIVATION_CONTEXT_COMPATIBILITY_INFORMATION ENDS
+PACTIVATION_CONTEXT_COMPATIBILITY_INFORMATION typedef ptr ACTIVATION_CONTEXT_COMPATIBILITY_INFORMATION
+
+pragma warning(pop)
+
+PCACTIVATION_CONTEXT_COMPATIBILITY_INFORMATION typedef ptr ACTIVATION_CONTEXT_COMPATIBILITY_INFORMATION
+
+MAX_SUPPORTED_OS_NUM	equ 4
+INVALID_OS_COUNT	equ 0xffff
+
+SUPPORTED_OS_INFO	STRUC
+OsCount			dw ?
+MitigationExist		dw ?
+OsList			dw MAX_SUPPORTED_OS_NUM dup(?)
+SUPPORTED_OS_INFO	ENDS
+PSUPPORTED_OS_INFO	typedef ptr SUPPORTED_OS_INFO
+
+ACTIVATION_CONTEXT_DETAILED_INFORMATION	 STRUC
+dwFlags			dd ?
+ulFormatVersion		dd ?
+ulAssemblyCount		dd ?
+ulRootManifestPathType	dd ?
+ulRootManifestPathChars dd ?
+ulRootConfigurationPathType dd ?
+ulRootConfigurationPathChars dd ?
+ulAppDirPathType	dd ?
+ulAppDirPathChars	dd ?
+lpRootManifestPath	PCWSTR ?
+lpRootConfigurationPath PCWSTR ?
+lpAppDirPath		PCWSTR ?
+ACTIVATION_CONTEXT_DETAILED_INFORMATION ENDS
+PACTIVATION_CONTEXT_DETAILED_INFORMATION typedef ptr ACTIVATION_CONTEXT_DETAILED_INFORMATION
+PCACTIVATION_CONTEXT_DETAILED_INFORMATION typedef ptr ACTIVATION_CONTEXT_DETAILED_INFORMATION
+
+HARDWARE_COUNTER_DATA	STRUC
+_Type			HARDWARE_COUNTER_TYPE ?
+Reserved		dd ?
+Value			dd ?
+HARDWARE_COUNTER_DATA	ENDS
+PHARDWARE_COUNTER_DATA	typedef ptr HARDWARE_COUNTER_DATA
+
+PERFORMANCE_DATA_VERSION equ 1
+
+PERFORMANCE_DATA	STRUC
+_Size			dw ?
+Version			db ?
+HwCountersCount		db ?
+ContextSwitchCount	dd ?
+WaitReasonBitMap	dd ?
+CycleTime		dd ?
+RetryCount		dd ?
+Reserved		dd ?
+HwCounters		HARDWARE_COUNTER_DATA MAX_HW_COUNTERS dup(<>)
+PERFORMANCE_DATA	ENDS
+PPERFORMANCE_DATA	typedef ptr PERFORMANCE_DATA
+
+READ_THREAD_PROFILING_FLAG_DISPATCHING equ 0x00000001
+READ_THREAD_PROFILING_FLAG_HARDWARE_COUNTERS equ 0x00000002
+
+DLL_PROCESS_ATTACH	equ 1
+DLL_THREAD_ATTACH	equ 2
+DLL_THREAD_DETACH	equ 3
+DLL_PROCESS_DETACH	equ 0
 
 ;;
 ;; Defines for the READ flags for Eventlogging
@@ -4681,8 +11709,12 @@ DataOffset			dd ?	;; Offset from beginning of record
 EVENTLOGRECORD			ENDS
 PEVENTLOGRECORD			typedef ptr EVENTLOGRECORD
 
-MAXLOGICALLOGNAMESIZE		equ 256
+if _MSC_VER GE 1200
+pragma warning(push)
+endif
+pragma warning(disable : 4200) ;; nonstandard extension used : zero-sized array in struct/union
 
+ifdef _MSC_EXTENSIONS
 EVENTSFORLOGFILE		STRUC
 ulSize				dd ?
 szLogicalLogFile		WCHAR MAXLOGICALLOGNAMESIZE dup(?) ;; name of the logical file-security/application/system
@@ -4691,12 +11723,14 @@ pEventLogRecords		EVENTLOGRECORD <>
 EVENTSFORLOGFILE		ENDS
 PEVENTSFORLOGFILE		typedef ptr EVENTSFORLOGFILE
 
+
 PACKEDEVENTINFO			STRUC
 ulSize				dd ?	;;total size of the structure
 ulNumEventsForLogFile		dd ?	;;number of EventsForLogFile structure that follow
 ulOffsets			dd ?	;;the offsets from the start of this structure to the EVENTSFORLOGFILE structure
 PACKEDEVENTINFO			ENDS
 PPACKEDEVENTINFO		typedef ptr PACKEDEVENTINFO
+endif
 
 DBG_CONTINUE			equ 0x00010002
 DBG_TERMINATE_THREAD		equ 0x40010003
@@ -4705,24 +11739,37 @@ DBG_CONTROL_C			equ 0x40010005
 DBG_CONTROL_BREAK		equ 0x40010008
 DBG_EXCEPTION_NOT_HANDLED	equ 0x80010001
 
+if _MSC_VER GE 1200
+pragma warning(pop)
+else
+pragma warning(default : 4200) ;; nonstandard extension used : zero-sized array in struct/union
+endif
+;;SS: end of changes to support clustering
+;;
+
 ;;
 ;; Registry Specific Access Rights.
 ;;
 
-KEY_QUERY_VALUE			equ 0x0001
-KEY_SET_VALUE			equ 0x0002
-KEY_CREATE_SUB_KEY		equ 0x0004
-KEY_ENUMERATE_SUB_KEYS		equ 0x0008
-KEY_NOTIFY			equ 0x0010
-KEY_CREATE_LINK			equ 0x0020
+KEY_QUERY_VALUE		equ 0x0001
+KEY_SET_VALUE		equ 0x0002
+KEY_CREATE_SUB_KEY	equ 0x0004
+KEY_ENUMERATE_SUB_KEYS	equ 0x0008
+KEY_NOTIFY		equ 0x0010
+KEY_CREATE_LINK		equ 0x0020
+KEY_WOW64_32KEY		equ 0x0200
+KEY_WOW64_64KEY		equ 0x0100
+KEY_WOW64_RES		equ 0x0300
 
-KEY_READ	equ ((STANDARD_RIGHTS_READ or KEY_QUERY_VALUEor or KEY_ENUMERATE_SUB_KEYS or KEY_NOTIFY) \
-		 and (not SYNCHRONIZE))
-KEY_WRITE	equ ((STANDARD_RIGHTS_WRITE or KEY_SET_VALUE or KEY_CREATE_SUB_KEY) \
-		 and (not SYNCHRONIZE))
-KEY_EXECUTE	equ (KEY_READ and (not SYNCHRONIZE))
-KEY_ALL_ACCESS	equ ((STANDARD_RIGHTS_ALL or KEY_QUERY_VALUE or KEY_SET_VALUE or KEY_CREATE_SUB_KEY \
-		 or KEY_ENUMERATE_SUB_KEYS or KEY_NOTIFY or KEY_CREATE_LINK) and (not SYNCHRONIZE))
+KEY_READ	equ (STANDARD_RIGHTS_READ or KEY_QUERY_VALUEor or \
+		    KEY_ENUMERATE_SUB_KEYS or KEY_NOTIFY) and not SYNCHRONIZE
+KEY_WRITE	equ (STANDARD_RIGHTS_WRITE or KEY_SET_VALUE or KEY_CREATE_SUB_KEY) \
+		    and (not SYNCHRONIZE)
+KEY_EXECUTE	equ KEY_READ and (not SYNCHRONIZE)
+KEY_ALL_ACCESS	equ (STANDARD_RIGHTS_ALL or KEY_QUERY_VALUE or KEY_SET_VALUE or \
+		    KEY_CREATE_SUB_KEY or KEY_ENUMERATE_SUB_KEYS or KEY_NOTIFY or \
+		    KEY_CREATE_LINK) and (not SYNCHRONIZE)
+
 
 ;;
 ;; Open/Create Options
@@ -4747,6 +11794,8 @@ REG_LEGAL_OPTION		equ REG_OPTION_RESERVED or \
 				    REG_OPTION_BACKUP_RESTORE or \
 				    REG_OPTION_OPEN_LINK
 
+REG_OPEN_LEGAL_OPTION	equ REG_OPTION_RESERVED OR REG_OPTION_BACKUP_RESTORE
+
 ;;
 ;; Key creation/open disposition
 ;;
@@ -4761,8 +11810,19 @@ REG_OPENED_EXISTING_KEY		equ 0x00000002	;; Existing Key opened
 REG_WHOLE_HIVE_VOLATILE		equ 0x00000001	;; Restore whole hive volatile
 REG_REFRESH_HIVE		equ 0x00000002	;; Unwind changes to last flush
 REG_NO_LAZY_FLUSH		equ 0x00000004	;; Never lazy flush this hive
+REG_FORCE_RESTORE		equ 0x00000008	;; Force the restore process even when we have open handles on subkeys
+REG_APP_HIVE			equ 0x00000010	;; Loads the hive visible to the calling process
+REG_PROCESS_PRIVATE		equ 0x00000020	;; Hive cannot be mounted by any other process while in use
+REG_START_JOURNAL		equ 0x00000040	;; Starts Hive Journal
+REG_HIVE_EXACT_FILE_GROWTH	equ 0x00000080	;; Grow hive file in exact 4k increments
+REG_HIVE_NO_RM			equ 0x00000100	;; No RM is started for this hive (no transactions)
+REG_HIVE_SINGLE_LOG		equ 0x00000200	;; Legacy single logging is used for this hive
+REG_BOOT_HIVE			equ 0x00000400	;; This hive might be used by the OS loader
 
-;; end_ntddk end_wdm end_nthal
+;;
+;; Unload Flags
+;;
+REG_FORCE_UNLOAD	equ 1
 
 ;;
 ;; Notify filter values
@@ -4795,6 +11855,8 @@ REG_MULTI_SZ			equ 7	;; Multiple Unicode strings
 REG_RESOURCE_LIST		equ 8	;; Resource list in the resource map
 REG_FULL_RESOURCE_DESCRIPTOR	equ 9	;; Resource list in the hardware description
 REG_RESOURCE_REQUIREMENTS_LIST	equ 10
+REG_QWORD			equ 11	;; 64-bit number
+REG_QWORD_LITTLE_ENDIAN		equ 11	;; 64-bit number (same as REG_QWORD)
 
 ;;
 ;; Service Types (Bit Mask)
@@ -4803,23 +11865,18 @@ SERVICE_KERNEL_DRIVER	       equ 0x00000001
 SERVICE_FILE_SYSTEM_DRIVER     equ 0x00000002
 SERVICE_ADAPTER		       equ 0x00000004
 SERVICE_RECOGNIZER_DRIVER      equ 0x00000008
-
 SERVICE_DRIVER		       equ SERVICE_KERNEL_DRIVER or \
 				   SERVICE_FILE_SYSTEM_DRIVER or \
 				   SERVICE_RECOGNIZER_DRIVER
-
 SERVICE_WIN32_OWN_PROCESS      equ 0x00000010
 SERVICE_WIN32_SHARE_PROCESS    equ 0x00000020
 SERVICE_WIN32		       equ SERVICE_WIN32_OWN_PROCESS or \
 				   SERVICE_WIN32_SHARE_PROCESS
-
 SERVICE_INTERACTIVE_PROCESS    equ 0x00000100
-
 SERVICE_TYPE_ALL	       equ SERVICE_WIN32 or \
 				   SERVICE_ADAPTER or \
 				   SERVICE_DRIVER  or \
 				   SERVICE_INTERACTIVE_PROCESS
-
 ;;
 ;; Start Type
 ;;
@@ -4843,23 +11900,49 @@ SERVICE_ERROR_CRITICAL	       equ 0x00000003
 ;; Define the registry driver node enumerations
 ;;
 
-    DriverType		     equ SERVICE_KERNEL_DRIVER
-    FileSystemType	     equ SERVICE_FILE_SYSTEM_DRIVER
-    Win32ServiceOwnProcess   equ SERVICE_WIN32_OWN_PROCESS
-    Win32ServiceShareProcess equ SERVICE_WIN32_SHARE_PROCESS
-    AdapterType		     equ SERVICE_ADAPTER
-    RecognizerType	     equ SERVICE_RECOGNIZER_DRIVER
+    DriverType			equ SERVICE_KERNEL_DRIVER
+    FileSystemType		equ SERVICE_FILE_SYSTEM_DRIVER
+    Win32ServiceOwnProcess	equ SERVICE_WIN32_OWN_PROCESS
+    Win32ServiceShareProcess	equ SERVICE_WIN32_SHARE_PROCESS
+    AdapterType			equ SERVICE_ADAPTER
+    RecognizerType		equ SERVICE_RECOGNIZER_DRIVER
 
-    BootLoad	equ SERVICE_BOOT_START
-    SystemLoad	equ SERVICE_SYSTEM_START
-    AutoLoad	equ SERVICE_AUTO_START
-    DemandLoad	equ SERVICE_DEMAND_START
-    DisableLoad equ SERVICE_DISABLED
+    BootLoad			equ SERVICE_BOOT_START
+    SystemLoad			equ SERVICE_SYSTEM_START
+    AutoLoad			equ SERVICE_AUTO_START
+    DemandLoad			equ SERVICE_DEMAND_START
+    DisableLoad			equ SERVICE_DISABLED
 
-    IgnoreError	  equ SERVICE_ERROR_IGNORE
-    NormalError	  equ SERVICE_ERROR_NORMAL
-    SevereError	  equ SERVICE_ERROR_SEVERE
-    CriticalError equ SERVICE_ERROR_CRITICAL
+    IgnoreError			equ SERVICE_ERROR_IGNORE
+    NormalError			equ SERVICE_ERROR_NORMAL
+    SevereError			equ SERVICE_ERROR_SEVERE
+    CriticalError		equ SERVICE_ERROR_CRITICAL
+
+;;
+;; Service node Flags. These flags are used by the OS loader to promote
+;; a driver's start type to boot start if the system is booting using
+;; the specified mechanism. The flags should be set in the driver's
+;; registry configuration.
+;;
+;; CM_SERVICE_NETWORK_BOOT_LOAD - Specified if a driver should be
+;; promoted on network boot.
+;;
+;; CM_SERVICE_VIRTUAL_DISK_BOOT_LOAD - Specified if a driver should be
+;; promoted on booting from a VHD.
+;;
+;; CM_SERVICE_USB_DISK_BOOT_LOAD - Specified if a driver should be promoted
+;; while booting from a USB disk.
+;;
+
+CM_SERVICE_NETWORK_BOOT_LOAD		equ 0x00000001
+CM_SERVICE_VIRTUAL_DISK_BOOT_LOAD	equ 0x00000002
+CM_SERVICE_USB_DISK_BOOT_LOAD		equ 0x00000004
+
+;;
+;; Mask defining the legal promotion flag values.
+;;
+
+CM_SERVICE_VALID_PROMOTION_MASK equ CM_SERVICE_NETWORK_BOOT_LOAD OR CM_SERVICE_VIRTUAL_DISK_BOOT_LOAD
 
 ;;
 ;; IOCTL_TAPE_ERASE definitions
@@ -4869,7 +11952,7 @@ TAPE_ERASE_SHORT		equ 0
 TAPE_ERASE_LONG			equ 1
 
 TAPE_ERASE			STRUC
-_Type				DWORD ?
+_Type				dd ?
 Immediate			BOOLEAN ?
 TAPE_ERASE			ENDS
 PTAPE_ERASE			typedef ptr TAPE_ERASE
@@ -4886,7 +11969,7 @@ TAPE_UNLOCK			equ 4
 TAPE_FORMAT			equ 5
 
 TAPE_PREPARE			STRUC
-Operation			DWORD ?
+Operation			dd ?
 Immediate			BOOLEAN ?
 TAPE_PREPARE			ENDS
 PTAPE_PREPARE			typedef ptr TAPE_PREPARE
@@ -4901,8 +11984,8 @@ TAPE_SHORT_FILEMARKS		equ 2
 TAPE_LONG_FILEMARKS		equ 3
 
 TAPE_WRITE_MARKS		STRUC
-_Type				DWORD ?
-Count				DWORD ?
+_Type				dd ?
+Count				dd ?
 Immediate			BOOLEAN ?
 TAPE_WRITE_MARKS		ENDS
 PTAPE_WRITE_MARKS		typedef ptr TAPE_WRITE_MARKS
@@ -4916,8 +11999,8 @@ TAPE_LOGICAL_POSITION		equ 1
 TAPE_PSEUDO_LOGICAL_POSITION	equ 2
 
 TAPE_GET_POSITION		STRUC
-_Type				DWORD ?
-Partition			DWORD ?
+_Type				dd ?
+Partition			dd ?
 _Offset				LARGE_INTEGER <>
 TAPE_GET_POSITION		ENDS
 PTAPE_GET_POSITION		typedef ptr TAPE_GET_POSITION
@@ -4938,8 +12021,8 @@ TAPE_SPACE_SETMARKS		equ 8
 TAPE_SPACE_SEQUENTIAL_SMKS	equ 9
 
 TAPE_SET_POSITION		STRUC
-Method				DWORD ?
-Partition			DWORD ?
+Method				dd ?
+Partition			dd ?
 _Offset				LARGE_INTEGER <>
 Immediate			BOOLEAN ?
 TAPE_SET_POSITION		ENDS
@@ -5036,13 +12119,13 @@ ECC				BOOLEAN ?
 Compression			BOOLEAN ?
 DataPadding			BOOLEAN ?
 ReportSetmarks			BOOLEAN ?
-DefaultBlockSize		DWORD ?
-MaximumBlockSize		DWORD ?
-MinimumBlockSize		DWORD ?
-MaximumPartitionCount		DWORD ?
-FeaturesLow			DWORD ?
-FeaturesHigh			DWORD ?
-EOTWarningZoneSize		DWORD ?
+DefaultBlockSize		dd ?
+MaximumBlockSize		dd ?
+MinimumBlockSize		dd ?
+MaximumPartitionCount		dd ?
+FeaturesLow			dd ?
+FeaturesHigh			dd ?
+EOTWarningZoneSize		dd ?
 TAPE_GET_DRIVE_PARAMETERS	ENDS
 PTAPE_GET_DRIVE_PARAMETERS	typedef ptr TAPE_GET_DRIVE_PARAMETERS
 
@@ -5055,7 +12138,7 @@ ECC				BOOLEAN ?
 Compression			BOOLEAN ?
 DataPadding			BOOLEAN ?
 ReportSetmarks			BOOLEAN ?
-EOTWarningZoneSize		DWORD ?
+EOTWarningZoneSize		dd ?
 TAPE_SET_DRIVE_PARAMETERS	ENDS
 PTAPE_SET_DRIVE_PARAMETERS	typedef ptr TAPE_SET_DRIVE_PARAMETERS
 
@@ -5066,8 +12149,8 @@ PTAPE_SET_DRIVE_PARAMETERS	typedef ptr TAPE_SET_DRIVE_PARAMETERS
 TAPE_GET_MEDIA_PARAMETERS	STRUC
 Capacity			LARGE_INTEGER <>
 Remaining			LARGE_INTEGER <>
-BlockSize			DWORD ?
-PartitionCount			DWORD ?
+BlockSize			dd ?
+PartitionCount			dd ?
 WriteProtected			BOOLEAN ?
 TAPE_GET_MEDIA_PARAMETERS	ENDS
 PTAPE_GET_MEDIA_PARAMETERS	typedef ptr TAPE_GET_MEDIA_PARAMETERS
@@ -5096,6 +12179,646 @@ _Size				dd ?
 TAPE_CREATE_PARTITION		ENDS
 PTAPE_CREATE_PARTITION		typedef ptr TAPE_CREATE_PARTITION
 
-endif	; _WINNT_
+;;
+;; WMI Methods
+;;
+TAPE_QUERY_DRIVE_PARAMETERS	equ 0
+TAPE_QUERY_MEDIA_CAPACITY	equ 1
+TAPE_CHECK_FOR_DRIVE_PROBLEM	equ 2
+TAPE_QUERY_IO_ERROR_DATA	equ 3
+TAPE_QUERY_DEVICE_ERROR_DATA	equ 4
+
+TAPE_WMI_OPERATIONS	STRUC
+Method			dd ?
+DataBufferSize		dd ?
+DataBuffer		PVOID ?
+TAPE_WMI_OPERATIONS	ENDS
+PTAPE_WMI_OPERATIONS	typedef ptr TAPE_WMI_OPERATIONS
+
+;;
+;; Type of drive errors
+;;
+TAPE_DRIVE_PROBLEM_TYPE		typedef sdword;enum _TAPE_DRIVE_PROBLEM_TYPE {
+TapeDriveProblemNone		equ 0
+TapeDriveReadWriteWarning	equ 1
+TapeDriveReadWriteError		equ 2
+TapeDriveReadWarning		equ 3
+TapeDriveWriteWarning		equ 4
+TapeDriveReadError		equ 5
+TapeDriveWriteError		equ 6
+TapeDriveHardwareError		equ 7
+TapeDriveUnsupportedMedia	equ 8
+TapeDriveScsiConnectionError	equ 9
+TapeDriveTimetoClean		equ 10
+TapeDriveCleanDriveNow		equ 11
+TapeDriveMediaLifeExpired	equ 12
+TapeDriveSnappedTape		equ 13
+
+ifndef _NTTMAPI_
+_NTTMAPI_ equ <>
+
+include ktmtypes.inc
+
+;;
+;; Types for Nt level TM calls
+;;
+
+;;
+;; KTM Tm object rights
+;;
+TRANSACTIONMANAGER_QUERY_INFORMATION	equ 0x0001
+TRANSACTIONMANAGER_SET_INFORMATION	equ 0x0002
+TRANSACTIONMANAGER_RECOVER		equ 0x0004
+TRANSACTIONMANAGER_RENAME		equ 0x0008
+TRANSACTIONMANAGER_CREATE_RM		equ 0x0010
+
+;; The following right is intended for DTC's use only; it will be
+;; deprecated, and no one else should take a dependency on it.
+TRANSACTIONMANAGER_BIND_TRANSACTION	equ 0x0020
+
+;;
+;; Generic mappings for transaction manager rights.
+;;
+
+TRANSACTIONMANAGER_GENERIC_READ equ STANDARD_RIGHTS_READ OR \
+				    TRANSACTIONMANAGER_QUERY_INFORMATION
+
+TRANSACTIONMANAGER_GENERIC_WRITE equ STANDARD_RIGHTS_WRITE OR \
+				     TRANSACTIONMANAGER_SET_INFORMATION OR \
+				     TRANSACTIONMANAGER_RECOVER OR \
+				     TRANSACTIONMANAGER_RENAME OR \
+				     TRANSACTIONMANAGER_CREATE_RM
+
+TRANSACTIONMANAGER_GENERIC_EXECUTE equ STANDARD_RIGHTS_EXECUTE
+
+TRANSACTIONMANAGER_ALL_ACCESS equ STANDARD_RIGHTS_REQUIRED OR \
+				  TRANSACTIONMANAGER_GENERIC_READ OR \
+				  TRANSACTIONMANAGER_GENERIC_WRITE OR \
+				  TRANSACTIONMANAGER_GENERIC_EXECUTE OR \
+				  TRANSACTIONMANAGER_BIND_TRANSACTION
+;;
+;; KTM transaction object rights.
+;;
+TRANSACTION_QUERY_INFORMATION	equ 0x0001
+TRANSACTION_SET_INFORMATION	equ 0x0002
+TRANSACTION_ENLIST		equ 0x0004
+TRANSACTION_COMMIT		equ 0x0008
+TRANSACTION_ROLLBACK		equ 0x0010
+TRANSACTION_PROPAGATE		equ 0x0020
+TRANSACTION_RIGHT_RESERVED1	equ 0x0040
+
+;;
+;; Generic mappings for transaction rights.
+;; Resource managers, when enlisting, should generally use the macro
+;; TRANSACTION_RESOURCE_MANAGER_RIGHTS when opening a transaction.
+;; It's the same as generic read and write except that it does not allow
+;; a commit decision to be made.
+;;
+
+TRANSACTION_GENERIC_READ	equ STANDARD_RIGHTS_READ OR \
+				    TRANSACTION_QUERY_INFORMATION OR \
+				    SYNCHRONIZE
+
+TRANSACTION_GENERIC_WRITE	equ STANDARD_RIGHTS_WRITE OR \
+				    TRANSACTION_SET_INFORMATION OR \
+				    TRANSACTION_COMMIT OR \
+				    TRANSACTION_ENLIST OR \
+				    TRANSACTION_ROLLBACK OR \
+				    TRANSACTION_PROPAGATE OR \
+				    SYNCHRONIZE
+
+TRANSACTION_GENERIC_EXECUTE	equ STANDARD_RIGHTS_EXECUTE OR \
+				    TRANSACTION_COMMIT	OR \
+				    TRANSACTION_ROLLBACK  OR \
+				    SYNCHRONIZE
+
+TRANSACTION_ALL_ACCESS		equ STANDARD_RIGHTS_REQUIRED OR \
+				    TRANSACTION_GENERIC_READ OR \
+				    TRANSACTION_GENERIC_WRITE OR \
+				    TRANSACTION_GENERIC_EXECUTE
+
+TRANSACTION_RESOURCE_MANAGER_RIGHTS equ TRANSACTION_GENERIC_READ OR \
+				    STANDARD_RIGHTS_WRITE OR \
+				    TRANSACTION_SET_INFORMATION OR \
+				    TRANSACTION_ENLIST OR \
+				    TRANSACTION_ROLLBACK OR \
+				    TRANSACTION_PROPAGATE OR \
+				    SYNCHRONIZE
+
+;;
+;; KTM resource manager object rights.
+;;
+RESOURCEMANAGER_QUERY_INFORMATION	equ 0x0001
+RESOURCEMANAGER_SET_INFORMATION		equ 0x0002
+RESOURCEMANAGER_RECOVER			equ 0x0004
+RESOURCEMANAGER_ENLIST			equ 0x0008
+RESOURCEMANAGER_GET_NOTIFICATION	equ 0x0010
+RESOURCEMANAGER_REGISTER_PROTOCOL	equ 0x0020
+RESOURCEMANAGER_COMPLETE_PROPAGATION	equ 0x0040
+
+;;
+;; Generic mappings for resource manager rights.
+;;
+RESOURCEMANAGER_GENERIC_READ equ STANDARD_RIGHTS_READ OR \
+			RESOURCEMANAGER_QUERY_INFORMATION OR \
+			SYNCHRONIZE
+
+RESOURCEMANAGER_GENERIC_WRITE equ STANDARD_RIGHTS_WRITE OR \
+			RESOURCEMANAGER_SET_INFORMATION OR \
+			RESOURCEMANAGER_RECOVER OR \
+			RESOURCEMANAGER_ENLIST OR \
+			RESOURCEMANAGER_GET_NOTIFICATION OR \
+			RESOURCEMANAGER_REGISTER_PROTOCOL OR \
+			RESOURCEMANAGER_COMPLETE_PROPAGATION OR \
+			SYNCHRONIZE
+
+RESOURCEMANAGER_GENERIC_EXECUTE equ STANDARD_RIGHTS_EXECUTE OR \
+			RESOURCEMANAGER_RECOVER OR \
+			RESOURCEMANAGER_ENLIST OR \
+			RESOURCEMANAGER_GET_NOTIFICATION OR \
+			RESOURCEMANAGER_COMPLETE_PROPAGATION OR \
+			SYNCHRONIZE
+
+RESOURCEMANAGER_ALL_ACCESS equ STANDARD_RIGHTS_REQUIRED OR \
+			RESOURCEMANAGER_GENERIC_READ OR \
+			RESOURCEMANAGER_GENERIC_WRITE OR \
+			RESOURCEMANAGER_GENERIC_EXECUTE
+
+;;
+;; KTM enlistment object rights.
+;;
+ENLISTMENT_QUERY_INFORMATION	equ 0x0001
+ENLISTMENT_SET_INFORMATION	equ 0x0002
+ENLISTMENT_RECOVER		equ 0x0004
+ENLISTMENT_SUBORDINATE_RIGHTS	equ 0x0008
+ENLISTMENT_SUPERIOR_RIGHTS	equ 0x0010
+
+;;
+;; Generic mappings for enlistment rights.
+;;
+ENLISTMENT_GENERIC_READ equ STANDARD_RIGHTS_READ OR \
+			ENLISTMENT_QUERY_INFORMATION
+
+ENLISTMENT_GENERIC_WRITE equ (STANDARD_RIGHTS_WRITE OR \
+			ENLISTMENT_SET_INFORMATION OR \
+			ENLISTMENT_RECOVER OR \
+			ENLISTMENT_SUBORDINATE_RIGHTS OR \
+			ENLISTMENT_SUPERIOR_RIGHTS
+
+ENLISTMENT_GENERIC_EXECUTE equ (STANDARD_RIGHTS_EXECUTE OR \
+			ENLISTMENT_RECOVER OR \
+			ENLISTMENT_SUBORDINATE_RIGHTS OR \
+			ENLISTMENT_SUPERIOR_RIGHTS
+
+ENLISTMENT_ALL_ACCESS	equ (STANDARD_RIGHTS_REQUIRED OR \
+			ENLISTMENT_GENERIC_READ OR \
+			ENLISTMENT_GENERIC_WRITE OR \
+			ENLISTMENT_GENERIC_EXECUTE
+;;
+;; Transaction outcomes.
+;;
+;; TODO: warning, must match values in KTRANSACTION_OUTCOME duplicated def
+;; in tm.h.
+;;
+
+TRANSACTION_OUTCOME	typedef sdword;enum _TRANSACTION_OUTCOME {
+TransactionOutcomeUndetermined	equ 1
+TransactionOutcomeCommitted	equ 2
+TransactionOutcomeAborted	equ 3
+
+
+
+TRANSACTION_STATE	typedef sdword;enum _TRANSACTION_STATE {
+TransactionStateNormal		equ 1
+TransactionStateIndoubt		equ 2
+TransactionStateCommittedNotify equ 3
+
+
+TRANSACTION_BASIC_INFORMATION  STRUC
+TransactionId		GUID <>
+State			dd ?
+Outcome			dd ?
+TRANSACTION_BASIC_INFORMATION ENDS
+PTRANSACTION_BASIC_INFORMATION typedef ptr TRANSACTION_BASIC_INFORMATION
+
+TRANSACTIONMANAGER_BASIC_INFORMATION  STRUC
+TmIdentity		GUID <>
+VirtualClock		LARGE_INTEGER <>
+TRANSACTIONMANAGER_BASIC_INFORMATION ENDS
+PTRANSACTIONMANAGER_BASIC_INFORMATION typedef ptr TRANSACTIONMANAGER_BASIC_INFORMATION
+
+TRANSACTIONMANAGER_LOG_INFORMATION  STRUC
+LogIdentity		GUID <>
+TRANSACTIONMANAGER_LOG_INFORMATION ENDS
+PTRANSACTIONMANAGER_LOG_INFORMATION typedef ptr TRANSACTIONMANAGER_LOG_INFORMATION
+
+TRANSACTIONMANAGER_LOGPATH_INFORMATION	STRUC
+LogPathLength		dd ?
+LogPath			dw ? ;; Variable size
+;;  Data[1];					    // Variable size data not declared
+TRANSACTIONMANAGER_LOGPATH_INFORMATION ENDS
+PTRANSACTIONMANAGER_LOGPATH_INFORMATION typedef ptr TRANSACTIONMANAGER_LOGPATH_INFORMATION
+
+TRANSACTIONMANAGER_RECOVERY_INFORMATION	 STRUC
+LastRecoveredLsn	ULONGLONG ?
+TRANSACTIONMANAGER_RECOVERY_INFORMATION ENDS
+PTRANSACTIONMANAGER_RECOVERY_INFORMATION typedef ptr TRANSACTIONMANAGER_RECOVERY_INFORMATION
+
+
+TRANSACTIONMANAGER_OLDEST_INFORMATION  STRUC
+OldestTransactionGuid	GUID <>
+TRANSACTIONMANAGER_OLDEST_INFORMATION ENDS
+PTRANSACTIONMANAGER_OLDEST_INFORMATION typedef ptr TRANSACTIONMANAGER_OLDEST_INFORMATION
+
+
+TRANSACTION_PROPERTIES_INFORMATION  STRUC
+IsolationLevel		dd ?
+IsolationFlags		dd ?
+Timeout			LARGE_INTEGER <>
+Outcome			dd ?
+DescriptionLength	dd ?
+Description		dw ? ;; Variable size
+;;	    Data[1];		// Variable size data not declared
+TRANSACTION_PROPERTIES_INFORMATION ENDS
+PTRANSACTION_PROPERTIES_INFORMATION typedef ptr TRANSACTION_PROPERTIES_INFORMATION
+
+;; The following info-class is intended for DTC's use only; it will be
+;; deprecated, and no one else should take a dependency on it.
+TRANSACTION_BIND_INFORMATION  STRUC
+TmHandle		HANDLE ?
+TRANSACTION_BIND_INFORMATION ENDS
+PTRANSACTION_BIND_INFORMATION typedef ptr TRANSACTION_BIND_INFORMATION
+
+TRANSACTION_ENLISTMENT_PAIR  STRUC
+EnlistmentId		GUID <>
+ResourceManagerId	GUID <>
+TRANSACTION_ENLISTMENT_PAIR ENDS
+PTRANSACTION_ENLISTMENT_PAIR typedef ptr TRANSACTION_ENLISTMENT_PAIR
+
+TRANSACTION_ENLISTMENTS_INFORMATION  STRUC
+NumberOfEnlistments	dd ?
+EnlistmentPair		TRANSACTION_ENLISTMENT_PAIR <>	;; Variable size
+TRANSACTION_ENLISTMENTS_INFORMATION ENDS
+PTRANSACTION_ENLISTMENTS_INFORMATION typedef ptr TRANSACTION_ENLISTMENTS_INFORMATION
+
+TRANSACTION_SUPERIOR_ENLISTMENT_INFORMATION  STRUC
+SuperiorEnlistmentPair	TRANSACTION_ENLISTMENT_PAIR <>
+TRANSACTION_SUPERIOR_ENLISTMENT_INFORMATION ENDS
+PTRANSACTION_SUPERIOR_ENLISTMENT_INFORMATION typedef ptr TRANSACTION_SUPERIOR_ENLISTMENT_INFORMATION
+
+
+RESOURCEMANAGER_BASIC_INFORMATION STRUC
+ResourceManagerId	GUID <>
+DescriptionLength	dd ?
+Description		dw ? ;; Variable size
+RESOURCEMANAGER_BASIC_INFORMATION ENDS
+PRESOURCEMANAGER_BASIC_INFORMATION typedef ptr RESOURCEMANAGER_BASIC_INFORMATION
+
+RESOURCEMANAGER_COMPLETION_INFORMATION STRUC
+IoCompletionPortHandle	HANDLE ?
+CompletionKey		ULONG_PTR ?
+RESOURCEMANAGER_COMPLETION_INFORMATION ENDS
+PRESOURCEMANAGER_COMPLETION_INFORMATION typedef ptr RESOURCEMANAGER_COMPLETION_INFORMATION
+
+
+TRANSACTION_INFORMATION_CLASS		typedef sdword;enum _TRANSACTION_INFORMATION_CLASS {
+TransactionBasicInformation		equ 0
+TransactionPropertiesInformation	equ 1
+TransactionEnlistmentInformation	equ 2
+TransactionSuperiorEnlistmentInformation equ 3
+TransactionBindInformation		equ 4	; private and deprecated
+TransactionDTCPrivateInformation	equ 5	; private and deprecated
+
+
+TRANSACTIONMANAGER_INFORMATION_CLASS	typedef sdword ; enum _TRANSACTIONMANAGER_INFORMATION_CLASS {
+TransactionManagerBasicInformation	equ 0
+TransactionManagerLogInformation	equ 1
+TransactionManagerLogPathInformation	equ 2
+TransactionManagerRecoveryInformation	equ 4
+;; are considered deprecated, and no one else should take a dependency
+;; on them.
+TransactionManagerOnlineProbeInformation equ 3
+TransactionManagerOldestTransactionInformation equ 5
+
+RESOURCEMANAGER_INFORMATION_CLASS typedef sdword ; enum _RESOURCEMANAGER_INFORMATION_CLASS {
+ResourceManagerBasicInformation		equ 0
+ResourceManagerCompletionInformation	equ 1
+
+
+ENLISTMENT_BASIC_INFORMATION STRUC
+EnlistmentId		GUID <>
+TransactionId		GUID <>
+ResourceManagerId	GUID <>
+ENLISTMENT_BASIC_INFORMATION ENDS
+PENLISTMENT_BASIC_INFORMATION typedef ptr ENLISTMENT_BASIC_INFORMATION
+
+ENLISTMENT_CRM_INFORMATION STRUC
+CrmTransactionManagerId GUID <>
+CrmResourceManagerId	GUID <>
+CrmEnlistmentId		GUID <>
+ENLISTMENT_CRM_INFORMATION ENDS
+PENLISTMENT_CRM_INFORMATION typedef ptr ENLISTMENT_CRM_INFORMATION
+
+ENLISTMENT_INFORMATION_CLASS typedef sdword ; enum _ENLISTMENT_INFORMATION_CLASS {
+EnlistmentBasicInformation	equ 0
+EnlistmentRecoveryInformation	equ 1
+EnlistmentCrmInformation	equ 2
+
+TRANSACTION_LIST_ENTRY	STRUC
+UOW			UOW <>
+TRANSACTION_LIST_ENTRY	ENDS
+PTRANSACTION_LIST_ENTRY typedef ptr TRANSACTION_LIST_ENTRY
+
+TRANSACTION_LIST_INFORMATION  STRUC
+NumberOfTransactions	dd ?
+TransactionInformation	TRANSACTION_LIST_ENTRY <>	;; Var size
+TRANSACTION_LIST_INFORMATION ENDS
+PTRANSACTION_LIST_INFORMATION typedef ptr TRANSACTION_LIST_INFORMATION
+
+
+;;
+;; Types of objects known to the kernel transaction manager.
+;;
+
+KTMOBJECT_TYPE		typedef sdword; ptr enum _KTMOBJECT_TYPE {
+PKTMOBJECT_TYPE		typedef ptr KTMOBJECT_TYPE
+
+KTMOBJECT_TRANSACTION		equ 0
+KTMOBJECT_TRANSACTION_MANAGER	equ 1
+KTMOBJECT_RESOURCE_MANAGER	equ 2
+KTMOBJECT_ENLISTMENT		equ 3
+KTMOBJECT_INVALID		equ 4
+
+;;
+;; KTMOBJECT_CURSOR
+;;
+;; Used by NtEnumerateTransactionObject to enumerate a transaction
+;; object namespace (e.g. enlistments in a resource manager).
+;;
+
+KTMOBJECT_CURSOR	STRUC
+LastQuery		GUID <>
+ObjectIdCount		dd ?
+ObjectIds		GUID <>
+KTMOBJECT_CURSOR	ENDS
+PKTMOBJECT_CURSOR	typedef ptr KTMOBJECT_CURSOR
+
+endif ;; _NTTMAPI_
+
+TP_VERSION		typedef DWORD
+PTP_VERSION		typedef ptr TP_VERSION
+TP_CALLBACK_INSTANCE	typedef proto _CType
+PTP_CALLBACK_INSTANCE	typedef ptr TP_CALLBACK_INSTANCE
+PTP_SIMPLE_CALLBACK_T	typedef proto _CType \
+	      Instance: PTP_CALLBACK_INSTANCE,
+	       Context: PVOID
+PTP_SIMPLE_CALLBACK	typedef ptr PTP_SIMPLE_CALLBACK_T
+PTP_POOL		typedef ptr TP_POOL
+
+TP_CALLBACK_PRIORITY	typedef sdword;enum
+TP_CALLBACK_PRIORITY_HIGH	equ 0
+TP_CALLBACK_PRIORITY_NORMAL	equ 1
+TP_CALLBACK_PRIORITY_LOW	equ 2
+TP_CALLBACK_PRIORITY_INVALID	equ 3
+
+
+TP_POOL_STACK_INFORMATION STRUC
+StackReserve		SIZE_T ?
+StackCommit		SIZE_T ?
+TP_POOL_STACK_INFORMATION ENDS
+PTP_POOL_STACK_INFORMATION typedef ptr TP_POOL_STACK_INFORMATION
+
+PTP_CLEANUP_GROUP	typedef ptr TP_CLEANUP_GROUP
+PTP_CLEANUP_GROUP_CANCEL_CALLBACK_T typedef proto _CType \
+	 ObjectContext: PVOID,
+	CleanupContext: PVOID
+
+PTP_CLEANUP_GROUP_CANCEL_CALLBACK typedef ptr PTP_CLEANUP_GROUP_CANCEL_CALLBACK_T
+
+;;
+;; Do not manipulate this structure directly!  Allocate space for it
+;; and use the inline interfaces below.
+;;
+
+if (_WIN32_WINNT GE _WIN32_WINNT_WIN7)
+
+TP_CALLBACK_ENVIRON_V3	STRUC
+Version			TP_VERSION ?
+Pool			PTP_POOL ?
+CleanupGroup		PTP_CLEANUP_GROUP ?
+CleanupGroupCancelCallback PTP_CLEANUP_GROUP_CANCEL_CALLBACK ?
+RaceDll			PVOID ?
+ActivationContext	ACTIVATION_CONTEXT ?
+FinalizationCallback	PTP_SIMPLE_CALLBACK ?
+UNION u
+ Flags			dd ?
+if 0
+ STRUC s
+  LongFunction : 1	dd ?
+  Persistent   : 1	dd ?
+  Private    : 30	dd ?
+ ENDS
+endif
+ENDS
+CallbackPriority	TP_CALLBACK_PRIORITY ?
+_Size			dd ?
+TP_CALLBACK_ENVIRON_V3	ENDS
+PTP_CALLBACK_ENVIRON	typedef ptr TP_CALLBACK_ENVIRON_V3
+
+TP_CALLBACK_ENVIRON	typedef TP_CALLBACK_ENVIRON_V3
+
+else
+
+TP_CALLBACK_ENVIRON_V1	STRUC
+Version			TP_VERSION ?
+Pool			PTP_POOL ?
+CleanupGroup		PTP_CLEANUP_GROUP ?
+CleanupGroupCancelCallback PTP_CLEANUP_GROUP_CANCEL_CALLBACK ?
+RaceDll			PVOID ?
+ActivationContext	PACTIVATION_CONTEXT ?
+FinalizationCallback	PTP_SIMPLE_CALLBACK ?
+UNION u
+ Flags			dd ?
+if 0
+ STRUC s
+  LongFunction : 1	dd ?
+  Persistent   : 1	dd ?
+  Private    : 30	dd ?
+ ENDS
+endif
+ENDS
+TP_CALLBACK_ENVIRON_V1	ENDS
+PTP_CALLBACK_ENVIRON	typedef ptr TP_CALLBACK_ENVIRON_V1
+TP_CALLBACK_ENVIRON	typedef TP_CALLBACK_ENVIRON_V1
+
+endif
+
+ifndef MIDL_PASS
+;FORCEINLINE
+;VOID
+TpInitializeCallbackEnviron macro CallbackEnviron
+if (_WIN32_WINNT GE _WIN32_WINNT_WIN7)
+	mov CallbackEnviron.Version,3
+else
+	mov CallbackEnviron.Version,1
+endif
+	mov CallbackEnviron.Pool,NULL
+	mov CallbackEnviron.CleanupGroup,NULL
+	mov CallbackEnviron.CleanupGroupCancelCallback,NULL
+	mov CallbackEnviron.RaceDll,NULL
+	mov CallbackEnviron.ActivationContext,NULL
+	mov CallbackEnviron.FinalizationCallback,NULL
+	mov CallbackEnviron.u.Flags,0
+if (_WIN32_WINNT GE _WIN32_WINNT_WIN7)
+	mov CallbackEnviron.CallbackPriority,TP_CALLBACK_PRIORITY_NORMAL
+	mov CallbackEnviron._Size,sizeof(TP_CALLBACK_ENVIRON)
+endif
+	endm
+;VOID
+TpSetCallbackThreadpool macro CallbackEnviron, Pool
+	mov CallbackEnviron.Pool,Pool
+	endm
+;VOID
+TpSetCallbackCleanupGroup macro CallbackEnviron, CleanupGroup, CleanupGroupCancelCallback
+	mov CallbackEnviron.CleanupGroup,CleanupGroup
+	mov CallbackEnviron.CleanupGroupCancelCallback,CleanupGroupCancelCallback
+	endm
+;VOID
+TpSetCallbackActivationContext macro CallbackEnviron, ActivationContext
+	mov CallbackEnviron.ActivationContext,ActivationContext
+	endm
+;VOID
+TpSetCallbackNoActivationContext macro CallbackEnviron
+	mov CallbackEnviron.ActivationContext,-1	;; INVALID_ACTIVATION_CONTEXT
+	endm
+;VOID
+TpSetCallbackLongFunction macro CallbackEnviron
+	mov CallbackEnviron.u.s.LongFunction,1
+	endm
+;VOID
+TpSetCallbackRaceWithDll macro CallbackEnviron, DllHandle
+	mov CallbackEnviron.RaceDll,DllHandle
+	endm
+;VOID
+TpSetCallbackFinalizationCallback macro CallbackEnviron, FinalizationCallback
+	mov CallbackEnviron.FinalizationCallback,FinalizationCallback
+	endm
+if (_WIN32_WINNT GE _WIN32_WINNT_WIN7)
+;VOID
+TpSetCallbackPriority macro CallbackEnviron, Priority
+	mov CallbackEnviron.CallbackPriority,Priority
+	endm
+endif
+;VOID
+TpSetCallbackPersistent macro CallbackEnviron
+	mov CallbackEnviron.u.s.Persistent,1
+	endm
+
+;VOID
+TpDestroyCallbackEnviron macro CallbackEnviron
+    ;; For the current version of the callback environment, no actions
+    ;; need to be taken to tear down an initialized structure.	This
+    ;; may change in a future release.
+	endm
+
+endif ;; NOT defined(MIDL_PASS)
+
+
+PTP_WORK		typedef ptr TP_WORK
+PTP_WORK_CALLBACK_T typedef proto _CType \
+	      Instance: PTP_CALLBACK_INSTANCE,
+	       Context: PVOID,
+		  Work: PTP_WORK
+PTP_WORK_CALLBACK	typedef ptr PTP_WORK_CALLBACK_T
+
+PTP_TIMER		typedef ptr TP_TIMER
+PTP_TIMER_CALLBACK_T	typedef proto _CType \
+	      Instance: PTP_CALLBACK_INSTANCE,
+	       Context: PVOID,
+		 Timer: PTP_TIMER
+PTP_TIMER_CALLBACK	typedef ptr PTP_TIMER_CALLBACK_T
+
+TP_WAIT_RESULT		typedef DWORD
+PTP_WAIT		typedef ptr TP_WAIT
+PTP_WAIT_CALLBACK_T	typedef proto _CType \
+	      Instance: PTP_CALLBACK_INSTANCE,
+	       Context: PVOID,
+		 _Wait: PTP_WAIT,
+	    WaitResult: TP_WAIT_RESULT
+PTP_WAIT_CALLBACK	typedef ptr PTP_WAIT_CALLBACK_T
+
+PTP_IO			typedef ptr TP_IO
+
+if defined(_M_AMD64) AND NOT defined(__midl)
+;TEB *
+NtCurrentTeb macro
+	exitm<__readgsqword(FIELD_OFFSET(NT_TIB, Self))>
+	endm
+;PVOID
+GetCurrentFiber macro
+	exitm<__readgsqword(FIELD_OFFSET(NT_TIB, FiberData))>
+	endm
+;PVOID
+GetFiberData macro
+	exitm<GetCurrentFiber()>
+	endm
+endif ;; _M_AMD64 AND NOT defined(__midl)
+
+
+if defined(_M_IX86) AND NOT defined(MIDL_PASS)
+
+PcTeb			equ 0x18
+
+if (_MSC_FULL_VER GE 13012035)
+
+NtCurrentTeb macro
+	exitm<__readfsdword(PcTeb)>
+	endm
+
+else
+
+if _MSC_VER GE 1200
+pragma warning(push)
+endif
+
+pragma warning (disable:4035)	      ;; disable 4035 (function must return something)
+
+NtCurrentTeb macro
+	mov eax,fs:[PcTeb]
+	exitm<eax>
+	endm
+
+if _MSC_VER GE 1200
+pragma warning(pop)
+else
+pragma warning (default:4035)	      ;; reenable it
+endif
+
+endif ;; (_MSC_FULL_VER GE 13012035)
+
+endif ;; defined(_M_IX86) AND NOT defined(MIDL_PASS)
+
+if (_WIN32_WINNT GT 0x0500) OR (_WIN32_FUSION GE 0x0100) ;OR ISOLATION_AWARE_ENABLED ;; winnt_only
+ACTIVATION_CONTEXT_SECTION_ASSEMBLY_INFORMATION		equ 1
+ACTIVATION_CONTEXT_SECTION_DLL_REDIRECTION		equ 2
+ACTIVATION_CONTEXT_SECTION_WINDOW_CLASS_REDIRECTION	equ 3
+ACTIVATION_CONTEXT_SECTION_COM_SERVER_REDIRECTION	equ 4
+ACTIVATION_CONTEXT_SECTION_COM_INTERFACE_REDIRECTION	equ 5
+ACTIVATION_CONTEXT_SECTION_COM_TYPE_LIBRARY_REDIRECTION equ 6
+ACTIVATION_CONTEXT_SECTION_COM_PROGID_REDIRECTION	equ 7
+ACTIVATION_CONTEXT_SECTION_GLOBAL_OBJECT_RENAME_TABLE	equ 8
+ACTIVATION_CONTEXT_SECTION_CLR_SURROGATES		equ 9
+ACTIVATION_CONTEXT_SECTION_APPLICATION_SETTINGS		equ 10
+ACTIVATION_CONTEXT_SECTION_COMPATIBILITY_INFO		equ 11
+endif ;; winnt_only
+
+if _MSC_VER GE 1200
+pragma warning(pop)
+else
+pragma warning(default:4201)
+pragma warning(default:4214)
+endif
 
 .list
+endif	; _WINNT_
+

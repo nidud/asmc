@@ -1,10 +1,11 @@
+ifndef __STRING_INC
+__STRING_INC equ <>
 ifndef __LIBC_INC
  include libc.inc
 endif
-
 .xlist
 ifdef __PE__
-option		dllimport:<msvcrt>
+option	dllimport:<msvcrt>
 endif
 
 memchr		PROTO :LPSTR, :SIZE_T,:SIZE_T
@@ -117,3 +118,4 @@ unixtodos	PROTO :LPSTR
 endif
 
 .list
+endif ;; __STRING_INC

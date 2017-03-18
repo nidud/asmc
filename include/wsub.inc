@@ -1,3 +1,6 @@
+ifndef __WSUB_INC
+__WSUB_INC equ <>
+
 ifndef __LIBC_INC
  include libc.inc
 endif
@@ -198,3 +201,4 @@ filexist	PROTO :LPSTR
 notsup		PROTO
 
 .list
+endif

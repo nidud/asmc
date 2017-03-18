@@ -395,7 +395,11 @@ ifndef NOVIRTUALKEYCODES
 VK_LBUTTON		equ 0x01
 VK_RBUTTON		equ 0x02
 VK_CANCEL		equ 0x03
-VK_MBUTTON		equ 0x04    ;; NOT contiguous with L AND RBUTTON
+VK_MBUTTON		equ 0x04 ;; NOT contiguous with L AND RBUTTON
+if(_WIN32_WINNT GE 0x0500)
+VK_XBUTTON1		equ 0x05 ;; NOT contiguous with L & RBUTTON
+VK_XBUTTON2		equ 0x06 ;; NOT contiguous with L & RBUTTON
+endif ;; _WIN32_WINNT >= 0x0500
 
 VK_BACK			equ 0x08
 VK_TAB			equ 0x09
@@ -489,8 +493,30 @@ VK_F22			equ 0x85
 VK_F23			equ 0x86
 VK_F24			equ 0x87
 
+;;
+;; 0x88 - 0x8F : unassigned
+;;
+
 VK_NUMLOCK		equ 0x90
 VK_SCROLL		equ 0x91
+
+;;
+;; NEC PC-9800 kbd definitions
+;;
+VK_OEM_NEC_EQUAL	equ 0x92   ;; '=' key on numpad
+
+;;
+;; Fujitsu/OASYS kbd definitions
+;;
+VK_OEM_FJ_JISHO		equ 0x92   ;; 'Dictionary' key
+VK_OEM_FJ_MASSHOU	equ 0x93   ;; 'Unregister word' key
+VK_OEM_FJ_TOUROKU	equ 0x94   ;; 'Register word' key
+VK_OEM_FJ_LOYA		equ 0x95   ;; 'Left OYAYUBI' key
+VK_OEM_FJ_ROYA		equ 0x96   ;; 'Right OYAYUBI' key
+
+;;
+;; 0x97 - 0x9F : unassigned
+;;
 
 ;;
 ;; VK_L* & VK_R* - left and right Alt, Ctrl and Shift virtual keys.
@@ -503,10 +529,94 @@ VK_LCONTROL		equ 0xA2
 VK_RCONTROL		equ 0xA3
 VK_LMENU		equ 0xA4
 VK_RMENU		equ 0xA5
+if(_WIN32_WINNT GE 0x0500)
+VK_BROWSER_BACK		equ 0xA6
+VK_BROWSER_FORWARD	equ 0xA7
+VK_BROWSER_REFRESH	equ 0xA8
+VK_BROWSER_STOP		equ 0xA9
+VK_BROWSER_SEARCH	equ 0xAA
+VK_BROWSER_FAVORITES	equ 0xAB
+VK_BROWSER_HOME		equ 0xAC
+
+VK_VOLUME_MUTE		equ 0xAD
+VK_VOLUME_DOWN		equ 0xAE
+VK_VOLUME_UP		equ 0xAF
+VK_MEDIA_NEXT_TRACK	equ 0xB0
+VK_MEDIA_PREV_TRACK	equ 0xB1
+VK_MEDIA_STOP		equ 0xB2
+VK_MEDIA_PLAY_PAUSE	equ 0xB3
+VK_LAUNCH_MAIL		equ 0xB4
+VK_LAUNCH_MEDIA_SELECT	equ 0xB5
+VK_LAUNCH_APP1		equ 0xB6
+VK_LAUNCH_APP2		equ 0xB7
+endif ;; _WIN32_WINNT >= 0x0500
+
+;;
+;; 0xB8 - 0xB9 : reserved
+;;
+
+VK_OEM_1		equ 0xBA   ;; ';:' for US
+VK_OEM_PLUS		equ 0xBB   ;; '+' any country
+VK_OEM_COMMA		equ 0xBC   ;; ',' any country
+VK_OEM_MINUS		equ 0xBD   ;; '-' any country
+VK_OEM_PERIOD		equ 0xBE   ;; '.' any country
+VK_OEM_2		equ 0xBF   ;; '/?' for US
+VK_OEM_3		equ 0xC0   ;; '` NOT ' for US
+
+;;
+;; 0xC1 - 0xD7 : reserved
+;;
+
+;;
+;; 0xD8 - 0xDA : unassigned
+;;
+
+VK_OEM_4		equ 0xDB  ;;  '[{' for US
+VK_OEM_5		equ 0xDC  ;;  '\ OR ' for US
+VK_OEM_6		equ 0xDD  ;;  ']}' for US
+VK_OEM_7		equ 0xDE  ;;  ''"' for US
+VK_OEM_8		equ 0xDF
+
+;;
+;; 0xE0 : reserved
+;;
+
+;;
+;; Various extended or enhanced keyboards
+;;
+VK_OEM_AX		equ 0xE1  ;;  'AX' key on Japanese AX kbd
+VK_OEM_102		equ 0xE2  ;;  " LT GT " or "\ OR " on RT 102-key kbd.
+VK_ICO_HELP		equ 0xE3  ;;  Help key on ICO
+VK_ICO_00		equ 0xE4  ;;  00 key on ICO
 
 if(WINVER GE 0x0400)
 VK_PROCESSKEY		equ 0xE5
 endif ;; WINVER GE 0x0400
+VK_ICO_CLEAR		equ 0xE6
+if(_WIN32_WINNT GE 0x0500)
+VK_PACKET		equ 0xE7
+endif ;; _WIN32_WINNT GE 0x0500
+
+;;
+;; 0xE8 : unassigned
+;;
+
+;;
+;; Nokia/Ericsson definitions
+;;
+VK_OEM_RESET		equ 0xE9
+VK_OEM_JUMP		equ 0xEA
+VK_OEM_PA1		equ 0xEB
+VK_OEM_PA2		equ 0xEC
+VK_OEM_PA3		equ 0xED
+VK_OEM_WSCTRL		equ 0xEE
+VK_OEM_CUSEL		equ 0xEF
+VK_OEM_ATTN		equ 0xF0
+VK_OEM_FINISH		equ 0xF1
+VK_OEM_COPY		equ 0xF2
+VK_OEM_AUTO		equ 0xF3
+VK_OEM_ENLW		equ 0xF4
+VK_OEM_BACKTAB		equ 0xF5
 
 VK_ATTN			equ 0xF6
 VK_CRSEL		equ 0xF7
@@ -517,6 +627,10 @@ VK_ZOOM			equ 0xFB
 VK_NONAME		equ 0xFC
 VK_PA1			equ 0xFD
 VK_OEM_CLEAR		equ 0xFE
+
+;;
+;; 0xFF : reserved
+;;
 
 ;; end_r_winuser
 
@@ -537,7 +651,9 @@ WH_CALLWNDPROC		equ 4
 WH_CBT			equ 5
 WH_SYSMSGFILTER		equ 6
 WH_MOUSE		equ 7
+ifdef _WIN32_WINDOWS
 WH_HARDWARE		equ 8
+endif
 WH_DEBUG		equ 9
 WH_SHELL		equ 10
 WH_FOREGROUNDIDLE	equ 11
@@ -621,6 +737,31 @@ hWndActive		HWND ?
 CBTACTIVATESTRUCT	ENDS
 LPCBTACTIVATESTRUCT	typedef ptr CBTACTIVATESTRUCT
 
+if(_WIN32_WINNT GE 0x0501)
+;;
+;; WTSSESSION_NOTIFICATION struct pointed by lParam, for WM_WTSSESSION_CHANGE
+;;
+WTSSESSION_NOTIFICATION STRUC
+cbSize			dd ?
+dwSessionId		dd ?
+WTSSESSION_NOTIFICATION ENDS
+PWTSSESSION_NOTIFICATION typedef ptr WTSSESSION_NOTIFICATION
+
+;;
+;; codes passed in WPARAM for WM_WTSSESSION_CHANGE
+;;
+
+WTS_CONSOLE_CONNECT	equ 0x1
+WTS_CONSOLE_DISCONNECT	equ 0x2
+WTS_REMOTE_CONNECT	equ 0x3
+WTS_REMOTE_DISCONNECT	equ 0x4
+WTS_SESSION_LOGON	equ 0x5
+WTS_SESSION_LOGOFF	equ 0x6
+WTS_SESSION_LOCK	equ 0x7
+WTS_SESSION_UNLOCK	equ 0x8
+WTS_SESSION_REMOTE_CONTROL equ 0x9
+
+endif ;; _WIN32_WINNT GE 0x0501
 ;;
 ;; WH_MSGFILTER Filter Proc Codes
 ;;
@@ -629,7 +770,7 @@ MSGF_MESSAGEBOX		equ 1
 MSGF_MENU		equ 2
 MSGF_SCROLLBAR		equ 5
 MSGF_NEXTWINDOW		equ 6
-MSGF_MAX		equ 8			    ;; unused
+MSGF_MAX		equ 8 ;; unused
 MSGF_USER		equ 4096
 
 ;;
@@ -645,14 +786,108 @@ HSHELL_GETMINRECT	equ 5
 HSHELL_REDRAW		equ 6
 HSHELL_TASKMAN		equ 7
 HSHELL_LANGUAGE		equ 8
+HSHELL_SYSMENU		equ 9
+HSHELL_ENDTASK		equ 10
+endif ;; WINVER GE 0x0400
 if(_WIN32_WINNT GE 0x0500)
 HSHELL_ACCESSIBILITYSTATE equ 11
-ACCESS_STICKYKEYS	equ 0x0001
-ACCESS_FILTERKEYS	equ 0x0002
-ACCESS_MOUSEKEYS	equ 0x0003
+HSHELL_APPCOMMAND	equ 12
 endif ;; _WIN32_WINNT GE 0x0500
-endif ;; WINVER GE 0x0400
+if(_WIN32_WINNT GE 0x0501)
+HSHELL_WINDOWREPLACED	equ 13
+HSHELL_WINDOWREPLACING	equ 14
+endif ;; _WIN32_WINNT GE 0x0501
 
+HSHELL_HIGHBIT		equ 0x8000
+HSHELL_FLASH		equ (HSHELL_REDRAW OR HSHELL_HIGHBIT)
+HSHELL_RUDEAPPACTIVATED equ (HSHELL_WINDOWACTIVATED OR HSHELL_HIGHBIT)
+
+if(_WIN32_WINNT GE 0x0500)
+;; cmd for HSHELL_APPCOMMAND and WM_APPCOMMAND
+APPCOMMAND_BROWSER_BACKWARD equ 1
+APPCOMMAND_BROWSER_FORWARD equ 2
+APPCOMMAND_BROWSER_REFRESH equ 3
+APPCOMMAND_BROWSER_STOP equ 4
+APPCOMMAND_BROWSER_SEARCH equ 5
+APPCOMMAND_BROWSER_FAVORITES equ 6
+APPCOMMAND_BROWSER_HOME equ 7
+APPCOMMAND_VOLUME_MUTE	equ 8
+APPCOMMAND_VOLUME_DOWN	equ 9
+APPCOMMAND_VOLUME_UP	equ 10
+APPCOMMAND_MEDIA_NEXTTRACK equ 11
+APPCOMMAND_MEDIA_PREVIOUSTRACK equ 12
+APPCOMMAND_MEDIA_STOP	equ 13
+APPCOMMAND_MEDIA_PLAY_PAUSE equ 14
+APPCOMMAND_LAUNCH_MAIL	equ 15
+APPCOMMAND_LAUNCH_MEDIA_SELECT equ 16
+APPCOMMAND_LAUNCH_APP1	equ 17
+APPCOMMAND_LAUNCH_APP2	equ 18
+APPCOMMAND_BASS_DOWN	equ 19
+APPCOMMAND_BASS_BOOST	equ 20
+APPCOMMAND_BASS_UP	equ 21
+APPCOMMAND_TREBLE_DOWN	equ 22
+APPCOMMAND_TREBLE_UP	equ 23
+if(_WIN32_WINNT GE 0x0501)
+APPCOMMAND_MICROPHONE_VOLUME_MUTE equ 24
+APPCOMMAND_MICROPHONE_VOLUME_DOWN equ 25
+APPCOMMAND_MICROPHONE_VOLUME_UP equ 26
+APPCOMMAND_HELP		equ 27
+APPCOMMAND_FIND		equ 28
+APPCOMMAND_NEW		equ 29
+APPCOMMAND_OPEN		equ 30
+APPCOMMAND_CLOSE	equ 31
+APPCOMMAND_SAVE		equ 32
+APPCOMMAND_PRINT	equ 33
+APPCOMMAND_UNDO		equ 34
+APPCOMMAND_REDO		equ 35
+APPCOMMAND_COPY		equ 36
+APPCOMMAND_CUT		equ 37
+APPCOMMAND_PASTE	equ 38
+APPCOMMAND_REPLY_TO_MAIL equ 39
+APPCOMMAND_FORWARD_MAIL equ 40
+APPCOMMAND_SEND_MAIL	equ 41
+APPCOMMAND_SPELL_CHECK	equ 42
+APPCOMMAND_DICTATE_OR_COMMAND_CONTROL_TOGGLE equ 43
+APPCOMMAND_MIC_ON_OFF_TOGGLE equ 44
+APPCOMMAND_CORRECTION_LIST equ 45
+APPCOMMAND_MEDIA_PLAY	equ 46
+APPCOMMAND_MEDIA_PAUSE	equ 47
+APPCOMMAND_MEDIA_RECORD equ 48
+APPCOMMAND_MEDIA_FAST_FORWARD equ 49
+APPCOMMAND_MEDIA_REWIND equ 50
+APPCOMMAND_MEDIA_CHANNEL_UP equ 51
+APPCOMMAND_MEDIA_CHANNEL_DOWN equ 52
+endif ;; _WIN32_WINNT GE 0x0501
+if(_WIN32_WINNT GE 0x0600)
+APPCOMMAND_DELETE	equ 53
+APPCOMMAND_DWM_FLIP3D	equ 54
+endif ;; _WIN32_WINNT GE 0x0600
+
+FAPPCOMMAND_MOUSE	equ 0x8000
+FAPPCOMMAND_KEY		equ 0
+FAPPCOMMAND_OEM		equ 0x1000
+FAPPCOMMAND_MASK	equ 0xF000
+
+GET_APPCOMMAND_LPARAM macro lParam
+	exitm<HIWORD(lParam) AND NOT FAPPCOMMAND_MASK>
+	endm
+GET_DEVICE_LPARAM macro lParam
+	exitm<HIWORD(lParam) AND FAPPCOMMAND_MASK>
+	endm
+GET_MOUSEORKEY_LPARAM	equ GET_DEVICE_LPARAM
+GET_FLAGS_LPARAM macro lParam
+	exitm<LOWORD(lParam)>
+	endm
+GET_KEYSTATE_LPARAM macro lParam
+	exitm<GET_FLAGS_LPARAM(lParam)>
+	endm
+endif ;; _WIN32_WINNT GE 0x0500
+
+SHELLHOOKINFO		STRUC
+hwnd			HWND ?
+rc			RECT <>
+SHELLHOOKINFO		ENDS
+LPSHELLHOOKINFO		typedef ptr SHELLHOOKINFO
 
 ;;
 ;; Message Structure used in Journaling
@@ -796,6 +1031,20 @@ KLF_REPLACELANG		equ 0x00000010
 KLF_NOTELLSHELL		equ 0x00000080
 endif ;; WINVER GE 0x0400
 KLF_SETFORPROCESS	equ 0x00000100
+if(_WIN32_WINNT GE 0x0500)
+KLF_SHIFTLOCK		equ 0x00010000
+KLF_RESET		equ 0x40000000
+endif ;; _WIN32_WINNT GE 0x0500
+
+
+if(WINVER GE 0x0500)
+;;
+;; Bits in wParam of WM_INPUTLANGCHANGEREQUEST message
+;;
+INPUTLANGCHANGE_SYSCHARSET equ 0x0001
+INPUTLANGCHANGE_FORWARD	   equ 0x0002
+INPUTLANGCHANGE_BACKWARD   equ 0x0004
+endif ;; WINVER GE 0x0500
 
 
 ;;
@@ -812,9 +1061,9 @@ LoadKeyboardLayoutW proto _CType \
 	      pwszKLID: LPCWSTR,
 		 Flags: UINT
 ifdef _UNICODE
-LoadKeyboardLayout	equ LoadKeyboardayoutW
+LoadKeyboardLayout	equ <LoadKeyboardayoutW>
 else
-LoadKeyboardLayout	equ LoadKeyboardayoutA
+LoadKeyboardLayout	equ <LoadKeyboardayoutA>
 endif ;; NOT UNICODE
 
 
@@ -853,9 +1102,9 @@ GetKeyboardLayoutNameA proto _CType \
 GetKeyboardLayoutNameW proto _CType \
 	      pwszKLID: LPWSTR
 ifdef _UNICODE
-GetKeyboardLayoutName	equ GetKeyboardayoutNameW
+GetKeyboardLayoutName	equ <GetKeyboardayoutNameW>
 else
-GetKeyboardLayoutName	equ GetKeyboardayoutNameA
+GetKeyboardLayoutName	equ <GetKeyboardayoutNameA>
 endif ;; NOT UNICODE
 
 if(WINVER GE 0x0400)
@@ -887,6 +1136,14 @@ GMMP_USE_DRIVER_POINTS	equ 2
 
 ;int
 GetMouseMovePoints proto _CType \
+		cbSize: UINT,
+		  lppt: LPMOUSEMOVEPOINT,
+	       lpptBuf: LPMOUSEMOVEPOINT,
+	    nBufPoints: SINT,
+	   resolution : DWORD
+
+;int
+GetMouseMovePointsEx proto _CType \
 		cbSize: UINT,
 		  lppt: LPMOUSEMOVEPOINT,
 	       lpptBuf: LPMOUSEMOVEPOINT,
@@ -1104,6 +1361,10 @@ UOI_FLAGS		equ 1
 UOI_NAME		equ 2
 UOI_TYPE		equ 3
 UOI_USER_SID		equ 4
+if(WINVER GE 0x0600)
+UOI_HEAPSIZE		equ 5
+UOI_IO			equ 6
+endif ;; WINVER GE 0x0600
 
 USEROBJECTFLAGS		STRUC
 fInherit		BOOL ?
@@ -1246,6 +1507,16 @@ NPWNDCLASS		typedef NPWNDCLASSA
 LPWNDCLASS		typedef LPWNDCLASSA
 endif ;; UNICODE
 
+;WINUSERAPI
+;BOOL
+IsHungAppWindow proto _CType \
+		hwnd: HWND
+
+if (WINVER GE 0x0501)
+;WINUSERAPI
+;VOID
+DisableProcessWindowsGhosting proto _CType
+endif ;; WINVER GE 0x0501
 
 ifndef NOMSG
 
@@ -1291,32 +1562,40 @@ ifndef NOWINOFFSETS
 ;;
 ;; Window field offsets for GetWindowLong()
 ;;
+ifndef _WIN64
 GWL_WNDPROC		equ (-4)
 GWL_HINSTANCE		equ (-6)
 GWL_HWNDPARENT		equ (-8)
+endif
 GWL_STYLE		equ (-16)
 GWL_EXSTYLE		equ (-20)
+ifndef _WIN64
 GWL_USERDATA		equ (-21)
+endif
 GWL_ID			equ (-12)
 
 ;;
 ;; Class field offsets for GetClassLong()
 ;;
+ifndef _WIN64
 GCL_MENUNAME		equ (-8)
 GCL_HBRBACKGROUND	equ (-10)
 GCL_HCURSOR		equ (-12)
 GCL_HICON		equ (-14)
 GCL_HMODULE		equ (-16)
+endif
 GCL_CBWNDEXTRA		equ (-18)
 GCL_CBCLSEXTRA		equ (-20)
+ifndef _WIN64
 GCL_WNDPROC		equ (-24)
+endif
 GCL_STYLE		equ (-26)
 GCW_ATOM		equ (-32)
-
 if(WINVER GE 0x0400)
+ifndef _WIN64
 GCL_HICONSM		equ (-34)
+endif
 endif ;; WINVER GE 0x0400
-
 endif ;; NOT NOWINOFFSETS
 
 ifndef NOWINMESSAGES
@@ -1405,7 +1684,9 @@ WM_GETHOTKEY		equ 0x0033
 WM_QUERYDRAGICON	equ 0x0037
 WM_COMPAREITEM		equ 0x0039
 if(WINVER GE 0x0500)
+ifndef _WIN32_WCE
 WM_GETOBJECT		equ 0x003D
+endif
 endif ;; WINVER GE 0x0500
 WM_COMPACTING		equ 0x0041
 WM_COMMNOTIFY		equ 0x0044  ;; no longer suported
@@ -1479,6 +1760,17 @@ WM_NCRBUTTONDBLCLK	equ 0x00A6
 WM_NCMBUTTONDOWN	equ 0x00A7
 WM_NCMBUTTONUP		equ 0x00A8
 WM_NCMBUTTONDBLCLK	equ 0x00A9
+if(_WIN32_WINNT GE 0x0500)
+WM_NCXBUTTONDOWN	equ 0x00AB
+WM_NCXBUTTONUP		equ 0x00AC
+WM_NCXBUTTONDBLCLK	equ 0x00AD
+endif ;; _WIN32_WINNT GE 0x0500
+if(_WIN32_WINNT GE 0x0501)
+WM_INPUT_DEVICE_CHANGE	equ 0x00FE
+endif ;; _WIN32_WINNT GE 0x0501
+if(_WIN32_WINNT GE 0x0501)
+WM_INPUT		equ 0x00FF
+endif ;; _WIN32_WINNT GE 0x0501
 
 WM_KEYFIRST		equ 0x0100
 WM_KEYDOWN		equ 0x0100
@@ -1489,7 +1781,13 @@ WM_SYSKEYDOWN		equ 0x0104
 WM_SYSKEYUP		equ 0x0105
 WM_SYSCHAR		equ 0x0106
 WM_SYSDEADCHAR		equ 0x0107
+if(_WIN32_WINNT GE 0x0501)
+WM_UNICHAR		equ 0x0109
+WM_KEYLAST		equ 0x0109
+UNICODE_NOCHAR		equ 0xFFFF
+else
 WM_KEYLAST		equ 0x0108
+endif ;; _WIN32_WINNT GE 0x0501
 
 if(WINVER GE 0x0400)
 WM_IME_STARTCOMPOSITION equ 0x010D
@@ -1506,15 +1804,40 @@ WM_HSCROLL		equ 0x0114
 WM_VSCROLL		equ 0x0115
 WM_INITMENU		equ 0x0116
 WM_INITMENUPOPUP	equ 0x0117
+if(WINVER GE 0x0601)
+WM_GESTURE		equ 0x0119
+WM_GESTURENOTIFY	equ 0x011A
+endif ;; WINVER GE 0x0601
 WM_MENUSELECT		equ 0x011F
 WM_MENUCHAR		equ 0x0120
 WM_ENTERIDLE		equ 0x0121
 if(WINVER GE 0x0500)
+ifndef _WIN32_WCE
 WM_MENURBUTTONUP	equ 0x0122
 WM_MENUDRAG		equ 0x0123
 WM_MENUGETOBJECT	equ 0x0124
 WM_UNINITMENUPOPUP	equ 0x0125
 WM_MENUCOMMAND		equ 0x0126
+if(_WIN32_WINNT GE 0x0500)
+WM_CHANGEUISTATE	equ 0x0127
+WM_UPDATEUISTATE	equ 0x0128
+WM_QUERYUISTATE		equ 0x0129
+;;
+;; LOWORD(wParam) values in WM_*UISTATE*
+;;
+UIS_SET			equ 1
+UIS_CLEAR		equ 2
+UIS_INITIALIZE		equ 3
+;;
+;; HIWORD(wParam) values in WM_*UISTATE*
+;;
+UISF_HIDEFOCUS		equ 0x1
+UISF_HIDEACCEL		equ 0x2
+if(_WIN32_WINNT GE 0x0501)
+UISF_ACTIVE		equ 0x4
+endif ;; _WIN32_WINNT GE 0x0501
+endif ;; _WIN32_WINNT GE 0x0500
+endif ;; NOT _WIN32_WCE
 endif ;; WINVER GE 0x0500
 
 
@@ -1525,6 +1848,7 @@ WM_CTLCOLORBTN		equ 0x0135
 WM_CTLCOLORDLG		equ 0x0136
 WM_CTLCOLORSCROLLBAR	equ 0x0137
 WM_CTLCOLORSTATIC	equ 0x0138
+MN_GETHMENU		equ 0x01E1
 
 
 WM_MOUSEFIRST		equ 0x0200
@@ -1538,13 +1862,25 @@ WM_RBUTTONDBLCLK	equ 0x0206
 WM_MBUTTONDOWN		equ 0x0207
 WM_MBUTTONUP		equ 0x0208
 WM_MBUTTONDBLCLK	equ 0x0209
-
-if (_WIN32_WINNT GE 0x0400) OR (_WIN32_WINDOWS GT 0x0400)
+if (_WIN32_WINNT GE 0x0600)
+WM_MOUSEHWHEEL		equ 0x020E
+elseif (_WIN32_WINNT GE 0x0400) OR (_WIN32_WINDOWS GT 0x0400)
 WM_MOUSEWHEEL		equ 0x020A
+endif
+if (_WIN32_WINNT GE 0x0500)
+WM_XBUTTONDOWN		equ 0x020B
+WM_XBUTTONUP		equ 0x020C
+WM_XBUTTONDBLCLK	equ 0x020D
+endif
+if (_WIN32_WINNT GE 0x0600)
+WM_MOUSELAST		equ 0x020E
+elseif (_WIN32_WINNT GE 0x0500)
+WM_MOUSELAST		equ 0x020D
+elseif (_WIN32_WINNT GE 0x0400) OR (_WIN32_WINDOWS GT 0x0400)
 WM_MOUSELAST		equ 0x020A
 else
 WM_MOUSELAST		equ 0x0209
-endif ;; if (_WIN32_WINNT LT 0x0400)
+endif ;; (_WIN32_WINNT GE 0x0600)
 
 if(_WIN32_WINNT GE 0x0400)
 WHEEL_DELTA		equ 120	    ;; Value for rolling one detent
@@ -1597,6 +1933,18 @@ PBT_APMPOWERSTATUSCHANGE equ 0x000A
 
 PBT_APMOEMEVENT		equ 0x000B
 PBT_APMRESUMEAUTOMATIC	equ 0x0012
+if (_WIN32_WINNT GE 0x0502)
+ifndef PBT_POWERSETTINGCHANGE
+PBT_POWERSETTINGCHANGE	equ 0x8013
+POWERBROADCAST_SETTING	STRUC
+PowerSetting		GUID <>
+DataLength		dd ?
+Data			db ?
+POWERBROADCAST_SETTING	ENDS
+PPOWERBROADCAST_SETTING typedef ptr POWERBROADCAST_SETTING
+endif ;; PBT_POWERSETTINGCHANGE
+endif ;; (_WIN32_WINNT GE 0x0502)
+
 ;; end_pbt
 
 ;; begin_r_winuser
@@ -1621,8 +1969,9 @@ WM_ENTERSIZEMOVE	equ 0x0231
 WM_EXITSIZEMOVE		equ 0x0232
 WM_DROPFILES		equ 0x0233
 WM_MDIREFRESHMENU	equ 0x0234
-
-
+if(WINVER GE 0x0601)
+WM_TOUCH		equ 0x0240
+endif ;; WINVER GE 0x0601
 if(WINVER GE 0x0400)
 WM_IME_SETCONTEXT	equ 0x0281
 WM_IME_NOTIFY		equ 0x0282
@@ -1638,12 +1987,19 @@ if(WINVER GE 0x0400)
 WM_IME_KEYDOWN		equ 0x0290
 WM_IME_KEYUP		equ 0x0291
 endif ;; WINVER GE 0x0400
-
-
 if(_WIN32_WINNT GE 0x0400)
 WM_MOUSEHOVER		equ 0x02A1
 WM_MOUSELEAVE		equ 0x02A3
 endif ;; _WIN32_WINNT GE 0x0400
+if(WINVER GE 0x0500)
+WM_NCMOUSEHOVER		equ 0x02A0
+WM_NCMOUSELEAVE		equ 0x02A2
+endif ;; WINVER GE 0x0500
+if(_WIN32_WINNT GE 0x0501)
+WM_WTSSESSION_CHANGE	equ 0x02B1
+WM_TABLET_FIRST		equ 0x02c0
+WM_TABLET_LAST		equ 0x02df
+endif ;; _WIN32_WINNT GE 0x0501
 
 WM_CUT			equ 0x0300
 WM_COPY			equ 0x0301
@@ -1668,22 +2024,40 @@ WM_HOTKEY		equ 0x0312
 if(WINVER GE 0x0400)
 WM_PRINT		equ 0x0317
 WM_PRINTCLIENT		equ 0x0318
-
+endif ;; WINVER GE 0x0400
+if(_WIN32_WINNT GE 0x0500)
+WM_APPCOMMAND		equ 0x0319
+endif ;; _WIN32_WINNT GE 0x0500
+if(_WIN32_WINNT GE 0x0501)
+WM_THEMECHANGED		equ 0x031A
+endif ;; _WIN32_WINNT GE 0x0501
+if(_WIN32_WINNT GE 0x0501)
+WM_CLIPBOARDUPDATE	equ 0x031D
+endif ;; _WIN32_WINNT GE 0x0501
+if(_WIN32_WINNT GE 0x0600)
+WM_DWMCOMPOSITIONCHANGED equ 0x031E
+WM_DWMNCRENDERINGCHANGED equ 0x031F
+WM_DWMCOLORIZATIONCOLORCHANGED equ 0x0320
+WM_DWMWINDOWMAXIMIZEDCHANGE equ 0x0321
+endif ;; _WIN32_WINNT GE 0x0600
+if(_WIN32_WINNT GE 0x0601)
+WM_DWMSENDICONICTHUMBNAIL equ 0x0323
+WM_DWMSENDICONICLIVEPREVIEWBITMAP equ 0x0326
+endif ;; _WIN32_WINNT GE 0x0601
+if(WINVER GE 0x0600)
+WM_GETTITLEBARINFOEX	equ 0x033F
+endif ;; WINVER GE 0x0600
+if(WINVER GE 0x0400)
 WM_HANDHELDFIRST	equ 0x0358
 WM_HANDHELDLAST		equ 0x035F
-
 WM_AFXFIRST		equ 0x0360
 WM_AFXLAST		equ 0x037F
 endif ;; WINVER GE 0x0400
-
 WM_PENWINFIRST		equ 0x0380
 WM_PENWINLAST		equ 0x038F
-
-
 if(WINVER GE 0x0400)
 WM_APP			equ 0x8000
 endif ;; WINVER GE 0x0400
-
 
 ;;
 ;; NOTE: All Message Numbers below 0x0400 are RESERVED.
@@ -1751,6 +2125,9 @@ SMTO_ABORTIFHUNG	equ 0x0002
 if(WINVER GE 0x0500)
 SMTO_NOTIMEOUTIFNOTHUNG equ 0x0008
 endif ;; WINVER GE 0x0500
+if(WINVER GE 0x0600)
+SMTO_ERRORONEXIT	equ 0x0020
+endif ;; WINVER GE 0x0600
 
 endif ;; NOT NONCMESSAGES
 
@@ -1851,7 +2228,10 @@ MK_RBUTTON		equ 0x0002
 MK_SHIFT		equ 0x0004
 MK_CONTROL		equ 0x0008
 MK_MBUTTON		equ 0x0010
-
+if(_WIN32_WINNT GE 0x0500)
+MK_XBUTTON1		equ 0x0020
+MK_XBUTTON2		equ 0x0040
+endif ;; _WIN32_WINNT GE 0x0500
 endif ;; NOT NOKEYSTATES
 
 if(_WIN32_WINNT GE 0x0400)
@@ -1859,9 +2239,11 @@ ifndef NOTRACKMOUSEEVENT
 
 TME_HOVER		equ 0x00000001
 TME_LEAVE		equ 0x00000002
+if(WINVER GE 0x0500)
+TME_NONCLIENT		equ 0x00000010
+endif ;; WINVER GE 0x0500
 TME_QUERY		equ 0x40000000
 TME_CANCEL		equ 0x80000000
-
 
 HOVER_DEFAULT		equ 0xFFFFFFFF
 ;; end_r_winuser
@@ -1962,6 +2344,21 @@ WS_EX_PALETTEWINDOW	equ WS_EX_WINDOWEDGE OR WS_EX_TOOLWINDOW OR WS_EX_TOPMOST
 
 endif ;; WINVER GE 0x0400
 
+if(_WIN32_WINNT GE 0x0500)
+WS_EX_LAYERED		equ 0x00080000
+endif ;; _WIN32_WINNT GE 0x0500
+
+if(WINVER GE 0x0500)
+WS_EX_NOINHERITLAYOUT	equ 0x00100000 ;; Disable inheritence of mirroring by children
+WS_EX_LAYOUTRTL		equ 0x00400000 ;; Right to left mirroring
+endif ;; WINVER GE 0x0500
+
+if(_WIN32_WINNT GE 0x0501)
+WS_EX_COMPOSITED	equ 0x02000000
+endif ;; _WIN32_WINNT GE 0x0501
+if(_WIN32_WINNT GE 0x0500)
+WS_EX_NOACTIVATE	equ 0x08000000
+endif ;; _WIN32_WINNT GE 0x0500
 
 ;;
 ;; Class styles
@@ -1979,6 +2376,9 @@ CS_BYTEALIGNWINDOW	equ 0x2000
 CS_GLOBALCLASS		equ 0x4000
 
 CS_IME			equ 0x00010000
+if(_WIN32_WINNT GE 0x0501)
+CS_DROPSHADOW		equ 0x00020000
+endif ;; _WIN32_WINNT GE 0x0501
 
 
 ;; end_r_winuser
@@ -2108,6 +2508,9 @@ DC_INBUTTON		equ 0x0010
 if(WINVER GE 0x0500)
 DC_GRADIENT		equ 0x0020
 endif ;; WINVER GE 0x0500
+if(_WIN32_WINNT GE 0x0501)
+DC_BUTTONS		equ 0x1000
+endif ;; _WIN32_WINNT GE 0x0501
 
 ;BOOL
 DrawCaption proto _CType \
@@ -2151,11 +2554,20 @@ CF_RIFF			equ 11
 CF_WAVE			equ 12
 CF_UNICODETEXT		equ 13
 CF_ENHMETAFILE		equ 14
-if(WINVER GE 0x0400)
+if (WINVER GE 0x0400)
 CF_HDROP		equ 15
 CF_LOCALE		equ 16
-CF_MAX			equ 17
 endif ;; WINVER GE 0x0400
+if (WINVER GE 0x0500)
+CF_DIBV5		equ 17
+endif ;; WINVER GE 0x0500
+if (WINVER GE 0x0500)
+CF_MAX			equ 18
+elseif (WINVER GE 0x0400)
+CF_MAX			equ 17
+else
+CF_MAX			equ 15
+endif
 
 CF_OWNERDISPLAY		equ 0x0080
 CF_DSPTEXT		equ 0x0081
@@ -2316,6 +2728,10 @@ endif ;; WINVER GE 0x0400
 if(WINVER GE 0x0500)
 ODS_HOTLIGHT		equ 0x0040
 ODS_INACTIVE		equ 0x0080
+if(_WIN32_WINNT GE 0x0500)
+ODS_NOACCEL		equ 0x0100
+ODS_NOFOCUSRECT		equ 0x0200
+endif ;; _WIN32_WINNT GE 0x0500
 endif ;; WINVER GE 0x0500
 
 ;;
@@ -2327,7 +2743,7 @@ CtlID			UINT ?
 itemID			UINT ?
 itemWidth		UINT ?
 itemHeight		UINT ?
-itemData		dd ?
+itemData		PVOID ?
 MEASUREITEMSTRUCT	ENDS
 PMEASUREITEMSTRUCT	typedef ptr MEASUREITEMSTRUCT
 LPMEASUREITEMSTRUCT	typedef ptr MEASUREITEMSTRUCT
@@ -2345,7 +2761,7 @@ itemState		UINT ?
 hwndItem		HWND ?
 hDC			HDC ?
 rcItem			RECT <>
-itemData		dd ?
+itemData		PVOID ?
 DRAWITEMSTRUCT		ENDS
 PDRAWITEMSTRUCT		typedef ptr DRAWITEMSTRUCT
 LPDRAWITEMSTRUCT	typedef ptr DRAWITEMSTRUCT
@@ -2358,7 +2774,7 @@ CtlType			UINT ?
 CtlID			UINT ?
 itemID			UINT ?
 hwndItem		HWND ?
-itemData		UINT ?
+itemData		PVOID ?
 DELETEITEMSTRUCT	ENDS
 PDELETEITEMSTRUCT	typedef ptr DELETEITEMSTRUCT
 LPDELETEITEMSTRUCT	typedef ptr DELETEITEMSTRUCT
@@ -2371,9 +2787,9 @@ CtlType			UINT ?
 CtlID			UINT ?
 hwndItem		HWND ?
 itemID1			UINT ?
-itemData1		dd ?
+itemData1		PVOID ?
 itemID2			UINT ?
-itemData2		dd ?
+itemData2		PVOID ?
 dwLocaleId		dd ?
 COMPAREITEMSTRUCT	ENDS
 PCOMPAREITEMSTRUCT	typedef ptr COMPAREITEMSTRUCT
@@ -2450,6 +2866,12 @@ endif ;; NOT UNICODE
 PM_NOREMOVE		equ 0x0000
 PM_REMOVE		equ 0x0001
 PM_NOYIELD		equ 0x0002
+if(WINVER GE 0x0500)
+PM_QS_INPUT		equ (QS_INPUT SHL 16)
+PM_QS_POSTMESSAGE	equ ((QS_POSTMESSAGE OR QS_HOTKEY OR QS_TIMER) SHL 16)
+PM_QS_PAINT		equ (QS_PAINT SHL 16)
+PM_QS_SENDMESSAGE	equ (QS_SENDMESSAGE SHL 16)
+endif ;; WINVER GE 0x0500
 
 endif ;; NOT NOMSG
 
@@ -2469,7 +2891,9 @@ MOD_ALT			equ 0x0001
 MOD_CONTROL		equ 0x0002
 MOD_SHIFT		equ 0x0004
 MOD_WIN			equ 0x0008
-
+if(WINVER GE 0x0601)
+MOD_NOREPEAT		equ 0x4000
+endif ;; WINVER GE 0x0601
 
 IDHOT_SNAPWINDOW	equ (-1)    ;; SHIFT-PRINTSCRN
 IDHOT_SNAPDESKTOP	equ (-2)    ;; PRINTSCRN
@@ -2496,6 +2920,10 @@ EWX_POWEROFF		equ 0x00000008
 if(_WIN32_WINNT GE 0x0500)
 EWX_FORCEIFHUNG		equ 0x00000010
 endif ;; _WIN32_WINNT GE 0x0500
+EWX_QUICKRESOLVE	equ 0x00000020
+if(_WIN32_WINNT GE 0x0600)
+EWX_RESTARTAPPS		equ 0x00000040
+endif ;; _WIN32_WINNT GE 0x0600
 
 
 ExitWindows macro dwReserved, Code
@@ -2519,6 +2947,11 @@ GetMessageTime proto _CType
 
 ;LONG
 GetMessageExtraInfo proto _CType
+
+if(_WIN32_WINNT GE 0x0501)
+;BOOL
+IsWow64Message proto _CType
+endif ;; _WIN32_WINNT GE 0x0501
 
 if(WINVER GE 0x0400)
 ;LPARAM
@@ -2607,9 +3040,41 @@ else
 SendMessageCallback	equ <SendMessageCallbackA>
 endif ;; NOT UNICODE
 
+if(_WIN32_WINNT GE 0x0501)
+BSMINFO			STRUC
+cbSize			UINT ?
+hdesk			HDESK ?
+hwnd			HWND ?
+luid			LUID <>
+BSMINFO			ENDS
+PBSMINFO		typedef ptr BSMINFO
+
+;WINUSERAPI
+;long
+BroadcastSystemMessageExA proto _CType \
+		 flags: DWORD,
+		lpInfo: LPDWORD,
+		   Msg: UINT,
+		wParam: WPARAM,
+		lParam: LPARAM,
+	      pbsmInfo: PBSMINFO
+BroadcastSystemMessageExW proto _CType \
+		 flags: DWORD,
+		lpInfo: LPDWORD,
+		   Msg: UINT,
+		wParam: WPARAM,
+		lParam: LPARAM,
+	      pbsmInfo: PBSMINFO
+ifdef _UNICODE
+BroadcastSystemMessageEx equ <BroadcastSystemMessageExW>
+else
+BroadcastSystemMessageEx equ <BroadcastSystemMessageExA>
+endif ;; NOT UNICODE
+endif ;; _WIN32_WINNT GE 0x0501
+
 if(WINVER GE 0x0400)
 
-if defined(_WIN32_WINNT)
+ifdef _WIN32_WINNT
 ;long
 BroadcastSystemMessageA proto _CType \
 		      : DWORD,
@@ -2629,7 +3094,7 @@ BroadcastSystemMessage	equ <BroadcastSystemMessageW>
 else
 BroadcastSystemMessage	equ <BroadcastSystemMessageA>
 endif ;; NOT UNICODE
-elseif defined(_WIN32_WINDOWS)
+elseifdef _WIN32_WINDOWS
 ;; The Win95 version isn't A/W decorated
 ;long
 BroadcastSystemMessage proto _CType \
@@ -2656,24 +3121,33 @@ BSF_NOHANG		equ 0x00000008
 BSF_POSTMESSAGE		equ 0x00000010
 BSF_FORCEIFHUNG		equ 0x00000020
 BSF_NOTIMEOUTIFNOTHUNG	equ 0x00000040
-
+if(_WIN32_WINNT GE 0x0500)
+BSF_ALLOWSFW		equ 0x00000080
+BSF_SENDNOTIFYMESSAGE	equ 0x00000100
+endif ;; _WIN32_WINNT GE 0x0500
+if(_WIN32_WINNT GE 0x0501)
+BSF_RETURNHDESK		equ 0x00000200
+BSF_LUID		equ 0x00000400
+endif ;; _WIN32_WINNT GE 0x0501
 BROADCAST_QUERY_DENY	equ 0x424D5144	;; Return this value to deny a query.
 endif ;; WINVER GE 0x0400
 
 ;; RegisterDeviceNotification
 
 if(WINVER GE 0x0500)
-HDEVNOTIFY		typedef	 PVOID
-PHDEVNOTIFY		typedef	 ptr HDEVNOTIFY
+HDEVNOTIFY	typedef PVOID
+PHDEVNOTIFY	typedef ptr HDEVNOTIFY
 
-DEVICE_NOTIFY_WINDOW_HANDLE equ 0x00000000
-
+DEVICE_NOTIFY_WINDOW_HANDLE  equ 0x00000000
+DEVICE_NOTIFY_SERVICE_HANDLE equ 0x00000001
+if(_WIN32_WINNT GE 0x0501)
+DEVICE_NOTIFY_ALL_INTERFACE_CLASSES equ 0x00000004
+endif ;; _WIN32_WINNT GE 0x0501
 ;HDEVNOTIFY
 RegisterDeviceNotificationA proto _CType \
 	      hRecipient: HANDLE,
       NotificationFilter: LPVOID,
 		  Flags : DWORD
-;HDEVNOTIFY
 RegisterDeviceNotificationW proto _CType \
 	      hRecipient: HANDLE,
       NotificationFilter: LPVOID,
@@ -2687,6 +3161,28 @@ endif ;; NOT UNICODE
 ;BOOL
 UnregisterDeviceNotification proto _CType \
 	      Handle : HDEVNOTIFY
+
+if (_WIN32_WINNT GE 0x0502)
+ifndef _HPOWERNOTIFY_DEF_
+_HPOWERNOTIFY_DEF_	equ 1
+HPOWERNOTIFY	typedef PVOID
+PHPOWERNOTIFY	typedef ptr HPOWERNOTIFY
+endif
+
+LPCGUID			typedef ptr GUID
+;WINUSERAPI
+;HPOWERNOTIFY
+RegisterPowerSettingNotification proto _CType \
+	    hRecipient: HANDLE,
+      PowerSettingGuid: LPCGUID,
+		 Flags: DWORD
+
+;BOOL
+UnregisterPowerSettingNotification proto _CType \
+		Handle: HPOWERNOTIFY
+endif ;; (_WIN32_WINNT GE 0x0502)
+
+endif ;; WINVER GE 0x0500
 endif ;; WINVER GE 0x0500
 
 
@@ -2727,10 +3223,10 @@ PostThreadMessage	equ <PostThreadMessageA>
 endif ;; NOT UNICODE
 
 PostAppMessageA macro idThread,wMsg,wParam,lParam
-	exitm <PostThreadMessageA(idThread , wMsg , wParam , lParam)>
+	exitm <PostThreadMessageA(idThread,wMsg,wParam,lParam)>
 	endm
 PostAppMessageW macro idThread,wMsg,wParam,lParam
-	exitm <PostThreadMessageW(idThread , wMsg , wParam , lParam)>
+	exitm <PostThreadMessageW(idThread,wMsg,wParam,lParam)>
 	endm
 ifdef _UNICODE
 PostAppMessage		equ <PostAppMessageW>
@@ -2901,7 +3397,6 @@ if(WINVER GE 0x0400)
 ;ATOM
 RegisterClassExA proto _CType \
 		      : ptr WNDCLASSEXA
-;ATOM
 RegisterClassExW proto _CType \
 		      : ptr WNDCLASSEXW
 ifdef _UNICODE
@@ -2915,7 +3410,6 @@ GetClassInfoExA proto _CType \
 		      : HINSTANCE,
 		      : LPCSTR,
 		      : LPWNDCLASSEXA
-;BOOL
 GetClassInfoExW proto _CType \
 		      : HINSTANCE,
 		      : LPCWSTR,
@@ -2934,6 +3428,11 @@ CW_USEDEFAULT		equ 0x80000000
 ;; Special value for CreateWindow, et al.
 ;;
 HWND_DESKTOP		equ 0
+if(_WIN32_WINNT GE 0x0501)
+PREGISTERCLASSNAMEW_T typedef proto \
+		      : LPCWSTR
+PREGISTERCLASSNAMEW typedef ptr PREGISTERCLASSNAMEW_T
+endif ;; _WIN32_WINNT GE 0x0501
 
 ;HWND
 CreateWindowExA proto _CType \
@@ -2945,7 +3444,7 @@ CreateWindowExA proto _CType \
 		     Y: SINT,
 		nWidth: SINT,
 	       nHeight: SINT,
-	   hWndParent : HWND,
+	    hWndParent: HWND,
 		 hMenu: HMENU,
 	     hInstance: HINSTANCE,
 	       lpParam: LPVOID
@@ -3012,6 +3511,74 @@ AnimateWindow proto _CType \
 		dwTime: DWORD,
 	       dwFlags: DWORD
 endif ;; WINVER GE 0x0500
+
+if(_WIN32_WINNT GE 0x0500)
+if defined(_WINGDI_) AND NOT defined(NOGDI)
+
+;BOOL
+UpdateLayeredWindow proto _CType \
+		  hWnd: HWND,
+		hdcDst: HDC,
+		pptDst: ptr POINT,
+		 psize: ptr POINT,
+		hdcSrc: HDC,
+		pptSrc: ptr POINT,
+		 crKey: COLORREF,
+		pblend: ptr BLENDFUNCTION,
+	       dwFlags: DWORD
+
+LPBLENDFUNCTION		typedef ptr BLENDFUNCTION
+;;
+;; Layered Window Update information
+;;
+UPDATELAYEREDWINDOWINFO STRUC
+cbSize			DWORD ?
+hdcDst			HDC ?
+pptDst			LPPOINT ?
+psize			LPPOINT ?
+hdcSrc			HDC ?
+pptSrc			LPPOINT ?
+crKey			COLORREF ?
+pblend			LPBLENDFUNCTION ?
+dwFlags			DWORD ?
+prcDirty		LPRECT ?
+UPDATELAYEREDWINDOWINFO ENDS
+PUPDATELAYEREDWINDOWINFO typedef ptr UPDATELAYEREDWINDOWINFO
+
+
+if (_WIN32_WINNT LT 0x0502)
+;WINUSERAPI
+;BOOL
+;WINAPI
+UpdateLayeredWindowIndirect_T typedef proto _CType \
+		  hWnd: HWND,
+	      pULWInfo: ptr UPDATELAYEREDWINDOWINFO
+UpdateLayeredWindowIndirect typedef ptr UpdateLayeredWindowIndirect_T
+else
+UpdateLayeredWindowIndirect proto _CType \
+		  hWnd: HWND,
+	      pULWInfo: ptr UPDATELAYEREDWINDOWINFO
+endif
+
+endif ;; defined(_WINGDI_) AND NOT defined(NOGDI)
+
+if(_WIN32_WINNT GE 0x0501)
+;WINUSERAPI
+;BOOL
+GetLayeredWindowAttributes proto _CType \
+		  hwnd: HWND,
+		pcrKey: ptr COLORREF,
+	       pbAlpha: ptr BYTE,
+	      pdwFlags: ptr DWORD
+
+PW_CLIENTONLY		equ 0x00000001
+
+;BOOL
+PrintWindow proto _CType \
+		  hwnd: HWND,
+		hdcBlt: HDC,
+		nFlags: UINT
+endif ;; _WIN32_WINNT GE 0x0501
 
 if(WINVER GE 0x0400)
 ;BOOL
@@ -3095,6 +3662,18 @@ SetWindowPlacement proto _CType \
 		  hWnd: HWND,
 	       lpwndpl: ptr WINDOWPLACEMENT
 
+if(_WIN32_WINNT GE 0x0601)
+WDA_NONE		equ 0x00000000
+WDA_MONITOR		equ 0x00000001
+;BOOL
+GetWindowDisplayAffinity proto _CType \
+		  hWnd: HWND,
+	   pdwAffinity: LPDWORD
+;BOOL
+SetWindowDisplayAffinity proto _CType \
+		  hWnd: HWND,
+	    dwAffinity: DWORD
+endif ;; _WIN32_WINNT GE 0x0601
 
 ifndef NODEFERWINDOWPOS
 
@@ -3175,10 +3754,12 @@ ifndef NOCTLMGR
 ;; followed by strings, etc that do not have to be DWORD aligned.
 ;;
 
+;include pshpack2.inc
+
 ;;
 ;; original NT 32 bit dialog template:
 ;;
-DLGTEMPLATE		STRUC 2
+DLGTEMPLATE		STRUC WORD
 style			dd ?
 dwExtendedStyle		dd ?
 cdit			dw ?
@@ -3205,7 +3786,7 @@ endif ;; UNICODE
 ;;
 ;; 32 bit Dialog item template.
 ;;
-DLGITEMTEMPLATE		STRUC 2
+DLGITEMTEMPLATE		STRUC WORD
 style			dd ?
 dwExtendedStyle		dd ?
 x			dw ?
@@ -3228,6 +3809,8 @@ LPDLGITEMTEMPLATE	typedef LPDLGITEMTEMPLATEW
 else
 LPDLGITEMTEMPLATE	typedef LPDLGITEMTEMPLATEA
 endif ;; UNICODE
+
+;include poppack.inc ;; Resume normal packing
 
 ;HWND
 CreateDialogParamA proto _CType \
@@ -3613,6 +4196,21 @@ GetPriorityClipboardFormat proto _CType \
 ;HWND
 GetOpenClipboardWindow proto _CType
 
+if(WINVER GE 0x0600)
+
+;BOOL
+AddClipboardFormatListener proto _CType \
+		  hwnd: HWND
+;BOOL
+RemoveClipboardFormatListener proto _CType \
+		  hwnd: HWND
+;BOOL
+GetUpdatedClipboardFormats proto _CType \
+	  lpuiFormats: PUINT,
+	     cFormats: UINT,
+	 pcFormatsOut: PUINT
+
+endif ;; WINVER GE 0x0600
 endif ;; NOT NOCLIPBOARD
 
 ;;
@@ -3958,6 +4556,10 @@ endif ;; NOT UNICODE
 endif ;; WINVER GE 0x0400
 KEYEVENTF_EXTENDEDKEY	equ 0x0001
 KEYEVENTF_KEYUP		equ 0x0002
+if(_WIN32_WINNT GE 0x0500)
+KEYEVENTF_UNICODE	equ 0x0004
+KEYEVENTF_SCANCODE	equ 0x0008
+endif ;; _WIN32_WINNT GE 0x0500
 
 ;VOID
 keybd_event proto _CType \
@@ -3974,6 +4576,12 @@ MOUSEEVENTF_RIGHTUP	equ 0x0010 ;; right button up
 MOUSEEVENTF_MIDDLEDOWN	equ 0x0020 ;; middle button down
 MOUSEEVENTF_MIDDLEUP	equ 0x0040 ;; middle button up
 MOUSEEVENTF_WHEEL	equ 0x0800 ;; wheel button rolled
+if (_WIN32_WINNT GE 0x0600)
+MOUSEEVENTF_HWHEEL	equ 0x01000 ;; hwheel button rolled
+endif
+if(WINVER GE 0x0600)
+MOUSEEVENTF_MOVE_NOCOALESCE equ 0x2000 ;; do not coalesce mouse moves
+endif ;; WINVER GE 0x0600
 MOUSEEVENTF_ABSOLUTE	equ 0x8000 ;; absolute move
 
 ;VOID
@@ -4038,6 +4646,95 @@ SendInput proto _CType \
 
 endif ;; (_WIN32_WINNT GT 0x0400)
 
+if(WINVER GE 0x0601)
+
+;;
+;; Touch Input defines and functions
+;;
+
+;;
+;; Touch input handle
+;;
+HTOUCHINPUT		typedef HANDLE ; DECLARE_HANDLE(HTOUCHINPUT);
+
+TOUCHINPUT		STRUC
+x			LONG ?
+y			LONG ?
+hSource			HANDLE ?
+dwID			dd ?
+dwFlags			dd ?
+dwMask			dd ?
+dwTime			dd ?
+dwExtraInfo		SIZE_T ?
+cxContact		dd ?
+cyContact		dd ?
+TOUCHINPUT		ENDS
+PTOUCHINPUT		typedef ptr TOUCHINPUT
+PCTOUCHINPUT		typedef ptr TOUCHINPUT
+
+
+;;
+;; Conversion of touch input coordinates to pixels
+;;
+TOUCH_COORD_TO_PIXEL macro l
+	exitm<((l) / 100)>
+	endm
+
+;;
+;; Touch input flag values (TOUCHINPUT.dwFlags)
+;;
+TOUCHEVENTF_MOVE	equ 0x0001
+TOUCHEVENTF_DOWN	equ 0x0002
+TOUCHEVENTF_UP		equ 0x0004
+TOUCHEVENTF_INRANGE	equ 0x0008
+TOUCHEVENTF_PRIMARY	equ 0x0010
+TOUCHEVENTF_NOCOALESCE	equ 0x0020
+TOUCHEVENTF_PEN		equ 0x0040
+TOUCHEVENTF_PALM	equ 0x0080
+
+;;
+;; Touch input mask values (TOUCHINPUT.dwMask)
+;;
+TOUCHINPUTMASKF_TIMEFROMSYSTEM equ 0x0001 ;; the dwTime field contains a system generated value
+TOUCHINPUTMASKF_EXTRAINFO      equ 0x0002 ;; the dwExtraInfo field is valid
+TOUCHINPUTMASKF_CONTACTAREA    equ 0x0004 ;; the cxContact and cyContact fields are valid
+
+;WINUSERAPI
+;BOOL
+GetTouchInputInfo proto _CType \
+	   hTouchInput: HTOUCHINPUT,
+	       cInputs: UINT,
+	       pInputs: PTOUCHINPUT,
+		cbSize: SINT ;; sizeof(TOUCHINPUT)
+
+;BOOL
+CloseTouchInputHandle proto _CType \
+	   hTouchInput: HTOUCHINPUT
+
+
+
+;;
+;; RegisterTouchWindow flag values
+;;
+TWF_FINETOUCH		equ 0x00000001
+TWF_WANTPALM		equ 0x00000002
+
+;BOOL
+RegisterTouchWindow proto _CType \
+		  hwnd: HWND,
+	       ulFlags: ULONG
+
+;BOOL
+UnregisterTouchWindow proto _CType \
+		  hwnd: HWND
+
+;BOOL
+IsTouchWindow proto _CType \
+		  hwnd: HWND,
+	      pulFlags: PULONG
+
+endif ;; WINVER GE 0x0601
+
 if(_WIN32_WINNT GE 0x0500)
 LASTINPUTINFO		STRUC
 cbSize			UINT ?
@@ -4081,6 +4778,14 @@ else
 MapVirtualKeyEx		equ <MapVirtualKeyExA>
 endif ;; NOT UNICODE
 endif ;; WINVER GE 0x0400
+
+MAPVK_VK_TO_VSC		equ 0
+MAPVK_VSC_TO_VK		equ 1
+MAPVK_VK_TO_CHAR	equ 2
+MAPVK_VSC_TO_VK_EX	equ 3
+if(WINVER GE 0x0600)
+MAPVK_VK_TO_VSC_EX	equ 4
+endif ;; WINVER GE 0x0600
 
 ;BOOL
 GetInputState proto _CType
@@ -4131,22 +4836,20 @@ QS_PAINT		equ 0x0020
 QS_SENDMESSAGE		equ 0x0040
 QS_HOTKEY		equ 0x0080
 QS_ALLPOSTMESSAGE	equ 0x0100
+if(_WIN32_WINNT GE 0x0501)
+QS_RAWINPUT		equ 0x0400
+endif ;; _WIN32_WINNT GE 0x0501
 
 QS_MOUSE		equ QS_MOUSEMOVE OR QS_MOUSEBUTTON
-
+if (_WIN32_WINNT GE 0x0501)
+QS_INPUT		equ QS_MOUSE or QS_KEY or QS_RAWINPUT
+else
 QS_INPUT		equ QS_MOUSE or QS_KEY
-
-QS_ALLEVENTS		equ QS_INPUT OR \
-			QS_POSTMESSAGE OR \
-			QS_TIMER OR \
-			QS_PAINT OR \
-			QS_HOTKEY
-
-QS_ALLINPUT		equ QS_INPUT OR \
-			QS_POSTMESSAGE OR \
-			QS_TIMER OR \
-			QS_PAINT OR \
-			QS_HOTKEY OR \
+endif ;; (_WIN32_WINNT >= 0x0501)
+QS_ALLEVENTS		equ QS_INPUT OR QS_POSTMESSAGE OR \
+			QS_TIMER OR QS_PAINT OR QS_HOTKEY
+QS_ALLINPUT		equ QS_INPUT OR QS_POSTMESSAGE OR \
+			QS_TIMER OR QS_PAINT OR QS_HOTKEY OR \
 			QS_SENDMESSAGE
 
 ;;
@@ -4345,12 +5048,56 @@ SM_CYVIRTUALSCREEN	equ 79
 SM_CMONITORS		equ 80
 SM_SAMEDISPLAYFORMAT	equ 81
 endif ;; WINVER GE 0x0500
+if(_WIN32_WINNT GE 0x0500)
+SM_IMMENABLED		equ 82
+endif ;; _WIN32_WINNT GE 0x0500
+
+if(_WIN32_WINNT GE 0x0501)
+SM_CXFOCUSBORDER	equ 83
+SM_CYFOCUSBORDER	equ 84
+endif ;; _WIN32_WINNT GE 0x0501
+
+if(_WIN32_WINNT GE 0x0501)
+SM_TABLETPC		equ 86
+SM_MEDIACENTER		equ 87
+SM_STARTER		equ 88
+SM_SERVERR2		equ 89
+endif ;; _WIN32_WINNT GE 0x0501
+
+if(_WIN32_WINNT GE 0x0600)
+SM_MOUSEHORIZONTALWHEELPRESENT equ 91
+SM_CXPADDEDBORDER	equ 92
+endif ;; _WIN32_WINNT GE 0x0600
+
+if(WINVER GE 0x0601)
+SM_DIGITIZER		equ 94
+SM_MAXIMUMTOUCHES	equ 95
+endif ;; WINVER GE 0x0601
 
 if (WINVER LT 0x0500) AND ( NOT defined(_WIN32_WINNT) OR (_WIN32_WINNT LT 0x0400))
 SM_CMETRICS		equ 76
-else
+elseif WINVER EQ 0x500
 SM_CMETRICS		equ 83
+elseif WINVER EQ 0x501
+SM_CMETRICS		equ 91
+elseif WINVER EQ 0x600
+SM_CMETRICS		equ 93
+else
+SM_CMETRICS		equ 97
 endif
+
+if(WINVER GE 0x0500)
+SM_REMOTESESSION	equ 0x1000
+if(_WIN32_WINNT GE 0x0501)
+SM_SHUTTINGDOWN		equ 0x2000
+endif ;; _WIN32_WINNT GE 0x0501
+if(WINVER GE 0x0501)
+SM_REMOTECONTROL	equ 0x2001
+endif ;; WINVER GE 0x0501
+if(WINVER GE 0x0501)
+SM_CARETBLINKINGENABLED equ 0x2002
+endif ;; WINVER GE 0x0501
+endif ;; WINVER GE 0x0500
 
 ;int
 GetSystemMetrics proto _CType \
@@ -4452,12 +5199,13 @@ GetMenuState proto _CType \
 DrawMenuBar proto _CType \
 		  hWnd: HWND
 
-
+if(_WIN32_WINNT GE 0x0501)
+PMB_ACTIVE		equ 0x00000001
+endif ;; _WIN32_WINNT GE 0x0501
 ;HMENU
 GetSystemMenu proto _CType \
 		  hWnd: HWND,
 	       bRevert: BOOL
-
 
 ;HMENU
 CreateMenu proto _CType
@@ -4609,6 +5357,16 @@ TrackPopupMenuEx proto _CType \
 		      : LPTPMPARAMS
 endif ;; WINVER GE 0x0400
 
+if(_WIN32_WINNT GE 0x0601)
+;BOOL
+CalculatePopupWindowPosition proto _CType \
+	   anchorPoint: ptr POINT,
+	    windowSize: ptr POINT,
+		 flags: UINT,
+	   excludeRect: ptr RECT,
+   popupWindowPosition: ptr RECT
+endif ;; _WIN32_WINNT GE 0x0601
+
 if(WINVER GE 0x0500)
 MNS_NOCHECK		equ 0x80000000
 MNS_MODELESS		equ 0x40000000
@@ -4662,7 +5420,7 @@ hmenu			HMENU ?
 riid			PVOID ?
 pvObj			PVOID ?
 MENUGETOBJECTINFO	ENDS
- PMENUGETOBJECTINFO	typedef ptr MENUGETOBJECTINFO
+PMENUGETOBJECTINFO	typedef ptr MENUGETOBJECTINFO
 
 ;;
 ;; MENUGETOBJECTINFO dwFlags values
@@ -4690,17 +5448,17 @@ MIIM_STRING		equ 0x00000040
 MIIM_BITMAP		equ 0x00000080
 MIIM_FTYPE		equ 0x00000100
 
-HBMMENU_CALLBACK	equ ((HBITMAP) -1)
-HBMMENU_SYSTEM		equ ((HBITMAP)	1)
-HBMMENU_MBAR_RESTORE	equ ((HBITMAP)	2)
-HBMMENU_MBAR_MINIMIZE	equ ((HBITMAP)	3)
-HBMMENU_MBAR_CLOSE	equ ((HBITMAP)	5)
-HBMMENU_MBAR_CLOSE_D	equ ((HBITMAP)	6)
-HBMMENU_MBAR_MINIMIZE_D equ ((HBITMAP)	7)
-HBMMENU_POPUP_CLOSE	equ ((HBITMAP)	8)
-HBMMENU_POPUP_RESTORE	equ ((HBITMAP)	9)
-HBMMENU_POPUP_MAXIMIZE	equ ((HBITMAP) 10)
-HBMMENU_POPUP_MINIMIZE	equ ((HBITMAP) 11)
+HBMMENU_CALLBACK	equ (-1)
+HBMMENU_SYSTEM		equ (1)
+HBMMENU_MBAR_RESTORE	equ (2)
+HBMMENU_MBAR_MINIMIZE	equ (3)
+HBMMENU_MBAR_CLOSE	equ (5)
+HBMMENU_MBAR_CLOSE_D	equ (6)
+HBMMENU_MBAR_MINIMIZE_D equ (7)
+HBMMENU_POPUP_CLOSE	equ (8)
+HBMMENU_POPUP_RESTORE	equ (9)
+HBMMENU_POPUP_MAXIMIZE	equ (10)
+HBMMENU_POPUP_MINIMIZE	equ (11)
 endif ;; WINVER GE 0x0500
 
 if(WINVER GE 0x0400)
@@ -4855,11 +5613,23 @@ TPM_RETURNCMD		equ 0x0100
 endif ;; WINVER GE 0x0400
 if(WINVER GE 0x0500)
 TPM_RECURSE		equ 0x0001
+TPM_HORPOSANIMATION	equ 0x0400
+TPM_HORNEGANIMATION	equ 0x0800
+TPM_VERPOSANIMATION	equ 0x1000
+TPM_VERNEGANIMATION	equ 0x2000
+if(_WIN32_WINNT GE 0x0500)
+TPM_NOANIMATION		equ 0x4000
+endif ;; _WIN32_WINNT GE 0x0500
+if(_WIN32_WINNT GE 0x0501)
+TPM_LAYOUTRTL		equ 0x8000
+endif ;; _WIN32_WINNT GE 0x0501
+endif ;; WINVER GE 0x0500
+if(_WIN32_WINNT GE 0x0601)
+TPM_WORKAREA		equ 0x10000
+endif ;; _WIN32_WINNT GE 0x0601
 endif ;; WINVER GE 0x0500
 
-
 endif ;; NOT NOMENUS
-
 
 if(WINVER GE 0x0400)
 ;;
@@ -4936,6 +5706,13 @@ DT_END_ELLIPSIS		equ 0x00008000
 DT_MODIFYSTRING		equ 0x00010000
 DT_RTLREADING		equ 0x00020000
 DT_WORD_ELLIPSIS	equ 0x00040000
+if(WINVER GE 0x0500)
+DT_NOFULLWIDTHCHARBREAK equ 0x00080000
+if(_WIN32_WINNT GE 0x0500)
+DT_HIDEPREFIX		equ 0x00100000
+DT_PREFIXONLY		equ 0x00200000
+endif ;; _WIN32_WINNT GE 0x0500
+endif ;; WINVER GE 0x0500
 
 
 DRAWTEXTPARAMS		STRUC
@@ -5039,6 +5816,10 @@ DSS_UNION		equ 0x0010  ;; Gray string appearance
 DSS_DISABLED		equ 0x0020
 DSS_MONO		equ 0x0080
 DSS_RIGHT		equ 0x8000
+if(_WIN32_WINNT GE 0x0500)
+DSS_HIDEPREFIX		equ 0x0200
+DSS_PREFIXONLY		equ 0x0400
+endif ;; _WIN32_WINNT GE 0x0500
 
 ;BOOL
 DrawStateA proto _CType \
@@ -5145,6 +5926,21 @@ endif ;; WINVER GE 0x0400
 SetForegroundWindow proto _CType \
 		  hWnd: HWND
 
+if(_WIN32_WINNT GE 0x0500)
+;BOOL
+AllowSetForegroundWindow proto _CType \
+	   dwProcessId: DWORD
+
+ASFW_ANY		equ (-1)
+
+;BOOL
+LockSetForegroundWindow proto _CType \
+	     uLockCode: UINT
+
+LSFW_LOCK		equ 1
+LSFW_UNLOCK		equ 2
+endif ;; _WIN32_WINNT GE 0x0500
+
 ;HWND
 WindowFromDC proto _CType \
 		   hDC: HDC
@@ -5168,18 +5964,12 @@ DCX_NORESETATTRS	equ 0x00000004
 DCX_CLIPCHILDREN	equ 0x00000008
 DCX_CLIPSIBLINGS	equ 0x00000010
 DCX_PARENTCLIP		equ 0x00000020
-
 DCX_EXCLUDERGN		equ 0x00000040
 DCX_INTERSECTRGN	equ 0x00000080
-
 DCX_EXCLUDEUPDATE	equ 0x00000100
 DCX_INTERSECTUPDATE	equ 0x00000200
-
 DCX_LOCKWINDOWUPDATE	equ 0x00000400
-
 DCX_VALIDATE		equ 0x00200000
-
-
 
 ;BOOL
 AlignRects proto _CType \
@@ -5241,6 +6031,12 @@ SetWindowRgn proto _CType \
 GetWindowRgn proto _CType \
 		  hWnd: HWND,
 		  hRgn: HRGN
+if(_WIN32_WINNT GE 0x0501)
+;int
+GetWindowRgnBox proto _CType \
+		  hWnd: HWND,
+		  lprc: LPRECT
+endif ;; _WIN32_WINNT GE 0x0501
 
 ;int
 ExcludeUpdateRgn proto _CType \
@@ -5583,7 +6379,9 @@ MB_ABORTRETRYIGNORE	equ 0x00000002
 MB_YESNOCANCEL		equ 0x00000003
 MB_YESNO		equ 0x00000004
 MB_RETRYCANCEL		equ 0x00000005
-
+if(WINVER GE 0x0500)
+MB_CANCELTRYCONTINUE	equ 0x00000006
+endif ;; WINVER GE 0x0500
 
 MB_ICONHAND		equ 0x00000010
 MB_ICONQUESTION		equ 0x00000020
@@ -5751,6 +6549,12 @@ ShowCursor proto _CType \
 SetCursorPos proto _CType \
 		     X: SINT,
 		     Y: SINT
+if(WINVER GE 0x0600)
+;BOOL
+SetPhysicalCursorPos proto _CType \
+		     X: SINT,
+		     Y: SINT
+endif ;; WINVER GE 0x0600
 
 ;HCURSOR
 SetCursor proto _CType \
@@ -5759,6 +6563,12 @@ SetCursor proto _CType \
 ;BOOL
 GetCursorPos proto _CType \
 	       lpPoint: LPPOINT
+
+if(WINVER GE 0x0600)
+;BOOL
+GetPhysicalCursorPos proto _CType \
+	       lpPoint: LPPOINT
+endif ;; WINVER GE 0x0600
 
 ;BOOL
 ClipCursor proto _CType \
@@ -5815,6 +6625,17 @@ ScreenToClient proto _CType \
 		  hWnd: HWND,
 	       lpPoint: LPPOINT
 
+if(WINVER GE 0x0600)
+;BOOL
+LogicalToPhysicalPoint proto _CType \
+		  hWnd: HWND,
+	       lpPoint: LPPOINT
+;BOOL
+PhysicalToLogicalPoint proto _CType \
+		  hWnd: HWND,
+	       lpPoint: LPPOINT
+endif ;; WINVER GE 0x0600
+
 ;int
 MapWindowPoints proto _CType \
 	      hWndFrom: HWND,
@@ -5825,6 +6646,12 @@ MapWindowPoints proto _CType \
 ;HWND
 WindowFromPoint proto _CType \
 		 Point: POINT
+
+if(WINVER GE 0x0600)
+;HWND
+WindowFromPhysicalPoint proto _CType \
+		 Point: POINT
+endif ;; WINVER GE 0x0600
 
 ;HWND
 ChildWindowFromPoint proto _CType \
@@ -5891,6 +6718,10 @@ if(WINVER GE 0x0500)
 COLOR_HOTLIGHT		equ 26
 COLOR_GRADIENTACTIVECAPTION equ 27
 COLOR_GRADIENTINACTIVECAPTION equ 28
+if(WINVER GE 0x0501)
+COLOR_MENUHILIGHT	equ 29
+COLOR_MENUBAR		equ 30
+endif ;; WINVER GE 0x0501
 endif ;; WINVER GE 0x0500
 
 if(WINVER GE 0x0400)
@@ -6092,6 +6923,55 @@ endif ;; NOT UNICODE
 
 endif ;; NOT NOWINOFFSETS
 
+
+ifdef _WIN64
+
+;LONG_PTR
+GetWindowLongPtrA proto _CType \
+		  hWnd: HWND,
+		nIndex: SINT
+GetWindowLongPtrW proto _CType \
+		  hWnd: HWND,
+		nIndex: SINT
+ifdef _UNICODE
+GetWindowLongPtr	equ <GetWindowLongPtrW>
+else
+GetWindowLongPtr	equ <GetWindowLongPtrA>
+endif ;; NOT UNICODE
+
+;LONG_PTR
+SetWindowLongPtrA proto _CType \
+		  hWnd: HWND,
+		nIndex: SINT,
+	     dwNewLong: PLONG
+SetWindowLongPtrW proto _CType \
+		  hWnd: HWND,
+		nIndex: SINT,
+	     dwNewLong: PLONG
+ifdef _UNICODE
+SetWindowLongPtr	equ <SetWindowLongPtrW>
+else
+SetWindowLongPtr	equ <SetWindowLongPtrA>
+endif ;; NOT UNICODE
+
+else  ;; _WIN64
+
+GetWindowLongPtrA	equ <GetWindowLongA>
+GetWindowLongPtrW	equ <GetWindowLongW>
+ifdef _UNICODE
+GetWindowLongPtr	equ <GetWindowLongPtrW>
+else
+GetWindowLongPtr	equ <GetWindowLongPtrA>
+endif ;; NOT UNICODE
+SetWindowLongPtrA	equ <SetWindowLongA>
+SetWindowLongPtrW	equ <SetWindowLongW>
+ifdef _UNICODE
+SetWindowLongPtr	equ <SetWindowLongPtrW>
+else
+SetWindowLongPtr	equ <SetWindowLongPtrA>
+endif ;; NOT UNICODE
+endif ;; _WIN64
+
 ;HWND
 GetDesktopWindow proto _CType
 
@@ -6224,10 +7104,7 @@ GetWindow proto _CType \
 		  hWnd: HWND,
 		  uCmd: UINT
 
-
-
 ifndef NOWH
-
 ifdef STRICT
 
 ;HHOOK
@@ -6457,6 +7334,14 @@ SC_MONITORPOWER		equ 0xF170
 SC_CONTEXTHELP		equ 0xF180
 SC_SEPARATOR		equ 0xF00F
 endif ;; WINVER GE 0x0400
+
+if(WINVER GE 0x0600)
+SCF_ISSECURE		equ 0x00000001
+endif ;; WINVER GE 0x0600
+
+GET_SC_WPARAM macro wParam
+	exitm<(wParam AND 0xFFF0)>
+	endm
 ;;
 ;; Obsolete names
 ;;
@@ -6702,6 +7587,9 @@ DI_IMAGE		equ 0x0002
 DI_NORMAL		equ 0x0003
 DI_COMPAT		equ 0x0004
 DI_DEFAULTSIZE		equ 0x0008
+if(_WIN32_WINNT GE 0x0501)
+DI_NOMIRROR		equ 0x0010
+endif ;; _WIN32_WINNT GE 0x0501
 
 ;BOOL
 DrawIconEx proto _CType \
@@ -6728,6 +7616,52 @@ CopyIcon proto _CType \
 GetIconInfo proto _CType \
 		 hIcon: HICON,
 	     piconinfo: PICONINFO
+
+if(_WIN32_WINNT GE 0x0600)
+ICONINFOEXA		STRUC
+cbSize			dd ?
+fIcon			BOOL ?
+xHotspot		dd ?
+yHotspot		dd ?
+hbmMask			HBITMAP ?
+hbmColor		HBITMAP ?
+wResID			dw ?
+szModName		db MAX_PATH dup(?)
+szResName		db MAX_PATH dup(?)
+ICONINFOEXA		ENDS
+PICONINFOEXA		typedef ptr ICONINFOEXA
+ICONINFOEXW		STRUC
+cbSize			dd ?
+fIcon			BOOL ?
+xHotspot		dd ?
+yHotspot		dd ?
+hbmMask			HBITMAP ?
+hbmColor		HBITMAP ?
+wResID			dw ?
+szModName		dw MAX_PATH dup(?)
+szResName		dw MAX_PATH dup(?)
+ICONINFOEXW		ENDS
+PICONINFOEXW		typedef ptr ICONINFOEXW
+ifdef _UNICODE
+ICONINFOEX		typedef ICONINFOEXW
+PICONINFOEX		typedef PICONINFOEXW
+else
+ICONINFOEX		typedef ICONINFOEXA
+PICONINFOEX		typedef PICONINFOEXA
+endif ;; UNICODE
+;BOOL
+GetIconInfoExA proto _CType \
+		 hicon: HICON,
+	     piconinfo: PICONINFOEXA
+GetIconInfoExW proto _CType \
+		 hicon: HICON,
+	     piconinfo: PICONINFOEXW
+ifdef _UNICODE
+GetIconInfoEx		equ <GetIconInfoExW>
+else
+GetIconInfoEx		equ <GetIconInfoExA>
+endif ;; NOT UNICODE
+endif ;; _WIN32_WINNT GE 0x0600
 
 if(WINVER GE 0x0400)
 RES_ICON		equ 1
@@ -6835,7 +7769,10 @@ IDI_ASTERISK		equ 32516
 if(WINVER GE 0x0400)
 IDI_WINLOGO		equ 32517
 endif ;; WINVER GE 0x0400
-else
+if(WINVER GE 0x0600)
+IDI_SHIELD		equ 32518
+endif ;; WINVER GE 0x0600
+else ;; RC_INVOKED
 IDI_APPLICATION		equ MAKEINTRESOURCE(32512)
 IDI_HAND		equ MAKEINTRESOURCE(32513)
 IDI_QUESTION		equ MAKEINTRESOURCE(32514)
@@ -6844,6 +7781,9 @@ IDI_ASTERISK		equ MAKEINTRESOURCE(32516)
 if(WINVER GE 0x0400)
 IDI_WINLOGO		equ MAKEINTRESOURCE(32517)
 endif ;; WINVER GE 0x0400
+if(WINVER GE 0x0600)
+IDI_SHIELD		equ MAKEINTRESOURCE(32518)
+endif ;; WINVER GE 0x0600
 endif ;; RC_INVOKED
 
 if(WINVER GE 0x0400)
@@ -6890,6 +7830,15 @@ if(WINVER GE 0x0400)
 IDCLOSE			equ 8
 IDHELP			equ 9
 endif ;; WINVER GE 0x0400
+if(WINVER GE 0x0500)
+IDTRYAGAIN		equ 10
+IDCONTINUE		equ 11
+endif ;; WINVER GE 0x0500
+if(WINVER GE 0x0501)
+ifndef IDTIMEOUT
+IDTIMEOUT		equ 32000
+endif
+endif ;; WINVER GE 0x0501
 
 ;; end_r_winuser
 
@@ -6938,6 +7887,11 @@ EN_ERRSPACE		equ 0x0500
 EN_MAXTEXT		equ 0x0501
 EN_HSCROLL		equ 0x0601
 EN_VSCROLL		equ 0x0602
+
+if(_WIN32_WINNT GE 0x0500)
+EN_ALIGN_LTR_EC		equ 0x0700
+EN_ALIGN_RTL_EC		equ 0x0701
+endif ;; _WIN32_WINNT GE 0x0500
 
 if(WINVER GE 0x0400)
 ;; Edit control EM_SETMARGIN parameters
@@ -7082,7 +8036,11 @@ if(WINVER GE 0x0400)
 BM_CLICK		equ 0x00F5
 BM_GETIMAGE		equ 0x00F6
 BM_SETIMAGE		equ 0x00F7
-
+endif ;; WINVER GE 0x0400
+if(WINVER GE 0x0600)
+BM_SETDONTCLICK		equ 0x00F8
+endif ;; WINVER GE 0x0600
+if(WINVER GE 0x0400)
 BST_UNCHECKED		equ 0x0000
 BST_CHECKED		equ 0x0001
 BST_INDETERMINATE	equ 0x0002
@@ -7115,6 +8073,9 @@ SS_ETCHEDVERT		equ 0x00000011
 SS_ETCHEDFRAME		equ 0x00000012
 SS_TYPEMASK		equ 0x0000001F
 endif ;; WINVER GE 0x0400
+if(WINVER GE 0x0501)
+SS_REALSIZECONTROL	equ 0x00000040
+endif ;; WINVER GE 0x0501
 SS_NOPREFIX		equ 0x00000080 ;; Don't do " AND " character translation
 if(WINVER GE 0x0400)
 SS_NOTIFY		equ 0x00000100
@@ -7284,10 +8245,10 @@ endif ;; NOT UNICODE
 ;;
 DS_ABSALIGN		equ 0x01
 DS_SYSMODAL		equ 0x02
-DS_LOCALEDIT		equ 0x20L   ;; Edit items get Local storage.
+DS_LOCALEDIT		equ 0x20   ;; Edit items get Local storage.
 DS_SETFONT		equ 0x40   ;; User specified font for Dlg controls
 DS_MODALFRAME		equ 0x80   ;; Can be combined with WS_CAPTION
-DS_NOIDLEMSG		equ 0x100L  ;; WM_ENTERIDE message will not be sent
+DS_NOIDLEMSG		equ 0x100  ;; WM_ENTERIDE message will not be sent
 DS_SETFOREGROUND	equ 0x200  ;; not in win3.1
 
 
@@ -7299,7 +8260,7 @@ DS_CONTROL		equ 0x0400
 DS_CENTER		equ 0x0800
 DS_CENTERMOUSE		equ 0x1000
 DS_CONTEXTHELP		equ 0x2000
-
+DS_SHELLFONT		equ (DS_SETFONT OR DS_FIXEDSYS)
 endif ;; WINVER GE 0x0400
 
 ;; end_r_winuser
@@ -7318,17 +8279,17 @@ DC_HASDEFID		equ 0x534B
 ;;
 ;; Dialog Codes
 ;;
-DLGC_WANTARROWS		equ 0x0001	;; Control wants arrow keys
-DLGC_WANTTAB		equ 0x0002	;; Control wants tab keys
-DLGC_WANTALLKEYS	equ 0x0004	;; Control wants all keys
-DLGC_WANTMESSAGE	equ 0x0004	;; Pass message to control
-DLGC_HASSETSEL		equ 0x0008	;; Understands EM_SETSE message
-DLGC_DEFPUSHBUTTON	equ 0x0010	;; Default pushbutton
-DLGC_UNDEFPUSHBUTTON	equ 0x0020     ;; Non-default pushbutton
-DLGC_RADIOBUTTON	equ 0x0040	;; Radio button
-DLGC_WANTCHARS		equ 0x0080	;; Want WM_CHAR messages
-DLGC_STATIC		equ 0x0100	;; Static item: don't include
-DLGC_BUTTON		equ 0x2000	;; Button item: can be checked
+DLGC_WANTARROWS		equ 0x0001 ;; Control wants arrow keys
+DLGC_WANTTAB		equ 0x0002 ;; Control wants tab keys
+DLGC_WANTALLKEYS	equ 0x0004 ;; Control wants all keys
+DLGC_WANTMESSAGE	equ 0x0004 ;; Pass message to control
+DLGC_HASSETSEL		equ 0x0008 ;; Understands EM_SETSE message
+DLGC_DEFPUSHBUTTON	equ 0x0010 ;; Default pushbutton
+DLGC_UNDEFPUSHBUTTON	equ 0x0020 ;; Non-default pushbutton
+DLGC_RADIOBUTTON	equ 0x0040 ;; Radio button
+DLGC_WANTCHARS		equ 0x0080 ;; Want WM_CHAR messages
+DLGC_STATIC		equ 0x0100 ;; Static item: don't include
+DLGC_BUTTON		equ 0x2000 ;; Button item: can be checked
 
 LB_CTLCODE		equ 0
 
@@ -7406,7 +8367,15 @@ if(WINVER GE 0x0400)
 LB_INITSTORAGE		equ 0x01A8
 LB_ITEMFROMPOINT	equ 0x01A9
 endif ;; WINVER GE 0x0400
-if(WINVER GE 0x0400)
+
+if(_WIN32_WINNT GE 0x0501)
+LB_GETLISTBOXINFO	equ 0x01B2
+endif ;; _WIN32_WINNT GE 0x0501
+if(_WIN32_WINNT GE 0x0501)
+LB_MSGMAX		equ 0x01B3
+elseif(_WIN32_WCE GE 0x0400)
+LB_MSGMAX		equ 0x01B1
+elseif(WINVER GE 0x0400)
 LB_MSGMAX		equ 0x01B0
 else
 LB_MSGMAX		equ 0x01A8
@@ -7534,13 +8503,22 @@ CB_GETDROPPEDWIDTH	equ 0x015f
 CB_SETDROPPEDWIDTH	equ 0x0160
 CB_INITSTORAGE		equ 0x0161
 endif ;; WINVER GE 0x0400
-if(WINVER GE 0x0400)
+
+if(_WIN32_WINNT GE 0x0501)
+CB_GETCOMBOBOXINFO	equ 0x0164
+endif ;; _WIN32_WINNT GE 0x0501
+
+if(_WIN32_WINNT GE 0x0501)
+CB_MSGMAX		equ 0x0165
+elseif(_WIN32_WCE GE 0x0400)
+CB_MSGMAX		equ 0x0163
+elseif(WINVER GE 0x0400)
 CB_MSGMAX		equ 0x0162
 else
 CB_MSGMAX		equ 0x015B
 endif
-endif  ;; NOT NOWINMESSAGES
 
+endif  ;; NOT NOWINMESSAGES
 
 
 ifndef NOWINSTYLES
@@ -7580,7 +8558,11 @@ SBM_ENABLE_ARROWS	equ 0x00E4 ;;not in win3.1
 if(WINVER GE 0x0400)
 SBM_SETSCROLLINFO	equ 0x00E9
 SBM_GETSCROLLINFO	equ 0x00EA
-
+endif ;; WINVER GE 0x0400
+if(_WIN32_WINNT GE 0x0501)
+SBM_GETSCROLLBARINFO	equ 0x00EB
+endif ;; _WIN32_WINNT GE 0x0501
+if(WINVER GE 0x0400)
 SIF_RANGE		equ 0x0001
 SIF_PAGE		equ 0x0002
 SIF_POS			equ 0x0004
@@ -7628,6 +8610,9 @@ MDIS_ALLCHILDSTYLES	equ 0x0001
 MDITILE_VERTICAL	equ 0x0000 ;;not in win3.1
 MDITILE_HORIZONTAL	equ 0x0001 ;;not in win3.1
 MDITILE_SKIPDISABLED	equ 0x0002 ;;not in win3.1
+if(_WIN32_WINNT GE 0x0500)
+MDITILE_ZORDER		equ 0x0004
+endif ;; _WIN32_WINNT GE 0x0500
 
 MDICREATESTRUCTA	STRUC
 szClass			LPCSTR ?
@@ -7670,14 +8655,14 @@ LPCLIENTCREATESTRUCT	typedef ptr CLIENTCREATESTRUCT
 ;LRESULT
 DefFrameProcA proto _CType \
 		  hWnd: HWND,
-	hWndMDIClient : HWND,
+	 hWndMDIClient: HWND,
 		  uMsg: UINT,
 		wParam: WPARAM,
 		lParam: LPARAM
 ;LRESULT
 DefFrameProcW proto _CType \
 		  hWnd: HWND,
-	hWndMDIClient : HWND,
+	 hWndMDIClient: HWND,
 		  uMsg: UINT,
 		wParam: WPARAM,
 		lParam: LPARAM
@@ -7892,7 +8877,16 @@ endif ;; NOT NOHELP
 if(WINVER GE 0x0500)
 GR_GDIOBJECTS		equ 0	    ;; Count of GDI objects
 GR_USEROBJECTS		equ 1	    ;; Count of USER objects
+if(WINVER GE 0x0601)
+GR_GDIOBJECTS_PEAK	equ 2	    ;; Peak count of GDI objects
+GR_USEROBJECTS_PEAK	equ 4	    ;; Peak count of USER objects
+endif ;; WINVER GE 0x0601
+if(WINVER GE 0x0601)
+GR_GLOBAL		equ (-2)
+endif ;; WINVER GE 0x0601
+endif ;; WINVER GE 0x0500
 
+if(WINVER GE 0x0500)
 ;DWORD
 GetGuiResources proto _CType \
 	      hProcess: HANDLE,
@@ -7983,45 +8977,90 @@ SPI_GETMOUSETRAILS	equ 94
 SPI_SETSCREENSAVERRUNNING equ 97
 SPI_SCREENSAVERRUNNING	equ SPI_SETSCREENSAVERRUNNING
 endif ;; WINVER GE 0x0400
-SPI_GETFILTERKEYS	equ 50
-SPI_SETFILTERKEYS	equ 51
-SPI_GETTOGGLEKEYS	equ 52
-SPI_SETTOGGLEKEYS	equ 53
-SPI_GETMOUSEKEYS	equ 54
-SPI_SETMOUSEKEYS	equ 55
-SPI_GETSHOWSOUNDS	equ 56
-SPI_SETSHOWSOUNDS	equ 57
-SPI_GETSTICKYKEYS	equ 58
-SPI_SETSTICKYKEYS	equ 59
-SPI_GETACCESSTIMEOUT	equ 60
-SPI_SETACCESSTIMEOUT	equ 61
+SPI_GETFILTERKEYS	equ 0x0032
+SPI_SETFILTERKEYS	equ 0x0033
+SPI_GETTOGGLEKEYS	equ 0x0034
+SPI_SETTOGGLEKEYS	equ 0x0035
+SPI_GETMOUSEKEYS	equ 0x0036
+SPI_SETMOUSEKEYS	equ 0x0037
+SPI_GETSHOWSOUNDS	equ 0x0038
+SPI_SETSHOWSOUNDS	equ 0x0039
+SPI_GETSTICKYKEYS	equ 0x003A
+SPI_SETSTICKYKEYS	equ 0x003B
+SPI_GETACCESSTIMEOUT	equ 0x003C
+SPI_SETACCESSTIMEOUT	equ 0x003D
 if(WINVER GE 0x0400)
-SPI_GETSERIALKEYS	equ 62
-SPI_SETSERIALKEYS	equ 63
+SPI_GETSERIALKEYS	equ 0x003E
+SPI_SETSERIALKEYS	equ 0x003F
 endif ;; WINVER GE 0x0400
-SPI_GETSOUNDSENTRY	equ 64
-SPI_SETSOUNDSENTRY	equ 65
+SPI_GETSOUNDSENTRY	equ 0x0040
+SPI_SETSOUNDSENTRY	equ 0x0041
+if(_WIN32_WINNT GE 0x0400)
+SPI_GETSNAPTODEFBUTTON	equ 0x005F
+SPI_SETSNAPTODEFBUTTON	equ 0x0060
+endif ;; _WIN32_WINNT GE 0x0400
 
 if (_WIN32_WINNT GE 0x0400) OR (_WIN32_WINDOWS GT 0x0400)
-SPI_GETMOUSEHOVERWIDTH	equ 98
-SPI_SETMOUSEHOVERWIDTH	equ 99
-SPI_GETMOUSEHOVERHEIGHT equ 100
-SPI_SETMOUSEHOVERHEIGHT equ 101
-SPI_GETMOUSEHOVERTIME	equ 102
-SPI_SETMOUSEHOVERTIME	equ 103
-SPI_GETWHEELSCROLLLINES equ 104
-SPI_SETWHEELSCROLLLINES equ 105
-
-SPI_GETSHOWIMEUI	equ 110
-SPI_SETSHOWIMEUI	equ 111
+SPI_GETMOUSEHOVERWIDTH	equ 0x0062
+SPI_SETMOUSEHOVERWIDTH	equ 0x0063
+SPI_GETMOUSEHOVERHEIGHT equ 0x0064
+SPI_SETMOUSEHOVERHEIGHT equ 0x0065
+SPI_GETMOUSEHOVERTIME	equ 0x0066
+SPI_SETMOUSEHOVERTIME	equ 0x0067
+SPI_GETWHEELSCROLLLINES equ 0x0068
+SPI_SETWHEELSCROLLLINES equ 0x0069
+SPI_GETMENUSHOWDELAY	equ 0x006A
+SPI_SETMENUSHOWDELAY	equ 0x006B
+if (_WIN32_WINNT GE 0x0600)
+SPI_GETWHEELSCROLLCHARS equ 0x006C
+SPI_SETWHEELSCROLLCHARS equ 0x006D
+endif
+SPI_GETSHOWIMEUI	equ 0x006E
+SPI_SETSHOWIMEUI	equ 0x006F
 endif
 
-
 if(WINVER GE 0x0500)
-SPI_GETMOUSESPEED	equ 112
-SPI_SETMOUSESPEED	equ 113
-SPI_GETSCREENSAVERRUNNING equ 114
+SPI_GETMOUSESPEED	equ 0x0070
+SPI_SETMOUSESPEED	equ 0x0071
+SPI_GETSCREENSAVERRUNNING equ 0x0072
+SPI_GETDESKWALLPAPER	equ 0x0073
 endif ;; WINVER GE 0x0500
+
+if(WINVER GE 0x0600)
+SPI_GETAUDIODESCRIPTION equ 0x0074
+SPI_SETAUDIODESCRIPTION equ 0x0075
+SPI_GETSCREENSAVESECURE equ 0x0076
+SPI_SETSCREENSAVESECURE equ 0x0077
+endif ;; WINVER GE 0x0600
+
+if(_WIN32_WINNT GE 0x0601)
+SPI_GETHUNGAPPTIMEOUT	equ 0x0078
+SPI_SETHUNGAPPTIMEOUT	equ 0x0079
+SPI_GETWAITTOKILLTIMEOUT equ 0x007A
+SPI_SETWAITTOKILLTIMEOUT equ 0x007B
+SPI_GETWAITTOKILLSERVICETIMEOUT equ 0x007C
+SPI_SETWAITTOKILLSERVICETIMEOUT equ 0x007D
+SPI_GETMOUSEDOCKTHRESHOLD equ 0x007E
+SPI_SETMOUSEDOCKTHRESHOLD equ 0x007F
+SPI_GETPENDOCKTHRESHOLD equ 0x0080
+SPI_SETPENDOCKTHRESHOLD equ 0x0081
+SPI_GETWINARRANGING	equ 0x0082
+SPI_SETWINARRANGING	equ 0x0083
+SPI_GETMOUSEDRAGOUTTHRESHOLD equ 0x0084
+SPI_SETMOUSEDRAGOUTTHRESHOLD equ 0x0085
+SPI_GETPENDRAGOUTTHRESHOLD equ 0x0086
+SPI_SETPENDRAGOUTTHRESHOLD equ 0x0087
+SPI_GETMOUSESIDEMOVETHRESHOLD equ 0x0088
+SPI_SETMOUSESIDEMOVETHRESHOLD equ 0x0089
+SPI_GETPENSIDEMOVETHRESHOLD equ 0x008A
+SPI_SETPENSIDEMOVETHRESHOLD equ 0x008B
+SPI_GETDRAGFROMMAXIMIZE equ 0x008C
+SPI_SETDRAGFROMMAXIMIZE equ 0x008D
+SPI_GETSNAPSIZING	equ 0x008E
+SPI_SETSNAPSIZING	equ 0x008F
+SPI_GETDOCKMOVING	equ 0x0090
+SPI_SETDOCKMOVING	equ 0x0091
+endif ;; _WIN32_WINNT GE 0x0601
 
 if(WINVER GE 0x0500)
 SPI_GETACTIVEWINDOWTRACKING equ 0x1000
@@ -8034,18 +9073,95 @@ SPI_GETLISTBOXSMOOTHSCROLLING equ 0x1006
 SPI_SETLISTBOXSMOOTHSCROLLING equ 0x1007
 SPI_GETGRADIENTCAPTIONS equ 0x1008
 SPI_SETGRADIENTCAPTIONS equ 0x1009
-SPI_GETMENUUNDERLINES	equ 0x100A
-SPI_SETMENUUNDERLINES	equ 0x100B
+SPI_GETKEYBOARDCUES	equ 0x100A
+SPI_SETKEYBOARDCUES	equ 0x100B
+SPI_GETMENUUNDERLINES	equ SPI_GETKEYBOARDCUES
+SPI_SETMENUUNDERLINES	equ SPI_SETKEYBOARDCUES
 SPI_GETACTIVEWNDTRKZORDER equ 0x100C
 SPI_SETACTIVEWNDTRKZORDER equ 0x100D
 SPI_GETHOTTRACKING	equ 0x100E
 SPI_SETHOTTRACKING	equ 0x100F
+SPI_GETMENUFADE		equ 0x1012
+SPI_SETMENUFADE		equ 0x1013
+SPI_GETSELECTIONFADE	equ 0x1014
+SPI_SETSELECTIONFADE	equ 0x1015
+SPI_GETTOOLTIPANIMATION equ 0x1016
+SPI_SETTOOLTIPANIMATION equ 0x1017
+SPI_GETTOOLTIPFADE	equ 0x1018
+SPI_SETTOOLTIPFADE	equ 0x1019
+SPI_GETCURSORSHADOW	equ 0x101A
+SPI_SETCURSORSHADOW	equ 0x101B
+if(_WIN32_WINNT GE 0x0501)
+SPI_GETMOUSESONAR	equ 0x101C
+SPI_SETMOUSESONAR	equ 0x101D
+SPI_GETMOUSECLICKLOCK	equ 0x101E
+SPI_SETMOUSECLICKLOCK	equ 0x101F
+SPI_GETMOUSEVANISH	equ 0x1020
+SPI_SETMOUSEVANISH	equ 0x1021
+SPI_GETFLATMENU		equ 0x1022
+SPI_SETFLATMENU		equ 0x1023
+SPI_GETDROPSHADOW	equ 0x1024
+SPI_SETDROPSHADOW	equ 0x1025
+SPI_GETBLOCKSENDINPUTRESETS equ 0x1026
+SPI_SETBLOCKSENDINPUTRESETS equ 0x1027
+endif ;; _WIN32_WINNT GE 0x0501
+
+SPI_GETUIEFFECTS	equ 0x103E
+SPI_SETUIEFFECTS	equ 0x103F
+
+if(_WIN32_WINNT GE 0x0600)
+SPI_GETDISABLEOVERLAPPEDCONTENT equ 0x1040
+SPI_SETDISABLEOVERLAPPEDCONTENT equ 0x1041
+SPI_GETCLIENTAREAANIMATION equ 0x1042
+SPI_SETCLIENTAREAANIMATION equ 0x1043
+SPI_GETCLEARTYPE	equ 0x1048
+SPI_SETCLEARTYPE	equ 0x1049
+SPI_GETSPEECHRECOGNITION equ 0x104A
+SPI_SETSPEECHRECOGNITION equ 0x104B
+endif ;; _WIN32_WINNT GE 0x0600
+
 SPI_GETFOREGROUNDLOCKTIMEOUT equ 0x2000
 SPI_SETFOREGROUNDLOCKTIMEOUT equ 0x2001
 SPI_GETACTIVEWNDTRKTIMEOUT equ 0x2002
 SPI_SETACTIVEWNDTRKTIMEOUT equ 0x2003
 SPI_GETFOREGROUNDFLASHCOUNT equ 0x2004
 SPI_SETFOREGROUNDFLASHCOUNT equ 0x2005
+SPI_GETCARETWIDTH	equ 0x2006
+SPI_SETCARETWIDTH	equ 0x2007
+
+if(_WIN32_WINNT GE 0x0501)
+SPI_GETMOUSECLICKLOCKTIME equ 0x2008
+SPI_SETMOUSECLICKLOCKTIME equ 0x2009
+SPI_GETFONTSMOOTHINGTYPE equ 0x200A
+SPI_SETFONTSMOOTHINGTYPE equ 0x200B
+
+;; constants for SPI_GETFONTSMOOTHINGTYPE and SPI_SETFONTSMOOTHINGTYPE:
+FE_FONTSMOOTHINGSTANDARD equ 0x0001
+FE_FONTSMOOTHINGCLEARTYPE equ 0x0002
+
+SPI_GETFONTSMOOTHINGCONTRAST equ 0x200C
+SPI_SETFONTSMOOTHINGCONTRAST equ 0x200D
+
+SPI_GETFOCUSBORDERWIDTH equ 0x200E
+SPI_SETFOCUSBORDERWIDTH equ 0x200F
+SPI_GETFOCUSBORDERHEIGHT equ 0x2010
+SPI_SETFOCUSBORDERHEIGHT equ 0x2011
+
+SPI_GETFONTSMOOTHINGORIENTATION equ 0x2012
+SPI_SETFONTSMOOTHINGORIENTATION equ 0x2013
+
+;; constants for SPI_GETFONTSMOOTHINGORIENTATION and SPI_SETFONTSMOOTHINGORIENTATION:
+FE_FONTSMOOTHINGORIENTATIONBGR equ 0x0000
+FE_FONTSMOOTHINGORIENTATIONRGB equ 0x0001
+endif ;; _WIN32_WINNT GE 0x0501
+
+if(_WIN32_WINNT GE 0x0600)
+SPI_GETMINIMUMHITRADIUS equ 0x2014
+SPI_SETMINIMUMHITRADIUS equ 0x2015
+SPI_GETMESSAGEDURATION	equ 0x2016
+SPI_SETMESSAGEDURATION	equ 0x2017
+endif ;; _WIN32_WINNT GE 0x0600
+
 endif ;; WINVER GE 0x0500
 
 ;;
@@ -8075,9 +9191,12 @@ iMenuHeight		SINT ?
 lfMenuFont		LOGFONTA <>
 lfStatusFont		LOGFONTA <>
 lfMessageFont		LOGFONTA <>
+if(WINVER GE 0x0600)
+iPaddedBorderWidth	SINT ?
+endif ;; WINVER GE 0x0600
 NONCLIENTMETRICSA	ENDS
 PNONCLIENTMETRICSA	typedef ptr NONCLIENTMETRICSA
- LPNONCLIENTMETRICSA	typedef ptr NONCLIENTMETRICSA
+LPNONCLIENTMETRICSA	typedef ptr NONCLIENTMETRICSA
 NONCLIENTMETRICSW	STRUC
 cbSize			UINT ?
 iBorderWidth		SINT ?
@@ -8094,9 +9213,12 @@ iMenuHeight		SINT ?
 lfMenuFont		LOGFONTW <>
 lfStatusFont		LOGFONTW <>
 lfMessageFont		LOGFONTW <>
+if(WINVER GE 0x0600)
+iPaddedBorderWidth	SINT ?
+endif ;; WINVER GE 0x0600
 NONCLIENTMETRICSW	ENDS
 PNONCLIENTMETRICSW	typedef ptr NONCLIENTMETRICSW
- LPNONCLIENTMETRICSW	typedef ptr NONCLIENTMETRICSW
+LPNONCLIENTMETRICSW	typedef ptr NONCLIENTMETRICSW
 ifdef _UNICODE
 NONCLIENTMETRICS	typedef NONCLIENTMETRICSW
 PNONCLIENTMETRICS	typedef PNONCLIENTMETRICSW
@@ -8233,6 +9355,8 @@ HCF_CONFIRMHOTKEY	equ 0x00000008
 HCF_HOTKEYSOUND		equ 0x00000010
 HCF_INDICATOR		equ 0x00000020
 HCF_HOTKEYAVAILABLE	equ 0x00000040
+HCF_LOGONDESKTOP	equ 0x00000100
+HCF_DEFAULTDESKTOP	equ 0x00000200
 
 ;; Flags for ChangeDisplaySettings
 CDS_UPDATEREGISTRY	equ 0x00000001
@@ -8240,9 +9364,16 @@ CDS_TEST		equ 0x00000002
 CDS_FULLSCREEN		equ 0x00000004
 CDS_GLOBAL		equ 0x00000008
 CDS_SET_PRIMARY		equ 0x00000010
+CDS_VIDEOPARAMETERS	equ 0x00000020
+if(WINVER GE 0x0600)
+CDS_ENABLE_UNSAFE_MODES equ 0x00000100
+CDS_DISABLE_UNSAFE_MODES equ 0x00000200
+endif ;; WINVER GE 0x0600
 CDS_RESET		equ 0x40000000
 CDS_SETRECT		equ 0x20000000
 CDS_NORESET		equ 0x10000000
+
+include tvout.inc
 
 ;; Return values for ChangeDisplaySettings
 DISP_CHANGE_SUCCESSFUL	equ 0
@@ -8252,6 +9383,9 @@ DISP_CHANGE_BADMODE	equ -2
 DISP_CHANGE_NOTUPDATED	equ -3
 DISP_CHANGE_BADFLAGS	equ -4
 DISP_CHANGE_BADPARAM	equ -5
+if(_WIN32_WINNT GE 0x0501)
+DISP_CHANGE_BADDUALVIEW equ -6
+endif ;; _WIN32_WINNT GE 0x0501
 
 ifdef _WINGDI_
 ifndef NOGDI
@@ -8309,8 +9443,28 @@ else
 EnumDisplaySettings	equ <EnumDisplaySettingsA>
 endif ;; NOT UNICODE
 
-
 if(WINVER GE 0x0500)
+;BOOL
+EnumDisplaySettingsExA proto _CType \
+	lpszDeviceName: LPCSTR,
+	      iModeNum: DWORD,
+	     lpDevMode: LPDEVMODEA,
+	       dwFlags: DWORD
+EnumDisplaySettingsExW proto _CType \
+	lpszDeviceName: LPCWSTR,
+	      iModeNum: DWORD,
+	     lpDevMode: LPDEVMODEA,
+	       dwFlags: DWORD
+ifdef _UNICODE
+EnumDisplaySettingsEx	equ <EnumDisplaySettingsExW>
+else
+EnumDisplaySettingsEx	equ <EnumDisplaySettingsExA>
+endif ;; NOT UNICODE
+
+;; Flags for EnumDisplaySettingsEx
+EDS_RAWMODE		equ 0x00000002
+EDS_ROTATEDMODE		equ 0x00000004
+
 ;BOOL
 EnumDisplayDevicesA proto _CType \
 		Unused: PVOID,
@@ -8328,7 +9482,44 @@ EnumDisplayDevices	equ <EnumDisplayDevicesW>
 else
 EnumDisplayDevices	equ <EnumDisplayDevicesA>
 endif ;; NOT UNICODE
+
+;; Flags for EnumDisplayDevices
+EDD_GET_DEVICE_INTERFACE_NAME equ 0x00000001
+
 endif ;; WINVER GE 0x0500
+
+if(WINVER GE 0x0601)
+
+;LONG
+GetDisplayConfigBufferSizes proto _CType \
+		 flags: UINT,
+  numPathArrayElements: ptr UINT,
+numModeInfoArrayElements: ptr UINT
+
+;LONG
+SetDisplayConfig proto _CType \
+	     pathArray: ptr DISPLAYCONFIG_PATH_INFO,
+  numPathArrayElements: UINT,
+	 modeInfoArray: ptr DISPLAYCONFIG_MODE_INFO,
+		 flags: UINT
+
+;LONG
+QueryDisplayConfig proto _CType \
+		 flags: UINT,
+  numPathArrayElements: ptr UINT,
+	     pathArray: ptr DISPLAYCONFIG_PATH_INFO,
+	 modeInfoArray: ptr DISPLAYCONFIG_MODE_INFO,
+     currentTopologyId: ptr DISPLAYCONFIG_TOPOLOGY_ID
+
+;LONG
+DisplayConfigGetDeviceInfo proto _CType \
+	 requestPacket: ptr DISPLAYCONFIG_DEVICE_INFO_HEADER
+
+;LONG
+DisplayConfigSetDeviceInfo proto _CType \
+	     setPacket: ptr DISPLAYCONFIG_DEVICE_INFO_HEADER
+
+endif ;; WINVER GE 0x0601
 
 endif ;; NOGDI
 endif ;; _WINGDI_
@@ -8520,6 +9711,11 @@ SSF_SOUNDSENTRYON	equ 0x00000001
 SSF_AVAILABLE		equ 0x00000002
 SSF_INDICATOR		equ 0x00000004
 
+if(_WIN32_WINNT GE 0x0600)
+;BOOL
+SoundSentry proto _CType
+endif ;; _WIN32_WINNT GE 0x0600
+
 TOGGLEKEYS		STRUC
 cbSize			UINT ?
 dwFlags			dd ?
@@ -8535,6 +9731,15 @@ TKF_HOTKEYACTIVE	equ 0x00000004
 TKF_CONFIRMHOTKEY	equ 0x00000008
 TKF_HOTKEYSOUND		equ 0x00000010
 TKF_INDICATOR		equ 0x00000020
+
+if(_WIN32_WINNT GE 0x0600)
+AUDIODESCRIPTION	STRUC
+cbSize			UINT ?	;; sizeof(AudioDescriptionType)
+Enabled			BOOL ?	;; On/Off
+Locale			LCID ?	;; locale ID for language
+AUDIODESCRIPTION	ENDS
+LPAUDIODESCRIPTION	typedef ptr AUDIODESCRIPTION
+endif ;; _WIN32_WINNT GE 0x0600
 
 ;;
 ;; Set debug level
@@ -8596,7 +9801,6 @@ dwFlags			dd ?
 MONITORINFO		ENDS
 LPMONITORINFO		typedef ptr MONITORINFO
 
-ifdef __cplusplus
 MONITORINFOEXA		STRUC
 szDevice		db CCHDEVICENAME dup(?)
 MONITORINFOEXA		ENDS
@@ -8612,23 +9816,6 @@ else
 MONITORINFOEX		typedef MONITORINFOEXA
 LPMONITORINFOEX		typedef LPMONITORINFOEXA
 endif ;; UNICODE
-else ;; ndef __cplusplus
-MONITORINFOEXA		STRUC
-szDevice		db CCHDEVICENAME dup(?)
-MONITORINFOEXA		ENDS
-LPMONITORINFOEXA	typedef ptr MONITORINFOEXA
-MONITORINFOEXW		STRUC
-szDevice		dw CCHDEVICENAME dup(?)
-MONITORINFOEXW		ENDS
-LPMONITORINFOEXW	typedef ptr MONITORINFOEXW
-ifdef _UNICODE
-MONITORINFOEX		typedef MONITORINFOEXW
-LPMONITORINFOEX		typedef LPMONITORINFOEXW
-else
-MONITORINFOEX		typedef MONITORINFOEXA
-LPMONITORINFOEX		typedef LPMONITORINFOEXA
-endif ;; UNICODE
-endif
 
 ;BOOL
 GetMonitorInfoA proto _CType \
@@ -8682,6 +9869,25 @@ WINEVENTPROC_T typedef proto _CType \
 	 dwmsEventTime: DWORD
 
 WINEVENTPROC typedef ptr WINEVENTPROC_T
+
+if(_WIN32_WINNT GE 0x0501)
+;BOOL
+IsWinEventHookInstalled proto _CType \
+		 event: DWORD
+
+endif ;; _WIN32_WINNT GE 0x0501
+
+;;
+;; dwFlags for SetWinEventHook
+;;
+WINEVENT_OUTOFCONTEXT	equ 0x0000  ;; Events are ASYNC
+WINEVENT_SKIPOWNTHREAD	equ 0x0001  ;; Don't call back for events on installer's thread
+WINEVENT_SKIPOWNPROCESS equ 0x0002  ;; Don't call back for events on installer's process
+WINEVENT_INCONTEXT	equ 0x0004  ;; Events are SYNC, this causes your dll to be injected into every process
+
+;BOOL
+UnhookWinEvent proto _CType \
+	 hWinEventHook: HWINEVENTHOOK
 
 ;;
 ;; idObject values for WinEventProc and NotifyWinEvent
@@ -8885,7 +10091,49 @@ EVENT_SYSTEM_SWITCHEND	equ 0x0015
 EVENT_SYSTEM_MINIMIZESTART equ 0x0016
 EVENT_SYSTEM_MINIMIZEEND equ 0x0017
 
+if(_WIN32_WINNT GE 0x0600)
+EVENT_SYSTEM_DESKTOPSWITCH equ 0x0020
+endif ;; _WIN32_WINNT GE 0x0600
 
+if(_WIN32_WINNT GE 0x0601)
+EVENT_SYSTEM_END	equ 0x00FF
+
+EVENT_OEM_DEFINED_START equ 0x0101
+EVENT_OEM_DEFINED_END	equ 0x01FF
+
+EVENT_UIA_EVENTID_START equ 0x4E00
+EVENT_UIA_EVENTID_END	equ 0x4EFF
+
+EVENT_UIA_PROPID_START	equ 0x7500
+EVENT_UIA_PROPID_END	equ 0x75FF
+endif ;; _WIN32_WINNT GE 0x0601
+
+if(_WIN32_WINNT GE 0x0501)
+EVENT_CONSOLE_CARET	equ 0x4001
+EVENT_CONSOLE_UPDATE_REGION equ 0x4002
+EVENT_CONSOLE_UPDATE_SIMPLE equ 0x4003
+EVENT_CONSOLE_UPDATE_SCROLL equ 0x4004
+EVENT_CONSOLE_LAYOUT	equ 0x4005
+EVENT_CONSOLE_START_APPLICATION equ 0x4006
+EVENT_CONSOLE_END_APPLICATION equ 0x4007
+;;
+;; Flags for EVENT_CONSOLE_START/END_APPLICATION.
+;;
+ifdef _WIN64
+CONSOLE_APPLICATION_16BIT equ 0x0000
+else
+CONSOLE_APPLICATION_16BIT equ 0x0001
+endif
+;;
+;; Flags for EVENT_CONSOLE_CARET
+;;
+CONSOLE_CARET_SELECTION equ 0x0001
+CONSOLE_CARET_VISIBLE	equ 0x0002
+endif ;; _WIN32_WINNT GE 0x0501
+
+if(_WIN32_WINNT GE 0x0601)
+EVENT_CONSOLE_END	equ 0x40FF
+endif ;; _WIN32_WINNT GE 0x0601
 
 ;;
 ;; Object events
@@ -9063,6 +10311,39 @@ EVENT_OBJECT_HELPCHANGE equ 0x8010  ;; hwnd + ID + idChild is item w/ help chang
 EVENT_OBJECT_DEFACTIONCHANGE equ 0x8011	 ;; hwnd + ID + idChild is item w/ def action change
 EVENT_OBJECT_ACCELERATORCHANGE equ 0x8012  ;; hwnd + ID + idChild is item w/ keybd accel change
 
+if(_WIN32_WINNT GE 0x0600)
+EVENT_OBJECT_INVOKED	equ 0x8013  ;; hwnd + ID + idChild is item invoked
+EVENT_OBJECT_TEXTSELECTIONCHANGED equ 0x8014  ;; hwnd + ID + idChild is item w? test selection change
+;;
+;; EVENT_OBJECT_CONTENTSCROLLED
+;; Sent when ending the scrolling of a window object.
+;;
+;; Unlike the similar event (EVENT_SYSTEM_SCROLLEND), this event will be
+;; associated with the scrolling window itself. There is no difference
+;; between horizontal or vertical scrolling.
+;;
+;; This event should be posted whenever scroll action is completed, including
+;; when it is scrolled by scroll bars, mouse wheel, or keyboard navigations.
+;;
+;;   example:
+;;	    hwnd == window that is scrolling
+;;	    idObject == OBJID_CLIENT
+;;	    idChild == CHILDID_SELF
+;;
+EVENT_OBJECT_CONTENTSCROLLED equ 0x8015
+endif ;; _WIN32_WINNT GE 0x0600
+
+if(_WIN32_WINNT GE 0x0601)
+EVENT_SYSTEM_ARRANGMENTPREVIEW equ 0x8016
+endif ;; _WIN32_WINNT GE 0x0601
+
+if(_WIN32_WINNT GE 0x0601)
+EVENT_OBJECT_END	equ 0x80FF
+
+EVENT_AIA_START		equ 0xA000
+EVENT_AIA_END		equ 0xAFFF
+endif ;; _WIN32_WINNT GE 0x0601
+
 ;;
 ;; Child IDs
 ;;
@@ -9138,11 +10419,30 @@ GUI_INMOVESIZE		equ 0x00000002
 GUI_INMENUMODE		equ 0x00000004
 GUI_SYSTEMMENUMODE	equ 0x00000008
 GUI_POPUPMENUMODE	equ 0x00000010
+if(_WIN32_WINNT GE 0x0501)
+ifdef _WIN64
+GUI_16BITTASK		equ 0x00000000
+else
+GUI_16BITTASK		equ 0x00000020
+endif
+endif ;; _WIN32_WINNT GE 0x0501
+
+if(_WIN32_WINNT GE 0x0600)
+USER_DEFAULT_SCREEN_DPI equ 96
+;BOOL
+SetProcessDPIAware proto _CType
+;BOOL
+IsProcessDPIAware proto _CType
+endif ;; _WIN32_WINNT GE 0x0600
 
 ;BOOL
 GetGUIThreadInfo proto _CType \
 	      idThread: DWORD,
 		  pgui: PGUITHREADINFO
+;BOOL
+BlockInput proto _CType \
+	      fBlockIt: BOOL
+
 
 ;UINT
 GetWindowModuleFileNameA proto _CType \
@@ -9254,6 +10554,16 @@ GetTitleBarInfo proto _CType \
 		  hwnd: HWND,
 		   pti: PTITLEBARINFO
 
+if(WINVER GE 0x0600)
+TITLEBARINFOEX		STRUC
+cbSize			dd ?
+rcTitleBar		RECT <>
+rgstate			dd CCHILDREN_TITLEBAR + 1 dup(?)
+rgrect			RECT CCHILDREN_TITLEBAR + 1 dup(<>)
+TITLEBARINFOEX		ENDS
+PTITLEBARINFOEX		typedef ptr TITLEBARINFOEX
+LPTITLEBARINFOEX	typedef ptr TITLEBARINFOEX
+endif ;; WINVER GE 0x0600
 ;;
 ;; Menubar information
 ;;
@@ -9431,6 +10741,639 @@ UserHandleGrantAccess proto _CType \
 		  hJob: HANDLE
 
 endif ;; _WIN32_WINNT GE 0x0500
+
+if(_WIN32_WINNT GE 0x0501)
+
+;;
+;; Raw Input Messages.
+;;
+
+HRAWINPUT		typedef HANDLE
+
+;;
+;; WM_INPUT wParam
+;;
+
+;;
+;; Use this macro to get the input code from wParam.
+;;
+GET_RAWINPUT_CODE_WPARAM macro wParam
+	exitm<((wParam) AND 0xff)>
+	endm
+
+;;
+;; The input is in the regular message flow,
+;; the app is required to call DefWindowProc
+;; so that the system can perform clean ups.
+;;
+RIM_INPUT		equ 0
+
+;;
+;; The input is sink only. The app is expected
+;; to behave nicely.
+;;
+RIM_INPUTSINK		equ 1
+
+
+;;
+;; Raw Input data header
+;;
+RAWINPUTHEADER		STRUC
+dwType			dd ?
+dwSize			dd ?
+hDevice			HANDLE ?
+wParam			WPARAM ?
+RAWINPUTHEADER		ENDS
+PRAWINPUTHEADER		typedef ptr RAWINPUTHEADER
+LPRAWINPUTHEADER	typedef ptr RAWINPUTHEADER
+
+;;
+;; Type of the raw input
+;;
+RIM_TYPEMOUSE		equ 0
+RIM_TYPEKEYBOARD	equ 1
+RIM_TYPEHID		equ 2
+
+;;
+;; Raw format of the mouse input
+;;
+RAWMOUSE		STRUC
+usFlags			dw ?
+UNION
+ ulButtons		dd ?
+ STRUC
+  usButtonFlags		dw ?
+  usButtonData		dw ?
+ ENDS
+ENDS
+ulRawButtons		dd ?
+lLastX			LONG ?
+lLastY			LONG ?
+ulExtraInformation	ULONG ?
+RAWMOUSE		ENDS
+PRAWMOUSE		typedef ptr RAWMOUSE
+LPRAWMOUSE		typedef ptr RAWMOUSE
+
+;;
+;; Define the mouse button state indicators.
+;;
+
+RI_MOUSE_LEFT_BUTTON_DOWN   equ 0x0001	;; Left Button changed to down.
+RI_MOUSE_LEFT_BUTTON_UP	    equ 0x0002	;; Left Button changed to up.
+RI_MOUSE_RIGHT_BUTTON_DOWN  equ 0x0004	;; Right Button changed to down.
+RI_MOUSE_RIGHT_BUTTON_UP    equ 0x0008	;; Right Button changed to up.
+RI_MOUSE_MIDDLE_BUTTON_DOWN equ 0x0010	;; Middle Button changed to down.
+RI_MOUSE_MIDDLE_BUTTON_UP   equ 0x0020	;; Middle Button changed to up.
+
+RI_MOUSE_BUTTON_1_DOWN	equ RI_MOUSE_LEFT_BUTTON_DOWN
+RI_MOUSE_BUTTON_1_UP	equ RI_MOUSE_LEFT_BUTTON_UP
+RI_MOUSE_BUTTON_2_DOWN	equ RI_MOUSE_RIGHT_BUTTON_DOWN
+RI_MOUSE_BUTTON_2_UP	equ RI_MOUSE_RIGHT_BUTTON_UP
+RI_MOUSE_BUTTON_3_DOWN	equ RI_MOUSE_MIDDE_BUTTON_DOWN
+RI_MOUSE_BUTTON_3_UP	equ RI_MOUSE_MIDDE_BUTTON_UP
+
+RI_MOUSE_BUTTON_4_DOWN	equ 0x0040
+RI_MOUSE_BUTTON_4_UP	equ 0x0080
+RI_MOUSE_BUTTON_5_DOWN	equ 0x0100
+RI_MOUSE_BUTTON_5_UP	equ 0x0200
+
+;;
+;; If usButtonFlags has RI_MOUSE_WHEEL, the wheel delta is stored in usButtonData.
+;; Take it as a signed value.
+;;
+RI_MOUSE_WHEEL		equ 0x0400
+
+;;
+;; Define the mouse indicator flags.
+;;
+MOUSE_MOVE_RELATIVE	equ 0
+MOUSE_MOVE_ABSOLUTE	equ 1
+MOUSE_VIRTUAL_DESKTOP	equ 0x02  ;; the coordinates are mapped to the virtual desktop
+MOUSE_ATTRIBUTES_CHANGED equ 0x04  ;; requery for mouse attributes
+if(WINVER GE 0x0600)
+MOUSE_MOVE_NOCOALESCE	equ 0x08  ;; do not coalesce mouse moves
+endif ;; WINVER GE 0x0600
+
+;;
+;; Raw format of the keyboard input
+;;
+RAWKEYBOARD		STRUC
+MakeCode		dw ?
+Flags			dw ?
+Reserved		dw ?
+VKey			dw ?
+Message			UINT ?
+ExtraInformation	ULONG ?
+RAWKEYBOARD		ENDS
+PRAWKEYBOARD		typedef ptr RAWKEYBOARD
+LPRAWKEYBOARD		typedef ptr RAWKEYBOARD
+
+;;
+;; Define the keyboard overrun MakeCode.
+;;
+
+KEYBOARD_OVERRUN_MAKE_CODE equ 0xFF
+
+;;
+;; Define the keyboard input data Flags.
+;;
+RI_KEY_MAKE		equ 0
+RI_KEY_BREAK		equ 1
+RI_KEY_E0		equ 2
+RI_KEY_E1		equ 4
+RI_KEY_TERMSRV_SET_LED	equ 8
+RI_KEY_TERMSRV_SHADOW	equ 0x10
+
+
+;;
+;; Raw format of the input from Human Input Devices
+;;
+RAWHID			STRUC
+dwSizeHid		dd ?	;; byte size of each report
+dwCount			dd ?	;; number of input packed
+bRawData		db ?
+RAWHID			ENDS
+PRAWHID			typedef ptr RAWHID
+LPRAWHID		typedef ptr RAWHID
+
+;;
+;; RAWINPUT data structure.
+;;
+RAWINPUT		STRUC
+header			RAWINPUTHEADER <>
+UNION data
+ mouse			RAWMOUSE <>
+ keyboard		RAWKEYBOARD <>
+ hid			RAWHID <>
+ENDS
+RAWINPUT		ENDS
+PRAWINPUT		typedef ptr RAWINPUT
+LPRAWINPUT		typedef ptr RAWINPUT
+
+ifdef _WIN64
+RAWINPUT_ALIGN macro x
+	exitm<(((x) + sizeof(QWORD) - 1) AND NOT (sizeof(QWORD) - 1))>
+	endm
+else   ;; _WIN64
+RAWINPUT_ALIGN macro x
+	exitm<(((x) + sizeof(DWORD) - 1) AND NOT (sizeof(DWORD) - 1))>
+	endm
+endif  ;; _WIN64
+
+NEXTRAWINPUTBLOCK macro p
+	exitm<RAWINPUT_ALIGN(p + p.header.dwSize)>
+	endm
+
+;;
+;; Flags for GetRawInputData
+;;
+
+RID_INPUT		equ 0x10000003
+RID_HEADER		equ 0x10000005
+
+;UINT
+GetRawInputData proto _CType \
+	     hRawInput: HRAWINPUT,
+	     uiCommand: UINT,
+		 pData: LPVOID,
+	       pcbSize: PUINT,
+	  cbSizeHeader: UINT
+
+;;
+;; Raw Input Device Information
+;;
+RIDI_PREPARSEDDATA	equ 0x20000005
+RIDI_DEVICENAME		equ 0x20000007	;; the return valus is the character length, not the byte size
+RIDI_DEVICEINFO		equ 0x2000000b
+
+RID_DEVICE_INFO_MOUSE	STRUC
+dwId			dd ?
+dwNumberOfButtons	dd ?
+dwSampleRate		dd ?
+fHasHorizontalWheel	BOOL ?
+RID_DEVICE_INFO_MOUSE	ENDS
+PRID_DEVICE_INFO_MOUSE	typedef ptr RID_DEVICE_INFO_MOUSE
+
+RID_DEVICE_INFO_KEYBOARD  STRUC
+dwType			dd ?
+dwSubType		dd ?
+dwKeyboardMode		dd ?
+dwNumberOfFunctionKeys	dd ?
+dwNumberOfIndicators	dd ?
+dwNumberOfKeysTotal	dd ?
+RID_DEVICE_INFO_KEYBOARD ENDS
+PRID_DEVICE_INFO_KEYBOARD typedef ptr RID_DEVICE_INFO_KEYBOARD
+
+RID_DEVICE_INFO_HID	STRUC
+dwVendorId		dd ?
+dwProductId		dd ?
+dwVersionNumber		dd ?
+usUsagePage		dw ?
+usUsage			dw ?
+RID_DEVICE_INFO_HID	ENDS
+PRID_DEVICE_INFO_HID	typedef ptr RID_DEVICE_INFO_HID
+
+RID_DEVICE_INFO		STRUC
+cbSize			dd ?
+dwType			dd ?
+UNION
+ mouse			RID_DEVICE_INFO_MOUSE <>
+ keyboard		RID_DEVICE_INFO_KEYBOARD <>
+ hid			RID_DEVICE_INFO_HID <>
+ENDS
+RID_DEVICE_INFO		ENDS
+PRID_DEVICE_INFO	typedef ptr RID_DEVICE_INFO
+LPRID_DEVICE_INFO	typedef ptr RID_DEVICE_INFO
+
+;UINT
+GetRawInputDeviceInfoA proto _CType \
+	       hDevice: HANDLE,
+	     uiCommand: UINT,
+		 pData: LPVOID,
+	       pcbSize: PUINT
+GetRawInputDeviceInfoW proto _CType \
+	       hDevice: HANDLE,
+	     uiCommand: UINT,
+		 pData: LPVOID,
+	       pcbSize: PUINT
+ifdef _UNICODE
+GetRawInputDeviceInfo	equ <GetRawInputDeviceInfoW>
+else
+GetRawInputDeviceInfo	equ <GetRawInputDeviceInfoA>
+endif ;; NOT UNICODE
+
+
+;UINT
+GetRawInputBuffer proto _CType \
+		 pData: PRAWINPUT,
+	       pcbSize: PUINT,
+	  cbSizeHeader: UINT
+
+;;
+;; Raw Input request APIs
+;;
+RAWINPUTDEVICE		STRUC
+usUsagePage		dw ?	;; Toplevel collection UsagePage
+usUsage			dw ?	;; Toplevel collection Usage
+dwFlags			dd ?
+hwndTarget		HWND ?	;; Target hwnd. NULL = follows keyboard focus
+RAWINPUTDEVICE		ENDS
+PRAWINPUTDEVICE		typedef ptr RAWINPUTDEVICE
+LPRAWINPUTDEVICE	typedef ptr RAWINPUTDEVICE
+PCRAWINPUTDEVICE	typedef ptr RAWINPUTDEVICE
+
+RIDEV_REMOVE		equ 0x00000001
+RIDEV_EXCLUDE		equ 0x00000010
+RIDEV_PAGEONLY		equ 0x00000020
+RIDEV_NOLEGACY		equ 0x00000030
+RIDEV_INPUTSINK		equ 0x00000100
+RIDEV_CAPTUREMOUSE	equ 0x00000200	;; effective when mouse nolegacy is specified, otherwise it would be an error
+RIDEV_NOHOTKEYS		equ 0x00000200	;; effective for keyboard.
+RIDEV_APPKEYS		equ 0x00000400	;; effective for keyboard.
+if(_WIN32_WINNT GE 0x0501)
+RIDEV_EXINPUTSINK	equ 0x00001000
+RIDEV_DEVNOTIFY		equ 0x00002000
+endif ;; _WIN32_WINNT GE 0x0501
+RIDEV_EXMODEMASK	equ 0x000000F0
+
+RIDEV_EXMODE macro m
+	exitm<((m) AND RIDEV_EXMODEMASK)>
+	endm
+
+if(_WIN32_WINNT GE 0x0501)
+;;
+;; Flags for the WM_INPUT_DEVICE_CHANGE message.
+;;
+GIDC_ARRIVAL		equ 1
+GIDC_REMOVAL		equ 2
+endif ;; _WIN32_WINNT GE 0x0501
+
+if (_WIN32_WINNT GE 0x0601)
+GET_DEVICE_CHANGE_WPARAM macro wParam
+	exitm<(LOWORD(wParam))>
+	endm
+elseif (_WIN32_WINNT GE 0x0501)
+GET_DEVICE_CHANGE_LPARAM macro lParam
+	exitm<(LOWORD(lParam))>
+	endm
+endif ;; (_WIN32_WINNT GE 0x0601)
+
+;BOOL
+RegisterRawInputDevices proto _CType \
+      pRawInputDevices: PCRAWINPUTDEVICE,
+	  uiNumDevices: UINT,
+		cbSize: UINT
+;UINT
+GetRegisteredRawInputDevices proto _CType \
+      pRawInputDevices: PCRAWINPUTDEVICE,
+	 puiNumDevices: PUINT,
+		cbSize: UINT
+
+RAWINPUTDEVICELIST	STRUC
+hDevice			HANDLE ?
+dwType			dd ?
+RAWINPUTDEVICELIST	ENDS
+PRAWINPUTDEVICELIST	typedef ptr RAWINPUTDEVICELIST
+
+;UINT
+GetRawInputDeviceList proto _CType \
+   pRawInputDeviceList: PRAWINPUTDEVICELIST,
+	 puiNumDevices: PUINT,
+		cbSize: UINT
+
+;LRESULT
+DefRawInputProc proto _CType \
+	    paRawInput: ptr PRAWINPUT,
+		nInput: SINT,
+	  cbSizeHeader: UINT
+
+endif ;; _WIN32_WINNT GE 0x0501
+
+
+if(WINVER GE 0x0600)
+
+;;
+;; Message Filter
+;;
+
+MSGFLT_ADD		equ 1
+MSGFLT_REMOVE		equ 2
+
+;BOOL
+ChangeWindowMessageFilter proto _CType \
+	       message: UINT,
+		dwFlag: DWORD
+
+
+endif ;; WINVER GE 0x0600
+
+if(WINVER GE 0x0601)
+
+;;
+;; Message filter info values (CHANGEFILTERSTRUCT.ExtStatus)
+;;
+MSGFLTINFO_NONE				equ 0
+MSGFLTINFO_ALREADYALLOWED_FORWND	equ 1
+MSGFLTINFO_ALREADYDISALLOWED_FORWND	equ 2
+MSGFLTINFO_ALLOWED_HIGHER		equ 3
+
+CHANGEFILTERSTRUCT	STRUC
+cbSize			dd ?
+ExtStatus		dd ?
+CHANGEFILTERSTRUCT	ENDS
+PCHANGEFILTERSTRUCT	typedef ptr CHANGEFILTERSTRUCT
+
+;;
+;; Message filter action values (action parameter to ChangeWindowMessageFilterEx)
+;;
+MSGFLT_RESET		equ 0
+MSGFLT_ALLOW		equ 1
+MSGFLT_DISALLOW		equ 2
+
+;BOOL
+ChangeWindowMessageFilterEx proto _CType \
+		  hwnd: HWND,
+	       message: UINT,
+		action: DWORD,
+   pChangeFilterStruct: PCHANGEFILTERSTRUCT
+
+
+endif ;; WINVER GE 0x0601
+
+
+if(WINVER GE 0x0601)
+
+;;
+;; Gesture defines and functions
+;;
+
+;;
+;; Gesture information handle
+;;
+HGESTUREINFO		typedef HANDLE
+
+
+;;
+;; Gesture flags - GESTUREINFO.dwFlags
+;;
+GF_BEGIN		equ 0x00000001
+GF_INERTIA		equ 0x00000002
+GF_END			equ 0x00000004
+
+;;
+;; Gesture IDs
+;;
+GID_BEGIN		equ 1
+GID_END			equ 2
+GID_ZOOM		equ 3
+GID_PAN			equ 4
+GID_ROTATE		equ 5
+GID_TWOFINGERTAP	equ 6
+GID_PRESSANDTAP		equ 7
+GID_ROLLOVER		equ GID_PRESSANDTAP
+
+;;
+;; Gesture information structure
+;;   - Pass the HGESTUREINFO received in the WM_GESTURE message lParam into the
+;;     GetGestureInfo function to retrieve this information.
+;;   - If cbExtraArgs is non-zero, pass the HGESTUREINFO received in the WM_GESTURE
+;;     message lParam into the GetGestureExtraArgs function to retrieve extended
+;;     argument information.
+;;
+GESTUREINFO		STRUC
+cbSize			UINT ?	;; size, in bytes, of this structure (including variable length Args field)
+dwFlags			dd ?	;; see GF_* flags
+dwID			dd ?	;; gesture ID, see GID_* defines
+hwndTarget		HWND ?	;; handle to window targeted by this gesture
+ptsLocation		POINTS <> ;; current location of this gesture
+dwInstanceID		dd ?	;; internally used
+dwSequenceID		dd ?	;; internally used
+ullArguments		ULONGLONG ?	;; arguments for gestures whose arguments fit in 8 BYTES
+cbExtraArgs		UINT ?	;; size, in bytes, of extra arguments, if any, that accompany this gesture
+GESTUREINFO		ENDS
+PGESTUREINFO		typedef ptr GESTUREINFO
+PCGESTUREINFO		typedef ptr GESTUREINFO
+
+
+;;
+;; Gesture notification structure
+;;   - The WM_GESTURENOTIFY message lParam contains a pointer to this structure.
+;;   - The WM_GESTURENOTIFY message notifies a window that gesture recognition is
+;;     in progress and a gesture will be generated if one is recognized under the
+;;     current gesture settings.
+;;
+GESTURENOTIFYSTRUCT	STRUC
+cbSize			UINT ?	;; size, in bytes, of this structure
+dwFlags			dd ?	;; unused
+hwndTarget		HWND ?	;; handle to window targeted by the gesture
+ptsLocation		POINTS <> ;; starting location
+dwInstanceID		dd ?	;; internally used
+GESTURENOTIFYSTRUCT	ENDS
+PGESTURENOTIFYSTRUCT	typedef ptr GESTURENOTIFYSTRUCT
+
+;;
+;; Gesture argument helpers
+;;   - Angle should be a double in the range of -2pi to +2pi
+;;   - Argument should be an unsigned 16-bit value
+;;
+GID_ROTATE_ANGLE_TO_ARGUMENT macro _arg_
+	exitm<((((_arg_ + 2.0 * 3.14159265) / (4.0 * 3.14159265)) * 65535.0))>
+	endm
+GID_ROTATE_ANGLE_FROM_ARGUMENT macro _arg_
+	exitm<(((_arg_ / 65535.0) * 4.0 * 3.14159265) - 2.0 * 3.14159265)>
+	endm
+
+;;
+;; Gesture information retrieval
+;;   - HGESTUREINFO is received by a window in the lParam of a WM_GESTURE message.
+;;
+;BOOL
+GetGestureInfo proto _CType \
+	  hGestureInfo: HGESTUREINFO,
+	  pGestureInfo: PGESTUREINFO
+
+;;
+;; Gesture extra arguments retrieval
+;;   - HGESTUREINFO is received by a window in the lParam of a WM_GESTURE message.
+;;   - Size, in bytes, of the extra argument data is available in the cbExtraArgs
+;;     field of the GESTUREINFO structure retrieved using the GetGestureInfo function.
+;;
+;BOOL
+GetGestureExtraArgs proto _CType \
+	  hGestureInfo: HGESTUREINFO,
+	   cbExtraArgs: UINT,
+	    pExtraArgs: PBYTE
+
+;;
+;; Gesture information handle management
+;;   - If an application processes the WM_GESTURE message, then once it is done
+;;     with the associated HGESTUREINFO, the application is responsible for
+;;     closing the handle using this function. Failure to do so may result in
+;;     process memory leaks.
+;;   - If the message is instead passed to DefWindowProc, or is forwarded using
+;;     one of the PostMessage or SendMessage class of API functions, the handle
+;;     is transfered with the message and need not be closed by the application.
+;;
+;BOOL
+CloseGestureInfoHandle proto _CType \
+	  hGestureInfo: HGESTUREINFO
+
+
+
+;;
+;; Gesture configuration structure
+;;   - Used in SetGestureConfig and GetGestureConfig
+;;   - Note that any setting not included in either GESTURECONFIG.dwWant or
+;;     GESTURECONFIG.dwBlock will use the parent window's preferences or
+;;     system defaults.
+;;
+GESTURECONFIG		STRUC
+dwID			dd ?	;; gesture ID
+dwWant			dd ?	;; settings related to gesture ID that are to be turned on
+dwBlock			dd ?	;; settings related to gesture ID that are to be turned off
+GESTURECONFIG		ENDS
+PGESTURECONFIG		typedef ptr GESTURECONFIG
+
+;;
+;; Gesture configuration flags - GESTURECONFIG.dwWant or GESTURECONFIG.dwBlock
+;;
+
+;;
+;; Common gesture configuration flags - set GESTURECONFIG.dwID to zero
+;;
+GC_ALLGESTURES		equ 0x00000001
+
+;;
+;; Zoom gesture configuration flags - set GESTURECONFIG.dwID to GID_ZOOM
+;;
+GC_ZOOM			equ 0x00000001
+
+;;
+;; Pan gesture configuration flags - set GESTURECONFIG.dwID to GID_PAN
+;;
+GC_PAN			equ 0x00000001
+GC_PAN_WITH_SINGLE_FINGER_VERTICALLY equ 0x00000002
+GC_PAN_WITH_SINGLE_FINGER_HORIZONTALLY equ 0x00000004
+GC_PAN_WITH_GUTTER	equ 0x00000008
+GC_PAN_WITH_INERTIA	equ 0x00000010
+
+;;
+;; Rotate gesture configuration flags - set GESTURECONFIG.dwID to GID_ROTATE
+;;
+GC_ROTATE		equ 0x00000001
+
+;;
+;; Two finger tap gesture configuration flags - set GESTURECONFIG.dwID to GID_TWOFINGERTAP
+;;
+GC_TWOFINGERTAP		equ 0x00000001
+
+;;
+;; PressAndTap gesture configuration flags - set GESTURECONFIG.dwID to GID_PRESSANDTAP
+;;
+GC_PRESSANDTAP		equ 0x00000001
+GC_ROLLOVER		equ GC_PRESSANDTAP
+
+GESTURECONFIGMAXCOUNT	equ 256		    ;; Maximum number of gestures that can be included
+							;; in a single call to SetGestureConfig / GetGestureConfig
+
+;BOOL
+SetGestureConfig proto _CType \
+		  hwnd: HWND ,
+	    dwReserved: DWORD,
+		  cIDs: UINT,
+	pGestureConfig: PGESTURECONFIG,
+		cbSize: UINT
+
+GCF_INCLUDE_ANCESTORS	equ 0x00000001	    ;; If specified, GetGestureConfig returns consolidated configuration
+							;; for the specified window and it's parent window chain
+;BOOL
+GetGestureConfig proto _CType \
+		 hwnd: HWND,
+	   dwReserved: DWORD,
+	      dwFlags: DWORD,
+		pcIDs: PUINT,
+       pGestureConfig: PGESTURECONFIG,
+	       cbSize: UINT		;; sizeof(GESTURECONFIG)
+
+endif ;; WINVER GE 0x0601
+
+if(WINVER GE 0x0601)
+
+;;
+;; GetSystemMetrics(SM_DIGITIZER) flag values
+;;
+NID_INTEGRATED_TOUCH	equ 0x00000001
+NID_EXTERNAL_TOUCH	equ 0x00000002
+NID_INTEGRATED_PEN	equ 0x00000004
+NID_EXTERNAL_PEN	equ 0x00000008
+NID_MULTI_INPUT		equ 0x00000040
+NID_READY		equ 0x00000080
+
+endif ;; WINVER GE 0x0601
+
+
+MAX_STR_BLOCKREASON	equ 256
+
+;BOOL
+ShutdownBlockReasonCreate proto _CType \
+		  hWnd: HWND,
+	    pwszReason: LPCWSTR
+
+;BOOL
+ShutdownBlockReasonQuery proto _CType \
+		  hWnd: HWND,
+	      pwszBuff: LPWSTR,
+	      pcchBuff: ptr DWORD
+
+;BOOL
+ShutdownBlockReasonDestroy proto _CType \
+		  hWnd: HWND
+
+ifdef ISOLATION_AWARE_ENABLED
+if ISOLATION_AWARE_ENABLED
+include winuser.inl
+endif ;; ISOLATION_AWARE_ENABLED
+
 endif ;; NOT _WINUSER_
 
 .list

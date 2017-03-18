@@ -132,11 +132,7 @@ endif
 		add	format,1
 		movzx	eax,BYTE PTR [eax]
 		mov	edx,eax
-
-		.if !eax || charsout > INT_MAX
-
-			.break
-		.endif
+		.break .if !eax || charsout > INT_MAX
 
 		.if eax >= ' ' && eax <= 'x'
 

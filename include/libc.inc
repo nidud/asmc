@@ -1,100 +1,84 @@
+ifndef __LIBC_INC
 ;
 ; Master include file for the Asmc RTL library.
 ;
 .xlist
-ifndef __LIBC_INC
-__LIBC_INC equ 1
+__LIBC_INC	equ 223	 ;; Asmc Version 2.23
+__STDC__	equ 1
 
-;
-; Version management functions, types, and definitions
-;
+include sdkddkver.inc
 
-TRUE	equ 1
-FALSE	equ 0
-NULL	equ 0
-
-defined macro x
-	ifdef x
-	    exitm<1>
-	else
-	    exitm<0>
-	endif
-	endm
-
+ifndef _MSC_VER
 ;;
-;; _WIN32_WINNT version constants
+;; _MSC_VER Defined as an integer literal that encodes the major and minor number
+;; elements of the compiler's version number. The major number is the first
+;; element of the period-delimited version number and the minor number is the
+;; second element. For example, if the version number of the Visual C++ compiler
+;; is 17.00.51106.1, the _MSC_VER macro evaluates to 1700. Enter cl /? at the
+;; command line to view the compiler's version number. This macro is always defined.
 ;;
-_WIN32_WINNT_NT4		equ 0x0400 ;; Windows NT 4.0
-_WIN32_WINNT_WIN2K		equ 0x0500 ;; Windows 2000
-_WIN32_WINNT_WINXP		equ 0x0501 ;; Windows XP
-_WIN32_WINNT_WS03		equ 0x0502 ;; Windows Server 2003
-_WIN32_WINNT_WIN6		equ 0x0600 ;; Windows Vista
-_WIN32_WINNT_VISTA		equ 0x0600 ;; Windows Vista
-_WIN32_WINNT_WS08		equ 0x0600 ;; Windows Server 2008
-_WIN32_WINNT_LONGHORN		equ 0x0600 ;; Windows Vista
-_WIN32_WINNT_WIN7		equ 0x0601 ;; Windows 7
-_WIN32_WINNT_WIN8		equ 0x0602 ;; Windows 8
-_WIN32_WINNT_WINBLUE		equ 0x0603 ;; Windows 8.1
-_WIN32_WINNT_WINTHRESHOLD	equ 0x0A00 ;; Windows 10
-_WIN32_WINNT_WIN10		equ 0x0A00 ;; Windows 10
-
-ifndef WINVER
-ifdef _WIN95
-WINVER equ _WIN32_WINNT_NT4
-else
-WINVER equ _WIN32_WINNT_WS03
-endif
+_MSC_VER	equ 1200 ;; Visual C++ version 12.0
 endif
 
-ifndef _WIN32_WINNT
-_WIN32_WINNT equ WINVER
-endif
-ifndef __STDC__
-__STDC__  equ 1
+ifndef _MSC_FULL_VER
+;;
+;; _MSC_FULL_VER Defined as an integer literal that encodes the major, minor,
+;; and build number elements of the compiler's version number. The major number
+;; is the first element of the period-delimited version number, the minor number
+;; is the second element, and the build number is the third element. For example,
+;; if the version number of the Visual C++ compiler is 15.00.20706.01, the
+;; _MSC_FULL_VER macro evaluates to 150020706. Enter cl /? at the command line
+;; to view the compiler's version number. This macro is always defined.
+;;
+_MSC_FULL_VER	equ 120000000 ;; Visual C++ version 12.0
 endif
 
 ifdef _WIN64
-ifdef __PE__		; For Asmc -pe
+option	win64:3 ; Standard stack frame
+ ifdef __PE__	; For Asmc -pe
 	.x64
-	.model	FLAT, FASTCALL
-endif	; __PE__
-	option	WIN64:3		; Standard stack frame
-
-else	;; !_WIN64
-
+	.model	flat, fastcall
+ endif
+_CDecl	equ <>	; fastcall
+_CType	equ <>	; fastcall
+else
 	.486
 if defined(_MSVCRT) or defined(__PE__)
 	.model	flat, c
 else
 	.model	flat, stdcall
 endif
-
 ifdef __SSE__
 	.686
 	.XMM
 endif
-_WIN32	equ 1
-endif	;; _WIN32
+_CDecl	equ <c>
+_CType	equ <stdcall>
+endif
 
+ifndef _WIN32
+_WIN32	equ <>
+endif
+
+ifdef _WIN64
+_IA64_	equ <>
+_M_IA64 equ <>
+SIZE_T	typedef QWORD
+else
+_X86_	equ <>
+_M_IX86 equ 300
+SIZE_T	typedef DWORD
+endif
 
 ifndef _WCHAR_T_DEFINED
 wchar_t		typedef WORD
 _WCHAR_T_DEFINED equ 1
 endif
+
 ifndef _WCTYPE_T_DEFINED
 wint_t		typedef wchar_t
 wctype_t	typedef wchar_t
 _WCTYPE_T_DEFINED equ 1
-endif
-
-SINT		typedef sdword
-UINT		typedef dword
-ULONG		typedef dword
-
-ifdef _WIN64
-SIZE_T		typedef qword
-else
-SIZE_T		typedef dword
 endif
 
 ifndef _TCHAR_DEFINED
@@ -112,32 +96,28 @@ endif
 _TCHAR_DEFINED	equ 1
 endif
 
+SINT		typedef sdword
+UINT		typedef dword
+ULONG		typedef dword
 PVOID		typedef ptr
 HANDLE		typedef ptr
 LPSTR		typedef ptr sbyte
 LPWSTR		typedef ptr wchar_t
-;LPTSTR		typedef ptr TCHAR
 LPBYTE		typedef ptr byte
 LPWORD		typedef ptr word
 LPDWORD		typedef ptr dword
 LPQWORD		typedef ptr qword
 
+TRUE		equ 1
+FALSE		equ 0
+NULL		equ 0
+
 option		casemap:none
 size_t		typedef SIZE_T
-
-ifdef _WIN64
-_CType		equ <>	; fastcall
-_CDecl		equ <>	; fastcall
-else
-_CType		equ <STDCALL>
-_CDecl		equ <C>
-endif
-
-
-ifdef	DEBUG
-	assert_exit proto
-	.assert:on
+ifdef DEBUG
+assert_exit	proto
+.assert:	on
 endif	;; DEBUG
 
-endif	;; __LIBC_INC
 .list
+endif	;; __LIBC_INC

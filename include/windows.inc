@@ -1,26 +1,60 @@
 ifndef __LIBC_INC
  include libc.inc
 endif
-
 .xlist
 ;
 ; Master include file for Windows applications.
 ;
 ifndef _WINDOWS_
-_WINDOWS_ equ 1
+_WINDOWS_ equ <>
 
-_X86_	  equ 1
-_MSC_VER  equ 1000
+option fieldalign:8
 
-_INTEGRAL_MAX_BITS equ 64
+if not defined(_68K_)	and \
+   not defined(_MPPC_)	and \
+   not defined(_X86_)	and \
+   not defined(_IA64_)	and \
+   not defined(_AMD64_) and defined(_M_IX86)
+_X86_  equ <>
+endif
 
-ifndef _M_IX86
-_M_IX86 equ 300
+if not defined(_68K_)	and \
+   not defined(_MPPC_)	and \
+   not defined(_X86_)	and \
+   not defined(_IA64_)	and \
+   not defined(_AMD64_) and defined(_M_AMD64)
+_AMD64_ equ <>
+endif
+
+if not defined(_68K_)	and \
+   not defined(_MPPC_)	and \
+   not defined(_X86_)	and \
+   not defined(_IA64_)	and \
+   not defined(_AMD64_) and defined(_M_M68K)
+_68K_  equ <>
+endif
+
+if not defined(_68K_)	and \
+   not defined(_MPPC_)	and \
+   not defined(_X86_)	and \
+   not defined(_IA64_)	and \
+   not defined(_AMD64_) and defined(_M_MPPC)
+_MPPC_ equ <>
+endif
+
+if not defined(_68K_)	and \
+   not defined(_MPPC_)	and \
+   not defined(_X86_)	and \
+   not defined(_M_IX86) and \
+   not defined(_AMD64_) and defined(_M_IA64)
+ifndef _IA64_
+_IA64_ equ <>
+endif ;; !_IA64_
 endif
 
 ifndef _WIN32_WINNT
 ifndef WINVER
-_WIN32_WINNT	equ 400h
+_WIN32_WINNT	equ 0x0400
 else
 _WIN32_WINNT	equ WINVER
 endif
@@ -53,23 +87,375 @@ if defined(_WIN32_WINNT) and (WINVER LT 0x0400) and (_WIN32_WINNT GT 0x0400)
 endif
 endif
 
-if WINVER GE 0x0500
-echo
-echo NOTE: WINVER has been defined as 0x0500 or greater which enables
-echo Windows NT 5.0 and Windows 98 features. When these headers were released,
-echo Windows NT 5.0 beta 1 and Windows 98 beta 2.1 were the current versions.
-echo
-echo For this release when WINVER is defined as 0x0500 or greater, you can only
-echo build beta or test applications.  To build a retail application,
-echo set WINVER to 0x0400 or visit http://www.microsoft.com/msdn/sdk
-echo to see if retail Windows NT 5.0 or Windows 98 headers are available.
-echo
-echo See the SDK release notes for more information.
-echo
+ifndef SNDMSG
+ifdef __cplusplus
+ifndef _MAC
+SNDMSG equ <::SendMessage>
+else
+SNDMSG equ <::AfxSendMessage>
+endif
+else  ;; __cplusplus
+ifndef _MAC
+SNDMSG equ <SendMessage>
+else
+SNDMSG equ <AfxSendMessage>
+endif
+endif ;; __cplusplus
+endif ;; SNDMSG
+
+;;***** KERNEL Macro APIs ****************************************************
+
+GetInstanceModule macro hInstance
+	exitm<hInstance>
+	endm
+
+GlobalPtrHandle macro lp
+	exitm<GlobalHandle(lp)>
+	endm
+
+GlobalLockPtr macro lp
+	exitm<GlobalLock(GlobalPtrHandle(lp))>
+	endm
+
+GlobalUnlockPtr macro lp
+	exitm<GlobalUnlock(GlobalPtrHandle(lp))>
+	endm
+
+ifndef _MAC
+GlobalAllocPtr macro flags, cb
+	exitm<GlobalLock(GlobalAlloc(flags, cb))>
+	endm
+else
+GlobalAllocPtr macro flags, cb
+	exitm<GlobalLock(GlobalAlloc(flags OR GMEM_PMODELOCKSTRATEGY, cb))>
+	endm
+endif
+
+GlobalReAllocPtr macro lp, cbNew, flags
+	GlobalUnlockPtr(lp)
+	exitm<GlobalLock(GlobalReAlloc(GlobalPtrHandle(lp), cbNew, flags))>
+	endm
+
+GlobalFreePtr macro lp
+	GlobalUnlockPtr(lp)
+	exitm<GlobalFree(GlobalPtrHandle(lp))>
+	endm
+
+;;***** GDI Macro APIs ******************************************************
+
+DeletePen macro hpen
+	exitm<DeleteObject(hpen)>
+	endm
+
+SelectPen macro hdc, hpen
+	exitm<SelectObject(hdc, hpen)>
+	endm
+
+GetStockPen macro i
+	exitm<GetStockObject(i)>
+	endm
+
+DeleteBrush macro hbr
+	exitm<DeleteObject(hbr)>
+	endm
+
+SelectBrush macro hdc, hbr
+	exitm<SelectObject(hdc, hbr)>
+	endm
+
+GetStockBrush macro i
+	exitm<GetStockObject(i)>
+	endm
+
+DeleteRgn macro hrgn
+	exitm<DeleteObject(hrgn)>
+	endm
+
+ifndef _MAC
+CopyRgn macro hrgnDst, hrgnSrc
+	exitm<CombineRgn(hrgnDst, hrgnSrc, 0, RGN_COPY)>
+	endm
+else
+AfxCopyRgn macro hrgnDst, hrgnSrc
+	exitm<CombineRgn(hrgnDst, hrgnSrc, 0, RGN_COPY)>
+	endm
+endif
+IntersectRgn macro hrgnResult, hrgnA, hrgnB
+	exitm<CombineRgn(hrgnResult, hrgnA, hrgnB, RGN_AND)>
+	endm
+
+SubtractRgn macro hrgnResult, hrgnA, hrgnB
+	exitm<CombineRgn(hrgnResult, hrgnA, hrgnB, RGN_DIFF)>
+	endm
+ifndef _MAC
+UnionRgn macro hrgnResult, hrgnA, hrgnB
+	exitm<CombineRgn(hrgnResult, hrgnA, hrgnB, RGN_OR)>
+	endm
+
+XorRgn macro hrgnResult, hrgnA, hrgnB
+	exitm<CombineRgn(hrgnResult, hrgnA, hrgnB, RGN_XOR)>
+	endm
+else
+AfxUnionRgn macro hrgnResult, hrgnA, hrgnB
+	exitm<CombineRgn(hrgnResult, hrgnA, hrgnB, RGN_OR)>
+	endm
+
+AfxXorRgn macro hrgnResult, hrgnA, hrgnB
+	exitm<CombineRgn(hrgnResult, hrgnA, hrgnB, RGN_XOR)>
+	endm
+endif
+
+DeletePalette macro hpal
+	exitm<DeleteObject(hpal)>
+	endm
+
+DeleteFont macro hfont
+	exitm<DeleteObject(hfont)>
+	endm
+
+SelectFont macro hdc, hfont
+	exitm<SelectObject(hdc, hfont)>
+	endm
+
+GetStockFont macro i
+	exitm<GetStockObject(i)>
+	endm
+
+DeleteBitmap macro hbm
+	exitm<DeleteObject(hbm)>
+	endm
+
+SelectBitmap macro hdc, hbm
+	exitm<SelectObject(hdc, hbm)>
+	endm
+
+ifndef _MAC
+InsetRect macro lprc, x, dy
+	exitm<InflateRect(lprc, -x, -dy)>
+	endm
+else
+AfxInsetRect macro lprc, x, dy
+	exitm<InflateRect((lprc), -(x), -(dy))>
+	endm
+endif
+
+;;***** USER Macro APIs ******************************************************
+
+GetWindowInstance macro hwnd
+	exitm<GetWindowLongPtr(hwnd, GWLP_HINSTANCE)>
+	endm
+
+GetWindowStyle macro hwnd
+	exitm<GetWindowLong(hwnd, GWL_STYLE)>
+	endm
+
+GetWindowExStyle macro hwnd
+	exitm<GetWindowLong(hwnd, GWL_EXSTYLE)>
+	endm
+
+GetWindowOwner macro hwnd
+	exitm<GetWindow(hwnd, GW_OWNER)>
+	endm
+
+GetFirstChild macro hwnd
+	exitm<GetTopWindow(hwnd)>
+	endm
+
+GetFirstSibling macro hwnd
+	exitm<GetWindow(hwnd, GW_HWNDFIRST)>
+	endm
+
+GetLastSibling macro hwnd
+	exitm<GetWindow(hwnd, GW_HWNDLAST)>
+	endm
+
+GetNextSibling macro hwnd
+	exitm<GetWindow(hwnd, GW_HWNDNEXT)>
+	endm
+
+GetPrevSibling macro hwnd
+	exitm<GetWindow(hwnd, GW_HWNDPREV)>
+	endm
+
+GetWindowID macro hwnd
+	exitm<GetDlgCtrlID(hwnd)>
+	endm
+
+SetWindowRedraw macro hwnd, fRedraw
+	exitm<SNDMSG(hwnd, WM_SETREDRAW, fRedraw, 0)>
+	endm
+
+SubclassWindow macro hwnd, lpfn
+	exitm<SetWindowLongPtr(hwnd, GWLP_WNDPROC, lpfn)>
+	endm
+
+IsMinimized macro hwnd
+	exitm<IsIconic(hwnd)>
+	endm
+
+IsMaximized macro hwnd
+	exitm<IsZoomed(hwnd)>
+	endm
+
+IsRestored macro hwnd
+	and GetWindowStyle(hwnd),WS_MINIMIZE OR WS_MAXIMIZE
+	.if eax
+	    xor eax,eax
+	.else
+	    inc eax
+	.endif
+	exitm<eax>
+	endm
+
+SetWindowFont macro hwnd, hfont, fRedraw
+	exitm<FORWARD_WM_SETFONT(hwnd, hfont, fRedraw, SNDMSG)>
+	endm
+
+GetWindowFont macro hwndhwnd
+	exitm<FORWARD_WM_GETFONT(hwnd, SNDMSG)>
+	endm
+
+if (WINVER GE 0x030a)
+ifdef UNIX
+MapWindowRect MwMapWindowRect
+LONG MwMapWindowRect(HWND, HWND, RECT *);
+else
+MapWindowRect macro hwndFrom, hwndTo, lprc
+	exitm<MapWindowPoints(hwndFrom, hwndTo, lprc, 2)>
+	endm
+endif ;; !UNIX
+endif
+
+IsLButtonDown macro
+	exitm<GetKeyState(VK_LBUTTON) < 0)>
+	endm
+
+IsRButtonDown macro
+	exitm<GetKeyState(VK_RBUTTON) < 0)>
+	endm
+
+IsMButtonDown macro
+	exitm<GetKeyState(VK_MBUTTON) < 0)>
+	endm
+
+SubclassDialog macro hwndDlg, lpfn
+	exitm<SetWindowLongPtr(hwndDlg, DWLP_DLGPROC, lpfn)>
+	endm
+
+SetDlgMsgResult macro hwnd, msg, result
+	.if	msg == WM_CTLCOLORMSGBOX	OR \
+		msg == WM_CTLCOLOREDIT		OR \
+		msg == WM_CTLCOLORLISTBOX	OR \
+		msg == WM_CTLCOLORBTN		OR \
+		msg == WM_CTLCOLORDLG		OR \
+		msg == WM_CTLCOLORSCROLLBAR	OR \
+		msg == WM_CTLCOLORSTATIC	OR \
+		msg == WM_COMPAREITEM		OR \
+		msg == WM_VKEYTOITEM		OR \
+		msg == WM_CHARTOITEM		OR \
+		msg == WM_QUERYDRAGICON		OR \
+		msg == WM_INITDIALOG
+		mov eax,result
+	.else
+		SetWindowLongPtr(hwnd, DWLP_MSGRESULT, result)
+		mov eax,TRUE
+	.endif
+	exitm<eax>
+	endm
+
+DefDlgProcEx macro hwnd, msg, wParam, lParam, pfRecursion
+	;exitm<*(pfRecursion) = TRUE, DefDlgProc(hwnd, msg, wParam, lParam))>
+	endm
+
+CheckDefDlgRecursion macro pfRecursion
+	;if (*(pfRecursion)) { *(pfRecursion) = FALSE; return FALSE; }
+	;exitm<>
+	endm
+
+;;***** Message crackers ***************************************************
+;;***** Static control message APIs *****************************************
+
+Static_Enable macro hwndCtl, fEnable
+	exitm<EnableWindow(hwndCtl, fEnable)>
+	endm
+
+Static_GetText macro hwndCtl, lpch, cchMax
+	exitm<GetWindowText(hwndCtl, lpch, cchMax)>
+	endm
+
+Static_GetTextLength macro hwndCtl
+	exitm<GetWindowTextLength(hwndCtl)>
+	endm
+
+Static_SetText macro hwndCtl, lpsz
+	exitm<SetWindowText(hwndCtl, lpsz)>
+	endm
+
+Static_SetIcon macro hwndCtl, hIcon
+	exitm<SNDMSG(hwndCtl, STM_SETICON, hIcon, 0)>
+	endm
+
+Static_GetIcon macro hwndCtl, hIcon
+	exitm<SNDMSG(hwndCtl, STM_GETICON, 0, 0)>
+	endm
+
+;;***** Static control message APIs ******************************************
+;;***** Button control message APIs ******************************************
+;;***** Edit control message APIs ********************************************
+;;***** ScrollBar control message APIs ***************************************
+;;***** ListBox control message APIs *****************************************
+;;***** ComboBox control message APIs ****************************************
+;;***** Alternate porting layer macros ***************************************
+;;***** C runtime porting macros *********************************************
+
+_ncalloc    equ <calloc>
+_nexpand    equ <_expand>
+_ffree	    equ <free>
+_fmalloc    equ <malloc>
+_fmemccpy   equ <_memccpy>
+_fmemchr    equ <memchr>
+_fmemcmp    equ <memcmp>
+_fmemcpy    equ <memcpy>
+_fmemicmp   equ <_memicmp>
+_fmemmove   equ <memmove>
+_fmemset    equ <memset>
+_fmsize	    equ <_msize>
+_frealloc   equ <realloc>
+_fstrcat    equ <strcat>
+_fstrchr    equ <strchr>
+_fstrcmp    equ <strcmp>
+_fstrcpy    equ <strcpy>
+_fstrcspn   equ <strcspn>
+_fstrdup    equ <_strdup>
+_fstricmp   equ <_stricmp>
+_fstrlen    equ <strlen>
+_fstrlwr    equ <_strlwr>
+_fstrncat   equ <strncat>
+_fstrncmp   equ <strncmp>
+_fstrncpy   equ <strncpy>
+_fstrnicmp  equ <_strnicmp>
+_fstrnset   equ <_strnset>
+_fstrpbrk   equ <strpbrk>
+_fstrrchr   equ <strrchr>
+_fstrrev    equ <_strrev>
+_fstrset    equ <_strset>
+_fstrspn    equ <strspn>
+_fstrstr    equ <strstr>
+_fstrtok    equ <strtok>
+_fstrupr    equ <_strupr>
+_nfree	    equ <free>
+_nmalloc    equ <malloc>
+_nmsize	    equ <_msize>
+_nrealloc   equ <realloc>
+_nstrdup    equ <_strdup>
+hmemcpy	    equ <MoveMemory>
+
+ifndef DECLARE_HANDLE32
+DECLARE_HANDLE32    equ <DECLARE_HANDLE>
 endif
 
 ifndef _INC_WINDOWS
-_INC_WINDOWS equ 1
+_INC_WINDOWS equ <>
 ;
 ;  If defined, the following flags inhibit definition
 ;     of the indicated items.

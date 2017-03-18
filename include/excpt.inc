@@ -1,23 +1,21 @@
+ifndef _INC_EXCPT
+_INC_EXCPT equ <>
 ifndef __LIBC_INC
  include libc.inc
 endif
-
 .xlist
-
-ifndef _INC_EXCPT
-_INC_EXCPT equ 1
 
 ifdef _MSC_VER
 ;
 ; Currently, all MS C compilers for Win32 platforms default to 8 byte
 ; alignment.
 ;
-option fieldalign:8
+;option fieldalign:8
 endif
 
 ; Define _CRTAPI1 (for compatibility with the NT SDK)
 
-if not defined(_CRTAPI1) and defined(_MSC_VER)
+if not defined(_CRTAPI1) and defined(_MSC_VER) and defined(_M_IX86)
  if (_MSC_VER GE 800) and (_M_IX86 GE 300)
   _CRTAPI1 equ <C>
  else
@@ -119,6 +117,6 @@ externdef _Num_FPE:SINT
 _XcptFilter proto :ULONG, :PVOID
 
 endif	; _INTERNAL_IFSTRIP_
-endif	; _INC_EXCPT
 
 .list
+endif	; _INC_EXCPT

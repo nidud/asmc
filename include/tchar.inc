@@ -1131,7 +1131,7 @@ _TEXT	macro x
 	endm
 endif
 
-ifdef	_WIN32
+ifndef	_WIN64
 	RAX	equ <eax>
 	RBX	equ <ebx>
 	RCX	equ <ecx>
@@ -1143,7 +1143,7 @@ ifdef	_WIN32
 endif
 ifdef __PE__
 	.data
-	__argc	  dd 0
+	__argc	  dd 0,0
 	__targv	  SIZE_T 0
 	_tenviron SIZE_T 0
 	_startup  db 100 dup(0)

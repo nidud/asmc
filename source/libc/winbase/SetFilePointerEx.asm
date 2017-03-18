@@ -25,11 +25,13 @@ dummy	proc _CType private \
 		hFile,		;; handle of file
 		eax,		;; number of bytes to move file pointer
 		ecx,		;; pointer to high-order DWORD of distance to move
-		dwMoveMethod )	;; how to move
+		dwMoveMethod ) != -1 ;; how to move
 
 		mov edx,lpNewFilePointer
 		mov [edx],eax
 		mov eax,1
+	.else
+		dec eax
 	.endif
 	ret
 

@@ -317,7 +317,7 @@ UNION __VARIANT_NAME_1
    fltVal		FLOAT ?
    dblVal		DOUBLE ?
    boolVal		VARIANT_BOOL ?
-   bool			_VARIANT_BOOL ?
+   bool			VARIANT_BOOL ?
    scode		SCODE ?
    cyVal		CY <>
    date			DATE ?
@@ -725,7 +725,7 @@ ICreateTypeInfoVtbl	STRUC
 
     QueryInterface60@CT typedef proto \
 		 pThis: ptr ICreateTypeInfo,
-		  riid: REFIID,
+		  riid: REFIID
 
     QueryInterface60@MP typedef ptr QueryInterface60@CT
 	 QueryInterface QueryInterface60@MP ?
@@ -1336,7 +1336,7 @@ ICreateTypeInfo2Vtbl	STRUC
 
     QueryInterface61@CT typedef proto \
 		 pThis: ptr ICreateTypeInfo2,
-		  riid: REFIID,
+		  riid: REFIID
 
     QueryInterface61@MP typedef ptr QueryInterface61@CT
 	 QueryInterface QueryInterface61@MP ?
@@ -1933,7 +1933,7 @@ ICreateTypeLibVtbl	STRUC
 
     QueryInterface62@CT typedef proto \
 		 pThis: ptr ICreateTypeLib,
-		  riid: REFIID,
+		  riid: REFIID
 
     QueryInterface62@MP typedef ptr QueryInterface62@CT
 	 QueryInterface QueryInterface62@MP ?
@@ -2219,7 +2219,7 @@ ICreateTypeLib2Vtbl	STRUC
 
     QueryInterface63@CT typedef proto \
 		 pThis: ptr ICreateTypeLib2,
-		  riid: REFIID,
+		  riid: REFIID
 
     QueryInterface63@MP typedef ptr QueryInterface63@CT
 	 QueryInterface QueryInterface63@MP ?
@@ -2468,7 +2468,7 @@ IDispatchVtbl		STRUC
 
     QueryInterface64@CT typedef proto \
 		 pThis: ptr IDispatch,
-		  riid: REFIID,
+		  riid: REFIID
 
     QueryInterface64@MP typedef ptr QueryInterface64@CT
 	 QueryInterface QueryInterface64@MP ?
@@ -2641,7 +2641,7 @@ IEnumVARIANTVtbl	STRUC
 
     QueryInterface65@CT typedef proto \
 		 pThis: ptr IEnumVARIANT,
-		  riid: REFIID,
+		  riid: REFIID
 
     QueryInterface65@MP typedef ptr QueryInterface65@CT
 	 QueryInterface QueryInterface65@MP ?
@@ -2801,7 +2801,7 @@ ITypeCompVtbl		STRUC
 
     QueryInterface66@CT typedef proto \
 		 pThis: ptr ITypeComp,
-		  riid: REFIID,
+		  riid: REFIID
 
     QueryInterface66@MP typedef ptr QueryInterface66@CT
 	 QueryInterface QueryInterface66@MP ?
@@ -2917,7 +2917,7 @@ ITypeInfoVtbl		STRUC
 
     QueryInterface67@CT typedef proto \
 		 pThis: ptr ITypeInfo,
-		  riid: REFIID,
+		  riid: REFIID
 
     QueryInterface67@MP typedef ptr QueryInterface67@CT
 	 QueryInterface QueryInterface67@MP ?
@@ -3454,7 +3454,7 @@ ITypeInfo2Vtbl		STRUC
 
     QueryInterface68@CT typedef proto \
 		 pThis: ptr ITypeInfo2,
-		  riid: REFIID,
+		  riid: REFIID
 
     QueryInterface68@MP typedef ptr QueryInterface68@CT
 	 QueryInterface QueryInterface68@MP ?
@@ -4081,7 +4081,7 @@ ITypeLibVtbl		STRUC
 
     QueryInterface69@CT typedef proto \
 		 pThis: ptr ITypeLib,
-		  riid: REFIID,
+		  riid: REFIID
 
     QueryInterface69@MP typedef ptr QueryInterface69@CT
 	 QueryInterface QueryInterface69@MP ?
@@ -4391,7 +4391,7 @@ ITypeLib2Vtbl		STRUC
 
     QueryInterface70@CT typedef proto \
 		 pThis: ptr ITypeLib2,
-		  riid: REFIID,
+		  riid: REFIID
 
     QueryInterface70@MP typedef ptr QueryInterface70@CT
 	 QueryInterface QueryInterface70@MP ?
@@ -4640,7 +4640,7 @@ ITypeChangeEventsVtbl	STRUC
 
     QueryInterface71@CT typedef proto \
 		 pThis: ptr ITypeChangeEvents,
-		  riid: REFIID,
+		  riid: REFIID
 
     QueryInterface71@MP typedef ptr QueryInterface71@CT
 	 QueryInterface QueryInterface71@MP ?
@@ -4748,7 +4748,7 @@ IErrorInfoVtbl		STRUC
 
     QueryInterface72@CT typedef proto \
 		 pThis: ptr IErrorInfo,
-		  riid: REFIID,
+		  riid: REFIID
 
     QueryInterface72@MP typedef ptr QueryInterface72@CT
 	 QueryInterface QueryInterface72@MP ?
@@ -4915,7 +4915,7 @@ ICreateErrorInfoVtbl	STRUC
 
     QueryInterface73@CT typedef proto \
 		 pThis: ptr ICreateErrorInfo,
-		  riid: REFIID,
+		  riid: REFIID
 
     QueryInterface73@MP typedef ptr QueryInterface73@CT
 	 QueryInterface QueryInterface73@MP ?
@@ -5082,7 +5082,7 @@ ISupportErrorInfoVtbl	STRUC
 
     QueryInterface74@CT typedef proto \
 		 pThis: ptr ISupportErrorInfo,
-		  riid: REFIID,
+		  riid: REFIID
 
     QueryInterface74@MP typedef ptr QueryInterface74@CT
 	 QueryInterface QueryInterface74@MP ?
@@ -5155,7 +5155,7 @@ ITypeFactoryVtbl	STRUC
 
     QueryInterface75@CT typedef proto \
 		 pThis: ptr ITypeFactory,
-		  riid: REFIID,
+		  riid: REFIID
 
     QueryInterface75@MP typedef ptr QueryInterface75@CT
 	 QueryInterface QueryInterface75@MP ?
@@ -5232,7 +5232,7 @@ ITypeMarshalVtbl	STRUC
 
     QueryInterface76@CT typedef proto \
 		 pThis: ptr ITypeMarshal,
-		  riid: REFIID,
+		  riid: REFIID
 
     QueryInterface76@MP typedef ptr QueryInterface76@CT
 	 QueryInterface QueryInterface76@MP ?
@@ -5400,7 +5400,7 @@ IRecordInfoVtbl		STRUC
 
     QueryInterface77@CT typedef proto \
 		 pThis: ptr IRecordInfo,
-		  riid: REFIID,
+		  riid: REFIID
 
     QueryInterface77@MP typedef ptr QueryInterface77@CT
 	 QueryInterface QueryInterface77@MP ?

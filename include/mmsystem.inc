@@ -129,7 +129,7 @@ UNION
 	hour		db ?	;; hours
 	min		db ?	;; minutes
 	sec		db ?	;; seconds
-	frame		db ?	;; frames
+	_frame		db ?	;; frames
 	fps		db ?	;; frames per second
 	dummy		db ?	;; pad
 ifdef _WIN32
@@ -278,7 +278,7 @@ MMSYSERR_VALNOTFOUND	equ (MMSYSERR_BASE + 19) ;; registry value not found
 MMSYSERR_NODRIVERCB	equ (MMSYSERR_BASE + 20) ;; driver does not call DriverCallback
 MMSYSERR_LASTERROR	equ (MMSYSERR_BASE + 20) ;; last error in range
 
-if (WINVER LT 0x030a) OR defined(_WIN32)
+if (WINVER LT 0x030a) OR defined(_WIN32) OR defined(_WIN64)
 HDRVR			typedef HANDLE
 endif ;; ifdef WINVER LT 0x030a
 
@@ -2064,8 +2064,8 @@ dwComponentType		dd ?	;; component type line connects to
 cChannels		dd ?	;; number of channels line supports
 cConnections		dd ?	;; number of connections [possible]
 cControls		dd ?	;; number of controls at this line
-szShortName		MIXER_SHORT_NAME_CHARS dup(?)
-szName			MIXER_LONG_NAME_CHARS dup(?)
+szShortName		dw MIXER_SHORT_NAME_CHARS dup(?)
+szName			dw MIXER_LONG_NAME_CHARS dup(?)
 STRUC Target
 dwType			dd ?	;; MIXERLINE_TARGETTYPE_xxxx
 dwDeviceID		dd ?	;; target device ID of device type
@@ -2242,7 +2242,7 @@ LPMIXERCONTROL		typedef LPMIXERCONTROLA
 endif ;; UNICODE
 
 else
-tMIXERCONTROL		STRUC
+MIXERCONTROL		STRUC
 cbStruct		dd ?	;; size in bytes of MIXERCONTROL
 dwControlID		dd ?	;; unique control id for mixer device
 dwControlType		dd ?	;; MIXERCONTROL_CONTROLTYPE_xxx
@@ -2484,7 +2484,7 @@ LPMIXERCONTROLDETAILS_LISTTEXT typedef LPMIXERCONTROLDETAILS_LISTTEXTA
 endif ;; UNICODE
 
 else
-tMIXERCONTROLDETAILS_LISTTEXT  STRUC
+MIXERCONTROLDETAILS_LISTTEXT STRUC
 dwParam1		dd ?
 dwParam2		dd ?
 szName			db MIXER_LONG_NAME_CHARS dup(?)
@@ -3892,7 +3892,7 @@ ifdef _WIN32
 nVirtKey		SINT ?
 hwndBreak		HWND ?
 else
-nVirtKey		short ?
+nVirtKey		SWORD ?
 wReserved0		dw ?	;; padding for Win 16
 hwndBreak		HWND ?
 wReserved1		dw ?	;; padding for Win 16

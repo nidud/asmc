@@ -1,18 +1,30 @@
-;
-; Basic Windows Type Definitions
-;
+ifndef _WINDEF_
+_WINDEF_ equ <>
 ifndef __LIBC_INC
  include libc.inc
 endif
-
 .xlist
-ifndef _WINDEF_
-_WINDEF_ equ 1
-
+;
+; Basic Windows Type Definitions
+;
 ifndef NO_STRICT
 ifndef STRICT
 STRICT equ 1
 endif
+endif
+
+;; Win32 defines _WIN32 automatically,
+;; but Macintosh doesn't, so if we are using
+;; Win32 Functions, we must do it here
+
+ifdef _MAC
+ifndef _WIN32
+_WIN32 equ <>
+endif
+endif ;;_MAC
+
+ifndef WIN32
+WIN32 equ <>
 endif
 
 ifndef WINVER
@@ -49,23 +61,60 @@ TRUE		equ 1
 endif
 
 ifndef OPTIONAL
-OPTIONAL	equ 1
+OPTIONAL	equ <>
 endif
 
-CDECL		equ <c>
+if 0
+if (not defined(_MAC)) and ((_MSC_VER ge 800) or defined(_STDCALL_SUPPORTED))
+pascal equ <__stdcall>
+else
+pascal equ <>
+endif
+endif
 
-ifdef _STDCALL_SUPPORTED
+if defined(DOSWIN32) or defined(_MAC)
+cdecl	equ <_cdecl>
+ifndef CDECL
+CDECL	equ <_cdecl>
+endif
+else
+cdecl	equ <>
+ifndef CDECL
+CDECL	equ <>
+endif
+endif
+
+ifdef _MAC
+CALLBACK	equ <PASCAL>
+WINAPI		equ <CDECL>
+WINAPIV		equ <CDECL>
+APIENTRY	equ <WINAPI>
+APIPRIVATE	equ <CDECL>
+ifdef _68K_
+PASCAL		equ <__pascal>
+else
+PASCAL		equ <>
+endif
+elseif (_MSC_VER ge 800) or defined(_STDCALL_SUPPORTED)
 CALLBACK	equ <stdcall>
 WINAPI		equ <stdcall>
 WINAPIV		equ <c>
 APIENTRY	equ <WINAPI>
 APIPRIVATE	equ <stdcall>
+;PASCAL		equ <stdcall>
 else
 CALLBACK	equ <>
 WINAPI		equ <>
 WINAPIV		equ <>
 APIENTRY	equ <WINAPI>
 APIPRIVATE	equ <>
+;PASCAL		equ <pascal>
+endif
+
+ifdef _M_CEE_PURE
+WINAPI_INLINE	equ <__clrcall>
+else
+WINAPI_INLINE	equ <WINAPI>
 endif
 
 BOOL		typedef sdword
@@ -88,17 +137,22 @@ LPCVOID		typedef ptr
 UINT		typedef dword
 PUINT		typedef ptr dword
 
-ifndef _WINNT_
+ifndef _WINNT_ ; NT_INCLUDED
 include winnt.inc
 .xlist
 endif
 
-; Types use for passing & returning polymorphic values
-WPARAM		typedef UINT
-LPARAM		typedef SDWORD
-LRESULT		typedef SDWORD
+;include specstrings.inc
 
-NOMINMAX equ 1
+; Types use for passing & returning polymorphic values
+WPARAM		typedef UINT_PTR
+LPARAM		typedef LONG_PTR
+LRESULT		typedef LONG_PTR
+
+ifndef NOMINMAX
+NOMINMAX equ <>
+endif
+
 ifndef NOMINMAX
 ifndef	max
 max	macro a, b
@@ -119,10 +173,10 @@ endif
 endif
 
 ifndef WIN_INTERNAL
-HWND		typedef HANDLE
-HHOOK		typedef HANDLE
+DECLARE_HANDLE(HWND)
+DECLARE_HANDLE(HHOOK)
 ifdef WINABLE
-HEVENT		typedef HANDLE
+DECLARE_HANDLE(HEVENT)
 endif
 endif
 
@@ -271,6 +325,5 @@ DC_PAPERNAMES	    equ 16
 DC_ORIENTATION	    equ 17
 DC_COPIES	    equ 18
 
-endif ; _WINDEF_
-
 .list
+endif ; _WINDEF_

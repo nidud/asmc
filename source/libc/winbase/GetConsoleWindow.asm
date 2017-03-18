@@ -2,7 +2,7 @@ include consx.inc
 include crtl.inc
 include winbase.inc
 
-if(WINVER LT 0x0500)
+if(_WIN32_WINNT LT 0x0500)
 
 	.data
 	externdef kernel32_dll:BYTE

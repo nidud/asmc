@@ -1,6 +1,5 @@
-;
-; This module defines the 32-Bit Windows Base APIs
-;
+ifndef _WINBASE_
+_WINBASE_ equ <>
 ifndef __LIBC_INC
  include libc.inc
 endif
@@ -10,12 +9,10 @@ endif
 ifndef _WINDEF_
  include windef.inc
 endif
-
 .xlist
-
-ifndef _WINBASE_
-_WINBASE_ equ 1
-
+;
+; This module defines the 32-Bit Windows Base APIs
+;
 ifndef _WIN32_WINDOWS
 _WIN32_WINDOWS equ 0x400
 endif
@@ -103,17 +100,17 @@ EXCEPTION_GUARD_PAGE		    equ STATUS_GUARD_PAGE_VIOLATION
 EXCEPTION_INVALID_HANDLE	    equ STATUS_INVALID_HANDLE
 CONTROL_C_EXIT			    equ STATUS_CONTROL_C_EXIT
 
-MoveMemory equ RtlMoveMemory
-CopyMemory equ RtlCopyMemory
-FillMemory equ RtlFillMemory
-ZeroMemory equ RtlZeroMemory
+MoveMemory equ <RtlMoveMemory>
+CopyMemory equ <RtlCopyMemory>
+FillMemory equ <RtlFillMemory>
+ZeroMemory equ <RtlZeroMemory>
 
 if (_WIN32_WINNT GE 0x0500)
 ifdef _M_ALPHA
-MoveMemoryVlm equ RtlMoveMemory
-CopyMemoryVlm equ RtlCopyMemory
-FillMemoryVlm equ RtlFillMemory
-ZeroMemoryVlm equ RtlZeroMemory
+MoveMemoryVlm equ <RtlMoveMemory>
+CopyMemoryVlm equ <RtlCopyMemory>
+FillMemoryVlm equ <RtlFillMemory>
+ZeroMemoryVlm equ <RtlZeroMemory>
 endif
 endif
 
@@ -140,77 +137,53 @@ OPEN_ALWAYS	    equ 4
 TRUNCATE_EXISTING   equ 5
 
 if (_WIN32_WINNT GE 0x0400)
-;
-; Define possible return codes from the CopyFileEx callback routine
-;
-
 PROGRESS_CONTINUE   equ 0
 PROGRESS_CANCEL	    equ 1
 PROGRESS_STOP	    equ 2
 PROGRESS_QUIET	    equ 3
 
-;
-; Define CopyFileEx callback routine state change values
-;
+CALLBACK_CHUNK_FINISHED equ 0x00000000
+CALLBACK_STREAM_SWITCH	equ 0x00000001
 
-CALLBACK_CHUNK_FINISHED		equ 0x00000000
-CALLBACK_STREAM_SWITCH		equ 0x00000001
-
-;
-; Define CopyFileEx option flags
-;
-
-COPY_FILE_FAIL_IF_EXISTS	equ 0x00000001
-COPY_FILE_RESTARTABLE		equ 0x00000002
+COPY_FILE_FAIL_IF_EXISTS equ 0x00000001
+COPY_FILE_RESTARTABLE equ 0x00000002
 COPY_FILE_OPEN_SOURCE_FOR_WRITE equ 0x00000004
+COPY_FILE_ALLOW_DECRYPTED_DESTINATION equ 0x00000008
+if (_WIN32_WINNT GE 0x0600)
+COPY_FILE_COPY_SYMLINK equ 0x00000800
+COPY_FILE_NO_BUFFERING equ 0x00001000
 endif
+endif ;; (_WIN32_WINNT GE 0x0400)
+if (_WIN32_WINNT GE 0x0500)
+REPLACEFILE_WRITE_THROUGH equ 0x00000001
+REPLACEFILE_IGNORE_MERGE_ERRORS equ 0x00000002
+if (_WIN32_WINNT GE 0x0600)
+REPLACEFILE_IGNORE_ACL_ERRORS equ 0x00000004
+endif
+endif ;; (_WIN32_WINNT GE 0x0500)
 
-;
-; Define the NamedPipe definitions
-;
+PIPE_ACCESS_INBOUND	   equ 0x00000001
+PIPE_ACCESS_OUTBOUND	   equ 0x00000002
+PIPE_ACCESS_DUPLEX	   equ 0x00000003
 
+PIPE_CLIENT_END		   equ 0x00000000
+PIPE_SERVER_END		   equ 0x00000001
 
-;
-; Define the dwOpenMode values for CreateNamedPipe
-;
+PIPE_WAIT		   equ 0x00000000
+PIPE_NOWAIT		   equ 0x00000001
+PIPE_READMODE_BYTE	   equ 0x00000000
+PIPE_READMODE_MESSAGE	   equ 0x00000002
+PIPE_TYPE_BYTE		   equ 0x00000000
+PIPE_TYPE_MESSAGE	   equ 0x00000004
+PIPE_ACCEPT_REMOTE_CLIENTS equ 0x00000000
+PIPE_REJECT_REMOTE_CLIENTS equ 0x00000008
 
-PIPE_ACCESS_INBOUND	    equ 0x00000001
-PIPE_ACCESS_OUTBOUND	    equ 0x00000002
-PIPE_ACCESS_DUPLEX	    equ 0x00000003
+PIPE_UNLIMITED_INSTANCES   equ 255
 
-;
-; Define the Named Pipe End flags for GetNamedPipeInfo
-;
-
-PIPE_CLIENT_END		    equ 0x00000000
-PIPE_SERVER_END		    equ 0x00000001
-
-;
-; Define the dwPipeMode values for CreateNamedPipe
-;
-
-PIPE_WAIT		    equ 0x00000000
-PIPE_NOWAIT		    equ 0x00000001
-PIPE_READMODE_BYTE	    equ 0x00000000
-PIPE_READMODE_MESSAGE	    equ 0x00000002
-PIPE_TYPE_BYTE		    equ 0x00000000
-PIPE_TYPE_MESSAGE	    equ 0x00000004
-
-;
-; Define the well known values for CreateNamedPipe nMaxInstances
-;
-
-PIPE_UNLIMITED_INSTANCES    equ 255
-
-;
-; Define the Security Quality of Service bits to be passed
-; into CreateFile
-;
-
-SECURITY_ANONYMOUS	    equ ( SecurityAnonymous	 shl 16 )
-SECURITY_IDENTIFICATION	    equ ( SecurityIdentification shl 16 )
-SECURITY_IMPERSONATION	    equ ( SecurityImpersonation	 shl 16 )
-SECURITY_DELEGATION	    equ ( SecurityDelegation	 shl 16 )
+SECURITY_ANONYMOUS	   equ ( SecurityAnonymous	shl 16 )
+SECURITY_IDENTIFICATION	   equ ( SecurityIdentification shl 16 )
+SECURITY_IMPERSONATION	   equ ( SecurityImpersonation	shl 16 )
+SECURITY_DELEGATION	   equ ( SecurityDelegation	shl 16 )
 
 SECURITY_CONTEXT_TRACKING  equ 0x00040000
 SECURITY_EFFECTIVE_ONLY	   equ 0x00080000
@@ -223,14 +196,26 @@ SECURITY_VALID_SQOS_FLAGS  equ 0x001F0000
 ;
 
 OVERLAPPED		STRUC
-Internal		dd ?
-InternalHigh		dd ?
-_Offset			dd ?
-OffsetHigh		dd ?
+Internal		SIZE_T ?
+InternalHigh		SIZE_T ?
+UNION
+ STRUC
+  _Offset		dd ?
+  OffsetHigh		dd ?
+ ENDS
+ Pointer		PVOID ?
+ENDS
 hEvent			HANDLE ?
 OVERLAPPED		ENDS
-
 LPOVERLAPPED		TYPEDEF PTR OVERLAPPED
+
+OVERLAPPED_ENTRY	STRUC
+lpCompletionKey		SIZE_T ?
+lpOverlapped		LPOVERLAPPED ?
+Internal		SIZE_T ?
+dwNumberOfBytesTransferred dd ?
+OVERLAPPED_ENTRY	ENDS
+LPOVERLAPPED_ENTRY	typedef ptr OVERLAPPED_ENTRY
 
 SECURITY_ATTRIBUTES	STRUC SIZE_T
 nLength			dd ?
@@ -259,7 +244,6 @@ FILETIME	STRUC
 dwLowDateTime	dd ?
 dwHighDateTime	dd ?
 FILETIME	ENDS
-
 PFILETIME	TYPEDEF PTR FILETIME
 LPFILETIME	TYPEDEF PTR FILETIME
 
@@ -277,7 +261,6 @@ wMinute		dw ?
 wSecond		dw ?
 wMilliseconds	dw ?
 SYSTEMTIME	ENDS
-
 PSYSTEMTIME	TYPEDEF PTR SYSTEMTIME
 LPSYSTEMTIME	TYPEDEF PTR SYSTEMTIME
 
@@ -297,6 +280,105 @@ LPCRITICAL_SECTION	typedef PRTL_CRITICAL_SECTION
 CRITICAL_SECTION_DEBUG	typedef RTL_CRITICAL_SECTION_DEBUG
 PCRITICAL_SECTION_DEBUG typedef PRTL_CRITICAL_SECTION_DEBUG
 LPCRITICAL_SECTION_DEBUG typedef PRTL_CRITICAL_SECTION_DEBUG
+
+if (_WIN32_WINNT GE 0x0600)
+
+INIT_ONCE	typedef RTL_RUN_ONCE
+PINIT_ONCE	typedef PRTL_RUN_ONCE
+LPINIT_ONCE	typedef PRTL_RUN_ONCE
+
+INIT_ONCE_STATIC_INIT	equ RTL_RUN_ONCE_INIT
+INIT_ONCE_CHECK_ONLY	equ RTL_RUN_ONCE_CHECK_ONLY
+INIT_ONCE_ASYNC		equ RTL_RUN_ONCE_ASYNC
+INIT_ONCE_INIT_FAILED	equ RTL_RUN_ONCE_INIT_FAILED
+INIT_ONCE_CTX_RESERVED_BITS equ RTL_RUN_ONCE_CTX_RESERVED_BITS
+
+FAIL_FAST_GENERATE_EXCEPTION_ADDRESS equ 0x1
+FAIL_FAST_NO_HARD_ERROR_DLG equ 0x2
+
+SRWLOCK		typedef RTL_SRWLOCK
+PSRWLOCK	typedef ptr RTL_SRWLOCK
+;SRWLOCK_INIT	typedef RTL_SRWLOCK_INIT
+
+;VOID
+InitializeSRWLock proto _CType \
+	       SRWLock: PSRWLOCK
+;VOID
+ReleaseSRWLockExclusive proto _CType \
+	       SRWLock: PSRWLOCK
+;VOID
+ReleaseSRWLockShared proto _CType \
+	       SRWLock: PSRWLOCK
+;VOID
+AcquireSRWLockExclusive proto _CType \
+	       SRWLock: PSRWLOCK
+;VOID
+AcquireSRWLockShared proto _CType \
+	       SRWLock: PSRWLOCK
+;BOOLEAN
+TryAcquireSRWLockExclusive proto _CType \
+	       SRWLock: PSRWLOCK
+;BOOLEAN
+TryAcquireSRWLockShared proto _CType \
+	       SRWLock: PSRWLOCK
+
+CONDITION_VARIABLE	typedef RTL_CONDITION_VARIABLE
+PCONDITION_VARIABLE	typedef ptr RTL_CONDITION_VARIABLE
+
+;VOID
+InitializeConditionVariable proto _CType \
+     ConditionVariable: PCONDITION_VARIABLE
+
+;VOID
+WakeConditionVariable proto _CType \
+     ConditionVariable: PCONDITION_VARIABLE
+
+;VOID
+WakeAllConditionVariable proto _CType \
+     ConditionVariable: PCONDITION_VARIABLE
+
+;BOOL
+SleepConditionVariableCS proto _CType \
+     ConditionVariable: PCONDITION_VARIABLE,
+       CriticalSection: PCRITICAL_SECTION,
+	dwMilliseconds: DWORD
+
+;BOOL
+SleepConditionVariableSRW proto _CType \
+     ConditionVariable: PCONDITION_VARIABLE,
+	       SRWLock: PSRWLOCK,
+	dwMilliseconds: DWORD,
+		 Flags: ULONG
+
+;;
+;; Static initializer for the condition variable
+;;
+
+CONDITION_VARIABLE_INIT equ RTL_CONDITION_VARIABLE_INIT
+
+;;
+;; Flags for condition variables
+;;
+CONDITION_VARIABLE_LOCKMODE_SHARED equ RTL_CONDITION_VARIABLE_LOCKMODE_SHARED
+
+
+;PVOID
+EncodePointer proto _CType \
+		  _Ptr: PVOID
+
+;PVOID
+DecodePointer proto _CType \
+		  _Ptr: PVOID
+
+;PVOID
+EncodeSystemPointer proto _CType \
+		  _Ptr: PVOID
+
+;PVOID
+DecodeSystemPointer proto _CType \
+		  _Ptr: PVOID
+
+endif ;; (_WIN32_WINNT GE 0x0600)
 
 ifdef _X86_
 LPLDT_ENTRY	typedef PLDT_ENTRY
@@ -599,57 +681,14 @@ GMEM_LOCKCOUNT		equ 0x00FF
 MEMORYSTATUS		STRUC
 dwLength		dd ?
 dwMemoryLoad		dd ?
-dwTotalPhys		dd ?
-dwAvailPhys		dd ?
-dwTotalPageFile		dd ?
-dwAvailPageFile		dd ?
-dwTotalVirtual		dd ?
-dwAvailVirtual		dd ?
+dwTotalPhys		SIZE_T ?
+dwAvailPhys		SIZE_T ?
+dwTotalPageFile		SIZE_T ?
+dwAvailPageFile		SIZE_T ?
+dwTotalVirtual		SIZE_T ?
+dwAvailVirtual		SIZE_T ?
 MEMORYSTATUS		ENDS
 LPMEMORYSTATUS		TYPEDEF PTR MEMORYSTATUS
-
-MEMORYSTATUSEX		STRUC
-dwLength		dd ?	; Size of structure: must be set before call
-dwMemoryLoad		dd ?	; A number between 0 and 100 that specifies the
-				; approximate percentage of physical memory that
-				; is in use (0 indicates no memory use and 100
-				; indicates full memory use).
-ullTotalPhys		dq ?	; The amount of actual physical memory in bytes
-ullAvailPhys		dq ?	; The amount of physical memory currently
-				; available, in bytes. This is the amount of
-				; physical memory that can be immediately reused
-				; without having to write its contents to disk
-				; first. It is the sum of the size of the
-				; standby, free, and zero lists.
-ullTotalPageFile	dq ?	; The current committed memory limit for the
-				; system or the current process, whichever is
-				; smaller, in bytes. To get the system-wide
-				; committed memory limit, call
-				; GetPerformanceInfo.
-ullAvailPageFile	dq ?	; The maximum amount of memory the current
-				; process can commit, in bytes. This value is
-				; equal to or smaller than the system-wide
-				; available commit value. To calculate the
-				; system-wide available commit value, call
-				; GetPerformanceInfo and subtract the value of
-				; CommitTotal from the value of CommitLimit.
-ullTotalVirtual		dq ?	; The size of the user-mode portion of the
-				; virtual address space of the calling process,
-				; in bytes. This value depends on the type of
-				; process, the type of processor, and the
-				; configuration of the operating system. For
-				; example, this value is approximately 2 GB for
-				; most 32-bit processes on an x86 processor and
-				; approximately 3 GB for 32-bit processes that
-				; are large address aware running on a system
-				; with 4-gigabyte tuning enabled.
-ullAvailVirtual		dq ?	; The amount of unreserved and uncommitted
-				; memory currently in the user-mode portion of
-				; the virtual address space of the calling
-				; process, in bytes.
-ullAvailExtendedVirtual dq ?	; Reserved. This value is always 0.
-MEMORYSTATUSEX		ENDS
-LPMEMORYSTATUSEX	TYPEDEF PTR MEMORYSTATUSEX
 
 ; Local Memory Flags
 LMEM_FIXED		equ 0x0000
@@ -680,47 +719,83 @@ LMEM_LOCKCOUNT		equ 0x00FF
 ; dwCreationFlag values
 ;
 
-DEBUG_PROCESS		    equ 0x00000001
-DEBUG_ONLY_THIS_PROCESS	    equ 0x00000002
+DEBUG_PROCESS		equ 0x00000001
+DEBUG_ONLY_THIS_PROCESS equ 0x00000002
+CREATE_SUSPENDED	equ 0x00000004
+DETACHED_PROCESS	equ 0x00000008
 
-CREATE_SUSPENDED	    equ 0x00000004
+CREATE_NEW_CONSOLE	equ 0x00000010
+NORMAL_PRIORITY_CLASS	equ 0x00000020
+IDLE_PRIORITY_CLASS	equ 0x00000040
+HIGH_PRIORITY_CLASS	equ 0x00000080
 
-DETACHED_PROCESS	    equ 0x00000008
+REALTIME_PRIORITY_CLASS equ 0x00000100
+CREATE_NEW_PROCESS_GROUP equ 0x00000200
+CREATE_UNICODE_ENVIRONMENT equ 0x00000400
+CREATE_SEPARATE_WOW_VDM equ 0x00000800
 
-CREATE_NEW_CONSOLE	    equ 0x00000010
+CREATE_SHARED_WOW_VDM	equ 0x00001000
+CREATE_FORCEDOS		equ 0x00002000
+BELOW_NORMAL_PRIORITY_CLASS equ 0x00004000
+ABOVE_NORMAL_PRIORITY_CLASS equ 0x00008000
 
-NORMAL_PRIORITY_CLASS	    equ 0x00000020
-IDLE_PRIORITY_CLASS	    equ 0x00000040
-HIGH_PRIORITY_CLASS	    equ 0x00000080
-REALTIME_PRIORITY_CLASS	    equ 0x00000100
+INHERIT_PARENT_AFFINITY equ 0x00010000
+INHERIT_CALLER_PRIORITY equ 0x00020000	  ;; Deprecated
+CREATE_PROTECTED_PROCESS equ 0x00040000
+EXTENDED_STARTUPINFO_PRESENT equ 0x00080000
 
-CREATE_NEW_PROCESS_GROUP    equ 0x00000200
-CREATE_UNICODE_ENVIRONMENT  equ 0x00000400
+PROCESS_MODE_BACKGROUND_BEGIN equ 0x00100000
+PROCESS_MODE_BACKGROUND_END equ 0x00200000
 
-CREATE_SEPARATE_WOW_VDM	    equ 0x00000800
-CREATE_SHARED_WOW_VDM	    equ 0x00001000
-CREATE_FORCEDOS		    equ 0x00002000
+CREATE_BREAKAWAY_FROM_JOB equ 0x01000000
+CREATE_PRESERVE_CODE_AUTHZ_LEVEL equ 0x02000000
+CREATE_DEFAULT_ERROR_MODE equ 0x04000000
+CREATE_NO_WINDOW	equ 0x08000000
 
-CREATE_DEFAULT_ERROR_MODE   equ 0x04000000
-CREATE_NO_WINDOW	    equ 0x08000000
+PROFILE_USER		equ 0x10000000
+PROFILE_KERNEL		equ 0x20000000
+PROFILE_SERVER		equ 0x40000000
+CREATE_IGNORE_SYSTEM_DEFAULT equ 0x80000000
 
-PROFILE_USER		    equ 0x10000000
-PROFILE_KERNEL		    equ 0x20000000
-PROFILE_SERVER		    equ 0x40000000
+;;
+;; Thread dwCreationFlag values
+;;
+
+;;#define CREATE_SUSPENDED		    0x00000004
+
+STACK_SIZE_PARAM_IS_A_RESERVATION equ 0x00010000    ;; Threads only
+;;
+;; Priority flags
+;;
 
 THREAD_PRIORITY_LOWEST		equ THREAD_BASE_PRIORITY_MIN
-THREAD_PRIORITY_BELOW_NORMAL	equ (THREAD_PRIORITY_LOWEST+1)
+THREAD_PRIORITY_BELOW_NORMAL	equ THREAD_PRIORITY_LOWEST+1
 THREAD_PRIORITY_NORMAL		equ 0
 THREAD_PRIORITY_HIGHEST		equ THREAD_BASE_PRIORITY_MAX
-THREAD_PRIORITY_ABOVE_NORMAL	equ (THREAD_PRIORITY_HIGHEST-1)
-THREAD_PRIORITY_ERROR_RETURN	equ (MAXLONG)
+THREAD_PRIORITY_ABOVE_NORMAL	equ THREAD_PRIORITY_HIGHEST-1
+THREAD_PRIORITY_ERROR_RETURN	equ MAXLONG
 
 THREAD_PRIORITY_TIME_CRITICAL	equ THREAD_BASE_PRIORITY_LOWRT
-THREAD_PRIORITY_IDLE		equ THREAD_BASE_PRIORITY_IDLE
+THREAD_PRIORITY_IDLE		equ THREAD_BASE_PRIORITY_IDE
 
-;
-; Debug APIs
-;
+THREAD_MODE_BACKGROUND_BEGIN	equ 0x00010000
+THREAD_MODE_BACKGROUND_END	equ 0x00020000
+
+;;
+;; GetFinalPathNameByHandle
+;;
+
+VOLUME_NAME_DOS		equ 0x0	 ;;default
+VOLUME_NAME_GUID	equ 0x1
+VOLUME_NAME_NT		equ 0x2
+VOLUME_NAME_NONE	equ 0x4
+
+FILE_NAME_NORMALIZED	equ 0x0	 ;;default
+FILE_NAME_OPENED	equ 0x8
+
+;;
+;; Debug APIs
+;;
 EXCEPTION_DEBUG_EVENT	    equ 1
 CREATE_THREAD_DEBUG_EVENT   equ 2
 CREATE_PROCESS_DEBUG_EVENT  equ 3
@@ -813,8 +888,28 @@ UNION
   RipInfo		RIP_INFO <>
 ENDS
 DEBUG_EVENT		ENDS
-
 LPDEBUG_EVENT		TYPEDEF PTR DEBUG_EVENT
+
+;;
+;; JIT Debugging Info. This structure is defined to have constant size in
+;; both the emulated and native environment.
+;;
+
+JIT_DEBUG_INFO		STRUC
+dwSize			dd ?
+dwProcessorArchitecture dd ?
+dwThreadID		dd ?
+dwReserved0		dd ?
+lpExceptionAddress	dq ?
+lpExceptionRecord	dq ?
+lpContextRecord		dq ?
+JIT_DEBUG_INFO		ENDS
+LPJIT_DEBUG_INFO	typedef ptr JIT_DEBUG_INFO
+
+JIT_DEBUG_INFO32	typedef JIT_DEBUG_INFO
+JIT_DEBUG_INFO64	typedef JIT_DEBUG_INFO
+LPJIT_DEBUG_INFO32	typedef ptr JIT_DEBUG_INFO
+LPJIT_DEBUG_INFO64	typedef ptr JIT_DEBUG_INFO
 
 ifndef MIDL_PASS
 LPCONTEXT		TYPEDEF PCONTEXT
@@ -999,53 +1094,53 @@ S_SERDDR      equ (-14) ; Invalid duration
 S_SERDSR      equ (-15) ; Invalid source
 S_SERDST      equ (-16) ; Invalid state
 
-NMPWAIT_WAIT_FOREVER		equ 0xffffffff
-NMPWAIT_NOWAIT			equ 0x00000001
-NMPWAIT_USE_DEFAULT_WAIT	equ 0x00000000
+NMPWAIT_WAIT_FOREVER	equ 0xffffffff
+NMPWAIT_NOWAIT		equ 0x00000001
+NMPWAIT_USE_DEFAULT_WAIT equ 0x00000000
 
-FS_CASE_IS_PRESERVED		equ FILE_CASE_PRESERVED_NAMES
-FS_CASE_SENSITIVE		equ FILE_CASE_SENSITIVE_SEARCH
-FS_UNICODE_STORED_ON_DISK	equ FILE_UNICODE_ON_DISK
-FS_PERSISTENT_ACLS		equ FILE_PERSISTENT_ACLS
-FS_VOL_IS_COMPRESSED		equ FILE_VOLUME_IS_COMPRESSED
-FS_FILE_COMPRESSION		equ FILE_FILE_COMPRESSION
+FS_CASE_IS_PRESERVED	equ FILE_CASE_PRESERVED_NAMES
+FS_CASE_SENSITIVE	equ FILE_CASE_SENSITIVE_SEARCH
+FS_UNICODE_STORED_ON_DISK equ FILE_UNICODE_ON_DISK
+FS_PERSISTENT_ACLS	equ FILE_PERSISTENT_ACLS
+FS_VOL_IS_COMPRESSED	equ FILE_VOLUME_IS_COMPRESSED
+FS_FILE_COMPRESSION	equ FILE_FILE_COMPRESSION
+FS_FILE_ENCRYPTION	equ FILE_SUPPORTS_ENCRYPTION
 
+FILE_MAP_COPY		equ SECTION_QUERY
+FILE_MAP_WRITE		equ SECTION_MAP_WRITE
+FILE_MAP_READ		equ SECTION_MAP_READ
+FILE_MAP_ALL_ACCESS	equ SECTION_ALL_ACCESS
+FILE_MAP_EXECUTE	equ SECTION_MAP_EXECUTE_EXPLICIT    ;; not included in FILE_MAP_ALL_ACCESS
 
-FILE_MAP_COPY	    equ SECTION_QUERY
-FILE_MAP_WRITE	    equ SECTION_MAP_WRITE
-FILE_MAP_READ	    equ SECTION_MAP_READ
-FILE_MAP_ALL_ACCESS equ SECTION_ALL_ACCESS
+OF_READ			equ 0x00000000
+OF_WRITE		equ 0x00000001
+OF_READWRITE		equ 0x00000002
+OF_SHARE_COMPAT		equ 0x00000000
+OF_SHARE_EXCLUSIVE	equ 0x00000010
+OF_SHARE_DENY_WRITE	equ 0x00000020
+OF_SHARE_DENY_READ	equ 0x00000030
+OF_SHARE_DENY_NONE	equ 0x00000040
+OF_PARSE		equ 0x00000100
+OF_DELETE		equ 0x00000200
+OF_VERIFY		equ 0x00000400
+OF_CANCEL		equ 0x00000800
+OF_CREATE		equ 0x00001000
+OF_PROMPT		equ 0x00002000
+OF_EXIST		equ 0x00004000
+OF_REOPEN		equ 0x00008000
 
-OF_READ		    equ 0x00000000
-OF_WRITE	    equ 0x00000001
-OF_READWRITE	    equ 0x00000002
-OF_SHARE_COMPAT	    equ 0x00000000
-OF_SHARE_EXCLUSIVE  equ 0x00000010
-OF_SHARE_DENY_WRITE equ 0x00000020
-OF_SHARE_DENY_READ  equ 0x00000030
-OF_SHARE_DENY_NONE  equ 0x00000040
-OF_PARSE	    equ 0x00000100
-OF_DELETE	    equ 0x00000200
-OF_VERIFY	    equ 0x00000400
-OF_CANCEL	    equ 0x00000800
-OF_CREATE	    equ 0x00001000
-OF_PROMPT	    equ 0x00002000
-OF_EXIST	    equ 0x00004000
-OF_REOPEN	    equ 0x00008000
+OFS_MAXPATHNAME		equ 128
 
-OFS_MAXPATHNAME equ 128
-
-OFSTRUCT	STRUC
-cBytes		BYTE ?
-fFixedDisk	BYTE ?
-nErrCode	WORD ?
-Reserved1	WORD ?
-Reserved2	WORD ?
-szPathName	SBYTE OFS_MAXPATHNAME dup(?)
-OFSTRUCT	ENDS
-
-LPOFSTRUCT	TYPEDEF PTR OFSTRUCT
-POFSTRUCT	TYPEDEF PTR OFSTRUCT
+OFSTRUCT		STRUC
+cBytes			db ?
+fFixedDisk		db ?
+nErrCode		dw ?
+Reserved1		dw ?
+Reserved2		dw ?
+szPathName		SBYTE OFS_MAXPATHNAME dup(?)
+OFSTRUCT		ENDS
+LPOFSTRUCT		TYPEDEF PTR OFSTRUCT
+POFSTRUCT		TYPEDEF PTR OFSTRUCT
 
 ;
 ; The MS-MIPS and Alpha compilers support intrinsic functions for interlocked
@@ -1062,27 +1157,1000 @@ GetConsoleWindow_T	typedef ptr GetConsoleWindow_P
 externdef		GetConsoleWindow:GetConsoleWindow_T
 endif
 
+ifndef NOWINBASEINTERLOCK
+
 ifndef _NTOS_
 
+ifdef _M_IA64
+
+InterlockedIncrement				equ <_InterlockedIncrement>
+InterlockedIncrementAcquire			equ <_InterlockedIncrement_acq>
+InterlockedIncrementRelease			equ <_InterlockedIncrement_rel>
+InterlockedDecrement				equ <_InterlockedDecrement>
+InterlockedDecrementAcquire			equ <_InterlockedDecrement_acq>
+InterlockedDecrementRelease			equ <_InterlockedDecrement_rel>
+InterlockedExchange				equ <_InterlockedExchange>
+InterlockedExchangeAdd				equ <_InterlockedExchangeAdd>
+InterlockedCompareExchange			equ <_InterlockedCompareExchange>
+InterlockedCompareExchangeAcquire		equ <_InterlockedCompareExchange_acq>
+InterlockedCompareExchangeRelease		equ <_InterlockedCompareExchange_rel>
+InterlockedExchangePointer			equ <_InterlockedExchangePointer>
+InterlockedCompareExchangePointer		equ <_InterlockedCompareExchangePointer>
+InterlockedCompareExchangePointerRelease	equ <_InterlockedCompareExchangePointer_rel>
+InterlockedCompareExchangePointerAcquire	equ <_InterlockedCompareExchangePointer_acq>
+
+InterlockedIncrement64				equ <_InterlockedIncrement64>
+InterlockedDecrement64				equ <_InterlockedDecrement64>
+InterlockedExchange64				equ <_InterlockedExchange64>
+InterlockedExchangeAcquire64			equ <_InterlockedExchange64_acq>
+InterlockedExchangeAdd64			equ <_InterlockedExchangeAdd64>
+InterlockedCompareExchange64			equ <_InterlockedCompareExchange64>
+InterlockedCompareExchangeAcquire64		equ <_InterlockedCompareExchange64_acq>
+InterlockedCompareExchangeRelease64		equ <_InterlockedCompareExchange64_rel>
+InterlockedCompare64Exchange128			equ <_InterlockedCompare64Exchange128>
+InterlockedCompare64ExchangeAcquire128		equ <_InterlockedCompare64Exchange128_acq>
+InterlockedCompare64ExchangeRelease128		equ <_InterlockedCompare64Exchange128_rel>
+
+InterlockedOr		equ <_InterlockedOr>
+InterlockedOrAcquire	equ <_InterlockedOr_acq>
+InterlockedOrRelease	equ <_InterlockedOr_rel>
+InterlockedOr8		equ <_InterlockedOr8>
+InterlockedOr8Acquire	equ <_InterlockedOr8_acq>
+InterlockedOr8Release	equ <_InterlockedOr8_rel>
+InterlockedOr16		equ <_InterlockedOr16>
+InterlockedOr16Acquire	equ <_InterlockedOr16_acq>
+InterlockedOr16Release	equ <_InterlockedOr16_rel>
+InterlockedOr64		equ <_InterlockedOr64>
+InterlockedOr64Acquire	equ <_InterlockedOr64_acq>
+InterlockedOr64Release	equ <_InterlockedOr64_rel>
+InterlockedXor		equ <_InterlockedXor>
+InterlockedXorAcquire	equ <_InterlockedXor_acq>
+InterlockedXorRelease	equ <_InterlockedXor_rel>
+InterlockedXor8		equ <_InterlockedXor8>
+InterlockedXor8Acquire	equ <_InterlockedXor8_acq>
+InterlockedXor8Release	equ <_InterlockedXor8_rel>
+InterlockedXor16	equ <_InterlockedXor16>
+InterlockedXor16Acquire equ <_InterlockedXor16_acq>
+InterlockedXor16Release equ <_InterlockedXor16_rel>
+InterlockedXor64	equ <_InterlockedXor64>
+InterlockedXor64Acquire equ <_InterlockedXor64_acq>
+InterlockedXor64Release equ <_InterlockedXor64_rel>
+InterlockedAnd		equ <_InterlockedAnd>
+InterlockedAndAcquire	equ <_InterlockedAnd_acq>
+InterlockedAndRelease	equ <_InterlockedAnd_rel>
+InterlockedAnd8		equ <_InterlockedAnd8>
+InterlockedAnd8Acquire	equ <_InterlockedAnd8_acq>
+InterlockedAnd8Release	equ <_InterlockedAnd8_rel>
+InterlockedAnd16	equ <_InterlockedAnd16>
+InterlockedAnd16Acquire equ <_InterlockedAnd16_acq>
+InterlockedAnd16Release equ <_InterlockedAnd16_rel>
+InterlockedAnd64	equ <_InterlockedAnd64>
+InterlockedAnd64Acquire equ <_InterlockedAnd64_acq>
+InterlockedAnd64Release equ <_InterlockedAnd64_rel>
+
+;LONG
+InterlockedOr proto _CType \
+	   Destination: ptr LONG,
+		 Value: LONG
+;LONG
+InterlockedOrAcquire proto _CType \
+	   Destination: ptr LONG,
+		 Value: LONG
+
+;LONG
+InterlockedOrRelease proto _CType \
+	   Destination: ptr LONG,
+		 Value: LONG
+
+;char
+InterlockedOr8 proto _CType \
+	   Destination: LPSTR,
+		 Value: SBYTE
+
+;char
+InterlockedOr8Acquire proto _CType \
+	   Destination: LPSTR,
+		 Value: SBYTE
+;char
+InterlockedOr8Release proto _CType \
+	   Destination: LPSTR,
+		 Value: SBYTE
+;SHORT
+InterlockedOr16 proto _CType \
+	   Destination: ptr SWORD,
+		 Value: SWORD
+
+;SHORT
+InterlockedOr16Acquire proto _CType \
+	   Destination: ptr SWORD,
+		 Value: SWORD
+
+;SHORT
+InterlockedOr16Release proto _CType \
+	   Destination: ptr SWORD,
+		 Value: SWORD
+
+;LONGLONG
+InterlockedOr64 proto _CType \
+	   Destination: ptr LONGLONG,
+		 Value: LONGLONG
+
+;LONGLONG
+InterlockedOr64Acquire proto _CType \
+	   Destination: ptr LONGLONG,
+		 Value: LONGLONG
+
+;LONGLONG
+InterlockedOr64Release proto _CType \
+	   Destination: ptr LONGLONG,
+		 Value: LONGLONG
+
+;LONG
+InterlockedXor proto _CType \
+	   Destination: ptr LONG,
+		 Value: LONG
+
+;LONG
+InterlockedXorAcquire proto _CType \
+	   Destination: ptr LONG,
+		 Value: LONG
+
+;LONG
+InterlockedXorRelease proto _CType \
+	   Destination: ptr LONG,
+		 Value: LONG
+
+;char
+InterlockedXor8 proto _CType \
+	   Destination: LPSTR,
+		 Value: SBYTE
+
+;char
+InterlockedXor8Acquire proto _CType \
+	   Destination: LPSTR,
+		 Value: SBYTE
+
+;char
+InterlockedXor8Release proto _CType \
+	   Destination: LPSTR,
+		 Value: SBYTE
+
+;SHORT
+InterlockedXor16 proto _CType \
+	   Destination: ptr SWORD,
+		 Value: SWORD
+
+;SHORT
+InterlockedXor16Acquire proto _CType \
+	   Destination: ptr SWORD,
+		 Value: SWORD
+
+;SHORT
+InterlockedXor16Release proto _CType \
+	   Destination: ptr SWORD,
+		 Value: SWORD
+
+;LONGLONG
+InterlockedXor64 proto _CType \
+	   Destination: ptr LONGLONG,
+		 Value: LONGLONG
+
+;LONGLONG
+InterlockedXor64Acquire proto _CType \
+	   Destination: ptr LONGLONG,
+		 Value: LONGLONG
+
+;LONGLONG
+InterlockedXor64Release proto _CType \
+	   Destination: ptr LONGLONG,
+		 Value: LONGLONG
+
+;LONG
+InterlockedAnd proto _CType \
+	   Destination: ptr LONG,
+		 Value: LONG
+
+;LONG
+InterlockedAndAcquire proto _CType \
+	   Destination: ptr LONG,
+		 Value: LONG
+
+;LONG
+InterlockedAndRelease proto _CType \
+	   Destination: ptr LONG,
+		 Value: LONG
+
+;char
+InterlockedAnd8 proto _CType \
+	   Destination: LPSTR,
+		 Value: SBYTE
+
+;char
+InterlockedAnd8Acquire proto _CType \
+	   Destination: LPSTR,
+		 Value: SBYTE
+
+;char
+InterlockedAnd8Release proto _CType \
+	   Destination: LPSTR,
+		 Value: SBYTE
+
+;SHORT
+InterlockedAnd16 proto _CType \
+	   Destination: ptr SWORD,
+		 Value: SWORD
+
+;SHORT
+InterlockedAnd16Acquire proto _CType \
+	   Destination: ptr SWORD,
+		 Value: SWORD
+
+;SHORT
+InterlockedAnd16Release proto _CType \
+	   Destination: ptr SWORD,
+		 Value: SWORD
+
+;LONGLONG
+InterlockedAnd64 proto _CType \
+	   Destination: ptr LONGLONG,
+		 Value: LONGLONG
+
+;LONGLONG
+InterlockedAnd64Acquire proto _CType \
+	   Destination: ptr LONGLONG,
+		 Value: LONGLONG
+
+;LONGLONG
+InterlockedAnd64Release proto _CType \
+	   Destination: ptr LONGLONG,
+		 Value: LONGLONG
+
+;LONGLONG
+InterlockedIncrement64 proto _CType \
+		Addend: ptr LONGLONG
+
+;LONGLONG
+InterlockedDecrement64 proto _CType \
+		Addend: ptr LONGLONG
+
+;LONG
+InterlockedIncrementAcquire proto _CType \
+		Addend: ptr LONG
+
+;LONG
+InterlockedDecrementAcquire proto _CType \
+		Addend: ptr LONG
+
+;LONG
+InterlockedIncrementRelease proto _CType \
+		Addend: ptr LONG
+
+;LONG
+InterlockedDecrementRelease proto _CType \
+		Addend: ptr LONG
+
+;LONGLONG
+InterlockedExchange64 proto _CType \
+		Target: ptr LONGLONG,
+		 Value: LONGLONG
+
+;LONGLONG
+InterlockedExchangeAcquire64 proto _CType \
+		Target: ptr LONGLONG,
+		 Value: LONGLONG
+
+;LONGLONG
+InterlockedExchangeAdd64 proto _CType \
+		Addend: ptr LONGLONG,
+		 Value: LONGLONG
+
+;LONGLONG
+InterlockedCompareExchange64 proto _CType \
+	   Destination: ptr LONGLONG,
+	      ExChange: LONGLONG,
+	     Comperand: LONGLONG
+
+;LONGLONG
+InterlockedCompareExchangeAcquire64 proto _CType \
+	   Destination: ptr LONGLONG,
+	      ExChange: LONGLONG,
+	     Comperand: LONGLONG
+
+;LONGLONG
+InterlockedCompareExchangeRelease64 proto _CType \
+	   Destination: ptr LONGLONG,
+	      ExChange: LONGLONG,
+	     Comperand: LONGLONG
+
+;LONG64
+InterlockedCompare64Exchange128 proto _CType \
+	   Destination: ptr LONG64,
+	  ExChangeHigh: LONG64,
+	   ExChangeLow: LONG64,
+	     Comperand: LONG64
+
+;LONG64
+InterlockedCompare64ExchangeAcquire128 proto _CType \
+	   Destination: ptr LONG64,
+	  ExChangeHigh: LONG64,
+	   ExChangeLow: LONG64,
+	     Comperand: LONG64
+
+;LONG64
+InterlockedCompare64ExchangeRelease128 proto _CType \
+	   Destination: ptr LONG64,
+	  ExChangeHigh: LONG64,
+	   ExChangeLow: LONG64,
+	     Comperand: LONG64
+
+;LONG
+InterlockedIncrement proto _CType \
+	      lpAddend: ptr LONG
+
+;LONG
+InterlockedDecrement proto _CType \
+	      lpAddend: ptr LONG
+
+;LONG
+InterlockedExchange proto _CType \
+		Target: ptr LONG,
+		 Value: LONG
+
+;LONG
+InterlockedExchangeAdd proto _CType \
+		Addend: ptr LONG,
+		 Value: LONG
+
+;LONG
+InterlockedCompareExchange proto _CType \
+	   Destination: ptr LONG,
+	      ExChange: LONG,
+	     Comperand: LONG
+
+;LONG
+InterlockedCompareExchangeRelease proto _CType \
+	   Destination: ptr LONG,
+	      ExChange: LONG,
+	     Comperand: LONG
+
+;LONG
+InterlockedCompareExchangeAcquire proto _CType \
+	   Destination: ptr LONG,
+	      ExChange: LONG,
+	     Comperand: LONG
+
+;PVOID
+InterlockedExchangePointer proto _CType \
+		Target: PVOID,
+		 Value: PVOID
+
+;PVOID
+InterlockedCompareExchangePointer proto _CType \
+	   Destination: PVOID,
+	      ExChange: PVOID,
+	     Comperand: PVOID
+
+;PVOID
+InterlockedCompareExchangePointerAcquire proto _CType \
+	   Destination: PVOID,
+	      ExChange: PVOID,
+	     Comperand: PVOID
+
+;PVOID
+InterlockedCompareExchangePointerRelease proto _CType \
+	   Destination: PVOID,
+	      ExChange: PVOID,
+	     Comperand: PVOID
+
+
+ifndef MIDL_PASS
+
+ifndef InterlockedAnd
+
+InterlockedAnd equ <InterlockedAnd_Inline>
+;FORCEINLINE
+;LONG
+InterlockedAnd_Inline macro Target, _Set
+	mov	rax,Target
+	mov	rdx,_Set
+	push	r12
+	push	r13
+	push	r14
+	push	r15
+	sub	rsp,0x20
+	.for	r12=rax,r13=rdx,r14d=[r12],r15d=~r14d:r14d!=r15d:
+		mov r15d,r14d
+		mov edx,r15d
+		and edx,r13d
+		mov r14,InterlockedCompareExchange(r12,edx,r15d)
+	.endf
+	mov	rax,r14
+	add	rsp,0x20
+	pop	r15
+	pop	r14
+	pop	r13
+	pop	r12
+	exitm  <eax>
+	endm
+endif
+
+ifndef InterlockedOr
+
+InterlockedOr equ <InterlockedOr_Inline>
+;FORCEINLINE
+;LONG
+InterlockedOr_Inline macro Target, _Set
+	mov	rax,Target
+	mov	rdx,_Set
+	push	r12
+	push	r13
+	push	r14
+	push	r15
+	sub	rsp,0x20
+	.for	r12=rax,r13=rdx,r14d=[r12],r15d=~r14d:r14d!=r15d:
+		mov r15d,r14d
+		mov edx,r15d
+		or  edx,r13d
+		mov r14,InterlockedCompareExchange(r12,edx,r15d)
+	.endf
+	mov	rax,r14
+	add	rsp,0x20
+	pop	r15
+	pop	r14
+	pop	r13
+	pop	r12
+	exitm  <eax>
+	endm
+endif
+
+ifndef InterlockedXor
+
+InterlockedXor equ <InterlockedXor_Inline>
+;FORCEINLINE
+;LONG
+InterlockedXor_Inline macro Target, _Set
+	mov	rax,Target
+	mov	rdx,_Set
+	push	r12
+	push	r13
+	push	r14
+	push	r15
+	sub	rsp,0x20
+	.for	r12=rax,r13=rdx,r14d=[r12],r15d=~r14d:r14d!=r15d:
+		mov r15d,r14d
+		mov edx,r15d
+		xor edx,r13d
+		mov r14,InterlockedCompareExchange(r12,edx,r15d)
+	.endf
+	mov	rax,r14
+	add	rsp,0x20
+	pop	r15
+	pop	r14
+	pop	r13
+	pop	r12
+	exitm  <eax>
+	endm
+endif
+
+ifndef InterlockedAnd64
+
+InterlockedAnd64 equ <InterlockedAnd64_Inline>
+;FORCEINLINE
+;LONGLONG
+InterlockedAnd64_Inline macro Destination, Value
+	mov	rax,Destination
+	mov	rdx,Value
+	push	r12
+	push	r13
+	push	r14
+	sub	rsp,0x28
+	.for	r12=rax, r13=rdx ::
+		mov r14,[r12]
+		mov rdx,r14
+		and rdx,r13
+		.break .if InterlockedCompareExchange64(r12,rdx,r14) == r14
+	.endf
+	mov	rax,r14
+	add	rsp,0x28
+	pop	r14
+	pop	r13
+	pop	r12
+	exitm  <eax>
+	endm
+endif
+
+ifndef InterlockedOr64
+
+InterlockedOr64 equ <InterlockedOr64_Inline>
+;FORCEINLINE
+;LONGLONG
+InterlockedOr64_Inline macro Destination, Value
+	mov	rax,Destination
+	mov	rdx,Value
+	push	r12
+	push	r13
+	push	r14
+	sub	rsp,0x28
+	.for	r12=rax, r13=rdx ::
+		mov r14,[r12]
+		mov rdx,r14
+		or  rdx,r13
+		.break .if InterlockedCompareExchange64(r12,rdx,r14) == r14
+	.endf
+	mov	rax,r14
+	add	rsp,0x28
+	pop	r14
+	pop	r13
+	pop	r12
+	exitm  <rax>
+	endm
+endif
+
+ifndef InterlockedXor64
+
+InterlockedXor64 equ <InterlockedXor64_Inline>
+;FORCEINLINE
+;LONGLONG
+InterlockedXor64_Inline macro Destination, Value
+	mov	rax,Destination
+	mov	rdx,Value
+	push	r12
+	push	r13
+	push	r14
+	sub	rsp,0x28
+	.for	r12=rax, r13=rdx ::
+		mov r14,[r12]
+		mov rdx,r14
+		xor rdx,r13
+		.break .if InterlockedCompareExchange64(r12,rdx,r14) == r14
+	.endf
+	mov	rax,r14
+	add	rsp,0x28
+	pop	r14
+	pop	r13
+	pop	r12
+	exitm  <rax>
+	endm
+endif
+
+ifndef InterlockedBitTestAndSet
+InterlockedBitTestAndSet equ <InterlockedBitTestAndSet_Inline>
+;FORCEINLINE
+;BOOLEAN
+InterlockedBitTestAndSet_Inline macro Base, Bit
+;    LONG tBit;
+;    tBit = 1<<(Bit & (sizeof (*Base)*8-1));
+;    return (BOOLEAN)((InterlockedOr(&Base[Bit/(sizeof(*Base)*8)], tBit)&tBit) != 0);
+	endm
+endif
+
+ifndef InterlockedBitTestAndReset
+InterlockedBitTestAndReset equ <InterlockedBitTestAndReset_Inline>
+;FORCEINLINE
+;BOOLEAN
+InterlockedBitTestAndReset_Inline macro Base, Bit
+;    LONG tBit;
+;    tBit = 1<<(Bit & (sizeof (*Base)*8-1));
+;    return (BOOLEAN)((InterlockedAnd(&Base[Bit/(sizeof(*Base)*8)], ~tBit)&tBit) != 0);
+	endm
+endif
+
+ifndef InterlockedBitTestAndComplement
+InterlockedBitTestAndComplement equ <InterlockedBitTestAndComplement_Inline>
+;FORCEINLINE
+;BOOLEAN
+InterlockedBitTestAndComplement_Inline macro Base, Bit
+;    LONG tBit;
+;    tBit = 1<<(Bit & (sizeof (*Base)*8-1));
+;    return (BOOLEAN)((InterlockedXor(&Base[Bit/(sizeof(*Base)*8)], tBit)&tBit) != 0);
+	endm
+endif
+
+endif ;; MIDL_PASS
+
+pragma_intrinsic macro x
+	endm
+
+pragma_intrinsic(_InterlockedIncrement)
+pragma_intrinsic(_InterlockedIncrement_acq)
+pragma_intrinsic(_InterlockedIncrement_rel)
+pragma_intrinsic(_InterlockedDecrement)
+pragma_intrinsic(_InterlockedDecrement_acq)
+pragma_intrinsic(_InterlockedDecrement_rel)
+pragma_intrinsic(_InterlockedExchange)
+pragma_intrinsic(_InterlockedExchangeAdd)
+pragma_intrinsic(_InterlockedCompareExchange)
+pragma_intrinsic(_InterlockedCompareExchange_acq)
+pragma_intrinsic(_InterlockedCompareExchange_rel)
+pragma_intrinsic(_InterlockedExchangePointer)
+pragma_intrinsic(_InterlockedCompareExchangePointer)
+pragma_intrinsic(_InterlockedCompareExchangePointer_acq)
+pragma_intrinsic(_InterlockedCompareExchangePointer_rel)
+pragma_intrinsic(_InterlockedIncrement64)
+pragma_intrinsic(_InterlockedDecrement64)
+pragma_intrinsic(_InterlockedExchange64)
+pragma_intrinsic(_InterlockedExchange64_acq)
+pragma_intrinsic(_InterlockedCompareExchange64)
+pragma_intrinsic(_InterlockedCompareExchange64_acq)
+pragma_intrinsic(_InterlockedCompareExchange64_rel)
+pragma_intrinsic(_InterlockedExchangeAdd64)
+pragma_intrinsic(_InterlockedOr)
+pragma_intrinsic(_InterlockedOr_acq)
+pragma_intrinsic(_InterlockedOr_rel)
+pragma_intrinsic(_InterlockedOr8)
+pragma_intrinsic(_InterlockedOr8_acq)
+pragma_intrinsic(_InterlockedOr8_rel)
+pragma_intrinsic(_InterlockedOr16)
+pragma_intrinsic(_InterlockedOr16_acq)
+pragma_intrinsic(_InterlockedOr16_rel)
+pragma_intrinsic(_InterlockedOr64)
+pragma_intrinsic(_InterlockedOr64_acq)
+pragma_intrinsic(_InterlockedOr64_rel)
+pragma_intrinsic(_InterlockedXor)
+pragma_intrinsic(_InterlockedXor_acq)
+pragma_intrinsic(_InterlockedXor_rel)
+pragma_intrinsic(_InterlockedXor8)
+pragma_intrinsic(_InterlockedXor8_acq)
+pragma_intrinsic(_InterlockedXor8_rel)
+pragma_intrinsic(_InterlockedXor16)
+pragma_intrinsic(_InterlockedXor16_acq)
+pragma_intrinsic(_InterlockedXor16_rel)
+pragma_intrinsic(_InterlockedXor64)
+pragma_intrinsic(_InterlockedXor64_acq)
+pragma_intrinsic(_InterlockedXor64_rel)
+pragma_intrinsic(_InterlockedAnd)
+pragma_intrinsic(_InterlockedAnd_acq)
+pragma_intrinsic(_InterlockedAnd_rel)
+pragma_intrinsic(_InterlockedAnd8)
+pragma_intrinsic(_InterlockedAnd8_acq)
+pragma_intrinsic(_InterlockedAnd8_rel)
+pragma_intrinsic(_InterlockedAnd16)
+pragma_intrinsic(_InterlockedAnd16_acq)
+pragma_intrinsic(_InterlockedAnd16_rel)
+pragma_intrinsic(_InterlockedAnd64)
+pragma_intrinsic(_InterlockedAnd64_acq)
+pragma_intrinsic(_InterlockedAnd64_rel)
+
+elseifdef _M_AMD64
+
+InterlockedAnd		equ <_InterlockedAnd>
+InterlockedOr		equ <_InterlockedOr>
+InterlockedXor		equ <_InterlockedXor>
+InterlockedIncrement	equ <_InterlockedIncrement>
+InterlockedIncrementAcquire equ <InterlockedIncrement>
+InterlockedIncrementRelease equ <InterlockedIncrement>
+InterlockedDecrement	equ <_InterlockedDecrement>
+InterlockedDecrementAcquire equ <InterlockedDecrement>
+InterlockedDecrementRelease equ <InterlockedDecrement>
+InterlockedExchange	equ <_InterlockedExchange>
+InterlockedExchangeAdd	equ <_InterlockedExchangeAdd>
+InterlockedCompareExchange equ <_InterlockedCompareExchange>
+InterlockedCompareExchangeAcquire equ <InterlockedCompareExchange>
+InterlockedCompareExchangeRelease equ <InterlockedCompareExchange>
+InterlockedExchangePointer equ <_InterlockedExchangePointer>
+InterlockedCompareExchangePointer equ <_InterlockedCompareExchangePointer>
+InterlockedCompareExchangePointerAcquire equ <_InterlockedCompareExchangePointer>
+InterlockedCompareExchangePointerRelease equ <_InterlockedCompareExchangePointer>
+
+InterlockedAnd64	equ <_InterlockedAnd64>
+InterlockedOr64		equ <_InterlockedOr64>
+InterlockedXor64	equ <_InterlockedXor64>
+InterlockedIncrement64	equ <_InterlockedIncrement64>
+InterlockedDecrement64	equ <_InterlockedDecrement64>
+InterlockedExchange64	equ <_InterlockedExchange64>
+InterlockedExchangeAdd64 equ <_InterlockedExchangeAdd64>
+InterlockedCompareExchange64 equ <_InterlockedCompareExchange64>
+InterlockedCompareExchangeAcquire64 equ <InterlockedCompareExchange64>
+InterlockedCompareExchangeRelease64 equ <InterlockedCompareExchange64>
+
+;LONG
+InterlockedAnd proto _CType \
+	  Destination: LPLONG,
+		Value: LONG
+
+;LONG
+InterlockedOr proto _CType \
+	  Destination: LPLONG,
+		Value: LONG
+
+;LONG
+InterlockedXor proto _CType \
+	  Destination: LPLONG,
+		Value: LONG
+
+;LONG
+InterlockedIncrement proto _CType \
+	       Addend: LPLONG
+
+;LONG
+InterlockedDecrement proto _CType \
+	       Addend: LPLONG
+
+;LONG
+InterlockedExchangeAdd proto _CType \
+	       Addend: LPLONG,
+		Value: LONG
+
+;LONG
+InterlockedCompareExchange proto _CType \
+	  Destination: LPLONG,
+	     ExChange: LONG,
+	    Comperand: LONG
+
+;PVOID
+InterlockedCompareExchangePointer proto _CType \
+	  Destination: PVOID,
+	     ExChange: PVOID,
+	    Comperand: PVOID
+
+;PVOID
+InterlockedExchangePointer proto _CType \
+	       Target: PVOID,
+		Value: PVOID
+
+;LONG64
+InterlockedAnd64 proto _CType \
+	  Destination: LPLONG64,
+		Value: LONG64
+
+;LONG64
+InterlockedOr64 proto _CType \
+	  Destination: LPLONG64,
+		Value: LONG64
+
+;LONG64
+InterlockedXor64 proto _CType \
+	  Destination: ptr LONG64,
+		Value: LONG64
+
+;LONG64
+InterlockedIncrement64 proto _CType \
+	       Addend: ptr LONG64
+
+;LONG64
+InterlockedDecrement64 proto _CType \
+	       Addend: ptr LONG64
+
+;LONG64
+InterlockedExchange64 proto _CType \
+	       Target: ptr LONG64,
+		Value: LONG64
+
+;LONG64
+InterlockedExchangeAdd64 proto _CType \
+	       Addend: ptr LONG64,
+		Value: LONG64
+
+;LONG64
+InterlockedCompareExchange64 proto _CType \
+	  Destination: ptr LONG64,
+	     ExChange: LONG64,
+	    Comperand: LONG64
+
+pragma_intrinsic macro x
+	endm
+
+pragma_intrinsic(_InterlockedAnd)
+pragma_intrinsic(_InterlockedOr)
+pragma_intrinsic(_InterlockedXor)
+pragma_intrinsic(_InterlockedIncrement)
+pragma_intrinsic(_InterlockedDecrement)
+pragma_intrinsic(_InterlockedExchange)
+pragma_intrinsic(_InterlockedExchangeAdd)
+pragma_intrinsic(_InterlockedCompareExchange)
+pragma_intrinsic(_InterlockedExchangePointer)
+pragma_intrinsic(_InterlockedCompareExchangePointer)
+pragma_intrinsic(_InterlockedAnd64)
+pragma_intrinsic(_InterlockedOr64)
+pragma_intrinsic(_InterlockedXor64)
+pragma_intrinsic(_InterlockedIncrement64)
+pragma_intrinsic(_InterlockedDecrement64)
+pragma_intrinsic(_InterlockedExchange64)
+pragma_intrinsic(_InterlockedExchangeAdd64)
+pragma_intrinsic(_InterlockedCompareExchange64)
+
+if _MSC_FULL_VER GE 140041204
+
+InterlockedAnd8	 equ <_InterlockedAnd8>
+InterlockedOr8	 equ <_InterlockedOr8>
+InterlockedXor8	 equ <_InterlockedXor8>
+InterlockedAnd16 equ <_InterlockedAnd16>
+InterlockedOr16	 equ <_InterlockedOr16>
+InterlockedXor16 equ <_InterlockedXor16>
+
+;char
+InterlockedAnd8 proto _CType \
+    Destination: LPSTR,
+	  Value: SBYTE
+
+;char
+InterlockedOr8 proto _CType \
+    Destination: LPSTR,
+	  Value: SBYTE
+
+;char
+InterlockedXor8 proto _CType \
+    Destination: LPSTR,
+	  Value: SBYTE
+
+;SHORT
+InterlockedAnd16 proto _CType \
+    Destination: LPSTR,
+	  Value: SWORD
+
+;SHORT
+InterlockedOr16 proto _CType \
+    Destination: LPSTR,
+	  Value: SWORD
+
+;SHORT
+InterlockedXor16 proto _CType \
+    Destination: LPSTR,
+	  Value: SWORD
+
+pragma_intrinsic(_InterlockedAnd8)
+pragma_intrinsic(_InterlockedOr8)
+pragma_intrinsic(_InterlockedXor8)
+pragma_intrinsic(_InterlockedAnd16)
+pragma_intrinsic(_InterlockedOr16)
+pragma_intrinsic(_InterlockedXor16)
+
+endif
+
+else ;; X86 interlocked definitions
+
+;LONG
 InterlockedIncrement proto _CType \
 	      lpAddend: LPLONG
+
 ;LONG
 InterlockedDecrement proto _CType \
 	      lpAddend: LPLONG
+
 ;LONG
 InterlockedExchange proto _CType \
 		Target: LPLONG,
 		 Value: LONG
+
+InterlockedExchangePointer macro Target, Value
+	InterlockedExchange(Target, Value)
+	endm
+
 ;LONG
 InterlockedExchangeAdd proto _CType \
 		Addend: LPLONG,
 		 Value: LONG
-;PVOID
+
+;LONG
 InterlockedCompareExchange proto _CType \
-	   Destination: PTR PVOID,
-	      Exchange: PVOID,
-	     Comperand: PVOID
+	   Destination: LPLONG,
+	      Exchange: LONG,
+	     Comperand: LONG
+
+if (_WIN32_WINNT GE 0x0502)
+;LONGLONG
+InterlockedCompareExchange64 proto _CType \
+	   Destination: ptr LONGLONG,
+	      Exchange: LONGLONG,
+	     Comperand: LONGLONG
 endif
+
+ifndef MIDL_PASS
+
+if (_WIN32_WINNT GE 0x0502)
+;FORCEINLINE
+;LONGLONG
+InterlockedAnd64 macro Destination, Value
+;    LONGLONG Old;
+;    do { Old = *Destination;
+;    } while (InterlockedCompareExchange64(Destination,Old & Value,Old) != Old);
+;    return Old;
+	endm
+;FORCEINLINE
+;LONGLONG
+InterlockedOr64 macro Destination, Value
+;    LONGLONG Old;
+;    do { Old = *Destination;
+;    } while (InterlockedCompareExchange64(Destination,Old | Value,Old) != Old);
+;    return Old;
+	endm
+;FORCEINLINE
+;LONGLONG
+InterlockedXor64 macro Destination, Value
+;    LONGLONG Old;
+;    do {
+;	 Old = *Destination;
+;    } while (InterlockedCompareExchange64(Destination,Old ^ Value,Old) != Old);
+;    return Old;
+	endm
+;FORCEINLINE
+;LONGLONG
+InterlockedIncrement64 macro Addend
+;    LONGLONG Old;
+;    do {
+;	 Old = *Addend;
+;    } while (InterlockedCompareExchange64(Addend,Old + 1,Old) != Old);
+;    return Old + 1;
+	endm
+;FORCEINLINE
+;LONGLONG
+InterlockedDecrement64 macro Addend
+;    LONGLONG Old;
+;    do {
+;	 Old = *Addend;
+;    } while (InterlockedCompareExchange64(Addend,Old - 1,Old) != Old);
+;    return Old - 1;
+	endm
+;FORCEINLINE
+;LONGLONG
+InterlockedExchange64 macro Target, Value
+;    LONGLONG Old;
+;    do {
+;	 Old = *Target;
+;    } while (InterlockedCompareExchange64(Target,Value,Old) != Old);
+;    return Old;
+	endm
+;FORCEINLINE
+;LONGLONG
+InterlockedExchangeAdd64 macro Addend, Value
+;    LONGLONG Old;
+;    do {
+;	 Old = *Addend;
+;    } while (InterlockedCompareExchange64(Addend,Old + Value,Old) != Old);
+;    return Old;
+	endm
+endif ;; (_WIN32_WINNT GE 0x0502)
+endif ;; MIDL_PASS
+
+InterlockedCompareExchangePointer macro Destination, ExChange, Comperand
+	exitm<InterlockedCompareExchange(Destination, ExChange, Comperand)>
+	endm
+
+InterlockedIncrementAcquire equ <InterlockedIncrement>
+InterlockedIncrementRelease equ <InterlockedIncrement>
+InterlockedDecrementAcquire equ <InterlockedDecrement>
+InterlockedDecrementRelease equ <InterlockedDecrement>
+InterlockedIncrementAcquire equ <InterlockedIncrement>
+InterlockedIncrementRelease equ <InterlockedIncrement>
+InterlockedCompareExchangeAcquire equ <InterlockedCompareExchange>
+InterlockedCompareExchangeRelease equ <InterlockedCompareExchange>
+InterlockedCompareExchangeAcquire64 equ <InterlockedCompareExchange64>
+InterlockedCompareExchangeRelease64 equ <InterlockedCompareExchange64>
+InterlockedCompareExchangePointerAcquire equ <InterlockedCompareExchangePointer>
+InterlockedCompareExchangePointerRelease equ <InterlockedCompareExchangePointer>
+
+endif ;; X86 OR IA64
+
+if defined(_SLIST_HEADER_) AND NOT defined(_NTOSP_)
+
+;WINBASEAPI
+;VOID
+InitializeSListHead proto _CType \
+	      ListHead: PSLIST_HEADER
+
+;PSLIST_ENTRY
+InterlockedPopEntrySList proto _CType \
+	      ListHead: PSLIST_HEADER
+
+;PSLIST_ENTRY
+InterlockedPushEntrySList proto _CType \
+	      ListHead: PSLIST_HEADER,
+	     ListEntry: PSLIST_ENTRY
+
+;PSLIST_ENTRY
+InterlockedFlushSList proto _CType \
+	      ListHead: PSLIST_HEADER
+
+;USHORT
+QueryDepthSList proto _CType \
+	      ListHead: PSLIST_HEADER
+
+endif ;; _SLIST_HEADER_
+
+endif ;; _NTOS_
+
+endif ;; NOWINBASEINTERLOCK
+;endif
 
 ;BOOL
 FreeResource proto _CType \
@@ -1091,15 +2159,28 @@ FreeResource proto _CType \
 LockResource proto _CType \
 	      hResData: HGLOBAL
 
-;UnlockResource(hResData) ((hResData), 0)
-MAXINTATOM	equ 0xC000
-;MAKEINTATOM(i)	 (LPTSTR)((DWORD)((WORD)(i)))
+UnlockResource macro hResData
+	exitm<((hResData), 0)>
+	endm
+MAXINTATOM		equ 0xC000
+MAKEINTATOM macro i
+	exitm<i>
+	endm
 INVALID_ATOM	equ 0
 
+;int
+;CALLBACK
 WinMain proto _CType \
 	     hInstance: HINSTANCE,
 	 hPrevInstance: HINSTANCE,
 	     lpCmdLine: LPSTR,
+	      nShowCmd: SINT
+;int
+;CALLBACK
+wWinMain proto _CType \
+	     hInstance: HINSTANCE,
+	 hPrevInstance: HINSTANCE,
+	     lpCmdLine: LPWSTR,
 	      nShowCmd: SINT
 
 ;BOOL
@@ -1165,6 +2246,19 @@ GlobalUnWire proto _CType \
 GlobalMemoryStatus proto _CType \
 	      lpBuffer: LPMEMORYSTATUS
 
+MEMORYSTATUSEX		STRUC
+dwLength		dd ?
+dwMemoryLoad		dd ?
+ullTotalPhys		dq ?
+ullAvailPhys		dq ?
+ullTotalPageFile	dq ?
+ullAvailPageFile	dq ?
+ullTotalVirtual		dq ?
+ullAvailVirtual		dq ?
+ullAvailExtendedVirtual dq ?
+MEMORYSTATUSEX		ENDS
+LPMEMORYSTATUSEX	typedef ptr MEMORYSTATUSEX
+
 GlobalMemoryStatusEx proto _CType \
 	      lpBuffer: LPMEMORYSTATUSEX
 
@@ -1208,6 +2302,49 @@ FlushInstructionCache proto _CType \
 	      hProcess: HANDLE,
 	 lpBaseAddress: LPCVOID,
 		dwSize: DWORD
+
+if (_WIN32_WINNT GE 0x0600)
+
+;VOID
+FlushProcessWriteBuffers proto _CType
+
+;BOOL
+QueryThreadCycleTime proto _CType \
+	  ThreadHandle: HANDLE,
+	     CycleTime: PULONG64
+
+;BOOL
+QueryProcessCycleTime proto _CType \
+	 ProcessHandle: HANDLE,
+	     CycleTime: PULONG64
+
+;BOOL
+QueryIdleProcessorCycleTime proto _CType \
+	  BufferLength: PULONG,
+ProcessorIdleCycleTime: PULONG64
+
+endif
+
+if (_WIN32_WINNT GE 0x0601)
+
+;BOOL
+QueryIdleProcessorCycleTimeEx proto _CType \
+		_Group: USHORT,
+	  BufferLength: PULONG,
+ProcessorIdleCycleTime: PULONG64
+
+;BOOL
+QueryUnbiasedInterruptTime proto _CType \
+	  UnbiasedTime: PULONGLONG
+
+;BOOL
+GetProcessorSystemCycleTime proto _CType \
+		_Group: USHORT,
+		Buffer: PSYSTEM_PROCESSOR_CYCLE_TIME_INFORMATION,
+	ReturnedLength: PDWORD
+
+endif ;; (_WIN32_WINNT >= 0x0601)
+
 ;LPVOID
 VirtualAlloc proto _CType \
 	     lpAddress: PVOID,
@@ -1237,6 +2374,17 @@ VirtualAllocEx proto _CType \
 		dwSize: SIZE_T,
       flAllocationType: DWORD,
 	     flProtect: DWORD
+
+if _WIN32_WINNT GE 0x0600
+;LPVOID
+VirtualAllocExNuma proto _CType \
+	      hProcess: HANDLE,
+	     lpAddress: LPVOID,
+		dwSize: SIZE_T,
+      flAllocationType: DWORD,
+	     flProtect: DWORD,
+	  nndPreferred: DWORD
+endif ;; _WIN32_WINNT >= 0x0600
 
 VirtualFreeEx proto _CType \
 	      hProcess: HANDLE,
@@ -1344,6 +2492,13 @@ SCS_WOW_BINARY	    equ 2
 SCS_PIF_BINARY	    equ 3
 SCS_POSIX_BINARY    equ 4
 SCS_OS216_BINARY    equ 5
+SCS_64BIT_BINARY    equ 6
+
+ifdef _WIN64
+SCS_THIS_PLATFORM_BINARY equ SCS_64BIT_BINARY
+else
+SCS_THIS_PLATFORM_BINARY equ SCS_32BIT_BINARY
+endif
 
 ;BOOL
 GetBinaryTypeA proto _CType \
@@ -1383,6 +2538,25 @@ else
 GetLongPathName equ <GetLongPathNameA>
 endif
 
+if _WIN32_WINNT GE 0x0600
+;DWORD
+GetLongPathNameTransactedA proto _CType \
+	 lpszShortPath: LPCSTR,
+	  lpszLongPath: LPSTR,
+	     cchBuffer: DWORD,
+	  hTransaction: HANDLE
+GetLongPathNameTransactedW proto _CType \
+	 lpszShortPath: LPCWSTR,
+	  lpszLongPath: LPWSTR,
+	     cchBuffer: DWORD,
+	  hTransaction: HANDLE
+ifdef _UNICODE
+GetLongPathNameTransacted equ <GetLongPathNameTransactedW>
+else
+GetLongPathNameTransacted equ <GetLongPathNameTransactedA>
+endif ;; !UNICODE
+endif ;; _WIN32_WINNT >= 0x0600
+
 ;BOOL
 GetProcessAffinityMask proto _CType \
 	      hProcess: HANDLE,
@@ -1393,6 +2567,21 @@ SetProcessAffinityMask proto _CType \
 	      hProcess: HANDLE,
  lpProcessAffinityMask: LPDWORD
 
+if _WIN32_WINNT GE 0x0601
+;BOOL
+GetProcessGroupAffinity proto _CType \
+	      hProcess: HANDLE,
+	    GroupCount: PUSHORT,
+	    GroupArray: PUSHORT
+endif ;; _WIN32_WINNT GE 0x0601
+
+if _WIN32_WINNT GE 0x0501
+;BOOL
+GetProcessHandleCount proto _CType \
+	      hProcess: HANDLE,
+	pdwHandleCount: PDWORD
+endif ;; (_WIN32_WINNT GE 0x0501)
+
 GetProcessTimes proto _CType \
 	      hProcess: HANDLE,
 	lpCreationTime: LPFILETIME,
@@ -1400,15 +2589,43 @@ GetProcessTimes proto _CType \
 	  lpKernelTime: LPFILETIME,
 	    lpUserTime: LPFILETIME
 
+
 GetProcessWorkingSetSize proto _CType \
 	      hProcess: HANDLE,
-lpMinimumWorkingSetSize: LPDWORD,
-lpMaximumWorkingSetSize: LPDWORD
+   lpMinWorkingSetSize: LPDWORD,
+   lpMaxWorkingSetSize: LPDWORD
 
+;BOOL
+GetProcessWorkingSetSizeEx proto _CType \
+	      hProcess: HANDLE,
+   lpMinWorkingSetSize: PSIZE_T,
+   lpMaxWorkingSetSize: PSIZE_T,
+		 Flags: PDWORD
+;BOOL
 SetProcessWorkingSetSize proto _CType \
 	      hProcess: HANDLE,
-dwMinimumWorkingSetSize: DWORD,
-dwMaximumWorkingSetSize: DWORD
+   dwMinWorkingSetSize: DWORD,
+   dwMaxWorkingSetSize: DWORD
+
+;BOOL
+SetProcessWorkingSetSizeEx proto _CType \
+	      hProcess: HANDLE,
+   dwMinWorkingSetSize: SIZE_T,
+   dwMaxWorkingSetSize: SIZE_T,
+		 Flags: DWORD
+
+if (_WIN32_WINNT GE 0x0600)
+PROCESS_AFFINITY_ENABLE_AUTO_UPDATE equ 0x00000001
+;BOOL
+SetProcessAffinityUpdateMode proto _CType \
+	      hProcess: HANDLE,
+	       dwFlags: DWORD
+;BOOL
+QueryProcessAffinityUpdateMode proto _CType \
+	      hProcess: HANDLE,
+	     lpdwFlags: LPDWORD
+endif ;; _WIN32_WINNT GE 0x0600
+
 ;HANDLE
 OpenProcess proto _CType \
        dwDesiredAccess: DWORD,
@@ -1470,18 +2687,142 @@ CreateFiber proto _CType \
 	   dwStackSize: DWORD,
 	lpStartAddress: LPFIBER_START_ROUTINE,
 	   lpParameter: LPVOID
+
+CreateFiberEx proto _CType \
+     dwStackCommitSize: SIZE_T,
+    dwStackReserveSize: SIZE_T,
+	       dwFlags: DWORD,
+	lpStartAddress: LPFIBER_START_ROUTINE,
+	   lpParameter: LPVOID
+
 ;VOID
 DeleteFiber proto _CType \
 	       lpFiber: LPVOID
 ;LPVOID
 ConvertThreadToFiber proto _CType \
 	   lpParameter: LPVOID
+
+ConvertThreadToFiberEx proto _CType \
+	   lpParameter: LPVOID,
+	       dwFlags: DWORD
+
+if (_WIN32_WINNT GE 0x0501)
+;BOOL
+ConvertFiberToThread proto _CType
+endif
+if (_WIN32_WINNT GE 0x0600)
+;BOOL
+IsThreadAFiber proto _CType
+endif
+
 ;VOID
 SwitchToFiber proto _CType \
 	       lpFiber: LPVOID
+
 ;BOOL
 SwitchToThread proto _CType
-endif
+
+;;
+;; UMS begin
+;;
+
+if (_WIN32_WINNT GE 0x0601) AND NOT defined(MIDL_PASS)
+
+UMS_VERSION		equ RTL_UMS_VERSION
+PUMS_CONTEXT		typedef ptr
+PUMS_COMPLETION_LIST	typedef ptr
+
+UMS_THREAD_INFO_CLASS	typedef sdword ; enum _RTL_UMS_THREAD_INFO_CLASS
+PUMS_THREAD_INFO_CLASS	typedef ptr sdword
+UMS_SCHEDULER_REASON	typedef sdword ; enum _RTL_UMS_SCHEDULER_REASON
+PUMS_SCHEDULER_ENTRY_POINT typedef PRTL_UMS_SCHEDULER_ENTRY_POINT
+
+UMS_SCHEDULER_STARTUP_INFO  STRUC
+    ;; UMS Version the application was built to. Should be set to UMS_VERSION
+UmsVersion		ULONG ?
+    ;; Completion List to associate the new User Scheduler to.
+CompletionList		PUMS_COMPLETION_LIST ?
+    ;; A pointer to the application-defined function that represents the starting
+    ;; address of the Sheduler.
+SchedulerProc		PUMS_SCHEDULER_ENTRY_POINT ?
+    ;; pointer to a variable to be passed to the scheduler uppon first activation.
+SchedulerParam		PVOID ?
+UMS_SCHEDULER_STARTUP_INFO ENDS
+PUMS_SCHEDULER_STARTUP_INFO typedef ptr UMS_SCHEDULER_STARTUP_INFO
+
+;BOOL
+CreateUmsCompletionList proto _CType \
+     UmsCompletionList: PUMS_COMPLETION_LIST
+
+;BOOL
+DequeueUmsCompletionListItems proto _CType \
+     UmsCompletionList: PUMS_COMPLETION_LIST,
+	   WaitTimeOut: DWORD,
+	 UmsThreadList: PUMS_CONTEXT
+
+;BOOL
+GetUmsCompletionListEvent proto _CType \
+     UmsCompletionList: PUMS_COMPLETION_LIST,
+    UmsCompletionEvent: PHANDLE
+
+;BOOL
+ExecuteUmsThread proto _CType \
+	     UmsThread: PUMS_CONTEXT
+
+;BOOL
+UmsThreadYield proto _CType \
+	SchedulerParam: PVOID
+
+;BOOL
+DeleteUmsCompletionList proto _CType \
+     UmsCompletionList: PUMS_COMPLETION_LIST
+
+;PUMS_CONTEXT
+GetCurrentUmsThread proto _CType
+
+;PUMS_CONTEXT
+GetNextUmsListItem proto _CType \
+	    UmsContext: PUMS_CONTEXT
+
+;BOOL
+QueryUmsThreadInformation proto _CType \
+	     UmsThread: PUMS_CONTEXT,
+    UmsThreadInfoClass: UMS_THREAD_INFO_CLASS,
+  UmsThreadInformation: PVOID,
+UmsThreadInformationLength: ULONG,
+	  ReturnLength: PULONG
+
+;BOOL
+SetUmsThreadInformation proto _CType \
+	     UmsThread: PUMS_CONTEXT,
+    UmsThreadInfoClass: UMS_THREAD_INFO_CLASS,
+  UmsThreadInformation: PVOID,
+UmsThreadInformationLength: ULONG
+
+;BOOL
+DeleteUmsThreadContext proto _CType \
+	     UmsThread: PUMS_CONTEXT
+
+;BOOL
+CreateUmsThreadContext proto _CType \
+	   lpUmsThread: ptr PUMS_CONTEXT
+
+;BOOL
+EnterUmsSchedulingMode proto _CType \
+  SchedulerStartupInfo: PUMS_SCHEDULER_STARTUP_INFO
+
+endif ;; (_WIN32_WINNT GE 0x0601) AND NOT defined(MIDL_PASS)
+
+;;
+;; UMS end
+;;
+
+endif ;; _WIN32_WINNT GE 0x0400
+
+endif ;; (_WIN32_WINNT GE 0x0400)
+
+PPROC_THREAD_ATTRIBUTE_LIST	typedef ptr PROC_THREAD_ATTRIBUTE_LIST
+LPPROC_THREAD_ATTRIBUTE_LIST	typedef ptr PROC_THREAD_ATTRIBUTE_LIST
 
 ;HANDLE
 CreateThread proto _CType \
@@ -1505,9 +2846,60 @@ GetCurrentThread proto _CType
 
 GetCurrentThreadId proto _CType
 
+;BOOL
+SetThreadStackGuarantee proto _CType \
+      StackSizeInBytes: PULONG
+
+;DWORD
+GetProcessIdOfThread proto _CType \
+		Thread: HANDLE
+
+if (_WIN32_WINNT GE 0x0502)
+;DWORD
+GetThreadId proto _CType \
+		Thread: HANDLE
+endif ;; _WIN32_WINNT GE 0x0502
+
+;DWORD
+GetProcessId proto _CType \
+	       Process: HANDLE
+
+;DWORD
+GetCurrentProcessorNumber proto _CType
+
+if (_WIN32_WINNT GE 0x0601)
+;VOID
+GetCurrentProcessorNumberEx proto _CType \
+	    ProcNumber: PPROCESSOR_NUMBER
+endif
+
+if (_WIN32_WINNT GE 0x0601)
+;BOOL
+GetThreadGroupAffinity proto _CType \
+	       hThread: HANDLE,
+	 GroupAffinity: PGROUP_AFFINITY
+endif ;; _WIN32_WINNT GE 0x0601
+
 SetThreadAffinityMask proto _CType \
 	       hThread: HANDLE,
   dwThreadAffinityMask: DWORD
+
+if (_WIN32_WINNT GE 0x0601)
+;BOOL
+SetThreadGroupAffinity proto _CType \
+	       hThread: HANDLE,
+	 GroupAffinity: ptr GROUP_AFFINITY,
+ PreviousGroupAffinity: PGROUP_AFFINITY
+;BOOL
+SetThreadIdealProcessorEx proto _CType \
+	       hThread: HANDLE,
+      lpIdealProcessor: PPROCESSOR_NUMBER,
+lpPreviousIdealProcessor: PPROCESSOR_NUMBER
+;BOOL
+GetThreadIdealProcessorEx proto _CType \
+	       hThread: HANDLE,
+      lpIdealProcessor: PPROCESSOR_NUMBER
+endif ;; _WIN32_WINNT GE 0x0601
 
 if(_WIN32_WINNT GE 0x0400)
 ;DWORD
@@ -1515,6 +2907,22 @@ SetThreadIdealProcessor proto _CType \
 	       hThread: HANDLE,
       dwIdealProcessor: DWORD
 endif
+
+if (_WIN32_WINNT GE 0x0600)
+
+PROCESS_DEP_ENABLE	equ 0x00000001
+PROCESS_DEP_DISABLE_ATL_THUNK_EMULATION equ 0x00000002
+
+;BOOL
+SetProcessDEPPolicy proto _CType \
+	       dwFlags: DWORD
+;BOOL
+GetProcessDEPPolicy proto _CType \
+	      hProcess: HANDLE,
+	       lpFlags: LPDWORD,
+	   lpPermanent: PBOOL
+
+endif ;; _WIN32_WINNT GE 0x0600
 
 ;BOOL
 SetProcessPriorityBoost proto _CType \
@@ -1549,6 +2957,14 @@ GetThreadTimes proto _CType \
 	    lpExitTime: LPFILETIME,
 	  lpKernelTime: LPFILETIME,
 	    lpUserTime: LPFILETIME
+
+if _WIN32_WINNT GE 0x0501
+;BOOL
+GetThreadIOPendingFlag proto _CType \
+	       hThread: HANDLE,
+	 lpIOIsPending: PBOOL
+endif ;; (_WIN32_WINNT GE 0x0501)
+
 ;VOID
 ExitThread proto _CType \
 	    dwExitCode: DWORD
@@ -1568,13 +2984,72 @@ GetThreadSelectorEntry proto _CType \
 ;EXECUTION_STATE
 SetThreadExecutionState proto _CType \
 	       esFlags: EXECUTION_STATE
+
+if (_WIN32_WINNT GE _WIN32_WINNT_WIN7)
+
+REASON_CONTEXT		STRUC
+Version			ULONG ?
+Flags			dd ?
+UNION Reason
+ STRUC Detailed
+  LocalizedReasonModule HMODULE ?
+  LocalizedReasonId	ULONG ?
+  ReasonStringCount	ULONG ?
+  ReasonStrings		LPWSTR ?
+ ENDS
+ SimpleReasonString	 LPWSTR ?
+ENDS
+REASON_CONTEXT		ENDS
+PREASON_CONTEXT		typedef ptr REASON_CONTEXT
+
+;;
+;; Power Request APIs
+;;
+POWER_REQUEST_CONTEXT	typedef REASON_CONTEXT
+PPOWER_REQUEST_CONTEXT	typedef ptr REASON_CONTEXT
+LPPOWER_REQUEST_CONTEXT typedef ptr REASON_CONTEXT
+
+;HANDLE
+PowerCreateRequest proto _CType \
+	       Context: PREASON_CONTEXT
+
+;BOOL
+PowerSetRequest proto _CType \
+	  PowerRequest: HANDLE,
+	   RequestType: POWER_REQUEST_TYPE
+
+;BOOL
+PowerClearRequest proto _CType \
+	  PowerRequest: HANDLE,
+	   RequestType: POWER_REQUEST_TYPE
+
+endif ;; (_WIN32_WINNT GE _WIN32_WINNT_WIN7)
+
+ifdef _M_CEE_PURE
+GetLastError		equ <System::Runtime::InteropServices::Marshal::GetLastWin32Error>
+else
 ;DWORD
 GetLastError proto _CType
+endif
 
+;VOID
 SetLastError proto _CType \
 	     dwErrCode: DWORD
 
+ifdef WINBASE_DECLARE_RESTORE_LAST_ERROR
+;VOID
+RestoreLastError proto _CType \
+	     dwErrCode: DWORD
+
+PRESTORE_LAST_ERROR_T	typedef proto _CType :DWORD
+PRESTORE_LAST_ERROR	typedef ptr PRESTORE_LAST_ERROR_T
+RESTORE_LAST_ERROR_NAME equ <"RestoreastError">
+
+endif ;; WINBASE_DECLARE_RESTORE_LAST_ERROR
+
 ;HasOverlappedIoCompleted(lpOverlapped) ((lpOverlapped)->Internal != STATUS_PENDING)
+HasOverlappedIoCompleted macro lpOverlapped
+	endm
 
 ;BOOL
 GetOverlappedResult proto _CType \
@@ -1596,11 +3071,47 @@ lpNumberOfBytesTransferred: LPDWORD,
 	  lpOverlapped: LPOVERLAPPED,
 	dwMilliseconds: DWORD
 
+if (_WIN32_WINNT GE 0x0600)
+;BOOL
+GetQueuedCompletionStatusEx proto _CType \
+	CompletionPort: HANDLE,
+lpCompletionPortEntries: LPOVERLAPPED_ENTRY,
+	       ulCount: ULONG,
+   ulNumEntriesRemoved: PULONG,
+	dwMilliseconds: DWORD,
+	    fAlertable: BOOL
+endif ;; _WIN32_WINNT GE 0x0600
+
 PostQueuedCompletionStatus proto _CType \
 	CompletionPort: HANDLE,
 lpNumberOfBytesTransferred: DWORD,
        lpCompletionKey: DWORD,
 	  lpOverlapped: LPOVERLAPPED
+
+if (_WIN32_WINNT GE 0x0600)
+;;
+;; The following flags allows an application to change
+;; the semantics of IO completion notification.
+;;
+;; Don't queue an entry to an associated completion port if returning success
+;; synchronously.
+;;
+FILE_SKIP_COMPLETION_PORT_ON_SUCCESS equ 0x1
+;;
+;; Don't set the file handle event on IO completion.
+;;
+FILE_SKIP_SET_EVENT_ON_HANDLE equ 0x2
+
+;BOOL
+SetFileCompletionNotificationModes proto _CType \
+	    FileHandle: HANDLE,
+		 Flags: UCHAR
+;BOOL
+SetFileIoOverlappedRange proto _CType \
+	    FileHandle: HANDLE,
+  OverlappedRangeStart: PUCHAR,
+	       _Length: ULONG
+endif ;; _WIN32_WINNT GE 0x0600
 
 SEM_FAILCRITICALERRORS	    equ 0x0001
 SEM_NOGPFAULTERRORBOX	    equ 0x0002
@@ -1608,8 +3119,20 @@ SEM_NOALIGNMENTFAULTEXCEPT  equ 0x0004
 SEM_NOOPENFILEERRORBOX	    equ 0x8000
 
 ;UINT
+GetErrorMode proto _CType
+
+;UINT
 SetErrorMode proto _CType \
 		 uMode: UINT
+
+;DWORD
+GetThreadErrorMode proto _CType
+
+;BOOL
+SetThreadErrorMode proto _CType \
+	     dwNewMode: DWORD,
+	     lpOldMode: LPDWORD
+
 ;BOOL
 ReadProcessMemory proto _CType \
 	      hProcess: HANDLE,
@@ -1624,8 +3147,8 @@ WriteProcessMemory proto _CType \
 	      lpBuffer: LPVOID,
 		 nSize: DWORD,
 lpNumberOfBytesWritten: LPDWORD
-ifndef MIDL_PASS
 
+ifndef MIDL_PASS
 GetThreadContext proto _CType \
 	       hThread: HANDLE,
 	     lpContext: LPCONTEXT
@@ -1633,19 +3156,43 @@ GetThreadContext proto _CType \
 SetThreadContext proto _CType \
 	       hThread: HANDLE,
 	     lpContext: PTR CONTEXT
-endif
+;BOOL
+Wow64GetThreadContext proto _CType \
+	       hThread: HANDLE,
+	     lpContext: PWOW64_CONTEXT
+
+if(_WIN32_WINNT GE 0x0601)
+;BOOL
+Wow64GetThreadSelectorEntry proto _CType \
+	 hThread: HANDLE,
+      dwSelector: DWORD,
+ lpSelectorEntry: PWOW64_LDT_ENTRY
+endif ;; _WIN32_WINNT GE 0x0601
+
+;BOOL
+Wow64SetThreadContext proto _CType \
+	 hThread: HANDLE,
+       lpContext: ptr WOW64_CONTEXT
+
+endif ;; !MIDL_PASS
 
 ;DWORD
 SuspendThread proto _CType \
 	       hThread: HANDLE
 
+;DWORD
+Wow64SuspendThread proto _CType \
+	       hThread: HANDLE
+
 ResumeThread proto _CType \
 	       hThread: HANDLE
 
-if(_WIN32_WINNT GE 0x0400)
+if(_WIN32_WINNT GE 0x0400) OR (_WIN32_WINDOWS GT 0x0400)
 
-APCFUNC_T TYPEDEF PROTO dwParam:DWORD
-PAPCFUNC  TYPEDEF PTR APCFUNC_T
+;VOID
+PAPCFUNC_T typedef proto _CType \
+	     Parameter: ULONG_PTR
+PAPCFUNC typedef ptr PAPCFUNC_T
 
 QueueUserAPC proto _CType \
 		pfnAPC: PAPCFUNC,
@@ -1658,8 +3205,16 @@ if (_WIN32_WINNT GE 0x0400) or (_WIN32_WINDOWS GT 0x0400)
 IsDebuggerPresent proto _CType
 endif
 
+if _WIN32_WINNT GE 0x0501
+;BOOL
+CheckRemoteDebuggerPresent proto _CType \
+	      hProcess: HANDLE,
+     pbDebuggerPresent: PBOOL
+endif ;; (_WIN32_WINNT GE 0x0501)
+
 ;VOID
 DebugBreak proto _CType
+
 ;BOOL
 WaitForDebugEvent proto _CType \
 	  lpDebugEvent: LPDEBUG_EVENT,
@@ -1672,6 +3227,19 @@ ContinueDebugEvent proto _CType \
 
 DebugActiveProcess proto _CType \
 	   dwProcessId: DWORD
+
+;BOOL
+DebugActiveProcessStop proto _CType \
+	   dwProcessId: DWORD
+
+;BOOL
+DebugSetProcessKillOnExit proto _CType \
+	    KillOnExit: BOOL
+
+;BOOL
+DebugBreakProcess proto _CType \
+	   dwProcessId: DWORD
+
 ;VOID
 InitializeCriticalSection proto _CType \
      lpCriticalSection: LPCRITICAL_SECTION
@@ -1682,15 +3250,25 @@ EnterCriticalSection proto _CType \
 LeaveCriticalSection proto _CType \
      lpCriticalSection: LPCRITICAL_SECTION
 
-if (_WIN32_WINNT GE 0x0500)
+if (_WIN32_WINNT GE 0x0403)
+CRITICAL_SECTION_NO_DEBUG_INFO equ RTL_CRITICAL_SECTION_FAG_NO_DEBUG_INFO
+
 ;BOOL
 InitializeCriticalSectionAndSpinCount proto _CType \
      lpCriticalSection: LPCRITICAL_SECTION,
 	   dwSpinCount: DWORD
+
+;BOOL
+InitializeCriticalSectionEx proto _CType \
+     lpCriticalSection: LPCRITICAL_SECTION,
+	   dwSpinCount: DWORD,
+		 Flags: DWORD
+
 ;DWORD
 SetCriticalSectionSpinCount proto _CType \
      lpCriticalSection: LPCRITICAL_SECTION,
 	   dwSpinCount: DWORD
+
 endif
 
 if(_WIN32_WINNT GE 0x0400)
@@ -1836,6 +3414,14 @@ SetStdHandle proto _CType \
 	    nStdHandle: DWORD,
 	       hHandle: HANDLE
 
+if (_WIN32_WINNT GE 0x0600)
+;BOOL
+SetStdHandleEx proto _CType \
+	    nStdHandle: DWORD,
+	       hHandle: HANDLE,
+	   phPrevValue: PHANDLE
+endif ;; _WIN32_WINNT GE 0x0600
+
 WriteFile proto _CType \
 		 hFile: HANDLE,
 	      lpBuffer: PVOID,
@@ -1907,6 +3493,25 @@ SetFileTime proto _CType \
 	lpCreationTime: LPFILETIME,
       lpLastAccessTime: LPFILETIME,
        lpLastWriteTime: LPFILETIME
+
+if _WIN32_WINNT GE 0x0501
+;BOOL
+SetFileValidData proto _CType \
+		 hFile: HANDLE,
+       ValidDataLength: LONGLONG
+endif ;; (_WIN32_WINNT GE 0x0501)
+;BOOL
+SetFileShortNameA proto _CType \
+		 hFile: HANDLE,
+	   lpShortName: LPCSTR
+SetFileShortNameW proto _CType \
+		 hFile: HANDLE,
+	   lpShortName: LPCWSTR
+ifdef _UNICODE
+SetFileShortName	equ <SetFileShortNameW>
+else
+SetFileShortName	equ <SetFileShortNameA>
+endif ;; NOT UNICODE
 
 CloseHandle proto _CType \
 	       hObject: HANDLE
@@ -2102,6 +3707,54 @@ SetLocalTime proto _CType \
 ;VOID
 GetSystemInfo proto _CType \
 	  lpSystemInfo: LPSYSTEM_INFO
+
+DEP_SYSTEM_POLICY_TYPE	typedef sdword ; enum _DEP_SYSTEM_POLICY_TYPE {
+DEPPolicyAlwaysOff	equ 0
+DEPPolicyAlwaysOn	equ 1
+DEPPolicyOptIn		equ 2
+DEPPolicyOptOut		equ 3
+DEPTotalPolicyCount	equ 4
+
+;DEP_SYSTEM_POLICY_TYPE
+GetSystemDEPPolicy proto _CType
+
+if _WIN32_WINNT GE 0x0502
+FILE_CACHE_FLAGS_DEFINED	equ 1
+FILE_CACHE_MAX_HARD_ENABLE	equ 0x00000001
+FILE_CACHE_MAX_HARD_DISABLE	equ 0x00000002
+FILE_CACHE_MIN_HARD_ENABLE	equ 0x00000004
+FILE_CACHE_MIN_HARD_DISABLE	equ 0x00000008
+
+;BOOL
+SetSystemFileCacheSize proto _CType \
+  MinimumFileCacheSize: SIZE_T,
+  MaximumFileCacheSize: SIZE_T,
+		 Flags: DWORD
+;BOOL
+GetSystemFileCacheSize proto _CType \
+lpMinimumFileCacheSize: PSIZE_T,
+lpMaximumFileCacheSize: PSIZE_T,
+		 Flags: DWORD
+endif ;; (_WIN32_WINNT GE 0x0502)
+
+if _WIN32_WINNT GE 0x0501
+;BOOL
+GetSystemRegistryQuota proto _CType \
+       pdwQuotaAllowed: PDWORD,
+	  pdwQuotaUsed: PDWORD
+;BOOL
+GetSystemTimes proto _CType \
+	    lpIdleTime: LPFILETIME,
+	  lpKernelTime: LPFILETIME,
+	    lpUserTime: LPFILETIME
+endif ;; (_WIN32_WINNT GE 0x0501)
+
+if _WIN32_WINNT GE 0x0501
+;VOID
+GetNativeSystemInfo proto _CType \
+	  lpSystemInfo: LPSYSTEM_INFO
+endif
+
 ;BOOL
 IsProcessorFeaturePresent proto _CType \
       ProcessorFeature: DWORD
@@ -2167,6 +3820,12 @@ DosDateTimeToFileTime proto _CType \
 	    lpFileTime: LPFILETIME	;; pointer to buffer for 64-bit file time
 ;DWORD
 GetTickCount proto _CType
+
+if (_WIN32_WINNT GE 0x0600)
+;ULONGLONG
+GetTickCount64 proto _CType
+endif
+
 ;BOOL
 SetSystemTimeAdjustment proto _CType \
       dwTimeAdjustment: DWORD,
@@ -2610,7 +4269,7 @@ BACKUP_PROPERTY_DATA	equ 0x00000006
 BACKUP_OBJECT_ID	equ 0x00000007
 BACKUP_REPARSE_DATA	equ 0x00000008
 BACKUP_SPARSE_BLOCK	equ 0x00000009
-
+BACKUP_TXFS_DATA	equ 0x0000000a
 
 ;
 ;  Stream Attributes
@@ -2652,7 +4311,10 @@ STARTF_FORCEOFFFEEDBACK equ 0x00000080
 STARTF_USESTDHANDLES	equ 0x00000100
 if(WINVER GE 0x0400)
 STARTF_USEHOTKEY	equ 0x00000200
-endif
+STARTF_TITLEISLINKNAME	equ 0x00000800
+STARTF_TITLEISAPPID	equ 0x00001000
+STARTF_PREVENTPINNING	equ 0x00002000
+endif ;; WINVER GE 0x0400
 
 STARTUPINFOA	STRUC
 cb		dd ?
@@ -2674,7 +4336,6 @@ hStdInput	HANDLE ?
 hStdOutput	HANDLE ?
 hStdError	HANDLE ?
 STARTUPINFOA	ENDS
-
 LPSTARTUPINFOA	TYPEDEF PTR STARTUPINFOA
 
 STARTUPINFOW	STRUC
@@ -2697,7 +4358,6 @@ hStdInput	HANDLE ?
 hStdOutput	HANDLE ?
 hStdError	HANDLE ?
 STARTUPINFOW	ENDS
-
 LPSTARTUPINFOW	TYPEDEF PTR STARTUPINFOW
 
 ifdef _UNICODE
@@ -2707,6 +4367,26 @@ else
 STARTUPINFO	typedef STARTUPINFOA
 LPSTARTUPINFO	typedef LPSTARTUPINFOA
 endif
+
+if (_WIN32_WINNT GE 0x0600)
+STARTUPINFOEXA		STRUC
+StartupInfo		STARTUPINFOA <>
+lpAttributeList		LPPROC_THREAD_ATTRIBUTE_LIST ?
+STARTUPINFOEXA		ENDS
+LPSTARTUPINFOEXA	typedef ptr STARTUPINFOEXA
+STARTUPINFOEXW		STRUC
+StartupInfo		STARTUPINFOW <>
+lpAttributeList		LPPROC_THREAD_ATTRIBUTE_LIST ?
+STARTUPINFOEXW		ENDS
+LPSTARTUPINFOEXW	typedef ptr STARTUPINFOEXW
+ifdef _UNICODE
+STARTUPINFOEX		typedef STARTUPINFOEXW
+LPSTARTUPINFOEX		typedef LPSTARTUPINFOEXW
+else
+STARTUPINFOEX		typedef STARTUPINFOEXA
+LPSTARTUPINFOEX		typedef LPSTARTUPINFOEXA
+endif ;; UNICODE
+endif ;; (_WIN32_WINNT GE 0x0600)
 
 SHUTDOWN_NORETRY	equ 0x00000001
 
@@ -2759,7 +4439,6 @@ ftLastWriteTime		FILETIME <>
 nFileSizeHigh		dd ?
 nFileSizeLow		dd ?
 WIN32_FILE_ATTRIBUTE_DATA ENDS
-
 LPWIN32_FILE_ATTRIBUTE_DATA	TYPEDEF PTR WIN32_FILE_ATTRIBUTE_DATA
 
 ;HANDLE
@@ -2885,6 +4564,18 @@ else
 OpenWaitableTimer equ <OpenWaitableTimerA>
 endif
 
+if (_WIN32_WINNT GE _WIN32_WINNT_WIN7)
+;BOOL
+SetWaitableTimerEx proto _CType \
+		hTimer: HANDLE,
+	     lpDueTime: ptr LARGE_INTEGER,
+	       lPeriod: LONG,
+  pfnCompletionRoutine: PTIMERAPCROUTINE,
+lpArgToCompletionRoutine: LPVOID,
+	   WakeContext: PREASON_CONTEXT,
+	TolerableDelay: ULONG
+endif ;; (_WIN32_WINNT GE _WIN32_WINNT_WIN7)
+
 ;BOOL
 SetWaitableTimer proto _CType \
 		hTimer: HANDLE,
@@ -2896,7 +4587,91 @@ lpArgToCompletionRoutine: PVOID,
 
 CancelWaitableTimer proto _CType \
 		hTimer: HANDLE
-endif
+
+if (_WIN32_WINNT GE 0x0600)
+
+CREATE_MUTEX_INITIAL_OWNER equ 0x00000001
+
+;HANDLE
+CreateMutexExA proto _CType \
+ lpMutexAttributes: LPSECURITY_ATTRIBUTES,
+	  lpName: LPCSTR,
+	  dwFlags: DWORD,
+  dwDesiredAccess: DWORD
+;HANDLE
+CreateMutexExW proto _CType \
+ lpMutexAttributes: LPSECURITY_ATTRIBUTES,
+	  lpName: LPCWSTR,
+	  dwFlags: DWORD,
+  dwDesiredAccess: DWORD
+ifdef _UNICODE
+CreateMutexEx		equ <CreateMutexExW>
+else
+CreateMutexEx		equ <CreateMutexExA>
+endif ;; NOT UNICODE
+
+CREATE_EVENT_MANUAL_RESET equ 0x00000001
+CREATE_EVENT_INITIAL_SET equ 0x00000002
+
+;HANDLE
+CreateEventExA proto _CType \
+ lpEventAttributes: LPSECURITY_ATTRIBUTES,
+	  lpName: LPCSTR,
+	  dwFlags: DWORD,
+  dwDesiredAccess: DWORD
+CreateEventExW proto _CType \
+ lpEventAttributes: LPSECURITY_ATTRIBUTES,
+	  lpName: LPCWSTR,
+	  dwFlags: DWORD,
+  dwDesiredAccess: DWORD
+ifdef _UNICODE
+CreateEventEx		equ <CreateEventExW>
+else
+CreateEventEx		equ <CreateEventExA>
+endif ;; NOT UNICODE
+
+;HANDLE
+CreateSemaphoreExA proto _CType \
+ lpSemaphoreAttributes: LPSECURITY_ATTRIBUTES,
+	 lInitialCount: LONG,
+	 lMaximumCount: LONG,
+		lpName: LPCSTR,
+	       dwFlags: DWORD,
+       dwDesiredAccess: DWORD
+CreateSemaphoreExW proto _CType \
+ lpSemaphoreAttributes: LPSECURITY_ATTRIBUTES,
+	 lInitialCount: LONG,
+	 lMaximumCount: LONG,
+		lpName: LPCWSTR,
+	       dwFlags: DWORD,
+       dwDesiredAccess: DWORD
+ifdef _UNICODE
+CreateSemaphoreEx	equ <CreateSemaphoreExW>
+else
+CreateSemaphoreEx	equ <CreateSemaphoreExA>
+endif ;; NOT UNICODE
+
+CREATE_WAITABLE_TIMER_MANUAL_RESET equ 0x00000001
+
+;HANDLE
+CreateWaitableTimerExA proto _CType \
+     lpTimerAttributes: LPSECURITY_ATTRIBUTES,
+	   lpTimerName: LPCSTR,
+	       dwFlags: DWORD,
+       dwDesiredAccess: DWORD
+CreateWaitableTimerExW proto _CType \
+     lpTimerAttributes: LPSECURITY_ATTRIBUTES,
+	   lpTimerName: LPCWSTR,
+	       dwFlags: DWORD,
+       dwDesiredAccess: DWORD
+ifdef _UNICODE
+CreateWaitableTimerEx	equ <CreateWaitableTimerExW>
+else
+CreateWaitableTimerEx	equ <CreateWaitableTimerExA>
+endif ;; NOT UNICODE
+endif ;; (_WIN32_WINNT GE 0x0600)
+
+endif ;; (_WIN32_WINNT GE 0x0400) OR (_WIN32_WINDOWS GT 0x0400)
 
 ;HANDLE
 CreateFileMappingA proto _CType \
@@ -2918,6 +4693,32 @@ CreateFileMapping equ <CreateFileMappingW>
 else
 CreateFileMapping equ <CreateFileMappingA>
 endif
+
+if _WIN32_WINNT GE 0x0600
+;HANDLE
+CreateFileMappingNumaA proto _CType \
+		 hFile: HANDLE,
+lpFileMappingAttributes: LPSECURITY_ATTRIBUTES,
+	     flProtect: DWORD,
+     dwMaximumSizeHigh: DWORD,
+      dwMaximumSizeLow: DWORD,
+		lpName: LPCSTR,
+	  nndPreferred: DWORD
+CreateFileMappingNumaW proto _CType \
+		 hFile: HANDLE,
+lpFileMappingAttributes: LPSECURITY_ATTRIBUTES,
+	     flProtect: DWORD,
+     dwMaximumSizeHigh: DWORD,
+      dwMaximumSizeLow: DWORD,
+		lpName: LPCWSTR,
+		 hFile: HANDLE,
+	  nndPreferred: DWORD
+ifdef _UNICODE
+CreateFileMappingNuma	equ <CreateFileMappingNumaW>
+else
+CreateFileMappingNuma	equ <CreateFileMappingNumaA>
+endif ;; NOT UNICODE
+endif ;; _WIN32_WINNT GE 0x0600
 
 OpenFileMappingA proto _CType \
        dwDesiredAccess: DWORD,
@@ -2945,6 +4746,21 @@ GetLogicalDriveStrings equ <GetLogicalDriveStringsW>
 else
 GetLogicalDriveStrings equ <GetLogicalDriveStringsA>
 endif
+
+if _WIN32_WINNT GE 0x0501
+MEMORY_RESOURCE_NOTIFICATION_TYPE typedef sdword ; enum _MEMORY_RESOURCE_NOTIFICATION_TYPE {
+LowMemoryResourceNotification	equ 0
+HighMemoryResourceNotification	equ 1
+
+;HANDLE
+CreateMemoryResourceNotification proto _CType \
+      NotificationType: MEMORY_RESOURCE_NOTIFICATION_TYPE
+
+;BOOL
+QueryMemoryResourceNotification proto _CType \
+ResourceNotificationHandle: HANDLE,
+	 ResourceState: PBOOL
+endif ;; _WIN32_WINNT GE 0x0501
 
 ;HMODULE
 LoadLibraryA proto _CType \
@@ -3003,6 +4819,157 @@ else
 GetModuleHandle equ <GetModuleHandleA>
 endif
 
+if _WIN32_WINNT GT 0x0500 OR \
+   defined(WINBASE_DECLARE_GET_MODULE_HANDLE_EX) OR \
+   defined(ISOLATION_AWARE_ENABLED)
+
+GET_MODULE_HANDLE_EX_FLAG_PIN			equ 0x00000001
+GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT	equ 0x00000002
+GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS		equ 0x00000004
+
+;BOOL
+PGET_MODULE_HANDLE_EXA_T typedef proto _CType \
+	       dwFlags: DWORD,
+	  lpModuleName: LPCSTR,
+	      phModule: ptr HMODULE
+PGET_MODULE_HANDLE_EXA	typedef ptr PGET_MODULE_HANDLE_EXA_T
+PGET_MODULE_HANDLE_EXW_T typedef proto _CType \
+	       dwFlags: DWORD,
+	  lpModuleName: LPCWSTR,
+	      phModule: ptr HMODULE
+PGET_MODULE_HANDLE_EXW	typedef ptr PGET_MODULE_HANDLE_EXW_T
+ifdef _UNICODE
+PGET_MODULE_HANDLE_EX	equ <PGET_MODULE_HANDE_EXW>
+else
+PGET_MODULE_HANDLE_EX	equ <PGET_MODULE_HANDE_EXA>
+endif ;; NOT UNICODE
+
+;BOOL
+GetModuleHandleExA proto _CType \
+	       dwFlags: DWORD,
+	  lpModuleName: LPCSTR,
+	      phModule: ptr HMODULE
+GetModuleHandleExW proto _CType \
+	       dwFlags: DWORD,
+	  lpModuleName: LPCWSTR,
+	      phModule: ptr HMODULE
+ifdef _UNICODE
+GetModuleHandleEx	equ <GetModuleHandleExW>
+else
+GetModuleHandleEx	equ <GetModuleHandleExA>
+endif ;; NOT UNICODE
+
+endif ;; _WIN32_WINNT GT 0x0500 OR defined(WINBASE_DECLARE_GET_MODULE_HANDLE_EX) OR defined(ISOLATION_AWARE_ENABLED)
+
+
+if _WIN32_WINNT GE 0x0502
+;BOOL
+NeedCurrentDirectoryForExePathA proto _CType \
+	       ExeName: LPCSTR
+NeedCurrentDirectoryForExePathW proto _CType \
+	       ExeName: LPCWSTR
+ifdef _UNICODE
+NeedCurrentDirectoryForExePath equ <NeedCurrentDirectoryForExePathW>
+else
+NeedCurrentDirectoryForExePath equ <NeedCurrentDirectoryForExePathA>
+endif ;; NOT UNICODE
+endif ;; _WIN32_WINNT GE 0x0502
+
+if _WIN32_WINNT GE 0x0600
+PROCESS_NAME_NATIVE	equ 0x00000001
+;BOOL
+QueryFullProcessImageNameA proto _CType \
+	      hProcess: HANDLE,
+	       dwFlags: DWORD,
+	     lpExeName: LPSTR,
+	      lpdwSize: PDWORD
+QueryFullProcessImageNameW proto _CType \
+	      hProcess: HANDLE,
+	       dwFlags: DWORD,
+	     lpExeName: LPWSTR,
+	      lpdwSize: PDWORD
+ifdef _UNICODE
+QueryFullProcessImageName equ <QueryFullProcessImageNameW>
+else
+QueryFullProcessImageName equ <QueryFullProcessImageNameA>
+endif ;; NOT UNICODE
+endif ;; _WIN32_WINNT GE 0x0600
+
+if (_WIN32_WINNT GE 0x0600)
+
+;;
+;; Extended process and thread attribute support
+;;
+
+PROC_THREAD_ATTRIBUTE_NUMBER	equ 0x0000FFFF
+PROC_THREAD_ATTRIBUTE_THREAD	equ 0x00010000	;; Attribute may be used with thread creation
+PROC_THREAD_ATTRIBUTE_INPUT	equ 0x00020000	;; Attribute is input only
+PROC_THREAD_ATTRIBUTE_ADDITIVE	equ 0x00040000	;; Attribute may be "accumulated," e.g. bitmasks, counters, etc.
+
+PROC_THREAD_ATTRIBUTE_NUM	typedef sdword ; enum _PROC_THREAD_ATTRIBUTE_NUM {
+ProcThreadAttributeParentProcess	equ 0
+ProcThreadAttributeExtendedFlags	equ 1
+ProcThreadAttributeHandleList		equ 2
+ProcThreadAttributeGroupAffinity	equ 3
+ProcThreadAttributePreferredNode	equ 4
+ProcThreadAttributeIdealProcessor	equ 5
+ProcThreadAttributeUmsThread		equ 6
+ProcThreadAttributeMitigationPolicy	equ 7
+ProcThreadAttributeMax			equ 8
+
+ProcThreadAttributeValue macro Number, Thread, Input, Additive
+	local result
+	result = (Number and PROC_THREAD_ATTRIBUTE_NUMBER)
+	if Thread
+	   result = (result and PROC_THREAD_ATTRIBUTE_THREAD)
+	endif
+	if Input
+	   result = (result and PROC_THREAD_ATTRIBUTE_INPUT)
+	endif
+	if Additive
+	   result = (result and PROC_THREAD_ATTRIBUTE_ADDITIVE)
+	endif
+	exitm<result>
+	endm
+
+PROC_THREAD_ATTRIBUTE_PARENT_PROCESS	equ ProcThreadAttributeValue(ProcThreadAttributeParentProcess,FALSE,TRUE,FALSE)
+PROC_THREAD_ATTRIBUTE_EXTENDED_FLAGS	equ ProcThreadAttributeValue(ProcThreadAttributeExtendedFlags,FALSE,TRUE,TRUE)
+PROC_THREAD_ATTRIBUTE_HANDLE_LIST	equ ProcThreadAttributeValue(ProcThreadAttributeHandleList,FALSE,TRUE,FALSE)
+PROC_THREAD_ATTRIBUTE_GROUP_AFFINITY	equ ProcThreadAttributeValue(ProcThreadAttributeGroupAffinity,TRUE,TRUE,FALSE)
+PROC_THREAD_ATTRIBUTE_PREFERRED_NODE	equ ProcThreadAttributeValue(ProcThreadAttributePreferredNode,FALSE,TRUE,FALSE)
+PROC_THREAD_ATTRIBUTE_IDEAL_PROCESSOR	equ ProcThreadAttributeValue(ProcThreadAttributeIdealProcessor,TRUE,TRUE,FALSE)
+PROC_THREAD_ATTRIBUTE_UMS_THREAD	equ ProcThreadAttributeValue(ProcThreadAttributeUmsThread,TRUE,TRUE,FALSE)
+PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY equ ProcThreadAttributeValue(ProcThreadAttributeMitigationPolicy,FALSE,TRUE,FALSE)
+
+PROCESS_CREATION_MITIGATION_POLICY_DEP_ENABLE		equ 0x01
+PROCESS_CREATION_MITIGATION_POLICY_DEP_ATL_THUNK_ENABLE equ 0x02
+PROCESS_CREATION_MITIGATION_POLICY_SEHOP_ENABLE		equ 0x04
+
+;BOOL
+InitializeProcThreadAttributeList proto _CType \
+       lpAttributeList: LPPROC_THREAD_ATTRIBUTE_LIST,
+      dwAttributeCount: DWORD,
+	       dwFlags: DWORD,
+		lpSize: PSIZE_T
+
+;VOID
+DeleteProcThreadAttributeList proto _CType \
+       lpAttributeList: LPPROC_THREAD_ATTRIBUTE_LIST
+
+PROC_THREAD_ATTRIBUTE_REPLACE_VALUE equ 0x00000001
+
+;BOOL
+UpdateProcThreadAttribute proto _CType \
+       lpAttributeList: LPPROC_THREAD_ATTRIBUTE_LIST,
+	       dwFlags: DWORD,
+	     Attribute: DWORD_PTR,
+	       lpValue: PVOID,
+		cbSize: SIZE_T,
+       lpPreviousValue: PVOID,
+	  lpReturnSize: PSIZE_T
+
+endif ;; (_WIN32_WINNT GE 0x0600)
+
 ;BOOL
 CreateProcessA proto _CType \
      lpApplicationName: LPCSTR,
@@ -3039,9 +5006,11 @@ SetProcessShutdownParameters proto _CType \
 GetProcessShutdownParameters proto _CType \
 	     lpdwLevel: LPDWORD,
 	     lpdwFlags: LPDWORD
+
 ;DWORD
 GetProcessVersion proto _CType \
 	     ProcessId: DWORD
+
 ;VOID
 FatalAppExitA proto _CType \
 	       uAction: UINT,
@@ -3618,6 +5587,84 @@ else
 GetWindowsDirectory equ <GetWindowsDirectoryA>
 endif
 
+;UINT
+GetSystemWindowsDirectoryA proto _CType \
+	      lpBuffer: LPSTR,
+		 uSize: UINT
+GetSystemWindowsDirectoryW proto _CType \
+	      lpBuffer: LPWSTR,
+		 uSize: UINT
+ifdef _UNICODE
+GetSystemWindowsDirectory equ <GetSystemWindowsDirectoryW>
+else
+GetSystemWindowsDirectory equ <GetSystemWindowsDirectoryA>
+endif ;; !UNICODE
+
+if _WIN32_WINNT GE 0x0501 OR defined(WINBASE_DECLARE_GET_SYSTEM_WOW64_DIRECTORY)
+;UINT
+GetSystemWow64DirectoryA proto _CType \
+	      lpBuffer: LPSTR,
+		 uSize: UINT
+GetSystemWow64DirectoryW proto _CType \
+	      lpBuffer: LPWSTR,
+		 uSize: UINT
+ifdef UNICODE
+GetSystemWow64Directory equ <GetSystemWow64DirectoryW>
+else
+GetSystemWow64Directory equ <GetSystemWow64DirectoryA>
+endif ;; !UNICODE
+
+;BOOLEAN
+Wow64EnableWow64FsRedirection proto _CType \
+Wow64FsEnableRedirection: BOOLEAN
+
+;BOOL
+Wow64DisableWow64FsRedirection proto _CType \
+	      OldValue: PVOID
+
+;BOOL
+Wow64RevertWow64FsRedirection proto _CType \
+	       OlValue: PVOID
+
+;;
+;; for GetProcAddress
+;;
+;UINT
+PGET_SYSTEM_WOW64_DIRECTORY_A_T typedef proto _CType \
+	      lpBuffer: LPSTR,
+		 uSize: UINT
+PGET_SYSTEM_WOW64_DIRECTORY_W_T typedef proto _CType \
+	      lpBuffer: LPWSTR,
+		 uSize: UINT
+
+PGET_SYSTEM_WOW64_DIRECTORY_A typedef ptr PGET_SYSTEM_WOW64_DIRECTORY_A_T
+PGET_SYSTEM_WOW64_DIRECTORY_W typedef ptr PGET_SYSTEM_WOW64_DIRECTORY_W_T
+
+
+;;
+;; GetProcAddress only accepts GET_SYSTEM_WOW64_DIRECTORY_NAME_A_A,
+;; GET_SYSTEM_WOW64_DIRECTORY_NAME_W_A, GET_SYSTEM_WOW64_DIRECTORY_NAME_T_A.
+;; The others are if you want to use the strings in some other way.
+;;
+GET_SYSTEM_WOW64_DIRECTORY_NAME_A_A equ <"GetSystemWow64DirectoryA">
+GET_SYSTEM_WOW64_DIRECTORY_NAME_A_W equ <L"GetSystemWow64DirectoryA">
+GET_SYSTEM_WOW64_DIRECTORY_NAME_A_T equ <"GetSystemWow64DirectoryA">
+GET_SYSTEM_WOW64_DIRECTORY_NAME_W_A equ <"GetSystemWow64DirectoryW">
+GET_SYSTEM_WOW64_DIRECTORY_NAME_W_W equ <L"GetSystemWow64DirectoryW">
+GET_SYSTEM_WOW64_DIRECTORY_NAME_W_T equ <"GetSystemWow64DirectoryW">
+
+ifdef _UNICODE
+GET_SYSTEM_WOW64_DIRECTORY_NAME_T_A equ <GET_SYSTEM_WOW64_DIRECTORY_NAME_W_A>
+GET_SYSTEM_WOW64_DIRECTORY_NAME_T_W equ <GET_SYSTEM_WOW64_DIRECTORY_NAME_W_W>
+GET_SYSTEM_WOW64_DIRECTORY_NAME_T_T equ <GET_SYSTEM_WOW64_DIRECTORY_NAME_W_T>
+else
+GET_SYSTEM_WOW64_DIRECTORY_NAME_T_A equ <GET_SYSTEM_WOW64_DIRECTORY_NAME_A_A>
+GET_SYSTEM_WOW64_DIRECTORY_NAME_T_W equ <GET_SYSTEM_WOW64_DIRECTORY_NAME_A_W>
+GET_SYSTEM_WOW64_DIRECTORY_NAME_T_T equ <GET_SYSTEM_WOW64_DIRECTORY_NAME_A_T>
+endif
+
+endif ;; _WIN32_WINNT >= 0x0501
+
 ;BOOL
 SetCurrentDirectoryA proto _CType \
 	    lpPathName: LPCSTR
@@ -3641,6 +5688,20 @@ GetCurrentDirectory equ <GetCurrentDirectoryW>
 else
 GetCurrentDirectory equ <GetCurrentDirectoryA>
 endif
+
+if _WIN32_WINNT GE 0x0502
+
+;BOOL
+SetDllDirectoryA proto _CType \
+	    lpPathName: LPCSTR
+SetDllDirectoryW proto _CType \
+	    lpPathName: LPCWSTR
+
+ifdef _UNICODE
+SetDllDirectory		equ <SetDllDirectoryW>
+else
+SetDllDirectory		equ <SetDllDirectoryA>
+endif ;; NOT UNICODE
 
 ;BOOL
 GetDiskFreeSpaceA proto _CType \
@@ -3703,6 +5764,25 @@ else
 CreateDirectoryEx equ <CreateDirectoryExA>
 endif
 
+if _WIN32_WINNT GE 0x0600
+;BOOL
+CreateDirectoryTransactedA proto _CType \
+   lpTemplateDirectory: LPCSTR,
+	lpNewDirectory: LPCSTR,
+  lpSecurityAttributes: LPSECURITY_ATTRIBUTES,
+	  hTransaction: HANDLE
+CreateDirectoryTransactedW proto _CType \
+   lpTemplateDirectory: LPCWSTR,
+	lpNewDirectory: LPCWSTR,
+  lpSecurityAttributes: LPSECURITY_ATTRIBUTES,
+	  hTransaction: HANDLE
+ifdef _UNICODE
+CreateDirectoryTransacted equ <CreateDirectoryTransactedW>
+else
+CreateDirectoryTransacted equ <CreateDirectoryTransactedA>
+endif ;; NOT UNICODE
+endif ;; _WIN32_WINNT GE 0x0600
+
 ;BOOL
 RemoveDirectoryA proto _CType \
 	    lpPathName: LPCSTR
@@ -3713,6 +5793,21 @@ RemoveDirectory equ <RemoveDirectoryW>
 else
 RemoveDirectory equ <RemoveDirectoryA>
 endif
+
+if _WIN32_WINNT GE 0x0600
+;BOOL
+RemoveDirectoryTransactedA proto _CType \
+	    lpPathName: LPCSTR,
+	  hTransaction: HANDLE
+RemoveDirectoryTransactedW proto _CType \
+	    lpPathName: LPCWSTR,
+	  hTransaction: HANDLE
+ifdef _UNICODE
+RemoveDirectoryTransacted equ <RemoveDirectoryTransactedW>
+else
+RemoveDirectoryTransacted equ <RemoveDirectoryTransactedA>
+endif ;; NOT UNICODE
+endif ;; _WIN32_WINNT GE 0x0600
 
 ;DWORD
 GetFullPathNameA proto _CType \
@@ -3730,6 +5825,27 @@ GetFullPathName equ <GetFullPathNameW>
 else
 GetFullPathName equ <GetFullPathNameA>
 endif
+
+if _WIN32_WINNT GE 0x0600
+;DWORD
+GetFullPathNameTransactedA proto _CType \
+	    lpFileName: LPCSTR,
+	 nBufferLength: DWORD,
+	      lpBuffer: LPSTR,
+	    lpFilePart: LPSTR,
+	  hTransaction: HANDLE
+GetFullPathNameTransactedW proto _CType \
+	    lpFileName: LPCWSTR,
+	 nBufferLength: DWORD,
+	      lpBuffer: LPWSTR,
+	    lpFilePart: LPWSTR,
+	  hTransaction: HANDLE
+ifdef _UNICODE
+GetFullPathNameTransacted equ <GetFullPathNameTransactedW>
+else
+GetFullPathNameTransacted equ <GetFullPathNameTransactedA>
+endif ;; NOT UNICODE
+endif ;; _WIN32_WINNT GE 0x0600
 
 DDD_RAW_TARGET_PATH	    equ 0x00000001
 DDD_REMOVE_DEFINITION	    equ 0x00000002
@@ -3791,6 +5907,46 @@ else
 CreateFile equ <CreateFileA>
 endif
 
+if _WIN32_WINNT GE 0x0600
+;HANDLE
+CreateFileTransactedA proto _CType \
+	    lpFileName: LPSTR,
+       dwDesiredAccess: DWORD,
+	   dwShareMode: DWORD,
+  lpSecurityAttributes: LPSECURITY_ATTRIBUTES,
+ dwCreationDisposition: DWORD,
+  dwFlagsAndAttributes: DWORD,
+	 hTemplateFile: HANDLE,
+	  hTransaction: HANDLE,
+	pusMiniVersion: PUSHORT,
+   lpExtendedParameter: PVOID
+CreateFileTransactedW proto _CType \
+	    lpFileName: LPWSTR,
+       dwDesiredAccess: DWORD,
+	   dwShareMode: DWORD,
+  lpSecurityAttributes: LPSECURITY_ATTRIBUTES,
+ dwCreationDisposition: DWORD,
+  dwFlagsAndAttributes: DWORD,
+	 hTemplateFile: HANDLE,
+	  hTransaction: HANDLE,
+	pusMiniVersion: PUSHORT,
+   lpExtendedParameter: PVOID
+ifdef _UNICODE
+CreateFileTransacted	equ <CreateFileTransactedW>
+else
+CreateFileTransacted	equ <CreateFileTransactedA>
+endif ;; NOT UNICODE
+endif ;; _WIN32_WINNT GE 0x0600
+
+if _WIN32_WINNT GE 0x0502
+;HANDLE
+ReOpenFile proto _CType \
+	  hOriginalFile: HANDLE,
+	dwDesiredAccess: DWORD,
+	    dwShareMode: DWORD,
+   dwFlagsAndAttributes: DWORD
+endif ;; _WIN32_WINNT GE 0x0502
+
 ;BOOL
 SetFileAttributesA proto _CType \
 	    lpFileName: LPSTR,	; pointer to filename
@@ -3815,9 +5971,26 @@ else
 GetFileAttributes equ <GetFileAttributesA>
 endif
 
+if _WIN32_WINNT GE 0x0600
+;BOOL
+SetFileAttributesTransactedA proto _CType \
+	    lpFileName: LPCSTR,
+      dwFileAttributes: DWORD,
+	  hTransaction: HANDLE
+SetFileAttributesTransactedW proto _CType \
+	    lpFileName: LPCWSTR,
+      dwFileAttributes: DWORD,
+	  hTransaction: HANDLE
+ifdef _UNICODE
+SetFileAttributesTransacted equ <SetFileAttributesTransactedW>
+else
+SetFileAttributesTransacted equ <SetFileAttributesTransactedA>
+endif ;; NOT UNICODE
+endif ;; _WIN32_WINNT GE 0x0600
+
 GetFileExInfoStandard	equ 0
 GetFileExMaxInfoLevel	equ 1
-GET_FILEEX_INFO_LEVELS	typedef dword
+GET_FILEEX_INFO_LEVELS	typedef sdword
 
 ;BOOL
 GetFileAttributesExA proto _CType \
@@ -3847,6 +6020,23 @@ else
 GetCompressedFileSize equ <GetCompressedFileSizeA>
 endif
 
+if _WIN32_WINNT GE 0x0600
+;DWORD
+GetCompressedFileSizeTransactedA proto _CType \
+	    lpFileName: LPCSTR,
+	lpFileSizeHigh: LPDWORD,
+	  hTransaction: HANDLE
+GetCompressedFileSizeTransactedW proto _CType \
+	    lpFileName: LPCWSTR,
+	lpFileSizeHigh: LPDWORD,
+	  hTransaction: HANDLE
+ifdef _UNICODE
+GetCompressedFileSizeTransacted equ <GetCompressedFileSizeTransactedW>
+else
+GetCompressedFileSizeTransacted equ <GetCompressedFileSizeTransactedA>
+endif ;; NOT UNICODE
+endif ;; _WIN32_WINNT GE 0x0600
+
 ;BOOL
 DeleteFileA proto _CType \
 	    lpFileName: LPCSTR
@@ -3857,6 +6047,42 @@ DeleteFile equ <DeleteFileW>
 else
 DeleteFile equ <DeleteFileA>
 endif
+
+if _WIN32_WINNT GE 0x0600
+;BOOL
+DeleteFileTransactedA proto _CType \
+	    lpFileName: LPCSTR,
+	  hTransaction: HANDLE
+DeleteFileTransactedW proto _CType \
+	    lpFileName: LPCWSTR,
+	  hTransaction: HANDLE
+ifdef _UNICODE
+DeleteFileTransacted	equ <DeleteFileTransactedW>
+else
+DeleteFileTransacted	equ <DeleteFileTransactedA>
+endif ;; NOT UNICODE
+endif ;; _WIN32_WINNT GE 0x0600
+
+if _WIN32_WINNT GE 0x0501
+;BOOL
+CheckNameLegalDOS8Dot3A proto _CType \
+		lpName: LPCSTR,
+	     lpOemName: LPSTR,
+	   OemNameSize: DWORD,
+  pbNameContainsSpaces: PBOOL,
+	   pbNameLegal: PBOOL
+CheckNameLegalDOS8Dot3W proto _CType \
+		lpName: LPCWSTR,
+	     lpOemName: LPSTR,
+	   OemNameSize: DWORD,
+  pbNameContainsSpaces: PBOOL,
+	   pbNameLegal: PBOOL
+ifdef _UNICODE
+CheckNameLegalDOS8Dot3	equ <CheckNameegalDOS8Dot3W>
+else
+CheckNameLegalDOS8Dot3	equ <CheckNameegalDOS8Dot3A>
+endif ;; NOT UNICODE
+endif ;; (_WIN32_WINNT GE 0x0501)
 
 if(_WIN32_WINNT GE 0x0400)
 
@@ -3893,6 +6119,31 @@ else
 FindFirstFileEx equ <FindFirstFileExA>
 endif
 endif
+
+if _WIN32_WINNT GE 0x0600
+;HANDLE
+FindFirstFileTransactedA proto _CType \
+	    lpFileName: LPCSTR,
+	  fInfoLevelId: FINDEX_INFO_LEVELS,
+	lpFindFileData: LPVOID,
+	     fSearchOp: FINDEX_SEARCH_OPS,
+	lpSearchFilter: LPVOID,
+     dwAdditionalFlags: DWORD,
+	  hTransaction: HANDLE
+FindFirstFileTransactedW proto _CType \
+	    lpFileName: LPCWSTR,
+	  fInfoLevelId: FINDEX_INFO_LEVELS,
+	lpFindFileData: LPVOID,
+	     fSearchOp: FINDEX_SEARCH_OPS,
+	lpSearchFilter: LPVOID,
+     dwAdditionalFlags: DWORD,
+	  hTransaction: HANDLE
+ifdef _UNICODE
+FindFirstFileTransacted equ <FindFirstFileTransactedW>
+else
+FindFirstFileTransacted equ <FindFirstFileTransactedA>
+endif ;; NOT UNICODE
+endif ;; _WIN32_WINNT GE 0x0600
 
 FindFirstFileA proto _CType \
 	    lpFileName: LPCSTR,
@@ -3975,7 +6226,32 @@ CopyFileEx equ <CopyFileExW>
 else
 CopyFileEx equ <CopyFileExA>
 endif
-endif
+
+if _WIN32_WINNT GE 0x0600
+;BOOL
+CopyFileTransactedA proto _CType \
+    lpExistingFileName: LPCSTR,
+	 lpNewFileName: LPCSTR,
+     lpProgressRoutine: LPPROGRESS_ROUTINE,
+		lpData: LPVOID,
+	      pbCancel: LPBOOL,
+	   dwCopyFlags: DWORD,
+	  hTransaction: HANDLE
+CopyFileTransactedW proto _CType \
+    lpExistingFileName: LPCWSTR,
+	 lpNewFileName: LPCWSTR,
+     lpProgressRoutine: LPPROGRESS_ROUTINE,
+		lpData: LPVOID,
+	      pbCancel: LPBOOL,
+	   dwCopyFlags: DWORD,
+	  hTransaction: HANDLE
+ifdef _UNICODE
+CopyFileTransacted	equ <CopyFileTransactedW>
+else
+CopyFileTransacted	equ <CopyFileTransactedA>
+endif ;; NOT UNICODE
+endif ;; _WIN32_WINNT GE 0x0600
+endif ;; (_WIN32_WINNT GE 0x0400)
 
 MoveFileA proto _CType \
     lpExistingFileName: LPCSTR,
@@ -4024,6 +6300,29 @@ MoveFileWithProgress equ <MoveFileWithProgressA>
 endif ; !UNICODE
 endif ; (_WIN32_WINNT >= equ 0x0500)
 
+if (_WIN32_WINNT GE 0x0600)
+;BOOL
+MoveFileTransactedA proto _CType \
+    lpExistingFileName: LPCSTR,
+	 lpNewFileName: LPCSTR,
+     lpProgressRoutine: LPPROGRESS_ROUTINE,
+		lpData: LPVOID,
+	       dwFlags: DWORD,
+	  hTransaction: HANDLE
+MoveFileTransactedW proto _CType \
+    lpExistingFileName: LPCWSTR,
+	 lpNewFileName: LPCWSTR,
+     lpProgressRoutine: LPPROGRESS_ROUTINE,
+		lpData: LPVOID,
+	       dwFlags: DWORD,
+	  hTransaction: HANDLE
+ifdef _UNICODE
+MoveFileTransacted	equ <MoveFileTransactedW>
+else
+MoveFileTransacted	equ <MoveFileTransactedA>
+endif ;; NOT UNICODE
+endif ;; (_WIN32_WINNT GE 0x0600)
+
 MOVEFILE_REPLACE_EXISTING	equ 0x00000001
 MOVEFILE_COPY_ALLOWED		equ 0x00000002
 MOVEFILE_DELAY_UNTIL_REBOOT	equ 0x00000004
@@ -4055,6 +6354,87 @@ CreateHardLink equ <CreateHardLinkA>
 endif
 
 endif ; (_WIN32_WINNT >= equ 0x0500)
+
+if (_WIN32_WINNT GE 0x0600)
+;;
+;; API call to create hard links.
+;;
+;BOOL
+CreateHardLinkTransactedA proto _CType \
+	    lpFileName: LPCSTR,
+    lpExistingFileName: LPCSTR,
+  lpSecurityAttributes: LPSECURITY_ATTRIBUTES,
+	  hTransaction: HANDLE
+CreateHardLinkTransactedW proto _CType \
+	    lpFileName: LPCWSTR,
+    lpExistingFileName: LPCWSTR,
+  lpSecurityAttributes: LPSECURITY_ATTRIBUTES,
+	  hTransaction: HANDLE
+ifdef _UNICODE
+CreateHardLinkTransacted equ <CreateHardinkTransactedW>
+else
+CreateHardLinkTransacted equ <CreateHardinkTransactedA>
+endif ;; NOT UNICODE
+endif ;; (_WIN32_WINNT GE 0x0600)
+
+if (_WIN32_WINNT GE 0x0501)
+;;
+;; API call to enumerate for streams within a file
+;;
+STREAM_INFO_LEVELS	typedef sdword ; enum _STREAM_INFO_LEVELS {
+FindStreamInfoStandard	equ 0
+FindStreamInfoMaxInfoLevel equ 1
+
+WIN32_FIND_STREAM_DATA	STRUC
+StreamSize		LARGE_INTEGER <>
+cStreamName		dw MAX_PATH + 36 dup(?)
+WIN32_FIND_STREAM_DATA	ENDS
+PWIN32_FIND_STREAM_DATA typedef ptr WIN32_FIND_STREAM_DATA
+
+;HANDLE
+FindFirstStreamW proto _CType \
+	    lpFileName: LPCWSTR,
+	     InfoLevel: STREAM_INFO_LEVELS,
+      lpFindStreamData: LPVOID,
+	       dwFlags: DWORD
+
+if _WIN32_WINNT GE 0x0600
+;HANDLE
+FindFirstStreamTransactedW proto _CType \
+	    lpFileName: LPCWSTR,
+	     InfoLevel: STREAM_INFO_LEVELS,
+      lpFindStreamData: LPVOID,
+	       dwFlags: DWORD,
+	  hTransaction: HANDLE
+endif ;; _WIN32_WINNT GE 0x600
+
+;BOOL
+FindNextStreamW proto _CType \
+	   hFindStream: HANDLE,
+      lpFindStreamData: LPVOID
+
+endif ;; (_WIN32_WINNT GE 0x0501)
+
+if _WIN32_WINNT GE 0x0600
+;HANDLE
+FindFirstFileNameW proto _CType \
+	   lpFileName: LPCWSTR,
+	      dwFlags: DWORD,
+	 StringLength: LPDWORD,
+	     LinkName: PWCHAR
+;BOOL
+FindNextFileNameW proto _CType \
+	  hFindStream: HANDLE,
+	 StringLength: LPDWORD,
+	     LinkName: PWCHAR
+;HANDLE
+FindFirstFileNameTransactedW proto _CType \
+	   lpFileName: LPCWSTR,
+	      dwFlags: DWORD,
+	 StringLength: LPDWORD,
+	     LinkName: PWCHAR,
+	 hTransaction: HANDLE
+endif
 
 ;HANDLE
 CreateNamedPipeA proto _CType \
@@ -4177,6 +6557,19 @@ GetVolumeInformation equ <GetVolumeInformationW>
 else
 GetVolumeInformation equ <GetVolumeInformationA>
 endif
+
+if(_WIN32_WINNT GE 0x0600)
+;BOOL
+GetVolumeInformationByHandleW proto _CType \
+		 hFile: HANDLE,
+    lpVolumeNameBuffer: LPWSTR,
+       nVolumeNameSize: DWORD,
+  lpVolumeSerialNumber: LPDWORD,
+lpMaximumComponentLength: LPDWORD,
+     lpFileSystemFlags: LPDWORD,
+lpFileSystemNameBuffer: LPWSTR,
+   nFileSystemNameSize: DWORD
+endif ;; _WIN32_WINNT GE 0x0600
 
 ;BOOL
 CancelIo proto _CType \
@@ -4641,6 +7034,29 @@ else
 PrivilegedServiceAuditAlarm equ <PrivilegedServiceAuditAlarmA>
 endif
 
+if(_WIN32_WINNT GE 0x0501)
+;BOOL
+IsWellKnownSid proto _CType \
+		  pSid: PSID,
+      WellKnownSidType: WELL_KNOWN_SID_TYPE
+;BOOL
+CreateWellKnownSid proto _CType \
+      WellKnownSidType: WELL_KNOWN_SID_TYPE,
+	     DomainSid: PSID,
+		  pSid: PSID,
+		 cbSid: LPDWORD
+;BOOL
+EqualDomainSid proto _CType \
+		 pSid1: PSID,
+		 pSid2: PSID,
+	       pfEqual: ptr BOOL
+;BOOL
+GetWindowsAccountDomainSid proto _CType \
+		  pSid: PSID,
+	    pDomainSid: PSID,
+	   cbDomainSid: LPDWORD
+endif ;;(_WIN32_WINNT GE 0x0501)
+
 IsValidSid proto _CType \
 		  pSid: PSID
 
@@ -4756,6 +7172,29 @@ AddAccessAllowedAceEx proto _CType \
 	    AccessMask: DWORD,
 		  pSid: PSID
 endif
+
+if(_WIN32_WINNT GE 0x0600)
+;BOOL
+AddMandatoryAce proto _CType \
+		  pAcl: PACL,
+	 dwAceRevision: DWORD,
+	      AceFlags: DWORD,
+       MandatoryPolicy: DWORD,
+	     pLabelSid: PSID
+endif ;; _WIN32_WINNT GE 0x0600
+
+if(_WIN32_WINNT GE 0x0601)
+;BOOL
+AddConditionalAce proto _CType \
+		  pAcl: PACL,
+	 dwAceRevision: DWORD,
+	      AceFlags: DWORD,
+	       AceType: UCHAR,
+	    AccessMask: DWORD,
+		  pSid: PSID,
+	  ConditionStr: PWCHAR,
+	  ReturnLength: LPDWORD
+endif ;; _WIN32_WINNT GE 0x0601
 
 AddAccessDeniedAce proto _CType \
 		  pAcl: PACL,
@@ -5060,6 +7499,19 @@ MapViewOfFileEx proto _CType \
        dwFileOffsetLow: DWORD,
   dwNumberOfBytesToMap: DWORD,
 	 lpBaseAddress: LPVOID
+
+if _WIN32_WINNT GE 0x0600
+;LPVOID
+MapViewOfFileExNuma proto _CType \
+    hFileMappingObject: HANDLE,
+       dwDesiredAccess: DWORD,
+      dwFileOffsetHigh: DWORD,
+       dwFileOffsetLow: DWORD,
+  dwNumberOfBytesToMap: SIZE_T,
+	 lpBaseAddress: LPVOID,
+	  nndPreferred: DWORD
+endif ;; _WIN32_WINNT GE 0x0600
+
 ;BOOL
 SetPriorityClass proto _CType \
 	      hProcess: HANDLE,
@@ -5315,6 +7767,9 @@ endif
 if(_WIN32_WINNT GE 0x0500)
 LOGON32_PROVIDER_WINNT50    equ 3
 endif
+if(_WIN32_WINNT GE 0x0600)
+LOGON32_PROVIDER_VIRTUAL    equ 4
+endif ;; (_WIN32_WINNT GE 0x0600)
 
 LogonUserA proto _CType \
 	  lpszUsername: LPSTR,
@@ -5369,6 +7824,40 @@ else
 PreateProcessAsUser equ <CreateProcessAsUserA>
 endif
 
+if(_WIN32_WINNT GE 0x0500)
+;;
+;; LogonFlags
+;;
+LOGON_WITH_PROFILE	equ 0x00000001
+LOGON_NETCREDENTIALS_ONLY equ 0x00000002
+LOGON_ZERO_PASSWORD_BUFFER equ 0x80000000
+
+;BOOL
+CreateProcessWithLogonW proto _CType \
+	    lpUsername: LPCWSTR,
+	      lpDomain: LPCWSTR,
+	    lpPassword: LPCWSTR,
+	  dwLogonFlags: DWORD,
+     lpApplicationName: LPCWSTR,
+	 lpCommandLine: LPWSTR,
+       dwCreationFlags: DWORD,
+	 lpEnvironment: LPVOID,
+    lpCurrentDirectory: LPCWSTR,
+	 lpStartupInfo: LPSTARTUPINFOW,
+  lpProcessInformation: LPPROCESS_INFORMATION
+;BOOL
+CreateProcessWithTokenW proto _CType \
+		hToken: HANDLE,
+	  dwLogonFlags: DWORD,
+     lpApplicationName: LPCWSTR,
+	 lpCommandLine: LPWSTR,
+       dwCreationFlags: DWORD,
+	 lpEnvironment: LPVOID,
+    lpCurrentDirectory: LPCWSTR,
+	 lpStartupInfo: LPSTARTUPINFOW,
+  lpProcessInformation: LPPROCESS_INFORMATION
+endif ;; (_WIN32_WINNT GE 0x0500)
+
 ;BOOL
 uplicateTokenEx proto _CType \
 	hExistingToken: HANDLE,
@@ -5392,6 +7881,406 @@ CreateRestrictedToken proto _CType \
 IsTokenRestricted proto _CType \
 	   TokenHandle: HANDLE
 
+IsTokenUntrusted proto _CType \
+	   TokenHandle: HANDLE
+
+;BOOL
+CheckTokenMembership proto _CType \
+	   TokenHandle: HANDLE,
+	    SidToCheck: PSID,
+	      IsMember: PBOOL
+
+;;
+;; Thread pool API's
+;;
+
+if (_WIN32_WINNT GE 0x0500)
+
+WAITORTIMERCALLBACK	typedef WAITORTIMERCALLBACKFUNC
+
+WINBASEAPI
+;BOOL
+RegisterWaitForSingleObject proto _CType \
+       phNewWaitObject: PHANDLE,
+	       hObject: HANDLE,
+	      Callback: WAITORTIMERCALLBACK,
+	       Context: PVOID,
+	dwMilliseconds: ULONG,
+	       dwFlags: ULONG
+
+;HANDLE
+RegisterWaitForSingleObjectEx proto _CType \
+	       hObject: HANDLE,
+	      Callback: WAITORTIMERCALLBACK,
+	       Context: PVOID,
+	dwMilliseconds: ULONG,
+	       dwFlags: ULONG
+
+;BOOL
+UnregisterWait proto _CType \
+	    WaitHandle: HANDLE
+
+;BOOL
+UnregisterWaitEx proto _CType \
+	    WaitHandle: HANDLE,
+       CompletionEvent: HANDLE
+
+;BOOL
+QueueUserWorkItem proto _CType \
+	      Function: LPTHREAD_START_ROUTINE,
+	       Context: PVOID,
+		 Flags: ULONG
+
+;BOOL
+BindIoCompletionCallback proto _CType \
+	    FileHandle: HANDLE,
+	      Function: LPOVERLAPPED_COMPLETION_ROUTINE,
+		 Flags: ULONG
+
+
+;HANDLE
+CreateTimerQueue proto _CType
+
+;BOOL
+CreateTimerQueueTimer proto _CType \
+	    phNewTimer: PHANDLE,
+	    TimerQueue: HANDLE,
+	      Callback: WAITORTIMERCALLBACK,
+	     Parameter: PVOID,
+	       DueTime: DWORD,
+		Period: DWORD,
+		 Flags: ULONG
+
+;BOOL
+ChangeTimerQueueTimer proto _CType \
+	    TimerQueue: HANDLE,
+		 Timer: HANDLE,
+	       DueTime: ULONG,
+		Period: ULONG
+
+;BOOL
+DeleteTimerQueueTimer proto _CType \
+	    TimerQueue: HANDLE,
+		 Timer: HANDLE,
+       CompletionEvent: HANDLE
+
+;BOOL
+DeleteTimerQueueEx proto _CType \
+	    TimerQueue: HANDLE,
+       CompletionEvent: HANDLE
+
+;HANDLE
+SetTimerQueueTimer proto _CType \
+	    TimerQueue: HANDLE,
+	      Callback: WAITORTIMERCALLBACK,
+	     Parameter: PVOID,
+	       DueTime: DWORD,
+		Period: DWORD,
+	      PreferIo: BOOL
+
+;BOOL
+CancelTimerQueueTimer proto _CType \
+	    TimerQueue: HANDLE,
+		 Timer: HANDLE
+
+;BOOL
+DeleteTimerQueue proto _CType \
+	    TimerQueue: HANDLE
+
+
+if (_WIN32_WINNT GE 0x0600)
+
+PTP_WIN32_IO_CALLBACK_T typedef proto _CType \
+	      Instance: PTP_CALLBACK_INSTANCE,
+	       Context: PVOID,
+	    Overlapped: PVOID,
+	      IoResult: ULONG,
+NumberOfBytesTransferred: LPDWORD,
+		    Io: PTP_IO
+PTP_WIN32_IO_CALLBACK typedef ptr PTP_WIN32_IO_CALLBACK_T
+
+;PTP_POOL
+CreateThreadpool proto _CType \
+	    __reserved: PVOID
+
+;VOID
+SetThreadpoolThreadMaximum proto _CType \
+		  ptpp: PTP_POOL,
+	     cthrdMost: DWORD
+
+;BOOL
+SetThreadpoolThreadMinimum proto _CType \
+		  ptpp: PTP_POOL,
+	      cthrdMic: DWORD
+
+;BOOL
+SetThreadpoolStackInformation proto _CType \
+		  ptpp: PTP_POOL,
+		 ptpsi: PTP_POOL_STACK_INFORMATION
+
+QueryThreadpoolStackInformation proto _CType \
+		  ptpp: PTP_POOL,
+		 ptpsi: PTP_POOL_STACK_INFORMATION
+
+;VOID
+CloseThreadpool proto _CType \
+		  ptpp: PTP_POOL
+
+;PTP_CLEANUP_GROUP
+CreateThreadpoolCleanupGroup proto _CType
+
+;VOID
+CloseThreadpoolCleanupGroupMembers proto _CType \
+		 ptpcg: PTP_CLEANUP_GROUP,
+fCancelPendingCallbacks: BOOL,
+      pvCleanupContext: PVOID
+
+
+;VOID
+CloseThreadpoolCleanupGroup proto _CType \
+		 ptpcg: PTP_CLEANUP_GROUP
+
+
+ifndef MIDL_PASS
+;FORCEINLINE
+;VOID
+InitializeThreadpoolEnvironment macro pcbe
+	TpInitializeCallbackEnviron(pcbe)
+	endm
+;VOID
+SetThreadpoolCallbackPool macro pcbe, ptpp
+	TpSetCallbackThreadpool(pcbe, ptpp)
+	endm
+;VOID
+SetThreadpoolCallbackCleanupGroup macro pcbe, ptpcg, pfng
+	TpSetCallbackCleanupGroup(pcbe, ptpcg, pfng)
+	endm
+;VOID
+SetThreadpoolCallbackRunsLong macro pcbe
+	TpSetCallbackLongFunction(pcbe)
+	endm
+;VOID
+SetThreadpoolCallbackLibrary macro pcbe, mod
+	TpSetCallbackRaceWithDll(pcbe, mod)
+	endm
+if (_WIN32_WINNT GE _WIN32_WINNT_WIN7)
+;VOID
+SetThreadpoolCallbackPriority macro pcbe, Priority
+	TpSetCallbackPriority(pcbe, Priority)
+	endm
+endif
+
+;VOID
+SetThreadpoolCallbackPersistent macro pcbe
+	TpSetCallbackPersistent(pcbe)
+	endm
+
+;VOID
+DestroyThreadpoolEnvironment macro pcbe
+	TpDestroyCallbackEnviron(pcbe)
+	endm
+
+endif ;; NOT defined(MIDL_PASS)
+
+;VOID
+SetEventWhenCallbackReturns proto _CType \
+		   pci: PTP_CALLBACK_INSTANCE,
+		   evt: HANDLE
+;VOID
+ReleaseSemaphoreWhenCallbackReturns proto _CType \
+		   pci: PTP_CALLBACK_INSTANCE,
+		   sem: HANDLE,
+		  crel: DWORD
+;VOID
+ReleaseMutexWhenCallbackReturns proto _CType \
+		   pci: PTP_CALLBACK_INSTANCE,
+		   mut: HANDLE
+;VOID
+LeaveCriticalSectionWhenCallbackReturns proto _CType \
+		   pci: PTP_CALLBACK_INSTANCE,
+		   pcs: PCRITICAL_SECTION
+;VOID
+FreeLibraryWhenCallbackReturns proto _CType \
+		   pci: PTP_CALLBACK_INSTANCE,
+		  _mod: HMODULE
+;BOOL
+CallbackMayRunLong proto _CType \
+		   pci: PTP_CALLBACK_INSTANCE
+;VOID
+DisassociateCurrentThreadFromCallback proto _CType \
+		   pci: PTP_CALLBACK_INSTANCE
+;BOOL
+TrySubmitThreadpoolCallback proto _CType \
+		  pfns: PTP_SIMPLE_CALLBACK,
+		    pv: PVOID,
+		  pcbe: PTP_CALLBACK_ENVIRON
+
+;PTP_WORK
+CreateThreadpoolWork proto _CType \
+		 pfnwk: PTP_WORK_CALLBACK,
+		    pv: PVOID,
+		  pcbe: PTP_CALLBACK_ENVIRON
+
+;VOID
+SubmitThreadpoolWork proto _CType \
+		   pwk: PTP_WORK
+
+;VOID
+WaitForThreadpoolWorkCallbacks proto _CType \
+		   pwk: PTP_WORK,
+fCancelPendingCallbacks: BOOL
+
+;VOID
+CloseThreadpoolWork proto _CType \
+		   pwk: PTP_WORK
+
+;PTP_TIMER
+CreateThreadpoolTimer proto _CType \
+		 pfnti: PTP_TIMER_CALLBACK,
+		    pv: PVOID,
+		  pcbe: PTP_CALLBACK_ENVIRON
+
+;VOID
+SetThreadpoolTimer proto _CType \
+		   pti: PTP_TIMER,
+	    pftDueTime: PFILETIME,
+	      msPeriod: DWORD,
+	msWindowLength: DWORD
+
+;BOOL
+IsThreadpoolTimerSet proto _CType \
+		   pti: PTP_TIMER
+
+;VOID
+WaitForThreadpoolTimerCallbacks proto _CType \
+		   pti: PTP_TIMER,
+fCancelPendingCallbacks: BOOL
+
+;VOID
+CloseThreadpoolTimer proto _CType \
+		   pti: PTP_TIMER
+
+;PTP_WAIT
+CreateThreadpoolWait proto _CType \
+		 pfnwa: PTP_WAIT_CALLBACK,
+		    pv: PVOID,
+		  pcbe: PTP_CALLBACK_ENVIRON
+
+;VOID
+SetThreadpoolWait proto _CType \
+		   pwa: PTP_WAIT,
+		     h: HANDLE,
+	    pftTimeout: PFILETIME
+
+;VOID
+WaitForThreadpoolWaitCallbacks proto _CType \
+		   pwa: PTP_WAIT,
+fCancelPendingCallbacks: BOOL
+
+;VOID
+CloseThreadpoolWait proto _CType \
+		   pwa: PTP_WAIT
+
+;PTP_IO
+CreateThreadpoolIo proto _CType \
+		    fl: HANDLE,
+		 pfnio: PTP_WIN32_IO_CALLBACK,
+		    pv: PVOID,
+		  pcbe: PTP_CALLBACK_ENVIRON
+
+;VOID
+StartThreadpoolIo proto _CType \
+		   pio: PTP_IO
+
+;VOID
+CancelThreadpoolIo proto _CType \
+		   pio: PTP_IO
+
+;VOID
+WaitForThreadpoolIoCallbacks proto _CType \
+		   pio: PTP_IO,
+fCancelPendingCallbacks: BOOL
+
+;VOID
+CloseThreadpoolIo proto _CType \
+		   pio: PTP_IO
+
+;;
+;;  Private Namespaces support
+;;
+;HANDLE
+CreatePrivateNamespaceA proto _CType \
+lpPrivateNamespaceAttributes: LPSECURITY_ATTRIBUTES,
+  lpBoundaryDescriptor: LPVOID,
+	 lpAliasPrefix: LPCSTR
+
+;HANDLE
+CreatePrivateNamespaceW proto _CType \
+lpPrivateNamespaceAttributes: LPSECURITY_ATTRIBUTES,
+  lpBoundaryDescriptor: LPVOID,
+	 lpAliasPrefix: LPCWSTR
+ifdef _UNICODE
+CreatePrivateNamespace	equ <CreatePrivateNamespaceW>
+else
+CreatePrivateNamespace	equ <CreatePrivateNamespaceA>
+endif ;; NOT UNICODE
+
+;HANDLE
+OpenPrivateNamespaceA proto _CType \
+  lpBoundaryDescriptor: LPVOID,
+	 lpAliasPrefix: LPCSTR
+OpenPrivateNamespaceW proto _CType \
+  lpBoundaryDescriptor: LPVOID,
+	 lpAliasPrefix: LPCWSTR
+ifdef _UNICODE
+OpenPrivateNamespace	equ <OpenPrivateNamespaceW>
+else
+OpenPrivateNamespace	equ <OpenPrivateNamespaceA>
+endif ;; NOT UNICODE
+
+PRIVATE_NAMESPACE_FLAG_DESTROY equ 0x00000001
+
+;BOOLEAN
+ClosePrivateNamespace proto _CType \
+		Handle: HANDLE,
+		 Flags: ULONG
+
+;;
+;;  Boundary descriptors support
+;;
+
+;HANDLE
+CreateBoundaryDescriptorA proto _CType \
+		 _Name: LPCSTR,
+		 Flags: ULONG
+
+;HANDLE
+CreateBoundaryDescriptorW proto _CType \
+		 _Name: LPCWSTR,
+		 Flags: ULONG
+
+ifdef _UNICODE
+CreateBoundaryDescriptor equ <CreateBoundaryDescriptorW>
+else
+CreateBoundaryDescriptor equ <CreateBoundaryDescriptorA>
+endif ;; NOT UNICODE
+
+;BOOL
+AddSIDToBoundaryDescriptor proto _CType \
+   BoundaryDescriptor: ptr HANDLE,
+	  RequiredSid: PSID
+
+;BOOL
+AddIntegrityLabelToBoundaryDescriptor proto _CType \
+   BoundaryDescriptor: ptr HANDLE,
+       IntegrityLabel: PSID
+
+;VOID
+DeleteBoundaryDescriptor proto _CType \
+    BoundaryDescriptor: HANDLE
+
+endif ;; _WIN32_WINNT GE 0x0600
+endif ;; _WIN32_WINNT GE 0x0500
 
 if(_WIN32_WINNT GE 0x0400)
 ;
@@ -5452,6 +8341,7 @@ QueryPerformanceCounter proto _CType \
 
 QueryPerformanceFrequency proto _CType \
 	   lpFrequency: PTR LARGE_INTEGER
+
 
 OSVERSIONINFOA		STRUC
 dwOSVersionInfoSize	dd ?
@@ -5547,6 +8437,39 @@ else
 GetVersionEx equ <GetVersionExA>
 endif
 
+;BOOL
+VerifyVersionInfoA proto _CType \
+  lpVersionInformation: LPOSVERSIONINFOEXA,
+	    dwTypeMask: DWORD,
+      dwlConditionMask: DWORDLONG
+VerifyVersionInfoW proto _CType \
+  lpVersionInformation: LPOSVERSIONINFOEXW,
+	    dwTypeMask: DWORD,
+      dwlConditionMask: DWORDLONG
+ifdef _UNICODE
+VerifyVersionInfo	equ <VerifyVersionInfoW>
+else
+VerifyVersionInfo	equ <VerifyVersionInfoA>
+endif ;; NOT UNICODE
+
+if (_WIN32_WINNT GE 0x0600)
+;BOOL
+GetProductInfo proto _CType \
+      dwOSMajorVersion: DWORD,
+      dwOSMinorVersion: DWORD,
+      dwSpMajorVersion: DWORD,
+      dwSpMinorVersion: DWORD,
+pdwReturnedProductType: PDWORD
+endif
+
+;; DOS and OS/2 Compatible Error Code definitions returned by the Win32 Base
+;; API functions.
+;;
+
+;include winerror.inc
+
+;; Abnormal termination codes
+
 ; Abnormal termination codes
 
 TC_NORMAL	equ 0
@@ -5589,282 +8512,91 @@ LPSYSTEM_POWER_STATUS	TYPEDEF PTR SYSTEM_POWER_STATUS
 ;BOOL
 GetSystemPowerStatus proto _CType \
    lpSystemPowerStatus: LPSYSTEM_POWER_STATUS
+
 ;BOOL
 SetSystemPowerState proto _CType \
 	      fSuspend: BOOL,
 		fForce: BOOL
 
-endif
-
-;
-; Win Certificate API and Structures
-;
-
-;
-; Structures
-;
-
-WIN_CERTIFICATE		STRUC
-dwLength		dd ?
-wRevision		dw ?
-wCertificateType	dw ? ; WIN_CERT_TYPE_xxx
-bCertificate		SBYTE ANYSIZE_ARRAY dup(?)
-WIN_CERTIFICATE		ENDS
-LPWIN_CERTIFICATE	typedef ptr WIN_CERTIFICATE
-
-;
-; Currently, the only defined certificate revision is WIN_CERT_REVISION_1_0
-;
-
-WIN_CERT_REVISION_1_0	equ 0x0100
-WIN_CERT_REVISION_2_0	equ 0x0200
-
-;
-; Possible certificate types are specified by the following values
-;
-
- WIN_CERT_TYPE_X509		  equ 0x0001	; bCertificate contains an X.509 Certificate
- WIN_CERT_TYPE_PKCS_SIGNED_DATA	  equ 0x0002	; bCertificate contains a PKCS SignedData structure
- WIN_CERT_TYPE_RESERVED_1	  equ 0x0003	; Reserved
-
-;
-; API
-;
-
-;BOOL
-WinSubmitCertificate proto _CType \
-	 lpCertificate: LPWIN_CERTIFICATE
-
-;
-; Trust API and Structures
-;
-
-;LONG
-WinVerifyTrust proto _CType \
-		  hwnd: HWND,
-	      ActionID: PVOID, ; GUID *
-	    ActionData: PVOID
-
-WinLoadTrustProvider proto _CType \
-	      ActionID: PVOID ; GUID *
-
-;
-; Common Trust API Data Structures
-;
-
-;
-; Data type commonly used in ActionData structures
-;
-
-WIN_TRUST_SUBJECT typedef PVOID
-
-;
-; Two commonly used ActionData structures
-;
-
-WIN_TRUST_ACTDATA_CONTEXT_WITH_SUBJECT STRUC
-
-hClientToken	HANDLE ?
-SubjectType	PVOID ? ; GUID *
-Subject		WIN_TRUST_SUBJECT ?
-
-WIN_TRUST_ACTDATA_CONTEXT_WITH_SUBJECT ENDS
-LPWIN_TRUST_ACTDATA_CONTEXT_WITH_SUBJECT typedef ptr WIN_TRUST_ACTDATA_CONTEXT_WITH_SUBJECT
-
-
-WIN_TRUST_ACTDATA_SUBJECT_ONLY STRUC
-
-SubjectType	PVOID ? ; GUID *
-Subject		WIN_TRUST_SUBJECT ?
-
-WIN_TRUST_ACTDATA_SUBJECT_ONLY ENDS
-LPWIN_TRUST_ACTDATA_SUBJECT_ONLY TYPEDEF PTR WIN_TRUST_ACTDATA_SUBJECT_ONLY
-
-
-;
-; SUBJECT FORM DEFINITIONS
-;
-
-;
-; Currently defined Subject Type Identifiers.  All of the below
-; use the WIN_TRUST_SUBJECT_FILE subject form, defined below.
-;
-
-;
-; Associated Subject Data Structure:
-;
-
-WIN_TRUST_SUBJECT_FILE STRUC
-
-hFile	HANDLE ?
-lpPath	LPWSTR ?
-
-WIN_TRUST_SUBJECT_FILE ENDS
-LPWIN_TRUST_SUBJECT_FILE TYPEDEF PTR WIN_TRUST_SUBJECT_FILE
-
-
-;
-; The following subject types use the
-; WIN_TRUST_SUBJECT_FILE_AND_DISPLAY subject type, defined
-; below.
-;
-
-;
-; Associated Subject Data Structure:
-;
-
-WIN_TRUST_SUBJECT_FILE_AND_DISPLAY STRUC
-
-hFile		HANDLE ?	; handle to the open file if you got it
-lpPath		LPWSTR ?	; the path to open if you don't
-lpDisplayName	LPWSTR ?	;	; (optional) display name to show to user
-				;      in place of path
-
-WIN_TRUST_SUBJECT_FILE_AND_DISPLAY ENDS
-LPWIN_TRUST_SUBJECT_FILE_AND_DISPLAY TYPEDEF PTR WIN_TRUST_SUBJECT_FILE_AND_DISPLAY
-
-
-;
-; Other subject types:
-;
-
-
-;
-; Data Structures:
-;
-; WIN_SPUB_ACTION_TRUSTED_PUBLISHER:
-;
-;      Uses WIN_SPUB_TRUSTED_PUBLISHER_DATA
-;
-; WIN_SPUB_ACTION_NT_ACTIVATE_IMAGE:
-;
-;      Uses WIN_TRUST_ACTDATA_CONTEXT_WITH_SUBJECT
-;
-; WIN_SPUB_ACTION_PUBLISHED_SOFTWARE:
-;
-;      Uses WIN_TRUST_ACTDATA_CONTEXT_WITH_SUBJECT
-;
-
-WIN_SPUB_TRUSTED_PUBLISHER_DATA STRUC
-hClientToken	HANDLE ?
-lpCertificate	LPWIN_CERTIFICATE ?
-WIN_SPUB_TRUSTED_PUBLISHER_DATA ENDS
-LPWIN_SPUB_TRUSTED_PUBLISHER_DATA TYPEDEF PTR WIN_SPUB_TRUSTED_PUBLISHER_DATA
+endif ;; (WINVER GE 0x0400)
 
 if (_WIN32_WINNT GE 0x0500)
-;
-; Very Large Memory API Subset
-;
+;;
+;; Very Large Memory API Subset
+;;
 
-;PVOID64
-VirtualAllocVlm proto _CType \
-	      hProcess: HANDLE,
-	     lpAddress: PVOID64,
-	       ullSize: DWORDLONG,
-      flAllocationType: DWORD,
-	     flProtect: DWORD
 ;BOOL
-VirtualFreeVlm proto _CType \
+AllocateUserPhysicalPages proto _CType \
 	      hProcess: HANDLE,
-	     lpAddress: PVOID64,
-	       ullSize: DWORDLONG,
-	    dwFreeType: DWORD
+	 NumberOfPages: PULONG_PTR,
+	     PageArray: PULONG_PTR
 
-VirtualProtectVlm proto _CType \
-	      hProcess: HANDLE,
-	     lpAddress: PVOID64,
-	       ullSize: DWORDLONG,
-	  flNewProtect: DWORD,
-	lpflOldProtect: PDWORD
-;DWORD
-VirtualQueryVlm proto _CType \
-	      hProcess: HANDLE,
-	     lpAddress: PVOID64,
-	      lpBuffer: PMEMORY_BASIC_INFORMATION_VLM,
-	      dwLength: DWORD
-
-MEMORYSTATUSVLM		STRUC
-dwLength		DWORD ?
-dwMemoryLoad		DWORD ?
-ullTotalPhys		DWORDLONG ?
-ullAvailPhys		DWORDLONG ?
-ullTotalPageFile	DWORDLONG ?
-ullAvailPageFile	DWORDLONG ?
-ullTotalVirtual		DWORDLONG ?
-ullAvailVirtual		DWORDLONG ?
-ullAvailExtendedVirtual DWORDLONG ?
-MEMORYSTATUSVLM		ENDS
-
-LPMEMORYSTATUSVLM TYPEDEF PTR LPMEMORYSTATUSVLM
-
-;VOID
-GlobalMemoryStatusVlm proto _CType \
-	      lpBuffer: LPMEMORYSTATUSVLM
+if _WIN32_WINNT GE 0x0600
 ;BOOL
-ReadProcessMemoryVlm proto _CType \
+AllocateUserPhysicalPagesNuma proto _CType \
+	     hProcess: HANDLE,
+	NumberOfPages: PULONG_PTR,
+	    PageArray: PULONG_PTR,
+	 nndPreferred: DWORD
+endif ;; _WIN32_WINNT GE 0x0600
+
+;BOOL
+FreeUserPhysicalPages proto _CType \
 	      hProcess: HANDLE,
-	 lpBaseAddress: PVOID64,
-	      lpBuffer: PVOID64,
-		 nSize: DWORD,
-   lpNumberOfBytesRead: LPDWORD
+	 NumberOfPages: PULONG_PTR,
+	     PageArray: PULONG_PTR
 
-WriteProcessMemoryVlm proto _CType \
-	      hProcess: HANDLE,
-	 lpBaseAddress: PVOID64,
-	      lpBuffer: PVOID64,
-		 nSize: DWORD,
-lpNumberOfBytesWritten: LPDWORD
+;BOOL
+MapUserPhysicalPages proto _CType \
+	VirtualAddress: PVOID,
+	 NumberOfPages: ULONG_PTR,
+	     PageArray: PULONG_PTR
 
-ReadFileVlm proto _CType \
-		 hFile: HANDLE,
-	      lpBuffer: PVOID64,
-  nNumberOfBytesToRead: DWORD,
-	    lpReserved: LPDWORD,
-	  lpOverlapped: LPOVERLAPPED
+;BOOL
+MapUserPhysicalPagesScatter proto _CType \
+      VirtualAddresses: PVOID,
+	 NumberOfPages: ULONG_PTR,
+	     PageArray: PULONG_PTR
 
-WriteFileVlm proto _CType \
-		 hFile: HANDLE,
-	      lpBuffer: PVOID64,
- nNumberOfBytesToWrite: DWORD,
-	    lpReserved: LPDWORD,
-	  lpOverlapped: LPOVERLAPPED
 ;HANDLE
 CreateJobObjectA proto _CType \
        lpJobAttributes: LPSECURITY_ATTRIBUTES,
-		lpName: LPSTR
+		lpName: LPCSTR
 CreateJobObjectW proto _CType \
        lpJobAttributes: LPSECURITY_ATTRIBUTES,
-		lpName: LPWSTR
+		lpName: LPCWSTR
 ifdef _UNICODE
-CreateJobObject equ <CreateJobObjectW>
+CreateJobObject		equ <CreateJobObjectW>
 else
-CreateJobObject equ <CreateJobObjectA>
-endif
+CreateJobObject		equ <CreateJobObjectA>
+endif ;; NOT UNICODE
 
 ;HANDLE
 OpenJobObjectA proto _CType \
        dwDesiredAccess: DWORD,
 	bInheritHandle: BOOL,
-		lpName: LPSTR
+		lpName: LPCSTR
 OpenJobObjectW proto _CType \
        dwDesiredAccess: DWORD,
 	bInheritHandle: BOOL,
-		lpName: LPWSTR
+		lpName: LPCWSTR
 ifdef _UNICODE
-OpenJobObject equ <OpenJobObjectW>
+OpenJobObject		equ <OpenJobObjectW>
 else
-OpenJobObject equ <OpenJobObjectA>
-endif
+OpenJobObject		equ <OpenJobObjectA>
+endif ;; NOT UNICODE
 
 ;BOOL
 AssignProcessToJobObject proto _CType \
 		  hJob: HANDLE,
 	      hProcess: HANDLE
 
+;BOOL
 TerminateJobObject proto _CType \
 		  hJob: HANDLE,
 	     uExitCode: UINT
 
+;BOOL
 QueryInformationJobObject proto _CType \
 		  hJob: HANDLE,
 JobObjectInformationClass: JOBOBJECTINFOCLASS,
@@ -5872,13 +8604,999 @@ lpJobObjectInformation: LPVOID,
 cbJobObjectInformationLength: DWORD,
 	lpReturnLength: LPDWORD
 
+;BOOL
 SetInformationJobObject proto _CType \
 		  hJob: HANDLE,
 JobObjectInformationClass: JOBOBJECTINFOCLASS,
-lpJobObjectInformation: PVOID,
+lpJobObjectInformation: LPVOID,
 cbJobObjectInformationLength: DWORD
 
-endif ; (_WIN32_WINNT >= 0x0500)
-endif ; _WINBASE_
+if (_WIN32_WINNT GE 0x0501)
+
+;BOOL
+IsProcessInJob proto _CType \
+	 ProcessHandle: HANDLE,
+	     JobHandle: HANDLE,
+		Result: PBOOL
+
+
+endif
+
+;BOOL
+CreateJobSet proto _CType \
+		NumJob: ULONG,
+	    UserJobSet: PJOB_SET_ARRAY,
+		 Flags: ULONG
+
+;PVOID
+AddVectoredExceptionHandler proto _CType \
+		 First: ULONG,
+	       Handler: PVECTORED_EXCEPTION_HANDLER
+
+;ULONG
+RemoveVectoredExceptionHandler proto _CType \
+		Handle: PVOID
+
+;PVOID
+AddVectoredContinueHandler proto _CType \
+		 First: ULONG,
+	       Handler: PVECTORED_EXCEPTION_HANDLER
+
+;ULONG
+RemoveVectoredContinueHandler proto _CType \
+		Handle: PVOID
+
+;;
+;; New Volume Mount Point API.
+;;
+
+;HANDLE
+FindFirstVolumeA proto _CType \
+	lpszVolumeName: LPSTR,
+       cchBufferLength: DWORD
+FindFirstVolumeW proto _CType \
+	lpszVolumeName: LPWSTR,
+       cchBufferLength: DWORD
+ifdef _UNICODE
+FindFirstVolume		equ <FindFirstVolumeW>
+else
+FindFirstVolume		equ <FindFirstVolumeA>
+endif ;; NOT UNICODE
+
+;BOOL
+FindNextVolumeA proto _CType \
+	   hFindVolume: HANDLE,
+	lpszVolumeName: LPSTR,
+       cchBufferLength: DWORD
+FindNextVolumeW proto _CType \
+	   hFindVolume: HANDLE,
+	lpszVolumeName: LPWSTR,
+       cchBufferLength: DWORD
+ifdef _UNICODE
+FindNextVolume		equ <FindNextVolumeW>
+else
+FindNextVolume		equ <FindNextVolumeA>
+endif ;; NOT UNICODE
+
+;BOOL
+FindVolumeClose proto _CType \
+	   hFindVolume: HANDLE
+
+;HANDLE
+FindFirstVolumeMountPointA proto _CType \
+      lpszRootPathName: LPCSTR,
+  lpszVolumeMountPoint: LPSTR,
+       cchBufferLength: DWORD
+FindFirstVolumeMountPointW proto _CType \
+      lpszRootPathName: LPCWSTR,
+  lpszVolumeMountPoint: LPWSTR,
+       cchBufferLength: DWORD
+ifdef _UNICODE
+FindFirstVolumeMountPoint equ <FindFirstVolumeMountPointW>
+else
+FindFirstVolumeMountPoint equ <FindFirstVolumeMountPointA>
+endif ;; NOT UNICODE
+
+;BOOL
+FindNextVolumeMountPointA proto _CType \
+ hFindVolumeMountPoint: HANDLE,
+  lpszVolumeMountPoint: LPSTR,
+       cchBufferLength: DWORD
+FindNextVolumeMountPointW proto _CType \
+ hFindVolumeMountPoint: HANDLE,
+  lpszVolumeMountPoint: LPWSTR,
+       cchBufferLength: DWORD
+ifdef _UNICODE
+FindNextVolumeMountPoint equ <FindNextVolumeMountPointW>
+else
+FindNextVolumeMountPoint equ <FindNextVolumeMountPointA>
+endif ;; NOT UNICODE
+
+;BOOL
+FindVolumeMountPointClose proto _CType \
+ hFindVolumeMountPoint: HANDLE
+
+;BOOL
+SetVolumeMountPointA proto _CType \
+  lpszVolumeMountPoint: LPCSTR,
+	lpszVolumeName: LPSTR
+SetVolumeMountPointW proto _CType \
+  lpszVolumeMountPoint: LPCWSTR,
+	lpszVolumeName: LPWSTR
+ifdef _UNICODE
+SetVolumeMountPoint	equ <SetVolumeMountPointW>
+else
+SetVolumeMountPoint	equ <SetVolumeMountPointA>
+endif ;; NOT UNICODE
+
+;BOOL
+DeleteVolumeMountPointA proto _CType \
+  lpszVolumeMountPoint: LPCSTR
+DeleteVolumeMountPointW proto _CType \
+  lpszVolumeMountPoint: LPCWSTR
+ifdef _UNICODE
+DeleteVolumeMountPoint	equ <DeleteVolumeMountPointW>
+else
+DeleteVolumeMountPoint	equ <DeleteVolumeMountPointA>
+endif ;; NOT UNICODE
+
+;BOOL
+GetVolumeNameForVolumeMountPointA proto _CType \
+  lpszVolumeMountPoint: LPCSTR,
+	lpszVolumeName: LPSTR,
+      cchBufferLength: DWORD
+GetVolumeNameForVolumeMountPointW proto _CType \
+  lpszVolumeMountPoint: LPCWSTR,
+	lpszVolumeName: LPWSTR,
+      cchBufferLength: DWORD
+ifdef _UNICODE
+GetVolumeNameForVolumeMountPoint equ <GetVolumeNameForVolumeMountPointW>
+else
+GetVolumeNameForVolumeMountPoint equ <GetVolumeNameForVolumeMountPointA>
+endif ;; NOT UNICODE
+
+;BOOL
+GetVolumePathNameA proto _CType \
+	  lpszFileName: LPCSTR,
+    lpszVolumePathName: LPSTR,
+       cchBufferLength: DWORD
+GetVolumePathNameW proto _CType \
+	  lpszFileName: LPCWSTR,
+    lpszVolumePathName: LPWSTR,
+       cchBufferLength: DWORD
+ifdef _UNICODE
+GetVolumePathName	equ <GetVolumePathNameW>
+else
+GetVolumePathName	equ <GetVolumePathNameA>
+endif ;; NOT UNICODE
+
+endif ;; (_WIN32_WINNT GE 0x0500)
+
+if(_WIN32_WINNT GE 0x0501)
+
+;BOOL
+GetVolumePathNamesForVolumeNameA proto _CType \
+	 lpszVolumeName: LPCSTR,
+    lpszVolumePathNames: LPCH,
+	cchBufferLength: DWORD,
+      lpcchReturnLength: PDWORD
+GetVolumePathNamesForVolumeNameW proto _CType \
+	 lpszVolumeName: LPCWSTR,
+    lpszVolumePathNames: LPWCH,
+	cchBufferLength: DWORD,
+      lpcchReturnLength: PDWORD
+ifdef _UNICODE
+GetVolumePathNamesForVolumeName equ <GetVolumePathNamesForVolumeNameW>
+else
+GetVolumePathNamesForVolumeName equ <GetVolumePathNamesForVolumeNameA>
+endif ;; NOT UNICODE
+
+endif ;; (_WIN32_WINNT GE 0x0501)
+
+if (_WIN32_WINNT GE 0x0500) OR (_WIN32_FUSION GE 0x0100) ;OR ISOLATION_AWARE_ENABLED
+
+ACTCTX_FLAG_PROCESSOR_ARCHITECTURE_VALID equ 0x00000001
+ACTCTX_FLAG_LANGID_VALID		equ 0x00000002
+ACTCTX_FLAG_ASSEMBLY_DIRECTORY_VALID	equ 0x00000004
+ACTCTX_FLAG_RESOURCE_NAME_VALID		equ 0x00000008
+ACTCTX_FLAG_SET_PROCESS_DEFAULT		equ 0x00000010
+ACTCTX_FLAG_APPLICATION_NAME_VALID	equ 0x00000020
+ACTCTX_FLAG_SOURCE_IS_ASSEMBLYREF	equ 0x00000040
+ACTCTX_FLAG_HMODULE_VALID		equ 0x00000080
+
+ACTCTXA			STRUC
+cbSize			ULONG ?
+dwFlags			dd ?
+lpSource		LPCSTR ?
+wProcessorArchitecture	USHORT ?
+wLangId			LANGID ?
+lpAssemblyDirectory	LPCSTR ?
+lpResourceName		LPCSTR ?
+lpApplicationName	LPCSTR ?
+hModule			HMODULE ?
+ACTCTXA			ENDS
+PACTCTXA		typedef ptr ACTCTXA
+ACTCTXW			STRUC
+cbSize			ULONG ?
+dwFlags			dd ?
+lpSource		LPCWSTR ?
+wProcessorArchitecture	USHORT ?
+wLangId			LANGID ?
+lpAssemblyDirectory	LPCWSTR ?
+lpResourceName		LPCWSTR ?
+lpApplicationName	LPCWSTR ?
+hModule			HMODULE ?
+ACTCTXW			ENDS
+PACTCTXW		typedef ptr ACTCTXW
+ifdef _UNICODE
+ACTCTX			typedef ACTCTXW
+PACTCTX			typedef PACTCTXW
+else
+ACTCTX			typedef ACTCTXA
+PACTCTX			typedef PACTCTXA
+endif ;; UNICODE
+
+PCACTCTXA		typedef ptr ACTCTXA
+PCACTCTXW		typedef ptr ACTCTXW
+ifdef _UNICODE
+PCACTCTX		typedef PCACTCTXW
+else
+PCACTCTX		typedef PCACTCTXA
+endif ;; UNICODE
+
+
+
+;HANDLE
+CreateActCtxA proto _CType \
+	       pActCtx: PCACTCTXA
+
+;HANDLE
+CreateActCtxW proto _CType \
+	       pActCtx: PCACTCTXW
+
+ifdef _UNICODE
+CreateActCtx		equ <CreateActCtxW>
+else
+CreateActCtx		equ <CreateActCtxA>
+endif ;; NOT UNICODE
+
+;VOID
+AddRefActCtx proto _CType \
+	       hActCtx: HANDLE
+
+;VOID
+ReleaseActCtx proto _CType \
+	       hActCtx: HANDLE
+
+;BOOL
+ZombifyActCtx proto _CType \
+	       hActCtx: HANDLE
+
+;BOOL
+ActivateActCtx proto _CType \
+	       hActCtx: HANDLE,
+	      lpCookie: ptr ULONG_PTR
+
+
+
+DEACTIVATE_ACTCTX_FLAG_FORCE_EARLY_DEACTIVATION equ 0x00000001
+
+;BOOL
+DeactivateActCtx proto _CType \
+	       dwFlags: DWORD,
+	      ulCookie: ULONG_PTR
+
+
+;BOOL
+GetCurrentActCtx proto _CType \
+	     lphActCtx: LPHANDLE
+
+
+
+ACTCTX_SECTION_KEYED_DATA_2600 STRUC
+cbSize			dd ?
+ulDataFormatVersion	dd ?
+lpData			PVOID ?
+ulLength		dd ?
+lpSectionGlobalData	PVOID ?
+ulSectionGlobalDataLength dd ?
+lpSectionBase		PVOID ?
+ulSectionTotalLength	dd ?
+hActCtx			HANDLE ?
+ulAssemblyRosterIndex	dd ?
+ACTCTX_SECTION_KEYED_DATA_2600 ENDS
+
+PACTCTX_SECTION_KEYED_DATA_2600 typedef ptr ACTCTX_SECTION_KEYED_DATA_2600
+PCACTCTX_SECTION_KEYED_DATA_2600 typedef ptr ACTCTX_SECTION_KEYED_DATA_2600
+
+ACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA  STRUC
+lpInformation		PVOID ?
+lpSectionBase		PVOID ?
+ulSectionLength		dd ?
+lpSectionGlobalDataBase PVOID ?
+ulSectionGlobalDataLength dd ?
+ACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA ENDS
+PACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA typedef ptr ACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA
+PCACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA typedef ptr ACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA
+
+ACTCTX_SECTION_KEYED_DATA  STRUC
+cbSize			dd ?
+ulDataFormatVersion	dd ?
+lpData			PVOID ?
+ulLength		dd ?
+lpSectionGlobalData	PVOID ?
+ulSectionGlobalDataLength dd ?
+lpSectionBase		PVOID ?
+ulSectionTotalLength	dd ?
+hActCtx			HANDLE ?
+ulAssemblyRosterIndex	dd ?
+;; 2600 stops here
+ulFlags			dd ?
+AssemblyMetadata	ACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA <>
+ACTCTX_SECTION_KEYED_DATA ENDS
+PACTCTX_SECTION_KEYED_DATA typedef ptr ACTCTX_SECTION_KEYED_DATA
+PCACTCTX_SECTION_KEYED_DATA typedef ptr ACTCTX_SECTION_KEYED_DATA
+
+FIND_ACTCTX_SECTION_KEY_RETURN_HACTCTX		 equ 0x00000001
+FIND_ACTCTX_SECTION_KEY_RETURN_FLAGS		 equ 0x00000002
+FIND_ACTCTX_SECTION_KEY_RETURN_ASSEMBLY_METADATA equ 0x00000004
+
+
+;BOOL
+FindActCtxSectionStringA proto _CType \
+	       dwFlags: DWORD,
+       lpExtensionGuid: ptr GUID,
+	   ulSectionId: ULONG,
+	lpStringToFind: LPCSTR,
+	  ReturnedData: PACTCTX_SECTION_KEYED_DATA
+FindActCtxSectionStringW proto _CType \
+	       dwFlags: DWORD,
+       lpExtensionGuid: ptr GUID,
+	   ulSectionId: ULONG,
+	lpStringToFind: LPCWSTR,
+	  ReturnedData: PACTCTX_SECTION_KEYED_DATA
+ifdef _UNICODE
+FindActCtxSectionString equ <FindActCtxSectionStringW>
+else
+FindActCtxSectionString equ <FindActCtxSectionStringA>
+endif ;; NOT UNICODE
+
+;BOOL
+FindActCtxSectionGuid proto _CType \
+	       dwFlags: DWORD,
+       lpExtensionGuid: ptr GUID,
+	   ulSectionId: ULONG,
+	  lpGuidToFind: ptr GUID,
+	  ReturnedData: PACTCTX_SECTION_KEYED_DATA
+
+ifndef ACTIVATION_CONTEXT_BASIC_INFORMATION_DEFINED
+
+ACTIVATION_CONTEXT_BASIC_INFORMATION  STRUC
+hActCtx			HANDLE ?
+dwFlags			dd ?
+ACTIVATION_CONTEXT_BASIC_INFORMATION ENDS
+PACTIVATION_CONTEXT_BASIC_INFORMATION typedef ptr ACTIVATION_CONTEXT_BASIC_INFORMATION
+PCACTIVATION_CONTEXT_BASIC_INFORMATION typedef ptr ACTIVATION_CONTEXT_BASIC_INFORMATION
+
+ACTIVATION_CONTEXT_BASIC_INFORMATION_DEFINED equ 1
+
+endif ;; !ACTIVATION_CONTEXT_BASIC_INFORMATION_DEFINED
+
+
+QUERY_ACTCTX_FLAG_USE_ACTIVE_ACTCTX equ (0x00000004)
+QUERY_ACTCTX_FLAG_ACTCTX_IS_HMODULE equ (0x00000008)
+QUERY_ACTCTX_FLAG_ACTCTX_IS_ADDRESS equ (0x00000010)
+QUERY_ACTCTX_FLAG_NO_ADDREF equ (0x80000000)
+
+;;
+;; switch (ulInfoClass)
+;;
+;;  case ActivationContextBasicInformation:
+;;    pvSubInstance == NULL
+;;    pvBuffer is of type PACTIVATION_CONTEXT_BASIC_INFORMATION
+;;
+;;  case ActivationContextDetailedInformation:
+;;    pvSubInstance == NULL
+;;    pvBuffer is of type PACTIVATION_CONTEXT_DETAILED_INFORMATION
+;;
+;;  case AssemblyDetailedInformationInActivationContext:
+;;    pvSubInstance is of type PULONG
+;;	*pvSubInstance < ACTIVATION_CONTEXT_DETAILED_INFORMATION::ulAssemblyCount
+;;    pvBuffer is of type PACTIVATION_CONTEXT_ASSEMBLY_DETAILED_INFORMATION
+;;
+;;  case FileInformationInAssemblyOfAssemblyInActivationContext:
+;;    pvSubInstance is of type PACTIVATION_CONTEXT_QUERY_INDEX
+;;	pvSubInstance->ulAssemblyIndex < ACTIVATION_CONTEXT_DETAILED_INFORMATION::ulAssemblyCount
+;;	pvSubInstance->ulFileIndexInAssembly < ACTIVATION_CONTEXT_ASSEMBLY_DETAILED_INFORMATION::ulFileCount
+;;    pvBuffer is of type PASSEMBLY_FILE_DETAILED_INFORMATION
+;;
+;;  case RunlevelInformationInActivationContext :
+;;    pvSubInstance == NULL
+;;    pvBuffer is of type PACTIVATION_CONTEXT_RUN_LEVEL_INFORMATION
+;;
+;; String are placed after the structs.
+;;
+;BOOL
+QueryActCtxW proto _CType \
+	       dwFlags: DWORD,
+	       hActCtx: HANDLE,
+	 pvSubInstance: PVOID,
+	   ulInfoClass: ULONG,
+	      pvBuffer: PVOID,
+	      cbBuffer: SIZE_T,
+  pcbWrittenOrRequired: ptr SIZE_T
+
+PQUERYACTCTXW_FUNC_T typedef proto _CType \
+	       dwFlags: DWORD,
+	       hActCtx: HANDLE,
+	 pvSubInstance: PVOID,
+	   ulInfoClass: ULONG,
+	      pvBuffer: PVOID,
+	      cbBuffer: SIZE_T,
+  pcbWrittenOrRequired: ptr SIZE_T
+PQUERYACTCTXW_FUNC typedef ptr PQUERYACTCTXW_FUNC_T
+
+endif ;; (_WIN32_WINNT GT 0x0500) OR (_WIN32_FUSION GE 0x0100) OR ISOLATION_AWARE_ENABLED
+
+;BOOL
+ProcessIdToSessionId proto _CType \
+	   dwProcessId: DWORD,
+	    pSessionId: LPDWORD
+
+if _WIN32_WINNT GE 0x0501
+
+;DWORD
+WTSGetActiveConsoleSessionId proto _CType
+
+;BOOL
+IsWow64Process proto _CType \
+	      hProcess: HANDLE,
+	  Wow64Process: PBOOL
+
+endif ;; (_WIN32_WINNT GE 0x0501)
+
+;BOOL
+GetLogicalProcessorInformation proto _CType \
+		Buffer: PSYSTEM_LOGICAL_PROCESSOR_INFORMATION,
+	ReturnedLength: PDWORD
+
+if _WIN32_WINNT GE 0x0601
+
+;BOOL
+GetLogicalProcessorInformationEx proto _CType \
+      RelationshipType: LOGICAL_PROCESSOR_RELATIONSHIP,
+		Buffer: PSYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX,
+	ReturnedLength: PDWORD
+
+;WORD
+GetActiveProcessorGroupCount proto _CType
+
+;WORD
+GetMaximumProcessorGroupCount proto _CType
+
+;DWORD
+GetActiveProcessorCount proto _CType \
+	   GroupNumber: WORD
+
+;DWORD
+GetMaximumProcessorCount proto _CType \
+	   GroupNumber: WORD
+
+endif ;; (_WIN32_WINNT GE 0x0601)
+
+;;
+;; NUMA Information routines.
+;;
+
+;BOOL
+GetNumaHighestNodeNumber proto _CType \
+     HighestNodeNumber: PULONG
+
+;BOOL
+GetNumaProcessorNode proto _CType \
+	     Processor: UCHAR,
+	    NodeNumber: PUCHAR
+
+if _WIN32_WINNT GE 0x0601
+
+;BOOL
+GetNumaNodeNumberFromHandle proto _CType \
+		 hFile: HANDLE,
+	    NodeNumber: PUSHORT
+
+endif ;; (_WIN32_WINNT GE 0x0601)
+
+if _WIN32_WINNT GE 0x0601
+
+;BOOL
+GetNumaProcessorNodeEx proto _CType \
+	     Processor: PPROCESSOR_NUMBER,
+	    NodeNumber: PUSHORT
+
+endif ;; (_WIN32_WINNT GE 0x0601)
+
+;BOOL
+GetNumaNodeProcessorMask proto _CType \
+		  Node: UCHAR,
+	 ProcessorMask: PULONGLONG
+
+if _WIN32_WINNT GE 0x0601
+
+;BOOL
+GetNumaNodeProcessorMaskEx proto _CType \
+		  Node: USHORT,
+	 ProcessorMask: PGROUP_AFFINITY
+
+endif ;; (_WIN32_WINNT GE 0x0601)
+
+;BOOL
+GetNumaAvailableMemoryNode proto _CType \
+		  Node: USHORT,
+	AvailableBytes: PULONGLONG
+
+if _WIN32_WINNT GE 0x0601
+
+;BOOL
+GetNumaAvailableMemoryNodeEx proto _CType \
+		  Node: USHORT,
+	AvailableBytes: PULONGLONG
+
+endif ;; (_WIN32_WINNT GE 0x0601)
+
+if (_WIN32_WINNT GE 0x0600)
+
+;BOOL
+GetNumaProximityNode proto _CType \
+	   ProximityId: ULONG,
+	    NodeNumber: PUCHAR
+
+endif
+
+if _WIN32_WINNT GE 0x0601
+
+;BOOL
+GetNumaProximityNodeEx proto _CType \
+	   ProximityId: ULONG,
+	    NodeNumber: PUCHAR
+
+endif ;; (_WIN32_WINNT GE 0x0601)
+
+;;
+;; Application restart and data recovery callback
+;;
+APPLICATION_RECOVERY_CALLBACK_T typedef proto _CType \
+	   pvParameter: PVOID
+APPLICATION_RECOVERY_CALLBACK typedef ptr APPLICATION_RECOVERY_CALLBACK_T
+
+;;
+;; Max length of commandline in characters (including the NULL character that can be registered for restart)
+;;
+RESTART_MAX_CMD_LINE	equ 1024
+
+;;
+;; Do not restart the process for termination due to application crashes
+;;
+RESTART_NO_CRASH	equ 1
+
+;;
+;; Do not restart the process for termination due to application hangs
+;;
+RESTART_NO_HANG		equ 2
+
+;;
+;; Do not restart the process for termination due to patch installations
+;;
+RESTART_NO_PATCH	equ 4
+
+;;
+;; Do not restart the process when the system is rebooted due to patch installations
+;;
+RESTART_NO_REBOOT	equ 8
+
+;HRESULT
+RegisterApplicationRecoveryCallback proto _CType \
+      pRecoveyCallback: APPLICATION_RECOVERY_CALLBACK,
+	   pvParameter: PVOID,
+	dwPingInterval: DWORD,
+	       dwFlags: DWORD
+
+;HRESULT
+UnregisterApplicationRecoveryCallback proto _CType
+
+;HRESULT
+RegisterApplicationRestart proto _CType \
+	pwzCommandline: PCWSTR,
+	       dwFlags: DWORD
+
+;HRESULT
+UnregisterApplicationRestart proto _CType
+
+RECOVERY_DEFAULT_PING_INTERVAL	equ 5000
+RECOVERY_MAX_PING_INTERVAL	equ (5 * 60 * 1000)
+
+;HRESULT
+GetApplicationRecoveryCallback proto _CType \
+	      hProcess: HANDLE,
+     pRecoveryCallback: ptr APPLICATION_RECOVERY_CALLBACK,
+	  ppvParameter: PVOID,
+       pdwPingInterval: PDWORD,
+	      pdwFlags: PDWORD
+
+;HRESULT
+GetApplicationRestartSettings proto _CType \
+	      hProcess: HANDLE,
+	pwzCommandline: PWSTR,
+	      pcchSize: PDWORD,
+	      pdwFlags: PDWORD
+
+;HRESULT
+ApplicationRecoveryInProgress proto _CType \
+	   pbCancelled: PBOOL
+
+
+;VOID
+ApplicationRecoveryFinished proto _CType \
+	      bSuccess: BOOL
+
+
+if (_WIN32_WINNT GE 0x0600)
+
+FILE_INFO_BY_HANDLE_CLASS  typedef sdword ; enum _FILE_INFO_BY_HANDLE_CLASS {
+PFILE_INFO_BY_HANDLE_CLASS typedef ptr FILE_INFO_BY_HANDLE_CLASS
+
+FileBasicInfo		equ 0
+FileStandardInfo	equ 1
+FileNameInfo		equ 2
+FileRenameInfo		equ 3
+FileDispositionInfo	equ 4
+FileAllocationInfo	equ 5
+FileEndOfFileInfo	equ 6
+FileStreamInfo		equ 7
+FileCompressionInfo	equ 8
+FileAttributeTagInfo	equ 9
+FileIdBothDirectoryInfo equ 10
+FileIdBothDirectoryRestartInfo equ 11
+FileIoPriorityHintInfo	equ 12
+FileRemoteProtocolInfo	equ 13
+MaximumFileInfoByHandleClass equ 14
+
+
+FILE_BASIC_INFO		STRUC
+CreationTime		LARGE_INTEGER <>
+LastAccessTime		LARGE_INTEGER <>
+LastWriteTime		LARGE_INTEGER <>
+ChangeTime		LARGE_INTEGER <>
+FileAttributes		dd ?
+FILE_BASIC_INFO		ENDS
+PFILE_BASIC_INFO	typedef ptr FILE_BASIC_INFO
+
+FILE_STANDARD_INFO	STRUC
+AllocationSize		LARGE_INTEGER <>
+EndOfFile		LARGE_INTEGER <>
+NumberOfLinks		dd ?
+DeletePending		BOOLEAN ?
+Directory		BOOLEAN ?
+FILE_STANDARD_INFO	ENDS
+PFILE_STANDARD_INFO	typedef ptr FILE_STANDARD_INFO
+
+FILE_NAME_INFO		STRUC
+FileNameLength		dd ?
+FileName		dw ?
+FILE_NAME_INFO		ENDS
+PFILE_NAME_INFO		typedef ptr FILE_NAME_INFO
+
+FILE_RENAME_INFO	STRUC
+ReplaceIfExists		BOOLEAN ?
+RootDirectory		HANDLE ?
+FileNameLength		dd ?
+FileName		dw ?
+FILE_RENAME_INFO	ENDS
+PFILE_RENAME_INFO	typedef ptr FILE_RENAME_INFO
+
+FILE_ALLOCATION_INFO	STRUC
+AllocationSize		LARGE_INTEGER <>
+FILE_ALLOCATION_INFO	ENDS
+PFILE_ALLOCATION_INFO	typedef ptr FILE_ALLOCATION_INFO
+
+FILE_END_OF_FILE_INFO	STRUC
+EndOfFile		LARGE_INTEGER <>
+FILE_END_OF_FILE_INFO	ENDS
+PFILE_END_OF_FILE_INFO	typedef ptr FILE_END_OF_FILE_INFO
+
+FILE_STREAM_INFO	STRUC
+NextEntryOffset		dd ?
+StreamNameLength	dd ?
+StreamSize		LARGE_INTEGER <>
+StreamAllocationSize	LARGE_INTEGER <>
+StreamName		dw ?
+FILE_STREAM_INFO	ENDS
+PFILE_STREAM_INFO	typedef ptr FILE_STREAM_INFO
+
+FILE_COMPRESSION_INFO	STRUC
+CompressedFileSize	LARGE_INTEGER <>
+CompressionFormat	dw ?
+CompressionUnitShift	db ?
+ChunkShift		db ?
+ClusterShift		db ?
+Reserved		db 3 dup(?)
+FILE_COMPRESSION_INFO	ENDS
+PFILE_COMPRESSION_INFO	typedef ptr FILE_COMPRESSION_INFO
+
+FILE_ATTRIBUTE_TAG_INFO	 STRUC
+FileAttributes		dd ?
+ReparseTag		dd ?
+FILE_ATTRIBUTE_TAG_INFO ENDS
+PFILE_ATTRIBUTE_TAG_INFO typedef ptr FILE_ATTRIBUTE_TAG_INFO
+
+FILE_DISPOSITION_INFO	STRUC
+DeleteFile		BOOLEAN ?
+FILE_DISPOSITION_INFO	ENDS
+PFILE_DISPOSITION_INFO	typedef ptr FILE_DISPOSITION_INFO
+
+FILE_ID_BOTH_DIR_INFO	STRUC
+NextEntryOffset		dd ?
+FileIndex		dd ?
+CreationTime		LARGE_INTEGER <>
+LastAccessTime		LARGE_INTEGER <>
+LastWriteTime		LARGE_INTEGER <>
+ChangeTime		LARGE_INTEGER <>
+EndOfFile		LARGE_INTEGER <>
+AllocationSize		LARGE_INTEGER <>
+FileAttributes		dd ?
+FileNameLength		dd ?
+EaSize			dd ?
+ShortNameLength		CCHAR ?
+ShortName		dw 12 dup(?)
+FileId			LARGE_INTEGER <>
+FileName		dw ?
+FILE_ID_BOTH_DIR_INFO	ENDS
+PFILE_ID_BOTH_DIR_INFO	typedef ptr FILE_ID_BOTH_DIR_INFO
+
+PRIORITY_HINT		typedef sdword ;enum _PRIORITY_HINT {
+IoPriorityHintVeryLow	equ 0
+IoPriorityHintLow	equ 1
+IoPriorityHintNormal	equ 2
+MaximumIoPriorityHintType equ 3
+
+FILE_IO_PRIORITY_HINT_INFO  STRUC
+PriorityHint		PRIORITY_HINT ?
+FILE_IO_PRIORITY_HINT_INFO ENDS
+PFILE_IO_PRIORITY_HINT_INFO typedef ptr FILE_IO_PRIORITY_HINT_INFO
+
+;; Structure and constants must match those in ntioapi_x.w
+
+REMOTE_PROTOCOL_INFO_FLAG_LOOPBACK equ 0x00000001
+REMOTE_PROTOCOL_INFO_FLAG_OFFLINE equ 0x00000002
+
+FILE_REMOTE_PROTOCOL_INFO STRUC
+;; Structure Version
+StructureVersion	dw ?	;; 1
+StructureSize		dw ?	;; sizeof(FILE_REMOTE_PROTOCOL_INFO)
+Protocol		dd ?	;; Protocol (WNNC_NET_*) defined in wnnc.h or ntifs.h.
+;; Protocol Version & Type
+ProtocolMajorVersion	dw ?
+ProtocolMinorVersion	dw ?
+ProtocolRevision	dw ?
+Reserved		dw ?
+;; Protocol-Generic Information
+Flags			dd ?
+STRUC GenericReserved
+ Reserved		dd 8 dup(?)
+ENDS
+;; Protocol specific information
+STRUC ProtocolSpecificReserved
+ Reserved		dd 16 dup(?)
+ENDS
+FILE_REMOTE_PROTOCOL_INFO ENDS
+PFILE_REMOTE_PROTOCOL_INFO typedef ptr FILE_REMOTE_PROTOCOL_INFO
+
+;BOOL
+SetFileInformationByHandle proto _CType \
+		 hFile: HANDLE,
+  FileInformationClass: FILE_INFO_BY_HANDLE_CLASS,
+     lpFileInformation: LPVOID,
+	  dwBufferSize: DWORD
+
+;BOOL
+GetFileInformationByHandleEx proto _CType \
+		 hFile: HANDLE,
+  FileInformationClass: FILE_INFO_BY_HANDLE_CLASS,
+     lpFileInformation: LPVOID,
+	  dwBufferSize: DWORD
+
+FileIdType		equ 0
+ObjectIdType		equ 1
+MaximumFileIdType	equ 2
+FILE_ID_TYPE		typedef sdword ;enum _FILE_ID_TYPE {
+PFILE_ID_TYPE		typedef ptr FILE_ID_TYPE
+
+
+FILE_ID_DESCRIPTOR	STRUC
+dwSize			dd ?	;; Size of the struct
+_Type			FILE_ID_TYPE ?	;; Describes the type of identifier passed in.
+UNION ;DUMMYUNIONNAME
+ FileId			LARGE_INTEGER <>
+ ObjectId		GUID <>
+ENDS
+FILE_ID_DESCRIPTOR	ENDS
+LPFILE_ID_DESCRIPTOR	typedef ptr FILE_ID_DESCRIPTOR
+
+;HANDLE
+OpenFileById proto _CType \
+	   hVolumeHint: HANDLE,
+	      lpFileId: LPFILE_ID_DESCRIPTOR,
+       dwDesiredAccess: DWORD,
+	   dwShareMode: DWORD,
+  lpSecurityAttributes: LPSECURITY_ATTRIBUTES,
+  dwFlagsAndAttributes: DWORD
+
+endif ;; (_WIN32_WINNT GE 0x0600)
+
+if (_WIN32_WINNT GE 0x0600)
+
+;;
+;;  Flags to be passed into CREATE_SYMBOLIC_LINK
+;;
+
+SYMBOLIC_LINK_FLAG_DIRECTORY equ (0x1)
+
+VALID_SYMBOLIC_LINK_FLAGS equ SYMBOLIC_LINK_FAG_DIRECTORY ;; AND whatever other flags we think of NOT
+
+;BOOLEAN
+CreateSymbolicLinkA proto _CType \
+      lpSymlinkFileName: LPCSTR,
+       lpTargetFileName: LPCSTR,
+		dwFlags: DWORD
+CreateSymbolicLinkW proto _CType \
+      lpSymlinkFileName: LPCWSTR,
+       lpTargetFileName: LPCWSTR,
+		dwFlags: DWORD
+ifdef _UNICODE
+CreateSymbolicLink equ <CreateSymbolicLinkW>
+else
+CreateSymbolicLink equ <CreateSymbolicLinkA>
+endif ;; !UNICODE
+
+;BOOLEAN
+CreateSymbolicLinkTransactedA proto _CType \
+      lpSymlinkFileName: LPCSTR,
+       lpTargetFileName: LPCSTR,
+		dwFlags: DWORD,
+	   hTransaction: HANDLE
+CreateSymbolicLinkTransactedW proto _CType \
+      lpSymlinkFileName: LPCWSTR,
+       lpTargetFileName: LPCWSTR,
+		dwFlags: DWORD,
+	   hTransaction: HANDLE
+ifdef _UNICODE
+CreateSymbolicLinkTransacted equ <CreateSymbolicLinkTransactedW>
+else
+CreateSymbolicLinkTransacted equ <CreateSymbolicLinkTransactedA>
+endif ;; !UNICODE
+
+;DWORD
+GetFinalPathNameByHandleA proto _CType \
+		  hFile: HANDLE,
+	   lpszFilePath: LPSTR,
+	    cchFilePath: DWORD,
+		dwFlags: DWORD
+GetFinalPathNameByHandleW proto _CType \
+		  hFile: HANDLE,
+	   lpszFilePath: LPWSTR,
+	    cchFilePath: DWORD,
+		dwFlags: DWORD
+ifdef _UNICODE
+GetFinalPathNameByHandle equ <GetFinalPathNameByHandleW>
+else
+GetFinalPathNameByHandle equ <GetFinalPathNameByHandleA>
+endif ;; !UNICODE
+
+endif ;; (_WIN32_WINNT >= 0x0600)
+
+if (_WIN32_WINNT GE 0x0600)
+
+;BOOL
+QueryActCtxSettingsW proto _CType \
+	       dwFlags: DWORD,
+	       hActCtx: HANDLE,
+     settingsNameSpace: PCWSTR,
+	   settingName: PCWSTR,
+	      pvBuffer: PWSTR,
+	      dwBuffer: SIZE_T,
+  pdwWrittenOrRequired: ptr SIZE_T
+endif
+
+if (_WIN32_WINNT GE 0x0600)
+
+;BOOL
+ReplacePartitionUnit proto _CType \
+       TargetPartition: PWSTR,
+	SparePartition: PWSTR,
+		 Flags: ULONG
+
+endif
+
+
+if (_WIN32_WINNT GE 0x0600)
+
+;BOOL
+AddSecureMemoryCacheCallback proto _CType \
+	   pfnCallBack: PSECURE_MEMORY_CACHE_CALLBACK
+
+;BOOL
+RemoveSecureMemoryCacheCallback proto _CType \
+	   pfnCallBack: PSECURE_MEMORY_CACHE_CALLBACK
+
+endif
+
+if (_WIN32_WINNT GE 0x0601)
+
+;BOOL
+CopyExtendedContext proto _CType \
+	   Destination: PCONTEXT_EX,
+	  ContextFlags: DWORD,
+		Source: PCONTEXT_EX
+
+;BOOL
+InitializeExtendedContext proto _CType \
+	       Context: PVOID,
+	  ContextFlags: DWORD,
+	     ContextEx: ptr PCONTEXT_EX
+
+;DWORD64
+GetEnabledExtendedFeatures proto _CType \
+	   FeatureMask: DWORD64
+
+;BOOL
+GetExtendedContextLength proto _CType \
+	  ContextFlags: DWORD,
+	 ContextLength: PDWORD
+
+;DWORD64
+GetExtendedFeaturesMask proto _CType \
+	     ContextEx: PCONTEXT_EX
+
+;PVOID
+LocateExtendedFeature proto _CType \
+	     ContextEx: PCONTEXT_EX,
+	     FeatureId: DWORD,
+	       _Length: PDWORD
+
+;PCONTEXT
+LocateLegacyContext proto _CType \
+	     ContextEx: PCONTEXT_EX,
+	       _Length: PDWORD
+
+;VOID
+SetExtendedFeaturesMask proto _CType \
+	     ContextEx: PCONTEXT_EX,
+	   FeatureMask: DWORD64
+
+;DWORD
+EnableThreadProfiling proto _CType \
+	  ThreadHandle: HANDLE,
+		 Flags: DWORD,
+      HardwareCounters: DWORD64,
+ PerformanceDataHandle: ptr HANDLE
+
+;DWORD
+DisableThreadProfiling proto _CType \
+ PerformanceDataHandle: HANDLE
+
+;DWORD
+QueryThreadProfiling proto _CType \
+	  ThreadHandle: HANDLE,
+	       Enabled: PBOOLEAN
+
+;DWORD
+ReadThreadProfilingData proto _CType \
+      PerformanceDataHandle: HANDLE,
+		 Flags: DWORD,
+       PerformanceData: PPERFORMANCE_DATA
+
+endif ;; (_WIN32_WINNT GE 0x0601)
+;endif ; (_WIN32_WINNT >= 0x0500)
 
 .list
+endif ; _WINBASE_
+

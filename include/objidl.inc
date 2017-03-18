@@ -6285,7 +6285,7 @@ bVal			db ?
 iVal			sword ?
 uiVal			dw ?
 boolVal			VARIANT_BOOL ?
-bool			_VARIANT_BOOL ?
+bool			VARIANT_BOOL ?
 lVal			LONG ?
 ulVal			ULONG ?
 fltVal			REAL4 ?

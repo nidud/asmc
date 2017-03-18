@@ -4,7 +4,6 @@
 include doszip.inc
 include tinfo.inc
 include io.inc
-include wsub.inc
 
 	.code
 

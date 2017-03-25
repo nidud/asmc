@@ -644,6 +644,7 @@ void StringInit( void )
     macro->sym.predefined = TRUE;
     macro->sym.func_ptr = CStringFunc;
     macro->sym.isfunc = TRUE;
+    //macro->sym.mac_multiline = TRUE;
     macro->e.macroinfo->parmcnt = 1;
     macro->e.macroinfo->parmlist = (struct mparm_list *)LclAlloc( sizeof( struct mparm_list )  * 1 );
     macro->e.macroinfo->parmlist[0].deflt = NULL;

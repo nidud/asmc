@@ -3,6 +3,8 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.23 - xx xxx 2017
+- added (L"Unicode") string macro
+- added ("Multi" "Text" "Lines") for quoted strings
 - added type check on function calls used as argument
 - added convert reg = 0 --> xor reg,reg in .FOR loop
 - added =&/=~ to .FOR <initialization> :: <increment/decrement>

@@ -2012,7 +2012,7 @@ static ret_code write_default_prologue( void )
     uint_8 oldlinenumbers;
     int cnt;
     int resstack = 0;
-    int cstack = (ModuleInfo.c_stack_frame &&
+    int cstack = ((ModuleInfo.aflag & _AF_CSTACK) &&
 	((CurrProc->sym.langtype == LANG_STDCALL && ModuleInfo.Ofssize == USE32) ||
 	(ModuleInfo.fctype == FCT_WIN64 && ModuleInfo.Ofssize == USE64)));
 
@@ -2407,7 +2407,7 @@ static void write_default_epilogue( void )
 {
     struct proc_info   *info;
     int resstack = 0;
-    int cstack = (ModuleInfo.c_stack_frame &&
+    int cstack = ((ModuleInfo.aflag & _AF_CSTACK) &&
 	((CurrProc->sym.langtype == LANG_STDCALL && ModuleInfo.Ofssize == USE32) ||
 	(ModuleInfo.fctype == FCT_WIN64 && ModuleInfo.Ofssize == USE64)));
 

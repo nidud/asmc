@@ -5,7 +5,6 @@ endif
 ifdef __PE__
 option	dllimport:<msvcrt>
 endif
-
 ;
 ; Maximum number of bytes in multi-byte character in the current locale
 ; (also defined in ctype.h).
@@ -28,77 +27,84 @@ externdef	_environ:SIZE_T
 externdef	_pgmptr:SIZE_T
 endif
 
-abort		PROTO
-exit		PROTO :DWORD
-atol		PROTO :LPSTR
-_atoi64		PROTO :LPSTR
-mbtowc		PROTO :LPWSTR, :LPSTR, :SIZE_T
-mbstowcs	PROTO :LPWSTR, :LPSTR, :SIZE_T
-wctomb		proto :LPSTR, :wchar_t
+abort		proto __cdecl
+exit		proto __cdecl :DWORD
+atol		proto __cdecl :LPSTR
+_atoi64		proto __cdecl :LPSTR
+mbtowc		proto __cdecl :LPWSTR, :LPSTR, :SIZE_T
+mbstowcs	proto __cdecl :LPWSTR, :LPSTR, :SIZE_T
+wctomb		proto __cdecl :LPSTR, :wchar_t
 
-QSORTCMD_T	TYPEDEF PROTO :PVOID, :PVOID
-LPQSORTCMD	TYPEDEF PTR QSORTCMD_T
-qsort		PROTO :PVOID, :SIZE_T, :SIZE_T, :LPQSORTCMD
+QSORTCMD_T	typedef proto _CType :PVOID, :PVOID
+LPQSORTCMD	typedef ptr QSORTCMD_T
+qsort		proto __cdecl :PVOID, :SIZE_T, :SIZE_T, :LPQSORTCMD
 
-getenv		PROTO :LPSTR
-strtod		PROTO :LPSTR, :DWORD
-system		PROTO :LPSTR
-malloc		proto :SIZE_T
-realloc		PROTO :PVOID, :SIZE_T
-free		proto :PVOID
+getenv		proto __cdecl :LPSTR
+strtod		proto __cdecl :LPSTR, :DWORD
+system		proto __cdecl :LPSTR
+malloc		proto __cdecl :SIZE_T
+realloc		proto __cdecl :PVOID, :SIZE_T
+free		proto __cdecl :PVOID
 
-xtol		PROTO :LPSTR
-_xtoi64		PROTO :LPSTR
-mkbstring	PROTO :LPSTR, :QWORD
-strtolx		PROTO :LPSTR
-searchp		PROTO :LPSTR
-getenvp		PROTO :LPSTR
-expenviron	PROTO :LPSTR
-SaveEnvironment PROTO :LPSTR
-ReadEnvironment PROTO :LPSTR
-GetEnvironmentTEMP PROTO
-GetEnvironmentPATH PROTO
-GetEnvironmentSize PROTO :LPSTR
+ifndef __PE__
+xtol			proto _CType :LPSTR
+_xtoi64			proto _CType :LPSTR
+mkbstring		proto _CType :LPSTR, :QWORD
+strtolx			proto _CType :LPSTR
+searchp			proto _CType :LPSTR
+getenvp			proto _CType :LPSTR
+expenviron		proto _CType :LPSTR
+SaveEnvironment		proto _CType :LPSTR
+ReadEnvironment		proto _CType :LPSTR
+GetEnvironmentTEMP	proto _CType
+GetEnvironmentPATH	proto _CType
+GetEnvironmentSize	proto _CType :LPSTR
+endif
 
 ifndef _WSTDLIB_DEFINED
+_WSTDLIB_DEFINED equ <>
+
 ifndef _WCHAR_T_DEFINED
-wchar_t			typedef WORD
-_WCHAR_T_DEFINED	equ 1
-endif
-ifndef _WCTYPE_T_DEFINED
-wint_t			typedef wchar_t
-wctype_t		typedef wchar_t
-_WCTYPE_T_DEFINED	equ 1
+_WCHAR_T_DEFINED equ <>
+wchar_t		typedef WORD
 endif
 
+ifndef _WCTYPE_T_DEFINED
+_WCTYPE_T_DEFINED equ <>
+wint_t		typedef wchar_t
+wctype_t	typedef wchar_t
+endif
+
+ifndef __PE__
 externdef	__wargv:SIZE_T
 externdef	_wenviron:SIZE_T
 externdef	_wpgmptr:SIZE_T
+endif
 
-_itow		proto :SINT, :ptr wchar_t, :SINT
-_ltow		proto :SINT, :ptr wchar_t, :SINT
-_ultow		proto :DWORD, :ptr wchar_t, :SINT
-wcstod		proto :ptr wchar_t, :ptr wchar_t
-wcstol		proto :ptr wchar_t, :ptr wchar_t, :SINT
-wcstoul		proto :ptr wchar_t, :ptr wchar_t, :SINT
-_wgetenv	proto :ptr wchar_t
-_wsystem	proto :ptr wchar_t
-_wtoi		proto :ptr wchar_t
-_wtol		proto :ptr wchar_t
+_itow		proto __cdecl :SINT, :ptr wchar_t, :SINT
+_ltow		proto __cdecl :SINT, :ptr wchar_t, :SINT
+_ultow		proto __cdecl :DWORD, :ptr wchar_t, :SINT
+wcstod		proto __cdecl :ptr wchar_t, :ptr wchar_t
+wcstol		proto __cdecl :ptr wchar_t, :ptr wchar_t, :SINT
+wcstoul		proto __cdecl :ptr wchar_t, :ptr wchar_t, :SINT
+_wgetenv	proto __cdecl :ptr wchar_t
+_wsystem	proto __cdecl :ptr wchar_t
+_wtoi		proto __cdecl :ptr wchar_t
+_wtol		proto __cdecl :ptr wchar_t
+
 if 0
 if _INTEGRAL_MAX_BITS GE 64
-_i64tow		proto :qword, :ptr wchar_t, :SINT
-_ui64tow	proto :sqword, :ptr wchar_t, :SINT
-_wtoi64		proto :ptr wchar_t
+_i64tow		proto __cdecl :qword, :ptr wchar_t, :SINT
+_ui64tow	proto __cdecl :sqword, :ptr wchar_t, :SINT
+_wtoi64		proto __cdecl :ptr wchar_t
 endif
 endif
-_WSTDLIB_DEFINED equ 1
-endif
+endif ; _WSTDLIB_DEFINED
 
-if defined(_MSVCRT) or defined(__PE__)
-__getmainargs	proto _CDecl :ptr, :ptr, :ptr, :ptr, :ptr
-__wgetmainargs	proto _CDecl :ptr, :ptr, :ptr, :ptr, :ptr
-__iob_func	proto _CDecl
+ifdef _MSVCRT
+__getmainargs	proto __cdecl :ptr, :ptr, :ptr, :ptr, :ptr
+__wgetmainargs	proto __cdecl :ptr, :ptr, :ptr, :ptr, :ptr
+__iob_func	proto __cdecl
 endif
 
 .list

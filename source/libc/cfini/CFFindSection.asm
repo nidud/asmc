@@ -161,7 +161,7 @@ local	cursor:		S_CURSOR,
 
 					scputs( ebx, y, 0, 28, [esi] )
 
-					.if	CFGetEntry( __CFGetSection( cfini, [esi] ), __entry )
+					.if CFGetEntry( __CFGetSection( cfini, [esi] ), __entry )
 
 						mov	ecx,ebx
 						add	ecx,30
@@ -190,11 +190,11 @@ local	cursor:		S_CURSOR,
 
 			  .case MOUSECMD
 
-				mov	esi,mousey()
-				mov	edi,mousex()
-				mov	ebx,dialog
-				mov	edx,[ebx].S_DOBJ.dl_rect
-				.if	rcxyrow( edx, edi, esi ) ;== 1
+				mov esi,mousey()
+				mov edi,mousex()
+				mov ebx,dialog
+				mov edx,[ebx].S_DOBJ.dl_rect
+				.if rcxyrow( edx, edi, esi ) ;== 1
 
 					rcmsmove(
 						addr [ebx].S_DOBJ.dl_rect,
@@ -260,8 +260,8 @@ endif
 				.endc
 
 			  .case KEY_HOME
-				mov	eax,index
-				.if	eax
+				mov eax,index
+				.if eax
 
 					mov	index,0
 					.endc
@@ -269,69 +269,69 @@ endif
 				jmp	event_loop
 
 			  .case KEY_END
-				mov	eax,name_count
-				dec	eax
-				.if	eax != index
+				mov eax,name_count
+				dec eax
+				.if eax != index
 
-					mov	index,eax
+					mov index,eax
 					.endc
 				.endif
-				jmp	event_loop
+				jmp event_loop
 
 			  .case KEY_UP
-				.if	index
+				.if index
 
-					dec	index
+					dec index
 					.endc
 				.endif
-				jmp	event_loop
+				jmp event_loop
 
 			  .case KEY_DOWN
-				mov	eax,name_count
-				dec	eax
-				.if	index < eax
+				mov eax,name_count
+				dec eax
+				.if index < eax
 
 					inc	index
 					.endc
 				.endif
-				jmp	event_loop
+				jmp event_loop
 
 			  .case KEY_PGUP
-				mov	eax,index
-				.if	eax < MAXLINES
+				mov eax,index
+				.if eax < MAXLINES
 
-					xor	eax,eax
+					xor eax,eax
 				.else
-					sub	eax,MAXLINES
+					sub eax,MAXLINES
 				.endif
-				.if	eax != index
+				.if eax != index
 
-					mov	index,eax
+					mov index,eax
 					.endc
 				.endif
-				jmp	event_loop
+				jmp event_loop
 
 			  .case KEY_PGDN
-				mov	edx,name_count
-				dec	edx
-				mov	eax,index
-				.if	eax < edx
+				mov edx,name_count
+				dec edx
+				mov eax,index
+				.if eax < edx
 
-					add	eax,MAXLINES
-					.if	eax <= edx
+					add eax,MAXLINES
+					.if eax <= edx
 
-						mov	index,eax
+						mov index,eax
 					.else
-						mov	index,edx
+						mov index,edx
 					.endif
 					.endc
 				.endif
-				jmp	event_loop
+				jmp event_loop
 
 			  .case KEY_LEFT
-				xor	ebx,ebx
-				.endc	.if !search_count()
-				jmp	event_loop
+				xor ebx,ebx
+				.endc .if !search_count()
+				jmp event_loop
 
 			  .case KEY_RIGHT
 
@@ -361,10 +361,10 @@ endif
 					mov	WORD PTR section[ecx],ax
 					inc	cur_x
 
-					mov	ebx,index
-					.if	search_count()
+					mov ebx,index
+					.if search_count()
 
-						.if	search_index()
+						.if search_index()
 
 							dec	cur_x
 							mov	ecx,cur_x
@@ -376,7 +376,7 @@ endif
 					.endif
 					.endc
 				.endif
-				jmp	event_loop
+				jmp event_loop
 			.endsw
 		.endw
 

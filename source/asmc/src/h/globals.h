@@ -335,11 +335,17 @@ enum seg_type {
     SEGTYPE_ERROR, /* must be last - an "impossible" segment type */
 };
 
+#define _AF_ON		0x01
+#define _AF_CSTACK	0x02
+#define _AF_WSTRING	0x04 /* convert "string" to unicode */
+#define _AF_LSTRING	0x08 /* L"Unicode" used --> allow dw "string" */
+
 /* .SWITCH options */
-#define SWITCH_PASCAL	0x01 /* auto insert break after cases */
-#define SWITCH_TABLE	0x02 /* forse creation of indexed jump table */
-#define SWITCH_REGAX	0x04 /* use [R|E]AX to render jump-code */
-#define SWITCH_NOTEST	0x08 /* skip test code - just jump */
+
+#define _AF_PASCAL	0x10 /* auto insert break after .case */
+#define _AF_TABLE	0x20 /* forse creation of indexed jump table */
+#define _AF_REGAX	0x40 /* use [R|E]AX to render jump-code */
+#define _AF_NOTEST	0x80 /* skip test code - just jump */
 
 struct global_options {
 unsigned char	quiet;			/* -q option */
@@ -388,12 +394,10 @@ unsigned	model;			/* -mt|s|m|c|l|h|f option */
 unsigned	cpu;			/* -0|1|2|3|4|5|6 & -fp{0|2|3|5|6|c} option */
 unsigned	fctype;			/* -zf0 & -zf1 option */
 unsigned char	syntax_check_only;	/* -Zs option */
-unsigned char	asmc_syntax;		/* -Xc option */
-unsigned char	c_stack_frame;		/* -Cs option */
-unsigned char	hll_switch;		/* -sw[c|p|a|t|nt] option */
+unsigned char	aflag;			/* asmc options */
+unsigned char	xflag;			/* extended options */
 unsigned char	loopalign;		/* OPTION:LOOPALIGN setting */
 unsigned char	casealign;		/* OPTION:CASEALIGN setting */
-unsigned char	wstring;		/* -ws */
 };
 
 /* if the structure changes, option.c, SetMZ() might need adjustment! */
@@ -509,7 +513,7 @@ struct module_info {
     unsigned char	EndDirFound;
     unsigned char	frame_auto;		/* win64 only */
     unsigned char	NoSignExtend;		/* option nosignextend */
-    unsigned char	asmc_syntax;		/* -Xc option */
+    unsigned char	aflag;			/* asmc options */
     union {
 	struct {
 	BYTE		elf_osabi;		/* for ELF */
@@ -538,12 +542,10 @@ struct module_info {
     int			token_count;		/* number of tokens in curr line */
     unsigned		basereg[3];		/* stack base register (16-, 32-, 64-bit */
     char		name[FILENAME_MAX];	/* name of module */
-    unsigned char	c_stack_frame;		/* -Cs option */
-    unsigned char	hll_switch;		/* -sw[c|p|a|t|nt] option */
+    unsigned char	xflag;			/* extended options */
     unsigned char	loopalign;		/* OPTION:LOOPALIGN setting */
     unsigned char	casealign;		/* OPTION:CASEALIGN setting */
     char *		assert_proc;		/* .assert:<handler> */
-    unsigned char	wstring;		/* -ws OPTION WSTRING:[ON|OFF] */
 };
 
 #define CurrSource	ModuleInfo.currsource

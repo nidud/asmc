@@ -22,7 +22,7 @@ close_files	PROTO
 .data
 
 cp_logo label byte
-%	db "Asmc Macro Assembler Version ",ASMC_VERSSTR, 'E', 10
+%	db "Asmc Macro Assembler Version ",ASMC_VERSSTR, 'F', 10
 	db "Portions Copyright (c) 1992-2002 Sybase, Inc. All Rights Reserved.",10,10,0
 
 cp_usage label byte
@@ -119,16 +119,14 @@ Options		global_options <	\
 		SFORMAT_NONE,		\ ; .sub_format
 		0,			\ ; .fieldalign
 		LANG_NONE,		\ ; .langtype
-		MODEL_NONE,		\ ; .modelt
+		MODEL_NONE,		\ ; ._model
 		P_86,			\ ; .cpu
 		FCT_MSC,		\ ; .fctype
 		0,			\ ; .syntax_check_only
-		1,			\ ; .asmc_syntax
-		0,			\ ; .c_stack_frame
-		0,			\ ; .hll_switch
+		1,			\ ; .aflag
+		0,			\ ; .xflag
 		0,			\ ; .loopalign
-		0,			\ ; .casealign
-		0			\ ; .wstring
+		0			\ ; .casealign
 		>
 
 DefaultDir	dd NUM_FILE_TYPES dup(0)
@@ -204,6 +202,7 @@ GetNumber ENDP
 queue_item PROC USES esi i, string
 
 	mov	esi,string
+
 	.while	BYTE PTR [esi] == '"'
 
 		.if strrchr( strcpy( esi, addr [esi+1] ), '"' )
@@ -232,9 +231,7 @@ queue_item PROC USES esi i, string
 
 		mov	Options.queues[eax*4],edx
 	.endif
-
 	ret
-
 queue_item ENDP
 
 get_fname PROC USES esi edi ebx i, string
@@ -398,7 +395,7 @@ ParseCmdline PROC USES esi edi ebx numargs
 				.endc
 
 			  .case 'sC'	; /Cs
-				mov	[edi].c_stack_frame,1
+				or	[edi].aflag,_AF_CSTACK
 				.endc
 
 			  .case 'uC'	; /Cu
@@ -538,23 +535,23 @@ ParseCmdline PROC USES esi edi ebx numargs
 				.endc
 
 			  .case 'pws'	; /swp
-				or	[edi].hll_switch,SWITCH_PASCAL
+				or	[edi].aflag,_AF_PASCAL
 				.endc
 
 			  .case 'cws'	; /swc
-				and	[edi].hll_switch,NOT SWITCH_PASCAL
+				and	[edi].aflag,NOT _AF_PASCAL
 				.endc
 
 			  .case 'rws'	; /swr
-				or	[edi].hll_switch,SWITCH_REGAX
+				or	[edi].aflag,_AF_REGAX
 				.endc
 
 			  .case 'nws'	; /swn
-				and	[edi].hll_switch,NOT SWITCH_TABLE
+				and	[edi].aflag,NOT _AF_TABLE
 				.endc
 
 			  .case 'tws'	; /swt
-				or	[edi].hll_switch,SWITCH_TABLE
+				or	[edi].aflag,_AF_TABLE
 				.endc
 
 			  .case 'efas'	; /safeseh
@@ -566,7 +563,7 @@ ParseCmdline PROC USES esi edi ebx numargs
 				.endc
 
 			  .case 'sw'	; /ws
-				mov	[edi].wstring,1
+				or	[edi].aflag,_AF_WSTRING
 				.endc
 
 			  .case 'XW'	; /WX
@@ -583,7 +580,7 @@ ParseCmdline PROC USES esi edi ebx numargs
 				.endc
 
 			  .case 'cX'	; /Xc
-				mov	[edi].asmc_syntax,0
+				and	[edi].aflag,NOT _AF_ON
 				.endc
 
 			  .case 'mcz'	; /zcm
@@ -638,7 +635,7 @@ ParseCmdline PROC USES esi edi ebx numargs
 				mov	 [edi].masm51_compat,1
 			  .case 'enZ'	; /Zne
 				mov	[edi].strict_masm_compat,1
-				mov	[edi].asmc_syntax,0
+				mov	[edi].aflag,0
 				.endc
 
 			  .case 'sZ'	; /Zs
@@ -921,19 +918,19 @@ AssembleSubdir PROC USES esi edi ebx directory, wild
 		FindClose( h )
 	.endif
 
-	.if	Options.process_subdir
+	.if Options.process_subdir
 
-		.if	FindFirstFile( strfcat( esi, directory, "*.*" ), edi ) != -1
+		.if FindFirstFile( strfcat( esi, directory, "*.*" ), edi ) != -1
 
-			mov	h,eax
+			mov h,eax
 			.repeat
-				mov	eax,[ebx]
-				and	eax,00FFFFFFh
-				.if	ff.dwFileAttributes & _A_SUBDIR && ax != '.' && eax != '..'
+				mov eax,[ebx]
+				and eax,00FFFFFFh
+				.if ff.dwFileAttributes & _A_SUBDIR && ax != '.' && eax != '..'
 
-					.if	AssembleSubdir( strfcat( esi, directory, ebx ), wild )
+					.if AssembleSubdir( strfcat( esi, directory, ebx ), wild )
 
-						mov	rc,eax
+						mov rc,eax
 					.endif
 				.endif
 				FindNextFile( h, edi )
@@ -998,11 +995,11 @@ endif
 
 		mov	argv0,offset cp_ml
 		mov	Options.strict_masm_compat,1
-		mov	Options.asmc_syntax,0
+		mov	Options.aflag,0
 	.elseif eax == 'sawj' && ecx == 'xe.m'
 
 		mov	argv0,offset cp_jwasm
-		mov	Options.asmc_syntax,0
+		mov	Options.aflag,0
 	.endif
 
 	.if	getenv( argv0 ) ; v2.21 -- getenv() error..

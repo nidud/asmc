@@ -434,66 +434,60 @@ SetMasm510 ENDP
 
 ModulePassInit PROC USES esi
 
-	mov	ecx,Options.cpu
-	mov	esi,Options._model
+	mov ecx,Options.cpu
+	mov esi,Options._model
 	;
 	; set default values not affected by the masm 5.1 compat switch
 	;
-	mov	ModuleInfo.procs_private,0
-	mov	ModuleInfo.procs_export,0
-	mov	ModuleInfo.offsettype,OT_GROUP
-	mov	ModuleInfo.scoped,1
-	.if	!UseSavedState
-		mov	eax,Options.langtype
-		mov	ModuleInfo.langtype,al
-		mov	eax,Options.fctype
-		mov	ModuleInfo.fctype,al
-		mov	eax,ecx
-		and	eax,P_CPU_MASK
-		.if	ModuleInfo.sub_format == SFORMAT_64BIT
+	mov ModuleInfo.procs_private,0
+	mov ModuleInfo.procs_export,0
+	mov ModuleInfo.offsettype,OT_GROUP
+	mov ModuleInfo.scoped,1
+
+	.if !UseSavedState
+
+		mov eax,Options.langtype
+		mov ModuleInfo.langtype,al
+		mov eax,Options.fctype
+		mov ModuleInfo.fctype,al
+		mov eax,ecx
+		and eax,P_CPU_MASK
+
+		.if ModuleInfo.sub_format == SFORMAT_64BIT
 			;
 			; v2.06: force cpu to be at least P_64, without side effect to Options.cpu
 			;
-			.if	eax < P_64	; enforce cpu to be 64-bit
-				mov	ecx,P_64
+			.if eax < P_64	; enforce cpu to be 64-bit
+
+				mov ecx,P_64
 			.endif
 			;
 			; ignore -m switch for 64-bit formats.
 			; there's no other model than FLAT possible.
 			;
-			mov	esi,MODEL_FLAT
-			.if	ModuleInfo.langtype == LANG_NONE && Options.output_format == OFORMAT_COFF
-				mov	ModuleInfo.langtype,LANG_FASTCALL
+			mov esi,MODEL_FLAT
+			.if ModuleInfo.langtype == LANG_NONE && Options.output_format == OFORMAT_COFF
+
+				mov ModuleInfo.langtype,LANG_FASTCALL
 			.endif
 		.else
 			;
 			; if model FLAT is to be set, ensure that cpu is compat.
 			;
-			.if	esi == MODEL_FLAT && eax < P_386	; cpu < 386?
-				mov	ecx,P_386
+			.if esi == MODEL_FLAT && eax < P_386	; cpu < 386?
+
+				mov ecx,P_386
 			.endif
 		.endif
 		SetCPU( ecx )
 		;
 		; table ModelToken starts with MODEL_TINY, which is index 1"
 		;
-		.if	esi != MODEL_NONE
+		.if esi != MODEL_NONE
+
 			AddLineQueueX( "%r %s", T_DOT_MODEL, ModelToken[esi*4-4] )
 		.endif
 	.endif
-	mov	al,Options.hll_switch
-	mov	ModuleInfo.hll_switch,al
-	mov	al,Options.wstring
-	mov	ModuleInfo.wstring,al
-	mov	al,Options.c_stack_frame
-	mov	ModuleInfo.c_stack_frame,al
-	mov	al,Options.asmc_syntax
-	mov	ModuleInfo.asmc_syntax,al
-
-	mov	al,Options.loopalign
-	mov	ModuleInfo.loopalign,al
-	mov	al,Options.casealign
-	mov	ModuleInfo.casealign,al
 
 	movzx	eax,Options.masm51_compat
 	SetMasm510( eax )
@@ -518,12 +512,23 @@ ModulePassInit PROC USES esi
 	mov	al,Options.fieldalign
 	mov	ModuleInfo.fieldalign,al
 	mov	ModuleInfo.procalign,0
+	mov	al,ModuleInfo.aflag
+	and	al,_AF_LSTRING
+	or	al,Options.aflag
+	mov	ModuleInfo.aflag,al
+	mov	al,Options.loopalign
+	mov	ModuleInfo.loopalign,al
+	mov	al,Options.casealign
+	mov	ModuleInfo.casealign,al
+
 	;
 	; if OPTION DLLIMPORT was used, reset all iat_used flags
 	;
-	.if	ModuleInfo.DllQueue
-		mov	eax,SymTables[TAB_EXT*sizeof(symbol_queue)].head
-		.while	eax
+	.if ModuleInfo.DllQueue
+
+		mov eax,SymTables[TAB_EXT*sizeof(symbol_queue)].head
+		.while eax
+
 			and [eax].asym.flag,not SFL_IAT_USED
 			mov eax,[eax].dsym.next
 		.endw
@@ -543,7 +548,8 @@ PassOneChecks PROC USES esi edi
 	;
 	HllCheckOpen()
 	CondCheckOpen()
-	.if	!ModuleInfo.EndDirFound
+	.if !ModuleInfo.EndDirFound
+
 		asmerr( 2088 )
 	.endif
 
@@ -555,21 +561,23 @@ PassOneChecks PROC USES esi edi
 	; because the loop will now filter weak externals [ this
 	; was previously done in GetPublicSymbols() ]
 	;
-	lea	edx,ModuleInfo.PubQueue
-	mov	ecx,[edx].qdesc.head
-	.while	ecx
-		mov	eax,[ecx].qnode.sym
-		.if	[eax].asym.state == SYM_INTERNAL
-			mov	edx,ecx
+	lea edx,ModuleInfo.PubQueue
+	mov ecx,[edx].qdesc.head
+	.while ecx
+		mov eax,[ecx].qnode.sym
+		.if [eax].asym.state == SYM_INTERNAL
+
+			mov edx,ecx
 		.elseif [eax].asym.state == SYM_EXTERNAL && [eax].asym.sint_flag & SINT_WEAK
-			mov	eax,[ecx].qnode.next
-			mov	[edx].qnode.next,eax
-			mov	ecx,edx
+
+			mov eax,[ecx].qnode.next
+			mov [edx].qnode.next,eax
+			mov ecx,edx
 		.else
-			mov	UseSavedState,0
-			jmp	aliases
+			mov UseSavedState,0
+			jmp aliases
 		.endif
-		mov	ecx,[ecx].qnode.next
+		mov ecx,[ecx].qnode.next
 	.endw
 	;
 	; check if there's an undefined segment reference.
@@ -577,63 +585,69 @@ PassOneChecks PROC USES esi edi
 	; Just do a full second pass, the GROUP directive will report
 	; the error.
 	;
-	mov	eax,SymTables[TAB_SEG*sizeof(symbol_queue)].head
-	.while	eax
-		.if	![eax].asym._segment
-			mov	UseSavedState,0
-			jmp	aliases
+	mov eax,SymTables[TAB_SEG*sizeof(symbol_queue)].head
+	.while eax
+		.if ![eax].asym._segment
+
+			mov UseSavedState,0
+			jmp aliases
 		.endif
-		mov	eax,[eax].dsym.next
+		mov eax,[eax].dsym.next
 	.endw
 	;
 	; if there's an item in the safeseh list which is not an
 	; internal proc, make a full second pass to emit a proper
 	; error msg at the .SAFESEH directive
 	;
-	mov	eax,ModuleInfo.SafeSEHQueue.head
-	.while	eax
-		.if	[eax].asym.state != SYM_INTERNAL || !([eax].asym.flag & SFL_ISPROC)
-			mov	UseSavedState,0
-			jmp	aliases
+	mov eax,ModuleInfo.SafeSEHQueue.head
+	.while eax
+		.if [eax].asym.state != SYM_INTERNAL || !([eax].asym.flag & SFL_ISPROC)
+
+			mov UseSavedState,0
+			jmp aliases
 		.endif
-		mov	eax,[eax].dsym.next
+		mov eax,[eax].dsym.next
 	.endw
 aliases:
 	;
 	; scan ALIASes for COFF/ELF
 	;
-	.if	Options.output_format == OFORMAT_COFF || Options.output_format == OFORMAT_ELF
-		mov	ecx,SymTables[TAB_ALIAS*sizeof(symbol_queue)].head
-		.while	ecx
-			mov	eax,[ecx].asym.substitute
+	.if Options.output_format == OFORMAT_COFF || Options.output_format == OFORMAT_ELF
+
+		mov ecx,SymTables[TAB_ALIAS*sizeof(symbol_queue)].head
+		.while ecx
+			mov eax,[ecx].asym.substitute
 			;
 			; check if symbol is external or public
 			;
-			.if	!eax || [eax].asym.state != SYM_EXTERNAL \
-				&& ([eax].asym.state != SYM_INTERNAL || !([eax].asym.flag & SFL_ISPUBLIC))
-				mov	UseSavedState,0
+			.if !eax || [eax].asym.state != SYM_EXTERNAL \
+			    && ([eax].asym.state != SYM_INTERNAL || !([eax].asym.flag & SFL_ISPUBLIC))
+
+				mov UseSavedState,0
 				.break
 			.endif
 			;
 			; make sure it becomes a strong external
 			;
-			.if	[eax].asym.state == SYM_EXTERNAL
-				or	[eax].asym.flag,SFL_USED
+			.if [eax].asym.state == SYM_EXTERNAL
+
+				or [eax].asym.flag,SFL_USED
 			.endif
-			mov	ecx,[ecx].dsym.next
+			mov ecx,[ecx].dsym.next
 		.endw
 	.endif
 	;
 	; scan the EXTERN/EXTERNDEF items
 	;
-	mov	edi,SymTables[TAB_EXT*sizeof(symbol_queue)].head
-	.while	edi
-		mov	esi,edi
-		mov	edi,[esi].dsym.next
-		.if	[esi].asym.flag & SFL_USED
-			and	[esi].asym.sint_flag,not SINT_WEAK
+	mov edi,SymTables[TAB_EXT*sizeof(symbol_queue)].head
+	.while edi
+		mov esi,edi
+		mov edi,[esi].dsym.next
+		.if [esi].asym.flag & SFL_USED
+
+			and [esi].asym.sint_flag,not SINT_WEAK
 		.endif
-		.if	[esi].asym.sint_flag & SINT_WEAK && !( [esi].asym.flag & SFL_IAT_USED )
+		.if [esi].asym.sint_flag & SINT_WEAK && !( [esi].asym.flag & SFL_IAT_USED )
 			;
 			; remove unused EXTERNDEF/PROTO items from queue.
 			;
@@ -647,34 +661,43 @@ aliases:
 		; the linker won't know private symbols and hence will search for a symbol
 		; of that name "elsewhere").
 		;
-		mov	eax,[esi].asym.altname
-		.if	eax
-			.if	[eax].asym.state == SYM_INTERNAL
-				.if	!( [eax].asym.flag & SFL_ISPUBLIC ) && \
+		mov eax,[esi].asym.altname
+		.if eax
+
+			.if [eax].asym.state == SYM_INTERNAL
+
+				.if !( [eax].asym.flag & SFL_ISPUBLIC ) && \
 					( Options.output_format == OFORMAT_COFF || \
 					  Options.output_format == OFORMAT_ELF)
-					call	SkipSavedState
+
+					SkipSavedState()
 				.endif
 			.elseif [eax].asym.state != SYM_EXTERNAL
-				mov	UseSavedState,0
+
+				mov UseSavedState,0
 			.endif
 		.endif
 	.endw
 
-	.if	!ModuleInfo.error_count
+	.if !ModuleInfo.error_count
 		;
 		; make all symbols of type SYM_INTERNAL, which aren't
 		; a constant, public.
 		;
-		.if	Options.all_symbols_public
+		.if Options.all_symbols_public
+
 			SymMakeAllSymbolsPublic()
 		.endif
-		.if	!Options.syntax_check_only
-			mov	write_to_file,1
+
+		.if !Options.syntax_check_only
+
+			mov write_to_file,1
 		.endif
-		.if	ModuleInfo.Pass1Checks
-			push	offset ModuleInfo
-			call	ModuleInfo.Pass1Checks
+
+		.if ModuleInfo.Pass1Checks
+
+			push offset ModuleInfo
+			call ModuleInfo.Pass1Checks
 		.endif
 	.endif
 	ret
@@ -706,42 +729,51 @@ OnePass PROC USES esi edi
 	MacroInit( Parse_Pass )
 	AssumeInit( Parse_Pass )
 	CmdlParamsInit( Parse_Pass )
-	xor	eax,eax
-	mov	ModuleInfo.EndDirFound,al
-	mov	ModuleInfo.PhaseError,al
+
+	xor eax,eax
+	mov ModuleInfo.EndDirFound,al
+	mov ModuleInfo.PhaseError,al
 	LinnumInit()
-	.if	ModuleInfo.line_queue.head
+	.if ModuleInfo.line_queue.head
+
 		RunLineQueue()
 	.endif
 
-	mov	StoreState,0
-	.if	Parse_Pass > PASS_1 && UseSavedState == 1
+	mov StoreState,0
+	.if Parse_Pass > PASS_1 && UseSavedState == 1
+
 		RestoreState()
-		mov	LineStoreCurr,eax
-		mov	esi,eax
+		mov LineStoreCurr,eax
+		mov esi,eax
+
 		.while	esi && !ModuleInfo.EndDirFound
+
 			set_curr_srcfile( [esi].line_item.srcfile, [esi].line_item.lineno )
-			mov	ModuleInfo.line_flags,0
-			xor	eax,eax
-			.if	[esi].line_item.srcfile == 0FFFh
-				inc	eax
+
+			mov ModuleInfo.line_flags,0
+			xor eax,eax
+			.if [esi].line_item.srcfile == 0FFFh
+
+				inc eax
 			.endif
-			mov	MacroLevel,eax
-			mov	ModuleInfo.CurrComment,0
+			mov MacroLevel,eax
+			mov ModuleInfo.CurrComment,0
 			Tokenize( addr [esi].line_item.line, 0, ModuleInfo.tokenarray, TOK_DEFAULT )
-			mov	ModuleInfo.token_count,eax
-			.if	eax
+			mov ModuleInfo.token_count,eax
+			.if eax
+
 				ParseLine( ModuleInfo.tokenarray )
 			.endif
-			mov	esi,[esi].line_item.next
-			mov	LineStoreCurr,esi
+			mov esi,[esi].line_item.next
+			mov LineStoreCurr,esi
 		.endw
 	.else
-		mov	esi,Options.queues[OPTQ_FINCLUDE*4]
-		.while	esi
-			lea	eax,[esi].qitem.value
-			mov	esi,[esi].qitem.next
-			.if	SearchFile(eax,1)
+		mov esi,Options.queues[OPTQ_FINCLUDE*4]
+		.while esi
+			lea eax,[esi].qitem.value
+			mov esi,[esi].qitem.next
+			.if SearchFile(eax,1)
+
 				ProcessFile( ModuleInfo.tokenarray )
 			.endif
 		.endw
@@ -749,48 +781,52 @@ OnePass PROC USES esi edi
 	.endif
 
 	LinnumFini()
-	.if	Parse_Pass == PASS_1
+	.if Parse_Pass == PASS_1
+
 		PassOneChecks()
 	.endif
 	ClearSrcStack()
-	mov	eax,1
+	mov eax,1
 	ret
 OnePass ENDP
 
 get_module_name PROC PRIVATE USES esi edi
 
-	mov	esi,Options.names[OPTN_MODULE_NAME*4]
-	.if	esi
+	mov esi,Options.names[OPTN_MODULE_NAME*4]
+	.if esi
+
 		strncpy( addr ModuleInfo._name, esi, sizeof( ModuleInfo._name ) )
-		mov	ModuleInfo._name[sizeof(ModuleInfo._name)-1],0
+		mov ModuleInfo._name[sizeof(ModuleInfo._name)-1],0
 	.else
 		strfn( ModuleInfo.curr_fname[ASM*4] )
-		mov	esi,eax
-		.if	!strext( eax )
+		mov esi,eax
+		.if !strext( eax )
+
 			strlen( esi )
 			add eax,esi
 		.endif
-		sub	eax,esi
-		mov	ModuleInfo._name[eax],0
+		sub eax,esi
+		mov ModuleInfo._name[eax],0
 		memcpy( addr ModuleInfo._name, esi, eax )
 	.endif
 	;
 	; the module name must be a valid identifier, because it's used
 	; as part of a segment name in certain memory models.
 	;
-	lea	esi,ModuleInfo._name
-	_strupr( esi )
+	lea esi,ModuleInfo._name
+	_strupr(esi)
 	.repeat
 		movzx	eax,BYTE PTR [esi]
 		add	esi,1
 		.break	.if !eax
 		.continue .if islabel( eax )
-		mov	BYTE PTR [esi-1],'_'
+		mov BYTE PTR [esi-1],'_'
 	.until	0
 	;
 	; first character can't be a digit either
 	;
 	.if ModuleInfo._name <= '9' && ModuleInfo._name >= '0'
+
 		mov ModuleInfo._name,'_'
 	.endif
 	ret
@@ -798,24 +834,28 @@ get_module_name ENDP
 
 ModuleInit PROC PRIVATE
 
-	mov	eax,Options.sub_format
-	mov	ModuleInfo.sub_format,al
-	mov	eax,Options.output_format
-	mov	ecx,sizeof(format_options)
-	mul	ecx
-	lea	eax,formatoptions[eax]
-	mov	ModuleInfo.fmtopt,eax
-	xor	eax,eax
-	.if	Options.output_format == OFORMAT_OMF && !Options.no_comment_in_code_rec
-		inc	eax
+	mov eax,Options.sub_format
+	mov ModuleInfo.sub_format,al
+	mov eax,Options.output_format
+	mov ecx,sizeof(format_options)
+	mul ecx
+	lea eax,formatoptions[eax]
+	mov ModuleInfo.fmtopt,eax
+
+	xor eax,eax
+	.if Options.output_format == OFORMAT_OMF && !Options.no_comment_in_code_rec
+
+		inc eax
 	.endif
-	mov	ModuleInfo.CommentDataInCode,al
-	mov	ModuleInfo.error_count,0
-	mov	ModuleInfo.warning_count,0
-	mov	ModuleInfo._model,MODEL_NONE
-	mov	ModuleInfo.ostype,OPSYS_DOS
-	mov	ModuleInfo.emulator,0
-	.if	Options.floating_point == FPO_EMULATION
+
+	mov ModuleInfo.CommentDataInCode,al
+	mov ModuleInfo.error_count,0
+	mov ModuleInfo.warning_count,0
+	mov ModuleInfo._model,MODEL_NONE
+	mov ModuleInfo.ostype,OPSYS_DOS
+	mov ModuleInfo.emulator,0
+
+	.if Options.floating_point == FPO_EMULATION
 
 		inc ModuleInfo.emulator
 	.endif
@@ -837,25 +877,27 @@ ModuleInit ENDP
 
 ReswTableInit PROC PRIVATE
 	ResWordsInit()
-	.if	Options.output_format == OFORMAT_OMF
+	.if Options.output_format == OFORMAT_OMF
+
 		DisableKeyword( T_IMAGEREL )
 		DisableKeyword( T_SECTIONREL )
 	.endif
-	.if	Options.strict_masm_compat == 1
+	.if Options.strict_masm_compat == 1
+
 		DisableKeyword( T_INCBIN )
 		DisableKeyword( T_FASTCALL )
 	.endif
-	.if	Options.asmc_syntax == 0
+	.if !(Options.aflag & _AF_ON)
 		;
 		; added v2.22 - HSE
 		;
-		push	ebx
-		mov	ebx,T_DOT_IFA
+		push ebx
+		mov  ebx,T_DOT_IFA
 		.repeat
 			DisableKeyword( ebx )
-			add	ebx,1
-		.until	ebx > T_DOT_ENDSW
-		pop	ebx
+			add ebx,1
+		.until ebx > T_DOT_ENDSW
+		pop ebx
 	.endif
 
 	ret
@@ -863,36 +905,32 @@ ReswTableInit ENDP
 
 open_files PROC PRIVATE
 	fopen( ModuleInfo.curr_fname[ASM*4], "rb" )
-	mov	ModuleInfo.curr_file[ASM*4],eax
-	test	eax,eax
-	jz	error_1
-;	mov	edx,eax
-;	invoke	setvbuf,edx,LclAlloc(_MAXIOBUF),_IOFBF,_MAXIOBUF
-	cmp	Options.syntax_check_only,0
-	jne	@F
+	mov ModuleInfo.curr_file[ASM*4],eax
+	test eax,eax
+	jz  error_1
+	cmp Options.syntax_check_only,0
+	jne @F
 	fopen( ModuleInfo.curr_fname[OBJ*4],"wb" )
-	mov	ModuleInfo.curr_file[OBJ*4],eax
-	test	eax,eax
+	mov ModuleInfo.curr_file[OBJ*4],eax
+	test eax,eax
 	jz	error_2
-;	mov	edx,eax
-;	invoke	setvbuf,edx,LclAlloc(_MAXIOBUF),_IOFBF,_MAXIOBUF
 @@:
-	cmp	Options.write_listing,0
-	je	toend
+	cmp Options.write_listing,0
+	je  toend
 	fopen( ModuleInfo.curr_fname[LST*4],"wb" )
-	mov	ModuleInfo.curr_file[LST*4],eax
-	test	eax,eax
-	jz	error_3
+	mov ModuleInfo.curr_file[LST*4],eax
+	test eax,eax
+	jz  error_3
 toend:
 	ret
 error_1:
-	mov	eax,ModuleInfo.curr_fname[ASM*4]
-	jmp	error
+	mov eax,ModuleInfo.curr_fname[ASM*4]
+	jmp error
 error_2:
-	mov	eax,ModuleInfo.curr_fname[OBJ*4]
-	jmp	error
+	mov eax,ModuleInfo.curr_fname[OBJ*4]
+	jmp error
 error_3:
-	mov	eax,ModuleInfo.curr_fname[LST*4]
+	mov eax,ModuleInfo.curr_fname[LST*4]
 error:
 	asmerr( 1000, eax )
 	ret	; will not return..
@@ -904,92 +942,110 @@ close_files PROC USES ebx
 	; That's because Fatal() may cause close_files() to be
 	; reentered and thus cause an endless loop.
 
-	mov	eax,ModuleInfo.curr_file[ASM*4]
-	.if	eax
-		.if	fclose(eax)
+	mov eax,ModuleInfo.curr_file[ASM*4]
+	.if eax
+
+		.if fclose(eax)
+
 			asmerr( 3021, ModuleInfo.curr_fname[ASM*4] )
 		.endif
 	.endif
-	mov	eax,ModuleInfo.curr_file[OBJ*4]
-	.if	eax
-		.if	fclose(eax)
+
+	mov eax,ModuleInfo.curr_file[OBJ*4]
+	.if eax
+		.if fclose(eax)
+
 			asmerr( 3021, ModuleInfo.curr_fname[OBJ*4] )
 		.endif
 	.endif
-	.if	!Options.syntax_check_only && ModuleInfo.error_count
+
+	.if !Options.syntax_check_only && ModuleInfo.error_count
+
 		remove( ModuleInfo.curr_fname[OBJ*4] )
 	.endif
-	mov	eax,ModuleInfo.curr_file[LST*4]
-	.if	eax
+
+	mov eax,ModuleInfo.curr_file[LST*4]
+	.if eax
+
 		fclose( eax )
-		mov	ModuleInfo.curr_file[LST*4],0
+		mov ModuleInfo.curr_file[LST*4],0
 	.endif
-	mov	eax,ModuleInfo.curr_file[ERR*4]
-	.if	eax
+
+	mov eax,ModuleInfo.curr_file[ERR*4]
+	.if eax
+
 		fclose( eax )
-		mov	ModuleInfo.curr_file[ERR*4],0
+		mov ModuleInfo.curr_file[ERR*4],0
 	.elseif ModuleInfo.curr_fname[ERR*4]
+
 		remove( ModuleInfo.curr_fname[ERR*4] )
 	.endif
 	ret
+
 close_files ENDP
 
 ;
 ; get default file extension for error, object and listing files
 ;
 GetExt	PROC PRIVATE ftype
-	mov	ecx,ftype
-	.if	ecx == OBJ && Options.output_format == OFORMAT_BIN
-		mov	ecx,5
-		.if	Options.sub_format != SFORMAT_MZ && Options.sub_format != SFORMAT_PE
-			dec	ecx
+
+	mov ecx,ftype
+	.if ecx == OBJ && Options.output_format == OFORMAT_BIN
+
+		mov ecx,5
+		.if Options.sub_format != SFORMAT_MZ && Options.sub_format != SFORMAT_PE
+
+			dec ecx
 		.endif
 	.endif
-	mov	ecx,filetypes[ecx*4]
-	lea	eax,currentftype
-	mov	[eax],ecx
+	mov ecx,filetypes[ecx*4]
+	lea eax,currentftype
+	mov [eax],ecx
 	ret
+
 GetExt	ENDP
 
 SetFilenames PROC PRIVATE USES esi edi ebx fn
   local path[260]:BYTE
 
 	strlen( fn )
-	inc	eax
+	inc eax
 	strcpy( LclAlloc( eax ), fn )
-	mov	ModuleInfo.curr_fname[ASM*4],eax
+	mov ModuleInfo.curr_fname[ASM*4],eax
 	strfn ( eax )
-	mov	esi,eax
-	mov	edi,ASM+1
-	lea	ebx,path
-	.while	edi < NUM_FILE_TYPES
-		mov	eax,Options.names[edi*4]
-		.if	!eax
+	mov esi,eax
+	mov edi,ASM+1
+	lea ebx,path
+	.while edi < NUM_FILE_TYPES
+
+		mov eax,Options.names[edi*4]
+		.if !eax
 l3:
-			mov	path,0
+			mov path,0
 			strfcat( ebx, DefaultDir[edi*4], esi )
 l4:
 			setfext( ebx, GetExt( edi ) )
 		.else
 			strcpy( ebx, eax )
-			cmp	BYTE PTR [eax],0
-			je	l3
+			cmp BYTE PTR [eax],0
+			je  l3
 			strext( eax )
-			jz	l4
+			jz  l4
 		.endif
+
 		strlen( ebx )
-		inc	eax
+		inc eax
 		strcpy( LclAlloc( eax ), ebx )
-		mov	ModuleInfo.curr_fname[edi*4],eax
-		inc	edi
+		mov ModuleInfo.curr_fname[edi*4],eax
+		inc edi
 	.endw
 	ret
 SetFilenames ENDP
 
 AssembleInit PROC PRIVATE source
 	MemInit()
-	mov	write_to_file,0
-	mov	LinnumQueue.head,0
+	mov write_to_file,0
+	mov LinnumQueue.head,0
 	SetFilenames( source )
 	FastpassInit()
 	open_files()
@@ -1022,44 +1078,52 @@ AssembleModule PROC USES esi edi ebx source
 
   local curr_written, prev_written
 
-	xor	eax,eax
-	mov	MacroLocals,eax
-	mov	ModuleInfo.StrStack,eax ; reset string label counter
-	lea	edi,ModuleInfo
-	mov	ecx,sizeof( ModuleInfo )
-	rep	stosb
-	dec	eax
-	mov	prev_written,eax
+	xor eax,eax
+	mov MacroLocals,eax
+	mov ModuleInfo.StrStack,eax ; reset string label counter
+	lea edi,ModuleInfo
+	mov ecx,sizeof( ModuleInfo )
+	rep stosb
+	dec eax
+	mov prev_written,eax
 
-	.if	!Options.quiet
+	.if !Options.quiet
 
 		_print( " Assembling: %s\n", source )
 	.endif
 
-	.if	setjmp( addr jmpenv )
+	.if setjmp( addr jmpenv )
 
-		.if	ModuleInfo.src_stack
+		.if eax == 1
+
+			;ClearSrcStack()
+			;AssembleFini()
+			jmp @F
+		.endif
+		.if ModuleInfo.src_stack
 
 			ClearSrcStack()
 		.endif
-		jmp	done
+		jmp done
 	.endif
-
+	@@:
 	AssembleInit( source )
 	mov Parse_Pass,PASS_1
 
 	.while	1
 
 		OnePass()
-		xor	eax,eax
+
+		xor eax,eax
 		.break .if ModuleInfo.error_count > eax
 
 		;
 		; calculate total size of segments
 		;
-		mov	curr_written,eax
-		mov	esi,SymTables[TAB_SEG*sizeof(symbol_queue)].head
-		.while	esi
+		mov curr_written,eax
+		mov esi,SymTables[TAB_SEG*sizeof(symbol_queue)].head
+		.while esi
+
 			mov eax,[esi].asym.max_offset
 			add curr_written,eax
 			mov esi,[esi].dsym.next
@@ -1067,46 +1131,49 @@ AssembleModule PROC USES esi edi ebx source
 		;
 		; if there's no phase error and size of segments didn't change, we're done
 		;
-		mov	eax,curr_written
+		mov eax,curr_written
 		.break	.if !ModuleInfo.PhaseError && eax == prev_written
-		mov	prev_written,eax
+		mov prev_written,eax
 
-		mov	eax,Parse_Pass
-		.if	eax >= 199
+		mov eax,Parse_Pass
+		.if eax >= 199
+
 			asmerr( 3000, eax )
 		.endif
 
-		.if	Options.line_numbers
-			.if	Options.output_format == OFORMAT_COFF
-				mov	esi,SymTables[TAB_SEG*8].head
+		.if Options.line_numbers
+
+			.if Options.output_format == OFORMAT_COFF
+
+				mov esi,SymTables[TAB_SEG*8].head
 				.while	esi
-					mov	ebx,[esi].dsym.seginfo
-					.if	[ebx].seg_info.LinnumQueue
+					mov ebx,[esi].dsym.seginfo
+					.if [ebx].seg_info.LinnumQueue
 						QueueDeleteLinnum( [ebx].seg_info.LinnumQueue )
 					.endif
-					mov	[ebx].seg_info.LinnumQueue,0
-					mov	esi,[esi].dsym.next
+					mov [ebx].seg_info.LinnumQueue,0
+					mov esi,[esi].dsym.next
 				.endw
 			.else
 				QueueDeleteLinnum( addr LinnumQueue )
-				mov	LinnumQueue.head,0
+				mov LinnumQueue.head,0
 			.endif
 		.endif
 
 		rewind( ModuleInfo.curr_file[ASM*4] )
-		.if	write_to_file && Options.output_format == OFORMAT_OMF
+		.if write_to_file && Options.output_format == OFORMAT_OMF
 			omf_set_filepos()
 		.endif
 
-		.if	!UseSavedState && ModuleInfo.curr_file[LST*4]
+		.if !UseSavedState && ModuleInfo.curr_file[LST*4]
 			rewind( ModuleInfo.curr_file[LST*4] )
 			LstInit()
 		.endif
 
-		inc	Parse_Pass
+		inc Parse_Pass
 	.endw
 
-	.if	Parse_Pass > PASS_1 && write_to_file
+	.if Parse_Pass > PASS_1 && write_to_file
 
 		WriteModule( addr ModuleInfo )
 	.endif
@@ -1115,10 +1182,10 @@ AssembleModule PROC USES esi edi ebx source
 done:
 	AssembleFini()
 
-	xor	eax,eax
-	cmp	ModuleInfo.error_count,eax
-	jne	toend
-	inc	eax
+	xor eax,eax
+	cmp ModuleInfo.error_count,eax
+	jne toend
+	inc eax
 toend:
 	ret
 AssembleModule ENDP

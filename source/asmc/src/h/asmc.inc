@@ -26,10 +26,21 @@ PASS_2			equ 1
 ; Asmc flags
 ;-------------------------------------------------------------------------------
 
-ASMCFLAG_ON		equ 01h
-ASMCFLAG_OFF		equ 00h
-ASMCFLAG_PUSHF		equ 40h ; Push/Pop flags
-ASMCFLAG_ASSERT		equ 80h ; Generate .assert code
+;.aflag
+
+_AF_ON			equ 0x01
+_AF_CSTACK		equ 0x02
+_AF_WSTRING		equ 0x04 ; convert "string" to unicode
+_AF_LSTRING		equ 0x08 ; L"Unicode" used --> allow dw "string"
+_AF_PASCAL		equ 0x10 ; auto insert break after cases
+_AF_TABLE		equ 0x20 ; forse creation of indexed jump table
+_AF_REGAX		equ 0x40 ; use [R|E]AX to render jump-code
+_AF_NOTEST		equ 0x80 ; skip test code - just jump
+
+;.xflag
+
+_XF_ASSERT		equ 0x01 ; Generate .assert code
+_XF_PUSHF		equ 0x02 ; Push/Pop flags
 
 ;-------------------------------------------------------------------------------
 ; HLL flags
@@ -38,14 +49,6 @@ T_HLL_DELAY		equ 01h ; tokenarray[0]: ELSEIF/WHILE/CASE
 T_HLL_MACRO		equ 02h ; macro()
 T_HLL_PROC		equ 04h ; proc()
 T_HLL_DELAYED		equ 08h ; tokenarray[0]: delayed
-
-;-------------------------------------------------------------------------------
-; .SWITCH options
-;-------------------------------------------------------------------------------
-SWITCH_PASCAL		equ 01h ; auto insert break after cases
-SWITCH_TABLE		equ 02h ; forse creation of indexed jump table
-SWITCH_REGAX		equ 04h ; use [R|E]AX to render jump-code
-SWITCH_NOTEST		equ 08h ; skip test code - just jump
 
 ;-------------------------------------------------------------------------------
 ; enumerations
@@ -942,12 +945,10 @@ _model			dd ?	; -mt|s|m|c|l|h|f option
 cpu			dd ?	; -0|1|2|3|4|5|6 & -fp{0|2|3|5|6|c} option
 fctype			dd ?	; -zf0 & -zf1 option
 syntax_check_only	db ?	; -Zs option
-asmc_syntax		db ?	; -Xc option
-c_stack_frame		db ?	; -Cs option
-hll_switch		db ?	; -sw[c|p|a|t|nt] option
+aflag			db ?	; asmc option
+xflag			db ?	; extended option
 loopalign		db ?	; OPTION:LOOPALIGN setting
 casealign		db ?	; OPTION:CASEALIGN setting
-wstring			db ?	; -ws
 global_options		ENDS
 
 M_MODULEVARS		MACRO
@@ -1037,7 +1038,7 @@ StartupDirectiveFound	db ?	;
 EndDirFound		db ?	;
 frame_auto		db ?	; win64 only
 NoSignExtend		db ?	; option nosignextend
-asmc_syntax		db ?	; -Xc option
+aflag			db ?	; asmc option
 UNION
     STRUC
     elf_osabi		db ?	; for ELF
@@ -1070,12 +1071,10 @@ stringbufferend		dd ?	; start free space in string buffer
 token_count		dd ?	; number of tokens in curr line
 basereg			dd 3 dup(?)	; stack base register (16-, 32-, 64-bit
 _name			db 260 dup(?)	; name of module
-c_stack_frame		db ?	; -Cs option
-hll_switch		db ?	; -sw[c|p|a|t|nt] option
+xflag			db ?	; extended option
 loopalign		db ?	; OPTION:LOOPALIGN setting
 casealign		db ?	; OPTION:CASEALIGN setting
 assert_proc		dd ?	; .assert:<proc/macro name>
-wstring			db ?	; OPTION WSTRING:[ON|OFF]
 module_info		ENDS
 
 equ_item		STRUC

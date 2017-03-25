@@ -1,16 +1,21 @@
-ifndef _INC_EXCPT
-_INC_EXCPT equ <>
+ifndef __EXCPT_INC
+__EXCPT_INC equ <>
 ifndef __LIBC_INC
  include libc.inc
 endif
 .xlist
 
-ifdef _MSC_VER
+;ifdef	_MSC_VER
+if 0;def _WINDOWS_
 ;
 ; Currently, all MS C compilers for Win32 platforms default to 8 byte
 ; alignment.
 ;
-;option fieldalign:8
+ifdef _WIN64
+option fieldalign:8
+else
+option fieldalign:4
+endif
 endif
 
 ; Define _CRTAPI1 (for compatibility with the NT SDK)
@@ -61,8 +66,8 @@ ifndef _INTERNAL_IFSTRIP_
 ;
 ; for convenience, define a type name for a pointer to signal-handler
 ;
-PHNDLR_T TYPEDEF PROTO :SINT
-_PHNDLR TYPEDEF PTR PHNDLR_T
+PHNDLR_T typedef proto _CType :SINT
+_PHNDLR	 typedef ptr PHNDLR_T
 
 ;
 ; Exception-action table used by the C runtime to identify and dispose of
@@ -114,7 +119,7 @@ externdef _Num_FPE:SINT
 ; return values and prototype for the exception filter function used in the
 ; C startup
 ;
-_XcptFilter proto :ULONG, :PVOID
+_XcptFilter proto _CType :ULONG, :PVOID
 
 endif	; _INTERNAL_IFSTRIP_
 

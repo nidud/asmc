@@ -264,7 +264,7 @@ SYSTEMTIME	ENDS
 PSYSTEMTIME	TYPEDEF PTR SYSTEMTIME
 LPSYSTEMTIME	TYPEDEF PTR SYSTEMTIME
 
-THREAD_ROUTINE_T	TYPEDEF PROTO :PVOID
+THREAD_ROUTINE_T	TYPEDEF PROTO _CType :PVOID
 PTHREAD_START_ROUTINE	TYPEDEF PTR THREAD_ROUTINE_T
 LPTHREAD_START_ROUTINE	TYPEDEF PTHREAD_START_ROUTINE
 
@@ -1162,7 +1162,7 @@ ifndef NOWINBASEINTERLOCK
 ifndef _NTOS_
 
 ifdef _M_IA64
-
+if 0
 InterlockedIncrement				equ <_InterlockedIncrement>
 InterlockedIncrementAcquire			equ <_InterlockedIncrement_acq>
 InterlockedIncrementRelease			equ <_InterlockedIncrement_rel>
@@ -1227,19 +1227,20 @@ InterlockedAnd16Release equ <_InterlockedAnd16_rel>
 InterlockedAnd64	equ <_InterlockedAnd64>
 InterlockedAnd64Acquire equ <_InterlockedAnd64_acq>
 InterlockedAnd64Release equ <_InterlockedAnd64_rel>
+endif
 
 ;LONG
 InterlockedOr proto _CType \
-	   Destination: ptr LONG,
+	   Destination: LPLONG,
 		 Value: LONG
 ;LONG
 InterlockedOrAcquire proto _CType \
-	   Destination: ptr LONG,
+	   Destination: LPLONG,
 		 Value: LONG
 
 ;LONG
 InterlockedOrRelease proto _CType \
-	   Destination: ptr LONG,
+	   Destination: LPLONG,
 		 Value: LONG
 
 ;char
@@ -1575,7 +1576,7 @@ InterlockedAnd_Inline macro Target, _Set
 endif
 
 ifndef InterlockedOr
-
+if 0
 InterlockedOr equ <InterlockedOr_Inline>
 ;FORCEINLINE
 ;LONG
@@ -1601,6 +1602,7 @@ InterlockedOr_Inline macro Target, _Set
 	pop	r12
 	exitm  <eax>
 	endm
+endif
 endif
 
 ifndef InterlockedXor
@@ -1812,7 +1814,7 @@ pragma_intrinsic(_InterlockedAnd64_acq)
 pragma_intrinsic(_InterlockedAnd64_rel)
 
 elseifdef _M_AMD64
-
+if 0
 InterlockedAnd		equ <_InterlockedAnd>
 InterlockedOr		equ <_InterlockedOr>
 InterlockedXor		equ <_InterlockedXor>
@@ -1842,6 +1844,8 @@ InterlockedExchangeAdd64 equ <_InterlockedExchangeAdd64>
 InterlockedCompareExchange64 equ <_InterlockedCompareExchange64>
 InterlockedCompareExchangeAcquire64 equ <InterlockedCompareExchange64>
 InterlockedCompareExchangeRelease64 equ <InterlockedCompareExchange64>
+
+endif
 
 ;LONG
 InterlockedAnd proto _CType \
@@ -1890,12 +1894,12 @@ InterlockedExchangePointer proto _CType \
 
 ;LONG64
 InterlockedAnd64 proto _CType \
-	  Destination: LPLONG64,
+	  Destination: PLONG64,
 		Value: LONG64
 
 ;LONG64
 InterlockedOr64 proto _CType \
-	  Destination: LPLONG64,
+	  Destination: PLONG64,
 		Value: LONG64
 
 ;LONG64

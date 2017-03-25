@@ -1,3 +1,5 @@
+ifndef __INC_CONIO
+__INC_CONIO equ <>
 ifndef __LIBC_INC
  include libc.inc
 endif
@@ -8,10 +10,6 @@ ifndef _WINUSER_
  include winuser.inc
 endif
 .xlist
-
-ifndef __INC_CONIO
-__INC_CONIO	EQU 1
-
 ifdef __PE__
 option	dllimport:<msvcrt>
 endif
@@ -36,39 +34,39 @@ WHITE		equ 15
 endif
 MAXINPUTRECORDS equ 100
 
-_cgets		proto :LPSTR
-_clreol		proto
-_clrscr		proto
+_cgets		proto __cdecl :LPSTR
+_clreol		proto __cdecl
+_clrscr		proto __cdecl
 _cprintf	proto _CDecl :LPSTR, :VARARG
-_cputs		proto :LPSTR
+_cputs		proto __cdecl :LPSTR
 _cscanf		proto _CDecl :LPSTR, :VARARG
-_getch		proto
-_getche		proto
-_gotoxy		proto :UINT, :UINT
-_inp		proto :UINT
-_inpw		proto :UINT
-_inpd		proto :UINT
-_kbhit		proto
-_outp		proto :UINT, :UINT
-_outpw		proto :UINT, :UINT
-_outpd		proto :UINT, :ULONG
-_putch		proto :UINT
-_textbackground proto :UINT
-_textcolor	proto :UINT
-_ungetch	proto :UINT
-_wherex		proto
-_wherey		proto
+_getch		proto __cdecl
+_getche		proto __cdecl
+_gotoxy		proto __cdecl :UINT, :UINT
+_inp		proto __cdecl :UINT
+_inpw		proto __cdecl :UINT
+_inpd		proto __cdecl :UINT
+_kbhit		proto __cdecl
+_outp		proto __cdecl :UINT, :UINT
+_outpw		proto __cdecl :UINT, :UINT
+_outpd		proto __cdecl :UINT, :ULONG
+_putch		proto __cdecl :UINT
+_textbackground proto __cdecl :UINT
+_textcolor	proto __cdecl :UINT
+_ungetch	proto __cdecl :UINT
+_wherex		proto __cdecl
+_wherey		proto __cdecl
 
-_cputws		proto :LPWSTR
-_putwch		proto :UINT ; WCHAR_T
-_getwch		proto
-_getwche	proto
-_cgetws		proto :LPWSTR, :SIZE_T, :PVOID
-_ungetwch	proto :UINT
-_cputws		proto :LPWSTR
+_cputws		proto __cdecl :LPWSTR
+_putwch		proto __cdecl :UINT ; WCHAR_T
+_getwch		proto __cdecl
+_getwche	proto __cdecl
+_cgetws		proto __cdecl :LPWSTR, :SIZE_T, :PVOID
+_ungetwch	proto __cdecl :UINT
+_cputws		proto __cdecl :LPWSTR
 _cwprintf	proto _CDecl :LPWSTR, :VARARG
 _cwscanf	proto _CDecl :LPWSTR, :VARARG
-_vcwprintf	proto :LPWSTR, :PVOID
+_vcwprintf	proto __cdecl :LPWSTR, :PVOID
 
 ;;;;;;;;;;;;;;; crtl
 ifndef __PE__
@@ -76,6 +74,6 @@ externdef hStdInput:  HANDLE
 externdef hStdOutput: HANDLE
 externdef hStdError:  HANDLE
 endif
-endif	; __INC_CONIO
 
 .list
+endif	; __INC_CONIO

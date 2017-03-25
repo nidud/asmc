@@ -417,6 +417,11 @@ static void __fastcall output_float( const struct expr *opnd, unsigned size )
  * 3. item size is 1 and a quoted string with len > 1 is used as initializer
  */
 
+#define CP_ACP		0 /* default to ANSI code page */
+#define MB_PRECOMPOSED	1 /* use precomposed chars */
+
+int MultiByteToWideChar(int, int, char *, int, unsigned short *, int);
+
 static int data_item( int *start_pos, struct asm_tok tokenarray[], struct asym *sym, uint_32 no_of_bytes, const struct asym *type_sym, uint_32 dup, bool inside_struct, bool is_float, bool first, int end )
 /***************************************************************************************************************************************************************************************************************/
 {
@@ -607,7 +612,11 @@ next_item:  /* <--- continue scan if a comma has been detected */
 	    if( no_of_bytes != 1 ) {
 		if( string_len > no_of_bytes ) {
 		    /* v2.22 - unicode */
-		    if ( inside_struct || !(ModuleInfo.wstring && no_of_bytes == 2) )
+		    /* v2.23 - use L"Unicode" */
+		    if ( inside_struct ||
+		      !( ( ModuleInfo.aflag & _AF_ON ) &&
+			 ( ModuleInfo.aflag & ( _AF_WSTRING | _AF_LSTRING ) ) &&
+			 no_of_bytes == 2) )
 			return( asmerr( 2071 ) );
 		}
 	    }
@@ -640,14 +649,37 @@ next_item:  /* <--- continue scan if a comma has been detected */
 		/* anything bigger than a byte must be stored in little-endian
 		 * format -- LSB first */
 		/* v2.22 - unicode */
-		if ( ModuleInfo.wstring && string_len > 1 && no_of_bytes == 2 ) {
+		/* v2.23 - use L"Unicode" */
+		if ( ( ModuleInfo.aflag & _AF_ON ) &&
+		     ( ModuleInfo.aflag & ( _AF_WSTRING | _AF_LSTRING ) ) &&
+		     string_len > 1 &&
+		     no_of_bytes == 2 ) {
 
-			uint_8 *p = pchar;
+			unsigned short *w;
+			uint_8 *p = NULL;
 			int q = string_len;
-			while ( q-- ) {
+
+			if ((w = malloc(string_len*2)) != NULL) {
+
+			    if ((MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED,
+				pchar, string_len, w, string_len)) == string_len) {
+
+				p = (uint_8 *)w;
+				while ( q-- ) {
+
+				    OutputBytes( p++, 1, NULL );
+				    OutputBytes( p++, 1, NULL );
+				}
+			    }
+			    free(w);
+			}
+			if (p == NULL) {
+			    p = pchar;
+			    while ( q-- ) {
 
 				OutputBytes( p++, 1, NULL );
 				FillDataBytes( 0, 1 );
+			    }
 			}
 		} else {
 		    if ( string_len > 1 && no_of_bytes > 1 )

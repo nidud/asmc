@@ -1,7 +1,8 @@
+ifndef __IO_INC
+__IO_INC equ <>
 ifndef __LIBC_INC
  include libc.inc
 endif
-
 .xlist
 ifdef __PE__
 option	dllimport:<msvcrt>
@@ -43,12 +44,9 @@ dwLowDateTime	dd ?
 dwHighDateTime	dd ?
 FILETIME	ENDS
 
-ifndef _INTEGRAL_MAX_BITS
-_INTEGRAL_MAX_BITS equ 64
-endif
 ifndef _TIME_T_DEFINED
+_TIME_T_DEFINED equ <>
 time_t		typedef sdword
-_TIME_T_DEFINED equ 1
 endif
 
 _finddata_t	STRUC
@@ -61,6 +59,7 @@ ff_name		db 260 dup(?)
 _finddata_t	ENDS
 
 ifndef _WFINDDATA_T_DEFINED
+_WFINDDATA_T_DEFINED equ <>
 _wfinddata_t	STRUC
 attrib		dd ?
 time_create	time_t ?	;; -1 for FAT file systems
@@ -79,7 +78,6 @@ _size		dq ?
 _name		wchar_t 260 dup(?)
 _wfinddatai64_t ENDS
 endif
-_WFINDDATA_T_DEFINED	equ 1
 endif
 
 externdef	_nfile:DWORD
@@ -100,51 +98,50 @@ M_RDWR		equ M_RDONLY or M_WRONLY
 
 _open		proto _CDecl :LPSTR, :SINT, :VARARG
 _sopen		proto _CDecl :LPSTR, :UINT, :UINT, :VARARG
-_read		proto :SINT, :PVOID, :SIZE_T
-_creat		proto :LPSTR, :UINT
-_close		proto :SINT
-_lseek		proto :SINT, :SIZE_T, :UINT
-_write		proto :SINT, :PVOID, :SIZE_T
-_access		proto :LPSTR, :UINT
-_isatty		proto :SINT
-_eof		proto :SINT
-_chsize		proto :SINT, :SIZE_T
-_filelength	proto :SINT
-_findfirst	proto :LPSTR, :PTR _finddata_t
-_findnext	proto :HANDLE, :PTR _finddata_t
-_findclose	proto :HANDLE
-_tell		proto :SINT
-_lseeki64	proto :SINT, :QWORD, :UINT
-remove		proto :LPSTR
-rename		proto :LPSTR, :LPSTR
+_read		proto __cdecl :SINT, :PVOID, :SIZE_T
+_creat		proto __cdecl :LPSTR, :UINT
+_close		proto __cdecl :SINT
+_lseek		proto __cdecl :SINT, :SIZE_T, :UINT
+_write		proto __cdecl :SINT, :PVOID, :SIZE_T
+_access		proto __cdecl :LPSTR, :UINT
+_isatty		proto __cdecl :SINT
+_eof		proto __cdecl :SINT
+_chsize		proto __cdecl :SINT, :SIZE_T
+_filelength	proto __cdecl :SINT
+_findfirst	proto __cdecl :LPSTR, :PTR _finddata_t
+_findnext	proto __cdecl :HANDLE, :PTR _finddata_t
+_findclose	proto __cdecl :HANDLE
+_tell		proto __cdecl :SINT
+_lseeki64	proto __cdecl :SINT, :QWORD, :UINT
+remove		proto __cdecl :LPSTR
+rename		proto __cdecl :LPSTR, :LPSTR
 
 ifndef _WIO_DEFINED
-
-_waccess	proto :ptr wchar_t, :SINT
-_wchmod		proto :ptr wchar_t, :SINT
-_wcreat		proto :ptr wchar_t, :SINT
-_wfindfirst	proto :ptr wchar_t, :ptr _wfinddata_t
-_wfindnext	proto :SINT, :ptr _wfinddata_t
-_wunlink	proto :ptr wchar_t
-_wrename	proto :ptr wchar_t, :ptr wchar_t
+_WIO_DEFINED equ <>
+_waccess	proto __cdecl :ptr wchar_t, :SINT
+_wchmod		proto __cdecl :ptr wchar_t, :SINT
+_wcreat		proto __cdecl :ptr wchar_t, :SINT
+_wfindfirst	proto __cdecl :ptr wchar_t, :ptr _wfinddata_t
+_wfindnext	proto __cdecl :SINT, :ptr _wfinddata_t
+_wunlink	proto __cdecl :ptr wchar_t
+_wrename	proto __cdecl :ptr wchar_t, :ptr wchar_t
 _wopen		proto _CDecl :ptr wchar_t, :SINT, :VARARG
 _wsopen		proto _CDecl :ptr wchar_t, :SINT, :SINT, :VARARG
-_wmktemp	proto :ptr wchar_t
+_wmktemp	proto __cdecl :ptr wchar_t
 if 0
 if _INTEGRAL_MAX_BITS GE 64
-_wfindfirsti64	proto :ptr wchar_t, :ptr _wfinddatai64_t
-_wfindnexti64	proto :LONG, :ptr _wfinddatai64_t
+_wfindfirsti64	proto __cdecl :ptr wchar_t, :ptr _wfinddatai64_t
+_wfindnexti64	proto __cdecl :LONG, :ptr _wfinddatai64_t
 endif
 endif
-_WIO_DEFINED	equ 1
-endif
+endif ; _WIO_DEFINED
 
 ifndef __PE__
 
-osopenA		proto :LPSTR, :UINT, :UINT, :UINT
-osopenW		proto :LPWSTR, :UINT, :UINT, :UINT
-_osopenA	proto :LPSTR, :UINT, :UINT, :PVOID, :UINT, :UINT
-_osopenW	proto :LPWSTR, :UINT, :UINT, :PVOID, :UINT, :UINT
+osopenA		proto _CType :LPSTR, :UINT, :UINT, :UINT
+osopenW		proto _CType :LPWSTR, :UINT, :UINT, :UINT
+_osopenA	proto _CType :LPSTR, :UINT, :UINT, :PVOID, :UINT, :UINT
+_osopenW	proto _CType :LPWSTR, :UINT, :UINT, :PVOID, :UINT, :UINT
 ifdef _UNICODE
 osopen		equ <osopenW>
 _osopen		equ <_osopenW>
@@ -153,30 +150,31 @@ osopen		equ <osopenA>
 _osopen		equ <_osopenA>
 endif
 
-osread		proto :SINT, :PVOID, :SIZE_T
-oswrite		proto :SINT, :PVOID, :SIZE_T
-getosfhnd	proto :SINT
-osmaperr	proto
+osread		proto _CType :SINT, :PVOID, :SIZE_T
+oswrite		proto _CType :SINT, :PVOID, :SIZE_T
+getosfhnd	proto _CType :SINT
+osmaperr	proto _CType
 
 ;;;;;;;;;;;;;;; crtl
 
-getfattr	proto :LPSTR
-_wgetfattr	proto :LPWSTR
+getfattr	proto _CType :LPSTR
+_wgetfattr	proto _CType :LPWSTR
 
-setfattr	proto :LPTSTR, :UINT
-filexist	proto :LPSTR
-readword	proto :LPSTR
-getftime	proto :SINT
-getftime_access proto :SINT
-getftime_create proto :SINT
-setftime	proto :SINT, :DWORD
-setftime_access proto :SINT, :DWORD
-setftime_create proto :SINT, :DWORD
-__FTToTime	proto :PTR FILETIME
+setfattr	proto _CType :LPTSTR, :UINT
+filexist	proto _CType :LPSTR
+readword	proto _CType :LPSTR
+getftime	proto _CType :SINT
+getftime_access proto _CType :SINT
+getftime_create proto _CType :SINT
+setftime	proto _CType :SINT, :DWORD
+setftime_access proto _CType :SINT, :DWORD
+setftime_create proto _CType :SINT, :DWORD
+__FTToTime	proto _CType :PTR FILETIME
 
 externdef	console:DWORD
 externdef	_diskflag:DWORD
 
-endif
+endif ; __PE__
 
 .list
+endif ; __IO_INC

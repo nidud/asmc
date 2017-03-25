@@ -87,47 +87,7 @@ static void __fastcall SkipMacro( struct asm_tok tokenarray[] )
     }
 
 }
-#if 0
-int DelayExpand( struct asm_tok tokenarray[] )
-{
-    int p, q, bracket;
 
-    if ( ModuleInfo.asmc_syntax == 0
-	|| !(tokenarray[0].hll_flags & T_HLL_DELAY)
-	|| Parse_Pass != PASS_1 )
-	return 0;
-
-    for (q = 1; q < Token_Count && !(tokenarray[q].hll_flags & T_HLL_MACRO); q++)
-	;
-    if (q == Token_Count)
-	return 0;
-
-
-    do {
-	if ( tokenarray[q].hll_flags & T_HLL_MACRO ) {
-	    bracket = 0;
-	    while ( ++q < Token_Count ) {
-		if ( tokenarray[q].token == T_OP_BRACKET ) {
-		    bracket++;
-		} else if ( tokenarray[q].token == T_CL_BRACKET ) {
-		    bracket--;
-		    if ( bracket == 0 )
-			break;
-		} else if ( tokenarray[q].token == T_STRING ) {
-		    if ( tokenarray[q].tokpos[0] == '<' &&
-			 tokenarray[q].string_ptr[0] != '<' ) {
-			asmerr( 7008, tokenarray[q].tokpos );
-			tokenarray[0].hll_flags = 0;
-			return 0;
-		    }
-		}
-	    }
-	}
-    } while ( q++ < Token_Count );
-
-    return 1;
-}
-#endif
 #define PARMSTRINGSIZE ( MAX_LINE_LEN * 2 )
 
 /* run a macro.
@@ -967,7 +927,7 @@ static int RebuildLine( const char *newstring, int i, struct asm_tok tokenarray[
 	*dest++ = '<';
 	for ( src = newstring; *src; src++ ) {
 
-	    if ( !( ModuleInfo.asmc_syntax & 2 ) )
+	    //if ( !( ModuleInfo.asmc_syntax & 2 ) )
 	    if ( *src == '<' || *src == '>' || *src == '!' )	/* count '!' operator */
 		*dest++ = '!';
 	    *dest++ = *src;

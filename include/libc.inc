@@ -3,9 +3,68 @@ ifndef __LIBC_INC
 ; Master include file for the Asmc RTL library.
 ;
 .xlist
-__LIBC_INC	equ 223	 ;; Asmc Version 2.23
+__LIBC_INC	equ 223 ; Asmc Version 2.23
 __STDC__	equ 1
+;;
+;; Architecture kinds:
+;;     _WIN64 (#define symbols)
+;;     _X86_
+;;     _AMD64_
+;;     _IA64_
+;;
+;; Machine Architectures:
+;;     _M_IX86
+;;     _M_AMD64
+;;     _M_IA64
+;;
+ifndef _WIN32
+_WIN32		equ <>	; default
+endif
+ifdef _WIN64
+_IA64_		equ <>
+_M_IA64		equ <>
+elseifdef _AMD64
+_AMD64_		equ <>
+_M_AMD64	equ <>
+else
+_X86_		equ <>
+_M_IX86		equ 300
+endif
 
+ifdef __PE__	; asmc /pe
+ifndef _MSVCRT	; msvcrt.lib
+_MSVCRT equ <>
+endif
+endif
+
+ifndef _CDecl	; vararg (...) type
+ifdef _WIN64
+_CDecl equ <fastcall>
+else
+_CDecl equ <c>
+endif
+endif
+
+ifndef __cdecl	; libc/msvcrt types
+ifdef _WIN64
+__cdecl equ <fastcall>
+elseifdef _MSVCRT
+__cdecl equ <c>
+else
+__cdecl equ <stdcall>
+endif
+endif
+
+ifndef _CType	; default (API) type
+ifdef _WIN64
+_CType equ <fastcall>
+else
+_CType equ <stdcall>
+endif
+endif
+;
+; Set Windows version
+;
 include sdkddkver.inc
 
 ifndef _MSC_VER
@@ -34,54 +93,38 @@ _MSC_FULL_VER	equ 120000000 ;; Visual C++ version 12.0
 endif
 
 ifdef _WIN64
-option	win64:3 ; Standard stack frame
- ifdef __PE__	; For Asmc -pe
+option	win64:3
+SIZE_T	typedef QWORD
+ifdef __PE__
 	.x64
-	.model	flat, fastcall
- endif
-_CDecl	equ <>	; fastcall
-_CType	equ <>	; fastcall
+	.model	flat, _CType
+endif
 else
 	.486
-if defined(_MSVCRT) or defined(__PE__)
-	.model	flat, c
-else
-	.model	flat, stdcall
-endif
 ifdef __SSE__
 	.686
-	.XMM
+	.xmm
 endif
-_CDecl	equ <c>
-_CType	equ <stdcall>
+ifdef _AMD64
+	.x64
 endif
-
-ifndef _WIN32
-_WIN32	equ <>
-endif
-
-ifdef _WIN64
-_IA64_	equ <>
-_M_IA64 equ <>
-SIZE_T	typedef QWORD
-else
-_X86_	equ <>
-_M_IX86 equ 300
-SIZE_T	typedef DWORD
+	.model	flat, _CType
+SIZE_T	typedef dword
 endif
 
 ifndef _WCHAR_T_DEFINED
+_WCHAR_T_DEFINED equ <>
 wchar_t		typedef WORD
-_WCHAR_T_DEFINED equ 1
 endif
 
 ifndef _WCTYPE_T_DEFINED
+_WCTYPE_T_DEFINED equ <>
 wint_t		typedef wchar_t
 wctype_t	typedef wchar_t
-_WCTYPE_T_DEFINED equ 1
 endif
 
 ifndef _TCHAR_DEFINED
+_TCHAR_DEFINED	equ <>
 ifdef _UNICODE
 TCHAR		typedef wchar_t
 PTCHAR		typedef ptr wchar_t
@@ -93,7 +136,6 @@ PTCHAR		typedef ptr sbyte
 LPTSTR		typedef ptr sbyte
 PTBYTE		typedef ptr byte
 endif
-_TCHAR_DEFINED	equ 1
 endif
 
 SINT		typedef sdword

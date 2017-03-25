@@ -2397,7 +2397,7 @@ int ParseLine( struct asm_tok tokenarray[] )
 	if ( i && tokenarray[i-1].token == T_ID )
 	    i--;
 
-	if ( i == 0 && tokenarray[0].hll_flags & T_HLL_PROC && ModuleInfo.asmc_syntax ) {
+	if ( i == 0 && tokenarray[0].hll_flags & T_HLL_PROC && ( ModuleInfo.aflag & _AF_ON ) ) {
 	    /*
 	     * invoke handle import, call do not..
 	     */
@@ -2470,7 +2470,7 @@ int ParseLine( struct asm_tok tokenarray[] )
     }
 
 #if 1
-    if ( ModuleInfo.asmc_syntax && Parse_Pass == PASS_1 ) {
+    if ( ( ModuleInfo.aflag & _AF_ON ) && Parse_Pass == PASS_1 ) {
 
 	for ( q = 1; tokenarray[q].token != T_FINAL; q++ ) {
 

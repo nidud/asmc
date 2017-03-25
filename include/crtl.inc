@@ -15,6 +15,7 @@ __isexec	PROTO :LPSTR
 __setenvp	PROTO :LPSTR
 __wsetenvp	PROTO :LPWSTR
 __setargv	PROTO :SIZE_T, :PVOID, :LPSTR
+__setwargv	PROTO :SIZE_T, :PVOID, :LPWSTR
 __initialize	PROTO :PVOID, :PVOID
 __allocwpath	PROTO :LPSTR
 

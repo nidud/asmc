@@ -201,6 +201,10 @@ _MSC_FULL_VER	equ 170000000	;; Visual C++ version 17.0
 endif
 endif
 
+ifndef _WIN32_WINDOWS
+_WIN32_WINDOWS	equ 0x0410
+endif
+
 ifndef _WIN32_IE
 ifdef _WIN32_WINNT
 ;; set _WIN32_IE based on _WIN32_WINNT

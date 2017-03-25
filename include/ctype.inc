@@ -1,11 +1,25 @@
+ifndef __CTYPE_INC
+__CTYPE_INC equ <>
 ifndef __LIBC_INC
  include libc.inc
 endif
-
 .xlist
-IFDEF __PE__
-option		dllimport:<msvcrt>
-ENDIF
+ifdef __PE__
+option	dllimport:<msvcrt>
+ifndef _MSVCRT
+_MSVCRT equ <>
+endif
+endif
+
+ifndef __cdecl
+ifdef _WIN64
+__cdecl equ <fastcall>
+elseifdef _MSVCRT
+__cdecl equ <c>
+else
+__cdecl equ <stdcall>
+endif
+endif
 
 _UPPER		equ 01h		; upper case letter
 _LOWER		equ 02h		; lower case letter
@@ -17,61 +31,60 @@ _BLANK		equ 40h		; space char
 _HEX		equ 80h		; hexadecimal digit
 
 _LEADBYTE	equ 0x8000	; multibyte leadbyte
-_ALPHA		equ 0x0100 or _UPPER or _LOWER ; alphabetic character
+				; alphabetic character
+_ALPHA		equ 0x0100 or _UPPER or _LOWER
 
 externdef	_ctype:WORD	; Character type array
 externdef	_pctype:LPWORD
 externdef	_pwctype:LPWORD
 
-isspace		PROTO :SINT	; space, tab, carriage return, new line, vertical tab,
+isspace		proto __cdecl :SINT ; space, tab, carriage return, new line, vertical tab,
 				; or formfeed (0x09 to 0x0D, 0x20)
-isupper		PROTO :SINT	; uppercase letter (A to Z)
-isalpha		PROTO :SINT	; letter (A to Z or a to z)
-isalnum		PROTO :SINT	; letter (A to Z or a to z) + digit (0 to 9)
-isascii		PROTO :SINT	; the low order byte of c is in the range 0 to 127
+isupper		proto __cdecl :SINT ; uppercase letter (A to Z)
+isalpha		proto __cdecl :SINT ; letter (A to Z or a to z)
+isalnum		proto __cdecl :SINT ; letter (A to Z or a to z) + digit (0 to 9)
+isascii		proto __cdecl :SINT ; the low order byte of c is in the range 0 to 127
 				; (0x00--0x7F)
-iscntrl		PROTO :SINT	; delete character or ordinary control character
+iscntrl		proto __cdecl :SINT ; delete character or ordinary control character
 				; (0x7F or 0x00 to 0x1F)
-isdigit		PROTO :SINT	; digit (0 to 9)
-isgraph		PROTO :SINT	; printing character, like isprint, except that
+isdigit		proto __cdecl :SINT ; digit (0 to 9)
+isgraph		proto __cdecl :SINT ; printing character, like isprint, except that
 				; a space character is excluded
-islower		PROTO :SINT	; lowercase letter (a to z)
-isprint		PROTO :SINT	; printing character (0x20 to 0x7E)
-ispunct		PROTO :SINT	; punctuation character (iscntrl or isspace)
-isxdigit	PROTO :SINT	; hexadecimal digit (0 to 9, A to F, a to f)
-toupper		PROTO :SINT
-tolower		PROTO :SINT
+islower		proto __cdecl :SINT ; lowercase letter (a to z)
+isprint		proto __cdecl :SINT ; printing character (0x20 to 0x7E)
+ispunct		proto __cdecl :SINT ; punctuation character (iscntrl or isspace)
+isxdigit	proto __cdecl :SINT ; hexadecimal digit (0 to 9, A to F, a to f)
+toupper		proto __cdecl :SINT
+tolower		proto __cdecl :SINT
 
-_isctype	PROTO :SINT, :SINT
-_tolower	PROTO :SINT
-_toupper	PROTO :SINT
-__isascii	PROTO :SINT
-__toascii	PROTO :SINT
-__iscsymf	PROTO :SINT
-__iscsym	PROTO :SINT
+_isctype	proto __cdecl :SINT, :SINT
+_tolower	proto __cdecl :SINT
+_toupper	proto __cdecl :SINT
+__isascii	proto __cdecl :SINT
+__toascii	proto __cdecl :SINT
+__iscsymf	proto __cdecl :SINT
+__iscsym	proto __cdecl :SINT
 
 ifndef _WCTYPE_DEFINED
+_WCTYPE_DEFINED equ <>
 
-iswalpha	proto :wint_t
-iswupper	proto :wint_t
-iswlower	proto :wint_t
-iswdigit	proto :wint_t
-iswxdigit	proto :wint_t
-iswspace	proto :wint_t
-iswpunct	proto :wint_t
-iswalnum	proto :wint_t
-iswprint	proto :wint_t
-iswgraph	proto :wint_t
-iswcntrl	proto :wint_t
-iswascii	proto :wint_t
-isleadbyte	proto :SINT
-
-towupper	proto :wchar_t
-towlower	proto :wchar_t
-
-iswctype	proto :wint_t, :wctype_t
-
-_WCTYPE_DEFINED equ 1
+iswalpha	proto __cdecl :wint_t
+iswupper	proto __cdecl :wint_t
+iswlower	proto __cdecl :wint_t
+iswdigit	proto __cdecl :wint_t
+iswxdigit	proto __cdecl :wint_t
+iswspace	proto __cdecl :wint_t
+iswpunct	proto __cdecl :wint_t
+iswalnum	proto __cdecl :wint_t
+iswprint	proto __cdecl :wint_t
+iswgraph	proto __cdecl :wint_t
+iswcntrl	proto __cdecl :wint_t
+iswascii	proto __cdecl :wint_t
+isleadbyte	proto __cdecl :SINT
+towupper	proto __cdecl :wchar_t
+towlower	proto __cdecl :wchar_t
+iswctype	proto __cdecl :wint_t, :wctype_t
 endif
 
 .list
+endif ; __CTYPE_INC

@@ -1,17 +1,21 @@
+ifndef __STDARG_INC
+__STDARG_INC equ <>
 ifndef __LIBC_INC
  include libc.inc
 endif
-
 .xlist
-ifndef _INC_STDARG
-_INC_STDARG equ 1
 
-ifdef  _MSC_VER
+;ifdef	_MSC_VER
+if 0;def _WINDOWS_
 ;
 ; Currently, all MS C compilers for Win32 platforms default to 8 byte
 ; alignment.
 ;
+ifdef _WIN64
 option fieldalign:8
+else
+option fieldalign:4
+endif
 endif
 
 va_list typedef ptr sbyte
@@ -36,6 +40,6 @@ va_end	macro ap
 	exitm<ap>
 	endm
 endif
-endif	; _INC_STDARG
 
 .list
+endif ; __STDARG_INC

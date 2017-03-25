@@ -8,58 +8,58 @@ ifdef __PE__
 option	dllimport:<msvcrt>
 endif
 
-memchr		PROTO :LPSTR, :SIZE_T,:SIZE_T
-memcpy		PROTO :LPSTR, :LPSTR, :SIZE_T
-memmove		PROTO :LPSTR, :LPSTR, :SIZE_T
-memcmp		PROTO :LPSTR, :LPSTR, :SIZE_T
-memset		PROTO :LPSTR, :SIZE_T,:SIZE_T
-_memicmp	PROTO :LPSTR, :LPSTR, :SIZE_T
+memchr		proto __cdecl :LPSTR, :SIZE_T,:SIZE_T
+memcpy		proto __cdecl :LPSTR, :LPSTR, :SIZE_T
+memmove		proto __cdecl :LPSTR, :LPSTR, :SIZE_T
+memcmp		proto __cdecl :LPSTR, :LPSTR, :SIZE_T
+memset		proto __cdecl :LPSTR, :SIZE_T,:SIZE_T
+_memicmp	proto __cdecl :LPSTR, :LPSTR, :SIZE_T
 
-strlen		PROTO :LPSTR
-strchr		PROTO :LPSTR, :SIZE_T
-strcmp		PROTO :LPSTR, :LPSTR
-strncmp		PROTO :LPSTR, :LPSTR, :SIZE_T
-strcpy		PROTO :LPSTR, :LPSTR
-strncpy		PROTO :LPSTR, :LPSTR, :SIZE_T
-strcat		PROTO :LPSTR, :LPSTR
-_stricmp	PROTO :LPSTR, :LPSTR
-_strnicmp	PROTO :LPSTR, :LPSTR, :SIZE_T
-_strupr		PROTO :LPSTR
-_strrev		PROTO :LPSTR
-_strlwr		PROTO :LPSTR
-strrchr		PROTO :LPSTR, :SIZE_T
-strstr		PROTO :LPSTR, :LPSTR
-_mbspbrk	PROTO :LPSTR, :LPSTR
+strlen		proto __cdecl :LPSTR
+strchr		proto __cdecl :LPSTR, :SIZE_T
+strcmp		proto __cdecl :LPSTR, :LPSTR
+strncmp		proto __cdecl :LPSTR, :LPSTR, :SIZE_T
+strcpy		proto __cdecl :LPSTR, :LPSTR
+strncpy		proto __cdecl :LPSTR, :LPSTR, :SIZE_T
+strcat		proto __cdecl :LPSTR, :LPSTR
+_stricmp	proto __cdecl :LPSTR, :LPSTR
+_strnicmp	proto __cdecl :LPSTR, :LPSTR, :SIZE_T
+_strupr		proto __cdecl :LPSTR
+_strrev		proto __cdecl :LPSTR
+_strlwr		proto __cdecl :LPSTR
+strrchr		proto __cdecl :LPSTR, :SIZE_T
+strstr		proto __cdecl :LPSTR, :LPSTR
+_mbspbrk	proto __cdecl :LPSTR, :LPSTR
 
 ifndef _WSTRING_DEFINED
 
-wcscat		proto :ptr wchar_t, :ptr wchar_t
-wcschr		proto :ptr wchar_t, :wchar_t
-wcscmp		proto :ptr wchar_t, :ptr wchar_t
-wcscpy		proto :ptr wchar_t, :ptr wchar_t
-wcscspn		proto :ptr wchar_t, :ptr wchar_t
-wcslen		proto :ptr wchar_t
-wcsncat		proto :ptr wchar_t, :ptr wchar_t, :size_t
-wcsncmp		proto :ptr wchar_t, :ptr wchar_t, :size_t
-wcsncpy		proto :ptr wchar_t, :ptr wchar_t, :size_t
-wcspbrk		proto :ptr wchar_t, :ptr wchar_t
-wcsrchr		proto :ptr wchar_t, :wchar_t
-wcsspn		proto :ptr wchar_t, :ptr wchar_t
-wcsstr		proto :ptr wchar_t, :ptr wchar_t
-wcstok		proto :ptr wchar_t, :ptr wchar_t
-_wcsdup		proto :ptr wchar_t
-_wcsicmp	proto :ptr wchar_t, :ptr wchar_t
-_wcsnicmp	proto :ptr wchar_t, :ptr wchar_t, :size_t
-_wcsnset	proto :ptr wchar_t, :wchar_t, :size_t
-_wcsrev		proto :ptr wchar_t
-_wcsset		proto :ptr wchar_t, :wchar_t
-_wcslwr		proto :ptr wchar_t
-_wcsupr		proto :ptr wchar_t
-wcsxfrm		proto :ptr wchar_t, :ptr wchar_t, :size_t
-wcscoll		proto :ptr wchar_t, :ptr wchar_t
-_wcsicoll	proto :ptr wchar_t, :ptr wchar_t
-_wcsncoll	proto :ptr wchar_t, :ptr wchar_t, :size_t
-_wcsnicoll	proto :ptr wchar_t, :ptr wchar_t, :size_t
+wcscat		proto __cdecl :ptr wchar_t, :ptr wchar_t
+wcschr		proto __cdecl :ptr wchar_t, :wchar_t
+wcscmp		proto __cdecl :ptr wchar_t, :ptr wchar_t
+wcscpy		proto __cdecl :ptr wchar_t, :ptr wchar_t
+wcscspn		proto __cdecl :ptr wchar_t, :ptr wchar_t
+wcslen		proto __cdecl :ptr wchar_t
+wcsncat		proto __cdecl :ptr wchar_t, :ptr wchar_t, :size_t
+wcsncmp		proto __cdecl :ptr wchar_t, :ptr wchar_t, :size_t
+wcsncpy		proto __cdecl :ptr wchar_t, :ptr wchar_t, :size_t
+wcspbrk		proto __cdecl :ptr wchar_t, :ptr wchar_t
+wcsrchr		proto __cdecl :ptr wchar_t, :wchar_t
+wcsspn		proto __cdecl :ptr wchar_t, :ptr wchar_t
+wcsstr		proto __cdecl :ptr wchar_t, :ptr wchar_t
+wcstok		proto __cdecl :ptr wchar_t, :ptr wchar_t
+_wcsdup		proto __cdecl :ptr wchar_t
+_wcsicmp	proto __cdecl :ptr wchar_t, :ptr wchar_t
+_wcsnicmp	proto __cdecl :ptr wchar_t, :ptr wchar_t, :size_t
+_wcsnset	proto __cdecl :ptr wchar_t, :wchar_t, :size_t
+_wcsrev		proto __cdecl :ptr wchar_t
+_wcsset		proto __cdecl :ptr wchar_t, :wchar_t
+_wcslwr		proto __cdecl :ptr wchar_t
+_wcsupr		proto __cdecl :ptr wchar_t
+wcsxfrm		proto __cdecl :ptr wchar_t, :ptr wchar_t, :size_t
+wcscoll		proto __cdecl :ptr wchar_t, :ptr wchar_t
+_wcsicoll	proto __cdecl :ptr wchar_t, :ptr wchar_t
+_wcsncoll	proto __cdecl :ptr wchar_t, :ptr wchar_t, :size_t
+_wcsnicoll	proto __cdecl :ptr wchar_t, :ptr wchar_t, :size_t
 
 ;; Old names
 wcswcs		equ <wcsstr>
@@ -67,15 +67,15 @@ wcswcs		equ <wcsstr>
 ifndef __STDC__
 
 ;; prototypes for oldnames.lib functions
-wcsdup		proto :ptr wchar_t
-wcsicmp		proto :ptr wchar_t, :ptr wchar_t
-wcsnicmp	proto :ptr wchar_t, :ptr wchar_t, :size_t
-wcsnset		proto :ptr wchar_t, :wchar_t, :size_t
-wcsrev		proto :ptr wchar_t
-wcsset		proto :ptr wchar_t, :wchar_t
-wcslwr		proto :ptr wchar_t
-wcsupr		proto :ptr wchar_t
-wcsicoll	proto :ptr wchar_t, :ptr wchar_t
+wcsdup		proto __cdecl :ptr wchar_t
+wcsicmp		proto __cdecl :ptr wchar_t, :ptr wchar_t
+wcsnicmp	proto __cdecl :ptr wchar_t, :ptr wchar_t, :size_t
+wcsnset		proto __cdecl :ptr wchar_t, :wchar_t, :size_t
+wcsrev		proto __cdecl :ptr wchar_t
+wcsset		proto __cdecl :ptr wchar_t, :wchar_t
+wcslwr		proto __cdecl :ptr wchar_t
+wcsupr		proto __cdecl :ptr wchar_t
+wcsicoll	proto __cdecl :ptr wchar_t, :ptr wchar_t
 
 endif  ;; NOT __STDC__
 
@@ -86,36 +86,54 @@ endif
 
 ifndef __PE__
 
-memxchg		PROTO :LPSTR, :LPSTR, :SIZE_T
-memstri		PROTO :LPSTR, :SIZE_T, :LPSTR, :SIZE_T
-memrchr		PROTO :LPSTR, :SIZE_T, :SIZE_T
-memquote	PROTO :LPSTR, :SIZE_T
-memzero		PROTO :LPSTR, :SIZE_T
+memxchg		proto _CType :LPSTR, :LPSTR, :SIZE_T
+memstri		proto _CType :LPSTR, :SIZE_T, :LPSTR, :SIZE_T
+memrchr		proto _CType :LPSTR, :SIZE_T, :SIZE_T
+memquote	proto _CType :LPSTR, :SIZE_T
+memzero		proto _CType :LPSTR, :SIZE_T
 
-strfn		PROTO :LPSTR
-strext		PROTO :LPSTR
-setfext		PROTO :LPSTR, :LPSTR
-strfcat		PROTO :LPSTR, :LPSTR, :LPSTR
-strxchg		PROTO :LPSTR, :LPSTR, :LPSTR
-strpath		PROTO :LPSTR
-strnzcpy	PROTO :LPSTR, :LPSTR, :SIZE_T
-strstart	PROTO :LPSTR
-strspace	PROTO :LPSTR
-strtrim		PROTO :LPSTR
-strtoken	PROTO :LPSTR
-strstri		PROTO :LPSTR, :LPSTR
-strins		PROTO :LPSTR, :LPSTR
-strtolx		PROTO :LPSTR
-strmove		PROTO :LPSTR, :LPSTR
-strchri		PROTO :LPSTR, :SIZE_T
-streol		PROTO :LPSTR
+strfn		proto _CType :LPSTR
+strext		proto _CType :LPSTR
+setfext		proto _CType :LPSTR, :LPSTR
+strfcat		proto _CType :LPSTR, :LPSTR, :LPSTR
+strxchg		proto _CType :LPSTR, :LPSTR, :LPSTR
+strpath		proto _CType :LPSTR
+strnzcpy	proto _CType :LPSTR, :LPSTR, :SIZE_T
+strstart	proto _CType :LPSTR
+strspace	proto _CType :LPSTR
+strtrim		proto _CType :LPSTR
+strtoken	proto _CType :LPSTR
+strstri		proto _CType :LPSTR, :LPSTR
+strins		proto _CType :LPSTR, :LPSTR
+strtolx		proto _CType :LPSTR
+strmove		proto _CType :LPSTR, :LPSTR
+strchri		proto _CType :LPSTR, :SIZE_T
+streol		proto _CType :LPSTR
 
-cmpwarg		PROTO :LPSTR, :LPSTR
-cmpwargs	PROTO :LPSTR, :LPSTR
-dostounix	PROTO :LPSTR
-unixtodos	PROTO :LPSTR
+cmpwarg		proto _CType :LPSTR, :LPSTR
+cmpwargs	proto _CType :LPSTR, :LPSTR
+dostounix	proto _CType :LPSTR
+unixtodos	proto _CType :LPSTR
+
+ifdef __SSE__
+
+memchr_sse	proto __cdecl :LPSTR, :SIZE_T,:SIZE_T
+memcpy_sse	proto __cdecl :LPSTR, :LPSTR, :SIZE_T
+strlen_sse	proto __cdecl :LPSTR
+strchr_sse	proto __cdecl :LPSTR, :SIZE_T
+strcmp_sse	proto __cdecl :LPSTR, :LPSTR
+strncmp_sse	proto __cdecl :LPSTR, :LPSTR, :SIZE_T
+strrchr_sse	proto __cdecl :LPSTR, :SIZE_T
+strstr_sse	proto __cdecl :LPSTR, :LPSTR
+
+memstri_sse	proto _CType :LPSTR, :SIZE_T, :LPSTR, :SIZE_T
+memrchr_sse	proto _CType :LPSTR, :SIZE_T, :SIZE_T
+memquote_sse	proto _CType :LPSTR, :SIZE_T
+strchri_sse	proto _CType :LPSTR, :SIZE_T
+streol_sse	proto _CType :LPSTR
 
 endif
+endif ;; !__PE__
 
 .list
 endif ;; __STRING_INC

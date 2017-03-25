@@ -1,12 +1,20 @@
 include string.inc
+ifdef _SSE
+include crtl.inc
 
-	OPTION PROLOGUE:NONE, EPILOGUE:NONE
-
-ifndef __SSE__
-
+	.data
+	strlen_p dd _rtl_strlen
+endif
 	.code
 
+	OPTION	PROLOGUE:NONE, EPILOGUE:NONE
+
+ifdef _SSE
+strlen_386:
+else
 strlen	PROC string:LPSTR
+endif
+
 if 0
 	mov	ecx,[esp+4]
 	xor	eax,eax
@@ -145,224 +153,22 @@ L3:
 	sub	eax,[esp+4]
 	ret	4
 endif
-strlen	ENDP
 
-else	; SSE2 - Auto install
-
-include math.inc
-
-	.data
-	strlen_p dd _rtl_strlen
-
-	.code
-
-strlen_SSE2:
-
-	mov	ecx,[esp+4]	; string
-
-	test	ecx,16-1
-	jz	aligned_16
-
-	xor	eax,eax
-
-	cmp	[ecx+0],al
-	jz	exit_0
-	cmp	[ecx+1],al
-	jz	exit_1
-	cmp	[ecx+2],al
-	jz	exit_2
-	cmp	[ecx+3],al
-	jz	exit_3
-	cmp	[ecx+4],al
-	jz	exit_4
-	cmp	[ecx+5],al
-	jz	exit_5
-	cmp	[ecx+6],al
-	jz	exit_6
-	cmp	[ecx+7],al
-	jz	exit_7
-	add	eax,8
-	cmp	[ecx+8],ah
-	jz	exit_0
-	cmp	[ecx+9],ah
-	jz	exit_1
-	cmp	[ecx+10],ah
-	jz	exit_2
-	cmp	[ecx+11],ah
-	jz	exit_3
-	cmp	[ecx+12],ah
-	jz	exit_4
-	cmp	[ecx+13],ah
-	jz	exit_5
-	cmp	[ecx+14],ah
-	jz	exit_6
-	cmp	[ecx+15],ah
-	jz	exit_7
-
-	add	ecx,10h
-	and	ecx,-10h
-
-	ALIGN	4
-aligned_16:
-
-	xorps	xmm0,xmm0
-
-	pcmpeqb xmm0,[ecx]
-	pmovmskb eax,xmm0
-	test	eax,eax
-	jnz	exit_00
-
-	pcmpeqb xmm0,[ecx+10h]
-	pmovmskb eax,xmm0
-	test	eax,eax
-	jnz	exit_10
-
-	pcmpeqb xmm0,[ecx+20h]
-	pmovmskb eax,xmm0
-	test	eax,eax
-	jnz	exit_20
-
-	pcmpeqb xmm0,[ecx+30h]
-	pmovmskb eax,xmm0
-	test	eax,eax
-	jnz	exit_30
-
-	add	ecx,40h
-	and	ecx,-40h
-
-	ALIGN	16
-loop_64:
-	movaps	xmm1,[ecx]
-	movaps	xmm2,[ecx+10h]
-	movaps	xmm3,[ecx+20h]
-	movaps	xmm4,[ecx+30h]
-	pminub	xmm1,xmm2
-	pminub	xmm3,xmm4
-	pminub	xmm1,xmm3
-	pcmpeqb xmm1,xmm0
-	pmovmskb eax,xmm1
-	add	ecx,40h
-	test	eax,eax
-	jz	loop_64
-
-	sub	ecx,40h
-
-	pcmpeqb xmm0,[ecx]
-	pmovmskb eax,xmm0
-	test	eax,eax
-	jnz	exit_00
-
-	pcmpeqb xmm2,xmm0
-	pmovmskb eax,xmm2
-	test	eax,eax
-	jnz	exit_10
-
-	pcmpeqb xmm0,[ecx+20h]
-	pmovmskb eax,xmm0
-	test	eax,eax
-	jnz	exit_20
-
-	pcmpeqb xmm0,xmm4
-	pmovmskb eax,xmm0
-
-exit_30:
-	add	ecx,10h
-exit_20:
-	add	ecx,10h
-exit_10:
-	add	ecx,10h
-exit_00:
-	bsf	eax,eax
-	add	eax,ecx
-	sub	eax,[esp+4]
-	ret	4
-exit_40:
-	add	ecx,40h
-	jmp	exit_00
-exit_0:
-	test	eax,eax
-	ret	4
-	ALIGN	4
-exit_1:
-	add	eax,1
-	ret	4
-	ALIGN	4
-exit_2:
-	add	eax,2
-	ret	4
-	ALIGN	4
-exit_3:
-	add	eax,3
-	ret	4
-	ALIGN	4
-exit_4:
-	add	eax,4
-	ret	4
-	ALIGN	4
-exit_5:
-	add	eax,5
-	ret	4
-	ALIGN	4
-exit_6:
-	add	eax,6
-	ret	4
-	ALIGN	4
-exit_7:
-	add	eax,7
-	ret	4
-
-	ALIGN	16
-
-strlen_386:
-
-	mov	ecx,[esp+4]
-	xor	eax,eax
-
-	cmp	[ecx+0],al
-	jz	exit_0
-	cmp	[ecx+1],al
-	jz	exit_1
-	cmp	[ecx+2],al
-	jz	exit_2
-	cmp	[ecx+3],al
-	jz	exit_3
-
-	and	ecx,-4
-	push	edx
-
-	ALIGN	4
-@@:
-	add	ecx,4
-	mov	edx,[ecx]
-	lea	eax,[edx-01010101h]
-	not	edx
-	and	eax,edx
-	and	eax,80808080h
-	jz	@B
-	pop	edx
-	bsf	eax,eax
-	shr	eax,3
-	add	eax,ecx
-	sub	eax,[esp+4]
-	ret	4
-
-	ALIGN	16
-
+ifdef _SSE
 strlen	PROC string:LPSTR
 	jmp	strlen_p
 strlen	ENDP
-
-	ALIGN	4
 	;
 	; First call: set pointer and jump
 	;
 _rtl_strlen:
 	mov	eax,strlen_386
 	.if	sselevel & SSE_SSE2
-		mov eax,strlen_SSE2
+		mov eax,strlen_sse
 	.endif
 	mov	strlen_p,eax
 	jmp	eax
-
+else
+strlen	ENDP
 endif
 	END

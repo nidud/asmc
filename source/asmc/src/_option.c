@@ -640,10 +640,10 @@ OPTFUNC( SetASMC )
     struct expr opndx;
 
     if ( 0 == _stricmp( tokenarray[i].string_ptr, "ON" ) ) {
-	ModuleInfo.asmc_syntax = 1;
+	ModuleInfo.aflag |= _AF_ON;
 	*pi = i + 1;
     } else if ( 0 == _stricmp( tokenarray[i].string_ptr, "OFF" ) ) {
-	ModuleInfo.asmc_syntax = 0;
+	ModuleInfo.aflag &= ~_AF_ON;
 	*pi = i + 1;
     } else {
 	if ( EvalOperand( &i, tokenarray, Token_Count, &opndx, EXPF_NOUNDEF ) == ERROR )
@@ -658,7 +658,7 @@ OPTFUNC( SetASMC )
 		if( temp != opndx.uvalue )
 			return( asmerr( 2063, opndx.value ) );
 	}
-	ModuleInfo.asmc_syntax = temp;
+	ModuleInfo.aflag = temp;
 	*pi = i;
     }
     return NOT_ERROR;
@@ -672,9 +672,9 @@ OPTFUNC( SetCStack )
     int i = *pi;
 
     if ( 0 == _stricmp( tokenarray[i].string_ptr, "ON" ) ) {
-	ModuleInfo.c_stack_frame = 1;
+	ModuleInfo.aflag |= _AF_CSTACK;
     } else if ( 0 == _stricmp( tokenarray[i].string_ptr, "OFF" ) ) {
-	ModuleInfo.c_stack_frame = 0;
+	ModuleInfo.aflag &= ~_AF_CSTACK;
     } else {
 	return( asmerr(2008, tokenarray[i].string_ptr ) );
     }
@@ -690,9 +690,9 @@ OPTFUNC( SetWString )
     int i = *pi;
 
     if ( 0 == _stricmp( tokenarray[i].string_ptr, "ON" ) ) {
-	ModuleInfo.wstring = 1;
+	ModuleInfo.aflag |= _AF_WSTRING;
     } else if ( 0 == _stricmp( tokenarray[i].string_ptr, "OFF" ) ) {
-	ModuleInfo.wstring = 0;
+	ModuleInfo.aflag &= ~_AF_WSTRING;
     } else {
 	return( asmerr(2008, tokenarray[i].string_ptr ) );
     }
@@ -708,19 +708,19 @@ OPTFUNC( SetSwitch )
     int i = *pi;
 
     if ( 0 == _stricmp( tokenarray[i].string_ptr, "C" ) ) {
-	ModuleInfo.hll_switch &= ~SWITCH_PASCAL;
+	ModuleInfo.aflag &= ~_AF_PASCAL;
     } else if ( 0 == _stricmp( tokenarray[i].string_ptr, "PASCAL" ) ) {
-	ModuleInfo.hll_switch |= SWITCH_PASCAL;
+	ModuleInfo.aflag |= _AF_PASCAL;
     } else if ( 0 == _stricmp( tokenarray[i].string_ptr, "TABLE" ) ) {
-	ModuleInfo.hll_switch |= SWITCH_TABLE;
+	ModuleInfo.aflag |= _AF_TABLE;
     } else if ( 0 == _stricmp( tokenarray[i].string_ptr, "NOTABLE" ) ) {
-	ModuleInfo.hll_switch &= ~SWITCH_TABLE;
+	ModuleInfo.aflag &= ~_AF_TABLE;
     } else if ( 0 == _stricmp( tokenarray[i].string_ptr, "REGAX" ) ) {
-	ModuleInfo.hll_switch |= SWITCH_REGAX;
+	ModuleInfo.aflag |= _AF_REGAX;
     } else if ( 0 == _stricmp( tokenarray[i].string_ptr, "NOREGS" ) ) {
-	ModuleInfo.hll_switch &= ~(SWITCH_REGAX);
+	ModuleInfo.aflag &= ~(_AF_REGAX);
     } else if ( 0 == _stricmp( tokenarray[i].string_ptr, "NOTEST" ) ) {
-	ModuleInfo.hll_switch |= SWITCH_NOTEST;
+	ModuleInfo.aflag |= _AF_NOTEST;
     } else {
 	return( asmerr(2008, tokenarray[i].string_ptr ) );
     }

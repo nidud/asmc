@@ -154,8 +154,6 @@ endif
 
 			  .case ST_NORMAL
 
-			   NORMAL_STATE:
-
 				mov	bufferiswide,0
 				.if	isleadbyte(edx)
 
@@ -280,6 +278,23 @@ endif
 
 				mov	eax,edx
 				.switch eax
+				  .case 'b'
+					mov eax,arglist
+					add arglist,4
+					mov edx,[eax]
+					bsr ecx,edx
+					inc ecx
+					mov textlen,ecx
+					.repeat
+						sub eax,eax
+						shr edx,1
+						adc al,'0'
+						mov buffer[ecx-1],al
+					.untilcxz
+					lea eax,buffer
+					mov text,eax
+					.endc
+
 				  .case 'C'	; ISO wide character
 					.if !(esi & (FLAG_SHORT or FLAG_LONG or FLAG_WIDECHAR))
 						;
@@ -333,7 +348,7 @@ endif
 					.endc
 
 				  .case 'S'	; ISO wide character string
-					.if	!(esi & (FLAG_SHORT or FLAG_LONG or FLAG_WIDECHAR))
+					.if !(esi & (FLAG_SHORT or FLAG_LONG or FLAG_WIDECHAR))
 
 						or esi,FLAG_SHORT
 					.endif

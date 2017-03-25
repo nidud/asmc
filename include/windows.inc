@@ -8,8 +8,6 @@ endif
 ifndef _WINDOWS_
 _WINDOWS_ equ <>
 
-option fieldalign:8
-
 if not defined(_68K_)	and \
    not defined(_MPPC_)	and \
    not defined(_X86_)	and \
@@ -343,23 +341,25 @@ SubclassDialog macro hwndDlg, lpfn
 	endm
 
 SetDlgMsgResult macro hwnd, msg, result
-	.if	msg == WM_CTLCOLORMSGBOX	OR \
-		msg == WM_CTLCOLOREDIT		OR \
-		msg == WM_CTLCOLORLISTBOX	OR \
-		msg == WM_CTLCOLORBTN		OR \
-		msg == WM_CTLCOLORDLG		OR \
-		msg == WM_CTLCOLORSCROLLBAR	OR \
-		msg == WM_CTLCOLORSTATIC	OR \
-		msg == WM_COMPAREITEM		OR \
-		msg == WM_VKEYTOITEM		OR \
-		msg == WM_CHARTOITEM		OR \
-		msg == WM_QUERYDRAGICON		OR \
-		msg == WM_INITDIALOG
+	.switch msg
+	  .case WM_CTLCOLORMSGBOX
+	  .case WM_CTLCOLOREDIT
+	  .case WM_CTLCOLORLISTBOX
+	  .case WM_CTLCOLORBTN
+	  .case WM_CTLCOLORDLG
+	  .case WM_CTLCOLORSCROLLBAR
+	  .case WM_CTLCOLORSTATIC
+	  .case WM_COMPAREITEM
+	  .case WM_VKEYTOITEM
+	  .case WM_CHARTOITEM
+	  .case WM_QUERYDRAGICON
+	  .case WM_INITDIALOG
 		mov eax,result
-	.else
+		.endc
+	  .default
 		SetWindowLongPtr(hwnd, DWLP_MSGRESULT, result)
 		mov eax,TRUE
-	.endif
+	.endsw
 	exitm<eax>
 	endm
 

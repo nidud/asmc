@@ -69,11 +69,16 @@ unicode:
 		stosw
 	.until	!al
 	lea	esi,[edx+WMAXPATH]
+	mov	[esi].S_WFBLKW.wf_name,ax
+	mov	[esi].S_WFBLKW.wf_shortname,ax
+
 	FindFirstFileW( edx, esi )
 done:
-	.if	eax != -1
+	.if eax != -1
+
 		push	eax
 		.if	ebx
+
 			mov	edi,fblk
 			mov	ecx,S_WFBLK.wf_name / 4
 			rep	movsd
@@ -90,6 +95,7 @@ done:
 				stosb
 			.until	!al
 		.endif
+
 		mov	ecx,fblk
 		mov	eax,dword ptr [ecx].S_WFBLK.wf_size[4]
 		mov	edx,dword ptr [ecx].S_WFBLK.wf_size

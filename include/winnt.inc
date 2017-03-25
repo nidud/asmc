@@ -4,7 +4,6 @@ include ctype.inc
 include string.inc
 include basetsd.inc
 .xlist
-
 ;
 ; This module defines the 32-Bit Windows types and constants that are
 ; defined by NT, but exposed through the Win32 API.
@@ -78,26 +77,30 @@ TYPE_ALIGNMENT macro t
 	exitm<S1.l2>
 	endm
 
-PROBE_ALIGNMENT macro _s
 ifdef _WIN64
 ifdef _AMD64_
+PROBE_ALIGNMENT macro _s
 	exitm<TYPE_ALIGNMENT(DWORD)>
+	endm
 elseifdef _IA64_
-	if TYPE_ALIGNMENT(_s) GT TYPE_ALIGNMENT(DWORD)
-	   exitm<TYPE_ALIGNMENT(_s)
-	else
-	   exitm<TYPE_ALIGNMENT(DWORD)>
-	endif
+PROBE_ALIGNMENT macro _s
+if TYPE_ALIGNMENT(_s) GT TYPE_ALIGNMENT(DWORD)
+	exitm<TYPE_ALIGNMENT(_s)>
+else
+	exitm<TYPE_ALIGNMENT(DWORD)>
+endif
+	endm
 else
 	.err <No Target Architecture>
 endif
-	endm
 PROBE_ALIGNMENT32 macro _s
 	exitm<TYPE_ALIGNMENT(DWORD)>
-else
-	exitm<TYPE_ALIGNMENT(DWORD)>
-endif
 	endm
+else
+PROBE_ALIGNMENT macro _s
+	exitm<TYPE_ALIGNMENT(DWORD)>
+	endm
+endif
 
 ;;
 ;; C_ASSERT() can be used to perform many compile-time assertions:
@@ -250,9 +253,8 @@ PVOID			typedef ptr
 PVOID64			typedef ptr
 
 if (_MSC_VER GE 800) OR defined(_STDCALL_SUPPORTED)
-NTAPI			equ <__stdcall>
+NTAPI			equ <stdcall>
 else
-__cdecl			equ <>
 NTAPI			equ <>
 endif
 
@@ -357,13 +359,10 @@ MAX_UCSCHAR		equ 0x0010FFFF
 
 PUCSCHAR		typedef ptr UCSCHAR
 PCUCSCHAR		typedef ptr UCSCHAR
-
 PUCSSTR			typedef ptr UCSCHAR
 PUUCSSTR		typedef ptr UCSCHAR ;UNALIGNED
-
 PCUCSSTR		typedef ptr UCSCHAR
 PCUUCSSTR		typedef ptr UCSCHAR ;UNALIGNED
-
 PUUCSCHAR		typedef ptr UCSCHAR ;UNALIGNED
 PCUUCSCHAR		typedef ptr UCSCHAR ;UNALIGNED
 
@@ -1106,7 +1105,10 @@ CONTAINING_RECORD macro address, x, field
 ;; Exception handler routine definition.
 ;;
 
-include excpt.inc
+ifndef __EXCPT_INC
+ include excpt.inc
+ .xlist
+endif
 
 EXCEPTION_MAXIMUM_PARAMETERS	equ 15	; maximum number of exception parameters
 
@@ -2207,19 +2209,19 @@ _interlockedbittestandreset64 proto _CType \
 	       _Offset: LONG64
 
 
-;pragma intrinsic(_bittest)
-;pragma intrinsic(_bittestandcomplement)
-;pragma intrinsic(_bittestandset)
-;pragma intrinsic(_bittestandreset)
-;pragma intrinsic(_interlockedbittestandset)
-;pragma intrinsic(_interlockedbittestandreset)
+pragma intrinsic(_bittest)
+pragma intrinsic(_bittestandcomplement)
+pragma intrinsic(_bittestandset)
+pragma intrinsic(_bittestandreset)
+pragma intrinsic(_interlockedbittestandset)
+pragma intrinsic(_interlockedbittestandreset)
 
-;pragma intrinsic(_bittest64)
-;pragma intrinsic(_bittestandcomplement64)
-;pragma intrinsic(_bittestandset64)
-;pragma intrinsic(_bittestandreset64)
-;pragma intrinsic(_interlockedbittestandset64)
-;pragma intrinsic(_interlockedbittestandreset64)
+pragma intrinsic(_bittest64)
+pragma intrinsic(_bittestandcomplement64)
+pragma intrinsic(_bittestandset64)
+pragma intrinsic(_bittestandreset64)
+pragma intrinsic(_interlockedbittestandset64)
+pragma intrinsic(_interlockedbittestandreset64)
 
 ;;
 ;; Define bit scan intrinsics.
@@ -2247,15 +2249,15 @@ _BitScanReverse64 proto _CType \
 		 Index: ptr dword,
 		 _Mask: DWORD64
 
-;pragma intrinsic(_BitScanForward)
-;pragma intrinsic(_BitScanReverse)
-;pragma intrinsic(_BitScanForward64)
-;pragma intrinsic(_BitScanReverse64)
+pragma intrinsic(_BitScanForward)
+pragma intrinsic(_BitScanReverse)
+pragma intrinsic(_BitScanForward64)
+pragma intrinsic(_BitScanReverse64)
 
 ;;
 ;; Interlocked intrinsic functions.
 ;;
-
+if 0
 InterlockedIncrement16	equ <_InterlockedIncrement16>
 InterlockedDecrement16	equ <_InterlockedDecrement16>
 InterlockedCompareExchange16 equ <_InterlockedCompareExchange16>
@@ -2303,6 +2305,7 @@ InterlockedExchangePointer equ <_InterlockedExchangePointer>
 InterlockedCompareExchangePointer equ <_InterlockedCompareExchangePointer>
 InterlockedCompareExchangePointerAcquire equ <_InterlockedCompareExchangePointer>
 InterlockedCompareExchangePointerRelease equ <_InterlockedCompareExchangePointer>
+endif
 
 InterlockedExchangeAddSizeT macro a, b
 	exitm<InterlockedExchangeAdd64(a, b)>
@@ -2332,11 +2335,11 @@ InterlockedAnd proto _CType \
 		 Value: LONG
 ;LONG
 InterlockedOr proto _CType \
-	   Destination: ptr LONG,
+	   Destination: LPLONG,
 		 Value: LONG
 ;LONG
 InterlockedXor proto _CType \
-	   Destination: ptr LONG,
+	   Destination: LPLONG,
 		 Value: LONG
 ;LONG64
 InterlockedAnd64 proto _CType \
@@ -2439,13 +2442,14 @@ pragma intrinsic(_InterlockedCompareExchangePointer)
 
 
 if _MSC_FULL_VER GE 140041204
-
+if 0
 InterlockedAnd8		equ <_InterlockedAnd8>
 InterlockedOr8		equ <_InterlockedOr8>
 InterlockedXor8		equ <_InterlockedXor8>
 InterlockedAnd16	equ <_InterlockedAnd16>
 InterlockedOr16		equ <_InterlockedOr16>
 InterlockedXor16	equ <_InterlockedXor16>
+endif
 
 ;char
 InterlockedAnd8 proto _CType \
@@ -2688,33 +2692,29 @@ pragma intrinsic(__movsq)
 ;; Define functions to store strings as bytes, words, dwords, and qwords.
 ;;
 
-VOID
-__stosb (
-    __out_ecount_full(Count) PBYTE  Destination,
-    __in BYTE  Value,
-    __in SIZE_T Count
-    );
+;VOID
+__stosb proto _CType \
+	   Destination: PBYTE,
+		 Value: BYTE,
+		 Count: SIZE_T
 
-VOID
-__stosw (
-    __out_ecount_full(Count) PWORD   Destination,
-    __in WORD	Value,
-    __in SIZE_T Count
-    );
+;VOID
+__stosw proto _CType \
+	   Destination: PWORD,
+		 Value: WORD,
+		 Count: SIZE_T
 
-VOID
-__stosd (
-    __out_ecount_full(Count) PDWORD Destination,
-    __in DWORD Value,
-    __in SIZE_T Count
-    );
+;VOID
+__stosd proto _CType \
+	   Destination: PDWORD,
+		 Value: DWORD,
+		 Count: SIZE_T
 
-VOID
-__stosq (
-    __out_ecount_full(Count) PDWORD64 Destination,
-    __in DWORD64 Value,
-    __in SIZE_T Count
-    );
+;VOID
+__stosq proto _CType \
+	   Destination: PDWORD64,
+		 Value: DWORD64,
+		 Count: SIZE_T
 
 pragma intrinsic(__stosb)
 pragma intrinsic(__stosw)
@@ -2933,7 +2933,8 @@ CONTEXT_EXCEPTION_REPORTING equ 0x80000000
 INITIAL_MXCSR		equ 0x1f80	      ;; initial MXCSR value
 INITIAL_FPCSR		equ 0x027f	      ;; initial FPCSR value
 
-PXMM_SAVE_AREA32	typedef ptr XSAVE_FORMAT XMM_SAVE_AREA32,
+XMM_SAVE_AREA32		typedef XSAVE_FORMAT
+PXMM_SAVE_AREA32	typedef ptr XSAVE_FORMAT
 
 ;;
 ;; Context Frame
@@ -3159,24 +3160,24 @@ RtlLookupFunctionEntry proto _CType \
 
 KNONVOLATILE_CONTEXT_POINTERS  STRUC
 UNION
- FloatingContext	PM128A 16 dup(<>)
+ FloatingContext	PM128A 16 dup(?)
  STRUC
-  _Xmm0			PM128A <>
-  _Xmm1			PM128A <>
-  _Xmm2			PM128A <>
-  _Xmm3			PM128A <>
-  _Xmm4			PM128A <>
-  _Xmm5			PM128A <>
-  _Xmm6			PM128A <>
-  _Xmm7			PM128A <>
-  _Xmm8			PM128A <>
-  _Xmm9			PM128A <>
-  _Xmm10		PM128A <>
-  _Xmm11		PM128A <>
-  _Xmm12		PM128A <>
-  _Xmm13		PM128A <>
-  _Xmm14		PM128A <>
-  _Xmm15		PM128A <>
+  _Xmm0			PM128A ?
+  _Xmm1			PM128A ?
+  _Xmm2			PM128A ?
+  _Xmm3			PM128A ?
+  _Xmm4			PM128A ?
+  _Xmm5			PM128A ?
+  _Xmm6			PM128A ?
+  _Xmm7			PM128A ?
+  _Xmm8			PM128A ?
+  _Xmm9			PM128A ?
+  _Xmm10		PM128A ?
+  _Xmm11		PM128A ?
+  _Xmm12		PM128A ?
+  _Xmm13		PM128A ?
+  _Xmm14		PM128A ?
+  _Xmm15		PM128A ?
  ENDS ;DUMMYSTRUCTNAME
 ENDS ;DUMMYUNIONNAME
 
@@ -3365,7 +3366,7 @@ InterlockedCompareExchange16 equ <_InterlockedCompareExchange16>
 InterlockedOr16		equ <_InterlockedOr16>
 
 ;SHORT
-InterlockedAnd16 proto _CType \
+_InterlockedAnd16 proto _CType \
 	   Destination: LPWORD,
 		 Value: WORD
 ;SHORT
@@ -3374,7 +3375,7 @@ _InterlockedCompareExchange16 proto _CType \
 	      ExChange: WORD,
 	     Comperand: WORD
 ;SHORT
-InterlockedOr16 proto _CType \
+_InterlockedOr16 proto _CType \
 	   Destination: LPWORD,
 		 Value: WORD
 
@@ -3929,7 +3930,7 @@ _InterlockedCompareExchange16 proto _CType \
 	     Comperand: word
 
 pragma intrinsic(_InterlockedCompareExchange16)
-
+if 0
 InterlockedAdd		equ <_InterlockedAdd>
 InterlockedAddAcquire	equ <_InterlockedAdd_acq>
 InterlockedAddRelease	equ <_InterlockedAdd_rel>
@@ -3986,7 +3987,7 @@ InterlockedExchangePointerAcquire equ <_InterlockedExchangePointer_acq>
 InterlockedCompareExchangePointer equ <_InterlockedCompareExchangePointer>
 InterlockedCompareExchangePointerRelease equ <_InterlockedCompareExchangePointer_rel>
 InterlockedCompareExchangePointerAcquire equ <_InterlockedCompareExchangePointer_acq>
-
+endif
 
 InterlockedExchangeAddSizeT macro a, b
 	exitm<InterlockedExchangeAdd64(a, b)>
@@ -3998,6 +3999,7 @@ InterlockedDecrementSizeT macro a
 	exitm<InterlockedDecrement64(a)>
 	endm
 
+if 0
 InterlockedOr		equ <_InterlockedOr>
 InterlockedOrAcquire	equ <_InterlockedOr_acq>
 InterlockedOrRelease	equ <_InterlockedOr_rel>
@@ -4034,6 +4036,7 @@ InterlockedAnd16Release equ <_InterlockedAnd16_rel>
 InterlockedAnd64	equ <_InterlockedAnd64>
 InterlockedAnd64Acquire equ <_InterlockedAnd64_acq>
 InterlockedAnd64Release equ <_InterlockedAnd64_rel>
+endif
 
 ;LONG
 InterlockedAdd proto _CType \
@@ -4208,15 +4211,15 @@ InterlockedExchangePointerAcquire proto _CType \
 		 Value: PVOID
 ;LONG
 InterlockedOr proto _CType \
-	   Destination: ptr LONG,
+	   Destination: PLONG,
 		 Value: LONG
 ;LONG
 InterlockedOrAcquire proto _CType \
-	   Destination: ptr LONG,
+	   Destination: PLONG,
 		 Value: LONG
 ;LONG
 InterlockedOrRelease proto _CType \
-	   Destination: ptr LONG,
+	   Destination: PLONG,
 		 Value: LONG
 ;CHAR
 ;InterlockedOr8
@@ -5130,28 +5133,33 @@ OUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK typedef proto _CType \
 POUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK typedef ptr OUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK
 OUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK_EXPORT_NAME equ <"OutOfProcessFunctionTableCallback">
 
-;;
-;; Define runtime exception handling prototypes.
-;;
-
 ;NTSYSAPI
-;VOID
-RtlRestoreContext proto _CType \
-	 ContextRecord: PCONTEXT,
-       ExceptionRecord: ptr EXCEPTION_RECORD
-
 ;BOOLEAN
 RtlAddFunctionTable proto _CType \
 	 FunctionTable: PRUNTIME_FUNCTION,
 	    EntryCount: DWORD,
-	   BaseAddress: DWORD64
+	   BaseAddress: ULONGLONG,
+	      TargetGp: ULONGLONG
+
+;BOOLEAN
+RtlInstallFunctionTableCallback proto _CType \
+       TableIdentifier: DWORD64,
+	   BaseAddress: DWORD64,
+	       _Length: DWORD,
+	      TargetGp: DWORD64,
+	      Callback: PGET_RUNTIME_FUNCTION_CALLBACK,
+	       Context: PVOID,
+OutOfProcessCallbackDll: PCWSTR
+
+;BOOLEAN
+RtlDeleteFunctionTable proto _CType \
+	 FunctionTable: PRUNTIME_FUNCTION
 
 ;PRUNTIME_FUNCTION
 RtlLookupFunctionEntry proto _CType \
-	     ControlPc: DWORD64,
-	     ImageBase: PDWORD64,
-	  HistoryTable: PUNWIND_HISTORY_TABLE
-
+	     ControlPc: ULONGLONG,
+	     ImageBase: PULONGLONG,
+	      TargetGp: PULONGLONG
 
 ;;
 ;; Nonvolatile context pointer record.
@@ -10152,7 +10160,7 @@ IMAGE_SNAP_BY_ORDINAL32 macro Ordinal
 ;; Thread Local Storage
 ;;
 
-IMAGE_TLS_CALLBACK_T typedef proto :PVOID, :DWORD, :PVOID
+IMAGE_TLS_CALLBACK_T typedef proto _CType :PVOID, :DWORD, :PVOID
 PIMAGE_TLS_CALLBACK  typedef ptr IMAGE_TLS_CALLBACK_T
 
 IMAGE_TLS_DIRECTORY64	STRUC
@@ -11441,15 +11449,15 @@ HeapCompatibilityInformation	  equ 0
 HeapEnableTerminationOnCorruption equ 1
 
 
-WAITORTIMERCALLBACK_T		typedef proto :PVOID, :BOOLEAN
+WAITORTIMERCALLBACK_T		typedef proto _CType :PVOID, :BOOLEAN
 WAITORTIMERCALLBACKFUNC		typedef ptr WAITORTIMERCALLBACK_T
-WORKERCALLBACK_T		typedef proto :PVOID
+WORKERCALLBACK_T		typedef proto _CType :PVOID
 WORKERCALLBACKFUNC		typedef ptr WORKERCALLBACK_T
-APC_CALLBACK_FUNCTION_T		typedef proto :DWORD, :PVOID, :PVOID
+APC_CALLBACK_FUNCTION_T		typedef proto _CType :DWORD, :PVOID, :PVOID
 APC_CALLBACK_FUNCTION		typedef ptr APC_CALLBACK_FUNCTION_T
-PFLS_CALLBACK_FUNCTION_T	typedef proto :PVOID
+PFLS_CALLBACK_FUNCTION_T	typedef proto _CType :PVOID
 PFLS_CALLBACK_FUNCTION		typedef ptr PFLS_CALLBACK_FUNCTION_T
-PSECURE_MEMORY_CACHE_CALLBACK_T typedef proto :PVOID, :SIZE_T
+PSECURE_MEMORY_CACHE_CALLBACK_T typedef proto _CType :PVOID, :SIZE_T
 PSECURE_MEMORY_CACHE_CALLBACK	typedef ptr PSECURE_MEMORY_CACHE_CALLBACK_T
 
 

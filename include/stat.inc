@@ -24,6 +24,6 @@ st_mtime	dd ?
 st_ctime	dd ?
 S_STAT		ENDS
 
-_stat		PROTO :LPSTR, :PVOID
+_stat		proto __cdecl :LPSTR, :PVOID
 
 .list

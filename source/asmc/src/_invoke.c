@@ -1289,7 +1289,7 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
     i++; /* skip INVOKE directive */
     namepos = i;
 
-    if ( ModuleInfo.asmc_syntax ) {
+    if ( ModuleInfo.aflag & _AF_ON ) {
 	if ( ExpandHllProc( buffer, i, tokenarray ) == ERROR )
 	    return ERROR;
 	if (buffer[0] != 0) {

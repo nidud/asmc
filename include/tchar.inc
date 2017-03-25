@@ -6,7 +6,7 @@ endif
 ; definitions for generic international text functions
 ;
 ifndef _INC_TCHAR
-_INC_TCHAR equ 1
+_INC_TCHAR equ <>
 
 _ftcscat		equ <_tcscat>
 _ftcschr		equ <_tcschr>
@@ -70,28 +70,28 @@ ifdef  _UNICODE
 include wchar.inc
 
 ifndef _WCTYPE_T_DEFINED
-wint_t			typedef wchar_t
-wctype_t		typedef wchar_t
-_WCTYPE_T_DEFINED	equ 1
+_WCTYPE_T_DEFINED equ <>
+wint_t		typedef wchar_t
+wctype_t	typedef wchar_t
 endif
 
 ifndef __TCHAR_DEFINED
-_TCHAR			typedef wchar_t
-_TSCHAR			typedef wchar_t
-_TUCHAR			typedef wchar_t
-_TXCHAR			typedef wchar_t
-_TINT			typedef wint_t
-__TCHAR_DEFINED		equ 1
+__TCHAR_DEFINED equ <>
+_TCHAR		typedef wchar_t
+_TSCHAR		typedef wchar_t
+_TUCHAR		typedef wchar_t
+_TXCHAR		typedef wchar_t
+_TINT		typedef wint_t
 endif
 
 ifndef _TCHAR_DEFINED
+_TCHAR_DEFINED	equ <>
 if NOT __STDC__
-TCHAR			typedef wchar_t
+TCHAR		typedef wchar_t
 endif
-_TCHAR_DEFINED		equ 1
 endif
 
-_TEOF			equ WEOF
+_TEOF		equ WEOF
 if 0
 __T	macro x
 %	exitm<L&x&>
@@ -1131,26 +1131,32 @@ _TEXT	macro x
 	endm
 endif
 
-ifndef	_WIN64
-	RAX	equ <eax>
-	RBX	equ <ebx>
-	RCX	equ <ecx>
-	RDX	equ <edx>
-	RDI	equ <edi>
-	RSI	equ <esi>
-	RBP	equ <ebp>
-	RSP	equ <esp>
+ifndef _WIN64
+	RAX equ <eax>
+	RBX equ <ebx>
+	RCX equ <ecx>
+	RDX equ <edx>
+	RDI equ <edi>
+	RSI equ <esi>
+	RBP equ <ebp>
+	RSP equ <esp>
 endif
+
 ifdef __PE__
+
 	.data
 	__argc	  dd 0,0
 	__targv	  SIZE_T 0
 	_tenviron SIZE_T 0
 	_startup  db 100 dup(0)
+
 	.code
+
 mainCRTStartup proc
+
 	.if !_tgetmainargs( addr __argc, addr __targv, addr _tenviron, 0, addr _startup )
-	mov	ecx,__argc
+
+		mov	ecx,__argc
 ifdef	_WIN64
 		mov	rdx,__targv
 		mov	r8,_tenviron
@@ -1163,11 +1169,17 @@ else
 endif
 		_tmain()
 	.endif
+
 	exit(eax)
+
 mainCRTStartup endp
+
 _tstart equ <mainCRTStartup>
+
 else
+
 _tstart equ <>
+
 endif
 
 endif  ;; _INC_TCHAR

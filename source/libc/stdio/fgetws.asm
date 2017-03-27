@@ -4,24 +4,23 @@ include stdio.inc
 
 	ASSUME	ebx:ptr _iobuf
 
-fgets proc uses edi ebx buf:LPSTR, count:SINT, fp:LPFILE
+fgetws	PROC USES esi edi ebx buf:LPWSTR, count:SINT, fp:LPFILE
 
 	mov edi,buf
-	mov ecx,count
+	mov esi,count
 	mov ebx,fp
 	xor eax,eax
 
 	.repeat
-		.break .ifs ecx <= eax
-		dec ecx
-		.for : ecx : ecx--
+		.break .ifs esi <= eax
+
+		dec esi
+		.for : esi: esi--
 
 			dec [ebx]._cnt
 			.ifl
-				push	ecx
-				_filbuf( ebx )
-				pop	ecx
-				.if	eax == -1
+				_filwbuf(ebx)
+				.if eax == -1
 
 					.break .if edi != buf
 
@@ -30,18 +29,18 @@ fgets proc uses edi ebx buf:LPSTR, count:SINT, fp:LPFILE
 				.endif
 			.else
 				mov eax,[ebx]._ptr
-				add [ebx]._ptr,1
-				mov al,[eax]
+				add [ebx]._ptr,2
+				mov ax,[eax]
 			.endif
-			stosb
-			.break .if al == 10
+			stosw
+			.break .if ax == 10
 		.endf
 		xor eax,eax
-		stosb
+		stosw
 		or eax,buf
 	.until	1
 	ret
 
-fgets	ENDP
+fgetws	ENDP
 
 	END

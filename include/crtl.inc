@@ -1,3 +1,6 @@
+ifndef __CRTL_INC
+__CRTL_INC equ <>
+
 ifndef __LIBC_INC
  include libc.inc
 endif
@@ -11,13 +14,45 @@ _EXEC_CMD	equ 4
 
 externdef	OldErrorMode:dword
 
-__isexec	PROTO :LPSTR
-__setenvp	PROTO :LPSTR
-__wsetenvp	PROTO :LPWSTR
-__setargv	PROTO :SIZE_T, :PVOID, :LPSTR
-__setwargv	PROTO :SIZE_T, :PVOID, :LPWSTR
-__initialize	PROTO :PVOID, :PVOID
-__allocwpath	PROTO :LPSTR
+__isexec	proto :LPSTR
+__setenvp	proto :LPSTR
+__wsetenvp	proto :LPWSTR
+__setargv	proto :SIZE_T, :PVOID, :LPSTR
+__setwargv	proto :SIZE_T, :PVOID, :LPWSTR
+__initialize	proto :PVOID, :PVOID
+__allocwpath	proto :LPSTR
+
+ifndef _WIN64
+
+_div64I		proto ; edx:eax / ecx:ebx --> edx:eax.ecx
+_div64U		proto ; edx:eax / ecx:ebx --> edx:eax.ecx
+_mul64		proto ; edx:eax * ecx:ebx --> ecx:ebx:edx:eax
+_shr64I		proto ; edx:eax >> cl
+_shr64U		proto ; edx:eax >> cl
+
+;
+; long shift left
+;
+; signed and unsigned are same
+;
+_allshl		proto ; Microsoft - edx:eax << cl
+__llshl		proto ;
+_I8LS		proto ; Watcom	  - edx:eax << bl
+_U8LS		proto ;
+
+_addld		proto ; long double[EBX] = long double[EAX] + long double[EDX]
+_subld		proto ; long double[EBX] = long double[EAX] - long double[EDX]
+_cmpld		proto ; CMP(long double[EAX], long double[EDX])
+_mulld		proto ; long double[EBX] = long double[EAX] * long double[EDX]
+_divld		proto ; long double[EBX] = long double[EAX] / long double[EDX]
+_fdtold		proto ; double[EAX] --> long double[EDX]
+_fldtod		proto ; long double[EAX] --> double[EDX]
+_u4told		proto ; DWORD [eax] to long double[edx]
+_i4told		proto ; SDWORD [eax] to long double[edx]
+_u8told		proto ; QWORD [eax] to long double[edx]
+_i8told		proto ; SQWORD [eax] to long double[edx]
+
+endif
 
 SSE_MMX		equ 0x0001
 SSE_SSE		equ 0x0002
@@ -32,24 +67,18 @@ SSE_AVX2	equ 0x0200
 SSE_AVXOS	equ 0x0400
 
 externdef	sselevel:DWORD
-GetSSELevel	PROTO
+GetSSELevel	proto
 
-pragma_init MACRO pp, priority
-_INIT	SEGMENT PARA FLAT PUBLIC 'INIT'
-	SIZE_T pp
-	SIZE_T priority
-_INIT	ENDS
-;_IEND	SEGMENT PARA FLAT PUBLIC 'INIT'
-;_IEND	ENDS
-	ENDM
+pragma_init macro pp, priority, name:=<INIT>
+_&name& segment para public '&name&'
+	size_t pp
+	size_t priority
+_&name& ends
+	endm
 
-pragma_exit MACRO pp, priority
-_EXIT	SEGMENT PARA FLAT PUBLIC 'EXIT'
-	SIZE_T pp
-	SIZE_T priority
-_EXIT	ENDS
-;_EEND	SEGMENT PARA FLAT PUBLIC 'INIT'
-;_EEND	ENDS
-	ENDM
+pragma_exit macro pp, priority
+pragma_init pp, priority, EXIT
+	endm
 
-	.list
+.list
+endif ; __CRTL_INC

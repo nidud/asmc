@@ -3,7 +3,7 @@ include limits.inc
 
 	.code
 
-vsprintf proc uses ecx string:LPSTR, format:LPSTR, vargs:PVOID
+swprintf proc c uses ecx string:LPWSTR, format:LPWSTR, argptr:VARARG
 
   local o:_iobuf
 
@@ -13,12 +13,12 @@ vsprintf proc uses ecx string:LPSTR, format:LPSTR, vargs:PVOID
 	mov o._ptr,eax
 	mov o._base,eax
 
-	_output( addr o, format, vargs )
+	_woutput(addr o, format, addr argptr)
 
 	mov ecx,o._ptr
-	mov BYTE PTR [ecx],0
+	mov WORD ptr [ecx],0
 	ret
 
-vsprintf endp
+swprintf ENDP
 
 	END

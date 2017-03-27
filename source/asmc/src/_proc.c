@@ -2026,7 +2026,8 @@ static ret_code write_default_prologue( void )
 	}
 	return( NOT_ERROR );
     }
-    if ( ModuleInfo.Ofssize == USE64 && ModuleInfo.fctype == FCT_WIN64 && ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) )
+    if ( ModuleInfo.Ofssize == USE64 && ModuleInfo.fctype == FCT_WIN64
+       && ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) )
 	resstack = sym_ReservedStack->value;
     /* default processing. if no params/locals are defined, continue */
     if( info->forceframe == FALSE &&
@@ -2050,8 +2051,8 @@ static ret_code write_default_prologue( void )
 
     if ( regist && cstack /*&& !resstack*/ ) {
 
-	int	offset = 0;
-	struct	dsym *p;
+	int offset = 0;
+	struct dsym *p;
 
 	for (cnt = *regist++; cnt; cnt--, regist++) {
 
@@ -2064,12 +2065,13 @@ static ret_code write_default_prologue( void )
 	    if ( !p->nextparam ) break;
 
 	if ( p ) {
-	    if ( p->sym.offset == 8 ||
+	    /* v2.23 - skip adding if stackbase is not EBP */
+	    if ( ( p->sym.offset == 8 && ModuleInfo.basereg[ModuleInfo.Ofssize] == T_EBP ) ||
 	    ( Parse_Pass == PASS_1 && info->pe_type && ModuleInfo.Ofssize == USE64 ) )
-	    for ( p = info->paralist; p; p = p->nextparam ) {
+
+	    for ( p = info->paralist; p; p = p->nextparam )
 		if ( p->sym.state != SYM_TMACRO ) /* register param? */
 		    p->sym.offset += offset;
-	    }
 	}
 
     }

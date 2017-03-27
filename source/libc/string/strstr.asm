@@ -11,7 +11,8 @@ include string.inc
 
 	.code
 
-	option	stackbase:esp
+	option cstack:off
+	option stackbase:esp
 
 strstr	PROC USES esi edi ebx edx dst:LPSTR, src:LPSTR
 

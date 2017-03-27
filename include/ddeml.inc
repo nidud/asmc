@@ -165,14 +165,14 @@ QID_SYNC		equ 0xFFFFFFFF
 ;;***** public strings used in DDE *****
 
 if 0;_UNICODE
-SZDDESYS_TOPIC		equ L"System"
-SZDDESYS_ITEM_TOPICS	equ L"Topics"
-SZDDESYS_ITEM_SYSITEMS	equ L"SysItems"
-SZDDESYS_ITEM_RTNMSG	equ L"ReturnMessage"
-SZDDESYS_ITEM_STATUS	equ L"Status"
-SZDDESYS_ITEM_FORMATS	equ L"Formats"
-SZDDESYS_ITEM_HELP	equ L"Help"
-SZDDE_ITEM_ITEMLIST	equ L"TopicItemList"
+SZDDESYS_TOPIC		equ <L"System">
+SZDDESYS_ITEM_TOPICS	equ <L"Topics">
+SZDDESYS_ITEM_SYSITEMS	equ <L"SysItems">
+SZDDESYS_ITEM_RTNMSG	equ <L"ReturnMessage">
+SZDDESYS_ITEM_STATUS	equ <L"Status">
+SZDDESYS_ITEM_FORMATS	equ <L"Formats">
+SZDDESYS_ITEM_HELP	equ <L"Help">
+SZDDE_ITEM_ITEMLIST	equ <L"TopicItemList">
 else
 SZDDESYS_TOPIC		equ <"System">
 SZDDESYS_ITEM_TOPICS	equ <"Topics">

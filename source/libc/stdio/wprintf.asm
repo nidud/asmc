@@ -2,15 +2,15 @@ include stdio.inc
 
 	.code
 
-printf	proc c format:LPSTR, argptr:VARARG
+wprintf proc c format:LPWSTR, argptr:VARARG
 	_stbuf( addr stdout )
 	push	eax
-	_output( addr stdout, format, addr argptr )
+	_woutput( addr stdout, format, addr argptr )
 	pop	edx
 	push	eax
 	_ftbuf( edx, addr stdout )
 	pop	eax
 	ret
-printf	endp
+wprintf endp
 
 	END

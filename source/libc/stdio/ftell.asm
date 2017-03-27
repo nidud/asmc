@@ -5,111 +5,130 @@ include winbase.inc
 
 	.code
 
-	ASSUME	ebx: PTR _iobuf
+	ASSUME ebx:ptr _iobuf
 
-ftell	PROC USES esi edi ebx,
-	fp:	LPFILE
-local	rdcnt:	SIZE_T,
+ftell proc uses esi edi ebx fp:LPFILE
+
+  local rdcnt:SIZE_T,
 	filepos:SIZE_T
 
-	mov	ebx,fp
-	xor	eax,eax
-	.if	SDWORD PTR [ebx]._cnt < eax
-		mov	[ebx]._cnt,eax
+	mov ebx,fp
+	xor eax,eax
+	.ifs [ebx]._cnt < eax
+
+		mov [ebx]._cnt,eax
 	.endif
 
-	mov	eax,[ebx]._file
-	mov	eax,_osfhnd[eax*4]
-	.if	SetFilePointer( eax, 0, 0, SEEK_CUR ) == -1
-		call	osmaperr
-		jmp	toend
-	.endif
-	mov	filepos,eax
+	mov eax,[ebx]._file
+	mov eax,_osfhnd[eax*4]
+	.if SetFilePointer( eax, 0, 0, SEEK_CUR ) == -1
 
-	.if	SDWORD PTR eax < 0
-		mov	eax,-1
-		jmp	toend
+		osmaperr()
+		jmp toend
+	.endif
+	mov filepos,eax
+
+	.ifs eax < 0
+
+		mov eax,-1
+		jmp toend
 	.endif
 
-	mov	ecx,[ebx]._flag
-	.if	!(ecx & ( _IOMYBUF or _IOYOURBUF ) )
-		sub	eax,[ebx]._cnt
-		jmp	toend
-	.endif
-	mov	edi,[ebx]._ptr
-	sub	edi,[ebx]._base
+	mov ecx,[ebx]._flag
+	.if !(ecx & ( _IOMYBUF or _IOYOURBUF ) )
 
-	.if	ecx & _IOWRT or _IOREAD
-		mov	eax,[ebx]._file
-		.if	_osfile[eax] & FH_TEXT
-			mov	eax,[ebx]._base
-			.while	eax < [ebx]._ptr
-				.if	BYTE PTR [eax] == 10
-					inc	edi
+		sub eax,[ebx]._cnt
+		jmp toend
+	.endif
+
+	mov edi,[ebx]._ptr
+	sub edi,[ebx]._base
+
+	.if ecx & _IOWRT or _IOREAD
+
+		mov eax,[ebx]._file
+		.if _osfile[eax] & FH_TEXT
+
+			mov eax,[ebx]._base
+			.while eax < [ebx]._ptr
+
+				.if BYTE PTR [eax] == 10
+
+					inc edi
 				.endif
-				inc	eax
+				inc eax
 			.endw
 		.endif
+
 	.elseif !(ecx & _IORW)
-		mov	errno,EINVAL
-		mov	eax,-1
-		jmp	toend
+
+		mov errno,EINVAL
+		mov eax,-1
+		jmp toend
 	.endif
-	mov	eax,edi
-	cmp	filepos,0
-	je	toend
 
-	.if	ecx & _IOREAD
+	mov eax,edi
+	cmp filepos,0
+	je  toend
 
-		mov	eax,[ebx]._cnt
-		.if	!eax
+	.if ecx & _IOREAD
+
+		mov eax,[ebx]._cnt
+		.if !eax
+
 			mov edi,eax
 		.else
-			add	eax,[ebx]._ptr
-			sub	eax,[ebx]._base
-			mov	rdcnt,eax
-			mov	eax,[ebx]._file
+			add eax,[ebx]._ptr
+			sub eax,[ebx]._base
+			mov rdcnt,eax
+			mov eax,[ebx]._file
 
-			.if	_osfile[eax] & FH_TEXT
-				mov	ecx,_osfhnd[eax*4]
-				.if	SetFilePointer( ecx, 0, 0, SEEK_END ) == filepos
-					mov	eax,[ebx]._base
-					mov	ecx,eax
-					add	eax,rdcnt
-					.while	ecx < eax
+			.if _osfile[eax] & FH_TEXT
+
+				mov ecx,_osfhnd[eax*4]
+				.if SetFilePointer( ecx, 0, 0, SEEK_END ) == filepos
+
+					.for eax=[ebx]._base, ecx=eax, eax+=rdcnt:,
+					     ecx < eax: ecx++
+
 						.if BYTE PTR [ecx] == 10
+
 							inc rdcnt
 						.endif
-						inc	ecx
-					.endw
-					.if	[ebx]._flag & _IOCTRLZ
-						inc	rdcnt
+					.endf
+
+					.if [ebx]._flag & _IOCTRLZ
+
+						inc rdcnt
 					.endif
 				.else
-					mov	eax,[ebx]._file
-					mov	ecx,_osfhnd[eax*4]
-					SetFilePointer( ecx, filepos, 0, SEEK_SET )
-					mov	eax,[ebx]._flag
+					mov eax,[ebx]._file
+					mov ecx,_osfhnd[eax*4]
+					SetFilePointer(ecx, filepos, 0, SEEK_SET)
+					mov eax,[ebx]._flag
 
-					.if	rdcnt <= 512 && ( eax & _IOMYBUF ) && !( eax & _IOSETVBUF )
-						mov	rdcnt,512
+					.if rdcnt <= 512 && ( eax & _IOMYBUF ) \
+					    && !( eax & _IOSETVBUF )
+
+						mov rdcnt,512
 					.else
-						mov	eax,[ebx]._bufsiz
-						mov	rdcnt,eax
+						mov eax,[ebx]._bufsiz
+						mov rdcnt,eax
 					.endif
-					mov	eax,[ebx]._file
+					mov eax,[ebx]._file
 
-					.if	_osfile[eax] & FH_CRLF
-						inc	rdcnt
+					.if _osfile[eax] & FH_CRLF
+
+						inc rdcnt
 					.endif
 				.endif
 			.endif
-			mov	eax,rdcnt
-			sub	filepos,eax
+			mov eax,rdcnt
+			sub filepos,eax
 		.endif
 	.endif
-	add	edi,filepos
-	mov	eax,edi
+	add edi,filepos
+	mov eax,edi
 toend:
 	ret
 ftell	ENDP

@@ -1,5 +1,5 @@
-; FOPEN.ASM--
-; FILE *fopen(file, mode) - open a file
+; _WFOPEN.ASM--
+; FILE *_wfopen(file, mode) - open a file
 ;
 ; mode:
 ;  r  : read
@@ -27,14 +27,14 @@ extrn	_umaskval:dword
 
 	option	switch:pascal
 
-fopen	PROC USES esi edi ebx file:LPSTR, mode:LPSTR
+_wfopen PROC USES esi edi ebx file:LPWSTR, mode:LPWSTR
 
-	mov ebx,mode
+	mov	ebx,mode
 
 	.repeat
 
-		movzx	eax,BYTE PTR [ebx]
-		add	ebx,1
+		movzx	eax,WORD PTR [ebx]
+		add	ebx,2
 		.switch eax
 
 		  .case 'r': mov esi,_IOREAD : mov edi,O_RDONLY
@@ -46,7 +46,7 @@ fopen	PROC USES esi edi ebx file:LPSTR, mode:LPSTR
 			.break
 		.endsw
 
-		mov al,[ebx]
+		mov ax,[ebx]
 		.while eax
 
 			.switch eax
@@ -67,14 +67,15 @@ fopen	PROC USES esi edi ebx file:LPSTR, mode:LPSTR
 			  .default
 				.break
 			.endsw
-			add ebx,1
-			mov al,[ebx]
+
+			add ebx,2
+			mov ax,[ebx]
 		.endw
 
 		mov ebx,_getst()
 		.break .if !eax
 
-		.if _sopen(file, edi, SH_DENYNO, 0284h) != -1
+		.if _wsopen(file, edi, SH_DENYNO, 0284h) != -1
 
 			mov [ebx]._iobuf._file,eax
 			xor eax,eax
@@ -88,6 +89,6 @@ fopen	PROC USES esi edi ebx file:LPSTR, mode:LPSTR
 		.endif
 	.until	1
 	ret
-fopen	ENDP
+_wfopen ENDP
 
 	END

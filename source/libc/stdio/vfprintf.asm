@@ -1,22 +1,15 @@
 include stdio.inc
-IFDEF	_UNICODE
-VFPRINTF equ <vfwprintf>
-OUTPUT	 equ <_woutput>
-ELSE
-VFPRINTF equ <vfprintf>
-OUTPUT	 equ <_output>
-ENDIF
+
 	.code
 
-VFPRINTF PROC file:LPFILE, format:LPTSTR, args:PVOID
-	_stbuf( file )
-	push	eax
-	OUTPUT( file, format, args )
-	pop	ecx
-	push	eax
-	_ftbuf( ecx, file )
-	pop	eax
+vfprintf proc uses esi file:LPFILE, format:LPSTR, args:PVOID
+
+	mov  esi,_stbuf(file)
+	xchg esi,_output(file, format, args)
+	_ftbuf(eax, file)
+	mov eax,esi
 	ret
-VFPRINTF ENDP
+
+vfprintf endp
 
 	END

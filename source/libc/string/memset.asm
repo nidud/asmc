@@ -2,22 +2,18 @@ include string.inc
 
 	.code
 
-	OPTION PROLOGUE:NONE, EPILOGUE:NONE
+	option cstack:off
+	option stackbase:esp
 
-memset	PROC dst:LPSTR, char:SIZE_T, count:SIZE_T
+memset	proc uses edi dst:LPSTR, char:SIZE_T, count:SIZE_T
 
-	push	edi
+	mov edi,dst
+	mov eax,char
+	mov ecx,count
+	rep stosb
+	mov eax,dst
+	ret
 
-	mov	edi,4[esp+4]
-	mov	eax,4[esp+8]
-	mov	ecx,4[esp+12]
-
-	rep	stosb
-
-	mov	eax,4[esp+4]
-	pop	edi
-	ret	12
-
-memset	ENDP
+memset	endp
 
 	END

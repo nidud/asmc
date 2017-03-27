@@ -1,8 +1,5 @@
-	.x64
-	.model flat
-_WIN64 equ <>
 
-include basetsd.inc
+include winnt.inc
 
 	.code
 

@@ -51,7 +51,7 @@ __setargv PROC USES esi edi ebx argc, argv:PVOID, cmdline:LPSTR
 		.break .if !eax ; end of command string
 
 		xor edx,edx ; "quote from start" in EDX - remove
-		xor ecx,ecx ; -I"quoted text"	 in ECX - keep
+		xor ecx,ecx ; -I"quoted text"	 in ECX - remove;keep
 
 		.if eax == '"'
 
@@ -62,7 +62,6 @@ __setargv PROC USES esi edi ebx argc, argv:PVOID, cmdline:LPSTR
 		.while eax == '"'	; ""A" B"
 
 			add ecx,1
-			stosb
 			lodsb
 		.endw
 
@@ -77,12 +76,16 @@ __setargv PROC USES esi edi ebx argc, argv:PVOID, cmdline:LPSTR
 					dec ecx
 				.elseif edx
 
-					.break
+					mov al,[esi]
+					.break .if al == ' '
+					.break .if al >= 9 && al <= 13
+					dec edx
 				.else
 					inc ecx
 				.endif
+			.else
+				stosb
 			.endif
-			stosb
 			lodsb
 		.endw
 		xor eax,eax
@@ -92,7 +95,7 @@ __setargv PROC USES esi edi ebx argc, argv:PVOID, cmdline:LPSTR
 		.break .if al == [edi]
 
 		sub ebx,edi
-		memcpy( malloc( ebx ), edi, ebx )
+		memcpy(malloc(ebx), edi, ebx)
 
 		mov edx,argv
 		mov ecx,[edx]
@@ -120,19 +123,21 @@ __setargv PROC USES esi edi ebx argc, argv:PVOID, cmdline:LPSTR
 			shl eax,1
 			mov argc_max,eax
 			shl eax,2
-			.break .if !malloc( eax )
+			.break .if !malloc(eax)
 			mov ebx,__argv
 			mov __argv,eax
 			mov ecx,argc_max
 			shl ecx,1
-			memcpy( eax, ebx, ecx )
+			memcpy(eax, ebx, ecx)
 			mov ecx,argv
 			sub ecx,ebx
 			add eax,ecx
 			mov argv,eax
 		.endif
+
 	.until byte ptr [esi-1] == 0
 	ret
+
 __setargv ENDP
 
 	END

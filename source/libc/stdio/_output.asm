@@ -17,19 +17,20 @@ endif
 
 BUFFERSIZE	equ 512		; ANSI-specified minimum is 509
 
-FLAG_SIGN	equ 0001h	; put plus or minus in front
-FLAG_SIGNSP	equ 0002h	; put space or minus in front
-FLAG_LEFT	equ 0004h	; left justify
-FLAG_LEADZERO	equ 0008h	; pad with leading zeros
-FLAG_LONG	equ 0010h	; long value given
-FLAG_SHORT	equ 0020h	; short value given
-FLAG_SIGNED	equ 0040h	; signed data given
-FLAG_ALTERNATE	equ 0080h	; alternate form requested
-FLAG_NEGATIVE	equ 0100h	; value is negative
-FLAG_FORCEOCTAL equ 0200h	; force leading '0' for octals
-FLAG_LONGDOUBLE equ 0400h	; long double
-FLAG_WIDECHAR	equ 0800h
-FLAG_I64	equ 8000h	; 64-bit value given
+FL_SIGN		equ 0x0001	; put plus or minus in front
+FL_SIGNSP	equ 0x0002	; put space or minus in front
+FL_LEFT		equ 0x0004	; left justify
+FL_LEADZERO	equ 0x0008	; pad with leading zeros
+FL_LONG		equ 0x0010	; long value given
+FL_SHORT	equ 0x0020	; short value given
+FL_SIGNED	equ 0x0040	; signed data given
+FL_ALTERNATE	equ 0x0080	; alternate form requested
+FL_NEGATIVE	equ 0x0100	; value is negative
+FL_FORCEOCTAL	equ 0x0200	; force leading '0' for octals
+FL_LONGDOUBLE	equ 0x0400	; long double
+FL_WIDECHAR	equ 0x0800
+FL_LONGLONG	equ 0x1000	; long long value given
+FL_I64		equ 0x8000	; 64-bit value given
 
 ST_NORMAL	equ 0		; normal state; outputting literal chars
 ST_PERCENT	equ 1		; just read '%'
@@ -40,22 +41,29 @@ ST_PRECIS	equ 5		; just read precision specifier
 ST_SIZE		equ 6		; just read size specifier
 ST_TYPE		equ 7		; just read type specifier
 
+ifdef FORMAT_VALIDATIONS
+NUMSTATES	equ (ST_INVALID + 1)
+else
+NUMSTATES	equ (ST_TYPE + 1)
+endif
+
 	.data
 
 cl_table	db 06h, 00h, 00h, 06h, 00h, 01h, 00h, 00h ;  !"#$%&' 20 00
 		db 10h, 00h, 03h, 06h, 00h, 06h, 02h, 10h ; ()*+,-./ 28 08
 		db 04h, 45h, 45h, 45h, 05h, 05h, 05h, 05h ; 01234567 30 10
 		db 05h, 35h, 30h, 00h, 50h, 00h, 00h, 00h ; 89:;<=>? 38 18
-		db 00h, 20h, 28h, 38h, 50h, 58h, 07h, 08h ; @ABCDEFG 40 20
+		db 00h, 28h, 28h, 38h, 50h, 58h, 07h, 08h ; @ABCDEFG 40 20
 		db 00h, 37h, 30h, 30h, 57h, 50h, 07h, 00h ; HIJKLMNO 48 28
 		db 00h, 20h, 20h, 08h, 00h, 00h, 00h, 00h ; PQRSTUVW 50 30
-		db 08h, 60h, 60h, 60h, 60h, 60h, 60h, 00h ; XYZ[\]^_ 58 38
-		db 00h, 70h, 78h, 78h, 78h, 78h, 78h, 08h ; `abcdefg 60 40
+		db 08h, 60h, 68h, 60h, 60h, 60h, 60h, 00h ; XYZ[\]^_ 58 38
+		db 00h, 78h, 78h, 78h, 78h, 78h, 78h, 08h ; `abcdefg 60 40
 		db 07h, 08h, 00h, 00h, 07h, 00h, 08h, 08h ; hijklmno 68 48
-		db 08h, 00h, 00h, 08h, 00h, 08h, 00h, 00h ; pqrstuvw 70 50
+		db 08h, 00h, 00h, 08h, 00h, 08h, 00h, 07h ; pqrstuvw 70 50
 		db 08h					  ; xyz{|}~  78 58
 
-nullstring	db '(null)',0
+__nullstring	db "(null)",0
+__wnullstring	dw '(','n','u','l','l',')',0
 
 	.code
 
@@ -118,20 +126,20 @@ local	wchar:		wint_t
 local	mbuf[MB_LEN_MAX+1]:byte
 local	buffer[BUFFERSIZE]:byte
 if LONGDOUBLE_IS_DOUBLE
-local	tmp:		REAL8
+local	tmp:REAL8
 else
-local	tmp:		REAL10
+local	tmp:REAL10
 endif
-	xor	eax,eax
-	mov	textlen,eax
-	mov	charsout,eax
-	mov	state,eax
+	xor eax,eax
+	mov textlen,eax
+	mov charsout,eax
+	mov state,eax
 
 	.while	1
-		mov	eax,format
-		add	format,1
-		movzx	eax,BYTE PTR [eax]
-		mov	edx,eax
+		mov eax,format
+		add format,1
+		movzx eax,BYTE PTR [eax]
+		mov edx,eax
 		.break .if !eax || charsout > INT_MAX
 
 		.if eax >= ' ' && eax <= 'x'
@@ -141,135 +149,157 @@ endif
 		.else
 			xor eax,eax
 		.endif
-		shl	eax,3
-		add	eax,state
-		mov	al,cl_table[eax]
-		shr	eax,4
-		and	eax,0Fh
-		mov	state,eax
+		shl eax,3
+		add eax,state
+		mov al,cl_table[eax]
+		shr eax,4
+		and eax,0Fh
+		mov state,eax
 
-		.if	eax <= 7
+		.if eax <= 7
 
 			.switch eax
 
 			  .case ST_NORMAL
 
-				mov	bufferiswide,0
-				.if	isleadbyte(edx)
+				mov bufferiswide,0
+				.if isleadbyte(edx)
 
 					write_char(edx, fp, addr charsout)
-					mov	eax,format
-					add	format,1
-					movzx	edx,BYTE PTR [eax]
+					mov eax,format
+					add format,1
+					movzx edx,BYTE PTR [eax]
 				.endif
 				write_char(edx, fp, addr charsout)
 				.endc
 
 			  .case ST_PERCENT
-				xor	eax,eax
-				mov	no_output,eax
-				mov	fldwidth,eax
-				mov	prefixlen,eax
-				mov	capexp,eax
-				mov	bufferiswide,eax
-				mov	esi,eax ; flags
-				mov	edi,eax ; precision
-				dec	edi
+				xor eax,eax
+				mov no_output,eax
+				mov fldwidth,eax
+				mov prefixlen,eax
+				mov capexp,eax
+				mov bufferiswide,eax
+				mov esi,eax ; flags
+				mov edi,eax ; precision
+				dec edi
 				.endc
 
 			  .case ST_FLAG
 				movzx	eax,dl
 				.switch eax
-				  .case '+': or esi,FLAG_SIGN:	    .endc ; '+' force sign indicator
-				  .case ' ': or esi,FLAG_SIGNSP:    .endc ; ' ' force sign or space
-				  .case '#': or esi,FLAG_ALTERNATE: .endc ; '#' alternate form
-				  .case '-': or esi,FLAG_LEFT:	    .endc ; '-' left justify
-				  .case '0': or esi,FLAG_LEADZERO:  .endc ; '0' pad with leading zeros
+				  .case '+': or esi,FL_SIGN:	  .endc ; '+' force sign indicator
+				  .case ' ': or esi,FL_SIGNSP:	  .endc ; ' ' force sign or space
+				  .case '#': or esi,FL_ALTERNATE: .endc ; '#' alternate form
+				  .case '-': or esi,FL_LEFT:	  .endc ; '-' left justify
+				  .case '0': or esi,FL_LEADZERO:  .endc ; '0' pad with leading zeros
 				.endsw
 				.endc
 
 			  .case ST_WIDTH
 				.if dl == '*'
-					mov	eax,arglist
-					add	arglist,4
-					mov	eax,[eax]
-					.ifs	eax < 0
-						or	esi,FLAG_LEFT
-						neg	eax
+					mov eax,arglist
+					add arglist,4
+					mov eax,[eax]
+					.ifs eax < 0
+						or  esi,FL_LEFT
+						neg eax
 					.endif
-					mov	fldwidth,eax
+					mov fldwidth,eax
 				.else
-					movsx	eax,dl
-					push	eax
-					mov	eax,fldwidth
-					mov	edx,10
-					imul	edx
-					pop	edx
-					add	edx,eax
-					add	edx,-48
-					mov	fldwidth,edx
+					movsx eax,dl
+					push eax
+					mov eax,fldwidth
+					mov edx,10
+					imul edx
+					pop edx
+					add edx,eax
+					add edx,-48
+					mov fldwidth,edx
 				.endif
 				.endc
 
 			  .case ST_DOT
-				xor	edi,edi
+				xor edi,edi
 				.endc
 
 			  .case ST_PRECIS
 				.if dl == '*'
-					mov	eax,arglist
-					add	arglist,4
-					mov	edi,[eax]
-					.ifs	edi < 0
+					mov eax,arglist
+					add arglist,4
+					mov edi,[eax]
+					.ifs edi < 0
 						mov edi,-1
 					.endif
 				.else
-					movsx	eax,dl
-					push	eax
-					mov	eax,edi
-					mov	edx,10
-					imul	edx
-					pop	edx
-					add	edx,eax
-					add	edx,-48
-					mov	edi,edx
+					movsx eax,dl
+					push eax
+					mov eax,edi
+					mov edx,10
+					imul edx
+					pop edx
+					add edx,eax
+					add edx,-48
+					mov edi,edx
 				.endif
 				.endc
 
 			  .case ST_SIZE
 				.switch edx
 				  .case 'l'
-					.if !(esi & FLAG_LONG)
+					.if !(esi & FL_LONG)
 
-						or esi,FLAG_LONG
+						or esi,FL_LONG
 						.endc
 					.endif
 					;
-					; case ll
+					; case ll => long long
 					;
-					and	esi,NOT FLAG_LONG
-					or	esi,FLAG_I64
+					and esi,NOT FL_LONG
+					or  esi,FL_LONGLONG
 					.endc
 				  .case 'L'
-					or	esi,FLAG_LONGDOUBLE or FLAG_I64
+					or  esi,FL_LONGDOUBLE or FL_I64
 					.endc
 				  .case 'I'
 					mov eax,format
 					mov cx,[eax]
-					.if cx == 0x3436
+					.switch cl
+					  .case '6'
+						.if ch != '4'
 
-						or	esi,FLAG_I64
-						add	eax,2
-						mov	format,eax
-					.else
-						.gotosw1(ST_NORMAL)
-					.endif
+							.gotosw2(ST_NORMAL)
+						.endif
+						or  esi,FL_I64
+						add eax,2
+						mov format,eax
+						.endc
+					  .case '3'
+						.if ch != '2'
+
+							.gotosw2(ST_NORMAL)
+						.endif
+						and esi,not FL_I64
+						add eax,2
+						mov format,eax
+						.endc
+					  .case 'd'
+					  .case 'i'
+					  .case 'o'
+					  .case 'u'
+					  .case 'x'
+					  .case 'X'
+						.endc
+					  .default
+						.gotosw2(ST_NORMAL)
+					.endsw
 					.endc
+
 				  .case 'h'
-					or	esi,FLAG_SHORT
+					or esi,FL_SHORT
 					.endc
 				  .case 'w'
-					or	esi,FLAG_WIDECHAR	; 'w' => wide character
+					or esi,FL_WIDECHAR	; 'w' => wide character
 					.endc
 				.endsw
 				.endc
@@ -296,61 +326,63 @@ endif
 					.endc
 
 				  .case 'C'	; ISO wide character
-					.if !(esi & (FLAG_SHORT or FLAG_LONG or FLAG_WIDECHAR))
+					.if !(esi & (FL_SHORT or FL_LONG or FL_WIDECHAR))
 						;
 						; CONSIDER: non-standard
 						;
-						or esi,FLAG_WIDECHAR	; ISO std.
+						or esi,FL_WIDECHAR ; ISO std.
 					.endif
 
 				  .case 'c'
 					;
 					; print a single character specified by int argument
 					;
-					mov	bufferiswide,1
-					mov	eax,arglist
-					add	arglist,4
-					mov	edx,[eax]
+					mov bufferiswide,1
+					mov eax,arglist
+					add arglist,4
+					mov edx,[eax]
 
-					.if	esi & (FLAG_LONG or FLAG_WIDECHAR)
+					if 0
+					.if esi & (FL_LONG or FL_WIDECHAR)
 						;
 						; format multibyte character
 						; this is an extension of ANSI
 						;
-						movzx	eax,dl
-						push	edx
-						push	eax
-						mov	edx,esp
-						.ifs	mbtowc(addr buffer, edx, MB_CUR_MAX) < 0
+						movzx eax,dl
+						push edx
+						push eax
+						mov  edx,esp
+						.ifs mbtowc(addr buffer, edx, MB_CUR_MAX) < 0
 							;
 							; ignore if conversion was unsuccessful
 							;
 							mov no_output,1
 						.endif
-						mov	textlen,eax
+						mov textlen,eax
 						;
 						; check that conversion was successful
 						;
-						.ifs	eax < 0
+						.ifs eax < 0
 
 							mov no_output,1
 						.endif
 
-						pop	eax
-						pop	edx
+						pop eax
+						pop edx
 
 					.else
-						mov	buffer,dl
-						mov	textlen,1 ; print just a single character
-					.endif
-					lea	eax,buffer
-					mov	text,eax
+					endif
+						mov buffer,dl
+						mov textlen,1 ; print just a single character
+					;.endif
+					lea eax,buffer
+					mov text,eax
 					.endc
 
 				  .case 'S'	; ISO wide character string
-					.if !(esi & (FLAG_SHORT or FLAG_LONG or FLAG_WIDECHAR))
+					.if !(esi & (FL_SHORT or FL_LONG or FL_WIDECHAR))
 
-						or esi,FLAG_SHORT
+						or esi,FL_WIDECHAR
 					.endif
 				  .case 's'
 
@@ -360,16 +392,16 @@ endif
 					;   min(precision, length) if precision given.
 					; prints '(null)' if a null string is passed
 
-					mov	eax,arglist
-					add	arglist,4
-					mov	eax,[eax]
-					.if	!eax
+					mov eax,arglist
+					add arglist,4
+					mov eax,[eax]
+					.if !eax
 
-						lea eax,nullstring
+						lea eax,__nullstring
 					.endif
-					mov	text,eax
+					mov text,eax
 
-					.if	edi == -1
+					.if edi == -1
 
 						mov ecx,INT_MAX
 					.else
@@ -379,18 +411,18 @@ endif
 						.break .if BYTE PTR [eax] == 0
 						add eax,1
 					.untilcxz
-					sub	eax,text
-					mov	textlen,eax
-					mov	bufferiswide,1
+					sub eax,text
+					mov textlen,eax
+					mov bufferiswide,1
 					.endc
 
 				  .case 'n'
-					mov	eax,arglist
-					add	arglist,4
-					mov	edx,[eax-4]
-					mov	eax,charsout
-					mov	[edx],eax
-					.if	esi & FLAG_LONG
+					mov eax,arglist
+					add arglist,4
+					mov edx,[eax-4]
+					mov eax,charsout
+					mov [edx],eax
+					.if esi & FL_LONG
 
 						mov no_output,1
 					.endif
@@ -398,21 +430,23 @@ endif
 
 				  .case 'E'
 				  .case 'G'
-					mov	capexp,1	; capitalize exponent
-					add	dl,'a' - 'A'	; convert format char to lower
+				  .case 'A'
+					mov capexp,1	; capitalize exponent
+					add dl,'a' - 'A'; convert format char to lower
 					;
 					; DROP THROUGH
 					;
 				  .case 'e'
 				  .case 'f'
 				  .case 'g'
+				  .case 'a'
 					;
 					; floating point conversion -- we call cfltcvt routines
 					; to do the work for us.
 					;
-					or	esi,FLAG_SIGNED ; floating point is signed conversion
-					lea	eax,buffer	; put result in buffer
-					mov	text,eax
+					or  esi,FL_SIGNED ; floating point is signed conversion
+					lea eax,buffer	    ; put result in buffer
+					mov text,eax
 					;
 					; compute the precision value
 					;
@@ -421,22 +455,22 @@ endif
 					.elseif !edi && dl == 'g'
 						mov edi,1 ; ANSI specified
 					.endif
-					mov	ecx,arglist
-					add	arglist,8
-					mov	eax,[ecx]
-					mov	DWORD PTR tmp,eax
-					mov	eax,[ecx+4]
-					mov	DWORD PTR tmp[4],eax
-					mov	ebx,edx
+					mov ecx,arglist
+					add arglist,8
+					mov eax,[ecx]
+					mov DWORD PTR tmp,eax
+					mov eax,[ecx+4]
+					mov DWORD PTR tmp[4],eax
+					mov ebx,edx
 if (LONGDOUBLE_IS_DOUBLE eq 0)
 					;
 					; do the conversion
 					;
-					.if esi & FLAG_LONGDOUBLE
+					.if esi & FL_LONGDOUBLE
 
-						add	arglist,4
-						mov	eax,[ecx+8]
-						mov	WORD PTR tmp[8],ax
+						add arglist,4
+						mov eax,[ecx+8]
+						mov WORD PTR tmp[8],ax
 						;
 						; Note: assumes ch is in ASCII range
 						;
@@ -453,14 +487,14 @@ endif
 					;
 					; '#' and precision == 0 means force a decimal point
 					;
-					.if ((esi & FLAG_ALTERNATE) && !edi)
+					.if ((esi & FL_ALTERNATE) && !edi)
 
 						_forcdecpt(text)
 					.endif
 					;
 					; 'g' format means crop zero unless '#' given
 					;
-					.if bl == 'g' && !(esi & FLAG_ALTERNATE)
+					.if bl == 'g' && !(esi & FL_ALTERNATE)
 
 						_cropzeros(text)
 					.endif
@@ -472,7 +506,7 @@ endif
 					mov al,[ecx]
 					.if al == '-'
 
-						or  esi,FLAG_NEGATIVE
+						or  esi,FL_NEGATIVE
 						inc text
 					.endif
 					mov textlen,strlen(text) ; compute length of text
@@ -482,10 +516,10 @@ endif
 					;
 					; signed decimal output
 					;
-					or	esi,FLAG_SIGNED
+					or  esi,FL_SIGNED
 				  .case 'u'
-					mov	curadix,10
-					jmp	COMMON_INT
+					mov curadix,10
+					jmp COMMON_INT
 
 				  .case 'p'
 					;
@@ -493,7 +527,7 @@ endif
 					; except we force precision to pad with zeros and
 					; output in big hex.
 					;
-					mov	edi,size_t * 2
+					mov edi,size_t * 2
 					;
 					; DROP THROUGH to hex formatting
 					;
@@ -501,39 +535,39 @@ endif
 					;
 					; set hexadd for uppercase hex
 					;
-					mov	hexoff,'A'-'9'-1
-					jmp	COMMON_HEX
+					mov hexoff,'A'-'9'-1
+					jmp COMMON_HEX
 
 				    .case 'x'
 					;
 					; unsigned lower hex output
 					;
-					mov	hexoff,'a'-'9'-1
+					mov hexoff,'a'-'9'-1
 					;
 					; DROP THROUGH TO COMMON_HEX
 					;
 				    COMMON_HEX:
 
-					mov	curadix,16
-					.if	esi & FLAG_ALTERNATE
+					mov curadix,16
+					.if esi & FL_ALTERNATE
 						;
 						; alternate form means '0x' prefix
 						;
-						mov	eax,'x' - 'a' + '9' + 1
-						add	eax,hexoff
-						mov	prefix,'0'
-						mov	prefix[1],al
-						mov	prefixlen,2
+						mov eax,'x' - 'a' + '9' + 1
+						add eax,hexoff
+						mov prefix,'0'
+						mov prefix[1],al
+						mov prefixlen,2
 					.endif
-					jmp	COMMON_INT
+					jmp COMMON_INT
 
 				  .case 'o'	; unsigned octal output
-					mov	curadix,8
-					.if	esi & FLAG_ALTERNATE
+					mov curadix,8
+					.if esi & FL_ALTERNATE
 						;
 						; alternate form means force a leading 0
 						;
-						or esi,FLAG_FORCEOCTAL
+						or esi,FL_FORCEOCTAL
 					.endif
 					;
 					; DROP THROUGH to COMMON_INT
@@ -546,32 +580,32 @@ endif
 					; correct radix, setting text and textlen
 					; appropriately.
 					;
-					mov	eax,arglist
-					add	arglist,4
-					mov	eax,[eax]
-					xor	edx,edx
+					mov eax,arglist
+					add arglist,4
+					mov eax,[eax]
+					xor edx,edx
 
-					.if esi & FLAG_I64
+					.if esi & FL_I64
 
-						mov	edx,arglist
-						add	arglist,4
-						mov	edx,[edx]
+						mov edx,arglist
+						add arglist,4
+						mov edx,[edx]
 					.endif
 
-					.if esi & FLAG_SHORT
+					.if esi & FL_SHORT
 
-						.if esi & FLAG_SIGNED
+						.if esi & FL_SIGNED
 							; sign extend
 							movsx eax,ax
 						.else	; zero-extend
 							movzx eax,ax
 						.endif
-					.elseif esi & FLAG_SIGNED
+					.elseif esi & FL_SIGNED
 
 						.ifs eax < 0
 
 							dec edx
-							or  esi,FLAG_NEGATIVE
+							or  esi,FL_NEGATIVE
 						.endif
 					.endif
 					;
@@ -579,15 +613,15 @@ endif
 					; turns off 0 flag, according to ANSI.
 					;
 					.ifs edi < 0
-						mov edi,1	; default precision
+						mov edi,1 ; default precision
 					.else
-						and esi,NOT FLAG_LEADZERO
+						and esi,NOT FL_LEADZERO
 					.endif
 					;
 					; Check if data is 0; if so, turn off hex prefix
 					;
-					mov	ecx,eax
-					or	ecx,edx
+					mov ecx,eax
+					or  ecx,edx
 					.ifz
 						mov prefixlen,eax
 					.endif
@@ -595,21 +629,21 @@ endif
 					; Convert data to ASCII -- note if precision is zero
 					; and number is zero, we get no digits at all.
 					;
-					.if esi & FLAG_SIGNED
+					.if esi & FL_SIGNED
 
 						test edx,edx
 						.ifs
 							neg eax
 							neg edx
 							sbb edx,0
-							or  esi,FLAG_NEGATIVE
+							or  esi,FL_NEGATIVE
 						.endif
 					.endif
-					mov	numeax,eax
-					mov	numedx,edx
-					lea	eax,buffer[BUFFERSIZE-1]
-					mov	text,eax
-					jmp	convert_next
+					mov numeax,eax
+					mov numedx,edx
+					lea eax,buffer[BUFFERSIZE-1]
+					mov text,eax
+					jmp convert_next
 
 				convert_loop:
 					mov	ecx,curadix
@@ -657,9 +691,9 @@ endif
 					mov	numeax,eax
 					mov	numedx,edx
 					add	ecx,'0'
-					.ifs	ecx > '9'
+					.ifs ecx > '9'
 
-						add	ecx,hexoff
+						add ecx,hexoff
 					.endif
 					mov	edx,text
 					mov	[edx],cl
@@ -681,16 +715,16 @@ endif
 					;
 					; Force a leading zero if FORCEOCTAL flag set
 					;
-					.if esi & FLAG_FORCEOCTAL
+					.if esi & FL_FORCEOCTAL
 
 						mov edx,text
 
 						.if BYTE PTR [edx] != '0' || textlen == 0
 
-							sub	edx,1
-							mov	text,edx
-							mov	BYTE PTR [edx],'0'
-							inc	textlen
+							sub edx,1
+							mov text,edx
+							mov BYTE PTR [edx],'0'
+							inc textlen
 						.endif
 					.endif
 					.endc
@@ -703,16 +737,16 @@ endif
 				;
 				.if !no_output
 
-					.if esi & FLAG_SIGNED
-						.if esi & FLAG_NEGATIVE
+					.if esi & FL_SIGNED
+						.if esi & FL_NEGATIVE
 							; prefix is a '-'
 							mov prefix,'-'
 							mov prefixlen,1
-						.elseif esi & FLAG_SIGN
+						.elseif esi & FL_SIGN
 							; prefix is '+'
 							mov prefix,'+'
 							mov prefixlen,1
-						.elseif esi & FLAG_SIGNSP
+						.elseif esi & FL_SIGNSP
 							; prefix is ' '
 							mov prefix,' '
 							mov prefixlen,1
@@ -722,14 +756,14 @@ endif
 					; calculate amount of padding -- might be negative,
 					; but this will just mean zero
 					;
-					mov	eax,fldwidth
-					sub	eax,textlen
-					sub	eax,prefixlen
-					mov	padding,eax
+					mov eax,fldwidth
+					sub eax,textlen
+					sub eax,prefixlen
+					mov padding,eax
 					;
 					; put out the padding, prefix, and text, in the correct order
 					;
-					.if !(esi & (FLAG_LEFT or FLAG_LEADZERO))
+					.if !(esi & (FL_LEFT or FL_LEADZERO))
 						;
 						; pad on left with blanks
 						;
@@ -740,7 +774,7 @@ endif
 					;
 					write_string(addr prefix, prefixlen, fp, addr charsout)
 
-					.if (esi & FLAG_LEADZERO) && !(esi & FLAG_LEFT)
+					.if (esi & FL_LEADZERO) && !(esi & FL_LEFT)
 						;
 						; write leading zeros
 						;
@@ -750,6 +784,7 @@ endif
 					; write text
 					;
 					mov ecx,textlen
+					if 0
 					.if ecx > 0 && bufferiswide
 
 						push esi
@@ -767,9 +802,10 @@ endif
 						pop  edi
 						pop  esi
 					.else
+					endif
 						write_string(text, ecx, fp, addr charsout)
-					.endif
-					.if esi & FLAG_LEFT
+					;.endif
+					.if esi & FL_LEFT
 						;
 						; pad on right with blanks
 						;

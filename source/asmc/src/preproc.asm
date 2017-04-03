@@ -30,7 +30,7 @@ StoreLine		PROTO :DWORD, :DWORD, :DWORD
 
 WriteCodeLabel PROC USES esi edi ebx line, tokenarray:PTR asm_tok
 
-	mov	ebx,tokenarray
+	mov ebx,tokenarray
 
 	.if [ebx].asm_tok.token != T_ID
 		asmerr( 2008, [ebx].asm_tok.string_ptr )
@@ -45,24 +45,24 @@ WriteCodeLabel PROC USES esi edi ebx line, tokenarray:PTR asm_tok
 	;
 	; v2.04: call ParseLine() to parse the "label" part of the line
 	;
-	movzx	esi,[ebx+32].asm_tok.token
-	mov	[ebx+32].asm_tok.token,T_FINAL
-	mov	edi,[ebx+32].asm_tok.tokpos
-	mov	al,[edi]
-	mov	BYTE PTR [edi],0
-	push	ModuleInfo.token_count
-	mov	ModuleInfo.token_count,2
-	push	eax
+	movzx esi,[ebx+32].asm_tok.token
+	mov [ebx+32].asm_tok.token,T_FINAL
+	mov edi,[ebx+32].asm_tok.tokpos
+	mov al,[edi]
+	mov BYTE PTR [edi],0
+	push ModuleInfo.token_count
+	mov ModuleInfo.token_count,2
+	push eax
 	ParseLine( ebx )
 	.if Options.preprocessor_stdout
 		WritePreprocessedLine( line )
 	.endif
-	pop	eax
-	mov	[edi],al
-	pop	ModuleInfo.token_count
-	mov	eax,esi
-	mov	[ebx+32].asm_tok.token,al
-	mov	eax,NOT_ERROR
+	pop eax
+	mov [edi],al
+	pop ModuleInfo.token_count
+	mov eax,esi
+	mov [ebx+32].asm_tok.token,al
+	mov eax,NOT_ERROR
 
 toend:
 	ret
@@ -76,8 +76,8 @@ WriteCodeLabel ENDP
 
 PreprocessLine PROC USES esi ebx line:LPSTR, tokenarray:PTR asm_tok
 
-	mov	ebx,tokenarray
-	xor	eax,eax
+	mov ebx,tokenarray
+	xor eax,eax
 	;
 	; v2.11: GetTextLine() removed - this is now done in ProcessFile()
 	; v2.08: moved here from GetTextLine()
@@ -99,9 +99,9 @@ if REMOVECOMENT eq 0
 	.endif
 endif
 
-	mov	eax,ModuleInfo.token_count
-	test	eax,eax
-	jz	toend
+	mov  eax,ModuleInfo.token_count
+	test eax,eax
+	jz   toend
 	;
 	; CurrIfState != BLOCK_ACTIVE && Token_Count == 1 | 3 may happen
 	; if a conditional assembly directive has been detected by Tokenize().
@@ -155,13 +155,13 @@ endif
 			.endif
 		.endif
 
-		movzx	eax,[ebx+esi].dirtype
-		shr	esi,4
-		push	ebx
-		push	esi
-		call	directive_tab[eax*4]
-		xor	eax,eax
-		jmp	toend
+		movzx eax,[ebx+esi].dirtype
+		shr  esi,4
+		push ebx
+		push esi
+		call directive_tab[eax*4]
+		xor  eax,eax
+		jmp  toend
 	.endif
 
 	;
@@ -209,12 +209,12 @@ endif
 		  .case DRT_MACRO
 		  .case DRT_CATSTR ; CATSTR + TEXTEQU directives
 		  .case DRT_SUBSTR
-			movzx	eax,[ebx+16].dirtype
-			push	ebx
-			push	1
-			call	directive_tab[eax*4]
-			xor	eax,eax
-			jmp	toend
+			movzx eax,[ebx+16].dirtype
+			push ebx
+			push 1
+			call directive_tab[eax*4]
+			xor eax,eax
+			jmp toend
 		.endsw
 	.endif
 	mov eax,ModuleInfo.token_count

@@ -69,77 +69,78 @@ SaveState PROC
 SaveState ENDP
 
 StoreLine PROC USES esi edi ebx sline, flags, lst_position
-	xor	eax,eax
-	cmp	eax,NoLineStore
-	jne	toend
+
+	xor eax,eax
+	cmp eax,NoLineStore
+	jne toend
 	;
 	; don't store generated lines!
 	;
-	.if	ModuleInfo.GeneratedCode == eax
-		.if	StoreState == eax	; line store already started?
-			call	SaveState
+	.if ModuleInfo.GeneratedCode == eax
+		.if StoreState == eax	; line store already started?
+			SaveState()
 		.endif
 		strlen( sline )
-		mov	ebx,eax
-		xor	eax,eax
-		.if	flags == 1 && ModuleInfo.CurrComment != eax
+		mov ebx,eax
+		xor eax,eax
+		.if flags == 1 && ModuleInfo.CurrComment != eax
 			strlen( ModuleInfo.CurrComment )
 		.endif
-		mov	edi,eax
-		lea	eax,[eax+ebx+sizeof(line_item)]
+		mov edi,eax
+		lea eax,[eax+ebx+sizeof(line_item)]
 		LclAlloc( eax )
-		mov	ecx,LineStoreCurr
-		mov	LineStoreCurr,eax
-		mov	esi,eax
-		mov	[esi].line_item.prev,ecx
-		mov	[esi].line_item.next,0
-		call	GetLineNumber
-		mov	[esi].line_item.lineno,eax
-		.if	MacroLevel
-			mov	[esi].line_item.srcfile,0FFFh
+		mov ecx,LineStoreCurr
+		mov LineStoreCurr,eax
+		mov esi,eax
+		mov [esi].line_item.prev,ecx
+		mov [esi].line_item.next,0
+		GetLineNumber()
+		mov [esi].line_item.lineno,eax
+		.if MacroLevel
+			mov [esi].line_item.srcfile,0FFFh
 		.else
 			get_curr_srcfile()
-			mov	[esi].line_item.srcfile,eax
+			mov [esi].line_item.srcfile,eax
 		.endif
-		mov	eax,lst_position
-		.if	!eax
-			mov	eax,list_pos
+		mov eax,lst_position
+		.if !eax
+			mov eax,list_pos
 		.endif
-		mov	[esi].line_item.list_pos,eax
-		.if	edi
+		mov [esi].line_item.list_pos,eax
+		.if edi
 			memcpy( addr [esi].line_item.line, sline, ebx )
-			inc	edi
-			add	eax,ebx
+			inc edi
+			add eax,ebx
 			memcpy( eax, ModuleInfo.CurrComment, edi )
 		.else
-			inc	ebx
+			inc ebx
 			memcpy( addr [esi].line_item.line, sline, ebx )
 		.endif
-		lea	ecx,[esi].line_item.line
+		lea ecx,[esi].line_item.line
 		;
 		; v2.08: don't store % operator at pos 0
 		;
-		movzx	eax,BYTE PTR [ecx]
-		.while	BYTE PTR _ctype[eax*2+2] & _SPACE
-			inc	ecx
-			mov	al,[ecx]
+		movzx eax,BYTE PTR [ecx]
+		.while BYTE PTR _ctype[eax*2+2] & _SPACE
+			inc ecx
+			mov al,[ecx]
 		.endw
-		.if	eax == '%'
-			mov	eax,[ecx+1]
-			movzx	edx,BYTE PTR [ecx+4]
-			and	eax,00FFFFFFh
-			or	eax,00202020h
-			.if	eax != 'tuo' || __ltype[edx+1] & _LABEL or _DIGIT
+		.if eax == '%'
+			mov eax,[ecx+1]
+			movzx edx,BYTE PTR [ecx+4]
+			and eax,00FFFFFFh
+			or  eax,00202020h
+			.if eax != 'tuo' || __ltype[edx+1] & _LABEL or _DIGIT
 				mov BYTE PTR [ecx],' '
 			.endif
 		.endif
-		.if	LineStore.head
-			mov	eax,LineStore.tail
-			mov	[eax].line_item.next,esi
+		.if LineStore.head
+			mov eax,LineStore.tail
+			mov [eax].line_item.next,esi
 		.else
-			mov	LineStore.head,esi
+			mov LineStore.head,esi
 		.endif
-		mov	LineStore.tail,esi
+		mov LineStore.tail,esi
 	.endif
 toend:
 	ret

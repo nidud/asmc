@@ -4,9 +4,9 @@ include stdio.inc
 
 fputwc	PROC wc:wint_t, fp:LPFILE
 
-	movzx	eax,wc
-	mov	ecx,fp
-	sub	[ecx]._iobuf._cnt,2
+	movzx eax,wc
+	mov ecx,fp
+	sub [ecx]._iobuf._cnt,2
 	.ifl
 		_flswbuf(eax, ecx)
 	.else

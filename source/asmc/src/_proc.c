@@ -713,7 +713,7 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 	    paranode->sym.is_ptr  = ti.is_ptr;
 	    paranode->sym.ptr_memtype = ti.ptr_memtype;
 	    paranode->sym.is_vararg = is_vararg;
-	    if ( proc->sym.langtype == LANG_FASTCALL &&
+	    if ((proc->sym.langtype == LANG_FASTCALL) &&
 		fastcall_tab[ModuleInfo.fctype].paramcheck( proc, paranode, &fcint ) ) {
 	    } else {
 		paranode->sym.state = SYM_STACK;
@@ -801,7 +801,9 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 
 	/* now calculate the [E|R]BP offsets */
 
-	if ( ModuleInfo.Ofssize == USE64 && proc->sym.langtype == LANG_FASTCALL ) {
+	if (ModuleInfo.Ofssize == USE64 &&
+	    proc->sym.langtype == LANG_FASTCALL) {
+
 	    for ( paranode = proc->e.procinfo->paralist; paranode ;paranode = paranode->nextparam )
 		if ( paranode->sym.state == SYM_TMACRO ) /* register param */
 		    ;
@@ -1803,7 +1805,7 @@ static ret_code write_userdef_prologue( struct asm_tok tokenarray[] )
     if ( CurrProc->sym.langtype == LANG_FASTCALL && ModuleInfo.fctype == FCT_WIN64 )
 	flags = 0;
     /* set bit 4 if the caller restores (E)SP */
-    if ( CurrProc->sym.langtype == LANG_C ||
+    if (CurrProc->sym.langtype == LANG_C ||
 	CurrProc->sym.langtype == LANG_SYSCALL ||
 	CurrProc->sym.langtype == LANG_FASTCALL )
 	flags |= 0x10;
@@ -1889,10 +1891,10 @@ static void win64_SaveRegParams( struct proc_info *info )
 static void write_win64_default_prologue( struct proc_info *info )
 /****************************************************************/
 {
-    uint_16		*regist;
-    const char * const	*ppfmt;
-    int			cntxmm;
-    int			resstack = ( ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) ? sym_ReservedStack->value : 0 );
+    uint_16 *regist;
+    const char * const *ppfmt;
+    int cntxmm;
+    int resstack = ( ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) ? sym_ReservedStack->value : 0 );
 
     if ( ModuleInfo.win64_flags & W64F_SAVEREGPARAMS )
 	win64_SaveRegParams( info );
@@ -2529,9 +2531,9 @@ static ret_code write_userdef_epilogue( bool flag_iret, struct asm_tok tokenarra
     /* to be compatible with ML64, translate FASTCALL to 0 (not 7) */
     if ( CurrProc->sym.langtype == LANG_FASTCALL && ModuleInfo.fctype == FCT_WIN64 )
 	flags = 0;
-    if ( CurrProc->sym.langtype == LANG_C ||
-	 CurrProc->sym.langtype == LANG_SYSCALL ||
-	 CurrProc->sym.langtype == LANG_FASTCALL)
+    if (CurrProc->sym.langtype == LANG_C ||
+	CurrProc->sym.langtype == LANG_SYSCALL ||
+	CurrProc->sym.langtype == LANG_FASTCALL)
 	flags |= 0x10;
 
     flags |= ( CurrProc->sym.mem_type == MT_FAR ? 0x20 : 0 );

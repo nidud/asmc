@@ -51,11 +51,11 @@ ParseCString PROC PRIVATE USES esi edi ebx,
   local sbuf[MAX_LINE_LEN]:SBYTE,	; "binary" string
 	Unicode:	BYTE
 
-	mov	esi,string
-	mov	edi,buffer
-	lea	edx,sbuf
-	xor	ebx,ebx
-	mov	[edx],ebx
+	mov esi,string
+	mov edi,buffer
+	lea edx,sbuf
+	xor ebx,ebx
+	mov [edx],ebx
 
 	xor eax,eax
 	.if ModuleInfo.aflag & _AF_WSTRING
@@ -322,19 +322,19 @@ GenerateCString PROC USES esi edi ebx i, tokenarray:PTR asm_tok
 		;
 		; need "quote"
 		;
-		mov	ebx,i
-		mov	esi,tokenarray
-		shl	ebx,4
-		add	ebx,esi
-		mov	brackets,al
-		mov	edx,eax
+		mov ebx,i
+		mov esi,tokenarray
+		shl ebx,4
+		add ebx,esi
+		mov brackets,al
+		mov edx,eax
 		;
 		; proc( "", ( ... ), "" )
 		;
-		.while	[ebx].asm_tok.token != T_FINAL
+		.while [ebx].asm_tok.token != T_FINAL
 
-			mov	ecx,[ebx].asm_tok.string_ptr
-			movzx	ecx,WORD PTR [ecx]
+			mov ecx,[ebx].asm_tok.string_ptr
+			movzx ecx,WORD PTR [ecx]
 
 			.switch cl
 			  .case 'L'

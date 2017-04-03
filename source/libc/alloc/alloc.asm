@@ -17,19 +17,19 @@ _ALIGNX equ 3
 
 malloc	PROC byte_count:UINT
 
-	mov	ecx,[esp+4]	; byte count to allocate
-	add	ecx,sizeof(S_HEAP)+_GRANULARITY-1
-	and	ecx,-(_GRANULARITY)
+	mov ecx,[esp+4] ; byte count to allocate
+	add ecx,sizeof(S_HEAP)+_GRANULARITY-1
+	and ecx,-(_GRANULARITY)
 
-	mov	edx,_heap_free
-	test	edx,edx
-	jz	create_heap
+	mov edx,_heap_free
+	test edx,edx
+	jz  create_heap
 
-	cmp	[edx].S_HEAP.h_type,_FREE
-	mov	eax,[edx].S_HEAP.h_size
-	jne	find_block
-	cmp	eax,ecx
-	jb	find_block
+	cmp [edx].S_HEAP.h_type,_FREE
+	mov eax,[edx].S_HEAP.h_size
+	jne find_block
+	cmp eax,ecx
+	jb  find_block
 
 block_found:
 

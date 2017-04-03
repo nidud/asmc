@@ -29,12 +29,12 @@ extrn	_umaskval:dword
 
 _wfopen PROC USES esi edi ebx file:LPWSTR, mode:LPWSTR
 
-	mov	ebx,mode
+	mov ebx,mode
 
 	.repeat
 
-		movzx	eax,WORD PTR [ebx]
-		add	ebx,2
+		movzx eax,WORD PTR [ebx]
+		add ebx,2
 		.switch eax
 
 		  .case 'r': mov esi,_IOREAD : mov edi,O_RDONLY

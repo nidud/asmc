@@ -3,7 +3,9 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.23 - xx xxx 2017
-- fixing bug in option:cstack + stackbase:esp
+- added .amd64 and .win64
+- fixed bug in quoted file names -- "test".asm
+- fixed bug in option:cstack + stackbase:esp
 - added (L"Unicode") string macro
 - added ("Multi" "Text" "Lines") for quoted strings
 - added type check on function calls used as argument

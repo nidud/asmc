@@ -38,62 +38,60 @@ AT_ALL		equ AT_TYPE  or AT_LABEL or AT_IND or AT_REG or AT_FIELD or AT_NUM or AT
 
 	.code
 
-	OPTION PROCALIGN:4
-
 init_expr PROC FASTCALL opnd
-	xor	eax,eax
-	mov	[ecx].expr.value,eax
-	mov	[ecx].expr.hvalue,eax
-	mov	DWORD PTR [ecx].expr.hlvalue[0],eax
-	mov	DWORD PTR [ecx].expr.hlvalue[4],eax
-	mov	[ecx].expr.quoted_string,eax
-	mov	[ecx].expr.base_reg,eax
-	mov	[ecx].expr.idx_reg,eax
-	mov	[ecx].expr.label_tok,eax
-	mov	[ecx].expr.override,eax
-	mov	[ecx].expr._instr,EMPTY		; -2
-	mov	[ecx].expr.kind,EXPR_EMPTY	; -2
-	mov	[ecx].expr.mem_type,MT_EMPTY	; 0C0h
-	mov	[ecx].expr.scale,al
-	mov	[ecx].expr.Ofssize,USE_EMPTY	; 0FEh
-	mov	[ecx].expr.flags,al
-	mov	[ecx].expr.sym,eax
-	mov	[ecx].expr.mbr,eax
-	mov	[ecx].expr._type,eax
+	xor eax,eax
+	mov [ecx].expr.value,eax
+	mov [ecx].expr.hvalue,eax
+	mov DWORD PTR [ecx].expr.hlvalue[0],eax
+	mov DWORD PTR [ecx].expr.hlvalue[4],eax
+	mov [ecx].expr.quoted_string,eax
+	mov [ecx].expr.base_reg,eax
+	mov [ecx].expr.idx_reg,eax
+	mov [ecx].expr.label_tok,eax
+	mov [ecx].expr.override,eax
+	mov [ecx].expr._instr,EMPTY		; -2
+	mov [ecx].expr.kind,EXPR_EMPTY	; -2
+	mov [ecx].expr.mem_type,MT_EMPTY	; 0C0h
+	mov [ecx].expr.scale,al
+	mov [ecx].expr.Ofssize,USE_EMPTY	; 0FEh
+	mov [ecx].expr.flags,al
+	mov [ecx].expr.sym,eax
+	mov [ecx].expr.mbr,eax
+	mov [ecx].expr._type,eax
 	ret
 init_expr ENDP
 
 TokenAssign PROC FASTCALL opnd1, opnd2
 
-	mov	eax,DWORD PTR [edx].expr.llvalue[0]
-	mov	DWORD PTR [ecx].expr.llvalue[0],eax
-	mov	eax,DWORD PTR [edx].expr.llvalue[4]
-	mov	DWORD PTR [ecx].expr.llvalue[4],eax
-	mov	eax,DWORD PTR [edx].expr.hlvalue[0]
-	mov	DWORD PTR [ecx].expr.hlvalue[0],eax
-	mov	eax,DWORD PTR [edx].expr.hlvalue[4]
-	mov	DWORD PTR [ecx].expr.hlvalue[4],eax
-	mov	eax,[edx].expr.quoted_string		; probably useless
-	mov	[ecx].expr.quoted_string,eax
+	mov eax,DWORD PTR [edx].expr.llvalue[0]
+	mov DWORD PTR [ecx].expr.llvalue[0],eax
+	mov eax,DWORD PTR [edx].expr.llvalue[4]
+	mov DWORD PTR [ecx].expr.llvalue[4],eax
+	mov eax,DWORD PTR [edx].expr.hlvalue[0]
+	mov DWORD PTR [ecx].expr.hlvalue[0],eax
+	mov eax,DWORD PTR [edx].expr.hlvalue[4]
+	mov DWORD PTR [ecx].expr.hlvalue[4],eax
+	mov eax,[edx].expr.quoted_string		; probably useless
+	mov [ecx].expr.quoted_string,eax
 
-	mov	eax,[edx].expr.base_reg
-	mov	[ecx].expr.base_reg,eax
-	mov	eax,[edx].expr.idx_reg
-	mov	[ecx].expr.idx_reg,eax
-	mov	eax,[edx].expr.label_tok
-	mov	[ecx].expr.label_tok,eax
-	mov	eax,[edx].expr.override
-	mov	[ecx].expr.override,eax
-	mov	eax,[edx].expr._instr
-	mov	[ecx].expr._instr,eax
-	mov	eax,[edx].expr.kind
-	mov	[ecx].expr.kind,eax
-	mov	eax,DWORD PTR [edx].expr.mem_type
-	mov	DWORD PTR [ecx].expr.mem_type,eax
-	mov	eax,[edx].expr.sym
-	mov	[ecx].expr.sym,eax
-	mov	eax,[edx].expr.mbr
-	mov	[ecx].expr.mbr,eax
+	mov eax,[edx].expr.base_reg
+	mov [ecx].expr.base_reg,eax
+	mov eax,[edx].expr.idx_reg
+	mov [ecx].expr.idx_reg,eax
+	mov eax,[edx].expr.label_tok
+	mov [ecx].expr.label_tok,eax
+	mov eax,[edx].expr.override
+	mov [ecx].expr.override,eax
+	mov eax,[edx].expr._instr
+	mov [ecx].expr._instr,eax
+	mov eax,[edx].expr.kind
+	mov [ecx].expr.kind,eax
+	mov eax,DWORD PTR [edx].expr.mem_type
+	mov DWORD PTR [ecx].expr.mem_type,eax
+	mov eax,[edx].expr.sym
+	mov [ecx].expr.sym,eax
+	mov eax,[edx].expr.mbr
+	mov [ecx].expr.mbr,eax
 
 	ret
 TokenAssign ENDP
@@ -112,59 +110,59 @@ is_expr_item PROC FASTCALL item
 ; DUP, comma or other instructions or directives terminate the expression.
 ;
 
-	movzx	edx,[ecx].asm_tok.token
-	mov	eax,1
+	movzx edx,[ecx].asm_tok.token
+	mov eax,1
 
 	.switch edx
 	  .case T_INSTRUCTION
-		mov	edx,[ecx].asm_tok.tokval
+		mov edx,[ecx].asm_tok.tokval
 		.switch edx
 		  .case T_SHL
 		  .case T_SHR
-			mov	[ecx].asm_tok.token,T_BINARY_OPERATOR
-			mov	[ecx].asm_tok.precedence,8
+			mov [ecx].asm_tok.token,T_BINARY_OPERATOR
+			mov [ecx].asm_tok.precedence,8
 			ret
 		  .case T_NOT
-			mov	[ecx].asm_tok.token,T_UNARY_OPERATOR
-			mov	[ecx].asm_tok.precedence,11
+			mov [ecx].asm_tok.token,T_UNARY_OPERATOR
+			mov [ecx].asm_tok.precedence,11
 			ret
 		  .case T_AND
-			mov	[ecx].asm_tok.token,T_BINARY_OPERATOR
-			mov	[ecx].asm_tok.precedence,12
+			mov [ecx].asm_tok.token,T_BINARY_OPERATOR
+			mov [ecx].asm_tok.precedence,12
 			ret
 		  .case T_OR
 		  .case T_XOR
-			mov	[ecx].asm_tok.token,T_BINARY_OPERATOR
-			mov	[ecx].asm_tok.precedence,13
+			mov [ecx].asm_tok.token,T_BINARY_OPERATOR
+			mov [ecx].asm_tok.precedence,13
 			ret
 		.endsw
-		xor	eax,eax
+		xor eax,eax
 		ret
 
 	  .case T_RES_ID
-		.if	[ecx].asm_tok.tokval == T_DUP
-			xor	eax,eax
+		.if [ecx].asm_tok.tokval == T_DUP
+			xor eax,eax
 		.endif
 		ret
 
 	  .case T_DIRECTIVE
-		.if	[ecx].asm_tok.tokval == T_PROC
-			mov	[ecx].asm_tok.token,T_STYPE
-			mov	edx,ecx
-			mov	cl,ModuleInfo._model
-			shl	eax,cl
-			and	eax,0070h
-			mov	eax,T_FAR
-			.if	ZERO?
-				mov	eax,T_NEAR
+		.if [ecx].asm_tok.tokval == T_PROC
+			mov [ecx].asm_tok.token,T_STYPE
+			mov edx,ecx
+			mov cl,ModuleInfo._model
+			shl eax,cl
+			and eax,0070h
+			mov eax,T_FAR
+			.if ZERO?
+				mov eax,T_NEAR
 			.endif
-			mov	[edx].asm_tok.tokval,eax
-			mov	eax,1
+			mov [edx].asm_tok.tokval,eax
+			mov eax,1
 			ret
 		.endif
 
 	  .case T_COMMA
-		xor	eax,eax
+		xor eax,eax
 		ret
 	.endsw
 	ret

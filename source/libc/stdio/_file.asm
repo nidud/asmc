@@ -16,16 +16,16 @@ _last	_iobuf	<0,0,0,0,-1,0,0>
 	.code
 
 _stdioexit:
-	push	esi
-	lea	esi,_first
+	push esi
+	lea  esi,_first
 	.repeat
-		.if	[esi]._iobuf._file != -1
+		.if [esi]._iobuf._file != -1
 
 			fclose( esi )
 		.endif
 		add esi,SIZE _iobuf
-	.until	esi > offset _last
-	pop	esi
+	.until esi > offset _last
+	pop esi
 	ret
 
 pragma_exit _stdioexit, 1

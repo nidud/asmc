@@ -327,23 +327,23 @@ local	op:		SINT,
 
 	assume	ebx: PTR asm_tok
 
-	mov	esi,i
-	mov	edi,[esi]
-	mov	ebx,edi
-	shl	ebx,4
-	add	ebx,tokenarray
+	mov esi,i
+	mov edi,[esi]
+	mov ebx,edi
+	shl ebx,4
+	add ebx,tokenarray
 
-	mov	eax,[ebx].string_ptr
+	mov eax,[ebx].string_ptr
 	.while	WORD PTR [eax] == '!'
 
-		add	edi,1
-		add	ebx,16
-		mov	eax,1
-		sub	eax,is_true
-		mov	is_true,eax
-		mov	eax,[ebx].string_ptr
+		add edi,1
+		add ebx,16
+		mov eax,1
+		sub eax,is_true
+		mov is_true,eax
+		mov eax,[ebx].string_ptr
 	.endw
-	mov	[esi],edi
+	mov [esi],edi
 	;
 	; the problem with '()' is that is might enclose just a standard Masm
 	; expression or a "hll" expression. The first case is to be handled
@@ -352,10 +352,10 @@ local	op:		SINT,
 	;
 	.if [ebx].token == T_OP_BRACKET
 
-		mov	esi,1
-		add	ebx,16
-		movzx	eax,[ebx].token
-		.while	eax != T_FINAL
+		mov esi,1
+		add ebx,16
+		movzx eax,[ebx].token
+		.while eax != T_FINAL
 
 			.if eax == T_OP_BRACKET
 
@@ -367,8 +367,8 @@ local	op:		SINT,
 			.else
 				.break .if GetCOp( ebx ) != COP_NONE
 			.endif
-			add	ebx,16
-			movzx	eax,[ebx].token
+			add ebx,16
+			movzx eax,[ebx].token
 		.endw
 
 		mov eax,esi
@@ -2205,19 +2205,19 @@ HllEndDir proc uses esi edi ebx i:SINT, tokenarray:PTR asm_tok
 		jmp toend
 	.endif
 
-	mov	eax,[esi].next
-	mov	ecx,ModuleInfo.HllFree
-	mov	ModuleInfo.HllStack,eax
-	mov	[esi].next,ecx
-	mov	ModuleInfo.HllFree,esi
-	mov	rc,NOT_ERROR
-	lea	edi,buffer
-	mov	ebx,tokenarray
-	mov	ecx,[esi].cmd
-	mov	edx,i
-	shl	edx,4
-	mov	eax,[ebx+edx].tokval
-	mov	cmd,eax
+	mov eax,[esi].next
+	mov ecx,ModuleInfo.HllFree
+	mov ModuleInfo.HllStack,eax
+	mov [esi].next,ecx
+	mov ModuleInfo.HllFree,esi
+	mov rc,NOT_ERROR
+	lea edi,buffer
+	mov ebx,tokenarray
+	mov ecx,[esi].cmd
+	mov edx,i
+	shl edx,4
+	mov eax,[ebx+edx].tokval
+	mov cmd,eax
 
 	.switch eax
 

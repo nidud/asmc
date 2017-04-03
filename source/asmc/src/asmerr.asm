@@ -406,28 +406,28 @@ NOTE	dd N0000,N0001,N0002,N0003
 
 print_err PROC PRIVATE USES esi edi ebx erbuf, format, args
   local iob:_iobuf
-	call	write_logo
-	mov	esi,erbuf
-	mov	iob._flag,_IOWRT or _IOSTRG
-	mov	iob._cnt,INT_MAX
-	mov	iob._ptr,esi
-	mov	iob._base,esi
+	write_logo()
+	mov esi,erbuf
+	mov iob._flag,_IOWRT or _IOSTRG
+	mov iob._cnt,INT_MAX
+	mov iob._ptr,esi
+	mov iob._base,esi
 	_output( addr iob, format, args )
-	mov	eax,iob._ptr
-	mov	byte ptr [eax],0
+	mov eax,iob._ptr
+	mov byte ptr [eax],0
 	;
 	; v2.05: new option -eq
 	;
-	.if	!Options.no_error_disp
+	.if !Options.no_error_disp
 		_print( "%s\n", esi )
 	.endif
 	;
 	; open .err file if not already open and a name is given
 	;
-	mov	ebx,ModuleInfo.curr_fname[ERR*4]
-	mov	edi,ModuleInfo.curr_file[ERR*4]
-	.if	!edi && ebx
-		.if	fopen( ebx, "w" )
+	mov ebx,ModuleInfo.curr_fname[ERR*4]
+	mov edi,ModuleInfo.curr_file[ERR*4]
+	.if !edi && ebx
+		.if fopen( ebx, "w" )
 			mov ModuleInfo.curr_file[ERR*4],eax
 		.else
 			;
@@ -442,11 +442,11 @@ print_err PROC PRIVATE USES esi edi ebx erbuf, format, args
 			asmerr( 4910, ebx )
 		.endif
 	.endif
-	mov	edi,ModuleInfo.curr_file[ERR*4]
-	.if	edi
+	mov edi,ModuleInfo.curr_file[ERR*4]
+	.if edi
 		fwrite( esi, 1, strlen( esi ), edi )
 		fwrite( "\n", 1, 1, edi )
-		.if	Parse_Pass == PASS_1 && ModuleInfo.curr_file[LST*4]
+		.if Parse_Pass == PASS_1 && ModuleInfo.curr_file[LST*4]
 			GetCurrOffset()
 			LstWrite( LSTTYPE_DIRECTIVE, eax, 0 )
 			LstPrintf( "                           %s", esi )
@@ -460,31 +460,31 @@ print_err ENDP
 asmerr	PROC C USES esi edi ebx edx ecx value, args:VARARG
   local format[512]:BYTE,erbuf[512]:BYTE
 
-	lea	edi,format
-	mov	ebx,value
-	cmp	ebx,MIN_ID
-	jb	error
-	cmp	ebx,MAX_ID
-	ja	error
+	lea edi,format
+	mov ebx,value
+	cmp ebx,MIN_ID
+	jb  error
+	cmp ebx,MAX_ID
+	ja  error
 
-	.if	ebx >= 4000 && !Options.warning_error && !Options.warning_level
+	.if ebx >= 4000 && !Options.warning_error && !Options.warning_level
 		jmp toend
 	.endif
-	.if	ebx >= 5000 && ebx < 8000 && Options.warning_level < 3
+	.if ebx >= 5000 && ebx < 8000 && Options.warning_level < 3
 		jmp toend
 	.endif
 
 	strcpy( edi, "ASMC : " )
-	mov	edx,ModuleInfo.src_stack
-	.while	edx
-		movzx	eax,[edx].src_item.srcfile
-		mov	ecx,ModuleInfo.FNames
-		mov	ecx,[ecx+eax*4]
-		mov	eax,[edx].src_item.line_num
-		cmp	[edx].src_item._type,SIT_FILE
-		mov	edx,[edx].src_item.next
-		.if	ZERO?
-			.if	ModuleInfo.EndDirFound
+	mov edx,ModuleInfo.src_stack
+	.while edx
+		movzx eax,[edx].src_item.srcfile
+		mov ecx,ModuleInfo.FNames
+		mov ecx,[ecx+eax*4]
+		mov eax,[edx].src_item.line_num
+		cmp [edx].src_item._type,SIT_FILE
+		mov edx,[edx].src_item.next
+		.if ZERO?
+			.if ModuleInfo.EndDirFound
 				sprintf( edi, "%s : ", ecx )
 			.else
 				sprintf( edi, "%s(%u) : ", ecx, eax )
@@ -493,7 +493,7 @@ asmerr	PROC C USES esi edi ebx edx ecx value, args:VARARG
 		.endif
 	.endw
 
-	.if	ebx < 2000
+	.if ebx < 2000
 		strcat( edi, "fatal error" )
 	.elseif ebx < 4000
 		strcat( edi,"error" )
@@ -502,65 +502,65 @@ asmerr	PROC C USES esi edi ebx edx ecx value, args:VARARG
 	.endif
 
 	strlen( edi )
-	add	edi,eax
+	add edi,eax
 	sprintf( edi, " A%04u: ", ebx )
-	xor	ecx,ecx
-	lea	eax,[ebx-1000]
-	.while	eax > 1000
-		add	ecx,1
-		sub	eax,1000
+	xor ecx,ecx
+	lea eax,[ebx-1000]
+	.while eax > 1000
+		add ecx,1
+		sub eax,1000
 	.endw
-	.if	eax == 910
-		mov	eax,14
+	.if eax == 910
+		mov eax,14
 	.endif
-	cmp	eax,maxid[ecx*4]
-	jnb	error
-	mov	esi,table[ecx*4]
-	mov	esi,[esi+eax*4]
-	cmp	esi,offset INTER
-	je	error
+	cmp eax,maxid[ecx*4]
+	jnb error
+	mov esi,table[ecx*4]
+	mov esi,[esi+eax*4]
+	cmp esi,offset INTER
+	je  error
 
-	lea	edi,format
+	lea edi,format
 	strcat( edi, esi )
 	print_err( addr erbuf, edi, addr args )
-	lea	esi,erbuf
+	lea esi,erbuf
 
-	mov	ebx,value
-	cmp	ebx,1012
-	je	quit
+	mov ebx,value
+	cmp ebx,1012
+	je  quit
 
-	.if	ebx >= 4000
-		.if	!Options.warning_error
+	.if ebx >= 4000
+		.if !Options.warning_error
 			inc ModuleInfo.warning_count
 		.else
 			inc ModuleInfo.error_count
 		.endif
 	.else
-		inc	ModuleInfo.error_count
+		inc ModuleInfo.error_count
 	.endif
-	mov	eax,Options.error_limit
-	.if	eax != -1
-		inc	eax
-		.if	ModuleInfo.error_count >= eax
+	mov eax,Options.error_limit
+	.if eax != -1
+		inc eax
+		.if ModuleInfo.error_count >= eax
 			asmerr( 1012 )
 		.endif
 	.endif
-	.if	ebx >= 2000
+	.if ebx >= 2000
 		print_source_nesting_structure()
 	.else
-		jmp	quit
+		jmp quit
 	.endif
 toend:
-	mov	eax,-1
+	mov eax,-1
 	ret
 error:
 	_print( "ASMC : fatal error A1901: %s\n", addr INTER )
 quit:
-	.if	ModuleInfo.curr_fname[ASM*4]
+	.if ModuleInfo.curr_fname[ASM*4]
 		longjmp( addr jmpenv, 3 )
 	.endif
-	mov	eax,ModuleInfo.curr_file[OBJ*4]
-	.if	eax
+	mov eax,ModuleInfo.curr_file[OBJ*4]
+	.if eax
 		fclose( eax )
 		remove( ModuleInfo.curr_fname[OBJ*4] )
 	.endif
@@ -576,8 +576,8 @@ WriteError ENDP
 
 PrintNote PROC C value, args:VARARG
   local erbuf[512]:BYTE
-	mov	eax,value
-	mov	edx,NOTE[eax*4]
+	mov eax,value
+	mov edx,NOTE[eax*4]
 	print_err( addr erbuf, edx, addr args )
 	ret
 PrintNote ENDP

@@ -95,6 +95,7 @@ endif
 ifdef _WIN64
 option	win64:3
 SIZE_T	typedef QWORD
+
 ifdef __PE__
 	.x64
 	.model	flat, _CType

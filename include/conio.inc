@@ -59,6 +59,7 @@ _wherey		proto __cdecl
 
 _cputws		proto __cdecl :LPWSTR
 _putwch		proto __cdecl :UINT ; WCHAR_T
+_putwch_nolock	proto __cdecl :UINT
 _getwch		proto __cdecl
 _getwche	proto __cdecl
 _cgetws		proto __cdecl :LPWSTR, :SIZE_T, :PVOID
@@ -69,10 +70,25 @@ _cwscanf	proto _CDecl :LPWSTR, :VARARG
 _vcwprintf	proto __cdecl :LPWSTR, :PVOID
 
 ;;;;;;;;;;;;;;; crtl
+
+ifndef _INTPTR_T_DEFINED
+_INTPTR_T_DEFINED equ <>
+ifdef _WIN64
+intptr_t typedef sqword
+else
+intptr_t typedef sdword
+endif
+endif
+
 ifndef __PE__
 externdef hStdInput:  HANDLE
 externdef hStdOutput: HANDLE
 externdef hStdError:  HANDLE
+
+__initconout	proto __cdecl
+__termconout	proto __cdecl
+externdef _confh:     intptr_t
+
 endif
 
 .list

@@ -56,70 +56,68 @@ hProcessHeap	dd 0
 
 	.code
 
-	OPTION PROCALIGN:4
-
 MemInit PROC
-	call	GetProcessHeap
-	mov	hProcessHeap,eax
-	xor	eax,eax
-	mov	pBase,eax
-	mov	currfree,eax
+	GetProcessHeap()
+	mov hProcessHeap,eax
+	xor eax,eax
+	mov pBase,eax
+	mov currfree,eax
 	ret
 MemInit ENDP
 
 MemFini PROC
-	push	ebx
-	mov	ebx,pBase
-	.while	ebx
-		mov	eax,ebx
-		mov	ebx,[ebx]
+	push ebx
+	mov ebx,pBase
+	.while ebx
+		mov eax,ebx
+		mov ebx,[ebx]
 		HeapFree( hProcessHeap, 0, eax )
 	.endw
-	mov	pBase,ebx
-	pop	ebx
+	mov pBase,ebx
+	pop ebx
 	ret
 MemFini ENDP
 
 LclAlloc PROC FASTCALL len
-	mov	eax,pCurr
-	add	ecx,ALIGNMENT-1
-	and	ecx,-ALIGNMENT
-	cmp	ecx,currfree
-	ja	alloc
+	mov eax,pCurr
+	add ecx,ALIGNMENT-1
+	and ecx,-ALIGNMENT
+	cmp ecx,currfree
+	ja  alloc
 done:
-	sub	currfree,ecx
-	add	pCurr,ecx
+	sub currfree,ecx
+	add pCurr,ecx
 	ret
 alloc:
-	push	edx
-	push	ecx
-	cmp	ecx,BLKSIZE-ALIGNMENT
-	ja	@F
-	mov	ecx,BLKSIZE-ALIGNMENT
+	push edx
+	push ecx
+	cmp ecx,BLKSIZE-ALIGNMENT
+	ja  @F
+	mov ecx,BLKSIZE-ALIGNMENT
 @@:
-	mov	currfree,ecx
-	add	ecx,ALIGNMENT
+	mov currfree,ecx
+	add ecx,ALIGNMENT
 	HeapAlloc( hProcessHeap, HEAP_ZERO_MEMORY, ecx )
-	test	eax,eax
-	jz	mem_error
-	mov	ecx,pBase
-	mov	[eax],ecx
-	mov	pBase,eax
-	add	eax,ALIGNMENT
-	mov	pCurr,eax
-	pop	ecx
-	pop	edx
-	jmp	done
+	test eax,eax
+	jz  mem_error
+	mov ecx,pBase
+	mov [eax],ecx
+	mov pBase,eax
+	add eax,ALIGNMENT
+	mov pCurr,eax
+	pop ecx
+	pop edx
+	jmp done
 LclAlloc ENDP
 
 MemAlloc PROC FASTCALL len
 	malloc( len )
-	jz	mem_error
+	jz mem_error
 	ret
 MemAlloc ENDP
 
 mem_error:
-	mov	currfree,eax
+	mov currfree,eax
 	asmerr( 1901 )
 	ret
 

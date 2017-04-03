@@ -89,7 +89,7 @@ enum fpo {
     FPO_EMULATION      /* -FPi */
 };
 
-/* language vaules.
+/* language values.
  * the order cannot be changed, it's
  * returned by OPATTR and used in user-defined prologue/epilogue.
  */
@@ -226,7 +226,8 @@ enum segofssize {
 enum fastcall_type {
     FCT_MSC,	    /* MS 16-/32-bit fastcall (ax,dx,cx / ecx,edx) */
     FCT_WATCOMC,    /* OW register calling convention (eax, ebx, ecx, edx) */
-    FCT_WIN64	    /* Win64 fastcall convention (rcx, rdx, r8, r9) */
+    FCT_WIN64,	    /* Win64 fastcall convention (rcx, rdx, r8, r9) */
+    FCT_ASMC	    /* ASMC fastcall (ax,dx,cx,bx,si,di,bp) */
 };
 
 enum stdcall_decoration {

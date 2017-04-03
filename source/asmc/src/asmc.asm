@@ -22,7 +22,7 @@ close_files	PROTO
 .data
 
 cp_logo label byte
-%	db "Asmc Macro Assembler Version ",ASMC_VERSSTR, 'G', 10
+%	db "Asmc Macro Assembler Version ",ASMC_VERSSTR, 'I', 10
 	db "Portions Copyright (c) 1992-2002 Sybase, Inc. All Rights Reserved.",10,10,0
 
 cp_usage label byte
@@ -143,55 +143,53 @@ argv		dd 0
 
 	.code
 
-	OPTION PROCALIGN:4
-
 write_logo PROC
-	xor	eax,eax
-	.if	eax == banner_printed
-		inc	banner_printed
+	xor eax,eax
+	.if eax == banner_printed
+		inc banner_printed
 		printf( addr cp_logo )
-		mov	eax,4
+		mov eax,4
 	.endif
 	ret
 write_logo ENDP
 
 getnextarg:
-	xor	eax,eax
-	.if	eax != argc
-		dec	argc
-		mov	eax,argv
-		add	argv,4
-		mov	eax,[eax]
+	xor eax,eax
+	.if eax != argc
+		dec argc
+		mov eax,argv
+		add argv,4
+		mov eax,[eax]
 	.endif
 	ret
 
 getfilearg:			; -Fo<file> or -Fo <file>
-	.if	BYTE PTR [eax] == 0
-		mov	ecx,eax
-		.if	!getnextarg()
+	.if BYTE PTR [eax] == 0
+		mov ecx,eax
+		.if !getnextarg()
 			mov eax,ecx
 		.endif
 	.elseif BYTE PTR [eax] == '='
-		inc	eax
+		inc eax
 	.endif
-	.if	BYTE PTR [eax] == 0
+	.if BYTE PTR [eax] == 0
 		asmerr( 1006, esi )
-		xor	eax,eax
+		xor eax,eax
 	.endif
 	ret
 
 GetNumber PROC
-	xor	eax,eax
-	lea	edx,[esi+2]	; -x[=]<number>
+	xor eax,eax
+	lea edx,[esi+2] ; -x[=]<number>
 	.repeat
-		mov	al,[edx]
-		inc	edx
-		test	al,al
-		jz	toend
+		mov al,[edx]
+		inc edx
+		test al,al
+		jz  toend
 	.until	BYTE PTR _ctype[eax*2+2] & _DIGIT
-	dec	edx
-	atol  ( edx )
-	test	eax,eax
+	dec edx
+	atol(edx)
+	test eax,eax
 toend:
 	ret
 GetNumber ENDP
@@ -201,9 +199,9 @@ GetNumber ENDP
 
 queue_item PROC USES esi i, string
 
-	mov	esi,string
+	mov esi,string
 
-	.while	BYTE PTR [esi] == '"'
+	.while BYTE PTR [esi] == '"'
 
 		.if strrchr( strcpy( esi, addr [esi+1] ), '"' )
 
@@ -212,24 +210,24 @@ queue_item PROC USES esi i, string
 	.endw
 
 	strlen( esi )
-	add	eax,sizeof( qitem )
+	add eax,sizeof( qitem )
 	MemAlloc( eax )
-	mov	[eax].qitem.next,0
-	mov	edx,eax
+	mov [eax].qitem.next,0
+	mov edx,eax
 	strcpy( addr [edx].qitem.value, esi )
 
-	mov	eax,i
-	mov	ecx,Options.queues[eax*4]
-	.if	ecx
+	mov eax,i
+	mov ecx,Options.queues[eax*4]
+	.if ecx
 
-		.while	[ecx].qitem.next
+		.while [ecx].qitem.next
 
 			mov ecx,[ecx].qitem.next
 		.endw
-		mov	[ecx].qitem.next,edx
+		mov [ecx].qitem.next,edx
 	.else
 
-		mov	Options.queues[eax*4],edx
+		mov Options.queues[eax*4],edx
 	.endif
 	ret
 queue_item ENDP
@@ -238,60 +236,60 @@ get_fname PROC USES esi edi ebx i, string
 
   local fname[_MAX_PATH]:BYTE
 
-	mov	ebx,string
-	.if	BYTE PTR [ebx] == '='
+	mov ebx,string
+	.if BYTE PTR [ebx] == '='
 
-		inc	ebx
+		inc ebx
 	.endif
-	strfn ( ebx )
-	mov	edi,i
-	mov	esi,eax
+	strfn(ebx)
+	mov edi,i
+	mov esi,eax
 	;
 	; If name's ending with a '\' (or '/' in Unix), it's supposed
 	; to be a directory name only.
 	;
-	.if	BYTE PTR [eax] == 0
+	.if BYTE PTR [eax] == 0
 
 		.if edi < NUM_FILE_TYPES && BYTE PTR [ebx]
 
-			mov	eax,DefaultDir[edi*4]
-			.if	eax
+			mov eax,DefaultDir[edi*4]
+			.if eax
 
-				free( eax )
+				free(eax)
 			.endif
-			salloc( ebx )
-			mov	DefaultDir[edi*4],eax
+			salloc(ebx)
+			mov DefaultDir[edi*4],eax
 		.endif
 	.else
 
-		mov	fname,0
-		.if	esi == ebx && edi < NUM_FILE_TYPES && DefaultDir[edi*4]
+		mov fname,0
+		.if esi == ebx && edi < NUM_FILE_TYPES && DefaultDir[edi*4]
 
 			strcpy( addr fname, DefaultDir[edi*4] )
 		.endif
-		strcat( addr fname, ebx )
-		free  ( Options.names[edi*4] )
-		salloc( addr fname )
-		mov	Options.names[edi*4],eax
+		strcat(addr fname, ebx)
+		free(Options.names[edi*4])
+		salloc(addr fname)
+		mov Options.names[edi*4],eax
 	.endif
 	ret
 get_fname ENDP
 
 set_option_n_name PROC idx, string
 
-	mov	edx,string
-	movzx	eax,BYTE PTR [edx]
-	.if	eax != '.'
+	mov edx,string
+	movzx eax,BYTE PTR [edx]
+	.if eax != '.'
 
 		islabel( eax )
 	.endif
-	.if	eax
+	.if eax
 
-		mov	eax,idx
+		mov eax,idx
 		free  ( Options.names[eax*4] )
 		salloc( edx )
-		mov	edx,idx
-		mov	Options.names[edx*4],eax
+		mov edx,idx
+		mov Options.names[edx*4],eax
 	.else
 
 		asmerr( 1006, esi )
@@ -306,39 +304,39 @@ ParseCmdline PROC USES esi edi ebx numargs
 
   local handle, buffer, bsize
 
-	lea	edi,Options
+	lea edi,Options
 	ASSUME	edi:PTR global_options
 
-	xor	esi,esi
-	.while	esi < NUM_FILE_TYPES
+	xor esi,esi
+	.while esi < NUM_FILE_TYPES
 
-		mov	eax,[edi].names[esi*4]
-		mov	[edi].names[esi*4],0
-		inc	esi
-		free  ( eax )
+		mov eax,[edi].names[esi*4]
+		mov [edi].names[esi*4],0
+		inc esi
+		free(eax)
 	.endw
 
 	.while	getnextarg()
 
-		mov	esi,eax
-		movzx	eax,BYTE PTR [esi]
+		mov esi,eax
+		movzx eax,BYTE PTR [esi]
 
 		.switch eax
 
 		  .case '/'
 		  .case '-'
-			mov	eax,[esi+1]
+			mov eax,[esi+1]
 			.switch al
-			  .case 'D'	; /D<name>[=text]
-				lea	eax,[esi+2]
-				.if	getfilearg()
+			  .case 'D' ; /D<name>[=text]
+				lea eax,[esi+2]
+				.if getfilearg()
 
 					queue_item( OPTQ_MACRO, eax )
 				.endif
 				.continue
-			  .case 'I'	; /I<name>
-				lea	eax,[esi+2]
-				.if	getfilearg()
+			  .case 'I' ; /I<name>
+				lea eax,[esi+2]
+				.if getfilearg()
 
 					queue_item( OPTQ_INCPATH, eax )
 				.endif
@@ -356,12 +354,10 @@ ParseCmdline PROC USES esi edi ebx numargs
 				  dd P_64
 			.code
 
-			.if	!ah
-
-				movzx	eax,al
-			.elseif !( eax & 00FF0000h )
-
-				movzx	eax,ax
+			.if !ah
+				movzx eax,al
+			.elseif !(eax & 00FF0000h)
+				movzx eax,ax
 			.endif
 
 			.switch eax
@@ -370,261 +366,261 @@ ParseCmdline PROC USES esi edi ebx numargs
 				.endc
 
 			  .case 'ffoc'	; /coff
-				mov	[edi].output_format,OFORMAT_COFF
-				mov	[edi].sub_format,SFORMAT_NONE
+				mov [edi].output_format,OFORMAT_COFF
+				mov [edi].sub_format,SFORMAT_NONE
 				.endc
 
 			  .case 'PE'	; /EP
-				mov	[edi].preprocessor_stdout,1
+				mov [edi].preprocessor_stdout,1
 
 			  .case 'q'	; /q
-				mov	[edi].quiet,1
+				mov [edi].quiet,1
 
 			  .case 'olon'	; /nologo
-				mov	banner_printed,1
+				mov banner_printed,1
 				.endc
 
 			  .case 'nib'	; /bin
-				mov	[edi].output_format,OFORMAT_BIN
-				mov	[edi].sub_format,SFORMAT_NONE
+				mov [edi].output_format,OFORMAT_BIN
+				mov [edi].sub_format,SFORMAT_NONE
 				.endc
 
 			  .case 'pC'	; /Cp
-				mov	[edi].case_sensitive,1
-				mov	[edi].convert_uppercase,0
+				mov [edi].case_sensitive,1
+				mov [edi].convert_uppercase,0
 				.endc
 
 			  .case 'sC'	; /Cs
-				or	[edi].aflag,_AF_CSTACK
+				or  [edi].aflag,_AF_CSTACK
 				.endc
 
 			  .case 'uC'	; /Cu
-				mov	[edi].case_sensitive,0
-				mov	[edi].convert_uppercase,1
+				mov [edi].case_sensitive,0
+				mov [edi].convert_uppercase,1
 				.endc
 
 			  .case 'xC'	; /Cx
-				mov	[edi].case_sensitive,0
-				mov	[edi].convert_uppercase,0
+				mov [edi].case_sensitive,0
+				mov [edi].convert_uppercase,0
 				.endc
 
 			  .case 'qe'	; /eq
-				mov	[edi].no_error_disp,1
+				mov [edi].no_error_disp,1
 				.endc
 
 			  .case '6fle'	; /elf64
-				mov	[edi].output_format,OFORMAT_ELF
-				mov	[edi].sub_format,SFORMAT_64BIT
+				mov [edi].output_format,OFORMAT_ELF
+				mov [edi].sub_format,SFORMAT_64BIT
 				.endc
 
 			  .case 'fle'	; /elf
-				mov	[edi].output_format,OFORMAT_ELF
-				mov	[edi].sub_format,SFORMAT_NONE
+				mov [edi].output_format,OFORMAT_ELF
+				mov [edi].sub_format,SFORMAT_NONE
 				.endc
 
 			  .case '8iPF'	; /FPi87
-				mov	[edi].floating_point,FPO_NO_EMULATION
+				mov [edi].floating_point,FPO_NO_EMULATION
 				.endc
 
 			  .case 'iPF'	; /Fpi
-				mov	[edi].floating_point,FPO_EMULATION
+				mov [edi].floating_point,FPO_EMULATION
 				.endc
 
 			  .case '0pf'	; /fp0
-				mov	[edi].cpu,P_87
+				mov [edi].cpu,P_87
 				.endc
 
 			  .case '2pf'	; /fp2
-				mov	[edi].cpu,P_287
+				mov [edi].cpu,P_287
 				.endc
 
 			  .case '3pf'	; /fp3
-				mov	[edi].cpu,P_387
+				mov [edi].cpu,P_387
 				.endc
 
 			  .case 'cpf'	; /fpc
-				mov	[edi].cpu,P_NO87
+				mov [edi].cpu,P_NO87
 				.endc
 
 			  .case 'cg'	; /gc
-				mov	[edi].langtype,LANG_PASCAL
+				mov [edi].langtype,LANG_PASCAL
 				.endc
 
 			  .case 'dg'	; /gd
-				mov	[edi].langtype,LANG_C
+				mov [edi].langtype,LANG_C
 				.endc
 
 			  .case 'rg'	; /gr
-				mov	[edi].langtype,LANG_FASTCALL
+				mov [edi].langtype,LANG_FASTCALL
 				.endc
 
 			  .case 'zg'	; /gz
-				mov	[edi].langtype,LANG_STDCALL
+				mov [edi].langtype,LANG_STDCALL
 				.endc
 
 			  .case '?'
 			  .case 'h'
-				call	write_logo
+				write_logo()
 				printf( addr cp_options, argv0 )
 				exit  ( 1 )
 
 			  .case 'zm'	; /mz
-				mov	[edi].output_format,OFORMAT_BIN
-				mov	[edi].sub_format,SFORMAT_MZ
+				mov [edi].output_format,OFORMAT_BIN
+				mov [edi].sub_format,SFORMAT_MZ
 				.endc
 
 			  .case 'cm'	; /mc
-				mov	[edi]._model,MODEL_COMPACT
+				mov [edi]._model,MODEL_COMPACT
 				.endc
 
 			  .case 'fm'	; /mf
-				mov	[edi]._model,MODEL_FLAT
+				mov [edi]._model,MODEL_FLAT
 				.endc
 
 			  .case 'hm'	; /mh
-				mov	[edi]._model,MODEL_HUGE
+				mov [edi]._model,MODEL_HUGE
 				.endc
 
 			  .case 'lm'	; /ml
-				mov	[edi]._model,MODEL_LARGE
+				mov [edi]._model,MODEL_LARGE
 				.endc
 
 			  .case 'mm'	; /mm
-				mov	[edi]._model,MODEL_MEDIUM
+				mov [edi]._model,MODEL_MEDIUM
 				.endc
 
 			  .case 'sm'	; /ms
-				mov	[edi]._model,MODEL_SMALL
+				mov [edi]._model,MODEL_SMALL
 				.endc
 
 			  .case 'tm'	; /mt
-				mov	[edi]._model,MODEL_TINY
+				mov [edi]._model,MODEL_TINY
 				.endc
 
 			  .case 'fmo'	; /omf
-				mov	[edi].output_format,OFORMAT_OMF
-				mov	[edi].sub_format,SFORMAT_NONE
+				mov [edi].output_format,OFORMAT_OMF
+				mov [edi].sub_format,SFORMAT_NONE
 				.endc
 
 			  .case 'ep'	; /pe
-				mov	[edi].output_format,OFORMAT_BIN
-				mov	[edi].sub_format,SFORMAT_PE
+				mov [edi].output_format,OFORMAT_BIN
+				mov [edi].sub_format,SFORMAT_PE
 				.endc
 
 			  .case 'r'	; /r
-				mov	[edi].process_subdir,1
+				mov [edi].process_subdir,1
 				.endc
 
 			  .case 'aS'	; /Sa
 				.endc
 
 			  .case 'fS'	; /Sf
-				mov	[edi].first_pass_listing,1
+				mov [edi].first_pass_listing,1
 				.endc
 
 			  .case 'gS'	; /Sg
-				mov	[edi].list_generated_code,1
+				mov [edi].list_generated_code,1
 				.endc
 
 			  .case 'nS'	; /Sn
-				mov	[edi].no_symbol_listing,1
+				mov [edi].no_symbol_listing,1
 				.endc
 
 			  .case 'xS'	; /Sx
-				mov	[edi].listif,1
+				mov [edi].listif,1
 				.endc
 
 			  .case 'pws'	; /swp
-				or	[edi].aflag,_AF_PASCAL
+				or  [edi].aflag,_AF_PASCAL
 				.endc
 
 			  .case 'cws'	; /swc
-				and	[edi].aflag,NOT _AF_PASCAL
+				and [edi].aflag,NOT _AF_PASCAL
 				.endc
 
 			  .case 'rws'	; /swr
-				or	[edi].aflag,_AF_REGAX
+				or  [edi].aflag,_AF_REGAX
 				.endc
 
 			  .case 'nws'	; /swn
-				and	[edi].aflag,NOT _AF_TABLE
+				and [edi].aflag,NOT _AF_TABLE
 				.endc
 
 			  .case 'tws'	; /swt
-				or	[edi].aflag,_AF_TABLE
+				or  [edi].aflag,_AF_TABLE
 				.endc
 
 			  .case 'efas'	; /safeseh
-				mov	[edi].safeseh,1
+				mov [edi].safeseh,1
 				.endc
 
 			  .case 'w'	; /w
-				mov	[edi].warning_level,0
+				mov [edi].warning_level,0
 				.endc
 
 			  .case 'sw'	; /ws
-				or	[edi].aflag,_AF_WSTRING
+				or  [edi].aflag,_AF_WSTRING
 				.endc
 
 			  .case 'XW'	; /WX
-				mov	[edi].warning_error,1
+				mov [edi].warning_error,1
 				.endc
 
 			  .case '6niw'	; /win64
-				mov	[edi].output_format,OFORMAT_COFF
-				mov	[edi].sub_format,SFORMAT_64BIT
+				mov [edi].output_format,OFORMAT_COFF
+				mov [edi].sub_format,SFORMAT_64BIT
 				.endc
 
 			  .case 'X'	; /X
-				mov	[edi].ignore_include,1
+				mov [edi].ignore_include,1
 				.endc
 
 			  .case 'cX'	; /Xc
-				and	[edi].aflag,NOT _AF_ON
+				and [edi].aflag,NOT _AF_ON
 				.endc
 
 			  .case 'mcz'	; /zcm
-				mov	[edi].no_cdecl_decoration,0
+				mov [edi].no_cdecl_decoration,0
 				.endc
 
 			  .case 'wcz'	; /zcw
-				mov	[edi].no_cdecl_decoration,1
+				mov [edi].no_cdecl_decoration,1
 				.endc
 
 			  .case 'fZ'	; /Zf
-				mov	[edi].all_symbols_public,1
+				mov [edi].all_symbols_public,1
 				.endc
 
 			  .case '0fz'	; /zf0
-				mov	[edi].fctype,0
+				mov [edi].fctype,0
 				.endc
 
 			  .case '1fz'	; /zf1
-				mov	[edi].fctype,1
+				mov [edi].fctype,1
 				.endc
 
 			  .case 'gZ'	; /Zg
-				mov	[edi].masm_compat_gencode,1
+				mov [edi].masm_compat_gencode,1
 				.endc
 
 			  .case 'dZ'	; /Zd
-				mov	[edi].line_numbers,1
+				mov [edi].line_numbers,1
 				.endc
 
 			  .case 'clz'	; /zlc
-				mov	[edi].no_comment_in_code_rec,1
+				mov [edi].no_comment_in_code_rec,1
 				.endc
 
 			  .case 'dlz'	; /zld
-				mov	[edi].no_opt_farcall,1
+				mov [edi].no_opt_farcall,1
 				.endc
 
 			  .case 'flz'	; /zlf
-				mov	[edi].no_file_entry,1
+				mov [edi].no_file_entry,1
 				.endc
 
 			  .case 'plz'	; /zlp
-				mov	[edi].no_static_procs,1
+				mov [edi].no_static_procs,1
 				.endc
 
 			  .case 'slz'	; /zls
@@ -632,54 +628,54 @@ ParseCmdline PROC USES esi edi ebx numargs
 				.endc
 
 			  .case 'mZ'	; /Zm
-				mov	 [edi].masm51_compat,1
+				mov [edi].masm51_compat,1
 			  .case 'enZ'	; /Zne
-				mov	[edi].strict_masm_compat,1
-				mov	[edi].aflag,0
+				mov [edi].strict_masm_compat,1
+				mov [edi].aflag,0
 				.endc
 
 			  .case 'sZ'	; /Zs
-				mov	[edi].syntax_check_only,1
+				mov [edi].syntax_check_only,1
 				.endc
 
 			  .case '0tz'	; /zt0
-				mov	[edi].stdcall_decoration,0
+				mov [edi].stdcall_decoration,0
 				.endc
 			  .case '1tz'	; /zt1
-				mov	[edi].stdcall_decoration,1
+				mov [edi].stdcall_decoration,1
 				.endc
 			  .case '2tz'	; /zt2
-				mov	[edi].stdcall_decoration,2
+				mov [edi].stdcall_decoration,2
 				.endc
 
 			  .case '8vZ'	; /Zv8
-				mov	[edi].masm8_proc_visibility,1
+				mov [edi].masm8_proc_visibility,1
 				.endc
 
 			  .case 'ezz'	; /zze
-				mov	[edi].no_export_decoration,1
+				mov [edi].no_export_decoration,1
 				.endc
 
 			  .case 'szz'	; /zzs
-				mov	[edi].entry_decorated,1
+				mov [edi].entry_decorated,1
 				.endc
 
 			  .case 'p01'		; /10p
-				mov	ah,'0'+'p'
+				mov ah,'0'+'p'
 			  .case '01'		; /10
-				sub	ah,'0'
-				mov	al,'9'+1
+				sub ah,'0'
+				mov al,'9'+1
 
 			  .case 'p0' .. 'p9'	; /0p../9p
 			  .case	 '0' ..	 '9'	; /0../9
 
-				sub	al,'0'
-				movzx	ecx,al
-				mov	ecx,cpuoption[ecx*4]
+				sub al,'0'
+				movzx ecx,al
+				mov ecx,cpuoption[ecx*4]
 
-				and	[edi].cpu,NOT ( P_CPU_MASK or P_EXT_MASK or P_PM )
-				or	[edi].cpu,ecx
-				.if	ah == 'p' && [edi].cpu >= P_286
+				and [edi].cpu,NOT ( P_CPU_MASK or P_EXT_MASK or P_PM )
+				or  [edi].cpu,ecx
+				.if ah == 'p' && [edi].cpu >= P_286
 
 					or [edi].cpu,P_PM
 				.endif
@@ -687,45 +683,45 @@ ParseCmdline PROC USES esi edi ebx numargs
 
 			  .default
 
-				movzx	ecx,ah
-				movzx	eax,al
+				movzx ecx,ah
+				movzx eax,al
 
 				.switch eax
 					;
 					; /e<number>
 					;
 				  .case 'e'
-					call	GetNumber
-					mov	[edi].error_limit,eax
+					GetNumber()
+					mov [edi].error_limit,eax
 					.endc
 					;
 					; /F
 					;
 				  .case 'F'
 
-					lea	eax,[esi+3]
+					lea eax,[esi+3]
 
 					.switch ecx
 
 					  .case 'd'	; /Fd
-						mov	[edi].write_impdef,1
+						mov [edi].write_impdef,1
 						get_fname( OPTN_LNKDEF_FN, eax )
 						.endc
 
 					  .case 'i'	; /Fi
-						.if	getfilearg()
+						.if getfilearg()
 
 							queue_item( OPTQ_FINCLUDE, eax )
 						.endif
 						.endc
 
 					  .case 'l'	; /Fl
-						mov	[edi].write_listing,1
+						mov [edi].write_listing,1
 						get_fname( OPTN_LST_FN, eax )
 						.endc
 
 					  .case 'o'	; /Fo
-						.if	getfilearg()
+						.if getfilearg()
 
 							get_fname( OPTN_OBJ_FN, eax )
 						.endif
@@ -756,101 +752,98 @@ ParseCmdline PROC USES esi edi ebx numargs
 					; /W<number>
 					;
 				  .case 'W'
-					movzx	eax,BYTE PTR [esi+2]
-					.if	eax < '0'
-
+					movzx eax,BYTE PTR [esi+2]
+					.if eax < '0'
 						asmerr( 8000, esi )
 					.elseif eax > '3'
-
 						asmerr( 4008, esi )
 					.else
-
-						sub	eax,'0'
-						mov	[edi].warning_level,al
+						sub eax,'0'
+						mov [edi].warning_level,al
 					.endif
 					.endc
 					;
 					; /Z
 					;
 				  .case 'Z'
-					.if	ecx == 'p'
+					.if ecx == 'p'
 						;
 						; /Zp[n]
 						;
-						call	GetNumber
-						jz	error
-						xor	ecx,ecx
-						mov	edx,eax
+						GetNumber()
+						jz  error
+						xor ecx,ecx
+						mov edx,eax
 
 						.repeat
-							mov	eax,1
-							shl	eax,cl
-							inc	ecx
-							cmp	eax,MAX_STRUCT_ALIGN
-							ja	error
+							mov eax,1
+							shl eax,cl
+							inc ecx
+							cmp eax,MAX_STRUCT_ALIGN
+							ja  error
 						.until	eax == edx
 
-						dec	ecx
-						mov	[edi].fieldalign,cl
+						dec ecx
+						mov [edi].fieldalign,cl
 						.endc
 					.endif
 
-					.if	ecx == 'i'
+					.if ecx == 'i'
 						;
 						; /Zi[0|1|2|3]
 						;
-						mov	[edi].debug_symbols,1;CV_SIGNATURE
-						mov	[edi].debug_ext,CVEX_NORMAL
-						call	GetNumber
-						.if	!ZERO?
-							cmp	eax,CVEX_MAX
-							ja	error
-							mov	[edi].debug_ext,al
+						mov [edi].debug_symbols,1;CV_SIGNATURE
+						mov [edi].debug_ext,CVEX_NORMAL
+						GetNumber()
+						.ifnz
+							cmp eax,CVEX_MAX
+							ja  error
+							mov [edi].debug_ext,al
 						.endif
 					.endif
 					;
 					; [/Zd]
 					;
-					mov	[edi].line_numbers,1
+					mov [edi].line_numbers,1
 					.endc
 
 				  .default
-					jmp	error
+					jmp error
 				.endsw
 			.endsw
 
-			mov	eax,numargs
-			inc	DWORD PTR [eax]
+			mov eax,numargs
+			inc DWORD PTR [eax]
 			.endc
 			;
 			; @<file>
 			;
 		  .case '@'
-			mov	handle,osopen( addr [esi+1], _A_NORMAL, M_RDONLY, A_OPEN )
-			cmp	eax,-1
-			je	error
+			mov handle,osopen( addr [esi+1], _A_NORMAL, M_RDONLY, A_OPEN )
+			cmp eax,-1
+			je  error
 			_filelength( eax )
-			inc	eax
-			mov	bsize,eax
+			inc eax
+			mov bsize,eax
 			alloca( eax )
-			mov	buffer,eax
+			mov buffer,eax
 			osread( handle, eax, bsize )
-			add	eax,buffer
-			mov	BYTE PTR [eax],0
+			add eax,buffer
+			mov BYTE PTR [eax],0
 			_close( handle )
-			mov	ebx,argv
-			sub	ebx,__argv
+			mov ebx,argv
+			sub ebx,__argv
 			__setargv( addr argc, argv, buffer )
-			mov	eax,__argv
-			add	eax,ebx
-			mov	argv,eax
+			mov eax,__argv
+			add eax,ebx
+			mov argv,eax
 			.endc
 
 		  .default
-			mov	eax,numargs
-			inc	DWORD PTR [eax]
-			salloc( esi )
-			mov	Options.names[ASM*4],eax
+			mov eax,numargs
+			inc DWORD PTR [eax]
+			salloc(esi)
+			mov Options.names[ASM*4],eax
 			.break
 		.endsw
 	.endw
@@ -865,31 +858,31 @@ ParseCmdline ENDP
 
 CmdlineFini PROC USES esi edi ebx
 
-	xor	esi,esi
-	xor	ebx,ebx
+	xor esi,esi
+	xor ebx,ebx
 
-	.while	esi < NUM_FILE_TYPES
+	.while esi < NUM_FILE_TYPES
 
-		mov	eax,DefaultDir[esi*4]
-		mov	DefaultDir[esi*4],ebx
-		free  ( eax )
-		mov	eax,Options.names[esi*4]
-		mov	Options.names[esi*4],ebx
-		inc	esi
+		mov eax,DefaultDir[esi*4]
+		mov DefaultDir[esi*4],ebx
+		free(eax)
+		mov eax,Options.names[esi*4]
+		mov Options.names[esi*4],ebx
+		inc esi
 	.endw
 
-	xor	esi,esi
-	.while	esi < OPTQ_LAST
+	xor esi,esi
+	.while esi < OPTQ_LAST
 
-		mov	edi,Options.queues[esi*4]
-		.while	edi
+		mov edi,Options.queues[esi*4]
+		.while edi
 
-			mov	eax,[edi].qitem.next
-			free  ( edi )
-			mov	edi,eax
+			mov eax,[edi].qitem.next
+			free(edi)
+			mov edi,eax
 		.endw
-		mov	Options.queues[esi*4],ebx
-		inc	esi
+		mov Options.queues[esi*4],ebx
+		inc esi
 	.endw
 	ret
 
@@ -899,10 +892,10 @@ AssembleSubdir PROC USES esi edi ebx directory, wild
 
   local path[_MAX_PATH]:BYTE, ff:WIN32_FIND_DATA, h, rc
 
-	lea	esi,path
-	lea	edi,ff
-	lea	ebx,ff.cFileName
-	mov	rc,0
+	lea esi,path
+	lea edi,ff
+	lea ebx,ff.cFileName
+	mov rc,0
 
 	.if FindFirstFile( strfcat( esi, directory, wild ), edi ) != -1
 
@@ -945,10 +938,10 @@ AssembleSubdir ENDP
 
 GeneralFailure PROC signo
 
-	mov	eax,signo
-	.if	eax != SIGTERM
+	mov eax,signo
+	.if eax != SIGTERM
 
-		mov	eax,pCurrentException
+		mov eax,pCurrentException
 		PrintContext(
 			[eax].EXCEPTION_POINTERS.ContextRecord,
 			[eax].EXCEPTION_POINTERS.ExceptionRecord )
@@ -974,77 +967,77 @@ ifndef	DEBUG
 ;	signal( SIGABRT,  ebx ) ; abnormal termination triggered by abort call
 endif
 
-	xor	eax,eax
-	mov	rc,eax
-	mov	numArgs,eax
-	mov	numFiles,eax
-	mov	eax,__argc
-	dec	eax
-	mov	argc,eax
-	mov	eax,__argv
-	mov	ecx,[eax]
-	add	eax,4
-	mov	argv,eax
-	strfn ( ecx )
-	mov	ecx,[eax+4]
-	mov	eax,[eax]
-	or	eax,20202020h
-	or	ecx,20202020h
+	xor eax,eax
+	mov rc,eax
+	mov numArgs,eax
+	mov numFiles,eax
+	mov eax,__argc
+	dec eax
+	mov argc,eax
+	mov eax,__argv
+	mov ecx,[eax]
+	add eax,4
+	mov argv,eax
+	strfn(ecx)
+	mov ecx,[eax+4]
+	mov eax,[eax]
+	or  eax,20202020h
+	or  ecx,20202020h
 
-	.if	eax == 'e.lm'
+	.if eax == 'e.lm'
 
-		mov	argv0,offset cp_ml
-		mov	Options.strict_masm_compat,1
-		mov	Options.aflag,0
+		mov argv0,offset cp_ml
+		mov Options.strict_masm_compat,1
+		mov Options.aflag,0
 	.elseif eax == 'sawj' && ecx == 'xe.m'
 
-		mov	argv0,offset cp_jwasm
-		mov	Options.aflag,0
+		mov argv0,offset cp_jwasm
+		mov Options.aflag,0
 	.endif
 
-	.if	getenv( argv0 ) ; v2.21 -- getenv() error..
+	.if getenv( argv0 ) ; v2.21 -- getenv() error..
 
 		__setargv( addr argc, argv, eax )
 	.endif
 
-	.while	ParseCmdline( addr numArgs )
+	.while ParseCmdline( addr numArgs )
 
-		inc	numFiles
-		call	write_logo
-		lea	edi,ff.cFileName
-		mov	esi,Options.names[ASM*4]
+		inc numFiles
+		write_logo()
+		lea edi,ff.cFileName
+		mov esi,Options.names[ASM*4]
 
-		.if	!Options.process_subdir
-			.if	FindFirstFile( esi, addr ff ) == -1
+		.if !Options.process_subdir
+			.if FindFirstFile( esi, addr ff ) == -1
 				asmerr( 1000, esi )
 				.break
 			.endif
 			FindClose( eax )
 		.endif
 		strchr( strcpy( edi, esi ), '*' )
-		mov	edx,eax
+		mov edx,eax
 		strchr( edi, '?' )
-		.if	eax || edx
-			.if	strfn( edi ) > edi
+		.if eax || edx
+			.if strfn( edi ) > edi
 				dec eax
 			.endif
-			mov	BYTE PTR [eax],0
+			mov BYTE PTR [eax],0
 			AssembleSubdir( edi, strfn( esi ) )
 		.else
 			AssembleModule( edi )
 		.endif
-		mov	rc,eax
+		mov rc,eax
 	.endw
 
 	CmdlineFini()
-	.if	!numArgs
-		call	write_logo
+	.if !numArgs
+		write_logo()
 		printf( addr cp_usage, argv0 )
 	.elseif !numFiles
 		asmerr( 1017 )
 	.endif
-	mov	eax,1
-	sub	eax,rc
+	mov eax,1
+	sub eax,rc
 	ret
 main	ENDP
 

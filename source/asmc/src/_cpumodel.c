@@ -25,6 +25,9 @@
 #include <macro.h>
 #include <fixup.h>
 #include <bin.h>
+#include <setjmp.h>
+
+extern jmp_buf jmpenv;
 
 #define DOT_XMMARG 0 /* 1=optional argument for .XMM directive */
 
@@ -407,7 +410,22 @@ int CpuDirective( int i, struct asm_tok tokenarray[] )
 {
     enum cpu_info newcpu;
 
-    newcpu = GetSflagsSp( tokenarray[i].tokval );
+    if (tokenarray[i].tokval == T_DOT_WIN64) {
+
+	if ( !UseSavedState && Options.sub_format != SFORMAT_64BIT ) {
+
+		Options.output_format = OFORMAT_COFF;
+		Options.sub_format = SFORMAT_64BIT;
+		longjmp( &jmpenv, 1 );
+	}
+	return( NOT_ERROR );
+    }
+
+    if (tokenarray[i].tokval == T_DOT_AMD64)
+
+	newcpu = GetSflagsSp( T_DOT_X64 );
+    else
+	newcpu = GetSflagsSp( tokenarray[i].tokval );
 
 #if DOT_XMMARG
     .if ( tokenarray[i].tokval == T_DOT_XMM && tokenarray[i+1].token != T_FINAL ) {

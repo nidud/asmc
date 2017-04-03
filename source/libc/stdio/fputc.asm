@@ -4,9 +4,9 @@ include stdio.inc
 
 fputc	PROC char:SINT, fp:LPFILE
 
-	mov	eax,char
-	mov	ecx,fp
-	dec	[ecx]._iobuf._cnt
+	mov eax,char
+	mov ecx,fp
+	dec [ecx]._iobuf._cnt
 	.ifl
 		_flsbuf(eax, ecx)
 	.else

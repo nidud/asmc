@@ -173,6 +173,7 @@ USE64			equ 2
 FCT_MSC			equ 0	; MS 16-/32-bit fastcall (ax,dx,cx / ecx,edx)
 FCT_WATCOMC		equ 1	; OW register calling convention (eax, ebx, ecx, edx)
 FCT_WIN64		equ 2	; Win64 fastcall convention (rcx, rdx, r8, r9)
+FCT_ASMC		equ 3
 
 STDCALL_FULL		equ 0
 STDCALL_NONE		equ 1
@@ -353,6 +354,17 @@ MT_TYPE			equ 0C4h
 MT_SPECIAL		equ 080h
 MT_SPECIAL_MASK		equ 0C0h
 MT_ADDRESS		equ 080h
+
+IS_SIGNED macro x
+    mov al,x
+    and al,MT_SPECIAL_MASK
+    .if al == MT_SIGNED
+	mov eax,1
+    .else
+	xor eax,eax
+    .endif
+    exitm<eax>
+    endm
 
 TYPE_NONE		equ 0
 TYPE_STRUCT		equ 1
@@ -594,25 +606,34 @@ SMAC_ALABEL		equ 04h
 SMAC_MULTILINE		equ 08h
 SMAC_PURGED		equ 10h
 
-LPASYM			TYPEDEF PTR asym
+LPASYM			typedef ptr asym
+LPDSYM			typedef ptr dsym
 
+func_ptr_t		typedef proto :ptr macro_instance, :LPSTR, :ptr asm_tok
+func_ptr_p		typedef ptr func_ptr_t
+internal_func_t		typedef proto :ptr asym, :PVOID
+internal_func		typedef ptr internal_func_t
 asym			STRUC
-nextitem		dd ?
-_name			LPSTR ?
-UNION
-    _offset		dd ?
-    value		SDWORD ?
-    uvalue		dd ?
-    string_ptr		LPSTR ?
-    substitute		dd ?
-    func_ptr		dd ?
-    class_lname_idx	dd ?
-ENDS
-_segment		LPASYM ?	; asym *
-state			db ?
-mem_type		db ?
-flag			dw ?	; remove bitfield
-UNION
+;;
+;; v2.11: name changed from 'next' to 'nextitem'
+;;
+ nextitem		LPASYM ?	; next symbol in hash line
+ _name			LPSTR ?		; symbol name
+ UNION
+    _offset		sdword ?	; used by SYM_INTERNAL (labels), SYM_TYPE,
+					; SYM_STACK, v2.11: SYM_SEG
+    value		sdword ?	; used by SYM_INTERNAL (equates)
+    uvalue		dword ?		; v2.01: equates (they are 33-bit!)
+    string_ptr		LPSTR ?		; used by SYM_TMACRO
+    substitute		LPASYM ?	; v2.04b: used by SYM_ALIAS
+    func_ptr		func_ptr_p ?	; used by SYM_MACRO if predefined==1
+    class_lname_idx	sdword ?	; used by SYM_CLASS_LNAME
+ ENDS
+ _segment		LPASYM ?
+ state			db ?
+ mem_type		db ?
+ flag			dw ?	; remove bitfield
+ UNION
     first_size		dd ?
     STRUC
 	Ofssize		db ?
@@ -624,195 +645,199 @@ UNION
 	sint_flag	db ?
     ENDS
     mac_flag		dd ?	; --byte
-ENDS
-UNION
-    first_length	dd ?
-    max_mbr_size	dd ?
-    target_type		dd ?
+ ENDS
+ UNION
+    first_length	dword ?
+    max_mbr_size	dword ?
+    target_type		LPASYM ?
     regist		dw 2 dup(?)
-ENDS
-UNION
-    total_size		dd ?
-    value3264		dd ?
-    dll			dd ?	; struct dll_desc *
-    max_offset		dd ?
-ENDS
-UNION
+ ENDS
+ UNION
+    total_size		dword ?
+    value3264		sdword ?
+    dll			PVOID ? ; struct dll_desc *
+    max_offset		sdword ?
+ ENDS
+ UNION
     total_length	dd ?
-    altname		dd ?
-    debuginfo		dd ?
-    sfunc_ptr		dd ?
+    altname		LPASYM ? ; SYM_EXTERNAL (comm==0): alternative name
+    debuginfo		PVOID ?
+    sfunc_ptr		internal_func ?
     STRUC
 	cvtyperef	dw ?
 	typekind	dw ?
     ENDS
-ENDS
-name_size		dw ?
-langtype		dw ?
-_type			dd ?
-UNION
-    bp_fixup		dd ?
+ ENDS
+ name_size		dw ?
+ langtype		dw ?
+ _type			LPASYM ?
+ UNION
+    bp_fixup		PVOID ? ; fixup *
     ext_idx		dd ?
     STRUC
 	ext_idx1	dw ?
 	ext_idx2	dw ?
     ENDS
-ENDS
+ ENDS
 asym			ENDS
 
-dsym			STRUC
-sym			asym <>
-UNION
-    seginfo		dd ?	; struct seg_info *
-    grpinfo		dd ?	; struct grp_info *
-    procinfo		dd ?	; struct proc_info *
-    structinfo		dd ?
-    macroinfo		dd ?
-    nextll		dd ?
-ENDS
-next			dd ?
-UNION
-    prev		dd ?
-    nextproc		dd ?
-    nextlocal		dd ?
-    nextparam		dd ?
-ENDS
-dsym			ENDS
-LPDSYM			TYPEDEF PTR dsym
-
 seg_item		STRUC
-next			dd ?
-iseg			dd ?
+ next			dd ?
+ iseg			dd ?
 seg_item		ENDS
 
 grp_info		STRUC
-seglist			dd ?
-grp_idx			dd ?
-lname_idx		dd ?
-numseg			dd ?
+ seglist		dd ?
+ grp_idx		dd ?
+ lname_idx		dd ?
+ numseg			dd ?
 grp_info		ENDS
+LPGRPINFO		typedef ptr grp_info
 
 seg_info		STRUC
-sgroup			dd ?
-start_loc		dd ?
-UNION
+ sgroup			dd ?
+ start_loc		dd ?
+ UNION
     current_loc		dd ?
     reloc_offset	dd ?
     start_offset	dd ?
-ENDS
-CodeBuffer		dd ?
-bytes_written		dd ?
-UNION
+ ENDS
+ CodeBuffer		dd ?
+ bytes_written		dd ?
+ UNION
     label_list		dd ?
     flushfunc		dd ?
-ENDS
-STRUC
+ ENDS
+ STRUC
     head		dd ?
     tail		dd ?
-ENDS
-UNION
+ ENDS
+ UNION
     LinnumQueue		dd ?
     fileoffset		dd ?
     num_linnums		dd ?
-ENDS
-num_relocs		dd ?
-seg_idx			dd ?
-segtype			dd ?
-lname_idx		dd ?
-clsym			dd ?
-UNION
+ ENDS
+ num_relocs		dd ?
+ seg_idx		dd ?
+ segtype		dd ?
+ lname_idx		dd ?
+ clsym			dd ?
+ UNION
     abs_frame		dd ?
     comdat_number	dd ?
     comdat_idx		dd ?
-ENDS
-UNION
+ ENDS
+ UNION
     abs_offset		dd ?
     aliasname		dd ?
-ENDS
-Ofssize			db ?
-characteristics		db ?
-alignment		db ?
-readonly		db ?
-info			db ?
-force32			db ?
-data_in_code		db ?
-internal		db ?
-written			db ?
-linnum_init		db ?
-combine			db ?
-comdat_selection	db ?
+ ENDS
+ Ofssize		db ?
+ characteristics	db ?
+ alignment		db ?
+ readonly		db ?
+ info			db ?
+ force32		db ?
+ data_in_code		db ?
+ internal		db ?
+ written		db ?
+ linnum_init		db ?
+ combine		db ?
+ comdat_selection	db ?
 seg_info		ENDS
+LPSEGINFO		typedef ptr seg_info
 
 proc_info		STRUC
-regslist		db ?
-paralist		dd ?
-locallist		dd ?
-labellist		dd ?
-parasize		dd ?
-localsize		dd ?
-rologuearg		dd ?
-exc_handler		dd ?
-ReservedStack		dd ?
-prolog_list_pos		dd ?
-flags			db ?
-PINF_HAS_VARARG		equ 01h
-PINF_PE_TYPE		equ 01h
-PINF_ISEXPORT		equ 02h
-PINF_FORCEFRAME		equ 04h
-PINF_LOADDS		equ 08h
-PINF_STACKPARAM		equ 10h
-PINF_ISFRAME		equ 20h
-PINF_FPO		equ 40h
-size_prolog		db ?
-basereg			dw ?
+ regslist		db ?
+ paralist		dd ?
+ locallist		dd ?
+ labellist		dd ?
+ parasize		dd ?
+ localsize		dd ?
+ rologuearg		dd ?
+ exc_handler		dd ?
+ ReservedStack		dd ?
+ prolog_list_pos	dd ?
+ flags			db ?
+ PINF_HAS_VARARG	equ 01h
+ PINF_PE_TYPE		equ 01h
+ PINF_ISEXPORT		equ 02h
+ PINF_FORCEFRAME	equ 04h
+ PINF_LOADDS		equ 08h
+ PINF_STACKPARAM	equ 10h
+ PINF_ISFRAME		equ 20h
+ PINF_FPO		equ 40h
+ size_prolog		db ?
+ basereg		dw ?
 proc_info		ENDS
+LPPROCINFO		typedef ptr proc_info
 
 mparm_list		STRUC
-deflt			dd ?
-required		db ?
+ deflt			dd ?
+ required		db ?
 mparm_list		ENDS
 
 srcline			STRUC
-next			dd ?
-ph_count		db ?
-line1			db ?
+ next			dd ?
+ ph_count		db ?
+ line1			db ?
 srcline			ENDS
 
 macro_info		STRUC
-parmcnt			dw ?
-UNION
+ parmcnt		dw ?
+ UNION
     localcnt		dw ?
     autoexp		dw ?
-ENDS
-parmlist		dd ?
-datap			dd ?
-srcfile			dd ?
+ ENDS
+ parmlist		dd ?
+ datap			dd ?
+ srcfile		dd ?
 macro_info		ENDS
+LPMACROINFO		typedef ptr macro_info
 
 sfield			STRUC
-sym			asym <>
-next			dd ?
-ivalue			db ?
+ sym			asym <>
+ next			dd ?
+ ivalue			db ?
 sfield			ENDS
 
 struct_info		STRUC
-head			dd ?
-tail			dd ?
-alignment		db ?
-flags			db ?
-STINF_ISINLINE		equ 1
-STINF_ISOPEN		equ 2
-STINF_ORGINSIDE		equ 4
+ head			dd ?
+ tail			dd ?
+ alignment		db ?
+ flags			db ?
+ STINF_ISINLINE		equ 1
+ STINF_ISOPEN		equ 2
+ STINF_ORGINSIDE	equ 4
 struct_info		ENDS
+LPSTRUCINFO		typedef ptr struct_info
+
+dsym			STRUC
+ sym			asym <>
+ UNION
+    seginfo		LPSEGINFO ?
+    grpinfo		LPGRPINFO ?
+    procinfo		LPPROCINFO ?
+    structinfo		LPSTRUCINFO ?
+    macroinfo		LPMACROINFO ?
+    nextll		LPDSYM ?
+ ENDS
+ next			LPDSYM ?
+ UNION
+    prev		LPDSYM ?
+    nextproc		LPDSYM ?
+    nextlocal		LPDSYM ?
+    nextparam		LPDSYM ?
+ ENDS
+dsym			ENDS
 
 symbol_queue		STRUC
-head			dd ?
-tail			dd ?
+ head			dd ?
+ tail			dd ?
 symbol_queue		ENDS
 
 asm_tok			STRUC
-token			db ?
-UNION
+ token			db ?
+ UNION
     dirtype		db ?
     bytval		db ?
     precedence		db ?
@@ -820,18 +845,18 @@ UNION
     floattype		db ?
     numbase		db ?
     specval		db ?
-ENDS
-hll_flags		db ?
-hll_index		db ?
-UNION
+ ENDS
+ hll_flags		db ?
+ hll_index		db ?
+ UNION
     tokval		dd ?
     stringlen		dd ?
     idarg		dd ?
     itemlen		dd ?
     lastidx		dd ?
-ENDS
-string_ptr		LPSTR ?
-tokpos			LPSTR ?
+ ENDS
+ string_ptr		LPSTR ?
+ tokpos			LPSTR ?
 asm_tok			ENDS
 LPTOKEN			TYPEDEF PTR asm_tok
 
@@ -850,53 +875,81 @@ EXPF_ONEOPND	equ 4		; private flag, used inside expreval.c only
 EXPF_IN_SQBR	equ 8		; private flag, used inside expreval.c only
 
 expr			STRUC
-UNION				; value of expression
+ UNION				; value of expression
     STRUC
-	value		dd ?
-	hvalue		dd ?
+     value		dd ?
+     hvalue		dd ?
     ENDS
     STRUC
-	llvalue		dq ?
-	hlvalue		dq ?
+     llvalue		dq ?
+     hlvalue		dq ?
     ENDS
     uvalue		dd ?
     value64		dq ?
     fvalue		dd ?
     st_idx		dd ?		; EXPR_REG: index if reg is ST
     chararray		db 16 dup(?)
-ENDS
-UNION
+ ENDS
+ UNION
     quoted_string	LPTOKEN ?	; for EXPR_CONST + quoted strings only
     float_tok		LPTOKEN ?	; for EXPR_FLOAT only
-ENDS
-base_reg		LPTOKEN ?	; EXPR_ADDR: base register token
+ ENDS
+ base_reg		LPTOKEN ?	; EXPR_ADDR: base register token
 					; EXPR_REG: register token
-idx_reg			LPTOKEN ?	; EXPR_ADDR: index register token
-UNION
+ idx_reg		LPTOKEN ?	; EXPR_ADDR: index register token
+ UNION
     label_tok		LPTOKEN ?	; token holding the label (EXPR_ADDR, used for overrides, inside expreval only)
     type_tok		LPTOKEN ?	; v2.10: token if target type of a label (SYM_STACK, MT_PTR) is to be stored
-ENDS
-override		LPTOKEN ?	; EXPR_ADDR: token holding the override label or segment register
-_instr			dd ?		; operator token
-kind			dd ?		; Type of expression
-mem_type		db ?		;
-scale			db ?		; EXPR_ADDR: scaling factor 1, 2, 4, or 8 - 386 code only
-Ofssize			db ?		; 16,32,64 bit if MT_NEAR, MT_FAR
-
-flags			db ?		; bit-flag
-EXF_INDIRECT		equ 01h ; indirect addressing used
-EXF_EXPLICIT		equ 02h ; Whether expression type explicitly given (to be removed!)
-EXF_IS_ABS		equ 04h ; external ABS
-EXF_IS_TYPE		equ 08h ; constant is a type
-EXF_IS_OPEATTR		equ 10h ; current operator is OPATTR
-EXF_NEGATIVE		equ 20h ; for EXPR_FLOAT only
-EXF_ASSUMECHECK		equ 40h ; v2.07: for ASSUMEd std registers
-EXF_IS_DOT		equ 80h ; v2.10: see regression test dotop5.asm
-
-sym			LPASYM ?; label used
-mbr			LPASYM ?; struct member
-_type			LPASYM ?; for DOT operator. Must be last (see TokenAssign)!
+ ENDS
+ override		LPTOKEN ?	; EXPR_ADDR: token holding the override label or segment register
+ _instr			dd ?		; operator token
+ kind			dd ?		; Type of expression
+ mem_type		db ?		;
+ scale			db ?		; EXPR_ADDR: scaling factor 1, 2, 4, or 8 - 386 code only
+ Ofssize		db ?		; 16,32,64 bit if MT_NEAR, MT_FAR
+ flags			db ?		; bit-flag
+ EXF_INDIRECT		equ 01h ; indirect addressing used
+ EXF_EXPLICIT		equ 02h ; Whether expression type explicitly given (to be removed!)
+ EXF_IS_ABS		equ 04h ; external ABS
+ EXF_IS_TYPE		equ 08h ; constant is a type
+ EXF_IS_OPEATTR		equ 10h ; current operator is OPATTR
+ EXF_NEGATIVE		equ 20h ; for EXPR_FLOAT only
+ EXF_ASSUMECHECK	equ 40h ; v2.07: for ASSUMEd std registers
+ EXF_IS_DOT		equ 80h ; v2.10: see regression test dotop5.asm
+ sym			LPASYM ?; label used
+ mbr			LPASYM ?; struct member
+ _type			LPASYM ?; for DOT operator. Must be last (see TokenAssign)!
 expr			ENDS
+
+special_item		STRUC
+value			dd ?
+sflags			dd ?
+cpu			dw ?
+bytval			db ?
+_type			db ?
+special_item		ENDS
+externdef		SpecialTable:special_item
+
+GetRegNo macro x
+	 imul eax,x,sizeof(special_item)
+	 exitm<SpecialTable[eax].bytval>
+	 endm
+GetSflagsSp macro x
+	 imul eax,x,sizeof(special_item)
+	 exitm<SpecialTable[eax].sflags>
+	 endm
+GetValueSp macro x
+	 imul eax,x,sizeof(special_item)
+	 exitm<SpecialTable[eax].value>
+	 endm
+GetMemtypeSp macro x
+	 imul eax,x,sizeof(special_item)
+	 exitm<SpecialTable[eax].bytval>
+	 endm
+GetCpuSp macro x
+	 imul eax,x,sizeof(special_item)
+	 exitm<SpecialTable[eax].cpu>
+	 endm
 
 global_options		STRUC
 quiet			db ?	; -q option
@@ -1250,6 +1303,15 @@ QueueDeleteLinnum	PROTO :DWORD	; qdesc *
 
 _atoow			PROTO :LPSTR, :LPSTR, :SINT, :SINT
 
+SizeFromMemtype		PROTO :BYTE, :SINT, :ptr asym
+GetSymOfssize		proto :ptr asym
+SizeFromRegister	proto fastcall :SINT
+
+;-------------------------------------------------------------------------------
+; Text macros
+;-------------------------------------------------------------------------------
+
+
 M_SKIP_SPACE MACRO reg, base
 	movzx reg,BYTE PTR [base]
 	.while BYTE PTR _ctype[reg*2+2] & _SPACE
@@ -1291,5 +1353,17 @@ M_EAT_SPACE_R MACRO reg, base
 	M_SKIP_SPACE_R reg, base
 	EXITM<reg>
 	ENDM
+
+cmprm macro src
+    .if edx == dword ptr src[4]
+	cmp eax,dword ptr src
+    .endif
+    endm
+
+cmpmm macro des,src
+    mov edx,dword ptr des[4]
+    mov eax,dword ptr des
+    cmprm src
+    endm
 
 .list

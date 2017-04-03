@@ -25,15 +25,15 @@ local	pgname[260]:WCHAR
 	; Get the program name pointer from Win32 Base
 	;
 	GetModuleFileNameW( 0, addr pgname, 260 )
-	lea	eax,[eax*2+2]
-	mov	_wpgmptr,malloc( eax )
-	lstrcpy( _wpgmptr, addr pgname )
-	mov	ecx,__wargv
-	mov	[ecx],eax
+	lea eax,[eax*2+2]
+	mov _wpgmptr,malloc( eax )
+	wcscpy( _wpgmptr, addr pgname )
+	mov ecx,__wargv
+	mov [ecx],eax
 
-	mov	edx,GetCommandLineW()
-	xor	ecx,ecx
-	movzx	eax,WCHAR PTR [edx]	; skip space
+	mov edx,GetCommandLineW()
+	xor ecx,ecx
+	movzx eax,WCHAR PTR [edx]	; skip space
 
 	.while	byte ptr _ctype[eax*2+2] & _SPACE
 
@@ -41,7 +41,7 @@ local	pgname[260]:WCHAR
 		mov ax,[edx]
 	.endw
 
-	.if	eax == '"'		; if _argv[0] is "quoted"
+	.if eax == '"'		; if _argv[0] is "quoted"
 
 		mov ecx,eax
 		add edx,WCHAR

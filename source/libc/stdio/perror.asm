@@ -10,9 +10,9 @@ perror	PROC USES edi string:LPSTR
 	mov eax,string
 	.if eax
 
-		mov	edi,eax
-		movzx	eax,byte ptr [edi]
-		.if	eax
+		mov edi,eax
+		movzx eax,byte ptr [edi]
+		.if eax
 
 			_write(2, edi, strlen(edi))
 			_write(2, ": ", 2)

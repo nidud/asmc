@@ -2285,7 +2285,7 @@ WS_DISABLED		equ 0x08000000
 WS_CLIPSIBLINGS		equ 0x04000000
 WS_CLIPCHILDREN		equ 0x02000000
 WS_MAXIMIZE		equ 0x01000000
-WS_CAPTION		equ 0x00C00000L	    ;; WS_BORDER OR WS_DGFRAME
+WS_CAPTION		equ 0x00C00000	    ;; WS_BORDER OR WS_DGFRAME
 WS_BORDER		equ 0x00800000
 WS_DLGFRAME		equ 0x00400000
 WS_VSCROLL		equ 0x00200000
@@ -2302,7 +2302,6 @@ WS_MAXIMIZEBOX		equ 0x00010000
 WS_TILED		equ WS_OVERLAPPED
 WS_ICONIC		equ WS_MINIMIZE
 WS_SIZEBOX		equ WS_THICKFRAME
-WS_TILEDWINDOW		equ WS_OVERLAPPEDWINDOW
 
 ;;
 ;; Common Window Styles
@@ -2311,6 +2310,7 @@ WS_OVERLAPPEDWINDOW	equ WS_OVERLAPPED OR WS_CAPTION OR WS_SYSMENU OR \
 			WS_THICKFRAME OR WS_MINIMIZEBOX
 WS_POPUPWINDOW		equ WS_POPUP OR WS_BORDER
 WS_CHILDWINDOW		equ WS_CHILD
+WS_TILEDWINDOW		equ WS_OVERLAPPEDWINDOW
 
 ;;
 ;; Extended Window Styles
@@ -3260,20 +3260,20 @@ WaitForInputIdle proto _CType \
 
 ;LRESULT
 ;CALLBACK
-DefWindowProcA typedef proto _CType \
+DefWindowProcA proto _CType \
 		  hWnd: HWND,
 		   Msg: UINT,
 		wParam: WPARAM,
 		lParam: LPARAM
-DefWindowProcW typedef proto _CType \
+DefWindowProcW proto _CType \
 		  hWnd: HWND,
 		   Msg: UINT,
 		wParam: WPARAM,
 		lParam: LPARAM
 ifdef _UNICODE
-DefWindowProc  typedef	ptr DefWindowProcW
+DefWindowProc equ <DefWindowProcW>
 else
-DefWindowProc  typedef	ptr DefWindowProcA
+DefWindowProc equ <DefWindowProcA>
 endif ;; !UNICODE
 
 ;VOID

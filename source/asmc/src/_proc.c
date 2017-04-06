@@ -2207,7 +2207,9 @@ static void SetLocalOffsets( struct proc_info *info )
     for( curr = info->locallist; curr; curr = curr->nextlocal ) {
 	uint_32 itemsize = ( curr->sym.total_size == 0 ? 0 : curr->sym.total_size / curr->sym.total_length );
 	info->localsize += curr->sym.total_size;
-	if ( itemsize > align )
+	if ( itemsize == 32 ) /* v2.23 align ymmword */
+	    info->localsize = ROUND_UP( info->localsize, 32 );
+	else if ( itemsize > align )
 	    info->localsize = ROUND_UP( info->localsize, align );
 	else if ( itemsize ) /* v2.04: skip if size == 0 */
 	    info->localsize = ROUND_UP( info->localsize, itemsize );

@@ -398,6 +398,53 @@ int SetCPU( enum cpu_info newcpu )
     return( NOT_ERROR );
 }
 
+/*
+ *
+ *
+ *
+ */
+
+void InitStackBase( int );
+int Win64Options( int i, struct asm_tok tokenarray[] )
+{
+	i++;
+	while (tokenarray[i].token != T_FINAL) {
+
+		if (tokenarray[i].token != T_COLON &&
+		    tokenarray[i].token != T_COMMA) {
+
+			if ( !_stricmp( tokenarray[i].string_ptr, "RSP" ) ) {
+				InitStackBase( T_RSP );
+				ModuleInfo.win64_flags |= W64F_AUTOSTACKSP;
+			} else if ( !_stricmp( tokenarray[i].string_ptr, "RBP" ) ) {
+				InitStackBase( T_RBP );
+				ModuleInfo.frame_auto = 1;
+				ModuleInfo.win64_flags |= (W64F_AUTOSTACKSP | W64F_SAVEREGPARAMS);
+			} else if ( !_stricmp( tokenarray[i].string_ptr, "ALIGN" ) ) {
+				if ( !ModuleInfo.win64_flags )
+					ModuleInfo.win64_flags |= W64F_AUTOSTACKSP;
+				ModuleInfo.win64_flags |= W64F_STACKALIGN16;
+			} else if ( !_stricmp( tokenarray[i].string_ptr, "NOALIGN" ) ) {
+				ModuleInfo.win64_flags &= ~W64F_STACKALIGN16;
+			} else if ( !_stricmp( tokenarray[i].string_ptr, "SAVE" ) ) {
+				ModuleInfo.win64_flags |= W64F_SAVEREGPARAMS;
+			} else if ( !_stricmp( tokenarray[i].string_ptr, "NOSAVE" ) ) {
+				ModuleInfo.win64_flags &= ~W64F_SAVEREGPARAMS;
+			} else if ( !_stricmp( tokenarray[i].string_ptr, "AUTO" ) ) {
+				ModuleInfo.win64_flags |= W64F_AUTOSTACKSP;
+			} else if ( !_stricmp( tokenarray[i].string_ptr, "NOAUTO" ) ) {
+				ModuleInfo.win64_flags &= ~W64F_AUTOSTACKSP;
+			} else if ( !_stricmp( tokenarray[i].string_ptr, "FRAME" ) ) {
+				ModuleInfo.frame_auto = 1;
+			} else if ( !_stricmp( tokenarray[i].string_ptr, "NOFRAME" ) ) {
+				ModuleInfo.frame_auto = 0;
+			}
+		}
+		i++;
+	};
+	return --i;
+}
+
 /* handles
  .8086,
  .[1|2|3|4|5|6]86[p],
@@ -405,6 +452,7 @@ int SetCPU( enum cpu_info newcpu )
  .[2|3]87,
  .NO87, .MMX, .K3D, .XMM directives.
 */
+
 int CpuDirective( int i, struct asm_tok tokenarray[] )
 /*********************************************************/
 {
@@ -418,14 +466,18 @@ int CpuDirective( int i, struct asm_tok tokenarray[] )
 		Options.sub_format = SFORMAT_64BIT;
 		longjmp( &jmpenv, 1 );
 	}
+	Win64Options( i, tokenarray );
 	return( NOT_ERROR );
     }
 
     if (tokenarray[i].tokval == T_DOT_AMD64)
-
 	newcpu = GetSflagsSp( T_DOT_X64 );
     else
 	newcpu = GetSflagsSp( tokenarray[i].tokval );
+
+    if (tokenarray[i].tokval == T_DOT_X64 ||
+	tokenarray[i].tokval == T_DOT_AMD64)
+	i = Win64Options( i, tokenarray );
 
 #if DOT_XMMARG
     .if ( tokenarray[i].tokval == T_DOT_XMM && tokenarray[i+1].token != T_FINAL ) {

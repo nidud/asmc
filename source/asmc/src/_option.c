@@ -873,6 +873,19 @@ OPTFUNC( SetCodeView )
 extern void UpdateStackBase( struct asym *, void * );
 extern void UpdateProcStatus( struct asym *, void * );
 
+void InitStackBase(int reg)
+{
+    ModuleInfo.basereg[ModuleInfo.Ofssize] = reg;
+    if ( !ModuleInfo.g.StackBase ) {
+	ModuleInfo.g.StackBase = CreateVariable( "@StackBase", 0 );
+	ModuleInfo.g.StackBase->predefined = TRUE;
+	ModuleInfo.g.StackBase->sfunc_ptr = UpdateStackBase;
+	ModuleInfo.g.ProcStatus = CreateVariable( "@ProcStatus", 0 );
+	ModuleInfo.g.ProcStatus->predefined = TRUE;
+	ModuleInfo.g.ProcStatus->sfunc_ptr = UpdateProcStatus;
+    }
+}
+
 OPTFUNC( SetStackBase )
 /*********************/
 {
@@ -884,15 +897,7 @@ OPTFUNC( SetStackBase )
     if ( !( GetSflagsSp( tokenarray[i].tokval ) & SFR_IREG ) ) {
 	return( asmerr( 2031 ) );
     }
-    ModuleInfo.basereg[ModuleInfo.Ofssize] = tokenarray[i].tokval;
-    if ( !ModuleInfo.g.StackBase ) {
-	ModuleInfo.g.StackBase = CreateVariable( "@StackBase", 0 );
-	ModuleInfo.g.StackBase->predefined = TRUE;
-	ModuleInfo.g.StackBase->sfunc_ptr = UpdateStackBase;
-	ModuleInfo.g.ProcStatus = CreateVariable( "@ProcStatus", 0 );
-	ModuleInfo.g.ProcStatus->predefined = TRUE;
-	ModuleInfo.g.ProcStatus->sfunc_ptr = UpdateProcStatus;
-    }
+    InitStackBase( tokenarray[i].tokval );
     i++;
     *pi = i;
     return( NOT_ERROR );

@@ -237,7 +237,8 @@ get_string PROC USES esi edi ebx buf, p
 
 			  .case ah == '"' && al == _cstring	; case \" ?
 
-				.if BYTE PTR [esi-1] == '\'
+				.if BYTE PTR [esi-1] == '\' && \
+				    BYTE PTR [esi-2] != '\'	; case \\"
 
 					stosb
 					inc esi

@@ -1,4 +1,5 @@
 include fltintrn.inc
+include crtl.inc
 
 XAM_INVALID	EQU 0001h
 XAM_DENORMAL	EQU 0002h
@@ -15,8 +16,6 @@ XAM_TOP		EQU 3800h
 XAM_C3		EQU 4000h
 XAM_BUSY	EQU 8000h
 XAM_CMASK	EQU 4700h
-
-_fdtold		proto ; double[eax] to long double[edx]
 
 .data
 
@@ -285,7 +284,7 @@ local	ld:REAL10
 
 	mov	eax,fp
 	lea	edx,ld
-	call	_fdtold
+	call	_iFDLD
 	lea	ecx,ld
 	fld	TBYTE PTR [ecx]
 	invoke	__fconv,buffer, ch_type, precision, capexp

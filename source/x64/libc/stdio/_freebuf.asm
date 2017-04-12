@@ -7,17 +7,17 @@ include alloc.inc
 
 _freebuf PROC fp:LPFILE
 
-	mov	eax,[rcx].S_FILE.iob_flag
+	mov	eax,[rcx]._iobuf._flag
 	.if	eax & _IOREAD or _IOWRT or _IORW
 		.if	eax & _IOMYBUF
-			free( [rcx].S_FILE.iob_base )
+			free( [rcx]._iobuf._base )
 			xor	eax,eax
 			mov	rcx,fp
-			mov	[rcx].S_FILE.iob_ptr,rax
-			mov	[rcx].S_FILE.iob_base,rax
-			mov	[rcx].S_FILE.iob_flag,eax
-			mov	[rcx].S_FILE.iob_bufsize,eax
-			mov	[rcx].S_FILE.iob_cnt,eax
+			mov	[rcx]._iobuf._ptr,rax
+			mov	[rcx]._iobuf._base,rax
+			mov	[rcx]._iobuf._flag,eax
+			mov	[rcx]._iobuf._bufsiz,eax
+			mov	[rcx]._iobuf._cnt,eax
 		.endif
 	.endif
 	ret

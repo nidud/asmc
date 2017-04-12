@@ -5,7 +5,7 @@ include string.inc
 
 	.code
 
-	ASSUME	rbx: ptr S_FILE
+	ASSUME	rbx: ptr _iobuf
 	OPTION	WIN64:2, STACKBASE:rsp
 
 fread PROC USES rsi rdi rbx r12 r13 r14 r15,
@@ -26,21 +26,21 @@ fread PROC USES rsi rdi rbx r12 r13 r14 r15,
 	jz	toend
 	mov	edx,_MAXIOBUF
 
-	.if	[rbx].iob_flag & _IOMYBUF or _IONBF or _IOYOURBUF
-		mov	edx,[rbx].iob_bufsize
+	.if	[rbx]._flag & _IOMYBUF or _IONBF or _IOYOURBUF
+		mov	edx,[rbx]._bufsiz
 	.endif
 	mov	r13d,edx
 
 	.while	edi
-		mov	r8d,[rbx].iob_cnt
-		.if	[rbx].iob_flag & _IOMYBUF or _IOYOURBUF && r8d
+		mov	r8d,[rbx]._cnt
+		.if	[rbx]._flag & _IOMYBUF or _IOYOURBUF && r8d
 			.if	edi < r8d
 				mov	r8d,edi
 			.endif
-			memcpy( rsi, [rbx].iob_ptr, r8 )
+			memcpy( rsi, [rbx]._ptr, r8 )
 			sub	edi,r8d
-			sub	[rbx].iob_cnt,r8d
-			add	[rbx].iob_ptr,r8
+			sub	[rbx]._cnt,r8d
+			add	[rbx]._ptr,r8
 			add	rsi,r8
 		.elseif edi >= r13d
 			mov	eax,edi
@@ -52,7 +52,7 @@ fread PROC USES rsi rdi rbx r12 r13 r14 r15,
 				sub	eax,edx
 			.endif
 
-			.if	!_read( [rbx].iob_file, rsi, rax )
+			.if	!_read( [rbx]._file, rsi, rax )
 				jmp	error
 			.elseif eax == -1
 				jmp	error
@@ -66,7 +66,7 @@ fread PROC USES rsi rdi rbx r12 r13 r14 r15,
 			mov	[rsi],al
 			inc	rsi
 			dec	edi
-			mov	eax,[rbx].iob_bufsize
+			mov	eax,[rbx]._bufsiz
 			mov	r13d,eax
 		.endif
 	.endw
@@ -74,7 +74,7 @@ fread PROC USES rsi rdi rbx r12 r13 r14 r15,
 toend:
 	ret
 error:
-	or	[rbx].iob_flag,_IOEOF
+	or	[rbx]._flag,_IOEOF
 break:
 	mov	eax,r12d
 	sub	eax,edi

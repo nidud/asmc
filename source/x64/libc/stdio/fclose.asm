@@ -8,17 +8,17 @@ include io.inc
 fclose	PROC USES rsi rbx fp:LPFILE
 
 	mov	rbx,rcx
-	mov	eax,[rbx].S_FILE.iob_flag
+	mov	eax,[rbx]._iobuf._flag
 	and	eax,_IOREAD or _IOWRT or _IORW
 	jz	error
 	fflush( rbx )
 	mov	rsi,rax
 	_freebuf( rbx )
 	xor	eax,eax
-	mov	[rbx].S_FILE.iob_flag,eax
-	mov	ecx,[rbx].S_FILE.iob_file
+	mov	[rbx]._iobuf._flag,eax
+	mov	ecx,[rbx]._iobuf._file
 	dec	eax
-	mov	[rbx].S_FILE.iob_file,eax
+	mov	[rbx]._iobuf._file,eax
 	_close( ecx )
 	test	rax,rax
 	mov	rax,rsi

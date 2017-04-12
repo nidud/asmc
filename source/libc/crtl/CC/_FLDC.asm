@@ -1,11 +1,8 @@
 	.486
-	.model	flat, stdcall
-
-	PUBLIC	_FLDC
-
+	.model	flat, c
 	.code
 
-_FLDC:
+_FLDC	proc
 	;
 	;  CMP long double[EAX], long double[EDX]
 	;
@@ -14,7 +11,6 @@ _FLDC:
 	; -1:  A < B
 	;  2:  NaN
 	;
-_cmpld	PROC
 	push	edi
 	push	esi
 	movsx	esi,word ptr [eax+8]
@@ -83,6 +79,6 @@ L007:
 	pop	esi
 	pop	edi
 	ret
-_cmpld	ENDP
+_FLDC	endp
 
 	END

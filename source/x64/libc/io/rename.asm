@@ -1,4 +1,5 @@
 include io.inc
+include winbase.inc
 
 	.code
 
@@ -14,7 +15,7 @@ else
 		xor	rax,rax
 endif
 	.else
-		call	osmaperr
+		osmaperr()
 	.endif
 	ret
 rename	ENDP

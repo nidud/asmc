@@ -1,16 +1,11 @@
 	.486
-	.model	flat, stdcall
-
-PUBLIC	_FLDA
-PUBLIC	_FLDS
-
+	.model	flat, c
 	.code
 
-_FLDA:
+_FLDA	PROC USES esi edi ecx
 	;
 	; long double[EBX] = long double[EAX] + long double[EDX]
 	;
-_addld	PROC USES esi edi ecx
 	push	ebx
 	movzx	esi,WORD PTR [edx+8]
 	mov	ecx,[edx+4]
@@ -26,13 +21,13 @@ _addld	PROC USES esi edi ecx
 	mov	[ebx+4],edx
 	mov	[ebx+8],si
 	ret
-_addld	ENDP
+_FLDA	ENDP
 
-_FLDS:
+_FLDS	PROC USES esi edi ecx
 	;
 	; long double[EBX] = long double[EAX] - long double[EDX]
 	;
-_subld	PROC USES esi edi ecx
+
 	push	ebx
 	movzx	esi,WORD PTR [edx+8]
 	mov	ecx,[edx+4]
@@ -48,7 +43,7 @@ _subld	PROC USES esi edi ecx
 	mov	[ebx+4],edx
 	mov	[ebx+8],si
 	ret
-_subld	ENDP
+_FLDS	ENDP
 
 L012:
 	add	si,1

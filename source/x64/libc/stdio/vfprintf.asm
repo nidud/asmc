@@ -10,7 +10,7 @@ vfprintf PROC USES rsi file:LPFILE, format:LPSTR, args:PVOID
 	_output( file, format, args )
 	mov	rcx,rsi
 	mov	rsi,rax
-	_ftbuf( rcx, file )
+	_ftbuf( ecx, file )
 	mov	rax,rsi
 	ret
 vfprintf ENDP

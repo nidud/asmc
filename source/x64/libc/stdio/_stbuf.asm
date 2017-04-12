@@ -13,7 +13,7 @@ extrn	output_flush:qword
 _stbuf	PROC USES rbx fp:LPFILE
 	mov	rbx,rcx
 
-	.if	_isatty( [rbx].S_FILE.iob_file )
+	.if	_isatty( [rbx]._iobuf._file )
 
 		xor	rax,rax
 		xor	rdx,rdx
@@ -26,11 +26,11 @@ _stbuf	PROC USES rbx fp:LPFILE
 			.endif
 			inc	rdx
 		.endif
-		mov	ecx,[rbx].S_FILE.iob_flag
+		mov	ecx,[rbx]._iobuf._flag
 		and	ecx,_IOMYBUF or _IONBF or _IOYOURBUF
 		jnz	@F
 		or	ecx,_IOWRT or _IOYOURBUF or _IOFLRTN
-		mov	[rbx].S_FILE.iob_flag,ecx
+		mov	[rbx]._iobuf._flag,ecx
 		shl	rdx,3
 		lea	r10,_stdbuf
 		add	rdx,r10
@@ -43,13 +43,13 @@ _stbuf	PROC USES rbx fp:LPFILE
 			mov	[rdx],rax
 			mov	ecx,_INTIOBUF
 			.if	ZERO?
-				lea	rax,[rbx].S_FILE.iob_charbuf
+				lea	rax,[rbx]._iobuf._charbuf
 				mov	ecx,4
 			.endif
 		.endif
-		mov	[rbx].S_FILE.iob_ptr,rax
-		mov	[rbx].S_FILE.iob_base,rax
-		mov	[rbx].S_FILE.iob_bufsize,ecx
+		mov	[rbx]._iobuf._ptr,rax
+		mov	[rbx]._iobuf._base,rax
+		mov	[rbx]._iobuf._bufsiz,ecx
 		mov	rax,1
 	.endif
 @@:

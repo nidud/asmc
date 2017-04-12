@@ -453,10 +453,10 @@ OPST_normal:
 
 output_PUTC:
 	mov	rdx,[rbp].OP_filep
-	dec	[rdx].S_FILE.iob_cnt
+	dec	[rdx]._iobuf._cnt
 	jl	putc_flush
-	inc	[rdx].S_FILE.iob_ptr
-	mov	rdx,[rdx].S_FILE.iob_ptr
+	inc	[rdx]._iobuf._ptr
+	mov	rdx,[rdx]._iobuf._ptr
 	mov	[rdx-1],al
 putc_end:
 	inc	[rbp].OP_charsout

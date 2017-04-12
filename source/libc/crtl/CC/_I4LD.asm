@@ -1,34 +1,26 @@
 	.486
-	.model	flat, stdcall
-
-public _U4LD
-public _I4LD
-
+	.model	flat, c
 	.code
 	;
 	; long [eax] to long double[edx]
 	;
-_I4LD:
-
-_s4told PROC
+_I4LD	proc
 	test	eax,eax
-	jns	_u4told
+	jns	_U4LD
 	push	ebx
 	mov	ebx,edx
 	neg	eax
 	mov	edx,0000BFFFh
 	jmp	L4TOLD
-_s4told ENDP
+_I4LD	endp
 	;
 	; DWORD [eax] to long double[edx]
 	;
-_U4LD:
-
-_u4told PROC
+_U4LD	proc
 	push	ebx
 	mov	ebx,edx
 	mov	edx,00003FFFh
-_u4told ENDP
+_U4LD	endp
 
 L4TOLD:
 	push	ecx

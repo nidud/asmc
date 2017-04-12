@@ -1,16 +1,11 @@
 	.486
-	.model	flat, stdcall
-
-	PUBLIC	_FLDM
-
+	.model	flat, c
 	.code
 
-_FLDM:
+_FLDM	proc
 	;
 	;  long double[EBX] = long double[EAX] * long double[EDX]
 	;
-
-_mulld	PROC
 	push	esi
 	push	ecx
 	push	ebx
@@ -29,7 +24,7 @@ _mulld	PROC
 	pop	ecx
 	pop	esi
 	ret
-_mulld	ENDP
+_FLDM	endp
 
 L001:
 	test	eax,eax

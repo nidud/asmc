@@ -191,8 +191,8 @@ event_add PROC USES rbx
 	call	getline
 	jz	nocando
 	movzx	rax,bl
-	lea	r8,__ctype
-	test	BYTE PTR [r8+rax+1],_CONTROL
+	lea	r8,_ctype
+	test	BYTE PTR [r8+rax*2+2],_CONTROL
 	jnz	control
 add_char:
 	mov	eax,[r12].ti_bcnt
@@ -240,7 +240,7 @@ tsetcursor PROC
 	mov	cursor.y,cx
 	mov	cursor.bVisible,1
 	mov	cursor.dwSize,CURSOR_NORMAL
-	SetCursor( addr cursor )
+	CursorSet( addr cursor )
 	ret
 tsetcursor ENDP
 
@@ -740,7 +740,7 @@ dledit	PROC USES rsi rdi r12 b:LPSTR, rc, bz, oflag
   local t:S_TEDIT
   local cursor:S_CURSOR
 
-	GetCursor( addr cursor )
+	CursorGet( addr cursor )
 
 	lea	r12,t
 	xor	eax,eax
@@ -777,7 +777,7 @@ dledit	PROC USES rsi rdi r12 b:LPSTR, rc, bz, oflag
 	call	modal
 	mov	esi,eax
 	call	putline
-	SetCursor( addr cursor )
+	CursorSet( addr cursor )
 	mov	eax,esi
 	ret
 dledit	ENDP

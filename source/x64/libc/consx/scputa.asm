@@ -12,7 +12,7 @@ scputa	PROC x, y, l, a
 	shl	r9d,16
 	mov	r9w,ax
 	movzx	edx,r10b
-	FillConsoleOutputAttribute( hStdOutput, edx, r8d, r9d, addr pcx )
+	FillConsoleOutputAttribute( hStdOutput, dx, r8d, r9d, addr pcx )
 	ret
 scputa	ENDP
 

@@ -1,7 +1,7 @@
 include time.inc
 
 	.data
-tb	S_TM <>
+tb	tm <>
 
 	.code
 

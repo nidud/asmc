@@ -2,12 +2,6 @@ include string.inc
 include stdio.inc
 include crtl.inc
 
-_div64I PROTO ; edx:eax / ecx:ebx --> edx:eax.ecx
-_div64U PROTO ; edx:eax / ecx:ebx --> edx:eax.ecx
-_shr64I PROTO ; edx:eax >> cl
-_shr64U PROTO ; edx:eax >> cl
-_shl64	PROTO ; edx:eax << cl
-
 	.data
 
 _divI	label dword
@@ -61,7 +55,7 @@ test_divI:
 	mov	edx,[esi+4]
 	mov	ebx,[esi+8]
 	mov	ecx,[esi+12]
-	call	_div64I
+	call	_I8D
 	cmp	eax,[esi+16]
 	jne	error_divI
 	cmp	edx,[esi+20]
@@ -88,7 +82,7 @@ test_shrU:
 	mov	eax,[esi]
 	mov	edx,[esi+4]
 	mov	ecx,[esi+16]
-	call	_shr64U
+	call	__ullshr
 	cmp	eax,[esi+8]
 	jne	error_shrU
 	cmp	edx,[esi+12]
@@ -113,7 +107,7 @@ test_shrI:
 	mov	eax,[esi]
 	mov	edx,[esi+4]
 	mov	ecx,[esi+16]
-	call	_shr64I
+	call	_allshr
 	cmp	eax,[esi+8]
 	jne	error_shrI
 	cmp	edx,[esi+12]
@@ -138,7 +132,7 @@ test_shl:
 	mov	eax,[esi]
 	mov	edx,[esi+4]
 	mov	ecx,[esi+8]
-	call	_shl64
+	call	__llshl
 	cmp	eax,[esi+12]
 	jne	error_shl
 	cmp	edx,[esi+16]

@@ -4,18 +4,18 @@ include stdio.inc
 
 	OPTION	WIN64:2, STACKBASE:rsp
 
-fputc	PROC char: SIZE_T, fp: LPFILE
+fputc	PROC char:SINT, fp: LPFILE
 
-	dec	[rdx].S_FILE.iob_cnt
+	dec	[rdx]._iobuf._cnt
 	jl	flush
-	mov	r8,[rdx].S_FILE.iob_ptr
-	inc	[rdx].S_FILE.iob_ptr
+	mov	r8,[rdx]._iobuf._ptr
+	inc	[rdx]._iobuf._ptr
 	mov	rax,rcx
 	mov	[r8],al
 toend:
 	ret
 flush:
-	_flsbuf( rcx, rdx )
+	_flsbuf( ecx, rdx )
 	jmp	toend
 fputc	ENDP
 

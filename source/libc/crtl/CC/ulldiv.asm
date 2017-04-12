@@ -1,8 +1,8 @@
 	.486
-	.model	flat, stdcall
+	.model	flat, c
 
 PUBLIC	_aulldiv
-_div64U proto
+_U8D	proto
 
 	.code
 
@@ -12,7 +12,7 @@ _aulldiv:
 	mov	edx,4[esp+8]
 	mov	ebx,4[esp+12]
 	mov	ecx,4[esp+16]
-	call	_div64U
+	call	_U8D
 	pop	ebx
 	ret	16
 

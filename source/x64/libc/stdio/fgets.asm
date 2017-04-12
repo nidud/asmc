@@ -3,9 +3,9 @@ include stdio.inc
 	.code
 
 	OPTION	STACKBASE:rsp
-	ASSUME	rbx:ptr S_FILE
+	ASSUME	rbx:ptr _iobuf
 
-fgets PROC USES rsi rdi rbx buf:LPSTR, count:SIZE_T, fp:LPFILE
+fgets PROC USES rsi rdi rbx buf:LPSTR, count:SINT, fp:LPFILE
 
 	mov	rdi,rcx
 	mov	rsi,rdx
@@ -16,10 +16,10 @@ fgets PROC USES rsi rdi rbx buf:LPSTR, count:SIZE_T, fp:LPFILE
 	dec	rsi
 	jz	done
 lupe:
-	dec	[rbx].iob_cnt
+	dec	[rbx]._cnt
 	jl	fbuf
-	mov	rcx,[rbx].iob_ptr
-	inc	[rbx].iob_ptr
+	mov	rcx,[rbx]._ptr
+	inc	[rbx]._ptr
 	mov	al,[rcx]
 next:
 	mov	[rdi],al

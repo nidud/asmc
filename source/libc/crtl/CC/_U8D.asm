@@ -1,13 +1,9 @@
 	.486
-	.model	flat, stdcall
+	.model	flat, c
+	.code
 
-public	_U8D
+_U8D	proc	; edx:eax / ecx:ebx
 
-	.code	; edx:eax / ecx:ebx
-
-_U8D:
-
-_div64U PROC
 	test	ecx,ecx
 	jnz	noteasy
 	dec	ebx
@@ -99,6 +95,6 @@ toend:
 	pop	esi
 	pop	ebp
 	ret
-_div64U ENDP
+_U8D	endp
 
 	END

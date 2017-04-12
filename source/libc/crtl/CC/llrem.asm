@@ -1,8 +1,8 @@
 	.486
-	.model	flat, stdcall
+	.model	flat, c
 
 public	_allrem
-_div64I proto
+_I8D	proto
 
 	.code
 
@@ -12,7 +12,7 @@ _allrem:
 	mov	edx,4[esp+8]
 	mov	ebx,4[esp+12]
 	mov	ecx,4[esp+16]
-	call	_div64I
+	call	_I8D
 	mov	eax,ebx
 	mov	edx,ecx
 	pop	ebx

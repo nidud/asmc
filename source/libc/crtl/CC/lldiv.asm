@@ -1,9 +1,9 @@
 	.486
-	.model	flat, stdcall
+	.model	flat, c
 
 public	_alldiv
 public	__lldiv
-_div64I proto
+_I8D	proto
 
 	.code
 __lldiv:
@@ -13,7 +13,7 @@ _alldiv:
 	mov	edx,4[esp+8]
 	mov	ebx,4[esp+12]
 	mov	ecx,4[esp+16]
-	call	_div64I
+	call	_I8D
 	pop	ebx
 	ret	16
 

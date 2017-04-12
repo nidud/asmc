@@ -7,7 +7,7 @@ include time.inc
 
 scroll_delay proc
 	call	tupdate
-	delay ( 2 )
+	Sleep ( 2 )
 	ret
 scroll_delay endp
 

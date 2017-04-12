@@ -1,4 +1,5 @@
 include time.inc
+include winbase.inc
 
 	.code
 
@@ -9,7 +10,7 @@ _loctotime_t PROC uses rsi rdi rbx,
 	hour:	SINT,
 	minute: SINT,
 	second: SINT
-local	tb:	S_TM
+local	tb:	tm
 
 	mov	eax,ecx		; year
 	sub	eax,1900

@@ -1,22 +1,23 @@
 include stdio.inc
 include io.inc
 include errno.inc
+include winbase.inc
 
 	.code
 
 	OPTION	WIN64:2, STACKBASE:rsp
-	ASSUME	rbx: PTR S_FILE
+	ASSUME	rbx: PTR _iobuf
 
 ftell	PROC USES rsi rdi rbx r12 r13 r14 r15,
 	fp:	LPFILE
 
 	mov	rbx,rcx
 	xor	eax,eax
-	.if	SDWORD PTR [rbx].iob_cnt < eax
-		mov	[rbx].iob_cnt,eax
+	.if	SDWORD PTR [rbx]._cnt < eax
+		mov	[rbx]._cnt,eax
 	.endif
 
-	mov	eax,[rbx].iob_file
+	mov	eax,[rbx]._file
 	lea	r14,_osfhnd
 	mov	r14,[r14+rax*8]
 	lea	r15,_osfile
@@ -33,21 +34,21 @@ ftell	PROC USES rsi rdi rbx r12 r13 r14 r15,
 		jmp	toend
 	.endif
 
-	mov	ecx,[rbx].iob_flag
+	mov	ecx,[rbx]._flag
 	.if	!(ecx & ( _IOMYBUF or _IOYOURBUF ) )
 
-		sub	eax,[rbx].iob_cnt
+		sub	eax,[rbx]._cnt
 		jmp	toend
 	.endif
-	mov	rdi,[rbx].iob_ptr
-	sub	rdi,[rbx].iob_base
+	mov	rdi,[rbx]._ptr
+	sub	rdi,[rbx]._base
 
 	.if	ecx & _IOWRT or _IOREAD
 
 		.if	r15b & FH_TEXT
 
-			mov	rax,[rbx].iob_base
-			.while	rax < [rbx].iob_ptr
+			mov	rax,[rbx]._base
+			.while	rax < [rbx]._ptr
 				.if	BYTE PTR [rax] == 10
 					inc	rdi
 				.endif
@@ -66,19 +67,19 @@ ftell	PROC USES rsi rdi rbx r12 r13 r14 r15,
 
 	.if	ecx & _IOREAD
 
-		mov	eax,[rbx].iob_cnt
+		mov	eax,[rbx]._cnt
 		.if	!eax
 			mov rdi,rax
 		.else
-			add	rax,[rbx].iob_ptr
-			sub	rax,[rbx].iob_base
+			add	rax,[rbx]._ptr
+			sub	rax,[rbx]._base
 			mov	r12,rax
 
 			.if	r15b & FH_TEXT
 
 				.if	SetFilePointer( r14, 0, 0, SEEK_END ) == r13
 
-					mov	rax,[rbx].iob_base
+					mov	rax,[rbx]._base
 					mov	rcx,rax
 					add	rax,r12
 					.while	rcx < rax
@@ -87,18 +88,18 @@ ftell	PROC USES rsi rdi rbx r12 r13 r14 r15,
 						.endif
 						inc	rcx
 					.endw
-					.if	[rbx].iob_flag & _IOCTRLZ
+					.if	[rbx]._flag & _IOCTRLZ
 						inc	r12
 					.endif
 				.else
 
 					SetFilePointer( r14, r13d, 0, SEEK_SET )
-					mov	eax,[ebx].iob_flag
+					mov	eax,[ebx]._flag
 
 					.if	r12 <= 512 && ( eax & _IOMYBUF ) && !( eax & _IOSETVBUF )
 						mov	r12,512
 					.else
-						mov	eax,[ebx].iob_bufsize
+						mov	eax,[ebx]._bufsiz
 						mov	r12,rax
 					.endif
 					.if	r15b & FH_CRLF

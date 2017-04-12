@@ -1,8 +1,7 @@
 include stdlib.inc
 include errno.inc
 include fltintrn.inc
-
-_fldtod proto
+include crtl.inc
 
 	.code
 
@@ -51,7 +50,7 @@ strtod	PROC USES esi edi ebx string:LPSTR, suffix:dword
 	  .case eax >= 00003BCDh
 		mov eax,ebx
 		mov edx,ebx
-		_fldtod()
+		_iLDFD()
 		.if !( edi & _ST_OVERFLOW )
 			mov eax,[ebx+4]
 			and eax,7FF00000h
@@ -65,7 +64,7 @@ strtod	PROC USES esi edi ebx string:LPSTR, suffix:dword
 	  .case eax >= 00003BCCh
 		mov eax,ebx
 		mov edx,ebx
-		_fldtod()
+		_iLDFD()
 		mov eax,[ebx]
 		or  eax,[ebx+4]
 		.if !ZERO?

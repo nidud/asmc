@@ -1,29 +1,25 @@
 	.486
-	.model	flat, stdcall
+	.model	flat, c
 
-public	_I8D
-public	_div64I
-
-_div64U proto
+_U8D	proto
 
 	.code
 	;
 	; edx:eax.ecx:ebx = edx:eax / ecx:ebx
 	;
-_I8D:
+_I8D	proc
 
-_div64I PROC
 	test	edx,edx		; hi word of dividend
 	js	dividend	; signed ?
 	or	ecx,ecx		; hi word of divisor
 	js	divisor		; signed ?
-	call	_div64U
-	ret
+	jmp	_U8D
+
 divisor:
 	neg	ecx
 	neg	ebx
 	sbb	ecx,0
-	call	_div64U
+	call	_U8D
 	neg	edx
 	neg	eax
 	sbb	edx,0
@@ -37,13 +33,13 @@ dividend:
 	neg	ecx
 	neg	ebx
 	sbb	ecx,0
-	call	_div64U
+	call	_U8D
 	neg	ecx
 	neg	ebx
 	sbb	ecx,0
 	ret
 @@:
-	call	_div64U
+	call	_U8D
 	neg	ecx
 	neg	ebx
 	sbb	ecx,0
@@ -51,6 +47,6 @@ dividend:
 	neg	eax
 	sbb	edx,0
 	ret
-_div64I ENDP
+_I8D	endp
 
 	END

@@ -14,6 +14,7 @@ include stdio.inc
 include stdlib.inc
 include process.inc
 include winbase.inc
+include crtl.inc
 
 STARTYEAR	equ 0
 MAXYEAR		equ 3000
@@ -82,8 +83,6 @@ c_time_y	equ 7
 c_days_y	equ 2
 
 	.code
-
-_div64U proto
 
 dummy	PROC
 	xor	eax,eax
@@ -375,7 +374,7 @@ TimerUpdate PROC USES esi edi ebx
 		mov	edx,diff_edx
 		mov	ebx,60
 		xor	ecx,ecx
-		call	_div64U
+		call	_U8D
 		sub	edi,1
 		scputf( esi, edi, 0, 0, addr format_q, edx::eax )
 
@@ -383,7 +382,7 @@ TimerUpdate PROC USES esi edi ebx
 		mov	edx,diff_edx
 		mov	ebx,60*60
 		xor	ecx,ecx
-		call	_div64U
+		call	_U8D
 		sub	edi,1
 		scputf( esi, edi, 0, 0, addr format_q, edx::eax )
 
@@ -391,7 +390,7 @@ TimerUpdate PROC USES esi edi ebx
 		mov	edx,diff_edx
 		mov	ebx,60*60*24
 		xor	ecx,ecx
-		call	_div64U
+		call	_U8D
 		sub	edi,1
 		scputf( esi, edi, 0, 0, addr format_q, edx::eax )
 

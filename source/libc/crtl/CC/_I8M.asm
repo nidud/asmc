@@ -12,7 +12,6 @@ public	_U8M
 _I8M:
 _U8M:
 
-_mul64	PROC
 	test	edx,edx
 	jnz	L1
 	test	ecx,ecx
@@ -31,6 +30,5 @@ L1:
 	mul	ebx
 	add	edx,ecx
 	ret
-_mul64	ENDP
 
 	END

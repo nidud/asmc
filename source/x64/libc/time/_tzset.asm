@@ -1,4 +1,5 @@
 include time.inc
+include winbase.inc
 
 	.code
 
@@ -38,11 +39,11 @@ toend:
 	ret
 _tzset	ENDP
 
-_isindst PROC USES rsi rdi rbx tb:PTR S_TM
+_isindst PROC USES rsi rdi rbx tb:PTR tm
 	mov	rsi,tb
 	xor	eax,eax
-	mov	ecx,[rsi].S_TM.tm_mon
-	mov	edx,[rsi].S_TM.tm_year
+	mov	ecx,[rsi].tm.tm_mon
+	mov	edx,[rsi].tm.tm_year
 	cmp	edx,67
 	jb	toend
 	cmp	ecx,3
@@ -79,19 +80,19 @@ _isindst PROC USES rsi rdi rbx tb:PTR S_TM
 	mov	ecx,7
 	idiv	ecx
 	mov	eax,1
-	cmp	[rsi].S_TM.tm_mon,3
+	cmp	[rsi].tm.tm_mon,3
 	jne	@F
-	cmp	[rsi].S_TM.tm_yday,edx
+	cmp	[rsi].tm.tm_yday,edx
 	ja	toend
 	jne	false
-	cmp	[rsi].S_TM.tm_hour,2
+	cmp	[rsi].tm.tm_hour,2
 	jae	toend
 	jmp	false
 @@:
-	cmp	[rsi].S_TM.tm_yday,edx
+	cmp	[rsi].tm.tm_yday,edx
 	jb	toend
 	jne	false
-	cmp	[rsi].S_TM.tm_hour,1
+	cmp	[rsi].tm.tm_hour,1
 	jae	false
 toend:
 	ret

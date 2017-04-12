@@ -1,29 +1,21 @@
 	.486
-	.model	flat, stdcall
-
-public _U8LD
-public _I8LD
-
+	.model	flat, c
 	.code
 	;
 	; SQWORD [eax] to long double[edx]
 	;
-_I8LD:
-
-_s8told PROC
+_I8LD	proc
 	push	ecx
 	xor	ecx,ecx
 	jmp	L8TOLD
-_s8told ENDP
+_I8LD	endp
 	;
 	; QWORD [eax] to long double[edx]
 	;
-_U8LD:
-
-_u8told PROC
+_U8LD	proc
 	push	ecx
 	or	ecx,1
-_u8told ENDP
+_U8LD	endp
 
 L8TOLD:
 	push	ebx

@@ -1,6 +1,7 @@
 include stdio.inc
 include io.inc
 include errno.inc
+include winbase.inc
 
 	.code
 
@@ -19,12 +20,12 @@ fseek	PROC USES rsi rdi rbx,
 	.if	r8b != SEEK_SET && r8b != SEEK_CUR && r8b != SEEK_END
 		jmp	error
 	.endif
-	mov	eax,[rbx].iob_flag
+	mov	eax,[rbx]._flag
 	.if	!( eax & _IOREAD or _IOWRT or _IORW )
 		jmp	error
 	.endif
 	and	eax,not _IOEOF
-	mov	[rbx].iob_flag,eax
+	mov	[rbx]._flag,eax
 
 	.if	r8b == SEEK_CUR
 		ftell ( rbx )
@@ -33,15 +34,15 @@ fseek	PROC USES rsi rdi rbx,
 	.endif
 	fflush( rbx )
 
-	mov	eax,[rbx].iob_flag
+	mov	eax,[rbx]._flag
 	.if	eax & _IORW
 		and	eax,not (_IOWRT or _IOREAD)
-		mov	[rbx].iob_flag,eax
+		mov	[rbx]._flag,eax
 	.elseif eax & _IOREAD && eax & _IOMYBUF && !( eax & _IOSETVBUF )
-		mov	[rbx].iob_bufsize,_MINIOBUF
+		mov	[rbx]._bufsiz,_MINIOBUF
 	.endif
 
-	mov	eax,[rbx].iob_file
+	mov	eax,[rbx]._file
 	lea	r8,_osfhnd
 	mov	rax,[r8+rax*8]
 	.if	SetFilePointer( rax, esi, 0, edi ) == -1

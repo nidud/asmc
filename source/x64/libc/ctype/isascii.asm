@@ -4,7 +4,7 @@ include ctype.inc
 
 	OPTION PROLOGUE:NONE, EPILOGUE:NONE
 
-isascii PROC char:SIZE_T
+isascii PROC char:SINT
 	mov	rax,rcx
 	and	rax,80h
 	setz	al

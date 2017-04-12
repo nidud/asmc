@@ -7,7 +7,7 @@ include string.inc
 	OPTION	WIN64:3, STACKBASE:rsp
 
 puts	PROC string:LPSTR
-	_write( stdout.iob_file, string, strlen( string ) )
+	_write( stdout._file, string, strlen( string ) )
 	ret
 puts	ENDP
 

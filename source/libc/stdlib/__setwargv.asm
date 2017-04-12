@@ -56,22 +56,29 @@ __setwargv PROC USES esi edi ebx argc, argv:PVOID, cmdline:LPWSTR
 			.break .if !edx && !ecx && (eax == ' ' || (eax >= 9 && eax <= 13))
 
 			.if eax == '"'
+
 				.if ecx
+
 					dec ecx
 				.elseif edx
-					.break
+
+					mov ax,[esi]
+					.break .if ax == ' '
+					.break .if ax >= 9 && ax <= 13
+					dec edx
 				.else
 					inc ecx
 				.endif
+			.else
+				stosw
 			.endif
-			stosw
 			lodsw
 		.endw
 
-		xor	eax,eax
-		mov	[edi],ax
-		lea	ebx,[edi+2]
-		mov	edi,base
+		xor eax,eax
+		mov [edi],ax
+		lea ebx,[edi+2]
+		mov edi,base
 		.break .if ax == [edi]
 
 		sub ebx,edi
@@ -81,8 +88,13 @@ __setwargv PROC USES esi edi ebx argc, argv:PVOID, cmdline:LPWSTR
 		mov ecx,[edx]
 		mov [edx],eax
 		add argv,4
-		.for ebx=count: ebx: ebx--,
-		     edx+=4, eax=[edx], [edx]=ecx, ecx=eax
+		mov ebx,count
+		.while ebx
+			add edx,4
+			mov eax,[edx]
+			mov [edx],ecx
+			mov ecx,eax
+			dec ebx
 		.endw
 		lea ecx,__argc
 		mov eax,argc
@@ -109,8 +121,9 @@ __setwargv PROC USES esi edi ebx argc, argv:PVOID, cmdline:LPWSTR
 			add eax,ecx
 			mov argv,eax
 		.endif
-	.until WCHAR PTR [esi-WCHAR] == 0
+	.until word ptr [esi-2] == 0
 	ret
+
 __setwargv ENDP
 
 	END

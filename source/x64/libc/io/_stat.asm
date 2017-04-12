@@ -7,12 +7,11 @@ include string.inc
 include stdlib.inc
 include alloc.inc
 include crtl.inc
+include winbase.inc
 
 A_D	equ 10h
 
 	.code
-
-	OPTION	WIN64:3, STACKBASE:rsp
 
 _lk_getltime PROC PRIVATE ft:PVOID
 
@@ -78,7 +77,7 @@ _stat	PROC USES rsi rdi rbx fname:LPSTR, buf:PVOID
 		mov	ff.dwFileAttributes,A_D
 		mov	ff.nFileSizeHigh,eax
 		mov	ff.nFileSizeLow,eax
-		mov	ff.cFileName,al
+		mov	ff.cFileName,0
 		_loctotime_t( 80, 1, 1, 0, 0, 0 )
 		mov	[rdi].S_STAT.st_mtime,eax
 		mov	[rdi].S_STAT.st_atime,eax

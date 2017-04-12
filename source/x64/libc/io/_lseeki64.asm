@@ -2,10 +2,9 @@ include io.inc
 include errno.inc
 include stdlib.inc
 include crtl.inc
+include winbase.inc
 
 	.code
-
-	OPTION	WIN64:2, STACKBASE:rsp
 
 _lseeki64 PROC handle:SINT, offs:QWORD, pos:UINT
 
@@ -15,9 +14,10 @@ _lseeki64 PROC handle:SINT, offs:QWORD, pos:UINT
 	.if	getosfhnd( ecx ) != -1
 
 		.if	!SetFilePointerEx( rax, edx, addr lpNewFilePointer, r9d )
-			call	osmaperr
+
+			osmaperr()
 		.else
-			mov	rax,lpNewFilePointer
+			mov rax,lpNewFilePointer
 		.endif
 	.endif
 	ret

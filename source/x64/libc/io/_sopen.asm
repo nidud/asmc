@@ -4,6 +4,7 @@ include stdio.inc
 include fcntl.inc
 include stat.inc
 include errno.inc
+include winbase.inc
 
 extrn	_fmode:DWORD
 extrn	_umaskval:DWORD
@@ -59,13 +60,13 @@ _sopen	PROC USES rsi rdi rbx path:LPSTR, oflag:UINT, shflag:UINT, args:VARARG
 	mov	eax,r8d;shflag
 	.switch eax
 	  .case SH_DENYNO			; share read and write access
-		mov	ebx,SHARE_READ or SHARE_WRITE
+		mov	ebx,FILE_SHARE_READ or FILE_SHARE_WRITE
 		.endc
 	  .case SH_DENYWR
-		mov	ebx,SHARE_READ		; share read access
+		mov	ebx,FILE_SHARE_READ	; share read access
 		.endc
 	  .case SH_DENYRD
-		mov	ebx,SHARE_WRITE		; share write access
+		mov	ebx,FILE_SHARE_WRITE	; share write access
 		.endc
 	  .default
 		xor	ebx,ebx			; exclusive access

@@ -4,7 +4,7 @@ include ctype.inc
 
 	OPTION PROLOGUE:NONE, EPILOGUE:NONE
 
-isgraph PROC char:SIZE_T
+isgraph PROC char:SINT
 	mov	rax,rcx
 	cmp	al,21h
 	jb	@F

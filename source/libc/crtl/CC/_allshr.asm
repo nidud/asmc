@@ -8,9 +8,9 @@ PUBLIC	_I8RS
 
 _I8RS:
 	mov	ecx,ebx
+
 _allshr:
 
-_shr64I PROC
 	cmp	cl,63
 	ja	SIGN
 	cmp	cl,31
@@ -28,6 +28,5 @@ SIGN:
 	sar	edx,31
 	mov	eax,edx
 	ret
-_shr64I ENDP
 
 	END

@@ -4,9 +4,9 @@ include ctype.inc
 
 	OPTION PROLOGUE:NONE, EPILOGUE:NONE
 
-isspace proc char:SIZE_T
-	lea	rax,__ctype
-	mov	al,[rax+rcx+1]
+isspace proc char:SINT
+	lea	rax,_ctype
+	mov	al,[rax+rcx*2+2]
 	and	rax,_SPACE
 	ret
 isspace endp

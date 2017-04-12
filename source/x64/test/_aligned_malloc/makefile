@@ -1,13 +1,14 @@
-LIBDIR = %AsmcDir%\lib\x64
+!include x64/srcpath
 
 _aligned_malloc.exe:
 	asmc -q -DDEBUG -D_WIN64 -win64 $*.asm
 	linkw @<<
+Name	$@
 Option	q
-SYMT	mainCRTStartup
-LibPath $(LIBDIR)
-Lib	crt, libc, kernel32
-File	$*.obj
+LibPath $(lib_dir)
+Lib	libc, kernel32
+File	$(lib_dir)\crt, $*.obj
 <<
-	del $*.obj
 	$@
+	del $*.obj
+#	del $*.exe

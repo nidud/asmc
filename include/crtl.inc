@@ -24,33 +24,46 @@ __allocwpath	proto :LPSTR
 
 ifndef _WIN64
 
-_div64I		proto ; edx:eax / ecx:ebx --> edx:eax.ecx
-_div64U		proto ; edx:eax / ecx:ebx --> edx:eax.ecx
-_mul64		proto ; edx:eax * ecx:ebx --> ecx:ebx:edx:eax
-_shr64I		proto ; edx:eax >> cl
-_shr64U		proto ; edx:eax >> cl
+; Microsoft
 
-;
-; long shift left
-;
-; signed and unsigned are same
-;
-_allshl		proto ; Microsoft - edx:eax << cl
-__llshl		proto ;
-_I8LS		proto ; Watcom	  - edx:eax << bl
-_U8LS		proto ;
+_allshr		proto c ; edx:eax >> cl
+_aullshr	proto c ; edx:eax >> cl
+__ullshr	proto c ; edx:eax >> cl
+_allshl		proto c ; edx:eax << cl
+__llshl		proto c ; edx:eax << cl
 
-_addld		proto ; long double[EBX] = long double[EAX] + long double[EDX]
-_subld		proto ; long double[EBX] = long double[EAX] - long double[EDX]
-_cmpld		proto ; CMP(long double[EAX], long double[EDX])
-_mulld		proto ; long double[EBX] = long double[EAX] * long double[EDX]
-_divld		proto ; long double[EBX] = long double[EAX] / long double[EDX]
-_fdtold		proto ; double[EAX] --> long double[EDX]
-_fldtod		proto ; long double[EAX] --> double[EDX]
-_u4told		proto ; DWORD [eax] to long double[edx]
-_i4told		proto ; SDWORD [eax] to long double[edx]
-_u8told		proto ; QWORD [eax] to long double[edx]
-_i8told		proto ; SQWORD [eax] to long double[edx]
+; stdcall / no decoration
+
+__lldiv		proto c ;:qword, :qword
+_alldiv		proto c ;:qword, :qword
+__llmul		proto c ;:qword, :qword
+_allmul		proto c ;:qword, :qword
+_allrem		proto c ;:qword, :qword
+_aulldiv	proto c ;:qword, :qword
+__ullmod	proto c ;:qword, :qword
+_aullrem	proto c ;:qword, :qword
+
+; Watcom
+
+_I8D		proto c ; edx:eax / ecx:ebx --> edx:eax.ecx
+_U8D		proto c ; edx:eax / ecx:ebx --> edx:eax.ecx
+_U8M		proto c ; edx:eax * ecx:ebx --> ecx:ebx:edx:eax
+_I8M		proto c ; edx:eax * ecx:ebx --> ecx:ebx:edx:eax
+_I8RS		proto c ; edx:eax >> bl
+_U8RS		proto c ; edx:eax >> bl
+_I8LS		proto c ; edx:eax << bl
+_U8LS		proto c ; edx:eax << bl
+_FLDA		proto c ; long double[EBX] = long double[EAX] + long double[EDX]
+_FLDS		proto c ; long double[EBX] = long double[EAX] - long double[EDX]
+_FLDC		proto c ; CMP(long double[EAX], long double[EDX])
+_FLDM		proto c ; long double[EBX] = long double[EAX] * long double[EDX]
+_FLDD		proto c ; long double[EBX] = long double[EAX] / long double[EDX]
+_iFDLD		proto c ; double[EAX] --> long double[EDX]
+_iLDFD		proto c ; long double[EAX] --> double[EDX]
+_U4LD		proto c ; DWORD [eax] to long double[edx]
+_I4LD		proto c ; SDWORD [eax] to long double[edx]
+_U8LD		proto c ; QWORD [eax] to long double[edx]
+_I8LD		proto c ; SQWORD [eax] to long double[edx]
 
 endif
 

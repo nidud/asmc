@@ -1,5 +1,6 @@
 include io.inc
 include direct.inc
+include winbase.inc
 
 	.code
 

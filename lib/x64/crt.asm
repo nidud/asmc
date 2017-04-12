@@ -23,15 +23,11 @@ EEnd	label byte
 _EEND	ends
 
 ifdef	_DLL
-C0END	equ <LibMain>
 PROCESS_DETACH equ 0
 PROCESS_ATTACH equ 1
+C0END	equ <LibMain>
 else
 _tmain	proto
-ifndef	_NOARGV
-extern	__targv:qword
-extern	_tenviron:qword
-endif
 C0END	equ <mainCRTStartup>
 endif
 	.code
@@ -60,7 +56,7 @@ LibMain endp
 
 else
 
-mainCRTStartup PROC
+mainCRTStartup proc
 
 	lea rcx,IStart
 	lea rdx,IEnd
@@ -69,6 +65,7 @@ ifndef	_NOARGV
 	mov ecx,__argc
 	mov rdx,__targv
 	mov r8,_tenviron
+	sub rsp,0x28
 endif
 	_tmain()
 	exit( eax )

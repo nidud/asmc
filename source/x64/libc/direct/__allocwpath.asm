@@ -1,6 +1,7 @@
 include direct.inc
 include alloc.inc
 include errno.inc
+include winnls.inc
 
 	.code
 

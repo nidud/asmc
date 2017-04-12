@@ -1,5 +1,6 @@
 include io.inc
 include errno.inc
+include winbase.inc
 
 	.code
 

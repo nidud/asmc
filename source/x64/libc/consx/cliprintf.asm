@@ -10,15 +10,15 @@ include limits.inc
 
 cliprintf PROC USES rsi rdi rbx format:LPSTR, args:VARARG
 
-	local	o:S_FILE
+	local	o:_iobuf
 
-	mov	o.iob_flag,_IOWRT or _IOSTRG
-	mov	o.iob_cnt,INT_MAX
+	mov	o._flag,_IOWRT or _IOSTRG
+	mov	o._cnt,INT_MAX
 	lea	rax,_bufin
-	mov	o.iob_ptr,rax
-	mov	o.iob_base,rax
+	mov	o._ptr,rax
+	mov	o._base,rax
 	_output( addr o, format, addr args )
-	mov	rcx,o.iob_ptr
+	mov	rcx,o._ptr
 	mov	BYTE PTR [rcx],0
 	.if	rax
 		mov	rdi,rax

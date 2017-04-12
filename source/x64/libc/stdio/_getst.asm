@@ -6,20 +6,20 @@ include stdio.inc
 
 _getst	PROC
 	lea	rdx,_iob
-	lea	r10,[rdx+(_NSTREAM_ * (SIZE S_FILE))]
+	lea	r10,[rdx+(_NSTREAM_ * sizeof(_iobuf))]
 	.repeat
 		xor	eax,eax
-		.if	!( [rdx].S_FILE.iob_flag & _IOREAD or _IOWRT or _IORW )
-			mov	[rdx].S_FILE.iob_cnt,eax
-			mov	[rdx].S_FILE.iob_flag,eax
-			mov	[rdx].S_FILE.iob_ptr,rax
-			mov	[rdx].S_FILE.iob_base,rax
+		.if	!( [rdx]._iobuf._flag & _IOREAD or _IOWRT or _IORW )
+			mov	[rdx]._iobuf._cnt,eax
+			mov	[rdx]._iobuf._flag,eax
+			mov	[rdx]._iobuf._ptr,rax
+			mov	[rdx]._iobuf._base,rax
 			dec	eax
-			mov	[rdx].S_FILE.iob_file,eax
+			mov	[rdx]._iobuf._file,eax
 			mov	rax,rdx
 			.break
 		.endif
-		add	rdx,SIZE S_FILE
+		add	rdx,sizeof(_iobuf)
 	.until	rdx >= r10
 	ret
 _getst	ENDP

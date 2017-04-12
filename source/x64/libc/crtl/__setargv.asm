@@ -9,10 +9,10 @@
 ; this expands to (second call):
 ;	PROG @<file> -a -b -c -x -y *.txt
 ;
-; On the second call the local argc is 3 and argv points to [-x] (&_argv[2])
-; On return the local argc is 6 and argv points to [-a] (&_argv[2])
+; On the second call the local argc is 3 and argv points to [-x] (&__argv[2])
+; On return the local argc is 6 and argv points to [-a] (&__argv[2])
 ;
-; Note: The main array (_argv) is allocated in _argv.asm
+; Note: The main array (__argv) is allocated in __argv.asm
 ;
 include stdlib.inc
 include string.inc
@@ -43,12 +43,12 @@ __setargv PROC USES rsi rdi rbx rbp r12 r13 r14 r15 argc:SIZE_T, argv:PVOID, cmd
 	mov	r13,rax
 
 	.repeat
-		lea	r9,__ctype
+		lea	r9,_ctype
 		xor	rax,rax ; Add a new argument
 		mov	[rdi],al
 		.repeat
 			lodsb	; skip space
-		.until !( BYTE PTR [r9+rax+1] & _SPACE )
+		.until !( BYTE PTR [r9+rax*2+2] & _SPACE )
 		.break .if !rax ; end of command string
 
 		xor	rdx,rdx ; "quote from start" in EDX - remove
@@ -94,7 +94,7 @@ __setargv PROC USES rsi rdi rbx rbp r12 r13 r14 r15 argc:SIZE_T, argv:PVOID, cmd
 			mov	rcx,rax
 			dec	rbx
 		.endw
-		lea	rcx,_argc
+		lea	rcx,__argc
 		mov	rax,argc
 		inc	QWORD PTR [rax]
 		.if	rax != rcx
@@ -107,8 +107,8 @@ __setargv PROC USES rsi rdi rbx rbp r12 r13 r14 r15 argc:SIZE_T, argv:PVOID, cmd
 			mov	argc_max,rax
 			shl	rax,3
 			.break .if !malloc( rax )
-			mov	rbx,_argv
-			mov	_argv,rax
+			mov	rbx,__argv
+			mov	__argv,rax
 			mov	r8,argc_max
 			shl	r8,1
 			memcpy( rax, rbx, r8 )

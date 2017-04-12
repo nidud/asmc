@@ -2,7 +2,7 @@ include time.inc
 
 	.code
 
-	assume	rax: ptr S_TM
+	assume	rax: ptr tm
 
 main	PROC
 	local	ltime

@@ -1,9 +1,9 @@
 	.486
-	.model	flat, stdcall
+	.model	flat, c
 
 public	_allmul
 public	__llmul ; PellesC
-_mul64	proto
+_U8M	proto
 
 	.code
 
@@ -14,7 +14,7 @@ _allmul:
 	mov	edx,4[esp+8]
 	mov	ebx,4[esp+12]
 	mov	ecx,4[esp+16]
-	call	_mul64
+	call	_U8M
 	pop	ebx
 	ret	16
 

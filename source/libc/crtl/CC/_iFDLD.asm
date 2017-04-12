@@ -1,17 +1,10 @@
 	.486
-	.model	flat, stdcall
-
-public	_iFDLD
-
+	.model	flat, c
 	.code
 	;
 	; double[eax] to long double[edx]
 	;
-_iFDLD:
-
-_fdtold PROC
-	push	ecx
-	push	ebx
+_iFDLD	proc uses ecx ebx
 	mov	ebx,edx
 	mov	edx,[eax+4]
 	mov	eax,[eax]
@@ -32,7 +25,7 @@ _fdtold PROC
 	test	eax,eax
 	jz	L003
 @@:
-	int	3	  ; Invalid exception
+;	int	3	  ; Invalid exception
 	or	edx,40000000h
 L003:
 	or	edx,80000000h
@@ -61,9 +54,7 @@ toend:
 	add	ecx,ecx
 	rcr	cx,1
 	mov	[ebx+8],cx
-	pop	ebx
-	pop	ecx
 	ret
-_fdtold ENDP
+_iFDLD	endp
 
 	END

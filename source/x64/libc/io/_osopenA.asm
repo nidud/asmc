@@ -4,7 +4,7 @@ include conio.inc
 
 	.code
 
-_osopen PROC USES rsi rdi rbx,
+_osopenA PROC USES rsi rdi rbx,
 	lpFileName:	LPSTR,
 	dwAccess:	DWORD,
 	dwShareMode:	DWORD,
@@ -41,10 +41,6 @@ toend:
 	ret
 error:
 	call	osmaperr
-ifdef __W95__
-	test	console,CON_WIN95
-	jnz	toend
-endif
 	cmp	edx,ERROR_FILENAME_EXCED_RANGE
 	jne	toend
 
@@ -68,6 +64,6 @@ endif
 	jnz	done
 	call	osmaperr
 	jmp	toend
-_osopen ENDP
+_osopenA ENDP
 
 	END

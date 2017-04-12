@@ -1,8 +1,7 @@
 include io.inc
+include winbase.inc
 
 	.code
-
-	OPTION	WIN64:2, STACKBASE:rsp
 
 remove	PROC file:LPSTR
 	.if	DeleteFile( rcx )
@@ -14,7 +13,7 @@ else
 		xor	rax,rax
 endif
 	.else
-		call	osmaperr
+		osmaperr()
 	.endif
 	ret
 remove	ENDP

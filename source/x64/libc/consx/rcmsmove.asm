@@ -4,7 +4,7 @@ include consx.inc
 
 	OPTION	WIN64:3, STACKBASE:rsp
 
-rcmsmove PROC USES rsi rdi rbx pRECT:PRECT, wp:PVOID, fl
+rcmsmove PROC USES rsi rdi rbx pRECT:ptr S_RECT, wp:PVOID, fl
 
 	local	xpos,ypos
 	local	relx,rely
@@ -24,8 +24,8 @@ rcmsmove PROC USES rsi rdi rbx pRECT:PRECT, wp:PVOID, fl
 	mov	relx,eax
 	sub	dl,bh
 	mov	rely,edx
-	GetCursor( addr cursor )
-	call	CursorOff
+	CursorGet( addr cursor )
+	CursorOff()
 
 	.while	mousep() == 1
 
@@ -64,7 +64,7 @@ rcmsmove PROC USES rsi rdi rbx pRECT:PRECT, wp:PVOID, fl
 			mov	xpos,eax
 		.endif
 	.endw
-	SetCursor( addr cursor )
+	CursorSet( addr cursor )
 	.if	fl & _D_SHADE
 		rcsetshade( ebx, wp )
 	.endif

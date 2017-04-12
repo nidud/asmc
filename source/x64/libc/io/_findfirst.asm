@@ -1,6 +1,7 @@
 include io.inc
 include crtl.inc
 include time.inc
+include winbase.inc
 
 	.code
 

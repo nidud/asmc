@@ -585,7 +585,7 @@ endif
 					mov eax,[eax]
 					xor edx,edx
 
-					.if esi & FL_I64
+					.if esi & (FL_I64 or FL_LONGLONG)
 
 						mov edx,arglist
 						add arglist,4

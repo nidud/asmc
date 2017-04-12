@@ -4,7 +4,7 @@ include ctype.inc
 
 	OPTION PROLOGUE:NONE, EPILOGUE:NONE
 
-tolower PROC char:SIZE_T
+tolower PROC char:SINT
 	mov	rax,rcx
 	sub	al,'A'
 	cmp	al,'Z'-'A'+1

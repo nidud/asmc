@@ -9,7 +9,7 @@ printf	PROC USES rbx format:LPSTR, argptr:VARARG
 	mov	rbx,rax
 	_output( addr stdout, format, addr argptr )
 	xchg	rax,rbx
-	_ftbuf( rax, addr stdout )
+	_ftbuf( eax, addr stdout )
 	ret
 printf	ENDP
 

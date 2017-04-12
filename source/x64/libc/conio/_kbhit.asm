@@ -28,7 +28,7 @@ _kbhit	PROC USES rbx rdi rsi
 			.if [rbx].INPUT_RECORD.EventType == KEY_EVENT && \
 			    [rbx].INPUT_RECORD.KeyEvent.bKeyDown
 
-				movzx edi,[rbx].INPUT_RECORD.KeyEvent.Char
+				movzx edi,[rbx].INPUT_RECORD.KeyEvent.AsciiChar
 				.break .if edi
 			.endif
 

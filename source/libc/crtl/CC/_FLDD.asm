@@ -1,15 +1,8 @@
 	.486
-	.model	flat, stdcall
-
-	PUBLIC	_FLDD
-
+	.model	flat, c
 	.code
 
-_FLDD:
-	;
-	;  long double[EBX] = long double[EAX] / long double[EDX]
-	;
-_divld	PROC
+_FLDD	proc ; long double[EBX] = long double[EAX] / long double[EDX]
 	push	esi
 	push	ecx
 	push	ebx
@@ -28,7 +21,7 @@ _divld	PROC
 	pop	ecx
 	pop	esi
 	ret
-_divld	ENDP
+_FLDD	endp
 
 L001:
 	dec	si

@@ -9,14 +9,14 @@ vsprintf PROC USES rcx,
 	string: LPSTR,
 	format: LPSTR,
 	vargs:	PVOID
-local	o:	S_FILE
+local	o:	_iobuf
 
-	mov	o.iob_flag,_IOWRT or _IOSTRG
-	mov	o.iob_cnt,INT_MAX
-	mov	o.iob_ptr,rcx
-	mov	o.iob_base,rcx
+	mov	o._flag,_IOWRT or _IOSTRG
+	mov	o._cnt,INT_MAX
+	mov	o._ptr,rcx
+	mov	o._base,rcx
 	_output( addr o, rdx, r8 )
-	mov	rcx,o.iob_ptr
+	mov	rcx,o._ptr
 	mov	BYTE PTR [rcx],0
 
 	ret

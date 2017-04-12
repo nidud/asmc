@@ -22,7 +22,7 @@ UpdateKeyEvent PROC USES rsi rbx pInput:ptr INPUT_RECORD
 	mov	al,byte ptr [rbx].KeyEvent.wVirtualScanCode
 	mov	keybscan,al
 	movzx	ecx,al
-	mov	al,byte ptr [rbx].KeyEvent.Char
+	mov	al,byte ptr [rbx].KeyEvent.AsciiChar
 	mov	keybchar,al
 	mov	rax,keyshift
 	mov	edx,[rax]

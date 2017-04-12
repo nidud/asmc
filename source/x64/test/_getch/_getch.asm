@@ -9,7 +9,8 @@ main	proc
 
 	.repeat
 
-		toupper( _getch()  )
+		_getch()
+		toupper( eax )
 
 	.until	al == 'Y'
 

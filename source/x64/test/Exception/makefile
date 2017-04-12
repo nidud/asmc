@@ -2,12 +2,11 @@ LIBDIR = %AsmcDir%\lib\x64
 
 Exception.exe:
 	asmc -q -D_WIN64 -win64 $*.asm
-	linkw @<<
+	linkw Name $@ @<<
 Option	q
-SYMT	mainCRTStartup
 LibPath $(LIBDIR)
-Lib	crt, libc, kernel32
-File	$*.obj
+Lib	libc, kernel32
+File	$(LIBDIR)\crt, $*.obj
 <<
 	del $*.obj
 	$@

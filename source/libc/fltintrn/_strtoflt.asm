@@ -1,8 +1,6 @@
 include ctype.inc
 include fltintrn.inc
-
-_mulld	proto
-_divld	proto
+include crtl.inc
 
 	.data
 
@@ -501,7 +499,7 @@ lupe:
 	jz	@F
 	lea	edx,pow_table[edi]
 	mov	eax,ebx
-	call	_mulld
+	call	_FLDM
 @@:
 	add	edi,10
 	shr	esi,1
@@ -531,13 +529,13 @@ scale10 PROC
 	call	doscale
 	mov	eax,ebx
 	lea	edx,factor
-	call	_divld
+	call	_FLDD
 	jmp	done
 @@:
 	call	doscale
 	lea	edx,factor
 	mov	eax,ebx
-	call	_mulld
+	call	_FLDM
 done:
 	fldcw	control			; restore control word
 toend:

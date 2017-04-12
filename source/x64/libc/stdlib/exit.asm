@@ -1,5 +1,6 @@
 include crtl.inc
 include stdlib.inc
+include winbase.inc
 
 _EXIT	segment para flat PUBLIC 'EXIT'
 ExitStart LABEL BYTE

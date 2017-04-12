@@ -15,7 +15,7 @@ fputs	PROC USES rsi rdi rbx string:LPSTR, fp:LPFILE
 	strlen( rdi )
 	fwrite( rdi, 1, eax, rsi )
 	xchg	rbx,rax
-	_ftbuf( rax, rsi )
+	_ftbuf( eax, rsi )
 	strlen( rdi )
 	cmp	rax,rbx
 	mov	rax,0

@@ -22,27 +22,27 @@ fwrite PROC USES rsi rdi rbx r12 r13 r14,
 	mov	r12d,eax
 
 	mov	r13d,_MAXIOBUF
-	.if	[rbx].iob_flag & _IOMYBUF or _IONBF or _IOYOURBUF
-		mov r13d,[rbx].iob_bufsize
+	.if	[rbx]._flag & _IOMYBUF or _IONBF or _IOYOURBUF
+		mov r13d,[rbx]._bufsiz
 	.endif
 
 	.while	edi
-		mov	r8d,[rbx].iob_cnt
-		.if	[rbx].iob_flag & _IOMYBUF or _IOYOURBUF && r8d
+		mov	r8d,[rbx]._cnt
+		.if	[rbx]._flag & _IOMYBUF or _IOYOURBUF && r8d
 
 			.if	edi < r8d
 				mov r8d,edi
 			.endif
 
-			memcpy( [rbx].iob_ptr, rsi, r8 )
+			memcpy( [rbx]._ptr, rsi, r8 )
 			sub	edi,r8d
-			sub	[rbx].iob_cnt,r8d
-			add	[rbx].iob_ptr,r8
+			sub	[rbx]._cnt,r8d
+			add	[rbx]._ptr,r8
 			add	rsi,r8
 
 		.elseif edi >= r13d
 
-			.if	[rbx].iob_flag & _IOMYBUF or _IOYOURBUF
+			.if	[rbx]._flag & _IOMYBUF or _IOYOURBUF
 				fflush( rbx )
 				test	rax,rax
 				jnz	break
@@ -59,7 +59,7 @@ fwrite PROC USES rsi rdi rbx r12 r13 r14,
 			.endif
 			mov	r14d,eax
 
-			_write( [rbx].iob_file, rsi, rax )
+			_write( [rbx]._file, rsi, rax )
 			cmp	rax,-1
 			je	error
 
@@ -74,7 +74,7 @@ fwrite PROC USES rsi rdi rbx r12 r13 r14,
 			je	break
 			inc	rsi
 			dec	rdi
-			mov	eax,[rbx].iob_bufsize
+			mov	eax,[rbx]._bufsiz
 			.if	!eax
 				mov eax,1
 			.endif
@@ -85,7 +85,7 @@ fwrite PROC USES rsi rdi rbx r12 r13 r14,
 toend:
 	ret
 error:
-	or	[rbx].iob_flag,_IOERR
+	or	[rbx]._flag,_IOERR
 break:
 	mov	rax,r12
 	sub	rax,rdi

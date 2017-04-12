@@ -4,9 +4,9 @@ include ctype.inc
 
 	OPTION PROLOGUE:NONE, EPILOGUE:NONE
 
-islower PROC char:SIZE_T
-	lea	rax,__ctype
-	mov	al,[rax+rcx+1]
+islower PROC char:SINT
+	lea	rax,_ctype
+	mov	al,[rax+rcx*2+2]
 	and	rax,_LOWER
 	ret
 islower ENDP

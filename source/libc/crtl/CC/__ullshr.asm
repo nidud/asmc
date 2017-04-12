@@ -1,17 +1,18 @@
 	.486
 	.model	flat, stdcall
 
+PUBLIC	_U8RS
 PUBLIC	_aullshr
 PUBLIC	__ullshr
-PUBLIC	_U8RS
 
 	.code
 
 _U8RS:
 	mov	ecx,ebx
+
 _aullshr:
 __ullshr:
-_shr64U PROC
+
 	cmp	cl,63
 	ja	ZERO
 	cmp	cl,31
@@ -29,6 +30,5 @@ ZERO:
 	xor	eax,eax
 	xor	edx,edx
 	ret
-_shr64U ENDP
 
 	END

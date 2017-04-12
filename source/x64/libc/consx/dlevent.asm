@@ -174,7 +174,7 @@ test_event ENDP
 
 save_cursor:
 	push	rax
-	GetCursor( addr ocurs )
+	CursorGet( addr ocurs )
 	pop	rax
 
 load_object:
@@ -1072,7 +1072,7 @@ dlpbuttevent PROC USES rsi rdi rbx
 	call	tgetevent
 	mov	ebx,eax
 	call	xbuttxchg
-	SetCursor( addr ocurs )
+	CursorSet( addr ocurs )
 	mov	eax,ebx
 	ret
 dlpbuttevent ENDP
@@ -1091,7 +1091,7 @@ dlradioevent PROC
 	.until oflag & _O_EVENT
 	mov	eax,KEY_SPACE
 toend:
-	SetCursor( addr ocurs )
+	CursorSet( addr ocurs )
 	ret
 dlradioevent ENDP
 
@@ -1111,7 +1111,7 @@ dlcheckevent PROC
 	.until	oflag & _O_EVENT
 	mov	eax,KEY_SPACE
 toend:
-	SetCursor( addr ocurs )
+	CursorSet( addr ocurs )
 	ret
 dlcheckevent ENDP
 
@@ -1151,7 +1151,7 @@ lupe:
 	jz	done
 	mov	esi,10
 	.while	!ZERO?
-		delay ( 16 )
+		Sleep ( 16 )
 		call	mousep
 		.break .if !ZERO?
 		dec	esi
@@ -1217,7 +1217,7 @@ dlmenusevent PROC USES rbx
 		mov eax,KEY_DOWN
 	.endif
 	call	TDDeselectObject
-	SetCursor( addr ocurs )
+	CursorSet( addr ocurs )
 	ret
 dlmenusevent ENDP
 
@@ -1238,7 +1238,7 @@ dlevent PROC USES rsi rdi rbx dialog:PTR S_DOBJ
 		jz	toend
 	.endif
 
-	GetCursor( addr cursor )
+	CursorGet( addr cursor )
 	call	CursorOff
 	movzx	rax,[rbx].S_DOBJ.dl_count
 	.if	eax
@@ -1304,7 +1304,7 @@ dlevent PROC USES rsi rdi rbx dialog:PTR S_DOBJ
 			.endif
 		.until	edi
 	.endif
-	SetCursor( addr cursor )
+	CursorSet( addr cursor )
 	mov	eax,event
 toend:
 	mov	edx,eax

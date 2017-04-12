@@ -1,18 +1,11 @@
 	.486
-	.model	flat, stdcall
-
-public	_iLDFD
-
+	.model	flat, c
 	.code
+
+_iLDFD	proc uses ecx ebx esi
 	;
 	; long double[eax] to double[edx]
 	;
-_iLDFD:
-
-_fldtod PROC
-	push	ecx
-	push	ebx
-	push	esi
 	push	edx
 	movzx	ecx,word ptr [eax+8]
 	mov	edx,[eax+4]
@@ -93,10 +86,7 @@ toend:
 	pop	esi
 	mov	[esi],eax
 	mov	[esi+4],edx
-	pop	esi
-	pop	ebx
-	pop	ecx
 	ret
-_fldtod ENDP
+_iLDFD	endp
 
 	END

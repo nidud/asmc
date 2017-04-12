@@ -12,16 +12,16 @@ _getbuf PROC fp:LPFILE
 
 	mov	rdx,fp
 	.if	rax
-		or	[rdx].iob_flag,_IOMYBUF
-		mov	[rdx].iob_bufsize,_INTIOBUF
+		or	[rdx]._flag,_IOMYBUF
+		mov	[rdx]._bufsiz,_INTIOBUF
 	.else
-		or	[rdx].iob_flag,_IONBF
-		mov	[rdx].iob_bufsize,4
-		lea	rax,[rdx].iob_charbuf
+		or	[rdx]._flag,_IONBF
+		mov	[rdx]._bufsiz,4
+		lea	rax,[rdx]._charbuf
 	.endif
-	mov	[rdx].iob_ptr,rax
-	mov	[rdx].iob_base,rax
-	mov	[rdx].iob_cnt,0
+	mov	[rdx]._ptr,rax
+	mov	[rdx]._base,rax
+	mov	[rdx]._cnt,0
 	ret
 _getbuf ENDP
 

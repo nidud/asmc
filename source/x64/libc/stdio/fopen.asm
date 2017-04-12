@@ -51,12 +51,12 @@ fopen	PROC USES rsi rdi rbx, fname:LPSTR, mode:LPSTR
 		mov	rcx,rbx
 		mov	rbx,rax
 		.if	_sopen( rcx, edi, SH_DENYNO, 0284h ) != -1
-			mov	[rbx].S_FILE.iob_file,eax
+			mov	[rbx]._iobuf._file,eax
 			xor	eax,eax
-			mov	[rbx].S_FILE.iob_cnt,eax
-			mov	[rbx].S_FILE.iob_ptr,rax
-			mov	[rbx].S_FILE.iob_base,rax
-			mov	[rbx].S_FILE.iob_flag,esi
+			mov	[rbx]._iobuf._cnt,eax
+			mov	[rbx]._iobuf._ptr,rax
+			mov	[rbx]._iobuf._base,rax
+			mov	[rbx]._iobuf._flag,esi
 			or	rax,rbx
 		.else
 			xor	eax,eax

@@ -9,7 +9,8 @@ main	proc
 
 	.repeat
 
-		toupper( _getwch()  )
+		_getwch()
+		toupper( eax  )
 
 	.until	al == 'Y'
 

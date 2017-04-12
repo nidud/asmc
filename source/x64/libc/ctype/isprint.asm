@@ -4,7 +4,7 @@ include ctype.inc
 
 	OPTION PROLOGUE:NONE, EPILOGUE:NONE
 
-isprint PROC char:SIZE_T
+isprint PROC char:SINT
 	mov	rax,rcx
 	cmp	al,20h
 	jb	@F

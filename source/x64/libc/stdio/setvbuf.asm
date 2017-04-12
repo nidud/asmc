@@ -26,12 +26,12 @@ setvbuf PROC USES rsi rdi rbx r12 r13,
 	fflush( rbx )
 	_freebuf( rbx )
 
-	mov	esi,[rbx].iob_flag
+	mov	esi,[rbx]._flag
 	and	esi,not (_IOMYBUF or _IOYOURBUF or _IONBF or _IOSETVBUF or _IOFEOF or _IOFLRTN or _IOCTRLZ)
 
 	.if	r12d & _IONBF
 		or	esi,_IONBF
-		lea	rdi,[rbx].iob_charbuf
+		lea	rdi,[rbx]._charbuf
 		mov	r13,4
 	.elseif !rdi
 		.if	!malloc( r13 )
@@ -43,12 +43,12 @@ setvbuf PROC USES rsi rdi rbx r12 r13,
 	.else
 		or	esi,_IOYOURBUF or _IOSETVBUF
 	.endif
-	mov	[rbx].iob_flag,esi
-	mov	[rbx].iob_bufsize,r13d
-	mov	[rbx].iob_ptr,rdi
-	mov	[rbx].iob_base,rdi
+	mov	[rbx]._flag,esi
+	mov	[rbx]._bufsiz,r13d
+	mov	[rbx]._ptr,rdi
+	mov	[rbx]._base,rdi
 	xor	eax,eax
-	mov	[rbx].iob_cnt,eax
+	mov	[rbx]._cnt,eax
 toend:
 	ret
 setvbuf ENDP

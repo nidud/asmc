@@ -2,6 +2,9 @@ HISTORY.TXT--
 Change Log File for ASMC
 ========================
 
+Changes in 2.24 - xx xxx 2017
+- fixed bug in [reg + type reg] and [reg + type(reg)]
+
 Changes in 2.23 - 10 Apr 2017
 - added .win64[: RSP | RBP | ALIGN | NOALIGN | SAVE | NOSAVE |
 		 AUTO | NOAUTO | FRAME | NOFRAME]

@@ -500,6 +500,7 @@ get_special_symbol PROC FASTCALL USES esi edi ebx buf, p
 	mov	esi,p
 	mov	edi,[esi].input
 	mov	eax,[edi]
+	mov	[ebx].tokval,0
 
 	.switch al
 
@@ -547,17 +548,17 @@ get_special_symbol PROC FASTCALL USES esi edi ebx buf, p
 			.endif
 		.endif
 
-		inc	[esi].input
-		.if	[esi].flags == TOK_DEFAULT && [esi].index == 0
+		inc [esi].input
+		.if [esi].flags == TOK_DEFAULT && [esi].index == 0
 
-			or	[esi].flags3,TF3_EXPANSION
-			mov	eax,EMPTY
-			jmp	toend
+			or  [esi].flags3,TF3_EXPANSION
+			mov eax,EMPTY
+			jmp toend
 		.endif
 
-		lea	eax,__percent
-		mov	[ebx].token,T_PERCENT
-		mov	[ebx].string_ptr,eax
+		lea eax,__percent
+		mov [ebx].token,T_PERCENT
+		mov [ebx].string_ptr,eax
 
 		.endc
 
@@ -744,17 +745,17 @@ get_special_symbol PROC FASTCALL USES esi edi ebx buf, p
 				.endif
 			.elseif BYTE PTR [edx] == '='
 
-				add	ecx,1
-				mov	BYTE PTR [ecx],'='
-				inc	[esi].output
-				inc	[esi].input
-				mov	[ebx].stringlen,2
+				add ecx,1
+				mov BYTE PTR [ecx],'='
+				inc [esi].output
+				inc [esi].input
+				mov [ebx].stringlen,2
 			.endif
-			xor	eax,eax
-			mov	[ebx].token,T_STRING
-			mov	[ebx].string_delim,al
-			mov	[ecx+1],al
-			inc	[esi].output
+			xor eax,eax
+			mov [ebx].token,T_STRING
+			mov [ebx].string_delim,al
+			mov [ecx+1],al
+			inc [esi].output
 			.endc
 		.endif
 

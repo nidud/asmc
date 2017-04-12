@@ -157,7 +157,14 @@ static ret_code get_operand( struct expr *opnd, int *idx, struct asm_tok tokenar
 	    } else
 		return( fnasmerr( 2085 ) );
 	}
-	if( flags & EXPF_IN_SQBR ) {
+
+	if ( (i > 0 && tokenarray[i - 1].tokval == T_TYPE) ||
+	     (i > 1 && tokenarray[i - 1].token == T_OP_BRACKET
+		    && tokenarray[i - 2].tokval == T_TYPE) )
+
+	     ; /* v2.24 [reg + type reg] | [reg + type(reg)] */
+
+	else  if( flags & EXPF_IN_SQBR ) {
 	    if ( SpecialTable[j].sflags & SFR_IREG ) {
 		opnd->indirect = 1;
 		opnd->assumecheck = 1;

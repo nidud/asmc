@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Utilities for processing creation of load files.
+* Description:	Utilities for processing creation of load files.
 *
 ****************************************************************************/
 
@@ -83,7 +83,7 @@ typedef struct {
     unsigned	didone : 1;
 } implibinfo;
 
-typedef struct  {
+typedef struct	{
     unsigned_32 grp_start;
     unsigned_32 seg_start;
     group_entry *lastgrp;  // used only for copy classes
@@ -132,7 +132,7 @@ void FiniLoadFile( void )
     SetupImpLib();
     if ( FmtData.output_raw ) {		// These must come first because
 	BinOutput();			//    they apply to all formats
-    } else if ( FmtData.output_hex ) {  //    and override native output
+    } else if ( FmtData.output_hex ) {	//    and override native output
 	HexOutput();
     } else if( FmtData.type & MK_REAL_MODE ) {
 	FiniDOSLoadFile();
@@ -223,7 +223,7 @@ static seg_leader *StackSegment( void )
 /*************************************/
 /* Find stack segment. */
 {
-    seg_leader  *seg;
+    seg_leader	*seg;
 
     seg = FindStack( Root );
     if( seg == NULL ) {
@@ -386,7 +386,7 @@ void SetStkSize( void )
 {
     StackSegPtr = StackSegment();
     if( FmtData.dll ) {
-	StackSize = 0;  // DLLs don't have their own stack
+	StackSize = 0;	// DLLs don't have their own stack
     } else if( StackSize < 0x200 ) {
 #if 0 /* JWLink: stacksize */
 	StackSize = 0x200;  /* don't touch stack size! */
@@ -574,7 +574,7 @@ void OrderGroups( bool (*lessthan)(targ_addr *, targ_addr *) )
 	low_group = NULL;
 	for( group = firstgroup; group->next_group != NULL;
 				 group = group->next_group ) {
-	    grp_addr =  &group->next_group->grp_addr;
+	    grp_addr =	&group->next_group->grp_addr;
 	    if( lessthan( grp_addr, low_addr ) ) {
 		low_addr = grp_addr;
 		low_group = group;
@@ -781,9 +781,9 @@ static void ExecWlib( void )
 #else
 
 #if defined( __UNIX__ )
-#define WLIB_EXE "libc"
+#define WLIB_EXE "libw"
 #else
-#define WLIB_EXE "libc.exe"
+#define WLIB_EXE "libw.exe"
 #endif
 
 static void ExecWlib( void )
@@ -795,7 +795,7 @@ static void ExecWlib( void )
     char	*libtype;
 
     namelen = strlen(ImpLib.fname) + 1;
-    _ChkAlloc( atfname, namelen + 1 );  // +1 for the @
+    _ChkAlloc( atfname, namelen + 1 );	// +1 for the @
     *atfname = '@';
     memcpy( atfname + 1, ImpLib.fname, namelen );
     DEBUG(( DBG_OLD, "ExecWlib(): implibname=%s, atfname=%s", FmtData.implibname, atfname ));
@@ -961,7 +961,7 @@ static bool WriteSegData( void *_sdata, void *_info )
     unsigned long   newpos;
     signed long	    pad;
 
-    if( !sdata->isuninit && !sdata->isdead 
+    if( !sdata->isuninit && !sdata->isdead
       && ( ( sdata->length > 0 ) || (FmtData.type & MK_END_PAD) ) ) {
 	newpos = info->seg_start + sdata->a.delta;
 	if( info->repos ) {
@@ -1037,7 +1037,7 @@ static bool WriteCopyGroups( void *_seg, void *_info )
     return( FALSE );
 }
 
-offset  WriteDOSGroupLoad( group_entry *group, bool repos )
+offset	WriteDOSGroupLoad( group_entry *group, bool repos )
 /*********************************************************/
 {
     grpwriteinfo     info;
@@ -1057,7 +1057,7 @@ offset  WriteDOSGroupLoad( group_entry *group, bool repos )
     return( PosLoad() - info.grp_start );
 }
 
-offset  WriteGroupLoad( group_entry *group )
+offset	WriteGroupLoad( group_entry *group )
 /******************************************/
 {
     return( WriteDOSGroupLoad( group, FALSE ) );

@@ -632,17 +632,17 @@ next_item:  /* <--- continue scan if a comma has been detected */
 			first = FALSE; /* avoid to touch first_xxx fields below */
 		    }
 		}
-#if 0
-		else if ( ModuleInfo.wstring && no_of_bytes == 2 && string_len > 1 ) {
-		    total += ( string_len*2 - 2 );
+		else if ( ModuleInfo.aflag & _AF_ON
+			&& (ModuleInfo.aflag & ( _AF_WSTRING | _AF_LSTRING ))
+			&& no_of_bytes == 2 && string_len > 1 ) {
+		    total += ( string_len - 1 );
 		    sym->isarray = TRUE; /* v2.07: added */
 		    if ( first ) {
-			sym->first_length = 2;
+			sym->first_length = 1;
 			sym->first_size = 2;
 			first = FALSE; /* avoid to touch first_xxx fields below */
 		    }
 		}
-#endif
 	    }
 
 	    if( !inside_struct ) {

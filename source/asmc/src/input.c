@@ -452,9 +452,7 @@ static FILE *open_file_in_include_path( const char *name, char fullpath[] )
 	    i++;
 	}
 	strcpy( fullpath+i, name );
-//	errno = 0;
 	file = fopen( fullpath, "rb" );
-//	_print("%s : %s\n", fullpath, sys_errlist[errno]);
 	if( file ) {
 	    break;
 	}
@@ -500,11 +498,9 @@ FILE *SearchFile( const char *path, bool queue )
 		     */
 		    memcpy( fullpath, src, i );
 		    strcpy( fullpath + i, path );
-//		     errno = 0;
 		    if ( file = fopen( fullpath, "rb" ) ) {
 			path = fullpath;
 		    }
-//		    _print("%s : %s\n", fullpath, sys_errlist[errno]);
 		}
 		break;
 	    }
@@ -512,10 +508,7 @@ FILE *SearchFile( const char *path, bool queue )
     }
     if ( file == NULL ) {
 	fullpath[0] = NULLC;
-//	 errno = 0;
 	file = fopen( path, "rb" );
-//	 _print("%s : %s\n", path, sys_errlist[errno]);
-
 	/* if the file isn't found yet and include paths have been set,
 	 * and NO absolute path is given, then search include dirs
 	 */
@@ -525,7 +518,6 @@ FILE *SearchFile( const char *path, bool queue )
 	    }
 	}
 	if( file == NULL ) {
-//	    _print("errno : %s\n", sys_errlist[errno]);
 	    asmerr(1000, path);
 	    return( NULL );
 	}

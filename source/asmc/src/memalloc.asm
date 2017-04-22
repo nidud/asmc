@@ -44,7 +44,7 @@ include asmc.inc
 ;
 
 BLKSIZE		equ 80000h
-ALIGNMENT	equ 16
+ALIGNMENT	equ 8
 
 	.data
 

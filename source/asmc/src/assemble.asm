@@ -817,13 +817,13 @@ get_module_name PROC PRIVATE USES esi edi
     ;
     lea esi,ModuleInfo._name
     _strupr(esi)
-    .repeat
+    .while 1
 	movzx	eax,BYTE PTR [esi]
 	add esi,1
 	.break	.if !eax
-	.continue .if islabel( eax )
+	.continue .if __ltype[eax+1] & _DIGIT or _LABEL
 	mov BYTE PTR [esi-1],'_'
-    .until  0
+    .endw
     ;
     ; first character can't be a digit either
     ;

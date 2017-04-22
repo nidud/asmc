@@ -1585,8 +1585,12 @@ static int calculate( struct expr *opnd1, struct expr *opnd2, const struct asm_t
 		fnasmerr( 2092 );
 	    else if ( opnd2->value >= ( 8 * sizeof( opnd1->llvalue ) ) )
 		opnd1->llvalue = 0;
-	    else
-		opnd1->llvalue = opnd1->llvalue >> opnd2->value;
+	    else {
+		if ( opnd1->value == -1 && ModuleInfo.Ofssize == USE32 )
+		    opnd1->llvalue = (unsigned long)opnd1->llvalue >> opnd2->value;
+		else
+		    opnd1->llvalue = opnd1->llvalue >> opnd2->value;
+	    }
 	    break;
 	case T_AND:
 	    opnd1->llvalue &= opnd2->llvalue;

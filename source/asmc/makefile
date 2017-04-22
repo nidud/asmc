@@ -4,7 +4,7 @@
 # has to be build. See the regress\exp\buildexp.cmd file
 # for more details.
 Regress = 0
-CC	= wcc386 -q -Isrc\h -d2 -bt=nt -bc -ecd -3r -obmilrt -s
+CC	= wcc386 -q -Isrc\h -d2 -bt=nt -bc -ecd -3r -ox -s
 
 asmc.exe:
 	if exist *.obj del *.obj

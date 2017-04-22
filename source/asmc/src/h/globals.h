@@ -34,24 +34,13 @@ void db_break(void);
 #include <queue.h>
 
 #define NULLC  '\0'
-
-#if 1
-#define _LABEL	0x01	/* _UPPER + _LOWER + _DIGIT + '@' + '_' + '$' + '?' */
-#define _DOT	0x02	/* '.' */
+#define _LABEL	0x01	/* _UPPER + _LOWER + '@' + '_' + '$' + '?' */
 
 extern unsigned char __ltype[]; /* Label type array */
-int _CType islabel (int __c);
-int _CType islabel_dot(int __c, int __dot);	/* alpha | ? | @ | $ | _ [ . ]	*/
-
-#define islabel(c) (__ltype[(unsigned char)(c) + 1] & (_LABEL | _DIGIT))
-#define is_valid_id_char(ch) islabel(ch)
-#define is_valid_id_first_char(ch) islabel_dot(ch, ModuleInfo.dotname)
-#else
-#define is_valid_id_char( ch ) \
-	( isalnum(ch) || ch=='_' || ch=='@' || ch=='$' || ch=='?' )
-#define is_valid_id_first_char( ch ) \
-	( isalpha(ch) || ch=='_' || ch=='@' || ch=='$' || ch=='?' || (ch == '.' && ModuleInfo.dotname == TRUE ))
-#endif
+#define is_valid_id_char( c ) \
+	( (__ltype[(unsigned char)(c) + 1] & (_LABEL | _DIGIT)) || (unsigned char)(c) > 127 )
+#define is_valid_id_first_char( c ) \
+	( (__ltype[(unsigned char)(c) + 1] & _LABEL) || ((c) == '.' && ModuleInfo.dotname) )
 
 /* function return values */
 

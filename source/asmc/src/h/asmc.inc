@@ -6,7 +6,8 @@ include ltype.inc
 
 	.xlist
 
-	OPTION	ASMC:ON, FIELDALIGN:4, LOOPALIGN:4
+	option	loopalign: 4
+	option	fieldalign: 4
 
 MAX_LINE_LEN		equ 2048		; no restriction for this number
 MAX_STRING_LEN		equ MAX_LINE_LEN - 32	; must be < MAX_LINE_LEN

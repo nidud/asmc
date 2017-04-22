@@ -22,7 +22,7 @@ close_files	PROTO
 .data
 
 cp_logo label byte
-%	db "Asmc Macro Assembler Version ",ASMC_VERSSTR, 'B',10
+%	db "Asmc Macro Assembler Version ",ASMC_VERSSTR, 'C',10
 	db "Portions Copyright (c) 1992-2002 Sybase, Inc. All Rights Reserved.",10,10,0
 
 cp_usage label byte
@@ -281,7 +281,10 @@ set_option_n_name PROC idx, string
 	movzx eax,BYTE PTR [edx]
 	.if eax != '.'
 
-		islabel( eax )
+		.if !(__ltype[eax+1] & _DIGIT or _LABEL)
+
+		    xor eax,eax
+		.endif
 	.endif
 	.if eax
 

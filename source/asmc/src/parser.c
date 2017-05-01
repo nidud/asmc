@@ -2244,11 +2244,8 @@ int ParseLine( struct asm_tok tokenarray[] )
     }
 
     if ( j ) {
-	/*
-	* break label: macro/hll lines
-	*/
 
-	/* parse label: */
+	/* break label: macro/hll lines */
 	strcpy( buffer, tokenarray[2].tokpos );
 	strcpy( CurrSource, tokenarray[0].string_ptr );
 	strcat( CurrSource, tokenarray[1].string_ptr );
@@ -2259,17 +2256,12 @@ int ParseLine( struct asm_tok tokenarray[] )
 	/* parse macro or hll function */
 	strcpy(CurrSource, buffer);
 	Token_Count = Tokenize(CurrSource, 0, tokenarray, TOK_DEFAULT);
-
-	/* skip .while and .elseif */
-	if ( DelayExpand( tokenarray ) )
-	    return 0;
 	i = ExpandLine(CurrSource, tokenarray);
 	if (i == EMPTY)
 	    return EMPTY;
 	else if (i == ERROR)
 	    return ERROR;
 	i = 0;
-
 	/* case label: */
     } else if ( tokenarray[0].token == T_ID && ( tokenarray[1].token == T_COLON || tokenarray[1].token == T_DBL_COLON ) ) {
 	i = 2;

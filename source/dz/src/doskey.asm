@@ -14,58 +14,72 @@ doskey_isnext	db 0
 	.code
 
 doskeysave proc
-	.if	strtrim( addr com_base )
-		mov	eax,history
-		.if	eax
-			lea	edx,[eax].S_HISTORY.h_doskey
-			mov	doskey_bindex,0
-			mov	doskey_isnext,0
-			mov	eax,[edx]
-			.if	eax
-				.if	strcmp( addr com_base, eax )
+
+	.if strtrim( addr com_base )
+
+		mov eax,history
+		.if eax
+
+			lea edx,[eax].S_HISTORY.h_doskey
+			mov doskey_bindex,0
+			mov doskey_isnext,0
+			mov eax,[edx]
+			.if eax
+
+				.if strcmp( addr com_base, eax )
+
 					free( [edx + 4 * (MAXDOSKEYS - 1)] )
 					memmove( addr [edx+4], edx, 4 * (MAXDOSKEYS - 1) )
 				.else
-					mov	eax,1
+					mov eax,1
 					ret
 				.endif
 			.endif
 		.endif
-		push	edx
+		push edx
 		salloc( addr com_base )
-		pop	edx
-		mov	[edx],eax
-		mov	eax,1
+		pop edx
+		mov [edx],eax
+		mov eax,1
 	.endif
 	ret
+
 doskeysave endp
 
 doskeytocommand proc private
-	mov	eax,history
-	movzx	ecx,doskey_bindex
-	mov	eax,[eax+ecx*4].S_HISTORY.h_doskey
-	.if	eax
+
+	mov eax,history
+	movzx ecx,doskey_bindex
+
+	mov eax,[eax+ecx*4].S_HISTORY.h_doskey
+	.if eax
+
 		strcpy( addr com_base, eax )
 	.endif
 	ret
+
 doskeytocommand endp
 
 CommandlineVisible:
-	mov	eax,DLG_Commandline
-	mov	eax,[eax]
-	and	eax,_D_ONSCR
+	mov eax,DLG_Commandline
+	mov eax,[eax]
+	and eax,_D_ONSCR
 	ret
 
 cmdoskeyup proc
-	.if	CommandlineVisible()
-		mov	eax,1
-		.if	doskey_isnext == al
+
+	.if CommandlineVisible()
+
+		mov eax,1
+		.if doskey_isnext == al
+
 			mov com_base,ah
 		.else
 			doskeytocommand()
-			inc	doskey_bindex
-			.if	doskey_bindex >= MAXDOSKEYS
-				mov	doskey_bindex,0
+			inc doskey_bindex
+			.if doskey_bindex >= MAXDOSKEYS
+
+				mov doskey_bindex,0
 			.endif
 		.endif
 		comevent( KEY_END )
@@ -73,15 +87,20 @@ cmdoskeyup proc
 		mov doskey_isnext,ah
 	.endif
 	ret
+
 cmdoskeyup endp
 
 cmdoskeydown proc
-	.if	CommandlineVisible()
-		xor	eax,eax
-		.if	doskey_isnext == al
-			mov	com_base,al
+
+	.if CommandlineVisible()
+
+		xor eax,eax
+		.if doskey_isnext == al
+
+			mov com_base,al
 		.else
-			.if	doskey_bindex == al
+			.if doskey_bindex == al
+
 				mov doskey_bindex,MAXDOSKEYS-1
 			.else
 				dec doskey_bindex
@@ -96,35 +115,38 @@ cmdoskeydown proc
 cmdoskeydown endp
 
 history_event_list proc uses esi
-	push	eax
-	mov	eax,[eax].S_DOBJ.dl_object
-	mov	esi,eax
-	mov	ecx,[edx].S_LOBJ.ll_dcount
+
+	push eax
+	mov eax,[eax].S_DOBJ.dl_object
+	mov esi,eax
+	mov ecx,[edx].S_LOBJ.ll_dcount
 	.repeat
-		or	[eax].S_TOBJ.to_flag,_O_STATE
-		lea	eax,[eax+SIZE S_TOBJ]
+		or  [eax].S_TOBJ.to_flag,_O_STATE
+		lea eax,[eax+SIZE S_TOBJ]
 	.untilcxz
-	mov	ecx,[edx].S_LOBJ.ll_numcel
-	mov	eax,[edx].S_LOBJ.ll_index
-	mov	edx,[edx].S_LOBJ.ll_list
-	lea	edx,[edx+eax*4]
+	mov ecx,[edx].S_LOBJ.ll_numcel
+	mov eax,[edx].S_LOBJ.ll_index
+	mov edx,[edx].S_LOBJ.ll_list
+	lea edx,[edx+eax*4]
+
 	.while	ecx
-		mov	eax,[edx]
+		mov eax,[edx]
 		.break .if !eax
-		mov	[esi].S_TOBJ.to_data,eax
-		and	[esi].S_TOBJ.to_flag,not _O_STATE
-		lea	edx,[edx+4]
-		lea	esi,[esi+SIZE S_TOBJ]
-		dec	ecx
+		mov [esi].S_TOBJ.to_data,eax
+		and [esi].S_TOBJ.to_flag,not _O_STATE
+		lea edx,[edx+4]
+		lea esi,[esi+SIZE S_TOBJ]
+		dec ecx
 	.endw
-	call	dlinit
-	mov	eax,1
+	dlinit()
+	mov eax,1
 	ret
+
 history_event_list endp
 
 cmhistory proc uses edi ebx
 
-local	ll:S_LOBJ
+  local ll:S_LOBJ
 
 	.if CommandlineVisible()
 

@@ -24,21 +24,23 @@ format_d	db "%d",0
 	.code
 
 event_loadpath PROC PRIVATE
-	local	path[_MAX_PATH]:BYTE
-	mov	path,0
-	tools_idd( _MAX_PATH, addr path, addr cp_directory )
-	push	eax
-	call	msloop
-	pop	eax
-	mov	dl,path
+  local path[_MAX_PATH]:BYTE
+
+	mov path,0
+	push tools_idd(_MAX_PATH, addr path, addr cp_directory)
+	msloop()
+	pop eax
+	mov dl,path
 	.if !dl || !eax || eax == MOUSECMD
-		mov	eax,_C_NORMAL
+
+		mov eax,_C_NORMAL
 	.else
-		expenviron( addr path )
-		strcpy( path_dd, eax )
-		mov	eax,_C_REOPEN
+		expenviron(addr path)
+		strcpy(path_dd, eax)
+		mov eax,_C_REOPEN
 	.endif
 	ret
+
 event_loadpath ENDP
 
 PanelFilter PROC PRIVATE USES esi edi ebx panel, xpos
@@ -47,6 +49,7 @@ PanelFilter PROC PRIVATE USES esi edi ebx panel, xpos
 	mov eax,xpos
 	mov [edi+6],al
 	.if rsopen( edi )
+
 		mov ebx,panel
 		mov esi,[ebx].S_PANEL.pn_wsub
 		mov edi,eax
@@ -54,35 +57,36 @@ PanelFilter PROC PRIVATE USES esi edi ebx panel, xpos
 		mov eax,[edi].S_TOBJ.to_data[ID_DIRECTORY]
 		mov path_dd,eax
 
-		strcpy( eax, [esi].S_WSUB.ws_path )
-		strcpy( [edi].S_TOBJ.to_data[ID_READMASK], [esi].S_WSUB.ws_mask )
-		sprintf( [edi].S_TOBJ.to_data[ID_READCOUNT], addr format_d, [esi].S_WSUB.ws_maxfb )
-		dlinit( edi )
+		strcpy(eax, [esi].S_WSUB.ws_path)
+		strcpy([edi].S_TOBJ.to_data[ID_READMASK], [esi].S_WSUB.ws_mask)
+		sprintf([edi].S_TOBJ.to_data[ID_READCOUNT], addr format_d, [esi].S_WSUB.ws_maxfb)
+		dlinit(edi)
 
 		.if dlevent( edi )
 
-			push	[edi].S_TOBJ.to_data[ID_READMASK]
-			push	[esi].S_WSUB.ws_mask
-			push	[edi].S_TOBJ.to_data[ID_DIRECTORY]
-			push	[esi].S_WSUB.ws_path
-			atol  ( [edi].S_TOBJ.to_data[ID_READCOUNT] )
-			mov	ebx,eax
-			call	strcpy
-			call	strcpy
-			dlclose( edi )
+			push [edi].S_TOBJ.to_data[ID_READMASK]
+			push [esi].S_WSUB.ws_mask
+			push [edi].S_TOBJ.to_data[ID_DIRECTORY]
+			push [esi].S_WSUB.ws_path
+
+			mov ebx,atol([edi].S_TOBJ.to_data[ID_READCOUNT])
+			strcpy()
+			strcpy()
+			dlclose(edi)
 
 			.if ebx != [esi].S_WSUB.ws_maxfb && ebx > 10 && \
 				ebx < WMAXFBLOCK && [esi].S_WSUB.ws_fcb
 
 				push [esi].S_WSUB.ws_maxfb
 				mov [esi].S_WSUB.ws_maxfb,ebx
-				wsopen( esi )
+				wsopen(esi)
 				pop edx
 				.if eax
+
 					mov eax,1
 				.else
 					mov [esi].S_WSUB.ws_maxfb,edx
-					wsopen( esi )
+					wsopen(esi)
 					xor eax,eax
 				.endif
 			.endif
@@ -90,11 +94,12 @@ PanelFilter PROC PRIVATE USES esi edi ebx panel, xpos
 			panel_reread(panel)
 			mov eax,panel
 			.if eax == cpanel
-				cominit( esi )
+
+				cominit(esi)
 			.endif
 			pop eax
 		.else
-			dlclose( edi )
+			dlclose(edi)
 			xor eax,eax
 		.endif
 	.endif
@@ -102,28 +107,30 @@ PanelFilter PROC PRIVATE USES esi edi ebx panel, xpos
 PanelFilter ENDP
 
 cmafilter PROC
-	PanelFilter( panela, 3 )
+	PanelFilter(panela, 3)
 	ret
 cmafilter ENDP
 
 cmbfilter PROC
-	PanelFilter( panelb, 42 )
+	PanelFilter(panelb, 42)
 	ret
 cmbfilter ENDP
 
 cmloadpath PROC
-	sub	esp,_MAX_PATH
-	mov	eax,esp
-	mov	path_dd,eax
-	push	eax
-	call	event_loadpath
-	cmp	eax,_C_REOPEN
-	pop	eax
-	jne	@F
+
+	sub esp,_MAX_PATH
+	mov eax,esp
+	mov path_dd,eax
+	push eax
+	event_loadpath()
+	cmp eax,_C_REOPEN
+	pop eax
+	jne @F
 	cpanel_setpath(eax)
 @@:
-	add	esp,_MAX_PATH
+	add esp,_MAX_PATH
 	ret
+
 cmloadpath ENDP
 
 	END

@@ -156,19 +156,19 @@ config_table_s	dd config.c_filter.of_include
 
 config_create PROC USES esi edi
 
-	xor	edi,edi
-	mov	config.c_cel_indexa,5
+	xor edi,edi
+	mov config.c_cel_indexa,5
 
-	.if	osopen( __srcfile, 0, M_WRONLY, A_CREATETRUNC ) != -1
+	.if osopen( __srcfile, 0, M_WRONLY, A_CREATETRUNC ) != -1
 
-		mov	esi,eax
-		or	_osfile[eax],FH_TEXT
+		mov esi,eax
+		or  _osfile[eax],FH_TEXT
 		_write( esi, addr default_ini, strlen( addr default_ini ) )
-		mov	edi,eax
+		mov edi,eax
 		_close( esi )
 	.endif
 
-	mov	eax,edi
+	mov eax,edi
 	ret
 
 config_create ENDP
@@ -178,107 +178,107 @@ config_read PROC USES esi edi ebx
   local xoff, boff, yoff, loff, entry
 
 ifdef _WIN95
-	push	console
+	push console
 endif
-	mov	history,malloc( SIZE S_HISTORY )
-	.if	eax
+	mov history,malloc( SIZE S_HISTORY )
+	.if eax
 
-		mov	edi,eax
-		xor	eax,eax
-		mov	ecx,SIZE S_HISTORY
-		rep	stosb
+		mov edi,eax
+		xor eax,eax
+		mov ecx,SIZE S_HISTORY
+		rep stosb
 	.endif
 
-	.if	CFGetSection( ".config" )
+	.if CFGetSection( ".config" )
 
-		mov	ebx,eax
+		mov ebx,eax
 
-		.if	CFGetEntryID( ebx, 0 )
+		.if CFGetEntryID( ebx, 0 )
 
-			.if	xtol(eax) <= DOSZIP_VERSION && eax >= DOSZIP_MINVERS
+			.if xtol(eax) <= DOSZIP_VERSION && eax >= DOSZIP_MINVERS
 
-				mov	edi,1
-				lea	esi,config_table_x
+				mov edi,1
+				lea esi,config_table_x
 				.repeat
-					.if	CFGetEntryID( ebx, edi )
+					.if CFGetEntryID( ebx, edi )
 
-						xtol  ( eax )
-						mov	ecx,[esi]
-						mov	[ecx],eax
+						xtol(eax)
+						mov ecx,[esi]
+						mov [ecx],eax
 					.endif
-					add	edi,1
-					add	esi,4
-					mov	eax,[esi]
+					add edi,1
+					add esi,4
+					mov eax,[esi]
 				.until	!eax
 
-				lea	esi,config_table_p
-				mov	eax,[esi]
-				.while	eax
-					.if	CFGetEntryID( ebx, edi )
+				lea esi,config_table_p
+				mov eax,[esi]
+				.while eax
+					.if CFGetEntryID( ebx, edi )
 
-						mov	ecx,[esi]
-						mov	ecx,[ecx]
+						mov ecx,[esi]
+						mov ecx,[ecx]
 						strcpy( ecx, eax )
 					.endif
-					add	edi,1
-					add	esi,4
-					mov	eax,[esi]
+					add edi,1
+					add esi,4
+					mov eax,[esi]
 				.endw
 
-				lea	esi,config_table_s
-				mov	eax,[esi]
-				.while	eax
-					.if	CFGetEntryID( ebx, edi )
+				lea esi,config_table_s
+				mov eax,[esi]
+				.while eax
+					.if CFGetEntryID( ebx, edi )
 
-						mov	ecx,[esi]
+						mov ecx,[esi]
 						strcpy( ecx, eax )
 					.endif
-					add	edi,1
-					add	esi,4
-					mov	eax,[esi]
+					add edi,1
+					add esi,4
+					mov eax,[esi]
 				.endw
 			.endif
 		.endif
 	.endif
 
-	.if	CFGetSection( ".directory" )
+	.if CFGetSection( ".directory" )
 
-		mov	edi,history
-		.if	edi
+		mov edi,history
+		.if edi
 
-			mov	entry,0
-			mov	ebx,eax
+			mov entry,0
+			mov ebx,eax
 
-			.while	CFReadFileName( ebx, addr entry, 2 )
+			.while CFReadFileName( ebx, addr entry, 2 )
 
-				mov	[edi].S_DIRECTORY.path,eax
-				mov	eax,loff
-				mov	[edi].S_DIRECTORY.flag,eax
-				mov	eax,yoff
-				mov	[edi].S_DIRECTORY.fcb_index,eax
-				mov	eax,boff
-				mov	[edi].S_DIRECTORY.cel_index,eax
-				add	edi,SIZE S_DIRECTORY
+				mov [edi].S_DIRECTORY.path,eax
+				mov eax,loff
+				mov [edi].S_DIRECTORY.flag,eax
+				mov eax,yoff
+				mov [edi].S_DIRECTORY.fcb_index,eax
+				mov eax,boff
+				mov [edi].S_DIRECTORY.cel_index,eax
+				add edi,SIZE S_DIRECTORY
 			.endw
 		.endif
 	.endif
 
-	.if	CFGetSection( ".doskey" )
+	.if CFGetSection( ".doskey" )
 
-		mov	ebx,eax
-		mov	eax,history
-		.if	eax
+		mov ebx,eax
+		mov eax,history
+		.if eax
 
-			lea	edi,[eax].S_HISTORY.h_doskey
-			mov	esi,MAXDOSKEYS
-			mov	entry,0
+			lea edi,[eax].S_HISTORY.h_doskey
+			mov esi,MAXDOSKEYS
+			mov entry,0
 
-			.while	CFGetEntryID( ebx, entry )
+			.while CFGetEntryID( ebx, entry )
 
 				salloc( eax )
 				stosd
-				inc	entry
-				dec	esi
+				inc entry
+				dec esi
 				.break .ifz
 			.endw
 		.endif
@@ -286,9 +286,9 @@ endif
 
 toend:
 ifdef _WIN95
-	pop	eax
-	and	eax,CON_WIN95
-	or	console,eax
+	pop eax
+	and eax,CON_WIN95
+	or  console,eax
 endif
 	ret
 config_read ENDP
@@ -297,73 +297,73 @@ config_save PROC USES esi edi ebx
 
   local boff, xoff, loff
 
-	mov	eax,spanela.pn_fcb_index
-	mov	config.c_fcb_indexa,eax
-	mov	eax,spanela.pn_cel_index
-	mov	config.c_cel_indexa,eax
-	mov	eax,spanelb.pn_fcb_index
-	mov	config.c_fcb_indexb,eax
-	mov	eax,spanelb.pn_cel_index
-	mov	config.c_cel_indexb,eax
+	mov eax,spanela.pn_fcb_index
+	mov config.c_fcb_indexa,eax
+	mov eax,spanela.pn_cel_index
+	mov config.c_cel_indexa,eax
+	mov eax,spanelb.pn_fcb_index
+	mov config.c_fcb_indexb,eax
+	mov eax,spanelb.pn_cel_index
+	mov config.c_cel_indexb,eax
 
-	and	config.c_apath.ws_flag,not _W_VISIBLE
-	.if	prect_a.xl_flag & _D_DOPEN
+	and config.c_apath.ws_flag,not _W_VISIBLE
+	.if prect_a.xl_flag & _D_DOPEN
 
 		or config.c_apath.ws_flag,_W_VISIBLE
 	.endif
 
-	and	config.c_bpath.ws_flag,not _W_VISIBLE
-	.if	prect_b.xl_flag & _D_DOPEN
+	and config.c_bpath.ws_flag,not _W_VISIBLE
+	.if prect_b.xl_flag & _D_DOPEN
 
 		or config.c_bpath.ws_flag,_W_VISIBLE
 	.endif
 
-	.if	CFAddSection( ".config" )
+	.if CFAddSection( ".config" )
 
-		mov	ebx,eax
+		mov ebx,eax
 		CFDelEntries( eax )
 
-		xor	edi,edi
+		xor edi,edi
 		CFAddEntryX( ebx, "%d=%X", edi, DOSZIP_VERSION )
 
-		inc	edi
-		lea	esi,config_table_x
-		.while	1
+		inc edi
+		lea esi,config_table_x
+		.while 1
 			lodsd
 			.break .if !eax
-			mov	eax,[eax]
+			mov eax,[eax]
 			CFAddEntryX( ebx, "%d=%X", edi, eax )
-			add	edi,1
+			add edi,1
 		.endw
-		lea	esi,config_table_p
-		.while	1
+		lea esi,config_table_p
+		.while 1
 			lodsd
 			.break .if !eax
-			mov	eax,[eax]
+			mov eax,[eax]
 			CFAddEntryX( ebx, "%d=%s", edi, eax )
-			add	edi,1
+			add edi,1
 		.endw
-		lea	esi,config_table_s
-		.while	1
+		lea esi,config_table_s
+		.while 1
 			lodsd
 			.break .if !eax
 			CFAddEntryX( ebx, "%d=%s", edi, eax )
-			add	edi,1
+			add edi,1
 		.endw
 	.endif
 
-	.if	CFAddSection( ".directory" )
+	.if CFAddSection( ".directory" )
 
-		.if	!(cflag & _C_DELHISTORY)
+		.if !(cflag & _C_DELHISTORY)
 
-			mov	ebx,eax
+			mov ebx,eax
 			CFDelEntries( eax )
 
-			mov	edi,history
-			.if	edi
+			mov edi,history
+			.if edi
 
-				xor	esi,esi
-				.while	[edi].S_DIRECTORY.path
+				xor esi,esi
+				.while [edi].S_DIRECTORY.path
 
 					CFAddEntryX( ebx, "%d=%X,%X,%X,%s", esi,
 						[edi].S_DIRECTORY.flag,
@@ -371,28 +371,28 @@ config_save PROC USES esi edi ebx
 						[edi].S_DIRECTORY.cel_index,
 						[edi].S_DIRECTORY.path )
 
-					add	edi,SIZE S_DIRECTORY
-					inc	esi
+					add edi,SIZE S_DIRECTORY
+					inc esi
 					.break .if esi == MAXHISTORY
 				.endw
 			.endif
 		.endif
 	.endif
 
-	.if	CFAddSection( ".doskey" )
+	.if CFAddSection( ".doskey" )
 
-		.if	!(cflag & _C_DELHISTORY)
+		.if !(cflag & _C_DELHISTORY)
 
-			mov	ebx,eax
+			mov ebx,eax
 			CFDelEntries( eax )
 
-			mov	eax,history
-			.if	eax
+			mov eax,history
+			.if eax
 
-				lea	esi,[eax].S_HISTORY.h_doskey
-				xor	edi,edi
+				lea esi,[eax].S_HISTORY.h_doskey
+				xor edi,edi
 
-				.while	edi < MAXDOSKEYS
+				.while edi < MAXDOSKEYS
 
 					lodsd
 
@@ -401,7 +401,7 @@ config_save PROC USES esi edi ebx
 
 					CFAddEntryX(ebx, "%d=%s", edi, eax)
 
-					inc	edi
+					inc edi
 				.endw
 			.endif
 		.endif
@@ -411,7 +411,7 @@ config_save PROC USES esi edi ebx
 	TISaveSession( __CFBase, ".openfiles" )
 	CFWrite( strfcat( __srcfile, _pgmpath, addr DZ_INIFILE ) )
 
-	mov	eax,1
+	mov eax,1
 	ret
 config_save ENDP
 
@@ -423,33 +423,33 @@ config_open PROC
 	;
 	__CFDelSection( __CFBase, ".openfiles" )
 
-	mov	eax,1
+	mov eax,1
 	ret
 
 config_open ENDP
 
 setconfirmflag PROC
 
-	mov	edx,CFSELECTED
-	mov	eax,config.c_cflag
+	mov edx,CFSELECTED
+	mov eax,config.c_cflag
 
-	.if	eax & _C_CONFDELETE
+	.if eax & _C_CONFDELETE
 
 		or edx,CFDELETEALL
 	.endif
-	.if	eax & _C_CONFDELSUB
+	.if eax & _C_CONFDELSUB
 
 		or edx,CFDIRECTORY
 	.endif
-	.if	eax & _C_CONFSYSTEM
+	.if eax & _C_CONFSYSTEM
 
 		or edx,CFSYSTEM
 	.endif
-	.if	eax & _C_CONFRDONLY
+	.if eax & _C_CONFRDONLY
 
 		or edx,CFREADONY
 	.endif
-	mov	confirmflag,edx
+	mov confirmflag,edx
 	ret
 
 setconfirmflag ENDP

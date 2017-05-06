@@ -65,61 +65,72 @@ cmsystem PROC USES esi edi ebx
 
 	.if rsopen( IDD_DZSystemOptions )
 
-		push	thelp
-		mov	thelp,event_help
-		mov	ebx,eax
-		mov	eax,cflag
+		push thelp
+		mov thelp,event_help
+		mov ebx,eax
+		mov eax,cflag
 		.if eax & _C_DELHISTORY
-			or	[ebx].S_TOBJ.to_flag[ID_DELHISTORY],_O_FLAGB
+
+			or [ebx].S_TOBJ.to_flag[ID_DELHISTORY],_O_FLAGB
 		.endif
+
 		.if eax & _C_ESCUSERSCR
-			or	[ebx].S_TOBJ.to_flag[ID_ESCUSERSCR],_O_FLAGB
+
+			or [ebx].S_TOBJ.to_flag[ID_ESCUSERSCR],_O_FLAGB
 		.endif
 		tosetbitflag( [ebx].S_DOBJ.dl_object, 8, _O_FLAGB, console )
 		dlinit( ebx )
 		rsevent( IDD_DZSystemOptions, ebx )
-		mov	esi,eax
+		mov esi,eax
 		togetbitflag( [ebx].S_DOBJ.dl_object, 10, _O_FLAGB )
 		dlclose( ebx )
-		pop	eax
-		mov	thelp,eax
-		mov	eax,esi
-		.if	eax
-			mov	eax,edx
-			mov	edx,cflag
-			and	edx,not (_C_DELHISTORY or _C_ESCUSERSCR)
-			.if	eax & 100h ; Auto Delete History
-				or	edx,_C_DELHISTORY
+		pop eax
+		mov thelp,eax
+		mov eax,esi
+		.if eax
+
+			mov eax,edx
+			mov edx,cflag
+			and edx,not (_C_DELHISTORY or _C_ESCUSERSCR)
+			.if eax & 100h ; Auto Delete History
+
+				or edx,_C_DELHISTORY
 			.endif
-			.if	eax & 200h ; Use Esc for user screen
-				or	edx,_C_ESCUSERSCR
+			.if eax & 200h ; Use Esc for user screen
+
+				or edx,_C_ESCUSERSCR
 			.endif
-			mov	cflag,edx
-			mov	ecx,console
-			mov	BYTE PTR console,al
-			and	eax,CON_MOUSE or CON_IOSFN or CON_CMDENV
-			and	ecx,CON_MOUSE or CON_IOSFN or CON_CMDENV
-			.if	ecx != eax
-				mov	ecx,ENABLE_WINDOW_INPUT
-				.if	eax & CON_MOUSE
-					or	ecx,ENABLE_MOUSE_INPUT
+			mov cflag,edx
+			mov ecx,console
+			mov BYTE PTR console,al
+			and eax,CON_MOUSE or CON_IOSFN or CON_CMDENV
+			and ecx,CON_MOUSE or CON_IOSFN or CON_CMDENV
+			.if ecx != eax
+
+				mov ecx,ENABLE_WINDOW_INPUT
+				.if eax & CON_MOUSE
+
+					or ecx,ENABLE_MOUSE_INPUT
 				.endif
 				SetConsoleMode( hStdInput, ecx )
-				.if	cf_panel == 1
-					mov	cf_panel_upd,1
+				.if cf_panel == 1
+
+					mov cf_panel_upd,1
 				.else
-					call	redraw_panels
+					redraw_panels()
 				.endif
 			.endif
-			call	setasymbol
-			mov	eax,1
+			setasymbol()
+			mov eax,1
 		.endif
 	.endif
 	ret
+
 event_help:
-	mov	eax,HELPID_15
-	call	view_readme
+	mov eax,HELPID_15
+	view_readme()
 	retn
+
 cmsystem ENDP
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -139,33 +150,36 @@ ID_LOAD		equ 10*16
 ID_SAVE		equ 11*16
 
 event_reload PROC
+
 	.if cf_panel == 0
-		dlhide( tdialog )
-		call	apiupdate
-		dlshow( tdialog )
-		call	msloop
-		mov	eax,_C_NORMAL
+
+		dlhide(tdialog)
+		apiupdate()
+		dlshow(tdialog)
+		msloop()
+		mov eax,_C_NORMAL
 	.else
-		call	msloop
-		mov	cf_screen_upd,1
-		mov	eax,_C_ESCAPE
+		msloop()
+		mov cf_screen_upd,1
+		mov eax,_C_ESCAPE
 	.endif
 	ret
+
 event_reload ENDP
 
 event_loadcolor PROC USES esi
 
 local	path[_MAX_PATH]:BYTE
 
-	.if	wgetfile( addr path, "*.pal", _WOPEN )
+	.if wgetfile(addr path, "*.pal", _WOPEN)
 
-		mov	esi,eax
-		osread( esi, addr at_foreground, SIZE S_COLOR )
-		xchg	eax,esi
-		_close( eax )
-		mov	eax,_C_NORMAL
+		mov esi,eax
+		osread(esi, addr at_foreground, SIZE S_COLOR)
+		xchg eax,esi
+		_close(eax)
+		mov eax,_C_NORMAL
 
-		.if	esi == SIZE S_COLOR
+		.if esi == SIZE S_COLOR
 
 			event_reload()
 		.endif
@@ -176,16 +190,16 @@ event_loadcolor ENDP
 
 event_savecolor PROC
 
-local	path[_MAX_PATH]:BYTE
+  local path[_MAX_PATH]:BYTE
 
-	.if	wgetfile( addr path, "*.pal", _WSAVE )
+	.if wgetfile(addr path, "*.pal", _WSAVE)
 
-		push	eax
-		oswrite( eax, addr at_foreground, SIZE S_COLOR )
+		push eax
+		oswrite(eax, addr at_foreground, SIZE S_COLOR)
 		_close()
 	.endif
 
-	mov	eax,_C_NORMAL
+	mov eax,_C_NORMAL
 	ret
 
 event_savecolor ENDP
@@ -193,11 +207,13 @@ event_savecolor ENDP
 ifdef __AT__
 
 event_editat PROC
+
 	editattrib()
-	test	eax,eax
-	jnz	event_reload
-	mov	eax,_C_NORMAL
+	test eax,eax
+	jnz event_reload
+	mov eax,_C_NORMAL
 	ret
+
 event_editat ENDP
 
 endif
@@ -330,99 +346,112 @@ cmscreen ENDP
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 cmpanel PROC USES ebx
-	.if rsopen( IDD_DZPanelOptions )
-		mov	ebx,eax
-		mov	edx,_O_FLAGB
-		mov	eax,cflag
+
+	.if rsopen(IDD_DZPanelOptions)
+
+		mov ebx,eax
+		mov edx,_O_FLAGB
+		mov eax,cflag
 		.if eax & _C_INSMOVDN
-			or	[ebx+1*16],dl
+			or [ebx+1*16],dl
 		.endif
 		.if eax & _C_SELECTDIR
-			or	[ebx+2*16],dl
+			or [ebx+2*16],dl
 		.endif
 		.if eax & _C_SORTDIR
-			or	[ebx+3*16],dl
+			or [ebx+3*16],dl
 		.endif
 		.if eax & _C_CDCLRDONLY
-			or	[ebx+4*16],dl
+			or [ebx+4*16],dl
 		.endif
 		.if eax & _C_VISUALUPDATE
-			or	[ebx+5*16],dl
+			or [ebx+5*16],dl
 		.endif
-		dlinit( ebx )
-		rsevent( IDD_DZPanelOptions, ebx )
-		push	eax
-		mov	eax,ebx
-		add	eax,SIZE S_DOBJ
-		togetbitflag( eax, 4, _O_FLAGB )
-		dlclose( ebx )
-		pop	eax
+		dlinit(ebx)
+		rsevent(IDD_DZPanelOptions, ebx)
+		push eax
+		mov eax,ebx
+		add eax,SIZE S_DOBJ
+		togetbitflag(eax, 4, _O_FLAGB)
+		dlclose(ebx)
+		pop eax
 
 		.if eax
-			mov	eax,edx
-			and	path_a.ws_flag,not _W_SORTSUB
-			and	path_b.ws_flag,not _W_SORTSUB
-			mov	edx,cflag
-			and	edx,not (_C_INSMOVDN or _C_SELECTDIR or _C_SORTDIR or _C_CDCLRDONLY or _C_VISUALUPDATE)
+
+			mov eax,edx
+			and path_a.ws_flag,not _W_SORTSUB
+			and path_b.ws_flag,not _W_SORTSUB
+			mov edx,cflag
+			and edx,not (_C_INSMOVDN or _C_SELECTDIR or _C_SORTDIR or _C_CDCLRDONLY or _C_VISUALUPDATE)
 			.if al & 1
-				or	edx,_C_INSMOVDN
+
+				or edx,_C_INSMOVDN
 			.endif
 			.if al & 2
-				or	edx,_C_SELECTDIR
+
+				or edx,_C_SELECTDIR
 			.endif
 			.if al & 4
-				or	edx,_C_SORTDIR
-				or	path_a.ws_flag,_W_SORTSUB
-				or	path_b.ws_flag,_W_SORTSUB
+
+				or edx,_C_SORTDIR
+				or path_a.ws_flag,_W_SORTSUB
+				or path_b.ws_flag,_W_SORTSUB
 			.endif
 			.if al & 8
-				or	edx,_C_CDCLRDONLY
+
+				or edx,_C_CDCLRDONLY
 			.endif
 			.if al & 16
-				or	edx,_C_VISUALUPDATE
+
+				or edx,_C_VISUALUPDATE
 			.endif
 			.if cflag != edx
-				mov	cflag,edx
-				mov	BYTE PTR _diskflag,1
+
+				mov cflag,edx
+				mov BYTE PTR _diskflag,1
 			.endif
-			mov	eax,1
+			mov eax,1
 		.endif
 	.endif
 	ret
+
 cmpanel ENDP
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 cmconfirm PROC USES ebx
 
-	.if rsopen( IDD_DZConfirmations )
+	.if rsopen(IDD_DZConfirmations)
 
-		mov	ebx,eax
-		mov	eax,config.c_cflag
-		shr	eax,16
-		tosetbitflag( [ebx].S_DOBJ.dl_object, 7, _O_FLAGB, eax )
-		dlinit( ebx )
-		rsevent( IDD_DZConfirmations, ebx )
-		push	eax
-		togetbitflag( [ebx].S_DOBJ.dl_object, 7, _O_FLAGB )
-		dlclose( ebx )
-		pop	eax
-		.if	eax
-			mov	eax,config.c_cflag
-			and	eax,not 007F0000h
-			shl	edx,16
-			or	eax,edx
-			mov	config.c_cflag,eax
+		mov ebx,eax
+		mov eax,config.c_cflag
+		shr eax,16
+		tosetbitflag([ebx].S_DOBJ.dl_object, 7, _O_FLAGB, eax)
+		dlinit(ebx)
+		rsevent(IDD_DZConfirmations, ebx)
+		push eax
+		togetbitflag([ebx].S_DOBJ.dl_object, 7, _O_FLAGB)
+		dlclose(ebx)
+
+		pop eax
+		.if eax
+
+			mov eax,config.c_cflag
+			and eax,not 007F0000h
+			shl edx,16
+			or  eax,edx
+			mov config.c_cflag,eax
 		.endif
 	.endif
 	ret
+
 cmconfirm ENDP
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 cmcompression PROC USES ebx
 
-	.if rsopen( IDD_DZCompression )
+	.if rsopen(IDD_DZCompression)
 
 		mov ebx,eax
 		mov eax,compresslevel
@@ -469,9 +498,10 @@ cmcompression PROC USES ebx
 			.endif
 			mov compresslevel,eax
 		.endif
-		dlclose( ebx )
+		dlclose(ebx)
 	.endif
 	ret
+
 cmcompression ENDP
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -527,17 +557,16 @@ ID_DEFAULT	equ 9*16
 
 cmscreensize proc uses esi edi ebx
 
-local	ci:CONSOLE_SCREEN_BUFFER_INFO
-local	rc:RECT
-local	maxcol,maxrow
+  local ci:CONSOLE_SCREEN_BUFFER_INFO,
+	rc:RECT, maxcol, maxrow
 
 	.repeat
 
 		.break .if !GetConsoleScreenBufferInfo(hStdOutput, addr ci)
-		mov	ecx,GetConsoleWindow()
+		mov ecx,GetConsoleWindow()
 		.break .if !GetWindowRect(ecx, addr rc)
 		.break .if !rsopen(IDD_ConsoleSize)
-		mov	ebx,eax
+		mov ebx,eax
 
 		strcpy([ebx+ID_MIN_X].S_TOBJ.to_data, "0")
 		strcpy([ebx+ID_MIN_Y].S_TOBJ.to_data, "0")
@@ -545,9 +574,9 @@ local	maxcol,maxrow
 		strcpy([ebx+ID_MAX_Y].S_TOBJ.to_data, "0")
 		strcpy([ebx+ID_MIN_COL].S_TOBJ.to_data, "40")
 		strcpy([ebx+ID_MIN_ROW].S_TOBJ.to_data, "16")
-		movzx	eax,ci.dwMaximumWindowSize.x
+		movzx eax,ci.dwMaximumWindowSize.x
 		sprintf([ebx+ID_MAX_COL].S_TOBJ.to_data, "%d", eax)
-		movzx	eax,ci.dwMaximumWindowSize.y
+		movzx eax,ci.dwMaximumWindowSize.y
 		sprintf([ebx+ID_MAX_ROW].S_TOBJ.to_data, "%d", eax)
 
 		.if CFGetSection(".consolesize")
@@ -673,3 +702,4 @@ local	maxcol,maxrow
 cmscreensize endp
 
 	END
+

@@ -135,40 +135,40 @@ CI_LABELS	db 1			; [section]
 
 CIRead	PROC USES esi edi ebx ci:PCIDATA
 
-	mov	esi,ci
+	mov esi,ci
 
-	.if	!__CFRead( 0, addr [esi].ci_curfile )
+	.if !__CFRead(0, addr [esi].ci_curfile)
 
 		__CFAlloc()
 	.endif
 
-	.if	eax
+	.if eax
 
-		mov	edi,eax
+		mov edi,eax
 
-		.if	[esi].ci_file
+		.if [esi].ci_file
 
-			__CFClose( [esi].ci_file )
+			__CFClose([esi].ci_file)
 		.endif
-		mov	[esi].ci_file,edi
+		mov [esi].ci_file,edi
 
-		.if	__CFGetSection( edi, ".file" )
+		.if __CFGetSection(edi, ".file")
 
-			mov	edi,eax
+			mov edi,eax
 
-			.if	CFGetEntryID( edi, _CI_INCFILE )
+			.if CFGetEntryID(edi, _CI_INCFILE)
 
 				lea edx,[esi].ci_incpath
-				expenviron( strcpy( edx, eax ) )
+				expenviron(strcpy(edx, eax))
 			.endif
 
-			.if	CFGetEntryID( edi, _CI_SRCFILE )
+			.if CFGetEntryID(edi, _CI_SRCFILE)
 
 				lea edx,[esi].ci_srcpath
-				expenviron( strcpy( edx, eax ) )
+				expenviron(strcpy(edx, eax))
 			.endif
 		.endif
-		mov	eax,1
+		mov eax,1
 	.endif
 	ret
 CIRead	ENDP
@@ -177,39 +177,39 @@ CIWrite PROC USES esi edi ebx ci:PCIDATA
 
 local	bak[_MAX_PATH]:BYTE
 
-	mov	esi,ci
-	lea	edi,bak
-	lea	ebx,[esi].ci_curfile
+	mov esi,ci
+	lea edi,bak
+	lea ebx,[esi].ci_curfile
 
-	remove( setfext( strcpy( edi, ebx ), ".bak" ) )
-	rename( ebx, edi )
+	remove(setfext(strcpy(edi, ebx), ".bak"))
+	rename(ebx, edi)
 
-	__CFWrite( [esi].ci_file, ebx )
+	__CFWrite([esi].ci_file, ebx)
 	ret
 
 CIWrite ENDP
 
 CICopySection proc uses esi edi CILabel, Section
 
-	mov	edi,CILabel
-	mov	ecx,sizeof(CISECTION)
-	xor	eax,eax
-	rep	stosb
+	mov edi,CILabel
+	mov ecx,sizeof(CISECTION)
+	xor eax,eax
+	rep stosb
 
-	mov	esi,CILabel
-	mov	edi,Section
-	strcpy( esi, [edi].S_CFINI.cf_name )
-	add	esi,MAXLABEL
-	xor	edi,edi
+	mov esi,CILabel
+	mov edi,Section
+	strcpy(esi, [edi].S_CFINI.cf_name)
+	add esi,MAXLABEL
+	xor edi,edi
 
-	.while	edi < MAXENTRIES
+	.while edi < MAXENTRIES
 
-		.if	CFGetEntryID( Section, edi )
+		.if CFGetEntryID(Section, edi)
 
-			strcpy( esi, eax )
+			strcpy(esi, eax)
 		.endif
-		inc	edi
-		add	esi,MAXENTRY
+		inc edi
+		add esi,MAXENTRY
 	.endw
 	ret
 
@@ -217,18 +217,18 @@ CICopySection endp
 
 CIGetTextValue proc uses ebx CILabel
 
-	mov	edx,CILabel
-	mov	ecx,sizeof(CISECTION)
-	xor	eax,eax
-	xor	ebx,ebx
+	mov edx,CILabel
+	mov ecx,sizeof(CISECTION)
+	xor eax,eax
+	xor ebx,ebx
 	.repeat
-		mov	al,[edx]
-		add	edx,1
-		add	ebx,eax
-		shl	ebx,1
-		adc	ebx,0
+		mov al,[edx]
+		add edx,1
+		add ebx,eax
+		shl ebx,1
+		adc ebx,0
 	.untilcxz
-	mov	eax,ebx
+	mov eax,ebx
 	ret
 
 CIGetTextValue endp
@@ -240,19 +240,19 @@ CIPutTextValue proc uses esi CILabel
 	mov	esi,CILabel
 	CIGetTextValue( esi )
 
-	mov	edx,[esi].ci_dialog
-	movzx	ecx,[edx].S_DOBJ.dl_rect.rc_x
-	add	ecx,1
-	movzx	edx,[edx].S_DOBJ.dl_rect.rc_y
-	add	edx,2
-	cmp	eax,[esi].ci_textvalue
-	mov	eax,' ';0C4h
+	mov edx,[esi].ci_dialog
+	movzx ecx,[edx].S_DOBJ.dl_rect.rc_x
+	add ecx,1
+	movzx edx,[edx].S_DOBJ.dl_rect.rc_y
+	add edx,2
+	cmp eax,[esi].ci_textvalue
+	mov eax,' ';0C4h
 
 	.ifnz
 
-		mov	eax,'*'
+		mov eax,'*'
 	.endif
-	scputc( ecx, edx, 1, eax )
+	scputc(ecx, edx, 1, eax)
 	ret
 
 CIPutTextValue endp
@@ -261,30 +261,32 @@ CIPutSection PROC USES esi edi ebx ci:PCIDATA
 
 local	x,y
 
-	mov	esi,ci
+	mov esi,ci
 
-	mov	eax,[esi].ci_dialog
-	movzx	ebx,[eax].S_DOBJ.dl_rect.rc_x
-	add	ebx,35
-	mov	x,ebx
-	movzx	edx,[eax].S_DOBJ.dl_rect.rc_y
-	add	edx,6
-	mov	y,edx
-	mov	ecx,11
+	mov eax,[esi].ci_dialog
+	movzx ebx,[eax].S_DOBJ.dl_rect.rc_x
+	add ebx,35
+	mov x,ebx
+
+	movzx edx,[eax].S_DOBJ.dl_rect.rc_y
+	add edx,6
+	mov y,edx
+	mov ecx,11
+
 	.repeat
-		scputc( ebx, edx, 31, ' ' )
-		inc	edx
+		scputc(ebx, edx, 31, ' ')
+		inc edx
 	.untilcxz
 
-	lea	edi,[esi+_CI_REF0*MAXENTRY].ci_section.s_entry
-	mov	ebx,7
+	lea edi,[esi+_CI_REF0*MAXENTRY].ci_section.s_entry
+	mov ebx,7
 	put_section_info()
-	inc	y
-	mov	ebx,3
+	inc y
+	mov ebx,3
 	put_section_info()
 
-	add	y,2
-	sub	x,33
+	add y,2
+	sub x,33
 
 	scputc(x, y, 40, ' ')
 	scputs(x, y, 0, 40, strfn(addr [esi].ci_curfile))
@@ -294,18 +296,18 @@ local	x,y
 put_section_info:
 
 	.repeat
-		.if	BYTE PTR [edi]
+		.if BYTE PTR [edi]
 
-			.if	__CFGetSection([esi].ci_file, edi)
+			.if __CFGetSection([esi].ci_file, edi)
 
-				.if	CFGetEntryID(eax, _CI_INFO)
+				.if CFGetEntryID(eax, _CI_INFO)
 
-					scputs( x, y, 0, 31, eax )
+					scputs(x, y, 0, 31, eax)
 				.endif
 			.endif
 		.endif
-		inc	y
-		add	edi,MAXENTRY
+		inc y
+		add edi,MAXENTRY
 	.untilbxz
 	retn
 
@@ -313,13 +315,13 @@ CIPutSection ENDP
 
 CIReadSection PROC USES esi edi ebx ci:PCIDATA, section:LPSTR
 
-local	tmp[MAXLABEL]:BYTE
+  local tmp[MAXLABEL]:BYTE
 
-	mov	esi,ci
-	lea	edi,tmp
-	mov	ebx,section
+	mov esi,ci
+	lea edi,tmp
+	mov ebx,section
 
-	.if	strcmp(esi, ebx)
+	.if strcmp(esi, ebx)
 
 		memmove(addr [esi].ci_lstack, esi, sizeof(CISECTION) * MAXLSTACK)
 	.endif
@@ -328,12 +330,12 @@ local	tmp[MAXLABEL]:BYTE
 	mov	byte ptr [eax+MAXLABEL-1],0
 	strncpy(esi, edi, MAXLABEL)
 
-	.if	__CFGetSection([esi].ci_file, eax)
+	.if __CFGetSection([esi].ci_file, eax)
 
 		CICopySection(esi, eax)
-		mov	[esi].ci_textvalue,CIGetTextValue(esi)
+		mov [esi].ci_textvalue,CIGetTextValue(esi)
 	.else
-		mov	[esi].ci_textvalue,0
+		mov [esi].ci_textvalue,0
 	.endif
 
 	CIPutTextValue(esi)
@@ -344,79 +346,79 @@ CIReadSection ENDP
 
 CIViewSrc PROC USES esi edi ebx ci:PCIDATA
 
-local	path[_MAX_PATH]:BYTE
+  local path[_MAX_PATH]:BYTE
 
-	mov	esi,ci
-	lea	ebx,[esi].ci_section.s_entry + _CI_SRCFILE * MAXENTRY
+	mov esi,ci
+	lea ebx,[esi].ci_section.s_entry + _CI_SRCFILE * MAXENTRY
 
-	.if	BYTE PTR [ebx]
+	.if BYTE PTR [ebx]
 
-		tview( strfcat( addr path, addr [esi].ci_srcpath, ebx ), 0 )
+		tview(strfcat(addr path, addr [esi].ci_srcpath, ebx), 0)
 	.endif
-	mov	eax,_C_NORMAL
+	mov eax,_C_NORMAL
 	ret
 
 CIViewSrc ENDP
 
 CIViewInc PROC USES esi edi ebx ci:PCIDATA
 
-local	path[_MAX_PATH]:BYTE
+  local path[_MAX_PATH]:BYTE
 
-	mov	esi,ci
-	lea	ebx,[esi].ci_section.s_entry + _CI_INCFILE * MAXENTRY
+	mov esi,ci
+	lea ebx,[esi].ci_section.s_entry + _CI_INCFILE * MAXENTRY
 
-	.if	BYTE PTR [ebx]
+	.if BYTE PTR [ebx]
 
-		tview( strfcat( addr path, addr [esi].ci_incpath, ebx ), 0 )
+		tview(strfcat(addr path, addr [esi].ci_incpath, ebx), 0)
 	.endif
 
-	mov	eax,_C_NORMAL
+	mov eax,_C_NORMAL
 	ret
 
 CIViewInc ENDP
 
 CIEditFile PROC USES edi ci:PCIDATA, file:LPSTR
 
-	mov	edi,tinfo
-	mov	tinfo,0
+	mov edi,tinfo
+	mov tinfo,0
 
-	.if	topen(file, 0)
+	.if topen(file, 0)
 
 		tmodal()
 		tclose()
 		CIPutSection(ci)
 	.endif
 
-	mov	tinfo,edi
+	mov tinfo,edi
 	ret
 
 CIEditFile ENDP
 
 CIEditSrc PROC USES esi edi ebx ci:PCIDATA
 
-local	path[_MAX_PATH]:BYTE
+  local path[_MAX_PATH]:BYTE
 
-	mov	esi,ci
-	lea	ebx,[esi].ci_section.s_entry + _CI_SRCFILE * MAXENTRY
+	mov esi,ci
+	lea ebx,[esi].ci_section.s_entry + _CI_SRCFILE * MAXENTRY
 
 	.repeat
 		.break .if BYTE PTR [ebx] == 0
 
-		.if	_access( strfcat( addr path, addr [esi].ci_srcpath, ebx ), 0 )
+		.if _access(strfcat(addr path, addr [esi].ci_srcpath, ebx), 0)
 
-			.break .if !rsmodal( IDD_CICreate )
+			.break .if !rsmodal(IDD_CICreate)
 
-			.if	osopen( addr path, _A_NORMAL, M_WRONLY, A_CREATE ) != -1
+			.if osopen(addr path, _A_NORMAL, M_WRONLY, A_CREATE) != -1
 
-				_close( eax )
+				_close(eax)
 			.endif
 		.endif
 
-		CIEditFile( esi, addr path )
+		CIEditFile(esi, addr path)
 
 	.until 1
 
-	mov	eax,_C_NORMAL
+	mov eax,_C_NORMAL
 	ret
 
 CIEditSrc ENDP
@@ -425,275 +427,274 @@ CIEditInc PROC USES esi edi ci:PCIDATA
 
 local	path[_MAX_PATH]:BYTE
 
-	mov	esi,ci
-	lea	edi,[esi].ci_section.s_entry + _CI_INCFILE * MAXENTRY
+	mov esi,ci
+	lea edi,[esi].ci_section.s_entry + _CI_INCFILE * MAXENTRY
 
-	.if	BYTE PTR [edi]
+	.if BYTE PTR [edi]
 
-		CIEditFile( esi, strfcat( addr path, addr [esi].ci_srcpath, edi ) )
+		CIEditFile(esi, strfcat(addr path, addr [esi].ci_srcpath, edi))
 	.endif
 
-	mov	eax,_C_NORMAL
+	mov eax,_C_NORMAL
 	ret
 
 CIEditInc ENDP
 
 CINextFile PROC USES esi edi ebx ci:PCIDATA
 
-	mov	esi,ci
-	mov	ebx,CIFileID
-	inc	ebx
+	mov esi,ci
+	mov ebx,CIFileID
+	inc ebx
 
-	.if	CFGetSection( "CodeInfo" )
+	.if CFGetSection("CodeInfo")
 
-		mov	edi,eax
+		mov edi,eax
 
-		.if	!CFGetEntryID( edi, ebx )
+		.if !CFGetEntryID(edi, ebx)
 
-			xor	ebx,ebx
-			CFGetEntryID( edi, ebx )
+			xor ebx,ebx
+			CFGetEntryID(edi, ebx)
 		.endif
 	.endif
 
-	.if	eax
+	.if eax
 
-		mov	edi,eax
+		mov edi,eax
 		CIWrite(esi)
 
-		mov	dx,[edi]
-		.if	dl == '%' || dl == '\' || dl == '/' || dh == ':'
+		mov dx,[edi]
+		.if dl == '%' || dl == '\' || dl == '/' || dh == ':'
 
-			strcpy( addr [esi].ci_curfile, edi )
+			strcpy(addr [esi].ci_curfile, edi)
 		.else
-			strfcat( addr [esi].ci_curfile, _pgmpath, edi )
+			strfcat(addr [esi].ci_curfile, _pgmpath, edi)
 		.endif
-		expenviron( eax )
+		expenviron(eax)
 
-		mov	CIFileID,ebx
+		mov CIFileID,ebx
 
-		CIRead( esi )
-		mov	[esi].ci_textvalue,0
+		CIRead(esi)
+		mov [esi].ci_textvalue,0
 
 		CIPutSection( esi )
 
-		mov	eax,[esi].ci_dialog
-		mov	[eax].S_DOBJ.dl_index,0
-		mov	eax,1
+		mov eax,[esi].ci_dialog
+		mov [eax].S_DOBJ.dl_index,0
+		mov eax,1
 	.endif
 	ret
+
 CINextFile ENDP
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 CIEventHelp PROC
 
-	rsmodal( IDD_CIHelp )
+	rsmodal(IDD_CIHelp)
 	ret
 
 CIEventHelp ENDP
 
 CIEventSave PROC USES esi edi ebx
 
-	mov	esi,CIFile
+	mov esi,CIFile
 
-	.if	__CFAddSection( [esi].ci_file, esi )
+	.if __CFAddSection([esi].ci_file, esi)
 
-		lea	edi,[esi].ci_section.s_entry
-		mov	esi,eax
-		xor	ebx,ebx
+		lea edi,[esi].ci_section.s_entry
+		mov esi,eax
+		xor ebx,ebx
 
-		.while	ebx < MAXENTRIES
+		.while ebx < MAXENTRIES
 
-			.if	BYTE PTR [edi]
+			.if BYTE PTR [edi]
 
-				CFAddEntryX( esi, "%d=%s", ebx, edi )
+				CFAddEntryX(esi, "%d=%s", ebx, edi)
 			.endif
-			add	ebx,1
-			add	edi,MAXENTRY
+			add ebx,1
+			add edi,MAXENTRY
 		.endw
 
-		mov	esi,CIFile
-		mov	[esi].ci_textvalue,CIGetTextValue(esi)
+		mov esi,CIFile
+		mov [esi].ci_textvalue,CIGetTextValue(esi)
 	.endif
 
-	CIPutTextValue( esi )
-	mov	eax,_C_NORMAL
+	CIPutTextValue(esi)
+	mov eax,_C_NORMAL
 	ret
 
 CIEventSave ENDP
 
 CIEventView PROC USES esi
 
-	mov	esi,CIFile
-	lea	ecx,[esi].ci_section.s_entry + _CI_SRCFILE * MAXENTRY
-	mov	edx,[esi].ci_dialog
+	mov esi,CIFile
+	lea ecx,[esi].ci_section.s_entry + _CI_SRCFILE * MAXENTRY
+	mov edx,[esi].ci_dialog
 
-	.if	[edx].S_DOBJ.dl_index == _CI_INCFILE || \
-		BYTE PTR [ecx] == 0
+	.if [edx].S_DOBJ.dl_index == _CI_INCFILE || BYTE PTR [ecx] == 0
 
 		CIViewInc(esi)
 	.else
 		CIViewSrc(esi)
 	.endif
 
-	mov	eax,_C_NORMAL
+	mov eax,_C_NORMAL
 	ret
 
 CIEventView ENDP
 
 CIEventEdit PROC USES esi
 
-	mov	esi,CIFile
-	lea	ecx,[esi].ci_section.s_entry + _CI_SRCFILE * MAXENTRY
-	mov	edx,[esi].ci_dialog
+	mov esi,CIFile
+	lea ecx,[esi].ci_section.s_entry + _CI_SRCFILE * MAXENTRY
+	mov edx,[esi].ci_dialog
 
-	.if	[edx].S_DOBJ.dl_index == _CI_INCFILE || \
-		BYTE PTR [ecx] == 0
+	.if [edx].S_DOBJ.dl_index == _CI_INCFILE || BYTE PTR [ecx] == 0
 
 		CIEditInc(esi)
 	.else
 		CIEditSrc(esi)
 	.endif
 
-	mov	eax,_C_NORMAL
+	mov eax,_C_NORMAL
 	ret
 
 CIEventEdit ENDP
 
 CIEventFind PROC USES esi edi ebx
 
-	mov	esi,CIFile
+	mov esi,CIFile
 
-	.if	CFFindSection( [esi].ci_file, esi, "12" )
+	.if CFFindSection([esi].ci_file, esi, "12")
 
-		.if	__CFGetSection( [esi].ci_file, eax )
+		.if __CFGetSection([esi].ci_file, eax)
 
-			CICopySection( esi, eax )
+			CICopySection(esi, eax)
 			mov [esi].ci_textvalue,CIGetTextValue(esi)
-			CIPutSection( esi )
-			CIPutTextValue( esi )
+			CIPutSection(esi)
+			CIPutTextValue(esi)
 		.endif
 	.endif
 
-	mov	eax,_C_NORMAL
+	mov eax,_C_NORMAL
 	ret
 
 CIEventFind ENDP
 
 CIEventDelete PROC USES edi
 
-	mov	edi,CIFile
+	mov edi,CIFile
 
-	.if	BYTE PTR [edi]
+	.if BYTE PTR [edi]
 
-		__CFDelSection( [edi].CIDATA.ci_file, edi )
+		__CFDelSection([edi].CIDATA.ci_file, edi)
 	.endif
 
-	xor	eax,eax
-	mov	[edi].CIDATA.ci_textvalue,eax
-	mov	ecx,sizeof(CISECTION)
-	rep	stosb
-	mov	eax,_C_NORMAL
+	xor eax,eax
+	mov [edi].CIDATA.ci_textvalue,eax
+	mov ecx,sizeof(CISECTION)
+	rep stosb
+	mov eax,_C_NORMAL
 	ret
 
 CIEventDelete ENDP
 
 CIEventSetup PROC USES esi edi ebx
 
-	mov	esi,CIFile
+	mov esi,CIFile
 
-	.if	rsopen(IDD_CISetup)
+	.if rsopen(IDD_CISetup)
 
-		mov	edi,eax
-		xor	ebx,ebx
+		mov edi,eax
+		xor ebx,ebx
 
-		.if	__CFGetSection( [esi].ci_file, ".file" )
+		.if __CFGetSection([esi].ci_file, ".file")
 
-			mov	ebx,eax
+			mov ebx,eax
 
-			.if	CFGetEntryID( ebx, _CI_INCFILE )
+			.if CFGetEntryID(ebx, _CI_INCFILE)
 
-				strcpy( [edi].S_TOBJ.to_data[32], eax )
+				strcpy([edi].S_TOBJ.to_data[32], eax)
 			.endif
-			.if	CFGetEntryID( ebx, _CI_SRCFILE )
+			.if CFGetEntryID(ebx, _CI_SRCFILE)
 
-				strcpy( [edi].S_TOBJ.to_data[16], eax )
-			.endif
-		.endif
-
-		dlinit( edi )
-
-		.if	dlevent( edi )
-
-			expenviron( strcpy( addr [esi].ci_srcpath, [edi].S_TOBJ.to_data[16] ) )
-			expenviron( strcpy( addr [esi].ci_incpath, [edi].S_TOBJ.to_data[32] ) )
-
-			.if	!ebx
-
-				mov ebx,__CFAddSection( [esi].ci_file, ".file" )
-			.endif
-
-			.if	ebx
-
-				CFAddEntryX( ebx, "%d=%s", _CI_SRCFILE, [edi].S_TOBJ.to_data[16] )
-				CFAddEntryX( ebx, "%d=%s", _CI_INCFILE, [edi].S_TOBJ.to_data[32] )
+				strcpy([edi].S_TOBJ.to_data[16], eax)
 			.endif
 		.endif
 
-		dlclose( edi )
+		dlinit(edi)
+
+		.if dlevent(edi)
+
+			expenviron(strcpy(addr [esi].ci_srcpath, [edi].S_TOBJ.to_data[16]))
+			expenviron(strcpy(addr [esi].ci_incpath, [edi].S_TOBJ.to_data[32]))
+
+			.if !ebx
+
+				mov ebx,__CFAddSection([esi].ci_file, ".file")
+			.endif
+
+			.if ebx
+
+				CFAddEntryX(ebx, "%d=%s", _CI_SRCFILE, [edi].S_TOBJ.to_data[16])
+				CFAddEntryX(ebx, "%d=%s", _CI_INCFILE, [edi].S_TOBJ.to_data[32])
+			.endif
+		.endif
+
+		dlclose(edi)
 	.endif
 
-	mov	eax,_C_NORMAL
+	mov eax,_C_NORMAL
 	ret
 
 CIEventSetup ENDP
 
 CIEventCTRLUP PROC USES esi
 
-	local	ll:CISECTION
+  local ll:CISECTION
 
-	mov	esi,CIFile
+	mov esi,CIFile
 
-	memcpy( addr ll, esi, sizeof(CISECTION) )
+	memcpy(addr ll, esi, sizeof(CISECTION))
 
-	memcpy( esi, addr [esi].ci_lstack, sizeof(CISECTION) * MAXLSTACK )
-	memcpy( addr [esi + sizeof(CISECTION) * MAXLSTACK], addr ll, sizeof(CISECTION) )
+	memcpy(esi, addr [esi].ci_lstack, sizeof(CISECTION) * MAXLSTACK)
+	memcpy(addr [esi + sizeof(CISECTION) * MAXLSTACK], addr ll, sizeof(CISECTION))
 
-	mov	eax,_C_NORMAL
+	mov eax,_C_NORMAL
 	ret
 
 CIEventCTRLUP ENDP
 
 CIEventCTRLDN PROC USES esi
 
-	local	ll:CISECTION
+  local ll:CISECTION
 
-	mov	esi,CIFile
+	mov esi,CIFile
 
-	memcpy( addr ll, addr [esi + sizeof(CISECTION) * MAXLSTACK], sizeof(CISECTION) )
-	memcpy( addr [esi].ci_lstack, esi, sizeof(CISECTION) * MAXLSTACK )
-	memcpy( esi, addr ll, sizeof(CISECTION) )
+	memcpy(addr ll, addr [esi + sizeof(CISECTION) * MAXLSTACK], sizeof(CISECTION))
+	memcpy(addr [esi].ci_lstack, esi, sizeof(CISECTION) * MAXLSTACK)
+	memcpy(esi, addr ll, sizeof(CISECTION))
 
-	mov	eax,_C_NORMAL
+	mov eax,_C_NORMAL
 	ret
 
 CIEventCTRLDN ENDP
 
 CIEventExit PROC
 
-	mov	eax,_C_ESCAPE
+	mov eax,_C_ESCAPE
 	ret
 
 CIEventExit ENDP
 
 CIEditEvent PROC USES esi edi ebx
 
-local	cursor:S_CURSOR
+  local cursor:S_CURSOR
 
-	CursorGet( addr cursor )
+	CursorGet(addr cursor)
 
-	mov	esi,CIFile
-	mov	edx,[esi].ci_dialog
+	mov esi,CIFile
+	mov edx,[esi].ci_dialog
 
 	movzx	edi,[edx].S_DOBJ.dl_index
 	shl	edi,4
@@ -707,9 +708,9 @@ local	cursor:S_CURSOR
 	mov	edi,[edi].S_TOBJ.to_data
 	mov	ebx,dledit(edi,edx,ecx,eax)
 
-	CursorSet( addr cursor )
+	CursorSet(addr cursor)
 
-	.if	ebx == KEY_ENTER
+	.if ebx == KEY_ENTER
 
 		mov	eax,[esi].ci_dialog
 		movzx	ecx,[eax].S_DOBJ.dl_index
@@ -719,7 +720,7 @@ local	cursor:S_CURSOR
 		movzx	eax,CI_LABELS[ecx]
 		.switch al
 		.case	1
-			.if	BYTE PTR [esi]
+			.if BYTE PTR [esi]
 
 				CIReadSection(esi, esi)
 			.endif
@@ -747,7 +748,7 @@ local	cursor:S_CURSOR
 	.endif
 
 	CIPutTextValue(esi)
-	mov	eax,ebx
+	mov eax,ebx
 	ret
 
 CIEditEvent ENDP
@@ -757,126 +758,125 @@ CIEditEvent ENDP
 
 CIPopUp PROC USES esi edi ebx
 
-local	scword[128]:BYTE
-local	ascii:BYTE
+  local scword[128]:BYTE, ascii:BYTE
 
-	mov	al,tclrascii
-	mov	ascii,al
-	inc	CICallStack
+	mov al,tclrascii
+	mov ascii,al
+	inc CICallStack
 
-	.if	scgetword( addr scword )
+	.if scgetword(addr scword)
 
-		.if	!CFGetSectionID( "CodeInfo", CIFileID )
+		.if !CFGetSectionID("CodeInfo", CIFileID)
 
-			mov	CIFileID,0
-			.if	!CFGetSectionID( "CodeInfo", 0 )
+			mov CIFileID,0
+			.if !CFGetSectionID("CodeInfo", 0)
 
-				mov	eax,@CStr( "%DZ%\\default.ci" )
+				mov eax,@CStr("%DZ%\\default.ci")
 			.endif
 		.endif
-		mov	ebx,eax
+		mov ebx,eax
 
-		.if	malloc( sizeof(CIDATA) )
+		.if malloc(sizeof(CIDATA))
 
-			mov	esi,eax
-			mov	edi,eax
-			mov	ecx,sizeof(CIDATA)
-			xor	eax,eax
-			rep	stosb
+			mov esi,eax
+			mov edi,eax
+			mov ecx,sizeof(CIDATA)
+			xor eax,eax
+			rep stosb
 
-			lea	ecx,[esi].ci_curfile
-			mov	edx,[ebx]
+			lea ecx,[esi].ci_curfile
+			mov edx,[ebx]
 			.switch
-			.case	dl == '%'
-			.case	dl == '\'
-			.case	dl == '/'
-			.case	dh == ':'
-				strcpy( ecx, ebx )
+			  .case dl == '%'
+			  .case dl == '\'
+			  .case dl == '/'
+			  .case dh == ':'
+				strcpy(ecx, ebx)
 				.endc
 			.default
-				strfcat( ecx, _pgmpath, ebx )
+				strfcat(ecx, _pgmpath, ebx)
 			.endsw
-			expenviron( eax )
+			expenviron(eax)
 
-			.if	CICallStack == 1
+			.if CICallStack == 1
 
-				CIRead( esi )
+				CIRead(esi)
 			.else
-				mov	edx,CIFile
-				mov	eax,[edx].CIDATA.ci_file
-				mov	[esi].CIDATA.ci_file,eax
-				memcpy( addr [esi].CIDATA.ci_lstack,
-					addr [edx].CIDATA.ci_lstack,
-					sizeof(CISECTION) * MAXLSTACK )
+				mov edx,CIFile
+				mov eax,[edx].CIDATA.ci_file
+				mov [esi].CIDATA.ci_file,eax
+				memcpy(addr [esi].CIDATA.ci_lstack,
+				       addr [edx].CIDATA.ci_lstack,
+				       sizeof(CISECTION) * MAXLSTACK)
 			.endif
 
-			push	CIFile
-			mov	CIFile,esi
+			push CIFile
+			mov CIFile,esi
 
-			.if	rsopen( IDD_CIEdit )
+			.if rsopen(IDD_CIEdit)
 
-				mov	[esi].ci_dialog,eax
+				mov [esi].ci_dialog,eax
 
-				push	thelp
-				mov	tclrascii,' '
+				push thelp
+				mov tclrascii,' '
 
-				mov	edx,[eax].S_DOBJ.dl_object
-				mov	thelp,CIEventHelp
-				mov	[edx].S_TOBJ.to_data,esi
-				mov	[edx].S_TOBJ.to_proc,CIEditEvent
+				mov edx,[eax].S_DOBJ.dl_object
+				mov thelp,CIEventHelp
+				mov [edx].S_TOBJ.to_data,esi
+				mov [edx].S_TOBJ.to_proc,CIEditEvent
 
-				mov	ecx,MAXENTRIES
-				lea	eax,[esi].ci_section.s_entry
+				mov ecx,MAXENTRIES
+				lea eax,[esi].ci_section.s_entry
 				.repeat
-					add	edx,sizeof(S_TOBJ)
-					mov	[edx].S_TOBJ.to_data,eax
-					mov	[edx].S_TOBJ.to_proc,CIEditEvent
-					add	eax,MAXENTRY
+					add edx,sizeof(S_TOBJ)
+					mov [edx].S_TOBJ.to_data,eax
+					mov [edx].S_TOBJ.to_proc,CIEditEvent
+					add eax,MAXENTRY
 				.untilcxz
 
-				mov	[edx+16].S_TOBJ.to_data,offset CICommand
+				mov [edx+16].S_TOBJ.to_data,offset CICommand
 
-				dlshow( [esi].ci_dialog )
+				dlshow([esi].ci_dialog)
 
-				CIReadSection( esi, addr scword )
-				rsevent( IDD_CIEdit, [esi].ci_dialog )
-				dlclose( [esi].ci_dialog )
+				CIReadSection(esi, addr scword)
+				rsevent(IDD_CIEdit, [esi].ci_dialog)
+				dlclose([esi].ci_dialog)
 
-				mov	al,ascii
-				mov	tclrascii,al
-				pop	eax
-				mov	thelp,eax
-				mov	[esi].ci_txtvaled,0
+				mov al,ascii
+				mov tclrascii,al
+				pop eax
+				mov thelp,eax
+				mov [esi].ci_txtvaled,0
 
-				CIWrite( esi )
+				CIWrite(esi)
 			.endif
 
-			pop	CIFile
+			pop CIFile
 
-			.if	CICallStack == 1
+			.if CICallStack == 1
 
-				__CFClose( [esi].ci_file )
+				__CFClose([esi].ci_file)
 			.endif
 
-			free  ( esi )
+			free(esi)
 		.endif
 	.endif
 
-	dec	CICallStack
-	xor	eax,eax
+	dec CICallStack
+	xor eax,eax
 	ret
 
 CIPopUp ENDP
 
 CIIdleHandler PROC
 
-	mov	eax,keyshift
-	mov	eax,[eax]
-	and	eax,POPUPKEY
+	mov eax,keyshift
+	mov eax,[eax]
+	and eax,POPUPKEY
 
-	.if	eax == POPUPKEY
+	.if eax == POPUPKEY
 
-		.if	CIActive != 1
+		.if CIActive != 1
 
 			mov CIActive,1
 			CIPopUp()
@@ -891,9 +891,9 @@ CIIdleHandler ENDP
 
 CodeInfo PROC PUBLIC
 
-	mov	eax,tdidle
-	mov	OldIdleHandler,eax
-	mov	tdidle,CIIdleHandler
+	mov eax,tdidle
+	mov OldIdleHandler,eax
+	mov tdidle,CIIdleHandler
 	ret
 
 CodeInfo ENDP

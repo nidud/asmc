@@ -7,7 +7,7 @@ include consx.inc
 
 tihandler PROC
 
-	mov	edx,tinfo
+	mov edx,tinfo
 
 	OPTION	SWITCH:PASCAL
 
@@ -52,13 +52,13 @@ tihandler PROC
 	  .case KEY_SHIFTF9:	TIShiftFx(9)
 
 	  .case KEY_ALTF1
-		push	esi
-		mov	esi,edx
-		.if	topen(strfcat( __srcfile, _pgmpath, addr DZ_INIFILE), 0)
+		push esi
+		mov esi,edx
+		.if topen(strfcat( __srcfile, _pgmpath, addr DZ_INIFILE), 0)
 
 			mov tinfo,titogglefile(esi, eax)
 		.endif
-		pop	esi
+		pop esi
 
 	  .case KEY_ALTF2:	TIAltFx(2)
 	  .case KEY_ALTF3:	TIAltFx(3)
@@ -73,20 +73,20 @@ tihandler PROC
 	  .case KEY_ALTS:	tisearchxy(edx)
 	  .case KEY_ALTX:	tcloseall() : jmp return
 	  .default
-		mov	eax,_TI_NOTEVENT
-		jmp	toend
+		mov eax,_TI_NOTEVENT
+		jmp toend
 	.endsw
-	mov	eax,_TI_CONTINUE
+	mov eax,_TI_CONTINUE
 toend:
 	ret
 toggle:
-	xor	[edx].S_TINFO.ti_flag,eax
+	xor [edx].S_TINFO.ti_flag,eax
 	tiputs( edx )
-	xor	eax,eax
-	jmp	toend
+	xor eax,eax
+	jmp toend
 return:
-	mov	eax,_TI_RETEVENT
-	jmp	toend
+	mov eax,_TI_RETEVENT
+	jmp toend
 
 tihandler ENDP
 

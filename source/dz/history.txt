@@ -3,6 +3,7 @@ Change Log File for DOSZIP - Win32
 ==================================
 
 Changes in 3.49 - xx xxx 2017
+- added Add/Edit to Transfer dialog
 - fixed bug edit.style() -- buffer overflow
 
 Changes in 3.48 - 15 Feb 2017

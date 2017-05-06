@@ -47,19 +47,20 @@ ifdef __SIGNAL__
 
 GeneralFailure PROC signo
 
-	mov	ecx,signo
-	mov	eax,1
-	.if	ecx == SIGTERM || ecx == SIGABRT
+	mov ecx,signo
+	mov eax,1
+	.if ecx == SIGTERM || ecx == SIGABRT
 
 		doszip_close()
-		.if	cflag & _C_DELHISTORY
+		.if cflag & _C_DELHISTORY
+
 			historyremove()
 		.endif
 		tcloseall()
-		ExecuteSection( "Exit" )
-		xor	eax,eax
+		ExecuteSection("Exit")
+		xor eax,eax
 	.endif
-	exit( eax )
+	exit(eax)
 	ret
 
 GeneralFailure ENDP
@@ -68,28 +69,28 @@ endif
 
 main	PROC C USES esi edi ebx
 
-	mov	esi,1
-	xor	edi,edi ; pointer to <filename>
+	mov esi,1
+	xor edi,edi ; pointer to <filename>
 
 	.while	esi < __argc
 
-		mov	eax,__argv
-		mov	ebx,[eax+esi*4]
-		mov	eax,[ebx]
+		mov eax,__argv
+		mov ebx,[eax+esi*4]
+		mov eax,[ebx]
 
 		.switch al
 
 		  .case '?'
 		   exitusage:
-			_print( addr copyright )
-			_print( addr cp_usage )
-			xor	eax,eax
-			jmp	toend
+			_print(addr copyright)
+			_print(addr cp_usage)
+			xor eax,eax
+			jmp toend
 
 		  .case '-'
 		  .case '/'
-			inc	ebx
-			shr	eax,8
+			inc ebx
+			shr eax,8
 			.switch al
 				;
 				; @3.42 - save environment block to file
@@ -97,47 +98,49 @@ main	PROC C USES esi edi ebx
 				; Note: This is called inside a child process
 				;
 			  .case 'E'
-				cmp	ah,':'
-				jne	exitusage
-				add	ebx,2
-				SaveEnvironment( ebx )
-				exit  ( 0 )
+				cmp ah,':'
+				jne exitusage
+				add ebx,2
+				SaveEnvironment(ebx)
+				exit(0)
 
 			  .case 'N'
-				inc	ebx
-				.if	strtolx( ebx )
-					mov	numfblock,eax
+				inc ebx
+				.if strtolx(ebx)
+
+					mov numfblock,eax
 				.endif
 				.endc
 			  .case 'C'
-				inc	ebx
-				.if	filexist( ebx ) == 2
-					free( _pgmpath )
-					salloc( ebx )
-					mov	_pgmpath,eax
+				inc ebx
+				.if filexist(ebx) == 2
+
+					free(_pgmpath)
+					salloc(ebx)
+					mov _pgmpath,eax
 					.endc
 				.endif
 			  .default
-				jmp	exitusage
+				jmp exitusage
 			.endsw
 			.endc
 
 		  .default
-			mov	edi,ebx
+			mov edi,ebx
 		.endsw
 
-		inc	esi
+		inc esi
 	.endw
 
 	SetConsoleTitle( DZ_Title )
 
-	.if	!doszip_init( edi )
+	.if !doszip_init( edi )
 
 		_print( addr copyright )
 
 		doszip_open()
 ifdef __SIGNAL__
-		mov	ebx,GeneralFailure
+		mov ebx,GeneralFailure
 		signal( SIGINT,	  ebx ) ; interrupt
 		signal( SIGILL,	  ebx ) ; illegal instruction - invalid function image
 		signal( SIGFPE,	  ebx ) ; floating point exception
@@ -150,18 +153,18 @@ ifdef __SIGNAL__
 else
 		doszip_modal()
 		doszip_close()
-		.if	cflag & _C_DELHISTORY
+		.if cflag & _C_DELHISTORY
 
 			;historyremove()
 		.endif
 		tcloseall()
 
-		.if	CFGetSection( "Exit" )
+		.if CFGetSection("Exit")
 
-			CFExecute( eax )
+			CFExecute(eax)
 		.endif
 		;ExecuteSection( "Exit" )
-		xor	eax,eax
+		xor eax,eax
 endif
 	.endif
 

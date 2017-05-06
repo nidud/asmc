@@ -331,12 +331,12 @@ apiupdate ENDP
 
 apimode PROC
 
-	mov	eax,24
-	.if	cflag & _C_EGALINE
+	mov eax,24
+	.if cflag & _C_EGALINE
 
-		mov	eax,49
+		mov eax,49
 	.endif
-	conssetl( eax )
+	conssetl(eax)
 
 apimode ENDP
 
@@ -353,22 +353,22 @@ apiega	ENDP
 
 open_idd PROC USES ebx id, lpMTitle
 
-	mov	eax,id
-	.if	rsopen( menus_iddtable[eax*4] )
+	mov eax,id
+	.if rsopen( menus_iddtable[eax*4] )
 
-		push	eax
-		.if	cflag & _C_MENUSLINE
+		push eax
+		.if cflag & _C_MENUSLINE
 
-			mov	eax,id
-			mov	ecx,menus_xtitle[eax*4]
-			mov	edx,menus_xpos[eax*4]
+			mov eax,id
+			mov ecx,menus_xtitle[eax*4]
+			mov edx,menus_xpos[eax*4]
 			scgetws( edx, 0, ecx )
-			mov	ebx,lpMTitle
-			mov	[ebx],eax
-			movzx	eax,at_foreground[F_MenusKey]
+			mov ebx,lpMTitle
+			mov [ebx],eax
+			movzx eax,at_foreground[F_MenusKey]
 			scputa( edx, 0, ecx, eax )
 		.endif
-		pop	eax
+		pop eax
 	.endif
 	ret
 
@@ -376,11 +376,11 @@ open_idd ENDP
 
 close_idd PROC USES eax edx id, wpMenusTitle
 
-	.if	cflag & _C_MENUSLINE
+	.if cflag & _C_MENUSLINE
 
-		mov	eax,id
-		mov	edx,menus_xtitle[eax*4]
-		mov	eax,menus_xpos[eax*4]
+		mov eax,id
+		mov edx,menus_xtitle[eax*4]
+		mov eax,menus_xpos[eax*4]
 		scputws(eax,0,edx,wpMenusTitle)
 	.endif
 	ret
@@ -391,47 +391,47 @@ modal_idd PROC USES esi edi ebx index, stInfo, dialog, wpMenusTitle
 
 local	stBuffer[256]:WORD
 
-	lea	esi,stBuffer
-	mov	edi,dialog
+	lea esi,stBuffer
+	mov edi,dialog
 	wcpushst(esi, stInfo)
 	dlinit(edi)
 	dlshow(edi)
 	msloop()
 	dlevent(edi)
-	mov	ebx,eax
-	movzx	eax,[edi].S_DOBJ.dl_index
-	shl	eax,4
-	add	eax,[edi].S_DOBJ.dl_object
-	movzx	edi,[eax].S_TOBJ.to_flag
-	and	edi,_O_STATE or _O_FLAGB
+	mov ebx,eax
+	movzx eax,[edi].S_DOBJ.dl_index
+	shl eax,4
+	add eax,[edi].S_DOBJ.dl_object
+	movzx edi,[eax].S_TOBJ.to_flag
+	and edi,_O_STATE or _O_FLAGB
 	wcpopst(esi)
 	close_idd(index, wpMenusTitle)
-	mov	edx,edi
-	mov	eax,ebx
+	mov edx,edi
+	mov eax,ebx
 	ret
 
 modal_idd ENDP
 
 readtools PROC PRIVATE USES esi edi ebx section, dialog, index, lsize
 
-local	handle, p, buffer[512]:SBYTE
+  local handle, p, buffer[512]:SBYTE
 
-	mov	eax,dialog
-	mov	ebx,[eax].S_DOBJ.dl_object
-	mov	edi,index
+	mov eax,dialog
+	mov ebx,[eax].S_DOBJ.dl_object
+	mov edi,index
 
-	.if	CFGetSection( section )
+	.if CFGetSection( section )
 
-		mov	handle,eax
+		mov handle,eax
 
-		.while	CFGetEntryID(handle, edi)
+		.while CFGetEntryID(handle, edi)
 
-			lea	esi,buffer
-			strcpy( esi, eax )
+			lea esi,buffer
+			strcpy(esi, eax)
 
-			mov	esi,strstart(esi)
-			mov	p,esi
-			mov	ecx,36
+			mov esi,strstart(esi)
+			mov p,esi
+			mov ecx,36
 
 			.repeat
 
@@ -441,11 +441,11 @@ local	handle, p, buffer[512]:SBYTE
 				  .case ','
 
 					mov byte ptr [esi-1],0		; terminate text line
-					mov	esi,strstart(esi)	; start of command tail
-					mov	ecx,lsize
-					mov	edx,[ebx].S_TOBJ.to_data
-					xchg	edi,edx
-					xor	eax,eax
+					mov esi,strstart(esi)	; start of command tail
+					mov ecx,lsize
+					mov edx,[ebx].S_TOBJ.to_data
+					xchg edi,edx
+					xor eax,eax
 
 					.while	ecx
 
@@ -453,7 +453,7 @@ local	handle, p, buffer[512]:SBYTE
 						.break .if !al
 						.break .if al == ']'
 
-						.if	al == '['
+						.if al == '['
 
 							mov ah,al
 							.continue
@@ -462,62 +462,62 @@ local	handle, p, buffer[512]:SBYTE
 						dec ecx
 					.endw
 
-					mov	ecx,1
-					mov	al,0
+					mov ecx,1
+					mov al,0
 					stosb
-					mov	edi,edx
+					mov edi,edx
 					.endc .if !ah
 
-					or	[ebx].S_TOBJ.to_flag,_O_FLAGB
+					or [ebx].S_TOBJ.to_flag,_O_FLAGB
 					.endc
 
 				  .case '<'
-					mov	ecx,1
+					mov ecx,1
 					.endc
 
 				  .case 0
 				   error:
-					CFError( section, p )
-					xor	edi,edi
+					CFError(section, p)
+					xor edi,edi
 					.break(1)
 				.endsw
 
 			.untilcxz
 
-			mov	esi,p
-			mov	eax,76
-			mul	edi
-			add	eax,78
-			mov	edx,dialog
-			mov	edx,[edx].S_DOBJ.dl_wp
-			add	edx,eax
+			mov esi,p
+			mov eax,76
+			mul edi
+			add eax,78
+			mov edx,dialog
+			mov edx,[edx].S_DOBJ.dl_wp
+			add edx,eax
 
-			.if	BYTE PTR [esi] == '<'
+			.if BYTE PTR [esi] == '<'
 
 				wcputw( edx, 38, 00C4h )
-				and	[ebx].S_TOBJ.to_flag,not _O_FLAGB
+				and [ebx].S_TOBJ.to_flag,not _O_FLAGB
 
 			.else
 
-				add	edx,4
-				wcputs( edx, 0, 32, esi )
-				mov	eax,not _O_STATE
-				and	[ebx].S_TOBJ.to_flag,ax
+				add edx,4
+				wcputs(edx, 0, 32, esi)
+				mov eax,not _O_STATE
+				and [ebx].S_TOBJ.to_flag,ax
 
-				.if	strchr( esi, '&' )
+				.if strchr(esi, '&')
 
-					mov	al,[eax+1]
-					mov	[ebx].S_TOBJ.to_ascii,al
+					mov al,[eax+1]
+					mov [ebx].S_TOBJ.to_ascii,al
 				.endif
 			.endif
 
-			add	ebx,16
-			inc	edi
+			add ebx,16
+			inc edi
 			.break .if edi >= 20
 		.endw
 	.endif
 
-	mov	eax,edi
+	mov eax,edi
 	ret
 
 readtools ENDP
@@ -528,101 +528,101 @@ local	mtitle, tbuf[256]:BYTE
 
 	.while	1
 
-		xor	esi,esi
-		.break .if !open_idd( ID_MTOOLS, addr mtitle )
+		xor esi,esi
+		.break .if !open_idd(ID_MTOOLS, addr mtitle)
 
-		mov	ebx,eax
-		.if	!readtools( section, eax, esi, lsize )
+		mov ebx,eax
+		.if !readtools(section, eax, esi, lsize)
 
-			close_idd( ID_MTOOLS, mtitle )
-			dlclose( ebx )
+			close_idd(ID_MTOOLS, mtitle)
+			dlclose(ebx)
 			.break
 		.endif
 
-		mov	[ebx].S_DOBJ.dl_count,al
-		add	al,2
-		mov	[ebx].S_DOBJ.dl_rect.S_RECT.rc_row,al
-		mov	ah,al
-		mov	al,[ebx].S_DOBJ.dl_rect.S_RECT.rc_col
-		movzx	edx,al
-		shl	eax,16
+		mov [ebx].S_DOBJ.dl_count,al
+		add al,2
+		mov [ebx].S_DOBJ.dl_rect.S_RECT.rc_row,al
+		mov ah,al
+		mov al,[ebx].S_DOBJ.dl_rect.S_RECT.rc_col
+		movzx edx,al
+		shl eax,16
 
-		rcframe( eax, [ebx].S_DOBJ.dl_wp, edx, 0 )
-		strnzcpy( addr tbuf, section, 16 )
-		modal_idd( ID_MTOOLS, eax, ebx, mtitle )
+		rcframe(eax, [ebx].S_DOBJ.dl_wp, edx, 0)
+		strnzcpy(addr tbuf, section, 16)
+		modal_idd(ID_MTOOLS, eax, ebx, mtitle)
 
-		mov	esi,eax ; dlevent() | key (Left/Right)
-		mov	edi,edx ; flag _O_STATE or _O_FLAGB
-		movzx	edx,[ebx].S_DOBJ.dl_count
+		mov esi,eax ; dlevent() | key (Left/Right)
+		mov edi,edx ; flag _O_STATE or _O_FLAGB
+		movzx edx,[ebx].S_DOBJ.dl_count
 
-		.if	eax && edx >= eax
+		.if eax && edx >= eax
 
-			shl	eax,4
-			lea	edx,[ebx+eax]
-			strnzcpy( addr tbuf, [edx].S_TOBJ.to_data, lsize )
+			shl eax,4
+			lea edx,[ebx+eax]
+			strnzcpy(addr tbuf, [edx].S_TOBJ.to_data, lsize)
 		.endif
 
-		movzx	eax,[ebx].S_DOBJ.dl_count
-		dlclose( ebx )
+		movzx eax,[ebx].S_DOBJ.dl_count
+		dlclose(ebx)
 
-		.if	esi && edx >= esi
+		.if esi && edx >= esi
 
-			lea	eax,tbuf
-			mov	edx,p
-			.if	edi == _O_FLAGB
+			lea eax,tbuf
+			mov edx,p
+			.if edi == _O_FLAGB
 
-				mov	section,eax
+				mov section,eax
 				.continue
 			.endif
-			.if	edx
+			.if edx
 
-				strcpy( edx, eax )
+				strcpy(edx, eax)
 				msloop()
 				.break
 			.endif
 
-			command( eax )
+			command(eax)
 			mov esi,eax
 		.endif
 
-		.if	mousep()
+		.if mousep()
 
-			mov	esi,MOUSECMD
+			mov esi,MOUSECMD
 		.endif
 		.break
 	.endw
-	mov	eax,esi
+	mov eax,esi
 	ret
 
 tools_idd ENDP
 
 cmtool PROC PRIVATE
 
-local	tool[128]:BYTE
+  local tool[128]:BYTE
 
-	.if	CFGetSectionID( addr cp_tools, eax )
+	.if CFGetSectionID( addr cp_tools, eax )
 
-		mov	edx,eax
-		mov	eax,[eax]
+		mov edx,eax
+		mov eax,[eax]
 
-		.if	ax != '><'
+		.if ax != '><'
 
-			.if	strchr( edx, ',' )
+			.if strchr( edx, ',' )
 
-				inc	eax
+				inc eax
 				strstart( eax )
-				mov	edx,eax
+				mov edx,eax
 				strnzcpy( addr tool, edx, 128-1 )
 
-				.if	tool != '['
+				.if tool != '['
 
 					command( eax )
 				.else
 
-					lea	ecx,[eax+1]
-					.if	strchr( strcpy( eax, ecx ), ']' )
+					lea ecx,[eax+1]
+					.if strchr( strcpy( eax, ecx ), ']' )
 
-						mov	BYTE PTR [eax],0
+						mov BYTE PTR [eax],0
 						tools_idd( 128, 0, addr tool )
 					.endif
 				.endif
@@ -635,8 +635,8 @@ cmtool	ENDP
 
 CMTOOLP macro q
 cmtool&q PROC
-	mov	eax,q-1
-	jmp	cmtool
+	mov eax,q-1
+	jmp cmtool
 cmtool&q ENDP
 	endm
 
@@ -654,74 +654,76 @@ menus_modalidd PROC USES esi edi ebx id
 
   local object, mtitle, dialog
 
-	xor	esi,esi
+	xor esi,esi
 
-	.if	id == ID_MTOOLS
+	.if id == ID_MTOOLS
 
 		tools_idd( 128, 0, addr cp_tools )
-		mov	esi,eax
+		mov esi,eax
 	.else
 
-		mov	eax,IDD_DZMenuPanel
-		mov	BYTE PTR [eax+6],0
-		.if	id == ID_MPANELB
-			mov	BYTE PTR [eax+6],42
+		mov eax,IDD_DZMenuPanel
+		mov BYTE PTR [eax+6],0
+		.if id == ID_MPANELB
+
+			mov BYTE PTR [eax+6],42
 		.endif
 
-		.if	open_idd( id, addr mtitle )
+		.if open_idd( id, addr mtitle )
 
-			mov	dialog,eax
-			mov	ebx,eax
-			add	eax,16
-			mov	object,eax
-			movzx	ecx,[ebx].S_DOBJ.dl_count
-			add	ebx,S_TOBJ.to_data[16]
-			mov	edx,id
-			mov	edx,menus_oid[edx*4]
+			mov dialog,eax
+			mov ebx,eax
+			add eax,16
+			mov object,eax
+			movzx ecx,[ebx].S_DOBJ.dl_count
+			add ebx,S_TOBJ.to_data[16]
+			mov edx,id
+			mov edx,menus_oid[edx*4]
 
-			.while	ecx
+			.while ecx
 
-				mov	eax,[edx]
-				mov	[ebx],eax
-				add	ebx,SIZE S_TOBJ
-				add	edx,8
-				dec	ecx
+				mov eax,[edx]
+				mov [ebx],eax
+				add ebx,SIZE S_TOBJ
+				add edx,8
+				dec ecx
 			.endw
 
-			mov	eax,id
-			xor	edx,edx
+			mov eax,id
+			xor edx,edx
 
-			.if	!eax
+			.if !eax
 
-				mov	edx,config.c_apath.ws_flag
+				mov edx,config.c_apath.ws_flag
 			.elseif eax == ID_MPANELB
 
-				mov	edx,config.c_bpath.ws_flag
+				mov edx,config.c_bpath.ws_flag
 			.endif
 
-			.if	edx
+			.if edx
 
-				mov	ebx,object
-				mov	eax,_O_FLAGB
-				mov	ecx,_W_LONGNAME
+				mov ebx,object
+				mov eax,_O_FLAGB
+				mov ecx,_W_LONGNAME
 
-				push	0
-				push	_W_DRVINFO
-				push	_W_MINISTATUS
-				push	_W_HIDDEN
-				push	_W_WIDEVIEW
-				push	_W_DETAIL
+				push 0
+				push _W_DRVINFO
+				push _W_MINISTATUS
+				push _W_HIDDEN
+				push _W_WIDEVIEW
+				push _W_DETAIL
 
-				.while	ecx
-					.if	edx & ecx
+				.while ecx
+					.if edx & ecx
+
 						or [ebx].S_TOBJ.to_flag,ax
 					.endif
-					add	ebx,SIZE S_TOBJ
-					pop	ecx
+					add ebx,SIZE S_TOBJ
+					pop ecx
 				.endw
 
-				mov	eax,_O_RADIO
-				and	edx,_W_SORTSIZE or _W_NOSORT
+				mov eax,_O_RADIO
+				and edx,_W_SORTSIZE or _W_NOSORT
 				.switch edx
 				  .case _W_SORTNAME
 					or [ebx+0*16].S_TOBJ.to_flag,ax
@@ -740,45 +742,45 @@ menus_modalidd PROC USES esi edi ebx id
 				.endsw
 			.endif
 
-			mov	eax,id
-			shl	eax,4
+			mov eax,id
+			shl eax,4
 			modal_idd( id, menus_TOBJ[eax].S_TOBJ.to_data, dialog, mtitle )
-			mov	esi,eax
-			mov	edi,edx
-			mov	eax,dialog
-			movzx	eax,[eax].S_DOBJ.dl_count
+			mov esi,eax
+			mov edi,edx
+			mov eax,dialog
+			movzx eax,[eax].S_DOBJ.dl_count
 
 			dlclose(dialog) ; -- return AX in DX
 
-			.if	esi && edx >= esi
+			.if esi && edx >= esi
 
-				mov	edx,id
-				mov	menus_idd,edx
-				mov	eax,esi
-				dec	eax
-				mov	menus_obj,eax
-				.if	!( edi & _O_STATE )
+				mov edx,id
+				mov menus_idd,edx
+				mov eax,esi
+				dec eax
+				mov menus_obj,eax
+				.if !( edi & _O_STATE )
 
-					mov	edx,menus_oid[edx*4]
-					call	[edx+eax*8].S_GLCMD.gl_proc
+					mov  edx,menus_oid[edx*4]
+					call [edx+eax*8].S_GLCMD.gl_proc
 				.endif
 			.endif
 
-			.if	mousep()
+			.if mousep()
 
-				mov	esi,MOUSECMD
+				mov esi,MOUSECMD
 			.endif
 		.endif
 	.endif
-	mov	eax,esi
+	mov eax,esi
 	ret
 
 menus_modalidd ENDP
 
 menus_event PROC USES esi edi ebx id, key
 
-	mov	edi,key
-	mov	esi,1
+	mov edi,key
+	mov esi,1
 
 	.while	1
 
@@ -786,111 +788,111 @@ menus_event PROC USES esi edi ebx id, key
 
 		  .case MOUSECMD
 
-			xor	edi,edi
-			xor	esi,esi
+			xor edi,edi
+			xor esi,esi
 			.endc
 
 		  .case KEY_LEFT
 		  .case KEY_RIGHT
 
-			mov	eax,edi
+			mov eax,edi
 			.break	.if !esi
 
-			mov	eax,id
-			.if	edi == KEY_RIGHT
+			mov eax,id
+			.if edi == KEY_RIGHT
 
-				inc	eax
-				.if	eax > ID_MPANELB
+				inc eax
+				.if eax > ID_MPANELB
 
-					xor	eax,eax
+					xor eax,eax
 				.endif
 			.else
-				dec	eax
-				.if	eax == -1
+				dec eax
+				.if eax == -1
 
-					mov	eax,ID_MPANELB
+					mov eax,ID_MPANELB
 				.endif
 			.endif
 
-			mov	id,eax
+			mov id,eax
 			menus_modalidd( eax )
-			mov	edi,eax
+			mov edi,eax
 			.endc
 
 		  .case KEY_ESC
-			mov	eax,edi
+			mov eax,edi
 			.break	.if !esi
-			xor	eax,eax
+			xor eax,eax
 			.break
 
 		  .default
-			.if	esi
+			.if esi
 
 				msloop()
 				.break
 			.endif
 			.endc .if !edi
 
-			mov	ecx,7
-			xor	ebx,ebx
+			mov ecx,7
+			xor ebx,ebx
 			.repeat
-				.if	edi == menus_shortkeys[ebx]
+				.if edi == menus_shortkeys[ebx]
 
-					shr	ebx,2
-					mov	id,ebx
+					shr ebx,2
+					mov id,ebx
 					menus_modalidd( ebx )
-					mov	edi,eax
-					mov	esi,1
+					mov edi,eax
+					mov esi,1
 					.break
 				.endif
-				add	ebx,4
+				add ebx,4
 			.untilcxz
-			mov	eax,edi
-			.break	.if !esi
+			mov eax,edi
+			.break .if !esi
 		.endsw
 
-		.if	!esi
+		.if !esi
 
-			tgetevent()
-			mov	edi,eax
-			.if	eax == MOUSECMD
+
+			mov edi,tgetevent()
+			.if eax == MOUSECMD
 
 				xor edi,edi
 			.endif
 		.endif
 
-		.if	cflag & _C_MENUSLINE && !keybmouse_y && !edi
+		.if cflag & _C_MENUSLINE && !keybmouse_y && !edi
 
-			.if	mousep()
+			.if mousep()
 
-				mov	eax,keybmouse_x
-				mov	edx,eax
-				mov	ecx,ID_MPANELB
+				mov eax,keybmouse_x
+				mov edx,eax
+				mov ecx,ID_MPANELB
 
-				.if	eax >= 57
+				.if eax >= 57
 
-					mov	eax,MOUSECMD
+					mov eax,MOUSECMD
 					.break
 				.endif
 
 				.repeat
-					mov	ebx,ecx
-					dec	ecx
-					shl	ebx,4
-					add	ebx,offset menus_TOBJ
+					mov ebx,ecx
+					dec ecx
+					shl ebx,4
+					add ebx,offset menus_TOBJ
 				.until	al >= [ebx+4]
 
-				mov	ah,[ebx].S_TOBJ.to_ascii
-				mov	al,0
-				mov	edi,eax
-				inc	ecx
-				mov	id,ecx
+				mov ah,[ebx].S_TOBJ.to_ascii
+				mov al,0
+				mov edi,eax
+				inc ecx
+				mov id,ecx
 
 				.continue
 			.endif
 		.endif
 
-		mov	eax,MOUSECMD
+		mov eax,MOUSECMD
 		.break .if !edi
 	.endw
 	ret
@@ -898,7 +900,7 @@ menus_event PROC USES esi edi ebx id, key
 menus_event ENDP
 
 menus_getevent PROC
-	menus_event( 0, MOUSECMD )
+	menus_event(0, MOUSECMD)
 	ret
 menus_getevent ENDP
 

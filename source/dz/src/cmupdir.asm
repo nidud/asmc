@@ -6,8 +6,9 @@ include doszip.inc
 	.code
 
 cmupdir PROC
-	.if panel_event( cpanel, KEY_HOME )
-	    panel_event( cpanel, KEY_ENTER )
+	.if panel_event(cpanel, KEY_HOME)
+
+	    panel_event(cpanel, KEY_ENTER)
 	.endif
 	ret
 cmupdir ENDP

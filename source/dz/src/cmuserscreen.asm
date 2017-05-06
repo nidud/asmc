@@ -6,7 +6,7 @@ include doszip.inc
 	.code
 
 cmuserscreen PROC
-	call	consuser
+	consuser()
 	ret
 cmuserscreen ENDP
 

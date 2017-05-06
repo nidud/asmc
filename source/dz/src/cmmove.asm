@@ -31,77 +31,102 @@ jmp_count dd 0
 	.code
 
 move_initfiles PROC PRIVATE filename
-	strfcat( __outfile, __outpath, filename )
-	strfcat( __srcfile, __srcpath, filename )
+
+	strfcat(__outfile, __outpath, filename)
+	strfcat(__srcfile, __srcpath, filename)
 	ret
+
 move_initfiles ENDP
 
 move_deletefile PROC PRIVATE result, flag
+
 	mov eax,result
 	add eax,copy_jump
 	.if eax
+
 		mov eax,result
 		.if !eax
+
 			mov copy_jump,eax
 			inc jmp_count
 		.endif
 	.else
 		.if BYTE PTR flag & _A_RDONLY
-			setfattr( __srcfile, 0 )
+
+			setfattr(__srcfile, 0)
 		.endif
-		remove( __srcfile )
+		remove(__srcfile)
 		mov eax,result
 	.endif
 	ret
+
 move_deletefile ENDP
 
 fp_movedirectory PROC PRIVATE directory
-	.if !progress_set( 0, directory, 0 )
-		setfattr( directory, eax )
-		.if _rmdir( directory )
+
+	.if !progress_set(0, directory, 0)
+
+		setfattr(directory, eax)
+		.if _rmdir(directory)
+
 			xor eax,eax
 			.if jmp_count == eax
-				erdelete( directory )
+
+				erdelete(directory)
 			.endif
 		.endif
 	.endif
 	ret
+
 fp_movedirectory ENDP
 
 fp_movefile PROC PRIVATE directory, wfblk
-	fp_copyfile( directory, wfblk )
-	mov	edx,wfblk
-	move_deletefile( eax, [edx].S_WFBLK.wf_attrib )
+
+	fp_copyfile(directory, wfblk)
+	mov edx,wfblk
+	move_deletefile(eax, [edx].S_WFBLK.wf_attrib)
 	ret
+
 fp_movefile ENDP
 
 fblk_movefile PROC PRIVATE USES ebx fblk
+
 	mov ebx,fblk
-	.if !progress_set( addr [ebx].S_FBLK.fb_name, __outpath, [ebx].S_FBLK.fb_size )
+	.if !progress_set(addr [ebx].S_FBLK.fb_name, __outpath, [ebx].S_FBLK.fb_size)
+
 		.if rename( __srcfile, __outfile )
-			copyfile( [ebx].S_FBLK.fb_size, [ebx].S_FBLK.fb_time, [ebx].S_FBLK.fb_flag )
+
+			copyfile([ebx].S_FBLK.fb_size, [ebx].S_FBLK.fb_time, [ebx].S_FBLK.fb_flag)
 			move_deletefile( eax, [ebx].S_FBLK.fb_flag )
 		.endif
 	.endif
 	ret
+
 fblk_movefile ENDP
 
 fblk_movedirectory PROC PRIVATE USES esi edi fblk
-	local	path[512]:BYTE
-	lea	edi,path
-	mov	esi,fblk
-	add	esi,S_FBLK.fb_name
+
+  local path[512]:BYTE
+
+	lea edi,path
+	mov esi,fblk
+	add esi,S_FBLK.fb_name
+
 	.if !progress_set( esi, __outpath, 0 )
-		move_initfiles( esi )
-		.if rename( eax, __outfile )
-			strfcat( edi, __srcpath, esi )
+
+		move_initfiles(esi)
+		.if rename(eax, __outfile)
+
+			strfcat(edi, __srcpath, esi)
 			mov fp_directory,fp_copydirectory
-			.if scansub( edi, addr cp_stdmask, 1 )
-				mov	eax,-1
+			.if scansub(edi, addr cp_stdmask, 1)
+
+				mov eax,-1
 			.else
 				.if copy_jump == eax
+
 					mov fp_directory,fp_movedirectory
-					scansub( edi, addr cp_stdmask, 0 )
+					scansub(edi, addr cp_stdmask, 0)
 				.else
 					mov copy_jump,eax
 					inc jmp_count
@@ -132,14 +157,16 @@ cmmove	PROC USES edi
 
 				mov eax,[edi]
 				.if eax & _FB_SELECTED
+
 					.while	1
 						.if eax & _A_SUBDIR
-							fblk_movedirectory( edi )
+
+							fblk_movedirectory(edi)
 						.else
 							mov eax,edi
 							add eax,S_FBLK.fb_name
-							move_initfiles( eax )
-							fblk_movefile( edi )
+							move_initfiles(eax)
+							fblk_movefile(edi)
 						.endif
 						.break .if eax
 						mov eax,not _FB_SELECTED
@@ -150,9 +177,10 @@ cmmove	PROC USES edi
 					.endw
 				.else
 					.if eax & _A_SUBDIR
-						fblk_movedirectory( edi )
+
+						fblk_movedirectory(edi)
 					.else
-						fblk_movefile( edi )
+						fblk_movefile(edi)
 					.endif
 				.endif
 				progress_close()

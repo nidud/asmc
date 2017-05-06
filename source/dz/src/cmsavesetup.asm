@@ -13,7 +13,7 @@ cmsavesetup PROC
 		.if !config_save()
 
 			eropen( __srcfile )
-			inc	eax
+			inc eax
 		.endif
 	.endif
 	ret

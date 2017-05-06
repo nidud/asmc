@@ -69,7 +69,9 @@ di_ReadDirectory:
 
 di_SubInfo PROC PRIVATE USES esi edi ebx s1, s2
   local x,y,col
-	.if	rsopen(IDD_DZSubInfo)
+
+	.if rsopen(IDD_DZSubInfo)
+
 		mov	edi,eax
 		movzx	eax,[edi].S_DOBJ.dl_rect.rc_x
 		add	eax,5
@@ -79,36 +81,42 @@ di_SubInfo PROC PRIVATE USES esi edi ebx s1, s2
 		mov	y,eax
 		movzx	eax,[edi].S_DOBJ.dl_rect.rc_col
 		mov	col,eax
-		wctitle( [edi].S_DOBJ.dl_wp, eax, s2 )
-		dlshow( edi )
-		mov	edx,y
-		mov	ecx,x
-		add	cl,10
-		scpath( ecx, edx, 20, s1 )
-		sub	cl,11
-		inc	edx
-		scputf( ecx, edx, 0, 0, "%10u", di_filecount )
-		mov	eax,di_subdcount
-		dec	eax
-		inc	edx
-		scputf( ecx, edx, 0, 0, "%10u", eax )
-		mkbstring( s1, qrax )
-		mov	ebx,eax
-		mov	esi,edx
-		mov	edx,y
-		mov	ecx,x
-		add	ecx,1
-		add	edx,4
-		scputf( ecx, edx, 0, 0, "total %s byte", s1 )
-		.if	ebx && esi
-			mov	al,cp_bytesize[esi]
-			add	ecx,6
-			inc	edx
-			scputf( ecx, edx, 0, 0, "%u%c", ebx, eax )
+		wctitle([edi].S_DOBJ.dl_wp, eax, s2)
+		dlshow(edi)
+
+		mov edx,y
+		mov ecx,x
+		add cl,10
+		scpath(ecx, edx, 20, s1)
+
+		sub cl,11
+		inc edx
+		scputf(ecx, edx, 0, 0, "%10u", di_filecount)
+
+		mov eax,di_subdcount
+		dec eax
+		inc edx
+		scputf(ecx, edx, 0, 0, "%10u", eax)
+
+		mov ebx,mkbstring(s1, qrax)
+		mov esi,edx
+		mov edx,y
+		mov ecx,x
+		add ecx,1
+		add edx,4
+		scputf(ecx, edx, 0, 0, "total %s byte", s1)
+
+		.if ebx && esi
+
+			mov al,cp_bytesize[esi]
+			add ecx,6
+			inc edx
+			scputf(ecx, edx, 0, 0, "%u%c", ebx, eax)
 		.endif
-		dlmodal( edi )
+		dlmodal(edi)
 	.endif
 	ret
+
 di_SubInfo ENDP
 
 di_SelectedFiles PROC PRIVATE USES esi edi s1
@@ -150,7 +158,7 @@ di_SelectedFiles PROC PRIVATE USES esi edi s1
 
 		mov eax,cpanel
 		mov eax,[eax].S_PANEL.pn_wsub
-		di_SubInfo(strcpy( s1, [eax].S_WSUB.ws_path ), "Selected Files")
+		di_SubInfo(strcpy(s1, [eax].S_WSUB.ws_path), "Selected Files")
 	.endif
 
 	ret
@@ -158,7 +166,7 @@ di_SelectedFiles ENDP
 
 di_cmSubInfo PROC PRIVATE USES esi edi ebx panel
 
-local	path[_MAX_PATH]:BYTE
+  local path[_MAX_PATH]:BYTE
 
 	mov esi,panel
 	lea edi,path
@@ -208,7 +216,7 @@ cmbsubinfo ENDP
 
 cmsubsize PROC
 
-local	path[_MAX_PATH]:BYTE
+  local path[_MAX_PATH]:BYTE
 
 	di_Init()
 

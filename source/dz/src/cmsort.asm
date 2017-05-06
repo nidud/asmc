@@ -45,103 +45,103 @@ local	path[_MAX_PATH]:BYTE
 cmsort	ENDP
 
 cmnosort:
-	.if	panel_state(eax)
+	.if panel_state(eax)
 
-		push	eax
-		mov	edx,[eax].S_PANEL.pn_wsub
-		or	[edx].S_WSUB.ws_flag,_W_NOSORT
+		push eax
+		mov edx,[eax].S_PANEL.pn_wsub
+		or  [edx].S_WSUB.ws_flag,_W_NOSORT
 		panel_read(eax)
-		pop	eax
+		pop eax
 		panel_putitem(eax, 0)
-		mov	eax,1
+		mov eax,1
 	.endif
 	ret
 
 cmanosort PROC
-	mov	eax,panela
-	jmp	cmnosort
+	mov eax,panela
+	jmp cmnosort
 cmanosort ENDP
 
 cmbnosort PROC
-	mov	eax,panelb
-	jmp	cmnosort
+	mov eax,panelb
+	jmp cmnosort
 cmbnosort ENDP
 
 cmcnosort PROC
-	mov	eax,cpanel
-	jmp	cmnosort
+	mov eax,cpanel
+	jmp cmnosort
 cmcnosort ENDP
 
 cmadate PROC
-	mov	eax,panela
-	mov	edx,_W_SORTDATE
-	jmp	cmsort
+	mov eax,panela
+	mov edx,_W_SORTDATE
+	jmp cmsort
 cmadate ENDP
 
 cmbdate PROC
-	mov	eax,panelb
-	mov	edx,_W_SORTDATE
-	jmp	cmsort
+	mov eax,panelb
+	mov edx,_W_SORTDATE
+	jmp cmsort
 cmbdate ENDP
 
 cmcdate PROC
-	mov	eax,cpanel
-	mov	edx,_W_SORTDATE
-	jmp	cmsort
+	mov eax,cpanel
+	mov edx,_W_SORTDATE
+	jmp cmsort
 cmcdate ENDP
 
 cmatype PROC
-	mov	eax,panela
-	mov	edx,_W_SORTTYPE
-	jmp	cmsort
+	mov eax,panela
+	mov edx,_W_SORTTYPE
+	jmp cmsort
 cmatype ENDP
 
 cmbtype PROC
-	mov	eax,panelb
-	mov	edx,_W_SORTTYPE
-	jmp	cmsort
+	mov eax,panelb
+	mov edx,_W_SORTTYPE
+	jmp cmsort
 cmbtype ENDP
 
 cmctype PROC
-	mov	eax,cpanel
-	mov	edx,_W_SORTTYPE
-	jmp	cmsort
+	mov eax,cpanel
+	mov edx,_W_SORTTYPE
+	jmp cmsort
 cmctype ENDP
 
 cmasize PROC
-	mov	eax,panela
-	mov	edx,_W_SORTSIZE
-	jmp	cmsort
+	mov eax,panela
+	mov edx,_W_SORTSIZE
+	jmp cmsort
 cmasize ENDP
 
 cmbsize PROC
-	mov	eax,panelb
-	mov	edx,_W_SORTSIZE
-	jmp	cmsort
+	mov eax,panelb
+	mov edx,_W_SORTSIZE
+	jmp cmsort
 cmbsize ENDP
 
 cmcsize PROC
-	mov	eax,cpanel
-	mov	edx,_W_SORTSIZE
-	jmp	cmsort
+	mov eax,cpanel
+	mov edx,_W_SORTSIZE
+	jmp cmsort
 cmcsize ENDP
 
 cmaname PROC
-	mov	eax,panela
-	mov	edx,_W_SORTNAME
-	jmp	cmsort
+	mov eax,panela
+	mov edx,_W_SORTNAME
+	jmp cmsort
 cmaname ENDP
 
 cmbname PROC
-	mov	eax,panelb
-	mov	edx,_W_SORTNAME
-	jmp	cmsort
+	mov eax,panelb
+	mov edx,_W_SORTNAME
+	jmp cmsort
 cmbname ENDP
 
 cmcname PROC
-	mov	eax,cpanel
-	mov	edx,_W_SORTNAME
-	jmp	cmsort
+	mov eax,cpanel
+	mov edx,_W_SORTNAME
+	jmp cmsort
 cmcname ENDP
 
 	END

@@ -21,38 +21,39 @@ cp_quicksearch	db '&Quick Search: ',1Ah,'   ',0
 
 psearch PROC PRIVATE USES esi edi ebx cname, l, direction
 
-	local	fcb, cindex, lindex
+  local fcb, cindex, lindex
 
-	mov	ebx,cpanel		; current index
-	mov	esi,[ebx].S_PANEL.pn_fcb_index
-	add	esi,[ebx].S_PANEL.pn_cel_index
-	mov	lindex,esi
-	mov	cindex,esi
-	mov	edi,[ebx].S_PANEL.pn_fcb_count
-	mov	ebx,[ebx].S_PANEL.pn_wsub
-	mov	eax,[ebx].S_WSUB.ws_fcb
-	mov	fcb,eax
+	mov ebx,cpanel		; current index
+	mov esi,[ebx].S_PANEL.pn_fcb_index
+	add esi,[ebx].S_PANEL.pn_cel_index
+	mov lindex,esi
+	mov cindex,esi
+	mov edi,[ebx].S_PANEL.pn_fcb_count
+	mov ebx,[ebx].S_PANEL.pn_wsub
+	mov eax,[ebx].S_WSUB.ws_fcb
+	mov fcb,eax
 
-	.if !direction			; if (direction == 0) search from start
-		mov	lindex,edi	; (case BKSP)
-		mov	esi,edi
+	.if !direction		; if (direction == 0) search from start
+
+		mov lindex,edi	; (case BKSP)
+		mov esi,edi
 	.endif
 
 	.while	1
 
-		.if	esi >= edi
+		.if esi >= edi
 
-			xor	esi,esi
-			mov	edi,lindex
-			mov	lindex,esi
+			xor esi,esi
+			mov edi,lindex
+			mov lindex,esi
 			.continue .if edi
 
-			xor	eax,eax
+			xor eax,eax
 			.break
 		.endif
 
-		mov	ebx,fcb
-		mov	ebx,[ebx+esi*4]
+		mov ebx,fcb
+		mov ebx,[ebx+esi*4]
 	  ifdef SKIPSUBDIR
 		.if !( BYTE PTR [ebx] & _A_SUBDIR )
 	  endif
@@ -69,30 +70,30 @@ psearch PROC PRIVATE USES esi edi ebx cname, l, direction
 	  ifdef SKIPSUBDIR
 		.endif
 	  endif
-		inc	esi
+		inc esi
 	.endw
 
-	mov	edx,cindex
+	mov edx,cindex
 	ret
 
 psearch ENDP
 
 cmquicksearch PROC USES esi edi ebx
 
-	local	cursor:S_CURSOR
-	local	stline[256]:WORD
-	local	fname[256]:BYTE
+  local cursor:S_CURSOR,
+	stline[256]:WORD,
+	fname[256]:BYTE
 
 	.if cpanel_state()
 
-		CursorGet( addr cursor )
+		CursorGet(addr cursor)
 		CursorOn()
-		wcpushst( addr stline, addr cp_quicksearch )
+		wcpushst(addr stline, addr cp_quicksearch)
 
-		lea	ebx,fname
-		mov	esi,15		; SI = x
-		mov	edi,_scrrow	; DI = y
-		_gotoxy( esi, edi )	; cursor to (x,y)
+		lea ebx,fname
+		mov esi,15		; SI = x
+		mov edi,_scrrow		; DI = y
+		_gotoxy(esi, edi)	; cursor to (x,y)
 
 		.repeat
 			tupdate()
@@ -104,16 +105,18 @@ cmquicksearch PROC USES esi edi ebx
 				.endc
 			  .case KEY_ENTER
 			  .case KEY_KPENTER
-				lea	eax,[esi-15]
+				lea eax,[esi-15]
 				psearch( ebx, eax, 1 )
 			  ifdef SKIPSUBDIR
-				xor	eax,eax
+				xor eax,eax
 			  else
 				.if eax
+
 					mov ecx,cpanel
 					mov eax,[ecx].S_PANEL.pn_fcb_index
 					add eax,[ecx].S_PANEL.pn_cel_index
 					.if eax == edx
+
 						inc eax
 					.else
 						xor eax,eax
@@ -129,51 +132,58 @@ cmquicksearch PROC USES esi edi ebx
 			  .case KEY_PGDN
 			  .case KEY_HOME
 			  .case KEY_END
-				panel_event( cpanel, eax )
-				xor	eax,eax
+				panel_event(cpanel, eax)
+				xor eax,eax
 				.endc
 			  .case KEY_BKSP
 				;
 				; delete char and search from start
 				;
 				.if SDWORD PTR esi > 15
-					dec	esi
-					mov	edx,edi
-					scputw( esi, edi, 2, ' ' )
-					_gotoxy( esi, edi )
-					xor	eax,eax
-					mov	ecx,15
-					jmp	event_back
+
+					dec esi
+					mov edx,edi
+					scputw(esi, edi, 2, ' ')
+					_gotoxy(esi, edi)
+					xor eax,eax
+					mov ecx,15
+					jmp event_back
 				.endif
-				xor	eax,eax
+				xor eax,eax
 				.endc
+
 			  .default
-				movzx	eax,al
-				mov	[ebx+esi-15],al
-				mov	ecx,14
+				movzx eax,al
+				mov [ebx+esi-15],al
+				mov ecx,14
+
 			   event_back:
-				push	eax
-				mov	edx,esi
-				sub	edx,ecx
-				psearch( ebx, edx, eax )
-				test	eax,eax
-				pop	eax
+				push eax
+				mov edx,esi
+				sub edx,ecx
+				psearch(ebx, edx, eax)
+				test eax,eax
+				pop eax
+
 				.if !ZERO?
+
 					.if eax
-						scputw( esi, edi, 1, eax )
+
+						scputw(esi, edi, 1, eax)
 						.if SDWORD PTR esi < 78
-							inc	esi
-							_gotoxy( esi, edi )
+
+							inc esi
+							_gotoxy(esi, edi)
 						.endif
 					.endif
 				.endif
-				xor	eax,eax
+				xor eax,eax
 			.endsw
 		.until	eax
-		wcpopst( addr stline )
-		CursorSet( addr cursor )
+		wcpopst(addr stline)
+		CursorSet(addr cursor)
 	.endif
-	xor	eax,eax
+	xor eax,eax
 	ret
 cmquicksearch ENDP
 

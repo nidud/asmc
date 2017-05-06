@@ -30,6 +30,7 @@ cp_ShiftX	db '1',0,0,0
 error_count	dd 0
 error_id	dd 0
 err_file	dd 0
+file_ext	dd 0
 chars		db "\abcdefghijklmnopqrstuvwxyz0123456789_@",0
 
 	.code
@@ -44,11 +45,11 @@ chars		db "\abcdefghijklmnopqrstuvwxyz0123456789_@",0
 ;
 
 clear_error PROC
-	free  ( err_file )
-	xor	eax,eax
-	mov	err_file,eax
-	mov	error_id,eax
-	mov	error_count,eax
+	free(err_file)
+	xor eax,eax
+	mov err_file,eax
+	mov error_id,eax
+	mov error_count,eax
 	ret
 clear_error ENDP
 
@@ -56,51 +57,51 @@ clear_error ENDP
 
 ParseLine PROC USES ecx edi esi ebx
 
-	mov	eax,SIZE ERFILE
-	mul	error_count
-	add	eax,err_file
-	mov	ebx,eax
-	mov	al,[esi]
+	mov eax,SIZE ERFILE
+	mul error_count
+	add eax,err_file
+	mov ebx,eax
+	mov al,[esi]
 
 	.switch al
 	  .case 'A'..'Z'
-		or	al,20h
+		or al,20h
 	.endsw
 
-	lea	edi,chars
-	mov	ecx,sizeof( chars )
-	repne	scasb
+	lea edi,chars
+	mov ecx,sizeof( chars )
+	repne scasb
 
-	.if	BYTE PTR [edi-1]
+	.if BYTE PTR [edi-1]
 
-		mov	edi,esi
+		mov edi,esi
 
-		.if	strchr( edi, 40 )
+		.if strchr( edi, 40 )
 
-			mov	cl,[eax+1]
-			.if	cl >= '0' && cl <= '9'
+			mov cl,[eax+1]
+			.if cl >= '0' && cl <= '9'
 
-				mov	esi,eax
-				mov	BYTE PTR [esi],0
-				inc	esi
-				atol  ( esi )
-				inc	esi
-				mov	[ebx].m_line,eax
+				mov esi,eax
+				mov BYTE PTR [esi],0
+				inc esi
+				atol(esi)
+				inc esi
+				mov [ebx].m_line,eax
 				strnzcpy( addr [ebx].m_file, edi, _MAX_PATH-1 )
 
-				.if	BYTE PTR [eax+1] != ':'
+				.if BYTE PTR [eax+1] != ':'
 
 					GetFullPathName( eax, _MAX_PATH, eax, 0 )
 				.endif
 
-				.if	strchr( esi, ':' )
+				.if strchr( esi, ':' )
 
-					inc	eax
-					mov	esi,eax
+					inc eax
+					mov esi,eax
 				.endif
 
 				strnzcpy( addr [ebx].m_info, esi, 255 )
-				inc	error_count
+				inc error_count
 			.endif
 		.endif
 	.endif
@@ -113,64 +114,64 @@ ParseOutput PROC USES esi edi ebx
 
 local	pBuffer, bSize, FName[_MAX_PATH]:BYTE
 
-	call	clear_error
+	clear_error()
 
-	mov	edx,tinfo
-	mov	eax,[edx].S_TINFO.ti_file
-	lea	edi,FName
+	mov edx,tinfo
+	mov eax,[edx].S_TINFO.ti_file
+	lea edi,FName
 
-	.if	osopen( setfext( strcpy( edi, strfn( eax ) ), ".err" ), 0, M_RDONLY, A_OPEN ) != -1
+	.if osopen( setfext( strcpy( edi, strfn( eax ) ), ".err" ), 0, M_RDONLY, A_OPEN ) != -1
 
-		mov	esi,eax
-		inc	_filelength(esi)
-		mov	bSize,eax
+		mov esi,eax
+		inc _filelength(esi)
+		mov bSize,eax
 
-		.if	malloc( eax )
+		.if malloc(eax)
 
-			mov	pBuffer,eax
-			mov	edi,eax
-			mov	ebx,bSize
-			dec	ebx
+			mov pBuffer,eax
+			mov edi,eax
+			mov ebx,bSize
+			dec ebx
 			osread( esi, eax, ebx )
-			mov	BYTE PTR [edi+ebx],0
+			mov BYTE PTR [edi+ebx],0
 			_close( esi )
 
-			.if	malloc( MAXERROR*SIZE ERFILE )
+			.if malloc( MAXERROR*SIZE ERFILE )
 
-				mov	err_file,eax
+				mov err_file,eax
 				memset( eax, 0, MAXERROR*SIZE ERFILE )
-				mov	esi,edi
-				mov	ecx,bSize
+				mov esi,edi
+				mov ecx,bSize
 
 				.while	error_count < MAXERROR-1
 
-					mov	al,10
-					repne	scasb
+					mov al,10
+					repne scasb
 					.break .if !ecx
-					mov	BYTE PTR [edi-2],0
-					call	ParseLine
-					mov	esi,edi
+					mov BYTE PTR [edi-2],0
+					ParseLine()
+					mov esi,edi
 				.endw
-				call	ParseLine
+				ParseLine()
 			.endif
-			free  ( pBuffer )
+			free(pBuffer)
 		.else
-			_close( esi )
+			_close(esi)
 		.endif
 	.endif
-	mov	eax,error_count
+	mov eax,error_count
 	ret
 
 ParseOutput ENDP
 
 GetMessageId PROC id
 
-	mov	eax,err_file
-	.if	eax
+	mov eax,err_file
+	.if eax
 
-		mov	eax,SIZE ERFILE
-		mul	id
-		add	eax,err_file
+		mov eax,SIZE ERFILE
+		mul id
+		add eax,err_file
 	.endif
 	ret
 
@@ -178,67 +179,67 @@ GetMessageId ENDP
 
 tifindfile PROC USES esi edi ebx fname
 
-	.if	tigetfile( tinfo )
+	.if tigetfile( tinfo )
 
-		mov	esi,eax
+		mov esi,eax
 		.repeat
-			.if	!_stricmp( fname, [esi].S_TINFO.ti_file )
+			.if !_stricmp( fname, [esi].S_TINFO.ti_file )
 
-				mov	eax,esi
+				mov eax,esi
 				.break
 			.endif
-			xor	eax,eax
-			cmp	esi,edx
-			mov	esi,[esi].S_TINFO.ti_next
+			xor eax,eax
+			cmp esi,edx
+			mov esi,[esi].S_TINFO.ti_next
 		.until	ZERO?
 	.endif
-	test	eax,eax
+	test eax,eax
 	ret
 
 tifindfile ENDP
 
 LoadMessageFile PROC USES esi edi ebx M
 
-	mov	esi,tinfo
-	mov	edi,M
+	mov esi,tinfo
+	mov edi,M
 
 	.repeat
-		.if	!tifindfile( addr [edi].ERFILE.m_file )
+		.if !tifindfile( addr [edi].ERFILE.m_file )
 
 			.break .if !topen( addr [edi].ERFILE.m_file, 0 )
 
-			mov	eax,tinfo
+			mov eax,tinfo
 		.endif
 
-		.if	eax != esi
+		.if eax != esi
 
-			mov	tinfo,esi
-			mov	tinfo,titogglefile(esi, eax)
-			mov	esi,tinfo
+			mov tinfo,esi
+			mov tinfo,titogglefile(esi, eax)
+			mov esi,tinfo
 		.endif
 
-		mov	eax,[edi].ERFILE.m_line
-		.if	eax
+		mov eax,[edi].ERFILE.m_line
+		.if eax
 
-			dec	eax
+			dec eax
 		.endif
 
 		tialigny(esi, eax)
 		tiputs(esi)
 
-		lea	eax,[edi].ERFILE.m_info
-		mov	ebx,[esi].S_TINFO.ti_ypos
-		add	ebx,[esi].S_TINFO.ti_yoff
-		inc	ebx
-		.if	ebx > [esi].S_TINFO.ti_rows
+		lea eax,[edi].ERFILE.m_info
+		mov ebx,[esi].S_TINFO.ti_ypos
+		add ebx,[esi].S_TINFO.ti_yoff
+		inc ebx
+		.if ebx > [esi].S_TINFO.ti_rows
 
-			sub	ebx,2
+			sub ebx,2
 		.endif
 
 		scputs( [esi].S_TINFO.ti_xpos, ebx, 4Fh, [esi].S_TINFO.ti_cols, eax )
-		xor	eax,eax
-		mov	[esi].S_TINFO.ti_scrc,eax
-		inc	eax
+		xor eax,eax
+		mov [esi].S_TINFO.ti_scrc,eax
+		inc eax
 	.until	1
 	ret
 
@@ -251,47 +252,47 @@ cmspawnini PROC USES ebx IniSection
 
 	CursorGet( addr cursor )
 
-	mov	ebx,tinfo
-	.if	dlscreen( addr screen, 0007h ) ; edx
+	mov ebx,tinfo
+	.if dlscreen( addr screen, 0007h ) ; edx
 
-		.if	[ebx].S_TINFO.ti_flag & _T_MODIFIED
+		.if [ebx].S_TINFO.ti_flag & _T_MODIFIED
 
 
 			tiflush( ebx )
 		.endif
 
-		.if	CFExpandCmd( __srcfile, [ebx].S_TINFO.ti_file, IniSection )
+		.if CFExpandCmd( __srcfile, [ebx].S_TINFO.ti_file, IniSection )
 
-			mov	ebx,eax
+			mov ebx,eax
 			dlshow( addr screen )
 
-			.if	!CreateConsole( ebx, _P_WAIT )
+			.if !CreateConsole( ebx, _P_WAIT )
 
-				mov	eax,errno
-				mov	eax,sys_errlist[eax*4]
+				mov eax,errno
+				mov eax,sys_errlist[eax*4]
 				ermsg( 0, "Unable to execute command:\n\n%s\n\n'%s'", __srcfile, eax )
-				xor	eax,eax
+				xor eax,eax
 			.endif
 		.endif
 		dlclose( addr screen )
-		mov	eax,edx
+		mov eax,edx
 	.endif
-	push	eax
+	push eax
 	CursorSet( addr cursor )
-	pop	eax
+	pop  eax
 	ret
 
 cmspawnini ENDP
 
 tiexecuteini PROC
 
-	push	eax
-	call	clear_error
-	pop	eax
+	push eax
+	clear_error()
+	pop  eax
 
-	.if	cmspawnini( eax )
+	.if cmspawnini( eax )
 
-		.if	ParseOutput()
+		.if ParseOutput()
 
 			tinexterror()
 		.endif
@@ -303,61 +304,61 @@ tiexecuteini ENDP
 
 tipreviouserror PROC
 
-	.if	error_count
+	.if error_count
 
-		.if	GetMessageId( error_id )
+		.if GetMessageId( error_id )
 
 			LoadMessageFile( eax )
 
-			.if	error_id
+			.if error_id
 
-				dec	error_id
+				dec error_id
 			.else
 
-				mov	eax,error_count
-				dec	eax
-				mov	error_id,eax
+				mov eax,error_count
+				dec eax
+				mov error_id,eax
 			.endif
 		.endif
 	.endif
-	mov	eax,_TI_CONTINUE
+	mov eax,_TI_CONTINUE
 	ret
 
 tipreviouserror ENDP
 
 tinexterror PROC
 
-	.if	error_count
+	.if error_count
 
-		.if	GetMessageId( error_id )
+		.if GetMessageId( error_id )
 
 			LoadMessageFile( eax )
 
-			mov	eax,error_id
-			inc	eax
-			.if	eax >= error_count
+			mov eax,error_id
+			inc eax
+			.if eax >= error_count
 
-				xor	eax,eax
+				xor eax,eax
 			.endif
-			mov	error_id,eax
+			mov error_id,eax
 		.endif
 	.endif
-	mov	eax,_TI_CONTINUE
+	mov eax,_TI_CONTINUE
 	ret
 
 tinexterror ENDP
 
 TIAltFx PROC id
 
-	call	clear_error
+	clear_error()
 
-	mov	eax,id
-	add	al,'0'
-	mov	cp_AltX,al
+	mov eax,id
+	add al,'0'
+	mov cp_AltX,al
 
-	.if	cmspawnini( addr cp_AltFX )
+	.if cmspawnini( addr cp_AltFX )
 
-		.if	ParseOutput()
+		.if ParseOutput()
 
 			tinexterror()
 		.endif
@@ -367,15 +368,14 @@ TIAltFx ENDP
 
 TIShiftFx PROC id
 
-	call	clear_error
+	clear_error()
+	mov eax,id
+	add al,'0'
+	mov cp_ShiftX,al
 
-	mov	eax,id
-	add	al,'0'
-	mov	cp_ShiftX,al
+	.if cmspawnini( addr cp_ShiftFX )
 
-	.if	cmspawnini( addr cp_ShiftFX )
-
-		.if	ParseOutput()
+		.if ParseOutput()
 
 			tinexterror()
 		.endif
@@ -387,123 +387,149 @@ MAXALTCMD	equ 6
 MAXSHIFTCMD	equ 9
 MAXEXTCMD	equ (MAXALTCMD + MAXSHIFTCMD)
 
+transfer_initsection:
+
+	movzx	eax,[edi].S_DOBJ.dl_index
+	inc	eax
+
+	.if eax >= 7
+
+		lea edx,[eax-6+'0']
+		mov cp_ShiftX,dl
+		lea ebx,cp_ShiftFX
+	.else
+		lea edx,[eax+1+'0']
+		.if eax == 6
+
+		    add edx,2
+		.endif
+		mov cp_AltX,dl
+		lea ebx,cp_AltFX
+	.endif
+
+	mov	edx,eax
+	shl	edx,4
+	mov	esi,[edi+edx].S_TOBJ.to_data
+	ret
+
+transfer_edit proc private uses esi ebx
+
+	transfer_initsection()
+
+	.if tgetline( "Edit Transfer Command", esi, 60, 256 )
+
+		.if CFAddSection( ebx )
+
+			CFAddEntryX( eax, "%s=%s", file_ext, esi )
+		.endif
+		dlinit(edi)
+	.endif
+	ret
+
+transfer_edit endp
+
+event_transfer proc private uses edi
+	.while dlxcellevent() == KEY_F4
+	    mov edi,tdialog
+	    transfer_edit()
+	.endw
+	ret
+event_transfer endp
+
 titransfer PROC USES esi edi ebx
 
-	local	ll:S_LOBJ,
-		cmd[MAXEXTCMD]:DWORD,
-		ext[_MAX_PATH]:SBYTE
+local	ext[_MAX_PATH]:SBYTE
 
-	lea	edi,ll
-	mov	ecx,SIZE S_LOBJ
-	xor	eax,eax
-	rep	stosb
-	mov	ll.ll_proc,history_event_list
-	mov	ll.ll_dcount,MAXEXTCMD
-	lea	edi,cmd
-	mov	ll.ll_list,edi
+	mov ebx,tinfo
+	mov eax,[ebx].S_TINFO.ti_file
+	lea ebx,ext
+	mov file_ext,ebx
 
-	mov	ebx,tinfo
-	mov	eax,[ebx].S_TINFO.ti_file
-	lea	ebx,ext
+	.if strrchr( strcpy( ebx, strfn( eax ) ), '.' )
 
-	.if	strrchr( strcpy( ebx, strfn( eax ) ), '.' )
-
-		mov	BYTE PTR [eax],0
-		inc	eax
-		.if	BYTE PTR [eax]
+		mov BYTE PTR [eax],0
+		inc eax
+		.if BYTE PTR [eax]
 
 			strcpy( ebx, eax )
 		.endif
 	.endif
 
-	mov	esi,2
-	.while	esi < 10
+	.repeat
 
-		lea	eax,[esi+'0']
-		mov	cp_AltX,al
+		.break .if !rsopen(IDD_DZTransfer)
+		mov edi,eax
+		mov edx,event_transfer
+		mov ecx,MAXEXTCMD
+		.repeat
+			add eax,sizeof(S_TOBJ)
+			mov [eax].S_TOBJ.to_proc,edx
+		.untilcxz
 
-		.if	CFGetSection( addr cp_AltFX )
+		mov esi,2
+		.while esi < 10
 
-			.if	CFGetEntry( eax, ebx )
+			lea eax,[esi+'0']
+			mov cp_AltX,al
 
-				mov	edx,eax
-				strlen( eax )
-				add	eax,12
-				alloca( eax )
-				stosd
-				sprintf( eax, "[%s]   %s", addr cp_AltFX, edx )
-				inc	ll.ll_count
+			.if CFGetSection( addr cp_AltFX )
+
+				.if CFGetEntry( eax, ebx )
+
+					lea edx,[esi-1]
+					.if esi == 9
+						sub edx,2
+					.endif
+					shl edx,4
+					strcpy([edi+edx].S_TOBJ.to_data, eax)
+				.endif
 			.endif
-		.endif
 
-		inc	esi
-		.if	esi == 7
+			inc esi
+			.if esi == 7
 
-			mov	esi,9
-		.endif
-	.endw
-
-	mov	esi,1
-	.while	esi < 10
-
-		lea	eax,[esi+'0']
-		mov	cp_ShiftX,al
-
-		.if	CFGetSection( addr cp_ShiftFX )
-
-			.if	CFGetEntry( eax, ebx )
-
-				mov	[edi],eax
-				strlen( eax )
-				add	eax,12
-				alloca( eax )
-				mov	edx,[edi]
-				stosd
-				sprintf( eax, "[%s] %s", addr cp_ShiftFX, edx )
-				inc	ll.ll_count
+				mov esi,9
 			.endif
-		.endif
-		inc	esi
-	.endw
+		.endw
 
-	.if	!ll.ll_count
+		mov esi,1
+		.while esi < 10
 
-		ermsg( 0, "No Transfer command for this type: %s", ebx )
-		xor	eax,eax
-		jmp	toend
-	.endif
+			lea eax,[esi+'0']
+			mov cp_ShiftX,al
 
-	.if	rsopen( IDD_DZTransfer )
+			.if CFGetSection( addr cp_ShiftFX )
 
-		mov	ebx,eax
-		mov	edi,ll.ll_count
-		mov	ll.ll_numcel,edi
-		mov	[ebx].S_DOBJ.dl_index,0
-		lea	edx,ll
-		mov	tdllist,edx
-		mov	eax,ebx
+				.if CFGetEntry( eax, ebx )
 
-		history_event_list()
-		dlshow( ebx )
-		rsevent( IDD_DZTransfer, ebx )
-		dlclose( ebx )
-
-		mov	eax,edx
-		.if	eax
-
-			dec	edx
-			mov	eax,cmd[edx*4]
-			inc	eax
-			mov	BYTE PTR [eax+7],0
-			.if	BYTE PTR [eax+5] == ']'
-
-				mov BYTE PTR [eax+5],0
+					lea edx,[esi+6]
+					shl edx,4
+					strcpy([edi+edx].S_TOBJ.to_data, eax)
+				.endif
 			.endif
-			call	tiexecuteini
-		.endif
-	.endif
+			inc esi
+		.endw
 
-toend:
+
+		dlshow(edi)
+		dlinit(edi)
+
+		.while rsevent(IDD_DZTransfer, edi)
+
+			transfer_initsection()
+			.if byte ptr [esi] == 0
+
+				transfer_edit()
+			.else
+				dlclose(edi)
+				mov eax,ebx
+				tiexecuteini()
+				.break(1)
+			.endif
+		.endw
+		dlclose(edi)
+		xor eax,eax
+	.until	1
 	ret
 
 titransfer ENDP

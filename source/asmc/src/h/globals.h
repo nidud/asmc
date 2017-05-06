@@ -383,6 +383,7 @@ unsigned	langtype;		/* -Gc|d|z option */
 unsigned	model;			/* -mt|s|m|c|l|h|f option */
 unsigned	cpu;			/* -0|1|2|3|4|5|6 & -fp{0|2|3|5|6|c} option */
 unsigned	fctype;			/* -zf0 & -zf1 option */
+unsigned	codepage;		/* Unicode code page */
 unsigned char	syntax_check_only;	/* -Zs option */
 unsigned char	aflag;			/* asmc options */
 unsigned char	xflag;			/* extended options */
@@ -536,6 +537,7 @@ struct module_info {
     unsigned char	loopalign;		/* OPTION:LOOPALIGN setting */
     unsigned char	casealign;		/* OPTION:CASEALIGN setting */
     char *		assert_proc;		/* .assert:<handler> */
+    unsigned		codepage;		/* Unicode code page */
 };
 
 #define CurrSource	ModuleInfo.currsource

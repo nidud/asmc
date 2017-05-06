@@ -661,7 +661,8 @@ next_item:  /* <--- continue scan if a comma has been detected */
 
 			if ((w = malloc(string_len*2)) != NULL) {
 
-			    if ((MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED,
+			    /* v2.24 - Unicode CodePage */
+			    if ((MultiByteToWideChar(ModuleInfo.codepage, 0,
 				pchar, string_len, w, string_len)) == string_len) {
 
 				p = (uint_8 *)w;

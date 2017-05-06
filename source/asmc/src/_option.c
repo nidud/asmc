@@ -700,6 +700,27 @@ OPTFUNC( SetWString )
     return NOT_ERROR;
 }
 
+/* OPTION CODEPAGE: <value>
+ */
+OPTFUNC( SetCodePage )
+/***************/
+{
+    int i = *pi;
+    struct expr opndx;
+
+    if ( EvalOperand( &i, tokenarray, Token_Count, &opndx, 0 ) == ERROR )
+	return( ERROR );
+    if ( opndx.kind == EXPR_CONST ) {
+	if ( opndx.llvalue > 0xFFFF )
+	    return( EmitConstError( &opndx ) );
+	ModuleInfo.codepage = opndx.value;
+    } else {
+	return( asmerr( 2026 ) );
+    }
+    *pi = i;
+    return( NOT_ERROR );
+}
+
 /* OPTION SWITCH: C | PASCAL | TABLE | NOTABLE | REGAX | NOREGS | NOTEST
  */
 OPTFUNC( SetSwitch )
@@ -965,6 +986,7 @@ static const struct asm_option optiontab[] = {
     { "LOOPALIGN",    SetLoopAlign   }, /* LOOPALIGN: <value> */
     { "CASEALIGN",    SetCaseAlign   }, /* CASEALIGN: <value> */
     { "WSTRING",      SetWString     }, /* WSTRING: <ON|OFF> */
+    { "CODEPAGE",     SetCodePage    }, /* CODEPAGE: <value> */
 };
 
 #define TABITEMS sizeof( optiontab) / sizeof( optiontab[0] )

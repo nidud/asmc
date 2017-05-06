@@ -3,6 +3,8 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.24 - xx xxx 2017
+- added switch /ws[[=]<codepage>] - default = CP_ACP (0)
+- added option codepage:<value>
 - fixed bug in label: .while ..
 - fixed bug in operator SHR
 - fixed sizeof(unicode string)

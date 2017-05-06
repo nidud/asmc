@@ -998,6 +998,7 @@ langtype		dd ?	; -Gc|d|z option
 _model			dd ?	; -mt|s|m|c|l|h|f option
 cpu			dd ?	; -0|1|2|3|4|5|6 & -fp{0|2|3|5|6|c} option
 fctype			dd ?	; -zf0 & -zf1 option
+codepage		dd ?	; Unicode code page
 syntax_check_only	db ?	; -Zs option
 aflag			db ?	; asmc option
 xflag			db ?	; extended option
@@ -1129,6 +1130,7 @@ xflag			db ?	; extended option
 loopalign		db ?	; OPTION:LOOPALIGN setting
 casealign		db ?	; OPTION:CASEALIGN setting
 assert_proc		dd ?	; .assert:<proc/macro name>
+codepage		dd ?	;
 module_info		ENDS
 
 equ_item		STRUC

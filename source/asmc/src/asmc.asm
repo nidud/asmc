@@ -22,7 +22,7 @@ close_files	PROTO
 .data
 
 cp_logo label byte
-%	db "Asmc Macro Assembler Version ",ASMC_VERSSTR, 'D',10
+%	db "Asmc Macro Assembler Version ",ASMC_VERSSTR, 'E',10
 	db "Portions Copyright (c) 1992-2002 Sybase, Inc. All Rights Reserved.",10,10,0
 
 cp_usage label byte
@@ -122,6 +122,7 @@ Options		global_options <	\
 		MODEL_NONE,		\ ; ._model
 		P_86,			\ ; .cpu
 		FCT_MSC,		\ ; .fctype
+		0,			\ ; .codepage
 		0,			\ ; .syntax_check_only
 		1,			\ ; .aflag
 		0,			\ ; .xflag
@@ -751,6 +752,19 @@ ParseCmdline PROC USES esi edi ebx numargs
 						.endc
 					.endsw
 					.endc
+					;
+					; /ws<number>
+					;
+				  .case 'w'
+					.if ecx != 's'
+
+						jmp error
+					.endif
+					GetNumber()
+					mov [edi].codepage,eax
+					or  [edi].aflag,_AF_WSTRING
+					.endc
+
 					;
 					; /W<number>
 					;

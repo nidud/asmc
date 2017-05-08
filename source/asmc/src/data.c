@@ -662,12 +662,11 @@ next_item:  /* <--- continue scan if a comma has been detected */
 			if ((w = malloc(string_len*2)) != NULL) {
 
 			    /* v2.24 - Unicode CodePage */
-			    if ((MultiByteToWideChar(ModuleInfo.codepage, 0,
-				pchar, string_len, w, string_len)) == string_len) {
+			    if ( (q = MultiByteToWideChar(ModuleInfo.codepage, 0,
+				  pchar, string_len, w, string_len)) != 0 ) {
 
 				p = (uint_8 *)w;
 				while ( q-- ) {
-
 				    OutputBytes( p++, 1, NULL );
 				    OutputBytes( p++, 1, NULL );
 				}

@@ -22,7 +22,7 @@ close_files	PROTO
 .data
 
 cp_logo label byte
-%	db "Asmc Macro Assembler Version ",ASMC_VERSSTR, 'E',10
+%	db "Asmc Macro Assembler Version ",ASMC_VERSSTR, 'F',10
 	db "Portions Copyright (c) 1992-2002 Sybase, Inc. All Rights Reserved.",10,10,0
 
 cp_usage label byte

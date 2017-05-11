@@ -3,6 +3,8 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.24 - xx xxx 2017
+- added to @CStr() - skip .data/.code if already in .data segment
+- added to @CStr() - skip return value if @CStr is first token
 - fixed bug in codepage:64001 (UTF-8 translation)
 - added switch /ws[[=]<codepage>] - default = CP_ACP (0)
 - added option codepage:<value>

@@ -473,6 +473,7 @@ GenerateCString PROC USES esi edi ebx i, tokenarray:PTR asm_tok
 
 					mov eax,ModuleInfo.currseg
 					mov ecx,[eax].asym._name
+
 					strcat( strcpy( addr b_seg, ecx ), " segment" )
 					.break .if InsertLine( ".data" )
 					.break .if InsertLine( addr b_data )
@@ -526,6 +527,7 @@ CString PROC USES esi edi ebx buffer:LPSTR, tokenarray:PTR asm_tok
 	Unicode:		BYTE
 
 	mov ebx,tokenarray
+	mov edi,_stricmp([ebx].asm_tok.string_ptr, "@CStr")
 	xor eax,eax
 
 	.while	[ebx].asm_tok.token != T_FINAL
@@ -542,8 +544,15 @@ CString PROC USES esi edi ebx buffer:LPSTR, tokenarray:PTR asm_tok
 				addr Unicode )
 
 			mov esi,eax
-			strcpy( buffer, "offset " )
-			strcat( buffer, addr dlabel )
+			.if edi
+				strcpy( buffer, "offset " )
+				strcat( buffer, addr dlabel )
+			.else
+				;
+				; v2.24 skip return value if @CStr is first token
+				;
+				mov word ptr dlabel,' '
+			.endif
 
 			.if esi
 
@@ -567,11 +576,23 @@ CString PROC USES esi edi ebx buffer:LPSTR, tokenarray:PTR asm_tok
 					.endif
 					sprintf(addr cursrc, ecx, addr dlabel)
 				.endif
-				InsertLine(".data")
+				;
+				; v2.24 skip .data/.code if already in .data segment
+
+				xor esi,esi
+				mov eax,ModuleInfo.currseg
+				.if _stricmp( [eax].asym._name, "_DATA" )
+
+					inc esi
+					InsertLine(".data")
+				.endif
 				InsertLine(addr cursrc)
-				InsertLine(".code")
+				.if esi
+
+					InsertLine(".code")
+				.endif
 			.endif
-			mov	eax,1
+			mov eax,1
 			.break
 		.endif
 		add ebx,16

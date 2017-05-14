@@ -2744,12 +2744,17 @@ int ParseLine( struct asm_tok tokenarray[] )
 void ProcessFile( struct asm_tok tokenarray[] )
 /*********************************************/
 {
-    while ( ModuleInfo.EndDirFound == FALSE && GetTextLine( CurrSource ) ) {
-	if ( PreprocessLine( CurrSource, tokenarray ) ) {
-	    ParseLine( tokenarray );
-	    if ( Options.preprocessor_stdout == TRUE && Parse_Pass == PASS_1 )
-		WritePreprocessedLine( CurrSource );
-	}
+    if ( ModuleInfo.EndDirFound == FALSE && GetTextLine( CurrSource ) ) {
+
+	if ( CurrSource[0] == 0xEF && CurrSource[1] == 0xBB && CurrSource[2] == 0xBF )
+	    strcpy( CurrSource, &CurrSource[3] );
+	do {
+	    if ( PreprocessLine( CurrSource, tokenarray ) ) {
+		ParseLine( tokenarray );
+		if ( Options.preprocessor_stdout == TRUE && Parse_Pass == PASS_1 )
+		    WritePreprocessedLine( CurrSource );
+	    }
+	} while ( ModuleInfo.EndDirFound == FALSE && GetTextLine( CurrSource ) );
     }
     return;
 }

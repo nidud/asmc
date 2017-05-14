@@ -579,34 +579,6 @@ next_proc		dd ?
 next_file		dd ?
 debug_info		ENDS
 
-SFL_USED		equ 0001h
-SFL_ISDEFINED		equ 0002h
-SFL_SCOPED		equ 0004h
-SFL_IAT_USED		equ 0008h
-SFL_ISEQUATE		equ 0010h
-SFL_PREDEFINED		equ 0020h
-SFL_VARIABLE		equ 0040h
-SFL_ISPUBLIC		equ 0080h
-SFL_LIST		equ 0100h
-SFL_ISARRAY		equ 0200h
-SFL_ISDATA		equ 0400h
-SFL_ISPROC		equ 0800h
-SFL_ISSAVED		equ 1000h
-SFL_FWDREF		equ 2000h
-SFL_INCLUDED		equ 4000h
-
-SINT_SEGOFSSIZE		equ 03h
-SINT_ISCOM		equ 04h
-SINT_WEAK		equ 08h
-SINT_ISFAR		equ 10h
-SINT_ISVARARG		equ 20h
-
-SMAC_ISVARARG		equ 01h
-SMAC_ISFUNC		equ 02h
-SMAC_ALABEL		equ 04h
-SMAC_MULTILINE		equ 08h
-SMAC_PURGED		equ 10h
-
 LPASYM			typedef ptr asym
 LPDSYM			typedef ptr dsym
 
@@ -614,6 +586,7 @@ func_ptr_t		typedef proto :ptr macro_instance, :LPSTR, :ptr asm_tok
 func_ptr_p		typedef ptr func_ptr_t
 internal_func_t		typedef proto :ptr asym, :PVOID
 internal_func		typedef ptr internal_func_t
+
 asym			STRUC
 ;;
 ;; v2.11: name changed from 'next' to 'nextitem'
@@ -633,6 +606,21 @@ asym			STRUC
  _segment		LPASYM ?
  state			db ?
  mem_type		db ?
+ SFL_USED		equ 0001h
+ SFL_ISDEFINED		equ 0002h
+ SFL_SCOPED		equ 0004h
+ SFL_IAT_USED		equ 0008h
+ SFL_ISEQUATE		equ 0010h
+ SFL_PREDEFINED		equ 0020h
+ SFL_VARIABLE		equ 0040h
+ SFL_ISPUBLIC		equ 0080h
+ SFL_LIST		equ 0100h
+ SFL_ISARRAY		equ 0200h
+ SFL_ISDATA		equ 0400h
+ SFL_ISPROC		equ 0800h
+ SFL_ISSAVED		equ 1000h
+ SFL_FWDREF		equ 2000h
+ SFL_INCLUDED		equ 4000h
  flag			dw ?	; remove bitfield
  UNION
     first_size		dd ?
@@ -643,8 +631,22 @@ asym			STRUC
 	    ptr_memtype db ?
 	    asmpass	db ?
 	ENDS
+
+	SINT_SEGOFSSIZE equ 03h
+	SINT_ISCOM	equ 04h
+	SINT_WEAK	equ 08h
+	SINT_ISFAR	equ 10h
+	SINT_ISVARARG	equ 20h
+
 	sint_flag	db ?
     ENDS
+
+	SMAC_ISVARARG	equ 01h
+	SMAC_ISFUNC	equ 02h
+	SMAC_ALABEL	equ 04h
+	SMAC_MULTILINE	equ 08h
+	SMAC_PURGED	equ 10h
+
     mac_flag		dd ?	; --byte
  ENDS
  UNION
@@ -921,6 +923,9 @@ expr			STRUC
  mbr			LPASYM ?; struct member
  _type			LPASYM ?; for DOT operator. Must be last (see TokenAssign)!
 expr			ENDS
+
+; special_item is the structure used to store directives and
+; other reserved words in SpecialTable (special.h).
 
 special_item		STRUC
 value			dd ?

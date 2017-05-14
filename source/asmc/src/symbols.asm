@@ -16,6 +16,7 @@ UpdateWordSize		PROTO :DWORD, :DWORD
 UpdateCurPC		PROTO :DWORD, :DWORD
 
 HASH_MAGNITUDE		equ 15	; is 15 since v1.94, previously 12
+HASH_MASK		equ 0x7FFF
 ;
 ; size of global hash table for symbol table searches. This affects
 ; assembly speed.
@@ -197,9 +198,9 @@ SymSetLocal PROC USES edi psym
 			shl eax,5
 			add eax,edx
 			mov edx,eax
-			and edx,not 00007FFFh
+			and edx,not HASH_MASK
 			xor eax,edx
-			shr edx,15
+			shr edx,HASH_MAGNITUDE
 			xor eax,edx
 			movzx edx,BYTE PTR [ecx]
 		.endw
@@ -329,9 +330,9 @@ SymFind PROC FASTCALL USES esi edi ebx ebp sname
 		shl eax,5
 		add eax,edx
 		mov edx,eax
-		and edx,not 00007FFFh
+		and edx,not HASH_MASK
 		xor eax,edx
-		shr edx,15
+		shr edx,HASH_MAGNITUDE
 		xor eax,edx
 		movzx edx,BYTE PTR [ecx]
 	.until !edx

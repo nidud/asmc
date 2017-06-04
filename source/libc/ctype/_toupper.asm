@@ -8,7 +8,7 @@ _toupper PROC char:SINT
 
 	movzx	eax,BYTE PTR [esp+4]
 	sub	al,'a'-'A'
-	ret	4
+	ret
 
 _toupper ENDP
 

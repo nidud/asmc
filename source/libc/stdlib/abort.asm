@@ -13,8 +13,9 @@ abort	PROC
 abort	ENDP
 
 Install:
-	.if	setjmp( addr jmp_exit )
-		exit( eax )
+	.if _setjmp( addr jmp_exit )
+
+	    exit( eax )
 	.endif
 	ret
 

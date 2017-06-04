@@ -59,7 +59,7 @@ _atoi64 PROC string:LPSTR
 	pop	ebx
 	pop	edi
 	pop	esi
-	ret	4
+	ret
 _atoi64 ENDP
 
 	END

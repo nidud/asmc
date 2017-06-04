@@ -1,21 +1,10 @@
 include string.inc
 
-ifdef _SSE
-
-include crtl.inc
-
-	.data
-	memchr_p dd _rtl_memchr
-endif
 	.code
 
 	OPTION	PROLOGUE:NONE, EPILOGUE:NONE
 
-ifdef _SSE
-memchr_386:
-else
 memchr	PROC base:LPSTR, char:SIZE_T, bsize:SIZE_T
-endif
 
 	push	esi
 	push	edi
@@ -71,7 +60,7 @@ exit_NULL:
 	pop	ebx
 	pop	edi
 	pop	esi
-	ret	12
+	ret
 exit_2:
 	add	edi,1
 exit_1:
@@ -82,25 +71,7 @@ toend:
 	pop	ebx
 	pop	edi
 	pop	esi
-	ret	12
+	ret
+memchr	endp
 
-ifdef _SSE
-memchr	PROC base:LPSTR, char:SIZE_T, bsize:SIZE_T
-	jmp	memchr_p
-memchr	ENDP
-	;
-	; First call: set pointer and jump
-	;
-_rtl_memchr:
-	mov eax,memchr_386
-	.if sselevel & SSE_SSE2
-
-		mov eax,memchr_sse
-	.endif
-
-	mov memchr_p,eax
-	jmp eax
-else
-memchr	ENDP
-endif
 	END

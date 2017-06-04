@@ -40,7 +40,7 @@ _wtol	PROC string:LPWSTR
 	jne	@F
 	neg	eax
 @@:
-	ret	4
+	ret
 _wtol	ENDP
 
 	END

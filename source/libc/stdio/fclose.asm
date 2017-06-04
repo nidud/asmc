@@ -25,7 +25,7 @@ fclose	PROC fp:LPFILE
 	jnz	error
 toend:
 	pop	ebx
-	ret	4
+	ret
 error:
 	mov	eax,-1
 	jmp	toend

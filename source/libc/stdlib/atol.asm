@@ -39,7 +39,7 @@ atol	PROC string:LPSTR
 	jne	@F
 	neg	eax
 @@:
-	ret	4
+	ret
 atol	ENDP
 
 	END

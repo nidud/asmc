@@ -37,7 +37,7 @@ toend:
 	pop	edx
 	pop	edi
 	mov	eax,[esp+4]
-	ret	8
+	ret
 strcpy	ENDP
 
 	END

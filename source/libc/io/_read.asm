@@ -10,6 +10,9 @@ ER_BROKEN_PIPE	 equ 109
 
 	.code
 
+read	PROC h:SINT, b:PVOID, count:SIZE_T
+read	ENDP
+
 _read	PROC USES ebx esi edi h:SINT, b:PVOID, count:SIZE_T
 	xor	esi,esi			; nothing read yet
 	mov	edi,b

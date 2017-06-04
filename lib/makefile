@@ -1,6 +1,6 @@
 !include srcpath
 
-all: .lbc .build .startup .clean
+all: lbc build clean
 
 .SUFFIXES: .lib
 .EXTENSIONS: .def .lbc .lib
@@ -8,6 +8,11 @@ all: .lbc .build .startup .clean
 source_path = def
 
 targets = \
+	kernel32.lib	\
+	oldnames.lib	\
+	user32.lib
+
+target_all = \
 	aclui.lib	\
 	activeds.lib	\
 	advapi32.lib	\
@@ -63,6 +68,7 @@ targets = \
 	ntdsapi.lib	\
 	odbc32.lib	\
 	odbccp32.lib	\
+	oldnames.lib	\
 	ole32.lib	\
 	oleacc.lib	\
 	oleaut32.lib	\
@@ -118,27 +124,12 @@ targets = \
 	lbc $<
 	libw /n /c /q /b /fac /ii $*.lib @$*.lbc
 
-.build: $(targets)
+build: $(targets)
 	libw /n /c /q /b /fac /ii ntvdm.lib @def\ntvdm.lbc
 
-.startup:
-	asmc -nologo -I$(inc_dir) -coff -D_NOARGV crt.asm
-	asmc -nologo -I$(inc_dir) -coff -Fo $(lib_dir)\crtc.obj crt.asm
-	asmc -nologo -I$(inc_dir) -coff -D_DLL -Fo $(lib_dir)\crtdll.obj crt.asm
-	asmc -nologo -I$(inc_dir) -coff -ws -D_UNICODE -D_NOARGV -Fo $(lib_dir)\crtw.obj crt.asm
-	asmc -nologo -I$(inc_dir) -coff -ws -D_UNICODE -Fo $(lib_dir)\crtwc.obj crt.asm
-	asmc -nologo -I$(inc_dir) -coff -ws -D_UNICODE -D_DLL -Fo $(lib_dir)\crtwdll.obj crt.asm
-	asmc -nologo -I$(inc_dir) -D_WATCOM -Fo $(lib_dir)\crto.obj crt.asm
-	asmc -nologo -I$(inc_dir) -coff -Zi -D_NOARGV -Fo $(lib_dir)\crtd.obj $(lib_dir)\crt.asm
-	asmc -nologo -I$(inc_dir) -coff -Zi -Fo $(lib_dir)\crtcd.obj $(lib_dir)\crt.asm
-	asmc -nologo -I$(inc_dir) -coff -Zi -D_DLL -Fo $(lib_dir)\crtdlld.obj $(lib_dir)\crt.asm
-	asmc -nologo -I$(inc_dir) -coff -Zi -ws -D_UNICODE -D_NOARGV -Fo $(lib_dir)\crtwd.obj $(lib_dir)\crt.asm
-	asmc -nologo -I$(inc_dir) -coff -Zi -ws -D_UNICODE -Fo $(lib_dir)\crtwcd.obj $(lib_dir)\crt.asm
-	asmc -nologo -I$(inc_dir) -coff -Zi -ws -D_UNICODE -D_DLL -Fo $(lib_dir)\crtwdlld.obj $(lib_dir)\crt.asm
-
-.lbc:
+lbc:
 	asmc -pe -D__PE__ $(source_path)\lbc.asm
 
-.clean:
+clean:
 	del lbc.exe
 	del *.lbc

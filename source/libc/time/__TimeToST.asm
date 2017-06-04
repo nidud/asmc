@@ -2,11 +2,11 @@ include time.inc
 
 	.code
 
-__TimeToST PROC USES edx ecx time:time_t, lpSystemTime:LPSYSTEMTIME
+__TimeToST PROC USES edx ecx Time:time_t, lpSystemTime:LPSYSTEMTIME
 	mov	ecx,lpSystemTime
 	mov	[ecx].SYSTEMTIME.wDayOfWeek,0
 	mov	[ecx].SYSTEMTIME.wMilliseconds,0
-	movzx	edx,word ptr time+2
+	movzx	edx,word ptr Time+2
 	mov	eax,edx
 	shr	eax,9
 	add	eax,DT_BASEYEAR
@@ -18,7 +18,7 @@ __TimeToST PROC USES edx ecx time:time_t, lpSystemTime:LPSYSTEMTIME
 	mov	eax,edx
 	and	eax,11111B
 	mov	[ecx].SYSTEMTIME.wDay,ax
-	movzx	eax,word ptr time
+	movzx	eax,word ptr Time
 	mov	edx,eax
 	shr	eax,11
 	mov	[ecx].SYSTEMTIME.wHour,ax

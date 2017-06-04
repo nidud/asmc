@@ -1,4 +1,4 @@
-include consx.inc
+include conio.inc
 include crtl.inc
 include winbase.inc
 

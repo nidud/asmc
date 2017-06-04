@@ -8,7 +8,7 @@ isdigit PROC char:SINT
 	movzx	eax,BYTE PTR [esp+4]
 	mov	al, BYTE PTR _ctype[eax*2+2]
 	and	eax,_DIGIT
-	ret	4
+	ret
 isdigit ENDP
 
 	END

@@ -13,7 +13,7 @@ tolower PROC char:SINT
 	add	al,ah
 	add	al,'A'
 	and	eax,000000FFh
-	ret	4
+	ret
 tolower ENDP
 
 	END

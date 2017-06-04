@@ -4,6 +4,9 @@ include winbase.inc
 
 	.code
 
+close	PROC handle:SINT
+close	ENDP
+
 _close	PROC handle:SINT
 	push	eax
 	mov	eax,handle

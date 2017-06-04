@@ -4,6 +4,9 @@ include winbase.inc
 
 	.code
 
+filelength PROC handle:SINT
+filelength ENDP
+
 _filelength PROC handle:SINT
 
 local	lpFileSize:qword

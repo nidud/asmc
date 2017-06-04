@@ -3,11 +3,11 @@ include winbase.inc
 
 	.code
 
-__TimeToFT PROC USES edx ecx time:time_t, lpFileTime:LPFILETIME
+__TimeToFT PROC USES edx ecx Time:time_t, lpFileTime:LPFILETIME
 
 local	SystemTime:SYSTEMTIME
 
-	SystemTimeToFileTime( __TimeToST( time, addr SystemTime ), lpFileTime )
+	SystemTimeToFileTime( __TimeToST( Time, addr SystemTime ), lpFileTime )
 	LocalFileTimeToFileTime( lpFileTime, lpFileTime )
 	mov eax,lpFileTime
 	ret

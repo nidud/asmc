@@ -13,7 +13,7 @@ toupper PROC char:SINT
 	sub	al,ah
 	add	al,'a'
 	and	eax,000000FFh
-	ret	4
+	ret
 toupper ENDP
 
 	END

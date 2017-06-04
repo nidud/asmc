@@ -10,10 +10,10 @@ isprint PROC char:SINT
 	jb	@F
 	cmp	eax,7Fh
 	jnb	@F
-	ret	4
+	ret
 @@:
 	xor	eax,eax
-	ret	4
+	ret
 isprint ENDP
 
 	END

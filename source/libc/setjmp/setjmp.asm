@@ -6,7 +6,13 @@ include setjmp.inc
 
 	ASSUME	eax: PTR S_JMPBUF
 
-setjmp	PROC C JMPBUF:PTR S_JMPBUF
+setjmp PROC C JMPBUF:PTR S_JMPBUF
+setjmp ENDP
+
+_setjmp3 PROC JMPBUF:PTR S_JMPBUF
+_setjmp3 ENDP
+
+_setjmp PROC C JMPBUF:PTR S_JMPBUF
 	mov	eax,[esp+4]
 	mov	[eax].J_EBP,ebp
 	mov	[eax].J_EBX,ebx
@@ -20,7 +26,7 @@ setjmp	PROC C JMPBUF:PTR S_JMPBUF
 	mov	ecx,[eax].J_ECX
 	xor	eax,eax
 	ret
-setjmp	ENDP
+_setjmp ENDP
 
 	ASSUME	edx: PTR S_JMPBUF
 
@@ -35,7 +41,7 @@ longjmp PROC C JMPBUF:PTR S_JMPBUF, retval:DWORD
 	mov	esp,[edx].J_ESP
 	push	[edx].J_EIP
 	mov	edx,[edx].J_EDX
-	ret	4
+	ret
 longjmp ENDP
 
 	END

@@ -39,7 +39,7 @@ toend:
 	pop	ecx
 	pop	edi
 	pop	esi
-	ret	8
+	ret
 _stricmp ENDP
 
 	END

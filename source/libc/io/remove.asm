@@ -12,9 +12,10 @@ REMOVE	PROC file:LPTSTR
 
 	.if DeleteFile( file )
 
-		mov	eax,1
-		mov	_diskflag,eax
-		dec	eax
+		xor eax,eax
+ifdef __DZ__
+		mov _diskflag,1
+endif
 	.else
 		osmaperr()
 	.endif

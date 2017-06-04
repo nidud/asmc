@@ -11,9 +11,10 @@ RENAME	PROC Oldname:LPTSTR, Newname:LPTSTR
 
 	.if MoveFile( Oldname, Newname )
 
-		mov	eax,1
-		mov	_diskflag,eax
-		dec	eax
+		xor eax,eax
+ifdef __DZ__
+		mov _diskflag,1
+endif
 	.else
 		osmaperr()
 	.endif

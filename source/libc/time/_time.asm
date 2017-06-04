@@ -3,7 +3,7 @@ include winbase.inc
 
 	.code
 
-_time	PROC timeptr:LPTIME
+time	PROC timeptr:LPTIME
   local SystemTime:SYSTEMTIME
 	GetLocalTime( addr SystemTime )
 	_loctotime_t( SystemTime.wYear,
@@ -18,6 +18,6 @@ _time	PROC timeptr:LPTIME
 	mov	[ecx],eax
 @@:
 	ret
-_time	ENDP
+time	ENDP
 
 	END

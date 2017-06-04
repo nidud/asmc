@@ -1,6 +1,11 @@
 # SRCPATH--
-# Default root directory setup for win32
+# Default root directories from %AsmcDir%
 #
+# %AsmcDir%\lib if is used by MAKE.EXE if defined
+#
+
 lib_dir = %AsmcDir%\lib
 inc_dir = %AsmcDir%\include
 src_dir = %AsmcDir%\source
+lib_x64 = %AsmcDir%\lib\x64
+src_x64 = %AsmcDir%\source\x64

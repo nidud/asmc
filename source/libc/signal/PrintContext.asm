@@ -42,7 +42,7 @@ PrintContext PROC ExcContext:PTR EXCEPTION_CONTEXT, ExcRecord:PTR EXCEPTION_RECO
 
 	mov	eax,ExcContext
 	mov	ecx,ExcRecord
-	_print( addr format,
+	printf( addr format,
 		[ecx].EXCEPTION_RECORD.ExceptionCode,
 		[ecx].EXCEPTION_RECORD.ExceptionFlags,
 		[eax]._Eax,

@@ -21,7 +21,7 @@ _chdrive PROC drive:SINT
 	jz	error2
 	xor	eax,eax
 toend:
-	ret	4
+	ret
 error1:
 	mov	errno,EACCES
 	mov	oserrno,ERROR_INVALID_DRIVE

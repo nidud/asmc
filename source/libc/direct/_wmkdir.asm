@@ -4,20 +4,19 @@ include winbase.inc
 
 	.code
 
-	OPTION PROLOGUE:NONE, EPILOGUE:NONE
-
 _wmkdir proc directory:LPWSTR
-	mov	eax,[esp+4]
-	CreateDirectoryW( eax, 0 )
-	test	eax,eax
-	jz	error
-	xor	eax,eax
-	mov	_diskflag,1
-toend:
-	ret	4
-error:
-	call	osmaperr
-	jmp	toend
+
+	.if CreateDirectoryW( directory, 0 )
+
+		xor eax,eax
+ifdef __DZ__
+		mov _diskflag,1
+endif
+	.else
+		osmaperr()
+	.endif
+	ret
+
 _wmkdir endp
 
 	END

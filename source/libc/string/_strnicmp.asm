@@ -46,7 +46,7 @@ toend:
 	pop	edx
 	pop	edi
 	pop	esi
-	ret	12
+	ret
 _strnicmp ENDP
 
 	END

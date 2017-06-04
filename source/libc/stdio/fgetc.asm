@@ -12,7 +12,7 @@ fgetc	PROC fp:LPFILE
 	mov eax,[eax]._iobuf._ptr
 	movzx eax,byte ptr [eax-1]
 toend:
-	ret 4
+	ret
 fbuf:
 	_filbuf( eax )
 	jmp toend

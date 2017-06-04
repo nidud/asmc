@@ -38,7 +38,7 @@ _memicmp PROC s1:LPSTR, s2:LPSTR, l:SIZE_T
 	mov	eax,ecx
 	pop	edi
 	pop	esi
-	ret	12
+	ret
 _memicmp ENDP
 
 	END

@@ -3,7 +3,7 @@ include errno.inc
 include alloc.inc
 include winbase.inc
 ifdef _WIN95
-include consx.inc
+include conio.inc
 endif
 
 WMAXPATH equ 2048

@@ -101,6 +101,7 @@ raise	PROC index:DWORD
 	.if	eax
 		push	ecx
 		call	eax
+		add	esp,4
 	.endif
 	ret
 raise	ENDP

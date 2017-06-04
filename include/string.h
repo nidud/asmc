@@ -8,53 +8,53 @@
 extern "C" {
 #endif
 
-_CRTIMP void *	_CType memcpy(void *, const void *, size_t);
-_CRTIMP int	_CType memcmp(const void *, const void *, size_t);
-_CRTIMP void *	_CType memset(void *, int, size_t);
-_CRTIMP char *	_CType strcpy(char *, const char *);
-_CRTIMP char *	_CType strcat(char *, const char *);
-_CRTIMP int	_CType strcmp(const char *, const char *);
-_CRTIMP size_t	_CType strlen(const char *);
-_CRTIMP void *	_CType memchr(const void *, int, size_t);
-_CRTIMP void *	_CType memmove(void *, const void *, size_t);
-_CRTIMP int	_CType _memicmp(const void *, const void *, size_t);
-_CRTIMP char *	_CType strchr(const char *, int);
-_CRTIMP int	_CType _stricmp(const char *, const char *);
-_CRTIMP char *	_CType _strlwr(char *);
-_CRTIMP int	_CType strncmp(const char *, const char *, size_t);
-_CRTIMP int	_CType _strnicmp(const char *, const char *, size_t);
-_CRTIMP char *	_CType strncpy(char *, const char *, size_t);
-_CRTIMP char *	_CType strrchr(const char *, int);
-_CRTIMP char *	_CType _strrev(char *);
-_CRTIMP char *	_CType strstr(const char *, const char *);
-_CRTIMP char *	_CType _strupr(char *);
-_CRTIMP char *	_CType strtok(char *, const char *);
+_CRTIMP void *	__cdecl memcpy(void *, const void *, size_t);
+_CRTIMP int	__cdecl memcmp(const void *, const void *, size_t);
+_CRTIMP void *	__cdecl memset(void *, int, size_t);
+_CRTIMP char *	__cdecl strcpy(char *, const char *);
+_CRTIMP char *	__cdecl strcat(char *, const char *);
+_CRTIMP int	__cdecl strcmp(const char *, const char *);
+_CRTIMP size_t	__cdecl strlen(const char *);
+_CRTIMP void *	__cdecl memchr(const void *, int, size_t);
+_CRTIMP void *	__cdecl memmove(void *, const void *, size_t);
+_CRTIMP int	__cdecl _memicmp(const void *, const void *, size_t);
+_CRTIMP char *	__cdecl strchr(const char *, int);
+_CRTIMP int	__cdecl _stricmp(const char *, const char *);
+_CRTIMP char *	__cdecl _strlwr(char *);
+_CRTIMP int	__cdecl strncmp(const char *, const char *, size_t);
+_CRTIMP int	__cdecl _strnicmp(const char *, const char *, size_t);
+_CRTIMP char *	__cdecl strncpy(char *, const char *, size_t);
+_CRTIMP char *	__cdecl strrchr(const char *, int);
+_CRTIMP char *	__cdecl _strrev(char *);
+_CRTIMP char *	__cdecl strstr(const char *, const char *);
+_CRTIMP char *	__cdecl _strupr(char *);
+_CRTIMP char *	__cdecl strtok(char *, const char *);
 
 #define memzero(s,z) memset(s,0,z)
 
 #ifndef _WSTRING_DEFINED
 #define _WSTRING_DEFINED
-_CRTIMP short * _CType wcscat(short *, short *);
-_CRTIMP int	_CType wcslen(short *);
-_CRTIMP short * _CType wcschr(short *, int);
-_CRTIMP int	_CType wcscmp(short *, short *);
-_CRTIMP short * _CType wcscpy(short *, short *);
-_CRTIMP short * _CType wcsstr(short *, short *);
-_CRTIMP short * _CType wcstok(short *, short *);
-_CRTIMP short * _CType wcsncpy(short *, short *, size_t);
-_CRTIMP int	_CType wcsncmp(short *, short *, size_t);
-_CRTIMP short * _CType wcsncat(short *, short *, size_t);
-_CRTIMP short * _CType wcsrchr(short *, int);
-_CRTIMP short * _CType wcspbrk(short *, short *);
+_CRTIMP short * __cdecl wcscat(short *, short *);
+_CRTIMP int	__cdecl wcslen(short *);
+_CRTIMP short * __cdecl wcschr(short *, int);
+_CRTIMP int	__cdecl wcscmp(short *, short *);
+_CRTIMP short * __cdecl wcscpy(short *, short *);
+_CRTIMP short * __cdecl wcsstr(short *, short *);
+_CRTIMP short * __cdecl wcstok(short *, short *);
+_CRTIMP short * __cdecl wcsncpy(short *, short *, size_t);
+_CRTIMP int	__cdecl wcsncmp(short *, short *, size_t);
+_CRTIMP short * __cdecl wcsncat(short *, short *, size_t);
+_CRTIMP short * __cdecl wcsrchr(short *, int);
+_CRTIMP short * __cdecl wcspbrk(short *, short *);
 #endif
 
-void *	_CType memxchg(void *, void *, size_t);
-char *	_CType strfn(const char *);
-char *	_CType strfcat(char *, const char *, const char *);
-char *	_CType setfext(char *, const char *);
-char *	_CType strext(const char *);
-int	_CType strtrim(char *);
-char *	_CType strstart(const char *);
+void *	__cdecl memxchg(void *, void *, size_t);
+char *	__cdecl strfn(const char *);
+char *	__cdecl strfcat(char *, const char *, const char *);
+char *	__cdecl setfext(char *, const char *);
+char *	__cdecl strext(const char *);
+int	__cdecl strtrim(char *);
+char *	__cdecl strstart(const char *);
 
 #define stricmp	 _stricmp
 #define strnicmp _strnicmp

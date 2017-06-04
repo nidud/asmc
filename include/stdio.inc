@@ -62,7 +62,6 @@ externdef	hStdError:HANDLE
 endif
 
 _output		proto __cdecl :LPFILE, :LPSTR, :PVOID
-_print		proto _CDecl :LPSTR, :VARARG
 sprintf		proto _CDecl :LPSTR, :LPSTR, :VARARG
 ftobufin	proto _CDecl :LPSTR, :VARARG
 printf		proto _CDecl :LPSTR, :VARARG

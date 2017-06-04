@@ -11,16 +11,6 @@ _MSVCRT equ <>
 endif
 endif
 
-ifndef __cdecl
-ifdef _WIN64
-__cdecl equ <fastcall>
-elseifdef _MSVCRT
-__cdecl equ <c>
-else
-__cdecl equ <stdcall>
-endif
-endif
-
 _UPPER		equ 01h		; upper case letter
 _LOWER		equ 02h		; lower case letter
 _DIGIT		equ 04h		; digit[0-9]
@@ -39,17 +29,17 @@ externdef	_pctype:LPWORD
 externdef	_pwctype:LPWORD
 
 isspace		proto __cdecl :SINT ; space, tab, carriage return, new line, vertical tab,
-				; or formfeed (0x09 to 0x0D, 0x20)
+			    ; or formfeed (0x09 to 0x0D, 0x20)
 isupper		proto __cdecl :SINT ; uppercase letter (A to Z)
 isalpha		proto __cdecl :SINT ; letter (A to Z or a to z)
 isalnum		proto __cdecl :SINT ; letter (A to Z or a to z) + digit (0 to 9)
 isascii		proto __cdecl :SINT ; the low order byte of c is in the range 0 to 127
-				; (0x00--0x7F)
+			    ; (0x00--0x7F)
 iscntrl		proto __cdecl :SINT ; delete character or ordinary control character
-				; (0x7F or 0x00 to 0x1F)
+			    ; (0x7F or 0x00 to 0x1F)
 isdigit		proto __cdecl :SINT ; digit (0 to 9)
 isgraph		proto __cdecl :SINT ; printing character, like isprint, except that
-				; a space character is excluded
+			    ; a space character is excluded
 islower		proto __cdecl :SINT ; lowercase letter (a to z)
 isprint		proto __cdecl :SINT ; printing character (0x20 to 0x7E)
 ispunct		proto __cdecl :SINT ; punctuation character (iscntrl or isspace)

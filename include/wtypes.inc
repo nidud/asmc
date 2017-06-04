@@ -8,12 +8,11 @@ endif
 include rpc.inc
 include rpcndr.inc
 .xlist
-;; Forward Declarations
 
 ;PVOID
-MIDL_user_allocate proto _CType :size_t
+MIDL_user_allocate proto WINAPI :size_t
 ;void
-MIDL_user_free proto _CType :PVOID
+MIDL_user_free proto WINAPI :PVOID
 
 externdef __MIDL_itf_wtypes_0000_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef __MIDL_itf_wtypes_0000_v0_0_s_ifspec:RPC_IF_HANDLE
@@ -72,9 +71,6 @@ OLESTR macro str
 endif
 ifndef _WINDEF_
 LPCRECTL	typedef ptr RECTL
-;;typedef void *PVOID;
-;;typedef void *LPVOID;
-;;typedef float FLOAT;
 
 RECT		STRUC
 left		LONG ?
@@ -86,7 +82,7 @@ PRECT		typedef ptr RECT
 LPRECT		typedef ptr RECT
 LPCRECT		typedef ptr RECT
 
-endif	;;_WINDEF_
+endif	
 UCHAR		typedef BYTE
 USHORT		typedef WORD
 DOUBLE		typedef REAL8
@@ -94,14 +90,14 @@ DOUBLE		typedef REAL8
 ifndef _DWORDLONG_
 DWORDLONG	typedef MIDL_uhyper
 PDWORDLONG	typedef ptr DWORDLONG
-endif ;; NOT _DWORDLONG_
+endif 
 
 ifndef _ULONGLONG_
 LONGLONG	typedef hyper
 ULONGLONG	typedef MIDL_uhyper
 PLONGLONG	typedef ptr LONGLONG
 PULONGLONG	typedef ptr ULONGLONG
-endif ;; _ULONGLONG_
+endif 
 
 ifndef _WINBASE_
 ifndef _FILETIME_
@@ -112,7 +108,7 @@ dwHighDateTime	dd ?
 FILETIME	ENDS
 PFILETIME	typedef ptr FILETIME
 LPFILETIME	typedef ptr FILETIME
-endif ;; NOT _FILETIME
+endif 
 
 ifndef _SYSTEMTIME_
 _SYSTEMTIME_ equ <>
@@ -128,7 +124,7 @@ wMilliseconds	dw ?
 SYSTEMTIME	ENDS
 PSYSTEMTIME	typedef ptr SYSTEMTIME
 LPSYSTEMTIME	typedef ptr SYSTEMTIME
-endif ;; NOT _SYSTEMTIME
+endif 
 
 ifndef _SECURITY_ATTRIBUTES_
 _SECURITY_ATTRIBUTES_ equ <>
@@ -139,7 +135,7 @@ bInheritHandle		BOOL ?
 SECURITY_ATTRIBUTES	ENDS
 PSECURITY_ATTRIBUTES	typedef ptr SECURITY_ATTRIBUTES
 LPSECURITY_ATTRIBUTES	typedef ptr SECURITY_ATTRIBUTES
-endif ;; NOT _SECURITY_ATTRIBUTES_
+endif 
 
 ifndef SECURITY_DESCRIPTOR_REVISION
 SECURITY_DESCRIPTOR_CONTROL typedef USHORT
@@ -166,9 +162,9 @@ Dacl			PACL ?
 SECURITY_DESCRIPTOR	ENDS
 PISECURITY_DESCRIPTOR	typedef ptr SECURITY_DESCRIPTOR
 
-endif ;; NOT SECURITY_DESCRIPTOR_REVISION
+endif 
 
-endif ;;_WINBASE_
+endif 
 COAUTHIDENTITY		STRUC
 User			LPWORD ?
 UserLength		ULONG ?
@@ -195,7 +191,7 @@ SCODE			typedef LONG
 ifndef _HRESULT_DEFINED
 _HRESULT_DEFINED equ <>
 HRESULT		typedef LONG
-endif ;; NOT _HRESULT_DEFINED
+endif 
 
 PSCODE		typedef ptr SCODE
 
@@ -207,12 +203,12 @@ Data2		dw ?
 Data3		dw ?
 Data4		db 8 dup(?)
 GUID		ENDS
-endif ;; !GUID_DEFINED
+endif 
 
 ifndef __LPGUID_DEFINED__
 __LPGUID_DEFINED__ equ <>
 LPGUID		typedef ptr GUID
-endif ;; !__LPGUID_DEFINED__
+endif 
 
 ifndef __OBJECTID_DEFINED
 __OBJECTID_DEFINED equ <>
@@ -221,7 +217,7 @@ OBJECTID	STRUC
 Lineage		GUID <>
 Uniquifier	dd ?
 OBJECTID	ENDS
-endif ;; !_OBJECTID_DEFINED
+endif 
 
 ifndef __IID_DEFINED__
 __IID_DEFINED__ equ <>
@@ -249,7 +245,7 @@ REFGUID		typedef ptr GUID
 REFIID		typedef ptr IID
 REFCLSID	typedef ptr CLSID
 REFFMTID	typedef ptr FMTID
-endif ;; NOT __IID_DEFINED__
+endif 
 
 MEMCTX		typedef SDWORD
 MEMCTX_TASK	equ 1
@@ -262,12 +258,12 @@ ifndef _ROTFLAGS_DEFINED
 _ROTFLAGS_DEFINED	equ 1
 ROTFLAGS_REGISTRATIONKEEPSALIVE equ 0x1
 ROTFLAGS_ALLOWANYCLIENT equ 0x2
-endif ;; NOT _ROTFLAGS_DEFINED
+endif 
 
 ifndef _ROT_COMPARE_MAX_DEFINED
 _ROT_COMPARE_MAX_DEFINED equ 1
 ROT_COMPARE_MAX		equ 2048
-endif ;; NOT _ROT_COMPARE_MAX_DEFINED
+endif 
 
 CLSCTX		typedef SDWORD
 
@@ -322,7 +318,7 @@ ifndef _LCID_DEFINED
 _LCID_DEFINED equ <>
 LCID		typedef DWORD
 
-endif ;; NOT _LCID_DEFINED
+endif 
 BYTE_BLOB	STRUC
 clSize		dd ?
 abData		db ?
@@ -501,8 +497,8 @@ wireHFONT	typedef ptr RemotableHandle
 wireHDC		typedef ptr RemotableHandle
 wireHICON	typedef ptr RemotableHandle
 
-ifndef _WIN32		 ;; The following code is for Win16 only
-ifndef WINAPI		;; If not included with 3.1 headers...
+ifndef _WIN32		 
+ifndef WINAPI		
 MSG		STRUC
 hwnd		HWND ?
 message		UINT ?
@@ -515,8 +511,8 @@ PMSG		typedef ptr MSG
 NPMSG		typedef ptr MSG
 LPMSG		typedef ptr MSG
 
-endif ;; _WIN32
-endif ;; WINAPI
+endif 
+endif 
 
 wireHBITMAP	typedef ptr userHBITMAP
 wireHPALETTE	typedef ptr userHPALETTE
@@ -528,7 +524,7 @@ HMETAFILEPICT	typedef PVOID
 
 externdef IWinTypes_v0_1_c_ifspec:RPC_IF_HANDLE
 externdef IWinTypes_v0_1_s_ifspec:RPC_IF_HANDLE
-endif ;; __IWinTypes_INTERFACE_DEFINED__
+endif 
 
 if ( _MSC_VER GE 800 )
 ;#pragma warning(disable:4201)
@@ -539,14 +535,11 @@ ifndef _tagCY_DEFINED
 _tagCY_DEFINED	equ 1
 _CY_DEFINED	equ 1
 if 0
-;; the following isn't the real definition of CY, but it is
-;; what RPC knows how to remote
 CY		STRUC
 int64		LONGLONG <>
 CY		ENDS
 
-else ;; 0
-;; real definition that makes the C++ compiler happy
+else 
 CY		UNION
 STRUC
 	Lo	dd ?
@@ -554,13 +547,11 @@ STRUC
 ENDS
 int64		dq ?
 CY		ENDS
-endif ;; 0
-endif ;; _tagCY_DEFINED
+endif 
+endif 
 LPCY		typedef ptr CY
 
-if 0 ;; _tagDEC_DEFINED
-;; The following isn't the real definition of Decimal type,
-;; but it is what RPC knows how to remote
+if 0 
 DECIMAL		STRUC
 wReserved	dw ?
 scale		db ?
@@ -569,8 +560,7 @@ Hi32		dd ?
 Lo64		dq ?
 DECIMAL		ENDS
 
-else ;; _tagDEC_DEFINED
-;; real definition that makes the C++ compiler happy
+else 
 
 DECIMAL		STRUC
 wReserved	dw ?
@@ -596,7 +586,7 @@ DECIMAL_SETZERO macro val
 	mov val.Hi32,0
 	mov val.signscale,0
 	endm
-endif ;; _tagDEC_DEFINED
+endif 
 LPDECIMAL	typedef ptr DECIMAL
 
 if ( _MSC_VER GE 800 )
@@ -605,22 +595,16 @@ endif
 wireBSTR	typedef ptr FLAGGED_WORD_BLOB
 BSTR		typedef ptr OLECHAR
 LPBSTR		typedef ptr BSTR
-;; 0 == FALSE, -1 == TRUE
 VARIANT_BOOL	typedef sword
 
 if NOT __STDC__ AND (_MSC_VER LE 1000)
-;; For backward compatibility
 _VARIANT_BOOL	typedef VARIANT_BOOL
 
 else
-;; ANSI C/C++ reserve bool as keyword
 _VARIANT_BOOL	equ <>;/##/
 endif
 BOOLEAN		typedef boolean
 
-;; The BSTRBLOB structure is used by some implementations
-;; of the IPropertyStorage interface when marshaling BSTRs
-;; on systems which don't support BSTR marshaling.
 ifndef _tagBSTRBLOB_DEFINED
 _tagBSTRBLOB_DEFINED  equ <>
 BSTRBLOB	STRUC
@@ -639,7 +623,7 @@ _BLOB_DEFINED	 equ <>
 _LPBLOB_DEFINED	 equ <>
 BLOB		STRUC
 cbSize		ULONG ?
-pBlobData	LPBYTE ?	;; [size_is]
+pBlobData	LPBYTE ?	
 BLOB		ENDS
 LPBLOB		typedef ptr BLOB
 endif
@@ -650,70 +634,13 @@ ulClipFmt	LONG ?
 pClipData	LPBYTE ?
 CLIPDATA	ENDS
 
-;; Macro to calculate the size of the above pClipData
 CBPCLIPDATA macro clipdata
 	exitm<( (clipdata).cbSize - sizeof((clipdata).ulClipFmt) )>
 	endm
 
 VARTYPE		typedef WORD
 
-;;
-;; VARENUM usage key,
-;;
-;; * [V] - may appear in a VARIANT
-;; * [T] - may appear in a TYPEDESC
-;; * [P] - may appear in an OLE property set
-;; * [S] - may appear in a Safe Array
-;;
-;;
-;;  VT_EMPTY		[V]   [P]     nothing
-;;  VT_NULL		[V]   [P]     SQL style Null
-;;  VT_I2		[V][T][P][S]  2 byte signed int
-;;  VT_I4		[V][T][P][S]  4 byte signed int
-;;  VT_R4		[V][T][P][S]  4 byte real
-;;  VT_R8		[V][T][P][S]  8 byte real
-;;  VT_CY		[V][T][P][S]  currency
-;;  VT_DATE		[V][T][P][S]  date
-;;  VT_BSTR		[V][T][P][S]  OLE Automation string
-;;  VT_DISPATCH		[V][T][P][S]  IDispatch *
-;;  VT_ERROR		[V][T][P][S]  SCODE
-;;  VT_BOOL		[V][T][P][S]  True=-1, False=0
-;;  VT_VARIANT		[V][T][P][S]  VARIANT *
-;;  VT_UNKNOWN		[V][T]	 [S]  IUnknown *
-;;  VT_DECIMAL		[V][T]	 [S]  16 byte fixed point
-;;  VT_RECORD		[V]   [P][S]  user defined type
-;;  VT_I1		[V][T][P][s]  signed char
-;;  VT_UI1		[V][T][P][S]  unsigned char
-;;  VT_UI2		[V][T][P][S]  unsigned short
-;;  VT_UI4		[V][T][P][S]  unsigned short
-;;  VT_I8		   [T][P]     signed 64-bit int
-;;  VT_UI8		   [T][P]     unsigned 64-bit int
-;;  VT_INT		[V][T][P][S]  signed machine int
-;;  VT_UINT		[V][T]	 [S]  unsigned machine int
-;;  VT_VOID		   [T]	      C style void
-;;  VT_HRESULT		   [T]	      Standard return type
-;;  VT_PTR		   [T]	      pointer type
-;;  VT_SAFEARRAY	   [T]	      (use VT_ARRAY in VARIANT)
-;;  VT_CARRAY		   [T]	      C style array
-;;  VT_USERDEFINED	   [T]	      user defined type
-;;  VT_LPSTR		   [T][P]     null terminated string
-;;  VT_LPWSTR		   [T][P]     wide null terminated string
-;;  VT_FILETIME		      [P]     FILETIME
-;;  VT_BLOB		      [P]     Length prefixed bytes
-;;  VT_STREAM		      [P]     Name of the stream follows
-;;  VT_STORAGE		      [P]     Name of the storage follows
-;;  VT_STREAMED_OBJECT	      [P]     Stream contains an object
-;;  VT_STORED_OBJECT	      [P]     Storage contains an object
-;;  VT_BLOB_OBJECT	      [P]     Blob contains an object
-;;  VT_CF		      [P]     Clipboard format
-;;  VT_CLSID		      [P]     A Class ID
-;;  VT_VECTOR		      [P]     simple counted array
-;;  VT_ARRAY		[V]	      SAFEARRAY*
-;;  VT_BYREF		[V]	      void* for local use
-;;  VT_BSTR_BLOB		      Reserved for system use
-;;
 
-;;enum VARENUM
 VT_EMPTY		equ 0
 VT_NULL			equ 1
 VT_I2			equ 2
@@ -803,7 +730,6 @@ dwVersionLo		dd ?
 QUERYCONTEXT		ENDS
 
 
-;;enum tagTYSPEC
 TYSPEC_CLSID		equ 0
 TYSPEC_FILEEXT		equ TYSPEC_CSID + 1
 TYSPEC_MIMETYPE		equ TYSPEC_FILEEXT + 1
@@ -849,7 +775,6 @@ ACTFLG_Published	equ 8
 ACTFLG_Assigned		equ 16
 ACTFLG_UserInstall	equ 32
 
-;;typedef enum _CLASSPATHTYPE
 CLASSPATHTYPE		typedef SDWORD
 ExeNamePath		equ 0
 DllNamePath		equ ExeNamePath + 1
@@ -902,10 +827,8 @@ PACKAGEINFO		ENDS
 externdef __MIDL_itf_wtypes_0001_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef __MIDL_itf_wtypes_0001_v0_0_s_ifspec:RPC_IF_HANDLE
 
-;; Additional Prototypes for ALL interfaces
 
-;; end of Additional Prototypes
 
 .list
 
-endif ;; __WTYPES_INC
+endif 

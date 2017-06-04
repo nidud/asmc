@@ -12,14 +12,13 @@ include rpcndr.inc
 
 ifndef __RPCNDR_H_VERSION__
 .err <this stub requires an updated version of rpcndr.inc >
-endif ;; __RPCNDR_H_VERSION__
+endif 
 
 ifndef COM_NO_WINDOWS_H
 include windows.inc
 include ole2.inc
-endif ;;COM_NO_WINDOWS_H
+endif 
 
-;; header files for imported files
 include wtypes.inc
 .xlist
 
@@ -35,12 +34,12 @@ endif
 LPUNKNOWN  typedef ptr IUnknown
 
 ;HRESULT
-IUnknown_QueryInterface_Proxy proto _CType \
+IUnknown_QueryInterface_Proxy proto WINAPI \
 		 _This: LPUNKNOWN,
 		  riid: REFIID,
 	     ppvObject: PVOID
 ;void
-IUnknown_QueryInterface_Stub proto _CType \
+IUnknown_QueryInterface_Stub proto WINAPI \
 		 _This: LPUNKNOWN,
     _pRpcChannelBuffer: ptr,;IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -48,12 +47,12 @@ IUnknown_QueryInterface_Stub proto _CType \
 
 
 ;ULONG
-IUnknown_AddRef_Proxy proto _CType \
+IUnknown_AddRef_Proxy proto WINAPI \
 		 _This: ptr IUnknown
 
 
 ;void
-IUnknown_AddRef_Stub proto _CType \
+IUnknown_AddRef_Stub proto WINAPI \
 		 _This: ptr,;IRpcStubBuffer,
     _pRpcChannelBuffer: ptr,;IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -61,12 +60,12 @@ IUnknown_AddRef_Stub proto _CType \
 
 
 ;ULONG
-IUnknown_Release_Proxy proto _CType \
+IUnknown_Release_Proxy proto WINAPI \
 		 _This: ptr,;IUnknown
 
 
 ;void
-IUnknown_Release_Stub proto _CType \
+IUnknown_Release_Stub proto WINAPI \
 		 _This: ptr,;IRpcStubBuffer,
     _pRpcChannelBuffer: ptr,;IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -74,7 +73,7 @@ IUnknown_Release_Stub proto _CType \
 
 
 
-endif	;; __IUnknown_INTERFACE_DEFINED__
+endif	
 
 
 ifndef __IClassFactory_INTERFACE_DEFINED__
@@ -117,19 +116,19 @@ struct IClassFactoryVtbl *lpVtbl CONST_VTBL ?
 			ENDS
 
 
-endif	;; C style interface
+endif	
 
 
 
 ;HRESULT
-IClassFactory_RemoteCreateInstance_Proxy proto _CType \
+IClassFactory_RemoteCreateInstance_Proxy proto WINAPI \
 		 _This: ptr IClassFactory,
 		  riid: REFIID,
 	     ppvObject: ptr IUnknown
 
 
 ;void
-IClassFactory_RemoteCreateInstance_Stub proto _CType \
+IClassFactory_RemoteCreateInstance_Stub proto WINAPI \
 		 _This: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -137,13 +136,13 @@ IClassFactory_RemoteCreateInstance_Stub proto _CType \
 
 
 ;HRESULT
-IClassFactory_RemoteLockServer_Proxy proto _CType \
+IClassFactory_RemoteLockServer_Proxy proto WINAPI \
 		 _This: ptr IClassFactory,
 		 fLock: BOOL
 
 
 ;void
-IClassFactory_RemoteLockServer_Stub proto _CType \
+IClassFactory_RemoteLockServer_Stub proto WINAPI \
 		 _This: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -151,35 +150,33 @@ IClassFactory_RemoteLockServer_Stub proto _CType \
 
 
 
-endif	;; __IClassFactory_INTERFACE_DEFINED__
+endif	
 
 
-;; Additional Prototypes for ALL interfaces
 
 ;HRESULT
-IClassFactory_CreateInstance_Proxy proto _CType \
+IClassFactory_CreateInstance_Proxy proto WINAPI \
 		 _This: ptr IClassFactory,
 	     pUnkOuter: ptr IUnknown,
 		  riid: REFIID
 
 ;HRESULT
-IClassFactory_CreateInstance_Stub proto _CType \
+IClassFactory_CreateInstance_Stub proto WINAPI \
 		 _This: ptr IClassFactory,
 		  riid: REFIID,
 	     ppvObject: ptr IUnknown
 
 ;HRESULT
-IClassFactory_LockServer_Proxy proto _CType \
+IClassFactory_LockServer_Proxy proto WINAPI \
 		 _This: ptr IClassFactory,
 		 fLock: BOOL
 
 ;HRESULT
-IClassFactory_LockServer_Stub proto _CType \
+IClassFactory_LockServer_Stub proto WINAPI \
 		 _This: ptr IClassFactory,
 		 fLock: BOOL
 
 
-;; end of Additional Prototypes
 
 .list
-endif	;; __unknwn_h__
+endif	

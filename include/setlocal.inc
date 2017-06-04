@@ -7,7 +7,6 @@ ERR_BUFFER_TOO_SMALL	equ 1	; should be in windef.h
 _CLOCALEHANDLE		equ 0	; "C" locale handle
 _CLOCALECP		equ CP_ACP ; "C" locale Code page
 
-; Define the max length for each string type including space for a null.
 
 _MAX_WDAY_ABBR		equ 4
 _MAX_WDAY		equ 10
@@ -18,7 +17,6 @@ _MAX_AMPM		equ 3
 _DATE_LENGTH		equ 8	; mm/dd/yy (null not included)
 _TIME_LENGTH		equ 8	; hh:mm:ss (null not included)
 
-; LC_TIME localization structure
 
 __lc_time_data		STRUC
 wday_abbr		LPSTR  7 dup(?)
@@ -36,7 +34,6 @@ MAX_LANG_LEN		equ 64	; max language name length
 MAX_CTRY_LEN		equ 64	; max country name length
 MAX_MODIFIER_LEN	equ 0	; max modifier name length - n/a
 MAX_LC_LEN		equ MAX_LANG_LEN + MAX_CTRY_LEN + MAX_MODIFIER_LEN + 3
-				; max entire locale string length
 MAX_CP_LEN		equ 8	; max code page name length
 CATNAMES_LEN		equ 57	; "LC_COLLATE=;LC_CTYPE=;..." length
 
@@ -65,15 +62,11 @@ externdef		__lc_collate_cp:UINT	; code page for LC_COLLATE
 __get_qualified_locale	PROTO :LPLC_STRINGS, :LPLC_ID, :LPLC_STRINGS
 ;__getlocaleinfo		PROTO :SINT, :LCID, :LCTYPE, :PVOID
 
-; lconv structure for the "C" locale
 externdef		__lconv_c:lconv
-; pointer to current lconv structure
 externdef		__lconv: ptr lconv
-; initial values for lconv structure
 externdef		__lconv_static_decimal:SBYTE
 externdef		__lconv_static_null:SBYTE
 
-; Initialization functions for locale categories
 
 __init_collate		PROTO
 __init_ctype		PROTO

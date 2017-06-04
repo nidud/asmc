@@ -1,16 +1,10 @@
 ifndef _KTMTYPES_
 _KTMTYPES_ equ <>
-;;
-;; Common types for KTM exposed at both the Nt- and Win32-layer.
-;;
 UOW			typedef GUID
 CRM_PROTOCOL_ID		typedef GUID
 PUOW			typedef ptr GUID
 PCRM_PROTOCOL_ID	typedef ptr GUID
 
-;;
-;; Define the TransactionManager option values
-;;
 
 TRANSACTION_MANAGER_VOLATILE		 equ 0x00000001
 TRANSACTION_MANAGER_COMMIT_DEFAULT	 equ 0x00000000
@@ -20,37 +14,16 @@ TRANSACTION_MANAGER_COMMIT_LOWEST	 equ 0x00000008
 TRANSACTION_MANAGER_CORRUPT_FOR_RECOVERY equ 0x00000010
 TRANSACTION_MANAGER_CORRUPT_FOR_PROGRESS equ 0x00000020
 TRANSACTION_MANAGER_MAXIMUM_OPTION	 equ 0x0000003F
-
-
-;;
-;; Define the Transaction option values
-;;
-
 TRANSACTION_DO_NOT_PROMOTE equ 0x00000001
 TRANSACTION_MAXIMUM_OPTION equ 0x00000001
-
-
-;;
-;; Define the ResourceManager option values
-;;
 
 RESOURCE_MANAGER_VOLATILE	equ 0x00000001
 RESOURCE_MANAGER_COMMUNICATION	equ 0x00000002
 RESOURCE_MANAGER_MAXIMUM_OPTION equ 0x00000003
 
-
-;;
-;; Define the RegisterProtocol option values
-;;
-
 CRM_PROTOCOL_EXPLICIT_MARSHAL_ONLY equ 0x00000001
 CRM_PROTOCOL_DYNAMIC_MARSHAL_INFO  equ 0x00000002
 CRM_PROTOCOL_MAXIMUM_OPTION	   equ 0x00000003
-
-
-;;
-;; Define the Enlistment option values
-;;
 
 ENLISTMENT_SUPERIOR		equ 0x00000001
 ENLISTMENT_MAXIMUM_OPTION	equ 0x00000001
@@ -83,34 +56,18 @@ TRANSACTION_NOTIFY_COMMIT_REQUEST	equ 0x04000000
 TRANSACTION_NOTIFY_PROMOTE		equ 0x08000000
 TRANSACTION_NOTIFY_PROMOTE_NEW		equ 0x10000000
 TRANSACTION_NOTIFY_REQUEST_OUTCOME	equ 0x20000000
-;;
-;;  Note that this flag is not included in the TRANSACTION_NOTIFY_MASK.
-;;  The reason being that KTM does not understand this flag yet. This
-;;  flag is strictly for the use of filter manager. In fact we mask it
-;;  out before enlisting in any transaction.
-;;
 TRANSACTION_NOTIFY_COMMIT_FINALIZE equ 0x40000000
 
-;;
-;; Path to the transaction manager objects in the NT
-;; object namespace.
-;;
 TRANSACTIONMANAGER_OBJECT_PATH	equ <L"\\TransactionManager\\">
 TRANSACTION_OBJECT_PATH		equ <L"\\Transaction\\">
 ENLISTMENT_OBJECT_PATH		equ <L"\\Enlistment\\">
 RESOURCE_MANAGER_OBJECT_PATH	equ <L"\\ResourceManager\\">
 
-;;
-;; The following three defines are here to ease the allocation
-;; of string buffers which are to contain a fully qualified
-;; transaction manager object name, e.g., \Transaction\{GUID}
-;;
 TRANSACTIONMANAGER_OBJECT_NAME_LENGTH_IN_BYTES	equ (sizeof(TRANSACTIONMANAGER_OBJECT_PATH)+(38*sizeof(WCHAR)))
 TRANSACTION_OBJECT_NAME_LENGTH_IN_BYTES		equ (sizeof(TRANSACTION_OBJECT_PATH)+(38*sizeof(WCHAR)))
 ENLISTMENT_OBJECT_NAME_LENGTH_IN_BYTES		equ (sizeof(ENLISTMENT_OBJECT_PATH)+(38*sizeof(WCHAR)))
 RESOURCE_MANAGER_OBJECT_NAME_LENGTH_IN_BYTES	equ (sizeof(RESOURCE_MANAGER_OBJECT_PATH)+(38*sizeof(WCHAR)))
 
-;; TODO: warning, duplicated def in tm.h.
 TRANSACTION_NOTIFICATION	STRUC
 TransactionKey			PVOID ?
 TransactionNotification		ULONG ?
@@ -146,7 +103,6 @@ PropagationCookie	ULONG ?
 UOW			GUID <>
 TmIdentity		GUID <>
 BufferLength		ULONG ?
-    ;; Bufferlength bytes of Buffer follow
 TRANSACTION_NOTIFICATION_PROPAGATE_ARGUMENT ENDS
 PTRANSACTION_NOTIFICATION_PROPAGATE_ARGUMENT typedef ptr TRANSACTION_NOTIFICATION_PROPAGATE_ARGUMENT
 
@@ -170,7 +126,7 @@ KCRM_MARSHAL_HEADER	STRUC
 VersionMajor		dd ?
 VersionMinor		dd ?
 NumProtocols		dd ?
-Unused			dd ?	;; for alignment purposes
+Unused			dd ?
 KCRM_MARSHAL_HEADER	ENDS
 PKCRM_MARSHAL_HEADER	typedef ptr KCRM_MARSHAL_HEADER
 ;RESTRICTED_POINTER
@@ -191,13 +147,13 @@ PRKCRM_TRANSACTION_BLOB typedef ptr KCRM_TRANSACTION_BLOB
 KCRM_PROTOCOL_BLOB	STRUC
 ProtocolId		CRM_PROTOCOL_ID <>
 StaticInfoLength	dd ?
-TransactionIdInfoLength dd ?	;;??? ProtocolDynamicInfoLength;
-Unused1			dd ?	;; for alignment purposes
-Unused2			dd ?	;; for alignment purposes
+TransactionIdInfoLength dd ?
+Unused1			dd ?
+Unused2			dd ?
 KCRM_PROTOCOL_BLOB	ENDS
 PKCRM_PROTOCOL_BLOB	typedef ptr KCRM_PROTOCOL_BLOB
 ;RESTRICTED_POINTER
 PRKCRM_PROTOCOL_BLOB	typedef ptr KCRM_PROTOCOL_BLOB
 
-endif ;; _KTMTYPES_
+endif
 

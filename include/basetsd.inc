@@ -4,9 +4,6 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 .xlist
-;
-; Type definitions for the basic sized types.
-;
 if (defined(_M_MRX000) OR defined(_M_AMD64) OR defined(_M_IA64)) AND (_MSC_VER GE 1100) AND NOT defined(MIDL_PASS)
  POINTER_64 equ <ptr>
  POINTER_64_INT typedef qword
@@ -31,11 +28,6 @@ else
 FIRMWARE_PTR equ <POINTER_32>
 endif
 
-;;
-;; A compiler with support for __sptr and __uptr is in qualification.  To
-;; participate in qualification, remove the "0 &&" term below and also
-;; enable warning 4826 in warning.w
-;;
 
 if 0 AND (_MSC_FULL_VER GE 140041204) AND NOT defined(MIDL_PASS)
 POINTER_SIGNED	 equ <__sptr>
@@ -71,15 +63,9 @@ UINT64		typedef qword
 PUINT64		typedef ptr qword
 
 
-;
-; The following types are guaranteed to be signed and 32 bits wide.
-;
 LONG32		typedef sdword
 PLONG32		typedef ptr sdword
 
-;
-; The following types are guaranteed to be unsigned and 32 bits wide.
-;
 ULONG32		typedef dword
 PULONG32	typedef ptr dword
 DWORD32		typedef dword
@@ -93,14 +79,6 @@ _W64		equ <>
 endif
 endif
 
-;;
-;; The INT_PTR is guaranteed to be the same size as a pointer.	Its
-;; size with change with pointer size (32/64).	It should be used
-;; anywhere that a pointer is cast to an integer type. UINT_PTR is
-;; the unsigned variation.
-;;
-;; __int3264 is intrinsic to 64b MIDL but not to old MIDL or to C compiler.
-;;
 if 0
 if ( 501 < __midl )
 
@@ -110,8 +88,7 @@ if ( 501 < __midl )
     typedef [public] __int3264 LONG_PTR, *PLONG_PTR;
     typedef [public] unsigned __int3264 ULONG_PTR, *PULONG_PTR;
 
-else  ;; midl64
-;; old midl and C++ compiler
+else  
 endif
 endif
 
@@ -144,13 +121,8 @@ else
     __int3264	equ <sdword> ; __int32
 
 endif
-;endif ;; midl64
+;endif 
 
-;
-; HALF_PTR is half the size of a pointer it intended for use with
-; within strcuture which contain a pointer and two small fields.
-; UHALF_PTR is the unsigned variation.
-;
 
 ifdef _WIN64
 
@@ -207,22 +179,18 @@ PtrToShort macro p ; const void *p
     endm
 ;void *
 IntToPtr macro i ; const int i
-;; Caution: IntToPtr() sign-extends the int value.
     exitm<PVOID ptr i>
     endm
 ;void *
 UIntToPtr macro ui ; const unsigned int ui
-;; Caution: UIntToPtr() zero-extends the unsigned int value.
     exitm<PVOID ptr ui>
     endm
 ;void *
 LongToPtr macro l ; const long l
-;; Caution: LongToPtr() sign-extends the long value.
     exitm<PVOID ptr l>
     endm
 ;void *
 ULongToPtr macro ui ; const unsigned long ui
-;; Caution: ULongToPtr() zero-extends the unsigned long value.
     exitm<PVOID ptr ul>
     endm
 PtrToPtr64 macro p
@@ -253,9 +221,9 @@ HandleToHandle32 macro h
     exitm<PtrToPtr32(h)>
     endm
 
-endif ;; !_midl
+endif 
 
-else  ;; !_WIN64
+else  
 
 ADDRESS_TAG_BIT		equ 0x80000000
 
@@ -309,22 +277,18 @@ PtrToShort macro p ; const void *p
     endm
 ;void *
 IntToPtr macro i ; const int i
-;; Caution: IntToPtr() sign-extends the int value.
     exitm<PVOID ptr i>
     endm
 ;void *
 UIntToPtr macro ui ; const unsigned int ui
-;; Caution: UIntToPtr() zero-extends the unsigned int value.
     exitm<PVOID ptr ui>
     endm
 ;void *
 LongToPtr macro l ; const long l
-;; Caution: LongToPtr() sign-extends the long value.
     exitm<PVOID ptr l>
     endm
 ;void *
 ULongToPtr macro ui ; const unsigned long ui
-;; Caution: ULongToPtr() zero-extends the unsigned long value.
     exitm<PVOID ptr ul>
     endm
 
@@ -360,7 +324,7 @@ HandleToHandle32 macro h
     exitm<PtrToPtr32(h)>
     endm
 
-endif ;; !_WIN64
+endif 
 
 
 HandleToUlong	equ <HandleToULong>
@@ -386,10 +350,6 @@ MINLONG_PTR	equ MININT_PTR
 MAXHALF_PTR	equ MAXUHALF_PTR shr 1
 MINHALF_PTR	equ MAXHALF_PTR + 1
 
-;;
-;; SIZE_T used for counts or ranges which need to span the range of
-;; of a pointer.  SSIZE_T is the signed variation.
-;;
 
 SIZE_T		typedef ULONG_PTR
 PSIZE_T		typedef ptr ULONG_PTR
@@ -437,37 +397,25 @@ MININT		equ MAXINT + 1
 MAXDWORD32	equ MAXULONG32
 MAXDWORD64	equ MAXULONG64
 
-endif ;; _WIN32_WINNT >= 0x0600
+endif 
 
-;;
-;; Add Windows flavor DWORD_PTR types
-;;
 
 DWORD_PTR	typedef ULONG_PTR
 PDWORD_PTR	typedef ptr ULONG_PTR
 
-;;
-;; The following types are guaranteed to be signed and 64 bits wide.
-;;
 
 LONG64		typedef sqword
 PLONG64		typedef ptr sqword
 
-;;
-;; The following types are guaranteed to be unsigned and 64 bits wide.
-;;
 
 ULONG64		typedef qword
 PULONG64	typedef ptr qword
 DWORD64		typedef qword
 PDWORD64	typedef ptr qword
 
-;;
-;; Legacy thread affinity.
-;;
 
 KAFFINITY	typedef ULONG_PTR
 PKAFFINITY	typedef ptr KAFFINITY
 
 .list
-endif ;; _BASETSD_H_
+endif 

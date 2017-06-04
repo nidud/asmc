@@ -1,17 +1,17 @@
 #ifndef __INC_DEFS
 #define __INC_DEFS
+#define _ASMLIB_ 224
 #ifdef __cplusplus
  extern "C" {
 #endif
 
-#ifdef _WIN64
-#define _CType _fastcall
-#define _CDecl _fastcall
+#ifndef WINAPI
+#ifdef _M_X64
+#define WINAPI
 #else
-#define _CType _stdcall
-#define _CDecl _cdecl
+#define WINAPI __stdcall
 #endif
-
+#endif
 #ifdef	_DLL
 #define _CRTIMP __declspec(dllimport)
 #else
@@ -27,11 +27,11 @@ typedef unsigned __int64 QWORD;
 #define _SIZE_T_DEFINED
 #ifdef _WIN64
 typedef __int64 _off_t;
-typedef QWORD size_t;
+typedef unsigned __int64 size_t;
 typedef __int64 intptr_t;
 #else
 typedef long _off_t;
-typedef DWORD size_t;
+typedef unsigned int size_t;
 typedef int intptr_t;
 #endif
 

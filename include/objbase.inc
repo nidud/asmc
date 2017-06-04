@@ -2,113 +2,20 @@ include rpc.inc
 include rpcndr.inc
 include stdlib.inc
 .xlist
-;;
-;; Component object model defintions.
-;;
 ifndef _OBJBASE_H_
 _OBJBASE_H_ equ 1
 
-;;#include <pshpack8.h>
 
 ifdef __PE__
 option	dllimport:<ole32>
 endif
 
-;;***** Interface Declaration **********************************************
 
-;;
-;;	These are macros for declaring interfaces.  They exist so that
-;;	a single definition of the interface is simulataneously a proper
-;;	declaration of the interface structures (C++ abstract classes)
-;;	for both C and C++.
-;;
-;;	DECLARE_INTERFACE(iface) is used to declare an interface that does
-;;	not derive from a base interface.
-;;	DECLARE_INTERFACE_(iface, baseiface) is used to declare an interface
-;;	that does derive from a base interface.
-;;
-;;	By default if the source file has a .c extension the C version of
-;;	the interface declaratations will be expanded; if it has a .cpp
-;;	extension the C++ version will be expanded. if you want to force
-;;	the C version expansion even though the source file has a .cpp
-;;	extension, then define the macro "CINTERFACE".
-;;	eg.	cl -DCINTERFACE file.cpp
-;;
-;;	Example Interface declaration:
-;;
-;;	    #undef  INTERFACE
-;;	    #define INTERFACE	IClassFactory
-;;
-;;	    DECLARE_INTERFACE_(IClassFactory, IUnknown)
-;;	    {
-;;		;; *** IUnknown methods ***
-;;		STDMETHOD(QueryInterface) (THIS_
-;;					  REFIID riid,
-;;					  LPVOID * ppvObj) PURE;
-;;		STDMETHOD_(ULONG,AddRef) (THIS) PURE;
-;;		STDMETHOD_(ULONG,Release) (THIS) PURE;
-;;
-;;		;; *** IClassFactory methods ***
-;;		STDMETHOD(CreateInstance) (THIS_
-;;					  LPUNKNOWN pUnkOuter,
-;;					  REFIID riid,
-;;					  LPVOID * ppvObject) PURE;
-;;	    };
-;;
-;;	Example C++ expansion:
-;;
-;;	    struct FAR IClassFactory : public IUnknown
-;;	    {
-;;		virtual HRESULT STDMETHODCALLTYPE QueryInterface(
-;;						    IID FAR& riid,
-;;						    LPVOID * ppvObj) = 0;
-;;		virtual HRESULT STDMETHODCALLTYPE AddRef(void) = 0;
-;;		virtual HRESULT STDMETHODCALLTYPE Release(void) = 0;
-;;		virtual HRESULT STDMETHODCALLTYPE CreateInstance(
-;;						LPUNKNOWN pUnkOuter,
-;;						IID FAR& riid,
-;;						LPVOID * ppvObject) = 0;
-;;	    };
-;;
-;;	    NOTE: Our documentation says '#define interface class' but we use
-;;	    'struct' instead of 'class' to keep a lot of 'public:' lines
-;;	    out of the interfaces.  The 'FAR' forces the 'this' pointers to
-;;	    be far, which is what we need.
-;;
-;;	Example C expansion:
-;;
-;;	    typedef struct IClassFactory
-;;	    {
-;;		const struct IClassFactoryVtbl * lpVtbl;
-;;	    } IClassFactory;
-;;
-;;	    typedef struct IClassFactoryVtbl IClassFactoryVtbl;
-;;
-;;	    struct IClassFactoryVtbl
-;;	    {
-;;		HRESULT (STDMETHODCALLTYPE * QueryInterface) (
-;;						    IClassFactory * This,
-;;						    IID * riid,
-;;						    LPVOID * ppvObj) ;
-;;		HRESULT (STDMETHODCALLTYPE * AddRef) (IClassFactory * This) ;
-;;		HRESULT (STDMETHODCALLTYPE * Release) (IClassFactory * This) ;
-;;		HRESULT (STDMETHODCALLTYPE * CreateInstance) (
-;;						    IClassFactory * This,
-;;						    LPUNKNOWN pUnkOuter,
-;;						    IID * riid,
-;;						    LPVOID * ppvObject);
-;;		HRESULT (STDMETHODCALLTYPE * LockServer) (
-;;						    IClassFactory * This,
-;;						    BOOL fLock);
-;;	    };
-;;
 
-;;***** Additional basic types *********************************************
 
 CLSCTX_INPROC		equ CLSCTX_INPROC_SERVER OR CLSCTX_INPROC_HANDER
 
-;; With DCOM, CLSCTX_REMOTE_SERVER should be included
-if (_WIN32_WINNT GE 0x0400 ) OR defined(_WIN32_DCOM) ;; DCOM
+if (_WIN32_WINNT GE 0x0400 ) OR defined(_WIN32_DCOM) 
 CLSCTX_ALL		equ CLSCTX_INPROC_SERVER OR CLSCTX_INPROC_HANDLER OR CLSCTX_LOCAL_SERVER OR CSCTX_REMOTE_SERVER
 CLSCTX_SERVER		equ CLSCTX_INPROC_SERVER OR CLSCTX_LOCAL_SERVER OR CSCTX_REMOTE_SERVER
 else
@@ -116,34 +23,19 @@ CLSCTX_ALL		equ CLSCTX_INPROC_SERVER OR CLSCTX_INPROC_HANDLER OR CLSCTX_LOCA_SER
 CLSCTX_SERVER		equ CLSCTX_INPROC_SERVER OR CLSCTX_LOCA_SERVER
 endif
 
-;;
-;; class registration flags; passed to CoRegisterClassObject
-;;
-REGCLS_SINGLEUSE	equ 0	;; class object only generates one instance
-REGCLS_MULTIPLEUSE	equ 1	;; same class object genereates multiple inst.
-				;; and local automatically goes into inproc tbl.
-REGCLS_MULTI_SEPARATE	equ 2	;; multiple use, but separate control over each
-				;; context.
-REGCLS_SUSPENDED	equ 4	;; register is as suspended, will be activated
-				;; when app calls CoResumeClassObjects
-REGCLS_SURROGATE	equ 8	;; must be used when a surrogate process
-				;; is registering a class object that will be
-				;; loaded in the surrogate
-				;; interface marshaling definitions
+REGCLS_SINGLEUSE	equ 0	
+REGCLS_MULTIPLEUSE	equ 1	
+REGCLS_MULTI_SEPARATE	equ 2	
+REGCLS_SUSPENDED	equ 4	
+REGCLS_SURROGATE	equ 8	
 
-MARSHALINTERFACE_MIN	equ 500 ;; minimum number of bytes for interface marshl
+MARSHALINTERFACE_MIN	equ 500 
 
 
-;;
-;; Common typedefs for paramaters used in Storage API's, gleamed from storage.h
-;; Also contains Storage error codes, which should be moved into the storage
-;; idl files.
-;;
 
 
 CWCSTORAGENAME		equ 32
 
-;; Storage instantiation modes
 STGM_DIRECT		equ 0x00000000
 STGM_TRANSACTED		equ 0x00010000
 STGM_SIMPLE		equ 0x08000000
@@ -161,7 +53,7 @@ STGM_PRIORITY		equ 0x00040000
 STGM_DELETEONRELEASE	equ 0x04000000
 if (WINVER GE 400)
 STGM_NOSCRATCH		equ 0x00100000
-endif ;; WINVER
+endif 
 
 STGM_CREATE		equ 0x00001000
 STGM_CONVERT		equ 0x00020000
@@ -169,7 +61,6 @@ STGM_FAILIFTHERE	equ 0x00000000
 
 STGM_NOSNAPSHOT		equ 0x00200000
 
-;;  flags for internet asyncronous and layout docfile
 ASYNC_MODE_COMPATIBILITY equ 0x00000001
 ASYNC_MODE_DEFAULT	equ 0x00000000
 
@@ -185,10 +76,8 @@ STGFMT_FILE		equ 3
 STGFMT_ANY		equ 4
 STGFMT_DOCFILE		equ 5
 
-;; This is a legacy define to allow old component to builds
 STGFMT_DOCUMENT		equ 0
 
-;; here is where we pull in the MIDL generated headers for the interfaces
 ;IRpcStubBuffer		typedef IRpcStubBuffer
 ;IRpcChannelBuffer	typedef IRpcChannelBuffer
 
@@ -197,20 +86,6 @@ include unknwn.inc
 include objidl.inc
 .xlist
 
-;; macros to define byte pattern for a GUID.
-;;	Example: DEFINE_GUID(GUID_XXX, a, b, c, ...);
-;;
-;; Each dll/exe must initialize the GUIDs once.	 This is done in one of
-;; two ways.  If you are not using precompiled headers for the file(s) which
-;; initializes the GUIDs, define INITGUID before including objbase.h.  This
-;; is how OLE builds the initialized versions of the GUIDs which are included
-;; in ole2.lib.	 The GUIDs in ole2.lib are all defined in the same text
-;; segment GUID_TEXT.
-;;
-;; The alternative (which some versions of the compiler don't handle properly;
-;; they wind up with the initialized GUIDs in a data, not a text segment),
-;; is to use a precompiled version of objbase.h and then include initguid.h
-;; after objbase.h followed by one or more of the guid defintion files.
 
 ifndef GUID
 GUID		STRUC
@@ -231,7 +106,7 @@ ifdef _OLE32_
 
 ifdef _OLE32PRIV_
 ;BOOL
-wIsEqualGUID proto _CType rguid1:REFGUID, rguid2:REFGUID
+wIsEqualGUID proto WINAPI rguid1:REFGUID, rguid2:REFGUID
 IsEqualGUID macro rguid1, rguid2
 	exitm<wIsEqualGUID(rguid1, rguid2)>
 	endm
@@ -244,8 +119,8 @@ IsEqualGUID macro rguid1, rguid2
 	.endif
 	exitm<eax>
 	endm
-endif	;;  _OLE32PRIV_
-endif	;;  _OLE32_
+endif	
+endif	
 
 IsEqualIID macro riid1, riid2
 	exitm<IsEqualGUID(riid1, riid2)>
@@ -259,101 +134,94 @@ include cguid.inc
 .xlist
 endif
 
-;; COM initialization flags; passed to CoInitialize.
 
-COINIT_APARTMENTTHREADED	equ 0x2 ;; Apartment model
+COINIT_APARTMENTTHREADED	equ 0x2 
 if  (_WIN32_WINNT GE 0x0400) OR defined(_WIN32_DCOM)
-;; These constants are only valid on Windows NT 4.0
-COINIT_MULTITHREADED		equ 0x0 ;; OLE calls objects on any thread.
-COINIT_DISABLE_OLE1DDE		equ 0x4 ;; Don't use DDE for Ole1 support.
-COINIT_SPEED_OVER_MEMORY	equ 0x8 ;; Trade memory for speed.
+COINIT_MULTITHREADED		equ 0x0 
+COINIT_DISABLE_OLE1DDE		equ 0x4 
+COINIT_SPEED_OVER_MEMORY	equ 0x8 
 endif
 
-;;***** STD Object API Prototypes ****************************************
 
-CoBuildVersion proto _CType
+CoBuildVersion proto WINAPI
 
-;; init/uninit
 
-CoInitialize proto _CType \
+CoInitialize proto WINAPI \
 	    pvReserved: LPVOID
 
-CoUninitialize proto _CType
+CoUninitialize proto WINAPI
 
-CoGetMalloc proto _CType \
+CoGetMalloc proto WINAPI \
 	  dwMemContext: DWORD,
 	      ppMalloc: LPMALLOC
 ;DWORD
-CoGetCurrentProcess proto _CType
+CoGetCurrentProcess proto WINAPI
 
-CoRegisterMallocSpy proto _CType \
+CoRegisterMallocSpy proto WINAPI \
 	    pMallocSpy: LPMALLOCSPY
 
-CoRevokeMallocSpy proto _CType
+CoRevokeMallocSpy proto WINAPI
 
-CoCreateStandardMalloc proto _CType \
+CoCreateStandardMalloc proto WINAPI \
 		memctx: DWORD,
 	      ppMalloc: ptr IMalloc
 
-if (_WIN32_WINNT GE 0x0400 ) OR defined(_WIN32_DCOM) ;; DCOM
-CoInitializeEx proto _CType \
+if (_WIN32_WINNT GE 0x0400 ) OR defined(_WIN32_DCOM) 
+CoInitializeEx proto WINAPI \
 	    pvReserved: LPVOID,
 	      dwCoInit: DWORD
-endif ;; DCOM
+endif 
 
 ;if DBG EQ 1
 ;ULONG
-DebugCoGetRpcFault proto _CType
+DebugCoGetRpcFault proto WINAPI
 ;void
-DebugCoSetRpcFault proto _CType \
+DebugCoSetRpcFault proto WINAPI \
 		      : ULONG
 ;endif
 
-;; register/revoke/get class objects
 
-CoGetClassObject proto _CType \
+CoGetClassObject proto WINAPI \
 		rclsid: REFCLSID,
 	  dwClsContext: DWORD,
 	    pvReserved: LPVOID,
 		  riid: REFIID,
 		   ppv: LPVOID
 
-CoRegisterClassObject proto _CType \
+CoRegisterClassObject proto WINAPI \
 		rclsid: REFCLSID,
 		  pUnk: LPUNKNOWN,
 	  dwClsContext: DWORD,
 		 flags: DWORD,
 	  lpdwRegister: LPDWORD
 
-CoRevokeClassObject proto _CType \
+CoRevokeClassObject proto WINAPI \
 	    dwRegister: DWORD
 
-CoResumeClassObjects proto _CType
+CoResumeClassObjects proto WINAPI
 
-CoSuspendClassObjects proto _CType
-
-;ULONG
-CoAddRefServerProcess proto _CType
+CoSuspendClassObjects proto WINAPI
 
 ;ULONG
-CoReleaseServerProcess proto _CType
+CoAddRefServerProcess proto WINAPI
 
-CoGetPSClsid proto _CType \
+;ULONG
+CoReleaseServerProcess proto WINAPI
+
+CoGetPSClsid proto WINAPI \
 		  riid: REFIID,
 		      : ptr CLSIDpClsid
 
-CoRegisterPSClsid proto _CType \
+CoRegisterPSClsid proto WINAPI \
 		  riid: REFIID,
 		rclsid: REFCLSID
 
-;; Registering surrogate processes
 
-CoRegisterSurrogate proto _CType \
+CoRegisterSurrogate proto WINAPI \
 	    pSurrogate: LPSURROGATE
 
-;; marshaling interface pointers
 
-CoGetMarshalSizeMax proto _CType \
+CoGetMarshalSizeMax proto WINAPI \
 	       pulSize: LPDWORD,
 		  riid: REFIID,
 		  pUnk: LPUNKNOWN,
@@ -361,7 +229,7 @@ CoGetMarshalSizeMax proto _CType \
 	 pvDestContext: LPVOID,
 	     mshlflags: DWORD
 
-CoMarshalInterface proto _CType \
+CoMarshalInterface proto WINAPI \
 		  pStm: LPSTREAM,
 		  riid: REFIID,
 		  pUnk: LPUNKNOWN,
@@ -369,32 +237,32 @@ CoMarshalInterface proto _CType \
 	 pvDestContext: LPVOID,
 	     mshlflags: DWORD
 
-CoUnmarshalInterface proto _CType \
+CoUnmarshalInterface proto WINAPI \
 		  pStm: LPSTREAM,
 		  riid: REFIID,
 		   ppv: LPVOID
 
-CoMarshalHresult proto _CType \
+CoMarshalHresult proto WINAPI \
 		  pstm: LPSTREAM,
 	       hresult: HRESULT
 
-CoUnmarshalHresult proto _CType \
+CoUnmarshalHresult proto WINAPI \
 		  pstm: LPSTREAM,
 	      phresult: ptr HRESULT
 
-CoReleaseMarshalData proto _CType \
+CoReleaseMarshalData proto WINAPI \
 		  pStm: LPSTREAM
 
-CoDisconnectObject proto _CType \
+CoDisconnectObject proto WINAPI \
 		  pUnk: LPUNKNOWN,
 	    dwReserved: DWORD
 
-CoLockObjectExternal proto _CType \
+CoLockObjectExternal proto WINAPI \
 		  pUnk: LPUNKNOWN,
 		 fLock: BOOL,
    fLastUnlockReleases: BOOL
 
-CoGetStandardMarshal proto _CType \
+CoGetStandardMarshal proto WINAPI \
 		  riid: REFIID,
 		  pUnk: LPUNKNOWN,
 	 dwDestContext: DWORD,
@@ -403,12 +271,12 @@ CoGetStandardMarshal proto _CType \
 	     ppMarshal: LPMARSHAL
 
 
-CoGetStdMarshalEx proto _CType \
+CoGetStdMarshalEx proto WINAPI \
 	     pUnkOuter: LPUNKNOWN,
 	     smexflags: DWORD,
 	    ppUnkInner: LPUNKNOWN
 
-CoGetStaticMarshal proto _CType \
+CoGetStaticMarshal proto WINAPI \
 	   pUnkControl: ptr IUnknown,
 		 cItfs: ULONG,
 		arIIDs: ptr IID,
@@ -418,53 +286,49 @@ CoGetStaticMarshal proto _CType \
 	     pBindings: LPUNKNOWN,
 	    ppUnkInner: ptr IUnknown
 
-;; flags for CoGetStdMarshalEx
 SMEXF_SERVER		equ 0x01
 SMEXF_HANDLER		equ 0x02
 
 
 ;BOOL
-CoIsHandlerConnected proto _CType \
+CoIsHandlerConnected proto WINAPI \
 		  pUnk: LPUNKNOWN
 ;BOOL
-CoHasStrongExternalConnections proto _CType \
+CoHasStrongExternalConnections proto WINAPI \
 		  pUnk: LPUNKNOWN
 
-;; Apartment model inter-thread interface passing helpers
 
-CoMarshalInterThreadInterfaceInStream proto _CType \
+CoMarshalInterThreadInterfaceInStream proto WINAPI \
 		  riid: REFIID,
 		  pUnk: LPUNKNOWN,
 		 ppStm: LPSTREAM
 
-CoGetInterfaceAndReleaseStream proto _CType \
+CoGetInterfaceAndReleaseStream proto WINAPI \
 		  pStm: LPSTREAM,
 		   iid: REFIID,
 		   ppv: LPVOID
 
-CoCreateFreeThreadedMarshaler proto _CType \
+CoCreateFreeThreadedMarshaler proto WINAPI \
 	     punkOuter: LPUNKNOWN,
 	  ppunkMarshal: LPUNKNOWN
 
-;; dll loading helpers; keeps track of ref counts and unloads all on exit
 
 ;HINSTANCE
-CoLoadLibrary proto _CType \
+CoLoadLibrary proto WINAPI \
 	   lpszLibName: LPOLESTR,
 	     bAutoFree: BOOL
 ;void
-CoFreeLibrary proto _CType \
+CoFreeLibrary proto WINAPI \
 		 hInst: HINSTANCE
 ;void
-CoFreeAllLibraries proto _CType
-CoFreeUnusedLibraries proto _CType
+CoFreeAllLibraries proto WINAPI
+CoFreeUnusedLibraries proto WINAPI
 
 
-if (_WIN32_WINNT GE 0x0400 ) OR defined(_WIN32_DCOM) ;; DCOM
+if (_WIN32_WINNT GE 0x0400 ) OR defined(_WIN32_DCOM) 
 
-;; Call Security.
 
-CoInitializeSecurity proto _CType \
+CoInitializeSecurity proto WINAPI \
 	      pSecDesc: PSECURITY_DESCRIPTOR,
 	      cAuthSvc: LONG,
 	     asAuthSvc: ptr SOLE_AUTHENTICATION_SERVICE,
@@ -475,11 +339,11 @@ CoInitializeSecurity proto _CType \
 	dwCapabilities: DWORD,
 	    pReserved3: PVOID
 
-CoGetCallContext proto _CType \
+CoGetCallContext proto WINAPI \
 		  riid: REFIID,
 	   ppInterface: PVOID
 
-CoQueryProxyBlanket proto _CType \
+CoQueryProxyBlanket proto WINAPI \
 		pProxy: ptr IUnknown,
 	    pwAuthnSvc: LPDWORD,
 	     pAuthzSvc: LPDWORD,
@@ -489,7 +353,7 @@ CoQueryProxyBlanket proto _CType \
 	     pAuthInfo: ptr RPC_AUTH_IDENTITY_HANDLE,
 	  pCapabilites: LPDWORD
 
-CoSetProxyBlanket proto _CType \
+CoSetProxyBlanket proto WINAPI \
 		pProxy: ptr IUnknown,
 	    dwAuthnSvc: DWORD,
 	    dwAuthzSvc: DWORD,
@@ -499,11 +363,11 @@ CoSetProxyBlanket proto _CType \
 	     pAuthInfo: RPC_AUTH_IDENTITY_HANDLE,
 	dwCapabilities: DWORD
 
-CoCopyProxy proto _CType \
+CoCopyProxy proto WINAPI \
 		pProxy: ptr IUnknown,
 		ppCopy: ptr IUnknown
 
-CoQueryClientBlanket proto _CType \
+CoQueryClientBlanket proto WINAPI \
 	     pAuthnSvc: LPDWORD,
 	     pAuthzSvc: LPDWORD,
       pServerPrincName: ptr OLECHAR,
@@ -512,24 +376,23 @@ CoQueryClientBlanket proto _CType \
 		pPrivs: ptr RPC_AUTHZ_HANDLE,
 	 pCapabilities: ptr DWORD
 
-CoImpersonateClient proto _CType
-CoRevertToSelf proto _CType
+CoImpersonateClient proto WINAPI
+CoRevertToSelf proto WINAPI
 
-CoQueryAuthenticationServices proto _CType \
+CoQueryAuthenticationServices proto WINAPI \
 	     pcAuthSvc: ptr DWORD,
 	     asAuthSvc: ptr SOLE_AUTHENTICATION_SERVICE
 
-CoSwitchCallContext proto _CType \
+CoSwitchCallContext proto WINAPI \
 	    pNewObject: ptr IUnknown,
 	   ppOldObject: ptr IUnknown
 
 COM_RIGHTS_EXECUTE	equ 1
 
-endif ;; DCOM
+endif 
 
-;; helper for creating instances
 
-CoCreateInstance proto _CType \
+CoCreateInstance proto WINAPI \
 		rclsid: REFCLSID,
 	     pUnkOuter: LPUNKNOWN,
 	  dwClsContext: DWORD,
@@ -539,7 +402,7 @@ CoCreateInstance proto _CType \
 
 if (_WIN32_WINNT GE 0x0400 ) OR defined(_WIN32_DCOM)
 
-CoGetInstanceFromFile proto _CType \
+CoGetInstanceFromFile proto WINAPI \
 	   pServerInfo: ptr COSERVERINFO,
 		pClsid: ptr CLSID,
 	     punkOuter: ptr IUnknown,
@@ -549,7 +412,7 @@ CoGetInstanceFromFile proto _CType \
 	       dwCount: DWORD,
 	      pResults: ptr MULTI_QI
 
-CoGetInstanceFromIStorage proto _CType \
+CoGetInstanceFromIStorage proto WINAPI \
 	   pServerInfo: ptr COSERVERINFO,
 		pClsid: ptr CLSID,
 	     punkOuter: PVOID,
@@ -558,7 +421,7 @@ CoGetInstanceFromIStorage proto _CType \
 	       dwCount: DWORD,
 	      pResults: ptr MULTI_QI
 
-CoCreateInstanceEx proto _CType \
+CoCreateInstanceEx proto WINAPI \
 		 Clsid: REFCLSID,
 	     punkOuter: PVOID,
 	      dwClsCtx: DWORD,
@@ -566,167 +429,154 @@ CoCreateInstanceEx proto _CType \
 	       dwCount: DWORD,
 	      pResults: ptr MULTI_QI
 
-endif ;; DCOM
+endif 
 
-;; Call related APIs
-if (_WIN32_WINNT GE 0x0500 ) OR defined(_WIN32_DCOM) ;; DCOM
+if (_WIN32_WINNT GE 0x0500 ) OR defined(_WIN32_DCOM) 
 
 
-CoGetCancelObject proto _CType \
+CoGetCancelObject proto WINAPI \
 	    dwThreadId: DWORD,
 		   iid: REFIID,
 		 ppUnk: PVOID
 
-CoSetCancelObject proto _CType \
+CoSetCancelObject proto WINAPI \
 		  pUnk: ptr IUnknown
 
-CoCancelCall proto _CType \
+CoCancelCall proto WINAPI \
 	    dwThreadId: DWORD
 
-CoTestCancel proto _CType
+CoTestCancel proto WINAPI
 endif
 
-;; DS related APIs
 
-;; Type definitions for these APIs can be found in wtypes.{idl,h}.
 
-if (_WIN32_WINNT GE 0x0500 ) OR defined(_WIN32_DCOM) ;; DCOM
+if (_WIN32_WINNT GE 0x0500 ) OR defined(_WIN32_DCOM) 
 
-CoGetClassInfo proto _CType \
+CoGetClassInfo proto WINAPI \
 	      pClassSpec: ptr uCLSSPEC,
 		pContext: ptr QUERYCONTEXT
 
-;; the following api returns a class access interface pointer
 
-CoGetClassAccess proto _CType \
+CoGetClassAccess proto WINAPI \
 	    ppIClassAccess: ptr IClassAccess
 
-;; The following API is for shell32's use only
 
-CoGetPublishedAppInfo proto _CType \
+CoGetPublishedAppInfo proto WINAPI \
 	     QueryType: APPINFOTYPE,
 	       lpCount: ptr DWORD,
 		ppInfo: ptr PUBLISHEDAPPINFO
 
 endif
 
-;; other helpers
 
-StringFromCLSID proto _CType \
+StringFromCLSID proto WINAPI \
 		rclsid: REFCLSID,
 		lplpsz: LPOLESTR
 
-CLSIDFromString proto _CType \
+CLSIDFromString proto WINAPI \
 		  lpsz: LPOLESTR,
 		pclsid: LPCLSID
 
-StringFromIID proto _CType \
+StringFromIID proto WINAPI \
 		rclsid: REFIID,
 		lplpsz: LPOLESTR
 
-IIDFromString proto _CType \
+IIDFromString proto WINAPI \
 		  lpsz: LPOLESTR,
 		 lpiid: LPIID
 
-CoIsOle1Class proto _CType \
+CoIsOle1Class proto WINAPI \
 		rclsid: REFCLSID
 
-ProgIDFromCLSID proto _CType \
+ProgIDFromCLSID proto WINAPI \
 		 clsid: REFCLSID,
 	  lplpszProgID: LPOLESTR
 
-CLSIDFromProgID proto _CType \
+CLSIDFromProgID proto WINAPI \
 	    lpszProgID: LPCOLESTR,
 	       lpclsid: LPCLSID
 ;int
-StringFromGUID2 proto _CType \
+StringFromGUID2 proto WINAPI \
 		 rguid: REFGUID,
 		  lpsz: LPOLESTR,
 		 cbMax: SINT
 
-CoCreateGuid proto _CType \
+CoCreateGuid proto WINAPI \
 		 pguid: ptr GUID
 
 ;BOOL
-CoFileTimeToDosDateTime proto _CType \
+CoFileTimeToDosDateTime proto WINAPI \
 	    lpFileTime: ptr FILETIME,
 	     lpDosDate: LPWORD,
 	     lpDosTime: LPWORD
 ;BOOL
-CoDosDateTimeToFileTime proto _CType \
+CoDosDateTimeToFileTime proto WINAPI \
 	      nDosDate: WORD,
 	      nDosTime: WORD,
 	    lpFileTime: ptr FILETIME
 
-CoFileTimeNow proto _CType \
+CoFileTimeNow proto WINAPI \
 	    lpFileTime: ptr FILETIME
 
-CoRegisterMessageFilter proto _CType \
+CoRegisterMessageFilter proto WINAPI \
        lpMessageFilter: LPMESSAGEFILTER,
      lplpMessageFilter: LPMESSAGEFILTER
 
-if (_WIN32_WINNT GE 0x0400 ) OR defined(_WIN32_DCOM) ;; DCOM
+if (_WIN32_WINNT GE 0x0400 ) OR defined(_WIN32_DCOM) 
 
-CoRegisterChannelHook proto _CType \
+CoRegisterChannelHook proto WINAPI \
 	 ExtensionUuid: REFGUID,
 	  pChannelHook: ptr IChannelHook
-endif ;; DCOM
+endif 
 
 
-;; TreatAs APIS
 
-CoGetTreatAsClass proto _CType \
+CoGetTreatAsClass proto WINAPI \
 	      clsidOld: REFCLSID,
 	     pClsidNew: LPCLSID
 
-CoTreatAsClass proto _CType \
+CoTreatAsClass proto WINAPI \
 	      clsidOld: REFCLSID,
 	      clsidNew: REFCLSID
 
 
-;; the server dlls must define their DllGetClassObject and DllCanUnloadNow
-;; to match these; the typedefs are located here to ensure all are changed at
-;; the same time.
-;;
 
 ;HRESULT
-LPFNGETCLASSOBJECT_T typedef proto _CType \
+LPFNGETCLASSOBJECT_T typedef proto WINAPI \
 		      : REFCLSID,
 		      : REFIID,
 		      : LPVOID
 LPFNGETCLASSOBJECT typedef ptr LPFNGETCLASSOBJECT_T
 
 
-LPFNCANUNLOADNOW_T typedef proto _CType
+LPFNCANUNLOADNOW_T typedef proto WINAPI
 LPFNCANUNLOADNOW typedef ptr LPFNCANUNLOADNOW_T
 
-DllGetClassObject proto _CType \
+DllGetClassObject proto WINAPI \
 		rclsid: REFCLSID,
 		  riid: REFIID,
 		   ppv: LPVOID
 
-DllCanUnloadNow proto _CType
+DllCanUnloadNow proto WINAPI
 
 
-;;***** Default Memory Allocation *****************************************
 ;LPVOID
-CoTaskMemAlloc proto _CType \
+CoTaskMemAlloc proto WINAPI \
 		    cb: ULONG
 ;LPVOID
-CoTaskMemRealloc proto _CType \
+CoTaskMemRealloc proto WINAPI \
 		    pv: LPVOID,
 		    cb: ULONG
 ;void
-CoTaskMemFree proto _CType \
+CoTaskMemFree proto WINAPI \
 		    pv: LPVOID
 
-;;***** DV APIs **********************************************************
 
 
-CreateDataAdviseHolder proto _CType \
+CreateDataAdviseHolder proto WINAPI \
 	    ppDAHolder: LPDATAADVISEHOLDER
 
-CreateDataCache proto _CType \
+CreateDataCache proto WINAPI \
 	     pUnkOuter: LPUNKNOWN,
 		rclsid: REFCLSID,
 		   iid: REFIID,
@@ -735,21 +585,20 @@ CreateDataCache proto _CType \
 
 
 
-;;***** Storage API Prototypes *******************************************
 
-StgCreateDocfile proto _CType \
+StgCreateDocfile proto WINAPI \
 	      pwcsName: ptr OLECHAR,
 	       grfMode: DWORD,
 	      reserved: DWORD,
 	     ppstgOpen: ptr IStorage
 
-StgCreateDocfileOnILockBytes proto _CType \
+StgCreateDocfileOnILockBytes proto WINAPI \
 		plkbyt: ptr ILockBytes,
 	       grfMode: DWORD,
 	      reserved: DWORD,
 	     ppstgOpen: ptr IStorage
 
-StgOpenStorage proto _CType \
+StgOpenStorage proto WINAPI \
 	      pwcsName: ptr OLECHAR,
 	  pstgPriority: ptr IStorage,
 	       grfMode: DWORD,
@@ -757,7 +606,7 @@ StgOpenStorage proto _CType \
 	      reserved: DWORD,
 	     ppstgOpen: ptr IStorage
 
-StgOpenStorageOnILockBytes proto _CType \
+StgOpenStorageOnILockBytes proto WINAPI \
 		plkbyt: ptr ILockBytes,
 	  pstgPriority: ptr IStorage,
 	       grfMode: DWORD,
@@ -765,40 +614,40 @@ StgOpenStorageOnILockBytes proto _CType \
 	      reserved: DWORD,
 	     ppstgOpen: ptr IStorage
 
-StgIsStorageFile proto _CType \
+StgIsStorageFile proto WINAPI \
 	      pwcsName: ptr OLECHAR
 
-StgIsStorageILockBytes proto _CType \
+StgIsStorageILockBytes proto WINAPI \
 		plkbyt: ptr ILockBytes
 
-StgSetTimes proto _CType \
+StgSetTimes proto WINAPI \
 	      lpszName: OLECHAR,
 		pctime: ptr FILETIME,
 		patime: ptr FILETIME,
 		pmtime: ptr FILETIME
 
-StgOpenAsyncDocfileOnIFillLockBytes proto _CType \
+StgOpenAsyncDocfileOnIFillLockBytes proto WINAPI \
 		  pflb: ptr IFillLockBytes,
 	       grfMode: DWORD,
 	    asyncFlags: DWORD,
 	     ppstgOpen: ptr IStorage
 
-StgGetIFillLockBytesOnILockBytes proto _CType \
+StgGetIFillLockBytesOnILockBytes proto WINAPI \
 		  pilb: ptr ILockBytes,
 		 ppflb: ptr IFillLockBytes
 
-StgGetIFillLockBytesOnFile proto _CType \
+StgGetIFillLockBytesOnFile proto WINAPI \
 	      pwcsName: ptr OLECHAR,
 		 ppflb: ptr IFillLockBytes
 
 
-StgOpenLayoutDocfile proto _CType \
+StgOpenLayoutDocfile proto WINAPI \
 	    pwcsDfName: ptr OLECHAR,
 	       grfMode: DWORD,
 	      reserved: DWORD,
 	     ppstgOpen: ptr IStorage
 
-StgCreateStorageEx proto _CType \
+StgCreateStorageEx proto WINAPI \
 	      pwcsName: ptr WCHAR,
 	       grfMode: DWORD,
 		stgfmt: DWORD,
@@ -808,7 +657,7 @@ StgCreateStorageEx proto _CType \
 		  riid: REFIID,
 	  ppObjectOpen: PVOID
 
-StgOpenStorageEx proto _CType \
+StgOpenStorageEx proto WINAPI \
 	      pwcsName: ptr WCHAR,
 	       grfMode: DWORD,
 		stgfmt: DWORD,
@@ -819,95 +668,89 @@ StgOpenStorageEx proto _CType \
 	  ppObjectOpen: PVOID
 
 
-;;
-;;  Moniker APIs
-;;
 
-BindMoniker proto _CType \
+BindMoniker proto WINAPI \
 		   pmk: LPMONIKER,
 		grfOpt: DWORD,
 	     iidResult: REFIID,
 	     ppvResult: LPVOID
 
-CoInstall proto _CType \
+CoInstall proto WINAPI \
 		   pbc: ptr IBindCtx,
 	       dwFlags: DWORD,
 	    pClassSpec: ptr uCLSSPEC,
 		pQuery: ptr QUERYCONTEXT,
 	   pszCodeBase: LPWSTR
 
-CoGetObject proto _CType \
+CoGetObject proto WINAPI \
 	       pszName: LPCWSTR,
 	  pBindOptions: ptr BIND_OPTS,
 		  riid: REFIID,
 		   ppv: PVOID
 
-MkParseDisplayName proto _CType \
+MkParseDisplayName proto WINAPI \
 		   pbc: LPBC,
 	    szUserName: LPCOLESTR,
 	      pchEaten: ptr ULONG,
 		  ppmk: LPMONIKER
 
-MonikerRelativePathTo proto _CType \
+MonikerRelativePathTo proto WINAPI \
 		pmkSrc: LPMONIKER,
 	       pmkDest: LPMONIKER,
 	   ppmkRelPath: LPMONIKER,
 	    dwReserved: BOOL
 
-MonikerCommonPrefixWith proto _CType \
+MonikerCommonPrefixWith proto WINAPI \
 	       pmkThis: LPMONIKER,
 	      pmkOther: LPMONIKER,
 	    ppmkCommon: ptr LPMONIKER
 
-CreateBindCtx proto _CType \
+CreateBindCtx proto WINAPI \
 	      reserved: DWORD,
 		  ppbc: LPBC
 
-CreateGenericComposite proto _CType \
+CreateGenericComposite proto WINAPI \
 	      pmkFirst: LPMONIKER,
 	       pmkRest: LPMONIKER,
 	 ppmkComposite: ptr LPMONIKER
 
-GetClassFile proto _CType \
+GetClassFile proto WINAPI \
 	    szFilename: LPCOLESTR,
 		pclsid: ptr CLSID
 
-CreateClassMoniker proto _CType \
+CreateClassMoniker proto WINAPI \
 		rclsid: REFCLSID,
 		  ppmk: ptr LPMONIKER
 
-CreateFileMoniker proto _CType \
+CreateFileMoniker proto WINAPI \
 	  lpszPathName: LPCOLESTR,
 		  ppmk: ptr LPMONIKER
 
-CreateItemMoniker proto _CType \
+CreateItemMoniker proto WINAPI \
 	     lpszDelim: LPCOLESTR,
 	      lpszItem: LPCOLESTR,
 		  ppmk: LPMONIKER
 
-CreateAntiMoniker proto _CType \
+CreateAntiMoniker proto WINAPI \
 		  ppmk: ptr LPMONIKER
 
-CreatePointerMoniker proto _CType \
+CreatePointerMoniker proto WINAPI \
 		  punk: LPUNKNOWN,
 		  ppmk: ptr LPMONIKER
 
-GetRunningObjectTable proto _CType \
+GetRunningObjectTable proto WINAPI \
 	      reserved: DWORD,
 		 pprot: LPRUNNINGOBJECTTABLE
 
 include urlmon.inc
 .xlist
-;;
-;; Standard Progress Indicator impolementation
-;;
 ;?
-CreateStdProgressIndicator proto _CType \
+CreateStdProgressIndicator proto WINAPI \
 	    hwndParent: HWND,
 	      pszTitle: LPCOLESTR,
 	   pIbscCaller: ptr IBindStatusCallback,
 		ppIbsc: ptr IBindStatusCallback
 
-endif	   ;; __OBJBASE_H__
+endif	   
 
 .list

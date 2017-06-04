@@ -85,9 +85,9 @@ externdef hStdInput:  HANDLE
 externdef hStdOutput: HANDLE
 externdef hStdError:  HANDLE
 
-__initconout	proto __cdecl
-__termconout	proto __cdecl
-externdef _confh:     intptr_t
+__initconout	proto
+__termconout	proto
+externdef _confh:intptr_t
 
 endif
 

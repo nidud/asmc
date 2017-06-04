@@ -1,9 +1,6 @@
 ifndef _WINSPOOL_
 .xlist
 _WINSPOOL_ equ 1
-;;
-;; Header file for Print APIs
-;;
 
 ifdef _WINUSER_
 include prsht.inc
@@ -34,7 +31,7 @@ else
 PRINTER_INFO_1		typedef PRINTER_INFO_1A
 PPRINTER_INFO_1		typedef PPRINTER_INFO_1A
 LPPRINTER_INFO_1	typedef LPPRINTER_INFO_1A
-endif ;; UNICODE
+endif 
 
 PRINTER_INFO_2A		STRUC
 pServerName		LPSTR ?
@@ -94,7 +91,7 @@ else
 PRINTER_INFO_2		typedef PRINTER_INFO_2A
 PPRINTER_INFO_2		typedef PPRINTER_INFO_2A
 LPPRINTER_INFO_2	typedef LPPRINTER_INFO_2A
-endif ;; UNICODE
+endif 
 
 PRINTER_INFO_3		STRUC
 pSecurityDescriptor	PSECURITY_DESCRIPTOR ?
@@ -124,7 +121,7 @@ else
 PRINTER_INFO_4		typedef PRINTER_INFO_4A
 PPRINTER_INFO_4		typedef PPRINTER_INFO_4A
 LPPRINTER_INFO_4	typedef LPPRINTER_INFO_4A
-endif ;; UNICODE
+endif 
 
 PRINTER_INFO_5A		STRUC
 pPrinterName		LPSTR ?
@@ -152,7 +149,7 @@ else
 PRINTER_INFO_5		typedef PRINTER_INFO_5A
 PPRINTER_INFO_5		typedef PPRINTER_INFO_5A
 LPPRINTER_INFO_5	typedef LPPRINTER_INFO_5A
-endif ;; UNICODE
+endif 
 
 PRINTER_INFO_6		STRUC
 dwStatus		dd ?
@@ -181,7 +178,7 @@ else
 PRINTER_INFO_7		typedef PRINTER_INFO_7A
 PPRINTER_INFO_7		typedef PPRINTER_INFO_7A
 LPPRINTER_INFO_7	typedef LPPRINTER_INFO_7A
-endif ;; UNICODE
+endif 
 
 DSPRINT_PUBLISH		equ 1
 DSPRINT_UPDATE		equ 2
@@ -286,7 +283,7 @@ else
 JOB_INFO_1		typedef JOB_INFO_1A
 PJOB_INFO_1		typedef PJOB_INFO_1A
 LPJOB_INFO_1		typedef LPJOB_INFO_1A
-endif ;; UNICODE
+endif 
 
 JOB_INFO_2A		STRUC
 JobId			dd ?
@@ -309,8 +306,8 @@ StartTime		dd ?
 UntilTime		dd ?
 TotalPages		dd ?
 _Size			dd ?
-Submitted		SYSTEMTIME <>	;; Time the job was spooled
-Time			dd ?	;; How many seconds the job has been printing
+Submitted		SYSTEMTIME <>	
+Time			dd ?	
 PagesPrinted		dd ?
 JOB_INFO_2A		ENDS
 PJOB_INFO_2A		typedef ptr JOB_INFO_2A
@@ -336,8 +333,8 @@ StartTime		dd ?
 UntilTime		dd ?
 TotalPages		dd ?
 _Size			dd ?
-Submitted		SYSTEMTIME <>	;; Time the job was spooled
-Time			dd ?	;; How many seconds the job has been printing
+Submitted		SYSTEMTIME <>	
+Time			dd ?	
 PagesPrinted		dd ?
 JOB_INFO_2W		ENDS
 PJOB_INFO_2W		typedef ptr JOB_INFO_2W
@@ -350,7 +347,7 @@ else
 JOB_INFO_2		typedef JOB_INFO_2A
 PJOB_INFO_2		typedef PJOB_INFO_2A
 LPJOB_INFO_2		typedef LPJOB_INFO_2A
-endif ;; UNICODE
+endif 
 
 JOB_INFO_3		STRUC
 JobId			dd ?
@@ -403,15 +400,15 @@ else
 ADDJOB_INFO_1		typedef ADDJOB_INFO_1A
 PADDJOB_INFO_1		typedef PADDJOB_INFO_1A
 LPADDJOB_INFO_1		typedef LPADDJOB_INFO_1A
-endif ;; UNICODE
+endif 
 
 DRIVER_INFO_1A		STRUC
-pName			LPSTR ? ;; QMS 810
+pName			LPSTR ? 
 DRIVER_INFO_1A		ENDS
 PDRIVER_INFO_1A		typedef ptr DRIVER_INFO_1A
 LPDRIVER_INFO_1A	typedef ptr DRIVER_INFO_1A
 DRIVER_INFO_1W		STRUC
-pName			LPWSTR ?	;; QMS 810
+pName			LPWSTR ?	
 DRIVER_INFO_1W		ENDS
 PDRIVER_INFO_1W		typedef ptr DRIVER_INFO_1W
 LPDRIVER_INFO_1W	typedef ptr DRIVER_INFO_1W
@@ -423,25 +420,25 @@ else
 DRIVER_INFO_1		typedef DRIVER_INFO_1A
 PDRIVER_INFO_1		typedef PDRIVER_INFO_1A
 LPDRIVER_INFO_1		typedef LPDRIVER_INFO_1A
-endif ;; UNICODE
+endif 
 
 DRIVER_INFO_2A		STRUC
 cVersion		dd ?
-pName			LPSTR ? ;; QMS 810
-pEnvironment		LPSTR ? ;; Win32 x86
-pDriverPath		LPSTR ? ;; c:\drivers\pscript.dll
-pDataFile		LPSTR ? ;; c:\drivers\QMS810.PPD
-pConfigFile		LPSTR ? ;; c:\drivers\PSCRPTUI.DLL
+pName			LPSTR ? 
+pEnvironment		LPSTR ? 
+pDriverPath		LPSTR ? 
+pDataFile		LPSTR ? 
+pConfigFile		LPSTR ? 
 DRIVER_INFO_2A		ENDS
 PDRIVER_INFO_2A		typedef ptr DRIVER_INFO_2A
 LPDRIVER_INFO_2A	typedef ptr DRIVER_INFO_2A
 DRIVER_INFO_2W		STRUC
 cVersion		dd ?
-pName			LPWSTR ?	;; QMS 810
-pEnvironment		LPWSTR ?	;; Win32 x86
-pDriverPath		LPWSTR ?	;; c:\drivers\pscript.dll
-pDataFile		LPWSTR ?	;; c:\drivers\QMS810.PPD
-pConfigFile		LPWSTR ?	;; c:\drivers\PSCRPTUI.DLL
+pName			LPWSTR ?	
+pEnvironment		LPWSTR ?	
+pDriverPath		LPWSTR ?	
+pDataFile		LPWSTR ?	
+pConfigFile		LPWSTR ?	
 DRIVER_INFO_2W		ENDS
 PDRIVER_INFO_2W		typedef ptr DRIVER_INFO_2W
 LPDRIVER_INFO_2W	typedef ptr DRIVER_INFO_2W
@@ -453,33 +450,33 @@ else
 DRIVER_INFO_2		typedef DRIVER_INFO_2A
 PDRIVER_INFO_2		typedef PDRIVER_INFO_2A
 LPDRIVER_INFO_2		typedef LPDRIVER_INFO_2A
-endif ;; UNICODE
+endif 
 
 DRIVER_INFO_3A		STRUC
 cVersion		dd ?
-pName			LPSTR ? ;; QMS 810
-pEnvironment		LPSTR ? ;; Win32 x86
-pDriverPath		LPSTR ? ;; c:\drivers\pscript.dll
-pDataFile		LPSTR ? ;; c:\drivers\QMS810.PPD
-pConfigFile		LPSTR ? ;; c:\drivers\PSCRPTUI.DLL
-pHelpFile		LPSTR ? ;; c:\drivers\PSCRPTUI.HLP
-pDependentFiles		LPSTR ? ;; PSCRIPT.DLL\0QMS810.PPD\0PSCRIPTUI.DLL\0PSCRIPTUI.HLP\0PSTEST.TXT\0\0
-pMonitorName		LPSTR ? ;; "PJL monitor"
-pDefaultDataType	LPSTR ? ;; "EMF"
+pName			LPSTR ? 
+pEnvironment		LPSTR ? 
+pDriverPath		LPSTR ? 
+pDataFile		LPSTR ? 
+pConfigFile		LPSTR ? 
+pHelpFile		LPSTR ? 
+pDependentFiles		LPSTR ? 
+pMonitorName		LPSTR ? 
+pDefaultDataType	LPSTR ? 
 DRIVER_INFO_3A		ENDS
 PDRIVER_INFO_3A		typedef ptr DRIVER_INFO_3A
 LPDRIVER_INFO_3A	typedef ptr DRIVER_INFO_3A
 DRIVER_INFO_3W		STRUC
 cVersion		dd ?
-pName			LPWSTR ?	;; QMS 810
-pEnvironment		LPWSTR ?	;; Win32 x86
-pDriverPath		LPWSTR ?	;; c:\drivers\pscript.dll
-pDataFile		LPWSTR ?	;; c:\drivers\QMS810.PPD
-pConfigFile		LPWSTR ?	;; c:\drivers\PSCRPTUI.DLL
-pHelpFile		LPWSTR ?	;; c:\drivers\PSCRPTUI.HLP
-pDependentFiles		LPWSTR ?	;; PSCRIPT.DLL\0QMS810.PPD\0PSCRIPTUI.DLL\0PSCRIPTUI.HLP\0PSTEST.TXT\0\0
-pMonitorName		LPWSTR ?	;; "PJL monitor"
-pDefaultDataType	LPWSTR ?	;; "EMF"
+pName			LPWSTR ?	
+pEnvironment		LPWSTR ?	
+pDriverPath		LPWSTR ?	
+pDataFile		LPWSTR ?	
+pConfigFile		LPWSTR ?	
+pHelpFile		LPWSTR ?	
+pDependentFiles		LPWSTR ?	
+pMonitorName		LPWSTR ?	
+pDefaultDataType	LPWSTR ?	
 DRIVER_INFO_3W		ENDS
 PDRIVER_INFO_3W		typedef ptr DRIVER_INFO_3W
 LPDRIVER_INFO_3W	typedef ptr DRIVER_INFO_3W
@@ -491,14 +488,12 @@ else
 DRIVER_INFO_3		typedef DRIVER_INFO_3A
 PDRIVER_INFO_3		typedef PDRIVER_INFO_3A
 LPDRIVER_INFO_3		typedef LPDRIVER_INFO_3A
-endif ;; UNICODE
+endif 
 
-;; FLAGS for DeletePrinterDriverEx.
 DPD_DELETE_UNUSED_FILES equ 0x00000001
 DPD_DELETE_SPECIFIC_VERSION equ 0x00000002
 DPD_DELETE_ALL_FILES	equ 0x00000004
 
-;; FLAGS for AddPrinterDriverEx.
 APD_STRICT_UPGRADE	equ 0x00000001
 APD_STRICT_DOWNGRADE	equ 0x00000002
 APD_COPY_ALL_FILES	equ 0x00000004
@@ -526,7 +521,7 @@ else
 DOC_INFO_1		typedef DOC_INFO_1A
 PDOC_INFO_1		typedef PDOC_INFO_1A
 LPDOC_INFO_1		typedef LPDOC_INFO_1A
-endif ;; UNICODE
+endif 
 
 FORM_INFO_1A		STRUC
 Flags			dd ?
@@ -552,7 +547,7 @@ else
 FORM_INFO_1		typedef FORM_INFO_1A
 PFORM_INFO_1		typedef PFORM_INFO_1A
 LPFORM_INFO_1		typedef LPFORM_INFO_1A
-endif ;; UNICODE
+endif 
 
 DOC_INFO_2A		STRUC
 pDocName		LPSTR ?
@@ -580,9 +575,9 @@ else
 DOC_INFO_2		typedef DOC_INFO_2A
 PDOC_INFO_2		typedef PDOC_INFO_2A
 LPDOC_INFO_2		typedef LPDOC_INFO_2A
-endif ;; UNICODE
+endif 
 
-DI_CHANNEL		equ 1	 ;; start direct read/write channel,
+DI_CHANNEL		equ 1	 
 
 
 DI_READ_SPOOL_JOB	equ 3
@@ -610,7 +605,7 @@ else
 PRINTPROCESSOR_INFO_1	typedef PRINTPROCESSOR_INFO_1A
 PPRINTPROCESSOR_INFO_1	typedef PPRINTPROCESSOR_INFO_1A
 LPPRINTPROCESSOR_INFO_1 typedef LPPRINTPROCESSOR_INFO_1A
-endif ;; UNICODE
+endif 
 
 PRINTPROCESSOR_CAPS_1	STRUC
 dwLevel			dd ?
@@ -638,7 +633,7 @@ else
 PORT_INFO_1		typedef PORT_INFO_1A
 PPORT_INFO_1		typedef PPORT_INFO_1A
 LPPORT_INFO_1		typedef LPPORT_INFO_1A
-endif ;; UNICODE
+endif 
 
 PORT_INFO_2A		STRUC
 pPortName		LPSTR ?
@@ -666,7 +661,7 @@ else
 PORT_INFO_2		typedef PORT_INFO_2A
 PPORT_INFO_2		typedef PPORT_INFO_2A
 LPPORT_INFO_2		typedef LPPORT_INFO_2A
-endif ;; UNICODE
+endif 
 
 PORT_TYPE_WRITE		equ 0x0001
 PORT_TYPE_READ		equ 0x0002
@@ -695,7 +690,7 @@ else
 PORT_INFO_3		typedef PORT_INFO_3A
 PPORT_INFO_3		typedef PPORT_INFO_3A
 LPPORT_INFO_3		typedef LPPORT_INFO_3A
-endif ;; UNICODE
+endif 
 
 PORT_STATUS_TYPE_ERROR	equ 1
 PORT_STATUS_TYPE_WARNING equ 2
@@ -735,7 +730,7 @@ else
 MONITOR_INFO_1		typedef MONITOR_INFO_1A
 PMONITOR_INFO_1		typedef PMONITOR_INFO_1A
 LPMONITOR_INFO_1	typedef LPMONITOR_INFO_1A
-endif ;; UNICODE
+endif 
 
 MONITOR_INFO_2A		STRUC
 pName			LPSTR ?
@@ -759,7 +754,7 @@ else
 MONITOR_INFO_2		typedef MONITOR_INFO_2A
 PMONITOR_INFO_2		typedef PMONITOR_INFO_2A
 LPMONITOR_INFO_2	typedef LPMONITOR_INFO_2A
-endif ;; UNICODE
+endif 
 
 DATATYPES_INFO_1A	STRUC
 pName			LPSTR ?
@@ -779,7 +774,7 @@ else
 DATATYPES_INFO_1	typedef DATATYPES_INFO_1A
 PDATATYPES_INFO_1	typedef PDATATYPES_INFO_1A
 LPDATATYPES_INFO_1	typedef LPDATATYPES_INFO_1A
-endif ;; UNICODE
+endif 
 
 PRINTER_DEFAULTSA	STRUC
 pDatatype		LPSTR ?
@@ -803,7 +798,7 @@ else
 PRINTER_DEFAULTS	typedef PRINTER_DEFAULTSA
 PPRINTER_DEFAULTS	typedef PPRINTER_DEFAULTSA
 LPPRINTER_DEFAULTS	typedef LPPRINTER_DEFAULTSA
-endif ;; UNICODE
+endif 
 
 PRINTER_ENUM_VALUESA	STRUC
 pValueName		LPSTR ?
@@ -831,10 +826,10 @@ else
 PRINTER_ENUM_VALUES	typedef PRINTER_ENUM_VALUESA
 PPRINTER_ENUM_VALUES	typedef PPRINTER_ENUM_VALUESA
 LPPRINTER_ENUM_VALUES	typedef LPPRINTER_ENUM_VALUESA
-endif ;; UNICODE
+endif 
 
 ;BOOL
-EnumPrintersA proto _CType \
+EnumPrintersA proto WINAPI \
 		 Flags: DWORD,
 		 _Name: LPSTR,
 		 Level: DWORD,
@@ -843,7 +838,7 @@ EnumPrintersA proto _CType \
 	     pcbNeeded: LPDWORD,
 	    pcReturned: LPDWORD
 ;BOOL
-EnumPrintersW proto _CType \
+EnumPrintersW proto WINAPI \
 		 Flags: DWORD,
 		 _Name: LPWSTR,
 		 Level: DWORD,
@@ -855,7 +850,7 @@ ifdef _UNICODE
 EnumPrinters		equ <EnumPrintersW>
 else
 EnumPrinters		equ <EnumPrintersA>
-endif ;; NOT UNICODE
+endif 
 
 PRINTER_ENUM_DEFAULT	equ 0x00000001
 PRINTER_ENUM_LOCAL	equ 0x00000002
@@ -880,12 +875,12 @@ PRINTER_ENUM_ICON7	equ 0x00400000
 PRINTER_ENUM_ICON8	equ 0x00800000
 
 ;BOOL
-OpenPrinterA proto _CType \
+OpenPrinterA proto WINAPI \
 	  pPrinterName: LPSTR,
 	     phPrinter: LPHANDLE,
 	      pDefault: LPPRINTER_DEFAULTSA
 ;BOOL
-OpenPrinterW proto _CType \
+OpenPrinterW proto WINAPI \
 	  pPrinterName: LPWSTR,
 	     phPrinter: LPHANDLE,
 	      pDefault: LPPRINTER_DEFAULTSW
@@ -893,31 +888,31 @@ ifdef _UNICODE
 OpenPrinter		equ <OpenPrinterW>
 else
 OpenPrinter		equ <OpenPrinterA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-ResetPrinterA proto _CType \
+ResetPrinterA proto WINAPI \
 	      hPrinter: HANDLE,
 	      pDefault: LPPRINTER_DEFAULTSA
 ;BOOL
-ResetPrinterW proto _CType \
+ResetPrinterW proto WINAPI \
 	      hPrinter: HANDLE,
 	      pDefault: LPPRINTER_DEFAULTSW
 ifdef _UNICODE
 ResetPrinter		equ <ResetPrinterW>
 else
 ResetPrinter		equ <ResetPrinterA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-SetJobA proto _CType \
+SetJobA proto WINAPI \
 	      hPrinter: HANDLE,
 		 JobId: DWORD,
 		 Level: DWORD,
 		  pJob: LPBYTE,
 	       Command: DWORD
 ;BOOL
-SetJobW proto _CType \
+SetJobW proto WINAPI \
 	      hPrinter: HANDLE,
 		 JobId: DWORD,
 		 Level: DWORD,
@@ -927,10 +922,10 @@ ifdef _UNICODE
 SetJob			equ <SetJobW>
 else
 SetJob			equ <SetJobA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-GetJobA proto _CType \
+GetJobA proto WINAPI \
 	      hPrinter: HANDLE,
 		 JobId: DWORD,
 		 Level: DWORD,
@@ -938,7 +933,7 @@ GetJobA proto _CType \
 		 cbBuf: DWORD,
 	     pcbNeeded: LPDWORD
 ;BOOL
-GetJobW proto _CType \
+GetJobW proto WINAPI \
 	      hPrinter: HANDLE,
 		 JobId: DWORD,
 		 Level: DWORD,
@@ -949,10 +944,10 @@ ifdef _UNICODE
 GetJob			equ <GetJobW>
 else
 GetJob			equ <GetJobA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-EnumJobsA proto _CType \
+EnumJobsA proto WINAPI \
 	      hPrinter: HANDLE,
 	      FirstJob: DWORD,
 		NoJobs: DWORD,
@@ -962,7 +957,7 @@ EnumJobsA proto _CType \
 	     pcbNeeded: LPDWORD,
 	    pcReturned: LPDWORD
 ;BOOL
-EnumJobsW proto _CType \
+EnumJobsW proto WINAPI \
 	      hPrinter: HANDLE,
 	      FirstJob: DWORD,
 		NoJobs: DWORD,
@@ -975,15 +970,15 @@ ifdef _UNICODE
 EnumJobs		equ <EnumJobsW>
 else
 EnumJobs		equ <EnumJobsA>
-endif ;; NOT UNICODE
+endif 
 
 ;HANDLE
-AddPrinterA proto _CType \
+AddPrinterA proto WINAPI \
 		 pName: LPSTR,
 		 Level: DWORD,
 	      pPrinter: LPBYTE
 ;HANDLE
-AddPrinterW proto _CType \
+AddPrinterW proto WINAPI \
 		 pName: LPWSTR,
 		 Level: DWORD,
 	      pPrinter: LPBYTE
@@ -991,20 +986,20 @@ ifdef _UNICODE
 AddPrinter		equ <AddPrinterW>
 else
 AddPrinter		equ <AddPrinterA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-DeletePrinter proto _CType \
+DeletePrinter proto WINAPI \
 	      hPrinter: HANDLE
 
 ;BOOL
-SetPrinterA proto _CType \
+SetPrinterA proto WINAPI \
 	      hPrinter: HANDLE,
 		 Level: DWORD,
 	      pPrinter: LPBYTE,
 	       Command: DWORD
 ;BOOL
-SetPrinterW proto _CType \
+SetPrinterW proto WINAPI \
 	      hPrinter: HANDLE,
 		 Level: DWORD,
 	      pPrinter: LPBYTE,
@@ -1013,17 +1008,17 @@ ifdef _UNICODE
 SetPrinter		equ <SetPrinterW>
 else
 SetPrinter		equ <SetPrinterA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-GetPrinterA proto _CType \
+GetPrinterA proto WINAPI \
 	      hPrinter: HANDLE,
 		 Level: DWORD,
 	      pPrinter: LPBYTE,
 		 cbBuf: DWORD,
 	     pcbNeeded: LPDWORD
 ;BOOL
-GetPrinterW proto _CType \
+GetPrinterW proto WINAPI \
 	      hPrinter: HANDLE,
 		 Level: DWORD,
 	      pPrinter: LPBYTE,
@@ -1033,15 +1028,15 @@ ifdef _UNICODE
 GetPrinter		equ <GetPrinterW>
 else
 GetPrinter		equ <GetPrinterA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-AddPrinterDriverA proto _CType \
+AddPrinterDriverA proto WINAPI \
 		 pName: LPSTR,
 		 Level: DWORD,
 	   pDriverInfo: LPBYTE
 ;BOOL
-AddPrinterDriverW proto _CType \
+AddPrinterDriverW proto WINAPI \
 		 pName: LPWSTR,
 		 Level: DWORD,
 	   pDriverInfo: LPBYTE
@@ -1049,16 +1044,16 @@ ifdef _UNICODE
 AddPrinterDriver	equ <AddPrinterDriverW>
 else
 AddPrinterDriver	equ <AddPrinterDriverA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-AddPrinterDriverExA proto _CType \
+AddPrinterDriverExA proto WINAPI \
 		 pName: LPSTR,
 		 Level: DWORD,
 	   pDriverInfo: LPBYTE,
        dwFileCopyFlags: DWORD
 ;BOOL
-AddPrinterDriverExW proto _CType \
+AddPrinterDriverExW proto WINAPI \
 		 pName: LPWSTR,
 		 Level: DWORD,
 	   pDriverInfo: LPBYTE,
@@ -1067,10 +1062,10 @@ ifdef _UNICODE
 AddPrinterDriverEx	equ <AddPrinterDriverExW>
 else
 AddPrinterDriverEx	equ <AddPrinterDriverExA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-EnumPrinterDriversA proto _CType \
+EnumPrinterDriversA proto WINAPI \
 		 pName: LPSTR,
 	  pEnvironment: LPSTR,
 		 Level: DWORD,
@@ -1079,7 +1074,7 @@ EnumPrinterDriversA proto _CType \
 	     pcbNeeded: LPDWORD,
 	    pcReturned: LPDWORD
 ;BOOL
-EnumPrinterDriversW proto _CType \
+EnumPrinterDriversW proto WINAPI \
 		 pName: LPWSTR,
 	  pEnvironment: LPWSTR,
 		 Level: DWORD,
@@ -1091,10 +1086,10 @@ ifdef _UNICODE
 EnumPrinterDrivers	equ <EnumPrinterDriversW>
 else
 EnumPrinterDrivers	equ <EnumPrinterDriversA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-GetPrinterDriverA proto _CType \
+GetPrinterDriverA proto WINAPI \
 	      hPrinter: HANDLE,
 	  pEnvironment: LPSTR,
 		 Level: DWORD,
@@ -1102,7 +1097,7 @@ GetPrinterDriverA proto _CType \
 		 cbBuf: DWORD,
 	     pcbNeeded: LPDWORD
 ;BOOL
-GetPrinterDriverW proto _CType \
+GetPrinterDriverW proto WINAPI \
 	      hPrinter: HANDLE,
 	  pEnvironment: LPWSTR,
 		 Level: DWORD,
@@ -1113,10 +1108,10 @@ ifdef _UNICODE
 GetPrinterDriver	equ <GetPrinterDriverW>
 else
 GetPrinterDriver	equ <GetPrinterDriverA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-GetPrinterDriverDirectoryA proto _CType \
+GetPrinterDriverDirectoryA proto WINAPI \
 		 pName: LPSTR,
 	  pEnvironment: LPSTR,
 		 Level: DWORD,
@@ -1124,7 +1119,7 @@ GetPrinterDriverDirectoryA proto _CType \
 		 cbBuf: DWORD,
 	     pcbNeeded: LPDWORD
 ;BOOL
-GetPrinterDriverDirectoryW proto _CType \
+GetPrinterDriverDirectoryW proto WINAPI \
 		 pName: LPWSTR,
 	  pEnvironment: LPWSTR,
 		 Level: DWORD,
@@ -1135,15 +1130,15 @@ ifdef _UNICODE
 GetPrinterDriverDirectory equ <GetPrinterDriverDirectoryW>
 else
 GetPrinterDriverDirectory equ <GetPrinterDriverDirectoryA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-DeletePrinterDriverA proto _CType \
+DeletePrinterDriverA proto WINAPI \
 		 pName: LPSTR,
 	  pEnvironment: LPSTR,
 	   pDriverName: LPSTR
 ;BOOL
-DeletePrinterDriverW proto _CType \
+DeletePrinterDriverW proto WINAPI \
 		 pName: LPWSTR,
 	  pEnvironment: LPWSTR,
 	   pDriverName: LPWSTR
@@ -1151,17 +1146,17 @@ ifdef _UNICODE
 DeletePrinterDriver	equ <DeletePrinterDriverW>
 else
 DeletePrinterDriver	equ <DeletePrinterDriverA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-DeletePrinterDriverExA proto _CType \
+DeletePrinterDriverExA proto WINAPI \
 		 pName: LPSTR,
 	  pEnvironment: LPSTR,
 	   pDriverName: LPSTR,
 	  dwDeleteFlag: DWORD,
 	 dwVersionFlag: DWORD
 ;BOOL
-DeletePrinterDriverExW proto _CType \
+DeletePrinterDriverExW proto WINAPI \
 		 pName: LPWSTR,
 	  pEnvironment: LPWSTR,
 	   pDriverName: LPWSTR,
@@ -1171,16 +1166,16 @@ ifdef _UNICODE
 DeletePrinterDriverEx	equ <DeletePrinterDriverExW>
 else
 DeletePrinterDriverEx	equ <DeletePrinterDriverExA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-AddPerMachineConnectionA proto _CType \
+AddPerMachineConnectionA proto WINAPI \
 	       pServer: LPCSTR,
 	  pPrinterName: LPCSTR,
 	  pPrintServer: LPCSTR,
 	     pProvider: LPCSTR
 ;BOOL
-AddPerMachineConnectionW proto _CType \
+AddPerMachineConnectionW proto WINAPI \
 	       pServer: LPCWSTR,
 	  pPrinterName: LPCWSTR,
 	  pPrintServer: LPCWSTR,
@@ -1189,31 +1184,31 @@ ifdef _UNICODE
 AddPerMachineConnection equ <AddPerMachineConnectionW>
 else
 AddPerMachineConnection equ <AddPerMachineConnectionA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-DeletePerMachineConnectionA proto _CType \
+DeletePerMachineConnectionA proto WINAPI \
 	       pServer: LPCSTR,
 	  pPrinterName: LPCSTR
 ;BOOL
-DeletePerMachineConnectionW proto _CType \
+DeletePerMachineConnectionW proto WINAPI \
 	       pServer: LPCWSTR,
 	  pPrinterName: LPCWSTR
 ifdef _UNICODE
 DeletePerMachineConnection equ <DeletePerMachineConnectionW>
 else
 DeletePerMachineConnection equ <DeletePerMachineConnectionA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-EnumPerMachineConnectionsA proto _CType \
+EnumPerMachineConnectionsA proto WINAPI \
 	       pServer: LPCSTR,
 	  pPrinterEnum: LPBYTE,
 		 cbBuf: DWORD,
 	     pcbNeeded: LPDWORD,
 	    pcReturned: LPDWORD
 ;BOOL
-EnumPerMachineConnectionsW proto _CType \
+EnumPerMachineConnectionsW proto WINAPI \
 	       pServer: LPCWSTR,
 	  pPrinterEnum: LPBYTE,
 		 cbBuf: DWORD,
@@ -1223,16 +1218,16 @@ ifdef _UNICODE
 EnumPerMachineConnections equ <EnumPerMachineConnectionsW>
 else
 EnumPerMachineConnections equ <EnumPerMachineConnectionsA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-AddPrintProcessorA proto _CType \
+AddPrintProcessorA proto WINAPI \
 		 pName: LPSTR,
 	  pEnvironment: LPSTR,
 	     pPathName: LPSTR,
    pPrintProcessorName: LPSTR
 ;BOOL
-AddPrintProcessorW proto _CType \
+AddPrintProcessorW proto WINAPI \
 		 pName: LPWSTR,
 	  pEnvironment: LPWSTR,
 	     pPathName: LPWSTR,
@@ -1241,10 +1236,10 @@ ifdef _UNICODE
 AddPrintProcessor	equ <AddPrintProcessorW>
 else
 AddPrintProcessor	equ <AddPrintProcessorA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-EnumPrintProcessorsA proto _CType \
+EnumPrintProcessorsA proto WINAPI \
 		 pName: LPSTR,
 	  pEnvironment: LPSTR,
 		 Level: DWORD,
@@ -1253,7 +1248,7 @@ EnumPrintProcessorsA proto _CType \
 	     pcbNeeded: LPDWORD,
 	    pcReturned: LPDWORD
 ;BOOL
-EnumPrintProcessorsW proto _CType \
+EnumPrintProcessorsW proto WINAPI \
 		 pName: LPWSTR,
 	  pEnvironment: LPWSTR,
 		 Level: DWORD,
@@ -1265,12 +1260,12 @@ ifdef _UNICODE
 EnumPrintProcessors	equ <EnumPrintProcessorsW>
 else
 EnumPrintProcessors	equ <EnumPrintProcessorsA>
-endif ;; NOT UNICODE
+endif 
 
 
 
 ;BOOL
-GetPrintProcessorDirectoryA proto _CType \
+GetPrintProcessorDirectoryA proto WINAPI \
 		 pName: LPSTR,
 	  pEnvironment: LPSTR,
 		 Level: DWORD,
@@ -1278,7 +1273,7 @@ GetPrintProcessorDirectoryA proto _CType \
 		 cbBuf: DWORD,
 	     pcbNeeded: LPDWORD
 ;BOOL
-GetPrintProcessorDirectoryW proto _CType \
+GetPrintProcessorDirectoryW proto WINAPI \
 		 pName: LPWSTR,
 	  pEnvironment: LPWSTR,
 		 Level: DWORD,
@@ -1289,10 +1284,10 @@ ifdef _UNICODE
 GetPrintProcessorDirectory equ <GetPrintProcessorDirectoryW>
 else
 GetPrintProcessorDirectory equ <GetPrintProcessorDirectoryA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-EnumPrintProcessorDatatypesA proto _CType \
+EnumPrintProcessorDatatypesA proto WINAPI \
 		 pName: LPSTR,
    pPrintProcessorName: LPSTR,
 		 Level: DWORD,
@@ -1301,7 +1296,7 @@ EnumPrintProcessorDatatypesA proto _CType \
 	     pcbNeeded: LPDWORD,
 	    pcReturned: LPDWORD
 ;BOOL
-EnumPrintProcessorDatatypesW proto _CType \
+EnumPrintProcessorDatatypesW proto WINAPI \
 		 pName: LPWSTR,
    pPrintProcessorName: LPWSTR,
 		 Level: DWORD,
@@ -1313,15 +1308,15 @@ ifdef _UNICODE
 EnumPrintProcessorDatatypes equ <EnumPrintProcessorDatatypesW>
 else
 EnumPrintProcessorDatatypes equ <EnumPrintProcessorDatatypesA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-DeletePrintProcessorA proto _CType \
+DeletePrintProcessorA proto WINAPI \
 		 pName: LPSTR,
 	  pEnvironment: LPSTR,
    pPrintProcessorName: LPSTR
 ;BOOL
-DeletePrintProcessorW proto _CType \
+DeletePrintProcessorW proto WINAPI \
 		 pName: LPWSTR,
 	  pEnvironment: LPWSTR,
    pPrintProcessorName: LPWSTR
@@ -1329,15 +1324,15 @@ ifdef _UNICODE
 DeletePrintProcessor	equ <DeletePrintProcessorW>
 else
 DeletePrintProcessor	equ <DeletePrintProcessorA>
-endif ;; NOT UNICODE
+endif 
 
 ;DWORD
-StartDocPrinterA proto _CType \
+StartDocPrinterA proto WINAPI \
 	      hPrinter: HANDLE,
 		 Level: DWORD,
 	      pDocInfo: LPBYTE
 ;DWORD
-StartDocPrinterW proto _CType \
+StartDocPrinterW proto WINAPI \
 	      hPrinter: HANDLE,
 		 Level: DWORD,
 	      pDocInfo: LPBYTE
@@ -1345,14 +1340,14 @@ ifdef _UNICODE
 StartDocPrinter		equ <StartDocPrinterW>
 else
 StartDocPrinter		equ <StartDocPrinterA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-StartPagePrinter proto _CType \
+StartPagePrinter proto WINAPI \
 	      hPrinter: HANDLE
 
 ;BOOL
-WritePrinter proto _CType \
+WritePrinter proto WINAPI \
 	      hPrinter: HANDLE,
 		  pBuf: LPVOID,
 		 cbBuf: DWORD,
@@ -1360,33 +1355,33 @@ WritePrinter proto _CType \
 
 
 ;BOOL
-EndPagePrinter proto _CType \
+EndPagePrinter proto WINAPI \
 	      hPrinter: HANDLE
 
 ;BOOL
-AbortPrinter proto _CType \
+AbortPrinter proto WINAPI \
 	      hPrinter: HANDLE
 
 ;BOOL
-ReadPrinter proto _CType \
+ReadPrinter proto WINAPI \
 	      hPrinter: HANDLE,
 		  pBuf: LPVOID,
 		 cbBuf: DWORD,
 	  pNoBytesRead: LPDWORD
 
 ;BOOL
-EndDocPrinter proto _CType \
+EndDocPrinter proto WINAPI \
 	      hPrinter: HANDLE
 
 ;BOOL
-AddJobA proto _CType \
+AddJobA proto WINAPI \
 	      hPrinter: HANDLE,
 		 Level: DWORD,
 		 pData: LPBYTE,
 		 cbBuf: DWORD,
 	     pcbNeeded: LPDWORD
 ;BOOL
-AddJobW proto _CType \
+AddJobW proto WINAPI \
 	      hPrinter: HANDLE,
 		 Level: DWORD,
 		 pData: LPBYTE,
@@ -1396,20 +1391,20 @@ ifdef _UNICODE
 AddJob			equ <AddJobW>
 else
 AddJob			equ <AddJobA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-ScheduleJob proto _CType \
+ScheduleJob proto WINAPI \
 	      hPrinter: HANDLE,
 		 JobId: DWORD
 
 ;BOOL
-PrinterProperties proto _CType \
+PrinterProperties proto WINAPI \
 		  hWnd: HWND,
 	      hPrinter: HANDLE
 
 ;LONG
-DocumentPropertiesA proto _CType \
+DocumentPropertiesA proto WINAPI \
 		  hWnd: HWND,
 	      hPrinter: HANDLE,
 	   pDeviceName: LPSTR,
@@ -1417,7 +1412,7 @@ DocumentPropertiesA proto _CType \
 	 pDevModeInput: PDEVMODEA,
 		 fMode: DWORD
 ;LONG
-DocumentPropertiesW proto _CType \
+DocumentPropertiesW proto WINAPI \
 		  hWnd: HWND,
 	      hPrinter: HANDLE,
 	   pDeviceName: LPWSTR,
@@ -1428,17 +1423,17 @@ ifdef _UNICODE
 DocumentProperties	equ <DocumentPropertiesW>
 else
 DocumentProperties	equ <DocumentPropertiesA>
-endif ;; NOT UNICODE
+endif 
 
 ;LONG
-AdvancedDocumentPropertiesA proto _CType \
+AdvancedDocumentPropertiesA proto WINAPI \
 		  hWnd: HWND,
 	      hPrinter: HANDLE,
 	   pDeviceName: LPSTR,
 	pDevModeOutput: PDEVMODEA,
 	 pDevModeInput: PDEVMODEA
 ;LONG
-AdvancedDocumentPropertiesW proto _CType \
+AdvancedDocumentPropertiesW proto WINAPI \
 		  hWnd: HWND,
 	      hPrinter: HANDLE,
 	   pDeviceName: LPWSTR,
@@ -1448,11 +1443,11 @@ ifdef _UNICODE
 AdvancedDocumentProperties equ <AdvancedDocumentPropertiesW>
 else
 AdvancedDocumentProperties equ <AdvancedDocumentPropertiesA>
-endif ;; NOT UNICODE
+endif 
 
 
 ;DWORD
-GetPrinterDataA proto _CType \
+GetPrinterDataA proto WINAPI \
 	      hPrinter: HANDLE,
 	    pValueName: LPSTR,
 		 pType: LPDWORD,
@@ -1460,7 +1455,7 @@ GetPrinterDataA proto _CType \
 		 nSize: DWORD,
 	     pcbNeeded: LPDWORD
 ;DWORD
-GetPrinterDataW proto _CType \
+GetPrinterDataW proto WINAPI \
 	      hPrinter: HANDLE,
 	    pValueName: LPWSTR,
 		 pType: LPDWORD,
@@ -1471,10 +1466,10 @@ ifdef _UNICODE
 GetPrinterData		equ <GetPrinterDataW>
 else
 GetPrinterData		equ <GetPrinterDataA>
-endif ;; NOT UNICODE
+endif 
 
 ;DWORD
-GetPrinterDataExA proto _CType \
+GetPrinterDataExA proto WINAPI \
 	      hPrinter: HANDLE,
 	      pKeyName: LPCSTR,
 	    pValueName: LPCSTR,
@@ -1483,7 +1478,7 @@ GetPrinterDataExA proto _CType \
 		 nSize: DWORD,
 	     pcbNeeded: LPDWORD
 ;DWORD
-GetPrinterDataExW proto _CType \
+GetPrinterDataExW proto WINAPI \
 	      hPrinter: HANDLE,
 	      pKeyName: LPCWSTR,
 	    pValueName: LPCWSTR,
@@ -1495,10 +1490,10 @@ ifdef _UNICODE
 GetPrinterDataEx	equ <GetPrinterDataExW>
 else
 GetPrinterDataEx	equ <GetPrinterDataExA>
-endif ;; NOT UNICODE
+endif 
 
 ;DWORD
-EnumPrinterDataA proto _CType \
+EnumPrinterDataA proto WINAPI \
 	      hPrinter: HANDLE,
 	       dwIndex: DWORD,
 	    pValueName: LPSTR,
@@ -1509,7 +1504,7 @@ EnumPrinterDataA proto _CType \
 		cbData: DWORD,
 	       pcbData: LPDWORD
 ;DWORD
-EnumPrinterDataW proto _CType \
+EnumPrinterDataW proto WINAPI \
 	      hPrinter: HANDLE,
 	       dwIndex: DWORD,
 	    pValueName: LPWSTR,
@@ -1523,10 +1518,10 @@ ifdef _UNICODE
 EnumPrinterData		equ <EnumPrinterDataW>
 else
 EnumPrinterData		equ <EnumPrinterDataA>
-endif ;; NOT UNICODE
+endif 
 
 ;DWORD
-EnumPrinterDataExA proto _CType \
+EnumPrinterDataExA proto WINAPI \
 	      hPrinter: HANDLE,
 	      pKeyName: LPCSTR,
 	   pEnumValues: LPBYTE,
@@ -1534,7 +1529,7 @@ EnumPrinterDataExA proto _CType \
 	 pcbEnumValues: LPDWORD,
 	  pnEnumValues: LPDWORD
 ;DWORD
-EnumPrinterDataExW proto _CType \
+EnumPrinterDataExW proto WINAPI \
 	      hPrinter: HANDLE,
 	      pKeyName: LPCWSTR,
 	   pEnumValues: LPBYTE,
@@ -1545,17 +1540,17 @@ ifdef _UNICODE
 EnumPrinterDataEx	equ <EnumPrinterDataExW>
 else
 EnumPrinterDataEx	equ <EnumPrinterDataExA>
-endif ;; NOT UNICODE
+endif 
 
 ;DWORD
-EnumPrinterKeyA proto _CType \
+EnumPrinterKeyA proto WINAPI \
 	      hPrinter: HANDLE,
 	      pKeyName: LPCSTR,
 	       pSubkey: LPSTR,
 	      cbSubkey: DWORD,
 	     pcbSubkey: LPDWORD
 ;DWORD
-EnumPrinterKeyW proto _CType \
+EnumPrinterKeyW proto WINAPI \
 	      hPrinter: HANDLE,
 	      pKeyName: LPCWSTR,
 	       pSubkey: LPWSTR,
@@ -1565,18 +1560,18 @@ ifdef _UNICODE
 EnumPrinterKey		equ <EnumPrinterKeyW>
 else
 EnumPrinterKey		equ <EnumPrinterKeyA>
-endif ;; NOT UNICODE
+endif 
 
 
 ;DWORD
-SetPrinterDataA proto _CType \
+SetPrinterDataA proto WINAPI \
 	      hPrinter: HANDLE,
 	    pValueName: LPSTR,
 		 _Type: DWORD,
 		 pData: LPBYTE,
 		cbData: DWORD
 ;DWORD
-SetPrinterDataW proto _CType \
+SetPrinterDataW proto WINAPI \
 	      hPrinter: HANDLE,
 	    pValueName: LPWSTR,
 		 _Type: DWORD,
@@ -1586,11 +1581,11 @@ ifdef _UNICODE
 SetPrinterData		equ <SetPrinterDataW>
 else
 SetPrinterData		equ <SetPrinterDataA>
-endif ;; NOT UNICODE
+endif 
 
 
 ;DWORD
-SetPrinterDataExA proto _CType \
+SetPrinterDataExA proto WINAPI \
 	      hPrinter: HANDLE,
 	      pKeyName: LPCSTR,
 	    pValueName: LPCSTR,
@@ -1598,7 +1593,7 @@ SetPrinterDataExA proto _CType \
 		 pData: LPBYTE,
 		cbData: DWORD
 ;DWORD
-SetPrinterDataExW proto _CType \
+SetPrinterDataExW proto WINAPI \
 	      hPrinter: HANDLE,
 	      pKeyName: LPCWSTR,
 	    pValueName: LPCWSTR,
@@ -1609,32 +1604,32 @@ ifdef _UNICODE
 SetPrinterDataEx	equ <SetPrinterDataExW>
 else
 SetPrinterDataEx	equ <SetPrinterDataExA>
-endif ;; NOT UNICODE
+endif 
 
 
 
 ;DWORD
-DeletePrinterDataA proto _CType \
+DeletePrinterDataA proto WINAPI \
 	      hPrinter: HANDLE,
 	    pValueName: LPSTR
 ;DWORD
-DeletePrinterDataW proto _CType \
+DeletePrinterDataW proto WINAPI \
 	      hPrinter: HANDLE,
 	    pValueName: LPWSTR
 ifdef _UNICODE
 DeletePrinterData	equ <DeletePrinterDataW>
 else
 DeletePrinterData	equ <DeletePrinterDataA>
-endif ;; NOT UNICODE
+endif 
 
 
 ;DWORD
-DeletePrinterDataExA proto _CType \
+DeletePrinterDataExA proto WINAPI \
 	      hPrinter: HANDLE,
 	      pKeyName: LPCSTR,
 	    pValueName: LPCSTR
 ;DWORD
-DeletePrinterDataExW proto _CType \
+DeletePrinterDataExW proto WINAPI \
 	      hPrinter: HANDLE,
 	      pKeyName: LPCWSTR,
 	    pValueName: LPCWSTR
@@ -1642,22 +1637,22 @@ ifdef _UNICODE
 DeletePrinterDataEx	equ <DeletePrinterDataExW>
 else
 DeletePrinterDataEx	equ <DeletePrinterDataExA>
-endif ;; NOT UNICODE
+endif 
 
 
 ;DWORD
-DeletePrinterKeyA proto _CType \
+DeletePrinterKeyA proto WINAPI \
 	      hPrinter: HANDLE,
 	      pKeyName: LPCSTR
 ;DWORD
-DeletePrinterKeyW proto _CType \
+DeletePrinterKeyW proto WINAPI \
 	      hPrinter: HANDLE,
 	      pKeyName: LPCWSTR
 ifdef _UNICODE
 DeletePrinterKey	equ <DeletePrinterKeyW>
 else
 DeletePrinterKey	equ <DeletePrinterKeyA>
-endif ;; NOT UNICODE
+endif 
 
 
 PRINTER_NOTIFY_TYPE	equ 0x00
@@ -1770,12 +1765,12 @@ PPRINTER_NOTIFY_INFO	typedef ptr PRINTER_NOTIFY_INFO
 LPPRINTER_NOTIFY_INFO	typedef ptr PRINTER_NOTIFY_INFO
 
 ;DWORD
-WaitForPrinterChange proto _CType \
+WaitForPrinterChange proto WINAPI \
 	      hPrinter: HANDLE,
 		 Flags: DWORD
 
 ;HANDLE
-FindFirstPrinterChangeNotification proto _CType \
+FindFirstPrinterChangeNotification proto WINAPI \
 	      hPrinter: HANDLE,
 	      fdwFlags: DWORD,
 	    fdwOptions: DWORD,
@@ -1783,18 +1778,18 @@ FindFirstPrinterChangeNotification proto _CType \
 
 
 ;BOOL
-FindNextPrinterChangeNotification proto _CType \
+FindNextPrinterChangeNotification proto WINAPI \
 	       hChange: HANDLE,
 	     pdwChange: PDWORD,
 	    pvReserved: LPVOID,
    ppPrinterNotifyInfo: LPVOID
 
 ;BOOL
-FreePrinterNotifyInfo proto _CType \
+FreePrinterNotifyInfo proto WINAPI \
     pPrinterNotifyInfo: PPRINTER_NOTIFY_INFO
 
 ;BOOL
-FindClosePrinterChangeNotification proto _CType \
+FindClosePrinterChangeNotification proto WINAPI \
 	       hChange: HANDLE
 
 PRINTER_CHANGE_ADD_PRINTER equ 0x00000001
@@ -1826,7 +1821,7 @@ PRINTER_CHANGE_TIMEOUT	equ 0x80000000
 PRINTER_CHANGE_ALL	equ 0x7777FFFF
 
 ;DWORD
-PrinterMessageBoxA proto _CType \
+PrinterMessageBoxA proto WINAPI \
 	      hPrinter: HANDLE,
 		 Error: DWORD,
 		  hWnd: HWND,
@@ -1834,7 +1829,7 @@ PrinterMessageBoxA proto _CType \
 	      pCaption: LPSTR,
 		dwType: DWORD
 ;DWORD
-PrinterMessageBoxW proto _CType \
+PrinterMessageBoxW proto WINAPI \
 	      hPrinter: HANDLE,
 		 Error: DWORD,
 		  hWnd: HWND,
@@ -1845,7 +1840,7 @@ ifdef _UNICODE
 PrinterMessageBox	equ <PrinterMessageBoxW>
 else
 PrinterMessageBox	equ <PrinterMessageBoxA>
-endif ;; NOT UNICODE
+endif 
 
 
 
@@ -1858,16 +1853,16 @@ PRINTER_ERROR_JAM	equ 0x00000002
 PRINTER_ERROR_OUTOFTONER equ 0x00000004
 
 ;BOOL
-ClosePrinter proto _CType \
+ClosePrinter proto WINAPI \
 	      hPrinter: HANDLE
 
 ;BOOL
-AddFormA proto _CType \
+AddFormA proto WINAPI \
 	      hPrinter: HANDLE,
 		 Level: DWORD,
 		 pForm: LPBYTE
 ;BOOL
-AddFormW proto _CType \
+AddFormW proto WINAPI \
 	      hPrinter: HANDLE,
 		 Level: DWORD,
 		 pForm: LPBYTE
@@ -1875,28 +1870,28 @@ ifdef _UNICODE
 AddForm			equ <AddFormW>
 else
 AddForm			equ <AddFormA>
-endif ;; NOT UNICODE
+endif 
 
 
 
 ;BOOL
-DeleteFormA proto _CType \
+DeleteFormA proto WINAPI \
 	      hPrinter: HANDLE,
 	     pFormName: LPSTR
 ;BOOL
-DeleteFormW proto _CType \
+DeleteFormW proto WINAPI \
 	      hPrinter: HANDLE,
 	     pFormName: LPWSTR
 ifdef _UNICODE
 DeleteForm		equ <DeleteFormW>
 else
 DeleteForm		equ <DeleteFormA>
-endif ;; NOT UNICODE
+endif 
 
 
 
 ;BOOL
-GetFormA proto _CType \
+GetFormA proto WINAPI \
 	      hPrinter: HANDLE,
 	     pFormName: LPSTR,
 		 Level: DWORD,
@@ -1904,7 +1899,7 @@ GetFormA proto _CType \
 		 cbBuf: DWORD,
 	     pcbNeeded: LPDWORD
 ;BOOL
-GetFormW proto _CType \
+GetFormW proto WINAPI \
 	      hPrinter: HANDLE,
 	     pFormName: LPWSTR,
 		 Level: DWORD,
@@ -1915,18 +1910,18 @@ ifdef _UNICODE
 GetForm			equ <GetFormW>
 else
 GetForm			equ <GetFormA>
-endif ;; NOT UNICODE
+endif 
 
 
 
 ;BOOL
-SetFormA proto _CType \
+SetFormA proto WINAPI \
 	      hPrinter: HANDLE,
 	     pFormName: LPSTR,
 		 Level: DWORD,
 		 pForm: LPBYTE
 ;BOOL
-SetFormW proto _CType \
+SetFormW proto WINAPI \
 	      hPrinter: HANDLE,
 	     pFormName: LPWSTR,
 		 Level: DWORD,
@@ -1935,12 +1930,12 @@ ifdef _UNICODE
 SetForm			equ <SetFormW>
 else
 SetForm			equ <SetFormA>
-endif ;; NOT UNICODE
+endif 
 
 
 
 ;BOOL
-EnumFormsA proto _CType \
+EnumFormsA proto WINAPI \
 	      hPrinter: HANDLE,
 		 Level: DWORD,
 		 pForm: LPBYTE,
@@ -1948,7 +1943,7 @@ EnumFormsA proto _CType \
 	     pcbNeeded: LPDWORD,
 	    pcReturned: LPDWORD
 ;BOOL
-EnumFormsW proto _CType \
+EnumFormsW proto WINAPI \
 	      hPrinter: HANDLE,
 		 Level: DWORD,
 		 pForm: LPBYTE,
@@ -1959,12 +1954,12 @@ ifdef _UNICODE
 EnumForms		equ <EnumFormsW>
 else
 EnumForms		equ <EnumFormsA>
-endif ;; NOT UNICODE
+endif 
 
 
 
 ;BOOL
-EnumMonitorsA proto _CType \
+EnumMonitorsA proto WINAPI \
 		 pName: LPSTR,
 		 Level: DWORD,
 	     pMonitors: LPBYTE,
@@ -1972,7 +1967,7 @@ EnumMonitorsA proto _CType \
 	     pcbNeeded: LPDWORD,
 	    pcReturned: LPDWORD
 ;BOOL
-EnumMonitorsW proto _CType \
+EnumMonitorsW proto WINAPI \
 		 pName: LPWSTR,
 		 Level: DWORD,
 	     pMonitors: LPBYTE,
@@ -1983,17 +1978,17 @@ ifdef _UNICODE
 EnumMonitors		equ <EnumMonitorsW>
 else
 EnumMonitors		equ <EnumMonitorsA>
-endif ;; NOT UNICODE
+endif 
 
 
 
 ;BOOL
-AddMonitorA proto _CType \
+AddMonitorA proto WINAPI \
 		 pName: LPSTR,
 		 Level: DWORD,
 	     pMonitors: LPBYTE
 ;BOOL
-AddMonitorW proto _CType \
+AddMonitorW proto WINAPI \
 		 pName: LPWSTR,
 		 Level: DWORD,
 	     pMonitors: LPBYTE
@@ -2001,17 +1996,17 @@ ifdef _UNICODE
 AddMonitor		equ <AddMonitorW>
 else
 AddMonitor		equ <AddMonitorA>
-endif ;; NOT UNICODE
+endif 
 
 
 
 ;BOOL
-DeleteMonitorA proto _CType \
+DeleteMonitorA proto WINAPI \
 		 pName: LPSTR,
 	  pEnvironment: LPSTR,
 	  pMonitorName: LPSTR
 ;BOOL
-DeleteMonitorW proto _CType \
+DeleteMonitorW proto WINAPI \
 		 pName: LPWSTR,
 	  pEnvironment: LPWSTR,
 	  pMonitorName: LPWSTR
@@ -2019,12 +2014,12 @@ ifdef _UNICODE
 DeleteMonitor		equ <DeleteMonitorW>
 else
 DeleteMonitor		equ <DeleteMonitorA>
-endif ;; NOT UNICODE
+endif 
 
 
 
 ;BOOL
-EnumPortsA proto _CType \
+EnumPortsA proto WINAPI \
 		 pName: LPSTR,
 		 Level: DWORD,
 		pPorts: LPBYTE,
@@ -2032,7 +2027,7 @@ EnumPortsA proto _CType \
 	     pcbNeeded: LPDWORD,
 	    pcReturned: LPDWORD
 ;BOOL
-EnumPortsW proto _CType \
+EnumPortsW proto WINAPI \
 		 pName: LPWSTR,
 		 Level: DWORD,
 		pPorts: LPBYTE,
@@ -2043,17 +2038,17 @@ ifdef _UNICODE
 EnumPorts		equ <EnumPortsW>
 else
 EnumPorts		equ <EnumPortsA>
-endif ;; NOT UNICODE
+endif 
 
 
 
 ;BOOL
-AddPortA proto _CType \
+AddPortA proto WINAPI \
 		 pName: LPSTR,
 		  hWnd: HWND,
 	  pMonitorName: LPSTR
 ;BOOL
-AddPortW proto _CType \
+AddPortW proto WINAPI \
 		 pName: LPWSTR,
 		  hWnd: HWND,
 	  pMonitorName: LPWSTR
@@ -2061,17 +2056,17 @@ ifdef _UNICODE
 AddPort			equ <AddPortW>
 else
 AddPort			equ <AddPortA>
-endif ;; NOT UNICODE
+endif 
 
 
 
 ;BOOL
-ConfigurePortA proto _CType \
+ConfigurePortA proto WINAPI \
 		 pName: LPSTR,
 		  hWnd: HWND,
 	     pPortName: LPSTR
 ;BOOL
-ConfigurePortW proto _CType \
+ConfigurePortW proto WINAPI \
 		 pName: LPWSTR,
 		  hWnd: HWND,
 	     pPortName: LPWSTR
@@ -2079,15 +2074,15 @@ ifdef _UNICODE
 ConfigurePort		equ <ConfigurePortW>
 else
 ConfigurePort		equ <ConfigurePortA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-DeletePortA proto _CType \
+DeletePortA proto WINAPI \
 		 pName: LPSTR,
 		  hWnd: HWND,
 	     pPortName: LPSTR
 ;BOOL
-DeletePortW proto _CType \
+DeletePortW proto WINAPI \
 		 pName: LPWSTR,
 		  hWnd: HWND,
 	     pPortName: LPWSTR
@@ -2095,10 +2090,10 @@ ifdef _UNICODE
 DeletePort		equ <DeletePortW>
 else
 DeletePort		equ <DeletePortA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-XcvDataW proto _CType \
+XcvDataW proto WINAPI \
 		  hXcv: HANDLE,
 	   pszDataName: PCWSTR,
 	    pInputData: PBYTE,
@@ -2111,13 +2106,13 @@ XcvData			equ <XcvDataW>
 
 
 ;BOOL
-SetPortA proto _CType \
+SetPortA proto WINAPI \
 		 pName: LPSTR,
 	     pPortName: LPSTR,
 	       dwLevel: DWORD,
 	     pPortInfo: LPBYTE
 ;BOOL
-SetPortW proto _CType \
+SetPortW proto WINAPI \
 		 pName: LPWSTR,
 	     pPortName: LPWSTR,
 	       dwLevel: DWORD,
@@ -2126,40 +2121,40 @@ ifdef _UNICODE
 SetPort			equ <SetPortW>
 else
 SetPort			equ <SetPortA>
-endif ;; NOT UNICODE
+endif 
 
 
 
 ;BOOL
-AddPrinterConnectionA proto _CType \
+AddPrinterConnectionA proto WINAPI \
 		 pName: LPSTR
 ;BOOL
-AddPrinterConnectionW proto _CType \
+AddPrinterConnectionW proto WINAPI \
 		 pName: LPWSTR
 ifdef _UNICODE
 AddPrinterConnection	equ <AddPrinterConnectionW>
 else
 AddPrinterConnection	equ <AddPrinterConnectionA>
-endif ;; NOT UNICODE
+endif 
 
 
 
 ;BOOL
-DeletePrinterConnectionA proto _CType \
+DeletePrinterConnectionA proto WINAPI \
 		 pName: LPSTR
 ;BOOL
-DeletePrinterConnectionW proto _CType \
+DeletePrinterConnectionW proto WINAPI \
 		 pName: LPWSTR
 ifdef _UNICODE
 DeletePrinterConnection equ <DeletePrinterConnectionW>
 else
 DeletePrinterConnection equ <DeletePrinterConnectionA>
-endif ;; NOT UNICODE
+endif 
 
 
 
 ;HANDLE
-ConnectToPrinterDlg proto _CType \
+ConnectToPrinterDlg proto WINAPI \
 		  hwnd: HWND,
 		 Flags: DWORD
 
@@ -2185,17 +2180,17 @@ else
 PROVIDOR_INFO_1		typedef PROVIDOR_INFO_1A
 PPROVIDOR_INFO_1	typedef PPROVIDOR_INFO_1A
 LPPROVIDOR_INFO_1	typedef LPPROVIDOR_INFO_1A
-endif ;; UNICODE
+endif 
 
 
 
 ;BOOL
-AddPrintProvidorA proto _CType \
+AddPrintProvidorA proto WINAPI \
 		 pName: LPSTR,
 		 level: DWORD,
 	 pProvidorInfo: LPBYTE
 ;BOOL
-AddPrintProvidorW proto _CType \
+AddPrintProvidorW proto WINAPI \
 		 pName: LPWSTR,
 		 level: DWORD,
 	 pProvidorInfo: LPBYTE
@@ -2203,15 +2198,15 @@ ifdef _UNICODE
 AddPrintProvidor	equ <AddPrintProvidorW>
 else
 AddPrintProvidor	equ <AddPrintProvidorA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-DeletePrintProvidorA proto _CType \
+DeletePrintProvidorA proto WINAPI \
 		 pName: LPSTR,
 	  pEnvironment: LPSTR,
     pPrintProvidorName: LPSTR
 ;BOOL
-DeletePrintProvidorW proto _CType \
+DeletePrintProvidorW proto WINAPI \
 		 pName: LPWSTR,
 	  pEnvironment: LPWSTR,
     pPrintProvidorName: LPWSTR
@@ -2219,13 +2214,10 @@ ifdef _UNICODE
 DeletePrintProvidor	equ <DeletePrintProvidorW>
 else
 DeletePrintProvidor	equ <DeletePrintProvidorA>
-endif ;; NOT UNICODE
+endif 
 
 
 
-;;
-;; SetPrinterData and GetPrinterData Server Handle Key values
-;;
 
 SPLREG_DEFAULT_SPOOL_DIRECTORY equ <"DefaultSpoolDirectory">
 SPLREG_PORT_THREAD_PRIORITY_DEFAULT equ <"PortThreadPriorityDefault">
@@ -2250,27 +2242,18 @@ PRINTER_ACCESS_USE	equ 0x00000008
 JOB_ACCESS_ADMINISTER	equ 0x00000010
 
 
-;;
-;; Access rights for print servers
-;;
 
 SERVER_ALL_ACCESS	equ STANDARD_RIGHTS_REQUIRED OR SERVER_ACCESS_ADMINISTER OR SERVER_ACCESS_ENUMERATE
 SERVER_READ		equ STANDARD_RIGHTS_READ OR SERVER_ACCESS_ENUMERATE
 SERVER_WRITE		equ STANDARD_RIGHTS_WRITE OR SERVER_ACCESS_ADMINISTER OR SERVER_ACCESS_ENUMERATE
 SERVER_EXECUTE		equ STANDARD_RIGHTS_EXECUTE OR SERVER_ACCESS_ENUMERATE
 
-;;
-;; Access rights for printers
-;;
 
 PRINTER_ALL_ACCESS	equ STANDARD_RIGHTS_REQUIRED OR PRINTER_ACCESS_ADMINISTER OR PRINTER_ACCESS_USE
 PRINTER_READ		equ STANDARD_RIGHTS_READ OR PRINTER_ACCESS_USE
 PRINTER_WRITE		equ STANDARD_RIGHTS_WRITE OR PRINTER_ACCESS_USE
 PRINTER_EXECUTE		equ STANDARD_RIGHTS_EXECUTE OR PRINTER_ACCESS_USE
 
-;;
-;; Access rights for jobs
-;;
 
 JOB_ALL_ACCESS		equ STANDARD_RIGHTS_REQUIRED OR JOB_ACCESS_ADMINISTER
 JOB_READ		equ STANDARD_RIGHTS_READ OR JOB_ACCESS_ADMINISTER
@@ -2279,18 +2262,13 @@ JOB_EXECUTE		equ STANDARD_RIGHTS_EXECUTE OR JOB_ACCESS_ADMINISTER
 
 
 
-;;
-;; DS Print-Queue property tables
-;;
 
 
-;; Predefined Registry Keys used by Set/GetPrinterDataEx
 SPLDS_SPOOLER_KEY	equ <"DsSpooler">
 SPLDS_DRIVER_KEY	equ <"DsDriver">
 SPLDS_USER_KEY		equ <"DsUser">
 
 
-;; DS Print-Queue properties
 
 SPLDS_ASSET_NUMBER	equ <"assetNumber">
 SPLDS_BYTES_PER_MINUTE	equ <"bytesPerMinute">
@@ -2337,17 +2315,10 @@ SPLDS_UNC_NAME		equ <"uNCName">
 SPLDS_URL		equ <"url">
 SPLDS_VERSION_NUMBER	equ <"versionNumber">
 
-;;
-;;-- Additional Print-Queue properties --
-;;
-;; These properties are not defined in the default Directory Services Schema,
-;; but should be used when extending the Schema so a consistent interface is maintained.
-;;
-;;
 
-SPLDS_PRINTER_NAME_ALIASES equ <"printerNameAliases">	   ;; MULTI_SZ
-SPLDS_PRINTER_LOCATIONS equ <"printerLocations"> ;; MULTI_SZ
-SPLDS_PRINTER_MODEL	equ <"printerModel">		;; SZ
+SPLDS_PRINTER_NAME_ALIASES equ <"printerNameAliases">	   
+SPLDS_PRINTER_LOCATIONS equ <"printerLocations"> 
+SPLDS_PRINTER_MODEL	equ <"printerModel">		
 
 
 
@@ -2358,12 +2329,12 @@ PRINTER_HTML_VIEW_JOBPROPERTIES equ 3
 
 
 ;DWORD
-SetPrinterHTMLViewA proto _CType \
+SetPrinterHTMLViewA proto WINAPI \
 	      hPrinter: HANDLE,
 		dwView: DWORD,
 	      lpszPath: LPCSTR
 ;DWORD
-SetPrinterHTMLViewW proto _CType \
+SetPrinterHTMLViewW proto WINAPI \
 	      hPrinter: HANDLE,
 		dwView: DWORD,
 	      lpszPath: LPCWSTR
@@ -2371,17 +2342,17 @@ ifdef _UNICODE
 SetPrinterHTMLView	equ <SetPrinterHTMLViewW>
 else
 SetPrinterHTMLView	equ <SetPrinterHTMLViewA>
-endif ;; NOT UNICODE
+endif 
 
 ;DWORD
-GetPrinterHTMLViewA proto _CType \
+GetPrinterHTMLViewA proto WINAPI \
 	      hPrinter: HANDLE,
 		dwView: DWORD,
 	      lpszPath: LPSTR,
 		 nSize: DWORD,
 	     pcbNeeded: LPDWORD
 ;DWORD
-GetPrinterHTMLViewW proto _CType \
+GetPrinterHTMLViewW proto WINAPI \
 	      hPrinter: HANDLE,
 		dwView: DWORD,
 	      lpszPath: LPWSTR,
@@ -2391,9 +2362,9 @@ ifdef _UNICODE
 GetPrinterHTMLView	equ <GetPrinterHTMLViewW>
 else
 GetPrinterHTMLView	equ <GetPrinterHTMLViewA>
-endif ;; NOT UNICODE
+endif 
 
 .list
-endif ;; _WINSPOOL_
+endif 
 
 

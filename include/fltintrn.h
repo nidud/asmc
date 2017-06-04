@@ -15,7 +15,7 @@ typedef struct _strflt {
 	char *	mantissa;
       } *STRFLT;
 
-STRFLT	_CType _strtoflt(char *);
+STRFLT __cdecl _strtoflt(char *);
 
 #ifdef __cplusplus
  }

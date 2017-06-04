@@ -8,25 +8,24 @@
  extern "C" {
 #endif
 
-_CRTIMP int _CType _chdir(char *);
-_CRTIMP int _CType _chdrive(int);
-_CRTIMP char * _CType _getcwd(char *, int);
-_CRTIMP char * _CType _getdcwd(int __drive, char *__pnbuf, int __maxlen);
-_CRTIMP int _CType _mkdir(char *);
-_CRTIMP int _CType _rmdir(char *);
-_CRTIMP int _CType _getdrive(void);
-_CRTIMP DWORD _CType _getdrives(void);
-
-_CRTIMP int _CType _wchdir(const wchar_t *);
-_CRTIMP wchar_t * _CType _wgetcwd(wchar_t *, int);
-_CRTIMP wchar_t * _CType _wgetdcwd(int, wchar_t *, int);
-_CRTIMP int _CType _wmkdir(const wchar_t *);
-_CRTIMP int _CType _wrmdir(const wchar_t *);
+_CRTIMP int __cdecl _chdir(char *);
+_CRTIMP int __cdecl _chdrive(int);
+_CRTIMP char * __cdecl _getcwd(char *, int);
+_CRTIMP char * __cdecl _getdcwd(int __drive, char *__pnbuf, int __maxlen);
+_CRTIMP int __cdecl _mkdir(char *);
+_CRTIMP int __cdecl _rmdir(char *);
+_CRTIMP int __cdecl _getdrive(void);
+_CRTIMP unsigned long __cdecl _getdrives(void);
+_CRTIMP int __cdecl _wchdir(const wchar_t *);
+_CRTIMP wchar_t * __cdecl _wgetcwd(wchar_t *, int);
+_CRTIMP wchar_t * __cdecl _wgetdcwd(int, wchar_t *, int);
+_CRTIMP int __cdecl _wmkdir(const wchar_t *);
+_CRTIMP int __cdecl _wrmdir(const wchar_t *);
 
 /**/
 
-char * _CType wlongpath(const char *__path, const char *__file);
-char * _CType wlongname(const char *__path, const char *__file);
+char * __cdecl wlongpath(const char *__path, const char *__file);
+char * __cdecl wlongname(const char *__path, const char *__file);
 
 #ifdef __cplusplus
  }

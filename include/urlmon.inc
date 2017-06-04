@@ -3,155 +3,153 @@ include rpcndr.inc
 ifndef COM_NO_WINDOWS_H
 include windows.inc
 include ole2.inc
-endif ;;COM_NO_WINDOWS_H
+endif 
 
 ifndef __urlmon_h__
 .xlist
 __urlmon_h__ equ 1
 
-;; Forward Declarations
 
 ifndef __IPersistMoniker_FWD_DEFINED__
 __IPersistMoniker_FWD_DEFINED__ equ 1
-endif	;; __IPersistMoniker_FWD_DEFINED__
+endif	
 
 
 ifndef __IBindProtocol_FWD_DEFINED__
 __IBindProtocol_FWD_DEFINED__ equ 1
-endif	;; __IBindProtocol_FWD_DEFINED__
+endif	
 
 
 ifndef __IBinding_FWD_DEFINED__
 __IBinding_FWD_DEFINED__ equ 1
-endif	;; __IBinding_FWD_DEFINED__
+endif	
 
 
 ifndef __IBindStatusCallback_FWD_DEFINED__
 __IBindStatusCallback_FWD_DEFINED__ equ 1
-endif	;; __IBindStatusCallback_FWD_DEFINED__
+endif	
 
 
 ifndef __IAuthenticate_FWD_DEFINED__
 __IAuthenticate_FWD_DEFINED__ equ 1
-endif	;; __IAuthenticate_FWD_DEFINED__
+endif	
 
 
 ifndef __IHttpNegotiate_FWD_DEFINED__
 __IHttpNegotiate_FWD_DEFINED__ equ 1
-endif	;; __IHttpNegotiate_FWD_DEFINED__
+endif	
 
 
 ifndef __IWindowForBindingUI_FWD_DEFINED__
 __IWindowForBindingUI_FWD_DEFINED__ equ 1
-endif	;; __IWindowForBindingUI_FWD_DEFINED__
+endif	
 
 
 ifndef __ICodeInstall_FWD_DEFINED__
 __ICodeInstall_FWD_DEFINED__ equ 1
-endif	;; __ICodeInstall_FWD_DEFINED__
+endif	
 
 
 ifndef __IWinInetInfo_FWD_DEFINED__
 __IWinInetInfo_FWD_DEFINED__ equ 1
-endif	;; __IWinInetInfo_FWD_DEFINED__
+endif	
 
 
 ifndef __IHttpSecurity_FWD_DEFINED__
 __IHttpSecurity_FWD_DEFINED__ equ 1
-endif	;; __IHttpSecurity_FWD_DEFINED__
+endif	
 
 
 ifndef __IWinInetHttpInfo_FWD_DEFINED__
 __IWinInetHttpInfo_FWD_DEFINED__ equ 1
-endif	;; __IWinInetHttpInfo_FWD_DEFINED__
+endif	
 
 
 ifndef __IBindHost_FWD_DEFINED__
 __IBindHost_FWD_DEFINED__ equ 1
-endif	;; __IBindHost_FWD_DEFINED__
+endif	
 
 
 ifndef __IInternet_FWD_DEFINED__
 __IInternet_FWD_DEFINED__ equ 1
-endif	;; __IInternet_FWD_DEFINED__
+endif	
 
 
 ifndef __IInternetBindInfo_FWD_DEFINED__
 __IInternetBindInfo_FWD_DEFINED__ equ 1
-endif	;; __IInternetBindInfo_FWD_DEFINED__
+endif	
 
 
 ifndef __IInternetProtocolRoot_FWD_DEFINED__
 __IInternetProtocolRoot_FWD_DEFINED__ equ 1
-endif	;; __IInternetProtocolRoot_FWD_DEFINED__
+endif	
 
 
 ifndef __IInternetProtocol_FWD_DEFINED__
 __IInternetProtocol_FWD_DEFINED__ equ 1
-endif	;; __IInternetProtocol_FWD_DEFINED__
+endif	
 
 
 ifndef __IInternetProtocolSink_FWD_DEFINED__
 __IInternetProtocolSink_FWD_DEFINED__ equ 1
-endif	;; __IInternetProtocolSink_FWD_DEFINED__
+endif	
 
 
 ifndef __IInternetSession_FWD_DEFINED__
 __IInternetSession_FWD_DEFINED__ equ 1
-endif	;; __IInternetSession_FWD_DEFINED__
+endif	
 
 
 ifndef __IInternetThreadSwitch_FWD_DEFINED__
 __IInternetThreadSwitch_FWD_DEFINED__ equ 1
-endif	;; __IInternetThreadSwitch_FWD_DEFINED__
+endif	
 
 
 ifndef __IInternetPriority_FWD_DEFINED__
 __IInternetPriority_FWD_DEFINED__ equ 1
-endif	;; __IInternetPriority_FWD_DEFINED__
+endif	
 
 
 ifndef __IInternetProtocolInfo_FWD_DEFINED__
 __IInternetProtocolInfo_FWD_DEFINED__ equ 1
-endif	;; __IInternetProtocolInfo_FWD_DEFINED__
+endif	
 
 
 ifndef __IInternetSecurityMgrSite_FWD_DEFINED__
 __IInternetSecurityMgrSite_FWD_DEFINED__ equ 1
-endif	;; __IInternetSecurityMgrSite_FWD_DEFINED__
+endif	
 
 
 ifndef __IInternetSecurityManager_FWD_DEFINED__
 __IInternetSecurityManager_FWD_DEFINED__ equ 1
-endif	;; __IInternetSecurityManager_FWD_DEFINED__
+endif	
 
 
 ifndef __IInternetHostSecurityManager_FWD_DEFINED__
 __IInternetHostSecurityManager_FWD_DEFINED__ equ 1
-endif	;; __IInternetHostSecurityManager_FWD_DEFINED__
+endif	
 
 
 ifndef __IInternetZoneManager_FWD_DEFINED__
 __IInternetZoneManager_FWD_DEFINED__ equ 1
-endif	;; __IInternetZoneManager_FWD_DEFINED__
+endif	
 
 
 ifndef __ISoftDistExt_FWD_DEFINED__
 __ISoftDistExt_FWD_DEFINED__ equ 1
-endif	;; __ISoftDistExt_FWD_DEFINED__
+endif	
 
 
 ifndef __IDataFilter_FWD_DEFINED__
 __IDataFilter_FWD_DEFINED__ equ 1
-endif	;; __IDataFilter_FWD_DEFINED__
+endif	
 
 
 ifndef __IEncodingFilterFactory_FWD_DEFINED__
 __IEncodingFilterFactory_FWD_DEFINED__ equ 1
-endif	;; __IEncodingFilterFactory_FWD_DEFINED__
+endif	
 
 
-;; header files for imported files
 include objidl.inc
 include oleidl.inc
 include servprov.inc
@@ -159,16 +157,12 @@ include msxml.inc
 .xlist
 
 ;void *
-MIDL_user_allocate proto _CType :size_t
+MIDL_user_allocate proto WINAPI :size_t
 ;void
-MIDL_user_free proto _CType :PVOID
+MIDL_user_free proto WINAPI :PVOID
 
-;;#pragma comment(lib,"uuid.lib")
 
-;;---------------------------------------------------------------------------=
-;; URL Moniker Interfaces.
 
-;; These are for backwards compatibility with previous URLMON versions
 BINDF_DONTUSECACHE	equ <BINDF_GETNEWESTVERSION>
 BINDF_DONTPUTINCACHE	equ <BINDF_NOWRITECACHE>
 BINDF_NOCOPYDATA	equ <BINDF_PULLDATA>
@@ -194,25 +188,25 @@ SZ_ASYNC_CALLEE		equ <OLESTR("AsyncCallee")>
 MKSYS_URLMONIKER	equ 6
 
 ;STDAPI
-CreateURLMoniker proto _CType \
+CreateURLMoniker proto WINAPI \
 		pMkCtx: LPMONIKER,
 		 szURL: LPCWSTR,
 		  ppmk: ptr LPMONIKER
 
 ;STDAPI
-GetClassURL proto _CType \
+GetClassURL proto WINAPI \
 		 szURL: LPCWSTR,
 		pClsID: ptr CLSID
 
 ;STDAPI
-CreateAsyncBindCtx proto _CType \
+CreateAsyncBindCtx proto WINAPI \
 	      reserved: DWORD,
 		 pBSCb: ptr IBindStatusCallback,
 		pEFetc: ptr IEnumFORMATETC,
 		  ppBC: ptr IBindCtx
 
 ;STDAPI
-CreateAsyncBindCtxEx proto _CType \
+CreateAsyncBindCtxEx proto WINAPI \
 		   pbc: ptr IBindCtx,
 	     dwOptions: DWORD,
 		 pBSCb: ptr IBindStatusCallback,
@@ -221,26 +215,26 @@ CreateAsyncBindCtxEx proto _CType \
 	      reserved: DWORD
 
 ;STDAPI
-MkParseDisplayNameEx proto _CType \
+MkParseDisplayNameEx proto WINAPI \
 		   pbc: ptr IBindCtx,
 	 szDisplayName: LPCWSTR,
 	      pchEaten: ptr ULONG,
 		  ppmk: ptr LPMONIKER
 
 ;STDAPI
-RegisterBindStatusCallback proto _CType \
+RegisterBindStatusCallback proto WINAPI \
 		   pBC: LPBC,
 		 pBSCb: ptr IBindStatusCallback,
 	    ppBSCBPrev: ptr IBindStatusCallback,
 	    dwReserved: DWORD
 
 ;STDAPI
-RevokeBindStatusCallback proto _CType \
+RevokeBindStatusCallback proto WINAPI \
 		   pBC: LPBC,
 		 pBSCb: ptr IBindStatusCallback
 
 ;STDAPI
-GetClassFileOrMime proto _CType \
+GetClassFileOrMime proto WINAPI \
 		   pBC: LPBC,
 	    szFilename: LPCWSTR,
 	       pBuffer: LPVOID,
@@ -250,13 +244,13 @@ GetClassFileOrMime proto _CType \
 		pclsid: ptr CLSID
 
 ;STDAPI
-IsValidURL proto _CType \
+IsValidURL proto WINAPI \
 		   pBC: LPBC,
 		 szURL: LPCWSTR,
 	    dwReserved: DWORD
 
 ;STDAPI
-CoGetClassObjectFromURL proto _CType \
+CoGetClassObjectFromURL proto WINAPI \
 	      rCLASSID: REFCLSID,
 		szCODE: LPCWSTR,
        dwFileVersionMS: DWORD,
@@ -269,48 +263,47 @@ CoGetClassObjectFromURL proto _CType \
 		   ppv: ptr LPVOID
 
 
-;;helper apis
 ;STDAPI
-IsAsyncMoniker proto _CType \
+IsAsyncMoniker proto WINAPI \
 		   pmk: ptr IMoniker
 
 ;STDAPI
-CreateURLBinding proto _CType \
+CreateURLBinding proto WINAPI \
 	       lpszUrl: LPCWSTR,
 		   pbc: ptr IBindCtx,
 		 ppBdg: ptr IBinding
 
 
 ;STDAPI
-RegisterMediaTypes proto _CType \
+RegisterMediaTypes proto WINAPI \
 		ctypes: UINT,
 	     rgszTypes: LPCSTR,
 	     rgcfTypes: ptr CLIPFORMAT
 
 ;STDAPI
-FindMediaType proto _CType \
+FindMediaType proto WINAPI \
 	     rgszTypes: LPCSTR,
 	     rgcfTypes: ptr CLIPFORMAT
 
 ;STDAPI
-CreateFormatEnumerator proto _CType \
+CreateFormatEnumerator proto WINAPI \
 	       cfmtetc: UINT,
 	      rgfmtetc: ptr FORMATETC,
 	  ppenumfmtetc: ptr IEnumFORMATETC
 
 ;STDAPI
-RegisterFormatEnumerator proto _CType \
+RegisterFormatEnumerator proto WINAPI \
 		   pBC: LPBC,
 		pEFetc: ptr IEnumFORMATETC,
 	      reserved: DWORD
 
 ;STDAPI
-RevokeFormatEnumerator proto _CType \
+RevokeFormatEnumerator proto WINAPI \
 		   pBC: LPBC,
 		pEFetc: ptr IEnumFORMATETC
 
 ;STDAPI
-RegisterMediaTypeClass proto _CType \
+RegisterMediaTypeClass proto WINAPI \
 		   pBC: LPBC,
 		ctypes: UINT,
 	     rgszTypes: LPCSTR,
@@ -318,21 +311,21 @@ RegisterMediaTypeClass proto _CType \
 	      reserved: DWORD
 
 ;STDAPI
-FindMediaTypeClass proto _CType \
+FindMediaTypeClass proto WINAPI \
 		   pBC: LPBC,
 		szType: LPCSTR,
 		pclsID: ptr CLSID,
 	      reserved: DWORD
 
 ;STDAPI
-UrlMkSetSessionOption proto _CType \
+UrlMkSetSessionOption proto WINAPI \
 	      dwOption: DWORD,
 	       pBuffer: LPVOID,
 	dwBufferLength: DWORD,
 	    dwReserved: DWORD
 
 ;STDAPI
-UrlMkGetSessionOption proto _CType \
+UrlMkGetSessionOption proto WINAPI \
 	      dwOption: DWORD,
 	       pBuffer: LPVOID,
 	dwBufferLength: DWORD,
@@ -340,7 +333,7 @@ UrlMkGetSessionOption proto _CType \
 	    dwReserved: DWORD
 
 ;STDAPI
-FindMimeFromData proto _CType \
+FindMimeFromData proto WINAPI \
 		   pBC: LPBC,
 		pwzUrl: LPCWSTR,
 	       pBuffer: LPVOID,
@@ -351,13 +344,12 @@ FindMimeFromData proto _CType \
 	    dwReserved: DWORD
 
 ;STDAPI
-ObtainUserAgentString proto _CType \
+ObtainUserAgentString proto WINAPI \
 	      dwOption: DWORD,
 	      pszUAOut: LPSTR,
 		cbSize: LPDWORD
 
 
-;; URLMON-specific defines for UrlMkSetSessionOption() above
 URLMON_OPTION_USERAGENT equ 0x10000001
 URLMON_OPTION_USERAGENT_REFRESH equ 0x10000002
 
@@ -394,9 +386,6 @@ CFSTR_MIME_X_MSVIDEO	equ <(TEXT("video/x-msvideo"))>
 CFSTR_MIME_X_SGI_MOVIE	equ <(TEXT("video/x-sgi-movie"))>
 CFSTR_MIME_HTML		equ <(TEXT("text/html"))>
 
-;; MessageId: MK_S_ASYNCHRONOUS
-;; MessageText: Operation is successful, but will complete asynchronously.
-;;
 MK_S_ASYNCHRONOUS	equ _HRESULT_TYPEDEF_(0x000401E8)
 ifndef S_ASYNCHRONOUS
 S_ASYNCHRONOUS		equ MK_S_ASYNCHRONOUS
@@ -406,18 +395,6 @@ ifndef E_PENDING
 E_PENDING		equ _HRESULT_TYPEDEF_(0x8000000A)
 endif
 
-;;
-;;
-;; WinINet and protocol specific errors are mapped to one of the following
-;; error which are returned in IBSC::OnStopBinding
-;;
-;;
-;; Note: FACILITY C is split into ranges of 1k
-;; C0000 - C03FF  INET_E_ (URLMON's original hresult)
-;; C0400 - C07FF  INET_E_CLIENT_xxx
-;; C0800 - C0BFF  INET_E_SERVER_xxx
-;; C0C00 - C0FFF  INET_E_????
-;; C1000 - C13FF  INET_E_AGENT_xxx (info delivery agents)
 INET_E_INVALID_URL	equ _HRESULT_TYPEDEF_(0x800C0002)
 INET_E_NO_SESSION	equ _HRESULT_TYPEDEF_(0x800C0003)
 INET_E_CANNOT_CONNECT	equ _HRESULT_TYPEDEF_(0x800C0004)
@@ -542,14 +519,14 @@ IPersistMoniker		ENDS
 
 
 ;HRESULT
-IPersistMoniker_GetClassID_Proxy proto _CType \
+IPersistMoniker_GetClassID_Proxy proto WINAPI \
 		 pThis: ptr IPersistMoniker,
 	      pClassID: ptr CLSID
 
 
 
 ;void
-IPersistMoniker_GetClassID_Stub proto _CType \
+IPersistMoniker_GetClassID_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -558,13 +535,13 @@ IPersistMoniker_GetClassID_Stub proto _CType \
 
 
 ;HRESULT
-IPersistMoniker_IsDirty_Proxy proto _CType \
+IPersistMoniker_IsDirty_Proxy proto WINAPI \
 		 pThis: ptr IPersistMoniker
 
 
 
 ;void
-IPersistMoniker_IsDirty_Stub proto _CType \
+IPersistMoniker_IsDirty_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -573,7 +550,7 @@ IPersistMoniker_IsDirty_Stub proto _CType \
 
 
 ;HRESULT
-IPersistMoniker_Load_Proxy proto _CType \
+IPersistMoniker_Load_Proxy proto WINAPI \
 		 pThis: ptr IPersistMoniker,
        fFullyAvailable: BOOL,
 	      pimkName: ptr IMoniker,
@@ -583,7 +560,7 @@ IPersistMoniker_Load_Proxy proto _CType \
 
 
 ;void
-IPersistMoniker_Load_Stub proto _CType \
+IPersistMoniker_Load_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -592,7 +569,7 @@ IPersistMoniker_Load_Stub proto _CType \
 
 
 ;HRESULT
-IPersistMoniker_Save_Proxy proto _CType \
+IPersistMoniker_Save_Proxy proto WINAPI \
 		 pThis: ptr IPersistMoniker,
 	      pimkName: ptr IMoniker,
 		   pbc: LPBC,
@@ -601,7 +578,7 @@ IPersistMoniker_Save_Proxy proto _CType \
 
 
 ;void
-IPersistMoniker_Save_Stub proto _CType \
+IPersistMoniker_Save_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -610,7 +587,7 @@ IPersistMoniker_Save_Stub proto _CType \
 
 
 ;HRESULT
-IPersistMoniker_SaveCompleted_Proxy proto _CType \
+IPersistMoniker_SaveCompleted_Proxy proto WINAPI \
 		 pThis: ptr IPersistMoniker,
 	      pimkName: ptr IMoniker,
 		  pibc: LPBC
@@ -618,7 +595,7 @@ IPersistMoniker_SaveCompleted_Proxy proto _CType \
 
 
 ;void
-IPersistMoniker_SaveCompleted_Stub proto _CType \
+IPersistMoniker_SaveCompleted_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -627,14 +604,14 @@ IPersistMoniker_SaveCompleted_Stub proto _CType \
 
 
 ;HRESULT
-IPersistMoniker_GetCurMoniker_Proxy proto _CType \
+IPersistMoniker_GetCurMoniker_Proxy proto WINAPI \
 		 pThis: ptr IPersistMoniker,
 	     ppimkName: ptr ptr IMoniker
 
 
 
 ;void
-IPersistMoniker_GetCurMoniker_Stub proto _CType \
+IPersistMoniker_GetCurMoniker_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -643,7 +620,7 @@ IPersistMoniker_GetCurMoniker_Stub proto _CType \
 
 
 
-endif	;; __IPersistMoniker_INTERFACE_DEFINED__
+endif	
 
 
 
@@ -716,7 +693,7 @@ IBindProtocol		ENDS
 
 
 ;HRESULT
-IBindProtocol_CreateBinding_Proxy proto _CType \
+IBindProtocol_CreateBinding_Proxy proto WINAPI \
 		 pThis: ptr IBindProtocol,
 		 szUrl: LPCWSTR,
 		   pbc: ptr IBindCtx,
@@ -725,7 +702,7 @@ IBindProtocol_CreateBinding_Proxy proto _CType \
 
 
 ;void
-IBindProtocol_CreateBinding_Stub proto _CType \
+IBindProtocol_CreateBinding_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -734,7 +711,7 @@ IBindProtocol_CreateBinding_Stub proto _CType \
 
 
 
-endif	;; __IBindProtocol_INTERFACE_DEFINED__
+endif	
 
 
 
@@ -840,13 +817,13 @@ IBinding		ENDS
 
 
 ;HRESULT
-IBinding_Abort_Proxy proto _CType \
+IBinding_Abort_Proxy proto WINAPI \
 		 pThis: ptr IBinding
 
 
 
 ;void
-IBinding_Abort_Stub proto _CType \
+IBinding_Abort_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -855,13 +832,13 @@ IBinding_Abort_Stub proto _CType \
 
 
 ;HRESULT
-IBinding_Suspend_Proxy proto _CType \
+IBinding_Suspend_Proxy proto WINAPI \
 		 pThis: ptr IBinding
 
 
 
 ;void
-IBinding_Suspend_Stub proto _CType \
+IBinding_Suspend_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -870,13 +847,13 @@ IBinding_Suspend_Stub proto _CType \
 
 
 ;HRESULT
-IBinding_Resume_Proxy proto _CType \
+IBinding_Resume_Proxy proto WINAPI \
 		 pThis: ptr IBinding
 
 
 
 ;void
-IBinding_Resume_Stub proto _CType \
+IBinding_Resume_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -885,14 +862,14 @@ IBinding_Resume_Stub proto _CType \
 
 
 ;HRESULT
-IBinding_SetPriority_Proxy proto _CType \
+IBinding_SetPriority_Proxy proto WINAPI \
 		 pThis: ptr IBinding,
 	     nPriority: LONG
 
 
 
 ;void
-IBinding_SetPriority_Stub proto _CType \
+IBinding_SetPriority_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -901,14 +878,14 @@ IBinding_SetPriority_Stub proto _CType \
 
 
 ;HRESULT
-IBinding_GetPriority_Proxy proto _CType \
+IBinding_GetPriority_Proxy proto WINAPI \
 		 pThis: ptr IBinding,
 	    pnPriority: ptr LONG
 
 
 
 ;void
-IBinding_GetPriority_Stub proto _CType \
+IBinding_GetPriority_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -917,7 +894,7 @@ IBinding_GetPriority_Stub proto _CType \
 
 
 ;HRESULT
-IBinding_RemoteGetBindResult_Proxy proto _CType \
+IBinding_RemoteGetBindResult_Proxy proto WINAPI \
 		 pThis: ptr IBinding,
 	pclsidProtocol: ptr CLSID,
 	     pdwResult: LPDWORD,
@@ -927,7 +904,7 @@ IBinding_RemoteGetBindResult_Proxy proto _CType \
 
 
 ;void
-IBinding_RemoteGetBindResult_Stub proto _CType \
+IBinding_RemoteGetBindResult_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -936,7 +913,7 @@ IBinding_RemoteGetBindResult_Stub proto _CType \
 
 
 
-endif	;; __IBinding_INTERFACE_DEFINED__
+endif	
 
 
 
@@ -1185,7 +1162,7 @@ IBindStatusCallback	ENDS
 
 
 ;HRESULT
-IBindStatusCallback_OnStartBinding_Proxy proto _CType \
+IBindStatusCallback_OnStartBinding_Proxy proto WINAPI \
 		 pThis: ptr IBindStatusCallback,
 	    dwReserved: DWORD,
 		   pib: ptr IBinding
@@ -1193,7 +1170,7 @@ IBindStatusCallback_OnStartBinding_Proxy proto _CType \
 
 
 ;void
-IBindStatusCallback_OnStartBinding_Stub proto _CType \
+IBindStatusCallback_OnStartBinding_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1202,14 +1179,14 @@ IBindStatusCallback_OnStartBinding_Stub proto _CType \
 
 
 ;HRESULT
-IBindStatusCallback_GetPriority_Proxy proto _CType \
+IBindStatusCallback_GetPriority_Proxy proto WINAPI \
 		 pThis: ptr IBindStatusCallback,
 	    pnPriority: ptr LONG
 
 
 
 ;void
-IBindStatusCallback_GetPriority_Stub proto _CType \
+IBindStatusCallback_GetPriority_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1218,14 +1195,14 @@ IBindStatusCallback_GetPriority_Stub proto _CType \
 
 
 ;HRESULT
-IBindStatusCallback_OnLowResource_Proxy proto _CType \
+IBindStatusCallback_OnLowResource_Proxy proto WINAPI \
 		 pThis: ptr IBindStatusCallback,
 	      reserved: DWORD
 
 
 
 ;void
-IBindStatusCallback_OnLowResource_Stub proto _CType \
+IBindStatusCallback_OnLowResource_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1234,7 +1211,7 @@ IBindStatusCallback_OnLowResource_Stub proto _CType \
 
 
 ;HRESULT
-IBindStatusCallback_OnProgress_Proxy proto _CType \
+IBindStatusCallback_OnProgress_Proxy proto WINAPI \
 		 pThis: ptr IBindStatusCallback,
 	    ulProgress: ULONG,
 	 ulProgressMax: ULONG,
@@ -1244,7 +1221,7 @@ IBindStatusCallback_OnProgress_Proxy proto _CType \
 
 
 ;void
-IBindStatusCallback_OnProgress_Stub proto _CType \
+IBindStatusCallback_OnProgress_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1253,7 +1230,7 @@ IBindStatusCallback_OnProgress_Stub proto _CType \
 
 
 ;HRESULT
-IBindStatusCallback_OnStopBinding_Proxy proto _CType \
+IBindStatusCallback_OnStopBinding_Proxy proto WINAPI \
 		 pThis: ptr IBindStatusCallback,
 	       hresult: HRESULT,
 	       szError: LPCWSTR
@@ -1261,7 +1238,7 @@ IBindStatusCallback_OnStopBinding_Proxy proto _CType \
 
 
 ;void
-IBindStatusCallback_OnStopBinding_Stub proto _CType \
+IBindStatusCallback_OnStopBinding_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1270,7 +1247,7 @@ IBindStatusCallback_OnStopBinding_Stub proto _CType \
 
 
 ;HRESULT
-IBindStatusCallback_RemoteGetBindInfo_Proxy proto _CType \
+IBindStatusCallback_RemoteGetBindInfo_Proxy proto WINAPI \
 		 pThis: ptr IBindStatusCallback,
 	      grfBINDF: LPDWORD,
 	     pbindinfo: ptr RemBINDINFO,
@@ -1279,7 +1256,7 @@ IBindStatusCallback_RemoteGetBindInfo_Proxy proto _CType \
 
 
 ;void
-IBindStatusCallback_RemoteGetBindInfo_Stub proto _CType \
+IBindStatusCallback_RemoteGetBindInfo_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1288,7 +1265,7 @@ IBindStatusCallback_RemoteGetBindInfo_Stub proto _CType \
 
 
 ;HRESULT
-IBindStatusCallback_RemoteOnDataAvailable_Proxy proto _CType \
+IBindStatusCallback_RemoteOnDataAvailable_Proxy proto WINAPI \
 		 pThis: ptr IBindStatusCallback,
 	       grfBSCF: DWORD,
 		dwSize: DWORD,
@@ -1298,7 +1275,7 @@ IBindStatusCallback_RemoteOnDataAvailable_Proxy proto _CType \
 
 
 ;void
-IBindStatusCallback_RemoteOnDataAvailable_Stub proto _CType \
+IBindStatusCallback_RemoteOnDataAvailable_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1307,7 +1284,7 @@ IBindStatusCallback_RemoteOnDataAvailable_Stub proto _CType \
 
 
 ;HRESULT
-IBindStatusCallback_OnObjectAvailable_Proxy proto _CType \
+IBindStatusCallback_OnObjectAvailable_Proxy proto WINAPI \
 		 pThis: ptr IBindStatusCallback,
 		  riid: REFIID,
 		  punk: ptr IUnknown
@@ -1315,7 +1292,7 @@ IBindStatusCallback_OnObjectAvailable_Proxy proto _CType \
 
 
 ;void
-IBindStatusCallback_OnObjectAvailable_Stub proto _CType \
+IBindStatusCallback_OnObjectAvailable_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1324,7 +1301,7 @@ IBindStatusCallback_OnObjectAvailable_Stub proto _CType \
 
 
 
-endif	;; __IBindStatusCallback_INTERFACE_DEFINED__
+endif	
 
 
 
@@ -1397,7 +1374,7 @@ IAuthenticate		ENDS
 
 
 ;HRESULT
-IAuthenticate_Authenticate_Proxy proto _CType \
+IAuthenticate_Authenticate_Proxy proto WINAPI \
 		 pThis: ptr IAuthenticate,
 		 phwnd: ptr HWND,
 	   pszUsername: ptr LPWSTR,
@@ -1406,7 +1383,7 @@ IAuthenticate_Authenticate_Proxy proto _CType \
 
 
 ;void
-IAuthenticate_Authenticate_Stub proto _CType \
+IAuthenticate_Authenticate_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1415,7 +1392,7 @@ IAuthenticate_Authenticate_Stub proto _CType \
 
 
 
-endif	;; __IAuthenticate_INTERFACE_DEFINED__
+endif	
 
 
 
@@ -1499,7 +1476,7 @@ IHttpNegotiate		ENDS
 
 
 ;HRESULT
-IHttpNegotiate_BeginningTransaction_Proxy proto _CType \
+IHttpNegotiate_BeginningTransaction_Proxy proto WINAPI \
 		 pThis: ptr IHttpNegotiate,
 		 szURL: LPCWSTR,
 	     szHeaders: LPCWSTR,
@@ -1509,7 +1486,7 @@ IHttpNegotiate_BeginningTransaction_Proxy proto _CType \
 
 
 ;void
-IHttpNegotiate_BeginningTransaction_Stub proto _CType \
+IHttpNegotiate_BeginningTransaction_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1518,7 +1495,7 @@ IHttpNegotiate_BeginningTransaction_Stub proto _CType \
 
 
 ;HRESULT
-IHttpNegotiate_OnResponse_Proxy proto _CType \
+IHttpNegotiate_OnResponse_Proxy proto WINAPI \
 		 pThis: ptr IHttpNegotiate,
 	dwResponseCode: DWORD,
      szResponseHeaders: LPCWSTR,
@@ -1528,7 +1505,7 @@ pszAdditionalRequestHeaders: ptr LPWSTR
 
 
 ;void
-IHttpNegotiate_OnResponse_Stub proto _CType \
+IHttpNegotiate_OnResponse_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1537,7 +1514,7 @@ IHttpNegotiate_OnResponse_Stub proto _CType \
 
 
 
-endif	;; __IHttpNegotiate_INTERFACE_DEFINED__
+endif	
 
 
 
@@ -1609,7 +1586,7 @@ IWindowForBindingUI	ENDS
 
 
 ;HRESULT
-IWindowForBindingUI_GetWindow_Proxy proto _CType \
+IWindowForBindingUI_GetWindow_Proxy proto WINAPI \
 		 pThis: ptr IWindowForBindingUI,
 	   rguidReason: REFGUID,
 		 phwnd: ptr HWND
@@ -1617,7 +1594,7 @@ IWindowForBindingUI_GetWindow_Proxy proto _CType \
 
 
 ;void
-IWindowForBindingUI_GetWindow_Stub proto _CType \
+IWindowForBindingUI_GetWindow_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1626,7 +1603,7 @@ IWindowForBindingUI_GetWindow_Stub proto _CType \
 
 
 
-endif	;; __IWindowForBindingUI_INTERFACE_DEFINED__
+endif	
 
 
 
@@ -1720,7 +1697,7 @@ ICodeInstall		ENDS
 
 
 ;HRESULT
-ICodeInstall_OnCodeInstallProblem_Proxy proto _CType \
+ICodeInstall_OnCodeInstallProblem_Proxy proto WINAPI \
 		 pThis: ptr ICodeInstall,
 	  ulStatusCode: ULONG,
 	 szDestination: LPCWSTR,
@@ -1730,7 +1707,7 @@ ICodeInstall_OnCodeInstallProblem_Proxy proto _CType \
 
 
 ;void
-ICodeInstall_OnCodeInstallProblem_Stub proto _CType \
+ICodeInstall_OnCodeInstallProblem_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1739,7 +1716,7 @@ ICodeInstall_OnCodeInstallProblem_Stub proto _CType \
 
 
 
-endif	;; __ICodeInstall_INTERFACE_DEFINED__
+endif	
 
 
 
@@ -1812,7 +1789,7 @@ IWinInetInfo		ENDS
 
 
 ;HRESULT
-IWinInetInfo_RemoteQueryOption_Proxy proto _CType \
+IWinInetInfo_RemoteQueryOption_Proxy proto WINAPI \
 		 pThis: ptr IWinInetInfo,
 	      dwOption: DWORD,
 	       pBuffer: LPBYTE,
@@ -1821,7 +1798,7 @@ IWinInetInfo_RemoteQueryOption_Proxy proto _CType \
 
 
 ;void
-IWinInetInfo_RemoteQueryOption_Stub proto _CType \
+IWinInetInfo_RemoteQueryOption_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1830,7 +1807,7 @@ IWinInetInfo_RemoteQueryOption_Stub proto _CType \
 
 
 
-endif	;; __IWinInetInfo_INTERFACE_DEFINED__
+endif	
 
 
 
@@ -1910,14 +1887,14 @@ IHttpSecurity		ENDS
 
 
 ;HRESULT
-IHttpSecurity_OnSecurityProblem_Proxy proto _CType \
+IHttpSecurity_OnSecurityProblem_Proxy proto WINAPI \
 		 pThis: ptr IHttpSecurity,
 	     dwProblem: DWORD
 
 
 
 ;void
-IHttpSecurity_OnSecurityProblem_Stub proto _CType \
+IHttpSecurity_OnSecurityProblem_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1926,7 +1903,7 @@ IHttpSecurity_OnSecurityProblem_Stub proto _CType \
 
 
 
-endif	;; __IHttpSecurity_INTERFACE_DEFINED__
+endif	
 
 
 
@@ -2010,7 +1987,7 @@ IWinInetHttpInfo	ENDS
 
 
 ;HRESULT
-IWinInetHttpInfo_RemoteQueryInfo_Proxy proto _CType \
+IWinInetHttpInfo_RemoteQueryInfo_Proxy proto WINAPI \
 		 pThis: ptr IWinInetHttpInfo,
 	      dwOption: DWORD,
 	       pBuffer: LPBYTE,
@@ -2021,7 +1998,7 @@ IWinInetHttpInfo_RemoteQueryInfo_Proxy proto _CType \
 
 
 ;void
-IWinInetHttpInfo_RemoteQueryInfo_Stub proto _CType \
+IWinInetHttpInfo_RemoteQueryInfo_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2030,7 +2007,7 @@ IWinInetHttpInfo_RemoteQueryInfo_Stub proto _CType \
 
 
 
-endif	;; __IWinInetHttpInfo_INTERFACE_DEFINED__
+endif	
 
 
 
@@ -2129,7 +2106,7 @@ IBindHost		ENDS
 
 
 ;HRESULT
-IBindHost_CreateMoniker_Proxy proto _CType \
+IBindHost_CreateMoniker_Proxy proto WINAPI \
 		 pThis: ptr IBindHost,
 		szName: LPOLESTR,
 		   pBC: ptr IBindCtx,
@@ -2139,7 +2116,7 @@ IBindHost_CreateMoniker_Proxy proto _CType \
 
 
 ;void
-IBindHost_CreateMoniker_Stub proto _CType \
+IBindHost_CreateMoniker_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2148,7 +2125,7 @@ IBindHost_CreateMoniker_Stub proto _CType \
 
 
 ;HRESULT
-IBindHost_RemoteMonikerBindToStorage_Proxy proto _CType \
+IBindHost_RemoteMonikerBindToStorage_Proxy proto WINAPI \
 		 pThis: ptr IBindHost,
 		   pMk: ptr IMoniker,
 		   pBC: ptr IBindCtx,
@@ -2159,7 +2136,7 @@ IBindHost_RemoteMonikerBindToStorage_Proxy proto _CType \
 
 
 ;void
-IBindHost_RemoteMonikerBindToStorage_Stub proto _CType \
+IBindHost_RemoteMonikerBindToStorage_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2168,7 +2145,7 @@ IBindHost_RemoteMonikerBindToStorage_Stub proto _CType \
 
 
 ;HRESULT
-IBindHost_RemoteMonikerBindToObject_Proxy proto _CType \
+IBindHost_RemoteMonikerBindToObject_Proxy proto WINAPI \
 		 pThis: ptr IBindHost,
 		   pMk: ptr IMoniker,
 		   pBC: ptr IBindCtx,
@@ -2179,7 +2156,7 @@ IBindHost_RemoteMonikerBindToObject_Proxy proto _CType \
 
 
 ;void
-IBindHost_RemoteMonikerBindToObject_Stub proto _CType \
+IBindHost_RemoteMonikerBindToObject_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2188,7 +2165,7 @@ IBindHost_RemoteMonikerBindToObject_Stub proto _CType \
 
 
 
-endif	;; __IBindHost_INTERFACE_DEFINED__
+endif	
 
 
 
@@ -2196,16 +2173,14 @@ endif	;; __IBindHost_INTERFACE_DEFINED__
 
 endif
 
-;; These are for backwards compatibility with previous URLMON versions
-;; Flags for the UrlDownloadToCacheFile
-URLOSTRM_USECACHEDCOPY_ONLY equ 0x1	 ;; Only get from cache
-URLOSTRM_USECACHEDCOPY	equ 0x2	 ;; Get from cache if available else download
-URLOSTRM_GETNEWESTVERSION equ 0x3	 ;; Get new version only. But put it in cache too
+URLOSTRM_USECACHEDCOPY_ONLY equ 0x1	 
+URLOSTRM_USECACHEDCOPY	equ 0x2	 
+URLOSTRM_GETNEWESTVERSION equ 0x3	 
 
 
 ;IBindStatusCallback	typedef STRUC
 ;STDAPI
-HlinkSimpleNavigateToString proto _CType \
+HlinkSimpleNavigateToString proto WINAPI \
 	      szTarget: LPCWSTR,
 	    szLocation: LPCWSTR,
      szTargetFrameName: LPCWSTR,
@@ -2217,7 +2192,7 @@ HlinkSimpleNavigateToString proto _CType \
 
 
 ;STDAPI
-HlinkSimpleNavigateToMoniker proto _CType \
+HlinkSimpleNavigateToMoniker proto WINAPI \
 	     pmkTarget: ptr IMoniker,
 	    szLocation: LPCWSTR,
      szTargetFrameName: LPCWSTR,
@@ -2251,24 +2226,24 @@ URLOpenPullStream	equ URLOpenPullStreamA
 URLDownloadToFile	equ URLDownloadToFileA
 URLDownloadToCacheFile	equ URLDownloadToCacheFileA
 URLOpenBlockingStream	equ URLOpenBlockingStreamA
-endif ;; NOT UNICODE
+endif 
 
 
 ;STDAPI
-HlinkGoBack proto _CType \
+HlinkGoBack proto WINAPI \
 		  pUnk: ptr IUnknown
 
 ;STDAPI
-HlinkGoForward proto _CType \
+HlinkGoForward proto WINAPI \
 		  pUnk: ptr IUnknown
 
 ;STDAPI
-HlinkNavigateString proto _CType \
+HlinkNavigateString proto WINAPI \
 		  pUnk: ptr IUnknown,
 	      szTarget: LPCWSTR
 
 ;STDAPI
-HlinkNavigateMoniker proto _CType \
+HlinkNavigateMoniker proto WINAPI \
 		  pUnk: ptr IUnknown,
 	     pmkTarget: ptr IMoniker
 
@@ -2338,7 +2313,7 @@ IInternet		ENDS
 
 
 
-endif	;; __IInternet_INTERFACE_DEFINED__
+endif	
 
 
 
@@ -2437,7 +2412,7 @@ IInternetBindInfo	ENDS
 
 
 ;HRESULT
-IInternetBindInfo_GetBindInfo_Proxy proto _CType \
+IInternetBindInfo_GetBindInfo_Proxy proto WINAPI \
 		 pThis: ptr IInternetBindInfo,
 	      grfBINDF: LPDWORD,
 	     pbindinfo: ptr BINDINFO
@@ -2445,7 +2420,7 @@ IInternetBindInfo_GetBindInfo_Proxy proto _CType \
 
 
 ;void
-IInternetBindInfo_GetBindInfo_Stub proto _CType \
+IInternetBindInfo_GetBindInfo_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2454,7 +2429,7 @@ IInternetBindInfo_GetBindInfo_Stub proto _CType \
 
 
 ;HRESULT
-IInternetBindInfo_GetBindString_Proxy proto _CType \
+IInternetBindInfo_GetBindString_Proxy proto WINAPI \
 		 pThis: ptr IInternetBindInfo,
 	  ulStringType: ULONG,
 	       ppwzStr: ptr LPOLESTR,
@@ -2464,7 +2439,7 @@ IInternetBindInfo_GetBindString_Proxy proto _CType \
 
 
 ;void
-IInternetBindInfo_GetBindString_Stub proto _CType \
+IInternetBindInfo_GetBindString_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2473,7 +2448,7 @@ IInternetBindInfo_GetBindString_Stub proto _CType \
 
 
 
-endif	;; __IInternetBindInfo_INTERFACE_DEFINED__
+endif	
 
 
 
@@ -2603,7 +2578,7 @@ IInternetProtocolRoot	ENDS
 
 
 ;HRESULT
-IInternetProtocolRoot_Start_Proxy proto _CType \
+IInternetProtocolRoot_Start_Proxy proto WINAPI \
 		 pThis: ptr IInternetProtocolRoot,
 		 szUrl: LPCWSTR,
 	   pOIProtSink: ptr IInternetProtocolSink,
@@ -2614,7 +2589,7 @@ IInternetProtocolRoot_Start_Proxy proto _CType \
 
 
 ;void
-IInternetProtocolRoot_Start_Stub proto _CType \
+IInternetProtocolRoot_Start_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2623,14 +2598,14 @@ IInternetProtocolRoot_Start_Stub proto _CType \
 
 
 ;HRESULT
-IInternetProtocolRoot_Continue_Proxy proto _CType \
+IInternetProtocolRoot_Continue_Proxy proto WINAPI \
 		 pThis: ptr IInternetProtocolRoot,
 	 pProtocolData: ptr PROTOCOLDATA
 
 
 
 ;void
-IInternetProtocolRoot_Continue_Stub proto _CType \
+IInternetProtocolRoot_Continue_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2639,7 +2614,7 @@ IInternetProtocolRoot_Continue_Stub proto _CType \
 
 
 ;HRESULT
-IInternetProtocolRoot_Abort_Proxy proto _CType \
+IInternetProtocolRoot_Abort_Proxy proto WINAPI \
 		 pThis: ptr IInternetProtocolRoot,
 	      hrReason: HRESULT,
 	     dwOptions: DWORD
@@ -2647,7 +2622,7 @@ IInternetProtocolRoot_Abort_Proxy proto _CType \
 
 
 ;void
-IInternetProtocolRoot_Abort_Stub proto _CType \
+IInternetProtocolRoot_Abort_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2656,14 +2631,14 @@ IInternetProtocolRoot_Abort_Stub proto _CType \
 
 
 ;HRESULT
-IInternetProtocolRoot_Terminate_Proxy proto _CType \
+IInternetProtocolRoot_Terminate_Proxy proto WINAPI \
 		 pThis: ptr IInternetProtocolRoot,
 	     dwOptions: DWORD
 
 
 
 ;void
-IInternetProtocolRoot_Terminate_Stub proto _CType \
+IInternetProtocolRoot_Terminate_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2672,13 +2647,13 @@ IInternetProtocolRoot_Terminate_Stub proto _CType \
 
 
 ;HRESULT
-IInternetProtocolRoot_Suspend_Proxy proto _CType \
+IInternetProtocolRoot_Suspend_Proxy proto WINAPI \
 		 pThis: ptr IInternetProtocolRoot
 
 
 
 ;void
-IInternetProtocolRoot_Suspend_Stub proto _CType \
+IInternetProtocolRoot_Suspend_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2687,13 +2662,13 @@ IInternetProtocolRoot_Suspend_Stub proto _CType \
 
 
 ;HRESULT
-IInternetProtocolRoot_Resume_Proxy proto _CType \
+IInternetProtocolRoot_Resume_Proxy proto WINAPI \
 		 pThis: ptr IInternetProtocolRoot
 
 
 
 ;void
-IInternetProtocolRoot_Resume_Stub proto _CType \
+IInternetProtocolRoot_Resume_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2702,7 +2677,7 @@ IInternetProtocolRoot_Resume_Stub proto _CType \
 
 
 
-endif	;; __IInternetProtocolRoot_INTERFACE_DEFINED__
+endif	
 
 
 
@@ -2842,7 +2817,7 @@ IInternetProtocol	ENDS
 
 
 ;HRESULT
-IInternetProtocol_Read_Proxy proto _CType \
+IInternetProtocol_Read_Proxy proto WINAPI \
 		 pThis: ptr IInternetProtocol,
 		    pv: PVOID,
 		    cb: ULONG,
@@ -2851,7 +2826,7 @@ IInternetProtocol_Read_Proxy proto _CType \
 
 
 ;void
-IInternetProtocol_Read_Stub proto _CType \
+IInternetProtocol_Read_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2860,7 +2835,7 @@ IInternetProtocol_Read_Stub proto _CType \
 
 
 ;HRESULT
-IInternetProtocol_Seek_Proxy proto _CType \
+IInternetProtocol_Seek_Proxy proto WINAPI \
 		 pThis: ptr IInternetProtocol,
 	      dlibMove: LARGE_INTEGER,
 	      dwOrigin: DWORD,
@@ -2869,7 +2844,7 @@ IInternetProtocol_Seek_Proxy proto _CType \
 
 
 ;void
-IInternetProtocol_Seek_Stub proto _CType \
+IInternetProtocol_Seek_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2878,14 +2853,14 @@ IInternetProtocol_Seek_Stub proto _CType \
 
 
 ;HRESULT
-IInternetProtocol_LockRequest_Proxy proto _CType \
+IInternetProtocol_LockRequest_Proxy proto WINAPI \
 		 pThis: ptr IInternetProtocol,
 	     dwOptions: DWORD
 
 
 
 ;void
-IInternetProtocol_LockRequest_Stub proto _CType \
+IInternetProtocol_LockRequest_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2894,13 +2869,13 @@ IInternetProtocol_LockRequest_Stub proto _CType \
 
 
 ;HRESULT
-IInternetProtocol_UnlockRequest_Proxy proto _CType \
+IInternetProtocol_UnlockRequest_Proxy proto WINAPI \
 		 pThis: ptr IInternetProtocol
 
 
 
 ;void
-IInternetProtocol_UnlockRequest_Stub proto _CType \
+IInternetProtocol_UnlockRequest_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2909,7 +2884,7 @@ IInternetProtocol_UnlockRequest_Stub proto _CType \
 
 
 
-endif	;; __IInternetProtocol_INTERFACE_DEFINED__
+endif	
 
 
 
@@ -3006,14 +2981,14 @@ IInternetProtocolSink	ENDS
 
 
 ;HRESULT
-IInternetProtocolSink_Switch_Proxy proto _CType \
+IInternetProtocolSink_Switch_Proxy proto WINAPI \
 		 pThis: ptr IInternetProtocolSink,
 	 pProtocolData: ptr PROTOCOLDATA
 
 
 
 ;void
-IInternetProtocolSink_Switch_Stub proto _CType \
+IInternetProtocolSink_Switch_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3022,7 +2997,7 @@ IInternetProtocolSink_Switch_Stub proto _CType \
 
 
 ;HRESULT
-IInternetProtocolSink_ReportProgress_Proxy proto _CType \
+IInternetProtocolSink_ReportProgress_Proxy proto WINAPI \
 		 pThis: ptr IInternetProtocolSink,
 	  ulStatusCode: ULONG,
 	  szStatusText: LPCWSTR
@@ -3030,7 +3005,7 @@ IInternetProtocolSink_ReportProgress_Proxy proto _CType \
 
 
 ;void
-IInternetProtocolSink_ReportProgress_Stub proto _CType \
+IInternetProtocolSink_ReportProgress_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3039,7 +3014,7 @@ IInternetProtocolSink_ReportProgress_Stub proto _CType \
 
 
 ;HRESULT
-IInternetProtocolSink_ReportData_Proxy proto _CType \
+IInternetProtocolSink_ReportData_Proxy proto WINAPI \
 		 pThis: ptr IInternetProtocolSink,
 	       grfBSCF: DWORD,
 	    ulProgress: ULONG,
@@ -3048,7 +3023,7 @@ IInternetProtocolSink_ReportData_Proxy proto _CType \
 
 
 ;void
-IInternetProtocolSink_ReportData_Stub proto _CType \
+IInternetProtocolSink_ReportData_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3057,7 +3032,7 @@ IInternetProtocolSink_ReportData_Stub proto _CType \
 
 
 ;HRESULT
-IInternetProtocolSink_ReportResult_Proxy proto _CType \
+IInternetProtocolSink_ReportResult_Proxy proto WINAPI \
 		 pThis: ptr IInternetProtocolSink,
 	      hrResult: HRESULT,
 	       dwError: DWORD,
@@ -3066,7 +3041,7 @@ IInternetProtocolSink_ReportResult_Proxy proto _CType \
 
 
 ;void
-IInternetProtocolSink_ReportResult_Stub proto _CType \
+IInternetProtocolSink_ReportResult_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3075,7 +3050,7 @@ IInternetProtocolSink_ReportResult_Stub proto _CType \
 
 
 
-endif	;; __IInternetProtocolSink_INTERFACE_DEFINED__
+endif	
 
 
 
@@ -3212,7 +3187,7 @@ IInternetSession	ENDS
 
 
 ;HRESULT
-IInternetSession_RegisterNameSpace_Proxy proto _CType \
+IInternetSession_RegisterNameSpace_Proxy proto WINAPI \
 		 pThis: ptr IInternetSession,
 		   pCF: ptr IClassFactory,
 		rclsid: REFCLSID,
@@ -3224,7 +3199,7 @@ IInternetSession_RegisterNameSpace_Proxy proto _CType \
 
 
 ;void
-IInternetSession_RegisterNameSpace_Stub proto _CType \
+IInternetSession_RegisterNameSpace_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3233,7 +3208,7 @@ IInternetSession_RegisterNameSpace_Stub proto _CType \
 
 
 ;HRESULT
-IInternetSession_UnregisterNameSpace_Proxy proto _CType \
+IInternetSession_UnregisterNameSpace_Proxy proto WINAPI \
 		 pThis: ptr IInternetSession,
 		   pCF: ptr IClassFactory,
 	   pszProtocol: LPCWSTR
@@ -3241,7 +3216,7 @@ IInternetSession_UnregisterNameSpace_Proxy proto _CType \
 
 
 ;void
-IInternetSession_UnregisterNameSpace_Stub proto _CType \
+IInternetSession_UnregisterNameSpace_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3250,7 +3225,7 @@ IInternetSession_UnregisterNameSpace_Stub proto _CType \
 
 
 ;HRESULT
-IInternetSession_RegisterMimeFilter_Proxy proto _CType \
+IInternetSession_RegisterMimeFilter_Proxy proto WINAPI \
 		 pThis: ptr IInternetSession,
 		   pCF: ptr IClassFactory,
 		rclsid: REFCLSID,
@@ -3259,7 +3234,7 @@ IInternetSession_RegisterMimeFilter_Proxy proto _CType \
 
 
 ;void
-IInternetSession_RegisterMimeFilter_Stub proto _CType \
+IInternetSession_RegisterMimeFilter_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3268,7 +3243,7 @@ IInternetSession_RegisterMimeFilter_Stub proto _CType \
 
 
 ;HRESULT
-IInternetSession_UnregisterMimeFilter_Proxy proto _CType \
+IInternetSession_UnregisterMimeFilter_Proxy proto WINAPI \
 		 pThis: ptr IInternetSession,
 		   pCF: ptr IClassFactory,
 	       pwzType: LPCWSTR
@@ -3276,7 +3251,7 @@ IInternetSession_UnregisterMimeFilter_Proxy proto _CType \
 
 
 ;void
-IInternetSession_UnregisterMimeFilter_Stub proto _CType \
+IInternetSession_UnregisterMimeFilter_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3285,7 +3260,7 @@ IInternetSession_UnregisterMimeFilter_Stub proto _CType \
 
 
 ;HRESULT
-IInternetSession_CreateBinding_Proxy proto _CType \
+IInternetSession_CreateBinding_Proxy proto WINAPI \
 		 pThis: ptr IInternetSession,
 		   pBC: LPBC,
 		 szUrl: LPCWSTR,
@@ -3297,7 +3272,7 @@ IInternetSession_CreateBinding_Proxy proto _CType \
 
 
 ;void
-IInternetSession_CreateBinding_Stub proto _CType \
+IInternetSession_CreateBinding_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3306,7 +3281,7 @@ IInternetSession_CreateBinding_Stub proto _CType \
 
 
 ;HRESULT
-IInternetSession_SetSessionOption_Proxy proto _CType \
+IInternetSession_SetSessionOption_Proxy proto WINAPI \
 		 pThis: ptr IInternetSession,
 	      dwOption: DWORD,
 	       pBuffer: LPVOID,
@@ -3316,7 +3291,7 @@ IInternetSession_SetSessionOption_Proxy proto _CType \
 
 
 ;void
-IInternetSession_SetSessionOption_Stub proto _CType \
+IInternetSession_SetSessionOption_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3325,7 +3300,7 @@ IInternetSession_SetSessionOption_Stub proto _CType \
 
 
 ;HRESULT
-IInternetSession_GetSessionOption_Proxy proto _CType \
+IInternetSession_GetSessionOption_Proxy proto WINAPI \
 		 pThis: ptr IInternetSession,
 	      dwOption: DWORD,
 	       pBuffer: LPVOID,
@@ -3335,7 +3310,7 @@ IInternetSession_GetSessionOption_Proxy proto _CType \
 
 
 ;void
-IInternetSession_GetSessionOption_Stub proto _CType \
+IInternetSession_GetSessionOption_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3344,7 +3319,7 @@ IInternetSession_GetSessionOption_Stub proto _CType \
 
 
 
-endif	;; __IInternetSession_INTERFACE_DEFINED__
+endif	
 
 
 
@@ -3420,13 +3395,13 @@ IInternetThreadSwitch	ENDS
 
 
 ;HRESULT
-IInternetThreadSwitch_Prepare_Proxy proto _CType \
+IInternetThreadSwitch_Prepare_Proxy proto WINAPI \
 		 pThis: ptr IInternetThreadSwitch
 
 
 
 ;void
-IInternetThreadSwitch_Prepare_Stub proto _CType \
+IInternetThreadSwitch_Prepare_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3435,13 +3410,13 @@ IInternetThreadSwitch_Prepare_Stub proto _CType \
 
 
 ;HRESULT
-IInternetThreadSwitch_Continue_Proxy proto _CType \
+IInternetThreadSwitch_Continue_Proxy proto WINAPI \
 		 pThis: ptr IInternetThreadSwitch
 
 
 
 ;void
-IInternetThreadSwitch_Continue_Stub proto _CType \
+IInternetThreadSwitch_Continue_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3450,7 +3425,7 @@ IInternetThreadSwitch_Continue_Stub proto _CType \
 
 
 
-endif	;; __IInternetThreadSwitch_INTERFACE_DEFINED__
+endif	
 
 
 
@@ -3528,14 +3503,14 @@ IInternetPriority	ENDS
 
 
 ;HRESULT
-IInternetPriority_SetPriority_Proxy proto _CType \
+IInternetPriority_SetPriority_Proxy proto WINAPI \
 		 pThis: ptr IInternetPriority,
 	     nPriority: LONG
 
 
 
 ;void
-IInternetPriority_SetPriority_Stub proto _CType \
+IInternetPriority_SetPriority_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3544,14 +3519,14 @@ IInternetPriority_SetPriority_Stub proto _CType \
 
 
 ;HRESULT
-IInternetPriority_GetPriority_Proxy proto _CType \
+IInternetPriority_GetPriority_Proxy proto WINAPI \
 		 pThis: ptr IInternetPriority,
 	    pnPriority: ptr LONG
 
 
 
 ;void
-IInternetPriority_GetPriority_Stub proto _CType \
+IInternetPriority_GetPriority_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3560,7 +3535,7 @@ IInternetPriority_GetPriority_Stub proto _CType \
 
 
 
-endif	;; __IInternetPriority_INTERFACE_DEFINED__
+endif	
 
 
 
@@ -3709,7 +3684,7 @@ IInternetProtocolInfo	ENDS
 
 
 ;HRESULT
-IInternetProtocolInfo_ParseUrl_Proxy proto _CType \
+IInternetProtocolInfo_ParseUrl_Proxy proto WINAPI \
 		 pThis: ptr IInternetProtocolInfo,
 		pwzUrl: LPCWSTR,
 	   ParseAction: PARSEACTION,
@@ -3722,7 +3697,7 @@ IInternetProtocolInfo_ParseUrl_Proxy proto _CType \
 
 
 ;void
-IInternetProtocolInfo_ParseUrl_Stub proto _CType \
+IInternetProtocolInfo_ParseUrl_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3731,7 +3706,7 @@ IInternetProtocolInfo_ParseUrl_Stub proto _CType \
 
 
 ;HRESULT
-IInternetProtocolInfo_CombineUrl_Proxy proto _CType \
+IInternetProtocolInfo_CombineUrl_Proxy proto WINAPI \
 		 pThis: ptr IInternetProtocolInfo,
 	    pwzBaseUrl: LPCWSTR,
 	pwzRelativeUrl: LPCWSTR,
@@ -3744,7 +3719,7 @@ IInternetProtocolInfo_CombineUrl_Proxy proto _CType \
 
 
 ;void
-IInternetProtocolInfo_CombineUrl_Stub proto _CType \
+IInternetProtocolInfo_CombineUrl_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3753,7 +3728,7 @@ IInternetProtocolInfo_CombineUrl_Stub proto _CType \
 
 
 ;HRESULT
-IInternetProtocolInfo_CompareUrl_Proxy proto _CType \
+IInternetProtocolInfo_CompareUrl_Proxy proto WINAPI \
 		 pThis: ptr IInternetProtocolInfo,
 	       pwzUrl1: LPCWSTR,
 	       pwzUrl2: LPCWSTR,
@@ -3762,7 +3737,7 @@ IInternetProtocolInfo_CompareUrl_Proxy proto _CType \
 
 
 ;void
-IInternetProtocolInfo_CompareUrl_Stub proto _CType \
+IInternetProtocolInfo_CompareUrl_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3771,7 +3746,7 @@ IInternetProtocolInfo_CompareUrl_Stub proto _CType \
 
 
 ;HRESULT
-IInternetProtocolInfo_QueryInfo_Proxy proto _CType \
+IInternetProtocolInfo_QueryInfo_Proxy proto WINAPI \
 		 pThis: ptr IInternetProtocolInfo,
 		pwzUrl: LPCWSTR,
 	   OueryOption: QUERYOPTION,
@@ -3784,7 +3759,7 @@ IInternetProtocolInfo_QueryInfo_Proxy proto _CType \
 
 
 ;void
-IInternetProtocolInfo_QueryInfo_Stub proto _CType \
+IInternetProtocolInfo_QueryInfo_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3793,7 +3768,7 @@ IInternetProtocolInfo_QueryInfo_Stub proto _CType \
 
 
 
-endif	;; __IInternetProtocolInfo_INTERFACE_DEFINED__
+endif	
 
 endif
 
@@ -3827,7 +3802,7 @@ IID_IOInetPriority	equ <IID_IInternetPriority>
 IID_IOInetThreadSwitch	equ <IID_IInternetThreadSwitch>
 
 ;STDAPI
-CoInternetParseUrl proto _CType \
+CoInternetParseUrl proto WINAPI \
 		pwzUrl: LPCWSTR,
 	   ParseAction: PARSEACTION,
 	       dwFlags: DWORD,
@@ -3837,7 +3812,7 @@ CoInternetParseUrl proto _CType \
 	    dwReserved: DWORD
 
 ;STDAPI
-CoInternetCombineUrl proto _CType \
+CoInternetCombineUrl proto WINAPI \
 	    pwzBaseUrl: LPCWSTR,
 	pwzRelativeUrl: LPCWSTR,
 	dwCombineFlags: DWORD,
@@ -3847,19 +3822,19 @@ CoInternetCombineUrl proto _CType \
 	    dwReserved: DWORD
 
 ;STDAPI
-CoInternetCompareUrl proto _CType \
+CoInternetCompareUrl proto WINAPI \
 	       pwzUrl1: LPCWSTR,
 	       pwzUrl2: LPCWSTR,
 	       dwFlags: DWORD
 
 ;STDAPI
-CoInternetGetProtocolFlags proto _CType \
+CoInternetGetProtocolFlags proto WINAPI \
 		pwzUrl: LPCWSTR,
 	      pdwFlags: ptr DWORD,
 	    dwReserved: DWORD
 
 ;STDAPI
-CoInternetQueryInfo proto _CType \
+CoInternetQueryInfo proto WINAPI \
 		pwzUrl: LPCWSTR,
 	  QueryOptions: QUERYOPTION,
 	  dwQueryFlags: DWORD,
@@ -3869,13 +3844,13 @@ CoInternetQueryInfo proto _CType \
 	    dwReserved: DWORD
 
 ;STDAPI
-CoInternetGetSession proto _CType \
+CoInternetGetSession proto WINAPI \
 	 dwSessionMode: DWORD,
     ppIInternetSession: ptr IInternetSession,
 	    dwReserved: DWORD
 
 ;STDAPI
-CoInternetGetSecurityUrl proto _CType \
+CoInternetGetSecurityUrl proto WINAPI \
 		pwzUrl: LPCWSTR,
 	    ppwzSecUrl: ptr LPWSTR,
 	     psuAction: PSUACTION,
@@ -3883,17 +3858,17 @@ CoInternetGetSecurityUrl proto _CType \
 
 
 ;STDAPI
-CopyStgMedium proto _CType \
+CopyStgMedium proto WINAPI \
 	   pcstgmedSrc: ptr STGMEDIUM,
 	   pstgmedDest: ptr STGMEDIUM
 
 ;STDAPI
-CopyBindInfo proto _CType \
+CopyBindInfo proto WINAPI \
 	       pcbiSrc: ptr BINDINFO,
 	       pbiDest: ptr BINDINFO
 
 ;STDAPI_(void)
-ReleaseBindInfo proto _CType \
+ReleaseBindInfo proto WINAPI \
 	     pbindinfo: ptr BINDINFO
 
 
@@ -3907,33 +3882,26 @@ OInetCombineUrl		equ <CoInternetCombineUrl>
 OInetCompareUrl		equ <CoInternetCompareUrl>
 OInetQueryInfo		equ <CoInternetQueryInfo>
 OInetGetSession		equ <CoInternetGetSession>
-endif ;; NOT _URLMON_NO_ASYNC_PLUGABLE_PROTOCOLS_
-;;
-;; Static Protocol flags
-;;
+endif 
 PROTOCOLFLAG_NO_PICS_CHECK equ 0x00000001
 
-;; Creates the security manager object. The first argument is the Service provider
-;; to allow for delegation
 ;STDAPI
-CoInternetCreateSecurityManager proto _CType \
+CoInternetCreateSecurityManager proto WINAPI \
 		   pSP: ptr IServiceProvider,
 		  ppSM: ptr IInternetSecurityManager,
 	    dwReserved: DWORD
 
 
 ;STDAPI
-CoInternetCreateZoneManager proto _CType \
+CoInternetCreateZoneManager proto WINAPI \
 		   pSP: ptr IServiceProvider,
 		  ppZM: ptr IInternetZoneManager,
 	    dwReserved: DWORD
 
 
 
-;; Security manager CLSID's
 externdef		CLSID_InternetSecurityManager:IID
 externdef		CLSID_InternetZoneManager:IID
-;; pThis service is used for delegation support on the Security Manager interface
 SID_SInternetSecurityManager equ IID_IInternetSecurityManager
 
 SID_SInternetHostSecurityManager equ IID_IInternetHostSecurityManager
@@ -4007,14 +3975,14 @@ IInternetSecurityMgrSite ENDS
 
 
 ;HRESULT
-IInternetSecurityMgrSite_GetWindow_Proxy proto _CType \
+IInternetSecurityMgrSite_GetWindow_Proxy proto WINAPI \
 		 pThis: ptr IInternetSecurityMgrSite,
 		 phwnd: ptr HWND
 
 
 
 ;void
-IInternetSecurityMgrSite_GetWindow_Stub proto _CType \
+IInternetSecurityMgrSite_GetWindow_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -4023,14 +3991,14 @@ IInternetSecurityMgrSite_GetWindow_Stub proto _CType \
 
 
 ;HRESULT
-IInternetSecurityMgrSite_EnableModeless_Proxy proto _CType \
+IInternetSecurityMgrSite_EnableModeless_Proxy proto WINAPI \
 		 pThis: ptr IInternetSecurityMgrSite,
 	       fEnable: BOOL
 
 
 
 ;void
-IInternetSecurityMgrSite_EnableModeless_Stub proto _CType \
+IInternetSecurityMgrSite_EnableModeless_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -4039,7 +4007,7 @@ IInternetSecurityMgrSite_EnableModeless_Stub proto _CType \
 
 
 
-endif	;; __IInternetSecurityMgrSite_INTERFACE_DEFINED__
+endif	
 
 
 
@@ -4058,8 +4026,7 @@ __IInternetSecurityManager_INTERFACE_DEFINED__ equ 1
 
 
 
-;; MapUrlToZone returns the zone index given a URL
-MAX_SIZE_SECURITY_ID	equ 512 ;; bytes
+MAX_SIZE_SECURITY_ID	equ 512 
 ;typedef enum __MIDL_IInternetSecurityManager_0001
 
 PUAF_DEFAULT		equ 0
@@ -4069,31 +4036,11 @@ PUAF_WARN_IF_DENIED	equ 0x4
 PUAF_FORCEUI_FOREGROUND equ 0x8
 PUAF_CHECK_TIFS		equ 0x10
 
-;; pThis is the wrapper function that most clients will use.
-;; It figures out the current Policy for the passed in Action,
-;; and puts up UI if the current Policy indicates that the user
-;; should be queried. It returns back the Policy which the caller
-;; will use to determine if the action should be allowed
-;; pThis is the wrapper function to conveniently read a custom policy.
 ;typedef enum __MIDL_IInternetSecurityManager_0002
 
 SZM_CREATE		equ 0
 SZM_DELETE		equ 0x1
 
-;; SetZoneMapping
-;;    lpszPattern: string denoting a URL pattern
-;;	  Examples of valid patterns:
-;;	      *:/;;.msn.com
-;;	      http:/;;.sony.co.jp
-;;	      *://et.msn.com
-;;	      ftp://157.54.23.41/
-;;	      https://localsvr
-;;	      file:\localsvr\share
-;;	      *://157.54.100-200.*
-;;	  Examples of invalid patterns:
-;;	      http:/;;.lcs.mit.edu
-;;	      ftp:/;;
-;;    dwFlags: SZM_FLAGS values
 
 externdef		IID_IInternetSecurityManager:IID
 
@@ -4215,14 +4162,14 @@ IInternetSecurityManager ENDS
 
 
 ;HRESULT
-IInternetSecurityManager_SetSecuritySite_Proxy proto _CType \
+IInternetSecurityManager_SetSecuritySite_Proxy proto WINAPI \
 		 pThis: ptr IInternetSecurityManager,
 		 pSite: ptr IInternetSecurityMgrSite
 
 
 
 ;void
-IInternetSecurityManager_SetSecuritySite_Stub proto _CType \
+IInternetSecurityManager_SetSecuritySite_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -4231,14 +4178,14 @@ IInternetSecurityManager_SetSecuritySite_Stub proto _CType \
 
 
 ;HRESULT
-IInternetSecurityManager_GetSecuritySite_Proxy proto _CType \
+IInternetSecurityManager_GetSecuritySite_Proxy proto WINAPI \
 		 pThis: ptr IInternetSecurityManager,
 		ppSite: ptr IInternetSecurityMgrSite
 
 
 
 ;void
-IInternetSecurityManager_GetSecuritySite_Stub proto _CType \
+IInternetSecurityManager_GetSecuritySite_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -4247,7 +4194,7 @@ IInternetSecurityManager_GetSecuritySite_Stub proto _CType \
 
 
 ;HRESULT
-IInternetSecurityManager_MapUrlToZone_Proxy proto _CType \
+IInternetSecurityManager_MapUrlToZone_Proxy proto WINAPI \
 		 pThis: ptr IInternetSecurityManager,
 	       pwszUrl: LPCWSTR,
 	       pdwZone: LPDWORD,
@@ -4256,7 +4203,7 @@ IInternetSecurityManager_MapUrlToZone_Proxy proto _CType \
 
 
 ;void
-IInternetSecurityManager_MapUrlToZone_Stub proto _CType \
+IInternetSecurityManager_MapUrlToZone_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -4265,7 +4212,7 @@ IInternetSecurityManager_MapUrlToZone_Stub proto _CType \
 
 
 ;HRESULT
-IInternetSecurityManager_GetSecurityId_Proxy proto _CType \
+IInternetSecurityManager_GetSecurityId_Proxy proto WINAPI \
 		 pThis: ptr IInternetSecurityManager,
 	       pwszUrl: LPCWSTR,
 	  pbSecurityId: LPBYTE,
@@ -4275,7 +4222,7 @@ IInternetSecurityManager_GetSecurityId_Proxy proto _CType \
 
 
 ;void
-IInternetSecurityManager_GetSecurityId_Stub proto _CType \
+IInternetSecurityManager_GetSecurityId_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -4284,7 +4231,7 @@ IInternetSecurityManager_GetSecurityId_Stub proto _CType \
 
 
 ;HRESULT
-IInternetSecurityManager_ProcessUrlAction_Proxy proto _CType \
+IInternetSecurityManager_ProcessUrlAction_Proxy proto WINAPI \
 		 pThis: ptr IInternetSecurityManager,
 	       pwszUrl: LPCWSTR,
 	      dwAction: DWORD,
@@ -4298,7 +4245,7 @@ IInternetSecurityManager_ProcessUrlAction_Proxy proto _CType \
 
 
 ;void
-IInternetSecurityManager_ProcessUrlAction_Stub proto _CType \
+IInternetSecurityManager_ProcessUrlAction_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -4307,7 +4254,7 @@ IInternetSecurityManager_ProcessUrlAction_Stub proto _CType \
 
 
 ;HRESULT
-IInternetSecurityManager_QueryCustomPolicy_Proxy proto _CType \
+IInternetSecurityManager_QueryCustomPolicy_Proxy proto WINAPI \
 		 pThis: ptr IInternetSecurityManager,
 	       pwszUrl: LPCWSTR,
 	       guidKey: REFGUID,
@@ -4320,7 +4267,7 @@ IInternetSecurityManager_QueryCustomPolicy_Proxy proto _CType \
 
 
 ;void
-IInternetSecurityManager_QueryCustomPolicy_Stub proto _CType \
+IInternetSecurityManager_QueryCustomPolicy_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -4329,7 +4276,7 @@ IInternetSecurityManager_QueryCustomPolicy_Stub proto _CType \
 
 
 ;HRESULT
-IInternetSecurityManager_SetZoneMapping_Proxy proto _CType \
+IInternetSecurityManager_SetZoneMapping_Proxy proto WINAPI \
 		 pThis: ptr IInternetSecurityManager,
 		dwZone: DWORD,
 	   lpszPattern: LPCWSTR,
@@ -4338,7 +4285,7 @@ IInternetSecurityManager_SetZoneMapping_Proxy proto _CType \
 
 
 ;void
-IInternetSecurityManager_SetZoneMapping_Stub proto _CType \
+IInternetSecurityManager_SetZoneMapping_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -4347,7 +4294,7 @@ IInternetSecurityManager_SetZoneMapping_Stub proto _CType \
 
 
 ;HRESULT
-IInternetSecurityManager_GetZoneMappings_Proxy proto _CType \
+IInternetSecurityManager_GetZoneMappings_Proxy proto WINAPI \
 		 pThis: ptr IInternetSecurityManager,
 		dwZone: DWORD,
 	  ppenumString: ptr IEnumString,
@@ -4356,7 +4303,7 @@ IInternetSecurityManager_GetZoneMappings_Proxy proto _CType \
 
 
 ;void
-IInternetSecurityManager_GetZoneMappings_Stub proto _CType \
+IInternetSecurityManager_GetZoneMappings_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -4365,7 +4312,7 @@ IInternetSecurityManager_GetZoneMappings_Stub proto _CType \
 
 
 
-endif	;; __IInternetSecurityManager_INTERFACE_DEFINED__
+endif	
 
 
 
@@ -4374,9 +4321,6 @@ endif	;; __IInternetSecurityManager_INTERFACE_DEFINED__
 endif
 ifndef _LPINTERNETHOSTSECURITYMANANGER_DEFINED
 _LPINTERNETHOSTSECURITYMANANGER_DEFINED equ 1
-;;This is the interface MSHTML exposes to its clients
-;;The clients need not pass in a URL to these functions
-;;since MSHTML maintains the notion of the current URL
 
 
 externdef		__MIDL_itf_urlmon_0133_v0_0_c_ifspec:RPC_IF_HANDLE
@@ -4464,7 +4408,7 @@ IInternetHostSecurityManager ENDS
 
 
 ;HRESULT
-IInternetHostSecurityManager_GetSecurityId_Proxy proto _CType \
+IInternetHostSecurityManager_GetSecurityId_Proxy proto WINAPI \
 		 pThis: ptr IInternetHostSecurityManager,
 	  pbSecurityId: LPBYTE,
 	 pcbSecurityId: LPDWORD,
@@ -4473,7 +4417,7 @@ IInternetHostSecurityManager_GetSecurityId_Proxy proto _CType \
 
 
 ;void
-IInternetHostSecurityManager_GetSecurityId_Stub proto _CType \
+IInternetHostSecurityManager_GetSecurityId_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -4482,7 +4426,7 @@ IInternetHostSecurityManager_GetSecurityId_Stub proto _CType \
 
 
 ;HRESULT
-IInternetHostSecurityManager_ProcessUrlAction_Proxy proto _CType \
+IInternetHostSecurityManager_ProcessUrlAction_Proxy proto WINAPI \
 		 pThis: ptr IInternetHostSecurityManager,
 	      dwAction: DWORD,
 	       pPolicy: LPBYTE,
@@ -4495,7 +4439,7 @@ IInternetHostSecurityManager_ProcessUrlAction_Proxy proto _CType \
 
 
 ;void
-IInternetHostSecurityManager_ProcessUrlAction_Stub proto _CType \
+IInternetHostSecurityManager_ProcessUrlAction_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -4504,7 +4448,7 @@ IInternetHostSecurityManager_ProcessUrlAction_Stub proto _CType \
 
 
 ;HRESULT
-IInternetHostSecurityManager_QueryCustomPolicy_Proxy proto _CType \
+IInternetHostSecurityManager_QueryCustomPolicy_Proxy proto WINAPI \
 		 pThis: ptr IInternetHostSecurityManager,
 	       guidKey: REFGUID,
 	      ppPolicy: LPBYTE,
@@ -4516,7 +4460,7 @@ IInternetHostSecurityManager_QueryCustomPolicy_Proxy proto _CType \
 
 
 ;void
-IInternetHostSecurityManager_QueryCustomPolicy_Stub proto _CType \
+IInternetHostSecurityManager_QueryCustomPolicy_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -4525,7 +4469,7 @@ IInternetHostSecurityManager_QueryCustomPolicy_Stub proto _CType \
 
 
 
-endif	;; __IInternetHostSecurityManager_INTERFACE_DEFINED__
+endif	
 
 
 
@@ -4533,11 +4477,7 @@ endif	;; __IInternetHostSecurityManager_INTERFACE_DEFINED__
 
 endif
 
-;; The zone manager maintains policies for a set of standard actions.
-;; These actions are identified by integral values (called action indexes)
-;; specified below.
 
-;; Minimum legal value for an action
 URLACTION_MIN		equ 0x00001000
 
 URLACTION_DOWNLOAD_MIN	equ 0x00001000
@@ -4548,11 +4488,11 @@ URLACTION_DOWNLOAD_MAX	equ 0x000011FF
 
 URLACTION_ACTIVEX_MIN	equ 0x00001200
 URLACTION_ACTIVEX_RUN	equ 0x00001200
-URLACTION_ACTIVEX_OVERRIDE_OBJECT_SAFETY equ 0x00001201 ;; aggregate next four
-URLACTION_ACTIVEX_OVERRIDE_DATA_SAFETY equ 0x00001202 ;;
-URLACTION_ACTIVEX_OVERRIDE_SCRIPT_SAFETY equ 0x00001203 ;;
-URLACTION_SCRIPT_OVERRIDE_SAFETY equ 0x00001401 ;;
-URLACTION_ACTIVEX_CONFIRM_NOOBJECTSAFETY equ 0x00001204 ;;
+URLACTION_ACTIVEX_OVERRIDE_OBJECT_SAFETY equ 0x00001201 
+URLACTION_ACTIVEX_OVERRIDE_DATA_SAFETY equ 0x00001202 
+URLACTION_ACTIVEX_OVERRIDE_SCRIPT_SAFETY equ 0x00001203 
+URLACTION_SCRIPT_OVERRIDE_SAFETY equ 0x00001401 
+URLACTION_ACTIVEX_CONFIRM_NOOBJECTSAFETY equ 0x00001204 
 URLACTION_ACTIVEX_TREATASUNTRUSTED equ 0x00001205
 URLACTION_ACTIVEX_CURR_MAX equ 0x00001205
 URLACTION_ACTIVEX_MAX	equ 0x000013ff
@@ -4565,11 +4505,11 @@ URLACTION_SCRIPT_CURR_MAX equ 0x00001405
 URLACTION_SCRIPT_MAX	equ 0x000015ff
 
 URLACTION_HTML_MIN	equ 0x00001600
-URLACTION_HTML_SUBMIT_FORMS equ 0x00001601 ;; aggregate next two
-URLACTION_HTML_SUBMIT_FORMS_FROM equ 0x00001602 ;;
-URLACTION_HTML_SUBMIT_FORMS_TO equ 0x00001603 ;;
+URLACTION_HTML_SUBMIT_FORMS equ 0x00001601 
+URLACTION_HTML_SUBMIT_FORMS_FROM equ 0x00001602 
+URLACTION_HTML_SUBMIT_FORMS_TO equ 0x00001603 
 URLACTION_HTML_FONT_DOWNLOAD equ 0x00001604
-URLACTION_HTML_JAVA_RUN equ 0x00001605 ;; derive from Java custom policy
+URLACTION_HTML_JAVA_RUN equ 0x00001605 
 URLACTION_HTML_CURR_MAX equ 0x00001605
 URLACTION_HTML_MAX	equ 0x000017ff
 
@@ -4611,10 +4551,6 @@ URLACTION_JAVA_CURR_MAX equ 0x00001C00
 URLACTION_JAVA_MAX	equ 0x00001Cff
 
 
-;; The following Infodelivery actions should have no default policies
-;; in the registry.  They assume that no default policy means fall
-;; back to the global restriction.  If an admin sets a policy per
-;; zone, then it overrides the global restriction.
 
 URLACTION_INFODELIVERY_MIN equ 0x00001D00
 URLACTION_INFODELIVERY_NO_ADDING_CHANNELS equ 0x00001D00
@@ -4633,25 +4569,14 @@ URLPOLICY_CHANNEL_SOFTDIST_PRECACHE equ 0x00020000
 URLPOLICY_CHANNEL_SOFTDIST_AUTOINSTALL equ 0x00030000
 URLACTION_CHANNEL_SOFTDIST_MAX equ 0x00001Eff
 
-;; For each action specified above the system maintains
-;; a set of policies for the action.
-;; The only policies supported currently are permissions (i.e. is something allowed)
-;; and logging status.
-;; IMPORTANT: If you are defining your own policies don't overload the meaning of the
-;; loword of the policy. You can use the hiword to store any policy bits which are only
-;; meaningful to your action.
-;; For an example of how to do this look at the URLPOLICY_JAVA above
 
-;; Permissions
 URLPOLICY_ALLOW		equ 0x00
 URLPOLICY_QUERY		equ 0x01
 URLPOLICY_DISALLOW	equ 0x03
 
-;; Notifications are not done when user already queried.
 URLPOLICY_NOTIFY_ON_ALLOW equ 0x10
 URLPOLICY_NOTIFY_ON_DISALLOW equ 0x20
 
-;; Logging is done regardless of whether user was queried.
 URLPOLICY_LOG_ON_ALLOW	equ 0x40
 URLPOLICY_LOG_ON_DISALLOW equ 0x80
 
@@ -4664,9 +4589,6 @@ SetUrlPolicyPermissions macro dw,dw2
 	endm
 
 
-;; The ordinal #'s that define the predefined zones internet explorer knows about.
-;; When we support user-defined zones their zone numbers should be between
-;; URLZONE_USER_MIN and URLZONE_USER_MAX
 ifndef _LPINTERNETZONEMANAGER_DEFINED
 _LPINTERNETZONEMANAGER_DEFINED equ 1
 
@@ -4729,57 +4651,12 @@ dwFlags			dd ?
 ZONEATTRIBUTES		ENDS
 LPZONEATTRIBUTES	typedef ptr ZONEATTRIBUTES
 
-;; Gets the zone attributes (information in registry other than actual security
-;; policies associated with the zone).	Zone attributes are fixed as:
-;; Sets the zone attributes (information in registry other than actual security
-;; policies associated with the zone).	Zone attributes as above.
-;; Returns S_OK or ??? if failed to write the zone attributes.
-;; Registry Flags
-;;
-;; When reading, default behavior is
-;; If HKLM allows override and HKCU value exists
-;; Then use HKCU value
-;; Else use HKLM value
-;; When writing, default behavior is same as HKCU
-;; If HKLM allows override
-;; Then Write to HKCU
-;; Else Fail
-;;
 URLZONEREG		typedef SDWORD
 URLZONEREG_DEFAULT	equ 0
 URLZONEREG_HKLM		equ URLZONEREG_DEFAULT + 1
 URLZONEREG_HKCU		equ URLZONEREG_HKLM + 1
 
-;; Gets a named custom policy associated with a zone;
-;; e.g. the Java VM settings can be defined with a unique key such as 'Java'.
-;; Custom policy support is intended to allow extensibility from the predefined
-;; set of policies that IE4 has built in.
-;;
-;; pwszKey is the string name designating the custom policy.  Components are
-;;   responsible for having unique names.
-;; ppPolicy is the callee allocated buffer for the policy byte blob; caller is
-;;   responsible for freeing this buffer eventually.
-;; pcbPolicy is the size of the byte blob returned.
-;; dwRegFlags determines how registry is accessed (see above).
-;; Returns S_OK if key is found and buffer allocated; ??? if key is not found (no buffer alloced).
-;; Sets a named custom policy associated with a zone;
-;; e.g. the Java VM settings can be defined with a unique key such as 'Java'.
-;; Custom policy support is intended to allow extensibility from the predefined
-;; set of policies that IE4 has built in.
-;;
-;; pwszKey is the string name designating the custom policy.  Components are
-;;   responsible for having unique names.
-;; ppPolicy is the caller allocated buffer for the policy byte blob.
-;; pcbPolicy is the size of the byte blob to be set.
-;; dwRegFlags determines if HTCU or HKLM is set.
-;; Returns S_OK or ??? if failed to write the zone custom policy.
-;; Gets action policy associated with a zone, the builtin, fixed-length policies info.
 
-;; dwAction is the action code for the action as defined above.
-;; pPolicy is the caller allocated buffer for the policy data.
-;; cbPolicy is the size of the caller allocated buffer.
-;; dwRegFlags determines how registry is accessed (see above).
-;; Returns S_OK if action is valid; ??? if action is not valid.
 
 externdef		IID_IInternetZoneManager:IID
 
@@ -4938,7 +4815,7 @@ IInternetZoneManager	ENDS
 
 
 ;HRESULT
-IInternetZoneManager_GetZoneAttributes_Proxy proto _CType \
+IInternetZoneManager_GetZoneAttributes_Proxy proto WINAPI \
 		 pThis: ptr IInternetZoneManager,
 		dwZone: DWORD,
        pZoneAttributes: ptr ZONEATTRIBUTES
@@ -4946,7 +4823,7 @@ IInternetZoneManager_GetZoneAttributes_Proxy proto _CType \
 
 
 ;void
-IInternetZoneManager_GetZoneAttributes_Stub proto _CType \
+IInternetZoneManager_GetZoneAttributes_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -4955,7 +4832,7 @@ IInternetZoneManager_GetZoneAttributes_Stub proto _CType \
 
 
 ;HRESULT
-IInternetZoneManager_SetZoneAttributes_Proxy proto _CType \
+IInternetZoneManager_SetZoneAttributes_Proxy proto WINAPI \
 		 pThis: ptr IInternetZoneManager,
 		dwZone: DWORD,
        pZoneAttributes: ptr ZONEATTRIBUTES
@@ -4963,7 +4840,7 @@ IInternetZoneManager_SetZoneAttributes_Proxy proto _CType \
 
 
 ;void
-IInternetZoneManager_SetZoneAttributes_Stub proto _CType \
+IInternetZoneManager_SetZoneAttributes_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -4972,7 +4849,7 @@ IInternetZoneManager_SetZoneAttributes_Stub proto _CType \
 
 
 ;HRESULT
-IInternetZoneManager_GetZoneCustomPolicy_Proxy proto _CType \
+IInternetZoneManager_GetZoneCustomPolicy_Proxy proto WINAPI \
 		 pThis: ptr IInternetZoneManager,
 		dwZone: DWORD,
 	       guidKey: REFGUID,
@@ -4983,7 +4860,7 @@ IInternetZoneManager_GetZoneCustomPolicy_Proxy proto _CType \
 
 
 ;void
-IInternetZoneManager_GetZoneCustomPolicy_Stub proto _CType \
+IInternetZoneManager_GetZoneCustomPolicy_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -4992,7 +4869,7 @@ IInternetZoneManager_GetZoneCustomPolicy_Stub proto _CType \
 
 
 ;HRESULT
-IInternetZoneManager_SetZoneCustomPolicy_Proxy proto _CType \
+IInternetZoneManager_SetZoneCustomPolicy_Proxy proto WINAPI \
 		 pThis: ptr IInternetZoneManager,
 		dwZone: DWORD,
 	       guidKey: REFGUID,
@@ -5003,7 +4880,7 @@ IInternetZoneManager_SetZoneCustomPolicy_Proxy proto _CType \
 
 
 ;void
-IInternetZoneManager_SetZoneCustomPolicy_Stub proto _CType \
+IInternetZoneManager_SetZoneCustomPolicy_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -5012,7 +4889,7 @@ IInternetZoneManager_SetZoneCustomPolicy_Stub proto _CType \
 
 
 ;HRESULT
-IInternetZoneManager_GetZoneActionPolicy_Proxy proto _CType \
+IInternetZoneManager_GetZoneActionPolicy_Proxy proto WINAPI \
 		 pThis: ptr IInternetZoneManager,
 		dwZone: DWORD,
 	      dwAction: DWORD,
@@ -5023,7 +4900,7 @@ IInternetZoneManager_GetZoneActionPolicy_Proxy proto _CType \
 
 
 ;void
-IInternetZoneManager_GetZoneActionPolicy_Stub proto _CType \
+IInternetZoneManager_GetZoneActionPolicy_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -5032,7 +4909,7 @@ IInternetZoneManager_GetZoneActionPolicy_Stub proto _CType \
 
 
 ;HRESULT
-IInternetZoneManager_SetZoneActionPolicy_Proxy proto _CType \
+IInternetZoneManager_SetZoneActionPolicy_Proxy proto WINAPI \
 		 pThis: ptr IInternetZoneManager,
 		dwZone: DWORD,
 	      dwAction: DWORD,
@@ -5043,7 +4920,7 @@ IInternetZoneManager_SetZoneActionPolicy_Proxy proto _CType \
 
 
 ;void
-IInternetZoneManager_SetZoneActionPolicy_Stub proto _CType \
+IInternetZoneManager_SetZoneActionPolicy_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -5052,7 +4929,7 @@ IInternetZoneManager_SetZoneActionPolicy_Stub proto _CType \
 
 
 ;HRESULT
-IInternetZoneManager_PromptAction_Proxy proto _CType \
+IInternetZoneManager_PromptAction_Proxy proto WINAPI \
 		 pThis: ptr IInternetZoneManager,
 	      dwAction: DWORD,
 	    hwndParent: HWND,
@@ -5063,7 +4940,7 @@ IInternetZoneManager_PromptAction_Proxy proto _CType \
 
 
 ;void
-IInternetZoneManager_PromptAction_Stub proto _CType \
+IInternetZoneManager_PromptAction_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -5072,7 +4949,7 @@ IInternetZoneManager_PromptAction_Stub proto _CType \
 
 
 ;HRESULT
-IInternetZoneManager_LogAction_Proxy proto _CType \
+IInternetZoneManager_LogAction_Proxy proto WINAPI \
 		 pThis: ptr IInternetZoneManager,
 	      dwAction: DWORD,
 	       pwszUrl: LPCWSTR,
@@ -5082,7 +4959,7 @@ IInternetZoneManager_LogAction_Proxy proto _CType \
 
 
 ;void
-IInternetZoneManager_LogAction_Stub proto _CType \
+IInternetZoneManager_LogAction_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -5091,7 +4968,7 @@ IInternetZoneManager_LogAction_Stub proto _CType \
 
 
 ;HRESULT
-IInternetZoneManager_CreateZoneEnumerator_Proxy proto _CType \
+IInternetZoneManager_CreateZoneEnumerator_Proxy proto WINAPI \
 		 pThis: ptr IInternetZoneManager,
 	       pdwEnum: LPDWORD,
 	      pdwCount: LPDWORD,
@@ -5100,7 +4977,7 @@ IInternetZoneManager_CreateZoneEnumerator_Proxy proto _CType \
 
 
 ;void
-IInternetZoneManager_CreateZoneEnumerator_Stub proto _CType \
+IInternetZoneManager_CreateZoneEnumerator_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -5109,7 +4986,7 @@ IInternetZoneManager_CreateZoneEnumerator_Stub proto _CType \
 
 
 ;HRESULT
-IInternetZoneManager_GetZoneAt_Proxy proto _CType \
+IInternetZoneManager_GetZoneAt_Proxy proto WINAPI \
 		 pThis: ptr IInternetZoneManager,
 		dwEnum: DWORD,
 	       dwIndex: DWORD,
@@ -5118,7 +4995,7 @@ IInternetZoneManager_GetZoneAt_Proxy proto _CType \
 
 
 ;void
-IInternetZoneManager_GetZoneAt_Stub proto _CType \
+IInternetZoneManager_GetZoneAt_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -5127,14 +5004,14 @@ IInternetZoneManager_GetZoneAt_Stub proto _CType \
 
 
 ;HRESULT
-IInternetZoneManager_DestroyZoneEnumerator_Proxy proto _CType \
+IInternetZoneManager_DestroyZoneEnumerator_Proxy proto WINAPI \
 		 pThis: ptr IInternetZoneManager,
 		dwEnum: DWORD
 
 
 
 ;void
-IInternetZoneManager_DestroyZoneEnumerator_Stub proto _CType \
+IInternetZoneManager_DestroyZoneEnumerator_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -5143,7 +5020,7 @@ IInternetZoneManager_DestroyZoneEnumerator_Stub proto _CType \
 
 
 ;HRESULT
-IInternetZoneManager_CopyTemplatePoliciesToZone_Proxy proto _CType \
+IInternetZoneManager_CopyTemplatePoliciesToZone_Proxy proto WINAPI \
 		 pThis: ptr IInternetZoneManager,
 	    dwTemplate: DWORD,
 		dwZone: DWORD,
@@ -5152,7 +5029,7 @@ IInternetZoneManager_CopyTemplatePoliciesToZone_Proxy proto _CType \
 
 
 ;void
-IInternetZoneManager_CopyTemplatePoliciesToZone_Stub proto _CType \
+IInternetZoneManager_CopyTemplatePoliciesToZone_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -5161,7 +5038,7 @@ IInternetZoneManager_CopyTemplatePoliciesToZone_Stub proto _CType \
 
 
 
-endif	;; __IInternetZoneManager_INTERFACE_DEFINED__
+endif	
 
 
 
@@ -5292,7 +5169,7 @@ ISoftDistExt		ENDS
 
 
 ;HRESULT
-ISoftDistExt_ProcessSoftDist_Proxy proto _CType \
+ISoftDistExt_ProcessSoftDist_Proxy proto WINAPI \
 		 pThis: ptr ISoftDistExt,
 	      szCDFURL: LPCWSTR,
       pSoftDistElement: ptr IXMLElement,
@@ -5301,7 +5178,7 @@ ISoftDistExt_ProcessSoftDist_Proxy proto _CType \
 
 
 ;void
-ISoftDistExt_ProcessSoftDist_Stub proto _CType \
+ISoftDistExt_ProcessSoftDist_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -5310,7 +5187,7 @@ ISoftDistExt_ProcessSoftDist_Stub proto _CType \
 
 
 ;HRESULT
-ISoftDistExt_GetFirstCodeBase_Proxy proto _CType \
+ISoftDistExt_GetFirstCodeBase_Proxy proto WINAPI \
 		 pThis: ptr ISoftDistExt,
 	    szCodeBase: ptr LPWSTR,
 	     dwMaxSize: LPDWORD
@@ -5318,7 +5195,7 @@ ISoftDistExt_GetFirstCodeBase_Proxy proto _CType \
 
 
 ;void
-ISoftDistExt_GetFirstCodeBase_Stub proto _CType \
+ISoftDistExt_GetFirstCodeBase_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -5327,7 +5204,7 @@ ISoftDistExt_GetFirstCodeBase_Stub proto _CType \
 
 
 ;HRESULT
-ISoftDistExt_GetNextCodeBase_Proxy proto _CType \
+ISoftDistExt_GetNextCodeBase_Proxy proto WINAPI \
 		 pThis: ptr ISoftDistExt,
 	    szCodeBase: ptr LPWSTR,
 	     dwMaxSize: LPDWORD
@@ -5335,7 +5212,7 @@ ISoftDistExt_GetNextCodeBase_Proxy proto _CType \
 
 
 ;void
-ISoftDistExt_GetNextCodeBase_Stub proto _CType \
+ISoftDistExt_GetNextCodeBase_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -5344,7 +5221,7 @@ ISoftDistExt_GetNextCodeBase_Stub proto _CType \
 
 
 ;HRESULT
-ISoftDistExt_AsyncInstallDistributionUnit_Proxy proto _CType \
+ISoftDistExt_AsyncInstallDistributionUnit_Proxy proto WINAPI \
 		 pThis: ptr ISoftDistExt,
 		   pbc: ptr IBindCtx,
 	    pvReserved: LPVOID,
@@ -5354,7 +5231,7 @@ ISoftDistExt_AsyncInstallDistributionUnit_Proxy proto _CType \
 
 
 ;void
-ISoftDistExt_AsyncInstallDistributionUnit_Stub proto _CType \
+ISoftDistExt_AsyncInstallDistributionUnit_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -5363,19 +5240,19 @@ ISoftDistExt_AsyncInstallDistributionUnit_Stub proto _CType \
 
 
 
-endif	;; __ISoftDistExt_INTERFACE_DEFINED__
+endif	
 
 
 
 
 
 ;STDAPI
-GetSoftwareUpdateInfo proto _CType \
+GetSoftwareUpdateInfo proto WINAPI \
 	    szDistUnit: LPCWSTR,
 		  psdi: LPSOFTDISTINFO
 
 ;STDAPI
-SetSoftwareUpdateAdvertisementState proto _CType \
+SetSoftwareUpdateAdvertisementState proto WINAPI \
 	    szDistUnit: LPCWSTR,
 	     dwAdState: DWORD,
  dwAdvertisedVersionMS: DWORD,
@@ -5476,7 +5353,7 @@ IDataFilter		ENDS
 
 
 ;HRESULT
-IDataFilter_DoEncode_Proxy proto _CType \
+IDataFilter_DoEncode_Proxy proto WINAPI \
 		 pThis: ptr IDataFilter,
 	       dwFlags: DWORD,
 	 lInBufferSize: LONG,
@@ -5491,7 +5368,7 @@ IDataFilter_DoEncode_Proxy proto _CType \
 
 
 ;void
-IDataFilter_DoEncode_Stub proto _CType \
+IDataFilter_DoEncode_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -5500,7 +5377,7 @@ IDataFilter_DoEncode_Stub proto _CType \
 
 
 ;HRESULT
-IDataFilter_DoDecode_Proxy proto _CType \
+IDataFilter_DoDecode_Proxy proto WINAPI \
 		 pThis: ptr IDataFilter,
 	       dwFlags: DWORD,
 	 lInBufferSize: LONG,
@@ -5515,7 +5392,7 @@ IDataFilter_DoDecode_Proxy proto _CType \
 
 
 ;void
-IDataFilter_DoDecode_Stub proto _CType \
+IDataFilter_DoDecode_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -5524,14 +5401,14 @@ IDataFilter_DoDecode_Stub proto _CType \
 
 
 ;HRESULT
-IDataFilter_SetEncodingLevel_Proxy proto _CType \
+IDataFilter_SetEncodingLevel_Proxy proto WINAPI \
 		 pThis: ptr IDataFilter,
 	    dwEncLevel: DWORD
 
 
 
 ;void
-IDataFilter_SetEncodingLevel_Stub proto _CType \
+IDataFilter_SetEncodingLevel_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -5540,7 +5417,7 @@ IDataFilter_SetEncodingLevel_Stub proto _CType \
 
 
 
-endif	;; __IDataFilter_INTERFACE_DEFINED__
+endif	
 
 endif
 
@@ -5633,7 +5510,7 @@ IEncodingFilterFactory	ENDS
 
 
 ;HRESULT
-IEncodingFilterFactory_FindBestFilter_Proxy proto _CType \
+IEncodingFilterFactory_FindBestFilter_Proxy proto WINAPI \
 		 pThis: ptr IEncodingFilterFactory,
 	     pwzCodeIn: LPCWSTR,
 	    pwzCodeOut: LPCWSTR,
@@ -5643,7 +5520,7 @@ IEncodingFilterFactory_FindBestFilter_Proxy proto _CType \
 
 
 ;void
-IEncodingFilterFactory_FindBestFilter_Stub proto _CType \
+IEncodingFilterFactory_FindBestFilter_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -5652,7 +5529,7 @@ IEncodingFilterFactory_FindBestFilter_Stub proto _CType \
 
 
 ;HRESULT
-IEncodingFilterFactory_GetDefaultFilter_Proxy proto _CType \
+IEncodingFilterFactory_GetDefaultFilter_Proxy proto WINAPI \
 		 pThis: ptr IEncodingFilterFactory,
 	     pwzCodeIn: LPCWSTR,
 	    pwzCodeOut: LPCWSTR,
@@ -5661,7 +5538,7 @@ IEncodingFilterFactory_GetDefaultFilter_Proxy proto _CType \
 
 
 ;void
-IEncodingFilterFactory_GetDefaultFilter_Stub proto _CType \
+IEncodingFilterFactory_GetDefaultFilter_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -5670,7 +5547,7 @@ IEncodingFilterFactory_GetDefaultFilter_Stub proto _CType \
 
 
 
-endif	;; __IEncodingFilterFactory_INTERFACE_DEFINED__
+endif	
 
 
 
@@ -5679,17 +5556,16 @@ endif	;; __IEncodingFilterFactory_INTERFACE_DEFINED__
 endif
 ifndef _HITLOGGING_DEFINED
 _HITLOGGING_DEFINED equ 1
-;; Logging-specific apis
 ;BOOL
-IsLoggingEnabledA proto _CType \
+IsLoggingEnabledA proto WINAPI \
 		pszUrl: LPCTSTR
-IsLoggingEnalbedW proto _CType \
+IsLoggingEnalbedW proto WINAPI \
 	       pwszUrl: LPCWSTR
 ifdef _UNICODE
 IsLoggingEnabled	equ <IsLoggingEnabledW>
 else
 IsLoggingEnabled	equ <IsLoggingEnabledA>
-endif ;; NOT UNICODE
+endif 
 HIT_LOGGING_INFO	STRUC
 dwStructSize		dd ?
 lpszLoggedUrlName	LPSTR ?
@@ -5700,7 +5576,7 @@ HIT_LOGGING_INFO	ENDS
 LPHIT_LOGGING_INFO	typedef ptr HIT_LOGGING_INFO
 
 ;BOOL
-WriteHitLogging proto _CType \
+WriteHitLogging proto WINAPI \
 	 lpLogginginfo: LPHIT_LOGGING_INFO
 
 endif
@@ -5709,10 +5585,9 @@ endif
 externdef		__MIDL_itf_urlmon_0138_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef		__MIDL_itf_urlmon_0138_v0_0_s_ifspec:RPC_IF_HANDLE
 
-;; Additional Prototypes for ALL interfaces
 
 ;HRESULT
-IBinding_GetBindResult_Proxy proto _CType \
+IBinding_GetBindResult_Proxy proto WINAPI \
 		 pThis: ptr IBinding,
 	pclsidProtocol: ptr CLSID,
 	     pdwResult: LPDWORD,
@@ -5722,7 +5597,7 @@ IBinding_GetBindResult_Proxy proto _CType \
 
 
 ;HRESULT
-IBinding_GetBindResult_Stub proto _CType \
+IBinding_GetBindResult_Stub proto WINAPI \
 		 pThis: ptr IBinding,
 	pclsidProtocol: ptr CLSID,
 	     pdwResult: LPDWORD,
@@ -5731,7 +5606,7 @@ IBinding_GetBindResult_Stub proto _CType \
 
 
 ;HRESULT
-IBindStatusCallback_GetBindInfo_Proxy proto _CType \
+IBindStatusCallback_GetBindInfo_Proxy proto WINAPI \
 		 pThis: ptr IBindStatusCallback,
 	      grfBINDF: LPDWORD,
 	     pbindinfo: ptr BINDINFO
@@ -5739,7 +5614,7 @@ IBindStatusCallback_GetBindInfo_Proxy proto _CType \
 
 
 ;HRESULT
-IBindStatusCallback_GetBindInfo_Stub proto _CType \
+IBindStatusCallback_GetBindInfo_Stub proto WINAPI \
 		 pThis: ptr IBindStatusCallback,
 	      grfBINDF: LPDWORD,
 	     pbindinfo: ptr RemBINDINFO,
@@ -5747,7 +5622,7 @@ IBindStatusCallback_GetBindInfo_Stub proto _CType \
 
 
 ;HRESULT
-IBindStatusCallback_OnDataAvailable_Proxy proto _CType \
+IBindStatusCallback_OnDataAvailable_Proxy proto WINAPI \
 		 pThis: ptr IBindStatusCallback,
 	       grfBSCF: DWORD,
 		dwSize: DWORD,
@@ -5757,7 +5632,7 @@ IBindStatusCallback_OnDataAvailable_Proxy proto _CType \
 
 
 ;HRESULT
-IBindStatusCallback_OnDataAvailable_Stub proto _CType \
+IBindStatusCallback_OnDataAvailable_Stub proto WINAPI \
 		 pThis: ptr IBindStatusCallback,
 	       grfBSCF: DWORD,
 		dwSize: DWORD,
@@ -5766,7 +5641,7 @@ IBindStatusCallback_OnDataAvailable_Stub proto _CType \
 
 
 ;HRESULT
-IWinInetInfo_QueryOption_Proxy proto _CType \
+IWinInetInfo_QueryOption_Proxy proto WINAPI \
 		 pThis: ptr IWinInetInfo,
 	      dwOption: DWORD,
 	       pBuffer: LPVOID,
@@ -5775,7 +5650,7 @@ IWinInetInfo_QueryOption_Proxy proto _CType \
 
 
 ;HRESULT
-IWinInetInfo_QueryOption_Stub proto _CType \
+IWinInetInfo_QueryOption_Stub proto WINAPI \
 		 pThis: ptr IWinInetInfo,
 	      dwOption: DWORD,
 	       pBuffer: LPBYTE,
@@ -5783,7 +5658,7 @@ IWinInetInfo_QueryOption_Stub proto _CType \
 
 
 ;HRESULT
-IWinInetHttpInfo_QueryInfo_Proxy proto _CType \
+IWinInetHttpInfo_QueryInfo_Proxy proto WINAPI \
 		 pThis: ptr IWinInetHttpInfo,
 	      dwOption: DWORD,
 	       pBuffer: LPVOID,
@@ -5794,7 +5669,7 @@ IWinInetHttpInfo_QueryInfo_Proxy proto _CType \
 
 
 ;HRESULT
-IWinInetHttpInfo_QueryInfo_Stub proto _CType \
+IWinInetHttpInfo_QueryInfo_Stub proto WINAPI \
 		 pThis: ptr IWinInetHttpInfo,
 	      dwOption: DWORD,
 	       pBuffer: LPBYTE,
@@ -5804,7 +5679,7 @@ IWinInetHttpInfo_QueryInfo_Stub proto _CType \
 
 
 ;HRESULT
-IBindHost_MonikerBindToStorage_Proxy proto _CType \
+IBindHost_MonikerBindToStorage_Proxy proto WINAPI \
 		 pThis: ptr IBindHost,
 		   pMk: ptr IMoniker,
 		   pBC: ptr IBindCtx,
@@ -5815,7 +5690,7 @@ IBindHost_MonikerBindToStorage_Proxy proto _CType \
 
 
 ;HRESULT
-IBindHost_MonikerBindToStorage_Stub proto _CType \
+IBindHost_MonikerBindToStorage_Stub proto WINAPI \
 		 pThis: ptr IBindHost,
 		   pMk: ptr IMoniker,
 		   pBC: ptr IBindCtx,
@@ -5825,7 +5700,7 @@ IBindHost_MonikerBindToStorage_Stub proto _CType \
 
 
 ;HRESULT
-IBindHost_MonikerBindToObject_Proxy proto _CType \
+IBindHost_MonikerBindToObject_Proxy proto WINAPI \
 		 pThis: ptr IBindHost,
 		   pMk: ptr IMoniker,
 		   pBC: ptr IBindCtx,
@@ -5836,7 +5711,7 @@ IBindHost_MonikerBindToObject_Proxy proto _CType \
 
 
 ;HRESULT
-IBindHost_MonikerBindToObject_Stub proto _CType \
+IBindHost_MonikerBindToObject_Stub proto WINAPI \
 		 pThis: ptr IBindHost,
 		   pMk: ptr IMoniker,
 		   pBC: ptr IBindCtx,
@@ -5847,6 +5722,5 @@ IBindHost_MonikerBindToObject_Stub proto _CType \
 
 
 
-;; end of Additional Prototypes
 .list
 endif

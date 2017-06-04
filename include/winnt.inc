@@ -4,10 +4,6 @@ include ctype.inc
 include string.inc
 include basetsd.inc
 .xlist
-;
-; This module defines the 32-Bit Windows types and constants that are
-; defined by NT, but exposed through the Win32 API.
-;
 ifndef _WIN32_FUSION
 _WIN32_FUSION	equ 0
 endif
@@ -24,8 +20,8 @@ endif
 if _MSC_VER GE 1200
 pragma warning(push)
 endif
-pragma warning(disable:4201) ;; named type definition in parentheses
-pragma warning(disable:4214) ;; bit field types other than int
+pragma warning(disable:4201) 
+pragma warning(disable:4214) 
 
 ANYSIZE_ARRAY		equ 1
 
@@ -64,10 +60,6 @@ MAX_NATURAL_ALIGNMENT		equ sizeof(DWORD)
 MEMORY_ALLOCATION_ALIGNMENT	equ 8
 endif
 
-;
-; TYPE_ALIGNMENT will return the alignment requirements of a given type for
-; the current platform.
-;
 TYPE_ALIGNMENT macro t
 	local S1
 	S1 STRUC
@@ -102,12 +94,6 @@ PROBE_ALIGNMENT macro _s
 	endm
 endif
 
-;;
-;; C_ASSERT() can be used to perform many compile-time assertions:
-;;	      type sizes, field offsets, etc.
-;;
-;; An assertion failure results in error C2118: negative subscript.
-;;
 if 0
 ;ifndef SORTPP_PASS
 C_ASSERT macro e
@@ -119,7 +105,7 @@ C_ASSERT macro e
 	endm
 else
 C_ASSERT macro e
-	endm ;; nothing
+	endm 
 endif
 
 if (defined(_M_IX86) OR defined(_M_IA64) OR defined(_M_AMD64)) AND NOT defined(MIDL_PASS)
@@ -245,9 +231,6 @@ DECLSPEC_DEPRECATED_DDK equ 1
 PRAGMA_DEPRECATED_DDK	equ 0
 endif
 
-;;
-;; Void
-;;
 
 PVOID			typedef ptr
 PVOID64			typedef ptr
@@ -264,9 +247,6 @@ else
 NTAPI_INLINE		equ <>
 endif
 
-;;
-;; Define API decoration for direct importing system DLL references.
-;;
 
 ifndef _NTSYSTEM_
 NTSYSAPI		equ <DECSPEC_IMPORT>
@@ -280,9 +260,6 @@ NTSYSCALLAPI		equ <DECSPEC_ADDRSAFE>
 endif
 endif
 
-;;
-;; Basics
-;;
 
 ifndef VOID
 VOID			equ <>
@@ -294,9 +271,6 @@ LONG			typedef sdword
 ;endif
 endif
 
-;;
-;; UNICODE (Wide Character) types
-;;
 
 WCHAR			typedef word ; 16-bit UNICODE character
 
@@ -333,27 +307,14 @@ if _WIN32_WINNT GE 0x0600 OR (defined(__cplusplus) AND defined(WINDOWS_ENABLE_CP
 PCWCHAR			typedef ptr WCHAR
 PCUWCHAR		typedef ptr WCHAR ;UNALIGNED
 
-;;
-;;  UCS (Universal Character Set) types
-;;
 
 UCSCHAR			typedef dword
 
-;;
-;;  Even pre-Unicode agreement, UCS values are always in the
-;;  range U+00000000 to U+7FFFFFFF, so we'll pick an obvious
-;;  value.
 
 UCSCHAR_INVALID_CHARACTER equ 0xffffffff
 
 MIN_UCSCHAR		equ 0
 
-;;
-;;  We'll assume here that the ISO-10646 / Unicode agreement
-;;  not to assign code points after U+0010FFFF holds so that
-;;  we do not have to have separate "UCSCHAR" and "UNICODECHAR"
-;;  types.
-;;
 
 MAX_UCSCHAR		equ 0x0010FFFF
 
@@ -366,11 +327,8 @@ PCUUCSSTR		typedef ptr UCSCHAR ;UNALIGNED
 PUUCSCHAR		typedef ptr UCSCHAR ;UNALIGNED
 PCUUCSCHAR		typedef ptr UCSCHAR ;UNALIGNED
 
-endif ;; _WIN32_WINNT GE 0x0600
+endif 
 
-;;
-;; ANSI (Multi-byte Character) types
-;;
 PCH			typedef ptr CHAR
 LPCH			typedef ptr CHAR
 PCCH			typedef ptr CHAR
@@ -389,9 +347,6 @@ PCZZSTR			typedef ptr CHAR
 PNZCH			typedef ptr CHAR
 PCNZCH			typedef ptr CHAR
 
-;;
-;; Neutral ANSI/UNICODE types and macros
-;;
 ifdef _UNICODE
 ifndef _TCHAR_DEFINED
 TBYTE			typedef WCHAR
@@ -428,7 +383,7 @@ __TEXT macro quote
 	exitm<L&quote&>
 	endm
 
-else ;; !_UNICODE
+else 
 ifndef _TCHAR_DEFINED
 TBYTE			typedef CHAR
 TCHAR			typedef CHAR
@@ -463,7 +418,7 @@ __TEXT	macro quote
 	exitm<quote>
 	endm
 
-endif ;; _UNICODE
+endif 
 
 TEXT	macro quote
 	exitm<__TEXT(quote)>
@@ -474,10 +429,6 @@ PLONG			typedef ptr LONG
 
 ALL_PROCESSOR_GROUPS	equ 0xffff
 
-;;
-;; Structure to represent a system wide processor number. It contains a
-;; group number and relative processor number within the group.
-;;
 
 PROCESSOR_NUMBER	STRUC
 _Group			dw ?
@@ -486,10 +437,6 @@ Reserved		db ?
 PROCESSOR_NUMBER	ENDS
 PPROCESSOR_NUMBER	typedef ptr PROCESSOR_NUMBER
 
-;;
-;; Structure to represent a group-specific affinity, such as that of a
-;; thread.  Specifies the group number and the affinity within that group.
-;;
 
 GROUP_AFFINITY		STRUC
 _Mask			KAFFINITY ?
@@ -498,9 +445,6 @@ Reserved		dw 3 dup(?)
 GROUP_AFFINITY		ENDS
 PGROUP_AFFINITY		typedef ptr GROUP_AFFINITY
 
-;;
-;; Handle to an Object
-;;
 
 ifdef STRICT
 HANDLE		typedef ptr
@@ -525,16 +469,12 @@ endif
 PHANDLE typedef ptr HANDLE
 
 
-;;
-;; Flag (bit) fields
-;;
 
 
 FCHAR		typedef BYTE
 FSHORT		typedef WORD
 FLONG		typedef DWORD
 
-; Component Object Model defines, and macros
 
 ifndef _HRESULT_DEFINED
 _HRESULT_DEFINED	equ <>
@@ -542,8 +482,8 @@ ifdef __midl
 HRESULT			typedef LONG
 else
 HRESULT			typedef LONG;__success(return >= 0) long
-endif ;; __midl
-endif ;; NOT _HRESULT_DEFINED
+endif 
+endif 
 
 
 if defined(_M_IA64) AND NOT defined(MIDL_PASS)
@@ -557,7 +497,6 @@ else
 
 if defined(_WIN32) or defined(_MPPC_)
 
-; Win32 doesn't support __export
 
 ifdef _68K_
 STDMETHODCALLTYPE	equ <c>
@@ -574,8 +513,8 @@ STDMETHODVCALLTYPE	equ <c>
 STDAPICALLTYPE		equ <stdcall>
 STDAPIVCALLTYPE		equ <c>
 
-endif ;; defined(_WIN32) or defined(_MPPC_)
-endif ;; defined(_M_IA64) AND NOT defined(MIDL_PASS)
+endif 
+endif 
 
 STDAPI			equ <STDAPICALLTYPE>
 STDMETHODIMP		equ <STDMETHODCALLTYPE>
@@ -598,7 +537,6 @@ STDOVERRIDEMETHODIMP_ macro _type
 IFACEMETHODIMP_ macro _type
 	exitm<STDMETHODIMP_(_type)> ; __override
 	endm
-; The 'V' versions allow Variable Argument lists.
 STDAPIV_ macro x
 	exitm<x STDAPIVCALLTYPE>
 	endm
@@ -626,19 +564,8 @@ ERROR_SEVERITY_INFORMATIONAL equ 0x40000000
 ERROR_SEVERITY_WARNING	     equ 0x80000000
 ERROR_SEVERITY_ERROR	     equ 0xC0000000
 
-;;
-;; _M_IX86 included so that EM CONTEXT structure compiles with
-;; x86 programs. *** TBD should this be for all architectures?
-;;
 
-;;
-;; 16 byte aligned type for 128 bit floats
-;;
 
-;;
-;; For we define a 128 bit structure and use __declspec(align(16)) pragma to
-;; align to 128 bits.
-;;
 
 if defined(_M_IA64) AND NOT defined(MIDL_PASS)
 ;__declspec(align(16))
@@ -650,10 +577,6 @@ HighPart	dq ?
 FLOAT128	ENDS
 PFLOAT128	typedef PTR FLOAT128
 
-;;
-;; __int64 is only supported by 2.0 and later midl.
-;; __midl is set by the 2.0 midl and not by 1.0 midl.
-;;
 
 _ULONGLONG_	equ <>
 
@@ -672,13 +595,12 @@ PLONGLONG	typedef PTR LONGLONG
 PULONGLONG	typedef PTR ULONGLONG
 
 
-; Update Sequence Number
 
 USN		typedef LONGLONG
 
 ifdef MIDL_PASS
 LARGE_INTEGER	STRUC
-else ;; MIDL_PASS
+else 
 LARGE_INTEGER	UNION
     STRUC
       LowPart	dd ?
@@ -688,14 +610,14 @@ LARGE_INTEGER	UNION
       LowPart	dd ?
       HighPart	LONG ?
     ENDS
-endif ;; MIDL_PASS
+endif 
     QuadPart	LONGLONG ?
 LARGE_INTEGER	ENDS
 PLARGE_INTEGER	typedef PTR LARGE_INTEGER
 
 ifdef MIDL_PASS
 ULARGE_INTEGER	STRUC
-else ;; MIDL_PASS
+else 
 ULARGE_INTEGER	UNION
     STRUC
       LowPart	dd ?
@@ -705,14 +627,11 @@ ULARGE_INTEGER	UNION
       LowPart	dd ?
       HighPart	dd ?
     ENDS
-endif ;; MIDL_PASS
+endif 
     QuadPart	ULONGLONG ?
 ULARGE_INTEGER	ENDS
 PULARGE_INTEGER typedef PTR ULARGE_INTEGER
 
-;
-; Locally Unique Identifier
-;
 
 LUID		STRUC
 LowPart		dd ?
@@ -726,63 +645,35 @@ _DWORDLONG_	equ 1
 DWORDLONG	typedef ULONGLONG
 PDWORDLONG	typedef PTR DWORDLONG
 
-;;
-;; Define operations to logically shift an int64 by 0..31 bits and to multiply
-;; 32-bits by 32-bits to form a 64-bit product.
-;;
 
 if defined(MIDL_PASS) OR defined(RC_INVOKED) OR defined(_M_CEE_PURE) \
    OR defined(_68K_) OR defined(_MPPC_) \
    OR defined(_M_IA64) OR defined(_M_AMD64)
 
-;;
-;; Midl does not understand inline assembler. Therefore, the Rtl functions
-;; are used for shifts by 0..31 and multiplies of 32-bits times 32-bits to
-;; form a 64-bit product.
-;;
-;;
-;; IA64 and AMD64 have native 64-bit operations that are just as fast as their
-;; 32-bit counter parts. Therefore, the int64 data type is used directly to form
-;; shifts of 0..31 and multiplies of 32-bits times 32-bits to form a 64-bit
-;; product.
-;;
 Int32x32To64 macro a, b
-;	exitm<(((__int64)((long)(a))) * ((__int64)((long)(b))))>
 	endm
 UInt32x32To64 macro a, b
-;	exitm<(((unsigned __int64)((unsigned int)(a))) * ((unsigned __int64)((unsigned int)(b))))>
 	endm
 Int64ShllMod32 macro a, b
-;	exitm<(((unsigned __int64)(a)) SHL (b))>
 	endm
 Int64ShraMod32 macro a, b
-;	exitm<(((__int64)(a)) SHR (b))>
 	endm
 Int64ShrlMod32 macro a, b
-;	exitm<(((unsigned __int64)(a)) SHR (b))>
 	endm
 
 elseifdef _M_IX86
 
-;;
-;; The x86 C compiler understands inline assembler. Therefore, inline functions
-;; that employ inline assembler are used for shifts of 0..31.  The multiplies
-;; rely on the compiler recognizing the cast of the multiplicand to int64 to
-;; generate the optimal code inline.
-;;
 if 0
 Int32x32To64 macro a, b
-;	exitm<((__int64)(((__int64)((long)(a))) * ((long)(b))))>
 	endm
 UInt32x32To64 macro a, b
-;	exitm<((unsigned __int64)(((unsigned __int64)((unsigned int)(a))) * ((unsigned int)(b))))>
 	endm
 else
-Int32x32To64 proto _CType \
+Int32x32To64 proto WINAPI \
     Multiplier: LONG,
   Multiplicand: LONG
 
-UInt32x32To64 proto _CType \
+UInt32x32To64 proto WINAPI \
     Multiplier: DWORD,
   Multiplicand: DWORD
 endif
@@ -790,22 +681,22 @@ endif
 if _MSC_VER GE 1200
 ;pragma warning(push)
 endif
-;pragma warning(disable:4035 4793)		 ;; re-enable below
+;pragma warning(disable:4035 4793)		 
 
 if 0;DECLSPEC_NOINLINE
 
 ;ULONGLONG
-Int64ShllMod32 proto _CType \
+Int64ShllMod32 proto WINAPI \
 	 Value: ULONGLONG,
     ShiftCount: DWORD
 
 ;LONGLONG
-Int64ShraMod32 proto _CType \
+Int64ShraMod32 proto WINAPI \
 	 Value: ULONGLONG,
     ShiftCount: DWORD
 
 ;ULONGLONG
-Int64ShrlMod32 proto _CType \
+Int64ShrlMod32 proto WINAPI \
 	 Value: ULONGLONG,
     ShiftCount: DWORD
 
@@ -835,7 +726,7 @@ Int64ShrlMod32 macro Value, ShiftCount
 	shr	edx, cl
 	endm
 
-endif ;; DECLSPEC_NOINLINE
+endif 
 
 if _MSC_VER GE 1200
 ;pragma warning(pop)
@@ -847,7 +738,7 @@ else
 
 .err <Must define a target architecture.>
 
-endif ;; _M_IX86
+endif 
 
 ifdef _M_AMD64
 
@@ -857,19 +748,19 @@ RotateRight8		equ <_rotr8>
 RotateRight16		equ <_rotr16>
 
 ;unsigned char
-_rotl8 proto _CType \
+_rotl8 proto WINAPI \
 		 Value: BYTE,
 		 Shift: BYTE
 ;unsigned short
-_rotl16 proto _CType \
+_rotl16 proto WINAPI \
 		 Value: WORD,
 		 Shift: BYTE
 ;unsigned char
-_rotr8 proto _CType \
+_rotr8 proto WINAPI \
 		 Value: BYTE,
 		 Shift: BYTE
 ;unsigned short
-_rotr16 proto _CType \
+_rotr16 proto WINAPI \
 		 Value: WORD,
 		 Shift: BYTE
 
@@ -878,7 +769,7 @@ _rotr16 proto _CType \
 ;pragma intrinsic(_rotr8)
 ;pragma intrinsic(_rotr16)
 
-endif ;; _M_AMD64
+endif 
 
 if _MSC_VER GE 1300
 
@@ -888,19 +779,19 @@ RotateRight32		equ <_rotr>
 RotateRight64		equ <_rotr64>
 
 ;unsigned int
-_rotl proto _CType \
+_rotl proto WINAPI \
 		 Value: dword,
 		 Shift: SINT
 ;unsigned __int64
-_rotl64 proto _CType \
+_rotl64 proto WINAPI \
 		 Value: qword,
 		 Shift: SINT
 ;unsigned int
-_rotr proto _CType \
+_rotr proto WINAPI \
 		 Value: dword,
 		 Shift: SINT
 ;unsigned __int64
-_rotr64 proto _CType \
+_rotr64 proto WINAPI \
 		 Value: qword,
 		 Shift: SINT
 
@@ -909,7 +800,7 @@ _rotr64 proto _CType \
 ;pragma intrinsic(_rotr)
 ;pragma intrinsic(_rotr64)
 
-endif ;; _MSC_VER GE 1300
+endif 
 
 ANSI_NULL	equ 0
 UNICODE_NULL	equ 0
@@ -919,10 +810,6 @@ PBOOLEAN	typedef PTR BOOLEAN
 UNICODE_STRING_MAX_BYTES equ 65534
 UNICODE_STRING_MAX_CHARS equ 32767
 
-;;
-;;  Doubly linked list structure.  Can be used as either a list head, or
-;;  as link words.
-;;
 
 LIST_ENTRY	STRUC
 Flink		PVOID ?
@@ -931,19 +818,12 @@ LIST_ENTRY	ENDS
 PLIST_ENTRY	TYPEDEF PTR LIST_ENTRY
 PRLIST_ENTRY	TYPEDEF PTR LIST_ENTRY
 
-;
-;  Singly linked list structure. Can be used as either a list head, or
-;  as link words.
-;
 
 SINGLE_LIST_ENTRY STRUC
 Next		PVOID ?
 SINGLE_LIST_ENTRY ENDS
 PSINGLE_LIST_ENTRY TYPEDEF PTR SINGLE_LIST_ENTRY
 
-;;
-;; These are needed for portable debugger support.
-;;
 
 LIST_ENTRY32		STRUC
 Flink			dd ?
@@ -979,45 +859,23 @@ MAXBYTE		equ 0xff
 MAXWORD		equ 0xffff
 MAXDWORD	equ 0xffffffff
 
-;
-; Calculate the byte offset of a field in a structure of type type.
-;
 
 FIELD_OFFSET macro x, field
 	exitm<x.field>
 	endm
 
-;;
-;; Calculate the size of a field in a structure of type type, without
-;; knowing or stating the type of the field.
-;;
 RTL_FIELD_SIZE macro type, field
 	exitm<sizeof(type.field)>
 	endm
 
-;;
-;; Calculate the size of a structure of type type up through and
-;; including a field.
-;;
 RTL_SIZEOF_THROUGH_FIELD macro type, field
 	exitm<FIELD_OFFSET(type, field) + RTL_FIELD_SIZE(type, field)>
 	endm
 
-;;
-;;  RTL_CONTAINS_FIELD usage:
-;;
-;;	if (RTL_CONTAINS_FIELD(pBlock, pBlock->cbSize, dwMumble)) { // safe to use pBlock->dwMumble
-;;
 RTL_CONTAINS_FIELD macro Struct, Size, Field
 	exitm<Struct.Field + sizeof(Struct.Field) LE Struct+Size>
 	endm
 
-;;
-;; Return the number of elements in a statically sized array.
-;;   DWORD Buffer[100];
-;;   RTL_NUMBER_OF(Buffer) == 100
-;; This is also popularly known as: NUMBER_OF, ARRSIZE, _countof, NELEM, etc.
-;;
 RTL_NUMBER_OF_V1 macro A
 	exitm<(sizeof(A)/sizeof((A)[0]))>
 	endm
@@ -1036,12 +894,6 @@ RTL_NUMBER_OF macro A
 	endm
 endif
 
-;;
-;; ARRAYSIZE is more readable version of RTL_NUMBER_OF_V2, and uses
-;; it regardless of ENABLE_RTL_NUMBER_OF_V2
-;;
-;; _ARRAYSIZE is a version useful for anonymous types
-;;
 ARRAYSIZE macro A
 	exitm<RTL_NUMBER_OF_V2(A)>
 	endm
@@ -1049,31 +901,14 @@ _ARRAYSIZE macro A
 	exitm<RTL_NUMBER_OF_V1(A)>
 	endm
 
-;;
-;; An expression that yields the type of a field in a struct.
-;;
 RTL_FIELD_TYPE macro type, field
 	exitm<type.field>
 	endm
 
-;; RTL_ to avoid collisions in the global namespace.
-;;
-;; Given typedef struct _FOO { BYTE Bar[123]; } FOO;
-;; RTL_NUMBER_OF_FIELD(FOO, Bar) == 123
-;;
 RTL_NUMBER_OF_FIELD macro type, field
 	exitm<RTL_NUMBER_OF(RTL_FIED_TYPE(type, field))>
 	endm
 
-;;
-;; eg:
-;; typedef struct FOO {
-;;   DWORD Integer;
-;;   PVOID Pointer;
-;; } FOO;
-;;
-;; RTL_PADDING_BETWEEN_FIELDS(FOO, Integer, Pointer) == 0 for Win32, 4 for Win64
-;;
 RTL_PADDING_BETWEEN_FIELDS macro T, F1, F2
 	if FIELD_OFFSET(T, F2) GT FIELD_OFFSET(T, F1)
 	    exitm<(FIELD_OFFSET(T, F2) - FIELD_OFFSET(T, F1) - RTL_FIELD_SIZE(T, F1))>
@@ -1082,8 +917,6 @@ RTL_PADDING_BETWEEN_FIELDS macro T, F1, F2
 	endif
 	endm
 
-;; like sizeof
-;; usually this would be * CHAR_BIT, but we don't necessarily have #include <limits.h>
 RTL_BITS_OF macro sizeOfArg
 	exitm<(sizeof(sizeOfArg) * 8)>
 	endm
@@ -1092,18 +925,11 @@ RTL_BITS_OF_FIELD macro type, field
 	exitm<(RTL_BITS_OF(RTL_FIED_TYPE(type, field)))>
 	endm
 
-;;
-;; Calculate the address of the base of the structure given its type, and an
-;; address of a field within the structure.
-;;
 
 CONTAINING_RECORD macro address, x, field
 	exitm<address-x.field>
 	endm
 
-;;
-;; Exception handler routine definition.
-;;
 
 ifndef __EXCPT_INC
  include excpt.inc
@@ -1112,9 +938,6 @@ endif
 
 EXCEPTION_MAXIMUM_PARAMETERS	equ 15	; maximum number of exception parameters
 
-;;
-;; Exception record definition.
-;;
 
 EXCEPTION_RECORD	STRUC SIZE_T
 ExceptionCode		dd ?
@@ -1126,7 +949,7 @@ ExceptionInformation	PVOID EXCEPTION_MAXIMUM_PARAMETERS dup(?)
 EXCEPTION_RECORD	ENDS
 PEXCEPTION_RECORD	TYPEDEF PTR EXCEPTION_RECORD
 
-EXCEPTION_ROUTINE typedef proto _CType \
+EXCEPTION_ROUTINE typedef proto WINAPI \
        ExceptionRecord: ptr EXCEPTION_RECORD,
       EstablisherFrame: PVOID,
 	 ContextRecord: ptr CONTEXT,
@@ -1154,19 +977,6 @@ VER_SUITE_STORAGE_SERVER equ 0x00002000
 VER_SUITE_COMPUTE_SERVER equ 0x00004000
 VER_SUITE_WH_SERVER	equ 0x00008000
 
-;;
-;; Product types
-;; This list grows with each OS release.
-;;
-;; There is no ordering of values to ensure callers
-;; do an equality test i.e. greater-than and less-than
-;; comparisons are not useful.
-;;
-;; NOTE: Values in this list should never be deleted.
-;;	 When a product-type 'X' gets dropped from a
-;;	 OS release onwards, the value of 'X' continues
-;;	 to be used in the mapping table of GetProductInfo.
-;;
 
 PRODUCT_UNDEFINED	equ 0x00000000
 
@@ -1245,29 +1055,7 @@ PRODUCT_UNLICENSED	equ 0xABCDABCD
 
 ;include <sdkddkver.h>
 
-;
-;  Language IDs.
-;
-;  The following two combinations of primary language ID and
-;  sublanguage ID have special semantics:
-;
-;    Primary Language ID   Sublanguage ID      Result
-;    -------------------   ---------------     ------------------------
-;    LANG_NEUTRAL	   SUBLANG_NEUTRAL     Language neutral
-;    LANG_NEUTRAL	   SUBLANG_DEFAULT     User default language
-;    LANG_NEUTRAL	   SUBLANG_SYS_DEFAULT System default language
-;
 
-;;
-;;  Primary language IDs.
-;;
-;;  WARNING: These aren't always unique.  Bosnian, Serbian & Croation for example.
-;;
-;;  It is recommended that applications test for locale names or actual LCIDs.
-;;
-;;  Note that the LANG, SUBLANG construction is not always consistent.
-;;  The named locale APIs (eg GetLocaleInfoEx) are recommended.
-;;
 LANG_NEUTRAL		equ 0x00
 LANG_INVARIANT		equ 0x7f
 
@@ -1284,13 +1072,13 @@ LANG_BASQUE		equ 0x2d
 LANG_BELARUSIAN		equ 0x23
 LANG_BENGALI		equ 0x45
 LANG_BRETON		equ 0x7e
-LANG_BOSNIAN		equ 0x1a   ;; Use with SUBANG_BOSNIAN_* Sublanguage IDs
-LANG_BOSNIAN_NEUTRAL	equ 0x781a   ;; Use with the ConvertDefaultLocale function
+LANG_BOSNIAN		equ 0x1a   
+LANG_BOSNIAN_NEUTRAL	equ 0x781a   
 LANG_BULGARIAN		equ 0x02
 LANG_CATALAN		equ 0x03
-LANG_CHINESE		equ 0x04   ;; Use with SUBANG_CHINESE_* Sublanguage IDs
-LANG_CHINESE_SIMPLIFIED equ 0x04   ;; Use with the ConvertDefaultLocale function
-LANG_CHINESE_TRADITIONAL equ 0x7c04   ;; Use with the ConvertDefaultLocale function
+LANG_CHINESE		equ 0x04   
+LANG_CHINESE_SIMPLIFIED equ 0x04   
+LANG_CHINESE_TRADITIONAL equ 0x7c04   
 LANG_CORSICAN		equ 0x83
 LANG_CROATIAN		equ 0x1a
 LANG_CZECH		equ 0x05
@@ -1301,7 +1089,7 @@ LANG_DUTCH		equ 0x13
 LANG_ENGLISH		equ 0x09
 LANG_ESTONIAN		equ 0x25
 LANG_FAEROESE		equ 0x38
-LANG_FARSI		equ 0x29   ;; Deprecated: use LANG_PERSIAN instead
+LANG_FARSI		equ 0x29   
 LANG_FILIPINO		equ 0x64
 LANG_FINNISH		equ 0x0b
 LANG_FRENCH		equ 0x0c
@@ -1320,7 +1108,7 @@ LANG_ICELANDIC		equ 0x0f
 LANG_IGBO		equ 0x70
 LANG_INDONESIAN		equ 0x21
 LANG_INUKTITUT		equ 0x5d
-LANG_IRISH		equ 0x3c   ;; Use with the SUBLANG_IRISH_IREAND Sublanguage ID
+LANG_IRISH		equ 0x3c   
 LANG_ITALIAN		equ 0x10
 LANG_JAPANESE		equ 0x11
 LANG_KANNADA		equ 0x4b
@@ -1337,7 +1125,7 @@ LANG_LATVIAN		equ 0x26
 LANG_LITHUANIAN		equ 0x27
 LANG_LOWER_SORBIAN	equ 0x2e
 LANG_LUXEMBOURGISH	equ 0x6e
-LANG_MACEDONIAN		equ 0x2f   ;; the Former Yugoslav Republic of Macedonia
+LANG_MACEDONIAN		equ 0x2f   
 LANG_MALAY		equ 0x3e
 LANG_MALAYALAM		equ 0x4c
 LANG_MALTESE		equ 0x3a
@@ -1363,8 +1151,8 @@ LANG_RUSSIAN		equ 0x19
 LANG_SAMI		equ 0x3b
 LANG_SANSKRIT		equ 0x4f
 LANG_SCOTTISH_GAELIC	equ 0x91
-LANG_SERBIAN		equ 0x1a   ;; Use with the SUBANG_SERBIAN_* Sublanguage IDs
-LANG_SERBIAN_NEUTRAL	equ 0x7c1a   ;; Use with the ConvertDefaultLocale function
+LANG_SERBIAN		equ 0x1a   
+LANG_SERBIAN_NEUTRAL	equ 0x7c1a   
 LANG_SINDHI		equ 0x59
 LANG_SINHALESE		equ 0x5b
 LANG_SLOVAK		equ 0x1b
@@ -1399,296 +1187,263 @@ LANG_YI			equ 0x78
 LANG_YORUBA		equ 0x6a
 LANG_ZULU		equ 0x35
 
-;;
-;;  Sublanguage IDs.
-;;
-;;  The name immediately following SUBLANG_ dictates which primary
-;;  language ID that sublanguage ID can be combined with to form a
-;;  valid language ID.
-;;
-;;  Note that the LANG, SUBLANG construction is not always consistent.
-;;  The named locale APIs (eg GetLocaleInfoEx) are recommended.
-;;
 
-SUBLANG_NEUTRAL		equ 0x00    ;; language neutral
-SUBLANG_DEFAULT		equ 0x01    ;; user default
-SUBLANG_SYS_DEFAULT	equ 0x02    ;; system default
-SUBLANG_CUSTOM_DEFAULT	equ 0x03    ;; default custom language/locale
-SUBLANG_CUSTOM_UNSPECIFIED equ 0x04    ;; custom language/locale
-SUBLANG_UI_CUSTOM_DEFAULT equ 0x05    ;; Default custom MUI language/locale
+SUBLANG_NEUTRAL		equ 0x00    
+SUBLANG_DEFAULT		equ 0x01    
+SUBLANG_SYS_DEFAULT	equ 0x02    
+SUBLANG_CUSTOM_DEFAULT	equ 0x03    
+SUBLANG_CUSTOM_UNSPECIFIED equ 0x04    
+SUBLANG_UI_CUSTOM_DEFAULT equ 0x05    
 
 
-SUBLANG_AFRIKAANS_SOUTH_AFRICA equ 0x01	   ;; Afrikaans (South Africa) 0x0436 af-ZA
-SUBLANG_ALBANIAN_ALBANIA equ 0x01    ;; Albanian (Albania) 0x041c sq-A
-SUBLANG_ALSATIAN_FRANCE equ 0x01    ;; Alsatian (France) 0x0484
-SUBLANG_AMHARIC_ETHIOPIA equ 0x01    ;; Amharic (Ethiopia) 0x045e
-SUBLANG_ARABIC_SAUDI_ARABIA equ 0x01	;; Arabic (Saudi Arabia)
-SUBLANG_ARABIC_IRAQ	equ 0x02    ;; Arabic (Iraq)
-SUBLANG_ARABIC_EGYPT	equ 0x03    ;; Arabic (Egypt)
-SUBLANG_ARABIC_LIBYA	equ 0x04    ;; Arabic (Libya)
-SUBLANG_ARABIC_ALGERIA	equ 0x05    ;; Arabic (Algeria)
-SUBLANG_ARABIC_MOROCCO	equ 0x06    ;; Arabic (Morocco)
-SUBLANG_ARABIC_TUNISIA	equ 0x07    ;; Arabic (Tunisia)
-SUBLANG_ARABIC_OMAN	equ 0x08    ;; Arabic (Oman)
-SUBLANG_ARABIC_YEMEN	equ 0x09    ;; Arabic (Yemen)
-SUBLANG_ARABIC_SYRIA	equ 0x0a    ;; Arabic (Syria)
-SUBLANG_ARABIC_JORDAN	equ 0x0b    ;; Arabic (Jordan)
-SUBLANG_ARABIC_LEBANON	equ 0x0c    ;; Arabic (Lebanon)
-SUBLANG_ARABIC_KUWAIT	equ 0x0d    ;; Arabic (Kuwait)
-SUBLANG_ARABIC_UAE	equ 0x0e    ;; Arabic (U.A.E)
-SUBLANG_ARABIC_BAHRAIN	equ 0x0f    ;; Arabic (Bahrain)
-SUBLANG_ARABIC_QATAR	equ 0x10    ;; Arabic (Qatar)
-SUBLANG_ARMENIAN_ARMENIA equ 0x01    ;; Armenian (Armenia) 0x042b hy-AM
-SUBLANG_ASSAMESE_INDIA	equ 0x01    ;; Assamese (India) 0x044d
-SUBLANG_AZERI_LATIN	equ 0x01    ;; Azeri (Latin)
-SUBLANG_AZERI_CYRILLIC	equ 0x02    ;; Azeri (Cyrillic)
-SUBLANG_BASHKIR_RUSSIA	equ 0x01    ;; Bashkir (Russia) 0x046d ba-RU
-SUBLANG_BASQUE_BASQUE	equ 0x01    ;; Basque (Basque) 0x042d eu-ES
-SUBLANG_BELARUSIAN_BELARUS equ 0x01    ;; Belarusian (Belarus) 0x0423 be-BY
-SUBLANG_BENGALI_INDIA	equ 0x01    ;; Bengali (India)
-SUBLANG_BENGALI_BANGLADESH equ 0x02    ;; Bengali (Bangladesh)
-SUBLANG_BOSNIAN_BOSNIA_HERZEGOVINA_LATIN equ 0x05    ;; Bosnian (Bosnia and Herzegovina - Latin) 0x141a bs-BA-Latn
-SUBLANG_BOSNIAN_BOSNIA_HERZEGOVINA_CYRILLIC equ 0x08	;; Bosnian (Bosnia and Herzegovina - Cyrillic) 0x201a bs-BA-Cyrl
-SUBLANG_BRETON_FRANCE	equ 0x01    ;; Breton (France) 0x047e
-SUBLANG_BULGARIAN_BULGARIA equ 0x01    ;; Bulgarian (Bulgaria) 0x0402
-SUBLANG_CATALAN_CATALAN equ 0x01    ;; Catalan (Catalan) 0x0403
-SUBLANG_CHINESE_TRADITIONAL equ 0x01	;; Chinese (Taiwan) 0x0404 zh-TW
-SUBLANG_CHINESE_SIMPLIFIED equ 0x02    ;; Chinese (PR China) 0x0804 zh-CN
-SUBLANG_CHINESE_HONGKONG equ 0x03    ;; Chinese (Hong Kong S.A.R., P.R.C.) 0x0c04 zh-HK
-SUBLANG_CHINESE_SINGAPORE equ 0x04    ;; Chinese (Singapore) 0x1004 zh-SG
-SUBLANG_CHINESE_MACAU	equ 0x05    ;; Chinese (Macau S.A.R.) 0x1404 zh-MO
-SUBLANG_CORSICAN_FRANCE equ 0x01    ;; Corsican (France) 0x0483
-SUBLANG_CZECH_CZECH_REPUBLIC equ 0x01	 ;; Czech (Czech Republic) 0x0405
-SUBLANG_CROATIAN_CROATIA equ 0x01    ;; Croatian (Croatia)
-SUBLANG_CROATIAN_BOSNIA_HERZEGOVINA_LATIN equ 0x04    ;; Croatian (Bosnia and Herzegovina - Latin) 0x101a hr-BA
-SUBLANG_DANISH_DENMARK	equ 0x01    ;; Danish (Denmark) 0x0406
-SUBLANG_DARI_AFGHANISTAN equ 0x01    ;; Dari (Afghanistan)
-SUBLANG_DIVEHI_MALDIVES equ 0x01    ;; Divehi (Maldives) 0x0465 div-MV
-SUBLANG_DUTCH		equ 0x01    ;; Dutch
-SUBLANG_DUTCH_BELGIAN	equ 0x02    ;; Dutch (Belgian)
-SUBLANG_ENGLISH_US	equ 0x01    ;; English (USA)
-SUBLANG_ENGLISH_UK	equ 0x02    ;; English (UK)
-SUBLANG_ENGLISH_AUS	equ 0x03    ;; English (Australian)
-SUBLANG_ENGLISH_CAN	equ 0x04    ;; English (Canadian)
-SUBLANG_ENGLISH_NZ	equ 0x05    ;; English (New Zealand)
-SUBLANG_ENGLISH_EIRE	equ 0x06    ;; English (Irish)
-SUBLANG_ENGLISH_SOUTH_AFRICA equ 0x07	 ;; English (South Africa)
-SUBLANG_ENGLISH_JAMAICA equ 0x08    ;; English (Jamaica)
-SUBLANG_ENGLISH_CARIBBEAN equ 0x09    ;; English (Caribbean)
-SUBLANG_ENGLISH_BELIZE	equ 0x0a    ;; English (Belize)
-SUBLANG_ENGLISH_TRINIDAD equ 0x0b    ;; English (Trinidad)
-SUBLANG_ENGLISH_ZIMBABWE equ 0x0c    ;; English (Zimbabwe)
-SUBLANG_ENGLISH_PHILIPPINES equ 0x0d	;; English (Philippines)
-SUBLANG_ENGLISH_INDIA	equ 0x10    ;; English (India)
-SUBLANG_ENGLISH_MALAYSIA equ 0x11    ;; English (Malaysia)
-SUBLANG_ENGLISH_SINGAPORE equ 0x12    ;; English (Singapore)
-SUBLANG_ESTONIAN_ESTONIA equ 0x01    ;; Estonian (Estonia) 0x0425 et-EE
-SUBLANG_FAEROESE_FAROE_ISLANDS equ 0x01	   ;; Faroese (Faroe Islands) 0x0438 fo-FO
-SUBLANG_FILIPINO_PHILIPPINES equ 0x01	 ;; Filipino (Philippines) 0x0464 fil-PH
-SUBLANG_FINNISH_FINLAND equ 0x01    ;; Finnish (Finland) 0x040b
-SUBLANG_FRENCH		equ 0x01    ;; French
-SUBLANG_FRENCH_BELGIAN	equ 0x02    ;; French (Belgian)
-SUBLANG_FRENCH_CANADIAN equ 0x03    ;; French (Canadian)
-SUBLANG_FRENCH_SWISS	equ 0x04    ;; French (Swiss)
-SUBLANG_FRENCH_LUXEMBOURG equ 0x05    ;; French (Luxembourg)
-SUBLANG_FRENCH_MONACO	equ 0x06    ;; French (Monaco)
-SUBLANG_FRISIAN_NETHERLANDS equ 0x01	;; Frisian (Netherlands) 0x0462 fy-NL
-SUBLANG_GALICIAN_GALICIAN equ 0x01    ;; Galician (Galician) 0x0456 gl-ES
-SUBLANG_GEORGIAN_GEORGIA equ 0x01    ;; Georgian (Georgia) 0x0437 ka-GE
-SUBLANG_GERMAN		equ 0x01    ;; German
-SUBLANG_GERMAN_SWISS	equ 0x02    ;; German (Swiss)
-SUBLANG_GERMAN_AUSTRIAN equ 0x03    ;; German (Austrian)
-SUBLANG_GERMAN_LUXEMBOURG equ 0x04    ;; German (Luxembourg)
-SUBLANG_GERMAN_LIECHTENSTEIN equ 0x05	 ;; German (Liechtenstein)
-SUBLANG_GREEK_GREECE	equ 0x01    ;; Greek (Greece)
-SUBLANG_GREENLANDIC_GREENLAND equ 0x01	  ;; Greenlandic (Greenland) 0x046f kl-GL
-SUBLANG_GUJARATI_INDIA	equ 0x01    ;; Gujarati (India (Gujarati Script)) 0x0447 gu-IN
-SUBLANG_HAUSA_NIGERIA_LATIN equ 0x01	;; Hausa (Latin, Nigeria) 0x0468 ha-NG-Latn
-SUBLANG_HEBREW_ISRAEL	equ 0x01    ;; Hebrew (Israel) 0x040d
-SUBLANG_HINDI_INDIA	equ 0x01    ;; Hindi (India) 0x0439 hi-IN
-SUBLANG_HUNGARIAN_HUNGARY equ 0x01    ;; Hungarian (Hungary) 0x040e
-SUBLANG_ICELANDIC_ICELAND equ 0x01    ;; Icelandic (Iceland) 0x040f
-SUBLANG_IGBO_NIGERIA	equ 0x01    ;; Igbo (Nigeria) 0x0470 ig-NG
-SUBLANG_INDONESIAN_INDONESIA equ 0x01	 ;; Indonesian (Indonesia) 0x0421 id-ID
-SUBLANG_INUKTITUT_CANADA equ 0x01    ;; Inuktitut (Syllabics) (Canada) 0x045d iu-CA-Cans
-SUBLANG_INUKTITUT_CANADA_LATIN equ 0x02	   ;; Inuktitut (Canada - Latin)
-SUBLANG_IRISH_IRELAND	equ 0x02    ;; Irish (Ireland)
-SUBLANG_ITALIAN		equ 0x01    ;; Italian
-SUBLANG_ITALIAN_SWISS	equ 0x02    ;; Italian (Swiss)
-SUBLANG_JAPANESE_JAPAN	equ 0x01    ;; Japanese (Japan) 0x0411
-SUBLANG_KANNADA_INDIA	equ 0x01    ;; Kannada (India (Kannada Script)) 0x044b kn-IN
-SUBLANG_KASHMIRI_SASIA	equ 0x02    ;; Kashmiri (South Asia)
-SUBLANG_KASHMIRI_INDIA	equ 0x02    ;; For app compatibility only
-SUBLANG_KAZAK_KAZAKHSTAN equ 0x01    ;; Kazakh (Kazakhstan) 0x043f kk-KZ
-SUBLANG_KHMER_CAMBODIA	equ 0x01    ;; Khmer (Cambodia) 0x0453 kh-KH
-SUBLANG_KICHE_GUATEMALA equ 0x01    ;; K'iche (Guatemala)
-SUBLANG_KINYARWANDA_RWANDA equ 0x01    ;; Kinyarwanda (Rwanda) 0x0487 rw-RW
-SUBLANG_KONKANI_INDIA	equ 0x01    ;; Konkani (India) 0x0457 kok-IN
-SUBLANG_KOREAN		equ 0x01    ;; Korean (Extended Wansung)
-SUBLANG_KYRGYZ_KYRGYZSTAN equ 0x01    ;; Kyrgyz (Kyrgyzstan) 0x0440 ky-KG
-SUBLANG_LAO_LAO		equ 0x01    ;; Lao (Lao PDR) 0x0454 lo-LA
-SUBLANG_LATVIAN_LATVIA	equ 0x01    ;; Latvian (Latvia) 0x0426 lv-LV
-SUBLANG_LITHUANIAN	equ 0x01    ;; Lithuanian
-SUBLANG_LOWER_SORBIAN_GERMANY equ 0x02	  ;; Lower Sorbian (Germany) 0x082e wee-DE
-SUBLANG_LUXEMBOURGISH_LUXEMBOURG equ 0x01    ;; Luxembourgish (Luxembourg) 0x046e lb-LU
-SUBLANG_MACEDONIAN_MACEDONIA equ 0x01	 ;; Macedonian (Macedonia (FYROM)) 0x042f mk-MK
-SUBLANG_MALAY_MALAYSIA	equ 0x01    ;; Malay (Malaysia)
-SUBLANG_MALAY_BRUNEI_DARUSSALAM equ 0x02    ;; Malay (Brunei Darussalam)
-SUBLANG_MALAYALAM_INDIA equ 0x01    ;; Malayalam (India (Malayalam Script) ) 0x044c ml-IN
-SUBLANG_MALTESE_MALTA	equ 0x01    ;; Maltese (Malta) 0x043a mt-MT
-SUBLANG_MAORI_NEW_ZEALAND equ 0x01    ;; Maori (New Zealand) 0x0481 mi-NZ
-SUBLANG_MAPUDUNGUN_CHILE equ 0x01    ;; Mapudungun (Chile) 0x047a arn-C
-SUBLANG_MARATHI_INDIA	equ 0x01    ;; Marathi (India) 0x044e mr-IN
-SUBLANG_MOHAWK_MOHAWK	equ 0x01    ;; Mohawk (Mohawk) 0x047c moh-CA
-SUBLANG_MONGOLIAN_CYRILLIC_MONGOLIA equ 0x01	;; Mongolian (Cyrillic, Mongolia)
-SUBLANG_MONGOLIAN_PRC	equ 0x02    ;; Mongolian (PRC)
-SUBLANG_NEPALI_INDIA	equ 0x02    ;; Nepali (India)
-SUBLANG_NEPALI_NEPAL	equ 0x01    ;; Nepali (Nepal) 0x0461 ne-NP
-SUBLANG_NORWEGIAN_BOKMAL equ 0x01    ;; Norwegian (Bokmal)
-SUBLANG_NORWEGIAN_NYNORSK equ 0x02    ;; Norwegian (Nynorsk)
-SUBLANG_OCCITAN_FRANCE	equ 0x01    ;; Occitan (France) 0x0482 oc-FR
-SUBLANG_ORIYA_INDIA	equ 0x01    ;; Oriya (India (Oriya Script)) 0x0448 or-IN
-SUBLANG_PASHTO_AFGHANISTAN equ 0x01    ;; Pashto (Afghanistan)
-SUBLANG_PERSIAN_IRAN	equ 0x01    ;; Persian (Iran) 0x0429 fa-IR
-SUBLANG_POLISH_POLAND	equ 0x01    ;; Polish (Poland) 0x0415
-SUBLANG_PORTUGUESE	equ 0x02    ;; Portuguese
-SUBLANG_PORTUGUESE_BRAZILIAN equ 0x01	 ;; Portuguese (Brazilian)
-SUBLANG_PUNJABI_INDIA	equ 0x01    ;; Punjabi (India (Gurmukhi Script)) 0x0446 pa-IN
-SUBLANG_QUECHUA_BOLIVIA equ 0x01    ;; Quechua (Bolivia)
-SUBLANG_QUECHUA_ECUADOR equ 0x02    ;; Quechua (Ecuador)
-SUBLANG_QUECHUA_PERU	equ 0x03    ;; Quechua (Peru)
-SUBLANG_ROMANIAN_ROMANIA equ 0x01    ;; Romanian (Romania) 0x0418
-SUBLANG_ROMANSH_SWITZERLAND equ 0x01	;; Romansh (Switzerland) 0x0417 rm-CH
-SUBLANG_RUSSIAN_RUSSIA	equ 0x01    ;; Russian (Russia) 0x0419
-SUBLANG_SAMI_NORTHERN_NORWAY equ 0x01	 ;; Northern Sami (Norway)
-SUBLANG_SAMI_NORTHERN_SWEDEN equ 0x02	 ;; Northern Sami (Sweden)
-SUBLANG_SAMI_NORTHERN_FINLAND equ 0x03	  ;; Northern Sami (Finland)
-SUBLANG_SAMI_LULE_NORWAY equ 0x04    ;; Lule Sami (Norway)
-SUBLANG_SAMI_LULE_SWEDEN equ 0x05    ;; Lule Sami (Sweden)
-SUBLANG_SAMI_SOUTHERN_NORWAY equ 0x06	 ;; Southern Sami (Norway)
-SUBLANG_SAMI_SOUTHERN_SWEDEN equ 0x07	 ;; Southern Sami (Sweden)
-SUBLANG_SAMI_SKOLT_FINLAND equ 0x08    ;; Skolt Sami (Finland)
-SUBLANG_SAMI_INARI_FINLAND equ 0x09    ;; Inari Sami (Finland)
-SUBLANG_SANSKRIT_INDIA	equ 0x01    ;; Sanskrit (India) 0x044f sa-IN
-SUBLANG_SCOTTISH_GAELIC equ 0x01    ;; Scottish Gaelic (United Kingdom) 0x0491 gd-GB
-SUBLANG_SERBIAN_BOSNIA_HERZEGOVINA_LATIN equ 0x06    ;; Serbian (Bosnia and Herzegovina - Latin)
-SUBLANG_SERBIAN_BOSNIA_HERZEGOVINA_CYRILLIC equ 0x07	;; Serbian (Bosnia and Herzegovina - Cyrillic)
-SUBLANG_SERBIAN_MONTENEGRO_LATIN equ 0x0b    ;; Serbian (Montenegro - Latn)
-SUBLANG_SERBIAN_MONTENEGRO_CYRILLIC equ 0x0c	;; Serbian (Montenegro - Cyrillic)
-SUBLANG_SERBIAN_SERBIA_LATIN equ 0x09	 ;; Serbian (Serbia - Latin)
-SUBLANG_SERBIAN_SERBIA_CYRILLIC equ 0x0a    ;; Serbian (Serbia - Cyrillic)
-SUBLANG_SERBIAN_CROATIA equ 0x01    ;; Croatian (Croatia) 0x041a hr-HR
-SUBLANG_SERBIAN_LATIN	equ 0x02    ;; Serbian (Latin)
-SUBLANG_SERBIAN_CYRILLIC equ 0x03    ;; Serbian (Cyrillic)
-SUBLANG_SINDHI_INDIA	equ 0x01    ;; Sindhi (India) reserved 0x0459
-SUBLANG_SINDHI_PAKISTAN equ 0x02    ;; Sindhi (Pakistan) reserved 0x0859
-SUBLANG_SINDHI_AFGHANISTAN equ 0x02    ;; For app compatibility only
-SUBLANG_SINHALESE_SRI_LANKA equ 0x01	;; Sinhalese (Sri Lanka)
-SUBLANG_SOTHO_NORTHERN_SOUTH_AFRICA equ 0x01	;; Northern Sotho (South Africa)
-SUBLANG_SLOVAK_SLOVAKIA equ 0x01    ;; Slovak (Slovakia) 0x041b sk-SK
-SUBLANG_SLOVENIAN_SLOVENIA equ 0x01    ;; Slovenian (Slovenia) 0x0424 sl-SI
-SUBLANG_SPANISH		equ 0x01    ;; Spanish (Castilian)
-SUBLANG_SPANISH_MEXICAN equ 0x02    ;; Spanish (Mexican)
-SUBLANG_SPANISH_MODERN	equ 0x03    ;; Spanish (Modern)
-SUBLANG_SPANISH_GUATEMALA equ 0x04    ;; Spanish (Guatemala)
-SUBLANG_SPANISH_COSTA_RICA equ 0x05    ;; Spanish (Costa Rica)
-SUBLANG_SPANISH_PANAMA	equ 0x06    ;; Spanish (Panama)
-SUBLANG_SPANISH_DOMINICAN_REPUBLIC equ 0x07    ;; Spanish (Dominican Republic)
-SUBLANG_SPANISH_VENEZUELA equ 0x08    ;; Spanish (Venezuela)
-SUBLANG_SPANISH_COLOMBIA equ 0x09    ;; Spanish (Colombia)
-SUBLANG_SPANISH_PERU	equ 0x0a    ;; Spanish (Peru)
-SUBLANG_SPANISH_ARGENTINA equ 0x0b    ;; Spanish (Argentina)
-SUBLANG_SPANISH_ECUADOR equ 0x0c    ;; Spanish (Ecuador)
-SUBLANG_SPANISH_CHILE	equ 0x0d    ;; Spanish (Chile)
-SUBLANG_SPANISH_URUGUAY equ 0x0e    ;; Spanish (Uruguay)
-SUBLANG_SPANISH_PARAGUAY equ 0x0f    ;; Spanish (Paraguay)
-SUBLANG_SPANISH_BOLIVIA equ 0x10    ;; Spanish (Bolivia)
-SUBLANG_SPANISH_EL_SALVADOR equ 0x11	;; Spanish (El Salvador)
-SUBLANG_SPANISH_HONDURAS equ 0x12    ;; Spanish (Honduras)
-SUBLANG_SPANISH_NICARAGUA equ 0x13    ;; Spanish (Nicaragua)
-SUBLANG_SPANISH_PUERTO_RICO equ 0x14	;; Spanish (Puerto Rico)
-SUBLANG_SPANISH_US	equ 0x15    ;; Spanish (United States)
-SUBLANG_SWAHILI_KENYA	equ 0x01    ;; Swahili (Kenya) 0x0441 sw-KE
-SUBLANG_SWEDISH		equ 0x01    ;; Swedish
-SUBLANG_SWEDISH_FINLAND equ 0x02    ;; Swedish (Finland)
-SUBLANG_SYRIAC_SYRIA	equ 0x01    ;; Syriac (Syria) 0x045a syr-SY
-SUBLANG_TAJIK_TAJIKISTAN equ 0x01    ;; Tajik (Tajikistan) 0x0428 tg-TJ-Cyrl
-SUBLANG_TAMAZIGHT_ALGERIA_LATIN equ 0x02    ;; Tamazight (Latin, Algeria) 0x085f tmz-DZ-Latn
-SUBLANG_TAMIL_INDIA	equ 0x01    ;; Tamil (India)
-SUBLANG_TATAR_RUSSIA	equ 0x01    ;; Tatar (Russia) 0x0444 tt-RU
-SUBLANG_TELUGU_INDIA	equ 0x01    ;; Telugu (India (Telugu Script)) 0x044a te-IN
-SUBLANG_THAI_THAILAND	equ 0x01    ;; Thai (Thailand) 0x041e th-TH
-SUBLANG_TIBETAN_PRC	equ 0x01    ;; Tibetan (PRC)
-SUBLANG_TIGRIGNA_ERITREA equ 0x02    ;; Tigrigna (Eritrea)
-SUBLANG_TSWANA_SOUTH_AFRICA equ 0x01	;; Setswana / Tswana (South Africa) 0x0432 tn-ZA
-SUBLANG_TURKISH_TURKEY	equ 0x01    ;; Turkish (Turkey) 0x041f tr-TR
-SUBLANG_TURKMEN_TURKMENISTAN equ 0x01	 ;; Turkmen (Turkmenistan) 0x0442 tk-TM
-SUBLANG_UIGHUR_PRC	equ 0x01    ;; Uighur (PRC) 0x0480 ug-CN
-SUBLANG_UKRAINIAN_UKRAINE equ 0x01    ;; Ukrainian (Ukraine) 0x0422 uk-UA
-SUBLANG_UPPER_SORBIAN_GERMANY equ 0x01	  ;; Upper Sorbian (Germany) 0x042e wen-DE
-SUBLANG_URDU_PAKISTAN	equ 0x01    ;; Urdu (Pakistan)
-SUBLANG_URDU_INDIA	equ 0x02    ;; Urdu (India)
-SUBLANG_UZBEK_LATIN	equ 0x01    ;; Uzbek (Latin)
-SUBLANG_UZBEK_CYRILLIC	equ 0x02    ;; Uzbek (Cyrillic)
-SUBLANG_VIETNAMESE_VIETNAM equ 0x01    ;; Vietnamese (Vietnam) 0x042a vi-VN
-SUBLANG_WELSH_UNITED_KINGDOM equ 0x01	 ;; Welsh (United Kingdom) 0x0452 cy-GB
-SUBLANG_WOLOF_SENEGAL	equ 0x01    ;; Wolof (Senegal)
-SUBLANG_XHOSA_SOUTH_AFRICA equ 0x01    ;; isiXhosa / Xhosa (South Africa) 0x0434 xh-ZA
-SUBLANG_YAKUT_RUSSIA	equ 0x01    ;; Yakut (Russia) 0x0485 sah-RU
-SUBLANG_YI_PRC		equ 0x01    ;; Yi (PRC)) 0x0478
-SUBLANG_YORUBA_NIGERIA	equ 0x01    ;; Yoruba (Nigeria) 046a yo-NG
-SUBLANG_ZULU_SOUTH_AFRICA equ 0x01    ;; isiZulu / Zulu (South Africa) 0x0435 zu-ZA
+SUBLANG_AFRIKAANS_SOUTH_AFRICA equ 0x01	   
+SUBLANG_ALBANIAN_ALBANIA equ 0x01    
+SUBLANG_ALSATIAN_FRANCE equ 0x01    
+SUBLANG_AMHARIC_ETHIOPIA equ 0x01    
+SUBLANG_ARABIC_SAUDI_ARABIA equ 0x01	
+SUBLANG_ARABIC_IRAQ	equ 0x02    
+SUBLANG_ARABIC_EGYPT	equ 0x03    
+SUBLANG_ARABIC_LIBYA	equ 0x04    
+SUBLANG_ARABIC_ALGERIA	equ 0x05    
+SUBLANG_ARABIC_MOROCCO	equ 0x06    
+SUBLANG_ARABIC_TUNISIA	equ 0x07    
+SUBLANG_ARABIC_OMAN	equ 0x08    
+SUBLANG_ARABIC_YEMEN	equ 0x09    
+SUBLANG_ARABIC_SYRIA	equ 0x0a    
+SUBLANG_ARABIC_JORDAN	equ 0x0b    
+SUBLANG_ARABIC_LEBANON	equ 0x0c    
+SUBLANG_ARABIC_KUWAIT	equ 0x0d    
+SUBLANG_ARABIC_UAE	equ 0x0e    
+SUBLANG_ARABIC_BAHRAIN	equ 0x0f    
+SUBLANG_ARABIC_QATAR	equ 0x10    
+SUBLANG_ARMENIAN_ARMENIA equ 0x01    
+SUBLANG_ASSAMESE_INDIA	equ 0x01    
+SUBLANG_AZERI_LATIN	equ 0x01    
+SUBLANG_AZERI_CYRILLIC	equ 0x02    
+SUBLANG_BASHKIR_RUSSIA	equ 0x01    
+SUBLANG_BASQUE_BASQUE	equ 0x01    
+SUBLANG_BELARUSIAN_BELARUS equ 0x01    
+SUBLANG_BENGALI_INDIA	equ 0x01    
+SUBLANG_BENGALI_BANGLADESH equ 0x02    
+SUBLANG_BOSNIAN_BOSNIA_HERZEGOVINA_LATIN equ 0x05    
+SUBLANG_BOSNIAN_BOSNIA_HERZEGOVINA_CYRILLIC equ 0x08	
+SUBLANG_BRETON_FRANCE	equ 0x01    
+SUBLANG_BULGARIAN_BULGARIA equ 0x01    
+SUBLANG_CATALAN_CATALAN equ 0x01    
+SUBLANG_CHINESE_TRADITIONAL equ 0x01	
+SUBLANG_CHINESE_SIMPLIFIED equ 0x02    
+SUBLANG_CHINESE_HONGKONG equ 0x03    
+SUBLANG_CHINESE_SINGAPORE equ 0x04    
+SUBLANG_CHINESE_MACAU	equ 0x05    
+SUBLANG_CORSICAN_FRANCE equ 0x01    
+SUBLANG_CZECH_CZECH_REPUBLIC equ 0x01	 
+SUBLANG_CROATIAN_CROATIA equ 0x01    
+SUBLANG_CROATIAN_BOSNIA_HERZEGOVINA_LATIN equ 0x04    
+SUBLANG_DANISH_DENMARK	equ 0x01    
+SUBLANG_DARI_AFGHANISTAN equ 0x01    
+SUBLANG_DIVEHI_MALDIVES equ 0x01    
+SUBLANG_DUTCH		equ 0x01    
+SUBLANG_DUTCH_BELGIAN	equ 0x02    
+SUBLANG_ENGLISH_US	equ 0x01    
+SUBLANG_ENGLISH_UK	equ 0x02    
+SUBLANG_ENGLISH_AUS	equ 0x03    
+SUBLANG_ENGLISH_CAN	equ 0x04    
+SUBLANG_ENGLISH_NZ	equ 0x05    
+SUBLANG_ENGLISH_EIRE	equ 0x06    
+SUBLANG_ENGLISH_SOUTH_AFRICA equ 0x07	 
+SUBLANG_ENGLISH_JAMAICA equ 0x08    
+SUBLANG_ENGLISH_CARIBBEAN equ 0x09    
+SUBLANG_ENGLISH_BELIZE	equ 0x0a    
+SUBLANG_ENGLISH_TRINIDAD equ 0x0b    
+SUBLANG_ENGLISH_ZIMBABWE equ 0x0c    
+SUBLANG_ENGLISH_PHILIPPINES equ 0x0d	
+SUBLANG_ENGLISH_INDIA	equ 0x10    
+SUBLANG_ENGLISH_MALAYSIA equ 0x11    
+SUBLANG_ENGLISH_SINGAPORE equ 0x12    
+SUBLANG_ESTONIAN_ESTONIA equ 0x01    
+SUBLANG_FAEROESE_FAROE_ISLANDS equ 0x01	   
+SUBLANG_FILIPINO_PHILIPPINES equ 0x01	 
+SUBLANG_FINNISH_FINLAND equ 0x01    
+SUBLANG_FRENCH		equ 0x01    
+SUBLANG_FRENCH_BELGIAN	equ 0x02    
+SUBLANG_FRENCH_CANADIAN equ 0x03    
+SUBLANG_FRENCH_SWISS	equ 0x04    
+SUBLANG_FRENCH_LUXEMBOURG equ 0x05    
+SUBLANG_FRENCH_MONACO	equ 0x06    
+SUBLANG_FRISIAN_NETHERLANDS equ 0x01	
+SUBLANG_GALICIAN_GALICIAN equ 0x01    
+SUBLANG_GEORGIAN_GEORGIA equ 0x01    
+SUBLANG_GERMAN		equ 0x01    
+SUBLANG_GERMAN_SWISS	equ 0x02    
+SUBLANG_GERMAN_AUSTRIAN equ 0x03    
+SUBLANG_GERMAN_LUXEMBOURG equ 0x04    
+SUBLANG_GERMAN_LIECHTENSTEIN equ 0x05	 
+SUBLANG_GREEK_GREECE	equ 0x01    
+SUBLANG_GREENLANDIC_GREENLAND equ 0x01	  
+SUBLANG_GUJARATI_INDIA	equ 0x01    
+SUBLANG_HAUSA_NIGERIA_LATIN equ 0x01	
+SUBLANG_HEBREW_ISRAEL	equ 0x01    
+SUBLANG_HINDI_INDIA	equ 0x01    
+SUBLANG_HUNGARIAN_HUNGARY equ 0x01    
+SUBLANG_ICELANDIC_ICELAND equ 0x01    
+SUBLANG_IGBO_NIGERIA	equ 0x01    
+SUBLANG_INDONESIAN_INDONESIA equ 0x01	 
+SUBLANG_INUKTITUT_CANADA equ 0x01    
+SUBLANG_INUKTITUT_CANADA_LATIN equ 0x02	   
+SUBLANG_IRISH_IRELAND	equ 0x02    
+SUBLANG_ITALIAN		equ 0x01    
+SUBLANG_ITALIAN_SWISS	equ 0x02    
+SUBLANG_JAPANESE_JAPAN	equ 0x01    
+SUBLANG_KANNADA_INDIA	equ 0x01    
+SUBLANG_KASHMIRI_SASIA	equ 0x02    
+SUBLANG_KASHMIRI_INDIA	equ 0x02    
+SUBLANG_KAZAK_KAZAKHSTAN equ 0x01    
+SUBLANG_KHMER_CAMBODIA	equ 0x01    
+SUBLANG_KICHE_GUATEMALA equ 0x01    
+SUBLANG_KINYARWANDA_RWANDA equ 0x01    
+SUBLANG_KONKANI_INDIA	equ 0x01    
+SUBLANG_KOREAN		equ 0x01    
+SUBLANG_KYRGYZ_KYRGYZSTAN equ 0x01    
+SUBLANG_LAO_LAO		equ 0x01    
+SUBLANG_LATVIAN_LATVIA	equ 0x01    
+SUBLANG_LITHUANIAN	equ 0x01    
+SUBLANG_LOWER_SORBIAN_GERMANY equ 0x02	  
+SUBLANG_LUXEMBOURGISH_LUXEMBOURG equ 0x01    
+SUBLANG_MACEDONIAN_MACEDONIA equ 0x01	 
+SUBLANG_MALAY_MALAYSIA	equ 0x01    
+SUBLANG_MALAY_BRUNEI_DARUSSALAM equ 0x02    
+SUBLANG_MALAYALAM_INDIA equ 0x01    
+SUBLANG_MALTESE_MALTA	equ 0x01    
+SUBLANG_MAORI_NEW_ZEALAND equ 0x01    
+SUBLANG_MAPUDUNGUN_CHILE equ 0x01    
+SUBLANG_MARATHI_INDIA	equ 0x01    
+SUBLANG_MOHAWK_MOHAWK	equ 0x01    
+SUBLANG_MONGOLIAN_CYRILLIC_MONGOLIA equ 0x01	
+SUBLANG_MONGOLIAN_PRC	equ 0x02    
+SUBLANG_NEPALI_INDIA	equ 0x02    
+SUBLANG_NEPALI_NEPAL	equ 0x01    
+SUBLANG_NORWEGIAN_BOKMAL equ 0x01    
+SUBLANG_NORWEGIAN_NYNORSK equ 0x02    
+SUBLANG_OCCITAN_FRANCE	equ 0x01    
+SUBLANG_ORIYA_INDIA	equ 0x01    
+SUBLANG_PASHTO_AFGHANISTAN equ 0x01    
+SUBLANG_PERSIAN_IRAN	equ 0x01    
+SUBLANG_POLISH_POLAND	equ 0x01    
+SUBLANG_PORTUGUESE	equ 0x02    
+SUBLANG_PORTUGUESE_BRAZILIAN equ 0x01	 
+SUBLANG_PUNJABI_INDIA	equ 0x01    
+SUBLANG_QUECHUA_BOLIVIA equ 0x01    
+SUBLANG_QUECHUA_ECUADOR equ 0x02    
+SUBLANG_QUECHUA_PERU	equ 0x03    
+SUBLANG_ROMANIAN_ROMANIA equ 0x01    
+SUBLANG_ROMANSH_SWITZERLAND equ 0x01	
+SUBLANG_RUSSIAN_RUSSIA	equ 0x01    
+SUBLANG_SAMI_NORTHERN_NORWAY equ 0x01	 
+SUBLANG_SAMI_NORTHERN_SWEDEN equ 0x02	 
+SUBLANG_SAMI_NORTHERN_FINLAND equ 0x03	  
+SUBLANG_SAMI_LULE_NORWAY equ 0x04    
+SUBLANG_SAMI_LULE_SWEDEN equ 0x05    
+SUBLANG_SAMI_SOUTHERN_NORWAY equ 0x06	 
+SUBLANG_SAMI_SOUTHERN_SWEDEN equ 0x07	 
+SUBLANG_SAMI_SKOLT_FINLAND equ 0x08    
+SUBLANG_SAMI_INARI_FINLAND equ 0x09    
+SUBLANG_SANSKRIT_INDIA	equ 0x01    
+SUBLANG_SCOTTISH_GAELIC equ 0x01    
+SUBLANG_SERBIAN_BOSNIA_HERZEGOVINA_LATIN equ 0x06    
+SUBLANG_SERBIAN_BOSNIA_HERZEGOVINA_CYRILLIC equ 0x07	
+SUBLANG_SERBIAN_MONTENEGRO_LATIN equ 0x0b    
+SUBLANG_SERBIAN_MONTENEGRO_CYRILLIC equ 0x0c	
+SUBLANG_SERBIAN_SERBIA_LATIN equ 0x09	 
+SUBLANG_SERBIAN_SERBIA_CYRILLIC equ 0x0a    
+SUBLANG_SERBIAN_CROATIA equ 0x01    
+SUBLANG_SERBIAN_LATIN	equ 0x02    
+SUBLANG_SERBIAN_CYRILLIC equ 0x03    
+SUBLANG_SINDHI_INDIA	equ 0x01    
+SUBLANG_SINDHI_PAKISTAN equ 0x02    
+SUBLANG_SINDHI_AFGHANISTAN equ 0x02    
+SUBLANG_SINHALESE_SRI_LANKA equ 0x01	
+SUBLANG_SOTHO_NORTHERN_SOUTH_AFRICA equ 0x01	
+SUBLANG_SLOVAK_SLOVAKIA equ 0x01    
+SUBLANG_SLOVENIAN_SLOVENIA equ 0x01    
+SUBLANG_SPANISH		equ 0x01    
+SUBLANG_SPANISH_MEXICAN equ 0x02    
+SUBLANG_SPANISH_MODERN	equ 0x03    
+SUBLANG_SPANISH_GUATEMALA equ 0x04    
+SUBLANG_SPANISH_COSTA_RICA equ 0x05    
+SUBLANG_SPANISH_PANAMA	equ 0x06    
+SUBLANG_SPANISH_DOMINICAN_REPUBLIC equ 0x07    
+SUBLANG_SPANISH_VENEZUELA equ 0x08    
+SUBLANG_SPANISH_COLOMBIA equ 0x09    
+SUBLANG_SPANISH_PERU	equ 0x0a    
+SUBLANG_SPANISH_ARGENTINA equ 0x0b    
+SUBLANG_SPANISH_ECUADOR equ 0x0c    
+SUBLANG_SPANISH_CHILE	equ 0x0d    
+SUBLANG_SPANISH_URUGUAY equ 0x0e    
+SUBLANG_SPANISH_PARAGUAY equ 0x0f    
+SUBLANG_SPANISH_BOLIVIA equ 0x10    
+SUBLANG_SPANISH_EL_SALVADOR equ 0x11	
+SUBLANG_SPANISH_HONDURAS equ 0x12    
+SUBLANG_SPANISH_NICARAGUA equ 0x13    
+SUBLANG_SPANISH_PUERTO_RICO equ 0x14	
+SUBLANG_SPANISH_US	equ 0x15    
+SUBLANG_SWAHILI_KENYA	equ 0x01    
+SUBLANG_SWEDISH		equ 0x01    
+SUBLANG_SWEDISH_FINLAND equ 0x02    
+SUBLANG_SYRIAC_SYRIA	equ 0x01    
+SUBLANG_TAJIK_TAJIKISTAN equ 0x01    
+SUBLANG_TAMAZIGHT_ALGERIA_LATIN equ 0x02    
+SUBLANG_TAMIL_INDIA	equ 0x01    
+SUBLANG_TATAR_RUSSIA	equ 0x01    
+SUBLANG_TELUGU_INDIA	equ 0x01    
+SUBLANG_THAI_THAILAND	equ 0x01    
+SUBLANG_TIBETAN_PRC	equ 0x01    
+SUBLANG_TIGRIGNA_ERITREA equ 0x02    
+SUBLANG_TSWANA_SOUTH_AFRICA equ 0x01	
+SUBLANG_TURKISH_TURKEY	equ 0x01    
+SUBLANG_TURKMEN_TURKMENISTAN equ 0x01	 
+SUBLANG_UIGHUR_PRC	equ 0x01    
+SUBLANG_UKRAINIAN_UKRAINE equ 0x01    
+SUBLANG_UPPER_SORBIAN_GERMANY equ 0x01	  
+SUBLANG_URDU_PAKISTAN	equ 0x01    
+SUBLANG_URDU_INDIA	equ 0x02    
+SUBLANG_UZBEK_LATIN	equ 0x01    
+SUBLANG_UZBEK_CYRILLIC	equ 0x02    
+SUBLANG_VIETNAMESE_VIETNAM equ 0x01    
+SUBLANG_WELSH_UNITED_KINGDOM equ 0x01	 
+SUBLANG_WOLOF_SENEGAL	equ 0x01    
+SUBLANG_XHOSA_SOUTH_AFRICA equ 0x01    
+SUBLANG_YAKUT_RUSSIA	equ 0x01    
+SUBLANG_YI_PRC		equ 0x01    
+SUBLANG_YORUBA_NIGERIA	equ 0x01    
+SUBLANG_ZULU_SOUTH_AFRICA equ 0x01    
 
-;;
-;;  Sorting IDs.
-;;
-;;  Note that the named locale APIs (eg CompareStringExEx) are recommended.
-;;
 
-SORT_DEFAULT		equ 0x0	    ;; sorting default
+SORT_DEFAULT		equ 0x0	    
 
-SORT_INVARIANT_MATH	equ 0x1	    ;; Invariant (Mathematical Symbols)
+SORT_INVARIANT_MATH	equ 0x1	    
 
-SORT_JAPANESE_XJIS	equ 0x0	    ;; Japanese XJIS order
-SORT_JAPANESE_UNICODE	equ 0x1	    ;; Japanese Unicode order (no longer supported)
-SORT_JAPANESE_RADICALSTROKE equ 0x4	;; Japanese radical/stroke order
+SORT_JAPANESE_XJIS	equ 0x0	    
+SORT_JAPANESE_UNICODE	equ 0x1	    
+SORT_JAPANESE_RADICALSTROKE equ 0x4	
 
-SORT_CHINESE_BIG5	equ 0x0	    ;; Chinese BIG5 order
-SORT_CHINESE_PRCP	equ 0x0	    ;; PRC Chinese Phonetic order
-SORT_CHINESE_UNICODE	equ 0x1	    ;; Chinese Unicode order (no longer supported)
-SORT_CHINESE_PRC	equ 0x2	    ;; PRC Chinese Stroke Count order
-SORT_CHINESE_BOPOMOFO	equ 0x3	    ;; Traditional Chinese Bopomofo order
-SORT_CHINESE_RADICALSTROKE equ 0x4     ;; Traditional Chinese radical/stroke order.
+SORT_CHINESE_BIG5	equ 0x0	    
+SORT_CHINESE_PRCP	equ 0x0	    
+SORT_CHINESE_UNICODE	equ 0x1	    
+SORT_CHINESE_PRC	equ 0x2	    
+SORT_CHINESE_BOPOMOFO	equ 0x3	    
+SORT_CHINESE_RADICALSTROKE equ 0x4     
 
-SORT_KOREAN_KSC		equ 0x0	    ;; Korean KSC order
-SORT_KOREAN_UNICODE	equ 0x1	    ;; Korean Unicode order (no longer supported)
+SORT_KOREAN_KSC		equ 0x0	    
+SORT_KOREAN_UNICODE	equ 0x1	    
 
-SORT_GERMAN_PHONE_BOOK	equ 0x1	    ;; German Phone Book order
+SORT_GERMAN_PHONE_BOOK	equ 0x1	    
 
-SORT_HUNGARIAN_DEFAULT	equ 0x0	    ;; Hungarian Default order
-SORT_HUNGARIAN_TECHNICAL equ 0x1     ;; Hungarian Technical order
+SORT_HUNGARIAN_DEFAULT	equ 0x0	    
+SORT_HUNGARIAN_TECHNICAL equ 0x1     
 
-SORT_GEORGIAN_TRADITIONAL equ 0x0     ;; Georgian Traditional order
-SORT_GEORGIAN_MODERN	equ 0x1	    ;; Georgian Modern order
+SORT_GEORGIAN_TRADITIONAL equ 0x0     
+SORT_GEORGIAN_MODERN	equ 0x1	    
 
-;
-;  A language ID is a 16 bit value which is the combination of a
-;  primary language ID and a secondary language ID.  The bits are
-;  allocated as follows:
-;
-;	+-----------------------+-------------------------+
-;	|     Sublanguage ID	|   Primary Language ID	  |
-;	+-----------------------+-------------------------+
-;	 15		      10 9			 0   bit
-;
-;
-;  Language ID creation/extraction macros:
-;
-;    MAKELANGID	   - construct language id from a primary language id and
-;		     a sublanguage id.
-;    PRIMARYLANGID - extract primary language id from a language id.
-;    SUBLANGID	   - extract sublanguage id from a language id.
-;
 
 
 MAKELANGID MACRO usPrimaryLanguage, usSubLanguage
@@ -1703,25 +1458,6 @@ SUBLANGID MACRO lgid
 	EXITM<lgid shr 10>
 	ENDM
 
-;
-;  A locale ID is a 32 bit value which is the combination of a
-;  language ID, a sort ID, and a reserved area.	 The bits are
-;  allocated as follows:
-;
-;	+-------------+---------+-------------------------+
-;	|   Reserved  | Sort ID |      Language ID	  |
-;	+-------------+---------+-------------------------+
-;	 31	    20 19     16 15			 0   bit
-;
-;
-;  Locale ID creation/extraction macros:
-;
-;    MAKELCID		 - construct the locale id from a language id and a sort id.
-;    MAKESORTLCID	 - construct the locale id from a language id, sort id, and sort version.
-;    LANGIDFROMLCID	 - extract the language id from a locale id.
-;    SORTIDFROMLCID	 - extract the sort id from a locale id.
-;    SORTVERSIONFROMLCID - extract the sort version from a locale id.
-;
 
 NLS_VALID_LOCALE_MASK  equ 0x000fffff
 
@@ -1746,19 +1482,8 @@ SORTVERSIONFROMLCID macro lcid
 	endm
 
 
-;; 8 characters for language
-;; 8 characters for region
-;; 64 characters for suffix (script)
-;; 2 characters for '-' separators
-;; 2 characters for prefix like "i-" or "x-"
-;; 1 null termination
 LOCALE_NAME_MAX_LENGTH	equ 85
 
-;;
-;;  Default System and User IDs for language and locale.
-;;  Locale names such as LOCALE_NAME_SYSTEM_DEFAULT, LOCALE_NAME_USER_DEFAULT,
-;;  and LOCALE_NAME_INVARIANT are preferred.
-;;
 
 LANG_SYSTEM_DEFAULT	equ MAKELANGID(LANG_NEUTRAL, SUBLANG_SYS_DEFAULT)
 LANG_USER_DEFAULT	equ MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT)
@@ -1766,9 +1491,6 @@ LANG_USER_DEFAULT	equ MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT)
 LOCALE_SYSTEM_DEFAULT	equ MAKELCID(LANG_SYSTEM_DEFAULT, SORT_DEFAULT)
 LOCALE_USER_DEFAULT	equ MAKELCID(LANG_USER_DEFAULT, SORT_DEFAULT)
 
-;;
-;;  Other special IDs for language and locale.
-;;
 LOCALE_CUSTOM_DEFAULT	equ \
 MAKELCID(MAKELANGID(LANG_NEUTRAL, SUBLANG_CUSTOM_DEFAULT), SORT_DEFAULT)
 
@@ -1784,94 +1506,41 @@ MAKELCID(MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL), SORT_DEFAULT)
 LOCALE_INVARIANT	equ \
 MAKELCID(MAKELANGID(LANG_INVARIANT, SUBLANG_NEUTRAL), SORT_DEFAULT)
 
-;; begin_ntminiport begin_ntndis begin_ntminitape
 
-;;
-;; Macros used to eliminate compiler warning generated when formal
-;; parameters or local variables are not declared.
-;;
-;; Use DBG_UNREFERENCED_PARAMETER() when a parameter is not yet
-;; referenced but will be once the module is completely developed.
-;;
-;; Use DBG_UNREFERENCED_LOCAL_VARIABLE() when a local variable is not yet
-;; referenced but will be once the module is completely developed.
-;;
-;; Use UNREFERENCED_PARAMETER() if a parameter will never be referenced.
-;;
-;; DBG_UNREFERENCED_PARAMETER and DBG_UNREFERENCED_LOCAL_VARIABLE will
-;; eventually be made into a null macro to help determine whether there
-;; is unfinished work.
-;;
 
 ifndef lint
 UNREFERENCED_PARAMETER macro P
-;	exitm<(P)>
 	endm
 DBG_UNREFERENCED_PARAMETER macro P
-;	exitm<(P)>
 	endm
 DBG_UNREFERENCED_LOCAL_VARIABLE macro V
-;	exitm<(V)>
 	endm
 
-else ;; lint
+else 
 
-;; Note: lint -e530 says don't complain about uninitialized variables for
-;; this varible.  Error 527 has to do with unreachable code.
-;; -restore restores checking to the -save state
 
 UNREFERENCED_PARAMETER macro P
-;;lint -save -e527 -e530
-;	exitm<(P) = (P)>
 	endm
-;;lint -restore
 DBG_UNREFERENCED_PARAMETER macro P
-;;lint -save -e527 -e530
-;	exitm<(P) = (P)>
 	endm
-;;lint -restore
 DBG_UNREFERENCED_LOCAL_VARIABLE macro V
-;;lint -save -e527 -e530
-;	exitm<(V) = (V)>
 	endm
-;;lint -restore
 
-endif ;; lint
+endif 
 
-;;
-;; Macro used to eliminate compiler warning 4715 within a switch statement
-;; when all possible cases have already been accounted for.
-;;
-;; switch (a & 3) {
-;;     case 0: return 1;
-;;     case 1: return Foo();
-;;     case 2: return Bar();
-;;     case 3: return 1;
-;;     DEFAULT_UNREACHABLE;
-;;
 
 if (_MSC_VER GT 1200)
 DEFAULT_UNREACHABLE	equ <default: __assume(0)>
 else
 
-;;
-;; Older compilers do not support __assume(), and there is no other free
-;; method of eliminating the warning.
-;;
 
 DEFAULT_UNREACHABLE	equ <>
 
 endif
 
 DEFINE_ENUM_FLAG_OPERATORS macro ENUMTYPE
-	endm ;; NOP, C allows these operators.
+	endm 
 
-;; Compile-time macros for initializing flag values in const data.
-;;
-;; When using DEFINE_ENUM_FLAG_OPERATORS for enum values you should use the macros below
-;; when you need to initialize global const data.  Without these macros the inline operators
-;; from DEFINE_ENUM_FLAG_OPERATORS force a runtime initialization rather than a
-;; compile time initialization.	 This applies even if you have declared the data as const.
 COMPILETIME_OR_2FLAGS macro a,b
 	exitm<((a) OR (b))>
 	endm
@@ -1944,9 +1613,6 @@ MAXIMUM_SUSPEND_COUNT	equ MAXCHAR	; Maximum times thread can be suspended
 KSPIN_LOCK	typedef UINT_PTR
 PKSPIN_LOCK	typedef PTR KSPIN_LOCK
 
-;;
-;; Define 128-bit 16-byte aligned xmm register type.
-;;
 
 DECLSPEC_ALIGN(16)
 M128A		STRUC
@@ -1955,9 +1621,6 @@ _High		LONGLONG ?
 M128A		ENDS
 PM128A		typedef ptr M128A
 
-;;
-;; Format of data for (F)XSAVE/(F)XRSTOR instruction
-;;
 
 DECLSPEC_ALIGN(16)
 XSAVE_FORMAT		STRUC
@@ -1986,11 +1649,8 @@ else
 XmmRegisters		M128A 8 dup(<>)
 Reserved4		db 192 dup(?)
 
-    ;; The fields below are not part of XSAVE/XRSTOR format.
-    ;; They are written by the OS which is relying on a fact that
-    ;; neither (FX)SAVE nor (F)XSTOR used this area.
 
-StackControl		dd 7 dup(?)	;; KERNEL_STACK_CONTROL structure actualy
+StackControl		dd 7 dup(?)	
 Cr0NpxState		dd ?
 
 endif
@@ -2031,12 +1691,6 @@ PXSTATE_CONTEXT		typedef ptr XSTATE_CONTEXT
 XSAVE_ALIGN		equ 64
 MINIMAL_XSTATE_AREA_LENGTH equ sizeof(XSAVE_AREA)
 
-;;
-;; This structure specifies an offset (from the beginning of CONTEXT_EX
-;; structure) and size of a single chunk of an extended context structure.
-;;
-;; N.B. Offset may be negative.
-;;
 
 CONTEXT_CHUNK		STRUC
 _Offset			LONG ?
@@ -2044,49 +1698,15 @@ _Length			dd ?
 CONTEXT_CHUNK		ENDS
 PCONTEXT_CHUNK		typedef ptr CONTEXT_CHUNK
 
-;;
-;; CONTEXT_EX structure is an extension to CONTEXT structure. It defines
-;; a context record as a set of disjoint variable-sized buffers (chunks)
-;; each containing a portion of processor state. Currently there are only
-;; two buffers (chunks) are defined:
-;;
-;;   - Legacy, that stores traditional CONTEXT structure;
-;;   - XState, that stores XSAVE save area buffer starting from
-;;     XSAVE_AREA_HEADER, i.e. without the first 512 bytes.
-;;
-;; There a few assumptions exists that simplify conversion of PCONTEXT
-;; pointer to PCONTEXT_EX pointer.
-;;
-;; 1. APIs that work with PCONTEXT pointers assume that CONTEXT_EX is
-;;    stored right after the CONTEXT structure. It is also assumed that
-;;    CONTEXT_EX is present if and only if corresponding CONTEXT_XXX
-;;    flags are set in CONTEXT.ContextFlags.
-;;
-;; 2. CONTEXT_EX.Legacy is always present if CONTEXT_EX structure is
-;;    present. All other chunks are optional.
-;;
-;; 3. CONTEXT.ContextFlags unambigiously define which chunks are
-;;    present. I.e. if CONTEXT_XSTATE is set CONTEXT_EX.XState is valid.
-;;
 
 CONTEXT_EX		STRUC
 
-    ;; The total length of the structure starting from the chunk with
-    ;; the smallest offset. N.B. that the offset may be negative.
 
 All			CONTEXT_CHUNK <>
 
-    ;; Wrapper for the traditional CONTEXT structure. N.B. the size of
-    ;; the chunk may be less than sizeof(CONTEXT) is some cases (when
-    ;; CONTEXT_EXTENDED_REGISTERS is not set on x86 for instance).
 
 Legacy			CONTEXT_CHUNK <>
 
-    ;; CONTEXT_XSTATE: Extended processor state chunk. The state is
-    ;; stored in the same format XSAVE operation strores it with
-    ;; exception of the first 512 bytes, i.e. staring from
-    ;; XSAVE_AREA_HEADER. The lower two bits corresponding FP and
-    ;; SSE state must be zero.
 
 XState			CONTEXT_CHUNK <>
 
@@ -2095,44 +1715,31 @@ PCONTEXT_EX		typedef ptr CONTEXT_EX
 
 CONTEXT_EX_LENGTH	equ ALIGN_UP_BY(sizeof(CONTEXT_EX), STACK_AIGN)
 
-;;
-;; These macros make context chunks manupulations easier.
-;;
 
 RTL_CONTEXT_EX_OFFSET macro ContextEx, Chunk
-;	exitm<((ContextEx)->Chunk.Offset)>
 	endm
 
 RTL_CONTEXT_EX_LENGTH macro ContextEx, Chunk
-;	exitm<((ContextEx).Chunk._Length)>
 	endm
 
 RTL_CONTEXT_EX_CHUNK macro Base, Layout, Chunk
-;	exitm<((PVOID)((PCHAR)(Base) + RTL_CONTEXT_EX_OFFSET(Layout, Chunk)))>
 	endm
 
 RTL_CONTEXT_OFFSET macro Context, Chunk
-;	exitm<RTL_CONTEXT_EX_OFFSET((PCONTEXT_EX)(Context + 1), Chunk)>
 	endm
 
 RTL_CONTEXT_LENGTH macro Context, Chunk
-;	exitm<RTL_CONTEXT_EX_LENGTH((PCONTEXT_EX)(Context + 1), Chunk)>
 	endm
 
 RTL_CONTEXT_CHUNK macro Context, Chunk
-;	exitm<RTL_CONTEXT_EX_CHUNK((PCONTEXT_EX)(Context + 1),(PCONTEXT_EX)(Context + 1),Chunk)>
 	endm
 
 if NOT defined(__midl) AND NOT defined(MIDL_PASS)
 
-;;
-;; XSAVE/XRSTOR save area should be aligned on 64 byte boundary
-;;
 
 C_ASSERT((sizeof(XSAVE_FORMAT) & (XSAVE_ALIGN - 1)) == 0)
 C_ASSERT((FIELD_OFFSET(XSAVE_AREA, Header) & (XSAVE_ALIGN - 1)) == 0)
 
-;; XSAVE_AREA structure must be sized uniformly on all architectures
 C_ASSERT(MINIMAL_XSTATE_AREA_LENGTH == 512 + 64)
 
 endif
@@ -2141,9 +1748,6 @@ ifdef _AMD64_
 
 if defined(_M_AMD64) AND NOT defined(RC_INVOKED) AND NOT defined(MIDL_PASS)
 
-;;
-;; Define bit test intrinsics.
-;;
 
 BitTest			equ <_bittest>
 BitTestAndComplement	equ <_bittestandcomplement>
@@ -2160,51 +1764,51 @@ InterlockedBitTestAndSet64 equ <_interlockedbittestandset64>
 InterlockedBitTestAndReset64 equ <_interlockedbittestandreset64>
 
 ;BOOLEAN
-_bittest proto _CType \
+_bittest proto WINAPI \
 		  Base: ptr LONG,
 	       _Offset: LONG
 ;BOOLEAN
-_bittestandcomplement proto _CType \
+_bittestandcomplement proto WINAPI \
 		  Base: ptr LONG,
 	       _Offset: LONG
 ;BOOLEAN
-_bittestandset proto _CType \
+_bittestandset proto WINAPI \
 		  Base: ptr LONG,
 	       _Offset: LONG
 ;BOOLEAN
-_bittestandreset proto _CType \
+_bittestandreset proto WINAPI \
 		  Base: ptr LONG,
 	       _Offset: LONG
 ;BOOLEAN
-_interlockedbittestandset proto _CType \
+_interlockedbittestandset proto WINAPI \
 		  Base: ptr LONG,
 	       _Offset: LONG
 ;BOOLEAN
-_interlockedbittestandreset proto _CType \
+_interlockedbittestandreset proto WINAPI \
 		  Base: ptr LONG,
 	       _Offset: LONG
 ;BOOLEAN
-_bittest64 proto _CType \
+_bittest64 proto WINAPI \
 		  Base: ptr LONG64,
 	       _Offset: LONG64
 ;BOOLEAN
-_bittestandcomplement64 proto _CType \
+_bittestandcomplement64 proto WINAPI \
 		  Base: ptr LONG64,
 	       _Offset: LONG64
 ;BOOLEAN
-_bittestandset64 proto _CType \
+_bittestandset64 proto WINAPI \
 		  Base: ptr LONG64,
 	       _Offset: LONG64
 ;BOOLEAN
-_bittestandreset64 proto _CType \
+_bittestandreset64 proto WINAPI \
 		  Base: ptr LONG64,
 	       _Offset: LONG64
 ;BOOLEAN
-_interlockedbittestandset64 proto _CType \
+_interlockedbittestandset64 proto WINAPI \
 		  Base: ptr LONG64,
 	       _Offset: LONG64
 ;BOOLEAN
-_interlockedbittestandreset64 proto _CType \
+_interlockedbittestandreset64 proto WINAPI \
 		  Base: ptr LONG64,
 	       _Offset: LONG64
 
@@ -2223,9 +1827,6 @@ pragma intrinsic(_bittestandreset64)
 pragma intrinsic(_interlockedbittestandset64)
 pragma intrinsic(_interlockedbittestandreset64)
 
-;;
-;; Define bit scan intrinsics.
-;;
 
 BitScanForward		equ <_BitScanForward>
 BitScanReverse		equ <_BitScanReverse>
@@ -2233,19 +1834,19 @@ BitScanForward64	equ <_BitScanForward64>
 BitScanReverse64	equ <_BitScanReverse64>
 
 ;BOOLEAN
-_BitScanForward proto _CType \
+_BitScanForward proto WINAPI \
 		 Index: ptr dword,
 		 _Mask: dword
 ;BOOLEAN
-_BitScanReverse proto _CType \
+_BitScanReverse proto WINAPI \
 		 Index: ptr dword,
 		 _Mask: dword
 ;BOOLEAN
-_BitScanForward64 proto _CType \
+_BitScanForward64 proto WINAPI \
 		 Index: ptr dword,
 		 _Mask: DWORD64
 ;BOOLEAN
-_BitScanReverse64 proto _CType \
+_BitScanReverse64 proto WINAPI \
 		 Index: ptr dword,
 		 _Mask: DWORD64
 
@@ -2254,9 +1855,6 @@ pragma intrinsic(_BitScanReverse)
 pragma intrinsic(_BitScanForward64)
 pragma intrinsic(_BitScanReverse64)
 
-;;
-;; Interlocked intrinsic functions.
-;;
 if 0
 InterlockedIncrement16	equ <_InterlockedIncrement16>
 InterlockedDecrement16	equ <_InterlockedDecrement16>
@@ -2317,80 +1915,78 @@ InterlockedDecrementSizeT macro a
 	exitm<InterlockedDecrement64(a)>
 	endm
 
-; SHORT
-InterlockedIncrement16 proto _CType \
+InterlockedIncrement16 proto WINAPI \
 		Addend: ptr word,
 		 Value: LONG
 ;SHORT
-InterlockedDecrement16 proto _CType \
+InterlockedDecrement16 proto WINAPI \
 		Addend: ptr word
 ;SHORT
-InterlockedCompareExchange16 proto _CType \
+InterlockedCompareExchange16 proto WINAPI \
 	   Destination: ptr word,
 	      ExChange: word,
 	     Comperand: word
 ;LONG
-InterlockedAnd proto _CType \
+InterlockedAnd proto WINAPI \
 	   Destination: ptr LONG,
 		 Value: LONG
 ;LONG
-InterlockedOr proto _CType \
+InterlockedOr proto WINAPI \
 	   Destination: LPLONG,
 		 Value: LONG
 ;LONG
-InterlockedXor proto _CType \
+InterlockedXor proto WINAPI \
 	   Destination: LPLONG,
 		 Value: LONG
 ;LONG64
-InterlockedAnd64 proto _CType \
+InterlockedAnd64 proto WINAPI \
 	   Destination: ptr LONG64,
 		 Value: LONG64
 ;LONG64
-InterlockedOr64 proto _CType \
+InterlockedOr64 proto WINAPI \
 	   Destination: ptr LONG64,
 		 Value: LONG64
 ;LONG64
-InterlockedXor64 proto _CType \
+InterlockedXor64 proto WINAPI \
 	   Destination: ptr LONG64,
 		 Value: LONG64
 ;LONG
-InterlockedIncrement proto _CType \
+InterlockedIncrement proto WINAPI \
 		Addend: ptr LONG
 ;LONG
-InterlockedDecrement proto _CType \
+InterlockedDecrement proto WINAPI \
 		Addend: ptr LONG
 ;LONG
-InterlockedExchange proto _CType \
+InterlockedExchange proto WINAPI \
 		Target: ptr LONG,
 		 Value: LONG
 ;LONG
-InterlockedExchangeAdd proto _CType \
+InterlockedExchangeAdd proto WINAPI \
 		Addend: ptr LONG,
 		 Value: LONG
 ifndef _X86AMD64_
 ;__forceinline
 ;LONG
 InterlockedAdd macro Addend, Value
-;	exitm<InterlockedExchangeAdd(Addend, Value) + Value>
 	endm
 endif
 ;LONG
-InterlockedCompareExchange proto _CType \
+InterlockedCompareExchange proto WINAPI \
 	   Destination: ptr LONG,
 	      Exchange: LONG,
 	     Comperand: LONG
 ;LONG64
-InterlockedIncrement64 proto _CType \
+InterlockedIncrement64 proto WINAPI \
 		Addend: ptr LONG64
 ;LONG64
-InterlockedDecrement64 proto _CType \
+InterlockedDecrement64 proto WINAPI \
 		Addend: ptr LONG64
 ;LONG64
-InterlockedExchange64 proto _CType \
+InterlockedExchange64 proto WINAPI \
 		Target: ptr LONG64,
 		 Value: LONG64
 ;LONG64
-InterlockedExchangeAdd64 proto _CType \
+InterlockedExchangeAdd64 proto WINAPI \
 		Addend: ptr LONG64,
 		 Value: LONG64
 
@@ -2404,17 +2000,17 @@ InterlockedAdd64 macro Addend, Value
 endif
 
 ;LONG64
-InterlockedCompareExchange64 proto _CType \
+InterlockedCompareExchange64 proto WINAPI \
 	   Destination: ptr LONG64,
 	      Exchange: LONG64,
 	     Comperand: LONG64
 ;PVOID
-InterlockedCompareExchangePointer proto _CType \
+InterlockedCompareExchangePointer proto WINAPI \
 	   Destination: PVOID,
 	      Exchange: PVOID,
 	     Comperand: PVOID
 ;PVOID
-InterlockedExchangePointer proto _CType \
+InterlockedExchangePointer proto WINAPI \
 		Target: PVOID,
 		 Value: PVOID
 
@@ -2452,27 +2048,27 @@ InterlockedXor16	equ <_InterlockedXor16>
 endif
 
 ;char
-InterlockedAnd8 proto _CType \
+InterlockedAnd8 proto WINAPI \
 	   Destination: LPSTR,
 		 Value: CHAR
 ;char
-InterlockedOr8 proto _CType \
+InterlockedOr8 proto WINAPI \
 	   Destination: LPSTR,
 		 Value: CHAR
 ;char
-InterlockedXor8 proto _CType \
+InterlockedXor8 proto WINAPI \
 	   Destination: LPSTR,
 		 Value: CHAR
 ;SHORT
-InterlockedAnd16 proto _CType \
+InterlockedAnd16 proto WINAPI \
 	   Destination: LPWORD,
 		 Value: WORD
 ;SHORT
-InterlockedOr16 proto _CType \
+InterlockedOr16 proto WINAPI \
 	   Destination: LPWORD,
 		 Value: WORD
 ;SHORT
-InterlockedXor16 proto _CType \
+InterlockedXor16 proto WINAPI \
 	   Destination: LPWORD,
 		 Value: WORD
 
@@ -2485,28 +2081,22 @@ pragma intrinsic (_InterlockedXor16)
 
 endif
 
-;;
-;; Define function to flush a cache line.
-;;
 
 CacheLineFlush macro Address
 	exitm<_mm_clflush(Address)>
 	endm
 
 ;VOID
-_mm_clflush proto _CType \
+_mm_clflush proto WINAPI \
 	       Address: PVOID
 
 pragma intrinsic(_mm_clflush)
 
 ;VOID
-_ReadWriteBarrier proto _CType
+_ReadWriteBarrier proto WINAPI
 
 pragma intrinsic(_ReadWriteBarrier)
 
-;;
-;; Define memory fence intrinsics
-;;
 
 FastFence		equ <__faststorefence>
 LoadFence		equ <_mm_lfence>
@@ -2514,33 +2104,30 @@ MemoryFence		equ <_mm_mfence>
 StoreFence		equ <_mm_sfence>
 
 ;VOID
-__faststorefence proto _CType
+__faststorefence proto WINAPI
 
 ;VOID
-_mm_lfence proto _CType
+_mm_lfence proto WINAPI
 
 ;VOID
-_mm_mfence proto _CType
+_mm_mfence proto WINAPI
 
 ;VOID
-_mm_sfence proto _CType
+_mm_sfence proto WINAPI
 
 ;VOID
-_mm_pause proto _CType
+_mm_pause proto WINAPI
 
 ;VOID
-_mm_prefetch proto _CType \
+_mm_prefetch proto WINAPI \
 		     a: LPSTR,
 		   sel: SINT
 
 ;VOID
-_m_prefetchw proto _CType \
+_m_prefetchw proto WINAPI \
 		Source: PVOID
 
 
-;;
-;; Define constants for use with _mm_prefetch.
-;;
 
 _MM_HINT_T0		equ 1
 _MM_HINT_T1		equ 2
@@ -2567,38 +2154,29 @@ ReadForWriteAccess macro p
 	exitm<(_m_prefetchw(p), *(p))>
 	endm
 
-;;
-;; PreFetchCacheLine level defines.
-;;
 
 PF_TEMPORAL_LEVEL_1	equ _MM_HINT_T0
 PF_TEMPORAL_LEVEL_2	equ _MM_HINT_T1
 PF_TEMPORAL_LEVEL_3	equ _MM_HINT_T2
 PF_NON_TEMPORAL_LEVEL_ALL equ _MM_HINT_NTA
 
-;;
-;; Define get/set MXCSR intrinsics.
-;;
 
 ReadMxCsr		equ <_mm_getcsr>
 WriteMxCsr		equ <_mm_setcsr>
 
 ;unsigned int
-_mm_getcsr proto _CType
+_mm_getcsr proto WINAPI
 
 ;VOID
-_mm_setcsr proto _CType \
+_mm_setcsr proto WINAPI \
 		 MxCsr: UINT
 
 pragma intrinsic(_mm_getcsr)
 pragma intrinsic(_mm_setcsr)
 
-;;
-;; Assert exception.
-;;
 
 ;VOID
-__int2c proto _CType
+__int2c proto WINAPI
 
 pragma intrinsic(__int2c)
 
@@ -2608,77 +2186,62 @@ DbgRaiseAssertionFailure macro
 	exitm<__int2c()>
 	endm
 
-;;
-;; Define function to get the caller's EFLAGs value.
-;;
 
 GetCallersEflags macro
 	exitm<__getcallerseflags()>
 	endm
 
 ;unsigned __int32
-__getcallerseflags proto _CType
+__getcallerseflags proto WINAPI
 
 pragma intrinsic(__getcallerseflags)
 
-;;
-;; Define function to get segment limit.
-;;
 
 GetSegmentLimit equ <__segmentlimit>
 
 ;DWORD
-__segmentlimit proto _CType \
+__segmentlimit proto WINAPI \
 	      Selector: DWORD
 
 pragma intrinsic(__segmentlimit)
 
-;;
-;; Define function to read the value of a performance counter.
-;;
 
 ReadPMC equ <__readpmc>
 
 ;DWORD64
-__readpmc proto _CType \
+__readpmc proto WINAPI \
 	       Counter: DWORD
 
 pragma intrinsic(__readpmc)
 
-;;
-;; Define function to read the value of the time stamp counter
-;;
 
 ReadTimeStampCounter macro
 	exitm<__rdtsc()>
 	endm
 
 ;DWORD64
-__rdtsc proto _CType
+__rdtsc proto WINAPI
 
 pragma intrinsic(__rdtsc)
 
-;;
-;; Define functions to move strings as bytes, words, dwords, and qwords.
-;;
 
 ;VOID
-__movsb proto _CType \
+__movsb proto WINAPI \
 	   Destination: PBYTE,
 		Source: ptr BYTE,
 		 Count: SIZE_T
 ;VOID
-__movsw proto _CType \
+__movsw proto WINAPI \
 	   Destination: PWORD,
 		Source: ptr WORD,
 		 Count: SIZE_T
 ;VOID
-__movsd proto _CType \
+__movsd proto WINAPI \
 	   Destination: PDWORD,
 		Source: ptr DWORD,
 		 Count: SIZE_T
 ;VOID
-__movsq proto _CType \
+__movsq proto WINAPI \
 	   Destination: PDWORD64,
 		Source: ptr DWORD64,
 		 Count: SIZE_T
@@ -2688,30 +2251,27 @@ pragma intrinsic(__movsw)
 pragma intrinsic(__movsd)
 pragma intrinsic(__movsq)
 
-;;
-;; Define functions to store strings as bytes, words, dwords, and qwords.
-;;
 
 ;VOID
-__stosb proto _CType \
+__stosb proto WINAPI \
 	   Destination: PBYTE,
 		 Value: BYTE,
 		 Count: SIZE_T
 
 ;VOID
-__stosw proto _CType \
+__stosw proto WINAPI \
 	   Destination: PWORD,
 		 Value: WORD,
 		 Count: SIZE_T
 
 ;VOID
-__stosd proto _CType \
+__stosd proto WINAPI \
 	   Destination: PDWORD,
 		 Value: DWORD,
 		 Count: SIZE_T
 
 ;VOID
-__stosq proto _CType \
+__stosq proto WINAPI \
 	   Destination: PDWORD64,
 		 Value: DWORD64,
 		 Count: SIZE_T
@@ -2721,39 +2281,33 @@ pragma intrinsic(__stosw)
 pragma intrinsic(__stosd)
 pragma intrinsic(__stosq)
 
-;;
-;; Define functions to capture the high 64-bits of a 128-bit multiply.
-;;
 
 MultiplyHigh		equ <__mulh>
 UnsignedMultiplyHigh	equ <__umulh>
 
 ;LONGLONG
-__mulh proto _CType \
+__mulh proto WINAPI \
 	    Multiplier: LONG64,
 	  Multiplicand: LONG64
 ;ULONGLONG
-__umulh proto _CType \
+__umulh proto WINAPI \
 	    Multiplier: DWORD64,
 	  Multiplicand: DWORD64
 
 pragma intrinsic(__mulh)
 pragma intrinsic(__umulh)
 
-;;
-;; Define functions to perform 128-bit shifts
-;;
 
 ShiftLeft128	equ <__shiftleft128>
 ShiftRight128	equ <__shiftright128>
 
 ;DWORD64
-__shiftleft128 proto _CType \
+__shiftleft128 proto WINAPI \
 	       LowPart: DWORD64,
 	      HighPart: DWORD64,
 		 Shift: BYTE
 ;DWORD64
-__shiftright128 proto _CType \
+__shiftright128 proto WINAPI \
 	       LowPart: DWORD64,
 	      HighPart: DWORD64,
 		 Shift: BYTE
@@ -2761,14 +2315,11 @@ __shiftright128 proto _CType \
 pragma intrinsic(__shiftleft128)
 pragma intrinsic(__shiftright128)
 
-;;
-;; Define functions to perform 128-bit multiplies.
-;;
 
 Multiply128	equ <_mul128>
 
 ;LONG64
-_mul128 proto _CType \
+_mul128 proto WINAPI \
 	    Multiplier: LONG64,
 	  Multiplicand: LONG64,
 	   HighProduct: ptr LONG64
@@ -2781,7 +2332,7 @@ ifndef UnsignedMultiply128
 UnsignedMultiply128	equ <_umul128>
 
 ;DWORD64
-_umul128 proto _CType \
+_umul128 proto WINAPI \
 	    Multiplier: DWORD64,
 	  Multiplicand: DWORD64,
 	   HighProduct: ptr DWORD64
@@ -2792,47 +2343,44 @@ endif
 
 ;__forceinline
 ;LONG64
-Multiply128 proto _CType \
+Multiply128 proto WINAPI \
 	    Multiplier: LONG64,
 	  Multiplicand: LONG64,
 	   HighProduct: ptr LONG64
 
 ;__forceinline
 ;DWORD64
-UnsignedMultiplyExtract128 proto _CType \
+UnsignedMultiplyExtract128 proto WINAPI \
 	    Multiplier: LONG64,
 	  Multiplicand: LONG64,
 		 Shift: BYTE
-;;
-;; Define functions to read and write the uer TEB and the system PCR/PRCB.
-;;
 
 ;BYTE
-__readgsbyte proto _CType \
+__readgsbyte proto WINAPI \
 	       _Offset: DWORD
 ;WORD
-__readgsword proto _CType \
+__readgsword proto WINAPI \
 	       _Offset: DWORD
 ;DWORD
-__readgsdword proto _CType \
+__readgsdword proto WINAPI \
 	       _Offset: DWORD
 ;DWORD64
-__readgsqword proto _CType \
+__readgsqword proto WINAPI \
 	       _Offset: DWORD
 ;VOID
-__writegsbyte proto _CType \
+__writegsbyte proto WINAPI \
 	       _Offset: DWORD,
 		  Data: BYTE
 ;VOID
-__writegsword proto _CType \
+__writegsword proto WINAPI \
 	       _Offset: DWORD,
 		  Data: WORD
 ;VOID
-__writegsdword proto _CType \
+__writegsdword proto WINAPI \
 	       _Offset: DWORD,
 		  Data: DWORD
 ;VOID
-__writegsqword proto _CType \
+__writegsqword proto WINAPI \
 	       _Offset: DWORD,
 		  Data: DWORD64
 
@@ -2849,31 +2397,31 @@ pragma intrinsic(__writegsqword)
 if NOT defined(_MANAGED)
 
 ;VOID
-__incgsbyte proto _CType \
+__incgsbyte proto WINAPI \
 	       _Offset: DWORD
 ;VOID
-__addgsbyte proto _CType \
+__addgsbyte proto WINAPI \
 	       _Offset: DWORD,
 		 Value: BYTE
 ;VOID
-__incgsword proto _CType \
+__incgsword proto WINAPI \
 	       _Offset: DWORD
 ;VOID
-__addgsword proto _CType \
+__addgsword proto WINAPI \
 	       _Offset: DWORD,
 		 Value: WORD
 ;VOID
-__incgsdword proto _CType \
+__incgsdword proto WINAPI \
 	       _Offset: DWORD
 ;VOID
-__addgsdword proto _CType \
+__addgsdword proto WINAPI \
 	       _Offset: DWORD,
 		 Value: DWORD
 ;VOID
-__incgsqword proto _CType \
+__incgsqword proto WINAPI \
 	       _Offset: DWORD
 ;VOID
-__addgsqword proto _CType \
+__addgsqword proto WINAPI \
 	       _Offset: DWORD,
 		 Value: DWORD64
 
@@ -2889,23 +2437,15 @@ pragma intrinsic(__incgsqword)
 pragma intrinsic(__addgsqword)
 endif
 
-endif ;; !defined(_MANAGED)
+endif 
 
-endif ;; defined(_M_AMD64) AND NOT defined(RC_INVOKED) AND NOT defined(MIDL_PASS)
+endif 
 
-;;
-;; The following values specify the type of access in the first parameter
-;; of the exception record whan the exception code specifies an access
-;; violation.
-;;
 
-EXCEPTION_READ_FAULT	equ 0	       ;; exception caused by a read
-EXCEPTION_WRITE_FAULT	equ 1	      ;; exception caused by a write
-EXCEPTION_EXECUTE_FAULT equ 8	    ;; exception caused by an instruction fetch
+EXCEPTION_READ_FAULT	equ 0	       
+EXCEPTION_WRITE_FAULT	equ 1	      
+EXCEPTION_EXECUTE_FAULT equ 8	    
 
-;;
-;; The following flags control the contents of the CONTEXT structure.
-;;
 
 CONTEXT_AMD64		equ 0x100000
 
@@ -2926,54 +2466,17 @@ CONTEXT_SERVICE_ACTIVE	equ 0x10000000
 CONTEXT_EXCEPTION_REQUEST equ 0x40000000
 CONTEXT_EXCEPTION_REPORTING equ 0x80000000
 
-;;
-;; Define initial MxCsr and FpCsr control.
-;;
 
-INITIAL_MXCSR		equ 0x1f80	      ;; initial MXCSR value
-INITIAL_FPCSR		equ 0x027f	      ;; initial FPCSR value
+INITIAL_MXCSR		equ 0x1f80	      
+INITIAL_FPCSR		equ 0x027f	      
 
 XMM_SAVE_AREA32		typedef XSAVE_FORMAT
 PXMM_SAVE_AREA32	typedef ptr XSAVE_FORMAT
 
-;;
-;; Context Frame
-;;
-;;  This frame has a several purposes: 1) it is used as an argument to
-;;  NtContinue, 2) it is used to constuct a call frame for APC delivery,
-;;  and 3) it is used in the user level thread creation routines.
-;;
-;;
-;; The flags field within this record controls the contents of a CONTEXT
-;; record.
-;;
-;; If the context record is used as an input parameter, then for each
-;; portion of the context record controlled by a flag whose value is
-;; set, it is assumed that that portion of the context record contains
-;; valid context. If the context record is being used to modify a threads
-;; context, then only that portion of the threads context is modified.
-;;
-;; If the context record is used as an output parameter to capture the
-;; context of a thread, then only those portions of the thread's context
-;; corresponding to set flags will be returned.
-;;
-;; CONTEXT_CONTROL specifies SegSs, Rsp, SegCs, Rip, and EFlags.
-;;
-;; CONTEXT_INTEGER specifies Rax, Rcx, Rdx, Rbx, Rbp, Rsi, Rdi, and R8-R15.
-;;
-;; CONTEXT_SEGMENTS specifies SegDs, SegEs, SegFs, and SegGs.
-;;
-;; CONTEXT_FLOATING_POINT specifies Xmm0-Xmm15.
-;;
-;; CONTEXT_DEBUG_REGISTERS specifies Dr0-Dr3 and Dr6-Dr7.
-;;
 
 DECLSPEC_ALIGN(16)
 CONTEXT			STRUC
 
-    ;; Register parameter home addresses.
-    ;; N.B. These fields are for convience - they could be used to extend the
-    ;; context record in the future.
 
 P1Home			dd ?
 P2Home			dd ?
@@ -2982,12 +2485,10 @@ P4Home			dd ?
 P5Home			dd ?
 P6Home			dd ?
 
-    ;; Control flags.
 
 ContextFlags		dd ?
 MxCsr			dd ?
 
-    ;; Segment Registers and processor flags.
 
 SegCs			dw ?
 SegDs			dw ?
@@ -2997,7 +2498,6 @@ SegGs			dw ?
 SegSs			dw ?
 EFlags			dd ?
 
-    ;; Debug registers
 
 _Dr0			dd ?
 _Dr1			dd ?
@@ -3006,7 +2506,6 @@ _Dr3			dd ?
 _Dr6			dd ?
 _Dr7			dd ?
 
-    ;; Integer registers.
 
 _Rax			dd ?
 _Rcx			dd ?
@@ -3025,11 +2524,9 @@ _R13			dd ?
 _R14			dd ?
 _R15			dd ?
 
-    ;; Program counter.
 
 _Rip			dd ?
 
-    ;; Floating point state.
 
 UNION
  FltSave		XMM_SAVE_AREA32 <>
@@ -3055,12 +2552,10 @@ UNION
  ENDS ;DUMMYSTRUCTNAME
 ENDS ;DUMMYUNIONNAME
 
-    ;; Vector registers.
 
 VectorRegister		M128A 26 dup(<>)
 VectorControl		dd ?
 
-    ;; Special debug control registers.
 
 DebugControl		dd ?
 LastBranchToRip		dd ?
@@ -3070,10 +2565,6 @@ LastExceptionFromRip	dd ?
 CONTEXT			ENDS
 PCONTEXT		typedef ptr CONTEXT
 
-;;
-;; Define function table entry - a function table entry is generated for
-;; each frame function.
-;;
 
 RUNTIME_FUNCTION_INDIRECT equ 0x1
 
@@ -3084,9 +2575,6 @@ UnwindData		dd ?
 RUNTIME_FUNCTION	ENDS
 PRUNTIME_FUNCTION	typedef ptr RUNTIME_FUNCTION
 
-;;
-;; Define unwind history table structure.
-;;
 
 UNWIND_HISTORY_TABLE_SIZE equ 12
 
@@ -3108,13 +2596,10 @@ Entry			UNWIND_HISTORY_TABLE_ENTRY UNWIND_HISTORY_TABLE_SIZE dup(<>)
 UNWIND_HISTORY_TABLE	ENDS
 PUNWIND_HISTORY_TABLE	typedef ptr UNWIND_HISTORY_TABLE
 
-;;
-;; Define dynamic function table entry.
-;;
 
 ;typedef
 ;PRUNTIME_FUNCTION
-GET_RUNTIME_FUNCTION_CALLBACK typedef proto _CType \
+GET_RUNTIME_FUNCTION_CALLBACK typedef proto WINAPI \
 	     ControlPc: DWORD64,
 	       Context: PVOID
 
@@ -3122,7 +2607,7 @@ PGET_RUNTIME_FUNCTION_CALLBACK typedef ptr GET_RUNTIME_FUNCTION_CALLBACK
 
 ;typedef
 ;DWORD
-OUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK typedef proto _CType \
+OUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK typedef proto WINAPI \
 	       Process: HANDLE,
 	  TableAddress: PVOID,
 	       Entries: PDWORD,
@@ -3132,31 +2617,25 @@ POUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK typedef ptr OUT_OF_PROCESS_FUNCTION_TABL
 
 OUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK_EXPORT_NAME equ <"OutOfProcessFunctionTableCallback">
 
-;;
-;; Define runtime exception handling prototypes.
-;;
 
 ;NTSYSAPI
 ;VOID
-RtlRestoreContext proto _CType \
+RtlRestoreContext proto WINAPI \
 	 ContextRecord: PCONTEXT,
        ExceptionRecord: ptr EXCEPTION_RECORD
 
 ;BOOLEAN
-RtlAddFunctionTable proto _CType \
+RtlAddFunctionTable proto WINAPI \
 	 FunctionTable: PRUNTIME_FUNCTION,
 	    EntryCount: DWORD,
 	   BaseAddress: DWORD64
 
 ;PRUNTIME_FUNCTION
-RtlLookupFunctionEntry proto _CType \
+RtlLookupFunctionEntry proto WINAPI \
 	     ControlPc: DWORD64,
 	     ImageBase: PDWORD64,
 	  HistoryTable: PUNWIND_HISTORY_TABLE
 
-;;
-;; Nonvolatile context pointer record.
-;;
 
 KNONVOLATILE_CONTEXT_POINTERS  STRUC
 UNION
@@ -3208,7 +2687,7 @@ PKNONVOLATILE_CONTEXT_POINTERS typedef ptr KNONVOLATILE_CONTEXT_POINTERS
 
 ;NTSYSAPI
 ;PEXCEPTION_ROUTINE
-RtlVirtualUnwind proto _CType \
+RtlVirtualUnwind proto WINAPI \
 	   HandlerType: DWORD,
 	     ImageBase: DWORD64,
 	     ControlPc: DWORD64,
@@ -3219,7 +2698,7 @@ RtlVirtualUnwind proto _CType \
        ContextPointers: PKNONVOLATILE_CONTEXT_POINTERS
 
 ;BOOLEAN
-RtlInstallFunctionTableCallback proto _CType \
+RtlInstallFunctionTableCallback proto WINAPI \
        TableIdentifier: DWORD64,
 	   BaseAddress: DWORD64,
 	       _Length: DWORD,
@@ -3228,17 +2707,13 @@ RtlInstallFunctionTableCallback proto _CType \
 OutOfProcessCallbackDll: PCWSTR
 
 ;BOOLEAN
-RtlDeleteFunctionTable proto _CType \
+RtlDeleteFunctionTable proto WINAPI \
 	 FunctionTable: PRUNTIME_FUNCTION
 
-endif ;; _AMD64_
+endif 
 
 ifdef _X86_
 
-;;
-;; Disable these two pragmas that evaluate to "sti" "cli" on x86 so that driver
-;; writers to not leave them inadvertantly in their code.
-;;
 
 ifndef MIDL_PASS
 ;ifndef RC_INVOKED
@@ -3246,8 +2721,7 @@ ifndef MIDL_PASS
 if _MSC_VER GE 1200
 pragma warning(push)
 endif
-pragma warning(disable:4164)   ;; disable C4164 warning so that apps that
-				;; build with /Od don't get weird errors !
+pragma warning(disable:4164)   
 ifdef _M_IX86
 pragma function(_enable)
 pragma function(_disable)
@@ -3256,20 +2730,17 @@ endif
 if _MSC_VER GE 1200
 pragma warning(pop)
 else
-pragma warning(default:4164)   ;; reenable C4164 warning
+pragma warning(default:4164)   
 endif
 
-;endif ;; !RC_INVOKED
-endif ;; !MIDL_PASS
+;endif 
+endif 
 
 ;if defined(_M_IX86) AND NOT defined(RC_INVOKED) AND NOT defined(MIDL_PASS)
 if defined(_M_IX86) AND NOT defined(MIDL_PASS)
 
 if (_MSC_FULL_VER GE 14000101)
 
-;;
-;; Define bit test intrinsics.
-;;
 
 BitTest			equ <_bittest>
 BitTestAndComplement	equ <_bittestandcomplement>
@@ -3279,27 +2750,27 @@ InterlockedBitTestAndSet equ <_interlockedbittestandset>
 InterlockedBitTestAndReset equ <_interlockedbittestandreset>
 
 ;BOOLEAN
-_bittest proto _CType \
+_bittest proto WINAPI \
 		  Base: ptr LONG,
 	       _Offset: LONG
 ;BOOLEAN
-_bittestandcomplement proto _CType \
+_bittestandcomplement proto WINAPI \
 		  Base: ptr LONG,
 	       _Offset: LONG
 ;BOOLEAN
-_bittestandset proto _CType \
+_bittestandset proto WINAPI \
 		  Base: ptr LONG,
 	       _Offset: LONG
 ;BOOLEAN
-_bittestandreset proto _CType \
+_bittestandreset proto WINAPI \
 		  Base: ptr LONG,
 	       _Offset: LONG
 ;BOOLEAN
-_interlockedbittestandset proto _CType \
+_interlockedbittestandset proto WINAPI \
 		  Base: ptr LONG,
 	       _Offset: LONG
 ;BOOLEAN
-_interlockedbittestandreset proto _CType \
+_interlockedbittestandreset proto WINAPI \
 		  Base: ptr LONG,
 	       _Offset: LONG
 
@@ -3311,26 +2782,23 @@ pragma intrinsic(_bittestandreset)
 pragma intrinsic(_interlockedbittestandset)
 pragma intrinsic(_interlockedbittestandreset)
 
-;;
-;; Define bit scan intrinsics.
-;;
 
 BitScanForward		equ <_BitScanForward>
 BitScanReverse		equ <_BitScanReverse>
 
 ;BOOLEAN
-_BitScanForward proto _CType \
+_BitScanForward proto WINAPI \
 		 Index: ptr dword,
 		 _Mask: dword
 ;BOOLEAN
-_BitScanReverse proto _CType \
+_BitScanReverse proto WINAPI \
 		 Index: ptr dword,
 		 _Mask: dword
 
 pragma intrinsic(_BitScanForward)
 pragma intrinsic(_BitScanReverse)
 
-else ;; (_MSC_FULL_VER GE 14000101)
+else 
 
 pragma warning(push)
 pragma warning(disable:4035 4793)
@@ -3354,11 +2822,8 @@ InterlockedBitTestAndReset macro Base, Bit
 
 pragma warning(pop)
 
-endif ;; _MSC_FULL_VER >= 14000101
+endif 
 
-;;
-;; [pfx_parse] - guard against PREfix intrinsic error
-;;
 if (_MSC_FULL_VER GE 140040816) OR (defined(_PREFAST_) AND (_MSC_VER GE 1400))
 
 InterlockedAnd16	equ <_InterlockedAnd16>
@@ -3366,16 +2831,16 @@ InterlockedCompareExchange16 equ <_InterlockedCompareExchange16>
 InterlockedOr16		equ <_InterlockedOr16>
 
 ;SHORT
-_InterlockedAnd16 proto _CType \
+_InterlockedAnd16 proto WINAPI \
 	   Destination: LPWORD,
 		 Value: WORD
 ;SHORT
-_InterlockedCompareExchange16 proto _CType \
+_InterlockedCompareExchange16 proto WINAPI \
 	   Destination: LPWORD,
 	      ExChange: WORD,
 	     Comperand: WORD
 ;SHORT
-_InterlockedOr16 proto _CType \
+_InterlockedOr16 proto WINAPI \
 	   Destination: LPWORD,
 		 Value: WORD
 
@@ -3383,7 +2848,7 @@ pragma intrinsic(_InterlockedAnd16)
 pragma intrinsic(_InterlockedCompareExchange16)
 pragma intrinsic(_InterlockedOr16)
 
-endif  ;; _MSC_FULL_VER GE 140040816
+endif  
 
 if NOT defined(_M_CEE_PURE)
 pragma warning(push)
@@ -3398,37 +2863,30 @@ InterlockedBitTestAndComplement macro Base, Bit
 	setc	al
 	endm
 pragma warning(pop)
-endif	;; _M_CEE_PURE
+endif	
 
-;;
-;; [pfx_parse]
-;; guard against __readfsbyte parsing error
-;;
 if (_MSC_FULL_VER GE 13012035) OR defined(_PREFIX_) OR defined(_PREFAST_)
 
-;;
-;; Define FS referencing intrinsics
-;;
 
 ;BYTE
-__readfsbyte proto _CType \
+__readfsbyte proto WINAPI \
 	       _Offset: DWORD
 ;WORD
-__readfsword proto _CType \
+__readfsword proto WINAPI \
 	       _Offset: DWORD
 ;DWORD
-__readfsdword proto _CType \
+__readfsdword proto WINAPI \
 	       _Offset: DWORD
 ;VOID
-__writefsbyte proto _CType \
+__writefsbyte proto WINAPI \
 	       _Offset: DWORD,
 		  Data: BYTE
 ;VOID
-__writefsword proto _CType \
+__writefsword proto WINAPI \
 	       _Offset: DWORD,
 		  Data: WORD
 ;VOID
-__writefsdword proto _CType \
+__writefsdword proto WINAPI \
 	       _Offset: DWORD,
 		  Data: DWORD
 
@@ -3439,31 +2897,31 @@ pragma intrinsic(__writefsbyte)
 pragma intrinsic(__writefsword)
 pragma intrinsic(__writefsdword)
 
-endif ;; _MSC_FULL_VER GE 13012035
+endif 
 
 if (_MSC_FULL_VER GE 140050727) OR defined(_PREFIX_) OR defined(_PREFAST_)
 
 ifndef _MANAGED
 
 ;VOID
-__incfsbyte proto _CType \
+__incfsbyte proto WINAPI \
 	       _Offset: DWORD
 ;VOID
-__addfsbyte proto _CType \
+__addfsbyte proto WINAPI \
 	       _Offset: DWORD,
 		 Value: BYTE
 ;VOID
-__incfsword proto _CType \
+__incfsword proto WINAPI \
 	       _Offset: DWORD
 ;VOID
-__addfsword proto _CType \
+__addfsword proto WINAPI \
 	       _Offset: DWORD,
 		 Value: WORD
 ;VOID
-__incfsdword proto _CType \
+__incfsdword proto WINAPI \
 	       _Offset: DWORD
 ;VOID
-__addfsdword proto _CType \
+__addfsdword proto WINAPI \
 	       _Offset: DWORD,
 		 Value: DWORD
 
@@ -3474,13 +2932,13 @@ pragma intrinsic(__addfsword)
 pragma intrinsic(__incfsdword)
 pragma intrinsic(__addfsdword)
 
-endif ;; !_MANAGED
-endif ;; _MSC_FULL_VER GE 140050727
+endif 
+endif 
 
 if (_MSC_FULL_VER GE 140041204) OR defined(_PREFIX_) OR defined(_PREFAST_)
 
 ;VOID
-_mm_pause proto _CType
+_mm_pause proto WINAPI
 
 pragma intrinsic(_mm_pause)
 
@@ -3492,10 +2950,10 @@ ifndef _M_CEE_PURE
 YieldProcessor macro
 	exitm<rep nop>
 	endm
-endif  ;; NOT defined(_M_CEE_PURE)
-endif  ;; (_MSC_FULL_VER GE 140041204)
+endif  
+endif  
 
-endif  ;; NOT defined(MIDL_PASS) OR defined(_M_IX86)
+endif  
 
 if NOT defined(MIDL_PASS) AND defined(_M_IX86)
 
@@ -3506,43 +2964,31 @@ pragma warning( disable : 4793 )
 ;FORCEINLINE
 ;VOID
 MemoryBarrier macro
-;    local Barrier
-;    xchg Barrier,eax
     endm
 
 pragma warning( pop )
 
-endif ;; _M_CEE_PURE
+endif 
 
-;;
-;; Prefetch is not supported on all x86 procssors.
-;;
 
 PreFetchCacheLine macro l, a
 	endm
 PrefetchForWrite macro p
 	endm
 ReadForWriteAccess macro p
-;	exitm<[p]>
 	endm
 
-;;
-;; PreFetchCacheLine level defines.
-;;
 
 PF_TEMPORAL_LEVEL_1 equ 1
 PF_NON_TEMPORAL_LEVEL_ALL equ 1
 
-;;
-;; Define function to read the value of a performance counter.
-;;
 
 if _MSC_FULL_VER GE 140050727
 
 ReadPMC equ <__readpmc>
 
 ;DWORD64
-__readpmc proto _CType \
+__readpmc proto WINAPI \
 	       Counter: DWORD
 
 
@@ -3557,9 +3003,6 @@ __readpmc macro Counter
 	endm
 endif
 
-;;
-;; Define function to read the value of the time stamp counter
-;;
 
 if _MSC_FULL_VER GE 140040310
 
@@ -3568,7 +3011,7 @@ ReadTimeStampCounter macro
 	endm
 
 ;DWORD64
-__rdtsc proto _CType
+__rdtsc proto WINAPI
 
 pragma intrinsic(__rdtsc)
 
@@ -3587,7 +3030,7 @@ if defined(_X86_) AND defined(_M_IX86) AND NOT defined(MIDL_PASS)
 if _MSC_FULL_VER GE 140030222
 
 ;VOID
-__int2c proto _CType
+__int2c proto WINAPI
 
 pragma intrinsic(__int2c)
 
@@ -3608,9 +3051,9 @@ __int2c macro
 
 pragma warning( pop )
 
-endif ;; _MSC_FULL_VER GE 140030222
+endif 
 
-endif ;; _X86_
+endif 
 
 if (_MSC_FULL_VER GE 13012035)
 
@@ -3627,7 +3070,7 @@ else
 if _MSC_VER GE 1200
 pragma warning(push)
 endif
-pragma warning (disable:4035 4793)	  ;; disable 4035 (function must return something)
+pragma warning (disable:4035 4793)	  
 
 ;__inline PVOID
 GetFiberData macro
@@ -3645,38 +3088,31 @@ GetCurrentFiber macro
 if _MSC_VER GE 1200
 pragma warning(pop)
 else
-pragma warning (default:4035 4793)	  ;; Reenable it
+pragma warning (default:4035 4793)	  
 endif
-endif ;; (_MSC_FULL_VER GE 13012035)
+endif 
 
-endif ;; NOT defined(MIDL_PASS) AND defined(_M_IX86)
+endif 
 
-;;
-;; The following values specify the type of failing access when the status is
-;; STATUS_ACCESS_VIOLATION and the first parameter in the execpetion record.
-;;
 
-EXCEPTION_READ_FAULT	equ 0 ;; Access violation was caused by a read
-EXCEPTION_WRITE_FAULT	equ 1 ;; Access violation was caused by a write
-EXCEPTION_EXECUTE_FAULT equ 8 ;; Access violation was caused by an instruction fetch
+EXCEPTION_READ_FAULT	equ 0 
+EXCEPTION_WRITE_FAULT	equ 1 
+EXCEPTION_EXECUTE_FAULT equ 8 
 
 SIZE_OF_80387_REGISTERS equ 80
 
-;;
-;; The following flags control the contents of the CONTEXT structure.
-;;
 
 ;if NOT defined(RC_INVOKED)
 
-CONTEXT_i386		equ 0x00010000	  ;; this assumes that i386 and
-CONTEXT_i486		equ 0x00010000	  ;; i486 have identical context records
+CONTEXT_i386		equ 0x00010000	  
+CONTEXT_i486		equ 0x00010000	  
 
-CONTEXT_CONTROL		equ CONTEXT_i386 OR 0x00000001 ;; SS:SP, CS:IP, FAGS, BP
-CONTEXT_INTEGER		equ CONTEXT_i386 OR 0x00000002 ;; AX, BX, CX, DX, SI, DI
-CONTEXT_SEGMENTS	equ CONTEXT_i386 OR 0x00000004 ;; DS, ES, FS, GS
-CONTEXT_FLOATING_POINT	equ CONTEXT_i386 OR 0x00000008 ;; 387 state
-CONTEXT_DEBUG_REGISTERS equ CONTEXT_i386 OR 0x00000010 ;; DB 0-3,6,7
-CONTEXT_EXTENDED_REGISTERS equ CONTEXT_i386 OR 0x00000020 ;; cpu specific extensions
+CONTEXT_CONTROL		equ CONTEXT_i386 OR 0x00000001 
+CONTEXT_INTEGER		equ CONTEXT_i386 OR 0x00000002 
+CONTEXT_SEGMENTS	equ CONTEXT_i386 OR 0x00000004 
+CONTEXT_FLOATING_POINT	equ CONTEXT_i386 OR 0x00000008 
+CONTEXT_DEBUG_REGISTERS equ CONTEXT_i386 OR 0x00000010 
+CONTEXT_EXTENDED_REGISTERS equ CONTEXT_i386 OR 0x00000020 
 CONTEXT_FULL		equ CONTEXT_CONTROL OR CONTEXT_INTEGER OR CONTEXT_SEGMENTS
 CONTEXT_ALL		equ CONTEXT_CONTROL OR CONTEXT_INTEGER OR CONTEXT_SEGMENTS OR \
 			    CONTEXT_DEBUG_REGISTERS OR CONTEXT_FLOATING_POINT OR \
@@ -3707,36 +3143,12 @@ endif
 
 ;include "pshpack4.h"
 
-;;
-;; Context Frame
-;;
-;;  This frame has a several purposes: 1) it is used as an argument to
-;;  NtContinue, 2) is is used to constuct a call frame for APC delivery,
-;;  and 3) it is used in the user level thread creation routines.
-;;
-;;  The layout of the record conforms to a standard call frame.
-;;
 
 CONTEXT			STRUC
 
-    ;; The flags values within this flag control the contents of
-    ;; a CONTEXT record.
-    ;; If the context record is used as an input parameter, then
-    ;; for each portion of the context record controlled by a flag
-    ;; whose value is set, it is assumed that that portion of the
-    ;; context record contains valid context. If the context record
-    ;; is being used to modify a threads context, then only that
-    ;; portion of the threads context will be modified.
-    ;; If the context record is used as an IN OUT parameter to capture
-    ;; the context of a thread, then only those portions of the thread's
-    ;; context corresponding to set flags will be returned.
-    ;; The context record is never used as an OUT only parameter.
 
     ContextFlags	dd ?
 
-    ;; This section is specified/returned if CONTEXT_DEBUG_REGISTERS is
-    ;; set in ContextFlags.  Note that CONTEXT_DEBUG_REGISTERS is NOT
-    ;; included in CONTEXT_FULL.
 
     _Dr0		dd ?
     _Dr1		dd ?
@@ -3745,19 +3157,11 @@ CONTEXT			STRUC
     _Dr6		dd ?
     _Dr7		dd ?
 
-    ;; This section is specified/returned if the
-    ;; ContextFlags word contians the flag CONTEXT_FLOATING_POINT.
 
     FloatSave	FLOATING_SAVE_AREA <>
 
-    ;; This section is specified/returned if the
-    ;; ContextFlags word contians the flag CONTEXT_SEGMENTS.
 
 
-    ;
-    ; This section is specified/returned if the
-    ; ContextFlags word contians the flag CONTEXT_INTEGER.
-    ;
 
     _Edi	dd ?
     _Esi	dd ?
@@ -3766,10 +3170,6 @@ CONTEXT			STRUC
     _Ecx	dd ?
     _Eax	dd ?
 
-    ;
-    ; This section is specified/returned if the
-    ; ContextFlags word contians the flag CONTEXT_CONTROL.
-    ;
 
     _Ebp	dd ?
     _Eip	dd ?
@@ -3778,11 +3178,6 @@ CONTEXT			STRUC
     _Esp	dd ?
     SegSs	dd ?
 
-    ;
-    ; This section is specified/returned if the ContextFlags word
-    ; contains the flag CONTEXT_EXTENDED_REGISTERS.
-    ; The format and contexts are processor specific
-    ;
 
     ExtendedRegisters db MAXIMUM_SUPPORTED_EXTENSION dup(?)
 
@@ -3792,7 +3187,7 @@ PCONTEXT typedef ptr CONTEXT
 
 ;include "poppack.h"
 
-endif ;;_X86_
+endif 
 
 
 ifndef _LDT_ENTRY_DEFINED
@@ -3832,9 +3227,6 @@ endif
 ;if defined(_M_IA64) AND NOT defined(RC_INVOKED) AND NOT defined(MIDL_PASS)
 if defined(_M_IA64) AND NOT defined(MIDL_PASS)
 
-;;
-;; Define bit test intrinsics.
-;;
 
 BitTest			equ <_bittest>
 BitTestAndComplement	equ <_bittestandcomplement>
@@ -3847,36 +3239,36 @@ BitTestAndSet64		equ <_bittestandset64>
 BitTestAndReset64	equ <_bittestandreset64>
 
 ;BOOLEAN
-_bittest proto _CType \
+_bittest proto WINAPI \
 		  Base: ptr LONG,
 	       _Offset: LONG
 ;BOOLEAN
-_bittestandcomplement proto _CType \
+_bittestandcomplement proto WINAPI \
 		  Base: ptr LONG,
 	       _Offset: LONG
 ;BOOLEAN
-_bittestandset proto _CType \
+_bittestandset proto WINAPI \
 		  Base: ptr LONG,
 	       _Offset: LONG
 ;BOOLEAN
-_bittestandreset proto _CType \
+_bittestandreset proto WINAPI \
 		  Base: ptr LONG,
 	       _Offset: LONG
 
 ;BOOLEAN
-_bittest64 proto _CType \
+_bittest64 proto WINAPI \
 		  Base: ptr LONG64,
 	       _Offset: LONG64
 ;BOOLEAN
-_bittestandcomplement64 proto _CType \
+_bittestandcomplement64 proto WINAPI \
 		  Base: ptr LONG64,
 	       _Offset: LONG64
 ;BOOLEAN
-_bittestandset64 proto _CType \
+_bittestandset64 proto WINAPI \
 		  Base: ptr LONG64,
 	       _Offset: LONG64
 ;BOOLEAN
-_bittestandreset64 proto _CType \
+_bittestandreset64 proto WINAPI \
 		  Base: ptr LONG64,
 	       _Offset: LONG64
 
@@ -3890,9 +3282,6 @@ pragma intrinsic(_bittestandcomplement64)
 pragma intrinsic(_bittestandset64)
 pragma intrinsic(_bittestandreset64)
 
-;;
-;; Define bit scan intrinsics.
-;;
 
 BitScanForward		equ <_BitScanForward>
 BitScanReverse		equ <_BitScanReverse>
@@ -3900,19 +3289,19 @@ BitScanForward64	equ <_BitScanForward64>
 BitScanReverse64	equ <_BitScanReverse64>
 
 ;BOOLEAN
-_BitScanForward proto _CType \
+_BitScanForward proto WINAPI \
 		 Index: ptr dword,
 		 _Mask: dword
 ;BOOLEAN
-_BitScanReverse proto _CType \
+_BitScanReverse proto WINAPI \
 		 Index: ptr dword,
 		 _Mask: dword
 ;BOOLEAN
-_BitScanForward64 proto _CType \
+_BitScanForward64 proto WINAPI \
 		 Index: ptr dword,
 		 _Mask: DWORD64
 ;BOOLEAN
-_BitScanReverse64 proto _CType \
+_BitScanReverse64 proto WINAPI \
 		 Index: ptr dword,
 		 _Mask: DWORD64
 
@@ -3924,7 +3313,7 @@ pragma intrinsic(_BitScanReverse64)
 InterlockedCompareExchange16 equ <_InterlockedCompareExchange16>
 
 ;SHORT
-_InterlockedCompareExchange16 proto _CType \
+_InterlockedCompareExchange16 proto WINAPI \
 	   Destination: ptr word,
 	      ExChange: word,
 	     Comperand: word
@@ -4039,319 +3428,319 @@ InterlockedAnd64Release equ <_InterlockedAnd64_rel>
 endif
 
 ;LONG
-InterlockedAdd proto _CType \
+InterlockedAdd proto WINAPI \
 		Addend: ptr LONG,
 		 Value: LONG
 ;LONG
-InterlockedAddAcquire proto _CType \
+InterlockedAddAcquire proto WINAPI \
 		Addend: ptr LONG,
 		 Value: LONG
 ;LONG
-InterlockedAddRelease proto _CType \
+InterlockedAddRelease proto WINAPI \
 		Addend: ptr LONG,
 		 Value: LONG
 ;LONGLONG
-InterlockedAdd64 proto _CType \
+InterlockedAdd64 proto WINAPI \
 		Addend: ptr LONGLONG,
 		 Value: LONGLONG
 ;LONGLONG
-InterlockedAddAcquire64 proto _CType \
+InterlockedAddAcquire64 proto WINAPI \
 		Addend: ptr LONGLONG,
 		 Value: LONGLONG
 ;LONGLONG
-InterlockedAddRelease64 proto _CType \
+InterlockedAddRelease64 proto WINAPI \
 		Addend: ptr LONGLONG,
 		 Value: LONGLONG
 ;LONG
-InterlockedIncrement proto _CType \
+InterlockedIncrement proto WINAPI \
 		Addend: ptr LONG
 ;LONG
-InterlockedDecrement proto _CType \
+InterlockedDecrement proto WINAPI \
 		Addend: ptr LONG
 ;LONG
-InterlockedIncrementAcquire proto _CType \
+InterlockedIncrementAcquire proto WINAPI \
 		Addend: ptr LONG
 ;LONG
-InterlockedDecrementAcquire proto _CType \
+InterlockedDecrementAcquire proto WINAPI \
 		Addend: ptr LONG
 ;LONG
-InterlockedIncrementRelease proto _CType \
+InterlockedIncrementRelease proto WINAPI \
 		Addend: ptr LONG
 ;LONG
-InterlockedDecrementRelease proto _CType \
+InterlockedDecrementRelease proto WINAPI \
 		Addend: ptr LONG
 ;LONG
-InterlockedExchange proto _CType \
+InterlockedExchange proto WINAPI \
 		Target: ptr LONG,
 		 Value: LONG
 ;LONG
-InterlockedExchangeAcquire proto _CType \
+InterlockedExchangeAcquire proto WINAPI \
 		Target: ptr LONG,
 		 Value: LONG
 ;LONG
-InterlockedExchangeAdd proto _CType \
+InterlockedExchangeAdd proto WINAPI \
 		Addend: ptr LONG,
 		 Value: LONG
 ;LONG
-InterlockedExchangeAddAcquire proto _CType \
+InterlockedExchangeAddAcquire proto WINAPI \
 		Addend: ptr LONG,
 		 Value: LONG
 ;LONG
-InterlockedExchangeAddRelease proto _CType \
+InterlockedExchangeAddRelease proto WINAPI \
 		Addend: ptr LONG,
 		 Value: LONG
 ;LONG
-InterlockedCompareExchange proto _CType \
+InterlockedCompareExchange proto WINAPI \
 	   Destination: ptr LONG,
 	      ExChange: LONG,
 	     Comperand: LONG
 ;LONG
-InterlockedCompareExchangeRelease proto _CType \
+InterlockedCompareExchangeRelease proto WINAPI \
 	   Destination: ptr LONG,
 	      ExChange: LONG,
 	     Comperand: LONG
 ;LONG
-InterlockedCompareExchangeAcquire proto _CType \
+InterlockedCompareExchangeAcquire proto WINAPI \
 	   Destination: ptr LONG,
 	      ExChange: LONG,
 	     Comperand: LONG
 ;LONGLONG
-InterlockedIncrement64 proto _CType \
+InterlockedIncrement64 proto WINAPI \
 		Addend: ptr LONGLONG
 ;LONGLONG
-InterlockedIncrementAcquire64 proto _CType \
+InterlockedIncrementAcquire64 proto WINAPI \
 		Addend: ptr LONGLONG
 ;LONGLONG
-InterlockedIncrementRelease64 proto _CType \
+InterlockedIncrementRelease64 proto WINAPI \
 		Addend: ptr LONGLONG
 ;LONGLONG
-InterlockedDecrement64 proto _CType \
+InterlockedDecrement64 proto WINAPI \
 		Addend: ptr LONGLONG
 ;LONGLONG
-InterlockedDecrementAcquire64 proto _CType \
+InterlockedDecrementAcquire64 proto WINAPI \
 		Addend: ptr LONGLONG
 ;LONGLONG
-InterlockedDecrementRelease64 proto _CType \
+InterlockedDecrementRelease64 proto WINAPI \
 		Addend: ptr LONGLONG
 ;LONGLONG
-InterlockedExchange64 proto _CType \
+InterlockedExchange64 proto WINAPI \
 		Target: ptr LONGLONG,
 		 Value: LONGLONG
 ;LONGLONG
-InterlockedExchangeAcquire64 proto _CType \
+InterlockedExchangeAcquire64 proto WINAPI \
 		Target: ptr LONGLONG,
 		 Value: LONGLONG
 ;LONGLONG
-InterlockedExchangeAdd64 proto _CType \
+InterlockedExchangeAdd64 proto WINAPI \
 		Addend: ptr LONGLONG,
 		 Value: LONGLONG
 ;LONGLONG
-InterlockedExchangeAddAcquire64 proto _CType \
+InterlockedExchangeAddAcquire64 proto WINAPI \
 		Addend: ptr LONGLONG,
 		 Value: LONGLONG
 ;LONGLONG
-InterlockedExchangeAddRelease64 proto _CType \
+InterlockedExchangeAddRelease64 proto WINAPI \
 		Addend: ptr LONGLONG,
 		 Value: LONGLONG
 ;LONGLONG
-InterlockedCompareExchange64 proto _CType \
+InterlockedCompareExchange64 proto WINAPI \
 	   Destination: ptr LONGLONG,
 	      Exchange: LONGLONG,
 	     Comperand: LONGLONG
 ;LONGLONG
-InterlockedCompareExchangeAcquire64 proto _CType \
+InterlockedCompareExchangeAcquire64 proto WINAPI \
 	   Destination: ptr LONGLONG,
 	      Exchange: LONGLONG,
 	     Comperand: LONGLONG
 ;LONGLONG
-InterlockedCompareExchangeRelease64 proto _CType \
+InterlockedCompareExchangeRelease64 proto WINAPI \
 	   Destination: ptr LONGLONG,
 	      Exchange: LONGLONG,
 	     Comperand: LONGLONG
 ;LONG64
-InterlockedCompare64Exchange128 proto _CType \
+InterlockedCompare64Exchange128 proto WINAPI \
 	   Destination: ptr LONG64,
 	  ExchangeHigh: LONG64,
 	   ExchangeLow: LONG64,
 	     Comperand: LONG64
 ;LONG64
-InterlockedCompare64ExchangeAcquire128 proto _CType \
+InterlockedCompare64ExchangeAcquire128 proto WINAPI \
 	   Destination: ptr LONG64,
 	  ExchangeHigh: LONG64,
 	   ExchangeLow: LONG64,
 	     Comperand: LONG64
 ;LONG64
-InterlockedCompare64ExchangeRelease128 proto _CType \
+InterlockedCompare64ExchangeRelease128 proto WINAPI \
 	   Destination: ptr LONG64,
 	  ExchangeHigh: LONG64,
 	   ExchangeLow: LONG64,
 	     Comperand: LONG64
 ;PVOID
-InterlockedCompareExchangePointer proto _CType \
+InterlockedCompareExchangePointer proto WINAPI \
 	   Destination: PVOID,
 	      Exchange: PVOID,
 	     Comperand: PVOID
 ;PVOID
-InterlockedCompareExchangePointerAcquire proto _CType \
+InterlockedCompareExchangePointerAcquire proto WINAPI \
 	   Destination: PVOID,
 	      Exchange: PVOID,
 	     Comperand: PVOID
 ;PVOID
-InterlockedCompareExchangePointerRelease proto _CType \
+InterlockedCompareExchangePointerRelease proto WINAPI \
 	   Destination: PVOID,
 	      Exchange: PVOID,
 	     Comperand: PVOID
 ;PVOID
-InterlockedExchangePointer proto _CType \
+InterlockedExchangePointer proto WINAPI \
 		Target: PVOID,
 		 Value: PVOID
 ;PVOID
-InterlockedExchangePointerAcquire proto _CType \
+InterlockedExchangePointerAcquire proto WINAPI \
 		Target: PVOID,
 		 Value: PVOID
 ;LONG
-InterlockedOr proto _CType \
+InterlockedOr proto WINAPI \
 	   Destination: PLONG,
 		 Value: LONG
 ;LONG
-InterlockedOrAcquire proto _CType \
+InterlockedOrAcquire proto WINAPI \
 	   Destination: PLONG,
 		 Value: LONG
 ;LONG
-InterlockedOrRelease proto _CType \
+InterlockedOrRelease proto WINAPI \
 	   Destination: PLONG,
 		 Value: LONG
 ;CHAR
 ;InterlockedOr8
-InterlockedOr8 proto _CType \
+InterlockedOr8 proto WINAPI \
 	   Destination: LPSTR,
 		 Value: CHAR
 ;CHAR
-InterlockedOr8Acquire proto _CType \
+InterlockedOr8Acquire proto WINAPI \
 	   Destination: LPSTR,
 		 Value: CHAR
 ;CHAR
-InterlockedOr8Release proto _CType \
+InterlockedOr8Release proto WINAPI \
 	   Destination: LPSTR,
 		 Value: CHAR
 ;SHORT
-InterlockedOr16 proto _CType \
+InterlockedOr16 proto WINAPI \
 	   Destination: ptr sword,
 		 Value: sword
 ;SHORT
-InterlockedOr16Acquire proto _CType \
+InterlockedOr16Acquire proto WINAPI \
 	   Destination: ptr sword,
 		 Value: sword
 ;SHORT
-InterlockedOr16Release proto _CType \
+InterlockedOr16Release proto WINAPI \
 	   Destination: ptr sword,
 		 Value: sword
 ;LONGLONG
-InterlockedOr64 proto _CType \
+InterlockedOr64 proto WINAPI \
 	   Destination: ptr LONGLONG,
 		 Value: LONGLONG
 ;LONGLONG
-InterlockedOr64Acquire proto _CType \
+InterlockedOr64Acquire proto WINAPI \
 	   Destination: ptr LONGLONG,
 		 Value: LONGLONG
 ;LONGLONG
-InterlockedOr64Release proto _CType \
-	   Destination: ptr LONGLONG,
-		 Value: LONGLONG
-;LONG
-InterlockedXor proto _CType \
-	   Destination: ptr LONG,
-		 Value: LONG
-;LONG
-InterlockedXorAcquire proto _CType \
-	   Destination: ptr LONG,
-		 Value: LONG
-;LONG
-InterlockedXorRelease proto _CType \
-	   Destination: ptr LONG,
-		 Value: LONG
-;CHAR
-InterlockedXor8 proto _CType \
-	   Destination: LPSTR,
-		 Value: CHAR
-;CHAR
-InterlockedXor8Acquire proto _CType \
-	   Destination: LPSTR,
-		 Value: CHAR
-;CHAR
-InterlockedXor8Release proto _CType \
-	   Destination: LPSTR,
-		 Value: CHAR
-;SHORT
-InterlockedXor16 proto _CType \
-	   Destination: ptr sword,
-		 Value: sword
-;SHORT
-InterlockedXor16Acquire proto _CType \
-	   Destination: ptr sword,
-		 Value: sword
-;SHORT
-InterlockedXor16Release proto _CType \
-	   Destination: ptr sword,
-		 Value: sword
-;LONGLONG
-InterlockedXor64 proto _CType \
-	   Destination: ptr LONGLONG,
-		 Value: LONGLONG
-;LONGLONG
-InterlockedXor64Acquire proto _CType \
-	   Destination: ptr LONGLONG,
-		 Value: LONGLONG
-;LONGLONG
-InterlockedXor64Release proto _CType \
+InterlockedOr64Release proto WINAPI \
 	   Destination: ptr LONGLONG,
 		 Value: LONGLONG
 ;LONG
-InterlockedAnd proto _CType \
+InterlockedXor proto WINAPI \
 	   Destination: ptr LONG,
 		 Value: LONG
 ;LONG
-InterlockedAndAcquire proto _CType \
+InterlockedXorAcquire proto WINAPI \
 	   Destination: ptr LONG,
 		 Value: LONG
 ;LONG
-InterlockedAndRelease proto _CType \
+InterlockedXorRelease proto WINAPI \
 	   Destination: ptr LONG,
 		 Value: LONG
 ;CHAR
-InterlockedAnd8 proto _CType \
+InterlockedXor8 proto WINAPI \
 	   Destination: LPSTR,
 		 Value: CHAR
 ;CHAR
-InterlockedAnd8Acquire proto _CType \
+InterlockedXor8Acquire proto WINAPI \
 	   Destination: LPSTR,
 		 Value: CHAR
 ;CHAR
-InterlockedAnd8Release proto _CType \
+InterlockedXor8Release proto WINAPI \
 	   Destination: LPSTR,
 		 Value: CHAR
 ;SHORT
-InterlockedAnd16 proto _CType \
+InterlockedXor16 proto WINAPI \
 	   Destination: ptr sword,
 		 Value: sword
 ;SHORT
-InterlockedAnd16Acquire proto _CType \
+InterlockedXor16Acquire proto WINAPI \
 	   Destination: ptr sword,
 		 Value: sword
 ;SHORT
-InterlockedAnd16Release proto _CType \
+InterlockedXor16Release proto WINAPI \
 	   Destination: ptr sword,
 		 Value: sword
 ;LONGLONG
-InterlockedAnd64 proto _CType \
+InterlockedXor64 proto WINAPI \
 	   Destination: ptr LONGLONG,
 		 Value: LONGLONG
 ;LONGLONG
-InterlockedAnd64Acquire proto _CType \
+InterlockedXor64Acquire proto WINAPI \
 	   Destination: ptr LONGLONG,
 		 Value: LONGLONG
 ;LONGLONG
-InterlockedAnd64Release proto _CType \
+InterlockedXor64Release proto WINAPI \
+	   Destination: ptr LONGLONG,
+		 Value: LONGLONG
+;LONG
+InterlockedAnd proto WINAPI \
+	   Destination: ptr LONG,
+		 Value: LONG
+;LONG
+InterlockedAndAcquire proto WINAPI \
+	   Destination: ptr LONG,
+		 Value: LONG
+;LONG
+InterlockedAndRelease proto WINAPI \
+	   Destination: ptr LONG,
+		 Value: LONG
+;CHAR
+InterlockedAnd8 proto WINAPI \
+	   Destination: LPSTR,
+		 Value: CHAR
+;CHAR
+InterlockedAnd8Acquire proto WINAPI \
+	   Destination: LPSTR,
+		 Value: CHAR
+;CHAR
+InterlockedAnd8Release proto WINAPI \
+	   Destination: LPSTR,
+		 Value: CHAR
+;SHORT
+InterlockedAnd16 proto WINAPI \
+	   Destination: ptr sword,
+		 Value: sword
+;SHORT
+InterlockedAnd16Acquire proto WINAPI \
+	   Destination: ptr sword,
+		 Value: sword
+;SHORT
+InterlockedAnd16Release proto WINAPI \
+	   Destination: ptr sword,
+		 Value: sword
+;LONGLONG
+InterlockedAnd64 proto WINAPI \
+	   Destination: ptr LONGLONG,
+		 Value: LONGLONG
+;LONGLONG
+InterlockedAnd64Acquire proto WINAPI \
+	   Destination: ptr LONGLONG,
+		 Value: LONGLONG
+;LONGLONG
+InterlockedAnd64Release proto WINAPI \
 	   Destination: ptr LONGLONG,
 		 Value: LONGLONG
 
@@ -4439,16 +3828,9 @@ ifndef InterlockedAnd64
 InterlockedAnd64	equ <InterlockedAnd64_Inline>
 
 ;LONGLONG
-InterlockedAnd64_Inline proto _CType \
+InterlockedAnd64_Inline proto WINAPI \
 	   Destination: ptr LONGLONG,
 		 Value: LONGLONG
-;    LONGLONG Old;
-;    do {
-;	 Old = *Destination;
-;    } while (InterlockedCompareExchange64(Destination,
-;					   Old | Value,
-;					   Old) != Old);
-;    return Old;
 endif
 
 InterlockedAndAffinity	equ <InterlockedAnd64>
@@ -4458,16 +3840,9 @@ ifndef InterlockedOr64
 InterlockedOr64		equ <InterlockedOr64_Inline>
 
 ;LONGLONG
-InterlockedOr64_Inline proto _CType \
+InterlockedOr64_Inline proto WINAPI \
 	   Destination: ptr LONGLONG,
 		 Value: LONGLONG
-;    LONGLONG Old;
-;    do {
-;	 Old = *Destination;
-;    } while (InterlockedCompareExchange64(Destination,
-;					   Old | Value,
-;					   Old) != Old);
-;    return Old;
 endif
 
 InterlockedOrAffinity	equ <InterlockedOr64>
@@ -4477,16 +3852,9 @@ ifndef InterlockedXor64
 InterlockedXor64	equ <InterlockedXor64_Inline>
 
 ;LONGLONG
-InterlockedXor64_Inline proto _CType \
+InterlockedXor64_Inline proto WINAPI \
 	   Destination: ptr LONGLONG,
 		 Value: LONGLONG
-;    LONGLONG Old;
-;    do {
-;	 Old = *Destination;
-;    } while (InterlockedCompareExchange64(Destination,
-;					   Old ^ Value,
-;					   Old) != Old);
-;    return Old;
 endif
 
 ifndef InterlockedBitTestAndSet
@@ -4494,13 +3862,9 @@ ifndef InterlockedBitTestAndSet
 InterlockedBitTestAndSet equ <InterlockedBitTestAndSet_Inline>
 
 ;BOOLEAN
-InterlockedBitTestAndSet_Inline proto _CType \
+InterlockedBitTestAndSet_Inline proto WINAPI \
 		  Base: ptr LONG,
 		   Bit: LONG
-;    LONG tBit;
-;
-;    tBit = 1<<(Bit & (sizeof (*Base)*8-1));
-;    return (BOOLEAN) ((InterlockedOr (&Base[Bit/(sizeof (*Base)*8)], tBit)&tBit) != 0);
 endif
 
 ifndef InterlockedBitTestAndReset
@@ -4508,13 +3872,9 @@ ifndef InterlockedBitTestAndReset
 InterlockedBitTestAndReset equ <InterlockedBitTestAndReset_Inline>
 
 ;BOOLEAN
-InterlockedBitTestAndReset_Inline proto _CType \
+InterlockedBitTestAndReset_Inline proto WINAPI \
 		  Base: ptr LONG,
 		   Bit: LONG
-;    LONG tBit;
-;
-;    tBit = 1<<(Bit & (sizeof (*Base)*8-1));
-;    return (BOOLEAN) ((InterlockedAnd (&Base[Bit/(sizeof (*Base)*8)], ~tBit)&tBit) != 0);
 endif
 
 ifndef InterlockedBitTestAndSet64
@@ -4522,13 +3882,9 @@ ifndef InterlockedBitTestAndSet64
 InterlockedBitTestAndSet64 equ <InterlockedBitTestAndSet64_Inline>
 
 ;BOOLEAN
-InterlockedBitTestAndSet64_Inline proto _CType \
+InterlockedBitTestAndSet64_Inline proto WINAPI \
 		  Base: ptr LONG64,
 		   Bit: LONG64
-;    LONG64 tBit;
-;
-;    tBit = 1i64<<(Bit & (sizeof (*Base)*8-1));
-;    return (BOOLEAN) ((InterlockedOr64 (&Base[Bit/(sizeof (*Base)*8)], tBit)&tBit) != 0);
 endif
 
 ifndef InterlockedBitTestAndReset64
@@ -4536,13 +3892,9 @@ ifndef InterlockedBitTestAndReset64
 InterlockedBitTestAndReset64 equ <InterlockedBitTestAndReset64_Inline>
 
 ;BOOLEAN
-InterlockedBitTestAndReset64_Inline proto _CType \
+InterlockedBitTestAndReset64_Inline proto WINAPI \
 		  Base: ptr LONG64,
 		   Bit: LONG64
-;    LONG64 tBit;
-;
-;    tBit = 1i64<<(Bit & (sizeof (*Base)*8-1));
-;    return (BOOLEAN) ((InterlockedAnd64 (&Base[Bit/(sizeof (*Base)*8)], ~tBit)&tBit) != 0);
 endif
 
 ifndef InterlockedBitTestAndComplement
@@ -4550,14 +3902,10 @@ ifndef InterlockedBitTestAndComplement
 InterlockedBitTestAndComplement equ <InterlockedBitTestAndComplement_Inline>
 
 ;BOOLEAN
-InterlockedBitTestAndComplement_Inline proto _CType \
+InterlockedBitTestAndComplement_Inline proto WINAPI \
 		  Base: ptr LONG,
 		   Bit: LONG
 
-;    LONG tBit;
-;
-;    tBit = 1<<(Bit & (sizeof (*Base)*8-1));
-;    return (BOOLEAN) ((InterlockedXor (&Base[Bit/(sizeof (*Base)*8)], tBit)&tBit) != 0);
 endif
 
 ifndef InterlockedBitTestAndComplement64
@@ -4565,39 +3913,31 @@ ifndef InterlockedBitTestAndComplement64
 InterlockedBitTestAndComplement64 equ <InterlockedBitTestAndComplement64_Inline>
 
 ;BOOLEAN
-InterlockedBitTestAndComplement64_Inline proto _CType \
+InterlockedBitTestAndComplement64_Inline proto WINAPI \
 		  Base: ptr LONG64,
 		   Bit: LONG64
-;    LONG64 tBit;
-;
-;    tBit = 1i64<<(Bit & (sizeof (*Base)*8-1));
-;    return (BOOLEAN) ((InterlockedXor64 (&Base[Bit/(sizeof (*Base)*8)], tBit)&tBit) != 0);
 endif
 
-endif ;; defined(_M_IA64) AND NOT defined(RC_INVOKED) AND NOT defined(MIDL_PASS)
+endif 
 
 
 if NOT defined(__midl) AND NOT defined(GENUTIL) AND NOT defined(_GENIA64_) AND defined(_IA64_)
 
 ;void *
-_rdteb proto _CType
+_rdteb proto WINAPI
 
 ;void *
-_rdtebex proto _CType
+_rdtebex proto WINAPI
 
 ifdef _M_IA64
 
 pragma intrinsic(_rdteb)
-pragma intrinsic(_rdtebex)	;; _rdtebex() is a kernel safe version of _rdteb()
+pragma intrinsic(_rdtebex)	
 
 NtCurrentTeb macro
 	exitm<_rdtebex()>
 	endm
 
-;;
-;; Define functions to get the address of the current fiber and the
-;; current fiber data.
-;;
 
 GetCurrentFiber macro
 	exitm<[NtCurrentTeb()].FiberData>
@@ -4611,13 +3951,13 @@ GetFiberData macro
 if defined(_IA64_) AND defined(_M_IA64) AND NOT defined(MIDL_PASS)
 
 ;void
-__break proto _CType \
+__break proto WINAPI \
 		 StIIM: SINT
 
 pragma intrinsic (__break)
 
 BREAK_DEBUG_BASE	equ 0x080000
-ASSERT_BREAKPOINT	equ (BREAK_DEBUG_BASE+3)  ;; Cause a STATUS_ASSERTION_FAILURE exception to be raised.
+ASSERT_BREAKPOINT	equ (BREAK_DEBUG_BASE+3)  
 
 ;FORCEINLINE
 ;VOID
@@ -4628,29 +3968,26 @@ DbgRaiseAssertionFailure macro
 endif
 
 ;void
-__yield proto _CType
+__yield proto WINAPI
 ;void
-__mf proto _CType
+__mf proto WINAPI
 ;void
-__lfetch proto _CType \
+__lfetch proto WINAPI \
 		 Level: SINT,
 	       Address: PVOID
 ;void
-__lfetchfault proto _CType \
+__lfetchfault proto WINAPI \
 		 Level: SINT,
 	       Address: PVOID
 ;void
-__lfetch_excl proto _CType \
+__lfetch_excl proto WINAPI \
 		 Level: SINT,
 	       Address: PVOID
 ;void
-__lfetchfault_excl proto _CType \
+__lfetchfault_excl proto WINAPI \
 		 Level: SINT,
 	       Address: PVOID
 
-;;
-;; __lfetch control defines.
-;;
 
 MD_LFHINT_NONE		equ 0x00
 MD_LFHINT_NT1		equ 0x01
@@ -4664,19 +4001,13 @@ pragma intrinsic (__lfetchfault_excl)
 pragma intrinsic (__lfetch_excl)
 pragma intrinsic (__mf)
 
-;;
-;; Define function to read the value of the time stamp counter
-;;
-;; N.B. The register number for the time stamp counter is CV_IA64_ApITC which
-;;	is 3116.
-;;
 
 ReadTimeStampCounter macro
 	exitm<__getReg(3116)>
 	endm
 
 ;unsigned __int64
-__getReg proto _CType \
+__getReg proto WINAPI \
 		Number: SINT
 
 pragma intrinsic(__getReg)
@@ -4691,23 +4022,17 @@ ReadForWriteAccess macro p
 	exitm<(__lfetch_excl(MD_LFHINT_NONE, p), *p)>
 	endm
 
-;;
-;; PreFetchCacheLine level defines.
-;;
 
 PF_TEMPORAL_LEVEL_1	equ MD_LFHINT_NONE
 PF_TEMPORAL_LEVEL_2	equ MD_LFHINT_NT1
 PF_TEMPORAL_LEVEL_3	equ MD_LFHINT_NT2
 PF_NON_TEMPORAL_LEVEL_ALL equ MD_LFHINT_NTA
 
-;;
-;; Define functions to capture the high 64-bits of a 128-bit multiply.
-;;
 
 UnsignedMultiplyHigh	equ <__UMULH>
 
 ;ULONGLONG
-__UMULH proto _CType \
+__UMULH proto WINAPI \
 	    Multiplier: ULONGLONG,
 	  Multiplicand: ULONGLONG
 
@@ -4718,7 +4043,7 @@ if (_MSC_VER GE 1400)
 UnsignedMultiply128	equ <_umul128>
 
 ;DWORD64
-_umul128 proto _CType \
+_umul128 proto WINAPI \
 	    Multiplier: qword,
 	  Multiplicand: qword,
 	   HighProduct: ptr qword
@@ -4730,26 +4055,19 @@ endif
 else
 
 ;STRUC TEB *
-NtCurrentTeb proto _CType
+NtCurrentTeb proto WINAPI
 
-endif ;; _M_IA64
+endif 
 
-endif  ;; NOT defined(__midl) AND NOT defined(GENUTIL) AND NOT defined(_GENIA64_) AND defined(_M_IA64)
+endif  
 
 ifdef _IA64_
 
-;;
-;; The following values specify the type of failing access when the status is
-;; STATUS_ACCESS_VIOLATION and the first parameter in the exception record.
-;;
 
-EXCEPTION_READ_FAULT	equ 0 ;; Access violation was caused by a read
-EXCEPTION_WRITE_FAULT	equ 1 ;; Access violation was caused by a write
-EXCEPTION_EXECUTE_FAULT equ 2 ;; Access violation was caused by an instruction fetch
+EXCEPTION_READ_FAULT	equ 0 
+EXCEPTION_WRITE_FAULT	equ 1 
+EXCEPTION_EXECUTE_FAULT equ 2 
 
-;;
-;; The following flags control the contents of the CONTEXT structure.
-;;
 
 ;if NOT defined(RC_INVOKED)
 
@@ -4760,7 +4078,7 @@ CONTEXT_LOWER_FLOATING_POINT equ CONTEXT_IA64 OR 0x00000002
 CONTEXT_HIGHER_FLOATING_POINT equ CONTEXT_IA64 OR 0x00000004
 CONTEXT_INTEGER		equ CONTEXT_IA64 OR 0x00000008
 CONTEXT_DEBUG		equ CONTEXT_IA64 OR 0x00000010
-CONTEXT_IA32_CONTROL	equ CONTEXT_IA64 OR 0x00000020	;; Includes StIPSR
+CONTEXT_IA32_CONTROL	equ CONTEXT_IA64 OR 0x00000020	
 
 
 CONTEXT_FLOATING_POINT	equ CONTEXT_LOWER_FLOATING_POINT OR CONTEXT_HIGHER_FOATING_POINT
@@ -4774,42 +4092,15 @@ CONTEXT_SERVICE_ACTIVE	    equ 0x10000000
 CONTEXT_EXCEPTION_REQUEST   equ 0x40000000
 CONTEXT_EXCEPTION_REPORTING equ 0x80000000
 
-;endif ;; NOT defined(RC_INVOKED)
+;endif 
 
-;;
-;; Context Frame
-;;
-;;  This frame has a several purposes: 1) it is used as an argument to
-;;  NtContinue, 2) it is used to construct a call frame for APC delivery,
-;;  3) it is used to construct a call frame for exception dispatching
-;;  in user mode, 4) it is used in the user level thread creation
-;;  routines, and 5) it is used to to pass thread state to debuggers.
-;;
-;;  N.B. Because this record is used as a call frame, it must be EXACTLY
-;;  a multiple of 16 bytes in length and aligned on a 16-byte boundary.
-;;
 
 CONTEXT			STRUC
 
-    ;; The flags values within this flag control the contents of
-    ;; a CONTEXT record.
-    ;; If the context record is used as an input parameter, then
-    ;; for each portion of the context record controlled by a flag
-    ;; whose value is set, it is assumed that that portion of the
-    ;; context record contains valid context. If the context record
-    ;; is being used to modify a thread's context, then only that
-    ;; portion of the threads context will be modified.
-    ;; If the context record is used as an __inout parameter to capture
-    ;; the context of a thread, then only those portions of the thread's
-    ;; context corresponding to set flags will be returned.
-    ;; The context record is never used as an __out only parameter.
 
 ContextFlags		dd ?
-Fill1			dd 3 dup(?) ;; for alignment of following on 16-byte boundary
+Fill1			dd 3 dup(?) 
 
-    ;; This section is specified/returned if the ContextFlags word contains
-    ;; the flag CONTEXT_DEBUG.
-    ;; N.B. CONTEXT_DEBUG is *not* part of CONTEXT_FULL.
 
 DbI0			ULONGLONG ?
 DbI1			ULONGLONG ?
@@ -4829,8 +4120,6 @@ DbD5			ULONGLONG ?
 DbD6			ULONGLONG ?
 DbD7			ULONGLONG ?
 
-    ;; This section is specified/returned if the ContextFlags word contains
-    ;; the flag CONTEXT_LOWER_FLOATING_POINT.
 
 FltS0			FLOAT128 <>
 FltS1			FLOAT128 <>
@@ -4847,8 +4136,6 @@ FltT7			FLOAT128 <>
 FltT8			FLOAT128 <>
 FltT9			FLOAT128 <>
 
-    ;; This section is specified/returned if the ContextFlags word contains
-    ;; the flag CONTEXT_HIGHER_FLOATING_POINT.
 
 FltS4			FLOAT128 <>
 FltS5			FLOAT128 <>
@@ -4973,29 +4260,24 @@ FltF125			FLOAT128 <>
 FltF126			FLOAT128 <>
 FltF127			FLOAT128 <>
 
-    ;; This section is specified/returned if the ContextFlags word contains
-    ;; the flag CONTEXT_LOWER_FLOATING_POINT | CONTEXT_HIGHER_FLOATING_POINT | CONTEXT_CONTROL.
 
-StFPSR			ULONGLONG ?	;;  FP status
+StFPSR			ULONGLONG ?	
 
-    ;; This section is specified/returned if the ContextFlags word contains
-    ;; the flag CONTEXT_INTEGER.
-    ;; N.B. The registers gp, sp, rp are part of the control context
 
-IntGp			ULONGLONG ?	;;  r1, volatile
-IntT0			ULONGLONG ?	;;  r2-r3, volatile
-IntT1			ULONGLONG ?	;;
-IntS0			ULONGLONG ?	;;  r4-r7, preserved
+IntGp			ULONGLONG ?	
+IntT0			ULONGLONG ?	
+IntT1			ULONGLONG ?	
+IntS0			ULONGLONG ?	
 IntS1			ULONGLONG ?
 IntS2			ULONGLONG ?
 IntS3			ULONGLONG ?
-IntV0			ULONGLONG ?	;;  r8, volatile
-IntT2			ULONGLONG ?	;;  r9-r11, volatile
+IntV0			ULONGLONG ?	
+IntT2			ULONGLONG ?	
 IntT3			ULONGLONG ?
 IntT4			ULONGLONG ?
-IntSp			ULONGLONG ?	;;  stack pointer (r12), special
-IntTeb			ULONGLONG ?	;;  teb (r13), special
-IntT5			ULONGLONG ?	;;  r14-r31, volatile
+IntSp			ULONGLONG ?	
+IntTeb			ULONGLONG ?	
+IntT5			ULONGLONG ?	
 IntT6			ULONGLONG ?
 IntT7			ULONGLONG ?
 IntT8			ULONGLONG ?
@@ -5014,59 +4296,49 @@ IntT20			ULONGLONG ?
 IntT21			ULONGLONG ?
 IntT22			ULONGLONG ?
 
-IntNats			ULONGLONG ?	;;  Nat bits for r1-r31
-			    ;; r1-r31 in bits 1 thru 31.
-Preds			ULONGLONG ?	;;  predicates, preserved
+IntNats			ULONGLONG ?	
+Preds			ULONGLONG ?	
 
-BrRp			ULONGLONG ?	;;  return pointer, b0, preserved
-BrS0			ULONGLONG ?	;;  b1-b5, preserved
+BrRp			ULONGLONG ?	
+BrS0			ULONGLONG ?	
 BrS1			ULONGLONG ?
 BrS2			ULONGLONG ?
 BrS3			ULONGLONG ?
 BrS4			ULONGLONG ?
-BrT0			ULONGLONG ?	;;  b6-b7, volatile
+BrT0			ULONGLONG ?	
 BrT1			ULONGLONG ?
 
-    ;; This section is specified/returned if the ContextFlags word contains
-    ;; the flag CONTEXT_CONTROL.
 
-    ;; Other application registers
-ApUNAT			ULONGLONG ?	;;  User Nat collection register, preserved
-ApLC			ULONGLONG ?	;;  Loop counter register, preserved
-ApEC			ULONGLONG ?	;;  Epilog counter register, preserved
-ApCCV			ULONGLONG ?	;;  CMPXCHG value register, volatile
-ApDCR			ULONGLONG ?	;;  Default control register (TBD)
+ApUNAT			ULONGLONG ?	
+ApLC			ULONGLONG ?	
+ApEC			ULONGLONG ?	
+ApCCV			ULONGLONG ?	
+ApDCR			ULONGLONG ?	
 
-    ;; Register stack info
-RsPFS			ULONGLONG ?	;;  Previous function state, preserved
-RsBSP			ULONGLONG ?	;;  Backing store pointer, preserved
+RsPFS			ULONGLONG ?	
+RsBSP			ULONGLONG ?	
 RsBSPSTORE		ULONGLONG ?
-RsRSC			ULONGLONG ?	;;  RSE configuration, volatile
-RsRNAT			ULONGLONG ?	;;  RSE Nat collection register, preserved
+RsRSC			ULONGLONG ?	
+RsRNAT			ULONGLONG ?	
 
-    ;; Trap Status Information
-StIPSR			ULONGLONG ?	;;  Interruption Processor Status
-StIIP			ULONGLONG ?	;;  Interruption IP
-StIFS			ULONGLONG ?	;;  Interruption Function State
+StIPSR			ULONGLONG ?	
+StIIP			ULONGLONG ?	
+StIFS			ULONGLONG ?	
 
-    ;; iA32 related control registers
-StFCR			ULONGLONG ?	;;  copy of Ar21
-Eflag			ULONGLONG ?	;;  Eflag copy of Ar24
-SegCSD			ULONGLONG ?	;;  iA32 CSDescriptor (Ar25)
-SegSSD			ULONGLONG ?	;;  iA32 SSDescriptor (Ar26)
-Cflag			ULONGLONG ?	;;  Cr0+Cr4 copy of Ar27
-StFSR			ULONGLONG ?	;;  x86 FP status (copy of AR28)
-StFIR			ULONGLONG ?	;;  x86 FP status (copy of AR29)
-StFDR			ULONGLONG ?	;;  x86 FP status (copy of AR30)
+StFCR			ULONGLONG ?	
+Eflag			ULONGLONG ?	
+SegCSD			ULONGLONG ?	
+SegSSD			ULONGLONG ?	
+Cflag			ULONGLONG ?	
+StFSR			ULONGLONG ?	
+StFIR			ULONGLONG ?	
+StFDR			ULONGLONG ?	
 
-UNUSEDPACK		ULONGLONG ?	;;  added to pack StFDR to 16-bytes
+UNUSEDPACK		ULONGLONG ?	
 
 CONTEXT			ENDS
 PCONTEXT		typedef ptr CONTEXT
 
-;;
-;; Plabel descriptor structure definition
-;;
 
 PLABEL_DESCRIPTOR	STRUC
 EntryPoint		ULONGLONG ?
@@ -5074,9 +4346,6 @@ GlobalPointer		ULONGLONG ?
 PLABEL_DESCRIPTOR	ENDS
 PPLABEL_DESCRIPTOR	typedef ptr PLABEL_DESCRIPTOR
 
-;;
-;; Function table entry structure definition.
-;;
 
 RUNTIME_FUNCTION	STRUC
 BeginAddress		dd ?
@@ -5085,9 +4354,6 @@ UnwindInfoAddress	dd ?
 RUNTIME_FUNCTION	ENDS
 PRUNTIME_FUNCTION	typedef ptr RUNTIME_FUNCTION
 
-;;
-;; Define unwind history table structure.
-;;
 
 UNWIND_HISTORY_TABLE_SIZE equ 12
 
@@ -5110,13 +4376,10 @@ Entry			UNWIND_HISTORY_TABLE_ENTRY UNWIND_HISTORY_TABLE_SIZE dup(<>)
 UNWIND_HISTORY_TABLE	ENDS
 PUNWIND_HISTORY_TABLE	typedef ptr UNWIND_HISTORY_TABLE
 
-;;
-;; Define dynamic function table entry.
-;;
 
 ;typedef
 ;PRUNTIME_FUNCTION
-GET_RUNTIME_FUNCTION_CALLBACK typedef proto _CType \
+GET_RUNTIME_FUNCTION_CALLBACK typedef proto WINAPI \
 	     ControlPc: DWORD64,
 	       Context: PVOID
 
@@ -5124,7 +4387,7 @@ PGET_RUNTIME_FUNCTION_CALLBACK typedef ptr GET_RUNTIME_FUNCTION_CALLBACK
 
 ;typedef
 ;DWORD
-OUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK typedef proto _CType \
+OUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK typedef proto WINAPI \
 	       Process: HANDLE,
 	  TableAddress: PVOID,
 	       Entries: PDWORD,
@@ -5135,14 +4398,14 @@ OUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK_EXPORT_NAME equ <"OutOfProcessFunctionTab
 
 ;NTSYSAPI
 ;BOOLEAN
-RtlAddFunctionTable proto _CType \
+RtlAddFunctionTable proto WINAPI \
 	 FunctionTable: PRUNTIME_FUNCTION,
 	    EntryCount: DWORD,
 	   BaseAddress: ULONGLONG,
 	      TargetGp: ULONGLONG
 
 ;BOOLEAN
-RtlInstallFunctionTableCallback proto _CType \
+RtlInstallFunctionTableCallback proto WINAPI \
        TableIdentifier: DWORD64,
 	   BaseAddress: DWORD64,
 	       _Length: DWORD,
@@ -5152,29 +4415,15 @@ RtlInstallFunctionTableCallback proto _CType \
 OutOfProcessCallbackDll: PCWSTR
 
 ;BOOLEAN
-RtlDeleteFunctionTable proto _CType \
+RtlDeleteFunctionTable proto WINAPI \
 	 FunctionTable: PRUNTIME_FUNCTION
 
 ;PRUNTIME_FUNCTION
-RtlLookupFunctionEntry proto _CType \
+RtlLookupFunctionEntry proto WINAPI \
 	     ControlPc: ULONGLONG,
 	     ImageBase: PULONGLONG,
 	      TargetGp: PULONGLONG
 
-;;
-;; Nonvolatile context pointer record.
-;;
-;; The IA64 architecture currently doesn't have any nonvolatile kernel context
-;; as we capture everything in either the trap or exception frames on
-;; transition from user to kernel mode. We allocate a single bogus
-;; pointer field as usually this structure is made up of pointers to
-;; places in the kernel stack where the various nonvolatile items were
-;; pushed on to the kernel stack.
-;;
-;; TBD *** Need to fill in this structure with the relevant fields
-;;	   when we start storing the nonvolatile information only when
-;;	   necessary.
-;;
 
 KNONVOLATILE_CONTEXT_POINTERS  STRUC
 FltS0			PFLOAT128 ?
@@ -5242,7 +4491,7 @@ PFRAME_POINTERS		typedef ptr FRAME_POINTERS
 
 ;NTSYSAPI
 ;ULONGLONG
-RtlVirtualUnwind proto _CType \
+RtlVirtualUnwind proto WINAPI \
 	     ImageBase: ULONGLONG,
 	     ControlPc: ULONGLONG,
 	 FunctionEntry: PRUNTIME_FUNCTION,
@@ -5252,29 +4501,29 @@ RtlVirtualUnwind proto _CType \
        ContextPointers: PKNONVOLATILE_CONTEXT_POINTERS
 
 ;VOID
-RtlRestoreContext proto _CType \
+RtlRestoreContext proto WINAPI \
 	 ContextRecord: PCONTEXT,
        ExceptionRecord: ptr EXCEPTION_RECORD
 
 ;VOID
-__jump_unwind proto _CType \
+__jump_unwind proto WINAPI \
 	 TargetMsFrame: ULONGLONG,
 	 TargetBsFrame: ULONGLONG,
 	      TargetPc: ULONGLONG
 
-endif ;; _IA64_
+endif 
 
 ;if NOT defined(RC_INVOKED)
 
-WOW64_CONTEXT_i386	equ 0x00010000	  ;; this assumes that i386 and
-WOW64_CONTEXT_i486	equ 0x00010000	  ;; i486 have identical context records
+WOW64_CONTEXT_i386	equ 0x00010000	  
+WOW64_CONTEXT_i486	equ 0x00010000	  
 
-WOW64_CONTEXT_CONTROL	equ WOW64_CONTEXT_i386 OR 0x00000001 ;; SS:SP, CS:IP, FAGS, BP
-WOW64_CONTEXT_INTEGER	equ WOW64_CONTEXT_i386 OR 0x00000002 ;; AX, BX, CX, DX, SI, DI
-WOW64_CONTEXT_SEGMENTS	equ WOW64_CONTEXT_i386 OR 0x00000004 ;; DS, ES, FS, GS
-WOW64_CONTEXT_FLOATING_POINT equ WOW64_CONTEXT_i386 OR 0x00000008 ;; 387 state
-WOW64_CONTEXT_DEBUG_REGISTERS equ WOW64_CONTEXT_i386 OR 0x00000010 ;; DB 0-3,6,7
-WOW64_CONTEXT_EXTENDED_REGISTERS equ WOW64_CONTEXT_i386 OR 0x00000020 ;; cpu specific extensions
+WOW64_CONTEXT_CONTROL	equ WOW64_CONTEXT_i386 OR 0x00000001 
+WOW64_CONTEXT_INTEGER	equ WOW64_CONTEXT_i386 OR 0x00000002 
+WOW64_CONTEXT_SEGMENTS	equ WOW64_CONTEXT_i386 OR 0x00000004 
+WOW64_CONTEXT_FLOATING_POINT equ WOW64_CONTEXT_i386 OR 0x00000008 
+WOW64_CONTEXT_DEBUG_REGISTERS equ WOW64_CONTEXT_i386 OR 0x00000010 
+WOW64_CONTEXT_EXTENDED_REGISTERS equ WOW64_CONTEXT_i386 OR 0x00000020 
 
 WOW64_CONTEXT_FULL	equ WOW64_CONTEXT_CONTROL OR WOW64_CONTEXT_INTEGER OR \
 			    WOW64_CONTEXT_SEGMENTS
@@ -5283,11 +4532,8 @@ WOW64_CONTEXT_ALL	equ WOW64_CONTEXT_CONTROL OR WOW64_CONTEXT_INTEGER OR \
 			    WOW64_CONTEXT_FLOATING_POINT
 WOW64_CONTEXT_XSTATE	equ WOW64_CONTEXT_i386 OR 0x00000040
 
-;endif ;; NOT defined(RC_INVOKED)
+;endif 
 
-;;
-;;  Define the size of the 80387 save area, which is in the context frame.
-;;
 
 WOW64_SIZE_OF_80387_REGISTERS equ 80
 
@@ -5308,36 +4554,12 @@ PWOW64_FLOATING_SAVE_AREA typedef ptr WOW64_FLOATING_SAVE_AREA
 
 ;include "pshpack4.h"
 
-;;
-;; Context Frame
-;;
-;;  This frame has a several purposes: 1) it is used as an argument to
-;;  NtContinue, 2) is is used to constuct a call frame for APC delivery,
-;;  and 3) it is used in the user level thread creation routines.
-;;
-;;  The layout of the record conforms to a standard call frame.
-;;
 
 WOW64_CONTEXT		STRUC
 
-    ;; The flags values within this flag control the contents of
-    ;; a CONTEXT record.
-    ;; If the context record is used as an input parameter, then
-    ;; for each portion of the context record controlled by a flag
-    ;; whose value is set, it is assumed that that portion of the
-    ;; context record contains valid context. If the context record
-    ;; is being used to modify a threads context, then only that
-    ;; portion of the threads context will be modified.
-    ;; If the context record is used as an IN OUT parameter to capture
-    ;; the context of a thread, then only those portions of the thread's
-    ;; context corresponding to set flags will be returned.
-    ;; The context record is never used as an OUT only parameter.
 
 ContextFlags		dd ?
 
-    ;; This section is specified/returned if CONTEXT_DEBUG_REGISTERS is
-    ;; set in ContextFlags.  Note that CONTEXT_DEBUG_REGISTERS is NOT
-    ;; included in CONTEXT_FULL.
 
 _Dr0			dd ?
 _Dr1			dd ?
@@ -5346,21 +4568,15 @@ _Dr3			dd ?
 _Dr6			dd ?
 _Dr7			dd ?
 
-    ;; This section is specified/returned if the
-    ;; ContextFlags word contians the flag CONTEXT_FLOATING_POINT.
 
 FloatSave		WOW64_FLOATING_SAVE_AREA <>
 
-    ;; This section is specified/returned if the
-    ;; ContextFlags word contians the flag CONTEXT_SEGMENTS.
 
 SegGs			dd ?
 SegFs			dd ?
 SegEs			dd ?
 SegDs			dd ?
 
-    ;; This section is specified/returned if the
-    ;; ContextFlags word contians the flag CONTEXT_INTEGER.
 
 _Edi			dd ?
 _Esi			dd ?
@@ -5369,19 +4585,14 @@ _Edx			dd ?
 _Ecx			dd ?
 _Eax			dd ?
 
-    ;; This section is specified/returned if the
-    ;; ContextFlags word contians the flag CONTEXT_CONTROL.
 
 _Ebp			dd ?
 _Eip			dd ?
-SegCs			dd ?	;; MUST BE SANITIZED
-EFlags			dd ?	;; MUST BE SANITIZED
+SegCs			dd ?	
+EFlags			dd ?	
 _Esp			dd ?
 SegSs			dd ?
 
-    ;; This section is specified/returned if the ContextFlags word
-    ;; contains the flag CONTEXT_EXTENDED_REGISTERS.
-    ;; The format and contexts are processor specific
 
 ExtendedRegisters	db WOW64_MAXIMUM_SUPPORTED_EXTENSION dup(?)
 WOW64_CONTEXT		ENDS
@@ -5447,9 +4658,6 @@ ExceptionInformation	DWORD64 EXCEPTION_MAXIMUM_PARAMETERS dup(?)
 EXCEPTION_RECORD64	ENDS
 PEXCEPTION_RECORD64	typedef ptr EXCEPTION_RECORD64
 
-;;
-;; Typedef for pointer returned by exception_info()
-;;
 
 EXCEPTION_POINTERS	STRUC
 ExceptionRecord		PEXCEPTION_RECORD ?
@@ -5463,7 +4671,7 @@ handler			SIZE_T ?
 EXCEPTION_REGISTRATION	ENDS
 
 ;VOID
-RtlUnwind proto _CType \
+RtlUnwind proto WINAPI \
 	   TargetFrame: PVOID,
 	      TargetIp: PVOID,
        ExceptionRecord: PEXCEPTION_RECORD,
@@ -5471,7 +4679,7 @@ RtlUnwind proto _CType \
 
 ifdef _IA64_
 ;VOID
-RtlUnwind2 proto _CType \
+RtlUnwind2 proto WINAPI \
 	   TargetFrame: FRAME_POINTERS,
 	      TargetIp: PVOID,
        ExceptionRecord: PEXCEPTION_RECORD,
@@ -5481,7 +4689,7 @@ endif
 
 ifdef _AMD64_
 ;VOID
-RtlUnwindEx proto _CType \
+RtlUnwindEx proto WINAPI \
 	   TargetFrame: PVOID,
 	      TargetIp: PVOID,
        ExceptionRecord: PEXCEPTION_RECORD,
@@ -5490,7 +4698,7 @@ RtlUnwindEx proto _CType \
 	  HistoryTable: PUNWIND_HISTORY_TABLE
 elseifdef _IA64_
 ;VOID
-RtlUnwindEx proto _CType \
+RtlUnwindEx proto WINAPI \
 	   TargetFrame: FRAME_POINTERS,
 	      TargetIp: PVOID,
        ExceptionRecord: PEXCEPTION_RECORD,
@@ -5503,56 +4711,12 @@ PACCESS_TOKEN		typedef PVOID
 PSECURITY_DESCRIPTOR	typedef PVOID
 PSID			typedef PVOID
 
-;;//////////////////////////////////////////////////////////////////////
-;;								      //
-;;			       ACCESS MASK			      //
-;;								      //
-;;//////////////////////////////////////////////////////////////////////
 
-;;
-;;  Define the access mask as a longword sized structure divided up as
-;;  follows:
-;;
-;;	 3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1
-;;	 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-;;	+---------------+---------------+-------------------------------+
-;;	|G|G|G|G|Res'd|A| StandardRights|         SpecificRights        |
-;;	|R|W|E|A|     |S|		|				|
-;;	+-+-------------+---------------+-------------------------------+
-;;
-;;	typedef struct _ACCESS_MASK {
-;;	    WORD   SpecificRights;
-;;	    BYTE  StandardRights;
-;;	    BYTE  AccessSystemAcl : 1;
-;;	    BYTE  Reserved : 3;
-;;	    BYTE  GenericAll : 1;
-;;	    BYTE  GenericExecute : 1;
-;;	    BYTE  GenericWrite : 1;
-;;	    BYTE  GenericRead : 1;
-;;	} ACCESS_MASK;
-;;	typedef ACCESS_MASK *PACCESS_MASK;
-;;
-;;  but to make life simple for programmer's we'll allow them to specify
-;;  a desired access mask by simply OR'ing together mulitple single rights
-;;  and treat an access mask as a DWORD.  For example
-;;
-;;	DesiredAccess = DELETE | READ_CONTROL
-;;
-;;  So we'll declare ACCESS_MASK as DWORD
-;;
 
 ACCESS_MASK	typedef DWORD
 PACCESS_MASK	typedef PTR ACCESS_MASK
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;								    ;;
-;;			    ACCESS TYPES			    ;;
-;;								    ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;
-; The following are masks for the predefined standard access types
-;
 
 DELETE		equ 0x00010000
 READ_CONTROL	equ 0x00020000
@@ -5569,31 +4733,18 @@ STANDARD_RIGHTS_EXECUTE equ READ_CONTROL
 STANDARD_RIGHTS_ALL	equ 0x001F0000
 SPECIFIC_RIGHTS_ALL	equ 0x0000FFFF
 
-;
-; AccessSystemAcl access type
-;
 
 ACCESS_SYSTEM_SECURITY	equ 0x01000000
 
-;
-; MaximumAllowed access type
-;
 
 MAXIMUM_ALLOWED equ 0x02000000
 
-;
-;  These are the generic rights.
-;
 
 GENERIC_READ	equ 0x80000000
 GENERIC_WRITE	equ 0x40000000
 GENERIC_EXECUTE equ 0x20000000
 GENERIC_ALL	equ 0x10000000
 
-;
-;  Define the generic mapping array.  This is used to denote the
-;  mapping of each generic access right to a specific access mask.
-;
 
 GENERIC_MAPPING STRUC
 GenericRead	ACCESS_MASK ?
@@ -5604,13 +4755,6 @@ GENERIC_MAPPING ENDS
 
 PGENERIC_MAPPING typedef PTR GENERIC_MAPPING
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;								      ;;
-;;			  LUID_AND_ATTRIBUTES			      ;;
-;;								      ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-;;
 
 ;include <pshpack4.h>
 
@@ -5624,32 +4768,6 @@ PLUID_AND_ATTRIBUTES_ARRAY typedef ptr LUID_AND_ATTRIBUTES_ARRAY
 
 ;include <poppack.h>
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;								      ;;
-;;		Security Id	(SID)				      ;;
-;;								      ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-;;
-;; Pictorially the structure of an SID is as follows:
-;;
-;;	   1   1   1   1   1   1
-;;	   5   4   3   2   1   0   9   8   7   6   5   4   3   2   1   0
-;;	+---------------------------------------------------------------+
-;;	|      SubAuthorityCount	|Reserved1 (SBZ)|   Revision	|
-;;	+---------------------------------------------------------------+
-;;	|		    IdentifierAuthority[0]			|
-;;	+---------------------------------------------------------------+
-;;	|		    IdentifierAuthority[1]			|
-;;	+---------------------------------------------------------------+
-;;	|		    IdentifierAuthority[2]			|
-;;	+---------------------------------------------------------------+
-;;	|								|
-;;	+- -  -	 -  -  -  -  -	SubAuthority[]	-  -  -	 -  -  -  -  - -+
-;;	|								|
-;;	+---------------------------------------------------------------+
-;;
-;;
 
 ifndef SID_IDENTIFIER_AUTHORITY_DEFINED
 SID_IDENTIFIER_AUTHORITY_DEFINED equ 1
@@ -5669,9 +4787,9 @@ IdentifierAuthority	SID_IDENTIFIER_AUTHORITY <>
 ifdef MIDL_PASS
 ;SubAuthority		dd [SubAuthorityCount] dup(?)
 SubAuthority		dd ANYSIZE_ARRAY dup(?)
-else ;; MIDL_PASS
+else 
 SubAuthority		dd ANYSIZE_ARRAY dup(?)
-endif;; MIDL_PASS
+endif
 SID			ENDS
 PISID			typedef ptr SID
 endif
@@ -5679,7 +4797,7 @@ endif
 ifndef MIDL_PASS
 SECURITY_MAX_SID_SIZE	equ \
 (sizeof(SID) - sizeof(DWORD) + (SID_MAX_SUB_AUTHORITIES * sizeof(DWORD)))
-endif ;; MIDL_PASS
+endif 
 
 SID_REVISION		equ 1	; Current revision level
 SID_MAX_SUB_AUTHORITIES equ 15
@@ -5701,9 +4819,9 @@ SidTypeComputer		equ 9
 SID_AND_ATTRIBUTES	STRUC
 ifdef MIDL_PASS
 Sid			PISID ?
-else ;; MIDL_PASS
+else 
 Sid			PSID ?
-endif ;; MIDL_PASS
+endif 
 Attributes		dd ?
 SID_AND_ATTRIBUTES	ENDS
 PSID_AND_ATTRIBUTES	typedef ptr SID_AND_ATTRIBUTES
@@ -5725,21 +4843,6 @@ _Hash			SID_HASH_ENTRY SID_HASH_SIZE dup(?)
 SID_AND_ATTRIBUTES_HASH ENDS
 PSID_AND_ATTRIBUTES_HASH typedef ptr SID_AND_ATTRIBUTES_HASH
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;									   ;;
-;; Universal well-known SIDs						   ;;
-;;									   ;;
-;;     Null SID			    S-1-0-0				   ;;
-;;     World			    S-1-1-0				   ;;
-;;     Local			    S-1-2-0				   ;;
-;;     Creator Owner ID		    S-1-3-0				   ;;
-;;     Creator Group ID		    S-1-3-1				   ;;
-;;     Creator Owner Server ID	    S-1-3-2				   ;;
-;;     Creator Group Server ID	    S-1-3-3				   ;;
-;;									   ;;
-;;     (Non-unique IDs)		    S-1-4				   ;;
-;;									   ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 SECURITY_NULL_SID_AUTHORITY	  equ <{0,0,0,0,0,0}>
 SECURITY_WORLD_SID_AUTHORITY	  equ <{0,0,0,0,0,1}>
@@ -5760,54 +4863,9 @@ SECURITY_CREATOR_OWNER_SERVER_RID equ 0x00000002
 SECURITY_CREATOR_GROUP_SERVER_RID equ 0x00000003
 SECURITY_CREATOR_OWNER_RIGHTS_RID equ 0x00000004
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;									     //
-;; NT well-known SIDs							     //
-;;									     //
-;;     NT Authority	       S-1-5					     //
-;;     Dialup		       S-1-5-1					     //
-;;									     //
-;;     Network		       S-1-5-2					     //
-;;     Batch		       S-1-5-3					     //
-;;     Interactive	       S-1-5-4					     //
-;;     (Logon IDs)	       S-1-5-5-X-Y				     //
-;;     Service		       S-1-5-6					     //
-;;     AnonymousLogon	       S-1-5-7	     (aka null logon session)	     //
-;;     Proxy		       S-1-5-8					     //
-;;     Enterprise DC (EDC)     S-1-5-9	     (aka domain controller account) //
-;;     Self		       S-1-5-10	     (self RID)			     //
-;;     Authenticated User      S-1-5-11	     (Authenticated user somewhere)  //
-;;     Restricted Code	       S-1-5-12	     (Running restricted code)	     //
-;;     Terminal Server	       S-1-5-13	     (Running on Terminal Server)    //
-;;     Remote Logon	       S-1-5-14	     (Remote Interactive Logon)	     //
-;;     This Organization       S-1-5-15					     //
-;;									     //
-;;     IUser		       S-1-5-17
-;;     Local System	       S-1-5-18					     //
-;;     Local Service	       S-1-5-19					     //
-;;     Network Service	       S-1-5-20					     //
-;;									     //
-;;     (NT non-unique IDs)     S-1-5-0x15-... (NT Domain Sids)		     //
-;;									     //
-;;     (Built-in domain)       S-1-5-0x20				     //
-;;									     //
-;;     (Security Package IDs)  S-1-5-0x40				     //
-;;     NTLM Authentication     S-1-5-0x40-10				     //
-;;     SChannel Authentication S-1-5-0x40-14				     //
-;;     Digest Authentication   S-1-5-0x40-21				     //
-;;									     //
-;;     Other Organization      S-1-5-1000    (>=1000 can not be filtered)    //
-;;									     //
-;;									     //
-;; NOTE: the relative identifier values (RIDs) determine which security	     //
-;;	 boundaries the SID is allowed to cross.  Before adding new RIDs,    //
-;;	 a determination needs to be made regarding which range they should  //
-;;	 be added to in order to ensure proper "SID filtering"		     //
-;;									     //
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-SECURITY_NT_AUTHORITY		equ <{0,0,0,0,0,5}>	;; ntifs
+SECURITY_NT_AUTHORITY		equ <{0,0,0,0,0,5}>	
 
 SECURITY_DIALUP_RID		equ 0x00000001
 SECURITY_NETWORK_RID		equ 0x00000002
@@ -5873,20 +4931,13 @@ SECURITY_NFS_ID_BASE_RID	equ 0x00000058
 SECURITY_COM_ID_BASE_RID	equ 0x00000059
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;									   ;;
-;; well-known domain relative sub-authority values (RIDs)...		   ;;
-;;									   ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Well-known users ...
 
 DOMAIN_USER_RID_ADMIN	       equ 0x000001F4
 DOMAIN_USER_RID_GUEST	       equ 0x000001F5
 DOMAIN_USER_RID_KRBTGT	       equ 0x000001F6
 DOMAIN_USER_RID_MAX	       equ 0x000003E7
 
-;; well-known groups ...
 
 DOMAIN_GROUP_RID_ADMINS	       equ 0x00000200
 DOMAIN_GROUP_RID_USERS	       equ 0x00000201
@@ -5899,7 +4950,6 @@ DOMAIN_GROUP_RID_ENTERPRISE_ADMINS equ 0x00000207
 DOMAIN_GROUP_RID_POLICY_ADMINS equ 0x00000208
 DOMAIN_GROUP_RID_READONLY_CONTROLLERS equ 0x00000209
 
-;; well-known aliases ...
 
 DOMAIN_ALIAS_RID_ADMINS	       equ 0x00000220
 DOMAIN_ALIAS_RID_USERS	       equ 0x00000221
@@ -5938,10 +4988,6 @@ SECURITY_MANDATORY_HIGH_RID		    equ 0x00003000
 SECURITY_MANDATORY_SYSTEM_RID		    equ 0x00004000
 SECURITY_MANDATORY_PROTECTED_PROCESS_RID    equ 0x00005000
 
-;;
-;; SECURITY_MANDATORY_MAXIMUM_USER_RID is the highest RID that
-;; can be set by a usermode caller.
-;;
 
 SECURITY_MANDATORY_MAXIMUM_USER_RID equ SECURITY_MANDATORY_SYSTEM_RID
 
@@ -5949,9 +4995,6 @@ MANDATORY_LEVEL_TO_MANDATORY_RID macro IL
 	exitm<(IL * 0x1000)>
 	endm
 
-;;
-;; Well known SID definitions for lookup.
-;;
 
 WELL_KNOWN_SID_TYPE typedef sdword ; enum {
 
@@ -6040,10 +5083,6 @@ WELL_KNOWN_SID_TYPE typedef sdword ; enum {
     WinThisOrganizationCertificateSid		equ 82
 
 
-;;
-;; Allocate the System Luid.  The first 1000 LUIDs are reserved.
-;; Use #999 here (0x3e7 = 999)
-;;
 
 SYSTEM_LUID			equ <{ 0x3E7, 0x0 }>
 ANONYMOUS_LOGON_LUID		equ <{ 0x3e6, 0x0 }>
@@ -6051,15 +5090,7 @@ LOCALSERVICE_LUID		equ <{ 0x3e5, 0x0 }>
 NETWORKSERVICE_LUID		equ <{ 0x3e4, 0x0 }>
 IUSER_LUID			equ <{ 0x3e3, 0x0 }>
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;								      ;;
-;;			    User and Group related SID attributes     ;;
-;;								      ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;
-;; Group attributes
-;;
 
 SE_GROUP_MANDATORY		equ 0x00000001
 SE_GROUP_ENABLED_BY_DEFAULT	equ 0x00000002
@@ -6082,46 +5113,14 @@ SE_GROUP_VALID_ATTRIBUTES	equ SE_GROUP_MANDATORY		OR \
 				    SE_GROUP_INTEGRITY		OR \
 				    SE_GROUP_INTEGRITY_ENABLED
 
-;;
-;; User attributes
-;;
 
-;; (None yet defined.)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;								     ;;
-;;			  ACL  and  ACE				     ;;
-;;								     ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;
-;;  Define an ACL and the ACE format.  The structure of an ACL header
-;;  followed by one or more ACEs.  Pictorally the structure of an ACL header
-;;  is as follows:
-;;
-;;	3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1
-;;	1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-;;	+-------------------------------+---------------+---------------+
-;;	|	    AclSize	       |      Sbz1     |  AclRevision  |
-;;	+-------------------------------+---------------+---------------+
-;;	|	      Sbz2	       |	   AceCount	       |
-;;	+-------------------------------+-------------------------------+
-;;
-;;  The current AclRevision is defined to be ACL_REVISION.
-;;
-;;  AclSize is the size, in bytes, allocated for the ACL.  This includes
-;;  the ACL header, ACES, and remaining free space in the buffer.
-;;
-;;  AceCount is the number of ACES in the ACL.
-;;
 
-;; This is the *current* ACL revision
 
 ACL_REVISION	 equ 2
 ACL_REVISION_DS	 equ 4
 
-;; This is the history of ACL revisions. Add a new one whenever
-;; ACL_REVISION is updated
 
 ACL_REVISION1		equ 1
 MIN_ACL_REVISION	equ ACL_REVISION2
@@ -6139,23 +5138,6 @@ Sbz2		dw ?
 ACL		ENDS
 PACL		typedef PTR ACL
 
-;;
-;;  The structure of an ACE is a common ace header followed by ace type
-;;  specific data.  Pictorally the structure of the common ace header is
-;;  as follows:
-;;
-;;	3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1
-;;	1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-;;	+---------------+-------+-------+---------------+---------------+
-;;	|	    AceSize	       |    AceFlags   |     AceType   |
-;;	+---------------+-------+-------+---------------+---------------+
-;;
-;;  AceType denotes the type of the ace, there are some predefined ace
-;;  types
-;;
-;;  AceSize is the size, in bytes, of ace.
-;;
-;;  AceFlags are the Ace flags for audit and inheritance, defined shortly.
 
 ACE_HEADER	STRUC
 AceType		db ?
@@ -6164,10 +5146,6 @@ AceSize		dw ?
 ACE_HEADER	ENDS
 PACE_HEADER	typedef PTR ACE_HEADER
 
-;;
-;;  The following are the predefined ace types that go into the AceType
-;;  field of an Ace header.
-;;
 
 ACCESS_MIN_MS_ACE_TYPE			equ 0x0
 ACCESS_ALLOWED_ACE_TYPE			equ 0x0
@@ -6201,10 +5179,6 @@ SYSTEM_ALARM_CALLBACK_OBJECT_ACE_TYPE	equ 0x10
 SYSTEM_MANDATORY_LABEL_ACE_TYPE		equ 0x11
 ACCESS_MAX_MS_V5_ACE_TYPE		equ 0x11
 
-;;
-;;  The following are the inherit flags that go into the AceFlags field
-;;  of an Ace header.
-;;
 
 OBJECT_INHERIT_ACE		  equ 0x1
 CONTAINER_INHERIT_ACE		  equ 0x2
@@ -6214,57 +5188,14 @@ INHERITED_ACE			  equ 0x10
 VALID_INHERIT_FLAGS		  equ 0x1F
 
 
-;;  The following are the currently defined ACE flags that go into the
-;;  AceFlags field of an ACE header.  Each ACE type has its own set of
-;;  AceFlags.
-;;
-;;  SUCCESSFUL_ACCESS_ACE_FLAG - used only with system audit and alarm ACE
-;;  types to indicate that a message is generated for successful accesses.
-;;
-;;  FAILED_ACCESS_ACE_FLAG - used only with system audit and alarm ACE types
-;;  to indicate that a message is generated for failed accesses.
-;;
 
-;;
-;;  SYSTEM_AUDIT and SYSTEM_ALARM AceFlags
-;;
-;;  These control the signaling of audit and alarms for success or failure.
-;;
 
 SUCCESSFUL_ACCESS_ACE_FLAG	 equ 0x40
 FAILED_ACCESS_ACE_FLAG		 equ 0x80
 
 
-;;
-;;  We'll define the structure of the predefined ACE types.  Pictorally
-;;  the structure of the predefined ACE's is as follows:
-;;
-;;	3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1
-;;	1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-;;	+---------------+-------+-------+---------------+---------------+
-;;	|    AceFlags	| Resd	|Inherit|    AceSize	|     AceType	|
-;;	+---------------+-------+-------+---------------+---------------+
-;;	|			      Mask			       |
-;;	+---------------------------------------------------------------+
-;;	|							       |
-;;	+							       +
-;;	|							       |
-;;	+			      Sid			       +
-;;	|							       |
-;;	+							       +
-;;	|							       |
-;;	+---------------------------------------------------------------+
-;;
-;;  Mask is the access mask associated with the ACE.  This is either the
-;;  access allowed, access denied, audit, or alarm mask.
-;;
-;;  Sid is the Sid associated with the ACE.
-;;
 
-;;  The following are the four predefined ACE types.
 
-;;  Examine the AceType field in the Header to determine
-;;  which structure is appropriate to use for casting.
 
 
 ACCESS_ALLOWED_ACE	STRUC
@@ -6350,16 +5281,11 @@ SidStart		dd ?
 SYSTEM_ALARM_OBJECT_ACE ENDS
 PSYSTEM_ALARM_OBJECT_ACE TYPEDEF PTR SYSTEM_ALARM_OBJECT_ACE
 
-;;
-;; Callback ace support in post Win2000.
-;; Resource managers can put their own data after Sidstart + Length of the sid
-;;
 
 ACCESS_ALLOWED_CALLBACK_ACE STRUC
 Header			ACE_HEADER <>
 _Mask			ACCESS_MASK ?
 SidStart		dd ?
-;; Opaque resouce manager specific data
 ACCESS_ALLOWED_CALLBACK_ACE ENDS
 PACCESS_ALLOWED_CALLBACK_ACE typedef ptr ACCESS_ALLOWED_CALLBACK_ACE
 
@@ -6367,7 +5293,6 @@ ACCESS_DENIED_CALLBACK_ACE STRUC
 Header			ACE_HEADER <>
 _Mask			ACCESS_MASK ?
 SidStart		dd ?
-;; Opaque resouce manager specific data
 ACCESS_DENIED_CALLBACK_ACE ENDS
 PACCESS_DENIED_CALLBACK_ACE typedef ptr ACCESS_DENIED_CALLBACK_ACE
 
@@ -6375,7 +5300,6 @@ SYSTEM_AUDIT_CALLBACK_ACE STRUC
 Header			ACE_HEADER <>
 _Mask			ACCESS_MASK ?
 SidStart		dd ?
-;; Opaque resouce manager specific data
 SYSTEM_AUDIT_CALLBACK_ACE ENDS
 PSYSTEM_AUDIT_CALLBACK_ACE typedef ptr SYSTEM_AUDIT_CALLBACK_ACE
 
@@ -6383,7 +5307,6 @@ SYSTEM_ALARM_CALLBACK_ACE STRUC
 Header			ACE_HEADER <>
 _Mask			ACCESS_MASK ?
 SidStart		dd ?
-;; Opaque resouce manager specific data
 SYSTEM_ALARM_CALLBACK_ACE ENDS
 PSYSTEM_ALARM_CALLBACK_ACE typedef ptr SYSTEM_ALARM_CALLBACK_ACE
 
@@ -6394,7 +5317,6 @@ Flags			dd ?
 ObjectType		GUID <>
 InheritedObjectType	GUID <>
 SidStart		dd ?
-;; Opaque resouce manager specific data
 ACCESS_ALLOWED_CALLBACK_OBJECT_ACE ENDS
 PACCESS_ALLOWED_CALLBACK_OBJECT_ACE typedef ptr ACCESS_ALLOWED_CALLBACK_OBJECT_ACE
 
@@ -6405,7 +5327,6 @@ Flags			dd ?
 ObjectType		GUID <>
 InheritedObjectType	GUID <>
 SidStart		dd ?
-;; Opaque resouce manager specific data
 ACCESS_DENIED_CALLBACK_OBJECT_ACE ENDS
 PACCESS_DENIED_CALLBACK_OBJECT_ACE typedef ptr ACCESS_DENIED_CALLBACK_OBJECT_ACE
 
@@ -6416,7 +5337,6 @@ Flags			dd ?
 ObjectType		GUID <>
 InheritedObjectType	GUID <>
 SidStart		dd ?
-;; Opaque resouce manager specific data
 SYSTEM_AUDIT_CALLBACK_OBJECT_ACE ENDS
 PSYSTEM_AUDIT_CALLBACK_OBJECT_ACE typedef ptr SYSTEM_AUDIT_CALLBACK_OBJECT_ACE
 
@@ -6427,41 +5347,25 @@ Flags			dd ?
 ObjectType		GUID <>
 InheritedObjectType	GUID <>
 SidStart		dd ?
-;; Opaque resouce manager specific data
 SYSTEM_ALARM_CALLBACK_OBJECT_ACE ENDS
 PSYSTEM_ALARM_CALLBACK_OBJECT_ACE typedef ptr SYSTEM_ALARM_CALLBACK_OBJECT_ACE
 
-;;
-;; Currently define Flags for "OBJECT" ACE types.
-;;
 
 ACE_OBJECT_TYPE_PRESENT		  equ 0x1
 ACE_INHERITED_OBJECT_TYPE_PRESENT equ 0x2
 
-;;
-;;  The following declarations are used for setting and querying information
-;;  about and ACL.  First are the various information classes available to
-;;  the user.
-;;
 
 ACL_INFORMATION_CLASS	typedef SDWORD
 
 AclRevisionInformation	equ 1
 AclSizeInformation	equ 2
 
-;;
-;;  This record is returned/sent if the user is requesting/setting the
-;;  AclRevisionInformation
-;;
 
 ACL_REVISION_INFORMATION STRUC
 AclRevision		dd ?
 ACL_REVISION_INFORMATION ENDS
 PACL_REVISION_INFORMATION typedef ptr ACL_REVISION_INFORMATION
 
-;;
-;;  This record is returned if the user is requesting AclSizeInformation
-;;
 
 ACL_SIZE_INFORMATION	STRUC
 AceCount		dd ?
@@ -6470,18 +5374,7 @@ AclBytesFree		dd ?
 ACL_SIZE_INFORMATION	ENDS
 PACL_SIZE_INFORMATION	typedef ptr ACL_SIZE_INFORMATION
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;								     ;;
-;;			      SECURITY_DESCRIPTOR		     ;;
-;;								     ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-;;  Define the Security Descriptor and related data types.
-;;  This is an opaque data structure.
 
-;;
-;; Current security descriptor revision value
-;;
 
 SECURITY_DESCRIPTOR_REVISION	 equ 1
 SECURITY_DESCRIPTOR_REVISION1	 equ 1
@@ -6506,78 +5399,6 @@ SE_SACL_PROTECTED		 equ 0x2000
 SE_RM_CONTROL_VALID		 equ 0x4000
 SE_SELF_RELATIVE		 equ 0x8000
 
-;;
-;;  Where:
-;;
-;;	SE_OWNER_DEFAULTED - This boolean flag, when set, indicates that the
-;;	   SID pointed to by the Owner field was provided by a
-;;	   defaulting mechanism rather than explicitly provided by the
-;;	   original provider of the security descriptor.  This may
-;;	   affect the treatment of the SID with respect to inheritence
-;;	   of an owner.
-;;
-;;	SE_GROUP_DEFAULTED - This boolean flag, when set, indicates that the
-;;	   SID in the Group field was provided by a defaulting mechanism
-;;	   rather than explicitly provided by the original provider of
-;;	   the security descriptor.  This may affect the treatment of
-;;	   the SID with respect to inheritence of a primary group.
-;;
-;;	SE_DACL_PRESENT - This boolean flag, when set, indicates that the
-;;	   security descriptor contains a discretionary ACL.  If this
-;;	   flag is set and the Dacl field of the SECURITY_DESCRIPTOR is
-;;	   null, then a null ACL is explicitly being specified.
-;;
-;;	SE_DACL_DEFAULTED - This boolean flag, when set, indicates that the
-;;	   ACL pointed to by the Dacl field was provided by a defaulting
-;;	   mechanism rather than explicitly provided by the original
-;;	   provider of the security descriptor.	 This may affect the
-;;	   treatment of the ACL with respect to inheritence of an ACL.
-;;	   This flag is ignored if the DaclPresent flag is not set.
-;;
-;;	SE_SACL_PRESENT - This boolean flag, when set,	indicates that the
-;;	   security descriptor contains a system ACL pointed to by the
-;;	   Sacl field.	If this flag is set and the Sacl field of the
-;;	   SECURITY_DESCRIPTOR is null, then an empty (but present)
-;;	   ACL is being specified.
-;;
-;;	SE_SACL_DEFAULTED - This boolean flag, when set, indicates that the
-;;	   ACL pointed to by the Sacl field was provided by a defaulting
-;;	   mechanism rather than explicitly provided by the original
-;;	   provider of the security descriptor.	 This may affect the
-;;	   treatment of the ACL with respect to inheritence of an ACL.
-;;	   This flag is ignored if the SaclPresent flag is not set.
-;;
-;;	SE_SELF_RELATIVE - This boolean flag, when set, indicates that the
-;;	   security descriptor is in self-relative form.  In this form,
-;;	   all fields of the security descriptor are contiguous in memory
-;;	   and all pointer fields are expressed as offsets from the
-;;	   beginning of the security descriptor.  This form is useful
-;;	   for treating security descriptors as opaque data structures
-;;	   for transmission in communication protocol or for storage on
-;;	   secondary media.
-;;
-;;
-;;
-;; Pictorially the structure of a security descriptor is as follows:
-;;
-;;	3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1
-;;	1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-;;	+---------------------------------------------------------------+
-;;	|	    Control	       |Reserved1 (SBZ)|   Revision    |
-;;	+---------------------------------------------------------------+
-;;	|			    Owner			       |
-;;	+---------------------------------------------------------------+
-;;	|			    Group			       |
-;;	+---------------------------------------------------------------+
-;;	|			    Sacl			       |
-;;	+---------------------------------------------------------------+
-;;	|			    Dacl			       |
-;;	+---------------------------------------------------------------+
-;;
-;; In general, this data structure should be treated opaquely to ensure future
-;; compatibility.
-;;
-;;
 
 SECURITY_DESCRIPTOR_RELATIVE STRUC
 Revision		db ?
@@ -6601,51 +5422,9 @@ Dacl			dd ?
 SECURITY_DESCRIPTOR	ENDS
 PISECURITY_DESCRIPTOR	typedef ptr SECURITY_DESCRIPTOR
 
-;; Where:
-;;
-;;     Revision - Contains the revision level of the security
-;;	  descriptor.  This allows this structure to be passed between
-;;	  systems or stored on disk even though it is expected to
-;;	  change in the future.
-;;
-;;     Control - A set of flags which qualify the meaning of the
-;;	  security descriptor or individual fields of the security
-;;	  descriptor.
-;;
-;;     Owner - is a pointer to an SID representing an object's owner.
-;;	  If this field is null, then no owner SID is present in the
-;;	  security descriptor.	If the security descriptor is in
-;;	  self-relative form, then this field contains an offset to
-;;	  the SID, rather than a pointer.
-;;
-;;     Group - is a pointer to an SID representing an object's primary
-;;	  group.  If this field is null, then no primary group SID is
-;;	  present in the security descriptor.  If the security descriptor
-;;	  is in self-relative form, then this field contains an offset to
-;;	  the SID, rather than a pointer.
-;;
-;;     Sacl - is a pointer to a system ACL.  This field value is only
-;;	  valid if the DaclPresent control flag is set.	 If the
-;;	  SaclPresent flag is set and this field is null, then a null
-;;	  ACL  is specified.  If the security descriptor is in
-;;	  self-relative form, then this field contains an offset to
-;;	  the ACL, rather than a pointer.
-;;
-;;     Dacl - is a pointer to a discretionary ACL.  This field value is
-;;	  only valid if the DaclPresent control flag is set.  If the
-;;	  DaclPresent flag is set and this field is null, then a null
-;;	  ACL (unconditionally granting access) is specified.  If the
-;;	  security descriptor is in self-relative form, then this field
-;;	  contains an offset to the ACL, rather than a pointer.
-;;
 
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;								     ;;
-;;		Object Type list for AccessCheckByType		     ;;
-;;								     ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 LPGUID			typedef ptr GUID
@@ -6656,9 +5435,6 @@ ObjectType		LPGUID ?
 OBJECT_TYPE_LIST	ENDS
 POBJECT_TYPE_LIST	typedef ptr OBJECT_TYPE_LIST
 
-;;
-;; DS values for Level
-;;
 
 ACCESS_OBJECT_GUID	 equ 0
 ACCESS_PROPERTY_SET_GUID equ 1
@@ -6666,34 +5442,20 @@ ACCESS_PROPERTY_GUID	 equ 2
 
 ACCESS_MAX_LEVEL	 equ 4
 
-;;
-;; Parameters to NtAccessCheckByTypeAndAditAlarm
-;;
 
 AuditEventObjectAccess			equ 0
 AuditEventDirectoryServiceAccess	equ 1
 
 AUDIT_ALLOW_NO_PRIVILEGE		equ 0x1
 AUDIT_EVENT_TYPE			typedef sdword
-;;
-;; DS values for Source and ObjectTypeName
-;;
 
 ;ACCESS_DS_SOURCE_A		equ <"DS">
 ;ACCESS_DS_SOURCE_W		equ <"DS">
 ;ACCESS_DS_OBJECT_TYPE_NAME_A	equ <"Directory Service Object">
 ;ACCESS_DS_OBJECT_TYPE_NAME_W	equ <"Directory Service Object">
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;								     ;;
-;;		Privilege Related Data Structures		     ;;
-;;								     ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-;;
-;; Privilege attributes
-;;
 
 SE_PRIVILEGE_ENABLED_BY_DEFAULT equ 0x00000001
 SE_PRIVILEGE_ENABLED		equ 0x00000002
@@ -6704,20 +5466,9 @@ SE_PRIVILEGE_VALID_ATTRIBUTES	equ SE_PRIVILEGE_ENABLED_BY_DEFAULT OR \
 				    SE_PRIVILEGE_REMOVED	    OR \
 				    SE_PRIVILEGE_USED_FOR_ACCESS
 
-;;
-;; Privilege Set Control flags
-;;
 
 PRIVILEGE_SET_ALL_NECESSARY    equ 1
 
-;;
-;;  Privilege Set - This is defined for a privilege set of one.
-;;		   If more than one privilege is needed, then this structure
-;;		   will need to be allocated with more space.
-;;
-;;  Note: don't change this structure without fixing the INITIAL_PRIVILEGE_SET
-;;  structure (defined in se.h)
-;;
 
 PRIVILEGE_SET	STRUC
 PrivilegeCount	dd ?
@@ -6731,11 +5482,11 @@ ACCESS_REASON_DATA_MASK		equ 0x0000ffff
 
 ACCESS_REASON_TYPE		typedef sdword ; enum {
 
-    AccessReasonNone		equ 0x00000000	;; Indicate no reason for the bit. The bit may not be checked, or just no known reason.
-    AccessReasonAllowedAce	equ 0x00010000	;; Granted a permission.
-    AccessReasonDeniedAce	equ 0x00020000	;; Denied a permission.
-    AccessReasonAllowedParentAce equ 0x00030000 ;; Granted a permission from parent ACE
-    AccessReasonDeniedParentAce equ 0x00040000	;; Denied a permission from parent ACE
+    AccessReasonNone		equ 0x00000000	
+    AccessReasonAllowedAce	equ 0x00010000	
+    AccessReasonDeniedAce	equ 0x00020000	
+    AccessReasonAllowedParentAce equ 0x00030000 
+    AccessReasonDeniedParentAce equ 0x00040000	
     AccessReasonMissingPrivilege equ 0x00100000
     AccessReasonFromPrivilege	equ 0x00200000
     AccessReasonIntegrityLevel	equ 0x00300000
@@ -6743,7 +5494,7 @@ ACCESS_REASON_TYPE		typedef sdword ; enum {
     AccessReasonNullDacl	equ 0x00500000
     AccessReasonEmptyDacl	equ 0x00600000
     AccessReasonNoSD		equ 0x00700000
-    AccessReasonNoGrant		equ 0x00800000	;; this access bit is not granted by any ACE.
+    AccessReasonNoGrant		equ 0x00800000	
 
 ACCESS_REASON		typedef DWORD
 ACCESS_REASONS		STRUC
@@ -6778,8 +5529,6 @@ PSE_ACCESS_REQUEST	typedef ptr SE_ACCESS_REQUEST
 SE_ACCESS_REPLY		STRUC
 _Size			dd ?
 ResultListCount		dd ?	; Indicate the array size of GrantedAccess and
-				; AccessStatus, it only can be either 1 or
-				; ObjectTypeListCount.
 GrantedAccess		PACCESS_MASK ?
 AccessStatus		PDWORD ?
 AccessReason		PACCESS_REASONS ?
@@ -6787,11 +5536,6 @@ Privileges		PPRIVILEGE_SET ?
 SE_ACCESS_REPLY		ENDS
 PSE_ACCESS_REPLY	typedef ptr SE_ACCESS_REPLY
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;								     ;;
-;;		NT Defined Privileges				     ;;
-;;								     ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 SE_CREATE_TOKEN_NAME		equ <TEXT("SeCreateTokenPrivilege")>
 SE_ASSIGNPRIMARYTOKEN_NAME	equ <TEXT("SeAssignPrimaryTokenPrivilege")>
@@ -6829,19 +5573,7 @@ SE_INC_WORKING_SET_NAME		equ <TEXT("SeIncreaseWorkingSetPrivilege")>
 SE_TIME_ZONE_NAME		equ <TEXT("SeTimeZonePrivilege")>
 SE_CREATE_SYMBOLIC_LINK_NAME	equ <TEXT("SeCreateSymbolicLinkPrivilege")>
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;								 ;;
-;;	    Security Quality Of Service				 ;;
-;;								 ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;
-;; Impersonation Level
-;;
-;; Impersonation level is represented by a pair of bits in Windows.
-;; If a new impersonation level is added or lowest value is changed from
-;; 0 to something else, fix the Windows CreateFile call.
-;;
 
 SecurityAnonymous	equ 0
 SecurityIdentification	equ 1
@@ -6859,15 +5591,7 @@ VALID_IMPERSONATION_LEVEL macro L
 	endm
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;								 ;;
-;;	    Token Object Definitions				 ;;
-;;								 ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;
-;; Token Specific Access Rights.
-;;
 
 TOKEN_ASSIGN_PRIMARY	equ 0x0001
 TOKEN_DUPLICATE		equ 0x0002
@@ -6904,10 +5628,6 @@ TOKEN_EXECUTE	equ STANDARD_RIGHTS_EXECUTE
 
 TOKEN_TYPE	typedef DWORD
 
-;;
-;;
-;; Token Types
-;;
 
     TokenPrimary		equ 1
     TokenImpersonation		equ 2
@@ -6919,9 +5639,6 @@ TOKEN_TYPE	typedef DWORD
     TokenElevationTypeFull	equ 2
     TokenElevationTypeLimited	equ 3
 
-;;
-;; Token Information Classes.
-;;
     TOKEN_INFORMATION_CLASS	typedef dword
     PTOKEN_INFORMATION_CLASS	typedef ptr TOKEN_INFORMATION_CLASS
 
@@ -6953,11 +5670,8 @@ TOKEN_TYPE	typedef DWORD
     TokenUIAccess		equ 26
     TokenMandatoryPolicy	equ 27
     TokenLogonSid		equ 28
-    MaxTokenInfoClass		equ 29 ;; MaxTokenInfoClass should always be the last enum
+    MaxTokenInfoClass		equ 29 
 
-;;
-;; Token information class structures
-;;
 
 
 TOKEN_USER		STRUC
@@ -7048,9 +5762,6 @@ Flags			dd ?
 TOKEN_ACCESS_INFORMATION ENDS
 PTOKEN_ACCESS_INFORMATION typedef ptr TOKEN_ACCESS_INFORMATION
 
-;;
-;; Valid bits for each TOKEN_AUDIT_POLICY policy mask field.
-;;
 
 POLICY_AUDIT_SUBCATEGORY_COUNT equ 53
 
@@ -7107,9 +5818,6 @@ PTOKEN_ORIGIN		typedef ptr TOKEN_ORIGIN
     MandatoryLevelSecureProcess equ 5
     MandatoryLevelCount		equ 6
 
-;;
-;; Security Tracking Mode
-;;
 
 SECURITY_DYNAMIC_TRACKING	equ TRUE
 SECURITY_STATIC_TRACKING	equ FALSE
@@ -7117,9 +5825,6 @@ SECURITY_STATIC_TRACKING	equ FALSE
 SECURITY_CONTEXT_TRACKING_MODE	typedef BOOLEAN
 PSECURITY_CONTEXT_TRACKING_MODE typedef ptr SECURITY_CONTEXT_TRACKING_MODE
 
-;;
-;; Quality Of Service
-;;
 
 SECURITY_QUALITY_OF_SERVICE	STRUC
 _Length				dd ?
@@ -7129,9 +5834,6 @@ EffectiveOnly			BOOLEAN ?
 SECURITY_QUALITY_OF_SERVICE	ENDS
 PSECURITY_QUALITY_OF_SERVICE	typedef ptr SECURITY_QUALITY_OF_SERVICE
 
-;;
-;; Used to represent information related to a thread impersonation
-;;
 
 SE_IMPERSONATION_STATE		STRUC
 Token				PACCESS_TOKEN ?
@@ -7198,8 +5900,8 @@ THREAD_SET_THREAD_TOKEN		equ 0x0080
 THREAD_IMPERSONATE		equ 0x0100
 THREAD_DIRECT_IMPERSONATION	equ 0x0200
 
-THREAD_SET_LIMITED_INFORMATION	 equ 0x0400  ;; winnt
-THREAD_QUERY_LIMITED_INFORMATION equ 0x0800  ;; winnt
+THREAD_SET_LIMITED_INFORMATION	 equ 0x0400  
+THREAD_QUERY_LIMITED_INFORMATION equ 0x0800  
 if (NTDDI_VERSION GE NTDDI_VISTA)
 THREAD_ALL_ACCESS equ STANDARD_RIGHTS_REQUIRED OR SYNCHRONIZE OR 0xFFFF
 else
@@ -7277,10 +5979,10 @@ Self				dq ?
 NT_TIB64			ENDS
 PNT_TIB64			typedef ptr NT_TIB64
 
-THREAD_BASE_PRIORITY_LOWRT	equ 15	;; value that gets a thread to LowRealtime-1
-THREAD_BASE_PRIORITY_MAX	equ 2	;; maximum thread base priority boost
-THREAD_BASE_PRIORITY_MIN	equ -2	;; minimum thread base priority boost
-THREAD_BASE_PRIORITY_IDLE	equ -15 ;; value that gets a thread to idle
+THREAD_BASE_PRIORITY_LOWRT	equ 15	
+THREAD_BASE_PRIORITY_MAX	equ 2	
+THREAD_BASE_PRIORITY_MIN	equ -2	
+THREAD_BASE_PRIORITY_IDLE	equ -15 
 
 UMS_CREATE_THREAD_ATTRIBUTES	STRUC
 UmsVersion			dd ?
@@ -7322,9 +6024,9 @@ PagedPoolLimit			SIZE_T ?
 NonPagedPoolLimit		SIZE_T ?
 MinimumWorkingSetSize		SIZE_T ?
 MaximumWorkingSetSize		SIZE_T ?
-PagefileLimit			SIZE_T ?   ;; Limit expressed in pages
+PagefileLimit			SIZE_T ?   
 TimeLimit			LARGE_INTEGER <>
-WorkingSetLimit			SIZE_T ?   ;; Limit expressed in pages
+WorkingSetLimit			SIZE_T ?   
 Reserved2			SIZE_T ?
 Reserved3			SIZE_T ?
 Reserved4			SIZE_T ?
@@ -7397,9 +6099,6 @@ UIRestrictionsClass		dd ?
 JOBOBJECT_BASIC_UI_RESTRICTIONS ENDS
 PJOBOBJECT_BASIC_UI_RESTRICTIONS typedef ptr JOBOBJECT_BASIC_UI_RESTRICTIONS
 
-;;
-;; N.B. The JOBOBJECT_SECURITY_LIMIT_INFORMATION information class is no longer supported.
-;;
 JOBOBJECT_SECURITY_LIMIT_INFORMATION STRUC
 SecurityLimitFlags		dd ?
 JobToken			HANDLE ?
@@ -7434,11 +6133,6 @@ PJOBOBJECT_JOBSET_INFORMATION	typedef ptr JOBOBJECT_JOBSET_INFORMATION
 JOB_OBJECT_TERMINATE_AT_END_OF_JOB	equ 0
 JOB_OBJECT_POST_AT_END_OF_JOB		equ 1
 
-;;
-;; Completion Port Messages for job objects
-;;
-;; These values are returned via the lpNumberOfBytesTransferred parameter
-;;
 
 JOB_OBJECT_MSG_END_OF_JOB_TIME		equ 1
 JOB_OBJECT_MSG_END_OF_PROCESS_TIME	equ 2
@@ -7459,9 +6153,6 @@ JOB_OBJECT_LIMIT_AFFINITY		equ 0x00000010
 JOB_OBJECT_LIMIT_PRIORITY_CLASS		equ 0x00000020
 JOB_OBJECT_LIMIT_PRESERVE_JOB_TIME	equ 0x00000040
 JOB_OBJECT_LIMIT_SCHEDULING_CLASS	equ 0x00000080
-;;
-;; Extended Limits
-;;
 JOB_OBJECT_LIMIT_PROCESS_MEMORY		    equ 0x00000100
 JOB_OBJECT_LIMIT_JOB_MEMORY		    equ 0x00000200
 JOB_OBJECT_LIMIT_DIE_ON_UNHANDLED_EXCEPTION equ 0x00000400
@@ -7481,9 +6172,6 @@ JOB_OBJECT_BASIC_LIMIT_VALID_FLAGS	equ 0x000000ff
 JOB_OBJECT_EXTENDED_LIMIT_VALID_FLAGS	equ 0x00007fff
 JOB_OBJECT_RESERVED_LIMIT_VALID_FLAGS	equ 0x0007ffff
 
-;;
-;; UI restrictions for jobs
-;;
 
 JOB_OBJECT_UILIMIT_NONE			equ 0x00000000
 
@@ -7530,9 +6218,6 @@ MUTANT_ALL_ACCESS	equ STANDARD_RIGHTS_REQUIRED or SYNCHRONIZE or MUTANT_QUERY_ST
 SEMAPHORE_MODIFY_STATE	equ 0x0002
 SEMAPHORE_ALL_ACCESS	equ STANDARD_RIGHTS_REQUIRED or SYNCHRONIZE or 0x3
 
-;;
-;; Timer Specific Access Rights.
-;;
 
 TIMER_QUERY_STATE	equ 0x0001
 TIMER_MODIFY_STATE	equ 0x0002
@@ -7654,24 +6339,24 @@ PROCESSOR_INTEL_486	equ 486
 PROCESSOR_INTEL_PENTIUM equ 586
 PROCESSOR_INTEL_IA64	equ 2200
 PROCESSOR_AMD_X8664	equ 8664
-PROCESSOR_MIPS_R4000	equ 4000	;; incl R4101 & R3910 for Windows CE
+PROCESSOR_MIPS_R4000	equ 4000	
 PROCESSOR_ALPHA_21064	equ 21064
 PROCESSOR_PPC_601	equ 601
 PROCESSOR_PPC_603	equ 603
 PROCESSOR_PPC_604	equ 604
 PROCESSOR_PPC_620	equ 620
-PROCESSOR_HITACHI_SH3	equ 10003	;; Windows CE
-PROCESSOR_HITACHI_SH3E	equ 10004	;; Windows CE
-PROCESSOR_HITACHI_SH4	equ 10005	;; Windows CE
-PROCESSOR_MOTOROLA_821	equ 821		;; Windows CE
-PROCESSOR_SHx_SH3	equ 103		;; Windows CE
-PROCESSOR_SHx_SH4	equ 104		;; Windows CE
-PROCESSOR_STRONGARM	equ 2577	;; Windows CE - 0xA11
-PROCESSOR_ARM720	equ 1824	;; Windows CE - 0x720
-PROCESSOR_ARM820	equ 2080	;; Windows CE - 0x820
-PROCESSOR_ARM920	equ 2336	;; Windows CE - 0x920
-PROCESSOR_ARM_7TDMI	equ 70001	;; Windows CE
-PROCESSOR_OPTIL		equ 0x494f	;; MSIL
+PROCESSOR_HITACHI_SH3	equ 10003	
+PROCESSOR_HITACHI_SH3E	equ 10004	
+PROCESSOR_HITACHI_SH4	equ 10005	
+PROCESSOR_MOTOROLA_821	equ 821		
+PROCESSOR_SHx_SH3	equ 103		
+PROCESSOR_SHx_SH4	equ 104		
+PROCESSOR_STRONGARM	equ 2577	
+PROCESSOR_ARM720	equ 1824	
+PROCESSOR_ARM820	equ 2080	
+PROCESSOR_ARM920	equ 2336	
+PROCESSOR_ARM_7TDMI	equ 70001	
+PROCESSOR_OPTIL		equ 0x494f	
 
 PROCESSOR_ARCHITECTURE_INTEL		equ 0
 PROCESSOR_ARCHITECTURE_MIPS		equ 1
@@ -7705,9 +6390,6 @@ PF_COMPARE64_EXCHANGE128		equ 15
 PF_CHANNELS_ENABLED			equ 16
 PF_XSAVE_ENABLED			equ 17
 
-;;
-;; Known extended CPU state feature IDs
-;;
 
 XSTATE_LEGACY_FLOATING_POINT		equ 0
 XSTATE_LEGACY_SSE			equ 1
@@ -7720,9 +6402,6 @@ XSTATE_MASK_GSSE			equ (1 shl (XSTATE_GSSE))
 
 MAXIMUM_XSTATE_FEATURES			equ 64
 
-;;
-;; Extended processor state configuration
-;;
 
 XSTATE_FEATURE		STRUC
 _Offset			dd ?
@@ -7731,10 +6410,9 @@ XSTATE_FEATURE		ENDS
 PXSTATE_FEATURE		typedef ptr XSTATE_FEATURE
 
 XSTATE_CONFIGURATION	STRUC
-EnabledFeatures		DWORD64 ? ;; Mask of enabled features
-_Size			dd ?	;; Total size of the save area
+EnabledFeatures		DWORD64 ? 
+_Size			dd ?	
 OptimizedSave		dd ?	;: 1;
-				;; List of features
 Features		XSTATE_FEATURE MAXIMUM_XSTATE_FEATURES dup(<>)
 XSTATE_CONFIGURATION	ENDS
 PXSTATE_CONFIGURATION	typedef ptr XSTATE_CONFIGURATION
@@ -7850,35 +6528,25 @@ SEC_LARGE_PAGES		equ 0x80000000
 MEM_IMAGE		equ SEC_IMAGE
 WRITE_WATCH_FLAG_RESET	equ 0x01
 
-;;
-;; Define access rights to files and directories
-;;
 
-;;
-;; The FILE_READ_DATA and FILE_WRITE_DATA constants are also defined in
-;; devioctl.h as FILE_READ_ACCESS and FILE_WRITE_ACCESS. The values for these
-;; constants *MUST* always be in sync.
-;; The values are redefined in devioctl.h because they must be available to
-;; both DOS and NT.
-;;
 
-FILE_READ_DATA			equ 0x0001  ;; file & pipe
-FILE_LIST_DIRECTORY		equ 0x0001  ;; directory
+FILE_READ_DATA			equ 0x0001  
+FILE_LIST_DIRECTORY		equ 0x0001  
 
-FILE_WRITE_DATA			equ 0x0002  ;; file & pipe
-FILE_ADD_FILE			equ 0x0002  ;; directory
+FILE_WRITE_DATA			equ 0x0002  
+FILE_ADD_FILE			equ 0x0002  
 
-FILE_APPEND_DATA		equ 0x0004  ;; file
-FILE_ADD_SUBDIRECTORY		equ 0x0004  ;; directory
-FILE_CREATE_PIPE_INSTANCE	equ 0x0004  ;; named pipe
+FILE_APPEND_DATA		equ 0x0004  
+FILE_ADD_SUBDIRECTORY		equ 0x0004  
+FILE_CREATE_PIPE_INSTANCE	equ 0x0004  
 
-FILE_READ_EA			equ 0x0008  ;; file & directory
-FILE_WRITE_EA			equ 0x0010  ;; file & directory
-FILE_EXECUTE			equ 0x0020  ;; file
-FILE_TRAVERSE			equ 0x0020  ;; directory
-FILE_DELETE_CHILD		equ 0x0040  ;; directory
-FILE_READ_ATTRIBUTES		equ 0x0080  ;; all
-FILE_WRITE_ATTRIBUTES		equ 0x0100  ;; all
+FILE_READ_EA			equ 0x0008  
+FILE_WRITE_EA			equ 0x0010  
+FILE_EXECUTE			equ 0x0020  
+FILE_TRAVERSE			equ 0x0020  
+FILE_DELETE_CHILD		equ 0x0040  
+FILE_READ_ATTRIBUTES		equ 0x0080  
+FILE_WRITE_ATTRIBUTES		equ 0x0100  
 
 FILE_ALL_ACCESS		equ STANDARD_RIGHTS_REQUIRED or SYNCHRONIZE or 0x3FF
 FILE_GENERIC_READ	equ STANDARD_RIGHTS_READ or \
@@ -7949,9 +6617,6 @@ FILE_SUPPORTS_EXTENDED_ATTRIBUTES equ 0x00800000
 FILE_SUPPORTS_OPEN_BY_FILE_ID	equ 0x01000000
 FILE_SUPPORTS_USN_JOURNAL	equ 0x02000000
 
-;;
-;; Define the file notification information structure
-;;
 
 FILE_NOTIFY_INFORMATION STRUC
 NextEntryOffset		dd ?
@@ -7961,9 +6626,6 @@ FileName		WCHAR ?
 FILE_NOTIFY_INFORMATION ENDS
 PFILE_NOTIFY_INFORMATION typedef ptr FILE_NOTIFY_INFORMATION
 
-;;
-;; Define segement buffer structure for scatter/gather read/write.
-;;
 
 FILE_SEGMENT_ELEMENT	UNION
 Buffer			PVOID64 ?
@@ -7971,15 +6633,7 @@ Alignment		ULONGLONG ?
 FILE_SEGMENT_ELEMENT	ENDS
 PFILE_SEGMENT_ELEMENT	typedef ptr FILE_SEGMENT_ELEMENT
 
-;;
-;; Structures for FSCTL_SET_REPARSE_POINT, FSCTL_GET_REPARSE_POINT, and FSCTL_DELETE_REPARSE_POINT
-;;
 
-;;
-;; The reparse structure is used by layered drivers to store data in a
-;; reparse point. The constraints on reparse tags are defined below.
-;; This version of the reparse data buffer is only for Microsoft tags.
-;;
 
 REPARSE_DATA_BUFFER	STRUC
 ReparseTag		dd ?
@@ -8009,13 +6663,6 @@ PREPARSE_DATA_BUFFER	typedef ptr REPARSE_DATA_BUFFER
 
 REPARSE_DATA_BUFFER_HEADER_SIZE equ FIELD_OFFSET(REPARSE_DATA_BUFFER, GenericReparseBuffer)
 
-;;
-;; The reparse GUID structure is used by all 3rd party layered drivers to
-;; store data in a reparse point. For non-Microsoft tags, The GUID field
-;; cannot be GUID_NULL.
-;; The constraints on reparse tags are defined below.
-;; Microsoft tags can also be uses with this format of the reparse point buffer.
-;;
 
 REPARSE_GUID_DATA_BUFFER STRUC
 ReparseTag		dd ?
@@ -8031,10 +6678,6 @@ PREPARSE_GUID_DATA_BUFFER typedef ptr REPARSE_GUID_DATA_BUFFER
 REPARSE_GUID_DATA_BUFFER_HEADER_SIZE   equ FIELD_OFFSET(REPARSE_GUID_DATA_BUFFER, GenericReparseBuffer)
 
 
-;;
-;; The reparse information structure is used to return information about
-;; a reparse point to the caller.
-;;
 
 REPARSE_POINT_INFORMATION	STRUC
 ReparseDataLength		dw ?
@@ -8042,71 +6685,24 @@ UnparsedNameLength		dw ?
 REPARSE_POINT_INFORMATION	ENDS
 PREPARSE_POINT_INFORMATION	typedef ptr REPARSE_POINT_INFORMATION
 
-;;
-;; Maximum allowed size of the reparse data.
-;;
 
 MAXIMUM_REPARSE_DATA_BUFFER_SIZE	equ 16 * 1024
 
-;;
-;; Predefined reparse tags.
-;; These tags need to avoid conflicting with IO_REMOUNT defined in ntos\inc\io.h
-;;
 
 IO_REPARSE_TAG_RESERVED_ZERO		equ 0
 IO_REPARSE_TAG_RESERVED_ONE		equ 1
 
-;;
-;; The value of the following constant needs to satisfy the following conditions:
-;;  (1) Be at least as large as the largest of the reserved tags.
-;;  (2) Be strictly smaller than all the tags in use.
-;;
 
 IO_REPARSE_TAG_RESERVED_RANGE		equ IO_REPARSE_TAG_RESERVED_ONE
 
-;;
-;; The reparse tags are a DWORD. The 32 bits are laid out as follows:
-;;
-;;   3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1
-;;   1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-;;  +-+-+-+-------------------------+-------------------------------+
-;;  |M|L|N|   Reserved bits	   |	   Reparse Tag Value	   |
-;;  +-+-+-+-------------------------+-------------------------------+
-;;
-;; M is the Microsoft bit. When set to 1, it denotes a tag owned by Microsoft.
-;;   All ISVs must use a tag with a 0 in this position.
-;;   Note: If a Microsoft tag is used by non-Microsoft software, the
-;;   behavior is not defined.
-;;
-;; L is the high-latency bit. When set to 1, a file with this tag is
-;;   expected to have a long latency to retrieve the first byte of data.
-;;
-;; N is name surrogate. When set to 1, the file represents another named
-;;   entity in the system.
-;;
-;; The M, L, and N bits are OR-able.
-;; The following macros check for the M, L and N bit values:
-;;
 
-;;
-;; Macro to determine whether a reparse point tag corresponds to a tag
-;; owned by Microsoft.
-;;
 IsReparseTagMicrosoft macro _tag
 	exitm<_tag and 0x80000000>
 	endm
 
-;;
-;; Macro to determine whether a reparse point tag corresponds to a file
-;; that is to be displayed with the slow icon overlay.
-;;
 IsReparseTagHighLatency macro _tag
 	exitm<_tag and 0x40000000>
 	endm
-;;
-;; Macro to determine whether a reparse point tag corresponds to a file
-;; that is to be displayed with the slow icon overlay.
-;;
 IsReparseTagNameSurrogate macro _tag
 	exitm<_tag and 0x20000000>
 	endm
@@ -8121,38 +6717,23 @@ IO_REPARSE_TAG_DFS		equ 0x8000000A
 IO_REPARSE_TAG_SYMLINK		equ 0xA000000C
 IO_REPARSE_TAG_DFSR		equ 0x80000012
 
-;;
-;; I/O Completion Specific Access Rights.
-;;
 
 IO_COMPLETION_MODIFY_STATE	equ 0x0002
 IO_COMPLETION_ALL_ACCESS	equ STANDARD_RIGHTS_REQUIRED OR SYNCHRONIZE OR 0x3
 
-;;
-;; Object Manager Symbolic Link Specific Access Rights.
-;;
 
 DUPLICATE_CLOSE_SOURCE		equ 0x00000001
 DUPLICATE_SAME_ACCESS		equ 0x00000002
 
-;;
-;; =========================================
-;; Define GUIDs which represent well-known power schemes
-;; =========================================
-;;
 
-;; ...
 PROCESSOR_PERF_BOOST_POLICY_DISABLED	equ 0
 PROCESSOR_PERF_BOOST_POLICY_MAX		equ 100
-;; ...
 CORE_PARKING_POLICY_CHANGE_IDEAL	equ 0
 CORE_PARKING_POLICY_CHANGE_SINGLE	equ 1
 CORE_PARKING_POLICY_CHANGE_ROCKET	equ 2
 ;CORE_PARKING_POLICY_CHANGE_MAX CORE_PARKING_POLICY_CHANGE_ROCKET
-;; ...
 POWER_DEVICE_IDLE_POLICY_PERFORMANCE	equ 0
 POWER_DEVICE_IDLE_POLICY_CONSERVATIVE	equ 1
-;; ...
 
 SYSTEM_POWER_STATE		typedef sdword ; enum
 PSYSTEM_POWER_STATE		typedef ptr SYSTEM_POWER_STATE
@@ -8221,18 +6802,13 @@ DIAGNOSTIC_REASON_DETAILED_STRING	equ 0x00000002
 DIAGNOSTIC_REASON_NOT_SPECIFIED		equ 0x80000000
 DIAGNOSTIC_REASON_INVALID_FLAGS		equ (not 0x80000003)
 
-endif ;; (_WIN32_WINNT >= _WIN32_WINNT_WIN7)
+endif 
 
 POWER_REQUEST_CONTEXT_VERSION		equ 0
 
 POWER_REQUEST_CONTEXT_SIMPLE_STRING	equ 0x00000001
 POWER_REQUEST_CONTEXT_DETAILED_STRING	equ 0x00000002
 
-;;
-;; N.B. The maximum is a macro (rather than part of enum) for cgen to be able
-;; to parse power.h correctly. When a new power request type is added, the
-;; PowerRequestMaximum should be manually incremented.
-;;
 
 POWER_REQUEST_TYPE		typedef sdword ; enum _
 PPOWER_REQUEST_TYPE		typedef ptr POWER_REQUEST_TYPE
@@ -8244,10 +6820,6 @@ PowerRequestMaximum		equ 3
 
 if (NTDDI_VERSION GE NTDDI_WINXP)
 
-;;-----------------------------------------------------------------------------
-;; Device Power Information
-;; Accessable via CM_Get_DevInst_Registry_Property_Ex(CM_DRP_DEVICE_POWER_DATA)
-;;-----------------------------------------------------------------------------
 
 PDCAP_D0_SUPPORTED		equ 0x00000001
 PDCAP_D1_SUPPORTED		equ 0x00000002
@@ -8271,11 +6843,8 @@ PD_DeepestSystemWake	SYSTEM_POWER_STATE ?
 CM_POWER_DATA		ENDS
 PCM_POWER_DATA		typedef ptr CM_POWER_DATA
 
-endif ;; (NTDDI_VERSION GE NTDDI_WINXP)
+endif 
 
-;;
-;; Power Setting definitions
-;;
 
 SYSTEM_POWER_CONDITION	typedef sdword ; enum {
 PoAc			equ 0
@@ -8285,23 +6854,16 @@ PoConditionMaximum	equ 3
 
 SET_POWER_SETTING_VALUE STRUC
 
-    ;; Version of this structure.  Currently should be set to
-    ;; POWER_SETTING_VALUE_VERSION.
 Version			dd ?
 
 
-    ;; GUID representing the power setting being applied.
 Guid			GUID <>
 
 
-    ;; What power state should this setting be applied to?  E.g.
-    ;; AC, DC, thermal, ...
 PowerCondition		SYSTEM_POWER_CONDITION ?
 
-    ;; Length (in bytes) of the 'Data' member.
 DataLength		dd ?
 
-    ;; Data which contains the actual setting value.
 Data			db ANYSIZE_ARRAY dup(?)
 SET_POWER_SETTING_VALUE ENDS
 PSET_POWER_SETTING_VALUE typedef ptr SET_POWER_SETTING_VALUE
@@ -8320,9 +6882,6 @@ ButtonInstanceID	dd ?
 APPLICATIONLAUNCH_SETTING_VALUE ENDS
 PAPPLICATIONLAUNCH_SETTING_VALUE typedef ptr APPLICATIONLAUNCH_SETTING_VALUE
 
-;;
-;; define platform roles
-;;
 
 POWER_PLATFORM_ROLE	typedef sdword ; enum {
 PlatformRoleUnspecified		equ 0
@@ -8335,9 +6894,6 @@ PlatformRoleAppliancePC		equ 6
 PlatformRolePerformanceServer	equ 7
 PlatformRoleMaximum		equ 8
 
-;;
-;; System power manager capabilities
-;;
 
 if (NTDDI_VERSION GE NTDDI_WINXP) OR NOT defined(_BATCLASS_)
 BATTERY_REPORTING_SCALE STRUC
@@ -8345,7 +6901,7 @@ Granularity		dd ?
 Capacity		dd ?
 BATTERY_REPORTING_SCALE ENDS
 PBATTERY_REPORTING_SCALE typedef ptr BATTERY_REPORTING_SCALE
-endif ;; (NTDDI_VERSION GE NTDDI_WINXP) OR NOT defined(_BATCLASS_)
+endif 
 
 PPM_WMI_LEGACY_PERFSTATE STRUC
 Frequency		dd ?
@@ -8365,15 +6921,15 @@ Reserved		db ?
 StateFlags		dd ?
 Context			dd ?
 IdleHandler		dd ?
-Reserved1		dd ?	;; reserved for future use
+Reserved1		dd ?	
 PPM_WMI_IDLE_STATE	ENDS
 PPPM_WMI_IDLE_STATE	typedef ptr PPM_WMI_IDLE_STATE
 
 PPM_WMI_IDLE_STATES	STRUC
 _Type			dd ?
 Count			dd ?
-TargetState		dd ?	;; current idle state
-OldState		dd ?	;; previous idle state
+TargetState		dd ?	
+OldState		dd ?	
 TargetProcessors	dd ?
 State			PPM_WMI_IDLE_STATE ANYSIZE_ARRAY dup(<>)
 PPM_WMI_IDLE_STATES	ENDS
@@ -8382,26 +6938,26 @@ PPPM_WMI_IDLE_STATES	typedef ptr PPM_WMI_IDLE_STATES
 PPM_WMI_IDLE_STATES_EX	STRUC
 _Type			dd ?
 Count			dd ?
-TargetState		dd ?	;; current idle state
-OldState		dd ?	;; previous idle state
+TargetState		dd ?	
+OldState		dd ?	
 TargetProcessors	PVOID ?
 State			PPM_WMI_IDLE_STATE ANYSIZE_ARRAY dup(<>)
 PPM_WMI_IDLE_STATES_EX	ENDS
 PPPM_WMI_IDLE_STATES_EX typedef ptr PPM_WMI_IDLE_STATES_EX
 
 PPM_WMI_PERF_STATE	STRUC
-Frequency		dd ?	;; in Mhz
-Power			dd ?	;; in milliwatts
+Frequency		dd ?	
+Power			dd ?	
 PercentFrequency	db ?
-IncreaseLevel		db ?	;; goto higher state
-DecreaseLevel		db ?	;; goto lower state
-_Type			db ?	;; performance or throttle
-IncreaseTime		dd ?	;; in tick counts
-DecreaseTime		dd ?	;; in tick counts
-Control			dd ?	;; control value
-Status			dd ?	;; control value
+IncreaseLevel		db ?	
+DecreaseLevel		db ?	
+_Type			db ?	
+IncreaseTime		dd ?	
+DecreaseTime		dd ?	
+Control			dd ?	
+Status			dd ?	
 HitCount		dd ?
-Reserved1		dd ?	;; reserved for future use
+Reserved1		dd ?	
 Reserved2		dd ?
 Reserved3		dd ?
 PPM_WMI_PERF_STATE	ENDS
@@ -8410,17 +6966,17 @@ PPPM_WMI_PERF_STATE	typedef ptr PPM_WMI_PERF_STATE
 PPM_WMI_PERF_STATES	STRUC
 Count			dd ?
 MaxFrequency		dd ?
-CurrentState		dd ?	;; current state
-MaxPerfState		dd ?	;; fastest state considering policy restrictions
-MinPerfState		dd ?	;; slowest state considering policy restrictions
-LowestPerfState		dd ?	;; slowest perf state, fixed, aka the "knee"
+CurrentState		dd ?	
+MaxPerfState		dd ?	
+MinPerfState		dd ?	
+LowestPerfState		dd ?	
 ThermalConstraint	dd ?
 BusyAdjThreshold	db ?
-PolicyType		db ?	;; domain coordination
+PolicyType		db ?	
 _Type			db ?
 Reserved		db ?
 TimerInterval		dd ?
-TargetProcessors	dd ?	;; domain affinity
+TargetProcessors	dd ?	
 PStateHandler		dd ?
 PStateContext		dd ?
 TStateHandler		dd ?
@@ -8435,17 +6991,17 @@ PPPM_WMI_PERF_STATES	typedef ptr PPM_WMI_PERF_STATES
 PPM_WMI_PERF_STATES_EX	STRUC
 Count			dd ?
 MaxFrequency		dd ?
-CurrentState		dd ?	;; current state
-MaxPerfState		dd ?	;; fastest state considering policy restrictions
-MinPerfState		dd ?	;; slowest state considering policy restrictions
-LowestPerfState		dd ?	;; slowest perf state, fixed, aka the "knee"
+CurrentState		dd ?	
+MaxPerfState		dd ?	
+MinPerfState		dd ?	
+LowestPerfState		dd ?	
 ThermalConstraint	dd ?
 BusyAdjThreshold	db ?
-PolicyType		db ?	;; domain coordination
+PolicyType		db ?	
 _Type			db ?
 Reserved		db ?
 TimerInterval		dd ?
-TargetProcessors	PVOID ? ;; domain affinity
+TargetProcessors	PVOID ? 
 PStateHandler		dd ?
 PStateContext		dd ?
 TStateHandler		dd ?
@@ -8457,9 +7013,6 @@ State			PPM_WMI_PERF_STATE ANYSIZE_ARRAY dup(<>)
 PPM_WMI_PERF_STATES_EX	ENDS
 PPPM_WMI_PERF_STATES_EX typedef ptr PPM_WMI_PERF_STATES_EX
 
-;;
-;; Legacy processor idle accounting.
-;;
 
 PROC_IDLE_BUCKET_COUNT	equ 6
 
@@ -8481,9 +7034,6 @@ State			PPM_IDLE_STATE_ACCOUNTING ANYSIZE_ARRAY dup(<>)
 PPM_IDLE_ACCOUNTING	ENDS
 PPPM_IDLE_ACCOUNTING	typedef ptr PPM_IDLE_ACCOUNTING
 
-;;
-;; Processor idle accounting.
-;;
 
 PROC_IDLE_BUCKET_COUNT_EX equ 16
 
@@ -8515,24 +7065,14 @@ State			PPM_IDLE_STATE_ACCOUNTING_EX ANYSIZE_ARRAY dup(<>)
 PPM_IDLE_ACCOUNTING_EX	ENDS
 PPPM_IDLE_ACCOUNTING_EX typedef ptr PPM_IDLE_ACCOUNTING_EX
 
-;;
-;; Definitions of coordination types for _PSD, _TSD, and _CSD BIOS objects from
-;; the Acpi 3.0 specification
-;;
 
 ACPI_PPM_SOFTWARE_ALL	equ 0xFC
 ACPI_PPM_SOFTWARE_ANY	equ 0xFD
 ACPI_PPM_HARDWARE_ALL	equ 0xFE
 
-;;
-;; Definition of Microsoft PPM coordination types.
-;;
 
 MS_PPM_SOFTWARE_ALL	equ 0x1
 
-;;
-;; Processor firmware rundown feature bit definitions.
-;;
 
 PPM_FIRMWARE_ACPI1C2	equ 0x00000001
 PPM_FIRMWARE_ACPI1C3	equ 0x00000002
@@ -8592,9 +7132,6 @@ PPPM_THERMAL_POLICY_EVENT typedef ptr PPM_THERMAL_POLICY_EVENT
 
 pragma warning(pop)
 
-;;
-;; Power Policy Management interfaces
-;;
 
 POWER_ACTION_POLICY	STRUC
 Action			POWER_ACTION ?
@@ -8603,7 +7140,6 @@ EventCode		dd ?
 POWER_ACTION_POLICY	ENDS
 PPOWER_ACTION_POLICY	typedef ptr POWER_ACTION_POLICY
 
-;; POWER_ACTION_POLICY->Flags:
 POWER_ACTION_QUERY_ALLOWED	equ 0x00000001
 POWER_ACTION_UI_ALLOWED		equ 0x00000002
 POWER_ACTION_OVERRIDE_APPS	equ 0x00000004
@@ -8613,7 +7149,6 @@ POWER_ACTION_LOCK_CONSOLE	equ 0x20000000
 POWER_ACTION_DISABLE_WAKES	equ 0x40000000
 POWER_ACTION_CRITICAL		equ 0x80000000
 
-;; POWER_ACTION_POLICY->EventCode flags
 POWER_LEVEL_USER_NOTIFY_TEXT	equ 0x00000001
 POWER_LEVEL_USER_NOTIFY_SOUND	equ 0x00000002
 POWER_LEVEL_USER_NOTIFY_EXEC	equ 0x00000004
@@ -8622,17 +7157,10 @@ POWER_USER_NOTIFY_SHUTDOWN	equ 0x00000010
 POWER_USER_NOTIFY_FORCED_SHUTDOWN equ 0x00000020
 POWER_FORCE_TRIGGER_RESET	equ 0x80000000
 
-;; Note: for battery alarm EventCodes, the ID of the battery alarm << 16 is ORed
-;; into the flags.  For example: DISCHARGE_POLICY_LOW << 16
 
-;;
-;; The GUID_BATTERY_DISCHARGE_FLAGS_x power settings use a subset of EventCode
-;; flags.  The POWER_FORCE_TRIGGER_RESET flag doesn't make sense for a battery
-;; alarm so it is overloaded for other purposes (gerneral enable/disable).
 BATTERY_DISCHARGE_FLAGS_EVENTCODE_MASK equ 0x00000007
 BATTERY_DISCHARGE_FLAGS_ENABLE equ 0x80000000
 
-;; system battery drain policies
 SYSTEM_POWER_LEVEL	STRUC
 Enable			BOOLEAN ?
 Spare			db 3 dup(?)
@@ -8642,15 +7170,13 @@ MinSystemState		SYSTEM_POWER_STATE ?
 SYSTEM_POWER_LEVEL	ENDS
 PSYSTEM_POWER_LEVEL	typedef ptr SYSTEM_POWER_LEVEL
 
-;; Discharge policy constants
 NUM_DISCHARGE_POLICIES	equ 4
 DISCHARGE_POLICY_CRITICAL equ 0
 DISCHARGE_POLICY_LOW	equ 1
 
 
-;; system power policies
 SYSTEM_POWER_POLICY	STRUC
-Revision		dd ?	;; 1
+Revision		dd ?	
 PowerButton		POWER_ACTION_POLICY <>
 SleepButton		POWER_ACTION_POLICY <>
 LidClose		POWER_ACTION_POLICY <>
@@ -8681,11 +7207,7 @@ OverThrottled		POWER_ACTION_POLICY <>
 SYSTEM_POWER_POLICY	ENDS
 PSYSTEM_POWER_POLICY	typedef ptr SYSTEM_POWER_POLICY
 
-;; processor power policy state
 
-;;
-;; Processor Idle State Policy.
-;;
 
 PROCESSOR_IDLESTATE_POLICY_COUNT equ 0x3
 
@@ -8714,23 +7236,18 @@ Policy			PROCESSOR_IDLESTATE_INFO PROCESSOR_IDLESTATE_POLICY_COUNT dup(<>)
 PROCESSOR_IDLESTATE_POLICY ENDS
 PPROCESSOR_IDLESTATE_POLICY typedef ptr PROCESSOR_IDLESTATE_POLICY
 
-;;
-;; Legacy Processor Policy.  This is only provided to allow legacy
-;; applications to compile.  New applications must use
-;; PROCESSOR_IDLESTATE_POLICY.
-;;
 
 PO_THROTTLE_NONE	equ 0
 PO_THROTTLE_CONSTANT	equ 1
 PO_THROTTLE_DEGRADE	equ 2
 PO_THROTTLE_ADAPTIVE	equ 3
-PO_THROTTLE_MAXIMUM	equ 4	;; not a policy, just a limit
+PO_THROTTLE_MAXIMUM	equ 4	
 
 
 PROCESSOR_POWER_POLICY_INFO  STRUC
-TimeCheck		dd ?	;; in US
-DemoteLimit		dd ?	;; in US
-PromoteLimit		dd ?	;; in US
+TimeCheck		dd ?	
+DemoteLimit		dd ?	
+PromoteLimit		dd ?	
 DemotePercent		db ?
 PromotePercent		db ?
 Spare			db 2 dup(?)
@@ -8741,9 +7258,9 @@ Flags			dd ?
 PROCESSOR_POWER_POLICY_INFO ENDS
 PPROCESSOR_POWER_POLICY_INFO typedef ptr PROCESSOR_POWER_POLICY_INFO
 
-PROCESSOR_POWER_POLICY	STRUC	;; processor power policy
-Revision		dd ?	;; 1
-DynamicThrottle		db ?	;; Dynamic Throttling Policy
+PROCESSOR_POWER_POLICY	STRUC	
+Revision		dd ?	
+DynamicThrottle		db ?	
 Spare			db 3 dup(?)
 Flags			dd ?
 ;DisableCStates:1	 dd ?
@@ -8753,9 +7270,6 @@ Policy			PROCESSOR_POWER_POLICY_INFO 3 dup(<>)
 PROCESSOR_POWER_POLICY	ENDS
 PPROCESSOR_POWER_POLICY typedef ptr PROCESSOR_POWER_POLICY
 
-;;
-;; Processor Perf State Policy.
-;;
 
 PROCESSOR_PERFSTATE_POLICY STRUC
 Revision		dd ?
@@ -8784,7 +7298,6 @@ DecreasePercent		dd ?
 PROCESSOR_PERFSTATE_POLICY ENDS
 PPROCESSOR_PERFSTATE_POLICY typedef ptr PROCESSOR_PERFSTATE_POLICY
 
-;; administrator power policy overrides
 ADMINISTRATOR_POWER_POLICY  STRUC
 MinSleep		SYSTEM_POWER_STATE ?
 MaxSleep		SYSTEM_POWER_STATE ?
@@ -8810,131 +7323,128 @@ DefaultAlert2		dd ?
 SYSTEM_BATTERY_STATE	ENDS
 PSYSTEM_BATTERY_STATE	typedef ptr SYSTEM_BATTERY_STATE
 
-;include "pshpack2.h"			;; 16 bit headers are 2 byte packed
+;include "pshpack2.h"			
 
-IMAGE_DOS_SIGNATURE	equ 0x5A4D	;; MZ
-IMAGE_OS2_SIGNATURE	equ 0x454E	;; NE
-IMAGE_OS2_SIGNATURE_LE	equ 0x454C	;; LE
-IMAGE_VXD_SIGNATURE	equ 0x454C	;; LE
-IMAGE_NT_SIGNATURE	equ 0x00004550	;; PE00
+IMAGE_DOS_SIGNATURE	equ 0x5A4D	
+IMAGE_OS2_SIGNATURE	equ 0x454E	
+IMAGE_OS2_SIGNATURE_LE	equ 0x454C	
+IMAGE_VXD_SIGNATURE	equ 0x454C	
+IMAGE_NT_SIGNATURE	equ 0x00004550	
 
-IMAGE_DOS_HEADER	STRUC WORD	;; 16 bit headers are 2 byte packed
-e_magic			dw ?		;; Magic number
-e_cblp			dw ?		;; Bytes on last page of file
-e_cp			dw ?		;; Pages in file
-e_crlc			dw ?		;; Relocations
-e_cparhdr		dw ?		;; Size of header in paragraphs
-e_minalloc		dw ?		;; Minimum extra paragraphs needed
-e_maxalloc		dw ?		;; Maximum extra paragraphs needed
-e_ss			dw ?		;; Initial (relative) SS value
-e_sp			dw ?		;; Initial SP value
-e_csum			dw ?		;; Checksum
-e_ip			dw ?		;; Initial IP value
-e_cs			dw ?		;; Initial (relative) CS value
-e_lfarlc		dw ?		;; File address of relocation table
-e_ovno			dw ?		;; Overlay number
-e_res			dw 4 dup(?)	;; Reserved words
-e_oemid			dw ?		;; OEM identifier (for e_oeminfo)
-e_oeminfo		dw ?		;; OEM information; e_oemid specific
-e_res2			dw 10 dup(?)	;; Reserved words
-e_lfanew		dd ?		;; File address of new exe header
+IMAGE_DOS_HEADER	STRUC WORD	
+e_magic			dw ?		
+e_cblp			dw ?		
+e_cp			dw ?		
+e_crlc			dw ?		
+e_cparhdr		dw ?		
+e_minalloc		dw ?		
+e_maxalloc		dw ?		
+e_ss			dw ?		
+e_sp			dw ?		
+e_csum			dw ?		
+e_ip			dw ?		
+e_cs			dw ?		
+e_lfarlc		dw ?		
+e_ovno			dw ?		
+e_res			dw 4 dup(?)	
+e_oemid			dw ?		
+e_oeminfo		dw ?		
+e_res2			dw 10 dup(?)	
+e_lfanew		dd ?		
 IMAGE_DOS_HEADER	ENDS
 PIMAGE_DOS_HEADER	typedef ptr IMAGE_DOS_HEADER
 
-IMAGE_OS2_HEADER	STRUC	;; OS/2 .EXE header
-ne_magic		WORD ?		;; Magic number
-ne_ver			CHAR ?		;; Version number
-ne_rev			CHAR ?		;; Revision number
-ne_enttab		WORD ?		;; Offset of Entry Table
-ne_cbenttab		WORD ?		;; Number of bytes in Entry Table
-ne_crc			LONG ?		;; Checksum of whole file
-ne_flags		WORD ?		;; Flag word
-ne_autodata		WORD ?		;; Automatic data segment number
-ne_heap			WORD ?		;; Initial heap allocation
-ne_stack		WORD ?		;; Initial stack allocation
-ne_csip			LONG ?		;; Initial CS:IP setting
-ne_sssp			LONG ?		;; Initial SS:SP setting
-ne_cseg			WORD ?		;; Count of file segments
-ne_cmod			WORD ?		;; Entries in Module Reference Table
-ne_cbnrestab		WORD ?		;; Size of non-resident name table
-ne_segtab		WORD ?		;; Offset of Segment Table
-ne_rsrctab		WORD ?		;; Offset of Resource Table
-ne_restab		WORD ?		;; Offset of resident name table
-ne_modtab		WORD ?		;; Offset of Module Reference Table
-ne_imptab		WORD ?		;; Offset of Imported Names Table
-ne_nrestab		LONG ?		;; Offset of Non-resident Names Table
-ne_cmovent		WORD ?		;; Count of movable entries
-ne_align		WORD ?		;; Segment alignment shift count
-ne_cres			WORD ?		;; Count of resource segments
-ne_exetyp		db ?		;; Target Operating system
-ne_flagsothers		db ?		;; Other .EXE flags
-ne_pretthunks		WORD ?		;; offset to return thunks
-ne_psegrefbytes		WORD ?		;; offset to segment ref. bytes
-ne_swaparea		WORD ?		;; Minimum code swap area size
-ne_expver		WORD ?		;; Expected Windows version number
+IMAGE_OS2_HEADER	STRUC	
+ne_magic		WORD ?		
+ne_ver			CHAR ?		
+ne_rev			CHAR ?		
+ne_enttab		WORD ?		
+ne_cbenttab		WORD ?		
+ne_crc			LONG ?		
+ne_flags		WORD ?		
+ne_autodata		WORD ?		
+ne_heap			WORD ?		
+ne_stack		WORD ?		
+ne_csip			LONG ?		
+ne_sssp			LONG ?		
+ne_cseg			WORD ?		
+ne_cmod			WORD ?		
+ne_cbnrestab		WORD ?		
+ne_segtab		WORD ?		
+ne_rsrctab		WORD ?		
+ne_restab		WORD ?		
+ne_modtab		WORD ?		
+ne_imptab		WORD ?		
+ne_nrestab		LONG ?		
+ne_cmovent		WORD ?		
+ne_align		WORD ?		
+ne_cres			WORD ?		
+ne_exetyp		db ?		
+ne_flagsothers		db ?		
+ne_pretthunks		WORD ?		
+ne_psegrefbytes		WORD ?		
+ne_swaparea		WORD ?		
+ne_expver		WORD ?		
 IMAGE_OS2_HEADER	ENDS
 PIMAGE_OS2_HEADER	typedef ptr IMAGE_OS2_HEADER
 
-IMAGE_VXD_HEADER	STRUC ;; Windows VXD header
-e32_magic		dw ?		;; Magic number
-e32_border		db ?		;; The byte ordering for the VXD
-e32_worder		db ?		;; The word ordering for the VXD
-e32_level		dd ?		;; The EXE format level for now = 0
-e32_cpu			dw ?		;; The CPU type
-e32_os			dw ?		;; The OS type
-e32_ver			dd ?		;; Module version
-e32_mflags		dd ?		;; Module flags
-e32_mpages		dd ?		;; Module # pages
-e32_startobj		dd ?		;; Object # for instruction pointer
-e32_eip			dd ?		;; Extended instruction pointer
-e32_stackobj		dd ?		;; Object # for stack pointer
-e32_esp			dd ?		;; Extended stack pointer
-e32_pagesize		dd ?		;; VXD page size
-e32_lastpagesize	dd ?		;; Last page size in VXD
-e32_fixupsize		dd ?		;; Fixup section size
-e32_fixupsum		dd ?		;; Fixup section checksum
-e32_ldrsize		dd ?		;; Loader section size
-e32_ldrsum		dd ?		;; Loader section checksum
-e32_objtab		dd ?		;; Object table offset
-e32_objcnt		dd ?		;; Number of objects in module
-e32_objmap		dd ?		;; Object page map offset
-e32_itermap		dd ?		;; Object iterated data map offset
-e32_rsrctab		dd ?		;; Offset of Resource Table
-e32_rsrccnt		dd ?		;; Number of resource entries
-e32_restab		dd ?		;; Offset of resident name table
-e32_enttab		dd ?		;; Offset of Entry Table
-e32_dirtab		dd ?		;; Offset of Module Directive Table
-e32_dircnt		dd ?		;; Number of module directives
-e32_fpagetab		dd ?		;; Offset of Fixup Page Table
-e32_frectab		dd ?		;; Offset of Fixup Record Table
-e32_impmod		dd ?		;; Offset of Import Module Name Table
-e32_impmodcnt		dd ?		;; Number of entries in Import Module Name Table
-e32_impproc		dd ?		;; Offset of Import Procedure Name Table
-e32_pagesum		dd ?		;; Offset of Per-Page Checksum Table
-e32_datapage		dd ?		;; Offset of Enumerated Data Pages
-e32_preload		dd ?		;; Number of preload pages
-e32_nrestab		dd ?		;; Offset of Non-resident Names Table
-e32_cbnrestab		dd ?		;; Size of Non-resident Name Table
-e32_nressum		dd ?		;; Non-resident Name Table Checksum
-e32_autodata		dd ?		;; Object # for automatic data object
-e32_debuginfo		dd ?		;; Offset of the debugging information
-e32_debuglen		dd ?		;; The length of the debugging info. in bytes
-e32_instpreload		dd ?		;; Number of instance pages in preload section of VXD file
-e32_instdemand		dd ?		;; Number of instance pages in demand load section of VXD file
-e32_heapsize		dd ?		;; Size of heap - for 16-bit apps
-e32_res3		db 12 dup(?)	;; Reserved words
+IMAGE_VXD_HEADER	STRUC 
+e32_magic		dw ?		
+e32_border		db ?		
+e32_worder		db ?		
+e32_level		dd ?		
+e32_cpu			dw ?		
+e32_os			dw ?		
+e32_ver			dd ?		
+e32_mflags		dd ?		
+e32_mpages		dd ?		
+e32_startobj		dd ?		
+e32_eip			dd ?		
+e32_stackobj		dd ?		
+e32_esp			dd ?		
+e32_pagesize		dd ?		
+e32_lastpagesize	dd ?		
+e32_fixupsize		dd ?		
+e32_fixupsum		dd ?		
+e32_ldrsize		dd ?		
+e32_ldrsum		dd ?		
+e32_objtab		dd ?		
+e32_objcnt		dd ?		
+e32_objmap		dd ?		
+e32_itermap		dd ?		
+e32_rsrctab		dd ?		
+e32_rsrccnt		dd ?		
+e32_restab		dd ?		
+e32_enttab		dd ?		
+e32_dirtab		dd ?		
+e32_dircnt		dd ?		
+e32_fpagetab		dd ?		
+e32_frectab		dd ?		
+e32_impmod		dd ?		
+e32_impmodcnt		dd ?		
+e32_impproc		dd ?		
+e32_pagesum		dd ?		
+e32_datapage		dd ?		
+e32_preload		dd ?		
+e32_nrestab		dd ?		
+e32_cbnrestab		dd ?		
+e32_nressum		dd ?		
+e32_autodata		dd ?		
+e32_debuginfo		dd ?		
+e32_debuglen		dd ?		
+e32_instpreload		dd ?		
+e32_instdemand		dd ?		
+e32_heapsize		dd ?		
+e32_res3		db 12 dup(?)	
 e32_winresoff		dd ?
 e32_winreslen		dd ?
-e32_devid		dw ?		;; Device ID for VxD
-e32_ddkver		dw ?		;; DDK version for VxD
+e32_devid		dw ?		
+e32_ddkver		dw ?		
 IMAGE_VXD_HEADER	ENDS
 PIMAGE_VXD_HEADER	typedef ptr IMAGE_VXD_HEADER
 
-;include "poppack.h"			;; Back to 4 byte packing
+;include "poppack.h"			
 
-;;
-;; File header format.
-;;
 
 IMAGE_FILE_HEADER	STRUC
 Machine			dw ?
@@ -8950,59 +7460,54 @@ PIMAGE_FILE_HEADER	typedef ptr IMAGE_FILE_HEADER
 
 IMAGE_SIZEOF_FILE_HEADER	equ 20
 
-; Characteristics flags
 
-IMAGE_FILE_RELOCS_STRIPPED	     equ 0x0001 ;; Relocation info stripped from file.
-IMAGE_FILE_EXECUTABLE_IMAGE	     equ 0x0002 ;; File is executable  (i.e. no unresolved externel references).
-IMAGE_FILE_LINE_NUMS_STRIPPED	     equ 0x0004 ;; Line nunbers stripped from file.
-IMAGE_FILE_LOCAL_SYMS_STRIPPED	     equ 0x0008 ;; Local symbols stripped from file.
-IMAGE_FILE_AGGRESIVE_WS_TRIM	     equ 0x0010 ;; Agressively trim working set
-IMAGE_FILE_LARGE_ADDRESS_AWARE	     equ 0x0020 ;; App can handle >2gb addresses
-IMAGE_FILE_BYTES_REVERSED_LO	     equ 0x0080 ;; Bytes of machine word are reversed.
-IMAGE_FILE_32BIT_MACHINE	     equ 0x0100 ;; 32 bit word machine.
-IMAGE_FILE_DEBUG_STRIPPED	     equ 0x0200 ;; Debugging info stripped from file in .DBG file
-IMAGE_FILE_REMOVABLE_RUN_FROM_SWAP   equ 0x0400 ;; If Image is on removable media, copy and run from the swap file.
-IMAGE_FILE_NET_RUN_FROM_SWAP	     equ 0x0800 ;; If Image is on Net, copy and run from the swap file.
-IMAGE_FILE_SYSTEM		     equ 0x1000 ;; System File.
-IMAGE_FILE_DLL			     equ 0x2000 ;; File is a DLL.
-IMAGE_FILE_UP_SYSTEM_ONLY	     equ 0x4000 ;; File should only be run on a UP machine
-IMAGE_FILE_BYTES_REVERSED_HI	     equ 0x8000 ;; Bytes of machine word are reversed.
+IMAGE_FILE_RELOCS_STRIPPED	     equ 0x0001 
+IMAGE_FILE_EXECUTABLE_IMAGE	     equ 0x0002 
+IMAGE_FILE_LINE_NUMS_STRIPPED	     equ 0x0004 
+IMAGE_FILE_LOCAL_SYMS_STRIPPED	     equ 0x0008 
+IMAGE_FILE_AGGRESIVE_WS_TRIM	     equ 0x0010 
+IMAGE_FILE_LARGE_ADDRESS_AWARE	     equ 0x0020 
+IMAGE_FILE_BYTES_REVERSED_LO	     equ 0x0080 
+IMAGE_FILE_32BIT_MACHINE	     equ 0x0100 
+IMAGE_FILE_DEBUG_STRIPPED	     equ 0x0200 
+IMAGE_FILE_REMOVABLE_RUN_FROM_SWAP   equ 0x0400 
+IMAGE_FILE_NET_RUN_FROM_SWAP	     equ 0x0800 
+IMAGE_FILE_SYSTEM		     equ 0x1000 
+IMAGE_FILE_DLL			     equ 0x2000 
+IMAGE_FILE_UP_SYSTEM_ONLY	     equ 0x4000 
+IMAGE_FILE_BYTES_REVERSED_HI	     equ 0x8000 
 
-; Machine values
 
 IMAGE_FILE_MACHINE_UNKNOWN	equ 0
-IMAGE_FILE_MACHINE_I386		equ 0x014c ;; Intel 386.
-IMAGE_FILE_MACHINE_R3000	equ 0x0162 ;; MIPS little-endian, equ 0x160 big-endian
-IMAGE_FILE_MACHINE_R4000	equ 0x0166 ;; MIPS little-endian
-IMAGE_FILE_MACHINE_R10000	equ 0x0168 ;; MIPS little-endian
-IMAGE_FILE_MACHINE_WCEMIPSV2	equ 0x0169 ;; MIPS little-endian WCE v2
-IMAGE_FILE_MACHINE_ALPHA	equ 0x0184 ;; Alpha_AXP
-IMAGE_FILE_MACHINE_SH3		equ 0x01a2 ;; SH3 little-endian
+IMAGE_FILE_MACHINE_I386		equ 0x014c 
+IMAGE_FILE_MACHINE_R3000	equ 0x0162 
+IMAGE_FILE_MACHINE_R4000	equ 0x0166 
+IMAGE_FILE_MACHINE_R10000	equ 0x0168 
+IMAGE_FILE_MACHINE_WCEMIPSV2	equ 0x0169 
+IMAGE_FILE_MACHINE_ALPHA	equ 0x0184 
+IMAGE_FILE_MACHINE_SH3		equ 0x01a2 
 IMAGE_FILE_MACHINE_SH3DSP	equ 0x01a3
-IMAGE_FILE_MACHINE_SH3E		equ 0x01a4 ;; SH3E little-endian
-IMAGE_FILE_MACHINE_SH4		equ 0x01a6 ;; SH4 little-endian
-IMAGE_FILE_MACHINE_SH5		equ 0x01a8 ;; SH5
-IMAGE_FILE_MACHINE_ARM		equ 0x01c0 ;; ARM Little-Endian
+IMAGE_FILE_MACHINE_SH3E		equ 0x01a4 
+IMAGE_FILE_MACHINE_SH4		equ 0x01a6 
+IMAGE_FILE_MACHINE_SH5		equ 0x01a8 
+IMAGE_FILE_MACHINE_ARM		equ 0x01c0 
 IMAGE_FILE_MACHINE_THUMB	equ 0x01c2
 IMAGE_FILE_MACHINE_AM33		equ 0x01d3
-IMAGE_FILE_MACHINE_POWERPC	equ 0x01F0 ;; IBM PowerPC Little-Endian
+IMAGE_FILE_MACHINE_POWERPC	equ 0x01F0 
 IMAGE_FILE_MACHINE_POWERPCFP	equ 0x01f1
-IMAGE_FILE_MACHINE_IA64		equ 0x0200 ;; Intel 64
-IMAGE_FILE_MACHINE_MIPS16	equ 0x0266 ;; MIPS
-IMAGE_FILE_MACHINE_ALPHA64	equ 0x0284 ;; ALPHA64
-IMAGE_FILE_MACHINE_MIPSFPU	equ 0x0366 ;; MIPS
-IMAGE_FILE_MACHINE_MIPSFPU16	equ 0x0466 ;; MIPS
+IMAGE_FILE_MACHINE_IA64		equ 0x0200 
+IMAGE_FILE_MACHINE_MIPS16	equ 0x0266 
+IMAGE_FILE_MACHINE_ALPHA64	equ 0x0284 
+IMAGE_FILE_MACHINE_MIPSFPU	equ 0x0366 
+IMAGE_FILE_MACHINE_MIPSFPU16	equ 0x0466 
 IMAGE_FILE_MACHINE_AXP64	equ IMAGE_FILE_MACHINE_ALPHA64
-IMAGE_FILE_MACHINE_TRICORE	equ 0x0520 ;; Infineon
+IMAGE_FILE_MACHINE_TRICORE	equ 0x0520 
 IMAGE_FILE_MACHINE_CEF		equ 0x0CEF
-IMAGE_FILE_MACHINE_EBC		equ 0x0EBC ;; EFI Byte Code
-IMAGE_FILE_MACHINE_AMD64	equ 0x8664 ;; AMD64 (K8)
-IMAGE_FILE_MACHINE_M32R		equ 0x9041 ;; M32R little-endian
+IMAGE_FILE_MACHINE_EBC		equ 0x0EBC 
+IMAGE_FILE_MACHINE_AMD64	equ 0x8664 
+IMAGE_FILE_MACHINE_M32R		equ 0x9041 
 IMAGE_FILE_MACHINE_CEE		equ 0xC0EE
 
-;;
-;; Directory format.
-;;
 
 IMAGE_DATA_DIRECTORY	STRUC
 VirtualAddress		dd ?
@@ -9012,15 +7517,9 @@ PIMAGE_DATA_DIRECTORY	typedef ptr IMAGE_DATA_DIRECTORY
 
 IMAGE_NUMBEROF_DIRECTORY_ENTRIES equ 16
 
-;;
-;; Optional header format.
-;;
 
 IMAGE_OPTIONAL_HEADER32		STRUC
 
-    ;;
-    ;; Standard fields.
-    ;;
 
 Magic				dw ?
 MajorLinkerVersion		db ?
@@ -9032,9 +7531,6 @@ AddressOfEntryPoint		dd ?
 BaseOfCode			dd ?
 BaseOfData			dd ?
 
-    ;;
-    ;; NT additional fields.
-    ;;
 
 ImageBase			dd ?
 SectionAlignment		dd ?
@@ -9160,117 +7656,102 @@ IMAGE_NT_HEADERS	typedef IMAGE_NT_HEADERS32
 PIMAGE_NT_HEADERS	typedef PIMAGE_NT_HEADERS32
 endif
 
-;; IMAGE_FIRST_SECTION doesn't need 32/64 versions since the file header is the
-;; same either way.
 
 IMAGE_FIRST_SECTION macro ntheader
 ifdef _WIN64
-;	exitm<IMAGE_FIRST_SECTION64(ntheader)>
 else
-;	exitm<IMAGE_FIRST_SECTION32(ntheader)>
 endif
 	endm
 
 
-;; Subsystem Values
 
-IMAGE_SUBSYSTEM_UNKNOWN		equ 0	 ;; Unknown subsystem.
-IMAGE_SUBSYSTEM_NATIVE		equ 1	 ;; Image doesn't require a subsystem.
-IMAGE_SUBSYSTEM_WINDOWS_GUI	equ 2	 ;; Image runs in the Windows GUI subsystem.
-IMAGE_SUBSYSTEM_WINDOWS_CUI	equ 3	 ;; Image runs in the Windows character subsystem.
-IMAGE_SUBSYSTEM_OS2_CUI		equ 5	 ;; image runs in the OS/2 character subsystem.
-IMAGE_SUBSYSTEM_POSIX_CUI	equ 7	 ;; image runs in the Posix character subsystem.
-IMAGE_SUBSYSTEM_NATIVE_WINDOWS	equ 8	 ;; image is a native Win9x driver.
-IMAGE_SUBSYSTEM_WINDOWS_CE_GUI	equ 9	 ;; Image runs in the Windows CE subsystem.
-IMAGE_SUBSYSTEM_EFI_APPLICATION equ 10	 ;;
+IMAGE_SUBSYSTEM_UNKNOWN		equ 0	 
+IMAGE_SUBSYSTEM_NATIVE		equ 1	 
+IMAGE_SUBSYSTEM_WINDOWS_GUI	equ 2	 
+IMAGE_SUBSYSTEM_WINDOWS_CUI	equ 3	 
+IMAGE_SUBSYSTEM_OS2_CUI		equ 5	 
+IMAGE_SUBSYSTEM_POSIX_CUI	equ 7	 
+IMAGE_SUBSYSTEM_NATIVE_WINDOWS	equ 8	 
+IMAGE_SUBSYSTEM_WINDOWS_CE_GUI	equ 9	 
+IMAGE_SUBSYSTEM_EFI_APPLICATION equ 10	 
 IMAGE_SUBSYSTEM_EFI_BOOT_SERVICE_DRIVER equ 11
 IMAGE_SUBSYSTEM_EFI_RUNTIME_DRIVER equ 12
 IMAGE_SUBSYSTEM_EFI_ROM		equ 13
 IMAGE_SUBSYSTEM_XBOX		equ 14
 IMAGE_SUBSYSTEM_WINDOWS_BOOT_APPLICATION equ 16
 
-;; DllCharacteristics Entries
 
-;IMAGE_LIBRARY_PROCESS_INIT		equ 0x0001  ;; Reserved.
-;IMAGE_LIBRARY_PROCESS_TERM		equ 0x0002  ;; Reserved.
-;IMAGE_LIBRARY_THREAD_INIT		equ 0x0004  ;; Reserved.
-;IMAGE_LIBRARY_THREAD_TERM		equ 0x0008  ;; Reserved.
-IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE	equ 0x0040  ;; DLL can move.
-IMAGE_DLLCHARACTERISTICS_FORCE_INTEGRITY equ 0x0080 ;; Code Integrity Image
-IMAGE_DLLCHARACTERISTICS_NX_COMPAT	equ 0x0100  ;; Image is NX compatible
-IMAGE_DLLCHARACTERISTICS_NO_ISOLATION	equ 0x0200  ;; Image understands isolation and doesn't want it
-IMAGE_DLLCHARACTERISTICS_NO_SEH		equ 0x0400  ;; Image does not use SEH.	No SE handler may reside in this image
-IMAGE_DLLCHARACTERISTICS_NO_BIND	equ 0x0800  ;; Do not bind this image.
-IMAGE_DLLCHARACTERISTICS_WDM_DRIVER	equ 0x2000  ;; Driver uses WDM model
+;IMAGE_LIBRARY_PROCESS_INIT		equ 0x0001  
+;IMAGE_LIBRARY_PROCESS_TERM		equ 0x0002  
+;IMAGE_LIBRARY_THREAD_INIT		equ 0x0004  
+;IMAGE_LIBRARY_THREAD_TERM		equ 0x0008  
+IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE	equ 0x0040  
+IMAGE_DLLCHARACTERISTICS_FORCE_INTEGRITY equ 0x0080 
+IMAGE_DLLCHARACTERISTICS_NX_COMPAT	equ 0x0100  
+IMAGE_DLLCHARACTERISTICS_NO_ISOLATION	equ 0x0200  
+IMAGE_DLLCHARACTERISTICS_NO_SEH		equ 0x0400  
+IMAGE_DLLCHARACTERISTICS_NO_BIND	equ 0x0800  
+IMAGE_DLLCHARACTERISTICS_WDM_DRIVER	equ 0x2000  
 IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE equ 0x8000
 
-;; Directory Entries
 
-IMAGE_DIRECTORY_ENTRY_EXPORT		equ 0	  ;; Export Directory
-IMAGE_DIRECTORY_ENTRY_IMPORT		equ 1	  ;; Import Directory
-IMAGE_DIRECTORY_ENTRY_RESOURCE		equ 2	  ;; Resource Directory
-IMAGE_DIRECTORY_ENTRY_EXCEPTION		equ 3	  ;; Exception Directory
-IMAGE_DIRECTORY_ENTRY_SECURITY		equ 4	  ;; Security Directory
-IMAGE_DIRECTORY_ENTRY_BASERELOC		equ 5	  ;; Base Relocation Table
-IMAGE_DIRECTORY_ENTRY_DEBUG		equ 6	  ;; Debug Directory
-;IMAGE_DIRECTORY_ENTRY_COPYRIGHT	equ 7	  ;; (X86 usage)
-IMAGE_DIRECTORY_ENTRY_ARCHITECTURE	equ 7	  ;; Architecture Specific Data
-IMAGE_DIRECTORY_ENTRY_GLOBALPTR		equ 8	  ;; RVA of GP
-IMAGE_DIRECTORY_ENTRY_TLS		equ 9	  ;; TLS Directory
-IMAGE_DIRECTORY_ENTRY_LOAD_CONFIG	equ 10	  ;; Load Configuration Directory
-IMAGE_DIRECTORY_ENTRY_BOUND_IMPORT	equ 11	  ;; Bound Import Directory in headers
-IMAGE_DIRECTORY_ENTRY_IAT		equ 12	  ;; Import Address Table
-IMAGE_DIRECTORY_ENTRY_DELAY_IMPORT	equ 13	  ;; Delay Load Import Descriptors
-IMAGE_DIRECTORY_ENTRY_COM_DESCRIPTOR	equ 14	  ;; COM Runtime descriptor
+IMAGE_DIRECTORY_ENTRY_EXPORT		equ 0	  
+IMAGE_DIRECTORY_ENTRY_IMPORT		equ 1	  
+IMAGE_DIRECTORY_ENTRY_RESOURCE		equ 2	  
+IMAGE_DIRECTORY_ENTRY_EXCEPTION		equ 3	  
+IMAGE_DIRECTORY_ENTRY_SECURITY		equ 4	  
+IMAGE_DIRECTORY_ENTRY_BASERELOC		equ 5	  
+IMAGE_DIRECTORY_ENTRY_DEBUG		equ 6	  
+;IMAGE_DIRECTORY_ENTRY_COPYRIGHT	equ 7	  
+IMAGE_DIRECTORY_ENTRY_ARCHITECTURE	equ 7	  
+IMAGE_DIRECTORY_ENTRY_GLOBALPTR		equ 8	  
+IMAGE_DIRECTORY_ENTRY_TLS		equ 9	  
+IMAGE_DIRECTORY_ENTRY_LOAD_CONFIG	equ 10	  
+IMAGE_DIRECTORY_ENTRY_BOUND_IMPORT	equ 11	  
+IMAGE_DIRECTORY_ENTRY_IAT		equ 12	  
+IMAGE_DIRECTORY_ENTRY_DELAY_IMPORT	equ 13	  
+IMAGE_DIRECTORY_ENTRY_COM_DESCRIPTOR	equ 14	  
 
-;;
-;; Non-COFF Object file header
-;;
 
 ANON_OBJECT_HEADER	STRUC
-Sig1			dw ?	;; Must be IMAGE_FILE_MACHINE_UNKNOWN
-Sig2			dw ?	;; Must be 0xffff
-Version			dw ?	;; >= 1 (implies the CLSID field is present)
+Sig1			dw ?	
+Sig2			dw ?	
+Version			dw ?	
 Machine			dw ?
 TimeDateStamp		dd ?
-ClassID			CLSID <> ;; Used to invoke CoCreateInstance
-SizeOfData		dd ?	;; Size of data that follows the header
+ClassID			CLSID <> 
+SizeOfData		dd ?	
 ANON_OBJECT_HEADER	ENDS
 
 ANON_OBJECT_HEADER_V2	STRUC
-Sig1			dw ?	;; Must be IMAGE_FILE_MACHINE_UNKNOWN
-Sig2			dw ?	;; Must be 0xffff
-Version			dw ?	;; >= 2 (implies the Flags field is present - otherwise V1)
+Sig1			dw ?	
+Sig2			dw ?	
+Version			dw ?	
 Machine			dw ?
 TimeDateStamp		dd ?
-ClassID			CLSID <> ;; Used to invoke CoCreateInstance
-SizeOfData		dd ?	;; Size of data that follows the header
-Flags			dd ?	;; 0x1 -> contains metadata
-MetaDataSize		dd ?	;; Size of CLR metadata
-MetaDataOffset		dd ?	;; Offset of CLR metadata
+ClassID			CLSID <> 
+SizeOfData		dd ?	
+Flags			dd ?	
+MetaDataSize		dd ?	
+MetaDataOffset		dd ?	
 ANON_OBJECT_HEADER_V2	ENDS
 
 ANON_OBJECT_HEADER_BIGOBJ  STRUC
-;; same as ANON_OBJECT_HEADER_V2
-Sig1			dw ?	;; Must be IMAGE_FILE_MACHINE_UNKNOWN
-Sig2			dw ?	;; Must be 0xffff
-Version			dw ?	;; >= 2 (implies the Flags field is present)
-Machine			dw ?	;; Actual machine - IMAGE_FILE_MACHINE_xxx
+Sig1			dw ?	
+Sig2			dw ?	
+Version			dw ?	
+Machine			dw ?	
 TimeDateStamp		dd ?
-ClassID			CLSID <> ;; {D1BAA1C7-BAEE-4ba9-AF20-FAF66AA4DCB8}
-SizeOfData		dd ?	;; Size of data that follows the header
-Flags			dd ?	;; 0x1 -> contains metadata
-MetaDataSize		dd ?	;; Size of CLR metadata
-MetaDataOffset		dd ?	;; Offset of CLR metadata
-				;; bigobj specifics
-NumberOfSections	dd ?	;; extended from WORD
+ClassID			CLSID <> 
+SizeOfData		dd ?	
+Flags			dd ?	
+MetaDataSize		dd ?	
+MetaDataOffset		dd ?	
+NumberOfSections	dd ?	
 PointerToSymbolTable	dd ?
 NumberOfSymbols		dd ?
 ANON_OBJECT_HEADER_BIGOBJ ENDS
 
-;;
-;; Section header format.
-;;
 
 IMAGE_SIZEOF_SHORT_NAME equ 8
 
@@ -9292,77 +7773,60 @@ IMAGE_SECTION_HEADER	ENDS
 
 IMAGE_SIZEOF_SECTION_HEADER	equ 40
 
-;;
-;; Section characteristics.
-;;
-;;	IMAGE_SCN_TYPE_REG	equ 0x00000000 ;; Reserved.
-;;	IMAGE_SCN_TYPE_DSECT	equ 0x00000001 ;; Reserved.
-;;	IMAGE_SCN_TYPE_NOLOAD	equ 0x00000002 ;; Reserved.
-;;	IMAGE_SCN_TYPE_GROUP	equ 0x00000004 ;; Reserved.
-IMAGE_SCN_TYPE_NO_PAD		equ 0x00000008 ;; Reserved.
-;;	IMAGE_SCN_TYPE_COPY	equ 0x00000010 ;; Reserved.
+IMAGE_SCN_TYPE_NO_PAD		equ 0x00000008 
 
-IMAGE_SCN_CNT_CODE		equ 0x00000020	 ;; Section contains code.
-IMAGE_SCN_CNT_INITIALIZED_DATA	equ 0x00000040	 ;; Section contains initialized data.
-IMAGE_SCN_CNT_UNINITIALIZED_DATA equ 0x00000080	 ;; Section contains uninitialized data.
+IMAGE_SCN_CNT_CODE		equ 0x00000020	 
+IMAGE_SCN_CNT_INITIALIZED_DATA	equ 0x00000040	 
+IMAGE_SCN_CNT_UNINITIALIZED_DATA equ 0x00000080	 
 
-IMAGE_SCN_LNK_OTHER		equ 0x00000100	 ;; Reserved.
-IMAGE_SCN_LNK_INFO		equ 0x00000200	 ;; Section contains comments or some other type of information.
-;IMAGE_SCN_TYPE_OVER		equ 0x00000400 ;; Reserved.
-IMAGE_SCN_LNK_REMOVE		equ 0x00000800	 ;; Section contents will not become part of image.
-IMAGE_SCN_LNK_COMDAT		equ 0x00001000	 ;; Section contents comdat.
-;				equ 0x00002000 ;; Reserved.
+IMAGE_SCN_LNK_OTHER		equ 0x00000100	 
+IMAGE_SCN_LNK_INFO		equ 0x00000200	 
+;IMAGE_SCN_TYPE_OVER		equ 0x00000400 
+IMAGE_SCN_LNK_REMOVE		equ 0x00000800	 
+IMAGE_SCN_LNK_COMDAT		equ 0x00001000	 
 ;IMAGE_SCN_MEM_PROTECTED - Obsolete equ 0x00004000
-IMAGE_SCN_NO_DEFER_SPEC_EXC	equ 0x00004000	 ;; Reset speculative exceptions handling bits in the TLB entries for this section.
-IMAGE_SCN_GPREL			equ 0x00008000	 ;; Section content can be accessed relative to GP
+IMAGE_SCN_NO_DEFER_SPEC_EXC	equ 0x00004000	 
+IMAGE_SCN_GPREL			equ 0x00008000	 
 IMAGE_SCN_MEM_FARDATA		equ 0x00008000
-;;IMAGE_SCN_MEM_SYSHEAP - Obsolete equ 0x00010000
 IMAGE_SCN_MEM_PURGEABLE		equ 0x00020000
 IMAGE_SCN_MEM_16BIT		equ 0x00020000
 IMAGE_SCN_MEM_LOCKED		equ 0x00040000
 IMAGE_SCN_MEM_PRELOAD		equ 0x00080000
 
-IMAGE_SCN_ALIGN_1BYTES		equ 0x00100000	 ;;
-IMAGE_SCN_ALIGN_2BYTES		equ 0x00200000	 ;;
-IMAGE_SCN_ALIGN_4BYTES		equ 0x00300000	 ;;
-IMAGE_SCN_ALIGN_8BYTES		equ 0x00400000	 ;;
-IMAGE_SCN_ALIGN_16BYTES		equ 0x00500000	 ;; Default alignment if no others are specified.
-IMAGE_SCN_ALIGN_32BYTES		equ 0x00600000	 ;;
-IMAGE_SCN_ALIGN_64BYTES		equ 0x00700000	 ;;
-IMAGE_SCN_ALIGN_128BYTES	equ 0x00800000	 ;;
-IMAGE_SCN_ALIGN_256BYTES	equ 0x00900000	 ;;
-IMAGE_SCN_ALIGN_512BYTES	equ 0x00A00000	 ;;
-IMAGE_SCN_ALIGN_1024BYTES	equ 0x00B00000	 ;;
-IMAGE_SCN_ALIGN_2048BYTES	equ 0x00C00000	 ;;
-IMAGE_SCN_ALIGN_4096BYTES	equ 0x00D00000	 ;;
-IMAGE_SCN_ALIGN_8192BYTES	equ 0x00E00000	 ;;
-;; Unused			equ 0x00F00000
+IMAGE_SCN_ALIGN_1BYTES		equ 0x00100000	 
+IMAGE_SCN_ALIGN_2BYTES		equ 0x00200000	 
+IMAGE_SCN_ALIGN_4BYTES		equ 0x00300000	 
+IMAGE_SCN_ALIGN_8BYTES		equ 0x00400000	 
+IMAGE_SCN_ALIGN_16BYTES		equ 0x00500000	 
+IMAGE_SCN_ALIGN_32BYTES		equ 0x00600000	 
+IMAGE_SCN_ALIGN_64BYTES		equ 0x00700000	 
+IMAGE_SCN_ALIGN_128BYTES	equ 0x00800000	 
+IMAGE_SCN_ALIGN_256BYTES	equ 0x00900000	 
+IMAGE_SCN_ALIGN_512BYTES	equ 0x00A00000	 
+IMAGE_SCN_ALIGN_1024BYTES	equ 0x00B00000	 
+IMAGE_SCN_ALIGN_2048BYTES	equ 0x00C00000	 
+IMAGE_SCN_ALIGN_4096BYTES	equ 0x00D00000	 
+IMAGE_SCN_ALIGN_8192BYTES	equ 0x00E00000	 
 IMAGE_SCN_ALIGN_MASK		equ 0x00F00000
 
-IMAGE_SCN_LNK_NRELOC_OVFL	equ 0x01000000	 ;; Section contains extended relocations.
-IMAGE_SCN_MEM_DISCARDABLE	equ 0x02000000	 ;; Section can be discarded.
-IMAGE_SCN_MEM_NOT_CACHED	equ 0x04000000	 ;; Section is not cachable.
-IMAGE_SCN_MEM_NOT_PAGED		equ 0x08000000	 ;; Section is not pageable.
-IMAGE_SCN_MEM_SHARED		equ 0x10000000	 ;; Section is shareable.
-IMAGE_SCN_MEM_EXECUTE		equ 0x20000000	 ;; Section is executable.
-IMAGE_SCN_MEM_READ		equ 0x40000000	 ;; Section is readable.
-IMAGE_SCN_MEM_WRITE		equ 0x80000000	 ;; Section is writeable.
+IMAGE_SCN_LNK_NRELOC_OVFL	equ 0x01000000	 
+IMAGE_SCN_MEM_DISCARDABLE	equ 0x02000000	 
+IMAGE_SCN_MEM_NOT_CACHED	equ 0x04000000	 
+IMAGE_SCN_MEM_NOT_PAGED		equ 0x08000000	 
+IMAGE_SCN_MEM_SHARED		equ 0x10000000	 
+IMAGE_SCN_MEM_EXECUTE		equ 0x20000000	 
+IMAGE_SCN_MEM_READ		equ 0x40000000	 
+IMAGE_SCN_MEM_WRITE		equ 0x80000000	 
 
-;;
-;; TLS Chaacteristic Flags
-;;
-IMAGE_SCN_SCALE_INDEX	equ 0x00000001	 ;; Tls index is scaled
+IMAGE_SCN_SCALE_INDEX	equ 0x00000001	 
 
-;;
-;; Symbol format.
-;;
 
-IMAGE_SYMBOL		STRUC WORD ;; Symbols, relocs, and linenumbers are 2 byte packed
+IMAGE_SYMBOL		STRUC WORD 
 UNION
     ShortName		db 8 dup(?)
     STRUC
-	_Short		dd ?	;; if 0, use LongName
-	_Long		dd ?	;; offset into string table
+	_Short		dd ?	
+	_Long		dd ?	
     ENDS
     LongName		dd 2 dup(?)
 ENDS
@@ -9380,8 +7844,8 @@ IMAGE_SYMBOL_EX		STRUC
 UNION
     ShortName		db 8 dup(?)
     STRUC
-	_Short		dd ?	;; if 0, use LongName
-	_Long		dd ?	;; offset into string table
+	_Short		dd ?	
+	_Long		dd ?	
     ENDS
     LongName		dd 2 dup(?)
 ENDS
@@ -9393,55 +7857,39 @@ NumberOfAuxSymbols	db ?
 IMAGE_SYMBOL_EX		ENDS
 PIMAGE_SYMBOL_EX	typedef ptr IMAGE_SYMBOL_EX
 
-;;
-;; Section values.
-;;
-;; Symbols have a section number of the section in which they are
-;; defined. Otherwise, section numbers have the following meanings:
-;;
 
-IMAGE_SYM_UNDEFINED		equ 0		;; Symbol is undefined or is common.
-IMAGE_SYM_ABSOLUTE		equ -1		;; Symbol is an absolute value.
-IMAGE_SYM_DEBUG			equ -2		;; Symbol is a special debug item.
-IMAGE_SYM_SECTION_MAX		equ 0xFEFF	;; Values 0xFF00-0xFFFF are special
+IMAGE_SYM_UNDEFINED		equ 0		
+IMAGE_SYM_ABSOLUTE		equ -1		
+IMAGE_SYM_DEBUG			equ -2		
+IMAGE_SYM_SECTION_MAX		equ 0xFEFF	
 IMAGE_SYM_SECTION_MAX_EX	equ MAXLONG
 
-;;
-;; Type (fundamental) values.
-;;
 
-IMAGE_SYM_TYPE_NULL		equ 0x0000	;; no type.
-IMAGE_SYM_TYPE_VOID		equ 0x0001	;;
-IMAGE_SYM_TYPE_CHAR		equ 0x0002	;; type character.
-IMAGE_SYM_TYPE_SHORT		equ 0x0003	;; type short integer.
-IMAGE_SYM_TYPE_INT		equ 0x0004	;;
-IMAGE_SYM_TYPE_LONG		equ 0x0005	;;
-IMAGE_SYM_TYPE_FLOAT		equ 0x0006	;;
-IMAGE_SYM_TYPE_DOUBLE		equ 0x0007	;;
-IMAGE_SYM_TYPE_STRUCT		equ 0x0008	;;
-IMAGE_SYM_TYPE_UNION		equ 0x0009	;;
-IMAGE_SYM_TYPE_ENUM		equ 0x000A	;; enumeration.
-IMAGE_SYM_TYPE_MOE		equ 0x000B	;; member of enumeration.
-IMAGE_SYM_TYPE_BYTE		equ 0x000C	;;
-IMAGE_SYM_TYPE_WORD		equ 0x000D	;;
-IMAGE_SYM_TYPE_UINT		equ 0x000E	;;
-IMAGE_SYM_TYPE_DWORD		equ 0x000F	;;
-IMAGE_SYM_TYPE_PCODE		equ 0x8000	;;
+IMAGE_SYM_TYPE_NULL		equ 0x0000	
+IMAGE_SYM_TYPE_VOID		equ 0x0001	
+IMAGE_SYM_TYPE_CHAR		equ 0x0002	
+IMAGE_SYM_TYPE_SHORT		equ 0x0003	
+IMAGE_SYM_TYPE_INT		equ 0x0004	
+IMAGE_SYM_TYPE_LONG		equ 0x0005	
+IMAGE_SYM_TYPE_FLOAT		equ 0x0006	
+IMAGE_SYM_TYPE_DOUBLE		equ 0x0007	
+IMAGE_SYM_TYPE_STRUCT		equ 0x0008	
+IMAGE_SYM_TYPE_UNION		equ 0x0009	
+IMAGE_SYM_TYPE_ENUM		equ 0x000A	
+IMAGE_SYM_TYPE_MOE		equ 0x000B	
+IMAGE_SYM_TYPE_BYTE		equ 0x000C	
+IMAGE_SYM_TYPE_WORD		equ 0x000D	
+IMAGE_SYM_TYPE_UINT		equ 0x000E	
+IMAGE_SYM_TYPE_DWORD		equ 0x000F	
+IMAGE_SYM_TYPE_PCODE		equ 0x8000	
 
-;;
-;; Type (derived) values.
-;;
 
-IMAGE_SYM_DTYPE_NULL		equ 0	 ;; no derived type.
-IMAGE_SYM_DTYPE_POINTER		equ 1	 ;; pointer.
-IMAGE_SYM_DTYPE_FUNCTION	equ 2	 ;; function.
-IMAGE_SYM_DTYPE_ARRAY		equ 3	 ;; array.
+IMAGE_SYM_DTYPE_NULL		equ 0	 
+IMAGE_SYM_DTYPE_POINTER		equ 1	 
+IMAGE_SYM_DTYPE_FUNCTION	equ 2	 
+IMAGE_SYM_DTYPE_ARRAY		equ 3	 
 
-;;
-;; Storage classes.
-;;
 
-; StorageClass values
 
 IMAGE_SYM_CLASS_END_OF_FUNCTION	    equ -1
 IMAGE_SYM_CLASS_NULL		    equ 0x0000
@@ -9464,18 +7912,16 @@ IMAGE_SYM_CLASS_MEMBER_OF_ENUM	    equ 0x0010
 IMAGE_SYM_CLASS_REGISTER_PARAM	    equ 0x0011
 IMAGE_SYM_CLASS_BIT_FIELD	    equ 0x0012
 
-IMAGE_SYM_CLASS_FAR_EXTERNAL	    equ 0x0044	;; Not in PECOFF v8 spec
+IMAGE_SYM_CLASS_FAR_EXTERNAL	    equ 0x0044	
 
 IMAGE_SYM_CLASS_BLOCK		    equ 0x0064
 IMAGE_SYM_CLASS_FUNCTION	    equ 0x0065
 IMAGE_SYM_CLASS_END_OF_STRUCT	    equ 0x0066
 IMAGE_SYM_CLASS_FILE		    equ 0x0067
-;; new
 IMAGE_SYM_CLASS_SECTION		    equ 0x0068
 IMAGE_SYM_CLASS_WEAK_EXTERNAL	    equ 0x0069
 IMAGE_SYM_CLASS_CLR_TOKEN	    equ 0x006B
 
-;; type packing constants
 
 N_BTMASK    equ 0x000F
 N_TMASK	    equ 0x0030
@@ -9484,31 +7930,25 @@ N_TMASK2    equ 0x00F0
 N_BTSHFT    equ 4
 N_TSHIFT    equ 2
 
-;; MACROS
 
-;; Basic Type of x
 BTYPE	macro x
 	exitm<((x) and N_BTMASK)>
 	endm
-;; Is x a pointer?
 ifndef ISPTR
 ISPTR	macro x
 	exitm<(((x) and N_TMASK) == (IMAGE_SYM_DTYPE_POINTER shl N_BTSHFT))>
 	endm
 endif
-;; Is x a function?
 ifndef ISFCN
 ISFCN	macro x
 	exitm<(((x) and N_TMASK) == (IMAGE_SYM_DTYPE_FUNCTION shl N_BTSHFT))>
 	endm
 endif
-;; Is x an array?
 ifndef ISARY
 ISARY	macro x
 	exitm<(((x) and N_TMASK) == (IMAGE_SYM_DTYPE_ARRAY shl N_BTSHFT))>
 	endm
 endif
-;; Is x a structure, union, or enumeration TAG?
 ifndef ISTAG
 ISTAG	macro x
 	exitm<((x)==IMAGE_SYM_CLASS_STRUCT_TAG or (x)==IMAGE_SYM_CLASS_UNION_TAG or (x)==IMAGE_SYM_CLASS_ENUM_TAG)>
@@ -9528,29 +7968,23 @@ endif
 ;include <pshpack2.h>
 
 IMAGE_AUX_SYMBOL_TOKEN_DEF STRUC WORD
-bAuxType		db ?	;; IMAGE_AUX_SYMBOL_TYPE
-bReserved		db ?	;; Must be 0
+bAuxType		db ?	
+bReserved		db ?	
 SymbolTableIndex	dd ?
-rgbReserved		db 12 dup(?) ;; Must be 0
+rgbReserved		db 12 dup(?) 
 IMAGE_AUX_SYMBOL_TOKEN_DEF ENDS
 PIMAGE_AUX_SYMBOL_TOKEN_DEF typedef ptr IMAGE_AUX_SYMBOL_TOKEN_DEF
 
 ;include <poppack.h>
 
-;;
-;; Auxiliary entry format.
-;;
 
 IMAGE_AUX_SYMBOL	UNION
-;
-; AUX format 2: .bf and .ef entries
-;
 STRUC
- TagIndex		dd ?	;; struct, union, or enum tag index
+ TagIndex		dd ?	
  UNION
   STRUC
-    Linenumber		dw ?	;; declaration line number
-    _Size		dw ?	;; size of struct, union, or enum
+    Linenumber		dw ?	
+    _Size		dw ?	
   ENDS
   TotalSize		dd ?
  ENDS
@@ -9558,36 +7992,28 @@ STRUC
   STRUC
    PointerToLinenumber	dd ?
    PointerToNextFunction dd ?
-  ENDS				;; if ISARY, up to 4 dimen.
-; STRUC
+  ENDS				
    Dimension		dw 4 dup(?)
-; ENDS
  ENDS
  TvIndex		dw ?
 ENDS
-;
-; AUX format 4: file entries
-;
 STRUC
  _Name			db IMAGE_SIZEOF_SYMBOL dup(?)
 ENDS
-;
-; AUX format 5: section entries
-;
 STRUC
- _Length		dd ?	;; section length
- NumberOfRelocations	dw ?	;; number of relocation entries
- NumberOfLinenumbers	dw ?	;; number of line numbers
- CheckSum		dd ?	;; checksum for communal
- Number			dw ?	;; section number to associate with
- Selection		db ?	;; communal selection type
+ _Length		dd ?	
+ NumberOfRelocations	dw ?	
+ NumberOfLinenumbers	dw ?	
+ CheckSum		dd ?	
+ Number			dw ?	
+ Selection		db ?	
 ENDS
 IMAGE_AUX_SYMBOL	ENDS
 PIMAGE_AUX_SYMBOL	typedef ptr IMAGE_AUX_SYMBOL
 
 IMAGE_AUX_SYMBOL_EX	UNION
 STRUC Sym
- WeakDefaultSymIndex	dd ?	;; the weak extern default symbol index
+ WeakDefaultSymIndex	dd ?	
  WeakSearchType		dd ?
  rgbReserved		db 12 dup(?)
 ENDS
@@ -9621,11 +8047,7 @@ IMAGE_AUX_SYMBOL_TYPE_TOKEN_DEF equ 1
 
 IMAGE_SIZEOF_AUX_SYMBOL equ 18
 
-;;
-;; Communal selection types.
-;;
 
-; values for IMAGE_AUX_SYMBOL.Section.Selection
 
 IMAGE_COMDAT_SELECT_NODUPLICATES    equ 1
 IMAGE_COMDAT_SELECT_ANY		    equ 2
@@ -9635,20 +8057,16 @@ IMAGE_COMDAT_SELECT_ASSOCIATIVE	    equ 5
 IMAGE_COMDAT_SELECT_LARGEST	    equ 6
 IMAGE_COMDAT_SELECT_NEWEST	    equ 7
 
-; values for IMAGE_AUX_SYMBOL.Sym.Characteristics(=TotalSize)
 
 IMAGE_WEAK_EXTERN_SEARCH_NOLIBRARY  equ 1
 IMAGE_WEAK_EXTERN_SEARCH_LIBRARY    equ 2
 IMAGE_WEAK_EXTERN_SEARCH_ALIAS	    equ 3
 
-;;
-;; Relocation format.
-;;
 
 IMAGE_RELOCATION	STRUC
 UNION
     VirtualAddress	dd ?
-    RelocCount		dd ?	;; Set to the real count when IMAGE_SCN_LNK_NRELOC_OVFL is set
+    RelocCount		dd ?	
 ENDS
 SymbolTableIndex	dd ?
 _Type			dw ?
@@ -9657,26 +8075,20 @@ PIMAGE_RELOCATION	typedef ptr IMAGE_RELOCATION
 
 IMAGE_SIZEOF_RELOCATION equ 10
 
-;;
-;; I386 relocation types.
-;;
 
-IMAGE_REL_I386_ABSOLUTE		equ 0x0000 ;; Reference is absolute, no relocation is necessary
-IMAGE_REL_I386_DIR16		equ 0x0001 ;; Direct 16-bit reference to the symbols virtual address
-IMAGE_REL_I386_REL16		equ 0x0002 ;; PC-relative 16-bit reference to the symbols virtual address
-IMAGE_REL_I386_DIR32		equ 0x0006 ;; Direct 32-bit reference to the symbols virtual address
-IMAGE_REL_I386_DIR32NB		equ 0x0007 ;; Direct 32-bit reference to the symbols virtual address, base not included
-IMAGE_REL_I386_SEG12		equ 0x0009 ;; Direct 16-bit reference to the segment-selector bits of a 32-bit virtual address
+IMAGE_REL_I386_ABSOLUTE		equ 0x0000 
+IMAGE_REL_I386_DIR16		equ 0x0001 
+IMAGE_REL_I386_REL16		equ 0x0002 
+IMAGE_REL_I386_DIR32		equ 0x0006 
+IMAGE_REL_I386_DIR32NB		equ 0x0007 
+IMAGE_REL_I386_SEG12		equ 0x0009 
 IMAGE_REL_I386_SECTION		equ 000Ah ; 16bit section index
 IMAGE_REL_I386_SECREL		equ 000Bh ; 32bit offset (SECTIONREL)
 IMAGE_REL_I386_TOKEN		equ 000Ch ; CLR token
 IMAGE_REL_I386_SECREL7		equ 000Dh ; 7bit offset
-IMAGE_REL_I386_REL32		equ 0x0014 ;; PC-relative 32-bit reference to the symbols virtual address
+IMAGE_REL_I386_REL32		equ 0x0014 
 
-;;
-;; MIPS relocation types.
-;;
-IMAGE_REL_MIPS_ABSOLUTE		equ 0x0000 ;; Reference is absolute, no relocation is necessary
+IMAGE_REL_MIPS_ABSOLUTE		equ 0x0000 
 IMAGE_REL_MIPS_REFHALF		equ 0x0001
 IMAGE_REL_MIPS_REFWORD		equ 0x0002
 IMAGE_REL_MIPS_JMPADDR		equ 0x0003
@@ -9686,16 +8098,13 @@ IMAGE_REL_MIPS_GPREL		equ 0x0006
 IMAGE_REL_MIPS_LITERAL		equ 0x0007
 IMAGE_REL_MIPS_SECTION		equ 0x000A
 IMAGE_REL_MIPS_SECREL		equ 0x000B
-IMAGE_REL_MIPS_SECRELLO		equ 0x000C ;; Low 16-bit section relative referemce (used for >32k TLS)
-IMAGE_REL_MIPS_SECRELHI		equ 0x000D ;; High 16-bit section relative reference (used for >32k TLS)
-IMAGE_REL_MIPS_TOKEN		equ 0x000E ;; clr token
+IMAGE_REL_MIPS_SECRELLO		equ 0x000C 
+IMAGE_REL_MIPS_SECRELHI		equ 0x000D 
+IMAGE_REL_MIPS_TOKEN		equ 0x000E 
 IMAGE_REL_MIPS_JMPADDR16	equ 0x0010
 IMAGE_REL_MIPS_REFWORDNB	equ 0x0022
 IMAGE_REL_MIPS_PAIR		equ 0x0025
 
-;;
-;; Alpha Relocation types.
-;;
 
 IMAGE_REL_ALPHA_ABSOLUTE	equ 0x0000
 IMAGE_REL_ALPHA_REFLONG		equ 0x0001
@@ -9714,96 +8123,89 @@ IMAGE_REL_ALPHA_MATCH		equ 0x000D
 IMAGE_REL_ALPHA_SECTION		equ 0x000E
 IMAGE_REL_ALPHA_SECREL		equ 0x000F
 IMAGE_REL_ALPHA_REFLONGNB	equ 0x0010
-IMAGE_REL_ALPHA_SECRELLO	equ 0x0011 ;; Low 16-bit section relative reference
-IMAGE_REL_ALPHA_SECRELHI	equ 0x0012 ;; High 16-bit section relative reference
-IMAGE_REL_ALPHA_REFQ3		equ 0x0013 ;; High 16 bits of 48 bit reference
-IMAGE_REL_ALPHA_REFQ2		equ 0x0014 ;; Middle 16 bits of 48 bit reference
-IMAGE_REL_ALPHA_REFQ1		equ 0x0015 ;; Low 16 bits of 48 bit reference
-IMAGE_REL_ALPHA_GPRELLO		equ 0x0016 ;; Low 16-bit GP relative reference
-IMAGE_REL_ALPHA_GPRELHI		equ 0x0017 ;; High 16-bit GP relative reference
+IMAGE_REL_ALPHA_SECRELLO	equ 0x0011 
+IMAGE_REL_ALPHA_SECRELHI	equ 0x0012 
+IMAGE_REL_ALPHA_REFQ3		equ 0x0013 
+IMAGE_REL_ALPHA_REFQ2		equ 0x0014 
+IMAGE_REL_ALPHA_REFQ1		equ 0x0015 
+IMAGE_REL_ALPHA_GPRELLO		equ 0x0016 
+IMAGE_REL_ALPHA_GPRELHI		equ 0x0017 
 
 
-;;
-;; IBM PowerPC relocation types.
-;;
 
-IMAGE_REL_PPC_ABSOLUTE		equ 0x0000 ;; NOP
-IMAGE_REL_PPC_ADDR64		equ 0x0001 ;; 64-bit address
-IMAGE_REL_PPC_ADDR32		equ 0x0002 ;; 32-bit address
-IMAGE_REL_PPC_ADDR24		equ 0x0003 ;; 26-bit address, shifted left 2 (branch absolute)
-IMAGE_REL_PPC_ADDR16		equ 0x0004 ;; 16-bit address
-IMAGE_REL_PPC_ADDR14		equ 0x0005 ;; 16-bit address, shifted left 2 (load doubleword)
-IMAGE_REL_PPC_REL24		equ 0x0006 ;; 26-bit PC-relative offset, shifted left 2 (branch relative)
-IMAGE_REL_PPC_REL14		equ 0x0007 ;; 16-bit PC-relative offset, shifted left 2 (br cond relative)
-IMAGE_REL_PPC_TOCREL16		equ 0x0008 ;; 16-bit offset from TOC base
-IMAGE_REL_PPC_TOCREL14		equ 0x0009 ;; 16-bit offset from TOC base, shifted left 2 (load doubleword)
+IMAGE_REL_PPC_ABSOLUTE		equ 0x0000 
+IMAGE_REL_PPC_ADDR64		equ 0x0001 
+IMAGE_REL_PPC_ADDR32		equ 0x0002 
+IMAGE_REL_PPC_ADDR24		equ 0x0003 
+IMAGE_REL_PPC_ADDR16		equ 0x0004 
+IMAGE_REL_PPC_ADDR14		equ 0x0005 
+IMAGE_REL_PPC_REL24		equ 0x0006 
+IMAGE_REL_PPC_REL14		equ 0x0007 
+IMAGE_REL_PPC_TOCREL16		equ 0x0008 
+IMAGE_REL_PPC_TOCREL14		equ 0x0009 
 
-IMAGE_REL_PPC_ADDR32NB		equ 0x000A ;; 32-bit addr w/o image base
-IMAGE_REL_PPC_SECREL		equ 0x000B ;; va of containing section (as in an image sectionhdr)
-IMAGE_REL_PPC_SECTION		equ 0x000C ;; sectionheader number
-IMAGE_REL_PPC_IFGLUE		equ 0x000D ;; substitute TOC restore instruction iff symbol is glue code
-IMAGE_REL_PPC_IMGLUE		equ 0x000E ;; symbol is glue code; virtual address is TOC restore instruction
-IMAGE_REL_PPC_SECREL16		equ 0x000F ;; va of containing section (limited to 16 bits)
+IMAGE_REL_PPC_ADDR32NB		equ 0x000A 
+IMAGE_REL_PPC_SECREL		equ 0x000B 
+IMAGE_REL_PPC_SECTION		equ 0x000C 
+IMAGE_REL_PPC_IFGLUE		equ 0x000D 
+IMAGE_REL_PPC_IMGLUE		equ 0x000E 
+IMAGE_REL_PPC_SECREL16		equ 0x000F 
 IMAGE_REL_PPC_REFHI		equ 0x0010
 IMAGE_REL_PPC_REFLO		equ 0x0011
 IMAGE_REL_PPC_PAIR		equ 0x0012
-IMAGE_REL_PPC_SECRELLO		equ 0x0013 ;; Low 16-bit section relative reference (used for >32k TLS)
-IMAGE_REL_PPC_SECRELHI		equ 0x0014 ;; High 16-bit section relative reference (used for >32k TLS)
+IMAGE_REL_PPC_SECRELLO		equ 0x0013 
+IMAGE_REL_PPC_SECRELHI		equ 0x0014 
 IMAGE_REL_PPC_GPREL		equ 0x0015
-IMAGE_REL_PPC_TOKEN		equ 0x0016 ;; clr token
+IMAGE_REL_PPC_TOKEN		equ 0x0016 
 
-IMAGE_REL_PPC_TYPEMASK		equ 0x00FF ;; mask to isolate above values in IMAGE_RELOCATION.Type
+IMAGE_REL_PPC_TYPEMASK		equ 0x00FF 
 
-;; Flag bits in IMAGE_RELOCATION.TYPE
 
-IMAGE_REL_PPC_NEG		equ 0x0100 ;; subtract reloc value rather than adding it
-IMAGE_REL_PPC_BRTAKEN		equ 0x0200 ;; fix branch prediction bit to predict branch taken
-IMAGE_REL_PPC_BRNTAKEN		equ 0x0400 ;; fix branch prediction bit to predict branch not taken
-IMAGE_REL_PPC_TOCDEFN		equ 0x0800 ;; toc slot defined in file (or, data in toc)
+IMAGE_REL_PPC_NEG		equ 0x0100 
+IMAGE_REL_PPC_BRTAKEN		equ 0x0200 
+IMAGE_REL_PPC_BRNTAKEN		equ 0x0400 
+IMAGE_REL_PPC_TOCDEFN		equ 0x0800 
 
-;;
-;; Hitachi SH3 relocation types.
-;;
-IMAGE_REL_SH3_ABSOLUTE		equ 0x0000 ;; No relocation
-IMAGE_REL_SH3_DIRECT16		equ 0x0001 ;; 16 bit direct
-IMAGE_REL_SH3_DIRECT32		equ 0x0002 ;; 32 bit direct
-IMAGE_REL_SH3_DIRECT8		equ 0x0003 ;; 8 bit direct, -128..255
-IMAGE_REL_SH3_DIRECT8_WORD	equ 0x0004 ;; 8 bit direct .W (0 ext.)
-IMAGE_REL_SH3_DIRECT8_LONG	equ 0x0005 ;; 8 bit direct .L (0 ext.)
-IMAGE_REL_SH3_DIRECT4		equ 0x0006 ;; 4 bit direct (0 ext.)
-IMAGE_REL_SH3_DIRECT4_WORD	equ 0x0007 ;; 4 bit direct .W (0 ext.)
-IMAGE_REL_SH3_DIRECT4_LONG	equ 0x0008 ;; 4 bit direct .L (0 ext.)
-IMAGE_REL_SH3_PCREL8_WORD	equ 0x0009 ;; 8 bit PC relative .W
-IMAGE_REL_SH3_PCREL8_LONG	equ 0x000A ;; 8 bit PC relative .L
-IMAGE_REL_SH3_PCREL12_WORD	equ 0x000B ;; 12 LSB PC relative .W
-IMAGE_REL_SH3_STARTOF_SECTION	equ 0x000C ;; Start of EXE section
-IMAGE_REL_SH3_SIZEOF_SECTION	equ 0x000D ;; Size of EXE section
-IMAGE_REL_SH3_SECTION		equ 0x000E ;; Section table index
-IMAGE_REL_SH3_SECREL		equ 0x000F ;; Offset within section
-IMAGE_REL_SH3_DIRECT32_NB	equ 0x0010 ;; 32 bit direct not based
-IMAGE_REL_SH3_GPREL4_LONG	equ 0x0011 ;; GP-relative addressing
-IMAGE_REL_SH3_TOKEN		equ 0x0012 ;; clr token
-IMAGE_REL_SHM_PCRELPT		equ 0x0013 ;; Offset from current
-IMAGE_REL_SHM_REFLO		equ 0x0014 ;; Low bits of 32-bit address
-IMAGE_REL_SHM_REFHALF		equ 0x0015 ;; High bits of 32-bit address
-IMAGE_REL_SHM_RELLO		equ 0x0016 ;; Low bits of relative reference
-IMAGE_REL_SHM_RELHALF		equ 0x0017 ;; High bits of relative reference
-IMAGE_REL_SHM_PAIR		equ 0x0018 ;; offset operand for relocation
+IMAGE_REL_SH3_ABSOLUTE		equ 0x0000 
+IMAGE_REL_SH3_DIRECT16		equ 0x0001 
+IMAGE_REL_SH3_DIRECT32		equ 0x0002 
+IMAGE_REL_SH3_DIRECT8		equ 0x0003 
+IMAGE_REL_SH3_DIRECT8_WORD	equ 0x0004 
+IMAGE_REL_SH3_DIRECT8_LONG	equ 0x0005 
+IMAGE_REL_SH3_DIRECT4		equ 0x0006 
+IMAGE_REL_SH3_DIRECT4_WORD	equ 0x0007 
+IMAGE_REL_SH3_DIRECT4_LONG	equ 0x0008 
+IMAGE_REL_SH3_PCREL8_WORD	equ 0x0009 
+IMAGE_REL_SH3_PCREL8_LONG	equ 0x000A 
+IMAGE_REL_SH3_PCREL12_WORD	equ 0x000B 
+IMAGE_REL_SH3_STARTOF_SECTION	equ 0x000C 
+IMAGE_REL_SH3_SIZEOF_SECTION	equ 0x000D 
+IMAGE_REL_SH3_SECTION		equ 0x000E 
+IMAGE_REL_SH3_SECREL		equ 0x000F 
+IMAGE_REL_SH3_DIRECT32_NB	equ 0x0010 
+IMAGE_REL_SH3_GPREL4_LONG	equ 0x0011 
+IMAGE_REL_SH3_TOKEN		equ 0x0012 
+IMAGE_REL_SHM_PCRELPT		equ 0x0013 
+IMAGE_REL_SHM_REFLO		equ 0x0014 
+IMAGE_REL_SHM_REFHALF		equ 0x0015 
+IMAGE_REL_SHM_RELLO		equ 0x0016 
+IMAGE_REL_SHM_RELHALF		equ 0x0017 
+IMAGE_REL_SHM_PAIR		equ 0x0018 
 
-IMAGE_REL_SH_NOMODE		equ 0x8000 ;; relocation ignores section mode
+IMAGE_REL_SH_NOMODE		equ 0x8000 
 
-IMAGE_REL_ARM_ABSOLUTE		equ 0x0000 ;; No relocation required
-IMAGE_REL_ARM_ADDR32		equ 0x0001 ;; 32 bit address
-IMAGE_REL_ARM_ADDR32NB		equ 0x0002 ;; 32 bit address w/o image base
-IMAGE_REL_ARM_BRANCH24		equ 0x0003 ;; 24 bit offset << 2 & sign ext.
-IMAGE_REL_ARM_BRANCH11		equ 0x0004 ;; Thumb: 2 11 bit offsets
-IMAGE_REL_ARM_TOKEN		equ 0x0005 ;; clr token
-IMAGE_REL_ARM_GPREL12		equ 0x0006 ;; GP-relative addressing (ARM)
-IMAGE_REL_ARM_GPREL7		equ 0x0007 ;; GP-relative addressing (Thumb)
+IMAGE_REL_ARM_ABSOLUTE		equ 0x0000 
+IMAGE_REL_ARM_ADDR32		equ 0x0001 
+IMAGE_REL_ARM_ADDR32NB		equ 0x0002 
+IMAGE_REL_ARM_BRANCH24		equ 0x0003 
+IMAGE_REL_ARM_BRANCH11		equ 0x0004 
+IMAGE_REL_ARM_TOKEN		equ 0x0005 
+IMAGE_REL_ARM_GPREL12		equ 0x0006 
+IMAGE_REL_ARM_GPREL7		equ 0x0007 
 IMAGE_REL_ARM_BLX24		equ 0x0008
 IMAGE_REL_ARM_BLX11		equ 0x0009
-IMAGE_REL_ARM_SECTION		equ 0x000E ;; Section table index
-IMAGE_REL_ARM_SECREL		equ 0x000F ;; Offset within section
+IMAGE_REL_ARM_SECTION		equ 0x000E 
+IMAGE_REL_ARM_SECREL		equ 0x000F 
 
 IMAGE_REL_AM_ABSOLUTE		equ 0x0000
 IMAGE_REL_AM_ADDR32		equ 0x0001
@@ -9816,9 +8218,6 @@ IMAGE_REL_AM_SECREL		equ 0x0007
 IMAGE_REL_AM_SECTION		equ 0x0008
 IMAGE_REL_AM_TOKEN		equ 0x0009
 
-;;
-;; x64 relocations
-;;
 
 IMAGE_REL_AMD64_ABSOLUTE	equ 0000h ; Reference is absolute, no relocation is necessary
 IMAGE_REL_AMD64_ADDR64		equ 0001h ; 64-bit address (VA)
@@ -9834,13 +8233,10 @@ IMAGE_REL_AMD64_SECTION		equ 000Ah ; Section index
 IMAGE_REL_AMD64_SECREL		equ 000Bh ; 32 bit offset from base of section containing target
 IMAGE_REL_AMD64_SECREL7		equ 000Ch ; 7 bit unsigned offset from base of section containing target
 IMAGE_REL_AMD64_TOKEN		equ 000Dh ; 32 bit metadata token
-IMAGE_REL_AMD64_SREL32		equ 0x000E ;; 32 bit signed span-dependent value emitted into object
+IMAGE_REL_AMD64_SREL32		equ 0x000E 
 IMAGE_REL_AMD64_PAIR		equ 0x000F
-IMAGE_REL_AMD64_SSPAN32		equ 0x0010 ;; 32 bit signed span-dependent value applied at link time
+IMAGE_REL_AMD64_SSPAN32		equ 0x0010 
 
-;;
-;; IA64 relocation types.
-;;
 
 IMAGE_REL_IA64_ABSOLUTE		equ 0x0000
 IMAGE_REL_IA64_IMM14		equ 0x0001
@@ -9862,59 +8258,53 @@ IMAGE_REL_IA64_SREL14		equ 0x0011
 IMAGE_REL_IA64_SREL22		equ 0x0012
 IMAGE_REL_IA64_SREL32		equ 0x0013
 IMAGE_REL_IA64_UREL32		equ 0x0014
-IMAGE_REL_IA64_PCREL60X		equ 0x0015 ;; This is always a BRL and never converted
-IMAGE_REL_IA64_PCREL60B		equ 0x0016 ;; If possible, convert to MBB bundle with NOP.B in slot 1
-IMAGE_REL_IA64_PCREL60F		equ 0x0017 ;; If possible, convert to MFB bundle with NOP.F in slot 1
-IMAGE_REL_IA64_PCREL60I		equ 0x0018 ;; If possible, convert to MIB bundle with NOP.I in slot 1
-IMAGE_REL_IA64_PCREL60M		equ 0x0019 ;; If possible, convert to MMB bundle with NOP.M in slot 1
+IMAGE_REL_IA64_PCREL60X		equ 0x0015 
+IMAGE_REL_IA64_PCREL60B		equ 0x0016 
+IMAGE_REL_IA64_PCREL60F		equ 0x0017 
+IMAGE_REL_IA64_PCREL60I		equ 0x0018 
+IMAGE_REL_IA64_PCREL60M		equ 0x0019 
 IMAGE_REL_IA64_IMMGPREL64	equ 0x001A
-IMAGE_REL_IA64_TOKEN		equ 0x001B ;; clr token
+IMAGE_REL_IA64_TOKEN		equ 0x001B 
 IMAGE_REL_IA64_GPREL32		equ 0x001C
 IMAGE_REL_IA64_ADDEND		equ 0x001F
 
-;;
-;; CEF relocation types.
-;;
-IMAGE_REL_CEF_ABSOLUTE	equ 0x0000	;; Reference is absolute, no relocation is necessary
-IMAGE_REL_CEF_ADDR32	equ 0x0001	;; 32-bit address (VA).
-IMAGE_REL_CEF_ADDR64	equ 0x0002	;; 64-bit address (VA).
-IMAGE_REL_CEF_ADDR32NB	equ 0x0003	;; 32-bit address w/o image base (RVA).
-IMAGE_REL_CEF_SECTION	equ 0x0004	;; Section index
-IMAGE_REL_CEF_SECREL	equ 0x0005	;; 32 bit offset from base of section containing target
-IMAGE_REL_CEF_TOKEN	equ 0x0006	;; 32 bit metadata token
+IMAGE_REL_CEF_ABSOLUTE	equ 0x0000	
+IMAGE_REL_CEF_ADDR32	equ 0x0001	
+IMAGE_REL_CEF_ADDR64	equ 0x0002	
+IMAGE_REL_CEF_ADDR32NB	equ 0x0003	
+IMAGE_REL_CEF_SECTION	equ 0x0004	
+IMAGE_REL_CEF_SECREL	equ 0x0005	
+IMAGE_REL_CEF_TOKEN	equ 0x0006	
 
-;;
-;; clr relocation types.
-;;
-IMAGE_REL_CEE_ABSOLUTE	equ 0x0000	;; Reference is absolute, no relocation is necessary
-IMAGE_REL_CEE_ADDR32	equ 0x0001	;; 32-bit address (VA).
-IMAGE_REL_CEE_ADDR64	equ 0x0002	;; 64-bit address (VA).
-IMAGE_REL_CEE_ADDR32NB	equ 0x0003	;; 32-bit address w/o image base (RVA).
-IMAGE_REL_CEE_SECTION	equ 0x0004	;; Section index
-IMAGE_REL_CEE_SECREL	equ 0x0005	;; 32 bit offset from base of section containing target
-IMAGE_REL_CEE_TOKEN	equ 0x0006	;; 32 bit metadata token
+IMAGE_REL_CEE_ABSOLUTE	equ 0x0000	
+IMAGE_REL_CEE_ADDR32	equ 0x0001	
+IMAGE_REL_CEE_ADDR64	equ 0x0002	
+IMAGE_REL_CEE_ADDR32NB	equ 0x0003	
+IMAGE_REL_CEE_SECTION	equ 0x0004	
+IMAGE_REL_CEE_SECREL	equ 0x0005	
+IMAGE_REL_CEE_TOKEN	equ 0x0006	
 
-IMAGE_REL_M32R_ABSOLUTE equ 0x0000	;; No relocation required
-IMAGE_REL_M32R_ADDR32	equ 0x0001	;; 32 bit address
-IMAGE_REL_M32R_ADDR32NB equ 0x0002	;; 32 bit address w/o image base
-IMAGE_REL_M32R_ADDR24	equ 0x0003	;; 24 bit address
-IMAGE_REL_M32R_GPREL16	equ 0x0004	;; GP relative addressing
-IMAGE_REL_M32R_PCREL24	equ 0x0005	;; 24 bit offset SHL 2 AND sign ext.
-IMAGE_REL_M32R_PCREL16	equ 0x0006	;; 16 bit offset SHL 2 AND sign ext.
-IMAGE_REL_M32R_PCREL8	equ 0x0007	;; 8 bit offset SHL 2 AND sign ext.
-IMAGE_REL_M32R_REFHALF	equ 0x0008	;; 16 MSBs
-IMAGE_REL_M32R_REFHI	equ 0x0009	;; 16 MSBs; adj for LSB sign ext.
-IMAGE_REL_M32R_REFLO	equ 0x000A	;; 16 LSBs
-IMAGE_REL_M32R_PAIR	equ 0x000B	;; Link HI and LO
-IMAGE_REL_M32R_SECTION	equ 0x000C	;; Section table index
-IMAGE_REL_M32R_SECREL32 equ 0x000D	;; 32 bit section relative reference
-IMAGE_REL_M32R_TOKEN	equ 0x000E	;; clr token
+IMAGE_REL_M32R_ABSOLUTE equ 0x0000	
+IMAGE_REL_M32R_ADDR32	equ 0x0001	
+IMAGE_REL_M32R_ADDR32NB equ 0x0002	
+IMAGE_REL_M32R_ADDR24	equ 0x0003	
+IMAGE_REL_M32R_GPREL16	equ 0x0004	
+IMAGE_REL_M32R_PCREL24	equ 0x0005	
+IMAGE_REL_M32R_PCREL16	equ 0x0006	
+IMAGE_REL_M32R_PCREL8	equ 0x0007	
+IMAGE_REL_M32R_REFHALF	equ 0x0008	
+IMAGE_REL_M32R_REFHI	equ 0x0009	
+IMAGE_REL_M32R_REFLO	equ 0x000A	
+IMAGE_REL_M32R_PAIR	equ 0x000B	
+IMAGE_REL_M32R_SECTION	equ 0x000C	
+IMAGE_REL_M32R_SECREL32 equ 0x000D	
+IMAGE_REL_M32R_TOKEN	equ 0x000E	
 
-IMAGE_REL_EBC_ABSOLUTE	equ 0x0000	;; No relocation required
-IMAGE_REL_EBC_ADDR32NB	equ 0x0001	;; 32 bit address w/o image base
-IMAGE_REL_EBC_REL32	equ 0x0002	;; 32-bit relative address from byte following reloc
-IMAGE_REL_EBC_SECTION	equ 0x0003	;; Section table index
-IMAGE_REL_EBC_SECREL	equ 0x0004	;; Offset within section
+IMAGE_REL_EBC_ABSOLUTE	equ 0x0000	
+IMAGE_REL_EBC_ADDR32NB	equ 0x0001	
+IMAGE_REL_EBC_REL32	equ 0x0002	
+IMAGE_REL_EBC_SECTION	equ 0x0003	
+IMAGE_REL_EBC_SECREL	equ 0x0004	
 
 EXT_IMM64 macro Value,Address,Size,InstPos,ValPos
 	exitm <Value  or  = ( ( ( ( * ( Address )  shr	InstPos )  and	( ( 1  shl  Size ) - 1 ) ) )  shl  ValPos ) >
@@ -9963,87 +8353,77 @@ EMARCH_ENC_I17_SIGN_SIZE_X		equ 1
 EMARCH_ENC_I17_SIGN_INST_WORD_POS_X	equ 27
 EMARCH_ENC_I17_SIGN_VAL_POS_X		equ 63
 
-X3_OPCODE_INST_WORD_X	equ 3  ;; Intel-IA64-Filler
-X3_OPCODE_SIZE_X	equ 4  ;; Intel-IA64-Filler
-X3_OPCODE_INST_WORD_POS_X equ 28 ;; Intel-IA64-Filler
-X3_OPCODE_SIGN_VAL_POS_X equ 0	;; Intel-IA64-Filler
+X3_OPCODE_INST_WORD_X	equ 3  
+X3_OPCODE_SIZE_X	equ 4  
+X3_OPCODE_INST_WORD_POS_X equ 28 
+X3_OPCODE_SIGN_VAL_POS_X equ 0	
 
-X3_I_INST_WORD_X	equ 3  ;; Intel-IA64-Filler
-X3_I_SIZE_X		equ 1  ;; Intel-IA64-Filler
-X3_I_INST_WORD_POS_X	equ 27 ;; Intel-IA64-Filler
-X3_I_SIGN_VAL_POS_X	equ 59 ;; Intel-IA64-Filler
+X3_I_INST_WORD_X	equ 3  
+X3_I_SIZE_X		equ 1  
+X3_I_INST_WORD_POS_X	equ 27 
+X3_I_SIGN_VAL_POS_X	equ 59 
 
-X3_D_WH_INST_WORD_X	equ 3  ;; Intel-IA64-Filler
-X3_D_WH_SIZE_X		equ 3  ;; Intel-IA64-Filler
-X3_D_WH_INST_WORD_POS_X equ 24 ;; Intel-IA64-Filler
-X3_D_WH_SIGN_VAL_POS_X	equ 0  ;; Intel-IA64-Filler
+X3_D_WH_INST_WORD_X	equ 3  
+X3_D_WH_SIZE_X		equ 3  
+X3_D_WH_INST_WORD_POS_X equ 24 
+X3_D_WH_SIGN_VAL_POS_X	equ 0  
 
-X3_IMM20_INST_WORD_X	equ 3  ;; Intel-IA64-Filler
-X3_IMM20_SIZE_X		equ 20 ;; Intel-IA64-Filler
-X3_IMM20_INST_WORD_POS_X equ 4	;; Intel-IA64-Filler
-X3_IMM20_SIGN_VAL_POS_X equ 0  ;; Intel-IA64-Filler
+X3_IMM20_INST_WORD_X	equ 3  
+X3_IMM20_SIZE_X		equ 20 
+X3_IMM20_INST_WORD_POS_X equ 4	
+X3_IMM20_SIGN_VAL_POS_X equ 0  
 
-X3_IMM39_1_INST_WORD_X	equ 2  ;; Intel-IA64-Filler
-X3_IMM39_1_SIZE_X	equ 23 ;; Intel-IA64-Filler
-X3_IMM39_1_INST_WORD_POS_X equ 0  ;; Intel-IA64-Filler
-X3_IMM39_1_SIGN_VAL_POS_X equ 36 ;; Intel-IA64-Filler
+X3_IMM39_1_INST_WORD_X	equ 2  
+X3_IMM39_1_SIZE_X	equ 23 
+X3_IMM39_1_INST_WORD_POS_X equ 0  
+X3_IMM39_1_SIGN_VAL_POS_X equ 36 
 
-X3_IMM39_2_INST_WORD_X	equ 1  ;; Intel-IA64-Filler
-X3_IMM39_2_SIZE_X	equ 16 ;; Intel-IA64-Filler
-X3_IMM39_2_INST_WORD_POS_X equ 16 ;; Intel-IA64-Filler
-X3_IMM39_2_SIGN_VAL_POS_X equ 20 ;; Intel-IA64-Filler
+X3_IMM39_2_INST_WORD_X	equ 1  
+X3_IMM39_2_SIZE_X	equ 16 
+X3_IMM39_2_INST_WORD_POS_X equ 16 
+X3_IMM39_2_SIGN_VAL_POS_X equ 20 
 
-X3_P_INST_WORD_X	equ 3  ;; Intel-IA64-Filler
-X3_P_SIZE_X		equ 4  ;; Intel-IA64-Filler
-X3_P_INST_WORD_POS_X	equ 0  ;; Intel-IA64-Filler
-X3_P_SIGN_VAL_POS_X	equ 0  ;; Intel-IA64-Filler
+X3_P_INST_WORD_X	equ 3  
+X3_P_SIZE_X		equ 4  
+X3_P_INST_WORD_POS_X	equ 0  
+X3_P_SIGN_VAL_POS_X	equ 0  
 
-X3_TMPLT_INST_WORD_X	equ 0  ;; Intel-IA64-Filler
-X3_TMPLT_SIZE_X		equ 4  ;; Intel-IA64-Filler
-X3_TMPLT_INST_WORD_POS_X equ 0	;; Intel-IA64-Filler
-X3_TMPLT_SIGN_VAL_POS_X equ 0  ;; Intel-IA64-Filler
+X3_TMPLT_INST_WORD_X	equ 0  
+X3_TMPLT_SIZE_X		equ 4  
+X3_TMPLT_INST_WORD_POS_X equ 0	
+X3_TMPLT_SIGN_VAL_POS_X equ 0  
 
-X3_BTYPE_QP_INST_WORD_X equ 2  ;; Intel-IA64-Filler
-X3_BTYPE_QP_SIZE_X	equ 9  ;; Intel-IA64-Filler
-X3_BTYPE_QP_INST_WORD_POS_X equ 23 ;; Intel-IA64-Filler
-X3_BTYPE_QP_INST_VAL_POS_X equ 0  ;; Intel-IA64-Filler
+X3_BTYPE_QP_INST_WORD_X equ 2  
+X3_BTYPE_QP_SIZE_X	equ 9  
+X3_BTYPE_QP_INST_WORD_POS_X equ 23 
+X3_BTYPE_QP_INST_VAL_POS_X equ 0  
 
-X3_EMPTY_INST_WORD_X	equ 1  ;; Intel-IA64-Filler
-X3_EMPTY_SIZE_X		equ 2  ;; Intel-IA64-Filler
-X3_EMPTY_INST_WORD_POS_X equ 14 ;; Intel-IA64-Filler
-X3_EMPTY_INST_VAL_POS_X equ 0  ;; Intel-IA64-Filler
+X3_EMPTY_INST_WORD_X	equ 1  
+X3_EMPTY_SIZE_X		equ 2  
+X3_EMPTY_INST_WORD_POS_X equ 14 
+X3_EMPTY_INST_VAL_POS_X equ 0  
 
-;;
-;; Line number format.
-;;
 
 IMAGE_LINENUMBER	STRUC
 UNION
-    SymbolTableIndex	dd ?	;; Symbol table index of function name if Linenumber is 0.
-    VirtualAddress	dd ?	;; Virtual address of line number.
+    SymbolTableIndex	dd ?	
+    VirtualAddress	dd ?	
 ENDS
-Linenumber		dw ?	;; Line number.
+Linenumber		dw ?	
 IMAGE_LINENUMBER	ENDS
 PIMAGE_LINENUMBER	typedef ptr IMAGE_LINENUMBER
 
 IMAGE_SIZEOF_LINENUMBER equ 6
 
-;;
-;; Based relocation format.
-;;
 
 IMAGE_BASE_RELOCATION	STRUC
 VirtualAddress		dd ?
 SizeOfBlock		dd ?
-;;  WORD	   TypeOffset[1];
 IMAGE_BASE_RELOCATION	ENDS
 PIMAGE_BASE_RELOCATION	typedef ptr IMAGE_BASE_RELOCATION
 
 IMAGE_SIZEOF_BASE_RELOCATION	equ 8
 
-;;
-;; Based relocation types.
-;;
 
 IMAGE_REL_BASED_ABSOLUTE	equ 0
 IMAGE_REL_BASED_HIGH		equ 1
@@ -10060,9 +8440,6 @@ IMAGE_REL_BASED_DIR64		equ 10
 IMAGE_REL_BASED_HIGH3ADJ	equ 11
 
 
-;;
-;; Archive format.
-;;
 
 IMAGE_ARCHIVE_START_SIZE	equ 8
 IMAGE_ARCHIVE_START		equ <"!",3Ch,"arch",3Eh,0Ah>
@@ -10072,25 +8449,19 @@ IMAGE_ARCHIVE_LINKER_MEMBER	equ <"/               ">
 IMAGE_ARCHIVE_LONGNAMES_MEMBER	equ <"//              ">
 
 IMAGE_ARCHIVE_MEMBER_HEADER	STRUC
-_Name				db 16 dup(?)	;; File member name - `/' terminated.
-Date				db 12 dup(?)	;; File member date - decimal.
-UserID				db  6 dup(?)	;; File member user id - decimal.
-GroupID				db  6 dup(?)	;; File member group id - decimal.
-Mode				db  8 dup(?)	;; File member mode - octal.
-_Size				db 10 dup(?)	;; File member size - decimal.
-EndHeader			db  2 dup(?)	;; String to end header.
+_Name				db 16 dup(?)	
+Date				db 12 dup(?)	
+UserID				db  6 dup(?)	
+GroupID				db  6 dup(?)	
+Mode				db  8 dup(?)	
+_Size				db 10 dup(?)	
+EndHeader			db  2 dup(?)	
 IMAGE_ARCHIVE_MEMBER_HEADER	ENDS
 PIMAGE_ARCHIVE_MEMBER_HEADER	typedef ptr IMAGE_ARCHIVE_MEMBER_HEADER
 
 IMAGE_SIZEOF_ARCHIVE_MEMBER_HDR equ 60
 
-;;
-;; DLL support.
-;;
 
-;;
-;; Export Format
-;;
 
 IMAGE_EXPORT_DIRECTORY		STRUC
 Characteristics			dd ?
@@ -10101,15 +8472,12 @@ _Name				dd ?
 Base				dd ?
 NumberOfFunctions		dd ?
 NumberOfNames			dd ?
-AddressOfFunctions		dd ?	;; RVA from base of image
-AddressOfNames			dd ?	;; RVA from base of image
-AddressOfNameOrdinals		dd ?	;; RVA from base of image
+AddressOfFunctions		dd ?	
+AddressOfNames			dd ?	
+AddressOfNameOrdinals		dd ?	
 IMAGE_EXPORT_DIRECTORY		ENDS
 PIMAGE_EXPORT_DIRECTORY		typedef ptr IMAGE_EXPORT_DIRECTORY
 
-;;
-;; Import Format
-;;
 
 IMAGE_IMPORT_BY_NAME	STRUC
 Hint			dw ?
@@ -10156,11 +8524,8 @@ IMAGE_SNAP_BY_ORDINAL32 macro Ordinal
 	exitm<Ordinal and IMAGE_ORDINAL_FLAG32>
 	endm
 
-;;
-;; Thread Local Storage
-;;
 
-IMAGE_TLS_CALLBACK_T typedef proto _CType :PVOID, :DWORD, :PVOID
+IMAGE_TLS_CALLBACK_T typedef proto WINAPI :PVOID, :DWORD, :PVOID
 PIMAGE_TLS_CALLBACK  typedef ptr IMAGE_TLS_CALLBACK_T
 
 IMAGE_TLS_DIRECTORY64	STRUC
@@ -10211,29 +8576,22 @@ endif
 
 IMAGE_IMPORT_DESCRIPTOR STRUC
 UNION
-  Characteristics	dd ?	;; 0 for terminating null import descriptor
-  OriginalFirstThunk	dd ?	;; RVA to original unbound IAT (PIMAGE_THUNK_DATA)
+  Characteristics	dd ?	
+  OriginalFirstThunk	dd ?	
 ENDS
-TimeDateStamp		dd ?	;; 0 if not bound,
-				;; -1 if bound, and real date\time stamp
-				;;	  in IMAGE_DIRECTORY_ENTRY_BOUND_IMPORT (new BIND)
-				;; O.W. date/time stamp of DLL bound to (Old BIND)
-ForwarderChain		dd ?	;; -1 if no forwarders
+TimeDateStamp		dd ?	
+ForwarderChain		dd ?	
 _Name			dd ?
-FirstThunk		dd ?	;; RVA to IAT (if bound this IAT has actual addresses)
+FirstThunk		dd ?	
 IMAGE_IMPORT_DESCRIPTOR ENDS
 
 PIMAGE_IMPORT_DESCRIPTOR typedef ptr IMAGE_IMPORT_DESCRIPTOR
 
-;;
-;; New format import descriptors pointed to by DataDirectory[ IMAGE_DIRECTORY_ENTRY_BOUND_IMPORT ]
-;;
 
 IMAGE_BOUND_IMPORT_DESCRIPTOR	STRUC
 TimeDateStamp			dd ?
 OffsetModuleName		dw ?
 NumberOfModuleForwarderRefs	dw ?
-;; Array of zero or more IMAGE_BOUND_FORWARDER_REF follows
 IMAGE_BOUND_IMPORT_DESCRIPTOR	ENDS
 PIMAGE_BOUND_IMPORT_DESCRIPTOR	typedef ptr IMAGE_BOUND_IMPORT_DESCRIPTOR
 
@@ -10244,15 +8602,12 @@ Reserved			dw ?
 IMAGE_BOUND_FORWARDER_REF	ENDS
 PIMAGE_BOUND_FORWARDER_REF	typedef ptr IMAGE_BOUND_FORWARDER_REF
 
-;;
-;; Stub structure for IA64 transition stubs
-;;
 IMAGE_MIX_ISA_LIMIT		equ 2
 
 IMAGE_STUB_DIRECTORY		STRUC
-SecondaryImportAddressTable	dd ?	;; RVA of Secondary IAT
-ExpectedISA			dw IMAGE_MIX_ISA_LIMIT dup(?) ;; Indicator of available ISA stubs
-StubAddressTable		dd IMAGE_MIX_ISA_LIMIT dup(?) ;; RVA of Stub Address Tables
+SecondaryImportAddressTable	dd ?	
+ExpectedISA			dw IMAGE_MIX_ISA_LIMIT dup(?) 
+StubAddressTable		dd IMAGE_MIX_ISA_LIMIT dup(?) 
 IMAGE_STUB_DIRECTORY		ENDS
 PIMAGE_STUB_DIRECTORY		typedef ptr IMAGE_STUB_DIRECTORY
 
@@ -10260,23 +8615,7 @@ IA64_STUB_NOT_AVAILABLE		equ -1
 IA64_JMPE_MASK			equ 0x00ffffff
 IA64_JMPE_MARKER		equ 0x0035000f
 
-;;
-;; Resource Format.
-;;
 
-;;
-;; Resource directory consists of two counts, following by a variable length
-;; array of directory entries.	The first count is the number of entries at
-;; beginning of the array that have actual names associated with each entry.
-;; The entries are in ascending order, case insensitive strings.	 The second
-;; count is the number of entries that immediately follow the named entries.
-;; This second count identifies the number of entries that have 16-bit integer
-;; Ids as their name.  These entries are also sorted in ascending order.
-;;
-;; This structure allows fast lookup by either name or number, but for any
-;; given resource entry only one form of lookup is supported, not both.
-;; This is consistant with the syntax of the .RC file and the .RES file.
-;;
 
 IMAGE_RESOURCE_DIRECTORY	STRUC
 Characteristics			dd ?
@@ -10285,26 +8624,11 @@ MajorVersion			dw ?
 MinorVersion			dw ?
 NumberOfNamedEntries		dw ?
 NumberOfIdEntries		dw ?
-;;  IMAGE_RESOURCE_DIRECTORY_ENTRY DirectoryEntries[];
 IMAGE_RESOURCE_DIRECTORY	ENDS
 PIMAGE_RESOURCE_DIRECTORY	typedef ptr IMAGE_RESOURCE_DIRECTORY
 
 IMAGE_RESOURCE_NAME_IS_STRING	     equ 0x80000000
 IMAGE_RESOURCE_DATA_IS_DIRECTORY     equ 0x80000000
-;;
-;; Each directory contains the 32-bit Name of the entry and an offset,
-;; relative to the beginning of the resource directory of the data associated
-;; with this directory entry.  If the name of the entry is an actual text
-;; string instead of an integer Id, then the high order bit of the name field
-;; is set to one and the low order 31-bits are an offset, relative to the
-;; beginning of the resource directory of the string, which is of type
-;; IMAGE_RESOURCE_DIRECTORY_STRING.  Otherwise the high bit is clear and the
-;; low-order 16-bits are the integer Id that identify this resource directory
-;; entry. If the directory entry is yet another resource directory (i.e. a
-;; subdirectory), then the high order bit of the offset field will be
-;; set to indicate this.	 Otherwise the high bit is clear and the offset
-;; field points to a resource data entry.
-;;
 
 IMAGE_RESOURCE_DIRECTORY_ENTRY_R0 RECORD \
 	irde_NameIsString:	1,
@@ -10330,14 +8654,6 @@ ENDS
 IMAGE_RESOURCE_DIRECTORY_ENTRY	ENDS
 PIMAGE_RESOURCE_DIRECTORY_ENTRY typedef ptr IMAGE_RESOURCE_DIRECTORY_ENTRY
 
-;;
-;; For resource directory entries that have actual string names, the Name
-;; field of the directory entry points to an object of the following type.
-;; All of these string objects are stored together after the last resource
-;; directory entry and before the first resource data object.  This minimizes
-;; the impact of these variable length objects on the alignment of the fixed
-;; size directory entry objects.
-;;
 
 IMAGE_RESOURCE_DIRECTORY_STRING STRUC
 _Length				dw ?
@@ -10353,14 +8669,6 @@ IMAGE_RESOURCE_DIR_STRING_U	ENDS
 PIMAGE_RESOURCE_DIR_STRING_U	typedef ptr IMAGE_RESOURCE_DIR_STRING_U
 
 
-;;
-;; Each resource data entry describes a leaf node in the resource directory
-;; tree.	 It contains an offset, relative to the beginning of the resource
-;; directory of the data for the resource, a size field that gives the number
-;; of bytes of data at that offset, a CodePage that should be used when
-;; decoding code point values within the resource data. Typically for new
-;; applications the code page would be the unicode code page.
-;;
 
 IMAGE_RESOURCE_DATA_ENTRY	STRUC
 OffsetToData			dd ?
@@ -10370,9 +8678,6 @@ Reserved			dd ?
 IMAGE_RESOURCE_DATA_ENTRY	ENDS
 PIMAGE_RESOURCE_DATA_ENTRY	typedef ptr IMAGE_RESOURCE_DATA_ENTRY
 
-;;
-;; Load Configuration Directory Entry
-;;
 
 IMAGE_LOAD_CONFIG_DIRECTORY	STRUC
 Characteristics			dd ?
@@ -10397,12 +8702,6 @@ IMAGE_LOAD_CONFIG_DIRECTORY	ENDS
 PIMAGE_LOAD_CONFIG_DIRECTORY	typedef ptr IMAGE_LOAD_CONFIG_DIRECTORY
 
 
-;;
-;; Function table entry format for IA64 images. Function table is
-;; pointed to by the IMAGE_DIRECTORY_ENTRY_EXCEPTION directory entry.
-;; This definition duplicates the one in ntia64.h for use by portable
-;; image file mungers.
-;;
 
 IMAGE_IA64_RUNTIME_FUNCTION_ENTRY	STRUC
 BeginAddress				dd ?
@@ -10411,12 +8710,6 @@ UnwindInfoAddress			dd ?
 IMAGE_IA64_RUNTIME_FUNCTION_ENTRY	ENDS
 PIMAGE_IA64_RUNTIME_FUNCTION_ENTRY	typedef ptr IMAGE_IA64_RUNTIME_FUNCTION_ENTRY
 
-;;
-;; Function table entry format for ALPHA images.	 Function table is
-;; pointed to by the IMAGE_DIRECTORY_ENTRY_EXCEPTION directory entry.
-;; This definition duplicates ones in ntmips.h and ntalpha.h for use
-;; by portable image file mungers.
-;;
 
 IMAGE_ALPHA_RUNTIME_FUNCTION_ENTRY	STRUC
 BeginAddress				dd ?
@@ -10439,9 +8732,6 @@ PIMAGE_ALPHA64_RUNTIME_FUNCTION_ENTRY	typedef ptr IMAGE_ALPHA64_RUNTIME_FUNCTION
 IMAGE_AXP64_RUNTIME_FUNCTION_ENTRY	typedef IMAGE_ALPHA64_RUNTIME_FUNCTION_ENTRY
 PIMAGE_AXP64_RUNTIME_FUNCTION_ENTRY	typedef PIMAGE_ALPHA64_RUNTIME_FUNCTION_ENTRY
 
-;;
-;; WIN CE Exception table format
-;;
 
 IMAGE_CE_RUNTIME_FUNCTION_ENTRY_R0 RECORD \
 	icrfe_ExceptionFlag:	1,
@@ -10463,9 +8753,6 @@ IMAGE_RUNTIME_FUNCTION_ENTRY	typedef IMAGE_ALPHA_RUNTIME_FUNCTION_ENTRY
 PIMAGE_RUNTIME_FUNCTION_ENTRY	typedef PIMAGE_ALPHA_RUNTIME_FUNCTION_ENTRY
 endif
 
-;;
-;; Debug Format
-;;
 
 IMAGE_DEBUG_DIRECTORY		STRUC
 Characteristics			dd ?
@@ -10511,18 +8798,18 @@ FRAME_TSS	equ 2
 FRAME_NONFPO	equ 3
 
 FPO_DATA_R0	RECORD \
-	fpo_cbFrame:	2,	;; frame type
-	fpo_reserved:	1,	;; reserved for future use
-	fpo_fUseBP:	1,	;; TRUE if EBP has been allocated
-	fpo_fHasSEH:	1,	;; TRUE if SEH in func
-	fpo_cbRegs:	3,	;; # regs saved
-	fpo_cbProlog:	8	;; # bytes in prolog
+	fpo_cbFrame:	2,	
+	fpo_reserved:	1,	
+	fpo_fUseBP:	1,	
+	fpo_fHasSEH:	1,	
+	fpo_cbRegs:	3,	
+	fpo_cbProlog:	8	
 
 FPO_DATA	STRUC
-ulOffStart	dd ?		;; offset 1st byte of function code
-cbProcSize	dd ?		;; # bytes in function
-cdwLocals	dd ?		;; # bytes in locals/4
-cdwParams	dw ?		;; # bytes in params/4
+ulOffStart	dd ?		
+cbProcSize	dd ?		
+cdwLocals	dd ?		
+cdwParams	dw ?		
 r0		FPO_DATA_R0 <>
 FPO_DATA	ENDS
 PFPO_DATA	typedef ptr FPO_DATA
@@ -10532,21 +8819,15 @@ SIZEOF_RFPO_DATA	equ 16
 IMAGE_DEBUG_MISC_EXENAME	equ 1
 
 IMAGE_DEBUG_MISC	STRUC
-DataType		dd ?	;; type of misc data, see defines
-_Length			dd ?	;; total length of record, rounded to four
-				;; byte multiple.
-Unicode			BOOLEAN ? ;; TRUE if data is unicode string
+DataType		dd ?	
+_Length			dd ?	
+Unicode			BOOLEAN ? 
 Reserved		db 3 dup(?)
-Data			db ?	;; Actual data
+Data			db ?	
 IMAGE_DEBUG_MISC	ENDS
 PIMAGE_DEBUG_MISC	typedef ptr IMAGE_DEBUG_MISC
 
 
-;;
-;; Function table extracted from MIPS/ALPHA/IA64 images.	 Does not contain
-;; information needed only for runtime support. Just those fields for
-;; each entry needed by a debugger.
-;;
 
 IMAGE_FUNCTION_ENTRY	STRUC
 StartingAddress		dd ?
@@ -10565,25 +8846,6 @@ ENDS
 IMAGE_FUNCTION_ENTRY64	ENDS
 PIMAGE_FUNCTION_ENTRY64 typedef ptr IMAGE_FUNCTION_ENTRY64
 
-;;
-;; Debugging information can be stripped from an image file and placed
-;; in a separate .DBG file, whose file name part is the same as the
-;; image file name part (e.g. symbols for CMD.EXE could be stripped
-;; and placed in CMD.DBG).  This is indicated by the IMAGE_FILE_DEBUG_STRIPPED
-;; flag in the Characteristics field of the file header.	 The beginning of
-;; the .DBG file contains the following structure which captures certain
-;; information from the image file.  This allows a debug to proceed even if
-;; the original image file is not accessable.  This header is followed by
-;; zero of more IMAGE_SECTION_HEADER structures, followed by zero or more
-;; IMAGE_DEBUG_DIRECTORY structures.  The latter structures and those in
-;; the image file contain file offsets relative to the beginning of the
-;; .DBG file.
-;;
-;; If symbols have been stripped from an image, the IMAGE_DEBUG_MISC structure
-;; is left in the image file, but not mapped.  This allows a debugger to
-;; compute the name of the .DBG file, from the name of the image in the
-;; IMAGE_DEBUG_MISC structure.
-;;
 
 IMAGE_SEPARATE_DEBUG_HEADER	STRUC
 Signature			dw ?
@@ -10620,60 +8882,47 @@ IMAGE_SEPARATE_DEBUG_SIGNATURE equ 0x4944
 NON_PAGED_DEBUG_SIGNATURE      equ 0x494E
 else
 IMAGE_SEPARATE_DEBUG_SIGNATURE equ 0x4449
-NON_PAGED_DEBUG_SIGNATURE      equ 0x4E49 ;; NI
+NON_PAGED_DEBUG_SIGNATURE      equ 0x4E49 
 endif
 
 IMAGE_SEPARATE_DEBUG_FLAGS_MASK equ 0x8000
-IMAGE_SEPARATE_DEBUG_MISMATCH	equ 0x8000 ;; when DBG was updated, the
-					   ;; old checksum didn't match.
+IMAGE_SEPARATE_DEBUG_MISMATCH	equ 0x8000 
 
-;;
-;;  The .arch section is made up of headers, each describing an amask position/value
-;;  pointing to an array of IMAGE_ARCHITECTURE_ENTRY's.  Each "array" (both the header
-;;  and entry arrays) are terminiated by a quadword of 0xffffffffL.
-;;
-;;  NOTE: There may be quadwords of 0 sprinkled around and must be skipped.
-;;
 
 IMAGE_ARCHITECTURE_HEADER_R0 RECORD \
-	iah_int2:	16,	;; MBZ
-	iah_AmaskShift: 8,	;; Amask bit in question for this fixup
-	iah_int1:	7,	;; MBZ
-	iah_AmaskValue: 1	;; 1 -> code section depends on mask bit
-				;; 0 -> new instruction depends on mask bit
+	iah_int2:	16,	
+	iah_AmaskShift: 8,	
+	iah_int1:	7,	
+	iah_AmaskValue: 1	
 IMAGE_ARCHITECTURE_HEADER	STRUC
 r0				IMAGE_ARCHITECTURE_HEADER_R0 <>
-FirstEntryRVA			dd ?	;; RVA into .arch section to array of ARCHITECTURE_ENTRY's
+FirstEntryRVA			dd ?	
 IMAGE_ARCHITECTURE_HEADER	ENDS
 PIMAGE_ARCHITECTURE_HEADER	typedef ptr IMAGE_ARCHITECTURE_HEADER
 
 IMAGE_ARCHITECTURE_ENTRY	STRUC
-FixupInstRVA			dd ?	;; RVA of instruction to fixup
-NewInst				dd ?	;; fixup instruction (see alphaops.h)
+FixupInstRVA			dd ?	
+NewInst				dd ?	
 IMAGE_ARCHITECTURE_ENTRY	ENDS
 PIMAGE_ARCHITECTURE_ENTRY	typedef ptr IMAGE_ARCHITECTURE_ENTRY
 
 
-;; The following structure defines the new import object.  Note the values of the first two fields,
-;; which must be set as stated in order to differentiate old and new import members.
-;; Following this structure, the linker emits two null-terminated strings used to recreate the
-;; import at the time of use.  The first string is the import's name, the second is the dll's name.
 
 IMPORT_OBJECT_HDR_SIG2	equ 0xffff
 IMPORT_OBJECT_HEADER_R0 RECORD \
-	ioh_Reserved:	11,	;; Reserved. Must be zero.
-	ioh_NameType:	3,	;; IMPORT_NAME_TYPE
-	ioh_Type:	2	;; IMPORT_TYPE
+	ioh_Reserved:	11,	
+	ioh_NameType:	3,	
+	ioh_Type:	2	
 
 IMPORT_OBJECT_HEADER	STRUC
-Sig1			dw ?	;; Must be IMAGE_FILE_MACHINE_UNKNOWN
-Sig2			dw ?	;; Must be IMPORT_OBJECT_HDR_SIG2.
+Sig1			dw ?	
+Sig2			dw ?	
 Version			dw ?
 Machine			dw ?
-TimeDateStamp		dd ?	;; Time/date stamp
-SizeOfData		dd ?	;; particularly useful for incremental links
+TimeDateStamp		dd ?	
+SizeOfData		dd ?	
 UNION
-  Ordinal		dw ?	;; if grf & IMPORT_OBJECT_ORDINAL
+  Ordinal		dw ?	
   Hint			dw ?
 ENDS
 r0			IMPORT_OBJECT_HEADER_R0 <>
@@ -10685,18 +8934,16 @@ IMPORT_OBJECT_DATA		equ 1
 IMPORT_OBJECT_CONST		equ 2
 
 IMPORT_OBJECT_NAME_TYPE		typedef sdword ; enum
-IMPORT_OBJECT_ORDINAL		equ 0	;; Import by ordinal
-IMPORT_OBJECT_NAME		equ 1	;; Import name == public symbol name.
-IMPORT_OBJECT_NAME_NO_PREFIX	equ 2	;; Import name == public symbol name skipping leading ?, @, or optionally _.
-IMPORT_OBJECT_NAME_UNDECORATE	equ 3	;; Import name == public symbol name skipping leading ?, @, or optionally _
-					;; and truncating at first @
+IMPORT_OBJECT_ORDINAL		equ 0	
+IMPORT_OBJECT_NAME		equ 1	
+IMPORT_OBJECT_NAME_NO_PREFIX	equ 2	
+IMPORT_OBJECT_NAME_UNDECORATE	equ 3	
 
 ifndef __IMAGE_COR20_HEADER_DEFINED__
 __IMAGE_COR20_HEADER_DEFINED__ equ <>
 
 ReplacesCorHdrNumericDefines	typedef sdword ; enum
 
-;; COM+ Header entry point flags.
     COMIMAGE_FLAGS_ILONLY		equ 0x00000001
     COMIMAGE_FLAGS_32BITREQUIRED	equ 0x00000002
     COMIMAGE_FLAGS_IL_LIBRARY		equ 0x00000004
@@ -10704,105 +8951,76 @@ ReplacesCorHdrNumericDefines	typedef sdword ; enum
     COMIMAGE_FLAGS_NATIVE_ENTRYPOINT	equ 0x00000010
     COMIMAGE_FLAGS_TRACKDEBUGDATA	equ 0x00010000
 
-;; Version flags for image.
     COR_VERSION_MAJOR_V2		equ 2
     COR_VERSION_MAJOR			equ COR_VERSION_MAJOR_V2
     COR_VERSION_MINOR			equ 0
     COR_DELETED_NAME_LENGTH		equ 8
     COR_VTABLEGAP_NAME_LENGTH		equ 8
 
-;; Maximum size of a NativeType descriptor.
     NATIVE_TYPE_MAX_CB			equ 1
     COR_ILMETHOD_SECT_SMALL_MAX_DATASIZE equ 0xFF
 
-;; #defines for the MIH FLAGS
     IMAGE_COR_MIH_METHODRVA		equ 0x01
     IMAGE_COR_MIH_EHRVA			equ 0x02
     IMAGE_COR_MIH_BASICBLOCK		equ 0x08
 
-;; V-table constants
-    COR_VTABLE_32BIT			equ 0x01	;; V-table slots are 32-bits in size.
-    COR_VTABLE_64BIT			equ 0x02	;; V-table slots are 64-bits in size.
-    COR_VTABLE_FROM_UNMANAGED		equ 0x04	;; If set, transition from unmanaged.
-    COR_VTABLE_FROM_UNMANAGED_RETAIN_APPDOMAIN	equ 0x08;; If set, transition from unmanaged with keeping the current appdomain.
-    COR_VTABLE_CALL_MOST_DERIVED	equ 0x10	;; Call most derived method described by
+    COR_VTABLE_32BIT			equ 0x01	
+    COR_VTABLE_64BIT			equ 0x02	
+    COR_VTABLE_FROM_UNMANAGED		equ 0x04	
+    COR_VTABLE_FROM_UNMANAGED_RETAIN_APPDOMAIN	equ 0x08
+    COR_VTABLE_CALL_MOST_DERIVED	equ 0x10	
 
-;; EATJ constants
-    IMAGE_COR_EATJ_THUNK_SIZE		equ 32		;; Size of a jump thunk reserved range.
+    IMAGE_COR_EATJ_THUNK_SIZE		equ 32		
 
-;; Max name lengths
-    ;;@todo: Change to unlimited name lengths.
     MAX_CLASS_NAME			equ 1024
     MAX_PACKAGE_NAME			equ 1024
 
-;; CLR 2.0 header structure.
 IMAGE_COR20_HEADER		STRUC
 
-    ;; Header versioning
     cb				dd ?
     MajorRuntimeVersion		dw ?
     MinorRuntimeVersion		dw ?
 
-    ;; Symbol table and startup information
     MetaData			IMAGE_DATA_DIRECTORY <>
     Flags			dd ?
 
-    ;; If COMIMAGE_FLAGS_NATIVE_ENTRYPOINT is not set, EntryPointToken represents a managed entrypoint.
-    ;; If COMIMAGE_FLAGS_NATIVE_ENTRYPOINT is set, EntryPointRVA represents an RVA to a native entrypoint.
     UNION
 	EntryPointToken		dd ?
 	EntryPointRVA		dd ?
     ENDS
 
-    ;; Binding information
     Resources			IMAGE_DATA_DIRECTORY <>
     StrongNameSignature		IMAGE_DATA_DIRECTORY <>
 
-    ;; Regular fixup and binding information
     CodeManagerTable		IMAGE_DATA_DIRECTORY <>
     VTableFixups		IMAGE_DATA_DIRECTORY <>
     ExportAddressTableJumps	IMAGE_DATA_DIRECTORY <>
 
-    ;; Precompiled image info (internal use only - set to zero)
     ManagedNativeHeader		IMAGE_DATA_DIRECTORY <>
 
 IMAGE_COR20_HEADER		ENDS
 PIMAGE_COR20_HEADER	typedef ptr IMAGE_COR20_HEADER
 
-endif ;; __IMAGE_COR20_HEADER_DEFINED__
+endif 
 
-;;
-;; End Image Format
-;;
 
-;;
-;; for move macros
-;;
 
 ifdef _MAC
 ifndef __STRING_INC
 include string.inc
-endif ;; _INC_STRING
+endif 
 else
 ifndef __STRING_INC
 include string.inc
 .xlist
 endif
-endif ;; _MAC
+endif 
 
 ifdef _WIN64
 
-;;
-;; The type SINGLE_LIST_ENTRY is not suitable for use with SLISTs.  For
-;; WIN64, an entry on an SLIST is required to be 16-byte aligned, while a
-;; SINGLE_LIST_ENTRY structure has only 8 byte alignment.
-;;
-;; Therefore, all SLIST code should use the SLIST_ENTRY type instead of the
-;; SINGLE_LIST_ENTRY type.
-;;
 
 pragma warning(push)
-pragma warning(disable:4324) ;; structure padded due to align()
+pragma warning(disable:4324) 
 DECLSPEC_ALIGN(16)
 SLIST_ENTRY		STRUC
 Next			PVOID ?;PSLIST_ENTRY ?
@@ -10823,17 +9041,17 @@ PSLIST_ENTRY		equ <PSINGLE_LIST_ENTRY>
 SLIST_ENTRY32		typedef SLIST_ENTRY
 PSLIST_ENTRY32		typedef ptr SLIST_ENTRY
 
-endif ;; _WIN64
+endif 
 
 ifdef _WIN64
 
 DECLSPEC_ALIGN(16)
 SLIST_HEADER		UNION
-STRUC ;; original struct
+STRUC 
  Alignment		ULONGLONG ?
  Region			ULONGLONG ?
 ENDS
-STRUC Header8 ;; 8-byte header
+STRUC Header8 
  R0			ULONGLONG ?
 if 0
 	ULONGLONG Depth:16;
@@ -10845,7 +9063,7 @@ if 0
 	ULONGLONG Region:3;
 endif
 ENDS
-STRUC Header16 ;; ia64 16-byte header
+STRUC Header16 
  R0			ULONGLONG ?
 if 0
 	ULONGLONG Depth:16;
@@ -10856,7 +9074,7 @@ if 0
 	ULONGLONG NextEntry:60; // last 4 bits are always 0's
 endif
 ENDS
-STRUC HeaderX64 ;; x64 16-byte header
+STRUC HeaderX64 
  R0			ULONGLONG ?
 if 0
 	ULONGLONG Depth:16;
@@ -10893,57 +9111,47 @@ PSLIST_HEADER		typedef ptr SLIST_HEADER
 SLIST_HEADER32		typedef SLIST_HEADER
 PSLIST_HEADER32		typedef ptr SLIST_HEADER
 
-endif ;; _WIN64
+endif 
 
-endif ;; _SLIST_HEADER_
+endif 
 
 ;NTSYSAPI
 ;VOID
-RtlInitializeSListHead proto _CType \
+RtlInitializeSListHead proto WINAPI \
 	      ListHead: PSLIST_HEADER
 ;PSLIST_ENTRY
-RtlFirstEntrySList proto _CType \
+RtlFirstEntrySList proto WINAPI \
 	      ListHead: PSLIST_HEADER
 ;PSLIST_ENTRY
-RtlInterlockedPopEntrySList proto _CType \
+RtlInterlockedPopEntrySList proto WINAPI \
 	      ListHead: PSLIST_HEADER
 ;PSLIST_ENTRY
-RtlInterlockedPushEntrySList proto _CType \
+RtlInterlockedPushEntrySList proto WINAPI \
 	      ListHead: PSLIST_HEADER,
 	     ListEntry: PSLIST_ENTRY
 ;PSLIST_ENTRY
-RtlInterlockedFlushSList proto _CType \
+RtlInterlockedFlushSList proto WINAPI \
 	      ListHead: PSLIST_HEADER
 ;WORD
-RtlQueryDepthSList proto _CType \
+RtlQueryDepthSList proto WINAPI \
 	      ListHead: PSLIST_HEADER
 ifdef _IA64_
 ;PSLIST_ENTRY32
-RtlInterlockedPopEntrySList32 proto _CType \
+RtlInterlockedPopEntrySList32 proto WINAPI \
 	      ListHead: PSLIST_HEADER32
 endif
 
 ifndef _RTL_RUN_ONCE_DEF
 _RTL_RUN_ONCE_DEF equ <>
 
-;;
-;; Run once
-;;
 
-RTL_RUN_ONCE_INIT equ <{0}> ;; Static initializer
+RTL_RUN_ONCE_INIT equ <{0}> 
 
-;;
-;; Run once flags
-;;
 
 RTL_RUN_ONCE_CHECK_ONLY	    equ 0x00000001
 RTL_RUN_ONCE_ASYNC	    equ 0x00000002
 RTL_RUN_ONCE_INIT_FAILED    equ 0x00000004
 
-;;
-;; The context stored in the run once structure must leave the following number
-;; of low order bits unused.
-;;
 
 RTL_RUN_ONCE_CTX_RESERVED_BITS equ 2
 
@@ -10953,38 +9161,38 @@ RTL_RUN_ONCE		ENDS
 PRTL_RUN_ONCE		typedef ptr RTL_RUN_ONCE
 
 ;DWORD
-RTL_RUN_ONCE_INIT_FN typedef proto _CType \
+RTL_RUN_ONCE_INIT_FN typedef proto WINAPI \
 	       RunOnce: PRTL_RUN_ONCE,
 	     Parameter: PVOID,
 	       Context: PVOID
 
 PRTL_RUN_ONCE_INIT_FN	typedef ptr RTL_RUN_ONCE_INIT_FN
 
-endif ;; _RTL_RUN_ONCE_DEF
+endif 
 
 if (NTDDI_VERSION GE NTDDI_LONGHORN)
 
 ;VOID
-RtlRunOnceInitialize proto _CType \
+RtlRunOnceInitialize proto WINAPI \
 	       RunOnce: PRTL_RUN_ONCE
 ;DWORD
-RtlRunOnceExecuteOnce proto _CType \
+RtlRunOnceExecuteOnce proto WINAPI \
 	       RunOnce: PRTL_RUN_ONCE,
 		InitFn: PRTL_RUN_ONCE_INIT_FN,
 	     Parameter: PVOID,
 	       Context: PVOID
 ;DWORD
-RtlRunOnceBeginInitialize proto _CType \
+RtlRunOnceBeginInitialize proto WINAPI \
 	       RunOnce: PRTL_RUN_ONCE,
 		 Flags: DWORD,
 	       Context: PVOID
 ;DWORD
-RtlRunOnceComplete proto _CType \
+RtlRunOnceComplete proto WINAPI \
 	       RunOnce: PRTL_RUN_ONCE,
 		 Flags: DWORD,
 	       Context: PVOID
 
-endif ;; NTDDI_VERSION >= NTDDI_LONGHORN
+endif 
 
 HEAP_NO_SERIALIZE		equ 0x00000001
 HEAP_GROWABLE			equ 0x00000002
@@ -11004,14 +9212,12 @@ ifndef MIDL_PASS
 ;FORCEINLINE
 ;DWORD
 HEAP_MAKE_TAG_FLAGS macro TagBase, Tag
-;    __assume_bound(TagBase);
-;    return ((DWORD)((TagBase) + ((Tag) << HEAP_TAG_SHIFT)));
     endm
 endif
 
 if (NTDDI_VERSION GT NTDDI_WINXP)
 ;WORD
-RtlCaptureStackBackTrace proto _CType \
+RtlCaptureStackBackTrace proto WINAPI \
 	  FramesToSkip: DWORD,
        FramesToCapture: DWORD,
 	     BackTrace: PVOID,
@@ -11020,7 +9226,7 @@ endif
 
 if (NTDDI_VERSION GT NTDDI_WIN2K)
 ;VOID
-RtlCaptureContext proto _CType \
+RtlCaptureContext proto WINAPI \
 	 ContextRecord: PCONTEXT
 endif
 
@@ -11059,15 +9265,6 @@ _MEMCPY_INLINE_ equ <>
 ;FORCEINLINE
 ;PVOID
 memcpy_inline macro dst, src, _size
-;    //
-;    // Make sure the source and destination do not overlap such that the
-;    // move destroys the destination.
-;    //
-;    if (((char *)dst > (char *)src) &&
-;	((char *)dst < ((char *)src + size))) {
-;	__debugbreak();
-;    }
-;    return memcpy(dst, src, size);
 	endm
 ;memcpy equ <memcpy_inline>
 endif
@@ -11075,7 +9272,7 @@ endif
 
 if (NTDDI_VERSION GE NTDDI_WIN2K)
 ;SIZE_T
-RtlCompareMemory proto _CType \
+RtlCompareMemory proto WINAPI \
 	      Source1: PVOID,
 	      Source2: PVOID,
 	      _Length: SIZE_T
@@ -11152,7 +9349,7 @@ MESSAGE_RESOURCE_DATA	ENDS
 PMESSAGE_RESOURCE_DATA	typedef ptr MESSAGE_RESOURCE_DATA
 
 ;PVOID
-RtlPcToFileHeader proto _CType \
+RtlPcToFileHeader proto WINAPI \
 	       PcValue: PVOID,
 	   BaseOfImage: PVOID
 
@@ -11222,9 +9419,6 @@ POSVERSIONINFOEX	typedef POSVERSIONINFOEXA
 LPOSVERSIONINFOEX	typedef LPOSVERSIONINFOEXA
 endif
 
-;;
-;; RtlVerifyVersionInfo() conditions
-;;
 
 VER_EQUAL		equ 1
 VER_GREATER		equ 2
@@ -11237,9 +9431,6 @@ VER_OR			equ 7
 VER_CONDITION_MASK	equ 7
 VER_NUM_BITS_PER_CONDITION_MASK equ 3
 
-;;
-;; RtlVerifyVersionInfo() type mask bits
-;;
 
 VER_MINORVERSION	equ 0x0000001
 VER_MAJORVERSION	equ 0x0000002
@@ -11250,31 +9441,17 @@ VER_SERVICEPACKMAJOR	equ 0x0000020
 VER_SUITENAME		equ 0x0000040
 VER_PRODUCT_TYPE	equ 0x0000080
 
-;;
-;; RtlVerifyVersionInfo() os product type values
-;;
 
 VER_NT_WORKSTATION	equ 0x0000001
 VER_NT_DOMAIN_CONTROLLER equ 0x0000002
 VER_NT_SERVER		equ 0x0000003
 
-;;
-;; dwPlatformId defines:
-;;
 
 VER_PLATFORM_WIN32s	equ 0
 VER_PLATFORM_WIN32_WINDOWS equ 1
 VER_PLATFORM_WIN32_NT	equ 2
 
 
-;;
-;;
-;; VerifyVersionInfo() macro to set the condition mask
-;;
-;; For documentation sakes here's the old version of the macro that got
-;; changed to call an API
-;; #define VER_SET_CONDITION(_m_,_t_,_c_)  _m_=(_m_|(_c_<<(1<<_t_)))
-;;
 
 VER_SET_CONDITION macro _m_,_t_,_c_
 	exitm<mov _m_,VerSetConditionMask(_m_,_t_,_c_)>
@@ -11284,7 +9461,7 @@ VER_SET_CONDITION macro _m_,_t_,_c_
 if (NTDDI_VERSION GE NTDDI_WIN2K)
 ;NTSYSAPI
 ;ULONGLONG
-VerSetConditionMask proto _CType \
+VerSetConditionMask proto WINAPI \
 	 ConditionMask: ULONGLONG,
 	      TypeMask: DWORD,
 	     Condition: BYTE
@@ -11292,7 +9469,7 @@ endif
 
 if (NTDDI_VERSION GE NTDDI_VISTA)
 ;BOOLEAN
-RtlGetProductInfo proto _CType \
+RtlGetProductInfo proto WINAPI \
 	OSMajorVersion: DWORD,
 	OSMinorVersion: DWORD,
 	SpMajorVersion: DWORD,
@@ -11320,7 +9497,7 @@ UmsSchedulerThreadBlocked	equ 1
 UmsSchedulerThreadYield		equ 2
 
 ;VOID
-RTL_UMS_SCHEDULER_ENTRY_POINT typedef proto _CType \
+RTL_UMS_SCHEDULER_ENTRY_POINT typedef proto WINAPI \
 		Reason: RTL_UMS_SCHEDULER_REASON,
      ActivationPayload: ULONG_PTR,
 	SchedulerParam: PVOID
@@ -11329,36 +9506,36 @@ PRTL_UMS_SCHEDULER_ENTRY_POINT typedef ptr RTL_UMS_SCHEDULER_ENTRY_POINT
 
 if (NTDDI_VERSION GE NTDDI_WIN7)
 ;DWORD
-RtlCopyExtendedContext proto _CType \
+RtlCopyExtendedContext proto WINAPI \
 	   Destination: PCONTEXT_EX,
 	  ContextFlags: DWORD,
 		Source: PCONTEXT_EX
 ;DWORD
-RtlInitializeExtendedContext proto _CType \
+RtlInitializeExtendedContext proto WINAPI \
 	       Context: PVOID,
 	  ContextFlags: DWORD,
 	     ContextEx: PCONTEXT_EX
 ;DWORD64
-RtlGetEnabledExtendedFeatures proto _CType \
+RtlGetEnabledExtendedFeatures proto WINAPI \
 	   FeatureMask: DWORD64
 ;DWORD
-RtlGetExtendedContextLength proto _CType \
+RtlGetExtendedContextLength proto WINAPI \
 	  ContextFlags: DWORD,
 	 ContextLength: PDWORD
 ;DWORD64
-RtlGetExtendedFeaturesMask proto _CType \
+RtlGetExtendedFeaturesMask proto WINAPI \
 	     ContextEx: PCONTEXT_EX
 ;PVOID
-RtlLocateExtendedFeature proto _CType \
+RtlLocateExtendedFeature proto WINAPI \
 	     ContextEx: PCONTEXT_EX,
 	     FeatureId: DWORD,
 	       _Length: PDWORD
 ;PCONTEXT
-RtlLocateLegacyContext proto _CType \
+RtlLocateLegacyContext proto WINAPI \
 	     ContextEx: PCONTEXT_EX,
 	       _Length: PDWORD
 ;VOID
-RtlSetExtendedFeaturesMask proto _CType \
+RtlSetExtendedFeaturesMask proto WINAPI \
 	     ContextEx: PCONTEXT_EX,
 	   FeatureMask: DWORD64
 endif
@@ -11381,9 +9558,6 @@ PRTL_RESOURCE_DEBUG		typedef ptr RTL_CRITICAL_SECTION_DEBUG
 RTL_CRITSECT_TYPE	equ 0
 RTL_RESOURCE_TYPE	equ 1
 
-;;
-;; These flags define the upper byte of the critical section SpinCount field
-;;
 RTL_CRITICAL_SECTION_FLAG_NO_DEBUG_INFO equ 0x01000000
 RTL_CRITICAL_SECTION_FLAG_DYNAMIC_SPIN	equ 0x02000000
 RTL_CRITICAL_SECTION_FLAG_STATIC_INIT	equ 0x04000000
@@ -11392,9 +9566,6 @@ RTL_CRITICAL_SECTION_FLAG_RESERVED	equ (RTL_CRITICAL_SECTION_ALL_FLAG_BITS AND \
 	( NOT (RTL_CRITICAL_SECTION_FLAG_NO_DEBUG_INFO OR \
 	RTL_CRITICAL_SECTION_FLAG_DYNAMIC_SPIN OR RTL_CRITICAL_SECTION_FAG_STATIC_INIT))
 
-;;
-;; These flags define possible values stored in the Flags field of a critsec debuginfo.
-;;
 RTL_CRITICAL_SECTION_DEBUG_FLAG_STATIC_INIT equ 0x00000001
 
 
@@ -11403,14 +9574,12 @@ RTL_CRITICAL_SECTION_DEBUG_FLAG_STATIC_INIT equ 0x00000001
 RTL_CRITICAL_SECTION	STRUC
 DebugInfo		PRTL_CRITICAL_SECTION_DEBUG ?
 
-    ;; The following three fields control entering and exiting the critical
-    ;; section for the resource
 
 LockCount		LONG ?
 RecursionCount		LONG ?
-OwningThread		HANDLE ?	;; from the thread's ClientId->UniqueThread
+OwningThread		HANDLE ?	
 LockSemaphore		HANDLE ?
-SpinCount		ULONG_PTR ?	;; force size on 64-bit systems when packed
+SpinCount		ULONG_PTR ?	
 RTL_CRITICAL_SECTION	ENDS
 PRTL_CRITICAL_SECTION	typedef ptr RTL_CRITICAL_SECTION
 
@@ -11432,11 +9601,11 @@ RTL_CONDITION_VARIABLE_INIT equ <{0}>
 RTL_CONDITION_VARIABLE_LOCKMODE_SHARED equ 0x1
 
 ;VOID
-PAPCFUNC_T typedef proto _CType \
+PAPCFUNC_T typedef proto WINAPI \
 	     Parameter: ULONG_PTR
 PAPCFUNC typedef ptr PAPCFUNC_T
 ;LONG
-PVECTORED_EXCEPTION_HANDLER_T typedef proto _CType \
+PVECTORED_EXCEPTION_HANDLER_T typedef proto WINAPI \
 	 ExceptionInfo: ptr EXCEPTION_POINTERS
 PVECTORED_EXCEPTION_HANDLER typedef ptr PVECTORED_EXCEPTION_HANDLER_T
 
@@ -11449,15 +9618,15 @@ HeapCompatibilityInformation	  equ 0
 HeapEnableTerminationOnCorruption equ 1
 
 
-WAITORTIMERCALLBACK_T		typedef proto _CType :PVOID, :BOOLEAN
+WAITORTIMERCALLBACK_T		typedef proto WINAPI :PVOID, :BOOLEAN
 WAITORTIMERCALLBACKFUNC		typedef ptr WAITORTIMERCALLBACK_T
-WORKERCALLBACK_T		typedef proto _CType :PVOID
+WORKERCALLBACK_T		typedef proto WINAPI :PVOID
 WORKERCALLBACKFUNC		typedef ptr WORKERCALLBACK_T
-APC_CALLBACK_FUNCTION_T		typedef proto _CType :DWORD, :PVOID, :PVOID
+APC_CALLBACK_FUNCTION_T		typedef proto WINAPI :DWORD, :PVOID, :PVOID
 APC_CALLBACK_FUNCTION		typedef ptr APC_CALLBACK_FUNCTION_T
-PFLS_CALLBACK_FUNCTION_T	typedef proto _CType :PVOID
+PFLS_CALLBACK_FUNCTION_T	typedef proto WINAPI :PVOID
 PFLS_CALLBACK_FUNCTION		typedef ptr PFLS_CALLBACK_FUNCTION_T
-PSECURE_MEMORY_CACHE_CALLBACK_T typedef proto _CType :PVOID, :SIZE_T
+PSECURE_MEMORY_CACHE_CALLBACK_T typedef proto WINAPI :PVOID, :SIZE_T
 PSECURE_MEMORY_CACHE_CALLBACK	typedef ptr PSECURE_MEMORY_CACHE_CALLBACK_T
 
 
@@ -11488,9 +9657,6 @@ ACTIVATION_CONTEXT_INFO_CLASS typedef sdword ; enum _
     CompatibilityInformationInActivationContext		    equ 6
     ActivationContextManifestResourceName		    equ 7
     MaxActivationContextInfoClass			    equ 8
-    ;;
-    ;; compatibility with old names
-    ;;
     AssemblyDetailedInformationInActivationContxt	    equ 3
     FileInformationInAssemblyOfAssemblyInActivationContxt   equ 4
 
@@ -11519,10 +9685,6 @@ ASSEMBLY_FILE_DETAILED_INFORMATION ENDS
 PASSEMBLY_FILE_DETAILED_INFORMATION typedef ptr ASSEMBLY_FILE_DETAILED_INFORMATION
 PCASSEMBLY_FILE_DETAILED_INFORMATION typedef ptr ASSEMBLY_FILE_DETAILED_INFORMATION
 
-;;
-;; compatibility with old names
-;; The new names use "file" consistently.
-;;
 _ASSEMBLY_DLL_REDIRECTION_DETAILED_INFORMATION	equ _ASSEMBLY_FILE_DETAILED_INFORMATION
 ASSEMBLY_DLL_REDIRECTION_DETAILED_INFORMATION	equ ASSEMBLY_FILE_DETAILED_INFORMATION
 PASSEMBLY_DLL_REDIRECTION_DETAILED_INFORMATION	equ PASSEMBLY_FILE_DETAILED_INFORMATION
@@ -11530,19 +9692,19 @@ PCASSEMBLY_DLL_REDIRECTION_DETAILED_INFORMATION equ PCASSEMBLY_FILE_DETAILED_INF
 
 ACTIVATION_CONTEXT_ASSEMBLY_DETAILED_INFORMATION STRUC
 ulFlags				dd ?
-ulEncodedAssemblyIdentityLength dd ?	;; in bytes
-ulManifestPathType		dd ?	;; ACTIVATION_CONTEXT_PATH_TYPE_*
-ulManifestPathLength		dd ?	;; in bytes
-liManifestLastWriteTime		LARGE_INTEGER <> ;; FILETIME
-ulPolicyPathType		dd ?	;; ACTIVATION_CONTEXT_PATH_TYPE_*
-ulPolicyPathLength		dd ?	;; in bytes
-liPolicyLastWriteTime		LARGE_INTEGER <> ;; FILETIME
+ulEncodedAssemblyIdentityLength dd ?	
+ulManifestPathType		dd ?	
+ulManifestPathLength		dd ?	
+liManifestLastWriteTime		LARGE_INTEGER <> 
+ulPolicyPathType		dd ?	
+ulPolicyPathLength		dd ?	
+liPolicyLastWriteTime		LARGE_INTEGER <> 
 ulMetadataSatelliteRosterIndex	dd ?
-ulManifestVersionMajor		dd ?	;; 1
-ulManifestVersionMinor		dd ?	;; 0
-ulPolicyVersionMajor		dd ?	;; 0
-ulPolicyVersionMinor		dd ?	;; 0
-ulAssemblyDirectoryNameLength	dd ?	;; in bytes
+ulManifestVersionMajor		dd ?	
+ulManifestVersionMinor		dd ?	
+ulPolicyVersionMajor		dd ?	
+ulPolicyVersionMinor		dd ?	
+ulAssemblyDirectoryNameLength	dd ?	
 lpAssemblyEncodedAssemblyIdentity PCWSTR ?
 lpAssemblyManifestPath		PCWSTR ?
 lpAssemblyPolicyPath		PCWSTR ?
@@ -11648,17 +9810,11 @@ DLL_THREAD_ATTACH	equ 2
 DLL_THREAD_DETACH	equ 3
 DLL_PROCESS_DETACH	equ 0
 
-;;
-;; Defines for the READ flags for Eventlogging
-;;
 EVENTLOG_SEQUENTIAL_READ	equ 0X0001
 EVENTLOG_SEEK_READ		equ 0X0002
 EVENTLOG_FORWARDS_READ		equ 0X0004
 EVENTLOG_BACKWARDS_READ		equ 0X0008
 
-;;
-;; The types of events that can be logged.
-;;
 EVENTLOG_SUCCESS		equ 0X0000
 EVENTLOG_ERROR_TYPE		equ 0x0001
 EVENTLOG_WARNING_TYPE		equ 0x0002
@@ -11666,10 +9822,6 @@ EVENTLOG_INFORMATION_TYPE	equ 0x0004
 EVENTLOG_AUDIT_SUCCESS		equ 0x0008
 EVENTLOG_AUDIT_FAILURE		equ 0x0010
 
-;;
-;; Defines for the WRITE flags used by Auditing for paired events
-;; These are not implemented in Product 1
-;;
 
 EVENTLOG_START_PAIRED_EVENT    equ 0x0001
 EVENTLOG_END_PAIRED_EVENT      equ 0x0002
@@ -11677,55 +9829,36 @@ EVENTLOG_END_ALL_PAIRED_EVENTS equ 0x0004
 EVENTLOG_PAIRED_EVENT_ACTIVE   equ 0x0008
 EVENTLOG_PAIRED_EVENT_INACTIVE equ 0x0010
 
-;;
-;; Structure that defines the header of the Eventlog record. This is the
-;; fixed-sized portion before all the variable-length strings, binary
-;; data and pad bytes.
-;;
-;; TimeGenerated is the time it was generated at the client.
-;; TimeWritten is the time it was put into the log at the server end.
-;;
 
 EVENTLOGRECORD			STRUC
-_Length				dd ?	;; Length of full record
-Reserved			dd ?	;; Used by the service
-RecordNumber			dd ?	;; Absolute record number
-TimeGenerated			dd ?	;; Seconds since 1-1-1970
-TimeWritten			dd ?	;; Seconds since 1-1-1970
+_Length				dd ?	
+Reserved			dd ?	
+RecordNumber			dd ?	
+TimeGenerated			dd ?	
+TimeWritten			dd ?	
 EventID				dd ?
 EventType			dw ?
 NumStrings			dw ?
 EventCategory			dw ?
-ReservedFlags			dw ?	;; For use with paired events (auditing)
-ClosingRecordNumber		dd ?	;; For use with paired events (auditing)
-StringOffset			dd ?	;; Offset from beginning of record
+ReservedFlags			dw ?	
+ClosingRecordNumber		dd ?	
+StringOffset			dd ?	
 UserSidLength			dd ?
 UserSidOffset			dd ?
 DataLength			dd ?
-DataOffset			dd ?	;; Offset from beginning of record
-    ;;
-    ;; Then follow:
-    ;;
-    ;; WCHAR SourceName[]
-    ;; WCHAR Computername[]
-    ;; SID   UserSid
-    ;; WCHAR Strings[]
-    ;; BYTE  Data[]
-    ;; CHAR  Pad[]
-    ;; DWORD Length;
-    ;;
+DataOffset			dd ?	
 EVENTLOGRECORD			ENDS
 PEVENTLOGRECORD			typedef ptr EVENTLOGRECORD
 
 if _MSC_VER GE 1200
 pragma warning(push)
 endif
-pragma warning(disable : 4200) ;; nonstandard extension used : zero-sized array in struct/union
+pragma warning(disable : 4200) 
 
 ifdef _MSC_EXTENSIONS
 EVENTSFORLOGFILE		STRUC
 ulSize				dd ?
-szLogicalLogFile		WCHAR MAXLOGICALLOGNAMESIZE dup(?) ;; name of the logical file-security/application/system
+szLogicalLogFile		WCHAR MAXLOGICALLOGNAMESIZE dup(?) 
 ulNumRecords			dd ?
 pEventLogRecords		EVENTLOGRECORD <>
 EVENTSFORLOGFILE		ENDS
@@ -11733,9 +9866,9 @@ PEVENTSFORLOGFILE		typedef ptr EVENTSFORLOGFILE
 
 
 PACKEDEVENTINFO			STRUC
-ulSize				dd ?	;;total size of the structure
-ulNumEventsForLogFile		dd ?	;;number of EventsForLogFile structure that follow
-ulOffsets			dd ?	;;the offsets from the start of this structure to the EVENTSFORLOGFILE structure
+ulSize				dd ?	
+ulNumEventsForLogFile		dd ?	
+ulOffsets			dd ?	
 PACKEDEVENTINFO			ENDS
 PPACKEDEVENTINFO		typedef ptr PACKEDEVENTINFO
 endif
@@ -11750,14 +9883,9 @@ DBG_EXCEPTION_NOT_HANDLED	equ 0x80010001
 if _MSC_VER GE 1200
 pragma warning(pop)
 else
-pragma warning(default : 4200) ;; nonstandard extension used : zero-sized array in struct/union
+pragma warning(default : 4200) 
 endif
-;;SS: end of changes to support clustering
-;;
 
-;;
-;; Registry Specific Access Rights.
-;;
 
 KEY_QUERY_VALUE		equ 0x0001
 KEY_SET_VALUE		equ 0x0002
@@ -11779,21 +9907,13 @@ KEY_ALL_ACCESS	equ (STANDARD_RIGHTS_ALL or KEY_QUERY_VALUE or KEY_SET_VALUE or \
 		    KEY_CREATE_LINK) and (not SYNCHRONIZE)
 
 
-;;
-;; Open/Create Options
-;;
 
-REG_OPTION_RESERVED		equ 0x00000000	;; Parameter is reserved
-REG_OPTION_NON_VOLATILE		equ 0x00000000	;; Key is preserved
-						;; when system is rebooted
-REG_OPTION_VOLATILE		equ 0x00000001	;; Key is not preserved
-						;; when system is rebooted
-REG_OPTION_CREATE_LINK		equ 0x00000002	;; Created key is a
-						;; symbolic link
-REG_OPTION_BACKUP_RESTORE	equ 0x00000004	;; open for backup or restore
-						;; special access rules
-						;; privilege required
-REG_OPTION_OPEN_LINK		equ 0x00000008	;; Open symbolic link
+REG_OPTION_RESERVED		equ 0x00000000	
+REG_OPTION_NON_VOLATILE		equ 0x00000000	
+REG_OPTION_VOLATILE		equ 0x00000001	
+REG_OPTION_CREATE_LINK		equ 0x00000002	
+REG_OPTION_BACKUP_RESTORE	equ 0x00000004	
+REG_OPTION_OPEN_LINK		equ 0x00000008	
 
 REG_LEGAL_OPTION		equ REG_OPTION_RESERVED or \
 				    REG_OPTION_NON_VOLATILE or \
@@ -11804,40 +9924,28 @@ REG_LEGAL_OPTION		equ REG_OPTION_RESERVED or \
 
 REG_OPEN_LEGAL_OPTION	equ REG_OPTION_RESERVED OR REG_OPTION_BACKUP_RESTORE
 
-;;
-;; Key creation/open disposition
-;;
 
-REG_CREATED_NEW_KEY		equ 0x00000001	;; New Registry Key created
-REG_OPENED_EXISTING_KEY		equ 0x00000002	;; Existing Key opened
+REG_CREATED_NEW_KEY		equ 0x00000001	
+REG_OPENED_EXISTING_KEY		equ 0x00000002	
 
-;;
-;; Key restore flags
-;;
 
-REG_WHOLE_HIVE_VOLATILE		equ 0x00000001	;; Restore whole hive volatile
-REG_REFRESH_HIVE		equ 0x00000002	;; Unwind changes to last flush
-REG_NO_LAZY_FLUSH		equ 0x00000004	;; Never lazy flush this hive
-REG_FORCE_RESTORE		equ 0x00000008	;; Force the restore process even when we have open handles on subkeys
-REG_APP_HIVE			equ 0x00000010	;; Loads the hive visible to the calling process
-REG_PROCESS_PRIVATE		equ 0x00000020	;; Hive cannot be mounted by any other process while in use
-REG_START_JOURNAL		equ 0x00000040	;; Starts Hive Journal
-REG_HIVE_EXACT_FILE_GROWTH	equ 0x00000080	;; Grow hive file in exact 4k increments
-REG_HIVE_NO_RM			equ 0x00000100	;; No RM is started for this hive (no transactions)
-REG_HIVE_SINGLE_LOG		equ 0x00000200	;; Legacy single logging is used for this hive
-REG_BOOT_HIVE			equ 0x00000400	;; This hive might be used by the OS loader
+REG_WHOLE_HIVE_VOLATILE		equ 0x00000001	
+REG_REFRESH_HIVE		equ 0x00000002	
+REG_NO_LAZY_FLUSH		equ 0x00000004	
+REG_FORCE_RESTORE		equ 0x00000008	
+REG_APP_HIVE			equ 0x00000010	
+REG_PROCESS_PRIVATE		equ 0x00000020	
+REG_START_JOURNAL		equ 0x00000040	
+REG_HIVE_EXACT_FILE_GROWTH	equ 0x00000080	
+REG_HIVE_NO_RM			equ 0x00000100	
+REG_HIVE_SINGLE_LOG		equ 0x00000200	
+REG_BOOT_HIVE			equ 0x00000400	
 
-;;
-;; Unload Flags
-;;
 REG_FORCE_UNLOAD	equ 1
 
-;;
-;; Notify filter values
-;;
-REG_NOTIFY_CHANGE_NAME		equ 0x00000001	;; Create or delete (child)
+REG_NOTIFY_CHANGE_NAME		equ 0x00000001	
 REG_NOTIFY_CHANGE_ATTRIBUTES	equ 0x00000002
-REG_NOTIFY_CHANGE_LAST_SET	equ 0x00000004	;; time stamp
+REG_NOTIFY_CHANGE_LAST_SET	equ 0x00000004	
 REG_NOTIFY_CHANGE_SECURITY	equ 0x00000008
 
 REG_LEGAL_CHANGE_FILTER equ REG_NOTIFY_CHANGE_NAME   or \
@@ -11845,30 +9953,22 @@ REG_LEGAL_CHANGE_FILTER equ REG_NOTIFY_CHANGE_NAME   or \
 			REG_NOTIFY_CHANGE_LAST_SET   or \
 			REG_NOTIFY_CHANGE_SECURITY
 
-;;
-;;
-;; Predefined Value Types.
-;;
 
-REG_NONE			equ 0	;; No value type
-REG_SZ				equ 1	;; Unicode nul terminated string
-REG_EXPAND_SZ			equ 2	;; Unicode nul terminated string
-					;; (with environment variable references)
-REG_BINARY			equ 3	;; Free form binary
-REG_DWORD			equ 4	;; 32-bit number
-REG_DWORD_LITTLE_ENDIAN		equ 4	;; 32-bit number (same as REG_DWORD)
-REG_DWORD_BIG_ENDIAN		equ 5	;; 32-bit number
-REG_LINK			equ 6	;; Symbolic Link (unicode)
-REG_MULTI_SZ			equ 7	;; Multiple Unicode strings
-REG_RESOURCE_LIST		equ 8	;; Resource list in the resource map
-REG_FULL_RESOURCE_DESCRIPTOR	equ 9	;; Resource list in the hardware description
+REG_NONE			equ 0	
+REG_SZ				equ 1	
+REG_EXPAND_SZ			equ 2	
+REG_BINARY			equ 3	
+REG_DWORD			equ 4	
+REG_DWORD_LITTLE_ENDIAN		equ 4	
+REG_DWORD_BIG_ENDIAN		equ 5	
+REG_LINK			equ 6	
+REG_MULTI_SZ			equ 7	
+REG_RESOURCE_LIST		equ 8	
+REG_FULL_RESOURCE_DESCRIPTOR	equ 9	
 REG_RESOURCE_REQUIREMENTS_LIST	equ 10
-REG_QWORD			equ 11	;; 64-bit number
-REG_QWORD_LITTLE_ENDIAN		equ 11	;; 64-bit number (same as REG_QWORD)
+REG_QWORD			equ 11	
+REG_QWORD_LITTLE_ENDIAN		equ 11	
 
-;;
-;; Service Types (Bit Mask)
-;;
 SERVICE_KERNEL_DRIVER	       equ 0x00000001
 SERVICE_FILE_SYSTEM_DRIVER     equ 0x00000002
 SERVICE_ADAPTER		       equ 0x00000004
@@ -11885,9 +9985,6 @@ SERVICE_TYPE_ALL	       equ SERVICE_WIN32 or \
 				   SERVICE_ADAPTER or \
 				   SERVICE_DRIVER  or \
 				   SERVICE_INTERACTIVE_PROCESS
-;;
-;; Start Type
-;;
 
 SERVICE_BOOT_START	       equ 0x00000000
 SERVICE_SYSTEM_START	       equ 0x00000001
@@ -11895,18 +9992,11 @@ SERVICE_AUTO_START	       equ 0x00000002
 SERVICE_DEMAND_START	       equ 0x00000003
 SERVICE_DISABLED	       equ 0x00000004
 
-;;
-;; Error control type
-;;
 SERVICE_ERROR_IGNORE	       equ 0x00000000
 SERVICE_ERROR_NORMAL	       equ 0x00000001
 SERVICE_ERROR_SEVERE	       equ 0x00000002
 SERVICE_ERROR_CRITICAL	       equ 0x00000003
 
-;;
-;;
-;; Define the registry driver node enumerations
-;;
 
     DriverType			equ SERVICE_KERNEL_DRIVER
     FileSystemType		equ SERVICE_FILE_SYSTEM_DRIVER
@@ -11926,35 +10016,14 @@ SERVICE_ERROR_CRITICAL	       equ 0x00000003
     SevereError			equ SERVICE_ERROR_SEVERE
     CriticalError		equ SERVICE_ERROR_CRITICAL
 
-;;
-;; Service node Flags. These flags are used by the OS loader to promote
-;; a driver's start type to boot start if the system is booting using
-;; the specified mechanism. The flags should be set in the driver's
-;; registry configuration.
-;;
-;; CM_SERVICE_NETWORK_BOOT_LOAD - Specified if a driver should be
-;; promoted on network boot.
-;;
-;; CM_SERVICE_VIRTUAL_DISK_BOOT_LOAD - Specified if a driver should be
-;; promoted on booting from a VHD.
-;;
-;; CM_SERVICE_USB_DISK_BOOT_LOAD - Specified if a driver should be promoted
-;; while booting from a USB disk.
-;;
 
 CM_SERVICE_NETWORK_BOOT_LOAD		equ 0x00000001
 CM_SERVICE_VIRTUAL_DISK_BOOT_LOAD	equ 0x00000002
 CM_SERVICE_USB_DISK_BOOT_LOAD		equ 0x00000004
 
-;;
-;; Mask defining the legal promotion flag values.
-;;
 
 CM_SERVICE_VALID_PROMOTION_MASK equ CM_SERVICE_NETWORK_BOOT_LOAD OR CM_SERVICE_VIRTUAL_DISK_BOOT_LOAD
 
-;;
-;; IOCTL_TAPE_ERASE definitions
-;;
 
 TAPE_ERASE_SHORT		equ 0
 TAPE_ERASE_LONG			equ 1
@@ -11965,9 +10034,6 @@ Immediate			BOOLEAN ?
 TAPE_ERASE			ENDS
 PTAPE_ERASE			typedef ptr TAPE_ERASE
 
-;;
-;; IOCTL_TAPE_PREPARE definitions
-;;
 
 TAPE_LOAD			equ 0
 TAPE_UNLOAD			equ 1
@@ -11982,9 +10048,6 @@ Immediate			BOOLEAN ?
 TAPE_PREPARE			ENDS
 PTAPE_PREPARE			typedef ptr TAPE_PREPARE
 
-;;
-;; IOCTL_TAPE_WRITE_MARKS definitions
-;;
 
 TAPE_SETMARKS			equ 0
 TAPE_FILEMARKS			equ 1
@@ -11998,9 +10061,6 @@ Immediate			BOOLEAN ?
 TAPE_WRITE_MARKS		ENDS
 PTAPE_WRITE_MARKS		typedef ptr TAPE_WRITE_MARKS
 
-;;
-;; IOCTL_TAPE_GET_POSITION definitions
-;;
 
 TAPE_ABSOLUTE_POSITION		equ 0
 TAPE_LOGICAL_POSITION		equ 1
@@ -12013,9 +10073,6 @@ _Offset				LARGE_INTEGER <>
 TAPE_GET_POSITION		ENDS
 PTAPE_GET_POSITION		typedef ptr TAPE_GET_POSITION
 
-;;
-;; IOCTL_TAPE_SET_POSITION definitions
-;;
 
 TAPE_REWIND			equ 0
 TAPE_ABSOLUTE_BLOCK		equ 1
@@ -12036,13 +10093,7 @@ Immediate			BOOLEAN ?
 TAPE_SET_POSITION		ENDS
 PTAPE_SET_POSITION		typedef ptr TAPE_SET_POSITION
 
-;;
-;; IOCTL_TAPE_GET_DRIVE_PARAMS definitions
-;;
 
-;;
-;; Definitions for FeaturesLow parameter
-;;
 
 TAPE_DRIVE_FIXED		equ 0x00000001
 TAPE_DRIVE_SELECT		equ 0x00000002
@@ -12074,13 +10125,8 @@ TAPE_DRIVE_EJECT_MEDIA		equ 0x01000000
 TAPE_DRIVE_CLEAN_REQUESTS	equ 0x02000000
 TAPE_DRIVE_SET_CMP_BOP_ONLY	equ 0x04000000
 
-TAPE_DRIVE_RESERVED_BIT		equ 0x80000000 ;;don't use this bit!
-;;					       ;;can't be a low features bit!
-;;					       ;;reserved; high features only
+TAPE_DRIVE_RESERVED_BIT		equ 0x80000000 
 
-;;
-;; Definitions for FeaturesHigh parameter
-;;
 
 TAPE_DRIVE_LOAD_UNLOAD		equ 0x80000001
 TAPE_DRIVE_TENSION		equ 0x80000002
@@ -12120,7 +10166,7 @@ TAPE_DRIVE_WRITE_LONG_FMKS	equ 0x88000000
 TAPE_DRIVE_WRITE_MARK_IMMED	equ 0x90000000
 TAPE_DRIVE_FORMAT		equ 0xA0000000
 TAPE_DRIVE_FORMAT_IMMEDIATE	equ 0xC0000000
-TAPE_DRIVE_HIGH_FEATURES	equ 0x80000000 ;;mask for high features flag
+TAPE_DRIVE_HIGH_FEATURES	equ 0x80000000 
 
 TAPE_GET_DRIVE_PARAMETERS	STRUC
 ECC				BOOLEAN ?
@@ -12137,9 +10183,6 @@ EOTWarningZoneSize		dd ?
 TAPE_GET_DRIVE_PARAMETERS	ENDS
 PTAPE_GET_DRIVE_PARAMETERS	typedef ptr TAPE_GET_DRIVE_PARAMETERS
 
-;;
-;; IOCTL_TAPE_SET_DRIVE_PARAMETERS definitions
-;;
 
 TAPE_SET_DRIVE_PARAMETERS	STRUC
 ECC				BOOLEAN ?
@@ -12150,9 +10193,6 @@ EOTWarningZoneSize		dd ?
 TAPE_SET_DRIVE_PARAMETERS	ENDS
 PTAPE_SET_DRIVE_PARAMETERS	typedef ptr TAPE_SET_DRIVE_PARAMETERS
 
-;;
-;; IOCTL_TAPE_GET_MEDIA_PARAMETERS definitions
-;;
 
 TAPE_GET_MEDIA_PARAMETERS	STRUC
 Capacity			LARGE_INTEGER <>
@@ -12163,18 +10203,12 @@ WriteProtected			BOOLEAN ?
 TAPE_GET_MEDIA_PARAMETERS	ENDS
 PTAPE_GET_MEDIA_PARAMETERS	typedef ptr TAPE_GET_MEDIA_PARAMETERS
 
-;;
-;; IOCTL_TAPE_SET_MEDIA_PARAMETERS definitions
-;;
 
 TAPE_SET_MEDIA_PARAMETERS	STRUC
 BlockSize			dd ?
 TAPE_SET_MEDIA_PARAMETERS	ENDS
 PTAPE_SET_MEDIA_PARAMETERS	typedef ptr TAPE_SET_MEDIA_PARAMETERS
 
-;;
-;; IOCTL_TAPE_CREATE_PARTITION definitions
-;;
 
 TAPE_FIXED_PARTITIONS		equ 0
 TAPE_SELECT_PARTITIONS		equ 1
@@ -12187,9 +10221,6 @@ _Size				dd ?
 TAPE_CREATE_PARTITION		ENDS
 PTAPE_CREATE_PARTITION		typedef ptr TAPE_CREATE_PARTITION
 
-;;
-;; WMI Methods
-;;
 TAPE_QUERY_DRIVE_PARAMETERS	equ 0
 TAPE_QUERY_MEDIA_CAPACITY	equ 1
 TAPE_CHECK_FOR_DRIVE_PROBLEM	equ 2
@@ -12203,9 +10234,6 @@ DataBuffer		PVOID ?
 TAPE_WMI_OPERATIONS	ENDS
 PTAPE_WMI_OPERATIONS	typedef ptr TAPE_WMI_OPERATIONS
 
-;;
-;; Type of drive errors
-;;
 TAPE_DRIVE_PROBLEM_TYPE		typedef sdword;enum _TAPE_DRIVE_PROBLEM_TYPE {
 TapeDriveProblemNone		equ 0
 TapeDriveReadWriteWarning	equ 1
@@ -12227,26 +10255,15 @@ _NTTMAPI_ equ <>
 
 include ktmtypes.inc
 
-;;
-;; Types for Nt level TM calls
-;;
 
-;;
-;; KTM Tm object rights
-;;
 TRANSACTIONMANAGER_QUERY_INFORMATION	equ 0x0001
 TRANSACTIONMANAGER_SET_INFORMATION	equ 0x0002
 TRANSACTIONMANAGER_RECOVER		equ 0x0004
 TRANSACTIONMANAGER_RENAME		equ 0x0008
 TRANSACTIONMANAGER_CREATE_RM		equ 0x0010
 
-;; The following right is intended for DTC's use only; it will be
-;; deprecated, and no one else should take a dependency on it.
 TRANSACTIONMANAGER_BIND_TRANSACTION	equ 0x0020
 
-;;
-;; Generic mappings for transaction manager rights.
-;;
 
 TRANSACTIONMANAGER_GENERIC_READ equ STANDARD_RIGHTS_READ OR \
 				    TRANSACTIONMANAGER_QUERY_INFORMATION
@@ -12264,9 +10281,6 @@ TRANSACTIONMANAGER_ALL_ACCESS equ STANDARD_RIGHTS_REQUIRED OR \
 				  TRANSACTIONMANAGER_GENERIC_WRITE OR \
 				  TRANSACTIONMANAGER_GENERIC_EXECUTE OR \
 				  TRANSACTIONMANAGER_BIND_TRANSACTION
-;;
-;; KTM transaction object rights.
-;;
 TRANSACTION_QUERY_INFORMATION	equ 0x0001
 TRANSACTION_SET_INFORMATION	equ 0x0002
 TRANSACTION_ENLIST		equ 0x0004
@@ -12275,13 +10289,6 @@ TRANSACTION_ROLLBACK		equ 0x0010
 TRANSACTION_PROPAGATE		equ 0x0020
 TRANSACTION_RIGHT_RESERVED1	equ 0x0040
 
-;;
-;; Generic mappings for transaction rights.
-;; Resource managers, when enlisting, should generally use the macro
-;; TRANSACTION_RESOURCE_MANAGER_RIGHTS when opening a transaction.
-;; It's the same as generic read and write except that it does not allow
-;; a commit decision to be made.
-;;
 
 TRANSACTION_GENERIC_READ	equ STANDARD_RIGHTS_READ OR \
 				    TRANSACTION_QUERY_INFORMATION OR \
@@ -12313,9 +10320,6 @@ TRANSACTION_RESOURCE_MANAGER_RIGHTS equ TRANSACTION_GENERIC_READ OR \
 				    TRANSACTION_PROPAGATE OR \
 				    SYNCHRONIZE
 
-;;
-;; KTM resource manager object rights.
-;;
 RESOURCEMANAGER_QUERY_INFORMATION	equ 0x0001
 RESOURCEMANAGER_SET_INFORMATION		equ 0x0002
 RESOURCEMANAGER_RECOVER			equ 0x0004
@@ -12324,9 +10328,6 @@ RESOURCEMANAGER_GET_NOTIFICATION	equ 0x0010
 RESOURCEMANAGER_REGISTER_PROTOCOL	equ 0x0020
 RESOURCEMANAGER_COMPLETE_PROPAGATION	equ 0x0040
 
-;;
-;; Generic mappings for resource manager rights.
-;;
 RESOURCEMANAGER_GENERIC_READ equ STANDARD_RIGHTS_READ OR \
 			RESOURCEMANAGER_QUERY_INFORMATION OR \
 			SYNCHRONIZE
@@ -12352,18 +10353,12 @@ RESOURCEMANAGER_ALL_ACCESS equ STANDARD_RIGHTS_REQUIRED OR \
 			RESOURCEMANAGER_GENERIC_WRITE OR \
 			RESOURCEMANAGER_GENERIC_EXECUTE
 
-;;
-;; KTM enlistment object rights.
-;;
 ENLISTMENT_QUERY_INFORMATION	equ 0x0001
 ENLISTMENT_SET_INFORMATION	equ 0x0002
 ENLISTMENT_RECOVER		equ 0x0004
 ENLISTMENT_SUBORDINATE_RIGHTS	equ 0x0008
 ENLISTMENT_SUPERIOR_RIGHTS	equ 0x0010
 
-;;
-;; Generic mappings for enlistment rights.
-;;
 ENLISTMENT_GENERIC_READ equ STANDARD_RIGHTS_READ OR \
 			ENLISTMENT_QUERY_INFORMATION
 
@@ -12382,12 +10377,6 @@ ENLISTMENT_ALL_ACCESS	equ (STANDARD_RIGHTS_REQUIRED OR \
 			ENLISTMENT_GENERIC_READ OR \
 			ENLISTMENT_GENERIC_WRITE OR \
 			ENLISTMENT_GENERIC_EXECUTE
-;;
-;; Transaction outcomes.
-;;
-;; TODO: warning, must match values in KTRANSACTION_OUTCOME duplicated def
-;; in tm.h.
-;;
 
 TRANSACTION_OUTCOME	typedef sdword;enum _TRANSACTION_OUTCOME {
 TransactionOutcomeUndetermined	equ 1
@@ -12422,8 +10411,7 @@ PTRANSACTIONMANAGER_LOG_INFORMATION typedef ptr TRANSACTIONMANAGER_LOG_INFORMATI
 
 TRANSACTIONMANAGER_LOGPATH_INFORMATION	STRUC
 LogPathLength		dd ?
-LogPath			dw ? ;; Variable size
-;;  Data[1];					    // Variable size data not declared
+LogPath			dw ? 
 TRANSACTIONMANAGER_LOGPATH_INFORMATION ENDS
 PTRANSACTIONMANAGER_LOGPATH_INFORMATION typedef ptr TRANSACTIONMANAGER_LOGPATH_INFORMATION
 
@@ -12445,13 +10433,10 @@ IsolationFlags		dd ?
 Timeout			LARGE_INTEGER <>
 Outcome			dd ?
 DescriptionLength	dd ?
-Description		dw ? ;; Variable size
-;;	    Data[1];		// Variable size data not declared
+Description		dw ? 
 TRANSACTION_PROPERTIES_INFORMATION ENDS
 PTRANSACTION_PROPERTIES_INFORMATION typedef ptr TRANSACTION_PROPERTIES_INFORMATION
 
-;; The following info-class is intended for DTC's use only; it will be
-;; deprecated, and no one else should take a dependency on it.
 TRANSACTION_BIND_INFORMATION  STRUC
 TmHandle		HANDLE ?
 TRANSACTION_BIND_INFORMATION ENDS
@@ -12465,7 +10450,7 @@ PTRANSACTION_ENLISTMENT_PAIR typedef ptr TRANSACTION_ENLISTMENT_PAIR
 
 TRANSACTION_ENLISTMENTS_INFORMATION  STRUC
 NumberOfEnlistments	dd ?
-EnlistmentPair		TRANSACTION_ENLISTMENT_PAIR <>	;; Variable size
+EnlistmentPair		TRANSACTION_ENLISTMENT_PAIR <>	
 TRANSACTION_ENLISTMENTS_INFORMATION ENDS
 PTRANSACTION_ENLISTMENTS_INFORMATION typedef ptr TRANSACTION_ENLISTMENTS_INFORMATION
 
@@ -12478,7 +10463,7 @@ PTRANSACTION_SUPERIOR_ENLISTMENT_INFORMATION typedef ptr TRANSACTION_SUPERIOR_EN
 RESOURCEMANAGER_BASIC_INFORMATION STRUC
 ResourceManagerId	GUID <>
 DescriptionLength	dd ?
-Description		dw ? ;; Variable size
+Description		dw ? 
 RESOURCEMANAGER_BASIC_INFORMATION ENDS
 PRESOURCEMANAGER_BASIC_INFORMATION typedef ptr RESOURCEMANAGER_BASIC_INFORMATION
 
@@ -12503,8 +10488,6 @@ TransactionManagerBasicInformation	equ 0
 TransactionManagerLogInformation	equ 1
 TransactionManagerLogPathInformation	equ 2
 TransactionManagerRecoveryInformation	equ 4
-;; are considered deprecated, and no one else should take a dependency
-;; on them.
 TransactionManagerOnlineProbeInformation equ 3
 TransactionManagerOldestTransactionInformation equ 5
 
@@ -12539,14 +10522,11 @@ PTRANSACTION_LIST_ENTRY typedef ptr TRANSACTION_LIST_ENTRY
 
 TRANSACTION_LIST_INFORMATION  STRUC
 NumberOfTransactions	dd ?
-TransactionInformation	TRANSACTION_LIST_ENTRY <>	;; Var size
+TransactionInformation	TRANSACTION_LIST_ENTRY <>	
 TRANSACTION_LIST_INFORMATION ENDS
 PTRANSACTION_LIST_INFORMATION typedef ptr TRANSACTION_LIST_INFORMATION
 
 
-;;
-;; Types of objects known to the kernel transaction manager.
-;;
 
 KTMOBJECT_TYPE		typedef sdword; ptr enum _KTMOBJECT_TYPE {
 PKTMOBJECT_TYPE		typedef ptr KTMOBJECT_TYPE
@@ -12557,12 +10537,6 @@ KTMOBJECT_RESOURCE_MANAGER	equ 2
 KTMOBJECT_ENLISTMENT		equ 3
 KTMOBJECT_INVALID		equ 4
 
-;;
-;; KTMOBJECT_CURSOR
-;;
-;; Used by NtEnumerateTransactionObject to enumerate a transaction
-;; object namespace (e.g. enlistments in a resource manager).
-;;
 
 KTMOBJECT_CURSOR	STRUC
 LastQuery		GUID <>
@@ -12571,13 +10545,13 @@ ObjectIds		GUID <>
 KTMOBJECT_CURSOR	ENDS
 PKTMOBJECT_CURSOR	typedef ptr KTMOBJECT_CURSOR
 
-endif ;; _NTTMAPI_
+endif 
 
 TP_VERSION		typedef DWORD
 PTP_VERSION		typedef ptr TP_VERSION
-TP_CALLBACK_INSTANCE	typedef proto _CType
+TP_CALLBACK_INSTANCE	typedef proto WINAPI
 PTP_CALLBACK_INSTANCE	typedef ptr TP_CALLBACK_INSTANCE
-PTP_SIMPLE_CALLBACK_T	typedef proto _CType \
+PTP_SIMPLE_CALLBACK_T	typedef proto WINAPI \
 	      Instance: PTP_CALLBACK_INSTANCE,
 	       Context: PVOID
 PTP_SIMPLE_CALLBACK	typedef ptr PTP_SIMPLE_CALLBACK_T
@@ -12597,16 +10571,12 @@ TP_POOL_STACK_INFORMATION ENDS
 PTP_POOL_STACK_INFORMATION typedef ptr TP_POOL_STACK_INFORMATION
 
 PTP_CLEANUP_GROUP	typedef ptr TP_CLEANUP_GROUP
-PTP_CLEANUP_GROUP_CANCEL_CALLBACK_T typedef proto _CType \
+PTP_CLEANUP_GROUP_CANCEL_CALLBACK_T typedef proto WINAPI \
 	 ObjectContext: PVOID,
 	CleanupContext: PVOID
 
 PTP_CLEANUP_GROUP_CANCEL_CALLBACK typedef ptr PTP_CLEANUP_GROUP_CANCEL_CALLBACK_T
 
-;;
-;; Do not manipulate this structure directly!  Allocate space for it
-;; and use the inline interfaces below.
-;;
 
 if (_WIN32_WINNT GE _WIN32_WINNT_WIN7)
 
@@ -12697,7 +10667,7 @@ TpSetCallbackActivationContext macro CallbackEnviron, ActivationContext
 	endm
 ;VOID
 TpSetCallbackNoActivationContext macro CallbackEnviron
-	mov CallbackEnviron.ActivationContext,-1	;; INVALID_ACTIVATION_CONTEXT
+	mov CallbackEnviron.ActivationContext,-1	
 	endm
 ;VOID
 TpSetCallbackLongFunction macro CallbackEnviron
@@ -12724,23 +10694,20 @@ TpSetCallbackPersistent macro CallbackEnviron
 
 ;VOID
 TpDestroyCallbackEnviron macro CallbackEnviron
-    ;; For the current version of the callback environment, no actions
-    ;; need to be taken to tear down an initialized structure.	This
-    ;; may change in a future release.
 	endm
 
-endif ;; NOT defined(MIDL_PASS)
+endif 
 
 
 PTP_WORK		typedef ptr TP_WORK
-PTP_WORK_CALLBACK_T typedef proto _CType \
+PTP_WORK_CALLBACK_T typedef proto WINAPI \
 	      Instance: PTP_CALLBACK_INSTANCE,
 	       Context: PVOID,
 		  Work: PTP_WORK
 PTP_WORK_CALLBACK	typedef ptr PTP_WORK_CALLBACK_T
 
 PTP_TIMER		typedef ptr TP_TIMER
-PTP_TIMER_CALLBACK_T	typedef proto _CType \
+PTP_TIMER_CALLBACK_T	typedef proto WINAPI \
 	      Instance: PTP_CALLBACK_INSTANCE,
 	       Context: PVOID,
 		 Timer: PTP_TIMER
@@ -12748,7 +10715,7 @@ PTP_TIMER_CALLBACK	typedef ptr PTP_TIMER_CALLBACK_T
 
 TP_WAIT_RESULT		typedef DWORD
 PTP_WAIT		typedef ptr TP_WAIT
-PTP_WAIT_CALLBACK_T	typedef proto _CType \
+PTP_WAIT_CALLBACK_T	typedef proto WINAPI \
 	      Instance: PTP_CALLBACK_INSTANCE,
 	       Context: PVOID,
 		 _Wait: PTP_WAIT,
@@ -12770,7 +10737,7 @@ GetCurrentFiber macro
 GetFiberData macro
 	exitm<GetCurrentFiber()>
 	endm
-endif ;; _M_AMD64 AND NOT defined(__midl)
+endif 
 
 
 if defined(_M_IX86) AND NOT defined(MIDL_PASS)
@@ -12789,7 +10756,7 @@ if _MSC_VER GE 1200
 pragma warning(push)
 endif
 
-pragma warning (disable:4035)	      ;; disable 4035 (function must return something)
+pragma warning (disable:4035)	      
 
 NtCurrentTeb macro
 	mov eax,fs:[PcTeb]
@@ -12799,14 +10766,14 @@ NtCurrentTeb macro
 if _MSC_VER GE 1200
 pragma warning(pop)
 else
-pragma warning (default:4035)	      ;; reenable it
+pragma warning (default:4035)	      
 endif
 
-endif ;; (_MSC_FULL_VER GE 13012035)
+endif 
 
-endif ;; defined(_M_IX86) AND NOT defined(MIDL_PASS)
+endif 
 
-if (_WIN32_WINNT GT 0x0500) OR (_WIN32_FUSION GE 0x0100) ;OR ISOLATION_AWARE_ENABLED ;; winnt_only
+if (_WIN32_WINNT GT 0x0500) OR (_WIN32_FUSION GE 0x0100) ;OR ISOLATION_AWARE_ENABLED 
 ACTIVATION_CONTEXT_SECTION_ASSEMBLY_INFORMATION		equ 1
 ACTIVATION_CONTEXT_SECTION_DLL_REDIRECTION		equ 2
 ACTIVATION_CONTEXT_SECTION_WINDOW_CLASS_REDIRECTION	equ 3
@@ -12818,7 +10785,7 @@ ACTIVATION_CONTEXT_SECTION_GLOBAL_OBJECT_RENAME_TABLE	equ 8
 ACTIVATION_CONTEXT_SECTION_CLR_SURROGATES		equ 9
 ACTIVATION_CONTEXT_SECTION_APPLICATION_SETTINGS		equ 10
 ACTIVATION_CONTEXT_SECTION_COMPATIBILITY_INFO		equ 11
-endif ;; winnt_only
+endif 
 
 if _MSC_VER GE 1200
 pragma warning(pop)

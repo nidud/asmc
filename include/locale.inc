@@ -14,7 +14,6 @@ LC_TIME		equ 5
 LC_MIN		equ LC_ALL
 LC_MAX		equ LC_TIME
 
-; Locale convention structure
 
 lconv		STRUC
 decimal_point	LPSTR ?
@@ -37,7 +36,6 @@ p_sign_posn	BYTE ?
 n_sign_posn	BYTE ?
 lconv		ENDS
 
-; function prototypes
 
 setlocale	PROTO :SINT, :LPSTR
 localeconv	PROTO

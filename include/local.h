@@ -38,8 +38,8 @@ struct lconv {
 #define _LCONV_DEFINED
 #endif
 
-_CRTIMP char * _CType setlocale(int, const char *);
-_CRTIMP struct lconv * _CType localeconv(void);
-_CRTIMP wchar_t * _CType _wsetlocale(int, const wchar_t *);
+_CRTIMP char * __cdecl setlocale(int, const char *);
+_CRTIMP struct lconv * __cdecl localeconv(void);
+_CRTIMP wchar_t * __cdecl _wsetlocale(int, const wchar_t *);
 
 #endif	/* __INC_LOCAL */

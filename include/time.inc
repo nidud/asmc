@@ -62,32 +62,36 @@ endif
 time_t		typedef sdword
 LPTIME		typedef ptr time_t
 
-asctime		proto :ptr tm
-ctime		proto :ptr time_t
-clock		proto
-csftime		proto :ptr sbyte, :size_t, :ptr sbyte, :ptr tm
-strdate		proto :ptr sbyte
-strtime		proto :ptr sbyte
-difftime	proto :time_t, :time_t
+asctime		proto __cdecl :ptr tm
+ctime		proto __cdecl :ptr time_t
+clock		proto __cdecl
+csftime		proto __cdecl :ptr sbyte, :size_t, :ptr sbyte, :ptr tm
+strdate		proto __cdecl :ptr sbyte
+strtime		proto __cdecl :ptr sbyte
+difftime	proto __cdecl :time_t, :time_t
 
-gmtime		proto :ptr time_t
-localtime	proto :ptr time_t
-mktime		proto :ptr tm
-strftime	proto :ptr sbyte, :size_t, :ptr sbyte, :ptr tm
-_strdate	proto :ptr sbyte
-_strtime	proto :ptr sbyte
-_tzset		proto
-_time		proto :ptr time_t
-_isindst	proto :ptr tm
-_loctotime_t	proto y:SINT, m:SINT, d:SINT, h:SINT, m:SINT, s:SINT
+gmtime		proto __cdecl :ptr time_t
+localtime	proto __cdecl :ptr time_t
+mktime		proto __cdecl :ptr tm
+strftime	proto __cdecl :ptr sbyte, :size_t, :ptr sbyte, :ptr tm
+strdate		proto __cdecl :ptr sbyte
+strtime		proto __cdecl :ptr sbyte
+_tzset		proto __cdecl
+time		proto __cdecl :ptr time_t
+_isindst	proto __cdecl :ptr tm
+_loctotime_t	proto __cdecl y:SINT, m:SINT, d:SINT, h:SINT, m:SINT, s:SINT
+
+_time		equ <time>
+_strdate	equ <strdate>
+_strtime	equ <strtime>
 
 ifndef _WTIME_DEFINED
 
-_wasctime	proto :ptr tm
-_wctime		proto :ptr time_t
-wcsftime	proto :ptr wchar_t, :size_t, :ptr wchar_t, :ptr tm
-_wstrdate	proto :ptr wchar_t
-_wstrtime	proto :ptr wchar_t
+_wasctime	proto __cdecl :ptr tm
+_wctime		proto __cdecl :ptr time_t
+wcsftime	proto __cdecl :ptr wchar_t, :size_t, :ptr wchar_t, :ptr tm
+_wstrdate	proto __cdecl :ptr wchar_t
+_wstrtime	proto __cdecl :ptr wchar_t
 
 _WTIME_DEFINED	equ 1
 endif
@@ -102,24 +106,24 @@ externdef	_tzname:LPSTR
 externdef	__dnames:BYTE
 externdef	__mnames:BYTE
 
-__FTToTime	proto :LPFILETIME
-__STToTime	proto :LPSYSTEMTIME
-__TimeToFT	proto :time_t, :LPFILETIME
-__TimeToST	proto :time_t, :LPSYSTEMTIME
+__FTToTime	proto __cdecl :LPFILETIME
+__STToTime	proto __cdecl :LPSYSTEMTIME
+__TimeToFT	proto __cdecl :time_t, :LPFILETIME
+__TimeToST	proto __cdecl :time_t, :LPSYSTEMTIME
 
-DaysInFebruary	proto :dword
-DaysInMonth	proto :dword, :dword
-GetDayCount	proto :dword, :dword, :dword
-GetWeekDay	proto :dword, :dword, :dword
+DaysInFebruary	proto __cdecl :dword
+DaysInMonth	proto __cdecl :dword, :dword
+GetDayCount	proto __cdecl :dword, :dword, :dword
+GetWeekDay	proto __cdecl :dword, :dword, :dword
 
-atotime		proto :LPSTR
-atodate		proto :LPSTR
-fdatetostr	proto :LPSTR, :LPFILETIME
-ftimetostr	proto :LPSTR, :LPFILETIME
+atotime		proto __cdecl :LPSTR
+atodate		proto __cdecl :LPSTR
+fdatetostr	proto __cdecl :LPSTR, :LPFILETIME
+ftimetostr	proto __cdecl :LPSTR, :LPFILETIME
 
-TDateToString		proto :ptr sbyte, :time_t
-SystemTimeToString	proto :ptr sbyte, :LPSYSTEMTIME
-SystemDateToString	proto :ptr sbyte, :LPSYSTEMTIME
+TDateToString	proto __cdecl :ptr sbyte, :time_t
+SystemTimeToString proto __cdecl :ptr sbyte, :LPSYSTEMTIME
+SystemDateToString proto __cdecl :ptr sbyte, :LPSYSTEMTIME
 
 endif	;; __PE__
 

@@ -27,10 +27,10 @@ S_STRFLT	ENDS
 LPDOUBLE	typedef ptr REAL8
 LPLONGDOUBLE	typedef ptr REAL8
 
-_strtoflt	PROTO :LPSTR
-_cfltcvt	proto :LPDOUBLE, :LPSTR, :SINT, :SINT, :SINT
-_cldcvt		proto :LPLONGDOUBLE, :LPSTR, :SINT, :SINT, :SINT
-_forcdecpt	proto :LPSTR
-_cropzeros	proto :LPSTR
+_strtoflt	PROTO __cdecl :LPSTR
+_cfltcvt	proto __cdecl :LPDOUBLE, :LPSTR, :SINT, :SINT, :SINT
+_cldcvt		proto __cdecl :LPLONGDOUBLE, :LPSTR, :SINT, :SINT, :SINT
+_forcdecpt	proto __cdecl :LPSTR
+_cropzeros	proto __cdecl :LPSTR
 
 .list

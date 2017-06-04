@@ -39,22 +39,11 @@ externdef		CLSID_DCOMAccessControl:CLSID
 externdef		CLSID_StdGlobalInterfaceTable:CLSID
 externdef		CLSID_ComBinding:CLSID
 
-;;********************************************
-;;
-;; CD Forms CLSIDs
-;;
-;;********************************************
 
-;;
-;; Form Kernel objects
-;;
 externdef		CLSID_CCDFormKrnl:CLSID
 externdef		CLSID_CCDPropertyPage:CLSID
 externdef		CLSID_CCDFormDialog:CLSID
 
-;;
-;; Control objects
-;;
 externdef		CLSID_CCDCommandButton:CLSID
 externdef		CLSID_CCDComboBox:CLSID
 externdef		CLSID_CCDTextBox:CLSID
@@ -65,9 +54,6 @@ externdef		CLSID_CCDListBox:CLSID
 externdef		CLSID_CCDScrollBar:CLSID
 externdef		CLSID_CCDGroupBox:CLSID
 
-;;
-;; Property Pages
-;;
 externdef		CLSID_CCDGeneralPropertyPage:CLSID
 externdef		CLSID_CCDGenericPropertyPage:CLSID
 externdef		CLSID_CCDFontPropertyPage:CLSID
@@ -98,9 +84,6 @@ externdef		CLSID_Picture_Metafile:CLSID
 externdef		CLSID_Picture_EnhMetafile:CLSID
 externdef		CLSID_Picture_Dib:CLSID
 
-;;
-;; Enumerations
-;;
 externdef		GUID_TRISTATE:GUID
 
-endif ;; __CGUID_H__
+endif 

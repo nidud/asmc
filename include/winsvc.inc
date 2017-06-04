@@ -5,52 +5,28 @@ ifndef _WINDEF_
  include windef.inc
 endif
 .xlist
-;
-; Header file for the Service Control Manager
-;
 ifndef _WINSVC_
 _WINSVC_ equ 1
 
-;;
-;; Define API decoration for direct importing of DLL references.
-;;
 
 ifdef __PE__
 option dllimport:<advapi32>
 endif
 
-;;
-;; Constants
-;;
 
-;;
-;; Service database names
-;;
 
 SERVICES_ACTIVE_DATABASE equ <"ServicesActive">
 SERVICES_FAILED_DATABASE equ <"ServicesFailed">
 
-;;
-;; Character to designate that a name is a group
-;;
 
 SC_GROUP_IDENTIFIER	equ '+'
 
-;;
-;; Value to indicate no change to an optional parameter
-;;
 SERVICE_NO_CHANGE	equ 0xffffffff
 
-;;
-;; Service State -- for Enum Requests (Bit Mask)
-;;
 SERVICE_ACTIVE		equ 0x00000001
 SERVICE_INACTIVE	equ 0x00000002
 SERVICE_STATE_ALL	equ SERVICE_ACTIVE OR SERVICE_INACTIVE
 
-;;
-;; Controls
-;;
 SERVICE_CONTROL_STOP		equ 0x00000001
 SERVICE_CONTROL_PAUSE		equ 0x00000002
 SERVICE_CONTROL_CONTINUE	equ 0x00000003
@@ -62,9 +38,6 @@ SERVICE_CONTROL_NETBINDREMOVE	equ 0x00000008
 SERVICE_CONTROL_NETBINDENABLE	equ 0x00000009
 SERVICE_CONTROL_NETBINDDISABLE	equ 0x0000000A
 
-;;
-;; Service State -- for CurrentState
-;;
 SERVICE_STOPPED			equ 0x00000001
 SERVICE_START_PENDING		equ 0x00000002
 SERVICE_STOP_PENDING		equ 0x00000003
@@ -73,18 +46,12 @@ SERVICE_CONTINUE_PENDING	equ 0x00000005
 SERVICE_PAUSE_PENDING		equ 0x00000006
 SERVICE_PAUSED			equ 0x00000007
 
-;;
-;; Controls Accepted  (Bit Mask)
-;;
 SERVICE_ACCEPT_STOP		equ 0x00000001
 SERVICE_ACCEPT_PAUSE_CONTINUE	equ 0x00000002
 SERVICE_ACCEPT_SHUTDOWN		equ 0x00000004
 SERVICE_ACCEPT_PARAMCHANGE	equ 0x00000008
 SERVICE_ACCEPT_NETBINDCHANGE	equ 0x00000010
 
-;;
-;; Service Control Manager object specific access types
-;;
 SC_MANAGER_CONNECT		equ 0x0001
 SC_MANAGER_CREATE_SERVICE	equ 0x0002
 SC_MANAGER_ENUMERATE_SERVICE	equ 0x0004
@@ -100,9 +67,6 @@ SC_MANAGER_ALL_ACCESS		equ STANDARD_RIGHTS_REQUIRED OR \
 				SC_MANAGER_QUERY_LOCK_STATUS OR \
 				SC_MANAGER_MODIFY_BOOT_CONFIG
 
-;;
-;; Service object specific access type
-;;
 SERVICE_QUERY_CONFIG		equ 0x0001
 SERVICE_CHANGE_CONFIG		equ 0x0002
 SERVICE_QUERY_STATUS		equ 0x0004
@@ -125,22 +89,13 @@ SERVICE_ALL_ACCESS		equ STANDARD_RIGHTS_REQUIRED OR \
 				SERVICE_USER_DEFINED_CONTROL
 
 
-;;
-;; Info levels for ChangeServiceConfig2 and QueryServiceConfig2
-;;
 SERVICE_CONFIG_DESCRIPTION	equ 1
 SERVICE_CONFIG_FAILURE_ACTIONS	equ 2
 
-;;
-;; Service description string
-;;
 SERVICE_DESCRIPTIONA	STRUC
 lpDescription		LPSTR ?
 SERVICE_DESCRIPTIONA	ENDS
 LPSERVICE_DESCRIPTIONA	typedef ptr SERVICE_DESCRIPTIONA
-;;
-;; Service description string
-;;
 SERVICE_DESCRIPTIONW	STRUC
 lpDescription		LPWSTR ?
 SERVICE_DESCRIPTIONW	ENDS
@@ -151,11 +106,8 @@ LPSERVICE_DESCRIPTION	typedef LPSERVICE_DESCRIPTIONW
 else
 SERVICE_DESCRIPTION	typedef SERVICE_DESCRIPTIONA
 LPSERVICE_DESCRIPTION	typedef LPSERVICE_DESCRIPTIONA
-endif ;; UNICODE
+endif 
 
-;;
-;; Actions to take on service failure
-;;
 
 SC_ACTION_NONE		equ 0
 SC_ACTION_RESTART	equ 1
@@ -191,21 +143,15 @@ LPSERVICE_FAILURE_ACTIONS typedef LPSERVICE_FAILURE_ACTIONSW
 else
 SERVICE_FAILURE_ACTIONS typedef SERVICE_FAILURE_ACTIONSA
 LPSERVICE_FAILURE_ACTIONS typedef LPSERVICE_FAILURE_ACTIONSA
-endif ;; UNICODE
+endif 
 
 
-;;
-;; Handle Types
-;;
 
 SC_HANDLE		typedef HANDLE
 LPSC_HANDLE		typedef ptr SC_HANDLE
 
 SERVICE_STATUS_HANDLE	typedef DWORD
 
-;;
-;; Service Status Structure
-;;
 
 SERVICE_STATUS		STRUC
 dwServiceType		dd ?
@@ -220,9 +166,6 @@ LPSERVICE_STATUS	typedef ptr SERVICE_STATUS
 
 
 
-;;
-;; Service Status Enumeration Structure
-;;
 
 ENUM_SERVICE_STATUSA	STRUC
 lpServiceName		LPSTR ?
@@ -242,12 +185,9 @@ LPENUM_SERVICE_STATUS	typedef LPENUM_SERVICE_STATUSW
 else
 ENUM_SERVICE_STATUS	typedef ENUM_SERVICE_STATUSA
 LPENUM_SERVICE_STATUS	typedef LPENUM_SERVICE_STATUSA
-endif ;; UNICODE
+endif 
 
 
-;;
-;; Structures for the Lock API functions
-;;
 
 SC_LOCK			typedef PVOID
 
@@ -269,13 +209,10 @@ LPQUERY_SERVICE_LOCK_STATUS typedef LPQUERY_SERVICE_LOCK_STATUSW
 else
 QUERY_SERVICE_LOCK_STATUS typedef QUERY_SERVICE_LOCK_STATUSA
 LPQUERY_SERVICE_LOCK_STATUS typedef LPQUERY_SERVICE_LOCK_STATUSA
-endif ;; UNICODE
+endif 
 
 
 
-;;
-;; Query Service Configuration Structure
-;;
 
 QUERY_SERVICE_CONFIGA	STRUC
 dwServiceType		dd ?
@@ -307,20 +244,17 @@ LPQUERY_SERVICE_CONFIG	typedef LPQUERY_SERVICE_CONFIGW
 else
 QUERY_SERVICE_CONFIG	typedef QUERY_SERVICE_CONFIGA
 LPQUERY_SERVICE_CONFIG	typedef LPQUERY_SERVICE_CONFIGA
-endif ;; UNICODE
+endif 
 
 
 
-;;
-;; Function Prototype for the Service Main Function
-;;
 
-SERVICE_MAIN_FUNCTIONW_T typedef proto _CType \
+SERVICE_MAIN_FUNCTIONW_T typedef proto WINAPI \
      dwNumServicesArgs: DWORD,
    lpServiceArgVectors: LPWSTR
 LPSERVICE_MAIN_FUNCTIONW typedef ptr SERVICE_MAIN_FUNCTIONW_T
 
-SERVICE_MAIN_FUNCTIONA_T typedef proto _CType \
+SERVICE_MAIN_FUNCTIONA_T typedef proto WINAPI \
      dwNumServicesArgs: DWORD,
    lpServiceArgVectors: LPSTR
 LPSERVICE_MAIN_FUNCTIONA typedef ptr SERVICE_MAIN_FUNCTIONA_T
@@ -329,12 +263,9 @@ ifdef _UNICODE
 LPSERVICE_MAIN_FUNCTION equ LPSERVICE_MAIN_FUNCTIONW
 else
 LPSERVICE_MAIN_FUNCTION equ LPSERVICE_MAIN_FUNCTIONA
-endif ;;UNICODE
+endif 
 
 
-;;
-;; Service Start Table
-;;
 
 SERVICE_TABLE_ENTRYA	STRUC
 lpServiceName		LPSTR ?
@@ -352,22 +283,16 @@ LPSERVICE_TABLE_ENTRY	typedef LPSERVICE_TABLE_ENTRYW
 else
 SERVICE_TABLE_ENTRY	typedef SERVICE_TABLE_ENTRYA
 LPSERVICE_TABLE_ENTRY	typedef LPSERVICE_TABLE_ENTRYA
-endif ;; UNICODE
+endif 
 
-;;
-;; Prototype for the Service Control Handler Function
-;;
 
-HANDLER_FUNCTION_T typedef proto _CType dwControl: DWORD
+HANDLER_FUNCTION_T typedef proto WINAPI dwControl: DWORD
 LPHANDLER_FUNCTION typedef ptr HANDLER_FUNCTION_T
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; API Function Prototypes
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;BOOL
-ChangeServiceConfigA proto _CType \
+ChangeServiceConfigA proto WINAPI \
 	      hService: SC_HANDLE,
 	 dwServiceType: DWORD,
 	   dwStartType: DWORD,
@@ -379,7 +304,7 @@ ChangeServiceConfigA proto _CType \
     lpServiceStartName: LPCSTR,
 	    lpPassword: LPCSTR,
 	 lpDisplayName: LPCSTR
-ChangeServiceConfigW proto _CType \
+ChangeServiceConfigW proto WINAPI \
 	      hService: SC_HANDLE,
 	 dwServiceType: DWORD,
 	   dwStartType: DWORD,
@@ -395,14 +320,14 @@ ifdef _UNICODE
 ChangeServiceConfig	equ <ChangeServiceConfigW>
 else
 ChangeServiceConfig	equ <ChangeServiceConfigA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-ChangeServiceConfig2A proto _CType \
+ChangeServiceConfig2A proto WINAPI \
 	      hService: SC_HANDLE,
 	   dwInfoLevel: DWORD,
 		lpInfo: LPVOID
-ChangeServiceConfig2W proto _CType \
+ChangeServiceConfig2W proto WINAPI \
 	      hService: SC_HANDLE,
 	   dwInfoLevel: DWORD,
 		lpInfo: LPVOID
@@ -410,20 +335,20 @@ ifdef _UNICODE
 ChangeServiceConfig2	equ <ChangeServiceConfig2W>
 else
 ChangeServiceConfig2	equ <ChangeServiceConfig2A>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-CloseServiceHandle proto _CType \
+CloseServiceHandle proto WINAPI \
 	     hSCObject: SC_HANDLE
 
 ;BOOL
-ControlService proto _CType \
+ControlService proto WINAPI \
 	      hService: SC_HANDLE,
 	     dwControl: DWORD,
        lpServiceStatus: LPSERVICE_STATUS
 
 ;SC_HANDLE
-CreateServiceA proto _CType \
+CreateServiceA proto WINAPI \
 	    hSCManager: SC_HANDLE,
 	 lpServiceName: LPCSTR,
 	 lpDisplayName: LPCSTR,
@@ -437,7 +362,7 @@ CreateServiceA proto _CType \
 	lpDependencies: LPCSTR,
     lpServiceStartName: LPCSTR,
 	    lpPassword: LPCSTR
-CreateServiceW proto _CType \
+CreateServiceW proto WINAPI \
 	    hSCManager: SC_HANDLE,
 	 lpServiceName: LPCWSTR,
 	 lpDisplayName: LPCWSTR,
@@ -455,21 +380,21 @@ ifdef _UNICODE
 CreateService		equ <CreateServiceW>
 else
 CreateService		equ <CreateServiceA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-DeleteService proto _CType \
+DeleteService proto WINAPI \
 	      hService: SC_HANDLE
 
 ;BOOL
-EnumDependentServicesA proto _CType \
+EnumDependentServicesA proto WINAPI \
 	      hService: SC_HANDLE,
 	dwServiceState: DWORD,
 	    lpServices: LPENUM_SERVICE_STATUSA,
 	     cbBufSize: DWORD,
 	pcbBytesNeeded: LPDWORD,
     lpServicesReturned: LPDWORD
-EnumDependentServicesW proto _CType \
+EnumDependentServicesW proto WINAPI \
 	      hService: SC_HANDLE,
 	dwServiceState: DWORD,
 	    lpServices: LPENUM_SERVICE_STATUSW,
@@ -480,10 +405,10 @@ ifdef _UNICODE
 EnumDependentServices	equ <EnumDependentServicesW>
 else
 EnumDependentServices	equ <EnumDependentServicesA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-EnumServicesStatusA proto _CType \
+EnumServicesStatusA proto WINAPI \
 	    hSCManager: SC_HANDLE,
 	 dwServiceType: DWORD,
 	dwServiceState: DWORD,
@@ -492,7 +417,7 @@ EnumServicesStatusA proto _CType \
 	pcbBytesNeeded: LPDWORD,
     lpServicesReturned: LPDWORD,
 	lpResumeHandle: LPDWORD
-EnumServicesStatusW proto _CType \
+EnumServicesStatusW proto WINAPI \
 	    hSCManager: SC_HANDLE,
 	 dwServiceType: DWORD,
 	dwServiceState: DWORD,
@@ -505,15 +430,15 @@ ifdef _UNICODE
 EnumServicesStatus	equ <EnumServicesStatusW>
 else
 EnumServicesStatus	equ <EnumServicesStatusA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-GetServiceKeyNameA proto _CType \
+GetServiceKeyNameA proto WINAPI \
 	    hSCManager: SC_HANDLE,
 	 lpDisplayName: LPCSTR,
 	 lpServiceName: LPSTR,
 	   lpcchBuffer: LPDWORD
-GetServiceKeyNameW proto _CType \
+GetServiceKeyNameW proto WINAPI \
 	    hSCManager: SC_HANDLE,
 	 lpDisplayName: LPCWSTR,
 	 lpServiceName: LPWSTR,
@@ -522,15 +447,15 @@ ifdef _UNICODE
 GetServiceKeyName	equ <GetServiceKeyNameW>
 else
 GetServiceKeyName	equ <GetServiceKeyNameA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-GetServiceDisplayNameA proto _CType \
+GetServiceDisplayNameA proto WINAPI \
 	    hSCManager: SC_HANDLE,
 	 lpServiceName: LPCSTR,
 	 lpDisplayName: LPSTR,
 	   lpcchBuffer: LPDWORD
-GetServiceDisplayNameW proto _CType \
+GetServiceDisplayNameW proto WINAPI \
 	    hSCManager: SC_HANDLE,
 	 lpServiceName: LPCWSTR,
 	 lpDisplayName: LPWSTR,
@@ -539,22 +464,22 @@ ifdef _UNICODE
 GetServiceDisplayName	equ <GetServiceDisplayNameW>
 else
 GetServiceDisplayName	equ <GetServiceDisplayNameA>
-endif ;; NOT UNICODE
+endif 
 
 ;SC_LOCK
-LockServiceDatabase proto _CType \
+LockServiceDatabase proto WINAPI \
 	   hSCManager: SC_HANDLE
 
 ;BOOL
-NotifyBootConfigStatus proto _CType \
+NotifyBootConfigStatus proto WINAPI \
 	BootAcceptable: BOOL
 
 ;SC_HANDLE
-OpenSCManagerA proto _CType \
+OpenSCManagerA proto WINAPI \
 	lpMachineName: LPCSTR,
        lpDatabaseName: LPCSTR,
       dwDesiredAccess: DWORD
-OpenSCManagerW proto _CType \
+OpenSCManagerW proto WINAPI \
 	lpMachineName: LPCWSTR,
        lpDatabaseName: LPCWSTR,
       dwDesiredAccess: DWORD
@@ -562,14 +487,14 @@ ifdef _UNICODE
 OpenSCManager		equ <OpenSCManagerW>
 else
 OpenSCManager		equ <OpenSCManagerA>
-endif ;; NOT UNICODE
+endif 
 
 ;SC_HANDLE
-OpenServiceA proto _CType \
+OpenServiceA proto WINAPI \
 	    hSCManager: SC_HANDLE,
 	 lpServiceName: LPCSTR,
        dwDesiredAccess: DWORD
-OpenServiceW proto _CType \
+OpenServiceW proto WINAPI \
 	    hSCManager: SC_HANDLE,
 	 lpServiceName: LPCWSTR,
        dwDesiredAccess: DWORD
@@ -577,15 +502,15 @@ ifdef _UNICODE
 OpenService		equ <OpenServiceW>
 else
 OpenService		equ <OpenServiceA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-QueryServiceConfigA proto _CType \
+QueryServiceConfigA proto WINAPI \
 	      hService: SC_HANDLE,
        lpServiceConfig: LPQUERY_SERVICE_CONFIGA,
 	     cbBufSize: DWORD,
 	pcbBytesNeeded: LPDWORD
-QueryServiceConfigW proto _CType \
+QueryServiceConfigW proto WINAPI \
 	      hService: SC_HANDLE,
        lpServiceConfig: LPQUERY_SERVICE_CONFIGW,
 	     cbBufSize: DWORD,
@@ -594,16 +519,16 @@ ifdef _UNICODE
 QueryServiceConfig	equ <QueryServiceConfigW>
 else
 QueryServiceConfig	equ <QueryServiceConfigA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-QueryServiceConfig2A proto _CType \
+QueryServiceConfig2A proto WINAPI \
 	      hService: SC_HANDLE,
 	   dwInfoLevel: DWORD,
 	      lpBuffer: LPBYTE,
 	     cbBufSize: DWORD,
 	pcbBytesNeeded: LPDWORD
-QueryServiceConfig2W proto _CType \
+QueryServiceConfig2W proto WINAPI \
 	      hService: SC_HANDLE,
 	   dwInfoLevel: DWORD,
 	      lpBuffer: LPBYTE,
@@ -613,15 +538,15 @@ ifdef _UNICODE
 QueryServiceConfig2	equ <QueryServiceConfig2W>
 else
 QueryServiceConfig2	equ <QueryServiceConfig2A>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-QueryServiceLockStatusA proto _CType \
+QueryServiceLockStatusA proto WINAPI \
 	    hSCManager: SC_HANDLE,
 	  lpLockStatus: LPQUERY_SERVICE_LOCK_STATUSA,
 	     cbBufSize: DWORD,
 	pcbBytesNeeded: LPDWORD
-QueryServiceLockStatusW proto _CType \
+QueryServiceLockStatusW proto WINAPI \
 	    hSCManager: SC_HANDLE,
 	  lpLockStatus: LPQUERY_SERVICE_LOCK_STATUSW,
 	     cbBufSize: DWORD,
@@ -630,10 +555,10 @@ ifdef _UNICODE
 QueryServiceLockStatus	equ <QueryServiceockStatusW>
 else
 QueryServiceLockStatus	equ <QueryServiceockStatusA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-QueryServiceObjectSecurity proto _CType \
+QueryServiceObjectSecurity proto WINAPI \
 	      hService: SC_HANDLE,
  dwSecurityInformation: SECURITY_INFORMATION,
   lpSecurityDescriptor: PSECURITY_DESCRIPTOR,
@@ -641,52 +566,52 @@ QueryServiceObjectSecurity proto _CType \
 	pcbBytesNeeded: LPDWORD
 
 ;BOOL
-QueryServiceStatus proto _CType \
+QueryServiceStatus proto WINAPI \
 	      hService: SC_HANDLE,
        lpServiceStatus: LPSERVICE_STATUS
 
 ;SERVICE_STATUS_HANDLE
-RegisterServiceCtrlHandlerA proto _CType \
+RegisterServiceCtrlHandlerA proto WINAPI \
 	 lpServiceName: LPCSTR,
 	 lpHandlerProc: LPHANDLER_FUNCTION
-RegisterServiceCtrlHandlerW proto _CType \
+RegisterServiceCtrlHandlerW proto WINAPI \
 	 lpServiceName: LPCWSTR,
 	 lpHandlerProc: LPHANDLER_FUNCTION
 ifdef _UNICODE
 RegisterServiceCtrlHandler equ <RegisterServiceCtrlHandlerW>
 else
 RegisterServiceCtrlHandler equ <RegisterServiceCtrlHandlerA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-SetServiceObjectSecurity proto _CType \
+SetServiceObjectSecurity proto WINAPI \
 	      hService: SC_HANDLE,
  dwSecurityInformation: SECURITY_INFORMATION,
   lpSecurityDescriptor: PSECURITY_DESCRIPTOR
 
 ;BOOL
-SetServiceStatus proto _CType \
+SetServiceStatus proto WINAPI \
 	hServiceStatus: SERVICE_STATUS_HANDLE,
        lpServiceStatus: LPSERVICE_STATUS
 
 ;BOOL
-StartServiceCtrlDispatcherA proto _CType \
+StartServiceCtrlDispatcherA proto WINAPI \
    lpServiceStartTable: ptr SERVICE_TABLE_ENTRYA
-StartServiceCtrlDispatcherW proto _CType \
+StartServiceCtrlDispatcherW proto WINAPI \
    lpServiceStartTable: ptr SERVICE_TABLE_ENTRYW
 ifdef _UNICODE
 StartServiceCtrlDispatcher equ <StartServiceCtrlDispatcherW>
 else
 StartServiceCtrlDispatcher equ <StartServiceCtrlDispatcherA>
-endif ;; NOT UNICODE
+endif 
 
 
 ;BOOL
-StartServiceA proto _CType \
+StartServiceA proto WINAPI \
 	      hService: SC_HANDLE,
       dwNumServiceArgs: DWORD,
    lpServiceArgVectors: LPCSTR
-StartServiceW proto _CType \
+StartServiceW proto WINAPI \
 	      hService: SC_HANDLE,
       dwNumServiceArgs: DWORD,
    lpServiceArgVectors: LPCWSTR
@@ -694,13 +619,13 @@ ifdef _UNICODE
 StartService		equ <StartServiceW>
 else
 StartService		equ <StartServiceA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-UnlockServiceDatabase proto _CType \
+UnlockServiceDatabase proto WINAPI \
 		ScLock: SC_LOCK
 
 
-endif ;; _WINSVC_
+endif 
 
 .list

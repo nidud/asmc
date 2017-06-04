@@ -3,6 +3,8 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.24 - xx xxx 2017
+- added C-Stack to C calling convention
+- added switch -Sp[n] Set segment alignment
 - added auto detect UTF-8 header (BOM)
 - added to @CStr() - skip .data/.code if already in .data segment
 - added to @CStr() - skip return value if @CStr is first token

@@ -71,36 +71,36 @@ extern	char _bufin[];
 
 #ifndef _STDIO_DEFINED
 
-_CRTIMP int _CType _filbuf(FILE *);
-_CRTIMP int _CType _flsbuf(int, FILE *);
-_CRTIMP int _CType feof(FILE *);
-_CRTIMP int _CType fflush(FILE *);
-_CRTIMP int _CType fgetc(FILE *);
-_CRTIMP char * _CType fgets(char *, int, FILE *);
-_CRTIMP FILE * _CType fopen(const char *, const char *);
-_CRTIMP int _CDecl fprintf(FILE *, const char *, ...);
-_CRTIMP int _CType fputc(int, FILE *);
-_CRTIMP int _CType fputs(char *, FILE *);
-_CRTIMP size_t _CType fread(void *, size_t, size_t, FILE *);
-_CRTIMP int _CType fseek(FILE *, long, int);
-_CRTIMP int _CType ftell(FILE *);
-_CRTIMP size_t _CType fwrite(const void *, size_t, size_t, FILE *);
-_CRTIMP void _CType perror(char *);
-_CRTIMP int _CDecl printf(const char *, ...);
-_CRTIMP int _CType puts(char *);
-_CRTIMP int _CType remove(const char *);
-_CRTIMP int _CType rename(const char *, const char *);
-_CRTIMP void _CType rewind(FILE *);
-_CRTIMP void _CType setbuf(FILE *, char *);
-_CRTIMP int _CType setvbuf(FILE *, char *, int, size_t);
-_CRTIMP int _CDecl sprintf(char *, const char *, ...);
-_CRTIMP int _CType vfprintf(FILE *, const char *, va_list);
-_CRTIMP int _CType ungetc(int, FILE *);
-_CRTIMP int _CType vsprintf(char *, const char *, va_list);
-_CRTIMP int _CType fclose(FILE *);
-_CRTIMP int _CType _output(FILE *, char *, va_list);
-_CRTIMP int _CType _stbuf(FILE *);
-_CRTIMP void _CType _ftbuf(int __flag, FILE *);
+_CRTIMP int __cdecl _filbuf(FILE *);
+_CRTIMP int __cdecl _flsbuf(int, FILE *);
+_CRTIMP int __cdecl feof(FILE *);
+_CRTIMP int __cdecl fflush(FILE *);
+_CRTIMP int __cdecl fgetc(FILE *);
+_CRTIMP char * __cdecl fgets(char *, int, FILE *);
+_CRTIMP FILE * __cdecl fopen(const char *, const char *);
+_CRTIMP int __cdecl fprintf(FILE *, const char *, ...);
+_CRTIMP int __cdecl fputc(int, FILE *);
+_CRTIMP int __cdecl fputs(char *, FILE *);
+_CRTIMP size_t __cdecl fread(void *, size_t, size_t, FILE *);
+_CRTIMP int __cdecl fseek(FILE *, long, int);
+_CRTIMP int __cdecl ftell(FILE *);
+_CRTIMP size_t __cdecl fwrite(const void *, size_t, size_t, FILE *);
+_CRTIMP void __cdecl perror(char *);
+_CRTIMP int __cdecl printf(const char *, ...);
+_CRTIMP int __cdecl puts(char *);
+_CRTIMP int __cdecl remove(const char *);
+_CRTIMP int __cdecl rename(const char *, const char *);
+_CRTIMP void __cdecl rewind(FILE *);
+_CRTIMP void __cdecl setbuf(FILE *, char *);
+_CRTIMP int __cdecl setvbuf(FILE *, char *, int, size_t);
+_CRTIMP int __cdecl sprintf(char *, const char *, ...);
+_CRTIMP int __cdecl vfprintf(FILE *, const char *, va_list);
+_CRTIMP int __cdecl ungetc(int, FILE *);
+_CRTIMP int __cdecl vsprintf(char *, const char *, va_list);
+_CRTIMP int __cdecl fclose(FILE *);
+_CRTIMP int __cdecl _output(FILE *, char *, va_list);
+_CRTIMP int __cdecl _stbuf(FILE *);
+_CRTIMP void __cdecl _ftbuf(int __flag, FILE *);
 
 #ifndef _WSTDIO_DEFINED
 
@@ -108,20 +108,20 @@ _CRTIMP void _CType _ftbuf(int __flag, FILE *);
 #define WEOF (wint_t)(0xFFFF)
 #endif	/* WEOF */
 
-_CRTIMP wint_t _CType fgetwc(FILE *);
-_CRTIMP wchar_t * _CType fgetws(wchar_t *, int, FILE *);
-_CRTIMP int _CDecl fwprintf(FILE *, const wchar_t *, ...);
-_CRTIMP wint_t _CType fputwc(wint_t, FILE *);
-_CRTIMP int _CType fputws(wchar_t *, FILE *);
-_CRTIMP void _CType _wperror(wchar_t *);
-_CRTIMP int _CDecl wprintf(const wchar_t *, ...);
-_CRTIMP int _CType _putws(wchar_t *);
-_CRTIMP int _CDecl swprintf(wchar_t *, const wchar_t *, ...);
-_CRTIMP int _CType vfwprintf(FILE *, const wchar_t *, va_list);
-_CRTIMP int _CType vswprintf(char *, const wchar_t *, va_list);
-_CRTIMP int _CType _woutput(FILE *, const wchar_t *, va_list);
-_CRTIMP FILE * _CType _wfopen(const wchar_t *, const wchar_t *);
-_CRTIMP int _CType _wremove(const wchar_t *);
+_CRTIMP wint_t __cdecl fgetwc(FILE *);
+_CRTIMP wchar_t * __cdecl fgetws(wchar_t *, int, FILE *);
+_CRTIMP int __cdecl fwprintf(FILE *, const wchar_t *, ...);
+_CRTIMP wint_t __cdecl fputwc(wint_t, FILE *);
+_CRTIMP int __cdecl fputws(wchar_t *, FILE *);
+_CRTIMP void __cdecl _wperror(wchar_t *);
+_CRTIMP int __cdecl wprintf(const wchar_t *, ...);
+_CRTIMP int __cdecl _putws(wchar_t *);
+_CRTIMP int __cdecl swprintf(wchar_t *, const wchar_t *, ...);
+_CRTIMP int __cdecl vfwprintf(FILE *, const wchar_t *, va_list);
+_CRTIMP int __cdecl vswprintf(char *, const wchar_t *, va_list);
+_CRTIMP int __cdecl _woutput(FILE *, const wchar_t *, va_list);
+_CRTIMP FILE * __cdecl _wfopen(const wchar_t *, const wchar_t *);
+_CRTIMP int __cdecl _wremove(const wchar_t *);
 
 #define _WSTDIO_DEFINED
 #endif	/* _WSTDIO_DEFINED */
@@ -129,9 +129,9 @@ _CRTIMP int _CType _wremove(const wchar_t *);
 #define _STDIO_DEFINED
 #endif	/* _STDIO_DEFINED */
 
-FILE * _CType _getst(void);
-int _CDecl _print(const char *, ...);
-int _CDecl ftobufin(const char *, ...);
+FILE * __cdecl _getst(void);
+int __cdecl _print(const char *, ...);
+int __cdecl ftobufin(const char *, ...);
 
 #define feof(s)		((s)->_flag & _IOEOF)
 #define ferror(s)	((s)->_flag & _IOERR)

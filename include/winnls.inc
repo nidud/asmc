@@ -1,8 +1,3 @@
-;
-;  Constants
-;
-;  Define all constants for the NLS component here.
-;
 ifndef __LIBC_INC
  include libc.inc
 endif
@@ -29,14 +24,10 @@ SYSTEMTIME	ENDS
 LPSYSTEMTIME	TYPEDEF PTR SYSTEMTIME
 endif
 
-;  String Length Maximums.
 
 MAX_LEADBYTES		  equ 12	; 5 ranges, 2 bytes ea., 0 term.
 MAX_DEFAULTCHAR		  equ 2		; single or double byte
 
-;
-;  MBCS and Unicode Translation Flags.
-;
 MB_PRECOMPOSED		  equ 0x00000001  ; use precomposed chars
 MB_COMPOSITE		  equ 0x00000002  ; use composite chars
 MB_USEGLYPHCHARS	  equ 0x00000004  ; use glyph chars, not ctrl chars
@@ -48,16 +39,10 @@ WC_SEPCHARS		  equ 0x00000020  ; generate separate chars
 WC_DEFAULTCHAR		  equ 0x00000040  ; replace w/ default char
 WC_NO_BEST_FIT_CHARS	  equ 0x00000400  ; do not use best fit chars
 
-;
-;  Character Type Flags.
-;
 CT_CTYPE1		  equ 0x00000001  ; ctype 1 information
 CT_CTYPE2		  equ 0x00000002  ; ctype 2 information
 CT_CTYPE3		  equ 0x00000004  ; ctype 3 information
 
-;
-;  CType 1 Flag Bits.
-;
 C1_UPPER		  equ 0x0001	  ; upper case
 C1_LOWER		  equ 0x0002	  ; lower case
 C1_DIGIT		  equ 0x0004	  ; decimal digits
@@ -68,9 +53,6 @@ C1_BLANK		  equ 0x0040	  ; blank characters
 C1_XDIGIT		  equ 0x0080	  ; other digits
 C1_ALPHA		  equ 0x0100	  ; any linguistic character
 
-;
-;  CType 2 Flag Bits.
-;
 C2_LEFTTORIGHT		  equ 0x0001	  ; left to right
 C2_RIGHTTOLEFT		  equ 0x0002	  ; right to left
 
@@ -87,9 +69,6 @@ C2_OTHERNEUTRAL		  equ 0x000B	  ; other neutrals
 
 C2_NOTAPPLICABLE	  equ 0x0000	  ; no implicit directionality
 
-;
-;  CType 3 Flag Bits.
-;
 C3_NONSPACING		  equ 0x0001	  ; nonspacing character
 C3_DIACRITIC		  equ 0x0002	  ; diacritic mark
 C3_VOWELMARK		  equ 0x0004	  ; vowel mark
@@ -107,9 +86,6 @@ C3_ALPHA		  equ 0x8000	  ; any linguistic char (C1_ALPHA)
 
 C3_NOTAPPLICABLE	  equ 0x0000	  ; ctype 3 is not applicable
 
-;
-;  String Flags.
-;
 NORM_IGNORECASE		  equ 0x00000001  ; ignore case
 NORM_IGNORENONSPACE	  equ 0x00000002  ; ignore nonspacing chars
 NORM_IGNORESYMBOLS	  equ 0x00000004  ; ignore symbols
@@ -118,9 +94,6 @@ NORM_IGNOREKANATYPE	  equ 0x00010000  ; ignore kanatype
 NORM_IGNOREWIDTH	  equ 0x00020000  ; ignore width
 
 
-;
-;  Locale Independent Mapping Flags.
-;
 MAP_FOLDCZONE		  equ 0x00000010  ; fold compatibility zone chars
 MAP_PRECOMPOSED		  equ 0x00000020  ; convert to precomposed chars
 MAP_COMPOSITE		  equ 0x00000040  ; convert to composite chars
@@ -128,9 +101,6 @@ MAP_FOLDDIGITS		  equ 0x00000080  ; all digits to ASCII 0-9
 
 MAP_EXPAND_LIGATURES	  equ 0x00002000  ; expand all ligatures
 
-;
-;  Locale Dependent Mapping Flags.
-;
 LCMAP_LOWERCASE		  equ 0x00000100  ; lower case letters
 LCMAP_UPPERCASE		  equ 0x00000200  ; upper case letters
 LCMAP_SORTKEY		  equ 0x00000400  ; WC sort key (normalize)
@@ -147,65 +117,23 @@ LCMAP_SIMPLIFIED_CHINESE  equ 0x02000000  ; map traditional chinese to simplifie
 LCMAP_TRADITIONAL_CHINESE equ 0x04000000  ; map simplified chinese to traditional chinese
 
 
-;
-;  Locale Enumeration Flags.
-;
 LCID_INSTALLED		  equ 0x00000001  ; installed locale ids
 LCID_SUPPORTED		  equ 0x00000002  ; supported locale ids
 LCID_ALTERNATE_SORTS	  equ 0x00000004  ; alternate sort locale ids
 
 
-;
-;  Code Page Enumeration Flags.
-;
 CP_INSTALLED		  equ 0x00000001  ; installed code page ids
 CP_SUPPORTED		  equ 0x00000002  ; supported code page ids
 
 
-;
-;  Sorting Flags.
-;
-;    WORD Sort:	   culturally correct sort
-;		   hyphen and apostrophe are special cased
-;		   example: "coop" and "co-op" will sort together in a list
-;
-;			 co_op	   <-------  underscore (symbol)
-;			 coat
-;			 comb
-;			 coop
-;			 co-op	   <-------  hyphen (punctuation)
-;			 cork
-;			 went
-;			 were
-;			 we're     <-------  apostrophe (punctuation)
-;
-;
-;    STRING Sort:  hyphen and apostrophe will sort with all other symbols
-;
-;			 co-op	   <-------  hyphen (punctuation)
-;			 co_op	   <-------  underscore (symbol)
-;			 coat
-;			 comb
-;			 coop
-;			 cork
-;			 we're     <-------  apostrophe (punctuation)
-;			 went
-;			 were
-;
 SORT_STRINGSORT		  equ 0x00001000  ; use string sort method
 
 
-;
-;  Compare String Return Values.
-;
 CSTR_LESS_THAN		  equ 1		  ; string 1 less than string 2
 CSTR_EQUAL		  equ 2		  ; string 1 equal to string 2
 CSTR_GREATER_THAN	  equ 3		  ; string 1 greater than string 2
 
 
-;
-;  Code Page Default Values.
-;
 CP_ACP			  equ 0		  ; default to ANSI code page
 CP_OEMCP		  equ 1		  ; default to OEM  code page
 CP_MACCP		  equ 2		  ; default to MAC  code page
@@ -216,9 +144,6 @@ CP_UTF7			  equ 65000	  ; UTF-7 translation
 CP_UTF8			  equ 65001	  ; UTF-8 translation
 
 
-;
-;  Country Codes.
-;
 CTRY_DEFAULT		  equ 0
 
 CTRY_ALBANIA		  equ 355	  ; Albania
@@ -325,36 +250,13 @@ CTRY_YEMEN		  equ 967	  ; Yemen
 CTRY_ZIMBABWE		  equ 263	  ; Zimbabwe
 
 
-;
-;  Locale Types.
-;
-;  These types are used for the GetLocaleInfo NLS API routine.
-;  Some of these types are also used for the SetLocaleInfo NLS API routine.
-;
 
-;
-;  The following LCTypes may be used in combination with any other LCTypes.
-;
-;    LOCALE_NOUSEROVERRIDE is also used in GetTimeFormat and
-;    GetDateFormat.
-;
-;    LOCALE_USE_CP_ACP is used in many of the A (Ansi) apis that need
-;    to do string translation.
-;
-;    LOCALE_RETURN_NUMBER will return the result from GetLocaleInfo as a
-;    number instead of a string.  This flag is only valid for the LCTypes
-;    beginning with LOCALE_I.
-;
 LOCALE_NOUSEROVERRIDE	      equ 0x80000000   ; do not use user overrides
 LOCALE_USE_CP_ACP	      equ 0x40000000   ; use the system ACP
 
 LOCALE_RETURN_NUMBER	      equ 0x20000000   ; return number instead of string
 
 
-;
-;  The following LCTypes are mutually exclusive in that they may NOT
-;  be used in combination with each other.
-;
 LOCALE_ILANGUAGE	      equ 0x00000001   ; language id
 LOCALE_SLANGUAGE	      equ 0x00000002   ; localized name of language
 LOCALE_SENGLANGUAGE	      equ 0x00001001   ; English name of language
@@ -477,18 +379,12 @@ LOCALE_SYEARMONTH	      equ 0x00001006	  ; year month format string
 LOCALE_SSORTNAME	      equ 0x00001013	  ; sort name
 LOCALE_IDIGITSUBSTITUTION     equ 0x00001014	  ; 0 = none, 1 = context, 2 = native digit
 
-;
-;  Time Flags for GetTimeFormat.
-;
 TIME_NOMINUTESORSECONDS	  equ 0x00000001 ; do not use minutes or seconds
 TIME_NOSECONDS		  equ 0x00000002 ; do not use seconds
 TIME_NOTIMEMARKER	  equ 0x00000004 ; do not use time marker
 TIME_FORCE24HOURFORMAT	  equ 0x00000008 ; always use 24 hour format
 
 
-;
-;  Date Flags for GetDateFormat.
-;
 DATE_SHORTDATE		  equ 0x00000001 ; use short date picture
 DATE_LONGDATE		  equ 0x00000002 ; use long date picture
 DATE_USE_ALT_CALENDAR	  equ 0x00000004 ; use alternate calendar (if any)
@@ -497,11 +393,6 @@ DATE_YEARMONTH		  equ 0x00000008 ; use year month picture
 DATE_LTRREADING		  equ 0x00000010 ; add marks for left to right reading order layout
 DATE_RTLREADING		  equ 0x00000020 ; add marks for right to left reading order layout
 
-;
-;  Calendar Types.
-;
-;  These types are used for the EnumCalendarInfo NLS API routine.
-;
 CAL_ICALINTVALUE	  equ 0x00000001 ; calendar type
 CAL_SCALNAME		  equ 0x00000002 ; native name of calendar
 CAL_IYEAROFFSETRANGE	  equ 0x00000003 ; starting years of eras
@@ -551,15 +442,9 @@ CAL_SABBREVMONTHNAME13	  equ 0x0000002e ; abbreviated name for 13th month (if an
 
 CAL_SYEARMONTH		  equ 0x0000002f ; year month format string
 
-;
-;  Calendar Enumeration Value.
-;
 ENUM_ALL_CALENDARS	  equ 0xffffffff ; enumerate all calendars
 
 
-;
-;  Calendar ID Values.
-;
 CAL_GREGORIAN		       equ 1	; Gregorian (localized) calendar
 CAL_GREGORIAN_US	       equ 2	; Gregorian (U.S.) calendar
 CAL_JAPAN		       equ 3	; Japanese Emperor Era calendar
@@ -573,30 +458,13 @@ CAL_GREGORIAN_ARABIC	       equ 10	; Gregorian Arabic calendar
 CAL_GREGORIAN_XLIT_ENGLISH     equ 11	; Gregorian Transliterated English calendar
 CAL_GREGORIAN_XLIT_FRENCH      equ 12	; Gregorian Transliterated French calendar
 
-;
-;  Typedefs
-;
-;  Define all types for the NLS component here.
-;
 
-;
-;  Locale type constant.
-;
 LCTYPE	typedef DWORD
 
-;
-;  Calendar type constant.
-;
 CALTYPE typedef DWORD
 
-;
-;  Calendar ID.
-;
 CALID	typedef DWORD
 
-;
-;  CP Info.
-;
 
 WCHAR	typedef WORD
 
@@ -636,9 +504,6 @@ LPCPINFOEX	TYPEDEF LPCPINFOEXA
 endif ; _UNICODE
 
 
-;
-;  Number format.
-;
 
 NUMBERFMTA	STRUC
 NumDigits	UINT ?	       ; number of decimal digits
@@ -669,9 +534,6 @@ LPNUMBERFMT	TYPEDEF LPNUMBERFMTA
 endif
 
 
-;
-;  Currency format.
-;
 
 CURRENCYFMTA		STRUC
 NumDigits		UINT ?	; number of decimal digits
@@ -705,9 +567,6 @@ CURRENCYFMT	TYPEDEF CURRENCYFMTA
 LPCURRENCYFMT	TYPEDEF LPCURRENCYFMTA
 endif
 
-;
-;  Enumeration function constants.
-;
 
 CALLBACKA1	TYPEDEF PROTO :LPSTR
 CALLBACKA2	TYPEDEF PROTO :LPSTR, :CALID
@@ -754,40 +613,27 @@ CALINFO_ENUMPROCEX  equ CALINFO_ENUMPROCEXA
 endif
 
 
-;
-;  Macros
-;
-;  Define all macros for the NLS component here.
-;
 
-;
-;  Function Prototypes
-;
-;  Only prototypes for the NLS APIs should go here.
-;
 
-;
-;  Code Page Dependent APIs.
-;
 
 ;BOOL
-IsValidCodePage proto _CType \
+IsValidCodePage proto WINAPI \
 	CodePage:	UINT
 ;UINT
-GetACP proto _CType
+GetACP proto WINAPI
 ;UINT
-GetOEMCP proto _CType
+GetOEMCP proto WINAPI
 ;BOOL
-GetCPInfo proto _CType \
+GetCPInfo proto WINAPI \
 	CodePage:	UINT,
 	lpCPInfo:	LPCPINFO
 ;BOOL
-GetCPInfoExA proto _CType \
+GetCPInfoExA proto WINAPI \
 	CodePage:	UINT,
 	dwFlags:	DWORD,
 	lpCPInfoEx:	LPCPINFOEXA
 ;BOOL
-GetCPInfoExW proto _CType \
+GetCPInfoExW proto WINAPI \
 	CodePage:	UINT,
 	dwFlags:	DWORD,
 	lpCPInfoEx:	LPCPINFOEXW
@@ -797,14 +643,14 @@ else
 GetCPInfoEx  equ <GetCPInfoExA>
 endif
 ;BOOL
-IsDBCSLeadByte proto _CType \
+IsDBCSLeadByte proto WINAPI \
 	TestChar:	UINT ; BYTE
 ;BOOL
-IsDBCSLeadByteEx proto _CType \
+IsDBCSLeadByteEx proto WINAPI \
 	CodePage:	UINT,
 	TestChar:	UINT ; BYTE
 ;int
-MultiByteToWideChar proto _CType \
+MultiByteToWideChar proto WINAPI \
 	CodePage:	UINT,
 	dwFlags:	DWORD,
 	lpMultiByteStr: LPSTR,
@@ -812,7 +658,7 @@ MultiByteToWideChar proto _CType \
 	lpWideCharStr:	LPWSTR,
 	cchWideChar:	SINT
 ;int
-WideCharToMultiByte proto _CType \
+WideCharToMultiByte proto WINAPI \
 	CodePage:		UINT,
 	dwFlags:		DWORD,
 	lpWideCharStr:		LPWSTR,
@@ -822,12 +668,9 @@ WideCharToMultiByte proto _CType \
 	lpDefaultChar:		LPSTR,
 	lpUsedDefaultChar:	LPBOOL
 
-;
-;  Locale Dependent APIs.
-;
 
 ;int
-CompareStringA proto _CType \
+CompareStringA proto WINAPI \
 	Locale:		LCID,
 	dwCmpFlags:	DWORD,
 	lpString1:	LPSTR,
@@ -835,7 +678,7 @@ CompareStringA proto _CType \
 	lpString2:	LPSTR,
 	cchCount2:	SINT
 ;int
-CompareStringW proto _CType \
+CompareStringW proto WINAPI \
 	Locale:		LCID,
 	dwCmpFlags:	DWORD,
 	lpString1:	LPWSTR,
@@ -848,7 +691,7 @@ else
 CompareString  equ <CompareStringA>
 endif
 ;int
-LCMapStringA proto _CType \
+LCMapStringA proto WINAPI \
 	Locale:		LCID,
 	dwMapFlags:	DWORD,
 	lpSrcStr:	LPSTR,
@@ -856,7 +699,7 @@ LCMapStringA proto _CType \
 	lpDestStr:	LPSTR,
 	cchDest:	SINT
 ;int
-LCMapStringW proto _CType \
+LCMapStringW proto WINAPI \
 	Locale:		LCID,
 	dwMapFlags:	DWORD,
 	lpSrcStr:	LPWSTR,
@@ -869,13 +712,13 @@ else
 LCMapString  equ <LCMapStringA>
 endif
 ;int
-GetLocaleInfoA proto _CType \
+GetLocaleInfoA proto WINAPI \
 	Locale:		LCID,
 	LCType:		LCTYPE,
 	lpLCData:	LPSTR,
 	cchData:	SINT
 ;int
-GetLocaleInfoW proto _CType \
+GetLocaleInfoW proto WINAPI \
 	Locale:		LCID,
 	LCType:		LCTYPE,
 	lpLCData:	LPWSTR,
@@ -886,12 +729,12 @@ else
 GetLocaleInfo  equ <GetLocaleInfoA>
 endif
 ;BOOL
-SetLocaleInfoA proto _CType \
+SetLocaleInfoA proto WINAPI \
 	Locale:		LCID,
 	LCType:		LCTYPE,
 	lpLCData:	LPSTR
 ;BOOL
-SetLocaleInfoW proto _CType \
+SetLocaleInfoW proto WINAPI \
 	Locale:		LCID,
 	LCType:		LCTYPE,
 	lpLCData:	LPWSTR
@@ -901,7 +744,7 @@ else
 SetLocaleInfo  equ <SetLocaleInfoA>
 endif
 ;int
-GetTimeFormatA proto _CType \
+GetTimeFormatA proto WINAPI \
 	Locale:		LCID,
 	dwFlags:	DWORD,
 	lpTime:		LPSYSTEMTIME,
@@ -909,7 +752,7 @@ GetTimeFormatA proto _CType \
 	lpTimeStr:	LPSTR,
 	cchTime:	SINT
 ;int
-GetTimeFormatW proto _CType \
+GetTimeFormatW proto WINAPI \
 	Locale:		LCID,
 	dwFlags:	DWORD,
 	lpTime:		LPSYSTEMTIME,
@@ -923,14 +766,14 @@ GetTimeFormat  equ <GetTimeFormatA>
 endif
 
 ;int
-GetDateFormatA proto _CType \
+GetDateFormatA proto WINAPI \
 	Locale:		LCID,		; (LCID) locale for which date is to be formatted
 	dwFlags:	DWORD,		; flags specifying function options
 	lpDate:		LPSYSTEMTIME,	; date to be formatted
 	lpFormat:	LPSTR,		; date format string
 	lpDateStr:	LPSTR,		; buffer for storing formatted string
 	cchDate:	SINT		; size of buffer
-GetDateFormatW proto _CType \
+GetDateFormatW proto WINAPI \
 	Locale:		LCID,
 	dwFlags:	DWORD,
 	lpDate:		LPSYSTEMTIME,
@@ -943,7 +786,7 @@ else
 GetDateFormat  equ <GetDateFormatA>
 endif
 ;int
-GetNumberFormatA proto _CType \
+GetNumberFormatA proto WINAPI \
 	Locale:		LCID,
 	dwFlags:	DWORD,
 	lpValue:	LPSTR,
@@ -951,7 +794,7 @@ GetNumberFormatA proto _CType \
 	lpNumberStr:	LPSTR,
 	cchNumber:	SINT
 ;int
-GetNumberFormatW proto _CType \
+GetNumberFormatW proto WINAPI \
 	Locale:		LCID,
 	dwFlags:	DWORD,
 	lpValue:	LPWSTR,
@@ -964,7 +807,7 @@ else
 GetNumberFormat equ <GetNumberFormatA>
 endif
 ;int
-GetCurrencyFormatA proto _CType \
+GetCurrencyFormatA proto WINAPI \
 	Locale:		LCID,
 	dwFlags:	DWORD,
 	lpValue:	LPSTR,
@@ -972,7 +815,7 @@ GetCurrencyFormatA proto _CType \
 	lpCurrencyStr:	LPSTR,
 	cchCurrency:	SINT
 ;int
-GetCurrencyFormatW proto _CType \
+GetCurrencyFormatW proto WINAPI \
 	Locale:		LCID,
 	dwFlags:	DWORD,
 	lpValue:	LPWSTR,
@@ -985,13 +828,13 @@ else
 GetCurrencyFormat equ <GetCurrencyFormatA>
 endif
 ;BOOL
-EnumCalendarInfoA proto _CType \
+EnumCalendarInfoA proto WINAPI \
 	lpCalInfoEnumProc:	CALINFO_ENUMPROCA,
 	Locale:			LCID,
 	Calendar:		CALID,
 	CalType:		CALTYPE
 ;BOOL
-EnumCalendarInfoW proto _CType \
+EnumCalendarInfoW proto WINAPI \
 	lpCalInfoEnumProc:	CALINFO_ENUMPROCW,
 	Locale:			LCID,
 	Calendar:		CALID,
@@ -1004,13 +847,13 @@ endif
 
 ;if(WINVER >= equ 0x0500)
 ;BOOL
-EnumCalendarInfoExA proto _CType \
+EnumCalendarInfoExA proto WINAPI \
 	lpCalInfoEnumProcEx:	CALINFO_ENUMPROCEXA,
 	Locale:			LCID,
 	Calendar:		CALID,
 	CalType:		CALTYPE
 ;BOOL
-EnumCalendarInfoExW proto _CType \
+EnumCalendarInfoExW proto WINAPI \
 	lpCalInfoEnumProcEx:	CALINFO_ENUMPROCEXW,
 	Locale:			LCID,
 	Calendar:		CALID,
@@ -1022,12 +865,12 @@ EnumCalendarInfoEx equ <EnumCalendarInfoExA>
 endif
 ;endif /* WINVER >= equ 0x0500 */
 ;BOOL
-EnumTimeFormatsA proto _CType \
+EnumTimeFormatsA proto WINAPI \
 	lpTimeFmtEnumProc:	TIMEFMT_ENUMPROCA,
 	Locale:			LCID,
 	dwFlags:		DWORD
 ;BOOL
-EnumTimeFormatsW proto _CType \
+EnumTimeFormatsW proto WINAPI \
 	lpTimeFmtEnumProc:	TIMEFMT_ENUMPROCW,
 	Locale:			LCID,
 	dwFlags:		DWORD
@@ -1037,12 +880,12 @@ else
 EnumTimeFormats equ <EnumTimeFormatsA>
 endif
 ;BOOL
-EnumDateFormatsA proto _CType \
+EnumDateFormatsA proto WINAPI \
 	lpDateFmtEnumProc:	DATEFMT_ENUMPROCA,
 	Locale:			LCID,
 	dwFlags:		DWORD
 ;BOOL
-EnumDateFormatsW proto _CType \
+EnumDateFormatsW proto WINAPI \
 	lpDateFmtEnumProc:	DATEFMT_ENUMPROCW,
 	Locale:			LCID,
 	dwFlags:		DWORD
@@ -1054,12 +897,12 @@ endif
 
 ;if(WINVER >= equ 0x0500)
 ;BOOL
-EnumDateFormatsExA proto _CType \
+EnumDateFormatsExA proto WINAPI \
 	lpDateFmtEnumProcEx:	DATEFMT_ENUMPROCEXA,
 	Locale:			LCID,
 	dwFlags:		DWORD
 ;BOOL
-EnumDateFormatsExW proto _CType \
+EnumDateFormatsExW proto WINAPI \
 	lpDateFmtEnumProcEx:	DATEFMT_ENUMPROCEXW,
 	Locale:			LCID,
 	dwFlags:		DWORD
@@ -1070,38 +913,35 @@ EnumDateFormatsEx equ <EnumDateFormatsExA>
 endif
 ;endif /* WINVER >= equ 0x0500 */
 ;BOOL
-IsValidLocale proto _CType \
+IsValidLocale proto WINAPI \
 	Locale:		LCID,
 	dwFlags:	DWORD
 ;LCID
-ConvertDefaultLocale proto _CType \
+ConvertDefaultLocale proto WINAPI \
 	Locale:		LCID
 ;LCID
-GetThreadLocale proto _CType
+GetThreadLocale proto WINAPI
 ;BOOL
-SetThreadLocale proto _CType \
+SetThreadLocale proto WINAPI \
 	Locale:		LCID
 ;LANGID
-GetSystemDefaultLangID proto _CType
+GetSystemDefaultLangID proto WINAPI
 ;LANGID
-GetUserDefaultLangID proto _CType
+GetUserDefaultLangID proto WINAPI
 ;LCID
-GetSystemDefaultLCID proto _CType
+GetSystemDefaultLCID proto WINAPI
 ;LCID
-GetUserDefaultLCID proto _CType
+GetUserDefaultLCID proto WINAPI
 
-;
-;  Locale Independent APIs.
-;
 
 ;BOOL
-GetStringTypeExA proto _CType \
+GetStringTypeExA proto WINAPI \
 	Locale:		LCID,
 	dwInfoType:	DWORD,
 	lpSrcStr:	LPSTR,
 	cchSrc:		SINT,
 	lpCharType:	LPWORD
-GetStringTypeExW proto _CType \
+GetStringTypeExW proto WINAPI \
 	Locale:		LCID,
 	dwInfoType:	DWORD,
 	lpSrcStr:	LPWSTR,
@@ -1113,39 +953,28 @@ else
 GetStringTypeEx equ <GetStringTypeExA>
 endif
 
-;
-;  NOTE: The parameters for GetStringTypeA and GetStringTypeW are
-;	 NOT the same.	The W version was shipped in NT 3.1.  The
-;	 A version was then shipped in 16-bit OLE with the wrong
-;	 parameters (ported from Win95).  To be compatible, we
-;	 must break the relationship between the A and W versions
-;	 of GetStringType.  There will be NO function call for the
-;	 generic GetStringType.
-;
-;	 GetStringTypeEx (above) should be used instead.
-;
 ;BOOL
-GetStringTypeA proto _CType \
+GetStringTypeA proto WINAPI \
 	Locale:		LCID,	; LCID - locale identifer
 	dwInfoType:	DWORD,	; information-type options
 	lpSrcStr:	LPCSTR, ; pointer to the source string
 	cchSrc:		SINT,	; size, in bytes, of the source string
 	lpCharType:	LPWORD	; pointer to the buffer for output
 
-GetStringTypeW proto _CType \
+GetStringTypeW proto WINAPI \
 	dwInfoType:	DWORD,	; information-type options
 	lpSrcStr:	LPCWSTR,; pointer to the source string
 	cchSrc:		SINT,	; size, in bytes, of the source string
 	lpCharType:	LPWORD	; pointer to the buffer for output
 ;int
-FoldStringA proto _CType \
+FoldStringA proto WINAPI \
 	dwMapFlags:	DWORD,
 	lpSrcStr:	LPSTR,
 	cchSrc:		SINT,
 	lpDestStr:	LPSTR,
 	cchDest:	SINT
 ;int
-FoldStringW proto _CType \
+FoldStringW proto WINAPI \
 	dwMapFlags:	DWORD,
 	lpSrcStr:	LPWSTR,
 	cchSrc:		SINT,
@@ -1157,11 +986,11 @@ else
 FoldString equ <FoldStringA>
 endif
 ;BOOL
-EnumSystemLocalesA proto _CType \
+EnumSystemLocalesA proto WINAPI \
 	lpLocaleEnumProc:	LOCALE_ENUMPROCA,
 	dwFlags:		DWORD
 ;BOOL
-EnumSystemLocalesW proto _CType \
+EnumSystemLocalesW proto WINAPI \
 	lpLocaleEnumProc:	LOCALE_ENUMPROCW,
 	dwFlags:		DWORD
 ifdef _UNICODE
@@ -1170,11 +999,11 @@ else
 EnumSystemLocales equ <EnumSystemLocalesA>
 endif
 ;BOOL
-EnumSystemCodePagesA proto _CType \
+EnumSystemCodePagesA proto WINAPI \
 	lpCodePageEnumProc:	CODEPAGE_ENUMPROCA,
 	dwFlags:		DWORD
 ;BOOL
-EnumSystemCodePagesW proto _CType \
+EnumSystemCodePagesW proto WINAPI \
 	lpCodePageEnumProc:	CODEPAGE_ENUMPROCW,
 	dwFlags:		DWORD
 ifdef _UNICODE

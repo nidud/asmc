@@ -3,17 +3,11 @@ ifndef __LIBC_INC
 endif
 ifndef RPC_NO_WINDOWS_H
 include windows.inc
-endif ;; RPC_NO_WINDOWS_H
+endif 
 ifndef __RPC_H__
 .xlist
-;;
-;; Master include file for RPC applications.
-;;
 __RPC_H__ equ 1
 
-;;-------------------------------------------------------------
-;; platform specific defines
-;;-------------------------------------------------------------
 ifdef _WIN32
 __RPC_WIN32__		equ 1
 else
@@ -55,12 +49,12 @@ include excpt.inc
 include winerror.inc
 .xlist
 
-MACYIELDCALLBACK_T	typedef proto _CType :ptr sword
+MACYIELDCALLBACK_T	typedef proto WINAPI :ptr sword
 MACYIELDCALLBACK	typedef ptr MACYIELDCALLBACK_T
 ;RPC_ENTRY		typedef ptr MACYIELDCALLBACK
 
 ;RPC_ENTRY
-RpcMacSetYieldInfo proto _CType \
+RpcMacSetYieldInfo proto WINAPI \
 	    pfnCallback: MACYIELDCALLBACK
 
 RpcExceptionCode macro
@@ -71,27 +65,26 @@ RpcAbnormalTermination macro
 	endm
 
 ;RPC_ENTRY
-RpcImpersonateClient proto _CType \
+RpcImpersonateClient proto WINAPI \
 	 BindingHandle: RPC_BINDING_HANDLE
 
 ;RPC_ENTRY
-RpcRevertToSelfEx proto _CType \
+RpcRevertToSelfEx proto WINAPI \
 	 BindingHandle: RPC_BINDING_HANDLE
 
 ;RPC_ENTRY
-RpcRevertToSelf proto _CType
+RpcRevertToSelf proto WINAPI
 
 ;long
-I_RpcMapWin32Status proto _CType \
+I_RpcMapWin32Status proto WINAPI \
 		Status: RPC_STATUS
 
-;; Definitions which depend on windows.inc
 ifndef RPC_NO_WINDOWS_H
 
 include rpcasync.inc
 
-endif ;; RPC_NO_WINDOWS_H
+endif 
 .list
-endif ;; __RPC_H__
+endif 
 
 

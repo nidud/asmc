@@ -3,7 +3,7 @@ WINTRUST_H equ 1
 
 include wincrypt.inc
 
-ifndef WIN_CERT_REVISION_1_0   ;; there were duplicate definitions in winbase.h
+ifndef WIN_CERT_REVISION_1_0   
 WT_DEFINE_ALL_APIS equ 1
 ;else
 ;WT_DEFINE_ALL_APIS equ <>
@@ -55,12 +55,12 @@ WTD_UICONTEXT_EXECUTE	equ 0
 WTD_UICONTEXT_INSTALL	equ 1
 
 WINTRUST_DATA		STRUC
-cbStruct		dd ?	;; = sizeof(WINTRUST_DATA)
-pPolicyCallbackData	PVOID ? ;; optional: used to pass data between the app and policy
-pSIPClientData		PVOID ? ;; optional: used to pass data between the app and SIP.
-dwUIChoice		dd ?	;; required: UI choice.	 One of the following.
-fdwRevocationChecks	dd ?	;; required: certificate revocation check options
-dwUnionChoice		dd ?	;; required: which structure is being passed in?
+cbStruct		dd ?	
+pPolicyCallbackData	PVOID ? 
+pSIPClientData		PVOID ? 
+dwUIChoice		dd ?	
+fdwRevocationChecks	dd ?	
+dwUnionChoice		dd ?	
 UNION
  pFile			PWINTRUST_FILE_INFO ?
  pCatalog		PWINTRUST_CATALOG_INFO ?
@@ -68,39 +68,39 @@ UNION
  pSgnr			PWINTRUST_SGNR_INFO ?
  pCert			PWINTRUST_CERT_INFO ?
 ENDS
-dwStateAction		dd ?	;; optional (Catalog File Processing)
-hWVTStateData		HANDLE ?	;; optional (Catalog File Processing)
-pwszURLReference	LPWCHAR ?	;; optional: (future) used to determine zone.
+dwStateAction		dd ?	
+hWVTStateData		HANDLE ?	
+pwszURLReference	LPWCHAR ?	
 dwProvFlags		dd ?
 dwUIContext		dd ?
 WINTRUST_DATA		ENDS
 PWINTRUST_DATA		typedef ptr WINTRUST_DATA
 
 WINTRUST_FILE_INFO	STRUC
-cbStruct		dd ?		;; = sizeof(WINTRUST_FILE_INFO)
-pcwszFilePath		LPCWSTR ?	;; required, file name to be verified
-hFile			HANDLE ?	;; optional, open handle to pcwszFilePath
-pgKnownSubject		LPGUID ?	;; optional: fill if the subject type is known.
+cbStruct		dd ?		
+pcwszFilePath		LPCWSTR ?	
+hFile			HANDLE ?	
+pgKnownSubject		LPGUID ?	
 WINTRUST_FILE_INFO	ENDS
 PWINTRUST_FILE_INFO	typedef ptr WINTRUST_FILE_INFO
 
 WINTRUST_CATALOG_INFO	STRUC
-cbStruct		dd ?	;; = sizeof(WINTRUST_CATALOG_INFO)
-dwCatalogVersion	dd ?	;; optional: Catalog version number
-pcwszCatalogFilePath	LPCWSTR ?	;; required: path/name to Catalog file
-pcwszMemberTag		LPCWSTR ?	;; optional: tag to member in Catalog
-pcwszMemberFilePath	LPCWSTR ?	;; required: path/name to member file
-hMemberFile		HANDLE ?	;; optional: open handle to pcwszMemberFilePath
-pbCalculatedFileHash	LPBYTE ?	;; optional: pass in the calculated hash
-cbCalculatedFileHash	dd ?	;; optional: pass in the count bytes of the calc hash
-pcCatalogContext	PCCTL_CONTEXT ? ;; optional: pass in to use instead of CatalogFilePath.
+cbStruct		dd ?	
+dwCatalogVersion	dd ?	
+pcwszCatalogFilePath	LPCWSTR ?	
+pcwszMemberTag		LPCWSTR ?	
+pcwszMemberFilePath	LPCWSTR ?	
+hMemberFile		HANDLE ?	
+pbCalculatedFileHash	LPBYTE ?	
+cbCalculatedFileHash	dd ?	
+pcCatalogContext	PCCTL_CONTEXT ? 
 WINTRUST_CATALOG_INFO	ENDS
 PWINTRUST_CATALOG_INFO	typedef ptr WINTRUST_CATALOG_INFO
 
 WINTRUST_BLOB_INFO	STRUC
-cbStruct		dd ?	;; = sizeof(WINTRUST_BLOB_INFO)
-gSubject		GUID <> ;; SIP to load
-pcwszDisplayName	LPCWSTR ?	;; display name of object
+cbStruct		dd ?	
+gSubject		GUID <> 
+pcwszDisplayName	LPCWSTR ?	
 cbMemObject		dd ?
 pbMemObject		LPBYTE ?
 cbMemSignedMsg		dd ?
@@ -109,11 +109,11 @@ WINTRUST_BLOB_INFO	ENDS
 PWINTRUST_BLOB_INFO	typedef ptr WINTRUST_BLOB_INFO
 
 WINTRUST_SGNR_INFO	STRUC
-cbStruct		dd ?		;; = sizeof(WINTRUST_SGNR_INFO)
-pcwszDisplayName	LPCWSTR ?	;; name of the "thing" the pbMem is pointing to.
+cbStruct		dd ?		
+pcwszDisplayName	LPCWSTR ?	
 psSignerInfo		LPCMSG_SIGNER_INFO ?
-chStores		dd ?		;; number of stores in pahStores
-pahStores		LPHCERTSTORE ?	;; array of stores to add to internal list
+chStores		dd ?		
+pahStores		LPHCERTSTORE ?	
 WINTRUST_SGNR_INFO	ENDS
 PWINTRUST_SGNR_INFO	typedef ptr WINTRUST_SGNR_INFO
 
@@ -122,46 +122,46 @@ WTCI_OPEN_ONLY_ROOT	equ 0x00000002
 WTCI_USE_LOCAL_MACHINE	equ 0x00000004	; Local machine context
 
 WINTRUST_CERT_INFO	STRUC
-cbStruct		dd ?		;; = sizeof(WINTRUST_CERT_INFO)
-pcwszDisplayName	LPCWSTR ?	;; display name
+cbStruct		dd ?		
+pcwszDisplayName	LPCWSTR ?	
 psCertContext		LPCERT_CONTEXT ?
-chStores		dd ?		;; number of stores in pahStores
-pahStores		LPHCERTSTORE ?	;; array of stores to add to internal list
+chStores		dd ?		
+pahStores		LPHCERTSTORE ?	
 dwFlags			dd ?
-psftVerifyAsOf		LPFILETIME ?	;; if not null, each cert will be validated as of this time.
+psftVerifyAsOf		LPFILETIME ?	
 WINTRUST_CERT_INFO	ENDS
 PWINTRUST_CERT_INFO	typedef ptr WINTRUST_CERT_INFO
 
 ;include <poppack.h>
 
-WinVerifyTrust proto _CType \
+WinVerifyTrust proto WINAPI \
 		  hwnd: HWND,
 	    pgActionID: ptr GUID,
 	      pWVTData: LPVOID
 
-WinVerifyTrustEx proto _CType \
+WinVerifyTrustEx proto WINAPI \
 		  hwnd: HWND,
 	    pgActionID: ptr GUID,
 	 pWinTrustData: LPWINTRUST_DATA
 
-WTPF_TRUSTTEST		equ 0x00000020	;; trust any "TEST" certificate
+WTPF_TRUSTTEST		equ 0x00000020	
 WTPF_TESTCANBEVALID	equ 0x00000080
-WTPF_IGNOREEXPIRATION	equ 0x00000100	;; Use expiration date
-WTPF_IGNOREREVOKATION	equ 0x00000200	;; Do revocation check
-WTPF_OFFLINEOK_IND	equ 0x00000400	;; off-line is ok individual certs
-WTPF_OFFLINEOK_COM	equ 0x00000800	;; off-line is ok commercial certs
-WTPF_OFFLINEOKNBU_IND	equ 0x00001000	;; off-line is ok individual certs, no bad ui
-WTPF_OFFLINEOKNBU_COM	equ 0x00002000	;; off-line is ok commercial certs, no bad ui
-WTPF_VERIFY_V1_OFF	equ 0x00010000	;; turn verify of v1 certs off
-WTPF_IGNOREREVOCATIONONTS equ 0x00020000  ;; ignore TimeStamp revocation checks
-WTPF_ALLOWONLYPERTRUST	equ 0x00040000	;; allow only items in personal trust db.
+WTPF_IGNOREEXPIRATION	equ 0x00000100	
+WTPF_IGNOREREVOKATION	equ 0x00000200	
+WTPF_OFFLINEOK_IND	equ 0x00000400	
+WTPF_OFFLINEOK_COM	equ 0x00000800	
+WTPF_OFFLINEOKNBU_IND	equ 0x00001000	
+WTPF_OFFLINEOKNBU_COM	equ 0x00002000	
+WTPF_VERIFY_V1_OFF	equ 0x00010000	
+WTPF_IGNOREREVOCATIONONTS equ 0x00020000  
+WTPF_ALLOWONLYPERTRUST	equ 0x00040000	
 
 ;void
-WintrustGetRegPolicyFlags proto _CType \
+WintrustGetRegPolicyFlags proto WINAPI \
 	 pdwPolicyFlags: LPDWORD
 
 ;BOOL
-WintrustSetRegPolicyFlags proto _CType \
+WintrustSetRegPolicyFlags proto WINAPI \
 	  dwPolicyFlags: DWORD
 
 
@@ -197,12 +197,12 @@ TRUSTERROR_STEP_FINAL_UIPROV	equ 37
 TRUSTERROR_MAX_STEPS		equ 38
 
 ;PVOID
-PFN_CPD_MEM_ALLOC_T typedef proto _CType \
+PFN_CPD_MEM_ALLOC_T typedef proto WINAPI \
 		cbSize: DWORD
 PFN_CPD_MEM_ALLOC typedef ptr PFN_CPD_MEM_ALLOC_T
 
 ;void
-PFN_CPD_MEM_FREE_T typedef proto _CType \
+PFN_CPD_MEM_FREE_T typedef proto WINAPI \
 	    pvMem2Free: PVOID
 PFN_CPD_MEM_FREE typedef ptr PFN_CPD_MEM_FREE_T
 
@@ -211,13 +211,13 @@ PFN_CPD_MEM_FREE typedef ptr PFN_CPD_MEM_FREE_T
 ;typedef CRYPT_PROVIDER_PRIVDATA
 
 ;BOOL
-PFN_CPD_ADD_STORE_T typedef proto _CType \
+PFN_CPD_ADD_STORE_T typedef proto WINAPI \
 	     pProvData: ptr CRYPT_PROVIDER_DATA,
 	    hStore2Add: HCERTSTORE
 PFN_CPD_ADD_STORE typedef PFN_CPD_ADD_STORE_T
 
 ;BOOL
-PFN_CPD_ADD_SGNR_T typedef proto _CType \
+PFN_CPD_ADD_SGNR_T typedef proto WINAPI \
 	     pProvData: ptr CRYPT_PROVIDER_DATA,
 	fCounterSigner: BOOL,
 	     idxSigner: DWORD,
@@ -225,7 +225,7 @@ PFN_CPD_ADD_SGNR_T typedef proto _CType \
 PFN_CPD_ADD_SGNR typedef ptr PFN_CPD_ADD_SGNR_T
 
 ;BOOL
-PFN_CPD_ADD_CERT_T typedef proto _CType \
+PFN_CPD_ADD_CERT_T typedef proto WINAPI \
 	     pProvData: ptr CRYPT_PROVIDER_DATA,
 	     idxSigner: DWORD,
 	fCounterSigner: BOOL,
@@ -234,48 +234,48 @@ PFN_CPD_ADD_CERT_T typedef proto _CType \
 PFN_CPD_ADD_CERT typedef ptr PFN_CPD_ADD_CERT_T
 
 ;BOOL
-PFN_CPD_ADD_PRIVDATA_T typedef proto _CType \
+PFN_CPD_ADD_PRIVDATA_T typedef proto WINAPI \
 	     pProvData: ptr CRYPT_PROVIDER_DATA,
 	 pPrivData2Add: ptr CRYPT_PROVIDER_PRIVDATA
 PFN_CPD_ADD_PRIVDATA typedef ptr PFN_CPD_ADD_PRIVDATA_T
 
 ;HRESULT
-PFN_PROVIDER_INIT_CALL_T typedef proto _CType \
+PFN_PROVIDER_INIT_CALL_T typedef proto WINAPI \
 	     pProvData: ptr CRYPT_PROVIDER_DATA
 PFN_PROVIDER_INIT_CALL typedef ptr PFN_PROVIDER_INIT_CALL_T
 
 ;HRESULT
-PFN_PROVIDER_OBJTRUST_CALL_T typedef proto _CType \
+PFN_PROVIDER_OBJTRUST_CALL_T typedef proto WINAPI \
 	     pProvData: ptr CRYPT_PROVIDER_DATA
 PFN_PROVIDER_OBJTRUST_CALL typedef ptr PFN_PROVIDER_OBJTRUST_CALL_T
 
 ;HRESULT
-PFN_PROVIDER_SIGTRUST_CALL_T typedef proto _CType \
+PFN_PROVIDER_SIGTRUST_CALL_T typedef proto WINAPI \
 	     pProvData: ptr CRYPT_PROVIDER_DATA
 PFN_PROVIDER_SIGTRUST_CALL typedef ptr PFN_PROVIDER_SIGTRUST_CALL_T
 
 ;HRESULT
-PFN_PROVIDER_CERTTRUST_CALL_T typedef proto _CType \
+PFN_PROVIDER_CERTTRUST_CALL_T typedef proto WINAPI \
 	     pProvData: ptr CRYPT_PROVIDER_DATA
 PFN_PROVIDER_CERTTRUST_CALL typedef ptr PFN_PROVIDER_CERTTRUST_CALL_T
 
 ;HRESULT
-PFN_PROVIDER_FINALPOLICY_CALL_T typedef proto _CType \
+PFN_PROVIDER_FINALPOLICY_CALL_T typedef proto WINAPI \
 	     pProvData: ptr CRYPT_PROVIDER_DATA
 PFN_PROVIDER_FINALPOLICY_CALL typedef PFN_PROVIDER_FINALPOLICY_CALL_T
 
 ;HRESULT
-PFN_PROVIDER_TESTFINALPOLICY_CALL_T typedef proto _CType \
+PFN_PROVIDER_TESTFINALPOLICY_CALL_T typedef proto WINAPI \
 	     pProvData: ptr CRYPT_PROVIDER_DATA
 PFN_PROVIDER_TESTFINALPOLICY_CALL typedef ptr PFN_PROVIDER_TESTFINALPOLICY_CALL_T
 
 ;HRESULT
-PFN_PROVIDER_CLEANUP_CALL_T typedef proto _CType \
+PFN_PROVIDER_CLEANUP_CALL_T typedef proto WINAPI \
 	     pProvData: ptr CRYPT_PROVIDER_DATA
 PFN_PROVIDER_CLEANUP_CALL typedef PFN_PROVIDER_CLEANUP_CALL_T
 
 ;BOOL
-PFN_PROVIDER_CERTCHKPOLICY_CALL_T typedef proto _CType \
+PFN_PROVIDER_CERTCHKPOLICY_CALL_T typedef proto WINAPI \
 	     pProvData: ptr CRYPT_PROVIDER_DATA,
 	     idxSigner: DWORD,
    fCounterSignerChain: BOOL,
@@ -286,8 +286,6 @@ WVT_OFFSETOF macro t,f
 	exitm<t.f>
 	endm
 
-;; WOB #1251526 -- macro must check whether _all_ bytes of the member
-;; lie within the struct size specified
 
 WVT_ISINSTRUCT macro structtypedef, structpassedsize, member
 	if (structtypedef.member + sizeof(structtypedef.member)) LE structpassedsize
@@ -314,35 +312,35 @@ CPD_UISTATE_MODE_ALLOW			equ 0x00000002
 CPD_UISTATE_MODE_MASK			equ 0x00000003
 
 CRYPT_PROVIDER_DATA	STRUC
-cbStruct		dd ?		;; = sizeof(TRUST_PROVIDER_DATA) (set in WVT)
-pWintrustData		LPWINTRUST_DATA ? ;; NOT verified (set in WVT)
-fOpenedFile		BOOL ?		;; the provider opened the file handle (if applicable)
-hWndParent		HWND ?		;; if passed in, else, Desktop hWnd (set in WVT).
-pgActionID		LPGUID ?	;; represents the Provider combination (set in WVT).
-hProv			HCRYPTPROV ?	;; set to NULL to let CryptoAPI to assign.
-dwError			dd ?		;; error if a low-level, system error was encountered
-dwRegSecuritySettings	dd ?		;; ie security settings (set in WVT)
-dwRegPolicySettings	dd ?		;; setreg settings (set in WVT)
+cbStruct		dd ?		
+pWintrustData		LPWINTRUST_DATA ? 
+fOpenedFile		BOOL ?		
+hWndParent		HWND ?		
+pgActionID		LPGUID ?	
+hProv			HCRYPTPROV ?	
+dwError			dd ?		
+dwRegSecuritySettings	dd ?		
+dwRegPolicySettings	dd ?		
 psPfns			PCRYPT_PROVIDER_FUNCTIONS ?
-cdwTrustStepErrors	dd ?		;; set in WVT.
-padwTrustStepErrors	LPDWORD ?	;; allocated in WVT.  filled in WVT & Trust Provider
-chStores		dd ?		;; number of stores in pahStores (root set in WVT)
-pahStores		LPHCERTSTORE ?	;; array of known stores (root set in WVT) root is ALWAYS #0!!!
-dwEncoding		dd ?		;; message encoding type (set in WVT and Signature Prov)
-hMsg			HCRYPTMSG ?	;; set in Signature Prov.
-csSigners		dd ?		;; use Add2 and Get functions!
+cdwTrustStepErrors	dd ?		
+padwTrustStepErrors	LPDWORD ?	
+chStores		dd ?		
+pahStores		LPHCERTSTORE ?	
+dwEncoding		dd ?		
+hMsg			HCRYPTMSG ?	
+csSigners		dd ?		
 pasSigners		PCRYPT_PROVIDER_SGNR ?
-csProvPrivData		dd ?		;; use Add2 and Get functions!
+csProvPrivData		dd ?		
 pasProvPrivData		PCRYPT_PROVIDER_PRIVDATA ?
 dwSubjectChoice		dd ?
 UNION
  pPDSip			PPROVDATA_SIP ?
 ENDS
-pszUsageOID		LPSTR ?		;; set in Init Provider
-fRecallWithState	BOOL ?		;; state was maintained for Catalog Files.
+pszUsageOID		LPSTR ?		
+fRecallWithState	BOOL ?		
 sftSystemTime		FILETIME <>
 pszCTLSignerUsageOID	LPSTR ?
-dwProvFlags		dd ?		;; LOWORD intialized from WINTRUST_DATA's dwProvFlags.
+dwProvFlags		dd ?		
 dwFinalError		dd ?
 pRequestUsage		PCERT_USAGE_MATCH ?
 dwTrustPubSettings	dd ?
@@ -352,27 +350,27 @@ PCRYPT_PROVIDER_DATA	typedef ptr CRYPT_PROVIDER_DATA
 
 CRYPT_PROVIDER_FUNCTIONS STRUC
 cbStruct		dd ?
-pfnAlloc		PFN_CPD_MEM_ALLOC ?	;; set in WVT
-pfnFree			PFN_CPD_MEM_FREE ?	;; set in WVT
-pfnAddStore2Chain	PFN_CPD_ADD_STORE ?	;; call to add a store to the chain.
-pfnAddSgnr2Chain	PFN_CPD_ADD_SGNR ?	;; call to add a sgnr struct to a msg struct sgnr chain
-pfnAddCert2Chain	PFN_CPD_ADD_CERT ?	;; call to add a cert struct to a sgnr struct cert chain
-pfnAddPrivData2Chain	PFN_CPD_ADD_PRIVDATA ?	;; call to add provider private data to struct.
-pfnInitialize		PFN_PROVIDER_INIT_CALL ?	;; initialize Policy data.
-pfnObjectTrust		PFN_PROVIDER_OBJTRUST_CALL ?	;; build info up to the signer info(s).
-pfnSignatureTrust	PFN_PROVIDER_SIGTRUST_CALL ?	;; build info to the signing cert
-pfnCertificateTrust	PFN_PROVIDER_CERTTRUST_CALL ?	;; build the chain
-pfnFinalPolicy		PFN_PROVIDER_FINALPOLICY_CALL ? ;; final call to policy
-pfnCertCheckPolicy	PFN_PROVIDER_CERTCHKPOLICY_CALL ?	;; check each cert will building chain
-pfnTestFinalPolicy	PFN_PROVIDER_TESTFINALPOLICY_CALL ?	;; dump structures to a file (or whatever the policy chooses)
+pfnAlloc		PFN_CPD_MEM_ALLOC ?	
+pfnFree			PFN_CPD_MEM_FREE ?	
+pfnAddStore2Chain	PFN_CPD_ADD_STORE ?	
+pfnAddSgnr2Chain	PFN_CPD_ADD_SGNR ?	
+pfnAddCert2Chain	PFN_CPD_ADD_CERT ?	
+pfnAddPrivData2Chain	PFN_CPD_ADD_PRIVDATA ?	
+pfnInitialize		PFN_PROVIDER_INIT_CALL ?	
+pfnObjectTrust		PFN_PROVIDER_OBJTRUST_CALL ?	
+pfnSignatureTrust	PFN_PROVIDER_SIGTRUST_CALL ?	
+pfnCertificateTrust	PFN_PROVIDER_CERTTRUST_CALL ?	
+pfnFinalPolicy		PFN_PROVIDER_FINALPOLICY_CALL ? 
+pfnCertCheckPolicy	PFN_PROVIDER_CERTCHKPOLICY_CALL ?	
+pfnTestFinalPolicy	PFN_PROVIDER_TESTFINALPOLICY_CALL ?	
 psUIpfns		PCRYPT_PROVUI_FUNCS ?
-pfnCleanupPolicy	PFN_PROVIDER_CLEANUP_CALL ?	;; PRIVDATA cleanup routine.
+pfnCleanupPolicy	PFN_PROVIDER_CLEANUP_CALL ?	
 CRYPT_PROVIDER_FUNCTIONS ENDS
 PCRYPT_PROVIDER_FUNCTIONS typedef ptr CRYPT_PROVIDER_FUNCTIONS
 
 
 ;BOOL
-PFN_PROVUI_CALL_T typedef proto _CType \
+PFN_PROVUI_CALL_T typedef proto WINAPI \
     hWndSecurityDialog: HWND,
 	     pProvData: ptr CRYPT_PROVIDER_DATA
 PFN_PROVUI_CALL typedef ptr PFN_PROVUI_CALL_T
@@ -390,10 +388,10 @@ PCRYPT_PROVUI_FUNCS	typedef ptr CRYPT_PROVUI_FUNCS
 CRYPT_PROVUI_DATA	STRUC
 cbStruct		dd ?
 dwFinalError		dd ?
-pYesButtonText		LPWCHAR ?	;; default: "&Yes"
-pNoButtonText		LPWCHAR ?	;; default: "&No"
-pMoreInfoButtonText	LPWCHAR ?	;; default: "&More Info"
-pAdvancedLinkText	LPWCHAR ?	;; default: <none>
+pYesButtonText		LPWCHAR ?	
+pNoButtonText		LPWCHAR ?	
+pMoreInfoButtonText	LPWCHAR ?	
+pAdvancedLinkText	LPWCHAR ?	
 pCopyActionText		LPWCHAR ?
 pCopyActionTextNoTS	LPWCHAR ?
 pCopyActionTextNotSigned LPWCHAR ?
@@ -404,13 +402,13 @@ SGNR_TYPE_TIMESTAMP	equ 0x00000010
 
 CRYPT_PROVIDER_SGNR	STRUC
 cbStruct		dd ?
-sftVerifyAsOf		FILETIME <>	;; either today's filetime or the timestamps
-csCertChain		dd ?	;; use Add2 and Get functions!
+sftVerifyAsOf		FILETIME <>	
+csCertChain		dd ?	
 pasCertChain		PCRYPT_PROVIDER_CERT ?
-dwSignerType		dd ?	;; set if known by policy
-psSigner		LPCMSG_SIGNER_INFO ?	;; must use the pfnAlloc allocator!
-dwError			dd ?	;; error encounted while building/verifying the signer.
-csCounterSigners	dd ?	;; use Add2 and Get functions!
+dwSignerType		dd ?	
+psSigner		LPCMSG_SIGNER_INFO ?	
+dwError			dd ?	
+csCounterSigners	dd ?	
 pasCounterSigners	PCRYPT_PROVIDER_SGNR ?
 pChainContext		PCCERT_CHAIN_CONTEXT ?
 CRYPT_PROVIDER_SGNR	ENDS
@@ -425,13 +423,13 @@ CERT_CONFIDENCE_HIGHEST equ 0x11111000
 
 CRYPT_PROVIDER_CERT	STRUC
 cbStruct		dd ?
-pCert			PCCERT_CONTEXT ?	;; must have its own ref-count!
+pCert			PCCERT_CONTEXT ?	
 fCommercial		BOOL ?
-fTrustedRoot		BOOL ?	;; certchk policy should set this.
-fSelfSigned		BOOL ?	;; set in cert provider
-fTestCert		BOOL ?	;; certchk policy will set
+fTrustedRoot		BOOL ?	
+fSelfSigned		BOOL ?	
+fTestCert		BOOL ?	
 dwRevokedReason		dd ?
-dwConfidence		dd ?	;; set in the Certificate Provider
+dwConfidence		dd ?	
 dwError			dd ?
 pTrustListContext	LPCTL_CONTEXT ?
 fTrustListSignerCert	BOOL ?
@@ -451,8 +449,8 @@ CRYPT_PROVIDER_PRIVDATA ENDS
 PCRYPT_PROVIDER_PRIVDATA typedef ptr CRYPT_PROVIDER_PRIVDATA
 
 PROVDATA_SIP		STRUC
-cbStruct		dd ?	;; = sizeof(PROVDATA_SIP)
-gSubject		GUID <> ;; subject guid of file/member file. (set in Sig Prov)
+cbStruct		dd ?	
+gSubject		GUID <> 
 pSip			PSIP_DISPATCH_INFO ?
 pCATSip			PSIP_DISPATCH_INFO ?
 psSipSubjectInfo	PSIP_SUBJECTINFO ?
@@ -461,17 +459,12 @@ psIndirectData		PSIP_INDIRECT_DATA ?
 PROVDATA_SIP		ENDS
 PPROVDATA_SIP		typedef ptr PROVDATA_SIP
 
-;;////////////////////////////////////////////////////////////////////////////
-;;
-;; structures used to register action IDs
-;;----------------------------------------------------------------------------
-;;
 WT_CURRENT_VERSION	equ 0x00000200
 
 CRYPT_TRUST_REG_ENTRY	STRUC
 cbStruct		dd ?
 pwszDLLName		LPWCHAR ?
-pwszFunctionName	LPWCHAR ?	;; no more than WT_MAX_FUNC_NAME!
+pwszFunctionName	LPWCHAR ?	
 CRYPT_TRUST_REG_ENTRY	ENDS
 PCRYPT_TRUST_REG_ENTRY	typedef ptr CRYPT_TRUST_REG_ENTRY
 
@@ -491,20 +484,20 @@ PCRYPT_REGISTER_ACTIONID typedef ptr CRYPT_REGISTER_ACTIONID
 ;typedef CRYPT_PROVIDER_DEFUSAGE
 
 ;BOOL
-PFN_ALLOCANDFILLDEFUSAGE_T typedef proto _CType \
+PFN_ALLOCANDFILLDEFUSAGE_T typedef proto WINAPI \
 	   pszUsageOID: LPSTR,
 	    psDefUsage: ptr CRYPT_PROVIDER_DEFUSAGE
 PFN_ALLOCANDFILLDEFUSAGE typedef ptr PFN_ALLOCANDFILLDEFUSAGE_T
 
 ;BOOL
-PFN_FREEDEFUSAGE_T typedef proto _CType \
+PFN_FREEDEFUSAGE_T typedef proto WINAPI \
 	   pszUsageOID: LPSTR,
 	    psDefUsage: ptr CRYPT_PROVIDER_DEFUSAGE
 PFN_FREEDEFUSAGE typedef ptr PFN_FREEDEFUSAGE_T
 
 
 CRYPT_PROVIDER_REGDEFUSAGE STRUC
-cbStruct		dd ?	;; = sizeof CRYPT_PROVIDER_REGDEFUSAGE
+cbStruct		dd ?	
 pgActionID		LPGUID ?
 pwszDllName		LPWCHAR ?
 pwszLoadCallbackDataFunctionName LPSTR ?
@@ -513,10 +506,10 @@ CRYPT_PROVIDER_REGDEFUSAGE ENDS
 PCRYPT_PROVIDER_REGDEFUSAGE typedef ptr CRYPT_PROVIDER_REGDEFUSAGE
 
 CRYPT_PROVIDER_DEFUSAGE STRUC
-cbStruct		dd ?	;; = sizeof CRYPT_PROVIDER_DEFUSAGE
-gActionID		GUID <> ;; ActionID of provider
-pDefPolicyCallbackData	LPVOID ?;; normally filled in WINTRUST_DATA
-pDefSIPClientData	LPVOID ?;; normally filled in WINTRUST_DATA
+cbStruct		dd ?	
+gActionID		GUID <> 
+pDefPolicyCallbackData	LPVOID ?
+pDefSIPClientData	LPVOID ?
 CRYPT_PROVIDER_DEFUSAGE ENDS
 PCRYPT_PROVIDER_DEFUSAGE typedef ptr CRYPT_PROVIDER_DEFUSAGE
 
@@ -526,7 +519,7 @@ WT_PROVIDER_DLL_NAME	equ <L"WINTRUST.DLL">
 WT_PROVIDER_CERTTRUST_FUNCTION equ <L"WintrustCertificateTrust">
 
 ;BOOL
-WintrustAddActionID proto _CType \
+WintrustAddActionID proto WINAPI \
 	    pgActionID: LPGUID,
 	      fdwFlags: DWORD,
 	    psProvInfo: ptr CRYPT_REGISTER_ACTIONID
@@ -535,16 +528,16 @@ WT_ADD_ACTION_ID_RET_RESULT_FLAG equ 0x1
 
 
 ;BOOL
-WintrustRemoveActionID proto _CType \
+WintrustRemoveActionID proto WINAPI \
 	    pgActionID: LPGUID
 
 ;BOOL
-WintrustLoadFunctionPointers proto _CType \
+WintrustLoadFunctionPointers proto WINAPI \
 	    pgActionID: LPGUID,
 		 pPfns: ptr CRYPT_PROVIDER_FUNCTIONS
 
 ;BOOL
-WintrustAddDefaultForUsage proto _CType \
+WintrustAddDefaultForUsage proto WINAPI \
 	   pszUsageOID: LPSTR,
 	    psDefUsage: ptr CRYPT_PROVIDER_REGDEFUSAGE
 
@@ -589,16 +582,10 @@ WTHelperCertCheckValidSignature
 
 ;include <pshpack8.h>
 
-;;
-;;  CTL Trusted CA Lists
-;;
 szOID_TRUSTED_CODESIGNING_CA_LIST equ <"1.3.6.1.4.1.311.2.2.1">
 szOID_TRUSTED_CLIENT_AUTH_CA_LIST equ <"1.3.6.1.4.1.311.2.2.2">
 szOID_TRUSTED_SERVER_AUTH_CA_LIST equ <"1.3.6.1.4.1.311.2.2.3">
 
-;;
-;;  encode/decode OID defines
-;;
 SPC_COMMON_NAME_OBJID		equ szOID_COMMON_NAME
 SPC_TIME_STAMP_REQUEST_OBJID	equ <"1.3.6.1.4.1.311.3.2.1">
 SPC_INDIRECT_DATA_OBJID		equ <"1.3.6.1.4.1.311.2.1.4">
@@ -613,27 +600,18 @@ SPC_JAVA_CLASS_DATA_OBJID	equ <"1.3.6.1.4.1.311.2.1.20">
 SPC_INDIVIDUAL_SP_KEY_PURPOSE_OBJID equ <"1.3.6.1.4.1.311.2.1.21">
 SPC_COMMERCIAL_SP_KEY_PURPOSE_OBJID equ <"1.3.6.1.4.1.311.2.1.22">
 SPC_CAB_DATA_OBJID		equ <"1.3.6.1.4.1.311.2.1.25">
-SPC_GLUE_RDN_OBJID		equ <"1.3.6.1.4.1.311.2.1.25">	;; obsolete NOT
+SPC_GLUE_RDN_OBJID		equ <"1.3.6.1.4.1.311.2.1.25">	
 SPC_MINIMAL_CRITERIA_OBJID	equ <"1.3.6.1.4.1.311.2.1.26">
 SPC_FINANCIAL_CRITERIA_OBJID	equ <"1.3.6.1.4.1.311.2.1.27">
 SPC_LINK_OBJID			equ <"1.3.6.1.4.1.311.2.1.28">
 SPC_SIGINFO_OBJID		equ <"1.3.6.1.4.1.311.2.1.30">
 
-;;
-;;  Page hash versions
-;;
-SPC_PE_IMAGE_PAGE_HASHES_V1_OBJID equ <"1.3.6.1.4.1.311.2.3.1">	   ;; V1
-SPC_PE_IMAGE_PAGE_HASHES_V2_OBJID equ <"1.3.6.1.4.1.311.2.3.2">	   ;; V2
+SPC_PE_IMAGE_PAGE_HASHES_V1_OBJID equ <"1.3.6.1.4.1.311.2.3.1">	   
+SPC_PE_IMAGE_PAGE_HASHES_V2_OBJID equ <"1.3.6.1.4.1.311.2.3.2">	   
 
-;;
-;;  Catalog entries
-;;
 CAT_NAMEVALUE_OBJID	equ <"1.3.6.1.4.1.311.12.2.1">
 CAT_MEMBERINFO_OBJID	equ <"1.3.6.1.4.1.311.12.2.2">
 
-;;
-;;  encode/decode internal defines
-;;
 SPC_SP_AGENCY_INFO_STRUCT	equ 2000
 SPC_MINIMAL_CRITERIA_STRUCT	equ 2001
 SPC_FINANCIAL_CRITERIA_STRUCT	equ 2002
@@ -722,7 +700,7 @@ PSPC_SP_AGENCY_INFO	typedef ptr SPC_SP_AGENCY_INFO
 
 SPC_STATEMENT_TYPE	STRUC
 cKeyPurposeId		dd ?
-rgpszKeyPurposeId	LPLPSTR ?	;; pszObjId
+rgpszKeyPurposeId	LPLPSTR ?	
 
 SPC_STATEMENT_TYPE	ENDS
 PSPC_STATEMENT_TYPE	typedef ptr SPC_STATEMENT_TYPE
@@ -749,25 +727,22 @@ PCAT_MEMBERINFO		typedef ptr CAT_MEMBERINFO
 
 ;include <poppack.h>
 
-;;
-;;  support for old calling convention: *** DO NOT USE ***
-;;
 ifdef WT_DEFINE_ALL_APIS
 
 WIN_CERTIFICATE		STRUC
 dwLength		dd ?
 wRevision		dw ?
-wCertificateType	dw ?	;; WIN_CERT_TYPE_xxx
+wCertificateType	dw ?	
 bCertificate		db ANYSIZE_ARRAY dup(?)
 WIN_CERTIFICATE		ENDS
 LPWIN_CERTIFICATE	typedef ptr WIN_CERTIFICATE
 
 WIN_CERT_REVISION_1_0		equ 0x0100
 WIN_CERT_REVISION_2_0		equ 0x0200
-WIN_CERT_TYPE_X509		equ 0x0001 ;; bCertificate contains an X.509 Certificate
-WIN_CERT_TYPE_PKCS_SIGNED_DATA	equ 0x0002 ;; bCertificate contains a PKCS SignedData structure
-WIN_CERT_TYPE_RESERVED_1	equ 0x0003 ;; Reserved
-WIN_CERT_TYPE_TS_STACK_SIGNED	equ 0x0004 ;; Terminal Server Protocol Stack Certificate signing
+WIN_CERT_TYPE_X509		equ 0x0001 
+WIN_CERT_TYPE_PKCS_SIGNED_DATA	equ 0x0002 
+WIN_CERT_TYPE_RESERVED_1	equ 0x0003 
+WIN_CERT_TYPE_TS_STACK_SIGNED	equ 0x0004 
 
 
 WIN_TRUST_SUBJECT	typedef LPVOID
@@ -786,16 +761,12 @@ Subject			WIN_TRUST_SUBJECT ?
 WIN_TRUST_ACTDATA_SUBJECT_ONLY ENDS
 LPWIN_TRUST_ACTDATA_SUBJECT_ONLY typedef ptr WIN_TRUST_ACTDATA_SUBJECT_ONLY
 
-;; RawFile == 959dc450-8d9e-11cf-8736-00aa00a485eb
 WIN_TRUST_SUBJTYPE_RAW_FILE equ \
 <{0x959dc450,0x8d9e,0x11cf,{0x87,0x36,0x00,0xaa,0x00,0xa4,0x85,0xeb}}>
-;; PeImage == 43c9a1e0-8da0-11cf-8736-00aa00a485eb
 WIN_TRUST_SUBJTYPE_PE_IMAGE equ \
 <{0x43c9a1e0,0x8da0,0x11cf,{0x87,0x36,0x00,0xaa,0x00,0xa4,0x85,0xeb}}>
-;; JavaClass = 08ad3990-8da1-11cf-8736-00aa00a485eb
 WIN_TRUST_SUBJTYPE_JAVA_CLASS equ \
 <{0x08ad3990,0x8da1,0x11cf,{0x87,0x36,0x00,0xaa,0x00,0xa4,0x85,0xeb}}>
-;; Cabinet = d17c5374-a392-11cf-9df5-00aa00c184e0
 WIN_TRUST_SUBJTYPE_CABINET equ \
 <{0xd17c5374,0xa392,0x11cf,{0x9d,0xf5,0x00,0xaa,0x00,0xc1,0x84,0xe0}}>
 
@@ -815,22 +786,18 @@ WIN_TRUST_SUBJTYPE_CABINETEX equ \
 <{0x6f458114,0xc2f1,0x11cf,{0x8a,0x69,0x0,0xaa,0x0,0x6c,0x37,0x6}}>
 
 WIN_TRUST_SUBJECT_FILE_AND_DISPLAY STRUC
-hFile			HANDLE ?	;; handle to the open file if you got it
-lpPath			LPCWSTR ?	;; the path to open if you don't
-lpDisplayName		LPCWSTR ?	;; (optional) display name to show to user
+hFile			HANDLE ?	
+lpPath			LPCWSTR ?	
+lpDisplayName		LPCWSTR ?	
 WIN_TRUST_SUBJECT_FILE_AND_DISPLAY ENDS
 LPWIN_TRUST_SUBJECT_FILE_AND_DISPLAY typedef ptr WIN_TRUST_SUBJECT_FILE_AND_DISPLAY
 
-;; OleStorage == c257e740-8da0-11cf-8736-00aa00a485eb
 WIN_TRUST_SUBJTYPE_OLE_STORAGE equ \
 <{0xc257e740,0x8da0,0x11cf,{0x87,0x36,0x00,0xaa,0x00,0xa4,0x85,0xeb}}>
-;; TrustedPublisher == 66426730-8da1-11cf-8736-00aa00a485eb
 WIN_SPUB_ACTION_TRUSTED_PUBLISHER equ \
 <{0x66426730,0x8da1,0x11cf,{0x87,0x36,0x00,0xaa,0x00,0xa4,0x85,0xeb}}>
-;; NtActivateImage == 8bc96b00-8da1-11cf-8736-00aa00a485eb
 WIN_SPUB_ACTION_NT_ACTIVATE_IMAGE equ \
 <{0x8bc96b00,0x8da1,0x11cf,{0x87,0x36,0x00,0xaa,0x00,0xa4,0x85,0xeb}}>
-;; PublishedSoftware == 64b9d180-8da2-11cf-8736-00aa00a485eb
 WIN_SPUB_ACTION_PUBLISHED_SOFTWARE equ \
 <{0x64b9d180,0x8da2,0x11cf,{0x87,0x36,0x00,0xaa,0x00,0xa4,0x85,0xeb}}>
 
@@ -843,7 +810,7 @@ LPWIN_SPUB_TRUSTED_PUBLISHER_DATA typedef ptr WIN_SPUB_TRUSTED_PUBLISHER_DATA
 endif
 
 ;BOOL
-OpenPersonalTrustDBDialogEx proto _CType \
+OpenPersonalTrustDBDialogEx proto WINAPI \
 	    hwndParent: HWND,
 	       dwFlags: DWORD,
 	    pvReserved: PVOID
@@ -853,4 +820,4 @@ WT_TRUSTDBDIALOG_ONLY_PUB_TAB_FLAG	equ 0x00000002
 WT_TRUSTDBDIALOG_WRITE_LEGACY_REG_FLAG	equ 0x00000100
 WT_TRUSTDBDIALOG_WRITE_IEAK_STORE_FLAG	equ 0x00000200
 
-endif ;; WINTRUST_H
+endif 

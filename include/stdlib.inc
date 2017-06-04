@@ -21,8 +21,15 @@ _MAX_FNAME	equ 256
 _MAX_EXT	equ 256
 
 ifndef __PE__
+ifdef _LINUX
+externdef	_argc:dword
+externdef	_argv:SIZE_T
+__argc		equ <_argc>
+__argv		equ <_argv>
+else
 externdef	__argc:dword
 externdef	__argv:SIZE_T
+endif
 externdef	_environ:SIZE_T
 externdef	_pgmptr:SIZE_T
 endif
@@ -35,9 +42,9 @@ mbtowc		proto __cdecl :LPWSTR, :LPSTR, :SIZE_T
 mbstowcs	proto __cdecl :LPWSTR, :LPSTR, :SIZE_T
 wctomb		proto __cdecl :LPSTR, :wchar_t
 
-QSORTCMD_T	typedef proto _CType :PVOID, :PVOID
+QSORTCMD_T	typedef proto __cdecl :PVOID, :PVOID
 LPQSORTCMD	typedef ptr QSORTCMD_T
-qsort		proto __cdecl :PVOID, :SIZE_T, :SIZE_T, :LPQSORTCMD
+qsort		proto :PVOID, :SIZE_T, :SIZE_T, :LPQSORTCMD
 
 getenv		proto __cdecl :LPSTR
 strtod		proto __cdecl :LPSTR, :DWORD
@@ -45,21 +52,7 @@ system		proto __cdecl :LPSTR
 malloc		proto __cdecl :SIZE_T
 realloc		proto __cdecl :PVOID, :SIZE_T
 free		proto __cdecl :PVOID
-
-ifndef __PE__
-xtol			proto _CType :LPSTR
-_xtoi64			proto _CType :LPSTR
-mkbstring		proto _CType :LPSTR, :QWORD
-strtolx			proto _CType :LPSTR
-searchp			proto _CType :LPSTR
-getenvp			proto _CType :LPSTR
-expenviron		proto _CType :LPSTR
-SaveEnvironment		proto _CType :LPSTR
-ReadEnvironment		proto _CType :LPSTR
-GetEnvironmentTEMP	proto _CType
-GetEnvironmentPATH	proto _CType
-GetEnvironmentSize	proto _CType :LPSTR
-endif
+setargv		proto __cdecl :ptr, :ptr sbyte
 
 ifndef _WSTDLIB_DEFINED
 _WSTDLIB_DEFINED equ <>

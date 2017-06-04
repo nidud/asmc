@@ -2,10 +2,6 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 .xlist
-;;
-;;    This file contains the types and function definitions to use the
-;;    Name Service Independent APIs.
-;;
 ifndef __RPCNSI_H__
 __RPCNSI_H__ equ 1
 
@@ -23,10 +19,9 @@ RPC_C_PROFILE_MATCH_BY_BOTH	equ 4
 
 RPC_C_NS_DEFAULT_EXP_AGE	equ -1
 
-;; Server APIs
 
 ;RPC_STATUS
-RpcNsBindingExportA proto _CType \
+RpcNsBindingExportA proto WINAPI \
        EntryNameSyntax: DWORD,
 	     EntryName: LPBYTE,
 		IfSpec: RPC_IF_HANDLE,
@@ -35,7 +30,7 @@ RpcNsBindingExportA proto _CType \
 
 
 ;RPC_STATUS
-RpcNsBindingUnexportA proto _CType \
+RpcNsBindingUnexportA proto WINAPI \
        EntryNameSyntax: DWORD,
 	     EntryName: LPBYTE,
 		IfSpec: RPC_IF_HANDLE,
@@ -44,7 +39,7 @@ RpcNsBindingUnexportA proto _CType \
 ifdef RPC_UNICODE_SUPPORTED
 
 ;RPC_STATUS
-RpcNsBindingExportW proto _CType \
+RpcNsBindingExportW proto WINAPI \
        EntryNameSyntax: DWORD,
 	     EntryName: LPWORD,
 		IfSpec: RPC_IF_HANDLE,
@@ -52,7 +47,7 @@ RpcNsBindingExportW proto _CType \
 	 ObjectUuidVec: ptr UUID_VECTOR
 
 ;RPC_STATUS
-RpcNsBindingUnexportW proto _CType \
+RpcNsBindingUnexportW proto WINAPI \
        EntryNameSyntax: DWORD,
 	     EntryName: LPWORD,
 		IfSpec: RPC_IF_HANDLE,
@@ -60,10 +55,9 @@ RpcNsBindingUnexportW proto _CType \
 
 endif
 
-;; Client APIs
 
 ;RPC_STATUS
-RpcNsBindingLookupBeginA proto _CType \
+RpcNsBindingLookupBeginA proto WINAPI \
        EntryNameSyntax: DWORD,
 	     EntryName: LPBYTE,
 		IfSpec: RPC_IF_HANDLE,
@@ -74,7 +68,7 @@ RpcNsBindingLookupBeginA proto _CType \
 ifdef RPC_UNICODE_SUPPORTED
 
 ;RPC_STATUS
-RpcNsBindingLookupBeginW proto _CType \
+RpcNsBindingLookupBeginW proto WINAPI \
        EntryNameSyntax: DWORD,
 	     EntryName: LPWORD,
 		IfSpec: RPC_IF_HANDLE,
@@ -84,95 +78,93 @@ RpcNsBindingLookupBeginW proto _CType \
 endif
 
 ;RPC_STATUS
-RpcNsBindingLookupNext proto _CType \
+RpcNsBindingLookupNext proto WINAPI \
 	 LookupContext: RPC_NS_HANDLE,
 	    BindingVec: ptr RPC_BINDING_VECTOR
 
 ;RPC_STATUS
-RpcNsBindingLookupDone proto _CType \
+RpcNsBindingLookupDone proto WINAPI \
 	 LookupContext: ptr RPC_NS_HANDLE
 
-;; Group APIs
 
 ;RPC_STATUS
-RpcNsGroupDeleteA proto _CType \
+RpcNsGroupDeleteA proto WINAPI \
        GroupNameSyntax: DWORD,
 	     GroupName: LPBYTE
 
 ;RPC_STATUS
-RpcNsGroupMbrAddA proto _CType \
+RpcNsGroupMbrAddA proto WINAPI \
        GroupNameSyntax: DWORD,
 	     GroupName: LPBYTE,
       MemberNameSyntax: DWORD,
 	    MemberName: LPBYTE
 
 ;RPC_STATUS
-RpcNsGroupMbrRemoveA proto _CType \
+RpcNsGroupMbrRemoveA proto WINAPI \
        GroupNameSyntax: DWORD,
 	     GroupName: LPBYTE,
       MemberNameSyntax: DWORD,
 	    MemberName: LPBYTE
 
 ;RPC_STATUS
-RpcNsGroupMbrInqBeginA proto _CType \
+RpcNsGroupMbrInqBeginA proto WINAPI \
        GroupNameSyntax: DWORD,
 	     GroupName: LPBYTE,
       MemberNameSyntax: DWORD,
 	InquiryContext: ptr RPC_NS_HANDLE
 
 ;RPC_STATUS
-RpcNsGroupMbrInqNextA proto _CType \
+RpcNsGroupMbrInqNextA proto WINAPI \
 	InquiryContext: RPC_NS_HANDLE,
 	    MemberName: LPBYTE
 
 ifdef RPC_UNICODE_SUPPORTED
 
 ;RPC_STATUS
-RpcNsGroupDeleteW proto _CType \
+RpcNsGroupDeleteW proto WINAPI \
        GroupNameSyntax: DWORD,
 	     GroupName: LPWORD
 
 ;RPC_STATUS
-RpcNsGroupMbrAddW proto _CType \
+RpcNsGroupMbrAddW proto WINAPI \
        GroupNameSyntax: DWORD,
 	     GroupName: LPWORD,
       MemberNameSyntax: DWORD,
 	    MemberName: LPWORD
 
 ;RPC_STATUS
-RpcNsGroupMbrRemoveW proto _CType \
+RpcNsGroupMbrRemoveW proto WINAPI \
        GroupNameSyntax: DWORD,
 	     GroupName: LPWORD,
       MemberNameSyntax: DWORD,
 	    MemberName: LPWORD
 
 ;RPC_STATUS
-RpcNsGroupMbrInqBeginW proto _CType \
+RpcNsGroupMbrInqBeginW proto WINAPI \
        GroupNameSyntax: DWORD,
 	     GroupName: LPWORD,
       MemberNameSyntax: DWORD,
 	InquiryContext: ptr RPC_NS_HANDLE
 
 ;RPC_STATUS
-RpcNsGroupMbrInqNextW proto _CType \
+RpcNsGroupMbrInqNextW proto WINAPI \
 	InquiryContext: RPC_NS_HANDLE,
 	    MemberName: LPWORD
 
 endif
 
 ;RPC_STATUS
-RpcNsGroupMbrInqDone proto _CType \
+RpcNsGroupMbrInqDone proto WINAPI \
 	InquiryContext: ptr RPC_NS_HANDLE
 
-;; Profile APIs
 
 ;RPC_STATUS
-RpcNsProfileDeleteA proto _CType \
+RpcNsProfileDeleteA proto WINAPI \
      ProfileNameSyntax: DWORD,
 	   ProfileName: LPBYTE
 
 ;RPC_STATUS
-RpcNsProfileEltAddA proto _CType \
+RpcNsProfileEltAddA proto WINAPI \
      ProfileNameSyntax: DWORD,
 	   ProfileName: LPBYTE,
 		  IfId: ptr RPC_IF_ID,
@@ -182,7 +174,7 @@ RpcNsProfileEltAddA proto _CType \
 	    Annotation: LPBYTE
 
 ;RPC_STATUS
-RpcNsProfileEltRemoveA proto _CType \
+RpcNsProfileEltRemoveA proto WINAPI \
      ProfileNameSyntax: DWORD,
 	   ProfileName: LPBYTE,
 		  IfId: ptr RPC_IF_ID,
@@ -190,7 +182,7 @@ RpcNsProfileEltRemoveA proto _CType \
 	    MemberName: LPBYTE
 
 ;RPC_STATUS
-RpcNsProfileEltInqBeginA proto _CType \
+RpcNsProfileEltInqBeginA proto WINAPI \
      ProfileNameSyntax: DWORD,
 	   ProfileName: LPBYTE,
 	   InquiryType: DWORD,
@@ -201,7 +193,7 @@ RpcNsProfileEltInqBeginA proto _CType \
 	InquiryContext: ptr RPC_NS_HANDLE
 
 ;RPC_STATUS
-RpcNsProfileEltInqNextA proto _CType \
+RpcNsProfileEltInqNextA proto WINAPI \
 	InquiryContext: RPC_NS_HANDLE,
 		  IfId: ptr RPC_IF_ID,
 	    MemberName: LPBYTE,
@@ -211,12 +203,12 @@ RpcNsProfileEltInqNextA proto _CType \
 ifdef RPC_UNICODE_SUPPORTED
 
 ;RPC_STATUS
-RpcNsProfileDeleteW proto _CType \
+RpcNsProfileDeleteW proto WINAPI \
      ProfileNameSyntax: DWORD,
 	   ProfileName: LPWORD
 
 ;RPC_STATUS
-RpcNsProfileEltAddW proto _CType \
+RpcNsProfileEltAddW proto WINAPI \
      ProfileNameSyntax: DWORD,
 	   ProfileName: LPWORD,
 		  IfId: ptr RPC_IF_ID,
@@ -226,7 +218,7 @@ RpcNsProfileEltAddW proto _CType \
 	    Annotation: LPWORD
 
 ;RPC_STATUS
-RpcNsProfileEltRemoveW proto _CType \
+RpcNsProfileEltRemoveW proto WINAPI \
      ProfileNameSyntax: DWORD,
 	   ProfileName: LPWORD,
 		  IfId: ptr RPC_IF_ID,
@@ -234,7 +226,7 @@ RpcNsProfileEltRemoveW proto _CType \
 	    MemberName: LPWORD
 
 ;RPC_STATUS
-RpcNsProfileEltInqBeginW proto _CType \
+RpcNsProfileEltInqBeginW proto WINAPI \
      ProfileNameSyntax: DWORD,
 	   ProfileName: LPWORD,
 	   InquiryType: DWORD,
@@ -245,7 +237,7 @@ RpcNsProfileEltInqBeginW proto _CType \
 	InquiryContext: ptr RPC_NS_HANDLE
 
 ;RPC_STATUS
-RpcNsProfileEltInqNextW proto _CType \
+RpcNsProfileEltInqNextW proto WINAPI \
 	InquiryContext: RPC_NS_HANDLE,
 		  IfId: ptr RPC_IF_ID,
 	    MemberName: LPWORD,
@@ -255,13 +247,12 @@ RpcNsProfileEltInqNextW proto _CType \
 endif
 
 ;RPC_STATUS
-RpcNsProfileEltInqDone proto _CType \
+RpcNsProfileEltInqDone proto WINAPI \
 	InquiryContext: ptr RPC_NS_HANDLE
 
-;; Entry object APIs
 
 ;RPC_STATUS
-RpcNsEntryObjectInqBeginA proto _CType \
+RpcNsEntryObjectInqBeginA proto WINAPI \
        EntryNameSyntax: DWORD,
 	     EntryName: LPBYTE,
 	InquiryContext: ptr RPC_NS_HANDLE
@@ -269,7 +260,7 @@ RpcNsEntryObjectInqBeginA proto _CType \
 ifdef RPC_UNICODE_SUPPORTED
 
 ;RPC_STATUS
-RpcNsEntryObjectInqBeginW proto _CType \
+RpcNsEntryObjectInqBeginW proto WINAPI \
        EntryNameSyntax: DWORD,
 	     EntryName: LPWORD,
 	InquiryContext: ptr RPC_NS_HANDLE
@@ -277,24 +268,23 @@ RpcNsEntryObjectInqBeginW proto _CType \
 endif
 
 ;RPC_STATUS
-RpcNsEntryObjectInqNext proto _CType \
+RpcNsEntryObjectInqNext proto WINAPI \
 	InquiryContext: RPC_NS_HANDLE,
 	       ObjUuid: ptr UUID
 
 ;RPC_STATUS
-RpcNsEntryObjectInqDone proto _CType \
+RpcNsEntryObjectInqDone proto WINAPI \
 	InquiryContext: ptr RPC_NS_HANDLE
 
-;; Management and MISC APIs
 
 ;RPC_STATUS
-RpcNsEntryExpandNameA proto _CType \
+RpcNsEntryExpandNameA proto WINAPI \
        EntryNameSyntax: DWORD,
 	     EntryName: LPBYTE,
 	  ExpandedName: LPBYTE
 
 ;RPC_STATUS
-RpcNsMgmtBindingUnexportA proto _CType \
+RpcNsMgmtBindingUnexportA proto WINAPI \
        EntryNameSyntax: DWORD,
 	     EntryName: LPBYTE,
 		  IfId: ptr RPC_IF_ID,
@@ -302,44 +292,44 @@ RpcNsMgmtBindingUnexportA proto _CType \
 	 ObjectUuidVec: ptr UUID_VECTOR
 
 ;RPC_STATUS
-RpcNsMgmtEntryCreateA proto _CType \
+RpcNsMgmtEntryCreateA proto WINAPI \
        EntryNameSyntax: DWORD,
 	     EntryName: LPBYTE
 
 ;RPC_STATUS
-RpcNsMgmtEntryDeleteA proto _CType \
+RpcNsMgmtEntryDeleteA proto WINAPI \
        EntryNameSyntax: DWORD,
 	     EntryName: LPBYTE
 
 ;RPC_STATUS
-RpcNsMgmtEntryInqIfIdsA proto _CType \
+RpcNsMgmtEntryInqIfIdsA proto WINAPI \
        EntryNameSyntax: DWORD,
 	     EntryName: LPBYTE,
 	       IfIdVec: ptr RPC_IF_ID_VECTOR
 
 ;RPC_STATUS
-RpcNsMgmtHandleSetExpAge proto _CType \
+RpcNsMgmtHandleSetExpAge proto WINAPI \
 	      NsHandle: RPC_NS_HANDLE,
 	 ExpirationAge: DWORD
 
 ;RPC_STATUS
-RpcNsMgmtInqExpAge proto _CType \
+RpcNsMgmtInqExpAge proto WINAPI \
 	 ExpirationAge: LPDWORD
 
 ;RPC_STATUS
-RpcNsMgmtSetExpAge proto _CType \
+RpcNsMgmtSetExpAge proto WINAPI \
 	 ExpirationAge: DWORD
 
 ifdef RPC_UNICODE_SUPPORTED
 
 ;RPC_STATUS
-RpcNsEntryExpandNameW proto _CType \
+RpcNsEntryExpandNameW proto WINAPI \
        EntryNameSyntax: DWORD,
 	     EntryName: LPWORD,
 	  ExpandedName: LPWORD
 
 ;RPC_STATUS
-RpcNsMgmtBindingUnexportW proto _CType \
+RpcNsMgmtBindingUnexportW proto WINAPI \
        EntryNameSyntax: DWORD,
 	     EntryName: LPWORD,
 		  IfId: ptr RPC_IF_ID,
@@ -347,27 +337,26 @@ RpcNsMgmtBindingUnexportW proto _CType \
 	 ObjectUuidVec: ptr UUID_VECTOR
 
 ;RPC_STATUS
-RpcNsMgmtEntryCreateW proto _CType \
+RpcNsMgmtEntryCreateW proto WINAPI \
        EntryNameSyntax: DWORD,
 	     EntryName: LPWORD
 
 ;RPC_STATUS
-RpcNsMgmtEntryDeleteW proto _CType \
+RpcNsMgmtEntryDeleteW proto WINAPI \
        EntryNameSyntax: DWORD,
 	     EntryName: LPWORD
 
 ;RPC_STATUS
-RpcNsMgmtEntryInqIfIdsW proto _CType \
+RpcNsMgmtEntryInqIfIdsW proto WINAPI \
        EntryNameSyntax: DWORD,
 	     EntryName: LPWORD,
 	       IfIdVec: ptr RPC_IF_ID_VECTOR
 
 endif
 
-;; Client API's implemented in wrappers.
 
 ;RPC_STATUS
-RpcNsBindingImportBeginA proto _CType \
+RpcNsBindingImportBeginA proto WINAPI \
        EntryNameSyntax: DWORD,
 	     EntryName: LPBYTE,
 		IfSpec: RPC_IF_HANDLE,
@@ -377,7 +366,7 @@ RpcNsBindingImportBeginA proto _CType \
 ifdef RPC_UNICODE_SUPPORTED
 
 ;RPC_STATUS
-RpcNsBindingImportBeginW proto _CType \
+RpcNsBindingImportBeginW proto WINAPI \
        EntryNameSyntax: DWORD,
 	     EntryName: LPWORD,
 		IfSpec: RPC_IF_HANDLE,
@@ -387,16 +376,16 @@ RpcNsBindingImportBeginW proto _CType \
 endif
 
 ;RPC_STATUS
-RpcNsBindingImportNext proto _CType \
+RpcNsBindingImportNext proto WINAPI \
 	 ImportContext: RPC_NS_HANDLE,
 	       Binding: ptr RPC_BINDING_HANDLE
 
 ;RPC_STATUS
-RpcNsBindingImportDone proto _CType \
+RpcNsBindingImportDone proto WINAPI \
 	 ImportContext: ptr RPC_NS_HANDLE
 
 ;RPC_STATUS
-RpcNsBindingSelect proto _CType \
+RpcNsBindingSelect proto WINAPI \
 	    BindingVec: ptr RPC_BINDING_VECTOR,
 	       Binding: ptr RPC_BINDING_HANDLE
 
@@ -446,8 +435,8 @@ RpcNsProfileEltRemove	equ <RpcNsProfileEltRemoveA>
 RpcNsProfileEltInqBegin equ <RpcNsProfileEltInqBeginA>
 RpcNsProfileEltInqNext	equ <RpcNsProfileEltInqNextA>
 
-endif ;; UNICODE
+endif 
 
-endif ;; __RPCNSI_H__
+endif 
 
 .list

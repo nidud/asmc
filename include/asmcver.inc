@@ -1,3 +1,3 @@
-VERSION equ 0x0223
-VERSSTR equ <'2.23'>
+VERSION equ 224
+VERSSTR equ <'2.24'>
 

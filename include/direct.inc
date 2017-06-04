@@ -13,86 +13,25 @@ _MAX_EXT	equ 256
 
 .xlist
 
-_getdrive	PROTO
-_chdrive	PROTO :SINT
-_chdir		PROTO :LPSTR
-_mkdir		PROTO :LPSTR
-_rmdir		PROTO :LPSTR
-_getcwd		PROTO :LPSTR, :SINT
-_getdcwd	PROTO :SINT, :LPSTR, :SINT
-_wchdir		PROTO :LPWSTR
-_wmkdir		PROTO :LPWSTR
-_wrmdir		PROTO :LPWSTR
-_wgetcwd	PROTO :LPWSTR, :SINT
-_wgetdcwd	PROTO :SINT, :LPWSTR, :SINT
-
-externdef	_diskflag:DWORD
+_getdrive	PROTO __cdecl
+_chdrive	PROTO __cdecl :SINT
+_chdir		PROTO __cdecl :LPSTR
+_mkdir		PROTO __cdecl :LPSTR
+_rmdir		PROTO __cdecl :LPSTR
+_getcwd		PROTO __cdecl :LPSTR, :SINT
+_getdcwd	PROTO __cdecl :SINT, :LPSTR, :SINT
+_wchdir		PROTO __cdecl :LPWSTR
+_wmkdir		PROTO __cdecl :LPWSTR
+_wrmdir		PROTO __cdecl :LPWSTR
+_wgetcwd	PROTO __cdecl :LPWSTR, :SINT
+_wgetdcwd	PROTO __cdecl :SINT, :LPWSTR, :SINT
 
 IFNDEF __PE__
 
-;;;;;;;;;;;;;;; crtl
-
-__allocwpath	PROTO :LPSTR
-
-;;;;;;;;;;;;;;; drvinfo
-
-MAXDRIVES	equ 26
-
-_DI_ROOTDIR	equ 0x00020000	; _FB_ROOTDIR
-_DI_CDROOM	equ 0x00080000	; _FB_CDROOM
-_DI_VOLID	equ 0x00000008	; _A_VOLID
-
-S_DISK		STRUC
-di_flag		dd ?
-di_time		dd ?
-di_size		dq ?
-di_name		db 32 dup(?)
-S_DISK		ENDS
-
-externdef	drvinfo:S_DISK	; [MAXDRIVES]
-
-_disk_read	PROTO
-_disk_exist	PROTO :UINT
-
-;;;;;;;;;;;;;;;
-
-WMAXPATH	equ 2048
-
-_DISK_LOCAL	equ 0x0001
-_DISK_FLOPPY	equ 0x0100
-_DISK_NETWORK	equ 0x0200
-_DISK_SUBST	equ 0x0400
-_DISK_CDROOM	equ 0x0800
-
-DRIVE_REMOVABLE equ 2	; _disk_type()
-DRIVE_FIXED	equ 3
-DRIVE_REMOTE	equ 4
-DRIVE_CDROM	equ 5
-DRIVE_RAMDISK	equ 6
-
-externdef	cp_stdpath:	SBYTE
-externdef	cp_stdmask:	SBYTE
-externdef	fp_maskp:	LPSTR
-externdef	fp_directory:	PVOID	; int (*fp_directory)(char *);
-externdef	fp_fileblock:	PVOID	; int (*fp_fileblock)(char *, wfblk *);
-externdef	OldErrorMode:	DWORD
-
-validdrive	PROTO :SINT
-
-scansub		PROTO :LPSTR, :LPSTR, :UINT
-scan_files	PROTO :LPSTR
-scan_directory	PROTO :UINT, :LPSTR
-recursive	PROTO :LPSTR, :LPSTR, :LPSTR
-
-_disk_init	PROTO :UINT
-_disk_type	PROTO :UINT
-_disk_test	PROTO :UINT
-_disk_ready	PROTO :UINT
-_disk_retry	PROTO :UINT
-_disk_select	PROTO :LPSTR
-
-GetVolumeID	PROTO :LPSTR, :LPSTR
-GetFileSystemName PROTO :LPSTR, :LPSTR
+__allocwpath	PROTO __cdecl :LPSTR
+ifdef __DZ__
+externdef	_diskflag:DWORD
+endif
 
 ENDIF
 

@@ -4,24 +4,18 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 .xlist
-;
-; Basic Windows Type Definitions
-;
 ifndef NO_STRICT
 ifndef STRICT
 STRICT equ 1
 endif
 endif
 
-;; Win32 defines _WIN32 automatically,
-;; but Macintosh doesn't, so if we are using
-;; Win32 Functions, we must do it here
 
 ifdef _MAC
 ifndef _WIN32
 _WIN32 equ <>
 endif
-endif ;;_MAC
+endif 
 
 ifndef WIN32
 WIN32 equ <>
@@ -31,9 +25,6 @@ ifndef WINVER
 WINVER equ 0x0500
 endif
 
-;
-; BASETYPES is defined in ntdef.h if these types are already defined
-;
 
 ifndef BASETYPES
 BASETYPES	equ 1
@@ -86,7 +77,7 @@ endif
 
 ifdef _MAC
 CALLBACK	equ <PASCAL>
-WINAPI		equ <CDECL>
+;WINAPI		equ <CDECL>
 WINAPIV		equ <CDECL>
 APIENTRY	equ <WINAPI>
 APIPRIVATE	equ <CDECL>
@@ -97,14 +88,14 @@ PASCAL		equ <>
 endif
 elseif (_MSC_VER ge 800) or defined(_STDCALL_SUPPORTED)
 CALLBACK	equ <stdcall>
-WINAPI		equ <stdcall>
+;WINAPI		equ <stdcall>
 WINAPIV		equ <c>
 APIENTRY	equ <WINAPI>
 APIPRIVATE	equ <stdcall>
 ;PASCAL		equ <stdcall>
 else
 CALLBACK	equ <>
-WINAPI		equ <>
+;WINAPI		equ <>
 WINAPIV		equ <>
 APIENTRY	equ <WINAPI>
 APIPRIVATE	equ <>
@@ -144,7 +135,6 @@ endif
 
 ;include specstrings.inc
 
-; Types use for passing & returning polymorphic values
 WPARAM		typedef UINT_PTR
 LPARAM		typedef LONG_PTR
 LRESULT		typedef LONG_PTR
@@ -294,7 +284,6 @@ POINTS		ENDS
 PPOINTS		typedef ptr POINTS
 LPPOINTS	typedef ptr POINTS
 
-; mode selections for the device mode function
 DM_UPDATE	    equ 1
 DM_COPY		    equ 2
 DM_PROMPT	    equ 4
@@ -305,7 +294,6 @@ DM_IN_PROMPT	    equ DM_PROMPT
 DM_OUT_BUFFER	    equ DM_COPY
 DM_OUT_DEFAULT	    equ DM_UPDATE
 
-; device capabilities indices
 DC_FIELDS	    equ 1
 DC_PAPERS	    equ 2
 DC_PAPERSIZE	    equ 3

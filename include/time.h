@@ -24,12 +24,12 @@ struct tm {
 
 typedef unsigned long clock_t;
 
-_CRTIMP time_t	_CType _time(time_t *);
-_CRTIMP struct tm *_CType localtime(const time_t *);
-_CRTIMP struct tm *_CType gmtime(const time_t *);
-_CRTIMP clock_t _CType clock(void);
+_CRTIMP time_t	__cdecl time(time_t *);
+_CRTIMP struct tm *__cdecl localtime(const time_t *);
+_CRTIMP struct tm *__cdecl gmtime(const time_t *);
+_CRTIMP clock_t __cdecl clock(void);
 
-#define time	_time
+#define _time	time
 
 typedef struct {
 	DWORD	dwLowDateTime;
@@ -47,9 +47,9 @@ typedef struct {
 	WORD	wMilliseconds;
       } SYSTEMTIME;
 
-void	_CType Sleep(int __dwMilliseconds);
-DWORD	_CType GetTickCount(void);
-void	_CType GetLocalTime(SYSTEMTIME *);
+void WINAPI Sleep(int __dwMilliseconds);
+unsigned WINAPI GetTickCount(void);
+void WINAPI GetLocalTime(SYSTEMTIME *);
 
 #ifdef __cplusplus
  }

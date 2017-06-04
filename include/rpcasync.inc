@@ -2,10 +2,6 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 .xlist
-;;
-;; This module contains the RPC runtime APIs needed to use
-;; [async] RPC features.
-;;
 ifndef __RPCASYNC_H__
 __RPCASYNC_H__ equ 1
 
@@ -24,7 +20,7 @@ RpcSendComplete		equ 1
 RpcReceiveComplete	equ 2
 RPC_ASYNC_EVENT		typedef sdword
 
-RPCNOTIFICATION_ROUTINE_T typedef proto _CType \
+RPCNOTIFICATION_ROUTINE_T typedef proto WINAPI \
 		pAsync: PVOID,
 	       Context: PVOID,
 		 Event: RPC_ASYNC_EVENT
@@ -32,7 +28,7 @@ RPCNOTIFICATION_ROUTINE typedef ptr RPCNOTIFICATION_ROUTINE_T
 PFN_RPCNOTIFICATION_ROUTINE typedef ptr RPCNOTIFICATION_ROUTINE
 
 RPC_ASYNC_STATE		STRUC
-_Size			UINT ?	;; size of this structure
+_Size			UINT ?	
 Signature		ULONG ?
 _Lock			LONG ?
 Flags			ULONG ?
@@ -63,7 +59,6 @@ Reserved		LONG 4 dup(?)
 RPC_ASYNC_STATE		ENDS
 PRPC_ASYNC_STATE	typedef ptr RPC_ASYNC_STATE
 
-;; Possible values for Flags
 RPC_C_NOTIFY_ON_SEND_COMPLETE equ 0x1
 RPC_C_INFINITE_TIMEOUT	equ INFINITE
 
@@ -72,46 +67,43 @@ RpcAsyncGetCallHandle macro pAsync
 	endm
 
 ;RPC_STATUS
-RpcAsyncInitializeHandle proto _CType \
+RpcAsyncInitializeHandle proto WINAPI \
 		pAsync: PRPC_ASYNC_STATE,
 		 _Size: UINT
 
 ;RPC_STATUS
-RpcAsyncRegisterInfo proto _CType \
+RpcAsyncRegisterInfo proto WINAPI \
 		pAsync: PRPC_ASYNC_STATE ;
 
 ;RPC_STATUS
-RpcAsyncGetCallStatus proto _CType \
+RpcAsyncGetCallStatus proto WINAPI \
 		pAsync: PRPC_ASYNC_STATE ;
 
 ;RPC_STATUS
-RpcAsyncCompleteCall proto _CType \
+RpcAsyncCompleteCall proto WINAPI \
 		pAsync: PRPC_ASYNC_STATE,
 		 Reply: PVOID ;
 
 ;RPC_STATUS
-RpcAsyncAbortCall proto _CType \
+RpcAsyncAbortCall proto WINAPI \
 		pAsync: PRPC_ASYNC_STATE,
 	 ExceptionCode: DWORD ;
 
 ;RPC_STATUS
-RpcAsyncCancelCall proto _CType \
+RpcAsyncCancelCall proto WINAPI \
 		pAsync: PRPC_ASYNC_STATE,
 		fAbort: BOOL ;
 
-;;
-;; Internal APIs
-;;
 ;RPC_STATUS RPC_ENTRY
-I_RpcAsyncSetHandle proto _CType \
+I_RpcAsyncSetHandle proto WINAPI \
 		Message: PRPC_MESSAGE,
 		pAsync: PRPC_ASYNC_STATE
 
 ;RPC_STATUS RPC_ENTRY
-I_RpcAsyncAbortCall proto _CType \
+I_RpcAsyncAbortCall proto WINAPI \
 		pAsync: PRPC_ASYNC_STATE,
 		ExceptionCode: DWORD
 
-endif ;; __RPCASYNC_H__
+endif 
 
 .list

@@ -82,58 +82,10 @@ endif  ;; NOT __STDC__
 _WSTRING_DEFINED equ 1
 endif
 
-;;;;;;;;;;;;;;; crtl
-
-ifndef __PE__
-
-memxchg		proto _CType :LPSTR, :LPSTR, :SIZE_T
-memstri		proto _CType :LPSTR, :SIZE_T, :LPSTR, :SIZE_T
-memrchr		proto _CType :LPSTR, :SIZE_T, :SIZE_T
-memquote	proto _CType :LPSTR, :SIZE_T
-memzero		proto _CType :LPSTR, :SIZE_T
-
-strfn		proto _CType :LPSTR
-strext		proto _CType :LPSTR
-setfext		proto _CType :LPSTR, :LPSTR
-strfcat		proto _CType :LPSTR, :LPSTR, :LPSTR
-strxchg		proto _CType :LPSTR, :LPSTR, :LPSTR
-strpath		proto _CType :LPSTR
-strnzcpy	proto _CType :LPSTR, :LPSTR, :SIZE_T
-strstart	proto _CType :LPSTR
-strspace	proto _CType :LPSTR
-strtrim		proto _CType :LPSTR
-strtoken	proto _CType :LPSTR
-strstri		proto _CType :LPSTR, :LPSTR
-strins		proto _CType :LPSTR, :LPSTR
-strtolx		proto _CType :LPSTR
-strmove		proto _CType :LPSTR, :LPSTR
-strchri		proto _CType :LPSTR, :SIZE_T
-streol		proto _CType :LPSTR
-
-cmpwarg		proto _CType :LPSTR, :LPSTR
-cmpwargs	proto _CType :LPSTR, :LPSTR
-dostounix	proto _CType :LPSTR
-unixtodos	proto _CType :LPSTR
-
-ifdef __SSE__
-
-memchr_sse	proto __cdecl :LPSTR, :SIZE_T,:SIZE_T
-memcpy_sse	proto __cdecl :LPSTR, :LPSTR, :SIZE_T
-strlen_sse	proto __cdecl :LPSTR
-strchr_sse	proto __cdecl :LPSTR, :SIZE_T
-strcmp_sse	proto __cdecl :LPSTR, :LPSTR
-strncmp_sse	proto __cdecl :LPSTR, :LPSTR, :SIZE_T
-strrchr_sse	proto __cdecl :LPSTR, :SIZE_T
-strstr_sse	proto __cdecl :LPSTR, :LPSTR
-
-memstri_sse	proto _CType :LPSTR, :SIZE_T, :LPSTR, :SIZE_T
-memrchr_sse	proto _CType :LPSTR, :SIZE_T, :SIZE_T
-memquote_sse	proto _CType :LPSTR, :SIZE_T
-strchri_sse	proto _CType :LPSTR, :SIZE_T
-streol_sse	proto _CType :LPSTR
-
-endif
-endif ;; !__PE__
+strfn		proto __cdecl :LPSTR
+strext		proto __cdecl :LPSTR
+memxchg		proto __cdecl :LPSTR, :LPSTR, :SIZE_T
+strfcat		proto __cdecl :LPSTR, :LPSTR, :LPSTR
 
 .list
 endif ;; __STRING_INC

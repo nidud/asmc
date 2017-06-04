@@ -1,29 +1,29 @@
 ifndef _INC_SDKDDKVER
 _INC_SDKDDKVER		equ <>
-;;
-;; Master include file for versioning windows SDK/DDK.
-;;
-_INTEGRAL_MAX_BITS	equ 64
-;;
-;; _WIN32_WINNT version constants
-;;
-_WIN32_WINNT_NT4	equ 0x0400 ;; Windows NT 4.0
-_WIN32_WINNT_WIN2K	equ 0x0500 ;; Windows 2000
-_WIN32_WINNT_WINXP	equ 0x0501 ;; Windows XP
-_WIN32_WINNT_WS03	equ 0x0502 ;; Windows Server 2003
-_WIN32_WINNT_WIN6	equ 0x0600 ;; Windows Vista
-_WIN32_WINNT_VISTA	equ 0x0600 ;; Windows Vista
-_WIN32_WINNT_WS08	equ 0x0600 ;; Windows Server 2008
-_WIN32_WINNT_LONGHORN	equ 0x0600 ;; Windows Vista
-_WIN32_WINNT_WIN7	equ 0x0601 ;; Windows 7
-_WIN32_WINNT_WIN8	equ 0x0602 ;; Windows 8
-_WIN32_WINNT_WINBLUE	equ 0x0603 ;; Windows 8.1
-_WIN32_WINNT_WINTHRESHOLD equ 0x0A00 ;; Windows 10
-_WIN32_WINNT_WIN10	equ 0x0A00 ;; Windows 10
 
-;;
-;; _WIN32_IE_ version constants
-;;
+ifndef WINAPI	; default (API) type
+ifdef _WIN64
+WINAPI equ <>
+else
+WINAPI equ <stdcall>
+endif
+endif
+
+_INTEGRAL_MAX_BITS	equ 64
+_WIN32_WINNT_NT4	equ 0x0400 
+_WIN32_WINNT_WIN2K	equ 0x0500 
+_WIN32_WINNT_WINXP	equ 0x0501 
+_WIN32_WINNT_WS03	equ 0x0502 
+_WIN32_WINNT_WIN6	equ 0x0600 
+_WIN32_WINNT_VISTA	equ 0x0600 
+_WIN32_WINNT_WS08	equ 0x0600 
+_WIN32_WINNT_LONGHORN	equ 0x0600 
+_WIN32_WINNT_WIN7	equ 0x0601 
+_WIN32_WINNT_WIN8	equ 0x0602 
+_WIN32_WINNT_WINBLUE	equ 0x0603 
+_WIN32_WINNT_WINTHRESHOLD equ 0x0A00 
+_WIN32_WINNT_WIN10	equ 0x0A00 
+
 _WIN32_IE_IE20		equ 0x0200
 _WIN32_IE_IE30		equ 0x0300
 _WIN32_IE_IE302		equ 0x0302
@@ -38,20 +38,17 @@ _WIN32_IE_IE60SP2	equ 0x0603
 _WIN32_IE_IE70		equ 0x0700
 _WIN32_IE_IE80		equ 0x0800
 
-;;
-;; IE <-> OS version mapping
-;;
-_WIN32_IE_NT4		equ _WIN32_IE_IE20  ;; NT4 supports IE versions 2.0 -> 6.0 SP1
+_WIN32_IE_NT4		equ _WIN32_IE_IE20  
 _WIN32_IE_NT4SP1	equ _WIN32_IE_IE20
 _WIN32_IE_NT4SP2	equ _WIN32_IE_IE20
 _WIN32_IE_NT4SP3	equ _WIN32_IE_IE302
 _WIN32_IE_NT4SP4	equ _WIN32_IE_IE401
 _WIN32_IE_NT4SP5	equ _WIN32_IE_IE401
 _WIN32_IE_NT4SP6	equ _WIN32_IE_IE50
-_WIN32_IE_WIN98		equ _WIN32_IE_IE401 ;; Win98 supports IE versions 4.01 -> 6.0 SP1
-_WIN32_IE_WIN98SE	equ _WIN32_IE_IE50  ;; Win98SE supports IE versions 5.0 -> 6.0 SP1
-_WIN32_IE_WINME		equ _WIN32_IE_IE55  ;; WinME supports IE versions 5.5 -> 6.0 SP1
-_WIN32_IE_WIN2K		equ _WIN32_IE_IE501 ;; Win2k supports IE versions 5.01 -> 6.0 SP1
+_WIN32_IE_WIN98		equ _WIN32_IE_IE401 
+_WIN32_IE_WIN98SE	equ _WIN32_IE_IE50  
+_WIN32_IE_WINME		equ _WIN32_IE_IE55  
+_WIN32_IE_WIN2K		equ _WIN32_IE_IE501 
 _WIN32_IE_WIN2KSP1	equ _WIN32_IE_IE501
 _WIN32_IE_WIN2KSP2	equ _WIN32_IE_IE501
 _WIN32_IE_WIN2KSP3	equ _WIN32_IE_IE501
@@ -66,9 +63,6 @@ _WIN32_IE_LONGHORN	equ _WIN32_IE_IE70
 _WIN32_IE_WIN7		equ _WIN32_IE_IE80
 
 
-;;
-;; NTDDI version constants
-;;
 NTDDI_WIN2K		equ 0x05000000
 NTDDI_WIN2KSP1		equ 0x05000100
 NTDDI_WIN2KSP2		equ 0x05000200
@@ -108,9 +102,6 @@ NTDDI_WS08SP4		equ NTDDI_WIN6SP4
 
 NTDDI_WIN7		equ 0x06010000
 
-;;
-;; masks for version macros
-;;
 OSVERSION_MASK		equ 0xFFFF0000
 SPVERSION_MASK		equ 0x0000FF00
 SUBVERSION_MASK		equ 0x000000FF
@@ -126,28 +117,24 @@ endif
 
 ifdef DECLSPEC_DEPRECATED_DDK
 
-;; deprecate in 2k or later
 if (NTDDI_VERSION GE NTDDI_WIN2K)
 DECLSPEC_DEPRECATED_DDK_WIN2K equ DECSPEC_DEPRECATED_DDK
 else
 DECLSPEC_DEPRECATED_DDK_WIN2K equ <>
 endif
 
-;; deprecate in XP or later
 if (NTDDI_VERSION GE NTDDI_WINXP)
 DECLSPEC_DEPRECATED_DDK_WINXP equ DECSPEC_DEPRECATED_DDK
 else
 DECLSPEC_DEPRECATED_DDK_WINXP equ <>
 endif
 
-;; deprecate in WS03 or later
 if (NTDDI_VERSION GE NTDDI_WS03)
 DECLSPEC_DEPRECATED_DDK_WIN2003 equ DECSPEC_DEPRECATED_DDK
 else
 DECLSPEC_DEPRECATED_DDK_WIN2003 equ <>
 endif
 
-;; deprecate in WIN6 or later
 if (NTDDI_VERSION GE NTDDI_WIN6)
 DECLSPEC_DEPRECATED_DDK_WIN6 equ DECSPEC_DEPRECATED_DDK
 else
@@ -156,11 +143,8 @@ endif
 
 DECLSPEC_DEPRECATED_DDK_LONGHORN equ DECSPEC_DEPRECATED_DDK_WIN6
 
-endif ;; defined(DECLSPEC_DEPRECATED_DDK)
+endif 
 
-;;
-;; if versions aren't already defined, default to most current
-;;
 
 NTDDI_VERSION_FROM_WIN32_WINNT2 macro ver
 	exitm<(ver shl 16)>
@@ -182,7 +166,6 @@ endif
 
 ifndef NTDDI_VERSION
 ifdef _WIN32_WINNT
-;; set NTDDI_VERSION based on _WIN32_WINNT
 NTDDI_VERSION	equ NTDDI_VERSION_FROM_WIN32_WINNT(_WIN32_WINNT)
 else
 NTDDI_VERSION	equ 0x06010000
@@ -195,9 +178,9 @@ WINVER		equ _WIN32_WINNT_NT4
 elseifdef _WIN32
 WINVER		equ _WIN32_WINNT_WS03
 else
-WINVER		equ 0x0601	;; Windows 7
-_MSC_VER	equ 1700	;; Visual C++ version 17.0
-_MSC_FULL_VER	equ 170000000	;; Visual C++ version 17.0
+WINVER		equ 0x0601	
+_MSC_VER	equ 1700	
+_MSC_FULL_VER	equ 170000000	
 endif
 endif
 
@@ -207,7 +190,6 @@ endif
 
 ifndef _WIN32_IE
 ifdef _WIN32_WINNT
-;; set _WIN32_IE based on _WIN32_WINNT
 if (_WIN32_WINNT LE _WIN32_WINNT_NT4)
 _WIN32_IE	equ _WIN32_IE_IE50
 elseif (_WIN32_WINNT LE _WIN32_WINNT_WIN2K)
@@ -221,12 +203,9 @@ _WIN32_IE	equ 0x0800
 endif
 else
 _WIN32_IE	equ 0x0800
-endif ;; _WIN32_WINNT
-endif ;; _WIN32_IE
+endif 
+endif 
 
-;;
-;; Sanity check for compatible versions
-;;
 if defined(_WIN32_WINNT) AND NOT defined(MIDL_PASS)
 if ((WINVER LT 0x0400) AND (_WIN32_WINNT GT 0x0400))
 .err <WINVER setting conflicts with _WIN32_WINNT setting>
@@ -252,7 +231,7 @@ if ((_WIN32_WINNT LT _WIN32_WINNT_WIN2K) AND (_WIN32_IE GT _WIN32_IE_IE60SP1))
 .err <_WIN32_WINNT settings conflicts with _WIN32_IE setting>
 endif
 
-endif  ;; defined(_WIN32_WINNT) AND NOT defined(MIDL_PASS)
+endif  
 
-endif  ;; _INC_SDKDDKVER
+endif  
 

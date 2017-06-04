@@ -2,55 +2,43 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 .xlist
-;;
-;; Public interface to LZEXP?.LIB.
-;;
 ifndef _LZEXPAND_
 _LZEXPAND_ equ 1
 
-;;
-;;* Error Return Codes
-;;
-
-LZERROR_BADINHANDLE	equ -1	;; invalid input handle
-LZERROR_BADOUTHANDLE	equ -2	;; invalid output handle
-LZERROR_READ		equ -3	;; corrupt compressed file format
-LZERROR_WRITE		equ -4	;; out of space for output file
-LZERROR_GLOBALLOC	equ -5	;; insufficient memory for LZFile struct
-LZERROR_GLOBLOCK	equ -6	;; bad global handle
-LZERROR_BADVALUE	equ -7	;; input parameter out of acceptable range
-LZERROR_UNKNOWNALG	equ -8	;; compression algorithm not recognized
-
-
-;;
-;;* Prototypes
-;;
+LZERROR_BADINHANDLE	equ -1
+LZERROR_BADOUTHANDLE	equ -2
+LZERROR_READ		equ -3
+LZERROR_WRITE		equ -4
+LZERROR_GLOBALLOC	equ -5
+LZERROR_GLOBLOCK	equ -6
+LZERROR_BADVALUE	equ -7
+LZERROR_UNKNOWNALG	equ -8
 
 ;INT
-LZStart proto _CType
+LZStart proto WINAPI
 
 ;VOID
-LZDone proto _CType
+LZDone proto WINAPI
 
 ;LONG
-CopyLZFile proto _CType \
+CopyLZFile proto WINAPI \
 		      : SINT,
 		      : SINT
 
 ;LONG
-LZCopy proto _CType \
+LZCopy proto WINAPI \
 		      : SINT,
 		      : SINT
 
 ;INT
-LZInit proto _CType \
+LZInit proto WINAPI \
 		      : SINT
 
 ;INT
-GetExpandedNameA proto _CType \
+GetExpandedNameA proto WINAPI \
 		      : LPSTR,
 		      : LPSTR
-GetExpandedNameW proto _CType \
+GetExpandedNameW proto WINAPI \
 		      : LPWSTR,
 		      : LPWSTR
 
@@ -58,14 +46,14 @@ ifdef _UNICODE
 GetExpandedName		equ <GetExpandedNameW>
 else
 GetExpandedName		equ <GetExpandedNameA>
-endif ;; NOT UNICODE
+endif
 
 ;INT
-LZOpenFileA proto _CType \
+LZOpenFileA proto WINAPI \
 		      : LPSTR,
 		      : LPOFSTRUCT,
 		      : WORD
-LZOpenFileW proto _CType \
+LZOpenFileW proto WINAPI \
 		      : LPWSTR,
 		      : LPOFSTRUCT,
 		      : WORD
@@ -73,24 +61,24 @@ ifdef _UNICODE
 LZOpenFile		equ <LZOpenFileW>
 else
 LZOpenFile		equ <LZOpenFileA>
-endif ;; NOT UNICODE
+endif
 
 ;LONG
-LZSeek proto _CType \
+LZSeek proto WINAPI \
 		      : SINT,
 		      : LONG,
 		      : SINT
 
 ;INT
-LZRead proto _CType \
+LZRead proto WINAPI \
 		      : SINT,
 		      : LPSTR,
 		      : SINT
 
 ;VOID
-LZClose proto _CType \
+LZClose proto WINAPI \
 		      : SINT
 
-endif ;; _LZEXPAND_
+endif
 
 .list

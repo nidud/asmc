@@ -2,11 +2,6 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 .xlist
-;;
-;; Rpc Error Codes from the compiler and runtime
-;;
-;; If you change this file, you must also change rpcerr.h.
-;;
 ifndef __RPCNTERR_H__
 __RPCNTERR_H__ equ 1
 
@@ -30,6 +25,6 @@ RPC_X_INVALID_BUFFER		equ ERROR_INVAID_USER_BUFFER
 RPC_X_PIPE_APP_MEMORY		equ ERROR_OUTOFMEMORY
 RPC_X_INVALID_PIPE_OPERATION	equ RPC_X_WRONG_PIPE_ORDER
 
-endif ;; __RPCNTERR_H__
+endif 
 
 .list

@@ -2,9 +2,6 @@ ifndef _WINDEF_
  include windef.inc
 endif
 .xlist
-;
-; declarations for wide character functions
-;
 ifndef __WCHAR_INC
 __WCHAR_INC equ <>
 
@@ -14,7 +11,6 @@ ifndef _WIN64
 endif
 endif
 
-;; Define _CRTIMP
 
 ifdef __PE__
 option	dllimport:<msvcrt>
@@ -44,8 +40,8 @@ ifndef _VA_LIST_DEFINED
 _VA_LIST_DEFINED equ <>
 ifdef  _M_ALPHA
 va_list		STRUC
-a0		LPSTR ? ;; pointer to first homed integer argument
-offset		SINT ?	;; byte offset of next parameter
+a0		LPSTR ? 
+offset		SINT ?	
 va_list		ENDS
 else
 va_list		typedef LPSTR
@@ -71,23 +67,22 @@ _iobuf		ENDS
 FILE		typedef _iobuf
 endif
 
-;; Declare _iob[] array
 
 ifndef _STDIO_DEFINED
 externdef	_iob:FILE
-endif  ;; _STDIO_DEFINED
+endif  
 
 ifndef _FSIZE_T_DEFINED
 _FSIZE_T_DEFINED equ <>
-_fsize_t	typedef size_t	;; Could be 64 bits for Win32
+_fsize_t	typedef size_t	
 endif
 
 ifndef _WFINDDATA_T_DEFINED
 _WFINDDATA_T_DEFINED equ <>
 _wfinddata_t	STRUC
 attrib		dd ?
-time_create	time_t ?	;; -1 for FAT file systems
-time_access	time_t ?	;; -1 for FAT file systems
+time_create	time_t ?	
+time_access	time_t ?	
 time_write	time_t ?
 _size		dq ?
 _name		wchar_t 260 dup(?)
@@ -95,8 +90,8 @@ _wfinddata_t	ENDS
 if _INTEGRAL_MAX_BITS GE 64
 _wfinddatai64_t STRUC
 attrib		dd ?
-time_create	time_t ?	;; -1 for FAT file systems
-time_access	time_t ?	;; -1 for FAT file systems
+time_create	time_t ?	
+time_access	time_t ?	
 time_write	time_t ?
 _size		dq ?
 _name		wchar_t 260 dup(?)
@@ -104,7 +99,6 @@ _wfinddatai64_t ENDS
 endif
 endif
 
-;; define NULL pointer value
 
 ifndef NULL
 NULL		equ 0
@@ -115,31 +109,26 @@ ifndef _CTYPE_DISABLE_MACROS
 externdef	_ctype:word
 externdef	_pctype:ptr word
 externdef	_pwctype:ptr wctype_t
-endif  ;; _CTYPE_DISABLE_MACROS
+endif  
 
 
-;; set bit masks for the possible character types
 
-_UPPER		equ 0x1	    ;; upper case letter
-_LOWER		equ 0x2	    ;; lower case letter
-_DIGIT		equ 0x4	    ;; digit[0-9]
-_SPACE		equ 0x8	    ;; tab, carriage return, newline,
-;; vertical tab or form feed
-_PUNCT		equ 0x10    ;; punctuation character
-_CONTROL	equ 0x20    ;; control character
-_BLANK		equ 0x40    ;; space char
-_HEX		equ 0x80    ;; hexadecimal digit
+_UPPER		equ 0x1	    
+_LOWER		equ 0x2	    
+_DIGIT		equ 0x4	    
+_SPACE		equ 0x8	    
+_PUNCT		equ 0x10    
+_CONTROL	equ 0x20    
+_BLANK		equ 0x40    
+_HEX		equ 0x80    
 
-_LEADBYTE	equ 0x8000  ;; multibyte leadbyte
-_ALPHA		equ 0x0100 OR _UPPER OR _LOWER	;; alphabetic character
+_LEADBYTE	equ 0x8000  
+_ALPHA		equ 0x0100 OR _UPPER OR _LOWER	
 
 
-;; Function prototypes
 
 ifndef _WCTYPE_DEFINED
 
-;; Character classification function prototypes
-;; also declared in ctype.h
 
 iswalpha	proto __cdecl :wint_t
 iswupper	proto __cdecl :wint_t
@@ -165,7 +154,6 @@ endif
 
 ifndef _WDIRECT_DEFINED
 
-;; also declared in direct.h
 
 _wchdir		proto __cdecl :ptr wchar_t
 _wgetcwd	proto __cdecl :ptr wchar_t, :SINT
@@ -178,7 +166,6 @@ endif
 
 ifndef _WIO_DEFINED
 
-;; also declared in io.h
 
 _waccess	proto __cdecl :ptr wchar_t, :SINT
 _wchmod		proto __cdecl :ptr wchar_t, :SINT
@@ -201,7 +188,6 @@ endif
 
 ifndef _WLOCALE_DEFINED
 
-;; wide function prototypes, also declared in wchar.h
 
 _wsetlocale	proto __cdecl :SINT, :ptr wchar_t
 
@@ -211,7 +197,6 @@ endif
 ifndef _WPROCESS_DEFINED
 _WPROCESS_DEFINED equ <>
 
-;; also declared in process.h
 
 _wexecl		proto _CDecl :ptr wchar_t, :ptr wchar_t, :VARARG
 _wexecle	proto _CDecl :ptr wchar_t, :ptr wchar_t, :VARARG
@@ -277,28 +262,25 @@ ifndef _CTYPE_DISABLE_MACROS
 isleadbyte macro _c
 	exitm<_pctype[_c] AND _LEADBYTE>
 	endm
-endif  ;; _CTYPE_DISABLE_MACROS
-endif  ;; _WCTYPE_INLINE_DEFINED
-endif  ;; _WCTYPE_DEFINED
+endif  
+endif  
+endif  
 
 
 ifndef _POSIX_
 
-;; define structure for returning status information
 
 ifndef _INO_T_DEFINED
 _INO_T_DEFINED equ <>
-_ino_t		typedef WORD	;; i-node number (not used on DOS)
+_ino_t		typedef WORD	
 if NOT __STDC__
-;; Non-ANSI name for compatibility
 ino_t		typedef WORD
 endif
 endif
 
 ifndef _DEV_T_DEFINED
-_dev_t		typedef UINT	  ;; device code
+_dev_t		typedef UINT	  
 if NOT __STDC__
-;; Non-ANSI name for compatibility
 dev_t		typedef UINT
 endif
 _DEV_T_DEFINED	equ 1
@@ -306,12 +288,11 @@ endif
 
 ifndef _OFF_T_DEFINED
 ifdef _WIN64
-_off_t		typedef QWORD	;; file offset value
+_off_t		typedef QWORD	
 else
 _off_t		typedef SDWORD
 endif
 if NOT __STDC__
-;; Non-ANSI name for compatibility
 off_t		typedef _off_t
 endif
 _OFF_T_DEFINED	equ 1
@@ -335,7 +316,6 @@ st_ctime	time_t ?
 _stat		ENDS
 
 if NOT __STDC__
-;; Non-ANSI names for compatibility
 stat		STRUC
 st_dev		_dev_t ?
 st_ino		_ino_t ?
@@ -349,7 +329,7 @@ st_atime	time_t ?
 st_mtime	time_t ?
 st_ctime	time_t ?
 stat		ENDS
-endif  ;; __STDC__
+endif  
 
 if _INTEGRAL_MAX_BITS GE 64
 _stati64	STRUC
@@ -371,19 +351,17 @@ endif
 
 ifndef _WSTAT_DEFINED
 _WSTAT_DEFINED	equ <>
-;; also declared in stat.h
 _wstatproto	proto __cdecl :ptr wchar_t, :ptr _stat
 if _INTEGRAL_MAX_BITS GE 64
 _wstati64	proto __cdecl :ptr wchar_t, :ptr _stati64
 endif
 endif
 
-endif  ;; NOT _POSIX_
+endif  
 
 
 ifndef _WSTDIO_DEFINED
 
-;; also declared in stdio.h
 
 ifdef  _POSIX_
 _wfsopenproto	proto __cdecl :ptr wchar_t, :ptr wchar_t
@@ -445,7 +423,6 @@ endif
 
 ifndef _WSTDLIB_DEFINED
 
-;; also declared in stdlib.h
 
 _itow		proto __cdecl :SINT, :ptr wchar_t, :SINT
 _ltow		proto __cdecl :LONG, :ptr wchar_t, :SINT
@@ -471,7 +448,6 @@ ifndef _POSIX_
 
 ifndef _WSTDLIBP_DEFINED
 
-;; also declared in stdlib.h
 
 _wfullpath	proto __cdecl :ptr wchar_t, :ptr wchar_t, :size_t
 _wmakepath	proto __cdecl :ptr wchar_t, :ptr wchar_t, :ptr wchar_t, :ptr wchar_t, :ptr wchar_t
@@ -483,12 +459,11 @@ _wsplitpath	proto __cdecl :ptr wchar_t, :ptr wchar_t, :ptr wchar_t, :ptr wchar_t
 _WSTDLIBP_DEFINED equ 1
 endif
 
-endif  ;; _POSIX_
+endif  
 
 
 ifndef _WSTRING_DEFINED
 
-;; also declared in string.h
 
 wcscat		proto __cdecl :ptr wchar_t, :ptr wchar_t
 wcschr		proto __cdecl :ptr wchar_t, :wchar_t
@@ -518,12 +493,10 @@ _wcsicoll	proto __cdecl :ptr wchar_t, :ptr wchar_t
 _wcsncoll	proto __cdecl :ptr wchar_t, :ptr wchar_t, :size_t
 _wcsnicoll	proto __cdecl :ptr wchar_t, :ptr wchar_t, :size_t
 
-;; Old names
 wcswcs		equ <wcsstr>
 
 if NOT __STDC__
 
-;; prototypes for oldnames.lib functions
 wcsdup		proto __cdecl :ptr wchar_t
 wcsicmp		proto __cdecl :ptr wchar_t, :ptr wchar_t
 wcsnicmp	proto __cdecl :ptr wchar_t, :ptr wchar_t, :size_t
@@ -534,7 +507,7 @@ wcslwr		proto __cdecl :ptr wchar_t
 wcsupr		proto __cdecl :ptr wchar_t
 wcsicoll	proto __cdecl :ptr wchar_t, :ptr wchar_t
 
-endif  ;; NOT __STDC__
+endif  
 
 _WSTRING_DEFINED equ 1
 endif
@@ -542,21 +515,20 @@ endif
 ifndef _TM_DEFINED
 _TM_DEFINED equ <>
 tm		STRUC
-tm_sec		SINT ?	;; seconds after the minute - [0,59]
-tm_min		SINT ?	;; minutes after the hour - [0,59]
-tm_hour		SINT ?	;; hours since midnight - [0,23]
-tm_mday		SINT ?	;; day of the month - [1,31]
-tm_mon		SINT ?	;; months since January - [0,11]
-tm_year		SINT ?	;; years since 1900
-tm_wday		SINT ?	;; days since Sunday - [0,6]
-tm_yday		SINT ?	;; days since January 1 - [0,365]
-tm_isdst	SINT ?	;; daylight savings time flag
+tm_sec		SINT ?	
+tm_min		SINT ?	
+tm_hour		SINT ?	
+tm_mday		SINT ?	
+tm_mon		SINT ?	
+tm_year		SINT ?	
+tm_wday		SINT ?	
+tm_yday		SINT ?	
+tm_isdst	SINT ?	
 tm		ENDS
 endif
 
 ifndef _WTIME_DEFINED
 
-;; also declared in time.h
 
 _wasctime	proto __cdecl :ptr tm
 _wctime		proto __cdecl :ptr time_t
@@ -581,6 +553,6 @@ wcrtomb		proto __cdecl :LPSTR, :wchar_t, :ptr mbstate_t
 wcsrtombs	proto __cdecl :LPSTR, :ptr wchar_t, :size_t, :ptr mbstate_t
 wctob		proto __cdecl :wint_t
 
-endif  ;; __WCHAR_INC
+endif  
 
 .list

@@ -1,21 +1,10 @@
 .xlist
-;
-; This module contains the UI dialog header information.
-;
 ifndef _DLGSH_INCLUDED_
 _DLGSH_INCLUDED_ equ 1
-
-
-;;
-;;  Constant Declarations.
-;;
 
 ctlFirst		equ 0x0400
 ctlLast			equ 0x04ff
 
-;;
-;;  Push buttons.
-;;
 psh1			equ 0x0400
 psh2			equ 0x0401
 psh3			equ 0x0402
@@ -34,9 +23,6 @@ psh15			equ 0x040e
 pshHelp			equ psh15
 psh16			equ 0x040f
 
-;;
-;;  Checkboxes.
-;;
 chx1			equ 0x0410
 chx2			equ 0x0411
 chx3			equ 0x0412
@@ -54,9 +40,6 @@ chx14			equ 0x041d
 chx15			equ 0x041e
 chx16			equ 0x041f
 
-;;
-;;  Radio buttons.
-;;
 rad1			equ 0x0420
 rad2			equ 0x0421
 rad3			equ 0x0422
@@ -74,9 +57,6 @@ rad14			equ 0x042d
 rad15			equ 0x042e
 rad16			equ 0x042f
 
-;;
-;;  Groups, frames, rectangles, and icons.
-;;
 grp1			equ 0x0430
 grp2			equ 0x0431
 grp3			equ 0x0432
@@ -94,9 +74,6 @@ ico2			equ 0x043d
 ico3			equ 0x043e
 ico4			equ 0x043f
 
-;;
-;;  Static text.
-;;
 stc1			equ 0x0440
 stc2			equ 0x0441
 stc3			equ 0x0442
@@ -130,9 +107,6 @@ stc30			equ 0x045d
 stc31			equ 0x045e
 stc32			equ 0x045f
 
-;;
-;;  Listboxes.
-;;
 lst1			equ 0x0460
 lst2			equ 0x0461
 lst3			equ 0x0462
@@ -150,9 +124,6 @@ lst14			equ 0x046d
 lst15			equ 0x046e
 lst16			equ 0x046f
 
-;;
-;;  Combo boxes.
-;;
 cmb1			equ 0x0470
 cmb2			equ 0x0471
 cmb3			equ 0x0472
@@ -170,9 +141,6 @@ cmb14			equ 0x047d
 cmb15			equ 0x047e
 cmb16			equ 0x047f
 
-;;
-;;  Edit controls.
-;;
 edt1			equ 0x0480
 edt2			equ 0x0481
 edt3			equ 0x0482
@@ -190,9 +158,6 @@ edt14			equ 0x048d
 edt15			equ 0x048e
 edt16			equ 0x048f
 
-;;
-;;  Scroll bars.
-;;
 scr1			equ 0x0490
 scr2			equ 0x0491
 scr3			equ 0x0492
@@ -202,10 +167,6 @@ scr6			equ 0x0495
 scr7			equ 0x0496
 scr8			equ 0x0497
 
-;;
-;;  These dialog resource ordinals really start at 0x0600, but the
-;;  RC Compiler can't handle hex for resource IDs, hence the decimal.
-;;
 FILEOPENORD		equ 1536
 MULTIFILEOPENORD	equ 1537
 PRINTDLGORD		equ 1538
@@ -221,11 +182,8 @@ if (WINVER GE 0x400)
 PAGESETUPDLGORD		equ 1546
 NEWFILEOPENORD		equ 1547
 NEWOBJECTOPENORD	equ 1548
-endif ;; WINVER GE 0x400)
+endif
 
-;;
-;;  Typedef Declarations.
-;;
 CRGB			STRUC
 bRed			db ?
 bGreen			db ?
@@ -233,7 +191,6 @@ bBlue			db ?
 bExtra			db ?
 CRGB			ENDS
 
-
-endif ;; _DLGSH_INCLUDED_
+endif
 
 .list

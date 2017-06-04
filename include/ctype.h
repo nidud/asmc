@@ -24,49 +24,49 @@ extern unsigned short _ctype[]; /* Character type array */
 
 #ifndef _CTYPE_DEFINED
 
-_CRTIMP int _CType isalnum (int __c);
-_CRTIMP int _CType isalpha (int __c);
-_CRTIMP int _CType isascii (int __c);
-_CRTIMP int _CType iscntrl (int __c);
-_CRTIMP int _CType isdigit (int __c);
-_CRTIMP int _CType isgraph (int __c);
-_CRTIMP int _CType islower (int __c);
-_CRTIMP int _CType isprint (int __c);
-_CRTIMP int _CType ispunct (int __c);
-_CRTIMP int _CType isspace (int __c);
-_CRTIMP int _CType isupper (int __c);
-_CRTIMP int _CType isxdigit(int __c);
-_CRTIMP int _CType tolower (int __c);
-_CRTIMP int _CType toupper (int __c);
+_CRTIMP int __cdecl isalnum (int __c);
+_CRTIMP int __cdecl isalpha (int __c);
+_CRTIMP int __cdecl isascii (int __c);
+_CRTIMP int __cdecl iscntrl (int __c);
+_CRTIMP int __cdecl isdigit (int __c);
+_CRTIMP int __cdecl isgraph (int __c);
+_CRTIMP int __cdecl islower (int __c);
+_CRTIMP int __cdecl isprint (int __c);
+_CRTIMP int __cdecl ispunct (int __c);
+_CRTIMP int __cdecl isspace (int __c);
+_CRTIMP int __cdecl isupper (int __c);
+_CRTIMP int __cdecl isxdigit(int __c);
+_CRTIMP int __cdecl tolower (int __c);
+_CRTIMP int __cdecl toupper (int __c);
 
-_CRTIMP int _CType _isctype(int, int);
-_CRTIMP int _CType _tolower(int);
-_CRTIMP int _CType _toupper(int);
-_CRTIMP int _CType __isascii(int);
-_CRTIMP int _CType __toascii(int);
-_CRTIMP int _CType __iscsymf(int);
-_CRTIMP int _CType __iscsym(int);
+_CRTIMP int __cdecl _isctype(int, int);
+_CRTIMP int __cdecl _tolower(int);
+_CRTIMP int __cdecl _toupper(int);
+_CRTIMP int __cdecl __isascii(int);
+_CRTIMP int __cdecl __toascii(int);
+_CRTIMP int __cdecl __iscsymf(int);
+_CRTIMP int __cdecl __iscsym(int);
 #define _CTYPE_DEFINED
 #endif
 
 #ifndef _WCTYPE_DEFINED
 
-_CRTIMP int _CType iswalpha(wint_t);
-_CRTIMP int _CType iswupper(wint_t);
-_CRTIMP int _CType iswlower(wint_t);
-_CRTIMP int _CType iswdigit(wint_t);
-_CRTIMP int _CType iswxdigit(wint_t);
-_CRTIMP int _CType iswspace(wint_t);
-_CRTIMP int _CType iswpunct(wint_t);
-_CRTIMP int _CType iswalnum(wint_t);
-_CRTIMP int _CType iswprint(wint_t);
-_CRTIMP int _CType iswgraph(wint_t);
-_CRTIMP int _CType iswcntrl(wint_t);
-_CRTIMP int _CType iswascii(wint_t);
-_CRTIMP int _CType isleadbyte(int);
-_CRTIMP wchar_t _CType towupper(wchar_t);
-_CRTIMP wchar_t _CType towlower(wchar_t);
-_CRTIMP int _CType iswctype(wint_t, wctype_t);
+_CRTIMP int __cdecl iswalpha(wint_t);
+_CRTIMP int __cdecl iswupper(wint_t);
+_CRTIMP int __cdecl iswlower(wint_t);
+_CRTIMP int __cdecl iswdigit(wint_t);
+_CRTIMP int __cdecl iswxdigit(wint_t);
+_CRTIMP int __cdecl iswspace(wint_t);
+_CRTIMP int __cdecl iswpunct(wint_t);
+_CRTIMP int __cdecl iswalnum(wint_t);
+_CRTIMP int __cdecl iswprint(wint_t);
+_CRTIMP int __cdecl iswgraph(wint_t);
+_CRTIMP int __cdecl iswcntrl(wint_t);
+_CRTIMP int __cdecl iswascii(wint_t);
+_CRTIMP int __cdecl isleadbyte(int);
+_CRTIMP wchar_t __cdecl towupper(wchar_t);
+_CRTIMP wchar_t __cdecl towlower(wchar_t);
+_CRTIMP int __cdecl iswctype(wint_t, wctype_t);
 
 #define _WCTYPE_DEFINED
 #endif
@@ -75,21 +75,21 @@ _CRTIMP int _CType iswctype(wint_t, wctype_t);
  }
 #endif
 
-#define isalnum(c)  ((unsigned char)_ctype[(unsigned char)(c) + 1] & (_DIGIT | _UPPER | _LOWER))
-#define isalpha(c)  ((unsigned char)_ctype[(unsigned char)(c) + 1] & (_UPPER | _LOWER))
+#define isalnum(c)  (_ctype[(unsigned char)(c) + 1] & (_DIGIT | _UPPER | _LOWER))
+#define isalpha(c)  (_ctype[(unsigned char)(c) + 1] & (_UPPER | _LOWER))
 #define isascii(c)  ((unsigned char)(c) < 128)
-#define iscntrl(c)  ((unsigned char)_ctype[(unsigned char)(c) + 1] & _CONTROL)
-#define isdigit(c)  ((unsigned char)_ctype[(unsigned char)(c) + 1] & _DIGIT)
+#define iscntrl(c)  (_ctype[(unsigned char)(c) + 1] & _CONTROL)
+#define isdigit(c)  (_ctype[(unsigned char)(c) + 1] & _DIGIT)
 #define isgraph(c)  ((unsigned char)(c) >= 0x21 && (unsigned char)(c) <= 0x7e)
-#define islower(c)  ((unsigned char)_ctype[(unsigned char)(c) + 1] & _LOWER)
+#define islower(c)  (_ctype[(unsigned char)(c) + 1] & _LOWER)
 #define isprint(c)  ((unsigned char)(c) >= 0x20 && (unsigned char)(c) <= 0x7e)
-#define ispunct(c)  ((unsigned char)_ctype[(unsigned char)(c) + 1] & _PUNCT)
-#define isspace(c)  ((unsigned char)_ctype[(unsigned char)(c) + 1] & _SPACE)
-#define isupper(c)  ((unsigned char)_ctype[(unsigned char)(c) + 1] & _UPPER)
-#define isxdigit(c) ((unsigned char)_ctype[(unsigned char)(c) + 1] & (_DIGIT | _HEX))
+#define ispunct(c)  (_ctype[(unsigned char)(c) + 1] & _PUNCT)
+#define isspace(c)  (_ctype[(unsigned char)(c) + 1] & _SPACE)
+#define isupper(c)  (_ctype[(unsigned char)(c) + 1] & _UPPER)
+#define isxdigit(c) (_ctype[(unsigned char)(c) + 1] & _HEX)
 
-#define _tolower(_c)	( (_c)-'A'+'a' )
-#define _toupper(_c)	( (_c)-'a'+'A' )
+#define _tolower(_c)	((_c)-'A'+'a')
+#define _toupper(_c)	((_c)-'a'+'A')
 
 #define __isascii(_c)	( (unsigned)(_c) < 0x80 )
 #define __toascii(_c)	( (_c) & 0x7f )

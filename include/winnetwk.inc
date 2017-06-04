@@ -2,18 +2,12 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 .xlist
-;
-; Standard WINNET Header File for WIN32
-;
 ifndef _WINNETWK_
 _WINNETWK_ equ 1
 ifdef __PE__
 option dllimport:<mpr>
 endif
 
-;;
-;; Network types
-;;
 
 WNNC_NET_MSNET		equ 0x00010000
 WNNC_NET_LANMAN		equ 0x00020000
@@ -47,9 +41,6 @@ WNNC_NET_DISTINCT	equ 0x00230000
 WNNC_NET_TWINS		equ 0x00240000
 WNNC_NET_RDR2SAMPLE	equ 0x00250000
 
-;;
-;;  Network Resources.
-;;
 
 RESOURCE_CONNECTED	equ 0x00000001
 RESOURCE_GLOBALNET	equ 0x00000002
@@ -57,14 +48,14 @@ RESOURCE_REMEMBERED	equ 0x00000003
 if(WINVER GE 0x0400)
 RESOURCE_RECENT		equ 0x00000004
 RESOURCE_CONTEXT	equ 0x00000005
-endif ;; WINVER GE 0x0400
+endif 
 
 RESOURCETYPE_ANY	equ 0x00000000
 RESOURCETYPE_DISK	equ 0x00000001
 RESOURCETYPE_PRINT	equ 0x00000002
 if(WINVER GE 0x0400)
 RESOURCETYPE_RESERVED	equ 0x00000008
-endif ;; WINVER GE 0x0400
+endif 
 RESOURCETYPE_UNKNOWN	equ 0xFFFFFFFF
 
 RESOURCEUSAGE_CONNECTABLE equ 0x00000001
@@ -74,7 +65,7 @@ RESOURCEUSAGE_NOLOCALDEVICE equ 0x00000004
 RESOURCEUSAGE_SIBLING	equ 0x00000008
 RESOURCEUSAGE_ATTACHED	equ 0x00000010
 RESOURCEUSAGE_ALL	equ RESOURCEUSAGE_CONNECTABE OR RESOURCEUSAGE_CONTAINER OR RESOURCEUSAGE_ATTACHED
-endif ;; WINVER GE 0x0400
+endif 
 RESOURCEUSAGE_RESERVED	equ 0x80000000
 
 RESOURCEDISPLAYTYPE_GENERIC	equ 0x00000000
@@ -88,11 +79,11 @@ RESOURCEDISPLAYTYPE_NETWORK	equ 0x00000006
 RESOURCEDISPLAYTYPE_ROOT	equ 0x00000007
 RESOURCEDISPLAYTYPE_SHAREADMIN	equ 0x00000008
 RESOURCEDISPLAYTYPE_DIRECTORY	equ 0x00000009
-endif ;; WINVER GE 0x0400
+endif 
 RESOURCEDISPLAYTYPE_TREE	equ 0x0000000A
 if(WINVER GE 0x0400)
 RESOURCEDISPLAYTYPE_NDSCONTAINER equ 0x0000000B
-endif ;; WINVER GE 0x0400
+endif 
 
 NETRESOURCEA		STRUC
 dwScope			dd ?
@@ -122,11 +113,8 @@ LPNETRESOURCE		typedef LPNETRESOURCEW
 else
 NETRESOURCE		typedef NETRESOURCEA
 LPNETRESOURCE		typedef LPNETRESOURCEA
-endif ;; UNICODE
+endif 
 
-;;
-;;  Network Connections.
-;;
 
 NETPROPERTY_PERSISTENT	equ 1
 
@@ -143,15 +131,15 @@ CONNECT_LOCALDRIVE	equ 0x00000100
 CONNECT_CURRENT_MEDIA	equ 0x00000200
 CONNECT_DEFERRED	equ 0x00000400
 CONNECT_RESERVED	equ 0xFF000000
-endif ;; WINVER GE 0x0400
+endif 
 
 ;DWORD
-WNetAddConnectionA proto _CType \
+WNetAddConnectionA proto WINAPI \
 	  lpRemoteName: LPCSTR,
 	    lpPassword: LPCSTR,
 	   lpLocalName: LPCSTR
 ;DWORD
-WNetAddConnectionW proto _CType \
+WNetAddConnectionW proto WINAPI \
 	  lpRemoteName: LPCWSTR,
 	    lpPassword: LPCWSTR,
 	   lpLocalName: LPCWSTR
@@ -159,16 +147,16 @@ ifdef _UNICODE
 WNetAddConnection	equ <WNetAddConnectionW>
 else
 WNetAddConnection	equ <WNetAddConnectionA>
-endif ;; NOT UNICODE
+endif 
 
 ;DWORD
-WNetAddConnection2A proto _CType \
+WNetAddConnection2A proto WINAPI \
 	 lpNetResource: LPNETRESOURCEA,
 	    lpPassword: LPCSTR,
 	    lpUserName: LPCSTR,
 	       dwFlags: DWORD
 ;DWORD
-WNetAddConnection2W proto _CType \
+WNetAddConnection2W proto WINAPI \
 	 lpNetResource: LPNETRESOURCEW,
 	    lpPassword: LPCWSTR,
 	    lpUserName: LPCWSTR,
@@ -177,17 +165,17 @@ ifdef _UNICODE
 WNetAddConnection2	equ <WNetAddConnection2W>
 else
 WNetAddConnection2	equ <WNetAddConnection2A>
-endif ;; NOT UNICODE
+endif 
 
 ;DWORD
-WNetAddConnection3A proto _CType \
+WNetAddConnection3A proto WINAPI \
 	     hwndOwner: HWND,
 	 lpNetResource: LPNETRESOURCEA,
 	    lpPassword: LPCSTR,
 	    lpUserName: LPCSTR,
 	       dwFlags: DWORD
 ;DWORD
-WNetAddConnection3W proto _CType \
+WNetAddConnection3W proto WINAPI \
 	     hwndOwner: HWND,
 	 lpNetResource: LPNETRESOURCEW,
 	    lpPassword: LPCWSTR,
@@ -197,29 +185,29 @@ ifdef _UNICODE
 WNetAddConnection3	equ <WNetAddConnection3W>
 else
 WNetAddConnection3	equ <WNetAddConnection3A>
-endif ;; NOT UNICODE
+endif 
 
 ;DWORD
-WNetCancelConnectionA proto _CType \
+WNetCancelConnectionA proto WINAPI \
 		lpName: LPCSTR,
 		fForce: BOOL
 ;DWORD
-WNetCancelConnectionW proto _CType \
+WNetCancelConnectionW proto WINAPI \
 		lpName: LPCWSTR,
 		fForce: BOOL
 ifdef _UNICODE
 WNetCancelConnection	equ <WNetCancelConnectionW>
 else
 WNetCancelConnection	equ <WNetCancelConnectionA>
-endif ;; NOT UNICODE
+endif 
 
 ;DWORD
-WNetCancelConnection2A proto _CType \
+WNetCancelConnection2A proto WINAPI \
 		lpName: LPCSTR,
 	       dwFlags: DWORD,
 		fForce: BOOL
 ;DWORD
-WNetCancelConnection2W proto _CType \
+WNetCancelConnection2W proto WINAPI \
 		lpName: LPCWSTR,
 	       dwFlags: DWORD,
 		fForce: BOOL
@@ -227,15 +215,15 @@ ifdef _UNICODE
 WNetCancelConnection2	equ <WNetCancelConnection2W>
 else
 WNetCancelConnection2	equ <WNetCancelConnection2A>
-endif ;; NOT UNICODE
+endif 
 
 ;DWORD
-WNetGetConnectionA proto _CType \
+WNetGetConnectionA proto WINAPI \
 	   lpLocalName: LPCSTR,
 	  lpRemoteName: LPSTR,
 	     lpnLength: LPDWORD
 ;DWORD
-WNetGetConnectionW proto _CType \
+WNetGetConnectionW proto WINAPI \
 	   lpLocalName: LPCWSTR,
 	  lpRemoteName: LPWSTR,
 	     lpnLength: LPDWORD
@@ -243,12 +231,12 @@ ifdef _UNICODE
 WNetGetConnection	equ <WNetGetConnectionW>
 else
 WNetGetConnection	equ <WNetGetConnectionA>
-endif ;; NOT UNICODE
+endif 
 
 
 if(WINVER GE 0x0400)
 ;DWORD
-WNetUseConnectionA proto _CType \
+WNetUseConnectionA proto WINAPI \
 	     hwndOwner: HWND,
 	 lpNetResource: LPNETRESOURCEA,
 	      lpUserID: LPCSTR,
@@ -258,7 +246,7 @@ WNetUseConnectionA proto _CType \
 	  lpBufferSize: LPDWORD,
 	      lpResult: LPDWORD
 ;DWORD
-WNetUseConnectionW proto _CType \
+WNetUseConnectionW proto WINAPI \
 	     hwndOwner: HWND,
 	 lpNetResource: LPNETRESOURCEW,
 	      lpUserID: LPCWSTR,
@@ -271,39 +259,36 @@ ifdef _UNICODE
 WNetUseConnection	equ <WNetUseConnectionW>
 else
 WNetUseConnection	equ <WNetUseConnectionA>
-endif ;; NOT UNICODE
-endif ;; WINVER GE 0x0400
+endif 
+endif 
 
 
-;;
-;;  Network Connection Dialogs.
-;;
 
 ;DWORD
-WNetConnectionDialog proto _CType \
+WNetConnectionDialog proto WINAPI \
 		  hwnd: HWND,
 		dwType: DWORD
 
 ;DWORD
-WNetDisconnectDialog proto _CType \
+WNetDisconnectDialog proto WINAPI \
 		  hwnd: HWND,
 		dwType: DWORD
 
 if(WINVER GE 0x0400)
 CONNECTDLGSTRUCTA	STRUC
-cbStructure		dd ?	;; size of this structure in bytes
-hwndOwner		HWND ?	;; owner window for the dialog
-lpConnRes		LPNETRESOURCEA ?	;; Requested Resource info
-dwFlags			dd ?	;; flags (see below)
-dwDevNum		dd ?	;; number of devices connected to
+cbStructure		dd ?	
+hwndOwner		HWND ?	
+lpConnRes		LPNETRESOURCEA ?	
+dwFlags			dd ?	
+dwDevNum		dd ?	
 CONNECTDLGSTRUCTA	ENDS
 LPCONNECTDLGSTRUCTA	typedef ptr CONNECTDLGSTRUCTA
 CONNECTDLGSTRUCTW	STRUC
-cbStructure		dd ?	;; size of this structure in bytes
-hwndOwner		HWND ?	;; owner window for the dialog
-lpConnRes		LPNETRESOURCEW ?	;; Requested Resource info
-dwFlags			dd ?	;; flags (see below)
-dwDevNum		dd ?	;; number of devices connected to
+cbStructure		dd ?	
+hwndOwner		HWND ?	
+lpConnRes		LPNETRESOURCEW ?	
+dwFlags			dd ?	
+dwDevNum		dd ?	
 CONNECTDLGSTRUCTW	ENDS
 LPCONNECTDLGSTRUCTW	typedef ptr CONNECTDLGSTRUCTW
 ifdef _UNICODE
@@ -312,47 +297,42 @@ LPCONNECTDLGSTRUCT	typedef LPCONNECTDLGSTRUCTW
 else
 CONNECTDLGSTRUCT	typedef CONNECTDLGSTRUCTA
 LPCONNECTDLGSTRUCT	typedef LPCONNECTDLGSTRUCTA
-endif ;; UNICODE
+endif 
 
-CONNDLG_RO_PATH		equ 0x00000001 ;; Resource path should be read-only
-CONNDLG_CONN_POINT	equ 0x00000002 ;; Netware -style movable connection point enabled
-CONNDLG_USE_MRU		equ 0x00000004 ;; Use MRU combobox
-CONNDLG_HIDE_BOX	equ 0x00000008 ;; Hide persistent connect checkbox
+CONNDLG_RO_PATH		equ 0x00000001 
+CONNDLG_CONN_POINT	equ 0x00000002 
+CONNDLG_USE_MRU		equ 0x00000004 
+CONNDLG_HIDE_BOX	equ 0x00000008 
 
-;;
-;; NOTE:  Set at most ONE of the below flags.  If neither flag is set,
-;;	  then the persistence is set to whatever the user chose during
-;;	  a previous connection
-;;
-CONNDLG_PERSIST		equ 0x00000010 ;; Force persistent connection
-CONNDLG_NOT_PERSIST	equ 0x00000020 ;; Force connection NOT persistent
+CONNDLG_PERSIST		equ 0x00000010 
+CONNDLG_NOT_PERSIST	equ 0x00000020 
 
 ;DWORD
-WNetConnectionDialog1A proto _CType \
+WNetConnectionDialog1A proto WINAPI \
        lpConnDlgStruct: LPCONNECTDLGSTRUCTA
 ;DWORD
-WNetConnectionDialog1W proto _CType \
+WNetConnectionDialog1W proto WINAPI \
        lpConnDlgStruct: LPCONNECTDLGSTRUCTW
 ifdef _UNICODE
 WNetConnectionDialog1	equ <WNetConnectionDialog1W>
 else
 WNetConnectionDialog1	equ <WNetConnectionDialog1A>
-endif ;; NOT UNICODE
+endif 
 
 DISCDLGSTRUCTA		STRUC
-cbStructure		dd ?	;; size of this structure in bytes
-hwndOwner		HWND ?	;; owner window for the dialog
-lpLocalName		LPSTR ? ;; local device name
-lpRemoteName		LPSTR ? ;; network resource name
-dwFlags			dd ?	;; flags
+cbStructure		dd ?	
+hwndOwner		HWND ?	
+lpLocalName		LPSTR ? 
+lpRemoteName		LPSTR ? 
+dwFlags			dd ?	
 DISCDLGSTRUCTA		ENDS
 LPDISCDLGSTRUCTA	typedef ptr DISCDLGSTRUCTA
 DISCDLGSTRUCTW		STRUC
-cbStructure		dd ?	;; size of this structure in bytes
-hwndOwner		HWND ?	;; owner window for the dialog
-lpLocalName		LPWSTR ?	;; local device name
-lpRemoteName		LPWSTR ?	;; network resource name
-dwFlags			dd ?	;; flags
+cbStructure		dd ?	
+hwndOwner		HWND ?	
+lpLocalName		LPWSTR ?	
+lpRemoteName		LPWSTR ?	
+dwFlags			dd ?	
 DISCDLGSTRUCTW		ENDS
 LPDISCDLGSTRUCTW	typedef ptr DISCDLGSTRUCTW
 ifdef _UNICODE
@@ -361,36 +341,33 @@ LPDISCDLGSTRUCT		typedef LPDISCDLGSTRUCTW
 else
 DISCDLGSTRUCT		typedef DISCDLGSTRUCTA
 LPDISCDLGSTRUCT		typedef LPDISCDLGSTRUCTA
-endif ;; UNICODE
+endif 
 
 DISC_UPDATE_PROFILE	equ 0x00000001
 DISC_NO_FORCE		equ 0x00000040
 
 ;DWORD
-WNetDisconnectDialog1A proto _CType \
+WNetDisconnectDialog1A proto WINAPI \
        lpConnDlgStruct: LPDISCDLGSTRUCTA
-WNetDisconnectDialog1W proto _CType \
+WNetDisconnectDialog1W proto WINAPI \
        lpConnDlgStruct: LPDISCDLGSTRUCTW
 ifdef _UNICODE
 WNetDisconnectDialog1	equ <WNetDisconnectDialog1W>
 else
 WNetDisconnectDialog1	equ <WNetDisconnectDialog1A>
-endif ;; NOT UNICODE
-endif ;; WINVER GE 0x0400
+endif 
+endif 
 
-;;
-;;  Network Browsing.
-;;
 
 ;DWORD
-WNetOpenEnumA proto _CType \
+WNetOpenEnumA proto WINAPI \
 	       dwScope: DWORD,
 		dwType: DWORD,
 	       dwUsage: DWORD,
 	 lpNetResource: LPNETRESOURCEA,
 	       lphEnum: LPHANDLE
 ;DWORD
-WNetOpenEnumW proto _CType \
+WNetOpenEnumW proto WINAPI \
 	       dwScope: DWORD,
 		dwType: DWORD,
 	       dwUsage: DWORD,
@@ -400,16 +377,16 @@ ifdef _UNICODE
 WNetOpenEnum		equ <WNetOpenEnumW>
 else
 WNetOpenEnum		equ <WNetOpenEnumA>
-endif ;; NOT UNICODE
+endif 
 
 ;DWORD
-WNetEnumResourceA proto _CType \
+WNetEnumResourceA proto WINAPI \
 		 hEnum: HANDLE,
 	      lpcCount: LPDWORD,
 	      lpBuffer: LPVOID,
 	  lpBufferSize: LPDWORD
 ;DWORD
-WNetEnumResourceW proto _CType \
+WNetEnumResourceW proto WINAPI \
 		 hEnum: HANDLE,
 	      lpcCount: LPDWORD,
 	      lpBuffer: LPVOID,
@@ -418,16 +395,13 @@ ifdef _UNICODE
 WNetEnumResource	equ <WNetEnumResourceW>
 else
 WNetEnumResource	equ <WNetEnumResourceA>
-endif ;; NOT UNICODE
+endif 
 
 ;DWORD
-WNetCloseEnum proto _CType \
+WNetCloseEnum proto WINAPI \
 		 hEnum: HANDLE
 
 
-;;
-;;  Universal Naming.
-;;
 
 UNIVERSAL_NAME_INFO_LEVEL equ 0x00000001
 REMOTE_NAME_INFO_LEVEL	equ 0x00000002
@@ -446,7 +420,7 @@ LPUNIVERSAL_NAME_INFO	typedef LPUNIVERSAL_NAME_INFOW
 else
 UNIVERSAL_NAME_INFO	typedef UNIVERSAL_NAME_INFOA
 LPUNIVERSAL_NAME_INFO	typedef LPUNIVERSAL_NAME_INFOA
-endif ;; UNICODE
+endif 
 
 REMOTE_NAME_INFOA	STRUC
 lpUniversalName		LPSTR ?
@@ -466,16 +440,16 @@ LPREMOTE_NAME_INFO	typedef LPREMOTE_NAME_INFOW
 else
 REMOTE_NAME_INFO	typedef REMOTE_NAME_INFOA
 LPREMOTE_NAME_INFO	typedef LPREMOTE_NAME_INFOA
-endif ;; UNICODE
+endif 
 
 ;DWORD
-WNetGetUniversalNameA proto _CType \
+WNetGetUniversalNameA proto WINAPI \
 	   lpLocalPath: LPCSTR,
 	   dwInfoLevel: DWORD,
 	      lpBuffer: LPVOID,
 	  lpBufferSize: LPDWORD
 ;DWORD
-WNetGetUniversalNameW proto _CType \
+WNetGetUniversalNameW proto WINAPI \
 	   lpLocalPath: LPCWSTR,
 	   dwInfoLevel: DWORD,
 	      lpBuffer: LPVOID,
@@ -484,19 +458,16 @@ ifdef _UNICODE
 WNetGetUniversalName	equ <WNetGetUniversalNameW>
 else
 WNetGetUniversalName	equ <WNetGetUniversalNameA>
-endif ;; NOT UNICODE
+endif 
 
-;;
-;;  Authentication and Logon/Logoff.
-;;
 
 ;DWORD
-WNetGetUserA proto _CType \
+WNetGetUserA proto WINAPI \
 		lpName: LPCSTR,
 	    lpUserName: LPSTR,
 	     lpnLength: LPDWORD
 ;DWORD
-WNetGetUserW proto _CType \
+WNetGetUserW proto WINAPI \
 		lpName: LPCWSTR,
 	    lpUserName: LPWSTR,
 	     lpnLength: LPDWORD
@@ -504,29 +475,26 @@ ifdef _UNICODE
 WNetGetUser		equ <WNetGetUserW>
 else
 WNetGetUser		equ <WNetGetUserA>
-endif ;; NOT UNICODE
+endif 
 
 
-;;
-;; Other.
-;;
 
 if(WINVER GE 0x0400)
 WNFMT_MULTILINE		equ 0x01
 WNFMT_ABBREVIATED	equ 0x02
 WNFMT_INENUM		equ 0x10
 WNFMT_CONNECTION	equ 0x20
-endif ;; WINVER GE 0x0400
+endif 
 
 
 if(WINVER GE 0x0400)
 ;DWORD
-WNetGetProviderNameA proto _CType \
+WNetGetProviderNameA proto WINAPI \
 	     dwNetType: DWORD,
 	lpProviderName: LPSTR,
 	  lpBufferSize: LPDWORD
 ;DWORD
-WNetGetProviderNameW proto _CType \
+WNetGetProviderNameW proto WINAPI \
 	     dwNetType: DWORD,
 	lpProviderName: LPWSTR,
 	  lpBufferSize: LPDWORD
@@ -534,7 +502,7 @@ ifdef _UNICODE
 WNetGetProviderName	equ <WNetGetProviderNameW>
 else
 WNetGetProviderName	equ <WNetGetProviderNameA>
-endif ;; NOT UNICODE
+endif 
 
 NETINFOSTRUCT		STRUC
 cbStructure		dd ?
@@ -548,27 +516,24 @@ dwDrives		dd ?
 NETINFOSTRUCT		ENDS
 LPNETINFOSTRUCT		typedef ptr NETINFOSTRUCT
 
-NETINFO_DLL16		equ 0x00000001	;; Provider running as 16 bit Winnet Driver
-NETINFO_DISKRED		equ 0x00000004	;; Provider requires disk redirections to connect
-NETINFO_PRINTERRED	equ 0x00000008	;; Provider requires printer redirections to connect
+NETINFO_DLL16		equ 0x00000001	
+NETINFO_DISKRED		equ 0x00000004	
+NETINFO_PRINTERRED	equ 0x00000008	
 
 ;DWORD
-WNetGetNetworkInformationA proto _CType \
+WNetGetNetworkInformationA proto WINAPI \
 	    lpProvider: LPCSTR,
        lpNetInfoStruct: LPNETINFOSTRUCT
 ;DWORD
-WNetGetNetworkInformationW proto _CType \
+WNetGetNetworkInformationW proto WINAPI \
 	    lpProvider: LPCWSTR,
        lpNetInfoStruct: LPNETINFOSTRUCT
 ifdef _UNICODE
 WNetGetNetworkInformation equ <WNetGetNetworkInformationW>
 else
 WNetGetNetworkInformation equ <WNetGetNetworkInformationA>
-endif ;; NOT UNICODE
+endif 
 
-;;
-;;  User Profiles.
-;;
 
 PFNGETPROFILEPATHA_T typedef proto \
 	   pszUsername: LPCSTR,
@@ -584,7 +549,7 @@ ifdef _UNICODE
 PFNGETPROFILEPATH	equ <PFNGETPROFILEPATHW>
 else
 PFNGETPROFILEPATH	equ <PFNGETPROFILEPATHA>
-endif ;; NOT UNICODE
+endif 
 
 PFNRECONCILEPROFILEA_T typedef proto \
 	pszCentralFile: LPCSTR,
@@ -600,15 +565,12 @@ ifdef _UNICODE
 PFNRECONCILEPROFILE	equ <PFNRECONCILEPROFILEW>
 else
 PFNRECONCILEPROFILE	equ <PFNRECONCILEPROFILEA>
-endif ;; NOT UNICODE
+endif 
 
-RP_LOGON		equ 0x01	;; if set, do for logon, else for logoff
-RP_INIFILE		equ 0x02	;; if set, reconcile .INI file, else reg. hive
+RP_LOGON		equ 0x01	
+RP_INIFILE		equ 0x02	
 
 
-;;
-;;  Policies.
-;;
 
 PFNPROCESSPOLICIESA_T typedef proto \
 		  hwnd: HWND,
@@ -628,24 +590,21 @@ ifdef _UNICODE
 PFNPROCESSPOLICIES	equ <PFNPROCESSPOLICIESW>
 else
 PFNPROCESSPOLICIES	equ <PFNPROCESSPOLICIESA>
-endif ;; NOT UNICODE
+endif 
 
-PP_DISPLAYERRORS	equ 0x01    ;; if set, display error messages, else fail silently if error
-endif ;; WINVER GE 0x0400
+PP_DISPLAYERRORS	equ 0x01    
+endif 
 
-;;
-;;  Error handling.
-;;
 
 ;DWORD
-WNetGetLastErrorA proto _CType \
+WNetGetLastErrorA proto WINAPI \
 	       lpError: LPDWORD,
 	    lpErrorBuf: LPSTR,
 	 nErrorBufSize: DWORD,
 	     lpNameBuf: LPSTR,
 	  nNameBufSize: DWORD
 ;DWORD
-WNetGetLastErrorW proto _CType \
+WNetGetLastErrorW proto WINAPI \
 	       lpError: LPDWORD,
 	    lpErrorBuf: LPWSTR,
 	 nErrorBufSize: DWORD,
@@ -655,13 +614,9 @@ ifdef _UNICODE
 WNetGetLastError	equ <WNetGetLastErrorW>
 else
 WNetGetLastError	equ <WNetGetLastErrorA>
-endif ;; NOT UNICODE
+endif 
 
-;;
-;;  STATUS CODES
-;;
 
-;; General
 
 WN_SUCCESS		equ NO_ERROR
 WN_NO_ERROR		equ NO_ERROR
@@ -685,9 +640,8 @@ WN_BAD_HANDLE		equ ERROR_INVALID_HANDE
 if(WINVER GE 0x0400)
 WN_NOT_INITIALIZING	equ ERROR_ALREADY_INITIAIZED
 WN_NO_MORE_DEVICES	equ ERROR_NO_MORE_DEVICES
-endif ;; WINVER GE 0x0400
+endif 
 
-;; Connection
 
 WN_NOT_CONNECTED	equ ERROR_NOT_CONNECTED
 WN_OPEN_FILES		equ ERROR_OPEN_FILES
@@ -705,22 +659,17 @@ WN_BAD_DEV_TYPE		equ ERROR_BAD_DEV_TYPE
 WN_DEVICE_ALREADY_REMEMBERED equ ERROR_DEVICE_AREADY_REMEMBERED
 WN_CONNECTED_OTHER_PASSWORD equ ERROR_CONNECTED_OTHER_PASSWORD
 
-;; Enumeration
 
 WN_NO_MORE_ENTRIES	equ ERROR_NO_MORE_ITEMS
 WN_NOT_CONTAINER	equ ERROR_NOT_CONTAINER
 
 if(WINVER GE 0x0400)
-;; Authentication
 
 WN_NOT_AUTHENTICATED	equ ERROR_NOT_AUTHENTICATED
 WN_NOT_LOGGED_ON	equ ERROR_NOT_LOGGED_ON
 WN_NOT_VALIDATED	equ ERROR_NO_LOGON_SERVERS
-endif ;; WINVER GE 0x0400
+endif 
 
-;;
-;;  For Shell
-;;
 
 if(WINVER GE 0x0400)
 NETCONNECTINFOSTRUCT	STRUC
@@ -738,20 +687,20 @@ WNCON_SLOWLINK		equ 0x00000004
 WNCON_DYNAMIC		equ 0x00000008
 
 ;DWORD
-MultinetGetConnectionPerformanceA proto _CType \
+MultinetGetConnectionPerformanceA proto WINAPI \
 	 lpNetResource: LPNETRESOURCEA,
 lpNetConnectInfoStruct: LPNETCONNECTINFOSTRUCT
 ;DWORD
-MultinetGetConnectionPerformanceW proto _CType \
+MultinetGetConnectionPerformanceW proto WINAPI \
 	 lpNetResource: LPNETRESOURCEW,
 lpNetConnectInfoStruct: LPNETCONNECTINFOSTRUCT
 ifdef _UNICODE
 MultinetGetConnectionPerformance equ <MultinetGetConnectionPerformanceW>
 else
 MultinetGetConnectionPerformance equ <MultinetGetConnectionPerformanceA>
-endif ;; NOT UNICODE
-endif ;; WINVER GE 0x0400
+endif 
+endif 
 
-endif  ;; _WINNETWK_
+endif  
 
 .list

@@ -5,38 +5,20 @@ endif
 ifndef _WINSOCKAPI_
 _WINSOCKAPI_ equ 1
 
-;;
-;; Pull in WINDOWS.H if necessary
-;;
 ifndef _INC_WINDOWS
 include windows.inc
 .xlist
-endif ;; _INC_WINDOWS
+endif 
 
-;;
-;; Basic system type definitions, taken from the BSD file sys/types.h.
-;;
-;;
-;; The new type to be used in all
-;; instances which refer to sockets.
-;;
 SOCKET			typedef UINT
 
-;;
-;; Select uses arrays of SOCKETs.  These macros manipulate such
-;; arrays.  FD_SETSIZE may be defined by the user before including
-;; this file, but the default here should be >= 64.
-;;
-;; CAVEAT IMPLEMENTOR and USER: THESE MACROS AND TYPES MUST BE
-;; INCLUDED IN WINSOCK.H EXACTLY AS SHOWN HERE.
-;;
 ifndef FD_SETSIZE
 FD_SETSIZE		equ 64
-endif ;; FD_SETSIZE
+endif 
 
 fd_set			STRUC
-fd_count		UINT ?	;; how many are SET?
-fd_array		SOCKET FD_SETSIZE dup(?) ;; an array of SOCKETs
+fd_count		UINT ?	
+fd_array		SOCKET FD_SETSIZE dup(?) 
 fd_set			ENDS
 
 __WSAFDIsSet		proto :SOCKET, :ptr fd_set
@@ -79,19 +61,11 @@ FD_ISSET macro fd, set
 	exitm<__WSAFDIsSet(fd, set)>
 	endm
 
-;;
-;; Structure used in select() call, taken from the BSD file sys/time.h.
-;;
 timeval			STRUC
-tv_sec			LONG ?	;; seconds
-tv_usec			LONG ?	;; and microseconds
+tv_sec			LONG ?	
+tv_usec			LONG ?	
 timeval			ENDS
 
-;;
-;; Operations on timevals.
-;;
-;; NB: timercmp does not work for >= or <=.
-;;
 timerisset macro tvp
 	exitm<0>
 	endm
@@ -102,22 +76,11 @@ timerclear macro tvp
 	exitm<0>
 	endm
 
-;;
-;; Commands for ioctlsocket(),	taken from the BSD file fcntl.h.
-;;
-;;
-;; Ioctl's have the command encoded in the lower word,
-;; and the size of any in or out parameters in the upper
-;; word.  The high 2 bits of the upper word are used
-;; to encode the in/out status of the parameter; for now
-;; we restrict parameters to at most 128 bytes.
-;;
-IOCPARM_MASK		equ 0x7f		;; parameters must be LT 128 bytes
-IOC_VOID		equ 0x20000000	;; no parameters
-IOC_OUT			equ 0x40000000	;; copy out parameters
-IOC_IN			equ 0x80000000	;; copy in parameters
+IOCPARM_MASK		equ 0x7f		
+IOC_VOID		equ 0x20000000	
+IOC_OUT			equ 0x40000000	
+IOC_IN			equ 0x80000000	
 IOC_INOUT		equ (IOC_IN OR IOC_OUT)
-;; old 0x20000000 distinguishes new & ioctl's
 _IO macro x,y
 	exitm<(IOC_VOID OR ((x) SHL 8) OR (y))>
 	endm
@@ -130,79 +93,59 @@ _IOW macro x,y,t
 	exitm<(IOC_IN OR ((sizeof(t) AND IOCPARM_MASK) SHL 16) OR ((x) SHL 8) OR (y))>
 	endm
 
-FIONREAD		equ _IOR('f', 127, ULONG) ;; get # bytes to read
-FIONBIO			equ _IOW('f', 126, ULONG) ;; set/clear non-blocking i/o
-FIOASYNC		equ _IOW('f', 125, ULONG) ;; set/clear async i/o
+FIONREAD		equ _IOR('f', 127, ULONG) 
+FIONBIO			equ _IOW('f', 126, ULONG) 
+FIOASYNC		equ _IOW('f', 125, ULONG) 
 
-;; Socket I/O Controls
-SIOCSHIWAT		equ _IOW('s',  0, ULONG) ;; set high watermark
-SIOCGHIWAT		equ _IOR('s',  1, ULONG) ;; get high watermark
-SIOCSLOWAT		equ _IOW('s',  2, ULONG) ;; set low watermark
-SIOCGLOWAT		equ _IOR('s',  3, ULONG) ;; get low watermark
-SIOCATMARK		equ _IOR('s',  7, ULONG) ;; at oob mark?
+SIOCSHIWAT		equ _IOW('s',  0, ULONG) 
+SIOCGHIWAT		equ _IOR('s',  1, ULONG) 
+SIOCSLOWAT		equ _IOW('s',  2, ULONG) 
+SIOCGLOWAT		equ _IOR('s',  3, ULONG) 
+SIOCATMARK		equ _IOR('s',  7, ULONG) 
 
-;;
-;; Structures returned by network data base library, taken from the
-;; BSD file netdb.h.  All addresses are supplied in host order, and
-;; returned in network order (suitable for use in system calls).
-;;
 
 hostent			STRUC
-h_name			LPSTR ? ;; official name of host
-h_aliases		LPSTR ? ;; alias list
-h_addrtype		dw ?	;; host address type
-h_length		dw ?	;; length of address
-h_addr_list		LPSTR ? ;; list of addresses
+h_name			LPSTR ? 
+h_aliases		LPSTR ? 
+h_addrtype		dw ?	
+h_length		dw ?	
+h_addr_list		LPSTR ? 
 hostent			ENDS
 
-;;
-;; It is assumed here that a network number
-;; fits in 32 bits.
-;;
 netent			STRUC
-n_name			LPSTR ? ;; official name of net
-n_aliases		LPSTR ? ;; alias list
-n_addrtype		dw ?	;; net address type
-n_net			dd ?	;; network #
+n_name			LPSTR ? 
+n_aliases		LPSTR ? 
+n_addrtype		dw ?	
+n_net			dd ?	
 netent			ENDS
 
 servent			STRUC
-s_name			LPSTR ? ;; official service name
-s_aliases		LPSTR ? ;; alias list
-s_port			dw ?	;; port #
-s_proto			LPSTR ? ;; protocol to use
+s_name			LPSTR ? 
+s_aliases		LPSTR ? 
+s_port			dw ?	
+s_proto			LPSTR ? 
 servent			ENDS
 
 protoent		STRUC
-p_name			LPSTR ? ;; official protocol name
-p_aliases		LPSTR ? ;; alias list
-p_proto			dw ?	;; protocol #
+p_name			LPSTR ? 
+p_aliases		LPSTR ? 
+p_proto			dw ?	
 protoent		ENDS
 
-;;
-;; Constants and structures defined by the internet system,
-;; Per RFC 790, September 1981, taken from the BSD file netinet/in.h.
-;;
 
-;;
-;; Protocols
-;;
-IPPROTO_IP		equ 0		;; dummy for IP
-IPPROTO_ICMP		equ 1		;; control message protocol
-IPPROTO_IGMP		equ 2		;; group management protocol
-IPPROTO_GGP		equ 3		;; gateway^2 (deprecated)
-IPPROTO_TCP		equ 6		;; tcp
-IPPROTO_PUP		equ 12		;; pup
-IPPROTO_UDP		equ 17		;; user datagram protocol
-IPPROTO_IDP		equ 22		;; xns idp
-IPPROTO_ND		equ 77		;; UNOFFICIA net disk proto
+IPPROTO_IP		equ 0		
+IPPROTO_ICMP		equ 1		
+IPPROTO_IGMP		equ 2		
+IPPROTO_GGP		equ 3		
+IPPROTO_TCP		equ 6		
+IPPROTO_PUP		equ 12		
+IPPROTO_UDP		equ 17		
+IPPROTO_IDP		equ 22		
+IPPROTO_ND		equ 77		
 
-IPPROTO_RAW		equ 255		;; raw IP packet
+IPPROTO_RAW		equ 255		
 IPPROTO_MAX		equ 256
 
-;;
-;; Port/socket numbers: network standard functions
-;;
 IPPORT_ECHO		equ 7
 IPPORT_DISCARD		equ 9
 IPPORT_SYSTAT		equ 11
@@ -216,47 +159,27 @@ IPPORT_NAMESERVER	equ 42
 IPPORT_WHOIS		equ 43
 IPPORT_MTP		equ 57
 
-;;
-;; Port/socket numbers: host specific functions
-;;
 IPPORT_TFTP		equ 69
 IPPORT_RJE		equ 77
 IPPORT_FINGER		equ 79
 IPPORT_TTYLINK		equ 87
 IPPORT_SUPDUP		equ 95
 
-;;
-;; UNIX TCP sockets
-;;
 IPPORT_EXECSERVER	equ 512
 IPPORT_LOGINSERVER	equ 513
 IPPORT_CMDSERVER	equ 514
 IPPORT_EFSSERVER	equ 520
 
-;;
-;; UNIX UDP sockets
-;;
 IPPORT_BIFFUDP		equ 512
 IPPORT_WHOSERVER	equ 513
 IPPORT_ROUTESERVER	equ 520
-;; 520+1 also used
 
-;;
-;; Ports < IPPORT_RESERVED are reserved for
-;; privileged processes (e.g. root).
-;;
 IPPORT_RESERVED		equ 1024
 
-;;
-;; Link numbers
-;;
 IMPLINK_IP		equ 155
 IMPLINK_LOWEXPER	equ 156
 IMPLINK_HIGHEXPER	equ 158
 
-;;
-;; Internet address (old style... should be updated)
-;;
 in_addr			STRUC
 UNION S_un
  STRUC
@@ -279,11 +202,6 @@ s_impno			equ <S_un.S_un_b.s_b4>
 s_lh			equ <S_un.S_un_b.s_b3>
 in_addr			ENDS
 
-;;
-;; Definitions of bits in internet address integers.
-;; On subnets, the decomposition of addresses to host and net parts
-;; is done according to subnet mask, not the masks here.
-;;
 IN_CLASSA macro i
 	exitm<(((i) AND 0x80000000) EQ 0)>
 	endm
@@ -312,9 +230,6 @@ INADDR_LOOPBACK		equ 0x7f000001
 INADDR_BROADCAST	equ (ULONG)0xffffffff
 INADDR_NONE		equ 0xffffffff
 
-;;
-;; Socket address, internet style.
-;;
 sockaddr_in		STRUC
 sin_family		dw ?
 sin_port		dw ?
@@ -337,84 +252,57 @@ WSADATA			ENDS
 
 LPWSADATA		typedef ptr WSADATA
 
-;;
-;; Options for use with [gs]etsockopt at the IP level.
-;;
-IP_OPTIONS		equ 1		;; set/get IP per-packet options
-IP_MULTICAST_IF		equ 2		;; set/get IP multicast interface
-IP_MULTICAST_TTL	equ 3		;; set/get IP multicast timetolive
-IP_MULTICAST_LOOP	equ 4		;; set/get IP multicast loopback
-IP_ADD_MEMBERSHIP	equ 5		;; add	an IP group membership
-IP_DROP_MEMBERSHIP	equ 6		;; drop an IP group membership
-IP_TTL			equ 7		;; set/get IP Time To Live
-IP_TOS			equ 8		;; set/get IP Type Of Service
-IP_DONTFRAGMENT		equ 9		;; set/get IP Don't Fragment flag
+IP_OPTIONS		equ 1		
+IP_MULTICAST_IF		equ 2		
+IP_MULTICAST_TTL	equ 3		
+IP_MULTICAST_LOOP	equ 4		
+IP_ADD_MEMBERSHIP	equ 5		
+IP_DROP_MEMBERSHIP	equ 6		
+IP_TTL			equ 7		
+IP_TOS			equ 8		
+IP_DONTFRAGMENT		equ 9		
 
 
-IP_DEFAULT_MULTICAST_TTL equ 1	;; normally limit m'casts to 1 hop
-IP_DEFAULT_MULTICAST_LOOP equ 1 ;; normally hear sends if a member
-IP_MAX_MEMBERSHIPS	equ 20	;; per socket; must fit in one mbuf
+IP_DEFAULT_MULTICAST_TTL equ 1	
+IP_DEFAULT_MULTICAST_LOOP equ 1 
+IP_MAX_MEMBERSHIPS	equ 20	
 
-;;
-;; Argument structure for IP_ADD_MEMBERSHIP and IP_DROP_MEMBERSHIP.
-;;
 ip_mreq			STRUC
 imr_multiaddr		in_addr <>	; IP multicast address of group
 imr_interface		in_addr <>	; local IP address of interface
 ip_mreq			ENDS
 
-;;
-;; Definitions related to sockets: types, address families, options,
-;; taken from the BSD file sys/socket.h.
-;;
 
-;;
-;; This is used instead of -1, since the
-;; SOCKET type is unsigned.
-;;
 INVALID_SOCKET		equ <( NOT 0)>
 SOCKET_ERROR		equ (-1)
 
-;;
-;; Types
-;;
-SOCK_STREAM		equ 1		;; stream socket
-SOCK_DGRAM		equ 2		;; datagram socket
-SOCK_RAW		equ 3		;; raw-protocol interface
-SOCK_RDM		equ 4		;; reliably-delivered message
-SOCK_SEQPACKET		equ 5		;; sequenced packet stream
+SOCK_STREAM		equ 1		
+SOCK_DGRAM		equ 2		
+SOCK_RAW		equ 3		
+SOCK_RDM		equ 4		
+SOCK_SEQPACKET		equ 5		
 
-;;
-;; Option flags per-socket.
-;;
-SO_DEBUG		equ 0x0001		;; turn on debugging info recording
-SO_ACCEPTCONN		equ 0x0002		;; socket has had listen()
-SO_REUSEADDR		equ 0x0004		;; allow local address reuse
-SO_KEEPALIVE		equ 0x0008		;; keep connections alive
-SO_DONTROUTE		equ 0x0010		;; just use interface addresses
-SO_BROADCAST		equ 0x0020		;; permit sending of broadcast msgs
-SO_USELOOPBACK		equ 0x0040		;; bypass hardware when possible
-SO_LINGER		equ 0x0080		;; linger on close if data present
-SO_OOBINLINE		equ 0x0100		;; leave received OOB data in line
+SO_DEBUG		equ 0x0001		
+SO_ACCEPTCONN		equ 0x0002		
+SO_REUSEADDR		equ 0x0004		
+SO_KEEPALIVE		equ 0x0008		
+SO_DONTROUTE		equ 0x0010		
+SO_BROADCAST		equ 0x0020		
+SO_USELOOPBACK		equ 0x0040		
+SO_LINGER		equ 0x0080		
+SO_OOBINLINE		equ 0x0100		
 
 SO_DONTLINGER		equ <( NOT SO_LINGER)>
 
-;;
-;; Additional options.
-;;
-SO_SNDBUF		equ 0x1001		;; send buffer size
-SO_RCVBUF		equ 0x1002		;; receive buffer size
-SO_SNDLOWAT		equ 0x1003		;; send low-water mark
-SO_RCVLOWAT		equ 0x1004		;; receive low-water mark
-SO_SNDTIMEO		equ 0x1005		;; send timeout
-SO_RCVTIMEO		equ 0x1006		;; receive timeout
-SO_ERROR		equ 0x1007		;; get error status and clear
-SO_TYPE			equ 0x1008		;; get socket type
+SO_SNDBUF		equ 0x1001		
+SO_RCVBUF		equ 0x1002		
+SO_SNDLOWAT		equ 0x1003		
+SO_RCVLOWAT		equ 0x1004		
+SO_SNDTIMEO		equ 0x1005		
+SO_RCVTIMEO		equ 0x1006		
+SO_ERROR		equ 0x1007		
+SO_TYPE			equ 0x1008		
 
-;;
-;; Options for connect and disconnect data and options.	 Used only by
-;; non-TCP/IP transports such as DECNet, OSI TP4, etc.
-;;
 SO_CONNDATA		equ 0x7000
 SO_CONNOPT		equ 0x7001
 SO_DISCDATA		equ 0x7002
@@ -424,79 +312,56 @@ SO_CONNOPTLEN		equ 0x7005
 SO_DISCDATALEN		equ 0x7006
 SO_DISCOPTLEN		equ 0x7007
 
-;;
-;; Option for opening sockets for synchronous access.
-;;
 SO_OPENTYPE		equ 0x7008
 
 SO_SYNCHRONOUS_ALERT	equ 0x10
 SO_SYNCHRONOUS_NONALERT equ 0x20
 
-;;
-;; Other NT-specific options.
-;;
 SO_MAXDG		equ 0x7009
 SO_MAXPATHDG		equ 0x700A
 SO_UPDATE_ACCEPT_CONTEXT equ 0x700B
 SO_CONNECT_TIME		equ 0x700C
 
-;;
-;; TCP options.
-;;
 TCP_NODELAY		equ 0x0001
 TCP_BSDURGENT		equ 0x7000
 
-;;
-;; Address families.
-;;
-AF_UNSPEC		equ 0		;; unspecified
-AF_UNIX			equ 1		;; local to host (pipes, portals)
-AF_INET			equ 2		;; internetwork: UDP, TCP, etc.
-AF_IMPLINK		equ 3		;; arpanet imp addresses
-AF_PUP			equ 4		;; pup protocols: e.g. BSP
-AF_CHAOS		equ 5		;; mit CHAOS protocols
-AF_IPX			equ 6		;; IPX and SPX
-AF_NS			equ 6		;; XEROX NS protocols
-AF_ISO			equ 7		;; ISO protocols
-AF_OSI			equ AF_ISO		;; OSI is ISO
-AF_ECMA			equ 8		;; european computer manufacturers
-AF_DATAKIT		equ 9		;; datakit protocols
-AF_CCITT		equ 10		;; CCITT protocols, X.25 etc
-AF_SNA			equ 11		;; IBM SNA
-AF_DECnet		equ 12		;; DECnet
-AF_DLI			equ 13		;; Direct data link interface
-AF_LAT			equ 14		;; LAT
-AF_HYLINK		equ 15		;; NSC Hyperchannel
-AF_APPLETALK		equ 16		;; AppleTalk
-AF_NETBIOS		equ 17		;; NetBios-style addresses
-AF_VOICEVIEW		equ 18		;; VoiceView
-AF_FIREFOX		equ 19		;; FireFox
-AF_UNKNOWN1		equ 20		;; Somebody is using this NOT
-AF_BAN			equ 21		;; Banyan
+AF_UNSPEC		equ 0		
+AF_UNIX			equ 1		
+AF_INET			equ 2		
+AF_IMPLINK		equ 3		
+AF_PUP			equ 4		
+AF_CHAOS		equ 5		
+AF_IPX			equ 6		
+AF_NS			equ 6		
+AF_ISO			equ 7		
+AF_OSI			equ AF_ISO		
+AF_ECMA			equ 8		
+AF_DATAKIT		equ 9		
+AF_CCITT		equ 10		
+AF_SNA			equ 11		
+AF_DECnet		equ 12		
+AF_DLI			equ 13		
+AF_LAT			equ 14		
+AF_HYLINK		equ 15		
+AF_APPLETALK		equ 16		
+AF_NETBIOS		equ 17		
+AF_VOICEVIEW		equ 18		
+AF_FIREFOX		equ 19		
+AF_UNKNOWN1		equ 20		
+AF_BAN			equ 21		
 
 AF_MAX			equ 22
 
-;;
-;; Structure used by kernel to store most
-;; addresses.
-;;
 sockaddr		STRUC
-sa_family		dw ?		;; address family
-sa_data			db 14 dup(?)	;; up to 14 bytes of direct address
+sa_family		dw ?		
+sa_data			db 14 dup(?)	
 sockaddr		ENDS
 
-;;
-;; Structure used by kernel to pass protocol
-;; information in raw sockets.
-;;
 sockproto		STRUC
-sp_family		dw ?	;; address family
-sp_protocol		dw ?	;; protocol
+sp_family		dw ?	
+sp_protocol		dw ?	
 sockproto		ENDS
 
-;;
-;; Protocol families, same as address families for now.
-;;
 PF_UNSPEC		equ AF_UNSPEC
 PF_UNIX			equ AF_UNIX
 PF_INET			equ AF_INET
@@ -523,40 +388,25 @@ PF_BAN			equ AF_BAN
 
 PF_MAX			equ AF_MAX
 
-;;
-;; Structure used for manipulating linger option.
-;;
 linger			STRUC
-l_onoff			dw ?	;; option on/off
-l_linger		dw ?	;; linger time
+l_onoff			dw ?	
+l_linger		dw ?	
 linger			ENDS
 
-;;
-;; Level number for (get/set)sockopt() to apply to socket itself.
-;;
-SOL_SOCKET		equ 0xffff		;; options for socket level
+SOL_SOCKET		equ 0xffff		
 
-;;
-;; Maximum queue length specifiable by listen.
-;;
 SOMAXCONN		equ 5
 
-MSG_OOB			equ 0x1		;; process out-of-band data
-MSG_PEEK		equ 0x2		;; peek at incoming message
-MSG_DONTROUTE		equ 0x4		;; send without using routing tables
+MSG_OOB			equ 0x1		
+MSG_PEEK		equ 0x2		
+MSG_DONTROUTE		equ 0x4		
 
 MSG_MAXIOVLEN		equ 16
 
-MSG_PARTIAL		equ 0x8000		;; partial send or recv for message xport
+MSG_PARTIAL		equ 0x8000		
 
-;;
-;; Define constant based on rfc883, used by gethostbyxxxx() calls.
-;;
 MAXGETHOSTSTRUCT	equ 1024
 
-;;
-;; Define flags to be used with the WSAAsyncSelect() call.
-;;
 FD_READ			equ 0x01
 FD_WRITE		equ 0x02
 FD_OOB			equ 0x04
@@ -564,14 +414,7 @@ FD_ACCEPT		equ 0x08
 FD_CONNECT		equ 0x10
 FD_CLOSE		equ 0x20
 
-;;
-;; All Windows Sockets error constants are biased by WSABASEERR from
-;; the "normal"
-;;
 WSABASEERR		equ 10000
-;;
-;; Windows Sockets definitions of regular Microsoft C error constants
-;;
 WSAEINTR		equ (WSABASEERR+4)
 WSAEBADF		equ (WSABASEERR+9)
 WSAEACCES		equ (WSABASEERR+13)
@@ -579,9 +422,6 @@ WSAEFAULT		equ (WSABASEERR+14)
 WSAEINVAL		equ (WSABASEERR+22)
 WSAEMFILE		equ (WSABASEERR+24)
 
-;;
-;; Windows Sockets definitions of regular Berkeley error constants
-;;
 WSAEWOULDBLOCK		equ (WSABASEERR+35)
 WSAEINPROGRESS		equ (WSABASEERR+36)
 WSAEALREADY		equ (WSABASEERR+37)
@@ -622,51 +462,28 @@ WSAEREMOTE		equ (WSABASEERR+71)
 
 WSAEDISCON		equ (WSABASEERR+101)
 
-;;
-;; Extended Windows Sockets error constant definitions
-;;
 WSASYSNOTREADY		equ (WSABASEERR+91)
 WSAVERNOTSUPPORTED	equ (WSABASEERR+92)
 WSANOTINITIALISED	equ (WSABASEERR+93)
 
-;;
-;; Error return codes from gethostbyname() and gethostbyaddr()
-;; (when using the resolver). Note that these errors are
-;; retrieved via WSAGetLastError() and must therefore follow
-;; the rules for avoiding clashes with error numbers from
-;; specific implementations or language run-time systems.
-;; For this reason the codes are based at WSABASEERR+1001.
-;; Note also that [WSA]NO_ADDRESS is defined only for
-;; compatibility purposes.
-;;
 
 h_errno			equ <WSAGetLastError()>
 
-;; Authoritative Answer: Host not found
 WSAHOST_NOT_FOUND	equ (WSABASEERR+1001)
 HOST_NOT_FOUND		equ WSAHOST_NOT_FOUND
 
-;; Non-Authoritative: Host not found, or SERVERFAIL
 WSATRY_AGAIN		equ (WSABASEERR+1002)
 TRY_AGAIN		equ WSATRY_AGAIN
 
-;; Non recoverable errors, FORMERR, REFUSED, NOTIMP
 WSANO_RECOVERY		equ (WSABASEERR+1003)
 NO_RECOVERY		equ WSANO_RECOVERY
 
-;; Valid name, no data record of requested type
 WSANO_DATA		equ (WSABASEERR+1004)
 NO_DATA			equ WSANO_DATA
 
-;; no address, look for MX record
 WSANO_ADDRESS		equ WSANO_DATA
 NO_ADDRESS		equ WSANO_ADDRESS
 
-;;
-;; Windows Sockets errors redefined as regular Berkeley error constants.
-;; These are commented out in Windows NT to avoid conflicts with errno.h.
-;; Use the WSA constants instead.
-;;
 if 0
 EWOULDBLOCK		equ WSAEWOULDBOCK
 EINPROGRESS		equ WSAEINPROGRESS
@@ -707,48 +524,47 @@ ESTALE			equ WSAESTAE
 EREMOTE			equ WSAEREMOTE
 endif
 
-;; Socket function prototypes
 
-accept proto _CType \
+accept proto WINAPI \
 		 _addr: ptr sockaddr,
 	       addrlen: ptr SINT
 
 ;int
-bind proto _CType \
+bind proto WINAPI \
 		     s: SOCKET,
 		 _addr: ptr sockaddr,
 	       namelen: SINT
 
 ;int
-closesocket proto _CType \
+closesocket proto WINAPI \
 		     s: SOCKET
 
 ;int
-connect proto _CType \
+connect proto WINAPI \
 		     s: SOCKET,
 		 _name: ptr sockaddr,
 	       namelen: SINT
 
 ;int
-ioctlsocket proto _CType \
+ioctlsocket proto WINAPI \
 		     s: SOCKET,
 		   cmd: LONG,
 		  argp: ptr ULONG
 
 ;int
-getpeername proto _CType \
+getpeername proto WINAPI \
 		     s: SOCKET,
 		 _name: ptr sockaddr,
 	       namelen: ptr SINT
 
 ;int
-getsockname proto _CType \
+getsockname proto WINAPI \
 		     s: SOCKET,
 		 _name: ptr sockaddr,
 	       namelen: ptr SINT
 
 ;int
-getsockopt proto _CType \
+getsockopt proto WINAPI \
 		     s: SOCKET,
 		 level: SINT,
 	       optname: SINT,
@@ -756,41 +572,41 @@ getsockopt proto _CType \
 		optlen: ptr SINT
 
 ;ULONG
-htonl proto _CType \
+htonl proto WINAPI \
 	      hostlong: ULONG
 
 WORD  htons(WORD hostshort);
 
 ;ULONG
-inet_addr proto _CType \
+inet_addr proto WINAPI \
 		    cp: LPSTR
 
 ;LPSTR
-inet_ntoa proto _CType \
+inet_ntoa proto WINAPI \
 		      : in_addr
 
 ;int
-listen proto _CType \
+listen proto WINAPI \
 		     s: SOCKET,
 	       backlog: SINT
 
 ;ULONG
-ntohl proto _CType \
+ntohl proto WINAPI \
 	       netlong: ULONG
 
 ;WORD
-ntohs proto _CType \
+ntohs proto WINAPI \
 	      netshort: WORD
 
 ;int
-recv proto _CType \
+recv proto WINAPI \
 		     s: SOCKET,
 		   buf: LPSTR,
 		   len: SINT,
 		 flags: SINT
 
 ;int
-recvfrom proto _CType \
+recvfrom proto WINAPI \
 		     s: SOCKET,
 		   buf: LPSTR,
 		   len: SINT,
@@ -799,7 +615,7 @@ recvfrom proto _CType \
 	       fromlen: ptr SINT
 
 ;int
-select proto _CType \
+select proto WINAPI \
 		  nfds: SINT,
 	       readfds: ptr fd_set,
 	      writefds: ptr fd_set,
@@ -807,14 +623,14 @@ select proto _CType \
 	       timeout: ptr timeval
 
 ;int
-send proto _CType \
+send proto WINAPI \
 		     s: SOCKET,
 		   buf: LPSTR,
 		   len: SINT,
 		 flags: SINT
 
 ;int
-sendto proto _CType \
+sendto proto WINAPI \
 		     s: SOCKET,
 		   buf: LPSTR,
 		   len: SINT,
@@ -823,7 +639,7 @@ sendto proto _CType \
 		 tolen: SINT
 
 ;int
-setsockopt proto _CType \
+setsockopt proto WINAPI \
 		     s: SOCKET,
 		 level: SINT,
 	       optname: SINT,
@@ -831,62 +647,60 @@ setsockopt proto _CType \
 		optlen: SINT
 
 ;int
-shutdown proto _CType \
+shutdown proto WINAPI \
 		     s: SOCKET,
 		   how: SINT
 
 ;SOCKET
-socket proto _CType \
+socket proto WINAPI \
 		    af: SINT,
 		 _type: SINT,
 	      protocol: SINT
 
-;; Database function prototypes
 
 ;hostent *
-gethostbyaddr proto _CType \
+gethostbyaddr proto WINAPI \
 		 _addr: LPSTR,
 		   len: SINT,
 		 _type: SINT
 
 hostent *
-gethostbyname proto _CType \
+gethostbyname proto WINAPI \
 		 _name: LPSTR
 
 ;int
-gethostname proto _CType \
+gethostname proto WINAPI \
 		 _name: LPSTR,
 	       namelen: SINT
 
 ;servent *
-getservbyport proto _CType \
+getservbyport proto WINAPI \
 		  port: SINT,
 		_proto: LPSTR
 
 ;servent *
-getservbyname proto _CType \
+getservbyname proto WINAPI \
 		 _name: LPSTR,
 		_proto: LPSTR
 
 ;protoent *
-getprotobynumber proto _CType \
+getprotobynumber proto WINAPI \
 		_proto: SINT
 
 ;protoent *
-getprotobyname proto _CType \
+getprotobyname proto WINAPI \
 		 _name: LPSTR
 
-;; Microsoft Windows Extension function prototypes
 
 ;int
-WSAStartup proto _CType \
+WSAStartup proto WINAPI \
       wVersionRequired: WORD,
 	     lpWSAData: LPWSADATA
 
 ;int
 
 ;void
-WSASetLastError proto _CType \
+WSASetLastError proto WINAPI \
 		iError: SINT
 
 ;int
@@ -896,13 +710,13 @@ WSASetLastError proto _CType \
 ;int
 
 FARPROC
-WSASetBlockingHook proto _CType \
+WSASetBlockingHook proto WINAPI \
 	   lpBlockFunc: FARPROC
 
 ;int
 
 ;HANDLE
-WSAAsyncGetServByName proto _CType \
+WSAAsyncGetServByName proto WINAPI \
 		  hWnd: HWND,
 		  wMsg: UINT,
 		 _name: LPSTR,
@@ -911,7 +725,7 @@ WSAAsyncGetServByName proto _CType \
 		buflen: SINT
 
 ;HANDLE
-WSAAsyncGetServByPort proto _CType \
+WSAAsyncGetServByPort proto WINAPI \
 		  hWnd: HWND,
 		  wMsg: UINT,
 		  port: SINT,
@@ -920,7 +734,7 @@ WSAAsyncGetServByPort proto _CType \
 		buflen: SINT
 
 ;HANDLE
-WSAAsyncGetProtoByName proto _CType \
+WSAAsyncGetProtoByName proto WINAPI \
 		  hWnd: HWND,
 		  wMsg: UINT,
 		  name: LPSTR,
@@ -928,7 +742,7 @@ WSAAsyncGetProtoByName proto _CType \
 		buflen: SINT
 
 ;HANDLE
-WSAAsyncGetProtoByNumber proto _CType \
+WSAAsyncGetProtoByNumber proto WINAPI \
 		  hWnd: HWND,
 		  wMsg: UINT,
 		number: SINT,
@@ -936,7 +750,7 @@ WSAAsyncGetProtoByNumber proto _CType \
 		buflen: SINT
 
 ;HANDLE
-WSAAsyncGetHostByName proto _CType \
+WSAAsyncGetHostByName proto WINAPI \
 		  hWnd: HWND,
 		  wMsg: UINT,
 		  name: LPSTR,
@@ -944,7 +758,7 @@ WSAAsyncGetHostByName proto _CType \
 		buflen: SINT
 
 ;HANDLE
-WSAAsyncGetHostByAddr proto _CType \
+WSAAsyncGetHostByAddr proto WINAPI \
 		  hWnd: HWND,
 		  wMsg: UINT,
 		 _addr: LPSTR,
@@ -954,18 +768,18 @@ WSAAsyncGetHostByAddr proto _CType \
 		buflen: SINT
 
 ;int
-WSACancelAsyncRequest proto _CType \
+WSACancelAsyncRequest proto WINAPI \
       hAsyncTaskHandle: HANDLE
 
 ;int
-WSAAsyncSelect proto _CType \
+WSAAsyncSelect proto WINAPI \
 		     s: SOCKET,
 		  hWnd: HWND,
 		  wMsg: UINT,
 		lEvent: LONG
 
 ;int
-WSARecvEx proto _CType \
+WSARecvEx proto WINAPI \
 		     s: SOCKET,
 		   buf: LPSTR,
 		   len: SINT,
@@ -985,7 +799,7 @@ TF_REUSE_SOCKET		equ 0x02
 TF_WRITE_BEHIND		equ 0x04
 
 ;BOOL
-TransmitFile proto _CType \
+TransmitFile proto WINAPI \
 	       hSocket: SOCKET,
 		 hFile: HANDLE,
  nNumberOfBytesToWrite: DWORD,
@@ -995,7 +809,7 @@ TransmitFile proto _CType \
 	    dwReserved: DWORD
 
 ;BOOL
-AcceptEx proto _CType \
+AcceptEx proto WINAPI \
 	 sListenSocket: SOCKET,
 	 sAcceptSocket: SOCKET,
 	lpOutputBuffer: PVOID,
@@ -1006,7 +820,7 @@ AcceptEx proto _CType \
 	  lpOverlapped: LPOVERLAPPED
 
 ;VOID
-GetAcceptExSockaddrs _CType \
+GetAcceptExSockaddrs WINAPI \
 	lpOutputBuffer: PVOID,
    dwReceiveDataLength: DWORD,
   dwLocalAddressLength: DWORD,
@@ -1016,7 +830,6 @@ GetAcceptExSockaddrs _CType \
 	RemoteSockaddr: PVOID,
   RemoteSockaddrLength: LPINT
 
-;; Microsoft Windows Extended data types
 ;sockaddr SOCKADDR;	 STRUC
 PSOCKADDR		typedef PVOID
 LPSOCKADDR		typedef PVOID
@@ -1053,56 +866,25 @@ LPPROTOENT		typedef PVOID
 PTIMEVAL		typedef PVOID
 LPTIMEVAL		typedef PVOID
 
-;;
-;; Windows message parameter composition and decomposition
-;; macros.
-;;
-;; WSAMAKEASYNCREPLY is intended for use by the Windows Sockets implementation
-;; when constructing the response to a WSAAsyncGetXByY() routine.
-;;
 WSAMAKEASYNCREPLY macro buflen,error
 	exitm<MAKEONG(buflen,error)>
 	endm
-;;
-;; WSAMAKESELECTREPLY is intended for use by the Windows Sockets implementation
-;; when constructing the response to WSAAsyncSelect().
-;;
 WSAMAKESELECTREPLY macro event,error
 	exitm<MAKEONG(event,error)>
 	endm
-;;
-;; WSAGETASYNCBUFLEN is intended for use by the Windows Sockets application
-;; to extract the buffer length from the lParam in the response
-;; to a WSAGetXByY().
-;;
 WSAGETASYNCBUFLEN macro lParam
 	exitm<LOWORD(lParam)>
 	endm
-;;
-;; WSAGETASYNCERROR is intended for use by the Windows Sockets application
-;; to extract the error code from the lParam in the response
-;; to a WSAGetXByY().
-;;
 WSAGETASYNCERROR macro lParam
 	exitm<HIWORD(lParam)>
 	endm
-;;
-;; WSAGETSELECTEVENT is intended for use by the Windows Sockets application
-;; to extract the event code from the lParam in the response
-;; to a WSAAsyncSelect().
-;;
 WSAGETSELECTEVENT macro lParam
 	exitm<LOWORD(lParam)>
 	endm
-;;
-;; WSAGETSELECTERROR is intended for use by the Windows Sockets application
-;; to extract the error code from the lParam in the response
-;; to a WSAAsyncSelect().
-;;
 WSAGETSELECTERROR macro lParam
 	exitm<HIWORD(lParam)>
 	endm
 
-endif	;; _WINSOCKAPI_
+endif	
 
 .list

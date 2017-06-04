@@ -2,17 +2,9 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 .xlist
-;;
-;; This module contains the Microsoft-specific extensions to the Windows
-;; Sockets API.
-;;
 ifndef _MSWSOCK_
 _MSWSOCK_ equ 1
 
-;;
-;; Options for connect and disconnect data and options.	 Used only by
-;; non-TCP/IP transports such as DECNet, OSI TP4, etc.
-;;
 SO_CONNDATA		equ 0x7000
 SO_CONNOPT		equ 0x7001
 SO_DISCDATA		equ 0x7002
@@ -22,32 +14,20 @@ SO_CONNOPTLEN		equ 0x7005
 SO_DISCDATALEN		equ 0x7006
 SO_DISCOPTLEN		equ 0x7007
 
-;;
-;; Option for opening sockets for synchronous access.
-;;
 SO_OPENTYPE		equ 0x7008
 
 SO_SYNCHRONOUS_ALERT	equ 0x10
 SO_SYNCHRONOUS_NONALERT equ 0x20
 
-;;
-;; Other NT-specific options.
-;;
 SO_MAXDG		equ 0x7009
 SO_MAXPATHDG		equ 0x700A
 SO_UPDATE_ACCEPT_CONTEXT equ 0x700B
 SO_CONNECT_TIME		equ 0x700C
 
-;;
-;; TCP options.
-;;
 TCP_BSDURGENT		equ 0x7000
 
-;;
-;; Microsoft extended APIs.
-;;
 ;int
-WSARecvEx proto _CType \
+WSARecvEx proto WINAPI \
 		     s: SOCKET,
 		   buf: LPSTR,
 		   len: SINT,
@@ -67,7 +47,7 @@ TF_REUSE_SOCKET		equ 0x02
 TF_WRITE_BEHIND		equ 0x04
 
 ;BOOL
-TransmitFile proto _CType \
+TransmitFile proto WINAPI \
 	       hSocket: SOCKET,
 		 hFile: HANDLE,
  nNumberOfBytesToWrite: DWORD,
@@ -77,7 +57,7 @@ TransmitFile proto _CType \
 	    dwReserved: DWORD
 
 ;BOOL
-AcceptEx proto _CType \
+AcceptEx proto WINAPI \
 	 sListenSocket: SOCKET,
 	 sAcceptSocket: SOCKET,
 	lpOutputBuffer: PVOID,
@@ -88,7 +68,7 @@ AcceptEx proto _CType \
 	  lpOverlapped: LPOVERLAPPED
 
 ;VOID
-GetAcceptExSockaddrs proto _CType \
+GetAcceptExSockaddrs proto WINAPI \
 	lpOutputBuffer: PVOID,
    dwReceiveDataLength: DWORD,
   dwLocalAddressLength: DWORD,
@@ -98,12 +78,9 @@ GetAcceptExSockaddrs proto _CType \
 	RemoteSockaddr: ptr sockaddr,
   RemoteSockaddrLength: LPINT
 
-;;
-;; "QueryInterface" versions of the above APIs.
-;;
 
 ;BOOL
-LPFN_TRANSMITFILE_T typedef proto _CType \
+LPFN_TRANSMITFILE_T typedef proto WINAPI \
 	       hSocket: SOCKET,
 		 hFile: HANDLE,
  nNumberOfBytesToWrite: DWORD,
@@ -116,7 +93,7 @@ LPFN_TRANSMITFILE typedef ptr LPFN_TRANSMITFILE_T
 WSAID_TRANSMITFILE	equ <{0xb5367df0,0xcbac,0x11cf,{0x95,0xca,0x00,0x80,0x5f,0x48,0xa1,0x92}}>
 
 ;BOOL
-LPFN_ACCEPTEX_T typedef proto _CType \
+LPFN_ACCEPTEX_T typedef proto WINAPI \
 	 sListenSocket: SOCKET,
 	 sAcceptSocket: SOCKET,
 	lpOutputBuffer: PVOID,
@@ -130,7 +107,7 @@ LPFN_ACCEPTEX typedef ptr LPFN_ACCEPTEX_T
 WSAID_ACCEPTEX		equ <{0xb5367df1,0xcbac,0x11cf,{0x95,0xca,0x00,0x80,0x5f,0x48,0xa1,0x92}}>
 
 ;VOID
-LPFN_GETACCEPTEXSOCKADDRS_T typedef proto _CType \
+LPFN_GETACCEPTEXSOCKADDRS_T typedef proto WINAPI \
 	lpOutputBuffer: PVOID,
    dwReceiveDataLength: DWORD,
   dwLocalAddressLength: DWORD,
@@ -143,6 +120,6 @@ LPFN_GETACCEPTEXSOCKADDRS typedef ptr LPFN_GETACCEPTEXSOCKADDRS_T
 
 WSAID_GETACCEPTEXSOCKADDRS equ <{0xb5367df2,0xcbac,0x11cf,{0x95,0xca,0x00,0x80,0x5f,0x48,0xa1,0x92}}>
 
-endif	;; _MSWSOCK_
+endif	
 
 .list

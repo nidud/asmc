@@ -2,9 +2,6 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 .xlist
-;
-; definitions for generic international text functions
-;
 ifndef _INC_TCHAR
 _INC_TCHAR equ <>
 
@@ -40,7 +37,6 @@ _ftcsncoll		equ <_tcsncoll>
 _ftcsncicoll		equ <_tcsncicoll>
 _ftcsnicoll		equ <_tcsnicoll>
 
-;; Redundant "logical-character" mappings
 
 _ftcsclen		equ <_tcsclen>
 _ftcsnccat		equ <_tcsnccat>
@@ -65,7 +61,6 @@ _ftccmp			equ <_tccmp>
 
 ifdef  _UNICODE
 
-;; ++++++++++++++++++++ UNICODE ++++++++++++++++++++
 
 include wchar.inc
 
@@ -98,7 +93,6 @@ __T	macro x
 	endm
 endif
 
-;; Program
 
 _tmain			equ <wmain>
 _tWinMain		equ <wWinMain>
@@ -106,7 +100,6 @@ _tenviron		equ <_wenviron>
 __targv			equ <__wargv>
 _tgetmainargs		equ <__wgetmainargs>
 
-;; Formatted i/o
 
 _tprintf		equ <wprintf>
 _ftprintf		equ <fwprintf>
@@ -121,7 +114,6 @@ _ftscanf		equ <fwscanf>
 _stscanf		equ <swscanf>
 
 
-;; Unformatted i/o
 
 _fgettc			equ <fgetwc>
 _fgettchar		equ <_fgetwchar>
@@ -138,7 +130,6 @@ _putts			equ <_putws>
 _ungettc		equ <ungetwc>
 
 
-;; String conversion functions
 
 _tcstod			equ <wcstod>
 _tcstol			equ <wcstol>
@@ -154,7 +145,6 @@ _ttoi64			equ <_wtoi64>
 _i64tot			equ <_i64tow>
 _ui64tot		equ <_ui64tow>
 
-;; String functions
 
 _tcscat			equ <wcscat>
 _tcschr			equ <wcschr>
@@ -189,7 +179,6 @@ _tcsncicoll		equ <_wcsnicoll>
 _tcsnicoll		equ <_wcsnicoll>
 
 
-;; Execute functions
 
 _texecl			equ <_wexecl>
 _texecle		equ <_wexecle>
@@ -213,7 +202,6 @@ _tspawnvpe		equ <_wspawnvpe>
 _tsystem		equ <_wsystem>
 
 
-;; Time functions
 
 _tasctime		equ <_wasctime>
 _tctime			equ <_wctime>
@@ -223,7 +211,6 @@ _tutime			equ <_wutime>
 _tcsftime		equ <wcsftime>
 
 
-;; Directory functions
 
 _tchdir			equ <_wchdir>
 _tgetcwd		equ <_wgetcwd>
@@ -232,7 +219,6 @@ _tmkdir			equ <_wmkdir>
 _trmdir			equ <_wrmdir>
 
 
-;; Environment/Path functions
 
 _tfullpath		equ <_wfullpath>
 _tgetenv		equ <_wgetenv>
@@ -242,7 +228,6 @@ _tsearchenv		equ <_wsearchenv>
 _tsplitpath		equ <_wsplitpath>
 
 
-;; Stdio functions
 
 _tfdopen		equ <_wfdopen>
 _tfsopen		equ <_wfsopen>
@@ -254,7 +239,6 @@ _ttempnam		equ <_wtempnam>
 _ttmpnam		equ <_wtmpnam>
 
 
-;; Io functions
 
 _taccess		equ <_waccess>
 _tchmod			equ <_wchmod>
@@ -274,18 +258,15 @@ _tfinddata_t		equ <_wfinddata_t>
 _tfinddatai64_t		equ <_wfinddatai64_t>
 
 
-;; Stat functions
 
 _tstat			equ <_wstat>
 _tstati64		equ <_wstati64>
 
 
-;; Setlocale functions
 
 _tsetlocale		equ <_wsetlocale>
 
 
-;; Redundant "logical-character" mappings
 
 _tcsclen		equ <wcslen>
 _tcsnccat		equ <wcsncat>
@@ -320,14 +301,13 @@ _tccmp	macro _cpc1,_cpc2
 	movsx eax,ax
 	exitm<eax>
 	endm
-else   ;; __STDC__
-_tclen proto _CType :ptr WORD
-_tccpy proto _CType :ptr WORD, :ptr WORD
-_tccmp proto _CType :ptr WORD, :ptr WORD
-endif  ;; __STDC__
+else   
+_tclen proto WINAPI :ptr WORD
+_tccpy proto WINAPI :ptr WORD, :ptr WORD
+_tccmp proto WINAPI :ptr WORD, :ptr WORD
+endif  
 
 
-;; ctype functions
 
 _istalnum		equ <iswalnum>
 _istalpha		equ <iswalpha>
@@ -396,30 +376,26 @@ _wcsspnp macro _cpc1,_cpc2
 	.endif
 	exitm<rax>
 	endm
-else   ;; __STDC__
+else   
 _wcsdec		proto :ptr wchar_t, :ptr wchar_t
 _wcsinc		proto :ptr wchar_t
 _wcsnextc	proto :ptr wchar_t
 _wcsninc	proto :ptr wchar_t, :size_t
 _wcsncnt	proto :ptr wchar_t, :size_t
 _wcsspnp	proto :ptr wchar_t, :ptr wchar_t
-endif  ;; __STDC__
+endif  
 
 
-else   ;; ndef _UNICODE
+else   
 
-;; ++++++++++++++++++++ SBCS and MBCS ++++++++++++++++++++
 
 include string.inc
 
 _TEOF			equ EOF
 
 ;__T	macro x
-;	exitm<x>
-;	endm
 
 
-;; Program
 
 _tmain			equ <main>
 _tWinMain		equ <WinMain>
@@ -432,7 +408,6 @@ __targv			equ <__argv>
 _tgetmainargs		equ <__getmainargs>
 
 
-;; Formatted i/o
 
 _tprintf		equ <printf>
 _ftprintf		equ <fprintf>
@@ -447,7 +422,6 @@ _ftscanf		equ <fscanf>
 _stscanf		equ <sscanf>
 
 
-;; Unformatted i/o
 
 _fgettc			equ <fgetc>
 _fgettchar		equ <_fgetchar>
@@ -464,7 +438,6 @@ _putts			equ <puts>
 _ungettc		equ <ungetc>
 
 
-;; String conversion functions
 
 _tcstod			equ <strtod>
 _tcstol			equ <strtol>
@@ -480,10 +453,7 @@ _ttoi64			equ <_atoi64>
 _i64tot			equ <_i64toa>
 _ui64tot		equ <_ui64toa>
 
-;; String functions
 
-;; Note that _mbscat, _mbscpy and _mbsdup are functionally equivalent to
-;; strcat, strcpy and strdup, respectively.
 
 _tcscat			equ <strcat>
 _tcscpy			equ <strcpy>
@@ -493,7 +463,6 @@ _tcslen			equ <strlen>
 _tcsxfrm		equ <strxfrm>
 
 
-;; Execute functions
 
 _texecl			equ <_execl>
 _texecle		equ <_execle>
@@ -516,7 +485,6 @@ _tspawnvpe		equ <_spawnvpe>
 _tsystem		equ <system>
 
 
-;; Time functions
 
 _tasctime		equ <asctime>
 _tctime			equ <ctime>
@@ -526,7 +494,6 @@ _tutime			equ <_utime>
 _tcsftime		equ <strftime>
 
 
-;; Directory functions
 
 _tchdir			equ <_chdir>
 _tgetcwd		equ <_getcwd>
@@ -535,7 +502,6 @@ _tmkdir			equ <_mkdir>
 _trmdir			equ <_rmdir>
 
 
-;; Environment/Path functions
 
 _tfullpath		equ <_fullpath>
 _tgetenv		equ <getenv>
@@ -545,7 +511,6 @@ _tsearchenv		equ <_searchenv>
 _tsplitpath		equ <_splitpath>
 
 
-;; Stdio functions
 
 ifdef  _POSIX_
 _tfdopen		equ <fdopen>
@@ -561,7 +526,6 @@ _ttempnam		equ <_tempnam>
 _ttmpnam		equ <tmpnam>
 
 
-;; Io functions
 
 _tchmod			equ <_chmod>
 _tcreat			equ <_creat>
@@ -588,27 +552,23 @@ _tfinddata_t		equ <_finddata_t>
 _tfinddatai64_t		equ <_finddatai64_t>
 
 
-;; ctype functions
 
 _istascii		equ <isascii>
 _istcntrl		equ <iscntrl>
 _istxdigit		equ <isxdigit>
 
 
-;; Stat functions
 
 _tstat			equ <_stat>
 _tstati64		equ <_stati64>
 
 
-;; Setlocale functions
 
 _tsetlocale		equ <setlocale>
 
 
 ifdef  _MBCS
 
-;; ++++++++++++++++++++ MBCS ++++++++++++++++++++
 
 include mbstring.inc
 
@@ -631,9 +591,7 @@ endif
 
 ifdef  _MB_MAP_DIRECT
 
-;; use mb functions directly - types must match
 
-;; String functions
 
 _tcschr			equ <_mbschr>
 _tcscspn		equ <_mbscspn>
@@ -664,7 +622,6 @@ _tcsncicoll		equ <_mbsnicoll>
 _tcsnicoll		equ <_mbsnbicoll>
 
 
-;; "logical-character" mappings
 
 _tcsclen		equ <_mbslen>
 _tcsnccat		equ <_mbsncat>
@@ -672,7 +629,6 @@ _tcsnccpy		equ <_mbsncpy>
 _tcsncset		equ <_mbsnset>
 
 
-;; MBCS-specific mappings
 
 _tcsdec			equ <_mbsdec>
 _tcsinc			equ <_mbsinc>
@@ -693,7 +649,7 @@ _tccmp macro _cpuc1,_cpuc2
 	endm
 
 
-else ;; _MB_MAP_DIRECT
+else 
 
 _PUC			equ ptr byte
 _CPUC			equ ptr byte
@@ -703,61 +659,55 @@ _UI			equ dword
 
 if     (__STDC__ OR defined(_NO_INLINING)) AND NOT defined(_M_M68K)
 
-;; use type-safe linked-in function thunks
 
-;; String functions
 
-_tcschr		proto _CType :_CPC, :_UI
-_tcscspn	proto _CType :_CPC, :_CPC
-_tcsncat	proto _CType :_PC, :_CPC, :size_t
-_tcsncpy	proto _CType :_PC, :_CPC, :size_t
-_tcspbrk	proto _CType :_CPC, :_CPC
-_tcsrchr	proto _CType :_CPC, :_UI
-_tcsspn		proto _CType :_CPC, :_CPC
-_tcsstr		proto _CType :_CPC, :_CPC
-_tcstok		proto _CType :_PC, :_CPC
-_tcsnset	proto _CType :_PC, :_UI, :size_t
-_tcsrev		proto _CType :_PC
-_tcsset		proto _CType :_PC, :_UI
-_tcscmp		proto _CType :_CPC, :_CPC
-_tcsicmp	proto _CType :_CPC, :_CPC
-_tcsnccmp	proto _CType :_CPC, :_CPC, :size_t
-_tcsncmp	proto _CType :_CPC, :_CPC, :size_t
-_tcsncicmp	proto _CType :_CPC, :_CPC, :size_t
-_tcsnicmp	proto _CType :_CPC, :_CPC, :size_t
-_tcscoll	proto _CType :_CPC, :_CPC
-_tcsicoll	proto _CType :_CPC, :_CPC
-_tcsnccoll	proto _CType :_CPC, :_CPC, :size_t
-_tcsncoll	proto _CType :_CPC, :_CPC, :size_t
-_tcsncicoll	proto _CType :_CPC, :_CPC, :size_t
-_tcsnicoll	proto _CType :_CPC, :_CPC, :size_t
+_tcschr		proto WINAPI :_CPC, :_UI
+_tcscspn	proto WINAPI :_CPC, :_CPC
+_tcsncat	proto WINAPI :_PC, :_CPC, :size_t
+_tcsncpy	proto WINAPI :_PC, :_CPC, :size_t
+_tcspbrk	proto WINAPI :_CPC, :_CPC
+_tcsrchr	proto WINAPI :_CPC, :_UI
+_tcsspn		proto WINAPI :_CPC, :_CPC
+_tcsstr		proto WINAPI :_CPC, :_CPC
+_tcstok		proto WINAPI :_PC, :_CPC
+_tcsnset	proto WINAPI :_PC, :_UI, :size_t
+_tcsrev		proto WINAPI :_PC
+_tcsset		proto WINAPI :_PC, :_UI
+_tcscmp		proto WINAPI :_CPC, :_CPC
+_tcsicmp	proto WINAPI :_CPC, :_CPC
+_tcsnccmp	proto WINAPI :_CPC, :_CPC, :size_t
+_tcsncmp	proto WINAPI :_CPC, :_CPC, :size_t
+_tcsncicmp	proto WINAPI :_CPC, :_CPC, :size_t
+_tcsnicmp	proto WINAPI :_CPC, :_CPC, :size_t
+_tcscoll	proto WINAPI :_CPC, :_CPC
+_tcsicoll	proto WINAPI :_CPC, :_CPC
+_tcsnccoll	proto WINAPI :_CPC, :_CPC, :size_t
+_tcsncoll	proto WINAPI :_CPC, :_CPC, :size_t
+_tcsncicoll	proto WINAPI :_CPC, :_CPC, :size_t
+_tcsnicoll	proto WINAPI :_CPC, :_CPC, :size_t
 
-;; "logical-character" mappings
 
-_tcsclen	proto _CType :_CPC
-_tcsnccat	proto _CType :_PC, :_CPC, :size_t
-_tcsnccpy	proto _CType :_PC, :_CPC, :size_t
-_tcsncset	proto _CType :_PC, :_UI, :size_t
+_tcsclen	proto WINAPI :_CPC
+_tcsnccat	proto WINAPI :_PC, :_CPC, :size_t
+_tcsnccpy	proto WINAPI :_PC, :_CPC, :size_t
+_tcsncset	proto WINAPI :_PC, :_UI, :size_t
 
-;; MBCS-specific mappings
 
-_tcsdec		proto _CType :_CPC, :_CPC
-_tcsinc		proto _CType :_CPC
-_tcsnbcnt	proto _CType :_CPC, :size_t
-_tcsnccnt	proto _CType :_CPC, :size_t
-_tcsninc	proto _CType :_CPC, :size_t
-_tcsspnp	proto _CType :_CPC, :_CPC
-_tcslwr		proto _CType :_PC
-_tcsupr		proto _CType :_PC
-_tclen		proto _CType :_CPC
-_tccpy		proto _CType :_PC, :_CPC
-_tcsnextc	proto _CType :_CPC
+_tcsdec		proto WINAPI :_CPC, :_CPC
+_tcsinc		proto WINAPI :_CPC
+_tcsnbcnt	proto WINAPI :_CPC, :size_t
+_tcsnccnt	proto WINAPI :_CPC, :size_t
+_tcsninc	proto WINAPI :_CPC, :size_t
+_tcsspnp	proto WINAPI :_CPC, :_CPC
+_tcslwr		proto WINAPI :_PC
+_tcsupr		proto WINAPI :_PC
+_tclen		proto WINAPI :_CPC
+_tccpy		proto WINAPI :_PC, :_CPC
+_tcsnextc	proto WINAPI :_CPC
 
-else   ;; __STDC__
+else   
 
-;; the default: use type-safe inline function thunks
 
-;; String functions
 
 _tcschr macro _s1,_c
 	exitm<_mbschr(_s1,_c)>
@@ -836,7 +786,6 @@ _tcsnicoll macro _s1,_s2,_n
 	endm
 
 
-;; "logical-character" mappings
 
 _tcsclen macro _s1,_s2
 	exitm<_mbslen(_s1)>
@@ -852,7 +801,6 @@ _tcsncset macro _s1,_c,_n
 	endm
 
 
-;; MBCS-specific mappings
 
 _tcsdec macro _s1,_s2
 	exitm<_mbsdec(_s1,_s2)>
@@ -886,7 +834,6 @@ _tccpy macro _s1,_s2
 	endm
 
 
-;; inline helper
 _tcsnextc macro _s1
 	mov rax,_s1
 	movzx eax,byte ptr [rax]
@@ -898,19 +845,17 @@ _tcsnextc macro _s1
 	exitm<eax>
 	endm
 
-endif  ;; __STDC__
+endif  
 
-endif  ;; _MB_MAP_DIRECT
+endif  
 
 
-;; MBCS-specific mappings
 
 _tccmp macro _cp1,_cp2
 	exitm<_tcsnccmp(_cp1,_cp2,1)>
 	endm
 
 
-;; ctype functions
 
 _istalnum		equ <_ismbcalnum>
 _istalpha		equ <_ismbcalpha>
@@ -929,9 +874,8 @@ _totlower		equ <_mbctolower>
 _istlead		equ <_ismbblead>
 _istleadbyte		equ <isleadbyte>
 
-else   ;; NOT _MBCS
+else   
 
-;; ++++++++++++++++++++ SBCS ++++++++++++++++++++
 
 
 ifndef __TCHAR_DEFINED
@@ -951,7 +895,6 @@ _TCHAR_DEFINED		equ 1
 endif
 
 
-;; String functions
 
 _tcschr			equ <strchr>
 _tcscspn		equ <strcspn>
@@ -982,7 +925,6 @@ _tcsncicoll		equ <_strnicoll>
 _tcsnicoll		equ <_strnicoll>
 
 
-;; "logical-character" mappings
 
 _tcsclen		equ <strlen>
 _tcsnccat		equ <strncat>
@@ -990,7 +932,6 @@ _tcsnccpy		equ <strncpy>
 _tcsncset		equ <_strnset>
 
 
-;; MBCS-specific functions
 
 _tcsdec			equ <_strdec>
 _tcsinc			equ <_strinc>
@@ -1031,14 +972,13 @@ _tccmp macro _cpc1,_cpc2
 	exitm<eax>
 	endm
 
-else   ;; __STDC__
-_tclen proto _CType :ptr SBYTE
-_tccpy proto _CType :ptr SBYTE, :ptr SBYTE
-_tccmp proto _CType :ptr SBYTE, :ptr SBYTE
-endif  ;; __STDC__
+else   
+_tclen proto WINAPI :ptr SBYTE
+_tccpy proto WINAPI :ptr SBYTE, :ptr SBYTE
+_tccmp proto WINAPI :ptr SBYTE, :ptr SBYTE
+endif  
 
 
-;; ctype-functions
 
 _istalnum		equ <isalnum>
 _istalpha		equ <isalpha>
@@ -1058,9 +998,7 @@ _istlegal macro _c
 	endm
 
 
-;; the following is optional if functional versions are available
 
-;; define NULL pointer value
 
 ifndef NULL
 NULL			equ 0
@@ -1106,22 +1044,20 @@ _strspnp macro _cpc1,_cpc2
 	.endif
 	exitm<rax>
 	endm
-else   ;; __STDC__
+else   
 _strdec		proto :ptr SBYTE, :ptr SBYTE
 _strinc		proto :ptr SBYTE
 _strnextc	proto :ptr SBYTE
 _strninc	proto :ptr SBYTE, :size_t
 _strncnt	proto :ptr SBYTE, :size_t
 _strspnp	proto :ptr SBYTE, :ptr SBYTE
-endif  ;; __STDC__
+endif  
 
 
-endif  ;; _MBCS
-endif  ;; _UNICODE
+endif  
+endif  
 
 
-;; Generic text macros to be used with string literals and character constants.
-;; Will also allow symbolic constants that resolve to same.
 if 0
 _T	macro x
 	exitm<__T(x)>
@@ -1182,6 +1118,6 @@ _tstart equ <>
 
 endif
 
-endif  ;; _INC_TCHAR
+endif  
 
 .list

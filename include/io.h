@@ -90,53 +90,75 @@ struct _wfinddata_t {
 	wchar_t name[260];
       };
 
-_CRTIMP int _CType _access(const char *, int);
-_CRTIMP int _CType _chmod(const char *, int);
-_CRTIMP int _CType _chsize(int, long);
-_CRTIMP int _CType _close(int);
-_CRTIMP int _CType _commit(int);
-_CRTIMP int _CType _creat(const char *, int);
-_CRTIMP int _CType _dup(int);
-_CRTIMP int _CType _dup2(int);
-_CRTIMP int _CType _eof(int);
-_CRTIMP long _CType _filelength(int);
-_CRTIMP long _CType _findfirst(char *, struct _finddata_t *);
-_CRTIMP int _CType _findnext(long, struct _finddata_t *);
-_CRTIMP int _CType _findclose(long);
-_CRTIMP int _CType _isatty(int);
-_CRTIMP long _CType _lseek(int, long, int);
-_CRTIMP char *_CType _mktemp(char *);
-_CRTIMP int _CDecl _open(const char *, int, ...);
-_CRTIMP int _CType _pipe(int *, unsigned int, int);
-_CRTIMP int _CType _read(int, void *, unsigned);
-_CRTIMP int _CType remove(const char *);
-_CRTIMP int _CType rename(const char *, const char *);
-_CRTIMP int _CType _setmode(int, int);
-_CRTIMP int _CDecl _sopen(const char *, int, int, ...);
-_CRTIMP long _CType _tell(int);
-_CRTIMP int _CType _umask(int);
-_CRTIMP int _CType _unlink(const char *);
-_CRTIMP int _CType _write(int, const void *, unsigned int);
+struct _finddatai64_t {
+	unsigned attrib;
+	time_t	time_create;
+	time_t	time_access;
+	time_t	time_write;
+	__int64 size;
+	char	name[260];
+      };
+
+struct _wfinddatai64_t {
+	unsigned attrib;
+	time_t	time_create;
+	time_t	time_access;
+	time_t	time_write;
+	__int64 size;
+	wchar_t name[260];
+      };
+
+_CRTIMP int __cdecl _access(const char *, int);
+_CRTIMP int __cdecl _chmod(const char *, int);
+_CRTIMP int __cdecl _chsize(int, long);
+_CRTIMP int __cdecl _close(int);
+_CRTIMP int __cdecl close(int);
+_CRTIMP int __cdecl _commit(int);
+_CRTIMP int __cdecl _creat(const char *, int);
+_CRTIMP int __cdecl _dup(int);
+_CRTIMP int __cdecl _dup2(int);
+_CRTIMP int __cdecl _eof(int);
+_CRTIMP long __cdecl filelength(int);
+#define _filelength filelength
+_CRTIMP long __cdecl _findfirst(char *, struct _finddata_t *);
+_CRTIMP int __cdecl _findnext(long, struct _finddata_t *);
+_CRTIMP int __cdecl _findclose(long);
+_CRTIMP int __cdecl _isatty(int);
+_CRTIMP long __cdecl _lseek(int, long, int);
+_CRTIMP char *__cdecl _mktemp(char *);
+_CRTIMP int __cdecl _open(const char *, int, ...);
+_CRTIMP int __cdecl open(const char *, int, ...);
+_CRTIMP int __cdecl _pipe(int *, unsigned int, int);
+_CRTIMP int __cdecl _read(int, void *, unsigned);
+_CRTIMP int __cdecl read(int, void *, unsigned);
+_CRTIMP int __cdecl remove(const char *);
+_CRTIMP int __cdecl rename(const char *, const char *);
+_CRTIMP int __cdecl _setmode(int, int);
+_CRTIMP int __cdecl _sopen(const char *, int, int, ...);
+_CRTIMP long __cdecl _tell(int);
+_CRTIMP int __cdecl _umask(int);
+_CRTIMP int __cdecl _unlink(const char *);
+_CRTIMP int __cdecl _write(int, const void *, unsigned int);
 
 #ifndef _WIO_DEFINED
 
-_CRTIMP int _CType _waccess(const wchar_t *, int);
-_CRTIMP int _CType _wchmod(const wchar_t *, int);
-_CRTIMP int _CType _wcreat(const wchar_t *, int);
-_CRTIMP long _CType _wfindfirst(wchar_t *, struct _wfinddata_t *);
-_CRTIMP int _CType _wfindnext(long, struct _wfinddata_t *);
-_CRTIMP int _CType _wunlink(const wchar_t *);
-_CRTIMP int _CType _wrename(const wchar_t *, const wchar_t *);
-_CRTIMP int _CType _wopen(const wchar_t *, int, ...);
-_CRTIMP int _CType _wsopen(const wchar_t *, int, int, ...);
+_CRTIMP int __cdecl _waccess(const wchar_t *, int);
+_CRTIMP int __cdecl _wchmod(const wchar_t *, int);
+_CRTIMP int __cdecl _wcreat(const wchar_t *, int);
+_CRTIMP long __cdecl _wfindfirst(wchar_t *, struct _wfinddata_t *);
+_CRTIMP int __cdecl _wfindnext(long, struct _wfinddata_t *);
+_CRTIMP int __cdecl _wunlink(const wchar_t *);
+_CRTIMP int __cdecl _wrename(const wchar_t *, const wchar_t *);
+_CRTIMP int __cdecl _wopen(const wchar_t *, int, ...);
+_CRTIMP int __cdecl _wsopen(const wchar_t *, int, int, ...);
 
 #define _WIO_DEFINED
 #endif	/* _WIO_DEFINED */
 
-int _CType getosfhnd(int);
-int _CType osopen(const char *, int, int, int);
-int _CType osread(int, void *, unsigned);
-int _CType oswrite(int, const void *, unsigned);
+int __cdecl getosfhnd(int);
+int __cdecl osopen(const char *, int, int, int);
+int __cdecl osread(int, void *, unsigned);
+int __cdecl oswrite(int, const void *, unsigned);
 
 #if !__STDC__
 #define access _access

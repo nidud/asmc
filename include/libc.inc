@@ -2,8 +2,9 @@ ifndef __LIBC_INC
 ;
 ; Master include file for the Asmc RTL library.
 ;
+_ASMLIB_	equ 224 ; Asmc Version
 .xlist
-__LIBC_INC	equ 223 ; Asmc Version 2.23
+__LIBC_INC	equ 1
 __STDC__	equ 1
 ;;
 ;; Architecture kinds:
@@ -31,6 +32,13 @@ _X86_		equ <>
 _M_IX86		equ 300
 endif
 
+ifdef __DZ__
+_CDecl	equ <c>
+_CType	equ <stdcall>
+__cdecl equ <stdcall>
+WINAPI	equ <stdcall>
+endif
+
 ifdef __PE__	; asmc /pe
 ifndef _MSVCRT	; msvcrt.lib
 _MSVCRT equ <>
@@ -48,18 +56,16 @@ endif
 ifndef __cdecl	; libc/msvcrt types
 ifdef _WIN64
 __cdecl equ <fastcall>
-elseifdef _MSVCRT
-__cdecl equ <c>
 else
-__cdecl equ <stdcall>
+__cdecl equ <c>
 endif
 endif
 
-ifndef _CType	; default (API) type
+ifndef _CType	; default (user) type
 ifdef _WIN64
 _CType equ <fastcall>
 else
-_CType equ <stdcall>
+_CType equ <c>
 endif
 endif
 ;

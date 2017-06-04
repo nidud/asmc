@@ -20,7 +20,7 @@ else
 DEFINE_GUID macro name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8
 	externdef name:GUID
 	endm
-endif ;; INITGUID
+endif 
 
 DEFINE_OLEGUID macro name, l, w1, w2
 	exitm<DEFINE_GUID(name, l, w1, w2, 0xC0,0,0,0,0,0,0,0x46)>
@@ -88,7 +88,7 @@ _REFFMTID_DEFINED	equ <>
 REFFMTID		equ <LPIID>
 endif
 
-endif ;; NOT __IID_DEFINED__
+endif 
 
 ifndef __midl
 ifndef _SYS_GUID_OPERATORS_
@@ -108,7 +108,6 @@ IsEqualGUID macro rguid1, rguid2
 	exitm<InlineIsEqualGUID(rguid1, rguid2)>
 	endm
 
-;; Same type, different name
 
 IsEqualIID macro riid1, riid2
 	exitm<IsEqualGUID(riid1, riid2)>
@@ -117,6 +116,6 @@ IsEqualCLSID macro rclsid1, rclsid2
 	exitm<IsEqualGUID(rclsid1, rclsid2)>
 	endm
 
-endif  ;; _SYS_GUID_OPERATORS_
-endif  ;; __midl
-endif  ;; _GUIDDEF_H_
+endif  
+endif  
+endif  

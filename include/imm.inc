@@ -5,11 +5,8 @@ ifndef _WINDEF_
  include windef.inc
 endif
 .xlist
-;
-; Input Method Manager definitions
-;
 ifndef _IMM_
-_IMM_ equ 1 ;; defined if IMM.H has been included
+_IMM_ equ 1 
 
 if (WINVER GE 0x40A)
 HIMC			typedef HANDLE
@@ -81,7 +78,7 @@ REGISTERWORD		typedef REGISTERWORDA
 PREGISTERWORD		typedef PREGISTERWORDA
 NPREGISTERWORD		typedef NPREGISTERWORDA
 LPREGISTERWORD		typedef LPREGISTERWORDA
-endif ;; UNICODE
+endif 
 
 
 if(WINVER GE 0x040A)
@@ -126,7 +123,7 @@ STYLEBUF		typedef STYLEBUFA
 PSTYLEBUF		typedef PSTYLEBUFA
 NPSTYLEBUF		typedef NPSTYLEBUFA
 LPSTYLEBUF		typedef LPSTYLEBUFA
-endif ;; UNICODE
+endif 
 
 
 if(WINVER GE 0x040A)
@@ -170,34 +167,33 @@ IMEMENUITEMINFO		typedef IMEMENUITEMINFOA
 PIMEMENUITEMINFO	typedef PIMEMENUITEMINFOA
 NPIMEMENUITEMINFO	typedef NPIMEMENUITEMINFOA
 LPIMEMENUITEMINFO	typedef LPIMEMENUITEMINFOA
-endif ;; UNICODE
-endif  ;; WINVER GE 0x040A
+endif 
+endif  
 
-;; prototype of IMM API
 
-ImmInstallIMEA proto _CType \
+ImmInstallIMEA proto WINAPI \
        lpszIMEFileName: LPCSTR,
 	lpszLayoutText: LPCSTR
-ImmInstallIMEW proto _CType \
+ImmInstallIMEW proto WINAPI \
        lpszIMEFileName: LPCWSTR,
 	lpszLayoutText: LPCWSTR
 ifdef _UNICODE
 ImmInstallIME		equ <ImmInstallIMEW>
 else
 ImmInstallIME		equ <ImmInstallIMEA>
-endif ;; NOT UNICODE
+endif 
 
 ;HWND
-ImmGetDefaultIMEWnd proto _CType \
+ImmGetDefaultIMEWnd proto WINAPI \
 		      : HWND
 
 ;UINT
-ImmGetDescriptionA proto _CType \
+ImmGetDescriptionA proto WINAPI \
 		      : HKL,
 		      : LPSTR,
 	       uBufLen: UINT
 ;UINT
-ImmGetDescriptionW proto _CType \
+ImmGetDescriptionW proto WINAPI \
 		      : HKL,
 		      : LPWSTR,
 	       uBufLen: UINT
@@ -205,15 +201,15 @@ ifdef _UNICODE
 ImmGetDescription	equ <ImmGetDescriptionW>
 else
 ImmGetDescription	equ <ImmGetDescriptionA>
-endif ;; NOT UNICODE
+endif 
 
 ;UINT
-ImmGetIMEFileNameA proto _CType \
+ImmGetIMEFileNameA proto WINAPI \
 		      : HKL,
 		      : LPSTR,
 	       uBufLen: UINT
 ;UINT
-ImmGetIMEFileNameW proto _CType \
+ImmGetIMEFileNameW proto WINAPI \
 		      : HKL,
 		      : LPWSTR,
 	       uBufLen: UINT
@@ -221,51 +217,51 @@ ifdef _UNICODE
 ImmGetIMEFileName	equ <ImmGetIMEFileNameW>
 else
 ImmGetIMEFileName	equ <ImmGetIMEFileNameA>
-endif ;; NOT UNICODE
+endif 
 
 ;DWORD
-ImmGetProperty proto _CType \
+ImmGetProperty proto WINAPI \
 		      : HKL,
 		      : DWORD
 
 ;BOOL
-ImmIsIME proto _CType \
+ImmIsIME proto WINAPI \
 		      : HKL
 ;BOOL
-ImmSimulateHotKey proto _CType \
+ImmSimulateHotKey proto WINAPI \
 		      : HWND,
 		      : DWORD
 ;HIMC
-ImmCreateContext proto _CType
+ImmCreateContext proto WINAPI
 ;BOOL
-ImmDestroyContext proto _CType \
+ImmDestroyContext proto WINAPI \
 			: HIMC
 ;HIMC
-ImmGetContext proto _CType \
+ImmGetContext proto WINAPI \
 		      : HWND
 ;BOOL
-ImmReleaseContext proto _CType \
+ImmReleaseContext proto WINAPI \
 		      : HWND,
 		      : HIMC
 ;HIMC
-ImmAssociateContext proto _CType \
+ImmAssociateContext proto WINAPI \
 		      : HWND,
 		      : HIMC
 if(WINVER GE 0x040A)
 ;BOOL
-ImmAssociateContextEx proto _CType \
+ImmAssociateContextEx proto WINAPI \
 		      : HWND,
 		      : HIMC,
 		      : DWORD
-endif ;; WINVER GE 0x040A
+endif 
 
 ;LONG
-ImmGetCompositionStringA proto _CType \
+ImmGetCompositionStringA proto WINAPI \
 		      : HIMC,
 		      : DWORD,
 		      : LPVOID,
 		      : DWORD
-ImmGetCompositionStringW proto _CType \
+ImmGetCompositionStringW proto WINAPI \
 		      : HIMC,
 		      : DWORD,
 		      : LPVOID,
@@ -274,17 +270,17 @@ ifdef _UNICODE
 ImmGetCompositionString equ <ImmGetCompositionStringW>
 else
 ImmGetCompositionString equ <ImmGetCompositionStringA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-ImmSetCompositionStringA proto _CType \
+ImmSetCompositionStringA proto WINAPI \
 		      : HIMC,
 	       dwIndex: DWORD,
 		lpComp: LPCVOID,
 		      : DWORD,
 		lpRead: LPCVOID,
 		      : DWORD
-ImmSetCompositionStringW proto _CType \
+ImmSetCompositionStringW proto WINAPI \
 		      : HIMC,
 	       dwIndex: DWORD,
 		lpComp: LPCVOID,
@@ -295,28 +291,28 @@ ifdef _UNICODE
 ImmSetCompositionString equ <ImmSetCompositionStringW>
 else
 ImmSetCompositionString equ <ImmSetCompositionStringA>
-endif ;; NOT UNICODE
+endif 
 
 ;DWORD
-ImmGetCandidateListCountA proto _CType \
+ImmGetCandidateListCountA proto WINAPI \
 		      : HIMC,
 	 lpdwListCount: LPDWORD
-ImmGetCandidateListCountW proto _CType \
+ImmGetCandidateListCountW proto WINAPI \
 		      : HIMC,
 	 lpdwListCount: LPDWORD
 ifdef _UNICODE
 ImmGetCandidateListCount equ <ImmGetCandidateistCountW>
 else
 ImmGetCandidateListCount equ <ImmGetCandidateistCountA>
-endif ;; NOT UNICODE
+endif 
 
 ;DWORD
-ImmGetCandidateListA proto _CType \
+ImmGetCandidateListA proto WINAPI \
 		      : HIMC,
 	       deIndex: DWORD,
 		      : LPCANDIDATELIST,
 	      dwBufLen: DWORD
-ImmGetCandidateListW proto _CType \
+ImmGetCandidateListW proto WINAPI \
 		      : HIMC,
 	       deIndex: DWORD,
 		      : LPCANDIDATELIST,
@@ -325,15 +321,15 @@ ifdef _UNICODE
 ImmGetCandidateList	equ <ImmGetCandidateistW>
 else
 ImmGetCandidateList	equ <ImmGetCandidateistA>
-endif ;; NOT UNICODE
+endif 
 
 ;DWORD
-ImmGetGuideLineA proto _CType \
+ImmGetGuideLineA proto WINAPI \
 		      : HIMC,
 	       dwIndex: DWORD,
 		      : LPSTR,
 	      dwBufLen: DWORD
-ImmGetGuideLineW proto _CType \
+ImmGetGuideLineW proto WINAPI \
 		      : HIMC,
 	       dwIndex: DWORD,
 		      : LPWSTR,
@@ -342,60 +338,60 @@ ifdef _UNICODE
 ImmGetGuideLine		equ <ImmGetGuideineW>
 else
 ImmGetGuideLine		equ <ImmGetGuideineA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-ImmGetConversionStatus proto _CType \
+ImmGetConversionStatus proto WINAPI \
 		      : HIMC,
 		      : LPDWORD,
 		      : LPDWORD
 ;BOOL
-ImmSetConversionStatus proto _CType \
+ImmSetConversionStatus proto WINAPI \
 		      : HIMC,
 		      : DWORD,
 		      : DWORD
 ;BOOL
-ImmSetOpenStatus proto _CType \
+ImmSetOpenStatus proto WINAPI \
 		      : HIMC,
 		      : BOOL
 
 ifdef _WINGDI_
 ifndef NOGDI
 ;BOOL
-ImmGetCompositionFontA proto _CType \
+ImmGetCompositionFontA proto WINAPI \
 		      : HIMC,
 		      : LPLOGFONTA
-ImmGetCompositionFontW proto _CType \
+ImmGetCompositionFontW proto WINAPI \
 		      : HIMC,
 		      : LPLOGFONTW
 ifdef _UNICODE
 ImmGetCompositionFont	equ <ImmGetCompositionFontW>
 else
 ImmGetCompositionFont	equ <ImmGetCompositionFontA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-ImmSetCompositionFontA proto _CType \
+ImmSetCompositionFontA proto WINAPI \
 		      : HIMC,
 		      : LPLOGFONTA
-ImmSetCompositionFontW proto _CType \
+ImmSetCompositionFontW proto WINAPI \
 		      : HIMC,
 		      : LPLOGFONTW
 ifdef _UNICODE
 ImmSetCompositionFont	equ <ImmSetCompositionFontW>
 else
 ImmSetCompositionFont	equ <ImmSetCompositionFontA>
-endif ;; NOT UNICODE
-endif  ;; ifndef NOGDI
-endif  ;; ifdef _WINGDI_
+endif 
+endif  
+endif  
 
 ;BOOL
-ImmConfigureIMEA proto _CType \
+ImmConfigureIMEA proto WINAPI \
 		      : HKL,
 		      : HWND,
 		      : DWORD,
 		      : LPVOID
-ImmConfigureIMEW proto _CType \
+ImmConfigureIMEW proto WINAPI \
 		      : HKL,
 		      : HWND,
 		      : DWORD,
@@ -404,15 +400,15 @@ ifdef _UNICODE
 ImmConfigureIME		equ <ImmConfigureIMEW>
 else
 ImmConfigureIME		equ <ImmConfigureIMEA>
-endif ;; NOT UNICODE
+endif 
 
 ;LRESULT
-ImmEscapeA proto _CType \
+ImmEscapeA proto WINAPI \
 		      : HKL,
 		      : HIMC,
 		      : UINT,
 		      : LPVOID
-ImmEscapeW proto _CType \
+ImmEscapeW proto WINAPI \
 		      : HKL,
 		      : HIMC,
 		      : UINT,
@@ -421,17 +417,17 @@ ifdef _UNICODE
 ImmEscape		equ <ImmEscapeW>
 else
 ImmEscape		equ <ImmEscapeA>
-endif ;; NOT UNICODE
+endif 
 
 ;DWORD
-ImmGetConversionListA proto _CType \
+ImmGetConversionListA proto WINAPI \
 		      : HKL,
 		      : HIMC,
 		      : LPCSTR,
 		      : LPCANDIDATELIST,
 	      dwBufLen: DWORD,
 		 uFlag: UINT
-ImmGetConversionListW proto _CType \
+ImmGetConversionListW proto WINAPI \
 		      : HKL,
 		      : HIMC,
 		      : LPCWSTR,
@@ -442,10 +438,10 @@ ifdef _UNICODE
 ImmGetConversionList	equ <ImmGetConversionListW>
 else
 ImmGetConversionList	equ <ImmGetConversionListA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-ImmNotifyIME proto _CType \
+ImmNotifyIME proto WINAPI \
 		      : HIMC,
 	      dwAction: DWORD,
 	       dwIndex: DWORD,
@@ -453,39 +449,39 @@ ImmNotifyIME proto _CType \
 
 
 ;BOOL
-ImmGetStatusWindowPos proto _CType \
+ImmGetStatusWindowPos proto WINAPI \
 		      : HIMC,
 		      : LPPOINT
 ;BOOL
-ImmSetStatusWindowPos proto _CType \
+ImmSetStatusWindowPos proto WINAPI \
 		      : HIMC,
 		      : LPPOINT
 ;BOOL
-ImmGetCompositionWindow proto _CType \
+ImmGetCompositionWindow proto WINAPI \
 		      : HIMC,
 		      : LPCOMPOSITIONFORM
 ;BOOL
-ImmSetCompositionWindow proto _CType \
+ImmSetCompositionWindow proto WINAPI \
 		      : HIMC,
 		      : LPCOMPOSITIONFORM
 ;BOOL
-ImmGetCandidateWindow proto _CType \
+ImmGetCandidateWindow proto WINAPI \
 		      : HIMC,
 		      : DWORD,
 		      : LPCANDIDATEFORM
 ;BOOL
-ImmSetCandidateWindow proto _CType \
+ImmSetCandidateWindow proto WINAPI \
 		      : HIMC,
 		      : LPCANDIDATEFORM
 
 ;BOOL
-ImmIsUIMessageA proto _CType \
+ImmIsUIMessageA proto WINAPI \
 		      : HWND,
 		      : UINT,
 		      : WPARAM,
 		      : LPARAM
 ;BOOL
-ImmIsUIMessageW proto _CType \
+ImmIsUIMessageW proto WINAPI \
 		      : HWND,
 		      : UINT,
 		      : WPARAM,
@@ -494,17 +490,17 @@ ifdef _UNICODE
 ImmIsUIMessage		equ <ImmIsUIMessageW>
 else
 ImmIsUIMessage		equ <ImmIsUIMessageA>
-endif ;; NOT UNICODE
+endif 
 
 
 ;UINT
 
-REGISTERWORDENUMPROCA_T typedef proto _CType \
+REGISTERWORDENUMPROCA_T typedef proto WINAPI \
 	   lpszReading: LPCSTR,
 		      : DWORD,
 	  lpszRegister: LPCSTR,
 		      : LPVOID
-REGISTERWORDENUMPROCW_T typedef proto _CType \
+REGISTERWORDENUMPROCW_T typedef proto WINAPI \
 	   lpszReading: LPCWSTR,
 		      : DWORD,
 	  lpszRegister: LPCWSTR,
@@ -518,15 +514,15 @@ ifdef _UNICODE
 REGISTERWORDENUMPROC	equ <<REGISTERWORDENUMPROCW>
 else
 REGISTERWORDENUMPROC	equ <<REGISTERWORDENUMPROCA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-ImmRegisterWordA proto _CType \
+ImmRegisterWordA proto WINAPI \
 		      : HKL,
 	   lpszReading: LPCSTR,
 		      : DWORD,
 	  lpszRegister: LPCSTR
-ImmRegisterWordW proto _CType \
+ImmRegisterWordW proto WINAPI \
 		      : HKL,
 	   lpszReading: LPCWSTR,
 		      : DWORD,
@@ -535,16 +531,16 @@ ifdef _UNICODE
 ImmRegisterWord		equ <ImmRegisterWordW>
 else
 ImmRegisterWord		equ <ImmRegisterWordA>
-endif ;; NOT UNICODE
+endif 
 
 ;BOOL
-ImmUnregisterWordA proto _CType \
+ImmUnregisterWordA proto WINAPI \
 		      : HKL,
 	   lpszReading: LPCSTR,
 		      : DWORD,
 	lpszUnregister: LPCSTR
 ;BOOL
-ImmUnregisterWordW proto _CType \
+ImmUnregisterWordW proto WINAPI \
 		      : HKL,
 	   lpszReading: LPCWSTR,
 		      : DWORD,
@@ -553,15 +549,15 @@ ifdef _UNICODE
 ImmUnregisterWord	equ <ImmUnregisterWordW>
 else
 ImmUnregisterWord	equ <ImmUnregisterWordA>
-endif ;; NOT UNICODE
+endif 
 
 ;UINT
-ImmGetRegisterWordStyleA proto _CType \
+ImmGetRegisterWordStyleA proto WINAPI \
 		      : HKL,
 		 nItem: UINT,
 		      : LPSTYLEBUFA
 ;UINT
-ImmGetRegisterWordStyleW proto _CType \
+ImmGetRegisterWordStyleW proto WINAPI \
 		      : HKL,
 		 nItem: UINT,
 		      : LPSTYLEBUFW
@@ -569,10 +565,10 @@ ifdef _UNICODE
 ImmGetRegisterWordStyle equ <ImmGetRegisterWordStyleW>
 else
 ImmGetRegisterWordStyle equ <ImmGetRegisterWordStyleA>
-endif ;; NOT UNICODE
+endif 
 
 ;UINT
-ImmEnumRegisterWordA proto _CType \
+ImmEnumRegisterWordA proto WINAPI \
 		      : HKL,
 		      : REGISTERWORDENUMPROCA,
 	   lpszReading: LPCSTR,
@@ -580,7 +576,7 @@ ImmEnumRegisterWordA proto _CType \
 	  lpszRegister: LPCSTR,
 		      : LPVOID
 ;UINT
-ImmEnumRegisterWordW proto _CType \
+ImmEnumRegisterWordW proto WINAPI \
 		      : HKL,
 		      : REGISTERWORDENUMPROCW,
 	   lpszReading: LPCWSTR,
@@ -591,12 +587,12 @@ ifdef _UNICODE
 ImmEnumRegisterWord	equ <ImmEnumRegisterWordW>
 else
 ImmEnumRegisterWord	equ <ImmEnumRegisterWordA>
-endif ;; NOT UNICODE
+endif 
 
 if(WINVER GE 0x040A)
 ;BOOL
 ;DWORD
-ImmGetImeMenuItemsA proto _CType \
+ImmGetImeMenuItemsA proto WINAPI \
 		      : HIMC,
 		      : DWORD,
 		      : DWORD,
@@ -604,7 +600,7 @@ ImmGetImeMenuItemsA proto _CType \
 		      : LPIMEMENUITEMINFOA,
 		      : DWORD
 ;DWORD
-ImmGetImeMenuItemsW proto _CType \
+ImmGetImeMenuItemsW proto WINAPI \
 		      : HIMC,
 		      : DWORD,
 		      : DWORD,
@@ -615,13 +611,12 @@ ifdef _UNICODE
 ImmGetImeMenuItems	equ <ImmGetImeMenuItemsW>
 else
 ImmGetImeMenuItems	equ <ImmGetImeMenuItemsA>
-endif ;; NOT UNICODE
+endif 
 
-endif ;; WINVER GE 0x040A
+endif 
 
 
 
-;; wParam for WM_IME_CONTROL
 IMC_GETCANDIDATEPOS	equ 0x0007
 IMC_SETCANDIDATEPOS	equ 0x0008
 IMC_GETCOMPOSITIONFONT	equ 0x0009
@@ -634,7 +629,6 @@ IMC_CLOSESTATUSWINDOW	equ 0x0021
 IMC_OPENSTATUSWINDOW	equ 0x0022
 
 
-;; dwAction for ImmNotifyIME
 NI_OPENCANDIDATE	equ 0x0010
 NI_CLOSECANDIDATE	equ 0x0011
 NI_SELECTCANDIDATESTR	equ 0x0012
@@ -645,7 +639,6 @@ NI_SETCANDIDATE_PAGESTART equ 0x0016
 NI_SETCANDIDATE_PAGESIZE equ 0x0017
 NI_IMEMENUSELECTED	equ 0x0018
 
-;; lParam for WM_IME_SETCONTEXT
 ISC_SHOWUICANDIDATEWINDOW equ 0x00000001
 ISC_SHOWUICOMPOSITIONWINDOW equ 0x80000000
 ISC_SHOWUIGUIDELINE	equ 0x40000000
@@ -653,14 +646,12 @@ ISC_SHOWUIALLCANDIDATEWINDOW equ 0x0000000F
 ISC_SHOWUIALL		equ 0xC000000F
 
 
-;; dwIndex for ImmNotifyIME/NI_COMPOSITIONSTR
 CPS_COMPLETE		equ 0x0001
 CPS_CONVERT		equ 0x0002
 CPS_REVERT		equ 0x0003
 CPS_CANCEL		equ 0x0004
 
 
-;; the modifiers of hot key
 MOD_ALT			equ 0x0001
 MOD_CONTROL		equ 0x0002
 MOD_SHIFT		equ 0x0004
@@ -672,29 +663,23 @@ MOD_ON_KEYUP		equ 0x0800
 MOD_IGNORE_ALL_MODIFIER equ 0x0400
 
 
-;; Windows for Simplified Chinese Edition hot key ID from 0x10 - 0x2F
 IME_CHOTKEY_IME_NONIME_TOGGLE equ 0x10
 IME_CHOTKEY_SHAPE_TOGGLE equ 0x11
 IME_CHOTKEY_SYMBOL_TOGGLE equ 0x12
 
-;; Windows for Japanese Edition hot key ID from 0x30 - 0x4F
 IME_JHOTKEY_CLOSE_OPEN	equ 0x30
 
-;; Windows for Korean Edition hot key ID from 0x50 - 0x6F
 IME_KHOTKEY_SHAPE_TOGGLE equ 0x50
 IME_KHOTKEY_HANJACONVERT equ 0x51
 IME_KHOTKEY_ENGLISH	equ 0x52
 
-;; Windows for Traditional Chinese Edition hot key ID from 0x70 - 0x8F
 IME_THOTKEY_IME_NONIME_TOGGLE equ 0x70
 IME_THOTKEY_SHAPE_TOGGLE equ 0x71
 IME_THOTKEY_SYMBOL_TOGGLE equ 0x72
 
-;; direct switch hot key ID from 0x100 - 0x11F
 IME_HOTKEY_DSWITCH_FIRST equ 0x100
 IME_HOTKEY_DSWITCH_LAST equ 0x11F
 
-;; IME private hot key from 0x200 - 0x21F
 IME_HOTKEY_PRIVATE_FIRST equ 0x200
 IME_ITHOTKEY_RESEND_RESULTSTR equ 0x200
 IME_ITHOTKEY_PREVIOUS_COMPOSITION equ 0x201
@@ -703,9 +688,7 @@ IME_ITHOTKEY_RECONVERTSTRING equ 0x203
 IME_HOTKEY_PRIVATE_LAST equ 0x21F
 
 
-;; dwSystemInfoFlags bits
 
-;; parameter of ImmGetCompositionString
 GCS_COMPREADSTR		equ 0x0001
 GCS_COMPREADATTR	equ 0x0002
 GCS_COMPREADCLAUSE	equ 0x0004
@@ -719,46 +702,37 @@ GCS_RESULTREADCLAUSE	equ 0x0400
 GCS_RESULTSTR		equ 0x0800
 GCS_RESULTCLAUSE	equ 0x1000
 
-;; style bit flags for WM_IME_COMPOSITION
 CS_INSERTCHAR		equ 0x2000
 CS_NOMOVECARET		equ 0x4000
 
 
-;; bits of fdwInit of INPUTCONTEXT
-;; IME version constants
 IMEVER_0310		equ 0x0003000A
 IMEVER_0400		equ 0x00040000
 
 
-;; IME property bits
 IME_PROP_AT_CARET	equ 0x00010000
 IME_PROP_SPECIAL_UI	equ 0x00020000
 IME_PROP_CANDLIST_START_FROM_1 equ 0x00040000
 IME_PROP_UNICODE	equ 0x00080000
 IME_PROP_COMPLETE_ON_UNSELECT equ 0x00100000
 
-;; IME UICapability bits
 UI_CAP_2700		equ 0x00000001
 UI_CAP_ROT90		equ 0x00000002
 UI_CAP_ROTANY		equ 0x00000004
 
-;; ImmSetCompositionString Capability bits
 SCS_CAP_COMPSTR		equ 0x00000001
 SCS_CAP_MAKEREAD	equ 0x00000002
 SCS_CAP_SETRECONVERTSTRING equ 0x00000004
 
-;; IME WM_IME_SELECT inheritance Capability bits
 SELECT_CAP_CONVERSION	equ 0x00000001
 SELECT_CAP_SENTENCE	equ 0x00000002
 
-;; ID for deIndex of ImmGetGuideLine
 GGL_LEVEL		equ 0x00000001
 GGL_INDEX		equ 0x00000002
 GGL_STRING		equ 0x00000003
 GGL_PRIVATE		equ 0x00000004
 
 
-;; ID for dwLevel of GUIDELINE Structure
 GL_LEVEL_NOGUIDELINE	equ 0x00000000
 GL_LEVEL_FATAL		equ 0x00000001
 GL_LEVEL_ERROR		equ 0x00000002
@@ -766,7 +740,6 @@ GL_LEVEL_WARNING	equ 0x00000003
 GL_LEVEL_INFORMATION	equ 0x00000004
 
 
-;; ID for dwIndex of GUIDELINE Structure
 GL_ID_UNKNOWN		equ 0x00000000
 GL_ID_NOMODULE		equ 0x00000001
 GL_ID_NODICTIONARY	equ 0x00000010
@@ -785,7 +758,6 @@ GL_ID_PRIVATE_FIRST	equ 0x00008000
 GL_ID_PRIVATE_LAST	equ 0x0000FFFF
 
 
-;; ID for dwIndex of ImmGetProperty
 IGP_GETIMEVERSION	equ (-4)
 IGP_PROPERTY		equ 0x00000004
 IGP_CONVERSION		equ 0x00000008
@@ -794,7 +766,6 @@ IGP_UI			equ 0x00000010
 IGP_SETCOMPSTR		equ 0x00000014
 IGP_SELECT		equ 0x00000018
 
-;; dwIndex for ImmSetCompositionString API
 SCS_SETSTR		equ (GCS_COMPREADSTR OR GCS_COMPSTR)
 SCS_CHANGEATTR		equ (GCS_COMPREADATTR OR GCS_COMPATTR)
 SCS_CHANGECLAUSE	equ (GCS_COMPREADCLAUSE OR GCS_COMPCAUSE)
@@ -802,7 +773,6 @@ SCS_SETRECONVERTSTRING	equ 0x00010000
 SCS_QUERYRECONVERTSTRING equ 0x00020000
 
 
-;; attribute for COMPOSITIONSTRING Structure
 ATTR_INPUT		equ 0x00
 ATTR_TARGET_CONVERTED	equ 0x01
 ATTR_CONVERTED		equ 0x02
@@ -811,7 +781,6 @@ ATTR_INPUT_ERROR	equ 0x04
 ATTR_FIXEDCONVERTED	equ 0x05
 
 
-;; bit field for IMC_SETCOMPOSITIONWINDOW, IMC_SETCANDIDATEWINDOW
 CFS_DEFAULT		equ 0x0000
 CFS_RECT		equ 0x0001
 CFS_POINT		equ 0x0002
@@ -820,21 +789,18 @@ CFS_CANDIDATEPOS	equ 0x0040
 CFS_EXCLUDE		equ 0x0080
 
 
-;; conversion direction for ImmGetConversionList
 GCL_CONVERSION		equ 0x0001
 GCL_REVERSECONVERSION	equ 0x0002
 GCL_REVERSE_LENGTH	equ 0x0003
 
 
-;; bit field for conversion mode
 IME_CMODE_ALPHANUMERIC	equ 0x0000
 IME_CMODE_NATIVE	equ 0x0001
 IME_CMODE_CHINESE	equ IME_CMODE_NATIVE
-;; IME_CMODE_HANGEUL is old name of IME_CMODE_HANGUL. It will be gone eventually.
 IME_CMODE_HANGEUL	equ IME_CMODE_NATIVE
 IME_CMODE_HANGUL	equ IME_CMODE_NATIVE
 IME_CMODE_JAPANESE	equ IME_CMODE_NATIVE
-IME_CMODE_KATAKANA	equ 0x0002  ;; only effect under IME_CMODE_NATIVE
+IME_CMODE_KATAKANA	equ 0x0002  
 IME_CMODE_LANGUAGE	equ 0x0003
 IME_CMODE_FULLSHAPE	equ 0x0008
 IME_CMODE_ROMAN		equ 0x0010
@@ -853,7 +819,6 @@ IME_SMODE_AUTOMATIC	equ 0x0004
 IME_SMODE_PHRASEPREDICT equ 0x0008
 IME_SMODE_CONVERSATION	equ 0x0010
 
-;; style of candidate
 IME_CAND_UNKNOWN	equ 0x0000
 IME_CAND_READ		equ 0x0001
 IME_CAND_CODE		equ 0x0002
@@ -862,7 +827,6 @@ IME_CAND_RADICAL	equ 0x0004
 IME_CAND_STROKE		equ 0x0005
 
 
-;; wParam of report message WM_IME_NOTIFY
 IMN_CLOSESTATUSWINDOW	equ 0x0001
 IMN_OPENSTATUSWINDOW	equ 0x0002
 IMN_CHANGECANDIDATE	equ 0x0003
@@ -879,7 +843,6 @@ IMN_GUIDELINE		equ 0x000D
 IMN_PRIVATE		equ 0x000E
 
 if(WINVER GE 0x040A)
-;; wParam of report message WM_IME_REQUEST
 IMR_COMPOSITIONWINDOW	equ 0x0001
 IMR_CANDIDATEWINDOW	equ 0x0002
 IMR_COMPOSITIONFONT	equ 0x0003
@@ -887,18 +850,15 @@ IMR_RECONVERTSTRING	equ 0x0004
 IMR_CONFIRMRECONVERTSTRING equ 0x0005
 endif
 
-;; error code of ImmGetCompositionString
 IMM_ERROR_NODATA	equ (-1)
 IMM_ERROR_GENERAL	equ (-2)
 
 
-;; dialog mode of ImmConfigureIME
 IME_CONFIG_GENERAL	equ 1
 IME_CONFIG_REGISTERWORD equ 2
 IME_CONFIG_SELECTDICTIONARY equ 3
 
 
-;; dialog mode of ImmEscape
 IME_ESC_QUERY_SUPPORT	equ 0x0003
 IME_ESC_RESERVED_FIRST	equ 0x0004
 IME_ESC_RESERVED_LAST	equ 0x07FF
@@ -915,22 +875,18 @@ IME_ESC_AUTOMATA	equ 0x1009
 IME_ESC_PRIVATE_HOTKEY	equ 0x100a
 IME_ESC_GETHELPFILENAME equ 0x100b
 
-;; style of word registration
 IME_REGWORD_STYLE_EUDC	equ 0x00000001
 IME_REGWORD_STYLE_USER_FIRST equ 0x80000000
 IME_REGWORD_STYLE_USER_LAST equ 0xFFFFFFFF
 
 
 if(WINVER GE 0x040A)
-;; dwFlags for ImmAssociateContextEx
 IACE_CHILDREN		equ 0x0001
 IACE_DEFAULT		equ 0x0010
 IACE_IGNORENOCONTEXT	equ 0x0020
 
-;; dwFlags for ImmGetImeMenuItems
 IGIMIF_RIGHTMENU	equ 0x0001
 
-;; dwType for ImmGetImeMenuItems
 IGIMII_CMODE		equ 0x0001
 IGIMII_SMODE		equ 0x0002
 IGIMII_CONFIGURE	equ 0x0004
@@ -939,12 +895,10 @@ IGIMII_HELP		equ 0x0010
 IGIMII_OTHER		equ 0x0020
 IGIMII_INPUTTOOLS	equ 0x0040
 
-;; fType of IMEMENUITEMINFO structure
 IMFT_RADIOCHECK		equ 0x00001
 IMFT_SEPARATOR		equ 0x00002
 IMFT_SUBMENU		equ 0x00004
 
-;; fState of IMEMENUITEMINFO structure
 IMFS_GRAYED		equ MFS_GRAYED
 IMFS_DISABLED		equ MFS_DISABED
 IMFS_CHECKED		equ MFS_CHECKED
@@ -953,14 +907,11 @@ IMFS_ENABLED		equ MFS_ENABED
 IMFS_UNCHECKED		equ MFS_UNCHECKED
 IMFS_UNHILITE		equ MFS_UNHILITE
 IMFS_DEFAULT		equ MFS_DEFAULT
-endif ;; WINVER GE 0x040A
+endif 
 
-;; type of soft keyboard
-;; for Windows Tranditional Chinese Edition
 SOFTKEYBOARD_TYPE_T1	equ 0x0001
-;; for Windows Simplified Chinese Edition
 SOFTKEYBOARD_TYPE_C1	equ 0x0002
 
-endif  ;; _IMM_
+endif  
 
 .list

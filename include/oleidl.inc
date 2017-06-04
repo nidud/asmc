@@ -5,135 +5,133 @@ include rpc.inc
 include rpcndr.inc
 ifndef __RPCNDR_H_VERSION__
 .err <this stub requires an updated version of rpcndr.inc>
-endif ;; __RPCNDR_H_VERSION__
+endif 
 
 ifndef COM_NO_WINDOWS_H
 include windows.inc
 include ole2.inc
-endif ;;COM_NO_WINDOWS_H
+endif 
 ifndef __oleidl_h__
 .xlist
 __oleidl_h__ equ 1
 
-;; Forward Declarations
 
 ifndef __IOleAdviseHolder_FWD_DEFINED__
 __IOleAdviseHolder_FWD_DEFINED__ equ 1
-endif	;; __IOleAdviseHolder_FWD_DEFINED__
+endif	
 
 
 ifndef __IOleCache_FWD_DEFINED__
 __IOleCache_FWD_DEFINED__ equ 1
-endif	;; __IOleCache_FWD_DEFINED__
+endif	
 
 
 ifndef __IOleCache2_FWD_DEFINED__
 __IOleCache2_FWD_DEFINED__ equ 1
-endif	;; __IOleCache2_FWD_DEFINED__
+endif	
 
 
 ifndef __IOleCacheControl_FWD_DEFINED__
 __IOleCacheControl_FWD_DEFINED__ equ 1
-endif	;; __IOleCacheControl_FWD_DEFINED__
+endif	
 
 
 ifndef __IParseDisplayName_FWD_DEFINED__
 __IParseDisplayName_FWD_DEFINED__ equ 1
-endif	;; __IParseDisplayName_FWD_DEFINED__
+endif	
 
 
 ifndef __IOleContainer_FWD_DEFINED__
 __IOleContainer_FWD_DEFINED__ equ 1
-endif	;; __IOleContainer_FWD_DEFINED__
+endif	
 
 
 ifndef __IOleClientSite_FWD_DEFINED__
 __IOleClientSite_FWD_DEFINED__ equ 1
-endif	;; __IOleClientSite_FWD_DEFINED__
+endif	
 
 
 ifndef __IOleObject_FWD_DEFINED__
 __IOleObject_FWD_DEFINED__ equ 1
-endif	;; __IOleObject_FWD_DEFINED__
+endif	
 
 
 ifndef __IOleWindow_FWD_DEFINED__
 __IOleWindow_FWD_DEFINED__ equ 1
-endif	;; __IOleWindow_FWD_DEFINED__
+endif	
 
 
 ifndef __IOleLink_FWD_DEFINED__
 __IOleLink_FWD_DEFINED__ equ 1
-endif	;; __IOleLink_FWD_DEFINED__
+endif	
 
 
 ifndef __IOleItemContainer_FWD_DEFINED__
 __IOleItemContainer_FWD_DEFINED__ equ 1
-endif	;; __IOleItemContainer_FWD_DEFINED__
+endif	
 
 
 ifndef __IOleInPlaceUIWindow_FWD_DEFINED__
 __IOleInPlaceUIWindow_FWD_DEFINED__ equ 1
-endif	;; __IOleInPlaceUIWindow_FWD_DEFINED__
+endif	
 
 
 ifndef __IOleInPlaceActiveObject_FWD_DEFINED__
 __IOleInPlaceActiveObject_FWD_DEFINED__ equ 1
-endif	;; __IOleInPlaceActiveObject_FWD_DEFINED__
+endif	
 
 
 ifndef __IOleInPlaceFrame_FWD_DEFINED__
 __IOleInPlaceFrame_FWD_DEFINED__ equ 1
-endif	;; __IOleInPlaceFrame_FWD_DEFINED__
+endif	
 
 
 ifndef __IOleInPlaceObject_FWD_DEFINED__
 __IOleInPlaceObject_FWD_DEFINED__ equ 1
-endif	;; __IOleInPlaceObject_FWD_DEFINED__
+endif	
 
 
 ifndef __IOleInPlaceSite_FWD_DEFINED__
 __IOleInPlaceSite_FWD_DEFINED__ equ 1
-endif	;; __IOleInPlaceSite_FWD_DEFINED__
+endif	
 
 
 ifndef __IContinue_FWD_DEFINED__
 __IContinue_FWD_DEFINED__ equ 1
-endif	;; __IContinue_FWD_DEFINED__
+endif	
 
 
 ifndef __IViewObject_FWD_DEFINED__
 __IViewObject_FWD_DEFINED__ equ 1
-endif	;; __IViewObject_FWD_DEFINED__
+endif	
 
 
 ifndef __IViewObject2_FWD_DEFINED__
 __IViewObject2_FWD_DEFINED__ equ 1
-endif	;; __IViewObject2_FWD_DEFINED__
+endif	
 
 
 ifndef __IDropSource_FWD_DEFINED__
 __IDropSource_FWD_DEFINED__ equ 1
-endif	;; __IDropSource_FWD_DEFINED__
+endif	
 
 
 ifndef __IDropTarget_FWD_DEFINED__
 __IDropTarget_FWD_DEFINED__ equ 1
-endif	;; __IDropTarget_FWD_DEFINED__
+endif	
 
 
 ifndef __IEnumOLEVERB_FWD_DEFINED__
 __IEnumOLEVERB_FWD_DEFINED__ equ 1
-endif	;; __IEnumOLEVERB_FWD_DEFINED__
+endif	
 
 
-;; header files for imported files
 include objidl.inc
 .xlist
 
 ;PVOID
 ;void
-MIDL_user_free proto _CType \
+MIDL_user_free proto WINAPI \
 		      : PVOID
 
 
@@ -232,7 +230,7 @@ IOleAdviseHolder	ENDS
 
 
 ;HRESULT
-IOleAdviseHolder_Advise_Proxy proto _CType \
+IOleAdviseHolder_Advise_Proxy proto WINAPI \
 		 pThis: ptr IOleAdviseHolder,
 	       pAdvise: ptr IAdviseSink,
 	 pdwConnection: ptr DWORD
@@ -240,7 +238,7 @@ IOleAdviseHolder_Advise_Proxy proto _CType \
 
 
 ;void
-IOleAdviseHolder_Advise_Stub proto _CType \
+IOleAdviseHolder_Advise_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -249,14 +247,14 @@ IOleAdviseHolder_Advise_Stub proto _CType \
 
 
 ;HRESULT
-IOleAdviseHolder_Unadvise_Proxy proto _CType \
+IOleAdviseHolder_Unadvise_Proxy proto WINAPI \
 		 pThis: ptr IOleAdviseHolder,
 	  dwConnection: DWORD
 
 
 
 ;void
-IOleAdviseHolder_Unadvise_Stub proto _CType \
+IOleAdviseHolder_Unadvise_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -265,14 +263,14 @@ IOleAdviseHolder_Unadvise_Stub proto _CType \
 
 
 ;HRESULT
-IOleAdviseHolder_EnumAdvise_Proxy proto _CType \
+IOleAdviseHolder_EnumAdvise_Proxy proto WINAPI \
 		 pThis: ptr IOleAdviseHolder,
 	  ppenumAdvise: ptr IEnumSTATDATA
 
 
 
 ;void
-IOleAdviseHolder_EnumAdvise_Stub proto _CType \
+IOleAdviseHolder_EnumAdvise_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -281,14 +279,14 @@ IOleAdviseHolder_EnumAdvise_Stub proto _CType \
 
 
 ;HRESULT
-IOleAdviseHolder_SendOnRename_Proxy proto _CType \
+IOleAdviseHolder_SendOnRename_Proxy proto WINAPI \
 		 pThis: ptr IOleAdviseHolder,
 		   pmk: ptr IMoniker
 
 
 
 ;void
-IOleAdviseHolder_SendOnRename_Stub proto _CType \
+IOleAdviseHolder_SendOnRename_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -297,13 +295,13 @@ IOleAdviseHolder_SendOnRename_Stub proto _CType \
 
 
 ;HRESULT
-IOleAdviseHolder_SendOnSave_Proxy proto _CType \
+IOleAdviseHolder_SendOnSave_Proxy proto WINAPI \
 		 pThis: ptr IOleAdviseHolder
 
 
 
 ;void
-IOleAdviseHolder_SendOnSave_Stub proto _CType \
+IOleAdviseHolder_SendOnSave_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -312,13 +310,13 @@ IOleAdviseHolder_SendOnSave_Stub proto _CType \
 
 
 ;HRESULT
-IOleAdviseHolder_SendOnClose_Proxy proto _CType \
+IOleAdviseHolder_SendOnClose_Proxy proto WINAPI \
 		 pThis: ptr IOleAdviseHolder
 
 
 
 ;void
-IOleAdviseHolder_SendOnClose_Stub proto _CType \
+IOleAdviseHolder_SendOnClose_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -327,7 +325,7 @@ IOleAdviseHolder_SendOnClose_Stub proto _CType \
 
 
 
-endif	;; __IOleAdviseHolder_INTERFACE_DEFINED__
+endif	
 
 
 ifndef __IOleCache_INTERFACE_DEFINED__
@@ -419,7 +417,7 @@ IOleCache		ENDS
 
 
 ;HRESULT
-IOleCache_Cache_Proxy proto _CType \
+IOleCache_Cache_Proxy proto WINAPI \
 		 pThis: ptr IOleCache,
 	    pformatetc: ptr FORMATETC,
 		  advf: DWORD,
@@ -428,7 +426,7 @@ IOleCache_Cache_Proxy proto _CType \
 
 
 ;void
-IOleCache_Cache_Stub proto _CType \
+IOleCache_Cache_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -437,14 +435,14 @@ IOleCache_Cache_Stub proto _CType \
 
 
 ;HRESULT
-IOleCache_Uncache_Proxy proto _CType \
+IOleCache_Uncache_Proxy proto WINAPI \
 		 pThis: ptr IOleCache,
 	  dwConnection: DWORD
 
 
 
 ;void
-IOleCache_Uncache_Stub proto _CType \
+IOleCache_Uncache_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -453,14 +451,14 @@ IOleCache_Uncache_Stub proto _CType \
 
 
 ;HRESULT
-IOleCache_EnumCache_Proxy proto _CType \
+IOleCache_EnumCache_Proxy proto WINAPI \
 		 pThis: ptr IOleCache,
 	ppenumSTATDATA: ptr IEnumSTATDATA
 
 
 
 ;void
-IOleCache_EnumCache_Stub proto _CType \
+IOleCache_EnumCache_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -469,14 +467,14 @@ IOleCache_EnumCache_Stub proto _CType \
 
 
 ;HRESULT
-IOleCache_InitCache_Proxy proto _CType \
+IOleCache_InitCache_Proxy proto WINAPI \
 		 pThis: ptr IOleCache,
 	   pDataObject: ptr IDataObject
 
 
 
 ;void
-IOleCache_InitCache_Stub proto _CType \
+IOleCache_InitCache_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -485,7 +483,7 @@ IOleCache_InitCache_Stub proto _CType \
 
 
 ;HRESULT
-IOleCache_SetData_Proxy proto _CType \
+IOleCache_SetData_Proxy proto WINAPI \
 		 pThis: ptr IOleCache,
 	    pformatetc: ptr FORMATETC,
 	       pmedium: ptr STGMEDIUM,
@@ -494,7 +492,7 @@ IOleCache_SetData_Proxy proto _CType \
 
 
 ;void
-IOleCache_SetData_Stub proto _CType \
+IOleCache_SetData_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -503,7 +501,7 @@ IOleCache_SetData_Stub proto _CType \
 
 
 
-endif	;; __IOleCache_INTERFACE_DEFINED__
+endif	
 
 
 ifndef __IOleCache2_INTERFACE_DEFINED__
@@ -634,7 +632,7 @@ IOleCache2		ENDS
 
 
 ;HRESULT
-IOleCache2_RemoteUpdateCache_Proxy proto _CType \
+IOleCache2_RemoteUpdateCache_Proxy proto WINAPI \
 		 pThis: ptr IOleCache2,
 	   pDataObject: LPDATAOBJECT,
 	       grfUpdf: DWORD,
@@ -643,7 +641,7 @@ IOleCache2_RemoteUpdateCache_Proxy proto _CType \
 
 
 ;void
-IOleCache2_RemoteUpdateCache_Stub proto _CType \
+IOleCache2_RemoteUpdateCache_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -652,14 +650,14 @@ IOleCache2_RemoteUpdateCache_Stub proto _CType \
 
 
 ;HRESULT
-IOleCache2_DiscardCache_Proxy proto _CType \
+IOleCache2_DiscardCache_Proxy proto WINAPI \
 		 pThis: ptr IOleCache2,
       dwDiscardOptions: DWORD
 
 
 
 ;void
-IOleCache2_DiscardCache_Stub proto _CType \
+IOleCache2_DiscardCache_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -668,7 +666,7 @@ IOleCache2_DiscardCache_Stub proto _CType \
 
 
 
-endif	;; __IOleCache2_INTERFACE_DEFINED__
+endif	
 
 
 ifndef __IOleCacheControl_INTERFACE_DEFINED__
@@ -734,14 +732,14 @@ IOleCacheControl	ENDS
 
 
 ;HRESULT
-IOleCacheControl_OnRun_Proxy proto _CType \
+IOleCacheControl_OnRun_Proxy proto WINAPI \
 		 pThis: ptr IOleCacheControl,
 	   pDataObject: LPDATAOBJECT
 
 
 
 ;void
-IOleCacheControl_OnRun_Stub proto _CType \
+IOleCacheControl_OnRun_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -750,13 +748,13 @@ IOleCacheControl_OnRun_Stub proto _CType \
 
 
 ;HRESULT
-IOleCacheControl_OnStop_Proxy proto _CType \
+IOleCacheControl_OnStop_Proxy proto WINAPI \
 		 pThis: ptr IOleCacheControl
 
 
 
 ;void
-IOleCacheControl_OnStop_Stub proto _CType \
+IOleCacheControl_OnStop_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -765,7 +763,7 @@ IOleCacheControl_OnStop_Stub proto _CType \
 
 
 
-endif	;; __IOleCacheControl_INTERFACE_DEFINED__
+endif	
 
 
 ifndef __IParseDisplayName_INTERFACE_DEFINED__
@@ -828,7 +826,7 @@ IParseDisplayName	ENDS
 
 
 ;HRESULT
-IParseDisplayName_ParseDisplayName_Proxy proto _CType \
+IParseDisplayName_ParseDisplayName_Proxy proto WINAPI \
 		 pThis: ptr IParseDisplayName,
 		   pbc: ptr IBindCtx,
 	pszDisplayName: LPOLESTR,
@@ -838,7 +836,7 @@ IParseDisplayName_ParseDisplayName_Proxy proto _CType \
 
 
 ;void
-IParseDisplayName_ParseDisplayName_Stub proto _CType \
+IParseDisplayName_ParseDisplayName_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -847,7 +845,7 @@ IParseDisplayName_ParseDisplayName_Stub proto _CType \
 
 
 
-endif	;; __IParseDisplayName_INTERFACE_DEFINED__
+endif	
 
 
 ifndef __IOleContainer_INTERFACE_DEFINED__
@@ -925,7 +923,7 @@ IOleContainer		ENDS
 
 
 ;HRESULT
-IOleContainer_EnumObjects_Proxy proto _CType \
+IOleContainer_EnumObjects_Proxy proto WINAPI \
 		 pThis: ptr IOleContainer,
 	      grfFlags: DWORD,
 		ppenum: ptr IEnumUnknown
@@ -933,7 +931,7 @@ IOleContainer_EnumObjects_Proxy proto _CType \
 
 
 ;void
-IOleContainer_EnumObjects_Stub proto _CType \
+IOleContainer_EnumObjects_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -942,14 +940,14 @@ IOleContainer_EnumObjects_Stub proto _CType \
 
 
 ;HRESULT
-IOleContainer_LockContainer_Proxy proto _CType \
+IOleContainer_LockContainer_Proxy proto WINAPI \
 		 pThis: ptr IOleContainer,
 		 fLock: BOOL
 
 
 
 ;void
-IOleContainer_LockContainer_Stub proto _CType \
+IOleContainer_LockContainer_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -958,7 +956,7 @@ IOleContainer_LockContainer_Stub proto _CType \
 
 
 
-endif	;; __IOleContainer_INTERFACE_DEFINED__
+endif	
 
 
 ifndef __IOleClientSite_INTERFACE_DEFINED__
@@ -1052,13 +1050,13 @@ IOleClientSite		ENDS
 
 
 ;HRESULT
-IOleClientSite_SaveObject_Proxy proto _CType \
+IOleClientSite_SaveObject_Proxy proto WINAPI \
 		 pThis: ptr IOleClientSite
 
 
 
 ;void
-IOleClientSite_SaveObject_Stub proto _CType \
+IOleClientSite_SaveObject_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1067,7 +1065,7 @@ IOleClientSite_SaveObject_Stub proto _CType \
 
 
 ;HRESULT
-IOleClientSite_GetMoniker_Proxy proto _CType \
+IOleClientSite_GetMoniker_Proxy proto WINAPI \
 		 pThis: ptr IOleClientSite,
 	      dwAssign: DWORD,
 	dwWhichMoniker: DWORD,
@@ -1076,7 +1074,7 @@ IOleClientSite_GetMoniker_Proxy proto _CType \
 
 
 ;void
-IOleClientSite_GetMoniker_Stub proto _CType \
+IOleClientSite_GetMoniker_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1085,14 +1083,14 @@ IOleClientSite_GetMoniker_Stub proto _CType \
 
 
 ;HRESULT
-IOleClientSite_GetContainer_Proxy proto _CType \
+IOleClientSite_GetContainer_Proxy proto WINAPI \
 		 pThis: ptr IOleClientSite,
 	   ppContainer: ptr IOleContainer
 
 
 
 ;void
-IOleClientSite_GetContainer_Stub proto _CType \
+IOleClientSite_GetContainer_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1101,13 +1099,13 @@ IOleClientSite_GetContainer_Stub proto _CType \
 
 
 ;HRESULT
-IOleClientSite_ShowObject_Proxy proto _CType \
+IOleClientSite_ShowObject_Proxy proto WINAPI \
 		 pThis: ptr IOleClientSite
 
 
 
 ;void
-IOleClientSite_ShowObject_Stub proto _CType \
+IOleClientSite_ShowObject_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1116,14 +1114,14 @@ IOleClientSite_ShowObject_Stub proto _CType \
 
 
 ;HRESULT
-IOleClientSite_OnShowWindow_Proxy proto _CType \
+IOleClientSite_OnShowWindow_Proxy proto WINAPI \
 		 pThis: ptr IOleClientSite,
 		 fShow: BOOL
 
 
 
 ;void
-IOleClientSite_OnShowWindow_Stub proto _CType \
+IOleClientSite_OnShowWindow_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1132,13 +1130,13 @@ IOleClientSite_OnShowWindow_Stub proto _CType \
 
 
 ;HRESULT
-IOleClientSite_RequestNewObjectLayout_Proxy proto _CType \
+IOleClientSite_RequestNewObjectLayout_Proxy proto WINAPI \
 		 pThis: ptr IOleClientSite
 
 
 
 ;void
-IOleClientSite_RequestNewObjectLayout_Stub proto _CType \
+IOleClientSite_RequestNewObjectLayout_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1147,7 +1145,7 @@ IOleClientSite_RequestNewObjectLayout_Stub proto _CType \
 
 
 
-endif	;; __IOleClientSite_INTERFACE_DEFINED__
+endif	
 
 
 ifndef __IOleObject_INTERFACE_DEFINED__
@@ -1412,14 +1410,14 @@ IOleObject		ENDS
 
 
 ;HRESULT
-IOleObject_SetClientSite_Proxy proto _CType \
+IOleObject_SetClientSite_Proxy proto WINAPI \
 		 pThis: ptr IOleObject,
 	   pClientSite: ptr IOleClientSite
 
 
 
 ;void
-IOleObject_SetClientSite_Stub proto _CType \
+IOleObject_SetClientSite_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1428,14 +1426,14 @@ IOleObject_SetClientSite_Stub proto _CType \
 
 
 ;HRESULT
-IOleObject_GetClientSite_Proxy proto _CType \
+IOleObject_GetClientSite_Proxy proto WINAPI \
 		 pThis: ptr IOleObject,
 	  ppClientSite: ptr IOleClientSite
 
 
 
 ;void
-IOleObject_GetClientSite_Stub proto _CType \
+IOleObject_GetClientSite_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1444,7 +1442,7 @@ IOleObject_GetClientSite_Stub proto _CType \
 
 
 ;HRESULT
-IOleObject_SetHostNames_Proxy proto _CType \
+IOleObject_SetHostNames_Proxy proto WINAPI \
 		 pThis: ptr IOleObject,
 	szContainerApp: LPCOLESTR,
 	szContainerObj: LPCOLESTR
@@ -1452,7 +1450,7 @@ IOleObject_SetHostNames_Proxy proto _CType \
 
 
 ;void
-IOleObject_SetHostNames_Stub proto _CType \
+IOleObject_SetHostNames_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1461,14 +1459,14 @@ IOleObject_SetHostNames_Stub proto _CType \
 
 
 ;HRESULT
-IOleObject_Close_Proxy proto _CType \
+IOleObject_Close_Proxy proto WINAPI \
 		 pThis: ptr IOleObject,
 	  dwSaveOption: DWORD
 
 
 
 ;void
-IOleObject_Close_Stub proto _CType \
+IOleObject_Close_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1477,7 +1475,7 @@ IOleObject_Close_Stub proto _CType \
 
 
 ;HRESULT
-IOleObject_SetMoniker_Proxy proto _CType \
+IOleObject_SetMoniker_Proxy proto WINAPI \
 		 pThis: ptr IOleObject,
 	dwWhichMoniker: DWORD,
 		   pmk: ptr IMoniker
@@ -1485,7 +1483,7 @@ IOleObject_SetMoniker_Proxy proto _CType \
 
 
 ;void
-IOleObject_SetMoniker_Stub proto _CType \
+IOleObject_SetMoniker_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1494,7 +1492,7 @@ IOleObject_SetMoniker_Stub proto _CType \
 
 
 ;HRESULT
-IOleObject_GetMoniker_Proxy proto _CType \
+IOleObject_GetMoniker_Proxy proto WINAPI \
 		 pThis: ptr IOleObject,
 	      dwAssign: DWORD,
 	dwWhichMoniker: DWORD,
@@ -1503,7 +1501,7 @@ IOleObject_GetMoniker_Proxy proto _CType \
 
 
 ;void
-IOleObject_GetMoniker_Stub proto _CType \
+IOleObject_GetMoniker_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1512,7 +1510,7 @@ IOleObject_GetMoniker_Stub proto _CType \
 
 
 ;HRESULT
-IOleObject_InitFromData_Proxy proto _CType \
+IOleObject_InitFromData_Proxy proto WINAPI \
 		 pThis: ptr IOleObject,
 	   pDataObject: ptr IDataObject,
 	     fCreation: BOOL,
@@ -1521,7 +1519,7 @@ IOleObject_InitFromData_Proxy proto _CType \
 
 
 ;void
-IOleObject_InitFromData_Stub proto _CType \
+IOleObject_InitFromData_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1530,7 +1528,7 @@ IOleObject_InitFromData_Stub proto _CType \
 
 
 ;HRESULT
-IOleObject_GetClipboardData_Proxy proto _CType \
+IOleObject_GetClipboardData_Proxy proto WINAPI \
 		 pThis: ptr IOleObject,
 	    dwReserved: DWORD,
 	  ppDataObject: ptr IDataObject
@@ -1538,7 +1536,7 @@ IOleObject_GetClipboardData_Proxy proto _CType \
 
 
 ;void
-IOleObject_GetClipboardData_Stub proto _CType \
+IOleObject_GetClipboardData_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1547,7 +1545,7 @@ IOleObject_GetClipboardData_Stub proto _CType \
 
 
 ;HRESULT
-IOleObject_DoVerb_Proxy proto _CType \
+IOleObject_DoVerb_Proxy proto WINAPI \
 		 pThis: ptr IOleObject,
 		 iVerb: LONG,
 		 lpmsg: LPMSG,
@@ -1559,7 +1557,7 @@ IOleObject_DoVerb_Proxy proto _CType \
 
 
 ;void
-IOleObject_DoVerb_Stub proto _CType \
+IOleObject_DoVerb_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1568,14 +1566,14 @@ IOleObject_DoVerb_Stub proto _CType \
 
 
 ;HRESULT
-IOleObject_EnumVerbs_Proxy proto _CType \
+IOleObject_EnumVerbs_Proxy proto WINAPI \
 		 pThis: ptr IOleObject,
 	 ppEnumOleVerb: ptr IEnumOLEVERB
 
 
 
 ;void
-IOleObject_EnumVerbs_Stub proto _CType \
+IOleObject_EnumVerbs_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1584,13 +1582,13 @@ IOleObject_EnumVerbs_Stub proto _CType \
 
 
 ;HRESULT
-IOleObject_Update_Proxy proto _CType \
+IOleObject_Update_Proxy proto WINAPI \
 		 pThis: ptr IOleObject
 
 
 
 ;void
-IOleObject_Update_Stub proto _CType \
+IOleObject_Update_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1599,13 +1597,13 @@ IOleObject_Update_Stub proto _CType \
 
 
 ;HRESULT
-IOleObject_IsUpToDate_Proxy proto _CType \
+IOleObject_IsUpToDate_Proxy proto WINAPI \
 		 pThis: ptr IOleObject
 
 
 
 ;void
-IOleObject_IsUpToDate_Stub proto _CType \
+IOleObject_IsUpToDate_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1614,14 +1612,14 @@ IOleObject_IsUpToDate_Stub proto _CType \
 
 
 ;HRESULT
-IOleObject_GetUserClassID_Proxy proto _CType \
+IOleObject_GetUserClassID_Proxy proto WINAPI \
 		 pThis: ptr IOleObject,
 		pClsid: ptr CLSID
 
 
 
 ;void
-IOleObject_GetUserClassID_Stub proto _CType \
+IOleObject_GetUserClassID_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1630,7 +1628,7 @@ IOleObject_GetUserClassID_Stub proto _CType \
 
 
 ;HRESULT
-IOleObject_GetUserType_Proxy proto _CType \
+IOleObject_GetUserType_Proxy proto WINAPI \
 		 pThis: ptr IOleObject,
 	  dwFormOfType: DWORD,
 	   pszUserType: ptr LPOLESTR
@@ -1638,7 +1636,7 @@ IOleObject_GetUserType_Proxy proto _CType \
 
 
 ;void
-IOleObject_GetUserType_Stub proto _CType \
+IOleObject_GetUserType_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1647,7 +1645,7 @@ IOleObject_GetUserType_Stub proto _CType \
 
 
 ;HRESULT
-IOleObject_SetExtent_Proxy proto _CType \
+IOleObject_SetExtent_Proxy proto WINAPI \
 		 pThis: ptr IOleObject,
 	  dwDrawAspect: DWORD,
 		psizel: ptr SIZEL
@@ -1655,7 +1653,7 @@ IOleObject_SetExtent_Proxy proto _CType \
 
 
 ;void
-IOleObject_SetExtent_Stub proto _CType \
+IOleObject_SetExtent_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1664,7 +1662,7 @@ IOleObject_SetExtent_Stub proto _CType \
 
 
 ;HRESULT
-IOleObject_GetExtent_Proxy proto _CType \
+IOleObject_GetExtent_Proxy proto WINAPI \
 		 pThis: ptr IOleObject,
 	  dwDrawAspect: DWORD,
 		psizel: ptr SIZEL
@@ -1672,7 +1670,7 @@ IOleObject_GetExtent_Proxy proto _CType \
 
 
 ;void
-IOleObject_GetExtent_Stub proto _CType \
+IOleObject_GetExtent_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1681,7 +1679,7 @@ IOleObject_GetExtent_Stub proto _CType \
 
 
 ;HRESULT
-IOleObject_Advise_Proxy proto _CType \
+IOleObject_Advise_Proxy proto WINAPI \
 		 pThis: ptr IOleObject,
 	      pAdvSink: ptr IAdviseSink,
 	 pdwConnection: ptr DWORD
@@ -1689,7 +1687,7 @@ IOleObject_Advise_Proxy proto _CType \
 
 
 ;void
-IOleObject_Advise_Stub proto _CType \
+IOleObject_Advise_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1698,14 +1696,14 @@ IOleObject_Advise_Stub proto _CType \
 
 
 ;HRESULT
-IOleObject_Unadvise_Proxy proto _CType \
+IOleObject_Unadvise_Proxy proto WINAPI \
 		 pThis: ptr IOleObject,
 	  dwConnection: DWORD
 
 
 
 ;void
-IOleObject_Unadvise_Stub proto _CType \
+IOleObject_Unadvise_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1714,14 +1712,14 @@ IOleObject_Unadvise_Stub proto _CType \
 
 
 ;HRESULT
-IOleObject_EnumAdvise_Proxy proto _CType \
+IOleObject_EnumAdvise_Proxy proto WINAPI \
 		 pThis: ptr IOleObject,
 	  ppenumAdvise: ptr IEnumSTATDATA
 
 
 
 ;void
-IOleObject_EnumAdvise_Stub proto _CType \
+IOleObject_EnumAdvise_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1730,7 +1728,7 @@ IOleObject_EnumAdvise_Stub proto _CType \
 
 
 ;HRESULT
-IOleObject_GetMiscStatus_Proxy proto _CType \
+IOleObject_GetMiscStatus_Proxy proto WINAPI \
 		 pThis: ptr IOleObject,
 	      dwAspect: DWORD,
 	     pdwStatus: ptr DWORD
@@ -1738,7 +1736,7 @@ IOleObject_GetMiscStatus_Proxy proto _CType \
 
 
 ;void
-IOleObject_GetMiscStatus_Stub proto _CType \
+IOleObject_GetMiscStatus_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1747,14 +1745,14 @@ IOleObject_GetMiscStatus_Stub proto _CType \
 
 
 ;HRESULT
-IOleObject_SetColorScheme_Proxy proto _CType \
+IOleObject_SetColorScheme_Proxy proto WINAPI \
 		 pThis: ptr IOleObject,
 	       pLogpal: ptr LOGPALETTE
 
 
 
 ;void
-IOleObject_SetColorScheme_Stub proto _CType \
+IOleObject_SetColorScheme_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1763,7 +1761,7 @@ IOleObject_SetColorScheme_Stub proto _CType \
 
 
 
-endif	;; __IOleObject_INTERFACE_DEFINED__
+endif	
 
 
 ifndef __IOLETypes_INTERFACE_DEFINED__
@@ -1799,7 +1797,7 @@ LPLINKSRCDESCRIPTOR	typedef ptr OBJECTDESCRIPTOR
 
 externdef		IOLETypes_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef		IOLETypes_v0_0_s_ifspec:RPC_IF_HANDLE
-endif ;; __IOLETypes_INTERFACE_DEFINED__
+endif 
 
 ifndef __IOleWindow_INTERFACE_DEFINED__
 __IOleWindow_INTERFACE_DEFINED__ equ 1
@@ -1865,14 +1863,14 @@ IOleWindow		ENDS
 
 
 ;HRESULT
-IOleWindow_GetWindow_Proxy proto _CType \
+IOleWindow_GetWindow_Proxy proto WINAPI \
 		 pThis: ptr IOleWindow,
 		 phwnd: ptr HWND
 
 
 
 ;void
-IOleWindow_GetWindow_Stub proto _CType \
+IOleWindow_GetWindow_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1881,14 +1879,14 @@ IOleWindow_GetWindow_Stub proto _CType \
 
 
 ;HRESULT
-IOleWindow_ContextSensitiveHelp_Proxy proto _CType \
+IOleWindow_ContextSensitiveHelp_Proxy proto WINAPI \
 		 pThis: ptr IOleWindow,
 	    fEnterMode: BOOL
 
 
 
 ;void
-IOleWindow_ContextSensitiveHelp_Stub proto _CType \
+IOleWindow_ContextSensitiveHelp_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1897,7 +1895,7 @@ IOleWindow_ContextSensitiveHelp_Stub proto _CType \
 
 
 
-endif	;; __IOleWindow_INTERFACE_DEFINED__
+endif	
 
 
 ifndef __IOleLink_INTERFACE_DEFINED__
@@ -2040,14 +2038,14 @@ IOleLink		ENDS
 
 
 ;HRESULT
-IOleLink_SetUpdateOptions_Proxy proto _CType \
+IOleLink_SetUpdateOptions_Proxy proto WINAPI \
 		 pThis: ptr IOleLink,
 	   dwUpdateOpt: DWORD
 
 
 
 ;void
-IOleLink_SetUpdateOptions_Stub proto _CType \
+IOleLink_SetUpdateOptions_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2056,14 +2054,14 @@ IOleLink_SetUpdateOptions_Stub proto _CType \
 
 
 ;HRESULT
-IOleLink_GetUpdateOptions_Proxy proto _CType \
+IOleLink_GetUpdateOptions_Proxy proto WINAPI \
 		 pThis: ptr IOleLink,
 	  pdwUpdateOpt: ptr DWORD
 
 
 
 ;void
-IOleLink_GetUpdateOptions_Stub proto _CType \
+IOleLink_GetUpdateOptions_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2072,7 +2070,7 @@ IOleLink_GetUpdateOptions_Stub proto _CType \
 
 
 ;HRESULT
-IOleLink_SetSourceMoniker_Proxy proto _CType \
+IOleLink_SetSourceMoniker_Proxy proto WINAPI \
 		 pThis: ptr IOleLink,
 		   pmk: ptr IMoniker,
 		rclsid: REFCLSID
@@ -2080,7 +2078,7 @@ IOleLink_SetSourceMoniker_Proxy proto _CType \
 
 
 ;void
-IOleLink_SetSourceMoniker_Stub proto _CType \
+IOleLink_SetSourceMoniker_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2089,14 +2087,14 @@ IOleLink_SetSourceMoniker_Stub proto _CType \
 
 
 ;HRESULT
-IOleLink_GetSourceMoniker_Proxy proto _CType \
+IOleLink_GetSourceMoniker_Proxy proto WINAPI \
 		 pThis: ptr IOleLink,
 		  ppmk: ptr IMoniker
 
 
 
 ;void
-IOleLink_GetSourceMoniker_Stub proto _CType \
+IOleLink_GetSourceMoniker_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2105,14 +2103,14 @@ IOleLink_GetSourceMoniker_Stub proto _CType \
 
 
 ;HRESULT
-IOleLink_SetSourceDisplayName_Proxy proto _CType \
+IOleLink_SetSourceDisplayName_Proxy proto WINAPI \
 		 pThis: ptr IOleLink,
 	 pszStatusText: LPCOLESTR
 
 
 
 ;void
-IOleLink_SetSourceDisplayName_Stub proto _CType \
+IOleLink_SetSourceDisplayName_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2121,14 +2119,14 @@ IOleLink_SetSourceDisplayName_Stub proto _CType \
 
 
 ;HRESULT
-IOleLink_GetSourceDisplayName_Proxy proto _CType \
+IOleLink_GetSourceDisplayName_Proxy proto WINAPI \
 		 pThis: ptr IOleLink,
        ppszDisplayName: ptr LPOLESTR
 
 
 
 ;void
-IOleLink_GetSourceDisplayName_Stub proto _CType \
+IOleLink_GetSourceDisplayName_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2137,7 +2135,7 @@ IOleLink_GetSourceDisplayName_Stub proto _CType \
 
 
 ;HRESULT
-IOleLink_BindToSource_Proxy proto _CType \
+IOleLink_BindToSource_Proxy proto WINAPI \
 		 pThis: ptr IOleLink,
 	     bindflags: DWORD,
 		   pbc: ptr IBindCtx
@@ -2145,7 +2143,7 @@ IOleLink_BindToSource_Proxy proto _CType \
 
 
 ;void
-IOleLink_BindToSource_Stub proto _CType \
+IOleLink_BindToSource_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2154,13 +2152,13 @@ IOleLink_BindToSource_Stub proto _CType \
 
 
 ;HRESULT
-IOleLink_BindIfRunning_Proxy proto _CType \
+IOleLink_BindIfRunning_Proxy proto WINAPI \
 		 pThis: ptr IOleLink
 
 
 
 ;void
-IOleLink_BindIfRunning_Stub proto _CType \
+IOleLink_BindIfRunning_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2169,14 +2167,14 @@ IOleLink_BindIfRunning_Stub proto _CType \
 
 
 ;HRESULT
-IOleLink_GetBoundSource_Proxy proto _CType \
+IOleLink_GetBoundSource_Proxy proto WINAPI \
 		 pThis: ptr IOleLink,
 		 ppunk: ptr IUnknown
 
 
 
 ;void
-IOleLink_GetBoundSource_Stub proto _CType \
+IOleLink_GetBoundSource_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2185,13 +2183,13 @@ IOleLink_GetBoundSource_Stub proto _CType \
 
 
 ;HRESULT
-IOleLink_UnbindSource_Proxy proto _CType \
+IOleLink_UnbindSource_Proxy proto WINAPI \
 		 pThis: ptr IOleLink
 
 
 
 ;void
-IOleLink_UnbindSource_Stub proto _CType \
+IOleLink_UnbindSource_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2200,14 +2198,14 @@ IOleLink_UnbindSource_Stub proto _CType \
 
 
 ;HRESULT
-IOleLink_Update_Proxy proto _CType \
+IOleLink_Update_Proxy proto WINAPI \
 		 pThis: ptr IOleLink,
 		   pbc: ptr IBindCtx
 
 
 
 ;void
-IOleLink_Update_Stub proto _CType \
+IOleLink_Update_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2216,7 +2214,7 @@ IOleLink_Update_Stub proto _CType \
 
 
 
-endif	;; __IOleLink_INTERFACE_DEFINED__
+endif	
 
 
 ifndef __IOleItemContainer_INTERFACE_DEFINED__
@@ -2336,7 +2334,7 @@ IOleItemContainer	ENDS
 
 
 ;HRESULT
-IOleItemContainer_GetObject_Proxy proto _CType \
+IOleItemContainer_GetObject_Proxy proto WINAPI \
 		 pThis: ptr IOleItemContainer,
 	       pszItem: LPOLESTR,
 	 dwSpeedNeeded: DWORD,
@@ -2347,7 +2345,7 @@ IOleItemContainer_GetObject_Proxy proto _CType \
 
 
 ;void
-IOleItemContainer_GetObject_Stub proto _CType \
+IOleItemContainer_GetObject_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2356,7 +2354,7 @@ IOleItemContainer_GetObject_Stub proto _CType \
 
 
 ;HRESULT
-IOleItemContainer_GetObjectStorage_Proxy proto _CType \
+IOleItemContainer_GetObjectStorage_Proxy proto WINAPI \
 		 pThis: ptr IOleItemContainer,
 	       pszItem: LPOLESTR,
 		   pbc: ptr IBindCtx,
@@ -2366,7 +2364,7 @@ IOleItemContainer_GetObjectStorage_Proxy proto _CType \
 
 
 ;void
-IOleItemContainer_GetObjectStorage_Stub proto _CType \
+IOleItemContainer_GetObjectStorage_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2375,14 +2373,14 @@ IOleItemContainer_GetObjectStorage_Stub proto _CType \
 
 
 ;HRESULT
-IOleItemContainer_IsRunning_Proxy proto _CType \
+IOleItemContainer_IsRunning_Proxy proto WINAPI \
 		 pThis: ptr IOleItemContainer,
 	       pszItem: LPOLESTR
 
 
 
 ;void
-IOleItemContainer_IsRunning_Stub proto _CType \
+IOleItemContainer_IsRunning_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2391,7 +2389,7 @@ IOleItemContainer_IsRunning_Stub proto _CType \
 
 
 
-endif	;; __IOleItemContainer_INTERFACE_DEFINED__
+endif	
 
 
 ifndef __IOleInPlaceUIWindow_INTERFACE_DEFINED__
@@ -2493,14 +2491,14 @@ IOleInPlaceUIWindow	ENDS
 
 
 ;HRESULT
-IOleInPlaceUIWindow_GetBorder_Proxy proto _CType \
+IOleInPlaceUIWindow_GetBorder_Proxy proto WINAPI \
 		 pThis: ptr IOleInPlaceUIWindow,
 	  lprectBorder: LPRECT
 
 
 
 ;void
-IOleInPlaceUIWindow_GetBorder_Stub proto _CType \
+IOleInPlaceUIWindow_GetBorder_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2509,14 +2507,14 @@ IOleInPlaceUIWindow_GetBorder_Stub proto _CType \
 
 
 ;HRESULT
-IOleInPlaceUIWindow_RequestBorderSpace_Proxy proto _CType \
+IOleInPlaceUIWindow_RequestBorderSpace_Proxy proto WINAPI \
 		 pThis: ptr IOleInPlaceUIWindow,
 	 pborderwidths: LPCBORDERWIDTHS
 
 
 
 ;void
-IOleInPlaceUIWindow_RequestBorderSpace_Stub proto _CType \
+IOleInPlaceUIWindow_RequestBorderSpace_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2525,14 +2523,14 @@ IOleInPlaceUIWindow_RequestBorderSpace_Stub proto _CType \
 
 
 ;HRESULT
-IOleInPlaceUIWindow_SetBorderSpace_Proxy proto _CType \
+IOleInPlaceUIWindow_SetBorderSpace_Proxy proto WINAPI \
 		 pThis: ptr IOleInPlaceUIWindow,
 	 pborderwidths: LPCBORDERWIDTHS
 
 
 
 ;void
-IOleInPlaceUIWindow_SetBorderSpace_Stub proto _CType \
+IOleInPlaceUIWindow_SetBorderSpace_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2541,7 +2539,7 @@ IOleInPlaceUIWindow_SetBorderSpace_Stub proto _CType \
 
 
 ;HRESULT
-IOleInPlaceUIWindow_SetActiveObject_Proxy proto _CType \
+IOleInPlaceUIWindow_SetActiveObject_Proxy proto WINAPI \
 		 pThis: ptr IOleInPlaceUIWindow,
 	 pActiveObject: ptr IOleInPlaceActiveObject,
 	    pszObjName: LPCOLESTR
@@ -2549,7 +2547,7 @@ IOleInPlaceUIWindow_SetActiveObject_Proxy proto _CType \
 
 
 ;void
-IOleInPlaceUIWindow_SetActiveObject_Stub proto _CType \
+IOleInPlaceUIWindow_SetActiveObject_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2558,7 +2556,7 @@ IOleInPlaceUIWindow_SetActiveObject_Stub proto _CType \
 
 
 
-endif	;; __IOleInPlaceUIWindow_INTERFACE_DEFINED__
+endif	
 
 
 ifndef __IOleInPlaceActiveObject_INTERFACE_DEFINED__
@@ -2662,13 +2660,13 @@ IOleInPlaceActiveObject ENDS
 
 
 ;HRESULT
-IOleInPlaceActiveObject_RemoteTranslateAccelerator_Proxy proto _CType \
+IOleInPlaceActiveObject_RemoteTranslateAccelerator_Proxy proto WINAPI \
 		 pThis: ptr IOleInPlaceActiveObject
 
 
 
 ;void
-IOleInPlaceActiveObject_RemoteTranslateAccelerator_Stub proto _CType \
+IOleInPlaceActiveObject_RemoteTranslateAccelerator_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2677,14 +2675,14 @@ IOleInPlaceActiveObject_RemoteTranslateAccelerator_Stub proto _CType \
 
 
 ;HRESULT
-IOleInPlaceActiveObject_OnFrameWindowActivate_Proxy proto _CType \
+IOleInPlaceActiveObject_OnFrameWindowActivate_Proxy proto WINAPI \
 		 pThis: ptr IOleInPlaceActiveObject,
 	     fActivate: BOOL
 
 
 
 ;void
-IOleInPlaceActiveObject_OnFrameWindowActivate_Stub proto _CType \
+IOleInPlaceActiveObject_OnFrameWindowActivate_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2693,14 +2691,14 @@ IOleInPlaceActiveObject_OnFrameWindowActivate_Stub proto _CType \
 
 
 ;HRESULT
-IOleInPlaceActiveObject_OnDocWindowActivate_Proxy proto _CType \
+IOleInPlaceActiveObject_OnDocWindowActivate_Proxy proto WINAPI \
 		 pThis: ptr IOleInPlaceActiveObject,
 	     fActivate: BOOL
 
 
 
 ;void
-IOleInPlaceActiveObject_OnDocWindowActivate_Stub proto _CType \
+IOleInPlaceActiveObject_OnDocWindowActivate_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2709,7 +2707,7 @@ IOleInPlaceActiveObject_OnDocWindowActivate_Stub proto _CType \
 
 
 ;HRESULT
-IOleInPlaceActiveObject_RemoteResizeBorder_Proxy proto _CType \
+IOleInPlaceActiveObject_RemoteResizeBorder_Proxy proto WINAPI \
 		 pThis: ptr IOleInPlaceActiveObject,
 	     prcBorder: LPCRECT,
 		  riid: REFIID,
@@ -2719,7 +2717,7 @@ IOleInPlaceActiveObject_RemoteResizeBorder_Proxy proto _CType \
 
 
 ;void
-IOleInPlaceActiveObject_RemoteResizeBorder_Stub proto _CType \
+IOleInPlaceActiveObject_RemoteResizeBorder_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2728,14 +2726,14 @@ IOleInPlaceActiveObject_RemoteResizeBorder_Stub proto _CType \
 
 
 ;HRESULT
-IOleInPlaceActiveObject_EnableModeless_Proxy proto _CType \
+IOleInPlaceActiveObject_EnableModeless_Proxy proto WINAPI \
 		 pThis: ptr IOleInPlaceActiveObject,
 	       fEnable: BOOL
 
 
 
 ;void
-IOleInPlaceActiveObject_EnableModeless_Stub proto _CType \
+IOleInPlaceActiveObject_EnableModeless_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2744,7 +2742,7 @@ IOleInPlaceActiveObject_EnableModeless_Stub proto _CType \
 
 
 
-endif	;; __IOleInPlaceActiveObject_INTERFACE_DEFINED__
+endif	
 
 
 ifndef __IOleInPlaceFrame_INTERFACE_DEFINED__
@@ -2896,39 +2894,39 @@ lpVtbl			LPIOleInPlaceFrameVtbl ?
 IOleInPlaceFrame	ENDS
 
 ;HRESULT
-IOleInPlaceFrame_InsertMenus_Proxy proto _CType \
+IOleInPlaceFrame_InsertMenus_Proxy proto WINAPI \
 		 pThis: ptr IOleInPlaceFrame,
 	   hmenuShared: HMENU,
 	  lpMenuWidths: LPOLEMENUGROUPWIDTHS
 
 ;void
-IOleInPlaceFrame_InsertMenus_Stub proto _CType \
+IOleInPlaceFrame_InsertMenus_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
 	 _pdwStubPhase: ptr DWORD
 
 ;HRESULT
-IOleInPlaceFrame_SetMenu_Proxy proto _CType \
+IOleInPlaceFrame_SetMenu_Proxy proto WINAPI \
 		 pThis: ptr IOleInPlaceFrame,
 	   hmenuShared: HMENU,
 	      holemenu: HOLEMENU,
       hwndActiveObject: HWND
 
 ;void
-IOleInPlaceFrame_SetMenu_Stub proto _CType \
+IOleInPlaceFrame_SetMenu_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
 	 _pdwStubPhase: ptr DWORD
 
 ;HRESULT
-IOleInPlaceFrame_RemoveMenus_Proxy proto _CType \
+IOleInPlaceFrame_RemoveMenus_Proxy proto WINAPI \
 		 pThis: ptr IOleInPlaceFrame,
 	   hmenuShared: HMENU
 
 ;void
-IOleInPlaceFrame_RemoveMenus_Stub proto _CType \
+IOleInPlaceFrame_RemoveMenus_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2937,14 +2935,14 @@ IOleInPlaceFrame_RemoveMenus_Stub proto _CType \
 
 
 ;HRESULT
-IOleInPlaceFrame_SetStatusText_Proxy proto _CType \
+IOleInPlaceFrame_SetStatusText_Proxy proto WINAPI \
 		 pThis: ptr IOleInPlaceFrame,
 	 pszStatusText: LPCOLESTR
 
 
 
 ;void
-IOleInPlaceFrame_SetStatusText_Stub proto _CType \
+IOleInPlaceFrame_SetStatusText_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2953,14 +2951,14 @@ IOleInPlaceFrame_SetStatusText_Stub proto _CType \
 
 
 ;HRESULT
-IOleInPlaceFrame_EnableModeless_Proxy proto _CType \
+IOleInPlaceFrame_EnableModeless_Proxy proto WINAPI \
 		 pThis: ptr IOleInPlaceFrame,
 	       fEnable: BOOL
 
 
 
 ;void
-IOleInPlaceFrame_EnableModeless_Stub proto _CType \
+IOleInPlaceFrame_EnableModeless_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2969,7 +2967,7 @@ IOleInPlaceFrame_EnableModeless_Stub proto _CType \
 
 
 ;HRESULT
-IOleInPlaceFrame_TranslateAccelerator_Proxy proto _CType \
+IOleInPlaceFrame_TranslateAccelerator_Proxy proto WINAPI \
 		 pThis: ptr IOleInPlaceFrame,
 		 lpmsg: LPMSG,
 		   wID: WORD
@@ -2977,7 +2975,7 @@ IOleInPlaceFrame_TranslateAccelerator_Proxy proto _CType \
 
 
 ;void
-IOleInPlaceFrame_TranslateAccelerator_Stub proto _CType \
+IOleInPlaceFrame_TranslateAccelerator_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -2986,7 +2984,7 @@ IOleInPlaceFrame_TranslateAccelerator_Stub proto _CType \
 
 
 
-endif	;; __IOleInPlaceFrame_INTERFACE_DEFINED__
+endif	
 
 
 ifndef __IOleInPlaceObject_INTERFACE_DEFINED__
@@ -3079,13 +3077,13 @@ IOleInPlaceObject	ENDS
 
 
 ;HRESULT
-IOleInPlaceObject_InPlaceDeactivate_Proxy proto _CType \
+IOleInPlaceObject_InPlaceDeactivate_Proxy proto WINAPI \
 		 pThis: ptr IOleInPlaceObject
 
 
 
 ;void
-IOleInPlaceObject_InPlaceDeactivate_Stub proto _CType \
+IOleInPlaceObject_InPlaceDeactivate_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3094,13 +3092,13 @@ IOleInPlaceObject_InPlaceDeactivate_Stub proto _CType \
 
 
 ;HRESULT
-IOleInPlaceObject_UIDeactivate_Proxy proto _CType \
+IOleInPlaceObject_UIDeactivate_Proxy proto WINAPI \
 		 pThis: ptr IOleInPlaceObject
 
 
 
 ;void
-IOleInPlaceObject_UIDeactivate_Stub proto _CType \
+IOleInPlaceObject_UIDeactivate_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3109,7 +3107,7 @@ IOleInPlaceObject_UIDeactivate_Stub proto _CType \
 
 
 ;HRESULT
-IOleInPlaceObject_SetObjectRects_Proxy proto _CType \
+IOleInPlaceObject_SetObjectRects_Proxy proto WINAPI \
 		 pThis: ptr IOleInPlaceObject,
 	   lprcPosRect: LPCRECT,
 	  lprcClipRect: LPCRECT
@@ -3117,7 +3115,7 @@ IOleInPlaceObject_SetObjectRects_Proxy proto _CType \
 
 
 ;void
-IOleInPlaceObject_SetObjectRects_Stub proto _CType \
+IOleInPlaceObject_SetObjectRects_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3126,13 +3124,13 @@ IOleInPlaceObject_SetObjectRects_Stub proto _CType \
 
 
 ;HRESULT
-IOleInPlaceObject_ReactivateAndUndo_Proxy proto _CType \
+IOleInPlaceObject_ReactivateAndUndo_Proxy proto WINAPI \
 		 pThis: ptr IOleInPlaceObject
 
 
 
 ;void
-IOleInPlaceObject_ReactivateAndUndo_Stub proto _CType \
+IOleInPlaceObject_ReactivateAndUndo_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3141,7 +3139,7 @@ IOleInPlaceObject_ReactivateAndUndo_Stub proto _CType \
 
 
 
-endif	;; __IOleInPlaceObject_INTERFACE_DEFINED__
+endif	
 
 
 ifndef __IOleInPlaceSite_INTERFACE_DEFINED__
@@ -3276,13 +3274,13 @@ IOleInPlaceSite		ENDS
 
 
 ;HRESULT
-IOleInPlaceSite_CanInPlaceActivate_Proxy proto _CType \
+IOleInPlaceSite_CanInPlaceActivate_Proxy proto WINAPI \
 		 pThis: ptr IOleInPlaceSite
 
 
 
 ;void
-IOleInPlaceSite_CanInPlaceActivate_Stub proto _CType \
+IOleInPlaceSite_CanInPlaceActivate_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3291,13 +3289,13 @@ IOleInPlaceSite_CanInPlaceActivate_Stub proto _CType \
 
 
 ;HRESULT
-IOleInPlaceSite_OnInPlaceActivate_Proxy proto _CType \
+IOleInPlaceSite_OnInPlaceActivate_Proxy proto WINAPI \
 		 pThis: ptr IOleInPlaceSite
 
 
 
 ;void
-IOleInPlaceSite_OnInPlaceActivate_Stub proto _CType \
+IOleInPlaceSite_OnInPlaceActivate_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3306,13 +3304,13 @@ IOleInPlaceSite_OnInPlaceActivate_Stub proto _CType \
 
 
 ;HRESULT
-IOleInPlaceSite_OnUIActivate_Proxy proto _CType \
+IOleInPlaceSite_OnUIActivate_Proxy proto WINAPI \
 		 pThis: ptr IOleInPlaceSite
 
 
 
 ;void
-IOleInPlaceSite_OnUIActivate_Stub proto _CType \
+IOleInPlaceSite_OnUIActivate_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3321,7 +3319,7 @@ IOleInPlaceSite_OnUIActivate_Stub proto _CType \
 
 
 ;HRESULT
-IOleInPlaceSite_GetWindowContext_Proxy proto _CType \
+IOleInPlaceSite_GetWindowContext_Proxy proto WINAPI \
 		 pThis: ptr IOleInPlaceSite,
 	       ppFrame: ptr IOleInPlaceFrame,
 		 ppDoc: ptr IOleInPlaceUIWindow,
@@ -3332,7 +3330,7 @@ IOleInPlaceSite_GetWindowContext_Proxy proto _CType \
 
 
 ;void
-IOleInPlaceSite_GetWindowContext_Stub proto _CType \
+IOleInPlaceSite_GetWindowContext_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3340,14 +3338,14 @@ IOleInPlaceSite_GetWindowContext_Stub proto _CType \
 
 
 ;HRESULT
-IOleInPlaceSite_Scroll_Proxy proto _CType \
+IOleInPlaceSite_Scroll_Proxy proto WINAPI \
 		 pThis: ptr IOleInPlaceSite,
 	  scrollExtant: tagSIZE
 
 
 
 ;void
-IOleInPlaceSite_Scroll_Stub proto _CType \
+IOleInPlaceSite_Scroll_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3356,14 +3354,14 @@ IOleInPlaceSite_Scroll_Stub proto _CType \
 
 
 ;HRESULT
-IOleInPlaceSite_OnUIDeactivate_Proxy proto _CType \
+IOleInPlaceSite_OnUIDeactivate_Proxy proto WINAPI \
 		 pThis: ptr IOleInPlaceSite,
 	     fUndoable: BOOL
 
 
 
 ;void
-IOleInPlaceSite_OnUIDeactivate_Stub proto _CType \
+IOleInPlaceSite_OnUIDeactivate_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3372,13 +3370,13 @@ IOleInPlaceSite_OnUIDeactivate_Stub proto _CType \
 
 
 ;HRESULT
-IOleInPlaceSite_OnInPlaceDeactivate_Proxy proto _CType \
+IOleInPlaceSite_OnInPlaceDeactivate_Proxy proto WINAPI \
 		 pThis: ptr IOleInPlaceSite
 
 
 
 ;void
-IOleInPlaceSite_OnInPlaceDeactivate_Stub proto _CType \
+IOleInPlaceSite_OnInPlaceDeactivate_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3387,13 +3385,13 @@ IOleInPlaceSite_OnInPlaceDeactivate_Stub proto _CType \
 
 
 ;HRESULT
-IOleInPlaceSite_DiscardUndoState_Proxy proto _CType \
+IOleInPlaceSite_DiscardUndoState_Proxy proto WINAPI \
 		 pThis: ptr IOleInPlaceSite
 
 
 
 ;void
-IOleInPlaceSite_DiscardUndoState_Stub proto _CType \
+IOleInPlaceSite_DiscardUndoState_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3402,13 +3400,13 @@ IOleInPlaceSite_DiscardUndoState_Stub proto _CType \
 
 
 ;HRESULT
-IOleInPlaceSite_DeactivateAndUndo_Proxy proto _CType \
+IOleInPlaceSite_DeactivateAndUndo_Proxy proto WINAPI \
 		 pThis: ptr IOleInPlaceSite
 
 
 
 ;void
-IOleInPlaceSite_DeactivateAndUndo_Stub proto _CType \
+IOleInPlaceSite_DeactivateAndUndo_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3417,14 +3415,14 @@ IOleInPlaceSite_DeactivateAndUndo_Stub proto _CType \
 
 
 ;HRESULT
-IOleInPlaceSite_OnPosRectChange_Proxy proto _CType \
+IOleInPlaceSite_OnPosRectChange_Proxy proto WINAPI \
 		 pThis: ptr IOleInPlaceSite,
 	   lprcPosRect: LPCRECT
 
 
 
 ;void
-IOleInPlaceSite_OnPosRectChange_Stub proto _CType \
+IOleInPlaceSite_OnPosRectChange_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3433,7 +3431,7 @@ IOleInPlaceSite_OnPosRectChange_Stub proto _CType \
 
 
 
-endif	;; __IOleInPlaceSite_INTERFACE_DEFINED__
+endif	
 
 
 ifndef __IContinue_INTERFACE_DEFINED__
@@ -3490,13 +3488,13 @@ IContinue		ENDS
 
 
 ;HRESULT
-IContinue_FContinue_Proxy proto _CType \
+IContinue_FContinue_Proxy proto WINAPI \
 		 pThis: ptr IContinue
 
 
 
 ;void
-IContinue_FContinue_Stub proto _CType \
+IContinue_FContinue_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3505,7 +3503,7 @@ IContinue_FContinue_Stub proto _CType \
 
 
 
-endif	;; __IContinue_INTERFACE_DEFINED__
+endif	
 
 
 ifndef __IViewObject_INTERFACE_DEFINED__
@@ -3622,7 +3620,7 @@ IViewObject		ENDS
 
 
 ;HRESULT
-IViewObject_RemoteDraw_Proxy proto _CType \
+IViewObject_RemoteDraw_Proxy proto WINAPI \
 		 pThis: ptr IViewObject,
 	  dwDrawAspect: DWORD,
 		lindex: LONG,
@@ -3637,7 +3635,7 @@ IViewObject_RemoteDraw_Proxy proto _CType \
 
 
 ;void
-IViewObject_RemoteDraw_Stub proto _CType \
+IViewObject_RemoteDraw_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3646,7 +3644,7 @@ IViewObject_RemoteDraw_Stub proto _CType \
 
 
 ;HRESULT
-IViewObject_RemoteGetColorSet_Proxy proto _CType \
+IViewObject_RemoteGetColorSet_Proxy proto WINAPI \
 		 pThis: ptr IViewObject,
 	  dwDrawAspect: DWORD,
 		lindex: LONG,
@@ -3658,7 +3656,7 @@ IViewObject_RemoteGetColorSet_Proxy proto _CType \
 
 
 ;void
-IViewObject_RemoteGetColorSet_Stub proto _CType \
+IViewObject_RemoteGetColorSet_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3667,7 +3665,7 @@ IViewObject_RemoteGetColorSet_Stub proto _CType \
 
 
 ;HRESULT
-IViewObject_RemoteFreeze_Proxy proto _CType \
+IViewObject_RemoteFreeze_Proxy proto WINAPI \
 		 pThis: ptr IViewObject,
 	  dwDrawAspect: DWORD,
 		lindex: LONG,
@@ -3677,7 +3675,7 @@ IViewObject_RemoteFreeze_Proxy proto _CType \
 
 
 ;void
-IViewObject_RemoteFreeze_Stub proto _CType \
+IViewObject_RemoteFreeze_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3686,14 +3684,14 @@ IViewObject_RemoteFreeze_Stub proto _CType \
 
 
 ;HRESULT
-IViewObject_Unfreeze_Proxy proto _CType \
+IViewObject_Unfreeze_Proxy proto WINAPI \
 		 pThis: ptr IViewObject,
 	      dwFreeze: DWORD
 
 
 
 ;void
-IViewObject_Unfreeze_Stub proto _CType \
+IViewObject_Unfreeze_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3702,7 +3700,7 @@ IViewObject_Unfreeze_Stub proto _CType \
 
 
 ;HRESULT
-IViewObject_SetAdvise_Proxy proto _CType \
+IViewObject_SetAdvise_Proxy proto WINAPI \
 		 pThis: ptr IViewObject,
 	       aspects: DWORD,
 		  advf: DWORD,
@@ -3711,7 +3709,7 @@ IViewObject_SetAdvise_Proxy proto _CType \
 
 
 ;void
-IViewObject_SetAdvise_Stub proto _CType \
+IViewObject_SetAdvise_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3720,7 +3718,7 @@ IViewObject_SetAdvise_Stub proto _CType \
 
 
 ;HRESULT
-IViewObject_RemoteGetAdvise_Proxy proto _CType \
+IViewObject_RemoteGetAdvise_Proxy proto WINAPI \
 		 pThis: ptr IViewObject,
 	      pAspects: ptr DWORD,
 		 pAdvf: ptr DWORD,
@@ -3729,7 +3727,7 @@ IViewObject_RemoteGetAdvise_Proxy proto _CType \
 
 
 ;void
-IViewObject_RemoteGetAdvise_Stub proto _CType \
+IViewObject_RemoteGetAdvise_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3738,7 +3736,7 @@ IViewObject_RemoteGetAdvise_Stub proto _CType \
 
 
 
-endif	;; __IViewObject_INTERFACE_DEFINED__
+endif	
 
 
 ifndef __IViewObject2_INTERFACE_DEFINED__
@@ -3865,7 +3863,7 @@ IViewObject2		ENDS
 
 
 ;HRESULT
-IViewObject2_GetExtent_Proxy proto _CType \
+IViewObject2_GetExtent_Proxy proto WINAPI \
 		 pThis: ptr IViewObject2,
 	  dwDrawAspect: DWORD,
 		lindex: LONG,
@@ -3875,7 +3873,7 @@ IViewObject2_GetExtent_Proxy proto _CType \
 
 
 ;void
-IViewObject2_GetExtent_Stub proto _CType \
+IViewObject2_GetExtent_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3884,7 +3882,7 @@ IViewObject2_GetExtent_Stub proto _CType \
 
 
 
-endif	;; __IViewObject2_INTERFACE_DEFINED__
+endif	
 
 
 ifndef __IDropSource_INTERFACE_DEFINED__
@@ -3952,7 +3950,7 @@ IDropSource		ENDS
 
 
 ;HRESULT
-IDropSource_QueryContinueDrag_Proxy proto _CType \
+IDropSource_QueryContinueDrag_Proxy proto WINAPI \
 		 pThis: ptr IDropSource,
 	fEscapePressed: BOOL,
 	   grfKeyState: DWORD
@@ -3960,7 +3958,7 @@ IDropSource_QueryContinueDrag_Proxy proto _CType \
 
 
 ;void
-IDropSource_QueryContinueDrag_Stub proto _CType \
+IDropSource_QueryContinueDrag_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3969,14 +3967,14 @@ IDropSource_QueryContinueDrag_Stub proto _CType \
 
 
 ;HRESULT
-IDropSource_GiveFeedback_Proxy proto _CType \
+IDropSource_GiveFeedback_Proxy proto WINAPI \
 		 pThis: ptr IDropSource,
 	      dwEffect: DWORD
 
 
 
 ;void
-IDropSource_GiveFeedback_Stub proto _CType \
+IDropSource_GiveFeedback_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -3985,7 +3983,7 @@ IDropSource_GiveFeedback_Stub proto _CType \
 
 
 
-endif	;; __IDropSource_INTERFACE_DEFINED__
+endif	
 
 
 ifndef __IDropTarget_INTERFACE_DEFINED__
@@ -4007,24 +4005,14 @@ DROPEFFECT_LINK		equ ( 4 )
 
 DROPEFFECT_SCROLL	equ ( 0x80000000 )
 
-;; default inset-width of the hot zone, in pixels
-;;   typical use: GetProfileInt("windows","DragScrollInset",DD_DEFSCROLLINSET)
 DD_DEFSCROLLINSET	equ ( 11 )
 
-;; default delay before scrolling, in milliseconds
-;;   typical use: GetProfileInt("windows","DragScrollDelay",DD_DEFSCROLLDELAY)
 DD_DEFSCROLLDELAY	equ ( 50 )
 
-;; default scroll interval, in milliseconds
-;;   typical use: GetProfileInt("windows","DragScrollInterval", DD_DEFSCROLLINTERVAL)
 DD_DEFSCROLLINTERVAL	equ ( 50 )
 
-;; default delay before dragging should start, in milliseconds
-;;   typical use: GetProfileInt("windows", "DragDelay", DD_DEFDRAGDELAY)
 DD_DEFDRAGDELAY		equ ( 200 )
 
-;; default minimum distance (radius) before dragging should start, in pixels
-;;   typical use: GetProfileInt("windows", "DragMinDist", DD_DEFDRAGMINDIST)
 DD_DEFDRAGMINDIST	equ ( 2 )
 
 
@@ -4105,7 +4093,7 @@ IDropTarget		ENDS
 
 
 ;HRESULT
-IDropTarget_DragEnter_Proxy proto _CType \
+IDropTarget_DragEnter_Proxy proto WINAPI \
 		 pThis: ptr IDropTarget,
 	      pDataObj: ptr IDataObject,
 	   grfKeyState: DWORD,
@@ -4115,7 +4103,7 @@ IDropTarget_DragEnter_Proxy proto _CType \
 
 
 ;void
-IDropTarget_DragEnter_Stub proto _CType \
+IDropTarget_DragEnter_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -4124,7 +4112,7 @@ IDropTarget_DragEnter_Stub proto _CType \
 
 
 ;HRESULT
-IDropTarget_DragOver_Proxy proto _CType \
+IDropTarget_DragOver_Proxy proto WINAPI \
 		 pThis: ptr IDropTarget,
 	   grfKeyState: DWORD,
 		    pt: POINTL,
@@ -4133,7 +4121,7 @@ IDropTarget_DragOver_Proxy proto _CType \
 
 
 ;void
-IDropTarget_DragOver_Stub proto _CType \
+IDropTarget_DragOver_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -4142,13 +4130,13 @@ IDropTarget_DragOver_Stub proto _CType \
 
 
 ;HRESULT
-IDropTarget_DragLeave_Proxy proto _CType \
+IDropTarget_DragLeave_Proxy proto WINAPI \
 		 pThis: ptr IDropTarget
 
 
 
 ;void
-IDropTarget_DragLeave_Stub proto _CType \
+IDropTarget_DragLeave_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -4157,7 +4145,7 @@ IDropTarget_DragLeave_Stub proto _CType \
 
 
 ;HRESULT
-IDropTarget_Drop_Proxy proto _CType \
+IDropTarget_Drop_Proxy proto WINAPI \
 		 pThis: ptr IDropTarget,
 	      pDataObj: ptr IDataObject,
 	   grfKeyState: DWORD,
@@ -4167,7 +4155,7 @@ IDropTarget_Drop_Proxy proto _CType \
 
 
 ;void
-IDropTarget_Drop_Stub proto _CType \
+IDropTarget_Drop_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -4176,7 +4164,7 @@ IDropTarget_Drop_Stub proto _CType \
 
 
 
-endif	;; __IDropTarget_INTERFACE_DEFINED__
+endif	
 
 
 ifndef __IEnumOLEVERB_INTERFACE_DEFINED__
@@ -4271,7 +4259,7 @@ IEnumOLEVERB		ENDS
 
 
 ;HRESULT
-IEnumOLEVERB_RemoteNext_Proxy proto _CType \
+IEnumOLEVERB_RemoteNext_Proxy proto WINAPI \
 		 pThis: ptr IEnumOLEVERB,
 		  celt: ULONG,
 		 rgelt: LPOLEVERB,
@@ -4280,7 +4268,7 @@ IEnumOLEVERB_RemoteNext_Proxy proto _CType \
 
 
 ;void
-IEnumOLEVERB_RemoteNext_Stub proto _CType \
+IEnumOLEVERB_RemoteNext_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -4289,14 +4277,14 @@ IEnumOLEVERB_RemoteNext_Stub proto _CType \
 
 
 ;HRESULT
-IEnumOLEVERB_Skip_Proxy proto _CType \
+IEnumOLEVERB_Skip_Proxy proto WINAPI \
 		 pThis: ptr IEnumOLEVERB,
 		  celt: ULONG
 
 
 
 ;void
-IEnumOLEVERB_Skip_Stub proto _CType \
+IEnumOLEVERB_Skip_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -4305,13 +4293,13 @@ IEnumOLEVERB_Skip_Stub proto _CType \
 
 
 ;HRESULT
-IEnumOLEVERB_Reset_Proxy proto _CType \
+IEnumOLEVERB_Reset_Proxy proto WINAPI \
 		 pThis: ptr IEnumOLEVERB
 
 
 
 ;void
-IEnumOLEVERB_Reset_Stub proto _CType \
+IEnumOLEVERB_Reset_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -4320,14 +4308,14 @@ IEnumOLEVERB_Reset_Stub proto _CType \
 
 
 ;HRESULT
-IEnumOLEVERB_Clone_Proxy proto _CType \
+IEnumOLEVERB_Clone_Proxy proto WINAPI \
 		 pThis: ptr IEnumOLEVERB,
 		ppenum: ptr IEnumOLEVERB
 
 
 
 ;void
-IEnumOLEVERB_Clone_Stub proto _CType \
+IEnumOLEVERB_Clone_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -4336,166 +4324,165 @@ IEnumOLEVERB_Clone_Stub proto _CType \
 
 
 
-endif	;; __IEnumOLEVERB_INTERFACE_DEFINED__
+endif	
 
 
-;; Additional Prototypes for ALL interfaces
 
 ;DWORD
-CLIPFORMAT_UserSize proto _CType \
+CLIPFORMAT_UserSize proto WINAPI \
 		      : LPDWORD,
 		      : DWORD,
 		      : ptr CLIPFORMAT
 
 ;LPBYTE
-CLIPFORMAT_UserMarshal proto _CType \
+CLIPFORMAT_UserMarshal proto WINAPI \
 		      : LPDWORD,
 		      : LPSTR,
 		      : ptr CLIPFORMAT
 
 ;LPBYTE
-CLIPFORMAT_UserUnmarshal proto _CType \
+CLIPFORMAT_UserUnmarshal proto WINAPI \
 		      : LPDWORD,
 		      : LPSTR,
 		      : ptr CLIPFORMAT
 
 ;void
-CLIPFORMAT_UserFree proto _CType \
+CLIPFORMAT_UserFree proto WINAPI \
 		      : LPDWORD,
 		      : ptr CLIPFORMAT
 
 
 ;DWORD
-HACCEL_UserSize proto _CType \
+HACCEL_UserSize proto WINAPI \
 		      : LPDWORD,
 		      : DWORD,
 		      : ptr HACCEL
 
 ;LPBYTE
-HACCEL_UserMarshal proto _CType \
+HACCEL_UserMarshal proto WINAPI \
 		      : LPDWORD,
 		      : LPSTR,
 		      : ptr HACCEL
 
 ;LPBYTE
-HACCEL_UserUnmarshal proto _CType \
+HACCEL_UserUnmarshal proto WINAPI \
 		      : LPDWORD,
 		      : LPSTR,
 		      : ptr HACCEL
 
 ;void
-HACCEL_UserFree proto _CType \
+HACCEL_UserFree proto WINAPI \
 		      : LPDWORD,
 		      : ptr HACCEL
 
 ;DWORD
-HGLOBAL_UserSize proto _CType \
+HGLOBAL_UserSize proto WINAPI \
 		      : LPDWORD,
 		      : DWORD,
 		      : ptr HGLOBAL
 
 ;LPBYTE
-HGLOBAL_UserMarshal proto _CType \
+HGLOBAL_UserMarshal proto WINAPI \
 		      : LPDWORD,
 		      : LPSTR,
 		      : ptr HGLOBAL
 
 ;LPBYTE
-HGLOBAL_UserUnmarshal proto _CType \
+HGLOBAL_UserUnmarshal proto WINAPI \
 		      : LPDWORD,
 		      : LPSTR,
 		      : ptr HGLOBAL
 
 ;void
-HGLOBAL_UserFree proto _CType \
+HGLOBAL_UserFree proto WINAPI \
 		      : LPDWORD,
 		      : ptr HGLOBAL
 
 
 ;DWORD
-HMENU_UserSize proto _CType \
+HMENU_UserSize proto WINAPI \
 		      : LPDWORD,
 		      : DWORD,
 		      : ptr HMENU
 
 ;LPBYTE
-HMENU_UserMarshal proto _CType \
+HMENU_UserMarshal proto WINAPI \
 		      : LPDWORD,
 		      : LPSTR,
 		      : ptr HMENU
 
 ;LPBYTE
-HMENU_UserUnmarshal proto _CType \
+HMENU_UserUnmarshal proto WINAPI \
 		      : LPDWORD,
 		      : LPSTR,
 		      : ptr HMENU
 
 ;void
-HMENU_UserFree proto _CType \
+HMENU_UserFree proto WINAPI \
 		      : LPDWORD,
 		      : ptr HMENU
 
 
 ;DWORD
-HWND_UserSize proto _CType \
+HWND_UserSize proto WINAPI \
 		      : LPDWORD,
 		      : DWORD,
 		      : ptr HWND
 
 ;LPBYTE
-HWND_UserMarshal proto _CType \
+HWND_UserMarshal proto WINAPI \
 		      : LPDWORD,
 		      : LPSTR,
 		      : ptr HWND
 
 ;LPBYTE
-HWND_UserUnmarshal proto _CType \
+HWND_UserUnmarshal proto WINAPI \
 		      : LPDWORD,
 		      : LPSTR,
 		      : ptr HWND
 
 ;void
-HWND_UserFree proto _CType \
+HWND_UserFree proto WINAPI \
 		      : LPDWORD,
 		      : ptr HWND
 
 
 ;DWORD
-STGMEDIUM_UserSize proto _CType \
+STGMEDIUM_UserSize proto WINAPI \
 		      : LPDWORD,
 		      : DWORD,
 		      : ptr STGMEDIUM
 ;LPBYTE
-STGMEDIUM_UserMarshal proto _CType \
+STGMEDIUM_UserMarshal proto WINAPI \
 		      : LPDWORD,
 		      : LPSTR,
 		      : ptr STGMEDIUM
 ;LPBYTE
-STGMEDIUM_UserUnmarshal proto _CType \
+STGMEDIUM_UserUnmarshal proto WINAPI \
 		      : LPDWORD,
 		      : LPSTR,
 		      : ptr STGMEDIUM
 
 ;void
-STGMEDIUM_UserFree proto _CType \
+STGMEDIUM_UserFree proto WINAPI \
 		      : LPDWORD,
 		      : ptr STGMEDIUM
 
 
 ;HRESULT
-IOleInPlaceActiveObject_TranslateAccelerator_Proxy proto _CType \
+IOleInPlaceActiveObject_TranslateAccelerator_Proxy proto WINAPI \
 		 pThis: ptr IOleInPlaceActiveObject,
 		 lpmsg: LPMSG
 
 
 
 ;HRESULT
-IOleInPlaceActiveObject_TranslateAccelerator_Stub proto _CType \
+IOleInPlaceActiveObject_TranslateAccelerator_Stub proto WINAPI \
 		 pThis: ptr IOleInPlaceActiveObject
 
 
 ;HRESULT
-IOleInPlaceActiveObject_ResizeBorder_Proxy proto _CType \
+IOleInPlaceActiveObject_ResizeBorder_Proxy proto WINAPI \
 		 pThis: ptr IOleInPlaceActiveObject,
 	     prcBorder: LPCRECT,
 	     pUIWindow: ptr IOleInPlaceUIWindow,
@@ -4504,7 +4491,7 @@ IOleInPlaceActiveObject_ResizeBorder_Proxy proto _CType \
 
 
 ;HRESULT
-IOleInPlaceActiveObject_ResizeBorder_Stub proto _CType \
+IOleInPlaceActiveObject_ResizeBorder_Stub proto WINAPI \
 		 pThis: ptr IOleInPlaceActiveObject,
 	     prcBorder: LPCRECT,
 		  riid: REFIID,
@@ -4517,7 +4504,7 @@ IOleInPlaceActiveObject_ResizeBorder_Stub proto _CType \
        pfnContinue52@MP typedef ptr pfnContinue52@CT
 
 ;HRESULT
-IViewObject_Draw_Proxy proto _CType \
+IViewObject_Draw_Proxy proto WINAPI \
 		 pThis: ptr IViewObject,
 	  dwDrawAspect: DWORD,
 		lindex: LONG,
@@ -4533,7 +4520,7 @@ IViewObject_Draw_Proxy proto _CType \
 
 
 ;HRESULT
-IViewObject_Draw_Stub proto _CType \
+IViewObject_Draw_Stub proto WINAPI \
 		 pThis: ptr IViewObject,
 	  dwDrawAspect: DWORD,
 		lindex: LONG,
@@ -4547,7 +4534,7 @@ IViewObject_Draw_Stub proto _CType \
 
 
 ;HRESULT
-IViewObject_GetColorSet_Proxy proto _CType \
+IViewObject_GetColorSet_Proxy proto WINAPI \
 		 pThis: ptr IViewObject,
 	  dwDrawAspect: DWORD,
 		lindex: LONG,
@@ -4559,7 +4546,7 @@ IViewObject_GetColorSet_Proxy proto _CType \
 
 
 ;HRESULT
-IViewObject_GetColorSet_Stub proto _CType \
+IViewObject_GetColorSet_Stub proto WINAPI \
 		 pThis: ptr IViewObject,
 	  dwDrawAspect: DWORD,
 		lindex: LONG,
@@ -4570,7 +4557,7 @@ IViewObject_GetColorSet_Stub proto _CType \
 
 
 ;HRESULT
-IViewObject_Freeze_Proxy proto _CType \
+IViewObject_Freeze_Proxy proto WINAPI \
 		 pThis: ptr IViewObject,
 	  dwDrawAspect: DWORD,
 		lindex: LONG,
@@ -4580,7 +4567,7 @@ IViewObject_Freeze_Proxy proto _CType \
 
 
 ;HRESULT
-IViewObject_Freeze_Stub proto _CType \
+IViewObject_Freeze_Stub proto WINAPI \
 		 pThis: ptr IViewObject,
 	  dwDrawAspect: DWORD,
 		lindex: LONG,
@@ -4589,7 +4576,7 @@ IViewObject_Freeze_Stub proto _CType \
 
 
 ;HRESULT
-IViewObject_GetAdvise_Proxy proto _CType \
+IViewObject_GetAdvise_Proxy proto WINAPI \
 		 pThis: ptr IViewObject,
 	      pAspects: LPDWORD,
 		 pAdvf: LPDWORD,
@@ -4598,7 +4585,7 @@ IViewObject_GetAdvise_Proxy proto _CType \
 
 
 ;HRESULT
-IViewObject_GetAdvise_Stub proto _CType \
+IViewObject_GetAdvise_Stub proto WINAPI \
 		 pThis: ptr IViewObject,
 	      pAspects: LPDWORD,
 		 pAdvf: LPDWORD,
@@ -4606,7 +4593,7 @@ IViewObject_GetAdvise_Stub proto _CType \
 
 
 ;HRESULT
-IEnumOLEVERB_Next_Proxy proto _CType \
+IEnumOLEVERB_Next_Proxy proto WINAPI \
 		 pThis: ptr IEnumOLEVERB,
 		  celt: ULONG,
 		 rgelt: LPOLEVERB,
@@ -4615,7 +4602,7 @@ IEnumOLEVERB_Next_Proxy proto _CType \
 
 
 ;HRESULT
-IEnumOLEVERB_Next_Stub proto _CType \
+IEnumOLEVERB_Next_Stub proto WINAPI \
 		 pThis: ptr IEnumOLEVERB,
 		  celt: ULONG,
 		 rgelt: LPOLEVERB,
@@ -4623,7 +4610,7 @@ IEnumOLEVERB_Next_Stub proto _CType \
 
 
 ;HRESULT
-IOleCache2_UpdateCache_Proxy proto _CType \
+IOleCache2_UpdateCache_Proxy proto WINAPI \
 		 pThis: ptr IOleCache2,
 	   pDataObject: LPDATAOBJECT,
 	       grfUpdf: DWORD,
@@ -4632,14 +4619,13 @@ IOleCache2_UpdateCache_Proxy proto _CType \
 
 
 ;HRESULT
-IOleCache2_UpdateCache_Stub proto _CType \
+IOleCache2_UpdateCache_Stub proto WINAPI \
 		 pThis: ptr IOleCache2,
 	   pDataObject: LPDATAOBJECT,
 	       grfUpdf: DWORD,
 	     pReserved: DWORD
 
 
-;; end of Additional Prototypes
 
 .list
 

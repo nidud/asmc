@@ -5,15 +5,9 @@ ifndef _WINDEF_
  include windef.inc
 endif
 .xlist
-;
-; GDI procedure declarations, constant definitions and macros
-;
 ifndef _WINGDI_
 _WINGDI_ equ 1
 
-;;
-;; Define API decoration for direct importing of DLL references.
-;;
 
 ifdef __PE__
 WINGDIAPI	equ <option dllimport:<gdi32>>
@@ -23,12 +17,9 @@ WINGDIAPI	equ <>
 WINSPOOLAPI	equ <>
 endif
 
-;;
-;; Define API decoration for direct importing of DLL references.
-;;
 
 ifndef WINVER
-WINVER	equ 0x0500	;; version 5.0
+WINVER	equ 0x0500	
 endif
 ifndef _WIN32_WINDOWS
 _WIN32_WINDOWS equ WINVER
@@ -41,60 +32,55 @@ ifndef NOGDI
 
 ifndef NORASTEROPS
 
-;; Binary raster ops
-R2_BLACK	equ 1	;;  0
-R2_NOTMERGEPEN	equ 2	;; DPon
-R2_MASKNOTPEN	equ 3	;; DPna
-R2_NOTCOPYPEN	equ 4	;; PN
-R2_MASKPENNOT	equ 5	;; PDna
-R2_NOT		equ 6	;; Dn
-R2_XORPEN	equ 7	;; DPx
-R2_NOTMASKPEN	equ 8	;; DPan
-R2_MASKPEN	equ 9	;; DPa
-R2_NOTXORPEN	equ 10	;; DPxn
-R2_NOP		equ 11	;; D
-R2_MERGENOTPEN	equ 12	;; DPno
-R2_COPYPEN	equ 13	;; P
-R2_MERGEPENNOT	equ 14	;; PDno
-R2_MERGEPEN	equ 15	;; DPo
-R2_WHITE	equ 16	;;  1
+R2_BLACK	equ 1	
+R2_NOTMERGEPEN	equ 2	
+R2_MASKNOTPEN	equ 3	
+R2_NOTCOPYPEN	equ 4	
+R2_MASKPENNOT	equ 5	
+R2_NOT		equ 6	
+R2_XORPEN	equ 7	
+R2_NOTMASKPEN	equ 8	
+R2_MASKPEN	equ 9	
+R2_NOTXORPEN	equ 10	
+R2_NOP		equ 11	
+R2_MERGENOTPEN	equ 12	
+R2_COPYPEN	equ 13	
+R2_MERGEPENNOT	equ 14	
+R2_MERGEPEN	equ 15	
+R2_WHITE	equ 16	
 R2_LAST		equ 16
 
-;; Ternary raster operations
-SRCCOPY		equ 0x00CC0020 ;; dest = source
-SRCPAINT	equ 0x00EE0086 ;; dest = source OR dest
-SRCAND		equ 0x008800C6 ;; dest = source AND dest
-SRCINVERT	equ 0x00660046 ;; dest = source XOR dest
-SRCERASE	equ 0x00440328 ;; dest = source AND (NOT dest )
-NOTSRCCOPY	equ 0x00330008 ;; dest = (NOT source)
-NOTSRCERASE	equ 0x001100A6 ;; dest = (NOT src) AND (NOT dest)
-MERGECOPY	equ 0x00C000CA ;; dest = (source AND pattern)
-MERGEPAINT	equ 0x00BB0226 ;; dest = (NOT source) OR dest
-PATCOPY		equ 0x00F00021 ;; dest = pattern
-PATPAINT	equ 0x00FB0A09 ;; dest = DPSnoo
-PATINVERT	equ 0x005A0049 ;; dest = pattern XOR dest
-DSTINVERT	equ 0x00550009 ;; dest = (NOT dest)
-BLACKNESS	equ 0x00000042 ;; dest = BACK
-WHITENESS	equ 0x00FF0062 ;; dest = WHITE
+SRCCOPY		equ 0x00CC0020 
+SRCPAINT	equ 0x00EE0086 
+SRCAND		equ 0x008800C6 
+SRCINVERT	equ 0x00660046 
+SRCERASE	equ 0x00440328 
+NOTSRCCOPY	equ 0x00330008 
+NOTSRCERASE	equ 0x001100A6 
+MERGECOPY	equ 0x00C000CA 
+MERGEPAINT	equ 0x00BB0226 
+PATCOPY		equ 0x00F00021 
+PATPAINT	equ 0x00FB0A09 
+PATINVERT	equ 0x005A0049 
+DSTINVERT	equ 0x00550009 
+BLACKNESS	equ 0x00000042 
+WHITENESS	equ 0x00FF0062 
 
-;; Quaternary raster codes
 MAKEROP4 macro fore,back
 	exitm<((((back) SHL 8) AND 0xFF000000) OR (fore))>
 	endm
 
-endif ;; NORASTEROPS
+endif 
 
 GDI_ERROR	equ 0xFFFFFFFF
 HGDI_ERROR	equ 0xFFFFFFFF
 
-;; Region Flags
 ERROR		equ 0
 NULLREGION	equ 1
 SIMPLEREGION	equ 2
 COMPLEXREGION	equ 3
 RGN_ERROR	equ ERROR
 
-;; CombineRgn() Styles
 RGN_AND		equ 1
 RGN_OR		equ 2
 RGN_XOR		equ 3
@@ -103,7 +89,6 @@ RGN_COPY	equ 5
 RGN_MIN		equ RGN_AND
 RGN_MAX		equ RGN_COPY
 
-;; StretchBlt() Modes
 BLACKONWHITE	equ 1
 WHITEONBLACK	equ 2
 COLORONCOLOR	equ 3
@@ -111,19 +96,16 @@ HALFTONE	equ 4
 MAXSTRETCHBLTMODE	equ 4
 
 if(WINVER GE 0x0400)
-;; New StretchBlt() Modes
 STRETCH_ANDSCANS	equ BACKONWHITE
 STRETCH_ORSCANS		equ WHITEONBACK
 STRETCH_DELETESCANS	equ COLORONCOLOR
 STRETCH_HALFTONE	equ HAFTONE
-endif ;; WINVER GE 0x0400
+endif 
 
-;; PolyFill() Modes
 ALTERNATE	equ 1
 WINDING		equ 2
 POLYFILL_LAST	equ 2
 
-;; Text Alignment Options
 TA_NOUPDATECP	equ 0
 TA_UPDATECP	equ 1
 
@@ -156,14 +138,13 @@ ETO_RTLREADING		equ 0x0080
 ETO_NUMERICSLOCAL	equ 0x0400
 ETO_NUMERICSLATIN	equ 0x0800
 ETO_IGNORELANGUAGE	equ 0x1000
-endif ;; WINVER GE 0x0400
+endif 
 if (_WIN32_WINNT GE 0x0500)
 ETO_PDY			equ 0x2000
-endif ;; (_WIN32_WINNT GE 0x0500)
+endif 
 
 ASPECT_FILTERING	equ 0x0001
 
-;; Bounds Accumulation APIs
 
 DCB_RESET		equ 0x0001
 DCB_ACCUMULATE		equ 0x0002
@@ -174,7 +155,6 @@ DCB_DISABLE		equ 0x0008
 
 ifndef NOMETAFILE
 
-;; Metafile Functions
 META_SETBKCOLOR		equ 0x0201
 META_SETBKMODE		equ 0x0102
 META_SETMAPMODE		equ 0x0103
@@ -252,11 +232,10 @@ wStyle		dw ?
 wPattern	dw ?
 DRAWPATRECT	ENDS
 PDRAWPATRECT	typedef ptr DRAWPATRECT
-endif ;; WINVER GE 0x0400
+endif 
 
-endif ;; NOMETAFILE
+endif 
 
-;; GDI Escapes
 NEWFRAME		equ 1
 ABORTDOC		equ 2
 NEXTBAND		equ 3
@@ -336,38 +315,29 @@ CLOSECHANNEL		equ 4112
 POSTSCRIPT_PASSTHROUGH	equ 4115
 ENCAPSULATED_POSTSCRIPT equ 4116
 
-POSTSCRIPT_IDENTIFY	equ 4117   ;; new escape for NT5 pscript driver
-POSTSCRIPT_INJECTION	equ 4118   ;; new escape for NT5 pscript driver
+POSTSCRIPT_IDENTIFY	equ 4117   
+POSTSCRIPT_INJECTION	equ 4118   
 
-;;
-;; Parameters for POSTSCRIPT_IDENTIFY escape
-;;
 
 PSIDENT_GDICENTRIC	equ 0
 PSIDENT_PSCENTRIC	equ 1
 
-;; Header structure for the input buffer to POSTSCRIPT_INJECTION escape
 
 PSINJECTDATA	STRUC
 
-DataBytes	dd ?	;; number of raw data bytes
-InjectionPoint	dd ?	;; injection point
-Flags		dd ?	;; flags
-Reserved	dd ?	;; reserved field - must be 0
+DataBytes	dd ?	
+InjectionPoint	dd ?	
+Flags		dd ?	
+Reserved	dd ?	
 
-;; Followed by raw data to be injected
 
 PSINJECTDATA	ENDS
 PPSINJECTDATA	typedef ptr PSINJECTDATA
 
-;; Constants for PSINJECTDATA.Flags field
 
 PSINJECT_APPEND		equ 0
 PSINJECT_REPLACE	equ 1
 
-;; Constants for PSINJECTDATA.InjectionPoint field
-;; The data injected at these points coexist with the output emitted
-;; by the driver for the same points.
 
 PSINJECT_BEGINSTREAM	equ 0
 PSINJECT_PSADOBE	equ 1
@@ -389,20 +359,10 @@ PSINJECT_ENDSTREAM	equ 16
 PSINJECT_VMSAVE		equ 17
 PSINJECT_VMRESTORE	equ 18
 
-;;
-;; The data injected at these points are appended to the output
-;; emitted by the driver for the same points. It will go into
-;; the document trailer section. They must be in the form of:
-;;     %%+ resource-type resource-names
-;;
 
 PSINJECT_DOCNEEDEDRES	equ 19
 PSINJECT_DOCSUPPLIEDRES equ 20
 
-;;
-;; The data injected at these points replaces the output emitted
-;; by the driver for the same points.
-;;
 
 PSINJECT_PAGES		equ 21
 PSINJECT_PAGEORDER	equ 22
@@ -414,13 +374,11 @@ PSINJECT_PAGEBBOX	equ 26
 PSINJECT_MAX		equ 27
 
 
-;; Flag returned from QUERYDIBSUPPORT
 QDI_SETDIBITS		equ 1
 QDI_GETDIBITS		equ 2
 QDI_DIBTOSCREEN		equ 4
 QDI_STRETCHDIB		equ 8
 
-;; Spooler Error Codes
 SP_NOTREPORTED		equ 0x4000
 SP_ERROR		equ (-1)
 SP_APPABORT		equ (-2)
@@ -430,7 +388,6 @@ SP_OUTOFMEMORY		equ (-5)
 
 PR_JOBSTATUS		equ 0x0000
 
-;; Object Definitions for EnumObjects()
 OBJ_PEN			equ 1
 OBJ_BRUSH		equ 2
 OBJ_DC			equ 3
@@ -445,7 +402,6 @@ OBJ_EXTPEN		equ 11
 OBJ_ENHMETADC		equ 12
 OBJ_ENHMETAFILE		equ 13
 
-;; xform stuff
 MWT_IDENTITY		equ 1
 MWT_LEFTMULTIPLY	equ 2
 MWT_RIGHTMULTIPLY	equ 3
@@ -465,7 +421,6 @@ XFORM			ENDS
 PXFORM			typedef ptr XFORM
 LPXFORM			typedef ptr XFORM
 
-;; Bitmap Header Definition
 BITMAP			STRUC
 bmType			LONG ?
 bmWidth			LONG ?
@@ -495,20 +450,17 @@ LPRGBQUAD		typedef ptr RGBQUAD
 
 if(WINVER GE 0x0400)
 
-;; Image Color Matching color definitions
 
 CS_ENABLE		equ 0x00000001
 CS_DISABLE		equ 0x00000002
 CS_DELETE_TRANSFORM	equ 0x00000003
 
-;; Logcolorspace signature
 
 LCS_SIGNATURE		equ 'PSOC'
 
-;; Logcolorspace lcsType values
 
 LCS_sRGB		equ 'sRGB'
-LCS_WINDOWS_COLOR_SPACE equ 'Win '	;; Windows default color space
+LCS_WINDOWS_COLOR_SPACE equ 'Win '	
 
 LCSCSTYPE		typedef LONG
 LCS_CALIBRATED_RGB	equ 0x00000000
@@ -521,11 +473,9 @@ LCS_GM_GRAPHICS		equ 0x00000002
 LCS_GM_IMAGES		equ 0x00000004
 LCS_GM_ABS_COLORIMETRIC equ 0x00000008
 
-;; ICM Defines for results from CheckColorInGamut()
 CM_OUT_OF_GAMUT		equ 255
 CM_IN_GAMUT		equ 0
 
-;; UpdateICMRegKey Constants
 ICM_ADDPROFILE		equ 1
 ICM_DELETEPROFILE	equ 2
 ICM_QUERYPROFILE	equ 3
@@ -534,7 +484,6 @@ ICM_REGISTERICMATCHER	equ 5
 ICM_UNREGISTERICMATCHER equ 6
 ICM_QUERYMATCH		equ 7
 
-;; Macros to retrieve CMYK values from a COLORREF
 GetKValue macro cmyk
 	exitm<((cmyk))>
 	endm
@@ -557,8 +506,6 @@ FXPT2DOT30	typedef LONG
 LPFXPT16DOT16	typedef ptr LONG
 LPFXPT2DOT30	typedef ptr LONG
 
-;; ICM Color Definitions
-;; The following two structures are used for defining RGB's in terms of CIEXYZ.
 
 CIEXYZ			STRUC
 ciexyzX			FXPT2DOT30 ?
@@ -574,10 +521,6 @@ ciexyzBlue		CIEXYZ <>
 CIEXYZTRIPLE		ENDS
 LPCIEXYZTRIPLE		typedef ptr CIEXYZTRIPLE
 
-;; The next structures the logical color space. Unlike pens and brushes,
-;; but like palettes, there is only one way to create a LogColorSpace.
-;; A pointer to it must be passed, its elements can't be pushed as
-;; arguments.
 
 LOGCOLORSPACEA		STRUC
 lcsSignature		dd ?
@@ -611,13 +554,12 @@ LPLOGCOLORSPACE		typedef LPLOGCOLORSPACEW
 else
 LOGCOLORSPACE		typedef LOGCOLORSPACEA
 LPLOGCOLORSPACE		typedef LPLOGCOLORSPACEA
-endif ;; _UNICODE
+endif 
 
-endif ;; WINVER GE 0x0400
+endif 
 
-;; structures for defining DIBs
 BITMAPCOREHEADER	STRUC
-bcSize			dd ?	;; used to get to color table
+bcSize			dd ?	
 bcWidth			dw ?
 bcHeight		dw ?
 bcPlanes		dw ?
@@ -667,7 +609,7 @@ bV4GammaBlue		dd ?
 BITMAPV4HEADER		ENDS
 LPBITMAPV4HEADER	typedef ptr BITMAPV4HEADER
 PBITMAPV4HEADER		typedef ptr BITMAPV4HEADER
-endif ;; WINVER GE 0x0400
+endif 
 
 if (WINVER GE 0x0500)
 BITMAPV5HEADER		STRUC
@@ -699,12 +641,10 @@ BITMAPV5HEADER		ENDS
 LPBITMAPV5HEADER	typedef ptr BITMAPV5HEADER
 PBITMAPV5HEADER		typedef ptr BITMAPV5HEADER
 
-;; Values for bV5CSType
 PROFILE_LINKED		equ 'LINK'
 PROFILE_EMBEDDED	equ 'MBED'
 endif
 
-;; constants for the biCompression field
 BI_RGB			equ 0
 BI_RLE8			equ 1
 BI_RLE4			equ 2
@@ -771,11 +711,10 @@ LPLOCALESIGNATURE	typedef ptr LOCALESIGNATURE
 
 
 endif
-endif ;; WINVER GE 0x0400
+endif 
 
 ifndef NOMETAFILE
 
-;; Clipboard Metafile Picture Structure
 HANDLETABLE		STRUC
 objectHandle		HGDIOBJ ?
 HANDLETABLE		ENDS
@@ -810,60 +749,48 @@ METAHEADER		ENDS
 PMETAHEADER		typedef ptr METAHEADER
 LPMETAHEADER		typedef ptr METAHEADER
 
-;; Enhanced Metafile structures
 ENHMETARECORD		STRUC
-iType			dd ?	;; Record type EMR_XXX
-nSize			dd ?	;; Record size in bytes
-dParm			dd ?	;; Parameters
+iType			dd ?	
+nSize			dd ?	
+dParm			dd ?	
 ENHMETARECORD		ENDS
 PENHMETARECORD		typedef ptr ENHMETARECORD
 LPENHMETARECORD		typedef ptr ENHMETARECORD
 
 ENHMETAHEADER		STRUC
-iType			dd ?	;; Record type EMR_HEADER
-nSize			dd ?	;; Record size in bytes.  This may be greater
-				;; than the sizeof(ENHMETAHEADER).
-rclBounds		RECTL <> ;; Inclusive-inclusive bounds in device units
-rclFrame		RECTL <> ;; Inclusive-inclusive Picture Frame of metafile in .01 mm units
-dSignature		dd ?	;; Signature.  Must be ENHMETA_SIGNATURE.
-nVersion		dd ?	;; Version number
-nBytes			dd ?	;; Size of the metafile in bytes
-nRecords		dd ?	;; Number of records in the metafile
-nHandles		dw ?	;; Number of handles in the handle table
-				;; Handle index zero is reserved.
-sReserved		dw ?	;; Reserved.  Must be zero.
-nDescription		dd ?	;; Number of chars in the unicode description string
-				;; This is 0 if there is no description string
-offDescription		dd ?	;; Offset to the metafile description record.
-				;; This is 0 if there is no description string
-nPalEntries		dd ?	;; Number of entries in the metafile palette.
-szlDevice		SIZEL <> ;; Size of the reference device in pels
-szlMillimeters		SIZEL <> ;; Size of the reference device in millimeters
+iType			dd ?	
+nSize			dd ?	
+rclBounds		RECTL <> 
+rclFrame		RECTL <> 
+dSignature		dd ?	
+nVersion		dd ?	
+nBytes			dd ?	
+nRecords		dd ?	
+nHandles		dw ?	
+sReserved		dw ?	
+nDescription		dd ?	
+offDescription		dd ?	
+nPalEntries		dd ?	
+szlDevice		SIZEL <> 
+szlMillimeters		SIZEL <> 
 if(WINVER GE 0x0400)
-cbPixelFormat		dd ?	;; Size of PIXELFORMATDESCRIPTOR information
-				;; This is 0 if no pixel format is set
-offPixelFormat		dd ?	;; Offset to PIXELFORMATDESCRIPTOR
-				;; This is 0 if no pixel format is set
-bOpenGL			dd ?	;; TRUE if OpenGL commands are present in
-				;; the metafile, otherwise FALSE
-endif ;; WINVER GE 0x0400
+cbPixelFormat		dd ?	
+offPixelFormat		dd ?	
+bOpenGL			dd ?	
+endif 
 ENHMETAHEADER		ENDS
 PENHMETAHEADER		typedef ptr ENHMETAHEADER
 LPENHMETAHEADER		typedef ptr ENHMETAHEADER
 
-endif ;; NOMETAFILE
+endif 
 
 ifndef NOTEXTMETRIC
 
-;; tmPitchAndFamily flags
 TMPF_FIXED_PITCH	equ 0x01
 TMPF_VECTOR		equ 0x02
 TMPF_DEVICE		equ 0x08
 TMPF_TRUETYPE		equ 0x04
 
-;;
-;; BCHAR definition for APPs
-;;
 ifdef _UNICODE
 BCHAR	typedef WCHAR
 else
@@ -931,9 +858,8 @@ TEXTMETRIC		typedef TEXTMETRICA
 PTEXTMETRIC		typedef PTEXTMETRICA
 NPTEXTMETRIC		typedef NPTEXTMETRICA
 LPTEXTMETRIC		typedef LPTEXTMETRICA
-endif ;; _UNICODE
+endif 
 
-;; ntmFlags field flags
 NTM_REGULAR		equ 0x00000040
 NTM_BOLD		equ 0x00000020
 NTM_ITALIC		equ 0x00000001
@@ -1014,7 +940,7 @@ NEWTEXTMETRIC		typedef NEWTEXTMETRICA
 PNEWTEXTMETRIC		typedef PNEWTEXTMETRICA
 NPNEWTEXTMETRIC		typedef NPNEWTEXTMETRICA
 LPNEWTEXTMETRIC		typedef LPNEWTEXTMETRICA
-endif ;; _UNICODE
+endif 
 
 
 if(WINVER GE 0x0400)
@@ -1030,13 +956,11 @@ ifdef _UNICODE
 NEWTEXTMETRICEX		typedef NEWTEXTMETRICEXW
 else
 NEWTEXTMETRICEX		typedef NEWTEXTMETRICEXA
-endif ;; _UNICODE
-endif ;; WINVER GE 0x0400
+endif 
+endif 
 
-endif ;; NOTEXTMETRIC
-;; GDI Logical Objects:
+endif 
 
-;; Pel Array
 PELARRAY		STRUC
 paXCount		LONG ?
 paYCount		LONG ?
@@ -1048,7 +972,6 @@ PPELARRAY		typedef ptr PELARRAY
 NPPELARRAY		typedef ptr PELARRAY
 LPPELARRAY		typedef ptr PELARRAY
 
-;; Logical Brush (or Pattern)
 LOGBRUSH		STRUC
 lbStyle			UINT ?
 lbColor			COLORREF ?
@@ -1063,7 +986,6 @@ PPATTERN		typedef ptr PATTERN
 NPPATTERN		typedef ptr PATTERN
 LPPATTERN		typedef ptr PATTERN
 
-;; Logical Pen
 LOGPEN			STRUC
 lopnStyle		UINT ?
 lopnWidth		POINT <>
@@ -1095,7 +1017,6 @@ PALETTEENTRY		ENDS
 PPALETTEENTRY		typedef ptr PALETTEENTRY
 LPPALETTEENTRY		typedef ptr PALETTEENTRY
 
-;; Logical Palette
 LOGPALETTE		STRUC
 palVersion		dw ?
 palNumEntries		dw ?
@@ -1105,7 +1026,6 @@ PLOGPALETTE		typedef ptr LOGPALETTE
 NPLOGPALETTE		typedef ptr LOGPALETTE
 LPLOGPALETTE		typedef ptr LOGPALETTE
 
-;; Logical Font
 LF_FACESIZE		equ 32
 
 LOGFONTA		STRUC
@@ -1156,18 +1076,16 @@ LOGFONT			typedef LOGFONTA
 PLOGFONT		typedef PLOGFONTA
 NPLOGFONT		typedef NPLOGFONTA
 LPLOGFONT		typedef LPLOGFONTA
-endif ;; _UNICODE
+endif 
 
 LF_FULLFACESIZE		equ 64
 
-;; Structure passed to FONTENUMPROC
 ENUMLOGFONTA		STRUC
 elfLogFont		LOGFONTA <>
 elfFullName		db LF_FULLFACESIZE dup(?)
 elfStyle		db LF_FACESIZE dup(?)
 ENUMLOGFONTA		ENDS
 LPENUMLOGFONTA		typedef ptr ENUMLOGFONTA
-;; Structure passed to FONTENUMPROC
 ENUMLOGFONTW		STRUC
 elfLogFont		LOGFONTW <>
 elfFullName		dw LF_FULLFACESIZE dup(?)
@@ -1180,7 +1098,7 @@ LPENUMLOGFONT		typedef LPENUMLOGFONTW
 else
 ENUMLOGFONT		typedef ENUMLOGFONTA
 LPENUMLOGFONT		typedef LPENUMLOGFONTA
-endif ;; _UNICODE
+endif 
 
 if(WINVER GE 0x0400)
 ENUMLOGFONTEXA		STRUC
@@ -1203,8 +1121,8 @@ LPENUMLOGFONTEX		typedef LPENUMLOGFONTEXW
 else
 ENUMLOGFONTEX		typedef ENUMLOGFONTEXA
 LPENUMLOGFONTEX		typedef LPENUMLOGFONTEXA
-endif ;; _UNICODE
-endif ;; WINVER GE 0x0400
+endif 
+endif 
 
 OUT_DEFAULT_PRECIS	equ 0
 OUT_STRING_PRECIS	equ 1
@@ -1231,14 +1149,14 @@ PROOF_QUALITY		equ 2
 if(WINVER GE 0x0400)
 NONANTIALIASED_QUALITY	equ 3
 ANTIALIASED_QUALITY	equ 4
-endif ;; WINVER GE 0x0400
+endif 
 
 DEFAULT_PITCH		equ 0
 FIXED_PITCH		equ 1
 VARIABLE_PITCH		equ 2
 if(WINVER GE 0x0400)
 MONO_FONT		equ 8
-endif ;; WINVER GE 0x0400
+endif 
 
 ANSI_CHARSET		equ 0
 DEFAULT_CHARSET		equ 1
@@ -1279,20 +1197,15 @@ FS_WANSUNG		equ 0x00080000
 FS_CHINESETRAD		equ 0x00100000
 FS_JOHAB		equ 0x00200000
 FS_SYMBOL		equ 0x80000000
-endif ;; WINVER GE 0x0400
+endif 
 
-;; Font Families
-FF_DONTCARE		equ (0 SHL 4)  ;; Don't care or don't know.
-FF_ROMAN		equ (1 SHL 4)  ;; Variable stroke width, serifed.
-;; Times Roman, Century Schoolbook, etc.
-FF_SWISS		equ (2 SHL 4)  ;; Variable stroke width, sans-serifed.
-;; Helvetica, Swiss, etc.
-FF_MODERN		equ (3 SHL 4)  ;; Constant stroke width, serifed or sans-serifed.
-;; Pica, Elite, Courier, etc.
-FF_SCRIPT		equ (4 SHL 4)  ;; Cursive, etc.
-FF_DECORATIVE		equ (5 SHL 4)  ;; Old English, etc.
+FF_DONTCARE		equ (0 SHL 4)  
+FF_ROMAN		equ (1 SHL 4)  
+FF_SWISS		equ (2 SHL 4)  
+FF_MODERN		equ (3 SHL 4)  
+FF_SCRIPT		equ (4 SHL 4)  
+FF_DECORATIVE		equ (5 SHL 4)  
 
-;; Font Weights
 FW_DONTCARE		equ 0
 FW_THIN			equ 100
 FW_EXTRALIGHT		equ 200
@@ -1338,128 +1251,126 @@ bXHeight		db ?
 PANOSE			ENDS
 LPPANOSE		typedef ptr PANOSE
 
-PAN_ANY			equ 0 ;; Any
-PAN_NO_FIT		equ 1 ;; No Fit
+PAN_ANY			equ 0 
+PAN_NO_FIT		equ 1 
 
-PAN_FAMILY_TEXT_DISPLAY equ 2 ;; Text and Display
-PAN_FAMILY_SCRIPT	equ 3 ;; Script
-PAN_FAMILY_DECORATIVE	equ 4 ;; Decorative
-PAN_FAMILY_PICTORIAL	equ 5 ;; Pictorial
+PAN_FAMILY_TEXT_DISPLAY equ 2 
+PAN_FAMILY_SCRIPT	equ 3 
+PAN_FAMILY_DECORATIVE	equ 4 
+PAN_FAMILY_PICTORIAL	equ 5 
 
-PAN_SERIF_COVE		equ 2 ;; Cove
-PAN_SERIF_OBTUSE_COVE	equ 3 ;; Obtuse Cove
-PAN_SERIF_SQUARE_COVE	equ 4 ;; Square Cove
-PAN_SERIF_OBTUSE_SQUARE_COVE	equ 5 ;; Obtuse Square Cove
-PAN_SERIF_SQUARE	equ 6 ;; Square
-PAN_SERIF_THIN		equ 7 ;; Thin
-PAN_SERIF_BONE		equ 8 ;; Bone
-PAN_SERIF_EXAGGERATED	equ 9 ;; Exaggerated
-PAN_SERIF_TRIANGLE	equ 10 ;; Triangle
-PAN_SERIF_NORMAL_SANS	equ 11 ;; Normal Sans
-PAN_SERIF_OBTUSE_SANS	equ 12 ;; Obtuse Sans
-PAN_SERIF_PERP_SANS	equ 13 ;; Prep Sans
-PAN_SERIF_FLARED	equ 14 ;; Flared
-PAN_SERIF_ROUNDED	equ 15 ;; Rounded
+PAN_SERIF_COVE		equ 2 
+PAN_SERIF_OBTUSE_COVE	equ 3 
+PAN_SERIF_SQUARE_COVE	equ 4 
+PAN_SERIF_OBTUSE_SQUARE_COVE	equ 5 
+PAN_SERIF_SQUARE	equ 6 
+PAN_SERIF_THIN		equ 7 
+PAN_SERIF_BONE		equ 8 
+PAN_SERIF_EXAGGERATED	equ 9 
+PAN_SERIF_TRIANGLE	equ 10 
+PAN_SERIF_NORMAL_SANS	equ 11 
+PAN_SERIF_OBTUSE_SANS	equ 12 
+PAN_SERIF_PERP_SANS	equ 13 
+PAN_SERIF_FLARED	equ 14 
+PAN_SERIF_ROUNDED	equ 15 
 
-PAN_WEIGHT_VERY_LIGHT	equ 2 ;; Very Light
-PAN_WEIGHT_LIGHT	equ 3 ;; Light
-PAN_WEIGHT_THIN		equ 4 ;; Thin
-PAN_WEIGHT_BOOK		equ 5 ;; Book
-PAN_WEIGHT_MEDIUM	equ 6 ;; Medium
-PAN_WEIGHT_DEMI		equ 7 ;; Demi
-PAN_WEIGHT_BOLD		equ 8 ;; Bold
-PAN_WEIGHT_HEAVY	equ 9 ;; Heavy
-PAN_WEIGHT_BLACK	equ 10 ;; Black
-PAN_WEIGHT_NORD		equ 11 ;; Nord
+PAN_WEIGHT_VERY_LIGHT	equ 2 
+PAN_WEIGHT_LIGHT	equ 3 
+PAN_WEIGHT_THIN		equ 4 
+PAN_WEIGHT_BOOK		equ 5 
+PAN_WEIGHT_MEDIUM	equ 6 
+PAN_WEIGHT_DEMI		equ 7 
+PAN_WEIGHT_BOLD		equ 8 
+PAN_WEIGHT_HEAVY	equ 9 
+PAN_WEIGHT_BLACK	equ 10 
+PAN_WEIGHT_NORD		equ 11 
 
-PAN_PROP_OLD_STYLE	equ 2 ;; Old Style
-PAN_PROP_MODERN		equ 3 ;; Modern
-PAN_PROP_EVEN_WIDTH	equ 4 ;; Even Width
-PAN_PROP_EXPANDED	equ 5 ;; Expanded
-PAN_PROP_CONDENSED	equ 6 ;; Condensed
-PAN_PROP_VERY_EXPANDED	equ 7 ;; Very Expanded
-PAN_PROP_VERY_CONDENSED equ 8 ;; Very Condensed
-PAN_PROP_MONOSPACED	equ 9 ;; Monospaced
+PAN_PROP_OLD_STYLE	equ 2 
+PAN_PROP_MODERN		equ 3 
+PAN_PROP_EVEN_WIDTH	equ 4 
+PAN_PROP_EXPANDED	equ 5 
+PAN_PROP_CONDENSED	equ 6 
+PAN_PROP_VERY_EXPANDED	equ 7 
+PAN_PROP_VERY_CONDENSED equ 8 
+PAN_PROP_MONOSPACED	equ 9 
 
-PAN_CONTRAST_NONE	equ 2 ;; None
-PAN_CONTRAST_VERY_LOW	equ 3 ;; Very Low
-PAN_CONTRAST_LOW	equ 4 ;; Low
-PAN_CONTRAST_MEDIUM_LOW equ 5 ;; Medium Low
-PAN_CONTRAST_MEDIUM	equ 6 ;; Medium
-PAN_CONTRAST_MEDIUM_HIGH equ 7 ;; Mediim High
-PAN_CONTRAST_HIGH	equ 8 ;; High
-PAN_CONTRAST_VERY_HIGH	equ 9 ;; Very High
+PAN_CONTRAST_NONE	equ 2 
+PAN_CONTRAST_VERY_LOW	equ 3 
+PAN_CONTRAST_LOW	equ 4 
+PAN_CONTRAST_MEDIUM_LOW equ 5 
+PAN_CONTRAST_MEDIUM	equ 6 
+PAN_CONTRAST_MEDIUM_HIGH equ 7 
+PAN_CONTRAST_HIGH	equ 8 
+PAN_CONTRAST_VERY_HIGH	equ 9 
 
-PAN_STROKE_GRADUAL_DIAG equ 2 ;; Gradual/Diagonal
-PAN_STROKE_GRADUAL_TRAN equ 3 ;; Gradual/Transitional
-PAN_STROKE_GRADUAL_VERT equ 4 ;; Gradual/Vertical
-PAN_STROKE_GRADUAL_HORZ equ 5 ;; Gradual/Horizontal
-PAN_STROKE_RAPID_VERT	equ 6 ;; Rapid/Vertical
-PAN_STROKE_RAPID_HORZ	equ 7 ;; Rapid/Horizontal
-PAN_STROKE_INSTANT_VERT equ 8 ;; Instant/Vertical
+PAN_STROKE_GRADUAL_DIAG equ 2 
+PAN_STROKE_GRADUAL_TRAN equ 3 
+PAN_STROKE_GRADUAL_VERT equ 4 
+PAN_STROKE_GRADUAL_HORZ equ 5 
+PAN_STROKE_RAPID_VERT	equ 6 
+PAN_STROKE_RAPID_HORZ	equ 7 
+PAN_STROKE_INSTANT_VERT equ 8 
 
-PAN_STRAIGHT_ARMS_HORZ	equ 2 ;; Straight Arms/Horizontal
-PAN_STRAIGHT_ARMS_WEDGE equ 3 ;; Straight Arms/Wedge
-PAN_STRAIGHT_ARMS_VERT	equ 4 ;; Straight Arms/Vertical
-PAN_STRAIGHT_ARMS_SINGLE_SERIF	equ 5 ;; Straight Arms/Single-Serif
-PAN_STRAIGHT_ARMS_DOUBLE_SERIF	equ 6 ;; Straight Arms/Double-Serif
-PAN_BENT_ARMS_HORZ		equ 7 ;; Non-Straight Arms/Horizontal
-PAN_BENT_ARMS_WEDGE		equ 8 ;; Non-Straight Arms/Wedge
-PAN_BENT_ARMS_VERT		equ 9 ;; Non-Straight Arms/Vertical
-PAN_BENT_ARMS_SINGLE_SERIF	equ 10 ;; Non-Straight Arms/Single-Serif
-PAN_BENT_ARMS_DOUBLE_SERIF	equ 11 ;; Non-Straight Arms/Double-Serif
+PAN_STRAIGHT_ARMS_HORZ	equ 2 
+PAN_STRAIGHT_ARMS_WEDGE equ 3 
+PAN_STRAIGHT_ARMS_VERT	equ 4 
+PAN_STRAIGHT_ARMS_SINGLE_SERIF	equ 5 
+PAN_STRAIGHT_ARMS_DOUBLE_SERIF	equ 6 
+PAN_BENT_ARMS_HORZ		equ 7 
+PAN_BENT_ARMS_WEDGE		equ 8 
+PAN_BENT_ARMS_VERT		equ 9 
+PAN_BENT_ARMS_SINGLE_SERIF	equ 10 
+PAN_BENT_ARMS_DOUBLE_SERIF	equ 11 
 
-PAN_LETT_NORMAL_CONTACT		equ 2 ;; Normal/Contact
-PAN_LETT_NORMAL_WEIGHTED	equ 3 ;; Normal/Weighted
-PAN_LETT_NORMAL_BOXED		equ 4 ;; Normal/Boxed
-PAN_LETT_NORMAL_FLATTENED	equ 5 ;; Normal/Flattened
-PAN_LETT_NORMAL_ROUNDED		equ 6 ;; Normal/Rounded
-PAN_LETT_NORMAL_OFF_CENTER	equ 7 ;; Normal/Off Center
-PAN_LETT_NORMAL_SQUARE		equ 8 ;; Normal/Square
-PAN_LETT_OBLIQUE_CONTACT	equ 9 ;; Oblique/Contact
-PAN_LETT_OBLIQUE_WEIGHTED	equ 10 ;; Oblique/Weighted
-PAN_LETT_OBLIQUE_BOXED		equ 11 ;; Oblique/Boxed
-PAN_LETT_OBLIQUE_FLATTENED	equ 12 ;; Oblique/Flattened
-PAN_LETT_OBLIQUE_ROUNDED	equ 13 ;; Oblique/Rounded
-PAN_LETT_OBLIQUE_OFF_CENTER	equ 14 ;; Oblique/Off Center
-PAN_LETT_OBLIQUE_SQUARE		equ 15 ;; Oblique/Square
+PAN_LETT_NORMAL_CONTACT		equ 2 
+PAN_LETT_NORMAL_WEIGHTED	equ 3 
+PAN_LETT_NORMAL_BOXED		equ 4 
+PAN_LETT_NORMAL_FLATTENED	equ 5 
+PAN_LETT_NORMAL_ROUNDED		equ 6 
+PAN_LETT_NORMAL_OFF_CENTER	equ 7 
+PAN_LETT_NORMAL_SQUARE		equ 8 
+PAN_LETT_OBLIQUE_CONTACT	equ 9 
+PAN_LETT_OBLIQUE_WEIGHTED	equ 10 
+PAN_LETT_OBLIQUE_BOXED		equ 11 
+PAN_LETT_OBLIQUE_FLATTENED	equ 12 
+PAN_LETT_OBLIQUE_ROUNDED	equ 13 
+PAN_LETT_OBLIQUE_OFF_CENTER	equ 14 
+PAN_LETT_OBLIQUE_SQUARE		equ 15 
 
-PAN_MIDLINE_STANDARD_TRIMMED	equ 2 ;; Standard/Trimmed
-PAN_MIDLINE_STANDARD_POINTED	equ 3 ;; Standard/Pointed
-PAN_MIDLINE_STANDARD_SERIFED	equ 4 ;; Standard/Serifed
-PAN_MIDLINE_HIGH_TRIMMED	equ 5 ;; High/Trimmed
-PAN_MIDLINE_HIGH_POINTED	equ 6 ;; High/Pointed
-PAN_MIDLINE_HIGH_SERIFED	equ 7 ;; High/Serifed
-PAN_MIDLINE_CONSTANT_TRIMMED	equ 8 ;; Constant/Trimmed
-PAN_MIDLINE_CONSTANT_POINTED	equ 9 ;; Constant/Pointed
-PAN_MIDLINE_CONSTANT_SERIFED	equ 10 ;; Constant/Serifed
-PAN_MIDLINE_LOW_TRIMMED		equ 11 ;; Low/Trimmed
-PAN_MIDLINE_LOW_POINTED		equ 12 ;; Low/Pointed
-PAN_MIDLINE_LOW_SERIFED		equ 13 ;; Low/Serifed
+PAN_MIDLINE_STANDARD_TRIMMED	equ 2 
+PAN_MIDLINE_STANDARD_POINTED	equ 3 
+PAN_MIDLINE_STANDARD_SERIFED	equ 4 
+PAN_MIDLINE_HIGH_TRIMMED	equ 5 
+PAN_MIDLINE_HIGH_POINTED	equ 6 
+PAN_MIDLINE_HIGH_SERIFED	equ 7 
+PAN_MIDLINE_CONSTANT_TRIMMED	equ 8 
+PAN_MIDLINE_CONSTANT_POINTED	equ 9 
+PAN_MIDLINE_CONSTANT_SERIFED	equ 10 
+PAN_MIDLINE_LOW_TRIMMED		equ 11 
+PAN_MIDLINE_LOW_POINTED		equ 12 
+PAN_MIDLINE_LOW_SERIFED		equ 13 
 
-PAN_XHEIGHT_CONSTANT_SMALL	equ 2 ;; Constant/Small
-PAN_XHEIGHT_CONSTANT_STD	equ 3 ;; Constant/Standard
-PAN_XHEIGHT_CONSTANT_LARGE	equ 4 ;; Constant/Large
-PAN_XHEIGHT_DUCKING_SMALL	equ 5 ;; Ducking/Small
-PAN_XHEIGHT_DUCKING_STD		equ 6 ;; Ducking/Standard
-PAN_XHEIGHT_DUCKING_LARGE	equ 7 ;; Ducking/Large
+PAN_XHEIGHT_CONSTANT_SMALL	equ 2 
+PAN_XHEIGHT_CONSTANT_STD	equ 3 
+PAN_XHEIGHT_CONSTANT_LARGE	equ 4 
+PAN_XHEIGHT_DUCKING_SMALL	equ 5 
+PAN_XHEIGHT_DUCKING_STD		equ 6 
+PAN_XHEIGHT_DUCKING_LARGE	equ 7 
 
 
 ELF_VENDOR_SIZE		equ 4
 
-;; The extended logical font
-;; An extension of the ENUMLOGFONT
 
 EXTLOGFONTA		STRUC
 elfLogFont		LOGFONTA <>
 elfFullName		db LF_FULLFACESIZE dup(?)
 elfStyle		db LF_FACESIZE dup(?)
-elfVersion		dd ?	;; 0 for the first release of NT
+elfVersion		dd ?	
 elfStyleSize		dd ?
 elfMatch		dd ?
 elfReserved		dd ?
 elfVendorId		db ELF_VENDOR_SIZE dup(?)
-elfCulture		dd ?	;; 0 for Latin
+elfCulture		dd ?	
 elfPanose		PANOSE <>
 EXTLOGFONTA		ENDS
 PEXTLOGFONTA		typedef ptr EXTLOGFONTA
@@ -1469,12 +1380,12 @@ EXTLOGFONTW		STRUC
 elfLogFont		LOGFONTW <>
 elfFullName		dw LF_FULLFACESIZE dup(?)
 elfStyle		dw LF_FACESIZE dup(?)
-elfVersion		dd ?	;; 0 for the first release of NT
+elfVersion		dd ?	
 elfStyleSize		dd ?
 elfMatch		dd ?
 elfReserved		dd ?
 elfVendorId		db ELF_VENDOR_SIZE dup(?)
-elfCulture		dd ?	;; 0 for Latin
+elfCulture		dd ?	
 elfPanose		PANOSE <>
 EXTLOGFONTW		ENDS
 PEXTLOGFONTW		typedef ptr EXTLOGFONTW
@@ -1490,12 +1401,11 @@ EXTLOGFONT		typedef EXTLOGFONTA
 PEXTLOGFONT		typedef PEXTLOGFONTA
 NPEXTLOGFONT		typedef NPEXTLOGFONTA
 LPEXTLOGFONT		typedef LPEXTLOGFONTA
-endif ;; _UNICODE
+endif 
 
 ELF_VERSION		equ 0
 ELF_CULTURE_LATIN	equ 0
 
-;; EnumFonts Masks
 RASTER_FONTTYPE		equ 0x0001
 DEVICE_FONTTYPE		equ 0x002
 TRUETYPE_FONTTYPE	equ 0x004
@@ -1510,11 +1420,10 @@ PALETTEINDEX macro i
 	exitm<((COLORREF)(0x01000000 OR (i)))>
 	endm
 
-;; palette entry flags
 
-PC_RESERVED		equ 0x01 ;; palette index used for animation
-PC_EXPLICIT		equ 0x02 ;; palette index is explicit to device
-PC_NOCOLLAPSE		equ 0x04 ;; do not match color to system palette
+PC_RESERVED		equ 0x01 
+PC_EXPLICIT		equ 0x02 
+PC_NOCOLLAPSE		equ 0x04 
 
 GetRValue macro rgb
 	exitm<((rgb))>
@@ -1526,24 +1435,20 @@ GetBValue macro rgb
 	exitm<(((rgb) SHR 16))>
 	endm
 
-;; Background Modes
 TRANSPARENT		equ 1
 OPAQUE			equ 2
 BKMODE_LAST		equ 2
 
-;; Graphics Modes
 
 GM_COMPATIBLE		equ 1
 GM_ADVANCED		equ 2
 GM_LAST			equ 2
 
-;; PolyDraw and GetPath point types
 PT_CLOSEFIGURE		equ 0x01
 PT_LINETO		equ 0x02
 PT_BEZIERTO		equ 0x04
 PT_MOVETO		equ 0x06
 
-;; Mapping Modes
 MM_TEXT			equ 1
 MM_LOMETRIC		equ 2
 MM_HIMETRIC		equ 3
@@ -1553,16 +1458,13 @@ MM_TWIPS		equ 6
 MM_ISOTROPIC		equ 7
 MM_ANISOTROPIC		equ 8
 
-;; Min and Max Mapping Mode values
 MM_MIN			equ MM_TEXT
 MM_MAX			equ MM_ANISOTROPIC
 MM_MAX_FIXEDSCALE	equ MM_TWIPS
 
-;; Coordinate Modes
 ABSOLUTE		equ 1
 RELATIVE		equ 2
 
-;; Stock Logical Objects
 WHITE_BRUSH		equ 0
 LTGRAY_BRUSH		equ 1
 GRAY_BRUSH		equ 2
@@ -1583,7 +1485,7 @@ SYSTEM_FIXED_FONT	equ 16
 
 if(WINVER GE 0x0400)
 DEFAULT_GUI_FONT	equ 17
-endif ;; WINVER GE 0x0400
+endif 
 
 if (_WIN32_WINNT GE 0x0500)
 DC_BRUSH		equ 18
@@ -1601,7 +1503,6 @@ endif
 endif
 CLR_INVALID		equ 0xFFFFFFFF
 
-;; Brush Styles
 BS_SOLID		equ 0
 BS_NULL			equ 1
 BS_HOLLOW		equ BS_NULL
@@ -1614,20 +1515,18 @@ BS_PATTERN8X8		equ 7
 BS_DIBPATTERN8X8	equ 8
 BS_MONOPATTERN		equ 9
 
-;; Hatch Styles
-HS_HORIZONTAL		equ 0	    ;; -----
-HS_VERTICAL		equ 1	    ;; OR OR OR
-HS_FDIAGONAL		equ 2	    ;; \\\\\
-HS_BDIAGONAL		equ 3	    ;; ;;;;/
-HS_CROSS		equ 4	    ;; +++++
-HS_DIAGCROSS		equ 5	    ;; xxxxx
+HS_HORIZONTAL		equ 0	    
+HS_VERTICAL		equ 1	    
+HS_FDIAGONAL		equ 2	    
+HS_BDIAGONAL		equ 3	    
+HS_CROSS		equ 4	    
+HS_DIAGCROSS		equ 5	    
 
-;; Pen Styles
 PS_SOLID		equ 0
-PS_DASH			equ 1	    ;; -------
-PS_DOT			equ 2	    ;; .......
-PS_DASHDOT		equ 3	    ;; _._._._
-PS_DASHDOTDOT		equ 4	    ;; _.._.._
+PS_DASH			equ 1	    
+PS_DOT			equ 2	    
+PS_DASHDOT		equ 3	    
+PS_DASHDOTDOT		equ 4	    
 PS_NULL			equ 5
 PS_INSIDEFRAME		equ 6
 PS_USERSTYLE		equ 7
@@ -1651,159 +1550,144 @@ PS_TYPE_MASK		equ 0x000F0000
 AD_COUNTERCLOCKWISE	equ 1
 AD_CLOCKWISE		equ 2
 
-;; Device Parameters for GetDeviceCaps()
-DRIVERVERSION		equ 0	    ;; Device driver version
-TECHNOLOGY		equ 2	    ;; Device classification
-HORZSIZE		equ 4	    ;; Horizontal size in millimeters
-VERTSIZE		equ 6	    ;; Vertical size in millimeters
-HORZRES			equ 8	    ;; Horizontal width in pixels
-VERTRES			equ 10	;; Vertical height in pixels
-BITSPIXEL		equ 12	;; Number of bits per pixel
-PLANES			equ 14	;; Number of planes
-NUMBRUSHES		equ 16	;; Number of brushes the device has
-NUMPENS			equ 18	;; Number of pens the device has
-NUMMARKERS		equ 20	;; Number of markers the device has
-NUMFONTS		equ 22	;; Number of fonts the device has
-NUMCOLORS		equ 24	;; Number of colors the device supports
-PDEVICESIZE		equ 26	;; Size required for device descriptor
-CURVECAPS		equ 28	;; Curve capabilities
-LINECAPS		equ 30	;; Line capabilities
-POLYGONALCAPS		equ 32	;; Polygonal capabilities
-TEXTCAPS		equ 34	;; Text capabilities
-CLIPCAPS		equ 36	;; Clipping capabilities
-RASTERCAPS		equ 38	;; Bitblt capabilities
-ASPECTX			equ 40	;; Length of the X leg
-ASPECTY			equ 42	;; Length of the Y leg
-ASPECTXY		equ 44	;; Length of the hypotenuse
+DRIVERVERSION		equ 0	    
+TECHNOLOGY		equ 2	    
+HORZSIZE		equ 4	    
+VERTSIZE		equ 6	    
+HORZRES			equ 8	    
+VERTRES			equ 10	
+BITSPIXEL		equ 12	
+PLANES			equ 14	
+NUMBRUSHES		equ 16	
+NUMPENS			equ 18	
+NUMMARKERS		equ 20	
+NUMFONTS		equ 22	
+NUMCOLORS		equ 24	
+PDEVICESIZE		equ 26	
+CURVECAPS		equ 28	
+LINECAPS		equ 30	
+POLYGONALCAPS		equ 32	
+TEXTCAPS		equ 34	
+CLIPCAPS		equ 36	
+RASTERCAPS		equ 38	
+ASPECTX			equ 40	
+ASPECTY			equ 42	
+ASPECTXY		equ 44	
 
 if(WINVER GE 0x0500)
-SHADEBLENDCAPS		equ 45	;; Shading and blending caps
-endif ;; WINVER GE 0x0500
+SHADEBLENDCAPS		equ 45	
+endif 
 
-LOGPIXELSX		equ 88	;; Logical pixels/inch in X
-LOGPIXELSY		equ 90	;; Logical pixels/inch in Y
+LOGPIXELSX		equ 88	
+LOGPIXELSY		equ 90	
 
-SIZEPALETTE		equ 104 ;; Number of entries in physical palette
-NUMRESERVED		equ 106 ;; Number of reserved entries in palette
-COLORRES		equ 108 ;; Actual color resolution
+SIZEPALETTE		equ 104 
+NUMRESERVED		equ 106 
+COLORRES		equ 108 
 
 
-;; Printing related DeviceCaps. These replace the appropriate Escapes
 
-PHYSICALWIDTH		equ 110 ;; Physical Width in device units
-PHYSICALHEIGHT		equ 111 ;; Physical Height in device units
-PHYSICALOFFSETX		equ 112 ;; Physical Printable Area x margin
-PHYSICALOFFSETY		equ 113 ;; Physical Printable Area y margin
-SCALINGFACTORX		equ 114 ;; Scaling factor x
-SCALINGFACTORY		equ 115 ;; Scaling factor y
+PHYSICALWIDTH		equ 110 
+PHYSICALHEIGHT		equ 111 
+PHYSICALOFFSETX		equ 112 
+PHYSICALOFFSETY		equ 113 
+SCALINGFACTORX		equ 114 
+SCALINGFACTORY		equ 115 
 
-;; Display driver specific
 
-VREFRESH		equ 116 ;; Current vertical refresh rate of the
-;; display device (for displays only) in Hz
-DESKTOPVERTRES		equ 117 ;; Horizontal width of entire desktop in
-;; pixels
-DESKTOPHORZRES		equ 118 ;; Vertical height of entire desktop in
-;; pixels
-BLTALIGNMENT		equ 119 ;; Preferred blt alignment
+VREFRESH		equ 116 
+DESKTOPVERTRES		equ 117 
+DESKTOPHORZRES		equ 118 
+BLTALIGNMENT		equ 119 
 
 ifndef NOGDICAPMASKS
 
-;; Device Capability Masks:
 
-;; Device Technologies
-DT_PLOTTER		equ 0	;; Vector plotter
-DT_RASDISPLAY		equ 1	;; Raster display
-DT_RASPRINTER		equ 2	;; Raster printer
-DT_RASCAMERA		equ 3	;; Raster camera
-DT_CHARSTREAM		equ 4	;; Character-stream, PLP
-DT_METAFILE		equ 5	;; Metafile, VDM
-DT_DISPFILE		equ 6	;; Display-file
+DT_PLOTTER		equ 0	
+DT_RASDISPLAY		equ 1	
+DT_RASPRINTER		equ 2	
+DT_RASCAMERA		equ 3	
+DT_CHARSTREAM		equ 4	
+DT_METAFILE		equ 5	
+DT_DISPFILE		equ 6	
 
-;; Curve Capabilities
-CC_NONE			equ 0	;; Curves not supported
-CC_CIRCLES		equ 1	;; Can do circles
-CC_PIE			equ 2	;; Can do pie wedges
-CC_CHORD		equ 4	;; Can do chord arcs
-CC_ELLIPSES		equ 8	;; Can do ellipese
-CC_WIDE			equ 16	;; Can do wide lines
-CC_STYLED		equ 32	;; Can do styled lines
-CC_WIDESTYLED		equ 64	;; Can do wide styled lines
-CC_INTERIORS		equ 128 ;; Can do interiors
-CC_ROUNDRECT		equ 256 ;;
+CC_NONE			equ 0	
+CC_CIRCLES		equ 1	
+CC_PIE			equ 2	
+CC_CHORD		equ 4	
+CC_ELLIPSES		equ 8	
+CC_WIDE			equ 16	
+CC_STYLED		equ 32	
+CC_WIDESTYLED		equ 64	
+CC_INTERIORS		equ 128 
+CC_ROUNDRECT		equ 256 
 
-;; Line Capabilities
-LC_NONE			equ 0	;; Lines not supported
-LC_POLYLINE		equ 2	;; Can do polylines
-LC_MARKER		equ 4	;; Can do markers
-LC_POLYMARKER		equ 8	;; Can do polymarkers
-LC_WIDE			equ 16	;; Can do wide lines
-LC_STYLED		equ 32	;; Can do styled lines
-LC_WIDESTYLED		equ 64	;; Can do wide styled lines
-LC_INTERIORS		equ 128 ;; Can do interiors
+LC_NONE			equ 0	
+LC_POLYLINE		equ 2	
+LC_MARKER		equ 4	
+LC_POLYMARKER		equ 8	
+LC_WIDE			equ 16	
+LC_STYLED		equ 32	
+LC_WIDESTYLED		equ 64	
+LC_INTERIORS		equ 128 
 
-;; Polygonal Capabilities
-PC_NONE			equ 0	;; Polygonals not supported
-PC_POLYGON		equ 1	;; Can do polygons
-PC_RECTANGLE		equ 2	;; Can do rectangles
-PC_WINDPOLYGON		equ 4	;; Can do winding polygons
-PC_TRAPEZOID		equ 4	;; Can do trapezoids
-PC_SCANLINE		equ 8	;; Can do scanlines
-PC_WIDE			equ 16	;; Can do wide borders
-PC_STYLED		equ 32	;; Can do styled borders
-PC_WIDESTYLED		equ 64	;; Can do wide styled borders
-PC_INTERIORS		equ 128 ;; Can do interiors
-PC_POLYPOLYGON		equ 256 ;; Can do polypolygons
-PC_PATHS		equ 512 ;; Can do paths
+PC_NONE			equ 0	
+PC_POLYGON		equ 1	
+PC_RECTANGLE		equ 2	
+PC_WINDPOLYGON		equ 4	
+PC_TRAPEZOID		equ 4	
+PC_SCANLINE		equ 8	
+PC_WIDE			equ 16	
+PC_STYLED		equ 32	
+PC_WIDESTYLED		equ 64	
+PC_INTERIORS		equ 128 
+PC_POLYPOLYGON		equ 256 
+PC_PATHS		equ 512 
 
-;; Clipping Capabilities
-CP_NONE			equ 0	;; No clipping of output
-CP_RECTANGLE		equ 1	;; Output clipped to rects
-CP_REGION		equ 2	;; obsolete
+CP_NONE			equ 0	
+CP_RECTANGLE		equ 1	
+CP_REGION		equ 2	
 
-;; Text Capabilities
-TC_OP_CHARACTER		equ 0x00000001	;; Can do OutputPrecision   CHARACTER
-TC_OP_STROKE		equ 0x00000002	;; Can do OutputPrecision   STROKE
-TC_CP_STROKE		equ 0x00000004	;; Can do ClipPrecision	    STROKE
-TC_CR_90		equ 0x00000008	;; Can do CharRotAbility    90
-TC_CR_ANY		equ 0x00000010	;; Can do CharRotAbility    ANY
-TC_SF_X_YINDEP		equ 0x00000020	;; Can do ScaleFreedom	    X_YINDEPENDENT
-TC_SA_DOUBLE		equ 0x00000040	;; Can do ScaleAbility	    DOUBE
-TC_SA_INTEGER		equ 0x00000080	;; Can do ScaleAbility	    INTEGER
-TC_SA_CONTIN		equ 0x00000100	;; Can do ScaleAbility	    CONTINUOUS
-TC_EA_DOUBLE		equ 0x00000200	;; Can do EmboldenAbility   DOUBE
-TC_IA_ABLE		equ 0x00000400	;; Can do ItalisizeAbility  ABE
-TC_UA_ABLE		equ 0x00000800	;; Can do UnderlineAbility  ABE
-TC_SO_ABLE		equ 0x00001000	;; Can do StrikeOutAbility  ABE
-TC_RA_ABLE		equ 0x00002000	;; Can do RasterFontAble    ABE
-TC_VA_ABLE		equ 0x00004000	;; Can do VectorFontAble    ABE
+TC_OP_CHARACTER		equ 0x00000001	
+TC_OP_STROKE		equ 0x00000002	
+TC_CP_STROKE		equ 0x00000004	
+TC_CR_90		equ 0x00000008	
+TC_CR_ANY		equ 0x00000010	
+TC_SF_X_YINDEP		equ 0x00000020	
+TC_SA_DOUBLE		equ 0x00000040	
+TC_SA_INTEGER		equ 0x00000080	
+TC_SA_CONTIN		equ 0x00000100	
+TC_EA_DOUBLE		equ 0x00000200	
+TC_IA_ABLE		equ 0x00000400	
+TC_UA_ABLE		equ 0x00000800	
+TC_SO_ABLE		equ 0x00001000	
+TC_RA_ABLE		equ 0x00002000	
+TC_VA_ABLE		equ 0x00004000	
 TC_RESERVED		equ 0x00008000
-TC_SCROLLBLT		equ 0x00010000	;; Don't do text scroll with blt
+TC_SCROLLBLT		equ 0x00010000	
 
-endif ;; NOGDICAPMASKS
+endif 
 
-;; Raster Capabilities
 RC_NONE			equ 0
-RC_BITBLT		equ 1	    ;; Can do standard BT.
-RC_BANDING		equ 2	    ;; Device r equires banding support
-RC_SCALING		equ 4	    ;; Device requires scaling support
-RC_BITMAP64		equ 8	    ;; Device can support GT 64K bitmap
-RC_GDI20_OUTPUT		equ 0x0010 ;; has 2.0 output calls
+RC_BITBLT		equ 1	    
+RC_BANDING		equ 2	    
+RC_SCALING		equ 4	    
+RC_BITMAP64		equ 8	    
+RC_GDI20_OUTPUT		equ 0x0010 
 RC_GDI20_STATE		equ 0x0020
 RC_SAVEBITMAP		equ 0x0040
-RC_DI_BITMAP		equ 0x0080 ;; supports DIB to memory
-RC_PALETTE		equ 0x0100 ;; supports a palette
-RC_DIBTODEV		equ 0x0200 ;; supports DIBitsToDevice
-RC_BIGFONT		equ 0x0400 ;; supports GT 64K fonts
-RC_STRETCHBLT		equ 0x0800 ;; supports StretchBlt
-RC_FLOODFILL		equ 0x1000 ;; supports FloodFill
-RC_STRETCHDIB		equ 0x2000 ;; supports StretchDIBits
+RC_DI_BITMAP		equ 0x0080 
+RC_PALETTE		equ 0x0100 
+RC_DIBTODEV		equ 0x0200 
+RC_BIGFONT		equ 0x0400 
+RC_STRETCHBLT		equ 0x0800 
+RC_FLOODFILL		equ 0x1000 
+RC_STRETCHDIB		equ 0x2000 
 RC_OP_DX_OUTPUT		equ 0x4000
 RC_DEVBITS		equ 0x8000
 
 if(WINVER GE 0x0500)
 
-;; Shading and blending caps
 SB_NONE			equ 0x00000000
 SB_CONST_ALPHA		equ 0x00000001
 SB_PIXEL_ALPHA		equ 0x00000002
@@ -1812,32 +1696,26 @@ SB_PREMULT_ALPHA	equ 0x00000004
 SB_GRAD_RECT		equ 0x00000010
 SB_GRAD_TRI		equ 0x00000020
 
-endif ;; WINVER GE 0x0500
+endif 
 
 
-;; DIB color table identifiers
 
-DIB_RGB_COLORS		equ 0 ;; color table in RGBs
-DIB_PAL_COLORS		equ 1 ;; color table in palette indices
+DIB_RGB_COLORS		equ 0 
+DIB_PAL_COLORS		equ 1 
 
-;; constants for Get/SetSystemPaletteUse()
 
 SYSPAL_ERROR		equ 0
 SYSPAL_STATIC		equ 1
 SYSPAL_NOSTATIC		equ 2
 SYSPAL_NOSTATIC256	equ 3
 
-;; constants for CreateDIBitmap
-CBM_INIT		equ 0x04 ;; initialize bitmap
+CBM_INIT		equ 0x04 
 
-;; ExtFloodFill style flags
 FLOODFILLBORDER		equ 0
 FLOODFILLSURFACE	equ 1
 
-;; size of a device name string
 CCHDEVICENAME		equ 32
 
-;; size of a form name string
 CCHFORMNAME		equ 32
 
 DEVMODEA		STRUC
@@ -1883,7 +1761,7 @@ if (WINVER GE 0x0500) OR (_WIN32_WINNT GE 0x0400)
 dmPanningWidth		dd ?
 dmPanningHeight		dd ?
 endif
-endif ;; WINVER GE 0x0400
+endif 
 DEVMODEA		ENDS
 PDEVMODEA		typedef ptr DEVMODEA
 NPDEVMODEA		typedef ptr DEVMODEA
@@ -1931,7 +1809,7 @@ if (WINVER GE 0x0500) OR (_WIN32_WINNT GE 0x0400)
 dmPanningWidth		dd ?
 dmPanningHeight		dd ?
 endif
-endif ;; WINVER GE 0x0400
+endif 
 DEVMODEW		ENDS
 PDEVMODEW		typedef ptr DEVMODEW
 NPDEVMODEW		typedef ptr DEVMODEW
@@ -1946,9 +1824,8 @@ DEVMODE			typedef DEVMODEA
 PDEVMODE		typedef PDEVMODEA
 NPDEVMODE		typedef NPDEVMODEA
 LPDEVMODE		typedef LPDEVMODEA
-endif ;; _UNICODE
+endif 
 
-;; current version of specification
 if (WINVER GE 0x0500) OR (_WIN32_WINNT GE 0x0400)
 DM_SPECVERSION		equ 0x0401
 else
@@ -1956,9 +1833,8 @@ if (WINVER GE 0x0400)
 DM_SPECVERSION		equ 0x0400
 else
 DM_SPECVERSION		equ 0x0320
-endif ;; WINVER
+endif 
 endif
-;; field selection bits
 DM_ORIENTATION		equ 0x00000001
 DM_PAPERSIZE		equ 0x00000002
 DM_PAPERLENGTH		equ 0x00000004
@@ -1966,7 +1842,7 @@ DM_PAPERWIDTH		equ 0x00000008
 DM_SCALE		equ 0x00000010
 if(WINVER GE 0x0500)
 DM_POSITION		equ 0x00000020
-endif ;; WINVER GE 0x0500
+endif 
 DM_COPIES		equ 0x00000100
 DM_DEFAULTSOURCE	equ 0x00000200
 DM_PRINTQUALITY		equ 0x00000400
@@ -1989,137 +1865,135 @@ DM_MEDIATYPE		equ 0x02000000
 DM_DITHERTYPE		equ 0x04000000
 DM_PANNINGWIDTH		equ 0x08000000
 DM_PANNINGHEIGHT	equ 0x10000000
-endif ;; WINVER GE 0x0400
+endif 
 
-;; orientation selections
 DMORIENT_PORTRAIT	equ 1
 DMORIENT_LANDSCAPE	equ 2
 
-;; paper selections
 DMPAPER_FIRST		equ DMPAPER_LETTER
-DMPAPER_LETTER		equ 1	;; Letter 8 1/2 x 11 in
-DMPAPER_LETTERSMALL	equ 2	;; Letter Small 8 1/2 x 11 in
-DMPAPER_TABLOID		equ 3	;; Tabloid 11 x 17 in
-DMPAPER_LEDGER		equ 4	;; Ledger 17 x 11 in
-DMPAPER_LEGAL		equ 5	;; Legal 8 1/2 x 14 in
-DMPAPER_STATEMENT	equ 6	;; Statement 5 1/2 x 8 1/2 in
-DMPAPER_EXECUTIVE	equ 7	;; Executive 7 1/4 x 10 1/2 in
-DMPAPER_A3		equ 8	;; A3 297 x 420 mm
-DMPAPER_A4		equ 9	;; A4 210 x 297 mm
-DMPAPER_A4SMALL		equ 10	;; A4 Small 210 x 297 mm
-DMPAPER_A5		equ 11	;; A5 148 x 210 mm
-DMPAPER_B4		equ 12	;; B4 (JIS) 250 x 354
-DMPAPER_B5		equ 13	;; B5 (JIS) 182 x 257 mm
-DMPAPER_FOLIO		equ 14	;; Folio 8 1/2 x 13 in
-DMPAPER_QUARTO		equ 15	;; Quarto 215 x 275 mm
-DMPAPER_10X14		equ 16	;; 10x14 in
-DMPAPER_11X17		equ 17	;; 11x17 in
-DMPAPER_NOTE		equ 18	;; Note 8 1/2 x 11 in
-DMPAPER_ENV_9		equ 19	;; Envelope #9 3 7/8 x 8 7/8
-DMPAPER_ENV_10		equ 20	;; Envelope #10 4 1/8 x 9 1/2
-DMPAPER_ENV_11		equ 21	;; Envelope #11 4 1/2 x 10 3/8
-DMPAPER_ENV_12		equ 22	;; Envelope #12 4 \276 x 11
-DMPAPER_ENV_14		equ 23	;; Envelope #14 5 x 11 1/2
-DMPAPER_CSHEET		equ 24	;; C size sheet
-DMPAPER_DSHEET		equ 25	;; D size sheet
-DMPAPER_ESHEET		equ 26	;; E size sheet
-DMPAPER_ENV_DL		equ 27	;; Envelope D 110 x 220mm
-DMPAPER_ENV_C5		equ 28	;; Envelope C5 162 x 229 mm
-DMPAPER_ENV_C3		equ 29	;; Envelope C3	324 x 458 mm
-DMPAPER_ENV_C4		equ 30	;; Envelope C4	229 x 324 mm
-DMPAPER_ENV_C6		equ 31	;; Envelope C6	114 x 162 mm
-DMPAPER_ENV_C65		equ 32	;; Envelope C65 114 x 229 mm
-DMPAPER_ENV_B4		equ 33	;; Envelope B4	250 x 353 mm
-DMPAPER_ENV_B5		equ 34	;; Envelope B5	176 x 250 mm
-DMPAPER_ENV_B6		equ 35	;; Envelope B6	176 x 125 mm
-DMPAPER_ENV_ITALY	equ 36	;; Envelope 110 x 230 mm
-DMPAPER_ENV_MONARCH	equ 37	;; Envelope Monarch 3.875 x 7.5 in
-DMPAPER_ENV_PERSONAL	equ 38	;; 6 3/4 Envelope 3 5/8 x 6 1/2 in
-DMPAPER_FANFOLD_US	equ 39	;; US Std Fanfold 14 7/8 x 11 in
-DMPAPER_FANFOLD_STD_GERMAN equ 40	;; German Std Fanfold 8 1/2 x 12 in
-DMPAPER_FANFOLD_LGL_GERMAN equ 41	;; German Legal Fanfold 8 1/2 x 13 in
+DMPAPER_LETTER		equ 1	
+DMPAPER_LETTERSMALL	equ 2	
+DMPAPER_TABLOID		equ 3	
+DMPAPER_LEDGER		equ 4	
+DMPAPER_LEGAL		equ 5	
+DMPAPER_STATEMENT	equ 6	
+DMPAPER_EXECUTIVE	equ 7	
+DMPAPER_A3		equ 8	
+DMPAPER_A4		equ 9	
+DMPAPER_A4SMALL		equ 10	
+DMPAPER_A5		equ 11	
+DMPAPER_B4		equ 12	
+DMPAPER_B5		equ 13	
+DMPAPER_FOLIO		equ 14	
+DMPAPER_QUARTO		equ 15	
+DMPAPER_10X14		equ 16	
+DMPAPER_11X17		equ 17	
+DMPAPER_NOTE		equ 18	
+DMPAPER_ENV_9		equ 19	
+DMPAPER_ENV_10		equ 20	
+DMPAPER_ENV_11		equ 21	
+DMPAPER_ENV_12		equ 22	
+DMPAPER_ENV_14		equ 23	
+DMPAPER_CSHEET		equ 24	
+DMPAPER_DSHEET		equ 25	
+DMPAPER_ESHEET		equ 26	
+DMPAPER_ENV_DL		equ 27	
+DMPAPER_ENV_C5		equ 28	
+DMPAPER_ENV_C3		equ 29	
+DMPAPER_ENV_C4		equ 30	
+DMPAPER_ENV_C6		equ 31	
+DMPAPER_ENV_C65		equ 32	
+DMPAPER_ENV_B4		equ 33	
+DMPAPER_ENV_B5		equ 34	
+DMPAPER_ENV_B6		equ 35	
+DMPAPER_ENV_ITALY	equ 36	
+DMPAPER_ENV_MONARCH	equ 37	
+DMPAPER_ENV_PERSONAL	equ 38	
+DMPAPER_FANFOLD_US	equ 39	
+DMPAPER_FANFOLD_STD_GERMAN equ 40	
+DMPAPER_FANFOLD_LGL_GERMAN equ 41	
 if(WINVER GE 0x0400)
-DMPAPER_ISO_B4		equ 42	;; B4 (ISO) 250 x 353 mm
-DMPAPER_JAPANESE_POSTCARD equ 43	;; Japanese Postcard 100 x 148 mm
-DMPAPER_9X11		equ 44	;; 9 x 11 in
-DMPAPER_10X11		equ 45	;; 10 x 11 in
-DMPAPER_15X11		equ 46	;; 15 x 11 in
-DMPAPER_ENV_INVITE	equ 47	;; Envelope Invite 220 x 220 mm
-DMPAPER_RESERVED_48	equ 48	;; RESERVED--DO NOT USE
-DMPAPER_RESERVED_49	equ 49	;; RESERVED--DO NOT USE
-DMPAPER_LETTER_EXTRA	equ 50	;; Letter Extra 9 \275 x 12 in
-DMPAPER_LEGAL_EXTRA	equ 51	;; Legal Extra 9 \275 x 15 in
-DMPAPER_TABLOID_EXTRA	equ 52	;; Tabloid Extra 11.69 x 18 in
-DMPAPER_A4_EXTRA	equ 53	;; A4 Extra 9.27 x 12.69 in
-DMPAPER_LETTER_TRANSVERSE equ 54	;; Letter Transverse 8 \275 x 11 in
-DMPAPER_A4_TRANSVERSE	equ 55	;; A4 Transverse 210 x 297 mm
-DMPAPER_LETTER_EXTRA_TRANSVERSE equ 56 ;; Letter Extra Transverse 9\275 x 12 in
-DMPAPER_A_PLUS		equ 57	;; SuperA/SuperA/A4 227 x 356 mm
-DMPAPER_B_PLUS		equ 58	;; SuperB/SuperB/A3 305 x 487 mm
-DMPAPER_LETTER_PLUS	equ 59	;; Letter Plus 8.5 x 12.69 in
-DMPAPER_A4_PLUS		equ 60	;; A4 Plus 210 x 330 mm
-DMPAPER_A5_TRANSVERSE	equ 61	;; A5 Transverse 148 x 210 mm
-DMPAPER_B5_TRANSVERSE	equ 62	;; B5 (JIS) Transverse 182 x 257 mm
-DMPAPER_A3_EXTRA	equ 63	;; A3 Extra 322 x 445 mm
-DMPAPER_A5_EXTRA	equ 64	;; A5 Extra 174 x 235 mm
-DMPAPER_B5_EXTRA	equ 65	;; B5 (ISO) Extra 201 x 276 mm
-DMPAPER_A2		equ 66	;; A2 420 x 594 mm
-DMPAPER_A3_TRANSVERSE	equ 67	;; A3 Transverse 297 x 420 mm
-DMPAPER_A3_EXTRA_TRANSVERSE equ 68	;; A3 Extra Transverse 322 x 445 mm
-endif ;; WINVER GE 0x0400
+DMPAPER_ISO_B4		equ 42	
+DMPAPER_JAPANESE_POSTCARD equ 43	
+DMPAPER_9X11		equ 44	
+DMPAPER_10X11		equ 45	
+DMPAPER_15X11		equ 46	
+DMPAPER_ENV_INVITE	equ 47	
+DMPAPER_RESERVED_48	equ 48	
+DMPAPER_RESERVED_49	equ 49	
+DMPAPER_LETTER_EXTRA	equ 50	
+DMPAPER_LEGAL_EXTRA	equ 51	
+DMPAPER_TABLOID_EXTRA	equ 52	
+DMPAPER_A4_EXTRA	equ 53	
+DMPAPER_LETTER_TRANSVERSE equ 54	
+DMPAPER_A4_TRANSVERSE	equ 55	
+DMPAPER_LETTER_EXTRA_TRANSVERSE equ 56 
+DMPAPER_A_PLUS		equ 57	
+DMPAPER_B_PLUS		equ 58	
+DMPAPER_LETTER_PLUS	equ 59	
+DMPAPER_A4_PLUS		equ 60	
+DMPAPER_A5_TRANSVERSE	equ 61	
+DMPAPER_B5_TRANSVERSE	equ 62	
+DMPAPER_A3_EXTRA	equ 63	
+DMPAPER_A5_EXTRA	equ 64	
+DMPAPER_B5_EXTRA	equ 65	
+DMPAPER_A2		equ 66	
+DMPAPER_A3_TRANSVERSE	equ 67	
+DMPAPER_A3_EXTRA_TRANSVERSE equ 68	
+endif 
 
 if(WINVER GE 0x0500)
-DMPAPER_DBL_JAPANESE_POSTCARD	equ 69 ;; Japanese Double Postcard 200 x 148 mm
-DMPAPER_A6			equ 70	;; A6 105 x 148 mm
-DMPAPER_JENV_KAKU2		equ 71	;; Japanese Envelope Kaku #2
-DMPAPER_JENV_KAKU3		equ 72	;; Japanese Envelope Kaku #3
-DMPAPER_JENV_CHOU3		equ 73	;; Japanese Envelope Chou #3
-DMPAPER_JENV_CHOU4		equ 74	;; Japanese Envelope Chou #4
-DMPAPER_LETTER_ROTATED		equ 75	;; Letter Rotated 11 x 8 1/2 11 in
-DMPAPER_A3_ROTATED		equ 76	;; A3 Rotated 420 x 297 mm
-DMPAPER_A4_ROTATED		equ 77	;; A4 Rotated 297 x 210 mm
-DMPAPER_A5_ROTATED		equ 78	;; A5 Rotated 210 x 148 mm
-DMPAPER_B4_JIS_ROTATED		equ 79	;; B4 (JIS) Rotated 364 x 257 mm
-DMPAPER_B5_JIS_ROTATED		equ 80	;; B5 (JIS) Rotated 257 x 182 mm
-DMPAPER_JAPANESE_POSTCARD_ROTATED	equ 81 ;; Japanese Postcard Rotated 148 x 100 mm
-DMPAPER_DBL_JAPANESE_POSTCARD_ROTATED	equ 82 ;; Double Japanese Postcard Rotated 148 x 200 mm
-DMPAPER_A6_ROTATED		equ 83	;; A6 Rotated 148 x 105 mm
-DMPAPER_JENV_KAKU2_ROTATED	equ 84	;; Japanese Envelope Kaku #2 Rotated
-DMPAPER_JENV_KAKU3_ROTATED	equ 85	;; Japanese Envelope Kaku #3 Rotated
-DMPAPER_JENV_CHOU3_ROTATED	equ 86	;; Japanese Envelope Chou #3 Rotated
-DMPAPER_JENV_CHOU4_ROTATED	equ 87	;; Japanese Envelope Chou #4 Rotated
-DMPAPER_B6_JIS			equ 88	;; B6 (JIS) 128 x 182 mm
-DMPAPER_B6_JIS_ROTATED		equ 89	;; B6 (JIS) Rotated 182 x 128 mm
-DMPAPER_12X11			equ 90	;; 12 x 11 in
-DMPAPER_JENV_YOU4		equ 91	;; Japanese Envelope You #4
-DMPAPER_JENV_YOU4_ROTATED	equ 92	;; Japanese Envelope You #4 Rotated
-DMPAPER_P16K			equ 93	;; PRC 16K 146 x 215 mm
-DMPAPER_P32K			equ 94	;; PRC 32K 97 x 151 mm
-DMPAPER_P32KBIG			equ 95	;; PRC 32K(Big) 97 x 151 mm
-DMPAPER_PENV_1			equ 96	;; PRC Envelope #1 102 x 165 mm
-DMPAPER_PENV_2			equ 97	;; PRC Envelope #2 102 x 176 mm
-DMPAPER_PENV_3			equ 98	;; PRC Envelope #3 125 x 176 mm
-DMPAPER_PENV_4			equ 99	;; PRC Envelope #4 110 x 208 mm
-DMPAPER_PENV_5			equ 100 ;; PRC Envelope #5 110 x 220 mm
-DMPAPER_PENV_6			equ 101 ;; PRC Envelope #6 120 x 230 mm
-DMPAPER_PENV_7			equ 102 ;; PRC Envelope #7 160 x 230 mm
-DMPAPER_PENV_8			equ 103 ;; PRC Envelope #8 120 x 309 mm
-DMPAPER_PENV_9			equ 104 ;; PRC Envelope #9 229 x 324 mm
-DMPAPER_PENV_10			equ 105 ;; PRC Envelope #10 324 x 458 mm
-DMPAPER_P16K_ROTATED		equ 106 ;; PRC 16K Rotated
-DMPAPER_P32K_ROTATED		equ 107 ;; PRC 32K Rotated
-DMPAPER_P32KBIG_ROTATED		equ 108 ;; PRC 32K(Big) Rotated
-DMPAPER_PENV_1_ROTATED		equ 109 ;; PRC Envelope #1 Rotated 165 x 102 mm
-DMPAPER_PENV_2_ROTATED		equ 110 ;; PRC Envelope #2 Rotated 176 x 102 mm
-DMPAPER_PENV_3_ROTATED		equ 111 ;; PRC Envelope #3 Rotated 176 x 125 mm
-DMPAPER_PENV_4_ROTATED		equ 112 ;; PRC Envelope #4 Rotated 208 x 110 mm
-DMPAPER_PENV_5_ROTATED		equ 113 ;; PRC Envelope #5 Rotated 220 x 110 mm
-DMPAPER_PENV_6_ROTATED		equ 114 ;; PRC Envelope #6 Rotated 230 x 120 mm
-DMPAPER_PENV_7_ROTATED		equ 115 ;; PRC Envelope #7 Rotated 230 x 160 mm
-DMPAPER_PENV_8_ROTATED		equ 116 ;; PRC Envelope #8 Rotated 309 x 120 mm
-DMPAPER_PENV_9_ROTATED		equ 117 ;; PRC Envelope #9 Rotated 324 x 229 mm
-DMPAPER_PENV_10_ROTATED		equ 118 ;; PRC Envelope #10 Rotated 458 x 324 mm
-endif ;; WINVER GE 0x0500
+DMPAPER_DBL_JAPANESE_POSTCARD	equ 69 
+DMPAPER_A6			equ 70	
+DMPAPER_JENV_KAKU2		equ 71	
+DMPAPER_JENV_KAKU3		equ 72	
+DMPAPER_JENV_CHOU3		equ 73	
+DMPAPER_JENV_CHOU4		equ 74	
+DMPAPER_LETTER_ROTATED		equ 75	
+DMPAPER_A3_ROTATED		equ 76	
+DMPAPER_A4_ROTATED		equ 77	
+DMPAPER_A5_ROTATED		equ 78	
+DMPAPER_B4_JIS_ROTATED		equ 79	
+DMPAPER_B5_JIS_ROTATED		equ 80	
+DMPAPER_JAPANESE_POSTCARD_ROTATED	equ 81 
+DMPAPER_DBL_JAPANESE_POSTCARD_ROTATED	equ 82 
+DMPAPER_A6_ROTATED		equ 83	
+DMPAPER_JENV_KAKU2_ROTATED	equ 84	
+DMPAPER_JENV_KAKU3_ROTATED	equ 85	
+DMPAPER_JENV_CHOU3_ROTATED	equ 86	
+DMPAPER_JENV_CHOU4_ROTATED	equ 87	
+DMPAPER_B6_JIS			equ 88	
+DMPAPER_B6_JIS_ROTATED		equ 89	
+DMPAPER_12X11			equ 90	
+DMPAPER_JENV_YOU4		equ 91	
+DMPAPER_JENV_YOU4_ROTATED	equ 92	
+DMPAPER_P16K			equ 93	
+DMPAPER_P32K			equ 94	
+DMPAPER_P32KBIG			equ 95	
+DMPAPER_PENV_1			equ 96	
+DMPAPER_PENV_2			equ 97	
+DMPAPER_PENV_3			equ 98	
+DMPAPER_PENV_4			equ 99	
+DMPAPER_PENV_5			equ 100 
+DMPAPER_PENV_6			equ 101 
+DMPAPER_PENV_7			equ 102 
+DMPAPER_PENV_8			equ 103 
+DMPAPER_PENV_9			equ 104 
+DMPAPER_PENV_10			equ 105 
+DMPAPER_P16K_ROTATED		equ 106 
+DMPAPER_P32K_ROTATED		equ 107 
+DMPAPER_P32KBIG_ROTATED		equ 108 
+DMPAPER_PENV_1_ROTATED		equ 109 
+DMPAPER_PENV_2_ROTATED		equ 110 
+DMPAPER_PENV_3_ROTATED		equ 111 
+DMPAPER_PENV_4_ROTATED		equ 112 
+DMPAPER_PENV_5_ROTATED		equ 113 
+DMPAPER_PENV_6_ROTATED		equ 114 
+DMPAPER_PENV_7_ROTATED		equ 115 
+DMPAPER_PENV_8_ROTATED		equ 116 
+DMPAPER_PENV_9_ROTATED		equ 117 
+DMPAPER_PENV_10_ROTATED		equ 118 
+endif 
 
 if (WINVER GE 0x0500)
 DMPAPER_LAST		equ DMPAPER_PENV_10_ROTATED
@@ -2132,7 +2006,6 @@ endif
 endif
 DMPAPER_USER		equ 256
 
-;; bin selections
 DMBIN_FIRST		equ DMBIN_UPPER
 DMBIN_UPPER		equ 1
 DMBIN_ONLYONE		equ 1
@@ -2150,80 +2023,68 @@ DMBIN_CASSETTE		equ 14
 DMBIN_FORMSOURCE	equ 15
 DMBIN_LAST		equ DMBIN_FORMSOURCE
 
-DMBIN_USER		equ 256	    ;; device specific bins start here
+DMBIN_USER		equ 256	    
 
-;; print qualities
 DMRES_DRAFT		equ (-1)
 DMRES_LOW		equ (-2)
 DMRES_MEDIUM		equ (-3)
 DMRES_HIGH		equ (-4)
 
-;; color enable/disable for color printers
 DMCOLOR_MONOCHROME	equ 1
 DMCOLOR_COLOR		equ 2
 
-;; duplex enable
 DMDUP_SIMPLEX		equ 1
 DMDUP_VERTICAL		equ 2
 DMDUP_HORIZONTAL	equ 3
 
-;; TrueType options
-DMTT_BITMAP		equ 1	;; print TT fonts as graphics
-DMTT_DOWNLOAD		equ 2	;; download TT fonts as soft fonts
-DMTT_SUBDEV		equ 3	;; substitute device fonts for TT fonts
+DMTT_BITMAP		equ 1	
+DMTT_DOWNLOAD		equ 2	
+DMTT_SUBDEV		equ 3	
 if(WINVER GE 0x0400)
-DMTT_DOWNLOAD_OUTLINE	equ 4 ;; download TT fonts as outline soft fonts
-endif ;; WINVER GE 0x0400
+DMTT_DOWNLOAD_OUTLINE	equ 4 
+endif 
 
-;; Collation selections
 DMCOLLATE_FALSE		equ 0
 DMCOLLATE_TRUE		equ 1
 
-;; DEVMODE dmDisplayFlags flags
 
-;; #define DM_GRAYSCALE		   0x00000001 ;; This flag is no longer valid
-;; #define DM_INTERLACED	   0x00000002 ;; This flag is no longer valid
 DMDISPLAYFLAGS_TEXTMODE equ 0x00000004
 
 if(WINVER GE 0x0400)
-;; ICM methods
-DMICMMETHOD_NONE	equ 1	;; ICM disabled
-DMICMMETHOD_SYSTEM	equ 2	;; ICM handled by system
-DMICMMETHOD_DRIVER	equ 3	;; ICM handled by driver
-DMICMMETHOD_DEVICE	equ 4	;; ICM handled by device
+DMICMMETHOD_NONE	equ 1	
+DMICMMETHOD_SYSTEM	equ 2	
+DMICMMETHOD_DRIVER	equ 3	
+DMICMMETHOD_DEVICE	equ 4	
 
-DMICMMETHOD_USER	equ 256 ;; Device-specific methods start here
+DMICMMETHOD_USER	equ 256 
 
-;; ICM Intents
-DMICM_SATURATE		equ 1	;; Maximize color saturation
-DMICM_CONTRAST		equ 2	;; Maximize color contrast
-DMICM_COLORIMETRIC	equ 3	;; Use specific color metric
-DMICM_ABS_COLORIMETRIC	equ 4	;; Use specific color metric
+DMICM_SATURATE		equ 1	
+DMICM_CONTRAST		equ 2	
+DMICM_COLORIMETRIC	equ 3	
+DMICM_ABS_COLORIMETRIC	equ 4	
 
-DMICM_USER		equ 256 ;; Device-specific intents start here
+DMICM_USER		equ 256 
 
-;; Media types
 
-DMMEDIA_STANDARD	equ 1	  ;; Standard paper
-DMMEDIA_TRANSPARENCY	equ 2	  ;; Transparency
-DMMEDIA_GLOSSY		equ 3	  ;; Glossy paper
+DMMEDIA_STANDARD	equ 1	  
+DMMEDIA_TRANSPARENCY	equ 2	  
+DMMEDIA_GLOSSY		equ 3	  
 
-DMMEDIA_USER		equ 256	  ;; Device-specific media start here
+DMMEDIA_USER		equ 256	  
 
-;; Dither types
-DMDITHER_NONE		equ 1	   ;; No dithering
-DMDITHER_COARSE		equ 2	   ;; Dither with a coarse brush
-DMDITHER_FINE		equ 3	   ;; Dither with a fine brush
-DMDITHER_LINEART	equ 4	   ;; LineArt dithering
-DMDITHER_ERRORDIFFUSION equ 5  ;; LineArt dithering
-DMDITHER_RESERVED6	equ 6	   ;; LineArt dithering
-DMDITHER_RESERVED7	equ 7	   ;; LineArt dithering
-DMDITHER_RESERVED8	equ 8	   ;; LineArt dithering
-DMDITHER_RESERVED9	equ 9	   ;; LineArt dithering
-DMDITHER_GRAYSCALE	equ 10	   ;; Device does grayscaling
+DMDITHER_NONE		equ 1	   
+DMDITHER_COARSE		equ 2	   
+DMDITHER_FINE		equ 3	   
+DMDITHER_LINEART	equ 4	   
+DMDITHER_ERRORDIFFUSION equ 5  
+DMDITHER_RESERVED6	equ 6	   
+DMDITHER_RESERVED7	equ 7	   
+DMDITHER_RESERVED8	equ 8	   
+DMDITHER_RESERVED9	equ 9	   
+DMDITHER_GRAYSCALE	equ 10	   
 
-DMDITHER_USER		equ 256 ;; Device-specific dithers start here
-endif ;; WINVER GE 0x0400
+DMDITHER_USER		equ 256 
+endif 
 
 DISPLAY_DEVICEA		STRUC
 cb			dd ?
@@ -2249,7 +2110,7 @@ else
 DISPLAY_DEVICE		typedef DISPLAY_DEVICEA
 PDISPLAY_DEVICE		typedef PDISPLAY_DEVICEA
 LPDISPLAY_DEVICE	typedef LPDISPLAY_DEVICEA
-endif ;; _UNICODE
+endif 
 
 DISPLAY_DEVICE_ATTACHED_TO_DESKTOP	equ 0x00000001
 DISPLAY_DEVICE_MULTI_DRIVER	equ 0x00000002
@@ -2257,7 +2118,6 @@ DISPLAY_DEVICE_PRIMARY_DEVICE	equ 0x00000004
 DISPLAY_DEVICE_MIRRORING_DRIVER equ 0x00000008
 DISPLAY_DEVICE_VGA_COMPATIBLE	equ 0x00000010
 
-;; GetRegionData/ExtCreateRegion
 
 RDH_RECTANGLES		equ 1
 
@@ -2386,13 +2246,13 @@ OUTLINETEXTMETRIC	typedef OUTLINETEXTMETRICA
 POUTLINETEXTMETRIC	typedef POUTLINETEXTMETRICA
 NPOUTLINETEXTMETRIC	typedef NPOUTLINETEXTMETRICA
 LPOUTLINETEXTMETRIC	typedef LPOUTLINETEXTMETRICA
-endif ;; _UNICODE
+endif 
 
 ifdef _MAC
 include "poppack.h"
 endif
 
-endif ;; NOTEXTMETRIC
+endif 
 
 
 POLYTEXTA		STRUC
@@ -2429,7 +2289,7 @@ POLYTEXT		typedef POLYTEXTA
 PPOLYTEXT		typedef PPOLYTEXTA
 NPPOLYTEXT		typedef NPPOLYTEXTA
 LPPOLYTEXT		typedef LPPOLYTEXTA
-endif ;; _UNICODE
+endif 
 
 FIXED			STRUC
 ifndef _MAC
@@ -2461,7 +2321,6 @@ gmCellIncY		dw ?
 GLYPHMETRICS		ENDS
 LPGLYPHMETRICS		typedef ptr GLYPHMETRICS
 
-;;  GetGlyphOutline constants
 
 GGO_METRICS		equ 0
 GGO_BITMAP		equ 1
@@ -2473,7 +2332,7 @@ GGO_GRAY2_BITMAP	equ 4
 GGO_GRAY4_BITMAP	equ 5
 GGO_GRAY8_BITMAP	equ 6
 GGO_GLYPH_INDEX		equ 0x0080
-endif ;; WINVER GE 0x0400
+endif 
 
 TT_POLYGON_TYPE		equ 24
 
@@ -2508,14 +2367,12 @@ GCP_REORDER		equ 0x0002
 GCP_USEKERNING		equ 0x0008
 GCP_GLYPHSHAPE		equ 0x0010
 GCP_LIGATE		equ 0x0020
-;;//#define GCP_GLYPHINDEXING  0x0080
 GCP_DIACRITIC		equ 0x0100
 GCP_KASHIDA		equ 0x0400
 GCP_ERROR		equ 0x8000
 FLI_MASK		equ 0x103B
 
 GCP_JUSTIFY		equ 0x00010000
-;;//#define GCP_NODIACRITICS   0x00020000L
 FLI_GLYPHS		equ 0x00040000
 GCP_CLASSIN		equ 0x00080000
 GCP_MAXEXTENT		equ 0x00100000
@@ -2575,8 +2432,8 @@ LPGCP_RESULTS		typedef LPGCP_RESULTSW
 else
 GCP_RESULTS		typedef GCP_RESULTSA
 LPGCP_RESULTS		typedef LPGCP_RESULTSA
-endif ;; _UNICODE
-endif ;; WINVER GE 0x0400
+endif 
+endif 
 
 RASTERIZER_STATUS	STRUC
 nSize			dw ?
@@ -2585,11 +2442,9 @@ nLanguageID		dw ?
 RASTERIZER_STATUS	ENDS
 LPRASTERIZER_STATUS	typedef ptr RASTERIZER_STATUS
 
-;; bits defined in wFlags of RASTERIZER_STATUS
 TT_AVAILABLE		equ 0x0001
 TT_ENABLED		equ 0x0002
 
-;; Pixel format descriptor
 PIXELFORMATDESCRIPTOR	STRUC
 nSize			dw ?
 nVersion		dw ?
@@ -2621,16 +2476,13 @@ PIXELFORMATDESCRIPTOR	ENDS
 PPIXELFORMATDESCRIPTOR	typedef ptr PIXELFORMATDESCRIPTOR
 LPPIXELFORMATDESCRIPTOR typedef ptr PIXELFORMATDESCRIPTOR
 
-;; pixel types
 PFD_TYPE_RGBA		equ 0
 PFD_TYPE_COLORINDEX	equ 1
 
-;; layer types
 PFD_MAIN_PLANE		equ 0
 PFD_OVERLAY_PLANE	equ 1
 PFD_UNDERLAY_PLANE	equ (-1)
 
-;; PIXELFORMATDESCRIPTOR flags
 PFD_DOUBLEBUFFER	equ 0x00000001
 PFD_STEREO		equ 0x00000002
 PFD_DRAW_TO_WINDOW	equ 0x00000004
@@ -2646,7 +2498,6 @@ PFD_SWAP_LAYER_BUFFERS	equ 0x00000800
 PFD_GENERIC_ACCELERATED equ 0x00001000
 PFD_SUPPORT_DIRECTDRAW	equ 0x00002000
 
-;; PIXELFORMATDESCRIPTOR flags for use in ChoosePixelFormat only
 PFD_DEPTH_DONTCARE	equ 0x20000000
 PFD_DOUBLEBUFFER_DONTCARE	equ 0x40000000
 PFD_STEREO_DONTCARE	equ 0x80000000
@@ -2661,7 +2512,7 @@ ifdef _UNICODE
 OLDFONTENUMPROC equ <OLDFONTENUMPROCW>
 else
 OLDFONTENUMPROC equ <OLDFONTENUMPROCA>
-endif ;; NOT _UNICODE
+endif 
 else
 OLDFONTENUMA_T	 typedef proto :LPLOGFONTA, :PVOID, :DWORD, :LPARAM
 OLDFONTENUMW_T	 typedef proto :LPLOGFONTW, :PVOID, :DWORD, :LPARAM
@@ -2671,7 +2522,7 @@ ifdef _UNICODE
 OLDFONTENUMPROC equ <OLDFONTENUMPROCW>
 else
 OLDFONTENUMPROC equ <OLDFONTENUMPROCA>
-endif ;; NOT _UNICODE
+endif 
 endif
 
 FONTENUMPROCA	typedef OLDFONTENUMPROCA
@@ -2680,7 +2531,7 @@ ifdef _UNICODE
 FONTENUMPROC	typedef FONTENUMPROCW
 else
 FONTENUMPROC	typedef FONTENUMPROCA
-endif ;; _UNICODE
+endif 
 
 GOBJENUMPROC_T	typedef proto :PVOID, :LPARAM
 GOBJENUMPROC	typedef ptr GOBJENUMPROC_T
@@ -2694,122 +2545,118 @@ ifdef _UNICODE
 FONTENUMPROC	typedef FONTENUMPROCW
 else
 FONTENUMPROC	typedef FONTENUMPROCA
-endif ;; _UNICODE
+endif 
 GOBJENUMPROC	typedef FARPROC
 LINEDDAPROC	typedef FARPROC
 endif
 
 WINGDIAPI
-AddFontResourceA proto _CType :LPCSTR
-AddFontResourceW proto _CType :LPCWSTR
+AddFontResourceA proto WINAPI :LPCSTR
+AddFontResourceW proto WINAPI :LPCWSTR
 ifdef _UNICODE
 AddFontResource equ <AddFontResourceW>
 else
 AddFontResource equ <AddFontResourceA>
-endif ;; NOT _UNICODE
+endif 
 
 
 ;BOOL
-AnimatePalette	proto _CType :HPALETTE, :UINT, :UINT, :LPPALETTEENTRY
-Arc		proto _CType :HDC, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT
-BitBlt		proto _CType :HDC, :SINT, :SINT, :SINT, :SINT, :HDC, :SINT, :SINT, :DWORD
-CancelDC	proto _CType :HDC
-Chord		proto _CType :HDC, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT
-ChoosePixelFormat proto _CType :HDC, :LPPIXELFORMATDESCRIPTOR
+AnimatePalette	proto WINAPI :HPALETTE, :UINT, :UINT, :LPPALETTEENTRY
+Arc		proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT
+BitBlt		proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT, :HDC, :SINT, :SINT, :DWORD
+CancelDC	proto WINAPI :HDC
+Chord		proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT
+ChoosePixelFormat proto WINAPI :HDC, :LPPIXELFORMATDESCRIPTOR
 ;HMETAFILE
-CloseMetaFile	proto _CType :HDC
+CloseMetaFile	proto WINAPI :HDC
 ;int
-CombineRgn	proto _CType :HRGN, :HRGN, :HRGN, :SINT
+CombineRgn	proto WINAPI :HRGN, :HRGN, :HRGN, :SINT
 ;HMETAFILE
-CopyMetaFileA	proto _CType :HMETAFILE, :LPCSTR
-CopyMetaFileW	proto _CType :HMETAFILE, :LPCWSTR
+CopyMetaFileA	proto WINAPI :HMETAFILE, :LPCSTR
+CopyMetaFileW	proto WINAPI :HMETAFILE, :LPCWSTR
 ifdef _UNICODE
 CopyMetaFile equ <CopyMetaFileW>
 else
 CopyMetaFile equ <CopyMetaFileA>
-endif ;; NOT _UNICODE
-CreateBitmap	proto _CType :SINT, :SINT, :UINT, :UINT, :PVOID
-CreateBitmapIndirect proto _CType :LPBITMAP
-CreateBrushIndirect proto _CType :LPLOGBRUSH
-CreateCompatibleBitmap proto _CType :HDC, :SINT, :SINT
-CreateDiscardableBitmap proto _CType :HDC, :SINT, :SINT
-CreateCompatibleDC proto _CType :HDC
-CreateDCA proto _CType :LPCSTR, :LPCSTR, :LPCSTR, :LPDEVMODEA
-CreateDCW proto _CType :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPDEVMODEW
+endif 
+CreateBitmap	proto WINAPI :SINT, :SINT, :UINT, :UINT, :PVOID
+CreateBitmapIndirect proto WINAPI :LPBITMAP
+CreateBrushIndirect proto WINAPI :LPLOGBRUSH
+CreateCompatibleBitmap proto WINAPI :HDC, :SINT, :SINT
+CreateDiscardableBitmap proto WINAPI :HDC, :SINT, :SINT
+CreateCompatibleDC proto WINAPI :HDC
+CreateDCA proto WINAPI :LPCSTR, :LPCSTR, :LPCSTR, :LPDEVMODEA
+CreateDCW proto WINAPI :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPDEVMODEW
 ifdef _UNICODE
 CreateDC equ <CreateDCW>
 else
 CreateDC equ <CreateDCA>
-endif ;; NOT _UNICODE
-CreateDIBitmap proto _CType :HDC, :LPBITMAPINFOHEADER, :DWORD, :PVOID, :LPBITMAPINFO, :UINT
-CreateDIBPatternBrush proto _CType :HGLOBAL, :UINT
-CreateDIBPatternBrushPt proto _CType :PVOID , :UINT
-CreateEllipticRgn proto _CType :SINT, :SINT, :SINT, :SINT
-CreateEllipticRgnIndirect proto _CType :LPRECT
-CreateFontIndirectA proto _CType :LPLOGFONTA
-CreateFontIndirectW proto _CType :LPLOGFONTW
+endif 
+CreateDIBitmap proto WINAPI :HDC, :LPBITMAPINFOHEADER, :DWORD, :PVOID, :LPBITMAPINFO, :UINT
+CreateDIBPatternBrush proto WINAPI :HGLOBAL, :UINT
+CreateDIBPatternBrushPt proto WINAPI :PVOID , :UINT
+CreateEllipticRgn proto WINAPI :SINT, :SINT, :SINT, :SINT
+CreateEllipticRgnIndirect proto WINAPI :LPRECT
+CreateFontIndirectA proto WINAPI :LPLOGFONTA
+CreateFontIndirectW proto WINAPI :LPLOGFONTW
 ifdef _UNICODE
 CreateFontIndirect equ <CreateFontIndirectW>
 else
 CreateFontIndirect equ <CreateFontIndirectA>
-endif ;; NOT _UNICODE
-CreateFontA proto _CType :SINT, :SINT, :SINT, :SINT, :SINT, :DWORD,
+endif 
+CreateFontA proto WINAPI :SINT, :SINT, :SINT, :SINT, :SINT, :DWORD,
 	:DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :LPCSTR
-CreateFontW proto _CType :SINT, :SINT, :SINT, :SINT, :SINT, :DWORD,
+CreateFontW proto WINAPI :SINT, :SINT, :SINT, :SINT, :SINT, :DWORD,
 	:DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :LPCWSTR
 ifdef _UNICODE
 CreateFont equ <CreateFontW>
 else
 CreateFont equ <CreateFontA>
-endif ;; NOT _UNICODE
+endif 
 
-CreateHatchBrush proto _CType :SINT, :COLORREF
-CreateICA proto _CType :LPCSTR, :LPCSTR, :LPCSTR, :LPDEVMODEA
-CreateICW proto _CType :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPDEVMODEW
+CreateHatchBrush proto WINAPI :SINT, :COLORREF
+CreateICA proto WINAPI :LPCSTR, :LPCSTR, :LPCSTR, :LPDEVMODEA
+CreateICW proto WINAPI :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPDEVMODEW
 ifdef _UNICODE
 CreateIC equ <CreateICW>
 else
 CreateIC equ <CreateICA>
-endif ;; NOT _UNICODE
-CreateMetaFileA proto _CType :LPCSTR
-CreateMetaFileW proto _CType :LPCWSTR
+endif 
+CreateMetaFileA proto WINAPI :LPCSTR
+CreateMetaFileW proto WINAPI :LPCWSTR
 ifdef _UNICODE
 CreateMetaFile equ <CreateMetaFileW>
 else
 CreateMetaFile equ <CreateMetaFileA>
-endif ;; NOT _UNICODE
-CreatePalette proto _CType :LPLOGPALETTE
-CreatePen proto _CType :SINT, :SINT, :COLORREF
-CreatePenIndirect proto _CType :LPLOGPEN
-CreatePolyPolygonRgn proto _CType :LPPOINT, :PVOID, :SINT, :SINT
-CreatePatternBrush proto _CType :HBITMAP
-CreateRectRgn proto _CType :SINT, :SINT, :SINT, :SINT
-CreateRectRgnIndirect proto _CType :LPRECT
-CreateRoundRectRgn proto _CType :SINT, :SINT, :SINT, :SINT, :SINT, :SINT
-CreateScalableFontResourceA proto _CType :DWORD, :LPCSTR, :LPCSTR, :LPCSTR
-CreateScalableFontResourceW proto _CType :DWORD, :LPCWSTR, :LPCWSTR, :LPCWSTR
+endif 
+CreatePalette proto WINAPI :LPLOGPALETTE
+CreatePen proto WINAPI :SINT, :SINT, :COLORREF
+CreatePenIndirect proto WINAPI :LPLOGPEN
+CreatePolyPolygonRgn proto WINAPI :LPPOINT, :PVOID, :SINT, :SINT
+CreatePatternBrush proto WINAPI :HBITMAP
+CreateRectRgn proto WINAPI :SINT, :SINT, :SINT, :SINT
+CreateRectRgnIndirect proto WINAPI :LPRECT
+CreateRoundRectRgn proto WINAPI :SINT, :SINT, :SINT, :SINT, :SINT, :SINT
+CreateScalableFontResourceA proto WINAPI :DWORD, :LPCSTR, :LPCSTR, :LPCSTR
+CreateScalableFontResourceW proto WINAPI :DWORD, :LPCWSTR, :LPCWSTR, :LPCWSTR
 ifdef _UNICODE
 CreateScalableFontResource equ <CreateScalableFontResourceW>
 else
 CreateScalableFontResource equ <CreateScalableFontResourceA>
-endif ;; NOT _UNICODE
-CreateSolidBrush proto _CType :COLORREF
+endif 
+CreateSolidBrush proto WINAPI :COLORREF
 
-DeleteDC proto _CType :HDC
-DeleteMetaFile proto _CType :HMETAFILE
-DeleteObject proto _CType :HGDIOBJ
-DescribePixelFormat proto _CType :HDC, :SINT, :UINT, :LPPIXELFORMATDESCRIPTOR
+DeleteDC proto WINAPI :HDC
+DeleteMetaFile proto WINAPI :HMETAFILE
+DeleteObject proto WINAPI :HGDIOBJ
+DescribePixelFormat proto WINAPI :HDC, :SINT, :UINT, :LPPIXELFORMATDESCRIPTOR
 
-;; define types of pointers to ExtDeviceMode() and DeviceCapabilities()
-;; functions for Win 3.1 compatibility
-;;
 
 LPFNDEVMODE_T	typedef proto :HWND, :HMODULE, :LPDEVMODE, :LPSTR, :LPSTR, :LPDEVMODE, :LPSTR, :UINT
 LPFNDEVMODE	typedef ptr LPFNDEVMODE_T
 LPFNDEVCAPS_T	typedef proto :LPSTR, :LPSTR, :UINT, :LPSTR, :LPDEVMODE
 LPFNDEVCAPS	typedef ptr LPFNDEVCAPS_T
 
-;; mode selections for the device mode function
 DM_UPDATE		equ 1
 DM_COPY			equ 2
 DM_PROMPT		equ 4
@@ -2820,7 +2667,6 @@ DM_IN_PROMPT		equ DM_PROMPT
 DM_OUT_BUFFER		equ DM_COPY
 DM_OUT_DEFAULT		equ DM_UPDATE
 
-;; device capabilities indices
 DC_FIELDS		equ 1
 DC_PAPERS		equ 2
 DC_PAPERSIZE		equ 3
@@ -2846,7 +2692,7 @@ DC_DATATYPE_PRODUCED	equ 21
 DC_COLLATE		equ 22
 DC_MANUFACTURER		equ 23
 DC_MODEL		equ 24
-endif ;; WINVER GE 0x0400
+endif 
 
 
 if (WINVER GE 0x0500)
@@ -2863,14 +2709,12 @@ DC_PRINTERMEM		equ 28
 DC_MEDIAREADY		equ 29
 endif
 
-;; bit fields of the return value (DWORD) for DC_TRUETYPE
 DCTT_BITMAP		equ 0x0000001
 DCTT_DOWNLOAD		equ 0x0000002
 DCTT_SUBDEV		equ 0x0000004
 if(WINVER GE 0x0400)
 DCTT_DOWNLOAD_OUTLINE	equ 0x0000008
 
-;; return values for DC_BINADJUST
 DCBA_FACEUPNONE		equ 0x0000
 DCBA_FACEUPCENTER	equ 0x0001
 DCBA_FACEUPLEFT		equ 0x0002
@@ -2879,207 +2723,207 @@ DCBA_FACEDOWNNONE	equ 0x0100
 DCBA_FACEDOWNCENTER	equ 0x0101
 DCBA_FACEDOWNLEFT	equ 0x0102
 DCBA_FACEDOWNRIGHT	equ 0x0103
-endif ;; WINVER GE 0x0400
+endif 
 
 WINSPOOLAPI
 
-DeviceCapabilitiesA proto _CType :LPCSTR, :LPCSTR, :WORD, :LPSTR, :LPDEVMODEA
-DeviceCapabilitiesW proto _CType :LPCWSTR, :LPCWSTR, :WORD, :LPWSTR, :LPDEVMODEW
+DeviceCapabilitiesA proto WINAPI :LPCSTR, :LPCSTR, :WORD, :LPSTR, :LPDEVMODEA
+DeviceCapabilitiesW proto WINAPI :LPCWSTR, :LPCWSTR, :WORD, :LPWSTR, :LPDEVMODEW
 ifdef _UNICODE
 DeviceCapabilities equ <DeviceCapabilitiesW>
 else
 DeviceCapabilities equ <DeviceCapabilitiesA>
-endif ;; NOT _UNICODE
+endif 
 
 WINGDIAPI
 
-DrawEscape proto _CType :HDC, :SINT, :SINT, :LPCSTR
-Ellipse proto _CType :HDC, :SINT, :SINT, :SINT, :SINT
+DrawEscape proto WINAPI :HDC, :SINT, :SINT, :LPCSTR
+Ellipse proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT
 
 if(WINVER GE 0x0400)
-EnumFontFamiliesExA proto _CType :HDC, :LPLOGFONTA, :FONTENUMPROCA, :LPARAM, :DWORD
-EnumFontFamiliesExW proto _CType :HDC, :LPLOGFONTW, :FONTENUMPROCW, :LPARAM, :DWORD
+EnumFontFamiliesExA proto WINAPI :HDC, :LPLOGFONTA, :FONTENUMPROCA, :LPARAM, :DWORD
+EnumFontFamiliesExW proto WINAPI :HDC, :LPLOGFONTW, :FONTENUMPROCW, :LPARAM, :DWORD
 ifdef _UNICODE
 EnumFontFamiliesEx equ <EnumFontFamiliesExW>
 else
 EnumFontFamiliesEx equ <EnumFontFamiliesExA>
-endif ;; NOT _UNICODE
-endif ;; WINVER GE 0x0400
+endif 
+endif 
 
-EnumFontFamiliesA proto _CType :HDC, :LPCSTR, :FONTENUMPROCA, :LPARAM
-EnumFontFamiliesW proto _CType :HDC, :LPCWSTR, :FONTENUMPROCW, :LPARAM
+EnumFontFamiliesA proto WINAPI :HDC, :LPCSTR, :FONTENUMPROCA, :LPARAM
+EnumFontFamiliesW proto WINAPI :HDC, :LPCWSTR, :FONTENUMPROCW, :LPARAM
 ifdef _UNICODE
 EnumFontFamilies equ <EnumFontFamiliesW>
 else
 EnumFontFamilies equ <EnumFontFamiliesA>
-endif ;; NOT _UNICODE
-EnumFontsA proto _CType :HDC, :LPCSTR, :FONTENUMPROCA, :LPARAM
-EnumFontsW proto _CType :HDC, :LPCWSTR, :FONTENUMPROCW, :LPARAM
+endif 
+EnumFontsA proto WINAPI :HDC, :LPCSTR, :FONTENUMPROCA, :LPARAM
+EnumFontsW proto WINAPI :HDC, :LPCWSTR, :FONTENUMPROCW, :LPARAM
 ifdef _UNICODE
 EnumFonts equ <EnumFontsW>
 else
 EnumFonts equ <EnumFontsA>
-endif ;; NOT _UNICODE
+endif 
 
 ifdef STRICT
-EnumObjects proto _CType :HDC, :SINT, :GOBJENUMPROC, :LPARAM
+EnumObjects proto WINAPI :HDC, :SINT, :GOBJENUMPROC, :LPARAM
 else
-EnumObjects proto _CType :HDC, :SINT, :GOBJENUMPROC, :LPVOID
+EnumObjects proto WINAPI :HDC, :SINT, :GOBJENUMPROC, :LPVOID
 endif
 
 
-EqualRgn proto _CType :HRGN, :HRGN
-Escape proto _CType :HDC, :SINT, :SINT, :LPCSTR, :LPVOID
-ExtEscape proto _CType :HDC, :SINT, :SINT, :LPCSTR, :SINT, :LPSTR
-ExcludeClipRect proto _CType :HDC, :SINT, :SINT, :SINT, :SINT
-ExtCreateRegion proto _CType :LPXFORM, :DWORD, :LPRGNDATA
-ExtFloodFill proto _CType :HDC, :SINT, :SINT, :COLORREF, :UINT
-FillRgn proto _CType :HDC, :HRGN, :HBRUSH
-FloodFill proto _CType :HDC, :SINT, :SINT, :COLORREF
-FrameRgn proto _CType :HDC, :HRGN, :HBRUSH, :SINT, :SINT
-GetROP2 proto _CType :HDC
-GetAspectRatioFilterEx proto _CType :HDC, :LPSIZE
-GetBkColor proto _CType :HDC
+EqualRgn proto WINAPI :HRGN, :HRGN
+Escape proto WINAPI :HDC, :SINT, :SINT, :LPCSTR, :LPVOID
+ExtEscape proto WINAPI :HDC, :SINT, :SINT, :LPCSTR, :SINT, :LPSTR
+ExcludeClipRect proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT
+ExtCreateRegion proto WINAPI :LPXFORM, :DWORD, :LPRGNDATA
+ExtFloodFill proto WINAPI :HDC, :SINT, :SINT, :COLORREF, :UINT
+FillRgn proto WINAPI :HDC, :HRGN, :HBRUSH
+FloodFill proto WINAPI :HDC, :SINT, :SINT, :COLORREF
+FrameRgn proto WINAPI :HDC, :HRGN, :HBRUSH, :SINT, :SINT
+GetROP2 proto WINAPI :HDC
+GetAspectRatioFilterEx proto WINAPI :HDC, :LPSIZE
+GetBkColor proto WINAPI :HDC
 
 if (_WIN32_WINNT GE 0x0500)
-GetDCBrushColor proto _CType :HDC
-GetDCPenColor proto _CType :HDC
+GetDCBrushColor proto WINAPI :HDC
+GetDCPenColor proto WINAPI :HDC
 endif
 
-GetBkMode proto _CType :HDC
-GetBitmapBits proto _CType :HBITMAP, :LONG, :LPVOID
-GetBitmapDimensionEx proto _CType :HBITMAP, :LPSIZE
-GetBoundsRect proto _CType :HDC, :LPRECT, :UINT
+GetBkMode proto WINAPI :HDC
+GetBitmapBits proto WINAPI :HBITMAP, :LONG, :LPVOID
+GetBitmapDimensionEx proto WINAPI :HBITMAP, :LPSIZE
+GetBoundsRect proto WINAPI :HDC, :LPRECT, :UINT
 
-GetBrushOrgEx proto _CType :HDC, :LPPOINT
+GetBrushOrgEx proto WINAPI :HDC, :LPPOINT
 
-GetCharWidthA proto _CType :HDC, :UINT, :UINT, :LPINT
-GetCharWidthW proto _CType :HDC, :UINT, :UINT, :LPINT
+GetCharWidthA proto WINAPI :HDC, :UINT, :UINT, :LPINT
+GetCharWidthW proto WINAPI :HDC, :UINT, :UINT, :LPINT
 ifdef _UNICODE
 GetCharWidth equ <GetCharWidthW>
 else
 GetCharWidth equ <GetCharWidthA>
-endif ;; NOT _UNICODE
-GetCharWidth32A proto _CType :HDC, :UINT, :UINT, :LPINT
-GetCharWidth32W proto _CType :HDC, :UINT, :UINT, :LPINT
+endif 
+GetCharWidth32A proto WINAPI :HDC, :UINT, :UINT, :LPINT
+GetCharWidth32W proto WINAPI :HDC, :UINT, :UINT, :LPINT
 ifdef _UNICODE
 GetCharWidth32 equ <GetCharWidth32W>
 else
 GetCharWidth32 equ <GetCharWidth32A>
-endif ;; NOT _UNICODE
-GetCharWidthFloatA proto _CType :HDC, :UINT, :UINT, :PFLOAT
-GetCharWidthFloatW proto _CType :HDC, :UINT, :UINT, :PFLOAT
+endif 
+GetCharWidthFloatA proto WINAPI :HDC, :UINT, :UINT, :PFLOAT
+GetCharWidthFloatW proto WINAPI :HDC, :UINT, :UINT, :PFLOAT
 ifdef _UNICODE
 GetCharWidthFloat equ <GetCharWidthFloatW>
 else
 GetCharWidthFloat equ <GetCharWidthFloatA>
-endif ;; NOT _UNICODE
-GetCharABCWidthsA proto _CType :HDC, :UINT, :UINT, :LPABC
-GetCharABCWidthsW proto _CType :HDC, :UINT, :UINT, :LPABC
+endif 
+GetCharABCWidthsA proto WINAPI :HDC, :UINT, :UINT, :LPABC
+GetCharABCWidthsW proto WINAPI :HDC, :UINT, :UINT, :LPABC
 ifdef _UNICODE
 GetCharABCWidths equ <GetCharABCWidthsW>
 else
 GetCharABCWidths equ <GetCharABCWidthsA>
-endif ;; NOT _UNICODE
-GetCharABCWidthsFloatA proto _CType :HDC, :UINT, :UINT, :LPABCFLOAT
-GetCharABCWidthsFloatW proto _CType :HDC, :UINT, :UINT, :LPABCFLOAT
+endif 
+GetCharABCWidthsFloatA proto WINAPI :HDC, :UINT, :UINT, :LPABCFLOAT
+GetCharABCWidthsFloatW proto WINAPI :HDC, :UINT, :UINT, :LPABCFLOAT
 ifdef _UNICODE
 GetCharABCWidthsFloat equ <GetCharABCWidthsFloatW>
 else
 GetCharABCWidthsFloat equ <GetCharABCWidthsFloatA>
-endif ;; NOT _UNICODE
-GetClipBox proto _CType :HDC, :LPRECT
-GetClipRgn proto _CType :HDC, :HRGN
-GetMetaRgn proto _CType :HDC, :HRGN
-GetCurrentObject proto _CType :HDC, :UINT
-GetCurrentPositionEx proto _CType :HDC, :LPPOINT
-GetDeviceCaps proto _CType :HDC, :SINT
-GetDIBits proto _CType :HDC, :HBITMAP, :UINT, :UINT, :LPVOID, :LPBITMAPINFO, :UINT
-GetFontData proto _CType :HDC, :DWORD, :DWORD, :LPVOID, :DWORD
-GetGlyphOutlineA proto _CType :HDC, :UINT, :UINT, :LPGLYPHMETRICS, :DWORD, :LPVOID, :LPMAT2
-GetGlyphOutlineW proto _CType :HDC, :UINT, :UINT, :LPGLYPHMETRICS, :DWORD, :LPVOID, :LPMAT2
+endif 
+GetClipBox proto WINAPI :HDC, :LPRECT
+GetClipRgn proto WINAPI :HDC, :HRGN
+GetMetaRgn proto WINAPI :HDC, :HRGN
+GetCurrentObject proto WINAPI :HDC, :UINT
+GetCurrentPositionEx proto WINAPI :HDC, :LPPOINT
+GetDeviceCaps proto WINAPI :HDC, :SINT
+GetDIBits proto WINAPI :HDC, :HBITMAP, :UINT, :UINT, :LPVOID, :LPBITMAPINFO, :UINT
+GetFontData proto WINAPI :HDC, :DWORD, :DWORD, :LPVOID, :DWORD
+GetGlyphOutlineA proto WINAPI :HDC, :UINT, :UINT, :LPGLYPHMETRICS, :DWORD, :LPVOID, :LPMAT2
+GetGlyphOutlineW proto WINAPI :HDC, :UINT, :UINT, :LPGLYPHMETRICS, :DWORD, :LPVOID, :LPMAT2
 ifdef _UNICODE
 GetGlyphOutline equ <GetGlyphOutlineW>
 else
 GetGlyphOutline equ <GetGlyphOutlineA>
-endif ;; NOT _UNICODE
-GetGraphicsMode proto _CType :HDC
-GetMapMode proto _CType :HDC
-GetMetaFileBitsEx proto _CType :HMETAFILE, :UINT, :LPVOID
-GetMetaFileA proto _CType :LPCSTR
-GetMetaFileW proto _CType :LPCWSTR
+endif 
+GetGraphicsMode proto WINAPI :HDC
+GetMapMode proto WINAPI :HDC
+GetMetaFileBitsEx proto WINAPI :HMETAFILE, :UINT, :LPVOID
+GetMetaFileA proto WINAPI :LPCSTR
+GetMetaFileW proto WINAPI :LPCWSTR
 ifdef _UNICODE
 GetMetaFile equ <GetMetaFileW>
 else
 GetMetaFile equ <GetMetaFileA>
-endif ;; NOT _UNICODE
-GetNearestColor proto _CType :HDC, :COLORREF
-GetNearestPaletteIndex proto _CType :HPALETTE, :COLORREF
-GetObjectType proto _CType :HGDIOBJ
+endif 
+GetNearestColor proto WINAPI :HDC, :COLORREF
+GetNearestPaletteIndex proto WINAPI :HPALETTE, :COLORREF
+GetObjectType proto WINAPI :HGDIOBJ
 
 ifndef NOTEXTMETRIC
 
-GetOutlineTextMetricsA proto _CType :HDC, :UINT, :LPOUTLINETEXTMETRICA
-GetOutlineTextMetricsW proto _CType :HDC, :UINT, :LPOUTLINETEXTMETRICW
+GetOutlineTextMetricsA proto WINAPI :HDC, :UINT, :LPOUTLINETEXTMETRICA
+GetOutlineTextMetricsW proto WINAPI :HDC, :UINT, :LPOUTLINETEXTMETRICW
 ifdef _UNICODE
 GetOutlineTextMetrics equ <GetOutlineTextMetricsW>
 else
 GetOutlineTextMetrics equ <GetOutlineTextMetricsA>
-endif ;; NOT _UNICODE
+endif 
 
-endif ;; NOTEXTMETRIC
+endif 
 
-GetPaletteEntries proto _CType :HPALETTE, :UINT, :UINT, :LPPALETTEENTRY
-GetPixel proto _CType :HDC, :SINT, :SINT
-GetPixelFormat proto _CType :HDC
-GetPolyFillMode proto _CType :HDC
-GetRasterizerCaps proto _CType :LPRASTERIZER_STATUS, :UINT
-GetRegionData proto _CType :HRGN, :DWORD, :LPRGNDATA
-GetRgnBox proto _CType :HRGN, :LPRECT
-GetStockObject proto _CType :SINT
-GetStretchBltMode proto _CType :HDC
-GetSystemPaletteEntries proto _CType :HDC, :UINT, :UINT, :LPPALETTEENTRY
-GetSystemPaletteUse proto _CType :HDC
-GetTextCharacterExtra proto _CType :HDC
-GetTextAlign proto _CType :HDC
-GetTextColor proto _CType :HDC
+GetPaletteEntries proto WINAPI :HPALETTE, :UINT, :UINT, :LPPALETTEENTRY
+GetPixel proto WINAPI :HDC, :SINT, :SINT
+GetPixelFormat proto WINAPI :HDC
+GetPolyFillMode proto WINAPI :HDC
+GetRasterizerCaps proto WINAPI :LPRASTERIZER_STATUS, :UINT
+GetRegionData proto WINAPI :HRGN, :DWORD, :LPRGNDATA
+GetRgnBox proto WINAPI :HRGN, :LPRECT
+GetStockObject proto WINAPI :SINT
+GetStretchBltMode proto WINAPI :HDC
+GetSystemPaletteEntries proto WINAPI :HDC, :UINT, :UINT, :LPPALETTEENTRY
+GetSystemPaletteUse proto WINAPI :HDC
+GetTextCharacterExtra proto WINAPI :HDC
+GetTextAlign proto WINAPI :HDC
+GetTextColor proto WINAPI :HDC
 
-GetTextExtentPointA proto _CType
-GetTextExtentPointW proto _CType
+GetTextExtentPointA proto WINAPI
+GetTextExtentPointW proto WINAPI
 ifdef _UNICODE
 GetTextExtentPoint equ <GetTextExtentPointW>
 else
 GetTextExtentPoint equ <GetTextExtentPointA>
-endif ;; NOT _UNICODE
+endif 
 
-GetTextExtentPoint32A proto _CType
-GetTextExtentPoint32W proto _CType
+GetTextExtentPoint32A proto WINAPI
+GetTextExtentPoint32W proto WINAPI
 ifdef _UNICODE
 GetTextExtentPoint32 equ <GetTextExtentPoint32W>
 else
 GetTextExtentPoint32 equ <GetTextExtentPoint32A>
-endif ;; NOT _UNICODE
+endif 
 
-GetTextExtentExPointA proto _CType
-GetTextExtentExPointW proto _CType
+GetTextExtentExPointA proto WINAPI
+GetTextExtentExPointW proto WINAPI
 ifdef _UNICODE
 GetTextExtentExPoint equ <GetTextExtentExPointW>
 else
 GetTextExtentExPoint equ <GetTextExtentExPointA>
-endif ;; NOT _UNICODE
+endif 
 if(WINVER GE 0x0400)
-GetTextCharset proto _CType :HDC
-GetTextCharsetInfo proto _CType :HDC, :LPFONTSIGNATURE, :DWORD
-TranslateCharsetInfo proto _CType :LPDWORD, :LPCHARSETINFO, :DWORD
-GetFontLanguageInfo proto _CType :HDC
-GetCharacterPlacementA proto _CType :HDC, :LPCSTR, :SINT, :SINT, :LPGCP_RESULTSA, :DWORD
-GetCharacterPlacementW proto _CType :HDC, :LPCWSTR, :SINT, :SINT, :LPGCP_RESULTSW, :DWORD
+GetTextCharset proto WINAPI :HDC
+GetTextCharsetInfo proto WINAPI :HDC, :LPFONTSIGNATURE, :DWORD
+TranslateCharsetInfo proto WINAPI :LPDWORD, :LPCHARSETINFO, :DWORD
+GetFontLanguageInfo proto WINAPI :HDC
+GetCharacterPlacementA proto WINAPI :HDC, :LPCSTR, :SINT, :SINT, :LPGCP_RESULTSA, :DWORD
+GetCharacterPlacementW proto WINAPI :HDC, :LPCWSTR, :SINT, :SINT, :LPGCP_RESULTSW, :DWORD
 ifdef _UNICODE
 GetCharacterPlacement equ <GetCharacterPlacementW>
 else
 GetCharacterPlacement equ <GetCharacterPlacementA>
-endif ;; NOT _UNICODE
-endif ;; WINVER GE 0x0400
+endif 
+endif 
 
 if (_WIN32_WINNT GE 0x0500)
 
@@ -3100,26 +2944,24 @@ GLYPHSET		ENDS
 PGLYPHSET		typedef ptr GLYPHSET
 LPGLYPHSET		typedef ptr GLYPHSET
 
-;; flAccel flags for the GLYPHSET structure above
 
 GS_8BIT_INDICES		equ 0x00000001
 
-;; flags for GetGlyphIndices
 
 GGI_MARK_NONEXISTING_GLYPHS	equ 0X0001
 
-GetFontUnicodeRanges proto _CType :HDC, :LPGLYPHSET
-GetGlyphIndicesA proto _CType :HDC, :LPCSTR, :SINT, :LPWORD, :DWORD
-GetGlyphIndicesW proto _CType :HDC, :LPCWSTR, :SINT, :LPWORD, :DWORD
+GetFontUnicodeRanges proto WINAPI :HDC, :LPGLYPHSET
+GetGlyphIndicesA proto WINAPI :HDC, :LPCSTR, :SINT, :LPWORD, :DWORD
+GetGlyphIndicesW proto WINAPI :HDC, :LPCWSTR, :SINT, :LPWORD, :DWORD
 ifdef _UNICODE
 GetGlyphIndices equ <GetGlyphIndicesW>
 else
 GetGlyphIndices equ <GetGlyphIndicesA>
-endif ;; NOT _UNICODE
-GetTextExtentPointI proto _CType :HDC, :LPWORD, :SINT, :LPSIZE
-GetTextExtentExPointI proto _CType :HDC, :LPWORD, :SINT, :SINT, :LPINT, :LPINT, :LPSIZE
-GetCharWidthI proto _CType :HDC, :UINT, :UINT, :LPWORD, :LPINT
-GetCharABCWidthsI proto _CType :HDC, :UINT , :UINT , :LPWORD, :LPABC
+endif 
+GetTextExtentPointI proto WINAPI :HDC, :LPWORD, :SINT, :LPSIZE
+GetTextExtentExPointI proto WINAPI :HDC, :LPWORD, :SINT, :SINT, :LPINT, :LPINT, :LPSIZE
+GetCharWidthI proto WINAPI :HDC, :UINT, :UINT, :LPWORD, :LPINT
+GetCharABCWidthsI proto WINAPI :HDC, :UINT , :UINT , :LPWORD, :LPABC
 
 STAMP_DESIGNVECTOR	equ (0x8000000 + 'd' + ('v' SHL 8))
 STAMP_AXESLIST		equ (0x8000000 + 'a' + ('l' SHL 8))
@@ -3133,29 +2975,26 @@ DESIGNVECTOR		ENDS
 PDESIGNVECTOR		typedef ptr DESIGNVECTOR
 LPDESIGNVECTOR		typedef ptr DESIGNVECTOR
 
-AddFontResourceExA proto _CType :LPCSTR, :DWORD, :LPDESIGNVECTOR
-AddFontResourceExW proto _CType :LPCWSTR, :DWORD, :LPDESIGNVECTOR
+AddFontResourceExA proto WINAPI :LPCSTR, :DWORD, :LPDESIGNVECTOR
+AddFontResourceExW proto WINAPI :LPCWSTR, :DWORD, :LPDESIGNVECTOR
 ifdef _UNICODE
 AddFontResourceEx equ <AddFontResourceExW>
 else
 AddFontResourceEx equ <AddFontResourceExA>
-endif ;; NOT _UNICODE
-RemoveFontResourceExA proto _CType :LPCSTR, :DWORD, :LPDESIGNVECTOR
-RemoveFontResourceExW proto _CType :LPCWSTR, :DWORD, :LPDESIGNVECTOR
+endif 
+RemoveFontResourceExA proto WINAPI :LPCSTR, :DWORD, :LPDESIGNVECTOR
+RemoveFontResourceExW proto WINAPI :LPCWSTR, :DWORD, :LPDESIGNVECTOR
 ifdef _UNICODE
 RemoveFontResourceEx equ <RemoveFontResourceExW>
 else
 RemoveFontResourceEx equ <RemoveFontResourceExA>
-endif ;; NOT _UNICODE
-AddFontMemResourceEx proto _CType :PVOID, :DWORD, :LPDESIGNVECTOR, :PVOID
-RemoveFontMemResourceEx proto _CType :HANDLE
+endif 
+AddFontMemResourceEx proto WINAPI :PVOID, :DWORD, :LPDESIGNVECTOR, :PVOID
+RemoveFontMemResourceEx proto WINAPI :HANDLE
 
 FR_PRIVATE		equ 0x10
 FR_NOT_ENUM		equ 0x20
 
-;; The actual size of the DESIGNVECTOR and ENUMLOGFONTEXDV structures
-;; is determined by dvNumAxes,
-;; MM_MAX_NUMAXES only detemines the maximal size allowed
 
 MM_MAX_AXES_NAMELEN	equ 16
 
@@ -3181,7 +3020,7 @@ else
 AXISINFO		typedef AXISINFOA
 PAXISINFO		typedef PAXISINFOA
 LPAXISINFO		typedef LPAXISINFOA
-endif ;; _UNICODE
+endif 
 
 AXESLISTA		STRUC
 axlReserved		dd ?
@@ -3205,11 +3044,8 @@ else
 AXESLIST		typedef AXESLISTA
 PAXESLIST		typedef PAXESLISTA
 LPAXESLIST		typedef LPAXESLISTA
-endif ;; _UNICODE
+endif 
 
-;; The actual size of the AXESLIST and ENUMTEXTMETRIC structure is
-;; determined by axlNumAxes,
-;; MM_MAX_NUMAXES only detemines the maximal size allowed
 
 ENUMLOGFONTEXDVA	STRUC
 elfEnumLogfontEx	ENUMLOGFONTEXA <>
@@ -3231,16 +3067,16 @@ else
 ENUMLOGFONTEXDV		typedef ENUMLOGFONTEXDVA
 PENUMLOGFONTEXDV	typedef PENUMLOGFONTEXDVA
 LPENUMLOGFONTEXDV	typedef LPENUMLOGFONTEXDVA
-endif ;; _UNICODE
+endif 
 
 
-CreateFontIndirectExA proto _CType :LPENUMLOGFONTEXDVA
-CreateFontIndirectExW proto _CType :LPENUMLOGFONTEXDVW
+CreateFontIndirectExA proto WINAPI :LPENUMLOGFONTEXDVA
+CreateFontIndirectExW proto WINAPI :LPENUMLOGFONTEXDVW
 ifdef _UNICODE
 CreateFontIndirectEx equ <CreateFontIndirectExW>
 else
 CreateFontIndirectEx equ <CreateFontIndirectExA>
-endif ;; NOT _UNICODE
+endif 
 
 
 ifndef NOTEXTMETRIC
@@ -3264,107 +3100,104 @@ else
 ENUMTEXTMETRIC		typedef ENUMTEXTMETRICA
 PENUMTEXTMETRIC		typedef PENUMTEXTMETRICA
 LPENUMTEXTMETRIC	typedef LPENUMTEXTMETRICA
-endif ;; _UNICODE
-endif ;; NOTEXTMETRIC
+endif 
+endif 
 
-endif ;; (_WIN32_WINNT GE 0x0500)
+endif 
 
 
-GetViewportExtEx proto _CType :HDC, :LPSIZE
-GetViewportOrgEx proto _CType :HDC, :LPPOINT
-GetWindowExtEx proto _CType :HDC, :LPSIZE
-GetWindowOrgEx proto _CType :HDC, :LPPOINT
+GetViewportExtEx proto WINAPI :HDC, :LPSIZE
+GetViewportOrgEx proto WINAPI :HDC, :LPPOINT
+GetWindowExtEx proto WINAPI :HDC, :LPSIZE
+GetWindowOrgEx proto WINAPI :HDC, :LPPOINT
 
-IntersectClipRect proto _CType :HDC, :SINT, :SINT, :SINT, :SINT
-InvertRgn proto _CType :HDC, :HRGN
-LineDDA proto _CType :SINT, :SINT, :SINT, :SINT, :LINEDDAPROC, :LPARAM
-LineTo proto _CType :HDC, :SINT, :SINT
+IntersectClipRect proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT
+InvertRgn proto WINAPI :HDC, :HRGN
+LineDDA proto WINAPI :SINT, :SINT, :SINT, :SINT, :LINEDDAPROC, :LPARAM
+LineTo proto WINAPI :HDC, :SINT, :SINT
 
-MaskBlt proto _CType :HDC, :SINT, :SINT, :SINT, :SINT,
+MaskBlt proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT,
 	:HDC, :SINT, :SINT, :HBITMAP, :SINT, :SINT, :DWORD
-PlgBlt proto _CType :HDC, :LPPOINT, :HDC, :SINT, :SINT, :SINT,
+PlgBlt proto WINAPI :HDC, :LPPOINT, :HDC, :SINT, :SINT, :SINT,
 	:SINT, :HBITMAP, :SINT, :SINT
-OffsetClipRgn proto _CType :HDC, :SINT, :SINT
-OffsetRgn proto _CType :HRGN, :SINT, :SINT
-PatBlt proto _CType :HDC, :SINT, :SINT, :SINT, :SINT, :DWORD
-Pie proto _CType :HDC, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT
-PlayMetaFile proto _CType :HDC, :HMETAFILE
-PaintRgn proto _CType :HDC, :HRGN
-PolyPolygon proto _CType :HDC, :LPPOINT, :LPINT, :SINT
-PtInRegion proto _CType :HRGN, :SINT, :SINT
-PtVisible proto _CType :HDC, :SINT, :SINT
-RectInRegion proto _CType :HRGN, :LPRECT
-RectVisible proto _CType :HDC, :LPRECT
-Rectangle proto _CType :HDC, :SINT, :SINT, :SINT, :SINT
-RestoreDC proto _CType :HDC, :SINT
-ResetDCA proto _CType :HDC, :LPDEVMODEA
-ResetDCW proto _CType :HDC, :LPDEVMODEW
+OffsetClipRgn proto WINAPI :HDC, :SINT, :SINT
+OffsetRgn proto WINAPI :HRGN, :SINT, :SINT
+PatBlt proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT, :DWORD
+Pie proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT
+PlayMetaFile proto WINAPI :HDC, :HMETAFILE
+PaintRgn proto WINAPI :HDC, :HRGN
+PolyPolygon proto WINAPI :HDC, :LPPOINT, :LPINT, :SINT
+PtInRegion proto WINAPI :HRGN, :SINT, :SINT
+PtVisible proto WINAPI :HDC, :SINT, :SINT
+RectInRegion proto WINAPI :HRGN, :LPRECT
+RectVisible proto WINAPI :HDC, :LPRECT
+Rectangle proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT
+RestoreDC proto WINAPI :HDC, :SINT
+ResetDCA proto WINAPI :HDC, :LPDEVMODEA
+ResetDCW proto WINAPI :HDC, :LPDEVMODEW
 ifdef _UNICODE
 ResetDC equ <ResetDCW>
 else
 ResetDC equ <ResetDCA>
-endif ;; NOT _UNICODE
-RealizePalette proto _CType :HDC
-RemoveFontResourceA proto _CType :LPCSTR
-RemoveFontResourceW proto _CType :LPCWSTR
+endif 
+RealizePalette proto WINAPI :HDC
+RemoveFontResourceA proto WINAPI :LPCSTR
+RemoveFontResourceW proto WINAPI :LPCWSTR
 ifdef _UNICODE
 RemoveFontResource equ <RemoveFontResourceW>
 else
 RemoveFontResource equ <RemoveFontResourceA>
-endif ;; NOT _UNICODE
-RoundRect proto _CType :HDC, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT
-ResizePalette proto _CType :HPALETTE, :UINT
+endif 
+RoundRect proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT
+ResizePalette proto WINAPI :HPALETTE, :UINT
 
-SaveDC proto _CType :HDC
-SelectClipRgn proto _CType :HDC, :HRGN
-ExtSelectClipRgn proto _CType :HDC, :HRGN, :SINT
-SetMetaRgn proto _CType :HDC
-SelectObject proto _CType :HDC, :HGDIOBJ
-SelectPalette proto _CType :HDC, :HPALETTE, :BOOL
-SetBkColor proto _CType :HDC, :COLORREF
+SaveDC proto WINAPI :HDC
+SelectClipRgn proto WINAPI :HDC, :HRGN
+ExtSelectClipRgn proto WINAPI :HDC, :HRGN, :SINT
+SetMetaRgn proto WINAPI :HDC
+SelectObject proto WINAPI :HDC, :HGDIOBJ
+SelectPalette proto WINAPI :HDC, :HPALETTE, :BOOL
+SetBkColor proto WINAPI :HDC, :COLORREF
 
 if (_WIN32_WINNT GE 0x0500)
-SetDCBrushColor proto _CType :HDC, :COLORREF
-SetDCPenColor proto _CType :HDC, :COLORREF
+SetDCBrushColor proto WINAPI :HDC, :COLORREF
+SetDCPenColor proto WINAPI :HDC, :COLORREF
 endif
 
-SetBkMode proto _CType :HDC, :SINT
-SetBitmapBits proto _CType :HBITMAP, :DWORD, :LPVOID
+SetBkMode proto WINAPI :HDC, :SINT
+SetBitmapBits proto WINAPI :HBITMAP, :DWORD, :LPVOID
 
-SetBoundsRect proto _CType :HDC, :LPRECT, :UINT
-SetDIBits proto _CType :HDC, :HBITMAP, :UINT, :UINT, :LPVOID, :LPBITMAPINFO, :UINT
-SetDIBitsToDevice proto _CType :HDC, :SINT, :SINT, :DWORD, :DWORD, :SINT,
+SetBoundsRect proto WINAPI :HDC, :LPRECT, :UINT
+SetDIBits proto WINAPI :HDC, :HBITMAP, :UINT, :UINT, :LPVOID, :LPBITMAPINFO, :UINT
+SetDIBitsToDevice proto WINAPI :HDC, :SINT, :SINT, :DWORD, :DWORD, :SINT,
 	:SINT, :UINT, :UINT, :LPVOID, :LPBITMAPINFO, :UINT
 
 
-SetMapperFlags proto _CType :HDC, :DWORD
-SetGraphicsMode proto _CType :HDC, :SINT
-SetMapMode proto _CType :HDC, :SINT
-SetMetaFileBitsEx proto _CType :UINT, :LPBYTE
-SetPaletteEntries proto _CType :HPALETTE, :UINT, :UINT, :LPPALETTEENTRY
-SetPixel proto _CType :HDC, :SINT, :SINT, :COLORREF
-SetPixelV proto _CType :HDC, :SINT, :SINT, :COLORREF
-SetPixelFormat proto _CType :HDC, :SINT, :LPPIXELFORMATDESCRIPTOR
-SetPolyFillMode proto _CType :HDC, :SINT
-StretchBlt proto _CType :HDC, :SINT, :SINT, :SINT, :SINT, :HDC, :SINT, :SINT, :SINT, :SINT, :DWORD
-SetRectRgn proto _CType :HRGN, :SINT, :SINT, :SINT, :SINT
-StretchDIBits proto _CType :HDC, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :PVOID,
+SetMapperFlags proto WINAPI :HDC, :DWORD
+SetGraphicsMode proto WINAPI :HDC, :SINT
+SetMapMode proto WINAPI :HDC, :SINT
+SetMetaFileBitsEx proto WINAPI :UINT, :LPBYTE
+SetPaletteEntries proto WINAPI :HPALETTE, :UINT, :UINT, :LPPALETTEENTRY
+SetPixel proto WINAPI :HDC, :SINT, :SINT, :COLORREF
+SetPixelV proto WINAPI :HDC, :SINT, :SINT, :COLORREF
+SetPixelFormat proto WINAPI :HDC, :SINT, :LPPIXELFORMATDESCRIPTOR
+SetPolyFillMode proto WINAPI :HDC, :SINT
+StretchBlt proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT, :HDC, :SINT, :SINT, :SINT, :SINT, :DWORD
+SetRectRgn proto WINAPI :HRGN, :SINT, :SINT, :SINT, :SINT
+StretchDIBits proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :PVOID,
 	:LPBITMAPINFO, :UINT, :DWORD
-SetROP2 proto _CType :HDC, :SINT
-SetStretchBltMode proto _CType :HDC, :SINT
-SetSystemPaletteUse proto _CType :HDC, :UINT
-SetTextCharacterExtra proto _CType :HDC, :SINT
-SetTextColor proto _CType :HDC,:COLORREF
-SetTextAlign proto _CType :HDC, :UINT
-SetTextJustification proto _CType :HDC, :SINT, :SINT
-UpdateColors proto _CType :HDC
+SetROP2 proto WINAPI :HDC, :SINT
+SetStretchBltMode proto WINAPI :HDC, :SINT
+SetSystemPaletteUse proto WINAPI :HDC, :UINT
+SetTextCharacterExtra proto WINAPI :HDC, :SINT
+SetTextColor proto WINAPI :HDC,:COLORREF
+SetTextAlign proto WINAPI :HDC, :UINT
+SetTextJustification proto WINAPI :HDC, :SINT, :SINT
+UpdateColors proto WINAPI :HDC
 
 
 if (WINVER GE 0x0400)
 
-;;
-;; image blt
-;;
 
 COLOR16			typedef USHORT
 
@@ -3403,112 +3236,101 @@ BLENDFUNCTION		ENDS
 PBLENDFUNCTION		typedef ptr BLENDFUNCTION
 
 
-;;
-;; currentlly defined blend function
-;;
 
 AC_SRC_OVER		equ 0x00
 
-;;
-;; alpha format flags
-;;
 
 AC_SRC_NO_PREMULT_ALPHA equ 0x01
 AC_SRC_NO_ALPHA		equ 0x02
 AC_DST_NO_PREMULT_ALPHA equ 0x10
 AC_DST_NO_ALPHA		equ 0x20
 
-AlphaBlend proto _CType :HDC, :SINT, :SINT, :SINT, :SINT, :HDC, :SINT, :SINT, :SINT, :SINT, :BLENDFUNCTION
-AlphaDIBBlend proto _CType :HDC, :SINT, :SINT, :SINT, :SINT, :LPVOID,
+AlphaBlend proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT, :HDC, :SINT, :SINT, :SINT, :SINT, :BLENDFUNCTION
+AlphaDIBBlend proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT, :LPVOID,
 	:ptr BITMAPINFO, :UINT, :SINT, :SINT, :SINT, :SINT, :BLENDFUNCTION
-TransparentBlt proto _CType :HDC, :SINT, :SINT, :SINT, :SINT, :HDC, :SINT, :SINT, :SINT, :SINT, :UINT
-TransparentDIBits proto _CType :HDC, :SINT, :SINT, :SINT, :SINT, :LPVOID,
+TransparentBlt proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT, :HDC, :SINT, :SINT, :SINT, :SINT, :UINT
+TransparentDIBits proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT, :LPVOID,
 	:ptr BITMAPINFO, :UINT, :SINT, :SINT, :SINT, :SINT, :SINT, :UINT
 
-;;
-;; gradient drawing modes
-;;
 
 GRADIENT_FILL_RECT_H	equ 0x00000000
 GRADIENT_FILL_RECT_V	equ 0x00000001
 GRADIENT_FILL_TRIANGLE	equ 0x00000002
 GRADIENT_FILL_OP_FLAG	equ 0x000000ff
 
-GradientFill proto _CType :HDC, :PTRIVERTEX, :ULONG, :PVOID, :ULONG, :ULONG
+GradientFill proto WINAPI :HDC, :PTRIVERTEX, :ULONG, :PVOID, :ULONG, :ULONG
 
 endif
 
 
 ifndef NOMETAFILE
 
-PlayMetaFileRecord proto _CType :HDC, :LPHANDLETABLE, :LPMETARECORD, :UINT
+PlayMetaFileRecord proto WINAPI :HDC, :LPHANDLETABLE, :LPMETARECORD, :UINT
 
 MFENUMPROC_T typedef proto :HDC, :LPHANDLETABLE, :LPMETARECORD, :SINT, :LPARAM
 MFENUMPROC   typedef ptr MFENUMPROC_T
-EnumMetaFile proto _CType :HDC, :HMETAFILE, :MFENUMPROC, :LPARAM
+EnumMetaFile proto WINAPI :HDC, :HMETAFILE, :MFENUMPROC, :LPARAM
 
 ENHMFENUMPROC_T typedef proto :HDC, :LPHANDLETABLE, :LPENHMETARECORD, :SINT, :LPARAM
 ENHMFENUMPROC	typedef ptr ENHMFENUMPROC
 
-;; Enhanced Metafile Function Declarations
 
-CloseEnhMetaFile proto _CType :HDC
-CopyEnhMetaFileA proto _CType :HENHMETAFILE, :LPCSTR
-CopyEnhMetaFileW proto _CType :HENHMETAFILE, :LPCWSTR
+CloseEnhMetaFile proto WINAPI :HDC
+CopyEnhMetaFileA proto WINAPI :HENHMETAFILE, :LPCSTR
+CopyEnhMetaFileW proto WINAPI :HENHMETAFILE, :LPCWSTR
 ifdef _UNICODE
 CopyEnhMetaFile equ <CopyEnhMetaFileW>
 else
 CopyEnhMetaFile equ <CopyEnhMetaFileA>
-endif ;; NOT _UNICODE
-CreateEnhMetaFileA proto _CType :HDC, :LPCSTR, :LPRECT, :LPCSTR
-CreateEnhMetaFileW proto _CType :HDC, :LPCWSTR, :LPRECT, :LPCWSTR
+endif 
+CreateEnhMetaFileA proto WINAPI :HDC, :LPCSTR, :LPRECT, :LPCSTR
+CreateEnhMetaFileW proto WINAPI :HDC, :LPCWSTR, :LPRECT, :LPCWSTR
 ifdef _UNICODE
 CreateEnhMetaFile equ <CreateEnhMetaFileW>
 else
 CreateEnhMetaFile equ <CreateEnhMetaFileA>
-endif ;; NOT _UNICODE
-DeleteEnhMetaFile proto _CType :HENHMETAFILE
-EnumEnhMetaFile proto _CType :HDC, :HENHMETAFILE, :ENHMFENUMPROC, :LPVOID, :LPRECT
-GetEnhMetaFileA proto _CType :LPCSTR
-GetEnhMetaFileW proto _CType :LPCWSTR
+endif 
+DeleteEnhMetaFile proto WINAPI :HENHMETAFILE
+EnumEnhMetaFile proto WINAPI :HDC, :HENHMETAFILE, :ENHMFENUMPROC, :LPVOID, :LPRECT
+GetEnhMetaFileA proto WINAPI :LPCSTR
+GetEnhMetaFileW proto WINAPI :LPCWSTR
 ifdef _UNICODE
 GetEnhMetaFile equ <GetEnhMetaFileW>
 else
 GetEnhMetaFile equ <GetEnhMetaFileA>
-endif ;; NOT _UNICODE
-GetEnhMetaFileBits proto _CType :HENHMETAFILE, :UINT, :LPBYTE
-GetEnhMetaFileDescriptionA proto _CType :HENHMETAFILE, :UINT, :LPSTR
-GetEnhMetaFileDescriptionW proto _CType :HENHMETAFILE, :UINT, :LPWSTR
+endif 
+GetEnhMetaFileBits proto WINAPI :HENHMETAFILE, :UINT, :LPBYTE
+GetEnhMetaFileDescriptionA proto WINAPI :HENHMETAFILE, :UINT, :LPSTR
+GetEnhMetaFileDescriptionW proto WINAPI :HENHMETAFILE, :UINT, :LPWSTR
 ifdef _UNICODE
 GetEnhMetaFileDescription equ <GetEnhMetaFileDescriptionW>
 else
 GetEnhMetaFileDescription equ <GetEnhMetaFileDescriptionA>
-endif ;; NOT _UNICODE
-GetEnhMetaFileHeader proto _CType :HENHMETAFILE, :UINT, :LPENHMETAHEADER
-GetEnhMetaFilePaletteEntries proto _CType :HENHMETAFILE, :UINT, :LPPALETTEENTRY
-GetEnhMetaFilePixelFormat proto _CType :HENHMETAFILE, :UINT, :LPPIXELFORMATDESCRIPTOR
-GetWinMetaFileBits proto _CType :HENHMETAFILE, :UINT, :LPBYTE, :SINT, :HDC
-PlayEnhMetaFile proto _CType :HDC, :HENHMETAFILE, :LPRECT
-PlayEnhMetaFileRecord proto _CType :HDC, :LPHANDLETABLE, :LPENHMETARECORD, :UINT
-SetEnhMetaFileBits proto _CType :UINT, :LPBYTE
-SetWinMetaFileBits proto _CType :UINT, :LPBYTE, :HDC, :LPMETAFILEPICT
-GdiComment proto _CType :HDC, :UINT, :LPBYTE
+endif 
+GetEnhMetaFileHeader proto WINAPI :HENHMETAFILE, :UINT, :LPENHMETAHEADER
+GetEnhMetaFilePaletteEntries proto WINAPI :HENHMETAFILE, :UINT, :LPPALETTEENTRY
+GetEnhMetaFilePixelFormat proto WINAPI :HENHMETAFILE, :UINT, :LPPIXELFORMATDESCRIPTOR
+GetWinMetaFileBits proto WINAPI :HENHMETAFILE, :UINT, :LPBYTE, :SINT, :HDC
+PlayEnhMetaFile proto WINAPI :HDC, :HENHMETAFILE, :LPRECT
+PlayEnhMetaFileRecord proto WINAPI :HDC, :LPHANDLETABLE, :LPENHMETARECORD, :UINT
+SetEnhMetaFileBits proto WINAPI :UINT, :LPBYTE
+SetWinMetaFileBits proto WINAPI :UINT, :LPBYTE, :HDC, :LPMETAFILEPICT
+GdiComment proto WINAPI :HDC, :UINT, :LPBYTE
 
-endif	;; NOMETAFILE
+endif	
 
 ifndef NOTEXTMETRIC
 
-GetTextMetricsA proto _CType :HDC, :LPTEXTMETRICA
-GetTextMetricsW proto _CType :HDC, :LPTEXTMETRICW
+GetTextMetricsA proto WINAPI :HDC, :LPTEXTMETRICA
+GetTextMetricsW proto WINAPI :HDC, :LPTEXTMETRICW
 ifdef _UNICODE
 GetTextMetrics	equ <GetTextMetricsW>
 else
 GetTextMetrics	equ <GetTextMetricsA>
-endif ;; NOT _UNICODE
+endif 
 
 endif
 
-;; new GDI
 
 DIBSECTION		STRUC
 dsBm			BITMAP <>
@@ -3520,21 +3342,19 @@ DIBSECTION		ENDS
 LPDIBSECTION		typedef ptr DIBSECTION
 PDIBSECTION		typedef ptr DIBSECTION
 
-AngleArc proto _CType :HDC, :SINT, :SINT, :DWORD, :FLOAT, :FLOAT
-PolyPolyline proto _CType :HDC, :LPPOINT, :LPDWORD, :DWORD
-GetWorldTransform proto _CType :HDC, :LPXFORM
-SetWorldTransform proto _CType :HDC, :LPXFORM
-ModifyWorldTransform proto _CType :HDC, :LPXFORM, :DWORD
-CombineTransform proto _CType :LPXFORM, :LPXFORM, :LPXFORM
-CreateDIBSection proto _CType :HDC, :LPBITMAPINFO, :UINT, :PVOID, :HANDLE, :DWORD
-GetDIBColorTable proto _CType :HDC, :UINT, :UINT, :RGBQUAD
-SetDIBColorTable proto _CType :HDC, :UINT, :UINT, :LPRGBQUAD
+AngleArc proto WINAPI :HDC, :SINT, :SINT, :DWORD, :FLOAT, :FLOAT
+PolyPolyline proto WINAPI :HDC, :LPPOINT, :LPDWORD, :DWORD
+GetWorldTransform proto WINAPI :HDC, :LPXFORM
+SetWorldTransform proto WINAPI :HDC, :LPXFORM
+ModifyWorldTransform proto WINAPI :HDC, :LPXFORM, :DWORD
+CombineTransform proto WINAPI :LPXFORM, :LPXFORM, :LPXFORM
+CreateDIBSection proto WINAPI :HDC, :LPBITMAPINFO, :UINT, :PVOID, :HANDLE, :DWORD
+GetDIBColorTable proto WINAPI :HDC, :UINT, :UINT, :RGBQUAD
+SetDIBColorTable proto WINAPI :HDC, :UINT, :UINT, :LPRGBQUAD
 
-;; Flags value for COLORADJUSTMENT
 CA_NEGATIVE		equ 0x0001
 CA_LOG_FILTER		equ 0x0002
 
-;; IlluminantIndex values
 ILLUMINANT_DEVICE_DEFAULT equ 0
 ILLUMINANT_A		equ 1
 ILLUMINANT_B		equ 2
@@ -3551,17 +3371,14 @@ ILLUMINANT_DAYLIGHT	equ ILLUMINANT_C
 ILLUMINANT_FLUORESCENT	equ ILLUMINANT_F2
 ILLUMINANT_NTSC		equ ILLUMINANT_C
 
-;; Min and max for RedGamma, GreenGamma, BlueGamma
 RGB_GAMMA_MIN		equ 02500
 RGB_GAMMA_MAX		equ 65000
 
-;; Min and max for ReferenceBlack and ReferenceWhite
 REFERENCE_WHITE_MIN	equ 6000
 REFERENCE_WHITE_MAX	equ 10000
 REFERENCE_BLACK_MIN	equ 0
 REFERENCE_BLACK_MAX	equ 4000
 
-;; Min and max for Contrast, Brightness, Colorfulness, RedGreenTint
 COLOR_ADJ_MIN		equ (-100)
 COLOR_ADJ_MAX		equ 100
 
@@ -3582,12 +3399,12 @@ COLORADJUSTMENT		ENDS
 PCOLORADJUSTMENT	typedef ptr COLORADJUSTMENT
 LPCOLORADJUSTMENT	typedef ptr COLORADJUSTMENT
 
-SetColorAdjustment proto _CType :HDC, :LPCOLORADJUSTMENT
-GetColorAdjustment proto _CType :HDC, :LPCOLORADJUSTMENT
-CreateHalftonePalette proto _CType :HDC
+SetColorAdjustment proto WINAPI :HDC, :LPCOLORADJUSTMENT
+GetColorAdjustment proto WINAPI :HDC, :LPCOLORADJUSTMENT
+CreateHalftonePalette proto WINAPI :HDC
 
 ifdef STRICT
-ABORTPROC_T	typedef proto _CType :HDC, :SINT
+ABORTPROC_T	typedef proto WINAPI :HDC, :SINT
 ABORTPROC	typedef ptr ABORTPROC_T
 else
 ABORTPROC	typedef FARPROC
@@ -3600,7 +3417,7 @@ lpszOutput		LPCSTR ?
 if (WINVER GE 0x0400)
 lpszDatatype		LPCSTR ?
 fwType			dd ?
-endif ;; WINVER
+endif 
 DOCINFOA		ENDS
 LPDOCINFOA		typedef ptr DOCINFOA
 DOCINFOW		STRUC
@@ -3610,7 +3427,7 @@ lpszOutput		LPCWSTR ?
 if (WINVER GE 0x0400)
 lpszDatatype		LPCWSTR ?
 fwType			dd ?
-endif ;; WINVER
+endif 
 DOCINFOW		ENDS
 LPDOCINFOW		typedef ptr DOCINFOW
 ifdef _UNICODE
@@ -3619,105 +3436,105 @@ LPDOCINFO		typedef LPDOCINFOW
 else
 DOCINFO			typedef DOCINFOA
 LPDOCINFO		typedef LPDOCINFOA
-endif ;; _UNICODE
+endif 
 
 if(WINVER GE 0x0400)
 DI_APPBANDING		equ 0x00000001
 DI_ROPS_READ_DESTINATION equ 0x00000002
-endif ;; WINVER GE 0x0400
+endif 
 
-StartDocA proto _CType :HDC, :LPDOCINFOA
-StartDocW proto _CType :HDC, :LPDOCINFOW
+StartDocA proto WINAPI :HDC, :LPDOCINFOA
+StartDocW proto WINAPI :HDC, :LPDOCINFOW
 ifdef _UNICODE
 StartDoc equ <StartDocW>
 else
 StartDoc equ <StartDocA>
-endif ;; NOT _UNICODE
-EndDoc proto _CType :HDC
-StartPage proto _CType :HDC
-EndPage proto _CType :HDC
-AbortDoc proto _CType :HDC
-SetAbortProc proto _CType :HDC, :ABORTPROC
+endif 
+EndDoc proto WINAPI :HDC
+StartPage proto WINAPI :HDC
+EndPage proto WINAPI :HDC
+AbortDoc proto WINAPI :HDC
+SetAbortProc proto WINAPI :HDC, :ABORTPROC
 
-AbortPath proto _CType :HDC
-ArcTo proto _CType :HDC, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT
-BeginPath proto _CType :HDC
-CloseFigure proto _CType :HDC
-EndPath proto _CType :HDC
-FillPath proto _CType :HDC
-FlattenPath proto _CType :HDC
-GetPath proto _CType :HDC, :LPPOINT, :LPBYTE, :SINT
-PathToRegion proto _CType :HDC
-PolyDraw proto _CType :HDC, :LPPOINT, :LPBYTE, :SINT
-SelectClipPath proto _CType :HDC, :SINT
-SetArcDirection proto _CType :HDC, :SINT
-SetMiterLimit proto _CType :HDC, :FLOAT, :PFLOAT
-StrokeAndFillPath proto _CType :HDC
-StrokePath proto _CType :HDC
-WidenPath proto _CType :HDC
-ExtCreatePen proto _CType :DWORD, :DWORD, :LPLOGBRUSH, :DWORD, :LPDWORD
-GetMiterLimit proto _CType :HDC, :PFLOAT
-GetArcDirection proto _CType :HDC
+AbortPath proto WINAPI :HDC
+ArcTo proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT, :SINT
+BeginPath proto WINAPI :HDC
+CloseFigure proto WINAPI :HDC
+EndPath proto WINAPI :HDC
+FillPath proto WINAPI :HDC
+FlattenPath proto WINAPI :HDC
+GetPath proto WINAPI :HDC, :LPPOINT, :LPBYTE, :SINT
+PathToRegion proto WINAPI :HDC
+PolyDraw proto WINAPI :HDC, :LPPOINT, :LPBYTE, :SINT
+SelectClipPath proto WINAPI :HDC, :SINT
+SetArcDirection proto WINAPI :HDC, :SINT
+SetMiterLimit proto WINAPI :HDC, :FLOAT, :PFLOAT
+StrokeAndFillPath proto WINAPI :HDC
+StrokePath proto WINAPI :HDC
+WidenPath proto WINAPI :HDC
+ExtCreatePen proto WINAPI :DWORD, :DWORD, :LPLOGBRUSH, :DWORD, :LPDWORD
+GetMiterLimit proto WINAPI :HDC, :PFLOAT
+GetArcDirection proto WINAPI :HDC
 
-GetObjectA proto _CType :HGDIOBJ, :SINT, :LPVOID
-GetObjectW proto _CType :HGDIOBJ, :SINT, :LPVOID
+GetObjectA proto WINAPI :HGDIOBJ, :SINT, :LPVOID
+GetObjectW proto WINAPI :HGDIOBJ, :SINT, :LPVOID
 ifdef _UNICODE
 GetObject equ <GetObjectW>
 else
 GetObject equ <GetObjectA>
-endif ;; NOT _UNICODE
-MoveToEx proto _CType :HDC, :SINT, :SINT, :LPPOINT
-TextOutA proto _CType :HDC, :SINT, :SINT, :LPCSTR, :SINT
-TextOutW proto _CType :HDC, :SINT, :SINT, :LPCWSTR, :SINT
+endif 
+MoveToEx proto WINAPI :HDC, :SINT, :SINT, :LPPOINT
+TextOutA proto WINAPI :HDC, :SINT, :SINT, :LPCSTR, :SINT
+TextOutW proto WINAPI :HDC, :SINT, :SINT, :LPCWSTR, :SINT
 ifdef _UNICODE
 TextOut equ <TextOutW>
 else
 TextOut equ <TextOutA>
-endif ;; NOT _UNICODE
-ExtTextOutA proto _CType :HDC, :SINT, :SINT, :UINT, :LPRECT, :LPCSTR, :UINT, :LPINT
-ExtTextOutW proto _CType :HDC, :SINT, :SINT, :UINT, :LPRECT, :LPCWSTR, :UINT, :LPINT
+endif 
+ExtTextOutA proto WINAPI :HDC, :SINT, :SINT, :UINT, :LPRECT, :LPCSTR, :UINT, :LPINT
+ExtTextOutW proto WINAPI :HDC, :SINT, :SINT, :UINT, :LPRECT, :LPCWSTR, :UINT, :LPINT
 ifdef _UNICODE
 ExtTextOut equ <ExtTextOutW>
 else
 ExtTextOut equ <ExtTextOutA>
-endif ;; NOT _UNICODE
-PolyTextOutA proto _CType :HDC, :LPPOLYTEXTA, :SINT
-PolyTextOutW proto _CType :HDC, :LPPOLYTEXTW, :SINT
+endif 
+PolyTextOutA proto WINAPI :HDC, :LPPOLYTEXTA, :SINT
+PolyTextOutW proto WINAPI :HDC, :LPPOLYTEXTW, :SINT
 ifdef _UNICODE
 PolyTextOut equ <PolyTextOutW>
 else
 PolyTextOut equ <PolyTextOutA>
-endif ;; NOT _UNICODE
+endif 
 
-CreatePolygonRgn proto _CType :LPPOINT, :SINT, :SINT
-DPtoLP proto _CType :HDC, :LPPOINT, :SINT
-LPtoDP proto _CType :HDC, :LPPOINT, :SINT
-Polygon proto _CType :HDC, :LPPOINT, :SINT
-Polyline proto _CType :HDC, :LPPOINT, :SINT
+CreatePolygonRgn proto WINAPI :LPPOINT, :SINT, :SINT
+DPtoLP proto WINAPI :HDC, :LPPOINT, :SINT
+LPtoDP proto WINAPI :HDC, :LPPOINT, :SINT
+Polygon proto WINAPI :HDC, :LPPOINT, :SINT
+Polyline proto WINAPI :HDC, :LPPOINT, :SINT
 
-PolyBezier proto _CType :HDC, :LPPOINT, :DWORD
-PolyBezierTo proto _CType :HDC, :LPPOINT, :DWORD
-PolylineTo proto _CType :HDC, :LPPOINT, :DWORD
+PolyBezier proto WINAPI :HDC, :LPPOINT, :DWORD
+PolyBezierTo proto WINAPI :HDC, :LPPOINT, :DWORD
+PolylineTo proto WINAPI :HDC, :LPPOINT, :DWORD
 
-SetViewportExtEx proto _CType :HDC, :SINT, :SINT, :LPSIZE
-SetViewportOrgEx proto _CType :HDC, :SINT, :SINT, :LPPOINT
-SetWindowExtEx proto _CType :HDC, :SINT, :SINT, :LPSIZE
-SetWindowOrgEx proto _CType :HDC, :SINT, :SINT, :LPPOINT
+SetViewportExtEx proto WINAPI :HDC, :SINT, :SINT, :LPSIZE
+SetViewportOrgEx proto WINAPI :HDC, :SINT, :SINT, :LPPOINT
+SetWindowExtEx proto WINAPI :HDC, :SINT, :SINT, :LPSIZE
+SetWindowOrgEx proto WINAPI :HDC, :SINT, :SINT, :LPPOINT
 
-OffsetViewportOrgEx proto _CType :HDC, :SINT, :SINT, :LPPOINT
-OffsetWindowOrgEx proto _CType :HDC, :SINT, :SINT, :LPPOINT
-ScaleViewportExtEx proto _CType :HDC, :SINT, :SINT, :SINT, :SINT, :LPSIZE
-ScaleWindowExtEx proto _CType :HDC, :SINT, :SINT, :SINT, :SINT, :LPSIZE
-SetBitmapDimensionEx proto _CType :HBITMAP, :SINT, :SINT, :LPSIZE
-SetBrushOrgEx proto _CType :HDC, :SINT, :SINT, :LPPOINT
+OffsetViewportOrgEx proto WINAPI :HDC, :SINT, :SINT, :LPPOINT
+OffsetWindowOrgEx proto WINAPI :HDC, :SINT, :SINT, :LPPOINT
+ScaleViewportExtEx proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT, :LPSIZE
+ScaleWindowExtEx proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT, :LPSIZE
+SetBitmapDimensionEx proto WINAPI :HBITMAP, :SINT, :SINT, :LPSIZE
+SetBrushOrgEx proto WINAPI :HDC, :SINT, :SINT, :LPPOINT
 
-GetTextFaceA proto _CType :HDC, :SINT, :LPSTR
-GetTextFaceW proto _CType :HDC, :SINT, :LPWSTR
+GetTextFaceA proto WINAPI :HDC, :SINT, :LPSTR
+GetTextFaceW proto WINAPI :HDC, :SINT, :LPWSTR
 ifdef _UNICODE
 GetTextFace equ <GetTextFaceW>
 else
 GetTextFace equ <GetTextFaceA>
-endif ;; NOT _UNICODE
+endif 
 
 FONTMAPPER_MAX		equ 10
 
@@ -3728,21 +3545,21 @@ iKernAmount		SINT ?
 KERNINGPAIR		ENDS
 LPKERNINGPAIR		typedef ptr KERNINGPAIR
 
-GetKerningPairsA proto _CType :HDC, :DWORD, :LPKERNINGPAIR
-GetKerningPairsW proto _CType :HDC, :DWORD, :LPKERNINGPAIR
+GetKerningPairsA proto WINAPI :HDC, :DWORD, :LPKERNINGPAIR
+GetKerningPairsW proto WINAPI :HDC, :DWORD, :LPKERNINGPAIR
 ifdef _UNICODE
 GetKerningPairs equ <GetKerningPairsW>
 else
 GetKerningPairs equ <GetKerningPairsA>
-endif ;; NOT _UNICODE
+endif 
 
-GetDCOrgEx proto _CType :HDC, :LPPOINT
-FixBrushOrgEx proto _CType :HDC, :SINT, :SINT, :LPPOINT
-UnrealizeObject proto _CType :HGDIOBJ
+GetDCOrgEx proto WINAPI :HDC, :LPPOINT
+FixBrushOrgEx proto WINAPI :HDC, :SINT, :SINT, :LPPOINT
+UnrealizeObject proto WINAPI :HGDIOBJ
 
-GdiFlush proto _CType
-GdiSetBatchLimit proto _CType :DWORD
-GdiGetBatchLimit proto _CType
+GdiFlush proto WINAPI
+GdiSetBatchLimit proto WINAPI :DWORD
+GdiGetBatchLimit proto WINAPI
 
 
 if(WINVER GE 0x0400)
@@ -3761,67 +3578,66 @@ ifdef _UNICODE
 ICMENUMPROC equ <ICMENUMPROCW>
 else
 ICMENUMPROC equ <ICMENUMPROCA>
-endif ;; NOT _UNICODE
+endif 
 
-SetICMMode proto _CType :HDC, :SINT
-CheckColorsInGamut proto _CType :HDC, :LPVOID, :LPVOID, :DWORD
-GetColorSpace proto _CType :HDC
-GetLogColorSpaceA proto _CType :HCOLORSPACE, :LPLOGCOLORSPACEA, :DWORD
-GetLogColorSpaceW proto _CType :HCOLORSPACE, :LPLOGCOLORSPACEW, :DWORD
+SetICMMode proto WINAPI :HDC, :SINT
+CheckColorsInGamut proto WINAPI :HDC, :LPVOID, :LPVOID, :DWORD
+GetColorSpace proto WINAPI :HDC
+GetLogColorSpaceA proto WINAPI :HCOLORSPACE, :LPLOGCOLORSPACEA, :DWORD
+GetLogColorSpaceW proto WINAPI :HCOLORSPACE, :LPLOGCOLORSPACEW, :DWORD
 ifdef _UNICODE
 GetLogColorSpace equ <GetLogColorSpaceW>
 else
 GetLogColorSpace equ <GetLogColorSpaceA>
-endif ;; NOT _UNICODE
-CreateColorSpaceA proto _CType :LPLOGCOLORSPACEA
-CreateColorSpaceW proto _CType :LPLOGCOLORSPACEW
+endif 
+CreateColorSpaceA proto WINAPI :LPLOGCOLORSPACEA
+CreateColorSpaceW proto WINAPI :LPLOGCOLORSPACEW
 ifdef _UNICODE
 CreateColorSpace equ <CreateColorSpaceW>
 else
 CreateColorSpace equ <CreateColorSpaceA>
-endif ;; NOT _UNICODE
-SetColorSpace proto _CType :HDC, :HCOLORSPACE
-DeleteColorSpace proto _CType :HCOLORSPACE
-GetICMProfileA proto _CType :HDC, :LPDWORD, :LPSTR
-GetICMProfileW proto _CType :HDC, :LPDWORD, :LPWSTR
+endif 
+SetColorSpace proto WINAPI :HDC, :HCOLORSPACE
+DeleteColorSpace proto WINAPI :HCOLORSPACE
+GetICMProfileA proto WINAPI :HDC, :LPDWORD, :LPSTR
+GetICMProfileW proto WINAPI :HDC, :LPDWORD, :LPWSTR
 ifdef _UNICODE
 GetICMProfile equ <GetICMProfileW>
 else
 GetICMProfile equ <GetICMProfileA>
-endif ;; NOT _UNICODE
-SetICMProfileA proto _CType :HDC, :LPSTR
-SetICMProfileW proto _CType :HDC, :LPWSTR
+endif 
+SetICMProfileA proto WINAPI :HDC, :LPSTR
+SetICMProfileW proto WINAPI :HDC, :LPWSTR
 ifdef _UNICODE
 SetICMProfile equ <SetICMProfileW>
 else
 SetICMProfile equ <SetICMProfileA>
-endif ;; NOT _UNICODE
-GetDeviceGammaRamp proto _CType :HDC, :LPVOID
-SetDeviceGammaRamp proto _CType :HDC, :LPVOID
-ColorMatchToTarget proto _CType :HDC, :HDC, :DWORD
-EnumICMProfilesA proto _CType :HDC, :ICMENUMPROCA, :LPARAM
-EnumICMProfilesW proto _CType :HDC, :ICMENUMPROCW, :LPARAM
+endif 
+GetDeviceGammaRamp proto WINAPI :HDC, :LPVOID
+SetDeviceGammaRamp proto WINAPI :HDC, :LPVOID
+ColorMatchToTarget proto WINAPI :HDC, :HDC, :DWORD
+EnumICMProfilesA proto WINAPI :HDC, :ICMENUMPROCA, :LPARAM
+EnumICMProfilesW proto WINAPI :HDC, :ICMENUMPROCW, :LPARAM
 ifdef _UNICODE
 EnumICMProfiles equ <EnumICMProfilesW>
 else
 EnumICMProfiles equ <EnumICMProfilesA>
-endif ;; NOT _UNICODE
-UpdateICMRegKeyA proto _CType :DWORD, :LPSTR, :LPSTR, :UINT
-UpdateICMRegKeyW proto _CType :DWORD, :LPWSTR, :LPWSTR, :UINT
+endif 
+UpdateICMRegKeyA proto WINAPI :DWORD, :LPSTR, :LPSTR, :UINT
+UpdateICMRegKeyW proto WINAPI :DWORD, :LPWSTR, :LPWSTR, :UINT
 ifdef _UNICODE
 UpdateICMRegKey equ <UpdateICMRegKeyW>
 else
 UpdateICMRegKey equ <UpdateICMRegKeyA>
-endif ;; NOT _UNICODE
-endif ;; WINVER GE 0x0400
+endif 
+endif 
 
 if (WINVER GE 0x0500)
-ColorCorrectPalette proto _CType :HDC, :HPALETTE, :DWORD, :DWORD
+ColorCorrectPalette proto WINAPI :HDC, :HPALETTE, :DWORD, :DWORD
 endif
 
 ifndef NOMETAFILE
 
-;; Enhanced metafile constants.
 
 ifndef _MAC
 ENHMETA_SIGNATURE	equ 0x464D4520
@@ -3829,14 +3645,9 @@ else
 ENHMETA_SIGNATURE	equ 0x20454D46
 endif
 
-;; Stock object flag used in the object handle index in the enhanced
-;; metafile records.
-;; E.g. The object handle index (META_STOCK_OBJECT | BLACK_BRUSH)
-;; represents the stock object BLACK_BRUSH.
 
 ENHMETA_STOCK_OBJECT	equ 0x80000000
 
-;; Enhanced metafile record types.
 
 EMR_HEADER		equ 1
 EMR_POLYBEZIER		equ 2
@@ -3944,7 +3755,7 @@ EMR_DELETECOLORSPACE	equ 101
 EMR_GLSRECORD		equ 102
 EMR_GLSBOUNDEDRECORD	equ 103
 EMR_PIXELFORMAT equ 104
-endif ;; WINVER GE 0x0400
+endif 
 
 if (WINVER GE 0x0500)
 EMR_DRAWESCAPE		equ 105
@@ -3976,29 +3787,24 @@ else
 EMR_MAX			equ 97
 endif
 endif
-;; Base record type for the enhanced metafile.
 
 EMR			STRUC
-iType			dd ?	;; Enhanced metafile record type
-nSize			dd ?	;; Length of the record in bytes.
-				;; This must be a multiple of 4.
+iType			dd ?	
+nSize			dd ?	
 EMR			ENDS
 PEMR			typedef ptr EMR
 
-;; Base text record type for the enhanced metafile.
 
 EMRTEXT			STRUC
 ptlReference		POINTL <>
 nChars			dd ?
-offString		dd ?	;; Offset to the string
+offString		dd ?	
 fOptions		dd ?
 _rcl			RECTL <>
-offDx			dd ?	;; Offset to the inter-character spacing array.
-				;; This is always given.
+offDx			dd ?	
 EMRTEXT			ENDS
 PEMRTEXT		typedef ptr EMRTEXT
 
-;; Record structures for the enhanced metafile.
 
 EMRABORTPATH		STRUC
 emr			EMR <>
@@ -4049,14 +3855,13 @@ PEMRSETMITERLIMIT	typedef ptr EMRSETMITERLIMIT
 
 EMRRESTOREDC		STRUC
 emr			EMR <>
-iRelative		LONG ?	;; Specifies a relative instance
+iRelative		LONG ?	
 EMRRESTOREDC		ENDS
 PEMRRESTOREDC		typedef ptr EMRRESTOREDC
 
 EMRSETARCDIRECTION	STRUC
 emr			EMR <>
-iArcDirection		dd ?	;; Specifies the arc direction in the
-				;; advanced graphics mode.
+iArcDirection		dd ?	
 EMRSETARCDIRECTION	ENDS
 PEMRSETARCDIRECTION	typedef ptr EMRSETARCDIRECTION
 
@@ -4076,7 +3881,7 @@ EMRSETTEXTCOLOR		typedef EMRSETBKCOLOR
 
 EMRSELECTOBJECT		STRUC
 emr			EMR <>
-ihObject		dd ?	;; Object handle index
+ihObject		dd ?	
 EMRSELECTOBJECT		ENDS
 PEMRSELECTOBJECT	typedef ptr EMRSELECTOBJECT
 PEMRDELETEOBJECT	typedef ptr EMRSELECTOBJECT
@@ -4085,32 +3890,32 @@ EMRDELETEOBJECT		typedef EMRSELECTOBJECT
 if(WINVER GE 0x0400)
 EMRSELECTCOLORSPACE	STRUC
 emr			EMR <>
-ihCS			dd ?	;; ColorSpace handle index
+ihCS			dd ?	
 EMRSELECTCOLORSPACE	ENDS
 PEMRSELECTCOLORSPACE	typedef ptr EMRSELECTCOLORSPACE
 PEMRDELETECOLORSPACE	typedef ptr EMRSELECTCOLORSPACE
 EMRDELETECOLORSPACE	typedef EMRSELECTCOLORSPACE
-endif ;; WINVER GE 0x0400
+endif 
 
 EMRSELECTPALETTE	STRUC
 emr			EMR <>
-ihPal			dd ?	;; Palette handle index, background mode only
+ihPal			dd ?	
 EMRSELECTPALETTE	ENDS
 PEMRSELECTPALETTE	typedef ptr EMRSELECTPALETTE
 
 EMRRESIZEPALETTE	STRUC
 emr			EMR <>
-ihPal			dd ?	;; Palette handle index
+ihPal			dd ?	
 cEntries		dd ?
 EMRRESIZEPALETTE	ENDS
 PEMRRESIZEPALETTE	typedef ptr EMRRESIZEPALETTE
 
 EMRSETPALETTEENTRIES	STRUC
 emr			EMR <>
-ihPal			dd ?	;; Palette handle index
+ihPal			dd ?	
 iStart			dd ?
 cEntries		dd ?
-aPalEntries		PALETTEENTRY <> ;; The peFlags fields do not contain any flags
+aPalEntries		PALETTEENTRY <> 
 EMRSETPALETTEENTRIES	ENDS
 PEMRSETPALETTEENTRIES	typedef ptr EMRSETPALETTEENTRIES
 
@@ -4122,18 +3927,16 @@ PEMRSETCOLORADJUSTMENT	typedef ptr EMRSETCOLORADJUSTMENT
 
 EMRGDICOMMENT		STRUC
 emr			EMR <>
-cbData			dd ?	;; Size of data in bytes
+cbData			dd ?	
 Data			db ?
 EMRGDICOMMENT		ENDS
 PEMRGDICOMMENT		typedef ptr EMRGDICOMMENT
 
 EMREOF			STRUC
 emr			EMR <>
-nPalEntries		dd ?	;; Number of palette entries
-offPalEntries		dd ?	;; Offset to the palette entries
-nSizeLast		dd ?	;; Same as nSize and must be the last DWORD
-				;; of the record. The palette entries,
-				;; if exist, precede this field.
+nPalEntries		dd ?	
+offPalEntries		dd ?	
+nSizeLast		dd ?	
 EMREOF			ENDS
 PEMREOF			typedef ptr EMREOF
 
@@ -4153,7 +3956,7 @@ PEMROFFSETCLIPRGN	typedef ptr EMROFFSETCLIPRGN
 
 EMRFILLPATH		STRUC
 emr			EMR <>
-rclBounds		RECTL <> ;; Inclusive-inclusive bounds in device units
+rclBounds		RECTL <> 
 EMRFILLPATH		ENDS
 PEMRFILLPATH		typedef ptr EMRFILLPATH
 PEMRSTROKEANDFILLPATH	typedef ptr EMRFILLPATH
@@ -4228,7 +4031,7 @@ PEMREXTFLOODFILL	typedef ptr EMREXTFLOODFILL
 
 EMRELLIPSE		STRUC
 emr			EMR <>
-rclBox			RECTL <> ;; Inclusive-inclusive bounding rectangle
+rclBox			RECTL <> 
 EMRELLIPSE		ENDS
 PEMRELLIPSE		typedef ptr EMRELLIPSE
 PEMRRECTANGLE		typedef ptr EMRELLIPSE
@@ -4236,14 +4039,14 @@ EMRRECTANGLE		typedef EMRELLIPSE
 
 EMRROUNDRECT		STRUC
 emr			EMR <>
-rclBox			RECTL <> ;; Inclusive-inclusive bounding rectangle
+rclBox			RECTL <> 
 szlCorner		SIZEL <>
 EMRROUNDRECT		ENDS
 PEMRROUNDRECT		typedef ptr EMRROUNDRECT
 
 EMRARC			STRUC
 emr			EMR <>
-rclBox			RECTL <> ;; Inclusive-inclusive bounding rectangle
+rclBox			RECTL <> 
 ptlStart		POINTL <>
 ptlEnd			POINTL <>
 EMRARC			ENDS
@@ -4266,7 +4069,7 @@ PEMRANGLEARC		typedef ptr EMRANGLEARC
 
 EMRPOLYLINE		STRUC
 emr			EMR <>
-rclBounds		RECTL <> ;; Inclusive-inclusive bounds in device units
+rclBounds		RECTL <> 
 cptl			dd ?
 aptl			POINTL <>
 EMRPOLYLINE		ENDS
@@ -4278,7 +4081,7 @@ PEMRPOLYLINETO		typedef ptr EMRPOLYLINE
 
 EMRPOLYLINE16		STRUC
 emr			EMR <>
-rclBounds		RECTL <> ;; Inclusive-inclusive bounds in device units
+rclBounds		RECTL <> 
 cpts			dd ?
 apts			POINTS <>
 EMRPOLYLINE16		ENDS
@@ -4290,48 +4093,48 @@ PEMRPOLYLINETO16	typedef ptr EMRPOLYLINE16
 
 EMRPOLYDRAW		STRUC
 emr			EMR <>
-rclBounds		RECTL <> ;; Inclusive-inclusive bounds in device units
-cptl			dd ?	;; Number of points
-aptl			POINTL <> ;; Array of points
-abTypes			db ?	;; Array of point types
+rclBounds		RECTL <> 
+cptl			dd ?	
+aptl			POINTL <> 
+abTypes			db ?	
 EMRPOLYDRAW		ENDS
 PEMRPOLYDRAW		typedef ptr EMRPOLYDRAW
 
 EMRPOLYDRAW16		STRUC
 emr			EMR <>
-rclBounds		RECTL <> ;; Inclusive-inclusive bounds in device units
-cpts			dd ?	;; Number of points
-apts			POINTS <> ;; Array of points
-abTypes			db ?	;; Array of point types
+rclBounds		RECTL <> 
+cpts			dd ?	
+apts			POINTS <> 
+abTypes			db ?	
 EMRPOLYDRAW16		ENDS
 PEMRPOLYDRAW16		typedef ptr EMRPOLYDRAW16
 
 EMRPOLYPOLYLINE		STRUC
 emr			EMR <>
-rclBounds		RECTL <> ;; Inclusive-inclusive bounds in device units
-nPolys			dd ?	;; Number of polys
-cptl			dd ?	;; Total number of points in all polys
-aPolyCounts		dd ?	;; Array of point counts for each poly
-aptl			POINTL <> ;; Array of points
+rclBounds		RECTL <> 
+nPolys			dd ?	
+cptl			dd ?	
+aPolyCounts		dd ?	
+aptl			POINTL <> 
 EMRPOLYPOLYLINE		ENDS
 PEMRPOLYPOLYLINE	typedef ptr EMRPOLYPOLYLINE
 PEMRPOLYPOLYGON		typedef ptr EMRPOLYPOLYLINE
 
 EMRPOLYPOLYLINE16	STRUC
 emr			EMR <>
-rclBounds		RECTL <> ;; Inclusive-inclusive bounds in device units
-nPolys			dd ?	;; Number of polys
-cpts			dd ?	;; Total number of points in all polys
-aPolyCounts		dd ?	;; Array of point counts for each poly
-apts			POINTS <> ;; Array of points
+rclBounds		RECTL <> 
+nPolys			dd ?	
+cpts			dd ?	
+aPolyCounts		dd ?	
+apts			POINTS <> 
 EMRPOLYPOLYLINE16	ENDS
 PEMRPOLYPOLYLINE16	typedef ptr EMRPOLYPOLYLINE16
 PEMRPOLYPOLYGON16	typedef ptr EMRPOLYPOLYLINE16
 
 EMRINVERTRGN		STRUC
 emr			EMR <>
-rclBounds		RECTL <> ;; Inclusive-inclusive bounds in device units
-cbRgnData		dd ?	;; Size of region data in bytes
+rclBounds		RECTL <> 
+cbRgnData		dd ?	
 RgnData			db ?
 EMRINVERTRGN		ENDS
 PEMRINVERTRGN		typedef ptr EMRINVERTRGN
@@ -4339,18 +4142,18 @@ PEMRPAINTRGN		typedef ptr EMRINVERTRGN
 
 EMRFILLRGN		STRUC
 emr			EMR <>
-rclBounds		RECTL <> ;; Inclusive-inclusive bounds in device units
-cbRgnData		dd ?	;; Size of region data in bytes
-ihBrush			dd ?	;; Brush handle index
+rclBounds		RECTL <> 
+cbRgnData		dd ?	
+ihBrush			dd ?	
 RgnData			db ?
 EMRFILLRGN		ENDS
 PEMRFILLRGN		typedef ptr EMRFILLRGN
 
 EMRFRAMERGN		STRUC
 emr			EMR <>
-rclBounds		RECTL <> ;; Inclusive-inclusive bounds in device units
-cbRgnData		dd ?	;; Size of region data in bytes
-ihBrush			dd ?	;; Brush handle index
+rclBounds		RECTL <> 
+cbRgnData		dd ?	
+ihBrush			dd ?	
 szlStroke		SIZEL <>
 RgnData			db ?
 EMRFRAMERGN		ENDS
@@ -4360,7 +4163,7 @@ if (_WIN32_WINNT GE 0x0500)
 
 EMRGRADIENTFILL		STRUC
 emr			EMR <>
-rclBounds		RECTL <> ;; Inclusive-inclusive bounds in device units
+rclBounds		RECTL <> 
 nVer			dd ?
 nTri			dd ?
 ulMode			ULONG ?
@@ -4372,7 +4175,7 @@ endif
 
 EMREXTSELECTCLIPRGN	STRUC
 emr			EMR <>
-cbRgnData		dd ?	;; Size of region data in bytes
+cbRgnData		dd ?	
 iMode			dd ?
 RgnData			db ?
 EMREXTSELECTCLIPRGN	ENDS
@@ -4380,11 +4183,11 @@ PEMREXTSELECTCLIPRGN	typedef ptr EMREXTSELECTCLIPRGN
 
 EMREXTTEXTOUTA		STRUC
 emr			EMR <>
-rclBounds		RECTL <> ;; Inclusive-inclusive bounds in device units
-iGraphicsMode		dd ?	;; Current graphics mode
-exScale			FLOAT ? ;; X and Y scales from Page units to .01mm units
-eyScale			FLOAT ? ;;   if graphics mode is GM_COMPATIBLE.
-emrtext			EMRTEXT <> ;; This is followed by the string and spacing array
+rclBounds		RECTL <> 
+iGraphicsMode		dd ?	
+exScale			FLOAT ? 
+eyScale			FLOAT ? 
+emrtext			EMRTEXT <> 
 EMREXTTEXTOUTA		ENDS
 EMREXTTEXTOUTW		typedef EMREXTTEXTOUTA
 PEMREXTTEXTOUTA		typedef ptr EMREXTTEXTOUTA
@@ -4392,20 +4195,19 @@ PEMREXTTEXTOUTW		typedef ptr EMREXTTEXTOUTA
 
 EMRPOLYTEXTOUTA		STRUC
 emr			EMR <>
-rclBounds		RECTL <> ;; Inclusive-inclusive bounds in device units
-iGraphicsMode		dd ?	;; Current graphics mode
-exScale			FLOAT ? ;; X and Y scales from Page units to .01mm units
-eyScale			FLOAT ? ;;   if graphics mode is GM_COMPATIBLE.
+rclBounds		RECTL <> 
+iGraphicsMode		dd ?	
+exScale			FLOAT ? 
+eyScale			FLOAT ? 
 cStrings		LONG ?
-aemrtext		EMRTEXT <> ;; Array of EMRTEXT structures.
-					;; This is followed by the strings and spacing arrays.
+aemrtext		EMRTEXT <> 
 EMRPOLYTEXTOUTA		ENDS
 PEMRPOLYTEXTOUTA	typedef ptr EMRPOLYTEXTOUTA
 PEMRPOLYTEXTOUTW	typedef ptr EMRPOLYTEXTOUTW
 
 EMRBITBLT		STRUC
 emr			EMR <>
-rclBounds		RECTL <> ;; Inclusive-inclusive bounds in device units
+rclBounds		RECTL <> 
 xDest			LONG ?
 yDest			LONG ?
 cxDest			LONG ?
@@ -4413,20 +4215,19 @@ cyDest			LONG ?
 dwRop			dd ?
 xSrc			LONG ?
 ySrc			LONG ?
-xformSrc		XFORM <> ;; Source DC transform
-crBkColorSrc		COLORREF ?	;; Source DC BkColor in RGB
-iUsageSrc		dd ?	;; Source bitmap info color table usage
-				;; (DIB_RGB_COLORS)
-offBmiSrc		dd ?	;; Offset to the source BITMAPINFO structure
-cbBmiSrc		dd ?	;; Size of the source BITMAPINFO structure
-offBitsSrc		dd ?	;; Offset to the source bitmap bits
-cbBitsSrc		dd ?	;; Size of the source bitmap bits
+xformSrc		XFORM <> 
+crBkColorSrc		COLORREF ?	
+iUsageSrc		dd ?	
+offBmiSrc		dd ?	
+cbBmiSrc		dd ?	
+offBitsSrc		dd ?	
+cbBitsSrc		dd ?	
 EMRBITBLT		ENDS
 PEMRBITBLT		typedef ptr EMRBITBLT
 
 EMRSTRETCHBLT		STRUC
 emr			EMR <>
-rclBounds		RECTL <> ;; Inclusive-inclusive bounds in device units
+rclBounds		RECTL <> 
 xDest			LONG ?
 yDest			LONG ?
 cxDest			LONG ?
@@ -4434,14 +4235,13 @@ cyDest			LONG ?
 dwRop			dd ?
 xSrc			LONG ?
 ySrc			LONG ?
-xformSrc		XFORM <> ;; Source DC transform
-crBkColorSrc		COLORREF ?	;; Source DC BkColor in RGB
-iUsageSrc		dd ?	;; Source bitmap info color table usage
-				;; (DIB_RGB_COLORS)
-offBmiSrc		dd ?	;; Offset to the source BITMAPINFO structure
-cbBmiSrc		dd ?	;; Size of the source BITMAPINFO structure
-offBitsSrc		dd ?	;; Offset to the source bitmap bits
-cbBitsSrc		dd ?	;; Size of the source bitmap bits
+xformSrc		XFORM <> 
+crBkColorSrc		COLORREF ?	
+iUsageSrc		dd ?	
+offBmiSrc		dd ?	
+cbBmiSrc		dd ?	
+offBitsSrc		dd ?	
+cbBitsSrc		dd ?	
 cxSrc			LONG ?
 cySrc			LONG ?
 EMRSTRETCHBLT		ENDS
@@ -4449,7 +4249,7 @@ PEMRSTRETCHBLT		typedef ptr EMRSTRETCHBLT
 
 EMRMASKBLT		STRUC
 emr			EMR <>
-rclBounds		RECTL <> ;; Inclusive-inclusive bounds in device units
+rclBounds		RECTL <> 
 xDest			LONG ?
 yDest			LONG ?
 cxDest			LONG ?
@@ -4457,64 +4257,62 @@ cyDest			LONG ?
 dwRop			dd ?
 xSrc			LONG ?
 ySrc			LONG ?
-xformSrc		XFORM <> ;; Source DC transform
-crBkColorSrc		COLORREF ?	;; Source DC BkColor in RGB
-iUsageSrc		dd ?	;; Source bitmap info color table usage
-				;; (DIB_RGB_COLORS)
-offBmiSrc		dd ?	;; Offset to the source BITMAPINFO structure
-cbBmiSrc		dd ?	;; Size of the source BITMAPINFO structure
-offBitsSrc		dd ?	;; Offset to the source bitmap bits
-cbBitsSrc		dd ?	;; Size of the source bitmap bits
+xformSrc		XFORM <> 
+crBkColorSrc		COLORREF ?	
+iUsageSrc		dd ?	
+offBmiSrc		dd ?	
+cbBmiSrc		dd ?	
+offBitsSrc		dd ?	
+cbBitsSrc		dd ?	
 xMask			LONG ?
 yMask			LONG ?
-iUsageMask		dd ?	;; Mask bitmap info color table usage
-offBmiMask		dd ?	;; Offset to the mask BITMAPINFO structure if any
-cbBmiMask		dd ?	;; Size of the mask BITMAPINFO structure if any
-offBitsMask		dd ?	;; Offset to the mask bitmap bits if any
-cbBitsMask		dd ?	;; Size of the mask bitmap bits if any
+iUsageMask		dd ?	
+offBmiMask		dd ?	
+cbBmiMask		dd ?	
+offBitsMask		dd ?	
+cbBitsMask		dd ?	
 EMRMASKBLT		ENDS
 PEMRMASKBLT		typedef ptr EMRMASKBLT
 
 EMRPLGBLT		STRUC
 emr			EMR <>
-rclBounds		RECTL <> ;; Inclusive-inclusive bounds in device units
+rclBounds		RECTL <> 
 aptlDest		POINTL 3 dup(<>)
 xSrc			LONG ?
 ySrc			LONG ?
 cxSrc			LONG ?
 cySrc			LONG ?
-xformSrc		XFORM <> ;; Source DC transform
-crBkColorSrc		COLORREF ?	;; Source DC BkColor in RGB
-iUsageSrc		dd ?	;; Source bitmap info color table usage
-				;; (DIB_RGB_COLORS)
-offBmiSrc		dd ?	;; Offset to the source BITMAPINFO structure
-cbBmiSrc		dd ?	;; Size of the source BITMAPINFO structure
-offBitsSrc		dd ?	;; Offset to the source bitmap bits
-cbBitsSrc		dd ?	;; Size of the source bitmap bits
+xformSrc		XFORM <> 
+crBkColorSrc		COLORREF ?	
+iUsageSrc		dd ?	
+offBmiSrc		dd ?	
+cbBmiSrc		dd ?	
+offBitsSrc		dd ?	
+cbBitsSrc		dd ?	
 xMask			LONG ?
 yMask			LONG ?
-iUsageMask		dd ?	;; Mask bitmap info color table usage
-offBmiMask		dd ?	;; Offset to the mask BITMAPINFO structure if any
-cbBmiMask		dd ?	;; Size of the mask BITMAPINFO structure if any
-offBitsMask		dd ?	;; Offset to the mask bitmap bits if any
-cbBitsMask		dd ?	;; Size of the mask bitmap bits if any
+iUsageMask		dd ?	
+offBmiMask		dd ?	
+cbBmiMask		dd ?	
+offBitsMask		dd ?	
+cbBitsMask		dd ?	
 EMRPLGBLT		ENDS
 PEMRPLGBLT		typedef ptr EMRPLGBLT
 
 EMRSETDIBITSTODEVICE	STRUC
 emr			EMR <>
-rclBounds		RECTL <> ;; Inclusive-inclusive bounds in device units
+rclBounds		RECTL <> 
 xDest			LONG ?
 yDest			LONG ?
 xSrc			LONG ?
 ySrc			LONG ?
 cxSrc			LONG ?
 cySrc			LONG ?
-offBmiSrc		dd ?	;; Offset to the source BITMAPINFO structure
-cbBmiSrc		dd ?	;; Size of the source BITMAPINFO structure
-offBitsSrc		dd ?	;; Offset to the source bitmap bits
-cbBitsSrc		dd ?	;; Size of the source bitmap bits
-iUsageSrc		dd ?	;; Source bitmap info color table usage
+offBmiSrc		dd ?	
+cbBmiSrc		dd ?	
+offBitsSrc		dd ?	
+cbBitsSrc		dd ?	
+iUsageSrc		dd ?	
 iStartScan		dd ?
 cScans			dd ?
 EMRSETDIBITSTODEVICE	ENDS
@@ -4522,18 +4320,18 @@ PEMRSETDIBITSTODEVICE	typedef ptr EMRSETDIBITSTODEVICE
 
 EMRSTRETCHDIBITS	STRUC
 emr			EMR <>
-rclBounds		RECTL <> ;; Inclusive-inclusive bounds in device units
+rclBounds		RECTL <> 
 xDest			LONG ?
 yDest			LONG ?
 xSrc			LONG ?
 ySrc			LONG ?
 cxSrc			LONG ?
 cySrc			LONG ?
-offBmiSrc		dd ?	;; Offset to the source BITMAPINFO structure
-cbBmiSrc		dd ?	;; Size of the source BITMAPINFO structure
-offBitsSrc		dd ?	;; Offset to the source bitmap bits
-cbBitsSrc		dd ?	;; Size of the source bitmap bits
-iUsageSrc		dd ?	;; Source bitmap info color table usage
+offBmiSrc		dd ?	
+cbBmiSrc		dd ?	
+offBitsSrc		dd ?	
+cbBitsSrc		dd ?	
+iUsageSrc		dd ?	
 dwRop			dd ?
 cxDest			LONG ?
 cyDest			LONG ?
@@ -4544,7 +4342,7 @@ if (_WIN32_WINNT GE 0x0500)
 
 EMRALPHABLE		STRUC
 emr			EMR <>
-rclBounds		RECTL <> ;; Inclusive-inclusive bounds in device units
+rclBounds		RECTL <> 
 xDest			LONG ?
 yDest			LONG ?
 cxDest			LONG ?
@@ -4552,14 +4350,13 @@ cyDest			LONG ?
 dwRop			dd ?
 xSrc			LONG ?
 ySrc			LONG ?
-xformSrc		XFORM <> ;; Source DC transform
-crBkColorSrc		COLORREF ?	;; Source DC BkColor in RGB
-iUsageSrc		dd ?	;; Source bitmap info color table usage
-				;; (DIB_RGB_COLORS)
-offBmiSrc		dd ?	;; Offset to the source BITMAPINFO structure
-cbBmiSrc		dd ?	;; Size of the source BITMAPINFO structure
-offBitsSrc		dd ?	;; Offset to the source bitmap bits
-cbBitsSrc		dd ?	;; Size of the source bitmap bits
+xformSrc		XFORM <> 
+crBkColorSrc		COLORREF ?	
+iUsageSrc		dd ?	
+offBmiSrc		dd ?	
+cbBmiSrc		dd ?	
+offBitsSrc		dd ?	
+cbBitsSrc		dd ?	
 cxSrc			LONG ?
 cySrc			LONG ?
 EMRALPHABLE		ENDS
@@ -4567,7 +4364,7 @@ PEMRALPHABLEND		typedef ptr EMRALPHABLE
 
 EMREMRTRANSPARENTBLT	STRUC
 emr			EMR <>
-rclBounds		RECTL <> ;; Inclusive-inclusive bounds in device units
+rclBounds		RECTL <> 
 xDest			LONG ?
 yDest			LONG ?
 cxDest			LONG ?
@@ -4575,14 +4372,13 @@ cyDest			LONG ?
 dwRop			dd ?
 xSrc			LONG ?
 ySrc			LONG ?
-xformSrc		XFORM <> ;; Source DC transform
-crBkColorSrc		COLORREF ?	;; Source DC BkColor in RGB
-iUsageSrc		dd ?	;; Source bitmap info color table usage
-				;; (DIB_RGB_COLORS)
-offBmiSrc		dd ?	;; Offset to the source BITMAPINFO structure
-cbBmiSrc		dd ?	;; Size of the source BITMAPINFO structure
-offBitsSrc		dd ?	;; Offset to the source bitmap bits
-cbBitsSrc		dd ?	;; Size of the source bitmap bits
+xformSrc		XFORM <> 
+crBkColorSrc		COLORREF ?	
+iUsageSrc		dd ?	
+offBmiSrc		dd ?	
+cbBmiSrc		dd ?	
+offBitsSrc		dd ?	
+cbBitsSrc		dd ?	
 cxSrc			LONG ?
 cySrc			LONG ?
 EMREMRTRANSPARENTBLT	ENDS
@@ -4592,7 +4388,7 @@ endif
 
 EMREXTCREATEFONTINDIRECTW STRUC
 emr			EMR <>
-ihFont			dd ?	;; Font handle index
+ihFont			dd ?	
 elfw			EXTLOGFONTW <>
 EMREXTCREATEFONTINDIRECTW ENDS
 PEMREXTCREATEFONTINDIRECTW typedef ptr EMREXTCREATEFONTINDIRECTW
@@ -4600,9 +4396,8 @@ PEMREXTCREATEFONTINDIRECTW typedef ptr EMREXTCREATEFONTINDIRECTW
 
 EMRCREATEPALETTE	STRUC
 emr			EMR <>
-ihPal			dd ?	;; Palette handle index
-lgpl			LOGPALETTE <>	;; The peFlags fields in the palette entries
-					;; do not contain any flags
+ihPal			dd ?	
+lgpl			LOGPALETTE <>	
 EMRCREATEPALETTE	ENDS
 PEMRCREATEPALETTE	typedef ptr EMRCREATEPALETTE
 
@@ -4610,85 +4405,79 @@ if(WINVER GE 0x0400)
 
 EMRCREATECOLORSPACE	STRUC
 emr			EMR <>
-ihCS			dd ?	;; ColorSpace handle index
+ihCS			dd ?	
 lcs			LOGCOLORSPACEW <>
 EMRCREATECOLORSPACE	ENDS
 PEMRCREATECOLORSPACE	typedef ptr EMRCREATECOLORSPACE
 
-endif ;; WINVER GE 0x0400
+endif 
 
 EMRCREATEPEN		STRUC
 emr			EMR <>
-ihPen			dd ?	;; Pen handle index
+ihPen			dd ?	
 lopn			LOGPEN <>
 EMRCREATEPEN		ENDS
 PEMRCREATEPEN		typedef ptr EMRCREATEPEN
 
 EMREXTCREATEPEN		STRUC
 emr			EMR <>
-ihPen			dd ?	;; Pen handle index
-offBmi			dd ?	;; Offset to the BITMAPINFO structure if any
-cbBmi			dd ?	;; Size of the BITMAPINFO structure if any
-				;; The bitmap info is followed by the bitmap
-				;; bits to form a packed DIB.
-offBits			dd ?	;; Offset to the brush bitmap bits if any
-cbBits			dd ?	;; Size of the brush bitmap bits if any
-elp			EXTLOGPEN <>	;; The extended pen with the style array.
+ihPen			dd ?	
+offBmi			dd ?	
+cbBmi			dd ?	
+offBits			dd ?	
+cbBits			dd ?	
+elp			EXTLOGPEN <>	
 EMREXTCREATEPEN		ENDS
 PEMREXTCREATEPEN	typedef ptr EMREXTCREATEPEN
 
 EMRCREATEBRUSHINDIRECT	STRUC
 emr			EMR <>
-ihBrush			dd ?	;; Brush handle index
-lb			LOGBRUSH <>	;; The style must be BS_SOLID, BS_HOLLOW,
-					;; BS_NULL or BS_HATCHED.
+ihBrush			dd ?	
+lb			LOGBRUSH <>	
 EMRCREATEBRUSHINDIRECT	ENDS
 PEMRCREATEBRUSHINDIRECT typedef ptr EMRCREATEBRUSHINDIRECT
 
 EMRCREATEMONOBRUSH	STRUC
 emr			EMR <>
-ihBrush			dd ?	;; Brush handle index
-iUsage			dd ?	;; Bitmap info color table usage
-offBmi			dd ?	;; Offset to the BITMAPINFO structure
-cbBmi			dd ?	;; Size of the BITMAPINFO structure
-offBits			dd ?	;; Offset to the bitmap bits
-cbBits			dd ?	;; Size of the bitmap bits
+ihBrush			dd ?	
+iUsage			dd ?	
+offBmi			dd ?	
+cbBmi			dd ?	
+offBits			dd ?	
+cbBits			dd ?	
 EMRCREATEMONOBRUSH	ENDS
 PEMRCREATEMONOBRUSH	typedef ptr EMRCREATEMONOBRUSH
 
 EMRCREATEDIBPATTERNBRUSHPT STRUC
 emr			EMR <>
-ihBrush			dd ?	;; Brush handle index
-iUsage			dd ?	;; Bitmap info color table usage
-offBmi			dd ?	;; Offset to the BITMAPINFO structure
-cbBmi			dd ?	;; Size of the BITMAPINFO structure
-				;; The bitmap info is followed by the bitmap
-				;; bits to form a packed DIB.
-offBits			dd ?	;; Offset to the bitmap bits
-cbBits			dd ?	;; Size of the bitmap bits
+ihBrush			dd ?	
+iUsage			dd ?	
+offBmi			dd ?	
+cbBmi			dd ?	
+offBits			dd ?	
+cbBits			dd ?	
 EMRCREATEDIBPATTERNBRUSHPT ENDS
 PEMRCREATEDIBPATTERNBRUSHPT typedef ptr EMRCREATEDIBPATTERNBRUSHPT
 
 EMRFORMAT		STRUC
-dSignature		dd ?	;; Format signature, e.g. ENHMETA_SIGNATURE.
-nVersion		dd ?	;; Format version number.
-cbData			dd ?	;; Size of data in bytes.
-offData			dd ?	;; Offset to data from GDICOMMENT_IDENTIFIER.
-				;; It must begin at a DWORD offset.
+dSignature		dd ?	
+nVersion		dd ?	
+cbData			dd ?	
+offData			dd ?	
 EMRFORMAT		ENDS
 PEMRFORMAT		typedef ptr EMRFORMAT
 
 EMRGLSRECORD		STRUC
 emr			EMR <>
-cbData			dd ?	;; Size of data in bytes
+cbData			dd ?	
 Data			db ?
 EMRGLSRECORD		ENDS
 PEMRGLSRECORD		typedef ptr EMRGLSRECORD
 
 EMRGLSBOUNDEDRECORD	STRUC
 emr			EMR <>
-rclBounds		RECTL <> ;; Bounds in recording coordinates
-cbData			dd ?	;; Size of data in bytes
+rclBounds		RECTL <> 
+cbData			dd ?	
 Data			db ?
 EMRGLSBOUNDEDRECORD	ENDS
 PEMRGLSBOUNDEDRECORD	typedef ptr EMRGLSBOUNDEDRECORD
@@ -4703,10 +4492,10 @@ SETICMPROFILE_EMBEDED	equ 0x00000001
 
 EMRSETICMPROFILE	STRUC
 emr			EMR <>
-dwFlags			dd ?	;; flags
-cbName			dd ?	;; Size of desired profile name
-cbData			dd ?	;; Size of raw profile data if attached
-Data			db ?	;; Array size is cbName and cbData
+dwFlags			dd ?	
+cbName			dd ?	
+cbData			dd ?	
+Data			db ?	
 EMRSETICMPROFILE	ENDS
 PEMRSETICMPROFILE	typedef ptr EMRSETICMPROFILE
 
@@ -4717,28 +4506,27 @@ GDICOMMENT_ENDGROUP		equ 0x00000003
 GDICOMMENT_MULTIFORMATS		equ 0x40000004
 EPS_SIGNATURE			equ 0x46535045
 
-endif	;; NOMETAFILE
+endif	
 
 
-;; OpenGL wgl prototypes
 
-wglCopyContext proto _CType :HGLRC, :HGLRC, :UINT
-wglCreateContext proto _CType :HDC
-wglCreateLayerContext proto _CType :HDC, :SINT
-wglDeleteContext proto _CType :HGLRC
-wglGetCurrentContext proto _CType
-wglGetCurrentDC proto _CType
-wglGetProcAddres proto _CTypes :LPCSTR
-wglMakeCurrent proto _CType :HDC, :HGLRC
-wglShareLists proto _CType :HGLRC, :HGLRC
-wglUseFontBitmapsA proto _CType :HDC, :DWORD, :DWORD, :DWORD
-wglUseFontBitmapsW proto _CType :HDC, :DWORD, :DWORD, :DWORD
+wglCopyContext proto WINAPI :HGLRC, :HGLRC, :UINT
+wglCreateContext proto WINAPI :HDC
+wglCreateLayerContext proto WINAPI :HDC, :SINT
+wglDeleteContext proto WINAPI :HGLRC
+wglGetCurrentContext proto WINAPI
+wglGetCurrentDC proto WINAPI
+wglGetProcAddres proto WINAPIs :LPCSTR
+wglMakeCurrent proto WINAPI :HDC, :HGLRC
+wglShareLists proto WINAPI :HGLRC, :HGLRC
+wglUseFontBitmapsA proto WINAPI :HDC, :DWORD, :DWORD, :DWORD
+wglUseFontBitmapsW proto WINAPI :HDC, :DWORD, :DWORD, :DWORD
 ifdef _UNICODE
 wglUseFontBitmaps equ <wglUseFontBitmapsW>
 else
 wglUseFontBitmaps equ <wglUseFontBitmapsA>
 endif
-SwapBuffers proto _CType :HDC
+SwapBuffers proto WINAPI :HDC
 
 POINTFLOAT		STRUC
 x			FLOAT ?
@@ -4759,15 +4547,14 @@ LPGLYPHMETRICSFLOAT	typedef ptr GLYPHMETRICSFLOAT
 WGL_FONT_LINES		equ 0
 WGL_FONT_POLYGONS	equ 1
 
-wglUseFontOutlinesA proto _CType :HDC, :DWORD, :DWORD, :DWORD, :FLOAT, :FLOAT, :SINT, :LPGLYPHMETRICSFLOAT
-wglUseFontOutlinesW proto _CType :HDC, :DWORD, :DWORD, :DWORD, :FLOAT, :FLOAT, :SINT, :LPGLYPHMETRICSFLOAT
+wglUseFontOutlinesA proto WINAPI :HDC, :DWORD, :DWORD, :DWORD, :FLOAT, :FLOAT, :SINT, :LPGLYPHMETRICSFLOAT
+wglUseFontOutlinesW proto WINAPI :HDC, :DWORD, :DWORD, :DWORD, :FLOAT, :FLOAT, :SINT, :LPGLYPHMETRICSFLOAT
 ifdef _UNICODE
 wglUseFontOutlines equ <wglUseFontOutlinesW>
 else
 wglUseFontOutlines equ <wglUseFontOutlinesA>
 endif
 
-;; Layer plane descriptor
 LAYERPLANEDESCRIPTOR	STRUC
 nSize			dw ?
 nVersion		dw ?
@@ -4797,7 +4584,6 @@ LAYERPLANEDESCRIPTOR	ENDS
 PLAYERPLANEDESCRIPTOR	typedef ptr LAYERPLANEDESCRIPTOR
 LPLAYERPLANEDESCRIPTOR	typedef ptr LAYERPLANEDESCRIPTOR
 
-;; LAYERPLANEDESCRIPTOR flags
 LPD_DOUBLEBUFFER	equ 0x00000001
 LPD_STEREO		equ 0x00000002
 LPD_SUPPORT_GDI		equ 0x00000010
@@ -4812,7 +4598,6 @@ LPD_TRANSPARENT		equ 0x00001000
 LPD_TYPE_RGBA		equ 0
 LPD_TYPE_COLORINDEX	equ 1
 
-;; wglSwapLayerBuffers flags
 WGL_SWAP_MAIN_PLANE	equ 0x00000001
 WGL_SWAP_OVERLAY1	equ 0x00000002
 WGL_SWAP_OVERLAY2	equ 0x00000004
@@ -4845,11 +4630,11 @@ WGL_SWAP_UNDERLAY13	equ 0x10000000
 WGL_SWAP_UNDERLAY14	equ 0x20000000
 WGL_SWAP_UNDERLAY15	equ 0x40000000
 
-wglDescribeLayerPlane proto _CType :HDC, :SINT, :SINT, :UINT, :LPLAYERPLANEDESCRIPTOR
-wglSetLayerPaletteEntries proto _CType :HDC, :SINT, :SINT, :SINT, :LPCOLORREF
-wglGetLayerPaletteEntries proto _CType :HDC, :SINT, :SINT, :SINT, :LPCOLORREF
-wglRealizeLayerPalette proto _CType :HDC, :SINT, :BOOL
-wglSwapLayerBuffers proto _CType :HDC, :UINT
+wglDescribeLayerPlane proto WINAPI :HDC, :SINT, :SINT, :UINT, :LPLAYERPLANEDESCRIPTOR
+wglSetLayerPaletteEntries proto WINAPI :HDC, :SINT, :SINT, :SINT, :LPCOLORREF
+wglGetLayerPaletteEntries proto WINAPI :HDC, :SINT, :SINT, :SINT, :LPCOLORREF
+wglRealizeLayerPalette proto WINAPI :HDC, :SINT, :BOOL
+wglSwapLayerBuffers proto WINAPI :HDC, :UINT
 
 if (WINVER GE 0x0500)
 
@@ -4862,10 +4647,10 @@ LPWGLSWAP		typedef ptr WGLSWAP
 
 WGL_SWAPMULTIPLE_MAX	equ 16
 
-wglSwapMultipleBuffers proto _CType :UINT, :LPWGLSWAP
+wglSwapMultipleBuffers proto WINAPI :UINT, :LPWGLSWAP
 
-endif ;; (WINVER GE 0x0500)
-endif ;; NOGDI
-endif ;; _WINGDI_
+endif 
+endif 
+endif 
 
 .list

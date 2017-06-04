@@ -17,7 +17,6 @@ _A_VOLID	equ 08h
 _A_SUBDIR	equ 10h
 _A_ARCH		equ 20h
 _A_NORMAL	equ 80h
-
 _A_TEMPORARY	equ 0100h
 _A_SPARSE_FILE	equ 0200h
 _A_REPARSEPOINT equ 0400h
@@ -83,7 +82,9 @@ endif
 externdef	_nfile:DWORD
 externdef	_osfile:BYTE
 externdef	_osfhnd:HANDLE
+ifdef __DZ__
 externdef	_diskflag:DWORD
+endif
 
 A_CREATE	equ 1 ; fails if exists
 A_CREATETRUNC	equ 2 ; trunc if exists
@@ -97,16 +98,20 @@ M_WRONLY	equ 0x40000000
 M_RDWR		equ M_RDONLY or M_WRONLY
 
 _open		proto _CDecl :LPSTR, :SINT, :VARARG
+open		proto _CDecl :LPSTR, :SINT, :VARARG
 _sopen		proto _CDecl :LPSTR, :UINT, :UINT, :VARARG
 _read		proto __cdecl :SINT, :PVOID, :SIZE_T
+read		proto __cdecl :SINT, :PVOID, :SIZE_T
 _creat		proto __cdecl :LPSTR, :UINT
 _close		proto __cdecl :SINT
+close		proto __cdecl :SINT
 _lseek		proto __cdecl :SINT, :SIZE_T, :UINT
 _write		proto __cdecl :SINT, :PVOID, :SIZE_T
 _access		proto __cdecl :LPSTR, :UINT
 _isatty		proto __cdecl :SINT
 _eof		proto __cdecl :SINT
 _chsize		proto __cdecl :SINT, :SIZE_T
+filelength	proto __cdecl :SINT
 _filelength	proto __cdecl :SINT
 _findfirst	proto __cdecl :LPSTR, :PTR _finddata_t
 _findnext	proto __cdecl :HANDLE, :PTR _finddata_t
@@ -138,10 +143,10 @@ endif ; _WIO_DEFINED
 
 ifndef __PE__
 
-osopenA		proto _CType :LPSTR, :UINT, :UINT, :UINT
-osopenW		proto _CType :LPWSTR, :UINT, :UINT, :UINT
-_osopenA	proto _CType :LPSTR, :UINT, :UINT, :PVOID, :UINT, :UINT
-_osopenW	proto _CType :LPWSTR, :UINT, :UINT, :PVOID, :UINT, :UINT
+osopenA		proto __cdecl :LPSTR, :UINT, :UINT, :UINT
+osopenW		proto __cdecl :LPWSTR, :UINT, :UINT, :UINT
+_osopenA	proto __cdecl :LPSTR, :UINT, :UINT, :PVOID, :UINT, :UINT
+_osopenW	proto __cdecl :LPWSTR, :UINT, :UINT, :PVOID, :UINT, :UINT
 ifdef _UNICODE
 osopen		equ <osopenW>
 _osopen		equ <_osopenW>
@@ -150,29 +155,12 @@ osopen		equ <osopenA>
 _osopen		equ <_osopenA>
 endif
 
-osread		proto _CType :SINT, :PVOID, :SIZE_T
-oswrite		proto _CType :SINT, :PVOID, :SIZE_T
-getosfhnd	proto _CType :SINT
-osmaperr	proto _CType
-
-;;;;;;;;;;;;;;; crtl
-
-getfattr	proto _CType :LPSTR
-_wgetfattr	proto _CType :LPWSTR
-
-setfattr	proto _CType :LPTSTR, :UINT
-filexist	proto _CType :LPSTR
-readword	proto _CType :LPSTR
-getftime	proto _CType :SINT
-getftime_access proto _CType :SINT
-getftime_create proto _CType :SINT
-setftime	proto _CType :SINT, :DWORD
-setftime_access proto _CType :SINT, :DWORD
-setftime_create proto _CType :SINT, :DWORD
-__FTToTime	proto _CType :PTR FILETIME
-
-externdef	console:DWORD
-externdef	_diskflag:DWORD
+osread		proto __cdecl :SINT, :PVOID, :SIZE_T
+oswrite		proto __cdecl :SINT, :PVOID, :SIZE_T
+getosfhnd	proto __cdecl :SINT
+osmaperr	proto __cdecl
+getfattr	proto __cdecl :LPSTR
+_wgetfattr	proto __cdecl :LPWSTR
 
 endif ; __PE__
 

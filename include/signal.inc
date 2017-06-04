@@ -215,14 +215,14 @@ PEXCEPTION_REGISTRATION TYPEDEF PTR EXCEPTION_REGISTRATION
 externdef pCurrentException:PEXCEPTION_POINTERS
 externdef pExceptionReg:PEXCEPTION_REGISTRATION
 
-signal	proto :UINT, :PTR PROC
-raise	proto :UINT
+signal	proto __cdecl :UINT, :PTR PROC
+raise	proto __cdecl :UINT
 
-PrintContext proto \
+PrintContext proto __cdecl \
 	ContextRecord:	   PEXCEPTION_CONTEXT,
 	ExceptionRecord:   PEXCEPTION_RECORD
 IFDEF _WIN64
- ExceptionHandler proto \
+ ExceptionHandler proto __cdecl \
 	ExceptionRecord:   PEXCEPTION_RECORD,
 	EstablisherFrame:  LPDWORD,
 	ContextRecord:	   PEXCEPTION_CONTEXT,

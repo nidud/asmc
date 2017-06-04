@@ -28,7 +28,7 @@ ELSE
 ENDIF
 S_JMPBUF ENDS
 
-setjmp	PROTO _CDecl :PTR S_JMPBUF
-longjmp PROTO _CDecl :PTR S_JMPBUF, :SIZE_T
+_setjmp PROTO __cdecl :PTR S_JMPBUF
+longjmp PROTO __cdecl :PTR S_JMPBUF, :SIZE_T
 
 .list

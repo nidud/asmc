@@ -10,15 +10,15 @@
  extern "C" {
 #endif
 
-_CRTIMP void *	_CType malloc(size_t);
-_CRTIMP void *	_CType realloc(void *, size_t);
-_CRTIMP void *	_CType calloc(size_t, size_t);
-_CRTIMP void	_CType free(void *);
+_CRTIMP void *	__cdecl malloc(size_t);
+_CRTIMP void *	__cdecl realloc(void *, size_t);
+_CRTIMP void *	__cdecl calloc(size_t, size_t);
+_CRTIMP void	__cdecl free(void *);
 
-void * _CType alloca(size_t);
-void * _CType salloc(const char *);
-void * _CType _aligned_malloc(size_t, int);
-void * _CType _alloca64(size_t, int);
+void * __cdecl alloca(size_t);
+void * __cdecl salloc(const char *);
+void * __cdecl _aligned_malloc(size_t, int);
+void * __cdecl _alloca64(size_t, int);
 
 extern unsigned int _amblksiz;
 

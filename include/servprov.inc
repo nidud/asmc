@@ -5,36 +5,31 @@ include rpc.inc
 include rpcndr.inc
 ifndef __RPCNDR_H_VERSION__
 .err LT this stub requires an updated version of rpcndr.inc GT
-endif ;; __RPCNDR_H_VERSION__
+endif 
 ifndef COM_NO_WINDOWS_H
 include windows.inc
 include ole2.inc
-endif ;;COM_NO_WINDOWS_H
+endif 
 ifndef __servprov_h__
 .xlist
 __servprov_h__ equ 1
 
-;; Forward Declarations
 
 ifndef __IServiceProvider_FWD_DEFINED__
 __IServiceProvider_FWD_DEFINED__ equ 1
-endif	;; __IServiceProvider_FWD_DEFINED__
+endif	
 
 
-;; header files for imported files
 include objidl.inc
 .xlist
 
 ;PVOID
 ;void
-MIDL_user_free proto _CType \
+MIDL_user_free proto WINAPI \
 		      : PVOID
 
 
-;;#pragma comment(lib,"uuid.lib")
 
-;;---------------------------------------------------------------------------=
-;; IServiceProvider Interfaces.
 
 
 ifndef _LPSERVICEPROVIDER_DEFINED
@@ -100,7 +95,7 @@ IServiceProvider	ENDS
 
 
 ;HRESULT
-IServiceProvider_RemoteQueryService_Proxy proto _CType \
+IServiceProvider_RemoteQueryService_Proxy proto WINAPI \
 		 pThis: ptr IServiceProvider,
 	   guidService: REFGUID,
 		  riid: REFIID,
@@ -109,7 +104,7 @@ IServiceProvider_RemoteQueryService_Proxy proto _CType \
 
 
 ;void
-IServiceProvider_RemoteQueryService_Stub proto _CType \
+IServiceProvider_RemoteQueryService_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -118,17 +113,16 @@ IServiceProvider_RemoteQueryService_Stub proto _CType \
 
 
 
-endif	;; __IServiceProvider_INTERFACE_DEFINED__
+endif	
 endif
 
 
 externdef		__MIDL_itf_servprov_0074_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef		__MIDL_itf_servprov_0074_v0_0_s_ifspec:RPC_IF_HANDLE
 
-;; Additional Prototypes for ALL interfaces
 
 ;HRESULT
-IServiceProvider_QueryService_Proxy proto _CType \
+IServiceProvider_QueryService_Proxy proto WINAPI \
 		 pThis: ptr IServiceProvider,
 	   guidService: REFGUID,
 		  riid: REFIID,
@@ -137,13 +131,12 @@ IServiceProvider_QueryService_Proxy proto _CType \
 
 
 ;HRESULT
-IServiceProvider_QueryService_Stub proto _CType \
+IServiceProvider_QueryService_Stub proto WINAPI \
 		 pThis: ptr IServiceProvider,
 	   guidService: REFGUID,
 		  riid: REFIID,
 	     ppvObject: ptr IUnknown
 
 
-;; end of Additional Prototypes
 .list
 endif

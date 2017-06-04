@@ -14,78 +14,63 @@ _EXEC_CMD	equ 4
 
 externdef	OldErrorMode:dword
 
-__isexec	proto :LPSTR
-__setenvp	proto :LPSTR
-__wsetenvp	proto :LPWSTR
-__setargv	proto :SIZE_T, :PVOID, :LPSTR
-__setwargv	proto :SIZE_T, :PVOID, :LPWSTR
-__initialize	proto :PVOID, :PVOID
-__allocwpath	proto :LPSTR
+__isexec	proto __cdecl :LPSTR
+__setenvp	proto __cdecl :LPSTR
+__wsetenvp	proto __cdecl :LPWSTR
+__setargv	proto __cdecl :SIZE_T, :PVOID, :LPSTR
+__setwargv	proto __cdecl :SIZE_T, :PVOID, :LPWSTR
+__initialize	proto __cdecl :PVOID, :PVOID
+__allocwpath	proto __cdecl :LPSTR
 
 ifndef _WIN64
 
 ; Microsoft
 
-_allshr		proto c ; edx:eax >> cl
-_aullshr	proto c ; edx:eax >> cl
-__ullshr	proto c ; edx:eax >> cl
-_allshl		proto c ; edx:eax << cl
-__llshl		proto c ; edx:eax << cl
+_allshr		proto __cdecl ; edx:eax >> cl
+_aullshr	proto __cdecl ; edx:eax >> cl
+__ullshr	proto __cdecl ; edx:eax >> cl
+_allshl		proto __cdecl ; edx:eax << cl
+__llshl		proto __cdecl ; edx:eax << cl
 
 ; stdcall / no decoration
 
-__lldiv		proto c ;:qword, :qword
-_alldiv		proto c ;:qword, :qword
-__llmul		proto c ;:qword, :qword
-_allmul		proto c ;:qword, :qword
-_allrem		proto c ;:qword, :qword
-_aulldiv	proto c ;:qword, :qword
-__ullmod	proto c ;:qword, :qword
-_aullrem	proto c ;:qword, :qword
+__lldiv		proto __cdecl ;:qword, :qword
+_alldiv		proto __cdecl ;:qword, :qword
+__llmul		proto __cdecl ;:qword, :qword
+_allmul		proto __cdecl ;:qword, :qword
+_allrem		proto __cdecl ;:qword, :qword
+_aulldiv	proto __cdecl ;:qword, :qword
+__ullmod	proto __cdecl ;:qword, :qword
+_aullrem	proto __cdecl ;:qword, :qword
 
 ; Watcom
 
-_I8D		proto c ; edx:eax / ecx:ebx --> edx:eax.ecx
-_U8D		proto c ; edx:eax / ecx:ebx --> edx:eax.ecx
-_U8M		proto c ; edx:eax * ecx:ebx --> ecx:ebx:edx:eax
-_I8M		proto c ; edx:eax * ecx:ebx --> ecx:ebx:edx:eax
-_I8RS		proto c ; edx:eax >> bl
-_U8RS		proto c ; edx:eax >> bl
-_I8LS		proto c ; edx:eax << bl
-_U8LS		proto c ; edx:eax << bl
-_FLDA		proto c ; long double[EBX] = long double[EAX] + long double[EDX]
-_FLDS		proto c ; long double[EBX] = long double[EAX] - long double[EDX]
-_FLDC		proto c ; CMP(long double[EAX], long double[EDX])
-_FLDM		proto c ; long double[EBX] = long double[EAX] * long double[EDX]
-_FLDD		proto c ; long double[EBX] = long double[EAX] / long double[EDX]
-_iFDLD		proto c ; double[EAX] --> long double[EDX]
-_iLDFD		proto c ; long double[EAX] --> double[EDX]
-_U4LD		proto c ; DWORD [eax] to long double[edx]
-_I4LD		proto c ; SDWORD [eax] to long double[edx]
-_U8LD		proto c ; QWORD [eax] to long double[edx]
-_I8LD		proto c ; SQWORD [eax] to long double[edx]
+_I8D		proto __cdecl ; edx:eax / ecx:ebx --> edx:eax.ecx
+_U8D		proto __cdecl ; edx:eax / ecx:ebx --> edx:eax.ecx
+_U8M		proto __cdecl ; edx:eax * ecx:ebx --> ecx:ebx:edx:eax
+_I8M		proto __cdecl ; edx:eax * ecx:ebx --> ecx:ebx:edx:eax
+_I8RS		proto __cdecl ; edx:eax >> bl
+_U8RS		proto __cdecl ; edx:eax >> bl
+_I8LS		proto __cdecl ; edx:eax << bl
+_U8LS		proto __cdecl ; edx:eax << bl
+_FLDA		proto __cdecl ; long double[EBX] = long double[EAX] + long double[EDX]
+_FLDS		proto __cdecl ; long double[EBX] = long double[EAX] - long double[EDX]
+_FLDC		proto __cdecl ; CMP(long double[EAX], long double[EDX])
+_FLDM		proto __cdecl ; long double[EBX] = long double[EAX] * long double[EDX]
+_FLDD		proto __cdecl ; long double[EBX] = long double[EAX] / long double[EDX]
+_iFDLD		proto __cdecl ; double[EAX] --> long double[EDX]
+_iLDFD		proto __cdecl ; long double[EAX] --> double[EDX]
+_U4LD		proto __cdecl ; DWORD [eax] to long double[edx]
+_I4LD		proto __cdecl ; SDWORD [eax] to long double[edx]
+_U8LD		proto __cdecl ; QWORD [eax] to long double[edx]
+_I8LD		proto __cdecl ; SQWORD [eax] to long double[edx]
 
 endif
 
-SSE_MMX		equ 0x0001
-SSE_SSE		equ 0x0002
-SSE_SSE2	equ 0x0004
-SSE_SSE3	equ 0x0008
-SSE_SSSE3	equ 0x0010
-SSE_SSE41	equ 0x0020
-SSE_SSE42	equ 0x0040
-SSE_XGETBV	equ 0x0080
-SSE_AVX		equ 0x0100
-SSE_AVX2	equ 0x0200
-SSE_AVXOS	equ 0x0400
-
-externdef	sselevel:DWORD
-GetSSELevel	proto
-
 pragma_init macro pp, priority, name:=<INIT>
-_&name& segment para public '&name&'
-	size_t pp
-	size_t priority
+_&name& SEGMENT PARA FLAT PUBLIC '&name&'
+	SIZE_T pp
+	SIZE_T priority
 _&name& ends
 	endm
 

@@ -2,9 +2,6 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 .xlist
-;;
-;; Interface for the Windows Property Sheet Pages
-;;
 ifndef _PRSHT_H_
 _PRSHT_H_ equ 1
 
@@ -16,16 +13,13 @@ if (_WIN32_IE LT 0x0400) AND defined(_WIN32_WINNT) AND (_WIN32_WINNT GE 0x0500)
 endif
 endif
 
-;;
-;; Define API decoration for direct importing of DLL references.
-;;
 ifndef WINCOMMCTRLAPI
 if NOT defined(_COMCTL32_) AND defined(_WIN32)
 WINCOMMCTRLAPI		equ DECSPEC_IMPORT
 else
 WINCOMMCTRLAPI equ 1
 endif
-endif ;; WINCOMMCTRLAPI
+endif 
 
 ifndef CCSIZEOF_STRUCT
 CCSIZEOF_STRUCT macro structname, member
@@ -33,20 +27,17 @@ CCSIZEOF_STRUCT macro structname, member
 	endm
 endif
 
-;;
-;; For compilers that don't support nameless unions
-;;
 ifndef DUMMYUNIONNAME
 DUMMYUNIONNAME equ 1
 DUMMYUNIONNAME2 equ 1
 DUMMYUNIONNAME3 equ 1
 DUMMYUNIONNAME4 equ 1
 DUMMYUNIONNAME5 equ 1
-endif ;; DUMMYUNIONNAME
+endif 
 
 ifndef SNDMSG
 SNDMSG			equ <SendMessage>
-endif ;; ifndef SNDMSG
+endif 
 
 MAXPROPPAGES		equ 100
 HPROPSHEETPAGE		typedef ptr
@@ -57,12 +48,12 @@ ifndef MIDL_PASS
 endif
 
 ;UINT
-LPFNPSPCALLBACKA_T typedef proto _CType \
+LPFNPSPCALLBACKA_T typedef proto WINAPI \
 		  hwnd: HWND,
 		  uMsg: UINT,
 		  ppsp: PVOID
 LPFNPSPCALLBACKA typedef ptr LPFNPSPCALLBACKA_T
-LPFNPSPCALLBACKW_T typedef proto _CType \
+LPFNPSPCALLBACKW_T typedef proto WINAPI \
 		  hwnd: HWND,
 		  uMsg: UINT,
 		  ppsp: PVOID
@@ -87,11 +78,9 @@ PSP_USECALLBACK		equ 0x00000080
 PSP_PREMATURE		equ 0x00000400
 
 if (_WIN32_IE GE 0x0400)
-;;----- New flags for wizard97 --------------
 PSP_HIDEHEADER		equ 0x00000800
 PSP_USEHEADERTITLE	equ 0x00001000
 PSP_USEHEADERSUBTITLE	equ 0x00002000
-;;-------------------------------------------
 endif
 
 
@@ -123,8 +112,8 @@ lParam			LPARAM ?
 pfnCallback		LPFNPSPCALLBACKA ?
 pcRefParent		LPDWORD ?
 if (_WIN32_IE GE 0x0400)
-pszHeaderTitle		LPCSTR ?	;; this is displayed in the header
-pszHeaderSubTitle	LPCSTR ?	;;
+pszHeaderTitle		LPCSTR ?	
+pszHeaderSubTitle	LPCSTR ?	
 endif
 PROPSHEETPAGEA		ENDS
 LPPROPSHEETPAGEA	typedef ptr PROPSHEETPAGEA
@@ -153,8 +142,8 @@ pfnCallback		LPFNPSPCALLBACKW ?
 pcRefParent		PVOID ?;UINT ?
 
 if (_WIN32_IE GE 0x0400)
-pszHeaderTitle		LPCWSTR ?	;; this is displayed in the header
-pszHeaderSubTitle	LPCWSTR ?	;;/
+pszHeaderTitle		LPCWSTR ?	
+pszHeaderSubTitle	LPCWSTR ?	
 endif
 PROPSHEETPAGEW		ENDS
 LPPROPSHEETPAGEW	typedef ptr PROPSHEETPAGEW
@@ -189,22 +178,18 @@ PSH_RTLREADING		equ 0x00000800
 PSH_WIZARDCONTEXTHELP	equ 0x00001000
 
 if (_WIN32_IE GE 0x0400)
-;;----- New flags for wizard97 -----------
 PSH_WIZARD97		equ 0x00002000
-;; 0x00004000 was not used by any previous release
 PSH_WATERMARK		equ 0x00008000
-PSH_USEHBMWATERMARK	equ 0x00010000	;; user pass in a hbmWatermark instead of pszbmWatermark
-PSH_USEHPLWATERMARK	equ 0x00020000	;;
-PSH_STRETCHWATERMARK	equ 0x00040000	;; stretchwatermark also applies for the header
+PSH_USEHBMWATERMARK	equ 0x00010000	
+PSH_USEHPLWATERMARK	equ 0x00020000	
+PSH_STRETCHWATERMARK	equ 0x00040000	
 PSH_HEADER		equ 0x00080000
 PSH_USEHBMHEADER	equ 0x00100000
-PSH_USEPAGELANG		equ 0x00200000	;; use frame dialog template matched to page
-;;----------------------------------------
+PSH_USEPAGELANG		equ 0x00200000	
 endif
 
 
-; int
-PFNPROPSHEETCALLBACK_T typedef proto _CType \
+PFNPROPSHEETCALLBACK_T typedef proto WINAPI \
 		      : HWND,
 		      : UINT,
 		      : LPARAM
@@ -240,7 +225,7 @@ UNION DUMMYUNIONNAME4
 ENDS
 hplWatermark		HPALETTE ?
 UNION DUMMYUNIONNAME5
- hbmHeader		HBITMAP ?	;; Header  bitmap shares the palette with watermark
+ hbmHeader		HBITMAP ?	
  pszbmHeader		LPCSTR ?
 ENDS
 endif
@@ -315,12 +300,12 @@ endif
 
 
 ;BOOL
-LPFNADDPROPSHEETPAGE_T typedef proto _CType \
+LPFNADDPROPSHEETPAGE_T typedef proto WINAPI \
 		      : HPROPSHEETPAGE,
 		      : LPARAM
 LPFNADDPROPSHEETPAGE  typedef ptr LPFNADDPROPSHEETPAGE_T
 ;BOOL
-LPFNADDPROPSHEETPAGES_T typedef proto _CType \
+LPFNADDPROPSHEETPAGES_T typedef proto WINAPI \
 			: LPVOID,
 			: LPFNADDPROPSHEETPAGE,
 			: LPARAM
@@ -339,10 +324,8 @@ PSN_LAST		equ (0U-299U)
 
 PSN_SETACTIVE		equ (PSN_FIRST-0)
 PSN_KILLACTIVE		equ (PSN_FIRST-1)
-;; #define PSN_VALIDATE		   (PSN_FIRST-1)
 PSN_APPLY		equ (PSN_FIRST-2)
 PSN_RESET		equ (PSN_FIRST-3)
-;; #define PSN_CANCEL		   (PSN_FIRST-3)
 PSN_HELP		equ (PSN_FIRST-5)
 PSN_WIZBACK		equ (PSN_FIRST-6)
 PSN_WIZNEXT		equ (PSN_FIRST-7)
@@ -350,7 +333,7 @@ PSN_WIZFINISH		equ (PSN_FIRST-8)
 PSN_QUERYCANCEL		equ (PSN_FIRST-9)
 if (_WIN32_IE GE 0x0400)
 PSN_GETOBJECT		equ (PSN_FIRST-10)
-endif ;; 0x0400
+endif 
 
 PSNRET_NOERROR		equ 0
 PSNRET_INVALID		equ 1
@@ -516,6 +499,6 @@ PROP_MED_CYDLG		equ 215
 PROP_LG_CXDLG		equ 252
 PROP_LG_CYDLG		equ 218
 
-endif	;; _PRSHT_H_
+endif	
 
 .list

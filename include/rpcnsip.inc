@@ -2,10 +2,6 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 .xlist
-;;
-;; This file contains the types and function definitions to use the
-;; to implement the autohandle features of the runtime.
-;;
 ifndef __RPCNSIP_H__
 __RPCNSIP_H__ equ 1
 
@@ -19,36 +15,35 @@ RPC_IMPORT_CONTEXT_P	ENDS
 PRPC_IMPORT_CONTEXT_P	typedef ptr RPC_IMPORT_CONTEXT_P
 
 
-;; Stub Auto Binding routines.
 
 ;RPC_STATUS
-I_RpcNsGetBuffer proto _CType \
+I_RpcNsGetBuffer proto WINAPI \
 	       Message: PRPC_MESSAGE
 
 ;RPC_STATUS
-I_RpcNsSendReceive proto _CType \
+I_RpcNsSendReceive proto WINAPI \
 	       Message: PRPC_MESSAGE,
 		Handle: ptr RPC_BINDING_HANDLE
 
 ;void
-I_RpcNsRaiseException proto _CType \
+I_RpcNsRaiseException proto WINAPI \
 	       Message: PRPC_MESSAGE,
 		Status: RPC_STATUS
 
 ;RPC_STATUS
-I_RpcReBindBuffer proto _CType \
+I_RpcReBindBuffer proto WINAPI \
 	       Message: PRPC_MESSAGE
 
 ;RPC_STATUS
-I_NsServerBindSearch proto _CType
+I_NsServerBindSearch proto WINAPI
 
 ;RPC_STATUS
-I_NsClientBindSearch proto _CType
+I_NsClientBindSearch proto WINAPI
 
 ;void
-I_NsClientBindDone proto _CType
+I_NsClientBindDone proto WINAPI
 
 
-endif ;; __RPCNSIP_H__
+endif 
 
 .list

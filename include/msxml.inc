@@ -4,31 +4,30 @@ ifndef __msxml_h__
 .xlist
 __msxml_h__ equ 1
 
-;; Forward Declarations
 
 ifndef __IXMLElementCollection_FWD_DEFINED__
 __IXMLElementCollection_FWD_DEFINED__ equ 1
-endif	;; __IXMLElementCollection_FWD_DEFINED__
+endif	
 
 
 ifndef __IXMLDocument_FWD_DEFINED__
 __IXMLDocument_FWD_DEFINED__ equ 1
-endif	;; __IXMLDocument_FWD_DEFINED__
+endif	
 
 
 ifndef __IXMLElement_FWD_DEFINED__
 __IXMLElement_FWD_DEFINED__ equ 1
-endif	;; __IXMLElement_FWD_DEFINED__
+endif	
 
 
 ifndef __IXMLError_FWD_DEFINED__
 __IXMLError_FWD_DEFINED__ equ 1
-endif	;; __IXMLError_FWD_DEFINED__
+endif	
 
 
 ifndef __IXMLElementNotificationSink_FWD_DEFINED__
 __IXMLElementNotificationSink_FWD_DEFINED__ equ 1
-endif	;; __IXMLElementNotificationSink_FWD_DEFINED__
+endif	
 
 
 ifndef __XMLDocument_FWD_DEFINED__
@@ -36,21 +35,20 @@ __XMLDocument_FWD_DEFINED__ equ 1
 
 ;XMLDocument XMLDocument; STRUC
 
-endif	;; __XMLDocument_FWD_DEFINED__
+endif	
 
 
-;; header files for imported files
 include unknwn.inc
 include objidl.inc
 include oaidl.inc
 .xlist
 
 ;void *
-MIDL_user_allocate proto _CType \
+MIDL_user_allocate proto WINAPI \
 		      : size_t
 
 ;void
-MIDL_user_free proto _CType \
+MIDL_user_free proto WINAPI \
 		      : PVOID
 
 
@@ -201,14 +199,14 @@ IXMLElementCollection	ENDS
 
 
 ;HRESULT
-IXMLElementCollection_put_length_Proxy proto _CType \
+IXMLElementCollection_put_length_Proxy proto WINAPI \
 		 pThis: ptr IXMLElementCollection,
 		     v: LONG
 
 
 
 ;void
-IXMLElementCollection_put_length_Stub proto _CType \
+IXMLElementCollection_put_length_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -217,14 +215,14 @@ IXMLElementCollection_put_length_Stub proto _CType \
 
 
 ;HRESULT
-IXMLElementCollection_get_length_Proxy proto _CType \
+IXMLElementCollection_get_length_Proxy proto WINAPI \
 		 pThis: ptr IXMLElementCollection,
 		     p: ptr LONG
 
 
 
 ;void
-IXMLElementCollection_get_length_Stub proto _CType \
+IXMLElementCollection_get_length_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -233,14 +231,14 @@ IXMLElementCollection_get_length_Stub proto _CType \
 
 
 ;HRESULT
-IXMLElementCollection_get__newEnum_Proxy proto _CType \
+IXMLElementCollection_get__newEnum_Proxy proto WINAPI \
 		 pThis: ptr IXMLElementCollection,
 		 ppUnk: ptr IUnknown
 
 
 
 ;void
-IXMLElementCollection_get__newEnum_Stub proto _CType \
+IXMLElementCollection_get__newEnum_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -249,7 +247,7 @@ IXMLElementCollection_get__newEnum_Stub proto _CType \
 
 
 ;HRESULT
-IXMLElementCollection_item_Proxy proto _CType \
+IXMLElementCollection_item_Proxy proto WINAPI \
 		 pThis: ptr IXMLElementCollection,
 		  var1: VARIANT,
 		  var2: VARIANT,
@@ -258,7 +256,7 @@ IXMLElementCollection_item_Proxy proto _CType \
 
 
 ;void
-IXMLElementCollection_item_Stub proto _CType \
+IXMLElementCollection_item_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -267,7 +265,7 @@ IXMLElementCollection_item_Stub proto _CType \
 
 
 
-endif	;; __IXMLElementCollection_INTERFACE_DEFINED__
+endif	
 
 
 ifndef __IXMLDocument_INTERFACE_DEFINED__
@@ -453,26 +451,26 @@ IXMLDocument		ENDS
 
 
 ;HRESULT
-IXMLDocument_get_root_Proxy proto _CType \
+IXMLDocument_get_root_Proxy proto WINAPI \
 		 pThis: ptr IXMLDocument,
 		     p: ptr IXMLElement
 
 ;void
-IXMLDocument_get_root_Stub proto _CType \
+IXMLDocument_get_root_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
 	 _pdwStubPhase: ptr DWORD
 
 ;HRESULT
-IXMLDocument_get_fileSize_Proxy proto _CType \
+IXMLDocument_get_fileSize_Proxy proto WINAPI \
 		 pThis: ptr IXMLDocument,
 		     p: ptr BSTR
 
 
 
 ;void
-IXMLDocument_get_fileSize_Stub proto _CType \
+IXMLDocument_get_fileSize_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -481,14 +479,14 @@ IXMLDocument_get_fileSize_Stub proto _CType \
 
 
 ;HRESULT
-IXMLDocument_get_fileModifiedDate_Proxy proto _CType \
+IXMLDocument_get_fileModifiedDate_Proxy proto WINAPI \
 		 pThis: ptr IXMLDocument,
 		     p: ptr BSTR
 
 
 
 ;void
-IXMLDocument_get_fileModifiedDate_Stub proto _CType \
+IXMLDocument_get_fileModifiedDate_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -497,14 +495,14 @@ IXMLDocument_get_fileModifiedDate_Stub proto _CType \
 
 
 ;HRESULT
-IXMLDocument_get_fileUpdatedDate_Proxy proto _CType \
+IXMLDocument_get_fileUpdatedDate_Proxy proto WINAPI \
 		 pThis: ptr IXMLDocument,
 		     p: ptr BSTR
 
 
 
 ;void
-IXMLDocument_get_fileUpdatedDate_Stub proto _CType \
+IXMLDocument_get_fileUpdatedDate_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -513,14 +511,14 @@ IXMLDocument_get_fileUpdatedDate_Stub proto _CType \
 
 
 ;HRESULT
-IXMLDocument_get_URL_Proxy proto _CType \
+IXMLDocument_get_URL_Proxy proto WINAPI \
 		 pThis: ptr IXMLDocument,
 		     p: ptr BSTR
 
 
 
 ;void
-IXMLDocument_get_URL_Stub proto _CType \
+IXMLDocument_get_URL_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -529,14 +527,14 @@ IXMLDocument_get_URL_Stub proto _CType \
 
 
 ;HRESULT
-IXMLDocument_put_URL_Proxy proto _CType \
+IXMLDocument_put_URL_Proxy proto WINAPI \
 		 pThis: ptr IXMLDocument,
 		     p: BSTR
 
 
 
 ;void
-IXMLDocument_put_URL_Stub proto _CType \
+IXMLDocument_put_URL_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -545,14 +543,14 @@ IXMLDocument_put_URL_Stub proto _CType \
 
 
 ;HRESULT
-IXMLDocument_get_mimeType_Proxy proto _CType \
+IXMLDocument_get_mimeType_Proxy proto WINAPI \
 		 pThis: ptr IXMLDocument,
 		     p: ptr BSTR
 
 
 
 ;void
-IXMLDocument_get_mimeType_Stub proto _CType \
+IXMLDocument_get_mimeType_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -561,14 +559,14 @@ IXMLDocument_get_mimeType_Stub proto _CType \
 
 
 ;HRESULT
-IXMLDocument_get_readyState_Proxy proto _CType \
+IXMLDocument_get_readyState_Proxy proto WINAPI \
 		 pThis: ptr IXMLDocument,
 		    pl: ptr LONG
 
 
 
 ;void
-IXMLDocument_get_readyState_Stub proto _CType \
+IXMLDocument_get_readyState_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -577,14 +575,14 @@ IXMLDocument_get_readyState_Stub proto _CType \
 
 
 ;HRESULT
-IXMLDocument_get_charset_Proxy proto _CType \
+IXMLDocument_get_charset_Proxy proto WINAPI \
 		 pThis: ptr IXMLDocument,
 		     p: ptr BSTR
 
 
 
 ;void
-IXMLDocument_get_charset_Stub proto _CType \
+IXMLDocument_get_charset_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -593,14 +591,14 @@ IXMLDocument_get_charset_Stub proto _CType \
 
 
 ;HRESULT
-IXMLDocument_put_charset_Proxy proto _CType \
+IXMLDocument_put_charset_Proxy proto WINAPI \
 		 pThis: ptr IXMLDocument,
 		     p: BSTR
 
 
 
 ;void
-IXMLDocument_put_charset_Stub proto _CType \
+IXMLDocument_put_charset_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -609,14 +607,14 @@ IXMLDocument_put_charset_Stub proto _CType \
 
 
 ;HRESULT
-IXMLDocument_get_version_Proxy proto _CType \
+IXMLDocument_get_version_Proxy proto WINAPI \
 		 pThis: ptr IXMLDocument,
 		     p: ptr BSTR
 
 
 
 ;void
-IXMLDocument_get_version_Stub proto _CType \
+IXMLDocument_get_version_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -625,14 +623,14 @@ IXMLDocument_get_version_Stub proto _CType \
 
 
 ;HRESULT
-IXMLDocument_get_doctype_Proxy proto _CType \
+IXMLDocument_get_doctype_Proxy proto WINAPI \
 		 pThis: ptr IXMLDocument,
 		     p: ptr BSTR
 
 
 
 ;void
-IXMLDocument_get_doctype_Stub proto _CType \
+IXMLDocument_get_doctype_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -641,14 +639,14 @@ IXMLDocument_get_doctype_Stub proto _CType \
 
 
 ;HRESULT
-IXMLDocument_get_dtdURL_Proxy proto _CType \
+IXMLDocument_get_dtdURL_Proxy proto WINAPI \
 		 pThis: ptr IXMLDocument,
 		     p: ptr BSTR
 
 
 
 ;void
-IXMLDocument_get_dtdURL_Stub proto _CType \
+IXMLDocument_get_dtdURL_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -657,7 +655,7 @@ IXMLDocument_get_dtdURL_Stub proto _CType \
 
 
 ;HRESULT
-IXMLDocument_createElement_Proxy proto _CType \
+IXMLDocument_createElement_Proxy proto WINAPI \
 		 pThis: ptr IXMLDocument,
 		 vType: VARIANT,
 		  var1: VARIANT,
@@ -666,7 +664,7 @@ IXMLDocument_createElement_Proxy proto _CType \
 
 
 ;void
-IXMLDocument_createElement_Stub proto _CType \
+IXMLDocument_createElement_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -675,7 +673,7 @@ IXMLDocument_createElement_Stub proto _CType \
 
 
 
-endif	;; __IXMLDocument_INTERFACE_DEFINED__
+endif	
 
 
 ifndef __IXMLElement_INTERFACE_DEFINED__
@@ -852,14 +850,14 @@ IXMLElement		ENDS
 
 
 ;HRESULT
-IXMLElement_get_tagName_Proxy proto _CType \
+IXMLElement_get_tagName_Proxy proto WINAPI \
 		 pThis: ptr IXMLElement,
 		     p: ptr BSTR
 
 
 
 ;void
-IXMLElement_get_tagName_Stub proto _CType \
+IXMLElement_get_tagName_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -868,14 +866,14 @@ IXMLElement_get_tagName_Stub proto _CType \
 
 
 ;HRESULT
-IXMLElement_put_tagName_Proxy proto _CType \
+IXMLElement_put_tagName_Proxy proto WINAPI \
 		 pThis: ptr IXMLElement,
 		     p: BSTR
 
 
 
 ;void
-IXMLElement_put_tagName_Stub proto _CType \
+IXMLElement_put_tagName_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -884,14 +882,14 @@ IXMLElement_put_tagName_Stub proto _CType \
 
 
 ;HRESULT
-IXMLElement_get_parent_Proxy proto _CType \
+IXMLElement_get_parent_Proxy proto WINAPI \
 		 pThis: ptr IXMLElement,
 	      ppParent: ptr IXMLElement
 
 
 
 ;void
-IXMLElement_get_parent_Stub proto _CType \
+IXMLElement_get_parent_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -900,7 +898,7 @@ IXMLElement_get_parent_Stub proto _CType \
 
 
 ;HRESULT
-IXMLElement_setAttribute_Proxy proto _CType \
+IXMLElement_setAttribute_Proxy proto WINAPI \
 		 pThis: ptr IXMLElement,
        strPropertyName: BSTR,
 	 PropertyValue: VARIANT
@@ -908,7 +906,7 @@ IXMLElement_setAttribute_Proxy proto _CType \
 
 
 ;void
-IXMLElement_setAttribute_Stub proto _CType \
+IXMLElement_setAttribute_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -917,7 +915,7 @@ IXMLElement_setAttribute_Stub proto _CType \
 
 
 ;HRESULT
-IXMLElement_getAttribute_Proxy proto _CType \
+IXMLElement_getAttribute_Proxy proto WINAPI \
 		 pThis: ptr IXMLElement,
        strPropertyName: BSTR,
 	 PropertyValue: ptr VARIANT
@@ -925,7 +923,7 @@ IXMLElement_getAttribute_Proxy proto _CType \
 
 
 ;void
-IXMLElement_getAttribute_Stub proto _CType \
+IXMLElement_getAttribute_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -934,14 +932,14 @@ IXMLElement_getAttribute_Stub proto _CType \
 
 
 ;HRESULT
-IXMLElement_removeAttribute_Proxy proto _CType \
+IXMLElement_removeAttribute_Proxy proto WINAPI \
 		 pThis: ptr IXMLElement,
        strPropertyName: BSTR
 
 
 
 ;void
-IXMLElement_removeAttribute_Stub proto _CType \
+IXMLElement_removeAttribute_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -950,14 +948,14 @@ IXMLElement_removeAttribute_Stub proto _CType \
 
 
 ;HRESULT
-IXMLElement_get_children_Proxy proto _CType \
+IXMLElement_get_children_Proxy proto WINAPI \
 		 pThis: ptr IXMLElement,
 		    pp: ptr IXMLElementCollection
 
 
 
 ;void
-IXMLElement_get_children_Stub proto _CType \
+IXMLElement_get_children_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -966,14 +964,14 @@ IXMLElement_get_children_Stub proto _CType \
 
 
 ;HRESULT
-IXMLElement_get_type_Proxy proto _CType \
+IXMLElement_get_type_Proxy proto WINAPI \
 		 pThis: ptr IXMLElement,
 		plType: ptr LONG
 
 
 
 ;void
-IXMLElement_get_type_Stub proto _CType \
+IXMLElement_get_type_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -982,14 +980,14 @@ IXMLElement_get_type_Stub proto _CType \
 
 
 ;HRESULT
-IXMLElement_get_text_Proxy proto _CType \
+IXMLElement_get_text_Proxy proto WINAPI \
 		 pThis: ptr IXMLElement,
 		     p: ptr BSTR
 
 
 
 ;void
-IXMLElement_get_text_Stub proto _CType \
+IXMLElement_get_text_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -998,14 +996,14 @@ IXMLElement_get_text_Stub proto _CType \
 
 
 ;HRESULT
-IXMLElement_put_text_Proxy proto _CType \
+IXMLElement_put_text_Proxy proto WINAPI \
 		 pThis: ptr IXMLElement,
 		     p: BSTR
 
 
 
 ;void
-IXMLElement_put_text_Stub proto _CType \
+IXMLElement_put_text_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1014,7 +1012,7 @@ IXMLElement_put_text_Stub proto _CType \
 
 
 ;HRESULT
-IXMLElement_addChild_Proxy proto _CType \
+IXMLElement_addChild_Proxy proto WINAPI \
 		 pThis: ptr IXMLElement,
 	    pChildElem: ptr IXMLElement,
 		lIndex: LONG,
@@ -1023,7 +1021,7 @@ IXMLElement_addChild_Proxy proto _CType \
 
 
 ;void
-IXMLElement_addChild_Stub proto _CType \
+IXMLElement_addChild_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1032,14 +1030,14 @@ IXMLElement_addChild_Stub proto _CType \
 
 
 ;HRESULT
-IXMLElement_removeChild_Proxy proto _CType \
+IXMLElement_removeChild_Proxy proto WINAPI \
 		 pThis: ptr IXMLElement,
 	    pChildElem: ptr IXMLElement
 
 
 
 ;void
-IXMLElement_removeChild_Stub proto _CType \
+IXMLElement_removeChild_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1048,7 +1046,7 @@ IXMLElement_removeChild_Stub proto _CType \
 
 
 
-endif	;; __IXMLElement_INTERFACE_DEFINED__
+endif	
 
 
 ifndef __IXMLError_INTERFACE_DEFINED__
@@ -1103,14 +1101,14 @@ IXMLError		ENDS
 
 
 ;HRESULT
-IXMLError_GetErrorInfo_Proxy proto _CType \
+IXMLError_GetErrorInfo_Proxy proto WINAPI \
 		 pThis: ptr IXMLError,
 	  pErrorReturn: ptr XML_ERROR
 
 
 
 ;void
-IXMLError_GetErrorInfo_Stub proto _CType \
+IXMLError_GetErrorInfo_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1119,7 +1117,7 @@ IXMLError_GetErrorInfo_Stub proto _CType \
 
 
 
-endif	;; __IXMLError_INTERFACE_DEFINED__
+endif	
 
 
 ifndef __IXMLElementNotificationSink_INTERFACE_DEFINED__
@@ -1215,14 +1213,14 @@ IXMLElementNotificationSink ENDS
 
 
 ;HRESULT
-IXMLElementNotificationSink_ChildAdded_Proxy proto _CType \
+IXMLElementNotificationSink_ChildAdded_Proxy proto WINAPI \
 		 pThis: ptr IXMLElementNotificationSink,
 	    pChildElem: ptr IDispatch
 
 
 
 ;void
-IXMLElementNotificationSink_ChildAdded_Stub proto _CType \
+IXMLElementNotificationSink_ChildAdded_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
@@ -1231,15 +1229,13 @@ IXMLElementNotificationSink_ChildAdded_Stub proto _CType \
 
 
 
-endif	;; __IXMLElementNotificationSink_INTERFACE_DEFINED__
+endif	
 
 
 externdef		CLSID_XMLDocument:CLSID
 
-endif ;; __MSXML_LIBRARY_DEFINED__
+endif 
 
-;; Additional Prototypes for ALL interfaces
 
-;; end of Additional Prototypes
 .list
-endif ;; __msxml_h__
+endif 

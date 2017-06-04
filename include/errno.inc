@@ -55,6 +55,6 @@ externdef	errno:dword
 externdef	oserrno:dword
 externdef	sys_errlist:size_t
 
-osmaperr	proto
+osmaperr	proto __cdecl
 
 .list

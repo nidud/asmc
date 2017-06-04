@@ -27,32 +27,32 @@ _CRTIMP extern wchar_t **__wargv;
 _CRTIMP extern wchar_t **_wenviron;
 _CRTIMP extern wchar_t *_wpgmptr;
 
-_CRTIMP void	_CType abort(void);
-_CRTIMP void	_CType exit(int);
-_CRTIMP int	_CType atoi(const char *);
-_CRTIMP long	_CType atol(const char *);
-_CRTIMP __int64 _CType _atoi64(const char *);
-_CRTIMP char *	_CType getenv(const char *);
-_CRTIMP int	_CType mbtowc(wchar_t *, const char *, size_t);
-_CRTIMP size_t	_CType mbstowcs(wchar_t *, const char *, size_t);
-_CRTIMP void	_CType qsort(void *, size_t, size_t, int (_CType *)(const void *, const void *));
-_CRTIMP char *	_CType _fullpath(char *, const char *, size_t);
-_CRTIMP double	_CType strtod(const char *, char **);
-_CRTIMP void *	_CType malloc(size_t);
-_CRTIMP void *	_CType realloc(void *, size_t);
-_CRTIMP void *	_CType calloc(size_t, size_t);
-_CRTIMP void	_CType free(void *);
-_CRTIMP int	_CType system(const char *);
+_CRTIMP void	__cdecl abort(void);
+_CRTIMP void	__cdecl exit(int);
+_CRTIMP int	__cdecl atoi(const char *);
+_CRTIMP long	__cdecl atol(const char *);
+_CRTIMP __int64 __cdecl _atoi64(const char *);
+_CRTIMP char *	__cdecl getenv(const char *);
+_CRTIMP int	__cdecl mbtowc(wchar_t *, const char *, size_t);
+_CRTIMP size_t	__cdecl mbstowcs(wchar_t *, const char *, size_t);
+_CRTIMP void	__cdecl qsort(void *, size_t, size_t, int (*)(const void *, const void *));
+_CRTIMP char *	__cdecl _fullpath(char *, const char *, size_t);
+_CRTIMP double	__cdecl strtod(const char *, char **);
+_CRTIMP void *	__cdecl malloc(size_t);
+_CRTIMP void *	__cdecl realloc(void *, size_t);
+_CRTIMP void *	__cdecl calloc(size_t, size_t);
+_CRTIMP void	__cdecl free(void *);
+_CRTIMP int	__cdecl system(const char *);
 
-long	_CType xtol(const char *);
+long	__cdecl xtol(const char *);
 
 #ifndef _WSTDLIB_DEFINED
 
-_CRTIMP int	_CType _wtoi(const wchar_t *);
-_CRTIMP long	_CType _wtol(const wchar_t *);
-_CRTIMP double	_CType wcstod(const wchar_t *, wchar_t **);
-_CRTIMP int	_CType _wsystem(const wchar_t *);
-_CRTIMP wchar_t * _CType _wgetenv(const wchar_t *);
+_CRTIMP int	__cdecl _wtoi(const wchar_t *);
+_CRTIMP long	__cdecl _wtol(const wchar_t *);
+_CRTIMP double	__cdecl wcstod(const wchar_t *, wchar_t **);
+_CRTIMP int	__cdecl _wsystem(const wchar_t *);
+_CRTIMP wchar_t * __cdecl _wgetenv(const wchar_t *);
 
 #define _WSTDLIB_DEFINED
 #endif

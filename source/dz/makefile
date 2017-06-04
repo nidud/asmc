@@ -1,12 +1,45 @@
-#AFLAGS = -D__W95__ -D__CI__ -D__BMP__
-AFLAGS = -D__W95__
+#
+# Visual C version 6 used for debug
+# Open Watcom used to add the DZ.ICO file
+#
+debug = 0
+
+msvc = \vc
+watc = \watcom
+asmc = \asmc
+#
+# use full path of this directory (source level debug)
+#
+source	= $(asmc)\source\dz\src
+include = -I$(source)\h -I$(asmc)\include
+
+CC  = $(asmc)\bin\asmc /coff /Cs /Zi /D__DZ__ $(include)
+RC  = $(asmc)\bin\iddc /coff
+LIB = $(asmc)\bin\libw /b /n /c /fac
+
+!if $(debug)
+LINK = $(msvc)\bin\link /debug /subsystem:console /libpath:$(asmc)\lib
+!else
+LINK = $(asmc)\bin\linkw op stub=$(source)\res\dz.bin lib dz.lib file
+ICON = $(watc)\binnt\wrc -q $(source)\res\dz.res $@
+!endif
+
+all: dz.lib dz.obj dz.exe clean
 
 dz.exe:
-	iddc -r res\*.idd
-	asmc -Cs $(AFLAGS) -Iinc -r src\*.asm
-	libw $*.lib *.obj
-	linkw N $@ Op M, stub=res\dz.bin L libc, dz F ..\..\lib\crt
-	wrc -q res\dz.res $@
-	del dz.lib
-	del *.obj
+ $(LINK) dz.obj
+ $(ICON)
+
+dz.lib:
+ $(RC) /r $(source)\res\*.idd
+ $(CC) /r $(source)\lib\*.asm
+ $(LIB) $@ *.obj
+ @del *.obj
+
+dz.obj:
+ $(CC) $(source)\dz.asm
+
+clean:
+ @del dz.lib
+ @del dz.obj
 

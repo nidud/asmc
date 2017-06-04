@@ -3,7 +3,7 @@
 ; signed and unsigned are same
 ;
 	.386
-	.model	flat, stdcall
+	.model	flat, c
 
 public	_I8LS	; Watcom
 public	_U8LS

@@ -7,7 +7,7 @@ include libc.inc
 _inpd	PROC port
 	mov	dx,WORD PTR [esp+4]
 	in	eax,dx
-	ret	4
+	ret
 _inpd	ENDP
 
 	END

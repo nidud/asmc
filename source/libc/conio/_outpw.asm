@@ -8,7 +8,7 @@ _outpw	PROC port, w
 	mov	dx,WORD PTR [esp+4]
 	mov	ax,WORD PTR [esp+8]
 	out	dx,ax
-	ret	8
+	ret
 _outpw	ENDP
 
 	END

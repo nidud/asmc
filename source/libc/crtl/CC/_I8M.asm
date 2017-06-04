@@ -1,5 +1,5 @@
 	.486
-	.model	flat, stdcall
+	.model	flat, c
 
 public	_I8M
 public	_U8M

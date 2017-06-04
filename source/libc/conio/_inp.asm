@@ -8,7 +8,7 @@ _inp	PROC port
 	xor	eax,eax
 	mov	dx,WORD PTR [esp+4]
 	in	al,dx
-	ret	4
+	ret
 _inp	ENDP
 
 	END

@@ -9,7 +9,7 @@ _outp	PROC port, b
 	mov	dx,WORD PTR [esp+4]
 	mov	al,BYTE PTR [esp+8]
 	out	dx,al
-	ret	8
+	ret
 _outp	ENDP
 
 	END

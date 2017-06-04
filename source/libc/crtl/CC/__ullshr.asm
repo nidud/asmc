@@ -1,5 +1,5 @@
 	.486
-	.model	flat, stdcall
+	.model	flat, c
 
 PUBLIC	_U8RS
 PUBLIC	_aullshr

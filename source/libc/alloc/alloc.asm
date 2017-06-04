@@ -2,9 +2,8 @@ include alloc.inc
 include errno.inc
 
 _FREE	equ 0
-_LOCAL	equ 1
-_GLOBAL equ 2
-_ALIGNX equ 3
+_USED	equ 1
+_ALIGN	equ 3
 
 	.data
 
@@ -33,7 +32,7 @@ malloc	PROC byte_count:UINT
 
 block_found:
 
-	mov	[edx].S_HEAP.h_type,_LOCAL
+	mov	[edx].S_HEAP.h_type,_USED
 	je	@F			; same size ?
 
 	mov	[edx].S_HEAP.h_size,ecx
@@ -46,9 +45,12 @@ block_found:
 	add	edx,[edx].S_HEAP.h_size
 	mov	_heap_free,edx
 toend:
-	ret	4
+	ret
 
 find_block:
+	cmp	ecx,_amblksiz
+	ja	create_heap
+
 	mov	edx,_heap_base
 	xor	eax,eax
 lupe:
@@ -78,11 +80,12 @@ last:
 
 create_heap:
 	mov	eax,_amblksiz
-	test	eax,eax
-	jz	h_alloc
+	add	eax,sizeof(S_HEAP)
 	cmp	eax,ecx
-	jb	h_alloc
-	add	eax,sizeof(S_HEAP) * 2
+	jae	@F
+	mov	eax,ecx
+@@:
+	add	eax,sizeof(S_HEAP)
 	push	eax
 	push	ecx
 	push	eax
@@ -98,24 +101,21 @@ create_heap:
 	mov	[eax].S_HEAP.h_size,edx
 	mov	[eax].S_HEAP.h_type,_FREE
 	mov	[eax].S_HEAP.h_next,0
-	add	edx,eax
-	mov	[edx].S_HEAP.h_size,0
-	mov	[edx].S_HEAP.h_type,_LOCAL
-	mov	[edx].S_HEAP.h_prev,eax
+	mov	[eax+edx].S_HEAP.h_size,0
+	mov	[eax+edx].S_HEAP.h_type,_USED
+	mov	[eax+edx].S_HEAP.h_prev,eax
 	mov	edx,_heap_base
 	mov	[eax].S_HEAP.h_prev,edx
 	.if	edx
-		push	ecx
-		mov	ecx,[edx].S_HEAP.h_next
-		mov	[edx].S_HEAP.h_next,eax
-		mov	[eax].S_HEAP.h_next,ecx
-		.if	ecx
-			mov [ecx].S_HEAP.h_prev,eax
-		.endif
-		pop	ecx
+		.while [edx].S_HEAP.h_next
+		    mov edx,[edx].S_HEAP.h_next
+		.endw
+		mov [edx].S_HEAP.h_next,eax
+		mov [eax].S_HEAP.h_prev,edx
+	.else
+		mov _heap_base,eax
 	.endif
 	mov	_heap_free,eax
-	mov	_heap_base,eax
 	mov	edx,eax
 	mov	eax,[edx].S_HEAP.h_size
 	cmp	eax,ecx
@@ -124,31 +124,6 @@ nomem:
 	mov	errno,ENOMEM
 	xor	eax,eax
 	jmp	toend
-h_alloc:
-	push	ecx
-	push	ecx
-	push	0
-	call	GetProcessHeap
-	push	eax
-	call	HeapAlloc
-	pop	ecx
-	test	eax,eax
-	jz	nomem
-	mov	[eax].S_HEAP.h_size,ecx
-	mov	[eax].S_HEAP.h_type,_GLOBAL
-	mov	ecx,_heap_base
-	mov	[eax].S_HEAP.h_prev,ecx
-	mov	[eax].S_HEAP.h_next,ecx
-	.if	ecx
-		mov edx,[ecx].S_HEAP.h_next
-		mov [ecx].S_HEAP.h_next,eax
-		mov [eax].S_HEAP.h_next,edx
-		.if edx
-			mov [edx].S_HEAP.h_prev,eax
-		.endif
-	.endif
-	add	eax,16
-	jmp	toend
 malloc	ENDP
 
 free	PROC maddr:PVOID
@@ -156,33 +131,58 @@ free	PROC maddr:PVOID
 	mov	eax,[esp+8]
 	sub	eax,sizeof(S_HEAP)
 	js	toend
-	cmp	[eax].S_HEAP.h_type,_LOCAL
-	jne	h_free
-	mov	[eax].S_HEAP.h_type,_FREE
-	mov	_heap_free,eax
-toend:
-	pop	eax
-	ret	4
-h_free:
-	cmp	[eax].S_HEAP.h_type,_GLOBAL
+	cmp	[eax].S_HEAP.h_type,_ALIGN
+	jne	@F
+	mov	eax,[eax].S_HEAP.h_prev
+@@:
+	cmp	[eax].S_HEAP.h_type,_USED
 	jne	toend
-	push	edx
+	mov	[eax].S_HEAP.h_type,_FREE
+	mov	ecx,[eax].S_HEAP.h_size
+@@:
+	cmp	[eax+ecx].S_HEAP.h_type,_FREE
+	jne	@F
+	add	ecx,[eax+ecx].S_HEAP.h_size
+	mov	[eax].S_HEAP.h_size,ecx
+	jmp	@B
+@@:
+	mov	_heap_free,eax
+	cmp	[eax+ecx].S_HEAP.h_size,0
+	jne	toend
+	mov	eax,[eax+ecx].S_HEAP.h_prev
+	cmp	[eax].S_HEAP.h_type,_FREE
+	jne	toend
+	mov	ecx,[eax].S_HEAP.h_size
+@@:
+	cmp	[eax+ecx].S_HEAP.h_type,_FREE
+	jne	@F
+	add	ecx,[eax+ecx].S_HEAP.h_size
+	mov	[eax].S_HEAP.h_size,ecx
+	jmp	@B
+@@:
+	cmp	[eax+ecx].S_HEAP.h_size,0
+	jne	toend
 	push	eax
-	mov	edx,[eax].S_HEAP.h_prev
-	mov	ecx,[eax].S_HEAP.h_next
-	.if	edx
-		mov [edx].S_HEAP.h_next,ecx
+	;
+	; unlink the node
+	;
+	mov ecx,[eax].S_HEAP.h_prev
+	mov eax,[eax].S_HEAP.h_next
+	.if ecx
+	    mov [ecx].S_HEAP.h_next,eax
 	.endif
-	.if	ecx
-		mov [ecx].S_HEAP.h_prev,edx
+	.if eax
+	    mov [eax].S_HEAP.h_prev,ecx
 	.endif
+	mov	eax,_heap_base
+	mov	_heap_free,eax
 	push	0
 	call	GetProcessHeap
 	push	eax
 	call	HeapFree
-	pop	edx
+toend:
 	pop	eax
-	ret	4
+	ret
 free	ENDP
 
 	END

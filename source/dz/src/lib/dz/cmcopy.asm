@@ -327,7 +327,7 @@ copyfile PROC USES esi edi file_size:QWORD, t:DWORD, attrib:DWORD
 			; return user break (ESC) in ESI
 			;--------------------------------
 			mov	esi,eax
-			setftime( STDO.ios_file, time )
+			setftime( STDO.ios_file, t )
 			ioclose( addr STDO )
 			mov	eax,attrib
 			;-----------------------------------

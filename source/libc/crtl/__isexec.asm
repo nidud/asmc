@@ -5,10 +5,10 @@ include string.inc
 
 __isexec PROC filename:LPSTR
 
-	.if	strext( filename )
+	.if strext( filename )
 
-		mov	eax,[eax+1]
-		or	eax,'   '
+		mov eax,[eax+1]
+		or  eax,'   '
 
 		.switch eax
 
@@ -18,7 +18,7 @@ __isexec PROC filename:LPSTR
 		  .case 'tab':	mov eax,_EXEC_BAT: .endc
 
 		  .default
-			xor	eax,eax
+			xor eax,eax
 		.endsw
 	.endif
 	ret

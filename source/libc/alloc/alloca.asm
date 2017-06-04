@@ -12,9 +12,9 @@ alloca	PROC byte_count:UINT
 done:
 	sub eax,ecx
 	and eax,-16	; align 16
-	test [eax],eax	; probe page
+	test [eax-4],eax; probe page
 	mov ecx,[esp]
-	mov esp,eax
+	lea esp,[eax-4]
 	jmp ecx
 probe:
 	sub eax,1000h

@@ -58,8 +58,8 @@ assert_exit proc
 	.untilcxz
 	pop	eax
 	mov	_ip,eax
-	_print( addr fassert, eax )
-	_print( addr regs, _ax, _dx, _bx, _cx, _ip, _si, _bp, _di, _sp, _st )
+	printf( addr fassert, eax )
+	printf( addr regs, _ax, _dx, _bx, _cx, _ip, _si, _bp, _di, _sp, _st )
 ;	getch()
 	exit( 1 )
 	ret

@@ -1,5 +1,7 @@
-Name = Ascii
-Objs = Ascii.obj DMain.obj DHelp
+Ascii.exe:
+ asmc Ascii.asm
+ iddc DMain.idd
+ iddc DHelp.idd
+ linkw symt _cstart file Ascii, DMain, DHelp
 
-!include master.mif
 

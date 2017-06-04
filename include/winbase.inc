@@ -140,14 +140,14 @@ if (_WIN32_WINNT GE 0x0600)
 COPY_FILE_COPY_SYMLINK equ 0x00000800
 COPY_FILE_NO_BUFFERING equ 0x00001000
 endif
-endif 
+endif
 if (_WIN32_WINNT GE 0x0500)
 REPLACEFILE_WRITE_THROUGH equ 0x00000001
 REPLACEFILE_IGNORE_MERGE_ERRORS equ 0x00000002
 if (_WIN32_WINNT GE 0x0600)
 REPLACEFILE_IGNORE_ACL_ERRORS equ 0x00000004
 endif
-endif 
+endif
 
 PIPE_ACCESS_INBOUND	   equ 0x00000001
 PIPE_ACCESS_OUTBOUND	   equ 0x00000002
@@ -350,7 +350,7 @@ EncodeSystemPointer proto WINAPI \
 DecodeSystemPointer proto WINAPI \
 		  _Ptr: PVOID
 
-endif 
+endif
 
 ifdef _X86_
 LPLDT_ENTRY	typedef PLDT_ENTRY
@@ -672,7 +672,7 @@ BELOW_NORMAL_PRIORITY_CLASS equ 0x00004000
 ABOVE_NORMAL_PRIORITY_CLASS equ 0x00008000
 
 INHERIT_PARENT_AFFINITY equ 0x00010000
-INHERIT_CALLER_PRIORITY equ 0x00020000	  
+INHERIT_CALLER_PRIORITY equ 0x00020000
 CREATE_PROTECTED_PROCESS equ 0x00040000
 EXTENDED_STARTUPINFO_PRESENT equ 0x00080000
 
@@ -691,7 +691,7 @@ CREATE_IGNORE_SYSTEM_DEFAULT equ 0x80000000
 
 
 
-STACK_SIZE_PARAM_IS_A_RESERVATION equ 0x00010000    
+STACK_SIZE_PARAM_IS_A_RESERVATION equ 0x00010000
 
 THREAD_PRIORITY_LOWEST		equ THREAD_BASE_PRIORITY_MIN
 THREAD_PRIORITY_BELOW_NORMAL	equ THREAD_PRIORITY_LOWEST+1
@@ -707,12 +707,12 @@ THREAD_MODE_BACKGROUND_BEGIN	equ 0x00010000
 THREAD_MODE_BACKGROUND_END	equ 0x00020000
 
 
-VOLUME_NAME_DOS		equ 0x0	 
+VOLUME_NAME_DOS		equ 0x0
 VOLUME_NAME_GUID	equ 0x1
 VOLUME_NAME_NT		equ 0x2
 VOLUME_NAME_NONE	equ 0x4
 
-FILE_NAME_NORMALIZED	equ 0x0	 
+FILE_NAME_NORMALIZED	equ 0x0
 FILE_NAME_OPENED	equ 0x8
 
 EXCEPTION_DEBUG_EVENT	    equ 1
@@ -998,7 +998,7 @@ FILE_MAP_COPY		equ SECTION_QUERY
 FILE_MAP_WRITE		equ SECTION_MAP_WRITE
 FILE_MAP_READ		equ SECTION_MAP_READ
 FILE_MAP_ALL_ACCESS	equ SECTION_ALL_ACCESS
-FILE_MAP_EXECUTE	equ SECTION_MAP_EXECUTE_EXPLICIT    
+FILE_MAP_EXECUTE	equ SECTION_MAP_EXECUTE_EXPLICIT
 
 OF_READ			equ 0x00000000
 OF_WRITE		equ 0x00000001
@@ -1623,7 +1623,7 @@ InterlockedBitTestAndComplement_Inline macro Base, Bit
 	endm
 endif
 
-endif 
+endif
 
 pragma_intrinsic macro x
 	endm
@@ -1876,7 +1876,7 @@ pragma_intrinsic(_InterlockedXor16)
 
 endif
 
-else 
+else
 
 ;LONG
 InterlockedIncrement proto WINAPI \
@@ -1945,8 +1945,8 @@ InterlockedExchange64 macro Target, Value
 ;LONGLONG
 InterlockedExchangeAdd64 macro Addend, Value
 	endm
-endif 
-endif 
+endif
+endif
 
 InterlockedCompareExchangePointer macro Destination, ExChange, Comperand
 	exitm<InterlockedCompareExchange(Destination, ExChange, Comperand)>
@@ -1965,7 +1965,7 @@ InterlockedCompareExchangeRelease64 equ <InterlockedCompareExchange64>
 InterlockedCompareExchangePointerAcquire equ <InterlockedCompareExchangePointer>
 InterlockedCompareExchangePointerRelease equ <InterlockedCompareExchangePointer>
 
-endif 
+endif
 
 if defined(_SLIST_HEADER_) AND NOT defined(_NTOSP_)
 
@@ -1991,11 +1991,11 @@ InterlockedFlushSList proto WINAPI \
 QueryDepthSList proto WINAPI \
 	      ListHead: PSLIST_HEADER
 
-endif 
+endif
 
-endif 
+endif
 
-endif 
+endif
 ;endif
 
 ;BOOL
@@ -2189,7 +2189,7 @@ GetProcessorSystemCycleTime proto WINAPI \
 		Buffer: PSYSTEM_PROCESSOR_CYCLE_TIME_INFORMATION,
 	ReturnedLength: PDWORD
 
-endif 
+endif
 
 ;LPVOID
 VirtualAlloc proto WINAPI \
@@ -2230,7 +2230,7 @@ VirtualAllocExNuma proto WINAPI \
       flAllocationType: DWORD,
 	     flProtect: DWORD,
 	  nndPreferred: DWORD
-endif 
+endif
 
 VirtualFreeEx proto WINAPI \
 	      hProcess: HANDLE,
@@ -2399,8 +2399,8 @@ ifdef _UNICODE
 GetLongPathNameTransacted equ <GetLongPathNameTransactedW>
 else
 GetLongPathNameTransacted equ <GetLongPathNameTransactedA>
-endif 
-endif 
+endif
+endif
 
 ;BOOL
 GetProcessAffinityMask proto WINAPI \
@@ -2418,14 +2418,14 @@ GetProcessGroupAffinity proto WINAPI \
 	      hProcess: HANDLE,
 	    GroupCount: PUSHORT,
 	    GroupArray: PUSHORT
-endif 
+endif
 
 if _WIN32_WINNT GE 0x0501
 ;BOOL
 GetProcessHandleCount proto WINAPI \
 	      hProcess: HANDLE,
 	pdwHandleCount: PDWORD
-endif 
+endif
 
 GetProcessTimes proto WINAPI \
 	      hProcess: HANDLE,
@@ -2469,7 +2469,7 @@ SetProcessAffinityUpdateMode proto WINAPI \
 QueryProcessAffinityUpdateMode proto WINAPI \
 	      hProcess: HANDLE,
 	     lpdwFlags: LPDWORD
-endif 
+endif
 
 ;HANDLE
 OpenProcess proto WINAPI \
@@ -2648,12 +2648,12 @@ CreateUmsThreadContext proto WINAPI \
 EnterUmsSchedulingMode proto WINAPI \
   SchedulerStartupInfo: PUMS_SCHEDULER_STARTUP_INFO
 
-endif 
+endif
 
 
-endif 
+endif
 
-endif 
+endif
 
 PPROC_THREAD_ATTRIBUTE_LIST	typedef ptr PROC_THREAD_ATTRIBUTE_LIST
 LPPROC_THREAD_ATTRIBUTE_LIST	typedef ptr PROC_THREAD_ATTRIBUTE_LIST
@@ -2692,7 +2692,7 @@ if (_WIN32_WINNT GE 0x0502)
 ;DWORD
 GetThreadId proto WINAPI \
 		Thread: HANDLE
-endif 
+endif
 
 ;DWORD
 GetProcessId proto WINAPI \
@@ -2712,7 +2712,7 @@ if (_WIN32_WINNT GE 0x0601)
 GetThreadGroupAffinity proto WINAPI \
 	       hThread: HANDLE,
 	 GroupAffinity: PGROUP_AFFINITY
-endif 
+endif
 
 SetThreadAffinityMask proto WINAPI \
 	       hThread: HANDLE,
@@ -2733,7 +2733,7 @@ lpPreviousIdealProcessor: PPROCESSOR_NUMBER
 GetThreadIdealProcessorEx proto WINAPI \
 	       hThread: HANDLE,
       lpIdealProcessor: PPROCESSOR_NUMBER
-endif 
+endif
 
 if(_WIN32_WINNT GE 0x0400)
 ;DWORD
@@ -2756,7 +2756,7 @@ GetProcessDEPPolicy proto WINAPI \
 	       lpFlags: LPDWORD,
 	   lpPermanent: PBOOL
 
-endif 
+endif
 
 ;BOOL
 SetProcessPriorityBoost proto WINAPI \
@@ -2797,7 +2797,7 @@ if _WIN32_WINNT GE 0x0501
 GetThreadIOPendingFlag proto WINAPI \
 	       hThread: HANDLE,
 	 lpIOIsPending: PBOOL
-endif 
+endif
 
 ;VOID
 ExitThread proto WINAPI \
@@ -2854,7 +2854,7 @@ PowerClearRequest proto WINAPI \
 	  PowerRequest: HANDLE,
 	   RequestType: POWER_REQUEST_TYPE
 
-endif 
+endif
 
 ifdef _M_CEE_PURE
 GetLastError		equ <System::Runtime::InteropServices::Marshal::GetLastWin32Error>
@@ -2876,7 +2876,7 @@ PRESTORE_LAST_ERROR_T	typedef proto WINAPI :DWORD
 PRESTORE_LAST_ERROR	typedef ptr PRESTORE_LAST_ERROR_T
 RESTORE_LAST_ERROR_NAME equ <"RestoreastError">
 
-endif 
+endif
 
 ;HasOverlappedIoCompleted(lpOverlapped) ((lpOverlapped)->Internal != STATUS_PENDING)
 HasOverlappedIoCompleted macro lpOverlapped
@@ -2911,7 +2911,7 @@ lpCompletionPortEntries: LPOVERLAPPED_ENTRY,
    ulNumEntriesRemoved: PULONG,
 	dwMilliseconds: DWORD,
 	    fAlertable: BOOL
-endif 
+endif
 
 PostQueuedCompletionStatus proto WINAPI \
 	CompletionPort: HANDLE,
@@ -2932,7 +2932,7 @@ SetFileIoOverlappedRange proto WINAPI \
 	    FileHandle: HANDLE,
   OverlappedRangeStart: PUCHAR,
 	       _Length: ULONG
-endif 
+endif
 
 SEM_FAILCRITICALERRORS	    equ 0x0001
 SEM_NOGPFAULTERRORBOX	    equ 0x0002
@@ -2988,14 +2988,14 @@ Wow64GetThreadSelectorEntry proto WINAPI \
 	 hThread: HANDLE,
       dwSelector: DWORD,
  lpSelectorEntry: PWOW64_LDT_ENTRY
-endif 
+endif
 
 ;BOOL
 Wow64SetThreadContext proto WINAPI \
 	 hThread: HANDLE,
        lpContext: ptr WOW64_CONTEXT
 
-endif 
+endif
 
 ;DWORD
 SuspendThread proto WINAPI \
@@ -3031,7 +3031,7 @@ if _WIN32_WINNT GE 0x0501
 CheckRemoteDebuggerPresent proto WINAPI \
 	      hProcess: HANDLE,
      pbDebuggerPresent: PBOOL
-endif 
+endif
 
 ;VOID
 DebugBreak proto WINAPI
@@ -3241,7 +3241,7 @@ SetStdHandleEx proto WINAPI \
 	    nStdHandle: DWORD,
 	       hHandle: HANDLE,
 	   phPrevValue: PHANDLE
-endif 
+endif
 
 WriteFile proto WINAPI \
 		 hFile: HANDLE,
@@ -3320,7 +3320,7 @@ if _WIN32_WINNT GE 0x0501
 SetFileValidData proto WINAPI \
 		 hFile: HANDLE,
        ValidDataLength: LONGLONG
-endif 
+endif
 ;BOOL
 SetFileShortNameA proto WINAPI \
 		 hFile: HANDLE,
@@ -3332,7 +3332,7 @@ ifdef _UNICODE
 SetFileShortName	equ <SetFileShortNameW>
 else
 SetFileShortName	equ <SetFileShortNameA>
-endif 
+endif
 
 CloseHandle proto WINAPI \
 	       hObject: HANDLE
@@ -3556,7 +3556,7 @@ GetSystemFileCacheSize proto WINAPI \
 lpMinimumFileCacheSize: PSIZE_T,
 lpMaximumFileCacheSize: PSIZE_T,
 		 Flags: DWORD
-endif 
+endif
 
 if _WIN32_WINNT GE 0x0501
 ;BOOL
@@ -3568,7 +3568,7 @@ GetSystemTimes proto WINAPI \
 	    lpIdleTime: LPFILETIME,
 	  lpKernelTime: LPFILETIME,
 	    lpUserTime: LPFILETIME
-endif 
+endif
 
 if _WIN32_WINNT GE 0x0501
 ;VOID
@@ -3627,14 +3627,14 @@ CompareFileTime proto WINAPI \
 	   lpFileTime2: LPFILETIME
 ;BOOL
 FileTimeToDosDateTime proto WINAPI \
-	    lpFileTime: LPFILETIME,	
-	     lpFatDate: LPWORD,		
-	     lpFatTime: LPWORD		
+	    lpFileTime: LPFILETIME,
+	     lpFatDate: LPWORD,
+	     lpFatTime: LPWORD
 
 DosDateTimeToFileTime proto WINAPI \
-	      wFatDate: WORD,		
-	      wFatTime: WORD,		
-	    lpFileTime: LPFILETIME	
+	      wFatDate: WORD,
+	      wFatTime: WORD,
+	    lpFileTime: LPFILETIME
 ;DWORD
 GetTickCount proto WINAPI
 
@@ -4107,7 +4107,7 @@ STARTF_USEHOTKEY	equ 0x00000200
 STARTF_TITLEISLINKNAME	equ 0x00000800
 STARTF_TITLEISAPPID	equ 0x00001000
 STARTF_PREVENTPINNING	equ 0x00002000
-endif 
+endif
 
 STARTUPINFOA	STRUC
 cb		dd ?
@@ -4178,8 +4178,8 @@ LPSTARTUPINFOEX		typedef LPSTARTUPINFOEXW
 else
 STARTUPINFOEX		typedef STARTUPINFOEXA
 LPSTARTUPINFOEX		typedef LPSTARTUPINFOEXA
-endif 
-endif 
+endif
+endif
 
 SHUTDOWN_NORETRY	equ 0x00000001
 
@@ -4367,7 +4367,7 @@ SetWaitableTimerEx proto WINAPI \
 lpArgToCompletionRoutine: LPVOID,
 	   WakeContext: PREASON_CONTEXT,
 	TolerableDelay: ULONG
-endif 
+endif
 
 ;BOOL
 SetWaitableTimer proto WINAPI \
@@ -4401,7 +4401,7 @@ ifdef _UNICODE
 CreateMutexEx		equ <CreateMutexExW>
 else
 CreateMutexEx		equ <CreateMutexExA>
-endif 
+endif
 
 CREATE_EVENT_MANUAL_RESET equ 0x00000001
 CREATE_EVENT_INITIAL_SET equ 0x00000002
@@ -4421,7 +4421,7 @@ ifdef _UNICODE
 CreateEventEx		equ <CreateEventExW>
 else
 CreateEventEx		equ <CreateEventExA>
-endif 
+endif
 
 ;HANDLE
 CreateSemaphoreExA proto WINAPI \
@@ -4442,7 +4442,7 @@ ifdef _UNICODE
 CreateSemaphoreEx	equ <CreateSemaphoreExW>
 else
 CreateSemaphoreEx	equ <CreateSemaphoreExA>
-endif 
+endif
 
 CREATE_WAITABLE_TIMER_MANUAL_RESET equ 0x00000001
 
@@ -4461,10 +4461,10 @@ ifdef _UNICODE
 CreateWaitableTimerEx	equ <CreateWaitableTimerExW>
 else
 CreateWaitableTimerEx	equ <CreateWaitableTimerExA>
-endif 
-endif 
+endif
+endif
 
-endif 
+endif
 
 ;HANDLE
 CreateFileMappingA proto WINAPI \
@@ -4510,8 +4510,8 @@ ifdef _UNICODE
 CreateFileMappingNuma	equ <CreateFileMappingNumaW>
 else
 CreateFileMappingNuma	equ <CreateFileMappingNumaA>
-endif 
-endif 
+endif
+endif
 
 OpenFileMappingA proto WINAPI \
        dwDesiredAccess: DWORD,
@@ -4553,7 +4553,7 @@ CreateMemoryResourceNotification proto WINAPI \
 QueryMemoryResourceNotification proto WINAPI \
 ResourceNotificationHandle: HANDLE,
 	 ResourceState: PBOOL
-endif 
+endif
 
 ;HMODULE
 LoadLibraryA proto WINAPI \
@@ -4635,7 +4635,7 @@ ifdef _UNICODE
 PGET_MODULE_HANDLE_EX	equ <PGET_MODULE_HANDE_EXW>
 else
 PGET_MODULE_HANDLE_EX	equ <PGET_MODULE_HANDE_EXA>
-endif 
+endif
 
 ;BOOL
 GetModuleHandleExA proto WINAPI \
@@ -4650,9 +4650,9 @@ ifdef _UNICODE
 GetModuleHandleEx	equ <GetModuleHandleExW>
 else
 GetModuleHandleEx	equ <GetModuleHandleExA>
-endif 
+endif
 
-endif 
+endif
 
 
 if _WIN32_WINNT GE 0x0502
@@ -4665,8 +4665,8 @@ ifdef _UNICODE
 NeedCurrentDirectoryForExePath equ <NeedCurrentDirectoryForExePathW>
 else
 NeedCurrentDirectoryForExePath equ <NeedCurrentDirectoryForExePathA>
-endif 
-endif 
+endif
+endif
 
 if _WIN32_WINNT GE 0x0600
 PROCESS_NAME_NATIVE	equ 0x00000001
@@ -4685,16 +4685,16 @@ ifdef _UNICODE
 QueryFullProcessImageName equ <QueryFullProcessImageNameW>
 else
 QueryFullProcessImageName equ <QueryFullProcessImageNameA>
-endif 
-endif 
+endif
+endif
 
 if (_WIN32_WINNT GE 0x0600)
 
 
 PROC_THREAD_ATTRIBUTE_NUMBER	equ 0x0000FFFF
-PROC_THREAD_ATTRIBUTE_THREAD	equ 0x00010000	
-PROC_THREAD_ATTRIBUTE_INPUT	equ 0x00020000	
-PROC_THREAD_ATTRIBUTE_ADDITIVE	equ 0x00040000	
+PROC_THREAD_ATTRIBUTE_THREAD	equ 0x00010000
+PROC_THREAD_ATTRIBUTE_INPUT	equ 0x00020000
+PROC_THREAD_ATTRIBUTE_ADDITIVE	equ 0x00040000
 
 PROC_THREAD_ATTRIBUTE_NUM	typedef sdword ; enum _PROC_THREAD_ATTRIBUTE_NUM {
 ProcThreadAttributeParentProcess	equ 0
@@ -4758,7 +4758,7 @@ UpdateProcThreadAttribute proto WINAPI \
        lpPreviousValue: PVOID,
 	  lpReturnSize: PSIZE_T
 
-endif 
+endif
 
 ;BOOL
 CreateProcessA proto WINAPI \
@@ -5388,7 +5388,7 @@ ifdef _UNICODE
 GetSystemWindowsDirectory equ <GetSystemWindowsDirectoryW>
 else
 GetSystemWindowsDirectory equ <GetSystemWindowsDirectoryA>
-endif 
+endif
 
 if _WIN32_WINNT GE 0x0501 OR defined(WINBASE_DECLARE_GET_SYSTEM_WOW64_DIRECTORY)
 ;UINT
@@ -5402,7 +5402,7 @@ ifdef UNICODE
 GetSystemWow64Directory equ <GetSystemWow64DirectoryW>
 else
 GetSystemWow64Directory equ <GetSystemWow64DirectoryA>
-endif 
+endif
 
 ;BOOLEAN
 Wow64EnableWow64FsRedirection proto WINAPI \
@@ -5445,7 +5445,7 @@ GET_SYSTEM_WOW64_DIRECTORY_NAME_T_W equ <GET_SYSTEM_WOW64_DIRECTORY_NAME_A_W>
 GET_SYSTEM_WOW64_DIRECTORY_NAME_T_T equ <GET_SYSTEM_WOW64_DIRECTORY_NAME_A_T>
 endif
 
-endif 
+endif
 
 ;BOOL
 SetCurrentDirectoryA proto WINAPI \
@@ -5483,7 +5483,7 @@ ifdef _UNICODE
 SetDllDirectory		equ <SetDllDirectoryW>
 else
 SetDllDirectory		equ <SetDllDirectoryA>
-endif 
+endif
 
 ;BOOL
 GetDiskFreeSpaceA proto WINAPI \
@@ -5562,8 +5562,8 @@ ifdef _UNICODE
 CreateDirectoryTransacted equ <CreateDirectoryTransactedW>
 else
 CreateDirectoryTransacted equ <CreateDirectoryTransactedA>
-endif 
-endif 
+endif
+endif
 
 ;BOOL
 RemoveDirectoryA proto WINAPI \
@@ -5588,8 +5588,8 @@ ifdef _UNICODE
 RemoveDirectoryTransacted equ <RemoveDirectoryTransactedW>
 else
 RemoveDirectoryTransacted equ <RemoveDirectoryTransactedA>
-endif 
-endif 
+endif
+endif
 
 ;DWORD
 GetFullPathNameA proto WINAPI \
@@ -5626,8 +5626,8 @@ ifdef _UNICODE
 GetFullPathNameTransacted equ <GetFullPathNameTransactedW>
 else
 GetFullPathNameTransacted equ <GetFullPathNameTransactedA>
-endif 
-endif 
+endif
+endif
 
 DDD_RAW_TARGET_PATH	    equ 0x00000001
 DDD_REMOVE_DEFINITION	    equ 0x00000002
@@ -5717,8 +5717,8 @@ ifdef _UNICODE
 CreateFileTransacted	equ <CreateFileTransactedW>
 else
 CreateFileTransacted	equ <CreateFileTransactedA>
-endif 
-endif 
+endif
+endif
 
 if _WIN32_WINNT GE 0x0502
 ;HANDLE
@@ -5727,7 +5727,7 @@ ReOpenFile proto WINAPI \
 	dwDesiredAccess: DWORD,
 	    dwShareMode: DWORD,
    dwFlagsAndAttributes: DWORD
-endif 
+endif
 
 ;BOOL
 SetFileAttributesA proto WINAPI \
@@ -5767,8 +5767,8 @@ ifdef _UNICODE
 SetFileAttributesTransacted equ <SetFileAttributesTransactedW>
 else
 SetFileAttributesTransacted equ <SetFileAttributesTransactedA>
-endif 
-endif 
+endif
+endif
 
 GetFileExInfoStandard	equ 0
 GetFileExMaxInfoLevel	equ 1
@@ -5816,8 +5816,8 @@ ifdef _UNICODE
 GetCompressedFileSizeTransacted equ <GetCompressedFileSizeTransactedW>
 else
 GetCompressedFileSizeTransacted equ <GetCompressedFileSizeTransactedA>
-endif 
-endif 
+endif
+endif
 
 ;BOOL
 DeleteFileA proto WINAPI \
@@ -5842,8 +5842,8 @@ ifdef _UNICODE
 DeleteFileTransacted	equ <DeleteFileTransactedW>
 else
 DeleteFileTransacted	equ <DeleteFileTransactedA>
-endif 
-endif 
+endif
+endif
 
 if _WIN32_WINNT GE 0x0501
 ;BOOL
@@ -5863,8 +5863,8 @@ ifdef _UNICODE
 CheckNameLegalDOS8Dot3	equ <CheckNameegalDOS8Dot3W>
 else
 CheckNameLegalDOS8Dot3	equ <CheckNameegalDOS8Dot3A>
-endif 
-endif 
+endif
+endif
 
 if(_WIN32_WINNT GE 0x0400)
 
@@ -5924,8 +5924,8 @@ ifdef _UNICODE
 FindFirstFileTransacted equ <FindFirstFileTransactedW>
 else
 FindFirstFileTransacted equ <FindFirstFileTransactedA>
-endif 
-endif 
+endif
+endif
 
 FindFirstFileA proto WINAPI \
 	    lpFileName: LPCSTR,
@@ -5953,14 +5953,14 @@ FindNextFile equ <FindNextFileA>
 endif
 
 ;DWORD
-SearchPathA proto \
+SearchPathA proto WINAPI \
 	lpPath:		LPSTR,	; pointer to search path
 	lpFileName:	LPSTR,	; pointer to filename
 	lpExtension:	LPSTR,	; pointer to extension
 	nBufferLength:	DWORD,	; size, in characters, of buffer
 	lpBuffer:	LPSTR,	; pointer to buffer for found filename
 	lpFilePart:	LPSTR	; pointer to pointer to file component
-SearchPathW proto	:LPWSTR, :LPWSTR, :LPWSTR, :DWORD, :LPWSTR, :LPWSTR
+SearchPathW proto WINAPI :LPWSTR, :LPWSTR, :LPWSTR, :DWORD, :LPWSTR, :LPWSTR
 ifdef _UNICODE
 SearchPath equ <SearchPathW>
 else
@@ -6031,9 +6031,9 @@ ifdef _UNICODE
 CopyFileTransacted	equ <CopyFileTransactedW>
 else
 CopyFileTransacted	equ <CopyFileTransactedA>
-endif 
-endif 
-endif 
+endif
+endif
+endif
 
 MoveFileA proto WINAPI \
     lpExistingFileName: LPCSTR,
@@ -6102,8 +6102,8 @@ ifdef _UNICODE
 MoveFileTransacted	equ <MoveFileTransactedW>
 else
 MoveFileTransacted	equ <MoveFileTransactedA>
-endif 
-endif 
+endif
+endif
 
 MOVEFILE_REPLACE_EXISTING	equ 0x00000001
 MOVEFILE_COPY_ALLOWED		equ 0x00000002
@@ -6150,8 +6150,8 @@ ifdef _UNICODE
 CreateHardLinkTransacted equ <CreateHardinkTransactedW>
 else
 CreateHardLinkTransacted equ <CreateHardinkTransactedA>
-endif 
-endif 
+endif
+endif
 
 if (_WIN32_WINNT GE 0x0501)
 STREAM_INFO_LEVELS	typedef sdword ; enum _STREAM_INFO_LEVELS {
@@ -6179,14 +6179,14 @@ FindFirstStreamTransactedW proto WINAPI \
       lpFindStreamData: LPVOID,
 	       dwFlags: DWORD,
 	  hTransaction: HANDLE
-endif 
+endif
 
 ;BOOL
 FindNextStreamW proto WINAPI \
 	   hFindStream: HANDLE,
       lpFindStreamData: LPVOID
 
-endif 
+endif
 
 if _WIN32_WINNT GE 0x0600
 ;HANDLE
@@ -6342,7 +6342,7 @@ lpMaximumComponentLength: LPDWORD,
      lpFileSystemFlags: LPDWORD,
 lpFileSystemNameBuffer: LPWSTR,
    nFileSystemNameSize: DWORD
-endif 
+endif
 
 ;BOOL
 CancelIo proto WINAPI \
@@ -6821,7 +6821,7 @@ GetWindowsAccountDomainSid proto WINAPI \
 		  pSid: PSID,
 	    pDomainSid: PSID,
 	   cbDomainSid: LPDWORD
-endif 
+endif
 
 IsValidSid proto WINAPI \
 		  pSid: PSID
@@ -6947,7 +6947,7 @@ AddMandatoryAce proto WINAPI \
 	      AceFlags: DWORD,
        MandatoryPolicy: DWORD,
 	     pLabelSid: PSID
-endif 
+endif
 
 if(_WIN32_WINNT GE 0x0601)
 ;BOOL
@@ -6960,7 +6960,7 @@ AddConditionalAce proto WINAPI \
 		  pSid: PSID,
 	  ConditionStr: PWCHAR,
 	  ReturnLength: LPDWORD
-endif 
+endif
 
 AddAccessDeniedAce proto WINAPI \
 		  pAcl: PACL,
@@ -7276,7 +7276,7 @@ MapViewOfFileExNuma proto WINAPI \
   dwNumberOfBytesToMap: SIZE_T,
 	 lpBaseAddress: LPVOID,
 	  nndPreferred: DWORD
-endif 
+endif
 
 ;BOOL
 SetPriorityClass proto WINAPI \
@@ -7532,7 +7532,7 @@ LOGON32_PROVIDER_WINNT50    equ 3
 endif
 if(_WIN32_WINNT GE 0x0600)
 LOGON32_PROVIDER_VIRTUAL    equ 4
-endif 
+endif
 
 LogonUserA proto WINAPI \
 	  lpszUsername: LPSTR,
@@ -7616,7 +7616,7 @@ CreateProcessWithTokenW proto WINAPI \
     lpCurrentDirectory: LPCWSTR,
 	 lpStartupInfo: LPSTARTUPINFOW,
   lpProcessInformation: LPPROCESS_INFORMATION
-endif 
+endif
 
 ;BOOL
 uplicateTokenEx proto WINAPI \
@@ -7837,7 +7837,7 @@ DestroyThreadpoolEnvironment macro pcbe
 	TpDestroyCallbackEnviron(pcbe)
 	endm
 
-endif 
+endif
 
 ;VOID
 SetEventWhenCallbackReturns proto WINAPI \
@@ -7977,7 +7977,7 @@ ifdef _UNICODE
 CreatePrivateNamespace	equ <CreatePrivateNamespaceW>
 else
 CreatePrivateNamespace	equ <CreatePrivateNamespaceA>
-endif 
+endif
 
 ;HANDLE
 OpenPrivateNamespaceA proto WINAPI \
@@ -7990,7 +7990,7 @@ ifdef _UNICODE
 OpenPrivateNamespace	equ <OpenPrivateNamespaceW>
 else
 OpenPrivateNamespace	equ <OpenPrivateNamespaceA>
-endif 
+endif
 
 PRIVATE_NAMESPACE_FLAG_DESTROY equ 0x00000001
 
@@ -8014,7 +8014,7 @@ ifdef _UNICODE
 CreateBoundaryDescriptor equ <CreateBoundaryDescriptorW>
 else
 CreateBoundaryDescriptor equ <CreateBoundaryDescriptorA>
-endif 
+endif
 
 ;BOOL
 AddSIDToBoundaryDescriptor proto WINAPI \
@@ -8030,8 +8030,8 @@ AddIntegrityLabelToBoundaryDescriptor proto WINAPI \
 DeleteBoundaryDescriptor proto WINAPI \
     BoundaryDescriptor: HANDLE
 
-endif 
-endif 
+endif
+endif
 
 if(_WIN32_WINNT GE 0x0400)
 
@@ -8192,7 +8192,7 @@ ifdef _UNICODE
 VerifyVersionInfo	equ <VerifyVersionInfoW>
 else
 VerifyVersionInfo	equ <VerifyVersionInfoA>
-endif 
+endif
 
 if (_WIN32_WINNT GE 0x0600)
 ;BOOL
@@ -8252,7 +8252,7 @@ SetSystemPowerState proto WINAPI \
 	      fSuspend: BOOL,
 		fForce: BOOL
 
-endif 
+endif
 
 if (_WIN32_WINNT GE 0x0500)
 
@@ -8269,7 +8269,7 @@ AllocateUserPhysicalPagesNuma proto WINAPI \
 	NumberOfPages: PULONG_PTR,
 	    PageArray: PULONG_PTR,
 	 nndPreferred: DWORD
-endif 
+endif
 
 ;BOOL
 FreeUserPhysicalPages proto WINAPI \
@@ -8300,7 +8300,7 @@ ifdef _UNICODE
 CreateJobObject		equ <CreateJobObjectW>
 else
 CreateJobObject		equ <CreateJobObjectA>
-endif 
+endif
 
 ;HANDLE
 OpenJobObjectA proto WINAPI \
@@ -8315,7 +8315,7 @@ ifdef _UNICODE
 OpenJobObject		equ <OpenJobObjectW>
 else
 OpenJobObject		equ <OpenJobObjectA>
-endif 
+endif
 
 ;BOOL
 AssignProcessToJobObject proto WINAPI \
@@ -8389,7 +8389,7 @@ ifdef _UNICODE
 FindFirstVolume		equ <FindFirstVolumeW>
 else
 FindFirstVolume		equ <FindFirstVolumeA>
-endif 
+endif
 
 ;BOOL
 FindNextVolumeA proto WINAPI \
@@ -8404,7 +8404,7 @@ ifdef _UNICODE
 FindNextVolume		equ <FindNextVolumeW>
 else
 FindNextVolume		equ <FindNextVolumeA>
-endif 
+endif
 
 ;BOOL
 FindVolumeClose proto WINAPI \
@@ -8423,7 +8423,7 @@ ifdef _UNICODE
 FindFirstVolumeMountPoint equ <FindFirstVolumeMountPointW>
 else
 FindFirstVolumeMountPoint equ <FindFirstVolumeMountPointA>
-endif 
+endif
 
 ;BOOL
 FindNextVolumeMountPointA proto WINAPI \
@@ -8438,7 +8438,7 @@ ifdef _UNICODE
 FindNextVolumeMountPoint equ <FindNextVolumeMountPointW>
 else
 FindNextVolumeMountPoint equ <FindNextVolumeMountPointA>
-endif 
+endif
 
 ;BOOL
 FindVolumeMountPointClose proto WINAPI \
@@ -8455,7 +8455,7 @@ ifdef _UNICODE
 SetVolumeMountPoint	equ <SetVolumeMountPointW>
 else
 SetVolumeMountPoint	equ <SetVolumeMountPointA>
-endif 
+endif
 
 ;BOOL
 DeleteVolumeMountPointA proto WINAPI \
@@ -8466,7 +8466,7 @@ ifdef _UNICODE
 DeleteVolumeMountPoint	equ <DeleteVolumeMountPointW>
 else
 DeleteVolumeMountPoint	equ <DeleteVolumeMountPointA>
-endif 
+endif
 
 ;BOOL
 GetVolumeNameForVolumeMountPointA proto WINAPI \
@@ -8481,7 +8481,7 @@ ifdef _UNICODE
 GetVolumeNameForVolumeMountPoint equ <GetVolumeNameForVolumeMountPointW>
 else
 GetVolumeNameForVolumeMountPoint equ <GetVolumeNameForVolumeMountPointA>
-endif 
+endif
 
 ;BOOL
 GetVolumePathNameA proto WINAPI \
@@ -8496,9 +8496,9 @@ ifdef _UNICODE
 GetVolumePathName	equ <GetVolumePathNameW>
 else
 GetVolumePathName	equ <GetVolumePathNameA>
-endif 
+endif
 
-endif 
+endif
 
 if(_WIN32_WINNT GE 0x0501)
 
@@ -8517,9 +8517,9 @@ ifdef _UNICODE
 GetVolumePathNamesForVolumeName equ <GetVolumePathNamesForVolumeNameW>
 else
 GetVolumePathNamesForVolumeName equ <GetVolumePathNamesForVolumeNameA>
-endif 
+endif
 
-endif 
+endif
 
 if (_WIN32_WINNT GE 0x0500) OR (_WIN32_FUSION GE 0x0100) ;OR ISOLATION_AWARE_ENABLED
 
@@ -8562,7 +8562,7 @@ PACTCTX			typedef PACTCTXW
 else
 ACTCTX			typedef ACTCTXA
 PACTCTX			typedef PACTCTXA
-endif 
+endif
 
 PCACTCTXA		typedef ptr ACTCTXA
 PCACTCTXW		typedef ptr ACTCTXW
@@ -8570,7 +8570,7 @@ ifdef _UNICODE
 PCACTCTX		typedef PCACTCTXW
 else
 PCACTCTX		typedef PCACTCTXA
-endif 
+endif
 
 
 
@@ -8586,7 +8586,7 @@ ifdef _UNICODE
 CreateActCtx		equ <CreateActCtxW>
 else
 CreateActCtx		equ <CreateActCtxA>
-endif 
+endif
 
 ;VOID
 AddRefActCtx proto WINAPI \
@@ -8686,7 +8686,7 @@ ifdef _UNICODE
 FindActCtxSectionString equ <FindActCtxSectionStringW>
 else
 FindActCtxSectionString equ <FindActCtxSectionStringA>
-endif 
+endif
 
 ;BOOL
 FindActCtxSectionGuid proto WINAPI \
@@ -8707,7 +8707,7 @@ PCACTIVATION_CONTEXT_BASIC_INFORMATION typedef ptr ACTIVATION_CONTEXT_BASIC_INFO
 
 ACTIVATION_CONTEXT_BASIC_INFORMATION_DEFINED equ 1
 
-endif 
+endif
 
 
 QUERY_ACTCTX_FLAG_USE_ACTIVE_ACTCTX equ (0x00000004)
@@ -8735,7 +8735,7 @@ PQUERYACTCTXW_FUNC_T typedef proto WINAPI \
   pcbWrittenOrRequired: ptr SIZE_T
 PQUERYACTCTXW_FUNC typedef ptr PQUERYACTCTXW_FUNC_T
 
-endif 
+endif
 
 ;BOOL
 ProcessIdToSessionId proto WINAPI \
@@ -8752,7 +8752,7 @@ IsWow64Process proto WINAPI \
 	      hProcess: HANDLE,
 	  Wow64Process: PBOOL
 
-endif 
+endif
 
 ;BOOL
 GetLogicalProcessorInformation proto WINAPI \
@@ -8781,7 +8781,7 @@ GetActiveProcessorCount proto WINAPI \
 GetMaximumProcessorCount proto WINAPI \
 	   GroupNumber: WORD
 
-endif 
+endif
 
 
 ;BOOL
@@ -8800,7 +8800,7 @@ GetNumaNodeNumberFromHandle proto WINAPI \
 		 hFile: HANDLE,
 	    NodeNumber: PUSHORT
 
-endif 
+endif
 
 if _WIN32_WINNT GE 0x0601
 
@@ -8809,7 +8809,7 @@ GetNumaProcessorNodeEx proto WINAPI \
 	     Processor: PPROCESSOR_NUMBER,
 	    NodeNumber: PUSHORT
 
-endif 
+endif
 
 ;BOOL
 GetNumaNodeProcessorMask proto WINAPI \
@@ -8823,7 +8823,7 @@ GetNumaNodeProcessorMaskEx proto WINAPI \
 		  Node: USHORT,
 	 ProcessorMask: PGROUP_AFFINITY
 
-endif 
+endif
 
 ;BOOL
 GetNumaAvailableMemoryNode proto WINAPI \
@@ -8837,7 +8837,7 @@ GetNumaAvailableMemoryNodeEx proto WINAPI \
 		  Node: USHORT,
 	AvailableBytes: PULONGLONG
 
-endif 
+endif
 
 if (_WIN32_WINNT GE 0x0600)
 
@@ -8855,7 +8855,7 @@ GetNumaProximityNodeEx proto WINAPI \
 	   ProximityId: ULONG,
 	    NodeNumber: PUCHAR
 
-endif 
+endif
 
 APPLICATION_RECOVERY_CALLBACK_T typedef proto WINAPI \
 	   pvParameter: PVOID
@@ -9046,9 +9046,9 @@ REMOTE_PROTOCOL_INFO_FLAG_LOOPBACK equ 0x00000001
 REMOTE_PROTOCOL_INFO_FLAG_OFFLINE equ 0x00000002
 
 FILE_REMOTE_PROTOCOL_INFO STRUC
-StructureVersion	dw ?	
-StructureSize		dw ?	
-Protocol		dd ?	
+StructureVersion	dw ?
+StructureSize		dw ?
+Protocol		dd ?
 ProtocolMajorVersion	dw ?
 ProtocolMinorVersion	dw ?
 ProtocolRevision	dw ?
@@ -9085,8 +9085,8 @@ PFILE_ID_TYPE		typedef ptr FILE_ID_TYPE
 
 
 FILE_ID_DESCRIPTOR	STRUC
-dwSize			dd ?	
-_Type			FILE_ID_TYPE ?	
+dwSize			dd ?
+_Type			FILE_ID_TYPE ?
 UNION ;DUMMYUNIONNAME
  FileId			LARGE_INTEGER <>
  ObjectId		GUID <>
@@ -9103,14 +9103,14 @@ OpenFileById proto WINAPI \
   lpSecurityAttributes: LPSECURITY_ATTRIBUTES,
   dwFlagsAndAttributes: DWORD
 
-endif 
+endif
 
 if (_WIN32_WINNT GE 0x0600)
 
 
 SYMBOLIC_LINK_FLAG_DIRECTORY equ (0x1)
 
-VALID_SYMBOLIC_LINK_FLAGS equ SYMBOLIC_LINK_FAG_DIRECTORY 
+VALID_SYMBOLIC_LINK_FLAGS equ SYMBOLIC_LINK_FAG_DIRECTORY
 
 ;BOOLEAN
 CreateSymbolicLinkA proto WINAPI \
@@ -9125,7 +9125,7 @@ ifdef _UNICODE
 CreateSymbolicLink equ <CreateSymbolicLinkW>
 else
 CreateSymbolicLink equ <CreateSymbolicLinkA>
-endif 
+endif
 
 ;BOOLEAN
 CreateSymbolicLinkTransactedA proto WINAPI \
@@ -9142,7 +9142,7 @@ ifdef _UNICODE
 CreateSymbolicLinkTransacted equ <CreateSymbolicLinkTransactedW>
 else
 CreateSymbolicLinkTransacted equ <CreateSymbolicLinkTransactedA>
-endif 
+endif
 
 ;DWORD
 GetFinalPathNameByHandleA proto WINAPI \
@@ -9159,9 +9159,9 @@ ifdef _UNICODE
 GetFinalPathNameByHandle equ <GetFinalPathNameByHandleW>
 else
 GetFinalPathNameByHandle equ <GetFinalPathNameByHandleA>
-endif 
+endif
 
-endif 
+endif
 
 if (_WIN32_WINNT GE 0x0600)
 
@@ -9264,7 +9264,7 @@ ReadThreadProfilingData proto WINAPI \
 		 Flags: DWORD,
        PerformanceData: PPERFORMANCE_DATA
 
-endif 
+endif
 ;endif ; (_WIN32_WINNT >= 0x0500)
 
 .list

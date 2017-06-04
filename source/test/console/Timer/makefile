@@ -1,4 +1,5 @@
-Name = Timer
-Objs = Timer.obj About.obj Help1.obj Help2.obj TMain.obj
-
-!include master.mif
+Timer.exe:
+ asmc $*.asm
+ iddc /r *.idd
+ linkw symt _cstart file $*, TMain, Help1, Help2, About
+ del *.obj

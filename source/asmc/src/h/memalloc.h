@@ -3,12 +3,13 @@
 
 #include <malloc.h>
 
-void *	__fastcall MemAlloc(size_t);
-void *	__fastcall LclAlloc(size_t);
-void	__stdcall  MemInit(void);
-void	__stdcall  MemFini(void);
+void *	FASTCALL MemAlloc(size_t);
+void *	FASTCALL LclAlloc(size_t);
+void	MemInit(void);
+void	MemFini(void);
 
 #define MemFree(m) free(m)
 #define myalloca   alloca
+#define LclFree( p )
 
 #endif

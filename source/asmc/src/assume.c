@@ -28,8 +28,6 @@
 *
 ****************************************************************************/
 
-#include <ctype.h>
-
 #include <globals.h>
 #include <memalloc.h>
 #include <parser.h>
@@ -78,13 +76,12 @@ static const char szError[]   = { "ERROR" };
 static const char szNothing[] = { "NOTHING" };
 const char szDgroup[]  = { "DGROUP" };
 
-void __fastcall SetSegAssumeTable( void *savedstate )
-/****************************************/
+void SetSegAssumeTable( void *savedstate )
 {
     memcpy( &SegAssumeTable, savedstate, sizeof(SegAssumeTable) );
 }
 
-void __fastcall GetSegAssumeTable( void *savedstate )
+void GetSegAssumeTable( void *savedstate )
 /****************************************/
 {
     memcpy( savedstate, &SegAssumeTable, sizeof(SegAssumeTable) );
@@ -97,7 +94,7 @@ void __fastcall GetSegAssumeTable( void *savedstate )
  * this functions is also called by context.c, ContextDirective()!
  */
 
-void __fastcall SetStdAssumeTable( void *savedstate, struct stdassume_typeinfo *ti )
+void SetStdAssumeTable( void *savedstate, struct stdassume_typeinfo *ti )
 /***********************************************************************/
 {
     int i;
@@ -114,7 +111,7 @@ void __fastcall SetStdAssumeTable( void *savedstate, struct stdassume_typeinfo *
     }
 }
 
-void __fastcall GetStdAssumeTable( void *savedstate, struct stdassume_typeinfo *ti )
+void GetStdAssumeTable( void *savedstate, struct stdassume_typeinfo *ti )
 {
     int i;
     memcpy( savedstate, &StdAssumeTable, sizeof(StdAssumeTable) );
@@ -156,7 +153,7 @@ void AssumeInit( int pass ) /* pass may be -1 here! */
 	    StdAssumeTable[reg].error = 0;
 	}
 	if ( pass == PASS_1 )
-	    memzero( &stdsym, sizeof( stdsym ) );
+	    memset( &stdsym, 0, sizeof( stdsym ) );
     }
     if ( pass > PASS_1 && UseSavedState ) {
 	SetSegAssumeTable( &saved_SegAssumeTable );
@@ -210,7 +207,7 @@ void ModelAssumeInit( void )
 
 /* used by INVOKE directive */
 
-struct asym * __fastcall GetStdAssume( int reg )
+struct asym *GetStdAssume( int reg )
 /**********************************/
 {
     if ( StdAssumeTable[reg].symbol )
@@ -225,7 +222,7 @@ struct asym * __fastcall GetStdAssume( int reg )
  * expression evaluator if a register is used for indirect addressing
  */
 
-struct asym * __fastcall GetStdAssumeEx( int reg )
+struct asym *GetStdAssumeEx( int reg )
 /************************************/
 {
     return( StdAssumeTable[reg].symbol );
@@ -457,7 +454,7 @@ enum assume_segreg search_assume( const struct asym *sym,
  - override: segment register override (0,1,2,3,4,5)
 */
 
-struct asym * __fastcall GetOverrideAssume( enum assume_segreg override )
+struct asym *GetOverrideAssume( enum assume_segreg override )
 /***********************************************************/
 {
     if( SegAssumeTable[override].is_flat ) {

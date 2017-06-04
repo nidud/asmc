@@ -68,7 +68,11 @@ typedef	  signed __int64  int_64;
 #endif
 
 /* 32-bit integer format specifier */
+#ifdef __I86__
+#define I32_SPEC "l"
+#else
 #define I32_SPEC ""
+#endif
 
 /* 64-bit integer format specifier */
 #if defined(LONG_IS_64BITS) || defined(__LP64__)

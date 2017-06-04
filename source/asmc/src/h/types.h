@@ -25,4 +25,7 @@ extern void	   UpdateStructSize( struct asym * );
 extern ret_code	   SetStructCurrentOffset( int_32 );
 extern ret_code	   AlignInStruct( int );
 extern void	   TypesInit( void );
+//extern void	    DeleteType( struct dsym * );
+
+#define DeleteType( t )
 #endif

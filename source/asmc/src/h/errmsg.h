@@ -40,8 +40,8 @@
 #define NOTE_ITERATION_MACRO_CALLED_FROM 2
 #define NOTE_MAIN_LINE_CODE 3
 
-void	__cdecl	  PrintNote( int msgnum, ... );
-char *	__stdcall ErrnoStr( void );
-void	__stdcall WriteError( void );
+void	PrintNote( int msgnum, ... );
+char *	ErrnoStr( void );
+void	WriteError( void );
 
 #endif

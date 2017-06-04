@@ -182,7 +182,6 @@ int AlignDirective( int i, struct asm_tok tokenarray[] )
     int seg_align;
     struct expr opndx;
     uint_32 CurrAddr;
-    char buffer[32];
 
     switch( tokenarray[i].tokval ) {
     case T_ALIGN:

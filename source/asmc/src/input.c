@@ -28,8 +28,6 @@
 *
 ****************************************************************************/
 
-#include <ctype.h>
-
 #include <globals.h>
 #include <memalloc.h>
 #include <parser.h>
@@ -112,10 +110,9 @@ char *token_stringbuf;	/* start token string buffer */
 
 /* v2.12: function added - _splitpath()/_makepath() removed */
 
-const char *GetFNamePart( const char *fname )
-/*******************************************/
+char *GetFNamePart( char *fname )
 {
-    const char *rc;
+    char *rc;
     for ( rc = fname; *fname; fname++ )
 	if ( ISPC( *fname ) )
 	    rc = fname + 1;
@@ -124,18 +121,17 @@ const char *GetFNamePart( const char *fname )
 
 /* fixme: if the dot is at pos 0 of filename, ignore it */
 
-char *GetExtPart( const char *fname )
-/***********************************/
+char *GetExtPart( char *fname )
 {
     char *rc;
     for( rc = NULL; *fname; fname++ ) {
 	if( *fname == '.' ) {
-	    rc = (char *)fname;
+	    rc = fname;
 	} else if( ISPC( *fname ) ) {
 	    rc = NULL;
 	}
     }
-    return( rc ? rc : (char *)fname );
+    return( rc ? rc : fname );
 }
 
 /* check if a file is in the array of known files.
@@ -172,8 +168,7 @@ static unsigned AddFile( char const *fname )
     return( index );
 }
 
-const struct fname_item *GetFName( unsigned index )
-/*************************************************/
+struct fname_item *GetFName( unsigned index )
 {
     return( ModuleInfo.g.FNames+index );
 }
@@ -361,7 +356,7 @@ void SetLineNumber( unsigned line )
 /* this function is also called if pass is > 1,
  * which is a problem for FASTPASS because the file stack is empty.
  */
-int __stdcall GetCurrSrcPos( char *buffer )
+int GetCurrSrcPos( char *buffer )
 /*******************************/
 {
     struct src_item *curr;
@@ -382,7 +377,7 @@ int __stdcall GetCurrSrcPos( char *buffer )
  * the structure consists of include files and macros.
  */
 
-void __stdcall print_source_nesting_structure( void )
+void print_source_nesting_structure( void )
 /*****************************************/
 {
     struct src_item *curr;
@@ -420,7 +415,7 @@ static FILE *open_file_in_include_path( const char *name, char fullpath[] )
     int		    namelen;
     FILE	    *file = NULL;
 
-    while( isspace( *name ) )
+    while( islspace( *name ) )
 	name++;
 
     curr = ModuleInfo.g.IncludePath;
@@ -466,14 +461,13 @@ static FILE *open_file_in_include_path( const char *name, char fullpath[] )
  * v2.12: _splitpath()/_makepath() removed
  */
 
-FILE *SearchFile( const char *path, bool queue )
-/**********************************************/
+FILE *SearchFile( char *path, bool queue )
 {
-    FILE	*file = NULL;
+    FILE *file = NULL;
     struct src_item *fl;
-    const char	*fn;
-    bool	isabs;
-    char	fullpath[FILENAME_MAX];
+    char *fn;
+    bool isabs;
+    char fullpath[FILENAME_MAX];
 
     fn = GetFNamePart( path );
 
@@ -486,8 +480,8 @@ FILE *SearchFile( const char *path, bool queue )
     if ( !isabs ) {
 	for ( fl = src_stack; fl ; fl = fl->next ) {
 	    if ( fl->type == SIT_FILE ) {
-		const char  *fn2;
-		char	    *src;
+		char *fn2;
+		char *src;
 		src = GetFName( fl->srcfile )->fname;
 		fn2 = GetFNamePart( src );
 		if ( fn2 != src ) {
@@ -599,13 +593,12 @@ char *GetTextLine( char *buffer )
  * the include path is rebuilt for each assembled module.
  * it is stored in the standard C heap.
  */
-void AddStringToIncludePath( const char *string )
-/***********************************************/
+void AddStringToIncludePath( char *string )
 {
     char *tmp;
     int len;
 
-    while( isspace( *string ) )
+    while( islspace( *string ) )
 	string++;
     len = strlen( string );
     if ( len == 0 )

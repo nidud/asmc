@@ -59,24 +59,24 @@ struct input_status {
 
 extern uint_32	GetLineNumber( void );
 
-extern const char *GetFNamePart( const char *fname );
-extern char	*GetExtPart( const char *fname );
+extern char *GetFNamePart( char *fname );
+extern char *GetExtPart( char *fname );
 
-extern FILE	*SearchFile( const char *path, bool );
-extern char	*GetTextLine( char *buffer );
-extern void	PushMacro( struct macro_instance * );
-extern void	SetLineNumber( unsigned );
-extern void	AddStringToIncludePath( const char *string );
-extern void	InputInit( void );
-extern void	InputPassInit( void );
-extern void	InputFini( void );
+extern FILE *SearchFile( char *path, int );
+extern char *GetTextLine( char *buffer );
+extern void PushMacro( struct macro_instance * );
+extern void SetLineNumber( unsigned );
+extern void AddStringToIncludePath( char *string );
+extern void InputInit( void );
+extern void InputPassInit( void );
+extern void InputFini( void );
 extern struct asm_tok *PushInputStatus( struct input_status * );
-extern void	PopInputStatus( struct input_status * );
-extern int	__stdcall GetCurrSrcPos( char * );
-extern void	ClearSrcStack( void );
+extern void PopInputStatus( struct input_status * );
+extern int  GetCurrSrcPos( char * );
+extern void ClearSrcStack( void );
 extern unsigned get_curr_srcfile( void );
-extern void	set_curr_srcfile( unsigned, uint_32 );
-extern const struct fname_item *GetFName( unsigned );
+extern void set_curr_srcfile( unsigned, uint_32 );
+extern struct fname_item *GetFName( unsigned );
 
 #define GetAlignedPointer( x, size ) ( x + ( ( size + 1 + sizeof(void *) - 1 ) & ~( sizeof(void *) - 1 ) ) )
 

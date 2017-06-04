@@ -28,7 +28,6 @@
 *
 ****************************************************************************/
 
-#include <ctype.h>
 #include <stddef.h>
 
 #include <globals.h>
@@ -48,8 +47,8 @@ static struct asym *thissym;
 static struct asym *nullstruct;
 static struct asym *nullmbr;
 
-static int (__cdecl * fnasmerr)( int, ... );
-static int __cdecl noasmerr( int msg, ... );
+static int (*fnasmerr)( int, ... );
+static int noasmerr( int msg, ... );
 
 enum labelsize {
     LS_SHORT  = 0xFF01,
@@ -57,12 +56,119 @@ enum labelsize {
     LS_FAR32  = 0xFF06,
 };
 
-
+#if 0 //def _ASMC
 void __fastcall TokenAssign( struct expr *, const struct expr * );
 void __fastcall init_expr( struct expr * );
 int  __fastcall is_expr_item( struct asm_tok * );
+#else
+static void init_expr( struct expr *opnd )
+/****************************************/
+{
+    opnd->value	   = 0;
+    opnd->hvalue   = 0;
+    opnd->hlvalue  = 0;
+    opnd->quoted_string	  = NULL;
+    opnd->base_reg = NULL;
+    opnd->idx_reg  = NULL;
+    opnd->label_tok = NULL;
+    opnd->override = NULL;
+    opnd->instr	   = EMPTY;
+    opnd->kind	   = EXPR_EMPTY;
+    opnd->mem_type = MT_EMPTY;
+    opnd->scale	   = 0;
+    opnd->Ofssize  = USE_EMPTY;
+    opnd->flags1   = 0;
+    opnd->sym	   = NULL;
+    opnd->mbr	   = NULL;
+    opnd->type	   = NULL;
+}
 
-static int __fastcall get_precedence( const struct asm_tok *item )
+static void TokenAssign( struct expr *opnd1, const struct expr *opnd2 )
+/*********************************************************************/
+{
+#if 1
+    /* note that offsetof() is used. This means, don't change position
+     of field <type> in expr! */
+    memcpy( opnd1, opnd2, offsetof( struct expr, type ) );
+#else
+    opnd1->llvalue  = opnd2->llvalue;
+    opnd1->hlvalue  = opnd2->hlvalue;
+    opnd1->quoted_string   = opnd2->quoted_string; /* probably useless */
+    opnd1->base_reg = opnd2->base_reg;
+    opnd1->idx_reg  = opnd2->idx_reg;
+    opnd1->label_tok = opnd2->label_tok;
+    opnd1->override = opnd2->override;
+    opnd1->instr    = opnd2->instr;
+    opnd1->kind	    = opnd2->kind;
+    opnd1->mem_type = opnd2->mem_type;
+    opnd1->scale    = opnd2->scale;
+    opnd1->Ofssize  = opnd2->Ofssize;
+    opnd1->flags1   = opnd2->flags1;
+    opnd1->sym	    = opnd2->sym;
+    opnd1->mbr	    = opnd2->mbr;
+//  opnd1->type	    = opnd2->type;
+#endif
+}
+
+static int is_expr_item( struct asm_tok *item )
+/**********************************************/
+/* Check if a token is a valid part of an expression.
+ * chars + - * / . : [] and () are operators.
+ * also done here:
+ * T_INSTRUCTION  SHL, SHR, AND, OR, XOR changed to T_BINARY_OPERATOR
+ * T_INSTRUCTION  NOT			 changed to T_UNARY_OPERATOR
+ * T_DIRECTIVE	  PROC			 changed to T_STYPE
+ * for the new operators the precedence is set.
+ * DUP, comma or other instructions or directives terminate the expression.
+ */
+{
+    switch( item->token ) {
+    case T_INSTRUCTION:
+	switch( item->tokval ) {
+	case T_SHL:
+	case T_SHR:
+	    item->token = T_BINARY_OPERATOR;
+	    item->precedence = 8;
+	    return( TRUE );
+	case T_NOT:
+	    item->token = T_UNARY_OPERATOR;
+	    item->precedence = 11;
+	    return( TRUE );
+	case T_AND:
+	    item->token = T_BINARY_OPERATOR;
+	    item->precedence = 12;
+	    return( TRUE );
+	case T_OR:
+	case T_XOR:
+	    item->token = T_BINARY_OPERATOR;
+	    item->precedence = 13;
+	    return( TRUE );
+	}
+	return( FALSE );
+    case T_RES_ID:
+	if ( item->tokval == T_DUP ) /* DUP must terminate the expression */
+	    return( FALSE );
+	break;
+    case T_DIRECTIVE:
+	/* PROC is converted to a type */
+	if ( item->tokval == T_PROC ) {
+	    item->token = T_STYPE;
+	    /* v2.06: avoid to use ST_PROC */
+	    //item->bytval = ST_PROC;
+	    item->tokval = ( ( SIZE_CODEPTR & ( 1 << ModuleInfo.model ) ) ? T_FAR : T_NEAR );
+	    return( TRUE );
+	}
+	/* fall through. Other directives will end the expression */
+    case T_COMMA:
+    //case T_FLOAT: /* v2.05: floats are now handled */
+    //case T_QUESTION_MARK: /* v2.08: no need to be handled here */
+	return( FALSE );
+    }
+    return( TRUE );
+}
+#endif
+
+static int get_precedence( const struct asm_tok *item )
 {
     switch( item->token ) {
     case T_UNARY_OPERATOR:
@@ -87,7 +193,7 @@ static int __fastcall get_precedence( const struct asm_tok *item )
     return( ERROR );
 }
 
-static unsigned int __fastcall GetTypeSize( unsigned char mem_type, int Ofssize )
+static unsigned int GetTypeSize( unsigned char mem_type, int Ofssize )
 {
     if ( (mem_type & MT_SPECIAL) == 0 )
 	return( ( mem_type & MT_SIZE_MASK ) + 1 );
@@ -100,7 +206,7 @@ static unsigned int __fastcall GetTypeSize( unsigned char mem_type, int Ofssize 
     return( 0 );
 }
 
-static uint_64 __fastcall GetRecordMask( struct dsym *record )
+static uint_64 GetRecordMask( struct dsym *record )
 {
     uint_64 mask = 0;
     int i;
@@ -360,7 +466,7 @@ static ret_code get_operand( struct expr *opnd, int *idx, struct asm_tok tokenar
 	    fnasmerr( 2048, tokenarray[i].string_ptr );
 	else if ( tokenarray[i].token == T_COLON )
 	    fnasmerr( 2009 );
-	else if ( isalpha( *tokenarray[i].string_ptr ) )
+	else if ( islalpha( *tokenarray[i].string_ptr ) )
 	    fnasmerr( 2016, tokenarray[i].tokpos );
 	else
 	    fnasmerr( 2008, tokenarray[i].tokpos );
@@ -379,7 +485,7 @@ static bool check_both( const struct expr *opnd1, const struct expr *opnd2, enum
     return( 0 );
 }
 
-static int __fastcall index_connect( struct expr *opnd1, const struct expr *opnd2 )
+static int index_connect( struct expr *opnd1, const struct expr *opnd2 )
 {
     if ( opnd2->base_reg != NULL ) {
 	if ( opnd1->base_reg == NULL )
@@ -408,7 +514,7 @@ static int __fastcall index_connect( struct expr *opnd1, const struct expr *opnd
     return( NOT_ERROR );
 }
 
-static void __fastcall MakeConst( struct expr *opnd )
+static void MakeConst( struct expr *opnd )
 {
     if( ( opnd->kind != EXPR_ADDR ) || opnd->indirect )
 	return;
@@ -437,7 +543,7 @@ static void __fastcall MakeConst( struct expr *opnd )
     opnd->mem_type = MT_EMPTY;
 }
 
-static int __fastcall MakeConst2( struct expr *opnd1, struct expr *opnd2 )
+static int MakeConst2( struct expr *opnd1, struct expr *opnd2 )
 {
     if ( opnd1->sym->state == SYM_EXTERNAL ) {
 	return( fnasmerr( 2018, opnd1->sym->name ) );
@@ -454,7 +560,7 @@ static int __fastcall MakeConst2( struct expr *opnd1, struct expr *opnd2 )
     return( NOT_ERROR );
 }
 
-static int __fastcall ConstError( struct expr *opnd1, struct expr *opnd2 )
+static int ConstError( struct expr *opnd1, struct expr *opnd2 )
 {
     if ( opnd1->is_opattr )
 	return( NOT_ERROR );
@@ -465,7 +571,7 @@ static int __fastcall ConstError( struct expr *opnd1, struct expr *opnd2 )
     return( ERROR );
 }
 
-static void __fastcall fix_struct_value( struct expr *opnd )
+static void fix_struct_value( struct expr *opnd )
 {
     if( opnd->mbr && ( opnd->mbr->state == SYM_TYPE ) ) {
 	opnd->value += opnd->mbr->total_size;
@@ -473,7 +579,7 @@ static void __fastcall fix_struct_value( struct expr *opnd )
     }
 }
 
-static int __fastcall check_direct_reg( const struct expr *opnd1, const struct expr *opnd2 )
+static int check_direct_reg( const struct expr *opnd1, const struct expr *opnd2 )
 {
     if( ( opnd1->kind == EXPR_REG ) && ( opnd1->indirect == 0 )
 	|| ( opnd2->kind == EXPR_REG ) && ( opnd2->indirect == 0 ) ) {
@@ -482,14 +588,14 @@ static int __fastcall check_direct_reg( const struct expr *opnd1, const struct e
     return( NOT_ERROR );
 }
 
-static unsigned __fastcall GetSizeValue( struct asym *sym )
+static unsigned GetSizeValue( struct asym *sym )
 {
     if ( sym->mem_type == MT_PTR )
 	return( SizeFromMemtype( (unsigned char)(sym->isfar ? MT_FAR : MT_NEAR), sym->Ofssize, sym->type ) );
     return( SizeFromMemtype( sym->mem_type, sym->Ofssize, sym->type ) );
 }
 
-static unsigned __fastcall IsOffset( struct expr *opnd )
+static unsigned IsOffset( struct expr *opnd )
 {
     if ( opnd->mem_type == MT_EMPTY )
 	if ( opnd->instr == T_OFFSET ||
@@ -500,7 +606,7 @@ static unsigned __fastcall IsOffset( struct expr *opnd )
     return( 0 );
 }
 
-static int __fastcall invalid_operand( struct expr *opnd, char *oprtr, char *operand )
+static int invalid_operand( struct expr *opnd, char *oprtr, char *operand )
 {
     if ( !opnd->is_opattr )
 	fnasmerr( 3018, _strupr( oprtr), operand );
@@ -1099,7 +1205,7 @@ static int minus_op( struct expr *opnd1, struct expr *opnd2 )
     return( NOT_ERROR );
 }
 
-static int __fastcall struct_field_error( struct expr *opnd )
+static int struct_field_error( struct expr *opnd )
 {
     if ( opnd->is_opattr ) {
 	opnd->kind = EXPR_ERROR;
@@ -1108,7 +1214,7 @@ static int __fastcall struct_field_error( struct expr *opnd )
     return( fnasmerr( 2166 ) );
 }
 
-static int __fastcall dot_op( struct expr *opnd1, struct expr *opnd2 )
+static int dot_op( struct expr *opnd1, struct expr *opnd2 )
 {
     if( check_direct_reg( opnd1, opnd2 ) == ERROR ) {
 	return( fnasmerr( 2032 ) );
@@ -1278,7 +1384,7 @@ static int colon_op( struct expr *opnd1, struct expr *opnd2 )
     return( NOT_ERROR );
 }
 
-static int __fastcall positive_op( struct expr *opnd1, struct expr *opnd2 )
+static int positive_op( struct expr *opnd1, struct expr *opnd2 )
 {
     MakeConst( opnd2 );
     if( opnd2->kind == EXPR_CONST ) {
@@ -1295,7 +1401,7 @@ static int __fastcall positive_op( struct expr *opnd1, struct expr *opnd2 )
     return( NOT_ERROR );
 }
 
-static int __fastcall negative_op( struct expr *opnd1, struct expr *opnd2 )
+static int negative_op( struct expr *opnd1, struct expr *opnd2 )
 {
     MakeConst( opnd2 );
     if( opnd2->kind == EXPR_CONST ) {
@@ -1315,7 +1421,7 @@ static int __fastcall negative_op( struct expr *opnd1, struct expr *opnd2 )
     return( NOT_ERROR );
 }
 
-static void __fastcall CheckAssume( struct expr *opnd )
+static void CheckAssume( struct expr *opnd )
 {
     struct asym *sym = NULL;
     if ( opnd->explicit ) {
@@ -1348,7 +1454,7 @@ static void __fastcall CheckAssume( struct expr *opnd )
     }
 }
 
-static int __fastcall check_streg( struct expr *opnd1, struct expr *opnd2 )
+static int check_streg( struct expr *opnd1, struct expr *opnd2 )
 {
     if ( opnd1->scale > 0 ) {
 	return( fnasmerr( 2032 ) );
@@ -1728,7 +1834,7 @@ static void PrepareOp( struct expr *opnd, const struct expr *old, const struct a
     }
 }
 
-static void __fastcall OperErr( int i, struct asm_tok tokenarray[] )
+static void OperErr( int i, struct asm_tok tokenarray[] )
 {
     if ( tokenarray[i].token <= T_BAD_NUM ) {
 	fnasmerr( 2206 );

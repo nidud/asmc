@@ -5,15 +5,17 @@ include version.inc
 include ltype.inc
 
 	.xlist
+	option loopalign: 4
+	option fieldalign: 4
 
-	option	loopalign: 4
-	option	fieldalign: 4
+CHEXPREFIX		equ 1			; 0x prefix
 
 MAX_LINE_LEN		equ 2048		; no restriction for this number
 MAX_STRING_LEN		equ MAX_LINE_LEN - 32	; must be < MAX_LINE_LEN
 MAX_ID_LEN		equ 247			; must be < MAX_LINE_LEN
 MAX_TOKEN		equ MAX_LINE_LEN / 4	; max tokens in one line
 MAX_STRUCT_ALIGN	equ 32
+MAX_SEGMENT_ALIGN	equ 4096
 
 EMPTY			equ -2			; function return values
 ERROR			equ -1
@@ -995,20 +997,21 @@ no_symbol_listing	db ?	; -Sn option
 first_pass_listing	db ?	; -Sf option
 all_symbols_public	db ?	; -Zf option
 safeseh			db ?	; -safeseh option
-ignore_include		db ?	; -X option
 output_format		dd ?	; -bin, -omf, -coff, -elf options
 sub_format		dd ?	; -mz, -pe, -win64, -elf64 options
-fieldalign		db ?	; -Zp option
 langtype		dd ?	; -Gc|d|z option
 _model			dd ?	; -mt|s|m|c|l|h|f option
 cpu			dd ?	; -0|1|2|3|4|5|6 & -fp{0|2|3|5|6|c} option
 fctype			dd ?	; -zf0 & -zf1 option
 codepage		dd ?	; Unicode code page
+ignore_include		db ?	; -X option
+fieldalign		db ?	; -Zp option
 syntax_check_only	db ?	; -Zs option
 aflag			db ?	; asmc option
 xflag			db ?	; extended option
 loopalign		db ?	; OPTION:LOOPALIGN setting
 casealign		db ?	; OPTION:CASEALIGN setting
+segmentalign		db ?	; -Sp[n] Set segment alignment
 global_options		ENDS
 
 M_MODULEVARS		MACRO
@@ -1182,7 +1185,7 @@ externdef		ModelToken	: DWORD
 externdef		LastCodeBufSize : DWORD
 externdef		banner_printed	: DWORD
 
-asmerr			PROTO C :DWORD, :VARARG
+asmerr			PROTO :DWORD, :VARARG
 DelayExpand		PROTO FASTCALL :DWORD ; :PTR asm_tok
 
 write_logo		PROTO
@@ -1225,7 +1228,7 @@ CondCheckOpen		PROTO
 SymSetCmpFunc		PROTO
 
 SetCPU			PROTO :DWORD
-AddLineQueueX		PROTO C :DWORD, :VARARG
+AddLineQueueX		PROTO :DWORD, :VARARG
 AddStringToIncludePath	PROTO :DWORD
 SymFind			PROTO FASTCALL :DWORD
 SymCreate		PROTO :DWORD
@@ -1283,7 +1286,7 @@ LSTTYPE_MACROLINE	equ 8
 LstInit			PROTO
 LstWriteSrcLine		PROTO
 LstWriteCRef		PROTO
-LstPrintf		PROTO C :DWORD, :VARARG
+LstPrintf		PROTO _CDecl :DWORD, :VARARG
 LstSetPosition		PROTO
 LstNL			PROTO
 LstWrite		PROTO :DWORD, :DWORD, :DWORD
@@ -1313,16 +1316,19 @@ _atoow			PROTO :LPSTR, :LPSTR, :SINT, :SINT
 
 SizeFromMemtype		PROTO :BYTE, :SINT, :ptr asym
 GetSymOfssize		proto :ptr asym
-SizeFromRegister	proto fastcall :SINT
+SizeFromRegister	proto :SINT
 
 ;-------------------------------------------------------------------------------
 ; Text macros
 ;-------------------------------------------------------------------------------
 
+strlabel	PROTO :LPSTR, :UINT
+GetFNamePart	PROTO :LPSTR
+GetExtPart	PROTO :LPSTR
 
 M_SKIP_SPACE MACRO reg, base
 	movzx reg,BYTE PTR [base]
-	.while BYTE PTR _ctype[reg*2+2] & _SPACE
+	.while BYTE PTR _ltype[reg+1] & _SPACE
 		add   base,1
 		ifidni <reg>,<eax>
 			mov   al,[base]
@@ -1338,7 +1344,7 @@ M_SKIP_SPACE MACRO reg, base
 
 M_SKIP_SPACE_R MACRO reg, base
 	movzx reg,BYTE PTR [base]
-	.while BYTE PTR _ctype[reg*2+2] & _SPACE
+	.while BYTE PTR _ltype[reg+1] & _SPACE
 		sub   base,1
 	    ifidni <reg>,<eax>
 		mov   al,[base]
@@ -1373,5 +1379,6 @@ cmpmm macro des,src
     mov eax,dword ptr des
     cmprm src
     endm
+
 
 .list

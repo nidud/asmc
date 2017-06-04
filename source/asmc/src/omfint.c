@@ -159,7 +159,7 @@ static int FFQUAL writeMisc( struct outbuff *out, const struct omf_rec *objr )
 static int FFQUAL writeMisc32( struct outbuff *out, const struct omf_rec *objr )
 /******************************************************************************/
 {
-    WBegRec( out, objr->command | objr->is_32 );
+    WBegRec( out, (uint_8)(objr->command | objr->is_32) );
     PutMem( out, objr->data, objr->length );
     WEndRec( out );
     return( 0 );
@@ -184,7 +184,7 @@ static int FFQUAL writeSegdef( struct outbuff *out, const struct omf_rec *objr )
     uint_8	align;
 
     is32 = objr->is_32;
-    WBegRec( out, CMD_SEGDEF + is32 );
+    WBegRec( out, (uint_8)(CMD_SEGDEF + is32) );
 
     /* ACBP: bits=AAACCCBP
      * AAA=alignment
@@ -219,12 +219,12 @@ static int FFQUAL writeSegdef( struct outbuff *out, const struct omf_rec *objr )
 	 * and doesn't depend on segment size (16/32bit)
 	 */
 	PutWord( out, objr->d.segdef.abs.frame );
-	PutByte( out, objr->d.segdef.abs.offset );
+	PutByte( out, (uint_8)objr->d.segdef.abs.offset );
     }
     if( is32 ) {
 	PutDword( out, objr->d.segdef.seg_length );
     } else {
-	PutWord( out, objr->d.segdef.seg_length );
+	PutWord( out, (uint_16)objr->d.segdef.seg_length );
     }
 
     PutIndex( out, objr->d.segdef.seg_lname_idx );

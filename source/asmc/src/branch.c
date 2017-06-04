@@ -56,7 +56,7 @@
 /* v2.03: OutputCodeByte no longer needed */
 #define OutputCodeByte( x ) OutputByte( x )
 
-int __fastcall segm_override( const struct expr *opndx, struct code_info *CodeInfo );
+int segm_override( const struct expr *opndx, struct code_info *CodeInfo );
 extern struct asym *SegOverride;
 
 /* "short jump extension": extend a (conditional) jump.
@@ -70,8 +70,7 @@ extern struct asym *SegOverride;
  * of 7D-7F (16bit), because the additional "jmp label" will increase
  * the code size.
  */
-static void __fastcall jumpExtend( struct code_info *CodeInfo, int far_flag )
-/****************************************************************/
+static void jumpExtend( struct code_info *CodeInfo, int far_flag )
 {
     unsigned next_ins_size;
 
@@ -102,8 +101,7 @@ static void __fastcall jumpExtend( struct code_info *CodeInfo, int far_flag )
 /* "far call optimisation": a far call is done to a near label
  * optimize (call SSSS:OOOO -> PUSH CS, CALL OOOO)
  */
-static void __fastcall FarCallToNear( struct code_info *CodeInfo )
-/*****************************************************/
+static void FarCallToNear( struct code_info *CodeInfo )
 {
     if( Parse_Pass == PASS_2 )
 	asmerr( 7003 );

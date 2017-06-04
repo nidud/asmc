@@ -38,8 +38,6 @@
 ****************************************************************************/
 
 
-#include <ctype.h>
-
 #include <globals.h>
 #include <parser.h>
 #include <condasm.h>
@@ -177,7 +175,7 @@ static bool check_blank( const char *string )
 /*******************************************/
 {
     for ( ;*string; string++ )
-	if ( isspace(*string) == FALSE )
+	if ( islspace(*string) == FALSE )
 	    return FALSE;
     return( TRUE );
 }

@@ -46,8 +46,8 @@ struct qdesc {
     void *tail;
 };
 
-extern void __fastcall QEnqueue( struct qdesc *, void * );
-extern void __fastcall QAddItem( struct qdesc *, const void * );
+extern void FASTCALL QEnqueue( struct qdesc *, void * );
+extern void FASTCALL QAddItem( struct qdesc *, const void * );
 
 #endif
 

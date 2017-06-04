@@ -28,7 +28,6 @@
 *
 ****************************************************************************/
 
-#include <ctype.h>
 #include <limits.h>
 
 #include <globals.h>
@@ -94,7 +93,7 @@ struct symbol_queue SymTables[TAB_LAST];
 
 /* add item to linked list of symbols */
 
-void __fastcall sym_add_table( struct symbol_queue *queue, struct dsym *item )
+void sym_add_table( struct symbol_queue *queue, struct dsym *item )
 /*****************************************************************/
 {
     if( queue->head == NULL ) {
@@ -129,7 +128,7 @@ void sym_remove_table( struct symbol_queue *queue, struct dsym *item )
     item->prev = NULL;
 }
 
-void __fastcall sym_ext2int( struct asym *sym )
+void sym_ext2int( struct asym *sym )
 /**********************************/
 /* Change symbol state from SYM_EXTERNAL to SYM_INTERNAL.
  * called by:
@@ -170,7 +169,7 @@ int GetLangType( int *i, struct asm_tok tokenarray[], unsigned char *plang )
  * does now contain size for GPR, STx, MMX, XMM regs.
  */
 
-int __fastcall SizeFromRegister( int registertoken )
+int SizeFromRegister( int registertoken )
 /***************************************/
 {
     unsigned flags;
@@ -221,7 +220,7 @@ int SizeFromMemtype( unsigned char mem_type, int Ofssize, struct asym *type )
 }
 
 /* get memory type from size */
-int __fastcall MemtypeFromSize( int size, unsigned char *ptype )
+int MemtypeFromSize( int size, unsigned char *ptype )
 /*******************************************************/
 {
     int i;
@@ -237,7 +236,7 @@ int __fastcall MemtypeFromSize( int size, unsigned char *ptype )
     return( ERROR );
 }
 
-int __fastcall OperandSize( enum operand_type opnd, const struct code_info *CodeInfo )
+int OperandSize( enum operand_type opnd, const struct code_info *CodeInfo )
 /*************************************************************************/
 {
     /* v2.0: OP_M8_R8 and OP_M16_R16 have the DFT bit set! */
@@ -267,7 +266,7 @@ int __fastcall OperandSize( enum operand_type opnd, const struct code_info *Code
     return( 0 );
 }
 
-static int __fastcall comp_mem16( int reg1, int reg2 )
+static int comp_mem16( int reg1, int reg2 )
 /*****************************************/
 /*
 - compare and return the r/m field encoding of 16-bit address mode;
@@ -397,7 +396,7 @@ static void seg_override( struct code_info *CodeInfo, int seg_reg, const struct 
  * - data_item() in data.c
  */
 
-void __fastcall set_frame( const struct asym *sym )
+void set_frame( const struct asym *sym )
 /**************************************/
 {
     SetFixupFrame( SegOverride ? SegOverride : sym, FALSE );
@@ -409,7 +408,7 @@ void __fastcall set_frame( const struct asym *sym )
  * - idata_fixup()
  * - data_item()
  */
-void __fastcall set_frame2( const struct asym *sym )
+void set_frame2( const struct asym *sym )
 /***************************************/
 {
     SetFixupFrame( SegOverride ? SegOverride : sym, TRUE );
@@ -588,7 +587,7 @@ static int set_rm_sib( struct code_info *CodeInfo, unsigned CurrOpnd, char ss, i
  * 2. Set global variable SegOverride if it's a SEG/GRP symbol
  *    (or whatever is assumed for the segment register)
  */
-int __fastcall segm_override( const struct expr *opndx, struct code_info *CodeInfo )
+int segm_override( const struct expr *opndx, struct code_info *CodeInfo )
 /****************************************************************************/
 {
     struct asym	     *sym;
@@ -985,7 +984,7 @@ int idata_fixup( struct code_info *CodeInfo, unsigned CurrOpnd, struct expr *opn
  * (above comment is most likely plain wrong, see 'PF16 ptr [reg]'!
  * This code needs cleanup!
  */
-static void __fastcall SetPtrMemtype( struct code_info *CodeInfo, struct expr *opndx )
+static void SetPtrMemtype( struct code_info *CodeInfo, struct expr *opndx )
 /*************************************************************************/
 {
     struct asym *sym = opndx->sym;
@@ -1009,7 +1008,7 @@ static void __fastcall SetPtrMemtype( struct code_info *CodeInfo, struct expr *o
 		opndx->Ofssize = sym->type->Ofssize;
 
 	} else if ( sym->mem_type == MT_PTR ) {
-	    size = SizeFromMemtype( sym->isfar ? MT_FAR : MT_NEAR, sym->Ofssize, NULL );
+	    size = SizeFromMemtype( (unsigned char)(sym->isfar ? MT_FAR : MT_NEAR), sym->Ofssize, NULL );
 	    CodeInfo->isfar = sym->isfar;
 	} else	{
 	    if ( sym->isarray )
@@ -1035,7 +1034,7 @@ static void __fastcall SetPtrMemtype( struct code_info *CodeInfo, struct expr *o
  * called by memory_operand()
  */
 //static void Set_Memtype( struct code_info *CodeInfo, enum memtype mem_type )
-static void __fastcall Set_Memtype( struct code_info *CodeInfo, unsigned char mem_type )
+static void Set_Memtype( struct code_info *CodeInfo, unsigned char mem_type )
 /**************************************************************************/
 {
     if( CodeInfo->token == T_LEA )
@@ -1689,7 +1688,7 @@ static int process_register( struct code_info *CodeInfo, unsigned CurrOpnd, cons
  * <opndx> contains the last operand.
  */
 
-static void __fastcall HandleStringInstructions( struct code_info *CodeInfo, const struct expr opndx[] )
+static void HandleStringInstructions( struct code_info *CodeInfo, const struct expr opndx[] )
 /*******************************************************************************************/
 {
     int opndidx = OPND1;
@@ -1821,7 +1820,7 @@ static void __fastcall HandleStringInstructions( struct code_info *CodeInfo, con
     return;
 }
 
-static int __fastcall check_size( struct code_info *CodeInfo, const struct expr opndx[] )
+static int check_size( struct code_info *CodeInfo, const struct expr opndx[] )
 /*********************************************************************************/
 /*
  * - use to make sure the size of first operand match the size of second operand;
@@ -2184,7 +2183,7 @@ static int __fastcall check_size( struct code_info *CodeInfo, const struct expr 
     return( rc );
 }
 
-static struct asym * __fastcall IsType( const char *name )
+static struct asym *IsType( const char *name )
 /********************************************/
 {
     struct asym *sym;
@@ -2204,7 +2203,7 @@ static struct asym * __fastcall IsType( const char *name )
  * - for instructions: fill CodeInfo and call codegen()
  */
 
-int __fastcall LabelMacro( struct asm_tok tokenarray[] )
+int LabelMacro( struct asm_tok tokenarray[] )
 {
     if (Token_Count > 2 && tokenarray[0].token == T_ID &&
        (tokenarray[1].token == T_COLON || tokenarray[1].token == T_DBL_COLON)) {

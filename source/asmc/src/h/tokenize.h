@@ -54,7 +54,7 @@ enum tok_flags3 {
     TF3_EXPANSION = 0x02,  /* expansion operator % at pos 0 */
 };
 
-int _fastcall GetToken( struct asm_tok[], struct line_status * );
+int FASTCALL GetToken( struct asm_tok[], struct line_status * );
 int Tokenize( char *, unsigned int, struct asm_tok[], unsigned int );
 
 #endif

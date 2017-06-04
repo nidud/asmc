@@ -31,8 +31,6 @@
 *
 ****************************************************************************/
 
-#include <ctype.h>
-
 #include <globals.h>
 #include <memalloc.h>
 #include <parser.h>
@@ -48,7 +46,7 @@
 #include <omf.h>
 #include <atofloat.h>
 
-int __fastcall segm_override( const struct expr *, struct code_info * );
+int segm_override( const struct expr *, struct code_info * );
 extern struct asym *SegOverride;
 extern const char szNull[];
 
@@ -172,7 +170,6 @@ static int InitializeArray( const struct sfield *f, int *pi, struct asm_tok toke
  * global variable Token_Count.
  */
 static int InitStructuredVar( int index, struct asm_tok tokenarray[], const struct dsym *symtype, struct asym *embedded )
-/****************************************************************************************************************************/
 {
     struct sfield   *f;
     int_32	    nextofs;
@@ -351,8 +348,7 @@ static int InitStructuredVar( int index, struct asm_tok tokenarray[], const stru
  * convert a string into little endian format - ( LSB 1st, LSW 1st ... etc ).
  * <len> is the TYPE, may be 2,4,6,8,10?,16
  */
-static char * __fastcall little_endian( const char *src, unsigned len )
-/*********************************************************/
+static char *little_endian( const char *src, unsigned len )
 {
     /* v2.06: input and output buffer must be different! */
     char *dst = StringBufferEnd;
@@ -368,8 +364,7 @@ static char * __fastcall little_endian( const char *src, unsigned len )
     return( StringBufferEnd );
 }
 
-static void __fastcall output_float( const struct expr *opnd, unsigned size )
-/****************************************************************/
+static void output_float( const struct expr *opnd, unsigned size )
 {
     /* v2.07: buffer extended to max size of a data item (=32).
      * test case: XMMWORD REAL10 ptr 1.0
@@ -378,7 +373,7 @@ static void __fastcall output_float( const struct expr *opnd, unsigned size )
 
     if ( opnd->mem_type != MT_EMPTY ) {
 	int i;
-	memzero( buffer, sizeof( buffer ) );
+	memset( buffer, 0, sizeof( buffer ) );
 	i = SizeFromMemtype( opnd->mem_type, USE_EMPTY, NULL );
 	if ( i > size )
 	    asmerr( 2156 );
@@ -417,13 +412,12 @@ static void __fastcall output_float( const struct expr *opnd, unsigned size )
  * 3. item size is 1 and a quoted string with len > 1 is used as initializer
  */
 
-#define CP_ACP		0 /* default to ANSI code page */
-#define MB_PRECOMPOSED	1 /* use precomposed chars */
-
-int MultiByteToWideChar(int, int, char *, int, unsigned short *, int);
+#if !defined(__UNIX__)
+int WINAPI MultiByteToWideChar(int, int, char *, int, unsigned short *, int);
+#endif
 
 static int data_item( int *start_pos, struct asm_tok tokenarray[], struct asym *sym, uint_32 no_of_bytes, const struct asym *type_sym, uint_32 dup, bool inside_struct, bool is_float, bool first, int end )
-/***************************************************************************************************************************************************************************************************************/
+
 {
     int			i;
     int			string_len;
@@ -658,7 +652,7 @@ next_item:  /* <--- continue scan if a comma has been detected */
 			unsigned short *w;
 			uint_8 *p = NULL;
 			int q = string_len;
-
+#if !defined(__UNIX__)
 			if ((w = malloc(string_len*2)) != NULL) {
 
 			    /* v2.24 - Unicode CodePage */
@@ -673,6 +667,7 @@ next_item:  /* <--- continue scan if a comma has been detected */
 			    }
 			    free(w);
 			}
+#endif
 			if (p == NULL) {
 			    p = pchar;
 			    while ( q-- ) {

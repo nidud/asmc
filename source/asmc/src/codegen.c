@@ -63,8 +63,7 @@ enum prefix_reg {
 static const char sr_prefix[] =
     { PREFIX_ES, PREFIX_CS, PREFIX_SS, PREFIX_DS, PREFIX_FS, PREFIX_GS };
 
-static void __fastcall output_opc( struct code_info *CodeInfo )
-/**************************************************/
+static void output_opc( struct code_info *CodeInfo )
 /*
  * - determine what code should be output and their order.
  * - output prefix bytes:
@@ -459,8 +458,7 @@ static void output_data( const struct code_info *CodeInfo, enum operand_type det
     return;
 }
 
-static int __fastcall check_3rd_operand( struct code_info *CodeInfo )
-/*************************************************************/
+static int check_3rd_operand( struct code_info *CodeInfo )
 {
     if( ( opnd_clstab[CodeInfo->pinstr->opclsidx].opnd_type_3rd == OP3_NONE ) ||
        ( opnd_clstab[CodeInfo->pinstr->opclsidx].opnd_type_3rd == OP3_HID ) )
@@ -501,8 +499,7 @@ static int __fastcall check_3rd_operand( struct code_info *CodeInfo )
     return( ERROR );
 }
 
-static void __fastcall output_3rd_operand( struct code_info *CodeInfo )
-/**********************************************************/
+static void output_3rd_operand( struct code_info *CodeInfo )
 {
     if( opnd_clstab[CodeInfo->pinstr->opclsidx].opnd_type_3rd == OP3_I8_U ) {
 	output_data( CodeInfo, OP_I8, OPND3 );
@@ -521,7 +518,7 @@ static void __fastcall output_3rd_operand( struct code_info *CodeInfo )
     return;
 }
 
-static int __fastcall match_phase_3( struct code_info *CodeInfo, enum operand_type opnd1 )
+static int match_phase_3( struct code_info *CodeInfo, enum operand_type opnd1 )
 /***********************************************************************************
  * - this routine will look up the assembler opcode table and try to match
  *   the second operand with what we get;
@@ -686,8 +683,8 @@ static int __fastcall match_phase_3( struct code_info *CodeInfo, enum operand_ty
     return( ERROR );
 }
 
-static int __fastcall check_operand_2( struct code_info *CodeInfo, enum operand_type opnd1 )
-/*************************************************************************************
+static int check_operand_2( struct code_info *CodeInfo, enum operand_type opnd1 )
+/*
  * check if a second operand has been entered.
  * If yes, call match_phase_3();
  * else emit opcode and optional data.

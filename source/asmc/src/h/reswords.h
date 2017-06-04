@@ -48,9 +48,7 @@ struct ReservedWord {
     const char *name;	     /* reserved word (char[]) */
 };
 
-unsigned __fastcall FindResWord( char *name, unsigned size );
-//unsigned __fastcall FindResWord( char *name, unsigned char size );
-//extern unsigned FindResWord( const char *, unsigned char );
+unsigned FASTCALL FindResWord( char *name, unsigned size );
 extern char	*GetResWName( unsigned, char * );
 extern bool	IsKeywordDisabled( const char *, int );
 extern void	DisableKeyword( unsigned );

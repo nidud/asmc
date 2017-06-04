@@ -29,7 +29,6 @@
 ****************************************************************************/
 
 #include <limits.h>
-#include <ctype.h>
 #include <time.h>
 #include <sys/stat.h>
 
@@ -144,7 +143,7 @@ static const struct dbg_section SymDebParm[DBGS_MAX] = {
 
 static struct dsym *SymDebSeg[DBGS_MAX];
 
-static void __fastcall omf_InitRec( struct omf_rec *obj, uint_8 command )
+static void omf_InitRec( struct omf_rec *obj, uint_8 command )
 /************************************************************/
 {
     obj->length = 0;
@@ -155,7 +154,7 @@ static void __fastcall omf_InitRec( struct omf_rec *obj, uint_8 command )
     return;
 }
 
-static time_t __fastcall timet2dostime( time_t x )
+static time_t timet2dostime( time_t x )
 /*************************************/
 {
     struct tm *	   ltime;
@@ -173,13 +172,13 @@ static time_t __fastcall timet2dostime( time_t x )
     return x;
 }
 
-static void __fastcall Put8( struct omf_rec *objr, uint_8 value )
+static void Put8( struct omf_rec *objr, uint_8 value )
 /****************************************************/
 {
     objr->data[ objr->curoff++ ] = value;
 }
 
-static void __fastcall Put16( struct omf_rec *objr, uint_16 value )
+static void Put16( struct omf_rec *objr, uint_16 value )
 /******************************************************/
 {
 
@@ -187,7 +186,7 @@ static void __fastcall Put16( struct omf_rec *objr, uint_16 value )
     objr->curoff += sizeof( uint_16 );
 }
 
-static void __fastcall Put32( struct omf_rec *objr, uint_32 value )
+static void Put32( struct omf_rec *objr, uint_32 value )
 /******************************************************/
 {
     WriteU32( objr->data + objr->curoff, value );
@@ -200,7 +199,7 @@ static void __fastcall Put32( struct omf_rec *objr, uint_32 value )
  * order byte first ( with bit 7=1 ).
  */
 
-static void __fastcall PutIndex( struct omf_rec *objr, unsigned idx )
+static void PutIndex( struct omf_rec *objr, unsigned idx )
 /********************************************************/
 {
     if( idx > 0x7f ) {
@@ -216,7 +215,7 @@ static void PutData( struct omf_rec *objr, const uint_8 *data, size_t len )
     objr->curoff += len;
 }
 
-static void __fastcall PutName( struct omf_rec *objr, const char *name, size_t len )
+static void PutName( struct omf_rec *objr, const char *name, size_t len )
 /***********************************************************************/
 {
 #if MAX_ID_LEN > MAX_ID_LEN_OMF
@@ -229,7 +228,7 @@ static void __fastcall PutName( struct omf_rec *objr, const char *name, size_t l
     PutData( objr, (uint_8 *)name, len );
 }
 
-static void __fastcall AttachData( struct omf_rec *objr, uint_8 *data, size_t len )
+static void AttachData( struct omf_rec *objr, uint_8 *data, size_t len )
 /**********************************************************************/
 {
     objr->data = data;
@@ -307,7 +306,7 @@ void omf_OutSelect( bool is_data )
  * v2.11: create 16- or 32-bit data variant here!
  */
 
-static void __fastcall omf_write_linnum( uint_8 is32 )
+static void omf_write_linnum( uint_8 is32 )
 /*****************************************/
 {
     unsigned		 ofssize = ( is32 ? sizeof( uint_32) : sizeof( uint_16 ) );
@@ -339,7 +338,7 @@ static void __fastcall omf_write_linnum( uint_8 is32 )
     return;
 }
 
-static void __fastcall omf_write_fixupp( struct dsym *seg, char is32 )
+static void omf_write_fixupp( struct dsym *seg, char is32 )
 /*********************************************************/
 {
     uint_8 *data;
@@ -379,7 +378,7 @@ static uint_8 get_omfalign( uint_8 alignment );
 
 /* write an LEDATA record, optionally write fixups */
 
-static void __fastcall omf_write_ledata( struct dsym *seg )
+static void omf_write_ledata( struct dsym *seg )
 /**********************************************/
 {
     struct omf_rec  obj;
@@ -458,7 +457,7 @@ void omf_FlushCurrSeg( void )
 
 /* Write a THEADR record.
  */
-static void __fastcall omf_write_theadr( const char *name )
+static void omf_write_theadr( const char *name )
 /**********************************************/
 {
     struct omf_rec obj;
@@ -828,7 +827,7 @@ struct readext {
  * v2.09: index (ext_idx1, ext_idx2 ) is now set inside this function.
  */
 
-static struct asym * __fastcall GetExt( struct readext *r )
+static struct asym *GetExt( struct readext *r )
 /*********************************************/
 {
     struct asym *sym;
@@ -944,7 +943,7 @@ static uint_16 omf_write_extdef( void )
 
 #define THREE_BYTE_MAX ( (1UL << 24) - 1 )
 
-static int __fastcall get_size_of_comdef_number( uint_32 value )
+static int get_size_of_comdef_number( uint_32 value )
 /***************************************************/
 {
     /* The spec allows up to 128 in a one byte size field, but lots
@@ -994,7 +993,7 @@ static unsigned put_comdef_number( uint_8 *buffer, uint_32 value )
  * the size then!
  */
 
-static uint_16 __fastcall omf_write_comdef( uint_16 index )
+static uint_16 omf_write_comdef( uint_16 index )
 /**********************************************/
 {
     struct omf_rec obj;
@@ -1069,7 +1068,7 @@ static uint_16 __fastcall omf_write_comdef( uint_16 index )
     return( index );
 }
 
-static time_t __fastcall GetFileTimeStamp( const char *filename )
+static time_t GetFileTimeStamp( const char *filename )
 /****************************************************/
 {
     struct _stat statbuf;
@@ -1267,7 +1266,7 @@ static ret_code omf_write_pubdef( void )
     return( NOT_ERROR );
 }
 
-static void __fastcall omf_write_modend( struct fixup *fixup, uint_32 displ )
+static void omf_write_modend( struct fixup *fixup, uint_32 displ )
 /****************************************************************/
 {
     struct omf_rec  obj;

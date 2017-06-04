@@ -9,7 +9,7 @@
 
 /*---------------------------------------------------------------------------*/
 extern struct asym   *MakeExtern( const char *name, unsigned char type, struct asym * vartype, struct asym *, unsigned char );
-extern void  __fastcall AddPublicData( struct asym *sym );
+extern void  FASTCALL AddPublicData( struct asym *sym );
 //extern void  FreePubQueue( void );
 #define FreePubQueue() ModuleInfo.g.PubQueue.head = NULL
 

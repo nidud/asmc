@@ -37,7 +37,7 @@
 extern void		SetSymSegOfs( struct asym * );
 extern int		GetSymOfssize( const struct asym * );
 /* Get current segment's offset */
-extern uint_32		__stdcall GetCurrOffset( void );
+extern uint_32		GetCurrOffset( void );
 extern ret_code		SetCurrOffset( struct dsym *, uint_32, bool, bool );
 extern struct asym	*CreateIntSegment( const char *, const char *, uint_8, uint_8, bool );
 /* get symbol's segment index, from the symbol itself */
@@ -51,8 +51,6 @@ extern enum seg_type	TypeFromClassName( const struct dsym *, const struct asym *
 extern void		DefineFlatGroup( void );
 extern ret_code		SegmentModuleExit( void );
 extern void		DeleteGroup( struct dsym * );
-//extern char		  *GetLname( int );
-//extern void		  FreeLnameQueue( void );
 
 /* simplified segment functions */
 

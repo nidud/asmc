@@ -280,15 +280,15 @@ extern uint_16			 optable_idx[];	 /* helper, access thru IndexFromToken() only *
 #define IndexFromToken( tok )  optable_idx[ ( tok ) - SPECIAL_LAST ]
 
 int  SizeFromMemtype( unsigned char, int, struct asym * );
-int  __fastcall MemtypeFromSize( int, unsigned char * );
-int  __fastcall SizeFromRegister( int );
+int  MemtypeFromSize( int, unsigned char * );
+int  SizeFromRegister( int );
 int  GetLangType( int *, struct asm_tok[], unsigned char * );
-void __fastcall sym_add_table( struct symbol_queue *, struct dsym * );
+void sym_add_table( struct symbol_queue *, struct dsym * );
 void sym_remove_table( struct symbol_queue *, struct dsym * );
-void __fastcall sym_ext2int( struct asym * );
-int  __fastcall OperandSize( enum operand_type, const struct code_info * );
-void __fastcall set_frame( const struct asym *sym );
-void __fastcall set_frame2( const struct asym *sym );
+void sym_ext2int( struct asym * );
+int  OperandSize( enum operand_type, const struct code_info * );
+void set_frame( const struct asym *sym );
+void set_frame2( const struct asym *sym );
 int  ParseLine( struct asm_tok[] );
 void ProcessFile( struct asm_tok[] );
 void WritePreprocessedLine( const char * );

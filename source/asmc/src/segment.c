@@ -28,8 +28,6 @@
 *		- SEGMENT, ENDS, GROUP
 ****************************************************************************/
 
-#include <ctype.h>
-
 #include <globals.h>
 #include <memalloc.h>
 #include <parser.h>
@@ -221,7 +219,7 @@ static void pop_seg( void )
     return;
 }
 
-uint_32 __stdcall GetCurrOffset( void )
+uint_32 GetCurrOffset( void )
 /***************************/
 {
     return( CurrSeg ? CurrSeg->e.seginfo->current_loc : 0 );
@@ -278,7 +276,7 @@ static struct dsym *CreateSegment( struct dsym *seg, const char *name, bool add_
     if ( seg ) {
 	seg->sym.state = SYM_SEG;
 	seg->e.seginfo = (struct seg_info *)LclAlloc( sizeof( struct seg_info ) );
-	memzero( seg->e.seginfo, sizeof( struct seg_info ) );
+	memset( seg->e.seginfo, 0, sizeof( struct seg_info ) );
 	seg->e.seginfo->Ofssize = ModuleInfo.defOfssize;
 	seg->e.seginfo->alignment = 4; /* this is PARA (2^4) */
 	seg->e.seginfo->combine = COMB_INVALID;

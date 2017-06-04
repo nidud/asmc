@@ -71,14 +71,14 @@ void AssumeInit( int );	   /* init assume tables */
 enum assume_segreg search_assume( const struct asym *sym, enum assume_segreg def, bool search_grps );
 enum assume_segreg GetAssume( const struct asym *, const struct asym *, enum assume_segreg, struct asym * * );
 
-struct asym * __fastcall GetOverrideAssume( enum assume_segreg );
-struct asym * __fastcall GetStdAssume( int );
-struct asym * __fastcall GetStdAssumeEx( int );
+struct asym *GetOverrideAssume( enum assume_segreg );
+struct asym *GetStdAssume( int );
+struct asym *GetStdAssumeEx( int );
 
 void ModelAssumeInit( void );
-void __fastcall SetSegAssumeTable( void * );
-void __fastcall GetSegAssumeTable( void * );
-void __fastcall SetStdAssumeTable( void *, struct stdassume_typeinfo * );
-void __fastcall GetStdAssumeTable( void *, struct stdassume_typeinfo * );
+void SetSegAssumeTable( void * );
+void GetSegAssumeTable( void * );
+void SetStdAssumeTable( void *, struct stdassume_typeinfo * );
+void GetStdAssumeTable( void *, struct stdassume_typeinfo * );
 
 #endif

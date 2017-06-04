@@ -20,12 +20,12 @@ enum lsttype {
  LSTTYPE_MACROLINE,
 };
 
-extern void __stdcall LstInit( void );
-extern void __stdcall LstWrite( enum lsttype, uint_32 ofs, void * sym );
+extern void LstInit( void );
+extern void LstWrite( enum lsttype, uint_32 ofs, void * sym );
 extern void LstWriteSrcLine( void );
-extern void __stdcall LstWriteCRef( void );
-extern void __cdecl   LstPrintf( const char *format, ... );
-extern void __stdcall LstNL( void );
-extern void __stdcall LstSetPosition( void );
+extern void LstWriteCRef( void );
+extern void LstPrintf( const char *format, ... );
+extern void LstNL( void );
+extern void LstSetPosition( void );
 
 #endif

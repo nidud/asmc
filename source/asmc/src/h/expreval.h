@@ -132,8 +132,8 @@ enum expr_flags {
     EXPF_IN_SQBR   = 8	 /* private flag, used inside expreval.c only */
 };
 
-extern ret_code	    EvalOperand( int *, struct asm_tok[], int, struct expr *, uint_8 );
-extern void	    ExprEvalInit( void );
-extern ret_code	    EmitConstError( const struct expr * );
+extern int  EvalOperand( int *, struct asm_tok[], int, struct expr *, uint_8 );
+extern void ExprEvalInit( void );
+extern int  EmitConstError( const struct expr * );
 
 #endif

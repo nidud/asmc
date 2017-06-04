@@ -1,16 +1,59 @@
 #ifndef _GLOBALS_H_INCLUDED
 #define _GLOBALS_H_INCLUDED
 
+#define ASMC_VERSSTR "2.24"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h> /* needed for errno declaration ( "sometimes" it's defined in stdlib.h ) */
+
+#if defined(__UNIX__) || defined(__CYGWIN__) || defined(__DJGPP__) /* avoid for MinGW! */
+
+#define _stricmp strcasecmp
+#ifndef __WATCOMC__
+#define _memicmp strncasecmp
+#endif
+#define _ltoa	ltoa
+#define _strupr strupr
+
+#elif defined(__POCC__)
+
+#pragma warn(disable:2030) /* disable '=' used in a conditional expression */
+#pragma warn(disable:2229) /* disable 'local x is potentially used without ...' */
+#pragma warn(disable:2231) /* disable 'enum value x not handled in switch statement' */
+
+#elif defined(__BORLANDC__) || defined(__OCC__)
+
+#define _stricmp  stricmp
+#define _strnicmp strnicmp
+#define _strupr	  strupr
+#define _memicmp  memicmp
+
+#endif
+
+#ifndef WINAPI
+#ifdef _M_X64
+#define WINAPI
+#else
+#define WINAPI __stdcall
+#endif
+#endif
+
+#ifdef _ASMC
+#define FASTCALL __fastcall
+#else
+#define FASTCALL
+#endif
+
+#define CHEXPREFIX 1
 
 #define MAX_LINE_LEN		2048 /* no restriction for this number */
 #define MAX_TOKEN		MAX_LINE_LEN / 4  /* max tokens in one line */
 #define MAX_STRING_LEN		MAX_LINE_LEN - 32 /* must be < MAX_LINE_LEN */
 #define MAX_ID_LEN		247	/* must be < MAX_LINE_LEN */
 #define MAX_STRUCT_ALIGN	32
+#define MAX_SEGMENT_ALIGN	4096
 #define MAX_IF_NESTING		20	/* IFxx block nesting. Must be <=32, see condasm.c */
 #define MAX_SEG_NESTING		20	/* limit for segment nesting	 */
 #define MAX_MACRO_NESTING	100	/* macro call nesting	 */
@@ -24,23 +67,41 @@ typedef int	bool;
 #define FALSE	0
 #define TRUE	1
 
-#ifdef DEBUG
-void db_break(void);
-#else
-#define db_break()
-#endif
-
 #include <errmsg.h>  /* must be located AFTER #defines lines */
 #include <queue.h>
 
 #define NULLC  '\0'
-#define _LABEL	0x01	/* _UPPER + _LOWER + '@' + '_' + '$' + '?' */
 
-extern unsigned char __ltype[]; /* Label type array */
-#define is_valid_id_char( c ) \
-	( (__ltype[(unsigned char)(c) + 1] & (_LABEL | _DIGIT)) || (unsigned char)(c) > 127 )
+#define _LUPPER		0x01	/* upper case letter */
+#define _LLOWER		0x02	/* lower case letter */
+#define _LDIGIT		0x04	/* digit[0-9] */
+#define _LSPACE		0x08	/* tab, carriage return, newline, */
+				/* vertical tab or form feed */
+#define _LPUNCT		0x10	/* punctuation character */
+#define _LCONTROL	0x20	/* control character */
+#define _LABEL		0x40	/* UPPER + LOWER + '@' + '_' + '$' + '?' */
+#define _LHEX		0x80	/* hexadecimal digit */
+
+extern unsigned char _ltype[];	/* Label type array */
+
+#define islalnum(c)  (_ltype[(unsigned char)(c) + 1] & (_LDIGIT | _LUPPER | _LLOWER))
+#define islalpha(c)  (_ltype[(unsigned char)(c) + 1] & (_LUPPER | _LLOWER))
+#define islascii(c)  ((unsigned char)(c) < 128)
+#define islcntrl(c)  (_ltype[(unsigned char)(c) + 1] & _LCONTROL)
+#define isldigit(c)  (_ltype[(unsigned char)(c) + 1] & _LDIGIT)
+#define islgraph(c)  ((unsigned char)(c) >= 0x21 && (unsigned char)(c) <= 0x7e)
+#define isllower(c)  (_ltype[(unsigned char)(c) + 1] & _LLOWER)
+#define islprint(c)  ((unsigned char)(c) >= 0x20 && (unsigned char)(c) <= 0x7e)
+#define islpunct(c)  (_ltype[(unsigned char)(c) + 1] & _LPUNCT)
+#define islspace(c)  (_ltype[(unsigned char)(c) + 1] & _LSPACE)
+#define islupper(c)  (_ltype[(unsigned char)(c) + 1] & _LUPPER)
+#define islxdigit(c) (_ltype[(unsigned char)(c) + 1] & _LHEX)
+
+#define is_valid_id_char( c ) (_ltype[(unsigned char)(c)+1] & (_LABEL | _LDIGIT))
 #define is_valid_id_first_char( c ) \
-	( (__ltype[(unsigned char)(c) + 1] & _LABEL) || ((c) == '.' && ModuleInfo.dotname) )
+	((_ltype[(unsigned char)(c) + 1] & _LABEL) || ((c) == '.' && ModuleInfo.dotname))
+#define is_valid_id_start( c ) (_ltype[(unsigned char)(c) + 1] & _LABEL)
+#define is_valid_first_char( c ) ((_ltype[(unsigned char)(c) + 1] & _LABEL) || ((c) == '.' ))
 
 /* function return values */
 
@@ -337,6 +398,9 @@ enum seg_type {
 #define _AF_REGAX	0x40 /* use [R|E]AX to render jump-code */
 #define _AF_NOTEST	0x80 /* skip test code - just jump */
 
+#define _XF_ASSERT	0x01 /* Generate .assert code */
+#define _XF_PUSHF	0x02 /* Push/Pop flags */
+
 struct global_options {
 unsigned char	quiet;			/* -q option */
 unsigned char	line_numbers;		/* -Zd option */
@@ -375,28 +439,29 @@ unsigned char	no_symbol_listing;	/* -Sn option	*/
 unsigned char	first_pass_listing;	/* -Sf option	*/
 unsigned char	all_symbols_public;	/* -Zf option	*/
 unsigned char	safeseh;		/* -safeseh option */
-unsigned char	ignore_include;		/* -X option */
 unsigned	output_format;		/* -bin, -omf, -coff, -elf options */
 unsigned	sub_format;		/* -mz, -pe, -win64, -elf64 options */
-unsigned char	fieldalign;		/* -Zp option	*/
 unsigned	langtype;		/* -Gc|d|z option */
 unsigned	model;			/* -mt|s|m|c|l|h|f option */
 unsigned	cpu;			/* -0|1|2|3|4|5|6 & -fp{0|2|3|5|6|c} option */
 unsigned	fctype;			/* -zf0 & -zf1 option */
-unsigned	codepage;		/* Unicode code page */
+unsigned	codepage;		/* -ws[n] Unicode code page */
+unsigned char	ignore_include;		/* -X option */
+unsigned char	fieldalign;		/* -Zp option	*/
 unsigned char	syntax_check_only;	/* -Zs option */
 unsigned char	aflag;			/* asmc options */
 unsigned char	xflag;			/* extended options */
 unsigned char	loopalign;		/* OPTION:LOOPALIGN setting */
 unsigned char	casealign;		/* OPTION:CASEALIGN setting */
+unsigned char	segmentalign;		/* -Sp[n] Set segment alignment */
 };
 
 /* if the structure changes, option.c, SetMZ() might need adjustment! */
 struct MZDATA {
-    WORD ofs_fixups; /* offset start fixups */
-    WORD alignment; /* header alignment: 16,32,64,128,256,512 */
-    WORD heapmin;
-    WORD heapmax;
+    unsigned short ofs_fixups; /* offset start fixups */
+    unsigned short alignment; /* header alignment: 16,32,64,128,256,512 */
+    unsigned short heapmin;
+    unsigned short heapmax;
 };
 
 struct dll_desc {
@@ -439,7 +504,7 @@ union {
 struct fixup *	start_fixup;	 /* OMF only */
 struct asym *	start_label;	 /* non-OMF only: start label */
 };
-DWORD		start_displ;	 /* OMF only, optional displ for start label */
+unsigned	start_displ;	 /* OMF only, optional displ for start label */
 struct str_item *StrStack;	 /* v2.20 string stack */
 struct hll_item *HllStack;	 /* for .WHILE, .IF, .REPEAT */
 struct hll_item *HllFree;	 /* v2.06: stack of free <struct hll>-items */
@@ -507,8 +572,8 @@ struct module_info {
     unsigned char	aflag;			/* asmc options */
     union {
 	struct {
-	BYTE		elf_osabi;		/* for ELF */
-	BYTE		win64_flags;		/* for WIN64 + PE(32+) */
+	unsigned char	elf_osabi;		/* for ELF */
+	unsigned char	win64_flags;		/* for WIN64 + PE(32+) */
 	};
 	struct MZDATA	mz_data;		/* for MZ */
     };
@@ -523,7 +588,7 @@ struct module_info {
     unsigned		srcfile;		/* main source file - is an index for FNames[] */
     struct dsym		*currseg;		/* currently active segment */
     struct dsym		*flat_grp;		/* magic FLAT group */
-    BYTE		*pCodeBuff;
+    unsigned char	*pCodeBuff;
     unsigned int	GeneratedCode;		/* nesting level generated code */
     /* input members */
     char		*currsource;		/* current source line */
@@ -563,24 +628,27 @@ extern unsigned int  Parse_Pass;    /* assembly pass */
 extern unsigned char MacroLevel;    /* macro nesting level */
 extern unsigned int  write_to_file; /* 1=write the object module */
 
-int __cdecl asmerr(int, ...);
+int asmerr(int, ...);
 
 /* functions in assemble.asm */
 
 struct fixup;
 
-int  __fastcall DelayExpand( struct asm_tok *);
-void __stdcall OutputByte( unsigned char );
-void __stdcall FillDataBytes( unsigned char, int );
-void __stdcall OutputBytes( const unsigned char *, int, struct fixup * );
-int  __stdcall AssembleModule( const char * );
-void __stdcall SetMasm510( int );
-void __stdcall close_files( void );
-char * __stdcall ConvertSectionName( const struct asym *, unsigned *, char * );
+int  FASTCALL DelayExpand( struct asm_tok *);
+void OutputByte( unsigned char );
+void FillDataBytes( unsigned char, int );
+void OutputBytes( const unsigned char *, int, struct fixup * );
+int  AssembleModule( char * );
+void SetMasm510( int );
+void close_files( void );
+char *ConvertSectionName( const struct asym *, unsigned *, char * );
 
-char * __stdcall myltoa( uint_32, char *, unsigned, bool, bool );
+char *myltoa( uint_32, char *, unsigned, bool, bool );
 void AddLinnumDataRef( unsigned, uint_32 );
 
-void * _atoow(void *, const char *, int, int);
+void _atoow(void *, const char *, int, int);
+void write_logo(void);
+void write_usage(void);
+void write_options(void);
 
 #endif

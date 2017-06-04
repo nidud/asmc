@@ -453,7 +453,7 @@ extern	struct asym	*SymAddLocal( struct asym *, const char * );
 extern	struct asym	*SymLookup( const char * );
 extern	struct asym	*SymLookupLocal( const char * );
 
-extern	struct asym	* _fastcall SymFind( const char *name );
+extern	struct asym	*FASTCALL SymFind( const char *name );
 #define SymSearch(x) SymFind(x)
 
 extern	void		SymInit( void );
@@ -463,12 +463,11 @@ extern	void		SymGetAll( struct asym ** );
 extern	struct asym	*SymEnum( struct asym *, int * );
 extern	uint_32		SymGetCount( void );
 
-//#if defined(__WATCOMC__)
-//typedef int (__watcall * StrCmpFunc)(const void *, const void *, size_t );
-//#else
-typedef int (__stdcall * StrCmpFunc)(const void *, const void *, size_t );
-//#endif
-
+#if defined(__WATCOMC__) && defined(__WATCALL__)
+typedef int (__watcall * StrCmpFunc)(const void *, const void *, size_t );
+#else
+typedef int (* StrCmpFunc)(const void *, const void *, size_t );
+#endif
 extern StrCmpFunc SymCmpFunc;
 
 extern	void		SymSetCmpFunc( void );

@@ -124,12 +124,10 @@ endif
 	mov edi,esi
 	lea esi,table
 	.repeat
-	    push 100
 	    lodsd
-	    push eax
+	    mov ecx,eax
 	    lodsd
-	    push eax
-	    call strnicmp
+	    strnicmp( eax, ecx, 100 )
 	    mov edx,eax
 	    mov ecx,[esi-8]
 	    mov ebx,[esi-4]

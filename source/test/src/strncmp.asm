@@ -123,12 +123,10 @@ endif
 	xor edi,edi
 	lea esi,table
 	.repeat
-	    push 100
 	    lodsd
-	    push eax
+	    mov ecx,eax
 	    lodsd
-	    push eax
-	    call strncmp
+	    strncmp( eax, ecx, 100 )
 	    mov edx,eax
 	    mov ecx,[esi-8]
 	    mov ebx,[esi-4]
@@ -143,7 +141,7 @@ endif
 	.until !eax
 
 toend:
-	mov	eax,nerror
+	mov eax,nerror
 	ret
 main	ENDP
 

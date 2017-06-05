@@ -1,4 +1,4 @@
-include alloc.inc
+;include alloc.inc
 
 public	_chkstk
 public	_alloca_probe
@@ -19,12 +19,10 @@ _alloca_probe:
 	jmp	@B
 @@:
 	sub	rcx,rax
-	and	rcx,-16		; align 16
+	and	cl,-16		; align 16
 	test	[rcx],rax	; probe page
-	mov	rax,rsp
-	mov	rsp,rcx
-	mov	rcx,[rax-8]
-	mov	rax,[rax]
-	jmp	rax
+	mov	rax,rcx
+	mov	rcx,[rsp-8]
+	ret
 
 	end

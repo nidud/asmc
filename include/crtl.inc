@@ -17,8 +17,6 @@ externdef	OldErrorMode:dword
 __isexec	proto __cdecl :LPSTR
 __setenvp	proto __cdecl :LPSTR
 __wsetenvp	proto __cdecl :LPWSTR
-__setargv	proto __cdecl :SIZE_T, :PVOID, :LPSTR
-__setwargv	proto __cdecl :SIZE_T, :PVOID, :LPWSTR
 __initialize	proto __cdecl :PVOID, :PVOID
 __allocwpath	proto __cdecl :LPSTR
 

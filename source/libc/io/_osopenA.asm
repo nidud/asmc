@@ -20,27 +20,27 @@ _osopenA PROC USES esi edi ebx,
 	dwCreation:	SIZE_T,
 	dwAttributes:	SIZE_T
 
-	xor	eax,eax
+	xor eax,eax
 	.while	_osfile[eax] & FH_OPEN
-		inc	eax
-		.if	eax == _nfile
-			xor	eax,eax
-			mov	oserrno,eax ; no OS error
-			mov	errno,EBADF
-			dec	eax
-			jmp	toend
+		inc eax
+		.if eax == _nfile
+			xor eax,eax
+			mov oserrno,eax ; no OS error
+			mov errno,EBADF
+			dec eax
+			jmp toend
 		.endif
 	.endw
 	mov	ebx,eax
 
 	CreateFileA( lpFileName, dwAccess, dwShareMode, lpSecurity, dwCreation, dwAttributes, 0 )
-	mov	edx,eax
-	inc	eax
-	jz	error
+	mov edx,eax
+	inc eax
+	jz  error
 done:
-	mov	eax,ebx
-	mov	_osfhnd[eax*4],edx
-	or	_osfile[eax],FH_OPEN
+	mov eax,ebx
+	mov _osfhnd[eax*4],edx
+	or  _osfile[eax],FH_OPEN
 toend:
 	ret
 error:

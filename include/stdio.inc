@@ -59,6 +59,10 @@ externdef	_osfhnd:HANDLE
 externdef	hStdInput:HANDLE
 externdef	hStdOutput:HANDLE
 externdef	hStdError:HANDLE
+else
+_iob		equ <[__iob_func()]>
+stdout		equ <[__iob_func()+sizeof(_iobuf)]>
+stderr		equ <[__iob_func()+sizeof(_iobuf)*2]>
 endif
 
 _output		proto __cdecl :LPFILE, :LPSTR, :PVOID

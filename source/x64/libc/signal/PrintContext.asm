@@ -48,7 +48,7 @@ PrintContext PROC ExcContext:PTR EXCEPTION_CONTEXT, ExcRecord:PTR EXCEPTION_RECO
 		adc	byte ptr [rdx+rcx-1],0
 	.untilcxz
 
-	_print( addr format,
+	printf( addr format,
 		[r10].EXCEPTION_RECORD.ExceptionCode,
 		[r10].EXCEPTION_RECORD.ExceptionFlags,
 		[r11]._Rax, [r11]._R8,

@@ -6,12 +6,12 @@ include string.inc
 	OPTION WIN64:2, STACKBASE:rsp
 
 salloc	PROC USES rbx string:LPSTR
-	mov	rbx,rcx
+	mov rbx,rcx
 
-	.if	strlen( rcx )
+	.if strlen( rcx )
 
-		inc	rax
-		.if	malloc(rax)
+		inc rax
+		.if malloc(rax)
 
 			strcpy( rax, rbx )
 			test	rax,rax

@@ -6,7 +6,7 @@ include crtl.inc
 
 	.code
 
-Install proc
+Install proc private
 	__setenvp( addr _environ )
 	ret
 Install endp

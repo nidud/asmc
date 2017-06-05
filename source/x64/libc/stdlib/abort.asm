@@ -10,13 +10,13 @@ include setjmp.inc
 	OPTION	WIN64:2, STACKBASE:rsp
 
 abort	PROC
-	longjmp( addr jmp_exit, 1 )
+	longjmp(addr jmp_exit, 1)
 	ret
 abort	ENDP
 
 Install proc private
-	.if	setjmp( addr jmp_exit )
-		exit( eax )
+	.if _setjmp(addr jmp_exit)
+	    exit(eax)
 	.endif
 	ret
 Install endp

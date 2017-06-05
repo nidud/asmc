@@ -22,28 +22,23 @@ OldErrorMode	dd 5
 
 	.code
 
-	OPTION	WIN64:3, STACKBASE:rsp
-
 _ioinit proc
-	GetStdHandle( STD_INPUT_HANDLE )
-	mov	hStdInput,rax
-	GetStdHandle( STD_OUTPUT_HANDLE )
-	mov	hStdOutput,rax
-	GetStdHandle( STD_ERROR_HANDLE )
-	mov	hStdError,rax
+	mov hStdInput,	GetStdHandle( STD_INPUT_HANDLE )
+	mov hStdOutput, GetStdHandle( STD_OUTPUT_HANDLE )
+	mov hStdError,	GetStdHandle( STD_ERROR_HANDLE )
 	SetErrorMode( SEM_FAILCRITICALERRORS )
-	mov	OldErrorMode,eax
+	mov OldErrorMode,eax
 	ret
 _ioinit endp
 
 _ioexit proc uses rsi rdi
-	mov	esi,3
-	lea	rdi,_osfile
+	mov esi,3
+	lea rdi,_osfile
 	.while	esi < _NFILE_
-		.if	BYTE PTR [rdi+rsi] & FH_OPEN
-			_close( esi )
-		.endif
-		inc	esi
+	    .if BYTE PTR [rdi+rsi] & FH_OPEN
+		_close( esi )
+	    .endif
+	    inc esi
 	.endw
 	ret
 _ioexit endp

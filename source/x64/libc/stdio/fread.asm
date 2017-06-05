@@ -26,16 +26,18 @@ fread PROC USES rsi rdi rbx r12 r13 r14 r15,
 	jz	toend
 	mov	edx,_MAXIOBUF
 
-	.if	[rbx]._flag & _IOMYBUF or _IONBF or _IOYOURBUF
-		mov	edx,[rbx]._bufsiz
+	.if [rbx]._flag & _IOMYBUF or _IONBF or _IOYOURBUF
+
+		mov edx,[rbx]._bufsiz
 	.endif
-	mov	r13d,edx
+	mov r13d,edx
 
 	.while	edi
-		mov	r8d,[rbx]._cnt
-		.if	[rbx]._flag & _IOMYBUF or _IOYOURBUF && r8d
-			.if	edi < r8d
-				mov	r8d,edi
+
+		mov r8d,[rbx]._cnt
+		.if [rbx]._flag & _IOMYBUF or _IOYOURBUF && r8d
+			.if edi < r8d
+				mov r8d,edi
 			.endif
 			memcpy( rsi, [rbx]._ptr, r8 )
 			sub	edi,r8d
@@ -43,25 +45,25 @@ fread PROC USES rsi rdi rbx r12 r13 r14 r15,
 			add	[rbx]._ptr,r8
 			add	rsi,r8
 		.elseif edi >= r13d
-			mov	eax,edi
-			mov	ecx,r13d
-			.if	ecx
-				xor	edx,edx
-				div	ecx
-				mov	eax,edi
-				sub	eax,edx
+			mov eax,edi
+			mov ecx,r13d
+			.if ecx
+				xor edx,edx
+				div ecx
+				mov eax,edi
+				sub eax,edx
 			.endif
 
-			.if	!_read( [rbx]._file, rsi, rax )
-				jmp	error
+			.if !_read( [rbx]._file, rsi, rax )
+				jmp error
 			.elseif eax == -1
-				jmp	error
+				jmp error
 			.endif
-			sub	edi,eax
-			add	rsi,rax
+			sub edi,eax
+			add rsi,rax
 		.else
-			.if	_filbuf( rbx ) == -1
-				jmp	break
+			.if _filbuf( rbx ) == -1
+				jmp break
 			.endif
 			mov	[rsi],al
 			inc	rsi

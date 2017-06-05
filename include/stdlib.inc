@@ -21,15 +21,8 @@ _MAX_FNAME	equ 256
 _MAX_EXT	equ 256
 
 ifndef __PE__
-ifdef _LINUX
-externdef	_argc:dword
-externdef	_argv:SIZE_T
-__argc		equ <_argc>
-__argv		equ <_argv>
-else
 externdef	__argc:dword
 externdef	__argv:SIZE_T
-endif
 externdef	_environ:SIZE_T
 externdef	_pgmptr:SIZE_T
 endif
@@ -84,6 +77,7 @@ _wgetenv	proto __cdecl :ptr wchar_t
 _wsystem	proto __cdecl :ptr wchar_t
 _wtoi		proto __cdecl :ptr wchar_t
 _wtol		proto __cdecl :ptr wchar_t
+setwargv	proto __cdecl :ptr, :ptr wchar_t
 
 if 0
 if _INTEGRAL_MAX_BITS GE 64

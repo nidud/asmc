@@ -6,13 +6,15 @@ include alloc.inc
 
 _alloca64 PROC byte_count, res_stack
 
-	lea	rax,[rsp+8]	; start of call
-	add	rcx,rdx		; @ReservedStack
-	.while	rcx > _PAGESIZE_
-		sub	rax,_PAGESIZE_
-		test	[rax],rax
-		sub	rcx,_PAGESIZE_
+	lea rax,[rsp+8]		; start of call
+	add rcx,rdx		; @ReservedStack
+
+	.while rcx > _PAGESIZE_
+		sub  rax,_PAGESIZE_
+		test [rax],rax
+		sub  rcx,_PAGESIZE_
 	.endw
+
 	sub	rax,rcx
 	and	rax,-(_GRANULARITY)
 	test	[rax],rax

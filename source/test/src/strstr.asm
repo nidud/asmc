@@ -66,17 +66,15 @@ ifdef TEST_OVERLAP
 		.until	edi == 4096 - 33
 		call	VirtualFree
 	.endif
-
 endif
 
 	xor	edi,edi
 	lea	esi,table
 	.repeat
 		lodsd
-		push	eax
+		mov	ecx,eax
 		lodsd
-		push	eax
-		call	strstr
+		strstr( eax, ecx )
 		mov	edx,eax
 		mov	ecx,[esi-8]
 		mov	ebx,[esi-4]

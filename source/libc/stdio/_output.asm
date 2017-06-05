@@ -395,25 +395,27 @@ endif
 					mov eax,arglist
 					add arglist,4
 					mov eax,[eax]
-					.if !eax
-
-						lea eax,__nullstring
-					.endif
-					mov text,eax
-
+					mov ecx,edi
 					.if edi == -1
-
-						mov ecx,INT_MAX
-					.else
-						mov ecx,edi
+					    mov ecx,INT_MAX
 					.endif
-					.repeat
-						.break .if BYTE PTR [eax] == 0
-						add eax,1
-					.untilcxz
-					sub eax,text
-					mov textlen,eax
-					mov bufferiswide,1
+					if 0
+					.if esi & (FL_LONG or FL_WIDECHAR)
+
+						mov bufferiswide,1
+					.else
+					endif
+						.if !eax
+						    lea eax,__nullstring
+						.endif
+						mov text,eax
+						.repeat
+						    .break .if BYTE PTR [eax] == 0
+						    add eax,1
+						.untilcxz
+						sub eax,text
+						mov textlen,eax
+					;.endif
 					.endc
 
 				  .case 'n'

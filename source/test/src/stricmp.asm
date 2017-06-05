@@ -125,10 +125,9 @@ endif
 	lea esi,table
 	.repeat
 	    lodsd
-	    push eax
+	    mov ecx,eax
 	    lodsd
-	    push eax
-	    call stricmp
+	    stricmp(eax, ecx)
 	    mov edx,eax
 	    mov ecx,[esi-8]
 	    mov ebx,[esi-4]
@@ -143,7 +142,7 @@ endif
 	.until !eax
 
 toend:
-	mov	eax,nerror
+	mov eax,nerror
 	ret
 main	ENDP
 

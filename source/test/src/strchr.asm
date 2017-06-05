@@ -40,7 +40,7 @@ nerror	dd 0
 	.code
 
 overlapped proc uses esi edi ebx
-	.if	VirtualAlloc(0,4096,MEM_COMMIT,PAGE_READWRITE)
+	.if VirtualAlloc(0,4096,MEM_COMMIT,PAGE_READWRITE)
 		mov	esi,eax
 		mov	edi,eax
 		mov	ecx,4096-1
@@ -73,9 +73,7 @@ loop_az:
 	jb	do_table
 	mov	al,[esi]
 	dec	esi
-	push	eax
-	push	edi
-	call	strchr
+	strchr( edi, eax )
 	lea	edx,[esi+1]
 	movzx	ecx,byte ptr [edx]
 	jz	error2
@@ -89,10 +87,9 @@ do_table:
 	lea	esi,table
 lupe:
 	lodsd
-	push	eax
+	mov	ecx,eax
 	lodsd
-	push	eax
-	call	strchr
+	strchr( eax, ecx )
 	mov	edx,eax
 	mov	ecx,[esi-8]
 	mov	ebx,[esi-4]

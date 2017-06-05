@@ -400,6 +400,7 @@ endif
 						add eax,2
 					    .untilcxz
 					    sub eax,text
+					    shr eax,1
 					    mov textlen,eax
 					    mov bufferiswide,1
 					.endif
@@ -524,7 +525,7 @@ endif
 					mov	hexoff,'A'-'9'-1
 					jmp	COMMON_HEX
 
-				    .case 'x'
+				  .case 'x'
 					;
 					; unsigned lower hex output
 					;
@@ -803,7 +804,7 @@ endif
 		.endif
 	.endw
 
-	mov	eax,charsout ; return value = number of characters written
+	mov eax,charsout ; return value = number of characters written
 	ret
 
 _woutput ENDP

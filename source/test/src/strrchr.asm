@@ -92,10 +92,10 @@ loop_az:
 	push	edi
 ifdef __MSVC__
 	call	crt_strrchr
-	add	esp,8
 else
 	call	strrchr
 endif
+	add	esp,8
 	lea	edx,[esi-1]
 	movzx	ecx,byte ptr [edx]
 	cmp	eax,edx
@@ -112,10 +112,10 @@ lupe:
 	push	eax
 ifdef __MSVC__
 	call	crt_strrchr
-	add	esp,8
 else
 	call	strrchr
 endif
+	add	esp,8
 	mov	edx,eax
 	mov	ebx,[esi-4]
 	lodsd

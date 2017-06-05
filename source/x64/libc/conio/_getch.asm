@@ -4,11 +4,11 @@ include conio.inc
 
 _getch	PROC USES rbx rdi rsi
 
-	local	Count:QWORD
-	local	Event[MAXINPUTRECORDS]:INPUT_RECORD
+local	Count:QWORD
+local	Event[MAXINPUTRECORDS]:INPUT_RECORD
 
-	xor	edi,edi
-	.while	!edi
+	xor edi,edi
+	.while !edi
 
 		.if GetNumberOfConsoleInputEvents( hStdInput, addr Count )
 
@@ -17,11 +17,11 @@ _getch	PROC USES rbx rdi rsi
 				mov r8,MAXINPUTRECORDS
 			.endif
 
-			lea	rbx,Event
+			lea rbx,Event
 			ReadConsoleInput( hStdInput, rbx, r8d, addr Count )
 
-			mov	rsi,Count
-			.while	esi
+			mov rsi,Count
+			.while esi
 
 				.if [rbx].INPUT_RECORD.EventType == KEY_EVENT && \
 				    [rbx].INPUT_RECORD.KeyEvent.bKeyDown
@@ -30,12 +30,12 @@ _getch	PROC USES rbx rdi rsi
 					.break .if edi
 				.endif
 
-				add	rbx,SIZE INPUT_RECORD
-				dec	esi
+				add rbx,SIZE INPUT_RECORD
+				dec esi
 			.endw
 		.endif
 	.endw
-	mov	eax,edi
+	mov eax,edi
 	ret
 _getch	ENDP
 

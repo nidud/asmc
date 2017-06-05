@@ -3,7 +3,7 @@ include winbase.inc
 
 	.code
 
-_filelength PROC handle:SINT
+filelength PROC handle:SINT
 
 local	FileSize:QWORD
 
@@ -17,6 +17,6 @@ local	FileSize:QWORD
 		xor rax,rax
 	.endif
 	ret
-_filelength ENDP
+filelength ENDP
 
 	END

@@ -39,13 +39,13 @@ assert_exit proc
 	pop	rax
 	mov	rcx,16
 	.repeat
-		shr	eax,1
-		adc	byte ptr [rdx+rcx-1],0
+		shr eax,1
+		adc byte ptr [rdx+rcx-1],0
 	.untilcxz
 	mov	rax,rsp
 	pop	rdx
 	sub	rsp,@ReservedStack
-	_print( addr regs, rdx,
+	printf( addr regs, rdx,
 		_ax, r8,
 		rbx, r9,
 		_cx, r10,

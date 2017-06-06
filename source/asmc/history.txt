@@ -3,6 +3,8 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.24 - xx xxx 2017
+- added C source and make files for Linux and win64
+- added & as alias for ADDR in proc( &args )
 - added option cstack to C calling convention (32-bit)
 - added switch -Sp[n] Set segment alignment
 - added auto detect UTF-8 header (BOM)

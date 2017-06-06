@@ -1234,6 +1234,13 @@ local	b[MAX_LINE_LEN]:SBYTE,
 
 			.while	1
 
+				.if [ebx].token == '&'
+
+				    strcat(esi, "addr ")
+				    add edi,1
+				    add ebx,16
+				.endif
+
 				.if [ebx].hll_flags & T_HLL_PROC
 
 					LKRenderHllProc( dst, edi, tokenarray )

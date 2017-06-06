@@ -61,8 +61,8 @@ _ftccmp			equ <_tccmp>
 
 ifdef  _UNICODE
 
-
 include wchar.inc
+.xlist
 
 ifndef _WCTYPE_T_DEFINED
 _WCTYPE_T_DEFINED equ <>
@@ -301,12 +301,11 @@ _tccmp	macro _cpc1,_cpc2
 	movsx eax,ax
 	exitm<eax>
 	endm
-else   
+else
 _tclen proto WINAPI :ptr WORD
 _tccpy proto WINAPI :ptr WORD, :ptr WORD
 _tccmp proto WINAPI :ptr WORD, :ptr WORD
-endif  
-
+endif
 
 
 _istalnum		equ <iswalnum>
@@ -376,26 +375,25 @@ _wcsspnp macro _cpc1,_cpc2
 	.endif
 	exitm<rax>
 	endm
-else   
+else
 _wcsdec		proto :ptr wchar_t, :ptr wchar_t
 _wcsinc		proto :ptr wchar_t
 _wcsnextc	proto :ptr wchar_t
 _wcsninc	proto :ptr wchar_t, :size_t
 _wcsncnt	proto :ptr wchar_t, :size_t
 _wcsspnp	proto :ptr wchar_t, :ptr wchar_t
-endif  
+endif
 
 
-else   
+else
 
 
 include string.inc
+.xlist
 
 _TEOF			equ EOF
 
 ;__T	macro x
-
-
 
 _tmain			equ <main>
 _tWinMain		equ <WinMain>
@@ -406,8 +404,6 @@ _tenviron		equ <_environ>
 endif
 __targv			equ <__argv>
 _tgetmainargs		equ <__getmainargs>
-
-
 
 _tprintf		equ <printf>
 _ftprintf		equ <fprintf>
@@ -420,8 +416,6 @@ _vsntprintf		equ <_vsnprintf>
 _tscanf			equ <scanf>
 _ftscanf		equ <fscanf>
 _stscanf		equ <sscanf>
-
-
 
 _fgettc			equ <fgetc>
 _fgettchar		equ <_fgetchar>
@@ -437,8 +431,6 @@ _puttchar		equ <putchar>
 _putts			equ <puts>
 _ungettc		equ <ungetc>
 
-
-
 _tcstod			equ <strtod>
 _tcstol			equ <strtol>
 _tcstoul		equ <strtoul>
@@ -453,16 +445,12 @@ _ttoi64			equ <_atoi64>
 _i64tot			equ <_i64toa>
 _ui64tot		equ <_ui64toa>
 
-
-
 _tcscat			equ <strcat>
 _tcscpy			equ <strcpy>
 _tcsdup			equ <_strdup>
 
 _tcslen			equ <strlen>
 _tcsxfrm		equ <strxfrm>
-
-
 
 _texecl			equ <_execl>
 _texecle		equ <_execle>
@@ -484,8 +472,6 @@ _tspawnvpe		equ <_spawnvpe>
 
 _tsystem		equ <system>
 
-
-
 _tasctime		equ <asctime>
 _tctime			equ <ctime>
 _tstrdate		equ <_strdate>
@@ -493,15 +479,11 @@ _tstrtime		equ <_strtime>
 _tutime			equ <_utime>
 _tcsftime		equ <strftime>
 
-
-
 _tchdir			equ <_chdir>
 _tgetcwd		equ <_getcwd>
 _tgetdcwd		equ <_getdcwd>
 _tmkdir			equ <_mkdir>
 _trmdir			equ <_rmdir>
-
-
 
 _tfullpath		equ <_fullpath>
 _tgetenv		equ <getenv>
@@ -509,8 +491,6 @@ _tmakepath		equ <_makepath>
 _tputenv		equ <_putenv>
 _tsearchenv		equ <_searchenv>
 _tsplitpath		equ <_splitpath>
-
-
 
 ifdef  _POSIX_
 _tfdopen		equ <fdopen>
@@ -524,8 +504,6 @@ _tperror		equ <perror>
 _tpopen			equ <_popen>
 _ttempnam		equ <_tempnam>
 _ttmpnam		equ <tmpnam>
-
-
 
 _tchmod			equ <_chmod>
 _tcreat			equ <_creat>
@@ -551,24 +529,16 @@ _tunlink		equ <_unlink>
 _tfinddata_t		equ <_finddata_t>
 _tfinddatai64_t		equ <_finddatai64_t>
 
-
-
 _istascii		equ <isascii>
 _istcntrl		equ <iscntrl>
 _istxdigit		equ <isxdigit>
 
-
-
 _tstat			equ <_stat>
 _tstati64		equ <_stati64>
 
-
-
 _tsetlocale		equ <setlocale>
 
-
 ifdef  _MBCS
-
 
 include mbstring.inc
 
@@ -590,8 +560,6 @@ endif
 
 
 ifdef  _MB_MAP_DIRECT
-
-
 
 _tcschr			equ <_mbschr>
 _tcscspn		equ <_mbscspn>
@@ -621,14 +589,10 @@ _tcsncoll		equ <_mbsnbcoll>
 _tcsncicoll		equ <_mbsnicoll>
 _tcsnicoll		equ <_mbsnbicoll>
 
-
-
 _tcsclen		equ <_mbslen>
 _tcsnccat		equ <_mbsncat>
 _tcsnccpy		equ <_mbsncpy>
 _tcsncset		equ <_mbsnset>
-
-
 
 _tcsdec			equ <_mbsdec>
 _tcsinc			equ <_mbsinc>
@@ -648,8 +612,7 @@ _tccmp macro _cpuc1,_cpuc2
 	exitm<_tcsnccmp(_cpuc1,_cpuc2,1)>
 	endm
 
-
-else 
+else
 
 _PUC			equ ptr byte
 _CPUC			equ ptr byte
@@ -658,8 +621,6 @@ _CPC			equ ptr sbyte
 _UI			equ dword
 
 if     (__STDC__ OR defined(_NO_INLINING)) AND NOT defined(_M_M68K)
-
-
 
 _tcschr		proto WINAPI :_CPC, :_UI
 _tcscspn	proto WINAPI :_CPC, :_CPC
@@ -705,7 +666,7 @@ _tclen		proto WINAPI :_CPC
 _tccpy		proto WINAPI :_PC, :_CPC
 _tcsnextc	proto WINAPI :_CPC
 
-else   
+else
 
 
 
@@ -785,8 +746,6 @@ _tcsnicoll macro _s1,_s2,_n
 	exitm<_mbsnbicoll(_s1,_s2,_n)>
 	endm
 
-
-
 _tcsclen macro _s1,_s2
 	exitm<_mbslen(_s1)>
 	endm
@@ -799,8 +758,6 @@ _tcsnccpy macro _s1,_s2,_n
 _tcsncset macro _s1,_c,_n
 	exitm<_mbsnset(_s1,_c,_n)>
 	endm
-
-
 
 _tcsdec macro _s1,_s2
 	exitm<_mbsdec(_s1,_s2)>
@@ -833,7 +790,6 @@ _tccpy macro _s1,_s2
 	_mbccpy(_s1,_s2)
 	endm
 
-
 _tcsnextc macro _s1
 	mov rax,_s1
 	movzx eax,byte ptr [rax]
@@ -845,11 +801,9 @@ _tcsnextc macro _s1
 	exitm<eax>
 	endm
 
-endif  
+endif
 
-endif  
-
-
+endif
 
 _tccmp macro _cp1,_cp2
 	exitm<_tcsnccmp(_cp1,_cp2,1)>
@@ -874,9 +828,7 @@ _totlower		equ <_mbctolower>
 _istlead		equ <_ismbblead>
 _istleadbyte		equ <isleadbyte>
 
-else   
-
-
+else
 
 ifndef __TCHAR_DEFINED
 _TCHAR			typedef sbyte
@@ -893,8 +845,6 @@ TCHAR			typedef sbyte
 endif
 _TCHAR_DEFINED		equ 1
 endif
-
-
 
 _tcschr			equ <strchr>
 _tcscspn		equ <strcspn>
@@ -924,14 +874,10 @@ _tcsncoll		equ <_strncoll>
 _tcsncicoll		equ <_strnicoll>
 _tcsnicoll		equ <_strnicoll>
 
-
-
 _tcsclen		equ <strlen>
 _tcsnccat		equ <strncat>
 _tcsnccpy		equ <strncpy>
 _tcsncset		equ <_strnset>
-
-
 
 _tcsdec			equ <_strdec>
 _tcsinc			equ <_strinc>
@@ -972,13 +918,11 @@ _tccmp macro _cpc1,_cpc2
 	exitm<eax>
 	endm
 
-else   
+else
 _tclen proto WINAPI :ptr SBYTE
 _tccpy proto WINAPI :ptr SBYTE, :ptr SBYTE
 _tccmp proto WINAPI :ptr SBYTE, :ptr SBYTE
-endif  
-
-
+endif
 
 _istalnum		equ <isalnum>
 _istalpha		equ <isalpha>
@@ -997,13 +941,9 @@ _istlegal macro _c
 	exitm<(1)>
 	endm
 
-
-
-
 ifndef NULL
 NULL			equ 0
 endif
-
 
 if     (__STDC__ OR defined(_NO_INLINING)) AND NOT defined(_M_M68K)
 _strdec macro _cpc1,_cpc2
@@ -1044,18 +984,17 @@ _strspnp macro _cpc1,_cpc2
 	.endif
 	exitm<rax>
 	endm
-else   
+else
 _strdec		proto :ptr SBYTE, :ptr SBYTE
 _strinc		proto :ptr SBYTE
 _strnextc	proto :ptr SBYTE
 _strninc	proto :ptr SBYTE, :size_t
 _strncnt	proto :ptr SBYTE, :size_t
 _strspnp	proto :ptr SBYTE, :ptr SBYTE
-endif  
+endif
 
-
-endif  
-endif  
+endif
+endif
 
 
 if 0
@@ -1079,7 +1018,9 @@ ifndef _WIN64
 endif
 
 ifdef __PE__
-
+ifndef __STDLIB_INC
+include stdlib.inc
+endif
 	.data
 	__argc	  dd 0,0
 	__targv	  SIZE_T 0
@@ -1118,6 +1059,6 @@ _tstart equ <>
 
 endif
 
-endif  
+endif
 
 .list

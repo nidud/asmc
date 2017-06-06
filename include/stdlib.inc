@@ -1,7 +1,9 @@
+ifndef __STDLIB_INC
 ifndef __LIBC_INC
  include libc.inc
 endif
 .xlist
+__STDLIB_INC equ <>
 ifdef __PE__
 option	dllimport:<msvcrt>
 endif
@@ -95,3 +97,4 @@ __iob_func	proto __cdecl
 endif
 
 .list
+endif

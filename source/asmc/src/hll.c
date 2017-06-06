@@ -850,6 +850,10 @@ static int LKRenderHllProc( char *dst, int i, struct asm_tok tokenarray[] )
 
 	    while( 1 ) {
 
+		if ( tokenarray[k].token == '&' ) {
+		    strcat( b, "addr " );
+		    k++;
+		}
 		if ( tokenarray[k].hll_flags & T_HLL_PROC ) {
 
 		    if ( LKRenderHllProc( dst, k, tokenarray ) == ERROR )

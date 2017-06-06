@@ -340,15 +340,25 @@ add_cmdline_tmacros PROC USES esi edi ebx
 	    inc ebx
 	    mov esi,eax
 	.endif
-	.for edx = esi, eax = 0 ::
-	    lodsb
-	    .break .if !al
-	    .if !( _ltype[eax+1] & _LABEL )
-		asmerr( 2008, edx )
-		.break(1)
-	    .endif
-	.endf
-	mov esi,edx
+
+	xor ecx,ecx
+	movzx eax,byte ptr [esi]
+	.if !( ( _ltype[eax+1] & _LABEL ) || al == '.')
+	    inc ecx
+	.else
+	    .for edx = &[esi+1], al = [edx] : eax: edx++, al = [edx]
+
+		.if !( _ltype[eax+1] & ( _LABEL or _DIGIT ) )
+		    inc ecx
+		    .break
+		.endif
+	    .endf
+	.endif
+	.if ecx
+	    asmerr( 2008, esi )
+	    .break
+	.endif
+
 	.if !SymFind( esi )
 	    SymCreate( esi )
 	    mov [eax].asym.state,SYM_TMACRO

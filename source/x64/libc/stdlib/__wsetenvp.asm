@@ -5,21 +5,20 @@ include winbase.inc
 
 	.code
 
-__setenvp PROC USES rsi rdi rbx envp:LPSTR
-
-	mov rdi,GetEnvironmentStringsA()
+__wsetenvp PROC USES rsi rdi rbx envp:LPWSTR
+	mov rdi,GetEnvironmentStringsW()
 	mov rsi,rax			; save start of block in ESI
 	xor rax,rax
 	xor rbx,rbx
 	mov rcx,-1
-	.while	BYTE PTR [rdi]		; size up the environment
-	    .if BYTE PTR [rdi] != '='
+	.while	WORD PTR [rdi]		; size up the environment
+	    .if WORD PTR [rdi] != '='
 		mov  rdx,rdi		; save offset of string
 		sub  rdx,rsi
 		push rdx
 		inc  rbx		; increase count
 	    .endif
-	    repnz scasb			; next string..
+	    repnz scasw			; next string..
 	.endw
 	inc rbx				; count strings plus NULL
 	sub rdi,rsi			; EDI to size
@@ -29,9 +28,9 @@ __setenvp PROC USES rsi rdi rbx envp:LPSTR
 	mov [rcx],rax
 	.if rax
 	    lea rax,[rax+rbx*8]		; new adderss of block
-	    memcpy(rax, rsi, rdi)
+	    memcpy(rax,rsi,rdi)
 	    xchg rax,rsi		; ESI to block
-	    FreeEnvironmentStringsA(rax)
+	    FreeEnvironmentStringsW(rax)
 	    lea rdi,[rsi-8]		; EDI to end of pointers array
 	    std				; move backwards
 	    xor rax,rax			; set last pointer to NULL
@@ -49,6 +48,6 @@ __setenvp PROC USES rsi rdi rbx envp:LPSTR
 	    mov rax,[rax]
 	.endif
 	ret
-__setenvp ENDP
+__wsetenvp ENDP
 
 	END

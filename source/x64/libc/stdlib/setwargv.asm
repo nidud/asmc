@@ -2,7 +2,7 @@
 ;
 ; wchar_t **setwargv( int *argc, wchar_t *command_line );
 ;
-; Note: The main array (__wargv) is allocated in __wargv.asm
+; Note: The main array (__argv) is allocated in __wargv.asm
 ;
 include stdlib.inc
 include string.inc
@@ -13,26 +13,24 @@ MAXARGSIZE  equ 0x8000	; Max argument size: 32K
 
 	.code
 
-	option	cstack:on
+setwargv proc uses rsi rdi rbx argc:ptr, cmdline:ptr wchar_t
 
-setwargv proc uses esi edi ebx argc:ptr, cmdline:ptr wchar_t
-
-local argv[MAXARGCOUNT]:DWORD
-local buffer:DWORD
+local argv[MAXARGCOUNT]:QWORD
+local buffer:QWORD
 
     mov buffer,alloca(MAXARGSIZE*2)
-    mov edi,buffer
-    mov esi,cmdline
-    mov edx,argc
-    xor eax,eax
-    mov [edx],eax
+    mov rdi,buffer
+    mov rsi,cmdline
+    mov rdx,argc
+    xor rax,rax
+    mov [rdx],rax
 
     lodsw
     .while ax
 
 	xor ecx,ecx		; Add a new argument
 	xor edx,edx		; "quote from start" in EDX - remove
-	mov [edi],cx
+	mov [rdi],cx
 
 	.for : ax == ' ' || (ax >= 9 && ax <= 13) :
 	    lodsw
@@ -53,7 +51,7 @@ local buffer:DWORD
 		.if ecx
 		    dec ecx
 		.elseif edx
-		    mov ax,[esi]
+		    mov ax,[rsi]
 		    .break .if ax == ' '
 		    .break .if ax >= 9 && ax <= 13
 		    dec edx
@@ -67,27 +65,27 @@ local buffer:DWORD
 	.endw
 
 	xor ecx,ecx
-	mov [edi],ecx
-	lea ebx,[edi+2]
-	mov edi,buffer
-	.break .if cx == [edi]
-	push eax
-	sub ebx,edi
-	memcpy(malloc(ebx), edi, ebx)
-	mov edx,argc
-	mov ecx,[edx]
-	mov argv[ecx*4],eax
-	inc dword ptr [edx]
-	pop eax
+	mov [rdi],ecx
+	lea rbx,[rdi+2]
+	mov rdi,buffer
+	.break .if cx == [rdi]
+	push rax
+	sub rbx,rdi
+	memcpy(malloc(rbx), rdi, rbx)
+	mov rdx,argc
+	mov rcx,[rdx]
+	mov argv[rcx*8],rax
+	inc qword ptr [rdx]
+	pop rax
 	.break .if !( ecx < MAXARGCOUNT )
     .endw
     xor eax,eax
-    mov ebx,argc
-    mov ebx,[ebx]
-    lea edi,argv
-    mov [edi+ebx*4],eax
-    lea ebx,[ebx*4+4]
-    memcpy(malloc(ebx), edi, ebx)
+    mov rbx,argc
+    mov rbx,[rbx]
+    lea rdi,argv
+    mov [rdi+rbx*8],rax
+    lea rbx,[rbx*8+8]
+    memcpy(malloc(rbx), rdi, rbx)
     ret
 
 setwargv endp

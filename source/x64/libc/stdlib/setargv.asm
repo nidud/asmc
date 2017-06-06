@@ -65,7 +65,7 @@ local buffer:QWORD
 	.endw
 
 	xor ecx,ecx
-	mov [rdi],cl
+	mov [rdi],ecx
 	lea rbx,[rdi+1]
 	mov rdi,buffer
 	.break .if cl == [rdi]
@@ -83,7 +83,7 @@ local buffer:QWORD
     mov rbx,argc
     mov rbx,[rbx]
     lea rdi,argv
-    mov [rdi+rbx*8],eax
+    mov [rdi+rbx*8],rax
     lea rbx,[rbx*8+8]
     memcpy(malloc(rbx), rdi, rbx)
     ret

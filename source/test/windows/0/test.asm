@@ -2,13 +2,13 @@ include windows.inc
 include commctrl.inc
 include tchar.inc
 
-	.code
+    .code
 
-_tmain	proc _CDecl
+_tmain proc
 
-	MessageBox( NULL, "Hello World", "Dialog(0)", MB_OK )
-	ret
+    MessageBox( NULL, "Hello World", "Dialog(0)", MB_OK )
+    ret
 
-_tmain	endp
+_tmain  endp
 
-	end	_tstart
+    end _tstart

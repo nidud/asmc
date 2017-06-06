@@ -111,24 +111,20 @@ static char *getfilearg(char **args, char *p) // -Fo<file> or -Fo <file>
  * queue a text macro, include path or "forced" include files.
  * this is called for cmdline options -D, -I and -Fi
  */
-static void queue_item(int i, char *p)
+static void queue_item(int i, char *string)
 {
-    char *cp;
+    struct qitem *p;
     struct qitem *q;
 
-    while ( *p == '"' ) {
-	if ( (cp = strrchr( strcpy( p, p + 1 ), '"' )) )
-	    *cp = 0;
-    }
-    q = MemAlloc( strlen( p ) + sizeof( struct qitem ) );
-    q->next = NULL;
-    strcpy( q->value, p );
-    if ( Options.queues[i] ) {
-	struct qitem *e = q->next;
-	while ( e->next ) e++;
-	e->next = q;
+    p = MemAlloc( strlen( string ) + sizeof( struct qitem ) );
+    p->next = NULL;
+    strcpy( p->value, string );
+    q = Options.queues[i];
+    if ( q ) {
+	for ( ; q->next; q = q->next );
+	q->next = p;
     } else {
-	Options.queues[i] = q;
+	Options.queues[i] = p;
     }
 }
 

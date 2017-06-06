@@ -1,20 +1,50 @@
 !include srcpath
 
-.all:
-	asmc -pe -D__PE__ -Fo win32Ape.exe test.asm
-	asmc -ws -pe -D__PE__ -D_UNICODE -Fo win32Wpe.exe test.asm
-	asmc -pe -D__PE__ -D_WIN64 -Fo win64Ape.exe test.asm
-	asmc -ws -pe -D__PE__ -D_WIN64 -D_UNICODE -Fo win64Wpe.exe test.asm
+msgbox_test:
+    make -h -s win32A.exe
+    make -h -s win32W.exe
+    make -h -s win64A.exe
+    make -h -s win64W.exe
+    make -h -s win32peA.exe
+    make -h -s win32peW.exe
+    make -h -s win64peA.exe
+    make -h -s win64peW.exe
+    del win*.exe
+    del *.obj
+    pause
 
-	asmc test.asm
-	linkw N win32A.exe L libc F $(lib_dir)\crt, test
-	asmc -ws -D_UNICODE test.asm
-	linkw N win32W.exe L libcw F $(lib_dir)\crtw, test
-	asmc -win64 -D_WIN64 test.asm
-	linkw N win64A.exe LibP $(lib_dir)\x64 L kernel32, user32, libc F $(lib_dir)\x64\crt, test
-	asmc -win64 -ws -D_WIN64 -D_UNICODE test.asm
-	linkw N win64W.exe LibP $(lib_dir)\x64 L kernel32, user32, libcw F $(lib_dir)\x64\crtw, test
+win32A.exe:
+    asmc -q -Fo $*.obj test.asm
+    linkw op q symt _cstart file $*
+    $@
 
-	del test.obj
-	pause
+win32W.exe:
+    asmc -q -ws -D_UNICODE -Fo $*.obj test.asm
+    linkw op q symt _wcstart file $*
+    $@
 
+win64A.exe:
+    asmc -q -win64 -D_WIN64 -Fo $*.obj test.asm
+    linkw op q symt cstart libpath \asmc\lib\x64 lib kernel32, user32, libc file $*
+    $@
+
+win64W.exe:
+    asmc -q -win64 -D_WIN64 -ws -D_UNICODE -Fo $*.obj test.asm
+    linkw op q symt wcstart libpath \asmc\lib\x64 lib kernel32, user32, libc file $*
+    $@
+
+win32peA.exe:
+    asmc -q -pe -D__PE__ -Fo $*.exe test.asm
+    $@
+
+win32peW.exe:
+    asmc -q -pe -ws -D_UNICODE -D__PE__ -Fo $*.exe test.asm
+    $@
+
+win64peA.exe:
+    asmc -q -pe -D_WIN64 -D__PE__ -Fo $*.exe test.asm
+    $@
+
+win64peW.exe:
+    asmc -q -pe -ws -D_WIN64 -D_UNICODE -D__PE__ -Fo $*.exe test.asm
+    $@

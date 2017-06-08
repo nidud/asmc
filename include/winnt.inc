@@ -25,6 +25,10 @@ pragma warning(disable:4214)
 
 ANYSIZE_ARRAY		equ 1
 
+ifdef __PE__
+option dllimport:<ntdll>
+endif
+
 ;include specstrings.inc
 ;include kernelspecs.inc
 
@@ -9415,6 +9419,7 @@ POSVERSIONINFOEX	typedef POSVERSIONINFOEXA
 LPOSVERSIONINFOEX	typedef LPOSVERSIONINFOEXA
 endif
 
+STATUS_SUCCESS		equ 0
 
 VER_EQUAL		equ 1
 VER_GREATER		equ 2
@@ -9461,6 +9466,10 @@ VerSetConditionMask proto WINAPI \
 	 ConditionMask: ULONGLONG,
 	      TypeMask: DWORD,
 	     Condition: BYTE
+
+RtlGetVersion	    proto WINAPI \
+  lpVersionInformation: ptr
+
 endif
 
 if (NTDDI_VERSION GE NTDDI_VISTA)

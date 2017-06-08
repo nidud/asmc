@@ -741,6 +741,15 @@ get_special_symbol PROC FASTCALL USES esi edi ebx buf, p
 					inc [esi].output
 					inc [esi].input
 					mov [ebx].stringlen,2
+					;
+					; v2.24 proc( &arg )
+					;
+				.elseif al == '&' && \
+					([ebx-16].token == T_COMMA || [ebx-16].token == T_OP_BRACKET)
+					mov [ebx].token,al
+					lea eax,__amp
+					mov [ebx].string_ptr,eax
+					.endc
 				.endif
 			.elseif BYTE PTR [edx] == '='
 

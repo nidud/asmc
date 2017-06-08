@@ -553,6 +553,11 @@ static int get_special_symbol( struct asm_tok *buf, struct line_status *p )
 		    *(p->output)++ = symbol;
 		    p->input++;
 		    buf->stringlen = 2;
+		} else if ( symbol == '&' &&
+		    ( (buf-1)->token == T_OP_BRACKET || (buf-1)->token == T_COMMA ) ) {
+		    buf->token = '&';
+		    buf->string_ptr = "&";
+		    break;
 		}
 	    } else if ( *p->input == '=' ) {
 		*(p->output)++ = '=';

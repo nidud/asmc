@@ -2,7 +2,7 @@ include ctype.inc
 
 	.code
 
-	OPTION PROLOGUE:NONE, EPILOGUE:NONE
+	option stackbase:esp
 
 isprint PROC char:SINT
 	movzx	eax,BYTE PTR [esp+4]

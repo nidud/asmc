@@ -2,12 +2,12 @@ include string.inc
 
 	.code
 
-	OPTION	PROLOGUE:NONE, EPILOGUE:NONE
+	option stackbase:esp
 
 strlen	PROC string:LPSTR
 
-	mov	eax,[esp+4]
-	mov	ecx,[esp+4]
+	mov	eax,string
+	mov	ecx,string
 	push	edx
 	and	ecx,3
 	jz	L2
@@ -36,7 +36,7 @@ L3:
 	bsf	ecx,ecx
 	shr	ecx,3
 	add	eax,ecx
-	sub	eax,[esp+4]
+	sub	eax,string
 	ret
 
 strlen	endp

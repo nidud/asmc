@@ -563,7 +563,7 @@ mousex		PROTO __cdecl
 msloop		PROTO __cdecl
 mousewait	PROTO __cdecl x:UINT, y:UINT, l:UINT
 
-ReadEvevnt	PROTO __cdecl
+ReadEvent	PROTO __cdecl
 SetKeyState	PROTO __cdecl
 UpdateKeyEvent	PROTO __cdecl :PTR INPUT_RECORD
 UpdateMouseEvent PROTO __cdecl :PTR INPUT_RECORD

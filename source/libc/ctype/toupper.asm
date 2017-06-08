@@ -2,7 +2,7 @@ include ctype.inc
 
 	.code
 
-	OPTION PROLOGUE:NONE, EPILOGUE:NONE
+	option stackbase:esp
 
 toupper PROC char:SINT
 	mov	eax,[esp+4]

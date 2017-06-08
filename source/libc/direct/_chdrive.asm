@@ -3,10 +3,10 @@ include winbase.inc
 
 	.code
 
-	OPTION PROLOGUE:NONE, EPILOGUE:NONE
+	option stackbase:esp
 
 _chdrive PROC drive:SINT
-	mov	eax,[esp+4]
+	mov	eax,drive
 	cmp	eax,1
 	jl	error1
 	cmp	eax,31

@@ -3,11 +3,10 @@ include string.inc
 
 	.code
 
-	OPTION PROLOGUE:NONE, EPILOGUE:NONE
+	option stackbase:esp
 
-strext	PROC string:LPSTR
-	push	ecx
-	mov	eax,[esp+4+4]
+strext	proc uses ecx string:LPSTR
+	mov	eax,string
 	strfn  (eax)
 	push	eax
 	strrchr(eax, '.')
@@ -18,8 +17,7 @@ strext	PROC string:LPSTR
 	jne	@F
 	sub	eax,eax
 @@:
-	pop	ecx
 	ret
-strext	ENDP
+strext	endp
 
 	END

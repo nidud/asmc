@@ -2,7 +2,7 @@ include libc.inc
 
 	.code
 
-	OPTION PROLOGUE:NONE, EPILOGUE:NONE
+	option stackbase:esp
 
 _inpd	PROC port
 	mov	dx,WORD PTR [esp+4]

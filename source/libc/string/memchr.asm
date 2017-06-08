@@ -2,17 +2,13 @@ include string.inc
 
 	.code
 
-	OPTION	PROLOGUE:NONE, EPILOGUE:NONE
+	option stackbase:esp
 
-memchr	PROC base:LPSTR, char:SIZE_T, bsize:SIZE_T
+memchr	PROC uses esi edi ebx base:LPSTR, char:SIZE_T, bsize:SIZE_T
 
-	push	esi
-	push	edi
-	push	ebx
-
-	mov	edi,12[esp+4]
-	mov	eax,12[esp+8]
-	mov	ecx,12[esp+12]
+	mov	edi,base
+	mov	eax,char
+	mov	ecx,bsize
 
 	cmp	ecx,8
 	jb	tail
@@ -57,9 +53,6 @@ tail:
 	jnz	@B
 exit_NULL:
 	xor	eax,eax
-	pop	ebx
-	pop	edi
-	pop	esi
 	ret
 exit_2:
 	add	edi,1
@@ -68,9 +61,6 @@ exit_1:
 exit_0:
 	mov	eax,edi
 toend:
-	pop	ebx
-	pop	edi
-	pop	esi
 	ret
 memchr	endp
 

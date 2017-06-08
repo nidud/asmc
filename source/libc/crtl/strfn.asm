@@ -7,12 +7,10 @@ include string.inc
 
 	.code
 
-	OPTION PROLOGUE:NONE, EPILOGUE:NONE
+	option stackbase:esp
 
-strfn	PROC	path:LPSTR
-	push	edi
-	push	ecx
-	mov	edi,[esp+4+8]
+strfn	proc uses edi ecx path:LPSTR
+	mov	edi,path
 	strlen( edi )
 	lea	eax,[edi+eax-1]
 @@:
@@ -26,8 +24,6 @@ strfn	PROC	path:LPSTR
 	lea	eax,[edi-1]
 @@:
 	inc	eax
-	pop	ecx
-	pop	edi
 	ret
 strfn	ENDP
 

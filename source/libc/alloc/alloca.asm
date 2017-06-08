@@ -2,7 +2,7 @@ include alloc.inc
 
 	.code
 
-	OPTION PROLOGUE:NONE, EPILOGUE:NONE
+	option stackbase:esp
 
 alloca	PROC byte_count:UINT
 	lea eax,[esp+8]

@@ -4,7 +4,7 @@ include consx.inc
 
 mousep	PROC USES ecx edx
 
-	ReadEvevnt()
+	ReadEvent()
 	mov eax,edx
 	shr eax,16
 	and eax,3

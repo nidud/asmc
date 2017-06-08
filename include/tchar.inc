@@ -1021,6 +1021,9 @@ ifdef __PE__
 ifndef __STDLIB_INC
 include stdlib.inc
 endif
+ifdef _WIN64
+option	win64:3
+endif
 	.data
 	__argc	  dd 0,0
 	__targv	  SIZE_T 0

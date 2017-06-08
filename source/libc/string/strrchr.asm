@@ -2,19 +2,17 @@ include string.inc
 
 	.code
 
-	OPTION	PROLOGUE:NONE, EPILOGUE:NONE
+	option stackbase:esp
 
-strrchr PROC string:LPSTR, char:SIZE_T
+strrchr proc uses edi string:LPSTR, char:SIZE_T
 
-	push	edi
-	mov	edi,4[esp+4]
-
+	mov	edi,string
 	xor	eax,eax
 	mov	ecx,-1
 	repne	scasb
 	not	ecx
 	dec	edi
-	mov	al,4[esp+8]
+	mov	al,byte ptr char
 	std
 	repne	scasb
 	cld
@@ -23,7 +21,6 @@ strrchr PROC string:LPSTR, char:SIZE_T
 	lea	eax,[edi+1]
 @@:
 	test	eax,eax
-	pop	edi
 	ret
 
 strrchr endp

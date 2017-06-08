@@ -1,18 +1,11 @@
-!include srcpath
+source_path = ..\def
 
-all: lbc64 build clean
+all: dllw build clean
 
 .SUFFIXES: .lib
 .EXTENSIONS: .def .lbc .lib
 
-source_path = ..\def
-
 targets = \
-	kernel32.lib	\
-	oldnames.lib	\
-	user32.lib
-
-targets_all = \
 	aclui.lib	\
 	activeds.lib	\
 	advapi32.lib	\
@@ -122,14 +115,14 @@ targets_all = \
 	xpsprint.lib
 
 {$(source_path)}.def.lib:
-	lbc64 $<
+	dllw $*.dll
 	libw /n /c /q /b /fac /i6 $*.lib @$*.lbc
 
 build: $(targets)
 
-lbc64:
-	asmc -pe -D__PE__ $(source_path)\lbc64.asm
+dllw:
+	asmc -pe -D__PE__ -D_WIN64 dllw.asm
 
 clean:
 	del *.lbc
-	del lbc64.exe
+	del dllw.exe

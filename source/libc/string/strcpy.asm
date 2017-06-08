@@ -2,13 +2,11 @@ include string.inc
 
 	.code
 
-	OPTION PROLOGUE:NONE, EPILOGUE:NONE
+	option stackbase:esp
 
-strcpy	PROC dst:LPSTR, src:LPSTR
-	push	edi
-	push	edx
-	mov	ecx,8[esp+8]
-	mov	edi,8[esp+4]
+strcpy	proc uses edi edx dst:LPSTR, src:LPSTR
+	mov	ecx,src
+	mov	edi,dst
 	jmp	start
 dword_loop:
 	mov	[edi],eax
@@ -34,9 +32,7 @@ start:
 	jz	toend
 	mov	[edi+3],ah
 toend:
-	pop	edx
-	pop	edi
-	mov	eax,[esp+4]
+	mov	eax,dst
 	ret
 strcpy	ENDP
 

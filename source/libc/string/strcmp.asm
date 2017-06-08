@@ -2,13 +2,12 @@ include string.inc
 
 	.code
 
-	OPTION	PROLOGUE:NONE, EPILOGUE:NONE
+	option stackbase:esp
 
-strcmp	PROC s1:LPSTR, s2:LPSTR
+strcmp	proc uses edx s1:LPSTR, s2:LPSTR
 
-	push	edx
-	mov	edx,4[esp+4]
-	mov	ecx,4[esp+8]
+	mov	edx,s1
+	mov	ecx,s2
 	xor	eax,eax
 	ALIGN	4
 @@:
@@ -35,7 +34,6 @@ strcmp	PROC s1:LPSTR, s2:LPSTR
 done:
 	sbb	eax,eax
 	sbb	eax,-1
-	pop	edx
 	ret
 zero_3:
 	add	ecx,1
@@ -46,7 +44,6 @@ zero_1:
 zero_0:
 	sub	al,[ecx]
 	jnz	done
-	pop	edx
 	ret
 strcmp	endp
 

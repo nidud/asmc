@@ -2,11 +2,11 @@ include stdlib.inc
 
 	.code
 
-	OPTION	PROLOGUE:NONE, EPILOGUE:NONE
+	option stackbase:esp
 
 _wtol	PROC string:LPWSTR
 
-	mov	edx,[esp+4]
+	mov	edx,string
 	xor	ecx,ecx
 @@:
 	movzx	eax,word ptr [edx]

@@ -55,9 +55,9 @@ __setenvp PROC USES esi edi ebx envp:LPSTR
 		inc ebx			; remove ZERO flag
 		mov eax,envp		; return address of new _environ
 		mov eax,[eax]
+;	.else
+;		mov esp,ebp		; case no mem...
 	.endif
-
-	mov esp,ebp			; case no mem...
 	ret
 
 __setenvp ENDP

@@ -2,14 +2,11 @@ include string.inc
 
 	.code
 
-	OPTION PROLOGUE:NONE, EPILOGUE:NONE
+	option stackbase:esp
 
-_stricmp PROC dst:LPSTR, src:LPSTR
-	push	esi
-	push	edi
-	push	ecx
-	mov	edi,12[esp+4]
-	mov	esi,12[esp+8]
+_stricmp proc uses esi edi ecx dst:LPSTR, src:LPSTR
+	mov	edi,dst
+	mov	esi,src
 	mov	eax,-1
 	ALIGN	16
 lupe:
@@ -36,9 +33,6 @@ lupe:
 	sbb	al,-1
 toend:
 	movsx	eax,al
-	pop	ecx
-	pop	edi
-	pop	esi
 	ret
 _stricmp ENDP
 

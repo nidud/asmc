@@ -2,15 +2,13 @@ include string.inc
 
 	.code
 
-	OPTION	PROLOGUE:NONE, EPILOGUE:NONE
+	option stackbase:esp
 
-_memicmp PROC s1:LPSTR, s2:LPSTR, l:SIZE_T
+_memicmp proc uses esi edi s1:LPSTR, s2:LPSTR, l:SIZE_T
 
-	push	esi
-	push	edi
-	mov	esi,8[esp+4]		; s1
-	mov	edi,8[esp+8]		; s2
-	mov	ecx,8[esp+12]		; l
+	mov	esi,s1
+	mov	edi,s2
+	mov	ecx,l
 @@:
 	test	ecx,ecx
 	jz	@F
@@ -36,9 +34,8 @@ _memicmp PROC s1:LPSTR, s2:LPSTR, l:SIZE_T
 	sbb	ecx,-1
 @@:
 	mov	eax,ecx
-	pop	edi
-	pop	esi
 	ret
+
 _memicmp ENDP
 
 	END

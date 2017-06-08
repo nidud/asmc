@@ -2,10 +2,10 @@ include consx.inc
 
 	.code
 
-	OPTION PROLOGUE:NONE, EPILOGUE:NONE
+	option stackbase:esp
 
 dlmemsize PROC dobj
-	mov	edx,[esp+4]
+	mov	edx,dobj
 	movzx	ecx,[edx].S_DOBJ.dl_count
 	mov	edx,[edx].S_DOBJ.dl_object
 	xor	eax,eax
@@ -14,7 +14,7 @@ dlmemsize PROC dobj
 		add	edx,sizeof(S_TOBJ)
 		dec	ecx
 	.endw
-	mov	edx,[esp+4]
+	mov	edx,dobj
 	inc	ecx
 	add	cl,[edx].S_DOBJ.dl_count
 	add	eax,ecx
@@ -23,7 +23,7 @@ dlmemsize PROC dobj
 	rcmemsize( DWORD PTR [edx].S_DOBJ.dl_rect, [edx].S_DOBJ.dl_flag )
 	pop	edx
 	add	eax,edx
-	ret	4
+	ret
 dlmemsize ENDP
 
 	END

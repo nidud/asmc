@@ -3,7 +3,7 @@ include consx.inc
 	.code
 
 getkey	PROC
-	ReadEvevnt()
+	ReadEvent()
 	PopEvent()
 	ret
 getkey	ENDP

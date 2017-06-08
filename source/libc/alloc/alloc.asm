@@ -10,13 +10,13 @@ _ALIGN	equ 3
 	_heap_base dd 0		; address of main memory block
 	_heap_free dd 0		; address of free memory block
 
-	.code
+	option stackbase:esp
 
-	OPTION PROLOGUE:NONE, EPILOGUE:NONE
+	.code
 
 malloc	PROC byte_count:UINT
 
-	mov ecx,[esp+4] ; byte count to allocate
+	mov ecx,byte_count
 	add ecx,sizeof(S_HEAP)+_GRANULARITY-1
 	and ecx,-(_GRANULARITY)
 
@@ -126,9 +126,8 @@ nomem:
 	jmp	toend
 malloc	ENDP
 
-free	PROC maddr:PVOID
-	push	eax
-	mov	eax,[esp+8]
+free	proc uses eax maddr:PVOID
+	mov	eax,maddr
 	sub	eax,sizeof(S_HEAP)
 	js	toend
 	cmp	[eax].S_HEAP.h_type,_ALIGN
@@ -181,7 +180,6 @@ free	PROC maddr:PVOID
 	push	eax
 	call	HeapFree
 toend:
-	pop	eax
 	ret
 free	ENDP
 

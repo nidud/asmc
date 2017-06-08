@@ -2,7 +2,7 @@ include libc.inc
 
 	.code
 
-	OPTION PROLOGUE:NONE, EPILOGUE:NONE
+	option stackbase:esp
 
 _inp	PROC port
 	xor	eax,eax

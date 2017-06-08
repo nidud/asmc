@@ -56,7 +56,7 @@ parseshift:
 
 	ASSUME	ebx:ptr INPUT_RECORD
 
-ReadEvevnt PROC USES ebx edi esi ecx
+ReadEvent PROC USES ebx edi esi ecx
 
 local	Count:dword,
 	Event:INPUT_RECORD
@@ -116,6 +116,6 @@ local	Count:dword,
 	.endif
 	ret
 
-ReadEvevnt ENDP
+ReadEvent ENDP
 
 	END

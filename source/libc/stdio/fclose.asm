@@ -3,11 +3,10 @@ include io.inc
 
 	.code
 
-	OPTION	PROLOGUE:NONE, EPILOGUE:NONE
+	option stackbase:esp
 
-fclose	PROC fp:LPFILE
-	push	ebx
-	mov	ebx,[esp+8]
+fclose	proc uses ebx fp:LPFILE
+	mov	ebx,fp
 	mov	eax,[ebx]._iobuf._flag
 	and	eax,_IOREAD or _IOWRT or _IORW
 	jz	error
@@ -24,7 +23,6 @@ fclose	PROC fp:LPFILE
 	pop	eax
 	jnz	error
 toend:
-	pop	ebx
 	ret
 error:
 	mov	eax,-1

@@ -10,7 +10,7 @@ PUBLIC	_pgmpath
 
 	.code
 
-Install PROC USES edi PRIVATE
+Install PROC PRIVATE USES edi
 local	path[256]
 
 	lea edi,path

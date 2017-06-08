@@ -2,7 +2,7 @@ include stdlib.inc
 
 	.code
 
-	OPTION	PROLOGUE:NONE, EPILOGUE:NONE
+	option stackbase:esp
 
 _atoi64 PROC string:LPSTR
 	mov	eax,esp

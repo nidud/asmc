@@ -1,18 +1,14 @@
 include crtl.inc
 
-	OPTION	PROLOGUE:NONE, EPILOGUE:NONE
+	option stackbase:esp
 
 	.code
 
-memxchg PROC dst:LPSTR, src:LPSTR, count:SIZE_T
+memxchg proc uses esi edi edx dst:LPSTR, src:LPSTR, count:SIZE_T
 
-	push	esi
-	push	edi
-	push	edx
-
-	mov	edi,12[esp+4]
-	mov	esi,12[esp+8]
-	mov	ecx,12[esp+12]
+	mov	edi,dst
+	mov	esi,src
+	mov	ecx,count
 tail:
 	test	ecx,ecx
 	jz	toend
@@ -36,9 +32,6 @@ tail_4:
 	jnz	tail_4
 toend:
 	mov	eax,edi
-	pop	edx
-	pop	edi
-	pop	esi
 	ret
 
 memxchg ENDP

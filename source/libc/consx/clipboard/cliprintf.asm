@@ -6,7 +6,7 @@ include limits.inc
 
 	.code
 
-cliprintf PROC USES esi edi ebx format: LPSTR, args:VARARG
+cliprintf proc _CDecl uses esi edi ebx format: LPSTR, args:VARARG
 
 	local o: _iobuf
 

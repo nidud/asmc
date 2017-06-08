@@ -2,7 +2,7 @@ include string.inc
 
 	.code
 
-	OPTION	PROLOGUE:NONE, EPILOGUE:NONE
+	option stackbase:esp
 
 _strnicmp PROC s1:LPSTR, s2:LPSTR, count:SIZE_T
 	mov	eax,esp

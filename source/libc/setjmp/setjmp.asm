@@ -2,7 +2,7 @@ include setjmp.inc
 
 	.code
 
-	OPTION	PROLOGUE:NONE, EPILOGUE:NONE
+	option stackbase:esp
 
 	ASSUME	eax: PTR S_JMPBUF
 

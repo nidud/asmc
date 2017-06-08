@@ -6,17 +6,14 @@ include string.inc
 
 	.code
 
-	OPTION PROLOGUE:NONE, EPILOGUE:NONE
+	option stackbase:esp
 
-strshr	PROC string:LPSTR, char:UINT
+strshr	proc uses edx ecx string:LPSTR, char:UINT
 
-	push	edx
-	push	ecx
-
-	mov	edx,8[esp+4]
+	mov	edx,string
 	mov	eax,[edx]
 	shl	eax,8
-	mov	al,8[esp+8]
+	mov	al,byte ptr char
 @@:
 	mov	ecx,[edx+3]
 	mov	[edx],eax
@@ -32,10 +29,7 @@ strshr	PROC string:LPSTR, char:UINT
 	add	edx,4
 	jmp	@B
 @@:
-	mov	eax,8[esp+4]
-
-	pop	ecx
-	pop	edx
+	mov	eax,string
 	ret
 
 strshr	ENDP

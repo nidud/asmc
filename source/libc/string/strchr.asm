@@ -2,17 +2,13 @@ include string.inc
 
 	.code
 
-	OPTION	PROLOGUE:NONE, EPILOGUE:NONE
+	option stackbase:esp
 
-strchr	PROC string:LPSTR, char:SIZE_T
+strchr	proc uses esi edi ebx string:LPSTR, char:SIZE_T
 
-	push	esi
-	push	edi
-	push	ebx
-
-	movzx	eax,BYTE PTR 12[esp+8]
+	movzx	eax,BYTE PTR char
 	imul	ebx,eax,01010101h
-	mov	edi,12[esp+4]
+	mov	edi,string
 
 	mov	eax,edi
 	neg	eax
@@ -62,9 +58,6 @@ exit_NULL:
 	ALIGN	4
 toend:
 	test	eax,eax
-	pop	ebx
-	pop	edi
-	pop	esi
 	ret
 exit_0:
 	mov	eax,edi

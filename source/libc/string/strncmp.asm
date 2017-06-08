@@ -2,17 +2,13 @@ include string.inc
 
 	.code
 
-	OPTION	PROLOGUE:NONE, EPILOGUE:NONE
+	option stackbase:esp
 
-strncmp PROC s1:LPSTR, s2:LPSTR, count:SIZE_T
+strncmp proc uses esi edi edx s1:LPSTR, s2:LPSTR, count:SIZE_T
 
-	push	esi
-	push	edi
-	push	edx
-
-	mov	edi,12[esp+4]
-	mov	esi,12[esp+8]
-	mov	edx,12[esp+12]
+	mov	edi,s1
+	mov	esi,s2
+	mov	edx,count
 
 	xor	eax,eax
 	test	edx,edx
@@ -33,9 +29,6 @@ strncmp PROC s1:LPSTR, s2:LPSTR, count:SIZE_T
 	sbb	eax,eax
 	sbb	eax,-1
 toend:
-	pop	edx
-	pop	edi
-	pop	esi
 	ret
 
 strncmp ENDP

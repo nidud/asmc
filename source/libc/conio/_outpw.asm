@@ -2,11 +2,11 @@ include libc.inc
 
 	.code
 
-	OPTION PROLOGUE:NONE, EPILOGUE:NONE
+	option stackbase:esp
 
 _outpw	PROC port, w
-	mov	dx,WORD PTR [esp+4]
-	mov	ax,WORD PTR [esp+8]
+	mov	dx,WORD PTR port
+	mov	ax,WORD PTR w
 	out	dx,ax
 	ret
 _outpw	ENDP

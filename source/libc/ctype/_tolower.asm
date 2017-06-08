@@ -2,7 +2,7 @@ include ctype.inc
 
 	.code
 
-	OPTION PROLOGUE:NONE, EPILOGUE:NONE
+	option stackbase:esp
 
 _tolower PROC char:SINT
 

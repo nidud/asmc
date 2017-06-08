@@ -1,6 +1,4 @@
-!include srcpath
-
-all: lbc build clean
+all: defw build clean
 
 .SUFFIXES: .lib
 .EXTENSIONS: .def .lbc .lib
@@ -8,11 +6,6 @@ all: lbc build clean
 source_path = def
 
 targets = \
-	kernel32.lib	\
-	oldnames.lib	\
-	user32.lib
-
-target_all = \
 	aclui.lib	\
 	activeds.lib	\
 	advapi32.lib	\
@@ -121,15 +114,15 @@ target_all = \
 	wtsapi32.lib
 
 {$(source_path)}.def.lib:
-	lbc $<
+	defw $<
 	libw /n /c /q /b /fac /ii $*.lib @$*.lbc
 
 build: $(targets)
 	libw /n /c /q /b /fac /ii ntvdm.lib @def\ntvdm.lbc
 
-lbc:
-	asmc -pe -D__PE__ $(source_path)\lbc.asm
+defw:
+	asmc -pe -D__PE__ defw.asm
 
 clean:
-	del lbc.exe
+	del defw.exe
 	del *.lbc

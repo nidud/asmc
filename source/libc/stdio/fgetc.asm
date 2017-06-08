@@ -2,10 +2,10 @@ include stdio.inc
 
 	.code
 
-	OPTION	PROLOGUE:NONE, EPILOGUE:NONE
+	option stackbase:esp
 
 fgetc	PROC fp:LPFILE
-	mov eax,[esp+4]
+	mov eax,fp
 	dec [eax]._iobuf._cnt
 	jl  fbuf
 	add [eax]._iobuf._ptr,1

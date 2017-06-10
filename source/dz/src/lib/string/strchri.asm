@@ -1,23 +1,13 @@
 include string.inc
-ifdef _SSE
-include crtl.inc
 
-	.data
-	strchri_p dd _rtl_strchri
-endif
 	.code
 
-	OPTION	PROLOGUE:NONE, EPILOGUE:NONE
+	option stackbase:esp
 
-ifdef _SSE
-strchri_386:
-else
-strchri PROC string:LPSTR, char:SIZE_T
-endif
-	push	esi
+strchri PROC uses esi string:LPSTR, char:SIZE_T
 
-	mov	esi,4[esp+4]
-	movzx	eax,byte ptr 4[esp+8]
+	mov	esi,string
+	movzx	eax,byte ptr char
 
 	sub	al,'A'
 	cmp	al,'Z'-'A'+1
@@ -41,27 +31,8 @@ endif
 	mov	eax,esi
 	dec	eax
 toend:
-	pop	esi
-	ret	8
+	ret
 
-ifdef _SSE
-
-	ALIGN	4
-
-strchri PROC string:LPSTR, char:SIZE_T
-	jmp	strchri_p
 strchri ENDP
-	;
-	; First call: set pointer and jump
-	;
-_rtl_strchri:
-	mov	eax,strchri_386
-	.if	sselevel & SSE_SSE2
-		mov eax,strchri_sse
-	.endif
-	mov	strchri_p,eax
-	jmp	eax
-else
-strchri ENDP
-endif
+
 	END

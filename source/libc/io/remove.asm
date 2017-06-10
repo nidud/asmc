@@ -1,16 +1,11 @@
 include io.inc
 include winbase.inc
 
-IFDEF	_UNICODE
-REMOVE	equ <_wremove>
-ELSE
-REMOVE	equ <remove>
-ENDIF
 	.code
 
-REMOVE	PROC file:LPTSTR
+remove	PROC file:LPSTR
 
-	.if DeleteFile( file )
+	.if DeleteFileA( file )
 
 		xor eax,eax
 ifdef __DZ__
@@ -21,6 +16,6 @@ endif
 	.endif
 	ret
 
-REMOVE	ENDP
+remove	ENDP
 
 	END

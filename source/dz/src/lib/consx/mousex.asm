@@ -1,10 +1,1 @@
-include consx.inc
-
-	.code
-
-mousex	PROC
-	mov eax,keybmouse_x
-	ret
-mousex	ENDP
-
-	END
+include ..\libc\consx\keyb\mousex.asm

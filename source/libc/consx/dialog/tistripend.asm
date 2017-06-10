@@ -1,5 +1,5 @@
 include string.inc
-include ctype.inc
+include ltype.inc
 
 	.code
 
@@ -12,7 +12,7 @@ tistripend PROC USES esi string:LPSTR
 		.repeat
 			dec esi
 			mov al,[esi]
-			mov al,byte ptr _ctype[eax*2+2]
+			mov al,byte ptr _ltype[eax+1]
 			.break .if !( al & _SPACE )
 			mov [esi],ah
 		.untilcxz

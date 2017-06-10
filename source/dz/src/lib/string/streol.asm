@@ -1,25 +1,12 @@
 include string.inc
-ifdef _SSE
-include crtl.inc
 
-	.data
-	streol_p dd _rtl_streol
-endif
 	.code
 
-	OPTION	PROLOGUE:NONE, EPILOGUE:NONE
+	option stackbase:esp
 
-ifdef _SSE
-streol_386:
-else
-streol	PROC string:LPSTR
-endif
+streol	PROC uses ebx edx string:LPSTR
 
-	push	edx
-	push	ebx
-
-	mov	eax,8[esp+4]	; string
-
+	mov	eax,string
 	ALIGN	4
 @@:
 	mov	edx,[eax]
@@ -39,9 +26,8 @@ endif
 	bsf	ecx,ecx
 	shr	ecx,3
 	lea	eax,[eax+ecx-4]
-	pop	ebx
 
-	cmp	eax,4[esp+4]	; string
+	cmp	eax,string
 	je	@F
 	cmp	BYTE PTR [eax],0
 	je	@F
@@ -49,27 +35,8 @@ endif
 	jne	@F
 	dec	eax
 @@:
-	pop	edx
-	ret	4
+	ret
 
-ifdef _SSE
-	ALIGN	4
-
-streol	PROC string:LPSTR
-	jmp	streol_p
 streol	ENDP
-	;
-	; First call: set pointer and jump
-	;
-_rtl_streol:
-	mov eax,streol_386
-	.if sselevel & SSE_SSE2
 
-		mov eax,streol_sse
-	.endif
-	mov streol_p,eax
-	jmp eax
-else
-streol	ENDP
-endif
 	END

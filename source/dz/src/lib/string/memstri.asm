@@ -1,28 +1,14 @@
 include string.inc
-ifdef _SSE
-include crtl.inc
 
-	.data
-	memstri_p dd _rtl_memstri
-endif
 	.code
 
-	OPTION	PROLOGUE:NONE, EPILOGUE:NONE
+	option stackbase:esp
 
-ifdef _SSE
-memstri_386:
-else
-memstri PROC s1:LPSTR, l1:SIZE_T, s2:LPSTR, l2:SIZE_T
-endif
+memstri PROC uses esi edi ebx edx s1:LPSTR, l1:SIZE_T, s2:LPSTR, l2:SIZE_T
 
-	push	esi
-	push	edi
-	push	ebx
-	push	edx
-
-	mov	edi,16[esp+4]		; s1
-	mov	ecx,16[esp+8]		; l1
-	mov	esi,16[esp+12]		; s2
+	mov	edi,s1
+	mov	ecx,l1
+	mov	esi,s2
 
 	mov	al,[esi]
 	sub	al,'A'
@@ -45,7 +31,7 @@ scan:
 	add	al,'A'
 	cmp	al,bl
 	jne	scan
-	mov	edx,16[esp+16]		; l2
+	mov	edx,l2
 	dec	edx
 	jz	match
 	cmp	ecx,edx
@@ -77,29 +63,8 @@ match:
 	mov	eax,edi
 	dec	eax
 toend:
-	pop	edx
-	pop	ebx
-	pop	edi
-	pop	esi
-	ret	16
+	ret
 
-ifdef _SSE
-	ALIGN	4
-memstri PROC s1:LPSTR, l1:SIZE_T, s2:LPSTR, l2:SIZE_T
-	jmp	memstri_p
 memstri ENDP
-	;
-	; First call: set pointer and jump
-	;
-_rtl_memstri:
-	mov eax,memstri_386
-	.if sselevel & SSE_SSE2
 
-		mov eax,memstri_sse
-	.endif
-	mov memstri_p,eax
-	jmp eax
-else
-memstri ENDP
-endif
 	END

@@ -142,19 +142,20 @@ S_FBLK		STRUC
 fb_flag		dd ?	; _FB_:_A_
 fb_time		dd ?	; date:time
 fb_size		dq ?
-fb_name		db 4 dup(?)
+fb_name		sbyte 4 dup(?)
 S_FBLK		ENDS
 LPFBLK		TYPEDEF PTR S_FBLK
+PPFBLK		TYPEDEF PTR LPFBLK
 
 S_WSUB		STRUC
-ws_flag		SIZE_T ?
-ws_count	SIZE_T ?
-ws_maxfb	SIZE_T ?
-ws_mask		SIZE_T ?
-ws_file		SIZE_T ?
-ws_arch		SIZE_T ?
-ws_path		SIZE_T ?
-ws_fcb		SIZE_T ?
+ws_flag		dd ?
+ws_count	dd ?
+ws_maxfb	dd ?
+ws_mask		LPSTR ?
+ws_file		LPSTR ?
+ws_arch		LPSTR ?
+ws_path		LPSTR ?
+ws_fcb		PPFBLK ?
 S_WSUB		ENDS	; 32 byte
 LPWSUB		TYPEDEF PTR S_WSUB
 
@@ -221,17 +222,17 @@ OO_MEM64K	equ 00010000h	; malloc(segment) aligned xxxx0000h
 OO_MEMBUF	equ 00000000h	; read, set ios_fsize and IO_MEMBUF
 
 S_IOST		STRUC
-ios_bp		SIZE_T ?
-ios_i		SIZE_T ?
-ios_c		SIZE_T ?
-ios_size	SIZE_T ?
-ios_flag	DWORD ?
-ios_file	DWORD ?
-ios_crc		SIZE_T ?
-ios_line	SIZE_T ?	; line offset
-ios_offset	QWORD ?		; seek offset
-ios_total	QWORD ?		; count read/write
-ios_fsize	QWORD ?
+ios_bp		LPSTR ?
+ios_i		dd ?
+ios_c		dd ?
+ios_size	dd ?
+ios_flag	dd ?
+ios_file	dd ?
+ios_crc		dd ?
+ios_line	dd ?		; line offset
+ios_offset	dq ?		; seek offset
+ios_total	dq ?		; count read/write
+ios_fsize	dq ?
 S_IOST		ENDS
 LPIOST		TYPEDEF PTR S_IOST
 

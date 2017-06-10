@@ -467,7 +467,7 @@ event_find PROC PRIVATE USES esi edi ebx
 	mov ebx,DLG_FindFile
 	.if !( [ebx].S_TOBJ.to_flag[OF_GOTO] & _O_STATE )
 
-		CursorGet(addr cursor)
+		CursorGet(&cursor)
 		CursorOff()
 
 		mov edi,tdllist
@@ -490,13 +490,13 @@ event_find PROC PRIVATE USES esi edi ebx
 		add ax,0F03h
 		mov dl,ah
 		scputw( eax, edx, 11, 00C4h )
-		progress_open( addr cp_search, 0 )
+		progress_open( &cp_search, 0 )
 		mov eax,[ebx].S_TOBJ.to_data[OF_PATH]
 		push eax
 		progress_set(eax, 0, MAXHIT+2)
 		ff_searchpath()
 		progress_close()
-		CursorSet( addr cursor )
+		CursorSet(&cursor)
 		mov eax,[edi].S_LOBJ.ll_count
 		.if eax >= ID_FILE
 
@@ -509,7 +509,7 @@ event_find PROC PRIVATE USES esi edi ebx
 
 		free(STDI.ios_bp)
 	.endif
-	memset(addr STDI, 0, SIZE S_IOST)
+	memset(&STDI, 0, SIZE S_IOST)
 	ret
 event_find ENDP
 
@@ -743,14 +743,13 @@ ff_deleteobj PROC USES ebx
 
 	ff_getcurobj()
 	.if !ZERO?
-		push eax
 		.repeat
-			mov eax,[edx+4]
-			mov [edx],eax
+			mov ecx,[edx+4]
+			mov [edx],ecx
 			add edx,4
-		.until !eax
+		.until !ecx
 
-		free()
+		free(eax)
 		mov ebx,tdllist
 		dec [ebx].S_LOBJ.ll_count
 		mov eax,[ebx].S_LOBJ.ll_count
@@ -803,19 +802,19 @@ ff_event_delete:
 	mov eax,_C_NORMAL
 	ret
 
-ff_close PROC
+ff_close proc uses esi edi
 
-	mov edx,tdllist
-	mov eax,[edx].S_LOBJ.ll_list
-	.if eax
-		push eax
-		mov edx,[edx].S_LOBJ.ll_count
-		.while	edx
-			free ([eax])
-			add eax,4
-			dec edx
+	mov edi,tdllist
+	mov esi,[edi].S_LOBJ.ll_list
+	.if esi
+		mov edi,[edi].S_LOBJ.ll_count
+		.while	edi
+			lodsd
+			free(eax)
+			dec edi
 		.endw
-		free()
+		mov edi,tdllist
+		free([edi].S_LOBJ.ll_list)
 	.endif
 	ret
 
@@ -881,103 +880,103 @@ ff_rsevent ENDP
 FindFile PROC USES esi edi ebx wspath
   local ll:S_LOBJ, cursor:S_CURSOR
 
-	push thelp
-	mov thelp,event_help
-	xor esi,esi		; returned value
+	push	thelp
+	mov	thelp,event_help
+	xor	esi,esi		; returned value
 
-	lea ebx,ll
-	mov tdllist,ebx
-	mov edi,ebx
-	mov ecx,SIZE S_LOBJ
-	xor eax,eax
-	rep stosb
+	lea	ebx,ll
+	mov	tdllist,ebx
+	mov	edi,ebx
+	mov	ecx,SIZE S_LOBJ
+	xor	eax,eax
+	rep	stosb
 
-	mov [ebx].S_LOBJ.ll_dcount,ID_FILE
-	mov [ebx].S_LOBJ.ll_proc,event_list
-	malloc( MAXHIT * 4 + 4 )
-	mov [ebx].S_LOBJ.ll_list,eax
-	test eax,eax
-	jz  nomem
+	mov	[ebx].S_LOBJ.ll_dcount,ID_FILE
+	mov	[ebx].S_LOBJ.ll_proc,event_list
+	mov	[ebx].S_LOBJ.ll_list,malloc(MAXHIT*4+4)
+	test	eax,eax
+	jz	nomem
 
-	mov edi,eax
-	mov ecx,MAXHIT * 4 + 4
-	xor eax,eax
-	rep stosb
+	mov	edi,eax
+	mov	ecx,MAXHIT * 4 + 4
+	xor	eax,eax
+	rep	stosb
 
 	clrcmdl()
 	CursorGet( addr cursor )
 	rsopen( IDD_DZFindFile )
-	jz somem
+	test	eax,eax
+	jz	somem
 
-	mov DLG_FindFile,eax
-	mov ebx,eax
-	mov [ebx].S_TOBJ.to_data[OF_GCMD],offset GCMD_search
-	lea eax,findfilemask
-	mov [ebx].S_TOBJ.to_data[OF_MASK],eax
+	mov	DLG_FindFile,eax
+	mov	ebx,eax
+	mov	[ebx].S_TOBJ.to_data[OF_GCMD],offset GCMD_search
+	lea	eax,findfilemask
+	mov	[ebx].S_TOBJ.to_data[OF_MASK],eax
 	.if BYTE PTR [eax] == 0
 
 		strcpy( eax, addr cp_stdmask )
 	.endif
 
-	lea esi,searchstring
-	mov [ebx].S_TOBJ.to_data[OF_SSTR],esi
-	mov eax,wspath
-	mov [ebx].S_TOBJ.to_data[OF_PATH],eax
-	mov [ebx].S_TOBJ.to_proc[OF_HEXA],event_hexa
-	mov [ebx].S_TOBJ.to_proc[OF_FIND],event_find
-	mov [ebx].S_TOBJ.to_proc[OF_FILT],ff_event_filter
-	mov [ebx].S_TOBJ.to_proc[OF_SAVE],event_mklist
-	mov ah,BYTE PTR fsflag
-	mov al,_O_FLAGB
-	.if ah & IO_SEARCHCASE
+	lea	esi,searchstring
+	mov	[ebx].S_TOBJ.to_data[OF_SSTR],esi
+	mov	eax,wspath
+	mov	[ebx].S_TOBJ.to_data[OF_PATH],eax
+	mov	[ebx].S_TOBJ.to_proc[OF_HEXA],event_hexa
+	mov	[ebx].S_TOBJ.to_proc[OF_FIND],event_find
+	mov	[ebx].S_TOBJ.to_proc[OF_FILT],ff_event_filter
+	mov	[ebx].S_TOBJ.to_proc[OF_SAVE],event_mklist
+	mov	ah,BYTE PTR fsflag
+	mov	al,_O_FLAGB
 
-		or [ebx+OF_CASE],al
+	.if ah & IO_SEARCHCASE
+	    or [ebx+OF_CASE],al
 	.endif
 	.if ah & IO_SEARCHHEX
-
-		or [ebx+OF_HEXA],al
+	    or [ebx+OF_HEXA],al
 	.endif
 	.if ah & IO_SEARCHSUB
-
-		or [ebx+OF_SUBD],al
+	    or [ebx+OF_SUBD],al
 	.endif
-	lea edx,[ebx].S_TOBJ.to_proc[SIZE S_TOBJ]
-	mov ecx,ID_FILE
-	mov eax,ff_event_xcell
-	ff_rsevent( IDD_DZFindFile, event_find )
-	and ah,not (IO_SEARCHCASE or IO_SEARCHSUB or IO_SEARCHHEX)
-	mov al,_O_FLAGB
-	.if [ebx+OF_CASE] & al
 
-		or ah,IO_SEARCHCASE
+	lea	edx,[ebx].S_TOBJ.to_proc[SIZE S_TOBJ]
+	mov	ecx,ID_FILE
+	mov	eax,ff_event_xcell
+
+	ff_rsevent( IDD_DZFindFile, event_find )
+
+	and	ah,not (IO_SEARCHCASE or IO_SEARCHSUB or IO_SEARCHHEX)
+	mov	al,_O_FLAGB
+
+	.if [ebx+OF_CASE] & al
+	    or ah,IO_SEARCHCASE
 	.endif
 	.if [ebx+OF_HEXA] & al
-
-		or ah,IO_SEARCHHEX
+	    or ah,IO_SEARCHHEX
 	.endif
 	.if [ebx+OF_SUBD] & al
-
-		or ah,IO_SEARCHSUB
+	    or ah,IO_SEARCHSUB
 	.endif
+
 	ff_close_dlg()
 	ff_close()
 toend:
-	pop eax
-	mov thelp,eax
-	CursorSet( addr cursor )
-	mov eax,esi		; Exit code
-	mov ecx,edi		; Exit key
+	pop	eax
+	mov	thelp,eax
+	CursorSet(&cursor)
+	mov	eax,esi		; Exit code
+	mov	ecx,edi		; Exit key
 	ret
 somem:
 	ff_close()
 nomem:
-	mov esi,-1
-	ermsg( 0, addr CP_ENOMEM )
-	jmp toend
+	mov	esi,-1
+	ermsg(0, &CP_ENOMEM )
+	jmp	toend
 FindFile ENDP
 
 cmsearch PROC
-	FindFile( addr findfilepath )
+	FindFile( &findfilepath )
 	ret
 cmsearch ENDP
 

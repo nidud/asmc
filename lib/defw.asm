@@ -1,6 +1,5 @@
 include string.inc
 include stdio.inc
-include winbase.inc
 include tchar.inc
 
     .code
@@ -25,7 +24,9 @@ main proc
                 .while fgets(addr lbuf, 256, ebx)
                     .if strrchr(eax,10)
                         mov byte ptr [eax],0
-                        fprintf(esi,"++_%s.\'%s.dll\'\n",addr lbuf,edi)
+                        .if lbuf
+                            fprintf(esi,"++_%s.\'%s.dll\'\n",addr lbuf,edi)
+                        .endif
                     .endif
                 .endw
                 fclose(esi)

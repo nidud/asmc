@@ -1,6 +1,6 @@
 include consx.inc
 include string.inc
-include ctype.inc
+include ltype.inc
 
 ticontinue	PROTO
 tiretevent	PROTO
@@ -185,7 +185,7 @@ event_add PROC USES ebx
 	test	eax,eax
 	jz	nocando
 	movzx	eax,bl
-	test	byte ptr _ctype[eax*2+2],_CONTROL
+	test	byte ptr _ltype[eax+1],_CONTROL
 	jnz	control
 add_char:
 	mov	eax,[edx].ti_bcnt

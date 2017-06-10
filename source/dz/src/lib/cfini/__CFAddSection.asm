@@ -6,29 +6,23 @@ include cfini.inc
 
 __CFAddSection PROC USES esi ini:PCFINI, section:LPSTR
 
-	.if	!__CFGetSection(ini, section)
+	.if !__CFGetSection(ini, section)
 
-		.if	__CFAlloc()
+		.if __CFAlloc()
 
-			mov	esi,eax
-			mov	[esi].S_CFINI.cf_flag,_CFSECTION
-			mov	[esi].S_CFINI.cf_name,salloc(section)
+			mov esi,eax
+			mov [esi].S_CFINI.cf_flag,_CFSECTION
+			mov [esi].S_CFINI.cf_name,salloc(section)
 
-			mov	eax,ini
-			.if	eax
-if 0
-				mov	ecx,[eax].S_CFINI.cf_next
-				mov	[eax].S_CFINI.cf_next,esi
-				mov	[esi].S_CFINI.cf_next,ecx
-else
-				.while	[eax].S_CFINI.cf_next
+			mov eax,ini
+			.if eax
+				.while [eax].S_CFINI.cf_next
 
-					mov	eax,[eax].S_CFINI.cf_next
+					mov eax,[eax].S_CFINI.cf_next
 				.endw
-				mov	[eax].S_CFINI.cf_next,esi
-endif
+				mov [eax].S_CFINI.cf_next,esi
 			.endif
-			mov	eax,esi
+			mov eax,esi
 		.endif
 	.endif
 	ret

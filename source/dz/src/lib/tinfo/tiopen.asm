@@ -13,34 +13,35 @@ tiopen	PROC USES esi ti:PTINFO, tabsize:UINT, flags:UINT
 	malloc( SIZE S_TINFO )
 	jz	nomem
 
-	mov	edx,edi
-	mov	esi,eax
-	mov	edi,eax
-	mov	ecx,SIZE S_TINFO
-	xor	eax,eax
-	rep	stosb
-	mov	edi,edx
-	mov	eax,tabsize
-	mov	[esi].ti_tabz,eax
+	mov edx,edi
+	mov esi,eax
+	mov edi,eax
+	mov ecx,SIZE S_TINFO
+	xor eax,eax
+	rep stosb
+	mov edi,edx
+	mov eax,tabsize
+	mov [esi].ti_tabz,eax
 
-	mov	ah,at_background[B_TextEdit]
-	or	ah,at_foreground[F_TextEdit]
-	mov	al,' '
-	mov	[esi].ti_clat,eax
-	mov	[esi].ti_stat,eax
-	mov	eax,flags
-	mov	[esi].ti_flag,eax
+	mov ah,at_background[B_TextEdit]
+	or  ah,at_foreground[F_TextEdit]
+	mov al,' '
+	mov [esi].ti_clat,eax
+	mov [esi].ti_stat,eax
+	mov eax,flags
+	or  eax,_T_UNREAD
+	mov [esi].ti_flag,eax
 	;
 	; adapt to current screen
 	;
 	tsetrect( esi, tgetrect() )
 
-	mov	[esi].ti_bcol,TIMAXLINE
-	mov	[esi].ti_blen,TIMAXFILE
+	mov [esi].ti_bcol,TIMAXLINE
+	mov [esi].ti_blen,TIMAXFILE
 
-	.if	tialloc( esi )
+	.if tialloc( esi )
 
-		.if	tigetfile( ti )
+		.if tigetfile( ti )
 			;
 			; link to last file
 			;
@@ -48,18 +49,18 @@ tiopen	PROC USES esi ti:PTINFO, tabsize:UINT, flags:UINT
 			mov [edx].ti_next,esi
 		.endif
 
-		mov	eax,esi
-		test	eax,eax
+		mov  eax,esi
+		test eax,eax
 	.else
-		free  ( esi )
-		jmp	nomem
+		free( esi )
+		jmp nomem
 	.endif
 toend:
 	ret
 nomem:
-	ermsg ( 0, addr CP_ENOMEM )
-	xor	eax,eax
-	jmp	toend
+	ermsg( 0, addr CP_ENOMEM )
+	xor eax,eax
+	jmp toend
 tiopen	ENDP
 
 	ASSUME ebx: PTR S_TINFO

@@ -1,27 +1,13 @@
 include string.inc
-ifdef _SSE
 
-include crtl.inc
-
-	.data
-	memquote_p dd _rtl_memquote
-endif
 	.code
 
-	OPTION PROLOGUE:NONE, EPILOGUE:NONE
+	option stackbase:esp
 
-ifdef _SSE
-memquote_386:
-else
-memquote PROC string:LPSTR, bsize:SIZE_T
-endif
+memquote proc uses edi ebx edx string:LPSTR, bsize:SIZE_T
 
-	push	edi
-	push	ebx
-	push	edx
-
-	mov	eax,12[esp+4]	; string
-	mov	ebx,12[esp+8]	; len
+	mov	eax,string
+	mov	ebx,bsize
 
 	test	ebx,ebx
 	jz	failed
@@ -84,44 +70,18 @@ loop_4:
 	cmp	eax,ebx
 	sbb	ecx,ecx
 	and	eax,ecx
-	pop	edx
-	pop	ebx
-	pop	edi
-	ret	8
+	ret
 failed:
 	xor	eax,eax
-	pop	edx
-	pop	ebx
-	pop	edi
-	ret	8
+	ret
 exit_2:
 	inc	eax
 exit_1:
 	inc	eax
 exit_0:
 	test	eax,eax
-	pop	edx
-	pop	ebx
-	pop	edi
-	ret	8
+	ret
 
-ifdef _SSE
-memquote PROC string:LPSTR, len:SIZE_T
-	jmp memquote_p
 memquote ENDP
-	;
-	; First call: set pointer and jump
-	;
-_rtl_memquote:
-	mov eax,memquote_386
-	.if sselevel & SSE_SSE2
 
-		mov eax,memquote_sse
-	.endif
-
-	mov memquote_p,eax
-	jmp eax
-else
-memquote ENDP
-endif
 	END

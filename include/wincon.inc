@@ -40,22 +40,22 @@ KEY_EVENT_RECORD	ENDS
 PKEY_EVENT_RECORD	typedef ptr KEY_EVENT_RECORD
 
 
-RIGHT_ALT_PRESSED	equ 0x0001 
-LEFT_ALT_PRESSED	equ 0x0002 
-RIGHT_CTRL_PRESSED	equ 0x0004 
-LEFT_CTRL_PRESSED	equ 0x0008 
-SHIFT_PRESSED		equ 0x0010 
-NUMLOCK_ON		equ 0x0020 
-SCROLLLOCK_ON		equ 0x0040 
-CAPSLOCK_ON		equ 0x0080 
-ENHANCED_KEY		equ 0x0100 
-NLS_DBCSCHAR		equ 0x00010000 
-NLS_ALPHANUMERIC	equ 0x00000000 
-NLS_KATAKANA		equ 0x00020000 
-NLS_HIRAGANA		equ 0x00040000 
-NLS_ROMAN		equ 0x00400000 
-NLS_IME_CONVERSION	equ 0x00800000 
-NLS_IME_DISABLE		equ 0x20000000 
+RIGHT_ALT_PRESSED	equ 0x0001
+LEFT_ALT_PRESSED	equ 0x0002
+RIGHT_CTRL_PRESSED	equ 0x0004
+LEFT_CTRL_PRESSED	equ 0x0008
+SHIFT_PRESSED		equ 0x0010
+NUMLOCK_ON		equ 0x0020
+SCROLLLOCK_ON		equ 0x0040
+CAPSLOCK_ON		equ 0x0080
+ENHANCED_KEY		equ 0x0100
+NLS_DBCSCHAR		equ 0x00010000
+NLS_ALPHANUMERIC	equ 0x00000000
+NLS_KATAKANA		equ 0x00020000
+NLS_HIRAGANA		equ 0x00040000
+NLS_ROMAN		equ 0x00400000
+NLS_IME_CONVERSION	equ 0x00800000
+NLS_IME_DISABLE		equ 0x20000000
 
 MOUSE_EVENT_RECORD	STRUC
 dwMousePosition		COORD <>
@@ -105,11 +105,11 @@ INPUT_RECORD		ENDS
 PINPUT_RECORD		typedef ptr INPUT_RECORD
 
 
-KEY_EVENT		equ 0x0001 
-MOUSE_EVENT		equ 0x0002 
-WINDOW_BUFFER_SIZE_EVENT equ 0x0004 
-MENU_EVENT		equ 0x0008 
-FOCUS_EVENT		equ 0x0010 
+KEY_EVENT		equ 0x0001
+MOUSE_EVENT		equ 0x0002
+WINDOW_BUFFER_SIZE_EVENT equ 0x0004
+MENU_EVENT		equ 0x0008
+FOCUS_EVENT		equ 0x0010
 
 CHAR_INFO		STRUC
 UNION
@@ -121,22 +121,22 @@ CHAR_INFO		ENDS
 PCHAR_INFO		typedef ptr CHAR_INFO
 
 
-FOREGROUND_BLUE			equ 0x0001 
-FOREGROUND_GREEN		equ 0x0002 
-FOREGROUND_RED			equ 0x0004 
-FOREGROUND_INTENSITY		equ 0x0008 
-BACKGROUND_BLUE			equ 0x0010 
-BACKGROUND_GREEN		equ 0x0020 
-BACKGROUND_RED			equ 0x0040 
-BACKGROUND_INTENSITY		equ 0x0080 
-COMMON_LVB_LEADING_BYTE		equ 0x0100 
-COMMON_LVB_TRAILING_BYTE	equ 0x0200 
-COMMON_LVB_GRID_HORIZONTAL	equ 0x0400 
-COMMON_LVB_GRID_LVERTICAL	equ 0x0800 
-COMMON_LVB_GRID_RVERTICAL	equ 0x1000 
-COMMON_LVB_REVERSE_VIDEO	equ 0x4000 
-COMMON_LVB_UNDERSCORE		equ 0x8000 
-COMMON_LVB_SBCSDBCS		equ 0x0300 
+FOREGROUND_BLUE			equ 0x0001
+FOREGROUND_GREEN		equ 0x0002
+FOREGROUND_RED			equ 0x0004
+FOREGROUND_INTENSITY		equ 0x0008
+BACKGROUND_BLUE			equ 0x0010
+BACKGROUND_GREEN		equ 0x0020
+BACKGROUND_RED			equ 0x0040
+BACKGROUND_INTENSITY		equ 0x0080
+COMMON_LVB_LEADING_BYTE		equ 0x0100
+COMMON_LVB_TRAILING_BYTE	equ 0x0200
+COMMON_LVB_GRID_HORIZONTAL	equ 0x0400
+COMMON_LVB_GRID_LVERTICAL	equ 0x0800
+COMMON_LVB_GRID_RVERTICAL	equ 0x1000
+COMMON_LVB_REVERSE_VIDEO	equ 0x4000
+COMMON_LVB_UNDERSCORE		equ 0x8000
+COMMON_LVB_SBCSDBCS		equ 0x0300
 
 
 CONSOLE_SCREEN_BUFFER_INFO STRUC
@@ -191,7 +191,7 @@ ifdef _UNICODE
 PeekConsoleInput	equ <PeekConsoleInputW>
 else
 PeekConsoleInput	equ <PeekConsoleInputA>
-endif 
+endif
 
 ;BOOL
 ReadConsoleInputA proto WINAPI \
@@ -208,7 +208,7 @@ ifdef _UNICODE
 ReadConsoleInput	equ <ReadConsoleInputW>
 else
 ReadConsoleInput	equ <ReadConsoleInputA>
-endif 
+endif
 
 ;BOOL
 WriteConsoleInputA proto WINAPI \
@@ -227,7 +227,7 @@ ifdef _UNICODE
 WriteConsoleInput	equ <WriteConsoleInputW>
 else
 WriteConsoleInput	equ <WriteConsoleInputA>
-endif 
+endif
 
 ;BOOL
 ReadConsoleOutputA proto WINAPI \
@@ -246,7 +246,7 @@ ifdef _UNICODE
 ReadConsoleOutput	equ <ReadConsoleOutputW>
 else
 ReadConsoleOutput	equ <ReadConsoleOutputA>
-endif 
+endif
 
 ;BOOL
 WriteConsoleOutputA proto WINAPI \
@@ -265,7 +265,7 @@ ifdef _UNICODE
 WriteConsoleOutput	equ <WriteConsoleOutputW>
 else
 WriteConsoleOutput	equ <WriteConsoleOutputA>
-endif 
+endif
 
 ;BOOL
 ReadConsoleOutputCharacterA proto WINAPI \
@@ -284,7 +284,7 @@ ifdef _UNICODE
 ReadConsoleOutputCharacter equ <ReadConsoleOutputCharacterW>
 else
 ReadConsoleOutputCharacter equ <ReadConsoleOutputCharacterA>
-endif 
+endif
 
 ;BOOL
 ReadConsoleOutputAttribute proto WINAPI \
@@ -311,7 +311,7 @@ ifdef _UNICODE
 WriteConsoleOutputCharacter equ <WriteConsoleOutputCharacterW>
 else
 WriteConsoleOutputCharacter equ <WriteConsoleOutputCharacterA>
-endif 
+endif
 
 ;BOOL
 WriteConsoleOutputAttribute proto WINAPI \
@@ -338,7 +338,7 @@ ifdef _UNICODE
 FillConsoleOutputCharacter equ <FillConsoleOutputCharacterW>
 else
 FillConsoleOutputCharacter equ <FillConsoleOutputCharacterA>
-endif 
+endif
 
 ;BOOL
 FillConsoleOutputAttribute proto WINAPI \
@@ -423,7 +423,7 @@ ifdef _UNICODE
 ScrollConsoleScreenBuffer equ <ScrollConsoleScreenBufferW>
 else
 ScrollConsoleScreenBuffer equ <ScrollConsoleScreenBufferA>
-endif 
+endif
 
 ;BOOL
 SetConsoleWindowInfo proto WINAPI \
@@ -464,7 +464,7 @@ ifdef _UNICODE
 GetConsoleTitle		equ <GetConsoleTitleW>
 else
 GetConsoleTitle		equ <GetConsoleTitleA>
-endif 
+endif
 
 ;BOOL
 SetConsoleTitleA proto WINAPI \
@@ -475,7 +475,7 @@ ifdef _UNICODE
 SetConsoleTitle		equ <SetConsoleTitleW>
 else
 SetConsoleTitle		equ <SetConsoleTitleA>
-endif 
+endif
 
 ;BOOL
 ReadConsoleA proto WINAPI \
@@ -494,7 +494,7 @@ ifdef _UNICODE
 ReadConsole		equ <ReadConsoleW>
 else
 ReadConsole		equ <ReadConsoleA>
-endif 
+endif
 
 ;BOOL
 WriteConsoleA proto WINAPI \
@@ -513,7 +513,7 @@ ifdef _UNICODE
 WriteConsole		equ <WriteConsoleW>
 else
 WriteConsole		equ <WriteConsoleA>
-endif 
+endif
 
 CONSOLE_TEXTMODE_BUFFER equ 1
 
@@ -539,6 +539,15 @@ GetConsoleOutputCP proto WINAPI
 SetConsoleOutputCP proto WINAPI \
 	  wCodePageID : UINT
 
-endif 
+CONSOLE_FULLSCREEN_MODE equ 1
+CONSOLE_WINDOWED_MODE	equ 2
+
+;BOOL
+SetConsoleDisplayMode proto WINAPI \
+	hConsoleOutput: HANDLE,
+	       dwFlags: DWORD,
+lpNewScreenBufferDimensions: PCOORD
+
+endif
 
 .list

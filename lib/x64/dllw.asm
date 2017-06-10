@@ -6,9 +6,8 @@ include tchar.inc
     .code
 
 main proc
-    mov rsi,rdx
     .if rcx == 2
-	mov rdi,[rsi+8]
+	mov rdi,[rdx+8]
 	.if LoadLibrary(rdi)
 	    mov r12,rax
 	    mov rbx,strcpy(strrchr(rdi,'.'),".lbc")
@@ -38,7 +37,7 @@ main proc
 	    mov eax,1
 	.endif
     .else
-	printf("\nUsage: DLBC <dllname>.dll\n\n")
+	printf("\nUsage: DLLW <dllname>.dll\n\n")
 	mov eax,1
     .endif
     ret

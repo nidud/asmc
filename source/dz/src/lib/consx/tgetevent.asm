@@ -1,8 +1,1 @@
-include consx.inc
-
-	public	tgetevent
-
-	.data
-	tgetevent PVOID getevent
-
-	end
+include ..\libc\consx\keyb\tgetevent.asm

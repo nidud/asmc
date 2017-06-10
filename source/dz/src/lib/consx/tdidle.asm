@@ -1,10 +1,1 @@
-include consx.inc
-
-	.data
-	tdidle	PVOID tdummy
-	.code
-tdummy:
-	xor	eax,eax
-	ret
-
-	END
+include ..\libc\consx\keyb\tdidle.asm

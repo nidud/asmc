@@ -163,6 +163,7 @@ endif
 			  .case ST_NORMAL
 
 				mov bufferiswide,0
+ifndef __DZ__
 				.if isleadbyte(edx)
 
 					write_char(edx, fp, addr charsout)
@@ -170,6 +171,7 @@ endif
 					add format,1
 					movzx edx,BYTE PTR [eax]
 				.endif
+endif
 				write_char(edx, fp, addr charsout)
 				.endc
 
@@ -429,7 +431,7 @@ endif
 						mov no_output,1
 					.endif
 					.endc
-
+ifndef __DZ__
 				  .case 'E'
 				  .case 'G'
 				  .case 'A'
@@ -513,6 +515,7 @@ endif
 					.endif
 					mov textlen,strlen(text) ; compute length of text
 					.endc
+endif
 				  .case 'd'
 				  .case 'i'
 					;

@@ -1,24 +1,14 @@
 include string.inc
-ifdef _SSE
-include crtl.inc
 
-	.data
-	memrchr_p dd _rtl_memrchr
-endif
 	.code
 
-	OPTION	PROLOGUE:NONE, EPILOGUE:NONE
+	option stackbase:esp
 
-ifdef _SSE
-memrchr_386:
-else
-memrchr PROC base:LPSTR, char:SIZE_T, bsize:SIZE_T
-endif
+memrchr PROC uses edi base:LPSTR, char:SIZE_T, bsize:SIZE_T
 
-	push	edi
-	mov	edi,4[esp+4]
-	mov	al, 4[esp+8]
-	mov	ecx,4[esp+12]
+	mov	edi,base
+	mov	al, byte ptr char
+	mov	ecx,bsize
 	test	ecx,ecx
 	jz	@F
 	lea	edi,[edi+ecx-1]
@@ -28,29 +18,11 @@ endif
 	jnz	@F
 	mov	eax,edi
 	inc	eax
-	pop	edi
-	ret	12
+	ret
 @@:
 	xor	eax,eax
-	pop	edi
-	ret	12
+	ret
 
-ifdef _SSE
-memrchr PROC base:LPSTR, char:SIZE_T, bsize:SIZE_T
-	jmp	memrchr_p
 memrchr ENDP
-	;
-	; First call: set pointer and jump
-	;
-_rtl_strlen:
-	mov	eax,memrchr_386
-	.if	sselevel & SSE_SSE2
-		mov eax,memrchr_sse
-	.endif
-	mov	memrchr_p,eax
-	jmp	eax
-else
-memrchr ENDP
-endif
 
 	END

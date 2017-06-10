@@ -1,8 +1,1 @@
-include consx.inc
-
-PUBLIC	tclrascii
-
-	.data
-	tclrascii db 250
-
-	END
+include ..\libc\consx\dialog\clrascii.asm

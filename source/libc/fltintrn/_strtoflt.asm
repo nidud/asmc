@@ -1,4 +1,4 @@
-include ctype.inc
+include ltype.inc
 include fltintrn.inc
 include crtl.inc
 
@@ -36,7 +36,7 @@ setflags PROC
 	inc	ebx
 	test	eax,eax
 	jz	case_zero
-	test	byte ptr _ctype[eax*2+2],_SPACE
+	test	byte ptr _ltype[eax+1],_SPACE
 	jnz	@B
 	dec	ebx
 	cmp	eax,'+'
@@ -88,7 +88,7 @@ case_NaN:
 	movzx	eax,BYTE PTR [edx]
 	cmp	eax,'_'
 	je	@B
-	test	byte ptr _ctype[eax*2+2],_DIGIT or _UPPER or _LOWER
+	test	byte ptr _ltype[eax+1],_DIGIT or _UPPER or _LOWER
 	jnz	@B
 	cmp	eax,')'
 	jne	return_NAN
@@ -145,7 +145,7 @@ parsedes PROC
 	jz	parse
 	cmp	eax,'.'
 	je	dot
-	test	byte ptr _ctype[eax*2+2],_DIGIT
+	test	byte ptr _ltype[eax+1],_DIGIT
 	jz	parse
 	test	edi,_ST_DOT
 	jz	@F
@@ -192,7 +192,7 @@ found:
 	and	edi,not _ST_DIGITS
 lup:
 	movzx	eax,BYTE PTR [ebx]
-	test	byte ptr _ctype[eax*2+2],_DIGIT
+	test	byte ptr _ltype[eax+1],_DIGIT
 	jz	end_lup
 	cmp	esi,2000
 	jnb	@F
@@ -245,7 +245,7 @@ parsehex PROC
 	jz	parse
 	cmp	eax,'.'
 	je	dot
-	test	byte ptr _ctype[eax*2+2],_HEX
+	test	byte ptr _ltype[eax+1],_HEX
 	jz	parse
 	test	edi,_ST_DOT
 	jz	@F
@@ -291,7 +291,7 @@ found:
 	and	edi,not _ST_DIGITS
 lupe:
 	movzx	eax,BYTE PTR [ebx]
-	test	BYTE PTR _ctype[eax*2+2],_DIGIT
+	test	BYTE PTR _ltype[eax+1],_DIGIT
 	jz	end_lupx
 	cmp	esi,10000
 	jnb	@F

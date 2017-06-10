@@ -9,7 +9,7 @@ if (WINVER LT 0x0502)
 
 	.code
 
-dummy	proc _CType private \
+dummy	proc WINAPI private \
 		 hFile: HANDLE,
 	    lpFileSize: PLARGE_INTEGER
 

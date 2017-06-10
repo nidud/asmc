@@ -590,118 +590,121 @@ tireadstyle ENDP
 
 tiread	PROC USES esi edi ebx ti:PTINFO
 
-	local	line_count
+local	line_count, tabs_used:byte
 
-	mov	esi,ti		; v2.49 - auto detect CR/LF
+	mov esi,ti		; v2.49 - auto detect CR/LF
+	mov tabs_used,0
+
 	tiftime( esi )
-	mov	[esi].ti_time,eax
+	mov [esi].ti_time,eax
 
-	mov	line_count,0
-	mov	edi,[esi].ti_bp
+	mov line_count,0
+	mov edi,[esi].ti_bp
 
-	.if	ioopen( addr STDI, [esi].ti_file, M_RDONLY, OO_MEMBUF ) != -1
+	.if ioopen( addr STDI, [esi].ti_file, M_RDONLY, OO_MEMBUF ) != -1
 
-		mov	eax,DWORD PTR STDI.ios_fsize
-		mov	[esi].ti_size,eax
+		mov eax,DWORD PTR STDI.ios_fsize
+		mov [esi].ti_size,eax
 
-		xor	eax,eax
-		.if	eax == DWORD PTR STDI.ios_fsize[4]
+		xor eax,eax
+		.if eax == DWORD PTR STDI.ios_fsize[4]
 
-			mov	line_count,eax	; file offset (size)
-			mov	ebx,eax		; line offset (for tabs)
-			mov	edx,edi
-			add	edx,[esi].ti_blen
-			sub	edx,TIMAXTABSIZE
+			mov line_count,eax	; file offset (size)
+			mov ebx,eax		; line offset (for tabs)
+			mov edx,edi
+			add edx,[esi].ti_blen
+			sub edx,TIMAXTABSIZE
 
 			.while	1
 
-				.if	edi >= edx
+				.if edi >= edx
 
 					tirealloc( esi )
-					jz	err_filetobig
+					jz err_filetobig
 
-					sub	edi,eax
-					add	edi,[esi].ti_bp
-					mov	edx,[esi].ti_bp
-					add	edx,[esi].ti_blen
-					sub	edx,TIMAXTABSIZE
+					sub edi,eax
+					add edi,[esi].ti_bp
+					mov edx,[esi].ti_bp
+					add edx,[esi].ti_blen
+					sub edx,TIMAXTABSIZE
 				 .endif
 
-				call	ogetc
+				call ogetc
 				.break .if ZERO?
 
 				.switch al
 
 				  .case 0
-					mov	al,0Ah		; @v3.29 - convert 0 to LF
-					or	[esi].ti_flag,_T_MODIFIED
+					mov al,0Ah		; @v3.29 - convert 0 to LF
+					or  [esi].ti_flag,_T_MODIFIED
 
 				  .case 0Ah
-					mov	ecx,line_count
-					add	ecx,ebx
-					.if	!ZERO?
-						.if	BYTE PTR [edi-1] != 0Dh
-							and	[esi].ti_flag,not _T_USECRLF
+					mov ecx,line_count
+					add ecx,ebx
+					.if !ZERO?
+						.if BYTE PTR [edi-1] != 0Dh
+							and [esi].ti_flag,not _T_USECRLF
 						.endif
 					.endif
 					stosb
-					inc	line_count
-					xor	ebx,ebx
+					inc line_count
+					xor ebx,ebx
 					.endc
 
 				  .case 09h
-					.if	!( [esi].ti_flag & _T_USETABS )
+					mov tabs_used,al
+					.if !( [esi].ti_flag & _T_USETABS )
 
-						or	[esi].ti_flag,_T_MODIFIED
-						mov	al,' '
+						or [esi].ti_flag,_T_MODIFIED
+						mov al,' '
 						stosb
 
-						inc	ebx
-						mov	ecx,[esi].ti_tabz
-						dec	ecx
-						and	ecx,TIMAXTABSIZE-1
+						inc ebx
+						mov ecx,[esi].ti_tabz
+						dec ecx
+						and ecx,TIMAXTABSIZE-1
 
 						.while	ebx & ecx
 							.break .if ebx == [esi].ti_bcol
 							stosb
-							inc	ebx
+							inc ebx
 						.endw
 					.else
 						stosb
-						inc	ebx
+						inc ebx
 					.endif
 					.endc
 
 				  .case 0Dh
-					or	[esi].ti_flag,_T_USECRLF
+					or [esi].ti_flag,_T_USECRLF
 
 				  .default
 					stosb
-					inc	ebx
+					inc ebx
 				.endsw
 
-				.if	ebx == [esi].ti_bcol
+				.if ebx == [esi].ti_bcol
 
-					.if	[esi].ti_flag & _T_USECRLF
-						mov	BYTE PTR [edi],0Dh
-						inc	edi
+					.if [esi].ti_flag & _T_USECRLF
+						mov BYTE PTR [edi],0Dh
+						inc edi
 					.endif
 
-					mov	BYTE PTR [edi],0Ah
-					inc	edi
+					mov BYTE PTR [edi],0Ah
+					inc edi
 					stosb
 
-					push	edx
-					.if	!( [esi].ti_flag & _T_MODIFIED )
+					push edx
+					.if !( [esi].ti_flag & _T_MODIFIED )
 
-						or	[esi].ti_flag,_T_MODIFIED
+						or [esi].ti_flag,_T_MODIFIED
 
 						ermsg ( 0, "Line too long, was truncated" )
 					.endif
-					pop	edx
+					pop edx
 
-					inc	line_count
-					xor	ebx,ebx
+					inc line_count
+					xor ebx,ebx
 				.endif
 			.endw
 
@@ -711,21 +714,28 @@ tiread	PROC USES esi edi ebx ti:PTINFO
 
 			ermsg( 0, "File too big, no more memory" )
 
-			mov	line_count,-1
-			.if	edi != [esi].ti_bp
-				dec	edi
+			mov line_count,-1
+			.if edi != [esi].ti_bp
+				dec edi
 			.endif
 		.endif
 		mov	BYTE PTR [edi],0
 		ioclose( addr STDI )
 
-		inc	line_count
-		mov	eax,line_count
-		mov	[esi].ti_lcnt,eax
+		inc line_count
+		mov eax,line_count
+		mov [esi].ti_lcnt,eax
 	.endif
 
-	mov	eax,line_count
-	test	eax,eax
+	mov eax,line_count
+	.if [esi].ti_flag & _T_UNREAD
+	    and [esi].ti_flag,NOT _T_UNREAD
+	    .if !tabs_used && eax > 1 && [esi].ti_flag & _T_USETABS
+		and [esi].ti_flag,NOT _T_USETABS
+		mov [esi].ti_tabz,4
+	    .endif
+	.endif
+	test eax,eax
 
 	ret
 tiread	ENDP

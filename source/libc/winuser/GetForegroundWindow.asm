@@ -20,7 +20,7 @@ Install:
 		.endif
 	.endif
 
-dummy	proc _CType private
+dummy	proc WINAPI private
 	xor	eax,eax
 	ret
 dummy	endp

@@ -10,6 +10,7 @@ ifndef _WINDEF_
  include windef.inc
 endif
 .xlist
+
 ifndef _WIN32_WINDOWS
 _WIN32_WINDOWS equ 0x400
 endif
@@ -1042,10 +1043,9 @@ externdef		GetConsoleWindow:GetConsoleWindow_T
 endif
 
 ifndef NOWINBASEINTERLOCK
-
 ifndef _NTOS_
-
 ifdef _M_IA64
+
 if 0
 InterlockedIncrement				equ <_InterlockedIncrement>
 InterlockedIncrementAcquire			equ <_InterlockedIncrement_acq>
@@ -1111,7 +1111,7 @@ InterlockedAnd16Release equ <_InterlockedAnd16_rel>
 InterlockedAnd64	equ <_InterlockedAnd64>
 InterlockedAnd64Acquire equ <_InterlockedAnd64_acq>
 InterlockedAnd64Release equ <_InterlockedAnd64_rel>
-endif
+endif ; 0
 
 ;LONG
 InterlockedOr proto WINAPI \
@@ -1623,7 +1623,7 @@ InterlockedBitTestAndComplement_Inline macro Base, Bit
 	endm
 endif
 
-endif
+endif ; ifndef MIDL_PASS
 
 pragma_intrinsic macro x
 	endm
@@ -1688,7 +1688,8 @@ pragma_intrinsic(_InterlockedAnd64)
 pragma_intrinsic(_InterlockedAnd64_acq)
 pragma_intrinsic(_InterlockedAnd64_rel)
 
-elseifdef _M_AMD64
+elseifdef _M_AMD64 ; ifdef _M_IA64
+
 if 0
 InterlockedAnd		equ <_InterlockedAnd>
 InterlockedOr		equ <_InterlockedOr>
@@ -1874,9 +1875,9 @@ pragma_intrinsic(_InterlockedAnd16)
 pragma_intrinsic(_InterlockedOr16)
 pragma_intrinsic(_InterlockedXor16)
 
-endif
+endif ; _MSC_FULL_VER GE 140041204
 
-else
+else ; ifdef _M_IA64
 
 ;LONG
 InterlockedIncrement proto WINAPI \
@@ -1965,7 +1966,8 @@ InterlockedCompareExchangeRelease64 equ <InterlockedCompareExchange64>
 InterlockedCompareExchangePointerAcquire equ <InterlockedCompareExchangePointer>
 InterlockedCompareExchangePointerRelease equ <InterlockedCompareExchangePointer>
 
-endif
+endif ; ifdef _M_IA64
+
 
 if defined(_SLIST_HEADER_) AND NOT defined(_NTOSP_)
 
@@ -1991,11 +1993,9 @@ InterlockedFlushSList proto WINAPI \
 QueryDepthSList proto WINAPI \
 	      ListHead: PSLIST_HEADER
 
-endif
-
-endif
-
-endif
+endif ; defined(_SLIST_HEADER_) AND NOT defined(_NTOSP_)
+endif ; ifndef _NTOS_
+endif ; ifndef NOWINBASEINTERLOCK
 ;endif
 
 ;BOOL
@@ -2648,12 +2648,10 @@ CreateUmsThreadContext proto WINAPI \
 EnterUmsSchedulingMode proto WINAPI \
   SchedulerStartupInfo: PUMS_SCHEDULER_STARTUP_INFO
 
-endif
+endif ; (_WIN32_WINNT GE 0x0601) AND NOT defined(MIDL_PASS)
+endif ; (_WIN32_WINNT GE 0x0400)
 
-
-endif
-
-endif
+;endif
 
 PPROC_THREAD_ATTRIBUTE_LIST	typedef ptr PROC_THREAD_ATTRIBUTE_LIST
 LPPROC_THREAD_ATTRIBUTE_LIST	typedef ptr PROC_THREAD_ATTRIBUTE_LIST
@@ -9265,7 +9263,7 @@ ReadThreadProfilingData proto WINAPI \
        PerformanceData: PPERFORMANCE_DATA
 
 endif
-;endif ; (_WIN32_WINNT >= 0x0500)
+endif ; (_WIN32_WINNT >= 0x0500)
 
 .list
 endif ; _WINBASE_

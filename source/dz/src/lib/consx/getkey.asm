@@ -1,11 +1,1 @@
-include consx.inc
-
-	.code
-
-getkey	PROC
-	ReadEvevnt()
-	PopEvent()
-	ret
-getkey	ENDP
-
-	END
+include ..\libc\consx\keyb\getkey.asm

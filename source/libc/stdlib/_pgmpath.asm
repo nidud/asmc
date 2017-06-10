@@ -19,8 +19,7 @@ local	path[256]
 
 		mov byte ptr [eax-1],0
 		strlen( edi )
-		inc edi
-		mov _pgmpath,malloc( eax )
+		mov _pgmpath,malloc(addr [eax+1])
 		strcpy( eax, edi )
 	.endif
 	ret

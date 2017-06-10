@@ -9,7 +9,7 @@ if (WINVER LT 0x0502)
 	SetFilePointerEx SetFilePointerEx_T dummy
 	.code
 
-dummy	proc _CType private \
+dummy	proc WINAPI private \
 		 hFile: HANDLE,
       liDistanceToMove: LARGE_INTEGER,
       lpNewFilePointer: PLARGE_INTEGER,

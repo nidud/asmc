@@ -16,80 +16,75 @@ include dzlib.inc
 
 topen	PROC USES esi edi file:LPSTR, tflag:UINT
 
-	.if	tiopen( tinfo, titabsize, tiflags )
+	.if tiopen( tinfo, titabsize, tiflags )
 
-		mov	esi,eax
-		or	[esi].ti_flag,_T_FILE
-		mov	edi,[esi].ti_prev
-		mov	tinfo,eax
-		mov	eax,tflag
-		.if	eax
+		mov esi,eax
+		or  [esi].ti_flag,_T_FILE
+		mov edi,[esi].ti_prev
+		mov tinfo,eax
+		mov eax,tflag
+		.if eax
 
-			and	[esi].ti_flag,NOT _T_TECFGMASK
-			or	[esi].ti_flag,eax
+			and [esi].ti_flag,NOT _T_TECFGMASK
+			or  [esi].ti_flag,eax
 		.endif
 
-		mov	eax,file
-		.if	eax
+		mov eax,file
+		.if eax
 
-			.if	BYTE PTR [ strcpy( [esi].ti_file, eax ) + 1 ] != ':'
+			.if BYTE PTR [ strcpy( [esi].ti_file, eax ) + 1 ] != ':'
 
 				GetFullPathName( eax, _MAX_PATH * 2, eax, 0 )
 			.endif
 
-			.if	tireadstyle( esi )
+			.if tireadstyle( esi )
 
 				tiread( esi )
 			.else
-
 				ermsg ( 0, addr CP_ENOMEM )
 
 				ticlose( esi )
 				xor esi,esi
 			.endif
 		.else
-			inc	[esi].S_TINFO.ti_lcnt	; set line count to 1
+			and [esi].ti_flag,NOT _T_UNREAD
+			inc [esi].S_TINFO.ti_lcnt	; set line count to 1
 			.repeat
-
-				inc	new_id
+				inc new_id
 				sprintf( [esi].ti_file, "New (%d)", new_id )
 				filexist( [esi].ti_file )
 			.until	eax != 1
 
-			.if	edi
+			.if edi
 
 				memcpy( [esi].ti_style, [edi].ti_style, STYLESIZE )
-				mov	eax,[edi].ti_stat
-				mov	[esi].ti_stat,eax
+				mov eax,[edi].ti_stat
+				mov [esi].ti_stat,eax
 			.else
-
 				tireadstyle( esi )
 			.endif
 		.endif
-		mov	eax,esi
+		mov eax,esi
 	.endif
 
-	test	eax,eax
+	test eax,eax
 	ret
 
 topen	ENDP
 
 tclose	PROC
 
-	.if	tistate( tinfo )
-
-		.if	ecx & _T_MODIFIED
-
-			.if	tisavechanges( tinfo )
+	.if tistate( tinfo )
+		.if ecx & _T_MODIFIED
+			.if tisavechanges( tinfo )
 
 				tiflush( tinfo )
 			.endif
 		.endif
 		ticlose( tinfo )
-		mov	tinfo,eax
+		mov tinfo,eax
 	.else
-
-		mov	new_id,eax
+		mov new_id,eax
 	.endif
 	ret
 

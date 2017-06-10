@@ -10,7 +10,7 @@ if (WINVER LT 0x0500)
 
 	.code
 
-dummy	proc _CType private
+dummy	proc WINAPI private
 	xor eax,eax
 	ret 4
 dummy	endp

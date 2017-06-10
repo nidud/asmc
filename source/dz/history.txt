@@ -2,9 +2,12 @@ HISTORY.TXT--
 Change Log File for DOSZIP - Win32
 ==================================
 
-Changes in 3.49 - xx xxx 2017
-- added Add/Edit to Transfer dialog
-- removed memory restriction in panels -- file count
+Changes in 3.50 - xx xxx 2017
+- fixed bug in FindFile -- memory leak..
+
+Changes in 3.49 - 4 Jun 2017
+- added Edit/Add to Transfer dialog
+- removed memory restriction in panels -- max file count
 - fixed bug edit.style() -- buffer overflow
 - fixed memory leak in unzip functions
 - fixed memory leak file panels

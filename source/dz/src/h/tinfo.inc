@@ -30,6 +30,8 @@ _T_SHOWTABS	equ 8000h
 _T_TEDEFAULT	equ 3FE0h
 _T_TECFGMASK	equ 3FE0h
 
+_T_UNREAD	equ 0x10000
+
 _TI_CONTINUE	equ 0	; continue edit
 _TI_RETEVENT	equ 1	; return current event (keystroke)
 _TI_NOTEVENT	equ 2	; event not handled -- continue test

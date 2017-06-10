@@ -2,7 +2,7 @@ include direct.inc
 include alloc.inc
 include string.inc
 include errno.inc
-include ctype.inc
+include ltype.inc
 include winbase.inc
 
 .code
@@ -68,7 +68,7 @@ local dchar:BYTE
 	mov drive,0
 	push eax
 	movzx eax,al
-	test byte ptr _ctype[eax*2+2],_UPPER or _LOWER
+	test byte ptr _ltype[eax+1],_UPPER or _LOWER
 	pop eax
 	.if !ZERO? && ah == ':'
 	    mov [edi],ax

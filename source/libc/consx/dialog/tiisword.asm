@@ -1,10 +1,10 @@
-include ctype.inc
+include ltype.inc
 
 	.code
 
 tiisword PROC
 	movzx eax,al
-	mov ah,byte ptr _ctype[eax*2+2]
+	mov ah,byte ptr _ltype[eax+1]
 	test ah,_UPPER or _LOWER or _DIGIT
 	jnz toend
 	cmp al,'_'

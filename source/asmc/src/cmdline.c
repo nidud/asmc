@@ -130,7 +130,7 @@ static void queue_item(int i, char *string)
 
 static void get_fname( int type, char *token )
 {
-    char fname[_MAX_PATH];
+    char name[_MAX_PATH];
     char *p;
 
     if ( *token == '=' )
@@ -150,13 +150,13 @@ static void get_fname( int type, char *token )
 	}
 	return;
     }
-    fname[0] = 0;
+    name[0] = 0;
     if ( token == p && type < NUM_FILE_TYPES && DefaultDir[type] )
-	strcpy( fname, DefaultDir[type] );
-    strcat( fname, p );
+	strcpy( name, DefaultDir[type] );
+    strcat( name, token );
     free( Options.names[type] );
-    Options.names[type] = malloc( strlen( fname ) + 1 );
-    strcpy( Options.names[type], fname );
+    Options.names[type] = malloc( strlen( name ) + 1 );
+    strcpy( Options.names[type], name );
 }
 
 static void set_option_n_name( int idx, const char *name )

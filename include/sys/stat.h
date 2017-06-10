@@ -31,7 +31,7 @@ struct _stat {
 	time_t	st_ctime;
 };
 
-int _CType _stat(const char *, struct _stat *);
+int __cdecl _stat(const char *, struct _stat *);
 
 #ifdef __cplusplus
  }

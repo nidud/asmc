@@ -1,4 +1,5 @@
 include string.inc
+include strlib.inc
 include io.inc
 include direct.inc
 include stdlib.inc

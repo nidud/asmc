@@ -1,6 +1,7 @@
 include consx.inc
 include string.inc
 include alloc.inc
+include strlib.inc
 
 	.code
 

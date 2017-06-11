@@ -1,5 +1,6 @@
 include stdlib.inc
 include string.inc
+include strlib.inc
 include alloc.inc
 include crtl.inc
 

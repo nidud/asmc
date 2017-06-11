@@ -1,5 +1,11 @@
 	.386
 	.model flat, stdcall
+
+	.data
+
+	@CStr( "no return value" )
+     dd @CStr( "return offset" )
+
 	.code
 
 	mov	eax,@CStr( "\tCreate a \"C\" string: %s%d\n" )

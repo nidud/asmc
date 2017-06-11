@@ -1,0 +1,4 @@
+#include "windows.h"
+
+MakeIcon ICON make.ico
+

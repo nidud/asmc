@@ -12,6 +12,7 @@ include time.inc
 include string.inc
 include stdio.inc
 include stdlib.inc
+include strlib.inc
 include process.inc
 include winbase.inc
 include crtl.inc

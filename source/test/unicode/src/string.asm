@@ -34,8 +34,8 @@ _tmain	proc c
 	.assert wcsstr	(edi, "strstrx") == 0
 	lea esi,[edi+18]
 	.assert wcschr	(edi, '9') == esi
-	.assert wcschr	(addr cp_X, 'B') == offset cp_B
-	.assert wcschr	(addr cp_X, 9) == offset cp_9
+	.assert wcschr	(&cp_X, 'B') == offset cp_B
+	.assert wcschr	(&cp_X, 9) == offset cp_9
 	xor	eax,eax
 	ret
 

@@ -21,11 +21,10 @@ wcsstr	PROC USES esi edi ebx s1:LPWSTR, s2:LPWSTR
 			.for ebx = edi :: esi += 2, ebx += 2
 
 				mov ax,[esi]
-				.break .if !ax
+				.break(1) .if !ax
 				.break .if ax != [ebx]
 			.endf
 			mov esi,s2
-			.break(1) .ifz
 		.endw
 		mov eax,edi
 		sub eax,2

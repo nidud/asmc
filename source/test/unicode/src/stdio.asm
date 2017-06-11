@@ -31,7 +31,6 @@ test_f	macro z,r,s,v:VARARG
 	test_f 16,"1000000000000000","%lb",8000h
 	test_f 2,"-1","%i",0FFFFFFFFh
 	test_f 10,"4294967295","%u",0FFFFFFFFh
-	test_f 3,"003","%u",3
 
 	.assert _wtol("247") == 247
 	.assert _wfopen("test.fil","w")
@@ -39,7 +38,7 @@ test_f	macro z,r,s,v:VARARG
 	.assert fwprintf(eax,"%03u",3) == 3
 	.assert !fclose(esi)
 	.assert _wfopen("test.fil","rt") == esi
-	.assert fread(addr buf,3,1,esi) == 1
+	.assert fread(addr buf,3,2,esi) == 2
 	.assert !fclose(esi)
 	.assert !wcsncmp(addr buf,"003",3)
 	.assert !_wremove("test.fil")

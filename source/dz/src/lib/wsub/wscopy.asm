@@ -20,10 +20,10 @@ wscopyopen proc srcfile:LPSTR, outfile:LPSTR
 	.elseif eax != -1
 	    ioopen(addr STDI, srcfile, M_RDONLY, OO_MEM64K)
 	    or STDI.S_IOST.ios_flag,IO_USECRC
-	.endif
-	.if eax == -1
-	    eropen(srcfile)
-	    wscopyremove(outfile)
+	    .if eax == -1
+		eropen(srcfile)
+		wscopyremove(outfile)
+	    .endif
 	.endif
 	ret
 wscopyopen endp

@@ -3,6 +3,7 @@ include errno.inc
 include string.inc
 include confirm.inc
 include zip.inc
+include strlib.inc
 
 PUBLIC	progress_dobj
 PUBLIC	progress_size

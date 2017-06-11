@@ -2,6 +2,7 @@ include string.inc
 include io.inc
 include direct.inc
 include stdlib.inc
+include strlib.inc
 
 	.data
 
@@ -15,19 +16,19 @@ dzcmd_env db "\dzcmd.env",0
 
 CreateBatch PROC USES ebx cmd, CallBatch, UpdateEnviron
 
-	local	batch[_MAX_PATH]:SBYTE,
-		argv0[_MAX_PATH]:SBYTE
+local	batch[_MAX_PATH]:SBYTE,
+	argv0[_MAX_PATH]:SBYTE
 
-	.if	osopen( strfcat( addr batch, envtemp, addr dzcmd_bat ), 0, M_WRONLY, A_CREATETRUNC ) != -1
+	.if osopen( strfcat( addr batch, envtemp, addr dzcmd_bat ), 0, M_WRONLY, A_CREATETRUNC ) != -1
 		mov	ebx,eax
 
 		oswrite( ebx, addr echooff, 11 )
-		.if	CallBatch
+		.if CallBatch
 			oswrite( ebx, "call ", 5 )
 		.endif
 		oswrite( ebx, cmd, strlen( cmd ) )
 		oswrite( ebx, addr CRLF, 2 )
-		.if	UpdateEnviron
+		.if UpdateEnviron
 			mov	ecx,__argv
 			strcpy( addr argv0, [ecx] )
 			strcat( eax, " /E:" )

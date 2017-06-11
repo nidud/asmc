@@ -7,6 +7,7 @@ include progress.inc
 include zip.inc
 include consx.inc
 include syserrls.inc
+include strlib.inc
 
 PUBLIC	ocentral
 PUBLIC	cp_emarchive

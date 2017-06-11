@@ -6,6 +6,7 @@ include confirm.inc
 include errno.inc
 include zip.inc
 include progress.inc
+include strlib.inc
 
 USE_DEFLATE	equ 1
 

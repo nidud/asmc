@@ -81,11 +81,5 @@ endif  ;; NOT __STDC__
 
 _WSTRING_DEFINED equ 1
 endif
-
-strfn		proto __cdecl :LPSTR
-strext		proto __cdecl :LPSTR
-memxchg		proto __cdecl :LPSTR, :LPSTR, :SIZE_T
-strfcat		proto __cdecl :LPSTR, :LPSTR, :LPSTR
-
 .list
 endif ;; __STRING_INC

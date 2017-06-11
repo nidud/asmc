@@ -40,8 +40,8 @@ ifndef _VA_LIST_DEFINED
 _VA_LIST_DEFINED equ <>
 ifdef  _M_ALPHA
 va_list		STRUC
-a0		LPSTR ? 
-offset		SINT ?	
+a0		LPSTR ?
+offset		SINT ?
 va_list		ENDS
 else
 va_list		typedef LPSTR
@@ -69,20 +69,24 @@ endif
 
 
 ifndef _STDIO_DEFINED
-externdef	_iob:FILE
-endif  
+ifdef __PE__
+_iob		equ <[__iob_func()]>
+else
+externdef	_iob:_iobuf
+endif
+endif
 
 ifndef _FSIZE_T_DEFINED
 _FSIZE_T_DEFINED equ <>
-_fsize_t	typedef size_t	
+_fsize_t	typedef size_t
 endif
 
 ifndef _WFINDDATA_T_DEFINED
 _WFINDDATA_T_DEFINED equ <>
 _wfinddata_t	STRUC
 attrib		dd ?
-time_create	time_t ?	
-time_access	time_t ?	
+time_create	time_t ?
+time_access	time_t ?
 time_write	time_t ?
 _size		dq ?
 _name		wchar_t 260 dup(?)
@@ -90,8 +94,8 @@ _wfinddata_t	ENDS
 if _INTEGRAL_MAX_BITS GE 64
 _wfinddatai64_t STRUC
 attrib		dd ?
-time_create	time_t ?	
-time_access	time_t ?	
+time_create	time_t ?
+time_access	time_t ?
 time_write	time_t ?
 _size		dq ?
 _name		wchar_t 260 dup(?)
@@ -109,21 +113,21 @@ ifndef _CTYPE_DISABLE_MACROS
 externdef	_ctype:word
 externdef	_pctype:ptr word
 externdef	_pwctype:ptr wctype_t
-endif  
+endif
 
 
 
-_UPPER		equ 0x1	    
-_LOWER		equ 0x2	    
-_DIGIT		equ 0x4	    
-_SPACE		equ 0x8	    
-_PUNCT		equ 0x10    
-_CONTROL	equ 0x20    
-_BLANK		equ 0x40    
-_HEX		equ 0x80    
+_UPPER		equ 0x1
+_LOWER		equ 0x2
+_DIGIT		equ 0x4
+_SPACE		equ 0x8
+_PUNCT		equ 0x10
+_CONTROL	equ 0x20
+_BLANK		equ 0x40
+_HEX		equ 0x80
 
-_LEADBYTE	equ 0x8000  
-_ALPHA		equ 0x0100 OR _UPPER OR _LOWER	
+_LEADBYTE	equ 0x8000
+_ALPHA		equ 0x0100 OR _UPPER OR _LOWER
 
 
 
@@ -262,9 +266,9 @@ ifndef _CTYPE_DISABLE_MACROS
 isleadbyte macro _c
 	exitm<_pctype[_c] AND _LEADBYTE>
 	endm
-endif  
-endif  
-endif  
+endif
+endif
+endif
 
 
 ifndef _POSIX_
@@ -272,14 +276,14 @@ ifndef _POSIX_
 
 ifndef _INO_T_DEFINED
 _INO_T_DEFINED equ <>
-_ino_t		typedef WORD	
+_ino_t		typedef WORD
 if NOT __STDC__
 ino_t		typedef WORD
 endif
 endif
 
 ifndef _DEV_T_DEFINED
-_dev_t		typedef UINT	  
+_dev_t		typedef UINT
 if NOT __STDC__
 dev_t		typedef UINT
 endif
@@ -288,7 +292,7 @@ endif
 
 ifndef _OFF_T_DEFINED
 ifdef _WIN64
-_off_t		typedef QWORD	
+_off_t		typedef QWORD
 else
 _off_t		typedef SDWORD
 endif
@@ -329,7 +333,7 @@ st_atime	time_t ?
 st_mtime	time_t ?
 st_ctime	time_t ?
 stat		ENDS
-endif  
+endif
 
 if _INTEGRAL_MAX_BITS GE 64
 _stati64	STRUC
@@ -357,7 +361,7 @@ _wstati64	proto __cdecl :ptr wchar_t, :ptr _stati64
 endif
 endif
 
-endif  
+endif
 
 
 ifndef _WSTDIO_DEFINED
@@ -459,7 +463,7 @@ _wsplitpath	proto __cdecl :ptr wchar_t, :ptr wchar_t, :ptr wchar_t, :ptr wchar_t
 _WSTDLIBP_DEFINED equ 1
 endif
 
-endif  
+endif
 
 
 ifndef _WSTRING_DEFINED
@@ -507,7 +511,7 @@ wcslwr		proto __cdecl :ptr wchar_t
 wcsupr		proto __cdecl :ptr wchar_t
 wcsicoll	proto __cdecl :ptr wchar_t, :ptr wchar_t
 
-endif  
+endif
 
 _WSTRING_DEFINED equ 1
 endif
@@ -515,15 +519,15 @@ endif
 ifndef _TM_DEFINED
 _TM_DEFINED equ <>
 tm		STRUC
-tm_sec		SINT ?	
-tm_min		SINT ?	
-tm_hour		SINT ?	
-tm_mday		SINT ?	
-tm_mon		SINT ?	
-tm_year		SINT ?	
-tm_wday		SINT ?	
-tm_yday		SINT ?	
-tm_isdst	SINT ?	
+tm_sec		SINT ?
+tm_min		SINT ?
+tm_hour		SINT ?
+tm_mday		SINT ?
+tm_mon		SINT ?
+tm_year		SINT ?
+tm_wday		SINT ?
+tm_yday		SINT ?
+tm_isdst	SINT ?
 tm		ENDS
 endif
 
@@ -553,6 +557,6 @@ wcrtomb		proto __cdecl :LPSTR, :wchar_t, :ptr mbstate_t
 wcsrtombs	proto __cdecl :LPSTR, :ptr wchar_t, :size_t, :ptr mbstate_t
 wctob		proto __cdecl :wint_t
 
-endif  
+endif
 
 .list

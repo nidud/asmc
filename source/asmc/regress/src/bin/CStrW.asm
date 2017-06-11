@@ -1,8 +1,13 @@
 	.386
 	.model flat, stdcall
-	.code
-
 	option	wstring:on
+
+	.data
+
+	@CStr( "no return value" )
+     dd @CStr( "return offset" )
+
+	.code
 
 	mov	eax,@CStr( "\tCreate a \"C\" string: %s%d\n" )
 	mov	ebx,@CStr( "string: %s%d\n" )

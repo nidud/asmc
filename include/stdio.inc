@@ -98,6 +98,11 @@ _getbuf		proto __cdecl :LPFILE
 setvbuf		proto __cdecl :LPFILE, :LPSTR, :SIZE_T, :SIZE_T
 setbuf		proto __cdecl :LPFILE, :LPSTR
 ungetc		proto __cdecl :SINT, :LPFILE
+ifdef _MSVCRT
+__getmainargs	proto __cdecl :ptr, :ptr, :ptr, :ptr, :ptr
+__wgetmainargs	proto __cdecl :ptr, :ptr, :ptr, :ptr, :ptr
+__iob_func	proto __cdecl
+endif
 
 ifndef _WSTDIO_DEFINED
 _WSTDIO_DEFINED equ <>

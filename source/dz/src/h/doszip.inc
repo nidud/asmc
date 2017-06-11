@@ -9,9 +9,9 @@ include dzlib.inc
 
 	.xlist
 
-DOSZIP_VERSION	equ 0349h
+DOSZIP_VERSION	equ 0350h
 DOSZIP_MINVERS	equ 0349h
-DOSZIP_VSTRING	equ <"3.49">
+DOSZIP_VSTRING	equ <"3.50">
 DOSZIP_VSTRPRE	equ <"      ">
 
 MAXHISTORY	equ 32

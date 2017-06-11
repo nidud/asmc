@@ -4,35 +4,34 @@ include cfini.inc
 include string.inc
 include stdlib.inc
 include wsub.inc
-
-strtolx proto :LPSTR
+include strlib.inc
 
 	.code
 
 fbcolor PROC USES esi edi edx ecx fp:PTR S_FBLK
 
-	mov	esi,fp
+	mov esi,fp
 
 	.while	1
 
-		.if	!([esi].S_FBLK.fb_flag & _A_SUBDIR)
+		.if !([esi].S_FBLK.fb_flag & _A_SUBDIR)
 
-			lea	edi,[esi].S_FBLK.fb_name
-			.if	strext( edi )
+			lea edi,[esi].S_FBLK.fb_name
+			.if strext( edi )
 
-				lea	edi,[eax+1]
+				lea edi,[eax+1]
 			.endif
 
-			.if	CFGetSection( "FileColor" )
+			.if CFGetSection( "FileColor" )
 
-				.if	CFGetEntry( eax, edi )
+				.if CFGetEntry( eax, edi )
 
-					.if	strtolx( eax ) <= 15
+					.if strtolx( eax ) <= 15
 
-						shl	eax,4
-						.if	al != at_background[B_Panel]
+						shl eax,4
+						.if al != at_background[B_Panel]
 
-							shr	eax,4
+							shr eax,4
 							.break
 						.endif
 					.endif
@@ -40,26 +39,26 @@ fbcolor PROC USES esi edi edx ecx fp:PTR S_FBLK
 			.endif
 		.endif
 
-		mov	eax,[esi].S_FBLK.fb_flag
+		mov eax,[esi].S_FBLK.fb_flag
 		.switch
 		  .case eax & _FB_SELECTED
-			mov	al,at_foreground[F_Panel]
+			mov al,at_foreground[F_Panel]
 			.break
 		  .case eax & _FB_UPDIR
-			mov	al,7
+			mov al,7
 			.break
 		  .case eax & _FB_ROOTDIR
 		  .case eax & _A_SYSTEM
-			mov	al,at_foreground[F_System]
+			mov al,at_foreground[F_System]
 			.break
 		  .case eax & _A_HIDDEN
-			mov	al,at_foreground[F_Hidden]
+			mov al,at_foreground[F_Hidden]
 			.break
 		  .case eax & _A_SUBDIR
-			mov	al,at_foreground[F_Subdir]
+			mov al,at_foreground[F_Subdir]
 			.break
 		  .default
-			mov	al,at_foreground[F_Files]
+			mov al,at_foreground[F_Files]
 			.break
 		.endsw
 	.endw

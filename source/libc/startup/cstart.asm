@@ -35,6 +35,9 @@ cstart:
 @@:
 	mov edx,offset _IEND
 	__initialize( eax, edx )
-	exit( main( __argc, __argv, _environ ) )
+	mov ecx,__argc
+	mov edx,__argv
+	mov ebx,_environ
+	exit( main( ecx, edx, ebx ) )
 
 	end	cstart

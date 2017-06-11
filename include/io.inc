@@ -49,12 +49,12 @@ time_t		typedef sdword
 endif
 
 _finddata_t	STRUC
-ff_attrib	dd ?
-ff_time_create	time_t ?	; File creation time
-ff_time_access	time_t ?	; Last access time
-ff_time_write	time_t ?	; Last modification time
-ff_size		dq ?
-ff_name		db 260 dup(?)
+attrib		dd ?
+time_create	time_t ?	; File creation time
+time_access	time_t ?	; Last access time
+time_write	time_t ?	; Last modification time
+_size		dd ?
+_name		db 260 dup(?)
 _finddata_t	ENDS
 
 ifndef _WFINDDATA_T_DEFINED
@@ -64,7 +64,7 @@ attrib		dd ?
 time_create	time_t ?	;; -1 for FAT file systems
 time_access	time_t ?	;; -1 for FAT file systems
 time_write	time_t ?
-_size		dq ?
+_size		dd ?
 _name		wchar_t 260 dup(?)
 _wfinddata_t	ENDS
 if _INTEGRAL_MAX_BITS GE 64

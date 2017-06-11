@@ -54,9 +54,7 @@ copyblock:
 	mov	eax,[esi].dwFileAttributes
 	mov	[edi].attrib,eax
 	mov	eax,[esi].nFileSizeLow
-	mov	edx,[esi].nFileSizeHigh
-	mov	DWORD PTR [edi]._size,eax
-	mov	DWORD PTR [edi]._size[4],edx
+	mov	[edi]._size,eax
 	mov	[edi].time_create,__FTToTime( addr [esi].ftCreationTime )
 	mov	[edi].time_access,__FTToTime( addr [esi].ftLastAccessTime )
 	mov	[edi].time_write, __FTToTime( addr [esi].ftLastWriteTime )

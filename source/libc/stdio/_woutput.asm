@@ -81,9 +81,10 @@ __wnullstring	dw '(null)',0
 
 .code
 
-write_char proc private wc:wint_t, pnumwritten
+write_char proc private wc:wint_t, f:LPFILE, pnumwritten:ptr
 
-	.if _putwch_nolock(wc) == WEOF
+	.if fputwc(wc, f) == -1
+	;.if _putwch_nolock(wc) == WEOF
 
 		mov ecx,pnumwritten
 		mov DWORD PTR [ecx],-1
@@ -95,23 +96,23 @@ write_char proc private wc:wint_t, pnumwritten
 
 write_char endp
 
-write_string proc private uses esi edi ebx string, len, pnumwritten
+write_string proc private uses esi edi ebx string, len, f:LPFILE, pnumwritten:ptr
 
 	.fors esi = string, edi = len, ebx = pnumwritten: edi > 0: edi--
 
 		lodsw
-		write_char(ax, ebx)
+		write_char(ax, f, ebx)
 		.break .if DWORD PTR [ecx] == -1
 	.endf
 	ret
 
 write_string endp
 
-write_multi_char proc private uses edi char:wint_t, num:dword, pnumwritten:PVOID
+write_multi_char proc private uses edi char:wint_t, num:dword, f:LPFILE, pnumwritten:ptr
 
 	.fors edi = num: edi > 0: edi--
 
-		write_char(char, pnumwritten)
+		write_char(char, f, pnumwritten)
 		.break .if DWORD PTR [ecx] == -1
 	.endf
 	ret
@@ -176,7 +177,7 @@ endif
 			  .case ST_NORMAL
 
 				mov bufferiswide,1
-				write_char(dx, addr charsout)
+				write_char(dx, fp, addr charsout)
 				.endc
 
 			  .case ST_PERCENT
@@ -314,6 +315,26 @@ endif
 
 				mov	eax,edx
 				.switch eax
+				  ;
+				  ; binary output
+				  ;
+				  .case 'b'
+					mov eax,arglist
+					add arglist,4
+					mov edx,[eax]
+					bsr ecx,edx
+					inc ecx
+					mov textlen,ecx
+					.repeat
+						sub eax,eax
+						shr edx,1
+						adc al,'0'
+						mov buffer[ecx*2-2],ax
+					.untilcxz
+					lea eax,buffer
+					mov text,eax
+					.endc
+
 				  .case 'C'	; ISO wide character
 					.if !(esi & (FL_SHORT or FL_LONG or FL_WIDECHAR))
 						;
@@ -756,22 +777,23 @@ endif
 						;
 						; pad on left with blanks
 						;
-						write_multi_char(' ', padding, addr charsout)
+						write_multi_char(' ', padding, fp, addr charsout)
 					.endif
 					;
 					; write prefix
 					;
-					write_string(addr prefix, prefixlen, addr charsout)
+					write_string(addr prefix, prefixlen, fp, addr charsout)
 
 					.if (esi & FL_LEADZERO) && !(esi & FL_LEFT)
 						;
 						; write leading zeros
 						;
-						write_multi_char('0', padding, addr charsout)
+						write_multi_char('0', padding, fp, addr charsout)
 					.endif
 					;
 					; write text
 					;
+					if 0
 					.ifs !bufferiswide && textlen > 0
 
 						push  esi
@@ -783,17 +805,18 @@ endif
 								.break
 							.endif
 							add esi,eax
-							write_char(wchar, addr charsout)
+							write_char(wchar, fp, addr charsout)
 						.endf
 						pop   edi
 						pop   esi
 					.else
-						write_string(text, textlen, addr charsout)
-					.endif
+					endif
+						write_string(text, textlen, fp, addr charsout)
+					;.endif
 
 					.if esi & FL_LEFT
 						; pad on right with blanks
-						write_multi_char(' ', padding, addr charsout)
+						write_multi_char(' ', padding, fp, addr charsout)
 					.endif
 				.endif
 				;

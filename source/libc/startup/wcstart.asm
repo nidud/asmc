@@ -11,6 +11,7 @@ includelib user32.lib
 includelib libc.lib
 
 public wcstart
+public wmainCRTStartup
 
 _INIT	SEGMENT PARA FLAT PUBLIC 'INIT'
 _INIT	ENDS
@@ -25,10 +26,18 @@ wmain	proto :dword, :ptr, :ptr
 	dd 564A4A50h
 	db VERSSTR
 
+wmainCRTStartup:
+	mov eax,offset _INIT
+	and eax,-4096	; LINK - to start of page
+	jmp @F
 wcstart:
 	mov eax,offset _INIT
+@@:
 	mov edx,offset _IEND
 	__initialize( eax, edx )
-	exit( wmain( __argc, __wargv, _wenviron ) )
+	mov ecx,__argc
+	mov edx,__wargv
+	mov ebx,_wenviron
+	exit( wmain( ecx, edx, ebx ) )
 
 	end	wcstart

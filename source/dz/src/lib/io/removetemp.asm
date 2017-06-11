@@ -1,6 +1,6 @@
 include io.inc
 include direct.inc
-include string.inc
+include strlib.inc
 
 externdef	envtemp:DWORD
 removefile	proto :LPSTR

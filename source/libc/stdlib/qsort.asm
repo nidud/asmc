@@ -1,6 +1,7 @@
 include stdlib.inc
 include string.inc
 include crtl.inc
+include strlib.inc
 
 	.code
 

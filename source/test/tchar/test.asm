@@ -1,9 +1,7 @@
 include stdio.inc
 include stdlib.inc
 include tchar.inc
-ifdef _WIN64
-    option win64:3
-endif
+
     .code
 
 _tmain proc argc:SINT, argv:ptr

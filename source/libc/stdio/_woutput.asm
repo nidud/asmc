@@ -81,11 +81,17 @@ __wnullstring	dw '(null)',0
 
 .code
 
-write_char proc private wc:wint_t, f:LPFILE, pnumwritten:ptr
+write_char proc private wc:wint_t, fp:LPFILE, pnumwritten:ptr
 
-	.if fputwc(wc, f) == -1
-	;.if _putwch_nolock(wc) == WEOF
-
+	mov eax,fp
+	.if ([eax]._iobuf._file == 1 || [eax]._iobuf._file == 2)
+	    .if _putwch_nolock(wc) == WEOF
+		movsx eax,ax
+	    .endif
+	.else
+	    fputwc(wc, fp)
+	.endif
+	.if eax == -1
 		mov ecx,pnumwritten
 		mov DWORD PTR [ecx],-1
 	.else

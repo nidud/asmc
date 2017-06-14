@@ -1,5 +1,6 @@
 include io.inc
 include iost.inc
+include dzlib.inc
 
 	.code
 

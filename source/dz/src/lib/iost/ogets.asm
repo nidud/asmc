@@ -3,6 +3,7 @@ include io.inc
 include stdio.inc
 include string.inc
 include alloc.inc
+include dzlib.inc
 
 	.code
 

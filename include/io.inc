@@ -142,26 +142,19 @@ endif
 endif ; _WIO_DEFINED
 
 ifndef __PE__
-
-osopenA		proto __cdecl :LPSTR, :UINT, :UINT, :UINT
-osopenW		proto __cdecl :LPWSTR, :UINT, :UINT, :UINT
 _osopenA	proto __cdecl :LPSTR, :UINT, :UINT, :PVOID, :UINT, :UINT
 _osopenW	proto __cdecl :LPWSTR, :UINT, :UINT, :PVOID, :UINT, :UINT
 ifdef _UNICODE
-osopen		equ <osopenW>
 _osopen		equ <_osopenW>
 else
-osopen		equ <osopenA>
 _osopen		equ <_osopenA>
 endif
-
 osread		proto __cdecl :SINT, :PVOID, :SIZE_T
 oswrite		proto __cdecl :SINT, :PVOID, :SIZE_T
 getosfhnd	proto __cdecl :SINT
 osmaperr	proto __cdecl
 getfattr	proto __cdecl :LPSTR
 _wgetfattr	proto __cdecl :LPWSTR
-
 endif ; __PE__
 
 .list

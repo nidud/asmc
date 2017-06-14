@@ -1,5 +1,3 @@
-!include srcpath
-
 msgbox_test:
     make -h -s win32A.exe
     make -h -s win32W.exe
@@ -15,22 +13,22 @@ msgbox_test:
 
 win32A.exe:
     asmc -q -Fo $*.obj test.asm
-    linkw op q symt _cstart file $*
+    linkw system con_32 file $*
     $@
 
 win32W.exe:
     asmc -q -ws -D_UNICODE -Fo $*.obj test.asm
-    linkw op q symt _wcstart file $*
+    linkw system con_32W file $*
     $@
 
 win64A.exe:
     asmc -q -win64 -D_WIN64 -Fo $*.obj test.asm
-    linkw op q symt cstart libpath \asmc\lib\x64 lib kernel32, user32, libc file $*
+    linkw system con_64 file $*
     $@
 
 win64W.exe:
     asmc -q -win64 -D_WIN64 -ws -D_UNICODE -Fo $*.obj test.asm
-    linkw op q symt wcstart libpath \asmc\lib\x64 lib kernel32, user32, libc file $*
+    linkw system con_64W file $*
     $@
 
 win32peA.exe:

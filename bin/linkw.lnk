@@ -15,44 +15,66 @@ system begin 386
     runtime console=4.0
 end
 
-# DOS 16-bit
-system begin dos
-#   option  osname='DOS 16-bit'
-    libpath %AsmCDir%\lib
-    library cl
-    format  dos ^
-end
-system begin com
-    option osname='DOS 16-bit .COM application'
-    format dos com
-end
-
-system begin os2
-    option osname='OS/2 16-bit'
-    library os2.lib
-    libpath %WATCOM%/lib286
-    libpath %WATCOM%/lib286/os2
-    format os2 ^
-end
-
-system begin os2v2
-    option osname='OS/2 32-bit'
-    libpath %WATCOM%/lib386
-    libpath %WATCOM%/lib386/os2
-    format os2 lx ^
-end
-
-# Windows 32- and 64-bit
-system begin pe_con
-#    option osname='Win32/64 console application'
-    format windows pe ^
+# Win32 console application
+system begin con_32
+    option  quiet
+    libpath %ASMCDIR%\lib
+    library libc,kernel32,user32
+    symt    _cstart
+    format  windows pe ^
     runtime console=4.0
 end
-system begin pe_gui
-#    option osname='Win32/64 GUI application'
-    format windows pe ^
+
+# Win32 console Unicode application
+system begin con_32W
+    option  quiet
+    libpath %ASMCDIR%\lib
+    library libc,kernel32,user32
+    symt    _wcstart
+    format  windows pe ^
+    runtime console=4.0
+end
+
+# Win64 console application
+system begin con_64
+    option  quiet
+    libpath %ASMCDIR%\lib\amd64
+    library libc,kernel32,user32
+    symt    cstart
+    format  windows pe ^
+    runtime console=4.0
+end
+
+# Win64 console Unicode application
+system begin con_64W
+    option  quiet
+    libpath %ASMCDIR%\lib\amd64
+    library libc,kernel32,user32
+    symt    wcstart
+    format  windows pe ^
+    runtime console=4.0
+end
+
+# Win32 gui application
+system begin gui_32
+    option  quiet
+    libpath %ASMCDIR%\lib
+    library libc,kernel32,user32
+    symt    WinStart
+    format  windows pe ru win ^
     runtime windows=4.0
 end
+
+# Win64 gui application
+system begin gui_64
+    option  quiet
+    libpath %ASMCDIR%\lib\amd64
+    library libc,kernel32,user32
+    symt    WinStart
+    format  windows pe ru win ^
+    runtime windows=4.0
+end
+
 system begin pe_dll
 #    option osname='Win32/64 Dll'
     format windows pe dll ^

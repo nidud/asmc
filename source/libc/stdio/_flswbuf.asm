@@ -71,7 +71,7 @@ _flswbuf PROC USES esi edi ebx char:SINT, fp:LPFILE
 		mov ebx,[esi]._base
 		mov [ebx],dx
 	.else
-		inc edi
+		add edi,2
 		_write( ebx, addr char, edi )
 	.endif
 

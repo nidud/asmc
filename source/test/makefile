@@ -5,6 +5,7 @@ regress:
 	if exist *.obj del *.obj
 	for %%f in (src\*.asm) do call :testasm %%f
 	echo.
+	del *.exe
 	exit
 	:testasm
 	asmc -q -DDEBUG -I..\..\include %1
@@ -14,5 +15,4 @@ regress:
 	if errorlevel 1 exit
 	echo.
 	del %~n1.obj
-	del %~n1.exe
 

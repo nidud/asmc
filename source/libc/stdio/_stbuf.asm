@@ -4,7 +4,6 @@ include alloc.inc
 include crtl.inc
 
 extrn	_stdbuf:dword
-;extrn	output_flush:dword
 
 	.code
 

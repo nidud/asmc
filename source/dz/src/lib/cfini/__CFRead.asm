@@ -2,6 +2,7 @@ include io.inc
 include cfini.inc
 include alloc.inc
 include string.inc
+include dzlib.inc
 
 	.code
 

@@ -6,21 +6,14 @@ include windows.inc
 	.win64: rbp
 	.code
 
-start proc
-
-    mov rbx,GetModuleHandle(0)
-    ExitProcess(WinMain(rbx, 0, GetCommandLine(), SW_SHOWDEFAULT))
-
-start endp
-
 WinMain PROC hInstance: HINSTANCE,
 	 hPrevInstance: HINSTANCE,
 	     lpCmdLine: LPSTR,
 	      nShowCmd: SINT
 
-    LOCAL   wc:WNDCLASSEX
-    LOCAL   msg:MSG
-    LOCAL   hwnd:HANDLE
+    LOCAL wc:WNDCLASSEX
+    LOCAL msg:MSG
+    LOCAL hwnd:HANDLE
 
     mov wc.cbSize,SIZEOF WNDCLASSEX
     mov wc.style,CS_HREDRAW or CS_VREDRAW
@@ -40,7 +33,7 @@ WinMain PROC hInstance: HINSTANCE,
     mov wc.hIconSm,rax
     mov wc.hCursor,LoadCursor(0,IDC_ARROW)
 
-    RegisterClassEx(ADDR wc)
+    RegisterClassEx(&wc)
 
     mov eax,CW_USEDEFAULT
     mov hwnd,CreateWindowEx(0,"WndClass","Window",WS_OVERLAPPEDWINDOW,
@@ -49,10 +42,10 @@ WinMain PROC hInstance: HINSTANCE,
     ShowWindow(hwnd,SW_SHOWNORMAL)
     UpdateWindow(hwnd)
 
-    .while GetMessage(ADDR msg,0,0,0)
+    .while GetMessage(&msg,0,0,0)
 
-	TranslateMessage(ADDR msg)
-	DispatchMessage(ADDR msg)
+	TranslateMessage(&msg)
+	DispatchMessage(&msg)
     .endw
 
     mov rax,msg.wParam

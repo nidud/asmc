@@ -3,6 +3,7 @@ include io.inc
 include direct.inc
 include stdlib.inc
 include strlib.inc
+include dzlib.inc
 
 	.data
 

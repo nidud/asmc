@@ -1,43 +1,23 @@
 include alloc.inc
 
-	.code
+    .code
 
-__coreleft PROC USES ebx
+__coreleft proc uses ebx
+    xor eax,eax  ; EAX: free memory
+    xor ecx,ecx  ; ECX: total allocated
+    mov ebx,_heap_base
+    .while ebx
+        mov edx,ebx
+        .while [edx].S_HEAP.h_size
+            add ecx,[edx].S_HEAP.h_size
+            .if [edx].S_HEAP.h_type == 0
+                add eax,[edx].S_HEAP.h_size
+            .endif
+            add edx,[edx].S_HEAP.h_size
+        .endw
+        mov ebx,[ebx].S_HEAP.h_next
+    .endw
+    ret
+__coreleft endp
 
-	xor eax,eax		; EAX: free memory
-	mov ecx,_heap_base	; ECX: total allocated
-
-	.if ecx
-
-		mov edx,ecx
-		mov ecx,[edx].S_HEAP.h_next
-		.while ecx
-
-			add eax,[ecx]
-			mov ecx,[ecx].S_HEAP.h_next
-		.endw
-
-		mov ecx,eax
-		xor eax,eax
-		.while edx
-
-			mov ebx,[edx]
-			.while ebx
-
-				add ecx,ebx
-				.if [edx].S_HEAP.h_type == 0
-
-					add eax,ebx
-				.endif
-				add edx,ebx
-				mov ebx,[edx]
-			.endw
-			mov edx,[edx].S_HEAP.h_prev
-			mov edx,[edx].S_HEAP.h_prev
-		.endw
-	.endif
-	ret
-
-__coreleft ENDP
-
-	END
+    end

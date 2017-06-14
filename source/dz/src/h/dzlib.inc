@@ -89,6 +89,7 @@ setftime	proto __cdecl :SINT, :DWORD
 setftime_access proto __cdecl :SINT, :DWORD
 setftime_create proto __cdecl :SINT, :DWORD
 __FTToTime	proto __cdecl :PTR FILETIME
+osopen		proto __cdecl :LPSTR, :UINT, :UINT, :UINT
 
 externdef	console:DWORD
 externdef	_diskflag:DWORD

@@ -1,7 +1,7 @@
 Ascii.exe:
- asmc Ascii.asm
- iddc DMain.idd
- iddc DHelp.idd
- linkw symt _cstart file Ascii, DMain, DHelp
+    asmc Ascii.asm
+    iddc DMain.idd
+    iddc DHelp.idd
+    linkw system con_32 file Ascii, DMain, DHelp
 
 

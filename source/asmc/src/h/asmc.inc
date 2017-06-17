@@ -176,7 +176,7 @@ USE64			equ 2
 FCT_MSC			equ 0	; MS 16-/32-bit fastcall (ax,dx,cx / ecx,edx)
 FCT_WATCOMC		equ 1	; OW register calling convention (eax, ebx, ecx, edx)
 FCT_WIN64		equ 2	; Win64 fastcall convention (rcx, rdx, r8, r9)
-FCT_ASMC		equ 3
+FCT_ELF64		equ 3	; Linux 64 syscall
 
 STDCALL_FULL		equ 0
 STDCALL_NONE		equ 1

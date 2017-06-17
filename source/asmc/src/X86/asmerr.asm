@@ -516,7 +516,7 @@ asmerr	PROC USES esi edi ebx edx ecx value, args:VARARG
 
 	lea edi,format
 	strcat( edi, esi )
-	print_err( addr erbuf, edi, addr args )
+	print_err( &erbuf, edi, &args )
 	lea esi,erbuf
 
 	mov ebx,value
@@ -548,10 +548,10 @@ toend:
 	mov eax,-1
 	ret
 error:
-	printf( "ASMC : fatal error A1901: %s\n", addr INTER )
+	printf( "ASMC : fatal error A1901: %s\n", &INTER )
 quit:
 	.if ModuleInfo.curr_fname[ASM*4]
-		longjmp( addr jmpenv, 3 )
+		longjmp( &jmpenv, 3 )
 	.endif
 	mov eax,ModuleInfo.curr_file[OBJ*4]
 	.if eax
@@ -572,7 +572,7 @@ PrintNote PROC value, args:VARARG
   local erbuf[512]:BYTE
 	mov eax,value
 	mov edx,NOTE[eax*4]
-	print_err( addr erbuf, edx, addr args )
+	print_err( &erbuf, edx, &args )
 	ret
 PrintNote ENDP
 

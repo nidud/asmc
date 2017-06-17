@@ -50,6 +50,13 @@ static	int ms64_fcstart( struct dsym const *, int, int, struct asm_tok[], int * 
 static void ms64_fcend	( struct dsym const *, int, int );
 static	int ms64_param	( struct dsym const *, int, struct dsym *, bool, struct expr *, char *, uint_8 * );
 #define REGPAR_WIN64 0x0306 /* regs 1, 2, 8 and 9 */
+#ifdef FCT_ELF64
+static	int elf64_fcstart( struct dsym const *, int, int, struct asm_tok[], int * );
+static void elf64_fcend ( struct dsym const *, int, int );
+static	int elf64_param ( struct dsym const *, int, struct dsym *, bool, struct expr *, char *, uint_8 * );
+#define REGPAR_ELF64 0x03C6 /* regs 1, 2, 6, 7, 8 and 9 */
+#define ELF64_START 1 /* elf64: RDI first param start at bit 6 */
+#endif
 
 struct fastcall_conv {
     int	 (* invokestart)( struct dsym const *, int, int, struct asm_tok[], int * );
@@ -60,7 +67,10 @@ struct fastcall_conv {
 const struct fastcall_conv fastcall_tab[] = {
  { ms32_fcstart, ms32_fcend , ms32_param }, /* FCT_MSC */
  { watc_fcstart, watc_fcend , watc_param }, /* FCT_WATCOMC */
- { ms64_fcstart, ms64_fcend , ms64_param } /* FCT_WIN64 */
+ { ms64_fcstart, ms64_fcend , ms64_param }, /* FCT_WIN64 */
+#ifdef FCT_ELF64
+ { elf64_fcstart, elf64_fcend, elf64_param } /* FCT_ELF64 */
+#endif
 };
 
 /* 16-bit MS fastcall uses up to 3 registers (AX, DX, BX )
@@ -80,10 +90,19 @@ static const enum special_token ms64_regs[] = {
  T_RCX, T_RDX, T_R8,  T_R9
 };
 
+#ifdef FCT_ELF64
+unsigned char elf64_regs[] = {
+ T_DIL, T_SIL, T_DL,  T_CL,  T_R8B, T_R9B,
+ T_DI,	T_SI,  T_DX,  T_CX,  T_R8W, T_R9W,
+ T_EDI, T_ESI, T_EDX, T_ECX, T_R8D, T_R9D,
+ T_RDI, T_RSI, T_RDX, T_RCX, T_R8,  T_R9
+};
+#endif
+
 /* segment register names, order must match ASSUME_ enum */
 
-static int ms32_fcstart( struct dsym const *proc, int numparams, int start, struct asm_tok tokenarray[], int *value )
-/*******************************************************************************************************************/
+static int ms32_fcstart( struct dsym const *proc, int numparams, int start,
+	struct asm_tok tokenarray[], int *value )
 {
     struct dsym *param;
     if ( GetSymOfssize( &proc->sym ) == USE16 )
@@ -96,14 +115,12 @@ static int ms32_fcstart( struct dsym const *proc, int numparams, int start, stru
 }
 
 static void ms32_fcend( struct dsym const *proc, int numparams, int value )
-/*************************************************************************/
 {
     /* nothing to do */
     return;
 }
 
 static int ms32_param( struct dsym const *proc, int index, struct dsym *param, bool addr, struct expr *opnd, char *paramvalue, uint_8 *r0used )
-/*********************************************************************************************************************************************/
 {
     enum special_token const *pst;
 
@@ -146,7 +163,6 @@ static int ms32_param( struct dsym const *proc, int index, struct dsym *param, b
 }
 
 static int ms64_fcstart( struct dsym const *proc, int numparams, int start, struct asm_tok tokenarray[], int *value )
-/*******************************************************************************************************************/
 {
     /* v2.04: VARARG didn't work */
     if ( proc->e.procinfo->has_vararg ) {
@@ -171,7 +187,6 @@ static int ms64_fcstart( struct dsym const *proc, int numparams, int start, stru
 }
 
 static void ms64_fcend( struct dsym const *proc, int numparams, int value )
-/*************************************************************************/
 {
     /* use <value>, which has been set by ms64_fcstart() */
     if ( !( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) )
@@ -194,8 +209,8 @@ static void ms64_fcend( struct dsym const *proc, int numparams, int value )
  * the argument is used instead of the value.
  */
 
-static int ms64_param( struct dsym const *proc, int index, struct dsym *param, bool addr, struct expr *opnd, char *paramvalue, uint_8 *regs_used )
-/************************************************************************************************************************************************/
+static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
+	bool addr, struct expr *opnd, char *paramvalue, uint_8 *regs_used )
 {
     uint_32 size;
     uint_32 psize;
@@ -439,6 +454,155 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param, b
     }
     return( 1 );
 }
+
+#ifdef FCT_ELF64
+
+/* convert register number to param number: */
+
+int GetParmIndexS( int x )
+{
+    switch ( x ) {
+      case 1: return( 3 ); /* CX */
+      case 2: return( 2 ); /* DX */
+      case 8: return( 4 ); /* R8 */
+      case 9: return( 5 ); /* R9 */
+      case 6: return( 1 ); /* SI */
+    }
+    return( 0 ); /* DI */
+}
+
+static int elf64_fcstart( struct dsym const *proc, int numparams, int start,
+	struct asm_tok tokenarray[], int *value )
+{
+    *value = 0;
+    return( 0 );
+}
+
+static int elf64_param( struct dsym const *proc, int index, struct dsym *param,
+	bool addr, struct expr *opnd, char *paramvalue, uint_8 *regs_used )
+{
+    uint_32 size;
+    uint_32 psize;
+    int reg;
+    int i;
+    int base;
+    int destroyed = FALSE;
+
+    if ( *paramvalue == 0 )
+	return 1;
+
+    /* v2.11: default size is 32-bit, not 64-bit */
+    if ( param->sym.is_vararg ) {
+	psize = 0;
+	if ( addr || opnd->instr == T_OFFSET )
+	    psize = 8;
+	else if ( opnd->kind == EXPR_REG && opnd->indirect == FALSE )
+	    psize = SizeFromRegister( opnd->base_reg->tokval );
+	else if ( opnd->mem_type != MT_EMPTY )
+	    psize = SizeFromMemtype( opnd->mem_type, USE64, opnd->type );
+	if ( psize < 4 )
+	    psize = 4;
+    } else
+	psize = SizeFromMemtype( param->sym.mem_type, USE64, param->sym.type );
+
+    if ( param->sym.mem_type == MT_REAL4 || param->sym.mem_type == MT_REAL8 ) {
+
+	reg = opnd->base_reg->tokval;
+	/* v2.04: check if argument is the correct XMM register already */
+	if ( opnd->kind == EXPR_REG && opnd->indirect == FALSE ) {
+
+	    if ( GetValueSp( reg ) & OP_XMM ) {
+		if ( reg == T_XMM0 + index )
+		;
+		else
+		    AddLineQueueX( " movq %r, %s", T_XMM0 + index, paramvalue );
+		return( 1 );
+	    }
+	}
+	if ( opnd->kind == EXPR_FLOAT ) {
+	    *regs_used |= R0_USED;
+	    if ( param->sym.mem_type == MT_REAL4 ) {
+		AddLineQueueX( " mov %r, %s", T_EAX, paramvalue );
+		AddLineQueueX( " movd %r, %r", T_XMM0 + index, T_EAX );
+	    } else {
+		AddLineQueueX( " mov %r, %r ptr %s", T_RAX, T_REAL8, paramvalue );
+		AddLineQueueX( " movd %r, %r", T_XMM0 + index, T_RAX );
+	    }
+	} else {
+	    if ( param->sym.mem_type == MT_REAL4 )
+		AddLineQueueX( " movd %r, %s", T_XMM0 + index, paramvalue );
+	    else
+		AddLineQueueX( " movq %r, %s", T_XMM0 + index, paramvalue );
+	}
+    } else {
+
+	base = 3*6;
+	switch ( psize ) {
+	case 1: base = 0;   break;
+	case 2: base = 1*6; break;
+	case 4: base = 2*6; break;
+	}
+
+	if ( addr ) {
+	    if ( psize >= 4 )
+		AddLineQueueX( " lea %r, %s", elf64_regs[index + base], paramvalue );
+	    else
+		asmerr( 2114, index+1 );
+	    *regs_used |= ( 1 << ( index + RPAR_START ) );
+	    return( 1 );
+	}
+
+	if ( opnd->kind == EXPR_REG && opnd->indirect == FALSE ) {
+	    reg = opnd->base_reg->tokval;
+	    size = SizeFromRegister( reg );
+	} else if ( opnd->kind == EXPR_CONST || opnd->kind == EXPR_FLOAT ) {
+	    size = psize;
+	} else if ( opnd->mem_type != MT_EMPTY ) {
+	    size = SizeFromMemtype( opnd->mem_type, USE64, opnd->type );
+	} else if ( opnd->kind == EXPR_ADDR && opnd->sym->state == SYM_UNDEFINED ) {
+	    size = psize;
+	} else
+	    size = ( opnd->instr == T_OFFSET ? 8 : 4 );
+
+	if ( size > psize || ( size < psize && param->sym.mem_type == MT_PTR ) ) {
+	    asmerr( 2114, index+1 );
+	}
+	/* optimization if the register holds the value already */
+	if ( opnd->kind == EXPR_REG && opnd->indirect == FALSE ) {
+	    if ( GetValueSp( reg ) & OP_R ) {
+		if ( elf64_regs[index+base] == reg ) {
+		    return( 1 );
+		}
+		i = GetRegNo( reg );
+		if ( REGPAR_ELF64 & ( 1 << i ) ) {
+		    i = GetParmIndexS( i );
+		    if ( *regs_used & ( 1 << ( i + ELF64_START ) ) )
+			asmerr( 2133 );
+		}
+	    }
+	}
+	/* v2.11: allow argument extension */
+	if ( size < psize )
+	    if ( size == 4 ) {
+		if ( IS_SIGNED( opnd->mem_type ) )
+		    AddLineQueueX( " movsxd %r, %s", elf64_regs[index+base], paramvalue );
+		else
+		    AddLineQueueX( " mov %r, %s", elf64_regs[index+2*6], paramvalue );
+	    } else
+		AddLineQueueX( " mov%sx %r, %s", IS_SIGNED( opnd->mem_type ) ? "s" : "z", elf64_regs[index+base], paramvalue );
+	else
+	    AddLineQueueX( " mov %r, %s", elf64_regs[index+base], paramvalue );
+	*regs_used |= ( 1 << ( index + ELF64_START ) );
+    }
+    return( 1 );
+}
+
+static void elf64_fcend( struct dsym const *proc, int numparams, int value )
+{
+    return;
+}
+
+#endif
 
 /* get segment part of an argument
  * v2.05: extracted from PushInvokeParam(),

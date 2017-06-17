@@ -48,7 +48,7 @@ static const mangle_func fcmanglers[] = {
     ms32_decorate, /* FCT_MSC */
     ow_decorate,   /* FCT_WATCOMC */
     ms64_decorate, /* FCT_WIN64 */
-    ms32_decorate  /* FCT_ASMC */
+    ms64_decorate  /* FCT_ELF64 */
 };
 
 /* VoidMangler: no change to symbol name */

@@ -144,7 +144,7 @@ local	rc:SINT,cmd:UINT,
 
 		mov edx,i
 		shl edx,4
-		strcpy( addr cmdstr, [ebx+edx].tokpos )
+		strcpy( &cmdstr, [ebx+edx].tokpos )
 
 		.if ModuleInfo.xflag & _XF_PUSHF
 
@@ -161,8 +161,8 @@ local	rc:SINT,cmd:UINT,
 		mov [esi].labels[LSTART*4],0
 		mov [esi].labels[LTEST*4],GetHllLabel()
 
-		GetLabelStr( GetHllLabel(), addr buff )
-		mov rc,EvaluateHllExpression( esi, addr i, ebx, LTEST, 0, edi )
+		GetLabelStr( GetHllLabel(), &buff )
+		mov rc,EvaluateHllExpression( esi, &i, ebx, LTEST, 0, edi )
 		.endc .if eax != NOT_ERROR
 
 		QueueTestLines( edi )
@@ -178,7 +178,7 @@ local	rc:SINT,cmd:UINT,
 			.endif
 		.endif
 
-		AddLineQueueX( "jmp %s", addr buff )
+		AddLineQueueX( "jmp %s", &buff )
 		AddLineQueueX( "%s%s", GetLabelStr( [esi].labels[LTEST*4], edi ), LABELQUAL )
 
 		.if ModuleInfo.xflag & _XF_PUSHF
@@ -221,7 +221,7 @@ local	rc:SINT,cmd:UINT,
 			AddLineQueueX( "db \"%s\"", ebx )
 		.endif
 		AddLineQueue( "db 0" )
-		AddLineQueueX( "%s%s", addr buff, LABELQUAL )
+		AddLineQueueX( "%s%s", &buff, LABELQUAL )
 		.endc
 
 	  .case T_DOT_ASSERTD

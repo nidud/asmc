@@ -58,8 +58,8 @@ SaveState PROC
 	mov UseSavedState,eax
 	mov modstate.init,eax
 
-	memcpy( addr modstate.modinfo,
-		addr ModuleInfo.proc_prologue,
+	memcpy( &modstate.modinfo,
+		&ModuleInfo.proc_prologue,
 		sizeof( modstate.modinfo ))
 	SegmentSaveState()
 	AssumeSaveState()
@@ -107,13 +107,13 @@ StoreLine PROC USES esi edi ebx sline, flags, lst_position
 		.endif
 		mov [esi].line_item.list_pos,eax
 		.if edi
-			memcpy( addr [esi].line_item.line, sline, ebx )
+			memcpy( &[esi].line_item.line, sline, ebx )
 			inc edi
 			add eax,ebx
 			memcpy( eax, ModuleInfo.CurrComment, edi )
 		.else
 			inc ebx
-			memcpy( addr [esi].line_item.line, sline, ebx )
+			memcpy( &[esi].line_item.line, sline, ebx )
 		.endif
 		lea ecx,[esi].line_item.line
 		;
@@ -225,8 +225,8 @@ RestoreState PROC
 		;
 		mov al,ModuleInfo.aflag
 		push eax
-		memcpy( addr ModuleInfo.proc_prologue,
-			addr modstate.modinfo,
+		memcpy( &ModuleInfo.proc_prologue,
+			&modstate.modinfo,
 			sizeof( modstate.modinfo ) )
 		pop eax
 		and eax,_AF_LSTRING

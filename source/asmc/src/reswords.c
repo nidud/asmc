@@ -211,9 +211,7 @@ static const char resw_strings[] = {
 #define avxins( tok, string, cpu, flgs ) # string
 #include <instravx.h>
 #undef avxins
-    "syscall_" /* replacement for "syscall" language type in 64-bit */
 };
-#define strSyscall_ &resw_strings[sizeof(resw_strings)-9]
 #undef insx
 #undef insm
 #undef insn
@@ -516,7 +514,6 @@ void RenameKeyword( unsigned token, const char *newname, uint_8 length )
 void Set64Bit( bool newmode )
 /***************************/
 {
-    static const char *syscallname;   /* "true" syscall name stored here */
     int token;
     int i;
 
@@ -524,16 +521,6 @@ void Set64Bit( bool newmode )
 	if ( newmode != FALSE ) {
 	    optable_idx[ T_INC - SPECIAL_LAST ]++;   /* skip the one-byte register INC */
 	    optable_idx[ T_DEC - SPECIAL_LAST ]++;   /* skip the one-byte register DEC */
-	    /*
-	     * change SYSCALL to SYSCALL_ language in long mode.
-	     * one cannot just change the name, since the hash value
-	     * will differ!
-	     */
-	    RemoveResWord( T_SYSCALL );
-	    syscallname = ResWordTable[T_SYSCALL].name; /* save the "true" name */
-	    ResWordTable[T_SYSCALL].name = strSyscall_;
-	    ResWordTable[T_SYSCALL].len++;
-	    AddResWord( T_SYSCALL );
 
 	    for ( i = 0; i < sizeof( patchtab64 ) / sizeof( patchtab64[0] ); i++ )
 		for( token = patchtab64[i]; ResWordTable[token].flags & RWF_X64; token++ )
@@ -561,12 +548,6 @@ void Set64Bit( bool newmode )
 	    for ( i = 0; i < sizeof( patchtabr) / sizeof( patchtabr[0] ); i++ ) {
 		optable_idx[patchtabr[i].tok] = patchtabr[i].idx32;
 	    }
-
-	    /* change calling convention syscall_ back to syscall */
-	    RemoveResWord( T_SYSCALL );
-	    ResWordTable[T_SYSCALL].name = syscallname; /* restore "true" name */
-	    ResWordTable[T_SYSCALL].len--;
-	    AddResWord( T_SYSCALL );
 	}
 	b64bit = newmode;
     }

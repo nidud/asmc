@@ -19,13 +19,13 @@ addlq_label_b endp
 
 addlq_label proc id
 local buffer[32]:sbyte
-	addlq_label_b(id, addr buffer)
+	addlq_label_b(id, &buffer)
 	ret
 addlq_label endp
 
 addlq_jxx_label proc x, id
 local buffer[32]:sbyte
-	AddLineQueueX("%r %s", x, GetLabelStr(id, addr buffer))
+	AddLineQueueX("%r %s", x, GetLabelStr(id, &buffer))
 	ret
 addlq_jxx_label endp
 
@@ -209,7 +209,7 @@ GetCaseValue proc uses esi edi ebx hll, tokenarray, dcount, scount
 			mov ModuleInfo.token_count,eax
 			mov i,0
 			mov ecx,eax
-			EvalOperand( addr i, tokenarray, ecx, addr opnd, EXPF_NOERRMSG )
+			EvalOperand( &i, tokenarray, ecx, &opnd, EXPF_NOERRMSG )
 			.break .if eax != NOT_ERROR
 
 			mov eax,DWORD PTR opnd.value64
@@ -499,7 +499,7 @@ local buffer[64]:sbyte
 		AddLineQueueX( "push %r", reg )
 	.endif
 
-	GetResWName( reg, addr buffer )
+	GetResWName( reg, &buffer )
 
 	mov eax,flags
 	mov edx,reg
@@ -536,7 +536,7 @@ local buffer[64]:sbyte
 			.if eax & HLLF_ARGMEM
 
 				AddLineQueueX( "mov %r,WORD PTR %s", edx, ebx )
-			.elseif _stricmp( ebx, addr buffer )
+			.elseif _stricmp( ebx, &buffer )
 
 				AddLineQueueX( "mov %r,%s", edx, ebx )
 			.endif
@@ -556,7 +556,7 @@ local buffer[64]:sbyte
 			.if eax & HLLF_ARGMEM
 
 				AddLineQueueX( "mov %r,DWORD PTR %s", edx, ebx )
-			.elseif _stricmp( ebx, addr buffer )
+			.elseif _stricmp( ebx, &buffer )
 
 				AddLineQueueX( "mov %r,%s", edx, ebx )
 			.endif
@@ -618,7 +618,7 @@ local	r_dw:		DWORD,	; dw/dd/dq
 	;
 	; get static case-count
 	;
-	GetCaseValue( esi, tokenarray, addr dynamic, addr static )
+	GetCaseValue( esi, tokenarray, &dynamic, &static )
 
 	.if !( ModuleInfo.aflag & _AF_TABLE ) || eax < MIN_JTABLE
 		;
@@ -655,7 +655,7 @@ local	r_dw:		DWORD,	; dw/dd/dq
 	mov r_ax,edx
 	mov r_size,ecx
 
-	strcpy( addr l_start, edi )
+	strcpy( &l_start, edi )
 	;
 	; flip exit to default if exist
 	;
@@ -680,7 +680,7 @@ local	r_dw:		DWORD,	; dw/dd/dq
 		shl eax,cl
 		AddLineQueueX( "ALIGN %d", eax )
 	.endif
-	AddLineQueueX( "%s%s", addr l_start, LABELQUAL )
+	AddLineQueueX( "%s%s", &l_start, LABELQUAL )
 
 	.if dynamic
 
@@ -697,7 +697,7 @@ local	r_dw:		DWORD,	; dw/dd/dq
 
 	.while [esi].condlines
 
-		GetMaxCaseValue( esi, addr min, addr max, addr min_table, addr max_table )
+		GetMaxCaseValue( esi, &min, &max, &min_table, &max_table )
 
 		mov dist,eax
 		mov tcases,ecx
@@ -725,16 +725,16 @@ local	r_dw:		DWORD,	; dw/dd/dq
 				.endc
 			  .case ebx >= eax
 				mov ebx,tcases
-				SetLowCount( esi, addr tcases, min, max_table )
+				SetLowCount( esi, &tcases, min, max_table )
 				.endc
 			  .default
 				mov ebx,tcases
-				SetHighCount( esi, addr tcases, max, max_table )
+				SetHighCount( esi, &tcases, max, max_table )
 				.endc
 			.endsw
 			add ncases,eax
 
-			GetMaxCaseValue( esi, addr min, addr max, addr min_table, addr max_table )
+			GetMaxCaseValue( esi, &min, &max, &min_table, &max_table )
 			mov dist,eax
 			.break .if ebx == tcases
 		.endf
@@ -750,12 +750,12 @@ local	r_dw:		DWORD,	; dw/dd/dq
 		;
 		; Create the jump table lable
 		;
-		GetLabelStr( GetHllLabel(), addr l_jtab )
+		GetLabelStr( GetHllLabel(), &l_jtab )
 
 		mov edi,l_exit
 		.if ncases
 
-			mov edi,GetLabelStr( GetHllLabel(), addr l_start )
+			mov edi,GetLabelStr( GetHllLabel(), &l_start )
 		.endif
 
 		mov ebx,[esi].condlines
@@ -815,11 +815,11 @@ local	r_dw:		DWORD,	; dw/dd/dq
 
 			.if ModuleInfo.aflag & _AF_REGAX
 
-				AddLineQueueX( "mov bx,cs:[bx+%s]", addr l_jtab )
+				AddLineQueueX( "mov bx,cs:[bx+%s]", &l_jtab )
 				AddLineQueue ( "xchg ax,bx" )
 				AddLineQueue ( "jmp ax" )
 			.else
-				AddLineQueueX( "mov ax,cs:[bx+%s]", addr l_jtab )
+				AddLineQueueX( "mov ax,cs:[bx+%s]", &l_jtab )
 				AddLineQueue ( "mov bx,sp" )
 				AddLineQueue ( "mov ss:[bx+4],ax" )
 				AddLineQueue ( "pop ax" )
@@ -845,28 +845,28 @@ local	r_dw:		DWORD,	; dw/dd/dq
 
 						AddLineQueueX(
 							"movzx %r,BYTE PTR [%r+IT%s-(%d)]",
-							ebx, ebx, addr l_jtab, min )
+							ebx, ebx, &l_jtab, min )
 					.else
 						AddLineQueueX(
 							"movzx %r,WORD PTR [%r*2+IT%s-(%d*2)]",
-							ebx, ebx, addr l_jtab, min )
+							ebx, ebx, &l_jtab, min )
 					.endif
 					.if ModuleInfo.aflag & _AF_REGAX
 
 						AddLineQueueX( "jmp [%r*%d+%s]",
-							ebx, r_size, addr l_jtab )
+							ebx, r_size, &l_jtab )
 					.else
 						AddLineQueueX( "mov %r,[%r*%d+%s]",
-							ebx, ebx, r_size, addr l_jtab )
+							ebx, ebx, r_size, &l_jtab )
 					.endif
 				.else
 					.if ModuleInfo.aflag & _AF_REGAX
 
 						AddLineQueueX( "jmp [%r*%d+%s-(%d*%d)]",
-							ebx, r_size, addr l_jtab, min, r_size )
+							ebx, r_size, &l_jtab, min, r_size )
 					.else
 						AddLineQueueX( "mov %r,[%r*%d+%s-(%d*%d)]",
-							ebx, ebx, r_size, addr l_jtab, min, r_size )
+							ebx, ebx, r_size, &l_jtab, min, r_size )
 					.endif
 				.endif
 				.if !( ModuleInfo.aflag & _AF_REGAX )
@@ -897,24 +897,24 @@ local	r_dw:		DWORD,	; dw/dd/dq
 
 					AddLineQueueX(
 						"movzx %s,BYTE PTR [%s+IT%s-(%d)]",
-						ebx, ebx, addr l_jtab, min )
+						ebx, ebx, &l_jtab, min )
 				.else
 					AddLineQueueX(
 						"movzx %s,WORD PTR [%s*2+IT%s-(%d*2)]",
-						ebx, ebx, addr l_jtab, min )
+						ebx, ebx, &l_jtab, min )
 				.endif
 				.if ModuleInfo.aflag & _AF_REGAX
 
-					AddLineQueueX( "jmp [%s*%d+%s]", ebx, r_size, addr l_jtab )
+					AddLineQueueX( "jmp [%s*%d+%s]", ebx, r_size, &l_jtab )
 				.else
 					AddLineQueueX( "mov %s,[%s*%d+%s]",
-						ebx, ebx, r_size, addr l_jtab )
+						ebx, ebx, r_size, &l_jtab )
 					AddLineQueueX( "xchg %s,[%r]", ebx, r_sp )
 					AddLineQueue ( "retn" )
 				.endif
 			.else
 				AddLineQueueX( "jmp [%s*%d+%s-(%d*%d)]",
-					ebx, r_size, addr l_jtab, min, r_size )
+					ebx, r_size, &l_jtab, min, r_size )
 			.endif
 			.endc
 		.endsw
@@ -923,7 +923,7 @@ local	r_dw:		DWORD,	; dw/dd/dq
 		; Create the jump table
 		;
 		AddLineQueueX( "ALIGN %d", r_size )
-		AddLineQueueX( "%s%s", addr l_jtab, LABELQUAL )
+		AddLineQueueX( "%s%s", &l_jtab, LABELQUAL )
 
 		.if use_index
 
@@ -936,7 +936,7 @@ local	r_dw:		DWORD,	; dw/dd/dq
 				.if [esi].flags & HLLF_TABLE
 
 					.break .if !SymFind( GetLabelStr( [esi].labels[LSTART*4],
-							      addr labelx ))
+							      &labelx ))
 
 					.if ebx != [eax].asym._offset
 
@@ -965,7 +965,7 @@ local	r_dw:		DWORD,	; dw/dd/dq
 						r_dw,
 						GetLabelStr(
 							[esi].labels[LSTART*4],
-							addr labelx
+							&labelx
 						),
 						[esi].condlines
 					)
@@ -992,7 +992,7 @@ local	r_dw:		DWORD,	; dw/dd/dq
 				mov ebx,T_DW
 			.endif
 			mov	r_db,ebx
-			AddLineQueueX( "IT%s LABEL BYTE", addr l_jtab )
+			AddLineQueueX( "IT%s LABEL BYTE", &l_jtab )
 
 			.for ebx = 0: ebx < icount: ebx++
 				;
@@ -1052,7 +1052,7 @@ local	r_dw:		DWORD,	; dw/dd/dq
 			;
 			; Create the new start label
 			;
-			AddLineQueueX( "%s%s", addr l_start, LABELQUAL )
+			AddLineQueueX( "%s%s", &l_start, LABELQUAL )
 
 			.for ebx = [esi].caselist: ebx: ebx = [ebx].caselist
 
@@ -1265,7 +1265,7 @@ local	rc:SINT,cmd:SINT,
 
 	GetLabelStr( [esi].labels[LEXIT*4], edi )
 	RenderCaseExit( esi )
-	strcpy( addr l_exit, edi )
+	strcpy( &l_exit, edi )
 	GetLabelStr( [esi].labels[LSTART*4], edi )
 
 	assume ebx:ptr hll_item
@@ -1292,14 +1292,14 @@ local	rc:SINT,cmd:SINT,
 
 				mov i,1
 				or  [ebx].flags,HLLF_WHILE
-				ExpandHllExpression( ebx, addr i, tokenarray, LSTART, 1, edi )
+				ExpandHllExpression( ebx, &i, tokenarray, LSTART, 1, edi )
 			.else
 				QueueTestLines( [ebx].condlines )
 			.endif
 			mov ebx,[ebx].caselist
 		.endw
 	.else
-		RenderSwitch(esi, tokenarray, edi, addr l_exit)
+		RenderSwitch(esi, tokenarray, edi, &l_exit)
 	.endif
 
 	assume ebx:ptr asm_tok
@@ -1405,7 +1405,7 @@ local	rc:	SINT,
 		;
 		; .case a, b, c, ...
 		;
-		.endc .if RenderMultiCase( addr i, edi, ebx )
+		.endc .if RenderMultiCase( &i, edi, ebx )
 
 		mov cl,ModuleInfo.casealign
 		.if cl
@@ -1559,7 +1559,7 @@ local	rc:	SINT,
 			.if !eax
 
 				mov ebx,i
-				EvaluateHllExpression( esi, addr i, tokenarray, LSTART, 1, edi )
+				EvaluateHllExpression( esi, &i, tokenarray, LSTART, 1, edi )
 				mov i,ebx
 				mov rc,eax
 				.endc .if eax == ERROR
@@ -1655,7 +1655,7 @@ local	rc:	SINT,
 				mov i,eax
 			.endif
 		.else
-			_lk_HllContinueIf(addr i, tokenarray)
+			_lk_HllContinueIf(&i, tokenarray)
 		.endif
 		.endc
 

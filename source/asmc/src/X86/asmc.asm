@@ -135,7 +135,7 @@ endif
     mov ecx,__argv
     mov [ecx],eax
 
-    .while ParseCmdline( __argv, addr numArgs )
+    .while ParseCmdline( __argv, &numArgs )
 
 	inc numFiles
 	write_logo()
@@ -143,7 +143,7 @@ endif
 	mov esi,Options.names[ASM*4]
 
 	.if !Options.process_subdir
-	    .if FindFirstFile( esi, addr ff ) == -1
+	    .if FindFirstFile( esi, &ff ) == -1
 		asmerr( 1000, esi )
 		.break
 	    .endif

@@ -109,6 +109,9 @@ static	int watc_pcheck( struct dsym *, struct dsym *, int * );
 static void watc_return( struct dsym *, char * );
 static	int ms64_pcheck( struct dsym *, struct dsym *, int * );
 static void ms64_return( struct dsym *, char * );
+#ifdef FCT_ELF64
+static	int elf64_pcheck( struct dsym *, struct dsym *, int * );
+#endif
 
 /* table of fastcall types.
  * must match order of enum fastcall_type!
@@ -118,7 +121,10 @@ static void ms64_return( struct dsym *, char * );
 static const struct fastcall_conv fastcall_tab[] = {
     { ms32_pcheck, ms32_return },  /* FCT_MSC */
     { watc_pcheck, watc_return },  /* FCT_WATCOMC */
-    { ms64_pcheck, ms64_return }   /* FCT_WIN64 */
+    { ms64_pcheck, ms64_return },  /* FCT_WIN64 */
+#ifdef FCT_ELF64
+    { elf64_pcheck,ms64_return } /* FCT_ELF64 */
+#endif
 };
 
 const enum special_token stackreg[] = { T_SP, T_ESP, T_RSP };
@@ -307,6 +313,42 @@ static void ms64_return( struct dsym *proc, char *buffer )
     /* nothing to do, the caller cleans the stack */
     return;
 }
+
+#ifdef FCT_ELF64
+
+extern unsigned char elf64_regs[];
+
+static int elf64_pcheck( struct dsym *proc, struct dsym *paranode, int *used )
+{
+    char regname[32];
+    int reg;
+    int size = SizeFromMemtype( paranode->sym.mem_type, paranode->sym.Ofssize, paranode->sym.type );
+
+    if ( size > CurrWordSize || *used >= 6 || paranode->sym.is_vararg ) {
+	paranode->sym.string_ptr = NULL;
+	return(0);
+    }
+    if ( paranode->sym.mem_type == MT_REAL4 ||
+	 paranode->sym.mem_type == MT_REAL8 ||
+	 paranode->sym.mem_type == MT_OWORD )
+	 reg = T_XMM0 + *used;
+    else
+	switch ( size ) {
+	case 1:	 reg = elf64_regs[*used];    break;
+	case 2:	 reg = elf64_regs[*used+6];  break;
+	case 4:	 reg = elf64_regs[*used+12]; break;
+	default: reg = elf64_regs[*used+18]; break;
+	}
+    paranode->sym.state = SYM_TMACRO;
+    paranode->sym.regist[0] = reg;
+    GetResWName( reg, regname );
+    paranode->sym.string_ptr = (char *)LclAlloc( strlen( regname ) + 1 );
+    strcpy( paranode->sym.string_ptr, regname );
+    (*used)++;
+    return( 1 );
+}
+
+#endif
 
 static void pushitem( void *stk, void *elmt )
 /*******************************************/
@@ -542,7 +584,6 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
     struct asym	    *sym;
     int		    cntParam;
     int		    offset;
-    //int	      size;
     int		    fcint = 0;
     struct qualified_type ti;
     bool	    is_vararg;
@@ -558,7 +599,8 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 	proc->sym.langtype == LANG_SYSCALL ||
 	( proc->sym.langtype == LANG_FASTCALL && ModuleInfo.Ofssize != USE64 ) ||
 	proc->sym.langtype == LANG_STDCALL)
-	for ( paracurr = proc->e.procinfo->paralist; paracurr && paracurr->nextparam; paracurr = paracurr->nextparam );
+	for ( paracurr = proc->e.procinfo->paralist; paracurr && paracurr->nextparam;
+	      paracurr = paracurr->nextparam );
     else
 	paracurr = proc->e.procinfo->paralist;
 
@@ -582,15 +624,12 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 	ti.symtype = NULL;
 	ti.is_ptr = 0;
 	ti.ptr_memtype = MT_EMPTY;
-	/* v2.02: init is_far depending on memory model */
-	//ti.is_far = FALSE;
 	if ( SIZE_DATAPTR & ( 1 << ModuleInfo.model ) )
 	    ti.is_far = TRUE;
 	else
 	    ti.is_far = FALSE;
 	ti.Ofssize = ModuleInfo.Ofssize;
 	ti.size = CurrWordSize;
-
 	is_vararg = FALSE;
 
 	/* read colon. It's optional for PROC.
@@ -711,8 +750,12 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 	    paranode->sym.is_ptr  = ti.is_ptr;
 	    paranode->sym.ptr_memtype = ti.ptr_memtype;
 	    paranode->sym.is_vararg = is_vararg;
-	    if ((proc->sym.langtype == LANG_FASTCALL) &&
-		fastcall_tab[ModuleInfo.fctype].paramcheck( proc, paranode, &fcint ) ) {
+
+	    if ( ( proc->sym.langtype == LANG_FASTCALL
+#ifdef FCT_ELF64
+		|| ( proc->sym.langtype == LANG_SYSCALL && ModuleInfo.fctype == FCT_ELF64 )
+#endif
+		) && fastcall_tab[ModuleInfo.fctype].paramcheck( proc, paranode, &fcint ) ) {
 	    } else {
 		paranode->sym.state = SYM_STACK;
 	    }
@@ -724,11 +767,7 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 		/* v2.11: CurrWordSize does reflect the default parameter size only for PROCs.
 		 * For PROTOs and TYPEs use member seg_ofssize.
 		 */
-		//proc->e.procinfo->parasize += ROUND_UP( ti.size, CurrWordSize );
 		proc->e.procinfo->parasize += ROUND_UP( ti.size, IsPROC ? CurrWordSize : ( 2 << proc->sym.seg_ofssize ) );
-
-	    /* v2.05: the PROC's vararg flag has been set already */
-	    //proc->e.procinfo->is_vararg |= paranode->sym.is_vararg;
 
 	    /* Parameters usually are stored in "push" order.
 	     * However, for Win64, it's better to store them
@@ -754,6 +793,9 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 		    paracurr = NULL;
 		}
 		break;
+#ifdef FCT_ELF64
+	    case LANG_SYSCALL:
+#endif
 	    case LANG_FASTCALL:
 		if ( ti.Ofssize == USE64 )
 		    goto left_to_right;
@@ -799,9 +841,11 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 
 	/* now calculate the [E|R]BP offsets */
 
-	if (ModuleInfo.Ofssize == USE64 &&
-	    proc->sym.langtype == LANG_FASTCALL) {
-
+	if ( ( ModuleInfo.Ofssize == USE64 && proc->sym.langtype == LANG_FASTCALL )
+#ifdef FCT_ELF64
+	    || ( ModuleInfo.Ofssize == USE64 && proc->sym.langtype == LANG_SYSCALL )
+#endif
+	    ) {
 	    for ( paranode = proc->e.procinfo->paralist; paranode ;paranode = paranode->nextparam )
 		if ( paranode->sym.state == SYM_TMACRO ) /* register param */
 		    ;
@@ -841,8 +885,8 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
  * 2. use the current segment's attribute
  * 3. if no segment is set, use cpu setting
  */
-ret_code ParseProc( struct dsym *proc, int i, struct asm_tok tokenarray[], bool IsPROC, unsigned char langtype )
-/***************************************************************************************************************/
+int ParseProc( struct dsym *proc, int i, struct asm_tok tokenarray[], bool IsPROC,
+	unsigned char langtype )
 {
     char	    *token;
     uint_16	    *regist;
@@ -1887,7 +1931,6 @@ static void win64_SaveRegParams( struct proc_info *info )
  * OPTION FRAME:AUTO is set */
 
 static void write_win64_default_prologue( struct proc_info *info )
-/****************************************************************/
 {
     uint_16 *regist;
     const char * const *ppfmt;
@@ -2004,8 +2047,7 @@ static void write_win64_default_prologue( struct proc_info *info )
  write prolog code
 */
 
-static ret_code write_default_prologue( void )
-/********************************************/
+static int write_default_prologue( void )
 {
     struct proc_info *info;
     uint_16 *regist;
@@ -2096,8 +2138,8 @@ static ret_code write_default_prologue( void )
 	    regist = NULL;
 	}
 	AddLineQueueX( "sub %r, %d + %s", stackreg[ModuleInfo.Ofssize], NUMQUAL info->localsize, sym_ReservedStack->name );
-    } else
-    if( info->localsize	 ) {
+
+    } else if( info->localsize ) {
 	/* using ADD and the 2-complement has one advantage:
 	 * it will generate short instructions up to a size of 128.
 	 * with SUB, short instructions work up to 127 only.
@@ -2304,7 +2346,6 @@ static void pop_register( uint_16 *regist )
  */
 
 static void write_win64_default_epilogue( struct proc_info *info )
-/****************************************************************/
 {
     /* restore non-volatile xmm registers */
     if ( info->regslist ) {
@@ -2572,7 +2613,6 @@ static ret_code write_userdef_epilogue( bool flag_iret, struct asm_tok tokenarra
  * it's ensured already that ModuleInfo.proc_epilogue isn't NULL.
  */
 ret_code RetInstr( int i, struct asm_tok tokenarray[], int count )
-/****************************************************************/
 {
     struct proc_info   *info;
     bool	is_iret = FALSE;
@@ -2627,6 +2667,11 @@ ret_code RetInstr( int i, struct asm_tok tokenarray[], int count )
 		    sprintf( p, "%d%c", info->parasize, ModuleInfo.radix != 10 ? 't' : NULLC );
 		}
 		break;
+#ifdef FCT_ELF64
+	    case LANG_SYSCALL:
+	    if ( ModuleInfo.Ofssize != USE64 )
+		break;
+#endif
 	    case LANG_FASTCALL:
 		fastcall_tab[ModuleInfo.fctype].handlereturn( CurrProc, buffer );
 		break;

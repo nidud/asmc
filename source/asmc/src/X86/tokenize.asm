@@ -745,7 +745,7 @@ get_special_symbol PROC FASTCALL USES esi edi ebx buf, p
 					; v2.24 proc( &arg )
 					;
 				.elseif al == '&' && \
-					([ebx-16].token == T_COMMA || [ebx-16].token == T_OP_BRACKET)
+				   ([ebx-16].token == T_COMMA || [ebx-16].token == T_OP_BRACKET)
 					mov [ebx].token,al
 					lea eax,__amp
 					mov [ebx].string_ptr,eax
@@ -1352,7 +1352,7 @@ Tokenize PROC USES esi edi ebx line, start, tokenarray:PTR asm_tok, flags
 
 		mov eax,p.output
 		mov [ebx].string_ptr,eax
-		GetToken( ebx, addr p )
+		GetToken( ebx, &p )
 		mov rc,eax
 
 		.continue .if eax == EMPTY

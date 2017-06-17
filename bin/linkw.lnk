@@ -25,6 +25,16 @@ system begin con_32
     runtime console=4.0
 end
 
+# Win32 console application Open Watcom
+system begin watcom_c
+    option  quiet
+    libpath %ASMCDIR%\lib
+    library libc,kernel32,user32
+    symt    _cstart_
+    format  windows pe ^
+    runtime console=4.0
+end
+
 # Win32 console Unicode application
 system begin con_32W
     option  quiet

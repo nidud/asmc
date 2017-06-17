@@ -273,12 +273,11 @@ enum segofssize {
 /* fastcall types. if order is to be changed or entries
  * added, also adjust tables in proc.c, mangle.c and probably invoke.c!
  */
-enum fastcall_type {
-    FCT_MSC,	    /* MS 16-/32-bit fastcall (ax,dx,cx / ecx,edx) */
-    FCT_WATCOMC,    /* OW register calling convention (eax, ebx, ecx, edx) */
-    FCT_WIN64,	    /* Win64 fastcall convention (rcx, rdx, r8, r9) */
-    FCT_ASMC	    /* ASMC fastcall (ax,dx,cx,bx,si,di,bp) */
-};
+
+#define FCT_MSC		0 /* MS 16-/32-bit fastcall (ax,dx,cx / ecx,edx) */
+#define FCT_WATCOMC	1 /* OW register calling convention (eax, ebx, ecx, edx) */
+#define FCT_WIN64	2 /* Win64 fastcall convention (rcx, rdx, r8, r9) */
+#define FCT_ELF64	3 /* syscall 64 */
 
 enum stdcall_decoration {
     STDCALL_FULL,

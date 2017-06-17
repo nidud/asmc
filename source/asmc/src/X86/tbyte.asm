@@ -426,12 +426,12 @@ TB_create proc uses esi edi ebx value:ptr u96, exponent:sdword, ld:ptr TB_LD
 	lea esi,tab_plus_exp
     .endif
 
-    U96LD(value, addr res)
+    U96LD(value, &res)
 
     .for ebx = 0: ebx < MAX_EXP_INDEX: ebx++
 	.if edi & 1
 	    imul ecx,ebx,sizeof(ELD)
-	    multiply(addr res, addr [esi+ecx], addr res)
+	    multiply(&res, &[esi+ecx], &res)
 	.endif
 	shr edi,1
 	.break .ifz
@@ -514,12 +514,12 @@ local	sign,
 	    inc exponent_tmp
 	    inc exp1
 	.else
-	    .if add_check_u96_overflow(addr value_tmp, eax)
+	    .if add_check_u96_overflow(&value_tmp, eax)
 		mov overflow,1
 		inc exponent_tmp
 		inc exp1
 	    .elseif byte ptr [esi] != '0'
-		memcpy(addr value, addr value_tmp, sizeof(u96))
+		memcpy(&value, &value_tmp, sizeof(u96))
 		mov exp1,0
 	    .elseif value.m32[0*4] || value.m32[1*4] || value.m32[2*4]
 		inc exp1
@@ -538,12 +538,12 @@ local	sign,
 	sub al,'0'
 	.while al < 10
 	    .if overflow == 0
-		.if add_check_u96_overflow(addr value_tmp, eax )
+		.if add_check_u96_overflow(&value_tmp, eax )
 		    mov overflow,1
 		.else
 		    dec exponent_tmp
 		    .if byte ptr [esi] != '0'
-			memcpy(addr value, addr value_tmp, sizeof(u96))
+			memcpy(&value, &value_tmp, sizeof(u96))
 			mov eax,exponent_tmp
 			mov exponent,eax
 		    .endif
@@ -591,7 +591,7 @@ local	sign,
     .endif
     mov edx,exp_value
     add edx,exponent
-    TB_create(addr value, edx, ld)
+    TB_create(&value, edx, ld)
     mov eax,ld
     .ifs sign < 0
 	or [eax].ELD.e,0x8000

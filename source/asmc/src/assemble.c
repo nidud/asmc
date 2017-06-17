@@ -444,8 +444,12 @@ static void ModulePassInit( void )
 	     * there's no other model than FLAT possible.
 	     */
 	    model = MODEL_FLAT;
-	    if ( ModuleInfo.langtype == LANG_NONE && Options.output_format == OFORMAT_COFF )
-		ModuleInfo.langtype = LANG_FASTCALL;
+	    if ( ModuleInfo.langtype == LANG_NONE ) {
+		if ( Options.output_format == OFORMAT_COFF )
+		    ModuleInfo.langtype = LANG_FASTCALL;
+		else
+		    ModuleInfo.langtype = LANG_SYSCALL;
+	    }
 	} else
 	    /* if model FLAT is to be set, ensure that cpu is compat. */
 	    if ( model == MODEL_FLAT && ( cpu & P_CPU_MASK ) < P_386 ) /* cpu < 386? */

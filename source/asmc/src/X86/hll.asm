@@ -404,7 +404,7 @@ local	op:		SINT,
 	; get (first) operand
 	;
 	mov op1_pos,edi
-	LGetToken( hll, esi, ebx, addr op1 )
+	LGetToken( hll, esi, ebx, &op1 )
 	cmp eax,ERROR
 	je  toend
 
@@ -494,7 +494,7 @@ local	op:		SINT,
 		  .case EXPR_CONST
 			.if op1.hvalue != 0 && op1.hvalue != -1
 
-				EmitConstError( addr op1 )
+				EmitConstError( &op1 )
 				jmp toend
 			.endif
 
@@ -506,7 +506,7 @@ local	op:		SINT,
 
 			.if (( is_true && op1.value ) || ( edx && op1.value == 0 ))
 
-				sprintf( buffer, "jmp @C%04X%s", _label, addr EOLSTR )
+				sprintf( buffer, "jmp @C%04X%s", _label, &EOLSTR )
 			.else
 				mov BYTE PTR [eax],NULLC
 			.endif
@@ -522,7 +522,7 @@ local	op:		SINT,
 	;
 	mov edi,[esi]
 	mov op2_pos,edi
-	LGetToken( hll, esi, ebx, addr op2 )
+	LGetToken( hll, esi, ebx, &op2 )
 	cmp eax,ERROR
 	je  toend
 
@@ -785,7 +785,7 @@ local	truelabel:	SINT,
 			;
 			.if BYTE PTR [ebx]
 
-				strcat( GetLabelStr( truelabel, addr [ebx+4] ), addr EOLSTR )
+				strcat( GetLabelStr( truelabel, &[ebx+4] ), &EOLSTR )
 			.endif
 			;
 			; v2.22 .while	(eax || edx) && ecx -- failed
@@ -800,7 +800,7 @@ local	truelabel:	SINT,
 			mov olabel,GetLabel( hll, ilabel )
 			strlen(ebx)
 			add ebx,eax
-			sprintf( ebx, "%s%s%s", GetLabelStr( olabel, addr buff ), LABELQUAL, addr EOLSTR )
+			sprintf( ebx, "%s%s%s", GetLabelStr( olabel, &buff ), LABELQUAL, &EOLSTR )
 			ReplaceLabel( buffer, olabel, nlabel )
 			mov [edi].hll_opnd.lastjmp,0
 		.endif
@@ -814,7 +814,7 @@ local	truelabel:	SINT,
 
 		strlen(esi)
 		add esi,eax
-		strcat( strcat( GetLabelStr( truelabel, esi ), LABELQUAL ), addr EOLSTR )
+		strcat( strcat( GetLabelStr( truelabel, esi ), LABELQUAL ), &EOLSTR )
 		mov [edi].hll_opnd.lastjmp,0
 	.endif
 	mov eax,NOT_ERROR
@@ -879,7 +879,7 @@ local	truelabel:	SINT,
 
 			.if BYTE PTR [ebx]
 
-				strcat( GetLabelStr( truelabel, addr [ebx+4] ), addr EOLSTR )
+				strcat( GetLabelStr( truelabel, &[ebx+4] ), &EOLSTR )
 			.endif
 
 			mov ebx,esi
@@ -897,9 +897,9 @@ local	truelabel:	SINT,
 			.if [eax].hll_item.cmd == HLL_REPEAT
 
 				ReplaceLabel( buffer, olabel, nlabel )
-				sprintf( ebx, "%s%s%s", GetLabelStr( nlabel, addr buff ), LABELQUAL, addr EOLSTR )
+				sprintf( ebx, "%s%s%s", GetLabelStr( nlabel, &buff ), LABELQUAL, &EOLSTR )
 			.else
-				sprintf( ebx, "%s%s%s", GetLabelStr( olabel, addr buff ), LABELQUAL, addr EOLSTR )
+				sprintf( ebx, "%s%s%s", GetLabelStr( olabel, &buff ), LABELQUAL, &EOLSTR )
 				ReplaceLabel( buffer, olabel, nlabel )
 			.endif
 		.endif
@@ -920,7 +920,7 @@ local	truelabel:	SINT,
 
 		strlen( esi )
 		add esi,eax
-		strcat( strcat( GetLabelStr( truelabel, esi ), LABELQUAL ), addr EOLSTR )
+		strcat( strcat( GetLabelStr( truelabel, esi ), LABELQUAL ), &EOLSTR )
 		mov eax,truelabel
 		mov [edi].hll_opnd.lasttruelabel,eax
 	.endif
@@ -1313,7 +1313,7 @@ local	b[MAX_LINE_LEN]:SBYTE,
 	mov eax,dst
 	.if BYTE PTR [eax] != 0
 
-		strcat( eax, addr EOLSTR )
+		strcat( eax, &EOLSTR )
 	.endif
 	strcat( eax, esi )
 	StripSource( i, edi, tokenarray )
@@ -1327,11 +1327,11 @@ RenderHllProc proc private uses esi edi dst:LPSTR,i:UINT,tokenarray:ptr asm_tok
 
   local oldstat:input_status
 
-	PushInputStatus( addr oldstat )
+	PushInputStatus( &oldstat )
 	mov esi,LKRenderHllProc( dst, i, tokenarray )
 	mov edi,LclAlloc( MAX_LINE_LEN )
 	strcpy( eax, ModuleInfo.currsource )
-	PopInputStatus( addr oldstat )
+	PopInputStatus( &oldstat )
 	Tokenize( edi, 0, tokenarray, TOK_DEFAULT )
 	mov ModuleInfo.token_count,eax
 	mov eax,esi
@@ -1482,7 +1482,7 @@ local	hllop:		hll_opnd,
 		mov BYTE PTR [ecx],0
 
 		.if GetExpression( hll, esi, ebx, ilabel, is_true,
-				ecx, addr hllop ) != ERROR
+				ecx, &hllop ) != ERROR
 
 			mov eax,[esi]
 			shl eax,4
@@ -1638,7 +1638,7 @@ local	rc:		DWORD,
 	mov ebx,tokenarray
 	mov edi,buffer
 
-	PushInputStatus( addr oldstat )
+	PushInputStatus( &oldstat )
 
 	.if [esi].hll_item.flags & HLLF_WHILE
 
@@ -1691,7 +1691,7 @@ local	rc:		DWORD,
 		.endif
 	.endif
 
-	PopInputStatus( addr oldstat )
+	PopInputStatus( &oldstat )
 	Tokenize( ModuleInfo.currsource, 0, ebx, TOK_DEFAULT )
 	mov ModuleInfo.token_count,eax
 	mov eax,hll
@@ -1799,7 +1799,7 @@ local	buffer[32]:SBYTE
 	AddLineQueueX( " %r %r", T_DEC, ecx )
 	mov edx,hll
 	mov ecx,[edx].hll_item.labels[LSTART*4]
-	AddLineQueueX( " jnz %s", GetLabelStr( ecx, addr buffer ) )
+	AddLineQueueX( " jnz %s", GetLabelStr( ecx, &buffer ) )
 	ret
 
 RenderUntilXX endp
@@ -1898,7 +1898,7 @@ GetJumpString proc private uses edx ecx cmd
 		asmerr(1011)
 	.endsw
 
-	GetResWName( ecx, addr buffer )
+	GetResWName( ecx, &buffer )
 	.if byte ptr [eax+2] == 0
 
 		mov word ptr [eax+2],' '
@@ -1994,7 +1994,7 @@ local	rc:		SINT,
 		;
 		; get the C-style expression, convert to ASM code lines
 		;
-		EvaluateHllExpression( esi, addr i, ebx, LTEST, 0, edi )
+		EvaluateHllExpression( esi, &i, ebx, LTEST, 0, edi )
 		mov rc,eax
 		.if eax == NOT_ERROR
 
@@ -2054,7 +2054,7 @@ local	rc:		SINT,
 					.endc
 				.endsw
 				mov	[esi].flags,ecx
-				EvaluateHllExpression( esi, addr i, ebx, LSTART, 1, edi )
+				EvaluateHllExpression( esi, &i, ebx, LSTART, 1, edi )
 				mov rc,eax
 
 				.if eax == NOT_ERROR
@@ -2071,10 +2071,10 @@ local	rc:		SINT,
 				.endif
 			.elseif cmd != T_DOT_WHILE
 
-				GetLabelStr( [esi].labels[LSTART*4], addr [edi+20] )
+				GetLabelStr( [esi].labels[LSTART*4], &[edi+20] )
 				strcpy( edi, GetJumpString( cmd ) )
 				strcat( edi, " " )
-				strcat( edi, addr [edi+20] )
+				strcat( edi, &[edi+20] )
 				InvertJump( edi )
 				jmp alloc_cond
 			.else
@@ -2091,7 +2091,7 @@ local	rc:		SINT,
 			.if _memicmp( edi, "jmp", 3 )
 
 				mov [esi].labels[LTEST],GetHllLabel()
-				AddLineQueueX( "jmp %s", GetLabelStr( [esi].labels[LTEST*4], addr buff ) )
+				AddLineQueueX( "jmp %s", GetLabelStr( [esi].labels[LTEST*4], &buff ) )
 			.endif
 		.else
 			mov	[esi].cmd,HLL_REPEAT
@@ -2104,7 +2104,7 @@ local	rc:		SINT,
 			shl eax,cl
 			AddLineQueueX( "ALIGN %d", eax )
 		.endif
-		AddLineQueueX( "%s%s", GetLabelStr( [esi].labels[LSTART*4], addr buff ), LABELQUAL )
+		AddLineQueueX( "%s%s", GetLabelStr( [esi].labels[LSTART*4], &buff ), LABELQUAL )
 		.endc
 
 	  .case T_DOT_IFS
@@ -2123,10 +2123,10 @@ local	rc:		SINT,
 		mov [esi].cmd,HLL_IF
 		mov [esi].labels[LSTART*4],0
 		mov [esi].labels[LTEST*4],GetHllLabel()
-		GetLabelStr( [esi].labels[LTEST*4], addr buff )
+		GetLabelStr( [esi].labels[LTEST*4], &buff )
 		.if GetJumpString( cmd )
 
-			strcat( strcpy( addr buffer, eax ), " " )
+			strcat( strcpy( &buffer, eax ), " " )
 			lea ecx,buff
 			AddLineQueue( strcat( eax, ecx ) )
 		.endif
@@ -2257,7 +2257,7 @@ HllEndDir proc uses esi edi ebx i:SINT, tokenarray:PTR asm_tok
 		.if [esi].flags & HLLF_EXPRESSION
 
 			ExpandHllExpression(
-				esi, addr i, tokenarray, LSTART, 1, edi )
+				esi, &i, tokenarray, LSTART, 1, edi )
 		.else
 			QueueTestLines( [esi].condlines )
 		.endif
@@ -2304,7 +2304,7 @@ HllEndDir proc uses esi edi ebx i:SINT, tokenarray:PTR asm_tok
 				mov ecx,LEXIT
 			.endif
 
-			EvaluateHllExpression( esi, addr i, tokenarray, ecx, 0, edi )
+			EvaluateHllExpression( esi, &i, tokenarray, ecx, 0, edi )
 			mov rc,eax
 
 			.if eax == NOT_ERROR
@@ -2391,7 +2391,7 @@ HllEndDir proc uses esi edi ebx i:SINT, tokenarray:PTR asm_tok
 			.endsw
 			mov [esi].flags,ecx
 
-			EvaluateHllExpression( esi, addr i, tokenarray, LSTART, 0, edi )
+			EvaluateHllExpression( esi, &i, tokenarray, LSTART, 0, edi )
 			mov rc,eax
 
 			.if eax == NOT_ERROR
@@ -2400,10 +2400,10 @@ HllEndDir proc uses esi edi ebx i:SINT, tokenarray:PTR asm_tok
 			.endif
 		.elseif cmd != T_DOT_UNTIL
 
-			GetLabelStr( [esi].labels[LSTART*4], addr [edi+20] )
+			GetLabelStr( [esi].labels[LSTART*4], &[edi+20] )
 			strcpy( edi, GetJumpString( cmd ) )
 			strcat( edi, " " )
-			strcat( edi, addr [edi+20] )
+			strcat( edi, &[edi+20] )
 			AddLineQueue( edi )
 		.endif
 		.endc
@@ -2504,10 +2504,10 @@ _lk_HllContinueIf proc i:ptr sdword, tokenarray:ptr asm_tok
 
 				mov eax,i
 				inc dword ptr [eax]
-				GetLabelStr([esi].labels[ecx*4], addr buff)
+				GetLabelStr([esi].labels[ecx*4], &buff)
 				strcpy(edi, GetJumpString( [ebx].tokval))
 				strcat(edi, " ")
-				strcat(edi, addr buff)
+				strcat(edi, &buff)
 				InvertJump(edi)
 				AddLineQueue(edi)
 				.endc
@@ -2620,14 +2620,14 @@ local	rc:	SINT,
 			; create new labels[LTEST] label
 			;
 			mov [esi].labels[LTEST*4],GetHllLabel()
-			EvaluateHllExpression( esi, addr i, tokenarray, LTEST, 0, edi )
+			EvaluateHllExpression( esi, &i, tokenarray, LTEST, 0, edi )
 			mov rc,eax
 
 			.if eax == NOT_ERROR
 
 				.if [esi].flags & HLLF_EXPRESSION
 
-					ExpandHllExpression( esi, addr i, tokenarray, LTEST, 0, edi )
+					ExpandHllExpression( esi, &i, tokenarray, LTEST, 0, edi )
 					mov eax,ModuleInfo.token_count
 					mov i,eax
 				.else
@@ -2715,7 +2715,7 @@ local	rc:	SINT,
 		;
 		inc i
 		add ebx,16
-		mov rc,_lk_HllContinueIf(addr i, tokenarray)
+		mov rc,_lk_HllContinueIf(&i, tokenarray)
 		.endc
 	.endsw
 

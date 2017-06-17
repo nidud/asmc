@@ -303,8 +303,7 @@ WriteModule PROC USES esi edi ebx modinfo
 		    Mangle( esi, ModuleInfo.stringbufferend )
 		    sprintf( ModuleInfo.currsource, "import '%s'  %s.%s\n",
 			ModuleInfo.stringbufferend,
-			addr [ebx].dll_desc.dname,
-			[esi].asym._name )
+			&[ebx].dll_desc.dname, [esi].asym._name )
 		    mov ebx,eax
 		    .if fwrite( ModuleInfo.currsource, 1, ebx, edi ) != ebx
 			WriteError()
@@ -379,7 +378,7 @@ add_cmdline_tmacros ENDP
 add_incpaths PROC USES esi
     mov esi,Options.queues[OPTQ_INCPATH*4]
     .while  esi
-	AddStringToIncludePath( addr [esi].qitem.value )
+	AddStringToIncludePath( &[esi].qitem.value )
 	mov esi,[esi].qitem.next
     .endw
     ret
@@ -485,7 +484,11 @@ ModulePassInit PROC USES esi
 	    mov esi,MODEL_FLAT
 	    .if ModuleInfo.langtype == LANG_NONE
 
-		mov ModuleInfo.langtype,LANG_FASTCALL
+		.if Options.output_format == OFORMAT_COFF
+		    mov ModuleInfo.langtype,LANG_FASTCALL
+		.else
+		    mov ModuleInfo.langtype,LANG_SYSCALL
+		.endif
 	    .endif
 	.else
 	    ;
@@ -670,7 +673,7 @@ aliases:
 	    ;
 	    ; remove unused EXTERNDEF/PROTO items from queue.
 	    ;
-	    sym_remove_table( addr SymTables[TAB_EXT*sizeof(symbol_queue)], esi )
+	    sym_remove_table( &SymTables[TAB_EXT*sizeof(symbol_queue)], esi )
 	    .continue
 	.endif
 	.continue .if [esi].asym.sint_flag & SINT_ISCOM
@@ -778,7 +781,7 @@ OnePass PROC USES esi edi
 	    .endif
 	    mov MacroLevel,eax
 	    mov ModuleInfo.CurrComment,0
-	    Tokenize( addr [esi].line_item.line, 0, ModuleInfo.tokenarray, TOK_DEFAULT )
+	    Tokenize( &[esi].line_item.line, 0, ModuleInfo.tokenarray, TOK_DEFAULT )
 	    mov ModuleInfo.token_count,eax
 	    .if eax
 
@@ -815,7 +818,7 @@ get_module_name PROC PRIVATE USES esi edi
     mov esi,Options.names[OPTN_MODULE_NAME*4]
     .if esi
 
-	strncpy( addr ModuleInfo._name, esi, sizeof( ModuleInfo._name ) )
+	strncpy( &ModuleInfo._name, esi, sizeof( ModuleInfo._name ) )
 	mov ModuleInfo._name[sizeof(ModuleInfo._name)-1],0
     .else
 	GetFNamePart( ModuleInfo.curr_fname[ASM*4] )
@@ -826,7 +829,7 @@ get_module_name PROC PRIVATE USES esi edi
 	.endif
 	sub eax,esi
 	mov ModuleInfo._name[eax],0
-	memcpy( addr ModuleInfo._name, esi, eax )
+	memcpy( &ModuleInfo._name, esi, eax )
     .endif
     ;
     ; the module name must be a valid identifier, because it's used
@@ -1131,7 +1134,7 @@ AssembleModule PROC USES esi edi ebx source
 	printf( " Assembling: %s\n", source )
     .endif
 
-    .if _setjmp( addr jmpenv )
+    .if _setjmp( &jmpenv )
 
 	.if eax == 1
 
@@ -1202,7 +1205,7 @@ AssembleModule PROC USES esi edi ebx source
 		    mov esi,[esi].dsym.next
 		.endw
 	    .else
-		QueueDeleteLinnum( addr LinnumQueue )
+		QueueDeleteLinnum( &LinnumQueue )
 		mov LinnumQueue.head,0
 	    .endif
 	.endif
@@ -1222,7 +1225,7 @@ AssembleModule PROC USES esi edi ebx source
 
     .if Parse_Pass > PASS_1 && write_to_file
 
-	WriteModule( addr ModuleInfo )
+	WriteModule( &ModuleInfo )
     .endif
 
     LstWriteCRef()

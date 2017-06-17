@@ -41,16 +41,6 @@ enum reg_used_flags {
     R0_H_CLEARED  = 0x02, /* 16bit: high byte of R0 (=AH) has been set to 0 */
     R0_X_CLEARED  = 0x04, /* 16bit: register R0 (=AX) has been set to 0 */
     R2_USED	  = 0x08, /* contents of DX is destroyed ( via CWD ); cpu < 80386 only */
-    RCX_USED	  = 0x08, /* win64: register contents of CL/CX/ECX/RCX is destroyed */
-    RDX_USED	  = 0x10, /* win64: register contents of DL/DX/EDX/RDX is destroyed */
-    R8_USED	  = 0x20, /* win64: register contents of R8B/R8W/R8D/R8 is destroyed */
-    R9_USED	  = 0x40, /* win64: register contents of R9B/R9W/R9D/R9 is destroyed */
-#define RPAR_START 3 /* Win64: RCX first param start at bit 3 */
-    ROW_AX_USED	  = 0x08, /* watc: register contents of AL/AX/EAX is destroyed */
-    ROW_DX_USED	  = 0x10, /* watc: register contents of DL/DX/EDX is destroyed */
-    ROW_BX_USED	  = 0x20, /* watc: register contents of BL/BX/EBX is destroyed */
-    ROW_CX_USED	  = 0x40, /* watc: register contents of CL/CX/ECX is destroyed */
-#define ROW_START 3 /* watc: irst param start at bit 3 */
 };
 
 int size_vararg; /* size of :VARARG arguments */
@@ -98,7 +88,6 @@ static void SkipTypecast( char *fullparam, int i, struct asm_tok tokenarray[] )
  */
 
 static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *proc, struct dsym *curr, int reqParam, uint_8 *r0flags)
-/**********************************************************************************************************************************/
 {
     int currParm;
     int psize;
@@ -158,9 +147,14 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 	    return( NOT_ERROR );
 	}
 
-	if ( proc->sym.langtype == LANG_FASTCALL )
+	if ( proc->sym.langtype == LANG_FASTCALL
+#ifdef FCT_ELF64
+	|| ( proc->sym.langtype == LANG_SYSCALL && ModuleInfo.Ofssize == USE64 )
+#endif
+	    ) {
 	    if ( fastcall_tab[ModuleInfo.fctype].handleparam( proc, reqParam, curr, addr, &opnd, fullparam, r0flags ) )
 		return( NOT_ERROR );
+	}
 
 	if ( opnd.kind == EXPR_REG || opnd.indirect ) {
 	    if ( curr->sym.isfar || psize == fptrsize ) {
@@ -301,7 +295,11 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 
 	pushsize = CurrWordSize;
 
-	if (proc->sym.langtype == LANG_FASTCALL)
+	if ( proc->sym.langtype == LANG_FASTCALL
+#ifdef FCT_ELF64
+	|| ( proc->sym.langtype == LANG_SYSCALL && ModuleInfo.Ofssize == USE64 )
+#endif
+	)
 	    if (fastcall_tab[ModuleInfo.fctype].handleparam(
 		 proc, reqParam, curr, addr, &opnd, fullparam, r0flags))
 		return(NOT_ERROR);
@@ -720,7 +718,6 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 /* generate a call for a prototyped procedure */
 
 int InvokeDirective( int i, struct asm_tok tokenarray[] )
-/************************************************************/
 {
     struct asym *	sym;
     struct dsym *	proc;
@@ -819,7 +816,11 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 
     for (curr = info->paralist, numParam = 0 ; curr ; curr = curr->nextparam, numParam++);
 
-    if (proc->sym.langtype == LANG_FASTCALL) {
+    if ( proc->sym.langtype == LANG_FASTCALL
+#ifdef FCT_ELF64
+	|| ( proc->sym.langtype == LANG_SYSCALL && ModuleInfo.Ofssize == USE64 )
+#endif
+    ) {
 	fastcall_init();
 	porder = fastcall_tab[ModuleInfo.fctype].invokestart(
 		   proc, numParam, i, tokenarray, &value);
@@ -906,6 +907,10 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 	    }
 	}
     }
+#ifdef FCT_ELF64
+    if ( info->has_vararg && proc->sym.langtype == LANG_SYSCALL && ModuleInfo.Ofssize == USE64 )
+	 AddLineQueueX( " xor %r, %r", T_EAX, T_EAX );
+#endif
 
     /* v2.05 added. A warning only, because Masm accepts this. */
     if ( opnd.base_reg != NULL && Parse_Pass == PASS_1 &&
@@ -916,35 +921,43 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
     strcpy( p, " call " );
     p += 6;
 
-	if ( sym->state == SYM_EXTERNAL && sym->dll ) {
-	    char *iatname = p;
-	    strcpy( p, ModuleInfo.g.imp_prefix );
-	    p += strlen( p );
-	    p += Mangle( sym, p );
-	    namepos++;
-	    if ( sym->iat_used == FALSE ) {
-		sym->iat_used = TRUE;
-		sym->dll->cnt++;
-		if ( sym->langtype != LANG_NONE && sym->langtype != ModuleInfo.langtype )
-		    AddLineQueueX( " externdef %r %s: %r %r", sym->langtype + T_C - 1, iatname, T_PTR, T_PROC );
-		else
-		    AddLineQueueX( " externdef %s: %r %r", iatname, T_PTR, T_PROC );
-	    }
+    if ( sym->state == SYM_EXTERNAL && sym->dll ) {
+	char *iatname = p;
+	strcpy( p, ModuleInfo.g.imp_prefix );
+	p += strlen( p );
+	p += Mangle( sym, p );
+	namepos++;
+	if ( sym->iat_used == FALSE ) {
+	    sym->iat_used = TRUE;
+	    sym->dll->cnt++;
+	    if ( sym->langtype != LANG_NONE && sym->langtype != ModuleInfo.langtype )
+		AddLineQueueX( " externdef %r %s: %r %r", sym->langtype + T_C - 1, iatname, T_PTR, T_PROC );
+	    else
+		AddLineQueueX( " externdef %s: %r %r", iatname, T_PTR, T_PROC );
 	}
-	size = tokenarray[parmpos].tokpos - tokenarray[namepos].tokpos;
-	memcpy( p, tokenarray[namepos].tokpos, size );
-	*(p+size) = NULLC;
+    }
+    size = tokenarray[parmpos].tokpos - tokenarray[namepos].tokpos;
+    memcpy( p, tokenarray[namepos].tokpos, size );
+    *(p+size) = NULLC;
 
     AddLineQueue( StringBufferEnd );
 
-    if (( sym->langtype == LANG_C || sym->langtype == LANG_SYSCALL ) &&
+    if (( sym->langtype == LANG_C ||
+	( sym->langtype == LANG_SYSCALL
+#ifdef FCT_ELF64
+	&& ModuleInfo.fctype != FCT_ELF64
+#endif
+	)) &&
 	( info->parasize || ( info->has_vararg && size_vararg ) )) {
 	if ( info->has_vararg ) {
 	    AddLineQueueX( " add %r, %u", stackreg[ModuleInfo.Ofssize], NUMQUAL info->parasize + size_vararg );
 	} else
 	    AddLineQueueX( " add %r, %u", stackreg[ModuleInfo.Ofssize], NUMQUAL info->parasize );
-    } else if ( sym->langtype == LANG_FASTCALL ) {
-
+    } else if ( sym->langtype == LANG_FASTCALL
+#ifdef FCT_ELF64
+	|| ( proc->sym.langtype == LANG_SYSCALL && ModuleInfo.fctype == FCT_ELF64 )
+#endif
+    ) {
 	fastcall_tab[ModuleInfo.fctype].invokeend( proc, numParam, value );
     }
     LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), NULL );

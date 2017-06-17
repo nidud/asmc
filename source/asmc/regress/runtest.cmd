@@ -14,8 +14,8 @@ cd tmp
 for %%f in (..\src\bin\*.asm) do call :cmpbin %%f
 for %%f in (..\src\mz\*.asm)  do call :cmpmz  %%f
 for %%f in (..\src\err\*.asm) do call :cmperr %%f
-for %%f in (..\src\omf\*.asm) do call :cmpomf %%f
 for %%f in (..\src\omf\*.asm) do call :lnkomf %%f
+for %%f in (..\src\omf\*.asm) do call :cmpomf %%f
 for %%f in (..\src\coff\*.asm) do call :coff %%f
 for %%f in (..\src\cofferr\*.asm) do call :cofferr %%f
 for %%f in (..\src\win64\*.asm) do call :win64 %%f
@@ -30,6 +30,7 @@ for %%f in (..\src\elf\*.asm) do call :elf %%f
 for %%f in (..\src\omf2\*.asm) do call :omf2 %%f
 for %%f in (..\src\omfcu\*.asm) do call :omfcu %%f
 for %%f in (..\src\Xc\*.asm) do call :Xc %%f
+for %%f in (..\src\elf64\*.asm) do call :elf64 %%f
 
 call :safeseh
 call :dllimp
@@ -150,6 +151,14 @@ goto end
 
 :elf
 %ASMX% -q -elf %1
+if errorlevel 1 goto end
+fcmp %~n1.OBJ ..\exp\%~n1.obj
+if errorlevel 1 goto end
+del %~n1.OBJ
+goto end
+
+:elf64
+%ASMX% -q -elf64 %1
 if errorlevel 1 goto end
 fcmp %~n1.OBJ ..\exp\%~n1.obj
 if errorlevel 1 goto end

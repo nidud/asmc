@@ -679,22 +679,22 @@ SymInit PROC USES esi edi ebx
 	mov	ecx,sizeof(gsym_table)
 	rep	stosb
 
-	time( addr time_of_day )
-	localtime( addr time_of_day )
+	time( &time_of_day )
+	localtime( &time_of_day )
 	mov	esi,eax
 
 if USESTRFTIME
-	strftime( addr szDate, 9, "%D", esi )	; POSIX date (mm/dd/yy)
-	strftime( addr szTime, 9, "%T", esi )	; POSIX time (HH:MM:SS)
+	strftime( &szDate, 9, "%D", esi )	; POSIX date (mm/dd/yy)
+	strftime( &szTime, 9, "%T", esi )	; POSIX time (HH:MM:SS)
 else
 	mov	eax,[esi].tm.tm_year
 	sub	eax,100
 	mov	ecx,[esi].tm.tm_mon
 	add	ecx,1
-;	sprintf(addr szDate, "%02u/%02u/%02u", ecx, [esi].tm.tm_mday, eax)
+;	sprintf(&szDate, "%02u/%02u/%02u", ecx, [esi].tm.tm_mday, eax)
 	add	eax,2000
-	sprintf(addr szDate, "%u-%02u-%02u", eax, ecx, [esi].tm.tm_mday )
-	sprintf(addr szTime, "%02u:%02u:%02u", [esi].tm.tm_hour, [esi].tm.tm_min, [esi].tm.tm_sec)
+	sprintf(&szDate, "%u-%02u-%02u", eax, ecx, [esi].tm.tm_mday )
+	sprintf(&szTime, "%02u:%02u:%02u", [esi].tm.tm_hour, [esi].tm.tm_min, [esi].tm.tm_sec)
 endif
 	lea	esi,tmtab
 	.while [esi].tmitem._name

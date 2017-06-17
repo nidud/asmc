@@ -24,7 +24,7 @@ InsertLine PROC PRIVATE USES esi ebx line:LPSTR
 
   local oldstat:input_status
 
-	PushInputStatus( addr oldstat )
+	PushInputStatus( &oldstat )
 	mov esi,ModuleInfo.GeneratedCode
 	mov ModuleInfo.GeneratedCode,0
 	strcpy( ModuleInfo.currsource, line )
@@ -33,7 +33,7 @@ InsertLine PROC PRIVATE USES esi ebx line:LPSTR
 	ParseLine( ModuleInfo.tokenarray )
 	mov ModuleInfo.GeneratedCode,esi
 	mov esi,eax
-	PopInputStatus( addr oldstat )
+	PopInputStatus( &oldstat )
 	mov eax,esi
 	ret
 
@@ -239,7 +239,7 @@ ParseCString PROC PRIVATE USES esi edi ebx,
 	mov eax,pStringOffset
 	mov [eax],esi
 
-	mov ebx,strlen(addr sbuf)
+	mov ebx,strlen(&sbuf)
 	mov esi,ModuleInfo.StrStack
 	xor edi,edi
 
@@ -256,7 +256,7 @@ ParseCString PROC PRIVATE USES esi edi ebx,
 				sub edx,ebx
 			.endif
 
-			.if !strcmp( addr sbuf, edx )
+			.if !strcmp( &sbuf, edx )
 
 				movzx eax,[esi].str_item.index
 				sub edx,[esi].str_item.string
@@ -278,7 +278,7 @@ ParseCString PROC PRIVATE USES esi edi ebx,
 	.endw
 
 	sprintf(lbuf, "DS%04X", edi)
-	LclAlloc(addr [ebx+sizeof(str_item)+1])
+	LclAlloc(&[ebx+sizeof(str_item)+1])
 
 	mov [eax].str_item.count,ebx
 	mov [eax].str_item.index,di
@@ -291,7 +291,7 @@ ParseCString PROC PRIVATE USES esi edi ebx,
 	lea ecx,[eax+sizeof(str_item)]
 	mov [eax].str_item.string,ecx
 
-	strcpy(ecx, addr sbuf)
+	strcpy(ecx, &sbuf)
 toend:
 	ret
 ParseCString ENDP
@@ -365,7 +365,7 @@ GenerateCString PROC USES esi edi ebx i, tokenarray:PTR asm_tok
 		mov rc,eax
 		mov edi,LineStoreCurr
 		add edi,line_item.line
-		strcpy(addr b_line, edi)
+		strcpy(&b_line, edi)
 		mov BYTE PTR [edi],';'
 		mov equal,strcmp(eax, [esi].asm_tok.tokpos)
 		mov al,ModuleInfo.line_flags
@@ -382,12 +382,7 @@ GenerateCString PROC USES esi edi ebx i, tokenarray:PTR asm_tok
 				mov q,ebx
 				lea eax,[ebx+16]
 				mov e,eax
-				ParseCString(
-					addr b_label,
-					addr buffer,
-					esi,
-					addr StringOffset,
-					addr Unicode )
+				ParseCString( &b_label, &buffer, esi, &StringOffset, &Unicode )
 
 				mov NewString,eax
 				mov esi,StringOffset
@@ -398,10 +393,10 @@ GenerateCString PROC USES esi edi ebx i, tokenarray:PTR asm_tok
 					;
 					push esi
 					sub esi,edi
-					memcpy( addr b_data, edi, esi )
+					memcpy( &b_data, edi, esi )
 					mov BYTE PTR [eax+esi],0
 
-					.if strstr( addr b_line, eax )
+					.if strstr( &b_line, eax )
 
 						mov edi,eax
 						lea eax,[edi+esi]
@@ -409,7 +404,7 @@ GenerateCString PROC USES esi edi ebx i, tokenarray:PTR asm_tok
 
 						.if ecx != ',' && ecx != ')'
 
-							.if strrchr( addr [edi+1], '"' )
+							.if strrchr( &[edi+1], '"' )
 
 								add eax,1
 							.endif
@@ -420,8 +415,8 @@ GenerateCString PROC USES esi edi ebx i, tokenarray:PTR asm_tok
 							lea ecx,b_data
 							strcpy( ecx, eax )
 							strcpy( edi, "addr " )
-							strcat( edi, addr b_label )
-							strcat( edi, addr b_data )
+							strcat( edi, &b_label )
+							strcat( edi, &b_data )
 						.endif
 					.endif
 					pop esi
@@ -437,14 +432,14 @@ GenerateCString PROC USES esi edi ebx i, tokenarray:PTR asm_tok
 						.else
 							mov ecx,@CStr(" %s sbyte %s,0")
 						.endif
-						sprintf(addr b_data, ecx, addr b_label, addr buffer)
+						sprintf(&b_data, ecx, &b_label, &buffer)
 					.else
 						.if Unicode
 							mov ecx,@CStr(" %s dw 0")
 						.else
 							mov ecx,@CStr(" %s sbyte 0")
 						.endif
-						sprintf(addr b_data, ecx, addr b_label)
+						sprintf(&b_data, ecx, &b_label)
 					.endif
 
 				.elseif ModuleInfo.list
@@ -457,7 +452,7 @@ GenerateCString PROC USES esi edi ebx i, tokenarray:PTR asm_tok
 				mov BYTE PTR [eax],0
 				mov eax,tokenarray
 				mov ecx,[eax].asm_tok.tokpos
-				strcat( strcpy( addr buffer, ecx ), "addr " )
+				strcat( strcpy( &buffer, ecx ), "addr " )
 				lea ecx,b_label
 				strcat( eax, ecx )
 				M_SKIP_SPACE ecx, esi
@@ -472,14 +467,14 @@ GenerateCString PROC USES esi edi ebx i, tokenarray:PTR asm_tok
 					mov eax,ModuleInfo.currseg
 					mov ecx,[eax].asym._name
 
-					strcat( strcpy( addr b_seg, ecx ), " segment" )
+					strcat( strcpy( &b_seg, ecx ), " segment" )
 					.break .if InsertLine( ".data" )
-					.break .if InsertLine( addr b_data )
+					.break .if InsertLine( &b_data )
 					.break .if InsertLine( "_DATA ends" )
-					.break .if InsertLine( addr b_seg )
+					.break .if InsertLine( &b_seg )
 					mov rc,eax
 				.endif
-				strcpy( ModuleInfo.currsource, addr buffer )
+				strcpy( ModuleInfo.currsource, &buffer )
 				Tokenize( ModuleInfo.currsource, 0, tokenarray, TOK_DEFAULT )
 				mov ModuleInfo.token_count,eax
 				mov eax,i
@@ -502,7 +497,7 @@ GenerateCString PROC USES esi edi ebx i, tokenarray:PTR asm_tok
 		.else
 			mov ebx,ModuleInfo.GeneratedCode
 			mov ModuleInfo.GeneratedCode,0
-			StoreLine( addr b_line, list_pos, 0 )
+			StoreLine( &b_line, list_pos, 0 )
 			mov ModuleInfo.GeneratedCode,ebx
 		.endif
 		mov al,lineflags
@@ -535,16 +530,16 @@ CString PROC USES esi edi ebx buffer:LPSTR, tokenarray:PTR asm_tok
 		    WORD PTR [esi] == '"L'
 
 			ParseCString(
-				addr dlabel,
-				addr string,
+				&dlabel,
+				&string,
 				esi,
-				addr StringOffset,
-				addr Unicode )
+				&StringOffset,
+				&Unicode )
 
 			mov esi,eax
 			.if edi
 				strcpy( buffer, "offset " )
-				strcat( buffer, addr dlabel )
+				strcat( buffer, &dlabel )
 			.else
 				;
 				; v2.24 skip return value if @CStr is first token
@@ -564,7 +559,7 @@ CString PROC USES esi edi ebx buffer:LPSTR, tokenarray:PTR asm_tok
 					.else
 						mov ecx,@CStr(" %s sbyte %s,0")
 					.endif
-					sprintf(addr cursrc, ecx, addr dlabel, addr string)
+					sprintf(&cursrc, ecx, &dlabel, &string)
 				.else
 					.if Unicode
 
@@ -572,7 +567,7 @@ CString PROC USES esi edi ebx buffer:LPSTR, tokenarray:PTR asm_tok
 					.else
 						mov ecx,@CStr(" %s sbyte 0")
 					.endif
-					sprintf(addr cursrc, ecx, addr dlabel)
+					sprintf(&cursrc, ecx, &dlabel)
 				.endif
 				;
 				; v2.24 skip .data/.code if already in .data segment
@@ -584,7 +579,7 @@ CString PROC USES esi edi ebx buffer:LPSTR, tokenarray:PTR asm_tok
 					inc esi
 					InsertLine(".data")
 				.endif
-				InsertLine(addr cursrc)
+				InsertLine(&cursrc)
 				.if esi
 
 					InsertLine(".code")

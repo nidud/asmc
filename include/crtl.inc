@@ -20,8 +20,6 @@ __wsetenvp	proto __cdecl :LPWSTR
 __initialize	proto __cdecl :PVOID, :PVOID
 __allocwpath	proto __cdecl :LPSTR
 
-ifndef _WIN64
-
 ; Microsoft
 
 _allshr		proto __cdecl ; edx:eax >> cl
@@ -62,8 +60,6 @@ _U4LD		proto __cdecl ; DWORD [eax] to long double[edx]
 _I4LD		proto __cdecl ; SDWORD [eax] to long double[edx]
 _U8LD		proto __cdecl ; QWORD [eax] to long double[edx]
 _I8LD		proto __cdecl ; SQWORD [eax] to long double[edx]
-
-endif
 
 pragma_init macro pp, priority, name:=<INIT>
 _&name& SEGMENT PARA FLAT PUBLIC '&name&'

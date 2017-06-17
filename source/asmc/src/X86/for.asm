@@ -397,7 +397,7 @@ local	rc:SINT,
 				QueueTestLines( ebx )
 			.endif
 			AddLineQueueX( "%s%s",
-				GetLabelStr( [esi].labels[LSTART*4], addr buff ), LABELQUAL )
+				GetLabelStr( [esi].labels[LSTART*4], &buff ), LABELQUAL )
 
 			mov BYTE PTR [ebx],0
 			mov [esi].condlines,0
@@ -426,7 +426,7 @@ local	rc:SINT,
 				mov ModuleInfo.token_count,eax
 
 				mov i,1
-				EvaluateHllExpression( esi, addr i, tokenarray,
+				EvaluateHllExpression( esi, &i, tokenarray,
 					LEXIT, 0, ebx )
 				mov rc,eax
 

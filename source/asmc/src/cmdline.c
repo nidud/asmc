@@ -518,10 +518,10 @@ static void ProcessOption( char **cmdline, char *buffer )
 	Options.all_symbols_public = 1;
 	return;
     case '0fz':		// -zf0
-	Options.fctype = 0;
+	Options.fctype = FCT_MSC;
 	return;
     case '1fz':		// -zf1
-	Options.fctype = 1;
+	Options.fctype = FCT_WATCOMC;
 	return;
     case 'gZ':		// -Zg
 	Options.masm_compat_gencode = 1;

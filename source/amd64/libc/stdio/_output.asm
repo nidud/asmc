@@ -392,7 +392,7 @@ endif
                         mov no_output,1
                     .endif
                     .endc
-if 0
+if 1
                   .case 'E'
                   .case 'G'
                   .case 'A'
@@ -420,32 +420,31 @@ if 0
                     .elseif !edi && dl == 'g'
                         mov edi,1 ; ANSI specified
                     .endif
-                    mov ecx,arglist
+                    mov rcx,arglist
                     add arglist,8
-                    mov eax,[ecx]
-                    mov DWORD PTR tmp,eax
-                    mov eax,[ecx+4]
-                    mov DWORD PTR tmp[4],eax
+                    mov rax,[rcx]
+                    mov QWORD PTR tmp,rax
                     mov ebx,edx
 if (LONGDOUBLE_IS_DOUBLE eq 0)
                     ;
                     ; do the conversion
                     ;
+                    mov r8d,edx
                     .if esi & FL_LONGDOUBLE
 
-                        add arglist,4
-                        mov eax,[ecx+8]
+                        add arglist,8
+                        mov ax,[rcx+8]
                         mov WORD PTR tmp[8],ax
                         ;
                         ; Note: assumes ch is in ASCII range
                         ;
-                        _cldcvt(addr tmp, text, edx, edi, capexp)
+                        _cldcvt(&tmp, text, r8d, edi, capexp)
                     .else
 endif  ; !LONGDOUBLE_IS_DOUBLE
                         ;
                         ; Note: assumes ch is in ASCII range
                         ;
-                        _cfltcvt(addr tmp, text, edx, edi, capexp)
+                        _cfltcvt(&tmp, text, r8d, edi, capexp)
 if (LONGDOUBLE_IS_DOUBLE eq 0)
                     .endif
 endif
@@ -467,14 +466,15 @@ endif
                     ; check if result was negative, save '-' for later
                     ; and point to positive part (this is for '0' padding)
                     ;
-                    mov ecx,text
-                    mov al,[ecx]
+                    mov rcx,text
+                    mov al,[rcx]
                     .if al == '-'
 
                         or  esi,FL_NEGATIVE
                         inc text
                     .endif
-                    mov textlen,strlen(text) ; compute length of text
+                    strlen(text) ; compute length of text
+                    mov textlen,eax
                     .endc
 endif
                   .case 'd'

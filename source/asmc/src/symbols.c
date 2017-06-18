@@ -510,7 +510,7 @@ void SymInit( void )
 
     if ( define_LINUX ) {
 	sym = SymCreate( "_LINUX" );
-	sym->state = SYM_INTERNAL;
+	sym->state = SYM_TMACRO;
 	sym->isdefined = TRUE;
 	sym->predefined = TRUE;
 	sym->offset = define_LINUX;
@@ -519,7 +519,7 @@ void SymInit( void )
 
     if ( define_WIN64 ) {
 	sym = SymCreate( "_WIN64" );
-	sym->state = SYM_INTERNAL;
+	sym->state = SYM_TMACRO;
 	sym->isdefined = TRUE;
 	sym->predefined = TRUE;
 	sym->offset = define_WIN64;

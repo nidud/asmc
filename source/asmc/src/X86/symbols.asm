@@ -735,7 +735,7 @@ endif
 	.if define_LINUX
 
 		SymCreate( "_LINUX" )
-		mov [eax].asym.state,SYM_INTERNAL
+		mov [eax].asym.state,SYM_TMACRO
 		or  [eax].asym.flag,SFL_ISDEFINED or SFL_PREDEFINED
 		mov ecx,define_LINUX
 		mov [eax].asym._offset,ecx
@@ -745,7 +745,7 @@ endif
 	.if define_WIN64
 
 		SymCreate( "_WIN64" )
-		mov [eax].asym.state,SYM_INTERNAL
+		mov [eax].asym.state,SYM_TMACRO
 		or  [eax].asym.flag,SFL_ISDEFINED or SFL_PREDEFINED
 		mov ecx,define_WIN64
 		mov [eax].asym._offset,ecx

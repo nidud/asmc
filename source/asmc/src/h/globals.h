@@ -277,7 +277,7 @@ enum segofssize {
 #define FCT_MSC		0 /* MS 16-/32-bit fastcall (ax,dx,cx / ecx,edx) */
 #define FCT_WATCOMC	1 /* OW register calling convention (eax, ebx, ecx, edx) */
 #define FCT_WIN64	2 /* Win64 fastcall convention (rcx, rdx, r8, r9) */
-#define FCT_ELF64	3 /* syscall 64 */
+#define FCT_ELF64	3 /* Linux 64 calling convention (rdi, esi, rdx, rcx, r8, r9) */
 
 enum stdcall_decoration {
     STDCALL_FULL,

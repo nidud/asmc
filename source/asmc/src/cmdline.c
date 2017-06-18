@@ -67,6 +67,9 @@ struct global_options Options = {
 	4			// .segmentalign
 };
 
+int define_LINUX = 0;
+int define_WIN64 = 0;
+
 char *DefaultDir[NUM_FILE_TYPES] = { NULL };
 static int OptValue;
 
@@ -382,10 +385,13 @@ static void ProcessOption( char **cmdline, char *buffer )
     case '6fle':	// -elf64
 	Options.output_format = OFORMAT_ELF;
 	Options.sub_format = SFORMAT_64BIT;
+	define_LINUX = 2;
+	define_WIN64 = 1;
 	return;
     case 'fle':		// -elf
 	Options.output_format = OFORMAT_ELF;
 	Options.sub_format = SFORMAT_NONE;
+	define_LINUX = 1;
 	return;
     case '8iPF':	// -FPi87
 	Options.floating_point = FPO_NO_EMULATION;
@@ -501,6 +507,7 @@ static void ProcessOption( char **cmdline, char *buffer )
     case '6niw':	// -win64
 	Options.output_format = OFORMAT_COFF;
 	Options.sub_format = SFORMAT_64BIT;
+	define_WIN64 = 1;
 	return;
     case 'X':		// -X
 	Options.ignore_include = 1;

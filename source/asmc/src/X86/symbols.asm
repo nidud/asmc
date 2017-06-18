@@ -7,6 +7,8 @@ include token.inc
 
 public	SymCmpFunc
 public	resw_table
+extern	define_LINUX:DWORD
+extern	define_WIN64:DWORD
 
 DeleteProc		PROTO :DWORD
 ReleaseMacroData	PROTO :DWORD
@@ -728,17 +730,38 @@ endif
 	;
 	; @WordSize should not be listed
 	;
-	and	[eax].asym.flag,not SFL_LIST
+	and [eax].asym.flag,not SFL_LIST
+
+	.if define_LINUX
+
+		SymCreate( "_LINUX" )
+		mov [eax].asym.state,SYM_INTERNAL
+		or  [eax].asym.flag,SFL_ISDEFINED or SFL_PREDEFINED
+		mov ecx,define_LINUX
+		mov [eax].asym._offset,ecx
+		mov [eax].asym.sfunc_ptr,0
+	.endif
+
+	.if define_WIN64
+
+		SymCreate( "_WIN64" )
+		mov [eax].asym.state,SYM_INTERNAL
+		or  [eax].asym.flag,SFL_ISDEFINED or SFL_PREDEFINED
+		mov ecx,define_WIN64
+		mov [eax].asym._offset,ecx
+		mov [eax].asym.sfunc_ptr,0
+	.endif
+
 	;
 	; $ is an address (usually). Also, don't add it to the list
 	;
-	mov	eax,symPC
-	and	[eax].asym.flag,not SFL_LIST
-	or	[eax].asym.flag,SFL_VARIABLE
-	mov	eax,LineCur
-	and	[eax].asym.flag,not SFL_LIST
-
+	mov eax,symPC
+	and [eax].asym.flag,not SFL_LIST
+	or  [eax].asym.flag,SFL_VARIABLE
+	mov eax,LineCur
+	and [eax].asym.flag,not SFL_LIST
 	ret
+
 SymInit ENDP
 
 SymPassInit PROC pass

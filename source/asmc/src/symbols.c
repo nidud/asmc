@@ -73,6 +73,9 @@
 #define SYMCMP( x, y, z ) SymCmpFunc( x, y, z )
 #endif
 
+extern int define_LINUX;
+extern int define_WIN64;
+
 extern struct asym *FileCur;  /* @FileCur symbol    */
 extern struct asym *LineCur;  /* @Line symbol	    */
 extern struct asym *symCurSeg;/* @CurSeg symbol	    */
@@ -504,6 +507,25 @@ void SymInit( void )
 	    *eqtab[i].store = sym;
     }
     sym->list	= FALSE; /* @WordSize should not be listed */
+
+    if ( define_LINUX ) {
+	sym = SymCreate( "_LINUX" );
+	sym->state = SYM_INTERNAL;
+	sym->isdefined = TRUE;
+	sym->predefined = TRUE;
+	sym->offset = define_LINUX;
+	sym->sfunc_ptr = NULL;
+    }
+
+    if ( define_WIN64 ) {
+	sym = SymCreate( "_WIN64" );
+	sym->state = SYM_INTERNAL;
+	sym->isdefined = TRUE;
+	sym->predefined = TRUE;
+	sym->offset = define_WIN64;
+	sym->sfunc_ptr = NULL;
+    }
+
     /* $ is an address (usually). Also, don't add it to the list */
     symPC->variable = TRUE;
     symPC->list	    = FALSE;

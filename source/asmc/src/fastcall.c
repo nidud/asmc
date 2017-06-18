@@ -221,13 +221,17 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
     bool destroyed = FALSE;
 
     /* v2.11: default size is 32-bit, not 64-bit */
+    /* v2.24: 64-bit if [reg].. */
     if ( param->sym.is_vararg ) {
 	psize = 0;
 	if ( addr || opnd->instr == T_OFFSET )
 	    psize = 8;
-	else if ( opnd->kind == EXPR_REG && opnd->indirect == FALSE )
-	    psize = SizeFromRegister( opnd->base_reg->tokval );
-	else if ( opnd->mem_type != MT_EMPTY )
+	else if ( opnd->kind == EXPR_REG ) {
+	    if ( opnd->indirect == FALSE )
+		psize = SizeFromRegister( opnd->base_reg->tokval );
+	    else
+		psize = 8;
+	} else if ( opnd->mem_type != MT_EMPTY )
 	    psize = SizeFromMemtype( opnd->mem_type, USE64, opnd->type );
 	if ( psize < 4 )
 	    psize = 4;
@@ -404,9 +408,14 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
 	    return( 1 );
 	}
 	/* register argument? */
-	if ( opnd->kind == EXPR_REG && opnd->indirect == FALSE ) {
-	    reg = opnd->base_reg->tokval;
-	    size = SizeFromRegister( reg );
+
+	if ( opnd->kind == EXPR_REG ) {
+	    if ( opnd->indirect == FALSE ) {
+		reg = opnd->base_reg->tokval;
+		size = SizeFromRegister( reg );
+	    } else {
+		size = 8;
+	    }
 	} else if ( opnd->kind == EXPR_CONST || opnd->kind == EXPR_FLOAT ) {
 	    size = psize;
 	} else if ( opnd->mem_type != MT_EMPTY ) {
@@ -496,9 +505,12 @@ static int elf64_param( struct dsym const *proc, int index, struct dsym *param,
 	psize = 0;
 	if ( addr || opnd->instr == T_OFFSET )
 	    psize = 8;
-	else if ( opnd->kind == EXPR_REG && opnd->indirect == FALSE )
-	    psize = SizeFromRegister( opnd->base_reg->tokval );
-	else if ( opnd->mem_type != MT_EMPTY )
+	else if ( opnd->kind == EXPR_REG ) {
+	    if ( opnd->indirect == FALSE )
+		psize = SizeFromRegister( opnd->base_reg->tokval );
+	    else
+		psize = 8;
+	} else if ( opnd->mem_type != MT_EMPTY )
 	    psize = SizeFromMemtype( opnd->mem_type, USE64, opnd->type );
 	if ( psize < 4 )
 	    psize = 4;
@@ -552,9 +564,13 @@ static int elf64_param( struct dsym const *proc, int index, struct dsym *param,
 	    return( 1 );
 	}
 
-	if ( opnd->kind == EXPR_REG && opnd->indirect == FALSE ) {
-	    reg = opnd->base_reg->tokval;
-	    size = SizeFromRegister( reg );
+	if ( opnd->kind == EXPR_REG ) {
+	    if ( opnd->indirect == FALSE ) {
+		reg = opnd->base_reg->tokval;
+		size = SizeFromRegister( reg );
+	    } else {
+		size = 8;
+	    }
 	} else if ( opnd->kind == EXPR_CONST || opnd->kind == EXPR_FLOAT ) {
 	    size = psize;
 	} else if ( opnd->mem_type != MT_EMPTY ) {

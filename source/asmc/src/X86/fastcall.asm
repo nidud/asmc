@@ -560,9 +560,13 @@ GetPSize proc adr
         xor eax,eax
         .if adr || [edi].expr._instr == T_OFFSET
             mov eax,8
-        .elseif [edi].expr.kind == EXPR_REG && !([edi].expr.flags & EXF_INDIRECT)
-            mov eax,[edi].expr.base_reg
-            SizeFromRegister([eax].asm_tok.tokval)
+        .elseif [edi].expr.kind == EXPR_REG
+            .if !( [edi].expr.flags & EXF_INDIRECT )
+                mov eax,[edi].expr.base_reg
+                SizeFromRegister([eax].asm_tok.tokval)
+            .else
+                mov eax,8
+            .endif
         .elseif [edi].expr.mem_type != MT_EMPTY
             SizeFromMemtype( [edi].expr.mem_type, USE64, [edi].expr._type )
         .endif
@@ -823,11 +827,15 @@ ms64_param proc uses esi edi ebx pp:ptr dsym, index:SINT, param:ptr dsym, adr:SI
             ; register argument?
             ;
             mov edx,[edi].expr.sym
-            .if [edi].expr.kind == EXPR_REG && !([edi].expr.flags & EXF_INDIRECT)
-                mov eax,[edi].expr.base_reg
-                mov eax,[eax].asm_tok.tokval
-                mov reg,eax
-                SizeFromRegister(reg)
+            .if [edi].expr.kind == EXPR_REG
+                .if !( [edi].expr.flags & EXF_INDIRECT )
+                    mov eax,[edi].expr.base_reg
+                    mov eax,[eax].asm_tok.tokval
+                    mov reg,eax
+                    SizeFromRegister(reg)
+                .else
+                    mov eax,8
+                .endif
             .elseif [edi].expr.kind == EXPR_CONST || [edi].expr.kind == EXPR_FLOAT
                 mov eax,psize
             .elseif [edi].expr.mem_type != MT_EMPTY
@@ -1025,11 +1033,15 @@ elf64_param proc uses esi edi ebx pp:ptr dsym, index:SINT, param:ptr dsym, adr:S
             ; register argument?
             ;
             mov edx,[edi].expr.sym
-            .if [edi].expr.kind == EXPR_REG && !([edi].expr.flags & EXF_INDIRECT)
-                mov eax,[edi].expr.base_reg
-                mov eax,[eax].asm_tok.tokval
-                mov reg,eax
-                SizeFromRegister(reg)
+            .if [edi].expr.kind == EXPR_REG
+                .if !( [edi].expr.flags & EXF_INDIRECT )
+                    mov eax,[edi].expr.base_reg
+                    mov eax,[eax].asm_tok.tokval
+                    mov reg,eax
+                    SizeFromRegister(reg)
+                .else
+                    mov eax,8
+                .endif
             .elseif [edi].expr.kind == EXPR_CONST || [edi].expr.kind == EXPR_FLOAT
                 mov eax,psize
             .elseif [edi].expr.mem_type != MT_EMPTY

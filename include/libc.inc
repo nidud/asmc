@@ -32,7 +32,11 @@ _X86_		equ <>
 _M_IX86		equ 300
 endif
 
-ifdef __DZ__
+ifdef _LINUX
+_CType	equ <syscall>
+_CDecl	equ <syscall>
+__cdecl equ <syscall>
+elseifdef __DZ__
 _CDecl	equ <c>
 _CType	equ <stdcall>
 __cdecl equ <stdcall>

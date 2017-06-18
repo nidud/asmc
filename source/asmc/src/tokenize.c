@@ -837,6 +837,11 @@ continue_scan:
     }
     p->input = src;
     p->output = dst;
+
+    /* v2.24 hack for syscall.. */
+    if ( index == T_SYSCALL && p->index == 0 )
+	 index = T_SYSCALL_;
+
     buf->tokval = index; /* is a enum instr_token value */
     if ( index == T_DOT_ELSEIF || index == T_DOT_WHILE || index == T_DOT_CASE )
 	buf->hll_flags = T_HLL_DELAY;

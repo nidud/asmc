@@ -1102,6 +1102,12 @@ get_id	PROC FASTCALL USES esi edi ebx buf, p
 
 	mov [edx].input,esi
 	mov [edx].output,edi
+	;
+	; v2.24 hack for syscall..
+	;
+	.if eax == T_SYSCALL && ![edx].index
+	    mov eax,T_SYSCALL_
+	.endif
 	mov [ebx].tokval,eax
 
 	.if eax == T_DOT_ELSEIF || eax == T_DOT_WHILE || eax == T_DOT_CASE

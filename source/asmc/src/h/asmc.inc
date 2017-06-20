@@ -1014,6 +1014,7 @@ casealign		db ?	; OPTION:CASEALIGN setting
 segmentalign		db ?	; -Sp[n] Set segment alignment
 global_options		ENDS
 
+PLPSTR			typedef PTR LPSTR
 M_MODULEVARS		MACRO
 error_count		dd ?		; total of errors so far
 warning_count		dd ?		; total of warnings so far
@@ -1025,10 +1026,10 @@ LibQueue		qdesc <>	; includelibs
 DllQueue		dd ?		; dlls of OPTION DLLIMPORT
 imp_prefix		dd ?		;
 curr_file		dd NUM_FILE_TYPES dup(?) ; ASM, ERR, OBJ and LST
-curr_fname		dd NUM_FILE_TYPES dup(?)
-FNames			dd ?		; array of input files
+curr_fname		LPSTR NUM_FILE_TYPES dup(?)
+FNames			PLPSTR ?	; array of input files
 cnt_fnames		dd ?		; items in FNames array
-IncludePath		dd ?		;
+IncludePath		LPSTR ?		;
 line_queue		qdesc <>	; line queue
 src_stack		dd ?		; source item (files & macros) stack
 UNION
@@ -1157,6 +1158,7 @@ next			LPLINE ?
 prev			LPLINE ?
 lineno			SDWORD ? ; 20:12 = srcfile
 srcfile			SDWORD ?
+macro_level		SDWORD ?
 list_pos		SDWORD ?
 line			SBYTE 1 dup(?)
 line_item		ENDS

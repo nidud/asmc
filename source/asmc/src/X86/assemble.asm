@@ -774,11 +774,7 @@ OnePass PROC USES esi edi
 	    set_curr_srcfile( [esi].line_item.srcfile, [esi].line_item.lineno )
 
 	    mov ModuleInfo.line_flags,0
-	    xor eax,eax
-	    .if [esi].line_item.srcfile == 0FFFh
-
-		inc eax
-	    .endif
+	    mov eax,[esi].line_item.macro_level
 	    mov MacroLevel,eax
 	    mov ModuleInfo.CurrComment,0
 	    Tokenize( &[esi].line_item.line, 0, ModuleInfo.tokenarray, TOK_DEFAULT )

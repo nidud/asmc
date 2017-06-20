@@ -2,6 +2,9 @@ HISTORY.TXT--
 Change Log File for ASMC
 ========================
 
+Changes in 2.25 - xx xxx 2017
+- fixed bug in error output - wrong filename if error in macro
+
 Changes in 2.24 - 18 Jun 2017
 - fixed bug in win64/elf64 :vararg [reg] argument
 - added _LINUX and _WIN64 to switch -elf, -elf64, and -win64

@@ -95,12 +95,11 @@ StoreLine PROC USES esi edi ebx sline, flags, lst_position
 		mov [esi].line_item.next,0
 		GetLineNumber()
 		mov [esi].line_item.lineno,eax
-		.if MacroLevel
-			mov [esi].line_item.srcfile,0FFFh
-		.else
-			get_curr_srcfile()
-			mov [esi].line_item.srcfile,eax
-		.endif
+
+		get_curr_srcfile()
+		mov [esi].line_item.srcfile,eax
+		mov eax,MacroLevel
+		mov [esi].line_item.macro_level,eax
 		mov eax,lst_position
 		.if !eax
 			mov eax,list_pos

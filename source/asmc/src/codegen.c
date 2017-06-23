@@ -683,6 +683,24 @@ static int match_phase_3( struct code_info *CodeInfo, enum operand_type opnd1 )
     return( ERROR );
 }
 
+/* v2.25 - added ->offset to ->addbytes */
+
+static void add_bytes( struct code_info *CodeInfo, int index )
+{
+
+    int bytes;
+
+    if ( CodeInfo->opnd[index].InsFixup && CodeInfo->opnd[index].InsFixup->type == FIX_RELOFF32 ) {
+
+	bytes = GetCurrOffset() - CodeInfo->opnd[index].InsFixup->locofs;
+
+	if ( CodeInfo->opnd[index].InsFixup->sym && CodeInfo->opnd[index].InsFixup->sym->isarray )
+	    bytes += CodeInfo->opnd[index].InsFixup->offset;
+
+	CodeInfo->opnd[index].InsFixup->addbytes = bytes;
+    }
+}
+
 static int check_operand_2( struct code_info *CodeInfo, enum operand_type opnd1 )
 /*
  * check if a second operand has been entered.
@@ -714,8 +732,8 @@ static int check_operand_2( struct code_info *CodeInfo, enum operand_type opnd1 
 
 	output_opc( CodeInfo );
 	output_data( CodeInfo, opnd1, OPND1 );
-	if ( CodeInfo->Ofssize == USE64 && CodeInfo->opnd[OPND1].InsFixup && CodeInfo->opnd[OPND1].InsFixup->type == FIX_RELOFF32 )
-	    CodeInfo->opnd[OPND1].InsFixup->addbytes = GetCurrOffset() - CodeInfo->opnd[OPND1].InsFixup->locofs;
+	if ( CodeInfo->Ofssize == USE64 )
+	    add_bytes( CodeInfo,  OPND1 );
 	return( NOT_ERROR );
     }
 
@@ -723,10 +741,8 @@ static int check_operand_2( struct code_info *CodeInfo, enum operand_type opnd1 
     if ( match_phase_3( CodeInfo, opnd1 ) == NOT_ERROR ) {
 	/* for rip-relative fixups, the instruction end is needed */
 	if ( CodeInfo->Ofssize == USE64 ) {
-	    if ( CodeInfo->opnd[OPND1].InsFixup && CodeInfo->opnd[OPND1].InsFixup->type == FIX_RELOFF32 )
-		CodeInfo->opnd[OPND1].InsFixup->addbytes = GetCurrOffset() - CodeInfo->opnd[OPND1].InsFixup->locofs;
-	    if ( CodeInfo->opnd[OPND2].InsFixup && CodeInfo->opnd[OPND2].InsFixup->type == FIX_RELOFF32 )
-		CodeInfo->opnd[OPND2].InsFixup->addbytes = GetCurrOffset() - CodeInfo->opnd[OPND2].InsFixup->locofs;
+	    add_bytes( CodeInfo,  OPND1 );
+	    add_bytes( CodeInfo,  OPND2 );
 	}
 	return( NOT_ERROR );
     }

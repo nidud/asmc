@@ -823,6 +823,9 @@ static void coff_write_fixups( struct dsym *section, uint_32 *poffset, uint_32 *
 	    case FIX_RELOFF32: /* 32bit offset */
 		/* translated to IMAGE_REL_AMD64_REL32_[1|2|3|4|5] */
 		ir.Type = IMAGE_REL_AMD64_REL32 + (fix->addbytes - 4);
+		/* added v2.25 */
+		if ( fix->sym && fix->sym->isarray )
+		    ir.Type -= fix->offset;
 		break;
 	    case FIX_OFF32: /* 32bit offset */
 		ir.Type = IMAGE_REL_AMD64_ADDR32;

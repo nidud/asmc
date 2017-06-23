@@ -2745,6 +2745,7 @@ void ProcessFile( struct asm_tok tokenarray[] )
 {
     if ( ModuleInfo.EndDirFound == FALSE && GetTextLine( CurrSource ) ) {
 
+	/* v2.23 - BOM UFT-8 test */
 	if ( CurrSource[0] == 0xEF && CurrSource[1] == 0xBB && CurrSource[2] == 0xBF )
 	    strcpy( CurrSource, &CurrSource[3] );
 	do {

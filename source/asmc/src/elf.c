@@ -1008,6 +1008,9 @@ static void write_relocs64( struct dsym *curr )
 	unsigned symidx = fixup->sym->ext_idx;
 	reloc64.r_offset = fixup->locofs;
 	reloc64.r_addend = - fixup->addbytes;
+	/* added v2.25 */
+	if ( fixup->sym->isarray )
+	    reloc64.r_addend += fixup->offset;
 	switch ( fixup->type ) {
 	case FIX_RELOFF32:
 	    elftype = R_X86_64_PC32;

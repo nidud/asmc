@@ -211,6 +211,7 @@ static const char resw_strings[] = {
 #define avxins( tok, string, cpu, flgs ) # string
 #include <instravx.h>
 #undef avxins
+    "syscall_" /* replacement for "syscall" language type in 64-bit */
 };
 #undef insx
 #undef insm

@@ -1126,7 +1126,7 @@ local	b[MAX_LINE_LEN]:SBYTE
 	    .if GetProc([eax].asm_tok.string_ptr)
 
 		mov sym,eax
-		mov edx,[eax].dsym.procinfo
+		mov edx,[eax].nsym.procinfo
 		mov info,edx
 		mov ecx,[edx].proc_info.paralist
 
@@ -1134,9 +1134,9 @@ local	b[MAX_LINE_LEN]:SBYTE
 		.if eax == LANG_C || eax == LANG_SYSCALL || eax == LANG_STDCALL || \
 		   (eax == LANG_FASTCALL && ModuleInfo.Ofssize != USE64)
 
-			.while ecx && [ecx].dsym.nextparam
+			.while ecx && [ecx].nsym.nextparam
 
-				mov ecx,[ecx].dsym.nextparam
+				mov ecx,[ecx].nsym.nextparam
 			.endw
 		.endif
 		mov curr,ecx
@@ -1151,11 +1151,11 @@ local	b[MAX_LINE_LEN]:SBYTE
 			    (eax == LANG_FASTCALL && ModuleInfo.Ofssize != USE64)
 
 				.for eax=curr, ecx=[edx].proc_info.paralist: ecx,
-				     [ecx].dsym.nextparam != eax: ecx=[ecx].dsym.nextparam
+				     [ecx].nsym.nextparam != eax: ecx=[ecx].nsym.nextparam
 				.endf
 				mov curr,ecx
 			.else
-				mov ecx,[ecx].dsym.nextparam
+				mov ecx,[ecx].nsym.nextparam
 			.endif
 			dec parg_id
 		.endw

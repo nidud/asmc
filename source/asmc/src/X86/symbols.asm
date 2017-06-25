@@ -161,7 +161,7 @@ SymClearLocal ENDP
 SymGetLocal PROC psym
 
 	mov	ecx,psym
-	mov	edx,[ecx].dsym.procinfo
+	mov	edx,[ecx].nsym.procinfo
 	lea	edx,[edx].proc_info.labellist
 	xor	ecx,ecx
 	.while	ecx < LHASH_TABLE_SIZE
@@ -171,7 +171,7 @@ SymGetLocal PROC psym
 		.continue .if !eax
 
 		mov	[edx],eax
-		lea	edx,[eax].dsym.nextll
+		lea	edx,[eax].nsym.nextll
 	.endw
 	xor	eax,eax
 	mov	[edx],eax
@@ -190,7 +190,7 @@ SymSetLocal PROC USES edi psym
 	mov	ecx,sizeof( lsym_table ) / 4
 	rep	stosd
 	mov	ecx,psym
-	mov	edi,[ecx].dsym.procinfo
+	mov	edi,[ecx].nsym.procinfo
 	mov	edi,[edi].proc_info.labellist
 	.while	edi
 		mov	ecx,[edi].asym._name
@@ -215,7 +215,7 @@ SymSetLocal PROC USES edi psym
 			sub eax,LHASH_TABLE_SIZE
 		.endw
 		mov	lsym_table[eax*4],edi
-		mov	edi,[edi].dsym.nextll
+		mov	edi,[edi].nsym.nextll
 	.endw
 	ret
 SymSetLocal ENDP
@@ -224,12 +224,12 @@ SymAlloc PROC USES esi edi sname
 	mov	esi,sname
 	strlen( esi )
 	push	eax
-	add	eax,sizeof( dsym ) + 1
+	add	eax,sizeof( nsym ) + 1
 	LclAlloc( eax )
 	pop	edx
 	mov	[eax].asym.name_size,dx
 	mov	[eax].asym.mem_type,MT_EMPTY
-	lea	edi,[eax + sizeof( dsym )]
+	lea	edi,[eax + sizeof( nsym )]
 	mov	[eax].asym._name,edi
 	cmp	ModuleInfo.cref,0
 	jne	crefl

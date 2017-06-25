@@ -3,6 +3,8 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.25 - xx xxx 2017
+- added [: RSP | RBP | ALIGN | ...] to option win64
+- fixed bug in local offset - 64-bit/cstack
 - fixed bug in EIP-related offsets in 64-bit
 - fixed bug in error output - wrong filename if error in macro
 

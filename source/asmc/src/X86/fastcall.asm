@@ -112,7 +112,7 @@ GetSegmentPart proc uses esi edi ebx opnd:ptr expr, buffer:LPSTR, fullparam:LPST
     .elseif eax && [eax].asym._segment
 
         mov ebx,[eax].asym._segment
-        mov ecx,[ebx].dsym.seginfo
+        mov ecx,[ebx].nsym.seginfo
 
         .if [ecx].seg_info.segtype == SEGTYPE_DATA || \
             [ecx].seg_info.segtype == SEGTYPE_BSS
@@ -167,7 +167,7 @@ GetParmIndex macro x
 ; FCT_MSC
 ;-------------------------------------------------------------------------------
 
-ms32_fcstart proc pp:ptr dsym, numparams:SINT, start:SINT,
+ms32_fcstart proc pp:ptr nsym, numparams:SINT, start:SINT,
         tokenarray:ptr asm_tok, value:ptr SINT
 
     .repeat
@@ -177,8 +177,8 @@ ms32_fcstart proc pp:ptr dsym, numparams:SINT, start:SINT,
             .break
         .endif
 
-        .for eax=pp, eax=[eax].dsym.procinfo,
-             eax=[eax].proc_info.paralist: eax: eax=[eax].dsym.nextparam
+        .for eax=pp, eax=[eax].nsym.procinfo,
+             eax=[eax].proc_info.paralist: eax: eax=[eax].nsym.nextparam
 
             .if [eax].asym.state == SYM_TMACRO
 
@@ -191,7 +191,7 @@ ms32_fcstart proc pp:ptr dsym, numparams:SINT, start:SINT,
 
 ms32_fcstart endp
 
-ms32_param proc uses esi edi ebx pp:ptr dsym, index:SINT, param:ptr dsym, adr:SINT,
+ms32_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:SINT,
         opnd:ptr expr, paramvalue:LPSTR, r0used:ptr byte
 
     local z
@@ -280,7 +280,7 @@ ms32_fcend endp
 ;;   the third!
 ;;
 
-watc_fcstart proc pp: ptr dsym,
+watc_fcstart proc pp: ptr nsym,
            numparams: SINT,
                start: SINT,
           tokenarray: ptr asm_tok,
@@ -410,7 +410,7 @@ watc_param endp
 watc_fcend proc pp, numparams, value
 
     mov eax,pp
-    mov edx,[eax].dsym.procinfo
+    mov edx,[eax].nsym.procinfo
     mov eax,[edx].proc_info.parasize
     .if [edx].proc_info.flags & PINF_HAS_VARARG
         add eax,size_vararg
@@ -428,11 +428,11 @@ watc_fcend endp
 ; FCT_WIN64
 ;-------------------------------------------------------------------------------
 
-ms64_fcstart proc pp:ptr dsym, numparams:SINT, start:SINT,
+ms64_fcstart proc pp:ptr nsym, numparams:SINT, start:SINT,
         tokenarray:ptr asm_tok, value:ptr SINT
 
     mov edx,pp
-    mov edx,[edx].dsym.procinfo
+    mov edx,[edx].nsym.procinfo
     mov eax,numparams
 
     ; v2.04: VARARG didn't work
@@ -615,7 +615,7 @@ CheckXMM proc reg, paramvalue, regs_used, param
     ret
 CheckXMM endp
 
-ms64_param proc uses esi edi ebx pp:ptr dsym, index:SINT, param:ptr dsym, adr:SINT,
+ms64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:SINT,
         opnd:ptr expr, paramvalue:LPSTR, regs_used:ptr byte
 
     local z, psize, reg, i, destroyed
@@ -966,7 +966,7 @@ GetParmIndexS proc fastcall x
     ret
 GetParmIndexS endp
 
-elf64_fcstart proc pp:ptr dsym, numparams:SINT, start:SINT,
+elf64_fcstart proc pp:ptr nsym, numparams:SINT, start:SINT,
         tokenarray:ptr asm_tok, value:ptr SINT
 
     xor eax,eax
@@ -976,7 +976,7 @@ elf64_fcstart proc pp:ptr dsym, numparams:SINT, start:SINT,
 
 elf64_fcstart endp
 
-elf64_param proc uses esi edi ebx pp:ptr dsym, index:SINT, param:ptr dsym, adr:SINT,
+elf64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:SINT,
         opnd:ptr expr, paramvalue:LPSTR, regs_used:ptr byte
 
     local z, psize, reg, i, destroyed

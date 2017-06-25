@@ -582,7 +582,7 @@ next_file		dd ?
 debug_info		ENDS
 
 LPASYM			typedef ptr asym
-LPDSYM			typedef ptr dsym
+LPDSYM			typedef ptr nsym
 
 func_ptr_t		typedef proto :ptr macro_instance, :LPSTR, :ptr asm_tok
 func_ptr_p		typedef ptr func_ptr_t
@@ -816,7 +816,7 @@ struct_info		STRUC
 struct_info		ENDS
 LPSTRUCINFO		typedef ptr struct_info
 
-dsym			STRUC
+nsym			STRUC
  sym			asym <>
  UNION
     seginfo		LPSEGINFO ?
@@ -833,7 +833,7 @@ dsym			STRUC
     nextlocal		LPDSYM ?
     nextparam		LPDSYM ?
  ENDS
-dsym			ENDS
+nsym			ENDS
 
 symbol_queue		STRUC
  head			dd ?
@@ -1124,7 +1124,7 @@ epiloguemode		db ?	; current PEM_ enum value for OPTION EPILOGUE
 invoke_exprparm		db ?	; flag: forward refs for INVOKE params ok?
 cv_opt			db ?	; option codeview
 srcfile			dd ?	; main source file - is an index for FNames[]
-currseg			dd ?	; currently active segment - dsym *
+currseg			dd ?	; currently active segment - nsym *
 flat_grp		dd ?	; magic FLAT group - dsym *
 pCodeBuff		dd ?	;
 GeneratedCode		dd ?	; nesting level generated code

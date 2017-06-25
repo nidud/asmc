@@ -1995,8 +1995,8 @@ static void write_win64_default_prologue( struct proc_info *info )
 	if ( cntxmm ) {
 	    int i;
 	    int cnt;
-	    regist = info->regslist;
 	    i = ( info->localsize - cntxmm * 16 ) & ~(16-1);
+	    regist = info->regslist;
 	    for( cnt = *regist++; cnt; cnt--, regist++ ) {
 		if ( GetValueSp( *regist ) & OP_XMM ) {
 		    if ( resstack ) {
@@ -2202,13 +2202,16 @@ static void SetLocalOffsets( struct proc_info *info )
 /***************************************************/
 {
     struct dsym *curr;
-    int		cntxmm = 0;
-    int		cntstd = 0;
-    int		start = 0;
-    int		rspalign = FALSE;
-    int		align = CurrWordSize;
+    int cntxmm = 0;
+    int cntstd = 0;
+    int start = 0;
+    int regsize = 0; /* v2.25 - option cstack:on */
+    int rspalign = FALSE;
+    int align = CurrWordSize;
 
-    if ( info->isframe || ( ModuleInfo.fctype == FCT_WIN64 && ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) ) ) {
+    if ( info->isframe || ( ModuleInfo.fctype == FCT_WIN64 &&
+	( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) ) ) {
+
 	rspalign = TRUE;
 	if ( ModuleInfo.win64_flags & W64F_STACKALIGN16 )
 	    align = 16;
@@ -2243,6 +2246,12 @@ static void SetLocalOffsets( struct proc_info *info )
 	}
     }
 
+    if ( ( ModuleInfo.aflag & _AF_CSTACK ) &&
+	( ModuleInfo.basereg[ModuleInfo.Ofssize] == T_RBP ||
+	  ModuleInfo.basereg[ModuleInfo.Ofssize] == T_EBP ) ) {
+	regsize = CurrWordSize * cntstd + 16 * cntxmm;
+    }
+
     /* scan the locals list and set member sym.offset */
     for( curr = info->locallist; curr; curr = curr->nextlocal ) {
 	uint_32 itemsize = ( curr->sym.total_size == 0 ? 0 : curr->sym.total_size / curr->sym.total_length );
@@ -2251,7 +2260,7 @@ static void SetLocalOffsets( struct proc_info *info )
 	    info->localsize = ROUND_UP( info->localsize, align );
 	else if ( itemsize ) /* v2.04: skip if size == 0 */
 	    info->localsize = ROUND_UP( info->localsize, itemsize );
-	curr->sym.offset = - info->localsize;
+	curr->sym.offset = - info->localsize + regsize;
     }
 
     /* v2.11: localsize must be rounded before offset adjustment if fpo */
@@ -2380,7 +2389,7 @@ static void write_win64_default_epilogue( struct proc_info *info )
     else
 	AddLineQueueX( "add %r, %d", stackreg[ModuleInfo.Ofssize], NUMQUAL info->localsize );
     pop_register( CurrProc->e.procinfo->regslist );
-    if ( GetRegNo( info->basereg ) != 4 && ( info->parasize != 0 || info->locallist != NULL ) )
+    if ( ( GetRegNo( info->basereg ) != 4 && ( info->parasize != 0 || info->locallist != NULL ) ) )
 	AddLineQueueX( "pop %r", info->basereg );
     return;
 }

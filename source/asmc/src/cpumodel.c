@@ -410,6 +410,8 @@ int SetCPU( enum cpu_info newcpu )
  *
  */
 
+int SetWin64( int *, struct asm_tok[] );
+#if 0
 void InitStackBase( int );
 int Win64Options( int i, struct asm_tok tokenarray[] )
 {
@@ -450,6 +452,7 @@ int Win64Options( int i, struct asm_tok tokenarray[] )
 	};
 	return --i;
 }
+#endif
 
 /* handles
  .8086,
@@ -463,6 +466,7 @@ int CpuDirective( int i, struct asm_tok tokenarray[] )
 /*********************************************************/
 {
     enum cpu_info newcpu;
+    int x;
 
     if (tokenarray[i].tokval == T_DOT_WIN64) {
 
@@ -472,7 +476,10 @@ int CpuDirective( int i, struct asm_tok tokenarray[] )
 		Options.sub_format = SFORMAT_64BIT;
 		longjmp( jmpenv, 1 );
 	}
-	Win64Options( i, tokenarray );
+	if ( tokenarray[i+1].token == T_COLON ) {
+	    x = i + 2;
+	    SetWin64( &x, tokenarray );
+	}
 	return( NOT_ERROR );
     }
 
@@ -482,8 +489,12 @@ int CpuDirective( int i, struct asm_tok tokenarray[] )
 	newcpu = GetSflagsSp( tokenarray[i].tokval );
 
     if (tokenarray[i].tokval == T_DOT_X64 ||
-	tokenarray[i].tokval == T_DOT_AMD64)
-	i = Win64Options( i, tokenarray );
+	tokenarray[i].tokval == T_DOT_AMD64) {
+	if ( tokenarray[i+1].token == T_COLON ) {
+	    x = i + 2;
+	    SetWin64( &x, tokenarray );
+	}
+    }
 
 #if DOT_XMMARG
     .if ( tokenarray[i].tokval == T_DOT_XMM && tokenarray[i+1].token != T_FINAL ) {

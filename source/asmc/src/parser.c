@@ -2407,7 +2407,8 @@ int ParseLine( struct asm_tok tokenarray[] )
 	return( asmerr( 2037 ) );
     }
 
-    if( ProcStatus & PRST_PROLOGUE_NOT_DONE ) write_prologue( tokenarray );
+    if( ProcStatus & PRST_PROLOGUE_NOT_DONE ) 
+	write_prologue( tokenarray );
 
     if ( CurrFile[LST] ) oldofs = GetCurrOffset();
 

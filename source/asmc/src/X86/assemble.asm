@@ -85,7 +85,7 @@ ConvertSectionName PROC USES esi edi ebx sym, pst, buffer
 		mov ecx,pst
 		.if ecx
 
-		    mov eax,[edi].dsym.seginfo
+		    mov eax,[edi].nsym.seginfo
 		    .if !( esi == CSI_BSS + 1 && [eax].seg_info.bytes_written )
 			;
 			; don't set segment type to BSS if the segment
@@ -119,7 +119,7 @@ MAX_LEDATA_THRESHOLD equ 1024 - 10
 OutputByte PROC USES esi edi ebx char
 
     mov esi,ModuleInfo.currseg
-    mov edi,[esi].dsym.seginfo
+    mov edi,[esi].nsym.seginfo
 
     .if write_to_file
 
@@ -152,9 +152,9 @@ OutputByte PROC USES esi edi ebx char
     mov [edi].seg_info.written,1
     mov eax,[edi].seg_info.current_loc
 
-    .if eax > [esi].dsym.sym.max_offset
+    .if eax > [esi].nsym.sym.max_offset
 
-	mov [esi].dsym.sym.max_offset,eax
+	mov [esi].nsym.sym.max_offset,eax
     .endif
     ret
 OutputByte ENDP
@@ -174,7 +174,7 @@ FillDataBytes ENDP
 OutputBytes PROC USES esi edi ebx pbytes, len, fixup
 
     mov esi,ModuleInfo.currseg
-    mov edi,[esi].dsym.seginfo
+    mov edi,[esi].nsym.seginfo
 
     .if write_to_file
 
@@ -216,8 +216,8 @@ OutputBytes PROC USES esi edi ebx pbytes, len, fixup
     add [edi].seg_info.bytes_written,eax
     mov [edi].seg_info.written,1
     mov eax,[edi].seg_info.current_loc
-    .if eax > [esi].dsym.sym.max_offset
-	mov [esi].dsym.sym.max_offset,eax
+    .if eax > [esi].nsym.sym.max_offset
+	mov [esi].nsym.sym.max_offset,eax
     .endif
     ret
 OutputBytes ENDP
@@ -231,7 +231,7 @@ SetCurrOffset PROC USES esi edi ebx dseg, value, relative, select_data
     mov esi,dseg
     mov eax,relative
     mov ecx,write_to_file
-    mov edi,[esi].dsym.seginfo
+    mov edi,[esi].nsym.seginfo
 
     .if eax
 	add ebx,[edi].seg_info.current_loc
@@ -260,8 +260,8 @@ SetCurrOffset PROC USES esi edi ebx dseg, value, relative, select_data
     mov [edi].seg_info.current_loc,ebx
     mov [edi].seg_info.written,0
     mov eax,[edi].seg_info.current_loc
-    .if eax > [esi].dsym.sym.max_offset
-	mov [esi].dsym.sym.max_offset,eax
+    .if eax > [esi].nsym.sym.max_offset
+	mov [esi].nsym.sym.max_offset,eax
     .endif
     mov eax,NOT_ERROR
     ret
@@ -274,13 +274,13 @@ WriteModule PROC USES esi edi ebx modinfo
 
     mov esi,SymTables[TAB_SEG*sizeof(symbol_queue)].head
     .while  esi
-	mov eax,[esi].dsym.seginfo
-	.if [eax].seg_info.Ofssize == USE16 && [esi].dsym.sym.max_offset > 10000h
+	mov eax,[esi].nsym.seginfo
+	.if [eax].seg_info.Ofssize == USE16 && [esi].nsym.sym.max_offset > 10000h
 	    .if Options.output_format == OFORMAT_OMF
-		asmerr( 2103, [esi].dsym.sym._name )
+		asmerr( 2103, [esi].nsym.sym._name )
 	    .endif
 	.endif
-	mov esi,[esi].dsym.next
+	mov esi,[esi].nsym.next
     .endw
 
     mov	    eax,modinfo
@@ -309,7 +309,7 @@ WriteModule PROC USES esi edi ebx modinfo
 			WriteError()
 		    .endif
 		.endif
-		mov esi,[esi].dsym.next
+		mov esi,[esi].nsym.next
 	    .endw
 	    fclose(edi)
 	.endif
@@ -552,7 +552,7 @@ ModulePassInit PROC USES esi
 	.while eax
 
 	    and [eax].asym.flag,not SFL_IAT_USED
-	    mov eax,[eax].dsym.next
+	    mov eax,[eax].nsym.next
 	.endw
     .endif
     ret
@@ -614,7 +614,7 @@ PassOneChecks PROC USES esi edi
 	    mov UseSavedState,0
 	    jmp aliases
 	.endif
-	mov eax,[eax].dsym.next
+	mov eax,[eax].nsym.next
     .endw
     ;
     ; if there's an item in the safeseh list which is not an
@@ -628,7 +628,7 @@ PassOneChecks PROC USES esi edi
 	    mov UseSavedState,0
 	    jmp aliases
 	.endif
-	mov eax,[eax].dsym.next
+	mov eax,[eax].nsym.next
     .endw
 aliases:
     ;
@@ -655,7 +655,7 @@ aliases:
 
 		or [eax].asym.flag,SFL_USED
 	    .endif
-	    mov ecx,[ecx].dsym.next
+	    mov ecx,[ecx].nsym.next
 	.endw
     .endif
     ;
@@ -664,7 +664,7 @@ aliases:
     mov edi,SymTables[TAB_EXT*sizeof(symbol_queue)].head
     .while edi
 	mov esi,edi
-	mov edi,[esi].dsym.next
+	mov edi,[esi].nsym.next
 	.if [esi].asym.flag & SFL_USED
 
 	    and [esi].asym.sint_flag,not SINT_WEAK
@@ -1172,7 +1172,7 @@ AssembleModule PROC USES esi edi ebx source
 
 	    mov eax,[esi].asym.max_offset
 	    add curr_written,eax
-	    mov esi,[esi].dsym.next
+	    mov esi,[esi].nsym.next
 	.endw
 	;
 	; if there's no phase error and size of segments didn't change, we're done
@@ -1193,12 +1193,12 @@ AssembleModule PROC USES esi edi ebx source
 
 		mov esi,SymTables[TAB_SEG*8].head
 		.while	esi
-		    mov ebx,[esi].dsym.seginfo
+		    mov ebx,[esi].nsym.seginfo
 		    .if [ebx].seg_info.LinnumQueue
 			QueueDeleteLinnum( [ebx].seg_info.LinnumQueue )
 		    .endif
 		    mov [ebx].seg_info.LinnumQueue,0
-		    mov esi,[esi].dsym.next
+		    mov esi,[esi].nsym.next
 		.endw
 	    .else
 		QueueDeleteLinnum( &LinnumQueue )

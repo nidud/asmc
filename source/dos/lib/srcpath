@@ -4,9 +4,9 @@
 srcpath = %ASMCDIR%
 WATCOM	= %WATCOM%
 
-lib_dir = $(srcpath)\lib
-inc_dir = $(srcpath)\include\dos
 src_dir = $(srcpath)\source\dos
+inc_dir = $(src_dir)\include
+lib_dir = $(src_dir)\lib
 
 !ifdef bin
 bin_dir = $(bin)

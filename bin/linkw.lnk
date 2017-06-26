@@ -85,8 +85,20 @@ system begin gui_64
     runtime windows=4.0
 end
 
-system begin pe_dll
-#    option osname='Win32/64 Dll'
+system begin dll_32
+    libpath %ASMCDIR%\lib
     format windows pe dll ^
     runtime windows=4.0
+end
+
+system begin dll_64
+    libpath %ASMCDIR%\lib\amd64
+    format windows pe dll ^
+    runtime windows=4.0
+end
+
+system begin dos
+    libpath %AsmCDir%\source\dos\lib
+    library cl
+    format  dos ^
 end

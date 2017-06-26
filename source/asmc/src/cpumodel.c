@@ -404,55 +404,7 @@ int SetCPU( enum cpu_info newcpu )
     return( NOT_ERROR );
 }
 
-/*
- *
- *
- *
- */
-
 int SetWin64( int *, struct asm_tok[] );
-#if 0
-void InitStackBase( int );
-int Win64Options( int i, struct asm_tok tokenarray[] )
-{
-	i++;
-	while (tokenarray[i].token != T_FINAL) {
-
-		if (tokenarray[i].token != T_COLON &&
-		    tokenarray[i].token != T_COMMA) {
-
-			if ( !_stricmp( tokenarray[i].string_ptr, "RSP" ) ) {
-				InitStackBase( T_RSP );
-				ModuleInfo.win64_flags |= W64F_AUTOSTACKSP;
-			} else if ( !_stricmp( tokenarray[i].string_ptr, "RBP" ) ) {
-				InitStackBase( T_RBP );
-				ModuleInfo.frame_auto = 1;
-				ModuleInfo.win64_flags |= (W64F_AUTOSTACKSP | W64F_SAVEREGPARAMS);
-			} else if ( !_stricmp( tokenarray[i].string_ptr, "ALIGN" ) ) {
-				if ( !ModuleInfo.win64_flags )
-					ModuleInfo.win64_flags |= W64F_AUTOSTACKSP;
-				ModuleInfo.win64_flags |= W64F_STACKALIGN16;
-			} else if ( !_stricmp( tokenarray[i].string_ptr, "NOALIGN" ) ) {
-				ModuleInfo.win64_flags &= ~W64F_STACKALIGN16;
-			} else if ( !_stricmp( tokenarray[i].string_ptr, "SAVE" ) ) {
-				ModuleInfo.win64_flags |= W64F_SAVEREGPARAMS;
-			} else if ( !_stricmp( tokenarray[i].string_ptr, "NOSAVE" ) ) {
-				ModuleInfo.win64_flags &= ~W64F_SAVEREGPARAMS;
-			} else if ( !_stricmp( tokenarray[i].string_ptr, "AUTO" ) ) {
-				ModuleInfo.win64_flags |= W64F_AUTOSTACKSP;
-			} else if ( !_stricmp( tokenarray[i].string_ptr, "NOAUTO" ) ) {
-				ModuleInfo.win64_flags &= ~W64F_AUTOSTACKSP;
-			} else if ( !_stricmp( tokenarray[i].string_ptr, "FRAME" ) ) {
-				ModuleInfo.frame_auto = 1;
-			} else if ( !_stricmp( tokenarray[i].string_ptr, "NOFRAME" ) ) {
-				ModuleInfo.frame_auto = 0;
-			}
-		}
-		i++;
-	};
-	return --i;
-}
-#endif
 
 /* handles
  .8086,

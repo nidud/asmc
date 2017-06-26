@@ -1,12 +1,9 @@
 # MAKEFILE--
 # Makefile for Doszip
 #
-!include ../srcpath
-
-dz.exe: dz.dos
-	asmc -mz -Fo dz.exe -q -I$(inc_dir) dz.asm
-dz.dos:
-	iddc -ml -r src\*.idd
-	asmc -q -I$(inc_dir) -D__DZ__ src\*.asm
-	linkw Name $@ System dos OP M, Q L dz F { $(STARTUP) *.obj }
-	del *.obj
+dz.exe:
+    asmc -mz -Fo dz.exe -q -I..\include dz.asm
+    iddc -ml -r src\*.idd
+    asmc -I..\include -D__DZ__ src\*.asm
+    linkw system dos name dz.dos file ..\lib\c0l, *.obj
+    del *.obj

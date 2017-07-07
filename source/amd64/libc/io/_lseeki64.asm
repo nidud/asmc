@@ -4,23 +4,23 @@ include stdlib.inc
 include crtl.inc
 include winbase.inc
 
-	.code
+    .code
 
 _lseeki64 PROC handle:SINT, offs:QWORD, pos:UINT
 
-	local	lpNewFilePointer:QWORD
+    local lpNewFilePointer:QWORD
 
-	mov	r9,r8
-	.if	getosfhnd( ecx ) != -1
+    mov r9,r8
+    .ifd getosfhnd(ecx) != -1
 
-		.if	!SetFilePointerEx( rax, edx, addr lpNewFilePointer, r9d )
+        .ifd !SetFilePointerEx(rax, rdx, &lpNewFilePointer, r9d)
 
-			osmaperr()
-		.else
-			mov rax,lpNewFilePointer
-		.endif
-	.endif
-	ret
+            osmaperr()
+        .else
+            mov rax,lpNewFilePointer
+        .endif
+    .endif
+    ret
 _lseeki64 ENDP
 
-	END
+    END

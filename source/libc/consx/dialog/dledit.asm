@@ -8,7 +8,6 @@ tinocando	PROTO
 tidecx		PROTO :DWORD
 tiincx		PROTO :DWORD
 tistripend	PROTO :DWORD
-tiisword	PROTO
 
 	.data
 
@@ -245,10 +244,10 @@ event_nextword PROC USES esi
 	jz	toend
 	mov	esi,eax		; to end of word
 	mov	ecx,eax
+	xor	eax,eax
      @@:
 	lodsb
-	call	tiisword
-	test	eax,eax
+	test	_ltype[eax+1],_LABEL or _DIGIT
 	jnz	@B
 	test	al,al
 	jz	toend
@@ -256,8 +255,7 @@ event_nextword PROC USES esi
 	lodsb			; to start of word
 	test	al,al
 	jz	toend
-	call	tiisword
-	test	eax,eax
+	test	_ltype[eax+1],_LABEL or _DIGIT
 	jz	@B
 	dec	esi
 	sub	esi,ecx
@@ -294,12 +292,11 @@ event_prevword PROC
 	jz	toend
 	mov	esi,eax
 	add	esi,ecx
-	mov	al,[esi]
-	call	tiisword
-	test	eax,eax
+	movzx	eax,byte ptr [esi]
+	test	_ltype[eax+1],_LABEL or _DIGIT
 	jz	@F
 	mov	al,[esi-1]
-	call	tiisword
+	test	_ltype[eax+1],_LABEL or _DIGIT
 	jnz	lup2
 	dec	esi
 	jmp	lup
@@ -311,13 +308,13 @@ lup:
 	cmp	esi,ecx
 	je	set
 	jb	home
-	mov	al,[esi]
+	movzx	eax,byte ptr [esi]
 	dec	esi
 	cmp	esi,ecx
 	jbe	home
 	test	al,al
 	jz	home
-	call	tiisword
+	test	_ltype[eax+1],_LABEL or _DIGIT
 	jz	lup
 lup2:
 	mov	al,[esi]
@@ -327,7 +324,7 @@ lup2:
 	je	set
 	test	al,al
 	jz	home
-	call	tiisword
+	test	_ltype[eax+1],_LABEL or _DIGIT
 	jnz	lup2
 	add	esi,2
 set:

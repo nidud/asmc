@@ -165,15 +165,19 @@ free	proc uses eax maddr:PVOID
 	; unlink the node
 	;
 	mov ecx,[eax].S_HEAP.h_prev
-	mov eax,[eax].S_HEAP.h_next
+	mov edx,[eax].S_HEAP.h_next
 	.if ecx
-	    mov [ecx].S_HEAP.h_next,eax
+	    mov [ecx].S_HEAP.h_next,edx
 	.endif
-	.if eax
-	    mov [eax].S_HEAP.h_prev,ecx
+	.if edx
+	    mov [edx].S_HEAP.h_prev,ecx
 	.endif
-	mov	eax,_heap_base
-	mov	_heap_free,eax
+	mov edx,_heap_base
+	.if eax == edx
+	    xor edx,edx
+	    mov _heap_base,edx
+	.endif
+	mov	_heap_free,edx
 	push	0
 	call	GetProcessHeap
 	push	eax

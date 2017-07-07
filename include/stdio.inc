@@ -98,6 +98,7 @@ _getbuf		proto __cdecl :LPFILE
 setvbuf		proto __cdecl :LPFILE, :LPSTR, :SIZE_T, :SIZE_T
 setbuf		proto __cdecl :LPFILE, :LPSTR
 ungetc		proto __cdecl :SINT, :LPFILE
+_openfile	proto __cdecl :LPSTR, :LPSTR, :SINT, :LPFILE
 ifdef _MSVCRT
 __getmainargs	proto __cdecl :ptr, :ptr, :ptr, :ptr, :ptr
 __wgetmainargs	proto __cdecl :ptr, :ptr, :ptr, :ptr, :ptr

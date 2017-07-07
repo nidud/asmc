@@ -4,24 +4,24 @@ include winbase.inc
 
 	.code
 
-	OPTION	WIN64:2, STACKBASE:rsp
+	option	win64:rsp nosave
 
 oswrite PROC USES rbx h:SINT, b:PVOID, z:SIZE_T
-local	lpNumberOfBytesWritten:SIZE_T
+local	lpNumberOfBytesWritten:dword
 
-	mov	rbx,r8
-	lea	rax,_osfhnd
-	mov	rcx,[rax+rcx*8]
-	.if	WriteFile( rcx, rdx, r8d, addr lpNumberOfBytesWritten, 0 )
+	mov ebx,r8d
+	lea rax,_osfhnd
+	mov rcx,[rax+rcx*8]
+	.if WriteFile(rcx, rdx, r8d, &lpNumberOfBytesWritten, 0)
 
-		mov	rax,lpNumberOfBytesWritten
-		.if	rax != rbx
-			mov errno,ERROR_DISK_FULL
-			xor eax,eax
+		mov eax,lpNumberOfBytesWritten
+		.if eax != ebx
+		    mov errno,ERROR_DISK_FULL
+		    xor eax,eax
 		.endif
 	.else
-		call	osmaperr
-		xor	eax,eax
+	    osmaperr()
+	    xor eax,eax
 	.endif
 
 	ret

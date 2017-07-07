@@ -1,19 +1,21 @@
 include io.inc
 
-	.code
+    .code
 
-	OPTION PROLOGUE:NONE, EPILOGUE:NONE
+    option win64:rsp noauto nosave
 
 getosfhnd PROC handle:SINT
-	or	rax,-1
-	.if	ecx < _nfile
-		lea	r8,_osfile
-		.if	BYTE PTR [r8+rcx] & FH_OPEN
-			lea r8,_osfhnd
-			mov rax,[r8+rcx*8]
-		.endif
-	.endif
-	ret
+    or eax,-1
+    .if ecx < _nfile
+        lea rax,_osfile
+        .if byte ptr [rax+rcx] & FH_OPEN
+            lea rax,_osfhnd
+            mov rax,[rax+rcx*8]
+        .else
+            mov eax,-1
+        .endif
+    .endif
+    ret
 getosfhnd ENDP
 
-	END
+    END

@@ -50,10 +50,10 @@ endif
 
 _finddata_t	STRUC
 attrib		dd ?
-time_create	time_t ?	; File creation time
-time_access	time_t ?	; Last access time
-time_write	time_t ?	; Last modification time
-_size		dd ?
+time_create	size_t ?	; File creation time
+time_access	size_t ?	; Last access time
+time_write	size_t ?	; Last modification time
+_size		size_t ?
 _name		db 260 dup(?)
 _finddata_t	ENDS
 
@@ -61,18 +61,18 @@ ifndef _WFINDDATA_T_DEFINED
 _WFINDDATA_T_DEFINED equ <>
 _wfinddata_t	STRUC
 attrib		dd ?
-time_create	time_t ?	;; -1 for FAT file systems
-time_access	time_t ?	;; -1 for FAT file systems
-time_write	time_t ?
-_size		dd ?
+time_create	size_t ?	;; -1 for FAT file systems
+time_access	size_t ?	;; -1 for FAT file systems
+time_write	size_t ?
+_size		size_t ?
 _name		wchar_t 260 dup(?)
 _wfinddata_t	ENDS
 if _INTEGRAL_MAX_BITS GE 64
 _wfinddatai64_t STRUC
 attrib		dd ?
-time_create	time_t ?	;; -1 for FAT file systems
-time_access	time_t ?	;; -1 for FAT file systems
-time_write	time_t ?
+time_create	dq ?
+time_access	dq ?
+time_write	dq ?
 _size		dq ?
 _name		wchar_t 260 dup(?)
 _wfinddatai64_t ENDS

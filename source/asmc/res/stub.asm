@@ -1,5 +1,5 @@
 ; STUB.ASM--
-; Copyright (c) 2016 Doszip Developers
+; Copyright (c) 2016 Asmc Developers
 
 	.186
 	.model	small
@@ -13,7 +13,7 @@ start:
 	call	print
 
 	db	10
-	db	"Doszip Macro Assembler Version ", ASMC_VERSSTR
+	db	"Asmc Macro Assembler Version ", ASMC_VERSSTR
 %	db	" &@Date",13,10
 	db	"This is a Windows NT character-mode executable",13,10,'$'
 

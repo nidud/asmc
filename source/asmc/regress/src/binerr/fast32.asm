@@ -13,7 +13,7 @@ foo	proto fastcall :ptr S1
 ;
 ; This fails in ML:	error A2008: syntax error : panel
 ;	    and JWASM:	Error A2137: Conflicting parameter definition: panel
-;		ASMC:	error A2111: conflicting parameter definition : pS1
+;		ASMC:	error A2111: conflicting parameter definition : panel
 ;
 foo	proc fastcall panel:ptr S1
 

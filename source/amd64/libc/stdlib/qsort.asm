@@ -1,141 +1,139 @@
 include stdlib.inc
-include string.inc
 include strlib.inc
 
-	.code
+    .code
 
-qsort	PROC USES rsi rdi rbx p:PVOID, n:SIZE_T, w:SIZE_T, compare:LPQSORTCMD
+qsort proc uses rsi rdi rbx p:PVOID, n:SIZE_T, w:SIZE_T, compare:LPQSORTCMD
 
-local	stack_level
+local stack_level
 
-	mov	rax,n
-	.if	rax > 1
+    mov rax,n
+    .if rax > 1
 
-		dec	rax
-		mul	w
-		mov	rsi,p
-		lea	rdi,[rsi+rax]
-		mov	stack_level,0
+        dec rax
+        mul w
+        mov rsi,p
+        lea rdi,[rsi+rax]
+        mov stack_level,0
 
-		.while	1
+        .while  1
 
-			mov	rcx,w
-			lea	rax,[rdi+rcx]	; middle from (hi - lo) / 2
-			sub	rax,rsi
-			.ifnz
-				xor	rdx,rdx
-				div	rcx
-				shr	rax,1
-				mul	rcx
-			.endif
+            mov rcx,w
+            lea rax,[rdi+rcx]   ; middle from (hi - lo) / 2
+            sub rax,rsi
+            .ifnz
+                xor rdx,rdx
+                div rcx
+                shr rax,1
+                mul rcx
+            .endif
 
-			lea	rbx,[rsi+rax]
-			.ifs	compare( rsi, rbx ) > 0
+            sub rsp,0x20
 
-				memxchg( rsi, rbx, w )
-			.endif
-			.ifs	compare( rsi, rdi ) > 0
+            lea rbx,[rsi+rax]
+            .ifsd compare(rsi, rbx) > 0
+                memxchg(rsi, rbx, w)
+            .endif
+            .ifsd compare(rsi, rdi) > 0
+                memxchg(rsi, rdi, w)
+            .endif
+            .ifsd compare(rbx, rdi) > 0
+                memxchg(rbx, rdi, w)
+            .endif
+            mov p,rsi
+            mov n,rdi
 
-				memxchg( rsi, rdi, w )
-			.endif
-			.ifs	compare( rbx, rdi ) > 0
+            .while  1
 
-				memxchg( rbx, rdi, w )
-			.endif
+                mov rax,w
+                add p,rax
+                .if p < rdi
 
-			mov	p,rsi
-			mov	n,rdi
+                    .continue .ifsd compare(p, rbx) <= 0
+                .endif
 
-			.while	1
+                .while  1
 
-				mov	rax,w
-				add	p,rax
-				.if	p < rdi
+                    mov rax,w
+                    sub n,rax
 
-					.continue .ifs compare( p, rbx ) <= 0
-				.endif
+                    .break .if n <= rbx
+                    .break .ifsd compare(n, rbx) <= 0
+                .endw
 
-				.while	1
+                mov rdx,n
+                mov rax,p
+                .break .if rdx < rax
+                memxchg(rdx, rax, w)
 
-					mov	rax,w
-					sub	n,rax
+                .if rbx == n
 
-					.break .if n <= rbx
-					.break .ifs compare( n, rbx ) <= 0
-				.endw
+                    mov rbx,p
+                .endif
+            .endw
 
-				mov	rdx,n
-				mov	rax,p
-				.break .if rdx < rax
+            mov rax,w
+            add n,rax
 
-				memxchg( rdx, rax, w )
+            .while  1
 
-				.if	rbx == n
+                mov rax,w
+                sub n,rax
 
-					mov	rbx,p
-				.endif
-			.endw
+                .break .if n <= rsi
+                .break .ifd compare(n, rbx)
+            .endw
 
-			mov	rax,w
-			add	n,rax
+            add rsp,0x20
 
-			.while	1
+            mov rdx,p
+            mov rax,n
+            sub rax,rsi
+            mov rcx,rdi
+            sub rcx,rdx
 
-				mov	rax,w
-				sub	n,rax
+            .ifs rax < rcx
 
-				.break .if n <= rsi
-				.break .if compare( n, rbx )
-			.endw
+                mov rcx,n
 
-			mov	rdx,p
-			mov	rax,n
-			sub	rax,rsi
-			mov	rcx,rdi
-			sub	rcx,rdx
+                .if rdx < rdi
 
-			.ifs	rax < rcx
+                    push rdx
+                    push rdi
+                    inc stack_level
+                .endif
 
-				mov	rcx,n
+                .if rsi < rcx
 
-				.if	rdx < rdi
+                    mov rdi,rcx
+                    .continue
+                .endif
+            .else
+                mov rcx,n
 
-					push	rdx
-					push	rdi
-					inc	stack_level
-				.endif
+                .if rsi < rcx
 
-				.if	rsi < rcx
+                    push rsi
+                    push rcx
+                    inc stack_level
+                .endif
 
-					mov	rdi,rcx
-					.continue
-				.endif
-			.else
-				mov	rcx,n
+                .if rdx < rdi
 
-				.if	rsi < rcx
+                    mov rsi,rdx
+                    .continue
+                .endif
+            .endif
 
-					push	rsi
-					push	rcx
-					inc	stack_level
-				.endif
+            .break .if !stack_level
 
-				.if	rdx < rdi
+            dec stack_level
+            pop rdi
+            pop rsi
+        .endw
+    .endif
+    ret
 
-					mov	rsi,rdx
-					.continue
-				.endif
-			.endif
+qsort endp
 
-			.break .if !stack_level
-
-			dec	stack_level
-			pop	rdi
-			pop	rsi
-		.endw
-	.endif
-	ret
-
-qsort	ENDP
-
-	END
+    END

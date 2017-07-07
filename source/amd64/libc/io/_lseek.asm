@@ -3,13 +3,13 @@ include errno.inc
 
 	.code
 
-	OPTION	WIN64:2, STACKBASE:rsp
+	option win64:rsp nosave
 
 _lseek	PROC handle:SINT, offs:QWORD, pos:UINT
-	.if	r8d == SEEK_SET
-		and	rdx,0FFFFFFFFh
+	.if r8d == SEEK_SET
+		mov edx,edx
 	.endif
-	_lseeki64( ecx, rdx, r8d )
+	_lseeki64(ecx, rdx, r8d)
 	ret
 _lseek	ENDP
 

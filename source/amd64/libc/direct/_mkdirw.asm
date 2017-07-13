@@ -2,24 +2,19 @@ include io.inc
 include direct.inc
 include winbase.inc
 
-	.code
+    .code
 
-	OPTION PROLOGUE:NONE, EPILOGUE:NONE
+    option win64:nosave rsp
 
 _mkdirw proc directory:LPWSTR
 
-	CreateDirectoryW( rcx, 0 )
-	test	eax,eax
-	jz	error
-	xor	eax,eax
-ifdef __DZ__
-	mov	_diskflag,1
-endif
-toend:
-	ret
-error:
-	call	osmaperr
-	jmp	toend
+    .if CreateDirectoryW(rcx, 0)
+        xor eax,eax
+    .else
+        osmaperr()
+    .endif
+    ret
+
 _mkdirw endp
 
-	END
+    END

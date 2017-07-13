@@ -1,10 +1,8 @@
-include string.inc
+
+	.x64
+	.model	flat
 
 	.code
-
-	OPTION PROLOGUE:NONE, EPILOGUE:NONE
-
-strcpy	PROC dst:LPSTR, src:LPSTR
 
 	mov	r9,rcx
 	mov	al,[rdx]
@@ -80,6 +78,4 @@ toend:
 	mov	rax,r9
 	ret
 
-strcpy	ENDP
-
-	END
+	end

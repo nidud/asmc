@@ -1,37 +1,21 @@
 include io.inc
 include direct.inc
-include alloc.inc
 include winbase.inc
 
-	.code
+    .code
 
-	OPTION	WIN64:2
+    option win64:nosave rsp
 
-_mkdir	proc directory:LPSTR
+_mkdir proc directory:LPSTR
 
-local	wpath:qword
+    .if !CreateDirectoryA(rcx, 0)
 
-	.if	!CreateDirectoryA( directory, 0 )
+        osmaperr()
+    .else
+        xor eax,eax
+    .endif
+    ret
 
-		mov	wpath,__allocwpath( directory )
-		add	rax,8
-		.if	!CreateDirectoryW( rax, 0 )
+_mkdir endp
 
-			CreateDirectoryW( wpath, 0 )
-		.endif
-	.endif
-
-	.if	!eax
-
-		osmaperr()
-	.else
-	    ifdef __DZ__
-		mov _diskflag,1
-	    endif
-		xor eax,eax
-	.endif
-	ret
-
-_mkdir	endp
-
-	END
+    END

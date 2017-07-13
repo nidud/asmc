@@ -7,28 +7,34 @@ include string.inc
 memxchg PROC dst:LPSTR, src:LPSTR, count:SIZE_T
 
 	mov	r9,rcx
-	mov	r10,rdx
-	mov	rcx,r8
-tail:
-	test	rcx,rcx
+loop_1:
+	test	r8,r8
 	jz	toend
-	test	rcx,3
-	jz	tail_4
+	test	r8b,7
+	jz	loop_8
+	test	r8b,3
+	jz	loop_4
 
-	sub	rcx,1
-	mov	al,[r10+rcx]
-	mov	dl,[r9+rcx]
-	mov	[r10+rcx],dl
-	mov	[r9+rcx],al
-	jmp	tail
-
-tail_4:
-	sub	rcx,4
-	mov	eax,[r10+rcx]
-	mov	edx,[r9+rcx]
-	mov	[r10+rcx],edx
-	mov	[r9+rcx],eax
-	jnz	tail_4
+	sub	r8,1
+	mov	al,[rcx+r8]
+	mov	r10b,[rdx+r8]
+	mov	[rcx+r8],r10b
+	mov	[rdx+r8],al
+	jmp	loop_1
+loop_4:
+	sub	r8,4
+	mov	eax,[rcx+r8]
+	mov	r10d,[rdx+r8]
+	mov	[rcx+r8],r10d
+	mov	[rdx+r8],eax
+	jz	toend
+loop_8:
+	sub	r8,8
+	mov	rax,[rcx+r8]
+	mov	r10,[rdx+r8]
+	mov	[rcx+r8],r10
+	mov	[rdx+r8],rax
+	jnz	loop_8
 toend:
 	mov	rax,r9
 	ret

@@ -1,24 +1,20 @@
 include io.inc
 include direct.inc
-include alloc.inc
 include winbase.inc
 
-	.code
+    .code
 
-_rmdir	PROC directory:LPSTR
+    option win64:nosave rsp
 
-	.if	!RemoveDirectoryA( directory )
+_rmdir proc directory:LPSTR
 
-		RemoveDirectoryW( __allocwpath( directory ) )
-	.endif
+    .if RemoveDirectoryA(rcx)
+        xor eax,eax
+    .else
+        osmaperr()
+    .endif
+    ret
 
-	.if	!eax
-		osmaperr()
-	.else
-		xor eax,eax
-	.endif
-	ret
+_rmdir endp
 
-_rmdir	ENDP
-
-	END
+    END

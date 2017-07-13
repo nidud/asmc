@@ -3,66 +3,57 @@ include process.inc
 include string.inc
 include alloc.inc
 include direct.inc
+include winbase.inc
 
-MAXCMDL equ 8000h
+    .code
 
-EXTRN	comspec:QWORD
-EXTRN	comspex:QWORD
-PUBLIC	cp_quote
+    option win64:nosave
 
-	.data
-	cp_quote db '"',0
+system proc uses rdi rsi rbx r12 r13 string:LPSTR
 
-	.code
+    local arg0[_MAX_PATH]:BYTE
 
-	OPTION	WIN64:3, STACKBASE:rsp
+    mov rdi,rcx
+    mov r12,rcx
+    mov rbx,alloca(0x8000)
+    strcpy(rbx, "cmd.exe")
+    .if !GetEnvironmentVariable("Comspec", rbx, 0x8000)
+        SearchPath(rax, "cmd.exe", rax, 0x8000, rbx, rax)
+    .endif
+    strcat(rbx, " /C ")
 
-system	PROC USES rdi rsi rbx r12 string:LPSTR
+    mov r13d,' '
+    .if BYTE PTR [rdi] == '"'
+        inc rdi
+        mov r13d,'"'
+    .endif
+    xor rsi,rsi
+    .if strchr(rdi, r13d)
+        mov BYTE PTR [rax],0
+        mov rsi,rax
+    .endif
+    strncpy(&arg0, rdi, _MAX_PATH-1)
+    .if rsi
+        mov [rsi],r13b
+        .if r13b == '"'
+            inc rsi
+        .endif
+    .else
+        strlen(r12)
+        add rax,r12
+        mov rsi,rax
+    .endif
+    mov rdi,rsi
+    lea rsi,arg0
+    lea r12,@CStr( "\"" )
+    .if strchr(rsi, ' ')
+        strcat(strcat(strcat(rbx, r12), rsi), r12)
+    .else
+        strcat(rbx, rsi)
+    .endif
+    process(0, strcat(rbx, rdi), 0)
+    ret
 
-	local	arg0[_MAX_PATH]:BYTE
+system endp
 
-	.if	malloc( MAXCMDL )
-		mov	rbx,rax
-		mov	BYTE PTR [rax],0
-		mov	rdi,string
-		mov	r12d,' '
-		.if	BYTE PTR [rdi] == '"'
-			inc	rdi
-			mov	r12b,'"'
-		.endif
-		xor	rsi,rsi
-		.if	strchr( rdi, r12d )
-			mov	BYTE PTR [rax],0
-			mov	rsi,rax
-		.endif
-		strncpy( addr arg0, rdi, _MAX_PATH-1 )
-		.if	rsi
-			mov	[rsi],r12b
-			.if	dl == '"'
-				inc rsi
-			.endif
-		.else
-			strlen( string )
-			add	rax,string
-			mov	rsi,rax
-		.endif
-		mov	rdi,rsi
-		strcat( strcpy( rbx, comspec ), " " )
-		mov	rdx,comspex
-		.if	BYTE PTR [rdx]
-			strcat( strcat( rbx, rdx ), " " )
-		.endif
-		lea	rsi,arg0
-		lea	r12,cp_quote
-		.if	strchr( rsi, ' ' )
-			strcat( strcat( strcat( rbx, r12 ), rsi ), r12 )
-		.else
-			strcat( rbx, rsi )
-		.endif
-		process( 0, strcat( rbx, rdi ), 0 )
-		free( rbx )
-	.endif
-	ret
-system	ENDP
-
-	END
+    END

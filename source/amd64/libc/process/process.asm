@@ -26,10 +26,10 @@ local	PI:PROCESS_INFORMATION,
 
 	lea	rdi,PI
 	mov	rsi,rdi
-	mov	rcx,sizeof( PROCESS_INFORMATION )
+	mov	ecx,sizeof( PROCESS_INFORMATION )
 	rep	stosb
 	lea	rdi,SINFO
-	mov	rcx,sizeof( STARTUPINFO )
+	mov	ecx,sizeof( STARTUPINFO )
 	rep	stosb
 	lea	rdi,SINFO
 	mov	SINFO.cb,sizeof( STARTUPINFO )
@@ -59,9 +59,6 @@ error:
 	mov	hStdInput,rax
 	SetConsoleMode( rax, ConsoleMode )
 	SetErrorMode( SEM_FAILCRITICALERRORS )
-ifdef __DZ__
-	mov	byte ptr _diskflag,3
-endif
 	mov	eax,edi
 	ret
 process ENDP

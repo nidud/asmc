@@ -69,8 +69,8 @@ end
 system begin gui_32
     option  quiet
     libpath %ASMCDIR%\lib
-    library libc,kernel32,user32
-    symt    WinStart
+    library libc,kernel32,user32,gdi32
+    symt    _WinStart
     format  windows pe ru win ^
     runtime windows=4.0
 end
@@ -79,7 +79,7 @@ end
 system begin gui_64
     option  quiet
     libpath %ASMCDIR%\lib\amd64
-    library libc,kernel32,user32
+    library libc,kernel32,user32,gdi32
     symt    WinStart
     format  windows pe ru win ^
     runtime windows=4.0

@@ -15,46 +15,44 @@ _iLDFD	proc uses ecx ebx esi
 	shl	ebx,22
 	jnc	L002
 	jnz	@F
-	add	esi,esi
+	shl	esi,1
 @@:
-	add	eax,00000800h
+	add	eax,0800h
 	adc	edx,0
 	jnc	L002
 	mov	edx,80000000h
-	inc	ecx
+	inc	cx
 L002:
 	and	eax,esi
 	mov	ebx,ecx
-	and	ecx,00007FFFh
-	add	ecx,0FFFFC400h
-	and	ecx,0000FFFFh
-	cmp	ecx,000007FFh
-	jnc	L005
-	test	ecx,ecx
+	and	cx,7FFFh
+	add	cx,03FFh-3FFFh
+	cmp	cx,07FFh
+	jae	L005
+	test	cx,cx
 	jnz	@F
 	shrd	eax,edx,12
-	add	edx,edx
+	shl	edx,1
 	shr	edx,12
 	jmp	L004
 @@:
 	shrd	eax,edx,11
-	add	edx,edx
+	shl	edx,1
 	shrd	edx,ecx,11
 L004:
-	shl	ebx,1
+	shl	bx,1
 	rcr	edx,1
 	jmp	toend
 L005:
-	cmp	ecx,0000C400h
+	cmp	cx,0C400h
 	jb	L009
-	cmp	ecx,0000FFCCh
+	cmp	cx,-52
 	jl	L007
-	sub	ecx,0000000Ch
-	neg	ecx
-	and	ecx,0FFFF0000h
-	cmp	ecx,00000020h
+	sub	cx,12
+	neg	cx
+	cmp	cl,32
 	jb	L006
-	sub	ecx,00000020h
+	sub	cl,32
 	mov	esi,eax
 	mov	eax,edx
 	xor	edx,edx
@@ -74,14 +72,14 @@ L007:
 	jmp	toend
 L009:
 	shrd	eax,edx,11
-	add	edx,edx
+	shl	edx,1
 	shr	edx,11
-	shl	ebx,1
+	shl	bx,1
 	rcr	edx,1
 	or	edx,7FF00000h
-	cmp	ecx,000043FFh
+	cmp	cx,43FFh
 	je	toend
-	int	3	; OVERFLOW exception
+	;int	3	; OVERFLOW exception
 toend:
 	pop	esi
 	mov	[esi],eax

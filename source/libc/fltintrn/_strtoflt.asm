@@ -2,6 +2,9 @@ include ltype.inc
 include fltintrn.inc
 include crtl.inc
 
+MAX_DIGITS  equ 19
+MAX_SIG_DIG equ 32
+
 	.data
 
 pow_table label DWORD
@@ -27,315 +30,311 @@ flt	S_STRFLT <0,0,0,_real>
 
 	OPTION	PROC: PRIVATE
 
-setflags PROC
-	xor	edi,edi
-	mov	flt.exponent,edi
-	mov	ebx,flt.string
-@@:
-	movzx	eax,BYTE PTR [ebx]
-	inc	ebx
-	test	eax,eax
-	jz	case_zero
-	test	byte ptr _ltype[eax+1],_SPACE
-	jnz	@B
-	dec	ebx
-	cmp	eax,'+'
-	jne	@F
-	inc	ebx
-	or	edi,_ST_SIGN
-@@:
-	cmp	eax,'-'
-	jne	@F
-	inc	ebx
-	or	edi,_ST_SIGN or _ST_NEGNUM
-@@:
-	mov	ax,[ebx]
-	inc	ebx
-	test	al,al
-	jz	case_zero
-	or	eax,2020h
-	cmp	al,'n'
-	je	case_NaN
-	cmp	al,'i'
-	je	case_INF
-	cmp	ax,'x0'
-	jne	@F
-	or	edi,_ST_ISHEX
-	add	ebx,2
-@@:
-	dec	ebx
+setflags proc
+
+    xor edi,edi
+    mov flt.exponent,edi
+    mov ebx,flt.string
+
+    .repeat
+
+	movzx eax,BYTE PTR [ebx]
+	inc ebx
+	test al,al
+	jz case_zero
+    .until !(_ltype[eax+1] & _SPACE)
+
+    dec ebx
+    .if al == '+'
+	inc ebx
+	or  edi,_ST_SIGN
+    .endif
+    .if al == '-'
+	inc ebx
+	or  edi,_ST_SIGN or _ST_NEGNUM
+    .endif
+
+    mov ax,[ebx]
+    inc ebx
+    test al,al
+    jz case_zero
+
+    or	eax,2020h
+    cmp al,'n'
+    je	case_NaN
+    cmp al,'i'
+    je	case_INF
+
+    .if ax == 'x0'
+	or edi,_ST_ISHEX
+	add ebx,2
+    .endif
+    dec ebx
+
 toend:
-	mov	flt.flags,edi
-	mov	flt.string,ebx
-	mov	eax,edi
-	ret
+    mov flt.flags,edi
+    mov flt.string,ebx
+    mov eax,edi
+    ret
+
 case_NaN:
-	mov	ax,[ebx]
-	inc	ebx
-	test	al,al
-	jz	case_zero
-	or	ax,2020h
-	cmp	ax,'na'
-	jne	case_INVALID
-	or	edi,_ST_ISNAN
-	inc	ebx
-	movzx	eax,BYTE PTR [ebx]
-	cmp	eax,'('
-	jne	return_NAN
-	lea	edx,[ebx+1]
-@@:
-	inc	edx
-	movzx	eax,BYTE PTR [edx]
-	cmp	eax,'_'
-	je	@B
-	test	byte ptr _ltype[eax+1],_DIGIT or _UPPER or _LOWER
-	jnz	@B
-	cmp	eax,')'
-	jne	return_NAN
-	lea	ebx,[edx+1]
+
+    mov ax,[ebx]
+    inc ebx
+    test al,al
+    jz case_zero
+
+    or	ax,2020h
+    cmp ax,'na'
+    jne case_INVALID
+    or	edi,_ST_ISNAN
+    inc ebx
+    movzx eax,BYTE PTR [ebx]
+
+    .if al == '('
+	lea edx,[ebx+1]
+	movzx eax,BYTE PTR [edx]
+	.while al == '_' || _ltype[eax+1] & _DIGIT or _UPPER or _LOWER
+	    inc edx
+	    mov al,[edx]
+	.endw
+	.if al == ')'
+	    lea ebx,[edx+1]
+	.endif
+    .endif
+
 return_NAN:
-	xor	eax,eax
-	mov	ecx,80000000h
-	jmp	return_NANINF
+    xor eax,eax
+    mov ecx,80000000h
+    jmp return_NANINF
+
 case_INF:
-	mov	ax,[ebx]
-	inc	ebx
-	or	ax,2020h
-	cmp	ax,'fn'
-	jne	case_INVALID
-	or	edi,_ST_ISINF
-	inc	ebx
-	mov	eax,[ebx]
-	or	eax,20202020h
-	cmp	eax,'tini'
-	jne	@F
-	add	ebx,5
-@@:
-	xor	eax,eax
-	xor	ecx,ecx
+    mov ax,[ebx]
+    inc ebx
+    or	ax,2020h
+    cmp ax,'fn'
+    jne case_INVALID
+    or	edi,_ST_ISINF
+    inc ebx
+    xor eax,eax
+    xor ecx,ecx
+
 return_NANINF:
-	mov	edx,flt.mantissa
-	mov	[edx],eax
-	mov	[edx+4],ecx
-	mov	WORD PTR [edx+8],7FFFh
-	test	edi,_ST_NEGNUM
-	jz	toend
-	or	WORD PTR [edx+8],8000h
-	jmp	toend
+    mov edx,flt.mantissa
+    mov [edx],eax
+    mov [edx+4],ecx
+    mov WORD PTR [edx+8],7FFFh
+    .if edi & _ST_NEGNUM
+	or WORD PTR [edx+8],8000h
+    .endif
+    jmp toend
+
 case_INVALID:
-	dec	ebx
-	or	edi,_ST_INVALID
-	jmp	toend
+    dec ebx
+    or	edi,_ST_INVALID
+    jmp toend
+
 case_zero:
-	dec	ebx
-	or	edi,_ST_ISZERO
-	xor	eax,eax
-	mov	edx,flt.mantissa
-	mov	[edx],eax
-	mov	[edx+4],eax
-	mov	[edx+8],ax
-	jmp	toend
+    dec ebx
+    or	edi,_ST_ISZERO
+    xor eax,eax
+    mov edx,flt.mantissa
+    mov [edx],eax
+    mov [edx+4],eax
+    mov [edx+8],ax
+    jmp toend
 setflags ENDP
 
-
 parsedes PROC
-	movzx	eax,BYTE PTR [ebx]
-	inc	ebx
-	test	eax,eax
-	jz	parse
-	cmp	eax,'.'
-	je	dot
-	test	byte ptr _ltype[eax+1],_DIGIT
-	jz	parse
-	test	edi,_ST_DOT
-	jz	@F
-	inc	ecx
-@@:
-	or	edi,_ST_DIGITS
-	or	edx,eax
-	cmp	edx,'0'
-	je	parsedes
-	cmp	esi,32
-	jnb	parsedes
-	mov	buffer[esi],al
-	inc	esi
-	jmp	parsedes
-dot:
-	test	edi,_ST_DOT
-	jnz	parse
-	or	edi,_ST_DOT
-	jmp	parsedes
+    ;
+    ; Parse the mantissa
+    ;
+    .while 1
+	movzx eax,BYTE PTR [ebx]
+	inc ebx
+	.break .if !eax
+	.if al == '.'
+	    .break .if edi & _ST_DOT
+	    or edi,_ST_DOT
+	.else
+	    .break .if !(_ltype[eax+1] & _DIGIT)
+	    .if edi & _ST_DOT
+		inc ecx
+	    .endif
+	    or edi,_ST_DIGITS
+	    or edx,eax
+	    .continue .if edx == '0' ; if a significant digit
+	    .if esi < MAX_SIG_DIG
+		mov buffer[esi],al
+	    .endif
+	    inc esi
+	.endif
+    .endw
+    ;
+    ; Parse the optional exponent
+    ;
+    xor edx,edx
+    .if edi & _ST_DIGITS
 
-parse:
-	xor	edx,edx
-	test	edi,_ST_DIGITS
-	jz	no_digits
-	push	esi
-	push	ecx
-	xor	esi,esi		; exponent
-	cmp	al,'e'
-	je	found
-	cmp	al,'E'
-	jne	notfound
-found:
-	mov	al,[ebx]
-	lea	edx,[ebx-1]
-	cmp	al,'+'
-	jne	@F
-	inc	ebx
-@@:
-	cmp	al,'-'
-	jne	@F
-	inc	ebx
-	or	edi,_ST_NEGEXP
-@@:
-	and	edi,not _ST_DIGITS
-lup:
-	movzx	eax,BYTE PTR [ebx]
-	test	byte ptr _ltype[eax+1],_DIGIT
-	jz	end_lup
-	cmp	esi,2000
-	jnb	@F
-	lea	ecx,[esi*8]
-	lea	esi,[esi*2+ecx-'0']
-	add	esi,eax
-@@:
-	or	edi,_ST_DIGITS
-	inc	ebx
-	jmp	lup
-end_lup:
-	test	edi,_ST_NEGEXP
-	jz	@F
-	neg	esi
-@@:
-	test	edi,_ST_DIGITS
-	jnz	end_exp
-	mov	ebx,edx
-	jmp	end_exp
-notfound:
-	dec	ebx
-end_exp:
-	mov	edx,esi
-	pop	ecx
-	pop	esi
-	sub	edx,ecx
-	cmp	esi,32
-	jna	@F
-	lea	edx,[edx+esi-32]
-	mov	esi,32
-@@:
-	cmp	esi,0
-	jng	toend
-	cmp	buffer[esi-1],'0'
-	jne	toend
-	inc	edx
-	dec	esi
-	jmp	@B
-no_digits:
-	mov	ebx,flt.string
-toend:
-	mov	flt.string,ebx
-	ret
+	push esi
+	push ecx
+
+	xor esi,esi ; exponent
+	.if al == 'e' || al == 'E'
+	    mov al,[ebx]
+	    lea edx,[ebx-1]
+	    .if al == '+'
+		inc ebx
+	    .endif
+	    .if al == '-'
+		inc ebx
+		or  edi,_ST_NEGEXP
+	    .endif
+	    and edi,not _ST_DIGITS
+	    .while 1
+
+		movzx eax,BYTE PTR [ebx]
+		.break .if !(_ltype[eax+1] & _DIGIT)
+
+		.if esi < 2000
+
+		    lea ecx,[esi*8]
+		    lea esi,[esi*2+ecx-'0']
+		    add esi,eax
+		.endif
+
+		or  edi,_ST_DIGITS
+		inc ebx
+	    .endw
+	    .if edi & _ST_NEGEXP
+
+		neg esi
+	    .endif
+	    .if !(edi & _ST_DIGITS)
+		mov ebx,edx
+	    .endif
+	.else
+	    dec ebx ; digits found, but no e or E
+	.endif
+
+	mov edx,esi
+	pop ecx
+	pop esi
+
+	sub edx,ecx
+	.if esi > MAX_DIGITS
+
+	    lea edx,[edx+esi-MAX_DIGITS]
+	    mov esi,MAX_DIGITS
+	.endif
+	.while 1
+
+	    .break .ifs esi <= 0
+	    .break .if buffer[esi-1] != '0'
+	    inc edx
+	    dec esi
+	.endw
+    .else
+	mov ebx,flt.string
+    .endif
+    mov flt.string,ebx
+    ret
 parsedes ENDP
 
 parsehex PROC
-	movzx	eax,BYTE PTR [ebx]
-	inc	ebx
-	test	eax,eax
-	jz	parse
-	cmp	eax,'.'
-	je	dot
-	test	byte ptr _ltype[eax+1],_HEX
-	jz	parse
-	test	edi,_ST_DOT
-	jz	@F
-	inc	ecx
-@@:
-	or	edi,_ST_DIGITS
-	or	edx,eax
-	cmp	edx,'0'
-	je	parsehex
-	cmp	esi,32
-	jnb	parsehex
-	mov	buffer[esi],al
-	inc	esi
-	jmp	parsehex
-dot:
-	test	edi,_ST_DOT
-	jnz	parse
-	or	edi,_ST_DOT
-	jmp	parsehex
-parse:
-	xor	edx,edx
-	test	edi,_ST_DIGITS
-	jz	no_digits
-	push	esi
-	push	ecx
-	xor	esi,esi		; exponent
-	cmp	al,'p'
-	je	found
-	cmp	al,'P'
-	jne	notfound
-found:
-	mov	al,[ebx]
-	lea	edx,[ebx-1]
-	cmp	al,'+'
-	jne	@F
-	inc	ebx
-@@:
-	cmp	al,'-'
-	jne	@F
-	inc	ebx
-	or	edi,_ST_NEGEXP
-@@:
-	and	edi,not _ST_DIGITS
-lupe:
-	movzx	eax,BYTE PTR [ebx]
-	test	BYTE PTR _ltype[eax+1],_DIGIT
-	jz	end_lupx
-	cmp	esi,10000
-	jnb	@F
-	lea	ecx,[esi*8]
-	lea	esi,[esi*2+ecx-'0']
-	add	esi,eax
-@@:
-	or	edi,_ST_DIGITS
-	inc	ebx
-	jmp	lupe
-end_lupx:
-	test	edi,_ST_NEGEXP
-	jz	@F
-	neg	esi
-@@:
-	test	edi,_ST_DIGITS
-	jnz	end_exp
-	mov	ebx,edx
-	jmp	end_exp
-notfound:
-	dec	ebx
-end_exp:
-	mov	edx,esi
-	shl	ecx,2
-	sub	edx,ecx
-	pop	ecx
-	pop	esi
-	cmp	esi,16
-	jna	@F
-	lea	edx,[edx+esi-16*4]
-	mov	esi,16
-@@:
-	cmp	esi,0
-	jng	toend
-	cmp	buffer[esi-1],'0'
-	jne	toend
-	add	edx,4
-	dec	esi
-	jmp	@B
-no_digits:
-	mov	ebx,flt.string
-toend:
-	mov	flt.string,ebx
-	ret
+    ;
+    ; Parse the mantissa
+    ;
+    .while 1
+	movzx eax,BYTE PTR [ebx]
+	inc ebx
+	.break .if !eax
+	.if al == '.'
+	    .break .if edi & _ST_DOT
+	    or edi,_ST_DOT
+	.else
+	    .break .if !(_ltype[eax+1] & _HEX)
+	    .if edi & _ST_DOT
+		inc ecx
+	    .endif
+	    or edi,_ST_DIGITS
+	    or edx,eax
+	    .continue .if edx == '0' ; if a significant digit
+	    .if esi < MAX_SIG_DIG
+		mov buffer[esi],al
+	    .endif
+	    inc esi
+	.endif
+    .endw
+    ;
+    ; Parse the optional exponent
+    ;
+    xor edx,edx
+    .if edi & _ST_DIGITS
+
+	push esi
+	push ecx
+
+	xor esi,esi ; exponent
+	.if al == 'p' || al == 'P'
+	    mov al,[ebx]
+	    lea edx,[ebx-1]
+	    .if al == '+'
+		inc ebx
+	    .endif
+	    .if al == '-'
+		inc ebx
+		or  edi,_ST_NEGEXP
+	    .endif
+	    and edi,not _ST_DIGITS
+	    .while 1
+
+		movzx eax,BYTE PTR [ebx]
+		.break .if !(_ltype[eax+1] & _DIGIT)
+
+		.if esi < 10000
+
+		    lea ecx,[esi*8]
+		    lea esi,[esi*2+ecx-'0']
+		    add esi,eax
+		.endif
+
+		or  edi,_ST_DIGITS
+		inc ebx
+	    .endw
+	    .if edi & _ST_NEGEXP
+
+		neg esi
+	    .endif
+	    .if !(edi & _ST_DIGITS)
+		mov ebx,edx
+	    .endif
+	.else
+	    dec ebx ; digits found, but no e or E
+	.endif
+
+	mov edx,esi
+	pop ecx
+	pop esi
+	shl ecx,2
+	sub edx,ecx
+
+	.if esi > 16
+
+	    lea edx,[edx+esi-16*4]
+	    mov esi,16
+	.endif
+	.while 1
+	    .break .ifs esi <= 0
+	    .break .if buffer[esi-1] != '0'
+	    add edx,4
+	    dec esi
+	.endw
+    .else
+	mov ebx,flt.string
+    .endif
+    mov flt.string,ebx
+    ret
 parsehex ENDP
 
 strtold PROC USES esi edi ebx ebp
@@ -486,150 +485,143 @@ stxtold PROC USES edi
 stxtold ENDP
 
 doscale PROC USES edi ebx
-	mov	ebx,eax
-	xor	edi,edi
-	cmp	esi,8192
-	jb	@F
-	mov	esi,8192	; set to infinity multiplier
-@@:
-	test	esi,esi
-	jz	toend
-lupe:
-	test	esi,1
-	jz	@F
-	lea	edx,pow_table[edi]
-	mov	eax,ebx
-	call	_FLDM
-@@:
-	add	edi,10
-	shr	esi,1
-	jnz	lupe
-toend:
-	ret
+
+    mov ebx,eax
+    xor edi,edi
+    .if esi >= 8192
+	mov esi,8192	; set to infinity multiplier
+    .endif
+    .if esi
+	.repeat
+	    .if esi & 1
+		lea edx,pow_table[edi]
+		mov eax,ebx
+		_FLDM()
+	    .endif
+	    add edi,10
+	    shr esi,1
+	.untilz
+    .endif
+    ret
+
 doscale ENDP
 
-scale10 PROC
-  local control:WORD,
-	tmpcont:WORD,
-	factor:REAL10
-	test	esi,esi
-	jz	toend
-	fstcw	control			; Store FPU control word
-	mov	ax,control
-	or	ax,0300h		; set 64 bits extended precision
-	mov	tmpcont,ax
-	fldcw	tmpcont
-	lea	eax,factor
-	mov	DWORD PTR [eax],00000000h
-	mov	DWORD PTR [eax+4],80000000h
-	mov	WORD PTR  [eax+8],3FFFh ; 1.0
-	cmp	esi,0
-	jnl	@F
-	neg	esi
-	call	doscale
-	mov	eax,ebx
-	lea	edx,factor
-	call	_FLDD
-	jmp	done
-@@:
-	call	doscale
-	lea	edx,factor
-	mov	eax,ebx
-	call	_FLDM
-done:
-	fldcw	control			; restore control word
-toend:
-	ret
+scale10 proc
+local control:WORD, tmpcont:WORD, factor:REAL10
+
+    .if esi
+
+	fstcw control		; Store FPU control word
+	mov ax,control
+	or  ax,0300h		; set 64 bits extended precision
+	mov tmpcont,ax
+	fldcw tmpcont
+	lea eax,factor
+	mov DWORD PTR [eax],00000000h
+	mov DWORD PTR [eax+4],80000000h
+	mov WORD PTR [eax+8],3FFFh	; 1.0
+
+	.ifs esi < 0
+	    neg esi
+	    doscale()
+	    mov eax,ebx
+	    lea edx,factor
+	    _FLDD()
+	.else
+	    doscale()
+	    lea edx,factor
+	    mov eax,ebx
+	    _FLDM()
+	.endif
+	fldcw control			; restore control word
+    .endif
+    ret
+
 scale10 ENDP
 
 scaleld PROC
-	mov	esi,flt.exponent
-	lea	ebx,_real
-	cmp	esi,4096
-	jng	@F
-	mov	esi,4096
-	call	scale10
-	mov	esi,flt.exponent
-	sub	esi,4096
-	jmp	done
-@@:
-	cmp	esi,-4096
-	jnl	done
-	mov	esi,-4096
-	call	scale10
-	mov	esi,flt.exponent
-	add	esi,4096
-done:
-	call	scale10
-	ret
+    mov esi,flt.exponent
+    lea ebx,_real
+    .ifs esi > 4096
+	mov esi,4096
+	scale10()
+	mov esi,flt.exponent
+	sub esi,4096
+    .else
+	.ifs esi < -4096
+	    mov esi,-4096
+	    scale10()
+	    mov esi,flt.exponent
+	    add esi,4096
+	.endif
+    .endif
+    scale10()
+    ret
 scaleld ENDP
 
-	OPTION	PROC: PUBLIC
-
-_strtoflt PROC USES esi edi ebx string:LPSTR
+_strtoflt proc public uses esi edi ebx string:LPSTR
 
   local h, l, digits
 
-	mov	eax,string
-	mov	flt.string,eax
-	call	setflags
-;	int	3
-	test	edi,_ST_ISZERO or _ST_ISNAN or _ST_ISINF or _ST_INVALID
-	jnz	toend
-	xor	ecx,ecx
-	xor	edx,edx
-	xor	esi,esi
-	mov	ebx,flt.string
-	test	edi,_ST_ISHEX
-	jnz	@F
-	call	parsedes
-	jmp	end_parse
-@@:
-	call	parsehex
-end_parse:
-	mov	digits,esi
-	test	esi,esi
-	jnz	@F
-	or	edi,_ST_ISZERO
-	mov	edx,flt.mantissa
-	mov	[edx],esi
-	mov	[edx+4],esi
-	mov	[edx+8],si
-	jmp	toend
-@@:
-	mov	buffer[esi],0
-	mov	flt.exponent,edx
-	lea	eax,buffer
-	lea	edx,_real
-	test	edi,_ST_ISHEX
-	jz	@F
-	call	stxtold
-	jmp	done
-@@:
-	call	strtold
-	cmp	flt.exponent,0
-	je	done
-	call	scaleld
-done:
-	test	edi,_ST_NEGNUM
-	jz	@F
-	or	WORD PTR _real[8],8000h
-@@:
-	mov	eax,flt.exponent
-	add	eax,digits
-	dec	eax
-	cmp	eax,4932
-	jng	@F
-	or	edi,_ST_OVERFLOW
-@@:
-	cmp	eax,-4932
-	jnl	toend
-	or	edi,_ST_UNDERFLOW
+    .repeat
 
-toend:
-	mov	flt.flags,edi
-	lea	eax,flt
-	ret
+	mov eax,string
+	mov flt.string,eax
+	setflags()
+	.break .if edi & _ST_ISZERO or _ST_ISNAN or _ST_ISINF or _ST_INVALID
+
+	xor ecx,ecx
+	xor edx,edx
+	xor esi,esi
+	mov ebx,flt.string
+	.if edi & _ST_ISHEX
+	    parsehex()
+	.else
+	    parsedes()
+	.endif
+
+	mov digits,esi
+	.if !esi
+	    or	edi,_ST_ISZERO
+	    mov edx,flt.mantissa
+	    mov [edx],esi
+	    mov [edx+4],esi
+	    mov [edx+8],si
+	    .break
+	.endif
+
+	mov buffer[esi],0
+	mov flt.exponent,edx
+	lea eax,buffer
+	lea edx,_real
+
+	.if edi & _ST_ISHEX
+	    stxtold()
+	.else
+	    strtold()
+	    .if flt.exponent != 0
+		scaleld()
+	    .endif
+	.endif
+
+	.if edi & _ST_NEGNUM
+	    or WORD PTR _real[8],8000h
+	.endif
+
+	mov eax,flt.exponent
+	add eax,digits
+	dec eax
+	.ifs eax > 4932
+	    or edi,_ST_OVERFLOW
+	.endif
+	.ifs eax < -4932
+	    or edi,_ST_UNDERFLOW
+	.endif
+    .until 1
+    mov flt.flags,edi
+    lea eax,flt
+    ret
+
 _strtoflt ENDP
 
 	END

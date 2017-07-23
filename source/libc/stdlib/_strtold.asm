@@ -5,13 +5,13 @@ include crtl.inc
 
     .code
 
-strtod proc uses esi edi ebx string:LPSTR, suffix:LPSTR
+_strtold proc uses esi edi ebx string:LPSTR, suffix:LPSTR
 
     mov esi,_strtoflt(string)
     mov ebx,[esi].S_STRFLT.mantissa
     mov edi,[esi].S_STRFLT.flags
-    mov eax,[ebx+8]
-    and eax,0x00007FFF
+    mov ax,[ebx+8]
+    and eax,0x7FFF
 
     .switch
       .case edi & _ST_ISZERO
@@ -24,52 +24,49 @@ strtod proc uses esi edi ebx string:LPSTR, suffix:LPSTR
         .endif
         mov [ebx+4],eax
         .if edi & _ST_ISNAN or _ST_ISINF
-            mov eax,000007FFh
+            mov eax,7FFFh
             .if edi & _ST_ISNAN
-                mov eax,00008000h
+                or eax,8000h
             .endif
-            mov [ebx],eax
+            mov [ebx+8],ax
         .endif
         .endc
       .case edi & _ST_OVERFLOW
-      .case eax >= 000043FFh
+      .case eax >= 43FFh
         xor eax,eax
-        mov edx,7FF00000h
+        xor edx,edx
         .if edi & _ST_NEGNUM
             or edx,80000000h
         .endif
         mov [ebx],eax
         mov [ebx+4],edx
+        mov edx,7FFFh
+        mov [ebx+8],dx
         jmp err_range
       .case edi & _ST_UNDERFLOW
-      .case eax < 00003BCCh
+      .case eax < 3BCCh
         xor eax,eax
         mov [ebx],eax
         mov [ebx+4],eax
+        mov [ebx+8],ax
         jmp err_range
-      .case eax >= 00003BCDh
-        mov eax,ebx
-        mov edx,ebx
-        _iLDFD()
+      .case eax >= 3BCDh
         .if !( edi & _ST_OVERFLOW )
-            mov eax,[ebx+4]
-            and eax,7FF00000h
+            mov ax,[ebx+8]
+            and ax,7FFFh
             .if !ZERO?
-                mov eax,[ebx+4]
-                and eax,7FF00000h
-                .endc .if eax != 7FF00000h
+                mov ax,[ebx+8]
+                and ax,7FFFh
+                .endc .if ax != 7FFFh
             .endif
         .endif
         jmp err_range
-      .case eax >= 00003BCCh
-        mov eax,ebx
-        mov edx,ebx
-        _iLDFD()
+      .case eax >= 3BCCh
         mov eax,[ebx]
         or  eax,[ebx+4]
         .if !ZERO?
-            mov eax,[ebx+4]
-            and eax,7FF00000h
+            mov ax,[ebx+8]
+            and ax,7FFFh
             .endc .if !ZERO?
         .endif
        err_range:
@@ -80,8 +77,8 @@ strtod proc uses esi edi ebx string:LPSTR, suffix:LPSTR
         mov edx,[esi].S_STRFLT.string
         mov [eax],edx
     .endif
-    fld QWORD PTR [ebx]
+    fld TBYTE PTR [ebx]
     ret
-strtod endp
+_strtold endp
 
     END

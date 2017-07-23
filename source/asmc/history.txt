@@ -3,6 +3,7 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.25 - xx xxx 2017
+- fixed bug in float input (tbyte.asm)
 - fixed bug in float input (LIBC)
 - added [: RSP | RBP | ALIGN | ...] to option win64
 - fixed bug in local offset - 64-bit/cstack

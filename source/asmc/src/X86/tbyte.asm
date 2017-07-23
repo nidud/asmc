@@ -93,7 +93,7 @@ add_check_u96_overflow proc fastcall x, _c
 	push edi
 	push ebx
 
-	.for edi=_c, ebx=10, ecx=&[ecx].u96.m32, esi=0: esi < 3: esi++, ecx+=4
+	.for edi=_c, ebx=10, esi=0: esi < 3: esi++, ecx+=4
 
 		xor edx,edx
 		mov eax,[ecx]
@@ -131,8 +131,8 @@ bitsize64 proc x:qword
     mov ecx,dword ptr x
     mov edx,dword ptr x[4]
     .for eax = 64: !(edx & 0x80000000), eax: eax--
-	shld edx,ecx,1
-	shl ecx,1
+	add ecx,ecx
+	adc edx,edx
     .endf
     ret
 
@@ -302,7 +302,7 @@ normalize proc fastcall uses esi edi ebx res
     ret
 normalize endp
 
-add192 proc uses esi edi ebx res:ptr, x:qword, pos
+add192 proc uses esi edi ebx res:ptr, x:qword, pos:SINT
 ;
 ;    add uint_64 to u192 on uint_32 position
 ;
@@ -334,12 +334,12 @@ add192 proc uses esi edi ebx res:ptr, x:qword, pos
     ret
 add192 endp
 
-multiply proc uses esi edi ebx op1, op2, res
+multiply proc uses esi edi ebx op1:ptr ELD, op2:ptr ELD, res:ptr ELD
 ;
 ;    multiply u96 by u96 into u96
 ;    normalize and round result
 ;
-local exp:dword, r1:u192
+local exp:UINT, r1:u192
 
     mov ebx,op1
     mov edi,op2
@@ -474,15 +474,15 @@ strtotb proc public uses esi edi ebx p:LPSTR, ld:ptr TB_LD, negative:sbyte
 ;    convert string into tbyte/long double
 ;    set result sign
 ;
-local	sign,
-	exp_sign,
-	exp_value,
-	exponent,
-	exp1,
-	exponent_tmp,
-	overflow,
-	value:u96,
-	value_tmp:u96
+local	sign:		SINT,
+	exp_sign:	SINT,
+	exp_value:	UINT,
+	exponent:	UINT,
+	exp1:		UINT,
+	exponent_tmp:	UINT,
+	overflow:	SINT,
+	value:		u96,
+	value_tmp:	u96
 
     mov sign,1
     mov exp_sign,1
@@ -594,7 +594,7 @@ local	sign,
     TB_create(&value, edx, ld)
     mov eax,ld
     .ifs sign < 0
-	or [eax].ELD.e,0x8000
+	or [eax].TB_LD.e,0x8000
     .endif
 toend:
 	ret

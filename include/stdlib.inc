@@ -42,7 +42,9 @@ LPQSORTCMD	typedef ptr QSORTCMD_T
 qsort		proto :PVOID, :SIZE_T, :SIZE_T, :LPQSORTCMD
 
 getenv		proto __cdecl :LPSTR
-strtod		proto __cdecl :LPSTR, :DWORD
+strtod		proto __cdecl :LPSTR, :LPSTR
+_strtold	proto __cdecl :LPSTR, :LPSTR
+strtoqd		proto __cdecl :LPSTR, :LPSTR
 system		proto __cdecl :LPSTR
 malloc		proto __cdecl :SIZE_T
 realloc		proto __cdecl :PVOID, :SIZE_T

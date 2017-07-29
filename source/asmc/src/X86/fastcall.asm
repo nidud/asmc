@@ -931,7 +931,11 @@ ms64_fcend proc pp, numparams, value
 
         mov eax,value
         shl eax,3
-        AddLineQueueX(" add %r, %d", T_RSP, eax)
+        .if ( ModuleInfo.epilogueflags )
+            AddLineQueueX( " lea %r, [%r+%d]", T_RSP, T_RSP, eax )
+        .else
+            AddLineQueueX(" add %r, %d", T_RSP, eax)
+        .endif
     .endif
     ret
 ms64_fcend endp

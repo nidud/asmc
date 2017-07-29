@@ -950,9 +950,18 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 	)) &&
 	( info->parasize || ( info->has_vararg && size_vararg ) )) {
 	if ( info->has_vararg ) {
-	    AddLineQueueX( " add %r, %u", stackreg[ModuleInfo.Ofssize], NUMQUAL info->parasize + size_vararg );
-	} else
-	    AddLineQueueX( " add %r, %u", stackreg[ModuleInfo.Ofssize], NUMQUAL info->parasize );
+	    if ( ModuleInfo.epilogueflags )
+		AddLineQueueX( " lea %r, [%r+%u]",
+		stackreg[ModuleInfo.Ofssize], stackreg[ModuleInfo.Ofssize], NUMQUAL info->parasize + size_vararg );
+	    else
+		AddLineQueueX( " add %r, %u", stackreg[ModuleInfo.Ofssize], NUMQUAL info->parasize + size_vararg );
+	} else {
+	    if ( ModuleInfo.epilogueflags )
+		AddLineQueueX( " lea %r, [%r+%u]",
+		stackreg[ModuleInfo.Ofssize], stackreg[ModuleInfo.Ofssize], NUMQUAL info->parasize );
+	    else
+		AddLineQueueX( " add %r, %u", stackreg[ModuleInfo.Ofssize], NUMQUAL info->parasize );
+	}
     } else if ( sym->langtype == LANG_FASTCALL
 #ifdef FCT_ELF64
 	|| ( proc->sym.langtype == LANG_SYSCALL && ModuleInfo.fctype == FCT_ELF64 )

@@ -2,7 +2,7 @@
 #include <globals.h>
 
 char cp_logo[] =
- "Asmc Macro Assembler Version " ASMC_VERSSTR "E\n"
+ "Asmc Macro Assembler Version " ASMC_VERSSTR "F\n"
  "Portions Copyright (c) 1992-2002 Sybase, Inc. All Rights Reserved.\n\n";
 
 static char cp_usage[] =
@@ -43,11 +43,12 @@ static char cp_options[] =
  "/nm<name> Set name of module               /Zm Enable MASM 5.10 compatibility\n"
  "/nt<name> Set name of text segment         /Zne Disable non Masm extensions\n"
  "/pe Generate PE binary file, 32/64-bit     /Zp[n] Set structure alignment\n"
- "/q, /nologo Suppress copyright message     /Zs Perform syntax check only\n"
- "/r Recurse subdirectories                  /zt<0|1|2> Set STDCALL decoration\n"
- "/Sa Maximize source listing                /Zv8 Enable Masm v8+ PROC visibility\n"
- "/safeseh Assert exception handlers         /zze No export symbol decoration\n"
- "/Sf Generate first pass listing            /zzs Store name of start address\n";
+ "/pf Preserve Flags (Epilogue/Invoke)       /Zs Perform syntax check only\n"
+ "/q, /nologo Suppress copyright message     /zt<0|1|2> Set STDCALL decoration\n"
+ "/r Recurse subdirectories                  /Zv8 Enable Masm v8+ PROC visibility\n"
+ "/Sa Maximize source listing                /zze No export symbol decoration\n"
+ "/safeseh Assert exception handlers         /zzs Store name of start address\n"
+ "/Sf Generate first pass listing";
 
 int banner_printed = 0;
 

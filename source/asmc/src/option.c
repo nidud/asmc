@@ -345,16 +345,22 @@ OPTFUNC( SetEpilogue )
     if ( tokenarray[i].token != T_ID ) {
 	return( asmerr(2008, tokenarray[i].tokpos ) );
     }
-    ModuleInfo.proc_epilogue = NULL;
 
-    if ( 0 == _stricmp( tokenarray[i].string_ptr, "NONE" ) ) {
-	ModuleInfo.epiloguemode = PEM_NONE;
-    } else if ( 0 == _stricmp( tokenarray[i].string_ptr, "EPILOGUEDEF" ) ) {
-	ModuleInfo.epiloguemode = PEM_DEFAULT;
+    if ( 0 == _stricmp( tokenarray[i].string_ptr, "FLAGS" ) ) {
+	ModuleInfo.epilogueflags = 1;
     } else {
-	ModuleInfo.epiloguemode = PEM_MACRO;
-	ModuleInfo.proc_epilogue = (char *)LclAlloc( strlen( tokenarray[i].string_ptr ) + 1);
-	strcpy( ModuleInfo.proc_epilogue, tokenarray[i].string_ptr );
+
+	ModuleInfo.proc_epilogue = NULL;
+
+	if ( 0 == _stricmp( tokenarray[i].string_ptr, "NONE" ) ) {
+	    ModuleInfo.epiloguemode = PEM_NONE;
+	} else if ( 0 == _stricmp( tokenarray[i].string_ptr, "EPILOGUEDEF" ) ) {
+	    ModuleInfo.epiloguemode = PEM_DEFAULT;
+	} else {
+	    ModuleInfo.epiloguemode = PEM_MACRO;
+	    ModuleInfo.proc_epilogue = (char *)LclAlloc( strlen( tokenarray[i].string_ptr ) + 1);
+	    strcpy( ModuleInfo.proc_epilogue, tokenarray[i].string_ptr );
+	}
     }
 
     i++;

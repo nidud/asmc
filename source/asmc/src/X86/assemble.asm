@@ -542,6 +542,8 @@ ModulePassInit PROC USES esi
     mov ModuleInfo.casealign,al
     mov eax,Options.codepage
     mov ModuleInfo.codepage,eax
+    mov al,Options.epilogueflags
+    mov ModuleInfo.epilogueflags,al
 
     ;
     ; if OPTION DLLIMPORT was used, reset all iat_used flags

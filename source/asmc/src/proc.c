@@ -2384,10 +2384,19 @@ static void write_win64_default_epilogue( struct proc_info *info )
 	}
     }
 
-    if ( ModuleInfo.fctype == FCT_WIN64 && ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) )
-	AddLineQueueX( "add %r, %d + %s", stackreg[ModuleInfo.Ofssize], NUMQUAL info->localsize, sym_ReservedStack->name );
-    else
-	AddLineQueueX( "add %r, %d", stackreg[ModuleInfo.Ofssize], NUMQUAL info->localsize );
+    if ( ModuleInfo.fctype == FCT_WIN64 && ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) ) {
+	if ( ModuleInfo.epilogueflags )
+	    AddLineQueueX( "lea %r, [%r + %d + %s]",
+		stackreg[ModuleInfo.Ofssize], stackreg[ModuleInfo.Ofssize], NUMQUAL info->localsize, sym_ReservedStack->name );
+	else
+	    AddLineQueueX( "add %r, %d + %s", stackreg[ModuleInfo.Ofssize], NUMQUAL info->localsize, sym_ReservedStack->name );
+    } else {
+	if ( ModuleInfo.epilogueflags )
+	    AddLineQueueX( "lea %r, [%r+%d]",
+		stackreg[ModuleInfo.Ofssize], stackreg[ModuleInfo.Ofssize], NUMQUAL info->localsize );
+	else
+	    AddLineQueueX( "add %r, %d", stackreg[ModuleInfo.Ofssize], NUMQUAL info->localsize );
+    }
     pop_register( CurrProc->e.procinfo->regslist );
     if ( ( GetRegNo( info->basereg ) != 4 && ( info->parasize != 0 || info->locallist != NULL ) ) )
 	AddLineQueueX( "pop %r", info->basereg );
@@ -2480,11 +2489,15 @@ static void write_default_epilogue( void )
 	if ( cstack && (info->locallist	 || info->stackparam ||
 			info->has_vararg || info->forceframe ) && info->pe_type )
 	    ; /* v2.21: leave will follow.. */
-	else
-	    AddLineQueueX( "add %r, %d + %s",
-		stackreg[ModuleInfo.Ofssize],
-		NUMQUAL info->localsize,
-		sym_ReservedStack->name );
+	else {
+	    if ( ModuleInfo.epilogueflags )
+		AddLineQueueX( "lea %r, [%r + %d + %s]",
+			stackreg[ModuleInfo.Ofssize], stackreg[ModuleInfo.Ofssize],
+			NUMQUAL info->localsize, sym_ReservedStack->name );
+	    else
+		AddLineQueueX( "add %r, %d + %s",
+			stackreg[ModuleInfo.Ofssize], NUMQUAL info->localsize, sym_ReservedStack->name );
+	}
     }
 
     if ( cstack == 0 ) {
@@ -2526,9 +2539,13 @@ static void write_default_epilogue( void )
 	if ( info->fpo ) {
 	    if ( ModuleInfo.Ofssize == USE64 && ModuleInfo.fctype == FCT_WIN64 && ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) )
 		;
-	    else
-	    if ( info->localsize )
-		AddLineQueueX( "add %r, %d", stackreg[ModuleInfo.Ofssize], NUMQUAL info->localsize );
+	    else if ( info->localsize ) {
+		if ( ModuleInfo.epilogueflags )
+		    AddLineQueueX( "lea %r, [%r+%d]",
+			stackreg[ModuleInfo.Ofssize], stackreg[ModuleInfo.Ofssize], NUMQUAL info->localsize );
+		else
+		    AddLineQueueX( "add %r, %d", stackreg[ModuleInfo.Ofssize], NUMQUAL info->localsize );
+	    }
 	} else {
 	/*
 	 MOV [E|R]SP, [E|R]BP

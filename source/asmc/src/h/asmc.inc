@@ -1011,6 +1011,7 @@ aflag			db ?	; asmc option
 xflag			db ?	; extended option
 loopalign		db ?	; OPTION:LOOPALIGN setting
 casealign		db ?	; OPTION:CASEALIGN setting
+epilogueflags		db ?	; OPTION EPILOGUE: FLAGS
 segmentalign		db ?	; -Sp[n] Set segment alignment
 global_options		ENDS
 
@@ -1138,6 +1139,7 @@ _name			db 260 dup(?)	; name of module
 xflag			db ?	; extended option
 loopalign		db ?	; OPTION:LOOPALIGN setting
 casealign		db ?	; OPTION:CASEALIGN setting
+epilogueflags		db ?	; OPTION EPILOGUE: FLAGS
 assert_proc		dd ?	; .assert:<proc/macro name>
 codepage		dd ?	;
 module_info		ENDS

@@ -189,8 +189,12 @@ static int ms64_fcstart( struct dsym const *proc, int numparams, int start, stru
 static void ms64_fcend( struct dsym const *proc, int numparams, int value )
 {
     /* use <value>, which has been set by ms64_fcstart() */
-    if ( !( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) )
-	AddLineQueueX( " add %r, %d", T_RSP, value * 8 );
+    if ( !( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) ) {
+	if ( ModuleInfo.epilogueflags )
+	    AddLineQueueX( " lea %r, [%r+%d]", T_RSP, T_RSP, value * 8 );
+	else
+	    AddLineQueueX( " add %r, %d", T_RSP, value * 8 );
+    }
     return;
 }
 

@@ -485,6 +485,7 @@ static void ModulePassInit( void )
     ModuleInfo.loopalign = Options.loopalign;
     ModuleInfo.casealign = Options.casealign;
     ModuleInfo.codepage = Options.codepage;
+    ModuleInfo.epilogueflags = Options.epilogueflags;
 
     /* if OPTION DLLIMPORT was used, reset all iat_used flags */
     if ( ModuleInfo.g.DllQueue )

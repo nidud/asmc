@@ -64,6 +64,7 @@ struct global_options Options = {
 	0,			// .xflag
 	0,			// .loopalign
 	0,			// .casealign
+	0,			// .epilogueflags
 	4			// .segmentalign
 };
 
@@ -455,6 +456,9 @@ static void ProcessOption( char **cmdline, char *buffer )
     case 'fmo':		// -omf
 	Options.output_format = OFORMAT_OMF;
 	Options.sub_format = SFORMAT_NONE;
+	return;
+    case 'fp':		// -pf
+	Options.epilogueflags = 1;
 	return;
     case 'ep':		// -pe
 	Options.output_format = OFORMAT_BIN;

@@ -452,6 +452,7 @@ unsigned char	aflag;			/* asmc options */
 unsigned char	xflag;			/* extended options */
 unsigned char	loopalign;		/* OPTION:LOOPALIGN setting */
 unsigned char	casealign;		/* OPTION:CASEALIGN setting */
+unsigned char	epilogueflags;		/* OPTION EPILOGUE: FLAGS */
 unsigned char	segmentalign;		/* -Sp[n] Set segment alignment */
 };
 
@@ -600,6 +601,7 @@ struct module_info {
     unsigned char	xflag;			/* extended options */
     unsigned char	loopalign;		/* OPTION:LOOPALIGN setting */
     unsigned char	casealign;		/* OPTION:CASEALIGN setting */
+    unsigned char	epilogueflags;		/* OPTION EPILOGUE: FLAGS */
     char *		assert_proc;		/* .assert:<handler> */
     unsigned		codepage;		/* Unicode code page */
 };

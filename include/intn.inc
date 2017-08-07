@@ -58,6 +58,9 @@ _mulqw	proto __cdecl :qword, :qword, :ptr
 _atonf	proto __cdecl :ptr, :ptr, :ptr, :ptr, :dword
 _mulfq	proto __cdecl :ptr, :ptr, :ptr
 _divfq	proto __cdecl :ptr, :ptr, :ptr
+_qftol	proto __cdecl :ptr
+_qftoi64 proto __cdecl :ptr
+
 _normalizefq proto __cdecl :ptr, :dword
 
 _lk_mulfq proto __cdecl

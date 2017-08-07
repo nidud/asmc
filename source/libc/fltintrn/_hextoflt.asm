@@ -4,9 +4,6 @@ include fltintrn.inc
     .code
 
 _hextoflt proc uses esi edi ebx fp:LPSTRFLT, buffer:LPSTR
-ifdef __REAL16__
-local maxdig, maxsig
-endif
 local digits, sigdig
 
     mov edx,fp
@@ -17,17 +14,6 @@ local digits, sigdig
     mov sigdig,eax
     xor ebx,ebx
     xor edx,edx
-ifdef __REAL16__
-    mov maxdig,MAX_LD_HEXDIG
-    mov maxsig,MAX_LD_SIGDIG
-    .if ecx & _ST_QFLT
-        mov maxdig,MAX_Q_HEXDIG
-        mov maxsig,MAX_Q_SIGDIG
-    .endif
-else
-maxdig equ <MAX_LD_HEXDIG>
-maxsig equ <MAX_LD_SIGDIG>
-endif
     ;
     ; Parse the mantissa
     ;
@@ -45,7 +31,7 @@ endif
             or ecx,_ST_DIGITS
             or edx,eax
             .continue .if edx == '0' ; if a significant digit
-            .if ebx < maxsig
+            .if ebx < MAX_LD_SIGDIG
                 stosb
             .endif
             inc ebx
@@ -98,7 +84,7 @@ endif
         shl ecx,2
         sub edx,ecx
         mov ebx,digits
-        mov eax,maxdig
+        mov eax,MAX_LD_HEXDIG
         .if ebx > eax
             add edx,ebx
             mov ebx,eax

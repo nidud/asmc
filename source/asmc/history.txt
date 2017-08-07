@@ -3,6 +3,8 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.25 - xx xxx 2017
+- added const float params to C/STDCALL/PASCAL for REAL10/REAL16
+- added REAL16 128-bit quad float
 - added switch /pf - Preserve Flags (Epilogue/Invoke)
 - fixed bug in float input (tbyte.asm)
 - fixed bug in float input (LIBC)

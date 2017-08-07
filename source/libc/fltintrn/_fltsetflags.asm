@@ -93,30 +93,12 @@ case_INF:
 return_NANINF:
     mov edx,[esi].mantissa
     mov [edx],eax
-ifdef __REAL16__
-    .if edi & _ST_QFLT
-        mov [edx+4],eax
-        mov [edx+8],eax
-        mov [edx+10],ecx
-    .else
-        mov [edx+4],ecx
-    .endif
-else
     mov [edx+4],ecx
-endif
     mov ecx,7FFFh
     .if edi & _ST_NEGNUM
         or ecx,8000h
     .endif
-ifdef __REAL16__
-    .if edi & _ST_QFLT
-        mov [edx+14],cx
-    .else
-        mov [edx+8],cx
-    .endif
-else
     mov [edx+8],cx
-endif
     jmp toend
 
 case_INVALID:
@@ -131,16 +113,7 @@ case_zero:
     mov edx,[esi].mantissa
     mov [edx],eax
     mov [edx+4],eax
-ifdef __REAL16__
-    .if edi & _ST_QFLT
-        mov [edx+8],eax
-        mov [edx+12],eax
-    .else
-        mov [edx+8],ax
-    .endif
-else
     mov [edx+8],ax
-endif
     jmp toend
 _fltsetflags endp
 

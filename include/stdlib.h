@@ -44,6 +44,7 @@ _CRTIMP void *	__cdecl calloc(size_t, size_t);
 _CRTIMP void	__cdecl free(void *);
 _CRTIMP int	__cdecl system(const char *);
 
+void *	__cdecl _strtoq(void *, const char *, char **);
 long	__cdecl xtol(const char *);
 
 #ifndef _WSTDLIB_DEFINED

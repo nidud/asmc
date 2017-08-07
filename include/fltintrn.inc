@@ -16,17 +16,13 @@ _ST_UNDERFLOW	equ 0x0100
 _ST_OVERFLOW	equ 0x0200
 _ST_DIGITS	equ 0x0400
 _ST_DOT		equ 0x0800
-_ST_QFLT	equ 0x8000
 
 MAX_LD_DIGITS	equ 22
 MAX_LD_HEXDIG	equ 16
 MAX_LD_SIGDIG	equ 32
 MAX_LD_MANT	equ 64
 
-MAX_Q_DIGITS	equ 33
-MAX_Q_HEXDIG	equ 36
-MAX_Q_SIGDIG	equ 44
-MAX_Q_MANT	equ 113
+EXPONENT_BIAS	equ 0x3FFF ; REAL10/REAL16
 
 S_STRFLT	STRUC
 flags		dd ?	; parsing flags
@@ -48,8 +44,5 @@ _fltsetflags	proto __cdecl :LPSTRFLT, :LPSTR, :UINT
 _destoflt	proto __cdecl :LPSTRFLT, :LPSTR
 _hextoflt	proto __cdecl :LPSTRFLT, :LPSTR
 _fltscale	proto __cdecl :LPSTRFLT
-
-_strtofltq	proto __cdecl :LPSTR
-_fltscaleq	proto __cdecl :LPSTRFLT
 
 .list

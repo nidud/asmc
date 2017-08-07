@@ -25,6 +25,7 @@
 #include <proc.h>
 #include <tokenize.h>
 #include <fastpass.h>
+#include <atofloat.h>
 
 int QueueTestLines( char * );
 int ExpandHllProc( char *, int, struct asm_tok[] );
@@ -687,6 +688,55 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 				qual = T_LOWWORD;
 			    }
 			    break;
+			    /* v2.25: added support for REAL10 and REAL16 */
+			case 10:
+			    if ( Ofssize == USE16 || Options.strict_masm_compat == TRUE || opnd.kind != EXPR_FLOAT )
+				break;
+			    atofloat( &opnd.fvalue, fullparam, 10, opnd.negative, opnd.float_tok->floattype );
+			    sprintf(fullparam, "0x%04X", (int_32)opnd.hlvalue & 0xFFFF);
+			    AddLineQueueX( " push %s", fullparam );
+			    sprintf(fullparam, "0x%016" I64_SPEC "X", opnd.llvalue);
+			    if (( ModuleInfo.curr_cpu & P_CPU_MASK ) >= P_64 ) {
+				if ( opnd.llvalue > 0xFFFFFFFF ) {
+				    *r0flags |= R0_USED;
+				    AddLineQueueX( " mov %r, %s", T_RAX, fullparam );
+				    strcpy( fullparam, "rax" );
+				}
+				break;
+			    }
+			    AddLineQueueX( " pushd %r (%s)", T_HIGH32, fullparam );
+			    qual = T_LOW32;
+			    instr = "d";
+			    break;
+#if defined(_ASMLIB_)
+			case 16:
+			    if ( Ofssize == USE16 || Options.strict_masm_compat == TRUE )
+				break;
+			    if ( opnd.kind == EXPR_FLOAT )
+				atofloat( &opnd.fvalue, fullparam, 16, opnd.negative, opnd.float_tok->floattype );
+			    sprintf(fullparam, "0x%016" I64_SPEC "X", opnd.hlvalue);
+			    if ( Ofssize == USE32 ) {
+				AddLineQueueX( " pushd %r (%s)", T_HIGH32, fullparam );
+				AddLineQueueX( " pushd %r (%s)", T_LOW32, fullparam );
+			    } else {
+				if ( opnd.hlvalue <=  0xFFFFFFFF ) {
+				    AddLineQueueX( " push %s", fullparam );
+				} else {
+				    *r0flags |= R0_USED;
+				    AddLineQueueX( " mov %r, %s", T_RAX, fullparam );
+				    AddLineQueueX( " push %r", T_RAX );
+				}
+			    }
+			    sprintf(fullparam, "0x%016" I64_SPEC "X", opnd.llvalue);
+			    if ( ( ModuleInfo.curr_cpu & P_CPU_MASK ) >= P_64 &&
+				opnd.llvalue >	 0xFFFFFFFF ) {
+				*r0flags |= R0_USED;
+				AddLineQueueX( " mov %r, %s", T_RAX, fullparam );
+				AddLineQueueX( " push %r", T_RAX );
+				goto skip_push;
+			    }
+			    /* no break */
+#endif
 			case 8:
 			    if (( ModuleInfo.curr_cpu & P_CPU_MASK ) >= P_64 )
 				break;
@@ -707,6 +757,7 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 			AddLineQueueX( " push%s %s", instr, fullparam );
 		}
 	    }
+skip_push:
 	    if ( curr->sym.is_vararg ) {
 		size_vararg += psize;
 	    }

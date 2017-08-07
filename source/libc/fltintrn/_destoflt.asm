@@ -4,9 +4,6 @@ include fltintrn.inc
     .code
 
 _destoflt proc uses esi edi ebx fp:LPSTRFLT, buffer:LPSTR
-ifdef __REAL16__
-local maxdig, maxsig
-endif
 local digits, sigdig
 
     mov edx,fp
@@ -17,17 +14,6 @@ local digits, sigdig
     mov sigdig,eax
     xor ebx,ebx
     xor edx,edx
-ifdef __REAL16__
-    mov maxdig,MAX_LD_DIGITS
-    mov maxsig,MAX_LD_SIGDIG
-    .if ecx & _ST_QFLT
-        mov maxdig,MAX_Q_DIGITS
-        mov maxsig,MAX_Q_SIGDIG
-    .endif
-else
-maxdig equ <MAX_LD_DIGITS>
-maxsig equ <MAX_LD_SIGDIG>
-endif
     ;
     ; Parse the mantissa
     ;
@@ -45,7 +31,7 @@ endif
             or ecx,_ST_DIGITS
             or edx,eax
             .continue .if edx == '0' ; if a significant digit
-            .if ebx < maxsig
+            .if ebx < MAX_LD_SIGDIG
                 stosb
             .endif
             inc ebx
@@ -96,11 +82,9 @@ endif
         mov edx,edi
         sub edx,sigdig
         mov ebx,digits
-        mov eax,maxdig
-        .if ebx > eax
-            add edx,ebx
-            sub edx,eax
-            mov ebx,eax
+        .if ebx > MAX_LD_DIGITS
+            lea edx,[edx+ebx-MAX_LD_DIGITS]
+            mov ebx,MAX_LD_DIGITS
         .endif
         mov eax,buffer
         .while 1

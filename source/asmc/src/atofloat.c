@@ -24,10 +24,11 @@ void atofloat( void *out, const char *inp, unsigned size, bool negative, uint_8 
 {
     double  double_value;
     float   float_value;
+    uint_8 *p;
 
     /* v2.04: accept and handle 'real number designator' */
     if ( ftype ) {
-	uint_8 *p;
+
 	uint_8 *end;
 	/* convert hex string with float "designator" to float.
 	 * this is supposed to work with real4, real8 and real10.
@@ -77,6 +78,18 @@ void atofloat( void *out, const char *inp, unsigned size, bool negative, uint_8 
 	case 10:
 	    strtotb( (const char *)inp, (struct TB_LD *)out, (char)negative );
 	    break;
+#if defined(_ASMLIB_)
+	case 16:
+	    errno = 0;
+	    _strtoq( out, inp, NULL );
+	    if ( errno == ERANGE )
+		asmerr( 2071 );
+	    if ( negative ) {
+		p = (uint_8 *)out;
+		p[15] |= 0x80;
+	    }
+	    break;
+#endif
 	default:
 	    /* sizes != 4,8 or 10 aren't accepted.
 	     * Masm ignores silently, JWasm also unless -W4 is set.

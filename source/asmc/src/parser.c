@@ -2407,7 +2407,7 @@ int ParseLine( struct asm_tok tokenarray[] )
 	return( asmerr( 2037 ) );
     }
 
-    if( ProcStatus & PRST_PROLOGUE_NOT_DONE ) 
+    if( ProcStatus & PRST_PROLOGUE_NOT_DONE )
 	write_prologue( tokenarray );
 
     if ( CurrFile[LST] ) oldofs = GetCurrOffset();
@@ -2531,8 +2531,16 @@ int ParseLine( struct asm_tok tokenarray[] )
 	    /* v2.06: accept float constants for PUSH */
 	    if ( j == OPND2 || CodeInfo.token == T_PUSH || CodeInfo.token == T_PUSHD ) {
 		if ( Options.strict_masm_compat == FALSE ) {
-		    /* convert to REAL4, unless REAL8 coercion is requested */
-		    atofloat( &opndx[j].fvalue, opndx[j].float_tok->string_ptr, opndx[j].mem_type == MT_REAL8 ? 8 : 4, opndx[j].negative, opndx[j].float_tok->floattype );
+		    /* convert to REAL4, REAL8, or REAL16 */
+		    int m = 4;
+		    if ( opndx[j].mem_type == MT_REAL8 )
+			m = 8;
+#if defined(_ASMLIB_)
+		    else if ( opndx[j].mem_type == MT_REAL16 )
+			m = 16;
+#endif
+		    atofloat( &opndx[j].fvalue, opndx[j].float_tok->string_ptr,
+			m, opndx[j].negative, opndx[j].float_tok->floattype );
 		    opndx[j].kind = EXPR_CONST;
 		    opndx[j].float_tok = NULL;
 		    break;

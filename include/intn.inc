@@ -50,6 +50,37 @@ Q_EXPMASK	equ (1 shl Q_EXPBITS) - 1
 Q_EXPBIAS	equ Q_EXPMASK shr 1
 Q_EXPMAX	equ Q_EXPMASK - Q_EXPBIAS
 
+; Quadruple precision constants
+
+externdef	_Q_E:		REAL16 ; e
+externdef	_Q_LOG2E:	REAL16 ; log2(e)
+externdef	_Q_LOG10E:	REAL16 ; log10(e)
+externdef	_Q_LN2:		REAL16 ; ln(2)
+externdef	_Q_LN10:	REAL16 ; ln(10)
+externdef	_Q_PI:		REAL16 ; pi
+externdef	_Q_PI_2:	REAL16 ; pi/2
+externdef	_Q_PI_4:	REAL16 ; pi/4
+externdef	_Q_1_PI:	REAL16 ; 1/pi
+externdef	_Q_2_PI:	REAL16 ; 2/pi
+externdef	_Q_2_SQRTPI:	REAL16 ; 2/sqrt(pi)
+externdef	_Q_SQRT2:	REAL16 ; sqrt(2)
+externdef	_Q_SQRT1_2:	REAL16 ; 1/sqrt(2)
+externdef	_Q_1E1:		REAL16 ; table..
+externdef	_Q_1E2:		REAL16
+externdef	_Q_1E4:		REAL16
+externdef	_Q_1E8:		REAL16
+externdef	_Q_1E16:	REAL16
+externdef	_Q_1E32:	REAL16
+externdef	_Q_1E64:	REAL16
+externdef	_Q_1E128:	REAL16
+externdef	_Q_1E256:	REAL16
+externdef	_Q_1E512:	REAL16
+externdef	_Q_1E1024:	REAL16
+externdef	_Q_1E2048:	REAL16
+externdef	_Q_1E4096:	REAL16
+externdef	_Q_INF:		REAL16
+externdef	_Q_INF_M:	REAL16
+
 ; Octuple precision - binary256 -- REAL32 (__float256)
 
 O_SIGBITS	equ 237
@@ -93,6 +124,7 @@ _qftold proto __cdecl :ptr, :ptr
 _dtoqf	proto __cdecl :ptr, :qword
 _qftol	proto __cdecl :ptr
 _qftoll proto __cdecl :ptr
+_qpow10 proto __cdecl :ptr, :dword
 _normalizefq proto __cdecl :ptr, :dword
 
 _lk_mulfq proto __cdecl

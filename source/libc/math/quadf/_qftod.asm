@@ -79,9 +79,12 @@ _qftod proc uses esi edi ebx d:ptr, q:ptr
     .endif
     xor ebx,ebx
     .if edi < 0x3BCC
-        xor eax,eax
-        xor edx,edx
-        mov ebx,ERANGE
+        mov ecx,q
+        .if !(!edi && edi == [ecx+6] && edi == [ecx+10])
+            xor eax,eax
+            xor edx,edx
+            mov ebx,ERANGE
+        .endif
     .elseif edi >= 0x3BCD
         mov edi,edx
         and edi,0x7FF00000

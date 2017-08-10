@@ -17,13 +17,21 @@
 
 #define USESTRTOF 0 /* 0=use strtod() and convert "manually", 1=use strtof() */
 
+#ifdef _ASMC
+void _qftod(void *, void *);
+void _qftold(void *, void *);
+#endif
+
 /* it's ensured that 'out' points to a buffer with a size of at least 16 */
 
 void atofloat( void *out, const char *inp, unsigned size, bool negative, uint_8 ftype )
 /*************************************************************************************/
 {
-    double  double_value;
-    float   float_value;
+#ifdef _ASMC
+    uint_8 mant[16];
+#endif
+    double double_value;
+    float  float_value;
     uint_8 *p;
 
     /* v2.04: accept and handle 'real number designator' */
@@ -44,6 +52,43 @@ void atofloat( void *out, const char *inp, unsigned size, bool negative, uint_8 
 	    }
     } else {
 	switch ( size ) {
+#ifdef _ASMC
+	case 4:
+	case 8:
+	case 10:
+	case 16:
+	    errno = 0;
+	    _strtoq( &mant, inp, NULL );
+	    if ( errno == ERANGE )
+		asmerr( 2071 );
+	    if ( negative ) {
+		p = (uint_8 *)&mant;
+		p[15] |= 0x80;
+	    }
+	    if ( size == 16 )
+		memcpy(out, mant, 16);
+	    else {
+		if ( size == 10 )
+		    _qftold(out, mant);
+		else if ( size == 8 ) {
+		    _qftod(out, mant);
+		    if ( errno == ERANGE )
+			asmerr( 2071 );
+		} else {
+		    if ( negative )
+			p[15] &= 0x7F;
+		    _qftod(&double_value, mant);
+		    if ( double_value > FLT_MAX ||
+		       ( double_value < FLT_MIN && double_value != 0 ) )
+			asmerr( 2071 );
+		    if ( negative )
+			double_value *= -1;
+		    float_value = double_value;
+		    *(float *)out = float_value;
+		}
+	    }
+	    break;
+#else
 	case 4:
 #if USESTRTOF
 	    errno = 0;
@@ -77,17 +122,6 @@ void atofloat( void *out, const char *inp, unsigned size, bool negative, uint_8 
 	    break;
 	case 10:
 	    strtotb( (const char *)inp, (struct TB_LD *)out, (char)negative );
-	    break;
-#if defined(_ASMLIB_)
-	case 16:
-	    errno = 0;
-	    _strtoq( out, inp, NULL );
-	    if ( errno == ERANGE )
-		asmerr( 2071 );
-	    if ( negative ) {
-		p = (uint_8 *)out;
-		p[15] |= 0x80;
-	    }
 	    break;
 #endif
 	default:

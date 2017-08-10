@@ -1,34 +1,34 @@
 ; _atonf() - Converts a string to float
 ;
 include intn.inc
+include alloc.inc
 include ltype.inc
-
-MAXBUF  equ 256 ; maximum digits to keep
 
     .code
 
-_atonf proc uses esi edi ebx number:ptr, string:ptr, endptr:ptr, expptr:ptr, n
+_atonf proc uses esi edi ebx number:ptr, string:ptr, endptr:ptr, expptr:ptr, bits, expbits, n
 
-    local buffer[MAXBUF]:sbyte, digits, sigdig
-    local flags, exponent, bits, r_expptr, radix
+    local buffer, flags, exponent, radix
+    local digits, sigdig, maxdig, maxsig
 
+    mov radix,10    ; assume desimal
+    mov eax,bits    ; 53-bit --> 17
+    mov ecx,eax     ; 64-bit --> 22
+    mov edx,eax     ;113-bit --> 39
+    shr eax,2
+    shr edx,4
+    shr ecx,5
+    add eax,edx
+    add eax,ecx
+    shr ecx,2
+    sub eax,ecx
+    mov maxdig,eax
+    add eax,10
+    mov maxsig,eax
+    inc eax
+    mov buffer,alloca(eax)
     mov edi,number
     mov ecx,n
-    mov edx,8
-    mov eax,64      ; assuming REAL10
-    mov radix,10    ; assume desimal
-
-    .if ecx != 3
-        mov eax,ecx
-        shl eax,5   ; else n * 32 - 16
-        sub eax,16
-        mov edx,eax
-        shr edx,3
-    .endif
-
-    add edx,edi
-    mov r_expptr,edx
-    mov bits,eax
     xor eax,eax
     rep stosd
     mov sigdig,eax
@@ -103,10 +103,13 @@ _atonf proc uses esi edi ebx number:ptr, string:ptr, endptr:ptr, expptr:ptr, n
         .if ax == 'x0'
             or ecx,_ST_ISHEX
             add esi,2
+            mov edx,bits
+            shl edx,2
+            mov maxdig,edx
         .endif
         dec esi
 
-        lea edi,buffer
+        mov edi,buffer
         xor ebx,ebx
         xor edx,edx
         xor eax,eax
@@ -131,12 +134,13 @@ _atonf proc uses esi edi ebx number:ptr, string:ptr, endptr:ptr, expptr:ptr, n
                 or ecx,_ST_DIGITS
                 or edx,eax
                 .continue .if edx == '0' ; if a significant digit
-                .if ebx < MAXBUF
+                .if ebx < maxsig
                     stosb
                 .endif
                 inc ebx
             .endif
         .endw
+        mov byte ptr [edi],0
         mov digits,ebx
         ;
         ; Parse the optional exponent
@@ -193,7 +197,16 @@ _atonf proc uses esi edi ebx number:ptr, string:ptr, endptr:ptr, expptr:ptr, n
             .endif
             sub edx,eax
             mov ebx,digits
-            lea eax,buffer
+            mov eax,maxdig
+            .if ebx > eax
+                add edx,ebx
+                mov ebx,eax
+                .if ecx & _ST_ISHEX
+                    shl eax,2
+                .endif
+                sub edx,eax
+            .endif
+            mov eax,buffer
             .while 1
                 .break .ifs ebx <= 0
                 .break .if byte ptr [eax+ebx-1] != '0'
@@ -213,41 +226,77 @@ _atonf proc uses esi edi ebx number:ptr, string:ptr, endptr:ptr, expptr:ptr, n
         mov flags,ecx
         mov exponent,edx
         mov eax,digits
-        mov buffer[eax],0
-
-        _atond(number, &buffer, radix, n)
-
+        add eax,buffer
+        mov byte ptr [eax],0
+        ;
+        ; convert string to binary
+        ;
+        _atond(number, buffer, radix, n)
+        ;
+        ; get bit-count of number
+        ;
         .if _bsrnd(number, n)
-
+            ;
+            ; shift number to bit-size
+            ;
+            ; - 0x0001 --> 0x8000
+            ;
             mov edi,bits
             mov ebx,edi
             sub ebx,eax
 
             .if eax > edi
                 sub eax,edi
-                ;or flags,_ST_OVERFLOW
-                .if n > 3
-                    dec eax
-                .endif
-                .if eax
-                    _shrnd(number, eax, n)
-                .endif
-            .else
-                mov eax,ebx
-                .if n > 3
-                    inc eax
-                .endif
-                _shlnd(number, eax, n)
+                ;
+                ; or 0x10000 --> 0x1000
+                ;
+                _shrnd(number, eax, n)
+            .elseif ebx
+                _shlnd(number, ebx, n)
             .endif
-
-            lea edi,[edi+EXPONENT_BIAS-1]
-            sub edi,ebx
-            mov edx,r_expptr
+            ;
+            ; create exponent bias and mask
+            ;
+            mov ecx,expbits
+            mov eax,1
+            shl eax,cl
+            mov ecx,eax     ; sign bit
+            dec eax         ; mask
+            mov edx,eax
+            shr edx,1       ; bias
+            add edi,edx     ; bits + bias
+            sub edi,ebx     ; - shift count
+            dec edi
+            and edi,eax     ; remove sign bit
             .if flags & _ST_NEGNUM
-                or di,0x8000
+                or edi,ecx
             .endif
-            mov [edx],di
+            mov ebx,ecx
+            xor edx,edx     ; get dword-id from bits
+            mov eax,bits
+            mov ecx,32
+            div ecx
+            mov ecx,ebx
+            shl ecx,1
+            dec ecx
+            .if edx
+                ;
+                ; then shift exponent and sign to high word
+                ;
+                mov edx,ecx
+                mov ecx,31
+                bsf ebx,ebx
+                sub ecx,ebx
+                shl edi,cl
+                shl edx,cl
+                mov ecx,edx
+            .endif
 
+            lea ebx,[eax*4]
+            add ebx,number
+            not ecx
+            and [ebx],ecx
+            or  [ebx],edi
         .else
             or flags,_ST_ISZERO
         .endif

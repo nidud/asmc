@@ -36,34 +36,34 @@ compare macro a, val, p, e
     exitm<.assert(al == e)>
     endm
 
-    _atonf(&x, "-1.0e-0a", &eptr, &exponent, 3 )
+    _atonf(&x, "-1.0e-0a", &eptr, &exponent, LD_SIGBITS, LD_EXPBITS, 3 )
     compare(x, -1.0, eptr, 'a')
-    _atonf(&x, "-1e-0a", &eptr, &exponent, 3 )
+    _atonf(&x, "-1e-0a", &eptr, &exponent, LD_SIGBITS, LD_EXPBITS, 3 )
     compare(x, -1.0, eptr, 'a')
 
-    _atonf(&x, ".", &eptr, &exponent, 3 )
+    _atonf(&x, ".", &eptr, &exponent, LD_SIGBITS, LD_EXPBITS, 3 )
     compare(x, 0.0, eptr, '.')
 
-    _atonf(&n, "1.12", 0, &exponent, 4 )
+    _atonf(&n, "1.12", 0, &exponent, Q_SIGBITS, Q_EXPBITS, 4 )
     .assert( exponent == -2 )
-    _atonf(&n, "0.123456789", 0, &exponent, 4 )
+    _atonf(&n, "0.123456789", 0, &exponent, Q_SIGBITS, Q_EXPBITS, 4 )
     .assert( exponent == -9 )
-    _atonf(&n, "0.123456789", 0, &exponent, 8 )
+    _atonf(&n, "0.123456789", 0, &exponent, O_SIGBITS, O_EXPBITS, 8 )
     .assert( exponent == -9 )
 
-    _atonf(&x, "123456789.0", &eptr, &exponent, 3 )
+    _atonf(&x, "123456789.0", &eptr, &exponent, LD_SIGBITS, LD_EXPBITS, 3 )
     compare(x, 123456789.0, eptr, 0)
 
-    _atonf(&x, "0x1g", &eptr, &exponent, 3 )
+    _atonf(&x, "0x1g", &eptr, &exponent, LD_SIGBITS, LD_EXPBITS, 3 )
     compare(x, 1.0, eptr, 'g')
 
-    _atonf(&x, "0x2", &eptr, &exponent, 3 )
+    _atonf(&x, "0x2", &eptr, &exponent, LD_SIGBITS, LD_EXPBITS, 3 )
     compval(x, 2.0)
 
-    _atonf(&x, "0x4", &eptr, &exponent, 3 )
+    _atonf(&x, "0x4", &eptr, &exponent, LD_SIGBITS, LD_EXPBITS, 3 )
     compval(x, 4.0)
 
-    _atonf(&x, "0x8", &eptr, &exponent, 3 )
+    _atonf(&x, "0x8", &eptr, &exponent, LD_SIGBITS, LD_EXPBITS, 3 )
     compval(x, 8.0)
 
     xor eax,eax

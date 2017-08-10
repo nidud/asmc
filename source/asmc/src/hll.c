@@ -1211,6 +1211,7 @@ static char *GetJumpString( int cmd, char *buffer )
 	x = T_JBE;
 	break;
     case T_DOT_IFB:
+    case T_DOT_IFC:
     case T_DOT_UNTILB:
     case T_DOT_WHILEB:
 	x = T_JAE;
@@ -1250,6 +1251,7 @@ static char *GetJumpString( int cmd, char *buffer )
     case T_DOT_WHILENA:
 	x = T_JA;
 	break;
+    case T_DOT_IFNC:
     case T_DOT_IFNB:
     case T_DOT_UNTILNB:
     case T_DOT_WHILENB:
@@ -1473,6 +1475,7 @@ int HllStartDir( int i, struct asm_tok tokenarray[] )
 	    hll->flags |= HLLF_IFS;
 	    goto DOT_IF;
 	}
+    case T_DOT_IFC:
     case T_DOT_IFB:
 	if ( token != T_FINAL ) {
 	    hll->flags |= HLLF_IFB;
@@ -1486,6 +1489,7 @@ int HllStartDir( int i, struct asm_tok tokenarray[] )
     case T_DOT_IFZ:
     case T_DOT_IFNA:
     case T_DOT_IFNB:
+    case T_DOT_IFNC:
     case T_DOT_IFNG:
     case T_DOT_IFNL:
     case T_DOT_IFNO:
@@ -1760,6 +1764,7 @@ int HllContinueIf( struct hll_item *hll, int *i, char *buffer,
 			x |= HLLF_IFS;
 			goto DOT_IF;
 		    }
+		case T_DOT_IFC:
 		case T_DOT_IFB:
 		    if ( tokenarray[*i+1].token != T_FINAL ) {
 			x |= HLLF_IFB;
@@ -1773,6 +1778,7 @@ int HllContinueIf( struct hll_item *hll, int *i, char *buffer,
 		case T_DOT_IFZ:
 		case T_DOT_IFNA:
 		case T_DOT_IFNB:
+		case T_DOT_IFNC:
 		case T_DOT_IFNG:
 		case T_DOT_IFNL:
 		case T_DOT_IFNO:

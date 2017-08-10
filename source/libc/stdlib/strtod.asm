@@ -80,7 +80,7 @@ strtod proc uses esi edi ebx string:LPSTR, suffix:LPSTR
         mov edx,[esi].S_STRFLT.string
         mov [eax],edx
     .endif
-    fld QWORD PTR [ebx]
+    fld qword ptr [ebx]
     ret
 strtod endp
 

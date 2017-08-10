@@ -1,3 +1,5 @@
+; _qftoll() - Quadruple float to long
+;
 include intn.inc
 include limits.inc
 include errno.inc
@@ -10,12 +12,12 @@ _qftol proc uses esi edi fp:ptr
     mov cx,[edx+14]
     mov eax,ecx
     and eax,Q_EXPMASK
-    .ifs eax < EXPONENT_BIAS
+    .ifs eax < Q_EXPBIAS
         xor eax,eax
         .if cx & 0x8000
             dec eax
         .endif
-    .elseif eax > 32 + EXPONENT_BIAS
+    .elseif eax > 32 + Q_EXPBIAS
         mov errno,ERANGE
         mov eax,INT_MAX
         .if cx & 0x8000
@@ -23,7 +25,7 @@ _qftol proc uses esi edi fp:ptr
         .endif
     .else
         mov ecx,eax
-        sub ecx,EXPONENT_BIAS
+        sub ecx,Q_EXPBIAS
         mov edx,[edx+10]
         mov eax,1
         .while ecx

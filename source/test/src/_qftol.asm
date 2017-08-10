@@ -8,7 +8,7 @@ comp64 macro r, i
     b real16 r
     q dq i
     .code
-    _qftoi64(addr b)
+    _qftoll(addr b)
     mov ecx,dword ptr q[4]
     mov ebx,dword ptr q
     exitm<.assert(eax == ebx && ecx == edx)>
@@ -35,6 +35,7 @@ main proc
     comp32(0.99999999, 0)
     comp32(7777777.0, 7777777)
     comp32(2147483647.0, 2147483647)
+    .assert( errno == 0 )
     comp32(100000000000000000000.0, INT_MAX)
     .assert( errno == ERANGE )
     comp32(-100000000000000000000.0, INT_MIN)
@@ -47,6 +48,7 @@ main proc
     comp64(0.99999999, 0)
     comp64(7777777.0, 7777777)
     comp64(9223372036854775807.0, 9223372036854775807)
+    .assert( errno == 0 )
     comp64(9223372036854775808.0, _I64_MAX)
     .assert( errno == ERANGE )
     comp64(-9223372036854775808.0, _I64_MIN)

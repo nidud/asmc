@@ -1,6 +1,9 @@
 ifndef __LIBC_INC
  include libc.inc
 endif
+.xlist
+
+; Parsing flags
 
 _ST_SIGN	equ 0x0001
 _ST_NEGNUM	equ 0x0002
@@ -15,18 +18,45 @@ _ST_OVERFLOW	equ 0x0200
 _ST_DIGITS	equ 0x0400
 _ST_DOT		equ 0x0800
 
-_ST_FLT16	equ 0x4000
-_ST_FLT32	equ 0x8000
+; Single precision - binary32 -- REAL4 (float)
 
-EXPONENT_BIAS	equ 0x3FFF ; REAL10/16
+F_SIGBITS	equ 24
+F_EXPBITS	equ 8
+F_EXPMASK	equ (1 shl F_EXPBITS) - 1
+F_EXPBIAS	equ F_EXPMASK shr 1
+F_EXPMAX	equ F_EXPMASK - F_EXPBIAS
 
-Q_SIGBITS	equ 112
+; Double precision - binary64 -- REAL8 (double)
+
+D_SIGBITS	equ 53
+D_EXPBITS	equ 11
+D_EXPMASK	equ (1 shl D_EXPBITS) - 1
+D_EXPBIAS	equ D_EXPMASK shr 1
+D_EXPMAX	equ D_EXPMASK - D_EXPBIAS
+
+; Long Double precision - binary80 -- REAL10 (long double)
+
+LD_SIGBITS	equ 64
+LD_EXPBITS	equ 15
+LD_EXPMASK	equ (1 shl LD_EXPBITS) - 1
+LD_EXPBIAS	equ LD_EXPMASK shr 1
+LD_EXPMAX	equ LD_EXPMASK - LD_EXPBIAS
+
+; Quadruple precision - binary128 -- REAL16 (__float128)
+
+Q_SIGBITS	equ 113
 Q_EXPBITS	equ 15
 Q_EXPMASK	equ (1 shl Q_EXPBITS) - 1
-Q_EXPMAX	equ Q_EXPMASK - EXPONENT_BIAS
-Q_EXPMIN	equ -EXPONENT_BIAS
+Q_EXPBIAS	equ Q_EXPMASK shr 1
+Q_EXPMAX	equ Q_EXPMASK - Q_EXPBIAS
 
-.xlist
+; Octuple precision - binary256 -- REAL32 (__float256)
+
+O_SIGBITS	equ 237
+O_EXPBITS	equ 19
+O_EXPMASK	equ (1 shl O_EXPBITS) - 1
+O_EXPBIAS	equ O_EXPMASK shr 1
+O_EXPMAX	equ O_EXPMASK - O_EXPBIAS
 
 _incnd	proto __cdecl :ptr, :dword
 _decnd	proto __cdecl :ptr, :dword
@@ -55,12 +85,14 @@ _mulow	proto __cdecl :ptr, :ptr, :ptr
 _divow	proto __cdecl :ptr, :ptr, :ptr
 _mulqw	proto __cdecl :qword, :qword, :ptr
 
-_atonf	proto __cdecl :ptr, :ptr, :ptr, :ptr, :dword
+_atonf	proto __cdecl :ptr, :ptr, :ptr, :ptr, :dword, :dword, :dword
 _mulfq	proto __cdecl :ptr, :ptr, :ptr
 _divfq	proto __cdecl :ptr, :ptr, :ptr
+_qftod	proto __cdecl :ptr, :ptr
+_qftold proto __cdecl :ptr, :ptr
+_dtoqf	proto __cdecl :ptr, :qword
 _qftol	proto __cdecl :ptr
-_qftoi64 proto __cdecl :ptr
-
+_qftoll proto __cdecl :ptr
 _normalizefq proto __cdecl :ptr, :dword
 
 _lk_mulfq proto __cdecl

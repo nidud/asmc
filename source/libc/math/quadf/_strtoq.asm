@@ -7,7 +7,7 @@ _strtoq proc uses esi edi ebx number:ptr, string:LPSTR, suffix:LPSTR
 
 local exponent:dword
 
-    mov edi,_atonf(number, string, suffix, &exponent, 4)
+    mov edi,_atonf(number, string, suffix, &exponent, Q_SIGBITS, Q_EXPBITS, 4)
     mov ebx,number
     mov ax,[ebx+14]
     and eax,Q_EXPMASK
@@ -21,7 +21,7 @@ local exponent:dword
         .endif
         .endc
       .case edi & _ST_OVERFLOW
-      .case eax >= Q_EXPMAX + EXPONENT_BIAS
+      .case eax >= Q_EXPMAX + Q_EXPBIAS
         mov edx,0x7FFF0000
         .if edi & _ST_NEGNUM
             or edx,0x80000000

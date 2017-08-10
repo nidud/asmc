@@ -1820,6 +1820,7 @@ GetJumpString proc private uses edx ecx cmd
 		mov ecx,T_JBE
 		.endc
 	  .case T_DOT_IFB
+	  .case T_DOT_IFC
 	  .case T_DOT_UNTILB
 	  .case T_DOT_WHILEB
 		mov ecx,T_JAE
@@ -1860,6 +1861,7 @@ GetJumpString proc private uses edx ecx cmd
 		mov ecx,T_JA
 		.endc
 	  .case T_DOT_IFNB
+	  .case T_DOT_IFNC
 	  .case T_DOT_UNTILNB
 	  .case T_DOT_WHILENB
 		mov ecx,T_JB
@@ -2114,6 +2116,7 @@ local	rc:		SINT,
 			.gotosw(T_DOT_IF)
 		.endif
 	  .case T_DOT_IFB
+	  .case T_DOT_IFC
 		.if ecx != T_FINAL
 
 			or [esi].flags,HLLF_IFB
@@ -2495,6 +2498,7 @@ _lk_HllContinueIf proc i:ptr sdword, tokenarray:ptr asm_tok
 					.gotosw(T_DOT_IF)
 				.endif
 			  .case T_DOT_IFB
+			  .case T_DOT_IFC
 				.if [ebx+16].token != T_FINAL
 
 					or edx,HLLF_IFB

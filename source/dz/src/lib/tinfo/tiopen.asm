@@ -3,287 +3,287 @@ include string.inc
 include alloc.inc
 include errno.inc
 
-	.code
+    .code
 
-	ASSUME esi: PTR S_TINFO
-	ASSUME edx: PTR S_TINFO
+    ASSUME esi: PTR S_TINFO
+    ASSUME edx: PTR S_TINFO
 
 tiopen	PROC USES esi ti:PTINFO, tabsize:UINT, flags:UINT
 
-	malloc( SIZE S_TINFO )
-	jz	nomem
+    malloc( SIZE S_TINFO )
+    jz	nomem
 
-	mov edx,edi
-	mov esi,eax
-	mov edi,eax
-	mov ecx,SIZE S_TINFO
-	xor eax,eax
-	rep stosb
-	mov edi,edx
-	mov eax,tabsize
-	mov [esi].ti_tabz,eax
+    mov edx,edi
+    mov esi,eax
+    mov edi,eax
+    mov ecx,SIZE S_TINFO
+    xor eax,eax
+    rep stosb
+    mov edi,edx
+    mov eax,tabsize
+    mov [esi].ti_tabz,eax
 
-	mov ah,at_background[B_TextEdit]
-	or  ah,at_foreground[F_TextEdit]
-	mov al,' '
-	mov [esi].ti_clat,eax
-	mov [esi].ti_stat,eax
-	mov eax,flags
-	or  eax,_T_UNREAD
-	mov [esi].ti_flag,eax
-	;
-	; adapt to current screen
-	;
-	tsetrect( esi, tgetrect() )
+    mov ah,at_background[B_TextEdit]
+    or	ah,at_foreground[F_TextEdit]
+    mov al,' '
+    mov [esi].ti_clat,eax
+    mov [esi].ti_stat,eax
+    mov eax,flags
+    or	eax,_T_UNREAD
+    mov [esi].ti_flag,eax
+    ;
+    ; adapt to current screen
+    ;
+    tsetrect( esi, tgetrect() )
 
-	mov [esi].ti_bcol,TIMAXLINE
-	mov [esi].ti_blen,TIMAXFILE
+    mov [esi].ti_bcol,TIMAXLINE
+    mov [esi].ti_blen,TIMAXFILE
 
-	.if tialloc( esi )
+    .if tialloc( esi )
 
-		.if tigetfile( ti )
-			;
-			; link to last file
-			;
-			mov [esi].ti_prev,edx
-			mov [edx].ti_next,esi
-		.endif
-
-		mov  eax,esi
-		test eax,eax
-	.else
-		free( esi )
-		jmp nomem
+	.if tigetfile( ti )
+	    ;
+	    ; link to last file
+	    ;
+	    mov [esi].ti_prev,edx
+	    mov [edx].ti_next,esi
 	.endif
+
+	mov  eax,esi
+	test eax,eax
+    .else
+	free( esi )
+	jmp nomem
+    .endif
 toend:
-	ret
+    ret
 nomem:
-	ermsg( 0, addr CP_ENOMEM )
-	xor eax,eax
-	jmp toend
+    ermsg( 0, addr CP_ENOMEM )
+    xor eax,eax
+    jmp toend
 tiopen	ENDP
 
-	ASSUME ebx: PTR S_TINFO
-	ASSUME edi: PTR S_TINFO
+    ASSUME ebx: PTR S_TINFO
+    ASSUME edi: PTR S_TINFO
 
 ticlose PROC USES esi edi ebx ti:PTINFO
 
-	mov	esi,ti
-	xor	edi,edi
+    mov esi,ti
+    xor edi,edi
 
-	.if	[esi].ti_flag & _T_MALLOC
+    .if [esi].ti_flag & _T_MALLOC
 
-		tifree( esi )
-		dlclose( addr [esi].ti_DOBJ )
+	tifree( esi )
+	dlclose( addr [esi].ti_DOBJ )
+    .endif
+
+    .if tigetfile( esi )
+
+	mov edi,[esi].ti_prev
+	mov ebx,[esi].ti_next
+	mov [esi].ti_prev,0
+	mov [esi].ti_next,0
+
+	.if ebx && [ebx].ti_prev == esi
+
+	    mov [ebx].ti_prev,edi
 	.endif
 
-	.if	tigetfile( esi )
+	.if edi
 
-		mov	edi,[esi].ti_prev
-		mov	ebx,[esi].ti_next
-		mov	[esi].ti_prev,0
-		mov	[esi].ti_next,0
+	    .if [edi].ti_next == esi
 
-		.if	ebx && [ebx].ti_prev == esi
+		mov [edi].ti_next,ebx
+	    .endif
+	.else
 
-			mov	[ebx].ti_prev,edi
-		.endif
-
-		.if	edi
-
-			.if [edi].ti_next == esi
-
-				mov	[edi].ti_next,ebx
-			.endif
-		.else
-
-			mov	edi,ebx
-		.endif
+	    mov edi,ebx
 	.endif
+    .endif
 
-	free  ( esi )
-	mov	eax,edi
-	ret
+    free  ( esi )
+    mov eax,edi
+    ret
 ticlose ENDP
 
-	ASSUME ebx: NOTHING
-	ASSUME edi: NOTHING
+    ASSUME ebx: NOTHING
+    ASSUME edi: NOTHING
 
 tihide	PROC ti:PTINFO
 
-	mov	ecx,ti
-	.if	ecx
+    mov ecx,ti
+    .if ecx
 
-		mov	[ecx].S_TINFO.ti_scrc,0
-		dlclose( addr [ecx].S_TINFO.ti_DOBJ )
-	.endif
-	ret
+	mov [ecx].S_TINFO.ti_scrc,0
+	dlclose( addr [ecx].S_TINFO.ti_DOBJ )
+    .endif
+    ret
 
 tihide	ENDP
 
-	ASSUME esi: PTR S_TINFO
+    ASSUME esi: PTR S_TINFO
 
 tihideall PROC ti:PTINFO
 
-	.if	tigetfile( ti )
+    .if tigetfile( ti )
 
-		tihide( ti )
-	.endif
-	ret
+	tihide( ti )
+    .endif
+    ret
 
 tihideall ENDP
 
 timenus PROC USES esi ebx ti:PTINFO
 
-	mov	esi,ti
+    mov esi,ti
 
-	.if	tistate( esi )
+    .if tistate( esi )
 
-		.if	edx & _D_ONSCR && ecx & _T_USEMENUS
+	.if edx & _D_ONSCR && ecx & _T_USEMENUS
 
-			mov	ebx,eax
+	    mov ebx,eax
 
-			mov	eax,[esi].ti_loff
-			add	eax,[esi].ti_yoff
-			inc	eax
-			push	eax
+	    mov eax,[esi].ti_loff
+	    add eax,[esi].ti_yoff
+	    inc eax
+	    push eax
 
-			mov	eax,[esi].ti_xoff
-			add	eax,[esi].ti_boff
-			push	eax
+	    mov eax,[esi].ti_xoff
+	    add eax,[esi].ti_boff
+	    push eax
 
-			mov	eax,[ebx][4]
-			add	al,[ebx].S_DOBJ.dl_rect.rc_col
-			sub	al,18
-			mov	cl,ah
+	    mov eax,[ebx][4]
+	    add al,[ebx].S_DOBJ.dl_rect.rc_col
+	    sub al,18
+	    mov cl,ah
 
-			scputf( eax, ecx, 0, 0, " col %-3u ln %-6u" )
-			add	esp,4*2
+	    scputf( eax, ecx, 0, 0, " col %-3u ln %-6u" )
+	    add esp,4*2
 
-			mov	eax,' '
-			.if	[esi].ti_flag & _T_MODIFIED
+	    mov eax,' '
+	    .if [esi].ti_flag & _T_MODIFIED
 
-				mov	al,'*'
-			.endif
-			movzx	edx,[ebx].S_DOBJ.dl_rect.rc_x
-			scputw( edx, ecx, 1, eax )
-		.endif
+		mov al,'*'
+	    .endif
+	    movzx   edx,[ebx].S_DOBJ.dl_rect.rc_x
+	    scputw( edx, ecx, 1, eax )
 	.endif
-	xor	eax,eax
-	ret
+    .endif
+    xor eax,eax
+    ret
 timenus ENDP
 
-	ASSUME edi: PTR S_DOBJ
+    ASSUME edi: PTR S_DOBJ
 
 tishow	PROC USES esi edi ebx ti:PTINFO
 
-	mov	esi,ti
+    mov esi,ti
 
-	.if	esi
+    .if esi
 
-		lea	edi,[esi].S_TINFO.ti_DOBJ
-		.if	!( [edi].dl_flag & _D_DOPEN )
+	lea edi,[esi].S_TINFO.ti_DOBJ
+	.if !( [edi].dl_flag & _D_DOPEN )
 
-			tsetrect( esi, tgetrect() )
-			mov	edx,[esi].ti_clat
-			.if	[esi].ti_flag & _T_USESTYLE
+	    tsetrect( esi, tgetrect() )
+	    mov edx,[esi].ti_clat
+	    .if [esi].ti_flag & _T_USESTYLE
 
-				mov	edx,[esi].ti_stat
-			.endif
+		mov edx,[esi].ti_stat
+	    .endif
 
-			shr	edx,8
-			.if	rcopen( [edi].dl_rect, _D_CLEAR or _D_BACKG, edx, 0, 0 )
+	    shr edx,8
+	    .if rcopen( [edi].dl_rect, _D_CLEAR or _D_BACKG, edx, 0, 0 )
 
-				mov	[edi].dl_wp,eax
-				mov	[edi].dl_flag,_D_DOPEN
-			.endif
-		.endif
-
-		.if	[edi].dl_flag & _D_DOPEN
-
-			.if	!([edi].dl_flag & _D_ONSCR)
-
-				dlshow( edi )
-			.endif
-			xor	eax,eax
-			mov	[esi].ti_scrc,eax
-
-			.if	[esi].ti_flag & _T_USEMENUS
-
-				movzx	edx,[edi].dl_rect.rc_x
-				movzx	ebx,[edi].dl_rect.rc_y
-				mov	ecx,[esi].ti_cols
-				mov	ah,at_background[B_Menus]
-				or	ah,at_foreground[F_Menus]
-				mov	al,' '
-
-				scputw( edx, ebx, ecx, eax )
-
-				inc	edx
-				sub	ecx,19
-				scpath( edx, ebx, ecx, [esi].ti_file )
-			.endif
-			tiputs( esi )
-		.endif
+		mov [edi].dl_wp,eax
+		mov [edi].dl_flag,_D_DOPEN
+	    .endif
 	.endif
-	ret
+
+	.if [edi].dl_flag & _D_DOPEN
+
+	    .if !([edi].dl_flag & _D_ONSCR)
+
+		dlshow( edi )
+	    .endif
+	    xor eax,eax
+	    mov [esi].ti_scrc,eax
+
+	    .if [esi].ti_flag & _T_USEMENUS
+
+		movzx edx,[edi].dl_rect.rc_x
+		movzx ebx,[edi].dl_rect.rc_y
+		mov ecx,[esi].ti_cols
+		mov ah,at_background[B_Menus]
+		or  ah,at_foreground[F_Menus]
+		mov al,' '
+
+		scputw( edx, ebx, ecx, eax )
+
+		inc edx
+		sub ecx,19
+		scpath( edx, ebx, ecx, [esi].ti_file )
+	    .endif
+	    tiputs( esi )
+	.endif
+    .endif
+    ret
 tishow	ENDP
 
 titogglemenus PROC USES esi ti:PTINFO
 
-	mov	esi,ti
+    mov esi,ti
 
-	.if	tistate( esi )
+    .if tistate( esi )
 
-		tihide( esi )
+	tihide( esi )
 
-		movzx	edx,[esi].ti_DOBJ.dl_rect.rc_y
-		movzx	ecx,[esi].ti_DOBJ.dl_rect.rc_row
-		mov	eax,[esi].ti_flag
-		xor	eax,_T_USEMENUS
-		mov	[esi].ti_flag,eax
-		.if	eax & _T_USEMENUS
+	movzx edx,[esi].ti_DOBJ.dl_rect.rc_y
+	movzx ecx,[esi].ti_DOBJ.dl_rect.rc_row
+	mov eax,[esi].ti_flag
+	xor eax,_T_USEMENUS
+	mov [esi].ti_flag,eax
+	.if eax & _T_USEMENUS
 
-			inc	edx
-			dec	ecx
-		.endif
-		mov	[esi].ti_ypos,edx
-		mov	[esi].ti_rows,ecx
-
-		tishow( esi )
+	    inc edx
+	    dec ecx
 	.endif
-	xor	eax,eax
-	ret
+	mov [esi].ti_ypos,edx
+	mov [esi].ti_rows,ecx
+
+	tishow( esi )
+    .endif
+    xor eax,eax
+    ret
 titogglemenus ENDP
 
-	ASSUME esi: PTR S_TINFO
-	ASSUME edi: PTR S_TINFO
+    ASSUME esi: PTR S_TINFO
+    ASSUME edi: PTR S_TINFO
 
 titogglefile PROC USES esi edi ebx old:PTINFO, new:PTINFO
 
-	mov	edi,old
-	mov	eax,new
-	mov	ebx,edi
-	mov	esi,eax
+    mov edi,old
+    mov eax,new
+    mov ebx,edi
+    mov esi,eax
 
-	.if	esi != edi && [esi].ti_flag & _T_TEDIT
+    .if esi != edi && [esi].ti_flag & _T_TEDIT
 
-		mov	ebx,esi
-		tishow( esi )
+	mov ebx,esi
+	tishow( esi )
 
-		.if	[esi].ti_DOBJ.dl_flag & _D_DOPEN
+	.if [esi].ti_DOBJ.dl_flag & _D_DOPEN
 
-			and	[edi].ti_DOBJ.dl_flag,NOT (_D_DOPEN OR _D_ONSCR)
-			free  ( [esi].ti_DOBJ.dl_wp )
-			mov	eax,[edi].ti_DOBJ.dl_wp
-			mov	[esi].ti_DOBJ.dl_wp,eax
-		.else
-			mov	ebx,edi
-		.endif
+	    and [edi].ti_DOBJ.dl_flag,NOT (_D_DOPEN OR _D_ONSCR)
+	    free( [esi].ti_DOBJ.dl_wp )
+	    mov eax,[edi].ti_DOBJ.dl_wp
+	    mov [esi].ti_DOBJ.dl_wp,eax
+	.else
+	    mov ebx,edi
 	.endif
-	mov	eax,ebx
-	ret
+    .endif
+    mov eax,ebx
+    ret
 
 titogglefile ENDP
 
-	END
+    END

@@ -30,9 +30,8 @@ L001:
 	jo	L004
 	jns	L003
 	test	eax,eax
-	jnz	L002
+	jnz	L003
 	cmp	edx,80000000h
-L002:
 	jnz	L003
 	xor	esi,8000h
 L003:
@@ -78,7 +77,7 @@ L009:
 	shr	esi,16
 	ret
 divide:
-	add	si,1
+	add	si,1		; add 1 to exponent
 	jc	L001
 	jo	L001
 	add	esi,0FFFFh
@@ -108,7 +107,6 @@ L011:
 	mov	edx,80000000h
 	sub	eax,eax
 	or	esi,7FFFh
-L012:
 	ret
 L013:
 	or	eax,eax
@@ -172,22 +170,22 @@ L020:
 	sub	edi,edi
 	jmp	L032
 L021:
-	push	edi
-	push	esi
-	push	ebx
-	mov	ecx,esi
-	mov	edi,edx
-	mov	esi,eax
-	sub	eax,eax
-	cmp	ecx,edi
+	push	edi	; [ebp-8]  - exponent A
+	push	esi	; [ebp-12] - high B
+	push	ebx	; [ebp-16] - low B
+	mov	ecx,esi ; ecx: high B
+	mov	edi,edx ; edi: high A
+	mov	esi,eax ; esi: low A
+	sub	eax,eax ; LA = 0
+	cmp	ecx,edi ; HB >= HA ?
 	ja	L022
-	sub	edx,ecx
-	inc	eax
+	sub	edx,ecx ; HA -= HB
+	inc	eax	; LA = 1
 L022:
-	push	eax
+	push	eax	; [ebp-20] save LA
 	mov	eax,esi
-	div	ecx
-	push	eax
+	div	ecx	; [LA] / HB
+	push	eax	; [ebp-24]
 	xchg	ebx,eax
 	mul	ebx
 	xchg	ecx,eax
@@ -196,36 +194,36 @@ L022:
 	add	eax,ebx
 	adc	edx,0
 	mov	ebx,[ebp-16]
-	test	byte ptr [ebp-14H],1
+	test	byte ptr [ebp-20],1
 	jz	L023
 	add	eax,ebx
-	adc	edx,[ebp-0CH]
+	adc	edx,[ebp-12]
 L023:
 	neg	ecx
 	sbb	esi,eax
 	sbb	edi,edx
 	jz	L025
 L024:
-	sub	dword ptr [ebp-18H],1
-	sbb	dword ptr [ebp-14H],0
+	sub	dword ptr [ebp-24],1
+	sbb	dword ptr [ebp-20],0
 	add	ecx,ebx
-	adc	esi,[ebp-0CH]
+	adc	esi,[ebp-12]
 	adc	edi,0
 	jnz	L024
 L025:
 	mov	edi,esi
 	mov	esi,ecx
-	mov	ecx,[ebp-0CH]
+	mov	ecx,[ebp-12]
 	cmp	ecx,edi
 	ja	L026
 	sub	edi, ecx
-	add	dword ptr [ebp-18H],1
-	adc	dword ptr [ebp-14H],0
+	add	dword ptr [ebp-24],1
+	adc	dword ptr [ebp-20],0
 L026:
 	mov	edx, edi
 	mov	eax, esi
 	div	ecx
-	push	eax
+	push	eax		; [ebp-28]
 	or	eax, eax
 	jz	L028
 	xchg	ebx, eax
@@ -240,11 +238,11 @@ L026:
 	sbb	edi, edx
 	jz	L028
 L027:
-	sub	dword ptr [ebp-1CH],1
-	sbb	dword ptr [ebp-18H],0
-	sbb	dword ptr [ebp-14H],0
-	add	ecx,[ebp-10H]
-	adc	esi,[ebp-0CH]
+	sub	dword ptr [ebp-28],1
+	sbb	dword ptr [ebp-24],0
+	sbb	dword ptr [ebp-20],0
+	add	ecx,[ebp-16]
+	adc	esi,[ebp-12]
 	adc	edi,0
 	jnz	L027
 L028:

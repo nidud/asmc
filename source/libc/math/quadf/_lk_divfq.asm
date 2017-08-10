@@ -8,51 +8,49 @@ _lk_divfq proc uses esi edi ebx
     ;
 local rax[8],rdx[8],rcx[8]
 
-    push ecx
-    push eax
+    push ecx            ; save dest.
+    push eax            ; save dividend
 
     xor eax,eax
-    lea edi,rcx
-    mov ecx,3*8
+    lea edi,rdx
+    mov ecx,2*8
     rep stosd
 
-    mov si,[edx+14]
     mov ax,[edx]
     shl eax,16
     mov edi,[edx+2]
     mov ecx,[edx+6]
     mov ebx,[edx+10]
-    and si,0x7FFF
-    cmp si,0x3FFF
+    mov si,[edx+14]     ; shift out bits 0..112
+    and esi,Q_EXPMASK   ; if not zero
+    neg esi             ; - set high bit
     mov si,[edx+14]
-    cmc
     rcr ebx,1
     rcr ecx,1
     rcr edi,1
     rcr eax,1
-    mov rdx[0],eax
+    mov rdx[0],eax      ; divisor to stack (rdx)
     mov rdx[4],edi
     mov rdx[8],ecx
     mov rdx[12],ebx
     shl esi,16
 
-    pop edi
-    mov si,[edi+14]
+    pop edi             ; restore dividend
     mov ax,[edi]
     shl eax,16
     mov edx,[edi+2]
     mov ebx,[edi+6]
     mov ecx,[edi+10]
-    and si,0x7FFF
-    cmp si,0x3FFF
     mov si,[edi+14]
-    cmc
-    rcr ecx,1
+    and si,Q_EXPMASK
+    neg si
+    mov si,[edi+14]
+    rcr ecx,1           ; dividend to regs..
     rcr ebx,1
     rcr edx,1
     rcr eax,1
 
-    .repeat
+    .repeat             ; create frame -- no loop
 
         add si,1            ; add 1 to exponent
         jc  er_NaN_A        ; quit if NaN
@@ -93,7 +91,7 @@ local rax[8],rdx[8],rcx[8]
             .endif
         .endif
 
-        mov edi,eax ; A is 0 ?
+        mov edi,eax         ; A is 0 ?
         or  edi,edx
         or  edi,ebx
         or  edi,ecx
@@ -162,8 +160,8 @@ local rax[8],rdx[8],rcx[8]
         mov ebx,rax[8]
         mov edi,rax[12]
         dec si
-        shr rax[16],1
-        .if Carry?
+        shr rax[16],1           ; overflow bit..
+        .ifc
             rcr edi,1
             rcr ebx,1
             rcr edx,1
@@ -280,17 +278,17 @@ local rax[8],rdx[8],rcx[8]
     .until 1
 
     pop edi
-    shl eax,1
+    shl eax,1           ; shift bits back
     rcl edx,1
     rcl ebx,1
-    rcl ecx,1
-    shr eax,16
+    rcl ecx,1           ; shift high bit out..
+    shr eax,16          ; 16 low bits
     mov [edi],ax
     mov [edi+2],edx
     mov [edi+6],ebx
     mov [edi+10],ecx
-    mov [edi+14],si
-    mov eax,edi
+    mov [edi+14],si     ; exponent and sign
+    mov eax,edi         ; return result
     ret
 
 _lk_divfq endp

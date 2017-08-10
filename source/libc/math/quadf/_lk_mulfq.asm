@@ -12,16 +12,15 @@ local a[4]
     push ecx
     push eax
 
-    mov si,[edx+14]
     mov ax,[edx]
     shl eax,16
     mov edi,[edx+2]
     mov ecx,[edx+6]
     mov ebx,[edx+10]
-    and si,0x7FFF
-    cmp si,0x3FFF
+    mov si,[edx+14]     ; shift out bits 0..112
+    and esi,Q_EXPMASK   ; if not zero
+    neg esi             ; - set high bit
     mov si,[edx+14]
-    cmc
     rcr ebx,1
     rcr ecx,1
     rcr edi,1
@@ -33,16 +32,15 @@ local a[4]
     shl esi,16
 
     pop edi
-    mov si,[edi+14]
     mov ax,[edi]
     shl eax,16
     mov edx,[edi+2]
     mov ebx,[edi+6]
     mov ecx,[edi+10]
-    and si,0x7FFF
-    cmp si,0x3FFF
     mov si,[edi+14]
-    cmc
+    and si,Q_EXPMASK
+    neg si
+    mov si,[edi+14]
     rcr ecx,1
     rcr ebx,1
     rcr edx,1
@@ -83,9 +81,9 @@ local a[4]
         and esi,0x80007FFF  ; ...
         add esi,edi         ; determine exponent of result and sign
         sub si,0x3FFE       ; remove extra bias
-        .ifnb               ; exponent negative ?
+        .ifnc               ; exponent negative ?
             cmp si,0x7FFF   ; overflow ?
-            jnc overflow
+            ja  overflow
         .endif
         .ifs si < -64       ; exponent too small ?
             dec si

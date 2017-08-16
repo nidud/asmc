@@ -1,0 +1,45 @@
+LANGUAGEID      equ LANGID_NN
+
+if 1 ; Set if not local
+ _UNICODE       equ 1
+ option         wstring:on
+ option         codepage:865
+endif
+
+IDS_FILE        equ <"&Fil">
+IDS_OPEN        equ <"&pne">
+IDS_CLOSE       equ <"&Lukk">
+IDS_SAVE        equ <"La&gre">
+IDS_SAVEAS      equ <"Lagre &Som">
+IDS_EXIT        equ <"&Avslutt">
+IDS_EDIT        equ <"&Rediger">
+IDS_UNDO        equ <"&Angre">
+IDS_REDO        equ <"&Gjer om">
+IDS_COPY        equ <"&Kopier">
+IDS_CUT         equ <"Klipp ut">
+IDS_PASTE       equ <"&Lim inn">
+IDS_DELETE      equ <"&Slett">
+IDS_SELECTALL   equ <"Merk alt">
+IDS_SEARCH      equ <"&S›k">
+IDS_FIND        equ <"&S›k...",9,"Ctrl+F">
+IDS_FINDNEXT    equ <"S›k etter &neste",9,"F3">
+IDS_FINDPREV    equ <"S›k etter &f›rre.",9,"Ctrl+F3">
+IDS_REPLACE     equ <"&Erstatt..",9,"Ctrl+R">
+IDS_GOTO        equ <"&G† til",9,"Ctrl+G">
+IDS_OPTIONS     equ <"Alternativer">
+IDS_OK          equ <"OK">
+IDS_CANCEL      equ <"Avbryt">
+IDS_BACKGR      equ <"Bakgrunn:">
+IDS_FOREGR      equ <"Forgrunn:">
+IDS_FIND2       equ <"S›k..">
+IDS_MATCHCASE   equ <"Skiftsensitiv">
+IDS_WHOLEWORD   equ <"Heile ord">
+IDS_DOWN        equ <"Ned">
+IDS_UP          equ <"Opp">
+IDS_FINDWHAT    equ <"Finn :">
+IDS_DIRECTION   equ <"Retning">
+IDS_GOTO2       equ <"G† til">
+IDS_LINE        equ <"Linje :">
+IDS_REPLACE2    equ <"Erstatt">
+IDS_REPLACEWITH equ <"Erstatt med">
+

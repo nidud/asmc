@@ -776,6 +776,7 @@ no_tabs:
     mov eax,ts.ts_file_ptr
     add eax,[edx].ti_xpos
     add eax,[edx].ti_xoff
+    add eax,[edx].ti_boff
     mov ecx,eax
     inc ecx
     cmp ecx,ts.ts_file_end

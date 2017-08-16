@@ -44,7 +44,7 @@ if not defined(_68K_)	and \
    not defined(_AMD64_) and defined(_M_IA64)
 ifndef _IA64_
 _IA64_ equ <>
-endif 
+endif
 endif
 
 ifndef _WIN32_WINNT
@@ -89,14 +89,14 @@ SNDMSG equ <::SendMessage>
 else
 SNDMSG equ <::AfxSendMessage>
 endif
-else  
+else
 ifndef _MAC
 SNDMSG equ <SendMessage>
 else
 SNDMSG equ <AfxSendMessage>
 endif
-endif 
-endif 
+endif
+endif
 
 
 GetInstanceModule macro hInstance
@@ -300,11 +300,11 @@ IsRestored macro hwnd
 	endm
 
 SetWindowFont macro hwnd, hfont, fRedraw
-	exitm<FORWARD_WM_SETFONT(hwnd, hfont, fRedraw, SNDMSG)>
+	exitm<SendMessage(hwnd, WM_SETFONT, hfont, fRedraw)>
 	endm
 
-GetWindowFont macro hwndhwnd
-	exitm<FORWARD_WM_GETFONT(hwnd, SNDMSG)>
+GetWindowFont macro hwnd
+	exitm<SendMessage(hwnd, WM_GETFONT, 0, 0)>
 	endm
 
 if (WINVER GE 0x030a)
@@ -315,7 +315,7 @@ else
 MapWindowRect macro hwndFrom, hwndTo, lprc
 	exitm<MapWindowPoints(hwndFrom, hwndTo, lprc, 2)>
 	endm
-endif 
+endif
 endif
 
 IsLButtonDown macro

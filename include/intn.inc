@@ -117,18 +117,30 @@ _divow	proto __cdecl :ptr, :ptr, :ptr
 _mulqw	proto __cdecl :qword, :qword, :ptr
 
 _atonf	proto __cdecl :ptr, :ptr, :ptr, :ptr, :dword, :dword, :dword
+
 _mulfq	proto __cdecl :ptr, :ptr, :ptr
 _divfq	proto __cdecl :ptr, :ptr, :ptr
+_addfq	proto __cdecl :ptr, :ptr, :ptr
+_subfq	proto __cdecl :ptr, :ptr, :ptr
+
 _qftod	proto __cdecl :ptr, :ptr
 _qftold proto __cdecl :ptr, :ptr
 _dtoqf	proto __cdecl :ptr, :qword
 _qftol	proto __cdecl :ptr
 _qftoll proto __cdecl :ptr
+
 _qpow10 proto __cdecl :ptr, :dword
 _normalizefq proto __cdecl :ptr, :dword
 
-_lk_mulfq proto __cdecl
-_lk_divfq proto __cdecl
+_mulld	proto __cdecl :ptr, :ptr, :ptr
+_divld	proto __cdecl :ptr, :ptr, :ptr
+
+_lk_addfq proto __cdecl ; quad float [ecx] = quad float [eax] + quad float [edx]
+_lk_subfq proto __cdecl ; quad float [ecx] = quad float [eax] - quad float [edx]
+_lk_mulfq proto __cdecl ; quad float [ecx] = quad float [eax] * quad float [edx]
+_lk_divfq proto __cdecl ; quad float [ecx] = quad float [eax] / quad float [edx]
 _lk_mulqw proto __cdecl
+_lk_mulld proto __cdecl
+_lk_divld proto __cdecl
 
 .list

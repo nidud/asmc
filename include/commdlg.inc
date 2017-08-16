@@ -2,13 +2,17 @@ ifndef _INC_COMMDLG
 .xlist
 _INC_COMMDLG equ 1
 
-;#include <pshpack1.h>	       
+ifdef __PE__
+option dllimport:<comdlg32>
+endif
+
+;#include <pshpack1.h>
 
 if(WINVER GE 0x0400)
 ifndef SNDMSG
-SNDMSG			equ <AfxSendMessage>
-endif 
-endif 
+SNDMSG equ <AfxSendMessage>
+endif
+endif
 
 LPOFNHOOKPROC_T typedef proto WINAPI \
 		      : HWND,
@@ -71,22 +75,26 @@ LPOPENFILENAME		typedef LPOPENFILENAMEW
 else
 OPENFILENAME		typedef OPENFILENAMEA
 LPOPENFILENAME		typedef LPOPENFILENAMEA
-endif 
+endif
 
 ;BOOL
+GetOpenFileNameA proto WINAPI :LPOPENFILENAMEA
 ;BOOL
+GetOpenFileNameW proto WINAPI :LPOPENFILENAMEW
 ifdef _UNICODE
-GetOpenFileName		equ <GetOpenFileNameW>
+GetOpenFileName equ <GetOpenFileNameW>
 else
-GetOpenFileName		equ <GetOpenFileNameA>
-endif 
+GetOpenFileName equ <GetOpenFileNameA>
+endif
 ;BOOL
+GetSaveFileNameA proto WINAPI :LPOPENFILENAMEA
 ;BOOL
+GetSaveFileNameW proto WINAPI :LPOPENFILENAMEW
 ifdef _UNICODE
-GetSaveFileName		equ <GetSaveFileNameW>
+GetSaveFileName equ <GetSaveFileNameW>
 else
-GetSaveFileName		equ <GetSaveFileNameA>
-endif 
+GetSaveFileName equ <GetSaveFileNameA>
+endif
 ;short
 GetFileTitleA proto WINAPI \
 		      : LPCSTR,
@@ -100,7 +108,7 @@ ifdef _UNICODE
 GetFileTitle		equ <GetFileTitleW>
 else
 GetFileTitle		equ <GetFileTitleA>
-endif 
+endif
 
 OFN_READONLY		equ 0x00000001
 OFN_OVERWRITEPROMPT	equ 0x00000002
@@ -120,14 +128,14 @@ OFN_SHAREAWARE		equ 0x00004000
 OFN_NOREADONLYRETURN	equ 0x00008000
 OFN_NOTESTFILECREATE	equ 0x00010000
 OFN_NONETWORKBUTTON	equ 0x00020000
-OFN_NOLONGNAMES		equ 0x00040000	    
+OFN_NOLONGNAMES		equ 0x00040000
 if(WINVER GE 0x0400)
-OFN_EXPLORER		equ 0x00080000	    
+OFN_EXPLORER		equ 0x00080000
 OFN_NODEREFERENCELINKS	equ 0x00100000
-OFN_LONGNAMES		equ 0x00200000	    
-OFN_ENABLEINCLUDENOTIFY equ 0x00400000	    
+OFN_LONGNAMES		equ 0x00200000
+OFN_ENABLEINCLUDENOTIFY equ 0x00400000
 OFN_ENABLESIZING	equ 0x00800000
-endif 
+endif
 
 
 OFN_SHAREFALLTHROUGH	equ 2
@@ -146,13 +154,13 @@ if(WINVER GE 0x0400)
 OFNOTIFYA		STRUC
 hdr			NMHDR <>
 lpOFN			LPOPENFILENAMEA ?
-pszFile			LPSTR ? 
+pszFile			LPSTR ?
 OFNOTIFYA		ENDS
 LPOFNOTIFYA		typedef ptr OFNOTIFYA
 OFNOTIFYW		STRUC
 hdr			NMHDR <>
 lpOFN			LPOPENFILENAMEW ?
-pszFile			LPWSTR ?	
+pszFile			LPWSTR ?
 OFNOTIFYW		ENDS
 LPOFNOTIFYW		typedef ptr OFNOTIFYW
 ifdef _UNICODE
@@ -161,21 +169,21 @@ LPOFNOTIFY		typedef LPOFNOTIFYW
 else
 OFNOTIFY		typedef OFNOTIFYA
 LPOFNOTIFY		typedef LPOFNOTIFYA
-endif 
+endif
 
 
 OFNOTIFYEXA		STRUC
 hdr			NMHDR <>
 lpOFN			LPOPENFILENAMEA ?
 psf			LPVOID ?
-pidl			LPVOID ?	
+pidl			LPVOID ?
 OFNOTIFYEXA		ENDS
 LPOFNOTIFYEXA		typedef ptr OFNOTIFYEXA
 OFNOTIFYEXW		STRUC
 hdr			NMHDR <>
 lpOFN			LPOPENFILENAMEW ?
 psf			LPVOID ?
-pidl			LPVOID ?	
+pidl			LPVOID ?
 OFNOTIFYEXW		ENDS
 LPOFNOTIFYEXW		typedef ptr OFNOTIFYEXW
 ifdef _UNICODE
@@ -184,7 +192,7 @@ LPOFNOTIFYEX		typedef LPOFNOTIFYEXW
 else
 OFNOTIFYEX		typedef OFNOTIFYEXA
 LPOFNOTIFYEX		typedef LPOFNOTIFYEXA
-endif 
+endif
 
 
 CDN_FIRST		equ (0U-601U)
@@ -216,7 +224,7 @@ ifdef _UNICODE
 CommDlg_OpenSave_GetSpec equ <CommDlg_OpenSave_GetSpecW>
 else
 CommDlg_OpenSave_GetSpec equ <CommDlg_OpenSave_GetSpecA>
-endif 
+endif
 
 CDM_GETFILEPATH		equ (CDM_FIRST + 0x0001)
 CommDlg_OpenSave_GetFilePathA macro _hdlg, _psz, _cbmax
@@ -231,7 +239,7 @@ ifdef _UNICODE
 CommDlg_OpenSave_GetFilePath equ <CommDlg_OpenSave_GetFilePathW>
 else
 CommDlg_OpenSave_GetFilePath equ <CommDlg_OpenSave_GetFilePathA>
-endif 
+endif
 
 CDM_GETFOLDERPATH	equ (CDM_FIRST + 0x0002)
 CommDlg_OpenSave_GetFolderPathA macro _hdlg, _psz, _cbmax
@@ -246,7 +254,7 @@ ifdef _UNICODE
 CommDlg_OpenSave_GetFolderPath equ <CommDlg_OpenSave_GetFolderPathW>
 else
 CommDlg_OpenSave_GetFolderPath equ <CommDlg_OpenSave_GetFolderPathA>
-endif 
+endif
 
 CDM_GETFOLDERIDLIST	equ (CDM_FIRST + 0x0003)
 CommDlg_OpenSave_GetFolderIDList macro _hdlg, _pidl, _cbmax
@@ -268,7 +276,7 @@ CommDlg_OpenSave_SetDefExt macro _hdlg, _pszext
 	exitm<SNDMSG(_hdlg, CDM_SETDEFEXT, 0, _pszext)>
 	endm
 
-endif 
+endif
 
 ifndef _MAC
 CHOOSECOLORA		STRUC
@@ -301,7 +309,7 @@ LPCHOOSECOLOR		typedef LPCHOOSECOLORW
 else
 CHOOSECOLOR		typedef CHOOSECOLORA
 LPCHOOSECOLOR		typedef LPCHOOSECOLORA
-endif 
+endif
 else
 CHOOSECOLORA		STRUC
 lStructSize		dd ?
@@ -335,16 +343,18 @@ LPCHOOSECOLOR		typedef LPCHOOSECOLORW
 else
 CHOOSECOLOR		typedef CHOOSECOLORA
 LPCHOOSECOLOR		typedef LPCHOOSECOLORA
-endif 
-endif 
+endif
+endif
 
 ;BOOL
+ChooseColorA proto WINAPI :LPCHOOSECOLORA
 ;BOOL
+ChooseColorW proto WINAPI :LPCHOOSECOLORW
 ifdef _UNICODE
 ChooseColor		equ <ChooseColorW>
 else
 ChooseColor		equ <ChooseColorA>
-endif 
+endif
 
 CC_RGBINIT		equ 0x00000001
 CC_FULLOPEN		equ 0x00000002
@@ -356,7 +366,7 @@ CC_ENABLETEMPLATEHANDLE equ 0x00000040
 if(WINVER GE 0x0400)
 CC_SOLIDCOLOR		equ 0x00000080
 CC_ANYCOLOR		equ 0x00000100
-endif 
+endif
 
 ;UINT
 LPFRHOOKPROC_T typedef proto WINAPI \
@@ -367,31 +377,31 @@ LPFRHOOKPROC_T typedef proto WINAPI \
 LPFRHOOKPROC typedef ptr LPFRHOOKPROC_T
 
 FINDREPLACEA		STRUC
-lStructSize		dd ?	
-hwndOwner		HWND ?	
-hInstance		HINSTANCE ?	
-Flags			dd ?	
-lpstrFindWhat		LPSTR ? 
-lpstrReplaceWith	LPSTR ? 
-wFindWhatLen		dw ?	
-wReplaceWithLen		dw ?	
-lCustData		LPARAM ?	
-lpfnHook		LPFRHOOKPROC ?	
-lpTemplateName		LPCSTR ?	
+lStructSize		dd ?
+hwndOwner		HWND ?
+hInstance		HINSTANCE ?
+Flags			dd ?
+lpstrFindWhat		LPSTR ?
+lpstrReplaceWith	LPSTR ?
+wFindWhatLen		dw ?
+wReplaceWithLen		dw ?
+lCustData		LPARAM ?
+lpfnHook		LPFRHOOKPROC ?
+lpTemplateName		LPCSTR ?
 FINDREPLACEA		ENDS
 LPFINDREPLACEA		typedef ptr FINDREPLACEA
 FINDREPLACEW		STRUC
-lStructSize		dd ?	
-hwndOwner		HWND ?	
-hInstance		HINSTANCE ?	
-Flags			dd ?	
-lpstrFindWhat		LPWSTR ?	
-lpstrReplaceWith	LPWSTR ?	
-wFindWhatLen		dw ?	
-wReplaceWithLen		dw ?	
-lCustData		LPARAM ?	
-lpfnHook		LPFRHOOKPROC ?	
-lpTemplateName		LPCWSTR ?	
+lStructSize		dd ?
+hwndOwner		HWND ?
+hInstance		HINSTANCE ?
+Flags			dd ?
+lpstrFindWhat		LPWSTR ?
+lpstrReplaceWith	LPWSTR ?
+wFindWhatLen		dw ?
+wReplaceWithLen		dw ?
+lCustData		LPARAM ?
+lpfnHook		LPFRHOOKPROC ?
+lpTemplateName		LPCWSTR ?
 FINDREPLACEW		ENDS
 LPFINDREPLACEW		typedef ptr FINDREPLACEW
 ifdef _UNICODE
@@ -400,7 +410,7 @@ LPFINDREPLACE		typedef LPFINDREPLACEW
 else
 FINDREPLACE		typedef FINDREPLACEA
 LPFINDREPLACE		typedef LPFINDREPLACEA
-endif 
+endif
 
 FR_DOWN			equ 0x00000001
 FR_WHOLEWORD		equ 0x00000002
@@ -421,28 +431,34 @@ FR_HIDEMATCHCASE	equ 0x00008000
 FR_HIDEWHOLEWORD	equ 0x00010000
 
 ;HWND
+FindTextA proto WINAPI :LPFINDREPLACEA
 ;HWND
+FindTextW proto WINAPI :LPFINDREPLACEW
 ifdef _UNICODE
-FindText		equ <FindTextW>
+FindText equ <FindTextW>
 else
-FindText		equ <FindTextA>
-endif 
+FindText equ <FindTextA>
+endif
 ifndef _MAC
 ;HWND
+ReplaceTextA proto WINAPI :LPFINDREPLACEA
 ;HWND
+ReplaceTextW proto WINAPI :LPFINDREPLACEW
 ifdef _UNICODE
-ReplaceText		equ <ReplaceTextW>
+ReplaceText equ <ReplaceTextW>
 else
-ReplaceText		equ <ReplaceTextA>
-endif 
+ReplaceText equ <ReplaceTextA>
+endif
 else
 ;HWND
+AfxReplaceTextA proto WINAPI :LPFINDREPLACEA
 ;HWND
+AfxReplaceTextW proto WINAPI :LPFINDREPLACEW
 ifdef _UNICODE
-AfxReplaceText		equ <AfxReplaceTextW>
+AfxReplaceText equ <AfxReplaceTextW>
 else
-AfxReplaceText		equ <AfxReplaceTextA>
-endif 
+AfxReplaceText equ <AfxReplaceTextA>
+endif
 endif
 
 ;UINT
@@ -455,40 +471,40 @@ LPCFHOOKPROC typedef ptr LPCFHOOKPROC_T
 
 CHOOSEFONTA		STRUC
 lStructSize		dd ?
-hwndOwner		HWND ?	
-hDC			HDC ?	
-lpLogFont		LPLOGFONTA ?	
-iPointSize		SINT ?	
-Flags			dd ?	
-rgbColors		COLORREF ?	
-lCustData		LPARAM ?	
-lpfnHook		LPCFHOOKPROC ?	
-lpTemplateName		LPCSTR ?	
-hInstance		HINSTANCE ?	
-lpszStyle		LPSTR ? 
-nFontType		dw ?	
+hwndOwner		HWND ?
+hDC			HDC ?
+lpLogFont		LPLOGFONTA ?
+iPointSize		SINT ?
+Flags			dd ?
+rgbColors		COLORREF ?
+lCustData		LPARAM ?
+lpfnHook		LPCFHOOKPROC ?
+lpTemplateName		LPCSTR ?
+hInstance		HINSTANCE ?
+lpszStyle		LPSTR ?
+nFontType		dw ?
 ___MISSING_ALIGNMENT__	dw ?
-nSizeMin		SINT ?	
-nSizeMax		SINT ?	
+nSizeMin		SINT ?
+nSizeMax		SINT ?
 CHOOSEFONTA		ENDS
 LPCHOOSEFONTA		typedef ptr CHOOSEFONTA
 CHOOSEFONTW		STRUC
 lStructSize		dd ?
-hwndOwner		HWND ?		
-hDC			HDC ?		
-lpLogFont		LPLOGFONTW ?	
-iPointSize		SINT ?		
-Flags			dd ?		
-rgbColors		COLORREF ?	
-lCustData		LPARAM ?	
-lpfnHook		LPCFHOOKPROC ?	
-lpTemplateName		LPCWSTR ?	
-hInstance		HINSTANCE ?	
-lpszStyle		LPWSTR ?	
-nFontType		dw ?		
+hwndOwner		HWND ?
+hDC			HDC ?
+lpLogFont		LPLOGFONTW ?
+iPointSize		SINT ?
+Flags			dd ?
+rgbColors		COLORREF ?
+lCustData		LPARAM ?
+lpfnHook		LPCFHOOKPROC ?
+lpTemplateName		LPCWSTR ?
+hInstance		HINSTANCE ?
+lpszStyle		LPWSTR ?
+nFontType		dw ?
 ___MISSING_ALIGNMENT__	dw ?
-nSizeMin		SINT ?	
-nSizeMax		SINT ?	
+nSizeMin		SINT ?
+nSizeMax		SINT ?
 CHOOSEFONTW		ENDS
 LPCHOOSEFONTW		typedef ptr CHOOSEFONTW
 ifdef _UNICODE
@@ -497,7 +513,7 @@ LPCHOOSEFONT		typedef LPCHOOSEFONTW
 else
 CHOOSEFONT		typedef CHOOSEFONTA
 LPCHOOSEFONT		typedef LPCHOOSEFONTA
-endif 
+endif
 
 ;BOOL
 ;BOOL
@@ -505,7 +521,7 @@ ifdef _UNICODE
 ChooseFont		equ <ChooseFontW>
 else
 ChooseFont		equ <ChooseFontA>
-endif 
+endif
 
 CF_SCREENFONTS		equ 0x00000001
 CF_PRINTERFONTS		equ 0x00000002
@@ -521,13 +537,13 @@ CF_APPLY		equ 0x00000200
 CF_ANSIONLY		equ 0x00000400
 if(WINVER GE 0x0400)
 CF_SCRIPTSONLY		equ CF_ANSIONLY
-endif 
+endif
 CF_NOVECTORFONTS	equ 0x00000800
 CF_NOOEMFONTS		equ CF_NOVECTORFONTS
 CF_NOSIMULATIONS	equ 0x00001000
 CF_LIMITSIZE		equ 0x00002000
 CF_FIXEDPITCHONLY	equ 0x00004000
-CF_WYSIWYG		equ 0x00008000 
+CF_WYSIWYG		equ 0x00008000
 CF_FORCEFONTEXIST	equ 0x00010000
 CF_SCALABLEONLY		equ 0x00020000
 CF_TTONLY		equ 0x00040000
@@ -538,7 +554,7 @@ if(WINVER GE 0x0400)
 CF_SELECTSCRIPT		equ 0x00400000
 CF_NOSCRIPTSEL		equ 0x00800000
 CF_NOVERTFONTS		equ 0x01000000
-endif 
+endif
 
 
 SIMULATED_FONTTYPE	equ 0x8000
@@ -666,7 +682,7 @@ LPPRINTDLG		typedef LPPRINTDLGW
 else
 PRINTDLG		typedef PRINTDLGA
 LPPRINTDLG		typedef LPPRINTDLGA
-endif 
+endif
 
 ;BOOL
 ;BOOL
@@ -674,7 +690,7 @@ ifdef _UNICODE
 PrintDlg		equ <PrintDlgW>
 else
 PrintDlg		equ <PrintDlgA>
-endif 
+endif
 
 PD_ALLPAGES		equ 0x00000000
 PD_SELECTION		equ 0x00000001
@@ -780,7 +796,7 @@ LPPAGESETUPDLG		typedef LPPAGESETUPDLGW
 else
 PAGESETUPDLG		typedef PAGESETUPDLGA
 LPPAGESETUPDLG		typedef LPPAGESETUPDLGA
-endif 
+endif
 
 ;BOOL
 PageSetupDlgA proto WINAPI \
@@ -792,31 +808,31 @@ ifdef _UNICODE
 PageSetupDlg		equ <PageSetupDlgW>
 else
 PageSetupDlg		equ <PageSetupDlgA>
-endif 
+endif
 
-PSD_DEFAULTMINMARGINS	equ 0x00000000 
-PSD_INWININIINTLMEASURE equ 0x00000000 
+PSD_DEFAULTMINMARGINS	equ 0x00000000
+PSD_INWININIINTLMEASURE equ 0x00000000
 
-PSD_MINMARGINS		equ 0x00000001 
-PSD_MARGINS		equ 0x00000002 
-PSD_INTHOUSANDTHSOFINCHES equ 0x00000004 
-PSD_INHUNDREDTHSOFMILLIMETERS equ 0x00000008 
+PSD_MINMARGINS		equ 0x00000001
+PSD_MARGINS		equ 0x00000002
+PSD_INTHOUSANDTHSOFINCHES equ 0x00000004
+PSD_INHUNDREDTHSOFMILLIMETERS equ 0x00000008
 PSD_DISABLEMARGINS	equ 0x00000010
 PSD_DISABLEPRINTER	equ 0x00000020
-PSD_NOWARNING		equ 0x00000080 
+PSD_NOWARNING		equ 0x00000080
 PSD_DISABLEORIENTATION	equ 0x00000100
-PSD_RETURNDEFAULT	equ 0x00000400 
+PSD_RETURNDEFAULT	equ 0x00000400
 PSD_DISABLEPAPER	equ 0x00000200
-PSD_SHOWHELP		equ 0x00000800 
-PSD_ENABLEPAGESETUPHOOK equ 0x00002000 
-PSD_ENABLEPAGESETUPTEMPLATE equ 0x00008000 
-PSD_ENABLEPAGESETUPTEMPLATEHANDLE equ 0x00020000 
+PSD_SHOWHELP		equ 0x00000800
+PSD_ENABLEPAGESETUPHOOK equ 0x00002000
+PSD_ENABLEPAGESETUPTEMPLATE equ 0x00008000
+PSD_ENABLEPAGESETUPTEMPLATEHANDLE equ 0x00020000
 PSD_ENABLEPAGEPAINTHOOK equ 0x00040000
 PSD_DISABLEPAGEPAINTING equ 0x00080000
-PSD_NONETWORKBUTTON	equ 0x00200000 
-endif 
+PSD_NONETWORKBUTTON	equ 0x00200000
+endif
 
 ;#include <poppack.h>
 .list
-endif	
+endif
 

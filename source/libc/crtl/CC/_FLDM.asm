@@ -44,9 +44,8 @@ L002:
 	jc	L005
 	jo	L005
 	or	eax,eax
-	jnz	L003
+	jnz	L004
 	cmp	edx,80000000h
-L003:
 	jnz	L004
 	or	esi,esi
 	jns	L004
@@ -84,9 +83,8 @@ L011:
 	cmp	ecx,80000000h
 	jnz	L014
 	or	eax,eax
-	jnz	L012
+	jnz	L013
 	or	edx,edx
-L012:
 	jnz	L013
 	sar	ecx,1		; -NaN
 	mov	esi,0FFFFFFFFh

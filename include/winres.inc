@@ -67,11 +67,11 @@ MENUBEGIN macro
     @CatStr(<$>, %RCENUM2) IMAGE_RESOURCE_DATA_ENTRY <IMAGEREL @CatStr(<$$>, %RCENUM2), @CatStr(<size_$>, %RCENUM2), 0, 0>
     @CatStr(<$$>, %RCENUM2) dw 0,0
     endm
-MENUNAME macro name
-    dw MF_POPUP,name,0
+MENUNAME macro name, flags:=<0>
+    dw flags or MF_POPUP,name,0
     endm
-MENUITEM macro mf, idm, name
-    dw mf, idm, name,0
+MENUITEM macro idm, name, flags:=<0>
+    dw flags, idm, name,0
     endm
 SEPARATOR macro
     dw 0, 0, 0
@@ -160,10 +160,12 @@ DLGEND macro
 
 RCEND macro
     .rsrc ends
+ifdef __PE__
     .hdr$2 segment dword flat public 'HDR'
         org 0x5C
         dw 2
     .hdr$2 ends
+endif
     endm
 
 .list

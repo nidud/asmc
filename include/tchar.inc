@@ -1018,9 +1018,11 @@ ifndef _WIN64
 endif
 
 ifdef __PE__
+
 ifndef __STDLIB_INC
 include stdlib.inc
 endif
+
 ifdef _WIN64
 option	win64:3
 endif
@@ -1060,7 +1062,7 @@ else
 
 _tstart equ <>
 
-endif
+endif ; __PE__
 
 endif
 

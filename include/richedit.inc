@@ -3,7 +3,7 @@ _RICHEDIT_ equ <>
 .xlist
 
 ifndef _RICHEDIT_VER
-_RICHEDIT_VER       equ 0x0300
+_RICHEDIT_VER       equ 0x0800
 endif
 cchTextLimitDefault equ 32767
 ifdef _UNICODE
@@ -453,7 +453,7 @@ ifdef _WIN32
 endif
 
 ;; All character format measurements are in twips
-CHARFORMATA     STRUC
+CHARFORMATA     STRUC 4
 cbSize          UINT ?
 dwMask          DWORD ?
 dwEffects       DWORD ?
@@ -465,7 +465,7 @@ bPitchAndFamily BYTE ?
 szFaceName      SBYTE LF_FACESIZE dup(?)
 CHARFORMATA     ENDS
 
-CHARFORMATW     STRUC
+CHARFORMATW     STRUC 4
 cbSize          UINT ?
 dwMask          DWORD ?
 dwEffects       DWORD ?
@@ -489,7 +489,7 @@ endif ;; _RICHEDIT_VER >= 0x0200
 
 ;; CHARFORMAT2 structure
 
-CHARFORMAT2W    STRUC
+CHARFORMAT2W    STRUC 4
 cbSize          UINT ?
 dwMask          DWORD ?
 dwEffects       DWORD ?
@@ -509,10 +509,12 @@ wKerning        WORD ?              ;; Twip size above which to kern char pair
 bUnderlineType  BYTE ?              ;; Underline type
 bAnimation      BYTE ?              ;; Animated text like marching ants
 bRevAuthor      BYTE ?              ;; Revision author index
-bReserved1      BYTE ?
+if (_RICHEDIT_VER ge 0x0800)
+bUnderlineColor BYTE ?
+endif
 CHARFORMAT2W    ENDS
 
-CHARFORMAT2A    STRUC
+CHARFORMAT2A    STRUC 4
 cbSize          UINT ?
 dwMask          DWORD ?
 dwEffects       DWORD ?
@@ -532,10 +534,12 @@ wKerning        WORD ?              ;; Twip size above which to kern char pair
 bUnderlineType  BYTE ?              ;; Underline type
 bAnimation      BYTE ?              ;; Animated text like marching ants
 bRevAuthor      BYTE ?              ;; Revision author index
-bReserved1      BYTE ?
+if (_RICHEDIT_VER ge 0x0800)
+bUnderlineColor BYTE ?
+endif
 CHARFORMAT2A    ENDS
 
-ifdef UNICODE
+ifdef _UNICODE
 CHARFORMAT2 equ <CHARFORMAT2W>
 else
 CHARFORMAT2 equ <CHARFORMAT2A>

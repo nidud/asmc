@@ -4,6 +4,8 @@ _INC_COMMDLG equ 1
 
 ifdef __PE__
 option dllimport:<comdlg32>
+else
+includelib comdlg32.lib
 endif
 
 ;#include <pshpack1.h>
@@ -469,7 +471,7 @@ LPCFHOOKPROC_T typedef proto WINAPI \
 		      : LPARAM
 LPCFHOOKPROC typedef ptr LPCFHOOKPROC_T
 
-CHOOSEFONTA		STRUC
+CHOOSEFONTA		STRUC 4
 lStructSize		dd ?
 hwndOwner		HWND ?
 hDC			HDC ?
@@ -483,12 +485,13 @@ lpTemplateName		LPCSTR ?
 hInstance		HINSTANCE ?
 lpszStyle		LPSTR ?
 nFontType		dw ?
-___MISSING_ALIGNMENT__	dw ?
+;___MISSING_ALIGNMENT__ dw ?
 nSizeMin		SINT ?
 nSizeMax		SINT ?
 CHOOSEFONTA		ENDS
 LPCHOOSEFONTA		typedef ptr CHOOSEFONTA
-CHOOSEFONTW		STRUC
+
+CHOOSEFONTW		STRUC 4
 lStructSize		dd ?
 hwndOwner		HWND ?
 hDC			HDC ?
@@ -502,7 +505,7 @@ lpTemplateName		LPCWSTR ?
 hInstance		HINSTANCE ?
 lpszStyle		LPWSTR ?
 nFontType		dw ?
-___MISSING_ALIGNMENT__	dw ?
+;___MISSING_ALIGNMENT__ dw ?
 nSizeMin		SINT ?
 nSizeMax		SINT ?
 CHOOSEFONTW		ENDS
@@ -516,11 +519,13 @@ LPCHOOSEFONT		typedef LPCHOOSEFONTA
 endif
 
 ;BOOL
+ChooseFontA proto WINAPI lpcf:LPCHOOSEFONT
 ;BOOL
+ChooseFontW proto WINAPI lpcf:LPCHOOSEFONT
 ifdef _UNICODE
-ChooseFont		equ <ChooseFontW>
+ChooseFont equ <ChooseFontW>
 else
-ChooseFont		equ <ChooseFontA>
+ChooseFont equ <ChooseFontA>
 endif
 
 CF_SCREENFONTS		equ 0x00000001

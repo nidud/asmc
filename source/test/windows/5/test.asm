@@ -72,55 +72,12 @@ ASMFilter       TCHAR "ASM Source code (*.asm)",0,"*.asm",0
 
 RichEditProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 
-    local hdc:HDC
-    local FirstChar:DWORD
-    local rect:RECT
-    local txtrange:TEXTRANGE
-    local hRgn:DWORD
-    local hOldRgn:DWORD
-    local RealRect:RECT
-
     .switch uMsg
 
       .case WM_PAINT
         HideCaret(hWnd)
         CallWindowProc(OldWndProc, hWnd, uMsg, wParam, lParam)
         push eax
-        mov  hdc,GetDC(hWnd)
-        SetBkMode(hdc, TRANSPARENT)
-        SendMessage(hWnd, EM_GETRECT,0, &rect)
-        SendMessage(hWnd, EM_CHARFROMPOS, 0, &rect)
-        SendMessage(hWnd, EM_LINEFROMCHAR, eax, 0)
-        SendMessage(hWnd, EM_LINEINDEX, eax, 0)
-        mov  txtrange.chrg.cpMin,eax
-        mov  FirstChar,eax
-        SendMessage(hWnd, EM_CHARFROMPOS, 0, &rect.right)
-        mov  txtrange.chrg.cpMax,eax
-        push rect.left
-        pop  RealRect.left
-        push rect.top
-        pop  RealRect.top
-        push rect.right
-        pop  RealRect.right
-        push rect.bottom
-        pop  RealRect.bottom
-        mov  hRgn,CreateRectRgn(RealRect.left, RealRect.top, RealRect.right, RealRect.bottom)
-        mov  hOldRgn,SelectObject(hdc, hRgn)
-        ;
-        ; Get the visible text into buffer
-        ;
-        lea eax,TextBuffer
-        mov txtrange.lpstrText,eax
-
-        .if SendMessage(hWnd, EM_GETTEXTRANGE, 0, &txtrange)
-            SendMessage(hWnd, EM_POSFROMCHAR, &rect, FirstChar)
-            SetTextColor(hdc, TextColor)
-            DrawText(hdc, txtrange.lpstrText, -1, &rect, 0)
-        .endif
-
-        SelectObject(hdc, hOldRgn)
-        DeleteObject(hRgn)
-        ReleaseDC(hWnd, hdc)
         ShowCaret(hWnd)
         pop eax
         .endc
@@ -384,7 +341,7 @@ SearchProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
       .case WM_CLOSE
         mov hSearch,0
         EndDialog(hWnd, 0)
-        mov eax,TRUE    ; yes..
+        mov eax,TRUE
         .endc
 
       .default
@@ -438,7 +395,7 @@ ReplaceProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
       .case WM_CLOSE
         mov hSearch,0
         EndDialog(hWnd, 0)
-        mov eax,TRUE    ; yes..
+        mov eax,TRUE
         .endc
 
       .default
@@ -483,7 +440,7 @@ GoToProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
       .case WM_CLOSE
         mov hSearch,0
         EndDialog(hWnd, 0)
-        mov eax,TRUE    ; yes..
+        mov eax,TRUE
         .endc
 
       .default
@@ -904,30 +861,30 @@ RCBEGIN
 
     MENUBEGIN
       MENUNAME IDS_FILE
-        MENUITEM 0, IDM_OPEN,   IDS_OPEN
-        MENUITEM 0, IDM_CLOSE,  IDS_CLOSE
-        MENUITEM 0, IDM_SAVE,   IDS_SAVE
-        MENUITEM 0, IDM_SAVEAS, IDS_SAVEAS
+        MENUITEM IDM_OPEN,   IDS_OPEN
+        MENUITEM IDM_CLOSE,  IDS_CLOSE
+        MENUITEM IDM_SAVE,   IDS_SAVE
+        MENUITEM IDM_SAVEAS, IDS_SAVEAS
         SEPARATOR
-        MENUITEM MF_END, IDM_EXIT, IDS_EXIT
+        MENUITEM IDM_EXIT, IDS_EXIT, MF_END
       MENUNAME IDS_EDIT
-        MENUITEM 0, IDM_UNDO,   IDS_UNDO
-        MENUITEM 0, IDM_REDO,   IDS_REDO
-        MENUITEM 0, IDM_COPY,   IDS_COPY
-        MENUITEM 0, IDM_CUT,    IDS_CUT
-        MENUITEM 0, IDM_PASTE,  IDS_PASTE
+        MENUITEM IDM_UNDO,   IDS_UNDO
+        MENUITEM IDM_REDO,   IDS_REDO
+        MENUITEM IDM_COPY,   IDS_COPY
+        MENUITEM IDM_CUT,    IDS_CUT
+        MENUITEM IDM_PASTE,  IDS_PASTE
         SEPARATOR
-        MENUITEM 0, IDM_DELETE, IDS_DELETE
+        MENUITEM IDM_DELETE, IDS_DELETE
         SEPARATOR
-        MENUITEM MF_END, IDM_SELECTALL, IDS_SELECTALL
+        MENUITEM IDM_SELECTALL, IDS_SELECTALL, MF_END
       MENUNAME IDS_SEARCH
-        MENUITEM 0, IDM_FIND,     IDS_FIND
-        MENUITEM 0, IDM_FINDNEXT, IDS_FINDNEXT
-        MENUITEM 0, IDM_FINDPREV, IDS_FINDPREV
-        MENUITEM 0, IDM_REPLACE,  IDS_REPLACE
+        MENUITEM IDM_FIND,     IDS_FIND
+        MENUITEM IDM_FINDNEXT, IDS_FINDNEXT
+        MENUITEM IDM_FINDPREV, IDS_FINDPREV
+        MENUITEM IDM_REPLACE,  IDS_REPLACE
         SEPARATOR
-        MENUITEM MF_END, IDM_GOTOLINE, IDS_GOTO
-      MENUITEM MF_END, IDM_OPTION, IDS_OPTIONS
+        MENUITEM IDM_GOTOLINE, IDS_GOTO, MF_END
+      MENUITEM IDM_OPTION, IDS_OPTIONS, MF_END
     MENUEND
 
     DLGFLAGS equ DS_MODALFRAME or DS_SETFONT or WS_POPUP or WS_VISIBLE or WS_CAPTION or WS_SYSMENU

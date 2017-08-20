@@ -1,5 +1,5 @@
 [OPTIONS]
-Title=Doszip Macro Assembler Reference
+Title=Asmc Macro Assembler Reference
 Compiled file=asmc.chm
 Contents file=asmc.hhc
 Index file=asmc.hhc
@@ -14,7 +14,7 @@ Full-text search=Yes
 Language=0x809 Engelsk (Storbritannia)
 
 [WINDOWS]
-default="Doszip Macro Assembler Reference","asmc.hhc",,"html/index.htm","html/index.htm",,,,,0x2520,,,[,,,],0xb0000,,,,,,0
+default="Asmc Macro Assembler Reference","asmc.hhc",,"html/index.htm","html/index.htm",,,,,0x2520,,,[,,,],0xb0000,,,,,,0
 
 [FILES]
 html/index.htm

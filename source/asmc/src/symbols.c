@@ -136,11 +136,9 @@ struct eqitem {
     struct asym **store;
 };
 
-#define ASMC_VERSION 224
-
 /* table of predefined numeric equates */
 static const struct eqitem eqtab[] = {
-    { "__ASMC__", ASMC_VERSION, NULL, NULL },
+    { "__ASMC__",  225, NULL, NULL },
     { "__JWASM__", 212, NULL, NULL },
     { "$",	   0, UpdateCurPC, &symPC },
     { "@Line",	   0, UpdateLineNumber, &LineCur },

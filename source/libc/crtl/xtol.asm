@@ -7,34 +7,34 @@
 ;
 include stdlib.inc
 
-	.code
+    .code
 
-xtol	PROC string:LPSTR
+xtol proc string:LPSTR
 
-	mov	edx,string
-	xor	eax,eax
-	xor	ecx,ecx
+    mov edx,string
+    xor eax,eax
+    xor ecx,ecx
 
-	.while	1
+    .while 1
 
-		mov	cl,[edx]
-		add	edx,1
-		and	cl,0xDF
+        mov cl,[edx]
+        add edx,1
+        and cl,0xDF
 
-		.break .if cl < 0x10
-		.break .if cl > 'F'
+        .break .if cl < 0x10
+        .break .if cl > 'F'
 
-		.if	cl > 0x19
+        .if cl > 0x19
 
-			.break .if cl < 'A'
-			sub cl,'A' - 0x1A
-		.endif
-		sub	cl,0x10
-		shl	eax,4
-		add	eax,ecx
-	.endw
-	ret
+            .break .if cl < 'A'
+            sub cl,'A' - 0x1A
+        .endif
+        sub cl,0x10
+        shl eax,4
+        add eax,ecx
+    .endw
+    ret
 
-xtol	ENDP
+xtol endp
 
-	END
+    end

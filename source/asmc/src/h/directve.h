@@ -149,6 +149,7 @@ res(DOT_ENDF,	    .endf,	 DF_CGEN,				       DRT_HLLFOR, 0, P_86, 0)
 
 res(DOT_AMD64,	    .amd64,	 0, DRT_CPU, 0, P_86, P_64)
 res(DOT_WIN64,	    .win64,	 0, DRT_CPU, 0, P_86, P_64)
+res(UNDEF,	    undef,	 DF_NOEXPAND|DF_NOCONCAT,		       DRT_UNDEF,  0, P_86, 0)
 
 res(DOT_SWITCH,	    .switch,	 DF_CGEN|DF_CEXPR|DF_NOSTRUC|DF_STORE|DF_PROC, DRT_SWITCH, 0, P_86, 0)
 res(DOT_CASE,	    .case,	 DF_CGEN|DF_CEXPR,			       DRT_SWITCH, 0, P_86, 0)

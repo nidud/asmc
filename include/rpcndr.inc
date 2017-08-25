@@ -4,7 +4,7 @@ endif
 .xlist
 ifndef __RPCNDR_H_VERSION__
 __RPCNDR_H_VERSION__ equ 450
-endif 
+endif
 
 ifndef __RPCNDR_H__
 __RPCNDR_H__ equ 1
@@ -72,7 +72,7 @@ hyper			typedef REAL8
 MIDL_uhyper		typedef REAL8
 endif
 
-endif 
+endif
 
 ifndef _WCHAR_T_DEFINED
 wchar_t			typedef WORD
@@ -125,10 +125,6 @@ __MIDL_DECLSPEC_DLLIMPORT equ <>
 __MIDL_DECLSPEC_DLLEXPORT equ <>
 endif
 
-
-
-
-
 NDR_CCONTEXT		typedef PVOID
 
 _NDR_SCONTEXT		STRUC
@@ -141,7 +137,7 @@ NDRSContextValue macro hContext
 	.err <Macro not implemented>
 	endm
 
-cbNDRContext		equ 20		
+cbNDRContext		equ 20
 
 ;void
 NDR_RUNDOWN_T typedef proto WINAPI \
@@ -535,62 +531,34 @@ PNDR_ASYNC_MESSAGE	typedef ptr NDR_ASYNC_MESSAGE
 
 MIDL_STUB_MESSAGE	STRUC
 RpcMsg			PRPC_MESSAGE ?
-
 Buffer			LPBYTE ?
-
 BufferStart		LPBYTE ?
 BufferEnd		LPBYTE ?
-
 BufferMark		LPBYTE ?
-
 BufferLength		dd ?
-
 MemorySize		dd ?
-
 Memory			LPBYTE ?
-
 IsClient		SINT ?
-
 ReuseBuffer		SINT ?
-
 AllocAllNodesMemory	LPBYTE ?
-
 AllocAllNodesMemoryEnd	LPBYTE ?
-
-
 IgnoreEmbeddedPointers	SINT ?
-
 PointerBufferMark	LPBYTE ?
-
 fBufferValid		db ?
-
 Unused			db ?
-
 MaxCount		dd ?
-
 _Offset			dd ?
-
 ActualCount		dd ?
-
 pfnAllocate		PVOID ? ; (*pfnAllocate)(size_t)
 pfnFree			PVOID ? ; (*pfnFree)(PVOID)
-
 StackTop		LPBYTE ?
-
 pPresentedType		LPBYTE ?
 pTransmitType		LPBYTE ?
-
 SavedHandle		handle_t ?
-
 StubDesc		PVOID ? ; _MIDL_STUB_DES*
-
 FullPtrXlatTables	PVOID ? ; _FULL_PTR_XLAT_TABLES*
-
 FullPtrRefId		dd ?
-
-
 fCheckBounds		SINT ?
-
 if 0
 fInDontFree	  :1	SINT ?
 fDontCallFreeInst :1	SINT ?
@@ -599,34 +567,21 @@ fHasReturn	  :1	SINT ?
 else
 R0			SINT ?
 endif
-
 dwDestContext		dd ?
 pvDestContext		PVOID ?
 
 SavedContextHandles	NDR_SCONTEXT ?
-
 ParamNumber		LONG ?
-
 pRpcChannelBuffer	PVOID ?; IRpcChannelBuffer* ?
-
 pArrayInfo		PARRAY_INFO ?
-
-
 SizePtrCountArray	LPDWORD ?
 SizePtrOffsetArray	LPDWORD ?
 SizePtrLengthArray	LPDWORD ?
-
 pArgQueue		PVOID ?
-
 dwStubPhase		dd ?
-
 pPipeDesc		PNDR_PIPE_DESC ?
-
 pAsyncMsg		PNDR_ASYNC_MESSAGE ?
-
 Reserved		dd 3 dup(?)
-
-
 MIDL_STUB_MESSAGE	ENDS
 PMIDL_STUB_MESSAGE	typedef ptr MIDL_STUB_MESSAGE
 
@@ -728,7 +683,7 @@ GET_USER_DATA_REP macro f
 	exitm<((f) SHR 16)>
 	endm
 
-USER_CALL_IS_ASYNC	equ 0x0100	    
+USER_CALL_IS_ASYNC	equ 0x0100
 
 
 MALLOC_FREE_STRUCT	STRUC
@@ -1685,7 +1640,7 @@ PROXY_MARSHAL		equ 2
 PROXY_SENDRECEIVE	equ 3
 PROXY_UNMARSHAL		equ 4
 
-;IRpcStubBuffer;	    
+;IRpcStubBuffer;
 
 ;long
 NdrAsyncStubCall proto WINAPI \
@@ -2028,9 +1983,9 @@ endif
 
 if defined(__RPC_DOS__) OR defined(__RPC_WIN16__) OR defined(__RPC_MAC__)
 endif
-endif 
+endif
 
 .list
-endif 
+endif
 
 

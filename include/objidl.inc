@@ -8,13 +8,13 @@ include rpcndr.inc
 .xlist
 ifndef __RPCNDR_H_VERSION__
 .err < this stub requires an updated version of rpcndr.inc >
-endif 
+endif
 
 ifndef COM_NO_WINDOWS_H
 include windows.inc
 include ole2.inc
 .xlist
-endif 
+endif
 
 ifndef __objidl_h__
 __objidl_h__ equ 1
@@ -22,332 +22,332 @@ __objidl_h__ equ 1
 
 ifndef __IMarshal_FWD_DEFINED__
 __IMarshal_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IMalloc_FWD_DEFINED__
 __IMalloc_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IMallocSpy_FWD_DEFINED__
 __IMallocSpy_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IStdMarshalInfo_FWD_DEFINED__
 __IStdMarshalInfo_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IExternalConnection_FWD_DEFINED__
 __IExternalConnection_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IMultiQI_FWD_DEFINED__
 __IMultiQI_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IEnumUnknown_FWD_DEFINED__
 __IEnumUnknown_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IBindCtx_FWD_DEFINED__
 __IBindCtx_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IEnumMoniker_FWD_DEFINED__
 __IEnumMoniker_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IRunnableObject_FWD_DEFINED__
 __IRunnableObject_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IRunningObjectTable_FWD_DEFINED__
 __IRunningObjectTable_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IPersist_FWD_DEFINED__
 __IPersist_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IPersistStream_FWD_DEFINED__
 __IPersistStream_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IMoniker_FWD_DEFINED__
 __IMoniker_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IROTData_FWD_DEFINED__
 __IROTData_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IEnumString_FWD_DEFINED__
 __IEnumString_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __ISequentialStream_FWD_DEFINED__
 __ISequentialStream_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IStream_FWD_DEFINED__
 __IStream_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IEnumSTATSTG_FWD_DEFINED__
 __IEnumSTATSTG_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IStorage_FWD_DEFINED__
 __IStorage_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IPersistFile_FWD_DEFINED__
 __IPersistFile_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IPersistStorage_FWD_DEFINED__
 __IPersistStorage_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __ILockBytes_FWD_DEFINED__
 __ILockBytes_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IEnumFORMATETC_FWD_DEFINED__
 __IEnumFORMATETC_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IEnumSTATDATA_FWD_DEFINED__
 __IEnumSTATDATA_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IRootStorage_FWD_DEFINED__
 __IRootStorage_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IAdviseSink_FWD_DEFINED__
 __IAdviseSink_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IAdviseSink2_FWD_DEFINED__
 __IAdviseSink2_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IDataObject_FWD_DEFINED__
 __IDataObject_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IDataAdviseHolder_FWD_DEFINED__
 __IDataAdviseHolder_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IMessageFilter_FWD_DEFINED__
 __IMessageFilter_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IRpcChannelBuffer_FWD_DEFINED__
 __IRpcChannelBuffer_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IRpcChannelBuffer2_FWD_DEFINED__
 __IRpcChannelBuffer2_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IRpcChannelBuffer3_FWD_DEFINED__
 __IRpcChannelBuffer3_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IRpcProxyBuffer_FWD_DEFINED__
 __IRpcProxyBuffer_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IRpcStubBuffer_FWD_DEFINED__
 __IRpcStubBuffer_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IPSFactoryBuffer_FWD_DEFINED__
 __IPSFactoryBuffer_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IChannelHook_FWD_DEFINED__
 __IChannelHook_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IPropertyStorage_FWD_DEFINED__
 __IPropertyStorage_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IPropertySetStorage_FWD_DEFINED__
 __IPropertySetStorage_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IEnumSTATPROPSTG_FWD_DEFINED__
 __IEnumSTATPROPSTG_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IEnumSTATPROPSETSTG_FWD_DEFINED__
 __IEnumSTATPROPSETSTG_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IClientSecurity_FWD_DEFINED__
 __IClientSecurity_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IServerSecurity_FWD_DEFINED__
 __IServerSecurity_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IClassActivator_FWD_DEFINED__
 __IClassActivator_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IRpcOptions_FWD_DEFINED__
 __IRpcOptions_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IComBinding_FWD_DEFINED__
 __IComBinding_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IFillLockBytes_FWD_DEFINED__
 __IFillLockBytes_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IProgressNotify_FWD_DEFINED__
 __IProgressNotify_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __ILayoutStorage_FWD_DEFINED__
 __ILayoutStorage_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __ISurrogate_FWD_DEFINED__
 __ISurrogate_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IGlobalInterfaceTable_FWD_DEFINED__
 __IGlobalInterfaceTable_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IDirectWriterLock_FWD_DEFINED__
 __IDirectWriterLock_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __ISynchronize_FWD_DEFINED__
 __ISynchronize_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __ISynchronizeMutex_FWD_DEFINED__
 __ISynchronizeMutex_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IAsyncSetup_FWD_DEFINED__
 __IAsyncSetup_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __ICancelMethodCalls_FWD_DEFINED__
 __ICancelMethodCalls_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IAsyncManager_FWD_DEFINED__
 __IAsyncManager_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IWaitMultiple_FWD_DEFINED__
 __IWaitMultiple_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __ISynchronizeEvent_FWD_DEFINED__
 __ISynchronizeEvent_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IUrlMon_FWD_DEFINED__
 __IUrlMon_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IClassAccess_FWD_DEFINED__
 __IClassAccess_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IClassRefresh_FWD_DEFINED__
 __IClassRefresh_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IEnumPackage_FWD_DEFINED__
 __IEnumPackage_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IEnumClass_FWD_DEFINED__
 __IEnumClass_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 ifndef __IClassAdmin_FWD_DEFINED__
 __IClassAdmin_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 include unknwn.inc
@@ -422,59 +422,12 @@ IMarshalVtbl		STRUC
 	 QueryInterface QueryInterface@MP ?
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
-
-   GetUnmarshalClass@CT typedef proto \
-		 pThis: ptr IMarshal,
-		  riid: REFIID,
-		    pv: PVOID,
-	 dwDestContext: DWORD,
-	 pvDestContext: PVOID,
-	     mshlflags: DWORD,
-		  pCid: ptr CLSID
-   GetUnmarshalClass@MP typedef ptr GetUnmarshalClass@CT
-      GetUnmarshalClass GetUnmarshalClass@MP ?
-
-   GetMarshalSizeMax@CT typedef proto \
-		 pThis: ptr IMarshal,
-		  riid: REFIID,
-		    pv: PVOID,
-	 dwDestContext: DWORD,
-	 pvDestContext: PVOID,
-	     mshlflags: DWORD,
-		 pSize: LPDWORD
-   GetMarshalSizeMax@MP typedef ptr GetMarshalSizeMax@CT
-      GetMarshalSizeMax GetMarshalSizeMax@MP ?
-
-    MarshalInterface@CT typedef proto \
-		 pThis: ptr IMarshal,
-		  pStm: ptr IStream,
-		  riid: REFIID,
-		    pv: PVOID,
-	 dwDestContext: DWORD,
-	 pvDestContext: PVOID,
-	     mshlflags: DWORD
-    MarshalInterface@MP typedef ptr MarshalInterface@CT
-       MarshalInterface MarshalInterface@MP ?
-
-  UnmarshalInterface@CT typedef proto \
-		 pThis: ptr IMarshal,
-		  pStm: ptr IStream,
-		  riid: REFIID,
-		   ppv: PVOID
-  UnmarshalInterface@MP typedef ptr UnmarshalInterface@CT
-     UnmarshalInterface UnmarshalInterface@MP ?
-
-  ReleaseMarshalData@CT typedef proto \
-		 pThis: ptr IMarshal,
-		  pStm: ptr IStream
-  ReleaseMarshalData@MP typedef ptr ReleaseMarshalData@CT
-     ReleaseMarshalData ReleaseMarshalData@MP ?
-
-    DisconnectObject@CT typedef proto \
-		 pThis: ptr IMarshal,
-	    dwReserved: DWORD
-    DisconnectObject@MP typedef ptr DisconnectObject@CT
-       DisconnectObject DisconnectObject@MP ?
+      GetUnmarshalClass PVOID ?
+      GetMarshalSizeMax PVOID ?
+       MarshalInterface PVOID ?
+     UnmarshalInterface PVOID ?
+     ReleaseMarshalData PVOID ?
+       DisconnectObject PVOID ?
 
 	END_INTERFACE
 
@@ -588,7 +541,7 @@ IMarshal_DisconnectObject_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IMalloc_INTERFACE_DEFINED__
@@ -605,41 +558,12 @@ IMallocVtbl		STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-	       Alloc@CT typedef proto \
-		 pThis: ptr IMalloc,
-		    cb: ULONG
-	       Alloc@MP typedef ptr Alloc@CT
-		  Alloc Alloc@MP ?
-
-	     Realloc@CT typedef proto \
-		 pThis: ptr IMalloc,
-		    pv: PVOID,
-		    cb: ULONG
-	     Realloc@MP typedef ptr Realloc@CT
-		Realloc Realloc@MP ?
-
-		Free@CT typedef proto \
-		 pThis: ptr IMalloc,
-		    pv: PVOID
-		Free@MP typedef ptr Free@CT
-		   Free Free@MP ?
-
-	     GetSize@CT typedef proto \
-		 pThis: ptr IMalloc,
-		    pv: PVOID
-	     GetSize@MP typedef ptr GetSize@CT
-		GetSize GetSize@MP ?
-
-	    DidAlloc@CT typedef proto \
-		 pThis: ptr IMalloc,
-		    pv: PVOID
-	    DidAlloc@MP typedef ptr DidAlloc@CT
-	       DidAlloc DidAlloc@MP ?
-
-	HeapMinimize@CT typedef proto \
-		 pThis: ptr IMalloc
-	HeapMinimize@MP typedef ptr HeapMinimize@CT
-	   HeapMinimize HeapMinimize@MP ?
+		  Alloc PVOID ?
+		Realloc PVOID ?
+		   Free PVOID ?
+		GetSize PVOID ?
+	       DidAlloc PVOID ?
+	   HeapMinimize PVOID ?
 
 	END_INTERFACE
 
@@ -736,7 +660,7 @@ IMalloc_HeapMinimize_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IMallocSpy_INTERFACE_DEFINED__
@@ -758,85 +682,18 @@ IMallocSpyVtbl		STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-	    PreAlloc@CT typedef proto \
-		 pThis: ptr IMallocSpy,
-	     cbRequest: ULONG
-	    PreAlloc@MP typedef ptr PreAlloc@CT
-	       PreAlloc PreAlloc@MP ?
-
-	   PostAlloc@CT typedef proto \
-		 pThis: ptr IMallocSpy,
-	       pActual: PVOID
-	   PostAlloc@MP typedef ptr PostAlloc@CT
-	      PostAlloc PostAlloc@MP ?
-
-	     PreFree@CT typedef proto \
-		 pThis: ptr IMallocSpy,
-	      pRequest: PVOID,
-		fSpyed: BOOL
-	     PreFree@MP typedef ptr PreFree@CT
-		PreFree PreFree@MP ?
-
-	    PostFree@CT typedef proto \
-		 pThis: ptr IMallocSpy,
-		fSpyed: BOOL
-	    PostFree@MP typedef ptr PostFree@CT
-	       PostFree PostFree@MP ?
-
-	  PreRealloc@CT typedef proto \
-		 pThis: ptr IMallocSpy,
-	      pRequest: PVOID,
-	     cbRequest: ULONG,
-	  ppNewRequest: PVOID,
-		fSpyed: BOOL
-	  PreRealloc@MP typedef ptr PreRealloc@CT
-	     PreRealloc PreRealloc@MP ?
-
-	 PostRealloc@CT typedef proto \
-		 pThis: ptr IMallocSpy,
-	       pActual: PVOID,
-		fSpyed: BOOL
-	 PostRealloc@MP typedef ptr PostRealloc@CT
-	    PostRealloc PostRealloc@MP ?
-
-	  PreGetSize@CT typedef proto \
-		 pThis: ptr IMallocSpy,
-	      pRequest: PVOID,
-		fSpyed: BOOL
-	  PreGetSize@MP typedef ptr PreGetSize@CT
-	     PreGetSize PreGetSize@MP ?
-
-	 PostGetSize@CT typedef proto \
-		 pThis: ptr IMallocSpy,
-	      cbActual: ULONG,
-		fSpyed: BOOL
-	 PostGetSize@MP typedef ptr PostGetSize@CT
-	    PostGetSize PostGetSize@MP ?
-
-	 PreDidAlloc@CT typedef proto \
-		 pThis: ptr IMallocSpy,
-	      pRequest: PVOID,
-		fSpyed: BOOL
-	 PreDidAlloc@MP typedef ptr PreDidAlloc@CT
-	    PreDidAlloc PreDidAlloc@MP ?
-
-	PostDidAlloc@CT typedef proto \
-		 pThis: ptr IMallocSpy,
-	      pRequest: PVOID,
-		fSpyed: BOOL,
-	       fActual: SINT
-	PostDidAlloc@MP typedef ptr PostDidAlloc@CT
-	   PostDidAlloc PostDidAlloc@MP ?
-
-     PreHeapMinimize@CT typedef proto \
-		 pThis: ptr IMallocSpy
-     PreHeapMinimize@MP typedef ptr PreHeapMinimize@CT
-	PreHeapMinimize PreHeapMinimize@MP ?
-
-    PostHeapMinimize@CT typedef proto \
-		 pThis: ptr IMallocSpy
-    PostHeapMinimize@MP typedef ptr PostHeapMinimize@CT
-       PostHeapMinimize PostHeapMinimize@MP ?
+	       PreAlloc PVOID ?
+	      PostAlloc PVOID ?
+		PreFree PVOID ?
+	       PostFree PVOID ?
+	     PreRealloc PVOID ?
+	    PostRealloc PVOID ?
+	     PreGetSize PVOID ?
+	    PostGetSize PVOID ?
+	    PreDidAlloc PVOID ?
+	   PostDidAlloc PVOID ?
+	PreHeapMinimize PVOID ?
+       PostHeapMinimize PVOID ?
 
 	END_INTERFACE
 
@@ -1024,7 +881,7 @@ IMallocSpy_PostHeapMinimize_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IStdMarshalInfo_INTERFACE_DEFINED__
@@ -1045,13 +902,7 @@ IStdMarshalInfoVtbl	STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-  GetClassForHandler@CT typedef proto \
-		 pThis: ptr IStdMarshalInfo,
-	 dwDestContext: DWORD,
-	 pvDestContext: PVOID,
-		pClsid: ptr CLSID
-  GetClassForHandler@MP typedef ptr GetClassForHandler@CT
-     GetClassForHandler GetClassForHandler@MP ?
+     GetClassForHandler PVOID ?
 
 	END_INTERFACE
 
@@ -1081,7 +932,7 @@ IStdMarshalInfo_GetClassForHandler_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IExternalConnection_INTERFACE_DEFINED__
@@ -1106,20 +957,8 @@ IExternalConnectionVtbl STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-       AddConnection@CT typedef proto \
-		 pThis: ptr IExternalConnection,
-	       extconn: DWORD,
-	      reserved: DWORD
-       AddConnection@MP typedef ptr AddConnection@CT
-	  AddConnection AddConnection@MP ?
-
-   ReleaseConnection@CT typedef proto \
-		 pThis: ptr IExternalConnection,
-	       extconn: DWORD,
-	      reserved: DWORD,
-    fLastReleaseCloses: BOOL
-   ReleaseConnection@MP typedef ptr ReleaseConnection@CT
-      ReleaseConnection ReleaseConnection@MP ?
+	  AddConnection PVOID ?
+      ReleaseConnection PVOID ?
 
 	END_INTERFACE
 
@@ -1162,7 +1001,7 @@ IExternalConnection_ReleaseConnection_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IMultiQI_INTERFACE_DEFINED__
@@ -1189,12 +1028,7 @@ IMultiQIVtbl		STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-QueryMultipleInterfaces@CT typedef proto \
-		 pThis: ptr IMultiQI,
-		 cMQIs: ULONG,
-		 pMQIs: ptr MULTI_QI
-QueryMultipleInterfaces@MP typedef ptr QueryMultipleInterfaces@CT
-QueryMultipleInterfaces QueryMultipleInterfaces@MP ?
+QueryMultipleInterfaces PVOID ?
 
 	END_INTERFACE
 
@@ -1222,7 +1056,7 @@ IMultiQI_QueryMultipleInterfaces_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 	       Reset@CT typedef proto \
 		 pThis: PVOID
@@ -1336,7 +1170,7 @@ IEnumUnknown_Clone_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IBindCtx_INTERFACE_DEFINED__
@@ -1385,66 +1219,16 @@ IBindCtxVtbl		STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
- RegisterObjectBound@CT typedef proto \
-		 pThis: ptr IBindCtx,
-		  punk: ptr IUnknown
- RegisterObjectBound@MP typedef ptr RegisterObjectBound@CT
-    RegisterObjectBound RegisterObjectBound@MP ?
-
-   RevokeObjectBound@CT typedef proto \
-		 pThis: ptr IBindCtx,
-		  punk: ptr IUnknown
-   RevokeObjectBound@MP typedef ptr RevokeObjectBound@CT
-      RevokeObjectBound RevokeObjectBound@MP ?
-
- ReleaseBoundObjects@CT typedef proto \
-		 pThis: ptr IBindCtx
- ReleaseBoundObjects@MP typedef ptr ReleaseBoundObjects@CT
-    ReleaseBoundObjects ReleaseBoundObjects@MP ?
-
-      SetBindOptions@CT typedef proto \
-		 pThis: ptr IBindCtx,
-	     pbindopts: ptr BIND_OPTS
-      SetBindOptions@MP typedef ptr SetBindOptions@CT
-	 SetBindOptions SetBindOptions@MP ?
-
-      GetBindOptions@CT typedef proto \
-		 pThis: ptr IBindCtx,
-	     pbindopts: ptr BIND_OPTS
-      GetBindOptions@MP typedef ptr GetBindOptions@CT
-	 GetBindOptions GetBindOptions@MP ?
-
-GetRunningObjectTable@CT typedef proto \
-		 pThis: ptr IBindCtx,
-		 pprot: ptr IRunningObjectTable
-GetRunningObjectTable@MP typedef ptr GetRunningObjectTable@CT
-  GetRunningObjectTable GetRunningObjectTable@MP ?
-
- RegisterObjectParam@CT typedef proto \
-		 pThis: ptr IBindCtx,
-		pszKey: LPOLESTR,
-		  punk: ptr IUnknown
- RegisterObjectParam@MP typedef ptr RegisterObjectParam@CT
-    RegisterObjectParam RegisterObjectParam@MP ?
-
-      GetObjectParam@CT typedef proto \
-		 pThis: ptr IBindCtx,
-		pszKey: LPOLESTR,
-		 ppunk: ptr IUnknown
-      GetObjectParam@MP typedef ptr GetObjectParam@CT
-	 GetObjectParam GetObjectParam@MP ?
-
-     EnumObjectParam@CT typedef proto \
-		 pThis: ptr IBindCtx,
-		ppenum: ptr IEnumString
-     EnumObjectParam@MP typedef ptr EnumObjectParam@CT
-	EnumObjectParam EnumObjectParam@MP ?
-
-   RevokeObjectParam@CT typedef proto \
-		 pThis: ptr IBindCtx,
-		pszKey: LPOLESTR
-   RevokeObjectParam@MP typedef ptr RevokeObjectParam@CT
-      RevokeObjectParam RevokeObjectParam@MP ?
+    RegisterObjectBound PVOID ?
+      RevokeObjectBound PVOID ?
+    ReleaseBoundObjects PVOID ?
+	 SetBindOptions PVOID ?
+	 GetBindOptions PVOID ?
+  GetRunningObjectTable PVOID ?
+    RegisterObjectParam PVOID ?
+	 GetObjectParam PVOID ?
+	EnumObjectParam PVOID ?
+      RevokeObjectParam PVOID ?
 
 	END_INTERFACE
 
@@ -1599,7 +1383,7 @@ IBindCtx_RevokeObjectParam_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IEnumMoniker_INTERFACE_DEFINED__
@@ -1693,7 +1477,7 @@ IEnumMoniker_Clone_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IRunnableObject_INTERFACE_DEFINED__
@@ -1715,35 +1499,11 @@ IRunnableObjectVtbl	STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-     GetRunningClass@CT typedef proto \
-		 pThis: ptr IRunnableObject,
-	       lpClsid: LPCLSID
-     GetRunningClass@MP typedef ptr GetRunningClass@CT
-	GetRunningClass GetRunningClass@MP ?
-
-		 Run@CT typedef proto \
-		 pThis: ptr IRunnableObject,
-		   pbc: LPBINDCTX
-		 Run@MP typedef ptr Run@CT
-		    Run Run@MP ?
-
-	   IsRunning@CT typedef proto \
-		 pThis: ptr IRunnableObject
-	   IsRunning@MP typedef ptr IsRunning@CT
-	      IsRunning IsRunning@MP ?
-
-	 LockRunning@CT typedef proto \
-		 pThis: ptr IRunnableObject,
-		 fLock: BOOL,
-     fLastUnlockCloses: BOOL
-	 LockRunning@MP typedef ptr LockRunning@CT
-	    LockRunning LockRunning@MP ?
-
-  SetContainedObject@CT typedef proto \
-		 pThis: ptr IRunnableObject,
-	    fContained: BOOL
-  SetContainedObject@MP typedef ptr SetContainedObject@CT
-     SetContainedObject SetContainedObject@MP ?
+	GetRunningClass PVOID ?
+		    Run PVOID ?
+	      IsRunning PVOID ?
+	    LockRunning PVOID ?
+     SetContainedObject PVOID ?
 
 	END_INTERFACE
 
@@ -1824,7 +1584,7 @@ IRunnableObject_SetContainedObject_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IRunningObjectTable_INTERFACE_DEFINED__
@@ -1845,53 +1605,13 @@ IRunningObjectTableVtbl STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-	    Register@CT typedef proto \
-		 pThis: ptr IRunningObjectTable,
-	      grfFlags: DWORD,
-	    punkObject: ptr IUnknown,
-	 pmkObjectName: ptr IMoniker,
-	   pdwRegister: LPDWORD
-	    Register@MP typedef ptr Register@CT
-	       Register Register@MP ?
-
-	      Revoke@CT typedef proto \
-		 pThis: ptr IRunningObjectTable,
-	    dwRegister: DWORD
-	      Revoke@MP typedef ptr Revoke@CT
-		 Revoke Revoke@MP ?
-
-	   IRunningObjectTableVtblIs@Running@CT typedef proto \
-		 pThis: ptr IRunningObjectTable,
-	 pmkObjectName: ptr IMoniker
-	   IRunningObjectTableVtblIs@IsRunning@MP typedef ptr IRunningObjectTableVtblIs@IsRunning@CT
-	      IsRunning IRunningObjectTableVtblIs@IsRunning@MP ?
-
-	   GetObject@CT typedef proto \
-		 pThis: ptr IRunningObjectTable,
-	 pmkObjectName: ptr IMoniker,
-	   ppunkObject: ptr IUnknown
-	   GetObject@MP typedef ptr GetObject@CT
-	      GetObject GetObject@MP ?
-
-      NoteChangeTime@CT typedef proto \
-		 pThis: ptr IRunningObjectTable,
-	    dwRegister: DWORD,
-	     pfiletime: LPFILETIME
-      NoteChangeTime@MP typedef ptr NoteChangeTime@CT
-	 NoteChangeTime NoteChangeTime@MP ?
-
- GetTimeOfLastChange@CT typedef proto \
-		 pThis: ptr IRunningObjectTable,
-	 pmkObjectName: ptr IMoniker,
-	     pfiletime: LPFILETIME
- GetTimeOfLastChange@MP typedef ptr GetTimeOfLastChange@CT
-    GetTimeOfLastChange GetTimeOfLastChange@MP ?
-
-	 EnumRunning@CT typedef proto \
-		 pThis: ptr IRunningObjectTable,
-	 ppenumMoniker: ptr IEnumMoniker
-	 EnumRunning@MP typedef ptr EnumRunning@CT
-	    EnumRunning EnumRunning@MP ?
+	       Register PVOID ?
+		 Revoke PVOID ?
+	      IsRunning PVOID ?
+	      GetObject PVOID ?
+	 NoteChangeTime PVOID ?
+    GetTimeOfLastChange PVOID ?
+	    EnumRunning PVOID ?
 
 	END_INTERFACE
 
@@ -2006,7 +1726,7 @@ IRunningObjectTable_EnumRunning_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 	  GetClassID@CT typedef proto \
 		 pThis: PVOID,
@@ -2059,7 +1779,7 @@ IPersist_GetClassID_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 	     IsDirty@CT typedef proto pThis:PVOID
 	     IsDirty@MP typedef ptr IsDirty@CT
@@ -2090,18 +1810,8 @@ IPersistStreamVtbl	STRUC
 		IsDirty IsDirty@MP ?
 		   Load Load@MP ?
 
-	       Save1@CT typedef proto \
-		 pThis: ptr IPersistStream,
-		  pStm: ptr IStream,
-	   fClearDirty: BOOL
-	       Save1@MP typedef ptr Save1@CT
-		   Save Save1@MP ?
-
-	  GetSizeMax@CT typedef proto \
-		 pThis: ptr IPersistStream,
-	       pcbSize: ptr ULARGE_INTEGER
-	  GetSizeMax@MP typedef ptr GetSizeMax@CT
-	     GetSizeMax GetSizeMax@MP ?
+		   Save PVOID ?
+	     GetSizeMax PVOID ?
 
 	END_INTERFACE
 
@@ -2170,7 +1880,7 @@ IPersistStream_GetSizeMax_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IMoniker_INTERFACE_DEFINED__
@@ -2208,132 +1918,23 @@ IMonikerVtbl		STRUC
 		IsDirty IsDirty@MP ?
 		   Load Load@MP ?
 
-	       Save2@CT typedef proto \
-		 pThis: ptr IMoniker,
-		  pStm: ptr IStream,
-	   fClearDirty: BOOL
-	       Save2@MP typedef Save2@CT
-		   Save Save2@MP ?
-
-	  IMonikerVtbl@GetSizeMax@CT typedef proto \
-		 pThis: ptr IMoniker,
-	       pcbSize: ptr ULARGE_INTEGER
-	  IMonikerVtbl@GetSizeMax@MP typedef ptr IMonikerVtbl@GetSizeMax@CT
-	     GetSizeMax IMonikerVtbl@GetSizeMax@MP ?
-
-	BindToObject@CT typedef proto \
-		 pThis: ptr IMoniker,
-		   pbc: ptr IBindCtx,
-	     pmkToLeft: ptr IMoniker,
-	    riidResult: REFIID,
-	     ppvResult: PVOID
-	BindToObject@MP typedef ptr BindToObject@CT
-	   BindToObject BindToObject@MP ?
-
-       BindToStorage@CT typedef proto \
-		 pThis: ptr IMoniker,
-		   pbc: ptr IBindCtx,
-	     pmkToLeft: ptr IMoniker,
-		  riid: REFIID,
-		ppvObj: PVOID
-       BindToStorage@MP typedef ptr BindToStorage@CT
-	  BindToStorage BindToStorage@MP ?
-
-	      Reduce@CT typedef proto \
-		 pThis: ptr IMoniker,
-		   pbc: ptr IBindCtx,
-	dwReduceHowFar: DWORD,
-	    ppmkToLeft: ptr IMoniker,
-	   ppmkReduced: ptr IMoniker
-	      Reduce@MP typedef ptr Reduce@CT
-		 Reduce Reduce@MP ?
-
-	 ComposeWith@CT typedef proto \
-		 pThis: ptr IMoniker,
-	      pmkRight: ptr IMoniker,
-     fOnlyIfNotGeneric: BOOL,
-	 ppmkComposite: ptr IMoniker
-	 ComposeWith@MP typedef ptr ComposeWith@CT
-	    ComposeWith ComposeWith@MP ?
-
-		Enum@CT typedef proto \
-		 pThis: ptr IMoniker,
-	      fForward: BOOL,
-	 ppenumMoniker: ptr IEnumMoniker
-		Enum@MP typedef ptr Enum@CT
-		   Enum Enum@MP ?
-
-	     IsEqual@CT typedef proto \
-		 pThis: ptr IMoniker,
-       pmkOtherMoniker: ptr IMoniker
-	     IsEqual@MP typedef ptr IsEqual@CT
-		IsEqual IsEqual@MP ?
-
-		Hash@CT typedef proto \
-		 pThis: ptr IMoniker,
-	       pdwHash: LPDWORD
-		Hash@MP typedef ptr Hash@CT
-		   Hash Hash@MP ?
-
-	   IMonikerVtbl@IsRunning@CT typedef proto \
-		 pThis: ptr IMoniker,
-		   pbc: ptr IBindCtx,
-	     pmkToLeft: ptr IMoniker,
-       pmkNewlyRunning: ptr IMoniker
-	   IMonikerVtbl@IsRunning@MP typedef ptr IMonikerVtbl@IsRunning@CT
-	      IsRunning IMonikerVtbl@IsRunning@MP ?
-
- IMonikerVtbl@GetTimeOfLastChange@CT typedef proto \
-		 pThis: ptr IMoniker,
-		   pbc: ptr IBindCtx,
-	     pmkToLeft: ptr IMoniker,
-	     pFileTime: LPFILETIME
- IMonikerVtbl@GetTimeOfLastChange@MP typedef ptr IMonikerVtbl@GetTimeOfLastChange@CT
-    GetTimeOfLastChange IMonikerVtbl@GetTimeOfLastChange@MP ?
-
-	     Inverse@CT typedef proto \
-		 pThis: ptr IMoniker,
-		  ppmk: ptr IMoniker
-	     Inverse@MP typedef ptr Inverse@CT
-		Inverse Inverse@MP ?
-
-    CommonPrefixWith@CT typedef proto \
-		 pThis: ptr IMoniker,
-	      pmkOther: ptr IMoniker,
-	    ppmkPrefix: ptr IMoniker
-    CommonPrefixWith@MP typedef ptr CommonPrefixWith@CT
-       CommonPrefixWith CommonPrefixWith@MP ?
-
-      RelativePathTo@CT typedef proto \
-		 pThis: ptr IMoniker,
-	      pmkOther: ptr IMoniker,
-	   ppmkRelPath: ptr IMoniker
-      RelativePathTo@MP typedef ptr RelativePathTo@CT
-	 RelativePathTo RelativePathTo@MP ?
-
-      GetDisplayName@CT typedef proto \
-		 pThis: ptr IMoniker,
-		   pbc: ptr IBindCtx,
-	     pmkToLeft: ptr IMoniker,
-       ppszDisplayName: ptr LPOLESTR
-      GetDisplayName@MP typedef ptr GetDisplayName@CT
-	 GetDisplayName GetDisplayName@MP ?
-
-    ParseDisplayName@CT typedef proto \
-		 pThis: ptr IMoniker,
-		   pbc: ptr IBindCtx,
-	     pmkToLeft: ptr IMoniker,
-	pszDisplayName: LPOLESTR,
-	      pchEaten: LPDWORD,
-	       ppmkOut: ptr IMoniker
-    ParseDisplayName@MP typedef ptr ParseDisplayName@CT
-       ParseDisplayName ParseDisplayName@MP ?
-
-     IsSystemMoniker@CT typedef proto \
-		 pThis: ptr IMoniker,
-	      pdwMksys: LPDWORD
-     IsSystemMoniker@MP typedef ptr IsSystemMoniker@CT
-	IsSystemMoniker IsSystemMoniker@MP ?
+		   Save PVOID ?
+	     GetSizeMax PVOID ?
+	   BindToObject PVOID ?
+	  BindToStorage PVOID ?
+		 Reduce PVOID ?
+	    ComposeWith PVOID ?
+		   Enum PVOID ?
+		IsEqual PVOID ?
+		   Hash PVOID ?
+	      IsRunning PVOID ?
+    GetTimeOfLastChange PVOID ?
+		Inverse PVOID ?
+       CommonPrefixWith PVOID ?
+	 RelativePathTo PVOID ?
+	 GetDisplayName PVOID ?
+       ParseDisplayName PVOID ?
+	IsSystemMoniker PVOID ?
 
 	END_INTERFACE
 
@@ -2580,7 +2181,7 @@ IMoniker_IsSystemMoniker_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IROTData_INTERFACE_DEFINED__
@@ -2597,13 +2198,7 @@ IROTDataVtbl		STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-   GetComparisonData@CT typedef proto \
-		 pThis: ptr IROTData,
-		pbData: LPBYTE,
-		 cbMax: ULONG,
-	       pcbData: LPDWORD
-   GetComparisonData@MP typedef ptr GetComparisonData@CT
-      GetComparisonData GetComparisonData@MP ?
+      GetComparisonData PVOID ?
 
 	END_INTERFACE
 
@@ -2632,7 +2227,7 @@ IROTData_GetComparisonData_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IEnumString_INTERFACE_DEFINED__
@@ -2724,7 +2319,7 @@ IEnumString_Clone_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __ISequentialStream_INTERFACE_DEFINED__
@@ -2741,21 +2336,8 @@ ISequentialStreamVtbl	STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-		Read@CT typedef proto \
-		 pThis: ptr ISequentialStream,
-		    pv: PVOID,
-		    cb: ULONG,
-	       pcbRead: LPDWORD
-		Read@MP typedef ptr Read@CT
-		   Read Read@MP ?
-
-	       Write@CT typedef proto \
-		 pThis: ptr ISequentialStream,
-		    pv: PVOID,
-		    cb: ULONG,
-	    pcbWritten: LPDWORD
-	       Write@MP typedef ptr Write@CT
-		  Write Write@MP ?
+		   Read PVOID ?
+		  Write PVOID ?
 
 	END_INTERFACE
 
@@ -2800,7 +2382,7 @@ ISequentialStream_RemoteWrite_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IStream_INTERFACE_DEFINED__
@@ -2851,80 +2433,17 @@ IStreamVtbl		STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-    IStreamVtbl@Read@CT typedef proto \
-		 pThis: ptr IStream,
-		    pv: PVOID,
-		    cb: ULONG,
-	       pcbRead: LPDWORD
-    IStreamVtbl@Read@MP typedef ptr IStreamVtbl@Read@CT
-		   Read IStreamVtbl@Read@MP ?
-
-   IStreamVtbl@Write@CT typedef proto \
-		 pThis: ptr IStream,
-		    pv: PVOID,
-		    cb: ULONG,
-	    pcbWritten: LPDWORD
-   IStreamVtbl@Write@MP typedef ptr IStreamVtbl@Write@CT
-		  Write IStreamVtbl@Write@MP ?
-
-		Seek@CT typedef proto \
-		 pThis: ptr IStream,
-	      dlibMove: LARGE_INTEGER,
-	      dwOrigin: DWORD,
-       plibNewPosition: ptr ULARGE_INTEGER
-		Seek@MP typedef ptr Seek@CT
-		   Seek Seek@MP ?
-
-	     SetSize@CT typedef proto \
-		 pThis: ptr IStream,
-	    libNewSize: ULARGE_INTEGER
-	     SetSize@MP typedef ptr SetSize@CT
-		SetSize SetSize@MP ?
-
-	      CopyTo@CT typedef proto \
-		 pThis: ptr IStream,
-		  pstm: ptr IStream,
-		    cb: ULARGE_INTEGER,
-	       pcbRead: ptr ULARGE_INTEGER,
-	    pcbWritten: ptr ULARGE_INTEGER
-	      CopyTo@MP typedef ptr CopyTo@CT
-		 CopyTo CopyTo@MP ?
-
-	      Commit@CT typedef proto \
-		 pThis: ptr IStream,
-	grfCommitFlags: DWORD
-	      Commit@MP typedef ptr Commit@CT
-		 Commit Commit@MP ?
-
-	      Revert@CT typedef proto \
-		 pThis: ptr IStream
-	      Revert@MP typedef ptr Revert@CT
-		 Revert Revert@MP ?
-
-	  LockRegion@CT typedef proto \
-		 pThis: ptr IStream,
-	     libOffset: ULARGE_INTEGER,
-		    cb: ULARGE_INTEGER,
-	    dwLockType: DWORD
-	  LockRegion@MP typedef ptr LockRegion@CT
-	     LockRegion LockRegion@MP ?
-
-	UnlockRegion@CT typedef proto \
-		 pThis: ptr IStream,
-	     libOffset: ULARGE_INTEGER,
-		    cb: ULARGE_INTEGER,
-	    dwLockType: DWORD
-	UnlockRegion@MP typedef ptr UnlockRegion@CT
-	   UnlockRegion UnlockRegion@MP ?
-
-		Stat@CT typedef proto \
-		 pThis: ptr IStream,
-	      pstatstg: ptr STATSTG,
-	   grfStatFlag: DWORD
-		Stat@MP typedef ptr Stat@CT
-		   Stat Stat@MP ?
-
-		  Clone Clone@MP ?
+		   Read PVOID ?
+		  Write PVOID ?
+		   Seek PVOID ?
+		SetSize PVOID ?
+		 CopyTo PVOID ?
+		 Commit PVOID ?
+		 Revert PVOID ?
+	     LockRegion PVOID ?
+	   UnlockRegion PVOID ?
+		   Stat PVOID ?
+		  Clone PVOID ?
 
 	END_INTERFACE
 
@@ -3072,7 +2591,7 @@ IStream_Clone_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IEnumSTATSTG_INTERFACE_DEFINED__
@@ -3166,7 +2685,7 @@ IEnumSTATSTG_Clone_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IStorage_INTERFACE_DEFINED__
@@ -3196,126 +2715,21 @@ IStorageVtbl		STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-	CreateStream@CT typedef proto \
-		 pThis: ptr IStorage,
-	      pwcsName: ptr OLECHAR,
-	       grfMode: DWORD,
-	     reserved1: DWORD,
-	     reserved2: DWORD,
-		 ppstm: ptr IStream
-	CreateStream@MP typedef ptr CreateStream@CT
-	   CreateStream CreateStream@MP ?
-
-	  OpenStream@CT typedef proto \
-		 pThis: ptr IStorage,
-	      pwcsName: ptr OLECHAR,
-	     reserved1: PVOID,
-	       grfMode: DWORD,
-	     reserved2: DWORD,
-		 ppstm: ptr IStream
-	  OpenStream@MP typedef ptr OpenStream@CT
-	     OpenStream OpenStream@MP ?
-
-       CreateStorage@CT typedef proto \
-		_pThis: ptr IStorage,
-	      pwcsName: ptr OLECHAR,
-	       grfMode: DWORD,
-	     reserved1: DWORD,
-	     reserved2: DWORD,
-		 ppstg: ptr IStorage
-       CreateStorage@MP typedef ptr CreateStorage@CT
-	  CreateStorage CreateStorage@MP ?
-
-	 OpenStorage@CT typedef proto \
-		 pThis: ptr IStorage,
-	      pwcsName: ptr OLECHAR,
-	  pstgPriority: ptr IStorage,
-	       grfMode: DWORD,
-	    snbExclude: SNB,
-	      reserved: DWORD,
-		 ppstg: ptr IStorage
-	 OpenStorage@MP typedef ptr OpenStorage@CT
-	    OpenStorage OpenStorage@MP ?
-
-	     CopyTo2@CT typedef proto \
-		 pThis: ptr IStorage,
-	   ciidExclude: DWORD,
-	  rgiidExclude: ptr IID,
-	    snbExclude: SNB,
-	      pstgDest: ptr IStorage
-	     CopyTo2@MP typedef ptr CopyTo2@CT
-		 CopyTo CopyTo2@MP ?
-
-       MoveElementTo@CT typedef proto \
-		 pThis: ptr IStorage,
-	      pwcsName: ptr OLECHAR,
-	      pstgDest: ptr IStorage,
-	   pwcsNewName: ptr OLECHAR,
-	      grfFlags: DWORD
-       MoveElementTo@MP typedef ptr MoveElementTo@CT
-	  MoveElementTo MoveElementTo@MP ?
-
-	     Commit2@CT typedef proto \
-		 pThis: ptr IStorage,
-	grfCommitFlags: DWORD
-	     Commit2@MP typedef ptr Commit2@CT
-		 Commit Commit2@MP ?
-
-	     Revert2@CT typedef proto \
-		 pThis: ptr IStorage
-	     Revert2@MP typedef ptr Revert2@CT
-		 Revert Revert2@MP ?
-
-	EnumElements@CT typedef proto \
-		 pThis: ptr IStorage,
-	     reserved1: DWORD,
-	     reserved2: PVOID,
-	     reserved3: DWORD,
-		ppenum: ptr IEnumSTATSTG
-	EnumElements@MP typedef ptr EnumElements@CT
-	   EnumElements EnumElements@MP ?
-
-      DestroyElement@CT typedef proto \
-		 pThis: ptr IStorage,
-	      pwcsName: ptr OLECHAR
-      DestroyElement@MP typedef ptr DestroyElement@CT
-	 DestroyElement DestroyElement@MP ?
-
-       RenameElement@CT typedef proto \
-		 pThis: ptr IStorage,
-	   pwcsOldName: ptr OLECHAR,
-	   pwcsNewName: ptr OLECHAR
-       RenameElement@MP typedef ptr RenameElement@CT
-	  RenameElement RenameElement@MP ?
-
-     SetElementTimes@CT typedef proto \
-		 pThis: ptr IStorage,
-	      pwcsName: ptr OLECHAR,
-		pctime: LPFILETIME,
-		patime: LPFILETIME,
-		pmtime: LPFILETIME
-     SetElementTimes@MP typedef ptr SetElementTimes@CT
-	SetElementTimes SetElementTimes@MP ?
-
-	    SetClass@CT typedef proto \
-		 pThis: ptr IStorage,
-		 clsid: REFCLSID
-	    SetClass@MP typedef ptr SetClass@CT
-	       SetClass SetClass@MP ?
-
-	SetStateBits@CT typedef proto \
-		 pThis: ptr IStorage,
-	  grfStateBits: DWORD,
-	       grfMask: DWORD
-	SetStateBits@MP typedef ptr SetStateBits@CT
-	   SetStateBits SetStateBits@MP ?
-
-   IStorageVtbl@Stat@CT typedef proto \
-		 pThis: ptr IStorage,
-	      pstatstg: ptr STATSTG,
-	   grfStatFlag: DWORD
-   IStorageVtbl@Stat@MP typedef ptr IStorageVtbl@Stat@CT
-		   Stat IStorageVtbl@Stat@MP ?
+	   CreateStream PVOID ?
+	     OpenStream PVOID ?
+	  CreateStorage PVOID ?
+	    OpenStorage PVOID ?
+		 CopyTo PVOID ?
+	  MoveElementTo PVOID ?
+		 Commit PVOID ?
+		 Revert PVOID ?
+	   EnumElements PVOID ?
+	 DestroyElement PVOID ?
+	  RenameElement PVOID ?
+	SetElementTimes PVOID ?
+	       SetClass PVOID ?
+	   SetStateBits PVOID ?
+		   Stat PVOID ?
 
 	END_INTERFACE
 
@@ -3572,7 +2986,7 @@ IStorage_Stat_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IPersistFile_INTERFACE_DEFINED__
@@ -3596,31 +3010,10 @@ IPersistFileVtbl	STRUC
 	     GetClassID GetClassID@MP ?
 		IsDirty IsDirty@MP ?
 
-IPersistFileVtbl@Load@CT typedef proto \
-		 pThis: ptr IPersistFile,
-	   pszFileName: LPCOLESTR,
-		dwMode: DWORD
-IPersistFileVtbl@Load@MP typedef ptr IPersistFileVtbl@Load@CT
-		   Load IPersistFileVtbl@Load@MP ?
-
-	       Save3@CT typedef proto \
-		 pThis: ptr IPersistFile,
-	   pszFileName: LPCOLESTR,
-	     fRemember: BOOL
-	       Save3@MP typedef ptr Save3@CT
-		   Save Save3@MP ?
-
-       SaveCompleted@CT typedef proto \
-		 pThis: ptr IPersistFile,
-	   pszFileName: LPCOLESTR
-       SaveCompleted@MP typedef ptr SaveCompleted@CT
-	  SaveCompleted SaveCompleted@MP ?
-
-	  GetCurFile@CT typedef proto \
-		 pThis: ptr IPersistFile,
-	  ppszFileName: ptr LPOLESTR
-	  GetCurFile@MP typedef ptr GetCurFile@CT
-	     GetCurFile GetCurFile@MP ?
+		   Load PVOID ?
+		   Save PVOID ?
+	  SaveCompleted PVOID ?
+	     GetCurFile PVOID ?
 
 	END_INTERFACE
 
@@ -3705,7 +3098,7 @@ IPersistFile_GetCurFile_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IPersistStorage_INTERFACE_DEFINED__
@@ -3729,35 +3122,11 @@ IPersistStorageVtbl	STRUC
 	     GetClassID GetClassID@MP ?
 		IsDirty IsDirty@MP ?
 
-	     InitNew@CT typedef proto \
-		 pThis: ptr IPersistStorage,
-		  pStg: ptr IStorage
-	     InitNew@MP typedef ptr InitNew@CT
-		InitNew InitNew@MP ?
-
-IPersistStorageVtbl@Load@CT typedef proto \
-		 pThis: ptr IPersistStorage,
-		  pStg: ptr IStorage
-IPersistStorageVtbl@Load@MP typedef ptr IPersistStorageVtbl@Load@CT
-		   Load IPersistStorageVtbl@Load@MP ?
-
-	       Save4@CT typedef proto \
-		 pThis: ptr IPersistStorage,
-	      pStgSave: ptr IStorage,
-	   fSameAsLoad: BOOL
-	       Save4@MP typedef ptr Save4@CT
-		   Save Save4@MP ?
-
-      SaveCompleted2@CT typedef proto \
-		 pThis: ptr IPersistStorage,
-	       pStgNew: ptr IStorage
-      SaveCompleted2@MP typedef ptr SaveCompleted2@CT
-	  SaveCompleted SaveCompleted2@MP ?
-
-     HandsOffStorage@CT typedef proto \
-		 pThis: ptr IPersistStorage
-     HandsOffStorage@MP typedef ptr HandsOffStorage@CT
-	HandsOffStorage HandsOffStorage@MP ?
+		InitNew PVOID ?
+		   Load PVOID ?
+		   Save PVOID ?
+	  SaveCompleted PVOID ?
+	HandsOffStorage PVOID ?
 
 	END_INTERFACE
 
@@ -3854,7 +3223,7 @@ IPersistStorage_HandsOffStorage_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __ILockBytes_INTERFACE_DEFINED__
@@ -3875,57 +3244,13 @@ ILockBytesVtbl		STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-	      ReadAt@CT typedef proto \
-		 pThis: ptr ILockBytes,
-	      ulOffset: ULARGE_INTEGER,
-		    pv: PVOID,
-		    cb: ULONG,
-	       pcbRead: LPDWORD
-	      ReadAt@MP typedef ptr ReadAt@CT
-		 ReadAt ReadAt@MP ?
-
-	     WriteAt@CT typedef proto \
-		 pThis: ptr ILockBytes,
-	      ulOffset: ULARGE_INTEGER,
-		    pv: PVOID,
-		    cb: ULONG,
-	    pcbWritten: LPDWORD
-	     WriteAt@MP typedef ptr WriteAt@CT
-		WriteAt WriteAt@MP ?
-
-	       Flush@CT typedef proto \
-		 pThis: ptr ILockBytes
-	       Flush@MP typedef ptr Flush@CT
-		  Flush Flush@MP ?
-
-	    SetSize2@CT typedef proto \
-		 pThis: ptr ILockBytes,
-		    cb: ULARGE_INTEGER
-	    SetSize2@MP typedef ptr SetSize2@CT
-		SetSize SetSize2@MP ?
-
-	 LockRegion2@CT typedef proto \
-		 pThis: ptr ILockBytes,
-	     libOffset: ULARGE_INTEGER,
-		    cb: ULARGE_INTEGER,
-	    dwLockType: DWORD
-	 LockRegion2@MP typedef ptr LockRegion2@CT
-	     LockRegion LockRegion2@MP ?
-
-       UnlockRegion2@CT typedef proto \
-		 pThis: ptr ILockBytes,
-	     libOffset: ULARGE_INTEGER,
-		    cb: ULARGE_INTEGER,
-	    dwLockType: DWORD
-       UnlockRegion2@MP typedef ptr UnlockRegion2@CT
-	   UnlockRegion UnlockRegion2@MP ?
-
-	       Stat2@CT typedef proto \
-		 pThis: ptr ILockBytes,
-	      pstatstg: ptr STATSTG,
-	   grfStatFlag: DWORD
-	       Stat2@MP typedef ptr Stat2@CT
-		   Stat Stat2@MP ?
+		 ReadAt PVOID ?
+		WriteAt PVOID ?
+		  Flush PVOID ?
+		SetSize PVOID ?
+	     LockRegion PVOID ?
+	   UnlockRegion PVOID ?
+		   Stat PVOID ?
 
 	END_INTERFACE
 
@@ -4046,7 +3371,7 @@ ILockBytes_Stat_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IEnumFORMATETC_INTERFACE_DEFINED__
@@ -4159,7 +3484,7 @@ IEnumFORMATETC_Clone_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IEnumSTATDATA_INTERFACE_DEFINED__
@@ -4273,7 +3598,7 @@ IEnumSTATDATA_Clone_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IRootStorage_INTERFACE_DEFINED__
@@ -4295,11 +3620,7 @@ IRootStorageVtbl	STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-	SwitchToFile@CT typedef proto \
-		 pThis: ptr IRootStorage,
-	       pszFile: LPOLESTR
-	SwitchToFile@MP typedef ptr SwitchToFile@CT
-	   SwitchToFile SwitchToFile@MP ?
+	   SwitchToFile PVOID ?
 
 	END_INTERFACE
 
@@ -4327,7 +3648,7 @@ IRootStorage_SwitchToFile_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IAdviseSink_INTERFACE_DEFINED__
@@ -4392,7 +3713,7 @@ UNION u
 ENDS
 pUnkForRelease		LPIUnknown ?
 uSTGMEDIUM		ENDS
-endif 
+endif
 
 GDI_OBJECT		STRUC
 ObjectType		dd ?
@@ -4450,35 +3771,11 @@ IAdviseSinkVtbl		STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-	OnDataChange@CT typedef proto \
-		 pThis: ptr IAdviseSink,
-	    pFormatetc: ptr FORMATETC,
-	       pStgmed: ptr STGMEDIUM
-	OnDataChange@MP typedef ptr OnDataChange@CT
-	   OnDataChange OnDataChange@MP ?
-
-	OnViewChange@CT typedef proto \
-		 pThis: ptr IAdviseSink,
-	      dwAspect: DWORD,
-		lindex: LONG
-	OnViewChange@MP typedef ptr OnViewChange@CT
-	   OnViewChange OnViewChange@MP ?
-
-	    OnRename@CT typedef proto \
-		 pThis: ptr IAdviseSink,
-		   pmk: ptr IMoniker
-	    OnRename@MP typedef ptr OnRename@CT
-	       OnRename OnRename@MP ?
-
-	      OnSave@CT typedef proto \
-		 pThis: ptr IAdviseSink
-	      OnSave@MP typedef ptr OnSave@CT
-		 OnSave OnSave@MP ?
-
-	     OnClose@CT typedef proto \
-		 pThis: ptr IAdviseSink
-	     OnClose@MP typedef ptr OnClose@CT
-		OnClose OnClose@MP ?
+	   OnDataChange PVOID ?
+	   OnViewChange PVOID ?
+	       OnRename PVOID ?
+		 OnSave PVOID ?
+		OnClose PVOID ?
 
 	END_INTERFACE
 
@@ -4565,7 +3862,7 @@ IAdviseSink_RemoteOnClose_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IAdviseSink2_INTERFACE_DEFINED__
@@ -4586,41 +3883,12 @@ IAdviseSink2Vtbl	STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-       OnDataChange2@CT typedef proto \
-		 pThis: ptr IAdviseSink2,
-	    pFormatetc: ptr FORMATETC,
-	       pStgmed: ptr STGMEDIUM
-       OnDataChange2@MP typedef ptr OnDataChange2@CT
-	   OnDataChange OnDataChange2@MP ?
-
-       OnViewChange2@CT typedef proto \
-		 pThis: ptr IAdviseSink2,
-	      dwAspect: DWORD,
-		lindex: LONG
-       OnViewChange2@MP typedef ptr OnViewChange2@CT
-	   OnViewChange OnViewChange2@MP ?
-
-	   OnRename2@CT typedef proto \
-		 pThis: ptr IAdviseSink2,
-		   pmk: ptr IMoniker
-	   OnRename2@MP typedef ptr OnRename2@CT
-	       OnRename OnRename2@MP ?
-
-	     OnSave2@CT typedef proto \
-		 pThis: ptr IAdviseSink2
-	     OnSave2@MP typedef ptr OnSave2@CT
-		 OnSave OnSave2@MP ?
-
-	    OnClose2@CT typedef proto \
-		 pThis: ptr IAdviseSink2
-	    OnClose2@MP typedef ptr OnClose2@CT
-		OnClose OnClose2@MP ?
-
-     OnLinkSrcChange@CT typedef proto \
-		 pThis: ptr IAdviseSink2,
-		   pmk: ptr IMoniker
-     OnLinkSrcChange@MP typedef ptr OnLinkSrcChange@CT
-	OnLinkSrcChange OnLinkSrcChange@MP ?
+	   OnDataChange PVOID ?
+	   OnViewChange PVOID ?
+	       OnRename PVOID ?
+		 OnSave PVOID ?
+		OnClose PVOID ?
+	OnLinkSrcChange PVOID ?
 
 	END_INTERFACE
 
@@ -4649,7 +3917,7 @@ IAdviseSink2_RemoteOnLinkSrcChange_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IDataObject_INTERFACE_DEFINED__
@@ -4672,68 +3940,15 @@ IDataObjectVtbl		STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-	     GetData@CT typedef proto \
-		 pThis: ptr IDataObject,
-	  pformatetcIn: ptr FORMATETC,
-	       pmedium: ptr STGMEDIUM
-	     GetData@MP typedef ptr GetData@CT
-		GetData GetData@MP ?
-
-	 GetDataHere@CT typedef proto \
-		 pThis: ptr IDataObject,
-	    pformatetc: ptr FORMATETC,
-	       pmedium: ptr STGMEDIUM
-	 GetDataHere@MP typedef ptr GetDataHere@CT
-	    GetDataHere GetDataHere@MP ?
-
-	QueryGetData@CT typedef proto \
-		 pThis: ptr IDataObject,
-	    pformatetc: ptr FORMATETC
-	QueryGetData@MP typedef ptr QueryGetData@CT
-	   QueryGetData QueryGetData@MP ?
-
-GetCanonicalFormatEtc@CT typedef proto \
-		 pThis: ptr IDataObject,
-	  pformatectIn: ptr FORMATETC,
-	 pformatetcOut: ptr FORMATETC
-GetCanonicalFormatEtc@MP typedef ptr GetCanonicalFormatEtc@CT
-  GetCanonicalFormatEtc GetCanonicalFormatEtc@MP ?
-
-	     SetData@CT typedef proto \
-		 pThis: ptr IDataObject,
-	    pformatetc: ptr FORMATETC,
-	       pmedium: ptr STGMEDIUM,
-	      fRelease: BOOL
-	     SetData@MP typedef ptr SetData@CT
-		SetData SetData@MP ?
-
-       EnumFormatEtc@CT typedef proto \
-		 pThis: ptr IDataObject,
-	   dwDirection: DWORD,
-       ppenumFormatEtc: ptr IEnumFORMATETC
-       EnumFormatEtc@MP typedef ptr EnumFormatEtc@CT
-	  EnumFormatEtc EnumFormatEtc@MP ?
-
-	     DAdvise@CT typedef proto \
-		 pThis: ptr IDataObject,
-	    pformatetc: ptr FORMATETC,
-		  advf: DWORD,
-	      pAdvSink: ptr IAdviseSink,
-	 pdwConnection: LPDWORD
-	     DAdvise@MP typedef ptr DAdvise@CT
-		DAdvise DAdvise@MP ?
-
-	   DUnadvise@CT typedef proto \
-		 pThis: ptr IDataObject,
-	  dwConnection: DWORD
-	   DUnadvise@MP typedef ptr DUnadvise@CT
-	      DUnadvise DUnadvise@MP ?
-
-	 EnumDAdvise@CT typedef proto \
-		 pThis: ptr IDataObject,
-	  ppenumAdvise: ptr IEnumSTATDATA
-	 EnumDAdvise@MP typedef ptr EnumDAdvise@CT
-	    EnumDAdvise EnumDAdvise@MP ?
+		GetData PVOID ?
+	    GetDataHere PVOID ?
+	   QueryGetData PVOID ?
+  GetCanonicalFormatEtc PVOID ?
+		SetData PVOID ?
+	  EnumFormatEtc PVOID ?
+		DAdvise PVOID ?
+	      DUnadvise PVOID ?
+	    EnumDAdvise PVOID ?
 
 	END_INTERFACE
 
@@ -4883,7 +4098,7 @@ IDataObject_EnumDAdvise_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IDataAdviseHolder_INTERFACE_DEFINED__
@@ -4902,35 +4117,10 @@ IDataAdviseHolderVtbl	STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-	      Advise@CT typedef proto \
-		 pThis: ptr IDataAdviseHolder,
-	   pDataObject: ptr IDataObject,
-		 pFetc: ptr FORMATETC,
-		  advf: DWORD,
-	       pAdvise: ptr IAdviseSink,
-	 pdwConnection: LPDWORD
-	      Advise@MP typedef ptr Advise@CT
-		 Advise Advise@MP ?
-
-	    Unadvise@CT typedef proto \
-		 pThis: ptr IDataAdviseHolder,
-	  dwConnection: DWORD
-	    Unadvise@MP typedef ptr Unadvise@CT
-	       Unadvise Unadvise@MP ?
-
-	  EnumAdvise@CT typedef proto \
-		 pThis: ptr IDataAdviseHolder,
-	  ppenumAdvise: ptr IEnumSTATDATA
-	  EnumAdvise@MP typedef ptr EnumAdvise@CT
-	     EnumAdvise EnumAdvise@MP ?
-
-    SendOnDataChange@CT typedef proto \
-		 pThis: ptr IDataAdviseHolder,
-	   pDataObject: ptr IDataObject,
-	    dwReserved: DWORD,
-		  advf: DWORD
-    SendOnDataChange@MP typedef ptr SendOnDataChange@CT
-       SendOnDataChange SendOnDataChange@MP ?
+		 Advise PVOID ?
+	       Unadvise PVOID ?
+	     EnumAdvise PVOID ?
+       SendOnDataChange PVOID ?
 
 	END_INTERFACE
 
@@ -5005,7 +4195,7 @@ IDataAdviseHolder_SendOnDataChange_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IMessageFilter_INTERFACE_DEFINED__
@@ -5053,30 +4243,9 @@ IMessageFilterVtbl	STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-  HandleInComingCall@CT typedef proto \
-		 pThis: ptr IMessageFilter,
-	    dwCallType: DWORD,
-	   htaskCaller: HTASK,
-	   dwTickCount: DWORD,
-       lpInterfaceInfo: LPINTERFACEINFO
-  HandleInComingCall@MP typedef ptr HandleInComingCall@CT
-     HandleInComingCall HandleInComingCall@MP ?
-
-   RetryRejectedCall@CT typedef proto \
-		 pThis: ptr IMessageFilter,
-	   htaskCallee: HTASK,
-	   dwTickCount: DWORD,
-	  dwRejectType: DWORD
-   RetryRejectedCall@MP typedef ptr RetryRejectedCall@CT
-      RetryRejectedCall RetryRejectedCall@MP ?
-
-      MessagePending@CT typedef proto \
-		 pThis: ptr IMessageFilter,
-	   htaskCallee: HTASK,
-	   dwTickCount: DWORD,
-	 dwPendingType: DWORD
-      MessagePending@MP typedef ptr MessagePending@CT
-	 MessagePending MessagePending@MP ?
+     HandleInComingCall PVOID ?
+      RetryRejectedCall PVOID ?
+	 MessagePending PVOID ?
 
 	END_INTERFACE
 
@@ -5138,7 +4307,7 @@ IMessageFilter_MessagePending_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IRpcChannelBuffer_INTERFACE_DEFINED__
@@ -5171,37 +4340,11 @@ IRpcChannelBufferVtbl	STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-	   GetBuffer@CT typedef proto \
-		 pThis: ptr IRpcChannelBuffer,
-	      pMessage: ptr RPCOLEMESSAGE,
-		  riid: REFIID
-	   GetBuffer@MP typedef ptr GetBuffer@CT
-	      GetBuffer GetBuffer@MP ?
-
-	 SendReceive@CT typedef proto \
-		 pThis: ptr IRpcChannelBuffer,
-	      pMessage: ptr RPCOLEMESSAGE,
-	       pStatus: LPDWORD
-	 SendReceive@MP typedef ptr SendReceive@CT
-	    SendReceive SendReceive@MP ?
-
-	  FreeBuffer@CT typedef proto \
-		 pThis: ptr IRpcChannelBuffer,
-	      pMessage: ptr RPCOLEMESSAGE
-	  FreeBuffer@MP typedef ptr FreeBuffer@CT
-	     FreeBuffer FreeBuffer@MP ?
-
-	  GetDestCtx@CT typedef proto \
-		 pThis: ptr IRpcChannelBuffer,
-	pdwDestContext: LPDWORD,
-	ppvDestContext: PVOID
-	  GetDestCtx@MP typedef ptr GetDestCtx@CT
-	     GetDestCtx GetDestCtx@MP ?
-
-	 IsConnected@CT typedef proto \
-		 pThis: ptr IRpcChannelBuffer
-	 IsConnected@MP typedef ptr IsConnected@CT
-	    IsConnected IsConnected@MP ?
+	      GetBuffer PVOID ?
+	    SendReceive PVOID ?
+	     FreeBuffer PVOID ?
+	     GetDestCtx PVOID ?
+	    IsConnected PVOID ?
 
 	END_INTERFACE
 
@@ -5286,7 +4429,7 @@ IRpcChannelBuffer_IsConnected_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IRpcChannelBuffer2_INTERFACE_DEFINED__
@@ -5305,43 +4448,12 @@ IRpcChannelBuffer2Vtbl	STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-	  GetBuffer2@CT typedef proto \
-		 pThis: ptr IRpcChannelBuffer2,
-	      pMessage: ptr RPCOLEMESSAGE,
-		  riid: REFIID
-	  GetBuffer2@MP typedef ptr GetBuffer2@CT
-	      GetBuffer GetBuffer2@MP ?
-
-	SendReceive2@CT typedef proto \
-		 pThis: ptr IRpcChannelBuffer2,
-	      pMessage: ptr RPCOLEMESSAGE,
-	       pStatus: LPDWORD
-	SendReceive2@MP typedef ptr SendReceive2@CT
-	    SendReceive SendReceive2@MP ?
-
-	 FreeBuffer2@CT typedef proto \
-		 pThis: ptr IRpcChannelBuffer2,
-	      pMessage: ptr RPCOLEMESSAGE
-	 FreeBuffer2@MP typedef ptr FreeBuffer2@CT
-	     FreeBuffer FreeBuffer2@MP ?
-
-	 GetDestCtx2@CT typedef proto \
-		 pThis: ptr IRpcChannelBuffer2,
-	pdwDestContext: LPDWORD,
-	ppvDestContext: PVOID
-	 GetDestCtx2@MP typedef ptr GetDestCtx2@CT
-	     GetDestCtx GetDestCtx2@MP ?
-
-	IsConnected2@CT typedef proto \
-		 pThis: ptr IRpcChannelBuffer2
-	IsConnected2@MP typedef ptr IsConnected2@CT
-	    IsConnected IsConnected2@MP ?
-
-  GetProtocolVersion@CT typedef proto \
-		 pThis: ptr IRpcChannelBuffer2,
-	    pdwVersion: LPDWORD
-  GetProtocolVersion@MP typedef ptr GetProtocolVersion@CT
-     GetProtocolVersion GetProtocolVersion@MP ?
+	      GetBuffer PVOID ?
+	    SendReceive PVOID ?
+	     FreeBuffer PVOID ?
+	     GetDestCtx PVOID ?
+	    IsConnected PVOID ?
+     GetProtocolVersion PVOID ?
 
 	END_INTERFACE
 
@@ -5367,7 +4479,7 @@ IRpcChannelBuffer2_GetProtocolVersion_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IRpcChannelBuffer3_INTERFACE_DEFINED__
@@ -5386,94 +4498,19 @@ IRpcChannelBuffer3Vtbl	STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-	  GetBuffer3@CT typedef proto \
-		 pThis: ptr IRpcChannelBuffer3,
-	      pMessage: ptr RPCOLEMESSAGE,
-		  riid: REFIID
-	  GetBuffer3@MP typedef ptr GetBuffer3@CT
-	      GetBuffer GetBuffer3@MP ?
-
-	SendReceive@3CT typedef proto \
-		 pThis: ptr IRpcChannelBuffer3,
-	      pMessage: ptr RPCOLEMESSAGE,
-	       pStatus: LPDWORD
-	SendReceive3@MP typedef ptr SendReceive3@CT
-	    SendReceive SendReceive3@MP ?
-
-	 FreeBuffer3@CT typedef proto \
-		 pThis: ptr IRpcChannelBuffer3,
-	      pMessage: ptr RPCOLEMESSAGE
-	 FreeBuffer3@MP typedef ptr FreeBuffer3@CT
-	     FreeBuffer FreeBuffer3@MP ?
-
-	 GetDestCtx3@CT typedef proto \
-		 pThis: ptr IRpcChannelBuffer3,
-	pdwDestContext: LPDWORD,
-	ppvDestContext: PVOID
-	 GetDestCtx3@MP typedef ptr GetDestCtx3@CT
-	     GetDestCtx GetDestCtx3@MP ?
-
-	IsConnected3@CT typedef proto \
-		 pThis: ptr IRpcChannelBuffer3
-	IsConnected3@MP typedef ptr IsConnected3@CT
-	    IsConnected IsConnected3@MP ?
-
- GetProtocolVersion3@CT typedef proto \
-		 pThis: ptr IRpcChannelBuffer3,
-	    pdwVersion: LPDWORD
- GetProtocolVersion3@MP typedef ptr GetProtocolVersion3@CT
-     GetProtocolVersion GetProtocolVersion3@MP ?
-
-		Send@CT typedef proto \
-		 pThis: ptr IRpcChannelBuffer3,
-		  pMsg: ptr RPCOLEMESSAGE,
-	     pulStatus: LPDWORD
-		Send@MP typedef ptr Send@CT
-		   Send Send@MP ?
-
-	     Receive@CT typedef proto \
-		 pThis: ptr IRpcChannelBuffer3,
-		  pMsg: ptr RPCOLEMESSAGE,
-		ulSize: ULONG,
-	     pulStatus: LPDWORD
-	     Receive@MP typedef ptr Receive@CT
-		Receive Receive@MP ?
-
-	      Cancel@CT typedef proto \
-		 pThis: ptr IRpcChannelBuffer3,
-		  pMsg: ptr RPCOLEMESSAGE
-	      Cancel@MP typedef ptr Cancel@CT
-		 Cancel Cancel@MP ?
-
-      GetCallContext@CT typedef proto \
-		 pThis: ptr IRpcChannelBuffer3,
-		  pMsg: ptr RPCOLEMESSAGE,
-		  riid: REFIID,
-	    pInterface: PVOID
-      GetCallContext@MP typedef ptr GetCallContext@CT
-	 GetCallContext GetCallContext@MP ?
-
-	GetDestCtxEx@CT typedef proto \
-		 pThis: ptr IRpcChannelBuffer3,
-		  pMsg: ptr RPCOLEMESSAGE,
-	pdwDestContext: LPDWORD,
-	ppvDestContext: PVOID
-	GetDestCtxEx@MP typedef ptr GetDestCtxEx@CT
-	   GetDestCtxEx GetDestCtxEx@MP ?
-
-	    GetState@CT typedef proto \
-		 pThis: ptr IRpcChannelBuffer3,
-		  pMsg: ptr RPCOLEMESSAGE,
-		pState: LPDWORD
-	    GetState@MP typedef ptr GetState@CT
-	       GetState GetState@MP ?
-
-       RegisterAsync@CT typedef proto \
-		 pThis: ptr IRpcChannelBuffer3,
-		  pMsg: ptr RPCOLEMESSAGE,
-	     pAsyncMgr: ptr IAsyncManager
-       RegisterAsync@MP typedef ptr RegisterAsync@CT
-	  RegisterAsync RegisterAsync@MP ?
+	      GetBuffer PVOID ?
+	    SendReceive PVOID ?
+	     FreeBuffer PVOID ?
+	     GetDestCtx PVOID ?
+	    IsConnected PVOID ?
+     GetProtocolVersion PVOID ?
+		   Send PVOID ?
+		Receive PVOID ?
+		 Cancel PVOID ?
+	 GetCallContext PVOID ?
+	   GetDestCtxEx PVOID ?
+	       GetState PVOID ?
+	  RegisterAsync PVOID ?
 
 	END_INTERFACE
 
@@ -5594,7 +4631,7 @@ IRpcChannelBuffer3_RegisterAsync_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IRpcProxyBuffer_INTERFACE_DEFINED__
@@ -5613,16 +4650,8 @@ IRpcProxyBufferVtbl	STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-	     Connect@CT typedef proto \
-		 pThis: ptr IRpcProxyBuffer,
-     pRpcChannelBuffer: ptr IRpcChannelBuffer
-	     Connect@MP typedef ptr Connect@CT
-		Connect Connect@MP ?
-
-	  Disconnect@CT typedef proto \
-		 pThis: ptr IRpcProxyBuffer
-	  Disconnect@MP typedef ptr Disconnect@CT
-	     Disconnect Disconnect@MP ?
+		Connect PVOID ?
+	     Disconnect PVOID ?
 
 	END_INTERFACE
 
@@ -5662,7 +4691,7 @@ IRpcProxyBuffer_Disconnect_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IRpcStubBuffer_INTERFACE_DEFINED__
@@ -5681,34 +4710,11 @@ IRpcStubBufferVtbl	STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-	    Connect2@CT typedef proto \
-		 pThis: ptr IRpcStubBuffer,
-	    pUnkServer: ptr IUnknown
-	    Connect2@MP typedef ptr Connect2@CT
-		Connect Connect2@MP ?
-
-	 Disconnect2@CT typedef proto \
-		 pThis: ptr IRpcStubBuffer
-	 Disconnect2@MP typedef ptr Disconnect2@CT
-	     Disconnect Disconnect2@MP ?
-
-	     _Invoke@CT typedef proto \
-		 pThis: ptr IRpcStubBuffer,
-	      _prpcmsg: ptr RPCOLEMESSAGE,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer
-	     _Invoke@MP typedef ptr _Invoke@CT
-		_Invoke _Invoke@MP ?
-
-      IsIIDSupported@CT typedef proto \
-		 pThis: ptr IRpcStubBuffer,
-		  riid: REFIID
-      IsIIDSupported@MP typedef ptr IsIIDSupported@CT
-	 IsIIDSupported IsIIDSupported@MP ?
-
-	   CountRefs@CT typedef proto \
-		 pThis: ptr IRpcStubBuffer
-	   CountRefs@MP typedef ptr CountRefs@CT
-	      CountRefs CountRefs@MP ?
+		Connect PVOID ?
+	     Disconnect PVOID ?
+		_Invoke PVOID ?
+	 IsIIDSupported PVOID ?
+	      CountRefs PVOID ?
 
 DebugServerQueryInterface@CT typedef proto \
 		 pThis: ptr IRpcStubBuffer,
@@ -5830,7 +4836,7 @@ IRpcStubBuffer_DebugServerRelease_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IPSFactoryBuffer_INTERFACE_DEFINED__
@@ -5849,22 +4855,8 @@ IPSFactoryBufferVtbl	STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-	 CreateProxy@CT typedef proto \
-		 pThis: ptr IPSFactoryBuffer,
-	     pUnkOuter: ptr IUnknown,
-		  riid: REFIID,
-	       ppProxy: ptr IRpcProxyBuffer,
-		   ppv: PVOID
-	 CreateProxy@MP typedef ptr CreateProxy@CT
-	    CreateProxy CreateProxy@MP ?
-
-	  CreateStub@CT typedef proto \
-		 pThis: ptr IPSFactoryBuffer,
-		  riid: REFIID,
-	    pUnkServer: ptr IUnknown,
-		ppStub: ptr IRpcStubBuffer
-	  CreateStub@MP typedef ptr CreateStub@CT
-	     CreateStub CreateStub@MP ?
+	    CreateProxy PVOID ?
+	     CreateStub PVOID ?
 
 	END_INTERFACE
 
@@ -5909,13 +4901,13 @@ IPSFactoryBuffer_CreateStub_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 
 
 
-if  (_WIN32_WINNT GE 0x0400 ) OR defined(_WIN32_DCOM) 
+if  (_WIN32_WINNT GE 0x0400 ) OR defined(_WIN32_DCOM)
 SChannelHookCallInfo	STRUC
 iid			IID <>
 cbSize			dd ?
@@ -5946,62 +4938,12 @@ IChannelHookVtbl	STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-       ClientGetSize@CT typedef proto \
-		 pThis: ptr IChannelHook,
-	       uExtent: REFGUID,
-		  riid: REFIID,
-	     pDataSize: LPDWORD
-       ClientGetSize@MP typedef ptr ClientGetSize@CT
-	  ClientGetSize ClientGetSize@MP ?
-
-    ClientFillBuffer@CT typedef proto \
-		 pThis: ptr IChannelHook,
-	       uExtent: REFGUID,
-		  riid: REFIID,
-	     pDataSize: LPDWORD,
-	   pDataBuffer: PVOID
-    ClientFillBuffer@MP typedef ptr ClientFillBuffer@CT
-       ClientFillBuffer ClientFillBuffer@MP ?
-
-	ClientNotify@CT typedef proto \
-		 pThis: ptr IChannelHook,
-	       uExtent: REFGUID,
-		  riid: REFIID,
-	    cbDataSize: ULONG,
-	   pDataBuffer: PVOID,
-	      lDataRep: DWORD,
-	       hrFault: HRESULT
-	ClientNotify@MP typedef ptr ClientNotify@CT
-	   ClientNotify ClientNotify@MP ?
-
-	ServerNotify@CT typedef proto \
-		 pThis: ptr IChannelHook,
-	       uExtent: REFGUID,
-		  riid: REFIID,
-	    cbDataSize: ULONG,
-	   pDataBuffer: PVOID,
-	      lDataRep: DWORD
-	ServerNotify@MP typedef ptr ServerNotify@CT
-	   ServerNotify ServerNotify@MP ?
-
-       ServerGetSize@CT typedef proto \
-		 pThis: ptr IChannelHook,
-	       uExtent: REFGUID,
-		  riid: REFIID,
-	       hrFault: HRESULT,
-	     pDataSize: LPDWORD
-       ServerGetSize@MP typedef ptr ServerGetSize@CT
-	  ServerGetSize ServerGetSize@MP ?
-
-    ServerFillBuffer@CT typedef proto \
-		 pThis: ptr IChannelHook,
-	       uExtent: REFGUID,
-		  riid: REFIID,
-	     pDataSize: LPDWORD,
-	   pDataBuffer: PVOID,
-	       hrFault: HRESULT
-    ServerFillBuffer@MP typedef ptr ServerFillBuffer@CT
-       ServerFillBuffer ServerFillBuffer@MP ?
+	  ClientGetSize PVOID ?
+       ClientFillBuffer PVOID ?
+	   ClientNotify PVOID ?
+	   ServerNotify PVOID ?
+	  ServerGetSize PVOID ?
+       ServerFillBuffer PVOID ?
 
 	END_INTERFACE
 
@@ -6118,13 +5060,13 @@ IChannelHook_ServerFillBuffer_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 
 
 
-endif 
+endif
 
 
 
@@ -6332,24 +5274,24 @@ PID_SECURITY		equ 0x80000002
 PID_ILLEGAL		equ 0xffffffff
 
 
-PIDSI_TITLE		equ 0x00000002	 
-PIDSI_SUBJECT		equ 0x00000003	 
-PIDSI_AUTHOR		equ 0x00000004	 
-PIDSI_KEYWORDS		equ 0x00000005	 
-PIDSI_COMMENTS		equ 0x00000006	 
-PIDSI_TEMPLATE		equ 0x00000007	 
-PIDSI_LASTAUTHOR	equ 0x00000008	 
-PIDSI_REVNUMBER		equ 0x00000009	 
-PIDSI_EDITTIME		equ 0x0000000a	 
-PIDSI_LASTPRINTED	equ 0x0000000b	 
-PIDSI_CREATE_DTM	equ 0x0000000c	 
-PIDSI_LASTSAVE_DTM	equ 0x0000000d	 
-PIDSI_PAGECOUNT		equ 0x0000000e	
-PIDSI_WORDCOUNT		equ 0x0000000f	
-PIDSI_CHARCOUNT		equ 0x00000010	
-PIDSI_THUMBNAIL		equ 0x00000011	
-PIDSI_APPNAME		equ 0x00000012L	 
-PIDSI_DOC_SECURITY	equ 0x00000013	
+PIDSI_TITLE		equ 0x00000002
+PIDSI_SUBJECT		equ 0x00000003
+PIDSI_AUTHOR		equ 0x00000004
+PIDSI_KEYWORDS		equ 0x00000005
+PIDSI_COMMENTS		equ 0x00000006
+PIDSI_TEMPLATE		equ 0x00000007
+PIDSI_LASTAUTHOR	equ 0x00000008
+PIDSI_REVNUMBER		equ 0x00000009
+PIDSI_EDITTIME		equ 0x0000000a
+PIDSI_LASTPRINTED	equ 0x0000000b
+PIDSI_CREATE_DTM	equ 0x0000000c
+PIDSI_LASTSAVE_DTM	equ 0x0000000d
+PIDSI_PAGECOUNT		equ 0x0000000e
+PIDSI_WORDCOUNT		equ 0x0000000f
+PIDSI_CHARCOUNT		equ 0x00000010
+PIDSI_THUMBNAIL		equ 0x00000011
+PIDSI_APPNAME		equ 0x00000012L
+PIDSI_DOC_SECURITY	equ 0x00000013
 PRSPEC_INVALID		equ 0xffffffff
 
 PRSPEC_LPWSTR		equ 0
@@ -6401,89 +5343,18 @@ IPropertyStorageVtbl	STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-	ReadMultiple@CT typedef proto \
-		 pThis: ptr IPropertyStorage,
-		cpspec: ULONG,
-	       rgpspec: PROPSPEC,
-	     rgpropvar: PROPVARIANT
-	ReadMultiple@MP typedef ptr ReadMultiple@CT
-	   ReadMultiple ReadMultiple@MP ?
-
-       WriteMultiple@CT typedef proto \
-		 pThis: ptr IPropertyStorage,
-		cpspec: ULONG,
-	       rgpspec: PROPSPEC,
-	     rgpropvar: PROPVARIANT,
-       propidNameFirst: PROPID
-       WriteMultiple@MP typedef ptr WriteMultiple@CT
-	  WriteMultiple WriteMultiple@MP ?
-
-      DeleteMultiple@CT typedef proto \
-		 pThis: ptr IPropertyStorage,
-		cpspec: ULONG,
-	       rgpspec: PROPSPEC
-      DeleteMultiple@MP typedef ptr DeleteMultiple@CT
-	 DeleteMultiple DeleteMultiple@MP ?
-
-   ReadPropertyNames@CT typedef proto \
-		 pThis: ptr IPropertyStorage,
-	       cpropid: ULONG,
-	      rgpropid: PROPID,
-	  rglpwstrName: LPOLESTR
-   ReadPropertyNames@MP typedef ptr ReadPropertyNames@CT
-      ReadPropertyNames ReadPropertyNames@MP ?
-
-  WritePropertyNames@CT typedef proto \
-		 pThis: ptr IPropertyStorage,
-	       cpropid: ULONG,
-	      rgpropid: PROPID,
-	  rglpwstrName: LPOLESTR
-  WritePropertyNames@MP typedef ptr WritePropertyNames@CT
-     WritePropertyNames WritePropertyNames@MP ?
-
- DeletePropertyNames@CT typedef proto \
-		 pThis: ptr IPropertyStorage,
-	       cpropid: ULONG,
-	      rgpropid: PROPID
- DeletePropertyNames@MP typedef ptr DeletePropertyNames@CT
-    DeletePropertyNames DeletePropertyNames@MP ?
-
-	     Commit3@CT typedef proto \
-		 pThis: ptr IPropertyStorage,
-	grfCommitFlags: DWORD
-	     Commit3@MP typedef ptr Commit3@CT
-		 Commit Commit3@MP ?
-
-	     Revert3@CT typedef proto \
-		 pThis: ptr IPropertyStorage
-	     Revert3@MP typedef ptr Revert3@CT
-		 Revert Revert3@MP ?
-
-	       Enum3@CT typedef proto \
-		 pThis: ptr IPropertyStorage,
-		ppenum: ptr IEnumSTATPROPSTG
-	       Enum3@MP typedef ptr Enum3@CT
-		   Enum Enum3@MP ?
-
-	    SetTimes@CT typedef proto \
-		 pThis: ptr IPropertyStorage,
-		pctime: LPFILETIME,
-		patime: LPFILETIME,
-		pmtime: LPFILETIME
-	    SetTimes@MP typedef ptr SetTimes@CT
-	       SetTimes SetTimes@MP ?
-
-	   SetClass3@CT typedef proto \
-		 pThis: ptr IPropertyStorage,
-		 clsid: REFCLSID
-	   SetClass3@MP typedef ptr SetClass3@CT
-	       SetClass SetClass3@MP ?
-
-	       Stat3@CT typedef proto \
-		 pThis: ptr IPropertyStorage,
-	    pstatpsstg: ptr STATPROPSETSTG
-	       Stat3@MP typedef ptr Stat3@CT
-		   Stat Stat3@MP ?
+	   ReadMultiple PVOID ?
+	  WriteMultiple PVOID ?
+	 DeleteMultiple PVOID ?
+      ReadPropertyNames PVOID ?
+     WritePropertyNames PVOID ?
+    DeletePropertyNames PVOID ?
+		 Commit PVOID ?
+		 Revert PVOID ?
+		   Enum PVOID ?
+	       SetTimes PVOID ?
+	       SetClass PVOID ?
+		   Stat PVOID ?
 
 	END_INTERFACE
 
@@ -6674,7 +5545,7 @@ IPropertyStorage_Stat_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IPropertySetStorage_INTERFACE_DEFINED__
@@ -6693,35 +5564,10 @@ IPropertySetStorageVtbl STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-	      Create@CT typedef proto \
-		 pThis: ptr IPropertySetStorage,
-		rfmtid: REFFMTID,
-		pclsid: ptr CLSID,
-	      grfFlags: DWORD,
-	       grfMode: DWORD,
-	       ppprstg: ptr IPropertyStorage
-	      Create@MP typedef ptr Create@CT
-		 Create Create@MP ?
-
-		Open@CT typedef proto \
-		 pThis: ptr IPropertySetStorage,
-		rfmtid: REFFMTID,
-	       grfMode: DWORD,
-	       ppprstg: ptr IPropertyStorage
-		Open@MP typedef ptr Open@CT
-		   Open Open@MP ?
-
-	      Delete@CT typedef proto \
-		 pThis: ptr IPropertySetStorage,
-		rfmtid: REFFMTID
-	      Delete@MP typedef ptr Delete@CT
-		 Delete Delete@MP ?
-
-	       Enum4@CT typedef proto \
-		 pThis: ptr IPropertySetStorage,
-		ppenum: ptr IEnumSTATPROPSETSTG
-	       Enum4@MP typedef ptr Enum4@CT
-		   Enum Enum4@MP ?
+		 Create PVOID ?
+		   Open PVOID ?
+		 Delete PVOID ?
+		   Enum PVOID ?
 
 	END_INTERFACE
 
@@ -6796,7 +5642,7 @@ IPropertySetStorage_Enum_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IEnumSTATPROPSTG_INTERFACE_DEFINED__
@@ -6889,7 +5735,7 @@ IEnumSTATPROPSTG_Clone_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IEnumSTATPROPSETSTG_INTERFACE_DEFINED__
@@ -6981,7 +5827,7 @@ IEnumSTATPROPSETSTG_Clone_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 PropVariantCopy proto WINAPI \
@@ -7075,38 +5921,9 @@ IClientSecurityVtbl	STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-	QueryBlanket@CT typedef proto \
-		 pThis: ptr IClientSecurity,
-		pProxy: ptr IUnknown,
-	     pAuthnSvc: LPDWORD,
-	     pAuthzSvc: LPDWORD,
-      pServerPrincName: ptr OLECHAR,
-	   pAuthnLevel: LPDWORD,
-	     pImpLevel: LPDWORD,
-	     pAuthInfo: PVOID,
-	  pCapabilites: LPDWORD
-	QueryBlanket@MP typedef ptr QueryBlanket@CT
-	   QueryBlanket QueryBlanket@MP ?
-
-	  SetBlanket@CT typedef proto \
-		 pThis: ptr IClientSecurity,
-		pProxy: ptr IUnknown,
-	      AuthnSvc: DWORD,
-	      AuthzSvc: DWORD,
-      pServerPrincName: ptr OLECHAR,
-	    AuthnLevel: DWORD,
-	      ImpLevel: DWORD,
-	     pAuthInfo: PVOID,
-	  Capabilities: DWORD
-	  SetBlanket@MP typedef ptr SetBlanket@CT
-	     SetBlanket SetBlanket@MP ?
-
-	   CopyProxy@CT typedef proto \
-		 pThis: ptr IClientSecurity,
-		pProxy: ptr IUnknown,
-		ppCopy: ptr IUnknown
-	   CopyProxy@MP typedef ptr CopyProxy@CT
-	      CopyProxy CopyProxy@MP ?
+	   QueryBlanket PVOID ?
+	     SetBlanket PVOID ?
+	      CopyProxy PVOID ?
 
 	END_INTERFACE
 
@@ -7176,7 +5993,7 @@ IClientSecurity_CopyProxy_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IServerSecurity_INTERFACE_DEFINED__
@@ -7192,32 +6009,10 @@ IServerSecurityVtbl	STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-       QueryBlanket2@CT typedef proto \
-		 pThis: ptr IServerSecurity,
-	     pAuthnSvc: LPDWORD,
-	     pAuthzSvc: LPDWORD,
-      pServerPrincName: ptr OLECHAR,
-	   pAuthnLevel: LPDWORD,
-	     pImpLevel: LPDWORD,
-		pPrivs: PVOID,
-	 pCapabilities: LPDWORD
-       QueryBlanket2@MP typedef ptr QueryBlanket2@CT
-	   QueryBlanket QueryBlanket2@MP ?
-
-   ImpersonateClient@CT typedef proto \
-		 pThis: ptr IServerSecurity
-   ImpersonateClient@MP typedef ptr ImpersonateClient@CT
-      ImpersonateClient ImpersonateClient@MP ?
-
-	RevertToSelf@CT typedef proto \
-		 pThis: ptr IServerSecurity
-	RevertToSelf@MP typedef ptr RevertToSelf@CT
-	   RevertToSelf RevertToSelf@MP ?
-
-     IsImpersonating@CT typedef proto \
-		 pThis: ptr IServerSecurity
-     IsImpersonating@MP typedef ptr IsImpersonating@CT
-	IsImpersonating IsImpersonating@MP ?
+	   QueryBlanket PVOID ?
+      ImpersonateClient PVOID ?
+	   RevertToSelf PVOID ?
+	IsImpersonating PVOID ?
 
 	END_INTERFACE
 
@@ -7289,7 +6084,7 @@ IServerSecurity_IsImpersonating_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IClassActivator_INTERFACE_DEFINED__
@@ -7306,15 +6101,7 @@ IClassActivatorVtbl	STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-      GetClassObject@CT typedef proto \
-		 pThis: ptr IClassActivator,
-		rclsid: REFCLSID,
-	dwClassContext: DWORD,
-		locale: LCID,
-		  riid: REFIID,
-		   ppv: PVOID
-      GetClassObject@MP typedef ptr GetClassObject@CT
-	 GetClassObject GetClassObject@MP ?
+	 GetClassObject PVOID ?
 
 	END_INTERFACE
 
@@ -7346,7 +6133,7 @@ IClassActivator_GetClassObject_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IRpcOptions_INTERFACE_DEFINED__
@@ -7365,28 +6152,9 @@ IRpcOptionsVtbl		STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-		 Set@CT typedef proto \
-		 pThis: ptr IRpcOptions,
-		  pPrx: ptr IUnknown,
-	    dwProperty: DWORD,
-	       dwValue: DWORD
-		 Set@MP typedef ptr Set@CT
-		    Set Set@MP ?
-
-	       Query@CT typedef proto \
-		 pThis: ptr IRpcOptions,
-		  pPrx: ptr IUnknown,
-	    dwProperty: DWORD,
-	      pdwValue: LPDWORD
-	       Query@MP typedef ptr Query@CT
-		  Query Query@MP ?
-
-	  CopyProxy2@CT typedef proto \
-		 pThis: ptr IRpcOptions,
-	     punkProxy: ptr IUnknown,
-	     ppunkCopy: ptr IUnknown
-	  CopyProxy2@MP typedef ptr CopyProxy2@CT
-	      CopyProxy CopyProxy2@MP ?
+		    Set PVOID ?
+		  Query PVOID ?
+	      CopyProxy PVOID ?
 
 	END_INTERFACE
 
@@ -7446,7 +6214,7 @@ IRpcOptions_CopyProxy_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 
@@ -7471,25 +6239,8 @@ IComBindingVtbl		STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-	 InitBinding@CT typedef proto \
-		 pThis: ptr IComBinding,
-       dwEndpointFlags: DWORD,
-	    dwNICFlags: DWORD,
-	  mbzReserved1: DWORD,
-	  mbzReserved2: DWORD,
-	    pszBinding: LPOLESTR
-	 InitBinding@MP typedef ptr InitBinding@CT
-	    InitBinding InitBinding@MP ?
-
-	QueryBinding@CT typedef proto \
-		 pThis: ptr IComBinding,
-      pdwEndpointFlags: LPDWORD,
-	   pdwNICFlags: LPDWORD,
-	  mbzReserved1: LPDWORD,
-	  mbzReserved2: LPDWORD,
-	   ppszBinding: ptr LPOLESTR
-	QueryBinding@MP typedef ptr QueryBinding@CT
-	   QueryBinding QueryBinding@MP ?
+	    InitBinding PVOID ?
+	   QueryBinding PVOID ?
 
 	END_INTERFACE
 
@@ -7539,13 +6290,13 @@ IComBinding_QueryBinding_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 
 
 
-endif 
+endif
 
 
 externdef		__MIDL_itf_objidl_0053_v0_0_c_ifspec:RPC_IF_HANDLE
@@ -7567,34 +6318,10 @@ IFillLockBytesVtbl	STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-	  FillAppend@CT typedef proto \
-		 pThis: ptr IFillLockBytes,
-		    pv: PVOID,
-		    cb: ULONG,
-	    pcbWritten: LPDWORD
-	  FillAppend@MP typedef ptr FillAppend@CT
-	     FillAppend FillAppend@MP ?
-
-	      FillAt@CT typedef proto \
-		 pThis: ptr IFillLockBytes,
-	      ulOffset: ULARGE_INTEGER,
-		    pv: PVOID,
-		    cb: ULONG,
-	    pcbWritten: LPDWORD
-	      FillAt@MP typedef ptr FillAt@CT
-		 FillAt FillAt@MP ?
-
-	 SetFillSize@CT typedef proto \
-		 pThis: ptr IFillLockBytes,
-		ulSize: ULARGE_INTEGER
-	 SetFillSize@MP typedef ptr SetFillSize@CT
-	    SetFillSize SetFillSize@MP ?
-
-	   Terminate@CT typedef proto \
-		 pThis: ptr IFillLockBytes,
-	     bCanceled: BOOL
-	   Terminate@MP typedef ptr Terminate@CT
-	      Terminate Terminate@MP ?
+	     FillAppend PVOID ?
+		 FillAt PVOID ?
+	    SetFillSize PVOID ?
+	      Terminate PVOID ?
 
 	END_INTERFACE
 
@@ -7667,7 +6394,7 @@ IFillLockBytes_Terminate_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IProgressNotify_INTERFACE_DEFINED__
@@ -7686,14 +6413,7 @@ IProgressNotifyVtbl	STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-	  OnProgress@CT typedef proto \
-		 pThis: ptr IProgressNotify,
-     dwProgressCurrent: DWORD,
-     dwProgressMaximum: DWORD,
-	     fAccurate: BOOL,
-		fOwner: BOOL
-	  OnProgress@MP typedef ptr OnProgress@CT
-	     OnProgress OnProgress@MP ?
+	     OnProgress PVOID ?
 
 	END_INTERFACE
 
@@ -7724,7 +6444,7 @@ IProgressNotify_OnProgress_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __ILayoutStorage_INTERFACE_DEFINED__
@@ -7750,35 +6470,11 @@ ILayoutStorageVtbl	STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-	LayoutScript@CT typedef proto \
-		 pThis: ptr ILayoutStorage,
-	pStorageLayout: ptr StorageLayout,
-	      nEntries: DWORD,
-    glfInterleavedFlag: DWORD
-	LayoutScript@MP typedef ptr LayoutScript@CT
-	   LayoutScript LayoutScript@MP ?
-
-	BeginMonitor@CT typedef proto \
-		 pThis: ptr ILayoutStorage
-	BeginMonitor@MP typedef ptr BeginMonitor@CT
-	   BeginMonitor BeginMonitor@MP ?
-
-	  EndMonitor@CT typedef proto \
-		 pThis: ptr ILayoutStorage
-	  EndMonitor@MP typedef ptr EndMonitor@CT
-	     EndMonitor EndMonitor@MP ?
-
-     ReLayoutDocfile@CT typedef proto \
-		 pThis: ptr ILayoutStorage,
-	 pwcsNewDfName: ptr OLECHAR
-     ReLayoutDocfile@MP typedef ptr ReLayoutDocfile@CT
-	ReLayoutDocfile ReLayoutDocfile@MP ?
-
-ReLayoutDocfileOnILockBytes@CT typedef proto \
-		 pThis: ptr ILayoutStorage,
-	   pILockBytes: ptr ILockBytes
-ReLayoutDocfileOnILockBytes@MP typedef ptr ReLayoutDocfileOnILockBytes@CT
-ReLayoutDocfileOnILockBytes ReLayoutDocfileOnILockBytes@MP ?
+	   LayoutScript PVOID ?
+	   BeginMonitor PVOID ?
+	     EndMonitor PVOID ?
+	ReLayoutDocfile PVOID ?
+ReLayoutDocfileOnILockBytes PVOID ?
 
 	END_INTERFACE
 
@@ -7862,7 +6558,7 @@ ILayoutStorage_ReLayoutDocfileOnILockBytes_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __ISurrogate_INTERFACE_DEFINED__
@@ -7883,16 +6579,8 @@ ISurrogateVtbl		STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-       LoadDllServer@CT typedef proto \
-		 pThis: ptr ISurrogate,
-		 Clsid: REFCLSID
-       LoadDllServer@MP typedef ptr LoadDllServer@CT
-	  LoadDllServer LoadDllServer@MP ?
-
-       FreeSurrogate@CT typedef proto \
-		 pThis: ptr ISurrogate
-       FreeSurrogate@MP typedef ptr FreeSurrogate@CT
-	  FreeSurrogate FreeSurrogate@MP ?
+	  LoadDllServer PVOID ?
+	  FreeSurrogate PVOID ?
 
 	END_INTERFACE
 
@@ -7933,7 +6621,7 @@ ISurrogate_FreeSurrogate_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IGlobalInterfaceTable_INTERFACE_DEFINED__
@@ -7955,27 +6643,9 @@ IGlobalInterfaceTableVtbl STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-RegisterInterfaceInGlobal@CT typedef proto \
-		 pThis: ptr IGlobalInterfaceTable,
-		  pUnk: ptr IUnknown,
-		  riid: REFIID,
-	     pdwCookie: LPDWORD
-RegisterInterfaceInGlobal@MP typedef ptr RegisterInterfaceInGlobal@CT
-RegisterInterfaceInGlobal RegisterInterfaceInGlobal@MP ?
-
-RevokeInterfaceFromGlobal@CT typedef proto \
-		 pThis: ptr IGlobalInterfaceTable,
-	      dwCookie: DWORD
-RevokeInterfaceFromGlobal@MP typedef ptr RevokeInterfaceFromGlobal@CT
-RevokeInterfaceFromGlobal RevokeInterfaceFromGlobal@MP ?
-
-GetInterfaceFromGlobal@CT typedef proto \
-		 pThis: ptr IGlobalInterfaceTable,
-	      dwCookie: DWORD,
-		  riid: REFIID,
-		   ppv: PVOID
-GetInterfaceFromGlobal@MP typedef ptr GetInterfaceFromGlobal@CT
- GetInterfaceFromGlobal GetInterfaceFromGlobal@MP ?
+RegisterInterfaceInGlobal PVOID ?
+RevokeInterfaceFromGlobal PVOID ?
+ GetInterfaceFromGlobal PVOID ?
 
 	END_INTERFACE
 
@@ -8033,7 +6703,7 @@ IGlobalInterfaceTable_GetInterfaceFromGlobal_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IDirectWriterLock_INTERFACE_DEFINED__
@@ -8052,21 +6722,9 @@ IDirectWriterLockVtbl	STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-  WaitForWriteAccess@CT typedef proto \
-		 pThis: ptr IDirectWriterLock,
-	     dwTimeout: DWORD
-  WaitForWriteAccess@MP typedef ptr WaitForWriteAccess@CT
-     WaitForWriteAccess WaitForWriteAccess@MP ?
-
-  ReleaseWriteAccess@CT typedef proto \
-		 pThis: ptr IDirectWriterLock
-  ReleaseWriteAccess@MP typedef ptr ReleaseWriteAccess@CT
-     ReleaseWriteAccess ReleaseWriteAccess@MP ?
-
-     HaveWriteAccess@CT typedef proto \
-		 pThis: ptr IDirectWriterLock
-     HaveWriteAccess@MP typedef ptr HaveWriteAccess@CT
-	HaveWriteAccess HaveWriteAccess@MP ?
+     WaitForWriteAccess PVOID ?
+     ReleaseWriteAccess PVOID ?
+	HaveWriteAccess PVOID ?
 
 	END_INTERFACE
 
@@ -8118,7 +6776,7 @@ IDirectWriterLock_HaveWriteAccess_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __ISynchronize_INTERFACE_DEFINED__
@@ -8137,18 +6795,9 @@ ISynchronizeVtbl	STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-	       _Wait@CT typedef proto \
-		 pThis: ptr ISynchronize,
-	dwMilliseconds: DWORD
-	       _Wait@MP typedef ptr _Wait@CT
-		  _Wait _Wait@MP ?
-
-	      Signal@CT typedef proto \
-		 pThis: ptr ISynchronize
-	      Signal@MP typedef ptr Signal@CT
-		 Signal Signal@MP ?
-
-		  Reset Reset@MP ?
+		  _Wait PVOID ?
+		 Signal PVOID ?
+		  Reset PVOID ?
 
 	END_INTERFACE
 
@@ -8201,7 +6850,7 @@ ISynchronize_Reset_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __ISynchronizeMutex_INTERFACE_DEFINED__
@@ -8220,23 +6869,10 @@ ISynchronizeMutexVtbl	STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-	       Wait2@CT typedef proto \
-		 pThis: ptr ISynchronizeMutex,
-	dwMilliseconds: DWORD
-	       Wait2@MP typedef ptr Wait2@CT
-		  _Wait Wait2@MP ?
-
-	     Signal2@CT typedef proto \
-		 pThis: ptr ISynchronizeMutex
-	     Signal2@MP typedef ptr Signal2@CT
-		 Signal Signal2@MP ?
-
-		  Reset Reset@MP ?
-
-	ReleaseMutex@CT typedef proto \
-		 pThis: ptr ISynchronizeMutex
-	ReleaseMutex@MP typedef ptr ReleaseMutex@CT
-	   ReleaseMutex ReleaseMutex@MP ?
+		  _Wait PVOID ?
+		 Signal PVOID ?
+		  Reset PVOID ?
+	   ReleaseMutex PVOID ?
 
 	END_INTERFACE
 
@@ -8262,7 +6898,7 @@ ISynchronizeMutex_ReleaseMutex_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IAsyncSetup_INTERFACE_DEFINED__
@@ -8281,15 +6917,7 @@ IAsyncSetupVtbl		STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-     GetAsyncManager@CT typedef proto \
-		 pThis: ptr IAsyncSetup,
-		  riid: REFIID,
-		pOuter: ptr IUnknown,
-	       dwFlags: DWORD,
-	       ppInner: ptr IUnknown,
-	    ppAsyncMgr: ptr IAsyncManager
-     GetAsyncManager@MP typedef ptr GetAsyncManager@CT
-	GetAsyncManager GetAsyncManager@MP ?
+	GetAsyncManager PVOID ?
 
 	END_INTERFACE
 
@@ -8321,7 +6949,7 @@ IAsyncSetup_GetAsyncManager_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __ICancelMethodCalls_INTERFACE_DEFINED__
@@ -8343,21 +6971,9 @@ ICancelMethodCallsVtbl	STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-	     Cancel2@CT typedef proto \
-		 pThis: ptr ICancelMethodCalls
-	     Cancel2@MP typedef ptr Cancel2@CT
-		 Cancel Cancel2@MP ?
-
-	  TestCancel@CT typedef proto \
-		 pThis: ptr ICancelMethodCalls
-	  TestCancel@MP typedef ptr TestCancel@CT
-	     TestCancel TestCancel@MP ?
-
-    SetCancelTimeout@CT typedef proto \
-		 pThis: ptr ICancelMethodCalls,
-	     ulSeconds: ULONG
-    SetCancelTimeout@MP typedef ptr SetCancelTimeout@CT
-       SetCancelTimeout SetCancelTimeout@MP ?
+		 Cancel PVOID ?
+	     TestCancel PVOID ?
+       SetCancelTimeout PVOID ?
 
 	END_INTERFACE
 
@@ -8411,7 +7027,7 @@ ICancelMethodCalls_SetCancelTimeout_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IAsyncManager_INTERFACE_DEFINED__
@@ -8433,24 +7049,9 @@ IAsyncManagerVtbl	STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-	CompleteCall@CT typedef proto \
-		 pThis: ptr IAsyncManager,
-		Result: HRESULT
-	CompleteCall@MP typedef ptr CompleteCall@CT
-	   CompleteCall CompleteCall@MP ?
-
-     GetCallContext2@CT typedef proto \
-		 pThis: ptr IAsyncManager,
-		  riid: REFIID,
-	    pInterface: PVOID
-     GetCallContext2@MP typedef ptr GetCallContext2@CT
-	 GetCallContext GetCallContext2@MP ?
-
-	   GetState2@CT typedef proto \
-		 pThis: ptr IAsyncManager,
-	 pulStateFlags: LPDWORD
-	   GetState2@MP typedef ptr GetState2@CT
-	       GetState GetState2@MP ?
+	   CompleteCall PVOID ?
+	 GetCallContext PVOID ?
+	       GetState PVOID ?
 
 	END_INTERFACE
 
@@ -8507,7 +7108,7 @@ IAsyncManager_GetState_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IWaitMultiple_INTERFACE_DEFINED__
@@ -8526,18 +7127,8 @@ IWaitMultipleVtbl	STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-	WaitMultiple@CT typedef proto \
-		 pThis: ptr IWaitMultiple,
-	       timeout: DWORD,
-		 pSync: ptr ISynchronize
-	WaitMultiple@MP typedef ptr WaitMultiple@CT
-	   WaitMultiple WaitMultiple@MP ?
-
-      AddSynchronize@CT typedef proto \
-		 pThis: ptr IWaitMultiple,
-		 pSync: ptr ISynchronize
-      AddSynchronize@MP typedef ptr AddSynchronize@CT
-	 AddSynchronize AddSynchronize@MP ?
+	   WaitMultiple PVOID ?
+	 AddSynchronize PVOID ?
 
 	END_INTERFACE
 
@@ -8580,7 +7171,7 @@ IWaitMultiple_AddSynchronize_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __ISynchronizeEvent_INTERFACE_DEFINED__
@@ -8599,11 +7190,7 @@ ISynchronizeEventVtbl	STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-	    GetEvent@CT typedef proto \
-		 pThis: ptr ISynchronizeEvent,
-		pEvent: ptr HANDLE
-	    GetEvent@MP typedef ptr GetEvent@CT
-	       GetEvent GetEvent@MP ?
+	       GetEvent PVOID ?
 
 	END_INTERFACE
 
@@ -8631,7 +7218,7 @@ ISynchronizeEvent_GetEvent_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IUrlMon_INTERFACE_DEFINED__
@@ -8650,20 +7237,7 @@ IUrlMonVtbl		STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-   AsyncGetClassBits@CT typedef proto \
-		 pThis: ptr IUrlMon,
-		rclsid: REFCLSID,
-	       pszTYPE: LPCWSTR,
-		pszExt: LPCWSTR,
-       dwFileVersionMS: DWORD,
-       dwFileVersionLS: DWORD,
-	   pszCodeBase: LPCWSTR,
-		   pbc: ptr IBindCtx,
-	dwClassContext: DWORD,
-		  riid: REFIID,
-		 flags: DWORD
-   AsyncGetClassBits@MP typedef ptr AsyncGetClassBits@CT
-      AsyncGetClassBits AsyncGetClassBits@MP ?
+      AsyncGetClassBits PVOID ?
 
 	END_INTERFACE
 
@@ -8700,7 +7274,7 @@ IUrlMon_AsyncGetClassBits_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IClassAccess_INTERFACE_DEFINED__
@@ -8725,28 +7299,9 @@ IClassAccessVtbl	STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-	GetClassInfo@CT typedef proto \
-		 pThis: ptr IClassAccess,
-		 clsid: REFCLSID,
-	    QryContext: QUERYCONTEXT,
-	  pPackageInfo: ptr PACKAGEINFO
-	GetClassInfo@MP typedef ptr GetClassInfo@CT
-	   GetClassInfo GetClassInfo@MP ?
-
-    GetClassSpecInfo@CT typedef proto \
-		 pThis: ptr IClassAccess,
-	    pClassSpec: ptr uCLSSPEC,
-	    QryContext: QUERYCONTEXT,
-	  pPackageInfo: ptr PACKAGEINFO
-    GetClassSpecInfo@MP typedef ptr GetClassSpecInfo@CT
-       GetClassSpecInfo GetClassSpecInfo@MP ?
-
-GetInstallablePackages@CT typedef proto \
-		 pThis: ptr IClassAccess,
-		 Count: DWORD,
-	     pInfoList: ptr PUBLISHEDINFOLIST
-GetInstallablePackages@MP typedef ptr GetInstallablePackages@CT
- GetInstallablePackages GetInstallablePackages@MP ?
+	   GetClassInfo PVOID ?
+       GetClassSpecInfo PVOID ?
+ GetInstallablePackages PVOID ?
 
 	END_INTERFACE
 
@@ -8807,7 +7362,7 @@ IClassAccess_GetInstallablePackages_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IClassRefresh_INTERFACE_DEFINED__
@@ -8831,20 +7386,8 @@ IClassRefreshVtbl	STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-	 GetUpgrades@CT typedef proto \
-		 pThis: ptr IClassRefresh,
-	      cClasses: ULONG,
-	    pClassList: ptr CLSID,
-	      Platform: CSPLATFORM,
-		Locale: LCID,
-      pPackageInfoList: ptr PACKAGEINFOLIST
-	 GetUpgrades@MP typedef ptr GetUpgrades@CT
-	    GetUpgrades GetUpgrades@MP ?
-
-      CommitUpgrades@CT typedef proto \
-		 pThis: ptr IClassRefresh
-      CommitUpgrades@MP typedef ptr CommitUpgrades@CT
-	 CommitUpgrades CommitUpgrades@MP ?
+	    GetUpgrades PVOID ?
+	 CommitUpgrades PVOID ?
 
 	END_INTERFACE
 
@@ -8889,7 +7432,7 @@ IClassRefresh_CommitUpgrades_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 
@@ -9003,7 +7546,7 @@ IEnumPackage_Clone_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 ifndef __IEnumClass_INTERFACE_DEFINED__
@@ -9094,7 +7637,7 @@ IEnumClass_Clone_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 
@@ -9122,84 +7665,17 @@ IClassAdminVtbl		STRUC
 		 AddRef AddRef@MP ?
 		Release Release@MP ?
 
-	    NewClass@CT typedef proto \
-		 pThis: ptr IClassAdmin,
-	  pClassDetail: ptr CLASSDETAIL
-	    NewClass@MP typedef ptr NewClass@CT
-	       NewClass NewClass@MP ?
-
-	 DeleteClass@CT typedef proto \
-		 pThis: ptr IClassAdmin,
-	     guidClsId: REFCLSID
-	 DeleteClass@MP typedef ptr DeleteClass@CT
-	    DeleteClass DeleteClass@MP ?
-
-	NewInterface@CT typedef proto \
-		 pThis: ptr IClassAdmin,
-		   iid: REFIID,
-	       pszDesc: LPOLESTR,
-	       psclsid: REFCLSID,
-	     typelibid: REFCLSID
-	NewInterface@MP typedef ptr NewInterface@CT
-	   NewInterface NewInterface@MP ?
-
-     DeleteInterface@CT typedef proto \
-		 pThis: ptr IClassAdmin,
-		   iid: REFIID
-     DeleteInterface@MP typedef ptr DeleteInterface@CT
-	DeleteInterface DeleteInterface@MP ?
-
-	  NewPackage@CT typedef proto \
-		 pThis: ptr IClassAdmin,
-	pPackageDetail: ptr PACKAGEDETAIL
-	  NewPackage@MP typedef ptr NewPackage@CT
-	     NewPackage NewPackage@MP ?
-
-       DeletePackage@CT typedef proto \
-		 pThis: ptr IClassAdmin,
-	pszPackageName: LPOLESTR
-       DeletePackage@MP typedef ptr DeletePackage@CT
-	  DeletePackage DeletePackage@MP ?
-
-      GetClassesEnum@CT typedef proto \
-		 pThis: ptr IClassAdmin,
-	  ppIEnumClass: ptr IEnumClass
-      GetClassesEnum@MP typedef ptr GetClassesEnum@CT
-	 GetClassesEnum GetClassesEnum@MP ?
-
-     GetPackagesEnum@CT typedef proto \
-		 pThis: ptr IClassAdmin,
-	     guidClsid: REFCLSID,
-	     pszVendor: LPOLESTR,
-	      Platform: CSPLATFORM,
-	     dwContext: DWORD,
-		Locale: LCID,
-	ppIEnumPackage: ptr IEnumPackage
-     GetPackagesEnum@MP typedef ptr GetPackagesEnum@CT
-	GetPackagesEnum GetPackagesEnum@MP ?
-
-     GetClassDetails@CT typedef proto \
-		 pThis: ptr IClassAdmin,
-	     guidClsId: REFCLSID,
-	  pClassDetail: ptr CLASSDETAIL
-     GetClassDetails@MP typedef ptr GetClassDetails@CT
-	GetClassDetails GetClassDetails@MP ?
-
-       GetIidDetails@CT typedef proto \
-		 pThis: ptr IClassAdmin,
-		   iid: REFIID,
-	      ppszDesc: ptr LPOLESTR,
-	       psClsid: ptr CLSID,
-	    pTypeLibId: ptr CLSID
-       GetIidDetails@MP typedef ptr GetIidDetails@CT
-	  GetIidDetails GetIidDetails@MP ?
-
-   GetPackageDetails@CT typedef proto \
-		 pThis: ptr IClassAdmin,
-	pszPackageName: LPOLESTR,
-	pPackageDetail: ptr PACKAGEDETAIL
-   GetPackageDetails@MP typedef ptr GetPackageDetails@CT
-      GetPackageDetails GetPackageDetails@MP ?
+	       NewClass PVOID ?
+	    DeleteClass PVOID ?
+	   NewInterface PVOID ?
+	DeleteInterface PVOID ?
+	     NewPackage PVOID ?
+	  DeletePackage PVOID ?
+	 GetClassesEnum PVOID ?
+	GetPackagesEnum PVOID ?
+	GetClassDetails PVOID ?
+	  GetIidDetails PVOID ?
+      GetPackageDetails PVOID ?
 
 	END_INTERFACE
 
@@ -9378,7 +7854,7 @@ IClassAdmin_GetPackageDetails_Stub proto WINAPI \
 
 
 
-endif	
+endif
 
 
 

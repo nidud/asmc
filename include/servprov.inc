@@ -5,11 +5,11 @@ include rpc.inc
 include rpcndr.inc
 ifndef __RPCNDR_H_VERSION__
 .err LT this stub requires an updated version of rpcndr.inc GT
-endif 
+endif
 ifndef COM_NO_WINDOWS_H
 include windows.inc
 include ole2.inc
-endif 
+endif
 ifndef __servprov_h__
 .xlist
 __servprov_h__ equ 1
@@ -17,24 +17,17 @@ __servprov_h__ equ 1
 
 ifndef __IServiceProvider_FWD_DEFINED__
 __IServiceProvider_FWD_DEFINED__ equ 1
-endif	
+endif
 
 
 include objidl.inc
 .xlist
 
-;PVOID
 ;void
-MIDL_user_free proto WINAPI \
-		      : PVOID
-
-
-
-
+MIDL_user_free proto WINAPI :PVOID
 
 ifndef _LPSERVICEPROVIDER_DEFINED
 _LPSERVICEPROVIDER_DEFINED equ 1
-
 
 externdef		__MIDL_itf_servprov_0000_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef		__MIDL_itf_servprov_0000_v0_0_s_ifspec:RPC_IF_HANDLE
@@ -44,41 +37,16 @@ __IServiceProvider_INTERFACE_DEFINED__ equ 1
 
 LPSERVICEPROVIDER	typedef ptr IServiceProvider
 
-
 externdef		IID_IServiceProvider:IID
 
 IServiceProviderVtbl	STRUC
 
 	BEGIN_INTERFACE
 
-    QueryInterface52@CT typedef proto \
-		 pThis: ptr IServiceProvider,
-		  riid: REFIID,
-	     ppvObject: PVOID
-
-    QueryInterface52@MP typedef ptr QueryInterface52@CT
-	 QueryInterface QueryInterface52@MP ?
-
-	    AddRef52@CT typedef proto \
-		 pThis: ptr IServiceProvider
-
-	    AddRef52@MP typedef ptr AddRef52@CT
-		 AddRef AddRef52@MP ?
-
-	   Release52@CT typedef proto \
-		 pThis: ptr IServiceProvider
-
-	   Release52@MP typedef ptr Release52@CT
-		Release Release52@MP ?
-
-      QueryService52@CT typedef proto \
-		 pThis: ptr IServiceProvider,
-	   guidService: REFGUID,
-		  riid: REFIID,
-	     ppvObject: PVOID
-
-      QueryService52@MP typedef ptr QueryService52@CT
-	   QueryService QueryService52@MP ?
+	 QueryInterface PVOID ?
+		 AddRef PVOID ?
+		Release PVOID ?
+	   QueryService PVOID ?
 
 	END_INTERFACE
 
@@ -89,11 +57,6 @@ IServiceProvider	STRUC
 lpVtbl			LPIServiceProviderVtbl ?
 IServiceProvider	ENDS
 
-
-
-
-
-
 ;HRESULT
 IServiceProvider_RemoteQueryService_Proxy proto WINAPI \
 		 pThis: ptr IServiceProvider,
@@ -101,25 +64,17 @@ IServiceProvider_RemoteQueryService_Proxy proto WINAPI \
 		  riid: REFIID,
 	     ppvObject: ptr IUnknown
 
-
-
 ;void
 IServiceProvider_RemoteQueryService_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
 	 _pdwStubPhase: ptr DWORD
-
-
-
-
-endif	
 endif
-
+endif
 
 externdef		__MIDL_itf_servprov_0074_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef		__MIDL_itf_servprov_0074_v0_0_s_ifspec:RPC_IF_HANDLE
-
 
 ;HRESULT
 IServiceProvider_QueryService_Proxy proto WINAPI \
@@ -127,8 +82,6 @@ IServiceProvider_QueryService_Proxy proto WINAPI \
 	   guidService: REFGUID,
 		  riid: REFIID,
 	     ppvObject: PVOID
-
-
 
 ;HRESULT
 IServiceProvider_QueryService_Stub proto WINAPI \

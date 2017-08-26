@@ -433,9 +433,9 @@ static void GetSwitchArg( int reg, int flags, char *arg )
 		AddLineQueueX( "mov %r,%s", reg, arg );
 	} else if ( flags & HLLF_ARGMEM ) {
 
-	    AddLineQueueX( "movsx %r,DWORD PTR %s", reg, arg );
+	    AddLineQueueX( "movsxd %r,DWORD PTR %s", reg, arg );
 	} else {
-	    AddLineQueueX( "movsx %r,%s", reg, arg );
+	    AddLineQueueX( "movsxd %r,%s", reg, arg );
 	}
     } else {
 

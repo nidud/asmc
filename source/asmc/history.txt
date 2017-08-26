@@ -3,6 +3,8 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.25 - xx xxx 2017
+- fixed bug in 64-bit table-switch
+- added UNDEF directive
 - added quadruple precision to all float numbers
 - fixed bug in list output -- zero
 - added .ifc and .ifnc (same as .ifb/.ifnb)

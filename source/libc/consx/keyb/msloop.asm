@@ -1,12 +1,14 @@
 include consx.inc
 
-	.code
+    .code
 
-msloop	PROC
-	.repeat
-		mousep()
-	.until	ZERO?
-	ret
-msloop	ENDP
+msloop proc
 
-	END
+    .repeat
+        mousep()
+    .untilz
+    ret
+
+msloop endp
+
+    END

@@ -1,16 +1,15 @@
 include time.inc
 
-	.code
+    .code
 
-TDateToString PROC string:ptr sbyte, tptr:time_t
+TDateToString proc string:ptr sbyte, tptr:time_t
 
-local	SystemTime:SYSTEMTIME
+local SystemTime:SYSTEMTIME
 
-	__TimeToST( tptr, addr SystemTime )
+    __TimeToST(tptr, &SystemTime)
+    SystemDateToString(string, &SystemTime)
+    ret
 
-	SystemDateToString( string, addr SystemTime )
-	ret
+TDateToString endp
 
-TDateToString ENDP
-
-	END
+    END

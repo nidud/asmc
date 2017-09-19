@@ -1,47 +1,47 @@
 include conio.inc
 
-	.code
+.code
 
-	ASSUME	ebx:PTR INPUT_RECORD
+    assume ebx:ptr INPUT_RECORD
 
-_kbhit	PROC USES ebx edi esi
+_kbhit proc uses ebx edi esi
 
-  local Count:DWORD
+  local Count:dword
   local Event[MAXINPUTRECORDS]:INPUT_RECORD
 
-	xor edi,edi
-	lea ebx,Event
+    xor edi,edi
+    lea ebx,Event
 
-	.if GetNumberOfConsoleInputEvents( hStdInput, addr Count )
+    .if GetNumberOfConsoleInputEvents(hStdInput, &Count)
 
-		mov ecx,Count
-		.if ecx > MAXINPUTRECORDS
+        mov ecx,Count
+        .if ecx > MAXINPUTRECORDS
 
-			mov ecx,MAXINPUTRECORDS
-		.endif
+            mov ecx,MAXINPUTRECORDS
+        .endif
 
-		PeekConsoleInput( hStdInput, ebx, ecx, addr Count )
+        PeekConsoleInput(hStdInput, ebx, ecx, &Count)
 
-		mov	esi,Count
-		.while	esi
+        mov esi,Count
+        .while  esi
 
-			.if [ebx].INPUT_RECORD.EventType == KEY_EVENT && \
-			    [ebx].INPUT_RECORD.KeyEvent.bKeyDown
+            .if [ebx].INPUT_RECORD.EventType == KEY_EVENT && \
+                [ebx].INPUT_RECORD.KeyEvent.bKeyDown
 
-				movzx edi,[ebx].INPUT_RECORD.KeyEvent.AsciiChar
-				.break .if edi
-			.endif
+                movzx edi,[ebx].INPUT_RECORD.KeyEvent.AsciiChar
+                .break .if edi
+            .endif
 
-			ReadConsoleInput( hStdInput, ebx, 1, addr Count )
+            ReadConsoleInput(hStdInput, ebx, 1, &Count)
 
-			add ebx,SIZE INPUT_RECORD
-			dec esi
-		.endw
-	.endif
+            add ebx,SIZE INPUT_RECORD
+            dec esi
+        .endw
+    .endif
 
-	mov	eax,edi
-	ret
+    mov eax,edi
+    ret
 
-_kbhit	ENDP
+_kbhit endp
 
-	END
+    END

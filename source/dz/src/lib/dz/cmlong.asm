@@ -3,26 +3,26 @@
 
 include doszip.inc
 
-	.code
+    .code
 
-cmalong PROC
-	mov ecx,panela
-	jmp cmlong
-cmalong ENDP
+cmalong proc
+    mov ecx,panela
+    jmp cmlong
+cmalong endp
 
-cmblong PROC
-	mov ecx,panelb
-	jmp cmlong
-cmblong ENDP
+cmblong proc
+    mov ecx,panelb
+    jmp cmlong
+cmblong endp
 
-cmclong PROC
-	mov ecx,cpanel
-cmclong ENDP
+cmclong proc
+    mov ecx,cpanel
+cmclong endp
 
 cmlong:
-	mov edx,[ecx].S_PANEL.pn_wsub
-	xor [edx].S_WSUB.ws_flag,_W_LONGNAME
-	panel_update(ecx)
-	ret
+    mov edx,[ecx].S_PANEL.pn_wsub
+    xor [edx].S_WSUB.ws_flag,_W_LONGNAME
+    panel_update(ecx)
+    ret
 
-	END
+    END

@@ -1,12 +1,14 @@
 include consx.inc
 include stdio.inc
 
-	.code
+    .code
 
-scputf	PROC c USES edx ecx x, y, a, l, f:LPSTR, p:VARARG
-	ftobufin( f, addr p )
-	scputs( x, y, a, l, addr _bufin )
-	ret
-scputf	ENDP
+scputf proc c uses edx ecx x, y, a, l, f:LPSTR, p:VARARG
 
-	END
+    ftobufin(f, &p)
+    scputs(x, y, a, l, &_bufin)
+    ret
+
+scputf endp
+
+    END

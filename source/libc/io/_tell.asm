@@ -1,10 +1,12 @@
 include io.inc
 
-	.code
+.code
 
-_tell	proc handle:SINT
-	_lseek( handle, 0, SEEK_CUR )
-	ret
-_tell	endp
+_tell proc handle:SINT
 
-	end
+    _lseek(handle, 0, SEEK_CUR)
+    ret
+
+_tell endp
+
+    end

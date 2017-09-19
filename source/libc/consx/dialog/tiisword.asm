@@ -1,20 +1,22 @@
 include ltype.inc
 
-	.code
+    .code
 
-tiisword PROC
-	movzx eax,al
-	mov ah,byte ptr _ltype[eax+1]
-	test ah,_UPPER or _LOWER or _DIGIT
-	jnz toend
-	cmp al,'_'
-	jne @F
-	test al,al
-	ret
-@@:
-	cmp al,al
-toend:
-	ret
-tiisword ENDP
+tiisword proc
 
-	END
+    movzx eax,al
+    mov ah,byte ptr _ltype[eax+1]
+
+    .if !(ah & _UPPER or _LOWER or _DIGIT)
+
+        .if al == '_'
+            test al,al
+        .else
+            cmp al,al
+        .endif
+    .endif
+    ret
+
+tiisword endp
+
+    END

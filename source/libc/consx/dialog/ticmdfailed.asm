@@ -1,10 +1,10 @@
 include consx.inc
 
-	.code
+    .code
 
-ticmdfailed PROC
-	mov eax,_TE_CMFAILED ; operation fail (end of line/buffer)
-	ret
-ticmdfailed ENDP
+ticmdfailed proc
+    mov eax,_TE_CMFAILED ; operation fail (end of line/buffer)
+    ret
+ticmdfailed endp
 
-	END
+    END

@@ -1,21 +1,21 @@
 include io.inc
 include winbase.inc
 
-	.code
+.code
 
-rename	PROC Oldname:LPSTR, Newname:LPSTR
+rename proc Oldname:LPSTR, Newname:LPSTR
 
-	.if MoveFileA( Oldname, Newname )
+    .if MoveFileA(Oldname, Newname)
 
-		xor eax,eax
+        xor eax,eax
 ifdef __DZ__
-		mov _diskflag,1
+        mov _diskflag,1
 endif
-	.else
-		osmaperr()
-	.endif
-	ret
+    .else
+        osmaperr()
+    .endif
+    ret
 
-rename	ENDP
+rename endp
 
-	END
+    end

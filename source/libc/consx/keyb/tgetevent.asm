@@ -1,8 +1,8 @@
 include consx.inc
 
-	public	tgetevent
+    public  tgetevent
 
-	.data
-	tgetevent PVOID getevent
+    .data
+    tgetevent PVOID getevent
 
-	end
+    end

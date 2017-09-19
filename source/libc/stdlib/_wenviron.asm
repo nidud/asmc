@@ -1,15 +1,15 @@
 include stdlib.inc
 include crtl.inc
 
-	.data
-	_wenviron dd 0
+    .data
+    _wenviron dd 0
 
-	.code
+    .code
 
 install:
-	__wsetenvp( addr _wenviron )
-	ret
+    __wsetenvp(&_wenviron)
+    ret
 
 pragma_init install, 5
 
-	END
+    END

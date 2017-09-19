@@ -1,13 +1,13 @@
 include consx.inc
 
-	.code
+    .code
 
-wcmemset PROC USES edi string:PVOID, val, count
-	mov ecx,count
-	mov edi,string
-	mov eax,val
-	rep stosw
-	ret
-wcmemset ENDP
+wcmemset proc uses edi string:PVOID, val, count
+    mov ecx,count
+    mov edi,string
+    mov eax,val
+    rep stosw
+    ret
+wcmemset endp
 
-	END
+    END

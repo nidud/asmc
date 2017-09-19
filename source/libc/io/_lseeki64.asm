@@ -1,29 +1,29 @@
 include io.inc
 include winbase.inc
 
-	.code
+.code
 
-_lseeki64 PROC handle:SINT, offs:QWORD, pos:DWORD
+_lseeki64 proc handle:SINT, offs:QWORD, pos:DWORD
 
-local	lpNewFilePointer:QWORD
+local lpNewFilePointer:QWORD
 
-	.if	getosfhnd( handle ) != -1
+    .if getosfhnd(handle) != -1
 
-		mov ecx,eax
-		lea eax,lpNewFilePointer
+        mov ecx,eax
+        lea eax,lpNewFilePointer
 
-		.if !SetFilePointerEx( ecx, offs, eax, pos )
+        .if !SetFilePointerEx(ecx, offs, eax, pos)
 
-			osmaperr()
-			mov edx,eax
-		.else
-			mov eax,DWORD PTR lpNewFilePointer
-			mov edx,DWORD PTR lpNewFilePointer[4]
-		.endif
-	.else
-		mov edx,eax
-	.endif
-	ret
+            osmaperr()
+            mov edx,eax
+        .else
+            mov eax,DWORD PTR lpNewFilePointer
+            mov edx,DWORD PTR lpNewFilePointer[4]
+        .endif
+    .else
+        mov edx,eax
+    .endif
+    ret
 _lseeki64 ENDP
 
-	END
+    END

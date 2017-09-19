@@ -1,21 +1,24 @@
 include io.inc
 include crtl.inc
+include errno.inc
 
-	.code
+    .code
 
-_access PROC file:LPSTR, amode
+_access proc file:LPSTR, amode
 
-	.if getfattr( file ) != -1
+    .if getfattr(file) == -1
 
-		.if amode == 2 && eax & _A_RDONLY
+        osmaperr()
 
-			mov eax,-1
-		.else
-			xor eax,eax
-		.endif
-	.endif
-	ret
+    .elseif amode & 2 && eax & _A_RDONLY
 
-_access ENDP
+        mov errno,EACCES
+        mov eax,-1
+    .else
+        xor eax,eax
+    .endif
+    ret
 
-	END
+_access endp
+
+    END

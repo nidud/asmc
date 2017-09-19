@@ -1,13 +1,13 @@
 include io.inc
 include share.inc
 
-	.code
+.code
 
-_wopen	PROC c path:LPWSTR, oflag:SINT, args:VARARG
+_wopen proc c path:LPWSTR, oflag:SINT, args:VARARG
 
-	_wsopen( path, oflag, SH_DENYNO, addr args )
-	ret
+    _wsopen(path, oflag, SH_DENYNO, &args)
+    ret
 
-_wopen	ENDP
+_wopen endp
 
-	END
+    end

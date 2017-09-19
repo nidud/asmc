@@ -1,19 +1,19 @@
 include cfini.inc
 
-	.code
+    .code
 
-CFExpandCmd PROC buffer:LPSTR, __file:LPSTR, __section:LPSTR
+CFExpandCmd proc buffer:LPSTR, __file:LPSTR, __section:LPSTR
 
-	mov	eax,__CFBase
-	.if	eax
+    mov eax,__CFBase
+    .if eax
 
-		.if	__CFGetSection( eax, __section )
+        .if __CFGetSection(eax, __section)
 
-			__CFExpandCmd( eax, buffer, __file )
-		.endif
-	.endif
-	ret
+            __CFExpandCmd(eax, buffer, __file)
+        .endif
+    .endif
+    ret
 
-CFExpandCmd ENDP
+CFExpandCmd endp
 
-	END
+    END

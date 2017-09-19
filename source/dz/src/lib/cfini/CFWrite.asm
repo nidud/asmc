@@ -1,16 +1,16 @@
 include cfini.inc
 
-	.code
+    .code
 
-CFWrite PROC __file:LPSTR
+CFWrite proc __file:LPSTR
 
-	mov	eax,__CFBase
-	.if	eax
+    mov eax,__CFBase
+    .if eax
 
-		__CFWrite( eax, __file )
-	.endif
-	ret
+        __CFWrite(eax, __file)
+    .endif
+    ret
 
-CFWrite ENDP
+CFWrite endp
 
-	END
+    END

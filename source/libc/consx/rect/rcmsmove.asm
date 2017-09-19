@@ -1,72 +1,91 @@
 include consx.inc
 
-	.code
+    .code
 
-rcmsmove PROC USES esi edi ebx rc:ptr S_RECT, wp:PVOID, fl:DWORD
+rcmsmove proc uses esi edi ebx rc:ptr S_RECT, wp:PVOID, fl:dword
 
-local	xpos,ypos
-local	relx,rely
-local	cursor:S_CURSOR
+  local xpos,ypos
+  local relx,rely
+  local cursor:S_CURSOR
 
-	mov edi,rc
-	mov ebx,[edi]
-	.if fl & _D_SHADE
-		rcclrshade( ebx, wp )
-	.endif
-	call	mousey
-	mov	ypos,eax
-	mov	edx,eax
-	call	mousex
-	mov	xpos,eax
-	sub	al,bl
-	mov	relx,eax
-	sub	dl,bh
-	mov	rely,edx
-	CursorGet( addr cursor )
-	CursorOff()
+    mov edi,rc
+    mov ebx,[edi]
+    .if fl & _D_SHADE
 
-	.while	mousep() == 1
+        rcclrshade(ebx, wp)
+    .endif
 
-		xor esi,esi
-		.if mousex() > xpos
-			mov esi,rcmoveright
-		.elseif CARRY?
-			.if bl
-				mov esi,rcmoveleft
-			.endif
-		.endif
-		.if !esi
-			.if mousey() > ypos
-				mov esi,rcmovedn
-			.elseif CARRY?
-				.if bh != 1
-					mov esi,rcmoveup
-				.endif
-			.endif
-		.endif
-		.if esi
-			mov ecx,fl
-			and ecx,not _D_SHADE
-			push ecx
-			push wp
-			push ebx
-			call esi
-			mov ebx,eax
-			mov edx,eax
-			mov eax,rely
-			add al,dh
-			mov ypos,eax
-			mov eax,relx
-			add al,dl
-			mov xpos,eax
-		.endif
-	.endw
-	CursorSet( addr cursor )
-	.if fl & _D_SHADE
-		rcsetshade( ebx, wp )
-	.endif
-	mov [edi],ebx
-	ret
-rcmsmove ENDP
+    mov ypos,mousey()
+    mov edx,eax
+    mov xpos,mousex()
+    sub al,bl
+    mov relx,eax
+    sub dl,bh
+    mov rely,edx
 
-	END
+    CursorGet(&cursor)
+    CursorOff()
+
+    .while mousep() == 1
+
+        xor esi,esi
+        .if mousex() > xpos
+
+            mov esi,1
+
+        .elseif CARRY?
+
+            .if bl
+
+                mov esi,2
+            .endif
+        .endif
+
+        .if !esi
+
+            .if mousey() > ypos
+
+                mov esi,3
+
+            .elseif CARRY?
+
+                .if bh != 1
+
+                    mov esi,4
+                .endif
+            .endif
+        .endif
+
+        mov ecx,fl
+        and ecx,not _D_SHADE
+
+        .switch esi
+          .case 1 : rcmoveright(ebx, wp, ecx) : .endc
+          .case 2 : rcmoveleft(ebx, wp, ecx)  : .endc
+          .case 3 : rcmovedn(ebx, wp, ecx)    : .endc
+          .case 4 : rcmoveup(ebx, wp, ecx)    : .endc
+        .endsw
+
+        .if esi
+            mov ebx,eax
+            mov edx,eax
+            mov eax,rely
+            add al,dh
+            mov ypos,eax
+            mov eax,relx
+            add al,dl
+            mov xpos,eax
+        .endif
+    .endw
+
+    CursorSet(&cursor)
+    .if fl & _D_SHADE
+
+        rcsetshade(ebx, wp)
+    .endif
+    mov [edi],ebx
+    ret
+
+rcmsmove endp
+
+    END

@@ -11,7 +11,7 @@ PUBLIC	_pgmpath
 
 	.code
 
-Install PROC PRIVATE USES edi
+Install proc private uses edi
 local	path[256]
 
 	lea edi,path
@@ -25,7 +25,7 @@ local	path[256]
 	.endif
 	ret
 
-Install ENDP
+Install endp
 
 pragma_init Install, 30
 

@@ -1,34 +1,34 @@
 include consx.inc
 include winuser.inc
 
-	.code
+    .code
 
-ConsoleIdle PROC
+ConsoleIdle proc
 
-	.if console & CON_SLEEP
+    .if console & CON_SLEEP
 
-		Sleep(CON_SLEEP_TIME)
+        Sleep(CON_SLEEP_TIME)
 
 ifdef DEBUG
-		mov eax,hCurrentWindow
+        mov eax,hCurrentWindow
 else
-		.if GetForegroundWindow() != hCurrentWindow
+        .if GetForegroundWindow() != hCurrentWindow
 
-			mov eax,keyshift
-			and DWORD PTR [eax],not 0x00FF030F
+            mov eax,keyshift
+            and dword ptr [eax],not 0x00FF030F
 
-			.while	GetForegroundWindow() != hCurrentWindow
+            .while  GetForegroundWindow() != hCurrentWindow
 
-				Sleep(CON_SLEEP_TIME * 10)
-				.break .if tupdate()
-			.endw
-		.endif
+                Sleep(CON_SLEEP_TIME * 10)
+                .break .if tupdate()
+            .endw
+        .endif
 endif
-	.endif
+    .endif
 
-	tupdate()
-	ret
+    tupdate()
+    ret
 
-ConsoleIdle ENDP
+ConsoleIdle endp
 
-	END
+    END

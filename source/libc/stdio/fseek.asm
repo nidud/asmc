@@ -2,60 +2,64 @@ include stdio.inc
 include errno.inc
 include winbase.inc
 
-	.code
+    .code
 
-	ASSUME	ebx: LPFILE
+    assume ebx:LPFILE
 
 fseek proc uses ebx fp:LPFILE, off:ULONG, whence:SIZE_T
 
-	mov ebx,fp
-	mov eax,whence
-	.if eax != SEEK_SET && eax != SEEK_CUR && eax != SEEK_END
+    mov ebx,fp
 
-		jmp error
-	.endif
+    .repeat
 
-	mov edx,eax
-	mov eax,[ebx]._flag
-	.if !( eax & _IOREAD or _IOWRT or _IORW )
+        mov eax,whence
+        .if eax != SEEK_SET && eax != SEEK_CUR && eax != SEEK_END
 
-		jmp error
-	.endif
+            mov errno,EINVAL
+            mov eax,-1
+            .break
+        .endif
 
-	and eax,not _IOEOF
-	mov [ebx]._flag,eax
-	.if edx == SEEK_CUR
+        mov edx,eax
+        mov eax,[ebx]._flag
+        .if !( eax & _IOREAD or _IOWRT or _IORW )
 
-		add off,ftell(ebx)
-		mov whence,SEEK_SET
-	.endif
+            mov errno,EINVAL
+            mov eax,-1
+            .break
+        .endif
 
-	fflush(ebx)
+        and eax,not _IOEOF
+        mov [ebx]._flag,eax
+       .if edx == SEEK_CUR
 
-	mov eax,[ebx]._flag
-	.if eax & _IORW
+            add off,ftell(ebx)
+            mov whence,SEEK_SET
+        .endif
 
-		and eax,not (_IOWRT or _IOREAD)
-		mov [ebx]._flag,eax
-	.elseif eax & _IOREAD && eax & _IOMYBUF && !( eax & _IOSETVBUF )
+        fflush(ebx)
 
-		mov [ebx]._bufsiz,_MINIOBUF
-	.endif
+        mov eax,[ebx]._flag
+        .if eax & _IORW
 
-	mov eax,[ebx]._file
-	mov eax,_osfhnd[eax*4]
-	.if SetFilePointer( eax, off, 0, whence ) == -1
+            and eax,not (_IOWRT or _IOREAD)
+            mov [ebx]._flag,eax
+        .elseif eax & _IOREAD && eax & _IOMYBUF && !( eax & _IOSETVBUF )
 
-		osmaperr()
-		jmp toend
-	.endif
-	xor eax,eax
-toend:
-	ret
-error:
-	mov errno,EINVAL
-	mov eax,-1
-	jmp toend
-fseek	ENDP
+            mov [ebx]._bufsiz,_MINIOBUF
+        .endif
 
-	END
+        mov eax,[ebx]._file
+        mov eax,_osfhnd[eax*4]
+        .if SetFilePointer( eax, off, 0, whence ) == -1
+
+            osmaperr()
+            .break
+        .endif
+        xor eax,eax
+    .until 1
+    ret
+
+fseek endp
+
+    END

@@ -1,14 +1,12 @@
 include cfini.inc
 
-	.code
+    .code
 
-CFRead	PROC __file:LPSTR
+CFRead proc __file:LPSTR
 
+    mov __CFBase,__CFRead(__CFBase, __file)
+    ret
 
-	mov	__CFBase,__CFRead( __CFBase, __file )
+CFRead endp
 
-	ret
-
-CFRead	ENDP
-
-	END
+    END

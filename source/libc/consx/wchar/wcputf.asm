@@ -1,12 +1,14 @@
 include consx.inc
 include stdio.inc
 
-	.code
+    .code
 
-wcputf	PROC c b:PVOID, l, max, format:LPSTR, argptr:VARARG
-	ftobufin( format, addr argptr )
-	wcputs( b, l, max, addr _bufin )
-	ret
-wcputf	ENDP
+wcputf proc c b:PVOID, l, max, format:LPSTR, argptr:VARARG
 
-	END
+    ftobufin(format, addr argptr)
+    wcputs(b, l, max, addr _bufin)
+    ret
+
+wcputf endp
+
+    END

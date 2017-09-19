@@ -1,21 +1,29 @@
 include consx.inc
 include io.inc
 
-	.code
+    .code
 
-getxyc	proc uses ecx edx x, y
-	movzx	eax,byte ptr y
-	shl	eax,16
-	mov	al,byte ptr x
-	push	0
-	mov	edx,esp ; lpNumberOfCharsRead
-	push	0
-	mov	ecx,esp ; lpCharacter
-	ReadConsoleOutputCharacter( hStdOutput, ecx, 1, eax, edx )
-	pop	eax
-	pop	edx
-	and	eax,00FFh
-	ret
-getxyc	endp
+getxyc proc uses ecx edx x, y
 
-	END
+  local Character
+  local NumberOfCharsRead
+
+    movzx ecx,byte ptr y
+    shl   ecx,16
+    mov   cl,byte ptr x
+
+    .if ReadConsoleOutputCharacter(
+        hStdOutput,
+        &Character,
+        1,
+        ecx,
+        &NumberOfCharsRead)
+
+        mov eax,Character
+        and eax,0xFF
+    .endif
+    ret
+
+getxyc endp
+
+    END

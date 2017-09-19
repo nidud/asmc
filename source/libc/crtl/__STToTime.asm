@@ -10,7 +10,7 @@ include time.inc
 
 	.code
 
-__STToTime PROC USES edi lpSystemTime:ptr SYSTEMTIME
+__STToTime proc uses edi lpSystemTime:ptr SYSTEMTIME
 	mov	ecx,lpSystemTime
 	movzx	eax,[ecx].SYSTEMTIME.wYear
 	sub	eax,DT_BASEYEAR
@@ -35,6 +35,6 @@ __STToTime PROC USES edi lpSystemTime:ptr SYSTEMTIME
 	or	eax,edx ; <date>:<time>
 	shr	edx,16
 	ret
-__STToTime ENDP
+__STToTime endp
 
 	END

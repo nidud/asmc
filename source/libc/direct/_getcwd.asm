@@ -1,10 +1,12 @@
 include direct.inc
 
-	.code
+    .code
 
-_getcwd PROC buffer:LPSTR, maxlen:SINT
-	_getdcwd( 0, buffer, maxlen )
-	ret
-_getcwd ENDP
+_getcwd proc buffer:LPSTR, maxlen:SINT
 
-	END
+    _getdcwd(0, buffer, maxlen)
+    ret
+
+_getcwd endp
+
+    END

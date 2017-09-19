@@ -3,26 +3,26 @@ include crtl.inc
 include alloc.inc
 include dzlib.inc
 
-PUBLIC	envpath
+PUBLIC  envpath
 
-	.data
-	envpath dd curpath
-	curpath db ".",0
+    .data
+    envpath dd curpath
+    curpath db ".",0
 
-	.code
+    .code
 
-GetEnvironmentPATH PROC
-	.if getenvp( "PATH" )
-	    mov ecx,envpath
-	    mov envpath,eax
-	    .if ecx != offset envpath
-		free(ecx)
-	    .endif
-	.endif
-	mov eax,envpath
-	ret
-GetEnvironmentPATH ENDP
+GetEnvironmentPATH proc
+    .if getenvp("PATH")
+        mov ecx,envpath
+        mov envpath,eax
+        .if ecx != offset envpath
+        free(ecx)
+        .endif
+    .endif
+    mov eax,envpath
+    ret
+GetEnvironmentPATH endp
 
 pragma_init GetEnvironmentPATH, 101
 
-	END
+    END

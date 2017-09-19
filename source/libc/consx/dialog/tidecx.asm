@@ -1,59 +1,56 @@
 include consx.inc
 
-	.code
+    .code
 
-	ASSUME	edx: PTR S_TEDIT
+    assume edx: ptr S_TEDIT
 
-tidecx	PROC USES eax ecx ti:PTR S_TEDIT
-	mov edx,ti
+tidecx proc uses eax ecx ti:ptr S_TEDIT
 
-	mov eax,[edx].ti_boff
-	add eax,[edx].ti_xoff
-	jz  toend
+    mov edx,ti
+    mov eax,[edx].ti_boff
+    add eax,[edx].ti_xoff
 
-	mov ecx,[edx].ti_boff
-	mov eax,[edx].ti_xoff
-	test eax,eax
-	jz @F
+    .ifnz
+        mov ecx,[edx].ti_boff
+        mov eax,[edx].ti_xoff
+        .if eax
+            dec eax
+            and edx,edx
+            stc
+        .else
+            dec ecx
+            test edx,edx
+            clc
+        .endif
+        mov [edx].ti_xoff,eax
+        mov [edx].ti_boff,ecx
+    .endif
+    ret
 
-	dec eax
-	and edx,edx
-	stc
-	jmp done
-@@:
-	dec ecx
-	test edx,edx
-	clc
-done:
-	mov [edx].ti_xoff,eax
-	mov [edx].ti_boff,ecx
-toend:
-	ret
-tidecx	ENDP
+tidecx endp
 
-tiincx	PROC USES eax ecx ti:PTR S_TEDIT
-	mov edx,ti
-	mov eax,[edx].ti_boff
-	add eax,[edx].ti_xoff
-	inc eax
-	cmp eax,[edx].ti_bcol
-	jb  @F
-	sub eax,eax
-	jmp toend
-@@:
-	mov ecx,[edx].ti_boff
-	mov eax,[edx].ti_xoff
-	inc eax
-	cmp eax,[edx].ti_cols
-	jb  @F
-	mov eax,[edx].ti_cols
-	dec eax
-	inc ecx
-@@:
-	mov [edx].ti_xoff,eax
-	mov [edx].ti_boff,ecx
-toend:
-	ret
-tiincx ENDP
+tiincx proc uses eax ecx ti:ptr S_TEDIT
 
-	END
+    mov edx,ti
+    mov eax,[edx].ti_boff
+    add eax,[edx].ti_xoff
+    inc eax
+    .if eax >= [edx].ti_bcol
+        sub eax,eax
+    .else
+        mov ecx,[edx].ti_boff
+        mov eax,[edx].ti_xoff
+        inc eax
+        .if eax >= [edx].ti_cols
+            mov eax,[edx].ti_cols
+            dec eax
+            inc ecx
+        .endif
+        mov [edx].ti_xoff,eax
+        mov [edx].ti_boff,ecx
+    .endif
+    ret
+
+tiincx endp
+
+    END

@@ -1,25 +1,22 @@
 include direct.inc
 include dzlib.inc
 
-	.code
+    .code
 
-_disk_init PROC USES edi disk
+_disk_init proc uses edi disk
 
-	mov edi,disk
+    mov edi,disk
+    .if !_disk_test(edi)
 
-	.if !_disk_test( edi )
+	.if _disk_select("Select disk")
 
-;		beep( 5, 7 )
-		.if _disk_select( "Select disk" )
-
-			_disk_init( eax )
-			mov edi,eax
-		.endif
+	    _disk_init(eax)
+	    mov edi,eax
 	.endif
+    .endif
+    mov eax,edi
+    ret
 
-	mov eax,edi
-	ret
+_disk_init endp
 
-_disk_init ENDP
-
-	END
+    END

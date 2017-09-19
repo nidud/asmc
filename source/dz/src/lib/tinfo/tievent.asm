@@ -6,17 +6,17 @@ include dzlib.inc
 
     .code
 
-    ASSUME edx: PTR S_TINFO
+    assume edx: ptr S_TINFO
 
 tiselected proc ti:PTINFO
     mov edx,ti
     mov eax,[edx].ti_clel   ; CX line count
     sub eax,[edx].ti_clsl
     mov ecx,eax
-    jnz @F
-    mov eax,[edx].ti_cleo   ; AX byte count
-    sub eax,[edx].ti_clso
-@@:
+    .ifz
+        mov eax,[edx].ti_cleo   ; AX byte count
+        sub eax,[edx].ti_clso
+    .endif
     ret
 tiselected endp
     ;
@@ -37,20 +37,19 @@ ticlipset endp
 
 ticliptostart proc uses edi ti:PTINFO
     mov edx,ti
-
     mov edi,[edx].ti_loff
     mov eax,[edx].ti_yoff
     mov ecx,edi
     add ecx,eax
     sub ecx,[edx].ti_clsl
     .ifnz
-	.if eax >= ecx
-	    sub eax,ecx ; move cursor up
-	.else
-	    sub ecx,eax ; scroll up..
-	    xor eax,eax ; screen line to 0
-	    sub edi,ecx ; new line offset
-	.endif
+        .if eax >= ecx
+            sub eax,ecx ; move cursor up
+        .else
+            sub ecx,eax ; scroll up..
+            xor eax,eax ; screen line to 0
+            sub edi,ecx ; new line offset
+        .endif
     .endif
     mov [edx].ti_loff,edi
     mov [edx].ti_yoff,eax
@@ -58,68 +57,68 @@ ticliptostart proc uses edi ti:PTINFO
     ret
 ticliptostart endp
 
-tigeto	proc uses esi edi ti:PTINFO, line:UINT, offs:UINT
+tigeto proc uses esi edi ti:PTINFO, line:UINT, offs:UINT
 
     xor edi,edi
-    .if tigetline( ti, line )	; expanded line
+    .if tigetline(ti, line)   ; expanded line
 
-	mov esi,eax
-	mov edi,[edx].ti_flp	; line from file buffer
-	mov ecx,offs
+        mov esi,eax
+        mov edi,[edx].ti_flp    ; line from file buffer
+        mov ecx,offs
 
-	.while ecx
+        .while ecx
 
-	    mov al,[esi]
-	    add esi,1
-	    .break .if !al
+            mov al,[esi]
+            add esi,1
+            .break .if !al
 
-	    .if al != TITABCHAR ; skip expanded tabs
-		add edi,1
-	    .endif
-	    sub ecx,1
-	.endw
+            .if al != TITABCHAR ; skip expanded tabs
+                add edi,1
+            .endif
+            sub ecx,1
+        .endw
     .endif
     mov eax,edi
     ret
-tigeto	endp
+tigeto endp
 
 ticlipdel proc uses ebx ti:PTINFO
 
     mov edx,ti
 
-    .if tiselected( edx )
+    .if tiselected(edx)
 
-	ticliptostart( edx )
+        ticliptostart(edx)
 
-	.if tigeto( edx, [edx].ti_clsl, [edx].ti_clso )
-	    mov ebx,eax
+        .if tigeto(edx, [edx].ti_clsl, [edx].ti_clso)
+            mov ebx,eax
 
-	    .if tigeto( edx, [edx].ti_clel, [edx].ti_cleo )
-		.if eax <= ebx
-		    xor eax,eax
-		.else
-		    strcpy( ebx, eax )
-		    or	[edx].ti_flag,_T_MODIFIED
-		    mov eax,[edx].ti_clel
-		    sub eax,[edx].ti_clsl
-		    .ifnz
-			.if eax <= [edx].ti_lcnt
-			    sub [edx].ti_lcnt,eax
-			.else
-			    mov [edx].ti_lcnt,0
-			.endif
-		    .endif
-		    ticlipset( edx )
-		    xor eax,eax
-		    inc eax
-		.endif
-	    .endif
-	.endif
+            .if tigeto(edx, [edx].ti_clel, [edx].ti_cleo)
+                .if eax <= ebx
+                    xor eax,eax
+                .else
+                    strcpy(ebx, eax)
+                    or  [edx].ti_flag,_T_MODIFIED
+                    mov eax,[edx].ti_clel
+                    sub eax,[edx].ti_clsl
+                    .ifnz
+                        .if eax <= [edx].ti_lcnt
+                            sub [edx].ti_lcnt,eax
+                        .else
+                            mov [edx].ti_lcnt,0
+                        .endif
+                    .endif
+                    ticlipset(edx)
+                    xor eax,eax
+                    inc eax
+                .endif
+            .endif
+        .endif
     .endif
     ret
 ticlipdel endp
 
-    ASSUME  esi: PTR S_TINFO
+    assume esi:ptr S_TINFO
 
 ticlippaste proc uses esi edi ebx ti:PTINFO
 
@@ -127,104 +126,104 @@ ticlippaste proc uses esi edi ebx ti:PTINFO
     mov eax,[esi].ti_flag
 
     .if eax & _T_OVERWRITE
-	ticlipdel( esi )
+        ticlipdel(esi)
     .else
-	ticlipset( esi )
+        ticlipset(esi)
     .endif
 
     .if ClipboardPaste()
 
-	push [esi].ti_flag
-	push [esi].ti_yoff
-	push [esi].ti_loff
-	push [esi].ti_xoff
-	push [esi].ti_boff
+        push [esi].ti_flag
+        push [esi].ti_yoff
+        push [esi].ti_loff
+        push [esi].ti_xoff
+        push [esi].ti_boff
 
-	and [esi].ti_flag,not (_T_USEINDENT or _T_OPTIMALFILL)
-	mov edx,esi
-	mov esi,clipbsize
-	mov edi,eax
+        and [esi].ti_flag,not (_T_USEINDENT or _T_OPTIMALFILL)
+        mov edx,esi
+        mov esi,clipbsize
+        mov edi,eax
 
-	.while	1
+        .while  1
 
-	    @@:
+            @@:
 
-	    movzx eax,byte ptr [edi]
-	    .break .if !eax
+            movzx eax,byte ptr [edi]
+            .break .if !eax
 
-	    inc edi
-	    push    eax
-	    tiputc( ti, eax )
-	    cmp eax,_TI_CONTINUE
-	    pop eax
-	    .break .ifnz
-	    dec esi
-	    .break .ifz
-	    test BYTE PTR _ltype[eax+1],_SPACE
-	    jnz @B
+            inc edi
+            push  eax
+            tiputc(ti, eax)
+            cmp eax,_TI_CONTINUE
+            pop eax
+            .break .ifnz
+            dec esi
+            .break .ifz
+            test byte ptr _ltype[eax+1],_SPACE
+            jnz @B
 
-	    .if esi >= 128
+            .if esi >= 128
 
-		@@:
+                @@:
 
-		mov eax,[edx].ti_yoff
-		add eax,[edx].ti_loff
-		mov ecx,[edx].ti_xoff
-		add ecx,[edx].ti_boff
-		.break .if !tigeto( edx, eax, ecx )
+                mov eax,[edx].ti_yoff
+                add eax,[edx].ti_loff
+                mov ecx,[edx].ti_xoff
+                add ecx,[edx].ti_boff
+                .break .if !tigeto(edx, eax, ecx)
 
-		mov ebx,eax
-		strlen( eax )
-		add eax,esi
-		add eax,ebx
-		mov ecx,[edx].ti_bp
-		add ecx,[edx].ti_blen
-		sub ecx,128
-		.if eax < ecx
+                mov ebx,eax
+                strlen(eax)
+                add eax,esi
+                add eax,ebx
+                mov ecx,[edx].ti_bp
+                add ecx,[edx].ti_blen
+                sub ecx,128
+                .if eax < ecx
 
-		    strins( ebx, edi )
-		    mov [edx].ti_lcnt,1
-		    mov eax,[edx].ti_bp
+                    strins(ebx, edi)
+                    mov [edx].ti_lcnt,1
+                    mov eax,[edx].ti_bp
 
-		    .while strchr( eax, 10 )
-			inc [edx].ti_lcnt
-			inc eax
-		    .endw
-		    .break
-		.endif
-		.break .if !tirealloc( edx )
-		jmp @B
-	    .endif
+                    .while strchr(eax, 10)
+                        inc [edx].ti_lcnt
+                        inc eax
+                    .endw
+                    .break
+                .endif
+                .break .if !tirealloc(edx)
+                jmp @B
+            .endif
 
-	    .while esi
+            .while esi
 
-		movzx eax,BYTE PTR [edi]
-		.break .if !eax
+                movzx eax,byte ptr [edi]
+                .break .if !eax
 
-		add edi,1
-		tiputc( edx, eax )
-		.break .if eax != _TI_CONTINUE
-		sub esi,1
-	    .endw
-	    .break
-	.endw
+                add edi,1
+                tiputc(edx, eax)
+                .break .if eax != _TI_CONTINUE
+                sub esi,1
+            .endw
+            .break
+        .endw
 
-	ClipboardFree()
+        ClipboardFree()
 
-	mov esi,ti
-	pop eax
-	pop ecx
-	mov [esi].ti_boff,eax
-	mov [esi].ti_xoff,ecx
-	pop ecx
-	pop eax
-	mov [esi].ti_yoff,eax
-	mov [esi].ti_loff,ecx
-	pop eax
-	or  eax,_T_MODIFIED
-	mov [esi].ti_flag,eax
+        mov esi,ti
+        pop eax
+        pop ecx
+        mov [esi].ti_boff,eax
+        mov [esi].ti_xoff,ecx
+        pop ecx
+        pop eax
+        mov [esi].ti_yoff,eax
+        mov [esi].ti_loff,ecx
+        pop eax
+        or  eax,_T_MODIFIED
+        mov [esi].ti_flag,eax
     .endif
-    ticlipset( esi )
+    ticlipset(esi)
     xor eax,eax
     ret
 ticlippaste endp
@@ -235,29 +234,29 @@ ticopyselection proc uses esi edi ti:PTINFO
 
     mov esi,ti
 
-    .if tigeto( esi, [esi].ti_clsl, [esi].ti_clso )
-	mov edi,eax
-	.if tigeto( esi, [esi].ti_clel, [esi].ti_cleo )
-	    sub eax,edi	    ; = byte size of selected text
-	    ClipboardCopy( edi, eax )
-	    mov eax,1
-	.endif
+    .if tigeto(esi, [esi].ti_clsl, [esi].ti_clso)
+        mov edi,eax
+        .if tigeto(esi, [esi].ti_clel, [esi].ti_cleo)
+            sub eax,edi     ; = byte size of selected text
+            ClipboardCopy(edi, eax)
+            mov eax,1
+        .endif
     .endif
     ret
 ticopyselection endp
 
 ticlipcut proc uses esi ti:PTINFO, delete:UINT
     mov esi,ti
-    .if tiselected( esi )
-	ticopyselection( esi )
-	jz  toend
-	dec eax
-	jnz toend
+    .if tiselected(esi)
+        ticopyselection(esi)
+        jz  toend
+        dec eax
+        jnz toend
     .endif
     .if delete
-	ticlipdel( esi )
+        ticlipdel(esi)
     .endif
-    ticlipset( esi )
+    ticlipset(esi)
 toend:
     xor eax,eax
     ret
@@ -272,16 +271,16 @@ tiselectall proc ti:PTINFO
     mov eax,[edx].ti_bcol
     mov [edx].ti_cleo,eax
     .if [edx].ti_lcnt != eax
-	mov eax,[edx].ti_lcnt
-	dec eax
-	mov [edx].ti_clel,eax
-	tiputs( edx )
+        mov eax,[edx].ti_lcnt
+        dec eax
+        mov [edx].ti_clel,eax
+        tiputs(edx)
     .endif
     xor eax,eax
     ret
 tiselectall endp
 
-tiincy	proc uses eax ecx ebx ti:PTINFO
+tiincy  proc uses eax ecx ebx ti:PTINFO
     mov edx,ti
     mov ebx,[edx].ti_rows
     mov eax,[edx].ti_loff
@@ -289,20 +288,20 @@ tiincy	proc uses eax ecx ebx ti:PTINFO
     add eax,[edx].ti_yoff
     inc eax
     .if eax >= [edx].ti_lcnt
-	xor eax,eax
+        xor eax,eax
     .else
-	mov eax,[edx].ti_yoff
-	inc eax
-	.if eax >= ebx
-	    mov eax,ebx
-	    dec eax
-	    inc ecx
-	.endif
-	mov [edx].ti_yoff,eax
-	mov [edx].ti_loff,ecx
+        mov eax,[edx].ti_yoff
+        inc eax
+        .if eax >= ebx
+            mov eax,ebx
+            dec eax
+            inc ecx
+        .endif
+        mov [edx].ti_yoff,eax
+        mov [edx].ti_loff,ecx
     .endif
     ret
-tiincy	endp
+tiincy  endp
 
 tialignx proc uses ecx ti:PTINFO, x:UINT
     ;
@@ -313,19 +312,19 @@ tialignx proc uses ecx ti:PTINFO, x:UINT
 
     mov ecx,[edx].ti_xoff
     add ecx,[edx].ti_boff
-    cmp ecx,eax		; left or right ?
-    jb	incx
-    je	toend
+    cmp ecx,eax         ; left or right ?
+    jb  incx
+    je  toend
 @@:
-    tidecx( edx )	    ; go left
-    jz	toend
+    tidecx(edx)           ; go left
+    jz  toend
     dec ecx
     cmp eax,ecx
     jne @B
     jmp done
 incx:
-    tiincx( edx )	    ; go right
-    jz	toend
+    tiincx(edx)           ; go right
+    jz  toend
     inc ecx
     cmp eax,ecx
     jne incx
@@ -346,68 +345,68 @@ tialigny proc uses ecx ti:PTINFO, y:UINT
     add ecx,[edx].ti_loff
 
     .while ecx > eax
-	.if [edx].ti_yoff
-	    dec [edx].ti_yoff
-	.else
-	    dec [edx].ti_loff
-	.endif
-	dec ecx
+        .if [edx].ti_yoff
+            dec [edx].ti_yoff
+        .else
+            dec [edx].ti_loff
+        .endif
+        dec ecx
     .endw
 
     .while  ecx < eax
-	tiincy( edx )
-	.break .if ZERO?
-	inc ecx
+        tiincy(edx)
+        .break .ifz
+        inc ecx
     .endw
     ret
 
 tialigny endp
 
-tihome	proc ti:PTINFO
+tihome proc ti:PTINFO
     mov edx,ti
     xor eax,eax
     mov [edx].ti_boff,eax
     mov [edx].ti_xoff,eax
     ret
-tihome	endp
+tihome endp
 
 titoend proc uses esi edi ti:PTINFO
     mov edx,ti
-    ticurlp(edx )
+    ticurlp(edx)
     .ifnz
-	tistripend( eax )
-	.ifnz
-	    mov [edx].ti_bcnt,ecx
-	    mov eax,ecx
-	    sub eax,[edx].ti_boff
-	    .if eax < [edx].ti_cols
+        tistripend(eax)
+        .ifnz
+            mov [edx].ti_bcnt,ecx
+            mov eax,ecx
+            sub eax,[edx].ti_boff
+            .if eax < [edx].ti_cols
 
-		mov [edx].ti_xoff,eax
-	    .else
-		mov eax,[edx].ti_cols
-		dec eax
-		.if ecx <= eax
+                mov [edx].ti_xoff,eax
+            .else
+                mov eax,[edx].ti_cols
+                dec eax
+                .if ecx <= eax
 
-		    mov eax,ecx
-		.endif
-		mov [edx].ti_xoff,eax
-		sub ecx,eax
-		mov [edx].ti_boff,ecx
-	    .endif
-	.else
-	    tihome( edx )
-	.endif
-	xor eax,eax
+                    mov eax,ecx
+                .endif
+                mov [edx].ti_xoff,eax
+                sub ecx,eax
+                mov [edx].ti_boff,ecx
+            .endif
+        .else
+            tihome(edx)
+        .endif
+        xor eax,eax
     .else
-	mov eax,_TI_CMFAILED
+        mov eax,_TI_CMFAILED
     .endif
     ret
 titoend endp
 
 tileft proc ti:PTINFO
-    tidecx( ti )
+    tidecx(ti)
     mov eax,_TI_CMFAILED
-    jz	@F
+    jz  @F
     xor eax,eax
 @@:
     ret
@@ -417,170 +416,170 @@ tiup proc ti:PTINFO
     mov edx,ti
     xor eax,eax
     .if eax != [edx].ti_yoff
-	dec [edx].ti_yoff
+        dec [edx].ti_yoff
     .elseif eax != [edx].ti_loff
-	dec [edx].ti_loff
+        dec [edx].ti_loff
     .else
-	mov eax,_TI_CMFAILED
+        mov eax,_TI_CMFAILED
     .endif
     ret
 tiup endp
 
-tiputc	proc uses esi edi ebx ti:PTINFO, char:UINT
+tiputc proc uses esi edi ebx ti:PTINFO, char:UINT
 
-    local   ts:S_TIOST
+    local ts:S_TIOST
 
     mov edx,ti
     lea esi,ts
-    movzx eax,BYTE PTR char
+    movzx eax,byte ptr char
 
-    .if BYTE PTR _ltype[eax+1] & _CONTROL
+    .if _ltype[eax+1] & _CONTROL
 
-	.if eax != 9 && eax != 10
-	    .if eax == 13
-		xor eax,eax ; skip
-	    .else
-		mov eax,_TI_RETEVENT
-	    .endif
-	    jmp toend
-	.endif
+        .if eax != 9 && eax != 10
+            .if eax == 13
+                xor eax,eax ; skip
+            .else
+                mov eax,_TI_RETEVENT
+            .endif
+            jmp toend
+        .endif
     .endif
 
-    __st_open( edx, esi, eax )
+    __st_open(edx, esi, eax)
     jz error
 
     mov ecx,ts.ts_line_ptr
     sub ecx,[edx].ti_lp
 
     .if !ZERO?
-	__st_copy( edx, esi )
-	jc error
+        __st_copy(edx, esi)
+        jc error
     .endif
 
 
     .if ts.ts_char == 10
 
-	mov ecx,ts.ts_index
-	mov eax,ts.ts_buffer
+        mov ecx,ts.ts_index
+        mov eax,ts.ts_buffer
 
-	.while	ecx
-	    sub ecx,1
-	    .break .if BYTE PTR [eax+ecx] > ' '
-	    .break .if BYTE PTR [eax+ecx] == 10
-	    mov BYTE PTR [eax+ecx],0
-	    mov ts.ts_index,ecx
-	.endw
+        .while  ecx
+            sub ecx,1
+            .break .if byte ptr [eax+ecx] > ' '
+            .break .if byte ptr [eax+ecx] == 10
+            mov byte ptr [eax+ecx],0
+            mov ts.ts_index,ecx
+        .endw
 
-	.if [edx].ti_flag & _T_USECRLF
+        .if [edx].ti_flag & _T_USECRLF
 
-	    __st_putc( esi, 13 )
-	    jc error
-	.endif
+            __st_putc(esi, 13)
+            jc error
+        .endif
 
-	__st_putc( esi, 10 )
-	jc error
+        __st_putc(esi, 10)
+        jc error
 
-	inc [edx].ti_lcnt	; inc line count
-	tihome( edx )		; to start of line
-	tiincy( edx )		; one down
+        inc [edx].ti_lcnt       ; inc line count
+        tihome(edx)             ; to start of line
+        tiincy(edx)             ; one down
 
-	.if [edx].ti_flag & _T_USEINDENT
+        .if [edx].ti_flag & _T_USEINDENT
 
-	    mov ecx,[edx].ti_lp		; get indent size
-	    mov eax,' '
+            mov ecx,[edx].ti_lp         ; get indent size
+            mov eax,' '
 
-	    .while  [ecx] != ah && \
-		[ecx] <= al && \
-		ecx < ts.ts_line_ptr
-		add ecx,1
-	    .endw
-	    sub ecx,[edx].ti_lp		; add indent
-	    .ifnz
-		.repeat
+            .while [ecx] != ah && \
+                [ecx] <= al && \
+                ecx < ts.ts_line_ptr
+                add ecx,1
+            .endw
+            sub ecx,[edx].ti_lp         ; add indent
+            .ifnz
+                .repeat
 
-		    tiincx( edx )
-		    .break .ifz
+                    tiincx(edx)
+                    .break .ifz
 
-		    __st_putc( esi, eax )
-		    jc error
-		.untilcxz
-	    .endif
-	.endif
+                    __st_putc(esi, eax)
+                    jc error
+                .untilcxz
+            .endif
+        .endif
     .else
 
-	tiincx( edx )
-	jz error
+        tiincx(edx)
+        jz error
 
-	mov al,ts.ts_char
-	.if al == 9 && !( [edx].ti_flag & _T_USETABS )
+        mov al,ts.ts_char
+        .if al == 9 && !([edx].ti_flag & _T_USETABS)
 
-	    mov al,' '
-	.endif
+            mov al,' '
+        .endif
 
-	__st_putc( esi, eax )
-	jc error
+        __st_putc(esi, eax)
+        jc error
 
-	.if ts.ts_char == 9
+        .if ts.ts_char == 9
 
-	    mov eax,[edx].ti_xoff   ; Align xoff and boff to next TAB
-	    add eax,[edx].ti_boff
-	    mov ecx,eax
+            mov eax,[edx].ti_xoff   ; Align xoff and boff to next TAB
+            add eax,[edx].ti_boff
+            mov ecx,eax
 
-	    mov ebx,[edx].ti_tabz
-	    dec bl
-	    and bl,TIMAXTABSIZE-1
+            mov ebx,[edx].ti_tabz
+            dec bl
+            and bl,TIMAXTABSIZE-1
 
-	    .if al & bl
+            .if al & bl
 
-		not bl
-		and al,bl
-		add eax,[edx].ti_tabz
+                not bl
+                and al,bl
+                add eax,[edx].ti_tabz
 
-		.if ecx > eax	    ; Align xoff and boff to AX
+                .if ecx > eax       ; Align xoff and boff to AX
 
-		    .while  1
+                    .while  1
 
-			tidecx( edx )
-			.break .ifz
+                        tidecx(edx)
+                        .break .ifz
 
-			sub ecx,1
-			.break	.if eax == ecx
-		    .endw
+                        sub ecx,1
+                        .break  .if eax == ecx
+                    .endw
 
-		.elseif CARRY?
+                .elseif CARRY?
 
-		    .while  1
+                    .while  1
 
-			.if !( [edx].ti_flag & _T_USETABS )
+                        .if !([edx].ti_flag & _T_USETABS)
 
-			    push eax
-			    __st_putc( esi, ' ' )
-			    pop eax
-			    jc	error
-			.endif
+                            push eax
+                            __st_putc(esi, ' ')
+                            pop eax
+                            jc error
+                        .endif
 
-			tiincx( edx )
-			.break .ifz
+                        tiincx(edx)
+                        .break .ifz
 
-			add ecx,1
-			.break .if eax == ecx
-		    .endw
-		.endif
-	    .endif
-	.endif
+                        add ecx,1
+                        .break .if eax == ecx
+                    .endw
+                .endif
+            .endif
+        .endif
     .endif
 
-    __st_tail( edx, esi, ts.ts_line_ptr )
+    __st_tail(edx, esi, ts.ts_line_ptr)
 toend:
     ret
 error:
     mov eax,_TI_CMFAILED
     jmp toend
-tiputc	endp
+tiputc endp
 
 tibacksp proc uses esi edi ebx ti:PTINFO
 
-    local   ts:S_TIOST
+    local ts:S_TIOST
 
     mov edx,ti
     lea esi,ts
@@ -589,26 +588,26 @@ tibacksp proc uses esi edi ebx ti:PTINFO
     add eax,[edx].ti_boff
 
     .ifz
-	mov eax,[edx].ti_loff
-	add eax,[edx].ti_yoff
-	.ifz
-	    mov eax,_TI_CMFAILED
-	    jmp toend
-	.endif
-	tiup(edx)
-	titoend(edx)
-	tidelete(edx)
-	jmp toend
+        mov eax,[edx].ti_loff
+        add eax,[edx].ti_yoff
+        .ifz
+            mov eax,_TI_CMFAILED
+            jmp toend
+        .endif
+        tiup(edx)
+        titoend(edx)
+        tidelete(edx)
+        jmp toend
     .endif
 
-    __st_open( edx, esi, 0 )
+    __st_open(edx, esi, 0)
     jz error
 
     mov eax,ts.ts_line_ptr
     xor ebx,ebx
-    .if WORD PTR [eax-1] != ' '
+    .if word ptr [eax-1] != ' '
 
-	inc ebx
+        inc ebx
     .endif
 
     test [edx].ti_flag,_T_USEINDENT
@@ -616,12 +615,12 @@ tibacksp proc uses esi edi ebx ti:PTINFO
 
     mov eax,[edx].ti_lp
     cmp eax,ts.ts_line_ptr
-    je	done
+    je  done
 
     .while eax != ts.ts_line_ptr
-	cmp BYTE PTR [eax],' '
-	ja  done
-	add eax,1
+        cmp byte ptr [eax],' '
+        ja  done
+        add eax,1
     .endw
     sub eax,[edx].ti_lp
     ;
@@ -634,32 +633,32 @@ tibacksp proc uses esi edi ebx ti:PTINFO
 
     .while edi
 
-	sub edi,1
+        sub edi,1
 
-	tigetline( edx, edi )
-	.break .ifz
+        tigetline(edx, edi)
+        .break .ifz
 
-	.if BYTE PTR [eax]  ; get indent
+        .if byte ptr [eax]  ; get indent
 
-	    mov ecx,eax
-	    xor eax,eax
+            mov ecx,eax
+            xor eax,eax
 
-	    @@:
+            @@:
 
-	    .continue .if BYTE PTR [ecx+eax] == 0
+            .continue .if byte ptr [ecx+eax] == 0
 
-	    .if BYTE PTR [ecx+eax] <= ' '
+            .if byte ptr [ecx+eax] <= ' '
 
-		add eax,1
-		cmp eax,[edx].ti_bcol
-		jb  @B
+                add eax,1
+                cmp eax,[edx].ti_bcol
+                jb  @B
 
-		xor eax,eax
-		.break
-	    .endif
+                xor eax,eax
+                .break
+            .endif
 
-	    .break .if eax < esi
-	.endif
+            .break .if eax < esi
+        .endif
     .endw
 
     mov ecx,ts.ts_line_ptr
@@ -676,21 +675,21 @@ tibacksp proc uses esi edi ebx ti:PTINFO
     add ecx,[edx].ti_boff
     push ecx
     push edi
-    tigeto( edx, ebx, ecx )
+    tigeto(edx, ebx, ecx)
     mov esi,eax
 
     .repeat
-	.break .if tileft( edx )
-	sub edi,1
-    .until  ZERO?
+        .break .if tileft(edx)
+        sub edi,1
+    .untilz
     pop eax
     sub eax,edi
     pop ecx
     sub ecx,eax
-    tigeto( edx, ebx, ecx )
+    tigeto(edx, ebx, ecx)
     .if esi && eax && eax < esi
 
-	strcpy( eax, esi )
+        strcpy(eax, esi)
     .endif
     xor eax,eax
 toend:
@@ -699,9 +698,9 @@ error:
     mov eax,_TI_CMFAILED
     jmp toend
 done:
-    .if !tileft( edx ) && ebx
+    .if !tileft(edx) && ebx
 
-	tidelete( edx )
+        tidelete(edx)
     .endif
     jmp toend
 
@@ -714,12 +713,12 @@ tidelete proc uses esi edi ebx ti:PTINFO
     mov edx,ti
     lea esi,ts
 
-    __st_open( edx, esi, 0 )
+    __st_open(edx, esi, 0)
     jz failed
 
     mov eax,ts.ts_file_ptr
     cmp eax,ts.ts_file_end
-    je	zero_lenght
+    je  zero_lenght
 
     mov ecx,ts.ts_line_ptr
     xor eax,eax
@@ -729,32 +728,32 @@ tidelete proc uses esi edi ebx ti:PTINFO
     add ecx,1
     test ebx,ebx
     jz @F
-    or al,BYTE PTR _ltype[ebx+1]
+    or al,byte ptr _ltype[ebx+1]
     jmp @B
 @@:
     sub ecx,ts.ts_line_ptr
     dec ecx
-    jz	end_of_line
+    jz  end_of_line
 
     .if !( eax & NOT ( _SPACE or _CONTROL ) )
-	;
-	; the line is blank..
-	;
-	mov eax,ts.ts_line_ptr
-	mov BYTE PTR [eax+1],0
-	sub eax,[edx].ti_lp
-	jz  start
+        ;
+        ; the line is blank..
+        ;
+        mov eax,ts.ts_line_ptr
+        mov byte ptr [eax+1],0
+        sub eax,[edx].ti_lp
+        jz  start
     .endif
 
     test [edx].ti_flag,_T_USETABS
-    jz	 no_tabs
+    jz   no_tabs
 
     mov ecx,ts.ts_line_ptr
     sub ecx,[edx].ti_lp
-    jz	start
+    jz  start
 
-    __st_copy( edx, esi )
-    jc	failed
+    __st_copy(edx, esi)
+    jc  failed
 
 start:
     mov ecx,ts.ts_line_ptr
@@ -765,11 +764,11 @@ start:
     and eax,not _T_OPTIMALFILL
     mov [edx].ti_flag,eax
 
-    __st_tail( edx, esi, ecx )
+    __st_tail(edx, esi, ecx)
 
     pop ecx
     and ecx,_T_OPTIMALFILL
-    or	[edx].ti_flag,ecx
+    or  [edx].ti_flag,ecx
     jmp toend
 
 no_tabs:
@@ -780,43 +779,43 @@ no_tabs:
     mov ecx,eax
     inc ecx
     cmp ecx,ts.ts_file_end
-    ja	failed
+    ja  failed
     jmp copy
 
 end_of_line:
     mov ecx,ts.ts_line_ptr
     sub ecx,[edx].ti_lp
-    jz	failed
+    jz  failed
 
-    __st_copy2( edx, esi )
-    jc	failed
+    __st_copy2(edx, esi)
+    jc  failed
 
     mov eax,ts.ts_file_end
-    .if BYTE PTR [eax] == 0Dh
-	inc eax
+    .if byte ptr [eax] == 0Dh
+        inc eax
     .endif
-    .if BYTE PTR [eax] == 0Ah
-	inc eax
-	dec [edx].ti_lcnt
+    .if byte ptr [eax] == 0Ah
+        inc eax
+        dec [edx].ti_lcnt
     .endif
 
     mov ts.ts_file_end,eax
-    __st_flush( edx, esi )
+    __st_flush(edx, esi)
     jmp toend
 
 zero_lenght:
-    .if BYTE PTR [eax] == 0Dh
-	lea ecx,[eax+2]
-	dec [edx].ti_lcnt
-    .elseif BYTE PTR [eax] == 0Ah
-	lea ecx,[eax+1]
-	dec [edx].ti_lcnt
+    .if byte ptr [eax] == 0Dh
+        lea ecx,[eax+2]
+        dec [edx].ti_lcnt
+    .elseif byte ptr [eax] == 0Ah
+        lea ecx,[eax+1]
+        dec [edx].ti_lcnt
     .else
-	jmp failed
+        jmp failed
     .endif
 copy:
-    strcpy( eax, ecx )
-    or	[edx].ti_flag,_T_MODIFIED
+    strcpy(eax, ecx)
+    or  [edx].ti_flag,_T_MODIFIED
     xor eax,eax
 
 toend:
@@ -829,9 +828,9 @@ tidelete endp
 tievent proc uses esi edi ebx ti:PTINFO, event:UINT
 
 
-    .if !tiselected( ti )
+    .if !tiselected(ti)
 
-	ticlipset( edx )
+        ticlipset(edx)
     .endif
 
     mov eax,keyshift
@@ -842,190 +841,190 @@ tievent proc uses esi edi ebx ti:PTINFO, event:UINT
 
       .case eax == MOUSECMD
 
-	;--------------------------------------------------------------
-	; Mouse Event
-	;--------------------------------------------------------------
+        ;--------------------------------------------------------------
+        ; Mouse Event
+        ;--------------------------------------------------------------
 
-	mousep()
-	mov ebx,keybmouse_y
-	mov ecx,keybmouse_x
+        mousep()
+        mov ebx,keybmouse_y
+        mov ecx,keybmouse_x
 
-	.if eax == KEY_MSRIGTH
+        .if eax == KEY_MSRIGTH
 
-	    .data
+            .data
 
-	    externdef IDD_TEQuickMenu:DWORD
+            externdef IDD_TEQuickMenu:dword
 
-	    QuickMenuKeys   dd KEY_CTRLDEL
-		    dd KEY_CTRLINS ; KEY_CTRLC
-		    dd KEY_CTRLV
-		    dd KEY_CTRLA
-		    dd KEY_ALT0
-		    dd KEY_F5
-		    dd KEY_ESC
-		    dd KEY_CTRLX
-		    dd KEY_F7
+            QuickMenuKeys   dd KEY_CTRLDEL
+                    dd KEY_CTRLINS ; KEY_CTRLC
+                    dd KEY_CTRLV
+                    dd KEY_CTRLA
+                    dd KEY_ALT0
+                    dd KEY_F5
+                    dd KEY_ESC
+                    dd KEY_CTRLX
+                    dd KEY_F7
 
-	    qkeycount equ (($ - offset QuickMenuKeys) / 4)
+            qkeycount equ (($ - offset QuickMenuKeys) / 4)
 
-	    .code
+            .code
 
-	    mov ebx,IDD_TEQuickMenu
-	    mov eax,keybmouse_x
-	    mov [ebx+6],al
-	    mov eax,keybmouse_y
-	    mov [ebx+7],al
+            mov ebx,IDD_TEQuickMenu
+            mov eax,keybmouse_x
+            mov [ebx+6],al
+            mov eax,keybmouse_y
+            mov [ebx+7],al
 
-	    .if rsmodal( ebx )
+            .if rsmodal(ebx)
 
-		PushEvent( QuickMenuKeys[eax*4-4] )
-		msloop()
-	    .endif
-	    jmp continue
+                PushEvent(QuickMenuKeys[eax*4-4])
+                msloop()
+            .endif
+            jmp continue
 
-	.elseif eax == KEY_MSLEFT
+        .elseif eax == KEY_MSLEFT
 
-	    .if msvalidate()
+            .if msvalidate()
 
-		sub ebx,[edx].ti_ypos
-		sub ecx,[edx].ti_xpos
-		mov [edx].ti_yoff,ebx
-		mov [edx].ti_xoff,ecx
+                sub ebx,[edx].ti_ypos
+                sub ecx,[edx].ti_xpos
+                mov [edx].ti_yoff,ebx
+                mov [edx].ti_xoff,ecx
 
-		ticlipset( edx )
-		mov esi,[edx].ti_clsl
-		mov edi,[edx].ti_clso
+                ticlipset( edx )
+                mov esi,[edx].ti_clsl
+                mov edi,[edx].ti_clso
 
-		.while	1
+                .while  1
 
-		    tiputs( edx )
-		    push    edx
-		    Sleep ( CON_SLEEP_TIME )
-		    pop edx
+                    tiputs(edx)
+                    push edx
+                    Sleep(CON_SLEEP_TIME)
+                    pop edx
 
-		    mousep()
-		    mov ebx,keybmouse_y
-		    mov ecx,keybmouse_x
-		    cmp eax,KEY_MSLEFT
-		    jne return_event
+                    mousep()
+                    mov ebx,keybmouse_y
+                    mov ecx,keybmouse_x
+                    cmp eax,KEY_MSLEFT
+                    jne return_event
 
-		    msvalidate()
-		    .continue .ifz
+                    msvalidate()
+                    .continue .ifz
 
-		    sub ebx,[edx].ti_ypos
-		    sub ecx,[edx].ti_xpos
-		    mov [edx].ti_yoff,ebx
-		    mov [edx].ti_xoff,ecx
-		    add ecx,[edx].ti_boff
-		    add ebx,[edx].ti_loff
+                    sub ebx,[edx].ti_ypos
+                    sub ecx,[edx].ti_xpos
+                    mov [edx].ti_yoff,ebx
+                    mov [edx].ti_xoff,ecx
+                    add ecx,[edx].ti_boff
+                    add ebx,[edx].ti_loff
 
-		    .if edi > ecx
-			mov [edx].ti_clso,ecx
-		    .else
-			mov [edx].ti_cleo,ecx
-			.ifz
-			    mov [edx].ti_clso,ecx
-			.endif
-		    .endif
-		    .if esi > ebx
-			mov [edx].ti_clsl,ebx
-		    .else
-			mov [edx].ti_clel,ebx
-			.ifz
-			    mov [edx].ti_clsl,ebx
-			.endif
-		    .endif
+                    .if edi > ecx
+                        mov [edx].ti_clso,ecx
+                    .else
+                        mov [edx].ti_cleo,ecx
+                        .ifz
+                            mov [edx].ti_clso,ecx
+                        .endif
+                    .endif
+                    .if esi > ebx
+                        mov [edx].ti_clsl,ebx
+                    .else
+                        mov [edx].ti_clel,ebx
+                        .ifz
+                            mov [edx].ti_clsl,ebx
+                        .endif
+                    .endif
 
-		    mov eax,[edx].ti_yoff
-		    .if !eax
-			tiscrollup()
-		    .else
-			inc eax
-			.if eax == [edx].ti_rows
-			    tiscrolldn()
-			.endif
-		    .endif
-		.endw
-	    .endif
-	.endif
-	jmp return_event
+                    mov eax,[edx].ti_yoff
+                    .if !eax
+                        tiscrollup()
+                    .else
+                        inc eax
+                        .if eax == [edx].ti_rows
+                            tiscrolldn()
+                        .endif
+                    .endif
+                .endw
+            .endif
+        .endif
+        jmp return_event
 
       .case eax == KEY_CTRLINS
       .case eax == KEY_CTRLC
 
-	ticlipcut( edx, 0 )
-	.endc
+        ticlipcut(edx, 0)
+        .endc
 
       .case eax == KEY_CTRLV
-	ticlippaste( edx )
-	.endc
+        ticlippaste(edx)
+        .endc
 
       .case eax == KEY_CTRLDEL
 
-	ticlipcut( edx, 1 )
-	.endc
+        ticlipcut(edx, 1)
+        .endc
 
       .case ecx & SHIFT_KEYSPRESSED
 
-	.switch eax
+        .switch eax
 
-	  .case KEY_INS
-	    ticlippaste( edx )
-	    jmp continue
+          .case KEY_INS
+            ticlippaste(edx)
+            jmp continue
 
-	  .case KEY_DEL
-	    ticlipcut( edx, 1 )
-	    jmp continue
+          .case KEY_DEL
+            ticlipcut(edx, 1)
+            jmp continue
 
-	  .case KEY_HOME
-	  .case KEY_LEFT
-	  .case KEY_RIGHT
-	  .case KEY_END
-	  .case KEY_UP
-	  .case KEY_DOWN
-	  .case KEY_PGUP
-	  .case KEY_PGDN
+          .case KEY_HOME
+          .case KEY_LEFT
+          .case KEY_RIGHT
+          .case KEY_END
+          .case KEY_UP
+          .case KEY_DOWN
+          .case KEY_PGUP
+          .case KEY_PGDN
 
-	    push eax
-	    call handle_event
-	    pop	 ecx
+            push eax
+            call handle_event
+            pop  ecx
 
-	    cmp eax,_TI_CMFAILED
-	    je	continue
-	    cmp eax,_TI_RETEVENT
-	    je	continue
+            cmp eax,_TI_CMFAILED
+            je  continue
+            cmp eax,_TI_RETEVENT
+            je  continue
 
-	    mov edx,ti
-	    mov ebx,[edx].ti_loff
-	    add ebx,[edx].ti_yoff
-	    mov eax,[edx].ti_boff
-	    add eax,[edx].ti_xoff
-	    cmp ebx,[edx].ti_clsl
-	    jb	case_tostart
+            mov edx,ti
+            mov ebx,[edx].ti_loff
+            add ebx,[edx].ti_yoff
+            mov eax,[edx].ti_boff
+            add eax,[edx].ti_xoff
+            cmp ebx,[edx].ti_clsl
+            jb  case_tostart
 
-	    cmp eax,[edx].ti_clso
-	    jb	case_tostart
-	    cmp ecx,KEY_RIGHT
-	    jne @F
-	    lea ecx,[eax-1]
-	    cmp ecx,[edx].ti_clso
-	    jne @F
-	    cmp ecx,[edx].ti_cleo
-	    jne case_tostart
-	     @@:
-	    mov [edx].ti_cleo,eax
-	    mov [edx].ti_clel,ebx
-	    jmp continue
+            cmp eax,[edx].ti_clso
+            jb  case_tostart
+            cmp ecx,KEY_RIGHT
+            jne @F
+            lea ecx,[eax-1]
+            cmp ecx,[edx].ti_clso
+            jne @F
+            cmp ecx,[edx].ti_cleo
+            jne case_tostart
+             @@:
+            mov [edx].ti_cleo,eax
+            mov [edx].ti_clel,ebx
+            jmp continue
 
-	.endsw
-	.endc
+        .endsw
+        .endc
 
       .case eax == KEY_DEL
 
-	ticlipdel( edx )
-	mov eax,KEY_DEL
-	jz  clipset
-	jmp continue
+        ticlipdel(edx)
+        mov eax,KEY_DEL
+        jz  clipset
+        jmp continue
 
     .endsw
 
@@ -1036,16 +1035,16 @@ tievent proc uses esi edi ebx ti:PTINFO, event:UINT
       .case eax == KEY_ENTER
       .case eax == KEY_KPENTER
       .case !al
-	jmp clipset
+        jmp clipset
     .endsw
 
     push    eax
-    ticlipdel( edx )
+    ticlipdel(edx)
     pop eax
 
 clipset:
     push    eax
-    ticlipset( edx )
+    ticlipset(edx)
     pop eax
 
     handle_event()
@@ -1069,317 +1068,308 @@ handle_event:
     .switch eax
 
       .case KEY_ESC
-	mov eax,_TI_RETEVENT
+        mov eax,_TI_RETEVENT
       .case _TI_CONTINUE
-	.endc
+        .endc
 
       .case KEY_CTRLRIGHT
-	;--------------------------------------------------------------
-	; Move to Next/Prev word (Ctrl-Right, Ctrl-Left)
-	;--------------------------------------------------------------
+        ;--------------------------------------------------------------
+        ; Move to Next/Prev word (Ctrl-Right, Ctrl-Left)
+        ;--------------------------------------------------------------
 
-	.if ticurcp( edx )
+        .if ticurcp(edx)
 
-	    mov ecx,eax
-	    mov edx,eax
+            mov ecx,eax
+            mov edx,eax
 
-	    movzx eax,BYTE PTR [ecx]
-	    .while _ltype[eax+1] & _LABEL or _DIGIT
-		add ecx,1
-		mov al,[ecx]
-	    .endw
-	    .while  eax && !( _ltype[eax+1] & _LABEL or _DIGIT )
-		add ecx,1
-		mov al,[ecx]
-	    .endw
+            movzx eax,byte ptr [ecx]
+            .while _ltype[eax+1] & _LABEL or _DIGIT
+                add ecx,1
+                mov al,[ecx]
+            .endw
+            .while  eax && !( _ltype[eax+1] & _LABEL or _DIGIT )
+                add ecx,1
+                mov al,[ecx]
+            .endw
 
-	    .if eax
+            .if eax
 
-		sub ecx,edx
-		mov edx,ti
-		mov eax,[edx].ti_boff
-		add eax,[edx].ti_xoff
-		add eax,ecx
+                sub ecx,edx
+                mov edx,ti
+                mov eax,[edx].ti_boff
+                add eax,[edx].ti_xoff
+                add eax,ecx
 
-		.if eax <= [edx].ti_bcnt
+                .if eax <= [edx].ti_bcnt
 
-		    mov eax,ecx
-		    add eax,[edx].ti_xoff
-		    mov ecx,[edx].ti_cols
+                    mov eax,ecx
+                    add eax,[edx].ti_xoff
+                    mov ecx,[edx].ti_cols
 
-		    .if eax >= ecx
+                    .if eax >= ecx
 
-			dec ecx
-			sub eax,ecx
-			add [edx].ti_boff,eax
-			mov [edx].ti_xoff,ecx
-			xor eax,eax
-			.endc
-		    .endif
-		.endif
+                        dec ecx
+                        sub eax,ecx
+                        add [edx].ti_boff,eax
+                        mov [edx].ti_xoff,ecx
+                        xor eax,eax
+                        .endc
+                    .endif
+                .endif
 
-		mov [edx].ti_xoff,eax
-		xor eax,eax
-		.endc
-	    .endif
+                mov [edx].ti_xoff,eax
+                xor eax,eax
+                .endc
+            .endif
 
-	    mov edx,ti
-	    mov eax,KEY_DOWN
-	    call handle_event
-	    mov eax,KEY_HOME
-	    jmp handle_event
-	.endif
-	xor eax,eax
-	.endc
+            mov edx,ti
+            mov eax,KEY_DOWN
+            call handle_event
+            mov eax,KEY_HOME
+            jmp handle_event
+        .endif
+        xor eax,eax
+        .endc
 
       .case KEY_CTRLLEFT
-	.repeat
-	    .if ticurlp( edx )
+        .repeat
+            .if ticurlp(edx)
 
-		mov ecx,eax
-		mov eax,[edx].ti_boff
-		add eax,[edx].ti_xoff
-		.ifz
-		    .if !tiup( edx )
+                mov ecx,eax
+                mov eax,[edx].ti_boff
+                add eax,[edx].ti_xoff
+                .ifz
+                    .if !tiup(edx)
 
-			titoend( edx )
-			.continue
-		    .endif
-		    .endc
-		.endif
-		lea edx,[ecx+eax]
-		.if eax
+                        titoend(edx)
+                        .continue
+                    .endif
+                    .endc
+                .endif
+                lea edx,[ecx+eax-1]
+                movzx eax,byte ptr [edx]
+                .while ecx < edx && !( _ltype[eax+1] & _LABEL or _DIGIT )
 
-		    sub edx,1
-		.endif
-		movzx	eax,BYTE PTR [edx]
-		.while	ecx < edx && !( _ltype[eax+1] & _LABEL or _DIGIT )
+                    sub edx,1
+                    mov al,[edx]
+                .endw
+                .while ecx < edx && _ltype[eax+1] & _LABEL or _DIGIT
 
-		    sub edx,1
-		    mov al,[edx]
-		.endw
-		.while	ecx < edx && _ltype[eax+1] & _LABEL or _DIGIT
+                    sub edx,1
+                    mov al,[edx]
+                .endw
+                .if !( _ltype[eax+1] & _LABEL or _DIGIT )
 
-		    sub edx,1
-		    mov al,[edx]
-		.endw
-		.if !( _ltype[eax+1] & _LABEL or _DIGIT )
+                    mov al,[edx+1]
+                    .if _ltype[eax+1] & _LABEL or _DIGIT
 
-		    mov al,[edx+1]
-		    .if _ltype[eax+1] & _LABEL or _DIGIT
+                        add edx,1
+                    .endif
+                .endif
+                mov eax,edx
+                mov edx,ti
+                add ecx,[edx].ti_boff
+                add ecx,[edx].ti_xoff
+                sub ecx,eax
+                .if ecx > [edx].ti_xoff
 
-			add edx,1
-		    .endif
-		.endif
-		mov eax,edx
-		mov edx,ti
-		add ecx,[edx].ti_boff
-		add ecx,[edx].ti_xoff
-		sub ecx,eax
-		.if ecx > [edx].ti_xoff
-
-		    sub ecx,[edx].ti_xoff
-		    mov [edx].ti_xoff,0
-		    sub [edx].ti_boff,ecx
-		.else
-		    sub [edx].ti_xoff,ecx
-		.endif
-	    .endif
-	.until	1
-	xor eax,eax
-	.endc
+                    sub ecx,[edx].ti_xoff
+                    mov [edx].ti_xoff,0
+                    sub [edx].ti_boff,ecx
+                .else
+                    sub [edx].ti_xoff,ecx
+                .endif
+            .endif
+        .until  1
+        xor eax,eax
+        .endc
 
       .case KEY_LEFT
-	tileft( edx )
-	.endc
+        tileft(edx)
+        .endc
 
       .case KEY_RIGHT
-	tiincx( edx )
-	mov eax,_TI_CMFAILED
-	.endc .ifz
-	xor eax,eax
-	.endc
+        tiincx(edx)
+        mov eax,_TI_CMFAILED
+        .endc .ifz
+        xor eax,eax
+        .endc
 
       .case KEY_HOME
-	tihome( edx )
-	.endc
+        tihome(edx)
+        .endc
 
       .case KEY_END
-	titoend( edx )
-	.endc
+        titoend(edx)
+        .endc
 
       .case KEY_BKSP
-	tibacksp( edx )
-	.endc
+        tibacksp(edx)
+        .endc
 
       .case KEY_DEL
-	tidelete( edx )
-	.endc
+        tidelete(edx)
+        .endc
 
       .case KEY_UP
-	tiup( edx )
-	.endc
+        tiup(edx)
+        .endc
 
       .case KEY_DOWN
-	mov eax,[edx].ti_loff
-	mov ecx,[edx].ti_yoff
-	add eax,ecx
-	inc eax
-	.if eax >= [edx].ti_lcnt
-	    mov eax,_TI_CMFAILED
-	    .endc
-	.endif
-	mov eax,[edx].ti_rows
-	dec eax
-	.if ecx < eax
-	    inc [edx].ti_yoff
-	    xor eax,eax
-	    .endc
-	.endif
-	mov eax,[edx].ti_lcnt
-	sub eax,[edx].ti_loff
-	sub eax,ecx
-	.if eax < 2
-	    mov eax,_TI_CMFAILED
-	    .endc
-	.endif
-	inc [edx].ti_loff
-	xor eax,eax
-	.endc
+        mov eax,[edx].ti_loff
+        mov ecx,[edx].ti_yoff
+        add eax,ecx
+        inc eax
+        .if eax >= [edx].ti_lcnt
+            mov eax,_TI_CMFAILED
+            .endc
+        .endif
+        mov eax,[edx].ti_rows
+        dec eax
+        .if ecx < eax
+            inc [edx].ti_yoff
+            xor eax,eax
+            .endc
+        .endif
+        mov eax,[edx].ti_lcnt
+        sub eax,[edx].ti_loff
+        sub eax,ecx
+        .if eax < 2
+            mov eax,_TI_CMFAILED
+            .endc
+        .endif
+        inc [edx].ti_loff
+        xor eax,eax
+        .endc
 
       .case KEY_PGUP
-	mov eax,[edx].ti_rows
-	.if [edx].ti_loff >= eax
-	    sub [edx].ti_loff,eax
-	    xor eax,eax
-	    .endc
-	.endif
+        mov eax,[edx].ti_rows
+        .if [edx].ti_loff >= eax
+            sub [edx].ti_loff,eax
+            xor eax,eax
+            .endc
+        .endif
 
       .case KEY_CTRLHOME
-	xor eax,eax
-	mov [edx].ti_boff,eax
-	mov [edx].ti_xoff,eax
+        xor eax,eax
+        mov [edx].ti_boff,eax
+        mov [edx].ti_xoff,eax
 
       .case KEY_CTRLPGUP
-	xor eax,eax
-	mov [edx].ti_loff,eax
-	mov [edx].ti_yoff,eax
-	.endc
+        xor eax,eax
+        mov [edx].ti_loff,eax
+        mov [edx].ti_yoff,eax
+        .endc
 
       .case KEY_PGDN
-	mov eax,[edx].ti_rows
-	add eax,eax
-	add eax,[edx].ti_loff
-	.if eax < [edx].ti_lcnt
-	    mov eax,[edx].ti_loff
-	    add eax,[edx].ti_rows
-	    mov [edx].ti_loff,eax
-	    xor eax,eax
-	    .endc
-	.endif
+        mov eax,[edx].ti_rows
+        add eax,eax
+        add eax,[edx].ti_loff
+        .if eax < [edx].ti_lcnt
+            mov eax,[edx].ti_loff
+            add eax,[edx].ti_rows
+            mov [edx].ti_loff,eax
+            xor eax,eax
+            .endc
+        .endif
 
       .case KEY_CTRLEND
-	tictrlend:
-	mov eax,[edx].ti_lcnt
-	.if eax
-	    dec eax
-	    tialigny( edx, eax )
-	    xor eax,eax
-	    .endc
-	.endif
-	mov eax,_TI_CMFAILED
-	.endc
+        tictrlend:
+        mov eax,[edx].ti_lcnt
+        .if eax
+            dec eax
+            tialigny(edx, eax)
+            xor eax,eax
+            .endc
+        .endif
+        mov eax,_TI_CMFAILED
+        .endc
 
       .case KEY_CTRLPGDN
-	mov eax,[edx].ti_rows
-	dec eax
-	mov [edx].ti_yoff,eax
-	add eax,[edx].ti_loff
-	.if eax >= [edx].ti_lcnt
-	    xor eax,eax
-	    .endc
-	.endif
-	jmp tictrlend
+        mov eax,[edx].ti_rows
+        dec eax
+        mov [edx].ti_yoff,eax
+        add eax,[edx].ti_loff
+        .if eax >= [edx].ti_lcnt
+            xor eax,eax
+            .endc
+        .endif
+        jmp tictrlend
 
       .case KEY_CTRLUP
-	tiscrollup:
-	xor eax,eax
-	.if eax != [edx].ti_loff
-	    dec [edx].ti_loff
-	    .endc
-	.endif
-	mov eax,_TI_CMFAILED
-	.endc
+        tiscrollup:
+        xor eax,eax
+        .if eax != [edx].ti_loff
+            dec [edx].ti_loff
+            .endc
+        .endif
+        mov eax,_TI_CMFAILED
+        .endc
 
       .case KEY_CTRLDN
-	tiscrolldn:
-	mov eax,[edx].ti_loff
-	add eax,[edx].ti_yoff
-	inc eax
-	cmp eax,[edx].ti_lcnt
-	mov eax,_TI_CMFAILED
-	.endc .ifnb
-	inc [edx].ti_loff
-	xor eax,eax
-	.endc
+        tiscrolldn:
+        mov eax,[edx].ti_loff
+        add eax,[edx].ti_yoff
+        inc eax
+        cmp eax,[edx].ti_lcnt
+        mov eax,_TI_CMFAILED
+        .endc .ifnb
+        inc [edx].ti_loff
+        xor eax,eax
+        .endc
 
       .case KEY_MOUSEUP
-	xor eax,eax
-	mov ecx,3
-	.if ecx <= [edx].ti_loff
-	    sub [edx].ti_loff,ecx
-	    .endc
-	.endif
-	.if eax != [edx].ti_loff
-	    mov [edx].ti_loff,eax
-	    .endc
-	.endif
-	mov eax,_TI_CMFAILED
-	.endc
+        xor eax,eax
+        mov ecx,3
+        .if ecx <= [edx].ti_loff
+            sub [edx].ti_loff,ecx
+            .endc
+        .endif
+        .if eax != [edx].ti_loff
+            mov [edx].ti_loff,eax
+            .endc
+        .endif
+        mov eax,_TI_CMFAILED
+        .endc
 
       .case KEY_MOUSEDN
-	mov eax,[edx].ti_loff
-	add eax,[edx].ti_yoff
-	add eax,3
-	.if eax < [edx].ti_lcnt
+        mov eax,[edx].ti_loff
+        add eax,[edx].ti_yoff
+        add eax,3
+        .if eax < [edx].ti_lcnt
 
-	    add [edx].ti_loff,3
-	    xor eax,eax
-	    .endc
-	.endif
-	mov eax,_TI_CMFAILED
-	.endc
+            add [edx].ti_loff,3
+            xor eax,eax
+            .endc
+        .endif
+        mov eax,_TI_CMFAILED
+        .endc
 
       .case KEY_ENTER
       .case KEY_KPENTER
-	mov eax,10
+        mov eax,10
       .default
-	tiputc( edx, eax )
-	.endc
+        tiputc(edx, eax)
+        .endc
     .endsw
     retn
 
 msvalidate:
 
     mov eax,[edx].ti_xpos
-
     .if ecx >= eax
-
-	add eax,[edx].ti_cols
-	.if ecx < eax
-
-	    mov eax,[edx].ti_ypos
-	    .if ebx >= eax
-
-		add eax,[edx].ti_rows
-		.if ebx < eax
-
-		    xor eax,eax
-		    inc eax
-		    retn
-		.endif
-	    .endif
-	.endif
+        add eax,[edx].ti_cols
+        .if ecx < eax
+            mov eax,[edx].ti_ypos
+            .if ebx >= eax
+                add eax,[edx].ti_rows
+                .if ebx < eax
+                    xor eax,eax
+                    inc eax
+                    retn
+                .endif
+            .endif
+        .endif
     .endif
     xor eax,eax
     retn

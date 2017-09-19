@@ -1,69 +1,75 @@
 include consx.inc
 
-	.data
-;
-; These are characters used as valid identifiers
-;
-idchars db '0123456789_?@abcdefghijklmnopqrstuvwxyz',0
+    .data
+    ;
+    ; These are characters used as valid identifiers
+    ;
+    idchars db '0123456789_?@abcdefghijklmnopqrstuvwxyz',0
 
-	.code
+    .code
 
-scgetword PROC USES esi edi ebx linebuf:LPSTR
-	call	_wherex		; get cursor x,y pos
-	mov	edi,eax
-	mov	ebx,edx
-	inc	edi		; to start of line..
-@@:
-	dec	edi		; moving left seeking a valid character
-	jz	@F
-	getxyc( edi, ebx )
-	call	idtestal
-	jz	@B
-	mov	eax,edi
-	dec	eax
-	getxyc( eax, ebx )
-	call	idtestal
-	jnz	@B
-@@:
-	mov	esi,linebuf
-	mov	ecx,32
-	xor	eax,eax
-@@:
-	getxyc( edi, ebx )
-	inc	edi
-	call	idtestal
-	jz	@F
-	mov	[esi],al
-	inc	esi
-	dec	ecx
-	jnz	@B
-@@:
-	mov	BYTE PTR [esi],0
-	mov	edx,linebuf
-	sub	eax,eax
-	cmp	al,[edx]
-	je	@F
-	mov	eax,edx
-@@:
-	ret
+scgetword proc uses esi edi ebx linebuf:LPSTR
+
+    mov edi,_wherex()       ; get cursor x,y pos
+    mov ebx,edx
+    inc edi                 ; to start of line..
+
+    .repeat
+
+        dec edi             ; moving left seeking a valid character
+        .break .ifz
+
+        getxyc(edi, ebx)
+        idtestal()
+        .continue .ifz
+
+        getxyc(&[edi-1], ebx)
+        idtestal()
+    .untilz
+
+    mov esi,linebuf
+    mov ecx,32
+    xor eax,eax
+
+    .repeat
+
+        getxyc(edi, ebx)
+        inc edi
+        idtestal()
+        .break .ifz
+
+        mov [esi],al
+        inc esi
+    .untilcxz
+
+    mov byte ptr [esi],0
+    mov edx,linebuf
+    sub eax,eax
+    .if al != [edx]
+
+        mov eax,edx
+    .endif
+    ret
+
 idtestal:
-	push	edi
-	push	ecx
-	push	eax
-	cmp	al,'A'
-	jb	@F
-	cmp	al,'Z'
-	ja	@F
-	or	al,20h
-@@:
-	mov	edi,offset idchars
-	mov	ecx,sizeof idchars
-	repne	scasb
-	cmp	BYTE PTR [edi-1],0
-	pop	eax
-	pop	ecx
-	pop	edi
-	retn
-scgetword ENDP
 
-	END
+    push edi
+    push ecx
+    push eax
+
+    .if al >= 'A' && al <= 'Z'
+
+        or al,0x20
+    .endif
+    mov   edi,offset idchars
+    mov   ecx,sizeof idchars
+    repne scasb
+    cmp   byte ptr [edi-1],0
+    pop   eax
+    pop   ecx
+    pop   edi
+    retn
+
+scgetword endp
+
+    END

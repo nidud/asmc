@@ -4,7 +4,7 @@
 include tinfo.inc
 include string.inc
 
-externdef   IDD_TEWindows:DWORD
+externdef   IDD_TEWindows:dword
 
 MAXDLGOBJECT    equ 16
 MAXOBJECTLEN    equ 38
@@ -14,7 +14,7 @@ ID_CLOSE        equ 19
 
     .code
 
-event_list PROC PRIVATE USES esi edi ebx
+event_list proc private uses esi edi ebx
     mov esi,eax
     mov edi,edx
     dlinit(esi)
@@ -48,11 +48,11 @@ event_list PROC PRIVATE USES esi edi ebx
     .endw
     mov eax,1
     ret
-event_list ENDP
+event_list endp
 
-tdlgopen PROC USES esi edi ebx
+tdlgopen proc uses esi edi ebx
 
-  local ll:S_LOBJ, ti[TIMAXFILES]:DWORD
+  local ll:S_LOBJ, ti[TIMAXFILES]:dword
 
     lea edi,ll
     xor eax,eax
@@ -118,6 +118,6 @@ tdlgopen PROC USES esi edi ebx
     .endif
     test eax,eax
     ret
-tdlgopen ENDP
+tdlgopen endp
 
     END

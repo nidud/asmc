@@ -1,10 +1,10 @@
 include consx.inc
 
-	.code
+    .code
 
-tiretevent PROC
-	mov eax,_TE_RETEVENT ; return current event (keystroke)
-	ret
-tiretevent ENDP
+tiretevent proc
+    mov eax,_TE_RETEVENT ; return current event (keystroke)
+    ret
+tiretevent endp
 
-	END
+    END

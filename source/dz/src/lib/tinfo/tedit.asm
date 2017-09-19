@@ -1,16 +1,16 @@
 include tinfo.inc
 
-	.code
+    .code
 
-tedit	PROC fname:LPSTR, line
+tedit proc fname:LPSTR, line
 
-	.if topen( fname, 0 )
+    .if topen(fname, 0)
 
-		tialigny( tinfo, line )
-		tmodal()
-	.endif
-	ret
+        tialigny(tinfo, line)
+        tmodal()
+    .endif
+    ret
 
-tedit	ENDP
+tedit endp
 
-	END
+    END

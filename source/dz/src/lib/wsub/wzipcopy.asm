@@ -147,8 +147,9 @@ erfind:
 	ermsg ( addr CP_ENOENT, ebx )
 	mov	eax,ER_FIND
 eruser:
+	push	eax
 	_close( esi )
-	mov	eax,edx
+	pop	eax
 	jmp	toend
 wzipcopyfile ENDP
 

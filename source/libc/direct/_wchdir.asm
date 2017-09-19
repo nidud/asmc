@@ -2,43 +2,42 @@ include direct.inc
 include errno.inc
 include winbase.inc
 
-	.code
+    .code
 
-_wchdir PROC directory:LPWSTR
+_wchdir proc directory:LPWSTR
 
-local	abspath[_MAX_PATH]:WORD
+local root[2]
+local abspath[_MAX_PATH]:word
 
-	.if	SetCurrentDirectoryW( directory )
+    .repeat
+        .repeat
 
-		.if	GetCurrentDirectoryW( _MAX_PATH, addr abspath )
+            .if SetCurrentDirectoryW(directory)
 
-			mov	cl,byte ptr abspath
-			mov	ch,byte ptr abspath[2]
-			.if	ch == ':'
-				push	0x0000003A
-				movzx	eax,cl
-				.if	al >= 'a' && al <= 'z'
-					sub	al,'a' - 'A'
-				.endif
-				shl	eax,16
-				mov	al,0x3D
-				push	eax
-				mov	ecx,esp
-				lea	eax,abspath
-				SetEnvironmentVariableW( ecx, eax )
-				pop	ecx
-				pop	ecx
-				test	eax,eax
-				jz	error
-			.endif
-			xor	eax,eax
-			jmp	toend
-		.endif
-	.endif
-error:
-	call	osmaperr
-toend:
-	ret
-_wchdir ENDP
+                .if GetCurrentDirectoryW(_MAX_PATH, &abspath)
 
-	END
+                    mov cl,byte ptr abspath
+                    mov ch,byte ptr abspath[2]
+                    .if ch == ':'
+                        mov root[4],0x0000003A
+                        movzx eax,cl
+                        .if al >= 'a' && al <= 'z'
+                            sub al,'a' - 'A'
+                        .endif
+                        shl eax,16
+                        mov al,0x3D
+                        mov root,eax
+                        .break .if !SetEnvironmentVariable(&root, &abspath)
+                    .endif
+                    xor eax,eax
+                    .break(1)
+                .endif
+            .endif
+        .until 1
+        osmaperr()
+    .until 1
+    ret
+
+_wchdir endp
+
+    END

@@ -2,33 +2,33 @@ include direct.inc
 include errno.inc
 include winbase.inc
 
-	.code
+    .code
 
-_mkdir	proc directory:LPSTR
+_mkdir proc directory:LPSTR
 
-local	wpath
+  local wpath
 
-	.if !CreateDirectoryA( directory, 0 )
+    .if !CreateDirectoryA(directory, 0)
 
-		mov wpath,__allocwpath( directory )
-		add eax,8
-		.if !CreateDirectoryW( eax, 0 )
+        mov wpath,__allocwpath(directory)
+        add eax,8
+        .if !CreateDirectoryW(eax, 0)
 
-			CreateDirectoryW( wpath, 0 )
-		.endif
-	.endif
+            CreateDirectoryW(wpath, 0)
+        .endif
+    .endif
 
-	.if !eax
+    .if !eax
 
-		osmaperr()
-	.else
+        osmaperr()
+    .else
 ifdef __DZ__
-		mov _diskflag,1
+        mov _diskflag,1
 endif
-		xor eax,eax
-	.endif
-	ret
+        xor eax,eax
+    .endif
+    ret
 
-_mkdir	endp
+_mkdir endp
 
-	END
+    END

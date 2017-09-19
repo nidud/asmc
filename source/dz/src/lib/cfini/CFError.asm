@@ -1,13 +1,13 @@
 include consx.inc
 
-	.code
+    .code
 
-CFError PROC section, entry
+CFError proc section, entry
 
-	ermsg(	"Bad or missing Entry in .INI file",
-		"Section: [%s]\nEntry: [%s]", section, entry )
-	ret
+    ermsg("Bad or missing Entry in .INI file",
+	  "Section: [%s]\nEntry: [%s]", section, entry)
+    ret
 
-CFError ENDP
+CFError endp
 
-	END
+    END

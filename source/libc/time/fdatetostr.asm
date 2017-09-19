@@ -2,18 +2,17 @@ include time.inc
 include stdio.inc
 include winbase.inc
 
-	.code
+    .code
 
-fdatetostr PROC USES ecx edx string:LPSTR, ft:LPFILETIME
+fdatetostr proc uses ecx edx string:LPSTR, ft:LPFILETIME
 
-local	ftime:FILETIME,
-	stime:SYSTEMTIME
+local ftime:FILETIME, stime:SYSTEMTIME
 
-	FileTimeToLocalFileTime( ft, addr ftime )
-	FileTimeToSystemTime( addr ftime, addr stime )
-	SystemDateToString( string, addr stime )
-	ret
+    FileTimeToLocalFileTime(ft, &ftime)
+    FileTimeToSystemTime(&ftime, &stime)
+    SystemDateToString(string, &stime)
+    ret
 
-fdatetostr ENDP
+fdatetostr endp
 
-	END
+    END

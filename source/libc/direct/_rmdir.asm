@@ -2,22 +2,22 @@ include direct.inc
 include errno.inc
 include winbase.inc
 
-	.code
+    .code
 
-_rmdir	PROC directory:LPSTR
+_rmdir proc directory:LPSTR
 
-	.if	!RemoveDirectoryA( directory )
+    .if !RemoveDirectoryA(directory)
 
-		RemoveDirectoryW( __allocwpath( directory ) )
-	.endif
+        RemoveDirectoryW(__allocwpath(directory))
+    .endif
 
-	.if	!eax
-		osmaperr()
-	.else
-		xor eax,eax
-	.endif
-	ret
+    .if !eax
+        osmaperr()
+    .else
+        xor eax,eax
+    .endif
+    ret
 
-_rmdir	ENDP
+_rmdir endp
 
-	END
+    END

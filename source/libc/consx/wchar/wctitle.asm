@@ -1,14 +1,16 @@
 include consx.inc
 
-	.code
+    .code
 
-wctitle PROC p:PVOID, l:DWORD, string:LPSTR
-	mov	al,' '
-	mov	ah,at_background[B_Title]
-	or	ah,at_foreground[F_Title]
-	wcputw( p, l, eax )
-	wcenter( p, l, string )
-	ret
-wctitle ENDP
+wctitle proc p:PVOID, l:dword, string:LPSTR
 
-	END
+    mov al,' '
+    mov ah,at_background[B_Title]
+    or  ah,at_foreground[F_Title]
+    wcputw(p, l, eax)
+    wcenter(p, l, string)
+    ret
+
+wctitle endp
+
+    END

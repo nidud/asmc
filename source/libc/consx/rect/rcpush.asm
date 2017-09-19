@@ -1,15 +1,15 @@
 include consx.inc
 
-	.code
+    .code
 
-rcpush	PROC lines:UINT
+rcpush proc lines:UINT
 
-	mov eax,_scrcol
-	mov ah,BYTE PTR lines
-	shl eax,16
-	rcopen( eax, 0, 0, 0, 0 )
-	ret
+    mov eax,_scrcol
+    mov ah,byte ptr lines
+    shl eax,16
+    rcopen(eax, 0, 0, 0, 0)
+    ret
 
-rcpush	ENDP
+rcpush endp
 
-	END
+    END

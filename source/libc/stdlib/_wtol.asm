@@ -4,7 +4,7 @@ include stdlib.inc
 
 	option stackbase:esp
 
-_wtol	PROC string:LPWSTR
+_wtol	proc string:LPWSTR
 
 	mov	edx,string
 	xor	ecx,ecx
@@ -41,6 +41,6 @@ _wtol	PROC string:LPWSTR
 	neg	eax
 @@:
 	ret
-_wtol	ENDP
+_wtol	endp
 
 	END

@@ -1,17 +1,17 @@
 include conio.inc
 
-	.code
+    .code
 
-_wherex PROC
-local	ci:CONSOLE_SCREEN_BUFFER_INFO
+_wherex proc
+local ci:CONSOLE_SCREEN_BUFFER_INFO
 
-	.if	GetConsoleScreenBufferInfo( hStdOutput, addr ci )
+    .if GetConsoleScreenBufferInfo(hStdOutput, addr ci)
 
-		movzx eax,ci.dwCursorPosition.x
-		movzx edx,ci.dwCursorPosition.y
-	.endif
-	ret
+        movzx eax,ci.dwCursorPosition.x
+        movzx edx,ci.dwCursorPosition.y
+    .endif
+    ret
 
-_wherex ENDP
+_wherex endp
 
-	END
+    END

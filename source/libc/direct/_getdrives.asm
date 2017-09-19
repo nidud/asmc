@@ -1,10 +1,10 @@
 include winbase.inc
 
-	.code
+    .code
 
 _getdrives proc
-	GetLogicalDrives()
-	ret
+    GetLogicalDrives()
+    ret
 _getdrives endp
 
-	END
+    END

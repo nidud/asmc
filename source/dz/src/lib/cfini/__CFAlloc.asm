@@ -1,20 +1,20 @@
 include alloc.inc
 include cfini.inc
 
-	.code
+    .code
 
-__CFAlloc PROC
+__CFAlloc proc
 
-	.if malloc(sizeof(S_CFINI))
+    .if malloc(sizeof(S_CFINI))
 
-		mov ecx,0
-		mov [eax].S_CFINI.cf_flag,ecx
-		mov [eax].S_CFINI.cf_name,ecx
-		mov [eax].S_CFINI.cf_info,ecx
-		mov [eax].S_CFINI.cf_next,ecx
-	.endif
-	ret
+        mov ecx,0
+        mov [eax].S_CFINI.cf_flag,ecx
+        mov [eax].S_CFINI.cf_name,ecx
+        mov [eax].S_CFINI.cf_info,ecx
+        mov [eax].S_CFINI.cf_next,ecx
+    .endif
+    ret
 
-__CFAlloc ENDP
+__CFAlloc endp
 
-	END
+    END

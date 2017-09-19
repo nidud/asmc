@@ -1,187 +1,179 @@
 include alloc.inc
 include consx.inc
 
-externdef tclrascii:byte
+.code
 
-	.code
+dlinit proc uses esi edi ebx td:ptr S_DOBJ
 
-	OPTION PROC:PRIVATE
+local object, wp, window
 
-init_pushbutton proc
-	mov esi,[ebp-4]
-	and eax,_O_DEACT
-	mov edx,eax
-	.repeat
-		mov eax,[esi]
-		inc esi
-		mov al,ah
-		and al,0Fh
-		.if edx
-			.if !al
-				and ah,070h
-				or  ah,008h
-				mov [esi],ah
-			.endif
-		.elseif al == 8
-			and ah,070h
-			mov [esi],ah
-		.endif
-		inc esi
-	.untilcxz
-	ret
-init_pushbutton endp
+    mov ebx,td
+    mov edi,[ebx]
 
-init_radiobutton proc
-	and al,_O_RADIO
-	mov al,' '
-	jz  init_button
-	mov al,ASCII_RADIO
-init_radiobutton endp
+    .repeat
 
-init_button proc
-	mov edx,[ebp-4]
-	mov [edx+2],al
-	ret
-init_button endp
+        .if edi & _D_ONSCR
+            mov eax,[ebx].S_DOBJ.dl_wp
+            mov wp,eax
+            .break .if !rcalloc([ebx].S_DOBJ.dl_rect, 0)
+            mov [ebx].S_DOBJ.dl_wp,eax
+            rcread( [ebx].S_DOBJ.dl_rect, eax)
+        .endif
 
-init_chechbox proc
-	and eax,_O_FLAGB
-	mov al,' '
-	jz  init_button
-	mov al,'x'
-	jmp init_button
-init_chechbox endp
+        movzx eax,[ebx].S_DOBJ.dl_count
+        mov esi,eax
+        mov eax,[ebx].S_DOBJ.dl_object
+        mov object,eax
 
-init_textedit proc
-	mov dl,tclrascii
-	mov eax,esi
-	mov esi,[ebx].S_TOBJ.to_data
-	mov ebx,eax
-	mov edi,[ebp-4]
-	mov eax,[edi]
-	mov al,dl
-	mov edx,ecx
-	.if bl != _O_TEDIT
-		mov	al,' '
-		.repeat
-			stosb
-			inc edi
-		.untilcxz
-	.else
-		rep stosw
-	.endif
-	.if esi
-		mov edi,[ebp-4]
-		.if bl == _O_XCELL
-			add edi,2
-			sub edx,2
-			wcpath( edi, edx, esi )
-		.else
-			.repeat
-				lodsb
-				.break .if !al
-				stosb
-				inc edi
-				dec edx
-			.until	ZERO?
-		.endif
-	.endif
-	ret
-init_textedit endp
+        .while esi
 
-init_menus proc
-	mov edx,[ebp-4]
-	.if al & _O_FLAGB
-		mov byte ptr [edx-2],175
-	.elseif eax & _O_RADIO
-		mov al,ASCII_RADIO
-		mov [edx-2],al
-	.endif
-	ret
-init_menus endp
+            push esi
+            push edi
+            push ebx
 
-	.data
+            xor eax,eax
+            mov ebx,object
+            mov ch,[ebx].S_TOBJ.to_rect.rc_col
+            mov edx,[ebx].S_TOBJ.to_rect
+            mov ebx,td
+            mov cl,[ebx+6]  ; .dl_rect.rc_col
+            mov edi,[ebx]   ; .dl_flag
+            add edx,edx
+            mov al,dh
+            mul cl
+            mov cl,ch
+            and ecx,0x00FF
+            and edx,0x00FF
+            add eax,edx
+            add eax,[ebx].S_DOBJ.dl_wp
+            mov window,eax
+            mov ebx,object
+            mov ax,[ebx].S_TOBJ.to_flag
+            and eax,0x000F
+            mov esi,eax
 
-init_procs label dword
-	dd init_pushbutton
-	dd init_radiobutton
-	dd init_chechbox
-	dd init_textedit
-	dd init_textedit
-	dd init_menus
+            .switch eax
 
-	.code
+              .case _O_PBUTT
 
-dlinitobj proc uses ebx esi edi dobj:PTR S_DOBJ, tobj:PTR S_TOBJ
-  local window
-	xor	eax,eax
-	mov	ebx,tobj
-	mov	ch,[ebx].S_TOBJ.to_rect.rc_col
-	mov	edx,[ebx+4]	; .to_rect.rc_x,y
-	mov	ebx,dobj
-	mov	cl,[ebx+6]	; .dl_rect.rc_col
-	mov	edi,[ebx]	; .dl_flag
-	add	edx,edx
-	mov	al,dh
-	mul	cl
-	mov	cl,ch
-	and	ecx,00FFh
-	and	edx,00FFh
-	add	eax,edx
-	add	eax,[ebx].S_DOBJ.dl_wp
-	mov	window,eax
-	mov	ebx,tobj
-	mov	ax,[ebx].S_TOBJ.to_flag
-	and	eax,000Fh
-	mov	esi,eax
-	cmp	al,_O_MENUS
-	ja	@F
-	mov	edx,init_procs[eax*4]
-	mov	eax,[ebx]
-	push	edi
-	call	edx
-	pop	edi
-@@:
-	mov	eax,edi
-	ret
-dlinitobj endp
+                mov esi,window
+                mov eax,[ebx]
+                and eax,_O_DEACT
+                mov edx,eax
+                .repeat
+                    mov eax,[esi]
+                    inc esi
+                    mov al,ah
+                    and al,0Fh
+                    .if edx
+                        .if !al
+                            and ah,070h
+                            or  ah,008h
+                            mov [esi],ah
+                        .endif
+                    .elseif al == 8
+                        and ah,070h
+                        mov [esi],ah
+                    .endif
+                    inc esi
+                .untilcxz
+                .endc
 
-	OPTION	PROC:PUBLIC
+              .case _O_RBUTT
 
-dlinit	proc uses esi edi ebx td:PTR S_DOBJ
-  local object, wp
-	mov	ebx,td
-	mov	edi,[ebx]
-	test	edi,_D_ONSCR
-	jz	@F
-	mov	eax,[ebx].S_DOBJ.dl_wp
-	mov	wp,eax
-	rcalloc( [ebx].S_DOBJ.dl_rect, 0 )
-	test	eax,eax
-	jz	toend
-	mov	[ebx].S_DOBJ.dl_wp,eax
-	rcread( [ebx].S_DOBJ.dl_rect, eax )
-@@:
-	movzx	eax,[ebx].S_DOBJ.dl_count
-	mov	esi,eax
-	mov	eax,[ebx].S_DOBJ.dl_object
-	mov	object,eax
-	test	esi,esi
-	jz	done
-@@:
-	dlinitobj( td, object )
-	add	object,SIZE S_TOBJ
-	dec	esi
-	jnz	@B
-done:
-	test	edi,_D_ONSCR
-	jz	toend
-	rcwrite( [ebx].S_DOBJ.dl_rect, [ebx].S_DOBJ.dl_wp )
-	free( [ebx].S_DOBJ.dl_wp )
-	mov	eax,wp
-	mov	[ebx].S_DOBJ.dl_wp,eax
-toend:
-	ret
-dlinit	endp
+                mov eax,[ebx]
+                and al,_O_RADIO
+                mov al,' '
+                .ifnz
+                    mov al,ASCII_RADIO
+                .endif
+                mov edx,window
+                mov [edx+2],al
+                .endc
 
-	END
+              .case _O_CHBOX
+
+                mov eax,[ebx]
+                and eax,_O_FLAGB
+                mov al,' '
+                .ifnz
+                    mov al,'x'
+                .endif
+                mov edx,window
+                mov [edx+2],al
+                .endc
+
+              .case _O_XCELL
+              .case _O_TEDIT
+
+                mov dl,tclrascii
+                mov eax,esi
+                mov esi,[ebx].S_TOBJ.to_data
+                mov ebx,eax
+                mov edi,window
+                mov eax,[edi]
+                mov al,dl
+                mov edx,ecx
+
+                .if bl != _O_TEDIT
+                    mov al,' '
+                    .repeat
+                        stosb
+                        inc edi
+                    .untilcxz
+                .else
+                    rep stosw
+                .endif
+
+                .if esi
+                    mov edi,window
+                    .if bl == _O_XCELL
+                        add edi,2
+                        sub edx,2
+                        wcpath(edi, edx, esi)
+                    .else
+                        .repeat
+                            lodsb
+                            .break .if !al
+                            stosb
+                            inc edi
+                            dec edx
+                        .untilz
+                    .endif
+                .endif
+                .endc
+
+              .case _O_MENUS
+
+                mov eax,[ebx]
+                mov edx,window
+                .if al & _O_FLAGB
+                    mov byte ptr [edx-2],175
+                .elseif eax & _O_RADIO
+                    mov al,ASCII_RADIO
+                    mov [edx-2],al
+                .endif
+                .endc
+
+            .endsw
+
+            pop ebx
+            pop edi
+            pop esi
+
+            mov eax,edi
+            add object,SIZE S_TOBJ
+            dec esi
+        .endw
+
+        .break .if !(edi & _D_ONSCR)
+        rcwrite([ebx].S_DOBJ.dl_rect, [ebx].S_DOBJ.dl_wp)
+        free([ebx].S_DOBJ.dl_wp)
+        mov eax,wp
+        mov [ebx].S_DOBJ.dl_wp,eax
+    .until 1
+    ret
+
+dlinit endp
+
+    END

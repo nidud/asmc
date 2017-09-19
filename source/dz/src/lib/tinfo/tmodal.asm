@@ -1,78 +1,78 @@
 include tinfo.inc
 
-	.data
+    .data
 
-tiupdate_line	dd -1
-tiupdate_offs	dd -1
+tiupdate_line dd -1
+tiupdate_offs dd -1
 
-	.code
+    .code
 
-	ASSUME esi: PTR S_TINFO
+    assume esi:ptr S_TINFO
 
-tiupdate PROC PRIVATE USES esi
+tiupdate proc private uses esi
 
-	mov	esi,tinfo
-	.if	tistate( esi )
+    mov esi,tinfo
+    .if tistate(esi)
 
-		.if	edx & _D_ONSCR && ecx & _T_USEMENUS
+        .if edx & _D_ONSCR && ecx & _T_USEMENUS
 
-			mov	eax,[esi].ti_loff
-			add	eax,[esi].ti_yoff
-			mov	edx,[esi].ti_xoff
-			add	edx,[esi].ti_boff
+            mov eax,[esi].ti_loff
+            add eax,[esi].ti_yoff
+            mov edx,[esi].ti_xoff
+            add edx,[esi].ti_boff
 
-			.if	eax != tiupdate_line || edx != tiupdate_offs
+            .if eax != tiupdate_line || edx != tiupdate_offs
 
-				mov tiupdate_offs,edx
-				mov tiupdate_line,eax
+                mov tiupdate_offs,edx
+                mov tiupdate_line,eax
 
-				timenus( esi )
-			.endif
-		.endif
-	.endif
-	xor	eax,eax
-	ret
-tiupdate ENDP
+                timenus(esi)
+            .endif
+        .endif
+    .endif
+    xor eax,eax
+    ret
+tiupdate endp
 
-tmodal	PROC USES esi edi ebx
+tmodal proc uses esi edi ebx
 
-	local	cursor:S_CURSOR, update, ftime
+    local cursor:S_CURSOR, update, ftime
 
-	.while	mousep()
-	.endw
+    .while mousep()
+    .endw
 
-	mov	esi,tinfo
-	.if	tistate( esi )
+    mov esi,tinfo
+    .if tistate(esi)
 
-		mov	eax,tupdate
-		mov	update,eax
-		mov	tupdate,tiupdate
-		CursorGet( addr cursor )
-		tishow( esi )
+        mov eax,tupdate
+        mov update,eax
+        mov tupdate,tiupdate
+        CursorGet(&cursor)
+        tishow(esi)
 
-		mov	ftime,tiftime( esi )
-		mov	edi,tevent()
-		mov	eax,tinfo
-		cmp	eax,esi
-		mov	esi,0
+        mov ftime,tiftime(esi)
+        mov edi,tevent()
+        mov eax,tinfo
+        cmp eax,esi
+        mov esi,0
 
-		.if	ZERO?
+        .ifz
 
-			tiftime( eax )
-			mov	esi,ftime
-			sub	esi,eax
-		.endif
+            tiftime(eax)
+            mov esi,ftime
+            sub esi,eax
+        .endif
 
-		mov	eax,update
-		mov	tupdate,eax
-		CursorSet( addr cursor )
+        mov eax,update
+        mov tupdate,eax
+        CursorSet(&cursor)
 
-		mov	edx,esi		; zero if not modified
-		mov	eax,edi		; returned key value
-		test	eax,eax
-	.endif
-	ret
+        mov edx,esi     ; zero if not modified
+        mov eax,edi     ; returned key value
+        test eax,eax
+    .endif
+    ret
 
-tmodal	ENDP
+tmodal endp
 
-	END
+    END

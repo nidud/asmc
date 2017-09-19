@@ -1,37 +1,38 @@
 include time.inc
 
-	.code
+    .code
 
-DaysInFebruary PROC year
+DaysInFebruary proc year
 
-	mov eax,year
+    mov eax,year
 
-	.while	1
+    .repeat
+        .while 1
 
-		.break .if !eax
+            .break .if !eax
 
-		.if !( eax & 3 )
+            .if !(eax & 3)
 
-			mov ecx,100
-			xor edx,edx
-			div ecx
-			.break .if edx
+                mov ecx,100
+                xor edx,edx
+                div ecx
+                .break .if edx
 
-			mov eax,year
-		.endif
+                mov eax,year
+            .endif
 
-		mov ecx,400
-		xor edx,edx
-		div ecx
-		.break .if !edx
+            mov ecx,400
+            xor edx,edx
+            div ecx
+            .break .if !edx
 
-		mov eax,28
-		jmp toend
-	.endw
-	mov eax,29
-toend:
-	ret
+            mov eax,28
+            .break(1)
+        .endw
+        mov eax,29
+    .until 1
+    ret
 
-DaysInFebruary ENDP
+DaysInFebruary endp
 
-	END
+    END

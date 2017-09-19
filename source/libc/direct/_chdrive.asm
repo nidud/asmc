@@ -1,35 +1,30 @@
 include errno.inc
 include winbase.inc
 
-	.code
+    .code
 
-	option stackbase:esp
+_chdrive proc drive:SINT
 
-_chdrive PROC drive:SINT
-	mov	eax,drive
-	cmp	eax,1
-	jl	error1
-	cmp	eax,31
-	ja	error1
-	add	al,'A' - 1
-	mov	ah,':'
-	push	eax
-	mov	eax,esp
-	SetCurrentDirectory( eax )
-	pop	ecx
-	test	eax,eax
-	jz	error2
-	xor	eax,eax
-toend:
-	ret
-error1:
-	mov	errno,EACCES
-	mov	oserrno,ERROR_INVALID_DRIVE
-	or	eax,-1
-	jmp	toend
-error2:
-	call	osmaperr
-	jmp	toend
-_chdrive ENDP
+    mov eax,drive
+    .ifs eax > 0 || eax > 31
 
-	END
+        add al,'A' - 1
+        mov ah,':'
+        mov drive,eax
+
+        .if SetCurrentDirectory(&drive)
+
+            xor eax,eax
+        .else
+            osmaperr()
+        .endif
+    .else
+        mov errno,EACCES
+        mov oserrno,ERROR_INVALID_DRIVE
+        or  eax,-1
+    .endif
+    ret
+
+_chdrive endp
+
+    END

@@ -1,10 +1,12 @@
 include consx.inc
 
-	.data
-	tupdate PVOID tdummy
-	.code
-tdummy:
-	xor eax,eax
-	ret
+    .data
+    tupdate PVOID tdummy
 
-	END
+    .code
+
+tdummy:
+    xor eax,eax
+    ret
+
+    END

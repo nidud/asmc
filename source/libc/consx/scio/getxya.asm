@@ -1,20 +1,28 @@
 include consx.inc
 
-	.code
+    .code
 
-getxya	PROC USES ecx edx x, y
-	movzx	eax,BYTE PTR y
-	shl	eax,16
-	mov	al,BYTE PTR x	; COORD
-	push	eax
-	mov	edx,esp		; lpAttribute
-	push	eax
-	mov	ecx,esp		; lpNumberOfAttributesRead
-	ReadConsoleOutputAttribute( hStdOutput, edx, 1, eax, ecx )
-	pop	eax		; <1>
-	pop	eax		; Attribute
-	and	eax,00FFh
-	ret
-getxya	ENDP
+getxya proc uses ecx edx x, y
 
-	END
+  local Attribute
+  local NumberOfAttributesRead
+
+    movzx ecx,byte ptr y
+    shl   ecx,16
+    mov   cl,byte ptr x   ; COORD
+
+    .if ReadConsoleOutputAttribute(
+        hStdOutput,
+        &Attribute,
+        1,
+        ecx,
+        &NumberOfAttributesRead)
+
+        mov eax,Attribute
+        and eax,0xFF
+    .endif
+    ret
+
+getxya endp
+
+    END

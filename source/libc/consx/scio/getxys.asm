@@ -1,15 +1,15 @@
 include consx.inc
 
-	.code
+    .code
 
-getxys	PROC x, y, b:LPSTR, l, bsize
-	mov	ah,1
-	mov	al,BYTE PTR l
-	shl	eax,16
-	mov	ah,BYTE PTR y
-	mov	al,BYTE PTR x
-	dledit( b, eax, bsize, 0 )
-	ret
-getxys	ENDP
+getxys proc x, y, b:LPSTR, l, bsize
+    mov ah,1
+    mov al,byte ptr l
+    shl eax,16
+    mov ah,byte ptr y
+    mov al,byte ptr x
+    dledit(b, eax, bsize, 0)
+    ret
+getxys endp
 
-	END
+    END

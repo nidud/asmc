@@ -1,19 +1,19 @@
 include cfini.inc
 
-	.code
+    .code
 
-CFGetSectionID PROC __section:LPSTR, __id:UINT
+CFGetSectionID proc __section:LPSTR, __id:UINT
 
-	mov	eax,__CFBase
-	.if	eax
+    mov eax,__CFBase
+    .if eax
 
-		.if	__CFGetSection( eax, __section )
+        .if __CFGetSection(eax, __section)
 
-			CFGetEntryID( eax, __id )
-		.endif
-	.endif
-	ret
+            CFGetEntryID(eax, __id)
+        .endif
+    .endif
+    ret
 
-CFGetSectionID ENDP
+CFGetSectionID endp
 
-	END
+    END

@@ -1,3 +1,6 @@
+; ASSEMBLE.ASM--
+; Copyright (C) 2017 Asmc Developers
+
 include alloc.inc
 include stdio.inc
 include stdlib.inc
@@ -10,7 +13,7 @@ include asmc.inc
 include token.inc
 
 public	jmpenv
-extern	MacroLocals:DWORD
+extern	MacroLocals:dword
 
 conv_section	STRUC
 len		dd ?
@@ -39,7 +42,7 @@ cp_rdata	db ".rdata",0
 cp_bss1		db "_BSS",0
 cp_bss2		db ".bss",0
 
-    ALIGN   4
+    align 4
 
 formatoptions	label format_options
 format_options	< bin_init,  0000h, <"BIN",0,0,0>>
@@ -56,7 +59,7 @@ stt		db SEGTYPE_CODE,SEGTYPE_DATA,SEGTYPE_DATA,SEGTYPE_BSS
 filetypes	dd 'msa.','jbo.','tsl.','rre.','nib.','exe.'
 currentftype	dd 0,0
 
-    .code
+.code
 
 ;
 ; translate section names (COFF+PE):
@@ -65,7 +68,7 @@ currentftype	dd 0,0
 ; CONST -> .rdata
 ; _BSS	 -> .bss
 ;
-ConvertSectionName PROC USES esi edi ebx sym, pst, buffer
+ConvertSectionName proc uses esi edi ebx sym, pst, buffer
 
     .repeat
 
@@ -96,9 +99,9 @@ ConvertSectionName PROC USES esi edi ebx sym, pst, buffer
 		    .endif
 		.endif
 		mov eax,cst[ebx].dst
-		.if BYTE PTR [edx]
+		.if byte ptr [edx]
 
-			strcat( strcpy( buffer, eax ), edx )
+			strcat(strcpy(buffer, eax), edx)
 		.endif
 		.break(1)
 	    .endif
@@ -108,7 +111,7 @@ ConvertSectionName PROC USES esi edi ebx sym, pst, buffer
     .until 1
     ret
 
-ConvertSectionName ENDP
+ConvertSectionName endp
 ;
 ; Write a byte to the segment buffer.
 ; in OMF, the segment buffer is flushed when the max. record size is reached.
@@ -116,7 +119,7 @@ ConvertSectionName ENDP
 
 MAX_LEDATA_THRESHOLD equ 1024 - 10
 
-OutputByte PROC USES esi edi ebx char
+OutputByte proc uses esi edi ebx char
 
     mov esi,ModuleInfo.currseg
     mov edi,[esi].nsym.seginfo
@@ -157,9 +160,9 @@ OutputByte PROC USES esi edi ebx char
 	mov [esi].nsym.sym.max_offset,eax
     .endif
     ret
-OutputByte ENDP
+OutputByte endp
 
-FillDataBytes PROC USES esi char, len
+FillDataBytes proc uses esi char, len
     .if ModuleInfo.CommentDataInCode
 	omf_OutSelect(1)
     .endif
@@ -169,9 +172,9 @@ FillDataBytes PROC USES esi char, len
 	dec esi
     .endw
     ret
-FillDataBytes ENDP
+FillDataBytes endp
 
-OutputBytes PROC USES esi edi ebx pbytes, len, fixup
+OutputBytes proc uses esi edi ebx pbytes, len, fixup
 
     mov esi,ModuleInfo.currseg
     mov edi,[esi].nsym.seginfo
@@ -192,7 +195,7 @@ OutputBytes PROC USES esi edi ebx pbytes, len, fixup
 	.endif
 
 	.if fixup
-	    store_fixup( fixup, esi, pbytes )
+	    store_fixup(fixup, esi, pbytes)
 	.endif
 
 	mov edx,edi
@@ -220,12 +223,12 @@ OutputBytes PROC USES esi edi ebx pbytes, len, fixup
 	mov [esi].nsym.sym.max_offset,eax
     .endif
     ret
-OutputBytes ENDP
+OutputBytes endp
 
 ;
 ; set current offset in a segment (usually CurrSeg) without to write anything
 ;
-SetCurrOffset PROC USES esi edi ebx dseg, value, relative, select_data
+SetCurrOffset proc uses esi edi ebx dseg, value, relative, select_data
 
     mov ebx,value
     mov esi,dseg
@@ -239,13 +242,13 @@ SetCurrOffset PROC USES esi edi ebx dseg, value, relative, select_data
     .if Options.output_format == OFORMAT_OMF
 	.if esi == ModuleInfo.currseg
 	    .if ecx
-		call omf_FlushCurrSeg
+		omf_FlushCurrSeg()
 	    .endif
 	    ;
 	    ; for debugging, tell if data is located in code sections
 	    ;
 	    .if select_data && ModuleInfo.CommentDataInCode
-		omf_OutSelect( 1 )
+		omf_OutSelect(1)
 	    .endif
 	    mov LastCodeBufSize,ebx
 	.endif
@@ -265,12 +268,12 @@ SetCurrOffset PROC USES esi edi ebx dseg, value, relative, select_data
     .endif
     mov eax,NOT_ERROR
     ret
-SetCurrOffset ENDP
+SetCurrOffset endp
 
 ;
 ; write object module
 ;
-WriteModule PROC USES esi edi ebx modinfo
+WriteModule proc uses esi edi ebx modinfo
 
     mov esi,SymTables[TAB_SEG*sizeof(symbol_queue)].head
     .while  esi
@@ -290,8 +293,8 @@ WriteModule PROC USES esi edi ebx modinfo
 
     mov edi,Options.names[OPTN_LNKDEF_FN*4]
     .if edi
-	.if !fopen( edi, "w" )
-	    asmerr( 3020, edi )
+	.if !fopen(edi, "w")
+	    asmerr(3020, edi)
 	.else
 	    mov edi,eax
 	    mov esi,SymTables[TAB_EXT*sizeof(symbol_queue)].head
@@ -300,12 +303,12 @@ WriteModule PROC USES esi edi ebx modinfo
 		.if [esi].asym.flag & SFL_ISPROC && [esi].asym.dll && [ebx].dll_desc.dname \
 		    && ( !( [esi].asym.sint_flag & SINT_WEAK) || [esi].asym.flag & SFL_IAT_USED )
 
-		    Mangle( esi, ModuleInfo.stringbufferend )
-		    sprintf( ModuleInfo.currsource, "import '%s'  %s.%s\n",
+		    Mangle(esi, ModuleInfo.stringbufferend)
+		    sprintf(ModuleInfo.currsource, "import '%s'  %s.%s\n",
 			ModuleInfo.stringbufferend,
-			&[ebx].dll_desc.dname, [esi].asym._name )
+			&[ebx].dll_desc.dname, [esi].asym._name)
 		    mov ebx,eax
-		    .if fwrite( ModuleInfo.currsource, 1, ebx, edi ) != ebx
+		    .if fwrite(ModuleInfo.currsource, 1, ebx, edi) != ebx
 			WriteError()
 		    .endif
 		.endif
@@ -316,9 +319,9 @@ WriteModule PROC USES esi edi ebx modinfo
     .endif
     mov eax,NOT_ERROR
     ret
-WriteModule ENDP
+WriteModule endp
 
-add_cmdline_tmacros PROC USES esi edi ebx
+add_cmdline_tmacros proc uses esi edi ebx
 
     push ebp
     mov	 ebp,esp
@@ -326,44 +329,44 @@ add_cmdline_tmacros PROC USES esi edi ebx
     mov edi,Options.queues[OPTQ_MACRO*4]
     .while edi
 	lea esi,[edi].qitem.value
-	.if !strchr( esi, '=' )
-	    strlen( esi )
+	.if !strchr(esi, '=')
+	    strlen(esi)
 	    lea ebx,[esi+eax]
 	.else
 	    mov ebx,eax
 	    mov edx,ebx
 	    sub edx,esi
 	    inc edx
-	    memcpy( alloca( edx ), esi, edx )
-	    mov BYTE PTR [eax+edx-1],0
+	    memcpy(alloca(edx), esi, edx)
+	    mov byte ptr [eax+edx-1],0
 	    inc ebx
 	    mov esi,eax
 	.endif
 
 	xor ecx,ecx
 	movzx eax,byte ptr [esi]
-	.if !( ( _ltype[eax+1] & _LABEL ) || al == '.')
+	.if !((_ltype[eax+1] & _LABEL) || al == '.')
 	    inc ecx
 	.else
 	    .for edx = &[esi+1], al = [edx] : eax: edx++, al = [edx]
 
-		.if !( _ltype[eax+1] & ( _LABEL or _DIGIT ) )
+		.if !(_ltype[eax+1] & (_LABEL or _DIGIT))
 		    inc ecx
 		    .break
 		.endif
 	    .endf
 	.endif
 	.if ecx
-	    asmerr( 2008, esi )
+	    asmerr(2008, esi)
 	    .break
 	.endif
 
-	.if !SymFind( esi )
-	    SymCreate( esi )
+	.if !SymFind(esi)
+	    SymCreate(esi)
 	    mov [eax].asym.state,SYM_TMACRO
 	.endif
 	.if [eax].asym.state != SYM_TMACRO
-	    asmerr( 2005, esi )
+	    asmerr(2005, esi)
 	    .break
 	.endif
 	or  [eax].asym.flag,SFL_ISDEFINED or SFL_PREDEFINED
@@ -373,18 +376,18 @@ add_cmdline_tmacros PROC USES esi edi ebx
     mov esp,ebp
     pop ebp
     ret
-add_cmdline_tmacros ENDP
+add_cmdline_tmacros endp
 
-add_incpaths PROC USES esi
+add_incpaths proc uses esi
     mov esi,Options.queues[OPTQ_INCPATH*4]
-    .while  esi
-	AddStringToIncludePath( &[esi].qitem.value )
+    .while esi
+	AddStringToIncludePath(&[esi].qitem.value)
 	mov esi,[esi].qitem.next
     .endw
     ret
-add_incpaths ENDP
+add_incpaths endp
 
-CmdlParamsInit PROC pass
+CmdlParamsInit proc pass
     .if pass == PASS_1
 
 	add_cmdline_tmacros()
@@ -394,21 +397,21 @@ CmdlParamsInit PROC pass
 
 	    .if getenv("INCLUDE")
 
-		AddStringToIncludePath( eax )
+		AddStringToIncludePath(eax)
 	    .endif
 	.endif
     .endif
     ret
-CmdlParamsInit ENDP
+CmdlParamsInit endp
 
-WritePreprocessedLine PROC string
+WritePreprocessedLine proc string
     .data
     PrintEmptyLine db 1
     .code
     .if ModuleInfo.token_count > 0
 	mov eax,string
-	movzx	ecx,BYTE PTR [eax]
-	.while	BYTE PTR _ltype[ecx+1] & _SPACE
+	movzx ecx,byte ptr [eax]
+	.while byte ptr _ltype[ecx+1] & _SPACE
 	    add eax,1
 	    mov cl,[eax]
 	.endw
@@ -417,16 +420,16 @@ WritePreprocessedLine PROC string
 	.else
 	    mov eax,string
 	.endif
-	printf( "%s\n", eax )
+	printf("%s\n", eax)
 	mov PrintEmptyLine,1
     .elseif PrintEmptyLine
 	mov PrintEmptyLine,0
-	printf( "\n" )
+	printf("\n")
     .endif
     ret
-WritePreprocessedLine ENDP
+WritePreprocessedLine endp
 
-SetMasm510 PROC value
+SetMasm510 proc value
     mov eax,value
     mov ModuleInfo.m510,al
     mov ModuleInfo.oldstructs,al
@@ -446,9 +449,9 @@ SetMasm510 PROC value
 	.endif
     .endif
     ret
-SetMasm510 ENDP
+SetMasm510 endp
 
-ModulePassInit PROC USES esi
+ModulePassInit proc uses esi
 
     mov ecx,Options.cpu
     mov esi,Options._model
@@ -499,13 +502,13 @@ ModulePassInit PROC USES esi
 		mov ecx,P_386
 	    .endif
 	.endif
-	SetCPU( ecx )
+	SetCPU(ecx)
 	;
 	; table ModelToken starts with MODEL_TINY, which is index 1"
 	;
 	.if esi != MODEL_NONE
 
-	    AddLineQueueX( "%r %s", T_DOT_MODEL, ModelToken[esi*4-4] )
+	    AddLineQueueX("%r %s", T_DOT_MODEL, ModelToken[esi*4-4])
 	.endif
     .endif
 
@@ -558,11 +561,11 @@ ModulePassInit PROC USES esi
 	.endw
     .endif
     ret
-ModulePassInit ENDP
+ModulePassInit endp
 ;
 ; checks after pass one has been finished without errors
 ;
-PassOneChecks PROC USES esi edi
+PassOneChecks proc uses esi edi
     ;
     ; check for open structures and segments has been done inside the
     ; END directive handling already
@@ -574,7 +577,7 @@ PassOneChecks PROC USES esi edi
     CondCheckOpen()
     .if !ModuleInfo.EndDirFound
 
-	asmerr( 2088 )
+	asmerr(2088)
     .endif
 
     ; v2.04: check the publics queue.
@@ -671,11 +674,11 @@ aliases:
 
 	    and [esi].asym.sint_flag,not SINT_WEAK
 	.endif
-	.if [esi].asym.sint_flag & SINT_WEAK && !( [esi].asym.flag & SFL_IAT_USED )
+	.if [esi].asym.sint_flag & SINT_WEAK && !([esi].asym.flag & SFL_IAT_USED)
 	    ;
 	    ; remove unused EXTERNDEF/PROTO items from queue.
 	    ;
-	    sym_remove_table( &SymTables[TAB_EXT*sizeof(symbol_queue)], esi )
+	    sym_remove_table(&SymTables[TAB_EXT*sizeof(symbol_queue)], esi)
 	    .continue
 	.endif
 	.continue .if [esi].asym.sint_flag & SINT_ISCOM
@@ -726,7 +729,7 @@ aliases:
 	.endif
     .endif
     ret
-PassOneChecks ENDP
+PassOneChecks endp
 ;
 ; do ONE assembly pass
 ; the FASTPASS variant (which is default now) doesn't scan the full source
@@ -740,20 +743,20 @@ PassOneChecks ENDP
 ;    - restore the state
 ;    - read preprocessed lines and feed ParseLine() with it
 ;
-OnePass PROC USES esi edi
+OnePass proc uses esi edi
 
     InputPassInit()
     ModulePassInit()
-    SymPassInit( Parse_Pass )
+    SymPassInit(Parse_Pass)
     LabelInit()
-    SegmentInit( Parse_Pass )
-    ContextInit( Parse_Pass )
+    SegmentInit(Parse_Pass)
+    ContextInit(Parse_Pass)
     ProcInit()
     TypesInit()
-    HllInit( Parse_Pass )
-    MacroInit( Parse_Pass )
-    AssumeInit( Parse_Pass )
-    CmdlParamsInit( Parse_Pass )
+    HllInit(Parse_Pass)
+    MacroInit(Parse_Pass)
+    AssumeInit(Parse_Pass)
+    CmdlParamsInit(Parse_Pass)
 
     xor eax,eax
     mov ModuleInfo.EndDirFound,al
@@ -773,17 +776,17 @@ OnePass PROC USES esi edi
 
 	.while	esi && !ModuleInfo.EndDirFound
 
-	    set_curr_srcfile( [esi].line_item.srcfile, [esi].line_item.lineno )
+	    set_curr_srcfile([esi].line_item.srcfile, [esi].line_item.lineno)
 
 	    mov ModuleInfo.line_flags,0
 	    mov eax,[esi].line_item.macro_level
 	    mov MacroLevel,eax
 	    mov ModuleInfo.CurrComment,0
-	    Tokenize( &[esi].line_item.line, 0, ModuleInfo.tokenarray, TOK_DEFAULT )
+	    Tokenize(&[esi].line_item.line, 0, ModuleInfo.tokenarray, TOK_DEFAULT)
 	    mov ModuleInfo.token_count,eax
 	    .if eax
 
-		ParseLine( ModuleInfo.tokenarray )
+		ParseLine(ModuleInfo.tokenarray)
 	    .endif
 	    mov esi,[esi].line_item.next
 	    mov LineStoreCurr,esi
@@ -795,10 +798,10 @@ OnePass PROC USES esi edi
 	    mov esi,[esi].qitem.next
 	    .if SearchFile(eax,1)
 
-		ProcessFile( ModuleInfo.tokenarray )
+		ProcessFile(ModuleInfo.tokenarray)
 	    .endif
 	.endw
-	ProcessFile( ModuleInfo.tokenarray )
+	ProcessFile(ModuleInfo.tokenarray)
     .endif
 
     LinnumFini()
@@ -809,17 +812,17 @@ OnePass PROC USES esi edi
     ClearSrcStack()
     mov eax,1
     ret
-OnePass ENDP
+OnePass endp
 
-get_module_name PROC PRIVATE USES esi edi
+get_module_name proc private uses esi edi
 
     mov esi,Options.names[OPTN_MODULE_NAME*4]
     .if esi
 
-	strncpy( &ModuleInfo._name, esi, sizeof( ModuleInfo._name ) )
+	strncpy( &ModuleInfo._name, esi, sizeof(ModuleInfo._name))
 	mov ModuleInfo._name[sizeof(ModuleInfo._name)-1],0
     .else
-	GetFNamePart( ModuleInfo.curr_fname[ASM*4] )
+	GetFNamePart(ModuleInfo.curr_fname[ASM*4])
 	mov esi,eax
 	.if GetExtPart(eax) == esi
 	    strlen(esi)
@@ -827,7 +830,7 @@ get_module_name PROC PRIVATE USES esi edi
 	.endif
 	sub eax,esi
 	mov ModuleInfo._name[eax],0
-	memcpy( &ModuleInfo._name, esi, eax )
+	memcpy(&ModuleInfo._name, esi, eax)
     .endif
     ;
     ; the module name must be a valid identifier, because it's used
@@ -836,11 +839,11 @@ get_module_name PROC PRIVATE USES esi edi
     lea esi,ModuleInfo._name
     _strupr(esi)
     .while 1
-	movzx	eax,BYTE PTR [esi]
+	movzx	eax,byte ptr [esi]
 	add esi,1
 	.break	.if !eax
 	.continue .if _ltype[eax+1] & _DIGIT or _LABEL
-	mov BYTE PTR [esi-1],'_'
+	mov byte ptr [esi-1],'_'
     .endw
     ;
     ; first character can't be a digit either
@@ -850,9 +853,9 @@ get_module_name PROC PRIVATE USES esi edi
 	mov ModuleInfo._name,'_'
     .endif
     ret
-get_module_name ENDP
+get_module_name endp
 
-ModuleInit PROC PRIVATE
+ModuleInit proc private
 
     mov eax,Options.sub_format
     mov ModuleInfo.sub_format,al
@@ -894,19 +897,19 @@ ModuleInit PROC PRIVATE
     call [eax].format_options.init
     add	 esp,4
     ret
-ModuleInit ENDP
+ModuleInit endp
 
-ReswTableInit PROC PRIVATE
+ReswTableInit proc private
     ResWordsInit()
     .if Options.output_format == OFORMAT_OMF
 
-	DisableKeyword( T_IMAGEREL )
-	DisableKeyword( T_SECTIONREL )
+	DisableKeyword(T_IMAGEREL)
+	DisableKeyword(T_SECTIONREL)
     .endif
     .if Options.strict_masm_compat == 1
 
-	DisableKeyword( T_INCBIN )
-	DisableKeyword( T_FASTCALL )
+	DisableKeyword(T_INCBIN)
+	DisableKeyword(T_FASTCALL)
     .endif
     .if !(Options.aflag & _AF_ON)
 	;
@@ -915,30 +918,30 @@ ReswTableInit PROC PRIVATE
 	push ebx
 	mov  ebx,T_DOT_IFA
 	.repeat
-	    DisableKeyword( ebx )
+	    DisableKeyword(ebx)
 	    add ebx,1
 	.until ebx > T_DOT_ENDSW
 	pop ebx
     .endif
 
     ret
-ReswTableInit ENDP
+ReswTableInit endp
 
-open_files PROC PRIVATE
-    fopen( ModuleInfo.curr_fname[ASM*4], "rb" )
+open_files proc private
+    fopen(ModuleInfo.curr_fname[ASM*4], "rb")
     mov ModuleInfo.curr_file[ASM*4],eax
     test eax,eax
     jz	error_1
     cmp Options.syntax_check_only,0
     jne @F
-    fopen( ModuleInfo.curr_fname[OBJ*4],"wb" )
+    fopen(ModuleInfo.curr_fname[OBJ*4],"wb")
     mov ModuleInfo.curr_file[OBJ*4],eax
     test eax,eax
     jz	error_2
 @@:
     cmp Options.write_listing,0
     je	toend
-    fopen( ModuleInfo.curr_fname[LST*4],"wb" )
+    fopen(ModuleInfo.curr_fname[LST*4],"wb")
     mov ModuleInfo.curr_file[LST*4],eax
     test eax,eax
     jz	error_3
@@ -953,11 +956,11 @@ error_2:
 error_3:
     mov eax,ModuleInfo.curr_fname[LST*4]
 error:
-    asmerr( 1000, eax )
+    asmerr(1000, eax)
     ret ; will not return..
-open_files ENDP
+open_files endp
 
-close_files PROC USES ebx
+close_files proc uses ebx
 
     ; v2.11: no fatal errors anymore if fclose() fails.
     ; That's because Fatal() may cause close_files() to be
@@ -968,7 +971,7 @@ close_files PROC USES ebx
 
 	.if fclose(eax)
 
-	    asmerr( 3021, ModuleInfo.curr_fname[ASM*4] )
+	    asmerr(3021, ModuleInfo.curr_fname[ASM*4])
 	.endif
     .endif
 
@@ -976,39 +979,39 @@ close_files PROC USES ebx
     .if eax
 	.if fclose(eax)
 
-	    asmerr( 3021, ModuleInfo.curr_fname[OBJ*4] )
+	    asmerr(3021, ModuleInfo.curr_fname[OBJ*4])
 	.endif
     .endif
 
     .if !Options.syntax_check_only && ModuleInfo.error_count
 
-	remove( ModuleInfo.curr_fname[OBJ*4] )
+	remove(ModuleInfo.curr_fname[OBJ*4])
     .endif
 
     mov eax,ModuleInfo.curr_file[LST*4]
     .if eax
 
-	fclose( eax )
+	fclose(eax)
 	mov ModuleInfo.curr_file[LST*4],0
     .endif
 
     mov eax,ModuleInfo.curr_file[ERR*4]
     .if eax
 
-	fclose( eax )
+	fclose(eax)
 	mov ModuleInfo.curr_file[ERR*4],0
     .elseif ModuleInfo.curr_fname[ERR*4]
 
-	remove( ModuleInfo.curr_fname[ERR*4] )
+	remove(ModuleInfo.curr_fname[ERR*4])
     .endif
     ret
 
-close_files ENDP
+close_files endp
 
 ;
 ; get default file extension for error, object and listing files
 ;
-GetExt	PROC PRIVATE ftype
+GetExt proc private ftype
 
     mov ecx,ftype
     .if ecx == OBJ && Options.output_format == OFORMAT_BIN
@@ -1024,7 +1027,7 @@ GetExt	PROC PRIVATE ftype
     mov [eax],ecx
     ret
 
-GetExt	ENDP
+GetExt endp
 
 ;; set filenames for .obj, .lst and .err
 ;; in:
@@ -1034,14 +1037,14 @@ GetExt	ENDP
 ;;  CurrFName[] for .obj, .lst and .err ( may be NULL )
 ;; v2.12: _splitpath()/_makepath() removed.
 
-SetFilenames PROC PRIVATE USES esi edi ebx fn
-  local path[260]:BYTE
+SetFilenames proc private uses esi edi ebx fn
+  local path[260]:byte
 
-    strlen( fn )
+    strlen(fn)
     inc eax
-    strcpy( LclAlloc( eax ), fn )
+    strcpy(LclAlloc(eax), fn)
     mov ModuleInfo.curr_fname[ASM*4],eax
-    GetFNamePart( eax )
+    GetFNamePart(eax)
     mov esi,eax
     mov edi,ASM+1
     lea ebx,path
@@ -1052,41 +1055,41 @@ SetFilenames PROC PRIVATE USES esi edi ebx fn
 	    mov byte ptr [ebx],0
 	    mov eax,DefaultDir[edi*4]
 	    .if eax
-		strcpy( ebx, eax )
+		strcpy(ebx, eax)
 	    .endif
-	    GetExtPart( strcat( ebx, esi ) )
+	    GetExtPart(strcat(ebx, esi))
 	    @@:
 	    push eax
-	    GetExt( edi )
+	    GetExt(edi)
 	    pop ecx
-	    strcpy( ecx, eax )
+	    strcpy(ecx, eax)
 	.else
 	    ;
 	    ; filename has been set by cmdline option -Fo, -Fl or -Fr
 	    ;
-	    strcpy( ebx, eax )
-	    GetFNamePart( ebx )
+	    strcpy(ebx, eax)
+	    GetFNamePart(ebx)
 	    .if byte ptr [eax] == 0
-		strcpy( eax, esi )
+		strcpy(eax, esi)
 	    .endif
-	    GetExtPart( eax )
-	    cmp BYTE PTR [eax],0
+	    GetExtPart(eax)
+	    cmp byte ptr [eax],0
 	    je	@B
 	.endif
-	strlen( ebx )
+	strlen(ebx)
 	inc eax
-	strcpy( LclAlloc( eax ), ebx )
+	strcpy(LclAlloc(eax), ebx)
 	mov ModuleInfo.curr_fname[edi*4],eax
 	inc edi
     .endw
     ret
-SetFilenames ENDP
+SetFilenames endp
 
-AssembleInit PROC PRIVATE source
+AssembleInit proc private source
     MemInit()
     mov write_to_file,0
     mov LinnumQueue.head,0
-    SetFilenames( source )
+    SetFilenames(source)
     FastpassInit()
     open_files()
     ReswTableInit()
@@ -1097,9 +1100,9 @@ AssembleInit PROC PRIVATE source
     ExprEvalInit()
     LstInit()
     ret
-AssembleInit ENDP
+AssembleInit endp
 
-AssembleFini PROC PRIVATE
+AssembleFini proc private
     SegmentFini()
     ResWordsFini()
     mov ModuleInfo.PubQueue.head,0
@@ -1112,9 +1115,9 @@ AssembleFini PROC PRIVATE
     .untilcxz
     MemFini()
     ret
-AssembleFini ENDP
+AssembleFini endp
 
-AssembleModule PROC USES esi edi ebx source
+AssembleModule proc uses esi edi ebx source
 
   local curr_written, prev_written
 
@@ -1122,17 +1125,17 @@ AssembleModule PROC USES esi edi ebx source
     mov MacroLocals,eax
     mov ModuleInfo.StrStack,eax ; reset string label counter
     lea edi,ModuleInfo
-    mov ecx,sizeof( ModuleInfo )
+    mov ecx,sizeof(ModuleInfo)
     rep stosb
     dec eax
     mov prev_written,eax
 
     .if !Options.quiet
 
-	printf( " Assembling: %s\n", source )
+	printf(" Assembling: %s\n", source)
     .endif
 
-    .if _setjmp( &jmpenv )
+    .if _setjmp(&jmpenv)
 
 	.if eax == 1
 
@@ -1158,7 +1161,7 @@ AssembleModule PROC USES esi edi ebx source
     AssembleInit( source )
     mov Parse_Pass,PASS_1
 
-    .while  1
+    .while 1
 
 	OnePass()
 
@@ -1223,7 +1226,7 @@ AssembleModule PROC USES esi edi ebx source
 
     .if Parse_Pass > PASS_1 && write_to_file
 
-	WriteModule( &ModuleInfo )
+	WriteModule(&ModuleInfo)
     .endif
 
     LstWriteCRef()
@@ -1236,6 +1239,6 @@ done:
     inc eax
 toend:
     ret
-AssembleModule ENDP
+AssembleModule endp
 
     END

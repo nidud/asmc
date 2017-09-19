@@ -3,7 +3,7 @@ include string.inc
 
     .code
 
-_wgetenv PROC USES esi edi ecx enval:LPWSTR
+_wgetenv proc uses esi edi ecx enval:LPWSTR
 
     .if wcslen(enval)
 
@@ -26,6 +26,6 @@ _wgetenv PROC USES esi edi ecx enval:LPWSTR
         .endw
     .endif
     ret
-_wgetenv ENDP
+_wgetenv endp
 
     END

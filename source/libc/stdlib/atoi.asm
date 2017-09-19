@@ -1,10 +1,12 @@
 include stdlib.inc
 
-	.code
+    .code
 
-atoi	PROC string:LPSTR
-	atol( string )
-	ret
-atoi	ENDP
+atoi proc string:LPSTR
 
-	END
+    atol(string)
+    ret
+
+atoi endp
+
+    END

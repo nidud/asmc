@@ -1,31 +1,31 @@
 include alloc.inc
 
-	.code
+    .code
 
 _aligned_malloc proc dwSize:size_t, Alignment:UINT
 
-	mov edx,Alignment
-	mov eax,dwSize
-	lea eax,[eax+edx+sizeof(S_HEAP)]
+    mov edx,Alignment
+    mov eax,dwSize
+    lea eax,[eax+edx+sizeof(S_HEAP)]
 
-	.if malloc( eax )
+    .if malloc(eax)
 
-		mov ecx,Alignment
-		dec ecx
-		.if eax & ecx
+        mov ecx,Alignment
+        dec ecx
+        .if eax & ecx
 
-			lea edx,[eax-sizeof(S_HEAP)]
-			lea eax,[eax+ecx+sizeof(S_HEAP)]
-			not ecx
-			and eax,ecx
-			lea ecx,[eax-sizeof(S_HEAP)]
-			mov [ecx].S_HEAP.h_prev,edx
-			mov [ecx].S_HEAP.h_type,3
+            lea edx,[eax-sizeof(S_HEAP)]
+            lea eax,[eax+ecx+sizeof(S_HEAP)]
+            not ecx
+            and eax,ecx
+            lea ecx,[eax-sizeof(S_HEAP)]
+            mov [ecx].S_HEAP.h_prev,edx
+            mov [ecx].S_HEAP.h_type,3
 
-		.endif
-	.endif
-	ret
+        .endif
+    .endif
+    ret
 
-_aligned_malloc ENDP
+_aligned_malloc endp
 
-	END
+    end

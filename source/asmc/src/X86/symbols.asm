@@ -64,7 +64,7 @@ extrn	symCurSeg	: DWORD ; @CurSeg symbol
 extrn	CurrProc	: DWORD ;
 extrn	ResWordTable	: ReservedWord
 
-	.data?
+.data?
 
 SymCmpFunc	dd ?
 gsym		dd ?		; asym ** pointer into global hash table
@@ -78,7 +78,7 @@ gsym_table	dd GHASH_TABLE_SIZE dup(?)
 resw_table	LABEL WORD
 		dd HASH_TABITEMS / 2 + 1 dup(?)
 
-	.data
+.data
 
 symPC		dd 0		; the $ symbol -- asym *
 
@@ -91,7 +91,7 @@ MLVersion	db "800",0
 @@CurSeg	db "@CurSeg"
 @@Null		db 0
 
-	ALIGN	4
+ALIGN	4
 
 ;
 ; table of predefined text macros

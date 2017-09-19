@@ -3,30 +3,30 @@
 
 include doszip.inc
 
-	.code
+    .code
 
-cmawideview PROC
-	mov ecx,panela
-	jmp cmwideview
-cmawideview ENDP
+cmawideview proc
+    mov ecx,panela
+    jmp cmwideview
+cmawideview endp
 
-cmbwideview PROC
-	mov ecx,panelb
-	jmp cmwideview
-cmbwideview ENDP
+cmbwideview proc
+    mov ecx,panelb
+    jmp cmwideview
+cmbwideview endp
 
-cmcwideview PROC
-	mov ecx,cpanel
-cmcwideview ENDP
+cmcwideview proc
+    mov ecx,cpanel
+cmcwideview endp
 
 cmwideview:
-	mov edx,[ecx].S_PANEL.pn_wsub
-	mov eax,[edx].S_WSUB.ws_flag
-	and eax,not _W_DETAIL
-	xor eax,_W_WIDEVIEW
-	mov [edx].S_WSUB.ws_flag,eax
+    mov edx,[ecx].S_PANEL.pn_wsub
+    mov eax,[edx].S_WSUB.ws_flag
+    and eax,not _W_DETAIL
+    xor eax,_W_WIDEVIEW
+    mov [edx].S_WSUB.ws_flag,eax
 
-	panel_redraw(ecx)
-	ret
+    panel_redraw(ecx)
+    ret
 
-	END
+    END

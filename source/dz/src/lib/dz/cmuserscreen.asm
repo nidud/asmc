@@ -3,11 +3,11 @@
 
 include doszip.inc
 
-	.code
+    .code
 
-cmuserscreen PROC
-	consuser()
-	ret
-cmuserscreen ENDP
+cmuserscreen proc
+    consuser()
+    ret
+cmuserscreen endp
 
-	END
+    END

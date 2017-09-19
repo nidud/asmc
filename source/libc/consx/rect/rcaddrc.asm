@@ -1,13 +1,15 @@
 include conio.inc
 
-	.code
+    .code
 
-rcaddrc PROC USES ebx result:PVOID, r1, r2
-	mov	eax,r2
-	add	ax,WORD PTR r1
-	mov	ebx,result
-	mov	[ebx],eax
-	ret
-rcaddrc ENDP
+rcaddrc proc uses ebx result:PVOID, r1, r2
 
-	END
+    mov eax,r2
+    add ax,word ptr r1
+    mov ebx,result
+    mov [ebx],eax
+    ret
+
+rcaddrc endp
+
+    END

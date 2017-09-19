@@ -1,18 +1,18 @@
 include io.inc
 include winbase.inc
 
-	.code
+.code
 
-_wremove PROC file:LPWSTR
+_wremove proc file:LPWSTR
 
-	.if DeleteFileW( file )
+    .if DeleteFileW(file)
 
-		xor eax,eax
-	.else
-		osmaperr()
-	.endif
-	ret
+        xor eax,eax
+    .else
+        osmaperr()
+    .endif
+    ret
 
-_wremove ENDP
+_wremove endp
 
-	END
+    end

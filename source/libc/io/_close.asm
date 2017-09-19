@@ -2,37 +2,32 @@ include io.inc
 include errno.inc
 include winbase.inc
 
-	.code
+    .code
 
-close	PROC handle:SINT
-close	ENDP
+close proc handle:SINT
+close endp
 
-_close	PROC handle:SINT
-	push	eax
-	mov	eax,handle
-	cmp	eax,3
-	jb	argerr
-	cmp	eax,_nfile
-	jae	argerr
-	test	_osfile[eax],FH_OPEN
-	jz	argerr
-	mov	_osfile[eax],0
-	mov	eax,_osfhnd[eax*4]
-	CloseHandle( eax )
-	test	eax,eax
-	jz	error
-	xor	eax,eax
-toend:
-	pop	edx
-	ret
-error:
-	call	osmaperr
-	jmp	toend
-argerr:
-	mov	errno,EBADF
-	mov	oserrno,0
-	xor	eax,eax
-	jmp	toend
-_close	ENDP
+_close proc handle:SINT
 
-	END
+    mov eax,handle
+    .if eax < 3 || eax >= _nfile || !(_osfile[eax] & FH_OPEN)
+
+        mov errno,EBADF
+        mov oserrno,0
+        xor eax,eax
+    .else
+
+        mov _osfile[eax],0
+        mov eax,_osfhnd[eax*4]
+        .if !CloseHandle(eax)
+
+            osmaperr()
+        .else
+            xor eax,eax
+        .endif
+    .endif
+    ret
+
+_close endp
+
+    end

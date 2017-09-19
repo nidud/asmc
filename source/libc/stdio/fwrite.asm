@@ -3,101 +3,100 @@ include io.inc
 include errno.inc
 include string.inc
 
-	.code
+    .code
 
-	ASSUME	ebx: LPFILE
+    assume ebx:LPFILE
 
-fwrite PROC USES esi edi ebx buf:LPSTR, rsize:SINT, num:SINT, fp:LPFILE
-local	total:	SINT,
-	bufsize:SINT,
-	nbytes: SINT
+fwrite proc uses esi edi ebx buf:LPSTR, rsize:SINT, num:SINT, fp:LPFILE
 
-	mov esi,buf
-	mov ebx,fp
-	mov eax,rsize
-	mul num
-	mov edi,eax
-	mov total,eax
+local total:SINT, bufsize:SINT, nbytes:SINT
 
-	mov edx,_MAXIOBUF
-	.if [ebx]._flag & _IOMYBUF or _IONBF or _IOYOURBUF
+    mov esi,buf
+    mov ebx,fp
+    mov eax,rsize
+    mul num
+    mov edi,eax
+    mov total,eax
 
-		mov edx,[ebx]._iobuf._bufsiz
-	.endif
-	mov bufsize,edx
+    mov edx,_MAXIOBUF
+    .if [ebx]._flag & _IOMYBUF or _IONBF or _IOYOURBUF
 
-	.while edi
+        mov edx,[ebx]._iobuf._bufsiz
+    .endif
+    mov bufsize,edx
 
-		mov edx,[ebx]._cnt
-		.if [ebx]._flag & _IOMYBUF or _IOYOURBUF && edx
+    .while edi
 
-			.if edi < edx
+        mov edx,[ebx]._cnt
+        .if [ebx]._flag & _IOMYBUF or _IOYOURBUF && edx
 
-				mov edx,edi
-			.endif
-			memcpy([ebx]._ptr, esi, edx)
+            .if edi < edx
 
-			sub edi,edx
-			sub [ebx]._cnt,edx
-			add [ebx]._ptr,edx
-			add esi,edx
+                mov edx,edi
+            .endif
+            memcpy([ebx]._ptr, esi, edx)
 
-		.elseif edi >= bufsize
+            sub edi,edx
+            sub [ebx]._cnt,edx
+            add [ebx]._ptr,edx
+            add esi,edx
 
-			.if [ebx]._flag & _IOMYBUF or _IOYOURBUF
+        .elseif edi >= bufsize
 
-				fflush( ebx )
-				test eax,eax
-				jnz break
-			.endif
+            .if [ebx]._flag & _IOMYBUF or _IOYOURBUF
 
-			mov eax,edi
-			mov ecx,bufsize
-			.if ecx
+                fflush( ebx )
+                test eax,eax
+                jnz break
+            .endif
 
-				xor edx,edx
-				div ecx
-				mov eax,edi
-				sub eax,edx
-			.endif
-			mov nbytes,eax
+            mov eax,edi
+            mov ecx,bufsize
+            .if ecx
 
-			_write([ebx]._file, esi, eax)
-			cmp eax,-1
-			je  error
+                xor edx,edx
+                div ecx
+                mov eax,edi
+                sub eax,edx
+            .endif
+            mov nbytes,eax
 
-			sub edi,eax
-			add esi,eax
-			cmp eax,nbytes
-			jb  error
-		.else
-			movzx eax,BYTE PTR [esi]
-			_flsbuf(eax, ebx)
-			cmp eax,-1
-			je  break
+            _write([ebx]._file, esi, eax)
+            cmp eax,-1
+            je  error
 
-			inc esi
-			dec edi
-			mov eax,[ebx]._bufsiz
+            sub edi,eax
+            add esi,eax
+            cmp eax,nbytes
+            jb  error
+        .else
+            movzx eax,byte ptr [esi]
+            _flsbuf(eax, ebx)
+            cmp eax,-1
+            je  break
 
-			.if !eax
+            inc esi
+            dec edi
+            mov eax,[ebx]._bufsiz
 
-				mov eax,1
-			.endif
-			mov bufsize,eax
-		.endif
-	.endw
-	mov eax,num
+            .if !eax
+
+                mov eax,1
+            .endif
+            mov bufsize,eax
+        .endif
+    .endw
+    mov eax,num
 toend:
-	ret
+    ret
 error:
-	or  [ebx]._flag,_IOERR
+    or  [ebx]._flag,_IOERR
 break:
-	mov eax,total
-	sub eax,edi
-	xor edx,edx
-	div rsize
-	jmp toend
-fwrite	ENDP
+    mov eax,total
+    sub eax,edi
+    xor edx,edx
+    div rsize
+    jmp toend
+fwrite  endp
 
-	END
+    END

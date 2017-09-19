@@ -1,14 +1,14 @@
 include consx.inc
 
-	.code
+    .code
 
-GetShiftState PROC
+GetShiftState proc
 
-	mov eax,keyshift
-	mov eax,[eax]
-	and eax,SHIFT_KEYSPRESSED or SHIFT_LEFT or SHIFT_RIGHT
-	ret
+    mov eax,keyshift
+    mov eax,[eax]
+    and eax,SHIFT_KEYSPRESSED or SHIFT_LEFT or SHIFT_RIGHT
+    ret
 
-GetShiftState ENDP
+GetShiftState endp
 
-	END
+    END

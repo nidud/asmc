@@ -1,21 +1,20 @@
 include stdio.inc
 
-	.code
+    .code
 
-	option stackbase:esp
+fgetc proc fp:LPFILE
 
-fgetc	PROC fp:LPFILE
-	mov eax,fp
-	dec [eax]._iobuf._cnt
-	jl  fbuf
-	add [eax]._iobuf._ptr,1
-	mov eax,[eax]._iobuf._ptr
-	movzx eax,byte ptr [eax-1]
-toend:
-	ret
-fbuf:
-	_filbuf( eax )
-	jmp toend
-fgetc	ENDP
+    mov eax,fp
+    dec [eax]._iobuf._cnt
+    .ifl
+        _filbuf(eax)
+    .else
+        add [eax]._iobuf._ptr,1
+        mov eax,[eax]._iobuf._ptr
+        movzx eax,byte ptr [eax-1]
+    .endif
+    ret
 
-	END
+fgetc endp
+
+    END

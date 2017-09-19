@@ -1,18 +1,18 @@
 include cfini.inc
 include stdio.inc
 
-	.code
+    .code
 
-__CFAddSectionX PROC C ini:PCFINI, format:LPSTR, argptr:VARARG
+__CFAddSectionX proc C ini:PCFINI, format:LPSTR, argptr:VARARG
 
 
-	.if	ftobufin( format, addr argptr )
+    .if ftobufin(format, addr argptr)
 
-		__CFAddSection( ini, edx )
-	.endif
+        __CFAddSection(ini, edx)
+    .endif
 
-	ret
+    ret
 
-__CFAddSectionX ENDP
+__CFAddSectionX endp
 
-	END
+    END

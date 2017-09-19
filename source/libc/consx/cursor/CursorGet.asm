@@ -1,23 +1,23 @@
 include consx.inc
 
-	.code
+    .code
 
-CursorGet PROC USES ebx cursor:PTR S_CURSOR
+CursorGet proc uses ebx cursor:ptr S_CURSOR
 
   local ci:CONSOLE_SCREEN_BUFFER_INFO
 
-	mov ebx,cursor
+    mov ebx,cursor
 
-	.if GetConsoleScreenBufferInfo( hStdOutput, addr ci )
+    .if GetConsoleScreenBufferInfo(hStdOutput, &ci)
 
-		mov eax,ci.dwCursorPosition
-		mov DWORD PTR [ebx].S_CURSOR.x,eax
-	.endif
+        mov eax,ci.dwCursorPosition
+        mov dword ptr [ebx].S_CURSOR.x,eax
+    .endif
 
-	GetConsoleCursorInfo( hStdOutput, ebx )
-	mov eax,[ebx].S_CURSOR.bVisible
-	ret
+    GetConsoleCursorInfo(hStdOutput, ebx)
+    mov eax,[ebx].S_CURSOR.bVisible
+    ret
 
-CursorGet ENDP
+CursorGet endp
 
-	END
+    END

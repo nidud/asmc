@@ -1,12 +1,12 @@
 include stdlib.inc
 
-	.code
+    .code
 
-_wtoi	PROC string:LPWSTR
+_wtoi proc string:LPWSTR
 
-	_wtol(string)
-	ret
+    _wtol(string)
+    ret
 
-_wtoi	ENDP
+_wtoi endp
 
-	END
+    END

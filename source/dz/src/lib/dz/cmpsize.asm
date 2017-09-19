@@ -3,38 +3,38 @@
 
 include doszip.inc
 
-	.code
+    .code
 
-cmpsizeup PROC
+cmpsizeup proc
 
-	mov edx,panela
-	mov edx,[edx].S_PANEL.pn_dialog
-	mov al,9
+    mov edx,panela
+    mov edx,[edx].S_PANEL.pn_dialog
+    mov al,9
 
-	.if cflag & _C_HORIZONTAL
+    .if cflag & _C_HORIZONTAL
 
-		dec al
-	.endif
+        dec al
+    .endif
 
-	.if [edx+7] != al
+    .if [edx+7] != al
 
-		inc BYTE PTR config.c_panelsize
-		redraw_panels()
-	.endif
-	ret
+        inc byte ptr config.c_panelsize
+        redraw_panels()
+    .endif
+    ret
 
-cmpsizeup ENDP
+cmpsizeup endp
 
-cmpsizedn PROC
+cmpsizedn proc
 
-	xor eax,eax
-	.if eax != config.c_panelsize
+    xor eax,eax
+    .if eax != config.c_panelsize
 
-		dec config.c_panelsize
-		redraw_panels()
-	.endif
-	ret
+        dec config.c_panelsize
+        redraw_panels()
+    .endif
+    ret
 
-cmpsizedn ENDP
+cmpsizedn endp
 
-	END
+    END

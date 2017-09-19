@@ -1,17 +1,17 @@
 include cfini.inc
 include string.inc
 
-	.code
+    .code
 
-CFGetSection PROC __section:LPSTR
+CFGetSection proc __section:LPSTR
 
-	mov	eax,__CFBase
-	.if	eax
+    mov eax,__CFBase
+    .if eax
 
-		__CFGetSection( eax, __section )
-	.endif
-	ret
+        __CFGetSection(eax, __section)
+    .endif
+    ret
 
-CFGetSection ENDP
+CFGetSection endp
 
-	END
+    END

@@ -1,20 +1,20 @@
 include consx.inc
 
-	.code
+    .code
 
-wcputw	PROC USES eax ecx edi b:PVOID, l, w
-	mov eax,w
-	mov ecx,l
-	mov edi,b
-	.if ah
-		rep stosw
-	.else
-		.repeat
-			stosb
-			inc edi
-		.untilcxz
-	.endif
-	ret
-wcputw	ENDP
+wcputw proc uses eax ecx edi b:PVOID, l, w
+    mov eax,w
+    mov ecx,l
+    mov edi,b
+    .if ah
+        rep stosw
+    .else
+        .repeat
+            stosb
+            inc edi
+        .untilcxz
+    .endif
+    ret
+wcputw endp
 
-	END
+    END

@@ -1,15 +1,15 @@
 include consx.inc
 
-	.code
+    .code
 
-CursorOn PROC USES eax
-local	cu:CONSOLE_CURSOR_INFO
+CursorOn proc uses eax
+local cu:CONSOLE_CURSOR_INFO
 
-	mov cu.dwSize,CURSOR_NORMAL
-	mov cu.bVisible,1
-	SetConsoleCursorInfo(hStdOutput, addr cu)
-	ret
+    mov cu.dwSize,CURSOR_NORMAL
+    mov cu.bVisible,1
+    SetConsoleCursorInfo(hStdOutput, &cu)
+    ret
 
-CursorOn ENDP
+CursorOn endp
 
-	END
+    END

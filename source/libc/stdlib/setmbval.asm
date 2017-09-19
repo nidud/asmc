@@ -9,25 +9,25 @@ __invalid_mb_chars dd 0
 .code
 __set_invalid_mb_chars proc
 
-local	astring:word
+local astring:word
 
-	mov astring,"a" ; test string
+    mov astring,"a" ; test string
 
-	;
-	; Determine whether API supports this flag by making a dummy call.
-	;
+    ;
+    ; Determine whether API supports this flag by making a dummy call.
+    ;
 
-	.if MultiByteToWideChar(0, MB_ERR_INVALID_CHARS, addr astring, -1, NULL, 0)
-	    mov __invalid_mb_chars,MB_ERR_INVALID_CHARS
-	.else
-	    mov __invalid_mb_chars,0
-	.endif
+    .if MultiByteToWideChar(0, MB_ERR_INVALID_CHARS, addr astring, -1, NULL, 0)
+        mov __invalid_mb_chars,MB_ERR_INVALID_CHARS
+    .else
+        mov __invalid_mb_chars,0
+    .endif
 
-	ret
+    ret
 
 __set_invalid_mb_chars endp
 
 pragma_init 40,__set_invalid_mb_chars
 
-	end
+    end
 

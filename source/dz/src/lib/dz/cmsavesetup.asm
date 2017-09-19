@@ -4,20 +4,20 @@
 include doszip.inc
 include errno.inc
 
-	.code
+    .code
 
-cmsavesetup PROC
+cmsavesetup proc
 
-	.if rsmodal( IDD_DZSaveSetup )
+    .if rsmodal(IDD_DZSaveSetup)
 
-		.if !config_save()
+        .if !config_save()
 
-			eropen( __srcfile )
-			inc eax
-		.endif
-	.endif
-	ret
+            eropen(__srcfile)
+            inc eax
+        .endif
+    .endif
+    ret
 
-cmsavesetup ENDP
+cmsavesetup endp
 
-	END
+    END

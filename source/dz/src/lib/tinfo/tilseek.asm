@@ -3,36 +3,36 @@ include stdio.inc
 include stdlib.inc
 include dzlib.inc
 
-extern	IDD_TESeek:DWORD
+extern IDD_TESeek:dword
 
-	.code
+    .code
 
-tilseek PROC USES esi edi ti:PTINFO
+tilseek proc uses esi edi ti:PTINFO
 
-	mov esi,ti
+    mov esi,ti
 
-	.if rsopen( IDD_TESeek )
+    .if rsopen(IDD_TESeek)
 
-		mov edi,eax
+        mov edi,eax
 
-		mov ecx,[esi].S_TINFO.ti_loff
-		add ecx,[esi].S_TINFO.ti_yoff
-		inc ecx
+        mov ecx,[esi].S_TINFO.ti_loff
+        add ecx,[esi].S_TINFO.ti_yoff
+        inc ecx
 
-		sprintf( [edi+24], "%u", ecx )
-		dlinit ( edi )
+        sprintf([edi+24], "%u", ecx)
+        dlinit (edi)
 
-		.if rsevent( IDD_TESeek, edi )
-			.if strtolx( [edi+24] )
-				dec eax
-				tialigny( esi, eax )
-			.endif
-		.endif
-		dlclose( edi )
-		tiputs ( esi )
-	.endif
-	xor eax,eax
-	ret
-tilseek ENDP
+        .if rsevent(IDD_TESeek, edi)
+            .if strtolx([edi+24])
+                dec eax
+                tialigny(esi, eax)
+            .endif
+        .endif
+        dlclose(edi)
+        tiputs (esi)
+    .endif
+    xor eax,eax
+    ret
+tilseek endp
 
-	END
+    END

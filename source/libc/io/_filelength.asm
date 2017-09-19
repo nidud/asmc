@@ -2,27 +2,27 @@ include io.inc
 include errno.inc
 include winbase.inc
 
-	.code
+    .code
 
-filelength PROC handle:SINT
-filelength ENDP
+filelength proc handle:SINT
+filelength endp
 
-_filelength PROC handle:SINT
+_filelength proc handle:SINT
 
-local	lpFileSize:qword
+local lpFileSize:qword
 
-	mov eax,handle
-	mov edx,_osfhnd[eax*4]
+    mov eax,handle
+    mov edx,_osfhnd[eax*4]
 
-	.if !GetFileSizeEx( edx, addr lpFileSize )
+    .if !GetFileSizeEx(edx, &lpFileSize)
 
-		osmaperr()
-	.else
-		mov edx,dword ptr lpFileSize[4]
-		mov eax,dword ptr lpFileSize
-	.endif
-	ret
+        osmaperr()
+    .else
+        mov edx,dword ptr lpFileSize[4]
+        mov eax,dword ptr lpFileSize
+    .endif
+    ret
 
-_filelength ENDP
+_filelength endp
 
-	END
+    END

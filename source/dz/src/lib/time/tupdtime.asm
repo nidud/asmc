@@ -2,75 +2,75 @@ include time.inc
 include consx.inc
 include winnls.inc
 
-	.data
-	_sec	dd 61
-	iso_s	db "dd.MM.yy",0
+    .data
+    _sec    dd 61
+    iso_s   db "dd.MM.yy",0
 
-	.code
+    .code
 
-tupdtime PROC USES esi edi ebx
+tupdtime proc uses esi edi ebx
 
-local	ts:SYSTEMTIME
-local	buf[64]:byte
+local ts:SYSTEMTIME
+local buf[64]:byte
 
-	mov ebx,console
-	xor eax,eax
+    mov ebx,console
+    xor eax,eax
 
-	.if ebx & CON_UTIME or CON_UDATE
+    .if ebx & CON_UTIME or CON_UDATE
 
-		mov buf,al
-		mov ecx,SIZE SYSTEMTIME/4
-		lea edi,ts
-		rep stosd
-		mov edi,ebx
-		GetLocalTime( addr ts )
+        mov buf,al
+        mov ecx,SIZE SYSTEMTIME/4
+        lea edi,ts
+        rep stosd
+        mov edi,ebx
+        GetLocalTime(&ts)
 
-		mov eax,edi
-		and eax,CON_UTIME or CON_LTIME
-		cmp eax,CON_UTIME or CON_LTIME
-		movzx eax,ts.wSecond
-		.ifnz
-			movzx eax,ts.wMinute
-		.endif
+        mov eax,edi
+        and eax,CON_UTIME or CON_LTIME
+        cmp eax,CON_UTIME or CON_LTIME
+        movzx eax,ts.wSecond
+        .ifnz
+            movzx eax,ts.wMinute
+        .endif
 
-		.if eax != _sec
+        .if eax != _sec
 
-			mov _sec,eax
-			mov esi,GetUserDefaultLCID()
-			mov ebx,_scrcol
-			inc ebx
+            mov _sec,eax
+            mov esi,GetUserDefaultLCID()
+            mov ebx,_scrcol
+            inc ebx
 
-			.if edi & CON_UTIME
+            .if edi & CON_UTIME
 
-				mov edx,TIME_NOSECONDS
-				.if edi & CON_LTIME
+                mov edx,TIME_NOSECONDS
+                .if edi & CON_LTIME
 
-					xor edx,edx
-				.endif
-				.if GetTimeFormat( esi, edx, addr ts, 0, addr buf, 32 )
+                    xor edx,edx
+                .endif
+                .if GetTimeFormat(esi, edx, &ts, 0, &buf, 32)
 
-					sub ebx,eax
-					scputs( ebx, 0, 0, 0, addr buf )
-				.endif
-			.endif
+                    sub ebx,eax
+                    scputs(ebx, 0, 0, 0, &buf)
+                .endif
+            .endif
 
-			.if edi & CON_UDATE
+            .if edi & CON_UDATE
 
-				lea edx,iso_s
-				.if edi & CON_LDATE
+                lea edx,iso_s
+                .if edi & CON_LDATE
 
-					xor edx,edx
-				.endif
-				.if GetDateFormat( esi, 0, addr ts, edx, addr buf, 32 )
+                    xor edx,edx
+                .endif
+                .if GetDateFormat(esi, 0, &ts, edx, &buf, 32)
 
-					sub ebx,eax
-					scputs( ebx, 0, 0, 0, addr buf )
-				.endif
-			.endif
-		.endif
-	.endif
-	ret
+                    sub ebx,eax
+                    scputs(ebx, 0, 0, 0, &buf)
+                .endif
+            .endif
+        .endif
+    .endif
+    ret
 
-tupdtime ENDP
+tupdtime endp
 
-	END
+    END

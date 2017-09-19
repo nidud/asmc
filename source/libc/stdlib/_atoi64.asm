@@ -4,7 +4,7 @@ include stdlib.inc
 
 	option stackbase:esp
 
-_atoi64 PROC string:LPSTR
+_atoi64 proc string:LPSTR
 	mov	eax,esp
 	push	esi
 	push	edi
@@ -60,6 +60,6 @@ _atoi64 PROC string:LPSTR
 	pop	edi
 	pop	esi
 	ret
-_atoi64 ENDP
+_atoi64 endp
 
 	END

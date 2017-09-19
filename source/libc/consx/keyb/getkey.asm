@@ -1,11 +1,13 @@
 include consx.inc
 
-	.code
+.code
 
-getkey	PROC
-	ReadEvent()
-	PopEvent()
-	ret
-getkey	ENDP
+getkey proc
 
-	END
+    ReadEvent()
+    PopEvent()
+    ret
+
+getkey endp
+
+    END

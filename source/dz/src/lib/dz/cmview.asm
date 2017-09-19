@@ -9,7 +9,7 @@ include string.inc
 include stdlib.inc
 include process.inc
 
-	.code
+    .code
 
 ; type 4: F4	- edit
 ; type 3: Alt	- edit/view
@@ -17,236 +17,236 @@ include process.inc
 ; type 1: Shift - edit/view
 ; type 0: F3	- view
 
-loadiniproc PROC USES esi edi section, filename, itype
+loadiniproc proc uses esi edi section, filename, itype
 
-  local path[_MAX_PATH]:BYTE
+  local path[_MAX_PATH]:byte
 
-	mov edi,filename
-	mov eax,itype
-	mov esi,@CStr("F3")
+    mov edi,filename
+    mov eax,itype
+    mov esi,@CStr("F3")
 
-	.switch al
-	  .case 4 : mov esi,@CStr("F4")	   : .endc
-	  .case 3 : mov esi,@CStr("Alt")   : .endc
-	  .case 2 : mov esi,@CStr("Ctrl")  : .endc
-	  .case 1 : mov esi,@CStr("Shift") : .endc
-	.endsw
+    .switch al
+      .case 4 : mov esi,@CStr("F4")    : .endc
+      .case 3 : mov esi,@CStr("Alt")   : .endc
+      .case 2 : mov esi,@CStr("Ctrl")  : .endc
+      .case 1 : mov esi,@CStr("Shift") : .endc
+    .endsw
 
-	.if CFGetSection(section)
+    .if CFGetSection(section)
 
-		.if CFGetEntry(eax, esi)
+	.if CFGetEntry(eax, esi)
 
-			mov esi,eax
-			mov esi,strlen(strnzcpy(addr path, esi, _MAX_PATH - 1))
-			add strlen(edi),esi
+	    mov esi,eax
+	    mov esi,strlen(strnzcpy(addr path, esi, _MAX_PATH - 1))
+	    add strlen(edi),esi
 
-			.if eax < _MAX_PATH
+	    .if eax < _MAX_PATH
 
-				CFExpandMac(addr path, edi)
-				command(addr path)
-				mov eax,1
-			.else
-				xor eax,eax
-			.endif
-		.endif
+		CFExpandMac(addr path, edi)
+		command(addr path)
+		mov eax,1
+	    .else
+		xor eax,eax
+	    .endif
 	.endif
-	ret
+    .endif
+    ret
 
-loadiniproc ENDP
+loadiniproc endp
 
-load_tview PROC USES esi edi filename, etype
+load_tview proc uses esi edi filename, etype
 
   local offs
-	mov edi,filename
+    mov edi,filename
 
-	.if !loadiniproc("View", edi, etype)
+    .if !loadiniproc("View", edi, etype)
 
-		clrcmdl()
-		mov esi,edi
+	clrcmdl()
+	mov esi,edi
+	xor eax,eax
+	mov offs,eax
+
+	.while	1   ; %view% [-options] [file]
+
+	    lodsb
+	    .break .if !al
+
+	    .if al == '"'
+
+		mov edi,esi ; start of "file name"
+		.repeat
+		    lodsb
+		    test al,al
+		    jz error
+		.until	al == '"'
+
 		xor eax,eax
-		mov offs,eax
+		mov [esi-1],al
+		.break
 
-		.while	1	; %view% [-options] [file]
+	    .elseif al == '/' && byte ptr [esi-2] == ' '
 
-			lodsb
-			.break .if !al
+		lodsb
+		or  al,20h
+		.if al == 't'
 
-			.if al == '"'
+		    and tvflag,not _TV_HEXVIEW
+		.elseif al == 'h'
 
-				mov edi,esi ; start of "file name"
-				.repeat
-					lodsb
-					test al,al
-					jz error
-				.until	al == '"'
+		    or	tvflag,_TV_HEXVIEW
+		.elseif al == 'o'	; -o<offset> - Start offset
 
-				xor eax,eax
-				mov [esi-1],al
-				.break
+		    strtolx(esi)
+		    mov offs,eax
+		.else
+		    jmp error
+		.endif
 
-			.elseif al == '/' && BYTE PTR [esi-2] == ' '
+		.repeat
+		    lodsb
+		.until	al <= ' '
 
-				lodsb
-				or  al,20h
-				.if al == 't'
-
-					and tvflag,not _TV_HEXVIEW
-				.elseif al == 'h'
-
-					or  tvflag,_TV_HEXVIEW
-				.elseif al == 'o'		; -o<offset> - Start offset
-
-					strtolx( esi )
-					mov offs,eax
-				.else
-					jmp error
-				.endif
-
-				.repeat
-					lodsb
-				.until	al <= ' '
-
-				.break .if !al
-				mov edi,esi
-			.endif
-		.endw
-		tview(edi, offs)
-		xor eax,eax
-	.endif
+		.break .if !al
+		mov edi,esi
+	    .endif
+	.endw
+	tview(edi, offs)
+	xor eax,eax
+    .endif
 
 toend:
-	ret
+    ret
 
 error:
-	ermsg(0, "TVIEW error: %s", edi)
-	xor eax,eax
-	jmp toend
+    ermsg(0, "TVIEW error: %s", edi)
+    xor eax,eax
+    jmp toend
 
-load_tview ENDP
+load_tview endp
 
-TVGetCurrentFile PROC USES edi buffer
+TVGetCurrentFile proc uses edi buffer
 
-	xor edi,edi		; 0 (F3 or F4)
-	mov eax,keyshift
-	mov eax,[eax]
+    xor edi,edi	    ; 0 (F3 or F4)
+    mov eax,keyshift
+    mov eax,[eax]
 
-	.if eax & SHIFT_KEYSPRESSED
+    .if eax & SHIFT_KEYSPRESSED
 
-		mov edi,1
-	.elseif al & KEY_CTRL	; 2 (Ctrl)
+	mov edi,1
+    .elseif al & KEY_CTRL   ; 2 (Ctrl)
 
-		mov edi,2
-	.elseif al & KEY_ALT	; 3 (Alt)
+	mov edi,2
+    .elseif al & KEY_ALT    ; 3 (Alt)
 
-		mov edi,3
-	.endif
+	mov edi,3
+    .endif
 
-	.if panel_curobj(cpanel)
+    .if panel_curobj(cpanel)
 
-		xchg eax,ecx
-		.if eax & _FB_ARCHIVE
+	xchg eax,ecx
+	.if eax & _FB_ARCHIVE
 
-			.if eax & _A_SUBDIR
+	    .if eax & _A_SUBDIR
 
-				xor eax,eax		; 0 (subdir in archive)
-			.else
+		xor eax,eax	; 0 (subdir in archive)
+	    .else
 
-				.if eax & _FB_ARCHEXT
+		.if eax & _FB_ARCHEXT
 
-					mov eax,4	; 4 (plugin)
-				.else
-
-					mov eax,2	; 2 (zip)
-				.endif
-			.endif
-		.elseif eax & _A_SUBDIR
-
-			mov eax,3			; 3 (subdir)
+		    mov eax,4	; 4 (plugin)
 		.else
 
-			mov eax,cpanel			; 1 (file)
-			mov eax,[eax].S_PANEL.pn_wsub
-			mov eax,[eax].S_WSUB.ws_path
-
-			strfcat(buffer, eax, ecx)
-
-			mov eax,1
+		    mov eax,2	; 2 (zip)
 		.endif
-	.endif
-	mov ecx,edi
-	ret
+	    .endif
+	.elseif eax & _A_SUBDIR
 
-TVGetCurrentFile ENDP
-
-unzip_to_temp PROC USES esi edi fblk, name_buffer
-
-	mov edi,fblk
-
-	.if envtemp
-
-		progress_open("Unzip file to TEMP", addr cp_copy)
-		progress_set(addr [edi].S_FBLK.fb_name, envtemp, [edi].S_FBLK.fb_size)
-		mov eax,cpanel
-		wsdecomp([eax].S_PANEL.pn_wsub, edi, envtemp)
-
-		.if !progress_close()
-
-			add edi,S_FBLK.fb_name
-			strfcat(name_buffer, envtemp, edi)
-		.else
-
-			xor eax,eax
-		.endif
+	    mov eax,3		; 3 (subdir)
 	.else
 
-		ermsg(0, "Bad or missing TEMP directory")
+	    mov eax,cpanel	    ; 1 (file)
+	    mov eax,[eax].S_PANEL.pn_wsub
+	    mov eax,[eax].S_WSUB.ws_path
+
+	    strfcat(buffer, eax, ecx)
+
+	    mov eax,1
 	.endif
+    .endif
+    mov ecx,edi
+    ret
 
-	test eax,eax
-	ret
+TVGetCurrentFile endp
 
-unzip_to_temp ENDP
+unzip_to_temp proc uses esi edi fblk, name_buffer
 
-viewzip PROC USES edi
+    mov edi,fblk
 
-	mov edi,ecx
+    .if envtemp
 
-	.if unzip_to_temp(edx, ebx)
+	progress_open("Unzip file to TEMP", addr cp_copy)
+	progress_set(addr [edi].S_FBLK.fb_name, envtemp, [edi].S_FBLK.fb_size)
+	mov eax,cpanel
+	wsdecomp([eax].S_PANEL.pn_wsub, edi, envtemp)
 
-		load_tview(eax, edi)
-		setfattr(ebx, 0)
-		remove(ebx)
-		mov eax,1
+	.if !progress_close()
+
+	    add edi,S_FBLK.fb_name
+	    strfcat(name_buffer, envtemp, edi)
+	.else
+
+	    xor eax,eax
 	.endif
-	ret
+    .else
 
-viewzip ENDP
+	ermsg(0, "Bad or missing TEMP directory")
+    .endif
 
-cmview PROC USES ebx
+    test eax,eax
+    ret
 
-  local fname[_MAX_PATH*2]:BYTE
+unzip_to_temp endp
 
-	lea ebx,fname
+viewzip proc uses edi
 
-	.switch TVGetCurrentFile(ebx)
+    mov edi,ecx
 
-	  .case 1
-		load_tview(ebx, ecx)
-		.endc
-	  .case 2
-		viewzip()
-		.endc
-	  .case 4
-		mov eax,cpanel
-		mov eax,[eax].S_PANEL.pn_wsub
-		warcview(eax, edx)
-		.endc
-	  .case 3
-		cmsubsize()
-		.endc
-	.endsw
-	ret
+    .if unzip_to_temp(edx, ebx)
 
-cmview	ENDP
+	load_tview(eax, edi)
+	setfattr(ebx, 0)
+	remove(ebx)
+	mov eax,1
+    .endif
+    ret
 
-	END
+viewzip endp
+
+cmview proc uses ebx
+
+  local fname[_MAX_PATH*2]:byte
+
+    lea ebx,fname
+
+    .switch TVGetCurrentFile(ebx)
+
+      .case 1
+	load_tview(ebx, ecx)
+	.endc
+      .case 2
+	viewzip()
+	.endc
+      .case 4
+	mov eax,cpanel
+	mov eax,[eax].S_PANEL.pn_wsub
+	warcview(eax, edx)
+	.endc
+      .case 3
+	cmsubsize()
+	.endc
+    .endsw
+    ret
+
+cmview endp
+
+    END

@@ -2,23 +2,25 @@ include stdlib.inc
 include crtl.inc
 include setjmp.inc
 
-	.data
-	jmp_exit S_JMPBUF <>
+    .data
+    jmp_exit S_JMPBUF <>
 
-	.code
+    .code
 
-abort	PROC
-	longjmp( addr jmp_exit, 1 )
-	ret
-abort	ENDP
+abort proc
+
+    longjmp(&jmp_exit, 1)
+    ret
+
+abort endp
 
 Install:
-	.if _setjmp( addr jmp_exit )
+    .if _setjmp(&jmp_exit)
 
-	    exit( eax )
-	.endif
-	ret
+        exit(eax)
+    .endif
+    ret
 
 pragma_init Install, 1
 
-	END
+    END

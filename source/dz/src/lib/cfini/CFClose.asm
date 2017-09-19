@@ -1,17 +1,17 @@
 include cfini.inc
 
-	.code
+    .code
 
-CFClose PROC
+CFClose proc
 
-	mov eax,__CFBase
-	.if eax
+    mov eax,__CFBase
+    .if eax
 
-		__CFClose( eax )
-		mov __CFBase,0
-	.endif
-	ret
+        __CFClose(eax)
+        mov __CFBase,0
+    .endif
+    ret
 
-CFClose ENDP
+CFClose endp
 
-	END
+    END

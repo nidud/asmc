@@ -1,16 +1,16 @@
 include consx.inc
 
-	.code
+    .code
 
-CursorSet PROC USES eax Cursor:PTR S_CURSOR
+CursorSet proc uses eax Cursor:ptr S_CURSOR
 
-	mov eax,Cursor
-	mov eax,DWORD PTR [eax].S_CURSOR.x
+    mov eax,Cursor
+    mov eax,dword ptr [eax].S_CURSOR.x
 
-	SetConsoleCursorPosition(hStdOutput, eax)
-	SetConsoleCursorInfo(hStdOutput, Cursor)
-	ret
+    SetConsoleCursorPosition(hStdOutput, eax)
+    SetConsoleCursorInfo(hStdOutput, Cursor)
+    ret
 
-CursorSet ENDP
+CursorSet endp
 
-	END
+    END

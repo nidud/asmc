@@ -1,23 +1,24 @@
 include consx.inc
 
-	.code
+    .code
 
-getevent PROC
+getevent proc
 
-	call	getkey
-	jnz	@F
-	call	tdidle
-	jnz	@F
-	mov	eax,keyshift
-	mov	eax,[eax]
-	test	eax,SHIFT_MOUSEFLAGS
-	jz	getevent
-	call	mousep
-	jz	getevent
-	mov	eax,MOUSECMD
-@@:
-	ret
+    .while !getkey()
 
-getevent ENDP
+        .break .if tdidle()
 
-	END
+        mov eax,keyshift
+        mov eax,[eax]
+        .if eax & SHIFT_MOUSEFLAGS
+            .if mousep()
+                mov eax,MOUSECMD
+                .break
+            .endif
+        .endif
+    .endw
+    ret
+
+getevent endp
+
+    END

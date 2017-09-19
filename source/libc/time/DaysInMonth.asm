@@ -1,26 +1,26 @@
 include time.inc
 
-	.code
+    .code
 
-DaysInMonth PROC year, month
+DaysInMonth proc year, month
 
-	mov ecx,month
-	mov eax,31
+    mov ecx,month
+    mov eax,31
 
-	.switch ecx
+    .switch ecx
 
-	  .case 2
-		mov eax,year
-		DaysInFebruary(eax)
-		.endc
+      .case 2
+        mov eax,year
+        DaysInFebruary(eax)
+        .endc
 
-	  .case 4, 6, 9, 11:
-		sub eax,1
-		.endc
+      .case 4,6,9,11:
+        sub eax,1
+        .endc
 
-	.endsw
-	ret
+    .endsw
+    ret
 
-DaysInMonth ENDP
+DaysInMonth endp
 
-	END
+    END

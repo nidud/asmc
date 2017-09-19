@@ -1,13 +1,19 @@
 include consx.inc
 
-	.code
+    .code
 
-dlhide	PROC USES edi dobj:PTR S_DOBJ
-	mov edi,dobj
-	.if rchide( [edi].S_DOBJ.dl_rect, [edi].S_DOBJ.dl_flag, [edi].S_DOBJ.dl_wp )
-		and [edi].S_DOBJ.dl_flag,not _D_ONSCR
-	.endif
-	ret
-dlhide	ENDP
+    assume edx:ptr S_DOBJ
 
-	END
+dlhide proc dobj:ptr S_DOBJ
+
+    mov edx,dobj
+    .if rchide([edx].dl_rect, [edx].dl_flag, [edx].dl_wp)
+
+        mov edx,dobj
+        and [edx].dl_flag,not _D_ONSCR
+    .endif
+    ret
+
+dlhide endp
+
+    END

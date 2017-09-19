@@ -2,31 +2,31 @@ include io.inc
 include alloc.inc
 include cfini.inc
 
-	.code
+    .code
 
-__CFAddSection PROC USES esi ini:PCFINI, section:LPSTR
+__CFAddSection proc uses esi ini:PCFINI, section:LPSTR
 
-	.if !__CFGetSection(ini, section)
+    .if !__CFGetSection(ini, section)
 
-		.if __CFAlloc()
+        .if __CFAlloc()
 
-			mov esi,eax
-			mov [esi].S_CFINI.cf_flag,_CFSECTION
-			mov [esi].S_CFINI.cf_name,salloc(section)
+            mov esi,eax
+            mov [esi].S_CFINI.cf_flag,_CFSECTION
+            mov [esi].S_CFINI.cf_name,salloc(section)
 
-			mov eax,ini
-			.if eax
-				.while [eax].S_CFINI.cf_next
+            mov eax,ini
+            .if eax
+                .while [eax].S_CFINI.cf_next
 
-					mov eax,[eax].S_CFINI.cf_next
-				.endw
-				mov [eax].S_CFINI.cf_next,esi
-			.endif
-			mov eax,esi
-		.endif
-	.endif
-	ret
+                    mov eax,[eax].S_CFINI.cf_next
+                .endw
+                mov [eax].S_CFINI.cf_next,esi
+            .endif
+            mov eax,esi
+        .endif
+    .endif
+    ret
 
-__CFAddSection ENDP
+__CFAddSection endp
 
-	END
+    END

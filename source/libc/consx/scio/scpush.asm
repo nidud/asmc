@@ -1,21 +1,25 @@
 include consx.inc
 
-	.code
+    .code
 
-scpush	PROC lcount
-	mov	eax,lcount
-	mov	ah,80
-	shl	eax,16
-	rcopen( eax, 0, 0, 0, 0 )
-	ret
-scpush	ENDP
+scpush proc lcount
 
-scpop	PROC wp, lc
-	mov	eax,lc
-	mov	ah,80
-	shl	eax,16
-	rcclose( eax, _D_DOPEN or _D_ONSCR, wp )
-	ret
-scpop	ENDP
+    mov eax,lcount
+    mov ah,80
+    shl eax,16
+    rcopen(eax, 0, 0, 0, 0)
+    ret
 
-	END
+scpush endp
+
+scpop proc wp, lc
+
+    mov eax,lc
+    mov ah,80
+    shl eax,16
+    rcclose(eax, _D_DOPEN or _D_ONSCR, wp)
+    ret
+
+scpop endp
+
+    END

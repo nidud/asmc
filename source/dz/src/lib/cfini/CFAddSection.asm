@@ -1,16 +1,16 @@
 include cfini.inc
 
-	.code
+    .code
 
-CFAddSection PROC __section:LPSTR
+CFAddSection proc __section:LPSTR
 
-	mov	eax,__CFBase
-	.if	eax
+    mov eax,__CFBase
+    .if eax
 
-		__CFAddSection( eax, __section )
-	.endif
-	ret
+        __CFAddSection(eax, __section)
+    .endif
+    ret
 
-CFAddSection ENDP
+CFAddSection endp
 
-	END
+    END

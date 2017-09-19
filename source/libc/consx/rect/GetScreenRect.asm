@@ -1,14 +1,14 @@
 include consx.inc
 
-	.code
+    .code
 
-GetScreenRect PROC
+GetScreenRect proc
 
-	mov eax,_scrcol
-	mov ah,BYTE PTR _scrrow
-	shl eax,16
-	ret
+    mov eax,_scrcol
+    mov ah,byte ptr _scrrow
+    shl eax,16
+    ret
 
-GetScreenRect ENDP
+GetScreenRect endp
 
-	END
+    END

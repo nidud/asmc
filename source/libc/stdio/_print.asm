@@ -1,11 +1,13 @@
 include stdio.inc
 include io.inc
 
-	.code
+    .code
 
-_print	PROC C format:LPSTR, arglist:VARARG
-	_write( 1, addr _bufin, ftobufin( format, addr arglist ) )
-	ret
-_print	ENDP
+_print proc C format:LPSTR, arglist:VARARG
 
-	END
+    _write(1, &_bufin, ftobufin(format, &arglist))
+    ret
+
+_print endp
+
+    END

@@ -1,19 +1,19 @@
 include wsub.inc
 
-	.code
+    .code
 
-fbinvert PROC fblk:PTR S_FBLK
+fbinvert proc fblk:ptr S_FBLK
 
-	mov eax,fblk
-	.if ![eax].S_FBLK.fb_flag & _FB_UPDIR
+    mov eax,fblk
+    .if ![eax].S_FBLK.fb_flag & _FB_UPDIR
 
-		xor [eax].S_FBLK.fb_flag,_FB_SELECTED
-	.else
+        xor [eax].S_FBLK.fb_flag,_FB_SELECTED
+    .else
 
-		xor eax,eax
-	.endif
-	ret
+        xor eax,eax
+    .endif
+    ret
 
-fbinvert ENDP
+fbinvert endp
 
-	END
+    END

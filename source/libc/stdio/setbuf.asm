@@ -1,10 +1,12 @@
 include stdio.inc
 
-	.code
+    .code
 
-setbuf	PROC fp:LPFILE, buf:LPSTR
-	setvbuf( buf, fp, _IOFBF, _MINIOBUF )
-	ret
-setbuf	ENDP
+setbuf proc fp:LPFILE, buf:LPSTR
 
-	END
+    setvbuf(buf, fp, _IOFBF, _MINIOBUF)
+    ret
+
+setbuf endp
+
+    END

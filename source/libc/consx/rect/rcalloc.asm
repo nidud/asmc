@@ -1,13 +1,13 @@
 include consx.inc
 include alloc.inc
 
-	.code
+    .code
 
-rcalloc PROC rc:S_RECT, shade:UINT
+rcalloc proc rc:S_RECT, shade:UINT
 
-	malloc( rcmemsize( rc, shade ) )
-	ret
+    malloc(rcmemsize(rc, shade))
+    ret
 
-rcalloc ENDP
+rcalloc endp
 
-	END
+    END

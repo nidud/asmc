@@ -1,10 +1,10 @@
 include consx.inc
 
-	.code
+    .code
 
-ticontinue PROC
-	xor eax,eax ; _TI_CONTINUE - continue edit
-	ret
-ticontinue ENDP
+ticontinue proc
+    xor eax,eax ; _TI_CONTINUE - continue edit
+    ret
+ticontinue endp
 
-	END
+    END

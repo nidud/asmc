@@ -1,17 +1,17 @@
 include consx.inc
 
-wcputxg PROTO
+wcputxg proto
 
-	.code
+    .code
 
-wcputbg PROC USES ecx ebx wp:PVOID, l, attrib
-	mov	eax,attrib
-	mov	ah,0Fh
-	and	al,0F0h
-	mov	ecx,l
-	mov	ebx,wp
-	call	wcputxg
-	ret
-wcputbg ENDP
+wcputbg proc uses ecx ebx wp:PVOID, l, attrib
+    mov eax,attrib
+    mov ah,0x0F
+    and al,0xF0
+    mov ecx,l
+    mov ebx,wp
+    wcputxg()
+    ret
+wcputbg endp
 
-	END
+    END

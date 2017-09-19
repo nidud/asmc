@@ -2,7 +2,7 @@ include consx.inc
 
     .code
 
-rsmodal proc robj:PTR S_ROBJ
+rsmodal proc robj:ptr S_ROBJ
     .if rsopen(robj)
         push eax
         rsevent(robj, eax)
@@ -12,6 +12,6 @@ rsmodal proc robj:PTR S_ROBJ
         pop eax
     .endif
     ret
-rsmodal ENDP
+rsmodal endp
 
     END

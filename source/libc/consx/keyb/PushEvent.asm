@@ -1,35 +1,35 @@
 include consx.inc
 
-	.code
+    .code
 
-PushEvent PROC Event:DWORD
+PushEvent proc Event:dword
 
-	mov eax,Event
-	mov ecx,keybcount
-	.if ecx < MAXKEYSTACK-1
+    mov eax,Event
+    mov ecx,keybcount
+    .if ecx < MAXKEYSTACK-1
 
-		inc keybcount
-		mov keybstack[ecx*4],eax
-	.endif
-	ret
+        inc keybcount
+        mov keybstack[ecx*4],eax
+    .endif
+    ret
 
-PushEvent ENDP
+PushEvent endp
 
-PopEvent PROC
+PopEvent proc
 
-	mov eax,keyshift
-	mov edx,[eax]
+    mov eax,keyshift
+    mov edx,[eax]
 
-	xor eax,eax
-	.if eax != keybcount
+    xor eax,eax
+    .if eax != keybcount
 
-		dec keybcount
-		mov eax,keybcount
-		mov eax,keybstack[eax*4]
-		test eax,eax
-	.endif
-	ret
+        dec keybcount
+        mov eax,keybcount
+        mov eax,keybstack[eax*4]
+        test eax,eax
+    .endif
+    ret
 
-PopEvent ENDP
+PopEvent endp
 
-	END
+    END

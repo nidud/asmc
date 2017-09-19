@@ -5,12 +5,12 @@ include errno.inc
 
     .code
 
-    ASSUME esi: PTR S_TINFO
-    ASSUME edx: PTR S_TINFO
+    assume esi:ptr S_TINFO
+    assume edx:ptr S_TINFO
 
-tiopen	PROC USES esi ti:PTINFO, tabsize:UINT, flags:UINT
+tiopen proc uses esi ti:PTINFO, tabsize:UINT, flags:UINT
 
-    malloc( SIZE S_TINFO )
+    malloc(SIZE S_TINFO)
     jz	nomem
 
     mov edx,edi
@@ -34,14 +34,14 @@ tiopen	PROC USES esi ti:PTINFO, tabsize:UINT, flags:UINT
     ;
     ; adapt to current screen
     ;
-    tsetrect( esi, tgetrect() )
+    tsetrect(esi, tgetrect())
 
     mov [esi].ti_bcol,TIMAXLINE
     mov [esi].ti_blen,TIMAXFILE
 
-    .if tialloc( esi )
+    .if tialloc(esi)
 
-	.if tigetfile( ti )
+	.if tigetfile(ti)
 	    ;
 	    ; link to last file
 	    ;
@@ -52,32 +52,32 @@ tiopen	PROC USES esi ti:PTINFO, tabsize:UINT, flags:UINT
 	mov  eax,esi
 	test eax,eax
     .else
-	free( esi )
+	free(esi)
 	jmp nomem
     .endif
 toend:
     ret
 nomem:
-    ermsg( 0, addr CP_ENOMEM )
+    ermsg(0, &CP_ENOMEM)
     xor eax,eax
     jmp toend
-tiopen	ENDP
+tiopen	endp
 
-    ASSUME ebx: PTR S_TINFO
-    ASSUME edi: PTR S_TINFO
+    assume ebx:ptr S_TINFO
+    assume edi:ptr S_TINFO
 
-ticlose PROC USES esi edi ebx ti:PTINFO
+ticlose proc uses esi edi ebx ti:PTINFO
 
     mov esi,ti
     xor edi,edi
 
     .if [esi].ti_flag & _T_MALLOC
 
-	tifree( esi )
-	dlclose( addr [esi].ti_DOBJ )
+	tifree(esi)
+	dlclose(&[esi].ti_DOBJ)
     .endif
 
-    .if tigetfile( esi )
+    .if tigetfile(esi)
 
 	mov edi,[esi].ti_prev
 	mov ebx,[esi].ti_next
@@ -101,43 +101,43 @@ ticlose PROC USES esi edi ebx ti:PTINFO
 	.endif
     .endif
 
-    free  ( esi )
+    free(esi)
     mov eax,edi
     ret
-ticlose ENDP
+ticlose endp
 
-    ASSUME ebx: NOTHING
-    ASSUME edi: NOTHING
+    assume ebx: nothing
+    assume edi: nothing
 
-tihide	PROC ti:PTINFO
+tihide	proc ti:PTINFO
 
     mov ecx,ti
     .if ecx
 
 	mov [ecx].S_TINFO.ti_scrc,0
-	dlclose( addr [ecx].S_TINFO.ti_DOBJ )
+	dlclose(&[ecx].S_TINFO.ti_DOBJ)
     .endif
     ret
 
-tihide	ENDP
+tihide	endp
 
-    ASSUME esi: PTR S_TINFO
+    assume esi: ptr S_TINFO
 
-tihideall PROC ti:PTINFO
+tihideall proc ti:PTINFO
 
-    .if tigetfile( ti )
+    .if tigetfile(ti)
 
-	tihide( ti )
+	tihide(ti)
     .endif
     ret
 
-tihideall ENDP
+tihideall endp
 
-timenus PROC USES esi ebx ti:PTINFO
+timenus proc uses esi ebx ti:PTINFO
 
     mov esi,ti
 
-    .if tistate( esi )
+    .if tistate(esi)
 
 	.if edx & _D_ONSCR && ecx & _T_USEMENUS
 
@@ -157,7 +157,7 @@ timenus PROC USES esi ebx ti:PTINFO
 	    sub al,18
 	    mov cl,ah
 
-	    scputf( eax, ecx, 0, 0, " col %-3u ln %-6u" )
+	    scputf(eax, ecx, 0, 0, " col %-3u ln %-6u")
 	    add esp,4*2
 
 	    mov eax,' '
@@ -165,26 +165,26 @@ timenus PROC USES esi ebx ti:PTINFO
 
 		mov al,'*'
 	    .endif
-	    movzx   edx,[ebx].S_DOBJ.dl_rect.rc_x
-	    scputw( edx, ecx, 1, eax )
+	    movzx edx,[ebx].S_DOBJ.dl_rect.rc_x
+	    scputw(edx, ecx, 1, eax)
 	.endif
     .endif
     xor eax,eax
     ret
-timenus ENDP
+timenus endp
 
-    ASSUME edi: PTR S_DOBJ
+    assume edi:ptr S_DOBJ
 
-tishow	PROC USES esi edi ebx ti:PTINFO
+tishow proc uses esi edi ebx ti:PTINFO
 
     mov esi,ti
 
     .if esi
 
 	lea edi,[esi].S_TINFO.ti_DOBJ
-	.if !( [edi].dl_flag & _D_DOPEN )
+	.if !([edi].dl_flag & _D_DOPEN)
 
-	    tsetrect( esi, tgetrect() )
+	    tsetrect(esi, tgetrect())
 	    mov edx,[esi].ti_clat
 	    .if [esi].ti_flag & _T_USESTYLE
 
@@ -192,7 +192,7 @@ tishow	PROC USES esi edi ebx ti:PTINFO
 	    .endif
 
 	    shr edx,8
-	    .if rcopen( [edi].dl_rect, _D_CLEAR or _D_BACKG, edx, 0, 0 )
+	    .if rcopen([edi].dl_rect, _D_CLEAR or _D_BACKG, edx, 0, 0)
 
 		mov [edi].dl_wp,eax
 		mov [edi].dl_flag,_D_DOPEN
@@ -203,7 +203,7 @@ tishow	PROC USES esi edi ebx ti:PTINFO
 
 	    .if !([edi].dl_flag & _D_ONSCR)
 
-		dlshow( edi )
+		dlshow(edi)
 	    .endif
 	    xor eax,eax
 	    mov [esi].ti_scrc,eax
@@ -217,25 +217,25 @@ tishow	PROC USES esi edi ebx ti:PTINFO
 		or  ah,at_foreground[F_Menus]
 		mov al,' '
 
-		scputw( edx, ebx, ecx, eax )
+		scputw(edx, ebx, ecx, eax)
 
 		inc edx
 		sub ecx,19
-		scpath( edx, ebx, ecx, [esi].ti_file )
+		scpath(edx, ebx, ecx, [esi].ti_file)
 	    .endif
-	    tiputs( esi )
+	    tiputs(esi)
 	.endif
     .endif
     ret
-tishow	ENDP
+tishow	endp
 
-titogglemenus PROC USES esi ti:PTINFO
+titogglemenus proc uses esi ti:PTINFO
 
     mov esi,ti
 
-    .if tistate( esi )
+    .if tistate(esi)
 
-	tihide( esi )
+	tihide(esi)
 
 	movzx edx,[esi].ti_DOBJ.dl_rect.rc_y
 	movzx ecx,[esi].ti_DOBJ.dl_rect.rc_row
@@ -250,16 +250,16 @@ titogglemenus PROC USES esi ti:PTINFO
 	mov [esi].ti_ypos,edx
 	mov [esi].ti_rows,ecx
 
-	tishow( esi )
+	tishow(esi)
     .endif
     xor eax,eax
     ret
-titogglemenus ENDP
+titogglemenus endp
 
-    ASSUME esi: PTR S_TINFO
-    ASSUME edi: PTR S_TINFO
+    assume esi:ptr S_TINFO
+    assume edi:ptr S_TINFO
 
-titogglefile PROC USES esi edi ebx old:PTINFO, new:PTINFO
+titogglefile proc uses esi edi ebx old:PTINFO, new:PTINFO
 
     mov edi,old
     mov eax,new
@@ -269,12 +269,12 @@ titogglefile PROC USES esi edi ebx old:PTINFO, new:PTINFO
     .if esi != edi && [esi].ti_flag & _T_TEDIT
 
 	mov ebx,esi
-	tishow( esi )
+	tishow(esi)
 
 	.if [esi].ti_DOBJ.dl_flag & _D_DOPEN
 
 	    and [edi].ti_DOBJ.dl_flag,NOT (_D_DOPEN OR _D_ONSCR)
-	    free( [esi].ti_DOBJ.dl_wp )
+	    free([esi].ti_DOBJ.dl_wp)
 	    mov eax,[edi].ti_DOBJ.dl_wp
 	    mov [esi].ti_DOBJ.dl_wp,eax
 	.else
@@ -284,6 +284,6 @@ titogglefile PROC USES esi edi ebx old:PTINFO, new:PTINFO
     mov eax,ebx
     ret
 
-titogglefile ENDP
+titogglefile endp
 
     END

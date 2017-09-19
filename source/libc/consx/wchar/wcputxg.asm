@@ -1,15 +1,15 @@
 include consx.inc
 
-	.code
+    .code
 
-wcputxg PROC USES ecx
-	inc ebx
-	.repeat
-		and [ebx],ah
-		or  [ebx],al
-		add ebx,2
-	.untilcxz
-	ret
-wcputxg ENDP
+wcputxg proc uses ecx
+    inc ebx
+    .repeat
+        and [ebx],ah
+        or  [ebx],al
+        add ebx,2
+    .untilcxz
+    ret
+wcputxg endp
 
-	END
+    END

@@ -1,16 +1,16 @@
 include io.inc
 include share.inc
 
-	.code
+.code
 
-open	proc c path:LPSTR, oflag:SINT, args:VARARG
-open	endp
+open proc c path:LPSTR, oflag:SINT, args:VARARG
+open endp
 
-_open	proc c path:LPSTR, oflag:SINT, args:VARARG
+_open proc c path:LPSTR, oflag:SINT, args:VARARG
 
-	_sopen( path, oflag, SH_DENYNO, addr args )
-	ret
+    _sopen(path, oflag, SH_DENYNO, addr args)
+    ret
 
-_open	endp
+_open endp
 
-	END
+    end

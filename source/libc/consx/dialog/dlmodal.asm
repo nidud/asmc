@@ -1,13 +1,13 @@
 include consx.inc
 
-	.code
+    .code
 
-dlmodal PROC dobj:PTR S_DOBJ
-	dlevent( dobj )
-	dlclose( dobj )
-	mov	eax,edx
-	test	eax,eax
-	ret
-dlmodal ENDP
+dlmodal proc dobj:ptr S_DOBJ
+    dlevent(dobj)
+    dlclose(dobj)
+    mov eax,edx
+    test eax,eax
+    ret
+dlmodal endp
 
-	END
+    END

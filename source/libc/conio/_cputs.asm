@@ -1,30 +1,25 @@
 include conio.inc
 include string.inc
 
-	.code
+    .code
 
-_cputs	proc uses ebx string:LPSTR
+_cputs proc uses ebx string:LPSTR
 
-local	num_written:ULONG
-	;
-	; write string to console file handle
-	;
-	mov ebx,-1
-	.if hStdOutput != ebx
+local num_written:ULONG
+    ;
+    ; write string to console file handle
+    ;
+    mov ebx,-1
+    .if hStdOutput != ebx
 
-		mov edx,strlen( string )
-		.if !WriteConsole(
-			hStdOutput,
-			string,
-			edx,
-			addr num_written,
-			NULL )
-			xor ebx,ebx
-		.endif
-	.endif
-	mov eax,ebx
-	ret
+        mov edx,strlen(string)
+        .if !WriteConsole(hStdOutput, string, edx, &num_written, NULL)
+            xor ebx,ebx
+        .endif
+    .endif
+    mov eax,ebx
+    ret
 
-_cputs	ENDP
+_cputs endp
 
-	END
+    END

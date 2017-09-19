@@ -1,11 +1,12 @@
 include direct.inc
 
-	.code
+    .code
 
-_wgetcwd PROC buffer:LPWSTR, maxlen:SINT
+_wgetcwd proc buffer:LPWSTR, maxlen:SINT
 
-	_wgetdcwd( 0, buffer, maxlen )
-	ret
-_wgetcwd ENDP
+    _wgetdcwd(0, buffer, maxlen)
+    ret
 
-	END
+_wgetcwd endp
+
+    END

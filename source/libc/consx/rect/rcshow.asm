@@ -1,24 +1,30 @@
 include consx.inc
 
-	.code
+    .code
 
-rcshow	PROC rect, flag, wp:PVOID
-	mov	eax,flag
-	and	eax,_D_DOPEN or _D_ONSCR
-	jz	toend
-	and	eax,_D_ONSCR
-	jnz	done
-	rcxchg( rect, wp )
-	test	eax,eax
-	jz	toend
-	test	BYTE PTR flag,_D_SHADE
-	jz	done
-	rcsetshade( rect, wp )
-done:
-	xor	eax,eax
-	inc	eax
-toend:
-	ret
-rcshow	ENDP
+rcshow proc rect, flag, wp:PVOID
 
-	END
+    .repeat
+
+        mov eax,flag
+        and eax,_D_DOPEN or _D_ONSCR
+        .break .ifz
+
+        and eax,_D_ONSCR
+        .ifz
+
+            .break .if !rcxchg(rect, wp)
+
+            .if byte ptr flag & _D_SHADE
+
+                rcsetshade(rect, wp)
+            .endif
+        .endif
+        xor eax,eax
+        inc eax
+    .until 1
+    ret
+
+rcshow endp
+
+    END

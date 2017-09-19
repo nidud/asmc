@@ -1,29 +1,29 @@
 include consx.inc
 include alloc.inc
 
-	.code
+    .code
 
-rcclose PROC rect:S_RECT, fl:UINT, wp:PVOID
+rcclose proc rect:S_RECT, fl:UINT, wp:PVOID
 
-	mov eax,fl
-	.if eax & _D_DOPEN
+    mov eax,fl
+    .if eax & _D_DOPEN
 
-		.if eax & _D_ONSCR
+        .if eax & _D_ONSCR
 
-			rchide( rect, fl, wp )
-			mov eax,fl
-		.endif
+            rchide(rect, fl, wp)
+            mov eax,fl
+        .endif
 
-		.if !( eax & _D_MYBUF )
+        .if !(eax & _D_MYBUF)
 
-			free( wp )
-		.endif
-	.endif
+            free(wp)
+        .endif
+    .endif
 
-	mov eax,fl
-	and eax,_D_DOPEN
-	ret
+    mov eax,fl
+    and eax,_D_DOPEN
+    ret
 
-rcclose ENDP
+rcclose endp
 
-	END
+    END

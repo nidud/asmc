@@ -40,6 +40,7 @@ wctomb		proto __cdecl :LPSTR, :wchar_t
 QSORTCMD_T	typedef proto __cdecl :PVOID, :PVOID
 LPQSORTCMD	typedef ptr QSORTCMD_T
 qsort		proto :PVOID, :SIZE_T, :SIZE_T, :LPQSORTCMD
+qsort4		proto :PVOID, :SIZE_T, :LPQSORTCMD
 
 getenv		proto __cdecl :LPSTR
 strtod		proto __cdecl :LPSTR, :LPSTR

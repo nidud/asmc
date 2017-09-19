@@ -6,59 +6,59 @@ include winbase.inc
 include io.inc
 include dzlib.inc
 
-PUBLIC	drvinfo
+PUBLIC  drvinfo
 
-	.data
-	drvinfo S_DISK MAXDRIVES dup(<?>)
+    .data
+    drvinfo S_DISK MAXDRIVES dup(<?>)
 
-	.code
+    .code
 
-_disk_read PROC USES esi edi ebx
+_disk_read proc uses esi edi ebx
 
-	mov	esi,clock()
-	mov	edi,GetLogicalDrives()
-	lea	ebx,drvinfo
-	mov	ecx,1
+    mov esi,clock()
+    mov edi,GetLogicalDrives()
+    lea ebx,drvinfo
+    mov ecx,1
 l1:
-	sub	eax,eax
-	mov	[ebx].S_DISK.di_flag,eax
-	shr	edi,1
-	jnc	l4
-	_disk_type( ecx )
-	cmp	eax,1
-	jna	l3
-	mov	edx,_FB_ROOTDIR or _A_VOLID
-	cmp	eax,DRIVE_CDROM
-	jne	l2
-	or	edx,_FB_CDROOM
+    sub eax,eax
+    mov [ebx].S_DISK.di_flag,eax
+    shr edi,1
+    jnc l4
+    _disk_type(ecx)
+    cmp eax,1
+    jna l3
+    mov edx,_FB_ROOTDIR or _A_VOLID
+    cmp eax,DRIVE_CDROM
+    jne l2
+    or  edx,_FB_CDROOM
 l2:
-	mov	[ebx].S_DISK.di_flag,edx
+    mov [ebx].S_DISK.di_flag,edx
 l3:
-	mov	[ebx].S_DISK.di_time,esi
+    mov [ebx].S_DISK.di_time,esi
 l4:
-	add	ebx,SIZE S_DISK
-	inc	ecx
-	cmp	ecx,MAXDRIVES+1
-	jne	l1
-	ret
-_disk_read ENDP
+    add ebx,SIZE S_DISK
+    inc ecx
+    cmp ecx,MAXDRIVES+1
+    jne l1
+    ret
+_disk_read endp
 
 InitDisk:
-	lea	edx,drvinfo
-	mov	ecx,1
-	mov	eax,':A'
+    lea edx,drvinfo
+    mov ecx,1
+    mov eax,':A'
 @@:
-	mov	DWORD PTR [edx].S_DISK.di_name,eax
-	mov	DWORD PTR [edx].S_DISK.di_size,ecx
-	inc	eax
-	add	edx,SIZE S_DISK
-	inc	ecx
-	cmp	ecx,MAXDRIVES+1
-	jne	@B
+    mov dword ptr [edx].S_DISK.di_name,eax
+    mov dword ptr [edx].S_DISK.di_size,ecx
+    inc eax
+    add edx,SIZE S_DISK
+    inc ecx
+    cmp ecx,MAXDRIVES+1
+    jne @B
 @@:
-	call	_disk_read
-	ret
+    call    _disk_read
+    ret
 
 pragma_init InitDisk, 11
 
-	END
+    END

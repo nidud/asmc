@@ -1,10 +1,12 @@
 include consx.inc
 
-	.code
+    .code
 
-mousey	PROC
-	mov eax,keybmouse_y
-	ret
-mousey	ENDP
+mousey proc
 
-	END
+    mov eax,keybmouse_y
+    ret
+
+mousey endp
+
+    END

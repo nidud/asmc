@@ -4,72 +4,73 @@ include stdlib.inc
 include io.inc
 include errno.inc
 
-	.code
+    .code
 
-	assume	esi:ptr _iobuf
+    assume esi:ptr _iobuf
 
-fgetwc	PROC USES esi edi fp:LPFILE
-local	mbc[4]:BYTE, wch:WORD
+fgetwc proc uses esi edi fp:LPFILE
 
-	mov esi,fp
-	mov eax,[esi]._flag
-	mov ecx,[esi]._file
+  local mbc[4]:byte, wch:word
 
-	.repeat
-		.if eax & _IOSTRG && _osfile[ecx] & FH_TEXT
+    mov esi,fp
+    mov eax,[esi]._flag
+    mov ecx,[esi]._file
 
-			mov edi,1
-			;
-			; text (multi-byte) mode
-			;
-			.break .if fgetc(esi) == -1
+    .repeat
+        .if eax & _IOSTRG && _osfile[ecx] & FH_TEXT
 
-			mov mbc,al
+            mov edi,1
+            ;
+            ; text (multi-byte) mode
+            ;
+            .break .if fgetc(esi) == -1
 
-			.if isleadbyte(eax)
+            mov mbc,al
 
-				.if fgetc(esi) == -1
+            .if isleadbyte(eax)
 
-					movzx eax,mbc
-					ungetc(eax, esi)
-					mov eax,-1
-					.break
-				.endif
+                .if fgetc(esi) == -1
 
-				mov mbc[1],al
-				mov edi,2
-			.endif
+                    movzx eax,mbc
+                    ungetc(eax, esi)
+                    mov eax,-1
+                    .break
+                .endif
 
-			movzx ecx,mbc
-			.if mbtowc(addr wch, ecx, edi) == -1
-				;
-				; Conversion failed! Set errno and return
-				; failure.
-				;
+                mov mbc[1],al
+                mov edi,2
+            .endif
 
-				mov errno,EILSEQ
-				mov eax,-1
-				.break
-			.endif
-			movzx eax,wch
-			.break
-		.endif
+            movzx ecx,mbc
+            .if mbtowc(addr wch, ecx, edi) == -1
+                ;
+                ; Conversion failed! Set errno and return
+                ; failure.
+                ;
 
-		;
-		; binary (Unicode) mode
-		;
-		sub [esi]._cnt,2
-		.if sdword ptr [esi]._cnt >= 0
+                mov errno,EILSEQ
+                mov eax,-1
+                .break
+            .endif
+            movzx eax,wch
+            .break
+        .endif
 
-			add	[esi]._ptr,2
-			mov	eax,[esi]._ptr
-			movzx	eax,word ptr [eax-2]
-		.else
-			_filwbuf( esi )
-		.endif
-	.until	1
-	ret
+        ;
+        ; binary (Unicode) mode
+        ;
+        sub [esi]._cnt,2
+        .ifs [esi]._cnt >= 0
 
-fgetwc	ENDP
+            add [esi]._ptr,2
+            mov eax,[esi]._ptr
+            movzx eax,word ptr [eax-2]
+        .else
+            _filwbuf(esi)
+        .endif
+    .until 1
+    ret
 
-	END
+fgetwc endp
+
+    END

@@ -4,30 +4,30 @@ include wsub.inc
 
 externdef IDD_DirectoryNotFound:dword
 
-	.code
+    .code
 
-MakeDirectory PROC USES esi directory:LPSTR
+MakeDirectory proc uses esi directory:LPSTR
 
-	.if	filexist( directory ) != 2
+    .if filexist(directory) != 2
 
-		.if	rsopen( IDD_DirectoryNotFound )
+        .if rsopen(IDD_DirectoryNotFound)
 
-			mov	esi,eax
-			dlshow( eax )
-			mov	ax,[esi+4]
-			add	ax,0204h
-			mov	dl,ah
-			scpath( eax, edx, 22, directory )
+            mov esi,eax
+            dlshow(eax)
+            mov ax,[esi+4]
+            add ax,0204h
+            mov dl,ah
+            scpath(eax, edx, 22, directory)
 
-			.if	dlmodal( esi )
+            .if dlmodal(esi)
 
-				wsmkdir( directory )
-				inc	eax
-			.endif
-		.endif
-	.endif
-	ret
+                wsmkdir(directory)
+                inc eax
+            .endif
+        .endif
+    .endif
+    ret
 
-MakeDirectory ENDP
+MakeDirectory endp
 
-	END
+    END

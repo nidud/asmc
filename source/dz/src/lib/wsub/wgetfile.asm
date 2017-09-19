@@ -7,42 +7,42 @@ include direct.inc
 include wsub.inc
 include dzlib.inc
 
-	.code
+    .code
 
-wgetfile PROC path:LPSTR, fmask:LPSTR, flag
+wgetfile proc path:LPSTR, fmask:LPSTR, flag
 
-	.if	flag & _WLOCAL
+    .if flag & _WLOCAL
 
-		_getcwd( path, _MAX_PATH )
+        _getcwd(path, _MAX_PATH)
 
-	.else
-		mov	eax,fmask
-		add	eax,2
+    .else
+        mov eax,fmask
+        add eax,2
 
-		.if	filexist( strfcat( path, _pgmpath, eax ) ) != 2
+        .if filexist(strfcat(path, _pgmpath, eax)) != 2
 
-			strpath( path )
-		.endif
-	.endif
+            strpath(path)
+        .endif
+    .endif
 
-	.if	wdlgopen( path, fmask, flag )
+    .if wdlgopen(path, fmask, flag)
 
-		strcpy( path, eax )
+        strcpy(path, eax)
 
-		.if	flag & _WSAVE
+        .if flag & _WSAVE
 
-			ogetouth( eax, M_WRONLY )
-		.else
-			openfile( eax, M_RDONLY, A_OPEN )
-		.endif
+            ogetouth(eax, M_WRONLY)
+        .else
+            openfile(eax, M_RDONLY, A_OPEN)
+        .endif
 
-		.if	eax == -1
+        .if eax == -1
 
-			xor eax,eax
-		.endif
-	.endif
-	ret
+            xor eax,eax
+        .endif
+    .endif
+    ret
 
-wgetfile ENDP
+wgetfile endp
 
-	END
+    END

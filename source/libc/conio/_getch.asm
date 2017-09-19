@@ -1,46 +1,46 @@
 include conio.inc
 include stdio.inc
 
-	.code
+.code
 
-_getch	PROC USES ebx edi esi
+_getch proc uses ebx edi esi
 
-local	Count:DWORD
-local	Event[MAXINPUTRECORDS]:INPUT_RECORD
+local Count:dword
+local Event[MAXINPUTRECORDS]:INPUT_RECORD
 
-	xor edi,edi
+    xor edi,edi
 
-	.while !edi
+    .while !edi
 
-		.if GetNumberOfConsoleInputEvents( hStdInput, addr Count )
+        .if GetNumberOfConsoleInputEvents(hStdInput, &Count)
 
-			lea ebx,Event
-			mov ecx,Count
-			.if ecx > MAXINPUTRECORDS
+            lea ebx,Event
+            mov ecx,Count
+            .if ecx > MAXINPUTRECORDS
 
-				mov ecx,MAXINPUTRECORDS
-			.endif
-			ReadConsoleInput( hStdInput, ebx, ecx, addr Count )
-			mov esi,Count
+                mov ecx,MAXINPUTRECORDS
+            .endif
+            ReadConsoleInput(hStdInput, ebx, ecx, &Count)
+            mov esi,Count
 
-			.while esi
+            .while esi
 
-				.if [ebx].INPUT_RECORD.EventType == KEY_EVENT && \
-				    [ebx].INPUT_RECORD.KeyEvent.bKeyDown
+                .if [ebx].INPUT_RECORD.EventType == KEY_EVENT && \
+                    [ebx].INPUT_RECORD.KeyEvent.bKeyDown
 
-					movzx edi,[ebx].INPUT_RECORD.KeyEvent.AsciiChar
-					.break .if edi
-				.endif
+                    movzx edi,[ebx].INPUT_RECORD.KeyEvent.AsciiChar
+                    .break .if edi
+                .endif
 
-				add ebx,SIZE INPUT_RECORD
-				dec esi
-			.endw
-		.endif
-	.endw
+                add ebx,SIZE INPUT_RECORD
+                dec esi
+            .endw
+        .endif
+    .endw
 
-	mov eax,edi
-	ret
+    mov eax,edi
+    ret
 
-_getch	ENDP
+_getch endp
 
-	END
+    END

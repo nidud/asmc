@@ -4,7 +4,7 @@ include stdlib.inc
 
 	option stackbase:esp
 
-atol	PROC string:LPSTR
+atol	proc string:LPSTR
 	mov	edx,string
 	xor	ecx,ecx
 @@:
@@ -40,6 +40,6 @@ atol	PROC string:LPSTR
 	neg	eax
 @@:
 	ret
-atol	ENDP
+atol	endp
 
 	END

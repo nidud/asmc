@@ -6,48 +6,48 @@ include cfini.inc
 include winbase.inc
 include dzlib.inc
 
-	.code
+    .code
 
-CFReadFileName PROC USES esi edi ebx ini:PCFINI, index:PVOID, file_flag:UINT
+CFReadFileName proc uses esi edi ebx ini:PCFINI, index:PVOID, file_flag:UINT
 
-local	buffer[1024]:sbyte
+local buffer[1024]:sbyte
 
-	mov eax,index
-	mov ebx,[eax]
+    mov eax,index
+    mov ebx,[eax]
+    xor edi,edi
+
+    .while CFGetEntryID(ini, ebx)
+
+	mov esi,eax
+	inc ebx
+
+	mov edi,index
+	add edi,4
+
+	.while	strchr(esi, ',')
+
+	    mov ecx,esi
+	    lea esi,[eax+1]
+	    xtol(ecx)
+	    stosd
+	.endw
 	xor edi,edi
 
-	.while	CFGetEntryID( ini, ebx )
+	ExpandEnvironmentStrings(esi, strcpy(addr buffer, esi), 1024)
 
-		mov esi,eax
-		inc ebx
+	lea esi,buffer
+	.if filexist(esi) == file_flag
 
-		mov edi,index
-		add edi,4
+	    mov edi,salloc(esi)
+	    .break
+	.endif
+    .endw
 
-		.while	strchr(esi, ',')
+    mov eax,index
+    mov [eax],ebx
+    mov eax,edi
+    ret
 
-			mov ecx,esi
-			lea esi,[eax+1]
-			xtol(ecx)
-			stosd
-		.endw
-		xor edi,edi
+CFReadFileName endp
 
-		ExpandEnvironmentStrings( esi, strcpy(addr buffer, esi), 1024 )
-
-		lea esi,buffer
-		.if filexist(esi) == file_flag
-
-			mov edi,salloc(esi)
-			.break
-		.endif
-	.endw
-
-	mov eax,index
-	mov [eax],ebx
-	mov eax,edi
-	ret
-
-CFReadFileName ENDP
-
-	END
+    END

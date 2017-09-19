@@ -1,24 +1,24 @@
 include stdio.inc
 include limits.inc
 
-	.code
+    .code
 
 sprintf proc c uses ecx string:LPSTR, format:LPSTR, argptr:VARARG
 
   local o:_iobuf
 
-	mov o._flag,_IOWRT or _IOSTRG
-	mov o._cnt,INT_MAX
-	mov eax,string
-	mov o._ptr,eax
-	mov o._base,eax
+    mov o._flag,_IOWRT or _IOSTRG
+    mov o._cnt,INT_MAX
+    mov eax,string
+    mov o._ptr,eax
+    mov o._base,eax
 
-	_output(addr o, format, addr argptr)
+    _output(&o, format, &argptr)
 
-	mov ecx,o._ptr
-	mov byte ptr [ecx],0
-	ret
+    mov ecx,o._ptr
+    mov byte ptr [ecx],0
+    ret
 
-sprintf ENDP
+sprintf endp
 
-	END
+    END

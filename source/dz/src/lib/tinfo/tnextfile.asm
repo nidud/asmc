@@ -1,28 +1,28 @@
 include tinfo.inc
 
-	.code
+    .code
 
-	ASSUME	edx: PTR S_TINFO
+    assume edx:ptr S_TINFO
 
-tnextfile PROC
+tnextfile proc
 
-	.if	tigetfile( tinfo )
+    .if tigetfile(tinfo)
 
-		.if	ecx > 1
+        .if ecx > 1
 
-			mov	edx,tinfo
-			.if	[edx].ti_next
+            mov edx,tinfo
+            .if [edx].ti_next
 
-				mov eax,[edx].ti_next
-			.endif
+                mov eax,[edx].ti_next
+            .endif
 
-			titogglefile( edx, eax )
-		.endif
+            titogglefile(edx, eax)
+        .endif
 
-		mov	tinfo,eax
-	.endif
-	ret
+        mov tinfo,eax
+    .endif
+    ret
 
-tnextfile ENDP
+tnextfile endp
 
-	END
+    END

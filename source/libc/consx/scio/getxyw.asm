@@ -1,13 +1,14 @@
 include consx.inc
 
-	.code
+    .code
 
-getxyw	PROC USES ebx x, y
-	getxya( x, y )
-	mov	ebx,eax
-	getxyc( x, y )
-	mov	ah,bl
-	ret
-getxyw	ENDP
+getxyw proc uses ebx x, y
 
-	END
+    mov ebx,getxya(x, y)
+    getxyc(x, y)
+    mov ah,bl
+    ret
+
+getxyw endp
+
+    END

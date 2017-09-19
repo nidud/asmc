@@ -4,22 +4,22 @@
 include doszip.inc
 include consx.inc
 
-	.code
+    .code
 
-cmexit	PROC
-	.if config.c_cflag & _C_CONFEXIT
-		.if !rsmodal( IDD_DZExit )
-			ret
-		.endif
+cmexit proc
+    .if config.c_cflag & _C_CONFEXIT
+	.if !rsmodal(IDD_DZExit)
+	    ret
 	.endif
-cmexit	ENDP
+    .endif
+cmexit endp
 
-cmquit	PROC
-	xor	eax,eax
-	mov	mainswitch,eax
-	inc	eax
-	mov	dzexitcode,eax
-	ret
-cmquit	ENDP
+cmquit proc
+    xor eax,eax
+    mov mainswitch,eax
+    inc eax
+    mov dzexitcode,eax
+    ret
+cmquit endp
 
-	END
+    END

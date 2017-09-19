@@ -1,28 +1,26 @@
 include string.inc
 include wsub.inc
 
-	.code
+    .code
 
-wsearch PROC USES esi edi wsub:PTR S_WSUB, string:LPSTR
-	mov	eax,wsub
-	mov	esi,[eax].S_WSUB.ws_count
-	mov	edi,[eax].S_WSUB.ws_fcb
-@@:
-	mov	eax,-1
-	test	esi,esi
-	jz	@F
-	dec	esi
-	mov	eax,[edi]
-	add	eax,S_FBLK.fb_name
-	add	edi,4
-	_stricmp( string, eax )
-	jne	@B
-	mov	eax,wsub
-	mov	eax,[eax].S_WSUB.ws_count
-	sub	eax,esi
-	dec	eax
-@@:
-	ret
-wsearch ENDP
+wsearch proc uses esi edi wsub:ptr S_WSUB, string:LPSTR
+    mov eax,wsub
+    mov esi,[eax].S_WSUB.ws_count
+    mov edi,[eax].S_WSUB.ws_fcb
+    .repeat
+        mov eax,-1
+        .break .if !esi
+        dec esi
+        mov eax,[edi]
+        add eax,S_FBLK.fb_name
+        add edi,4
+        .continue(0) .if _stricmp(string, eax)
+        mov eax,wsub
+        mov eax,[eax].S_WSUB.ws_count
+        sub eax,esi
+        dec eax
+    .until 1
+    ret
+wsearch endp
 
-	END
+    END

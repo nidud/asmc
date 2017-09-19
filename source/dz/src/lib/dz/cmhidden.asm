@@ -3,24 +3,24 @@
 
 include doszip.inc
 
-	.code
+    .code
 
-cmahidden PROC
-	xor config.c_apath.ws_flag,_W_HIDDEN
-	panel_update(panela)
-	ret
-cmahidden ENDP
+cmahidden proc
+    xor config.c_apath.ws_flag,_W_HIDDEN
+    panel_update(panela)
+    ret
+cmahidden endp
 
-cmchidden PROC
-	mov eax,panela
-	cmp eax,cpanel
-	je  cmahidden
-cmchidden ENDP
+cmchidden proc
+    mov eax,panela
+    cmp eax,cpanel
+    je  cmahidden
+cmchidden endp
 
-cmbhidden PROC
-	xor config.c_bpath.ws_flag,_W_HIDDEN
-	panel_update(panelb)
-	ret
-cmbhidden ENDP
+cmbhidden proc
+    xor config.c_bpath.ws_flag,_W_HIDDEN
+    panel_update(panelb)
+    ret
+cmbhidden endp
 
-	END
+    END

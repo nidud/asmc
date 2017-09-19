@@ -3,21 +3,21 @@
 
 include doszip.inc
 
-	.code
+    .code
 
-cmaupdate PROC
-	panel_reread(panela)
-	ret
-cmaupdate ENDP
+cmaupdate proc
+    panel_reread(panela)
+    ret
+cmaupdate endp
 
-cmbupdate PROC
-	panel_reread(panelb)
-	ret
-cmbupdate ENDP
+cmbupdate proc
+    panel_reread(panelb)
+    ret
+cmbupdate endp
 
-cmcupdate PROC
-	panel_reread(cpanel)
-	ret
-cmcupdate ENDP
+cmcupdate proc
+    panel_reread(cpanel)
+    ret
+cmcupdate endp
 
-	END
+    END

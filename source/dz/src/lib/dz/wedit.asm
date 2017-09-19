@@ -5,26 +5,26 @@ include doszip.inc
 include tinfo.inc
 include io.inc
 
-	.code
+    .code
 
-wedit	PROC fcb, count
+wedit proc fcb, count
 
-	.while	fbffirst( fcb, count )
+    .while fbffirst(fcb, count)
 
-		and [eax].S_FBLK.fb_flag,not _FB_SELECTED
-		.if !( ecx & _FB_ARCHIVE or _A_SUBDIR )
+	and [eax].S_FBLK.fb_flag,not _FB_SELECTED
+	.if !(ecx & _FB_ARCHIVE or _A_SUBDIR)
 
-			add eax,S_FBLK.fb_name
-			topen(eax, 0)
-			.break .ifz
-		.endif
-	.endw
+	    add eax,S_FBLK.fb_name
+	    topen(eax, 0)
+	    .break .ifz
+	.endif
+    .endw
 
-	panel_redraw(cpanel)
-	xor eax,eax
-	tmodal()
-	ret
+    panel_redraw(cpanel)
+    xor eax,eax
+    tmodal()
+    ret
 
-wedit	ENDP
+wedit endp
 
-	END
+    END

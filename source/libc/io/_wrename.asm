@@ -1,18 +1,18 @@
 include io.inc
 include winbase.inc
 
-	.code
+    .code
 
-_wrename PROC Oldname:LPWSTR, Newname:LPWSTR
+_wrename proc Oldname:LPWSTR, Newname:LPWSTR
 
-	.if MoveFileW( Oldname, Newname )
+    .if MoveFileW(Oldname, Newname)
 
-		xor eax,eax
-	.else
-		osmaperr()
-	.endif
-	ret
+        xor eax,eax
+    .else
+        osmaperr()
+    .endif
+    ret
 
-_wrename ENDP
+_wrename endp
 
-	END
+    end

@@ -1,21 +1,21 @@
 include io.inc
 include crtl.inc
 
-	.code
+.code
 
 _waccess proc file:LPWSTR, amode:SINT
 
-	.if _wgetfattr( file ) != -1
+    .if _wgetfattr(file) != -1
 
-		.if amode == 2 && eax & _A_RDONLY
+        .if amode == 2 && eax & _A_RDONLY
 
-			mov eax,-1
-		.else
-			xor eax,eax
-		.endif
-	.endif
-	ret
+            mov eax,-1
+        .else
+            xor eax,eax
+        .endif
+    .endif
+    ret
 
 _waccess endp
 
-	END
+    end

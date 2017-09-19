@@ -1,20 +1,20 @@
 include tinfo.inc
 
-	.code
+    .code
 
-tisaveas PROC USES esi ti:PTINFO
+tisaveas proc uses esi ti:PTINFO
 
-	mov	esi,ti
+    mov esi,ti
 
-	.if	tigetfilename( esi )
+    .if tigetfilename(esi)
 
-		tiflush( esi )
+        tiflush(esi)
 
-		xor [esi].S_TINFO.ti_flag,_T_USEMENUS
-		titogglemenus( esi )
-	.endif
-	xor	eax,eax
-	ret
-tisaveas ENDP
+        xor [esi].S_TINFO.ti_flag,_T_USEMENUS
+        titogglemenus(esi)
+    .endif
+    xor eax,eax
+    ret
+tisaveas endp
 
-	END
+    END

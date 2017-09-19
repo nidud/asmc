@@ -1,17 +1,17 @@
 include tinfo.inc
 
-	.code
+    .code
 
-tnewfile PROC USES esi
+tnewfile proc uses esi
 
-	mov	esi,tinfo
-	.if	topen( 0, 0 )
+    mov esi,tinfo
+    .if topen(0, 0)
 
-		titogglefile( esi, eax )
-		mov tinfo,eax
-	.endif
-	ret
+        titogglefile(esi, eax)
+        mov tinfo,eax
+    .endif
+    ret
 
-tnewfile ENDP
+tnewfile endp
 
-	END
+    END

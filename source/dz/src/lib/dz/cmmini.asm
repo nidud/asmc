@@ -3,36 +3,36 @@
 
 include doszip.inc
 
-	.code
+    .code
 
-cmamini PROC
-	panel_xormini(panela)
-	ret
-cmamini ENDP
+cmamini proc
+    panel_xormini(panela)
+    ret
+cmamini endp
 
-cmbmini PROC
-	panel_xormini(panelb)
-	ret
-cmbmini ENDP
+cmbmini proc
+    panel_xormini(panelb)
+    ret
+cmbmini endp
 
-cmcmini PROC
-	panel_xormini(cpanel)
-	ret
-cmcmini ENDP
+cmcmini proc
+    panel_xormini(cpanel)
+    ret
+cmcmini endp
 
-cmvolinfo PROC
-	panel_xorinfo(cpanel)
-	ret
-cmvolinfo ENDP
+cmvolinfo proc
+    panel_xorinfo(cpanel)
+    ret
+cmvolinfo endp
 
-cmavolinfo PROC
-	panel_xorinfo(panela)
-	ret
-cmavolinfo ENDP
+cmavolinfo proc
+    panel_xorinfo(panela)
+    ret
+cmavolinfo endp
 
-cmbvolinfo PROC
-	panel_xorinfo(panelb)
-	ret
-cmbvolinfo ENDP
+cmbvolinfo proc
+    panel_xorinfo(panelb)
+    ret
+cmbvolinfo endp
 
-	END
+    END

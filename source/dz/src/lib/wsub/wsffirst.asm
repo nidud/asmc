@@ -1,13 +1,13 @@
 include wsub.inc
 
-	.code
+    .code
 
-wsffirst PROC wsub:PTR S_WSUB
+wsffirst proc wsub:ptr S_WSUB
 
-	mov eax,wsub
-	fbffirst([eax].S_WSUB.ws_fcb, [eax].S_WSUB.ws_count)
-	ret
+    mov eax,wsub
+    fbffirst([eax].S_WSUB.ws_fcb, [eax].S_WSUB.ws_count)
+    ret
 
-wsffirst ENDP
+wsffirst endp
 
-	END
+    END

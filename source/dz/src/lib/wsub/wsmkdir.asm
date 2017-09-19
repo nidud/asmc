@@ -1,17 +1,17 @@
 include direct.inc
 include wsub.inc
 
-	.code
+    .code
 
-wsmkdir PROC path:LPSTR
+wsmkdir proc path:LPSTR
 
-	.if	_mkdir( path )
-		ermkdir( path )
-	.else
-		inc eax
-	.endif
-	ret
+    .if _mkdir(path)
+        ermkdir(path)
+    .else
+        inc eax
+    .endif
+    ret
 
-wsmkdir ENDP
+wsmkdir endp
 
-	END
+    END

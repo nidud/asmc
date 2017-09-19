@@ -125,9 +125,12 @@ _subfq	proto __cdecl :ptr, :ptr, :ptr
 
 _qftod	proto __cdecl :ptr, :ptr
 _qftold proto __cdecl :ptr, :ptr
-_dtoqf	proto __cdecl :ptr, :qword
 _qftol	proto __cdecl :ptr
 _qftoll proto __cdecl :ptr
+
+_ltoqf	proto __cdecl :ptr, :dword	; long to Quadruple float
+_dtoqf	proto __cdecl :ptr, :qword	; double to Quadruple float
+_ldtoqf proto __cdecl :ptr, :ptr	; long double to Quadruple float
 
 _qpow10 proto __cdecl :ptr, :dword
 _normalizefq proto __cdecl :ptr, :dword
@@ -142,5 +145,9 @@ _lk_divfq proto __cdecl ; quad float [ecx] = quad float [eax] / quad float [edx]
 _lk_mulqw proto __cdecl
 _lk_mulld proto __cdecl
 _lk_divld proto __cdecl
+
+_qcvt	proto :ptr, :LPSTR, :SINT, :SINT, :SINT
+_dcvt	proto :ptr, :LPSTR, :SINT, :SINT, :SINT
+_ldcvt	proto :ptr, :LPSTR, :SINT, :SINT, :SINT
 
 .list

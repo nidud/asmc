@@ -3,40 +3,39 @@ include errno.inc
 include stdlib.inc
 include winbase.inc
 
-	.code
+    .code
 
-_chdir	PROC directory:LPSTR
+_chdir proc directory:LPSTR
 
-local	abspath[_MAX_PATH]:BYTE
+  local root
+  local abspath[_MAX_PATH]:byte
 
-	.if	SetCurrentDirectory( directory )
+    .repeat
+        .repeat
+            .if SetCurrentDirectory(directory)
 
-		.if	GetCurrentDirectory( _MAX_PATH, addr abspath )
+                .if GetCurrentDirectory(_MAX_PATH, &abspath)
 
-			mov	ecx,DWORD PTR abspath
-			.if	ch == ':'
+                    mov ecx,dword ptr abspath
+                    .if ch == ':'
 
-				mov	eax,003A003Dh
-				mov	ah,cl
-				.if	ah >= 'a' && ah <= 'z'
-					sub	ah,'a' - 'A'
-				.endif
-				push	eax
-				mov	ecx,esp
-				lea	eax,abspath
-				SetEnvironmentVariable( ecx, eax )
-				pop	ecx
-				test	eax,eax
-				jz	error
-			.endif
-			xor	eax,eax
-			jmp	toend
-		.endif
-	.endif
-error:
-	call	osmaperr
-toend:
-	ret
-_chdir	ENDP
+                        mov eax,0x003A003D
+                        mov ah,cl
+                        .if ah >= 'a' && ah <= 'z'
+                            sub ah,'a' - 'A'
+                        .endif
+                        mov root,eax
+                        .break .if !SetEnvironmentVariable(&root, &abspath)
+                    .endif
+                    xor eax,eax
+                    .break(1)
+                .endif
+            .endif
+        .until 1
+        osmaperr()
+    .until 1
+    ret
 
-	END
+_chdir endp
+
+    END

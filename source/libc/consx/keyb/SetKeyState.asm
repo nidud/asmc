@@ -1,31 +1,33 @@
 include consx.inc
 include winuser.inc
 
-	.code
+    .code
 
-SetKeyState PROC USES esi edi eax
-	mov edi,keyshift
-	mov esi,[edi]
-	and esi,not 01FF030Fh
+SetKeyState proc uses esi edi eax
 
-	GetKeyState(VK_LSHIFT)
-	.if ah & 80h
-		or esi,SHIFT_LEFT or SHIFT_KEYSPRESSED
-	.endif
-	GetKeyState(VK_RSHIFT)
-	.if ah & 80h
-		or esi,SHIFT_RIGHT or SHIFT_KEYSPRESSED
-	.endif
-	GetKeyState(VK_LCONTROL)
-	.if ah & 80h
-		or esi,SHIFT_CTRLLEFT
-	.endif
-	GetKeyState(VK_RCONTROL)
-	.if ah & 80h
-		or esi,SHIFT_CTRL
-	.endif
-	mov [edi],esi
-	ret
-SetKeyState ENDP
+    mov edi,keyshift
+    mov esi,[edi]
+    and esi,not 0x01FF030F
 
-	END
+    GetKeyState(VK_LSHIFT)
+    .if ah & 80h
+        or esi,SHIFT_LEFT or SHIFT_KEYSPRESSED
+    .endif
+    GetKeyState(VK_RSHIFT)
+    .if ah & 80h
+        or esi,SHIFT_RIGHT or SHIFT_KEYSPRESSED
+    .endif
+    GetKeyState(VK_LCONTROL)
+    .if ah & 80h
+        or esi,SHIFT_CTRLLEFT
+    .endif
+    GetKeyState(VK_RCONTROL)
+    .if ah & 80h
+        or esi,SHIFT_CTRL
+    .endif
+    mov [edi],esi
+    ret
+
+SetKeyState endp
+
+    END

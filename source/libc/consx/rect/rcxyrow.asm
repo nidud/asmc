@@ -1,31 +1,32 @@
 include consx.inc
 
-	.code
+    .code
 
-rcxyrow PROC USES edx rc, x, y
-	mov al,BYTE PTR y
-	mov ah,BYTE PTR x
-	mov dl,rc.S_RECT.rc_x
-	mov dh,rc.S_RECT.rc_y
-	cmp ah,dl
-	jb  outside
-	cmp al,dh
-	jb  outside
-	add dl,rc.S_RECT.rc_col
-	cmp ah,dl
-	jae outside
-	mov ah,dh
-	add dh,rc.S_RECT.rc_row
-	cmp al,dh
-	jae outside
-	sub al,ah
-	inc al
-	movzx eax,al
-toend:
-	ret
-outside:
-	xor eax,eax
-	jmp toend
-rcxyrow ENDP
+rcxyrow proc uses edx rc, x, y
 
-	END
+    mov al,byte ptr y
+    mov ah,byte ptr x
+    mov dl,rc.S_RECT.rc_x
+    mov dh,rc.S_RECT.rc_y
+
+    .repeat
+        .if ah >= dl && al >= dh
+            add dl,rc.S_RECT.rc_col
+            .if ah < dl
+                mov ah,dh
+                add dh,rc.S_RECT.rc_row
+                .if al < dh
+                    sub al,ah
+                    inc al
+                    movzx eax,al
+                    .break
+                .endif
+            .endif
+        .endif
+        xor eax,eax
+    .until 1
+    ret
+
+rcxyrow endp
+
+    END

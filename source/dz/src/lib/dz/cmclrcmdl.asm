@@ -3,14 +3,14 @@
 
 include doszip.inc
 
-	.code
+    .code
 
-cmclrcmdl PROC
-	.if	cflag & _C_ESCUSERSCR
-		call cmtoggleon
-	.endif
-	call	clrcmdl
-	ret
-cmclrcmdl ENDP
+cmclrcmdl proc
+    .if cflag & _C_ESCUSERSCR
+	cmtoggleon()
+    .endif
+    clrcmdl()
+    ret
+cmclrcmdl endp
 
-	END
+    END

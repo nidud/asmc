@@ -4,92 +4,24 @@
 include doszip.inc
 include string.inc
 
-externdef cp_select:BYTE
-externdef cp_deselect:BYTE
-externdef cp_selectmask:BYTE
+externdef cp_select:byte
+externdef cp_deselect:byte
+externdef cp_selectmask:byte
 
-	.code
+    .code
 
-cmselect PROC USES esi edi
+cmselect proc uses esi edi
 
-	.if !cp_selectmask
+    .if !cp_selectmask
 
-		strcpy( addr cp_selectmask, addr cp_stdmask )
-	.endif
+	strcpy(&cp_selectmask, &cp_stdmask)
+    .endif
 
-	.if tgetline( addr cp_select, addr cp_selectmask, 12, 32+8000h )
+    .if tgetline(&cp_select, &cp_selectmask, 12, 32+8000h)
 
-		.if cp_selectmask
+	.if cp_selectmask
 
-			.if panel_state(cpanel)
-
-				mov edi,[eax].S_PANEL.pn_wsub
-				mov esi,[eax].S_PANEL.pn_fcb_count
-				mov edi,[edi].S_WSUB.ws_fcb
-
-				.while	esi
-
-					mov eax,[edi]
-
-					.if cmpwarg(addr [eax].S_FBLK.fb_name, addr cp_selectmask)
-
-						fblk_select([edi])
-					.endif
-
-					add edi,4
-					dec esi
-				.endw
-
-				panel_putitem(cpanel, 0)
-				mov eax,1
-			.endif
-		.endif
-	.endif
-	ret
-cmselect ENDP
-
-cmdeselect PROC USES esi edi
-
-	.if !cp_selectmask
-
-		strcpy( addr cp_selectmask, addr cp_stdmask )
-	.endif
-
-	.if tgetline( addr cp_deselect, addr cp_selectmask, 12, 32+8000h )
-
-		.if cp_selectmask
-
-			.if panel_state(cpanel)
-
-				mov edi,[eax].S_PANEL.pn_wsub
-				mov esi,[eax].S_PANEL.pn_fcb_count
-				mov edi,[edi].S_WSUB.ws_fcb
-
-				.while	esi
-
-					mov eax,[edi]
-					add eax,S_FBLK.fb_name
-
-					.if cmpwarg(eax, addr cp_selectmask)
-
-						mov eax,[edi]
-						and [eax].S_FBLK.fb_flag,not _FB_SELECTED
-					.endif
-					add edi,4
-					dec esi
-				.endw
-
-				panel_putitem(cpanel, 0)
-				mov eax,1
-			.endif
-		.endif
-	.endif
-	ret
-cmdeselect ENDP
-
-cminvert PROC USES esi edi
-
-	.if panel_state(cpanel)
+	    .if panel_state(cpanel)
 
 		mov edi,[eax].S_PANEL.pn_wsub
 		mov esi,[eax].S_PANEL.pn_fcb_count
@@ -97,15 +29,83 @@ cminvert PROC USES esi edi
 
 		.while	esi
 
-			fblk_invert([edi])
-			add edi,4
-			dec esi
+		    mov eax,[edi]
+
+		    .if cmpwarg(&[eax].S_FBLK.fb_name, &cp_selectmask)
+
+			fblk_select([edi])
+		    .endif
+
+		    add edi,4
+		    dec esi
 		.endw
 
 		panel_putitem(cpanel, 0)
 		mov eax,1
+	    .endif
 	.endif
-	ret
-cminvert ENDP
+    .endif
+    ret
+cmselect endp
 
-	END
+cmdeselect proc uses esi edi
+
+    .if !cp_selectmask
+
+	strcpy(&cp_selectmask, &cp_stdmask)
+    .endif
+
+    .if tgetline(&cp_deselect, &cp_selectmask, 12, 32+8000h)
+
+	.if cp_selectmask
+
+	    .if panel_state(cpanel)
+
+		mov edi,[eax].S_PANEL.pn_wsub
+		mov esi,[eax].S_PANEL.pn_fcb_count
+		mov edi,[edi].S_WSUB.ws_fcb
+
+		.while	esi
+
+		    mov eax,[edi]
+		    add eax,S_FBLK.fb_name
+
+		    .if cmpwarg(eax, &cp_selectmask)
+
+			mov eax,[edi]
+			and [eax].S_FBLK.fb_flag,not _FB_SELECTED
+		    .endif
+		    add edi,4
+		    dec esi
+		.endw
+
+		panel_putitem(cpanel, 0)
+		mov eax,1
+	    .endif
+	.endif
+    .endif
+    ret
+cmdeselect endp
+
+cminvert proc uses esi edi
+
+    .if panel_state(cpanel)
+
+	mov edi,[eax].S_PANEL.pn_wsub
+	mov esi,[eax].S_PANEL.pn_fcb_count
+	mov edi,[edi].S_WSUB.ws_fcb
+
+	.while	esi
+
+	    fblk_invert([edi])
+	    add edi,4
+	    dec esi
+	.endw
+
+	panel_putitem(cpanel, 0)
+	mov eax,1
+    .endif
+    ret
+cminvert endp
+
+    END

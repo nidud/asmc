@@ -1,31 +1,33 @@
 include errno.inc
 include winbase.inc
 
-	.code
+    .code
 
-_getdrive PROC
-	local	b[512]:BYTE
-	GetCurrentDirectory( 512, addr b )
-	test	eax,eax
-	jz	error
+_getdrive proc
+
+  local b[512]:byte
+
+    .if GetCurrentDirectory(512, &b)
+
 ifdef _UNICODE
-	mov	al,b
-	mov	ah,b[2]
+        mov al,b
+        mov ah,b[2]
 else
-	mov	ax,WORD PTR b
+        mov ax,word ptr b
 endif
-	cmp	ah,':'
-	jne	nodrv
-	movzx	eax,al
-	or	al,20h
-	sub	al,'a' - 1	; A: == 1
-toend:
-	ret
-error:
-	call	osmaperr
-nodrv:
-	xor	eax,eax
-	jmp	toend
-_getdrive ENDP
+        .if ah == ':'
 
-	END
+            movzx eax,al
+            or    al,0x20
+            sub   al,'a' - 1  ; A: == 1
+        .else
+            xor eax,eax
+        .endif
+    .else
+        osmaperr()
+    .endif
+    ret
+
+_getdrive endp
+
+    END

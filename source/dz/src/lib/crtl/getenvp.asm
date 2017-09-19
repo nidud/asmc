@@ -2,18 +2,18 @@ include string.inc
 include alloc.inc
 include winbase.inc
 
-	.code
+    .code
 
-getenvp PROC USES ecx edx enval:LPSTR
+getenvp proc uses ecx edx enval:LPSTR
 
   local buf[2048]:byte
 
-	.if GetEnvironmentVariable( enval, addr buf, 2048 )
+    .if GetEnvironmentVariable(enval, &buf, 2048)
 
-		salloc( addr buf )
-	.endif
-	ret
+	salloc(&buf)
+    .endif
+    ret
 
-getenvp ENDP
+getenvp endp
 
-	END
+    END

@@ -1,21 +1,21 @@
 include io.inc
 include winbase.inc
 
-	.code
+.code
 
-remove	PROC file:LPSTR
+remove proc file:LPSTR
 
-	.if DeleteFileA( file )
+    .if DeleteFileA(file)
 
-		xor eax,eax
+        xor eax,eax
 ifdef __DZ__
-		mov _diskflag,1
+        mov _diskflag,1
 endif
-	.else
-		osmaperr()
-	.endif
-	ret
+    .else
+        osmaperr()
+    .endif
+    ret
 
-remove	ENDP
+remove endp
 
-	END
+    end

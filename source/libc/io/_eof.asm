@@ -1,27 +1,31 @@
 include io.inc
 
-	.code
+.code
 
-_eof	PROC handle:SINT
-	_lseeki64( handle, 0, SEEK_CUR )
-	push	edx
-	push	eax
-	_lseeki64( handle, 0, SEEK_END )
-	pop	ecx
-	cmp	eax,ecx
-	pop	eax
-	jne	not_eof
-	cmp	eax,edx
-	jne	not_eof
-	cmp	eax,-1
-	je	toend
-	mov	eax,1
-	jmp	toend
-not_eof:
-	_lseeki64( handle, eax::ecx, SEEK_SET )
-	xor	eax,eax
-toend:
-	ret
-_eof	ENDP
+_eof proc uses esi edi handle:SINT
 
-	END
+    _lseeki64(handle, 0, SEEK_CUR)
+
+    .if !(eax == -1 && edx == -1)
+
+        mov esi,edx
+        mov edi,eax
+        _lseeki64(handle, 0, SEEK_END)
+
+        .if !(eax == -1 && edx == -1)
+
+            .if eax == edi && edx == esi
+
+                mov eax,1
+            .else
+
+                _lseeki64(handle, esi::edi, SEEK_SET)
+                xor eax,eax
+            .endif
+        .endif
+    .endif
+    ret
+
+_eof endp
+
+    end

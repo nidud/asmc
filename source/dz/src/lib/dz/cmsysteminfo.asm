@@ -10,9 +10,9 @@ include winbase.inc
 
 ifdef _WIN95
 
-externdef kernel32_dll:BYTE
+externdef kernel32_dll:byte
 endif
-externdef IDD_DZSystemInfo:DWORD
+externdef IDD_DZSystemInfo:dword
 
     .data
     idleh   dd 0
@@ -21,20 +21,20 @@ externdef IDD_DZSystemInfo:DWORD
 
     .code
 
-UpdateMemoryStatus PROC PRIVATE USES esi edi ebx dialog
+UpdateMemoryStatus proc private uses esi edi ebx dialog
 ifdef _WIN95
   local M:MEMORYSTATUS
 endif
-  local MS:MEMORYSTATUSEX, value[32]:BYTE
+  local MS:MEMORYSTATUSEX, value[32]:byte
 
     lea edi,MS
-    mov ecx,sizeof( MEMORYSTATUSEX )
+    mov ecx,sizeof(MEMORYSTATUSEX)
     xor eax,eax
     rep stosb
-    mov MS.dwLength,sizeof( MEMORYSTATUSEX )
+    mov MS.dwLength,sizeof(MEMORYSTATUSEX)
 
 ifdef _WIN95
-    .if GetModuleHandle( addr kernel32_dll )
+    .if GetModuleHandle(addr kernel32_dll)
 
         .if GetProcAddress(eax, "GlobalMemoryStatusEx")
 
@@ -47,17 +47,17 @@ ifdef _WIN95
             mov eax,M.dwMemoryLoad
             mov MS.dwMemoryLoad,eax
             mov eax,M.dwTotalPhys
-            mov DWORD PTR MS.ullTotalPhys,eax
+            mov dword ptr MS.ullTotalPhys,eax
             mov eax,M.dwAvailPhys
-            mov DWORD PTR MS.ullAvailPhys,eax
+            mov dword ptr MS.ullAvailPhys,eax
             mov eax,M.dwTotalPageFile
-            mov DWORD PTR MS.ullTotalPageFile,eax
+            mov dword ptr MS.ullTotalPageFile,eax
             mov eax,M.dwAvailPageFile
-            mov DWORD PTR MS.ullAvailPageFile,eax
+            mov dword ptr MS.ullAvailPageFile,eax
             mov eax,M.dwTotalVirtual
-            mov DWORD PTR MS.ullTotalVirtual,eax
+            mov dword ptr MS.ullTotalVirtual,eax
             mov eax,M.dwAvailVirtual
-            mov DWORD PTR MS.ullAvailVirtual,eax
+            mov dword ptr MS.ullAvailVirtual,eax
         .endif
     .endif
 else
@@ -68,34 +68,34 @@ endif
     add ebx,00000D03h
     movzx edi,bh
     movzx ebx,bl
-    mkbstring( addr value, MS.ullTotalPhys )
-    scputf( ebx, edi, 0, 0, addr format, addr value )
+    mkbstring(addr value, MS.ullTotalPhys)
+    scputf(ebx, edi, 0, 0, addr format, addr value)
 
     inc edi
-    mov eax,DWORD PTR MS.ullTotalPhys
-    mov edx,DWORD PTR MS.ullTotalPhys[4]
-    sub eax,DWORD PTR MS.ullAvailPhys
-    sbb edx,DWORD PTR MS.ullAvailPhys[4]
-    mkbstring( addr value, edx::eax )
+    mov eax,dword ptr MS.ullTotalPhys
+    mov edx,dword ptr MS.ullTotalPhys[4]
+    sub eax,dword ptr MS.ullAvailPhys
+    sbb edx,dword ptr MS.ullAvailPhys[4]
+    mkbstring(addr value, edx::eax)
     scputf(ebx, edi, 0, 0, addr format, addr value)
 
     sub edi,1
     add ebx,18
-    mkbstring( addr value, MS.ullTotalPageFile )
+    mkbstring(addr value, MS.ullTotalPageFile)
     scputf(ebx, edi, 0, 0, addr format, addr value)
 
     inc edi
-    mov eax,DWORD PTR MS.ullTotalPageFile
-    mov edx,DWORD PTR MS.ullTotalPageFile[4]
-    sub eax,DWORD PTR MS.ullAvailPageFile
-    sbb edx,DWORD PTR MS.ullAvailPageFile[4]
-    mkbstring( addr value, edx::eax )
-    scputf( ebx, edi, 0, 0, addr format, addr value )
+    mov eax,dword ptr MS.ullTotalPageFile
+    mov edx,dword ptr MS.ullTotalPageFile[4]
+    sub eax,dword ptr MS.ullAvailPageFile
+    sbb edx,dword ptr MS.ullAvailPageFile[4]
+    mkbstring(addr value, edx::eax)
+    scputf(ebx, edi, 0, 0, addr format, addr value)
     ret
 
-UpdateMemoryStatus ENDP
+UpdateMemoryStatus endp
 
-sysinfoidle PROC PRIVATE
+sysinfoidle proc private
 
     .if count == 156
 
@@ -106,11 +106,11 @@ sysinfoidle PROC PRIVATE
     idleh()
     ret
 
-sysinfoidle ENDP
+sysinfoidle endp
 
-cmsysteminfo PROC USES esi edi ebx
+cmsysteminfo proc uses esi edi ebx
 
-  local CPU[80]:BYTE, MinorVersion, MajorVersion
+  local CPU[80]:byte, MinorVersion, MajorVersion
 
     mov edi,sselevel
     GetSSELevel()
@@ -163,23 +163,23 @@ cmsysteminfo PROC USES esi edi ebx
             mov     MinorVersion,edx
             mov     dh,cl
             .switch edx
-              .case _WIN32_WINNT_NT4:     mov eax,@CStr( "NT4" ):   .endc
-              .case _WIN32_WINNT_WIN2K:   mov eax,@CStr( "2K" ):    .endc
-              .case _WIN32_WINNT_WINXP:   mov eax,@CStr( "XP" ):    .endc
-              .case _WIN32_WINNT_WS03:    mov eax,@CStr( "WS03" ):  .endc
-              .case _WIN32_WINNT_VISTA:   mov eax,@CStr( "VISTA" ): .endc
-              .case _WIN32_WINNT_WIN7:    mov eax,@CStr( "7" ):     .endc
-              .case _WIN32_WINNT_WIN8:    mov eax,@CStr( "8" ):     .endc
-              .case _WIN32_WINNT_WINBLUE: mov eax,@CStr( "BLUE" ):  .endc
-              .case _WIN32_WINNT_WIN10:   mov eax,@CStr( "10" ):    .endc
+              .case _WIN32_WINNT_NT4:     mov eax,@CStr("NT4"):   .endc
+              .case _WIN32_WINNT_WIN2K:   mov eax,@CStr("2K"):    .endc
+              .case _WIN32_WINNT_WINXP:   mov eax,@CStr("XP"):    .endc
+              .case _WIN32_WINNT_WS03:    mov eax,@CStr("WS03"):  .endc
+              .case _WIN32_WINNT_VISTA:   mov eax,@CStr("VISTA"): .endc
+              .case _WIN32_WINNT_WIN7:    mov eax,@CStr("7"):     .endc
+              .case _WIN32_WINNT_WIN8:    mov eax,@CStr("8"):     .endc
+              .case _WIN32_WINNT_WINBLUE: mov eax,@CStr("BLUE"):  .endc
+              .case _WIN32_WINNT_WIN10:   mov eax,@CStr("10"):    .endc
               .default
-                mov eax,@CStr( "10+" )
+                mov eax,@CStr("10+")
             .endsw
             movzx   ecx,[esi].S_DOBJ.dl_rect.rc_x
             movzx   edx,[esi].S_DOBJ.dl_rect.rc_y
             add     ecx,4
             add     edx,2
-            scputf( ecx, edx, 0, 0, "Windows %s Version %d.%d", eax, MajorVersion, MinorVersion)
+            scputf(ecx, edx, 0, 0, "Windows %s Version %d.%d", eax, MajorVersion, MinorVersion)
         .endif
 
         .if ebx
@@ -250,6 +250,6 @@ cmsysteminfo PROC USES esi edi ebx
     .endif
     ret
 
-cmsysteminfo ENDP
+cmsysteminfo endp
 
     END

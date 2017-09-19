@@ -1,25 +1,23 @@
 include direct.inc
 include winbase.inc
 
-	.code
+    .code
 
-GetFileSystemName PROC lpRootPathName:LPSTR, lpFileSystemNameBuffer:LPSTR
+GetFileSystemName proc lpRootPathName:LPSTR, lpFileSystemNameBuffer:LPSTR
 
-local	MaximumComponentLength,
-	FileSystemFlags
+local MaximumComponentLength, FileSystemFlags
 
-	GetVolumeInformation(
-		lpRootPathName,
-		0,
-		0,
-		0,
-		addr MaximumComponentLength,
-		addr FileSystemFlags,
-		lpFileSystemNameBuffer,
-		32 )
+    GetVolumeInformation(
+	lpRootPathName,
+	0,
+	0,
+	0,
+	&MaximumComponentLength,
+	&FileSystemFlags,
+	lpFileSystemNameBuffer,
+	32)
+    ret
 
-	ret
+GetFileSystemName endp
 
-GetFileSystemName ENDP
-
-	END
+    END

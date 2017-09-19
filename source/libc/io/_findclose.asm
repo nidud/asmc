@@ -1,18 +1,18 @@
 include errno.inc
 include winbase.inc
 
-	.code
+    .code
 
-_findclose PROC h:HANDLE
+_findclose proc h:HANDLE
 
-	.if !FindClose( h )
+    .if !FindClose(h)
 
-		osmaperr()
-	.else
-		xor eax,eax
-	.endif
-	ret
+        osmaperr()
+    .else
+        xor eax,eax
+    .endif
+    ret
 
-_findclose ENDP
+_findclose endp
 
-	END
+    END

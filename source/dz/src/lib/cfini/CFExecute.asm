@@ -2,23 +2,23 @@ include process.inc
 include string.inc
 include cfini.inc
 
-	.code
+    .code
 
-CFExecute PROC USES esi __ini:PCFINI
+CFExecute proc uses esi __ini:PCFINI
 
   local cmd[256]:byte
 
-	xor	esi,esi
+    xor esi,esi
 
-	.while	CFGetEntryID( __ini, esi )
+    .while CFGetEntryID(__ini, esi)
 
-		mov	edx,eax
-		system( strcpy( addr cmd, edx ) )
-		inc	esi
-	.endw
+	mov edx,eax
+	system(strcpy(addr cmd, edx))
+	inc esi
+    .endw
 
-	ret
+    ret
 
-CFExecute ENDP
+CFExecute endp
 
-	END
+    END

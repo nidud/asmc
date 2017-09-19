@@ -1,15 +1,15 @@
 include consx.inc
 
-	.code
+    .code
 
-	ASSUME	edi: PTR S_DOBJ
+    assume edi: ptr S_DOBJ
 
-dlshow	PROC USES edi dobj:PTR S_DOBJ
-	mov edi,dobj
-	.if rcshow( [edi].dl_rect, [edi].dl_flag, [edi].dl_wp )
-		or [edi].dl_flag,_D_ONSCR
-	.endif
-	ret
-dlshow	ENDP
+dlshow proc uses edi dobj:ptr S_DOBJ
+    mov edi,dobj
+    .if rcshow([edi].dl_rect, [edi].dl_flag, [edi].dl_wp)
+        or [edi].dl_flag,_D_ONSCR
+    .endif
+    ret
+dlshow endp
 
-	END
+    END

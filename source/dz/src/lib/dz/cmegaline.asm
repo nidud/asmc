@@ -5,116 +5,116 @@ include doszip.inc
 include cfini.inc
 include stdlib.inc
 
-SWPFLAG		equ SWP_NOSIZE or SWP_NOACTIVATE or SWP_NOZORDER
+SWPFLAG equ SWP_NOSIZE or SWP_NOACTIVATE or SWP_NOZORDER
 
 .code
 
-cmegaline PROC uses esi edi
+cmegaline proc uses esi edi
 
 local	bz:COORD,
 	rc:SMALL_RECT,
 	ci:CONSOLE_SCREEN_BUFFER_INFO,
 	x, y, col, row
 
-	doszip_hide()
+    doszip_hide()
 
-	xor	eax,eax
-	mov	x,eax
-	mov	y,eax
-	mov	eax,DZMINCOLS
-	mov	edx,DZMINROWS
+    xor eax,eax
+    mov x,eax
+    mov y,eax
+    mov eax,DZMINCOLS
+    mov edx,DZMINROWS
 
-	.if !(cflag & _C_EGALINE)
+    .if !(cflag & _C_EGALINE)
 
-		mov	edx,GetLargestConsoleWindowSize(hStdOutput)
-		shr	edx,16
-		movzx	eax,ax
-		and	eax,-2
+	mov edx,GetLargestConsoleWindowSize(hStdOutput)
+	shr edx,16
+	movzx	eax,ax
+	and eax,-2
 
-		.if eax < DZMINCOLS || edx < DZMINROWS
+	.if eax < DZMINCOLS || edx < DZMINROWS
 
-			mov eax,DZMINCOLS
-			mov edx,DZMINROWS
+	    mov eax,DZMINCOLS
+	    mov edx,DZMINROWS
 
-		.elseif eax > DZMAXCOLS || edx > DZMAXROWS
+	.elseif eax > DZMAXCOLS || edx > DZMAXROWS
 
-			.if eax > DZMAXCOLS
+	    .if eax > DZMAXCOLS
 
-				mov eax,DZMAXCOLS
-			.endif
-			.if edx > DZMAXROWS
+		mov eax,DZMAXCOLS
+	    .endif
+	    .if edx > DZMAXROWS
 
-				mov edx,DZMAXROWS
-			.endif
-		.endif
+		mov edx,DZMAXROWS
+	    .endif
 	.endif
+    .endif
 
-	mov col,eax
-	mov row,edx
+    mov col,eax
+    mov row,edx
 
-	.if CFGetSection(".consolesize")
+    .if CFGetSection(".consolesize")
 
-		mov esi,eax
-		mov edi,4
-		.if cflag & _C_EGALINE
+	mov esi,eax
+	mov edi,4
+	.if cflag & _C_EGALINE
 
-			xor edi,edi
-		.endif
-		.if CFGetEntryID(esi, edi)
-
-			mov x,atol(eax)
-		.endif
-		.if CFGetEntryID(esi, addr [edi+1])
-
-			mov y,atol(eax)
-		.endif
-		.if CFGetEntryID(esi, addr [edi+2])
-
-			mov col,atol(eax)
-		.endif
-		.if CFGetEntryID(esi, addr [edi+3])
-
-			mov row,atol(eax)
-		.endif
+	    xor edi,edi
 	.endif
+	.if CFGetEntryID(esi, edi)
 
-	.if GetConsoleScreenBufferInfo( hStdOutput, addr ci )
-		;
-		; japheth 2014-01-10 - reposition to desktop position 0,0
-		;
-		SetWindowPos(GetConsoleWindow(),0,x,y,0,0,SWPFLAG)
-
-		xor	eax,eax
-		mov	rc.Left,ax
-		mov	rc.Top,ax
-		mov	eax,col
-		mov	bz.x,ax
-		dec	eax
-		mov	rc.Right,ax
-		mov	edx,row
-		mov	bz.y,dx
-		dec	edx
-		mov	rc.Bottom,dx
-
-		SetConsoleWindowInfo(hStdOutput, 1, addr rc)
-		SetConsoleScreenBufferSize( hStdOutput, bz)
-		SetConsoleWindowInfo(hStdOutput, 1, addr rc)
-
-		.if GetConsoleScreenBufferInfo(hStdOutput, addr ci)
-
-			mov	eax,ci.dwSize
-			movzx	edx,ax
-			mov	_scrcol,edx
-			shr	eax,16
-			dec	eax
-			mov	_scrrow,eax
-		.endif
+	    mov x,atol(eax)
 	.endif
+	.if CFGetEntryID(esi, &[edi+1])
 
-	apiega()
-	doszip_show()
-	ret
+	    mov y,atol(eax)
+	.endif
+	.if CFGetEntryID(esi, &[edi+2])
 
-cmegaline ENDP
+	    mov col,atol(eax)
+	.endif
+	.if CFGetEntryID(esi, &[edi+3])
 
-	END
+	    mov row,atol(eax)
+	.endif
+    .endif
+
+    .if GetConsoleScreenBufferInfo(hStdOutput, &ci)
+	;
+	; japheth 2014-01-10 - reposition to desktop position 0,0
+	;
+	SetWindowPos(GetConsoleWindow(),0,x,y,0,0,SWPFLAG)
+
+	xor eax,eax
+	mov rc.Left,ax
+	mov rc.Top,ax
+	mov eax,col
+	mov bz.x,ax
+	dec eax
+	mov rc.Right,ax
+	mov edx,row
+	mov bz.y,dx
+	dec edx
+	mov rc.Bottom,dx
+
+	SetConsoleWindowInfo(hStdOutput, 1, &rc)
+	SetConsoleScreenBufferSize(hStdOutput, bz)
+	SetConsoleWindowInfo(hStdOutput, 1, &rc)
+
+	.if GetConsoleScreenBufferInfo(hStdOutput, &ci)
+
+	    mov eax,ci.dwSize
+	    movzx   edx,ax
+	    mov _scrcol,edx
+	    shr eax,16
+	    dec eax
+	    mov _scrrow,eax
+	.endif
+    .endif
+
+    apiega()
+    doszip_show()
+    ret
+
+cmegaline endp
+
+    END

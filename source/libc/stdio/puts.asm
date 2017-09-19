@@ -2,11 +2,13 @@ include stdio.inc
 include io.inc
 include string.inc
 
-	.code
+    .code
 
-puts	PROC string:LPSTR
-	_write( stdout._file, string, strlen( string ) )
-	ret
-puts	ENDP
+puts proc string:LPSTR
 
-	END
+    _write(stdout._file, string, strlen(string))
+    ret
+
+puts endp
+
+    END

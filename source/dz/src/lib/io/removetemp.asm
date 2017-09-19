@@ -2,18 +2,18 @@ include io.inc
 include direct.inc
 include strlib.inc
 
-externdef	envtemp:DWORD
-removefile	proto :LPSTR
+externdef   envtemp:dword
+removefile  proto :LPSTR
 
-	.code
+    .code
 
-removetemp PROC path:LPSTR
+removetemp proc path:LPSTR
 
-  local nbuf[_MAX_PATH]:BYTE
+  local nbuf[_MAX_PATH]:byte
 
-	removefile( strfcat( addr nbuf, envtemp, path ) )
-	ret
+    removefile(strfcat(addr nbuf, envtemp, path))
+    ret
 
-removetemp ENDP
+removetemp endp
 
-	END
+    END

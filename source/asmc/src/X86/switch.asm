@@ -84,9 +84,8 @@ GetLowCount proc hll:ptr hll_item, min, dist
     xor eax,eax
     mov edx,[edx].hll_item.caselist
 
-    .while  edx
-        .if [edx].hll_item.flags & HLLF_TABLE && \
-            SDWORD PTR ecx >= [edx].hll_item.labels
+    .while edx
+        .ifs [edx].hll_item.flags & HLLF_TABLE && ecx >= [edx].hll_item.labels
 
             add eax,1
         .endif
@@ -125,7 +124,7 @@ SetLowCount proc uses esi hll:ptr hll_item, count, min, dist
     mov esi,[esi].caselist
 
     .while  esi
-        .if [esi].flags & HLLF_TABLE && SDWORD PTR ecx < [esi].labels
+        .ifs [esi].flags & HLLF_TABLE && ecx < [esi].labels
 
             and [esi].flags,NOT HLLF_TABLE
             dec DWORD PTR [edx]
@@ -149,7 +148,7 @@ SetHighCount proc uses esi hll:ptr hll_item, count, max, dist
 
     .while esi
 
-        .if [esi].flags & HLLF_TABLE && SDWORD PTR ecx > [esi].labels
+        .ifs [esi].flags & HLLF_TABLE && ecx > [esi].labels
 
             and [esi].flags,NOT HLLF_TABLE
             dec DWORD PTR [edx]
@@ -281,11 +280,11 @@ GetMaxCaseValue proc uses esi edi ebx hll, min, max, min_table, max_table
 
             inc edi
             mov ecx,[esi].labels
-            .if SDWORD PTR eax <= ecx
+            .ifs eax <= ecx
 
                 mov eax,ecx
             .endif
-            .if SDWORD PTR edx >= ecx
+            .ifs edx >= ecx
 
                 mov edx,ecx
             .endif
@@ -347,8 +346,7 @@ RenderCaseExit proc fastcall private hll
 
         .if !( [eax].hll_item.flags & HLLF_ENDCOCCUR )
 
-            .if Parse_Pass == PASS_1 && \
-                !( ModuleInfo.aflag & _AF_PASCAL )
+            .if Parse_Pass == PASS_1 && !( ModuleInfo.aflag & _AF_PASCAL )
 
                 asmerr( 7007 )
             .endif
@@ -392,12 +390,9 @@ IsCaseColon endp
 
     assume  ebx: ptr asm_tok
 
-RenderMultiCase proc uses esi edi ebx,
-    i:      ptr SDWORD,
-    buffer:     ptr SBYTE,
-    tokenarray: ptr asm_tok
-local   result:     DWORD,
-    colon:      DWORD
+RenderMultiCase proc uses esi edi ebx i:ptr SDWORD, buffer:ptr SBYTE, tokenarray:ptr asm_tok
+
+local result, colon
 
     mov ebx,tokenarray
     add ebx,16
@@ -584,7 +579,8 @@ RenderSwitch proc uses esi edi ebx,
     buffer:     LPSTR,  ; *switch.labels[LSTART]
     l_exit:     LPSTR   ; *switch.labels[LEXIT]
 
-local   r_dw:       DWORD,  ; dw/dd/dq
+local \
+    r_dw:       DWORD,  ; dw/dd/dq
     r_db:       DWORD,  ; "DB"/"DW"
     r_ax:       DWORD,  ; ax/eax/rax
     r_sp:       DWORD,  ; esp/rsp
@@ -602,7 +598,7 @@ local   r_dw:       DWORD,  ; dw/dd/dq
     min[2]:     SDWORD, ; minimum const value
     max[2]:     SDWORD, ; maximum const value
     dist:       SDWORD, ; max - min
-    l_start[16]:    SBYTE,  ; current start label
+    l_start[16]:SBYTE,  ; current start label
     l_jtab[16]: SBYTE,  ; jump table address
     labelx[16]: SBYTE,  ; label symbol
     use_index:  BYTE
@@ -1071,7 +1067,7 @@ RenderSwitch endp
 
 SwitchStart proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok
 
-local   rc:SINT, cmd:UINT, buffer[MAX_LINE_LEN]:SBYTE
+local rc:SINT, cmd:UINT, buffer[MAX_LINE_LEN]:SBYTE
 
     mov rc,NOT_ERROR
     mov ebx,tokenarray
@@ -1217,8 +1213,8 @@ SwitchStart endp
 SwitchEnd proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok
 
 local   rc:SINT,cmd:SINT,
-    buffer[MAX_LINE_LEN]:SBYTE,
-    l_exit[16]:SBYTE    ; exit or default label
+        buffer[MAX_LINE_LEN]:SBYTE,
+        l_exit[16]:SBYTE    ; exit or default label
 
     mov esi,ModuleInfo.HllStack
     .if !esi
@@ -1311,11 +1307,11 @@ _lk_HllContinueIf proto :ptr sdword, :ptr asm_tok
 
 SwitchExit proc uses esi edi ebx i, tokenarray:ptr asm_tok
 
-local   rc: SINT,
-    cont0:  SINT,
-    cmd:    SINT,
-    buff    [16]:SBYTE,
-    buffer  [MAX_LINE_LEN]:SBYTE
+local   rc:     SINT,
+        cont0:  SINT,
+        cmd:    SINT,
+        buff    [16]:SBYTE,
+        buffer  [MAX_LINE_LEN]:SBYTE
 
     mov esi,ModuleInfo.HllStack
     .if !esi
@@ -1503,8 +1499,8 @@ local   rc: SINT,
                   .case T_ID
                     .if SymFind( [ebx].string_ptr )
 
-                        .break  .if [eax].asym.state != SYM_INTERNAL
-                        .break  .if !([eax].asym.mem_type == MT_NEAR || \
+                        .break .if [eax].asym.state != SYM_INTERNAL
+                        .break .if !([eax].asym.mem_type == MT_NEAR || \
                                   [eax].asym.mem_type == MT_EMPTY)
                     .elseif Parse_Pass != PASS_1
 

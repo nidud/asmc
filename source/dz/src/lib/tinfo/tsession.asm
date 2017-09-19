@@ -5,207 +5,206 @@ include direct.inc
 include cfini.inc
 include wsub.inc
 
-	.code
+    .code
 
-TIOpenSession PROC USES esi edi pCFINI, Section:LPSTR
+TIOpenSession proc uses esi edi pCFINI, Section:LPSTR
 
-local	tflag,tabz,x,b,y,l,index
+local tflag,tabz,x,b,y,l,index
 
-	.if	__CFGetSection( pCFINI, Section )
+    .if __CFGetSection(pCFINI, Section)
 
-		mov	edi,eax
-		xor	eax,eax
-		mov	index,eax
-		mov	tflag,eax
-		mov	tabz,eax
+        mov edi,eax
+        xor eax,eax
+        mov index,eax
+        mov tflag,eax
+        mov tabz,eax
 
-		.while	CFReadFileName( edi, addr index, 1 )
+        .while  CFReadFileName(edi, addr index, 1)
 
-			mov	esi,eax
-			.break .if !topen(esi, tflag)
+            mov esi,eax
+            .break .if !topen(esi, tflag)
 
-			mov	tinfo,eax
-			free  ( esi )
+            mov tinfo,eax
+            free(esi)
 
-			ASSUME	esi: PTR S_TINFO
+            assume esi:ptr S_TINFO
 
-			mov	esi,tinfo
-			mov	eax,tabz
-			.if	eax
+            mov esi,tinfo
+            mov eax,tabz
+            .if eax
 
-				mov	[esi].ti_tabz,eax
-			.endif
-			mov	eax,l
-			mov	[esi].ti_loff,eax
-			mov	eax,y
-			mov	[esi].ti_yoff,eax
-			mov	eax,x
-			mov	[esi].ti_xoff,eax
-			mov	eax,b
-			mov	[esi].ti_boff,eax
-		.endw
+                mov [esi].ti_tabz,eax
+            .endif
+            mov eax,l
+            mov [esi].ti_loff,eax
+            mov eax,y
+            mov [esi].ti_yoff,eax
+            mov eax,x
+            mov [esi].ti_xoff,eax
+            mov eax,b
+            mov [esi].ti_boff,eax
+        .endw
 
-		mov	eax,tinfo
-		test	eax,eax
-	.endif
-	ret
+        mov eax,tinfo
+        test eax,eax
+    .endif
+    ret
 
-TIOpenSession ENDP
+TIOpenSession endp
 
-TISaveSession PROC USES esi edi ebx __ini, section:LPSTR
+TISaveSession proc uses esi edi ebx __ini, section:LPSTR
 
-local	buffer[1024]:	sbyte,
-	handle:		dword
+local buffer[1024]:sbyte, handle:dword
 
-	.if	tigetfile(tinfo)
+    .if tigetfile(tinfo)
 
-		mov	esi,eax
-		mov	edi,edx
+        mov esi,eax
+        mov edi,edx
 
-		mov	eax,__ini
-		.if	eax
+        mov eax,__ini
+        .if eax
 
-			.if	__CFAddSection( eax, section )
+            .if __CFAddSection(eax, section)
 
-				mov	handle,eax
+                mov handle,eax
 
-				CFDelEntries( eax )
+                CFDelEntries(eax)
 
-				xor	ebx,ebx
+                xor ebx,ebx
 
-				.while	esi
+                .while esi
 
-					mov	eax,[esi].ti_flag
-					and	eax,_T_TECFGMASK
+                    mov eax,[esi].ti_flag
+                    and eax,_T_TECFGMASK
 
-					CFAddEntryX( handle, "%d=%X,%X,%X,%X,%X,%X,%s", ebx,
-						[esi].ti_loff,
-						[esi].ti_yoff,
-						[esi].ti_boff,
-						[esi].ti_xoff,
-						[esi].ti_tabz,
-						eax,
-						[esi].ti_file )
+                    CFAddEntryX( handle, "%d=%X,%X,%X,%X,%X,%X,%s", ebx,
+                        [esi].ti_loff,
+                        [esi].ti_yoff,
+                        [esi].ti_boff,
+                        [esi].ti_xoff,
+                        [esi].ti_tabz,
+                        eax,
+                        [esi].ti_file )
 
-					inc	ebx
-					.break .if esi == edi
+                    inc ebx
+                    .break .if esi == edi
 
-					mov	esi,[esi].ti_next
-					.break .if !tistate(esi)
-				.endw
-			.endif
-		.endif
-	.endif
-	ret
+                    mov esi,[esi].ti_next
+                    .break .if !tistate(esi)
+                .endw
+            .endif
+        .endif
+    .endif
+    ret
 
-TISaveSession ENDP
+TISaveSession endp
 
-	ASSUME	esi: NOTHING
+    assume esi:nothing
 
-topenedi PROC USES esi fname:LPSTR
+topenedi proc uses esi fname:LPSTR
 
-local	cursor:S_CURSOR
+local cursor:S_CURSOR
 
-	.if	__CFRead( 0, fname )
+    .if __CFRead(0, fname)
 
-		mov	esi,eax
+        mov esi,eax
 
-		.if	__CFGetSection( esi, "." )
+        .if __CFGetSection(esi, ".")
 
-			CursorGet( addr cursor )
+            CursorGet(&cursor)
 
-			.if	tistate( tinfo )
+            .if tistate(tinfo)
 
-				tihide( tinfo )
-			.endif
+                tihide(tinfo)
+            .endif
 
-			TIOpenSession( esi, "." )
+            TIOpenSession(esi, ".")
 
-			.if	tistate( tinfo )
+            .if tistate(tinfo)
 
-				tishow( tinfo )
-				tmodal()
-			.endif
+                tishow(tinfo)
+                tmodal()
+            .endif
 
-			CursorSet( addr cursor )
-		.endif
-		__CFClose( esi )
-	.endif
+            CursorSet(&cursor)
+        .endif
+        __CFClose(esi)
+    .endif
 
-	mov	eax,tinfo
-	ret
+    mov eax,tinfo
+    ret
 
-topenedi ENDP
+topenedi endp
 
-tloadfiles PROC USES esi edi ebx
+tloadfiles proc uses esi edi ebx
 
-local	path[_MAX_PATH]:BYTE
+local path[_MAX_PATH]:byte
 
-	.if	wgetfile( addr path, "*.edi", _WOPEN )
+    .if wgetfile(&path, "*.edi", _WOPEN)
 
-		_close( eax )
+        _close(eax)
 
-		.if	__CFRead( 0, addr path )
+        .if __CFRead(0, &path)
 
-			mov	esi,eax
+            mov esi,eax
 
-			.if	__CFGetSection( esi, "." )
+            .if __CFGetSection(esi, ".")
 
-				.if	tistate( tinfo )
+                .if tistate(tinfo)
 
-					tihide( tinfo )
-				.endif
+                    tihide(tinfo)
+                .endif
 
-				TIOpenSession( esi, "." )
+                TIOpenSession(esi, ".")
 
-				.if	tistate( tinfo )
+                .if tistate(tinfo)
 
-					tishow( tinfo )
-				.endif
-			.endif
-			__CFClose( esi )
-		.endif
-	.endif
+                    tishow(tinfo)
+                .endif
+            .endif
+            __CFClose(esi)
+        .endif
+    .endif
 
-	mov	eax,_TI_CONTINUE
-	ret
+    mov eax,_TI_CONTINUE
+    ret
 
-tloadfiles ENDP
+tloadfiles endp
 
-topensession PROC
+topensession proc
 
-local	cu:S_CURSOR
+local cu:S_CURSOR
 
-	CursorGet( addr cu )
-	call	tloadfiles
-	xor	eax,eax
-	call	tmodal
-	CursorSet( addr cu )
-	mov	eax,_TI_CONTINUE
-	ret
+    CursorGet(&cu)
+    tloadfiles()
+    xor eax,eax
+    tmodal()
+    CursorSet(&cu)
+    mov eax,_TI_CONTINUE
+    ret
 
-topensession ENDP
+topensession endp
 
-tsavefiles PROC USES esi
+tsavefiles proc uses esi
 
-local	path[_MAX_PATH]:BYTE
+local path[_MAX_PATH]:byte
 
-	.if	wgetfile( addr path, "*.edi", _WSAVE )
+    .if wgetfile(&path, "*.edi", _WSAVE)
 
-		_close( eax )
+        _close(eax)
 
-		.if	__CFAlloc()
+        .if __CFAlloc()
 
-			mov	esi,eax
+            mov esi,eax
 
-			TISaveSession( esi, "." )
-			__CFWrite( esi, addr path )
-			__CFClose( esi )
-		.endif
-	.endif
-	mov	eax,_TI_CONTINUE
-	ret
+            TISaveSession( esi, ".")
+            __CFWrite(esi, &path)
+            __CFClose(esi)
+        .endif
+    .endif
+    mov eax,_TI_CONTINUE
+    ret
 
-tsavefiles ENDP
+tsavefiles endp
 
-	END
+    END

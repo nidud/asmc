@@ -1,8 +1,8 @@
 include consx.inc
 
-	PUBLIC	console
+    PUBLIC  console
 
-	.data
-	console dd CON_UBEEP or CON_MOUSE or CON_CLIPB
+    .data
+    console dd CON_UBEEP or CON_MOUSE or CON_CLIPB
 
-	END
+    END

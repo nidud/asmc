@@ -2,19 +2,19 @@ include crtl.inc
 include io.inc
 include winbase.inc
 
-	.code
+    .code
 
-setfattr PROC lpFilename:LPTSTR, Attributes:UINT
+setfattr proc lpFilename:LPTSTR, Attributes:UINT
 
-	.if	!SetFileAttributes( lpFilename, Attributes )
+    .if !SetFileAttributes(lpFilename, Attributes)
 
-		osmaperr()
-	.else
+        osmaperr()
+    .else
 
-		xor eax,eax
-		mov byte ptr _diskflag,2
-	.endif
-	ret
-setfattr ENDP
+        xor eax,eax
+        mov byte ptr _diskflag,2
+    .endif
+    ret
+setfattr endp
 
-	END
+    END

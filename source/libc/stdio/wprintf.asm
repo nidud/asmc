@@ -1,17 +1,17 @@
 include stdio.inc
 
-	.code
+    .code
 
 wprintf proc c uses esi format:LPWSTR, argptr:VARARG
 
-	mov  esi,_stbuf( addr stdout )
-	xchg esi,_woutput( addr stdout, format, addr argptr )
-	mov  edx,eax
+    mov  esi,_stbuf(&stdout)
+    xchg esi,_woutput(&stdout, format, &argptr)
+    mov  edx,eax
 
-	_ftbuf( edx, addr stdout )
-	mov eax,esi
-	ret
+    _ftbuf(edx, &stdout)
+    mov eax,esi
+    ret
 
 wprintf endp
 
-	END
+    END

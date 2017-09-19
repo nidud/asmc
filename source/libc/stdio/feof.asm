@@ -1,12 +1,12 @@
 include stdio.inc
 
-	.code
+    .code
 
-feof	PROC stream:LPFILE
-	mov eax,stream
-	mov eax,[eax]._iobuf._flag
-	and eax,_IOEOF
-	ret
-feof	ENDP
+feof proc stream:LPFILE
+    mov eax,stream
+    mov eax,[eax]._iobuf._flag
+    and eax,_IOEOF
+    ret
+feof endp
 
-	END
+    END

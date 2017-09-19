@@ -2,17 +2,17 @@ include io.inc
 include direct.inc
 include winbase.inc
 
-	.code
+.code
 
-_wgetfattr PROC USES ecx edx lpFilename:LPWSTR
+_wgetfattr proc uses ecx edx lpFilename:LPWSTR
 
-	.if GetFileAttributesW( lpFilename ) == -1
+    .if GetFileAttributesW(lpFilename) == -1
 
-		osmaperr()
-	.endif
-	ret
+        osmaperr()
+    .endif
+    ret
 
-_wgetfattr ENDP
+_wgetfattr endp
 
-	END
+    end
 

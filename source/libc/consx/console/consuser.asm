@@ -1,18 +1,24 @@
 include consx.inc
 
-	.code
+.code
 
-consuser PROC
-local	cursor:S_CURSOR
-	CursorGet(addr cursor)
-	CursorSet(addr console_cu)
-	dlshow(addr console_dl)
-	.while !getkey()
-	.endw
-	dlhide(addr console_dl)
-	CursorSet(addr cursor)
-	xor eax,eax
-	ret
-consuser ENDP
+consuser proc
 
-	END
+local cursor:S_CURSOR
+
+    CursorGet(&cursor)
+    CursorSet(&console_cu)
+    dlshow(&console_dl)
+
+    .while !getkey()
+    .endw
+
+    dlhide(&console_dl)
+    CursorSet(&cursor)
+
+    xor eax,eax
+    ret
+
+consuser endp
+
+    END

@@ -2,21 +2,21 @@ include direct.inc
 include errno.inc
 include winbase.inc
 
-	.code
+    .code
 
 _wrmdir proc directory:LPWSTR
 
-	.if RemoveDirectoryW( directory )
+    .if RemoveDirectoryW(directory)
 
-		xor eax,eax
+        xor eax,eax
 ifdef __DZ__
-		mov _diskflag,1
+        mov _diskflag,1
 endif
-	.else
-		osmaperr()
-	.endif
-	ret
+    .else
+        osmaperr()
+    .endif
+    ret
 
 _wrmdir endp
 
-	END
+    END

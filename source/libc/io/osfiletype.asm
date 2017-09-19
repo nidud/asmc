@@ -1,13 +1,13 @@
 include io.inc
 include winbase.inc
 
-	.code
+.code
 
-osfiletype PROC h:SINT
-	mov	eax,h
-	mov	eax,_osfhnd[eax*4]
-	GetFileType( eax )
-	ret
-osfiletype ENDP
+osfiletype proc h:SINT
+    mov eax,h
+    mov eax,_osfhnd[eax*4]
+    GetFileType(eax)
+    ret
+osfiletype endp
 
-	END
+    end

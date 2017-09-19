@@ -1,16 +1,16 @@
 include cfini.inc
 
-	.code
+    .code
 
-CFGetComspec PROC value:UINT
+CFGetComspec proc value:UINT
 
-	mov	eax,__CFBase
-	.if	eax
+    mov eax,__CFBase
+    .if eax
 
-		__CFGetComspec( eax, value )
-	.endif
-	ret
+        __CFGetComspec(eax, value)
+    .endif
+    ret
 
-CFGetComspec ENDP
+CFGetComspec endp
 
-	END
+    END

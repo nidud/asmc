@@ -7,12 +7,12 @@ include winbase.inc
 
 .code
 
-_fullpath PROC USES esi edi ebx buf:LPSTR, path:LPSTR, maxlen:UINT
-local drive:BYTE
-local dchar:BYTE
+_fullpath proc uses esi edi ebx buf:LPSTR, path:LPSTR, maxlen:UINT
+local drive:byte
+local dchar:byte
 
     mov esi,path
-    .if !esi || BYTE PTR [esi] == 0
+    .if !esi || byte ptr [esi] == 0
 	_getcwd(buf, maxlen)
 	jmp @F
     .endif
@@ -49,12 +49,12 @@ local dchar:BYTE
 	    .if (al == dl || al == dh)
 		mov [edi],dl
 		inc ah
-		.if ah == 2 && BYTE PTR [esi] == 0
+		.if ah == 2 && byte ptr [esi] == 0
 		    mov errno,EINVAL
 		    jmp error_2
 		.endif
 		.if ah >= 3
-		    .if BYTE PTR [edi-1] == '\'
+		    .if byte ptr [edi-1] == '\'
 			mov errno,EINVAL
 			jmp error_2
 		    .endif
@@ -120,10 +120,10 @@ local dchar:BYTE
 		dec edi
 	    .endif
 	.endif
-	mov BYTE PTR [edi],'\'
+	mov byte ptr [edi],'\'
 	lea ecx,[ebx+2]
     .endif
-    .while BYTE PTR [esi] != 0
+    .while byte ptr [esi] != 0
 	mov ax,[esi]
 	mov dl,[esi+2]
 	.if (al == '.' && ah == '.' && (!dl || dl == '\' || dl == '/'))
@@ -136,12 +136,12 @@ local dchar:BYTE
 		jmp error_2
 	    .endif
 	    add esi,2
-	    .if BYTE PTR [esi] != 0
+	    .if byte ptr [esi] != 0
 		inc esi
 	    .endif
 	.elseif (al == '.' && ((ah == '\' || ah == '/') || !ah))
 	    inc esi
-	    .if BYTE PTR [esi] != 0
+	    .if byte ptr [esi] != 0
 		inc esi
 	    .endif
 	.else
@@ -160,17 +160,17 @@ local dchar:BYTE
 		jmp error_2
 	    .endif
 	    inc edi
-	    mov BYTE PTR [edi],'\'
+	    mov byte ptr [edi],'\'
 	    mov al,[esi]
 	    .if al == '\' || al == '/'
 		inc esi
 	    .endif
 	.endif
     .endw
-    .if BYTE PTR [edi-1] == ':'
+    .if byte ptr [edi-1] == ':'
 	inc edi
     .endif
-    mov BYTE PTR [edi],0
+    mov byte ptr [edi],0
     mov eax,ebx
 @@:
     ret
@@ -182,7 +182,7 @@ error_2:
     .endif
     xor eax,eax
     jmp @B
-_fullpath ENDP
+_fullpath endp
 
 	END
 

@@ -1,15 +1,15 @@
 include consx.inc
 
-	.code
+    .code
 
-dllevent PROC ldlg:PTR S_DOBJ, listp:PTR S_LOBJ
-	push	tdllist
-	mov	eax,listp
-	mov	tdllist,eax
-	dlevent( ldlg )
-	pop	ecx
-	mov	tdllist,ecx
-	ret
-dllevent ENDP
+dllevent proc ldlg:ptr S_DOBJ, listp:ptr S_LOBJ
+    push tdllist
+    mov eax,listp
+    mov tdllist,eax
+    dlevent(ldlg)
+    pop ecx
+    mov tdllist,ecx
+    ret
+dllevent endp
 
-	END
+    END

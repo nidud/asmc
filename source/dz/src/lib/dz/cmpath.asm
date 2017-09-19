@@ -6,36 +6,36 @@ include string.inc
 include stdlib.inc
 include cfini.inc
 
-	.code
+    .code
 
-cmpath	PROC PRIVATE ini_id
-local	path[_MAX_PATH]:BYTE
+cmpath proc private ini_id
+local path[_MAX_PATH]:byte
 
-	.switch
-	  .case !panel_state(cpanel)
-	  .case !CFGetSectionID( addr cp_directory, ini_id )
-	  .case WORD PTR [eax] == '><'
-	  .case !strchr( eax, ',' )
-		.endc
-	  .default
-		inc	eax
-		strstart( eax )
-		mov	ecx,eax
-		strnzcpy( addr path, ecx, _MAX_PATH-1 )
-		expenviron( eax )
-		.endc .if path == '['
-		cpanel_setpath(addr path)
-		.endc
-	.endsw
-	ret
-cmpath	ENDP
+    .switch
+      .case !panel_state(cpanel)
+      .case !CFGetSectionID(&cp_directory, ini_id)
+      .case word ptr [eax] == '><'
+      .case !strchr(eax, ',')
+	.endc
+      .default
+	inc eax
+	strstart(eax)
+	mov ecx,eax
+	strnzcpy(&path, ecx, _MAX_PATH-1)
+	expenviron(eax)
+	.endc .if path == '['
+	cpanel_setpath(&path)
+	.endc
+    .endsw
+    ret
+cmpath endp
 
-cmpathp MACRO q
-cmpath&q PROC
-	cmpath( q )
-	ret
-cmpath&q ENDP
-	ENDM
+cmpathp macro q
+cmpath&q proc
+    cmpath(q)
+    ret
+cmpath&q endp
+    endm
 
 cmpathp 0
 cmpathp 1
@@ -46,4 +46,4 @@ cmpathp 5
 cmpathp 6
 cmpathp 7
 
-	END
+    END

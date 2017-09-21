@@ -6,10 +6,10 @@ include tchar.inc
 
 _tmain proc
 
-    MessageBox( NULL, "Hello World", "Dialog(0)", MB_OK )
+    MessageBox(NULL, "Hello World", "Dialog(0)", MB_OK)
     xor eax,eax
     ret
 
-_tmain  endp
+_tmain endp
 
     end _tstart

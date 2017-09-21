@@ -6,9 +6,9 @@ include tchar.inc
 
 _tmain proc argc:SINT, argv:ptr
 
-    .for RSI = argv, edi = argc, ebx = 0: edi: edi--, ebx++, RSI += size_t
+    .for rsi=argv, edi=argc, ebx=0: edi: edi--, ebx++, rsi+=size_t
 
-	_tprintf("[%d]: %s\n", ebx, [RSI])
+	_tprintf("[%d]: %s\n", ebx, [rsi])
     .endf
     xor eax,eax
     ret

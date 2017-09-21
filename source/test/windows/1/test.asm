@@ -50,8 +50,8 @@ DialogFunc endp
 
 _tmain proc
 
-    mov RCX,GetModuleHandle(NULL)
-    DialogBoxIndirectParam(RCX, &Dialog, 0, &DialogFunc, NULL)
+    mov rcx,GetModuleHandle(NULL)
+    DialogBoxIndirectParam(rcx, &Dialog, 0, &DialogFunc, NULL)
     ret
 
 _tmain  endp

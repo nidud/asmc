@@ -2,14 +2,14 @@ include cfini.inc
 
     .code
 
-CFExpandCmd proc buffer:LPSTR, __file:LPSTR, __section:LPSTR
+CFExpandCmd proc buffer:LPSTR, file:LPSTR, section:LPSTR
 
     mov eax,__CFBase
     .if eax
 
-        .if __CFGetSection(eax, __section)
+        .if INIGetSection(eax, section)
 
-            __CFExpandCmd(eax, buffer, __file)
+            __CFExpandCmd(eax, buffer, file)
         .endif
     .endif
     ret

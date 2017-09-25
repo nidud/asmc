@@ -7,7 +7,7 @@ include dzlib.inc
 
     .code
 
-__CFExpandCmd proc uses esi edi __ini:PCFINI, buffer:LPSTR, __file:LPSTR
+__CFExpandCmd proc uses esi edi ini:LPINI, buffer:LPSTR, file:LPSTR
 
   local tmp
 
@@ -15,7 +15,7 @@ __CFExpandCmd proc uses esi edi __ini:PCFINI, buffer:LPSTR, __file:LPSTR
     mov edi,eax
     mov esi,eax
 
-    .if strrchr(strcpy(esi, strfn(__file)), '.')
+    .if strrchr(strcpy(esi, strfn(file)), '.')
 
 	.if byte ptr [eax+1] == 0
 
@@ -26,13 +26,13 @@ __CFExpandCmd proc uses esi edi __ini:PCFINI, buffer:LPSTR, __file:LPSTR
 	.endif
     .endif
 
-    .if CFGetEntry(__ini, esi)
+    .if INIGetEntry(ini, esi)
 
 	mov esi,eax
 	strcpy(edi, eax)
 
 	ExpandEnvironmentStrings(esi, edi, 0x8000 - 1)
-	CFExpandMac(edi, __file)
+	CFExpandMac(edi, file)
 	strxchg(edi, ", ", "\r\n")
 	strcpy(buffer, edi)
     .endif

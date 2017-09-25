@@ -1,8 +1,8 @@
-include cfini.inc
+include ini.inc
 
     .code
 
-CFGetEntryID proc ini:PCFINI, entry:UINT
+INIGetEntryID proc __cdecl ini:LPINI, entry:UINT
 
     mov eax,entry ; 0..99
     .while  al > 9
@@ -16,9 +16,9 @@ CFGetEntryID proc ini:PCFINI, entry:UINT
     or  al,'0'
     mov entry,eax
 
-    CFGetEntry(ini, addr entry)
+    INIGetEntry(ini, &entry)
     ret
 
-CFGetEntryID endp
+INIGetEntryID endp
 
     END

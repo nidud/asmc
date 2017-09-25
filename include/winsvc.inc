@@ -11,6 +11,8 @@ _WINSVC_ equ 1
 
 ifdef __PE__
 option dllimport:<advapi32>
+else
+includelib advapi32.lib
 endif
 
 
@@ -106,7 +108,7 @@ LPSERVICE_DESCRIPTION	typedef LPSERVICE_DESCRIPTIONW
 else
 SERVICE_DESCRIPTION	typedef SERVICE_DESCRIPTIONA
 LPSERVICE_DESCRIPTION	typedef LPSERVICE_DESCRIPTIONA
-endif 
+endif
 
 
 SC_ACTION_NONE		equ 0
@@ -143,7 +145,7 @@ LPSERVICE_FAILURE_ACTIONS typedef LPSERVICE_FAILURE_ACTIONSW
 else
 SERVICE_FAILURE_ACTIONS typedef SERVICE_FAILURE_ACTIONSA
 LPSERVICE_FAILURE_ACTIONS typedef LPSERVICE_FAILURE_ACTIONSA
-endif 
+endif
 
 
 
@@ -185,7 +187,7 @@ LPENUM_SERVICE_STATUS	typedef LPENUM_SERVICE_STATUSW
 else
 ENUM_SERVICE_STATUS	typedef ENUM_SERVICE_STATUSA
 LPENUM_SERVICE_STATUS	typedef LPENUM_SERVICE_STATUSA
-endif 
+endif
 
 
 
@@ -209,7 +211,7 @@ LPQUERY_SERVICE_LOCK_STATUS typedef LPQUERY_SERVICE_LOCK_STATUSW
 else
 QUERY_SERVICE_LOCK_STATUS typedef QUERY_SERVICE_LOCK_STATUSA
 LPQUERY_SERVICE_LOCK_STATUS typedef LPQUERY_SERVICE_LOCK_STATUSA
-endif 
+endif
 
 
 
@@ -244,7 +246,7 @@ LPQUERY_SERVICE_CONFIG	typedef LPQUERY_SERVICE_CONFIGW
 else
 QUERY_SERVICE_CONFIG	typedef QUERY_SERVICE_CONFIGA
 LPQUERY_SERVICE_CONFIG	typedef LPQUERY_SERVICE_CONFIGA
-endif 
+endif
 
 
 
@@ -263,7 +265,7 @@ ifdef _UNICODE
 LPSERVICE_MAIN_FUNCTION equ LPSERVICE_MAIN_FUNCTIONW
 else
 LPSERVICE_MAIN_FUNCTION equ LPSERVICE_MAIN_FUNCTIONA
-endif 
+endif
 
 
 
@@ -283,7 +285,7 @@ LPSERVICE_TABLE_ENTRY	typedef LPSERVICE_TABLE_ENTRYW
 else
 SERVICE_TABLE_ENTRY	typedef SERVICE_TABLE_ENTRYA
 LPSERVICE_TABLE_ENTRY	typedef LPSERVICE_TABLE_ENTRYA
-endif 
+endif
 
 
 HANDLER_FUNCTION_T typedef proto WINAPI dwControl: DWORD
@@ -320,7 +322,7 @@ ifdef _UNICODE
 ChangeServiceConfig	equ <ChangeServiceConfigW>
 else
 ChangeServiceConfig	equ <ChangeServiceConfigA>
-endif 
+endif
 
 ;BOOL
 ChangeServiceConfig2A proto WINAPI \
@@ -335,7 +337,7 @@ ifdef _UNICODE
 ChangeServiceConfig2	equ <ChangeServiceConfig2W>
 else
 ChangeServiceConfig2	equ <ChangeServiceConfig2A>
-endif 
+endif
 
 ;BOOL
 CloseServiceHandle proto WINAPI \
@@ -380,7 +382,7 @@ ifdef _UNICODE
 CreateService		equ <CreateServiceW>
 else
 CreateService		equ <CreateServiceA>
-endif 
+endif
 
 ;BOOL
 DeleteService proto WINAPI \
@@ -405,7 +407,7 @@ ifdef _UNICODE
 EnumDependentServices	equ <EnumDependentServicesW>
 else
 EnumDependentServices	equ <EnumDependentServicesA>
-endif 
+endif
 
 ;BOOL
 EnumServicesStatusA proto WINAPI \
@@ -430,7 +432,7 @@ ifdef _UNICODE
 EnumServicesStatus	equ <EnumServicesStatusW>
 else
 EnumServicesStatus	equ <EnumServicesStatusA>
-endif 
+endif
 
 ;BOOL
 GetServiceKeyNameA proto WINAPI \
@@ -447,7 +449,7 @@ ifdef _UNICODE
 GetServiceKeyName	equ <GetServiceKeyNameW>
 else
 GetServiceKeyName	equ <GetServiceKeyNameA>
-endif 
+endif
 
 ;BOOL
 GetServiceDisplayNameA proto WINAPI \
@@ -464,7 +466,7 @@ ifdef _UNICODE
 GetServiceDisplayName	equ <GetServiceDisplayNameW>
 else
 GetServiceDisplayName	equ <GetServiceDisplayNameA>
-endif 
+endif
 
 ;SC_LOCK
 LockServiceDatabase proto WINAPI \
@@ -487,7 +489,7 @@ ifdef _UNICODE
 OpenSCManager		equ <OpenSCManagerW>
 else
 OpenSCManager		equ <OpenSCManagerA>
-endif 
+endif
 
 ;SC_HANDLE
 OpenServiceA proto WINAPI \
@@ -502,7 +504,7 @@ ifdef _UNICODE
 OpenService		equ <OpenServiceW>
 else
 OpenService		equ <OpenServiceA>
-endif 
+endif
 
 ;BOOL
 QueryServiceConfigA proto WINAPI \
@@ -519,7 +521,7 @@ ifdef _UNICODE
 QueryServiceConfig	equ <QueryServiceConfigW>
 else
 QueryServiceConfig	equ <QueryServiceConfigA>
-endif 
+endif
 
 ;BOOL
 QueryServiceConfig2A proto WINAPI \
@@ -538,7 +540,7 @@ ifdef _UNICODE
 QueryServiceConfig2	equ <QueryServiceConfig2W>
 else
 QueryServiceConfig2	equ <QueryServiceConfig2A>
-endif 
+endif
 
 ;BOOL
 QueryServiceLockStatusA proto WINAPI \
@@ -555,7 +557,7 @@ ifdef _UNICODE
 QueryServiceLockStatus	equ <QueryServiceockStatusW>
 else
 QueryServiceLockStatus	equ <QueryServiceockStatusA>
-endif 
+endif
 
 ;BOOL
 QueryServiceObjectSecurity proto WINAPI \
@@ -581,7 +583,7 @@ ifdef _UNICODE
 RegisterServiceCtrlHandler equ <RegisterServiceCtrlHandlerW>
 else
 RegisterServiceCtrlHandler equ <RegisterServiceCtrlHandlerA>
-endif 
+endif
 
 ;BOOL
 SetServiceObjectSecurity proto WINAPI \
@@ -603,7 +605,7 @@ ifdef _UNICODE
 StartServiceCtrlDispatcher equ <StartServiceCtrlDispatcherW>
 else
 StartServiceCtrlDispatcher equ <StartServiceCtrlDispatcherA>
-endif 
+endif
 
 
 ;BOOL
@@ -619,13 +621,13 @@ ifdef _UNICODE
 StartService		equ <StartServiceW>
 else
 StartService		equ <StartServiceA>
-endif 
+endif
 
 ;BOOL
 UnlockServiceDatabase proto WINAPI \
 		ScLock: SC_LOCK
 
 
-endif 
+endif
 
 .list

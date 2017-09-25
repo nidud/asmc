@@ -356,7 +356,7 @@ RenderCaseExit proc fastcall private hll
     ret
 RenderCaseExit endp
 
-    assume  esi: ptr asm_tok
+    assume esi:ptr asm_tok
 
 IsCaseColon proc uses esi edi ebx tokenarray:ptr asm_tok
 
@@ -364,7 +364,7 @@ IsCaseColon proc uses esi edi ebx tokenarray:ptr asm_tok
     xor edi,edi
     xor edx,edx
 
-    .while  [esi].token != T_FINAL
+    .while [esi].token != T_FINAL
 
         mov al,[esi].token
         mov ah,[esi-16].token
@@ -449,7 +449,7 @@ local result, colon
 
         mov ebx,tokenarray
         xor eax,eax
-        .while  [ebx].token != T_FINAL
+        .while [ebx].token != T_FINAL
 
             add eax,1
             add ebx,16
@@ -566,24 +566,20 @@ local buffer[64]:sbyte
         ;
         AddLineQueueX( "mov %r,QWORD PTR %s", edx, ebx )
     .endif
-
     ret
+
 GetSwitchArg endp
 
-    assume  esi: ptr hll_item
-    assume  ebx: ptr hll_item
+    assume esi:ptr hll_item
+    assume ebx:ptr hll_item
 
-RenderSwitch proc uses esi edi ebx,
-    hll:        ptr hll_item,
-    tokenarray: ptr asm_tok,
+RenderSwitch proc uses esi edi ebx hll:ptr hll_item, tokenarray:ptr asm_tok,
     buffer:     LPSTR,  ; *switch.labels[LSTART]
     l_exit:     LPSTR   ; *switch.labels[LEXIT]
 
 local \
     r_dw:       DWORD,  ; dw/dd/dq
     r_db:       DWORD,  ; "DB"/"DW"
-    r_ax:       DWORD,  ; ax/eax/rax
-    r_sp:       DWORD,  ; esp/rsp
     r_size:     DWORD,  ; 2/4/8
     dynamic:    DWORD,  ; number of dynmaic cases
     default:    DWORD,  ; hll_item * if exist
@@ -601,8 +597,7 @@ local \
     l_start[16]:SBYTE,  ; current start label
     l_jtab[16]: SBYTE,  ; jump table address
     labelx[16]: SBYTE,  ; label symbol
-    use_index:  BYTE,
-    reg_used:   BYTE
+    use_index:  BYTE
 
 
     mov esi,hll
@@ -620,35 +615,31 @@ local \
         ;
         ; Time NOTABLE/TABLE
         ;
-        ; .case * 3 4   7   8   9   10  16  60
+        ; .case *   3   4       7       8       9       10      16      60
         ; NOTABLE 1401  2130    5521    5081    7681    9481    18218   158245
         ; TABLE   1521  3361    4402    6521    7201    7881    9844    68795
         ; elseif  1402  4269    5787    7096    8481    10601   22923   212888
         ;
-        RenderCCMP( esi, edi )
-        jmp toend
+        .if eax <= MIN_NOTABLE
+            RenderCCMP( esi, edi )
+            jmp toend
+        .endif
     .endif
 
     mov ecx,2
-    mov edx,T_AX
     mov eax,T_DW
     .if ModuleInfo.Ofssize == USE32
 
         mov ecx,4
-        mov edx,T_EAX
         mov eax,T_DD
-        mov r_sp,T_ESP
 
     .elseif ModuleInfo.Ofssize == USE64
 
         mov ecx,8
-        mov edx,T_RAX
         mov eax,T_DQ
-        mov r_sp,T_RSP
     .endif
 
     mov r_dw,eax
-    mov r_ax,edx
     mov r_size,ecx
 
     strcpy( &l_start, edi )
@@ -753,18 +744,16 @@ local \
 
             mov edi,GetLabelStr( GetHllLabel(), &l_start )
         .endif
-
         mov ebx,[esi].condlines
+        .if !( [esi].flags & HLLF_NOTEST )
+            CompareMaxMin(ebx, max, min, edi)
+        .endif
+
         mov eax,[esi].flags
         mov cl,ModuleInfo.Ofssize
 
-        .switch
+        .if cl == USE16
 
-          .case cl == USE16
-
-            .if !( eax & HLLF_NOTEST )
-                CompareMaxMin(ebx, max, min, edi)
-            .endif
             .if !( ModuleInfo.aflag & _AF_REGAX )
                 AddLineQueue("push ax")
             .endif
@@ -808,97 +797,92 @@ local \
                 AddLineQueue ("pop bx")
                 AddLineQueue ("retn")
             .endif
-            .endc
 
-          .case !( eax & HLLF_ARGREG )
+        .elseif cl == USE32
 
-            .if !( eax & HLLF_NOTEST )
-                CompareMaxMin(ebx, max, min, edi)
-            .endif
-            GetSwitchArg(r_ax, [esi].flags, ebx)
+            .if !( eax & HLLF_ARGREG )
 
-            mov ebx,r_ax
-            .if ModuleInfo.Ofssize == USE64
-                push esi
-                mov esi,T_RAX
-                .if ebx == esi
-                    inc esi
-                .endif
-                AddLineQueueX("push %r", esi)
-                .if use_index
-                    AddLineQueueX("lea %r,IT%s", esi, &l_jtab)
-                    .if dist < 256
-                        AddLineQueueX("movzx %r,BYTE PTR [%r+%r-(%d)]", ebx, ebx, esi, min)
-                    .else
-                        AddLineQueueX("movzx %r,WORD PTR [%r*2+%r-(%d*2)]", ebx, ebx, esi, min)
-                    .endif
-                    AddLineQueueX("lea %r,%s", esi, &l_jtab)
-                    AddLineQueueX("mov %r,[%r*%d+%r]", ebx, ebx, r_size, esi)
-                .else
-                    AddLineQueueX("lea %r,%s", esi, &l_jtab)
-                    AddLineQueueX("mov %r,[%r*%d+%r-(%d*%d)]", ebx, ebx, r_size, esi, min, r_size)
-                .endif
-                .if ModuleInfo.aflag & _AF_REGAX
-                    AddLineQueueX("pop %r", esi)
-                    AddLineQueueX("jmp %r", ebx)
-                .else
-                    AddLineQueueX("mov %r,[rsp+8]", esi)
-                    AddLineQueueX("mov [rsp+8],%r", ebx)
-                    AddLineQueueX("mov %r,%r", ebx, esi)
-                    AddLineQueueX("pop %r", esi)
-                    AddLineQueue ("retn" )
-                .endif
-                pop esi
-            .else
+                GetSwitchArg(T_EAX, [esi].flags, ebx)
                 .if use_index
                     .if dist < 256
-                        AddLineQueueX("movzx %r,BYTE PTR [%r+IT%s-(%d)]", ebx, ebx, &l_jtab, min)
+                        AddLineQueueX("movzx eax,BYTE PTR [eax+IT%s-(%d)]", &l_jtab, min)
                     .else
-                        AddLineQueueX("movzx %r,WORD PTR [%r*2+IT%s-(%d*2)]", ebx, ebx, &l_jtab, min)
+                        AddLineQueueX("movzx eax,WORD PTR [eax*2+IT%s-(%d*2)]", &l_jtab, min)
                     .endif
                     .if ModuleInfo.aflag & _AF_REGAX
-                        AddLineQueueX("jmp [%r*%d+%s]", ebx, r_size, &l_jtab)
+                        AddLineQueueX("jmp [eax*4+%s]", &l_jtab)
                     .else
-                        AddLineQueueX("mov %r,[%r*%d+%s]", ebx, ebx, r_size, &l_jtab)
+                        AddLineQueueX("mov eax,[eax*4+%s]", &l_jtab)
                     .endif
                 .elseif ModuleInfo.aflag & _AF_REGAX
-                    AddLineQueueX("jmp [%r*%d+%s-(%d*%d)]", ebx, r_size, &l_jtab, min, r_size)
+                    AddLineQueueX("jmp [eax*4+%s-(%d*4)]", &l_jtab, min)
                 .else
-                    AddLineQueueX("mov %r,[%r*%d+%s-(%d*%d)]", ebx, ebx, r_size, &l_jtab, min, r_size)
+                    AddLineQueueX("mov eax,[eax*4+%s-(%d*4)]", &l_jtab, min)
                 .endif
                 .if !( ModuleInfo.aflag & _AF_REGAX )
-                    AddLineQueueX("xchg %r,[%r]", ebx, r_sp)
-                    AddLineQueue ("retn")
-                .endif
-            .endif
-            .endc
-
-          .default
-
-            .if !( eax & HLLF_NOTEST )
-                CompareMaxMin(ebx, max, min, edi)
-            .endif
-            .if use_index
-                .if !( ModuleInfo.aflag & _AF_REGAX )
-                    AddLineQueueX("push %s", ebx)
-                .endif
-                .if dist < 256
-                    AddLineQueueX("movzx %s,BYTE PTR [%s+IT%s-(%d)]", ebx, ebx, &l_jtab, min)
-                .else
-                    AddLineQueueX("movzx %s,WORD PTR [%s*2+IT%s-(%d*2)]", ebx, ebx, &l_jtab, min)
-                .endif
-                .if ModuleInfo.aflag & _AF_REGAX
-                    AddLineQueueX("jmp [%s*%d+%s]", ebx, r_size, &l_jtab)
-                .else
-                    AddLineQueueX("mov %s,[%s*%d+%s]", ebx, ebx, r_size, &l_jtab)
-                    AddLineQueueX("xchg %s,[%r]", ebx, r_sp)
-                    AddLineQueue ("retn")
+                    AddLineQueue("xchg eax,[esp]")
+                    AddLineQueue("retn")
                 .endif
             .else
-                AddLineQueueX("jmp [%s*%d+%s-(%d*%d)]", ebx, r_size, &l_jtab, min, r_size)
+                .if use_index
+                    .if !( ModuleInfo.aflag & _AF_REGAX )
+                        AddLineQueueX("push %s", ebx)
+                    .endif
+                    .if dist < 256
+                        AddLineQueueX("movzx %s,BYTE PTR [%s+IT%s-(%d)]", ebx, ebx, &l_jtab, min)
+                    .else
+                        AddLineQueueX("movzx %s,WORD PTR [%s*2+IT%s-(%d*2)]", ebx, ebx, &l_jtab, min)
+                    .endif
+                    .if ModuleInfo.aflag & _AF_REGAX
+                        AddLineQueueX("jmp [%s*4+%s]", ebx, &l_jtab)
+                    .else
+                        AddLineQueueX("mov %s,[%s*4+%s]", ebx, ebx, &l_jtab)
+                        AddLineQueueX("xchg %s,[esp]", ebx)
+                        AddLineQueue ("retn")
+                    .endif
+                .else
+                    AddLineQueueX("jmp [%s*4+%s-(%d*4)]", ebx, &l_jtab, min)
+                .endif
             .endif
-            .endc
-        .endsw
+
+        .else
+            .if !([esi].flags & HLLF_ARGREG)
+                GetSwitchArg(T_RAX, [esi].flags, ebx)
+            .else
+                .if !(ModuleInfo.aflag & _AF_REGAX)
+                    AddLineQueue("push rax")
+                .endif
+                .if _memicmp(ebx, "rax", 3)
+                    AddLineQueueX("mov rax,%s", ebx)
+                .endif
+            .endif
+            AddLineQueue("push rcx")
+
+            .if use_index
+                AddLineQueueX("lea rcx,IT%s", &l_jtab)
+                .if dist < 256
+                    AddLineQueueX("movzx rax,BYTE PTR [rcx+rax-(%d)]", min)
+                .else
+                    AddLineQueueX("movzx rax,WORD PTR [rcx+rax*2-(%d*2)]", min)
+                .endif
+                AddLineQueueX("lea rcx,%s", &l_jtab)
+                AddLineQueue("mov rax,[rcx+rax*8]")
+            .else
+                AddLineQueueX("lea rcx,%s", &l_jtab)
+                AddLineQueueX("mov rax,[rcx+rax*8-(%d*8)]", min)
+            .endif
+
+            .if ModuleInfo.aflag & _AF_REGAX
+                AddLineQueue("pop rcx")
+                AddLineQueue("jmp rax")
+            .else
+                AddLineQueue("mov rcx,[rsp+8]")
+                AddLineQueue("mov [rsp+8],rax")
+                AddLineQueue("mov rax,rcx")
+                AddLineQueue("pop rcx")
+                AddLineQueue("retn")
+            .endif
+        .endif
         ;
         ; Create the jump table
         ;
@@ -1113,16 +1097,15 @@ local rc:SINT, cmd:UINT, buffer[MAX_LINE_LEN]:SBYTE
                 .endif
               .case T_AL .. T_BH
                 .endc
-              .case T_EAX
-                .if ModuleInfo.Ofssize == USE64
-
-                    or [esi].flags,HLLF_ARG3264
-                .endif
-              .case T_ECX .. T_EDI
+              .case T_EAX .. T_EDI
                 or  [esi].flags,HLLF_ARG32
                 .if ModuleInfo.Ofssize == USE32
 
                     or [esi].flags,HLLF_ARGREG
+                .endif
+                .if ModuleInfo.Ofssize == USE64
+
+                    or [esi].flags,HLLF_ARG3264
                 .endif
                 .endc
               .case T_RAX .. T_R15
@@ -1195,9 +1178,7 @@ SwitchStart endp
 
 SwitchEnd proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok
 
-local   rc:SINT,cmd:SINT,
-        buffer[MAX_LINE_LEN]:SBYTE,
-        l_exit[16]:SBYTE    ; exit or default label
+local rc:SINT,cmd:SINT, buffer[MAX_LINE_LEN]:SBYTE, l_exit[16]:SBYTE    ; exit or default label
 
     mov esi,ModuleInfo.HllStack
     .if !esi

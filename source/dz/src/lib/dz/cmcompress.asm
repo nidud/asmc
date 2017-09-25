@@ -34,7 +34,7 @@ PackerGetSection proc private uses esi edi ebx section, result
 	    mov edi,eax
 	    mov ebx,[ebx].S_DOBJ.dl_object
 
-	    .while  CFGetEntryID(edi, esi)
+	    .while  INIGetEntryID(edi, esi)
 
 		strnzcpy([ebx].S_TOBJ.to_data, eax, 128-1)
 		and [ebx].S_TOBJ.to_flag,not (_O_STATE or _O_LLIST)

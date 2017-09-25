@@ -191,14 +191,14 @@ endif
 
         mov ebx,eax
 
-        .if CFGetEntryID(ebx, 0)
+        .if INIGetEntryID(ebx, 0)
 
             .if xtol(eax) <= DOSZIP_VERSION && eax >= DOSZIP_MINVERS
 
                 mov edi,1
                 lea esi,config_table_x
                 .repeat
-                    .if CFGetEntryID(ebx, edi)
+                    .if INIGetEntryID(ebx, edi)
 
                         xtol(eax)
                         mov ecx,[esi]
@@ -212,7 +212,7 @@ endif
                 lea esi,config_table_p
                 mov eax,[esi]
                 .while eax
-                    .if CFGetEntryID(ebx, edi)
+                    .if INIGetEntryID(ebx, edi)
 
                         mov ecx,[esi]
                         mov ecx,[ecx]
@@ -226,7 +226,7 @@ endif
                 lea esi,config_table_s
                 mov eax,[esi]
                 .while eax
-                    .if CFGetEntryID(ebx, edi)
+                    .if INIGetEntryID(ebx, edi)
 
                         mov ecx,[esi]
                         strcpy(ecx, eax)
@@ -271,7 +271,7 @@ endif
             mov esi,MAXDOSKEYS
             mov entry,0
 
-            .while CFGetEntryID(ebx, entry)
+            .while INIGetEntryID(ebx, entry)
 
                 salloc(eax)
                 stosd
@@ -319,10 +319,10 @@ config_save proc uses esi edi ebx
     .if CFAddSection(".config")
 
         mov ebx,eax
-        CFDelEntries(eax)
+        INIDelEntries(eax)
 
         xor edi,edi
-        CFAddEntryX(ebx, "%d=%X", edi, DOSZIP_VERSION)
+        INIAddEntryX(ebx, "%d=%X", edi, DOSZIP_VERSION)
 
         inc edi
         lea esi,config_table_x
@@ -330,7 +330,7 @@ config_save proc uses esi edi ebx
             lodsd
             .break .if !eax
             mov eax,[eax]
-            CFAddEntryX(ebx, "%d=%X", edi, eax)
+            INIAddEntryX(ebx, "%d=%X", edi, eax)
             add edi,1
         .endw
         lea esi,config_table_p
@@ -338,14 +338,14 @@ config_save proc uses esi edi ebx
             lodsd
             .break .if !eax
             mov eax,[eax]
-            CFAddEntryX(ebx, "%d=%s", edi, eax)
+            INIAddEntryX(ebx, "%d=%s", edi, eax)
             add edi,1
         .endw
         lea esi,config_table_s
         .while 1
             lodsd
             .break .if !eax
-            CFAddEntryX(ebx, "%d=%s", edi, eax)
+            INIAddEntryX(ebx, "%d=%s", edi, eax)
             add edi,1
         .endw
     .endif
@@ -355,7 +355,7 @@ config_save proc uses esi edi ebx
         .if !(cflag & _C_DELHISTORY)
 
             mov ebx,eax
-            CFDelEntries(eax)
+            INIDelEntries(eax)
 
             mov edi,history
             .if edi
@@ -363,7 +363,7 @@ config_save proc uses esi edi ebx
                 xor esi,esi
                 .while [edi].S_DIRECTORY.path
 
-                    CFAddEntryX(ebx, "%d=%X,%X,%X,%s", esi,
+                    INIAddEntryX(ebx, "%d=%X,%X,%X,%s", esi,
                         [edi].S_DIRECTORY.flag,
                         [edi].S_DIRECTORY.fcb_index,
                         [edi].S_DIRECTORY.cel_index,
@@ -382,7 +382,7 @@ config_save proc uses esi edi ebx
         .if !(cflag & _C_DELHISTORY)
 
             mov ebx,eax
-            CFDelEntries(eax)
+            INIDelEntries(eax)
 
             mov eax,history
             .if eax
@@ -397,7 +397,7 @@ config_save proc uses esi edi ebx
                     .break .if !eax
                     .break .if byte ptr [eax] == 0
 
-                    CFAddEntryX(ebx, "%d=%s", edi, eax)
+                    INIAddEntryX(ebx, "%d=%s", edi, eax)
 
                     inc edi
                 .endw
@@ -405,7 +405,7 @@ config_save proc uses esi edi ebx
         .endif
     .endif
 
-    __CFDelSection(__CFBase, ".openfiles")
+    INIDelSection(__CFBase, ".openfiles")
     TISaveSession(__CFBase, ".openfiles")
     CFWrite(strfcat(__srcfile, _pgmpath, addr DZ_INIFILE))
 
@@ -419,7 +419,7 @@ config_open proc
     ;
     ; Remove section
     ;
-    __CFDelSection(__CFBase, ".openfiles")
+    INIDelSection(__CFBase, ".openfiles")
 
     mov eax,1
     ret

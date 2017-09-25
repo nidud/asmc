@@ -590,16 +590,16 @@ local   cursor:S_CURSOR,
 
     .if CFGetSection(".compsubdir")
         mov ebx,eax
-        .if CFGetEntryID(ebx, 0)
+        .if INIGetEntryID(ebx, 0)
             mov flags,xtol(eax)
         .endif
-        .if CFGetEntryID(ebx, 1)
+        .if INIGetEntryID(ebx, 1)
             strcpy(&fmask, eax)
         .endif
-        .if CFGetEntryID(ebx, 2)
+        .if INIGetEntryID(ebx, 2)
             strcpy(source, eax)
         .endif
-        .if CFGetEntryID(ebx, 3)
+        .if INIGetEntryID(ebx, 3)
             strcpy(target, eax)
         .endif
     .endif
@@ -688,10 +688,10 @@ local   cursor:S_CURSOR,
     .if CFAddSection(".compsubdir")
 
         mov ebx,eax
-        CFAddEntryX(ebx, "0=%X", flags)
-        CFAddEntryX(ebx, "1=%s", &fmask)
-        CFAddEntryX(ebx, "2=%s", &spath)
-        CFAddEntryX(ebx, "3=%s", &tpath)
+        INIAddEntryX(ebx, "0=%X", flags)
+        INIAddEntryX(ebx, "1=%s", &fmask)
+        INIAddEntryX(ebx, "2=%s", &spath)
+        INIAddEntryX(ebx, "3=%s", &tpath)
     .endif
 
     CursorSet(&cursor)

@@ -7,7 +7,7 @@ CFClose proc
     mov eax,__CFBase
     .if eax
 
-        __CFClose(eax)
+        INIClose(eax)
         mov __CFBase,0
     .endif
     ret

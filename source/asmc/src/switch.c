@@ -452,8 +452,6 @@ static int RenderSwitch( struct hll_item *hll, struct asm_tok tokenarray[],
 
     int r_dw;		/* dw/dd/dq				*/
     int r_db;		/* "DB"/"DW"				*/
-    int r_ax;		/* ax/eax/rax				*/
-    int r_sp;		/* esp/rsp				*/
     int r_size;		/* 2/4/8				*/
     int dynamic;	/* number of dynmaic cases		*/
     int nstatic;	/* number of static const values	*/
@@ -491,23 +489,21 @@ static int RenderSwitch( struct hll_item *hll, struct asm_tok tokenarray[],
 	* TABLE	  1521	 3361	 4402	 6521	 7201	 7881	 9844	 68795
 	* elseif  1402	 4269	 5787	 7096	 8481	 10601	 22923	 212888
 	*/
-	RenderCCMP( hll, buffer );
-	return 0;
+	if (nstatic <= 20 ) {
+
+	    RenderCCMP( hll, buffer );
+	    return 0;
+	}
     }
 
     r_size = 2;
-    r_ax = T_AX;
     r_dw = T_DW;
     if ( ModuleInfo.Ofssize == USE32 ) {
 	r_size = 4;
-	r_ax = T_EAX;
 	r_dw = T_DD;
-	r_sp = T_ESP;
     } else if ( ModuleInfo.Ofssize == USE64 ) {
 	r_size = 8;
-	r_ax = T_RAX;
 	r_dw = T_DQ;
-	r_sp = T_RSP;
     }
     strcpy( l_start, buffer );
 
@@ -598,10 +594,10 @@ static int RenderSwitch( struct hll_item *hll, struct asm_tok tokenarray[],
 	if ( ncases )
 	    p = GetLabelStr( GetHllLabel(), l_start );
 
-	if ( ModuleInfo.Ofssize == USE16 ) {
+	if ( !( hll->flags & HLLF_NOTEST ) )
+	    CompareMaxMin( hll->condlines, max, min, p );
 
-	    if ( !( hll->flags & HLLF_NOTEST ) )
-		CompareMaxMin( hll->condlines, max, min, p );
+	if ( ModuleInfo.Ofssize == USE16 ) {
 
 	    if ( !( ModuleInfo.aflag & _AF_REGAX ) )
 		AddLineQueue( "push ax" );
@@ -642,69 +638,85 @@ static int RenderSwitch( struct hll_item *hll, struct asm_tok tokenarray[],
 		AddLineQueue ( "retn" );
 	    }
 
-	} else if ( !( hll->flags & HLLF_ARGREG ) ) {
+	} else if ( ModuleInfo.Ofssize == USE32 ) {
 
-	    if ( !( ModuleInfo.Ofssize == USE64 && ( hll->flags & HLLF_ARG3264 ) ) ) {
-
-		if ( !( hll->flags & HLLF_NOTEST ) )
-		    CompareMaxMin( hll->condlines, max, min, p );
-
-		GetSwitchArg( r_ax, hll->flags, hll->condlines );
-
+	    if ( !( hll->flags & HLLF_ARGREG ) ) {
+		GetSwitchArg(T_EAX, hll->flags, hll->condlines);
 		if ( use_index ) {
 		    if ( dist < 256 )
-			AddLineQueueX( "movzx %r,BYTE PTR [%r+IT%s-(%d)]",
-			    r_ax, r_ax, l_jtab, min );
+			AddLineQueueX("movzx eax,BYTE PTR [eax+IT%s-(%d)]", l_jtab, min);
 		    else
-			AddLineQueueX( "movzx %r,WORD PTR [%r*2+IT%s-(%d*2)]",
-			    r_ax, r_ax, l_jtab, min );
+			AddLineQueueX("movzx eax,WORD PTR [eax*2+IT%s-(%d*2)]", l_jtab, min);
 		    if ( ModuleInfo.aflag & _AF_REGAX )
-			AddLineQueueX( "jmp [%r*%d+%s]", r_ax, r_size, l_jtab );
+			AddLineQueueX("jmp [eax*4+%s]", l_jtab);
 		    else
-			AddLineQueueX( "mov %r,[%r*%d+%s]", r_ax, r_ax, r_size, l_jtab );
+			AddLineQueueX("mov eax,[eax*4+%s]", l_jtab);
+		} else if ( ModuleInfo.aflag & _AF_REGAX ) {
+		    AddLineQueueX("jmp [eax*4+%s-(%d*4)]", l_jtab, min);
 		} else {
-		    if ( ModuleInfo.aflag & _AF_REGAX )
-			AddLineQueueX( "jmp [%r*%d+%s-(%d*%d)]",
-			    r_ax, r_size, l_jtab, min, r_size );
-		    else
-			AddLineQueueX( "mov %r,[%r*%d+%s-(%d*%d)]",
-			    r_ax, r_ax, r_size, l_jtab, min, r_size );
+		    AddLineQueueX("mov eax,[eax*4+%s-(%d*4)]", l_jtab, min);
 		}
-
 		if ( !( ModuleInfo.aflag & _AF_REGAX ) ) {
-
-		    AddLineQueueX( "xchg %r,[%r]", r_ax, r_sp );
-		    AddLineQueue ( "retn" );
+		    AddLineQueue("xchg eax,[esp]");
+		    AddLineQueue("retn");
 		}
 	    } else {
-		strcpy( hll->condlines, "rax" );
-		goto arg_3264;
+		if ( use_index ) {
+		    if ( !( ModuleInfo.aflag & _AF_REGAX ) )
+			AddLineQueueX("push %s", hll->condlines);
+
+		    if ( dist < 256 )
+			AddLineQueueX("movzx %s,BYTE PTR [%s+IT%s-(%d)]",
+				hll->condlines, hll->condlines, l_jtab, min);
+		    else
+			AddLineQueueX("movzx %s,WORD PTR [%s*2+IT%s-(%d*2)]",
+				hll->condlines, hll->condlines, &l_jtab, min);
+
+		    if ( ModuleInfo.aflag & _AF_REGAX ) {
+			AddLineQueueX("jmp [%s*4+%s]", hll->condlines, l_jtab);
+		    } else {
+			AddLineQueueX("mov %s,[%s*4+%s]", hll->condlines,
+				hll->condlines, l_jtab);
+			AddLineQueueX("xchg %s,[esp]", hll->condlines);
+			AddLineQueue ("retn");
+		    }
+		} else {
+		    AddLineQueueX("jmp [%s*4+%s-(%d*4)]", hll->condlines, l_jtab, min);
+		}
 	    }
 	} else {
 
-	    arg_3264:
-	    if ( !( hll->flags & HLLF_NOTEST ) )
-		CompareMaxMin( hll->condlines, max, min, p );
-	    if ( use_index ) {
-		if ( !( ModuleInfo.aflag & _AF_REGAX ) )
-		    AddLineQueueX( "push %s", hll->condlines );
-		if ( dist < 256 )
-		    AddLineQueueX( "movzx %s,BYTE PTR [%s+IT%s-(%d)]",
-			hll->condlines, hll->condlines, l_jtab, min );
-		else
-		    AddLineQueueX( "movzx %s,WORD PTR [%s*2+IT%s-(%d*2)]",
-			hll->condlines, hll->condlines, l_jtab, min );
-		if ( ModuleInfo.aflag & _AF_REGAX ) {
-		    AddLineQueueX( "jmp [%s*%d+%s]", hll->condlines, r_size, l_jtab );
-		} else {
-		    AddLineQueueX( "mov %s,[%s*%d+%s]",
-			hll->condlines, hll->condlines, r_size, l_jtab );
-		    AddLineQueueX( "xchg %s,[%r]", hll->condlines, r_sp );
-		    AddLineQueue ( "retn" );
-		}
+	    if ( !( hll->flags & HLLF_ARGREG ) ) {
+		GetSwitchArg(T_RAX, hll->flags, hll->condlines);
 	    } else {
-		AddLineQueueX( "jmp [%s*%d+%s-(%d*%d)]",
-		    hll->condlines, r_size, l_jtab, min, r_size );
+		if ( !( ModuleInfo.aflag & _AF_REGAX ) )
+		    AddLineQueue("push rax");
+		if ( _memicmp(hll->condlines, "rax", 3) )
+		    AddLineQueueX("mov rax,%s", hll->condlines);
+	    }
+	    AddLineQueue("push rcx");
+
+	    if ( use_index ) {
+		AddLineQueueX("lea rcx,IT%s", l_jtab);
+		if ( dist < 256 )
+		    AddLineQueueX("movzx rax,BYTE PTR [rcx+rax-(%d)]", min);
+		else
+		    AddLineQueueX("movzx rax,WORD PTR [rcx+rax*2-(%d*2)]", min);
+		AddLineQueueX("lea rcx,%s", l_jtab);
+		AddLineQueue("mov rax,[rcx+rax*8]");
+	    } else {
+		AddLineQueueX("lea rcx,%s", l_jtab);
+		AddLineQueueX("mov rax,[rcx+rax*8-(%d*8)]", min);
+	    }
+	    if ( ModuleInfo.aflag & _AF_REGAX ) {
+		AddLineQueue("pop rcx");
+		AddLineQueue("jmp rax");
+	    } else {
+		AddLineQueue("mov rcx,[rsp+8]");
+		AddLineQueue("mov [rsp+8],rax");
+		AddLineQueue("mov rax,rcx");
+		AddLineQueue("pop rcx");
+		AddLineQueue("retn");
 	    }
 	}
 

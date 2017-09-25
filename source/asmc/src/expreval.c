@@ -214,7 +214,7 @@ static uint_64 GetRecordMask( struct dsym *record )
     for ( fl = record->e.structinfo->head; fl; fl = fl->next ) {
 	struct asym *sym = &fl->sym;
 	for ( i = sym->offset ;i < sym->offset + sym->total_size; i++ )
-	    mask |= 1 << i;
+	    mask |= (uint_64)1 << i;
     }
     return( mask );
 }

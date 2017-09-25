@@ -1,4 +1,4 @@
-; _qftoll() - Quadruple float to long
+; _qftol() - Quadruple float to long
 ;
 include intn.inc
 include limits.inc
@@ -6,7 +6,7 @@ include errno.inc
 
 .code
 
-_qftol proc uses esi edi fp:ptr
+_qftol proc fp:ptr
 
     mov edx,fp
     mov cx,[edx+14]

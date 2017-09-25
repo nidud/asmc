@@ -1,7 +1,7 @@
 #ifndef _GLOBALS_H_INCLUDED
 #define _GLOBALS_H_INCLUDED
 
-#define ASMC_VERSSTR "2.25"
+#define ASMC_VERSSTR "2.26"
 
 #include <stdio.h>
 #include <stdlib.h>

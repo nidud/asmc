@@ -6,6 +6,8 @@ endif
 .xlist
 ifdef __PE__
 option	dllimport:<msvcrt>
+else
+includelib libc.lib
 endif
 
 SEEK_CUR	equ 1

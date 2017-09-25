@@ -8,7 +8,7 @@ include dzlib.inc
 
     .code
 
-CFReadFileName proc uses esi edi ebx ini:PCFINI, index:PVOID, file_flag:UINT
+CFReadFileName proc uses esi edi ebx ini:LPINI, index:PVOID, file_flag:UINT
 
 local buffer[1024]:sbyte
 
@@ -16,7 +16,7 @@ local buffer[1024]:sbyte
     mov ebx,[eax]
     xor edi,edi
 
-    .while CFGetEntryID(ini, ebx)
+    .while INIGetEntryID(ini, ebx)
 
 	mov esi,eax
 	inc ebx
@@ -24,7 +24,7 @@ local buffer[1024]:sbyte
 	mov edi,index
 	add edi,4
 
-	.while	strchr(esi, ',')
+	.while strchr(esi, ',')
 
 	    mov ecx,esi
 	    lea esi,[eax+1]
@@ -33,7 +33,7 @@ local buffer[1024]:sbyte
 	.endw
 	xor edi,edi
 
-	ExpandEnvironmentStrings(esi, strcpy(addr buffer, esi), 1024)
+	ExpandEnvironmentStrings(esi, strcpy(&buffer, esi), 1024)
 
 	lea esi,buffer
 	.if filexist(esi) == file_flag

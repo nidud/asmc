@@ -7,7 +7,7 @@ CFAddSection proc __section:LPSTR
     mov eax,__CFBase
     .if eax
 
-        __CFAddSection(eax, __section)
+        INIAddSection(eax, __section)
     .endif
     ret
 

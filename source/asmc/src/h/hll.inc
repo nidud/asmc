@@ -2,8 +2,9 @@ ifndef __HLL_INC
 __HLL_INC equ <>
 
 MIN_JTABLE	equ 4
+MIN_NOTABLE	equ 20		; auto table if case count above
 
-LABELSGLOBAL	equ 0 ; make the generated labels global
+LABELSGLOBAL	equ 0		; make the generated labels global
 ;LABELFMT	equ <"@C%04X">
 ;
 ; v2.10: static variables moved to ModuleInfo
@@ -45,7 +46,7 @@ HLLF_ARGMEM	equ 0100h	; memory if set, else register
 HLLF_ARG16	equ 0200h	; size: 8/16/32/64
 HLLF_ARG32	equ 0400h
 HLLF_ARG64	equ 0800h
-HLLF_ARG3264	equ 1000h	; .switch eax in 64-bit assumend rax
+HLLF_ARG3264	equ 1000h	; .switch exx in 64-bit extended to rxx
 ;
 ; .CASE flags
 ;

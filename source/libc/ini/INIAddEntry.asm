@@ -1,12 +1,12 @@
 include alloc.inc
-include cfini.inc
+include ini.inc
 include ltype.inc
 include string.inc
-include dzlib.inc
+include strlib.inc
 
     .code
 
-CFAddEntry proc uses esi edi ebx cf:PCFINI, string:LPSTR
+INIAddEntry proc __cdecl uses esi edi ebx cf:LPINI, string:LPSTR
 
     xor edi,edi
     mov esi,string
@@ -21,12 +21,12 @@ CFAddEntry proc uses esi edi ebx cf:PCFINI, string:LPSTR
     .repeat
 	.if al == ';'
 
-	    .break .if !__CFAlloc()
+	    .break .if !INIAlloc()
 
 	    mov edi,eax
 	    strtrim(esi)
-	    mov [edi].S_CFINI.cf_flag,_CFCOMMENT
-	    mov [edi].S_CFINI.cf_name,salloc(esi)
+	    mov [edi].S_INI.flags,INI_COMMENT
+	    mov [edi].S_INI.entry,salloc(esi)
 	    mov eax,edi
 
 	.elseif strchr(esi, '=')
@@ -46,50 +46,50 @@ CFAddEntry proc uses esi edi ebx cf:PCFINI, string:LPSTR
 	    .break .if !strtrim(edi)
 	    lea ebx,[ebx+eax+2]
 
-	    .if CFGetEntry(cf, esi)
+	    .if INIGetEntry(cf, esi)
 
-		mov eax,[ecx].S_CFINI.cf_next
+		mov eax,[ecx].S_INI.next
 		.if !edx
 		    mov edx,cf
-		    mov [edx].S_CFINI.cf_info,eax
+		    mov [edx].S_INI.value,eax
 		.else
-		    mov [edx].S_CFINI.cf_next,eax
+		    mov [edx].S_INI.next,eax
 		.endif
 		push ecx
-		free([ecx].S_CFINI.cf_name)
+		free([ecx].S_INI.entry)
 		pop eax
 		free(eax)
 	    .endif
-	    .break .if !__CFAlloc()
+	    .break .if !INIAlloc()
 
 	    xchg ebx,eax
 	    .break .if !malloc(eax)
 
-	    mov [ebx].S_CFINI.cf_name,eax
+	    mov [ebx].S_INI.entry,eax
 	    strcat(strcat(strcpy(eax, esi), "="), edi)
 	    strchr(eax, '=')
 	    mov byte ptr [eax],0
 	    inc eax
-	    mov [ebx].S_CFINI.cf_info,eax
+	    mov [ebx].S_INI.value,eax
 
 	    mov eax,ebx
-	    mov [eax].S_CFINI.cf_flag,_CFENTRY
+	    mov [eax].S_INI.flags,INI_ENTRY
 	.endif
 
 	mov edx,cf
-	mov ecx,[edx].S_CFINI.cf_info
+	mov ecx,[edx].S_INI.value
 	.if ecx
-	    .while [ecx].S_CFINI.cf_next
+	    .while [ecx].S_INI.next
 
-		mov ecx,[ecx].S_CFINI.cf_next
+		mov ecx,[ecx].S_INI.next
 	    .endw
-	    mov [ecx].S_CFINI.cf_next,eax
+	    mov [ecx].S_INI.next,eax
 	.else
-	    mov [edx].S_CFINI.cf_info,eax
+	    mov [edx].S_INI.value,eax
 	.endif
     .until 1
     ret
 
-CFAddEntry endp
+INIAddEntry endp
 
     END

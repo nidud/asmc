@@ -34,7 +34,7 @@ loadiniproc proc uses esi edi section, filename, itype
 
     .if CFGetSection(section)
 
-	.if CFGetEntry(eax, esi)
+	.if INIGetEntry(eax, esi)
 
 	    mov esi,eax
 	    mov esi,strlen(strnzcpy(addr path, esi, _MAX_PATH - 1))

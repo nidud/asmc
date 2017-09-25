@@ -137,9 +137,9 @@ CIRead proc uses esi edi ebx ci:PCIDATA
 
     mov esi,ci
 
-    .if !__CFRead(0, &[esi].ci_curfile)
+    .if !INIRead(0, &[esi].ci_curfile)
 
-        __CFAlloc()
+        INIAlloc()
     .endif
 
     .if eax
@@ -148,21 +148,21 @@ CIRead proc uses esi edi ebx ci:PCIDATA
 
         .if [esi].ci_file
 
-            __CFClose([esi].ci_file)
+            INIClose([esi].ci_file)
         .endif
         mov [esi].ci_file,edi
 
-        .if __CFGetSection(edi, ".file")
+        .if INIGetSection(edi, ".file")
 
             mov edi,eax
 
-            .if CFGetEntryID(edi, _CI_INCFILE)
+            .if INIGetEntryID(edi, _CI_INCFILE)
 
                 lea edx,[esi].ci_incpath
                 expenviron(strcpy(edx, eax))
             .endif
 
-            .if CFGetEntryID(edi, _CI_SRCFILE)
+            .if INIGetEntryID(edi, _CI_SRCFILE)
 
                 lea edx,[esi].ci_srcpath
                 expenviron(strcpy(edx, eax))
@@ -182,7 +182,7 @@ local bak[_MAX_PATH]:byte
     lea ebx,[esi].ci_curfile
     remove(setfext(strcpy(edi, ebx), ".bak"))
     rename(ebx, edi)
-    __CFWrite([esi].ci_file, ebx)
+    INIWrite([esi].ci_file, ebx)
     ret
 
 CIWrite endp
@@ -196,13 +196,13 @@ CICopySection proc uses esi edi CILabel, Section
 
     mov esi,CILabel
     mov edi,Section
-    strcpy(esi, [edi].S_CFINI.cf_name)
+    strcpy(esi, [edi].S_INI.entry)
     add esi,MAXLABEL
     xor edi,edi
 
     .while edi < MAXENTRIES
 
-        .if CFGetEntryID(Section, edi)
+        .if INIGetEntryID(Section, edi)
 
             strcpy(esi, eax)
         .endif
@@ -294,8 +294,8 @@ put_section_info:
 
     .repeat
         .if byte ptr [edi]
-            .if __CFGetSection([esi].ci_file, edi)
-                .if CFGetEntryID(eax, _CI_INFO)
+            .if INIGetSection([esi].ci_file, edi)
+                .if INIGetEntryID(eax, _CI_INFO)
                     scputs(x, y, 0, 31, eax)
                 .endif
             .endif
@@ -324,7 +324,7 @@ CIReadSection proc uses esi edi ebx ci:PCIDATA, section:LPSTR
     mov byte ptr [eax+MAXLABEL-1],0
     strncpy(esi, edi, MAXLABEL)
 
-    .if __CFGetSection([esi].ci_file, eax)
+    .if INIGetSection([esi].ci_file, eax)
 
         CICopySection(esi, eax)
         mov [esi].ci_textvalue,CIGetTextValue(esi)
@@ -444,10 +444,10 @@ CINextFile proc uses esi edi ebx ci:PCIDATA
 
         mov edi,eax
 
-        .if !CFGetEntryID(edi, ebx)
+        .if !INIGetEntryID(edi, ebx)
 
             xor ebx,ebx
-            CFGetEntryID(edi, ebx)
+            INIGetEntryID(edi, ebx)
         .endif
     .endif
 
@@ -493,7 +493,7 @@ CIEventSave proc uses esi edi ebx
 
     mov esi,CIFile
 
-    .if __CFAddSection([esi].ci_file, esi)
+    .if INIAddSection([esi].ci_file, esi)
 
         lea edi,[esi].ci_section.s_entry
         mov esi,eax
@@ -503,7 +503,7 @@ CIEventSave proc uses esi edi ebx
 
             .if byte ptr [edi]
 
-                CFAddEntryX(esi, "%d=%s", ebx, edi)
+                INIAddEntryX(esi, "%d=%s", ebx, edi)
             .endif
             add ebx,1
             add edi,MAXENTRY
@@ -561,7 +561,7 @@ CIEventFind proc uses esi edi ebx
 
     .if CFFindSection([esi].ci_file, esi, "12")
 
-        .if __CFGetSection([esi].ci_file, eax)
+        .if INIGetSection([esi].ci_file, eax)
 
             CICopySection(esi, eax)
             mov [esi].ci_textvalue,CIGetTextValue(esi)
@@ -581,7 +581,7 @@ CIEventDelete proc uses edi
 
     .if byte ptr [edi]
 
-        __CFDelSection([edi].CIDATA.ci_file, edi)
+        INIDelSection([edi].CIDATA.ci_file, edi)
     .endif
 
     xor eax,eax
@@ -602,15 +602,15 @@ CIEventSetup proc uses esi edi ebx
         mov edi,eax
         xor ebx,ebx
 
-        .if __CFGetSection([esi].ci_file, ".file")
+        .if INIGetSection([esi].ci_file, ".file")
 
             mov ebx,eax
 
-            .if CFGetEntryID(ebx, _CI_INCFILE)
+            .if INIGetEntryID(ebx, _CI_INCFILE)
 
                 strcpy([edi].S_TOBJ.to_data[32], eax)
             .endif
-            .if CFGetEntryID(ebx, _CI_SRCFILE)
+            .if INIGetEntryID(ebx, _CI_SRCFILE)
 
                 strcpy([edi].S_TOBJ.to_data[16], eax)
             .endif
@@ -625,13 +625,13 @@ CIEventSetup proc uses esi edi ebx
 
             .if !ebx
 
-                mov ebx,__CFAddSection([esi].ci_file, ".file")
+                mov ebx,INIAddSection([esi].ci_file, ".file")
             .endif
 
             .if ebx
 
-                CFAddEntryX(ebx, "%d=%s", _CI_SRCFILE, [edi].S_TOBJ.to_data[16])
-                CFAddEntryX(ebx, "%d=%s", _CI_INCFILE, [edi].S_TOBJ.to_data[32])
+                INIAddEntryX(ebx, "%d=%s", _CI_SRCFILE, [edi].S_TOBJ.to_data[16])
+                INIAddEntryX(ebx, "%d=%s", _CI_INCFILE, [edi].S_TOBJ.to_data[32])
             .endif
         .endif
 
@@ -849,7 +849,7 @@ CIPopUp proc uses esi edi ebx
 
             .if CICallStack == 1
 
-                __CFClose([esi].ci_file)
+                INIClose([esi].ci_file)
             .endif
 
             free(esi)

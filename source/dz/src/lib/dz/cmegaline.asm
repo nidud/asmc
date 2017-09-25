@@ -60,19 +60,19 @@ local	bz:COORD,
 
 	    xor edi,edi
 	.endif
-	.if CFGetEntryID(esi, edi)
+	.if INIGetEntryID(esi, edi)
 
 	    mov x,atol(eax)
 	.endif
-	.if CFGetEntryID(esi, &[edi+1])
+	.if INIGetEntryID(esi, &[edi+1])
 
 	    mov y,atol(eax)
 	.endif
-	.if CFGetEntryID(esi, &[edi+2])
+	.if INIGetEntryID(esi, &[edi+2])
 
 	    mov col,atol(eax)
 	.endif
-	.if CFGetEntryID(esi, &[edi+3])
+	.if INIGetEntryID(esi, &[edi+3])
 
 	    mov row,atol(eax)
 	.endif

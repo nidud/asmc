@@ -24,7 +24,7 @@ fbcolor proc uses esi edi edx ecx fp:ptr S_FBLK
 
             .if CFGetSection("FileColor")
 
-                .if CFGetEntry(eax, edi)
+                .if INIGetEntry(eax, edi)
 
                     .if strtolx(eax) <= 15
 

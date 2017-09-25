@@ -1,25 +1,25 @@
-include cfini.inc
+include ini.inc
 include string.inc
 
     .code
 
-CFGetEntry proc uses esi edi __ini:PCFINI, __entry:LPSTR
+INIGetEntry proc __cdecl uses esi edi ini:LPINI, entry:LPSTR
 
-    mov edx,__ini
+    mov edx,ini
     xor edi,edi
     xor eax,eax
 
-    .if edx && [edx].S_CFINI.cf_flag & _CFSECTION
+    .if edx && [edx].S_INI.flags & INI_SECTION
 
-        mov eax,[edx].S_CFINI.cf_info
+        mov eax,[edx].S_INI.value
 
         .while  eax
 
-            .if [eax].S_CFINI.cf_flag & _CFENTRY
+            .if [eax].S_INI.flags & INI_ENTRY
 
                 mov esi,eax
-                mov edx,[eax].S_CFINI.cf_name
-                mov ecx,__entry
+                mov edx,[eax].S_INI.entry
+                mov ecx,entry
 
                 .while  1
 
@@ -40,18 +40,18 @@ CFGetEntry proc uses esi edi __ini:PCFINI, __entry:LPSTR
                     ;
                     ; return value
                     ;
-                    mov eax,[esi].S_CFINI.cf_info
+                    mov eax,[esi].S_INI.value
                     .break
                 .endif
 
                 mov eax,esi
             .endif
             mov edi,eax
-            mov eax,[eax].S_CFINI.cf_next
+            mov eax,[eax].S_INI.next
         .endw
     .endif
     ret
 
-CFGetEntry endp
+INIGetEntry endp
 
     END

@@ -4,13 +4,13 @@ include cfini.inc
 
     .code
 
-CFExecute proc uses esi __ini:PCFINI
+CFExecute proc uses esi ini:LPINI
 
   local cmd[256]:byte
 
     xor esi,esi
 
-    .while CFGetEntryID(__ini, esi)
+    .while INIGetEntryID(ini, esi)
 
 	mov edx,eax
 	system(strcpy(addr cmd, edx))

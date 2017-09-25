@@ -3,12 +3,12 @@ include string.inc
 
     .code
 
-CFGetSection proc __section:LPSTR
+CFGetSection proc section:LPSTR
 
     mov eax,__CFBase
     .if eax
 
-        __CFGetSection(eax, __section)
+        INIGetSection(eax, section)
     .endif
     ret
 

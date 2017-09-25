@@ -433,7 +433,7 @@ readtools proc private uses esi edi ebx section, dialog, index, lsize
 
         mov handle,eax
 
-        .while CFGetEntryID(handle, edi)
+        .while INIGetEntryID(handle, edi)
 
             lea esi,buffer
             strcpy(esi, eax)

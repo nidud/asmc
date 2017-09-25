@@ -6,6 +6,8 @@ endif
 .xlist
 ifdef __PE__
 option	dllimport:<msvcrt>
+else
+includelib libc.lib
 endif
 
 _NFILE_		equ 20

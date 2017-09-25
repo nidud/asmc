@@ -48,6 +48,7 @@ _getdcwd proc uses esi edi ebx drive:SINT, buffer:LPSTR, maxlen:SINT
             strcpy(esi, edi)
         .endif
     .until 1
+    mov esp,ebp
     ret
 
 _getdcwd endp

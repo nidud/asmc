@@ -135,7 +135,7 @@ doszip_init proc uses esi edi ebx argv
 
 	mov ebx,eax
 
-	.while	CFGetEntryID(ebx, edi)
+	.while INIGetEntryID(ebx, edi)
 
 	    strcpy(esi, eax)
 	    inc edi
@@ -160,7 +160,7 @@ doszip_init proc uses esi edi ebx argv
 
 	mov ebx,eax
 
-	.while	CFGetEntryID(ebx, edi)
+	.while INIGetEntryID(ebx, edi)
 
 	    mov edx,eax
 	    strcat(strcat(esi, ";"), edx)
@@ -269,7 +269,7 @@ ifdef __BMP__
 endif
     .if CFGetSection(".consolesize")
 
-	.if CFGetEntryID(eax, 8)
+	.if INIGetEntryID(eax, 8)
 
 	    .if byte ptr [eax] == '1'
 

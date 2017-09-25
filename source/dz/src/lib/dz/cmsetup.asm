@@ -580,13 +580,13 @@ cmscreensize proc uses esi edi ebx
 
         .if CFGetSection(".consolesize")
 
-            .for esi=eax, edi=0: edi < 8, CFGetEntryID(esi, edi): edi++
+            .for esi=eax, edi=0: edi < 8, INIGetEntryID(esi, edi): edi++
 
                 lea ecx,[edi+1]
                 shl ecx,4
                 strcpy([ebx+ecx].S_TOBJ.to_data, eax)
             .endf
-            .if CFGetEntryID(esi, 8)
+            .if INIGetEntryID(esi, 8)
 
                 .if byte ptr [eax] == '1'
 
@@ -677,14 +677,14 @@ cmscreensize proc uses esi edi ebx
 
                         lea ecx,[edi+1]
                         shl ecx,4
-                        CFAddEntryX(esi, "%d=%s", edi, [ebx+ecx].S_TOBJ.to_data)
+                        INIAddEntryX(esi, "%d=%s", edi, [ebx+ecx].S_TOBJ.to_data)
                     .endf
                     xor eax,eax
                     .if [ebx+ID_DEFAULT].S_TOBJ.to_flag & _O_FLAGB
 
                         inc eax
                     .endif
-                    CFAddEntryX(esi, "8=%d", eax)
+                    INIAddEntryX(esi, "8=%d", eax)
                 .endif
                 mov eax,1
                 .break

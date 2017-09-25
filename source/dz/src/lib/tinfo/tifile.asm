@@ -307,7 +307,7 @@ local st_type,i,p,q
 
     .repeat
 
-        .break .if !CFGetEntryID(section, ID_TYPE)
+        .break .if !INIGetEntryID(section, ID_TYPE)
 
         mov p,eax
         mov al,[eax]
@@ -348,7 +348,7 @@ local st_type,i,p,q
                 .continue
               .default
                 mov i,1
-                .break .if !CFGetEntryID(section, ID_ATTRIB)
+                .break .if !INIGetEntryID(section, ID_ATTRIB)
             .endsw
 
             mov esi,eax
@@ -408,7 +408,7 @@ local st_type,i,p,q
                 stosb
                 inc i
                 .break .if i == 100
-                .break .if !CFGetEntryID(section, i)
+                .break .if !INIGetEntryID(section, i)
                 mov esi,eax
             .endw
         .until 1
@@ -478,24 +478,24 @@ local file[_MAX_PATH]:sbyte, entry[_MAX_PATH]:sbyte, section, index
                 lea edi,[eax+1]
             .endif
 
-            .if __CFRead(0, esi)
+            .if INIRead(0, esi)
 
                 mov esi,eax
 
                 TIDoSection(esi, edi, buffer, endbuf, attrib)
-                __CFClose(esi)
+                INIClose(esi)
             .endif
         .else
 
             TIDoSection(cfile, ebx, buffer, endbuf, attrib)
         .endif
 
-    .elseif __CFGetSection(cfile, esi)
+    .elseif INIGetSection(cfile, esi)
 
         mov section,eax
         mov index,0
 
-        .while CFGetEntryID(section, index)
+        .while INIGetEntryID(section, index)
 
             inc index
 
@@ -503,7 +503,7 @@ local file[_MAX_PATH]:sbyte, entry[_MAX_PATH]:sbyte, section, index
 
                 TIDoSection(cfile, eax, buffer, endbuf, attrib)
 
-            .elseif __CFGetSection(cfile, eax)
+            .elseif INIGetSection(cfile, eax)
 
                 TIReadLabel(eax, buffer, endbuf, attrib)
             .endif
@@ -546,12 +546,12 @@ local endbuf:PVOID   ; style + SIZE style - 2
     .if CFGetSection("Style")
 
         mov ebx,eax
-        .if !CFGetEntry(ebx, edi) ; FILENAME[.EXT]
+        .if !INIGetEntry(ebx, edi) ; FILENAME[.EXT]
 
             .if strext(edi)   ; .EXT ?
 
                 inc eax
-                CFGetEntry(ebx, eax)
+                INIGetEntry(ebx, eax)
             .endif
         .endif
     .endif

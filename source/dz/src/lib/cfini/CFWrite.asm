@@ -2,12 +2,12 @@ include cfini.inc
 
     .code
 
-CFWrite proc __file:LPSTR
+CFWrite proc file:LPSTR
 
     mov eax,__CFBase
     .if eax
 
-        __CFWrite(eax, __file)
+        INIWrite(eax, file)
     .endif
     ret
 

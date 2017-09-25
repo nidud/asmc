@@ -3,12 +3,12 @@
 Asmc Macro Assembler Reference
 <H2>.BREAK</H2>
 
-<pre>.<b>BREAK</b>(1|2|3) [[.<b>IF</b> <i>condition</i>]]</pre>
+<pre>.<b>BREAK</b>(<i>n</i>) [[.<b>IF</b> <i>condition</i>]]</pre>
 
 <p>Generates code to terminate a <a href="while.htm">.WHILE</a>
 or <a href="repeat.htm">.REPEAT</a> block if <i>condition</i> is true.</p>
 
-<p><b>BREAK</b>[1|2|3] is optional nesting level to terminate.</p>
+<p><b>BREAK</b>[(<i>n</i>)] is optional nesting level to terminate.</p>
 
 <pre>
     .while 1

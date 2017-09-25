@@ -27,7 +27,7 @@ ENDIF
 
 compare endp
 
-CFFindSection proc uses esi edi ebx cfini:PCFINI, __section:LPSTR, __entry:LPSTR
+CFFindSection proc uses esi edi ebx cfini:LPINI, __section:LPSTR, entry:LPSTR
 
 local cursor:	S_CURSOR,
     dialog:	ptr S_DOBJ,
@@ -61,9 +61,9 @@ local cursor:	S_CURSOR,
 
 	    .while  esi
 
-		.if [esi].S_CFINI.cf_flag & _CFSECTION
+		.if [esi].S_INI.flags & INI_SECTION
 
-		    mov eax,[esi].S_CFINI.cf_name
+		    mov eax,[esi].S_INI.entry
 
 		    .if eax
 
@@ -79,7 +79,7 @@ local cursor:	S_CURSOR,
 			.endif
 		    .endif
 		.endif
-		mov esi,[esi].S_CFINI.cf_next
+		mov esi,[esi].S_INI.next
 	    .endw
 
 	    mov eax,name_count
@@ -160,7 +160,7 @@ local cursor:	S_CURSOR,
 
 		    scputs(ebx, y, 0, 28, [esi])
 
-		    .if CFGetEntry(__CFGetSection(cfini, [esi]), __entry)
+		    .if INIGetEntry(INIGetSection(cfini, [esi]), entry)
 
 			mov ecx,ebx
 			add ecx,30
@@ -407,14 +407,14 @@ search_edx:
 	mov ecx,cur_x
 	sub ecx,dlg_x
 
-	.if !ZERO?
+	.ifnz
 
 	    mov esi,[eax+ebx*4]
 	    lea edi,section
 IFDEF _CMPCASE
-	    repz    cmpsb
+	    repz cmpsb
 ELSE
-	    push    eax
+	    push eax
 	    .repeat
 		mov al,[esi]
 		mov ah,[edi]
@@ -426,7 +426,7 @@ ELSE
 	    .untilcxz
 	    pop eax
 ENDIF
-	    .if ZERO?
+	    .ifz
 
 		mov index,ebx
 		xor eax,eax

@@ -2,9 +2,9 @@ include cfini.inc
 
     .code
 
-CFRead proc __file:LPSTR
+CFRead proc file:LPSTR
 
-    mov __CFBase,__CFRead(__CFBase, __file)
+    mov __CFBase,INIRead(__CFBase, file)
     ret
 
 CFRead endp

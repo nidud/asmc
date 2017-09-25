@@ -11,7 +11,7 @@ CFAddSectionX proc C format:LPSTR, argptr:VARARG
 
         .if ftobufin(format, addr argptr)
 
-            __CFAddSection(__CFBase, edx)
+            INIAddSection(__CFBase, edx)
         .endif
     .endif
 

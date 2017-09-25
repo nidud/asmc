@@ -11,7 +11,7 @@ TIOpenSession proc uses esi edi pCFINI, Section:LPSTR
 
 local tflag,tabz,x,b,y,l,index
 
-    .if __CFGetSection(pCFINI, Section)
+    .if INIGetSection(pCFINI, Section)
 
         mov edi,eax
         xor eax,eax
@@ -64,11 +64,11 @@ local buffer[1024]:sbyte, handle:dword
         mov eax,__ini
         .if eax
 
-            .if __CFAddSection(eax, section)
+            .if INIAddSection(eax, section)
 
                 mov handle,eax
 
-                CFDelEntries(eax)
+                INIDelEntries(eax)
 
                 xor ebx,ebx
 
@@ -77,7 +77,7 @@ local buffer[1024]:sbyte, handle:dword
                     mov eax,[esi].ti_flag
                     and eax,_T_TECFGMASK
 
-                    CFAddEntryX( handle, "%d=%X,%X,%X,%X,%X,%X,%s", ebx,
+                    INIAddEntryX( handle, "%d=%X,%X,%X,%X,%X,%X,%s", ebx,
                         [esi].ti_loff,
                         [esi].ti_yoff,
                         [esi].ti_boff,
@@ -105,11 +105,11 @@ topenedi proc uses esi fname:LPSTR
 
 local cursor:S_CURSOR
 
-    .if __CFRead(0, fname)
+    .if INIRead(0, fname)
 
         mov esi,eax
 
-        .if __CFGetSection(esi, ".")
+        .if INIGetSection(esi, ".")
 
             CursorGet(&cursor)
 
@@ -128,7 +128,7 @@ local cursor:S_CURSOR
 
             CursorSet(&cursor)
         .endif
-        __CFClose(esi)
+        INIClose(esi)
     .endif
 
     mov eax,tinfo
@@ -144,11 +144,11 @@ local path[_MAX_PATH]:byte
 
         _close(eax)
 
-        .if __CFRead(0, &path)
+        .if INIRead(0, &path)
 
             mov esi,eax
 
-            .if __CFGetSection(esi, ".")
+            .if INIGetSection(esi, ".")
 
                 .if tistate(tinfo)
 
@@ -162,7 +162,7 @@ local path[_MAX_PATH]:byte
                     tishow(tinfo)
                 .endif
             .endif
-            __CFClose(esi)
+            INIClose(esi)
         .endif
     .endif
 
@@ -193,13 +193,13 @@ local path[_MAX_PATH]:byte
 
         _close(eax)
 
-        .if __CFAlloc()
+        .if INIAlloc()
 
             mov esi,eax
 
             TISaveSession( esi, ".")
-            __CFWrite(esi, &path)
-            __CFClose(esi)
+            INIWrite(esi, &path)
+            INIClose(esi)
         .endif
     .endif
     mov eax,_TI_CONTINUE

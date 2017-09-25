@@ -10,7 +10,7 @@ extern	__comspec:byte
 
     .code
 
-__CFGetComspec proc uses esi edi ebx __ini:PCFINI, value:UINT
+__CFGetComspec proc uses esi edi ebx ini:LPINI, value:UINT
 
 local buffer[512]:byte
 
@@ -22,12 +22,12 @@ local buffer[512]:byte
 
     .if esi
 
-	.if __CFGetSection(__ini, addr __comspec)
+	.if INIGetSection(ini, addr __comspec)
 
 	    mov esi,eax
 	    lea ebx,buffer
 
-	    .if CFGetEntryID(esi, 0)
+	    .if INIGetEntryID(esi, 0)
 
 		.if !_access(expenviron(strcpy(ebx, eax)), 0)
 
@@ -37,7 +37,7 @@ local buffer[512]:byte
 		    mov eax,__pCommandArg
 		    mov byte ptr [eax],0
 
-		    .if CFGetEntryID(esi, 1)
+		    .if INIGetEntryID(esi, 1)
 
 			expenviron(strcpy(ebx, eax))
 			strncpy(__pCommandArg, eax, 64-1)

@@ -419,7 +419,7 @@ transfer_edit proc private uses esi ebx
 
         .if CFAddSection(ebx)
 
-            CFAddEntryX(eax, "%s=%s", file_ext, esi)
+            INIAddEntryX(eax, "%s=%s", file_ext, esi)
         .endif
         dlinit(edi)
     .endif
@@ -473,7 +473,7 @@ local ext[_MAX_PATH]:sbyte
 
             .if CFGetSection(&cp_AltFX)
 
-                .if CFGetEntry(eax, ebx)
+                .if INIGetEntry(eax, ebx)
 
                     lea edx,[esi-1]
                     .if esi == 9
@@ -499,7 +499,7 @@ local ext[_MAX_PATH]:sbyte
 
             .if CFGetSection(&cp_ShiftFX)
 
-                .if CFGetEntry(eax, ebx)
+                .if INIGetEntry(eax, ebx)
 
                     lea edx,[esi+6]
                     shl edx,4

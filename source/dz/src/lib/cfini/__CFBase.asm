@@ -1,6 +1,6 @@
 include cfini.inc
 
     .data
-    __CFBase PCFINI 0
+    __CFBase LPINI 0
 
     END

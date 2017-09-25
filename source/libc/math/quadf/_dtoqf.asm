@@ -1,3 +1,5 @@
+; _dtoqf() - double to Quadruple float
+;
 include intn.inc
 
 .code
@@ -47,8 +49,8 @@ _dtoqf proc uses ebx p:ptr, d:qword
     rcr cx,1
     mov [eax+14],cx
     xor ebx,ebx
-    mov [eax+2],ebx
-    mov [eax],bx
+    mov [eax],ebx
+    mov [eax+4],bx
     ret
 
 _dtoqf endp

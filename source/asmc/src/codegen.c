@@ -158,8 +158,6 @@ static void output_opc( struct code_info *CodeInfo )
 	     * no matter what the current cpu is. The reason is simple: the
 	     * nop is needed because of the fixup which was inserted.
 	     */
-	    //if(( ModuleInfo.curr_cpu & P_CPU_MASK ) < P_386 ) {
-	    //	  if(( ModuleInfo.emulator == TRUE ) && ( CodeInfo->Ofssize == USE16 )) {
 	    if( fpfix ) {
 		OutputCodeByte( OP_NOP );
 	    }

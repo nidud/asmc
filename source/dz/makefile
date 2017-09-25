@@ -1,3 +1,4 @@
+
 #
 # Visual C version 6 used for debug
 # Open Watcom used to add the DZ.ICO file
@@ -18,19 +19,19 @@ RC  = $(asmc)\bin\iddc /coff
 LIB = $(asmc)\bin\libw /b /n /c /fac
 
 !if $(debug)
-LINK = $(msvc)\bin\link /debug /subsystem:console /libpath:$(asmc)\lib
+LINK = $(msvc)\bin\link /map /debug /subsystem:console /libpath:$(asmc)\lib
 !else
-LINK = $(asmc)\bin\linkw op stub=$(source)\res\dz.bin lib dz.lib file
+LINK = $(asmc)\bin\linkw op stub=$(source)\res\dz.bin lib libc.lib file
 ICON = $(watc)\binnt\wrc -q $(source)\res\dz.res $@
 !endif
 
-all: dz.lib dz.obj dz.exe clean
+all: libc.lib dz.obj dz.exe clean
 
 dz.exe:
  $(LINK) dz.obj
  $(ICON)
 
-dz.lib:
+libc.lib:
  $(RC) /r $(source)\res\*.idd
  $(CC) /r $(source)\lib\*.asm
  $(LIB) $@ *.obj
@@ -40,6 +41,6 @@ dz.obj:
  $(CC) $(source)\dz.asm
 
 clean:
- @del dz.lib
+ @del libc.lib
  @del dz.obj
 

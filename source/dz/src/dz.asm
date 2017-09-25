@@ -11,7 +11,7 @@ include cfini.inc
 include crtl.inc
 ;include signal.inc
 
-includelib dz.lib
+includelib libc.lib
 includelib kernel32.lib
 includelib user32.lib
 

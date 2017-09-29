@@ -271,12 +271,8 @@ _cldcvt proc fp:LPLONGDOUBLE, buffer:LPSTR, ch_type:SINT, precision:SINT, capexp
 _cldcvt endp
 
 _cfltcvt proc fp:LPDOUBLE, buffer:LPSTR, ch_type:SINT, precision:SINT, capexp:SINT
-local ld:REAL10
-    mov eax,fp
-    lea edx,ld
-    _iFDLD()
-    lea ecx,ld
-    fld TBYTE PTR [ecx]
+    mov ecx,fp
+    fld QWORD PTR [ecx]
     __fconv(buffer, ch_type, precision, capexp)
     ret
 _cfltcvt endp

@@ -11,24 +11,24 @@ _iFDLD	proc uses ecx ebx
 	mov	ecx,edx
 	shld	edx,eax,11
 	shl	eax,11
-	shr	ecx,20
-	and	ecx,000007FFh
+	sar	ecx,20
+	and	cx,0x07FF
 	jz	L004
-	cmp	ecx,000007FFh
+	cmp	cx,0x07FF
 	je	@F
-	add	ecx,00003C00h
+	add	cx,0x3C00
 	jmp	L003
 @@:
-	or	ecx,00007F00h
-	test	edx,7FFFFFFFh
+	or	ch,0x7F
+	test	edx,0x7FFFFFFF
 	jnz	@F
 	test	eax,eax
 	jz	L003
 @@:
 ;	int	3	  ; Invalid exception
-	or	edx,40000000h
+	or	edx,0x40000000
 L003:
-	or	edx,80000000h
+	or	edx,0x80000000
 	jmp	toend
 L004:
 	test	edx,edx
@@ -36,7 +36,7 @@ L004:
 	test	eax,eax
 	jz	toend
 @@:
-	or	ecx,00003C01h
+	or	cx,0x3C01
 	test	edx,edx
 	jnz	@F
 	xchg	edx,eax
@@ -51,7 +51,7 @@ L004:
 toend:
 	mov	[ebx],eax
 	mov	[ebx+4],edx
-	add	ecx,ecx
+	shl	ecx,1
 	rcr	cx,1
 	mov	[ebx+8],cx
 	ret

@@ -1,5 +1,8 @@
 include conio.inc
 
+externdef char_avail:dword
+externdef ungot_char:dword
+
 .code
 
     assume ebx:ptr INPUT_RECORD
@@ -12,7 +15,11 @@ _kbhit proc uses ebx edi esi
     xor edi,edi
     lea ebx,Event
 
-    .if GetNumberOfConsoleInputEvents(hStdInput, &Count)
+    .if char_avail
+
+        mov edi,ungot_char
+
+    .elseif GetNumberOfConsoleInputEvents(hStdInput, &Count)
 
         mov ecx,Count
         .if ecx > MAXINPUTRECORDS

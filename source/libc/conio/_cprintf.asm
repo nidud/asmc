@@ -3,6 +3,7 @@ include stdlib.inc
 include limits.inc
 include wchar.inc
 include fltintrn.inc
+include conio.inc
 
 ;
 ; the following should be set depending on the sizes of various types
@@ -53,9 +54,9 @@ externdef __wnullstring:byte
 
     .code
 
-write_char proc private char, f:LPFILE, pnumwritten
+write_char proc private char, pnumwritten
 
-    .if fputc(char, f) == -1
+    .if _putch(char) == -1
 
         mov ecx,pnumwritten
         mov DWORD PTR [ecx],-1
@@ -67,31 +68,31 @@ write_char proc private char, f:LPFILE, pnumwritten
 
 write_char endp
 
-write_string proc private uses esi edi ebx string, len, f, pnumwritten
+write_string proc private uses esi edi ebx string, len, pnumwritten
 
     .fors esi = string, edi = len, ebx = pnumwritten: edi > 0: edi--
 
         movzx eax,BYTE PTR [esi]
         add esi,1
-        write_char(ax, f, ebx)
+        write_char(ax, ebx)
         .break .if DWORD PTR [ecx] == -1
     .endf
     ret
 
 write_string endp
 
-write_multi_char proc private uses edi char, num:dword, f:LPFILE, pnumwritten:PVOID
+write_multi_char proc private uses edi char, num:dword, pnumwritten:PVOID
 
     .fors edi = num: edi > 0: edi--
 
-        write_char(char, f, pnumwritten)
+        write_char(char, pnumwritten)
         .break .if DWORD PTR [ecx] == -1
     .endf
     ret
 
 write_multi_char endp
 
-_output PROC PUBLIC USES edx ecx esi edi ebx fp:LPFILE, format:LPSTR, arglist:PVOID
+output proc private uses edx ecx esi edi ebx format:LPSTR, arglist:PVOID
 
 local   charsout:   sdword
 local   hexoff:     dword
@@ -149,16 +150,14 @@ endif
               .case ST_NORMAL
 
                 mov bufferiswide,0
-ifndef __DZ__
                 .if isleadbyte(edx)
 
-                    write_char(edx, fp, addr charsout)
+                    write_char(edx, &charsout)
                     mov eax,format
                     add format,1
                     movzx edx,BYTE PTR [eax]
                 .endif
-endif
-                write_char(edx, fp, addr charsout)
+                write_char(edx, &charsout)
                 .endc
 
               .case ST_PERCENT
@@ -417,7 +416,7 @@ endif
                         mov no_output,1
                     .endif
                     .endc
-ifndef __DZ__
+
                   .case 'E'
                   .case 'G'
                   .case 'A'
@@ -501,7 +500,7 @@ endif
                     .endif
                     mov textlen,strlen(text) ; compute length of text
                     .endc
-endif
+
                   .case 'd'
                   .case 'i'
                     ;
@@ -765,18 +764,18 @@ endif
                         ;
                         ; pad on left with blanks
                         ;
-                        write_multi_char(' ', padding, fp, addr charsout)
+                        write_multi_char(' ', padding, &charsout)
                     .endif
                     ;
                     ; write prefix
                     ;
-                    write_string(addr prefix, prefixlen, fp, addr charsout)
+                    write_string(&prefix, prefixlen, &charsout)
 
                     .if (esi & FL_LEADZERO) && !(esi & FL_LEFT)
                         ;
                         ; write leading zeros
                         ;
-                        write_multi_char('0', padding, fp, addr charsout)
+                        write_multi_char('0', padding, &charsout)
                     .endif
                     ;
                     ; write text
@@ -790,24 +789,24 @@ endif
                         .for edi = ecx, esi = text: edi: esi++, edi--
 
                             movzx ecx,BYTE PTR [esi]
-                            .ifs wctomb(addr mbuf, cx) <= 0
+                            .ifs wctomb(&mbuf, cx) <= 0
 
                                 .break
                             .endif
                             mov ecx,eax
-                            write_string(addr mbuf, ecx, fp, addr charsout)
+                            write_string(&mbuf, ecx, &charsout)
                         .endf
                         pop  edi
                         pop  esi
                     .else
                     endif
-                        write_string(text, ecx, fp, addr charsout)
+                        write_string(text, ecx, &charsout)
                     ;.endif
                     .if esi & FL_LEFT
                         ;
                         ; pad on right with blanks
                         ;
-                        write_multi_char(' ', padding, fp, addr charsout)
+                        write_multi_char(' ', padding, &charsout)
                     .endif
                 .endif
                 ;
@@ -821,6 +820,13 @@ endif
     mov eax,charsout ; return value = number of characters written
     ret
 
-_output ENDP
+output endp
+
+_cprintf proc _CDecl format:LPSTR, arglist:VARARG
+
+    output(format, &arglist)
+    ret
+
+_cprintf endp
 
     END

@@ -52,6 +52,11 @@ malloc		proto __cdecl :SIZE_T
 realloc		proto __cdecl :PVOID, :SIZE_T
 free		proto __cdecl :PVOID
 setargv		proto __cdecl :ptr, :ptr sbyte
+_makepath	proto __cdecl :LPSTR, :LPSTR, :LPSTR, :LPSTR, :LPSTR
+_rotl		proto __cdecl :UINT, :SINT
+_rotr		proto __cdecl :UINT, :SINT
+_lrotl		proto __cdecl :ULONG, :SINT
+_lrotr		proto __cdecl :ULONG, :SINT
 
 ifndef _WSTDLIB_DEFINED
 _WSTDLIB_DEFINED equ <>

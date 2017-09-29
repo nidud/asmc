@@ -12,6 +12,8 @@ endif
 .xlist
 ifdef __PE__
 option	dllimport:<msvcrt>
+else
+includelib libc.lib
 endif
 
 ifdef _CONIO_RETRO_COLORS
@@ -85,8 +87,8 @@ externdef hStdInput:  HANDLE
 externdef hStdOutput: HANDLE
 externdef hStdError:  HANDLE
 
-__initconout	proto
-__termconout	proto
+__initconout proto
+__termconout proto
 externdef _confh:intptr_t
 
 endif

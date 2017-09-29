@@ -480,7 +480,7 @@ static int RenderSwitch( struct hll_item *hll, struct asm_tok tokenarray[],
 
     GetCaseValue( hll, tokenarray, &dynamic, &nstatic );
 
-    if ( !( ModuleInfo.aflag & _AF_TABLE ) || nstatic < MIN_JTABLE ) {
+    if ( ModuleInfo.aflag & _AF_NOTABLE || nstatic < MIN_JTABLE ) {
        /*
 	* Time NOTABLE/TABLE
 	*
@@ -489,11 +489,8 @@ static int RenderSwitch( struct hll_item *hll, struct asm_tok tokenarray[],
 	* TABLE	  1521	 3361	 4402	 6521	 7201	 7881	 9844	 68795
 	* elseif  1402	 4269	 5787	 7096	 8481	 10601	 22923	 212888
 	*/
-	if (nstatic <= 20 ) {
-
-	    RenderCCMP( hll, buffer );
-	    return 0;
-	}
+	RenderCCMP( hll, buffer );
+	return 0;
     }
 
     r_size = 2;

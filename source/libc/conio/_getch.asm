@@ -1,6 +1,9 @@
 include conio.inc
 include stdio.inc
 
+externdef char_avail:dword
+externdef ungot_char:dword
+
 .code
 
 _getch proc uses ebx edi esi
@@ -11,6 +14,13 @@ local Event[MAXINPUTRECORDS]:INPUT_RECORD
     xor edi,edi
 
     .while !edi
+
+        .if char_avail
+
+            mov edi,ungot_char
+            mov char_avail,0
+            .break
+        .endif
 
         .if GetNumberOfConsoleInputEvents(hStdInput, &Count)
 

@@ -393,7 +393,7 @@ enum seg_type {
 /* .SWITCH options */
 
 #define _AF_PASCAL	0x10 /* auto insert break after .case */
-#define _AF_TABLE	0x20 /* forse creation of indexed jump table */
+#define _AF_NOTABLE	0x20 /* no indexed jump table */
 #define _AF_REGAX	0x40 /* use [R|E]AX to render jump-code */
 #define _AF_NOTEST	0x80 /* skip test code - just jump */
 

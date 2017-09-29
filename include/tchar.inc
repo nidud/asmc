@@ -1006,17 +1006,6 @@ _TEXT	macro x
 	endm
 endif
 
-ifndef _WIN64
-	rax equ <eax>
-	rbx equ <ebx>
-	rcx equ <ecx>
-	rdx equ <edx>
-	rdi equ <edi>
-	rsi equ <esi>
-	rbp equ <ebp>
-	rsp equ <esp>
-endif
-
 ifdef __PE__
 
 ifndef __STDLIB_INC
@@ -1025,6 +1014,15 @@ endif
 
 ifdef _WIN64
 option	win64:3
+else
+	rax equ <eax>
+	rbx equ <ebx>
+	rcx equ <ecx>
+	rdx equ <edx>
+	rdi equ <edi>
+	rsi equ <esi>
+	rbp equ <ebp>
+	rsp equ <esp>
 endif
 	.data
 	__argc	  dd 0,0

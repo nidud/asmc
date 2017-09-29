@@ -491,10 +491,10 @@ static void ProcessOption( char **cmdline, char *buffer )
 	Options.aflag |= _AF_REGAX;
 	return;
     case 'nws':		// -swn
-	Options.aflag &= ~_AF_TABLE;
+	Options.aflag |= _AF_NOTABLE;
 	return;
     case 'tws':		// -swt
-	Options.aflag |= _AF_TABLE;
+	Options.aflag &= ~_AF_NOTABLE;
 	return;
     case 'efas':	// -safeseh
 	Options.safeseh = 1;

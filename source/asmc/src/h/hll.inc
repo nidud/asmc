@@ -1,15 +1,15 @@
 ifndef __HLL_INC
 __HLL_INC equ <>
 
-MIN_JTABLE	equ 4
-MIN_NOTABLE	equ 20		; auto table if case count above
+MIN_JTABLE	equ 8
+MAX_JTABLE	equ 32
 
-LABELSGLOBAL	equ 0		; make the generated labels global
+LABELSGLOBAL	equ 0	; make the generated labels global
 ;LABELFMT	equ <"@C%04X">
 ;
 ; v2.10: static variables moved to ModuleInfo
 ;
-EOLCHAR		equ 10		; line termination char in generated source
+EOLCHAR		equ 10	; line termination char in generated source
 NULLC		equ 0
 
 ;

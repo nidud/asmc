@@ -737,9 +737,9 @@ OPTFUNC( SetSwitch )
     } else if ( 0 == _stricmp( tokenarray[i].string_ptr, "PASCAL" ) ) {
 	ModuleInfo.aflag |= _AF_PASCAL;
     } else if ( 0 == _stricmp( tokenarray[i].string_ptr, "TABLE" ) ) {
-	ModuleInfo.aflag |= _AF_TABLE;
+	ModuleInfo.aflag &= ~_AF_NOTABLE;
     } else if ( 0 == _stricmp( tokenarray[i].string_ptr, "NOTABLE" ) ) {
-	ModuleInfo.aflag &= ~_AF_TABLE;
+	ModuleInfo.aflag |= _AF_NOTABLE;
     } else if ( 0 == _stricmp( tokenarray[i].string_ptr, "REGAX" ) ) {
 	ModuleInfo.aflag |= _AF_REGAX;
     } else if ( 0 == _stricmp( tokenarray[i].string_ptr, "NOREGS" ) ) {

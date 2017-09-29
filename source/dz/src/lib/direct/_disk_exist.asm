@@ -10,7 +10,7 @@ _disk_exist proc uses edx disk
     mul edx
     lea edx,drvinfo[eax]
     xor eax,eax
-    .if [edx].S_DISK.di_flag == eax
+    .if [edx].S_DISK.di_flag != eax
 	mov eax,edx
     .endif
     ret

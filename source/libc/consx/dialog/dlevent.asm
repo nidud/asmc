@@ -1068,16 +1068,16 @@ dlxcellevent proc uses esi edi ebx
                     .if mousep()
 
                         mov edx,mousey()
-                        .if rcxyrow(ebx, mousex(), edx)
-
-                            mov eax,KEY_ENTER
-                        .endif
+                        .continue(0) .if !rcxyrow(ebx, mousex(), edx)
+                        mov eax,KEY_ENTER
                     .endif
                 .endif
+            .else
+                mov eax,MOUSECMD
             .endif
 
           .default
-            .continue .if !eax
+            .continue(0) .if !eax
             .endc
         .endsw
     .until 1

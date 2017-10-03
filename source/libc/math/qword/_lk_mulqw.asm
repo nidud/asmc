@@ -4,15 +4,13 @@ include intn.inc
 
 _lk_mulqw proc    ; ecx:ebx:edx:eax = edx:eax * ecx:ebx
 
-    test    edx,edx
-    jnz     @F
-    test    ecx,ecx
-    jnz     @F
-    mul     ebx
-    xor     ebx,ebx
-    ret
+    .if !edx && !ecx
 
-@@:
+        mul ebx
+        xor ebx,ebx
+        ret
+    .endif
+
     push    ebp
     push    esi
     push    edi

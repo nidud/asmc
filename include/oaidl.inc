@@ -704,17 +704,10 @@ ICreateTypeInfo		STRUC
 lpVtbl			LPICreateTypeInfoVtbl ?
 ICreateTypeInfo		ENDS
 
-
-
-
-
-
 ;HRESULT
 ICreateTypeInfo_SetGuid_Proxy proto WINAPI \
 		 pThis: ptr ICreateTypeInfo,
 		  guid: REFGUID
-
-
 
 ;void
 ICreateTypeInfo_SetGuid_Stub proto WINAPI \
@@ -723,14 +716,10 @@ ICreateTypeInfo_SetGuid_Stub proto WINAPI \
 	  _pRpcMessage: PRPC_MESSAGE,
 	 _pdwStubPhase: ptr DWORD
 
-
-
 ;HRESULT
 ICreateTypeInfo_SetTypeFlags_Proxy proto WINAPI \
 		 pThis: ptr ICreateTypeInfo,
 	    uTypeFlags: UINT
-
-
 
 ;void
 ICreateTypeInfo_SetTypeFlags_Stub proto WINAPI \
@@ -739,14 +728,10 @@ ICreateTypeInfo_SetTypeFlags_Stub proto WINAPI \
 	  _pRpcMessage: PRPC_MESSAGE,
 	 _pdwStubPhase: ptr DWORD
 
-
-
 ;HRESULT
 ICreateTypeInfo_SetDocString_Proxy proto WINAPI \
 		 pThis: ptr ICreateTypeInfo,
 	       pStrDoc: LPOLESTR
-
-
 
 ;void
 ICreateTypeInfo_SetDocString_Stub proto WINAPI \
@@ -755,14 +740,10 @@ ICreateTypeInfo_SetDocString_Stub proto WINAPI \
 	  _pRpcMessage: PRPC_MESSAGE,
 	 _pdwStubPhase: ptr DWORD
 
-
-
 ;HRESULT
 ICreateTypeInfo_SetHelpContext_Proxy proto WINAPI \
 		 pThis: ptr ICreateTypeInfo,
 	 dwHelpContext: DWORD
-
-
 
 ;void
 ICreateTypeInfo_SetHelpContext_Stub proto WINAPI \
@@ -771,15 +752,11 @@ ICreateTypeInfo_SetHelpContext_Stub proto WINAPI \
 	  _pRpcMessage: PRPC_MESSAGE,
 	 _pdwStubPhase: ptr DWORD
 
-
-
 ;HRESULT
 ICreateTypeInfo_SetVersion_Proxy proto WINAPI \
 		 pThis: ptr ICreateTypeInfo,
 	  wMajorVerNum: WORD,
 	  wMinorVerNum: WORD
-
-
 
 ;void
 ICreateTypeInfo_SetVersion_Stub proto WINAPI \
@@ -788,15 +765,11 @@ ICreateTypeInfo_SetVersion_Stub proto WINAPI \
 	  _pRpcMessage: PRPC_MESSAGE,
 	 _pdwStubPhase: ptr DWORD
 
-
-
 ;HRESULT
 ICreateTypeInfo_AddRefTypeInfo_Proxy proto WINAPI \
 		 pThis: ptr ICreateTypeInfo,
 		pTInfo: ptr ITypeInfo,
 	     phRefType: ptr HREFTYPE
-
-
 
 ;void
 ICreateTypeInfo_AddRefTypeInfo_Stub proto WINAPI \
@@ -805,15 +778,11 @@ ICreateTypeInfo_AddRefTypeInfo_Stub proto WINAPI \
 	  _pRpcMessage: PRPC_MESSAGE,
 	 _pdwStubPhase: ptr DWORD
 
-
-
 ;HRESULT
 ICreateTypeInfo_AddFuncDesc_Proxy proto WINAPI \
 		 pThis: ptr ICreateTypeInfo,
 		 index: UINT,
 	     pFuncDesc: ptr FUNCDESC
-
-
 
 ;void
 ICreateTypeInfo_AddFuncDesc_Stub proto WINAPI \
@@ -822,15 +791,11 @@ ICreateTypeInfo_AddFuncDesc_Stub proto WINAPI \
 	  _pRpcMessage: PRPC_MESSAGE,
 	 _pdwStubPhase: ptr DWORD
 
-
-
 ;HRESULT
 ICreateTypeInfo_AddImplType_Proxy proto WINAPI \
 		 pThis: ptr ICreateTypeInfo,
 		 index: UINT,
 	      hRefType: HREFTYPE
-
-
 
 ;void
 ICreateTypeInfo_AddImplType_Stub proto WINAPI \
@@ -839,15 +804,11 @@ ICreateTypeInfo_AddImplType_Stub proto WINAPI \
 	  _pRpcMessage: PRPC_MESSAGE,
 	 _pdwStubPhase: ptr DWORD
 
-
-
 ;HRESULT
 ICreateTypeInfo_SetImplTypeFlags_Proxy proto WINAPI \
 		 pThis: ptr ICreateTypeInfo,
 		 index: UINT,
 	 implTypeFlags: SINT
-
-
 
 ;void
 ICreateTypeInfo_SetImplTypeFlags_Stub proto WINAPI \
@@ -856,14 +817,10 @@ ICreateTypeInfo_SetImplTypeFlags_Stub proto WINAPI \
 	  _pRpcMessage: PRPC_MESSAGE,
 	 _pdwStubPhase: ptr DWORD
 
-
-
 ;HRESULT
 ICreateTypeInfo_SetAlignment_Proxy proto WINAPI \
 		 pThis: ptr ICreateTypeInfo,
 	   cbAlignment: WORD
-
-
 
 ;void
 ICreateTypeInfo_SetAlignment_Stub proto WINAPI \
@@ -872,14 +829,10 @@ ICreateTypeInfo_SetAlignment_Stub proto WINAPI \
 	  _pRpcMessage: PRPC_MESSAGE,
 	 _pdwStubPhase: ptr DWORD
 
-
-
 ;HRESULT
 ICreateTypeInfo_SetSchema_Proxy proto WINAPI \
 		 pThis: ptr ICreateTypeInfo,
 	    pStrSchema: LPOLESTR
-
-
 
 ;void
 ICreateTypeInfo_SetSchema_Stub proto WINAPI \
@@ -888,15 +841,11 @@ ICreateTypeInfo_SetSchema_Stub proto WINAPI \
 	  _pRpcMessage: PRPC_MESSAGE,
 	 _pdwStubPhase: ptr DWORD
 
-
-
 ;HRESULT
 ICreateTypeInfo_AddVarDesc_Proxy proto WINAPI \
 		 pThis: ptr ICreateTypeInfo,
 		 index: UINT,
 	      pVarDesc: ptr VARDESC
-
-
 
 ;void
 ICreateTypeInfo_AddVarDesc_Stub proto WINAPI \
@@ -905,16 +854,12 @@ ICreateTypeInfo_AddVarDesc_Stub proto WINAPI \
 	  _pRpcMessage: PRPC_MESSAGE,
 	 _pdwStubPhase: ptr DWORD
 
-
-
 ;HRESULT
 ICreateTypeInfo_SetFuncAndParamNames_Proxy proto WINAPI \
 		 pThis: ptr ICreateTypeInfo,
 		 index: UINT,
 	     rgszNames: ptr LPOLESTR,
 		cNames: UINT
-
-
 
 ;void
 ICreateTypeInfo_SetFuncAndParamNames_Stub proto WINAPI \
@@ -923,15 +868,11 @@ ICreateTypeInfo_SetFuncAndParamNames_Stub proto WINAPI \
 	  _pRpcMessage: PRPC_MESSAGE,
 	 _pdwStubPhase: ptr DWORD
 
-
-
 ;HRESULT
 ICreateTypeInfo_SetVarName_Proxy proto WINAPI \
 		 pThis: ptr ICreateTypeInfo,
 		 index: UINT,
 		szName: LPOLESTR
-
-
 
 ;void
 ICreateTypeInfo_SetVarName_Stub proto WINAPI \
@@ -940,14 +881,10 @@ ICreateTypeInfo_SetVarName_Stub proto WINAPI \
 	  _pRpcMessage: PRPC_MESSAGE,
 	 _pdwStubPhase: ptr DWORD
 
-
-
 ;HRESULT
 ICreateTypeInfo_SetTypeDescAlias_Proxy proto WINAPI \
 		 pThis: ptr ICreateTypeInfo,
 	   pTDescAlias: ptr TYPEDESC
-
-
 
 ;void
 ICreateTypeInfo_SetTypeDescAlias_Stub proto WINAPI \
@@ -956,16 +893,12 @@ ICreateTypeInfo_SetTypeDescAlias_Stub proto WINAPI \
 	  _pRpcMessage: PRPC_MESSAGE,
 	 _pdwStubPhase: ptr DWORD
 
-
-
 ;HRESULT
 ICreateTypeInfo_DefineFuncAsDllEntry_Proxy proto WINAPI \
 		 pThis: ptr ICreateTypeInfo,
 		 index: UINT,
 	     szDllName: LPOLESTR,
 	    szProcName: LPOLESTR
-
-
 
 ;void
 ICreateTypeInfo_DefineFuncAsDllEntry_Stub proto WINAPI \
@@ -974,15 +907,11 @@ ICreateTypeInfo_DefineFuncAsDllEntry_Stub proto WINAPI \
 	  _pRpcMessage: PRPC_MESSAGE,
 	 _pdwStubPhase: ptr DWORD
 
-
-
 ;HRESULT
 ICreateTypeInfo_SetFuncDocString_Proxy proto WINAPI \
 		 pThis: ptr ICreateTypeInfo,
 		 index: UINT,
 	   szDocString: LPOLESTR
-
-
 
 ;void
 ICreateTypeInfo_SetFuncDocString_Stub proto WINAPI \
@@ -991,15 +920,11 @@ ICreateTypeInfo_SetFuncDocString_Stub proto WINAPI \
 	  _pRpcMessage: PRPC_MESSAGE,
 	 _pdwStubPhase: ptr DWORD
 
-
-
 ;HRESULT
 ICreateTypeInfo_SetVarDocString_Proxy proto WINAPI \
 		 pThis: ptr ICreateTypeInfo,
 		 index: UINT,
 	   szDocString: LPOLESTR
-
-
 
 ;void
 ICreateTypeInfo_SetVarDocString_Stub proto WINAPI \
@@ -1008,15 +933,11 @@ ICreateTypeInfo_SetVarDocString_Stub proto WINAPI \
 	  _pRpcMessage: PRPC_MESSAGE,
 	 _pdwStubPhase: ptr DWORD
 
-
-
 ;HRESULT
 ICreateTypeInfo_SetFuncHelpContext_Proxy proto WINAPI \
 		 pThis: ptr ICreateTypeInfo,
 		 index: UINT,
 	 dwHelpContext: DWORD
-
-
 
 ;void
 ICreateTypeInfo_SetFuncHelpContext_Stub proto WINAPI \
@@ -1024,8 +945,6 @@ ICreateTypeInfo_SetFuncHelpContext_Stub proto WINAPI \
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
 	 _pdwStubPhase: ptr DWORD
-
-
 
 ;HRESULT
 ICreateTypeInfo_SetVarHelpContext_Proxy proto WINAPI \

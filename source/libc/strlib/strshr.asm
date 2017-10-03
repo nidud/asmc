@@ -4,34 +4,31 @@
 ;
 include strlib.inc
 
-	.code
+    .code
 
-	option stackbase:esp
+strshr proc uses edx ecx string:LPSTR, char:UINT
 
-strshr	proc uses edx ecx string:LPSTR, char:UINT
+    mov edx,string
+    mov eax,[edx]
+    shl eax,8
+    mov al,byte ptr char
 
-	mov	edx,string
-	mov	eax,[edx]
-	shl	eax,8
-	mov	al,byte ptr char
-@@:
-	mov	ecx,[edx+3]
-	mov	[edx],eax
-	test	eax,0x000000FF
-	jz	@F
-	test	eax,0x0000FF00
-	jz	@F
-	test	eax,0x00FF0000
-	jz	@F
-	test	eax,0xFF000000
-	jz	@F
-	mov	eax,ecx
-	add	edx,4
-	jmp	@B
-@@:
-	mov	eax,string
-	ret
+    .while 1
 
-strshr	ENDP
+        mov ecx,[edx+3]
+        mov [edx],eax
 
-	END
+        .break .if !(eax & 0x000000FF)
+        .break .if !(eax & 0x0000FF00)
+        .break .if !(eax & 0x00FF0000)
+        .break .if !(eax & 0xFF000000)
+
+        mov eax,ecx
+        add edx,4
+    .endw
+    mov eax,string
+    ret
+
+strshr endp
+
+    END

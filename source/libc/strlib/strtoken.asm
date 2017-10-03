@@ -1,45 +1,47 @@
 include strlib.inc
 include ltype.inc
 
-	.data
-	token dd ?
+    .data
+    token dd ?
 
-	.code
+    .code
 
-strtoken PROC string:LPSTR
-	mov	eax,string
-	mov	ecx,token
-	test	eax,eax
-	jz	@F
-	mov	ecx,eax
-	xor	eax,eax
-@@:
-	mov	al,[ecx]
-	inc	ecx
-	test	[eax + _ltype + 1],_SPACE
-	jnz	@B
-	dec	ecx
-	mov	token,ecx
-	test	al,al
-	jz	fail
-@@:
-	mov	al,[ecx]
-	inc	ecx
-	test	al,al
-	jz	@F
-	test	[eax + _ltype + 1],_SPACE
-	jz	@B
-	mov	[ecx-1],ah
-	inc	ecx
-@@:
-	dec	ecx
-	mov	eax,token
-	mov	token,ecx
-	jmp	toend
-fail:
-	xor	eax,eax
-toend:
-	ret
-strtoken ENDP
+strtoken proc string:LPSTR
 
-	END
+    mov eax,string
+    mov ecx,token
+    .if eax
+
+        mov ecx,eax
+        xor eax,eax
+    .endif
+    .repeat
+
+        mov al,[ecx]
+        inc ecx
+    .until !(_ltype[eax+1] & _SPACE)
+
+    .repeat
+
+        dec ecx
+        mov token,ecx
+        .break .if !al
+
+        .repeat
+            .repeat
+                mov al,[ecx]
+                inc ecx
+                .break(1) .if !al
+            .until _ltype[eax+1] & _SPACE
+            mov [ecx-1],ah
+            inc ecx
+        .until 1
+        dec ecx
+        mov eax,token
+        mov token,ecx
+    .until 1
+    ret
+
+strtoken endp
+
+    END

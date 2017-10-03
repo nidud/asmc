@@ -5,6 +5,12 @@ ifndef _INC_MATH
 .xlist
 _INC_MATH equ 1
 
+ifdef __PE__
+option  dllimport:<msvcrt>
+else
+includelib libc.lib
+endif
+
 ifdef _MSC_VER
 ;;
 ;; Currently, all MS C compilers for Win32 platforms default to 8 byte
@@ -96,7 +102,7 @@ endif
 cos     proto __cdecl _X:double
 cosh    proto __cdecl _X:double
 exp     proto __cdecl _X:double
-;fabs   proto __cdecl _X:double
+_fabs   proto __cdecl _X:double
 fmod    proto __cdecl _X:double, _Y:double
 log     proto __cdecl _X:double
 log10   proto __cdecl _X:double

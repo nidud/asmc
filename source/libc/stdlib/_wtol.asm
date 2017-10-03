@@ -1,46 +1,48 @@
 include stdlib.inc
 
-	.code
+    .code
 
-	option stackbase:esp
+    option stackbase:esp
 
-_wtol	proc string:LPWSTR
+_wtol proc string:LPWSTR
 
-	mov	edx,string
-	xor	ecx,ecx
-@@:
-	movzx	eax,word ptr [edx]
-	add	edx,2
-	cmp	eax,' '
-	je	@B
-	push	eax
-	cmp	eax,'-'
-	je	@2
-	cmp	eax,'+'
-	jne	@F
-@2:
-	mov	ax,[edx]
-	add	edx,2
-@@:
-	mov	ecx,eax
-	xor	eax,eax
-@@:
-	sub	ecx,'0'
-	jb	@F
-	cmp	ecx,9
-	ja	@F
-	lea	ecx,[eax*8+ecx]
-	lea	eax,[eax*2+ecx]
-	movzx	ecx,word ptr [edx]
-	add	edx,2
-	jmp	@B
-@@:
-	pop	ecx
-	cmp	ecx,'-'
-	jne	@F
-	neg	eax
-@@:
-	ret
-_wtol	endp
+    mov edx,string
+    xor ecx,ecx
+    .repeat
 
-	END
+        movzx eax,word ptr [edx]
+        add edx,2
+        .continue(0) .if eax == ' '
+    .until 1
+
+    push eax
+
+    .if eax == '-' || eax == '+'
+
+        mov ax,[edx]
+        add edx,2
+    .endif
+
+    mov ecx,eax
+    xor eax,eax
+    .while 1
+
+        sub ecx,'0'
+        .break .ifc
+        .break .if ecx > 9
+        lea ecx,[eax*8+ecx]
+        lea eax,[eax*2+ecx]
+        movzx ecx,word ptr [edx]
+        add edx,2
+    .endw
+
+    pop ecx
+    .if ecx == '-'
+
+        neg eax
+    .endif
+    ret
+
+_wtol endp
+
+    END

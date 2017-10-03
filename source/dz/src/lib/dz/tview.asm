@@ -1127,7 +1127,9 @@ tview proc uses esi edi ebx filename, offs
 
                     .if mousep() == 2
 
-                        .gotosw(KEY_F5)
+                        cmmcopy()
+                        .endc
+                        ;.gotosw(KEY_F5)
                     .endif
                     .endc .if !eax
 

@@ -76,7 +76,7 @@ _divow proc uses esi edi ebx dividend:ptr, divisor:ptr, reminder:ptr
             adc edx,edx
             adc ebx,ebx
             adc ecx,ecx
-            jc  @F
+            .break .ifc
             .if ecx == [edi+12]
                 .if ebx == [edi+8]
                     .if edx == [edi+4]
@@ -84,24 +84,12 @@ _divow proc uses esi edi ebx dividend:ptr, divisor:ptr, reminder:ptr
                     .endif
                 .endif
             .endif
-            ja  @F
+            .break .ifa
             inc divisor
         .endw
 
         .while 1
 
-            mov edi,dividend
-            mov esi,[edi]
-            adc [edi],esi
-            mov esi,[edi+4]
-            adc [edi+4],esi
-            mov esi,[edi+8]
-            adc [edi+8],esi
-            mov esi,[edi+12]
-            adc [edi+12],esi
-            dec divisor
-            .break .ifs
-         @@:
             rcr ecx,1
             rcr ebx,1
             rcr edx,1
@@ -114,37 +102,48 @@ _divow proc uses esi edi ebx dividend:ptr, divisor:ptr, reminder:ptr
             sbb [edi+12],ecx
 
             cmc
-            .continue .if CARRY?
+            .ifnc
+                .repeat
+                    mov edi,dividend
+                    mov esi,[edi]
+                    add [edi],esi
+                    mov esi,[edi+4]
+                    adc [edi+4],esi
+                    mov esi,[edi+8]
+                    adc [edi+8],esi
+                    mov esi,[edi+12]
+                    adc [edi+12],esi
 
-            .repeat
-                mov edi,dividend
-                mov esi,[edi]
-                add [edi],esi
-                mov esi,[edi+4]
-                adc [edi+4],esi
-                mov esi,[edi+8]
-                adc [edi+8],esi
-                mov esi,[edi+12]
-                adc [edi+12],esi
-
-                dec divisor
-                mov edi,reminder
-                .ifs
+                    dec divisor
+                    mov edi,reminder
+                    .ifs
+                        add [edi],eax
+                        adc [edi+4],edx
+                        adc [edi+8],ebx
+                        adc [edi+12],ecx
+                        .break(1)
+                    .endif
+                    shr ecx,1
+                    rcr ebx,1
+                    rcr edx,1
+                    rcr eax,1
                     add [edi],eax
                     adc [edi+4],edx
                     adc [edi+8],ebx
                     adc [edi+12],ecx
-                    .break(1)
-                .endif
-                shr ecx,1
-                rcr ebx,1
-                rcr edx,1
-                rcr eax,1
-                add [edi],eax
-                adc [edi+4],edx
-                adc [edi+8],ebx
-                adc [edi+12],ecx
-            .until CARRY?
+                .untilb
+            .endif
+            mov edi,dividend
+            mov esi,[edi]
+            adc [edi],esi
+            mov esi,[edi+4]
+            adc [edi+4],esi
+            mov esi,[edi+8]
+            adc [edi+8],esi
+            mov esi,[edi+12]
+            adc [edi+12],esi
+            dec divisor
+            .break .ifs
         .endw
     .until 1
     ret

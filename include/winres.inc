@@ -162,8 +162,8 @@ RCEND macro
     .rsrc ends
 ifdef __PE__
     .hdr$2 segment dword flat public 'HDR'
-        org 0x5C
-        dw 2
+    org 0x5C
+    dw 2
     .hdr$2 ends
 endif
     endm

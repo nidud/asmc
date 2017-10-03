@@ -1,20 +1,16 @@
 include ctype.inc
 
-	.code
+.code
 
-	option stackbase:esp
+isprint proc char:SINT
 
-isprint PROC char:SINT
-	movzx	eax,BYTE PTR [esp+4]
-	cmp	eax,20h
-	jb	@F
-	cmp	eax,7Fh
-	jnb	@F
-	ret
-@@:
-	xor	eax,eax
-	ret
-isprint ENDP
+    movzx eax,BYTE PTR char
+    .if eax < 0x20 || eax >= 0x7F
+        xor eax,eax
+    .endif
+    ret
 
-	END
+isprint endp
+
+    END
 

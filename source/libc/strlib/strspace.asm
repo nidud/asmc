@@ -5,31 +5,29 @@
 ;
 include strlib.inc
 
-	.code
+    .code
 
-	option stackbase:esp
+strspace proc string:LPSTR
 
-strspace PROC string:LPSTR
-	mov	ecx,string
-@@:
-	mov	al,[ecx]
-	inc	ecx
-	cmp	al,' '
-	je	found
-	cmp	al,9
-	je	found
-	test	al,al
-	jnz	@B
-	dec	ecx
-	xor	eax,eax
-	jmp	toend
-found:
-	mov	eax,ecx
-	dec	eax
-	movzx	ecx,byte ptr [eax]
-toend:
-	ret
-strspace ENDP
+    mov ecx,string
 
-	END
+    .repeat
+        .repeat
+            mov al,[ecx]
+            inc ecx
+            .if al == ' ' || al == 9
+                mov eax,ecx
+                dec eax
+                movzx ecx,byte ptr [eax]
+                .break(1)
+            .endif
+        .until !al
+        dec ecx
+        xor eax,eax
+    .until 1
+    ret
+
+strspace endp
+
+    END
 

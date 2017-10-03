@@ -1,45 +1,46 @@
 include stdlib.inc
 
-	.code
+    .code
 
-	option stackbase:esp
 
-atol	proc string:LPSTR
-	mov	edx,string
-	xor	ecx,ecx
-@@:
-	movzx	eax,byte ptr [edx]
-	inc	edx
-	cmp	eax,' '
-	je	@B
-	push	eax
-	cmp	eax,'-'
-	je	@2
-	cmp	eax,'+'
-	jne	@F
-@2:
-	mov	al,[edx]
-	inc	edx
-@@:
-	mov	ecx,eax
-	xor	eax,eax
-@@:
-	sub	ecx,'0'
-	jb	@F
-	cmp	ecx,9
-	ja	@F
-	lea	ecx,[eax*8+ecx]
-	lea	eax,[eax*2+ecx]
-	movzx	ecx,byte ptr [edx]
-	inc	edx
-	jmp	@B
-@@:
-	pop	ecx
-	cmp	ecx,'-'
-	jne	@F
-	neg	eax
-@@:
-	ret
-atol	endp
+atol proc string:LPSTR
 
-	END
+    mov edx,string
+    xor ecx,ecx
+
+    .repeat
+
+        movzx eax,byte ptr [edx]
+        inc edx
+        .continue(0) .if al == ' '
+
+        push eax
+        .if al == '-' || al == '+'
+
+            mov al,[edx]
+            inc edx
+        .endif
+
+        mov ecx,eax
+        xor eax,eax
+
+        .while 1
+
+            sub ecx,'0'
+            .break .ifc
+            .break .if ecx > 9
+            lea ecx,[eax*8+ecx]
+            lea eax,[eax*2+ecx]
+            movzx ecx,byte ptr [edx]
+            inc edx
+        .endw
+
+        pop ecx
+        .break .if cl != '-'
+        neg eax
+    .until 1
+    ret
+
+atol endp
+
+    END

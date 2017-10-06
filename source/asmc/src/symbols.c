@@ -75,6 +75,7 @@
 
 extern int define_LINUX;
 extern int define_WIN64;
+extern int define_PE;
 
 extern struct asym *FileCur;  /* @FileCur symbol    */
 extern struct asym *LineCur;  /* @Line symbol	    */
@@ -521,6 +522,15 @@ void SymInit( void )
 	sym->isdefined = TRUE;
 	sym->predefined = TRUE;
 	sym->offset = define_WIN64;
+	sym->sfunc_ptr = NULL;
+    }
+
+    if ( define_PE ) {
+	sym = SymCreate( "__PE__" );
+	sym->state = SYM_TMACRO;
+	sym->isdefined = TRUE;
+	sym->predefined = TRUE;
+	sym->offset = define_PE;
 	sym->sfunc_ptr = NULL;
     }
 

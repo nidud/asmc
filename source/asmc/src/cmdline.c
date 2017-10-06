@@ -70,6 +70,7 @@ struct global_options Options = {
 
 int define_LINUX = 0;
 int define_WIN64 = 0;
+int define_PE = 0;
 
 char *DefaultDir[NUM_FILE_TYPES] = { NULL };
 static int OptValue;
@@ -463,6 +464,7 @@ static void ProcessOption( char **cmdline, char *buffer )
     case 'ep':		// -pe
 	Options.output_format = OFORMAT_BIN;
 	Options.sub_format = SFORMAT_PE;
+	define_PE = 1;
 	return;
     case 'r':		// -r
 	Options.process_subdir = 1;

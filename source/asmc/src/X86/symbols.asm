@@ -9,6 +9,7 @@ public	SymCmpFunc
 public	resw_table
 extern	define_LINUX:DWORD
 extern	define_WIN64:DWORD
+extern	define_PE:DWORD
 
 DeleteProc		PROTO :DWORD
 ReleaseMacroData	PROTO :DWORD
@@ -718,6 +719,15 @@ endif
 	mov [eax].asym.state,SYM_TMACRO
 	or  [eax].asym.flag,SFL_ISDEFINED or SFL_PREDEFINED
 	mov ecx,define_WIN64
+	mov [eax].asym._offset,ecx
+	mov [eax].asym.sfunc_ptr,0
+    .endif
+
+    .if define_PE
+	SymCreate("__PE__")
+	mov [eax].asym.state,SYM_TMACRO
+	or  [eax].asym.flag,SFL_ISDEFINED or SFL_PREDEFINED
+	mov ecx,define_PE
 	mov [eax].asym._offset,ecx
 	mov [eax].asym.sfunc_ptr,0
     .endif

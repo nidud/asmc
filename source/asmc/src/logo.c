@@ -2,7 +2,7 @@
 #include <globals.h>
 
 char cp_logo[] =
- "Asmc Macro Assembler Version " ASMC_VERSSTR "B\n"
+ "Asmc Macro Assembler Version " ASMC_VERSSTR "C\n"
  "Portions Copyright (c) 1992-2002 Sybase, Inc. All Rights Reserved.\n\n";
 
 static char cp_usage[] =
@@ -19,10 +19,10 @@ static char cp_options[] =
  "/Cs C stack: push USER regs first          /Sn Suppress symbol-table listing\n"
  "/coff Generate COFF format object file     /Sp[n] Set segment alignment\n"
  "/C<p|u|x> Set OPTION CASEMAP               /swc C .SWITCH (default)\n"
- "/D<name>[=text] Define text macro          /swn No table in .SWITCH (default)\n"
+ "/D<name>[=text] Define text macro          /swn No table in .SWITCH\n"
  "/e<number> Set error limit number          /swp Pascal .SWITCH (auto.break)\n"
  "/elf Generate 32-bit ELF object file       /swr Use reg [R|E]AX in switch code\n"
- "/elf64 Generate 64-bit ELF object file     /swt Use table in .SWITCH\n"
+ "/elf64 Generate 64-bit ELF object file     /swt Use table in .SWITCH (default)\n"
  "/EP Output preprocessed listing to stdout  /Sx List false conditionals\n"
  "/eq Don't display error messages           /w Same as /W0 /WX\n"
  "/Fd[file] Write import definition file     /W<number> Set warning level\n"

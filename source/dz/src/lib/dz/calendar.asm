@@ -49,348 +49,26 @@ CALENDAR2_RC label word
     cp_month label dword
             dd cp_jan,cp_feb,cp_mar,cp_apr,cp_may,cp_jun
             dd cp_jul,cp_aug,cp_sep,cp_oct,cp_nov,cp_dec
-
-keylocal label dword
-    dd MOUSECMD,    event_mouse
-    dd KEY_ESC,     event_ESC
-    dd KEY_HOME,    event_HOME
-    dd KEY_RIGHT,   event_nextday
-    dd KEY_LEFT,    event_prevday
-    dd KEY_UP,      event_UP
-    dd KEY_DOWN,    event_DOWN
-    dd KEY_PGUP,    event_prevmnd
-    dd KEY_PGDN,    event_nextmnd
-    dd KEY_CTRLPGUP,event_prevyear
-    dd KEY_CTRLPGDN,event_nextyear
-    dd KEY_ENTER,   event_ENTER
-    dd KEY_ALTX,    event_ESC
-ifdef USE_MDALTKEYS
-    dd KEY_ALTUP,   event_ALTUP
-    dd KEY_ALTDN,   event_ALTDN
-    dd KEY_ALTLEFT, event_ALTLEFT
-    dd KEY_ALTRIGHT,event_ALTRIGHT
-endif
-    keycount = (($ - offset keylocal) / 8)
-    keypos          db 1,5,9,13,17,21,25
-    format_s_d      db '%s %d',0
-    format_2d       db '%2d',0
-
-    DLG_Calendar    dd 0
-    DLG_Calendar2   dd 0
-    xpos            dd 0
-    ypos            dd 0
-    curyear         dd 0
-    curmonth        dd 0
-    curday          dd 0
-    year            dd 0
-    month           dd 0
-    day             dd 0
-    week_day        dd 0
-    days_in_month   dd 0
-    current_year    dd 0
-    current_month   dd 0
-    calender        dd 0
-    result          dd 0
-
+    keypos  db 1,5,9,13,17,21,25
 
     .code
 
-    option  proc: private
+cmcalendar proc uses esi edi ebx
 
-getcurdate proc  ; GET SYSTEM DATE
-    GetWeekDay(curyear, curmonth, 0)
-    mov week_day,eax
-    DaysInMonth(curyear, curmonth)
-    mov days_in_month,eax
-    mov edx,curday
-    mov day,edx
-    mov ebx,curmonth
-    mov month,ebx
-    mov ecx,curyear
-    mov year,ecx
-    ret
-getcurdate endp
-
-incyear proc
-    mov ecx,year
-    cmp ecx,MAXYEAR
-    je  @F
-    inc ecx
-    ret
-@@:
-    mov ecx,STARTYEAR
-    ret
-incyear endp
-
-decyear proc
-    mov ecx,year
-    test    ecx,ecx
-    jz  @F
-    dec ecx
-    ret
-@@:
-    mov ecx,MAXYEAR
-    ret
-decyear endp
-
-putdate proc uses esi edi
-
-    mov eax,year
-    mov edx,month
-
-    .if eax != current_year || edx != current_month
-        mov current_month,edx
-        mov current_year,eax
-        mov eax,xpos
-        mov edx,ypos
-        add al,3
-        add dl,10
-        scputw(eax, edx, 14, 0020h)
-        mov ebx,month
-        mov ebx,cp_month[ebx*4-4]
-    scputf(eax, edx, 0, 0, &format_s_d, ebx, year)
-        mov ebx,xpos
-        mov edx,ypos
-        add dl,3
-        mov ecx,6
-        mov eax,20h
-        or  ah,at_background[B_Dialog]
-        or  ah,at_foreground[F_Dialog]
-        .repeat
-            scputw(ebx, edx, 29, eax)
-            inc dl
-        .untilcxz
-    .endif
-
-    xor esi,esi
-    mov edi,3
-    .while  esi < days_in_month && edi < 10
-        xor ecx,ecx
-        .while  ecx < 7
-            mov eax,3   ; first line
-            .if  (week_day <= ecx && edi == eax) || \
-                ((week_day > ecx || edi != eax) && edi > eax && esi < days_in_month)
-                inc esi
-                push    ecx
-                push    edi
-                mov ebx,ecx
-                mov cl,at_background[B_Dialog]
-                mov al,at_foreground[F_DialogKey]
-                .if esi != day
-                    mov al,at_foreground[F_Dialog]
-                .endif
-                or  cl,al
-                mov al,keypos[ebx]
-                mov ebx,edi
-                add ebx,ypos
-                add eax,xpos
-                mov edi,eax
-        scputf(eax, ebx, ecx, 2, &format_2d, esi)
-                .if curday == esi
-                    mov eax,curmonth
-                    .if eax == month
-                        mov eax,curyear
-                        .if eax == year
-                            mov al,4
-                            or  al,at_background[B_Dialog]
-                            scputa(edi, ebx, 2, eax)
-                        .endif
-                    .endif
-                .endif
-                pop edi
-                pop ecx
-            .endif
-            add ecx,1
-        .endw
-        add edi,1
-    .endw
-    ret
-putdate endp
-
-setdate proc
-    mov day,edx
-    mov month,ebx
-    mov year,ecx
-    GetWeekDay(ecx, ebx, 0)
-    mov week_day,eax
-    DaysInMonth(year, ebx)
-    mov days_in_month,eax
-    putdate()
-    ret
-setdate endp
-
-ifdef USE_MDALTKEYS
-
-event_ALTUP proc
-    mov eax,rcmoveup
-    jmp DLMOVE_MOVE
-event_ALTUP endp
-
-event_ALTDN proc
-    mov eax,rcmovedn
-    jmp DLMOVE_MOVE
-event_ALTDN endp
-
-event_ALTLEFT proc
-    mov eax,rcmoveleft
-    jmp DLMOVE_MOVE
-event_ALTLEFT endp
-
-event_ALTRIGHT proc
-    mov eax,rcmoveright
-event_ALTRIGHT endp
-
-DLMOVE_MOVE proc uses esi edi ebx
-    mov ebx,DLG_Calendar
-    mov esi,[ebx].S_DOBJ.dl_wp
-    mov edi,[ebx].S_DOBJ.dl_rect
-    push    eax
-    dlhide(DLG_Calendar2)
-    rcclrshade(edi, esi)
-    pop eax
-    push dword ptr [ebx].S_DOBJ.dl_flag
-    push esi
-    push edi
-    call eax
-    mov di,ax
-    mov word ptr [ebx].S_DOBJ.dl_rect,ax
-    mov byte ptr xpos,al
-    mov byte ptr ypos,ah
-    add eax,0A03h
-    mov ebx,DLG_Calendar2
-    mov word ptr [ebx].S_DOBJ.dl_rect,ax
-    rcsetshade(edi, esi)
-    dlshow(ebx)
-    ret
-DLMOVE_MOVE endp
-
-endif
-
-event_ENTER proc
-    mov eax,1
-    mov result,eax
-event_ENTER endp
-
-event_ESC proc
-    inc byte ptr calender
-    ret
-event_ESC endp
-
-event_HOME proc
-    call    getcurdate
-    jmp putdate
-event_HOME endp
-
-event_nextday proc
-    mov edx,day
-    inc edx
-    cmp edx,days_in_month
-    ja  event_nextmnd
-    mov day,edx
-    jmp putdate
-event_nextday endp
-
-event_prevday proc
-    mov edx,day
-    cmp edx,1
-    je  @F
-    mov ecx,year
-    mov ebx,month
-    dec edx
-    jmp setdate
-@@:
-    event_prevmnd()
-    mov eax,days_in_month
-    mov day,eax
-    jmp putdate
-event_prevday endp
-
-event_UP proc
-    mov eax,7
-    cmp day,eax
-    jbe event_prevday
-    sub day,eax
-    jmp putdate
-event_UP endp
-
-event_DOWN proc
-    mov eax,day
-    add eax,7
-    cmp eax,days_in_month
-    ja  event_nextday
-    mov day,eax
-    jmp putdate
-event_DOWN endp
-
-event_prevmnd proc
-    mov edx,1
-    mov ebx,month
-    mov ecx,year
-    cmp ebx,1
-    je  @F
-    dec ebx
-    jmp setdate
-@@:
-    mov ebx,12
-    decyear()
-    jmp setdate
-event_prevmnd endp
-
-event_nextmnd proc
-    mov ebx,month
-    cmp ebx,12
-    je  event_nextyear
-    mov edx,1
-    mov ecx,year
-    inc ebx
-    jmp setdate
-event_nextmnd endp
-
-event_prevyear proc
-    mov edx,1
-    mov ebx,edx
-    decyear()
-    jmp setdate
-event_prevyear endp
-
-event_nextyear proc
-    mov edx,1
-    mov ebx,edx
-    incyear()
-    jmp setdate
-event_nextyear endp
-
-event_mouse proc
-    mousex()
-    mov edx,eax
-    mousey()
-    mov ebx,DLG_Calendar
-    rcxyrow(dword ptr [ebx].S_DOBJ.dl_rect, edx, eax)
-    test    eax,eax
-    jz  event_ESC
-    dlhide(DLG_Calendar2)
-    dlmove(DLG_Calendar)
-    mov ebx,DLG_Calendar
-    sub eax,eax
-    mov al,[ebx+4]
-    mov dl,al
-    mov xpos,eax
-    mov al,[ebx+5]
-    mov ypos,eax
-    mov ah,al
-    mov al,dl
-    add ax,0A03h
-    mov ebx,DLG_Calendar2
-    mov [ebx+4],ax
-    dlshow(DLG_Calendar2)
-    ret
-event_mouse endp
-
-    option proc:PUBLIC
-
-cmcalendar proc uses ebx
   local t:SYSTEMTIME
+  local mouseloop
+  local dialog,dialog2
+  local xpos,ypos
+  local curyear,curmonth,curday
+  local year,month,day
+  local week_day
+  local days_in_month
+  local current_year
+  local current_month
+  local result
+
     GetLocalTime(&t)
+
     movzx eax,t.wDay
     mov curday,eax
     mov ax,t.wMonth
@@ -398,39 +76,290 @@ cmcalendar proc uses ebx
     mov ax,t.wYear
     mov curyear,eax
     xor eax,eax
-    mov calender,eax
     mov current_year,eax
     mov current_month,eax
     mov result,eax
+
     .if rsopen(&CALENDAR_RC)
-        mov DLG_Calendar,eax
+
+        mov dialog,eax
         mov ebx,eax
         sub eax,eax
         mov al,[ebx][4]
         mov xpos,eax
         mov al,[ebx][5]
         mov ypos,eax
-        dlshow(DLG_Calendar)
-    rsopen(&CALENDAR2_RC)
-        mov DLG_Calendar2,eax
+        dlshow(dialog)
+        rsopen(&CALENDAR2_RC)
+        mov dialog2,eax
         dlshow(eax)
-    getcurdate()
-    setdate()
-    msloop()
-        .while !calender
-        tgetevent()
-            mov ecx,keycount
-            xor ebx,ebx
-            .repeat
-                .if eax == keylocal[ebx]
-                    call keylocal[ebx+4]
-                    .break
+        mov edx,curday
+        mov ebx,curmonth
+        mov ecx,curyear
+        mov esi,1
+        xor edi,edi
+        mov mouseloop,1
+
+        .while 1
+
+            .if esi
+                mov day,edx
+                mov month,ebx
+                mov year,ecx
+                mov week_day,GetWeekDay(ecx, ebx, 0)
+                mov days_in_month,DaysInMonth(year, ebx)
+                inc edi
+                xor esi,esi
+            .endif
+
+            .if edi
+
+                mov eax,year
+                mov edx,month
+
+                .if eax != current_year || edx != current_month
+
+                    mov current_month,edx
+                    mov current_year,eax
+                    mov eax,xpos
+                    mov edx,ypos
+                    add al,3
+                    add dl,10
+                    scputw(eax, edx, 14, 0020h)
+                    mov ebx,month
+                    mov ebx,cp_month[ebx*4-4]
+                    scputf(eax, edx, 0, 0, "%s %d", ebx, year)
+                    mov ebx,xpos
+                    mov edx,ypos
+                    add dl,3
+                    mov ecx,6
+                    mov eax,20h
+                    or  ah,at_background[B_Dialog]
+                    or  ah,at_foreground[F_Dialog]
+                    .repeat
+                        scputw(ebx, edx, 29, eax)
+                        inc dl
+                    .untilcxz
                 .endif
-                add ebx,8
-            .untilcxz
+
+                xor esi,esi
+                mov edi,3
+                .while esi < days_in_month && edi < 10
+                    xor ecx,ecx
+                    .while ecx < 7
+                        mov eax,3   ; first line
+                        .if (week_day <= ecx && edi == eax) || \
+                            ((week_day > ecx || edi != eax) && edi > eax && esi < days_in_month)
+                            inc esi
+                            push ecx
+                            push edi
+                            mov ebx,ecx
+                            mov cl,at_background[B_Dialog]
+                            mov al,at_foreground[F_DialogKey]
+                            .if esi != day
+                                mov al,at_foreground[F_Dialog]
+                            .endif
+                            or  cl,al
+                            mov al,keypos[ebx]
+                            mov ebx,edi
+                            add ebx,ypos
+                            add eax,xpos
+                            mov edi,eax
+                            scputf(eax, ebx, ecx, 2, "%2d", esi)
+                            .if curday == esi
+                                mov eax,curmonth
+                                .if eax == month
+                                    mov eax,curyear
+                                    .if eax == year
+                                        mov al,4
+                                        or  al,at_background[B_Dialog]
+                                        scputa(edi, ebx, 2, eax)
+                                    .endif
+                                .endif
+                            .endif
+                            pop edi
+                            pop ecx
+                        .endif
+                        add ecx,1
+                    .endw
+                    add edi,1
+                .endw
+
+                .if mouseloop
+
+                    msloop()
+                    dec mouseloop
+                .endif
+                xor edi,edi
+                xor esi,esi
+            .endif
+
+            .switch tgetevent()
+
+            .case MOUSECMD
+                mousex()
+                mov edx,eax
+                mousey()
+                mov ebx,dialog
+                .break .if !rcxyrow(dword ptr [ebx].S_DOBJ.dl_rect, edx, eax)
+                dlhide(dialog2)
+                dlmove(dialog)
+                mov ebx,dialog
+                sub eax,eax
+                mov al,[ebx+4]
+                mov dl,al
+                mov xpos,eax
+                mov al,[ebx+5]
+                mov ypos,eax
+                mov ah,al
+                mov al,dl
+                add ax,0x0A03
+                mov ebx,dialog2
+                mov [ebx+4],ax
+                dlshow(dialog2)
+                .endc
+
+            .case KEY_ENTER
+                mov eax,1
+                mov result,eax
+            .case KEY_ALTX
+            .case KEY_ESC
+                .break
+
+            .case KEY_HOME
+                GetWeekDay(curyear, curmonth, 0)
+                mov week_day,eax
+                DaysInMonth(curyear, curmonth)
+                mov days_in_month,eax
+                mov edx,curday
+                mov day,edx
+                mov ebx,curmonth
+                mov month,ebx
+                mov ecx,curyear
+                mov year,ecx
+                inc edi
+                .endc
+
+            .case KEY_RIGHT
+                mov edx,day
+                inc edx
+                .if edx > days_in_month
+                    .gotosw(KEY_PGDN)
+                .endif
+                mov day,edx
+                inc edi
+                .endc
+
+            .case KEY_LEFT
+                mov edx,day
+                .if edx != 1
+                    mov ecx,year
+                    mov ebx,month
+                    dec edx
+                    inc edi
+                .else
+                    mov edx,1
+                    mov ebx,month
+                    mov ecx,year
+                    .if ebx != 1
+                        dec ebx
+                    .else
+                        mov ebx,12
+                        .if ecx
+                            dec ecx
+                        .else
+                            mov ecx,MAXYEAR
+                        .endif
+                    .endif
+                    mov day,edx
+                    mov month,ebx
+                    mov year,ecx
+                    mov week_day,GetWeekDay(ecx, ebx, 0)
+                    mov days_in_month,DaysInMonth(year, ebx)
+                    mov day,eax
+                    inc edi
+                .endif
+                .endc
+
+            .case KEY_UP
+                mov eax,7
+                .if day <= eax
+
+                    .gotosw(KEY_LEFT)
+                .endif
+                sub day,eax
+                inc edi
+                .endc
+
+            .case KEY_DOWN
+                mov eax,day
+                add eax,7
+                .if eax > days_in_month
+
+                    .gotosw(KEY_RIGHT)
+                .endif
+                mov day,eax
+                inc edi
+                .endc
+
+            .case KEY_PGUP
+                mov edx,1
+                mov ebx,month
+                mov ecx,year
+                .if ebx != 1
+                    dec ebx
+                .else
+                    mov ebx,12
+                    mov ecx,year
+                    .if ecx
+                        dec ecx
+                    .else
+                        mov ecx,MAXYEAR
+                    .endif
+                .endif
+                inc esi
+                .endc
+
+            .case KEY_PGDN
+                mov ebx,month
+                .if ebx == 12
+
+                    .gotosw(KEY_CTRLPGDN)
+                .endif
+                mov edx,1
+                mov ecx,year
+                inc ebx
+                inc esi
+                .endc
+
+            .case KEY_CTRLPGUP
+                mov edx,1
+                mov ebx,edx
+                mov ecx,year
+                .if ecx
+                    dec ecx
+                .else
+                    mov ecx,MAXYEAR
+                .endif
+                inc esi
+                .endc
+
+            .case KEY_CTRLPGDN
+                mov edx,1
+                mov ebx,edx
+                mov ecx,year
+                .if ecx != MAXYEAR
+                    inc ecx
+                .else
+                    mov ecx,STARTYEAR
+                .endif
+                inc esi
+                .endc
+            .endsw
         .endw
-        dlclose(DLG_Calendar2)
-        dlclose(DLG_Calendar)
+
+        dlclose(dialog2)
+        dlclose(dialog)
         mov edx,day
         mov ebx,month
         mov ecx,year

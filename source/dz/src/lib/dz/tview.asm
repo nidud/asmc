@@ -245,6 +245,7 @@ read_line_table proc uses edi
         dec [ebp].tv_lcount
         dec [ebp].tv_lcount
     .until 1
+
     .ifnz
         mov eax,_scrcol
         mul [ebp].tv_rowcnt
@@ -261,16 +262,22 @@ read_line_table proc uses edi
 read_line_table endp
 
 parse_line proc
+
     push esi
     push edi
     xor  esi,esi
+
     .while 1
+
         ogetc()
         .break .ifz
+
         inc [ebp].tv_offset
         .if al == 10 || al == 13
+
             ogetc()
             .break .ifz
+
             inc [ebp].tv_offset
             .if al != 10 && al != 13
                 dec [ebp].tv_offset
@@ -280,6 +287,7 @@ parse_line proc
             inc eax
             .break
         .endif
+
         .if al == 9
             mov eax,esi
             add eax,[ebp].tv_curcol
@@ -297,13 +305,18 @@ parse_line proc
             inc edi
             inc esi
         .endif
+
         .if esi == _scrcol
+
             ogetc()
             .break .ifz
+
             inc [ebp].tv_offset
             .if al == 10 || al == 13
+
                 ogetc()
                 .break .ifz
+
                 inc [ebp].tv_offset
                 .if al != 10 && al != 13
                     dec [ebp].tv_offset
@@ -317,19 +330,26 @@ parse_line proc
             .break .ifnb
         .endif
     .endw
+
     pop edi
     pop esi
+
     .ifnz
         add edi,_scrcol
     .endif
     ret
+
 parse_line endp
 
 read_wrap proc uses edi
+
     read_line_table()
+
     .repeat
+
         mov eax,0
         .break .ifz
+
         mov edi,[ebp].tv_screen
         mov [ebp].tv_bsize,eax
         mov [ebp].tv_lcount,eax
@@ -346,14 +366,20 @@ read_wrap proc uses edi
         or  eax,1
     .until 1
     ret
+
 read_wrap endp
 
 read_text proc uses edi
+
     read_line_table()
+
     .repeat
+
         .break .ifz
+
         mov edx,[ebp].tv_maxcol
         mov eax,[ebp].tv_lcount
+
         .while eax
             mov ecx,[ebp+eax*4].tv_line_table
             dec eax
@@ -362,10 +388,13 @@ read_text proc uses edi
                 mov edx,ecx
             .endif
         .endw
+
         mov [ebp].tv_maxcol,edx
         mov edi,[ebp].tv_screen
         mov [ebp].tv_bsize,0
+
         .while 1
+
             mov eax,[ebp].tv_bsize
             inc [ebp].tv_bsize
             .break .if eax >= [ebp].tv_lcount
@@ -387,6 +416,7 @@ read_text proc uses edi
         or eax,1
     .until 1
     ret
+
 read_text endp
 
 mk_hexword proc
@@ -404,11 +434,15 @@ mk_hexword proc
 mk_hexword endp
 
 read_hex proc uses esi edi ebx
+
     .repeat
+
         read_line_table()
         .break .ifz
+
         ogetc()
         .break .ifz
+
         dec STDI.ios_i
         push STDI.ios_c
         mov eax,[ebp].tv_rowcnt
@@ -420,20 +454,27 @@ read_hex proc uses esi edi ebx
         xor ecx,ecx
         mov [ebp].tv_scount,eax
         mov esi,[ebp].tv_screen
+
         .repeat
+
             mov edi,esi
             lea ebx,[ebp+ecx*4+3].tv_line_table
+
             .if !(tvflag & _TV_HEXOFFSET)
+
                 sprintf(edi, "%010u  ", [ebx-3])
                 add edi,9
             .else
+
                 .for edx=4: edx: edx--, ebx--
+
                     mov al,[ebx]
                     mk_hexword()
                     stosw
                 .endf
                 inc edi
             .endif
+
             mov edx,STDI.ios_c
             mov eax,16
             add edi,3
@@ -477,6 +518,7 @@ read_hex proc uses esi edi ebx
         mov eax,1
     .until 1
     ret
+
 read_hex endp
 
 previous_line proc
@@ -669,6 +711,7 @@ continuesearch proc uses esi lpOffset:ptr
 continuesearch endp
 
 chexbuf proc uses esi edi ebx off, len
+
   local result
 
     mov result,0
@@ -679,7 +722,9 @@ chexbuf proc uses esi edi ebx off, len
     mul ecx
     inc eax
 
-    .if malloc(eax)
+    .repeat
+
+        .break .if !malloc(eax)
 
         mov edi,eax
         mov result,eax
@@ -695,60 +740,64 @@ chexbuf proc uses esi edi ebx off, len
             lea edx,[edi+16*3+2]
 
             .while ebx && esi < len
-            .if esi == 8
+                .if esi == 8
 
-                strcpy(edi, "| ")
-                add edi,2
-            .endif
-            ogetc()
-            jz toend
-            push eax
-            sprintf(edi, "%02X", eax)
-            add edi,3
-            mov byte ptr [edi-1],' '
-            pop eax
-            .if eax < ' '
+                    strcpy(edi, "| ")
+                    add edi,2
+                .endif
+                ogetc()
+                .break(2) .ifz
+                push eax
+                sprintf(edi, "%02X", eax)
+                add edi,3
+                mov byte ptr [edi-1],' '
+                pop eax
+                .if eax < ' '
 
-                mov eax,'.'
-            .endif
-            sprintf(edx, "%c", eax)
-            dec ebx
-            inc edx
-            inc esi
-        .endw
-        sub len,esi
-        mov eax,'    '
-        .while esi < 16
-            .if esi == 8
+                    mov eax,'.'
+                .endif
+                sprintf(edx, "%c", eax)
+                dec ebx
+                inc edx
+                inc esi
+            .endw
+            sub len,esi
+            mov eax,'    '
+            .while esi < 16
+                .if esi == 8
 
+                    stosw
+                .endif
                 stosw
-            .endif
+                stosb
+                inc esi
+            .endw
+            mov edi,edx
+            mov eax,0x0A0D
             stosw
-            stosb
-            inc esi
         .endw
-        mov edi,edx
-        mov eax,0A0Dh
-        stosw
-    .endw
-    mov byte ptr [edi],0
-    mov edx,edi
-    sub edx,result
-    inc edx
-    .endif
-toend:
+        mov byte ptr [edi],0
+        mov edx,edi
+        sub edx,result
+        inc edx
+    .until 1
+
     mov eax,result
     ret
+
 chexbuf endp
 
 cmmcopy proc uses esi edi ebx
+
   local lb[128]:byte
+
     mov edx,IDD_TVQuickMenu
     mov eax,keybmouse_x
     mov esi,eax
     mov [edx+6],al
     mov ebx,keybmouse_y
     mov [edx+7],bl
+
     .if rsmodal(edx)
 
         .if eax != 1
@@ -773,6 +822,7 @@ cmmcopy proc uses esi edi ebx
         .endif
     .endif
     ret
+
 cmmcopy endp
 
 update_dialog proc uses edi ebx
@@ -808,6 +858,7 @@ update_dialog proc uses edi ebx
         scputs(ebx, edi, 0, ecx, eax)
     .endif
     ret
+
 update_dialog endp
 
 mouse_scroll proc
@@ -871,6 +922,7 @@ mouse_scroll proc
     push ecx
     mov ebx,esi
     sub ebx,3
+
     .if eax >= ebx
         add ebx,3+3
         .if eax >= ebx
@@ -882,6 +934,7 @@ mouse_scroll proc
             xor eax,eax
         .endif
     .endif
+
     shl eax,2
     .if edx > 12
         mov ecx,_scrrow
@@ -892,12 +945,15 @@ mouse_scroll proc
             xor edx,edx
         .endif
     .endif
+
     shl edx,2
     pop ecx
     ret
+
 mouse_scroll endp
 
 mouse_scroll_proc proc uses esi edi ebx
+
     mov esi,_scrcol
     mov edi,_scrrow
     inc edi
@@ -909,6 +965,7 @@ mouse_scroll_proc proc uses esi edi ebx
     pop edx
     mouse_scroll()
     ret
+
 mouse_scroll_proc endp
 
 tview_update proc
@@ -1686,9 +1743,11 @@ tview proc uses esi edi ebx filename, offs
             mov eax,1
         .endif
     .until 1
+
     pop ebp
     mov esp,ebp
     ret
+
 tview endp
 
     END

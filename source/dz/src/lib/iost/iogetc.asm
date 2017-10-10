@@ -1,38 +1,45 @@
 include iost.inc
 
-	.code
+    .code
 
-	ASSUME	edx:ptr S_IOST
+ogetc proc
+    lea eax,STDI
+ogetc endp
 
-ogetc	PROC
-	lea	eax,STDI
-ogetc	ENDP
+iogetc proc uses edx
 
-iogetc	PROC
-	push	edx
-	mov	edx,eax
-	mov	eax,[edx].ios_i
-	cmp	eax,[edx].ios_c
-	je	read
-do:
-	inc	[edx].ios_i
-	add	eax,[edx].ios_bp
-	movzx	eax,byte ptr [eax]
-toend:
-	pop	edx
-	ret
-read:
-	test	[edx].ios_flag,IO_MEMBUF
-	jnz	@F
-	push	ecx
-	ioread( edx )
-	pop	ecx
-	mov	eax,[edx].ios_i
-	jnz	do
-@@:
-	or	eax,-1
-	xor	edx,edx
-	jmp	toend
-iogetc	ENDP
+    assume edx:ptr S_IOST
 
-	END
+    mov edx,eax
+    mov eax,[edx].ios_i
+
+    .repeat
+
+        .if eax == [edx].ios_c
+
+            .while 1
+
+                .if !([edx].ios_flag & IO_MEMBUF)
+
+                    push ecx
+                    ioread(edx)
+                    pop ecx
+                    mov eax,[edx].ios_i
+                    .break .ifnz
+                .endif
+                or  eax,-1
+                xor edx,edx
+                .break(1)
+            .endw
+        .endif
+
+        inc   [edx].ios_i
+        add   eax,[edx].ios_bp
+        movzx eax,byte ptr [eax]
+
+    .until 1
+    ret
+
+iogetc endp
+
+    END

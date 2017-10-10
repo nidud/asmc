@@ -2,16 +2,16 @@ include io.inc
 include iost.inc
 include dzlib.inc
 
-	.code
+    .code
 
-openfile PROC fname:LPSTR, mode, action
+openfile proc fname:LPSTR, mode, action
 
-	.if osopen( fname, _A_NORMAL, mode, action ) == -1
+    .if osopen(fname, _A_NORMAL, mode, action) == -1
 
-		eropen( fname )
-	.endif
-	ret
+        eropen(fname)
+    .endif
+    ret
 
-openfile ENDP
+openfile endp
 
-	END
+    END

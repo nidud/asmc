@@ -1,15 +1,18 @@
 include iost.inc
 include alloc.inc
 
-	.code
+    .code
 
-iofree	PROC USES eax edx io:PTR S_IOST
-	xor	eax,eax
-	mov	ecx,io
-	push	[ecx].S_IOST.ios_bp
-	mov	[ecx].S_IOST.ios_bp,eax
-	call	free
-	ret
-iofree	ENDP
+iofree proc uses eax edx io:ptr S_IOST
 
-	END
+    xor	 eax,eax
+    mov	 ecx,io
+    push [ecx].S_IOST.ios_bp
+    mov	 [ecx].S_IOST.ios_bp,eax
+    pop	 eax
+    free(eax)
+    ret
+
+iofree endp
+
+    END

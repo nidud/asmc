@@ -50,6 +50,7 @@ externdef   IDD_TVCopy:dword
 externdef   IDD_TVSeek:dword
 externdef   IDD_TVHelp:dword
 externdef   IDD_TVQuickMenu:dword
+externdef   searchstring:byte
 
 PUBLIC      format_lu
 
@@ -59,28 +60,6 @@ cmsearchidd proto :dword
 MAXLINE     equ 8000h
 MAXLINES    equ 256
 
-S_TVIEW         STRUC
-tv_filename     dd ?
-tv_offset       dd ?
-tv_loffs        dd ?
-tv_dialog       dd ?    ; main dialog pointer
-tv_rowcnt       dd ?    ; max lines (23/48)
-tv_lcount       dd ?    ; lines on screen
-tv_scount       dd ?    ; bytes on screen
-tv_maxcol       dd ?    ; max linesize on screen
-tv_curcol       dd ?    ; current line offset (col)
-tv_screen       dd ?    ; screen buffer
-tv_menusline    dd ?
-tv_statusline   dd ?
-tv_cursor       S_CURSOR <> ; cursor (old)
-tv_bsize        dd ?    ; buffer size
-tv_zpos         dd ?    ; temp (mouse)
-tv_tmp          dd ?    ; temp 32
-tv_static_count dd ?        ; line count
-tv_line_table   dd 256 dup(?)   ; line offset in file
-tv_static_table dd MAXLINES dup(?) ; offset of first <MAXLINES> lines
-S_TVIEW         ENDS
-
 .data
 
 cp_deci     db 'Dec'
@@ -88,7 +67,6 @@ cp_hex      db 'Hex  '
 cp_ascii    db 'Ascii'
 cp_wrap     db 'Wrap  '
 cp_unwrap   db 'Unwrap'
-externdef   searchstring:byte
 
 format_lu   db "%u",0
 format_08Xh db "%08Xh",0
@@ -101,7 +79,6 @@ QuickMenuKeys label dword
     dd KEY_F6
     dd KEY_ESC
 
-DLG_Textview    S_DOBJ <?>
 UseClipboard    db ?
 rsrows          db 24
 
@@ -138,8 +115,6 @@ IDD_Menusline   dd Menusline_RC
 
     .code
 
-    assume ebp:ptr S_TVIEW
-
     option proc:private
 
 seek_eax proc
@@ -148,139 +123,28 @@ seek_eax proc
     ret
 seek_eax endp
 
-add_offset proc uses edx
-    mov eax,[ebp].tv_lcount
-    inc [ebp].tv_lcount
-    lea edx,[ebp+eax*4].tv_line_table
-    mov eax,[ebp].tv_offset
-    mov [edx],eax
-    ret
-add_offset endp
-
-read_line_table proc uses edi
-
-    mov [ebp].tv_lcount,1
-    mov eax,[ebp].tv_loffs
-    mov [ebp].tv_line_table,eax
-    mov [ebp].tv_offset,eax
-
-    .repeat
-
-        movzx ecx,tvflag
-        .if ecx & _TV_HEXVIEW
-
-            seek_eax()
-            .break .ifz
-            mov edi,16
-            xor ecx,ecx
-            .while 1
-                mov eax,[ebp].tv_offset
-                add eax,edi
-                mov [ebp].tv_offset,eax
-                .if eax > dword ptr STDI.ios_fsize
-                    mov eax,dword ptr STDI.ios_fsize
-                    mov [ebp].tv_offset,eax
-                    .break
-                .endif
-                add_offset()
-                inc ecx
-                .break .if ecx >= [ebp].tv_rowcnt
-            .endw
-
-        .else
-
-            .break .if ecx & _TV_WRAPLINES
-
-            lea edx,[ebp].tv_static_table
-            mov ecx,[ebp].tv_static_count
-            .repeat
-                .break .if eax == [edx]
-                add edx,4
-            .untilcxz
-
-            .if ecx
-                .repeat
-                    add edx,4
-                    mov eax,[edx]
-                    mov [ebp].tv_offset,eax
-                    add_offset()
-                    mov eax,[ebp].tv_lcount
-                    .if eax > [ebp].tv_rowcnt
-                        dec [ebp].tv_lcount
-                        .break(1)
-                    .endif
-                .untilcxz
-                mov eax,[ebp].tv_offset
-                .if eax == dword ptr STDI.ios_fsize
-                    dec [ebp].tv_lcount
-                    .break
-                .endif
-            .endif
-
-            seek_eax()
-            .break .ifz
-
-            xor edi,edi
-            .while 1
-                ogetc()
-                .break .ifz
-                inc [ebp].tv_offset
-                inc edi
-                .if edi == MAXLINE
-                    xor edi,edi
-                    mov eax,10
-                .endif
-                .if eax == 10
-                    add_offset()
-                    mov eax,[ebp].tv_lcount
-                    .if eax > [ebp].tv_rowcnt
-                        dec [ebp].tv_lcount
-                        .break(1)
-                    .endif
-                .endif
-            .endw
-        .endif
-        add_offset()
-        add_offset()
-        dec [ebp].tv_lcount
-        dec [ebp].tv_lcount
-    .until 1
-
-    .ifnz
-        mov eax,_scrcol
-        mul [ebp].tv_rowcnt
-        mov ecx,eax
-        mov edi,[ebp].tv_screen
-        mov eax,20h
-        rep stosb
-        mov eax,[ebp].tv_loffs
-        mov [ebp].tv_offset,eax
-        seek_eax()
-    .endif
-    ret
-
-read_line_table endp
-
-parse_line proc
+parse_line proc uses ebx offs:ptr, curcol:UINT
 
     push esi
     push edi
     xor  esi,esi
+    mov  eax,offs
+    mov  ebx,[eax]
 
     .while 1
 
         ogetc()
         .break .ifz
 
-        inc [ebp].tv_offset
+        inc ebx
         .if al == 10 || al == 13
 
             ogetc()
             .break .ifz
 
-            inc [ebp].tv_offset
+            inc ebx
             .if al != 10 && al != 13
-                dec [ebp].tv_offset
+                dec ebx
                 dec STDI.ios_i
             .endif
             xor eax,eax
@@ -290,11 +154,11 @@ parse_line proc
 
         .if al == 9
             mov eax,esi
-            add eax,[ebp].tv_curcol
+            add eax,curcol
             add eax,8
             and eax,-8
             sub eax,esi
-            sub eax,[ebp].tv_curcol
+            sub eax,curcol
             add esi,eax
             add edi,eax
         .else
@@ -311,15 +175,15 @@ parse_line proc
             ogetc()
             .break .ifz
 
-            inc [ebp].tv_offset
+            inc ebx
             .if al == 10 || al == 13
 
                 ogetc()
                 .break .ifz
 
-                inc [ebp].tv_offset
+                inc ebx
                 .if al != 10 && al != 13
-                    dec [ebp].tv_offset
+                    dec ebx
                     dec STDI.ios_i
                 .endif
             .endif
@@ -331,6 +195,8 @@ parse_line proc
         .endif
     .endw
 
+    mov edi,offs
+    mov [edi],ebx
     pop edi
     pop esi
 
@@ -341,190 +207,16 @@ parse_line proc
 
 parse_line endp
 
-read_wrap proc uses edi
+previous_line proc uses esi edi ebx offs:ptr, loffs:ptr, sttable:ptr, stcount:UINT,
+    screen:ptr, curcol:UINT
 
-    read_line_table()
+  local tmp:UINT
 
-    .repeat
+    mov esi,offs
+    mov edi,loffs
 
-        mov eax,0
-        .break .ifz
-
-        mov edi,[ebp].tv_screen
-        mov [ebp].tv_bsize,eax
-        mov [ebp].tv_lcount,eax
-        .repeat
-            mov eax,[ebp].tv_bsize
-            inc [ebp].tv_bsize
-            .break .if eax >= [ebp].tv_rowcnt
-            add_offset()
-            parse_line()
-        .untilz
-        mov eax,[ebp].tv_offset
-        sub eax,[ebp].tv_loffs
-        mov [ebp].tv_scount,eax
-        or  eax,1
-    .until 1
-    ret
-
-read_wrap endp
-
-read_text proc uses edi
-
-    read_line_table()
-
-    .repeat
-
-        .break .ifz
-
-        mov edx,[ebp].tv_maxcol
-        mov eax,[ebp].tv_lcount
-
-        .while eax
-            mov ecx,[ebp+eax*4].tv_line_table
-            dec eax
-            sub ecx,[ebp+eax*4].tv_line_table
-            .if ecx > edx
-                mov edx,ecx
-            .endif
-        .endw
-
-        mov [ebp].tv_maxcol,edx
-        mov edi,[ebp].tv_screen
-        mov [ebp].tv_bsize,0
-
-        .while 1
-
-            mov eax,[ebp].tv_bsize
-            inc [ebp].tv_bsize
-            .break .if eax >= [ebp].tv_lcount
-            lea edx,[ebp+eax*4].tv_line_table
-            mov eax,[edx+4]
-            sub eax,[edx]
-            add [ebp].tv_scount,eax
-            .if eax <= [ebp].tv_curcol
-                add edi,_scrcol
-            .else
-                mov eax,[edx]
-                add eax,[ebp].tv_curcol
-                seek_eax()
-                .break(1) .ifz
-                parse_line()
-                .break .ifz
-            .endif
-        .endw
-        or eax,1
-    .until 1
-    ret
-
-read_text endp
-
-mk_hexword proc
-    mov ah,al
-    and eax,0FF0h
-    shr al,4
-    or  eax,3030h
-    .if ah > 39h
-        add ah,7
-    .endif
-    .if al > 39h
-        add al,7
-    .endif
-    ret
-mk_hexword endp
-
-read_hex proc uses esi edi ebx
-
-    .repeat
-
-        read_line_table()
-        .break .ifz
-
-        ogetc()
-        .break .ifz
-
-        dec STDI.ios_i
-        push STDI.ios_c
-        mov eax,[ebp].tv_rowcnt
-        shl eax,4
-        .if eax <= STDI.ios_c
-            mov STDI.ios_c,eax
-        .endif
-        mov eax,STDI.ios_c
-        xor ecx,ecx
-        mov [ebp].tv_scount,eax
-        mov esi,[ebp].tv_screen
-
-        .repeat
-
-            mov edi,esi
-            lea ebx,[ebp+ecx*4+3].tv_line_table
-
-            .if !(tvflag & _TV_HEXOFFSET)
-
-                sprintf(edi, "%010u  ", [ebx-3])
-                add edi,9
-            .else
-
-                .for edx=4: edx: edx--, ebx--
-
-                    mov al,[ebx]
-                    mk_hexword()
-                    stosw
-                .endf
-                inc edi
-            .endif
-
-            mov edx,STDI.ios_c
-            mov eax,16
-            add edi,3
-            .if edx >= eax
-                mov edx,eax
-            .endif
-            .break .if !edx
-            sub STDI.ios_c,edx
-            mov ebx,edi
-            add ebx,51
-            push ecx
-            mov ecx,edx
-            xor edx,edx
-            .repeat
-                .if edx == 8
-                    mov al,179
-                    stosb
-                    inc edi
-                .endif
-                mov eax,STDI.ios_i
-                .break .if eax >= dword ptr STDI.ios_fsize
-                add eax,STDI.ios_bp
-                mov al,[eax]
-                inc STDI.ios_i
-                mov [ebx],al
-                .if !al
-                    mov byte ptr [ebx],' '
-                .endif
-                mk_hexword()
-                stosw
-                inc edi
-                inc ebx
-                inc edx
-            .untilcxz
-            pop ecx
-            add esi,_scrcol
-            inc ecx
-        .until ecx >= [ebp].tv_lcount
-        pop eax
-        mov STDI.ios_c,eax
-        mov eax,1
-    .until 1
-    ret
-
-read_hex endp
-
-previous_line proc
-
-    mov eax,[ebp].tv_loffs
-    mov [ebp].tv_offset,eax
+    mov eax,[edi]
+    mov [esi],eax
 
     .repeat
 
@@ -533,7 +225,7 @@ previous_line proc
         .if eax > dword ptr STDI.ios_fsize
 
             mov eax,dword ptr STDI.ios_fsize
-            mov [ebp].tv_loffs,eax
+            mov [edi],eax
             .break
         .endif
 
@@ -547,95 +239,111 @@ previous_line proc
             .break
         .endif
 
-        mov eax,[ebp].tv_static_count
-        mov eax,[ebp+eax*4].tv_static_table
-        .if eax < [ebp].tv_offset
-            mov eax,[ebp].tv_offset
+        mov eax,stcount
+        mov ebx,sttable
+        mov eax,[ebx+eax*4]
+
+        .if eax < [esi]
+
+            mov eax,[esi]
             seek_eax()
             .ifz
                 xor eax,eax
                 .break
             .endif
+
             oungetc()
             .ifz
                 xor eax,eax
                 .break
             .endif
-            dec [ebp].tv_offset
-            push esi
-            mov esi,0x8000
+
+            dec dword ptr [esi]
+            mov ebx,0x8000
+
             .if al == 13 || al == 10
                 oungetc()
                 .ifz
-                    pop esi
                     xor eax,eax
                     .break
                 .endif
-                dec [ebp].tv_offset
+                dec dword ptr [esi]
             .endif
+
             .while 1
                 oungetc()
                 .ifz
-                    pop esi
                     xor eax,eax
                     .break
                 .endif
-                dec [ebp].tv_offset
-                dec esi
+                dec dword ptr [esi]
+                dec ebx
                 .break .ifz
                 .break .if al == 13
                 .break .if al == 10
             .endw
-            mov eax,[ebp].tv_offset
+            mov eax,[esi]
             inc eax
-            pop esi
             .break
         .endif
-        mov eax,[ebp].tv_offset
-        mov ecx,[ebp].tv_static_count
+
+        mov eax,[esi]
+        mov ecx,stcount
+        mov ebx,sttable
+
         dec ecx
         .while 1
-            lea edx,[ebp+ecx*4].tv_static_table
+
+            lea edx,[ebx+ecx*4]
             .break .if eax > [edx]
 
             .if !ecx
+
                 mov eax,ecx
                 .break(1)
             .endif
             dec ecx
         .endw
+
         mov eax,[edx]
         .break .if !(tvflag & _TV_WRAPLINES)
-        mov edx,[ebp].tv_loffs
+
+        mov edx,[esi]
         .if eax > edx
+
             xor eax,eax
             .break
         .endif
+
         sub edx,eax
         .if edx >= 0x8000
+
             add eax,edx
             sub eax,_scrcol
         .endif
-        mov [ebp].tv_offset,eax
-        mov [ebp].tv_tmp,eax
+
+        mov [esi],eax
+        mov tmp,eax
         seek_eax()
         .break .ifz
-        push edi
+
         .while 1
-            mov edi,[ebp].tv_screen
-            parse_line()
+
+            mov edi,screen
+            parse_line(esi, curcol)
             .break .ifz
-            mov eax,[ebp].tv_offset
-            .break .if eax >= [ebp].tv_loffs
-            mov [ebp].tv_tmp,eax
+
+            mov eax,[esi]
+            mov ecx,loffs
+            .break .if eax >= [ecx]
+            mov tmp,eax
         .endw
-        pop edi
-        mov eax,[ebp].tv_tmp
+
+        mov eax,tmp
     .until 1
     ret
-previous_line endp
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+previous_line endp
 
 putscreenb proc uses esi edi ebx y, row, lp
 
@@ -671,8 +379,6 @@ putscreenb proc uses esi edi ebx y, row, lp
     ret
 
 putscreenb endp
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 continuesearch proc uses esi lpOffset:ptr
 
@@ -979,13 +685,22 @@ tview_update endp
 
 tview proc uses esi edi ebx filename, offs
 
-    alloca(sizeof(S_TVIEW))
-    mov ebx,offs
-    mov edx,filename
-    push ebp
-    mov ebp,eax
-    mov [ebp].tv_offset,ebx
-    mov [ebp].tv_filename,edx
+  local loffs        :UINT
+  local dlgobj       :S_DOBJ
+  local dialog       :UINT          ; main dialog pointer
+  local rowcnt       :UINT          ; max lines (23/48)
+  local lcount       :UINT          ; lines on screen
+  local scount       :UINT          ; bytes on screen
+  local maxcol       :UINT          ; max linesize on screen
+  local curcol       :UINT          ; current line offset (col)
+  local screen       :UINT          ; screen buffer
+  local menusline    :UINT
+  local statusline   :UINT
+  local cursor       :S_CURSOR      ; cursor (old)
+  local bsize        :UINT          ; buffer size
+  local staticcount  :UINT          ; line count
+  local linetable[MAXLINES]:DWORD   ; line offset in file
+  local statictable[MAXLINES]:DWORD ; offset of first <MAXLINES> lines
 
     mov STDI.ios_flag,0
     mov eax,_scrcol
@@ -998,12 +713,16 @@ tview proc uses esi edi ebx filename, offs
     sub al,80
     add Statusline_C1,al
     add Statusline_C2,al
+
     mov esi,STDI.ios_flag
-    lea edi,[ebp+8]
+
+    lea edi,statictable
     xor eax,eax
-    mov ecx,SIZE S_TVIEW - 8
-    rep stosb
-    mov [ebp].tv_loffs,ebx
+    mov ecx,MAXLINES*2+13
+    rep stosd
+    mov eax,offs
+    mov loffs,eax
+
     mov eax,_scrrow
     mov ebx,IDD_Statusline
     mov [ebx+7],al
@@ -1016,7 +735,7 @@ tview proc uses esi edi ebx filename, offs
         dec al
     .endif
 
-    mov [ebp].tv_rowcnt,eax ; adapt to current screen size
+    mov rowcnt,eax ; adapt to current screen size
     add eax,2
     mul _scrcol
 
@@ -1024,11 +743,11 @@ tview proc uses esi edi ebx filename, offs
 
         .break .if !malloc(eax)
 
-        mov [ebp].tv_screen,eax
+        mov screen,eax
         .if !(esi & IO_MEMBUF)
 
-            mov ebx,[ebp].tv_offset
-            .if ioopen(addr STDI, [ebp].tv_filename, M_RDONLY, OO_MEMBUF) != -1
+            mov ebx,offs
+            .ifs ioopen(&STDI, filename, M_RDONLY, OO_MEMBUF) > 0
 
                 xor eax,eax
                 .if eax != dword ptr STDI.ios_fsize[4]
@@ -1037,7 +756,7 @@ tview proc uses esi edi ebx filename, offs
                     sub eax,2
                     mov dword ptr STDI.ios_fsize,eax
                 .endif
-                mov [ebp].tv_loffs,ebx
+                mov loffs,ebx
                 .if !(STDI.ios_flag & IO_MEMBUF)
 
                     mov eax,8000h
@@ -1045,27 +764,27 @@ tview proc uses esi edi ebx filename, offs
                     mov STDI.ios_size,eax
                 .endif
             .else
-                free([ebp].tv_screen)
+                free(screen)
                 xor eax,eax
                 .break
             .endif
         .endif
         mov al,at_background[B_TextView]
         or  al,at_foreground[F_TextView]
-        .if dlscreen(addr DLG_Textview, eax)
+        .if dlscreen(&dlgobj, eax)
 
-            mov [ebp].tv_dialog,eax
+            mov dialog,eax
             dlshow(eax)
             rsopen(IDD_Menusline)
-            mov [ebp].tv_menusline,eax
+            mov menusline,eax
             dlshow(eax)
             rsopen(IDD_Statusline)
-            mov [ebp].tv_statusline,eax
+            mov statusline,eax
             .if tvflag & _TV_USESLINE
 
                 dlshow(eax)
             .endif
-            scpath(1, 0, 41, [ebp].tv_filename)
+            scpath(1, 0, 41, filename)
             mov eax,_scrcol
             sub eax,38
             mov edx,dword ptr STDI.ios_fsize
@@ -1078,10 +797,10 @@ tview proc uses esi edi ebx filename, offs
 
             .if !(tvflag & _TV_USEMLINE)
 
-                dlhide([ebp].tv_menusline)
+                dlhide(menusline)
             .endif
 
-            CursorGet(addr [ebp].tv_cursor)
+            CursorGet(&cursor)
             _gotoxy(0, 1)
             CursorOff()
 
@@ -1092,61 +811,348 @@ tview proc uses esi edi ebx filename, offs
             ;
             ; offset of first <MAXLINES> lines
             ;
-            lea edi,[ebp].tv_static_table
+            lea edi,statictable
             xor eax,eax
             xor esi,esi
             stosd
-            mov [ebp].tv_offset,eax
-            mov [ebp].tv_static_count,1
+            mov offs,eax
+            mov staticcount,1
             seek_eax()
             .ifnz
                 .repeat
                     ogetc()
                     .ifz
-                        mov eax,[ebp].tv_offset
+                        mov eax,offs
                         stosd
                         stosd
-                        inc [ebp].tv_static_count
+                        inc staticcount
                         .break
                     .endif
-                    inc [ebp].tv_offset
+                    inc offs
                     inc esi
                     .if esi == MAXLINE
                         xor esi,esi
                         mov eax,10
                     .endif
                     .if eax == 10
-                        mov eax,[ebp].tv_offset
+                        mov eax,offs
                         stosd
-                        inc [ebp].tv_static_count
+                        inc staticcount
                     .endif
-                .until [ebp].tv_static_count > MAXLINES-3
-                dec [ebp].tv_static_count
+                .until staticcount > MAXLINES-3
+                dec staticcount
             .endif
 
             mov esi,1
             .while 1
 
                 .if esi == 2
+
                     update_dialog()
                 .endif
+
                 .if esi
 
-                    mov [ebp].tv_scount,0
+                    mov scount,0
+
+                    mov esi,1
+                    mov eax,loffs
+                    lea edi,linetable
+                    mov [edi],eax
+                    mov ebx,eax
+                    mov offs,eax
+
+                    .repeat
+
+                        movzx ecx,tvflag
+                        .if ecx & _TV_HEXVIEW
+
+                            seek_eax()
+                            .break .ifz
+
+                            xor ecx,ecx
+                            .repeat
+                                add ebx,16
+                                .if ebx > dword ptr STDI.ios_fsize
+
+                                    mov ebx,dword ptr STDI.ios_fsize
+                                    .break
+                                .endif
+                                mov [edi+esi*4],ebx
+                                inc esi
+                                inc ecx
+                            .until ecx >= rowcnt
+
+                        .else
+
+                            .break .if ecx & _TV_WRAPLINES
+
+                            lea edx,statictable
+                            mov ecx,staticcount
+                            .repeat
+
+                                .break .if eax == [edx]
+                                add edx,4
+                            .untilcxz
+
+                            .if ecx
+
+                                .repeat
+
+                                    add edx,4
+                                    mov ebx,[edx]
+                                    mov [edi+esi*4],ebx
+                                    inc esi
+                                    .if esi > rowcnt
+                                        dec esi
+                                        .break(1)
+                                    .endif
+                                .untilcxz
+
+                                .if ebx == dword ptr STDI.ios_fsize
+
+                                    dec esi
+                                    .break
+                                .endif
+                            .endif
+
+                            seek_eax()
+                            .break .ifz
+
+                            xor ecx,ecx
+                            .while 1
+
+                                ogetc()
+                                .break .ifz
+
+                                inc ebx
+                                inc ecx
+                                .if ecx == MAXLINE
+                                    xor edi,edi
+                                    mov eax,10
+                                .endif
+
+                                .if eax == 10
+
+                                    mov [edi+esi*4],ebx
+                                    .break(1) .if esi >= rowcnt
+                                    inc esi
+                                .endif
+                            .endw
+                        .endif
+                        mov [edi+esi*4],ebx
+                        mov [edi+esi*4+4],ebx
+                        test esi,esi
+                    .until 1
+
+                    mov lcount,esi
+                    mov offs,ebx
+
+                    .ifnz
+
+                        mov eax,_scrcol
+                        mul rowcnt
+                        mov ecx,eax
+                        mov edi,screen
+                        mov eax,20h
+                        rep stosb
+                        mov eax,loffs
+                        mov offs,eax
+                        seek_eax()
+                    .endif
+
+                    mov eax,1
+                    .ifz
+                        xor eax,eax
+                    .endif
+
                     .if tvflag & _TV_HEXVIEW
-                        read_hex()
+
+                        .repeat
+
+                            .break .if !eax
+
+                            ogetc()
+                            .break .ifz
+
+                            dec STDI.ios_i
+                            push STDI.ios_c
+                            mov eax,rowcnt
+                            shl eax,4
+                            .if eax <= STDI.ios_c
+                                mov STDI.ios_c,eax
+                            .endif
+                            mov eax,STDI.ios_c
+                            xor ecx,ecx
+                            mov scount,eax
+                            mov esi,screen
+
+                            .repeat
+
+                                mov edi,esi
+                                lea ebx,linetable[ecx*4+3]
+
+                                .if !(tvflag & _TV_HEXOFFSET)
+
+                                    sprintf(edi, "%010u  ", [ebx-3])
+                                    add edi,9
+                                .else
+
+                                    .for edx=4: edx: edx--, ebx--
+
+                                        mov al,[ebx]
+                                        mov ah,al
+                                        and eax,0x0FF0
+                                        shr al,4
+                                        or  eax,0x3030
+                                        .if ah > 0x39
+                                            add ah,7
+                                        .endif
+                                        .if al > 0x39
+                                            add al,7
+                                        .endif
+                                        stosw
+                                    .endf
+                                    inc edi
+                                .endif
+
+                                mov edx,STDI.ios_c
+                                mov eax,16
+                                add edi,3
+                                .if edx >= eax
+                                    mov edx,eax
+                                .endif
+                                .break .if !edx
+                                sub STDI.ios_c,edx
+                                mov ebx,edi
+                                add ebx,51
+                                push ecx
+                                mov ecx,edx
+                                xor edx,edx
+                                .repeat
+                                    .if edx == 8
+                                        mov al,179
+                                        stosb
+                                        inc edi
+                                    .endif
+                                    mov eax,STDI.ios_i
+                                    .break .if eax >= dword ptr STDI.ios_fsize
+                                    add eax,STDI.ios_bp
+                                    mov al,[eax]
+                                    inc STDI.ios_i
+                                    mov [ebx],al
+                                    .if !al
+                                        mov byte ptr [ebx],' '
+                                    .endif
+                                    mov ah,al
+                                    and eax,0x0FF0
+                                    shr al,4
+                                    or  eax,0x3030
+                                    .if ah > 0x39
+                                        add ah,7
+                                    .endif
+                                    .if al > 0x39
+                                        add al,7
+                                    .endif
+                                    stosw
+                                    inc edi
+                                    inc ebx
+                                    inc edx
+                                .untilcxz
+                                pop ecx
+                                add esi,_scrcol
+                                inc ecx
+                            .until ecx >= lcount
+                            pop eax
+                            mov STDI.ios_c,eax
+                            mov eax,1
+                        .until 1
+
                     .elseif tvflag & _TV_WRAPLINES
-                        read_wrap()
+
+                        .repeat
+
+                            .break .if !eax
+
+                            xor eax,eax
+                            mov edi,screen
+                            mov bsize,eax
+                            mov lcount,eax
+
+                            .repeat
+
+                                mov eax,bsize
+                                inc bsize
+                                .break .if eax >= rowcnt
+
+
+                                mov eax,lcount
+                                inc lcount
+                                lea edx,linetable[eax*4]
+                                mov eax,offs
+                                mov [edx],eax
+
+                                parse_line(&offs, curcol)
+                            .untilz
+
+                            mov eax,offs
+                            sub eax,loffs
+                            mov scount,eax
+                            or  eax,1
+                        .until 1
+
                     .else
-                        read_text()
+
+                        .repeat
+
+                            .break .if !eax
+
+                            mov edx,maxcol
+                            mov eax,lcount
+
+                            .while eax
+                                mov ecx,linetable[eax*4]
+                                dec eax
+                                sub ecx,linetable[eax*4]
+                                .if ecx > edx
+                                    mov edx,ecx
+                                .endif
+                            .endw
+
+                            mov maxcol,edx
+                            mov edi,screen
+                            mov bsize,0
+
+                            .while 1
+
+                                mov eax,bsize
+                                inc bsize
+                                .break .if eax >= lcount
+                                lea edx,linetable[eax*4]
+                                mov eax,[edx+4]
+                                sub eax,[edx]
+                                add scount,eax
+                                .if eax <= curcol
+                                    add edi,_scrcol
+                                .else
+                                    mov eax,[edx]
+                                    add eax,curcol
+                                    seek_eax()
+                                    .break(1) .ifz
+                                    parse_line(&offs, curcol)
+                                    .break .ifz
+                                .endif
+                            .endw
+                            or eax,1
+                        .until 1
                     .endif
 
                     .if eax
 
                         .if tvflag & _TV_USEMLINE
 
-                            mov eax,[ebp].tv_scount
-                            add eax,[ebp].tv_loffs
+                            mov eax,scount
+                            add eax,loffs
                             .ifz
                                 mov eax,100
                             .else
@@ -1163,7 +1169,7 @@ tview proc uses esi edi ebx filename, offs
                             sub edx,5
                             scputf(edx, 0, 0, 0, "%3d", eax)
                             sub edx,10
-                            scputf(edx, 0, 0, 0, "%-8d", [ebp].tv_curcol)
+                            scputf(edx, 0, 0, 0, "%-8d", curcol)
                         .endif
                         mov eax,dword ptr STDI.ios_fsize
                         .if eax
@@ -1172,7 +1178,7 @@ tview proc uses esi edi ebx filename, offs
 
                                 inc eax
                             .endif
-                            putscreenb(eax, [ebp].tv_rowcnt, [ebp].tv_screen)
+                            putscreenb(eax, rowcnt, screen)
                         .endif
                     .endif
                     xor esi,esi
@@ -1186,7 +1192,6 @@ tview proc uses esi edi ebx filename, offs
 
                         cmmcopy()
                         .endc
-                        ;.gotosw(KEY_F5)
                     .endif
                     .endc .if !eax
 
@@ -1282,7 +1287,7 @@ tview proc uses esi edi ebx filename, offs
                             mov STDI.ios_flag,edx
                             and edx,IO_SEARCHCUR or IO_SEARCHSET
                             push edx
-                            continuesearch(&[ebp].tv_loffs)
+                            continuesearch(&loffs)
                             pop edx
                             or  STDI.ios_flag,edx
                         .endif
@@ -1309,15 +1314,15 @@ tview proc uses esi edi ebx filename, offs
                     .endif
                     mov tvflag,al
                     .if !(al & _TV_HEXVIEW)
-                        mov eax,[ebp].tv_curcol
-                        .if eax <= [ebp].tv_loffs
-                            sub [ebp].tv_loffs,eax
+                        mov eax,curcol
+                        .if eax <= loffs
+                            sub loffs,eax
                         .endif
                     .else
-                        mov eax,[ebp].tv_curcol
-                        add [ebp].tv_loffs,eax
+                        mov eax,curcol
+                        add loffs,eax
                         xor eax,eax
-                        mov [ebp].tv_curcol,eax
+                        mov curcol,eax
                     .endif
                     mov esi,2
                     .endc
@@ -1330,9 +1335,9 @@ tview proc uses esi edi ebx filename, offs
 
                             or byte ptr [ebx+4*16],_O_FLAGB
                         .endif
-                        mov edx,[ebp].tv_loffs
-                        add edx,[ebp].tv_curcol
-                        mov [ebp].tv_curcol,0
+                        mov edx,loffs
+                        add edx,curcol
+                        mov curcol,0
                         mov eax,offset format_08Xh
                         .if !(tvflag & _TV_HEXOFFSET)
 
@@ -1419,9 +1424,9 @@ tview proc uses esi edi ebx filename, offs
                   .case KEY_F7
                     .if rsopen(IDD_TVSeek)
                         mov ebx,eax
-                        mov edx,[ebp].tv_loffs
-                        add edx,[ebp].tv_curcol
-                        mov [ebp].tv_curcol,0
+                        mov edx,loffs
+                        add edx,curcol
+                        mov curcol,0
                         mov eax,offset format_08Xh
                         .if !(tvflag & _TV_HEXOFFSET)
                             mov eax,offset format_lu
@@ -1434,7 +1439,7 @@ tview proc uses esi edi ebx filename, offs
                         dlclose(ebx)
                         pop eax
                         .if eax && edx <= dword ptr STDI.ios_fsize
-                            mov [ebp].tv_loffs,edx
+                            mov loffs,edx
                             mov esi,1
                         .endif
                     .endif
@@ -1447,20 +1452,20 @@ tview proc uses esi edi ebx filename, offs
 
                   .case KEY_ALTF5
                   .case KEY_CTRLB
-                    dlhide([ebp].tv_dialog)
+                    dlhide(dialog)
                     .while !getkey()
                     .endw
-                    dlshow([ebp].tv_dialog)
+                    dlshow(dialog)
                     .endc
 
                   .case KEY_CTRLM
                     xor tvflag,_TV_USEMLINE
                     .if tvflag & _TV_USEMLINE
-                        dlshow([ebp].tv_menusline)
-                        dec [ebp].tv_rowcnt
+                        dlshow(menusline)
+                        dec rowcnt
                     .else
-                        dlhide([ebp].tv_menusline)
-                        inc [ebp].tv_rowcnt
+                        dlhide(menusline)
+                        inc rowcnt
                     .endif
                     mov esi,1
                     .endc
@@ -1468,11 +1473,11 @@ tview proc uses esi edi ebx filename, offs
                   .case KEY_CTRLS
                     xor tvflag,_TV_USESLINE
                     .if tvflag & _TV_USESLINE
-                        dlshow([ebp].tv_statusline)
-                        dec [ebp].S_TVIEW.tv_rowcnt
+                        dlshow(statusline)
+                        dec rowcnt
                     .else
-                        dlhide([ebp].tv_statusline)
-                        inc [ebp].S_TVIEW.tv_rowcnt
+                        dlhide(statusline)
+                        inc rowcnt
                     .endif
                     mov esi,1
                     .endc
@@ -1494,9 +1499,11 @@ tview proc uses esi edi ebx filename, offs
 
                   .case KEY_CTRLE
                   .case KEY_UP
-                    previous_line()
-                    .if eax != [ebp].tv_loffs
-                        mov [ebp].tv_loffs,eax
+                    previous_line(&offs, &loffs, &statictable,
+                        staticcount, screen, curcol)
+
+                    .if eax != loffs
+                        mov loffs,eax
                         mov esi,1
                     .endif
                     .endc
@@ -1504,20 +1511,20 @@ tview proc uses esi edi ebx filename, offs
                   .case KEY_CTRLX
                   .case KEY_DOWN
                     .if tvflag & _TV_HEXVIEW
-                        mov eax,[ebp].tv_scount
-                        add eax,[ebp].tv_loffs
+                        mov eax,scount
+                        add eax,loffs
                         inc eax
                         .endc .if eax >= dword ptr STDI.ios_fsize
                         add eax,15
                         .if eax >= dword ptr STDI.ios_fsize
                             .gotosw(KEY_END)
                         .endif
-                        add [ebp].tv_loffs,16
+                        add loffs,16
                     .else
-                        mov eax,[ebp].tv_lcount
-                        .endc .if eax < [ebp].tv_rowcnt
-                        mov eax,[ebp+4].tv_line_table
-                        mov [ebp].tv_loffs,eax
+                        mov eax,lcount
+                        .endc .if eax < rowcnt
+                        mov eax,linetable[4]
+                        mov loffs,eax
                     .endif
                     mov esi,1
                     .endc
@@ -1525,33 +1532,38 @@ tview proc uses esi edi ebx filename, offs
                   .case KEY_CTRLR
                   .case KEY_PGUP
                     mov cl,tvflag
-                    mov eax,[ebp].tv_loffs
+                    mov eax,loffs
                     .endc .if !eax
                     .if cl & _TV_HEXVIEW
-                        mov eax,[ebp].tv_rowcnt
+                        mov eax,rowcnt
                         shl eax,4
-                        .if eax < [ebp].tv_loffs
-                            sub [ebp].tv_loffs,eax
+                        .if eax < loffs
+                            sub loffs,eax
                         .else
                             xor eax,eax
-                            mov [ebp].tv_loffs,eax
+                            mov loffs,eax
                         .endif
                         mov esi,1
                     .else
                         .if !(tvflag & _TV_WRAPLINES) || eax != dword ptr STDI.ios_fsize
+
                             mov edi,1
                             .repeat
-                                previous_line()
-                                .break .if eax == [ebp].tv_loffs
-                                mov [ebp].tv_loffs,eax
+
+                                previous_line(&offs, &loffs,
+                                    &statictable, staticcount, screen, curcol)
+
+                                .break .if eax == loffs
+                                mov loffs,eax
                                 inc edi
-                            .until edi == [ebp].tv_rowcnt
+                            .until edi == rowcnt
                         .else
-                            mov edi,[ebp].tv_rowcnt
+                            mov edi,rowcnt
                             dec edi
                             .repeat
-                                previous_line()
-                                mov [ebp].tv_loffs,eax
+                                previous_line(&offs, &loffs, &statictable,
+                                    staticcount, screen, curcol)
+                                mov loffs,eax
                                 dec edi
                             .untilz
                         .endif
@@ -1561,43 +1573,43 @@ tview proc uses esi edi ebx filename, offs
 
                   .case KEY_CTRLC
                   .case KEY_PGDN
-                    mov eax,[ebp].tv_scount
-                    add eax,[ebp].tv_loffs
+                    mov eax,scount
+                    add eax,loffs
                     inc eax
                     .endc .if eax >= dword ptr STDI.ios_fsize
 
                     .if tvflag & _TV_HEXVIEW
 
                         mov ebx,eax
-                        mov eax,[ebp].tv_rowcnt
+                        mov eax,rowcnt
                         shl eax,4
                         add ebx,eax
                         .if ebx >= dword ptr STDI.ios_fsize
                             .gotosw(KEY_END)
                         .endif
-                        add [ebp].tv_loffs,eax
+                        add loffs,eax
                         mov esi,1
                         .endc
                     .endif
-                    mov eax,[ebp].tv_lcount
-                    .endc .if eax != [ebp].tv_rowcnt
+                    mov eax,lcount
+                    .endc .if eax != rowcnt
                     dec eax
                     shl eax,2
-                    lea ebx,[ebp].tv_line_table
+                    lea ebx,linetable
                     add ebx,eax
                     mov eax,[ebx]
                     .if eax >= dword ptr STDI.ios_fsize
                         .gotosw(KEY_END)
                     .endif
-                    mov [ebp].tv_loffs,eax
+                    mov loffs,eax
                     mov esi,1
                     .endc
 
                   .case KEY_LEFT
                     .if !(tvflag & _TV_HEXVIEW or _TV_WRAPLINES)
-                        mov eax,[ebp].tv_curcol
+                        mov eax,curcol
                         .if eax
-                            dec [ebp].tv_curcol
+                            dec curcol
                             mov esi,1
                         .endif
                     .endif
@@ -1605,9 +1617,9 @@ tview proc uses esi edi ebx filename, offs
 
                   .case KEY_RIGHT
                     .if !(tvflag & _TV_HEXVIEW or _TV_WRAPLINES)
-                        mov eax,[ebp].tv_curcol
-                        .if eax < [ebp].tv_maxcol
-                            inc [ebp].tv_curcol
+                        mov eax,curcol
+                        .if eax < maxcol
+                            inc curcol
                             mov esi,1
                         .endif
                     .endif
@@ -1615,14 +1627,14 @@ tview proc uses esi edi ebx filename, offs
 
                   .case KEY_HOME
                     sub eax,eax
-                    mov [ebp].tv_loffs,eax
-                    mov [ebp].tv_curcol,eax
+                    mov loffs,eax
+                    mov curcol,eax
                     mov esi,1
                     .endc
 
                   .case KEY_END
                     mov ecx,dword ptr STDI.ios_fsize
-                    mov edx,[ebp].tv_rowcnt
+                    mov edx,rowcnt
                     .if tvflag & _TV_HEXVIEW
                         mov eax,edx
                         shl eax,4
@@ -1632,31 +1644,34 @@ tview proc uses esi edi ebx filename, offs
                         not eax
                         add eax,18
                         and eax,-16
-                        mov [ebp].tv_loffs,eax
+                        mov loffs,eax
                         mov esi,1
                         .endc
                     .endif
-                    mov eax,[ebp].tv_lcount
+                    mov eax,lcount
                     .endc .if eax < edx
-                    mov eax,[ebp].tv_scount
-                    add eax,[ebp].tv_loffs
+                    mov eax,scount
+                    add eax,loffs
                     inc eax
                     .endc .if eax >= ecx
-                    mov [ebp].tv_loffs,ecx
+                    mov loffs,ecx
                     .if !(tvflag & _TV_WRAPLINES) || eax != dword ptr STDI.ios_fsize
                         mov edi,1
                         .repeat
-                            previous_line()
-                            .break .if eax == [ebp].tv_loffs
-                            mov [ebp].tv_loffs,eax
+                            previous_line(&offs, &loffs, &statictable,
+                                staticcount, screen, curcol)
+
+                            .break .if eax == loffs
+                            mov loffs,eax
                             inc edi
-                        .until edi == [ebp].tv_rowcnt
+                        .until edi == rowcnt
                     .else
-                        mov edi,[ebp].tv_rowcnt
+                        mov edi,rowcnt
                         dec edi
                         .repeat
-                            previous_line()
-                            mov [ebp].tv_loffs,eax
+                            previous_line(&loffs, &loffs, &statictable,
+                                staticcount, screen, curcol)
+                            mov loffs,eax
                             dec edi
                         .untilz
                     .endif
@@ -1678,76 +1693,72 @@ tview proc uses esi edi ebx filename, offs
                   .case KEY_CTRLLEFT
                     .endc .if tvflag & _TV_HEXVIEW or _TV_WRAPLINES
                     xor eax,eax
-                    or  eax,[ebp].tv_curcol
+                    or  eax,curcol
                     .endc .ifz
                     .if eax >= _scrcol
                         sub eax,_scrcol
                     .else
                         xor eax,eax
                     .endif
-                    mov [ebp].tv_curcol,eax
+                    mov curcol,eax
                     mov esi,1
                     .endc
 
                   .case KEY_CTRLRIGHT
                     .endc .if tvflag & _TV_HEXVIEW or _TV_WRAPLINES
-                    mov edx,[ebp].tv_maxcol
-                    mov eax,[ebp].tv_curcol
+                    mov edx,maxcol
+                    mov eax,curcol
                     .endc .if eax >= edx
                     add eax,_scrcol
                     .if eax > edx
                         mov eax,edx
                     .endif
-                    mov [ebp].tv_curcol,eax
+                    mov curcol,eax
                     mov esi,1
                     .endc
 
                   .case KEY_SHIFTF3
                   .case KEY_CTRLL
-                    .if continuesearch(&[ebp].tv_loffs)
+                    .if continuesearch(&loffs)
                         .gotosw(KEY_CTRLHOME)
                     .endif
                     .endc
 
                   .case KEY_CTRLEND
                     .endc .if tvflag & _TV_HEXVIEW or _TV_WRAPLINES
-                    mov eax,[ebp].tv_maxcol
+                    mov eax,maxcol
                     .endc .if eax < _scrcol
                     sub eax,20
-                    mov [ebp].tv_curcol,eax
+                    mov curcol,eax
                     mov esi,1
                     .endc
 
                   .case KEY_CTRLHOME
                     xor eax,eax
-                    mov [ebp].tv_curcol,eax
+                    mov curcol,eax
                     mov esi,1
                     .endc
                 .endsw
             .endw
 
             ioclose(addr STDI)
-            free([ebp].tv_screen)
-            dlclose([ebp].tv_statusline)
-            dlclose([ebp].tv_menusline)
-            dlclose([ebp].tv_dialog)
-            CursorSet(addr [ebp].tv_cursor)
+            free(screen)
+            dlclose(statusline)
+            dlclose(menusline)
+            dlclose(dialog)
+            CursorSet(&cursor)
             pop eax
             mov tupdate,eax
 
             xor eax,eax
             mov STDI.ios_flag,eax
         .else
-            free([ebp].tv_screen)
+            free(screen)
             _close(STDI.ios_file)
             mov eax,1
         .endif
     .until 1
-
-    pop ebp
-    mov esp,ebp
     ret
-
 tview endp
 
     END

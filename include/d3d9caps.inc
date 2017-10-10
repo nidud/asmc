@@ -1,0 +1,540 @@
+ifndef _d3d9CAPS_H
+_d3d9CAPS_H equ <>
+.xlist
+
+ifndef DIRECT3D_VERSION
+DIRECT3D_VERSION	equ 0x0900
+endif  ;;DIRECT3D_VERSION
+
+;; include this file content only if compiling for DX9 interfaces
+if(DIRECT3D_VERSION GE 0x0900)
+
+D3DVSHADERCAPS2_0	STRUC
+Caps			dd ?
+DynamicFlowControlDepth SINT ?
+NumTemps		SINT ?
+StaticFlowControlDepth	SINT ?
+D3DVSHADERCAPS2_0	ENDS
+
+D3DVS20CAPS_PREDICATION equ (1 SHL 0)
+
+D3DVS20_MAX_DYNAMICFLOWCONTROLDEPTH equ 24
+D3DVS20_MIN_DYNAMICFLOWCONTROLDEPTH equ 0
+D3DVS20_MAX_NUMTEMPS	equ 32
+D3DVS20_MIN_NUMTEMPS	equ 12
+D3DVS20_MAX_STATICFLOWCONTROLDEPTH equ 4
+D3DVS20_MIN_STATICFLOWCONTROLDEPTH equ 1
+
+D3DPSHADERCAPS2_0	STRUC
+Caps			dd ?
+DynamicFlowControlDepth SINT ?
+NumTemps		SINT ?
+StaticFlowControlDepth	SINT ?
+NumInstructionSlots	SINT ?
+D3DPSHADERCAPS2_0	ENDS
+
+D3DPS20CAPS_ARBITRARYSWIZZLE equ (1 SHL 0)
+D3DPS20CAPS_GRADIENTINSTRUCTIONS equ (1 SHL 1)
+D3DPS20CAPS_PREDICATION equ (1 SHL 2)
+D3DPS20CAPS_NODEPENDENTREADLIMIT equ (1 SHL 3)
+D3DPS20CAPS_NOTEXINSTRUCTIONLIMIT equ (1 SHL 4)
+
+D3DPS20_MAX_DYNAMICFLOWCONTROLDEPTH equ 24
+D3DPS20_MIN_DYNAMICFLOWCONTROLDEPTH equ 0
+D3DPS20_MAX_NUMTEMPS	equ 32
+D3DPS20_MIN_NUMTEMPS	equ 12
+D3DPS20_MAX_STATICFLOWCONTROLDEPTH equ 4
+D3DPS20_MIN_STATICFLOWCONTROLDEPTH equ 0
+D3DPS20_MAX_NUMINSTRUCTIONSLOTS equ 512
+D3DPS20_MIN_NUMINSTRUCTIONSLOTS equ 96
+
+D3DMIN30SHADERINSTRUCTIONS equ 512
+D3DMAX30SHADERINSTRUCTIONS equ 32768
+
+
+D3DOVERLAYCAPS		STRUC
+Caps			UINT ?
+MaxOverlayDisplayWidth	UINT ?
+MaxOverlayDisplayHeight UINT ?
+D3DOVERLAYCAPS		ENDS
+
+D3DOVERLAYCAPS_FULLRANGERGB equ 0x00000001
+D3DOVERLAYCAPS_LIMITEDRANGERGB equ 0x00000002
+D3DOVERLAYCAPS_YCbCr_BT601 equ 0x00000004
+D3DOVERLAYCAPS_YCbCr_BT709 equ 0x00000008
+D3DOVERLAYCAPS_YCbCr_BT601_xvYCC equ 0x00000010
+D3DOVERLAYCAPS_YCbCr_BT709_xvYCC equ 0x00000020
+D3DOVERLAYCAPS_STRETCHX equ 0x00000040
+D3DOVERLAYCAPS_STRETCHY equ 0x00000080
+
+
+D3DCONTENTPROTECTIONCAPS STRUC
+Caps			dd ?
+KeyExchangeType		GUID <>
+BufferAlignmentStart	UINT ?
+BlockAlignmentSize	UINT ?
+ProtectedMemorySize	ULONGLONG ?
+D3DCONTENTPROTECTIONCAPS ENDS
+
+D3DCPCAPS_SOFTWARE	equ 0x00000001
+D3DCPCAPS_HARDWARE	equ 0x00000002
+D3DCPCAPS_PROTECTIONALWAYSON equ 0x00000004
+D3DCPCAPS_PARTIALDECRYPTION equ 0x00000008
+D3DCPCAPS_CONTENTKEY	equ 0x00000010
+D3DCPCAPS_FRESHENSESSIONKEY equ 0x00000020
+D3DCPCAPS_ENCRYPTEDREADBACK equ 0x00000040
+D3DCPCAPS_ENCRYPTEDREADBACKKEY equ 0x00000080
+D3DCPCAPS_SEQUENTIAL_CTR_IV equ 0x00000100
+D3DCPCAPS_ENCRYPTSLICEDATAONLY equ 0x00000200
+
+DEFINE_GUID(D3DCRYPTOTYPE_AES128_CTR, 0x9b6bd711, 0x4f74, 0x41c9, 0x9e, 0x7b, 0xb, 0xe2, 0xd7, 0xd9, 0x3b, 0x4f);
+DEFINE_GUID(D3DCRYPTOTYPE_PROPRIETARY, 0xab4e9afd, 0x1d1c, 0x46e6, 0xa7, 0x2f, 0x8, 0x69, 0x91, 0x7b, 0xd, 0xe8);
+DEFINE_GUID(D3DKEYEXCHANGE_RSAES_OAEP, 0xc1949895, 0xd72a, 0x4a1d, 0x8e, 0x5d, 0xed, 0x85, 0x7d, 0x17, 0x15, 0x20);
+DEFINE_GUID(D3DKEYEXCHANGE_DXVA, 0x43d3775c, 0x38e5, 0x4924, 0x8d, 0x86, 0xd3, 0xfc, 0xcf, 0x15, 0x3e, 0x9b);
+
+
+D3DCAPS9		STRUC
+;; Device Info
+DeviceType		D3DDEVTYPE ?
+AdapterOrdinal		UINT ?
+
+;; Caps from DX7 Draw
+Caps			dd ?
+Caps2			dd ?
+Caps3			dd ?
+PresentationIntervals	dd ?
+
+;; Cursor Caps
+CursorCaps		dd ?
+
+;; 3D Device Caps
+DevCaps			dd ?
+
+PrimitiveMiscCaps	dd ?
+RasterCaps		dd ?
+ZCmpCaps		dd ?
+SrcBlendCaps		dd ?
+DestBlendCaps		dd ?
+AlphaCmpCaps		dd ?
+ShadeCaps		dd ?
+TextureCaps		dd ?
+TextureFilterCaps	dd ?	;; D3DPTFILTERCAPS for IDirect3DTexture9's
+CubeTextureFilterCaps	dd ?	;; D3DPTFILTERCAPS for IDirect3DCubeTexture9's
+VolumeTextureFilterCaps dd ?	;; D3DPTFILTERCAPS for IDirect3DVolumeTexture9's
+TextureAddressCaps	dd ?	;; D3DPTADDRESSCAPS for IDirect3DTexture9's
+VolumeTextureAddressCaps dd ?	;; D3DPTADDRESSCAPS for IDirect3DVolumeTexture9's
+
+LineCaps		dd ?	;; D3DLINECAPS
+
+MaxTextureWidth		dd ?
+MaxTextureHeight	dd ?
+MaxVolumeExtent		dd ?
+
+MaxTextureRepeat	dd ?
+MaxTextureAspectRatio	dd ?
+MaxAnisotropy		dd ?
+MaxVertexW		REAL4 ?
+
+GuardBandLeft		REAL4 ?
+GuardBandTop		REAL4 ?
+GuardBandRight		REAL4 ?
+GuardBandBottom		REAL4 ?
+
+ExtentsAdjust		REAL4 ?
+StencilCaps		dd ?
+
+FVFCaps			dd ?
+TextureOpCaps		dd ?
+MaxTextureBlendStages	dd ?
+MaxSimultaneousTextures dd ?
+
+VertexProcessingCaps	dd ?
+MaxActiveLights		dd ?
+MaxUserClipPlanes	dd ?
+MaxVertexBlendMatrices	dd ?
+MaxVertexBlendMatrixIndex dd ?
+
+MaxPointSize		REAL4 ?
+
+MaxPrimitiveCount	dd ?	;; max number of primitives per DrawPrimitive call
+MaxVertexIndex		dd ?
+MaxStreams		dd ?
+MaxStreamStride		dd ?	;; max stride for SetStreamSource
+
+VertexShaderVersion	dd ?
+MaxVertexShaderConst	dd ?	;; number of vertex shader constant registers
+
+PixelShaderVersion	dd ?
+PixelShader1xMaxValue	REAL4 ? ;; max value storable in registers of ps.1.x shaders
+
+    ;; Here are the DX9 specific ones
+DevCaps2		dd ?
+
+MaxNpatchTessellationLevel REAL4 ?
+Reserved5		dd ?
+
+MasterAdapterOrdinal	UINT ?	;; ordinal of master adaptor for adapter group
+AdapterOrdinalInGroup	UINT ?	;; ordinal inside the adapter group
+NumberOfAdaptersInGroup UINT ?	;; number of adapters in this adapter group (only if master)
+DeclTypes		dd ?	;; Data types, supported in vertex declarations
+NumSimultaneousRTs	dd ?	;; Will be at least 1
+StretchRectFilterCaps	dd ?	;; Filter caps supported by StretchRect
+VS20Caps		D3DVSHADERCAPS2_0 <>
+PS20Caps		D3DPSHADERCAPS2_0 <>
+VertexTextureFilterCaps dd ?	;; D3DPTFILTERCAPS for IDirect3DTexture9's for texture, used in vertex shaders
+MaxVShaderInstructionsExecuted dd ?	;; maximum number of vertex shader instructions that can be executed
+MaxPShaderInstructionsExecuted dd ?	;; maximum number of pixel shader instructions that can be executed
+MaxVertexShader30InstructionSlots dd ?
+MaxPixelShader30InstructionSlots dd ?
+D3DCAPS9		ENDS
+
+;;
+;; BIT DEFINES FOR D3DCAPS9 DWORD MEMBERS
+;;
+
+;;
+;; Caps
+;;
+D3DCAPS_OVERLAY		equ 0x00000800
+D3DCAPS_READ_SCANLINE	equ 0x00020000
+
+;;
+;; Caps2
+;;
+D3DCAPS2_FULLSCREENGAMMA equ 0x00020000
+D3DCAPS2_CANCALIBRATEGAMMA equ 0x00100000
+D3DCAPS2_RESERVED	equ 0x02000000
+D3DCAPS2_CANMANAGERESOURCE equ 0x10000000
+D3DCAPS2_DYNAMICTEXTURES equ 0x20000000
+D3DCAPS2_CANAUTOGENMIPMAP equ 0x40000000
+
+;; D3D9Ex only --
+ifndef D3D_DISABLE_9EX
+
+D3DCAPS2_CANSHARERESOURCE equ 0x80000000
+
+endif ;; NOT D3D_DISABLE_9EX
+;; -- D3D9Ex only
+
+;;
+;; Caps3
+;;
+D3DCAPS3_RESERVED	equ 0x8000001f
+
+;; Indicates that the device can respect the ALPHABLENDENABLE render state
+;; when fullscreen while using the FLIP or DISCARD swap effect.
+;; COPY and COPYVSYNC swap effects work whether or not this flag is set.
+D3DCAPS3_ALPHA_FULLSCREEN_FLIP_OR_DISCARD equ 0x00000020
+
+;; Indicates that the device can perform a gamma correction from
+;; a windowed back buffer containing linear content to the sRGB desktop.
+D3DCAPS3_LINEAR_TO_SRGB_PRESENTATION equ 0x00000080
+
+D3DCAPS3_COPY_TO_VIDMEM equ 0x00000100 ;; Device can acclerate copies from sysmem to local vidmem
+D3DCAPS3_COPY_TO_SYSTEMMEM equ 0x00000200 ;; Device can acclerate copies from local vidmem to sysmem
+D3DCAPS3_DXVAHD		equ 0x00000400
+
+
+;;
+;; PresentationIntervals
+;;
+D3DPRESENT_INTERVAL_DEFAULT equ 0x00000000
+D3DPRESENT_INTERVAL_ONE equ 0x00000001
+D3DPRESENT_INTERVAL_TWO equ 0x00000002
+D3DPRESENT_INTERVAL_THREE equ 0x00000004
+D3DPRESENT_INTERVAL_FOUR equ 0x00000008
+D3DPRESENT_INTERVAL_IMMEDIATE equ 0x80000000
+
+;;
+;; CursorCaps
+;;
+;; Driver supports HW color cursor in at least hi-res modes(height >=400)
+D3DCURSORCAPS_COLOR	equ 0x00000001
+;; Driver supports HW cursor also in low-res modes(height < 400)
+D3DCURSORCAPS_LOWRES	equ 0x00000002
+
+;;
+;; DevCaps
+;;
+D3DDEVCAPS_EXECUTESYSTEMMEMORY equ 0x00000010 ;; Device can use execute buffers from system memory
+D3DDEVCAPS_EXECUTEVIDEOMEMORY equ 0x00000020 ;; Device can use execute buffers from video memory
+D3DDEVCAPS_TLVERTEXSYSTEMMEMORY equ 0x00000040L ;; Device can use TL buffers from system memory
+D3DDEVCAPS_TLVERTEXVIDEOMEMORY equ 0x00000080L ;; Device can use TL buffers from video memory
+D3DDEVCAPS_TEXTURESYSTEMMEMORY equ 0x00000100 ;; Device can texture from system memory
+D3DDEVCAPS_TEXTUREVIDEOMEMORY equ 0x00000200 ;; Device can texture from device memory
+D3DDEVCAPS_DRAWPRIMTLVERTEX equ 0x00000400L ;; Device can draw TLVERTEX primitives
+D3DDEVCAPS_CANRENDERAFTERFLIP equ 0x00000800 ;; Device can render without waiting for flip to complete
+D3DDEVCAPS_TEXTURENONLOCALVIDMEM equ 0x00001000 ;; Device can texture from nonlocal video memory
+D3DDEVCAPS_DRAWPRIMITIVES2 equ 0x00002000 ;; Device can support DrawPrimitives2
+D3DDEVCAPS_SEPARATETEXTUREMEMORIES equ 0x00004000 ;; Device is texturing from separate memory pools
+D3DDEVCAPS_DRAWPRIMITIVES2EX equ 0x00008000 ;; Device can support Extended DrawPrimitives2 i.e. DX7 compliant driver
+D3DDEVCAPS_HWTRANSFORMANDLIGHT equ 0x00010000 ;; Device can support transformation and lighting in hardware and DRAWPRIMITIVES2EX must be also
+D3DDEVCAPS_CANBLTSYSTONONLOCAL equ 0x00020000 ;; Device supports a Tex Blt from system memory to non-local vidmem
+D3DDEVCAPS_HWRASTERIZATION equ 0x00080000 ;; Device has HW acceleration for rasterization
+D3DDEVCAPS_PUREDEVICE	equ 0x00100000 ;; Device supports D3DCREATE_PUREDEVICE
+D3DDEVCAPS_QUINTICRTPATCHES equ 0x00200000 ;; Device supports quintic Beziers and BSplines
+D3DDEVCAPS_RTPATCHES	equ 0x00400000 ;; Device supports Rect and Tri patches
+D3DDEVCAPS_RTPATCHHANDLEZERO equ 0x00800000 ;; Indicates that RT Patches may be drawn efficiently using handle 0
+D3DDEVCAPS_NPATCHES	equ 0x01000000 ;; Device supports N-Patches
+
+;;
+;; PrimitiveMiscCaps
+;;
+D3DPMISCCAPS_MASKZ	equ 0x00000002
+D3DPMISCCAPS_CULLNONE	equ 0x00000010
+D3DPMISCCAPS_CULLCW	equ 0x00000020
+D3DPMISCCAPS_CULLCCW	equ 0x00000040
+D3DPMISCCAPS_COLORWRITEENABLE equ 0x00000080
+D3DPMISCCAPS_CLIPPLANESCALEDPOINTS equ 0x00000100 ;; Device correctly clips scaled points to clip planes
+D3DPMISCCAPS_CLIPTLVERTS equ 0x00000200 ;; device will clip post-transformed vertex primitives
+D3DPMISCCAPS_TSSARGTEMP equ 0x00000400 ;; device supports D3DTA_TEMP for temporary register
+D3DPMISCCAPS_BLENDOP	equ 0x00000800L ;; device supports D3DRS_BENDOP
+D3DPMISCCAPS_NULLREFERENCE equ 0x00001000 ;; Reference Device that doesnt render
+D3DPMISCCAPS_INDEPENDENTWRITEMASKS equ 0x00004000 ;; Device supports independent write masks for MET or MRT
+D3DPMISCCAPS_PERSTAGECONSTANT equ 0x00008000 ;; Device supports per-stage constants
+D3DPMISCCAPS_FOGANDSPECULARALPHA equ 0x00010000 ;; Device supports separate fog and specular alpha (many devices
+						;; use the specular alpha channel to store fog factor)
+D3DPMISCCAPS_SEPARATEALPHABLEND equ 0x00020000 ;; Device supports separate blend settings for the alpha channel
+D3DPMISCCAPS_MRTINDEPENDENTBITDEPTHS equ 0x00040000 ;; Device supports different bit depths for MRT
+D3DPMISCCAPS_MRTPOSTPIXELSHADERBLENDING equ 0x00080000 ;; Device supports post-pixel shader operations for MRT
+D3DPMISCCAPS_FOGVERTEXCLAMPED equ 0x00100000 ;; Device clamps fog blend factor per vertex
+
+;; D3D9Ex only --
+if NOT defined(D3D_DISABLE_9EX)
+
+D3DPMISCCAPS_POSTBLENDSRGBCONVERT equ 0x00200000 ;; Indicates device can perform conversion to sRGB after blending.
+
+endif ;; NOT D3D_DISABLE_9EX
+;; -- D3D9Ex only
+
+
+;;
+;; LineCaps
+;;
+D3DLINECAPS_TEXTURE	equ 0x00000001
+D3DLINECAPS_ZTEST	equ 0x00000002
+D3DLINECAPS_BLEND	equ 0x00000004
+D3DLINECAPS_ALPHACMP	equ 0x00000008
+D3DLINECAPS_FOG		equ 0x00000010
+D3DLINECAPS_ANTIALIAS	equ 0x00000020
+
+;;
+;; RasterCaps
+;;
+D3DPRASTERCAPS_DITHER	equ 0x00000001
+D3DPRASTERCAPS_ZTEST	equ 0x00000010
+D3DPRASTERCAPS_FOGVERTEX equ 0x00000080
+D3DPRASTERCAPS_FOGTABLE equ 0x00000100
+D3DPRASTERCAPS_MIPMAPLODBIAS equ 0x00002000
+D3DPRASTERCAPS_ZBUFFERLESSHSR equ 0x00008000
+D3DPRASTERCAPS_FOGRANGE equ 0x00010000
+D3DPRASTERCAPS_ANISOTROPY equ 0x00020000
+D3DPRASTERCAPS_WBUFFER	equ 0x00040000
+D3DPRASTERCAPS_WFOG	equ 0x00100000
+D3DPRASTERCAPS_ZFOG	equ 0x00200000
+D3DPRASTERCAPS_COLORPERSPECTIVE equ 0x00400000 ;; Device iterates colors perspective correct
+D3DPRASTERCAPS_SCISSORTEST equ 0x01000000
+D3DPRASTERCAPS_SLOPESCALEDEPTHBIAS equ 0x02000000
+D3DPRASTERCAPS_DEPTHBIAS equ 0x04000000
+D3DPRASTERCAPS_MULTISAMPLE_TOGGLE equ 0x08000000
+
+;;
+;; ZCmpCaps, AlphaCmpCaps
+;;
+D3DPCMPCAPS_NEVER	equ 0x00000001
+D3DPCMPCAPS_LESS	equ 0x00000002
+D3DPCMPCAPS_EQUAL	equ 0x00000004
+D3DPCMPCAPS_LESSEQUAL	equ 0x00000008
+D3DPCMPCAPS_GREATER	equ 0x00000010
+D3DPCMPCAPS_NOTEQUAL	equ 0x00000020
+D3DPCMPCAPS_GREATEREQUAL equ 0x00000040
+D3DPCMPCAPS_ALWAYS	equ 0x00000080
+
+;;
+;; SourceBlendCaps, DestBlendCaps
+;;
+D3DPBLENDCAPS_ZERO	equ 0x00000001
+D3DPBLENDCAPS_ONE	equ 0x00000002
+D3DPBLENDCAPS_SRCCOLOR	equ 0x00000004
+D3DPBLENDCAPS_INVSRCCOLOR equ 0x00000008
+D3DPBLENDCAPS_SRCALPHA	equ 0x00000010
+D3DPBLENDCAPS_INVSRCALPHA equ 0x00000020
+D3DPBLENDCAPS_DESTALPHA equ 0x00000040
+D3DPBLENDCAPS_INVDESTALPHA equ 0x00000080
+D3DPBLENDCAPS_DESTCOLOR equ 0x00000100
+D3DPBLENDCAPS_INVDESTCOLOR equ 0x00000200
+D3DPBLENDCAPS_SRCALPHASAT equ 0x00000400
+D3DPBLENDCAPS_BOTHSRCALPHA equ 0x00000800
+D3DPBLENDCAPS_BOTHINVSRCALPHA equ 0x00001000
+D3DPBLENDCAPS_BLENDFACTOR equ 0x00002000L ;; Supports both D3DBLEND_BLENDFACTOR and D3DBLEND_INVBENDFACTOR
+
+;; D3D9Ex only --
+if NOT defined(D3D_DISABLE_9EX)
+
+D3DPBLENDCAPS_SRCCOLOR2 equ 0x00004000
+D3DPBLENDCAPS_INVSRCCOLOR2 equ 0x00008000
+
+endif ;; NOT D3D_DISABLE_9EX
+;; -- D3D9Ex only
+
+
+;;
+;; ShadeCaps
+;;
+D3DPSHADECAPS_COLORGOURAUDRGB equ 0x00000008
+D3DPSHADECAPS_SPECULARGOURAUDRGB equ 0x00000200
+D3DPSHADECAPS_ALPHAGOURAUDBLEND equ 0x00004000
+D3DPSHADECAPS_FOGGOURAUD equ 0x00080000
+
+;;
+;; TextureCaps
+;;
+D3DPTEXTURECAPS_PERSPECTIVE equ 0x00000001 ;; Perspective-correct texturing is supported
+D3DPTEXTURECAPS_POW2	equ 0x00000002 ;; Power-of-2 texture dimensions are required - applies to non-Cube/Volume textures only.
+D3DPTEXTURECAPS_ALPHA	equ 0x00000004 ;; Alpha in texture pixels is supported
+D3DPTEXTURECAPS_SQUAREONLY equ 0x00000020 ;; Only square textures are supported
+D3DPTEXTURECAPS_TEXREPEATNOTSCALEDBYSIZE equ 0x00000040 ;; Texture indices are not scaled by the texture size prior to interpolation
+D3DPTEXTURECAPS_ALPHAPALETTE equ 0x00000080 ;; Device can draw alpha from texture palettes
+;; Device can use non-POW2 textures if:
+;;  1) D3DTEXTURE_ADDRESS is set to CLAMP for this texture's stage
+;;  2) D3DRS_WRAP(N) is zero for this texture's coordinates
+;;  3) mip mapping is not enabled (use magnification filter only)
+D3DPTEXTURECAPS_NONPOW2CONDITIONAL equ 0x00000100
+D3DPTEXTURECAPS_PROJECTED equ 0x00000400 ;; Device can do D3DTTFF_PROJECTED
+D3DPTEXTURECAPS_CUBEMAP equ 0x00000800 ;; Device can do cubemap textures
+D3DPTEXTURECAPS_VOLUMEMAP equ 0x00002000 ;; Device can do volume textures
+D3DPTEXTURECAPS_MIPMAP	equ 0x00004000 ;; Device can do mipmapped textures
+D3DPTEXTURECAPS_MIPVOLUMEMAP equ 0x00008000 ;; Device can do mipmapped volume textures
+D3DPTEXTURECAPS_MIPCUBEMAP equ 0x00010000 ;; Device can do mipmapped cube maps
+D3DPTEXTURECAPS_CUBEMAP_POW2 equ 0x00020000 ;; Device requires that cubemaps be power-of-2 dimension
+D3DPTEXTURECAPS_VOLUMEMAP_POW2 equ 0x00040000 ;; Device requires that volume maps be power-of-2 dimension
+D3DPTEXTURECAPS_NOPROJECTEDBUMPENV equ 0x00200000 ;; Device does not support projected bump env lookup operation
+						;; in programmable and fixed function pixel shaders
+
+;;
+;; TextureFilterCaps, StretchRectFilterCaps
+;;
+D3DPTFILTERCAPS_MINFPOINT equ 0x00000100 ;; Min Filter
+D3DPTFILTERCAPS_MINFLINEAR equ 0x00000200
+D3DPTFILTERCAPS_MINFANISOTROPIC equ 0x00000400
+D3DPTFILTERCAPS_MINFPYRAMIDALQUAD equ 0x00000800
+D3DPTFILTERCAPS_MINFGAUSSIANQUAD equ 0x00001000
+D3DPTFILTERCAPS_MIPFPOINT equ 0x00010000 ;; Mip Filter
+D3DPTFILTERCAPS_MIPFLINEAR equ 0x00020000
+
+;; D3D9Ex only --
+if NOT defined(D3D_DISABLE_9EX)
+
+D3DPTFILTERCAPS_CONVOLUTIONMONO equ 0x00040000 ;; Min and Mag for the convolution mono filter
+
+endif ;; NOT D3D_DISABLE_9EX
+;; -- D3D9Ex only
+
+D3DPTFILTERCAPS_MAGFPOINT equ 0x01000000 ;; Mag Filter
+D3DPTFILTERCAPS_MAGFLINEAR equ 0x02000000
+D3DPTFILTERCAPS_MAGFANISOTROPIC equ 0x04000000
+D3DPTFILTERCAPS_MAGFPYRAMIDALQUAD equ 0x08000000
+D3DPTFILTERCAPS_MAGFGAUSSIANQUAD equ 0x10000000
+
+;;
+;; TextureAddressCaps
+;;
+D3DPTADDRESSCAPS_WRAP	equ 0x00000001
+D3DPTADDRESSCAPS_MIRROR equ 0x00000002
+D3DPTADDRESSCAPS_CLAMP	equ 0x00000004
+D3DPTADDRESSCAPS_BORDER equ 0x00000008
+D3DPTADDRESSCAPS_INDEPENDENTUV equ 0x00000010
+D3DPTADDRESSCAPS_MIRRORONCE equ 0x00000020
+
+;;
+;; StencilCaps
+;;
+D3DSTENCILCAPS_KEEP	equ 0x00000001
+D3DSTENCILCAPS_ZERO	equ 0x00000002
+D3DSTENCILCAPS_REPLACE	equ 0x00000004
+D3DSTENCILCAPS_INCRSAT	equ 0x00000008
+D3DSTENCILCAPS_DECRSAT	equ 0x00000010
+D3DSTENCILCAPS_INVERT	equ 0x00000020
+D3DSTENCILCAPS_INCR	equ 0x00000040
+D3DSTENCILCAPS_DECR	equ 0x00000080
+D3DSTENCILCAPS_TWOSIDED equ 0x00000100
+
+;;
+;; TextureOpCaps
+;;
+D3DTEXOPCAPS_DISABLE	equ 0x00000001
+D3DTEXOPCAPS_SELECTARG1 equ 0x00000002
+D3DTEXOPCAPS_SELECTARG2 equ 0x00000004
+D3DTEXOPCAPS_MODULATE	equ 0x00000008
+D3DTEXOPCAPS_MODULATE2X equ 0x00000010
+D3DTEXOPCAPS_MODULATE4X equ 0x00000020
+D3DTEXOPCAPS_ADD	equ 0x00000040
+D3DTEXOPCAPS_ADDSIGNED	equ 0x00000080
+D3DTEXOPCAPS_ADDSIGNED2X equ 0x00000100
+D3DTEXOPCAPS_SUBTRACT	equ 0x00000200
+D3DTEXOPCAPS_ADDSMOOTH	equ 0x00000400
+D3DTEXOPCAPS_BLENDDIFFUSEALPHA equ 0x00000800
+D3DTEXOPCAPS_BLENDTEXTUREALPHA equ 0x00001000
+D3DTEXOPCAPS_BLENDFACTORALPHA equ 0x00002000
+D3DTEXOPCAPS_BLENDTEXTUREALPHAPM equ 0x00004000
+D3DTEXOPCAPS_BLENDCURRENTALPHA equ 0x00008000
+D3DTEXOPCAPS_PREMODULATE equ 0x00010000
+D3DTEXOPCAPS_MODULATEALPHA_ADDCOLOR equ 0x00020000
+D3DTEXOPCAPS_MODULATECOLOR_ADDALPHA equ 0x00040000
+D3DTEXOPCAPS_MODULATEINVALPHA_ADDCOLOR equ 0x00080000
+D3DTEXOPCAPS_MODULATEINVCOLOR_ADDALPHA equ 0x00100000
+D3DTEXOPCAPS_BUMPENVMAP equ 0x00200000
+D3DTEXOPCAPS_BUMPENVMAPLUMINANCE equ 0x00400000
+D3DTEXOPCAPS_DOTPRODUCT3 equ 0x00800000
+D3DTEXOPCAPS_MULTIPLYADD equ 0x01000000
+D3DTEXOPCAPS_LERP	equ 0x02000000
+
+;;
+;; FVFCaps
+;;
+D3DFVFCAPS_TEXCOORDCOUNTMASK equ 0x0000ffff ;; mask for texture coordinate count field
+D3DFVFCAPS_DONOTSTRIPELEMENTS equ 0x00080000 ;; Device prefers that vertex elements not be stripped
+D3DFVFCAPS_PSIZE	equ 0x00100000 ;; Device can receive point size
+
+;;
+;; VertexProcessingCaps
+;;
+D3DVTXPCAPS_TEXGEN	equ 0x00000001 ;; device can do texgen
+D3DVTXPCAPS_MATERIALSOURCE7 equ 0x00000002 ;; device can do DX7-level colormaterialsource ops
+D3DVTXPCAPS_DIRECTIONALLIGHTS equ 0x00000008 ;; device can do directional lights
+D3DVTXPCAPS_POSITIONALLIGHTS equ 0x00000010 ;; device can do positional lights (includes point and spot)
+D3DVTXPCAPS_LOCALVIEWER equ 0x00000020 ;; device can do local viewer
+D3DVTXPCAPS_TWEENING	equ 0x00000040 ;; device can do vertex tweening
+D3DVTXPCAPS_TEXGEN_SPHEREMAP equ 0x00000100 ;; device supports D3DTSS_TCI_SPHEREMAP
+D3DVTXPCAPS_NO_TEXGEN_NONLOCALVIEWER equ 0x00000200 ;; device does not support TexGen in non-local viewer mode
+
+;;
+;; DevCaps2
+;;
+D3DDEVCAPS2_STREAMOFFSET equ 0x00000001 ;; Device supports offsets in streams. Must be set by DX9 drivers
+D3DDEVCAPS2_DMAPNPATCH	equ 0x00000002 ;; Device supports displacement maps for N-Patches
+D3DDEVCAPS2_ADAPTIVETESSRTPATCH equ 0x00000004 ;; Device supports adaptive tesselation of RT-patches
+D3DDEVCAPS2_ADAPTIVETESSNPATCH equ 0x00000008 ;; Device supports adaptive tesselation of N-patches
+D3DDEVCAPS2_CAN_STRETCHRECT_FROM_TEXTURES equ 0x00000010 ;; Device supports StretchRect calls with a texture as the source
+D3DDEVCAPS2_PRESAMPLEDDMAPNPATCH equ 0x00000020 ;; Device supports presampled displacement maps for N-Patches
+D3DDEVCAPS2_VERTEXELEMENTSCANSHARESTREAMOFFSET equ 0x00000040 ;; Vertex elements in a vertex declaration can share the same stream offset
+
+;;
+;; DeclTypes
+;;
+D3DDTCAPS_UBYTE4	equ 0x00000001
+D3DDTCAPS_UBYTE4N	equ 0x00000002
+D3DDTCAPS_SHORT2N	equ 0x00000004
+D3DDTCAPS_SHORT4N	equ 0x00000008
+D3DDTCAPS_USHORT2N	equ 0x00000010
+D3DDTCAPS_USHORT4N	equ 0x00000020
+D3DDTCAPS_UDEC3		equ 0x00000040
+D3DDTCAPS_DEC3N		equ 0x00000080
+D3DDTCAPS_FLOAT16_2	equ 0x00000100
+D3DDTCAPS_FLOAT16_4	equ 0x00000200
+
+endif ;; (DIRECT3D_VERSION GE 0x0900)
+.list
+endif ;; _d3d9CAPS_H_
+
+

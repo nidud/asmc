@@ -19,44 +19,39 @@ _disk_read proc uses esi edi ebx
     mov edi,GetLogicalDrives()
     lea ebx,drvinfo
     mov ecx,1
-l1:
-    sub eax,eax
-    mov [ebx].S_DISK.di_flag,eax
-    shr edi,1
-    jnc l4
-    _disk_type(ecx)
-    cmp eax,1
-    jna l3
-    mov edx,_FB_ROOTDIR or _A_VOLID
-    cmp eax,DRIVE_CDROM
-    jne l2
-    or  edx,_FB_CDROOM
-l2:
-    mov [ebx].S_DISK.di_flag,edx
-l3:
-    mov [ebx].S_DISK.di_time,esi
-l4:
-    add ebx,SIZE S_DISK
-    inc ecx
-    cmp ecx,MAXDRIVES+1
-    jne l1
+    .repeat
+        sub eax,eax
+        mov [ebx].S_DISK.di_flag,eax
+        shr edi,1
+        .ifc
+            .if _disk_type(ecx) > 1
+                mov edx,_FB_ROOTDIR or _A_VOLID
+                .if eax == DRIVE_CDROM
+                    or edx,_FB_CDROOM
+                .endif
+                mov [ebx].S_DISK.di_flag,edx
+            .endif
+            mov [ebx].S_DISK.di_time,esi
+        .endif
+        add ebx,SIZE S_DISK
+        inc ecx
+    .until ecx == MAXDRIVES+1
     ret
+
 _disk_read endp
 
 InitDisk:
     lea edx,drvinfo
     mov ecx,1
     mov eax,':A'
-@@:
-    mov dword ptr [edx].S_DISK.di_name,eax
-    mov dword ptr [edx].S_DISK.di_size,ecx
-    inc eax
-    add edx,SIZE S_DISK
-    inc ecx
-    cmp ecx,MAXDRIVES+1
-    jne @B
-@@:
-    call    _disk_read
+    .repeat
+        mov dword ptr [edx].S_DISK.di_name,eax
+        mov dword ptr [edx].S_DISK.di_size,ecx
+        inc eax
+        add edx,SIZE S_DISK
+        inc ecx
+    .until ecx == MAXDRIVES+1
+    _disk_read()
     ret
 
 pragma_init InitDisk, 11

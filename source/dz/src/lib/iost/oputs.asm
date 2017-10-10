@@ -1,30 +1,30 @@
 include stdio.inc
 include iost.inc
 
-	.code
+    .code
 
-	OPTION PROLOGUE:NONE, EPILOGUE:NONE
+oputs proc uses edx string:LPSTR
 
-oputs	PROC string:LPSTR
-	push	edx
-	mov	edx,[esp+8]
-@@:
-	mov	al,[edx]
-	inc	edx
-	test	al,al
-	jz	@F
-	call	oputc
-	jnz	toend
-	jmp	@B
-@@:
-	mov	eax,0Dh
-	call	oputc
-	jz	toend
-	mov	eax,0Ah
-	call	oputc
-toend:
-	pop	edx
-	ret	4
-oputs	ENDP
+    mov edx,string
 
-	END
+    .repeat
+
+        .while 1
+
+            mov al,[edx]
+            inc edx
+            .break .if !al
+            oputc()
+            .break(1) .ifnz
+        .endw
+        mov eax,0Dh
+        oputc()
+        .break .ifz
+        mov eax,0Ah
+        oputc()
+    .until 1
+    ret
+
+oputs endp
+
+    END

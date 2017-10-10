@@ -1,21 +1,23 @@
 include iost.inc
 
-	.code
+    .code
 
-oseek	PROC offs, from
-	mov	eax,offs
-	xor	edx,edx
-	ioseek( addr STDI, edx::eax, from )
-	jz	@F
-	test	STDI.ios_flag,IO_MEMBUF
-	jnz	@F
-	push	edx
-	push	eax
-	ioread( addr STDI )
-	pop	eax
-	pop	edx
-@@:
-	ret
-oseek	ENDP
+oseek proc offs, from
 
-	END
+    mov eax,offs
+    xor edx,edx
+    ioseek(&STDI, edx::eax, from)
+    .ifnz
+        .if !( STDI.ios_flag & IO_MEMBUF )
+            push edx
+            push eax
+            ioread(&STDI)
+            pop eax
+            pop edx
+        .endif
+    .endif
+    ret
+
+oseek endp
+
+    END

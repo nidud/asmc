@@ -4,40 +4,43 @@ include errno.inc
 include confirm.inc
 include dzlib.inc
 
-	.code
+    .code
 
-ogetouth PROC filename:LPSTR, mode
-	osopen( filename, _A_NORMAL, mode, A_CREATE )
-	cmp	eax,-1
-	jne	toend
-	cmp	errno,EEXIST
-	jne	error
-	test	confirmflag,CFDELETEALL
-	jnz	confirm
-trunc:
-	setfattr( filename, 0 )
-	openfile( filename, mode, A_TRUNC )
-	jmp	toend
-confirm:
-	confirm_delete( filename, 0 )
-	cmp	eax,1
-	je	trunc		; delete --> trunc
-	cmp	eax,2
-	je	delete		; delete all --> clear flag, trunc
-	cmp	eax,3
-	je	skip		; jump --> return 0
-	mov	eax,-1		; Cancel --> return -1
-	jmp	toend
-delete:
-	and	confirmflag,not CFDELETEALL
-	jmp	trunc
-skip:
-	xor	eax,eax
-toend:
-	ret
-error:
-	eropen( filename ) ; -1
-	jmp	toend
-ogetouth ENDP
+ogetouth proc filename:LPSTR, mode
 
-	END
+    .repeat
+
+        .break .if osopen(filename, _A_NORMAL, mode, A_CREATE) != -1
+
+        .if errno != EEXIST
+
+            eropen(filename) ; -1
+            .break
+        .endif
+
+        mov eax,1
+        .if confirmflag & CFDELETEALL
+
+            confirm_delete(filename, 0)
+        .endif
+
+        .switch eax
+          .case 2   ; delete all --> clear flag, trunc
+            and confirmflag,not CFDELETEALL
+          .case 1   ; delete --> trunc
+            setfattr(filename, 0)
+            openfile(filename, mode, A_TRUNC)
+            .endc
+          .case 3   ; jump --> return 0
+            xor eax,eax
+            .endc
+          .default  ; Cancel --> return -1
+            mov eax,-1
+            .endc
+        .endsw
+    .until 1
+    ret
+
+ogetouth endp
+
+    END

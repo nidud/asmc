@@ -429,7 +429,7 @@ test_event proc private uses esi edi ebx cmd, extended
                     .break
                 .endif
 
-                mov edx,edi
+                mov edx,esi
                 mov eax,[edx].S_TOBJ.to_rect
                 sub edx,sizeof(S_TOBJ) ; prev object
                 .repeat
@@ -439,7 +439,7 @@ test_event proc private uses esi edi ebx cmd, extended
                             dec ecx
                             mov [esi].S_DOBJ.dl_index,cl
                             mov result,1
-                            .break
+                            .break(1)
                         .endif
                     .endif
                     sub edx,sizeof(S_TOBJ)
@@ -494,18 +494,17 @@ test_event proc private uses esi edi ebx cmd, extended
                 inc    result
                 lea    edx,[ebx+16]
                 movzx  ecx,[esi].S_DOBJ.dl_index
-                add    ecx,2
+                inc    ecx
                 mov    eax,[ebx].S_TOBJ.to_rect
 
-                .while cl <= [esi].S_DOBJ.dl_count
+                .while cl < [esi].S_DOBJ.dl_count
 
                     .if ah == [edx].S_TOBJ.to_rect.rc_y && al < [edx].S_TOBJ.to_rect.rc_x
 
                         .if !([edx].S_TOBJ.to_flag & _O_DEACT)
 
-                            dec ecx
                             mov [esi].S_DOBJ.dl_index,cl
-                            .break
+                            .break(1)
                         .endif
                     .endif
                     inc ecx
@@ -652,8 +651,6 @@ test_event proc private uses esi edi ebx cmd, extended
                         mov result,_C_NORMAL
                         .break
                     .endif
-                .else
-                    .gotosw(KEY_HOME)
                 .endif
 
                 mov edx,tdllist
@@ -689,8 +686,6 @@ test_event proc private uses esi edi ebx cmd, extended
                         mov result,_C_NORMAL
                         .break
                     .endif
-                .else
-                    .gotosw(KEY_END)
                 .endif
 
                 mov edx,tdllist

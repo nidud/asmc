@@ -16,7 +16,7 @@ local lpFileSize:qword
 
     .if !GetFileSizeEx(edx, &lpFileSize)
 
-        osmaperr()
+        mov edx,osmaperr()
     .else
         mov edx,dword ptr lpFileSize[4]
         mov eax,dword ptr lpFileSize

@@ -345,77 +345,6 @@ previous_line proc uses esi edi ebx offs:ptr, loffs:ptr, sttable:ptr, stcount:UI
 
 previous_line endp
 
-putscreenb proc uses esi edi ebx y, row, lp
-
-  local bz:COORD, rect:SMALL_RECT, lbuf[TIMAXSCRLINE]:CHAR_INFO
-
-    mov esi,lp
-    mov ebx,row
-    mov eax,_scrcol
-    mov bz.x,ax
-    mov bz.y,1
-    mov rect.Left,0
-    dec eax
-    mov rect.Right,ax
-
-    .repeat
-        lea edi,lbuf
-        mov ecx,_scrcol
-        movzx eax,at_background[B_TextView]
-        or  al,at_foreground[F_TextView]
-        shl eax,16
-        .repeat
-            lodsb
-            stosd
-        .untilcxz
-        mov eax,y
-        add eax,row
-        sub eax,ebx
-        mov rect.Top,ax
-        mov rect.Bottom,ax
-        .break .if !WriteConsoleOutput(hStdOutput, addr lbuf, bz, 0, addr rect)
-        dec ebx
-    .untilz
-    ret
-
-putscreenb endp
-
-continuesearch proc uses esi lpOffset:ptr
-
-  local buffer[512]:byte
-
-    lea esi,buffer
-    xor eax,eax
-    .if al != searchstring
-        wcpushst(esi, "Search for the string:")
-        mov eax,_scrrow
-        mov edx,_scrcol
-        sub edx,24
-        scputs(24, eax, 0, edx, &searchstring)
-        mov eax,lpOffset
-        mov eax,[eax]
-        xor edx,edx
-        ioseek(addr STDI, edx::eax, SEEK_SET)
-        .ifnz
-            osearch()
-            .ifnz
-                mov ecx,lpOffset
-                mov [ecx],eax
-                mov dword ptr STDI.ios_offset,eax
-                mov dword ptr STDI.ios_offset[4],edx
-                wcpopst(esi)
-                mov eax,1
-            .else
-                notfoundmsg()
-            .endif
-        .else
-            notfoundmsg()
-        .endif
-    .endif
-    ret
-
-continuesearch endp
-
 chexbuf proc uses esi edi ebx off, len
 
   local result
@@ -682,6 +611,77 @@ tview_update endp
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
     option proc:PUBLIC
+
+putscreenb proc uses esi edi ebx y, row, lp
+
+  local bz:COORD, rect:SMALL_RECT, lbuf[TIMAXSCRLINE]:CHAR_INFO
+
+    mov esi,lp
+    mov ebx,row
+    mov eax,_scrcol
+    mov bz.x,ax
+    mov bz.y,1
+    mov rect.Left,0
+    dec eax
+    mov rect.Right,ax
+
+    .repeat
+        lea edi,lbuf
+        mov ecx,_scrcol
+        movzx eax,at_background[B_TextView]
+        or  al,at_foreground[F_TextView]
+        shl eax,16
+        .repeat
+            lodsb
+            stosd
+        .untilcxz
+        mov eax,y
+        add eax,row
+        sub eax,ebx
+        mov rect.Top,ax
+        mov rect.Bottom,ax
+        .break .if !WriteConsoleOutput(hStdOutput, addr lbuf, bz, 0, addr rect)
+        dec ebx
+    .untilz
+    ret
+
+putscreenb endp
+
+continuesearch proc uses esi lpOffset:ptr
+
+  local buffer[512]:byte
+
+    lea esi,buffer
+    xor eax,eax
+    .if al != searchstring
+        wcpushst(esi, "Search for the string:")
+        mov eax,_scrrow
+        mov edx,_scrcol
+        sub edx,24
+        scputs(24, eax, 0, edx, &searchstring)
+        mov eax,lpOffset
+        mov eax,[eax]
+        xor edx,edx
+        ioseek(addr STDI, edx::eax, SEEK_SET)
+        .ifnz
+            osearch()
+            .ifnz
+                mov ecx,lpOffset
+                mov [ecx],eax
+                mov dword ptr STDI.ios_offset,eax
+                mov dword ptr STDI.ios_offset[4],edx
+                wcpopst(esi)
+                mov eax,1
+            .else
+                notfoundmsg()
+            .endif
+        .else
+            notfoundmsg()
+        .endif
+    .endif
+    ret
+
+continuesearch endp
 
 tview proc uses esi edi ebx filename, offs
 

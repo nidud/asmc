@@ -2,6 +2,9 @@ HISTORY.TXT--
 Change Log File for DOSZIP - Win32
 ==================================
 
+Changes in 3.51 - 14 Oct 2017
+- added HexEdit (Ctrl-F4)
+
 Changes in 3.50 - 6 Jun 2017
 - fixed bug in Confirm Copy -- target deleted on Cancel..
 - fixed bug in FindFile -- memory leak..

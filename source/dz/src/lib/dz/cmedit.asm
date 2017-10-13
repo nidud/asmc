@@ -11,9 +11,8 @@ topensession proto
 wedit proto :dword, :dword
 TVGetCurrentFile proto :dword
 loadiniproc proto :dword, :dword, :dword
-ifdef __HEDIT__
 hedit proto :LPSTR, :dword
-endif
+
     .code
 
 load_tedit proc uses esi ebx file, etype
@@ -44,17 +43,13 @@ load_tedit proc uses esi ebx file, etype
                     mov byte ptr [eax],0
                 .endif
             .endif
-ifdef __HEDIT__
             mov eax,keyshift
             mov eax,[eax]
             .if al & KEY_CTRL   ; 2 (Ctrl)
                 hedit(esi, 0)
             .else
-endif
                 tedit(esi, 0)
-ifdef __HEDIT__
             .endif
-endif
         .endif
         xor eax,eax
     .endif
@@ -131,25 +126,26 @@ editzip proc uses esi edi
 editzip endp
 
 cmwindowlist proc
+
     .if tdlgopen() > 2
         mov tinfo,eax
-        jmp cmtmodal
-    .elseif eax == 1
-        mov tinfo,edx
-        tclose()
-    .elseif eax == 2
-        tiflush(edx)
+    .else
+        .if eax == 1
+            mov tinfo,edx
+            tclose()
+        .elseif eax == 2
+            tiflush(edx)
+        .endif
+        ret
     .endif
-    ret
+
 cmwindowlist endp
 
 cmtmodal proc
 
     .if tistate(tinfo)
-
         tmodal()
     .else
-
         topensession()
     .endif
     ret

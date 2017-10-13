@@ -75,7 +75,8 @@ tclose proc
 
     .if tistate(tinfo)
         .if ecx & _T_MODIFIED
-            .if tisavechanges(tinfo)
+            mov edx,tinfo
+            .if SaveChanges([edx].S_TINFO.ti_file)
 
                 tiflush(tinfo)
             .endif

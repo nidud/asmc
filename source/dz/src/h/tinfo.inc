@@ -165,13 +165,13 @@ tisearch	PROTO :PTINFO
 tisearchxy	PROTO :PTINFO
 ticontsearch	PROTO :PTINFO
 tireplace	PROTO :PTINFO
-tisavechanges	PROTO :PTINFO
 tioption	PROTO :PTINFO
 titogglefile	PROTO :PTINFO, :PTINFO
 tisaveas	PROTO :PTINFO
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+SaveChanges	PROTO :LPSTR
 tdlgopen	PROTO
 tihandler	PROTO
 toption		PROTO

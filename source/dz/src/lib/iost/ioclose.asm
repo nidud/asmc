@@ -5,7 +5,10 @@ include io.inc
 
 ioclose proc uses eax io:ptr S_IOST
     mov eax,io
-    _close([eax].S_IOST.ios_file)
+    mov eax,[eax].S_IOST.ios_file
+    .if eax != -1
+        _close(eax)
+    .endif
     iofree(io)
     ret
 ioclose endp

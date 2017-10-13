@@ -42,9 +42,9 @@ toption proc uses ebx
             mov al,128
             .repeat
                 shl ah,1
-                .break .if CARRY?
+                .break .ifc
                 shr al,1
-            .until ZERO?
+            .untilz
 
             .if al > TIMAXTABSIZE
                 mov al,TIMAXTABSIZE

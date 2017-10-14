@@ -63,6 +63,7 @@ enum operand_type {
     OP_AX	= ( OP_A | OP_R16 ),
     OP_EAX	= ( OP_A | OP_R32 ),
     OP_RAX	= ( OP_A | OP_R64 ),
+    OP_RIP	= ( 16 | OP_RSPEC),
     OP_CL	= ( OP_CL_ONLY | OP_R8 ),
     OP_DX	= ( OP_DX_ONLY | OP_R16 ),
     OP_RGT8	= ( OP_R16 | OP_R32 | OP_R64 ),

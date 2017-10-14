@@ -440,9 +440,11 @@ static int set_rm_sib( struct code_info *CodeInfo, unsigned CurrOpnd, char ss, i
     bit3_base = 0;
     bit3_idx = 0;
     rex = 0;
+    if (base == T_RIP)
+	CodeInfo->base_rip = 1;
     if( CodeInfo->opnd[CurrOpnd].InsFixup != NULL ) { /* symbolic displacement given? */
 	mod_field = MOD_10;
-    } else if( CodeInfo->opnd[CurrOpnd].data32l == 0 ) { /* no displacement (or 0) */
+    } else if((CodeInfo->opnd[CurrOpnd].data32l == 0) || (base == T_RIP)) { /* no displacement (or 0) */
 	mod_field = MOD_00;
     } else if( ( CodeInfo->opnd[CurrOpnd].data32l > SCHAR_MAX )
        || ( CodeInfo->opnd[CurrOpnd].data32l < SCHAR_MIN ) ) {
@@ -469,9 +471,14 @@ static int set_rm_sib( struct code_info *CodeInfo, unsigned CurrOpnd, char ss, i
 	    rm_field = RM_D16; /* D16=110b */
 	} else {
 	    rm_field = RM_D32; /* D32=101b */
-	    if ( CodeInfo->Ofssize == USE64 && CodeInfo->opnd[CurrOpnd].InsFixup == NULL ) {
-		rm_field = RM_SIB;
-		CodeInfo->sib = 0x25; /* IIIBBB, base=101b, index=100b */
+	    if ( CodeInfo->Ofssize == USE64 ) {
+		 if ( CodeInfo->opnd[CurrOpnd].InsFixup == NULL ) {
+		    rm_field = RM_SIB;	  /* 64-bit non-RIP direct addressing */
+		    CodeInfo->sib = 0x25; /* IIIBBB, base=101b, index=100b */
+		} else if ( CodeInfo->opnd[CurrOpnd].InsFixup->type == FIX_OFF32 ) {
+		    /* added v2.26 */
+		    CodeInfo->opnd[CurrOpnd].InsFixup->type = FIX_RELOFF32;
+		}
 	    }
 	}
     } else if( ( index == EMPTY ) && ( base != EMPTY ) ) {
@@ -496,7 +503,9 @@ static int set_rm_sib( struct code_info *CodeInfo, unsigned CurrOpnd, char ss, i
 	    rm_field = RM_BX; /* 7 */
 	    break;
 	default: /* for 386 and up */
-	    base_reg = GetRegNo( base );
+	    base_reg = 5;
+	    if ( base != T_RIP )
+		base_reg = GetRegNo( base );
 	    bit3_base = base_reg >> 3;
 	    base_reg &= BIT_012;
 	    rm_field = base_reg;
@@ -504,7 +513,7 @@ static int set_rm_sib( struct code_info *CodeInfo, unsigned CurrOpnd, char ss, i
 		/* 4 is RSP/ESP or R12/R12D, which must use SIB encoding.
 		 * SSIIIBBB, ss = 00, index = 100b ( no index ), base = 100b ( ESP ) */
 		CodeInfo->sib = 0x24;
-	    } else if ( base_reg == 5 && mod_field == MOD_00 ) {
+	    } else if ( base_reg == 5 && mod_field == MOD_00 && base != T_RIP ) {
 		/* 5 is [E|R]BP or R13[D]. Needs displacement */
 		mod_field = MOD_01;
 	    }
@@ -526,7 +535,9 @@ static int set_rm_sib( struct code_info *CodeInfo, unsigned CurrOpnd, char ss, i
 	seg_override( CodeInfo, T_DS, sym, FALSE );
     } else {
 	/* base != EMPTY && index != EMPTY */
-	base_reg = GetRegNo( base );
+	base_reg = 5;
+	if ( base != T_RIP )
+	    base_reg = GetRegNo( base );
 	idx_reg	 = GetRegNo( index );
 	bit3_base = base_reg >> 3;
 	bit3_idx  = idx_reg  >> 3;
@@ -551,10 +562,11 @@ static int set_rm_sib( struct code_info *CodeInfo, unsigned CurrOpnd, char ss, i
 	    seg_override( CodeInfo, base, sym, FALSE );
 	    break;
 	case T_RSP:
+	case T_RIP:
 	case T_ESP:
 	    return( asmerr( 2032 ) );
 	default:
-	    if( base_reg == 5 ) { /* v2.03: EBP/RBP/R13/R13D? */
+	    if( base_reg == 5 && base != T_RIP ) { /* v2.03: EBP/RBP/R13/R13D? */
 		if( mod_field == MOD_00 ) {
 		    mod_field = MOD_01;
 		}
@@ -566,6 +578,9 @@ static int set_rm_sib( struct code_info *CodeInfo, unsigned CurrOpnd, char ss, i
 	    seg_override( CodeInfo, base, sym, FALSE );
 	} /* end switch(index) */
     }
+
+    if ( base == T_RIP )
+	mod_field &= BIT_012;
     if( CurrOpnd == OPND2 ) {
 	/* shift the register field to left by 3 bit */
 	CodeInfo->rm_byte = mod_field | ( rm_field << 3 ) | ( CodeInfo->rm_byte & BIT_012 );

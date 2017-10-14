@@ -31,6 +31,8 @@ include tview.inc
 include tinfo.inc
 include dzlib.inc
 
+ifdef __CI__
+
     .data
 
 externdef   _pgmpath:dword
@@ -892,4 +894,5 @@ CodeInfo proc PUBLIC
 
 CodeInfo endp
 
+endif
     END

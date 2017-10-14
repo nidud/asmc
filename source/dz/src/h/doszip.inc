@@ -1,5 +1,6 @@
 ; DOSZIP.INC--
 ; Copyright (C) 2016 Doszip Developers -- see LICENSE.TXT
+;
 include direct.inc
 include wsub.inc
 include filter.inc
@@ -9,9 +10,9 @@ include dzlib.inc
 
 	.xlist
 
-DOSZIP_VERSION	equ 0351h
+DOSZIP_VERSION	equ 0352h
 DOSZIP_MINVERS	equ 0349h
-DOSZIP_VSTRING	equ <"3.51">
+DOSZIP_VSTRING	equ <"3.52">
 DOSZIP_VSTRPRE	equ <"      ">
 
 MAXHISTORY	equ 32

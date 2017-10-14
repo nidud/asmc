@@ -5,6 +5,7 @@ Change Log File for ASMC
 Changes in 2.26 - xx xxx 2017
 - rewrite of 64-bit switch table
 - added __PE__=1 to switch -pe
+- fixed bug in 64-bit rip-relative relocation
 
 Changes in 2.25 - 21 Sep 2017
 - fixed bug in 64-bit table-switch

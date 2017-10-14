@@ -935,7 +935,11 @@ tview proc uses esi edi ebx filename, offs
                                 .if eax == 10
 
                                     mov [edi+esi*4],ebx
-                                    .break(1) .if esi >= rowcnt
+                                    .if esi >= rowcnt
+
+                                        test esi,esi
+                                        .break(1)
+                                    .endif
                                     inc esi
                                 .endif
                             .endw

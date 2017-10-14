@@ -250,6 +250,7 @@ struct code_info {
 	    unsigned char   x86hi_used:1;   /* AH,BH,CH,DH used */
 	    unsigned char   x64lo_used:1;   /* SPL,BPL,SIL,DIL used */
 	    unsigned char   undef_sym:1;    /* v2.06b: struct member is forward ref */
+	    unsigned char   base_rip:1;
 	};
     };
 };

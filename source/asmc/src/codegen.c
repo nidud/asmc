@@ -217,15 +217,18 @@ static void output_opc( struct code_info *CodeInfo )
      * by either a segment prefix or the opcode byte.
      * Neither Masm nor JWasm emit a warning, though.
      */
-    if( CodeInfo->prefix.adrsiz == TRUE ) {
+    if( CodeInfo->prefix.adrsiz == TRUE
+
+	/* @RIP */ && !CodeInfo->base_rip ) {
+
 	OutputCodeByte( ADRSIZ );
     }
     if( CodeInfo->prefix.opsiz == TRUE ) {
-#if 1
+
 	if(( ModuleInfo.curr_cpu & P_CPU_MASK ) < P_386 ) {
 	    asmerr( 2087 );
 	}
-#endif
+
 	OutputCodeByte( OPSIZ );
     }
     /*
@@ -302,30 +305,30 @@ static void output_opc( struct code_info *CodeInfo )
 	}
     } else {
 
-    /* the REX prefix must be located after the other prefixes */
-    if( CodeInfo->prefix.rex != 0 ) {
-	if ( CodeInfo->Ofssize != USE64 ) {
-	    asmerr( 2024 );
+	/* the REX prefix must be located after the other prefixes */
+	if( CodeInfo->prefix.rex != 0 ) {
+	    if ( CodeInfo->Ofssize != USE64 ) {
+		asmerr( 2024 );
+	    }
+	    OutputCodeByte( CodeInfo->prefix.rex | 0x40 );
 	}
-	OutputCodeByte( CodeInfo->prefix.rex | 0x40 );
-    }
 
-    /*
-     * Output extended opcode
-     * special case for some 286 and 386 instructions
-     * or 3DNow!, MMX and SSEx instructions
-     */
-    if ( ins->byte1_info >= F_0F ) {
-	OutputCodeByte( EXTENDED_OPCODE );
-	switch ( ins->byte1_info ) {
-	case F_0F0F:   OutputCodeByte( EXTENDED_OPCODE ); break;
-	case F_0F38:
-	case F_F20F38:
-	case F_660F38: OutputCodeByte( 0x38 );		  break;
-	case F_0F3A:
-	case F_660F3A: OutputCodeByte( 0x3A );		  break;
+	/*
+	* Output extended opcode
+	* special case for some 286 and 386 instructions
+	* or 3DNow!, MMX and SSEx instructions
+	*/
+	if ( ins->byte1_info >= F_0F ) {
+	    OutputCodeByte( EXTENDED_OPCODE );
+	    switch ( ins->byte1_info ) {
+	    case F_0F0F: OutputCodeByte( EXTENDED_OPCODE ); break;
+	    case F_0F38:
+	    case F_F20F38:
+	    case F_660F38: OutputCodeByte( 0x38 ); break;
+	    case F_0F3A:
+	    case F_660F3A: OutputCodeByte( 0x3A ); break;
+	    }
 	}
-    }
     }
 
     switch( ins->rm_info ) {
@@ -345,6 +348,8 @@ static void output_opc( struct code_info *CodeInfo )
 	}
 	/* emit ModRM byte; bits 7-6 = Mod, bits 5-3 = Reg, bits 2-0 = R/M */
 	tmp = ins->rm_byte | CodeInfo->rm_byte;
+	if (CodeInfo->base_rip) /* @RIP */
+	    tmp &= ~MOD_10;
 	OutputCodeByte( tmp );
 
 	if( ( CodeInfo->Ofssize == USE16 && CodeInfo->prefix.adrsiz == 0 ) ||

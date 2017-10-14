@@ -915,7 +915,7 @@ tview proc uses esi edi ebx filename, offs
                                     .break
                                 .endif
                             .endif
-
+                            mov eax,ebx
                             seek_eax()
                             .break .ifz
 

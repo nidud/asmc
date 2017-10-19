@@ -126,8 +126,7 @@ cmsystem proc uses esi edi ebx
     ret
 
 event_help:
-    mov eax,HELPID_15
-    view_readme()
+    view_readme(HELPID_15)
     retn
 
 cmsystem endp

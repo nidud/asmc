@@ -172,8 +172,7 @@ event_clear:
     retn
 
 event_help:
-    mov eax,HELPID_12
-    view_readme()
+    view_readme(HELPID_12)
     retn
 filter_edit endp
 

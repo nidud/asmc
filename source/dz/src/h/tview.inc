@@ -12,6 +12,6 @@ _TV_CLASSVIEW	equ 80h
 tview		PROTO :DWORD, :DWORD
 load_tedit	PROTO :DWORD, :DWORD
 load_tview	PROTO :DWORD, :DWORD
-view_readme	PROTO
+view_readme	PROTO :DWORD
 
 .list

@@ -1,21 +1,24 @@
 ; HEDIT.ASM--
 ; Copyright (C) 2017 Doszip Developers -- see LICENSE.TXT
 ;
+; Change history:
+; 2017-10-19 - added ClassMode
+; 2017-10-14 - created
+;
+include doszip.inc
 include alloc.inc
 include string.inc
 include stdio.inc
+include stdlib.inc
 include io.inc
 include iost.inc
-include direct.inc
 include consx.inc
-include tview.inc
-include dzlib.inc
 include ltype.inc
+include cfini.inc
 
-externdef   tvflag: byte
-externdef   fsflag: byte
 externdef   IDD_TVSeek:dword
-externdef   IDD_TVHelp:dword
+externdef   IDD_HELine:dword
+externdef   IDD_HEFormat:dword
 externdef   CP_ENOMEM:byte
 externdef   searchstring:byte
 
@@ -23,6 +26,34 @@ cmsearchidd     proto :dword
 continuesearch  proto :ptr
 putscreenb      proto :dword, :dword, :ptr
 SaveChanges     proto :LPSTR
+
+
+_USEMLINE   equ 0x01
+_USESLINE   equ 0x02
+_HEXOFFSET  equ 0x04
+_CLASSMODE  equ 0x08
+
+_MAXL       equ 64
+_MAXTEXT    equ 49
+
+T_STRING    equ 0x01
+T_BINARY    equ 0x02
+T_BYTE      equ 0x04
+T_WORD      equ 0x08
+T_DWORD     equ 0x10
+T_QWORD     equ 0x20
+T_SIGNED    equ 0x40
+T_HEX       equ 0x80
+
+T_NUMBER    equ T_BYTE or T_WORD or T_DWORD or T_QWORD
+T_ARRAY     equ T_STRING or T_BINARY
+
+S_LINE      STRUC
+flags       db ?
+bytes       db ?
+boffs       dw ?
+S_LINE      ENDS
+
 
 .data
 
@@ -34,9 +65,11 @@ Statusline_RC   dw 0200h,0054h,0000h
 Statusline_Y    db 24
 Statusline_C0   db 80,1
                 db 0x3C,0x3F,0x3F,0xF0,7,0x3C,0x3F,0x3F,0xF0,7,0x3C,0x3F,0x3F,0xF0
-                db 9,0x3C,0x3F,0x3F,0xF0,7,0x3C,0xF0,32,0x3C,0x3F,0x3F,0x3F,0xF0
+                db 9,0x3C,0x3F,0x3F,0xF0,7,0x3C,0x3F,0x3F,0xF0,8,0x3C,0x3F,0x3F
+                db 0xF0,20,0x3C,0x3F,0x3F,0x3F,0xF0
 Statusline_C1   db 6,0x3C
-                db ' F1 Help  F2 Save  F3 Search  F4 Goto',0xF0,34,' Esc Quit '
+                db ' F1 Help  F2 Save  F3 Search  F4 Goto  F5 Mode   F6 Offset'
+                db 0xF0,13,' Esc Quit '
                 db 0xF0
 Statusline_C2   db 1,' '
 IDD_Statusline  dd Statusline_RC
@@ -50,12 +83,11 @@ Menusline_C1    db 80,3Ch,0F0h
 Menusline_C2    db 80,' '
 IDD_Menusline   dd Menusline_RC
 
-x_cpos  db 12, 15, 18, 21, 24, 27, 30, 33
-        db 38, 41, 44, 47, 50, 53, 56, 59
+x_cpos  db 12,15,18,21,24,27,30,33,38,41,44,47,50,53,56,59
 
-    .code
+.code
 
-savefile proc private uses esi edi ebx file:LPSTR
+savefile proc private uses esi edi ebx file:LPSTR, buffer:ptr, fsize:dword
 
   local path[_MAX_PATH]:byte
   local flags:dword
@@ -82,8 +114,8 @@ savefile proc private uses esi edi ebx file:LPSTR
             .break
         .endif
         mov esi,eax
-        mov ebx,dword ptr STDI.ios_fsize
-        .if oswrite(esi, STDI.ios_bp, ebx) != ebx
+        mov ebx,fsize
+        .if oswrite(esi, buffer, ebx) != ebx
 
             xor ebx,ebx
         .endif
@@ -100,30 +132,123 @@ savefile proc private uses esi edi ebx file:LPSTR
 
 savefile endp
 
-tview_update proc private
+LToString proc uses esi edi lp:ptr S_LINE, source:LPSTR, dest:LPSTR
+
+    mov edx,lp
+    movzx eax,[edx].S_LINE.flags
+    mov ecx,eax
+    and eax,T_BYTE or T_WORD or T_DWORD or T_QWORD
+    mov edi,source
+    mov esi,dest
+
+    .switch eax
+
+    .case T_BYTE
+        movzx edx,byte ptr [edi]
+        mov eax,@CStr("%u")
+        .if cl & T_SIGNED
+            mov eax,@CStr("%i")
+            movsx edx,dl
+        .elseif cl & T_HEX
+            mov eax,@CStr("%02X")
+        .endif
+        sprintf(esi, eax, edx)
+        .endc
+
+    .case T_WORD
+        movzx edx,word ptr [edi]
+        mov eax,@CStr("%u")
+        .if cl & T_SIGNED
+            mov eax,@CStr("%i")
+            movsx ecx,cx
+        .elseif cl & T_HEX
+            mov eax,@CStr("%04X")
+        .endif
+        sprintf(esi, eax, edx)
+        .endc
+
+    .case T_DWORD
+        mov eax,@CStr("%u")
+        .if cl & T_SIGNED
+            mov eax,@CStr("%i")
+        .elseif cl & T_HEX
+            mov eax,@CStr("%08X")
+        .endif
+        mov ecx,[edi]
+        sprintf(esi, eax, ecx)
+        .endc
+
+    .case T_QWORD
+        mov eax,@CStr("%llu")
+        .if cl & T_SIGNED
+            mov eax,@CStr("%lld")
+        .elseif cl & T_HEX
+            mov eax,@CStr("%016llX")
+        .endif
+        mov ecx,[edi]
+        mov edx,[edi+4]
+        sprintf(esi, eax, edx::ecx)
+        .endc
+    .endsw
+    ret
+LToString endp
+
+local_update:
     xor eax,eax
     ret
-tview_update endp
 
-hedit proc uses esi edi ebx file:LPSTR, offs:DWORD
+hedit proc uses esi edi ebx file:LPSTR, loffs:DWORD
 
-  local loffs       :dword
-  local dlgobj      :S_DOBJ   ; main dialog
-  local dialog      :dword    ; main dialog pointer
-  local rowcnt      :dword    ; screen lines
-  local lcount      :dword    ; lines on screen
-  local scount      :dword    ; bytes on screen
-  local screen      :dword    ; screen buffer
-  local menusline   :dword
+  local dialog      :dword  ; main dialog pointer
+  local cdialog     :dword  ; class dialog
+  local rowcnt      :dword  ; screen lines
+  local lcount      :dword  ; lines on screen
+  local cline       :dword  ; current line
+  local scount      :dword  ; bytes on screen
+  local bcount      :dword  ; screen size in bytes (page)
+  local screen      :dword  ; screen buffer
+  local menusline   :dword  ; dialogs for F11/Ctrl-S/Ctrl-M
   local statusline  :dword
-  local cursor      :S_CURSOR ; cursor (old)
-  local bsize       :dword    ; buffer size
-  local x,y,index   :dword
-  local linetable[256]:dword  ; line offset in file
-  local rsrows      :byte
+  local fsize       :dword  ; file size
+  local fbuff       :dword  ; file buffer
+  local index       :dword  ; x index into x_cpos table
+  local x           :dword  ; x pos from LEFT/RIGHT
+  local lbuff[512]  :byte
+  local lbc[_MAXL]  :S_LINE ; class table
+  local lbh[_MAXL]  :S_LINE ; hex table
+  local lptr        :dword  ; pointer to active table
+  local rc          :S_RECT ; edit text pos
+  local dlgobj      :S_DOBJ
+  local cursor      :S_CURSOR
+  local flags       :byte   ; main flags
+  local rsrows      :byte   ; rect-line count
   local modified    :byte
 
-    mov STDI.ios_flag,0
+
+    mov rc.rc_x,12
+    mov rc.rc_y,1
+    mov rc.rc_col,_MAXTEXT
+    mov rc.rc_row,1
+
+    mov ecx,_MAXL
+    lea edi,lbh
+    mov eax,0x00001000
+    rep stosd
+    mov ecx,_MAXL
+    mov eax,0x00000104
+    rep stosd
+
+    xor eax,eax
+    lea edi,STDI
+    mov ecx,sizeof(S_IOST)
+    rep stosb
+
+    mov cline,eax
+    mov index,eax
+    mov x,12
+    mov modified,al
+    mov STDI.ios_flag,eax
+
     mov eax,_scrcol
     mov Statusline_C0,al
     mov Menusline_C0,al
@@ -135,72 +260,83 @@ hedit proc uses esi edi ebx file:LPSTR, offs:DWORD
     add Statusline_C1,al
     add Statusline_C2,al
 
-    lea edi,linetable
-    xor eax,eax
-    mov modified,al
-    mov ecx,256+16
-    rep stosd
-    mov x,12
-    mov y,0
-    mov eax,offs
-    mov loffs,eax
     mov eax,_scrrow
     mov ebx,IDD_Statusline
     mov [ebx+7],al
     inc al
     mov rsrows,al
-    .if tvflag & _TV_USEMLINE
-        dec al
-        inc y
+
+    mov flags,_USEMLINE or _USESLINE or _HEXOFFSET
+
+    .if CFGetSection(".hexedit")
+
+        mov ebx,eax
+        .if INIGetEntry(ebx, "Flags")
+
+            xtol(eax)
+            mov flags,al
+        .endif
+        .for edi=0: edi < _MAXL: edi++
+            .break .if !INIGetEntryID(ebx, edi)
+            xtol(eax)
+            mov lbc[edi*4].bytes,al
+            mov lbc[edi*4].flags,ah
+        .endf
     .endif
-    .if tvflag & _TV_USESLINE
+
+    mov al,rsrows
+    .if flags & _USEMLINE
+        dec al
+    .endif
+    .if flags & _USESLINE
         dec al
     .endif
     mov rowcnt,eax ; adapt to current screen size
     add eax,2
     mul _scrcol
+    mov esi,eax
+
+    lea eax,lbh
+    .if flags & _CLASSMODE
+        lea eax,lbc
+    .endif
+    mov lptr,eax
 
     .repeat
 
-        .break .if !malloc(eax)
-        mov screen,eax
-
-        .ifs ioopen(&STDI, file, M_RDONLY, OO_MEM64K) > 0
-
-            _filelength(STDI.ios_file)
-            .if (!eax && !edx) || edx
-                .if edx
-                    ermsg(0, &CP_ENOMEM)
-                .endif
-                ioclose(&STDI)
-                free(screen)
-                xor eax,eax
-                .break
-            .endif
-
-            mov ebx,eax
-            mov dword ptr STDI.ios_fsize,eax
-            mov dword ptr STDI.ios_fsize[4],edx
-            .if !malloc(ebx)
-                ermsg(0, &CP_ENOMEM)
-                ioclose(&STDI)
-                free(screen)
-                xor eax,eax
-                .break
-            .endif
-            mov ecx,STDI.ios_bp
-            mov STDI.ios_bp,eax
-            mov STDI.ios_size,ebx
-            free(ecx)
-            ioread(&STDI)
-            or STDI.ios_flag,IO_MEMBUF
-            _close(STDI.ios_file)
-            mov STDI.ios_file,-1
-        .else
-            free(screen)
+        .if osopen(file, 0, M_RDONLY, A_OPEN) == -1
             xor eax,eax
             .break
         .endif
+        mov ebx,eax
+
+        _filelength(ebx)
+        .if (!eax && !edx) || edx
+            .if edx
+                ermsg(0, &CP_ENOMEM)
+            .endif
+            _close(ebx)
+            xor eax,eax
+            .break
+        .endif
+        mov fsize,eax
+        mov STDI.ios_flag,IO_MEMBUF
+        mov STDI.ios_c,eax
+        mov STDI.ios_i,0
+
+        add eax,esi
+        .if !malloc(eax)
+            ermsg(0, &CP_ENOMEM)
+            _close(ebx)
+            xor eax,eax
+            .break
+        .endif
+        mov screen,eax
+        add eax,esi
+        mov fbuff,eax
+        mov STDI.ios_bp,eax
+        osread(ebx, eax, fsize)
+        _close(ebx)
 
         mov al,at_background[B_TextView]
         or  al,at_foreground[F_TextView]
@@ -211,19 +347,18 @@ hedit proc uses esi edi ebx file:LPSTR, offs:DWORD
             mov menusline,rsopen(IDD_Menusline)
             dlshow(eax)
             mov statusline,rsopen(IDD_Statusline)
-            .if tvflag & _TV_USESLINE
+            .if flags & _USESLINE
                 dlshow(eax)
             .endif
             scpath(1, 0, 41, file)
             mov eax,_scrcol
             sub eax,38
-            mov edx,dword ptr STDI.ios_fsize
-            scputf(eax, 0, 0, 0, "%12u byte", edx)
+            scputf(eax, 0, 0, 0, "%12u byte", fsize)
             mov edx,_scrcol
             sub edx,5
             scputs(edx, 0, 0, 0, "100%")
 
-            .if !(tvflag & _TV_USEMLINE)
+            .if !(flags & _USEMLINE)
 
                 dlhide(menusline)
             .endif
@@ -232,129 +367,156 @@ hedit proc uses esi edi ebx file:LPSTR, offs:DWORD
             CursorOn()
 
             push tupdate
-            mov tupdate,tview_update
+            mov tupdate,local_update
 
             msloop()
-            ;
-            ; offset of first <MAXLINES> lines
-            ;
-            xor eax,eax
-            mov offs,eax
-            xor edx,edx
-            ioseek(&STDI, edx::eax, SEEK_SET)
-
-
             mov esi,1
+
             .while 1
 
                 .if esi
 
-                    _gotoxy(x, y)
-                    mov scount,0
+                    mov eax,cline
+                    .if flags & _USEMLINE
+                        inc eax
+                    .endif
+                    _gotoxy(x, eax)
 
-                    .repeat
+                    mov eax,_scrcol
+                    mul rowcnt
+                    mov ecx,eax
+                    mov edi,screen
+                    mov eax,0x20
+                    rep stosb
 
-                        mov lcount,1
-                        mov eax,loffs
-                        mov linetable,eax
-                        mov offs,eax
+                    mov esi,fsize
+                    sub esi,loffs
+                    .for ebx=lptr, edx=0, ecx=0: edx < esi, ecx < rowcnt: ecx++
+                        movzx eax,[ebx+ecx*4].S_LINE.bytes
+                        mov [ebx+ecx*4].S_LINE.boffs,dx
+                        add edx,eax
+                    .endf
+                    .if edx > esi
+                        mov edx,esi
+                    .endif
+                    mov scount,edx
+                    mov lcount,ecx
+                    .for : edx < esi, ecx < rowcnt: ecx++
+                        movzx eax,[ebx+ecx*4].S_LINE.bytes
+                        mov [ebx+ecx*4].S_LINE.boffs,dx
+                        add edx,eax
+                    .endf
+                    mov bcount,edx
 
-                        .repeat
+                    .for esi=screen, ebx=0: ebx < lcount: ebx++, esi += _scrcol
 
-                            xor edx,edx
-                            ioseek(&STDI, edx::eax, SEEK_SET)
-                            .break .ifz
-                            xor ecx,ecx
-                            .while 1
-
-                                mov eax,offs
-                                add eax,16
-                                mov offs,eax
-                                .if eax > dword ptr STDI.ios_fsize
-                                    mov eax,dword ptr STDI.ios_fsize
-                                    mov offs,eax
-                                    .break
-                                .endif
-                                mov eax,lcount
-                                inc lcount
-                                lea edx,linetable[eax*4]
-                                mov eax,offs
-                                mov [edx],eax
-                                inc ecx
-                                .break .if ecx >= rowcnt
-                            .endw
-
-                            mov eax,lcount
-                            lea edx,linetable[eax*4]
-                            mov eax,offs
-                            mov [edx],eax
-                            mov [edx+4],eax
-                            or  eax,1
-                        .until 1
-
-                        .ifnz
-                            mov eax,_scrcol
-                            mul rowcnt
-                            mov ecx,eax
-                            mov edi,screen
-                            mov eax,0x20
-                            rep stosb
-                            mov eax,loffs
-                            mov offs,eax
-                            xor edx,edx
-                            ioseek(&STDI, edx::eax, SEEK_SET)
+                        .if flags & _HEXOFFSET
+                            mov eax,@CStr("%p    ")
+                        .else
+                            mov eax,@CStr("%010u  ")
                         .endif
-                        .break .ifz
+                        mov edx,lptr
+                        movzx edi,[edx+ebx*4].S_LINE.boffs
+                        add edi,loffs
+                        sprintf(esi, eax, edi)
+                        mov ecx,fsize
+                        sub ecx,edi
+                        add edi,fbuff
 
-                        ogetc()
-                        .break .ifz
+                        mov edx,lptr
+                        movzx eax,[edx+ebx*4].S_LINE.flags
+                        and eax,T_NUMBER or T_ARRAY
 
-                        dec STDI.ios_i
-                        push STDI.ios_c
-                        mov eax,rowcnt
-                        shl eax,4
-                        .if eax <= STDI.ios_c
-                            mov STDI.ios_c,eax
-                        .endif
-                        mov eax,STDI.ios_c
-                        xor ecx,ecx
-                        mov scount,eax
-                        mov esi,screen
-
-                        .repeat
-
-                            mov edi,esi
-                            lea ebx,linetable[ecx*4+3]
-
-                            .for edx=4: edx: edx--, ebx--
-
-                                mov al,[ebx]
-                                mov ah,al
-                                and eax,0x0FF0
-                                shr al,4
-                                or  eax,0x3030
-                                .if ah > 0x39
-                                    add ah,7
-                                .endif
-                                .if al > 0x39
-                                    add al,7
-                                .endif
-                                stosw
-                            .endf
-                            inc edi
-
-                            mov edx,STDI.ios_c
-                            mov eax,16
-                            add edi,3
-                            .if edx >= eax
-                                mov edx,eax
+                        .switch eax
+                          .case T_STRING
+                            push esi
+                            xchg esi,edi
+                            movzx eax,[edx+ebx*4].S_LINE.bytes
+                            .if ecx > eax
+                                mov ecx,eax
                             .endif
-                            .break .if !edx
-                            sub STDI.ios_c,edx
-                            mov ebx,edi
-                            add ebx,51
-                            push ecx
-                            mov ecx,edx
+                            add edi,12
+                            .if ecx > _MAXTEXT
+                                mov ecx,_MAXTEXT
+                            .endif
+                            rep movsb
+                            pop esi
+                            lea ecx,[esi+51+12]
+                            sprintf(ecx, "CHAR[%u]", eax)
+                            .endc
+
+                          .case T_BINARY
+                            push esi
+                            push ebx
+                            movzx eax,[edx+ebx*4].S_LINE.bytes
+                            .if ecx > eax
+                                mov ecx,eax
+                            .endif
+                            .if ecx > _MAXTEXT
+                                mov ecx,_MAXTEXT
+                            .endif
+                            mov ebx,ecx
+                            mov esi,edi
+                            lea edi,lbuff
+                            rep movsb
+                            push eax
+                            lea esi,lbuff
+                            btohex(esi, ebx)
+                            pop eax
+                            mov ecx,ebx
+                            add ecx,ecx
+                            .if ecx > _MAXTEXT
+                                mov ecx,_MAXTEXT
+                            .endif
+                            pop  ebx
+                            pop  edi
+                            push edi
+                            add  edi,12
+                            rep  movsb
+                            pop  esi
+                            lea  ecx,[esi+51+12]
+                            sprintf(ecx, "BYTE[%u]", eax)
+                            .endc
+
+                          .case T_BYTE
+                          .case T_WORD
+                          .case T_DWORD
+                          .case T_QWORD
+                            push eax
+                            lea eax,[esi+12]
+                            lea edx,[edx+ebx*4]
+                            push edx
+                            LToString(edx, edi, eax)
+                            pop edx
+                            pop eax
+                            movzx edx,[edx].S_LINE.flags
+                            mov ecx,@CStr("unsigned")
+                            .if edx & T_SIGNED
+                                mov ecx,@CStr("signed")
+                            .elseif edx & T_HEX
+                                mov ecx,@CStr("hexadecimal")
+                            .endif
+                            mov edx,@CStr("BYTE")
+                            .if eax == T_DWORD
+                                mov edx,@CStr("DWORD")
+                            .elseif eax == T_WORD
+                                mov edx,@CStr("WORD")
+                            .elseif eax == T_QWORD
+                                mov edx,@CStr("QWORD")
+                            .endif
+                            lea eax,[esi+51+12]
+                            sprintf(eax, "%s(%s)", edx, ecx)
+                            .endc
+
+                          .default
+                            .if ecx > 16
+                                mov ecx,16
+                            .endif
+                            push ebx
+                            push esi
+                            xchg esi,edi
+                            add edi,12
+                            lea ebx,[edi+51]
                             xor edx,edx
                             .repeat
                                 .if edx == 8
@@ -362,11 +524,7 @@ hedit proc uses esi edi ebx file:LPSTR, offs:DWORD
                                     stosb
                                     inc edi
                                 .endif
-                                mov eax,STDI.ios_i
-                                .break .if eax >= dword ptr STDI.ios_fsize
-                                add eax,STDI.ios_bp
-                                mov al,[eax]
-                                inc STDI.ios_i
+                                lodsb
                                 mov [ebx],al
                                 .if !al
                                     mov byte ptr [ebx],' '
@@ -386,17 +544,14 @@ hedit proc uses esi edi ebx file:LPSTR, offs:DWORD
                                 inc ebx
                                 inc edx
                             .untilcxz
-                            pop ecx
-                            add esi,_scrcol
-                            inc ecx
-                        .until ecx >= lcount
-                        pop eax
-                        mov STDI.ios_c,eax
+                            pop esi
+                            pop ebx
+                        .endsw
                         mov eax,1
-                    .until 1
+                    .endf
 
                     .if eax
-                        .if tvflag & _TV_USEMLINE
+                        .if flags & _USEMLINE
                             mov eax,scount
                             add eax,loffs
                             .ifz
@@ -404,7 +559,7 @@ hedit proc uses esi edi ebx file:LPSTR, offs:DWORD
                             .else
                                 mov ecx,100
                                 mul ecx
-                                mov ecx,dword ptr STDI.ios_fsize
+                                mov ecx,fsize
                                 div ecx
                                 and eax,0x7F
                                 .if eax > 100
@@ -420,19 +575,129 @@ hedit proc uses esi edi ebx file:LPSTR, offs:DWORD
                                 scputc(0, 0, 1, ' ')
                             .endif
                         .endif
-                        mov eax,dword ptr STDI.ios_fsize
+                        .if flags & _USESLINE
+                            mov edx,statusline
+                            movzx edx,[edx].S_DOBJ.dl_rect.rc_y
+                            .if flags & _CLASSMODE
+                                mov eax,@CStr("Hex  ")
+                            .else
+                                mov eax,@CStr("Class")
+                            .endif
+                            scputs(42, edx, 0, 5, eax)
+                        .endif
+                        mov eax,fsize
                         .if eax
                             xor eax,eax
-                            .if tvflag & _TV_USEMLINE
+                            .if flags & _USEMLINE
                                 inc eax
                             .endif
                             putscreenb(eax, rowcnt, screen)
                         .endif
                     .endif
-                    xor esi,esi
                 .endif
 
-                .switch tgetevent()
+                mov ebx,cline
+                mov edx,lptr
+                mov al,[edx+ebx*4].S_LINE.flags
+                and al,T_ARRAY or T_NUMBER
+
+                .if al
+
+                    mov ecx,fsize
+                    movzx esi,[edx+ebx*4].S_LINE.boffs
+                    add esi,loffs
+                    sub ecx,esi
+                    add esi,fbuff
+                    lea edi,lbuff
+
+                    push esi
+                    push edi
+                    .switch al
+                      .case T_STRING
+                        movzx eax,[edx+ebx*4].S_LINE.bytes
+                        .if ecx > eax
+                            mov ecx,eax
+                        .endif
+                        rep movsb
+                        mov byte ptr [edi],0
+                        .endc
+                      .case T_BINARY
+                        movzx eax,[edx+ebx*4].S_LINE.bytes
+                        .if ecx > eax
+                            mov ecx,eax
+                        .endif
+                        push ecx
+                        rep movsb
+                        pop ecx
+                        btohex(&lbuff, ecx)
+                        .endc
+                      .case T_BYTE
+                      .case T_WORD
+                      .case T_DWORD
+                      .case T_QWORD
+                        lea edx,[edx+ebx*4]
+                        LToString(edx, esi, edi)
+                        .endc
+                    .endsw
+                    pop edi
+                    pop esi
+                    mov eax,ebx
+                    mov edx,lptr
+                    lea ebx,[edx+ebx*4]
+                    .if flags & _USEMLINE
+                        inc eax
+                    .endif
+                    mov rc.rc_y,al
+                    mov ecx,256
+                    .if [ebx].S_LINE.flags & T_BINARY
+                        shl ecx,1
+                    .endif
+                    dledit(edi, rc, ecx, 0)
+                    push eax
+                    .if !([ebx].S_LINE.flags & T_STRING)
+                        .if [ebx].S_LINE.flags & T_BINARY
+                            hextob(edi)
+                        .else
+                            .if [ebx].S_LINE.flags & T_HEX
+                                _xtoi64(edi)
+                            .else
+                                _atoi64(edi)
+                            .endif
+                            mov dword ptr [edi],eax
+                            mov dword ptr [edi+4],edx
+                        .endif
+                    .endif
+                    mov ecx,fsize
+                    movzx eax,[ebx].S_LINE.boffs
+                    movzx ebx,[ebx].S_LINE.bytes
+                    add eax,loffs
+                    add eax,ebx
+                    .if eax > ecx
+                        sub eax,ebx
+                        .if ecx >= eax
+                            sub ecx,eax
+                            mov ebx,ecx
+                        .else
+                            xor ebx,ebx
+                        .endif
+                    .endif
+                    .if ebx
+                        .if memcmp(esi, edi, ebx)
+                            memcpy(esi, edi, ebx)
+                            mov modified,1
+                        .endif
+                    .endif
+                    pop eax
+                .else
+                    tgetevent()
+                .endif
+
+                xor esi,esi
+                mov ebx,cline
+                mov edi,lptr
+                lea edi,[edi+ebx*4]
+
+                .switch eax
 
                   .case MOUSECMD
 
@@ -440,7 +705,7 @@ hedit proc uses esi edi ebx file:LPSTR, offs:DWORD
                     .endc .if !eax
                     mousey()
                     inc eax
-                    .endc .if !(tvflag & _TV_USESLINE) || al != rsrows
+                    .endc .if !(flags & _USESLINE) || al != rsrows
                     msloop()
                     mousex()
                     .if al && al <= 7
@@ -455,6 +720,12 @@ hedit proc uses esi edi ebx file:LPSTR, offs:DWORD
                     .if al >= 30 && al <= 36
                         .gotosw(KEY_F4)
                     .endif
+                    .if al >= 39 && al <= 46
+                        .gotosw(KEY_F5)
+                    .endif
+                    .if al >= 49 && al <= 57
+                        .gotosw(KEY_F6)
+                    .endif
                     .if al >= 71 && al <= 78
                         .gotosw(KEY_F10)
                     .endif
@@ -462,11 +733,11 @@ hedit proc uses esi edi ebx file:LPSTR, offs:DWORD
                     .endc
 
                   .case KEY_F1
-                    rsmodal(IDD_TVHelp)
+                    view_readme(HELPID_16)
                     .endc
 
                   .case KEY_F2
-                    .if savefile(file)
+                    .if savefile(file, fbuff, fsize)
                         mov modified,0
                         mov esi,1
                     .endif
@@ -474,11 +745,11 @@ hedit proc uses esi edi ebx file:LPSTR, offs:DWORD
 
                   .case KEY_F3
                     and STDI.ios_flag,not IO_SEARCHMASK
-                    mov al,fsflag
+                    mov eax,fsflag
                     and eax,IO_SEARCHMASK
                     or  STDI.ios_flag,eax
                     xor eax,eax
-                    .if dword ptr STDI.ios_fsize >= 16
+                    .if fsize >= 16
                         .if cmsearchidd(STDI.ios_flag)
                             mov STDI.ios_flag,edx
                             and edx,IO_SEARCHCUR or IO_SEARCHSET
@@ -492,8 +763,8 @@ hedit proc uses esi edi ebx file:LPSTR, offs:DWORD
                     and fsflag,not IO_SEARCHMASK
                     mov eax,STDI.ios_flag
                     and STDI.ios_flag,not (IO_SEARCHSET or IO_SEARCHCUR)
-                    and al,IO_SEARCHMASK
-                    or  fsflag,al
+                    and eax,IO_SEARCHMASK
+                    or  fsflag,eax
                     pop eax
                     .if eax
                         inc esi
@@ -511,8 +782,64 @@ hedit proc uses esi edi ebx file:LPSTR, offs:DWORD
                         strtolx([ebx+24])
                         dlclose(ebx)
                         pop eax
-                        .if eax && edx <= dword ptr STDI.ios_fsize
+                        .if eax && edx <= fsize
                             mov loffs,edx
+                            mov esi,1
+                        .endif
+                    .endif
+                    .endc
+
+                  .case KEY_F5
+                    xor flags,_CLASSMODE
+                    lea eax,lbh
+                    .if flags & _CLASSMODE
+                        lea eax,lbc
+                    .endif
+                    mov lptr,eax
+                    mov esi,1
+                    .endc
+
+                  .case KEY_F6
+                    xor flags,_HEXOFFSET
+                    mov esi,1
+                    .endc
+
+                  .case KEY_F8
+                    .if wgetfile(&lbuff, "*.cl", _WSAVE)
+                        _close(eax)
+                        .if INIAlloc()
+                            mov esi,eax
+                            .if INIAddSection(esi, ".")
+                                mov ebx,eax
+                                .for edi=0: edi < rowcnt: edi++
+
+                                    movzx eax,lbc[edi*4].bytes
+                                    mov ah,lbc[edi*4].flags
+                                    INIAddEntryX(ebx, "%d=%X", edi, eax)
+                                .endf
+                            .endif
+                            INIWrite(esi, &lbuff)
+                            INIClose(esi)
+                            xor esi,esi
+                        .endif
+                    .endif
+                    .endc
+
+                  .case KEY_F9
+                    .if wgetfile(&lbuff, "*.cl", _WOPEN)
+                        _close(eax)
+                        .if INIRead(0, &lbuff)
+                            mov esi,eax
+                            .if INIGetSection(esi, ".")
+                                mov ebx,eax
+                                .for edi=0: edi < _MAXL: edi++
+                                    .break .if !INIGetEntryID(ebx, edi)
+                                    xtol(eax)
+                                    mov lbc[edi*4].bytes,al
+                                    mov lbc[edi*4].flags,ah
+                                .endf
+                            .endif
+                            INIClose(esi)
                             mov esi,1
                         .endif
                     .endif
@@ -523,7 +850,7 @@ hedit proc uses esi edi ebx file:LPSTR, offs:DWORD
                   .case KEY_ALTX
                     .if modified
                         .if SaveChanges(file)
-                            savefile(file)
+                            savefile(file, fbuff, fsize)
                         .endif
                     .endif
                     .break
@@ -537,28 +864,30 @@ hedit proc uses esi edi ebx file:LPSTR, offs:DWORD
                     .endc
 
                   .case KEY_CTRLM
-                    xor tvflag,_TV_USEMLINE
-                    .if tvflag & _TV_USEMLINE
+                    xor flags,_USEMLINE
+                    .if flags & _USEMLINE
                         dlshow(menusline)
                         dec rowcnt
-                        inc y
                     .else
                         dlhide(menusline)
                         inc rowcnt
-                        dec y
                     .endif
                     mov esi,1
                     .endc
 
                   .case KEY_CTRLS
-                    xor tvflag,_TV_USESLINE
-                    .if tvflag & _TV_USESLINE
+                    xor flags,_USESLINE
+                    .if flags & _USESLINE
                         dlshow(statusline)
                         dec rowcnt
                         mov edx,statusline
+                        mov ecx,cline
+                        .if flags & _USEMLINE
+                            inc ecx
+                        .endif
                         movzx eax,[edx].S_DOBJ.dl_rect.rc_y
-                        .if eax == y
-                            dec y
+                        .if eax == ecx
+                            dec cline
                         .endif
                     .else
                         dlhide(statusline)
@@ -568,14 +897,14 @@ hedit proc uses esi edi ebx file:LPSTR, offs:DWORD
                     .endc
 
                   .case KEY_F11
-                    .if !(tvflag & _TV_USESLINE or _TV_USEMLINE)
+                    .if !(flags & _USESLINE or _USEMLINE)
                         PushEvent(KEY_CTRLS)
                         .gotosw(KEY_CTRLM)
                     .endif
-                    .if tvflag & _TV_USEMLINE
+                    .if flags & _USEMLINE
                         PushEvent(KEY_CTRLM)
                     .endif
-                    .if tvflag & _TV_USESLINE
+                    .if flags & _USESLINE
                         .gotosw(KEY_CTRLS)
                     .endif
                     .endc
@@ -585,20 +914,17 @@ hedit proc uses esi edi ebx file:LPSTR, offs:DWORD
                   .case KEY_CTRLE
                   .case KEY_UP
                     xor eax,eax
-                    .if tvflag & _TV_USEMLINE
-                        inc eax
-                    .endif
-                    .if eax == y
+                    .if eax == cline
                         mov eax,loffs
-                        mov offs,eax
                         .if eax
-                            .if eax > dword ptr STDI.ios_fsize
-                                mov eax,dword ptr STDI.ios_fsize
+                            .if eax > fsize
+                                mov eax,fsize
                             .else
-                                .if eax <= 16
+                                movzx ecx,[edi].S_LINE.bytes
+                                .if eax <= ecx
                                     xor eax,eax
                                 .else
-                                    sub eax,16
+                                    sub eax,ecx
                                 .endif
                             .endif
                         .endif
@@ -607,12 +933,19 @@ hedit proc uses esi edi ebx file:LPSTR, offs:DWORD
                             mov esi,1
                         .endif
                     .else
-                        dec y
+                        dec cline
                         mov esi,1
                     .endif
                     .endc
 
                   .case KEY_TAB
+                    .endc .if flags & _CLASSMODE
+                    mov eax,cline
+                    shl eax,4
+                    add eax,loffs
+                    add eax,index
+                    add eax,1
+                    .endc .if eax >= fsize
                     mov eax,index
                     mov edx,x
                     .if eax < 15
@@ -629,79 +962,80 @@ hedit proc uses esi edi ebx file:LPSTR, offs:DWORD
 
                   .case KEY_CTRLX
                   .case KEY_DOWN
-                    mov eax,scount
+                    movzx ecx,[edi].S_LINE.bytes
+                    movzx eax,[edi].S_LINE.boffs
                     add eax,loffs
-                    inc eax
-                    .endc .if eax >= dword ptr STDI.ios_fsize
-                    add eax,15
-                    .if eax >= dword ptr STDI.ios_fsize
-                        .gotosw(KEY_END)
+                    .if ecx == 16
+                        add eax,index
                     .endif
-                    mov eax,y
+                    add eax,ecx
+                    .endc .if eax >= fsize
+                    mov eax,ebx
+                    .if flags & _USEMLINE
+                        inc eax
+                    .endif
                     inc eax
                     mov edx,statusline
                     movzx edx,[edx].S_DOBJ.dl_rect.rc_y
-                    .if !(tvflag & _TV_USESLINE)
+                    .if !(flags & _USESLINE)
                         inc edx
                     .endif
                     .if eax == edx
-                        add loffs,16
+                        add loffs,ecx
                     .else
-                        mov y,eax
+                        inc cline
                     .endif
                     mov esi,1
                     .endc
 
                   .case KEY_CTRLR
                   .case KEY_PGUP
-                    mov eax,loffs
-                    .endc .if !eax
-                    mov eax,rowcnt
-                    shl eax,4
-                    .if eax < loffs
-                        sub loffs,eax
-                    .else
-                        xor eax,eax
-                        mov loffs,eax
+                    .endc .if !loffs
+                    mov eax,bcount
+                    .if eax > loffs
+                        .gotosw(KEY_HOME)
                     .endif
+                    sub loffs,eax
                     mov esi,1
                     .endc
 
                   .case KEY_CTRLC
                   .case KEY_PGDN
-                    mov eax,scount
+                    mov eax,bcount
+                    add eax,eax
                     add eax,loffs
-                    inc eax
-                    .endc .if eax >= dword ptr STDI.ios_fsize
-                    mov ebx,eax
-                    mov eax,rowcnt
-                    shl eax,4
-                    add ebx,eax
-                    .if ebx >= dword ptr STDI.ios_fsize
+                    .if eax > fsize
                         .gotosw(KEY_END)
                     .endif
-                    add loffs,eax
+                    sub eax,bcount
+                    mov loffs,eax
                     mov esi,1
                     .endc
 
                   .case KEY_LEFT
+                    .endc .if flags & _CLASSMODE
                     mov eax,index
                     mov edx,x
+                    movzx ecx,x_cpos[eax]
                     .if eax
-                        movzx ecx,x_cpos[eax]
                         .if ecx == edx
                             dec eax
                             mov dl,x_cpos[eax]
+                            inc edx
                         .else
                             dec edx
                         .endif
                         mov index,eax
                         mov x,edx
                         mov esi,1
+                    .elseif edx > ecx
+                        dec x
+                        mov esi,1
                     .endif
                     .endc
 
                   .case KEY_RIGHT
+                    .endc .if flags & _CLASSMODE
                     mov eax,index
                     mov edx,x
                     .if eax <= 15
@@ -714,35 +1048,31 @@ hedit proc uses esi edi ebx file:LPSTR, offs:DWORD
                         .else
                             inc edx
                         .endif
-                        mov ecx,y
-                        .if tvflag & _TV_USEMLINE
-                            dec ecx
-                        .endif
+                        mov ecx,cline
                         shl ecx,4
                         add ecx,eax
                         add ecx,loffs
-                        .endc .if ecx >= dword ptr STDI.ios_fsize
+                        .endc .if ecx >= fsize
                         mov index,eax
                         mov x,edx
                         mov esi,1
                     .endif
                     .endc
 
+                  .case KEY_CTRLHOME
                   .case KEY_HOME
                     sub eax,eax
                     mov loffs,eax
                     mov index,eax
-                    .if tvflag & _TV_USEMLINE
-                        inc eax
-                    .endif
-                    mov y,eax
+                    mov cline,eax
                     mov al,x_cpos
                     mov x,eax
                     mov esi,1
                     .endc
 
+                  .case KEY_CTRLEND
                   .case KEY_END
-                    mov ecx,dword ptr STDI.ios_fsize
+                    mov ecx,fsize
                     mov edx,rowcnt
                     mov eax,edx
                     shl eax,4
@@ -754,23 +1084,22 @@ hedit proc uses esi edi ebx file:LPSTR, offs:DWORD
                         and eax,-16
                         mov loffs,eax
                     .endif
-                    sub ecx,eax
+                    sub ecx,loffs
                     mov eax,ecx
                     shr ecx,4
-                    .if tvflag & _TV_USEMLINE
-                        inc ecx
-                    .endif
                     and eax,15
                     .ifnz
                         dec eax
                     .else
                         mov eax,15
-                        dec ecx
+                        .if ecx
+                            dec ecx
+                        .endif
                     .endif
                     mov index,eax
                     mov al,x_cpos[eax]
                     mov x,eax
-                    mov y,ecx
+                    mov cline,ecx
                     mov esi,1
                     .endc
 
@@ -793,19 +1122,78 @@ hedit proc uses esi edi ebx file:LPSTR, offs:DWORD
                     .endif
                     .endc
 
+                  .case KEY_ENTER
+                    .endc .if !(flags & _CLASSMODE)
+                    .endc .if !rsopen(IDD_HELine)
+                    movzx ecx,[edi].S_LINE.bytes
+                    mov edi,eax
+                    mov ebx,[edi].S_DOBJ.dl_object
+                    mov edx,[ebx].S_TOBJ.to_data
+                    push ecx
+                    sprintf(edx, "%d", ecx)
+                    pop ecx
+                    mov edx,[ebx].S_TOBJ.to_data[16]
+                    sprintf(edx, "%d", ecx)
+                    dlinit(edi)
+                    mov esi,rsevent(IDD_HELine, edi)
+                    .if esi == 1
+                        mov ebx,atol([ebx].S_TOBJ.to_data)
+                    .elseif esi == 2
+                        mov ebx,atol([ebx].S_TOBJ.to_data[16])
+                    .endif
+                    dlclose(edi)
+
+                    .endc .if !esi
+
+                    .if esi < 3
+                        mov edx,esi
+                        mov eax,ebx
+                        .if eax
+                            .if eax > 255
+                                mov eax,16
+                                xor edx,edx
+                            .endif
+                        .else
+                            mov eax,16
+                            xor edx,edx
+                        .endif
+                    .else
+                        .if rsmodal(IDD_HEFormat) == 1
+                            mov edx,T_SIGNED
+                        .elseif edx == 3
+                            mov edx,T_HEX
+                        .else
+                            xor edx,edx
+                        .endif
+                        .switch esi
+                          .case 3: mov eax,1  : or edx,T_BYTE  : .endc
+                          .case 4: mov eax,2  : or edx,T_WORD  : .endc
+                          .case 5: mov eax,4  : or edx,T_DWORD : .endc
+                          .case 6: mov eax,8  : or edx,T_QWORD : .endc
+                        .endsw
+                    .endif
+                    mov ecx,cline
+                    mov lbc[ecx*4].bytes,al
+                    mov lbc[ecx*4].flags,dl
+                    mov esi,1
+                    .endc
+
                   .default
+                    .if flags & _CLASSMODE
+                        mov ebx,cline
+                        movzx ebx,lbc[ebx*4].flags
+                        .endc .if ebx & T_STRING or T_BYTE or T_WORD or T_DWORD or T_QWORD
+                    .endif
+
                     movzx eax,al
                     mov ebx,eax
                     .endc .if !(_ltype[eax+1] & _HEX)
-                    mov eax,y
-                    .if tvflag & _TV_USEMLINE
-                        dec eax
-                    .endif
+                    mov eax,cline
                     shl eax,4
                     add eax,index
                     add eax,loffs
-                    .endc .if eax > dword ptr STDI.ios_fsize
-                    add eax,STDI.ios_bp
+                    .endc .if eax > fsize
+                    add eax,fbuff
                     mov edx,eax
                     .if bl > '9'
                         or bl,0x20
@@ -830,7 +1218,20 @@ hedit proc uses esi edi ebx file:LPSTR, offs:DWORD
                 .endsw
             .endw
 
-            ioclose(&STDI)
+            .if CFAddSection(".hexedit")
+
+                mov ebx,eax
+                mov esi,rowcnt
+                movzx ecx,flags
+                INIAddEntryX(ebx, "Flags=%X", ecx)
+                inc esi
+                .for edi=0: edi <= esi: edi++
+                    movzx eax,lbc[edi*4].bytes
+                    mov ah,lbc[edi*4].flags
+                    INIAddEntryX(ebx, "%d=%X", edi, eax)
+                .endf
+            .endif
+
             free(screen)
             dlclose(statusline)
             dlclose(menusline)
@@ -838,11 +1239,8 @@ hedit proc uses esi edi ebx file:LPSTR, offs:DWORD
             CursorSet(&cursor)
             pop eax
             mov tupdate,eax
-            xor eax,eax
-            mov STDI.ios_flag,eax
         .else
             free(screen)
-            ioclose(&STDI)
             mov eax,1
         .endif
     .until 1

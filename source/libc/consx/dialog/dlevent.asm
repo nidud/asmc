@@ -282,7 +282,7 @@ test_event proc private uses esi edi ebx cmd, extended
                             inc ebx
                             mov eax,y
                             inc eax
-                            mov c4,getxyc(ebx, y)
+                            mov c4,getxyc(ebx, eax)
                             mov eax,flag
                             and eax,0x0F
                             push eax

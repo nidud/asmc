@@ -35,6 +35,9 @@ cmpwargs	proto __cdecl :LPSTR, :LPSTR
 dostounix	proto __cdecl :LPSTR
 unixtodos	proto __cdecl :LPSTR
 
+btohex		proto __cdecl :LPSTR, :SINT
+hextob		proto __cdecl :LPSTR
+
 endif ;; __PE__
 .list
 endif ;; __STRLIB_INC

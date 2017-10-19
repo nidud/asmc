@@ -81,8 +81,8 @@ view_doszip proc private f, o
     ret
 view_doszip endp
 
-view_readme proc
-    view_doszip(addr DZ_TXTFILE, eax)
+view_readme proc id
+    view_doszip(addr DZ_TXTFILE, id)
     ret
 view_readme endp
 
@@ -100,7 +100,7 @@ cmhelp proc uses esi edi
 	.while rsevent(IDD_DZHelp, edi)
 	    dec eax
 	    mov eax,Offset_README[eax*4]
-	    view_readme()
+	    view_readme(eax)
 	.endw
 	dlclose(edi)
 	mov thelp,esi

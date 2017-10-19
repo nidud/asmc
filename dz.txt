@@ -2,9 +2,9 @@ DZ.TXT--
 Copyright (C) 2017 Doszip Developers.
 
 DOSZIP COMMANDER
-Version 3.50
+Version 3.53
 
-Welcome to Doszip Commander Version 3.50!
+Welcome to Doszip Commander Version 3.53!
 =========================================
 
 
@@ -245,6 +245,35 @@ Welcome to Doszip Commander Version 3.50!
     <Id>=<section> | [<section>] | [#<file>]
     [<section>]
     <code>
+
+
+<> Hex Editor
+
+    To launch the internal hex editor contained within DZ.EXE, type Ctrl-F4.
+
+    Keyboard
+    --------
+
+    F1			Help
+    F2			Save
+    F3			Search
+    F4			Goto offset
+    F5			Toggle Class/Hex edit
+    F6			Toggle offset type
+    F8			Save class
+    F9			Load class
+    F10, Esc, Alt-X	Exit the editor
+    F11			Toggle menus
+    Ctrl-L		Search again
+    Ctrl-M		Toggle menusline
+    Ctrl-B, Alt-F5	User screen
+    Ctrl-S		Toggle statusline
+
+    Class edit
+    ----------
+    Enter		Select type
+    Ctrl-Home		Top of file
+    Ctrl-End		End of file
 
 
 <> Extension and Filename Support
@@ -552,7 +581,7 @@ Welcome to Doszip Commander Version 3.50!
     Ctrl-F1		Toggle Panel-A
     Ctrl-F2		Toggle Panel-B
     Ctrl-F3		View file --> DZ.INI
-    Ctrl-F4		Edit file --> DZ.INI
+    Ctrl-F4		HexEdit or Edit file --> DZ.INI
     Ctrl-F5		Sort current panel by Name
     Ctrl-F6		Editor options
     Ctrl-F7		Screen options (Mouse-click upper right: Time)

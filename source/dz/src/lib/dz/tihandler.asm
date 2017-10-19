@@ -13,7 +13,7 @@ tihandler proc
 
     .switch eax
 
-      .case KEY_F1:	mov eax,HELPID_05 : view_readme()
+      .case KEY_F1:	view_readme(HELPID_05)
       .case KEY_F2:	tiflush(edx)
       .case KEY_F3:	tisearch(edx)
       .case KEY_F4:	tireplace(edx)

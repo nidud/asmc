@@ -595,7 +595,6 @@ endif
                         .if esi & FL_LONGLONG or FL_I64
                             .ifs edx < 0
 
-                                dec edx
                                 or  esi,FL_NEGATIVE
                             .endif
                         .else

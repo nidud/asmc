@@ -158,8 +158,7 @@ mklistidd proc uses esi edi ebx
     ret
 
 event_help:
-    mov eax,HELPID_11
-    view_readme()
+    view_readme(HELPID_11)
     retn
 
 event_filter:

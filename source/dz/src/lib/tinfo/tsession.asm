@@ -19,7 +19,7 @@ local tflag,tabz,x,b,y,l,index
         mov tflag,eax
         mov tabz,eax
 
-        .while  CFReadFileName(edi, addr index, 1)
+        .while CFReadFileName(edi, addr index, 1)
 
             mov esi,eax
             .break .if !topen(esi, tflag)

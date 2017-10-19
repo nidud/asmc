@@ -454,8 +454,7 @@ event_find proc uses esi edi ebx
 event_find endp
 
 event_help proc
-    mov eax,HELPID_14
-    view_readme()
+    view_readme(HELPID_14)
     ret
 event_help endp
 

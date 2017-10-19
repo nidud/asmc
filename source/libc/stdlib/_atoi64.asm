@@ -44,7 +44,7 @@ _atoi64 proc uses esi edi ebx string:LPSTR
 
         neg eax
         neg edx
-        sbb eax,0
+        sbb edx,0
     .endif
     ret
 

@@ -61,84 +61,14 @@ MAXHLEN equ 128
     .code
 
 atohex proc string:LPSTR
-    mov edx,string
-    strlen(edx)
-    test eax,eax
-    jz  toend
-    cmp eax,MAXHLEN/2
-    jnb toend
-    dec eax
-    mov ecx,edx
-    add ecx,eax
-    add eax,eax
-    add edx,eax
-    mov byte ptr [edx+2],0
-xloop:
-    mov al,[ecx]
-    mov ah,al
-    shr al,4
-    and ah,15
-    add ax,'00'
-    cmp al,'9'
-    jbe @F
-    add al,7
-@@:
-    cmp ah,'9'
-    jbe @F
-    add ah,7
-@@:
-    mov [edx],ax
-    dec ecx
-    sub edx,2
-    cmp edx,ecx
-    jae xloop
-toend:
+    .if strlen(string)
+        .if eax < MAXHLEN/2
+            btohex(string, eax)
+        .endif
+    .endif
     mov eax,string
     ret
 atohex endp
-
-hextoa proc string:LPSTR
-
-    mov edx,string
-    mov ecx,edx
-
-    .while 1
-
-        mov ax,[ecx]
-        inc ecx
-        .continue .if al == ' '
-
-        inc ecx
-        .break .if !al
-
-        sub al,'0'
-        .if al > 9
-            sub al,7
-        .endif
-
-        shl al,4
-        .if !ah
-            mov [edx],al
-            inc edx
-            .break
-        .endif
-
-        sub ah,'0'
-        .if ah > 9
-            sub ah,7
-        .endif
-
-        or  al,ah
-        mov [edx],al
-        inc edx
-    .endw
-
-    mov byte ptr [edx],0
-    mov eax,string
-    mov ecx,edx
-    sub ecx,eax
-    ret
-hextoa endp
 
 ff_getcurobj proc
     xor eax,eax
@@ -547,7 +477,7 @@ toggle_hex:
     .if byte ptr [eax+OF_HEXA] & _O_FLAGB
         atohex()
     .else
-        hextoa()
+        hextob()
     .endif
 event_list@:
     event_list()
@@ -555,8 +485,7 @@ event_list@:
     ret
 
 event_help:
-    mov eax,HELPID_10
-    view_readme()
+    view_readme(HELPID_10)
     ret
 
 ff_event_edit proc
@@ -873,7 +802,7 @@ ff_rsevent endp
 FindFile proc uses esi edi ebx wspath
   local ll:S_LOBJ, cursor:S_CURSOR
 
-    push    thelp
+    push thelp
     mov thelp,event_help
     xor esi,esi     ; returned value
 
@@ -887,8 +816,8 @@ FindFile proc uses esi edi ebx wspath
     mov [ebx].S_LOBJ.ll_dcount,ID_FILE
     mov [ebx].S_LOBJ.ll_proc,event_list
     mov [ebx].S_LOBJ.ll_list,malloc(MAXHIT*4+4)
-    test    eax,eax
-    jz  nomem
+    test eax,eax
+    jz nomem
 
     mov edi,eax
     mov ecx,MAXHIT * 4 + 4
@@ -898,8 +827,8 @@ FindFile proc uses esi edi ebx wspath
     clrcmdl()
     CursorGet(addr cursor)
     rsopen(IDD_DZFindFile)
-    test    eax,eax
-    jz  somem
+    test eax,eax
+    jz somem
 
     mov DLG_FindFile,eax
     mov ebx,eax

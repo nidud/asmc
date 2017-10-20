@@ -2,9 +2,9 @@ DZ.TXT--
 Copyright (C) 2017 Doszip Developers.
 
 DOSZIP COMMANDER
-Version 3.53
+Version 3.54
 
-Welcome to Doszip Commander Version 3.53!
+Welcome to Doszip Commander Version 3.54!
 =========================================
 
 
@@ -474,7 +474,7 @@ Welcome to Doszip Commander Version 3.53!
     F9	    - Load predefined file mask from .INI file.
     F10	    - Advanced settings.
     Esc	    - Exit program.
-    Ctrl-W  - Swap Panels and reload.
+    Ctrl-F6 - Swap directories and reload.
 
 
 <> Create List File

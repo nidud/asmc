@@ -12,11 +12,11 @@ HELPID_07	equ 1F1Ch	; <> Doszip Commander Environment Variables
 HELPID_08	equ 2570h	; <> Installing Commander under Windows
 HELPID_09	equ 26B3h	; <> Creating a tools menu
 HELPID_10	equ 2C07h	; <> The File Search utility
-HELPID_11	equ 3276h	; <> Create List File
-HELPID_12	equ 359Dh	; <> Operation Filter
-HELPID_13	equ 3818h	; <> Shortcut keys
+HELPID_11	equ 327Bh	; <> Create List File
+HELPID_12	equ 35A2h	; <> Operation Filter
+HELPID_13	equ 381Dh	; <> Shortcut keys
 HELPID_14	equ 2EF2h	; <> Compare Directories
-HELPID_15	equ 4672h	; <> Configuration Defaults
+HELPID_15	equ 4677h	; <> Configuration Defaults
 HELPID_16	equ 18E0h	; <> Hex Editor
 
 view_readme	proto :dword

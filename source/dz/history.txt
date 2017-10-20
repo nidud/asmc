@@ -2,6 +2,10 @@ HISTORY.TXT--
 Change Log File for DOSZIP - Win32
 ==================================
 
+Changes in 3.54 - 20 Oct 2017
+- fixed bug in Compare Directory (Shift-F6)
+- fixed a few bugs in HexEdit..
+
 Changes in 3.53 - 19 Oct 2017
 - added Class Edit to HexEdit (Ctrl-F4)
 

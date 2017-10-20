@@ -61,18 +61,18 @@ OF_GCMD     equ OF_MSUP
 
     .data
 
-GCMD_search dd KEY_F2,  event_mklist
-            dd KEY_F3,  ff_event_view
-            dd KEY_F4,  ff_event_edit
-            dd KEY_F5,  ff_event_filter
-            dd KEY_F6,  event_path
-            dd KEY_F7,  event_find
-            dd KEY_F8,  event_delete
-            dd KEY_F9,  cmfilter_load
-            dd KEY_F10, event_advanced
-            dd KEY_DEL, event_delete
+GCMD_search dd KEY_F2,      event_mklist
+            dd KEY_F3,      ff_event_view
+            dd KEY_F4,      ff_event_edit
+            dd KEY_F5,      ff_event_filter
+            dd KEY_F6,      event_path
+            dd KEY_F7,      event_find
+            dd KEY_F8,      event_delete
+            dd KEY_F9,      cmfilter_load
+            dd KEY_F10,     event_advanced
+            dd KEY_DEL,     event_delete
             dd KEY_ALTX,    ff_event_exit
-            dd KEY_CTRLW,   event_flip
+            dd KEY_CTRLF6,  event_flip
             dd 0
 
 ff_table        dd 0
@@ -561,18 +561,24 @@ event_advanced endp
 
 event_flip proc
 
-    PushEvent(KEY_ENTER)
-    PushEvent(KEY_F6)
-    PushEvent(KEY_SHIFTF5)
-    PushEvent(KEY_CTRLW)
-    mov eax,_C_ESCAPE
+    mov eax,DLG_FindFile
+    .if eax
+        mov ecx,[eax].S_TOBJ.to_data[OF_SOURCE]
+        mov edx,[eax].S_TOBJ.to_data[OF_TARGET]
+        mov [eax].S_TOBJ.to_data[OF_SOURCE],edx
+        mov [eax].S_TOBJ.to_data[OF_TARGET],ecx
+        mov [eax].S_DOBJ.dl_index,ID_FILE
+        dlinit(eax)
+        PushEvent(KEY_ENTER)
+    .endif
+    mov eax,_C_NORMAL
     ret
 
 event_flip endp
 
 cmcompsub proc PUBLIC uses esi edi ebx
 
-local   cursor:S_CURSOR,
+  local cursor:S_CURSOR,
         ll:S_LOBJ,
         old_thelp:dword,
         fmask[_MAX_PATH]:sbyte,

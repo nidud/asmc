@@ -670,7 +670,6 @@ continuesearch proc uses esi lpOffset:ptr
                 mov [ecx],eax
                 mov dword ptr STDI.ios_offset,eax
                 mov dword ptr STDI.ios_offset[4],edx
-                wcpopst(esi)
                 mov eax,1
             .else
                 notfoundmsg()
@@ -678,6 +677,9 @@ continuesearch proc uses esi lpOffset:ptr
         .else
             notfoundmsg()
         .endif
+        xchg eax,esi
+        wcpopst(eax)
+        mov eax,esi
     .endif
     ret
 
@@ -775,15 +777,13 @@ tview proc uses esi edi ebx filename, offs
 
             mov dialog,eax
             dlshow(eax)
-            rsopen(IDD_Menusline)
-            mov menusline,eax
+            mov menusline,rsopen(IDD_Menusline)
             dlshow(eax)
-            rsopen(IDD_Statusline)
-            mov statusline,eax
+            mov statusline,rsopen(IDD_Statusline)
             .if tvflag & _TV_USESLINE
-
                 dlshow(eax)
             .endif
+
             scpath(1, 0, 41, filename)
             mov eax,_scrcol
             sub eax,38
@@ -1296,13 +1296,11 @@ tview proc uses esi edi ebx filename, offs
                             or  STDI.ios_flag,edx
                         .endif
                     .endif
-                    push eax
                     and fsflag,not IO_SEARCHMASK
-                    mov eax,STDI.ios_flag
+                    mov ecx,STDI.ios_flag
                     and STDI.ios_flag,not (IO_SEARCHSET or IO_SEARCHCUR)
-                    and al,IO_SEARCHMASK
-                    or  fsflag,al
-                    pop eax
+                    and cl,IO_SEARCHMASK
+                    or  fsflag,cl
                     .if eax
                         inc esi
                     .endif

@@ -134,7 +134,7 @@ ff_alloc endp
 
 CompareFileData proc uses esi edi ebx A:LPSTR, B:LPSTR
 
-local   h1,h2,b1,b2
+  local h1,h2,b1,b2
 
     mov b1,alloca(0x8000)
     add eax,0x4000
@@ -151,7 +151,7 @@ local   h1,h2,b1,b2
             .break
         .endif
 
-        .while  osread(h1, b1, 0x4000)
+        .while osread(h1, b1, 0x4000)
 
             mov ebx,eax
             .if osread(h2, b2, 0x4000) != ebx
@@ -206,7 +206,7 @@ local path[_MAX_PATH*2]:sbyte, result:dword, found[4]:byte
 
         add edi,WIN32_FIND_DATA.cFileName
         strfcat(&path, directory, edi)
-        .break  .if !cmpwarg(edi, fp_maskp)
+        .break .if !cmpwarg(edi, fp_maskp)
 
         mov result,test_userabort()
         .break .ifnz

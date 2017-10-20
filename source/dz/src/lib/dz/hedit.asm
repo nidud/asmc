@@ -5,7 +5,6 @@
 ; 2017-10-19 - added ClassMode
 ; 2017-10-14 - created
 ;
-include doszip.inc
 include alloc.inc
 include string.inc
 include stdio.inc
@@ -15,18 +14,20 @@ include iost.inc
 include consx.inc
 include ltype.inc
 include cfini.inc
+include dzlib.inc
+include helpid.inc
+include wsub.inc
 
 externdef   IDD_TVSeek:dword
 externdef   IDD_HELine:dword
 externdef   IDD_HEFormat:dword
 externdef   CP_ENOMEM:byte
-externdef   searchstring:byte
+externdef   fsflag:byte
 
 cmsearchidd     proto :dword
 continuesearch  proto :ptr
 putscreenb      proto :dword, :dword, :ptr
 SaveChanges     proto :LPSTR
-
 
 _USEMLINE   equ 0x01
 _USESLINE   equ 0x02
@@ -322,7 +323,7 @@ hedit proc uses esi edi ebx file:LPSTR, loffs:DWORD
         mov fsize,eax
         mov STDI.ios_flag,IO_MEMBUF
         mov STDI.ios_c,eax
-        mov STDI.ios_i,0
+        mov dword ptr STDI.ios_fsize,eax
 
         add eax,esi
         .if !malloc(eax)
@@ -745,7 +746,7 @@ hedit proc uses esi edi ebx file:LPSTR, loffs:DWORD
 
                   .case KEY_F3
                     and STDI.ios_flag,not IO_SEARCHMASK
-                    mov eax,fsflag
+                    mov al,fsflag
                     and eax,IO_SEARCHMASK
                     or  STDI.ios_flag,eax
                     xor eax,eax
@@ -759,13 +760,11 @@ hedit proc uses esi edi ebx file:LPSTR, loffs:DWORD
                             or  STDI.ios_flag,edx
                         .endif
                     .endif
-                    push eax
                     and fsflag,not IO_SEARCHMASK
-                    mov eax,STDI.ios_flag
+                    mov ecx,STDI.ios_flag
                     and STDI.ios_flag,not (IO_SEARCHSET or IO_SEARCHCUR)
-                    and eax,IO_SEARCHMASK
-                    or  fsflag,eax
-                    pop eax
+                    and ecx,IO_SEARCHMASK
+                    or  fsflag,cl
                     .if eax
                         inc esi
                     .endif
@@ -1117,9 +1116,7 @@ hedit proc uses esi edi ebx file:LPSTR, loffs:DWORD
 
                   .case KEY_SHIFTF3
                   .case KEY_CTRLL
-                    .if continuesearch(&loffs)
-                        .gotosw(KEY_CTRLHOME)
-                    .endif
+                    mov esi,continuesearch(&loffs)
                     .endc
 
                   .case KEY_ENTER
@@ -1172,19 +1169,25 @@ hedit proc uses esi edi ebx file:LPSTR, loffs:DWORD
                           .case 6: mov eax,8  : or edx,T_QWORD : .endc
                         .endsw
                     .endif
-                    mov ecx,cline
-                    mov lbc[ecx*4].bytes,al
-                    mov lbc[ecx*4].flags,dl
+                    mov ebx,cline
+                    mov lbc[ebx*4].bytes,al
+                    mov lbc[ebx*4].flags,dl
+                    .if dl & T_STRING
+                        movzx esi,lbc[ebx*4].boffs
+                        add esi,loffs
+                        add esi,fbuff
+                        mov ecx,eax
+                        lea edi,lbuff
+                        rep movsb
+                        mov byte ptr [edi],0
+                        strlen(&lbuff)
+                        mov lbc[ebx*4].bytes,al
+                    .endif
                     mov esi,1
                     .endc
 
                   .default
-                    .if flags & _CLASSMODE
-                        mov ebx,cline
-                        movzx ebx,lbc[ebx*4].flags
-                        .endc .if ebx & T_STRING or T_BYTE or T_WORD or T_DWORD or T_QWORD
-                    .endif
-
+                    .endc .if flags & _CLASSMODE
                     movzx eax,al
                     mov ebx,eax
                     .endc .if !(_ltype[eax+1] & _HEX)

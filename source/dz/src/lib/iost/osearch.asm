@@ -1,241 +1,312 @@
 include iost.inc
 include string.inc
 
-    .data
-
-hexstring dd 0
-hexstrlen dd 0
-externdef searchstring:byte
+extern searchstring:byte
 
     .code
 
-searchtxt:
-    xor ecx,ecx
-    xor edx,edx
-    mov dl,searchstring
-    bt	STDI.ios_flag,0
-    jnc nocase
-@@:
-    ogetc()
-    jz	notfound
-    add edi,1
-    adc ebx,0
-    cmp eax,edx
-    je	charfound
-    cmp eax,10
-    jne @B
-    inc ecx
-    jmp @B
+SearchText proc private uses esi edi ebx pos:qword
 
-nocase:
-    mov eax,edx
-    sub al,'A'
-    cmp al,'Z'-'A'+1
-    sbb edx,edx
-    and edx,'a'-'A'
-    add eax,edx
-    add eax,'A'
-    mov edx,eax	    ; tolower(*searchstring)
-@@:
-    ogetc()
-    jz	notfound
-    add edi,1
-    adc ebx,0
-    sub al,'A'
-    cmp al,'Z'-'A'+1
-    sbb ah,ah
-    and ah,'a'-'A'
-    add al,ah
-    add al,'A'	    ; tolower(AL)
-    cmp al,dl
-    je	charfound
-    cmp eax,10
-    jne @B
-    inc ecx
-    jmp @B
+local len:dword
 
-charfound:
-    add STDI.ios_line,ecx
-    lea esi,searchstring
-    mov eax,hexstrlen
-    mov ecx,STDI.ios_c
-    sub ecx,STDI.ios_i
-    cmp eax,ecx
-    jb	compare
-    test STDI.ios_flag,IO_MEMBUF
-    jnz notfound
-    ioread(&STDI)
-    jz	notfound
+    mov len,strlen(&searchstring)
+    mov ebx,dword ptr pos[4]
+    mov edi,dword ptr pos
 
-compare:
-    ogetc()
-    jz	notfound
-    add edi,1
-    adc ebx,0
-    inc esi
-    lea edx,searchstring
-    mov ecx,eax
-    mov al,[esi]
-    test    eax,eax
-    jz	success
-    cmp eax,ecx
-    je	compare
-    bt	STDI.ios_flag,0 ; IO_SEARCHCASE
-    jc	@F
-    mov ah,cl
-    sub ax,'AA'
-    cmp al,'Z'-'A' + 1
-    sbb cl,cl
-    and cl,'a'-'A'
-    cmp ah,'Z'-'A' + 1
-    sbb ch,ch
-    and ch,'a'-'A'
-    add ax,cx
-    add ax,'AA'
-    cmp al,ah
-    je	compare
-@@:
-    mov eax,esi
-    sub eax,edx
-    sub edi,eax
-    sbb ebx,0
-    sub STDI.ios_i,eax
-    jmp searchtxt
+    .while 1
 
-success:
-    mov eax,esi
-    sub eax,edx
-    inc eax
-    sub edi,eax
-    sbb ebx,0
-    mov eax,edi
-    mov edx,ebx
-    or	edi,1
-    mov ecx,STDI.ios_line
+        .break .if !eax
+
+        xor ecx,ecx
+        xor edx,edx
+        mov dl,searchstring
+        bt  STDI.ios_flag,0
+
+        .ifc
+            .while 1
+
+                ogetc()
+                .ifz
+                    or  eax,-1
+                    mov edx,eax
+                    xor ebx,ebx
+                    .break(1)
+                .endif
+
+                add edi,1
+                adc ebx,0
+                .break .if eax == edx
+                .continue(0) .if eax != 10
+                inc ecx
+            .endw
+        .else
+
+            mov eax,edx
+            sub al,'A'
+            cmp al,'Z'-'A'+1
+            sbb edx,edx
+            and edx,'a'-'A'
+            add eax,edx
+            add eax,'A'
+            mov edx,eax     ; tolower(*searchstring)
+
+            .while 1
+
+                ogetc()
+                .ifz
+                    or  eax,-1
+                    mov edx,eax
+                    xor ebx,ebx
+                    .break(1)
+                .endif
+
+                add edi,1
+                adc ebx,0
+
+                .break .if al == dl
+
+                sub al,'A'
+                cmp al,'Z'-'A'+1
+                sbb ah,ah
+                and ah,'a'-'A'
+                add al,ah
+                add al,'A'      ; tolower(AL)
+
+                .break .if al == dl
+                .continue(0) .if eax != 10
+                inc ecx
+            .endw
+        .endif
+
+        add STDI.ios_line,ecx
+        lea esi,searchstring
+        mov eax,len
+        mov ecx,STDI.ios_c
+        sub ecx,STDI.ios_i
+        .if eax >= ecx
+
+            .if STDI.ios_flag & IO_MEMBUF || !ioread(&STDI)
+                or  eax,-1
+                mov edx,eax
+                xor ebx,ebx
+                .break
+            .endif
+        .endif
+
+        .while 1
+
+            ogetc()
+            .ifz
+                or  eax,-1
+                mov edx,eax
+                xor ebx,ebx
+                .break(1)
+            .endif
+
+            add edi,1
+            adc ebx,0
+
+            inc esi
+            lea edx,searchstring
+            mov ecx,eax
+            mov al,[esi]
+            .break .if !eax
+            .continue(0) .if eax == ecx
+
+            bt STDI.ios_flag,0 ; IO_SEARCHCASE
+            .ifnc
+                mov ah,cl
+                sub ax,'AA'
+                cmp al,'Z'-'A' + 1
+                sbb cl,cl
+                and cl,'a'-'A'
+                cmp ah,'Z'-'A' + 1
+                sbb ch,ch
+                and ch,'a'-'A'
+                add ax,cx
+                add ax,'AA'
+                .continue(0) .if al == ah
+            .endif
+
+            mov eax,esi
+            sub eax,edx
+            sub edi,eax
+            sbb ebx,0
+            sub STDI.ios_i,eax
+            .continue(1)
+        .endw
+
+        mov eax,esi
+        sub eax,edx
+        inc eax
+        sub edi,eax
+        sbb ebx,0
+        mov eax,edi
+        mov edx,ebx
+        or  edi,1
+        mov ecx,STDI.ios_line
+        .break
+    .endw
     ret
 
-notfound:
-    or	eax,-1
-    mov edx,eax
-    xor ebx,ebx
-    ret
+SearchText endp
 
-searchhex:
-    xor ecx,ecx
-    lea esi,searchstring
-    mov edx,hexstring
-getlen:
-    lodhex()
-    jz	hexlen
-    mov ah,al
-    lodhex()
-    jnz @F
-    xchg al,ah
-@@:
-    shl ah,4
-    or	al,ah
-    mov [edx],al
-    inc edx
-    inc ecx
-    jmp getlen
-hexlen:
-    mov hexstrlen,ecx
-scanhex:
-    mov eax,hexstring
-    movzx edx,byte ptr [eax]
-    mov ecx,STDI.ios_line
-@@:
-    ogetc()
-    jz	notfound
-    add edi,1	; inc offset
-    adc ebx,0
-    cmp al,dl
-    je	@F
-    cmp al,10
-    jne @B
-    inc ecx ; inc line
-    jmp @B
-@@:
-    mov STDI.ios_line,ecx
-    mov esi,hexstring
-    mov eax,hexstrlen
-    mov ecx,STDI.ios_c
-    sub ecx,STDI.ios_i
-    cmp eax,ecx
-    jb	@F
-    test STDI.ios_flag,IO_MEMBUF
-    jnz notfound
-    ioread(&STDI)
-    jz	notfound
-@@:
-    ogetc()
-    jz	notfound
-    add edi,1
-    adc ebx,0
-    inc esi
-    mov edx,hexstring
-    mov ecx,esi
-    sub ecx,edx
-    cmp ecx,hexstrlen
-    je	success
-    cmp al,[esi]
-    je	@B
-    mov eax,esi
-    sub eax,edx
-    sub edi,eax
-    sbb ebx,0
-    sub STDI.ios_i,eax
-    jmp scanhex
-
-lodhex:
-    mov al,[esi]
-    test    al,al
-    jz	hexnull
-    inc esi
-    cmp al,'0'
-    jb	lodhex
-    cmp al,'9'
-    jbe hexdigit
-    or	al,20h
-    cmp al,'f'
-    ja	lodhex
-    sub al,27h
-hexdigit:
-    sub al,'0'
-    test esi,esi
-hexnull:
-    ret
-
-osearch proc uses esi edi ebx
+SearchHex proc private uses esi edi ebx pos:qword
 
   local hex[128]:byte
+  local string:LPSTR
+  local hexstrlen:dword
+
+    xor ecx,ecx
+    lea esi,searchstring
+    lea edx,hex
+    mov string,edx
+    mov ebx,dword ptr pos[4]
+    mov edi,dword ptr pos
+
+    .while 1
+
+        .repeat
+            mov al,[esi]
+            .break(1) .if !al
+            inc esi
+            .continue(0) .if al < '0'
+            .if al > '9'
+                or al,0x20
+                .continue(0) .if al > 'f'
+                sub al,0x27
+            .endif
+            sub al,'0'
+        .until 1
+        mov ah,al
+        .repeat
+            mov al,[esi]
+            .if !al
+                xchg al,ah
+                .break
+            .endif
+            inc esi
+            .continue(0) .if al < '0'
+            .if al > '9'
+                or al,0x20
+                .continue(0) .if al > 'f'
+                sub al,0x27
+            .endif
+            sub al,'0'
+        .until 1
+        shl ah,4
+        or  al,ah
+        mov [edx],al
+        inc edx
+        inc ecx
+    .endw
+    mov hexstrlen,ecx
+
+    .while 1
+
+        mov eax,string
+        movzx edx,byte ptr [eax]
+        mov ecx,STDI.ios_line
+
+        .while 1
+
+            ogetc()
+            .ifz
+                or  eax,-1
+                mov edx,eax
+                xor ebx,ebx
+                .break(1)
+            .endif
+
+            add edi,1   ; inc offset
+            adc ebx,0
+
+            .break .if al == dl
+            .continue(0) .if eax != 10
+            inc ecx
+        .endw
+
+        mov STDI.ios_line,ecx
+        mov esi,string
+        mov eax,hexstrlen
+        mov ecx,STDI.ios_c
+        sub ecx,STDI.ios_i
+
+        .if eax >= ecx
+
+            .if STDI.ios_flag & IO_MEMBUF || !ioread(&STDI)
+                or  eax,-1
+                mov edx,eax
+                xor ebx,ebx
+                .break
+            .endif
+        .endif
+
+        .while 1
+
+            ogetc()
+            .ifz
+                or  eax,-1
+                mov edx,eax
+                xor ebx,ebx
+                .break(1)
+            .endif
+
+            add edi,1
+            adc ebx,0
+
+            inc esi
+            mov edx,string
+            mov ecx,esi
+            sub ecx,edx
+            .if ecx == hexstrlen
+
+                mov eax,esi
+                sub eax,edx
+                inc eax
+                sub edi,eax
+                sbb ebx,0
+                mov eax,edi
+                mov edx,ebx
+                or  edi,1
+                mov ecx,STDI.ios_line
+                .break(1)
+            .endif
+            .break .if al != [esi]
+        .endw
+
+        mov eax,esi
+        sub eax,edx
+        sub edi,eax
+        sbb ebx,0
+        sub STDI.ios_i,eax
+    .endw
+    ret
+
+SearchHex endp
+
+osearch proc
 
     mov eax,dword ptr STDI.ios_offset
     mov edx,dword ptr STDI.ios_offset[4]
     mov ecx,STDI.ios_flag
     and STDI.ios_flag,not (IO_SEARCHSET or IO_SEARCHCUR)
+
     .if ecx & IO_SEARCHSET
-	xor eax,eax
-	xor edx,edx
+        xor eax,eax
+        xor edx,edx
     .elseif !(ecx & IO_SEARCHCUR)
-	add eax,1	; offset++ (continue)
-	adc edx,0
+        add eax,1       ; offset++ (continue)
+        adc edx,0
     .endif
+
     ioseek(&STDI, edx::eax, SEEK_SET)
     .ifnz
-	mov edi,eax
-	mov ebx,edx
-	.if STDI.ios_flag & IO_SEARCHHEX
-	    lea ecx,hex
-	    mov hexstring,ecx
-	    searchhex()
-	.else
-	    strlen(addr searchstring)
-	    mov hexstrlen,eax
-	    .ifnz
-		searchtxt()
-	    .endif
-	.endif
+        .if STDI.ios_flag & IO_SEARCHHEX
+            SearchHex(edx::eax)
+        .else
+            SearchText(edx::eax)
+        .endif
     .endif
     ret
 

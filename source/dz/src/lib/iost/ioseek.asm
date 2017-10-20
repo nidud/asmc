@@ -21,6 +21,7 @@ ioseek proc uses esi iost:ptr S_IOST, offs:qword, from
                 test esi,esi
                 .break
             .endif
+
         .elseif [esi].S_IOST.ios_flag & IO_MEMBUF
 
             .if eax > [esi].S_IOST.ios_c
@@ -31,6 +32,7 @@ ioseek proc uses esi iost:ptr S_IOST, offs:qword, from
                 .break
             .endif
             mov [esi].S_IOST.ios_i,eax
+            mov dword ptr STDI.ios_offset,eax
             test esi,esi
             .break
         .endif

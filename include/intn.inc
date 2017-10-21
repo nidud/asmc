@@ -17,6 +17,11 @@ _ST_UNDERFLOW	equ 0x0100
 _ST_OVERFLOW	equ 0x0200
 _ST_DIGITS	equ 0x0400
 _ST_DOT		equ 0x0800
+_ST_E		equ 0x1000  ; 'E' format
+_ST_F		equ 0x2000  ; 'F' format
+_ST_G		equ 0x4000  ; 'G' format
+_ST_CVT		equ 0x8000  ; __cvt routine format rules
+_ST_CAPEXP	equ 0x10000
 
 ; Single precision - binary32 -- REAL4 (float)
 

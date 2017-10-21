@@ -45,4 +45,8 @@ _destoflt	proto __cdecl :LPSTRFLT, :LPSTR
 _hextoflt	proto __cdecl :LPSTRFLT, :LPSTR
 _fltscale	proto __cdecl :LPSTRFLT
 
+_qcvt		proto __cdecl :ptr, :LPSTR, :SINT, :SINT, :SINT
+_dcvt		proto __cdecl :ptr, :LPSTR, :SINT, :SINT, :SINT
+_ldcvt		proto __cdecl :ptr, :LPSTR, :SINT, :SINT, :SINT
+
 .list

@@ -7,13 +7,10 @@ include fltintrn.inc
 ;
 ; the following should be set depending on the sizes of various types
 ;
-ifndef LONGDOUBLE_IS_DOUBLE
-LONGDOUBLE_IS_DOUBLE equ 0  ; 1 means long double is same as double
 LONG_IS_INT     equ 1       ; 1 means long is same size as int
 SHORT_IS_INT    equ 0       ; 1 means short is same size as int
 PTR_IS_INT      equ 1       ; 1 means ptr is same size as int
 PTR_IS_LONG     equ 1       ; 1 means ptr is same size as long
-endif
 
 BUFFERSIZE      equ 512     ; ANSI-specified minimum is 509
 
@@ -29,8 +26,9 @@ FL_NEGATIVE     equ 0x0100  ; value is negative
 FL_FORCEOCTAL   equ 0x0200  ; force leading '0' for octals
 FL_LONGDOUBLE   equ 0x0400  ; long double
 FL_WIDECHAR     equ 0x0800
-FL_LONGLONG     equ 0x1000  ; long long value given
+FL_LONGLONG     equ 0x1000  ; long long or REAL16 value given
 FL_I64          equ 0x8000  ; 64-bit value given
+FL_CAPEXP       equ 0x10000
 
 ST_NORMAL       equ 0       ; normal state; outputting literal chars
 ST_PERCENT      equ 1       ; just read '%'
@@ -105,17 +103,13 @@ local   fldwidth:   dword
 local   bufferiswide:   dword
 local   padding:    dword
 local   text:       dword
-local   capexp:     dword
 local   numeax:     dword
 local   numedx:     dword
 local   wchar:      wint_t
 local   mbuf[MB_LEN_MAX+1]:byte
 local   buffer[BUFFERSIZE]:byte
-if LONGDOUBLE_IS_DOUBLE
-local   tmp:REAL8
-else
-local   tmp:REAL10
-endif
+local   tmp:REAL16
+
     xor eax,eax
     mov textlen,eax
     mov charsout,eax
@@ -166,7 +160,6 @@ endif
                 mov no_output,eax
                 mov fldwidth,eax
                 mov prefixlen,eax
-                mov capexp,eax
                 mov bufferiswide,eax
                 mov esi,eax ; flags
                 mov edi,eax ; precision
@@ -330,7 +323,7 @@ endif
                     add arglist,4
                     mov edx,[eax]
 
-                    if 0
+if 0
                     .if esi & (FL_LONG or FL_WIDECHAR)
                         ;
                         ; format multibyte character
@@ -359,7 +352,7 @@ endif
                         pop edx
 
                     .else
-                    endif
+endif
                         mov buffer,dl
                         mov textlen,1 ; print just a single character
                     ;.endif
@@ -421,8 +414,8 @@ ifndef __DZ__
                   .case 'E'
                   .case 'G'
                   .case 'A'
-                    mov capexp,1    ; capitalize exponent
-                    add dl,'a' - 'A'; convert format char to lower
+                    or  esi,FL_CAPEXP   ; capitalize exponent
+                    add dl,'a' - 'A'    ; convert format char to lower
                     ;
                     ; DROP THROUGH
                     ;
@@ -435,15 +428,15 @@ ifndef __DZ__
                     ; to do the work for us.
                     ;
                     or  esi,FL_SIGNED ; floating point is signed conversion
-                    lea eax,buffer      ; put result in buffer
+                    lea eax,buffer    ; put result in buffer
                     mov text,eax
                     ;
                     ; compute the precision value
                     ;
                     .ifs edi < 0
-                        mov edi,6 ; default precision: 6
+                        mov edi,6     ; default precision: 6
                     .elseif !edi && dl == 'g'
-                        mov edi,1 ; ANSI specified
+                        mov edi,1     ; ANSI specified
                     .endif
                     mov ecx,arglist
                     add arglist,8
@@ -452,7 +445,6 @@ ifndef __DZ__
                     mov eax,[ecx+4]
                     mov DWORD PTR tmp[4],eax
                     mov ebx,edx
-if (LONGDOUBLE_IS_DOUBLE eq 0)
                     ;
                     ; do the conversion
                     ;
@@ -460,20 +452,29 @@ if (LONGDOUBLE_IS_DOUBLE eq 0)
 
                         add arglist,4
                         mov eax,[ecx+8]
-                        mov WORD PTR tmp[8],ax
+                        mov DWORD PTR tmp[8],eax
                         ;
                         ; Note: assumes ch is in ASCII range
                         ;
-                        _cldcvt(addr tmp, text, edx, edi, capexp)
+                        _ldcvt(addr tmp, text, edx, edi, esi)
+
+                    .elseif esi & FL_LONGLONG
+
+                        add arglist,8
+                        mov eax,[ecx+8]
+                        mov DWORD PTR tmp[8],eax
+                        mov eax,[ecx+12]
+                        mov DWORD PTR tmp[12],eax
+                        ;
+                        ; Note: assumes ch is in ASCII range
+                        ;
+                        _qcvt(addr tmp, text, edx, edi, esi)
                     .else
-endif  ; !LONGDOUBLE_IS_DOUBLE
                         ;
                         ; Note: assumes ch is in ASCII range
                         ;
-                        _cfltcvt(addr tmp, text, edx, edi, capexp)
-if (LONGDOUBLE_IS_DOUBLE eq 0)
+                        _dcvt(addr tmp, text, edx, edi, esi)
                     .endif
-endif
                     ;
                     ; '#' and precision == 0 means force a decimal point
                     ;

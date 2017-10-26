@@ -958,7 +958,8 @@ ret_code SegmentDir( int i, struct asm_tok tokenarray[] )
 	case INIT_CHAR:
 	    /* characteristics are restricted to COFF/ELF/BIN-PE */
 	    if ( Options.output_format == OFORMAT_OMF
-		|| ( Options.output_format == OFORMAT_BIN && ModuleInfo.sub_format != SFORMAT_PE )
+		|| ( Options.output_format == OFORMAT_BIN &&
+		( ModuleInfo.sub_format != SFORMAT_PE && ModuleInfo.sub_format != SFORMAT_64BIT ) )
 	       ) {
 		asmerr( 3006, tokenarray[i].string_ptr );
 	    } else
@@ -967,7 +968,8 @@ ret_code SegmentDir( int i, struct asm_tok tokenarray[] )
 	case INIT_ALIAS:
 	    /* alias() is restricted to COFF/ELF/BIN-PE */
 	    if ( Options.output_format == OFORMAT_OMF
-		|| ( Options.output_format == OFORMAT_BIN && ModuleInfo.sub_format != SFORMAT_PE )
+		|| ( Options.output_format == OFORMAT_BIN &&
+		( ModuleInfo.sub_format != SFORMAT_PE && ModuleInfo.sub_format != SFORMAT_64BIT ) )
 	       ) {
 		asmerr( 3006, tokenarray[i].string_ptr );
 		i = Token_Count; /* stop further parsing of this line */

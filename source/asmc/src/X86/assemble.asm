@@ -14,6 +14,7 @@ include token.inc
 
 public	jmpenv
 extern	MacroLocals:dword
+extern	define_PE:DWORD
 
 conv_section	STRUC
 len		dd ?
@@ -58,6 +59,7 @@ cst		label conv_section
 stt		db SEGTYPE_CODE,SEGTYPE_DATA,SEGTYPE_DATA,SEGTYPE_BSS
 filetypes	dd 'msa.','jbo.','tsl.','rre.','nib.','exe.'
 currentftype	dd 0,0
+remove_obj	dd 0
 
 .code
 
@@ -983,8 +985,9 @@ close_files proc uses ebx
 	.endif
     .endif
 
-    .if !Options.syntax_check_only && ModuleInfo.error_count
+    .if ( ( !Options.syntax_check_only && ModuleInfo.error_count ) || remove_obj )
 
+	mov remove_obj,0
 	remove(ModuleInfo.curr_fname[OBJ*4])
     .endif
 
@@ -1016,10 +1019,9 @@ GetExt proc private ftype
     mov ecx,ftype
     .if ecx == OBJ && Options.output_format == OFORMAT_BIN
 
-	mov ecx,5
-	.if Options.sub_format != SFORMAT_MZ && Options.sub_format != SFORMAT_PE
-
-	    dec ecx
+	mov ecx,4
+	.if Options.sub_format == SFORMAT_MZ || define_PE
+	    inc ecx
 	.endif
     .endif
     mov ecx,filetypes[ecx*4]
@@ -1116,6 +1118,23 @@ AssembleFini proc private
     MemFini()
     ret
 AssembleFini endp
+
+RewindToWin64 proc
+
+    .if !( Options.output_format == OFORMAT_BIN && Options.sub_format == SFORMAT_NONE )
+
+	.if ( Options.output_format != OFORMAT_BIN )
+	    mov Options.output_format,OFORMAT_COFF
+	.else
+	    mov Options.langtype,LANG_FASTCALL
+	.endif
+	mov Options.sub_format,SFORMAT_64BIT
+	mov remove_obj,1
+	longjmp( &jmpenv, 1 )
+    .endif
+    ret
+
+RewindToWin64 endp
 
 AssembleModule proc uses esi edi ebx source
 

@@ -91,19 +91,21 @@ enum operand_type {
     OP_IGE16	= ( OP_I16 | OP_I32 ),
     OP_I_ANY	= ( OP_I | OP_I64 | OP_I48 ),
 
-    OP_M08	= 0x01000000,
-    OP_M16	= 0x02000000,
-    OP_M32	= 0x04000000,
-    OP_M64	= 0x08000000,
-    OP_M128	= 0x10000000,
-    OP_M256	= 0x20000000,
+    OP_ZMM	= 0x00400000, /* ZMMx register */
+    OP_M08	= 0x00800000,
+    OP_M16	= 0x01000000,
+    OP_M32	= 0x02000000,
+    OP_M64	= 0x04000000,
+    OP_M128	= 0x08000000,
+    OP_M256	= 0x10000000,
+    OP_M512	= 0x20000000,
     OP_M48	= 0x40000000,
     OP_M80	= 0x80000000,
 
     OP_MGT8	= ( OP_M16 | OP_M32 | OP_M64 ),
     OP_MGT16	= ( OP_M32 | OP_M64 ),
     OP_MFPTR	= ( OP_M32 | OP_M48 | OP_M80 ),
-    OP_M_ANY	= ( OP_M08 | OP_M16 | OP_M32 | OP_M64 | OP_M128 | OP_M256 | OP_M48 | OP_M80 ),
+    OP_M_ANY	= ( OP_M08 | OP_M16 | OP_M32 | OP_M64 | OP_M128 | OP_M256 | OP_M512 | OP_M48 | OP_M80 ),
     OP_M	= ( OP_M08 | OP_M16 | OP_M32 | OP_M64 | OP_M80 | OP_M128 ),
     /* v2.06: items in instruction table now use OP_MS instead of OP_M */
     OP_MS	= ( OP_M08 | OP_M16 | OP_M32 | OP_M64 ),

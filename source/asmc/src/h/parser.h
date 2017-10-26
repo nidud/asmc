@@ -52,10 +52,10 @@ SPECIAL_LAST
 
 enum instr_token {
     INS_FIRST_1 = SPECIAL_LAST - 1, /* to ensure tokens are unique */
-#define	 ins(token, string, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix ) T_ ## token ,
-#define insx(token, string, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,flgs ) T_ ## token ,
-#define insn(tok, suffix,   opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix)
-#define insm(tok, suffix,   opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix)
+#define	 ins(token, string, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex ) T_ ## token ,
+#define insx(token, string, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex,flgs ) T_ ## token ,
+#define insn(tok, suffix,   opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex)
+#define insm(tok, suffix,   opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex)
 #include <instruct.h>
 #undef insm
 #undef insn
@@ -161,7 +161,7 @@ struct instr_item {
 	first		: 1,	/* 1=opcode's first entry */
 	rm_info		: 3,	/* info on r/m byte */
 	opnd_dir	: 1;	/* operand direction */
-    unsigned char reserved;	/* not used yet */
+    unsigned char   evex;	/* EVEX */
     unsigned short  cpu;
     unsigned char   opcode;	/* opcode byte */
     unsigned char   rm_byte;	/* mod_rm_byte */
@@ -222,6 +222,15 @@ struct opnd_item {
 /* code_info describes the current instruction. It's the communication
  * structure between parser and code generator.
  */
+
+#define VX_OP1	0x01 /* EVEX args */
+#define VX_OP2	0x02
+#define VX_OP3	0x04
+#define VX_OP1V 0x08 /* set if op1 is xmm16..31, ymm16..31, or zmm */
+#define VX_OP2V 0x10
+#define VX_OP3V 0x20
+#define VX_OP3I 0x40 /* set if op3 is imm */
+
 struct code_info {
     struct {
 	enum instr_token ins;	       /* prefix before instruction, e.g. lock, rep, repnz */
@@ -229,17 +238,18 @@ struct code_info {
 	unsigned char	rex;
 	unsigned char	adrsiz:1;      /* address size prefix 0x67 is to be emitted */
 	unsigned char	opsiz:1;       /* operand size prefix 0x66 is to be emitted */
+	unsigned char	evex:1;	       /* EVEX prefix 0x62 is to be emitted */
     } prefix;
     const struct instr_item *pinstr;   /* current pointer into InstrTable */
     struct opnd_item opnd[MAX_OPND];
     enum instr_token token;
-    //enum memtype    mem_type;	       /* byte / word / etc. NOT near/far */
-    unsigned char mem_type;
-    unsigned char   rm_byte;
-    unsigned char   sib;
-    unsigned char   Ofssize;
-    unsigned char   opc_or;
-    unsigned char   vexregop; /* in based-1 format (0=empty) */
+    unsigned char mem_type;	       /* byte / word / etc. NOT near/far */
+    unsigned char vx_args;
+    unsigned char rm_byte;
+    unsigned char sib;
+    unsigned char Ofssize;
+    unsigned char opc_or;
+    unsigned char vexregop; /* in based-1 format (0=empty) */
     union {
 	unsigned char flags;
 	struct {

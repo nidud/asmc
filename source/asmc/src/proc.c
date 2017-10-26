@@ -1125,6 +1125,10 @@ int ParseProc( struct dsym *proc, int i, struct asm_tok tokenarray[], bool IsPRO
 	if ( proc->e.procinfo->paralist != NULL )
 	    asmerr( 2111, "" );
     } else if( proc->sym.langtype == LANG_NONE ) {
+	if( ModuleInfo.model == MODEL_NONE ) {
+	    /* v2.26 - default to /win64 */
+	    RewindToWin64();
+	}
 	asmerr( 2119 );
     } else {
 	/* v2.05: set PROC's vararg flag BEFORE params are scanned! */

@@ -55,10 +55,16 @@ enum operand_sets {
     OP_M16_M64	 = ( OP_M16 | OP_M64 ),
     OP_M16_M32	 = ( OP_M16 | OP_M32 ),
     OP_MMX_M64	 = ( OP_MMX | OP_M64 ),
+    OP_XMM_M08	 = ( OP_XMM | OP_M08 ),
+    OP_YMM_M08	 = ( OP_YMM | OP_M08 ),
+    OP_ZMM_M08	 = ( OP_ZMM | OP_M08 ),
     OP_XMM_M16	 = ( OP_XMM | OP_M16 ),
+    OP_YMM_M16	 = ( OP_YMM | OP_M16 ),
+    OP_ZMM_M16	 = ( OP_ZMM | OP_M16 ),
     OP_XMM_M32	 = ( OP_XMM | OP_M32 ),
     OP_XMM_M64	 = ( OP_XMM | OP_M64 ),
     OP_XMM_M128	 = ( OP_XMM | OP_M128 ),
+
 /* extended Masm syntax: sometimes Masm accepts 2 mem types
  * for the memory operand, although the mem access will always
  * be QWORD/OWORD.
@@ -71,7 +77,34 @@ enum operand_sets {
     OP_XMM_M128_16 = ( OP_XMM | OP_M128 | OP_M16 ),
     OP_XMM_M128_32 = ( OP_XMM | OP_M128 | OP_M32 ),
     OP_XMM_M128_64 = ( OP_XMM | OP_M128 | OP_M64 ),
-    OP_YMM_M256	 = ( OP_YMM | OP_M256 ),
+
+    OP_YMM_M256_08 = ( OP_YMM | OP_M256 | OP_M08 ),
+    OP_YMM_M256_16 = ( OP_YMM | OP_M256 | OP_M16 ),
+    OP_YMM_M256_32 = ( OP_YMM | OP_M256 | OP_M32 ),
+    OP_YMM_M256_64 = ( OP_YMM | OP_M256 | OP_M64 ),
+
+    OP_YMM_M256	   = ( OP_YMM | OP_M256 ),
+    OP_ZMM_M512	   = ( OP_ZMM | OP_M512 ),
+    OP_YMM_M32	   = ( OP_YMM | OP_M32 ),
+    OP_YMM_M64	   = ( OP_YMM | OP_M64 ),
+    OP_ZMM_M32	   = ( OP_ZMM | OP_M32 ),
+    OP_ZMM_M64	   = ( OP_ZMM | OP_M64 ),
+    OP_XMM_M256	   = ( OP_XMM | OP_M256 ),
+    OP_XMM_M_ANY   = ( OP_XMM | OP_M_ANY ),
+    OP_XMM_M128_M32= ( OP_XMM | OP_M128 | OP_M32 ),
+    OP_YMM_M256_M32= ( OP_YMM | OP_M256 | OP_M32 ),
+    OP_ZMM_M512_M32= ( OP_ZMM | OP_M512 | OP_M32 ),
+    OP_YMM_M128_M32= ( OP_YMM | OP_M128 | OP_M32 ),
+    OP_ZMM_M128_M32= ( OP_ZMM | OP_M128 | OP_M32 ),
+    OP_XMM_M128_M64= ( OP_XMM | OP_M128 | OP_M64 ),
+    OP_YMM_M128_M64= ( OP_YMM | OP_M128 | OP_M64 ),
+    OP_ZMM_M128_M64= ( OP_ZMM | OP_M128 | OP_M64 ),
+    OP_YMM_M256_M64= ( OP_YMM | OP_M256 | OP_M64 ),
+    OP_ZMM_M512_M64= ( OP_ZMM | OP_M512 | OP_M64 ),
+    OP_YMM_M128	   = ( OP_YMM | OP_M128 ),
+    OP_ZMM_M128	   = ( OP_ZMM | OP_M128 ),
+    OP_ZMM_M256	   = ( OP_ZMM | OP_M256 ),
+
 };
 
 /* v2.06: operand types have been removed from InstrTable[], they
@@ -105,17 +138,17 @@ enum opnd_variants {
 #define OpCls( op1, op2, op3 ) OPC_ ## op1 ## op2 ## op3
 
 const struct instr_item InstrTable[] = {
-#define ins(tok, string, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix) \
-    { opcls, byte1_info, prefix, 1, rm_info, op_dir, 0, cpu, opcode, rm_byte },
-#define insx(tok,string, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,flgs) \
-    { opcls, byte1_info, prefix, 1, rm_info, op_dir, 0, cpu, opcode, rm_byte },
-#define insn(tok,suffix,     opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix) \
-    { opcls, byte1_info, prefix, 0, rm_info, op_dir, 0, cpu, opcode, rm_byte },
-#define insm(tok,suffix,     opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix) \
-    { opcls, byte1_info, prefix, 1, rm_info, op_dir, 0, cpu, opcode, rm_byte },
+#define ins(tok, string, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex) \
+    { opcls, byte1_info, prefix, 1, rm_info, op_dir, evex, cpu, opcode, rm_byte },
+#define insx(tok,string, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex,flgs) \
+    { opcls, byte1_info, prefix, 1, rm_info, op_dir, evex, cpu, opcode, rm_byte },
+#define insn(tok,suffix, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex) \
+    { opcls, byte1_info, prefix, 0, rm_info, op_dir, evex, cpu, opcode, rm_byte },
+#define insm(tok,suffix, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex) \
+    { opcls, byte1_info, prefix, 1, rm_info, op_dir, evex, cpu, opcode, rm_byte },
 #include <instruct.h>
 #include <instr64.h>
-ins (NULL,0,OpCls(NONE,NONE,NONE),0,0,0,0,0,0,0) /* last entry - needed for its ".first" (=1) field */
+ins (NULL,0,OpCls(NONE,NONE,NONE),0,0,0,0,0,0,0,0) /* last entry - needed for its ".first" (=1) field */
 #undef insm
 #undef insn
 #undef insx
@@ -140,18 +173,18 @@ const struct special_item SpecialTable[] = {
 /* define symbolic indices for InstrTable[] */
 
 enum res_idx {
-#define	 ins(tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix) T_ ## tok ## _I,
-#define insx(tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix,flgs) T_ ## tok ## _I,
-#define insn(tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix) T_ ## tok ## _ ## suffix,
-#define insm(tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix) T_ ## tok ## _ ## suffix,
+#define	 ins(tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix,evex) T_ ## tok ## _I,
+#define insx(tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix,evex,flgs) T_ ## tok ## _I,
+#define insn(tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix,evex) T_ ## tok ## _ ## suffix,
+#define insm(tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix,evex) T_ ## tok ## _ ## suffix,
 #include <instruct.h>
 #undef insm
 #undef insn
 #undef ins
 
-#define	 ins(tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix) T_ ## tok ## _I64,
-#define insn(tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix) T_ ## tok ## _ ## suffix ## _I64,
-#define insm(tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix) T_ ## tok ## _ ## suffix ## _I64,
+#define	 ins(tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix,evex) T_ ## tok ## _I64,
+#define insn(tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix,evex) T_ ## tok ## _ ## suffix ## _I64,
+#define insm(tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix,evex) T_ ## tok ## _ ## suffix ## _I64,
 #include <instr64.h>
 #undef insm
 #undef insn
@@ -167,10 +200,10 @@ enum res_idx {
 
 uint_16 optable_idx[] = {
 
-#define	 ins( tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix) T_ ## tok ## _I,
-#define insx( tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix,flgs) T_ ## tok ## _I,
-#define insn( tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix)
-#define insm( tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix)
+#define	 ins( tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix,evex) T_ ## tok ## _I,
+#define insx( tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix,evex,flgs) T_ ## tok ## _I,
+#define insn( tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix,evex)
+#define insm( tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix,evex)
 #include <instruct.h>
 #undef insm
 #undef insn
@@ -201,11 +234,11 @@ static const char resw_strings[] = {
 #include <directve.h>
 #undef res
 
-#define ins(tok,string, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix) \
+#define ins(tok,string, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex) \
  # string
-#define insn(tok,suffix, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix)
-#define insm(tok,suffix, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix)
-#define insx(tok,string, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,flgs) \
+#define insn(tok,suffix, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex)
+#define insm(tok,suffix, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex)
+#define insx(tok,string, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex,flgs) \
  # string
 #include <instruct.h>
 #define avxins( tok, string, cpu, flgs ) # string
@@ -234,11 +267,11 @@ struct ReservedWord ResWordTable[] = {
 #include <directve.h>
 #undef res
 
-#define ins(tok,string,	 opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix) \
+#define ins(tok,string,	 opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex) \
     { 0, sizeof(#string)-1, 0, NULL },
-#define insn(tok,suffix, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix)
-#define insm(tok,suffix, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix)
-#define insx(tok,string, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,flags) \
+#define insn(tok,suffix, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex)
+#define insm(tok,suffix, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex)
+#define insx(tok,string, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex,flags) \
     { 0, sizeof(#string)-1, flags, NULL },
 #include <instruct.h>
 #undef insx
@@ -261,32 +294,30 @@ const uint_8 vex_flags[] = {
      * be equal to the one in instruct.h! ( this is to be improved.)
      * For a description of the VX_ flags see codegen.h
      */
-    VX_NND,	 /* VBROADCASTSS   */
-    VX_NND,	 /* VBROADCASTSD   */
-    VX_NND,	 /* VBROADCASTF128 */
-    VX_L,	 /* VBLENDVPD	   */
-    VX_L,	 /* VBLENDVPS	   */
-    0,		 /* VINSERTF128	   */
-    VX_NND,	 /* VEXTRACTF128   */
-    VX_L,	 /* VMASKMOVPS	   */
-    VX_L,	 /* VMASKMOVPD	   */
-    0,		 /* VPBLENDVB	   */
-    VX_L|VX_IMM, /* VPERMILPD	   */
-    VX_L|VX_IMM, /* VPERMILPS	   */
-    /* VPERMIL2xx has been dropped */
-    //VX_L,	 /* VPERMIL2PD	   */
-    //VX_L,	 /* VPERMIL2PS	   */
-    0,		 /* VPERM2F128	   */
-    VX_L|VX_NND, /* VTESTPS	   */
-    VX_L|VX_NND, /* VTESTPD	   */
-    VX_L,	 /* VZEROALL	   */
-    0,		 /* VZEROUPPER	   */
-    VX_NND,	 /* VCVTPD2DQ	   */
-    VX_NND,	 /* VCVTTPD2DQ	   */
-    VX_NND,	 /* VCVTPD2PS	   */
-    VX_NND,	 /* VMOVDDUP	   */
-    VX_L|VX_NND, /* VMOVMSKPD	   */ /* v2.11 */
-    VX_L|VX_NND, /* VMOVMSKPS	   */ /* v2.11 */
+    VX_NND|VX_NRW,	/* VBROADCASTSS	   */
+    VX_NND,		/* VBROADCASTSD	   */
+    VX_NND,		/* VBROADCASTF128  */
+    VX_L,		/* VBLENDVPD	   */
+    VX_L,		/* VBLENDVPS	   */
+    0,			/* VINSERTF128	   */
+    VX_NND,		/* VEXTRACTF128	   */
+    VX_L,		/* VMASKMOVPS	   */
+    VX_L,		/* VMASKMOVPD	   */
+    0,			/* VPBLENDVB	   */
+    VX_L|VX_IMM,	/* VPERMILPD	   */
+    VX_L|VX_IMM|VX_NRW, /* VPERMILPS	   */
+    0,			/* VPERM2F128	   */
+    VX_L|VX_NND,	/* VTESTPS	   */
+    VX_L|VX_NND,	/* VTESTPD	   */
+    VX_L,		/* VZEROALL	   */
+    0,			/* VZEROUPPER	   */
+    VX_NND,		/* VCVTPD2DQ	   */
+    VX_NND,		/* VCVTTPD2DQ	   */
+    VX_NND,		/* VCVTPD2PS	   */
+    VX_NND,		/* VMOVDDUP	   */
+    VX_L|VX_NND,	/* VMOVMSKPD	   */ /* v2.11 */
+    VX_L|VX_NND,	/* VMOVMSKPS	   */ /* v2.11 */
+
 #define avxins( tok, string, cpu, flgs ) flgs,
 #include <instravx.h>
 #undef avxins

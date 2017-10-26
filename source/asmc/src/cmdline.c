@@ -65,7 +65,8 @@ struct global_options Options = {
 	0,			// .loopalign
 	0,			// .casealign
 	0,			// .epilogueflags
-	4			// .segmentalign
+	4,			// .segmentalign
+	0			// .pe_subsystem
 };
 
 int define_LINUX = 0;
@@ -377,6 +378,9 @@ static void ProcessOption( char **cmdline, char *buffer )
 	Options.case_sensitive = 0;
 	Options.convert_uppercase = 1;
 	return;
+    case 'iuc':		// -cui - subsystem:console
+	Options.pe_subsystem = 0;
+	return;
     case 'xC':		// -Cx
 	Options.case_sensitive = 0;
 	Options.convert_uppercase = 0;
@@ -425,6 +429,9 @@ static void ProcessOption( char **cmdline, char *buffer )
     case 'zg':		// -gz
 	Options.langtype = LANG_STDCALL;
 	return;
+    case 'iug':		// -gui - subsystem:windows
+	Options.pe_subsystem = 1;
+	return;
     case '?':
     case 'h':
 	write_options();
@@ -463,7 +470,8 @@ static void ProcessOption( char **cmdline, char *buffer )
 	return;
     case 'ep':		// -pe
 	Options.output_format = OFORMAT_BIN;
-	Options.sub_format = SFORMAT_PE;
+	if ( !define_WIN64 )
+	    Options.sub_format = SFORMAT_PE;
 	define_PE = 1;
 	return;
     case 'r':		// -r
@@ -511,7 +519,12 @@ static void ProcessOption( char **cmdline, char *buffer )
 	Options.warning_error = 1;
 	return;
     case '6niw':	// -win64
-	Options.output_format = OFORMAT_COFF;
+	if ( !define_PE ) {
+	    Options.output_format = OFORMAT_COFF;
+	} else {
+	    Options.model = MODEL_FLAT;
+	    Options.langtype = LANG_FASTCALL;
+	}
 	Options.sub_format = SFORMAT_64BIT;
 	define_WIN64 = 1;
 	return;

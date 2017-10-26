@@ -4647,7 +4647,13 @@ cmsavebmp proc uses esi edi ebx
     ret
 cmsavebmp endp
 
+TempIdle:
+    xor eax,eax
+    ret
+
 MakeBMP proc
+    push tdidle
+    mov  tdidle,TempIdle
     .if read_screen()
         .if bmpfile
             cmsavebmp()
@@ -4655,6 +4661,7 @@ MakeBMP proc
         .endif
         free(screen)
     .endif
+    pop tdidle
     ret
 MakeBMP endp
 

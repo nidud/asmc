@@ -1,30 +1,29 @@
 include iost.inc
 include string.inc
 
-	.code
+.code
 
-oreadb	PROC USES ecx edx b:LPSTR, z
-	mov	eax,z
-	call	oread
-	jz	@F
-	memcpy( b, eax, z )
-	mov	ecx,z
-	jmp	toend
-@@:
-	xor	ecx,ecx
-	mov	edx,b
-@@:
-	cmp	ecx,z
-	jnb	toend
-	call	ogetc
-	jz	toend
-	mov	[edx],al
-	inc	edx
-	inc	ecx
-	jmp	@B
-toend:
-	mov	eax,ecx
-	ret
-oreadb	ENDP
+oreadb proc uses ecx edx b:LPSTR, z
 
-	END
+    mov eax,z
+    oread()
+    .ifnz
+        memcpy(b, eax, z)
+        mov ecx,z
+    .else
+        xor ecx,ecx
+        mov edx,b
+        .while ecx < z
+            ogetc()
+            .break .ifz
+            mov [edx],al
+            inc edx
+            inc ecx
+        .endw
+    .endif
+    mov eax,ecx
+    ret
+
+oreadb endp
+
+    END

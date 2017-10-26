@@ -843,7 +843,9 @@ static char *GetExt( int type )
     switch ( type ) {
     case OBJ:
 	if ( Options.output_format == OFORMAT_BIN )
-	    if ( Options.sub_format == SFORMAT_MZ || Options.sub_format == SFORMAT_PE )
+	    if ( Options.sub_format == SFORMAT_MZ ||
+		 Options.sub_format == SFORMAT_PE ||
+		 Options.sub_format == SFORMAT_64BIT )
 		return( EXE_EXT );
 	    else
 		return( BIN_EXT );
@@ -943,6 +945,16 @@ static void AssembleFini( void )
 	CurrFName[i] = NULL;
     }
     MemFini();
+}
+
+void RewindToWin64( void )
+{
+    if ( Options.output_format != OFORMAT_BIN )
+	Options.output_format = OFORMAT_COFF;
+    else
+	Options.langtype = LANG_FASTCALL;
+    Options.sub_format = SFORMAT_64BIT;
+    longjmp( jmpenv, 1 );
 }
 
 /* AssembleModule() assembles one source file */

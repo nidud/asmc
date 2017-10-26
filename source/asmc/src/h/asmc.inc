@@ -1013,6 +1013,7 @@ loopalign		db ?	; OPTION:LOOPALIGN setting
 casealign		db ?	; OPTION:CASEALIGN setting
 epilogueflags		db ?	; OPTION EPILOGUE: FLAGS
 segmentalign		db ?	; -Sp[n] Set segment alignment
+pe_subsystem		db ?	; -cui, -gui
 global_options		ENDS
 
 PLPSTR			typedef PTR LPSTR

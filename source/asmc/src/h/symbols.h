@@ -78,6 +78,7 @@ enum memtype {
     MT_OWORD = 16 - 1,
     MT_REAL16= MT_OWORD | MT_FLOAT,
     MT_YMMWORD = 32 - 1,
+    MT_ZMMWORD = 64 - 1,
     MT_PROC  = 0x80,   /* symbol is a TYPEDEF PROTO, state=SYM_TYPE, typekind=TYPE_TYPEDEF, prototype is stored in target_type */
     MT_NEAR  = 0x81,
     MT_FAR   = 0x82,

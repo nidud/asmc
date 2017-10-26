@@ -260,6 +260,8 @@ int OperandSize( enum operand_type opnd, const struct code_info *CodeInfo )
 	return( 16 );
     } else if( opnd & ( OP_YMM | OP_M256 ) ) {
 	return( 32 );
+    } else if( opnd & ( OP_ZMM | OP_M512 ) ) {
+	return( 64 );
     } else if( opnd & OP_RSPEC ) {
 	return( ( CodeInfo->Ofssize == USE64 ) ? 8 : 4 );
     }
@@ -1248,6 +1250,9 @@ static int memory_operand( struct code_info *CodeInfo, unsigned CurrOpnd, struct
     }
 
     if ( ( CodeInfo->mem_type & MT_SPECIAL) == 0 ) {
+	if ( ( CodeInfo->mem_type & 0x3F ) == MT_ZMMWORD )
+	    CodeInfo->opnd[CurrOpnd].type = OP_M512;
+	else
 	switch ( CodeInfo->mem_type & MT_SIZE_MASK ) {
 	    /* size is encoded 0-based */
 	case  0:  CodeInfo->opnd[CurrOpnd].type = OP_M08;  break;
@@ -1564,8 +1569,8 @@ static int process_const( struct code_info *CodeInfo, unsigned CurrOpnd, struct 
     return( idata_nofixup( CodeInfo, CurrOpnd, opndx ) );
 }
 
-static int process_register( struct code_info *CodeInfo, unsigned CurrOpnd, const struct expr opndx[] )
-/**********************************************************************************************************/
+static int process_register( struct code_info *CodeInfo, unsigned CurrOpnd,
+	const struct expr opndx[], unsigned index )
 /*
  * parse and encode direct register operands. Modifies:
  * - CodeInfo->opnd_type
@@ -1584,6 +1589,12 @@ static int process_register( struct code_info *CodeInfo, unsigned CurrOpnd, cons
     /* the register's "OP-flags" are stored in the 'value' field */
     flags = GetValueSp( regtok );
     CodeInfo->opnd[CurrOpnd].type = flags;
+
+    if ( ( ( flags == OP_XMM || flags == OP_YMM ) && regno > 15 ) || flags == OP_ZMM ) {
+	CodeInfo->prefix.evex = 1;
+	CodeInfo->vx_args |= (1 << ( index + 3 ));
+    }
+
     if ( flags & OP_R8 ) {
 	/* it's probably better to not reset the wide bit at all */
 	if ( flags != OP_CL )	   /* problem: SHL AX|AL, CL */
@@ -2413,7 +2424,7 @@ int ParseLine( struct asm_tok tokenarray[] )
 	    Token_Count = Tokenize( buffer, 0, tokenarray, TOK_DEFAULT );
 	    return ParseLine( tokenarray );
 
-	} else {
+	} else if ( i != 0 || tokenarray[0].dirtype != '{' ) {
 	    return( asmerr(2008, tokenarray[i].string_ptr ) );
 	}
     }
@@ -2431,6 +2442,7 @@ int ParseLine( struct asm_tok tokenarray[] )
     CodeInfo.prefix.ins		= EMPTY;
     CodeInfo.prefix.RegOverride = EMPTY;
     CodeInfo.prefix.rex	    = 0;
+    CodeInfo.prefix.evex    = 0;
     CodeInfo.prefix.adrsiz  = FALSE;
     CodeInfo.prefix.opsiz   = FALSE;
     CodeInfo.mem_type	    = MT_EMPTY;
@@ -2443,9 +2455,21 @@ int ParseLine( struct asm_tok tokenarray[] )
     CodeInfo.opc_or	    = 0;
     CodeInfo.vexregop	    = 0;
     CodeInfo.flags	    = 0;
+    CodeInfo.vx_args	    = 0;
 
-    /* instruction prefix?
-     * T_LOCK, T_REP, T_REPE, T_REPNE, T_REPNZ, T_REPZ */
+    /* instruction prefix? */
+
+    if ( i == 0 && tokenarray[0].dirtype == '{' ) {
+
+	if ( !_stricmp( tokenarray[0].string_ptr, "evex" ) ) {
+	    CodeInfo.prefix.evex = 1;
+	    i++;
+	} else {
+	    return( asmerr(2008, tokenarray[i].string_ptr ) );
+	}
+    }
+
+    /* T_LOCK, T_REP, T_REPE, T_REPNE, T_REPNZ, T_REPZ */
     if ( tokenarray[i].tokval >= T_LOCK && tokenarray[i].tokval <= T_REPZ ) {
 	CodeInfo.prefix.ins = tokenarray[i].tokval;
 	i++;
@@ -2476,7 +2500,6 @@ int ParseLine( struct asm_tok tokenarray[] )
 	}
     }
 
-#if 1
     if ( ( ModuleInfo.aflag & _AF_ON ) && Parse_Pass == PASS_1 ) {
 
 	for ( q = 1; tokenarray[q].token != T_FINAL; q++ ) {
@@ -2512,7 +2535,7 @@ int ParseLine( struct asm_tok tokenarray[] )
 	    }
 	}
     }
-#endif
+
     FStoreLine(0); /* must be placed AFTER write_prologue() */
 
     CodeInfo.token = tokenarray[i].tokval;
@@ -2576,7 +2599,9 @@ int ParseLine( struct asm_tok tokenarray[] )
 	return( asmerr(2008, tokenarray[i].tokpos ) );
     }
 
-    for ( CurrOpnd = 0; CurrOpnd < j && CurrOpnd < MAX_OPND; CurrOpnd++ ) {
+    CodeInfo.vx_args |= ( ( ( 1 << j ) - 1 ) & 0x07 );
+
+    for ( q = 0, CurrOpnd = 0; CurrOpnd < j && CurrOpnd < MAX_OPND; CurrOpnd++, q++ ) {
 
 	Frame_Type = FRAME_NONE;
 	SegOverride = NULL; /* segreg prefix is stored in RegOverride */
@@ -2586,9 +2611,9 @@ int ParseLine( struct asm_tok tokenarray[] )
 	/* if encoding is VEX and destination op is XMM, YMM or memory,
 	 * the second argument may be stored in the vexregop field.
 	 */
-	if ( CodeInfo.token >= VEX_START &&
-	    CurrOpnd == OPND2 &&
-	    ( CodeInfo.opnd[OPND1].type & ( OP_XMM | OP_YMM | OP_M | OP_M256 ) ) ) {
+	if ( CodeInfo.token >= VEX_START && CurrOpnd == OPND2 &&
+	    ( CodeInfo.opnd[OPND1].type & ( OP_XMM | OP_YMM | OP_ZMM | OP_M | OP_M256 | OP_M512 ) ) ) {
+
 	    if ( vex_flags[CodeInfo.token - VEX_START] & VX_NND )
 		;
 	    else if ( ( vex_flags[CodeInfo.token - VEX_START] & VX_IMM ) &&
@@ -2621,8 +2646,9 @@ int ParseLine( struct asm_tok tokenarray[] )
 			CodeInfo.vexregop = opndx[OPND1].base_reg->bytval + 1;
 			memcpy( &opndx[OPND1], &opndx[CurrOpnd], sizeof( opndx[0] ) * 3 );
 			CodeInfo.rm_byte = 0;
-			if ( process_register( &CodeInfo, OPND1, opndx ) == ERROR )
+			if ( process_register( &CodeInfo, OPND1, opndx, q ) == ERROR )
 			    return( ERROR );
+			q++;
 		    }
 		} else {
 		    unsigned flags = GetValueSp( opndx[CurrOpnd].base_reg->tokval );
@@ -2640,6 +2666,11 @@ int ParseLine( struct asm_tok tokenarray[] )
 		    /* second operand register is moved to vexregop */
 		    /* to be fixed: CurrOpnd is always OPND2, so use this const here */
 		    CodeInfo.vexregop = opndx[CurrOpnd].base_reg->bytval + 1;
+		    if ( GetRegNo( opndx[CurrOpnd].base_reg->tokval ) > 15 || flags & OP_ZMM ) {
+			CodeInfo.vx_args |= VX_OP2V;
+			CodeInfo.prefix.evex = 1;
+		    }
+		    q++;
 		    memcpy( &opndx[CurrOpnd], &opndx[CurrOpnd+1], sizeof( opndx[0] ) * 2 );
 		}
 		j--;
@@ -2651,6 +2682,8 @@ int ParseLine( struct asm_tok tokenarray[] )
 		return( ERROR );
 	    break;
 	case EXPR_CONST:
+	    if ( q == 2 )
+		CodeInfo.vx_args |= VX_OP3I;
 	    if ( process_const( &CodeInfo, CurrOpnd, &opndx[CurrOpnd] ) == ERROR )
 		return( ERROR );
 	    break;
@@ -2663,7 +2696,7 @@ int ParseLine( struct asm_tok tokenarray[] )
 		if ( CurrOpnd == OPND3 ) {
 		    CodeInfo.opnd[OPND3].type = GetValueSp( opndx[CurrOpnd].base_reg->tokval );
 		    CodeInfo.opnd[OPND3].data32l = opndx[CurrOpnd].base_reg->bytval;
-		} else if ( process_register( &CodeInfo, CurrOpnd, opndx ) == ERROR )
+		} else if ( process_register( &CodeInfo, CurrOpnd, opndx, q ) == ERROR )
 		    return( ERROR );
 	    }
 	    break;
@@ -2745,7 +2778,6 @@ int ParseLine( struct asm_tok tokenarray[] )
 		 * but bits 0-2 are needed to make "call rax" and "call r8"
 		 * distinguishable!
 		 */
-		//CodeInfo.prefix.rex = 0;
 		CodeInfo.prefix.rex &= 0x7;
 		break;
 	    case T_MOV:

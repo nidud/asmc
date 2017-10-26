@@ -23,9 +23,6 @@
 #include <macro.h>
 #include <fixup.h>
 #include <bin.h>
-#include <setjmp.h>
-
-extern jmp_buf jmpenv;
 
 #define DOT_XMMARG 0 /* 1=optional argument for .XMM directive */
 
@@ -202,7 +199,8 @@ static void SetModel( void )
     if ( ModuleInfo.defOfssize == USE64 && ModuleInfo.fctype == FCT_WIN64 ) {
 	sym_ReservedStack = AddPredefinedConstant( "@ReservedStack", 0 );
     }
-    if ( ModuleInfo.sub_format == SFORMAT_PE )
+    if ( ModuleInfo.sub_format == SFORMAT_PE ||
+       ( ModuleInfo.sub_format == SFORMAT_64BIT && Options.output_format == OFORMAT_BIN ) )
 	pe_create_PE_header();
 }
 
@@ -422,12 +420,9 @@ int CpuDirective( int i, struct asm_tok tokenarray[] )
 
     if (tokenarray[i].tokval == T_DOT_WIN64) {
 
-	if ( !UseSavedState && Options.sub_format != SFORMAT_64BIT ) {
+	if ( !UseSavedState && Options.sub_format != SFORMAT_64BIT )
+	    RewindToWin64();
 
-		Options.output_format = OFORMAT_COFF;
-		Options.sub_format = SFORMAT_64BIT;
-		longjmp( jmpenv, 1 );
-	}
 	if ( tokenarray[i+1].token == T_COLON ) {
 	    x = i + 2;
 	    SetWin64( &x, tokenarray );

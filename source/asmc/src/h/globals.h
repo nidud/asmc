@@ -454,6 +454,7 @@ unsigned char	loopalign;		/* OPTION:LOOPALIGN setting */
 unsigned char	casealign;		/* OPTION:CASEALIGN setting */
 unsigned char	epilogueflags;		/* OPTION EPILOGUE: FLAGS */
 unsigned char	segmentalign;		/* -Sp[n] Set segment alignment */
+unsigned char	pe_subsystem;		/* -cui, -gui */
 };
 
 /* if the structure changes, option.c, SetMZ() might need adjustment! */
@@ -651,5 +652,6 @@ void _atoow(void *, const char *, int, int);
 void write_logo(void);
 void write_usage(void);
 void write_options(void);
+void RewindToWin64(void);
 
 #endif

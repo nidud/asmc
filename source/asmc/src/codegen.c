@@ -42,13 +42,10 @@
 #include <reswords.h>
 
 extern const struct opnd_class opnd_clstab[];
-extern struct ReservedWord  ResWordTable[];
-extern const uint_8		  vex_flags[];
+extern struct ReservedWord ResWordTable[];
+extern const uint_8 vex_flags[];
 
 const char szNull[] = {"<NULL>"};
-
-/* v2.03: OutputCodeByte no longer needed */
-#define OutputCodeByte( x ) OutputByte( x )
 
 /* segment order must match the one in special.h */
 enum prefix_reg {
@@ -81,8 +78,9 @@ static void output_opc( struct code_info *CodeInfo )
  */
 {
     const struct instr_item *ins = CodeInfo->pinstr;
-    uint_8	     tmp;
-    uint_8	     fpfix = FALSE;
+    uint_8 tmp;
+    uint_8 evex = 0;
+    uint_8 fpfix = FALSE;
 
     /*
      * Output debug info - line numbers
@@ -132,6 +130,15 @@ static void output_opc( struct code_info *CodeInfo )
     }
 
     /*
+     * Output EVEX instruction prefix
+     */
+    if ( CodeInfo->prefix.evex ) {
+
+	evex = 1;
+	OutputByte( 0x62 );
+    }
+
+    /*
      * Output instruction prefix LOCK, REP or REP[N]E|Z
      */
     if( CodeInfo->prefix.ins != EMPTY ) {
@@ -144,10 +151,10 @@ static void output_opc( struct code_info *CodeInfo )
 	    ins->allowed_prefix == AP_REPxx )
 	    tmp = AP_REPxx;
 
-	if( ins->allowed_prefix != tmp ) {
+	if( ins->allowed_prefix != tmp )
 	    asmerr( 2068 );
-	} else
-	    OutputCodeByte( InstrTable[ IndexFromToken( CodeInfo->prefix.ins )].opcode );
+	else
+	    OutputByte( InstrTable[ IndexFromToken( CodeInfo->prefix.ins )].opcode );
     }
     /*
      * Output FP FWAIT if required
@@ -158,15 +165,15 @@ static void output_opc( struct code_info *CodeInfo )
 	     * no matter what the current cpu is. The reason is simple: the
 	     * nop is needed because of the fixup which was inserted.
 	     */
-	    if( fpfix ) {
-		OutputCodeByte( OP_NOP );
-	    }
+	    if( fpfix )
+		OutputByte( OP_NOP );
+
 	} else if( fpfix || ins->allowed_prefix == AP_FWAIT ) {
-	    OutputCodeByte( OP_WAIT );
+	    OutputByte( OP_WAIT );
 	} else if( ins->allowed_prefix != AP_NO_FWAIT ) {
 	    /* implicit FWAIT synchronization for 8087 (CPU 8086/80186) */
 	    if(( ModuleInfo.curr_cpu & P_CPU_MASK ) < P_286 )
-	       OutputCodeByte( OP_WAIT );
+	       OutputByte( OP_WAIT );
 	}
     }
 
@@ -205,9 +212,9 @@ static void output_opc( struct code_info *CodeInfo )
 	    CodeInfo->prefix.opsiz = TRUE;
 	    break;
 	case F_F20F:
-	case F_F20F38: OutputCodeByte( 0xF2 ); break;
+	case F_F20F38: OutputByte( 0xF2 ); break;
 	case F_F3: /* PAUSE instruction */
-	case F_F30F:   OutputCodeByte( 0xF3 ); break;
+	case F_F30F:   OutputByte( 0xF3 ); break;
 	}
     }
     /*
@@ -221,7 +228,7 @@ static void output_opc( struct code_info *CodeInfo )
 
 	/* @RIP */ && !CodeInfo->base_rip ) {
 
-	OutputCodeByte( ADRSIZ );
+	OutputByte( ADRSIZ );
     }
     if( CodeInfo->prefix.opsiz == TRUE ) {
 
@@ -229,13 +236,13 @@ static void output_opc( struct code_info *CodeInfo )
 	    asmerr( 2087 );
 	}
 
-	OutputCodeByte( OPSIZ );
+	OutputByte( OPSIZ );
     }
     /*
      * Output segment prefix
      */
     if( CodeInfo->prefix.RegOverride != EMPTY ) {
-	OutputCodeByte( sr_prefix[CodeInfo->prefix.RegOverride] );
+	OutputByte( sr_prefix[CodeInfo->prefix.RegOverride] );
     }
 
     if( ins->opnd_dir ) {
@@ -247,37 +254,48 @@ static void output_opc( struct code_info *CodeInfo )
     }
 
     if ( ResWordTable[CodeInfo->token].flags & RWF_VEX ) {
-	uint_8 lbyte = 0;
+	uint_8 byte1 = 0;
+	uint_8 byte2 = 0;
+	uint_8 byte3 = 0;
+	uint_8 vargs = CodeInfo->vx_args;
+
 	switch ( ins->byte1_info ) {
 	case F_660F:
 	case F_660F38:
 	case F_660F3A:
-	    lbyte |= 0x01;
+	    byte2 |= 0x01;
 	    break;
 	case F_F30F:
-	    lbyte |= 0x02;
+	    byte2 |= 0x02;
 	    break;
 	case F_F20F:
 	case F_F20F38:
-	    lbyte |= 0x03;
+	    byte2 |= 0x03;
 	    break;
 	}
+
+	if ( vargs & VX_OP1V )
+	    byte2 |= 0x04;
 
 	if ( ( CodeInfo->opnd[OPND1].type & OP_YMM ) ||
 	    ( CodeInfo->opnd[OPND2].type & ( OP_YMM | OP_M256 ) ) ||
 	    ( CodeInfo->opnd[OPND1].type == OP_NONE && /* no operands? use VX_L flag from vex_flags[] */
-	     vex_flags[ CodeInfo->token - VEX_START ] & VX_L ) )
-	    lbyte |= 0x04;
+	     vex_flags[ CodeInfo->token - VEX_START ] & VX_L ) ) {
+	    byte2 |= 0x04;
+	    byte3 |= 0x20;
+	}
 
-	if ( CodeInfo->vexregop )
-	    lbyte |= ( ( 16 - CodeInfo->vexregop ) << 3 );
-	else
-	    lbyte |= 0x78;
+	if ( CodeInfo->vexregop ) {
+	    byte2 |= ( ( 16 - CodeInfo->vexregop ) << 3 );
+	} else {
+	    byte2 |= 0x78;
+	    byte3 |= 0x08;
+	}
 
 	/* emit 2 (0xC4) or 3 (0xC5) byte VEX prefix */
 	if ( ins->byte1_info >= F_0F38 || ( CodeInfo->prefix.rex & ( REX_B | REX_X | REX_W ) ) ) {
-	    uint_8 byte1 = 0;
-	    OutputCodeByte( 0xC4 );
+	    if ( evex == 0 )
+		OutputByte( 0xC4 );
 	    switch ( ins->byte1_info ) {
 	    case F_0F38:
 	    case F_660F38:
@@ -292,16 +310,57 @@ static void output_opc( struct code_info *CodeInfo )
 		if ( ins->byte1_info >= F_0F )
 		    byte1 |= 0x01;
 	    }
-	    byte1 |= (( CodeInfo->prefix.rex & REX_B ) ? 0 : 0x20 );
-	    byte1 |= (( CodeInfo->prefix.rex & REX_X ) ? 0 : 0x40 );
-	    byte1 |= (( CodeInfo->prefix.rex & REX_R ) ? 0 : 0x80 );
-	    OutputCodeByte( byte1 );
-	    lbyte |= ( ( CodeInfo->prefix.rex & REX_W ) ? 0x80 : 0 );
-	    OutputCodeByte( lbyte );
+	    byte1 |= ( ( CodeInfo->prefix.rex & REX_B ) ? 0 : 0x20 );
+	    byte1 |= ( ( CodeInfo->prefix.rex & REX_X ) ? 0 : 0x40 );
+	    byte1 |= ( ( CodeInfo->prefix.rex & REX_R ) ? 0 : 0x80 );
+	    if ( evex == 1 ) {
+		if ( byte1 == 0xC1 )
+		    byte1 = 0x91;
+		else if ( byte1 == 0xC5 )
+		    byte1 = 0xB1;
+		else if ( ( byte1 == 0xE2 || byte1 == 0xE3 ) && !( vargs & ( VX_OP1V | VX_OP2V | VX_OP3V ) ) ) {
+		    byte1 |= 0x10;
+		    byte3 |= 0x08;
+		} else
+		    byte3 |= 0x08;
+	    }
+	    byte2 |= ( ( CodeInfo->prefix.rex & REX_W ) ? 0x80 : 0 );
 	} else {
-	    lbyte |= ( ( CodeInfo->prefix.rex & REX_R ) ? 0 : 0x80 );
-	    OutputCodeByte( 0xC5 );
-	    OutputCodeByte( lbyte );
+	    byte2 |= ( ( CodeInfo->prefix.rex & REX_R ) ? 0 : 0x80 );
+	    byte1 = 0xC5;
+	    if ( evex == 1 ) {
+		byte1 = CodeInfo->pinstr->evex;
+		if ( CodeInfo->prefix.rex & REX_R ) {
+		    byte1 = 0x61;
+		} else if ( vargs & VX_OP1V ) {
+		    byte1 = 0xE1;
+		    if ( vargs & VX_OP2V ) {
+			if ( !( vargs & VX_OP3 ) ||
+			   ( vargs & VX_OP3 && vargs & VX_OP3V ) )
+			   byte1 = 0xA1;
+		    } else if ( ( vex_flags[ CodeInfo->token - VEX_START ] & VX_HALF ) &&
+			vargs & VX_OP3I ){
+			byte1 = 0xF1;
+		    } else
+			byte3 |= 0x08;
+		} else if ( !( vargs & VX_OP2V ) ) {
+		    byte1 = 0xF1;
+		    byte3 |= 0x08;
+		} else if ( vargs & VX_OP2V ) {
+		    if ( vargs & VX_OP3 )
+			byte1 = 0xF1;
+		}
+	    }
+	}
+	OutputByte( byte1 );
+	if ( evex == 1 ) {
+	    byte2 |= 0x84;
+	    if ( vex_flags[ CodeInfo->token - VEX_START ] & VX_NRW )
+		byte2 &= 0x7F;
+	    OutputByte( byte2 );
+	    OutputByte( byte3 );
+	} else {
+	    OutputByte( byte2 );
 	}
     } else {
 
@@ -310,7 +369,7 @@ static void output_opc( struct code_info *CodeInfo )
 	    if ( CodeInfo->Ofssize != USE64 ) {
 		asmerr( 2024 );
 	    }
-	    OutputCodeByte( CodeInfo->prefix.rex | 0x40 );
+	    OutputByte( CodeInfo->prefix.rex | 0x40 );
 	}
 
 	/*
@@ -319,24 +378,24 @@ static void output_opc( struct code_info *CodeInfo )
 	* or 3DNow!, MMX and SSEx instructions
 	*/
 	if ( ins->byte1_info >= F_0F ) {
-	    OutputCodeByte( EXTENDED_OPCODE );
+	    OutputByte( EXTENDED_OPCODE );
 	    switch ( ins->byte1_info ) {
-	    case F_0F0F: OutputCodeByte( EXTENDED_OPCODE ); break;
+	    case F_0F0F: OutputByte( EXTENDED_OPCODE ); break;
 	    case F_0F38:
 	    case F_F20F38:
-	    case F_660F38: OutputCodeByte( 0x38 ); break;
+	    case F_660F38: OutputByte( 0x38 ); break;
 	    case F_0F3A:
-	    case F_660F3A: OutputCodeByte( 0x3A ); break;
+	    case F_660F3A: OutputByte( 0x3A ); break;
 	    }
 	}
     }
 
     switch( ins->rm_info ) {
     case R_in_OP:
-	OutputCodeByte( ins->opcode | ( CodeInfo->rm_byte & NOT_BIT_67 ) );
+	OutputByte( ins->opcode | ( CodeInfo->rm_byte & NOT_BIT_67 ) );
 	break;
     case no_RM:
-	OutputCodeByte( ins->opcode | CodeInfo->iswide );
+	OutputByte( ins->opcode | CodeInfo->iswide );
 	break;
     case no_WDS:
 	CodeInfo->iswide = 0;
@@ -344,13 +403,13 @@ static void output_opc( struct code_info *CodeInfo )
     default: /* opcode (with w d s bits), rm-byte */
 	/* don't emit opcode for 3DNow! instructions */
 	if( ins->byte1_info != F_0F0F ) {
-	    OutputCodeByte( ins->opcode | CodeInfo->iswide | CodeInfo->opc_or );
+	    OutputByte( ins->opcode | CodeInfo->iswide | CodeInfo->opc_or );
 	}
 	/* emit ModRM byte; bits 7-6 = Mod, bits 5-3 = Reg, bits 2-0 = R/M */
 	tmp = ins->rm_byte | CodeInfo->rm_byte;
 	if (CodeInfo->base_rip) /* @RIP */
 	    tmp &= ~MOD_10;
-	OutputCodeByte( tmp );
+	OutputByte( tmp );
 
 	if( ( CodeInfo->Ofssize == USE16 && CodeInfo->prefix.adrsiz == 0 ) ||
 	   ( CodeInfo->Ofssize == USE32 && CodeInfo->prefix.adrsiz == 1 ) )
@@ -361,7 +420,7 @@ static void output_opc( struct code_info *CodeInfo )
 	case 0x44: /* mod = 01, r/m = 100, s-i-b is present */
 	case 0x84: /* mod = 10, r/m = 100, s-i-b is present */
 	    /* emit SIB byte; bits 7-6 = Scale, bits 5-3 = Index, bits 2-0 = Base */
-	    OutputCodeByte( CodeInfo->sib );
+	    OutputByte( CodeInfo->sib );
 	}
     }
 
@@ -369,12 +428,11 @@ static void output_opc( struct code_info *CodeInfo )
 }
 
 static void output_data( const struct code_info *CodeInfo, enum operand_type determinant, int index )
-/***************************************************************************************************/
 /*
  * output address displacement and immediate data;
  */
 {
-    int	      size = 0;
+    int size = 0;
 
     /* skip the memory operand for XLAT/XLATB and string instructions! */
     if ( CodeInfo->token == T_XLAT || CodeInfo->token == T_XLATB ||
@@ -522,7 +580,7 @@ static void output_3rd_operand( struct code_info *CodeInfo )
 }
 
 static int match_phase_3( struct code_info *CodeInfo, enum operand_type opnd1 )
-/***********************************************************************************
+/*
  * - this routine will look up the assembler opcode table and try to match
  *   the second operand with what we get;
  * - if second operand match then it will output code; if not, pass back to
@@ -530,9 +588,9 @@ static int match_phase_3( struct code_info *CodeInfo, enum operand_type opnd1 )
  * - possible return codes: NOT_ERROR (=done), ERROR (=nothing found)
  */
 {
-    enum operand_type	 determinant = opnd_clstab[CodeInfo->pinstr->opclsidx].opnd_type[OPND1]; /* remember first op type */
-    enum operand_type	 opnd2 = CodeInfo->opnd[OPND2].type;
-    enum operand_type	 tbl_op2;
+    enum operand_type determinant = opnd_clstab[CodeInfo->pinstr->opclsidx].opnd_type[OPND1]; /* remember first op type */
+    enum operand_type opnd2 = CodeInfo->opnd[OPND2].type;
+    enum operand_type tbl_op2;
 
     if ( CodeInfo->token >= VEX_START && ( vex_flags[ CodeInfo->token - VEX_START ] & VX_L ) ) {
 	if ( CodeInfo->opnd[OPND1].type & ( OP_YMM | OP_M256) ) {
@@ -671,11 +729,10 @@ static int match_phase_3( struct code_info *CodeInfo, enum operand_type opnd1 )
 		    output_data( CodeInfo, opnd1, OPND1 );
 		if ( opnd2 & (OP_I_ANY | OP_M_ANY ) )
 		    output_data( CodeInfo, opnd2, OPND2 );
-		//if( CodeInfo->pinstr->opnd_type_3rd != OP3_NONE )
 		if( opnd_clstab[CodeInfo->pinstr->opclsidx].opnd_type_3rd != OP3_NONE )
 		    output_3rd_operand( CodeInfo );
 		if( CodeInfo->pinstr->byte1_info == F_0F0F ) /* output 3dNow opcode? */
-		    OutputCodeByte( CodeInfo->pinstr->opcode | CodeInfo->iswide );
+		    OutputByte( CodeInfo->pinstr->opcode | CodeInfo->iswide );
 		return( NOT_ERROR );
 	    }
 	    break;
@@ -752,17 +809,18 @@ static int check_operand_2( struct code_info *CodeInfo, enum operand_type opnd1 
     return( ERROR );
 }
 
-ret_code codegen( struct code_info *CodeInfo, uint_32 oldofs )
-/*************************************************************
+int codegen( struct code_info *CodeInfo, uint_32 oldofs )
+/*
  * - codegen() will look up the assembler opcode table and try to find
  *   a matching first operand;
  * - if one is found then it will call check_operand_2() to determine
  *   if further operands also match; else, it must be error.
  */
 {
-    ret_code	       retcode = ERROR;
-    enum operand_type  opnd1;
-    enum operand_type  tbl_op1;
+    int retcode = ERROR;
+    uint_8 evex = CodeInfo->prefix.evex;
+    enum operand_type opnd1;
+    enum operand_type tbl_op1;
 
     /* privileged instructions ok? */
     if( ( CodeInfo->pinstr->cpu & P_PM ) > ( ModuleInfo.curr_cpu & P_PM ) ) {
@@ -823,6 +881,8 @@ ret_code codegen( struct code_info *CodeInfo, uint_32 oldofs )
 		}
 		break;
 	    default:
+		if ( evex && CodeInfo->pinstr->evex == 0 )
+		    break;
 		retcode = check_operand_2( CodeInfo, CodeInfo->opnd[OPND1].type );
 		break;
 	    }

@@ -121,7 +121,7 @@ static const char mzcode[] = {
 };
 
 /* default 32-bit PE header */
-static const struct IMAGE_PE_HEADER32 pe32def = {
+static struct IMAGE_PE_HEADER32 pe32def = {
     'P'+ ('E' << 8 ),
     { IMAGE_FILE_MACHINE_I386, 0, 0, 0, 0, sizeof( struct IMAGE_OPTIONAL_HEADER32 ),
     IMAGE_FILE_RELOCS_STRIPPED | IMAGE_FILE_EXECUTABLE_IMAGE | IMAGE_FILE_LINE_NUMS_STRIPPED | IMAGE_FILE_LOCAL_SYMS_STRIPPED | IMAGE_FILE_32BIT_MACHINE
@@ -139,7 +139,7 @@ static const struct IMAGE_PE_HEADER32 pe32def = {
     }
 };
 /* default 64-bit PE header */
-static const struct IMAGE_PE_HEADER64 pe64def = {
+static struct IMAGE_PE_HEADER64 pe64def = {
     'P'+ ('E' << 8 ),
     { IMAGE_FILE_MACHINE_AMD64, 0, 0, 0, 0, sizeof( struct IMAGE_OPTIONAL_HEADER64 ),
     IMAGE_FILE_RELOCS_STRIPPED | IMAGE_FILE_EXECUTABLE_IMAGE | IMAGE_FILE_LINE_NUMS_STRIPPED | IMAGE_FILE_LOCAL_SYMS_STRIPPED | IMAGE_FILE_LARGE_ADDRESS_AWARE | IMAGE_FILE_32BIT_MACHINE
@@ -184,7 +184,8 @@ static void CalcOffset( struct dsym *curr, struct calc_param *cp )
     if ( grp == NULL ) {
 	offset = cp->fileoffset - cp->sizehdr;	// + alignbytes;
     } else {
-	if ( ModuleInfo.sub_format == SFORMAT_PE )
+	if ( ModuleInfo.sub_format == SFORMAT_PE || ModuleInfo.sub_format == SFORMAT_64BIT )
+
 	    offset = cp->rva;
 	else
 	    if ( grp->sym.total_size == 0 ) {
@@ -414,7 +415,7 @@ static int DoFixup( struct dsym *curr, struct calc_param *cp )
 	    default:
 		if ( seg->e.seginfo->group && fixup->frame_type != FRAME_SEG ) {
 		    value = (seg->e.seginfo->group->offset & 0xF) + seg->e.seginfo->start_offset + fixup->offset + offset;
-		    if ( ModuleInfo.sub_format == SFORMAT_PE ) {
+		    if ( ModuleInfo.sub_format == SFORMAT_PE || ModuleInfo.sub_format == SFORMAT_64BIT ) {
 			if ( curr->e.seginfo->Ofssize == USE64 )
 			    value64 = value + cp->imagebase64;
 			value += cp->imagebase;
@@ -460,7 +461,8 @@ static int DoFixup( struct dsym *curr, struct calc_param *cp )
 	    *codeptr.dd = value;
 	    break;
 	case FIX_OFF64:
-	    if ( ModuleInfo.sub_format == SFORMAT_PE && curr->e.seginfo->Ofssize == USE64 )
+	    if ( ( ModuleInfo.sub_format == SFORMAT_PE && curr->e.seginfo->Ofssize == USE64 ) ||
+		 ModuleInfo.sub_format == SFORMAT_64BIT )
 		*codeptr.dq = value64;
 	    else
 		*codeptr.dq = value;
@@ -587,9 +589,21 @@ void pe_create_PE_header( void )
 	if ( ModuleInfo.defOfssize == USE64 ) {
 	    size = sizeof( struct IMAGE_PE_HEADER64 );
 	    p = (void *)&pe64def;
+
+	    pe64def.OptionalHeader.ImageBase = 0x400000;
+	    pe64def.OptionalHeader.Subsystem = IMAGE_SUBSYSTEM_WINDOWS_CUI;
+	    if ( Options.pe_subsystem == 1 )
+		pe64def.OptionalHeader.Subsystem = IMAGE_SUBSYSTEM_WINDOWS_GUI;
+	    if ( ModuleInfo.sub_format == SFORMAT_64BIT )
+		pe64def.OptionalHeader.ImageBase = 0x140000000;
+
 	} else {
 	    size = sizeof( struct IMAGE_PE_HEADER32 );
 	    p = (void *)&pe32def;
+	    pe32def.OptionalHeader.Subsystem = IMAGE_SUBSYSTEM_WINDOWS_CUI;
+	    if ( Options.pe_subsystem == 1 )
+		pe32def.OptionalHeader.Subsystem = IMAGE_SUBSYSTEM_WINDOWS_GUI;
+
 	}
 	pehdr = ( struct dsym *)SymSearch( hdrname "2" );
 	if ( pehdr == NULL ) {
@@ -1306,7 +1320,7 @@ static ret_code bin_write_module( struct module_info *modinfo )
     /* set starting offsets for all sections */
 
     cp.rva = 0;
-    if ( modinfo->sub_format == SFORMAT_PE ) {
+    if ( modinfo->sub_format == SFORMAT_PE || modinfo->sub_format == SFORMAT_64BIT ) {
 	if ( ModuleInfo.model == MODEL_NONE ) {
 	    return( asmerr( 2013 ) );
 	}
@@ -1437,7 +1451,7 @@ static ret_code bin_write_module( struct module_info *modinfo )
 	if ( curr->e.seginfo->segtype == SEGTYPE_ABS ) {
 	    continue;
 	}
-	if ( ModuleInfo.sub_format == SFORMAT_PE &&
+	if ( ( ModuleInfo.sub_format == SFORMAT_PE || ModuleInfo.sub_format == SFORMAT_64BIT ) &&
 	    ( curr->e.seginfo->segtype == SEGTYPE_BSS || curr->e.seginfo->info ) )
 	    size = 0;
 	else
@@ -1463,7 +1477,7 @@ static ret_code bin_write_module( struct module_info *modinfo )
 	}
 	first = FALSE;
     }
-    if ( modinfo->sub_format == SFORMAT_PE ) {
+    if ( modinfo->sub_format == SFORMAT_PE || ModuleInfo.sub_format == SFORMAT_64BIT ) {
 	size = ftell( CurrFile[OBJ] );
 	if ( size & ( cp.rawpagesize - 1 ) ) {
 	    char *tmp;
@@ -1478,7 +1492,7 @@ static ret_code bin_write_module( struct module_info *modinfo )
     if ( modinfo->sub_format == SFORMAT_MZ )
 	sizeheap += sizetotal - cp.sizehdr;
     else
-    if ( modinfo->sub_format == SFORMAT_PE )
+    if ( modinfo->sub_format == SFORMAT_PE || ModuleInfo.sub_format == SFORMAT_64BIT )
 	sizeheap = cp.rva;
     else
 	sizeheap = GetImageSize( TRUE );
@@ -1510,6 +1524,7 @@ void bin_init( struct module_info *modinfo )
 	memcpy( &modinfo->mz_data, &mzdata, sizeof( struct MZDATA ) );
 	break;
     case SFORMAT_PE:
+    case SFORMAT_64BIT:
 	modinfo->g.EndDirHook = pe_enddirhook; /* v2.11 */
 	break;
     }

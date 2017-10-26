@@ -159,17 +159,15 @@ static void SetSimSeg( enum sim_seg segm, const char *name )
 }
 
 static void EndSimSeg( enum sim_seg segm )
-/****************************************/
 {
     AddLineQueueX( "%s %r", SegmNames[segm], T_ENDS );
     return;
 }
 
 ret_code SimplifiedSegDir( int i, struct asm_tok tokenarray[] )
-/*************************************************************/
 /*
- Handles simplified segment directives:
- .CODE, .STACK, .DATA, .DATA?, .FARDATA, .FARDATA?, .CONST
+ * Handles simplified segment directives:
+ * .CODE, .STACK, .DATA, .DATA?, .FARDATA, .FARDATA?, .CONST
  */
 {
     const char	*name = NULL;
@@ -177,14 +175,13 @@ ret_code SimplifiedSegDir( int i, struct asm_tok tokenarray[] )
     int		type;
     struct expr opndx;
 
-    LstWrite( LSTTYPE_DIRECTIVE, 0, NULL );
-
     if( ModuleInfo.model == MODEL_NONE ) {
-	asmerr( 2013 );
+	/* v2.26 - default to /win64 */
+	RewindToWin64();
 	return( ERROR );
     }
+    LstWrite( LSTTYPE_DIRECTIVE, 0, NULL );
 
-    //type = tokenarray[i].value;
     type = GetSflagsSp( tokenarray[i].tokval );
     i++; /* get past the directive token */
 

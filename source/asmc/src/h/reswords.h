@@ -33,10 +33,11 @@
 #define _RESWORDS_H_INCLUDED
 
 enum reservedword_flags {
-    RWF_DISABLED = 1, /* keyword disabled */
-    RWF_IA32	 = 2, /* keyword specific to IA32 mode */
-    RWF_X64	 = 4, /* keyword specific to IA32+ mode */
-    RWF_VEX	 = 8, /* keyword triggers VEX encoding */
+    RWF_DISABLED =  1, /* keyword disabled */
+    RWF_IA32	 =  2, /* keyword specific to IA32 mode */
+    RWF_X64	 =  4, /* keyword specific to IA32+ mode */
+    RWF_VEX	 =  8, /* keyword triggers VEX encoding */
+    RWF_EVEX	 = 16, /* keyword triggers EVEX encoding */
 };
 
 /* structure of items in the "reserved names" table ResWordTable[] */
@@ -45,7 +46,7 @@ struct ReservedWord {
     uint_16 next;	/* index next entry (used for hash table) */
     uint_8 len;		/* length of reserved word, i.e. 'AX' = 2 */
     uint_8 flags;	/* see enum reservedword_flags */
-    const char *name;	     /* reserved word (char[]) */
+    const char *name;	/* reserved word (char[]) */
 };
 
 unsigned FASTCALL FindResWord( char *name, unsigned size );

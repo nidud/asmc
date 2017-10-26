@@ -3,6 +3,13 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.26 - xx xxx 2017
+- added switch -gui -- subsystem:windows for -pe
+- added switch -cui -- subsystem:console for -pe (default)
+- added combination of -pe -win64 switches
+- added win64 longmode if model not set to -pe
+- added win64 fastcall as default if missing model/lang
+- added {evex} prefix
+- added XMM16..31, YMM16..31, and ZMM registers
 - rewrite of 64-bit switch table
 - added __PE__=1 to switch -pe
 - fixed bug in 64-bit rip-relative relocation

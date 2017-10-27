@@ -1859,11 +1859,19 @@ static int evaluate( struct expr *opnd1, int *i, struct asm_tok tokenarray[], co
 	    if ( tokenarray[curr_operator].token == '+' || tokenarray[curr_operator].token == '-' )
 		tokenarray[curr_operator].specval = 1;
 	    else if( !( tokenarray[curr_operator].token >= T_OP_BRACKET || tokenarray[curr_operator].token == T_UNARY_OPERATOR || tokenarray[curr_operator].token == T_BINARY_OPERATOR ) || tokenarray[curr_operator].token == T_UNARY_OPERATOR ) {
-		 ;
-		rc = ERROR;
-		if ( !opnd1->is_opattr )
-		    OperErr( curr_operator, tokenarray );
-		break;
+
+		/* v2.26 - added for {k1}{z}.. */
+		if ( tokenarray[curr_operator].token == T_STRING &&
+		     tokenarray[curr_operator].string_delim == '{' ) {
+		    tokenarray[curr_operator].hll_flags |= T_EVEX_OPT;
+		    (*i)++;
+		    continue;
+		} else {
+		    rc = ERROR;
+		    if ( !opnd1->is_opattr )
+			OperErr( curr_operator, tokenarray );
+		    break;
+		}
 	    }
 	}
 	(*i)++;

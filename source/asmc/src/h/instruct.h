@@ -1254,3 +1254,30 @@ insx(VMOVMSKPD, vmovmskpd,   OpCls( RGT16,    XMM,        NONE ), F_660F,  1,  n
 insn(VMOVMSKPD, 1,           OpCls( RGT16,    YMM,        NONE ), F_660F,  1,  no_WDS, 0x50, 0x00, P_686|P_AVX, 0,0)
 insx(VMOVMSKPS, vmovmskps,   OpCls( RGT16,    XMM,        NONE ), F_0F,    1,  no_WDS, 0x50, 0x00, P_686|P_AVX, 0,0, RWF_VEX )
 insn(VMOVMSKPS, 1,           OpCls( RGT16,    YMM,        NONE ), F_0F,    1,  no_WDS, 0x50, 0x00, P_686|P_AVX, 0,0)
+
+/* AVX2 */
+
+insx(VMASKMOVD, vpmaskmovd,  OpCls( XMM,      XMM_M128,   NONE ), F_660F38,1,  no_WDS, 0x8C, 0x00, P_686|P_AVX, 0,0, RWF_VEX )
+insn(VMASKMOVD, 1,           OpCls( XMM_M128, XMM,        NONE ), F_660F38,0,  no_WDS, 0x8E, 0x00, P_686|P_AVX, 0,0)
+insx(VMASKMOVQ, vpmaskmovq,  OpCls( XMM,      XMM_M128,   NONE ), F_660F38,1,  no_WDS, 0x8C, 0x00, P_686|P_AVX, 0,0, RWF_VEX )
+insn(VMASKMOVQ, 1,           OpCls( XMM_M128, XMM,        NONE ), F_660F38,0,  no_WDS, 0x8E, 0x00, P_686|P_AVX, 0,0)
+insx(VPERMPD, vpermpd,       OpCls( YMM,      YMM_M256,   NONE ), F_660F38,1,  no_WDS, 0x16, 0x00, P_686|P_AVX, 0,0xE3, RWF_VEX )
+insn(VPERMPD, 1,             OpCls( YMM,      YMM_M256,   I8_U ), F_660F3A,1,  no_WDS, 0x01, 0x00, P_686|P_AVX, 0,0xE3)
+insx(VPERMB, vpermb,         OpCls( XMM,      XMM_M128,   NONE ), F_660F38,1,  no_WDS, 0x8D, 0x00, P_686|P_AVX, 0,0, RWF_VEX )
+insx(VPERMD, vpermd,         OpCls( XMM,      XMM_M128,   NONE ), F_660F38,1,  no_WDS, 0x36, 0x00, P_686|P_AVX, 0,0xE2, RWF_VEX )
+insx(VPERMQ, vpermq,         OpCls( YMM,      YMM_M256,   NONE ), F_660F38,1,  no_WDS, 0x36, 0x00, P_686|P_AVX, 0,0xE3, RWF_VEX )
+insn(VPERMQ, 1,              OpCls( YMM,      YMM_M256,   I8_U ), F_660F3A,1,  no_WDS, 0x00, 0x00, P_686|P_AVX, 0,0xE3)
+insx(VPERMPS, vpermps,       OpCls( YMM,      YMM_M256,   NONE ), F_660F38,1,  no_WDS, 0x16, 0x00, P_686|P_AVX, 0,0xE2, RWF_VEX )
+insx(VPSLLVW, vpsllvw,       OpCls( XMM,      XMM_M128,   NONE ), F_660F38,1,  no_WDS, 0x12, 0x00, P_686|P_AVX, 0,0, RWF_VEX )
+insx(VPSLLVD, vpsllvd,       OpCls( XMM,      XMM_M128,   NONE ), F_660F38,1,  no_WDS, 0x47, 0x00, P_686|P_AVX, 0,0xE2, RWF_VEX )
+insx(VPSLLVQ, vpsllvq,       OpCls( XMM,      XMM_M128,   NONE ), F_660F38,1,  no_WDS, 0x47, 0x00, P_686|P_AVX, 0,0xE2, RWF_VEX )
+insx(VPSRAVD, vpsravd,       OpCls( XMM,      XMM_M128,   NONE ), F_660F38,1,  no_WDS, 0x46, 0x00, P_686|P_AVX, 0,0xE2, RWF_VEX )
+insx(VPSRLVD, vpsrlvd,       OpCls( XMM,      XMM_M128,   NONE ), F_660F38,1,  no_WDS, 0x45, 0x00, P_686|P_AVX, 0,0xE2, RWF_VEX )
+insx(VPSRLVQ, vpsrlvq,       OpCls( XMM,      XMM_M128,   NONE ), F_660F38,1,  no_WDS, 0x45, 0x00, P_686|P_AVX, 0,0xE2, RWF_VEX )
+
+/* AVX512 */
+
+insx(VPERMW, vpermw,         OpCls( XMM,      XMM_M128,   NONE ), F_660F38,1,  no_WDS, 0x8D, 0x00, P_686|P_AVX, 0,0xF2, RWF_VEX | RWF_EVEX )
+insx(VPSRAVW, vpsravw,       OpCls( XMM,      XMM_M128,   NONE ), F_660F38,1,  no_WDS, 0x11, 0x00, P_686|P_AVX, 0,0xF2, RWF_VEX | RWF_EVEX )
+insx(VPSRAVQ, vpsravq,       OpCls( XMM,      XMM_M128,   NONE ), F_660F38,1,  no_WDS, 0x46, 0x00, P_686|P_AVX, 0,0xF2, RWF_VEX | RWF_EVEX )
+insx(VPSRLVW, vpsrlvw,       OpCls( XMM,      XMM_M128,   NONE ), F_660F38,1,  no_WDS, 0x10, 0x00, P_686|P_AVX, 0,0xF2, RWF_VEX | RWF_EVEX )

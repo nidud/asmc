@@ -605,7 +605,6 @@ static int set_rm_sib( struct code_info *CodeInfo, unsigned CurrOpnd, char ss, i
  *    (or whatever is assumed for the segment register)
  */
 int segm_override( const struct expr *opndx, struct code_info *CodeInfo )
-/****************************************************************************/
 {
     struct asym	     *sym;
 
@@ -1592,7 +1591,7 @@ static int process_register( struct code_info *CodeInfo, unsigned CurrOpnd,
 
     if ( ( ( flags == OP_XMM || flags == OP_YMM ) && regno > 15 ) || flags == OP_ZMM ) {
 	CodeInfo->prefix.evex = 1;
-	CodeInfo->vx_args |= (1 << ( index + 3 ));
+	CodeInfo->vflags |= (1 << ( index + 3 ));
     }
 
     if ( flags & OP_R8 ) {
@@ -2439,7 +2438,7 @@ int ParseLine( struct asm_tok tokenarray[] )
     if ( CurrFile[LST] ) oldofs = GetCurrOffset();
 
     /* init CodeInfo */
-    CodeInfo.prefix.ins		= EMPTY;
+    CodeInfo.prefix.ins	    = EMPTY;
     CodeInfo.prefix.RegOverride = EMPTY;
     CodeInfo.prefix.rex	    = 0;
     CodeInfo.prefix.evex    = 0;
@@ -2450,17 +2449,16 @@ int ParseLine( struct asm_tok tokenarray[] )
 	CodeInfo.opnd[j].type = OP_NONE;
     }
     CodeInfo.rm_byte	    = 0;
-    CodeInfo.sib	    = 0;	    /* assume ss is *1 */
+    CodeInfo.sib	    = 0; /* assume ss is *1 */
     CodeInfo.Ofssize	    = ModuleInfo.Ofssize;
     CodeInfo.opc_or	    = 0;
     CodeInfo.vexregop	    = 0;
     CodeInfo.flags	    = 0;
-    CodeInfo.vx_args	    = 0;
+    CodeInfo.vflags	    = 0;
 
     /* instruction prefix? */
 
     if ( i == 0 && tokenarray[0].dirtype == '{' ) {
-
 	if ( !_stricmp( tokenarray[0].string_ptr, "evex" ) ) {
 	    CodeInfo.prefix.evex = 1;
 	    i++;
@@ -2561,10 +2559,25 @@ int ParseLine( struct asm_tok tokenarray[] )
 		break;
 	    i++;
 	}
+	q = i + 1;
 	if( EvalOperand( &i, tokenarray, Token_Count, &opndx[j], 0 ) == ERROR ) {
 	    return( ERROR );
 	}
 	switch ( opndx[j].kind ) {
+
+	case EXPR_REG: /* get {k1}{z} */
+	    while ( q < i && tokenarray[q].hll_flags & T_EVEX_OPT ) {
+		if ( tokenarray[q].string_ptr[0] == 'k' )
+		    /* @@ no case or range test.. */
+		    CodeInfo.vflags |= tokenarray[q].string_ptr[1] - '0';
+		else if ( tokenarray[q].string_ptr[0] == 'z' )
+		    CodeInfo.vflags |= VX_OPZ;
+		else
+		    return asmerr(2008, tokenarray[q].string_ptr );
+		q++;
+	    }
+	    break;
+
 	case EXPR_FLOAT:
 	    /* v2.06: accept float constants for PUSH */
 	    if ( j == OPND2 || CodeInfo.token == T_PUSH || CodeInfo.token == T_PUSHD ) {
@@ -2599,7 +2612,8 @@ int ParseLine( struct asm_tok tokenarray[] )
 	return( asmerr(2008, tokenarray[i].tokpos ) );
     }
 
-    CodeInfo.vx_args |= ( ( ( 1 << j ) - 1 ) & 0x07 );
+    if ( j >= 3 )
+	CodeInfo.vflags |= VX_OP3;
 
     for ( q = 0, CurrOpnd = 0; CurrOpnd < j && CurrOpnd < MAX_OPND; CurrOpnd++, q++ ) {
 
@@ -2627,7 +2641,7 @@ int ParseLine( struct asm_tok tokenarray[] )
 		;
 	    else {
 		if ( opndx[OPND2].kind != EXPR_REG ||
-		    ( ! ( GetValueSp( opndx[CurrOpnd].base_reg->tokval ) & ( OP_XMM | OP_YMM ) ) ) ) {
+		    ( ! ( GetValueSp( opndx[CurrOpnd].base_reg->tokval ) & ( OP_XMM | OP_YMM | OP_ZMM ) ) ) ) {
 		    return( asmerr( 2070 ) );
 		}
 		/* fixme: check if there's an operand behind OPND2 at all!
@@ -2667,7 +2681,7 @@ int ParseLine( struct asm_tok tokenarray[] )
 		    /* to be fixed: CurrOpnd is always OPND2, so use this const here */
 		    CodeInfo.vexregop = opndx[CurrOpnd].base_reg->bytval + 1;
 		    if ( GetRegNo( opndx[CurrOpnd].base_reg->tokval ) > 15 || flags & OP_ZMM ) {
-			CodeInfo.vx_args |= VX_OP2V;
+			CodeInfo.vflags |= VX_OP2V;
 			CodeInfo.prefix.evex = 1;
 		    }
 		    q++;
@@ -2682,8 +2696,6 @@ int ParseLine( struct asm_tok tokenarray[] )
 		return( ERROR );
 	    break;
 	case EXPR_CONST:
-	    if ( q == 2 )
-		CodeInfo.vx_args |= VX_OP3I;
 	    if ( process_const( &CodeInfo, CurrOpnd, &opndx[CurrOpnd] ) == ERROR )
 		return( ERROR );
 	    break;

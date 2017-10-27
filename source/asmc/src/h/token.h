@@ -68,6 +68,7 @@ enum tok_type {
 #define T_HLL_MACRO	0x02	/* - macro(args) */
 #define T_HLL_PROC	0x04	/* - label(args) */
 #define T_HLL_DELAYED	0x08	/* delayed */
+#define T_EVEX_OPT	0x10	/* {T_STRING} -- {k1}{z}.. */
 
 struct asm_tok {
     unsigned char token;

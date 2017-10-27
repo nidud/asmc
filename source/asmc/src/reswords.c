@@ -318,6 +318,25 @@ const uint_8 vex_flags[] = {
     VX_L|VX_NND,	/* VMOVMSKPD	   */ /* v2.11 */
     VX_L|VX_NND,	/* VMOVMSKPS	   */ /* v2.11 */
 
+    VX_L|VX_NRW,	/* VMASKMOVD	   */ /* AVX2 - v2.26 */
+    VX_L|VX_NRW|VX_RW1, /* VMASKMOVQ	   */
+    VX_L|VX_IMM|VX_RW1, /* VPERMPD	   */
+    VX_L|VX_NRW,	/* VPERMB	   */
+    VX_L|VX_NRW,	/* VPERMD	   */
+    VX_L|VX_IMM|VX_RW1, /* VPERMQ	   */
+    VX_L|VX_NRW,	/* VPERMPS	   */
+    VX_L|VX_NRW,	/* VPSLLVW	   */
+    VX_L|VX_NRW,	/* VPSLLVD	   */
+    VX_L|VX_RW1,	/* VPSLLVQ	   */
+    VX_L|VX_NRW,	/* VPSRAVD	   */
+    VX_L|VX_NRW,	/* VPSRLVD	   */
+    VX_L|VX_RW1,	/* VPSRLVQ	   */
+
+    VX_L,		/* VPERMW	   */ /* AVX512 */
+    VX_L,		/* VPSRAVW	   */
+    VX_L,		/* VPSRAVQ	   */
+    VX_L,		/* VPSRLVW	   */
+
 #define avxins( tok, string, cpu, flgs ) flgs,
 #include <instravx.h>
 #undef avxins

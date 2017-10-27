@@ -123,6 +123,7 @@ enum vex_info {
     VX_NMEM  = 0x10,	/* no VEX.NDS if op1 is a mem ref (vmovs[d|s], vmov[h|l]p[d|s] ) */
     VX_HALF  = 0x20,	/* op2 is half-sized */
     VX_NRW   = 0x40,	/* no REX.W bit */
+    VX_RW1   = 0x80	/* set REX.W bit */
 };
 
 extern int codegen( struct code_info *, uint_32 );

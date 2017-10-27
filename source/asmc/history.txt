@@ -3,6 +3,7 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.26 - xx xxx 2017
+- added {k1}{z} writemask for AVX512
 - added switch -gui -- subsystem:windows for -pe
 - added switch -cui -- subsystem:console for -pe (default)
 - added combination of -pe -win64 switches

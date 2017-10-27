@@ -223,33 +223,33 @@ struct opnd_item {
  * structure between parser and code generator.
  */
 
-#define VX_OP1	0x01 /* EVEX args */
-#define VX_OP2	0x02
-#define VX_OP3	0x04
+#define VX_OPK	0x07 /* {k1..k7} */
 #define VX_OP1V 0x08 /* set if op1 is xmm16..31, ymm16..31, or zmm */
 #define VX_OP2V 0x10
 #define VX_OP3V 0x20
-#define VX_OP3I 0x40 /* set if op3 is imm */
+#define VX_OP3	0x40 /* EVEX > 2 instruction args used */
+#define VX_OPZ	0x80 /* EVEX {z} */
+#define VX_MASK 0x87 /* EVEX {k1}{z} */
 
 struct code_info {
     struct {
-	enum instr_token ins;	       /* prefix before instruction, e.g. lock, rep, repnz */
-	enum assume_segreg RegOverride;/* segment override (0=ES,1=CS,2=SS,3=DS,...) */
+	enum instr_token ins;		/* prefix before instruction, e.g. lock, rep, repnz */
+	enum assume_segreg RegOverride; /* segment override (0=ES,1=CS,2=SS,3=DS,...) */
 	unsigned char	rex;
-	unsigned char	adrsiz:1;      /* address size prefix 0x67 is to be emitted */
-	unsigned char	opsiz:1;       /* operand size prefix 0x66 is to be emitted */
-	unsigned char	evex:1;	       /* EVEX prefix 0x62 is to be emitted */
+	unsigned char	adrsiz:1;	/* address size prefix 0x67 is to be emitted */
+	unsigned char	opsiz:1;	/* operand size prefix 0x66 is to be emitted */
+	unsigned char	evex:1;		/* EVEX prefix 0x62 is to be emitted */
     } prefix;
-    const struct instr_item *pinstr;   /* current pointer into InstrTable */
+    const struct instr_item *pinstr;	/* current pointer into InstrTable */
     struct opnd_item opnd[MAX_OPND];
     enum instr_token token;
-    unsigned char mem_type;	       /* byte / word / etc. NOT near/far */
-    unsigned char vx_args;
+    unsigned char mem_type;		/* byte / word / etc. NOT near/far */
+    unsigned char vflags;
     unsigned char rm_byte;
     unsigned char sib;
     unsigned char Ofssize;
     unsigned char opc_or;
-    unsigned char vexregop; /* in based-1 format (0=empty) */
+    unsigned char vexregop;		/* in based-1 format (0=empty) */
     union {
 	unsigned char flags;
 	struct {

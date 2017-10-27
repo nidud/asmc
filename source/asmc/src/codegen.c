@@ -81,6 +81,10 @@ static void output_opc( struct code_info *CodeInfo )
     uint_8 tmp;
     uint_8 evex = 0;
     uint_8 fpfix = FALSE;
+    uint_8 rflags = ResWordTable[CodeInfo->token].flags;
+
+    if ( rflags & RWF_EVEX )
+	CodeInfo->prefix.evex = 1;
 
     /*
      * Output debug info - line numbers
@@ -204,7 +208,7 @@ static void output_opc( struct code_info *CodeInfo )
 	break;
     }
 
-    if ( !( ResWordTable[CodeInfo->token].flags & RWF_VEX ) ) {
+    if ( !( rflags & RWF_VEX ) ) {
 	switch ( ins->byte1_info ) {
 	case F_660F:
 	case F_660F38:
@@ -253,11 +257,12 @@ static void output_opc( struct code_info *CodeInfo )
 	CodeInfo->prefix.rex = ( tmp & 0xFA ) | (( tmp & REX_R ) >> 2 ) | (( tmp & REX_B ) << 2 );
     }
 
-    if ( ResWordTable[CodeInfo->token].flags & RWF_VEX ) {
+    if ( rflags & RWF_VEX ) {
+
+	uint_8 vargs = CodeInfo->vflags;
 	uint_8 byte1 = 0;
-	uint_8 byte2 = 0;
-	uint_8 byte3 = 0;
-	uint_8 vargs = CodeInfo->vx_args;
+	uint_8 byte2 = vex_flags[ CodeInfo->token - VEX_START ] & VX_RW1;
+	uint_8 byte3 = vargs & VX_MASK;
 
 	switch ( ins->byte1_info ) {
 	case F_660F:
@@ -277,12 +282,16 @@ static void output_opc( struct code_info *CodeInfo )
 	if ( vargs & VX_OP1V )
 	    byte2 |= 0x04;
 
-	if ( ( CodeInfo->opnd[OPND1].type & OP_YMM ) ||
-	    ( CodeInfo->opnd[OPND2].type & ( OP_YMM | OP_M256 ) ) ||
+	if ( ( CodeInfo->opnd[OPND1].type & ( OP_YMM | OP_ZMM ) ) ||
+	    ( CodeInfo->opnd[OPND2].type & ( OP_YMM | OP_ZMM | OP_M256 ) ) ||
 	    ( CodeInfo->opnd[OPND1].type == OP_NONE && /* no operands? use VX_L flag from vex_flags[] */
 	     vex_flags[ CodeInfo->token - VEX_START ] & VX_L ) ) {
 	    byte2 |= 0x04;
-	    byte3 |= 0x20;
+	    if ( CodeInfo->opnd[OPND1].type & OP_ZMM ) {
+		byte3 |= 0x40;
+		byte1 |= 0x10;
+	    } else
+		byte3 |= 0x20;
 	}
 
 	if ( CodeInfo->vexregop ) {
@@ -339,17 +348,15 @@ static void output_opc( struct code_info *CodeInfo )
 			   ( vargs & VX_OP3 && vargs & VX_OP3V ) )
 			   byte1 = 0xA1;
 		    } else if ( ( vex_flags[ CodeInfo->token - VEX_START ] & VX_HALF ) &&
-			vargs & VX_OP3I ){
+			CodeInfo->opnd[OPND2].type & OP_I8 ) {
 			byte1 = 0xF1;
 		    } else
 			byte3 |= 0x08;
 		} else if ( !( vargs & VX_OP2V ) ) {
 		    byte1 = 0xF1;
 		    byte3 |= 0x08;
-		} else if ( vargs & VX_OP2V ) {
-		    if ( vargs & VX_OP3 )
-			byte1 = 0xF1;
-		}
+		} else if ( vargs & VX_OP3 )
+		    byte1 = 0xF1;
 	    }
 	}
 	OutputByte( byte1 );
@@ -593,7 +600,11 @@ static int match_phase_3( struct code_info *CodeInfo, enum operand_type opnd1 )
     enum operand_type tbl_op2;
 
     if ( CodeInfo->token >= VEX_START && ( vex_flags[ CodeInfo->token - VEX_START ] & VX_L ) ) {
-	if ( CodeInfo->opnd[OPND1].type & ( OP_YMM | OP_M256) ) {
+	if ( CodeInfo->opnd[OPND1].type & ( OP_YMM | OP_ZMM | OP_M256 | OP_M512 ) ) {
+	    if ( opnd2 & OP_ZMM )
+		opnd2 |= OP_YMM;
+	    else if ( opnd2 & OP_M512 )
+		opnd2 |= OP_M256;
 	    if ( opnd2 & OP_YMM )
 		opnd2 |= OP_XMM;
 	    else if ( opnd2 & OP_M256 )
@@ -609,7 +620,7 @@ static int match_phase_3( struct code_info *CodeInfo, enum operand_type opnd1 )
 	 * "without size" and the second operand is a ymm register
 	 */
 	else if ( CodeInfo->opnd[OPND1].type == OP_M ) {
-	    if ( opnd2 & OP_YMM )
+	    if ( opnd2 & ( OP_YMM | OP_ZMM ) )
 		opnd2 |= OP_XMM;
 	}
     }
@@ -839,12 +850,12 @@ int codegen( struct code_info *CodeInfo, uint_32 oldofs )
     }
 
     if ( CodeInfo->token >= VEX_START && ( vex_flags[ CodeInfo->token - VEX_START ] & VX_L ) ) {
-	if ( opnd1 & ( OP_YMM | OP_M256 ) ) {
+	if ( opnd1 & ( OP_YMM | OP_M256 | OP_ZMM | OP_M512 ) ) {
 	    if ( CodeInfo->opnd[OPND2].type & OP_XMM && !( vex_flags[ CodeInfo->token - VEX_START ] & VX_HALF ) ) {
 		asmerr( 2070 );
 		return( ERROR );
 	    }
-	    if ( opnd1 & OP_YMM )
+	    if ( opnd1 & ( OP_YMM | OP_ZMM ) )
 		opnd1 |= OP_XMM;
 	    else
 		opnd1 |= OP_M128;

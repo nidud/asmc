@@ -299,7 +299,7 @@
 
     vpextrb eax, xmm21, 1
     vpextrb byte ptr [rax], xmm21, 1
-    vpextrw eax, xmm21, 2
+
     vpextrw word ptr [rax], xmm21, 2
     vpextrd eax, xmm21, 3
     vpextrd dword ptr [rax], xmm21, 3
@@ -601,6 +601,7 @@
     {evex} vpextrb eax, xmm1, 1
     {evex} vpextrb byte ptr [rax], xmm1, 1
 
+    {evex} vpextrw eax, xmm1, 2
     {evex} vpextrw word ptr [rax], xmm1, 2
     {evex} vpextrd eax, xmm1, 3
     {evex} vpextrd dword ptr [rax], xmm1, 3

@@ -91,6 +91,7 @@ enum operand_type {
     OP_IGE16	= ( OP_I16 | OP_I32 ),
     OP_I_ANY	= ( OP_I | OP_I64 | OP_I48 ),
 
+    OP_K	= 0x00200000, /* Mask reg */
     OP_ZMM	= 0x00400000, /* ZMMx register */
     OP_M08	= 0x00800000,
     OP_M16	= 0x01000000,

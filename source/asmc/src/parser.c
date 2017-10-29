@@ -1589,9 +1589,10 @@ static int process_register( struct code_info *CodeInfo, unsigned CurrOpnd,
     flags = GetValueSp( regtok );
     CodeInfo->opnd[CurrOpnd].type = flags;
 
-    if ( ( ( flags == OP_XMM || flags == OP_YMM ) && regno > 15 ) || flags == OP_ZMM ) {
+    if ( ( ( flags == OP_XMM || flags == OP_YMM ) && regno > 15 ) || flags & ( OP_ZMM | OP_K ) ) {
 	CodeInfo->prefix.evex = 1;
-	CodeInfo->vflags |= (1 << ( index + 3 ));
+	if ( !( flags & OP_K ) )
+	    CodeInfo->vflags |= (1 << ( index + 3 ));
     }
 
     if ( flags & OP_R8 ) {
@@ -2626,7 +2627,7 @@ int ParseLine( struct asm_tok tokenarray[] )
 	 * the second argument may be stored in the vexregop field.
 	 */
 	if ( CodeInfo.token >= VEX_START && CurrOpnd == OPND2 &&
-	    ( CodeInfo.opnd[OPND1].type & ( OP_XMM | OP_YMM | OP_ZMM | OP_M | OP_M256 | OP_M512 ) ) ) {
+	    ( CodeInfo.opnd[OPND1].type & ( OP_XMM | OP_YMM | OP_ZMM | OP_M | OP_K | OP_M256 | OP_M512 ) ) ) {
 
 	    if ( vex_flags[CodeInfo.token - VEX_START] & VX_NND )
 		;
@@ -2654,10 +2655,18 @@ int ParseLine( struct asm_tok tokenarray[] )
 		/* flag VX_DST is set if an immediate is expected as operand 3 */
 		if ( ( vex_flags[CodeInfo.token - VEX_START] & VX_DST ) &&
 		    ( opndx[OPND3].kind == EXPR_CONST ) ) {
+
 		    if ( opndx[OPND1].base_reg ) {
 			/* first operand register is moved to vexregop */
 			/* handle VEX.NDD */
+			unsigned flags = GetValueSp( opndx[CurrOpnd].base_reg->tokval );
+
 			CodeInfo.vexregop = opndx[OPND1].base_reg->bytval + 1;
+			if ( flags & OP_ZMM )
+			    CodeInfo.vexregop |= 0x80;
+			else if ( flags & OP_YMM )
+			    CodeInfo.vexregop |= 0x40;
+
 			memcpy( &opndx[OPND1], &opndx[CurrOpnd], sizeof( opndx[0] ) * 3 );
 			CodeInfo.rm_byte = 0;
 			if ( process_register( &CodeInfo, OPND1, opndx, q ) == ERROR )
@@ -2680,10 +2689,13 @@ int ParseLine( struct asm_tok tokenarray[] )
 		    /* second operand register is moved to vexregop */
 		    /* to be fixed: CurrOpnd is always OPND2, so use this const here */
 		    CodeInfo.vexregop = opndx[CurrOpnd].base_reg->bytval + 1;
-		    if ( GetRegNo( opndx[CurrOpnd].base_reg->tokval ) > 15 || flags & OP_ZMM ) {
+		    if ( CodeInfo.vexregop > 16 || flags & OP_ZMM ) {
 			CodeInfo.vflags |= VX_OP2V;
 			CodeInfo.prefix.evex = 1;
-		    }
+			if ( flags & OP_ZMM )
+			    CodeInfo.vexregop |= 0x80;
+		    } else if ( flags & OP_YMM )
+			CodeInfo.vexregop |= 0x40;
 		    q++;
 		    memcpy( &opndx[CurrOpnd], &opndx[CurrOpnd+1], sizeof( opndx[0] ) * 2 );
 		}

@@ -81,9 +81,10 @@ static void output_opc( struct code_info *CodeInfo )
     uint_8 tmp;
     uint_8 evex = 0;
     uint_8 fpfix = FALSE;
+    uint_8 vflags = CodeInfo->vflags;
     uint_8 rflags = ResWordTable[CodeInfo->token].flags;
 
-    if ( rflags & RWF_EVEX )
+    if ( rflags & RWF_EVEX || vflags & VX_MASK )
 	CodeInfo->prefix.evex = 1;
 
     /*
@@ -259,10 +260,9 @@ static void output_opc( struct code_info *CodeInfo )
 
     if ( rflags & RWF_VEX ) {
 
-	uint_8 vargs = CodeInfo->vflags;
 	uint_8 byte1 = 0;
 	uint_8 byte2 = vex_flags[ CodeInfo->token - VEX_START ] & VX_RW1;
-	uint_8 byte3 = vargs & VX_MASK;
+	uint_8 byte3 = vflags & VX_MASK;
 
 	switch ( ins->byte1_info ) {
 	case F_660F:
@@ -279,23 +279,27 @@ static void output_opc( struct code_info *CodeInfo )
 	    break;
 	}
 
-	if ( vargs & VX_OP1V )
+	if ( vflags & VX_OP1V )
 	    byte2 |= 0x04;
 
 	if ( ( CodeInfo->opnd[OPND1].type & ( OP_YMM | OP_ZMM ) ) ||
 	    ( CodeInfo->opnd[OPND2].type & ( OP_YMM | OP_ZMM | OP_M256 ) ) ||
 	    ( CodeInfo->opnd[OPND1].type == OP_NONE && /* no operands? use VX_L flag from vex_flags[] */
 	     vex_flags[ CodeInfo->token - VEX_START ] & VX_L ) ) {
+
 	    byte2 |= 0x04;
-	    if ( CodeInfo->opnd[OPND1].type & OP_ZMM ) {
-		byte3 |= 0x40;
+	    if ( CodeInfo->opnd[OPND1].type & OP_ZMM || CodeInfo->opnd[OPND2].type & OP_ZMM ) {
+		byte3 |= 0x48;
 		byte1 |= 0x10;
 	    } else
 		byte3 |= 0x20;
 	}
 
 	if ( CodeInfo->vexregop ) {
-	    byte2 |= ( ( 16 - CodeInfo->vexregop ) << 3 );
+	    byte2 |= ( ( 16 - ( CodeInfo->vexregop & 0x3F ) ) << 3 );
+	    byte3 |= ( ( CodeInfo->vexregop >> 1 ) & 0x60 );
+	    if ( byte3 & 0x40 ) /* ZMM */
+		byte3 |= 0x08;
 	} else {
 	    byte2 |= 0x78;
 	    byte3 |= 0x08;
@@ -327,7 +331,7 @@ static void output_opc( struct code_info *CodeInfo )
 		    byte1 = 0x91;
 		else if ( byte1 == 0xC5 )
 		    byte1 = 0xB1;
-		else if ( ( byte1 == 0xE2 || byte1 == 0xE3 ) && !( vargs & ( VX_OP1V | VX_OP2V | VX_OP3V ) ) ) {
+		else if ( ( byte1 == 0xE2 || byte1 == 0xE3 ) && !( vflags & ( VX_OP1V | VX_OP2V | VX_OP3V ) ) ) {
 		    byte1 |= 0x10;
 		    byte3 |= 0x08;
 		} else
@@ -336,27 +340,34 @@ static void output_opc( struct code_info *CodeInfo )
 	    byte2 |= ( ( CodeInfo->prefix.rex & REX_W ) ? 0x80 : 0 );
 	} else {
 	    byte2 |= ( ( CodeInfo->prefix.rex & REX_R ) ? 0 : 0x80 );
-	    byte1 = 0xC5;
-	    if ( evex == 1 ) {
-		byte1 = CodeInfo->pinstr->evex;
+	    if ( evex == 0 ) {
+		byte1 = 0xC5;
+	    } else {
+		byte1 |= CodeInfo->pinstr->evex;
 		if ( CodeInfo->prefix.rex & REX_R ) {
 		    byte1 = 0x61;
-		} else if ( vargs & VX_OP1V ) {
-		    byte1 = 0xE1;
-		    if ( vargs & VX_OP2V ) {
-			if ( !( vargs & VX_OP3 ) ||
-			   ( vargs & VX_OP3 && vargs & VX_OP3V ) )
-			   byte1 = 0xA1;
-		    } else if ( ( vex_flags[ CodeInfo->token - VEX_START ] & VX_HALF ) &&
-			CodeInfo->opnd[OPND2].type & OP_I8 ) {
-			byte1 = 0xF1;
-		    } else
+		} else if ( vflags & VX_OP1V ) {
+		    if ( CodeInfo->opnd[OPND1].type & OP_ZMM ) {
+			byte1 |= 0x10;
 			byte3 |= 0x08;
-		} else if ( !( vargs & VX_OP2V ) ) {
+		    } else {
+			byte1 = 0xE1;
+			if ( vflags & VX_OP2V ) {
+			    if ( !( vflags & VX_OP3 ) ||
+			       ( vflags & VX_OP3 && vflags & VX_OP3V ) )
+				byte1 = 0xA1;
+			} else if ( ( vex_flags[ CodeInfo->token - VEX_START ] & VX_HALF ) &&
+			    CodeInfo->opnd[OPND2].type & OP_I8 ) {
+			    byte1 = 0xF1;
+			} else
+			    byte3 |= 0x08;
+		    }
+		} else if ( !( vflags & VX_OP2V ) ) {
 		    byte1 = 0xF1;
 		    byte3 |= 0x08;
-		} else if ( vargs & VX_OP3 )
+		} else if ( vflags & VX_OP3 ) {
 		    byte1 = 0xF1;
+		}
 	    }
 	}
 	OutputByte( byte1 );
@@ -600,7 +611,7 @@ static int match_phase_3( struct code_info *CodeInfo, enum operand_type opnd1 )
     enum operand_type tbl_op2;
 
     if ( CodeInfo->token >= VEX_START && ( vex_flags[ CodeInfo->token - VEX_START ] & VX_L ) ) {
-	if ( CodeInfo->opnd[OPND1].type & ( OP_YMM | OP_ZMM | OP_M256 | OP_M512 ) ) {
+	if ( CodeInfo->opnd[OPND1].type & ( OP_K | OP_YMM | OP_ZMM | OP_M256 | OP_M512 ) ) {
 	    if ( opnd2 & OP_ZMM )
 		opnd2 |= OP_YMM;
 	    else if ( opnd2 & OP_M512 )

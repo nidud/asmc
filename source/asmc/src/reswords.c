@@ -298,10 +298,10 @@ const uint_8 vex_flags[] = {
     VX_NND,		/* VBROADCASTSD	   */
     VX_NND,		/* VBROADCASTF128  */
     VX_L,		/* VBLENDVPD	   */
-    VX_L,		/* VBLENDVPS	   */
+    VX_L|VX_NRW,	/* VBLENDVPS	   */
     0,			/* VINSERTF128	   */
     VX_NND,		/* VEXTRACTF128	   */
-    VX_L,		/* VMASKMOVPS	   */
+    VX_L|VX_NRW,	/* VMASKMOVPS	   */
     VX_L,		/* VMASKMOVPD	   */
     0,			/* VPBLENDVB	   */
     VX_L|VX_IMM,	/* VPERMILPD	   */
@@ -311,17 +311,17 @@ const uint_8 vex_flags[] = {
     VX_L|VX_NND,	/* VTESTPD	   */
     VX_L,		/* VZEROALL	   */
     0,			/* VZEROUPPER	   */
-    VX_NND,		/* VCVTPD2DQ	   */
-    VX_NND,		/* VCVTTPD2DQ	   */
-    VX_NND,		/* VCVTPD2PS	   */
-    VX_NND,		/* VMOVDDUP	   */
+    VX_NND|VX_RW1,	/* VCVTPD2DQ	   */
+    VX_NND|VX_RW1,	/* VCVTTPD2DQ	   */
+    VX_NND|VX_RW1,	/* VCVTPD2PS	   */
+    VX_NND|VX_RW1,	/* VMOVDDUP	   */
     VX_L|VX_NND,	/* VMOVMSKPD	   */ /* v2.11 */
     VX_L|VX_NND,	/* VMOVMSKPS	   */ /* v2.11 */
 
-    VX_L|VX_NRW,	/* VMASKMOVD	   */ /* AVX2 - v2.26 */
-    VX_L|VX_NRW|VX_RW1, /* VMASKMOVQ	   */
+    VX_L,		/* VPMASKMOVD	   */ /* AVX2 - v2.26 */
+    VX_L|VX_RW1,	/* VPMASKMOVQ	   */
     VX_L|VX_IMM|VX_RW1, /* VPERMPD	   */
-    VX_L|VX_NRW,	/* VPERMB	   */
+    VX_L,		/* VPERMB	   */
     VX_L|VX_NRW,	/* VPERMD	   */
     VX_L|VX_IMM|VX_RW1, /* VPERMQ	   */
     VX_L|VX_NRW,	/* VPERMPS	   */
@@ -332,10 +332,17 @@ const uint_8 vex_flags[] = {
     VX_L|VX_NRW,	/* VPSRLVD	   */
     VX_L|VX_RW1,	/* VPSRLVQ	   */
 
-    VX_L,		/* VPERMW	   */ /* AVX512 */
-    VX_L,		/* VPSRAVW	   */
-    VX_L,		/* VPSRAVQ	   */
-    VX_L,		/* VPSRLVW	   */
+    VX_L|VX_RW1,	/* VPERMW	   */ /* AVX512 */
+    VX_L|VX_RW1,	/* VPSRAVW	   */
+    VX_L|VX_RW1,	/* VPSRAVQ	   */
+    VX_L|VX_RW1,	/* VPSRLVW	   */
+
+    VX_L|VX_NRW,	/* VPANDD	   */
+    VX_L|VX_RW1,	/* VPANDQ	   */
+    VX_L|VX_NRW,	/* VPANDDD	   */
+    VX_L|VX_RW1,	/* VPANDDQ	   */
+    VX_L|VX_NRW,	/* VPXORD	   */
+    VX_L|VX_RW1,	/* VPXORQ	   */
 
 #define avxins( tok, string, cpu, flgs ) flgs,
 #include <instravx.h>

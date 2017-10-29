@@ -192,7 +192,9 @@ OpCls( YMM,	 YMM_M256,   I8_U  )
 OpCls( YMM,	 YMM_M256,   YMM   )
 
 OpCls( XMM_M128, XMM,	      NONE )
-//
+OpCls( K,	 XMM_M128,    NONE ) /* PCMPEQB */
+OpCls( K,	 XMM_M128,    I8_U ) /* VCMPPD */
+
 OpCls( YMM,	 YMM_M256_08, NONE )
 OpCls( YMM,	 YMM_M256_16, NONE )
 OpCls( YMM,	 YMM_M256_32, NONE )

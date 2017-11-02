@@ -5,62 +5,6 @@
     .model flat
     .code
 
-    vpermw  xmm1, xmm2, xmm3
-    vpermw  ymm1, ymm2, ymm3
-    vpermw  zmm1, zmm2, zmm3
-    vpermw  zmm3, zmm2, zmm1
-
-    vpsravw xmm1, xmm2, xmm3
-    vpsravw ymm1, ymm2, ymm3
-    vpsravw zmm1, zmm2, zmm3
-
-    vpsravq xmm1, xmm2, xmm3
-    vpsravq ymm1, ymm2, ymm3
-    vpsravq zmm1, zmm2, zmm3
-
-    vpsrlvw xmm1, xmm2, xmm3
-    vpsrlvw ymm1, ymm2, ymm3
-    vpsrlvw zmm1, zmm2, zmm3
-
-    vpermw zmm1{k1},zmm2,zmm3
-    vpermw zmm1{k1}{z},zmm2,zmm3
-    vpermw zmm1{k2}{z},zmm2,zmm3
-    vpermw zmm1{k3}{z},zmm2,zmm3
-    vpermw zmm1{k4}{z},zmm2,zmm3
-    vpermw zmm1{k5}{z},zmm2,zmm3
-    vpermw zmm1{k6}{z},zmm2,zmm3
-    vpermw zmm1{k7}{z},zmm2,zmm3
-
-    vpermw xmm1,xmm2,[rax]
-    vpermw xmm1{k1},xmm2,[rax]
-    vpermw xmm1{k1}{z},xmm2,[rax]
-    vpermw xmm1{k2}{z},xmm2,[rax]
-    vpermw xmm1{k3}{z},xmm2,[rax]
-    vpermw xmm1{k4}{z},xmm2,[rax]
-    vpermw xmm1{k5}{z},xmm2,[rax]
-    vpermw xmm1{k6}{z},xmm2,[rax]
-    vpermw xmm1{k7}{z},xmm2,[rax]
-
-    vpermw ymm1,ymm2,[rax]
-    vpermw ymm1{k1},ymm2,[rax]
-    vpermw ymm1{k1}{z},ymm2,[rax]
-    vpermw ymm1{k2}{z},ymm2,[rax]
-    vpermw ymm1{k3}{z},ymm2,[rax]
-    vpermw ymm1{k4}{z},ymm2,[rax]
-    vpermw ymm1{k5}{z},ymm2,[rax]
-    vpermw ymm1{k6}{z},ymm2,[rax]
-    vpermw ymm1{k7}{z},ymm2,[rax]
-
-    vpermw zmm1,zmm2,[rax]
-    vpermw zmm1{k1},zmm2,[rax]
-    vpermw zmm1{k1}{z},zmm2,[rax]
-    vpermw zmm1{k2}{z},zmm2,[rax]
-    vpermw zmm1{k3}{z},zmm2,[rax]
-    vpermw zmm1{k4}{z},zmm2,[rax]
-    vpermw zmm1{k5}{z},zmm2,[rax]
-    vpermw zmm1{k6}{z},zmm2,[rax]
-    vpermw zmm1{k7}{z},zmm2,[rax]
-
     vaddpd xmm1,xmm2,xmm3
     vaddps xmm1,xmm2,xmm3
     vaddsd xmm1,xmm2,xmm3
@@ -562,7 +506,83 @@
     vunpcklpd   zmm1{k1}{z},zmm2,[rax]
     vunpcklps   zmm1{k1}{z},zmm2,[rax]
 
-    ; AVX512 only
+    vpsllw      xmm1{k1}{z},xmm2,xmm3
+    vpsllw      ymm1{k1}{z},ymm2,xmm3
+    vpsllw      zmm1{k1}{z},zmm2,xmm3
+    vpsllw      xmm1{k1}{z},xmm2,[rax]
+    vpsllw      ymm1{k1}{z},ymm2,[rax]
+    vpsllw      zmm1{k1}{z},zmm2,[rax]
+
+    vpsllw      xmm1{k1}{z},xmm2,7
+    vpsllw      ymm1{k1}{z},ymm2,7
+    vpsllw      zmm1{k1}{z},zmm2,7
+    vpsllw      xmm1{k1}{z},[rax],7
+    vpsllw      ymm1{k1}{z},[rax],7
+    vpsllw      zmm1{k1}{z},[rax],7
+
+    vpermw      xmm1, xmm2, xmm3
+    vpermw      ymm1, ymm2, ymm3
+    vpermw      zmm1, zmm2, zmm3
+    vpermw      zmm3, zmm2, zmm1
+
+    vpsravw     xmm1, xmm2, xmm3
+    vpsravw     ymm1, ymm2, ymm3
+    vpsravw     zmm1, zmm2, zmm3
+
+    vpsravq     xmm1, xmm2, xmm3
+    vpsravq     ymm1, ymm2, ymm3
+    vpsravq     zmm1, zmm2, zmm3
+
+    vpsrlvw     xmm1, xmm2, xmm3
+    vpsrlvw     ymm1, ymm2, ymm3
+    vpsrlvw     zmm1, zmm2, zmm3
+
+    vpermw      zmm1{k1},zmm2,zmm3
+    vpermw      zmm1{k1}{z},zmm2,zmm3
+    vpermw      zmm1{k2}{z},zmm2,zmm3
+    vpermw      zmm1{k3}{z},zmm2,zmm3
+    vpermw      zmm1{k4}{z},zmm2,zmm3
+    vpermw      zmm1{k5}{z},zmm2,zmm3
+    vpermw      zmm1{k6}{z},zmm2,zmm3
+    vpermw      zmm1{k7}{z},zmm2,zmm3
+
+    vpermw      xmm1,xmm2,[rax]
+    vpermw      xmm1{k1},xmm2,[rax]
+    vpermw      xmm1{k1}{z},xmm2,[rax]
+    vpermw      xmm1{k2}{z},xmm2,[rax]
+    vpermw      xmm1{k3}{z},xmm2,[rax]
+    vpermw      xmm1{k4}{z},xmm2,[rax]
+    vpermw      xmm1{k5}{z},xmm2,[rax]
+    vpermw      xmm1{k6}{z},xmm2,[rax]
+    vpermw      xmm1{k7}{z},xmm2,[rax]
+
+    vpermw      ymm1,ymm2,[rax]
+    vpermw      ymm1{k1},ymm2,[rax]
+    vpermw      ymm1{k1}{z},ymm2,[rax]
+    vpermw      ymm1{k2}{z},ymm2,[rax]
+    vpermw      ymm1{k3}{z},ymm2,[rax]
+    vpermw      ymm1{k4}{z},ymm2,[rax]
+    vpermw      ymm1{k5}{z},ymm2,[rax]
+    vpermw      ymm1{k6}{z},ymm2,[rax]
+    vpermw      ymm1{k7}{z},ymm2,[rax]
+
+    vpermw      zmm1,zmm2,[rax]
+    vpermw      zmm1{k1},zmm2,[rax]
+    vpermw      zmm1{k1}{z},zmm2,[rax]
+    vpermw      zmm1{k2}{z},zmm2,[rax]
+    vpermw      zmm1{k3}{z},zmm2,[rax]
+    vpermw      zmm1{k4}{z},zmm2,[rax]
+    vpermw      zmm1{k5}{z},zmm2,[rax]
+    vpermw      zmm1{k6}{z},zmm2,[rax]
+    vpermw      zmm1{k7}{z},zmm2,[rax]
+
+    vpermw      zmm21,zmm2, zmm3
+    vpermw      zmm21,zmm21,zmm3
+    vpermw      zmm21,zmm21,zmm31
+    vpermw      zmm21,zmm2, zmm31
+    vpermw      zmm1, zmm2, zmm31
+    vpermw      zmm1, zmm20,zmm31
+    vpermw      zmm1, zmm20,zmm3
 
     vpandd      zmm1{k1}{z},zmm2,zmm3
     vpandq      zmm1{k1}{z},zmm2,zmm3
@@ -570,5 +590,175 @@
     vpandnq     zmm1{k1}{z},zmm2,zmm3
     vpxord      zmm1{k1}{z},zmm2,zmm3
     vpxorq      zmm1{k1}{z},zmm2,zmm3
+
+    vpsraq      xmm1{k1}{z},xmm2,xmm3
+    vpsraq      ymm1{k1}{z},ymm2,xmm3
+    vpsraq      zmm1{k1}{z},zmm2,xmm3
+    vpsraq      xmm1{k1}{z},xmm2,[rax]
+    vpsraq      ymm1{k1}{z},ymm2,[rax]
+    vpsraq      zmm1{k1}{z},zmm2,[rax]
+
+    vpsraq      xmm1{k1}{z},xmm2,7
+    vpsraq      ymm1{k1}{z},ymm2,7
+    vpsraq      zmm1{k1}{z},zmm2,7
+    vpsraq      xmm1{k1}{z},[rax],7
+    vpsraq      ymm1{k1}{z},[rax],7
+    vpsraq      zmm1{k1}{z},[rax],7
+
+    vpconflictd zmm30,zmm1
+    vpconflictd zmm30,zmm31
+    vpconflictd zmm1,zmm31
+    vpconflictd zmm3,zmm1
+    vpconflictd xmm27,xmm3
+    vpconflictd ymm27,ymm3
+
+    vpconflictd zmm30,zmm29
+    vpconflictd zmm30{k7},zmm29
+    vpconflictd zmm30{k7}{z},zmm29
+    vpconflictd zmm30,zmmword ptr [rcx]
+    vpconflictd zmm30,zmmword ptr [rax+r14*8+0x123]
+    vpconflictd zmm30,dword ptr [rcx]{1to16}
+    vpconflictd zmm30,zmmword ptr [rdx+0x1fc0]
+    vpconflictd zmm30,zmmword ptr [rdx+0x2000]
+    vpconflictd zmm30,zmmword ptr [rdx-0x2000]
+    vpconflictd zmm30,zmmword ptr [rdx-0x2040]
+    vpconflictd zmm30,dword ptr [rdx+0x1fc]{1to16}
+    vpconflictd zmm30,dword ptr [rdx+0x200]{1to16}
+    vpconflictd zmm30,dword ptr [rdx-0x200]{1to16}
+    vpconflictd zmm30,dword ptr [rdx-0x204]{1to16}
+    vpconflictq zmm30,zmm29
+    vpconflictq zmm30{k7},zmm29
+    vpconflictq zmm30{k7}{z},zmm29
+    vpconflictq zmm30,zmmword ptr [rcx]
+    vpconflictq zmm30,zmmword ptr [rax+r14*8+0x123]
+    vpconflictq zmm30,qword ptr [rcx]{1to8}
+    vpconflictq zmm30,zmmword ptr [rdx+0x1fc0]
+    vpconflictq zmm30,zmmword ptr [rdx+0x2000]
+    vpconflictq zmm30,zmmword ptr [rdx-0x2000]
+    vpconflictq zmm30,zmmword ptr [rdx-0x2040]
+    vpconflictq zmm30,qword ptr [rdx+0x3f8]{1to8}
+    vpconflictq zmm30,qword ptr [rdx+0x400]{1to8}
+    vpconflictq zmm30,qword ptr [rdx-0x400]{1to8}
+    vpconflictq zmm30,qword ptr [rdx-0x408]{1to8}
+
+    vplzcntd    zmm30,zmm29
+    vplzcntd    zmm30{k7},zmm29
+    vplzcntd    zmm30{k7}{z},zmm29
+    vplzcntd    zmm30,zmmword ptr [rcx]
+    vplzcntd    zmm30,zmmword ptr [rax+r14*8+0x123]
+    vplzcntd    zmm30,dword ptr [rcx]{1to16}
+    vplzcntd    zmm30,zmmword ptr [rdx+0x1fc0]
+    vplzcntd    zmm30,zmmword ptr [rdx+0x2000]
+    vplzcntd    zmm30,zmmword ptr [rdx-0x2000]
+    vplzcntd    zmm30,zmmword ptr [rdx-0x2040]
+    vplzcntd    zmm30,dword ptr [rdx+0x1fc]{1to16}
+    vplzcntd    zmm30,dword ptr [rdx+0x200]{1to16}
+    vplzcntd    zmm30,dword ptr [rdx-0x200]{1to16}
+    vplzcntd    zmm30,dword ptr [rdx-0x204]{1to16}
+    vplzcntq    zmm30,zmm29
+    vplzcntq    zmm30{k7},zmm29
+    vplzcntq    zmm30{k7}{z},zmm29
+    vplzcntq    zmm30,zmmword ptr [rcx]
+    vplzcntq    zmm30,zmmword ptr [rax+r14*8+0x123]
+    vplzcntq    zmm30,qword ptr [rcx]{1to8}
+    vplzcntq    zmm30,zmmword ptr [rdx+0x1fc0]
+    vplzcntq    zmm30,zmmword ptr [rdx+0x2000]
+    vplzcntq    zmm30,zmmword ptr [rdx-0x2000]
+    vplzcntq    zmm30,zmmword ptr [rdx-0x2040]
+    vplzcntq    zmm30,qword ptr [rdx+0x3f8]{1to8}
+    vplzcntq    zmm30,qword ptr [rdx+0x400]{1to8}
+    vplzcntq    zmm30,qword ptr [rdx-0x400]{1to8}
+    vplzcntq    zmm30,qword ptr [rdx-0x408]{1to8}
+
+    vptestnmd   k5,zmm29,zmm28
+    vptestnmd   k5{k7},zmm29,zmm28
+    vptestnmd   k5,zmm29,zmmword ptr [rcx]
+    vptestnmd   k5,zmm29,zmmword ptr [rax+r14*8+0x123]
+    vptestnmd   k5,zmm29,dword ptr [rcx]{1to16}
+    vptestnmd   k5,zmm29,zmmword ptr [rdx+0x1fc0]
+    vptestnmd   k5,zmm29,zmmword ptr [rdx+0x2000]
+    vptestnmd   k5,zmm29,zmmword ptr [rdx-0x2000]
+    vptestnmd   k5,zmm29,zmmword ptr [rdx-0x2040]
+    vptestnmd   k5,zmm29,dword ptr [rdx+0x1fc]{1to16}
+    vptestnmd   k5,zmm29,dword ptr [rdx+0x200]{1to16}
+    vptestnmd   k5,zmm29,dword ptr [rdx-0x200]{1to16}
+    vptestnmd   k5,zmm29,dword ptr [rdx-0x204]{1to16}
+    vptestnmq   k5,zmm29,zmm28
+    vptestnmq   k5{k7},zmm29,zmm28
+    vptestnmq   k5,zmm29,zmmword ptr [rcx]
+    vptestnmq   k5,zmm29,zmmword ptr [rax+r14*8+0x123]
+    vptestnmq   k5,zmm29,qword ptr [rcx]{1to8}
+    vptestnmq   k5,zmm29,zmmword ptr [rdx+0x1fc0]
+    vptestnmq   k5,zmm29,zmmword ptr [rdx+0x2000]
+    vptestnmq   k5,zmm29,zmmword ptr [rdx-0x2000]
+    vptestnmq   k5,zmm29,zmmword ptr [rdx-0x2040]
+    vptestnmq   k5,zmm29,qword ptr [rdx+0x3f8]{1to8}
+    vptestnmq   k5,zmm29,qword ptr [rdx+0x400]{1to8}
+    vptestnmq   k5,zmm29,qword ptr [rdx-0x400]{1to8}
+    vptestnmq   k5,zmm29,qword ptr [rdx-0x408]{1to8}
+
+    vpbroadcastmw2d zmm30,k6
+    vpbroadcastmb2q zmm30,k6
+
+    kaddb       k1,k2,k3
+    kaddw       k1,k2,k3
+    kandb       k1,k2,k3
+    kandw       k1,k2,k3
+    kandnb      k1,k2,k3
+    kandnw      k1,k2,k3
+    korb        k1,k2,k3
+    korw        k1,k2,k3
+    kxorb       k1,k2,k3
+    kxorw       k1,k2,k3
+    kxnorb      k1,k2,k3
+    kxnorw      k1,k2,k3
+
+    kunpckbw    k1,k2,k3
+    kunpckwd    k1,k2,k3
+
+    kaddd       k1,k2,k3
+    kaddq       k1,k2,k3
+    kandd       k1,k2,k3
+    kandq       k1,k2,k3
+    kandnd      k1,k2,k3
+    kandnq      k1,k2,k3
+    kord        k1,k2,k3
+    korq        k1,k2,k3
+    kxord       k1,k2,k3
+    kxorq       k1,k2,k3
+    kxnord      k1,k2,k3
+    kxnorq      k1,k2,k3
+    kunpckdq    k1,k2,k3
+
+    knotb       k1,k2
+    knotw       k1,k2
+    knotd       k1,k2
+    knotq       k1,k2
+
+    kortestb    k1,k2
+    kortestw    k1,k2
+    kortestd    k1,k2
+    kortestq    k1,k2
+    kshiftlb    k1,k2,3
+    kshiftlw    k1,k2,3
+    kshiftld    k1,k2,3
+    kshiftlq    k1,k2,3
+    kshiftrb    k1,k2,3
+    kshiftrw    k1,k2,3
+    kshiftrd    k1,k2,3
+    kshiftrq    k1,k2,3
+
+    kmovb       k1,k2
+    kmovd       k1,k2
+    kmovq       k1,k2
+    kmovw       k1,k2
+    kmovb       k1,[rax]
+    kmovd       k1,[rax]
+    kmovq       k1,[rax]
+    kmovw       k1,[rax]
+    kmovb       [rax],k2
+    kmovd       [rax],k2
+    kmovq       [rax],k2
+    kmovw       [rax],k2
 
     end

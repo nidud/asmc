@@ -101,8 +101,10 @@ enum byte1_info {
     F_F3,	   /* F3 prefix (pause: F3 90)	  */
     F_48,	   /* REX.W prefix		  */
     F_0F = 16,	   /* 0F escape			  */
+    F_C5L,	   /* VEX.L1.0F.C4.L		  */
     F_0F0F,	   /* AMD 3DNow "prefix"	  */
     F_660F,	   /* SSEx prefix 1		  */
+    F_C5LP0,	   /* VEX.L1.66.0F.C4.L.P0	  */
     F_F20F,	   /* SSEx prefix 2		  */
     F_F30F,	   /* SSEx prefix 3		  */
     F_0FNO66,	   /* 0F escape, no size prefix	  */
@@ -112,6 +114,12 @@ enum byte1_info {
     F_660F38,
     F_660F3A,
     F_F20F38,
+    F_F30F38,
+    F_F20F3A,
+    F_C4M0,	   /* VEX.L1.0F.C5.M0		  */
+    F_C4M0P0,	   /* VEX.L1.66.0F.C5.M0.P0	  */
+    F_C4M0L,	   /* VEX.L1.0F.C5.M0.L		  */
+    F_C4M0P0L,	   /* VEX.L1.66.0F.C5.M0.L.P0	  */
 };
 
 /* VX_NND is only needed if instruction has more than 2 operands */
@@ -122,7 +130,7 @@ enum vex_info {
     VX_IMM   = 0x08,	/* no VEX.NDS if op3 is an immediate */
     VX_NMEM  = 0x10,	/* no VEX.NDS if op1 is a mem ref (vmovs[d|s], vmov[h|l]p[d|s] ) */
     VX_HALF  = 0x20,	/* op2 is half-sized */
-    VX_NRW   = 0x40,	/* no REX.W bit */
+    VX_RW0   = 0x40,	/* no REX.W bit */
     VX_RW1   = 0x80	/* set REX.W bit */
 };
 

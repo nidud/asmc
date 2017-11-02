@@ -3,6 +3,8 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.26 - xx xxx 2017
+- added {1to8} and {1to16} -- AVX512
+- added ZMMWORD
 - added mask registers k0..k7
 - added {k1}{z} writemask for AVX512
 - added switch -gui -- subsystem:windows for -pe

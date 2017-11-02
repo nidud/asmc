@@ -33,11 +33,11 @@
 #define _RESWORDS_H_INCLUDED
 
 enum reservedword_flags {
-    RWF_DISABLED =  1, /* keyword disabled */
-    RWF_IA32	 =  2, /* keyword specific to IA32 mode */
-    RWF_X64	 =  4, /* keyword specific to IA32+ mode */
-    RWF_VEX	 =  8, /* keyword triggers VEX encoding */
-    RWF_EVEX	 = 16, /* keyword triggers EVEX encoding */
+    RWF_DISABLED = 0x01, /* keyword disabled */
+    RWF_IA32	 = 0x02, /* keyword specific to IA32 mode */
+    RWF_X64	 = 0x04, /* keyword specific to IA32+ mode */
+    RWF_VEX	 = 0x08, /* keyword triggers VEX encoding */
+    RWF_EVEX	 = 0x10, /* keyword triggers EVEX encoding */
 };
 
 /* structure of items in the "reserved names" table ResWordTable[] */

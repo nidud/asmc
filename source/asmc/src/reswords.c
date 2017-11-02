@@ -294,18 +294,18 @@ const uint_8 vex_flags[] = {
      * be equal to the one in instruct.h! ( this is to be improved.)
      * For a description of the VX_ flags see codegen.h
      */
-    VX_NND|VX_NRW,	/* VBROADCASTSS	   */
+    VX_NND|VX_RW0,	/* VBROADCASTSS	   */
     VX_NND,		/* VBROADCASTSD	   */
     VX_NND,		/* VBROADCASTF128  */
     VX_L,		/* VBLENDVPD	   */
-    VX_L|VX_NRW,	/* VBLENDVPS	   */
+    VX_L|VX_RW0,	/* VBLENDVPS	   */
     0,			/* VINSERTF128	   */
     VX_NND,		/* VEXTRACTF128	   */
-    VX_L|VX_NRW,	/* VMASKMOVPS	   */
+    VX_L|VX_RW0,	/* VMASKMOVPS	   */
     VX_L,		/* VMASKMOVPD	   */
-    0,			/* VPBLENDVB	   */
+    VX_L,		/* VPBLENDVB	   */
     VX_L|VX_IMM,	/* VPERMILPD	   */
-    VX_L|VX_IMM|VX_NRW, /* VPERMILPS	   */
+    VX_L|VX_IMM|VX_RW0, /* VPERMILPS	   */
     0,			/* VPERM2F128	   */
     VX_L|VX_NND,	/* VTESTPS	   */
     VX_L|VX_NND,	/* VTESTPD	   */
@@ -322,27 +322,97 @@ const uint_8 vex_flags[] = {
     VX_L|VX_RW1,	/* VPMASKMOVQ	   */
     VX_L|VX_IMM|VX_RW1, /* VPERMPD	   */
     VX_L,		/* VPERMB	   */
-    VX_L|VX_NRW,	/* VPERMD	   */
+    VX_L|VX_RW0,	/* VPERMD	   */
     VX_L|VX_IMM|VX_RW1, /* VPERMQ	   */
-    VX_L|VX_NRW,	/* VPERMPS	   */
-    VX_L|VX_NRW,	/* VPSLLVW	   */
-    VX_L|VX_NRW,	/* VPSLLVD	   */
+    VX_L|VX_RW0,	/* VPERMPS	   */
+    VX_L|VX_RW0,	/* VPSLLVW	   */
+    VX_L|VX_RW0,	/* VPSLLVD	   */
     VX_L|VX_RW1,	/* VPSLLVQ	   */
-    VX_L|VX_NRW,	/* VPSRAVD	   */
-    VX_L|VX_NRW,	/* VPSRLVD	   */
+    VX_L|VX_RW0,	/* VPSRAVD	   */
+    VX_L|VX_RW0,	/* VPSRLVD	   */
     VX_L|VX_RW1,	/* VPSRLVQ	   */
+    VX_L,		/* VPBLENDD	   */
+    VX_L,		/* VPERM2I128	   */
+    VX_L|VX_HALF,	/* VINSERTI128	   */
+    VX_L|VX_NND,	/* VBROADCASTI128  */
+    VX_L|VX_NND,	/* VEXTRACTI128	   */
+    VX_L|VX_NND|VX_HALF,/* VPBROADCASTQ	   */
+    VX_L|VX_NND|VX_HALF,/* VPBROADCASTD	   */
+    VX_L|VX_NND|VX_HALF,/* VPBROADCASTW	   */
+    VX_L|VX_NND|VX_HALF,/* VPBROADCASTB	   */
 
     VX_L|VX_RW1,	/* VPERMW	   */ /* AVX512 */
     VX_L|VX_RW1,	/* VPSRAVW	   */
     VX_L|VX_RW1,	/* VPSRAVQ	   */
     VX_L|VX_RW1,	/* VPSRLVW	   */
-
-    VX_L|VX_NRW,	/* VPANDD	   */
+    VX_L|VX_RW0,	/* VPANDD	   */
     VX_L|VX_RW1,	/* VPANDQ	   */
-    VX_L|VX_NRW,	/* VPANDDD	   */
+    VX_L|VX_RW0,	/* VPANDDD	   */
     VX_L|VX_RW1,	/* VPANDDQ	   */
-    VX_L|VX_NRW,	/* VPXORD	   */
+    VX_L|VX_RW0,	/* VPXORD	   */
     VX_L|VX_RW1,	/* VPXORQ	   */
+    VX_L|VX_HALF|VX_DST|VX_RW1, /* VPSRAQ	   */
+    VX_L|VX_NND|VX_HALF|VX_RW0, /* VPCONFLICTD	   */
+    VX_L|VX_NND|VX_HALF|VX_RW1, /* VPCONFLICTQ	   */
+    VX_L|VX_NND|VX_HALF|VX_RW0, /* VPLZCNTD	   */
+    VX_L|VX_NND|VX_HALF|VX_RW1, /* VPLZCNTQ	   */
+    VX_L|VX_HALF|VX_RW0,	/* VPTESTNMB	   */
+    VX_L|VX_HALF|VX_RW1,	/* VPTESTNMW	   */
+    VX_L|VX_HALF|VX_RW0,	/* VPTESTNMD	   */
+    VX_L|VX_HALF|VX_RW1,	/* VPTESTNMQ	   */
+    VX_L|VX_NND|VX_HALF|VX_RW0, /* VPBROADCASTMW2D */
+    VX_L|VX_NND|VX_HALF|VX_RW1, /* VPBROADCASTMW2Q */
+
+    VX_L,		/* KADDB */
+    VX_L,		/* KADDW */
+    VX_L,		/* KANDB */
+    VX_L,		/* KANDW */
+    VX_L,		/* KANDNB */
+    VX_L,		/* KANDNW */
+    VX_L,		/* KORB */
+    VX_L,		/* KORW */
+    VX_L,		/* KXORB */
+    VX_L,		/* KXORW */
+    VX_L,		/* KXNORB */
+    VX_L,		/* KXNORW */
+    VX_L,		/* KUNPCKBW */
+    VX_L,		/* KUNPCKWD */
+
+    VX_L|VX_RW1,	/* KADDD */
+    VX_L|VX_RW1,	/* KADDQ */
+    VX_L|VX_RW1,	/* KANDD */
+    VX_L|VX_RW1,	/* KANDQ */
+    VX_L|VX_RW1,	/* KANDND */
+    VX_L|VX_RW1,	/* KANDNQ */
+    VX_L|VX_RW1,	/* KORD */
+    VX_L|VX_RW1,	/* KORQ */
+    VX_L|VX_RW1,	/* KXORD */
+    VX_L|VX_RW1,	/* KXORQ */
+    VX_L|VX_RW1,	/* KXNORD */
+    VX_L|VX_RW1,	/* KXNORQ */
+    VX_L|VX_RW1,	/* KUNPCKDQ */
+
+    VX_L|VX_NND,	/* KNOTB */
+    VX_L|VX_NND,	/* KNOTW */
+    VX_L|VX_RW1|VX_NND, /* KNOTD */
+    VX_L|VX_RW1|VX_NND, /* KNOTQ */
+    VX_L|VX_NND,	/* KORTESTB */
+    VX_L|VX_NND,	/* KORTESTW */
+    VX_L|VX_RW1|VX_NND, /* KORTESTD */
+    VX_L|VX_RW1|VX_NND, /* KORTESTQ */
+    VX_L|VX_NND,	/* KSHIFTLB */
+    VX_L|VX_RW1|VX_NND, /* KSHIFTLW */
+    VX_L|VX_NND,	/* KSHIFTLD */
+    VX_L|VX_RW1|VX_NND, /* KSHIFTLQ */
+    VX_L|VX_NND,	/* KSHIFTRB */
+    VX_L|VX_RW1|VX_NND, /* KSHIFTRW */
+    VX_L|VX_NND,	/* KSHIFTRD */
+    VX_L|VX_RW1|VX_NND, /* KSHIFTRQ */
+
+    VX_L|VX_NND,	/* KMOVB */
+    VX_L|VX_NND|VX_RW1, /* KMOVD */
+    VX_L|VX_NND|VX_RW1, /* KMOVQ */
+    VX_L|VX_NND,	/* KMOVW */
 
 #define avxins( tok, string, cpu, flgs ) flgs,
 #include <instravx.h>

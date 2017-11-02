@@ -223,13 +223,47 @@ struct opnd_item {
  * structure between parser and code generator.
  */
 
-#define VX_OPK	0x07 /* {k1..k7} */
-#define VX_OP1V 0x08 /* set if op1 is xmm16..31, ymm16..31, or zmm */
-#define VX_OP2V 0x10
-#define VX_OP3V 0x20
-#define VX_OP3	0x40 /* EVEX > 2 instruction args used */
-#define VX_OPZ	0x80 /* EVEX {z} */
-#define VX_MASK 0x87 /* EVEX {k1}{z} */
+/* EVEX:
+ * P1: R.X.B.R1.0.0.m1.m2
+ * P2: W.v3.v2.v1.v0.1.p1.p0
+ * P3: z.L1.L0.b.V1.a2.a1.a0
+ */
+#define VX1_R	0x80
+#define VX1_X	0x40
+#define VX1_B	0x20
+#define VX1_R1	0x10
+#define VX1_M1	0x02
+#define VX1_M2	0x01
+
+#define VX2_W	0x80
+#define VX2_V3	0x40
+#define VX2_V2	0x20
+#define VX2_V1	0x10
+#define VX2_V0	0x08
+#define VX2_1	0x04
+#define VX2_P1	0x02
+#define VX2_P0	0x01
+
+#define VX3_Z	0x80 /* {z} */
+#define VX3_L1	0x40
+#define VX3_L0	0x20
+#define VX3_B	0x10
+#define VX3_V	0x08
+#define VX3_A2	0x04 /* {k1..k7} */
+#define VX3_A1	0x02
+#define VX3_A0	0x01
+
+#define VX_OP1V 0x01 /* set if op1..3 is [z|y|x]mm16..31 used */
+#define VX_OP2V 0x02
+#define VX_OP3V 0x04
+#define VX_1T2	0x08 /* {1to2..16} */
+#define VX_1T4	0x10
+#define VX_1T8	0x18
+#define VX_1T16 0x20
+#define VX_1TOX 0x38
+#define VX_ZMM	0x40 /* ZMM used */
+#define VX_EVEX 0x47 /* auto set.. */
+#define VX_OP3	0x80 /* more than 2 instruction args used */
 
 struct code_info {
     struct {
@@ -245,6 +279,7 @@ struct code_info {
     enum instr_token token;
     unsigned char mem_type;		/* byte / word / etc. NOT near/far */
     unsigned char vflags;
+    unsigned char evexP3;
     unsigned char rm_byte;
     unsigned char sib;
     unsigned char Ofssize;

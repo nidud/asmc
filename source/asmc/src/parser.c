@@ -237,7 +237,6 @@ int MemtypeFromSize( int size, unsigned char *ptype )
 }
 
 int OperandSize( enum operand_type opnd, const struct code_info *CodeInfo )
-/*************************************************************************/
 {
     /* v2.0: OP_M8_R8 and OP_M16_R16 have the DFT bit set! */
     if( opnd == OP_NONE ) {
@@ -250,7 +249,7 @@ int OperandSize( enum operand_type opnd, const struct code_info *CodeInfo )
 	return( 2 );
     } else if( opnd & ( OP_R32 | OP_M32 | OP_I32 ) ) {
 	return( 4 );
-    } else if( opnd & ( OP_R64 | OP_M64 | OP_MMX | OP_I64 ) ) {
+    } else if( opnd & ( OP_K | OP_R64 | OP_M64 | OP_MMX | OP_I64 ) ) {
 	return( 8 );
     } else if( opnd & ( OP_I48 | OP_M48 ) ) {
 	return( 6 );
@@ -417,7 +416,6 @@ void set_frame2( const struct asym *sym )
 }
 
 static int set_rm_sib( struct code_info *CodeInfo, unsigned CurrOpnd, char ss, int index, int base, const struct asym *sym )
-/*******************************************************************************************************************************/
 /*
  * encode ModRM and SIB byte for memory addressing.
  * called by memory_operand().
@@ -497,7 +495,7 @@ static int set_rm_sib( struct code_info *CodeInfo, unsigned CurrOpnd, char ss, i
 	    break;
 	case T_BP:
 	    rm_field = RM_BP; /* 6 */
-	    if( mod_field == MOD_00 ) {
+	    if( mod_field == MOD_00 && base != T_RIP ) {
 		mod_field = MOD_01;
 	    }
 	    break;
@@ -1049,9 +1047,7 @@ static void SetPtrMemtype( struct code_info *CodeInfo, struct expr *opndx )
  * - prefix.rex REX_W
  * called by memory_operand()
  */
-//static void Set_Memtype( struct code_info *CodeInfo, enum memtype mem_type )
 static void Set_Memtype( struct code_info *CodeInfo, unsigned char mem_type )
-/**************************************************************************/
 {
     if( CodeInfo->token == T_LEA )
 	return;
@@ -1152,7 +1148,6 @@ static void Set_Memtype( struct code_info *CodeInfo, unsigned char mem_type )
 	 */
 	else if ( IS_MEMTYPE_SIZ( mem_type, sizeof(uint_64) ) ) {
 	    if ( opnd_clstab[CodeInfo->pinstr->opclsidx].opnd_type[OPND1] == OP_M_ANY ) {
-		//printf( "Set_Memtype: OP_M_ANY detected, file=%s, instr=%s\n", CurrFName[ASM], GetResWName( CodeInfo->token, NULL ) );
 	    } else if ( CodeInfo->pinstr->cpu & ( P_FPU_MASK | P_EXT_MASK ) ) {
 		;
 	    } else if ( CodeInfo->token != T_CMPXCHG8B )
@@ -1172,7 +1167,6 @@ static void Set_Memtype( struct code_info *CodeInfo, unsigned char mem_type )
  */
 
 static int memory_operand( struct code_info *CodeInfo, unsigned CurrOpnd, struct expr *opndx, bool with_fixup )
-/******************************************************************************************************************/
 {
     char		ss = SCALE_FACTOR_1;
     int			index;
@@ -1203,7 +1197,6 @@ static int memory_operand( struct code_info *CodeInfo, unsigned CurrOpnd, struct
     Set_Memtype( CodeInfo, opndx->mem_type );
     if( opndx->mbr != NULL ) {
 	if ( opndx->mbr->mem_type == MT_TYPE && opndx->mem_type == MT_EMPTY ) {
-	    //enum memtype mem_type;
 	    unsigned char mem_type;
 	    if ( MemtypeFromSize( opndx->mbr->total_size, &mem_type ) == NOT_ERROR )
 		Set_Memtype( CodeInfo, mem_type );
@@ -1551,7 +1544,6 @@ static int process_address( struct code_info *CodeInfo, unsigned CurrOpnd, struc
  * are always labeled as EXPR_ADDR by the expression evaluator.
  */
 static int process_const( struct code_info *CodeInfo, unsigned CurrOpnd, struct expr *opndx )
-/************************************************************************************************/
 {
     /* v2.11: don't accept an empty string */
     if ( opndx->quoted_string && opndx->quoted_string->stringlen == 0 )
@@ -1589,10 +1581,12 @@ static int process_register( struct code_info *CodeInfo, unsigned CurrOpnd,
     flags = GetValueSp( regtok );
     CodeInfo->opnd[CurrOpnd].type = flags;
 
-    if ( ( ( flags == OP_XMM || flags == OP_YMM ) && regno > 15 ) || flags & ( OP_ZMM | OP_K ) ) {
+    if ( ( ( flags == OP_XMM || flags == OP_YMM ) && regno > 15 ) || flags & OP_ZMM ) {
 	CodeInfo->prefix.evex = 1;
-	if ( !( flags & OP_K ) )
-	    CodeInfo->vflags |= (1 << ( index + 3 ));
+	if ( flags == OP_ZMM )
+	    CodeInfo->vflags |= VX_ZMM;
+	if ( regno > 15 )
+	    CodeInfo->vflags |= ( 1 << index );
     }
 
     if ( flags & OP_R8 ) {
@@ -1669,6 +1663,7 @@ static int process_register( struct code_info *CodeInfo, unsigned CurrOpnd,
 
     /* if it's a x86-64 register (SIL, R8W, R8D, RSI, ... */
     if ( ( SpecialTable[regtok].cpu & P_CPU_MASK ) == P_64 ) {
+
 	CodeInfo->prefix.rex |= 0x40;
 	if ( flags & OP_R64 )
 	    CodeInfo->prefix.rex |= REX_W;
@@ -2127,7 +2122,7 @@ static int check_size( struct code_info *CodeInfo, const struct expr opndx[] )
 	}
 	if( op1_size != op2_size ) {
 	    /* if one or more are !defined, set them appropriately */
-	    if( ( op1 | op2 ) & ( OP_MMX | OP_XMM | OP_YMM ) ) {
+	    if( ( op1 | op2 ) & ( OP_MMX | OP_XMM | OP_YMM | OP_ZMM | OP_K ) ) {
 	    } else if( ( op1_size != 0 ) && ( op2_size != 0 ) ) {
 		//asmerr( 2022, op1_size, op2_size );
 		rc = asmerr( 2022, op1_size, op2_size );//ERROR;
@@ -2456,6 +2451,7 @@ int ParseLine( struct asm_tok tokenarray[] )
     CodeInfo.vexregop	    = 0;
     CodeInfo.flags	    = 0;
     CodeInfo.vflags	    = 0;
+    CodeInfo.evexP3	    = 0;
 
     /* instruction prefix? */
 
@@ -2566,16 +2562,43 @@ int ParseLine( struct asm_tok tokenarray[] )
 	}
 	switch ( opndx[j].kind ) {
 
-	case EXPR_REG: /* get {k1}{z} */
-	    while ( q < i && tokenarray[q].hll_flags & T_EVEX_OPT ) {
-		if ( tokenarray[q].string_ptr[0] == 'k' )
-		    /* @@ no case or range test.. */
-		    CodeInfo.vflags |= tokenarray[q].string_ptr[1] - '0';
-		else if ( tokenarray[q].string_ptr[0] == 'z' )
-		    CodeInfo.vflags |= VX_OPZ;
-		else
-		    return asmerr(2008, tokenarray[q].string_ptr );
-		q++;
+	case EXPR_REG:
+	case EXPR_ADDR:
+
+	    if ( q < i ) {
+
+		q = i - 1;
+		while ( tokenarray[q].hll_flags & T_EVEX_OPT	) {
+
+		    switch ( tokenarray[q].string_ptr[0] | 0x20 ) {
+		    case 'k': /* get {k1} */
+			/* @@ no range test.. */
+			CodeInfo.evexP3 |= ( ( tokenarray[q].string_ptr[1] - '0' ) & 0x07 );
+			break;
+		    case '1': /* get {1to16} */
+			switch ( tokenarray[q].string_ptr[3] ) {
+			case '2':
+			    CodeInfo.vflags |= VX_1T2;
+			    break;
+			case '4':
+			    CodeInfo.vflags |= VX_1T4;
+			    break;
+			case '8':
+			    CodeInfo.vflags |= VX_1T8;
+			    break;
+			case '1':
+			    CodeInfo.vflags |= VX_1T16;
+			    break;
+			}
+			break;
+		    case 'z': /* get {z} */
+			CodeInfo.evexP3 |= VX3_Z;
+			break;
+		    default:
+			return asmerr(2008, tokenarray[q].string_ptr );
+		    }
+		    q--;
+		}
 	    }
 	    break;
 
@@ -2634,15 +2657,20 @@ int ParseLine( struct asm_tok tokenarray[] )
 	    else if ( ( vex_flags[CodeInfo.token - VEX_START] & VX_IMM ) &&
 		     ( opndx[OPND3].kind == EXPR_CONST ) && ( j > 2 ) )
 		;
-	    else if ( ( vex_flags[CodeInfo.token - VEX_START] & VX_NMEM ) &&
+	    else if ( ( vex_flags[CodeInfo.token - VEX_START] & VX_HALF ) &&
+		      ( CodeInfo.opnd[OPND1].type & ( OP_XMM | OP_YMM | OP_ZMM ) ) &&
+		      ( opndx[CurrOpnd].indirect /*&& opndx[OPND3].kind == EXPR_CONST*/ )
+		    ) {
+		CodeInfo.rm_byte = 0;
+	    } else if ( ( vex_flags[CodeInfo.token - VEX_START] & VX_NMEM ) &&
 		     ( ( CodeInfo.opnd[OPND1].type & OP_M ) ||
 		     /* v2.11: VMOVSD and VMOVSS always have 2 ops if a memory op is involved */
 		     ( ( CodeInfo.token == T_VMOVSD || CodeInfo.token == T_VMOVSS ) && ( opndx[OPND2].kind != EXPR_REG || opndx[OPND2].indirect == TRUE ) ) )
-		    )
-		;
-	    else {
+		    ) {
+
+	    } else {
 		if ( opndx[OPND2].kind != EXPR_REG ||
-		    ( ! ( GetValueSp( opndx[CurrOpnd].base_reg->tokval ) & ( OP_XMM | OP_YMM | OP_ZMM ) ) ) ) {
+		    ( ! ( GetValueSp( opndx[CurrOpnd].base_reg->tokval ) & ( OP_XMM | OP_YMM | OP_ZMM | OP_K ) ) ) ) {
 		    return( asmerr( 2070 ) );
 		}
 		/* fixme: check if there's an operand behind OPND2 at all!
@@ -2662,9 +2690,10 @@ int ParseLine( struct asm_tok tokenarray[] )
 			unsigned flags = GetValueSp( opndx[CurrOpnd].base_reg->tokval );
 
 			CodeInfo.vexregop = opndx[OPND1].base_reg->bytval + 1;
-			if ( flags & OP_ZMM )
+			if ( flags & OP_ZMM ) {
 			    CodeInfo.vexregop |= 0x80;
-			else if ( flags & OP_YMM )
+			   // CodeInfo.vflags |= VX_ZMM;
+			} else if ( flags & OP_YMM )
 			    CodeInfo.vexregop |= 0x40;
 
 			memcpy( &opndx[OPND1], &opndx[CurrOpnd], sizeof( opndx[0] ) * 3 );
@@ -2690,10 +2719,14 @@ int ParseLine( struct asm_tok tokenarray[] )
 		    /* to be fixed: CurrOpnd is always OPND2, so use this const here */
 		    CodeInfo.vexregop = opndx[CurrOpnd].base_reg->bytval + 1;
 		    if ( CodeInfo.vexregop > 16 || flags & OP_ZMM ) {
-			CodeInfo.vflags |= VX_OP2V;
+
 			CodeInfo.prefix.evex = 1;
-			if ( flags & OP_ZMM )
+			if ( CodeInfo.vexregop > 16 )
+			    CodeInfo.vflags |= VX_OP2V;
+			if ( flags & OP_ZMM ) {
 			    CodeInfo.vexregop |= 0x80;
+			    CodeInfo.vflags |= VX_ZMM;
+			}
 		    } else if ( flags & OP_YMM )
 			CodeInfo.vexregop |= 0x40;
 		    q++;

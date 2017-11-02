@@ -41,23 +41,47 @@
  */
 
 enum operand_type {
-    OP_NONE	= 0,
-    OP_R8	= 0x00000001,
-    OP_R16	= 0x00000002,
-    OP_R32	= 0x00000004,
-    OP_R64	= 0x00000008,
-    OP_MMX	= 0x00000010,  /* MMx register */
-    OP_XMM	= 0x00000020,  /* XMMx register */
-    OP_YMM	= 0x00000040,  /* YMMx register */
-    OP_A	= 0x00000080,  /* AL, AX, EAX, RAX registers */
-    OP_CL_ONLY	= 0x00000100,  /* CL register */
-    OP_DX_ONLY	= 0x00000200,  /* DX register */
-    OP_RSPEC	= 0x00000400,  /* CRx, DRx, TRx registers */
-    OP_SR86	= 0x00000800,  /* CS, DS, ES, SS registers */
-    OP_SR386	= 0x00001000,  /* FS, GS registers */
+OP_NONE		= 0,
+OP_R8		= 0x00000001,
+OP_R16		= 0x00000002,
+OP_R32		= 0x00000004,
+OP_R64		= 0x00000008,
+OP_XMM		= 0x00000010,
+OP_YMM		= 0x00000020,
+OP_ZMM		= 0x00000040,
+OP_A		= 0x00000080, /* AL, AX, EAX, RAX registers */
+OP_M08		= 0x00000100,
+OP_M16		= 0x00000200,
+OP_M32		= 0x00000400,
+OP_M64		= 0x00000800,
+OP_M128		= 0x00001000,
+OP_M256		= 0x00002000,
+OP_M512		= 0x00004000,
+OP_MMX		= 0x00008000,
+OP_I8		= 0x00010000,
+OP_I16		= 0x00020000,
+OP_I32		= 0x00040000,
+OP_I64		= 0x00080000,
+OP_K		= 0x00100000, /* Mask reg */
+OP_M48		= 0x00200000,
+OP_M80		= 0x00400000,
+OP_CL_ONLY	= 0x00800000, /* CL register */
+OP_DX_ONLY	= 0x01000000, /* DX register */
+OP_RSPEC	= 0x02000000, /* CRx, DRx, TRx registers */
+OP_SR86		= 0x04000000, /* CS, DS, ES, SS registers */
+OP_SR386	= 0x08000000, /* FS, GS registers */
+OP_ST		= 0x10000000, /* ST0 register */
+OP_ST_REG	= 0x20000000, /* ST1-ST7 registers */
+OP_I48		= 0x40000000, /* used for immediate FAR call/jmp */
 
-    OP_ST	= 0x00002000,  /* ST0 register */
-    OP_ST_REG	= 0x00004000,  /* ST1-ST7 registers */
+
+    /* OP_I_1, OP_I_3 and OP_I8_U aren't flags. They are
+     * used as values in SWITCH statements only. It's possible to
+     * "compress" them if room for another flag is needed
+     */
+    OP_I_1	= ( 0x00200000 | OP_I8 ),
+    OP_I_3	= ( 0x00400000 | OP_I8 ),
+    OP_I8_U	= ( 0x00800000 | OP_I8 | OP_I16 | OP_I32 ),
 
     OP_AL	= ( OP_A | OP_R8 ),
     OP_AX	= ( OP_A | OP_R16 ),
@@ -72,36 +96,10 @@ enum operand_type {
     OP_SR	= ( OP_SR86 | OP_SR386 ),
     OP_STI	= ( OP_ST | OP_ST_REG ),
 
-    OP_I8	= 0x00010000,
-    OP_I16	= 0x00020000,
-    OP_I32	= 0x00040000,
-    OP_I64	= 0x00080000,
-    OP_I48	= 0x00100000, /* used for immediate FAR call/jmp */
-
-    /* OP_I_1, OP_I_3 and OP_I8_U aren't flags. They are
-     * used as values in SWITCH statements only. It's possible to
-     * "compress" them if room for another flag is needed
-     */
-    OP_I_1	= ( 0x00200000 | OP_I8 ),
-    OP_I_3	= ( 0x00400000 | OP_I8 ),
-    OP_I8_U	= ( 0x00800000 | OP_I8 | OP_I16 | OP_I32 ),
-
     OP_I	= ( OP_I8 | OP_I16 | OP_I32 ),
     OP_IGE8	= ( OP_I8 | OP_I16 | OP_I32 ),
     OP_IGE16	= ( OP_I16 | OP_I32 ),
     OP_I_ANY	= ( OP_I | OP_I64 | OP_I48 ),
-
-    OP_K	= 0x00200000, /* Mask reg */
-    OP_ZMM	= 0x00400000, /* ZMMx register */
-    OP_M08	= 0x00800000,
-    OP_M16	= 0x01000000,
-    OP_M32	= 0x02000000,
-    OP_M64	= 0x04000000,
-    OP_M128	= 0x08000000,
-    OP_M256	= 0x10000000,
-    OP_M512	= 0x20000000,
-    OP_M48	= 0x40000000,
-    OP_M80	= 0x80000000,
 
     OP_MGT8	= ( OP_M16 | OP_M32 | OP_M64 ),
     OP_MGT16	= ( OP_M32 | OP_M64 ),
@@ -122,6 +120,8 @@ enum operand3_type {
     OP3_HID,	  /* hidden data ( CMPxxx[PD|PS|SD|SS] ) */
     OP3_XMM = OP3_XMM0, /* for VEX encoding only */
     OP3_YMM = OP3_XMM0, /* for VEX encoding only */
+    OP3_ZMM = OP3_XMM0, /* for VEX encoding only */
+    OP3_K   = OP3_XMM0, /* for VEX encoding only */
 };
 
 #endif

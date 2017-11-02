@@ -253,22 +253,39 @@ SEGTYPE_RELOC		equ 8	; "
 SEGTYPE_RSRC		equ 9	; "
 SEGTYPE_ERROR		equ 10	; must be last - an "impossible" segment type
 
-OP_NONE			equ 00000000h
-OP_R8			equ 00000001h
-OP_R16			equ 00000002h
-OP_R32			equ 00000004h
-OP_R64			equ 00000008h
-OP_MMX			equ 00000010h
-OP_XMM			equ 00000020h
-OP_YMM			equ 00000040h
-OP_A			equ 00000080h
-OP_CL_ONLY		equ 00000100h
-OP_DX_ONLY		equ 00000200h
-OP_RSPEC		equ 00000400h
-OP_SR86			equ 00000800h
-OP_SR386		equ 00001000h
-OP_ST			equ 00002000h
-OP_ST_REG		equ 00004000h
+OP_NONE			equ 0x00000000
+OP_R8			equ 0x00000001
+OP_R16			equ 0x00000002
+OP_R32			equ 0x00000004
+OP_R64			equ 0x00000008
+OP_XMM			equ 0x00000010
+OP_YMM			equ 0x00000020
+OP_ZMM			equ 0x00000040
+OP_A			equ 0x00000080
+OP_M08			equ 0x00000100
+OP_M16			equ 0x00000200
+OP_M32			equ 0x00000400
+OP_M64			equ 0x00000800
+OP_M128			equ 0x00001000
+OP_M256			equ 0x00002000
+OP_M512			equ 0x00004000
+OP_MMX			equ 0x00008000
+OP_I8			equ 0x00010000
+OP_I16			equ 0x00020000
+OP_I32			equ 0x00040000
+OP_I64			equ 0x00080000
+OP_K			equ 0x00100000
+OP_M48			equ 0x00200000
+OP_M80			equ 0x00400000
+OP_CL_ONLY		equ 0x00800000
+OP_DX_ONLY		equ 0x01000000
+OP_RSPEC		equ 0x02000000
+OP_SR86			equ 0x04000000
+OP_SR386		equ 0x08000000
+OP_ST			equ 0x10000000
+OP_ST_REG		equ 0x20000000
+OP_I48			equ 0x40000000
+
 OP_AL			equ OP_A or OP_R8
 OP_AX			equ OP_A or OP_R16
 OP_EAX			equ OP_A or OP_R32
@@ -280,11 +297,6 @@ OP_RGT16		equ OP_R32 or OP_R64
 OP_R			equ OP_R8 or OP_R16 or OP_R32 or OP_R64
 OP_SR			equ OP_SR86 or OP_SR386
 OP_STI			equ OP_ST or OP_ST_REG
-OP_I8			equ 00010000h
-OP_I16			equ 00020000h
-OP_I32			equ 00040000h
-OP_I64			equ 00080000h
-OP_I48			equ 00100000h
 OP_I_1			equ 00200000h or OP_I8
 OP_I_3			equ 00400000h or OP_I8
 OP_I8_U			equ 00800000h or OP_I8 or OP_I16 or OP_I32
@@ -292,14 +304,6 @@ OP_I			equ OP_I8 or OP_I16 or OP_I32
 OP_IGE8			equ OP_I8 or OP_I16 or OP_I32
 OP_IGE16		equ OP_I16 or OP_I32
 OP_I_ANY		equ OP_I or OP_I64 or OP_I48
-OP_M08			equ 01000000h
-OP_M16			equ 02000000h
-OP_M32			equ 04000000h
-OP_M64			equ 08000000h
-OP_M128			equ 10000000h
-OP_M256			equ 20000000h
-OP_M48			equ 40000000h
-OP_M80			equ 80000000h
 OP_MGT8			equ OP_M16 or OP_M32 or OP_M64
 OP_MGT16		equ OP_M32 or OP_M64
 OP_MFPTR		equ OP_M32 or OP_M48 or OP_M80
@@ -581,9 +585,6 @@ next_proc		dd ?
 next_file		dd ?
 debug_info		ENDS
 
-LPASYM			typedef ptr asym
-LPDSYM			typedef ptr nsym
-
 func_ptr_t		typedef proto :ptr macro_instance, :LPSTR, :ptr asm_tok
 func_ptr_p		typedef ptr func_ptr_t
 internal_func_t		typedef proto :ptr asym, :PVOID
@@ -593,7 +594,7 @@ asym			STRUC
 ;;
 ;; v2.11: name changed from 'next' to 'nextitem'
 ;;
- nextitem		LPASYM ?	; next symbol in hash line
+ nextitem		PVOID ?		; next symbol in hash line
  _name			LPSTR ?		; symbol name
  UNION
     _offset		sdword ?	; used by SYM_INTERNAL (labels), SYM_TYPE,
@@ -601,11 +602,11 @@ asym			STRUC
     value		sdword ?	; used by SYM_INTERNAL (equates)
     uvalue		dword ?		; v2.01: equates (they are 33-bit!)
     string_ptr		LPSTR ?		; used by SYM_TMACRO
-    substitute		LPASYM ?	; v2.04b: used by SYM_ALIAS
+    substitute		PVOID ?		; v2.04b: used by SYM_ALIAS
     func_ptr		func_ptr_p ?	; used by SYM_MACRO if predefined==1
     class_lname_idx	sdword ?	; used by SYM_CLASS_LNAME
  ENDS
- _segment		LPASYM ?
+ _segment		PVOID ?
  state			db ?
  mem_type		db ?
  SFL_USED		equ 0001h
@@ -654,7 +655,7 @@ asym			STRUC
  UNION
     first_length	dword ?
     max_mbr_size	dword ?
-    target_type		LPASYM ?
+    target_type		PVOID ?
     regist		dw 2 dup(?)
  ENDS
  UNION
@@ -665,7 +666,7 @@ asym			STRUC
  ENDS
  UNION
     total_length	dd ?
-    altname		LPASYM ? ; SYM_EXTERNAL (comm==0): alternative name
+    altname		PVOID ? ; SYM_EXTERNAL (comm==0): alternative name
     debuginfo		PVOID ?
     sfunc_ptr		internal_func ?
     STRUC
@@ -675,7 +676,7 @@ asym			STRUC
  ENDS
  name_size		dw ?
  langtype		dw ?
- _type			LPASYM ?
+ _type			PVOID ?
  UNION
     bp_fixup		PVOID ? ; fixup *
     ext_idx		dd ?
@@ -685,6 +686,7 @@ asym			STRUC
     ENDS
  ENDS
 asym			ENDS
+LPASYM			typedef ptr asym
 
 seg_item		STRUC
  next			dd ?
@@ -824,16 +826,17 @@ nsym			STRUC
     procinfo		LPPROCINFO ?
     structinfo		LPSTRUCINFO ?
     macroinfo		LPMACROINFO ?
-    nextll		LPDSYM ?
+    nextll		PVOID ?
  ENDS
- next			LPDSYM ?
+ next			PVOID ?
  UNION
-    prev		LPDSYM ?
-    nextproc		LPDSYM ?
-    nextlocal		LPDSYM ?
-    nextparam		LPDSYM ?
+    prev		PVOID ?
+    nextproc		PVOID ?
+    nextlocal		PVOID ?
+    nextparam		PVOID ?
  ENDS
 nsym			ENDS
+LPDSYM			typedef ptr nsym
 
 symbol_queue		STRUC
  head			dd ?
@@ -882,17 +885,17 @@ EXPF_IN_SQBR	equ 8		; private flag, used inside expreval.c only
 expr			STRUC
  UNION				; value of expression
     STRUC
-     value		dd ?
-     hvalue		dd ?
+     value		sdword ?
+     hvalue		sdword ?
     ENDS
     STRUC
      llvalue		dq ?
      hlvalue		dq ?
     ENDS
-    uvalue		dd ?
-    value64		dq ?
-    fvalue		dd ?
-    st_idx		dd ?		; EXPR_REG: index if reg is ST
+    uvalue		dword ?
+    value64		sqword ?
+    fvalue		REAL4 ?
+    st_idx		sdword ?	; EXPR_REG: index if reg is ST
     chararray		db 16 dup(?)
  ENDS
  UNION
@@ -907,8 +910,8 @@ expr			STRUC
     type_tok		LPTOKEN ?	; v2.10: token if target type of a label (SYM_STACK, MT_PTR) is to be stored
  ENDS
  override		LPTOKEN ?	; EXPR_ADDR: token holding the override label or segment register
- _instr			dd ?		; operator token
- kind			dd ?		; Type of expression
+ _instr			sdword ?	; operator token
+ kind			sdword ?	; Type of expression
  mem_type		db ?		;
  scale			db ?		; EXPR_ADDR: scaling factor 1, 2, 4, or 8 - 386 code only
  Ofssize		db ?		; 16,32,64 bit if MT_NEAR, MT_FAR

@@ -238,6 +238,7 @@ res(REAL10, real10,  RWT_STYPE,	 0,	    MT_REAL10,	0, P_86,    USE_EMPTY)
 res(OWORD,  oword,   RWT_STYPE,	 0,	    MT_OWORD,	0, P_86,    USE_EMPTY)
 res(REAL16, real16,  RWT_STYPE,	 0,	    MT_REAL16,	0, P_86,    USE_EMPTY)
 res(YMMWORD,ymmword, RWT_STYPE,	 0,	    MT_YMMWORD, 0, P_AVX,   USE_EMPTY)
+res(ZMMWORD,zmmword, RWT_STYPE,	 0,	    MT_ZMMWORD, 0, P_AVX,   USE_EMPTY)
 
 res(NEAR,   near,    RWT_STYPE,	 0,	    MT_NEAR,	0, P_86,    USE_EMPTY)
 res(FAR,    far,     RWT_STYPE,	 0,	    MT_FAR,	0, P_86,    USE_EMPTY)

@@ -191,15 +191,38 @@ OpCls( YMM,	 XMM_M128,   I8_U  )
 OpCls( YMM,	 YMM_M256,   I8_U  )
 OpCls( YMM,	 YMM_M256,   YMM   )
 
+OpCls( XMM,	 XMM_M256,   I8_U  )
+
 OpCls( XMM_M128, XMM,	      NONE )
 OpCls( K,	 XMM_M128,    NONE ) /* PCMPEQB */
 OpCls( K,	 XMM_M128,    I8_U ) /* VCMPPD */
-
 OpCls( YMM,	 YMM_M256_08, NONE )
-OpCls( YMM,	 YMM_M256_16, NONE )
-OpCls( YMM,	 YMM_M256_32, NONE )
-OpCls( YMM,	 YMM_M256_64, NONE )
-
 OpCls( ZMM,	 ZMM_M512,    NONE )
+OpCls( YMM,	 XMM_M64,     NONE )
+OpCls( XMM,	 R64,	      NONE )
+OpCls( XMM,	 R32,	      NONE )
+OpCls( XMM,	 R16,	      NONE )
+OpCls( XMM,	 R8,	      NONE )
+OpCls( XMM,	 XMM_M08,     NONE )
+OpCls( YMM,	 XMM_M32,     NONE )
+OpCls( YMM,	 XMM_M128,    NONE )
+OpCls( K,	 XMM_M32,     NONE ) /* VPTESTNMD */
+OpCls( K,	 XMM_M64,     NONE ) /* VPTESTNMQ */
+OpCls( XMM,	 K,	      NONE ) /* VPBROADCASTMW2D */
+OpCls( K,	 K,	      K	   ) /* KADDW */
+OpCls( K,	 K,	      NONE ) /* KNUTB */
+OpCls( K,	 K,	      I8_U ) /* KSHIFTLB */
+OpCls( K,	 M08,	      NONE ) /* KMOVB */
+OpCls( M08,	 K,	      NONE )
+OpCls( K,	 R32,	      NONE )
+OpCls( R32,	 K,	      NONE )
+OpCls( K,	 M32,	      NONE )
+OpCls( M32,	 K,	      NONE )
+OpCls( K,	 M64,	      NONE )
+OpCls( M64,	 K,	      NONE )
+OpCls( K,	 R64,	      NONE )
+OpCls( R64,	 K,	      NONE )
+OpCls( K,	 M16,	      NONE )
+OpCls( M16,	 K,	      NONE )
 
 

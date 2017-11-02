@@ -478,7 +478,7 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 		/* v2.06: check if register is valid to be pushed.
 		 * ST(n), MMn, XMMn, YMMn and special registers are NOT valid!
 		 */
-		if ( optype & ( OP_STI | OP_MMX | OP_XMM | OP_YMM | OP_RSPEC ) ) {
+		if ( optype & ( OP_STI | OP_MMX | OP_XMM | OP_YMM | OP_ZMM | OP_RSPEC ) ) {
 		    return( asmerr( 2114, reqParam+1 ) );
 		}
 

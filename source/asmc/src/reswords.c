@@ -104,7 +104,19 @@ enum operand_sets {
     OP_YMM_M128	   = ( OP_YMM | OP_M128 ),
     OP_ZMM_M128	   = ( OP_ZMM | OP_M128 ),
     OP_ZMM_M256	   = ( OP_ZMM | OP_M256 ),
-
+    OP_M256_M128   = ( OP_M256| OP_M128 ),
+    OP_XMM_MXMM	   = ( OP_XMM | OP_YMM | OP_M128 | OP_M256 | OP_M512 ),
+    OP_XMM_YMM	   = ( OP_XMM | OP_YMM ),
+    OP_YMM_ZMM	   = ( OP_YMM | OP_ZMM ),
+    OP_M32_M64	   = ( OP_M32 | OP_M64 ),
+    OP_M32_M256	   = ( OP_M32 | OP_M256 ),
+    OP_M64_M256	   = ( OP_M64 | OP_M256 ),
+    OP_M32_M512	   = ( OP_M32 | OP_M512 ),
+    OP_M64_M512	   = ( OP_M64 | OP_M512 ),
+    OP_XYZMM	   = ( OP_XMM | OP_YMM | OP_ZMM ),
+    OP_XMM_MXQ	   = ( OP_XMM | OP_M128 | OP_M64 ),
+    OP_XMM_MXQD	   = ( OP_XMM | OP_M128 | OP_M64 | OP_M32 ),
+    OP_XMM_MXQDW   = ( OP_XMM | OP_M128 | OP_M64 | OP_M32 | OP_M16 ),
 };
 
 /* v2.06: operand types have been removed from InstrTable[], they
@@ -138,9 +150,12 @@ enum opnd_variants {
 #define OpCls( op1, op2, op3 ) OPC_ ## op1 ## op2 ## op3
 
 const struct instr_item InstrTable[] = {
-#define ins(tok, string, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex) \
+#define avxins( alias, tok, string, cpu, flgs )
+#define insa(tok, string, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex) \
     { opcls, byte1_info, prefix, 1, rm_info, op_dir, evex, cpu, opcode, rm_byte },
 #define insx(tok,string, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex,flgs) \
+    { opcls, byte1_info, prefix, 1, rm_info, op_dir, evex, cpu, opcode, rm_byte },
+#define insv(tok,string, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex,flgs,vex) \
     { opcls, byte1_info, prefix, 1, rm_info, op_dir, evex, cpu, opcode, rm_byte },
 #define insn(tok,suffix, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex) \
     { opcls, byte1_info, prefix, 0, rm_info, op_dir, evex, cpu, opcode, rm_byte },
@@ -148,11 +163,13 @@ const struct instr_item InstrTable[] = {
     { opcls, byte1_info, prefix, 1, rm_info, op_dir, evex, cpu, opcode, rm_byte },
 #include <instruct.h>
 #include <instr64.h>
-ins (NULL,0,OpCls(NONE,NONE,NONE),0,0,0,0,0,0,0,0) /* last entry - needed for its ".first" (=1) field */
+insa(NULL,0,OpCls(NONE,NONE,NONE),0,0,0,0,0,0,0,0) /* last entry - needed for its ".first" (=1) field */
+#undef avxins
 #undef insm
 #undef insn
 #undef insx
-#undef ins
+#undef insv
+#undef insa
 };
 #undef OpCls
 
@@ -173,23 +190,27 @@ const struct special_item SpecialTable[] = {
 /* define symbolic indices for InstrTable[] */
 
 enum res_idx {
-#define	 ins(tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix,evex) T_ ## tok ## _I,
+#define avxins( alias, tok, string, cpu, flgs )
+#define insa(tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix,evex) T_ ## tok ## _I,
 #define insx(tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix,evex,flgs) T_ ## tok ## _I,
+#define insv(tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix,evex,flgs,vex) T_ ## tok ## _I,
 #define insn(tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix,evex) T_ ## tok ## _ ## suffix,
 #define insm(tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix,evex) T_ ## tok ## _ ## suffix,
 #include <instruct.h>
 #undef insm
 #undef insn
-#undef ins
+#undef insa
+#undef avxins
 
-#define	 ins(tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix,evex) T_ ## tok ## _I64,
+#define insa(tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix,evex) T_ ## tok ## _I64,
 #define insn(tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix,evex) T_ ## tok ## _ ## suffix ## _I64,
 #define insm(tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix,evex) T_ ## tok ## _ ## suffix ## _I64,
 #include <instr64.h>
 #undef insm
 #undef insn
 #undef insx
-#undef ins
+#undef insv
+#undef insa
 //T_NULL_I /* v2.06: removed */
 };
 
@@ -200,17 +221,18 @@ enum res_idx {
 
 uint_16 optable_idx[] = {
 
-#define	 ins( tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix,evex) T_ ## tok ## _I,
+#define insa( tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix,evex) T_ ## tok ## _I,
 #define insx( tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix,evex,flgs) T_ ## tok ## _I,
+#define insv( tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix,evex,flgs,vex) T_ ## tok ## _I,
 #define insn( tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix,evex)
 #define insm( tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix,evex)
+#define avxins( alias, tok, string, cpu, flgs ) T_ ## alias ## _I,
 #include <instruct.h>
 #undef insm
 #undef insn
 #undef insx
-#undef ins
-#define avxins( tok, string, cpu, flgs ) T_ ## tok ## _I,
-#include <instravx.h>
+#undef insv
+#undef insa
 #undef avxins
 };
 
@@ -234,22 +256,24 @@ static const char resw_strings[] = {
 #include <directve.h>
 #undef res
 
-#define ins(tok,string, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex) \
+#define insa(tok,string, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex) \
  # string
 #define insn(tok,suffix, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex)
 #define insm(tok,suffix, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex)
 #define insx(tok,string, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex,flgs) \
  # string
+#define insv(tok,string, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex,flgs,vex) \
+ # string
+#define avxins( alias, tok, string, cpu, flgs ) # string
 #include <instruct.h>
-#define avxins( tok, string, cpu, flgs ) # string
-#include <instravx.h>
-#undef avxins
     "syscall_" /* replacement for "syscall" language type in 64-bit */
 };
 #undef insx
+#undef insv
 #undef insm
 #undef insn
-#undef ins
+#undef insa
+#undef avxins
 
 /* create the 'reserved words' table (ResWordTable).
  * this table's entries will be used to create the instruction hash table.
@@ -267,20 +291,22 @@ struct ReservedWord ResWordTable[] = {
 #include <directve.h>
 #undef res
 
-#define ins(tok,string,	 opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex) \
+#define insa(tok,string, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex) \
     { 0, sizeof(#string)-1, 0, NULL },
 #define insn(tok,suffix, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex)
 #define insm(tok,suffix, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex)
 #define insx(tok,string, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex,flags) \
     { 0, sizeof(#string)-1, flags, NULL },
+#define insv(tok,string, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex,flags,vex) \
+    { 0, sizeof(#string)-1, flags, NULL },
+#define avxins( alias, tok, string, rwf, flgs ) \
+    { 0, sizeof(#string)-1, rwf|RWF_VEX, NULL },
 #include <instruct.h>
 #undef insx
+#undef insv
 #undef insm
 #undef insn
-#undef ins
-#define avxins( tok, string, cpu, flgs ) \
-    { 0, sizeof(#string)-1, RWF_VEX, NULL },
-#include <instravx.h>
+#undef insa
 #undef avxins
 };
 
@@ -294,128 +320,18 @@ const uint_8 vex_flags[] = {
      * be equal to the one in instruct.h! ( this is to be improved.)
      * For a description of the VX_ flags see codegen.h
      */
-    VX_NND|VX_RW0,	/* VBROADCASTSS	   */
-    VX_NND,		/* VBROADCASTSD	   */
-    VX_NND,		/* VBROADCASTF128  */
-    VX_L,		/* VBLENDVPD	   */
-    VX_L|VX_RW0,	/* VBLENDVPS	   */
-    0,			/* VINSERTF128	   */
-    VX_NND,		/* VEXTRACTF128	   */
-    VX_L|VX_RW0,	/* VMASKMOVPS	   */
-    VX_L,		/* VMASKMOVPD	   */
-    VX_L,		/* VPBLENDVB	   */
-    VX_L|VX_IMM,	/* VPERMILPD	   */
-    VX_L|VX_IMM|VX_RW0, /* VPERMILPS	   */
-    0,			/* VPERM2F128	   */
-    VX_L|VX_NND,	/* VTESTPS	   */
-    VX_L|VX_NND,	/* VTESTPD	   */
-    VX_L,		/* VZEROALL	   */
-    0,			/* VZEROUPPER	   */
-    VX_NND|VX_RW1,	/* VCVTPD2DQ	   */
-    VX_NND|VX_RW1,	/* VCVTTPD2DQ	   */
-    VX_NND|VX_RW1,	/* VCVTPD2PS	   */
-    VX_NND|VX_RW1,	/* VMOVDDUP	   */
-    VX_L|VX_NND,	/* VMOVMSKPD	   */ /* v2.11 */
-    VX_L|VX_NND,	/* VMOVMSKPS	   */ /* v2.11 */
-
-    VX_L,		/* VPMASKMOVD	   */ /* AVX2 - v2.26 */
-    VX_L|VX_RW1,	/* VPMASKMOVQ	   */
-    VX_L|VX_IMM|VX_RW1, /* VPERMPD	   */
-    VX_L,		/* VPERMB	   */
-    VX_L|VX_RW0,	/* VPERMD	   */
-    VX_L|VX_IMM|VX_RW1, /* VPERMQ	   */
-    VX_L|VX_RW0,	/* VPERMPS	   */
-    VX_L|VX_RW0,	/* VPSLLVW	   */
-    VX_L|VX_RW0,	/* VPSLLVD	   */
-    VX_L|VX_RW1,	/* VPSLLVQ	   */
-    VX_L|VX_RW0,	/* VPSRAVD	   */
-    VX_L|VX_RW0,	/* VPSRLVD	   */
-    VX_L|VX_RW1,	/* VPSRLVQ	   */
-    VX_L,		/* VPBLENDD	   */
-    VX_L,		/* VPERM2I128	   */
-    VX_L|VX_HALF,	/* VINSERTI128	   */
-    VX_L|VX_NND,	/* VBROADCASTI128  */
-    VX_L|VX_NND,	/* VEXTRACTI128	   */
-    VX_L|VX_NND|VX_HALF,/* VPBROADCASTQ	   */
-    VX_L|VX_NND|VX_HALF,/* VPBROADCASTD	   */
-    VX_L|VX_NND|VX_HALF,/* VPBROADCASTW	   */
-    VX_L|VX_NND|VX_HALF,/* VPBROADCASTB	   */
-
-    VX_L|VX_RW1,	/* VPERMW	   */ /* AVX512 */
-    VX_L|VX_RW1,	/* VPSRAVW	   */
-    VX_L|VX_RW1,	/* VPSRAVQ	   */
-    VX_L|VX_RW1,	/* VPSRLVW	   */
-    VX_L|VX_RW0,	/* VPANDD	   */
-    VX_L|VX_RW1,	/* VPANDQ	   */
-    VX_L|VX_RW0,	/* VPANDDD	   */
-    VX_L|VX_RW1,	/* VPANDDQ	   */
-    VX_L|VX_RW0,	/* VPXORD	   */
-    VX_L|VX_RW1,	/* VPXORQ	   */
-    VX_L|VX_HALF|VX_DST|VX_RW1, /* VPSRAQ	   */
-    VX_L|VX_NND|VX_HALF|VX_RW0, /* VPCONFLICTD	   */
-    VX_L|VX_NND|VX_HALF|VX_RW1, /* VPCONFLICTQ	   */
-    VX_L|VX_NND|VX_HALF|VX_RW0, /* VPLZCNTD	   */
-    VX_L|VX_NND|VX_HALF|VX_RW1, /* VPLZCNTQ	   */
-    VX_L|VX_HALF|VX_RW0,	/* VPTESTNMB	   */
-    VX_L|VX_HALF|VX_RW1,	/* VPTESTNMW	   */
-    VX_L|VX_HALF|VX_RW0,	/* VPTESTNMD	   */
-    VX_L|VX_HALF|VX_RW1,	/* VPTESTNMQ	   */
-    VX_L|VX_NND|VX_HALF|VX_RW0, /* VPBROADCASTMW2D */
-    VX_L|VX_NND|VX_HALF|VX_RW1, /* VPBROADCASTMW2Q */
-
-    VX_L,		/* KADDB */
-    VX_L,		/* KADDW */
-    VX_L,		/* KANDB */
-    VX_L,		/* KANDW */
-    VX_L,		/* KANDNB */
-    VX_L,		/* KANDNW */
-    VX_L,		/* KORB */
-    VX_L,		/* KORW */
-    VX_L,		/* KXORB */
-    VX_L,		/* KXORW */
-    VX_L,		/* KXNORB */
-    VX_L,		/* KXNORW */
-    VX_L,		/* KUNPCKBW */
-    VX_L,		/* KUNPCKWD */
-
-    VX_L|VX_RW1,	/* KADDD */
-    VX_L|VX_RW1,	/* KADDQ */
-    VX_L|VX_RW1,	/* KANDD */
-    VX_L|VX_RW1,	/* KANDQ */
-    VX_L|VX_RW1,	/* KANDND */
-    VX_L|VX_RW1,	/* KANDNQ */
-    VX_L|VX_RW1,	/* KORD */
-    VX_L|VX_RW1,	/* KORQ */
-    VX_L|VX_RW1,	/* KXORD */
-    VX_L|VX_RW1,	/* KXORQ */
-    VX_L|VX_RW1,	/* KXNORD */
-    VX_L|VX_RW1,	/* KXNORQ */
-    VX_L|VX_RW1,	/* KUNPCKDQ */
-
-    VX_L|VX_NND,	/* KNOTB */
-    VX_L|VX_NND,	/* KNOTW */
-    VX_L|VX_RW1|VX_NND, /* KNOTD */
-    VX_L|VX_RW1|VX_NND, /* KNOTQ */
-    VX_L|VX_NND,	/* KORTESTB */
-    VX_L|VX_NND,	/* KORTESTW */
-    VX_L|VX_RW1|VX_NND, /* KORTESTD */
-    VX_L|VX_RW1|VX_NND, /* KORTESTQ */
-    VX_L|VX_NND,	/* KSHIFTLB */
-    VX_L|VX_RW1|VX_NND, /* KSHIFTLW */
-    VX_L|VX_NND,	/* KSHIFTLD */
-    VX_L|VX_RW1|VX_NND, /* KSHIFTLQ */
-    VX_L|VX_NND,	/* KSHIFTRB */
-    VX_L|VX_RW1|VX_NND, /* KSHIFTRW */
-    VX_L|VX_NND,	/* KSHIFTRD */
-    VX_L|VX_RW1|VX_NND, /* KSHIFTRQ */
-
-    VX_L|VX_NND,	/* KMOVB */
-    VX_L|VX_NND|VX_RW1, /* KMOVD */
-    VX_L|VX_NND|VX_RW1, /* KMOVQ */
-    VX_L|VX_NND,	/* KMOVW */
-
-#define avxins( tok, string, cpu, flgs ) flgs,
-#include <instravx.h>
+#define insa(tok,string, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex)
+#define insn(tok,suffix, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex)
+#define insm(tok,suffix, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex)
+#define insx(tok,string, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex,flags)
+#define insv(tok,string, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex,flags,vex) vex,
+#define avxins(alias, tok, string, cpu, flgs) flgs,
+#include <instruct.h>
+#undef insx
+#undef insv
+#undef insm
+#undef insn
+#undef insa
 #undef avxins
 };
 
@@ -577,15 +493,20 @@ struct rename_node {
 
 /* Rename a keyword - used by OPTION RENAMEKEYWORD.
  * - token: keyword to rename
- * - newname: new name of keyword
+ * - name: new name of keyword
  * - length: length of new name
  */
 
-void RenameKeyword( unsigned token, const char *newname, uint_8 length )
+void RenameKeyword( unsigned token, const char *name, uint_8 length )
 /**********************************************************************/
 {
     struct rename_node *curr;
     struct rename_node *prev;
+    char *p, newname[64];
+
+    strcpy(newname, name); /* added v2.26 */
+    for ( p = newname; *p; p++)
+	*p |= 0x20; /* '@' --> 'ï'.. */
 
     /* v2.11: do nothing if new name matches current name */
     if ( ResWordTable[token].len == length && !_memicmp( newname, ResWordTable[token].name, length ) )

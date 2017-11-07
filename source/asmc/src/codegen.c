@@ -77,8 +77,9 @@ static void output_opc( struct code_info *CodeInfo )
  * F2/F3/66 byte is a "mantadory prefix".
  */
 {
-    const struct instr_item *ins = CodeInfo->pinstr;
     int tmp;
+    int index;
+    const struct instr_item *ins = CodeInfo->pinstr;
     uint_8 evex = 0;
     uint_8 fpfix = FALSE;
     uint_8 vflags = CodeInfo->vflags;
@@ -139,7 +140,7 @@ static void output_opc( struct code_info *CodeInfo )
      */
     if ( CodeInfo->prefix.evex ) {
 
-	evex = 1;
+	evex = CodeInfo->pinstr->evex;
 	OutputByte( 0x62 );
     }
 
@@ -231,7 +232,7 @@ static void output_opc( struct code_info *CodeInfo )
      */
     if( CodeInfo->prefix.adrsiz == TRUE
 
-	/* @RIP */ && !CodeInfo->base_rip ) {
+	/* @RIP */ && !CodeInfo->base_rip && !( CodeInfo->pinstr->evex & VX_XMMI ) ) {
 
 	OutputByte( ADRSIZ );
     }
@@ -260,8 +261,9 @@ static void output_opc( struct code_info *CodeInfo )
 
     if ( rflags & RWF_VEX ) {
 
+	uint_8 vex = vex_flags[ CodeInfo->token - VEX_START ];
 	uint_8 byte1 = 0;
-	uint_8 byte2 = vex_flags[ CodeInfo->token - VEX_START ] & VX_RW1;
+	uint_8 byte2 = vex & VX_RW1;
 	uint_8 byte3 = CodeInfo->evexP3;
 
 	switch ( ins->byte1_info ) {
@@ -295,14 +297,14 @@ static void output_opc( struct code_info *CodeInfo )
 	    byte3 |= VX3_V;
 
 	if ( ( CodeInfo->opnd[OPND1].type & ( OP_YMM | OP_ZMM ) ) ||
-	    ( CodeInfo->opnd[OPND2].type & ( OP_YMM | OP_ZMM | OP_M256 ) ) ||
+	    ( CodeInfo->opnd[OPND2].type & ( OP_YMM | OP_ZMM | OP_M256 | OP_M512 ) ) ||
 	    ( CodeInfo->opnd[OPND1].type == OP_NONE && /* no operands? use VX_L flag from vex_flags[] */
-	     vex_flags[ CodeInfo->token - VEX_START ] & VX_L ) ) {
+	     vex & VX_L ) ) {
 
 	    byte2 |= VX2_1;
-	    if ( CodeInfo->opnd[OPND1].type & OP_ZMM || CodeInfo->opnd[OPND2].type & OP_ZMM ) {
+	    if ( CodeInfo->opnd[OPND1].type & OP_ZMM || CodeInfo->opnd[OPND2].type & ( OP_ZMM | OP_M512 ) ) {
 		byte3 |= ( VX3_L1 | VX3_V ); /* ZMM */
-		byte1 |= VX1_R1;
+		byte1 |= ( evex & VX1_R1 );
 	    } else
 		byte3 |= VX3_L0; /* YMM */
 	}
@@ -320,11 +322,12 @@ static void output_opc( struct code_info *CodeInfo )
 		    byte3 |= VX3_V;
 	    }
 	} else {
-	    byte2 |= ( VX2_V1 | VX2_V2 | VX2_V3 );
+	    byte2 |= ( VX2_V2 | VX2_V3 );
+	    if ( !( CodeInfo->pinstr->evex & VX_XMMI ) )
+		byte2 |= VX2_V1;
 	    byte3 |= VX3_V;
-	    if ( !evex || !( evex && ( vflags & VX_OP3 ) &&
-		CodeInfo->opnd[OPND2].type & ( OP_M128 | OP_M256 | OP_M512 ) &&
-		CodeInfo->pinstr->evex & 0x04 ) )
+	    if ( !( ( vflags & VX_OP3 ) && ( evex & 0x04 ) &&
+		( CodeInfo->opnd[OPND2].type & ( OP_M128 | OP_M256 | OP_M512 ) ) ) )
 	       byte2 |= VX2_V0;
 	}
 
@@ -348,40 +351,56 @@ static void output_opc( struct code_info *CodeInfo )
 		    byte1 |= VX1_M2;
 	    }
 
-	    byte1 |= ( ( CodeInfo->prefix.rex & REX_B ) ? 0 : 0x20 );
-	    byte1 |= ( ( CodeInfo->prefix.rex & REX_X ) ? 0 : 0x40 );
-	    byte1 |= ( ( CodeInfo->prefix.rex & REX_R ) ? 0 : 0x80 );
+	    byte1 |= ( ( CodeInfo->prefix.rex & REX_B ) ? 0 : VX1_B );
+	    byte1 |= ( ( CodeInfo->prefix.rex & REX_X ) ? 0 : VX1_X );
+	    byte1 |= ( ( CodeInfo->prefix.rex & REX_R ) ? 0 : VX1_R );
+	    byte2 |= ( ( CodeInfo->prefix.rex & REX_W ) ? VX2_W : 0 );
 
-	    if ( evex == 1 ) {
+	    if ( evex ) {
 
-		int index;
+		if ( vflags & ( VX_OP1V | VX_OP2V | VX_OP3V ) ) {
 
-		if ( vflags & VX_ZMM && vflags & ( VX_OP1V | VX_OP2V | VX_OP3V ) ) {
-
-		    /* zmm16..31 */
+		    /* ?mm16..31 */
 
 		    switch ( vflags & ( VX_OP1V | VX_OP2V | VX_OP3V | VX_OP3 ) ) {
 		    case VX_OP3|VX_OP2V|VX_OP3V:	/* 0, 1, 1 */
 			byte3 &= ~VX3_V;
 		    case VX_OP2V:			/* 0, 1	   */
 		    case VX_OP3|VX_OP3V:		/* 0, 0, 1 */
-			byte1 &= ~VX1_X;
+			if ( rflags & ( RWF_T1S | RWF_QVM ) )
+			    byte1 &= ~VX1_R1;
+			else {
+			    byte1 &= ~VX1_X;
+			if ( !( vflags & VX_ZMM ) )
+			    byte1 |= VX1_R1;
+			}
 			break;
 		    case VX_OP3|VX_OP1V|VX_OP2V:	/* 1, 1, 0 */
-			byte3 &= ~VX3_V;
+			if ( !( evex & VX1_X ) && CodeInfo->opnd[OPND3].type == OP_I8 )
+			    byte1 &= ~VX1_X;
+			else {
+			    byte3 &= ~VX3_V;
+			    byte1 &= ~VX1_R1;
+			}
+			break;
 		    case VX_OP1V:			/* 1, 0	   */
 		    case VX_OP3|VX_OP1V:		/* 1, 0, 0 */
 			byte1 &= ~VX1_R1;
+			if ( !( vflags & VX_ZMM ) && !( rflags & RWF_T1S && byte3 ) )
+			    byte3 |= VX3_V;
 			break;
 		    case VX_OP3|VX_OP1V|VX_OP2V|VX_OP3V:/* 1, 1, 1 */
 			byte3 &= ~VX3_V;
-		    case VX_OP3|VX_OP3V|VX_OP1V:	/* 1, 0, 0 */
+		    case VX_OP3|VX_OP1V|VX_OP3V:	/* 1, 0, 1 */
 		    case VX_OP1V|VX_OP2V:		/* 1, 1	   */
 			byte1 &= ~( VX1_R1 | VX1_X );
 			break;
 		    case VX_OP3|VX_OP2V:		/* 0, 1, 0 */
-			byte3 &= ~VX3_V;
-			byte1 |= VX1_R1;
+			if ( vflags & VX_ZMM ) {
+			    byte3 &= ~VX3_V;
+			    byte1 |= VX1_R1;
+			} else
+			    byte1 &= ~VX1_R1;
 			break;
 		    }
 
@@ -396,7 +415,7 @@ static void output_opc( struct code_info *CodeInfo )
 			break;
 		    case 0xE2:
 		    case 0xE3:
-			if ( !( vflags & VX_EVEX ) || ( CodeInfo->pinstr->evex & 0x04 ) )
+			if ( !( vflags & VX_EVEX ) || ( evex & 0x04 ) )
 			    byte1 |= VX1_R1;
 		    default:
 			byte3 |= VX3_V;
@@ -408,8 +427,15 @@ static void output_opc( struct code_info *CodeInfo )
 		index = 0;
 		if ( CodeInfo->opnd[OPND2].type & OP_M_ANY )
 		    index++;
-		if ( CodeInfo->opnd[index].type & OP_M_ANY )
-		    tmp++;
+		if ( CodeInfo->opnd[index].type & OP_M_ANY ) {
+		    if ( rflags & RWF_T1S ) {
+			tmp = MT_DWORD;
+			if ( vex & VX_RW1 )
+			    tmp = MT_QWORD;
+		    } else {
+			tmp = CodeInfo->mem_type;
+		    }
+		}
 
 		if ( vflags & VX_1TOX ) {
 
@@ -419,54 +445,52 @@ static void output_opc( struct code_info *CodeInfo )
 			asmerr( 2070 );
 		}
 
-		if ( tmp ) {
+		if ( tmp && CodeInfo->opnd[index].data32l ) {
 
-		    tmp = CodeInfo->opnd[index].data32l;
+		    CodeInfo->rm_byte |= MOD_10;
+		    CodeInfo->rm_byte &= ~MOD_01;
 
-		    if ( tmp ) {
+		    if ( !( CodeInfo->opnd[index].data32l & tmp ) ) {
 
-			CodeInfo->rm_byte |= MOD_10;
-			CodeInfo->rm_byte &= ~MOD_01;
-			if ( !( tmp & CodeInfo->mem_type ) ) {
+			tmp = ( CodeInfo->opnd[index].data32l / ( tmp + 1 ) );
+			if ( tmp >= SCHAR_MIN && tmp <= SCHAR_MAX ) {
 
-			    tmp /= ( CodeInfo->mem_type + 1 );
-			    if ( tmp >= -128 && tmp <= 127 ) {
-
-				CodeInfo->opnd[index].data32l = tmp;
-				CodeInfo->rm_byte &= ~MOD_10;
-				CodeInfo->rm_byte |= MOD_01;
-			    }
+			    CodeInfo->opnd[index].data32l = tmp;
+			    CodeInfo->rm_byte &= ~MOD_10;
+			    CodeInfo->rm_byte |= MOD_01;
 			}
 		    }
 		}
+		if ( evex & VX_XMMI ) {
+		    byte2 |= 0x10;
+		    index = CodeInfo->opc_or & 0x1F;
+		    byte3 = 0x01 | ( CodeInfo->opc_or & 0x40 ) | ( ~( index >> 1 ) & 0x08 );
+		    byte1 = 0x02 | ( ~( index << 3 ) & 0x40 ) | ( evex & 0xF0 );
+		    if ( ( CodeInfo->sib & 0xC0 ) == 0x80 )
+			byte1 |= 0x20;
+		    CodeInfo->opc_or = 0;
+		}
 	    }
-	    byte2 |= ( ( CodeInfo->prefix.rex & REX_W ) ? 0x80 : 0 );
-
 	} else {
 
 	    byte2 |= ( ( CodeInfo->prefix.rex & REX_R ) ? 0 : 0x80 );
 	    if ( evex == 0 ) {
 		byte1 = 0xC5;
 	    } else {
-		byte1 |= ( CodeInfo->pinstr->evex & 0xF3 );
+		byte1 |= ( ( evex & 0xF0 ) | 0x01 );
 		if ( CodeInfo->prefix.rex & REX_R ) {
 		    byte1 = 0x61;
 		} else if ( vflags & VX_OP1V ) {
-		    if ( CodeInfo->opnd[OPND1].type & OP_ZMM ) {
-			byte1 |= VX1_R1;
+		    byte1 = 0xE1;
+		    if ( vflags & VX_OP2V ) {
+			if ( !( vflags & VX_OP3 ) ||
+			     ( vflags & VX_OP3 && vflags & VX_OP3V ) )
+			    byte1 = 0xA1;
+		    } else if ( ( vex & VX_HALF ) &&
+			CodeInfo->opnd[OPND2].type & OP_I8 ) {
+			byte1 = 0xF1;
+		    } else
 			byte3 |= VX3_V;
-		    } else {
-			byte1 = 0xE1;
-			if ( vflags & VX_OP2V ) {
-			    if ( !( vflags & VX_OP3 ) ||
-			       ( vflags & VX_OP3 && vflags & VX_OP3V ) )
-				byte1 = 0xA1;
-			} else if ( ( vex_flags[ CodeInfo->token - VEX_START ] & VX_HALF ) &&
-			    CodeInfo->opnd[OPND2].type & OP_I8 ) {
-			    byte1 = 0xF1;
-			} else
-			    byte3 |= VX3_V;
-		    }
 		} else if ( !( vflags & VX_OP2V ) ) {
 		    byte1 = 0xF1;
 		    byte3 |= VX3_V;
@@ -475,14 +499,21 @@ static void output_opc( struct code_info *CodeInfo )
 		}
 	    }
 	}
+
 	OutputByte( byte1 );
-	if ( evex == 1 ) {
+	if ( evex ) {
 	    byte2 |= ( VX2_W | VX2_1 );
-	    if ( vex_flags[ CodeInfo->token - VEX_START ] & VX_RW0 )
+	    if ( vex & VX_RW0 )
 		byte2 &= ~VX2_W;
 	    OutputByte( byte2 );
 	    OutputByte( byte3 );
 	} else {
+	    if ( CodeInfo->pinstr->evex & VX_XMMI ) {
+
+		byte2 = ( ( byte2 &= 0xC7 ) | ( ~( CodeInfo->opc_or << 3 ) & 0x38 ) |
+			( CodeInfo->opc_or >> 4 ) );
+		CodeInfo->opc_or = 0;
+	    }
 	    OutputByte( byte2 );
 	}
     } else {
@@ -856,7 +887,8 @@ static int match_phase_3( struct code_info *CodeInfo, enum operand_type opnd1 )
 		    output_data( CodeInfo, opnd1, OPND1 );
 		if ( opnd2 & (OP_I_ANY | OP_M_ANY ) )
 		    output_data( CodeInfo, opnd2, OPND2 );
-		if( opnd_clstab[CodeInfo->pinstr->opclsidx].opnd_type_3rd != OP3_NONE )
+		if ( ( opnd_clstab[CodeInfo->pinstr->opclsidx].opnd_type_3rd != OP3_NONE ) &&
+		    !( CodeInfo->pinstr->evex & VX_XMMI ) )
 		    output_3rd_operand( CodeInfo );
 		if( CodeInfo->pinstr->byte1_info == F_0F0F ) /* output 3dNow opcode? */
 		    OutputByte( CodeInfo->pinstr->opcode | CodeInfo->iswide );
@@ -971,7 +1003,11 @@ int codegen( struct code_info *CodeInfo, uint_32 oldofs )
 		asmerr( 2070 );
 		return( ERROR );
 	    }
-	    if ( opnd1 & ( OP_YMM | OP_ZMM ) )
+	    if ( opnd1 & OP_ZMM )
+		opnd1 |= OP_YMM;
+	    else if ( opnd1 & OP_M512 )
+		opnd1 |= OP_M256;
+	    if ( opnd1 & OP_YMM )
 		opnd1 |= OP_XMM;
 	    else
 		opnd1 |= OP_M128;

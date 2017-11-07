@@ -53,6 +53,7 @@
 #include <condasm.h>
 #include <extern.h>
 #include <atofloat.h>
+#include <reswords.h>
 
 #define ADDRSIZE( s, x ) ( ( ( x ) ^ ( s ) ) ? TRUE : FALSE )
 #define IS_ADDR32( s )	( s->Ofssize ? ( s->prefix.adrsiz == FALSE ) : ( s->prefix.adrsiz == TRUE ))
@@ -62,6 +63,7 @@
 
 #define InWordRange( val ) ( (val > 65535 || val < -65535) ? FALSE : TRUE )
 
+extern struct ReservedWord ResWordTable[];
 extern ret_code (* const directive_tab[])( int, struct asm_tok[] );
 
 /* parsing of branch instructions with imm operand is found in branch.c */
@@ -533,6 +535,11 @@ static int set_rm_sib( struct code_info *CodeInfo, unsigned CurrOpnd, char ss, i
 	rex = (bit3_idx << 1); /* set REX_X */
 	/* default is DS:[], DS: segment override is not needed */
 	seg_override( CodeInfo, T_DS, sym, FALSE );
+	if ( CodeInfo->pinstr->evex & VX_XMMI ) {
+	    CodeInfo->opc_or = GetRegNo( index );
+	    if ( GetValueSp( index ) > 16 )
+		CodeInfo->opc_or |= 0x40; /* YMM/ZMM */
+	}
     } else {
 	/* base != EMPTY && index != EMPTY */
 	base_reg = 5;
@@ -542,10 +549,15 @@ static int set_rm_sib( struct code_info *CodeInfo, unsigned CurrOpnd, char ss, i
 	bit3_base = base_reg >> 3;
 	bit3_idx  = idx_reg  >> 3;
 	base_reg &= BIT_012;
-	idx_reg	 &= BIT_012;
 	if ( ( GetSflagsSp( base ) & GetSflagsSp( index ) & SFR_SIZMSK ) == 0 ) {
-	    return( asmerr( 2082 ) );
+	    if ( GetValueSp( index ) > 8 && CodeInfo->pinstr->evex & VX_XMMI ) {
+		CodeInfo->opc_or = idx_reg;
+		if ( GetValueSp( index ) > 16 )
+		    CodeInfo->opc_or |= 0x40;
+	    } else
+		return( asmerr( 2082 ) );
 	}
+	idx_reg	 &= BIT_012;
 	switch( index ) {
 	case T_BX:
 	case T_BP:
@@ -1308,7 +1320,8 @@ static int memory_operand( struct code_info *CodeInfo, unsigned CurrOpnd, struct
 	/* v2.10: register swapping has been moved to expreval.c, index_connect().
 	 * what has remained here is the check if R/ESP is used as index reg.
 	 */
-	if ( GetRegNo( index ) == 4 ) { /* [E|R]SP? */
+	if ( GetRegNo( index ) == 4 && !( CodeInfo->pinstr->evex & VX_XMMI )) {
+	    /* [E|R]SP */
 	    if( opndx->scale ) { /* no scale must be set */
 		asmerr( 2031, GetResWName( index, NULL ) );
 	    } else {
@@ -2658,10 +2671,12 @@ int ParseLine( struct asm_tok tokenarray[] )
 		     ( opndx[OPND3].kind == EXPR_CONST ) && ( j > 2 ) )
 		;
 	    else if ( ( vex_flags[CodeInfo.token - VEX_START] & VX_HALF ) &&
-		      ( CodeInfo.opnd[OPND1].type & ( OP_XMM | OP_YMM | OP_ZMM ) ) &&
-		      ( opndx[CurrOpnd].indirect /*&& opndx[OPND3].kind == EXPR_CONST*/ )
+		      ( ( CodeInfo.opnd[OPND1].type & ( OP_XMM | OP_YMM | OP_ZMM ) ) &&
+		      ( opndx[CurrOpnd].indirect ) ) /*||
+		      ( ( opndx[CurrOpnd].kind == EXPR_REG ) && ( opndx[OPND1].indirect ) )*/
 		    ) {
-		CodeInfo.rm_byte = 0;
+		//if ( opndx[CurrOpnd].indirect )
+		    CodeInfo.rm_byte = 0;
 	    } else if ( ( vex_flags[CodeInfo.token - VEX_START] & VX_NMEM ) &&
 		     ( ( CodeInfo.opnd[OPND1].type & OP_M ) ||
 		     /* v2.11: VMOVSD and VMOVSS always have 2 ops if a memory op is involved */
@@ -2679,6 +2694,8 @@ int ParseLine( struct asm_tok tokenarray[] )
 		 */
 		if ( j <= 2 ) {
 		    /* v2.11: next line should be activated - currently the error is emitted below as syntax error */
+		    if ( ResWordTable[CodeInfo.token].flags & RWF_EVEX )
+			j++;
 		} else
 		/* flag VX_DST is set if an immediate is expected as operand 3 */
 		if ( ( vex_flags[CodeInfo.token - VEX_START] & VX_DST ) &&
@@ -2692,7 +2709,6 @@ int ParseLine( struct asm_tok tokenarray[] )
 			CodeInfo.vexregop = opndx[OPND1].base_reg->bytval + 1;
 			if ( flags & OP_ZMM ) {
 			    CodeInfo.vexregop |= 0x80;
-			   // CodeInfo.vflags |= VX_ZMM;
 			} else if ( flags & OP_YMM )
 			    CodeInfo.vexregop |= 0x40;
 
@@ -2753,6 +2769,8 @@ int ParseLine( struct asm_tok tokenarray[] )
 		if ( CurrOpnd == OPND3 ) {
 		    CodeInfo.opnd[OPND3].type = GetValueSp( opndx[CurrOpnd].base_reg->tokval );
 		    CodeInfo.opnd[OPND3].data32l = opndx[CurrOpnd].base_reg->bytval;
+		    if ( CodeInfo.pinstr->evex & VX_XMMI )
+			CodeInfo.opc_or = ( CodeInfo.opc_or & 0xF0 ) | opndx[CurrOpnd].base_reg->bytval;
 		} else if ( process_register( &CodeInfo, CurrOpnd, opndx, q ) == ERROR )
 		    return( ERROR );
 	    }

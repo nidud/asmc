@@ -35,6 +35,8 @@
 #include <symbols.h>
 #include <token.h>
 
+#define COMMENT /* .asm comment.. */
+
 /* define tokens for SpecialTable (registers, operators, ... ) */
 enum special_token {
     T_NULL,
@@ -52,19 +54,20 @@ SPECIAL_LAST
 
 enum instr_token {
     INS_FIRST_1 = SPECIAL_LAST - 1, /* to ensure tokens are unique */
-#define	 ins(token, string, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex ) T_ ## token ,
+#define insa(token, string, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex ) T_ ## token ,
 #define insx(token, string, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex,flgs ) T_ ## token ,
+#define insv(token, string, opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex,flgs,vex ) T_ ## token ,
 #define insn(tok, suffix,   opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex)
 #define insm(tok, suffix,   opcls, byte1_info,op_dir,rm_info,opcode,rm_byte,cpu,prefix,evex)
+#define avxins(alias, token, string, cpu, flgs ) T_ ## token ,
 #include <instruct.h>
 #undef insm
 #undef insn
 #undef insx
-#undef ins
-#define VEX_START  T_VBROADCASTSS  /* first VEX encoded item */
-#define avxins(token, string, cpu, flgs ) T_V ## token ,
-#include <instravx.h>
+#undef insv
+#undef insa
 #undef avxins
+#define VEX_START T_VBROADCASTSS  /* first VEX encoded item */
 };
 
 /*---------------------------------------------------------------------------*/
@@ -126,9 +129,9 @@ enum special_type {
 
 // values for sflags if register
 enum op1_flags {
-    SFR_SIZMSK	= 0x1F, /* size in bits 0-4 */
-    SFR_IREG	= 0x20,
-    SFR_SSBASED = 0x40, /* v2.11: added */
+    SFR_SIZMSK	= 0x7F, /* size in bits 0-4 */
+    SFR_IREG	= 0x80,
+    SFR_SSBASED = 0x100, /* v2.11: added */
 };
 
 enum rex_bits {
@@ -253,7 +256,7 @@ struct opnd_item {
 #define VX3_A1	0x02
 #define VX3_A0	0x01
 
-#define VX_OP1V 0x01 /* set if op1..3 is [z|y|x]mm16..31 used */
+#define VX_OP1V 0x01 /* set if op1..3 is [z|y|x]mm16..31 register */
 #define VX_OP2V 0x02
 #define VX_OP3V 0x04
 #define VX_1T2	0x08 /* {1to2..16} */
@@ -264,6 +267,8 @@ struct opnd_item {
 #define VX_ZMM	0x40 /* ZMM used */
 #define VX_EVEX 0x47 /* auto set.. */
 #define VX_OP3	0x80 /* more than 2 instruction args used */
+
+#define VX_XMMI 0x08 /* XMM register used as index */
 
 struct code_info {
     struct {

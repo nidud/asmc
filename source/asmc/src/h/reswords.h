@@ -38,6 +38,8 @@ enum reservedword_flags {
     RWF_X64	 = 0x04, /* keyword specific to IA32+ mode */
     RWF_VEX	 = 0x08, /* keyword triggers VEX encoding */
     RWF_EVEX	 = 0x10, /* keyword triggers EVEX encoding */
+    RWF_QVM	 = 0x20,
+    RWF_T1S	 = 0x80
 };
 
 /* structure of items in the "reserved names" table ResWordTable[] */

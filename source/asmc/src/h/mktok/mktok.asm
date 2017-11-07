@@ -9,24 +9,29 @@ res	macro tok, string, type, value, bytval, flags, cpu, sflags
 	enumval = enumval + 1
 	endm
 
-insa	macro tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix
+insa	macro tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex
 %	echo @CatStr(@CatStr(@CatStr(<T_>,@SubStr(<tok>,2)),<	equ >),%enumval)
 	enumval = enumval + 1
 	endm
 
-insx	macro tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, flgs
+insx	macro tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex, flgs
 %	echo @CatStr(@CatStr(@CatStr(<T_>,@SubStr(<tok>,2)),<	equ >),%enumval)
 	enumval = enumval + 1
 	endm
 
-insn	macro tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix
+insv	macro tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex, flgs, rex
+%	echo @CatStr(@CatStr(@CatStr(<T_>,@SubStr(<tok>,2)),<	equ >),%enumval)
+	enumval = enumval + 1
 	endm
 
-insm	macro tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix
+insn	macro tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex
 	endm
 
-avxins	macro tok, string, cpu, flgs
-%	echo @CatStr(@CatStr(@CatStr(<T_V>,@SubStr(<tok>,2)),<	equ >),%enumval)
+insm	macro tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex
+	endm
+
+avxins	macro op, tok, string, cpu, flgs
+%	echo @CatStr(@CatStr(@CatStr(<T_>,@SubStr(<tok>,1)),<	equ >),%enumval)
 	enumval = enumval + 1
 	endm
 
@@ -49,11 +54,10 @@ include ..\special.h
 include ..\directve.h
 %	echo SPECIAL_LAST	equ @CatStr(%enumval)
 	echo ;
-include instruct.inc
+include ..\instruct.h
 	echo ;
 	echo VEX_START	equ T_VBROADCASTSS ; first VEX encoded item
 	echo ;
-include ..\instravx.h
 	echo .list
 
 	end

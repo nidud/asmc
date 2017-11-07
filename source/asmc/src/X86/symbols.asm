@@ -208,13 +208,7 @@ SymSetLocal proc uses edi psym
             xor eax,edx
             movzx edx,BYTE PTR [ecx]
         .endw
-if 1
-        and eax,( LHASH_TABLE_SIZE - 1 )
-else
-        .while eax >= LHASH_TABLE_SIZE
-            sub eax,LHASH_TABLE_SIZE
-        .endw
-endif
+        and eax,LHASH_TABLE_SIZE - 1
         mov lsym_table[eax*4],edi
         mov edi,[edi].nsym.nextll
     .endw
@@ -907,14 +901,12 @@ FindResWord proc fastcall w_name, w_size
         ret
 
       .case 1
+        mov cl,al
         movzx eax,resw_table[eax*2]
         .while eax
             .if ResWordTable[eax*8].len == 1
                 mov edx,ResWordTable[eax*8]._name
-                mov dh,[edx]
-                mov dl,[ecx]
-                or  edx,0x2020
-                .break .if dl == dh
+                .break .if cl == [edx]
             .endif
             movzx eax,ResWordTable[eax*8].next
         .endw
@@ -932,11 +924,8 @@ FindResWord proc fastcall w_name, w_size
 
         .while eax
             .if ResWordTable[eax*8].len == 2
-
                 mov     edx,ResWordTable[eax*8]._name
-                movzx   edx,WORD PTR [edx]
-                or      edx,0x2020
-                .break .if dx == cx
+                .break .if cx == [edx]
             .endif
             movzx eax,ResWordTable[eax*8].next
         .endw
@@ -966,9 +955,8 @@ FindResWord proc fastcall w_name, w_size
             .if ResWordTable[eax*8].len == 3
                 mov edx,ResWordTable[eax*8]._name
                 mov edx,[edx]
-                or  edx,0x202020
                 and edx,0xFFFFFF
-                .break .if edx == ecx
+                .break .if ecx == edx
             .endif
             movzx eax,ResWordTable[eax*8].next
         .endw
@@ -1018,9 +1006,64 @@ FindResWord proc fastcall w_name, w_size
         push    ebx
         mov     ebx,edx
         mov     edi,ecx
-        mov     ecx,1
+if 1
+        mov ecx,1
         .repeat
-            movzx   edx,BYTE PTR [ecx+edi]
+            movzx edx,BYTE PTR [ecx+edi]
+            or  edx,0x20
+            shl eax,3
+            add eax,edx
+            mov edx,eax
+            and edx,not 0x00001FFF
+            xor eax,edx
+            shr edx,13
+            xor eax,edx
+            add ecx,1
+            cmp ecx,ebx
+        .untilnl
+else
+        mov     ecx,[edi+1]
+        or      ecx,0x20202020
+
+        movzx   edx,cl
+        shl     eax,3
+        add     eax,edx
+        mov     edx,eax
+        and     edx,not 0x1FFF
+        xor     eax,edx
+        shr     edx,13
+        xor     eax,edx
+
+        movzx   edx,ch
+        shl     eax,3
+        add     eax,edx
+        mov     edx,eax
+        and     edx,not 0x1FFF
+        xor     eax,edx
+        shr     edx,13
+        xor     eax,edx
+
+        shr     ecx,16
+        movzx   edx,cl
+        shl     eax,3
+        add     eax,edx
+        mov     edx,eax
+        and     edx,not 0x1FFF
+        xor     eax,edx
+        shr     edx,13
+        xor     eax,edx
+
+        movzx   edx,ch
+        shl     eax,3
+        add     eax,edx
+        mov     edx,eax
+        and     edx,not 0x1FFF
+        xor     eax,edx
+        shr     edx,13
+        xor     eax,edx
+
+        .if ebx > 5
+            movzx   edx,BYTE PTR [edi+5]
             or      edx,0x20
             shl     eax,3
             add     eax,edx
@@ -1029,44 +1072,44 @@ FindResWord proc fastcall w_name, w_size
             xor     eax,edx
             shr     edx,13
             xor     eax,edx
-            add     ecx,1
-            cmp     ecx,ebx
-        .untilnl
-
-        and     eax,HASH_TABITEMS - 1
-        movzx   eax,resw_table[eax*2]
-
+            .if ebx > 6
+                movzx   edx,BYTE PTR [edi+6]
+                or      edx,0x20
+                shl     eax,3
+                add     eax,edx
+                mov     edx,eax
+                and     edx,not 0x1FFF
+                xor     eax,edx
+                shr     edx,13
+                xor     eax,edx
+            .endif
+        .endif
+endif
+        and    eax,HASH_TABITEMS - 1
+        movzx  eax,resw_table[eax*2]
+        align  4
         .while eax
 
             .if ResWordTable[eax*8].len == bl
 
                 mov edx,ResWordTable[eax*8]._name
-                mov edx,[edx]
-                or  edx,0x20202020
                 mov ecx,[edi]
                 or  ecx,0x20202020
+                .if ecx == [edx]
 
-                .if edx == ecx
-
-                    mov edx,ResWordTable[eax*8]._name
-                    mov cl,[edx+4]
-                    mov ch,[edi+4]
-                    or  ecx,0x2020
-
-                    .if cl == ch
+                    mov cl,[edi+4]
+                    or  cl,0x20
+                    .if cl == [edx+4]
                         .break .if ebx == 5
 
-                        mov cl,[edx+5]
-                        mov ch,[edi+5]
-                        or  ecx,0x2020
-
-                        .if cl == ch
+                        mov cl,[edi+5]
+                        or  cl,0x20
+                        .if cl == [edx+5]
                             .break .if ebx == 6
 
-                            mov cl,[edx+6]
-                            mov ch,[edi+6]
-                            or  ecx,0x2020
-                            .break .if cl == ch
+                            mov cl,[edi+6]
+                            or  cl,0x20
+                            .break .if cl == [edx+6]
                         .endif
                     .endif
                 .endif
@@ -1078,13 +1121,73 @@ FindResWord proc fastcall w_name, w_size
         ret
 
       .default
-        push esi
-        push edi
-        push ebx
-        mov ebx,edx
-        mov edi,ecx
-        mov ecx,1
+        push    esi
+        push    edi
+        push    ebx
+        mov     ebx,edx
+        mov     edi,ecx
 
+        mov     ecx,[edi+1]
+        or      ecx,0x20202020
+
+        movzx   edx,cl
+        shl     eax,3
+        add     eax,edx
+        mov     esi,eax
+        and     esi,not 0x1FFF
+        xor     eax,esi
+        shr     esi,13
+        xor     eax,esi
+
+        mov     dl,ch
+        shl     eax,3
+        add     eax,edx
+        mov     esi,eax
+        and     esi,not 0x1FFF
+        xor     eax,esi
+        shr     esi,13
+        xor     eax,esi
+
+        shr     ecx,16
+        mov     dl,cl
+        shl     eax,3
+        add     eax,edx
+        mov     esi,eax
+        and     esi,not 0x1FFF
+        xor     eax,esi
+        shr     esi,13
+        xor     eax,esi
+
+        mov     dl,ch
+        shl     eax,3
+        add     eax,edx
+        mov     esi,eax
+        and     esi,not 0x1FFF
+        xor     eax,esi
+        shr     esi,13
+        xor     eax,esi
+
+        mov     dl,[edi+5]
+        or      dl,0x20
+        shl     eax,3
+        add     eax,edx
+        mov     esi,eax
+        and     esi,not 0x1FFF
+        xor     eax,esi
+        shr     esi,13
+        xor     eax,esi
+
+        mov     dl,[edi+6]
+        or      dl,0x20
+        shl     eax,3
+        add     eax,edx
+        mov     esi,eax
+        and     esi,not 0x1FFF
+        xor     eax,esi
+        shr     esi,13
+        xor     eax,esi
+
+        mov     ecx,7
         .repeat
             movzx edx,BYTE PTR [ecx+edi]
             or  edx,0x20
@@ -1098,19 +1201,16 @@ FindResWord proc fastcall w_name, w_size
             add ecx,1
             cmp ecx,ebx
         .untilnl
-
-        and eax,( HASH_TABITEMS - 1 )
+        and eax,HASH_TABITEMS - 1
         movzx eax,resw_table[eax*2]
-
+        align  4
         .while eax
             .if ResWordTable[eax*8].len == bl
 
                 mov esi,ResWordTable[eax*8]._name
-                mov edx,[esi]
-                or  edx,0x20202020
                 mov ecx,[edi]
                 or  ecx,0x20202020
-                .if edx == ecx
+                .if ecx == [esi]
 
                     mov ecx,[edi+4]
                     or  ecx,0x20202020
@@ -1121,17 +1221,16 @@ FindResWord proc fastcall w_name, w_size
                             .break(1) .if edx == 8
                             sub edx,1
                             mov cl,[edi+edx]
-                            mov ch,[edi+edx]
-                            or  ecx,0x2020
-                        .until cl != ch
+                            or  cl,0x20
+                        .until cl != [esi+edx]
                     .endif
                 .endif
             .endif
             mov ax,ResWordTable[eax*8].next
         .endw
-        pop ebx
-        pop edi
-        pop esi
+        pop     ebx
+        pop     edi
+        pop     esi
         ret
     .endsw
 

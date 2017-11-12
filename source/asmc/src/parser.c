@@ -2135,7 +2135,8 @@ static int check_size( struct code_info *CodeInfo, const struct expr opndx[] )
 	}
 	if( op1_size != op2_size ) {
 	    /* if one or more are !defined, set them appropriately */
-	    if( ( op1 | op2 ) & ( OP_MMX | OP_XMM | OP_YMM | OP_ZMM | OP_K ) ) {
+	    if( ( ( op1 | op2 ) & ( OP_MMX | OP_XMM | OP_YMM | OP_ZMM | OP_K ) ) ||
+		    CodeInfo->token >= VEX_START ) {
 	    } else if( ( op1_size != 0 ) && ( op2_size != 0 ) ) {
 		//asmerr( 2022, op1_size, op2_size );
 		rc = asmerr( 2022, op1_size, op2_size );//ERROR;
@@ -2569,52 +2570,23 @@ int ParseLine( struct asm_tok tokenarray[] )
 		break;
 	    i++;
 	}
-	q = i + 1;
 	if( EvalOperand( &i, tokenarray, Token_Count, &opndx[j], 0 ) == ERROR ) {
 	    return( ERROR );
 	}
-	switch ( opndx[j].kind ) {
-
-	case EXPR_REG:
-	case EXPR_ADDR:
-
-	    if ( q < i ) {
-
-		q = i - 1;
-		while ( tokenarray[q].hll_flags & T_EVEX_OPT	) {
-
-		    switch ( tokenarray[q].string_ptr[0] | 0x20 ) {
-		    case 'k': /* get {k1} */
-			/* @@ no range test.. */
-			CodeInfo.evexP3 |= ( ( tokenarray[q].string_ptr[1] - '0' ) & 0x07 );
-			break;
-		    case '1': /* get {1to16} */
-			switch ( tokenarray[q].string_ptr[3] ) {
-			case '2':
-			    CodeInfo.vflags |= VX_1T2;
-			    break;
-			case '4':
-			    CodeInfo.vflags |= VX_1T4;
-			    break;
-			case '8':
-			    CodeInfo.vflags |= VX_1T8;
-			    break;
-			case '1':
-			    CodeInfo.vflags |= VX_1T16;
-			    break;
-			}
-			break;
-		    case 'z': /* get {z} */
-			CodeInfo.evexP3 |= VX3_Z;
-			break;
-		    default:
-			return asmerr(2008, tokenarray[q].string_ptr );
-		    }
-		    q--;
-		}
+	if ( tokenarray[i-1].hll_flags & T_EVEX_OPT ) {
+	    CodeInfo.prefix.evex = 1;
+	    q = i - 1; /* get transform modifiers */
+	    do {
+		if ( parsevex( tokenarray[q].string_ptr, &CodeInfo.evexP3 ) == 0 )
+		    return asmerr(2008, tokenarray[q].string_ptr );
+	    } while ( tokenarray[--q].hll_flags & T_EVEX_OPT );
+	    if ( opndx[j].kind == EXPR_EMPTY ) {
+		j--;
+		continue;
 	    }
-	    break;
+	}
 
+	switch ( opndx[j].kind ) {
 	case EXPR_FLOAT:
 	    /* v2.06: accept float constants for PUSH */
 	    if ( j == OPND2 || CodeInfo.token == T_PUSH || CodeInfo.token == T_PUSHD ) {

@@ -1,12 +1,47 @@
 ;
-; AVX2 testcases written for gas
-;
-; http://sourceware.org/ml/binutils/2011-06/msg00150.html
+; AVX-2
 ;
     .x64
     .model flat
     .code
 
+    vpmaskmovd xmm6,xmm4,OWORD PTR [rcx]
+    vpmaskmovd OWORD PTR [rcx],xmm6,xmm4
+    vpmaskmovq xmm6,xmm4,OWORD PTR [rcx]
+    vpmaskmovq OWORD PTR [rcx],xmm6,xmm4
+
+    vpsrlvq xmm2,xmm6,xmm4
+    vpsrlvq xmm2,xmm6,OWORD PTR [rcx]
+
+    vpmaskmovd ymm6,ymm4,YMMWORD PTR [rcx]
+    vpmaskmovd YMMWORD PTR [rcx],ymm6,ymm4
+    vpmaskmovq ymm6,ymm4,YMMWORD PTR [rcx]
+    vpmaskmovq YMMWORD PTR [rcx],ymm6,ymm4
+
+    vpermpd ymm2,ymm6,0x7
+    vpermpd ymm6,YMMWORD PTR [rcx],0x7
+    vpermq  ymm2,ymm6,0x7
+    vpermq  ymm6,YMMWORD PTR [rcx],0x7
+    vpermd  ymm2,ymm6,ymm4
+    vpermd  ymm2,ymm6,YMMWORD PTR [rcx]
+    vpermps ymm2,ymm6,ymm4
+    vpermps ymm2,ymm6,YMMWORD PTR [rcx]
+    vpsllvd ymm2,ymm6,ymm4
+    vpsllvd ymm2,ymm6,YMMWORD PTR [rcx]
+    vpsllvq ymm2,ymm6,ymm4
+    vpsllvq ymm2,ymm6,YMMWORD PTR [rcx]
+    vpsravd ymm2,ymm6,ymm4
+    vpsravd ymm2,ymm6,YMMWORD PTR [rcx]
+    vpsrlvd ymm2,ymm6,ymm4
+    vpsrlvd ymm2,ymm6,YMMWORD PTR [rcx]
+    vpsrlvq ymm2,ymm6,ymm4
+    vpsrlvq ymm2,ymm6,YMMWORD PTR [rcx]
+
+;
+; AVX2 testcases written for gas
+;
+; http://sourceware.org/ml/binutils/2011-06/msg00150.html
+;
 ; b/gas/testsuite/gas/i386/avx2-intel.d
 
     vpmaskmovd ymm6,ymm4,ymmword ptr [rcx]

@@ -105,7 +105,7 @@ enum operand_sets {
     OP_ZMM_M128	   = ( OP_ZMM | OP_M128 ),
     OP_ZMM_M256	   = ( OP_ZMM | OP_M256 ),
     OP_M256_M128   = ( OP_M256| OP_M128 ),
-    OP_XMM_MXMM	   = ( OP_XMM | OP_YMM | OP_M128 | OP_M256 | OP_M512 ),
+    OP_XMM_MXMM	   = ( OP_XMM | OP_YMM | OP_M128 | OP_M256 | OP_M512 | OP_M64 | OP_M32 ),
     OP_XMM_YMM	   = ( OP_XMM | OP_YMM ),
     OP_YMM_ZMM	   = ( OP_YMM | OP_ZMM ),
     OP_M32_M64	   = ( OP_M32 | OP_M64 ),

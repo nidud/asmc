@@ -1953,12 +1953,13 @@ zip_deflate PROC USES esi edi ebx level
 	xor	esi,esi
 	malloc( SIZE S_DEFLATE )
 	jz	toend
+	mov	ebx,level
 	mov	ebp,eax
 	mov	edi,eax
 	mov	ecx,SIZE S_DEFLATE
 	xor	eax,eax
 	rep	stosb
-	mov	edi,level
+	mov	edi,ebx
 	mov	[ebp].compr_level,edi
 	lea	eax,[ebp].head_buf
 	mov	[ebp].head,eax

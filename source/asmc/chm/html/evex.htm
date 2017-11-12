@@ -1,0 +1,29 @@
+<HTML><HEAD><TITLE>Enhanced vector extension</TITLE></HEAD>
+<BODY>
+Asmc Macro Assembler Reference
+<H2>Enhanced vector extension</H2>
+
+<p>From version 2.26 Asmc support the Intel AVX-512 instruction set.</p>
+
+<p>
+This includes
+12 new 128-bit registers (XMM16 to XMM31),
+12 new 256-bit registers (YMM16 to YMM31),
+32 new 512-bit registers (ZMM0 to ZMM31), and
+8 new opmask registers (K0 to K7).</p>
+
+<p>
+The EVEX encoding prefix will be omitted by using an EVEX exclusive
+instruction or any of the extended SIMD registers. A preceding prefix
+(<b>{evex}</b>) may be used for EVEX encoding of other instructions.</p>
+<pre>
+    vcomisd xmm0,xmm1        ; normal
+    vcomisd xmm0,xmm16       ; prefix (auto)
+    {evex} vcomisd xmm0,xmm1 ; prefix
+</pre>
+
+<h4>See Also</h4>
+<a href="extensions.htm">Asmc Extensions</a> |
+<a href="jwasm/CHAPINSTRSET.htm">Instruction Sets</a>
+</BODY>
+</HTML>

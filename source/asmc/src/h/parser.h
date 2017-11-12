@@ -250,7 +250,7 @@ struct opnd_item {
 #define VX3_Z	0x80 /* {z} */
 #define VX3_L1	0x40
 #define VX3_L0	0x20
-#define VX3_B	0x10
+#define VX3_B	0x10 /* {1to4} {1to8} {1to16} */
 #define VX3_V	0x08
 #define VX3_A2	0x04 /* {k1..k7} */
 #define VX3_A1	0x02
@@ -259,16 +259,15 @@ struct opnd_item {
 #define VX_OP1V 0x01 /* set if op1..3 is [z|y|x]mm16..31 register */
 #define VX_OP2V 0x02
 #define VX_OP3V 0x04
-#define VX_1T2	0x08 /* {1to2..16} */
-#define VX_1T4	0x10
-#define VX_1T8	0x18
-#define VX_1T16 0x20
-#define VX_1TOX 0x38
-#define VX_ZMM	0x40 /* ZMM used */
-#define VX_EVEX 0x47 /* auto set.. */
-#define VX_OP3	0x80 /* more than 2 instruction args used */
+#define VX_OP3	0x08 /* more than 2 instruction args used */
+#define VX_ZMM	0x10 /* ZMM used */
+#define VX_SAE	0x20 /* {sae} used */
 
+/* pinstr->evex */
+#define VX_RXB	0x0F /* P1: R.X.B.R1 */
 #define VX_XMMI 0x08 /* XMM register used as index */
+#define VX_NV0	0x04 /* P2: V0=0 */
+#define VX_W1	0x02 /* P2: W=1 */
 
 struct code_info {
     struct {
@@ -283,8 +282,8 @@ struct code_info {
     struct opnd_item opnd[MAX_OPND];
     enum instr_token token;
     unsigned char mem_type;		/* byte / word / etc. NOT near/far */
-    unsigned char vflags;
     unsigned char evexP3;
+    unsigned char vflags;
     unsigned char rm_byte;
     unsigned char sib;
     unsigned char Ofssize;
@@ -343,5 +342,6 @@ void set_frame2( const struct asym *sym );
 int  ParseLine( struct asm_tok[] );
 void ProcessFile( struct asm_tok[] );
 void WritePreprocessedLine( const char * );
+int  parsevex( char *, unsigned char * );
 
 #endif

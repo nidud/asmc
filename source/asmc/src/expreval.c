@@ -239,7 +239,11 @@ static ret_code get_operand( struct expr *opnd, int *idx, struct asm_tok tokenar
 	    if ( tokenarray[i].string_delim == '\0' &&
 		( *tokenarray[i].string_ptr == '"' || *tokenarray[i].string_ptr == '\'' ))
 		fnasmerr( 2046 );
-	    else
+	    else if ( tokenarray[i].string_delim == '{' ) {
+		tokenarray[i].hll_flags |= T_EVEX_OPT;
+		opnd->kind = EXPR_EMPTY;
+		break;
+	    } else
 		fnasmerr( 2167, tokenarray[i].tokpos );
 	    return( ERROR );
 	}

@@ -2249,8 +2249,9 @@ int LabelMacro( struct asm_tok tokenarray[] )
     return 0;
 }
 
+int PublicDirective( int, struct asm_tok[] );
+
 int ParseLine( struct asm_tok tokenarray[] )
-/**********************************************/
 {
     int			i;
     int			j;
@@ -2303,9 +2304,17 @@ int ParseLine( struct asm_tok tokenarray[] )
 
 	/* create a global or local code label */
 	if( CreateLabel( tokenarray[0].string_ptr, MT_NEAR, NULL,
-			( ModuleInfo.scoped && CurrProc && tokenarray[1].token != T_DBL_COLON ) ) == NULL ) {
+		( ModuleInfo.scoped && CurrProc && tokenarray[1].token != T_DBL_COLON ) ) == NULL ) {
 	    return( ERROR );
 	}
+	/* v2.26: make label:: public */
+	if ( tokenarray[1].token == T_DBL_COLON && ModuleInfo.scoped && !CurrProc ) {
+
+	    tokenarray[1].token = T_FINAL;
+	    Token_Count = 1;
+	    PublicDirective( -1, tokenarray );
+	}
+
 	if ( tokenarray[i].token == T_FINAL ) {
 	    /* v2.06: this is a bit too late. Should be done BEFORE
 	     * CreateLabel, because of '@@'. There's a flag supposed to

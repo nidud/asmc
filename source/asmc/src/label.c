@@ -68,9 +68,7 @@ char *GetAnonymousLabel( char *buffer, int value )
  * - bLocal: if TRUE, code label is to be defined locally; it's ensured
  *   that CurrProc is != NULL and ModuleInfo.scoped == TRUE then.
  */
-//struct asym *CreateLabel( const char *name, enum memtype mem_type, struct qualified_type *ti, bool bLocal )
 struct asym *CreateLabel( const char *name, unsigned char mem_type, struct qualified_type *ti, bool bLocal )
-/*********************************************************************************************************/
 {
     struct asym		*sym;
     uint_32		addr;
@@ -91,7 +89,6 @@ struct asym *CreateLabel( const char *name, unsigned char mem_type, struct quali
 	}
     }
 
-    //if( strcmp( name, "@@" ) == 0 ) {
     if( name[0] == '@' && name[1] == '@' && name[2] == NULLC ) {
 	sprintf( buffer, "L&_%04u", ++ModuleInfo.g.anonymous_label );
 	name = buffer;

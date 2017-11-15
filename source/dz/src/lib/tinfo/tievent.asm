@@ -133,6 +133,16 @@ ticlippaste proc uses esi edi ebx ti:PTINFO
 
     .if ClipboardPaste()
 
+        mov ebx,eax
+
+        mov ecx,clipbsize   ; case not tabs and inserted
+        mov al,9            ; text include tabs..
+        mov edi,ebx
+        repnz scasb
+        .ifz
+            or [esi].ti_flag,_T_USETABS
+        .endif
+
         push [esi].ti_flag
         push [esi].ti_yoff
         push [esi].ti_loff
@@ -142,57 +152,55 @@ ticlippaste proc uses esi edi ebx ti:PTINFO
         and [esi].ti_flag,not (_T_USEINDENT or _T_OPTIMALFILL)
         mov edx,esi
         mov esi,clipbsize
-        mov edi,eax
+        mov edi,ebx
 
-        .while  1
+        .repeat
 
-            @@:
+            .repeat
 
-            movzx eax,byte ptr [edi]
-            .break .if !eax
+                movzx eax,byte ptr [edi]
+                .break(1) .if !eax
 
-            inc edi
-            push  eax
-            tiputc(ti, eax)
-            cmp eax,_TI_CONTINUE
-            pop eax
-            .break .ifnz
-            dec esi
-            .break .ifz
-            test byte ptr _ltype[eax+1],_SPACE
-            jnz @B
+                inc edi
+                push  eax
+                tiputc(ti, eax)
+                cmp eax,_TI_CONTINUE
+                pop eax
+                .break(1) .ifnz
+                dec esi
+                .break(1) .ifz
+            .until !( _ltype[eax+1] & _SPACE )
 
             .if esi >= 128
 
-                @@:
+                .while 1
+                    mov eax,[edx].ti_yoff
+                    add eax,[edx].ti_loff
+                    mov ecx,[edx].ti_xoff
+                    add ecx,[edx].ti_boff
+                    .break(1) .if !tigeto(edx, eax, ecx)
 
-                mov eax,[edx].ti_yoff
-                add eax,[edx].ti_loff
-                mov ecx,[edx].ti_xoff
-                add ecx,[edx].ti_boff
-                .break .if !tigeto(edx, eax, ecx)
+                    mov ebx,eax
+                    strlen(eax)
+                    add eax,esi
+                    add eax,ebx
+                    mov ecx,[edx].ti_bp
+                    add ecx,[edx].ti_blen
+                    sub ecx,128
+                    .if eax < ecx
 
-                mov ebx,eax
-                strlen(eax)
-                add eax,esi
-                add eax,ebx
-                mov ecx,[edx].ti_bp
-                add ecx,[edx].ti_blen
-                sub ecx,128
-                .if eax < ecx
+                        strins(ebx, edi)
+                        mov [edx].ti_lcnt,1
+                        mov eax,[edx].ti_bp
 
-                    strins(ebx, edi)
-                    mov [edx].ti_lcnt,1
-                    mov eax,[edx].ti_bp
-
-                    .while strchr(eax, 10)
-                        inc [edx].ti_lcnt
-                        inc eax
-                    .endw
-                    .break
-                .endif
-                .break .if !tirealloc(edx)
-                jmp @B
+                        .while strchr(eax, 10)
+                            inc [edx].ti_lcnt
+                            inc eax
+                        .endw
+                        .break(1)
+                    .endif
+                    .break(1) .if !tirealloc(edx)
+                .endw
             .endif
 
             .while esi
@@ -205,8 +213,7 @@ ticlippaste proc uses esi edi ebx ti:PTINFO
                 .break .if eax != _TI_CONTINUE
                 sub esi,1
             .endw
-            .break
-        .endw
+        .until 1
 
         ClipboardFree()
 

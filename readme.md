@@ -4,7 +4,9 @@
    under the Sybase Open Watcom Public License. For more information
    about JWasm: http://sourceforge.net/projects/jwasm/
 
-   Asmc adds some features to the HLL section and a few other things.
+   Asmc adds some features to the HLL section and from version 2.26
+   also support the Intel AVX-512 instruction set.
+
 
 ## Requirements
 

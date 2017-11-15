@@ -34,12 +34,18 @@
 
 enum reservedword_flags {
     RWF_DISABLED = 0x01, /* keyword disabled */
-    RWF_IA32	 = 0x02, /* keyword specific to IA32 mode */
-    RWF_X64	 = 0x04, /* keyword specific to IA32+ mode */
-    RWF_VEX	 = 0x08, /* keyword triggers VEX encoding */
-    RWF_EVEX	 = 0x10, /* keyword triggers EVEX encoding */
-    RWF_QVM	 = 0x20,
-    RWF_T1S	 = 0x80
+    RWF_IA32	= 0x02, /* keyword specific to IA32 mode */
+    RWF_X64	= 0x04, /* keyword specific to IA32+ mode */
+    RWF_VEX	= 0x08, /* keyword triggers VEX encoding */
+    RWF_EVEX	= 0x10, /* keyword triggers EVEX encoding */
+    RWF_QVM	= 0x20,
+    RWF_OVM	= 0x40,
+    RWF_HVM	= 0x60,
+    RWF_T1S	= 0x80, /* +Tuple1 Fixed (T1F) */
+    RWF_T2	= 0xA0,
+    RWF_T4	= 0xC0,
+    RWF_M128	= 0xE0,
+    RWF_MASK	= 0xE0, /* TupleType */
 };
 
 /* structure of items in the "reserved names" table ResWordTable[] */

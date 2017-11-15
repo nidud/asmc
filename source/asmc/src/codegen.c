@@ -84,6 +84,7 @@ static void output_opc( struct code_info *CodeInfo )
     uint_8 fpfix = FALSE;
     uint_8 vflags = CodeInfo->vflags;
     uint_8 rflags = ResWordTable[CodeInfo->token].flags;
+    uint_8 tuple = ( rflags & RWF_MASK );
 
     if ( rflags & RWF_EVEX )
 	CodeInfo->prefix.evex = 1;
@@ -372,12 +373,12 @@ static void output_opc( struct code_info *CodeInfo )
 			if ( evex == 0x20 )
 			    ins++;
 		    case VX_OP3|VX_OP3V:		/* 0, 0, 1 */
-			if ( rflags & ( RWF_T1S | RWF_QVM ) )
+			if ( !( evex & VX_W1 ) && ( tuple == RWF_T1S || tuple == RWF_QVM ) )
 			    byte1 &= ~VX1_R1;
 			else {
 			    byte1 &= ~VX1_X;
-			if ( !( vflags & VX_ZMM ) && !( CodeInfo->sib & 0xC0 ) )
-			    byte1 |= VX1_R1;
+			    if ( !( vflags & VX_ZMM ) && !( CodeInfo->sib & 0xC0 ) )
+				byte1 |= VX1_R1;
 			}
 			break;
 		    case VX_OP3|VX_OP1V|VX_OP2V:	/* 1, 1, 0 */
@@ -409,7 +410,7 @@ static void output_opc( struct code_info *CodeInfo )
 				ins++;
 			}
 			byte1 &= ~VX1_R1;
-			if ( !( vflags & VX_ZMM ) && !( rflags & RWF_T1S && byte3 ) )
+			if ( !( vflags & VX_ZMM ) && !( tuple == RWF_T1S && byte3 ) )
 			    byte3 |= VX3_V;
 			break;
 		    case VX_OP3|VX_OP1V|VX_OP2V|VX_OP3V:/* 1, 1, 1 */
@@ -419,7 +420,9 @@ static void output_opc( struct code_info *CodeInfo )
 			byte1 &= ~( VX1_R1 | VX1_X );
 			break;
 		    case VX_OP3|VX_OP2V:		/* 0, 1, 0 */
-			if ( ( evex != 0x80 ) && ( ( vflags & VX_ZMM || CodeInfo->sib & 0xC0 ) && !( rflags & RWF_T1S ) ) ) {
+			if ( ( ( evex & 0xFD ) != 0x80 ) &&
+			   ( ( vflags & VX_ZMM || CodeInfo->sib & 0xC0 ) &&
+			    !( !( vex & VX_RW1 ) && tuple == RWF_T1S ) ) ) {
 			    byte3 &= ~VX3_V;
 			    byte1 |= VX1_R1;
 			} else
@@ -527,44 +530,113 @@ static void output_opc( struct code_info *CodeInfo )
 	    if ( evex & VX_W1 )
 		vex &= ~VX_RW0;
 
+	    /* Get index of memory address if any */
 	    if ( CodeInfo->opnd[OPND2].type & OP_M_ANY )
 		index++;
 	    if ( CodeInfo->opnd[index].type & OP_M_ANY ) {
-		if ( rflags & RWF_T1S ) {
-		    tmp = MT_DWORD;
-		    if ( vex & VX_RW1 && !( vex & VX_RW0 ) )
-			tmp = MT_QWORD;
+
+		/* EVEX-encoded instructions use a compressed displacement */
+
+		if ( tuple == RWF_T1S ) {
+
+		    tmp = MT_DWORD + 1;
+		    if ( CodeInfo->mem_type == MT_BYTE )
+			tmp = MT_BYTE + 1;
+		    else if ( CodeInfo->mem_type == MT_WORD )
+			tmp = MT_WORD + 1;
+		    else if ( evex & VX_W1 || vex & VX_RW1 )
+			tmp = MT_QWORD + 1;
+
+		} else if ( CodeInfo->evexP3 & VX3_B ) {
+
+		    /* Embedded Broadcast {1tox} - EVEX.B=1 */
+
+		    tmp = MT_DWORD + 1; /* Full Vector (FV) || Half Vector (HV) && EVEX.W0 */
+		    if ( evex & VX_W1 || ( vex & VX_RW1 && !( vex & VX_RW0 ) ) )
+			tmp = MT_QWORD + 1; /* FV && EVEX.W1 */
+
 		} else {
-		    tmp = CodeInfo->mem_type;
-		    switch ( tmp ) {
+		    /*
+		     * Instructions Not Affected by Embedded Broadcast
+		     *
+		     * Type	ISize	EVEX.W	128	256	512	Comment
+		     *
+		     * FVM	N/A	N/A	16	32	64	Load/store or subDword full vector
+		     * T1S	8bit	N/A	1	1	1	1 Tuple less than Full Vector
+		     *		16bit	N/A	2	2	2
+		     *		32bit	0	4	4	4
+		     *		64bit	1	8	8	8
+		     * T1F	32bit	N/A	4	4	4	1 Tuple memsize not affected by
+		     *		64bit	N/A	8	8	8	EVEX.W
+		     * T2	32bit	0	8	8	8	Broadcast (2 elements)
+		     *		64bit	1	NA	16	16
+		     * T4	32bit	0	NA	16	16	Broadcast (4 elements)
+		     *		64bit	1	NA	NA	32
+		     * T8	32bit	0	NA	NA	32	Broadcast (8 elements)
+		     * HVM	N/A	N/A	8	16	32	SubQword Conversion
+		     * QVM	N/A	N/A	4	8	16	SubDword Conversion
+		     * OVM	N/A	N/A	2	4	8	SubWord Conversion
+		     * M128	N/A	N/A	16	16	16	Shift count from memory
+		     * MOVDDUP	N/A	N/A	8	32	64	VMOVDDUP
+		     */
+		    switch ( CodeInfo->mem_type ) {
 		    case MT_OWORD:
 		    case MT_YWORD:
 		    case MT_ZWORD:
 		    case MT_DWORD:
 		    case MT_QWORD:
+			tmp = CodeInfo->mem_type + 1;
 			break;
 		    default:
-			switch ( CodeInfo->opnd[index ^ 1].type ) {
-			case OP_ZMM:
-			    if ( CodeInfo->opnd[index].type & OP_M512 ) {
-				tmp = MT_ZWORD;
-				break;
-			    }
-			case OP_YMM:
-			    if ( CodeInfo->opnd[index].type & OP_M256 ) {
-				tmp = MT_YWORD;
-				break;
-			    }
-			case OP_XMM:
-			    if ( CodeInfo->opnd[index].type & OP_M128 ) {
-				tmp = MT_OWORD;
-				break;
-			    }
-			default:
-			    tmp = 0;
+			if ( CodeInfo->opnd[index].type & OP_M512 )
+			    tmp = MT_ZWORD + 1;
+			else if ( CodeInfo->opnd[index].type & OP_M256 )
+			    tmp = MT_YWORD + 1;
+			else if ( CodeInfo->opnd[index].type & OP_M128 )
+			    tmp = MT_OWORD + 1;
+			else
+			    break;
+			switch ( tuple ) {
+			case RWF_QVM:
+			    if ( tmp == MT_ZWORD + 1 )
+				tmp = MT_OWORD + 1;
+			    else if ( tmp == MT_YWORD + 1 )
+				tmp = MT_QWORD + 1;
+			    else
+				tmp = MT_DWORD + 1;
+			    break;
+			case RWF_OVM:
+			    if ( tmp == MT_ZWORD + 1 )
+				tmp = MT_QWORD + 1;
+			    else if ( tmp == MT_YWORD + 1 )
+				tmp = MT_DWORD + 1;
+			    else
+				tmp = MT_WORD + 1;
+			    break;
+			case RWF_HVM:
+			    if ( tmp == MT_ZWORD + 1 )
+				tmp = MT_YWORD + 1;
+			    else if ( tmp == MT_YWORD + 1 )
+				tmp = MT_OWORD + 1;
+			    else
+				tmp = MT_QWORD + 1;
+			    break;
+			case RWF_T2:
+			    if ( vex & VX_RW1 )
+				tmp = MT_OWORD + 1;
+			    else
+				tmp = MT_QWORD + 1;
+			    break;
+			case RWF_T4:
+			    if ( vex & VX_RW1 )
+				tmp = MT_YWORD + 1;
+			    else
+				tmp = MT_OWORD + 1;
+			    break;
+			case RWF_M128:
+			    tmp = MT_OWORD + 1;
 			    break;
 			}
-			break;
 		    }
 		}
 	    }
@@ -574,9 +646,9 @@ static void output_opc( struct code_info *CodeInfo )
 		CodeInfo->rm_byte |= MOD_10;
 		CodeInfo->rm_byte &= ~MOD_01;
 
-		if ( !( CodeInfo->opnd[index].data32l & tmp ) ) {
+		if ( !( CodeInfo->opnd[index].data32l & ( tmp - 1 ) ) ) {
 
-		    tmp = ( CodeInfo->opnd[index].data32l / ( tmp + 1 ) );
+		    tmp = ( CodeInfo->opnd[index].data32l / tmp );
 		    if ( tmp >= SCHAR_MIN && tmp <= SCHAR_MAX ) {
 
 			CodeInfo->opnd[index].data32l = tmp;

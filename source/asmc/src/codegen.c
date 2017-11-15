@@ -536,6 +536,36 @@ static void output_opc( struct code_info *CodeInfo )
 			tmp = MT_QWORD;
 		} else {
 		    tmp = CodeInfo->mem_type;
+		    switch ( tmp ) {
+		    case MT_OWORD:
+		    case MT_YWORD:
+		    case MT_ZWORD:
+		    case MT_DWORD:
+		    case MT_QWORD:
+			break;
+		    default:
+			switch ( CodeInfo->opnd[index ^ 1].type ) {
+			case OP_ZMM:
+			    if ( CodeInfo->opnd[index].type & OP_M512 ) {
+				tmp = MT_ZWORD;
+				break;
+			    }
+			case OP_YMM:
+			    if ( CodeInfo->opnd[index].type & OP_M256 ) {
+				tmp = MT_YWORD;
+				break;
+			    }
+			case OP_XMM:
+			    if ( CodeInfo->opnd[index].type & OP_M128 ) {
+				tmp = MT_OWORD;
+				break;
+			    }
+			default:
+			    tmp = 0;
+			    break;
+			}
+			break;
+		    }
 		}
 	    }
 

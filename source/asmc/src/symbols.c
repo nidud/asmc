@@ -54,11 +54,11 @@
 #if HASH_MAGNITUDE==12
 #define GHASH_TABLE_SIZE 2003
 #else
-#define GHASH_TABLE_SIZE 8009
+#define GHASH_TABLE_SIZE 8192
 #endif
 
 /* size of local hash table */
-#define LHASH_TABLE_SIZE 127
+#define LHASH_TABLE_SIZE 128
 
 /* use memcpy()/memcmpi() directly?
  * this may speed-up things, but not with OW.
@@ -218,7 +218,7 @@ void SymSetLocal( struct asym *proc )
 
     SymClearLocal();
     for ( l = ((struct dsym *)proc)->e.procinfo->labellist; l; l = l->e.nextll ) {
-	i = hashpjw( l->sym.name ) % LHASH_TABLE_SIZE;
+	i = hashpjw( l->sym.name ) & ( LHASH_TABLE_SIZE - 1 );
 	lsym_table[i] = &l->sym;
     }
     return;
@@ -268,14 +268,14 @@ struct asym * FASTCALL SymFind( const char *name )
     i = hashpjw( name );
 
     if ( CurrProc ) {
-	for( lsym = &lsym_table[ i % LHASH_TABLE_SIZE ]; *lsym; lsym = &((*lsym)->nextitem ) ) {
+	for( lsym = &lsym_table[ i & ( LHASH_TABLE_SIZE - 1 )]; *lsym; lsym = &((*lsym)->nextitem ) ) {
 	    if ( len == (*lsym)->name_size && SYMCMP( name, (*lsym)->name, len ) == 0 ) {
 		return( *lsym );
 	    }
 	}
     }
 
-    for( gsym = &gsym_table[ i % GHASH_TABLE_SIZE ]; *gsym; gsym = &((*gsym)->nextitem ) ) {
+    for( gsym = &gsym_table[ i & ( GHASH_TABLE_SIZE - 1 ) ]; *gsym; gsym = &((*gsym)->nextitem ) ) {
 	if ( len == (*gsym)->name_size && SYMCMP( name, (*gsym)->name, len ) == 0 ) {
 	    return( *gsym );
 	}

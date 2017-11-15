@@ -16,7 +16,7 @@
 #include <condasm.h>
 #include <codegen.h>
 
-#define HASH_TABITEMS 811
+#define HASH_TABITEMS 1024//811
 #define GetPtr( x, y ) x->y
 
 /* reserved words hash table */
@@ -406,14 +406,14 @@ static unsigned FASTCALL get_hash( const char *s, unsigned char size )
 	h ^= g;
 	h ^= g >> 13;
     }
-    return( h % HASH_TABITEMS );
+    return( h & ( HASH_TABITEMS - 1 ) );
 }
 
 unsigned FindResWord( char *name, unsigned size )
 /* search reserved word in hash table */
 {
     struct ReservedWord *inst;
-    unsigned i;
+    unsigned i,l;
 #ifdef BASEPTR
     __segment seg = FP_SEG( resw_strings );
 #endif
@@ -421,8 +421,10 @@ unsigned FindResWord( char *name, unsigned size )
     for( i = resw_table[ get_hash( name, size ) ]; i != 0; i = inst->next ) {
 	inst = &ResWordTable[i];
 	/* check if the name matches the entry for this inst in AsmChars */
-	if( inst->len == size && _memicmp( name, GetPtr( inst, name ), inst->len ) == 0 ) {
-	    return( i );
+	if( inst->len == size ) {
+	    for (l = 0; l < size && inst->name[l] == ( name[l] | ' ' ); l++ );
+	    if ( l == size )
+		return( i );
 	}
     }
     return( 0 );

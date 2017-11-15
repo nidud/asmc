@@ -876,15 +876,22 @@ dlradioevent proc uses esi edi
 
             .if tgetevent() == MOUSECMD
 
-                mousey()
-                .break(1) .if eax != y
+                .if mousey() != y
+                    mov eax,MOUSECMD
+                    .break(1)
+                .endif
                 mousex()
                 mov edx,x
                 dec edx
-                .break(1) .if eax < edx
+                .if eax < edx
+                    mov eax,MOUSECMD
+                    .break(1)
+                .endif
                 add edx,2
-                .break(1) .if eax > edx
-
+                .if eax > edx
+                    mov eax,MOUSECMD
+                    .break(1)
+                .endif
             .elseif eax != KEY_SPACE
 
                 .break(1)
@@ -948,7 +955,8 @@ dlcheckevent proc uses esi edi
 
     .repeat
         .repeat
-            .if tgetevent() == MOUSECMD
+            mov esi,tgetevent()
+            .if esi == MOUSECMD
 
                 mousey()
                 .break(1) .if eax != y
@@ -959,7 +967,7 @@ dlcheckevent proc uses esi edi
                 add edx,2
                 .break(1) .if eax > edx
 
-            .elseif eax != KEY_SPACE
+            .elseif esi != KEY_SPACE
 
                 .break(1)
             .endif
@@ -972,11 +980,10 @@ dlcheckevent proc uses esi edi
             scputc(x, y, 1, eax)
             msloop()
         .until [edi].S_TOBJ.to_flag & _O_EVENT
-        mov eax,KEY_SPACE
+        mov esi,KEY_SPACE
     .until 1
-    push eax
     CursorSet(&cursor)
-    pop eax
+    mov eax,esi
     ret
 
 dlcheckevent endp

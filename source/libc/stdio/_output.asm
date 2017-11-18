@@ -100,7 +100,7 @@ local   textlen:    dword
 local   prefixlen:  dword
 local   no_output:  dword
 local   fldwidth:   dword
-local   bufferiswide:   dword
+local   bufferiswide:dword
 local   padding:    dword
 local   text:       dword
 local   numeax:     dword
@@ -530,7 +530,7 @@ endif
                     mov hexoff,'A'-'9'-1
                     jmp COMMON_HEX
 
-                    .case 'x'
+                  .case 'x'
                     ;
                     ; unsigned lower hex output
                     ;

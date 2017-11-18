@@ -7,13 +7,10 @@ include fltintrn.inc
 ;
 ; the following should be set depending on the sizes of various types
 ;
-ifndef LONGDOUBLE_IS_DOUBLE
-LONGDOUBLE_IS_DOUBLE equ 0  ; 1 means long double is same as double
 LONG_IS_INT     equ 1       ; 1 means long is same size as int
 SHORT_IS_INT    equ 0       ; 1 means short is same size as int
 PTR_IS_INT      equ 1       ; 1 means ptr is same size as int
 PTR_IS_LONG     equ 1       ; 1 means ptr is same size as long
-endif
 
 BUFFERSIZE      equ 512     ; ANSI-specified minimum is 509
 
@@ -29,8 +26,9 @@ FL_NEGATIVE     equ 0x0100  ; value is negative
 FL_FORCEOCTAL   equ 0x0200  ; force leading '0' for octals
 FL_LONGDOUBLE   equ 0x0400  ; long double
 FL_WIDECHAR     equ 0x0800
-FL_LONGLONG     equ 0x1000  ; long long value given
+FL_LONGLONG     equ 0x1000  ; long long or REAL16 value given
 FL_I64          equ 0x8000  ; 64-bit value given
+FL_CAPEXP       equ 0x10000
 
 ST_NORMAL       equ 0       ; normal state; outputting literal chars
 ST_PERCENT      equ 1       ; just read '%'
@@ -47,23 +45,9 @@ else
 NUMSTATES       equ (ST_TYPE + 1)
 endif
 
-    .data
-
-cltable db 06h, 00h, 00h, 06h, 00h, 01h, 00h, 00h ;  !"#$%&' 20 00
-        db 10h, 00h, 03h, 06h, 00h, 06h, 02h, 10h ; ()*+,-./ 28 08
-        db 04h, 45h, 45h, 45h, 05h, 05h, 05h, 05h ; 01234567 30 10
-        db 05h, 35h, 30h, 00h, 50h, 00h, 00h, 00h ; 89:;<=>? 38 18
-        db 00h, 28h, 28h, 38h, 50h, 58h, 07h, 08h ; @ABCDEFG 40 20
-        db 00h, 37h, 30h, 30h, 57h, 50h, 07h, 00h ; HIJKLMNO 48 28
-        db 00h, 20h, 20h, 08h, 00h, 00h, 00h, 00h ; PQRSTUVW 50 30
-        db 08h, 60h, 68h, 60h, 60h, 60h, 60h, 00h ; XYZ[\]^_ 58 38
-        db 00h, 78h, 78h, 78h, 78h, 78h, 78h, 08h ; `abcdefg 60 40
-        db 07h, 08h, 00h, 00h, 07h, 00h, 08h, 08h ; hijklmno 68 48
-        db 08h, 00h, 00h, 08h, 00h, 08h, 00h, 07h ; pqrstuvw 70 50
-        db 08h                                    ; xyz{|}~  78 58
-
-__nullstring    db "(null)",0
-__wnullstring   dw '(','n','u','l','l',')',0
+externdef __lookuptable:byte
+externdef __nullstring:byte
+externdef __wnullstring:byte
 
     .code
 
@@ -127,23 +111,19 @@ local   fldwidth:   dword
 local   bufferiswide:dword
 local   padding:    dword
 local   text:       LPSTR
-local   capexp:     dword
 local   number:     qword
 local   wchar:      wint_t
 local   mbuf[MB_LEN_MAX+1]:byte
 local   buffer[BUFFERSIZE]:byte
-if LONGDOUBLE_IS_DOUBLE
-local   tmp:REAL8
-else
-local   tmp:REAL10
-endif
+local   tmp:REAL16
+
     xor eax,eax
     mov textlen,eax
     mov charsout,eax
     mov state,eax
 
     .while  1
-        lea     rbx,cltable
+        lea     rbx,__lookuptable
         mov     rax,format
         inc     format
         movzx   eax,BYTE PTR [rax]
@@ -185,7 +165,6 @@ endif
                 mov no_output,eax
                 mov fldwidth,eax
                 mov prefixlen,eax
-                mov capexp,eax
                 mov bufferiswide,eax
                 mov esi,eax ; flags
                 mov edi,eax ; precision
@@ -396,8 +375,8 @@ if 1
                   .case 'E'
                   .case 'G'
                   .case 'A'
-                    mov capexp,1    ; capitalize exponent
-                    add dl,'a' - 'A'; convert format char to lower
+                    or  esi,FL_CAPEXP   ; capitalize exponent
+                    add dl,'a' - 'A'    ; convert format char to lower
                     ;
                     ; DROP THROUGH
                     ;
@@ -409,45 +388,46 @@ if 1
                     ; floating point conversion -- we call cfltcvt routines
                     ; to do the work for us.
                     ;
-                    or  esi,FL_SIGNED ; floating point is signed conversion
-                    lea rax,buffer  ; put result in buffer
+                    or  esi,FL_SIGNED   ; floating point is signed conversion
+                    lea rax,buffer      ; put result in buffer
                     mov text,rax
                     ;
                     ; compute the precision value
                     ;
                     .ifs edi < 0
-                        mov edi,6 ; default precision: 6
+                        mov edi,6       ; default precision: 6
                     .elseif !edi && dl == 'g'
-                        mov edi,1 ; ANSI specified
+                        mov edi,1       ; ANSI specified
                     .endif
                     mov rcx,arglist
                     add arglist,8
                     mov rax,[rcx]
                     mov QWORD PTR tmp,rax
                     mov ebx,edx
-if (LONGDOUBLE_IS_DOUBLE eq 0)
                     ;
                     ; do the conversion
                     ;
                     mov r8d,edx
                     .if esi & FL_LONGDOUBLE
 
-                        add arglist,8
-                        mov ax,[rcx+8]
-                        mov WORD PTR tmp[8],ax
+                        mov rcx,[rax]
+                        mov QWORD PTR tmp,rcx
+                        mov cx,[rax+8]
+                        mov WORD PTR tmp[8],cx
                         ;
                         ; Note: assumes ch is in ASCII range
                         ;
-                        _cldcvt(&tmp, text, r8d, edi, capexp)
+                        _ldcvt(&tmp, text, r8d, edi, esi)
+                    .elseif esi & FL_LONGLONG
+
+                        mov rcx,[rax]
+                        mov QWORD PTR tmp,rcx
+                        mov rcx,[rax+8]
+                        mov QWORD PTR tmp[8],rcx
+                        _qcvt(&tmp, text, r8d, edi, esi)
                     .else
-endif  ; !LONGDOUBLE_IS_DOUBLE
-                        ;
-                        ; Note: assumes ch is in ASCII range
-                        ;
-                        _cfltcvt(&tmp, text, r8d, edi, capexp)
-if (LONGDOUBLE_IS_DOUBLE eq 0)
+                        _dcvt(&tmp, text, r8d, edi, esi)
                     .endif
-endif
                     ;
                     ; '#' and precision == 0 means force a decimal point
                     ;

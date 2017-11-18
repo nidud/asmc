@@ -32,10 +32,10 @@ local nd, result:ptr
         .for ecx=1: ecx < n: ecx++
 
             mov rax,[rsi+rbx*8-8]
-            mul dword ptr [rdi+rcx*8]
+            mul qword ptr [rdi+rcx*8]
             _addq()
             mov rax,[rsi+rbx*8]
-            mul dword ptr [rdi+rcx*8-8]
+            mul qword ptr [rdi+rcx*8-8]
             _addq()
         .endf
     .endf

@@ -867,7 +867,8 @@ local \
                 AddLineQueue("mov rax,[rcx+rax*8]")
             .else
                 AddLineQueueX("lea rcx,%s", &l_jtab)
-                AddLineQueueX("mov rax,[rcx+rax*8-(%d*8)]", min)
+                AddLineQueueX("sub rax,%d", min)
+                AddLineQueue("mov rax,[rcx+rax*8]")
             .endif
 
             .if ModuleInfo.aflag & _AF_REGAX

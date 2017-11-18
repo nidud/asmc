@@ -596,6 +596,12 @@ static void output_opc( struct code_info *CodeInfo )
 			    tmp = MT_OWORD + 1;
 			else
 			    break;
+
+			if ( CodeInfo->opnd[index ^ 1].type == OP_ZMM )
+			    tmp = MT_ZWORD + 1;
+			else if ( CodeInfo->opnd[index ^ 1].type == OP_YMM )
+			    tmp = MT_YWORD + 1;
+
 			switch ( tuple ) {
 			case RWF_QVM:
 			    if ( tmp == MT_ZWORD + 1 )

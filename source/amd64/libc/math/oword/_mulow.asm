@@ -46,9 +46,9 @@ _mulow proc multiplier:ptr, multiplicand:ptr, highproduct:ptr
     .endif
     mov [rcx],rax
     mov [rcx+8],rdx
-    .if r9
-        mov [r9],r10
-        mov [r9+8],r11
+    .if r8
+        mov [r8],r10
+        mov [r8+8],r11
     .endif
     ret
 

@@ -2,29 +2,30 @@ include io.inc
 include errno.inc
 include winbase.inc
 
-	.code
+.code
 
-	option	win64:rsp nosave
+    option win64:nosave
 
-oswrite PROC USES rbx h:SINT, b:PVOID, z:SIZE_T
-local	lpNumberOfBytesWritten:dword
+oswrite proc uses rbx h:SINT, b:PVOID, z:SIZE_T
 
-	mov ebx,r8d
-	lea rax,_osfhnd
-	mov rcx,[rax+rcx*8]
-	.if WriteFile(rcx, rdx, r8d, &lpNumberOfBytesWritten, 0)
+local lpNumberOfBytesWritten:dword
 
-		mov eax,lpNumberOfBytesWritten
-		.if eax != ebx
-		    mov errno,ERROR_DISK_FULL
-		    xor eax,eax
-		.endif
-	.else
-	    osmaperr()
-	    xor eax,eax
-	.endif
+    mov ebx,r8d
+    lea rax,_osfhnd
+    mov rcx,[rax+rcx*8]
+    .if WriteFile(rcx, rdx, r8d, &lpNumberOfBytesWritten, 0)
 
-	ret
-oswrite ENDP
+        mov eax,lpNumberOfBytesWritten
+        .if eax != ebx
+            mov errno,ERROR_DISK_FULL
+            xor eax,eax
+        .endif
+    .else
+        osmaperr()
+        xor eax,eax
+    .endif
+    ret
 
-	END
+oswrite endp
+
+    end

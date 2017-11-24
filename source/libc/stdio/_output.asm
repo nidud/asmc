@@ -639,70 +639,57 @@ endif
                     .endif
                     mov numeax,eax
                     mov numedx,edx
-                    lea eax,buffer[BUFFERSIZE-1]
-                    mov text,eax
-                    jmp convert_next
+                    lea ecx,buffer[BUFFERSIZE-1]
+                    mov text,ecx
 
-                convert_loop:
-                    mov ecx,curadix
-                    mov eax,numeax
-                    mov edx,numedx
-                    test edx,edx
-                    jz  DIV00
-                    test    ecx,ecx
-                    jnz DIV01
-                DIV00:
-                    div ecx
-                    mov ecx,edx
-                    xor edx,edx
-                    jmp DIV06
-                DIV01:
-                    push esi
-                    push edi
-                    mov ebx,ecx
-                    mov ecx,64
-                    xor esi,esi
-                    xor edi,edi
-                DIV02:
-                    shl eax,1
-                    rcl edx,1
-                    rcl esi,1
-                    rcl edi,1
-                    cmp edi,0
-                    jb  DIV04
-                    ja  DIV03
-                    cmp esi,ebx
-                    jb  DIV04
-                DIV03:
-                    sub esi,ebx
-                    sbb edi,0
-                    inc eax
-                DIV04:
-                    dec ecx
-                    jnz DIV02
-                    mov ebx,esi
-                DIV05:
-                    mov ecx,ebx
-                    pop edi
-                    pop esi
-                DIV06:
-                    mov numeax,eax
-                    mov numedx,edx
-                    add ecx,'0'
-                    .ifs ecx > '9'
-
-                        add ecx,hexoff
-                    .endif
-                    mov edx,text
-                    mov [edx],cl
-                    sub text,1
-                convert_next:
-                    mov ecx,edi
-                    dec edi
-                    test    ecx,ecx
-                    jg  convert_loop
-                    or  eax,numedx
-                    jnz convert_loop
+                    .while 1
+                        mov ecx,edi
+                        dec edi
+                        test ecx,ecx
+                        .ifng
+                            or eax,numedx
+                            .break .ifz
+                        .endif
+                        mov ecx,curadix
+                        mov eax,numeax
+                        mov edx,numedx
+                        .if !edx || !ecx
+                            div ecx
+                            mov ecx,edx
+                            xor edx,edx
+                        .else
+                            push esi
+                            push edi
+                            mov ebx,ecx
+                            mov ecx,64
+                            xor esi,esi
+                            xor edi,edi
+                            .repeat
+                                shl eax,1
+                                rcl edx,1
+                                rcl esi,1
+                                rcl edi,1
+                                .if edi || esi >= ebx
+                                    sub esi,ebx
+                                    sbb edi,0
+                                    inc eax
+                                .endif
+                            .untilcxz
+                            mov ebx,esi
+                            mov ecx,ebx
+                            pop edi
+                            pop esi
+                        .endif
+                        mov numeax,eax
+                        mov numedx,edx
+                        add ecx,'0'
+                        .ifs ecx > '9'
+                            add ecx,hexoff
+                        .endif
+                        mov edx,text
+                        mov [edx],cl
+                        sub text,1
+                    .endw
                     ;
                     ; compute length of number
                     ;

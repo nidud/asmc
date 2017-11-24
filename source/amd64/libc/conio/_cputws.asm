@@ -3,7 +3,7 @@ include wchar.inc
 
     .code
 
-    option win64:2
+    option win64:rsp nosave
 
 _cputws proc uses rsi string:LPWSTR
 

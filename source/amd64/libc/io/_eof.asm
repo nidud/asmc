@@ -1,27 +1,25 @@
 include io.inc
 
-	.code
+    .code
 
-	OPTION	WIN64:2, STACKBASE:rsp
+_eof proc uses rsi handle:SINT
 
-_eof	PROC USES rsi rdi handle:SINT
+    .if _lseeki64(ecx, 0, SEEK_CUR) != -1
 
-	mov	edi,ecx
-	_lseeki64( ecx, 0, SEEK_CUR )
-	mov	rsi,rax
-	_lseeki64( edi, 0, SEEK_END )
+        mov rsi,rax
+        .if _lseeki64(handle, 0, SEEK_END) != -1
 
-	cmp	rax,rsi
-	jne	not_eof
-	cmp	rax,-1
-	je	toend
-	mov	eax,1
-	jmp	toend
-not_eof:
-	_lseeki64( edi, rsi, SEEK_SET )
-	xor	eax,eax
-toend:
-	ret
-_eof	ENDP
+            .if rax != rsi
 
-	END
+                _lseeki64(handle, rsi, SEEK_SET)
+                xor eax,eax
+            .else
+                mov eax,1
+            .endif
+        .endif
+    .endif
+    ret
+
+_eof endp
+
+    end

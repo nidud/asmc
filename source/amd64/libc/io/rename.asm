@@ -1,17 +1,19 @@
 include io.inc
 include winbase.inc
 
-	.code
+.code
 
-	option win64:rsp nosave
+option win64:rsp nosave
 
-rename	PROC Oldname:LPSTR, Newname:LPSTR
-	.if MoveFile(rcx, rdx)
-	    xor rax,rax
-	.else
-	    osmaperr()
-	.endif
-	ret
-rename	ENDP
+rename proc Oldname:LPSTR, Newname:LPSTR
 
-	END
+    .if MoveFile(rcx, rdx)
+        xor rax,rax
+    .else
+        osmaperr()
+    .endif
+    ret
+
+rename endp
+
+    end

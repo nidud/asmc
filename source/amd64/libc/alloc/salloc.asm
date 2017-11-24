@@ -1,25 +1,23 @@
 include alloc.inc
 include string.inc
 
-	.code
+    .code
 
-	OPTION WIN64:2, STACKBASE:rsp
+    option win64:rsp nosave
 
-salloc	PROC USES rbx string:LPSTR
-	mov rbx,rcx
+salloc proc uses rbx string:LPSTR
 
-	.if strlen( rcx )
+    mov rbx,rcx
+    .if strlen(rcx)
 
-		inc rax
-		.if malloc(rax)
+        inc rax
+        .if malloc(rax)
 
-			strcpy( rax, rbx )
-			test	rax,rax
-		.endif
-	.endif
+            strcpy(rax, rbx)
+        .endif
+    .endif
+    ret
 
-	ret
+salloc endp
 
-salloc	ENDP
-
-	END
+    end

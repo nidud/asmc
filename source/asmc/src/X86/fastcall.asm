@@ -38,7 +38,7 @@ ELF64_START     equ 1 ; elf64: RDI first param start at bit 6
     .data
 
 externdef       sym_ReservedStack:LPASYM    ; max stack space required by INVOKE
-externdef       size_vararg:SINT            ; size of :VARARG arguments
+externdef       size_vararg:SINT        ; size of :VARARG arguments
 
 REGPAR_WIN64    equ 0x0306 ; regs 1, 2, 8 and 9
 REGPAR_ELF64    equ 0x03C6 ; regs 1, 2, 6, 7, 8 and 9
@@ -70,6 +70,9 @@ elf64_regs label byte
     db T_DI,  T_SI,  T_DX,  T_CX,  T_R8W, T_R9W
     db T_EDI, T_ESI, T_EDX, T_ECX, T_R8D, T_R9D
     db T_RDI, T_RSI, T_RDX, T_RCX, T_R8,  T_R9
+elf64_param_index label byte
+    ; AX CX DX BX SP BP SI DI R8 R9
+    db 0, 3, 2, 0, 0, 0, 1, 0, 4, 5, 0, 0, 0, 0, 0, 0
 endif
 
 ; segment register names, order must match ASSUME_ enum
@@ -168,7 +171,7 @@ GetParmIndex macro x
 ;-------------------------------------------------------------------------------
 
 ms32_fcstart proc pp:ptr nsym, numparams:SINT, start:SINT,
-        tokenarray:ptr asm_tok, value:ptr SINT
+    tokenarray:ptr asm_tok, value:ptr SINT
 
     .repeat
         .if GetSymOfssize(pp) == USE16
@@ -192,7 +195,7 @@ ms32_fcstart proc pp:ptr nsym, numparams:SINT, start:SINT,
 ms32_fcstart endp
 
 ms32_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:SINT,
-        opnd:ptr expr, paramvalue:LPSTR, r0used:ptr byte
+    opnd:ptr expr, paramvalue:LPSTR, r0used:ptr byte
 
     local z
 
@@ -281,10 +284,10 @@ ms32_fcend endp
 ;;
 
 watc_fcstart proc pp: ptr nsym,
-           numparams: SINT,
-               start: SINT,
-          tokenarray: ptr asm_tok,
-               value: ptr SINT
+       numparams: SINT,
+           start: SINT,
+      tokenarray: ptr asm_tok,
+           value: ptr SINT
     mov eax,1
     ret
 watc_fcstart endp
@@ -300,109 +303,110 @@ watc_param proc uses esi edi ebx pp, index, param, adr, opnd, paramvalue, r0used
     mov psize,SizeFromMemtype([ebx].asym.mem_type, USE_EMPTY, [ebx].asym._type)
 
     xor eax,eax
-    .if [ebx].asym.state != SYM_TMACRO
 
-        jmp toend
-    .endif
+    .repeat
 
-    ;; the "name" might be a register pair
+        .break .if [ebx].asym.state != SYM_TMACRO
 
-    lea esi,reg
-    mov edi,[ebx].asym.string_ptr
-    mov [esi],edi
-    mov [esi+4],eax
-    mov [esi+8],eax
-    mov [esi+12],eax
 
-    movzx eax,ModuleInfo.wordsize
-    add fcscratch,eax
+        ;; the "name" might be a register pair
 
-    .if strchr(edi, ':')
+        lea esi,reg
+        mov edi,[ebx].asym.string_ptr
+        mov [esi],edi
+        mov [esi+4],eax
+        mov [esi+8],eax
+        mov [esi+12],eax
 
-        strcpy(&regs, edi)
         movzx eax,ModuleInfo.wordsize
         add fcscratch,eax
 
-        .for ebx=&regs, edi=0: edi < 4: edi++
+        .if strchr(edi, ':')
 
-            mov [esi+edi*4],ebx
-            mov ebx,strchr(ebx, ':')
-            .break .if !ebx
-            mov byte ptr [ebx],0
-            inc ebx
-        .endf
-    .endif
+            strcpy(&regs, edi)
+            movzx eax,ModuleInfo.wordsize
+            add fcscratch,eax
 
-    mov edi,opnd
-    .if adr
-        mov edx,[edi].expr.sym
-        .if [edi].expr.kind == T_REG || [edx].asym.state == SYM_STACK
-            mov esi,T_LEA
-            mov ebx,T_NULL
-        .else
+            .for ebx=&regs, edi=0: edi < 4: edi++
+
+                mov [esi+edi*4],ebx
+                mov ebx,strchr(ebx, ':')
+                .break .if !ebx
+                mov byte ptr [ebx],0
+                inc ebx
+            .endf
+        .endif
+
+        mov edi,opnd
+        .if adr
+            mov edx,[edi].expr.sym
             mov esi,T_MOV
             mov ebx,T_OFFSET
-        .endif
-        ;
-        ; v2.05: filling of segment part added
-        ;
-        xor eax,eax
-        .if reg[1*4] != eax
-            .if GetSegmentPart(opnd, &buffer, paramvalue)
-                AddLineQueueX("%r %s, %r", T_MOV, reg, eax)
-            .else
-                AddLineQueueX("%r %s, %s", T_MOV, reg, &buffer)
+            .if [edi].expr.kind == T_REG || [edx].asym.state == SYM_STACK
+                mov esi,T_LEA
+                mov ebx,T_NULL
             .endif
-            mov eax,4
+            ;
+            ; v2.05: filling of segment part added
+            ;
+            xor eax,eax
+            .if reg[1*4] != eax
+                .if GetSegmentPart(opnd, &buffer, paramvalue)
+                    AddLineQueueX("%r %s, %r", T_MOV, reg, eax)
+                .else
+                    AddLineQueueX("%r %s, %s", T_MOV, reg, &buffer)
+                .endif
+                mov eax,4
+            .endif
+            mov eax,reg[eax]
+            AddLineQueueX("%r %s, %r %s", esi, eax, ebx, paramvalue)
+            mov eax,1
+            .break
         .endif
-        mov eax,reg[eax]
-        AddLineQueueX("%r %s, %r %s", esi, eax, ebx, paramvalue)
-        mov eax,1
-        jmp toend
-    .endif
 
-    .fors ebx = 3: ebx >= 0: ebx--
-        mov ecx,reg[ebx*4]
-        .if ecx
+        .fors ebx = 3: ebx >= 0: ebx--
+            mov ecx,reg[ebx*4]
+            .if ecx
 
-            .if [edi].expr.kind == EXPR_CONST
-                .ifs ebx > 0
-                    mov esi,T_LOWWORD
-                .elseif !ebx && reg[4]
-                    mov esi,T_HIGHWORD
-                .else
-                    mov esi,T_NULL
-                .endif
-                .if esi != T_NULL
-                    AddLineQueueX("mov %s, %r (%s)", ecx, esi, paramvalue)
-                .else
-                    AddLineQueueX("mov %s, %s", ecx, paramvalue)
-                .endif
-            .elseif [edi].expr.kind == EXPR_REG
-                AddLineQueueX("mov %s, %s", ecx, paramvalue)
-            .else
-                .if ebx == 0 && reg[4] == NULL
-                    AddLineQueueX("mov %s, %s", ecx, paramvalue)
-                .else
-                    .if ModuleInfo.Ofssize
-                        mov esi,T_DWORD
+                .if [edi].expr.kind == EXPR_CONST
+                    .ifs ebx > 0
+                        mov esi,T_LOWWORD
+                    .elseif !ebx && reg[4]
+                        mov esi,T_HIGHWORD
                     .else
-                        mov esi,T_WORD
+                        mov esi,T_NULL
                     .endif
-                    mov edi,ecx
-                    mov cl,ModuleInfo.Ofssize
-                    mov eax,2
-                    shl eax,cl
-                    lea ecx,[ebx+1]
-                    mul ecx
-                    mov ecx,psize
-                    sub ecx,eax
-                    AddLineQueueX("mov %s, %r %r %s[%u]", edi, esi, T_PTR, paramvalue, ecx)
+                    .if esi != T_NULL
+                        AddLineQueueX("mov %s, %r (%s)", ecx, esi, paramvalue)
+                    .else
+                        AddLineQueueX("mov %s, %s", ecx, paramvalue)
+                    .endif
+                .elseif [edi].expr.kind == EXPR_REG
+                    AddLineQueueX("mov %s, %s", ecx, paramvalue)
+                .else
+                    .if ebx == 0 && reg[4] == NULL
+                        AddLineQueueX("mov %s, %s", ecx, paramvalue)
+                    .else
+                        .if ModuleInfo.Ofssize
+                            mov esi,T_DWORD
+                        .else
+                            mov esi,T_WORD
+                        .endif
+                        mov edi,ecx
+                        mov cl,ModuleInfo.Ofssize
+                        mov eax,2
+                        shl eax,cl
+                        lea ecx,[ebx+1]
+                        mul ecx
+                        mov ecx,psize
+                        sub ecx,eax
+                        AddLineQueueX("mov %s, %r %r %s[%u]", edi, esi, T_PTR, paramvalue, ecx)
+                    .endif
                 .endif
             .endif
-        .endif
-    .endf
-    mov eax,1
+        .endf
+        mov eax,1
+    .until 1
 toend:
     ret
 watc_param endp
@@ -429,7 +433,7 @@ watc_fcend endp
 ;-------------------------------------------------------------------------------
 
 ms64_fcstart proc pp:ptr nsym, numparams:SINT, start:SINT,
-        tokenarray:ptr asm_tok, value:ptr SINT
+    tokenarray:ptr asm_tok, value:ptr SINT
 
     mov edx,pp
     mov edx,[edx].nsym.procinfo
@@ -483,71 +487,72 @@ ms64_fcstart endp
 ;
 
 check_register_overwrite proc uses esi edi ebx opnd:ptr expr,
-        regs_used:ptr byte, reg:ptr dword, destroyed:ptr byte, rmask:dword
+    regs_used:ptr byte, reg:ptr dword, destroyed:ptr byte, rmask:dword
 
-        mov edi,opnd
-        xor esi,esi
+    mov edi,opnd
+    xor esi,esi
 
-        .if [edi].expr.base_reg
-            mov ebx,[edi].expr.base_reg
-            mov ebx,[ebx].asm_tok.tokval
-            mov eax,reg
-            mov [eax],ebx
+    .if [edi].expr.base_reg
+        mov ebx,[edi].expr.base_reg
+        mov ebx,[ebx].asm_tok.tokval
+        mov eax,reg
+        mov [eax],ebx
 
-            .if GetValueSp(ebx) & OP_R
-                movzx ecx,GetRegNo(ebx)
+        .if GetValueSp(ebx) & OP_R
+            movzx ecx,GetRegNo(ebx)
+            mov eax,1
+            shl eax,cl
+            and eax,rmask
+            .if eax
+                lea ecx,[GetParmIndex(ecx)+RPAR_START]
                 mov eax,1
                 shl eax,cl
-                and eax,rmask
-                .if eax
-                    lea ecx,[GetParmIndex(ecx)+RPAR_START]
-                    mov eax,1
-                    shl eax,cl
-                    mov ecx,regs_used
-                    .if [ecx] & al
-                        mov esi,1
-                    .endif
-                .else
-                    mov ecx,regs_used
-                    .if byte ptr [ecx] & R0_USED
-                        .if GetValueSp(ebx) & OP_A || ebx == T_AH
-                            mov esi,TRUE
-                        .endif
-                    .endif
+                mov ecx,regs_used
+                .if [ecx] & al
+                    mov esi,1
                 .endif
-            .endif
-        .endif
-
-        .if [edi].expr.idx_reg
-            mov ebx,[edi].expr.idx_reg
-            mov ebx,[ebx].asm_tok.tokval
-
-            .if GetValueSp(ebx) & OP_R
-                movzx ecx,GetRegNo(ebx)
-                mov eax,1
-                shl eax,cl
-                and eax,rmask
-                .if eax
-                    lea ecx,[GetParmIndex(ecx)+RPAR_START]
-                    mov eax,1
-                    shl eax,cl
-                    mov ecx,regs_used
-                    .if [ecx] & al
+            .else
+                mov ecx,regs_used
+                .if byte ptr [ecx] & R0_USED
+                    .if GetValueSp(ebx) & OP_A || ebx == T_AH
                         mov esi,TRUE
                     .endif
-                .else
-                    mov ecx,regs_used
-                    .if byte ptr [ecx] & R0_USED
-                        .if GetValueSp(ebx) & OP_A || ebx == T_AH
-                            mov esi,TRUE
-                        .endif
+                .endif
+            .endif
+        .endif
+    .endif
+
+    .if [edi].expr.idx_reg
+
+        mov ebx,[edi].expr.idx_reg
+        mov ebx,[ebx].asm_tok.tokval
+
+        .if GetValueSp(ebx) & OP_R
+            movzx ecx,GetRegNo(ebx)
+            mov eax,1
+            shl eax,cl
+            and eax,rmask
+            .if eax
+                lea ecx,[GetParmIndex(ecx)+RPAR_START]
+                mov eax,1
+                shl eax,cl
+                mov ecx,regs_used
+                .if [ecx] & al
+                    mov esi,TRUE
+                .endif
+            .else
+                mov ecx,regs_used
+                .if byte ptr [ecx] & R0_USED
+                    .if GetValueSp(ebx) & OP_A || ebx == T_AH
+                        mov esi,TRUE
                     .endif
                 .endif
             .endif
         .endif
-        mov eax,destroyed
-        mov [eax],esi
-        ret
+    .endif
+    mov eax,destroyed
+    mov [eax],esi
+    ret
 
 check_register_overwrite endp
 
@@ -557,6 +562,7 @@ GetPSize proc adr
     ; v2.11: default size is 32-bit, not 64-bit
     ;
     .if [edx].asym.sint_flag & SINT_ISVARARG
+
         xor eax,eax
         .if adr || [edi].expr._instr == T_OFFSET
             mov eax,8
@@ -616,7 +622,7 @@ CheckXMM proc reg, paramvalue, regs_used, param
 CheckXMM endp
 
 ms64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:SINT,
-        opnd:ptr expr, paramvalue:LPSTR, regs_used:ptr byte
+    opnd:ptr expr, paramvalue:LPSTR, regs_used:ptr byte
 
     local z, psize, reg, i, destroyed
 
@@ -628,7 +634,7 @@ ms64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:SI
 
         mov psize,GetPSize(adr)
         check_register_overwrite(
-                edi, regs_used, &reg, &destroyed, REGPAR_WIN64 )
+            edi, regs_used, &reg, &destroyed, REGPAR_WIN64 )
 
         .if destroyed
             asmerr(2133)
@@ -661,14 +667,12 @@ ms64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:SI
             .endif
 
             mov eax,[edi].expr.kind
-            .if eax == EXPR_CONST || \
-               (eax == EXPR_ADDR && !([edi].expr.flags & EXF_INDIRECT) && \
-               [edi].expr.mem_type == MT_EMPTY && [edi].expr._instr != T_OFFSET)
+            .if eax == EXPR_CONST || ( eax == EXPR_ADDR && !( [edi].expr.flags & EXF_INDIRECT ) \
+                && [edi].expr.mem_type == MT_EMPTY && [edi].expr._instr != T_OFFSET )
 
                 ;
                 ; v2.06: support 64-bit constants for params > 4
                 ;
-
                 xor ecx,ecx
                 mov edx,dword ptr [edi].expr.value64[4]
                 mov eax,dword ptr [edi].expr.value64
@@ -680,13 +684,10 @@ ms64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:SI
                     cmp eax,LONG_MIN
                 .endif
                 setl ch
-
                 .ifs psize == 8 && (cl || ch)
 
-                    AddLineQueueX(" mov %r ptr [%r+%u], %r ( %s )",
-                        T_DWORD, T_RSP, &[esi*8], T_LOW32, paramvalue)
-                    AddLineQueueX(" mov %r ptr [%r+%u], %r ( %s )",
-                        T_DWORD, T_RSP, &[esi*8+4], T_HIGH32, paramvalue)
+                    AddLineQueueX(" mov %r ptr [%r+%u], %r ( %s )", T_DWORD, T_RSP, &[esi*8], T_LOW32, paramvalue)
+                    AddLineQueueX(" mov %r ptr [%r+%u], %r ( %s )", T_DWORD, T_RSP, &[esi*8+4], T_HIGH32, paramvalue)
                 .else
                     ;
                     ; v2.11: no expansion if target type is a pointer and argument
@@ -696,28 +697,22 @@ ms64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:SI
                     mov eax,[edi].expr.sym
                     .if [edx].asym.mem_type == MT_PTR && \
                         [edi].expr.kind == EXPR_ADDR && [eax].asym.state != SYM_UNDEFINED
+
                         asmerr(2114, &[esi+1])
                     .endif
-                    mov ecx,T_QWORD
-                    .switch psize
-                      .case 1: mov ecx,T_BYTE : .endc
-                      .case 2: mov ecx,T_WORD : .endc
-                      .case 4: mov ecx,T_DWORD: .endc
-                    .endsw
-                    AddLineQueueX(" mov %r ptr [%r+%u], %s",
-                        ecx, T_RSP, &[esi*8], paramvalue)
+                    mov eax,psize
+                    shr eax,1
+                    lea ecx,[eax*2+T_BYTE]
+                    AddLineQueueX(" mov %r ptr [%r+%u], %s", ecx, T_RSP, &[esi*8], paramvalue)
                 .endif
             .elseif [edi].expr.kind == EXPR_FLOAT
 
-                 mov edx,param
+                mov edx,param
                 .if [edx].asym.mem_type == MT_REAL8
-                    AddLineQueueX(" mov %r ptr [%r+%u+0], %r (%s)",
-                        T_DWORD, T_RSP, &[esi*8], T_LOW32, paramvalue)
-                    AddLineQueueX(" mov %r ptr [%r+%u+4], %r (%s)",
-                        T_DWORD, T_RSP, &[esi*8], T_HIGH32, paramvalue)
+                    AddLineQueueX(" mov %r ptr [%r+%u+0], %r (%s)", T_DWORD, T_RSP, &[esi*8], T_LOW32, paramvalue)
+                    AddLineQueueX(" mov %r ptr [%r+%u+4], %r (%s)", T_DWORD, T_RSP, &[esi*8], T_HIGH32, paramvalue)
                 .else
-                    AddLineQueueX(" mov %r ptr [%r+%u], %s",
-                        T_DWORD, T_RSP, &[esi*8], paramvalue)
+                    AddLineQueueX(" mov %r ptr [%r+%u], %s", T_DWORD, T_RSP, &[esi*8], paramvalue)
                 .endif
 
             .else ; it's a register or variable
@@ -734,13 +729,15 @@ ms64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:SI
                             mov psize,eax
                             asmerr(2114, &[esi+1])
                         .endif
-                        mov eax,T_RAX
                         mov ecx,psize
-                        .switch ecx
-                        .case 1: mov eax,T_AL : .endc
-                        .case 2: mov eax,T_AX : .endc
-                        .case 4: mov eax,T_EAX: .endc
-                        .endsw
+                        shr ecx,1
+                        lea eax,[ecx*8+T_AL]
+                        cmp ecx,4
+                        sbb ecx,ecx
+                        and eax,ecx
+                        not ecx
+                        and ecx,T_RAX
+                        or  eax,ecx
                         mov ecx,regs_used
                         or byte ptr [ecx],R0_USED
                     .endif
@@ -752,16 +749,18 @@ ms64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:SI
                             mov eax,8
                         .endif
                     .else
-                         SizeFromMemtype( [edi].expr.mem_type, USE64, [edi].expr._type )
+                        SizeFromMemtype( [edi].expr.mem_type, USE64, [edi].expr._type )
                     .endif
                     mov z,eax
-                    mov eax,T_RAX
                     mov ecx,psize
-                    .switch ecx
-                    .case 1: mov eax,T_AL : .endc
-                    .case 2: mov eax,T_AX : .endc
-                    .case 4: mov eax,T_EAX: .endc
-                    .endsw
+                    shr ecx,1
+                    lea eax,[ecx*8+T_AL]
+                    cmp ecx,4
+                    sbb ecx,ecx
+                    and eax,ecx
+                    not ecx
+                    and ecx,T_RAX
+                    or  eax,ecx
                     mov i,eax
                     mov ecx,regs_used
                     or byte ptr [ecx],R0_USED
@@ -823,31 +822,42 @@ ms64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:SI
                 mov eax,1
                 .break
             .endif
-            ;
-            ; register argument?
-            ;
+
             mov edx,[edi].expr.sym
-            .if [edi].expr.kind == EXPR_REG
-                .if !( [edi].expr.flags & EXF_INDIRECT )
-                    mov eax,[edi].expr.base_reg
-                    mov eax,[eax].asm_tok.tokval
-                    mov reg,eax
-                    SizeFromRegister(reg)
-                .else
-                    mov eax,8
+            mov ecx,[edi].expr.kind
+
+            .switch
+            .case ecx == EXPR_REG
+                ;
+                ; register argument
+                ;
+                mov eax,8
+                .endc .if ( [edi].expr.flags & EXF_INDIRECT )
+                mov eax,[edi].expr.base_reg
+                mov eax,[eax].asm_tok.tokval
+                mov reg,eax
+                SizeFromRegister(eax)
+                .endc
+            .case ecx == EXPR_CONST
+                mov eax,[edi].expr.hvalue
+                .if eax && eax != -1
+                    mov psize,8 ; extend const value to 64
                 .endif
-            .elseif [edi].expr.kind == EXPR_CONST || [edi].expr.kind == EXPR_FLOAT
+                ; drop
+            .case ecx == EXPR_FLOAT
                 mov eax,psize
-            .elseif [edi].expr.mem_type != MT_EMPTY
+                .endc
+            .case [edi].expr.mem_type != MT_EMPTY
                 SizeFromMemtype([edi].expr.mem_type, USE64, [edi].expr._type)
-            .elseif [edi].expr.kind == EXPR_ADDR && [edx].asym.state == SYM_UNDEFINED
+                .endc
+            .case ecx == EXPR_ADDR && [edx].asym.state == SYM_UNDEFINED
                 mov eax,psize
-            .else
+                .endc
+            .default
                 mov eax,4
-                .if [edi].expr._instr == T_OFFSET
-                    mov eax,8
-                .endif
-            .endif
+                .endc .if [edi].expr._instr != T_OFFSET
+                mov eax,8
+            .endsw
             mov z,eax
 
             mov edx,param
@@ -855,20 +865,20 @@ ms64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:SI
                 asmerr( 2114, &[esi+1] )
             .endif
 
-            mov ebx,3*4
             mov eax,psize
-            .switch eax
-            .case 1: mov ebx,0*4: .endc
-            .case 2: mov ebx,1*4: .endc
-            .case 4: mov ebx,2*4: .endc
-            .endsw
+            shr eax,1
+            cmp eax,4
+            cmc
+            sbb eax,0
+            movzx ebx,ms64_regs[esi+eax*4]
             ;
             ; optimization if the register holds the value already
             ;
             .if [edi].expr.kind == EXPR_REG && !([edi].expr.flags & EXF_INDIRECT)
+
                 .if GetValueSp(reg) & OP_R
-                    movzx eax,ms64_regs[esi+ebx]
-                    .if eax == reg
+
+                    .if ebx == reg
                         mov eax,1
                         .break
                     .endif
@@ -890,12 +900,11 @@ ms64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:SI
             ;
             ; v2.11: allow argument extension
             ;
-            movzx ecx,ms64_regs[esi+ebx]
             mov eax,z
             .if eax < psize
                 .if eax == 4
                     .if IS_SIGNED([edi].expr.mem_type)
-                        AddLineQueueX(" movsxd %r, %s", ecx, paramvalue)
+                        AddLineQueueX(" movsxd %r, %s", ebx, paramvalue)
                     .else
                         movzx eax,ms64_regs[esi+2*4]
                         AddLineQueueX(" mov %r, %s", eax, paramvalue)
@@ -906,10 +915,10 @@ ms64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:SI
                     .else
                         mov eax,@CStr("movzx")
                     .endif
-                    AddLineQueueX(" %s %r, %s", eax, ecx, paramvalue)
+                    AddLineQueueX(" %s %r, %s", eax, ebx, paramvalue)
                 .endif
             .else
-                AddLineQueueX(" mov %r, %s", ecx, paramvalue)
+                AddLineQueueX(" mov %r, %s", ebx, paramvalue)
             .endif
             lea ecx,[esi+RPAR_START]
             mov eax,1
@@ -945,33 +954,8 @@ ifdef FCT_ELF64
 ; FCT_ELF64
 ;-------------------------------------------------------------------------------
 
-; convert register number to param number:
-
-GetParmIndexS proc fastcall x
-    mov eax,x
-    .switch eax
-      .case 1   ; CX
-        mov eax,3
-      .case 2   ; DX
-        .endc
-      .case 8   ; R8
-        mov eax,4
-        .endc
-      .case 9   ; R9
-        mov eax,5
-        .endc
-      .case 6   ; SI
-        mov eax,1
-        .endc
-      .default  ; DI
-        xor eax,eax
-        .endc
-    .endsw
-    ret
-GetParmIndexS endp
-
 elf64_fcstart proc pp:ptr nsym, numparams:SINT, start:SINT,
-        tokenarray:ptr asm_tok, value:ptr SINT
+    tokenarray:ptr asm_tok, value:ptr SINT
 
     xor eax,eax
     mov edx,value
@@ -981,7 +965,7 @@ elf64_fcstart proc pp:ptr nsym, numparams:SINT, start:SINT,
 elf64_fcstart endp
 
 elf64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:SINT,
-        opnd:ptr expr, paramvalue:LPSTR, regs_used:ptr byte
+    opnd:ptr expr, paramvalue:LPSTR, regs_used:ptr byte
 
     local z, psize, reg, i, destroyed
 
@@ -990,9 +974,11 @@ elf64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:S
     mov edi,opnd
 
     .repeat
+
         mov eax,1
         mov ecx,paramvalue
         .break .if [ecx] == ah
+
         mov psize,GetPSize(adr)
         mov edx,param
         mov esi,index
@@ -1005,23 +991,18 @@ elf64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:S
 
         .else
 
-            mov ebx,3*6
             mov eax,psize
-            .switch eax
-            .case 1: mov ebx,0*6: .endc
-            .case 2: mov ebx,1*6: .endc
-            .case 4: mov ebx,2*6: .endc
-            .endsw
+            shr eax,1
+            cmp eax,4
+            cmc
+            sbb eax,0
+            lea ebx,[eax*2]
+            lea eax,[ebx+eax*4]
+            movzx ebx,elf64_regs[esi+eax]
 
             .if adr
-                .if eax >= 4
-                    .if eax > 4
-                        mov eax,3*6
-                    .else
-                        mov eax,2*6
-                    .endif
-                    movzx eax,elf64_regs[esi+eax]
-                    AddLineQueueX(" lea %r, %s", eax, paramvalue)
+                .if eax >= 2*6
+                    AddLineQueueX(" lea %r, %s", ebx, paramvalue)
                 .else
                     asmerr(2114, &[esi+1])
                 .endif
@@ -1033,31 +1014,42 @@ elf64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:S
                 mov eax,1
                 .break
             .endif
-            ;
-            ; register argument?
-            ;
+
             mov edx,[edi].expr.sym
-            .if [edi].expr.kind == EXPR_REG
-                .if !( [edi].expr.flags & EXF_INDIRECT )
-                    mov eax,[edi].expr.base_reg
-                    mov eax,[eax].asm_tok.tokval
-                    mov reg,eax
-                    SizeFromRegister(reg)
-                .else
-                    mov eax,8
+            mov ecx,[edi].expr.kind
+
+            .switch
+            .case ecx == EXPR_REG
+                ;
+                ; register argument
+                ;
+                mov eax,8
+                .endc .if ( [edi].expr.flags & EXF_INDIRECT )
+                mov eax,[edi].expr.base_reg
+                mov eax,[eax].asm_tok.tokval
+                mov reg,eax
+                SizeFromRegister(eax)
+                .endc
+            .case ecx == EXPR_CONST
+                mov eax,[edi].expr.hvalue
+                .if eax && eax != -1
+                    mov psize,8 ; extend const value to 64
                 .endif
-            .elseif [edi].expr.kind == EXPR_CONST || [edi].expr.kind == EXPR_FLOAT
+                ; drop
+            .case ecx == EXPR_FLOAT
                 mov eax,psize
-            .elseif [edi].expr.mem_type != MT_EMPTY
+                .endc
+            .case [edi].expr.mem_type != MT_EMPTY
                 SizeFromMemtype([edi].expr.mem_type, USE64, [edi].expr._type)
-            .elseif [edi].expr.kind == EXPR_ADDR && [edx].asym.state == SYM_UNDEFINED
+                .endc
+            .case ecx == EXPR_ADDR && [edx].asym.state == SYM_UNDEFINED
                 mov eax,psize
-            .else
+                .endc
+            .default
                 mov eax,4
-                .if [edi].expr._instr == T_OFFSET
-                    mov eax,8
-                .endif
-            .endif
+                .endc .if [edi].expr._instr != T_OFFSET
+                mov eax,8
+            .endsw
             mov z,eax
 
             mov edx,param
@@ -1069,9 +1061,10 @@ elf64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:S
             ; optimization if the register holds the value already
             ;
             .if [edi].expr.kind == EXPR_REG && !([edi].expr.flags & EXF_INDIRECT)
+
                 .if GetValueSp(reg) & OP_R
-                    movzx eax,elf64_regs[esi+ebx]
-                    .if eax == reg
+
+                    .if ebx == reg
                         mov eax,1
                         .break
                     .endif
@@ -1080,7 +1073,13 @@ elf64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:S
                     mov eax,1
                     shl eax,cl
                     .if eax & REGPAR_ELF64
-                        lea ecx,[GetParmIndexS(ecx)+ELF64_START]
+                        ;
+                        ; convert register number to param number:
+                        ;
+                        and ecx,0xF
+                        movzx eax,elf64_param_index[ecx]
+
+                        lea ecx,[eax+ELF64_START]
                         mov eax,1
                         shl eax,cl
                         mov ecx,regs_used
@@ -1093,12 +1092,11 @@ elf64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:S
             ;
             ; v2.11: allow argument extension
             ;
-            movzx ecx,elf64_regs[esi+ebx]
             mov eax,z
             .if eax < psize
                 .if eax == 4
                     .if IS_SIGNED([edi].expr.mem_type)
-                        AddLineQueueX(" movsxd %r, %s", ecx, paramvalue)
+                        AddLineQueueX(" movsxd %r, %s", ebx, paramvalue)
                     .else
                         movzx eax,elf64_regs[esi+2*6]
                         AddLineQueueX(" mov %r, %s", eax, paramvalue)
@@ -1109,10 +1107,10 @@ elf64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:S
                     .else
                         mov eax,@CStr("movzx")
                     .endif
-                    AddLineQueueX(" %s %r, %s", eax, ecx, paramvalue)
+                    AddLineQueueX(" %s %r, %s", eax, ebx, paramvalue)
                 .endif
             .else
-                AddLineQueueX(" mov %r, %s", ecx, paramvalue)
+                AddLineQueueX(" mov %r, %s", ebx, paramvalue)
             .endif
             lea ecx,[esi+ELF64_START]
             mov eax,1

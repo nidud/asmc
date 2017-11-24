@@ -11,15 +11,15 @@ _dx	dq ?
 regs	db "assert failed: %s",10
 	db 10
 	db 9,' regs:'
-	db 9,	'RAX: %016X R8:  %016X',10
-	db 9,9, 'RBX: %016X R9:  %016X',10
-	db 9,9, 'RCX: %016X R10: %016X',10
-	db 9,9, 'RDX: %016X R11: %016X',10
-	db 9,9, 'RSI: %016X R12: %016X',10
-	db 9,9, 'RDI: %016X R13: %016X',10
-	db 9,9, 'RBP: %016X R14: %016X',10
-	db 9,9, 'RSP: %016X R15: %016X',10
-	db 9,9, 'RIP: %016X',10
+	db 9,	'RAX: %016llX R8:  %016llX',10
+	db 9,9, 'RBX: %016llX R9:  %016llX',10
+	db 9,9, 'RCX: %016llX R10: %016llX',10
+	db 9,9, 'RDX: %016llX R11: %016llX',10
+	db 9,9, 'RSI: %016llX R12: %016llX',10
+	db 9,9, 'RDI: %016llX R13: %016llX',10
+	db 9,9, 'RBP: %016llX R14: %016llX',10
+	db 9,9, 'RSP: %016llX R15: %016llX',10
+	db 9,9, 'RIP: %016llX',10
 	db 10
 	db 9,'flags:  '
 bits	db '0000000000000000',10

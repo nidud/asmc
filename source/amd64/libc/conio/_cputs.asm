@@ -1,32 +1,26 @@
 include conio.inc
 include string.inc
 
-	.code
+    .code
 
-_cputs	proc uses rbx string:LPSTR
+_cputs proc uses rbx string:LPSTR
 
-	local	num_written:ULONG
-	;
-	; write string to console file handle
-	;
-	mov rbx,-1
-	.if hStdOutput != rbx
+    local num_written:ULONG
+    ;
+    ; write string to console file handle
+    ;
+    mov rbx,-1
+    .if hStdOutput != rbx
 
-		mov r9,strlen( string )
-		.if !WriteConsoleA(
-			hStdOutput,
-			string,
-			r9d,
-			addr num_written,
-			NULL )
+        mov r9,strlen(string)
+        .if !WriteConsoleA(hStdOutput, string, r9d, &num_written, NULL)
 
-			xor rbx,rbx
-		.endif
-	.endif
+            xor rbx,rbx
+        .endif
+    .endif
+    mov rax,rbx
+    ret
 
-	mov rax,rbx
-	ret
+_cputs  ENDP
 
-_cputs	ENDP
-
-	END
+    END

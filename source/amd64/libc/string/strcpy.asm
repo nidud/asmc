@@ -39,11 +39,12 @@ strcpy	PROC dst:LPSTR, src:LPSTR
 	mov	[rcx+7],al
 	test	al,al
 	jz	toend
-	lea	rax,[rdx+8]
-	and	al,not 7
-	sub	rax,rdx
-	add	rdx,rax
-	add	rcx,rax
+	lea	rdx,[rdx+8]
+	lea	rcx,[rcx+8]
+	;and	al,not 7
+	;sub	rax,rdx
+	;add	rdx,rax
+	;add	rcx,rax
 	mov	r10,0x8080808080808080
 	mov	r11,0x0101010101010101
 lupe:

@@ -4,7 +4,7 @@ include fcntl.inc
 
     .code
 
-    option win64:rsp
+    option win64:nosave
 
 _creat proc path:LPSTR, pmode:UINT
 

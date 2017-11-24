@@ -79,27 +79,25 @@ __fconv proc private uses rsi rdi rbx fp:ptr, cvt:ptr, buf:LPSTR, flags:dword
     mov rbx,cvt
     assume rbx:ptr CVT_INFO
 
-    mov rsi,fp
-    lea rdi,qf
-    movsd
-    movsd
-    movsd
-    movsw
+    mov     rsi,fp
+    lea     rdi,qf
+    mov     ecx,7
+    rep     movsw
     lodsw
-    bt  eax,15
-    sbb ecx,ecx
-    mov [rbx].sign,ecx
-    and eax,Q_EXPMASK   ; make number positive
+    bt      eax,15
+    sbb     ecx,ecx
+    mov     [rbx].sign,ecx
+    and     eax,Q_EXPMASK   ; make number positive
     stosw
-    movzx ecx,ax
-    xor eax,eax
-    mov [rbx].n1,eax
-    mov [rbx].nz1,eax
-    mov [rbx].n2,eax
-    mov [rbx].nz2,eax
-    mov [rbx].decimal_place,eax
-    mov value,eax
-    lea rdi,qf
+    movzx   ecx,ax
+    xor     eax,eax
+    mov     [rbx].n1,eax
+    mov     [rbx].nz1,eax
+    mov     [rbx].n2,eax
+    mov     [rbx].nz2,eax
+    mov     [rbx].decimal_place,eax
+    mov     value,eax
+    lea     rdi,qf
 
     .repeat
 
@@ -177,27 +175,15 @@ __fconv proc private uses rsi rdi rbx fp:ptr, cvt:ptr, buf:LPSTR, flags:dword
                         ; number is < 1e8
                         ;
                         mov xexp,0
-                    .elseif (esi < E16_EXP || ((esi == E16_EXP && (edx <  E16_HIGH || \
-                            (edx == E16_HIGH && eax < E16_LOW)))))
-                        ;
-                        ; number is < 1e16
-                        ;
-                        lea rdx,tmp     ; tmp --> 1e8
-                        xor eax,eax
-                        mov [rdx],rax
-                        mov eax,0x40000000
-                        mov [rdx+8],eax
-                        mov eax,0x40197D78
-                        mov [rdx+12],eax
 
-                        _divfq(&tmp2, rdi, &tmp)
-                        _qftol(&tmp2)
-                        mov value,eax
-                        _ltoqf(&tmp2, eax)
-                        _mulfq(&tmp, &tmp2, &tmp)
-                        _subfq(rdi, rdi, &tmp)
-                        mov xexp,8
                     .else
+                        .if (esi < E16_EXP || ((esi == E16_EXP && (edx <  E16_HIGH || \
+                            (edx == E16_HIGH && eax < E16_LOW)))))
+                            ;
+                            ; number is < 1e16
+                            ;
+                            mov xexp,8
+                        .endif
                         ;
                         ; scale number down
                         ;
@@ -246,50 +232,50 @@ __fconv proc private uses rsi rdi rbx fp:ptr, cvt:ptr, buf:LPSTR, flags:dword
         .whiles n > 0
 
             sub n,NDIG
+
             .if !value
+                ;
+                ; get long value to subtract
+                ;
+                .if _qftol(rdi)
 
-                mov ax,[rdi+14]
-                .break .if !(ax & Q_EXPMASK)
-                _qftol(rdi)
-                mov value,eax
-
-                .if n
+                    mov value,eax
 
                     _ltoqf(&tmp, eax)
                     _subfq(rdi, rdi, &tmp)
-                    ;
-                    ; tmp = 1e8
-                    ;
-                    lea edx,tmp
-                    xor eax,eax
-                    mov [rdx],rax
-                    mov eax,0x40000000
-                    mov [rdx+8],eax
-                    mov eax,0x40197D78
-                    mov [rdx+12],eax
-
-                    _mulfq(rdi, rdi, &tmp)
+                .elseif i && value
+                    mov [rdi],rax
+                    mov [rdi+8],rax
+                .endif
+                .if n
+                    _mulfq(rdi, rdi, &_Q_1E8)
                 .endif
             .endif
-            mov eax,value
-            Format8Digits()
-            add i,8
+
+            .for ( ecx = NDIG, eax = value, ebx = 10: ecx: ecx-- )
+
+                xor edx,edx
+                div ebx
+                add dl,'0'
+                mov [rsi+rcx-1],dl
+            .endf
+            add rsi,NDIG
+            add i,NDIG
             mov value,0
         .endw
 
         mov r9,buf
         mov r8d,i
-        mov eax,r8d         ; get number of characters in buf
-        lea rsi,stkbuf[1]
-        mov ecx,xexp
-        add ecx,NDIG - 1
-        .while byte ptr [rsi] == '0'
-            dec eax
-            dec ecx         ; skip over leading zeros
-            inc rsi
-        .endw
+        ;
+        ; get number of characters in buf
+        ;
+        .for eax=r8d, rsi=&stkbuf[1], ecx=xexp, ecx+=NDIG-1,
+             : byte ptr [rsi] == '0' : eax--, ecx--, rsi++
+             ; skip over leading zeros
+        .endf
 
         mov n,eax
+        mov rbx,cvt
         mov edx,[rbx].ndigits
 
         .if [rbx].flags & _ST_F
@@ -319,7 +305,8 @@ __fconv proc private uses rsi rdi rbx fp:ptr, cvt:ptr, buf:LPSTR, flags:dword
             .endif
             mov maxsize,eax
             mov eax,'0'
-            .if n > edx && byte ptr [rsi+rdx] >= '5'
+            .if n > edx && byte ptr [rsi+rdx] >= '5' || \
+                n == edx && byte ptr [rsi+rdx-1] == '9'
                 mov al,'9'
             .endif
             lea rdi,[rsi+rdx-1]
@@ -365,7 +352,8 @@ __fconv proc private uses rsi rdi rbx fp:ptr, cvt:ptr, buf:LPSTR, flags:dword
 
             .ifs ecx <= 0 ; digits only to right of '.'
 
-                .if !(eax & _ST_CVT)
+                .if !( eax & _ST_CVT )
+
                     mov byte ptr [rdi],'0'
                     inc r8d
                     .ifs [rbx].ndigits > 0 || eax & _ST_DOT
@@ -373,6 +361,7 @@ __fconv proc private uses rsi rdi rbx fp:ptr, cvt:ptr, buf:LPSTR, flags:dword
                         inc r8d
                     .endif
                 .endif
+                add rdi,r8
                 mov [rbx].n1,r8d
                 mov eax,ecx
                 neg eax
@@ -386,15 +375,27 @@ __fconv proc private uses rsi rdi rbx fp:ptr, cvt:ptr, buf:LPSTR, flags:dword
                 .ifs [rbx].ndigits < edx
                     mov edx,[rbx].ndigits
                 .endif
+                mov ecx,eax
                 mov [rbx].n2,edx
                 mov eax,[rbx].ndigits
+                add edx,ecx
                 sub eax,edx
                 mov [rbx].nz2,eax
-                mov ecx,i
-                add rdi,rcx
+                mov rax,buf
+                .if word ptr [rax] == '.0'
+                    add r8d,ecx
+                    sub edx,ecx
+                    sub [rbx].nz2,ecx
+                    mov eax,'0'
+                    rep stosb
+                .endif
+                add r8d,edx
                 mov ecx,edx
                 rep movsb
-                add r8d,edx
+                mov ecx,[rbx].nz2
+                add r8d,ecx
+                mov eax,'0'
+                rep stosb
 
             .elseif edx < ecx ; zeros before '.'
 
@@ -406,8 +407,15 @@ __fconv proc private uses rsi rdi rbx fp:ptr, cvt:ptr, buf:LPSTR, flags:dword
                 mov [rbx].decimal_place,ecx
                 mov ecx,edx
                 rep movsb
-                .if !([rbx].flags & _ST_CVT)
-                    .if [rbx].ndigits > 0 || [rbx].flags & _ST_DOT
+                add r8d,eax
+                mov ecx,eax
+                mov eax,'0'
+                rep stosb
+
+                .if !( [rbx].flags & _ST_CVT )
+
+                    .if ( [rbx].ndigits > 0 || [rbx].flags & _ST_DOT )
+
                         mov byte ptr [r9+r8],'.'
                         inc r8d
                         mov [rbx].n2,1
@@ -415,6 +423,14 @@ __fconv proc private uses rsi rdi rbx fp:ptr, cvt:ptr, buf:LPSTR, flags:dword
                 .endif
                 mov eax,[rbx].ndigits
                 mov [rbx].nz2,eax
+
+                .if ( ecx > edx )
+                    sub ecx,edx
+                    add r8d,ecx
+                    mov eax,'0'
+                    rep stosb
+                .endif
+
             .else                    ; enough digits before '.'
                 mov [rbx].decimal_place,ecx
                 add r8d,ecx
@@ -677,7 +693,7 @@ local cvt:CVT_INFO
     .elseif ch_type == 'g'
         mov eax,_ST_G
     .endif
-    ;or  eax,NO_TRUNC
+
     mov cvt.flags,eax
     mov cvt.ndigits,ecx
     xor ecx,ecx
@@ -715,51 +731,5 @@ local q:REAL16
     _qcvt(&q, buffer, ch_type, precision, flags)
     ret
 _dcvt endp
-
-Format8Digits:
-
-    @F()
-    xor al,al
-    mov [rsi],al
-    ret
-    @@:
-    mov  ecx,10000
-    sub  edx,edx
-    cmp  eax,ecx
-    xchg eax,edx
-    .ifnb
-        xchg eax,edx
-        div ecx
-    .endif
-    push rdx
-    @F()
-    pop  rax
-    @@:
-    mov  ecx,100
-    sub  edx,edx
-    cmp  eax,ecx
-    xchg eax,edx
-    .ifnb
-        xchg eax,edx
-        div cx
-    .endif
-    push rdx
-    @F()
-    pop  rax
-    @@:
-    mov  cl,10
-    cmp  al,cl
-    xchg al,ah
-    .ifnb
-        xchg al,ah
-        div cl
-    .endif
-    add ah,'0'
-    add al,'0'
-    mov [rsi],al
-    inc rsi
-    mov [rsi],ah
-    inc rsi
-    ret
 
     end

@@ -1,44 +1,43 @@
 include consx.inc
 include stdio.inc
 
-	.code
+    .code
 
-	ASSUME	rbx:PTR INPUT_RECORD
+    ASSUME rbx:PTR INPUT_RECORD
 
-_kbhit	PROC USES rbx rdi rsi
+_kbhit PROC USES rbx rdi rsi
 
   local Count:QWORD
   local Event[MAXINPUTRECORDS]:INPUT_RECORD
 
-	xor edi,edi
-	lea rbx,Event
+    xor edi,edi
+    lea rbx,Event
 
-	.if GetNumberOfConsoleInputEvents( hStdInput, addr Count )
+    .if GetNumberOfConsoleInputEvents(hStdInput, &Count)
 
-		mov r8,Count
-		.if r8 > MAXINPUTRECORDS
-			mov r8,MAXINPUTRECORDS
-		.endif
+        mov r8,Count
+        .if r8 > MAXINPUTRECORDS
+            mov r8,MAXINPUTRECORDS
+        .endif
 
-		PeekConsoleInput( hStdInput, rbx, r8d, addr Count )
-		mov rsi,Count
+        PeekConsoleInput(hStdInput, rbx, r8d, &Count)
+        mov rsi,Count
 
-		.while	esi
+        .while esi
 
-			.if [rbx].INPUT_RECORD.EventType == KEY_EVENT && \
-			    [rbx].INPUT_RECORD.KeyEvent.bKeyDown
+            .if [rbx].EventType == KEY_EVENT && [rbx].KeyEvent.bKeyDown
 
-				movzx edi,[rbx].INPUT_RECORD.KeyEvent.AsciiChar
-				.break .if edi
-			.endif
+                movzx edi,[rbx].KeyEvent.AsciiChar
+                .break .if edi
+            .endif
 
-			ReadConsoleInput( hStdInput, rbx, 1, addr Count )
-			add rbx,SIZE INPUT_RECORD
-			dec esi
-		.endw
-	.endif
-	mov eax,edi
-	ret
-_kbhit	ENDP
+            ReadConsoleInput(hStdInput, rbx, 1, &Count)
+            add rbx,SIZE INPUT_RECORD
+            dec esi
+        .endw
+    .endif
+    mov eax,edi
+    ret
+_kbhit endp
 
-	END
+    end

@@ -2,37 +2,31 @@ include io.inc
 include errno.inc
 include winbase.inc
 
-	.code
+.code
+.win64:nosave
 
-	OPTION	WIN64:2, STACKBASE:rsp
+_close proc handle:SINT
 
-_close	PROC handle:SINT
+    lea rax,_osfile
+    .if ecx < 3 || ecx >= _nfile || !(byte ptr [rax+rcx] & FH_OPEN)
 
-	cmp	ecx,3
-	jb	argerr
-	cmp	ecx,_nfile
-	jae	argerr
-	lea	rax,_osfile
-	test	BYTE PTR [rax+rcx],FH_OPEN
-	jz	argerr
+        mov errno,EBADF
+        mov oserrno,0
+        xor rax,rax
+    .else
 
-	mov	BYTE PTR [rax+rcx],0
-	lea	rax,_osfhnd
-	mov	rcx,[rax+rcx*8]
-	CloseHandle( rcx )
-	test	rax,rax
-	jz	error
-	xor	eax,eax
-toend:
-	ret
-error:
-	call	osmaperr
-	jmp	toend
-argerr:
-	mov	errno,EBADF
-	mov	oserrno,0
-	xor	rax,rax
-	jmp	toend
-_close	ENDP
+        mov BYTE PTR [rax+rcx],0
+        lea rax,_osfhnd
+        mov rcx,[rax+rcx*8]
+        .if !CloseHandle(rcx)
 
-	END
+            osmaperr()
+        .else
+            xor eax,eax
+        .endif
+    .endif
+    ret
+
+_close endp
+
+    end

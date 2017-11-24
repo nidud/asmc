@@ -2,6 +2,7 @@ include string.inc
 include stdio.inc
 include stdlib.inc
 include alloc.inc
+include limits.inc
 
 include asmc.inc
 include token.inc
@@ -747,6 +748,7 @@ local \
             CompareMaxMin(ebx, max, min, edi)
         .endif
 
+        mov edx,min
         mov eax,[esi].flags
         mov cl,ModuleInfo.Ofssize
 
@@ -843,6 +845,9 @@ local \
                 .endif
             .endif
 
+        .elseif ( edx <= ( UINT_MAX / 8 ) ) && !use_index && [esi].flags & HLLF_ARGREG
+
+            AddLineQueueX("jmp [%s*8+%s-(%d*8)]", ebx, &l_jtab, min)
         .else
             .if !([esi].flags & HLLF_ARGREG)
                 GetSwitchArg(T_RAX, [esi].flags, ebx)
@@ -867,8 +872,13 @@ local \
                 AddLineQueue("mov rax,[rcx+rax*8]")
             .else
                 AddLineQueueX("lea rcx,%s", &l_jtab)
-                AddLineQueueX("sub rax,%d", min)
-                AddLineQueue("mov rax,[rcx+rax*8]")
+                mov eax,min
+                .if ( eax < ( UINT_MAX / 8 ) )
+                    AddLineQueueX("mov rax,[rcx+rax*8-(%d*8)]", eax)
+                .else
+                    AddLineQueueX("sub rax,%d", eax)
+                    AddLineQueue("mov rax,[rcx+rax*8]")
+                .endif
             .endif
 
             .if ModuleInfo.aflag & _AF_REGAX

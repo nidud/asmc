@@ -73,10 +73,6 @@
 #define SYMCMP( x, y, z ) SymCmpFunc( x, y, z )
 #endif
 
-extern int define_LINUX;
-extern int define_WIN64;
-extern int define_PE;
-
 extern struct asym *FileCur;  /* @FileCur symbol    */
 extern struct asym *LineCur;  /* @Line symbol	    */
 extern struct asym *symCurSeg;/* @CurSeg symbol	    */
@@ -145,6 +141,20 @@ static const struct eqitem eqtab[] = {
     { "@Line",	   0, UpdateLineNumber, &LineCur },
     { "@WordSize", 0, UpdateWordSize, NULL }, /* must be last (see SymInit()) */
 };
+
+
+#define _MAX_DYNEQ 10
+
+static int dyneqcount = 0;
+static int dyneqvalue[_MAX_DYNEQ];
+static char *dyneqtable[_MAX_DYNEQ];
+
+void define_name(char *name, int value)
+{
+	dyneqvalue[dyneqcount] = value;
+	dyneqtable[dyneqcount] = name;
+	dyneqcount++;
+}
 
 static unsigned int hashpjw( const char *s )
 {
@@ -507,30 +517,12 @@ void SymInit( void )
     }
     sym->list	= FALSE; /* @WordSize should not be listed */
 
-    if ( define_LINUX ) {
-	sym = SymCreate( "_LINUX" );
+    for( i = 0; i < dyneqcount; i++ ) {
+	sym = SymCreate( dyneqtable[i] );
 	sym->state = SYM_TMACRO;
 	sym->isdefined = TRUE;
 	sym->predefined = TRUE;
-	sym->offset = define_LINUX;
-	sym->sfunc_ptr = NULL;
-    }
-
-    if ( define_WIN64 ) {
-	sym = SymCreate( "_WIN64" );
-	sym->state = SYM_TMACRO;
-	sym->isdefined = TRUE;
-	sym->predefined = TRUE;
-	sym->offset = define_WIN64;
-	sym->sfunc_ptr = NULL;
-    }
-
-    if ( define_PE ) {
-	sym = SymCreate( "__PE__" );
-	sym->state = SYM_TMACRO;
-	sym->isdefined = TRUE;
-	sym->predefined = TRUE;
-	sym->offset = define_PE;
+	sym->offset = dyneqvalue[i];
 	sym->sfunc_ptr = NULL;
     }
 

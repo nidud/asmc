@@ -1,6 +1,6 @@
 include string.inc
 include limits.inc
-include alloc.inc
+include malloc.inc
 include asmc.inc
 include token.inc
 
@@ -839,8 +839,7 @@ ms64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:SI
                 SizeFromRegister(eax)
                 .endc
             .case ecx == EXPR_CONST
-                mov eax,[edi].expr.hvalue
-                .if eax && eax != -1
+                .if [edi].expr.hvalue
                     mov psize,8 ; extend const value to 64
                 .endif
                 ; drop

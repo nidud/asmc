@@ -2,7 +2,7 @@
 #include <globals.h>
 
 char cp_logo[] =
- "Asmc Macro Assembler Version " ASMC_VERSSTR "L\n"
+ "Asmc Macro Assembler Version " ASMC_VERSSTR "M\n"
  "Portions Copyright (c) 1992-2002 Sybase, Inc. All Rights Reserved.\n\n";
 
 static char cp_usage[] =
@@ -15,6 +15,7 @@ static char cp_options[] =
  "\n"
  "/<0|1|..|10>[p] Set CPU: 0=8086 (default), 1=80186, 2=80286, 3=80386, 4=80486,\n"
  " 5=Pentium,6=PPro,7=P2,8=P3,9=P4,10=x86-64; <p> allows privileged instructions\n"
+ "/assert Generate .assert() code            /safeseh Assert exception handlers\n"
  "/bin Generate plain binary file            /Sf Generate first pass listing\n"
  "/Cs C stack: push USER regs first          /Sg Display generated code in listing\n"
  "/coff Generate COFF format object file     /Sn Suppress symbol-table listing\n"
@@ -48,8 +49,7 @@ static char cp_options[] =
  "/pf Preserve Flags (Epilogue/Invoke)       /zt<0|1|2> Set STDCALL decoration\n"
  "/q, /nologo Suppress copyright message     /Zv8 Enable Masm v8+ PROC visibility\n"
  "/r Recurse subdirectories                  /zze No export symbol decoration\n"
- "/Sa Maximize source listing                /zzs Store name of start address\n"
- "/safeseh Assert exception handlers\n";
+ "/Sa Maximize source listing                /zzs Store name of start address\n";
 
 int banner_printed = 0;
 

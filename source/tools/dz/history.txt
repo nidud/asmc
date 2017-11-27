@@ -1,0 +1,361 @@
+HISTORY.TXT--
+Change Log File for DOSZIP - Win32
+==================================
+
+Changes in 3.55 - xx xxx 2017
+- fixed mouse-lock in dialogs when check box active..
+
+Changes in 3.54 - 20 Oct 2017
+- fixed bug in compression engine. Compression level was
+  set incorrectly from v3.48 and potentially leaving some
+  archives created with Doszip up to version 3.53 corrupted.
+  The bug mostly effected large files.
+- fixed bug in Compare Directory (Shift-F6)
+- fixed a few bugs in HexEdit..
+
+Changes in 3.53 - 19 Oct 2017
+- added Class Edit to HexEdit (Ctrl-F4)
+
+Changes in 3.52 - 15 Oct 2017
+- fixed a few bugs in TextView (F3)
+
+Changes in 3.51 - 14 Oct 2017
+- added HexEdit (Ctrl-F4)
+
+Changes in 3.50 - 6 Jun 2017
+- fixed bug in Confirm Copy -- target deleted on Cancel..
+- fixed bug in FindFile -- memory leak..
+
+Changes in 3.49 - 4 Jun 2017
+- added Edit/Add to Transfer dialog
+- removed memory restriction in panels -- max file count
+- fixed bug edit.style() -- buffer overflow
+- fixed memory leak in unzip functions
+- fixed memory leak file panels
+- fixed bug in [Path] -- failed to updated panels
+- fixed bug in editor using Auto Indent with no Tabs
+
+Changes in 3.48 - 15 Feb 2017
+- added Advansed Settings to Compare Directories -- Shift-F5
+- added Desktop Size -- Alt-Z
+- removed dz.cfg --> moved to dz.ini
+- added key F7 to Toggle Edit Panel/Full Screen
+- fixed bug in Save Session -- one file short
+- fixed bug in reading Unix .INI files -- LF / CR, LF
+
+Changes in 3.47 - 15 May 2016
+- added Ctrl-C to the edit help menu for the Transfer dialog...
+
+Changes in 3.46 - 15 May 2016
+- added Transfer to program dialog to editor
+- added %DZDRIVE% to simplify configuration of tools
+- added multi command to transfer keys, same as [Filetype]:
+
+  [ShiftF1]
+  ;
+  ; The first command creates an .EXE from the .ASM file;
+  ; the second execute the .EXE file and the last
+  ; command pause to view the output before returning
+  ; to the editor
+  ;
+  asm = asmc -pe !.!, !.exe, pause
+
+- updated/fixed colours in some dialogs
+- fixed bug in cursor after execute -- menus line overwritten
+- fixed bug in .ERR handle in editor -- multiple copies of the same file
+  The editor search for an .ERR file after transfer and display the line
+  of the file where the error occurs if found. The Open Watcom tools,
+  JWasm, and Asmc create these files. In order to use this on other tools,
+  like Masm, use the following format:
+
+  [ShiftF3]
+  ;
+  ; Using the full path name here in case the file is not
+  ; in the current directory
+  ;
+  asm = ml -c !:\!\\!.! > !.err
+
+Changes in 3.45 - 5 May 2016
+- added [FileColor] to DZ.INI
+  syntax: <file_type>=<color> ; the value of <color> is 0..15 (0..F)
+
+  [FileColor]
+  exe	   = B
+  zip	   = 11
+  mak	   = 6
+  makefile = 6	; file with no type
+
+Changes in 3.44 - 7 Apr 2016
+- fixed bug in _time() function -- day miscalculation
+  after Feb current day dec: 04/05/16 --> 04/07/16
+- fixed bug on missing %TEMP% -- [x] CMD Compatible Mode
+- fixed bug in Text view -- CR/LF problem
+- added Produce Hex output to Copy (F5) in Text view
+- added Save and Load Environment to Shift-F6
+
+Changes in 3.43 - 25 Feb 2016
+- fixed bug on edit file inside a .ZIP file
+
+Changes in 3.42 - 24 Feb 2016
+- fixed bug in decompressing (7ZA) -- added quotes on target directory
+- added option [ ] CMD Compatible Mode. Default is OFF.
+  This option expands commands and batch files (.CMD and .BAT) "inline".
+  Environment and the current directory will then be upated if set. This
+  option is also needed to run the command SET name=value.
+
+Changes in 3.41 - 18 Jan 2016
+- fixed bug on executing external assosiated files
+- added handleing of archives 7ZA.EXE
+
+Changes in 3.40 - 11 Jan 2016
+- removed plugins code
+- fixed bug in Edit: SPACE/TAB not strippen from end of lines on save
+
+Changes in 3.39 - 29 Jul 2015
+- added more support for Win95 -- reduced memory usage
+- added dynamic alloc for editor -- tested up to 300M size
+- rewrote some of the clipboard functions -- large selections
+- increaced maximum open files to 300 -- default to 2M per file
+- added code for text macros (plugins) to editor -- .\EDI\DLL\*.dll
+- added option Use Short File Names to System options -- Ctrl-L is only visual
+- added option Use SIMD Extensions to System options -- auto detect
+- added option Win95 Compatible Mode to System options -- auto detect
+- added mouse-wheel functions to dialogs, edit, and view
+  Note: this only works in a window and not in full screen text mode
+- added mouse-select-text functions to editor
+- added Quick-Menu for edit and view -- right mouse-click
+- expanded history to 64 doskeys and 32 folders
+- fixed bug in option <Auto Delete History> -- System options
+- fixed bug in Copy -- missing Filter Dialog (@v3.35)
+- fixed Extension and Filename Support -- didn't work
+- fixed bug in Create List dialog -- hard error
+- fixed bug in editor F11 toggle menus -- hard error
+
+Changes in 3.38 - 15 May 2015
+- updated library source -- 3.37 build from old source..
+
+Changes in 3.37 - 15 May 2015
+- fixed bug in Filter -- Files Date After/Before error
+
+Changes in 3.36 - 29 Des 2014
+- fixed bug on copy selected files -- (fake) recursive error
+- fixed bug in Swap Panels (Ctrl-W) -- hard error
+
+Changes in 3.35 - 17 Des 2014
+- added section [Path] to DZ.INI
+- added section [Environ] to DZ.INI
+- added dialog Edit Environment -- Shift-F6
+- fixed bug in Zip Attributes -- no output
+
+Changes in 3.34 - 12 Nov 2014
+- fixed bug in command -- cration of batch file failed..
+- dropped support for Windows 95/98 compatibility
+  however, this is still optional in source code
+
+Changes in 3.33 - 5 Nov 2014
+- fixed bug in stricmp..
+
+Changes in 3.32 - 5 Nov 2014
+- fixed bug in reading .ZIP files created using backslash
+  versions up to 2.24 handle this but not later versions
+- removed Use SSE Functions from System options
+  the SIMD functions are now optional in source code
+  the default is to use SIMD functions (SSE2)
+
+Changes in 3.31 - 14 Oct 2014
+- fixed bug in File Attributes -- unicode IO-functions
+
+Changes in 3.30 - 7 Oct 2014
+- option "Win95 Compatible Mode" is added to System Options
+  some of the new functions fails in Windows 95/98
+
+Changes in 3.29 - 6 Oct 2014
+- unicode IO-functions is now used to access long paths
+  the maximum length is currently set to 2048 bytes
+- the visual update on copy is now removed -- slow output
+  option "Visual update on copy" is added to Panel Options
+- the DOS version is now included as a stub
+
+Changes in 3.28 - 28 Aug 2014
+- removed the .\DOC directory -- %DZ% == %DOSZIP%
+  syntax highlighting settings is moved to DZ.INI
+  history is moved to DZ.CFG -- now a text file
+- renamed .\DOC\plugins do .\DLL -- new plugins
+- made SIMD functions optional -- System Options
+- made source code compatible with Windows 95
+- extended the maximum size of a directory -- panels
+- reduced default memory consumption from 32M to 4M
+- added option to exclude Ascii Symbols -- System Options
+- bugs fixed:
+- screen output on text out of range (x, y, length)
+  this works in XP++ where size is clipped to screen size
+  in Windows 95/98 no output is made if out of range
+- on using COMMAND.COM -- quotes removed on command..
+- in Compare and Search -- new limits and error handle
+- in Panel filter -- path and read-mask not updated
+
+Changes in 3.27 - 20 Aug 2014
+- fixed bug in File Attributes (ZIP) -- hard error
+- fixed execution of .BAT files and > < commands
+- fixed some clipboard functions in the editor
+- changed the handling of the [x] Use NT Prompt option
+  this now toggles the use of CMD.EXE/COMMAND.COM
+
+Changes in 3.26 - 18 Aug 2014
+- fixed bug in Compare Directory -- User abort
+- fixed bug in File Search -- failed on search string < 16 byte
+
+Changes in 3.25 - 16 Aug 2014
+- split source base for 16/32-bit -- dialogs mixed up
+- fixed bug in screen output -- Tabs and CR/LF error
+- fixed bug in Compare Directory -- recursive warning
+- fixed bug in File Search -- zero not assumed in search string
+
+Changes in 3.24 - 14 Aug 2014
+- fixed bug in Directory Information on selected files -- hard error
+- fixed bug on open dialogs if screen metrics have changed -- hard error
+- fixed bug on expanding environment variables -- failed
+- fixed bug in STDIO functions -- not used by Doszip
+
+Changes in 3.23 - 11 Aug 2014
+- fixed bug in CPU detection -- missing values in System Info
+
+Changes in 3.22 - 11 Aug 2014
+- added CPU detection -- this (W32) version needs XP/SSE2++
+- added System Information dialog -- old Memory dialog
+- added SSE2 code to speed up string and memory functions
+- added Compare Directories dialog (Shift-F5)
+- added (or rewrote) Editor code to handle larger files
+- added options to Make List dialog for Search and Compare
+- added new (C) Stack Frame to the Assembler (ASM.EXE)
+
+Changes in 3.21 - 16 Jan 2014
+- added Ctrl-8 -- Past Panel-A directory to command line
+- added Ctrl-9 -- Past Panel-B directory to command line
+- fixed bug using 32-bit file size -- failed if >= 2G
+
+Changes in 3.20 - 13 Jan 2014
+- fixed bug in Edit -- save file fails on error/cancel on open files
+- fixed bug in View -- failed on files >= 4G
+- fixed bug in Copy -- failed on files >= 4G
+
+Changes in 3.19 - 12 Jan 2014
+- added reposition to desktop position 0,0 for Alt-F9 (japheth)
+- some changes made to the configuration, DZ and DOSZIP:
+  WIN: sets DZ and DOSZIP on init and add DOSZIP to top of PATH
+  DOS: ignore DZ if set but behaves as before.
+
+Changes in 3.18 - 6 Jan 2014
+- Updated documents and dialogs to 2014..
+
+Changes in 3.17 - 2 Jan 2014
+- merged the 16 and 32-bit versions into one package
+
+Changes in 3.16 - 27 Des 2013
+- link error..
+Changes in 3.15 - 27 Des 2013
+- fixed bug in dialog functions -- move dialog (Alt-Up/Down)
+- fixed bug(s) in proccess functions
+- added default file names to history
+- added more default colors -- new color setup
+- added path-history to panels -- access by mouse (Panel Filter)
+
+Changes in 2.51 - 22 Nov 2013
+- fixed bug in Help -- helpidd.inc
+
+Changes in 3.14 - 07 Nov 2013
+- added code for plugins
+- fixed bug in memory functions -- fragmentation prohibit copy
+- fixed bug in text view -- copy function
+- fixed bug in text view -- search function
+- converted 2 plugins from 16 to 32-bit (ARJ to 7ZA)
+- converted 2 TSR programs to plugins
+
+Changes in 3.13 - 30 Oct 2013
+- fixed bug in Search function -- eternal loop on same offset (seek error)
+- fixed bug in Sort Type -- directories and file with no .ext failed
+
+Changes in 3.12 - 25 Oct 2013
+- fixed bug in Read function -- files using flag _A_NORMAL not included
+
+Changes in 3.11 - 22 Oct 2013
+- added new function to execute using NT-prompt
+
+Changes in 3.10 - 20 Oct 2013
+- fixed bug in panels -- ministatus window
+- fixed bug on executing "long file.exe" -- added quotes
+- increased file size on edit from 2 to 8 MB
+- added console font to source code -- updated version
+- updated screen output for font usage -- only graphical window
+- updated default .INI file -- comspec args set to /C, not /S /C
+-- enter using NT-prompt (default) on "long file.pdf" failed
+- fixed bug on setting line size for editor -- failed
+- fixed bug in text view -- mouse scrolling failed on large screens
+- fixed bug in compare (Ctrl-C) -- failed
+
+Changes in 3.09 - 12 Oct 2013
+- remove JWLink from make -- assigned value to globals - hard error
+- fixed bug process functions -- command line including ">" failed
+
+Changes in 3.08 - 9 Oct 2013
+- rewrote process functions -- update screen metrics
+- fixed bug process functions -- execute old .EXE failed (BCC.EXE/...)
+- added user screen (Ctrl-B) -- not fully implementet
+- fixed bug(s) in console functions on large screens
+- fixed bug in inflate (Unzip) -- stored entries failed
+- fixed bug in inflate (Unzip) -- password decryption failed
+- fixed bug in inflate (Unzip) -- exploaded entries failed
+- fixed bug in Doskey -- index not updated after execute
+
+Changes in 3.07 - 6 Oct 2013
+- fixed Zip/Unzip functions -- not fully implemented
+  -- copy including overwite of existing file(s) failed
+  -- edit file inside Zip archives failed
+  -- delete failed in some cases
+  -- added new streams for fast compression
+- fixed bug(s) in screen updates in panels and edit
+- fixed bug(s) in Menus and statusline -- visual
+- rewrote event handler -- removed Ctrl hook-up
+
+Changes in 3.06 - 4 Oct 2013
+- fixed bug in Command Prompt -- Ctrl+Alt made an eternal loop - hard error
+- fixed bug in Keyboard -- added reset of shift-state on exec and inactive window
+- fixed bug in Edit -- Search Dialog exited editor
+- fixed bug in Edit -- Open selected files didn't work
+- added fast screen update for larger panels
+- added fast screen update for Editor -- less update of screen
+
+Changes in 3.05 - 3 Oct 2013
+- fixed bug in Keyboard -- Shift keys and Mouse state "hang" after execute
+- fixed bug in Keyboard -- Alt-Gray key (char)
+- fixed bug in Change Directory -- Enter, "CD..", and "CD "
+
+Changes in 3.04 - 2 Oct 2013
+- added support for full screen size (Alt-F9)
+- added Mouse-Wheel functions to Edit and View
+- fixed a few bugs in the Editor -- Syntax Highlighting
+
+Changes in 3.03 - 29 Sep 2013
+- added support for CD and X: for change drive and directory from command line
+- added support for larger screen size
+
+Changes in 3.02 - 28 Sep 2013
+- fixed bug in Edit -- missing char: }
+
+Changes in 3.01 - 28 Sep 2013
+- fixed bug in Edit -- missing char:
+- fixed bug on DeleteLine in Editor -- last line not deleted
+- fixed bug on Pasting text -- hard error
+- fixed Commandline args -- not implemented
+- fixed bug(s) in Filter dialog -- Date, Size
+- fixed bug(s) in Dialogs -- Radio-Button
+- added CriticalError test to Drive-Not-Ready lookups
+- added faster Search functions -- Ctrl-S
+- added inline compile error test to Editor -- removed ERR.EXE
+- removed Quick Search hook-up Ctrl+Alt -- Ctrl-Q
+
+Changes in 3.00 - 24 Sep 2013
+- bumped version to 3.00 for 32-bit -- first binary BETA release
+
+Changes in 2.48 - 16 Jul 2013
+- created a test bed for a 32-bit version of Doszip from v2.48

@@ -1382,11 +1382,11 @@ endif
 
 ifndef NOWINOFFSETS
 
-ifndef _WIN64
+;ifndef _WIN64
 GWL_WNDPROC		equ (-4)
 GWL_HINSTANCE		equ (-6)
 GWL_HWNDPARENT		equ (-8)
-endif
+;endif
 GWL_STYLE		equ (-16)
 GWL_EXSTYLE		equ (-20)
 ifndef _WIN64
@@ -6049,7 +6049,7 @@ if(WINVER GE 0x0400)
 MSGBOXCALLBACK_T	typedef proto WINAPI lpHelpInfo:LPHELPINFO
 MSGBOXCALLBACK		typedef ptr MSGBOXCALLBACK_T
 
-MSGBOXPARAMSA		STRUC
+MSGBOXPARAMSA		STRUC SIZE_T
 cbSize			UINT ?
 hwndOwner		HWND ?
 hInstance		HINSTANCE ?
@@ -6057,13 +6057,14 @@ lpszText		LPCSTR ?
 lpszCaption		LPCSTR ?
 dwStyle			dd ?
 lpszIcon		LPCSTR ?
-dwContextHelpId		dd ?
+dwContextHelpId		DWORD_PTR ?
 lpfnMsgBoxCallback	MSGBOXCALLBACK ?
 dwLanguageId		dd ?
 MSGBOXPARAMSA		ENDS
 PMSGBOXPARAMSA		typedef ptr MSGBOXPARAMSA
 LPMSGBOXPARAMSA		typedef ptr MSGBOXPARAMSA
-MSGBOXPARAMSW		STRUC
+
+MSGBOXPARAMSW		STRUC SIZE_T
 cbSize			UINT ?
 hwndOwner		HWND ?
 hInstance		HINSTANCE ?
@@ -6071,7 +6072,7 @@ lpszText		LPCWSTR ?
 lpszCaption		LPCWSTR ?
 dwStyle			dd ?
 lpszIcon		LPCWSTR ?
-dwContextHelpId		dd ?
+dwContextHelpId		DWORD_PTR ?
 lpfnMsgBoxCallback	MSGBOXCALLBACK ?
 dwLanguageId		dd ?
 MSGBOXPARAMSW		ENDS

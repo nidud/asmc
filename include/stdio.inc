@@ -53,6 +53,7 @@ LPFILE		TYPEDEF PTR _iobuf
 endif
 
 ifndef __PE__
+ifndef _LINUX
 externdef	_bufin:BYTE
 externdef	_iob:_iobuf
 externdef	stdout:_iobuf
@@ -61,6 +62,7 @@ externdef	_osfhnd:HANDLE
 externdef	hStdInput:HANDLE
 externdef	hStdOutput:HANDLE
 externdef	hStdError:HANDLE
+endif
 else
 _iob		equ <[__iob_func()]>
 stdout		equ <[__iob_func()+sizeof(_iobuf)]>

@@ -1,7 +1,7 @@
 include string.inc
 include stdio.inc
 include stdlib.inc
-include alloc.inc
+include malloc.inc
 include limits.inc
 
 include asmc.inc

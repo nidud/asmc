@@ -69,12 +69,10 @@ struct global_options Options = {
 	0			// .pe_subsystem
 };
 
-int define_LINUX = 0;
-int define_WIN64 = 0;
-int define_PE = 0;
-
 char *DefaultDir[NUM_FILE_TYPES] = { NULL };
 static int OptValue;
+
+void define_name( char *, int );
 
 /* current cmdline string is done, get the next one! */
 
@@ -350,6 +348,9 @@ static void ProcessOption( char **cmdline, char *buffer )
 	j &= 0xFFFF;
 
     switch ( j ) {
+    case 'essa':		// -assert
+	Options.xflag = _XF_ASSERT;
+	return;
     case 'c':		// -c
 	return;
     case 'ffoc':	// -coff
@@ -391,13 +392,13 @@ static void ProcessOption( char **cmdline, char *buffer )
     case '6fle':	// -elf64
 	Options.output_format = OFORMAT_ELF;
 	Options.sub_format = SFORMAT_64BIT;
-	define_LINUX = 2;
-	define_WIN64 = 1;
+	define_name( "_LINUX", 2 );
+	define_name( "_WIN64", 1 );
 	return;
     case 'fle':		// -elf
 	Options.output_format = OFORMAT_ELF;
 	Options.sub_format = SFORMAT_NONE;
-	define_LINUX = 1;
+	define_name( "_LINUX", 1 );
 	return;
     case '8iPF':	// -FPi87
 	Options.floating_point = FPO_NO_EMULATION;
@@ -431,6 +432,7 @@ static void ProcessOption( char **cmdline, char *buffer )
 	return;
     case 'iug':		// -gui - subsystem:windows
 	Options.pe_subsystem = 1;
+	define_name( "__GUI__", 1 );
 	return;
     case '?':
     case 'h':
@@ -469,10 +471,10 @@ static void ProcessOption( char **cmdline, char *buffer )
 	Options.epilogueflags = 1;
 	return;
     case 'ep':		// -pe
-	Options.output_format = OFORMAT_BIN;
-	if ( !define_WIN64 )
+	if ( Options.sub_format != SFORMAT_64BIT )
 	    Options.sub_format = SFORMAT_PE;
-	define_PE = 1;
+	Options.output_format = OFORMAT_BIN;
+	define_name( "__PE__", 1 );
 	return;
     case 'r':		// -r
 	Options.process_subdir = 1;
@@ -514,19 +516,20 @@ static void ProcessOption( char **cmdline, char *buffer )
 	return;
     case 'sw':		// -ws
 	Options.aflag |= _AF_WSTRING;
+	define_name( "_UNICODE", 1 );
 	return;
     case 'XW':		// -WX
 	Options.warning_error = 1;
 	return;
     case '6niw':	// -win64
-	if ( !define_PE ) {
+	if ( Options.output_format != OFORMAT_BIN ) {
 	    Options.output_format = OFORMAT_COFF;
 	} else {
 	    Options.model = MODEL_FLAT;
 	    Options.langtype = LANG_FASTCALL;
 	}
 	Options.sub_format = SFORMAT_64BIT;
-	define_WIN64 = 1;
+	define_name( "_WIN64", 1 );
 	return;
     case 'X':		// -X
 	Options.ignore_include = 1;

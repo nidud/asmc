@@ -1,5 +1,6 @@
 ifndef _INC_COMMCTRL
 _INC_COMMCTRL equ 1
+.xlist
 
 ifndef _WIN32_IE
 _WIN32_IE equ 0x0400
@@ -15,6 +16,8 @@ endif
 ifndef NOUSER
 ifdef __PE__
 option	dllimport:<comctl32>
+else
+includelib comctl32.lib
 endif
 
 ifdef _WIN32
@@ -22,6 +25,7 @@ endif
 
 
 include prsht.inc
+.xlist
 
 ifndef SNDMSG
 SNDMSG	equ <SendMessage>
@@ -8403,4 +8407,5 @@ if _MSC_VER GE 1200
 endif
 endif
 
-endif
+.list
+endif ; _INC_COMMCTRL

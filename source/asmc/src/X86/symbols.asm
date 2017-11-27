@@ -7,28 +7,25 @@ include token.inc
 
 public  SymCmpFunc
 public  resw_table
-extern  define_LINUX:DWORD
-extern  define_WIN64:DWORD
-extern  define_PE:DWORD
 
-DeleteProc              PROTO :DWORD
-ReleaseMacroData        PROTO :DWORD
-AddPublicData           PROTO FASTCALL :DWORD
-UpdateLineNumber        PROTO :DWORD, :DWORD
-UpdateWordSize          PROTO :DWORD, :DWORD
-UpdateCurPC             PROTO :DWORD, :DWORD
+DeleteProc          PROTO :DWORD
+ReleaseMacroData    PROTO :DWORD
+AddPublicData       PROTO FASTCALL :DWORD
+UpdateLineNumber    PROTO :DWORD, :DWORD
+UpdateWordSize      PROTO :DWORD, :DWORD
+UpdateCurPC         PROTO :DWORD, :DWORD
 
-HASH_MAGNITUDE          equ 15  ; is 15 since v1.94, previously 12
-HASH_MASK               equ 0x7FFF
+HASH_MAGNITUDE      equ 15  ; is 15 since v1.94, previously 12
+HASH_MASK           equ 0x7FFF
 ;
 ; size of global hash table for symbol table searches. This affects
 ; assembly speed.
 ;
-GHASH_TABLE_SIZE        equ 8192
+GHASH_TABLE_SIZE    equ 8192
 ;
 ; size of local hash table
 ;
-LHASH_TABLE_SIZE        equ 128
+LHASH_TABLE_SIZE    equ 128
 ;
 ; use memcpy()/memcmpi() directly?
 ; this may speed-up things, but not with OW.
@@ -59,40 +56,40 @@ flags           db ?    ; see enum reservedword_flags
 _name           dd ?    ; reserved word (char[])
 ReservedWord    ENDS
 
-extrn   FileCur         : DWORD ; @FileCur symbol
-extrn   LineCur         : DWORD ; @Line symbol
-extrn   symCurSeg       : DWORD ; @CurSeg symbol
-extrn   CurrProc        : DWORD ;
-extrn   ResWordTable    : ReservedWord
+extrn   FileCur     : DWORD ; @FileCur symbol
+extrn   LineCur     : DWORD ; @Line symbol
+extrn   symCurSeg   : DWORD ; @CurSeg symbol
+extrn   CurrProc    : DWORD ;
+extrn   ResWordTable: ReservedWord
 
 .data?
 
-SymCmpFunc      dd ?
-gsym            dd ?            ; asym ** pointer into global hash table
-lsym            dd ?            ; asym ** pointer into local hash table
-SymCount        dd ?            ; Number of symbols in global table
-szDate          db 16 dup(?)    ; value of @Date symbol
-szTime          db 16 dup(?)    ; value of @Time symbol
-                ALIGN 16
-lsym_table      dd LHASH_TABLE_SIZE+1 dup(?)
-                ALIGN 16
-gsym_table      dd GHASH_TABLE_SIZE dup(?)
-                ALIGN 16
-resw_table      LABEL WORD
-                dd HASH_TABITEMS / 2 + 1 dup(?)
+SymCmpFunc  dd ?
+gsym        dd ?        ; asym ** pointer into global hash table
+lsym        dd ?        ; asym ** pointer into local hash table
+SymCount    dd ?        ; Number of symbols in global table
+szDate      db 16 dup(?)    ; value of @Date symbol
+szTime      db 16 dup(?)    ; value of @Time symbol
+        ALIGN 16
+lsym_table  dd LHASH_TABLE_SIZE+1 dup(?)
+        ALIGN 16
+gsym_table  dd GHASH_TABLE_SIZE dup(?)
+        ALIGN 16
+resw_table  LABEL WORD
+        dd HASH_TABITEMS / 2 + 1 dup(?)
 
 .data
 
-symPC           dd 0            ; the $ symbol -- asym *
+symPC       dd 0        ; the $ symbol -- asym *
 
-@@Version       db "@Version",0
-MLVersion       db "800",0
-@@Date          db "@Date",0
-@@Time          db "@Time",0
-@@FileName      db "@FileName",0
-@@FileCur       db "@FileCur",0
-@@CurSeg        db "@CurSeg"
-@@Null          db 0
+@@Version   db "@Version",0
+MLVersion   db "800",0
+@@Date      db "@Date",0
+@@Time      db "@Time",0
+@@FileName  db "@FileName",0
+@@FileCur   db "@FileCur",0
+@@CurSeg    db "@CurSeg"
+@@Null      db 0
 
 ALIGN   4
 
@@ -100,42 +97,59 @@ ALIGN   4
 ; table of predefined text macros
 ;
 tmtab   LABEL tmitem
-        ;
-        ; @Version contains the Masm compatible version
-        ; v2.06: value of @Version changed to 800
-        ;
-        tmitem  <@@Version,  MLVersion, 0>
-        tmitem  <@@Date,     szDate,    0>
-        tmitem  <@@Time,     szTime,    0>
-        tmitem  <@@FileName, ModuleInfo._name, 0>
-        tmitem  <@@FileCur,  0, FileCur>
-        ;
-        ; v2.09: @CurSeg value is never set if no segment is ever opened.
-        ; this may have caused an access error if a listing was written.
-        ;
-        tmitem  <@@CurSeg,   @@Null, symCurSeg>
-        dd      0
+    ;
+    ; @Version contains the Masm compatible version
+    ; v2.06: value of @Version changed to 800
+    ;
+    tmitem  <@@Version,  MLVersion, 0>
+    tmitem  <@@Date,     szDate,    0>
+    tmitem  <@@Time,     szTime,    0>
+    tmitem  <@@FileName, ModuleInfo._name, 0>
+    tmitem  <@@FileCur,  0, FileCur>
+    ;
+    ; v2.09: @CurSeg value is never set if no segment is ever opened.
+    ; this may have caused an access error if a listing was written.
+    ;
+    tmitem  <@@CurSeg,   @@Null, symCurSeg>
+    dd  0
 
 ;
 ; table of predefined numeric equates
 ;
-CP__ASMC__      db "__ASMC__",0
-CP__JWASM__     db "__JWASM__",0
-CP_$            db "$",0
-@@Line          db "@Line",0
-@@WordSize      db "@WordSize",0
+CP__ASMC__  db "__ASMC__",0
+CP__JWASM__ db "__JWASM__",0
+CP_$        db "$",0
+@@Line      db "@Line",0
+@@WordSize  db "@WordSize",0
 
-        ALIGN   4
+    ALIGN   4
 
-eqtab   LABEL eqitem
-        eqitem  < CP__ASMC__,  ASMC_VERSION, 0, 0 >
-        eqitem  < CP__JWASM__, 212, 0, 0 >
-        eqitem  < CP_$,        0, UpdateCurPC, symPC >
-        eqitem  < @@Line,      0, UpdateLineNumber, LineCur >
-        eqitem  < @@WordSize,  0, UpdateWordSize, 0 > ; must be last (see SymInit())
-        dd      0
+eqtab LABEL eqitem
+    eqitem  < CP__ASMC__,  ASMC_VERSION, 0, 0 >
+    eqitem  < CP__JWASM__, 212, 0, 0 >
+    eqitem  < CP_$,        0, UpdateCurPC, symPC >
+    eqitem  < @@Line,      0, UpdateLineNumber, LineCur >
+    eqitem  < @@WordSize,  0, UpdateWordSize, 0 > ; must be last (see SymInit())
+    dd  0
+
+_MAX_DYNEQ equ 10
+dyneqcount dd 0
+dyneqtable dd _MAX_DYNEQ dup(0)
+dyneqvalue dd _MAX_DYNEQ dup(0)
 
     .code
+
+define_name proc string:LPSTR, value:SINT
+
+    mov edx,dyneqcount
+    mov eax,string
+    mov dyneqtable[edx*4],eax
+    mov eax,value
+    mov dyneqvalue[edx*4],eax
+    inc dyneqcount
+    ret
+
+define_name endp
 
 SymSetCmpFunc proc
     mov SymCmpFunc,_memicmp
@@ -281,7 +295,9 @@ SymFind proc fastcall uses esi edi ebx ebp sname
                     .repeat
 
                         .if cx == [eax].asym.name_size
+
                             mov edi,[eax].asym._name
+
                             .repeat
                                 .if ecx >= 4
                                     sub ecx,4
@@ -414,6 +430,7 @@ SymFind proc fastcall uses esi edi ebx ebp sname
                     lea edx,[eax].asym.nextitem
                     mov eax,[edx]
                 .until !eax
+
             .endif
 
         .until 1
@@ -709,32 +726,16 @@ endif
     ;
     and [eax].asym.flag,not SFL_LIST
 
-    .if define_LINUX
-        SymCreate("_LINUX")
+    xor esi,esi
+    .while esi < dyneqcount
+        SymCreate(dyneqtable[esi*4])
         mov [eax].asym.state,SYM_TMACRO
         or  [eax].asym.flag,SFL_ISDEFINED or SFL_PREDEFINED
-        mov ecx,define_LINUX
+        mov ecx,dyneqvalue[esi*4]
         mov [eax].asym._offset,ecx
         mov [eax].asym.sfunc_ptr,0
-    .endif
-
-    .if define_WIN64
-        SymCreate("_WIN64")
-        mov [eax].asym.state,SYM_TMACRO
-        or  [eax].asym.flag,SFL_ISDEFINED or SFL_PREDEFINED
-        mov ecx,define_WIN64
-        mov [eax].asym._offset,ecx
-        mov [eax].asym.sfunc_ptr,0
-    .endif
-
-    .if define_PE
-        SymCreate("__PE__")
-        mov [eax].asym.state,SYM_TMACRO
-        or  [eax].asym.flag,SFL_ISDEFINED or SFL_PREDEFINED
-        mov ecx,define_PE
-        mov [eax].asym._offset,ecx
-        mov [eax].asym.sfunc_ptr,0
-    .endif
+        inc esi
+    .endw
     ;
     ; $ is an address (usually). Also, don't add it to the list
     ;
@@ -800,7 +801,7 @@ SymGetAll proc syms
             mov eax,[eax].asym.nextitem
         .endw
         add ecx,1
-    .until  ecx == GHASH_TABLE_SIZE
+    .until ecx == GHASH_TABLE_SIZE
 
     ret
 
@@ -869,8 +870,8 @@ QEnqueue endp
 
 get_hash proc fastcall uses ebx s, z
 
-    xor  eax,eax
-    and  edx,0xFF
+    xor eax,eax
+    and edx,0xFF
     .while edx
         movzx ebx,byte ptr [ecx]
         inc   ecx
@@ -924,7 +925,7 @@ FindResWord proc fastcall w_name, w_size
 
         .while eax
             .if ResWordTable[eax*8].len == 2
-                mov     edx,ResWordTable[eax*8]._name
+                mov edx,ResWordTable[eax*8]._name
                 .break .if cx == [edx]
             .endif
             movzx eax,ResWordTable[eax*8].next
@@ -992,7 +993,7 @@ FindResWord proc fastcall w_name, w_size
 
         .while eax
             .if ResWordTable[eax*8].len == 4
-                mov     edx,ResWordTable[eax*8]._name
+                mov edx,ResWordTable[eax*8]._name
                 .break .if ecx == [edx]
             .endif
             movzx eax,ResWordTable[eax*8].next
@@ -1074,14 +1075,14 @@ else
             xor     eax,edx
             .if ebx > 6
                 movzx   edx,BYTE PTR [edi+6]
-                or      edx,0x20
-                shl     eax,3
-                add     eax,edx
-                mov     edx,eax
-                and     edx,not 0x1FFF
-                xor     eax,edx
-                shr     edx,13
-                xor     eax,edx
+                or  edx,0x20
+                shl eax,3
+                add eax,edx
+                mov edx,eax
+                and edx,not 0x1FFF
+                xor eax,edx
+                shr edx,13
+                xor eax,edx
             .endif
         .endif
 endif
@@ -1089,24 +1090,19 @@ endif
         movzx  eax,resw_table[eax*2]
         align  4
         .while eax
-
             .if ResWordTable[eax*8].len == bl
-
                 mov edx,ResWordTable[eax*8]._name
                 mov ecx,[edi]
                 or  ecx,0x20202020
                 .if ecx == [edx]
-
                     mov cl,[edi+4]
                     or  cl,0x20
                     .if cl == [edx+4]
                         .break .if ebx == 5
-
                         mov cl,[edi+5]
                         or  cl,0x20
                         .if cl == [edx+5]
                             .break .if ebx == 6
-
                             mov cl,[edi+6]
                             or  cl,0x20
                             .break .if cl == [edx+6]
@@ -1121,73 +1117,74 @@ endif
         ret
 
       .default
-        push    esi
-        push    edi
-        push    ebx
-        mov     ebx,edx
-        mov     edi,ecx
 
-        mov     ecx,[edi+1]
-        or      ecx,0x20202020
+        push esi
+        push edi
+        push ebx
+        mov ebx,edx
+        mov edi,ecx
 
-        movzx   edx,cl
-        shl     eax,3
-        add     eax,edx
-        mov     esi,eax
-        and     esi,not 0x1FFF
-        xor     eax,esi
-        shr     esi,13
-        xor     eax,esi
+        mov ecx,[edi+1]
+        or  ecx,0x20202020
 
-        mov     dl,ch
-        shl     eax,3
-        add     eax,edx
-        mov     esi,eax
-        and     esi,not 0x1FFF
-        xor     eax,esi
-        shr     esi,13
-        xor     eax,esi
+        movzx edx,cl
+        shl eax,3
+        add eax,edx
+        mov esi,eax
+        and esi,not 0x1FFF
+        xor eax,esi
+        shr esi,13
+        xor eax,esi
 
-        shr     ecx,16
-        mov     dl,cl
-        shl     eax,3
-        add     eax,edx
-        mov     esi,eax
-        and     esi,not 0x1FFF
-        xor     eax,esi
-        shr     esi,13
-        xor     eax,esi
+        mov dl,ch
+        shl eax,3
+        add eax,edx
+        mov esi,eax
+        and esi,not 0x1FFF
+        xor eax,esi
+        shr esi,13
+        xor eax,esi
 
-        mov     dl,ch
-        shl     eax,3
-        add     eax,edx
-        mov     esi,eax
-        and     esi,not 0x1FFF
-        xor     eax,esi
-        shr     esi,13
-        xor     eax,esi
+        shr ecx,16
+        mov dl,cl
+        shl eax,3
+        add eax,edx
+        mov esi,eax
+        and esi,not 0x1FFF
+        xor eax,esi
+        shr esi,13
+        xor eax,esi
 
-        mov     dl,[edi+5]
-        or      dl,0x20
-        shl     eax,3
-        add     eax,edx
-        mov     esi,eax
-        and     esi,not 0x1FFF
-        xor     eax,esi
-        shr     esi,13
-        xor     eax,esi
+        mov dl,ch
+        shl eax,3
+        add eax,edx
+        mov esi,eax
+        and esi,not 0x1FFF
+        xor eax,esi
+        shr esi,13
+        xor eax,esi
 
-        mov     dl,[edi+6]
-        or      dl,0x20
-        shl     eax,3
-        add     eax,edx
-        mov     esi,eax
-        and     esi,not 0x1FFF
-        xor     eax,esi
-        shr     esi,13
-        xor     eax,esi
+        mov dl,[edi+5]
+        or  dl,0x20
+        shl eax,3
+        add eax,edx
+        mov esi,eax
+        and esi,not 0x1FFF
+        xor eax,esi
+        shr esi,13
+        xor eax,esi
 
-        mov     ecx,7
+        mov dl,[edi+6]
+        or  dl,0x20
+        shl eax,3
+        add eax,edx
+        mov esi,eax
+        and esi,not 0x1FFF
+        xor eax,esi
+        shr esi,13
+        xor eax,esi
+
+        mov ecx,7
         .repeat
             movzx edx,BYTE PTR [ecx+edi]
             or  edx,0x20
@@ -1206,16 +1203,13 @@ endif
         align  4
         .while eax
             .if ResWordTable[eax*8].len == bl
-
                 mov esi,ResWordTable[eax*8]._name
                 mov ecx,[edi]
                 or  ecx,0x20202020
                 .if ecx == [esi]
-
                     mov ecx,[edi+4]
                     or  ecx,0x20202020
                     .if ecx == [esi+4]
-
                         mov edx,ebx
                         .repeat
                             .break(1) .if edx == 8
@@ -1228,9 +1222,9 @@ endif
             .endif
             mov ax,ResWordTable[eax*8].next
         .endw
-        pop     ebx
-        pop     edi
-        pop     esi
+        pop ebx
+        pop edi
+        pop esi
         ret
     .endsw
 

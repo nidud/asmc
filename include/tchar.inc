@@ -1006,15 +1006,7 @@ _TEXT	macro x
 	endm
 endif
 
-ifdef __PE__
-
-ifndef __STDLIB_INC
-include stdlib.inc
-endif
-
-ifdef _WIN64
-option	win64:3
-else
+ifndef _WIN64
 	rax equ <eax>
 	rbx equ <ebx>
 	rcx equ <ecx>
@@ -1024,6 +1016,28 @@ else
 	rbp equ <ebp>
 	rsp equ <esp>
 endif
+
+ifdef __PE__
+
+ifdef _WIN64
+option	win64:3
+endif
+
+ifdef __GUI__
+
+	.code
+
+mainCRTStartup proc
+
+    mov rbx,GetModuleHandle(0)
+    ExitProcess(_tWinMain(rbx, 0, GetCommandLine(), SW_SHOWDEFAULT))
+
+else
+
+ifndef __STDLIB_INC
+include stdlib.inc
+endif
+
 	.data
 	__argc	  dd 0,0
 	__targv	  SIZE_T 0
@@ -1051,6 +1065,8 @@ endif
 	.endif
 
 	exit(eax)
+
+endif ; __GUI__
 
 mainCRTStartup endp
 

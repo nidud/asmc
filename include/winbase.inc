@@ -2014,6 +2014,10 @@ MAKEINTATOM macro i
 	endm
 INVALID_ATOM	equ 0
 
+
+ifdef __PE__
+option dllimport:none
+endif
 ;int
 ;CALLBACK
 WinMain proto WINAPI \
@@ -2028,6 +2032,8 @@ wWinMain proto WINAPI \
 	 hPrevInstance: HINSTANCE,
 	     lpCmdLine: LPWSTR,
 	      nShowCmd: SINT
+
+WINBASEAPI
 
 ;BOOL
 FreeLibrary proto WINAPI \

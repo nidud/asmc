@@ -1,5 +1,5 @@
 include string.inc
-include alloc.inc
+include malloc.inc
 include asmc.inc
 include token.inc
 include hll.inc

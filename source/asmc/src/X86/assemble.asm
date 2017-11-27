@@ -1,7 +1,7 @@
 ; ASSEMBLE.ASM--
 ; Copyright (C) 2017 Asmc Developers
 
-include alloc.inc
+include malloc.inc
 include stdio.inc
 include stdlib.inc
 include string.inc
@@ -14,7 +14,6 @@ include token.inc
 
 public	jmpenv
 extern	MacroLocals:dword
-extern	define_PE:DWORD
 
 conv_section	STRUC
 len		dd ?
@@ -537,6 +536,8 @@ ModulePassInit proc uses esi
     mov al,Options.fieldalign
     mov ModuleInfo.fieldalign,al
     mov ModuleInfo.procalign,0
+    mov al,Options.xflag
+    mov ModuleInfo.xflag,al
     mov al,ModuleInfo.aflag
     and al,_AF_LSTRING
     or	al,Options.aflag
@@ -1020,7 +1021,9 @@ GetExt proc private ftype
     .if ecx == OBJ && Options.output_format == OFORMAT_BIN
 
 	mov ecx,4
-	.if Options.sub_format == SFORMAT_MZ || define_PE
+	.if Options.sub_format == SFORMAT_MZ || \
+	    Options.sub_format == SFORMAT_PE || \
+	    Options.sub_format == SFORMAT_64BIT
 	    inc ecx
 	.endif
     .endif

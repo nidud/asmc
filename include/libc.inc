@@ -167,10 +167,7 @@ NULL		equ 0
 
 option		casemap:none
 size_t		typedef SIZE_T
-ifdef DEBUG
 assert_exit	proto
-.assert:	on
-endif	;; DEBUG
 
 .list
 endif	;; __LIBC_INC

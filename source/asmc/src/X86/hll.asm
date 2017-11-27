@@ -1,7 +1,7 @@
 include string.inc
 include stdio.inc
 include stdlib.inc
-include alloc.inc
+include malloc.inc
 
 include asmc.inc
 include token.inc
@@ -1291,7 +1291,7 @@ local   b[MAX_LINE_LEN]:SBYTE,
     lea ecx,[eax+3]
     inc eax
 
-    .if edi == eax || ( edi == ecx && br_count == 0 )
+    .if ( edi == eax && eax > 1 ) || ( edi == ecx && br_count == 0 )
 
         .if SymFind( [ebx-32].string_ptr )
 

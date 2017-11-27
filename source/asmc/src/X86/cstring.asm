@@ -1,3 +1,4 @@
+include malloc.inc
 include stdio.inc
 include string.inc
 include asmc.inc
@@ -296,6 +297,8 @@ toend:
     ret
 ParseCString ENDP
 
+option cstack:on
+
 GenerateCString PROC USES esi edi ebx i, tokenarray:PTR asm_tok
 
 local   rc:                     SINT,
@@ -303,15 +306,25 @@ local   rc:                     SINT,
         e:                      SINT,
         equal:                  SINT,
         NewString:              SINT,
-        b_label[64]:            BYTE,
-        b_seg[64]:              BYTE,
-        b_line[MAX_LINE_LEN]:   BYTE,
-        b_data[MAX_LINE_LEN]:   BYTE,
-        buffer[MAX_LINE_LEN]:   BYTE,
+        b_label:                LPSTR,
+        b_seg:                  LPSTR,
+        b_line:                 LPSTR,
+        b_data:                 LPSTR,
+        buffer:                 LPSTR,
         StringOffset:           LPSTR,
         lineflags:              BYTE,
         brackets:               BYTE,
         Unicode:                BYTE
+
+    mov buffer,alloca(MAX_LINE_LEN*3+64*2)
+    add eax,MAX_LINE_LEN
+    mov b_data,eax
+    add eax,MAX_LINE_LEN
+    mov b_line,eax
+    add eax,MAX_LINE_LEN
+    mov b_seg,eax
+    add eax,64
+    mov b_label,eax
 
     xor eax,eax
     mov rc,eax
@@ -365,7 +378,7 @@ local   rc:                     SINT,
         mov rc,eax
         mov edi,LineStoreCurr
         add edi,line_item.line
-        strcpy(&b_line, edi)
+        strcpy(b_line, edi)
         mov BYTE PTR [edi],';'
         mov equal,strcmp(eax, [esi].asm_tok.tokpos)
         mov al,ModuleInfo.line_flags
@@ -382,7 +395,7 @@ local   rc:                     SINT,
                 mov q,ebx
                 lea eax,[ebx+16]
                 mov e,eax
-                ParseCString( &b_label, &buffer, esi, &StringOffset, &Unicode )
+                ParseCString( b_label, buffer, esi, &StringOffset, &Unicode )
 
                 mov NewString,eax
                 mov esi,StringOffset
@@ -393,10 +406,10 @@ local   rc:                     SINT,
                     ;
                     push esi
                     sub esi,edi
-                    memcpy( &b_data, edi, esi )
+                    memcpy( b_data, edi, esi )
                     mov BYTE PTR [eax+esi],0
 
-                    .if strstr( &b_line, eax )
+                    .if strstr( b_line, eax )
 
                         mov edi,eax
                         lea eax,[edi+esi]
@@ -412,11 +425,10 @@ local   rc:                     SINT,
 
                         .if eax
 
-                            lea ecx,b_data
-                            strcpy( ecx, eax )
+                            strcpy( b_data, eax )
                             strcpy( edi, "addr " )
-                            strcat( edi, &b_label )
-                            strcat( edi, &b_data )
+                            strcat( edi, b_label )
+                            strcat( edi, b_data )
                         .endif
                     .endif
                     pop esi
@@ -424,22 +436,23 @@ local   rc:                     SINT,
 
                 .if NewString
 
-                    mov eax,0x00FFFFFF
-                    and eax,dword ptr buffer
+                    mov eax,buffer
+                    mov eax,[eax]
+                    and eax,0x00FFFFFF
                     .if eax != '""'
                         .if Unicode
                             mov ecx,@CStr(" %s dw %s,0")
                         .else
                             mov ecx,@CStr(" %s sbyte %s,0")
                         .endif
-                        sprintf(&b_data, ecx, &b_label, &buffer)
+                        sprintf(b_data, ecx, b_label, buffer)
                     .else
                         .if Unicode
                             mov ecx,@CStr(" %s dw 0")
                         .else
                             mov ecx,@CStr(" %s sbyte 0")
                         .endif
-                        sprintf(&b_data, ecx, &b_label)
+                        sprintf(b_data, ecx, b_label)
                     .endif
 
                 .elseif ModuleInfo.list
@@ -452,9 +465,8 @@ local   rc:                     SINT,
                 mov BYTE PTR [eax],0
                 mov eax,tokenarray
                 mov ecx,[eax].asm_tok.tokpos
-                strcat( strcpy( &buffer, ecx ), "addr " )
-                lea ecx,b_label
-                strcat( eax, ecx )
+                strcat( strcpy( buffer, ecx ), "addr " )
+                strcat( eax, b_label )
                 M_SKIP_SPACE ecx, esi
 
                 .if ecx
@@ -467,14 +479,14 @@ local   rc:                     SINT,
                     mov eax,ModuleInfo.currseg
                     mov ecx,[eax].asym._name
 
-                    strcat( strcpy( &b_seg, ecx ), " segment" )
+                    strcat( strcpy( b_seg, ecx ), " segment" )
                     .break .if InsertLine( ".data" )
-                    .break .if InsertLine( &b_data )
+                    .break .if InsertLine( b_data )
                     .break .if InsertLine( "_DATA ends" )
-                    .break .if InsertLine( &b_seg )
+                    .break .if InsertLine( b_seg )
                     mov rc,eax
                 .endif
-                strcpy( ModuleInfo.currsource, &buffer )
+                strcpy( ModuleInfo.currsource, buffer )
                 Tokenize( ModuleInfo.currsource, 0, tokenarray, TOK_DEFAULT )
                 mov ModuleInfo.token_count,eax
                 mov eax,i
@@ -497,7 +509,7 @@ local   rc:                     SINT,
         .else
             mov ebx,ModuleInfo.GeneratedCode
             mov ModuleInfo.GeneratedCode,0
-            StoreLine( &b_line, list_pos, 0 )
+            StoreLine( b_line, list_pos, 0 )
             mov ModuleInfo.GeneratedCode,ebx
         .endif
         mov al,lineflags
@@ -513,11 +525,17 @@ ifdef MACRO_CSTRING
 
 CString PROC USES esi edi ebx buffer:LPSTR, tokenarray:PTR asm_tok
 
-  local string[MAX_LINE_LEN]:   SBYTE,
-        cursrc[MAX_LINE_LEN]:   SBYTE,
-        dlabel[32]:             SBYTE,
-        StringOffset:           LPSTR,
-        Unicode:                BYTE
+  local string:         LPSTR,
+        cursrc:         LPSTR,
+        dlabel:         LPSTR,
+        StringOffset:   LPSTR,
+        Unicode:        BYTE
+
+    mov cursrc,alloca(MAX_LINE_LEN*2+32)
+    add eax,MAX_LINE_LEN
+    mov string,eax
+    add eax,MAX_LINE_LEN
+    mov dlabel,eax
 
     mov ebx,tokenarray
     mov edi,_stricmp([ebx].asm_tok.string_ptr, "@CStr")
@@ -529,23 +547,25 @@ CString PROC USES esi edi ebx buffer:LPSTR, tokenarray:PTR asm_tok
         .if BYTE PTR [esi] == '"' || \
             WORD PTR [esi] == '"L'
 
-            ParseCString(&dlabel, &string, esi, &StringOffset, &Unicode)
+            ParseCString(dlabel, string, esi, &StringOffset, &Unicode)
 
             mov esi,eax
             .if edi
                 strcpy( buffer, "offset " )
-                strcat( buffer, &dlabel )
+                strcat( buffer, dlabel )
             .else
                 ;
                 ; v2.24 skip return value if @CStr is first token
                 ;
-                mov word ptr dlabel,' '
+                mov eax,dlabel
+                mov word ptr [eax],' '
             .endif
 
             .if esi
 
-                mov eax,0x00FFFFFF
-                and eax,dword ptr string
+                mov eax,string
+                mov eax,[eax]
+                and eax,0x00FFFFFF
                 .if eax != '""'
 
                     .if Unicode
@@ -554,7 +574,7 @@ CString PROC USES esi edi ebx buffer:LPSTR, tokenarray:PTR asm_tok
                     .else
                         mov ecx,@CStr(" %s sbyte %s,0")
                     .endif
-                    sprintf(&cursrc, ecx, &dlabel, &string)
+                    sprintf(cursrc, ecx, dlabel, string)
                 .else
                     .if Unicode
 
@@ -562,7 +582,7 @@ CString PROC USES esi edi ebx buffer:LPSTR, tokenarray:PTR asm_tok
                     .else
                         mov ecx,@CStr(" %s sbyte 0")
                     .endif
-                    sprintf(&cursrc, ecx, &dlabel)
+                    sprintf(cursrc, ecx, dlabel)
                 .endif
                 ;
                 ; v2.24 skip .data/.code if already in .data segment
@@ -574,7 +594,7 @@ CString PROC USES esi edi ebx buffer:LPSTR, tokenarray:PTR asm_tok
                     inc esi
                     InsertLine(".data")
                 .endif
-                InsertLine(&cursrc)
+                InsertLine(cursrc)
                 .if esi
 
                     InsertLine(".code")

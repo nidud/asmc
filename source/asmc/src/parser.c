@@ -2288,9 +2288,13 @@ int ParseLine( struct asm_tok tokenarray[] )
 	if ( ERROR == ParseLine( tokenarray ) )
 	    return ERROR;
 
+	if ( ModuleInfo.list ) /* v2.26 -- missing line from list file (wiesl) */
+	    ModuleInfo.line_flags &= ~LOF_LISTED;
+
 	/* parse macro or hll function */
 	strcpy(CurrSource, buffer);
 	Token_Count = Tokenize(CurrSource, 0, tokenarray, TOK_DEFAULT);
+
 	i = ExpandLine(CurrSource, tokenarray);
 	if (i == EMPTY)
 	    return EMPTY;

@@ -75,12 +75,32 @@ system begin gui_32
     runtime windows=4.0
 end
 
+# Win32 gui Unicode application
+system begin gui_32W
+    option  quiet
+    libpath %ASMCDIR%\lib
+    library libc,kernel32,user32,gdi32
+    symt    _wWinStart
+    format  windows pe ru win ^
+    runtime windows=4.0
+end
+
 # Win64 gui application
 system begin gui_64
     option  quiet
     libpath %ASMCDIR%\lib\amd64
     library libc,kernel32,user32,gdi32
     symt    WinStart
+    format  windows pe ru win ^
+    runtime windows=4.0
+end
+
+# Win64 gui Unicode application
+system begin gui_64W
+    option  quiet
+    libpath %ASMCDIR%\lib\amd64
+    library libc,kernel32,user32,gdi32
+    symt    wWinStart
     format  windows pe ru win ^
     runtime windows=4.0
 end
@@ -98,7 +118,7 @@ system begin dll_64
 end
 
 system begin dos
-    libpath %AsmCDir%\source\dos\lib
+    libpath %AsmCDir%\source\lib16\lib
     library cl
     format  dos ^
 end

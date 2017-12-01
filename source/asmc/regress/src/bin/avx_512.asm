@@ -3633,31 +3633,40 @@
     vscatterpf1qps  [r9+zmm31*1+0x100]{k1}
     vscatterpf1qps  [rcx+zmm31*4+0x400]{k1}
 
-    vscatterdpd	 [r14+ymm31*8+0x7b]{k1},zmm30
-    vscatterdpd	 [r14+ymm31*8+0x7b]{k1},zmm30
-    vscatterdpd	 [r9+ymm31*1+0x100]{k1},zmm30
-    vscatterdpd	 [rcx+ymm31*4+0x400]{k1},zmm30
-    vscatterdps	 [r14+zmm31*8+0x7b]{k1},zmm30
-    vscatterdps	 [r14+zmm31*8+0x7b]{k1},zmm30
-    vscatterdps	 [r9+zmm31*1+0x100]{k1},zmm30
-    vscatterdps	 [rcx+zmm31*4+0x400]{k1},zmm30
-    vscatterqpd	 [r14+zmm31*8+0x7b]{k1},zmm30
-    vscatterqpd	 [r14+zmm31*8+0x7b]{k1},zmm30
-    vscatterqpd	 [r9+zmm31*1+0x100]{k1},zmm30
-    vscatterqpd	 [rcx+zmm31*4+0x400]{k1},zmm30
-
-    vpscatterdd	 [r14+zmm31*8+0x7b]{k1},zmm30
-    vpscatterdd	 [r14+zmm31*8+0x7b]{k1},zmm30
-    vpscatterdd	 [r9+zmm31*1+0x100]{k1},zmm30
-    vpscatterdd	 [rcx+zmm31*4+0x400]{k1},zmm30
-    vpscatterdq	 [r14+ymm31*8+0x7b]{k1},zmm30
-    vpscatterdq	 [r14+ymm31*8+0x7b]{k1},zmm30
-    vpscatterdq	 [r9+ymm31*1+0x100]{k1},zmm30
-    vpscatterdq	 [rcx+ymm31*4+0x400]{k1},zmm30
-    vpscatterqq	 [r14+zmm31*8+0x7b]{k1},zmm30
-    vpscatterqq	 [r14+zmm31*8+0x7b]{k1},zmm30
-    vpscatterqq	 [r9+zmm31*1+0x100]{k1},zmm30
-    vpscatterqq	 [rcx+zmm31*4+0x400]{k1},zmm30
+    vscatterdpd [r14+ymm31*8+0x7b]{k1},zmm30
+    vscatterdpd [r14+ymm31*8+0x7b]{k1},zmm30
+    vscatterdpd [r9+ymm31*1+0x100]{k1},zmm30
+    vscatterdpd [rcx+ymm31*4+0x400]{k1},zmm30
+    vscatterdps [r14+zmm31*8+0x7b]{k1},zmm30
+    vscatterdps [r14+zmm31*8+0x7b]{k1},zmm30
+    vscatterdps [r9+zmm31*1+0x100]{k1},zmm30
+    vscatterdps [rcx+zmm31*4+0x400]{k1},zmm30
+    vscatterqpd [r14+zmm31*8+0x7b]{k1},zmm30
+    vscatterqpd [r14+zmm31*8+0x7b]{k1},zmm30
+    vscatterqpd [r9+zmm31*1+0x100]{k1},zmm30
+    vscatterqpd [rcx+zmm31*4+0x400]{k1},zmm30
+if 1 ; v2.27
+    vscatterqpd [rsi+xmm1*1+0]{k1},xmm0
+    vscatterqpd [rsi+xmm1*1+0]{k1},xmm20
+    vscatterqpd [rsi+xmm20*1+0]{k1},xmm20
+    vscatterqpd [rsi+ymm1*1+0]{k1},ymm0
+    vscatterqpd [rsi+ymm1*1+0]{k1},ymm20
+    vscatterqpd [rsi+ymm20*1+0]{k1},ymm20
+    vscatterqpd [rsi+zmm1*1+0]{k1},zmm0
+    vscatterqpd [rsi+zmm31*1+0]{k1},zmm0
+endif
+    vpscatterdd [r14+zmm31*8+0x7b]{k1},zmm30
+    vpscatterdd [r14+zmm31*8+0x7b]{k1},zmm30
+    vpscatterdd [r9+zmm31*1+0x100]{k1},zmm30
+    vpscatterdd [rcx+zmm31*4+0x400]{k1},zmm30
+    vpscatterdq [r14+ymm31*8+0x7b]{k1},zmm30
+    vpscatterdq [r14+ymm31*8+0x7b]{k1},zmm30
+    vpscatterdq [r9+ymm31*1+0x100]{k1},zmm30
+    vpscatterdq [rcx+ymm31*4+0x400]{k1},zmm30
+    vpscatterqq [r14+zmm31*8+0x7b]{k1},zmm30
+    vpscatterqq [r14+zmm31*8+0x7b]{k1},zmm30
+    vpscatterqq [r9+zmm31*1+0x100]{k1},zmm30
+    vpscatterqq [rcx+zmm31*4+0x400]{k1},zmm30
 
     vgetexppd zmm30,zmm29
     vgetexppd zmm30{k7},zmm29

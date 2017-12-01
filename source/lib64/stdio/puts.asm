@@ -2,13 +2,11 @@ include stdio.inc
 include io.inc
 include string.inc
 
-	.code
+    .code
 
-	OPTION	WIN64:3, STACKBASE:rsp
+puts proc string:LPSTR
+    _write(stdout._file, string, strlen(rcx))
+    ret
+puts endp
 
-puts	PROC string:LPSTR
-	_write( stdout._file, string, strlen( string ) )
-	ret
-puts	ENDP
-
-	END
+    END

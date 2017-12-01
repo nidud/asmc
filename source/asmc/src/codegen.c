@@ -370,6 +370,10 @@ static void output_opc( struct code_info *CodeInfo )
 		    case VX_OP3|VX_OP2V|VX_OP3V:	/* 0, 1, 1 */
 			byte3 &= ~VX3_V;
 		    case VX_OP2V:			/* 0, 1	   */
+			if ( evex == 0x08 && ( byte1 & 0x6F ) == 0x62 ) {
+			    evex |= 0xE0;
+			    break;
+			}
 			if ( evex == 0x20 )
 			    ins++;
 		    case VX_OP3|VX_OP3V:		/* 0, 0, 1 */
@@ -444,10 +448,14 @@ static void output_opc( struct code_info *CodeInfo )
 			if ( !( byte3 & VX3_B ) || ( evex & 0x04 ) )
 			    byte1 |= VX1_R1;
 			byte3 |= VX3_V;
+			if ( evex == 0x08 && ( byte1 & 0x6F ) == 0x62 )
+			    evex |= ( byte1 & 0xF0 );
 			break;
 		    default:
 			if ( ( byte1 &	0x0F ) == 1 )
 			    byte1 |= VX1_R1;
+			else if ( evex == 0x08 && ( byte1 & 0x0F ) == 0x02 )
+			    evex |= ( byte1 & 0xF0 ) | 0x90;
 			break;
 		    }
 		}
@@ -668,6 +676,10 @@ static void output_opc( struct code_info *CodeInfo )
 		byte2 |= 0x10;
 		index = CodeInfo->opc_or & 0x1F;
 		byte3 = 0x01 | ( CodeInfo->opc_or & 0x40 ) | ( ~( index >> 1 ) & 0x08 );
+		if ( byte3 & 0x40 && CodeInfo->opnd[1].type == OP_YMM ) {
+		    byte3 &= ~0x40;
+		    byte3 |= 0x20;
+		}
 		byte1 = 0x02 | ( ~( index << 3 ) & 0x40 ) | ( evex & 0xF0 );
 		if ( ( CodeInfo->sib & 0xC0 ) == 0x80 )
 		    byte1 |= 0x20;

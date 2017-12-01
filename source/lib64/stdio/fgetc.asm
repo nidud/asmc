@@ -1,21 +1,19 @@
 include stdio.inc
 
-	.code
+    .code
 
-	OPTION	PROLOGUE:NONE, EPILOGUE:NONE
+    option win64:rsp nosave noauto
 
-fgetc	PROC fp:LPFILE
+fgetc proc fp:LPFILE
+    dec [rcx]._iobuf._cnt
+    .ifl
+        _filbuf(rcx)
+    .else
+        inc [rcx]._iobuf._ptr
+        mov rax,[rcx]._iobuf._ptr
+        movzx eax,byte ptr [rax-1]
+    .endif
+    ret
+fgetc endp
 
-	dec	[rcx]._iobuf._cnt
-	jl	fbuf
-	inc	[rcx]._iobuf._ptr
-	mov	rax,[rcx]._iobuf._ptr
-	movzx	rax,byte ptr [rax-1]
-toend:
-	ret
-fbuf:
-	_filbuf( rcx )
-	jmp	toend
-fgetc	ENDP
-
-	END
+    END

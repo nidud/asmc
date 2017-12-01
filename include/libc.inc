@@ -2,7 +2,7 @@ ifndef __LIBC_INC
 ;
 ; Master include file for the Asmc RTL library.
 ;
-_ASMLIB_	equ 224 ; Asmc Version
+_ASMLIB_	equ 227 ; Asmc Version
 .xlist
 __LIBC_INC	equ 1
 __STDC__	equ 1
@@ -103,13 +103,14 @@ _MSC_FULL_VER	equ 120000000 ;; Visual C++ version 12.0
 endif
 
 ifdef _WIN64
-option	win64:3
-SIZE_T	typedef QWORD
-
 ifdef __PE__
+if not (@cpu eq 0x0D5F) ; case -pe -win64
 	.x64
 	.model	flat, _CType
 endif
+endif
+option	win64:3
+SIZE_T	typedef QWORD
 else
 	.486
 ifdef __SSE__

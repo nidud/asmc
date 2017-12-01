@@ -1,48 +1,41 @@
 include stdio.inc
 
-	.code
+    .code
 
-	OPTION	STACKBASE:rsp
-	ASSUME	rbx:ptr _iobuf
+    assume rbx:ptr _iobuf
 
-fgets PROC USES rsi rdi rbx buf:LPSTR, count:SINT, fp:LPFILE
+fgets proc uses rsi rdi rbx buf:LPSTR, count:SINT, fp:LPFILE
+    mov rdi,rcx
+    mov rsi,rdx
+    mov rbx,r8
+    .repeat
+        xor eax,eax
+        cmp rsi,rax
+        .break .ifng
+        dec rsi
+        .ifnz
+            .repeat
+                dec [rbx]._cnt
+                .ifl
+                    .ifd _filbuf(rbx) == -1
+                        .break .if rdi != buf
+                        xor eax,eax
+                        .break(1)
+                    .endif
+                .else
+                    mov rcx,[rbx]._ptr
+                    inc [rbx]._ptr
+                    mov al,[rcx]
+                .endif
+                stosb
+                .break .if al == 10
+                dec rsi
+            .untilz
+        .endif
+        mov byte ptr [rdi],0
+        mov rax,buf
+    .until 1
+    ret
+fgets endp
 
-	mov	rdi,rcx
-	mov	rsi,rdx
-	mov	rbx,r8
-
-	cmp	rsi,0
-	jle	error
-	dec	rsi
-	jz	done
-lupe:
-	dec	[rbx]._cnt
-	jl	fbuf
-	mov	rcx,[rbx]._ptr
-	inc	[rbx]._ptr
-	mov	al,[rcx]
-next:
-	mov	[rdi],al
-	inc	rdi
-	cmp	al,10
-	je	done
-	dec	rsi
-	jnz	lupe
-done:
-	mov	byte ptr [rdi],0
-	mov	rax,buf
-	test	rax,rax
-toend:
-	ret
-fbuf:
-	_filbuf(rbx)
-	cmp	eax,-1
-	jne	next
-	cmp	rdi,buf
-	jne	done
-error:
-	xor	eax,eax
-	jmp	toend
-fgets	ENDP
-
-	END
+    END

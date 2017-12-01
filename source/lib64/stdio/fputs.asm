@@ -1,28 +1,28 @@
 include stdio.inc
 include string.inc
 
-	.code
+    .code
 
-	OPTION	WIN64:2, STACKBASE:rsp
+    option win64:rsp nosave
 
-fputs	PROC USES rsi rdi rbx string:LPSTR, fp:LPFILE
+fputs proc uses rsi rdi rbx string:LPSTR, fp:LPFILE
 
-	mov	rsi,rdx
-	mov	rdi,rcx
+    mov rsi,rdx
+    mov rdi,rcx
 
-	_stbuf( rdx )
-	mov	rbx,rax
-	strlen( rdi )
-	fwrite( rdi, 1, eax, rsi )
-	xchg	rbx,rax
-	_ftbuf( eax, rsi )
-	strlen( rdi )
-	cmp	rax,rbx
-	mov	rax,0
-	je	@F
-	dec	rax
+    _stbuf(rdx)
+    mov rbx,rax
+    strlen(rdi)
+    fwrite(rdi, 1, eax, rsi)
+    xchg    rbx,rax
+    _ftbuf(eax, rsi)
+    strlen(rdi)
+    cmp rax,rbx
+    mov rax,0
+    je	@F
+    dec rax
 @@:
-	ret
-fputs	ENDP
+    ret
+fputs endp
 
-	END
+    END

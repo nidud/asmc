@@ -1,5 +1,5 @@
 include consx.inc
-include alloc.inc
+include malloc.inc
 
 rsunzipch proto
 rsunzipat proto

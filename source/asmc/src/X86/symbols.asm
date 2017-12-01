@@ -729,8 +729,13 @@ endif
     xor esi,esi
     .while esi < dyneqcount
         SymCreate(dyneqtable[esi*4])
+if 0
+        mov [eax].asym.state,SYM_INTERNAL
+        or  [eax].asym.flag,SFL_ISDEFINED or SFL_ISEQUATE or SFL_VARIABLE
+else
         mov [eax].asym.state,SYM_TMACRO
         or  [eax].asym.flag,SFL_ISDEFINED or SFL_PREDEFINED
+endif
         mov ecx,dyneqvalue[esi*4]
         mov [eax].asym._offset,ecx
         mov [eax].asym.sfunc_ptr,0

@@ -596,7 +596,6 @@ void pe_create_PE_header( void )
 		pe64def.OptionalHeader.Subsystem = IMAGE_SUBSYSTEM_WINDOWS_GUI;
 	    if ( ModuleInfo.sub_format == SFORMAT_64BIT )
 		pe64def.OptionalHeader.ImageBase = 0x140000000;
-
 	} else {
 	    size = sizeof( struct IMAGE_PE_HEADER32 );
 	    p = (void *)&pe32def;

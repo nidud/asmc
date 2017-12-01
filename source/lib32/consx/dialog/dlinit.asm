@@ -1,4 +1,4 @@
-include alloc.inc
+include malloc.inc
 include consx.inc
 
 .code

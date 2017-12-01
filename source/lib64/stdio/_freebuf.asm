@@ -1,26 +1,26 @@
 include stdio.inc
 include malloc.inc
 
-	.code
+    .code
 
-	OPTION	WIN64:3, STACKBASE:rsp
+    option win64:rsp
 
-_freebuf PROC fp:LPFILE
+_freebuf proc fp:LPFILE
 
-	mov	eax,[rcx]._iobuf._flag
-	.if	eax & _IOREAD or _IOWRT or _IORW
-		.if	eax & _IOMYBUF
-			free( [rcx]._iobuf._base )
-			xor	eax,eax
-			mov	rcx,fp
-			mov	[rcx]._iobuf._ptr,rax
-			mov	[rcx]._iobuf._base,rax
-			mov	[rcx]._iobuf._flag,eax
-			mov	[rcx]._iobuf._bufsiz,eax
-			mov	[rcx]._iobuf._cnt,eax
-		.endif
+    mov eax,[rcx]._iobuf._flag
+    .if eax & _IOREAD or _IOWRT or _IORW
+	.if eax & _IOMYBUF
+	    free([rcx]._iobuf._base)
+	    xor eax,eax
+	    mov rcx,fp
+	    mov [rcx]._iobuf._ptr,rax
+	    mov [rcx]._iobuf._base,rax
+	    mov [rcx]._iobuf._flag,eax
+	    mov [rcx]._iobuf._bufsiz,eax
+	    mov [rcx]._iobuf._cnt,eax
 	.endif
-	ret
-_freebuf ENDP
+    .endif
+    ret
+_freebuf endp
 
-	END
+    END

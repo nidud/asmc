@@ -1,6 +1,6 @@
 include consx.inc
 include string.inc
-include alloc.inc
+include malloc.inc
 include stdio.inc
 include limits.inc
 

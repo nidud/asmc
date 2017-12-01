@@ -1,25 +1,23 @@
 include stdio.inc
 include limits.inc
 
-	.code
+    .code
 
-	OPTION	WIN64:2, STACKBASE:rsp
+    option win64:rsp nosave
 
-vsprintf PROC USES rcx,
-	string: LPSTR,
-	format: LPSTR,
-	vargs:	PVOID
-local	o:	_iobuf
+vsprintf proc uses rcx string:LPSTR, format:LPSTR, vargs:PVOID
 
-	mov	o._flag,_IOWRT or _IOSTRG
-	mov	o._cnt,INT_MAX
-	mov	o._ptr,rcx
-	mov	o._base,rcx
-	_output( addr o, rdx, r8 )
-	mov	rcx,o._ptr
-	mov	BYTE PTR [rcx],0
+  local o:_iobuf
 
-	ret
-vsprintf ENDP
+    mov o._flag,_IOWRT or _IOSTRG
+    mov o._cnt,INT_MAX
+    mov o._ptr,rcx
+    mov o._base,rcx
+    _output(addr o, rdx, r8)
+    mov rcx,o._ptr
+    mov byte ptr [rcx],0
 
-	END
+    ret
+vsprintf endp
+
+    END

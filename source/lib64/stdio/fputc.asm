@@ -1,22 +1,22 @@
 include stdio.inc
 
-	.code
+    .code
 
-	OPTION	WIN64:2, STACKBASE:rsp
+    option win64:rsp nosave
 
-fputc	PROC char:SINT, fp: LPFILE
+fputc proc char:SINT, fp: LPFILE
 
-	dec	[rdx]._iobuf._cnt
-	jl	flush
-	mov	r8,[rdx]._iobuf._ptr
-	inc	[rdx]._iobuf._ptr
-	mov	rax,rcx
-	mov	[r8],al
+    dec [rdx]._iobuf._cnt
+    jl	flush
+    mov r8,[rdx]._iobuf._ptr
+    inc [rdx]._iobuf._ptr
+    mov rax,rcx
+    mov [r8],al
 toend:
-	ret
+    ret
 flush:
-	_flsbuf( ecx, rdx )
-	jmp	toend
-fputc	ENDP
+    _flsbuf(ecx, rdx)
+    jmp toend
+fputc endp
 
-	END
+    END

@@ -553,7 +553,7 @@ static int set_rm_sib( struct code_info *CodeInfo, unsigned CurrOpnd, char ss, i
 	    if ( GetValueSp( index ) > 8 && CodeInfo->pinstr->evex & VX_XMMI ) {
 		CodeInfo->opc_or = idx_reg;
 		if ( GetValueSp( index ) > 16 )
-		    CodeInfo->opc_or |= 0x40;
+		    CodeInfo->opc_or |= 0x40; /* YMM/ZMM */
 	    } else
 		return( asmerr( 2082 ) );
 	}

@@ -2,6 +2,9 @@ HISTORY.TXT--
 Change Log File for ASMC
 ========================
 
+Changes in 2.27 - xx xxx 2017
+- AVX-512 update
+
 Changes in 2.26 - 27 Nov 2017
 - added define __GUI__ if switch -gui used
 - added define _UNICODE if switch -ws used

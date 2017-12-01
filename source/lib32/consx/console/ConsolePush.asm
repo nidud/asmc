@@ -1,5 +1,5 @@
 include consx.inc
-include alloc.inc
+include malloc.inc
 
 PUBLIC console_dl  ; init screen
 PUBLIC console_cu  ; init cursor

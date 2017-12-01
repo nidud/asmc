@@ -11,7 +11,7 @@
 include stdio.inc
 include stdlib.inc
 include strlib.inc
-include alloc.inc
+include malloc.inc
 include string.inc
 include time.inc
 include direct.inc
@@ -26,7 +26,7 @@ LINEBREAKCH equ 5Eh ; '^'
 
 externdef   errorlevel:dword
 
-cpinfo      db "Doszip Make Version 1.5 Copyright (c) 2017 GNU General Public License",10,10,0
+cpinfo      db "Asmc Make Version 1.6 Copyright (c) 2017 GNU General Public License",10,10,0
 cpusage     db "USAGE: MAKE [-/options] [macro=text] [target(s)]",10
             db 10
             db " -a    build all targets (always set)",10

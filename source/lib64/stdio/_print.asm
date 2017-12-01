@@ -1,13 +1,13 @@
 include stdio.inc
 include io.inc
 
-	.code
+    .code
 
-	OPTION	WIN64:3, STACKBASE:rsp
+    option win64:rsp
 
-_print	PROC format:LPSTR, arglist:VARARG
-	_write( 1, addr _bufin, ftobufin( format, addr arglist ) )
-	ret
-_print	ENDP
+_print proc format:LPSTR, arglist:VARARG
+    _write(1, addr _bufin, ftobufin(format, addr arglist))
+    ret
+_print endp
 
-	END
+    END

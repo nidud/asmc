@@ -1,13 +1,13 @@
 include stdio.inc
 
-	.code
+    .code
 
-	OPTION	WIN64:2, STACKBASE:rsp
+    option win64:rsp nosave
 
-setbuf	PROC fp:LPFILE, buf:LPSTR
-	xchg	rcx,rdx
-	setvbuf( rcx, rdx, _IOFBF, _MINIOBUF )
-	ret
-setbuf	ENDP
+setbuf proc fp:LPFILE, buf:LPSTR
+    xchg rcx,rdx
+    setvbuf(rcx, rdx, _IOFBF, _MINIOBUF)
+    ret
+setbuf endp
 
-	END
+    END

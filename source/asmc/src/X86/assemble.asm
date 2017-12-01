@@ -926,41 +926,33 @@ ReswTableInit proc private
 	.until ebx > T_DOT_ENDSW
 	pop ebx
     .endif
-
     ret
+
 ReswTableInit endp
 
 open_files proc private
-    fopen(ModuleInfo.curr_fname[ASM*4], "rb")
+
+    .if !fopen(ModuleInfo.curr_fname[ASM*4], "rb")
+	;
+	; will not return..
+	;
+	asmerr(1000, ModuleInfo.curr_fname[ASM*4])
+    .endif
     mov ModuleInfo.curr_file[ASM*4],eax
-    test eax,eax
-    jz	error_1
-    cmp Options.syntax_check_only,0
-    jne @F
-    fopen(ModuleInfo.curr_fname[OBJ*4],"wb")
-    mov ModuleInfo.curr_file[OBJ*4],eax
-    test eax,eax
-    jz	error_2
-@@:
-    cmp Options.write_listing,0
-    je	toend
-    fopen(ModuleInfo.curr_fname[LST*4],"wb")
-    mov ModuleInfo.curr_file[LST*4],eax
-    test eax,eax
-    jz	error_3
-toend:
+    .if !Options.syntax_check_only
+	.if !fopen(ModuleInfo.curr_fname[OBJ*4], "wb")
+	    asmerr(1000, ModuleInfo.curr_fname[OBJ*4])
+	.endif
+	mov ModuleInfo.curr_file[OBJ*4],eax
+    .endif
+    .if Options.write_listing
+	.if !fopen(ModuleInfo.curr_fname[LST*4],"wb")
+	    asmerr(1000, ModuleInfo.curr_fname[LST*4])
+	.endif
+	mov ModuleInfo.curr_file[LST*4],eax
+    .endif
     ret
-error_1:
-    mov eax,ModuleInfo.curr_fname[ASM*4]
-    jmp error
-error_2:
-    mov eax,ModuleInfo.curr_fname[OBJ*4]
-    jmp error
-error_3:
-    mov eax,ModuleInfo.curr_fname[LST*4]
-error:
-    asmerr(1000, eax)
-    ret ; will not return..
+
 open_files endp
 
 close_files proc uses ebx

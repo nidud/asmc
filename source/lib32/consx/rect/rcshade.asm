@@ -1,5 +1,5 @@
 include consx.inc
-include alloc.inc
+include malloc.inc
 
 _FG_DEACTIVE equ 8
 

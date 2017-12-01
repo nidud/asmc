@@ -1,13 +1,13 @@
 include stdio.inc
 
-	.code
+    .code
 
-	OPTION	PROLOGUE:NONE, EPILOGUE:NONE
+    option win64:rsp nosave noauto
 
-feof	PROC stream:LPFILE
-	mov	eax,[rcx]._iobuf._flag
-	and	rax,_IOEOF
-	ret
-feof	ENDP
+feof proc stream:LPFILE
+    mov eax,[rcx]._iobuf._flag
+    and rax,_IOEOF
+    ret
+feof endp
 
-	END
+    END

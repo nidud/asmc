@@ -3,6 +3,9 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.27 - xx xxx 2017
+- added support for - assume reg:ptr struct -- [reg].proc_ptr(...)
+- added support for [reg].struct.proc_ptr(...)
+- added support for struct.proc_ptr(...)
 - AVX-512 update
 
 Changes in 2.26 - 27 Nov 2017

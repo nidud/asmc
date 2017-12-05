@@ -947,7 +947,7 @@ GetExpression endp
 ;   .CONT .IF: TRUE
 ;
 
-    assume  ebx: PTR asm_tok
+    assume ebx:ptr asm_tok
 
 ExpandCStrings proc uses ebx tokenarray:PTR asm_tok
 
@@ -967,8 +967,24 @@ ExpandCStrings proc uses ebx tokenarray:PTR asm_tok
                     .break
                 .endif
 
+                .if [ebx].token == T_OP_SQ_BRACKET
+                    ;
+                    ; invoke [...][.type].x(...)
+                    ;
+                    .repeat
+                        add ebx,16
+                    .until [ebx].token == T_CL_SQ_BRACKET
+                    add ebx,16
+                    .if [ebx].token == T_DOT
+                        add ebx,16
+                    .endif
+                .endif
+                .if [ebx+16].token == T_DOT
+                    add ebx,32
+                .endif
                 mov ecx,1
                 add ebx,32
+
                 .if [ebx-16].token != T_OP_BRACKET
 
                     asmerr( 3018, [ebx-32].string_ptr, [ebx-16].string_ptr )
@@ -1202,12 +1218,9 @@ local   b[MAX_LINE_LEN]:SBYTE
     ret
 StripSource endp
 
-LKRenderHllProc proc private uses esi edi ebx,
-        dst:        LPSTR,
-        i:          UINT,
-        tokenarray: PTR asm_tok
-local   b[MAX_LINE_LEN]:SBYTE,
-        br_count
+LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:PTR asm_tok
+
+  local b[MAX_LINE_LEN]:SBYTE, br_count
 
     lea esi,b
     mov edi,i
@@ -1220,6 +1233,36 @@ local   b[MAX_LINE_LEN]:SBYTE,
 
     inc edi
     add ebx,16
+
+    .if [ebx-16].token == T_OP_SQ_BRACKET
+        ;
+        ; invoke [...][.type].x(...)
+        ;
+        .repeat
+            strcat( esi, [ebx].string_ptr )
+            add ebx,16
+            inc edi
+        .until [ebx].token == T_CL_SQ_BRACKET
+        strcat( esi, [ebx].string_ptr )
+        add ebx,16
+        inc edi
+        .if [ebx+32].token == T_DOT
+            strcat( esi, [ebx].string_ptr )
+            strcat( esi, [ebx+16].string_ptr )
+            add ebx,32
+            add edi,2
+        .endif
+    .endif
+
+    .if [ebx].token == T_DOT
+        ;
+        ; invoke p.x(...)
+        ;
+        strcat( esi, [ebx].string_ptr )
+        strcat( esi, [ebx+16].string_ptr )
+        add ebx,32
+        add edi,2
+    .endif
 
     .if [ebx].token == T_OP_BRACKET
 

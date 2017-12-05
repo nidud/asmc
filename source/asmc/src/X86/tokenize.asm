@@ -569,6 +569,7 @@ get_special_symbol PROC FASTCALL USES esi edi ebx buf, p
         ; v2.20: removed auto off switch for asmc_syntax in macros
         ; v2.20: added more test code for label() calls
         ;
+
         .if ah == ')' && [ebx-16].token == T_REG
             ;
             ; REG() expans as CALL REG
@@ -581,11 +582,31 @@ get_special_symbol PROC FASTCALL USES esi edi ebx buf, p
 
         .elseif [esi].index && [ebx-16].token == T_ID
 
-            .if SymFind( [ebx-16].string_ptr )
+            lea edi,[ebx-16]
+            SymFind( [ebx-16].string_ptr )
+            xor edx,edx
+            .if !eax && [esi].index >= 3 && [ebx-32].token == T_DOT
+                ;
+                ; p.x(...)
+                ; [...][.type].x(...)
+                ;
+                lea edi,[ebx-16*3]
+                .if [edi].asm_tok.token == T_CL_SQ_BRACKET
+                    add edi,32
+                    inc eax
+                    mov edx,SYM_TYPE
+                .else
+                    SymFind( [ebx-16*3].string_ptr )
+                    xor edx,edx
+                .endif
+            .endif
+
+            .if eax
 
                 xor ecx,ecx
-                movzx   edx,[eax].asym.state
-
+                .if !edx
+                    movzx edx,[eax].asym.state
+                .endif
                 .switch
 
                   .case !(ModuleInfo.aflag & _AF_ON)
@@ -624,6 +645,23 @@ get_special_symbol PROC FASTCALL USES esi edi ebx buf, p
                     mov _cstring,'"'
                     .endc
 
+                  .case edx == SYM_TYPE ;  structure, union, typedef, record
+                    ;
+                    ; [...].type.x(...)
+                    ;
+                    mov eax,[esi].index
+                    .endc .if eax < 5
+                    .endc .if [edi-16].asm_tok.token != T_DOT
+                    .endc .if [edi-32].asm_tok.token != T_CL_SQ_BRACKET
+                    sub edi,64
+                    sub eax,4
+                    .while [edi].asm_tok.token != T_OP_SQ_BRACKET
+                        sub edi,16
+                        dec eax
+                        .break .ifz
+                    .endw
+                    .endc .if [edi].asm_tok.token != T_OP_SQ_BRACKET
+
                   .case edx == SYM_STACK
                   .case edx == SYM_INTERNAL
                   .case edx == SYM_EXTERNAL
@@ -634,12 +672,13 @@ get_special_symbol PROC FASTCALL USES esi edi ebx buf, p
                     .endc
 
                   .case edx == SYM_UNDEFINED
-                    .endc .if BYTE PTR [edi+1] != ')'
+                    mov edx,[esi].input
+                    .endc .if BYTE PTR [edx+1] != ')'
                     mov ecx,T_HLL_PROC
                     .endc
                 .endsw
 
-                or [ebx-16].hll_flags,cl
+                or [edi].asm_tok.hll_flags,cl
 
             .elseif BYTE PTR [edi+1] == ')' ;&& [ebx-32].token == T_DIRECTIVE
                 ;
@@ -651,6 +690,7 @@ get_special_symbol PROC FASTCALL USES esi edi ebx buf, p
                 ;
                 or [ebx-16].hll_flags,T_HLL_PROC
             .endif
+            mov edi,[esi].input
             mov eax,[edi]
         .endif
         ;

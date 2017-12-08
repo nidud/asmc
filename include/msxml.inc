@@ -79,30 +79,20 @@ __IXMLElementCollection_INTERFACE_DEFINED__ equ 1
 externdef		IID_IXMLElementCollection:IID
 
 
-IXMLElementCollectionVtbl STRUC
-
-	BEGIN_INTERFACE
-
-	 QueryInterface PVOID ?
-		 AddRef PVOID ?
-		Release PVOID ?
-       GetTypeInfoCount PVOID ?
-	    GetTypeInfo PVOID ?
-	  GetIDsOfNames PVOID ?
-		_Invoke PVOID ?
-	     put_length PVOID ?
-	     get_length PVOID ?
-	   get__newEnum PVOID ?
-		   item PVOID ?
-
-	END_INTERFACE
-
-IXMLElementCollectionVtbl ENDS
-
-LPIXMLElementCollectionVtbl typedef ptr IXMLElementCollectionVtbl
 IXMLElementCollection	STRUC
-lpVtbl			LPIXMLElementCollectionVtbl ?
+STDMETHOD QueryInterface, :REFIID, :ptr
+STDMETHOD AddRef
+STDMETHOD Release
+STDMETHOD GetTypeInfoCount, :ptr
+STDMETHOD GetTypeInfo, :UINT, :LCID, :ptr
+STDMETHOD GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
+STDMETHOD _Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+STDMETHOD put_length, :LONG
+STDMETHOD get_length, :ptr
+STDMETHOD get__newEnum, :ptr
+STDMETHOD item, :ptr, :ptr, :ptr
 IXMLElementCollection	ENDS
+LPIXMLElementCollection typedef ptr IXMLElementCollection
 
 
 ;HRESULT
@@ -165,41 +155,30 @@ __IXMLDocument_INTERFACE_DEFINED__ equ 1
 externdef		IID_IXMLDocument:IID
 
 
-IXMLDocumentVtbl	STRUC
-
-	BEGIN_INTERFACE
-
-	 QueryInterface PVOID ?
-		 AddRef PVOID ?
-		Release PVOID ?
-       GetTypeInfoCount PVOID ?
-	    GetTypeInfo PVOID ?
-	  GetIDsOfNames PVOID ?
-		_Invoke PVOID ?
-	       get_root PVOID ?
-	   get_fileSize PVOID ?
-   get_fileModifiedDate PVOID ?
-    get_fileUpdatedDate PVOID ?
-		get_URL PVOID ?
-		put_URL PVOID ?
-	   get_mimeType PVOID ?
-	 get_readyState PVOID ?
-	    get_charset PVOID ?
-	    put_charset PVOID ?
-	    get_version PVOID ?
-	    get_doctype PVOID ?
-	     get_dtdURL PVOID ?
-	  createElement PVOID ?
-
-	END_INTERFACE
-
-IXMLDocumentVtbl	ENDS
-
-LPIXMLDocumentVtbl	typedef ptr IXMLDocumentVtbl
 IXMLDocument		STRUC
-lpVtbl			LPIXMLDocumentVtbl ?
+STDMETHOD QueryInterface, :REFIID, :ptr
+STDMETHOD AddRef
+STDMETHOD Release
+STDMETHOD GetTypeInfoCount, :ptr
+STDMETHOD GetTypeInfo, :UINT, :LCID, :ptr
+STDMETHOD GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
+STDMETHOD _Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+STDMETHOD get_root, :ptr
+STDMETHOD get_fileSize, :ptr
+STDMETHOD get_fileModifiedDate, :ptr
+STDMETHOD get_fileUpdatedDate, :ptr
+STDMETHOD get_URL, :ptr
+STDMETHOD put_URL, :BSTR
+STDMETHOD get_mimeType, :ptr
+STDMETHOD get_readyState, :ptr
+STDMETHOD get_charset, :ptr
+STDMETHOD put_charset, :BSTR
+STDMETHOD get_version, :ptr
+STDMETHOD get_doctype, :ptr
+STDMETHOD get_dtdURL, :ptr
+STDMETHOD createElement, :VARIANT, :VARIANT, :ptr
 IXMLDocument		ENDS
-
+LPIXMLDocument		typedef ptr IXMLDocument
 
 ;HRESULT
 IXMLDocument_get_root_Proxy proto WINAPI \
@@ -381,38 +360,28 @@ __IXMLElement_INTERFACE_DEFINED__ equ 1
 externdef		IID_IXMLElement:IID
 
 
-IXMLElementVtbl		STRUC
-
-	BEGIN_INTERFACE
-
-	 QueryInterface PVOID ?
-		 AddRef PVOID ?
-		Release PVOID ?
-       GetTypeInfoCount PVOID ?
-	    GetTypeInfo PVOID ?
-	  GetIDsOfNames PVOID ?
-		_Invoke PVOID ?
-	    get_tagName PVOID ?
-	    put_tagName PVOID ?
-	     get_parent PVOID ?
-	   setAttribute PVOID ?
-	   getAttribute PVOID ?
-	removeAttribute PVOID ?
-	   get_children PVOID ?
-	       get_type PVOID ?
-	       get_text PVOID ?
-	       put_text PVOID ?
-	       addChild PVOID ?
-	    removeChild PVOID ?
-
-	END_INTERFACE
-
-IXMLElementVtbl		ENDS
-
-LPIXMLElementVtbl	typedef ptr IXMLElementVtbl
 IXMLElement		STRUC
-lpVtbl			LPIXMLElementVtbl ?
+STDMETHOD QueryInterface, :REFIID, :ptr
+STDMETHOD AddRef
+STDMETHOD Release
+STDMETHOD GetTypeInfoCount, :ptr
+STDMETHOD GetTypeInfo, :UINT, :LCID, :ptr
+STDMETHOD GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
+STDMETHOD _Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+STDMETHOD get_tagName, :ptr
+STDMETHOD put_tagName, :BSTR
+STDMETHOD get_parent, :ptr
+STDMETHOD setAttribute, :BSTR, :VARIANT
+STDMETHOD getAttribute, :BSTR, :VARIANT
+STDMETHOD removeAttribute, :BSTR
+STDMETHOD get_children, :ptr
+STDMETHOD get_type, :ptr
+STDMETHOD get_text, :ptr
+STDMETHOD put_text, :BSTR
+STDMETHOD addChild, :ptr
+STDMETHOD removeChild, :ptr, :LONG, :LONG
 IXMLElement		ENDS
+LPIXMLElement		typedef ptr IXMLElement
 
 ;HRESULT
 IXMLElement_get_tagName_Proxy proto WINAPI \
@@ -569,24 +538,13 @@ __IXMLError_INTERFACE_DEFINED__ equ 1
 externdef		IID_IXMLError:IID
 
 
-IXMLErrorVtbl		STRUC
-
-	BEGIN_INTERFACE
-
-	 QueryInterface PVOID ?
-		 AddRef PVOID ?
-		Release PVOID ?
-	   GetErrorInfo PVOID ?
-
-	END_INTERFACE
-
-IXMLErrorVtbl		ENDS
-
-LPIXMLErrorVtbl		typedef ptr IXMLErrorVtbl
 IXMLError		STRUC
-lpVtbl			LPIXMLErrorVtbl ?
+STDMETHOD QueryInterface, :REFIID, :ptr
+STDMETHOD AddRef
+STDMETHOD Release
+STDMETHOD GetErrorInfo, :ptr
 IXMLError		ENDS
-
+LPIXMLError		typedef ptr IXMLError
 
 ;HRESULT
 IXMLError_GetErrorInfo_Proxy proto WINAPI \
@@ -609,27 +567,17 @@ __IXMLElementNotificationSink_INTERFACE_DEFINED__ equ 1
 externdef		IID_IXMLElementNotificationSink:IID
 
 
-IXMLElementNotificationSinkVtbl STRUC
-
-	BEGIN_INTERFACE
-
-	 QueryInterface PVOID ?
-		 AddRef PVOID ?
-		Release PVOID ?
-       GetTypeInfoCount PVOID ?
-	    GetTypeInfo PVOID ?
-	  GetIDsOfNames PVOID ?
-		_Invoke PVOID ?
-	     ChildAdded PVOID ?
-
-	END_INTERFACE
-
-IXMLElementNotificationSinkVtbl ENDS
-
-LPIXMLElementNotificationSinkVtbl typedef ptr IXMLElementNotificationSinkVtbl
 IXMLElementNotificationSink STRUC
-lpVtbl			LPIXMLElementNotificationSinkVtbl ?
+STDMETHOD QueryInterface, :REFIID, :ptr
+STDMETHOD AddRef
+STDMETHOD Release
+STDMETHOD GetTypeInfoCount, :ptr
+STDMETHOD GetTypeInfo, :UINT, :LCID, :ptr
+STDMETHOD GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
+STDMETHOD _Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+STDMETHOD ChildAdded, :ptr
 IXMLElementNotificationSink ENDS
+LPIXMLElementNotificationSink typedef ptr IXMLElementNotificationSink
 
 ;HRESULT
 IXMLElementNotificationSink_ChildAdded_Proxy proto WINAPI \

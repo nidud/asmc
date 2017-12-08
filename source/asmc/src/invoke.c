@@ -790,9 +790,7 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
     namepos = i;
 
     if ( ModuleInfo.aflag & _AF_ON ) {
-
-	size = ExpandHllProc( buffer, i, tokenarray );
-	if ( size == ERROR )
+	if ( ExpandHllProc( buffer, i, tokenarray ) == ERROR )
 	    return ERROR;
 	if ( buffer[0] != 0 ) {
 	    QueueTestLines( buffer );

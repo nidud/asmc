@@ -680,15 +680,18 @@ get_special_symbol PROC FASTCALL USES esi edi ebx buf, p
 
                 or [edi].asm_tok.hll_flags,cl
 
-            .elseif BYTE PTR [edi+1] == ')' ;&& [ebx-32].token == T_DIRECTIVE
-                ;
-                ; undefined code label..
-                ;
-                ; label() or .if label()
-                ; ...
-                ; label:
-                ;
-                or [ebx-16].hll_flags,T_HLL_PROC
+            .else
+                mov edi,[esi].input
+                .if BYTE PTR [edi+1] == ')' ;&& [ebx-32].token == T_DIRECTIVE
+                    ;
+                    ; undefined code label..
+                    ;
+                    ; label() or .if label()
+                    ; ...
+                    ; label:
+                    ;
+                    or [ebx-16].hll_flags,T_HLL_PROC
+                .endif
             .endif
             mov edi,[esi].input
             mov eax,[edi]

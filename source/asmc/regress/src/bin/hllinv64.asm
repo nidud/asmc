@@ -27,6 +27,25 @@ opt_2	db 0
 opt_3	db 0
 opt_4	db 0
 
+; v2.27:
+; - struct.proc_ptr(...)
+; - [reg].struct.proc_ptr(...)
+; - assume reg:ptr struct -- [reg].proc_ptr(...)
+
+D0T	typedef proto
+D1T	typedef proto :ptr
+D2T	typedef proto :ptr, :ptr
+D0	typedef ptr D0T
+D1	typedef ptr D1T
+D2	typedef ptr D2T
+
+xx	struc
+l1	D0 ?
+l2	D1 ?
+l3	D2 ?
+xx	ends
+x	xx <>
+
 	.code
 
 @@:	cmp	foo(eax),0
@@ -131,6 +150,24 @@ m2	macro a
 	invoke	p2, p1( 1 ), 2
 	invoke	p2( rbx, "string\n" )
 	p2( "if first token is a proc()", "invoke()\n" )
+
+	invoke x.l1
+	x.l1()
+	x.l2(1)
+	x.l3(1,2)
+
+	[rbx].xx.l1()
+	[rbx].xx.l2(1)
+	[rbx].xx.l3(1,2)
+
+	assume rbx:ptr xx
+	[rbx].l1()
+	[rbx].l2(1)
+	[rbx].l3(1,2)
+
+	.if [rbx].l2(0)
+		nop
+	.endif
 
 	end
 

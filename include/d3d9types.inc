@@ -1,5 +1,6 @@
 ifndef _d3d9TYPES_H_
 _d3d9TYPES_H_ equ <>
+.xlist
 
 ifndef DIRECT3D_VERSION
 DIRECT3D_VERSION	equ 0x0900
@@ -91,7 +92,7 @@ _42			REAL4 ?
 _43			REAL4 ?
 _44			REAL4 ?
 ENDS
-m			REAL4 4 dup(?)
+m			REAL4 4*4 dup(?)
 ENDS
 D3DMATRIX		ENDS
 D3DMATRIX_DEFINED equ 1

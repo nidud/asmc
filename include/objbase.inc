@@ -15,7 +15,7 @@ endif
 
 CLSCTX_INPROC		equ CLSCTX_INPROC_SERVER OR CLSCTX_INPROC_HANDER
 
-if (_WIN32_WINNT GE 0x0400 ) OR defined(_WIN32_DCOM) 
+if (_WIN32_WINNT GE 0x0400 ) OR defined(_WIN32_DCOM)
 CLSCTX_ALL		equ CLSCTX_INPROC_SERVER OR CLSCTX_INPROC_HANDLER OR CLSCTX_LOCAL_SERVER OR CSCTX_REMOTE_SERVER
 CLSCTX_SERVER		equ CLSCTX_INPROC_SERVER OR CLSCTX_LOCAL_SERVER OR CSCTX_REMOTE_SERVER
 else
@@ -23,13 +23,13 @@ CLSCTX_ALL		equ CLSCTX_INPROC_SERVER OR CLSCTX_INPROC_HANDLER OR CLSCTX_LOCA_SER
 CLSCTX_SERVER		equ CLSCTX_INPROC_SERVER OR CLSCTX_LOCA_SERVER
 endif
 
-REGCLS_SINGLEUSE	equ 0	
-REGCLS_MULTIPLEUSE	equ 1	
-REGCLS_MULTI_SEPARATE	equ 2	
-REGCLS_SUSPENDED	equ 4	
-REGCLS_SURROGATE	equ 8	
+REGCLS_SINGLEUSE	equ 0
+REGCLS_MULTIPLEUSE	equ 1
+REGCLS_MULTI_SEPARATE	equ 2
+REGCLS_SUSPENDED	equ 4
+REGCLS_SURROGATE	equ 8
 
-MARSHALINTERFACE_MIN	equ 500 
+MARSHALINTERFACE_MIN	equ 500
 
 
 
@@ -53,7 +53,7 @@ STGM_PRIORITY		equ 0x00040000
 STGM_DELETEONRELEASE	equ 0x04000000
 if (WINVER GE 400)
 STGM_NOSCRATCH		equ 0x00100000
-endif 
+endif
 
 STGM_CREATE		equ 0x00001000
 STGM_CONVERT		equ 0x00020000
@@ -102,6 +102,18 @@ DEFINE_GUID macro name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8
 
 externdef GUID_NULL:GUID
 
+COMTYPEID = 0
+STDMETHOD macro name:req, arguments:VARARG
+ifnb <arguments>
+@CatStr(<pt??>, %COMTYPEID) typedef proto WINAPI :ptr, &arguments
+else
+@CatStr(<pt??>, %COMTYPEID) typedef proto WINAPI :ptr
+endif
+@CatStr(<pp??>, %COMTYPEID) typedef ptr @CatStr(<pt??>, %COMTYPEID)
+name @CatStr(<pp??>, %COMTYPEID) ?
+COMTYPEID = COMTYPEID + 1
+	endm
+
 ifdef _OLE32_
 
 ifdef _OLE32PRIV_
@@ -119,8 +131,8 @@ IsEqualGUID macro rguid1, rguid2
 	.endif
 	exitm<eax>
 	endm
-endif	
-endif	
+endif
+endif
 
 IsEqualIID macro riid1, riid2
 	exitm<IsEqualGUID(riid1, riid2)>
@@ -135,11 +147,11 @@ include cguid.inc
 endif
 
 
-COINIT_APARTMENTTHREADED	equ 0x2 
+COINIT_APARTMENTTHREADED	equ 0x2
 if  (_WIN32_WINNT GE 0x0400) OR defined(_WIN32_DCOM)
-COINIT_MULTITHREADED		equ 0x0 
-COINIT_DISABLE_OLE1DDE		equ 0x4 
-COINIT_SPEED_OVER_MEMORY	equ 0x8 
+COINIT_MULTITHREADED		equ 0x0
+COINIT_DISABLE_OLE1DDE		equ 0x4
+COINIT_SPEED_OVER_MEMORY	equ 0x8
 endif
 
 
@@ -166,11 +178,11 @@ CoCreateStandardMalloc proto WINAPI \
 		memctx: DWORD,
 	      ppMalloc: ptr IMalloc
 
-if (_WIN32_WINNT GE 0x0400 ) OR defined(_WIN32_DCOM) 
+if (_WIN32_WINNT GE 0x0400 ) OR defined(_WIN32_DCOM)
 CoInitializeEx proto WINAPI \
 	    pvReserved: LPVOID,
 	      dwCoInit: DWORD
-endif 
+endif
 
 ;if DBG EQ 1
 ;ULONG
@@ -325,7 +337,7 @@ CoFreeAllLibraries proto WINAPI
 CoFreeUnusedLibraries proto WINAPI
 
 
-if (_WIN32_WINNT GE 0x0400 ) OR defined(_WIN32_DCOM) 
+if (_WIN32_WINNT GE 0x0400 ) OR defined(_WIN32_DCOM)
 
 
 CoInitializeSecurity proto WINAPI \
@@ -389,7 +401,7 @@ CoSwitchCallContext proto WINAPI \
 
 COM_RIGHTS_EXECUTE	equ 1
 
-endif 
+endif
 
 
 CoCreateInstance proto WINAPI \
@@ -429,9 +441,9 @@ CoCreateInstanceEx proto WINAPI \
 	       dwCount: DWORD,
 	      pResults: ptr MULTI_QI
 
-endif 
+endif
 
-if (_WIN32_WINNT GE 0x0500 ) OR defined(_WIN32_DCOM) 
+if (_WIN32_WINNT GE 0x0500 ) OR defined(_WIN32_DCOM)
 
 
 CoGetCancelObject proto WINAPI \
@@ -450,7 +462,7 @@ endif
 
 
 
-if (_WIN32_WINNT GE 0x0500 ) OR defined(_WIN32_DCOM) 
+if (_WIN32_WINNT GE 0x0500 ) OR defined(_WIN32_DCOM)
 
 CoGetClassInfo proto WINAPI \
 	      pClassSpec: ptr uCLSSPEC,
@@ -522,12 +534,12 @@ CoRegisterMessageFilter proto WINAPI \
        lpMessageFilter: LPMESSAGEFILTER,
      lplpMessageFilter: LPMESSAGEFILTER
 
-if (_WIN32_WINNT GE 0x0400 ) OR defined(_WIN32_DCOM) 
+if (_WIN32_WINNT GE 0x0400 ) OR defined(_WIN32_DCOM)
 
 CoRegisterChannelHook proto WINAPI \
 	 ExtensionUuid: REFGUID,
 	  pChannelHook: ptr IChannelHook
-endif 
+endif
 
 
 
@@ -751,6 +763,6 @@ CreateStdProgressIndicator proto WINAPI \
 	   pIbscCaller: ptr IBindStatusCallback,
 		ppIbsc: ptr IBindStatusCallback
 
-endif	   
+endif
 
 .list

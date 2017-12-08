@@ -1,4 +1,4 @@
-	.model compact
+	.model compact, c
 	.286
 
 foo	macro reg
@@ -27,6 +27,25 @@ opt_1	db 0
 opt_2	db 0
 opt_3	db 0
 opt_4	db 0
+
+; v2.27:
+; - struct.proc_ptr(...)
+; - [reg].struct.proc_ptr(...)
+; - assume reg:ptr struct -- [reg].proc_ptr(...)
+
+D0T	typedef proto
+D1T	typedef proto :ptr
+D2T	typedef proto :ptr, :ptr
+D0	typedef ptr D0T
+D1	typedef ptr D1T
+D2	typedef ptr D2T
+
+xx	struc
+l1	D0 ?
+l2	D1 ?
+l3	D2 ?
+xx	ends
+x	xx <>
 
 	.code
 
@@ -129,6 +148,25 @@ m2	macro a
 	invoke	p2, p1( 1 ), 2
 	invoke	p2( bx, "string\n" )
 	p2( "if first token is a proc()", "invoke()\n" )
+
+	invoke x.l1
+	x.l1()
+	x.l2(1)
+	x.l3(1,2)
+
+	[bx].xx.l1()
+	[bx].xx.l2(1)
+	[bx].xx.l3(1,2)
+
+	assume bx:ptr xx
+	[bx].l1()
+	[bx].l2(1)
+	[bx].l3(1,2)
+
+	.if [bx].l2(0)
+		nop
+	.endif
+
 
 	end
 

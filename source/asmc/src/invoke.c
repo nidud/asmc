@@ -29,6 +29,7 @@
 
 int QueueTestLines( char * );
 int ExpandHllProc( char *, int, struct asm_tok[] );
+int ComInterface = 0;
 
 extern uint_32 list_pos;  /* current LST file position */
 extern int_64 maxintvalues[];
@@ -789,9 +790,11 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
     namepos = i;
 
     if ( ModuleInfo.aflag & _AF_ON ) {
-	if ( ExpandHllProc( buffer, i, tokenarray ) == ERROR )
+
+	size = ExpandHllProc( buffer, i, tokenarray );
+	if ( size == ERROR )
 	    return ERROR;
-	if (buffer[0] != 0) {
+	if ( buffer[0] != 0 ) {
 	    QueueTestLines( buffer );
 	    RunLineQueue();
 	    if (Token_Count == 2 &&
@@ -800,7 +803,6 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 		return NOT_ERROR;
 	}
     }
-
 
     /* if there is more than just an ID item describing the invoke target,
      use the expression evaluator to get it
@@ -987,9 +989,22 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 		AddLineQueueX( " externdef %s: %r %r", iatname, T_PTR, T_PROC );
 	}
     }
+
+    if ( ComInterface && tokenarray[namepos].token == T_OP_SQ_BRACKET
+	 && tokenarray[namepos+3].token == T_DOT ) {
+	ComInterface--;
+	if ( ModuleInfo.Ofssize == USE64 ) {
+	    AddLineQueue( " mov rax,[rcx]" );
+	} else if ( ModuleInfo.Ofssize == USE32 ) {
+	    AddLineQueueX( " mov eax,%s", tokenarray[parmpos+1].string_ptr );
+	    AddLineQueue( " mov eax,[eax]" );
+	}
+    }
+
     size = tokenarray[parmpos].tokpos - tokenarray[namepos].tokpos;
     memcpy( p, tokenarray[namepos].tokpos, size );
     *(p+size) = NULLC;
+
 
     AddLineQueue( StringBufferEnd );
 
@@ -1022,6 +1037,5 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
     }
     LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), NULL );
     RunLineQueue();
-
     return( NOT_ERROR );
 }

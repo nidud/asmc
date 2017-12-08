@@ -31,12 +31,12 @@ MsgProc proc WINAPI hWnd:HWND, msg:UINT, wParam:WPARAM, lParam:LPARAM
 MsgProc endp
 
 ;; The entry point of a windows application is the WinMain function
-WinMain proc WINAPI uses rsi rdi rbx r12 hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPSTR, nShowCmd:SINT
+WinMain proc WINAPI uses rdi hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPSTR, nShowCmd:SINT
 
     ;; Create a window class.
     local wc:WNDCLASSEX
     local hWnd:HWND
-    ;local pD3D:LPDIRECT3D9
+    local pD3D:LPDIRECT3D9
     local d3dpp:D3DPRESENT_PARAMETERS
     local pd3dDevice:LPDIRECT3DDEVICE9
     local msg:MSG
@@ -55,13 +55,13 @@ WinMain proc WINAPI uses rsi rdi rbx r12 hInstance:HINSTANCE, hPrevInstance:HINS
     mov wc.hInstance,GetModuleHandle(NULL)
 
     ;;Register the window class.
-    RegisterClassEx( &wc );
+    RegisterClassEx( &wc )
 
     ;; Create the application's window.
     mov hWnd,CreateWindowEx(0, "Direct3D Window", "DirectXers - D3D9 Tutorial 1",
         WS_OVERLAPPEDWINDOW, 100, 100, 400, 400, GetDesktopWindow(), NULL, wc.hInstance, NULL )
 
-    ShowWindow(hWnd,SW_SHOW)
+    ShowWindow( hWnd, SW_SHOW )
 
     .repeat
 
@@ -72,10 +72,7 @@ WinMain proc WINAPI uses rsi rdi rbx r12 hInstance:HINSTANCE, hPrevInstance:HINS
             mov eax,E_FAIL
             .break
         .endif
-
-        mov rbx,rax
-        mov rdi,[rax]
-        assume rdi: ptr IDirect3D9
+        mov pD3D,rax
 
         ;; Setup the device presentation parameters
 
@@ -87,47 +84,42 @@ WinMain proc WINAPI uses rsi rdi rbx r12 hInstance:HINSTANCE, hPrevInstance:HINS
         ;; The final step is to use the IDirect3D9::CreateDevice method to create the Direct3D device, as illustrated in the
         ;; following code example.
 
-        .ifs [rdi].CreateDevice(rbx, D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd, D3DCREATE_HARDWARE_VERTEXPROCESSING, &d3dpp, &pd3dDevice ) < 0
+        .ifd pD3D.CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd, D3DCREATE_HARDWARE_VERTEXPROCESSING, &d3dpp, &pd3dDevice )
 
-            MessageBox(hWnd, "No HAL HARDWARE_VERTEXPROCESSING! Sample will exit!", NULL, 0);
-            [rdi].Release(rbx)
+            MessageBox(hWnd, "No HAL HARDWARE_VERTEXPROCESSING! Sample will exit!", NULL, 0)
+            pD3D.Release()
             mov eax,E_FAIL
             .break
         .endif
 
-        mov rax,pd3dDevice
-        mov rsi,[rax]
-        mov r12,rax
-        assume rsi: ptr IDirect3DDevice9
-
         .while ( g_bContinue )
 
             ;; Clear render region with blue
-            [rsi].Clear( r12, 0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0,0,255), 1.0, 0 )
+            pd3dDevice.Clear( 0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0,0,255), 1.0, 0 )
 
             ;; before rendering something, you have to call this
-            [rsi].BeginScene( r12 );
+            pd3dDevice.BeginScene()
 
             ;;
             ;; rendering of scene objects happens her
             ;;
 
             ;; now end the scene
-            [rsi].EndScene( r12 );
+            pd3dDevice.EndScene()
 
             ;; update screen = swap front and backbuffer
-            [rsi].Present( r12, NULL, NULL, NULL, NULL)
+            pd3dDevice.Present( NULL, NULL, NULL, NULL )
 
             ;; A window has to handle its messages.
-            TranslateMessage( &msg );
-            DispatchMessage( &msg );
-            PeekMessage(&msg, 0, 0, 0, PM_REMOVE)
+            TranslateMessage( &msg )
+            DispatchMessage( &msg )
+            PeekMessage( &msg, 0, 0, 0, PM_REMOVE )
         .endw
 
         ;; Do not forget to clean up here
 
-        [rsi].Release( r12 );
-        [rdi].Release( rbx )
+        pd3dDevice.Release()
+        pD3D.Release()
         xor eax,eax
     .until 1
     ret

@@ -28,6 +28,8 @@ COP_SIGN        equ 13      ; SIGN?  not really a valid C operator
 COP_PARITY      equ 14      ; PARITY?   not really a valid C operator
 COP_OVERFLOW    equ 15      ; OVERFLOW? not really a valid C operator
 
+externdef ComInterface:SINT
+
 .data
 
 EOLSTR          db EOLCHAR,0
@@ -1220,7 +1222,7 @@ StripSource endp
 
 LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:PTR asm_tok
 
-  local b[MAX_LINE_LEN]:SBYTE, br_count
+  local b[MAX_LINE_LEN]:SBYTE, br_count:SINT, sym:ptr asym, comptr:LPSTR
 
     lea esi,b
     mov edi,i
@@ -1229,7 +1231,40 @@ LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:PTR 
     add ebx,tokenarray
 
     strcpy( esi, "invoke " ) ;  assume proc(...)
-    strcat( esi, [ebx].string_ptr )
+    mov comptr,0
+    mov sym,SymFind( [ebx].string_ptr )
+
+    xor ecx,ecx
+    .if eax
+        .if [eax].asym.mem_type == MT_TYPE && [eax].asym._type
+            mov eax,[eax].asym._type
+            .if [eax].asym.typekind == TYPE_TYPEDEF
+                mov ecx,[eax].asym.target_type
+            .endif
+        .elseif [eax].asym.mem_type == MT_PTR && [eax].asym.state == SYM_STACK
+            mov ecx,[eax].asym.target_type
+        .endif
+    .endif
+
+    .if ecx
+        .if [ecx].asym.state == SYM_TYPE && [ecx].asym.typekind == TYPE_STRUCT
+
+            mov eax,[ecx].asym._name
+            mov comptr,eax
+            .if ( ModuleInfo.Ofssize == USE64 )
+                strcat(esi, "[rax]." )
+            .else
+                strcat(esi, "[eax]." )
+            .endif
+            strcat(esi, comptr )
+            mov eax,[ebx].string_ptr
+            mov comptr,eax
+            inc ComInterface
+        .endif
+    .endif
+    .if ( !comptr )
+        strcat( esi, [ebx].string_ptr )
+    .endif
 
     inc edi
     add ebx,16
@@ -1274,6 +1309,11 @@ LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:PTR 
 
             strcat( esi, "," )
 
+            .if comptr
+                strcat( esi, comptr )
+                strcat( esi, "," )
+            .endif
+
             .while  1
 
                 .if [ebx].token == '&'
@@ -1316,6 +1356,9 @@ LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:PTR 
                 add edi,1
                 add ebx,16
             .endw
+        .elseif comptr
+            strcat( esi, "," )
+            strcat( esi, comptr )
         .endif
 
         .if br_count || [ebx].token != T_CL_BRACKET
@@ -1334,9 +1377,10 @@ LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:PTR 
     lea ecx,[eax+3]
     inc eax
 
-    .if ( edi == eax && eax > 1 ) || ( edi == ecx && br_count == 0 )
+    .if !comptr && ( ( edi == eax && eax > 1 ) || ( edi == ecx && br_count == 0 ) )
 
-        .if SymFind( [ebx-32].string_ptr )
+        mov eax,sym
+        .if eax
 
             .if !( [eax].asym.state == SYM_EXTERNAL && [eax].asym.dll )
 
@@ -1441,6 +1485,9 @@ QueueTestLines endp
 
 ExpandHllProc proc uses esi edi dst:LPSTR, i:SINT, tokenarray:PTR asm_tok
 
+  local rc:SINT
+
+    mov rc,NOT_ERROR
     mov eax,dst
     mov BYTE PTR [eax],0
 
@@ -1456,18 +1503,16 @@ ExpandHllProc proc uses esi edi dst:LPSTR, i:SINT, tokenarray:PTR asm_tok
             .if [edi].asm_tok.hll_flags & T_HLL_PROC
 
                 ExpandCStrings( tokenarray )
-                RenderHllProc( dst, esi, tokenarray )
-                cmp eax,ERROR
-                je  toend
+                mov rc,RenderHllProc( dst, esi, tokenarray )
                 .break
             .endif
             add edi,16
             add esi,1
         .endw
     .endif
-    mov eax,NOT_ERROR
-toend:
+    mov eax,rc
     ret
+
 ExpandHllProc endp
 
 EvaluateHllExpression proc uses esi edi ebx,
@@ -1523,8 +1568,7 @@ local   hllop:      hll_opnd,
         mov ecx,buffer
         mov BYTE PTR [ecx],0
 
-        .if GetExpression( hll, esi, ebx, ilabel, is_true,
-                ecx, &hllop ) != ERROR
+        .if GetExpression( hll, esi, ebx, ilabel, is_true, ecx, &hllop ) != ERROR
 
             mov eax,[esi]
             shl eax,4

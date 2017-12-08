@@ -98,36 +98,33 @@ DEFINE_GUID(IID_ID3DXConstantTable, 0xab3c758f, 0x093e, 0x4356, 0xb7, 0x62, 0x4d
 endif
 
 ID3DXConstantTable	STRUC
-;;** IUnknown methods **
-QueryInterface		PVOID ?
-AddRef			PVOID ?
-Release			PVOID ?
-;;** ID3DXBuffer methods **
-GetBufferPointer	PVOID ?
-GetBufferSize		PVOID ?
-;;** ID3DXConstantTable methods **
-GetDesc			PVOID ?
-GetConstantDesc		PVOID ?
-GetSamplerIndex		PVOID ?
-GetConstant		PVOID ?
-GetConstantByName	PVOID ?
-GetConstantElement	PVOID ?
-SetDefaults		PVOID ?
-SetValue		PVOID ?
-SetBool			PVOID ?
-SetBoolArray		PVOID ?
-SetInt			PVOID ?
-SetIntArray		PVOID ?
-SetFloat		PVOID ?
-SetFloatArray		PVOID ?
-SetVector		PVOID ?
-SetVectorArray		PVOID ?
-SetMatrix		PVOID ?
-SetMatrixArray		PVOID ?
-SetMatrixPointerArray	PVOID ?
-SetMatrixTranspose	PVOID ?
-SetMatrixTransposeArray PVOID ?
-SetMatrixTransposePointerArray PVOID ?
+STDMETHOD QueryInterface, :REFIID, :ptr
+STDMETHOD AddRef
+STDMETHOD Release
+STDMETHOD GetBufferPointer
+STDMETHOD GetBufferSize
+STDMETHOD GetDesc, :ptr
+STDMETHOD GetConstantDesc, :D3DXHANDLE, :ptr, :ptr
+STDMETHOD GetSamplerIndex, :D3DXHANDLE
+STDMETHOD GetConstant, :D3DXHANDLE, :UINT
+STDMETHOD GetConstantByName, :D3DXHANDLE, :ptr
+STDMETHOD GetConstantElement, :D3DXHANDLE, :UINT
+STDMETHOD SetDefaults, :ptr
+STDMETHOD SetValue, :ptr, :D3DXHANDLE, :ptr, :UINT
+STDMETHOD SetBool, :ptr, :D3DXHANDLE, :BOOL
+STDMETHOD SetBoolArray, :ptr, :D3DXHANDLE, :ptr, :UINT
+STDMETHOD SetInt, :ptr, :D3DXHANDLE, :SINT
+STDMETHOD SetIntArray, :ptr, :D3DXHANDLE, :ptr, :UINT
+STDMETHOD SetFloat, :ptr, :D3DXHANDLE, :float
+STDMETHOD SetFloatArray, :ptr, :D3DXHANDLE, :ptr, :UINT
+STDMETHOD SetVector, :ptr, :D3DXHANDLE, :ptr
+STDMETHOD SetVectorArray, :ptr, :D3DXHANDLE, :ptr, :UINT
+STDMETHOD SetMatrix, :ptr, :D3DXHANDLE, :ptr
+STDMETHOD SetMatrixArray, :ptr, :D3DXHANDLE, :ptr, :UINT
+STDMETHOD SetMatrixPointerArray, :ptr, :D3DXHANDLE, :ptr, :UINT
+STDMETHOD SetMatrixTranspose, :ptr, :D3DXHANDLE, :ptr
+STDMETHOD SetMatrixTransposeArray, :ptr, :D3DXHANDLE, :ptr, :UINT
+STDMETHOD SetMatrixTransposePointerArray, :ptr, :D3DXHANDLE, :ptr, :UINT
 ID3DXConstantTable	ENDS
 
 LPD3DXCONSTANTTABLE	typedef ptr ID3DXConstantTable
@@ -136,32 +133,32 @@ LPD3DXCONSTANTTABLE	typedef ptr ID3DXConstantTable
 DEFINE_GUID(IID_ID3DXTextureShader, 0x3e3d67f8, 0xaa7a, 0x405d, 0xa8, 0x57, 0xba, 0x1, 0xd4, 0x75, 0x84, 0x26);
 
 ID3DXTextureShader	STRUC
-QueryInterface		PVOID ?
-AddRef			PVOID ?
-Release			PVOID ?
-GetFunction		PVOID ?
-GetConstantBuffer	PVOID ?
-GetDesc			PVOID ?
-GetConstantDesc		PVOID ?
-GetConstant		PVOID ?
-GetConstantByName	PVOID ?
-GetConstantElement	PVOID ?
-SetDefaults		PVOID ?
-SetValue		PVOID ?
-SetBool			PVOID ?
-SetBoolArray		PVOID ?
-SetInt			PVOID ?
-SetIntArray		PVOID ?
-SetFloat		PVOID ?
-SetFloatArray		PVOID ?
-SetVector		PVOID ?
-SetVectorArray		PVOID ?
-SetMatrix		PVOID ?
-SetMatrixArray		PVOID ?
-SetMatrixPointerArray	PVOID ?
-SetMatrixTranspose	PVOID ?
-SetMatrixTransposeArray PVOID ?
-SetMatrixTransposePointerArray PVOID ?
+STDMETHOD QueryInterface, :REFIID, :ptr
+STDMETHOD AddRef
+STDMETHOD Release
+STDMETHOD GetFunction, :ptr
+STDMETHOD GetConstantBuffer, :ptr
+STDMETHOD GetDesc, :ptr
+STDMETHOD GetConstantDesc, :D3DXHANDLE, :ptr, :ptr
+STDMETHOD GetConstant, :D3DXHANDLE, :UINT
+STDMETHOD GetConstantByName, :D3DXHANDLE, :ptr
+STDMETHOD GetConstantElement, :D3DXHANDLE, :UINT
+STDMETHOD SetDefaults
+STDMETHOD SetValue, :D3DXHANDLE, :ptr, :UINT
+STDMETHOD SetBool, :D3DXHANDLE, :BOOL
+STDMETHOD SetBoolArray, :D3DXHANDLE, :ptr, :UINT
+STDMETHOD SetInt, :D3DXHANDLE, :SINT
+STDMETHOD SetIntArray, :D3DXHANDLE, :ptr, :UINT
+STDMETHOD SetFloat, :D3DXHANDLE, :FLOAT
+STDMETHOD SetFloatArray, :D3DXHANDLE, :ptr, :UINT
+STDMETHOD SetVector, :D3DXHANDLE, :ptr
+STDMETHOD SetVectorArray, :D3DXHANDLE, :ptr, :UINT
+STDMETHOD SetMatrix, :D3DXHANDLE, :ptr
+STDMETHOD SetMatrixArray, :D3DXHANDLE, :ptr, :UINT
+STDMETHOD SetMatrixPointerArray, :D3DXHANDLE, :ptr, :UINT
+STDMETHOD SetMatrixTranspose, :D3DXHANDLE, :ptr
+STDMETHOD SetMatrixTransposeArray, :D3DXHANDLE, :ptr, :UINT
+STDMETHOD SetMatrixTransposePointerArray, :D3DXHANDLE, :ptr, :UINT
 ID3DXTextureShader	ENDS
 
 D3DXMACRO		STRUC
@@ -198,21 +195,21 @@ LPD3DXFRAGMENT_DESC	typedef ptr D3DXFRAGMENT_DESC
 DEFINE_GUID(IID_ID3DXFragmentLinker, 0x1a2c0cc2, 0xe5b6, 0x4ebc, 0x9e, 0x8d, 0x39, 0xe, 0x5, 0x78, 0x11, 0xb6);
 
 ID3DXFragmentLinker	STRUC
-QueryInterface		PVOID ?
-AddRef			PVOID ?
-Release			PVOID ?
-GetDevice		PVOID ?
-GetNumberOfFragments	PVOID ?
-GetFragmentHandleByIndex PVOID ?
-GetFragmentHandleByName PVOID ?
-GetFragmentDesc		PVOID ?
-AddFragments		PVOID ?
-GetAllFragments		PVOID ?
-GetFragment		PVOID ?
-LinkShader		PVOID ?
-LinkVertexShader	PVOID ?
-LinkPixelShader		PVOID ?
-ClearCache		PVOID ?
+STDMETHOD QueryInterface, :REFIID, :ptr
+STDMETHOD AddRef
+STDMETHOD Release
+STDMETHOD GetDevice, :ptr
+STDMETHOD GetNumberOfFragments
+STDMETHOD GetFragmentHandleByIndex, :UINT
+STDMETHOD GetFragmentHandleByName, :ptr
+STDMETHOD GetFragmentDesc, :D3DXHANDLE, :ptr
+STDMETHOD AddFragments, :ptr
+STDMETHOD GetAllFragments, :ptr
+STDMETHOD GetFragment, :D3DXHANDLE, :ptr
+STDMETHOD LinkShader, :ptr, :DWORD, :ptr, :UINT, :ptr, :ptr
+STDMETHOD LinkVertexShader, :ptr, :DWORD, :ptr, :UINT, :ptr, :ptr
+STDMETHOD LinkPixelShader, :ptr, :DWORD, :ptr, :UINT, :ptr, :ptr
+STDMETHOD ClearCache
 ID3DXFragmentLinker	ENDS
 
 

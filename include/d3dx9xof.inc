@@ -45,71 +45,61 @@ D3DXFileCreate proto WINAPI \
 
 
 ID3DXFile		STRUC
-;;** IUnknown methods **
-QueryInterface		PVOID ?
-AddRef			PVOID ?
-Release			PVOID ?
-;;** ID3DXFile methods **
-CreateEnumObject	PVOID ?
-CreateSaveObject	PVOID ?
-RegisterTemplates	PVOID ?
-RegisterEnumTemplates	PVOID ?
+STDMETHOD QueryInterface, :REFIID, :ptr
+STDMETHOD AddRef
+STDMETHOD Release
+STDMETHOD CreateEnumObject, :ptr, :D3DXF_FILELOADOPTIONS, :ptr
+STDMETHOD CreateSaveObject, :ptr, :D3DXF_FILESAVEOPTIONS, :D3DXF_FILEFORMAT, :ptr
+STDMETHOD RegisterTemplates, :ptr, :SIZE_T
+STDMETHOD RegisterEnumTemplates, :ptr
 ID3DXFile		ENDS
 
 ID3DXFileSaveObject	STRUC
-;;** IUnknown methods **
-QueryInterface		PVOID ?
-AddRef			PVOID ?
-Release			PVOID ?
-;;** ID3DXFileSaveObject methods **
-GetFile			PVOID ?
-AddDataObject		PVOID ?
-Save			PVOID ?
+STDMETHOD QueryInterface, :REFIID, :ptr
+STDMETHOD AddRef
+STDMETHOD Release
+STDMETHOD GetFile, :ptr
+STDMETHOD AddDataObject, :REFGUID, :ptr, :ptr, :SIZE_T, :ptr, :ptr
+STDMETHOD Save
 ID3DXFileSaveObject	ENDS
 
 ID3DXFileSaveData	STRUC
-;;** IUnknown methods **
-QueryInterface		PVOID ?
-AddRef			PVOID ?
-Release			PVOID ?
-;;** ID3DXFileSaveObject methods **
-GetSave			PVOID ?
-GetName			PVOID ?
-GetId			PVOID ?
-GetType			PVOID ?
-AddDataObject		PVOID ?
-AddDataReference	PVOID ?
+STDMETHOD QueryInterface, :REFIID, :ptr
+STDMETHOD AddRef
+STDMETHOD Release
+STDMETHOD GetSave, :ptr
+STDMETHOD GetName, :ptr, :ptr
+STDMETHOD GetId, :LPGUID
+STDMETHOD GetType, :ptr
+STDMETHOD AddDataObject, :REFGUID, :ptr, :ptr, :SIZE_T, :ptr, :ptr
+STDMETHOD AddDataReference, :ptr, :ptr
 ID3DXFileSaveData	ENDS
 
 
 ID3DXFileEnumObject	STRUC
-;;** IUnknown methods **
-QueryInterface		PVOID ?
-AddRef			PVOID ?
-Release			PVOID ?
-;;** ID3DXFileEnumObject methods **
-GetFile			PVOID ?
-GetChildren		PVOID ?
-GetChild		PVOID ?
-GetDataObjectById	PVOID ?
-GetDataObjectByName	PVOID ?
+STDMETHOD QueryInterface, :REFIID, :ptr
+STDMETHOD AddRef
+STDMETHOD Release
+STDMETHOD GetFile, :ptr
+STDMETHOD GetChildren, :ptr
+STDMETHOD GetChild, :SIZE_T, :ptr
+STDMETHOD GetDataObjectById, :REFGUID, :ptr
+STDMETHOD GetDataObjectByName, :ptr, :ptr
 ID3DXFileEnumObject	ENDS
 
 ID3DXFileData		STRUC
-;;** IUnknown methods **
-QueryInterface		PVOID ?
-AddRef			PVOID ?
-Release			PVOID ?
-;;** ID3DXFileData methods **
-GetEnum			PVOID ?
-GetName			PVOID ?
-GetId			PVOID ?
-_Lock			PVOID ?
-Unlock			PVOID ?
-GetType			PVOID ?
-IsReference		PVOID ?
-GetChildren		PVOID ?
-GetChild		PVOID ?
+STDMETHOD QueryInterface, :REFIID, :ptr
+STDMETHOD AddRef
+STDMETHOD Release
+STDMETHOD GetEnum, :ptr
+STDMETHOD GetName, :ptr, :ptr
+STDMETHOD GetId, :LPGUID
+STDMETHOD _Lock, :ptr, :ptr
+STDMETHOD Unlock
+STDMETHOD GetType, :ptr
+STDMETHOD IsReference
+STDMETHOD GetChildren, :ptr
+STDMETHOD GetChild, :SIZE_T, :ptr
 ID3DXFileData		ENDS
 
 ;; D3DX File errors

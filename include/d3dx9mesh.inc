@@ -255,307 +255,285 @@ LPD3DXIMTSIGNALCALLBACK typedef ptr LPD3DXIMTSIGNALCALLBACKT
 LPD3DXSHPRTSIMCB	typedef ptr LPD3DXSHPRTSIMCBT
 
 ID3DXBaseMesh		STRUC
-;;** IUnknown methods **
-QueryInterface		PVOID ?
-AddRef			PVOID ?
-Release			PVOID ?
-;;** ID3DXBaseMesh **
-DrawSubset		PVOID ?
-GetNumFaces		PVOID ?
-GetNumVertices		PVOID ?
-GetFVF			PVOID ?
-GetDeclaration		PVOID ?
-GetNumBytesPerVertex	PVOID ?
-GetOptions		PVOID ?
-GetDevice		PVOID ?
-CloneMeshFVF		PVOID ?
-CloneMesh		PVOID ?
-GetVertexBuffer		PVOID ?
-GetIndexBuffer		PVOID ?
-LockVertexBuffer	PVOID ?
-UnlockVertexBuffer	PVOID ?
-LockIndexBuffer		PVOID ?
-UnlockIndexBuffer	PVOID ?
-GetAttributeTable	PVOID ?
-ConvertPointRepsToAdjacency PVOID ?
-ConvertAdjacencyToPointReps PVOID ?
-GenerateAdjacency	PVOID ?
-UpdateSemantics		PVOID ?
+STDMETHOD QueryInterface, :REFIID, :ptr
+STDMETHOD AddRef
+STDMETHOD Release
+STDMETHOD DrawSubset, :DWORD
+STDMETHOD GetNumFaces
+STDMETHOD GetNumVertices
+STDMETHOD GetFVF
+STDMETHOD GetDeclaration, :ptr
+STDMETHOD GetNumBytesPerVertex
+STDMETHOD GetOptions
+STDMETHOD GetDevice, :ptr
+STDMETHOD CloneMeshFVF, :DWORD, :DWORD, :ptr, :ptr
+STDMETHOD CloneMesh, :DWORD, :ptr, :ptr, :ptr
+STDMETHOD GetVertexBuffer, :ptr
+STDMETHOD GetIndexBuffer, :ptr
+STDMETHOD LockVertexBuffer, :DWORD, :ptr
+STDMETHOD UnlockVertexBuffer
+STDMETHOD LockIndexBuffer, :DWORD, :ptr
+STDMETHOD UnlockIndexBuffer
+STDMETHOD GetAttributeTable, :ptr, :ptr
+STDMETHOD ConvertPointRepsToAdjacency, :ptr, :ptr
+STDMETHOD ConvertAdjacencyToPointReps, :ptr, :ptr
+STDMETHOD GenerateAdjacency, :FLOAT, :ptr
+STDMETHOD UpdateSemantics, :ptr
 ID3DXBaseMesh		ENDS
 
 ID3DXMesh		STRUC
-;;** IUnknown methods **
-QueryInterface		PVOID ?
-AddRef			PVOID ?
-Release			PVOID ?
-;;** ID3DXBaseMesh **
-DrawSubset		PVOID ?
-GetNumFaces		PVOID ?
-GetNumVertices		PVOID ?
-GetFVF			PVOID ?
-GetDeclaration		PVOID ?
-GetNumBytesPerVertex	PVOID ?
-GetOptions		PVOID ?
-GetDevice		PVOID ?
-CloneMeshFVF		PVOID ?
-CloneMesh		PVOID ?
-GetVertexBuffer		PVOID ?
-GetIndexBuffer		PVOID ?
-LockVertexBuffer	PVOID ?
-UnlockVertexBuffer	PVOID ?
-LockIndexBuffer		PVOID ?
-UnlockIndexBuffer	PVOID ?
-GetAttributeTable	PVOID ?
-ConvertPointRepsToAdjacency PVOID ?
-ConvertAdjacencyToPointReps PVOID ?
-GenerateAdjacency	PVOID ?
-UpdateSemantics		PVOID ?
-;;** ID3DXMesh **
-LockAttributeBuffer	PVOID ?
-UnlockAttributeBuffer	PVOID ?
-Optimize		PVOID ?
-OptimizeInplace		PVOID ?
-SetAttributeTable	PVOID ?
+STDMETHOD QueryInterface, :REFIID, :ptr
+STDMETHOD AddRef
+STDMETHOD Release
+STDMETHOD DrawSubset, :DWORD
+STDMETHOD GetNumFaces
+STDMETHOD GetNumVertices
+STDMETHOD GetFVF
+STDMETHOD GetDeclaration, :ptr
+STDMETHOD GetNumBytesPerVertex
+STDMETHOD GetOptions
+STDMETHOD GetDevice, :ptr
+STDMETHOD CloneMeshFVF, :DWORD, :DWORD, :ptr, :ptr
+STDMETHOD CloneMesh, :DWORD, :ptr, :ptr, :ptr
+STDMETHOD GetVertexBuffer, :ptr
+STDMETHOD GetIndexBuffer, :ptr
+STDMETHOD LockVertexBuffer, :DWORD, :ptr
+STDMETHOD UnlockVertexBuffer
+STDMETHOD LockIndexBuffer, :DWORD, :ptr
+STDMETHOD UnlockIndexBuffer
+STDMETHOD GetAttributeTable, :ptr, :ptr
+STDMETHOD ConvertPointRepsToAdjacency, :ptr, :ptr
+STDMETHOD ConvertAdjacencyToPointReps, :ptr, :ptr
+STDMETHOD GenerateAdjacency, :FLOAT, :ptr
+STDMETHOD UpdateSemantics, :ptr
+STDMETHOD LockAttributeBuffer, :DWORD, :ptr
+STDMETHOD UnlockAttributeBuffer
+STDMETHOD Optimize, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr
+STDMETHOD OptimizeInplace, :DWORD, :ptr, :ptr, :ptr, :ptr
+STDMETHOD SetAttributeTable, :ptr, :DWORD
 ID3DXMesh		ENDS
 
 ID3DXPMesh		STRUC
-;;** IUnknown methods **
-QueryInterface		PVOID ?
-AddRef			PVOID ?
-Release			PVOID ?
-;;** ID3DXBaseMesh **
-DrawSubset		PVOID ?
-GetNumFaces		PVOID ?
-GetNumVertices		PVOID ?
-GetFVF			PVOID ?
-GetDeclaration		PVOID ?
-GetNumBytesPerVertex	PVOID ?
-GetOptions		PVOID ?
-GetDevice		PVOID ?
-CloneMeshFVF		PVOID ?
-CloneMesh		PVOID ?
-GetVertexBuffer		PVOID ?
-GetIndexBuffer		PVOID ?
-LockVertexBuffer	PVOID ?
-UnlockVertexBuffer	PVOID ?
-LockIndexBuffer		PVOID ?
-UnlockIndexBuffer	PVOID ?
-GetAttributeTable	PVOID ?
-ConvertPointRepsToAdjacency PVOID ?
-ConvertAdjacencyToPointReps PVOID ?
-GenerateAdjacency	PVOID ?
-UpdateSemantics		PVOID ?
-;;** ID3DXPMesh **
-ClonePMeshFVF		PVOID ?
-ClonePMesh		PVOID ?
-SetNumFaces		PVOID ?
-SetNumVertices		PVOID ?
-GetMaxFaces		PVOID ?
-GetMinFaces		PVOID ?
-GetMaxVertices		PVOID ?
-GetMinVertices		PVOID ?
-Save			PVOID ?
-Optimize		PVOID ?
-OptimizeBaseLOD		PVOID ?
-TrimByFaces		PVOID ?
-TrimByVertices		PVOID ?
-GetAdjacency		PVOID ?
-GenerateVertexHistory	PVOID ?
+STDMETHOD QueryInterface, :REFIID, :ptr
+STDMETHOD AddRef
+STDMETHOD Release
+STDMETHOD DrawSubset, :DWORD
+STDMETHOD GetNumFaces
+STDMETHOD GetNumVertices
+STDMETHOD GetFVF
+STDMETHOD GetDeclaration, :ptr
+STDMETHOD GetNumBytesPerVertex
+STDMETHOD GetOptions
+STDMETHOD GetDevice, :ptr
+STDMETHOD CloneMeshFVF, :DWORD, :DWORD, :ptr, :ptr
+STDMETHOD CloneMesh, :DWORD, :ptr, :ptr, :ptr
+STDMETHOD GetVertexBuffer, :ptr
+STDMETHOD GetIndexBuffer, :ptr
+STDMETHOD LockVertexBuffer, :DWORD, :ptr
+STDMETHOD UnlockVertexBuffer
+STDMETHOD LockIndexBuffer, :DWORD, :ptr
+STDMETHOD UnlockIndexBuffer
+STDMETHOD GetAttributeTable, :ptr, :ptr
+STDMETHOD ConvertPointRepsToAdjacency, :ptr, :ptr
+STDMETHOD ConvertAdjacencyToPointReps, :ptr, :ptr
+STDMETHOD GenerateAdjacency, :FLOAT, :ptr
+STDMETHOD UpdateSemantics, :ptr
+STDMETHOD ClonePMeshFVF, :DWORD, :DWORD, :ptr, :ptr
+STDMETHOD ClonePMesh, :DWORD, :ptr, :ptr, :ptr
+STDMETHOD SetNumFaces, :DWORD
+STDMETHOD SetNumVertices, :DWORD
+STDMETHOD GetMaxFaces
+STDMETHOD GetMinFaces
+STDMETHOD GetMaxVertices
+STDMETHOD GetMinVertices
+STDMETHOD Save, :ptr, :ptr, :ptr, :DWORD
+STDMETHOD Optimize, :DWORD, :ptr, :ptr, :ptr, :ptr
+STDMETHOD OptimizeBaseLOD, :DWORD, :ptr
+STDMETHOD TrimByFaces, :DWORD, :DWORD, :ptr, :ptr
+STDMETHOD TrimByVertices, :DWORD, :DWORD, :ptr, :ptr
+STDMETHOD GetAdjacency, :ptr
+STDMETHOD GenerateVertexHistory, :ptr
 ID3DXPMesh		ENDS
 
 ID3DXSPMesh		STRUC
-;;** IUnknown methods **
-QueryInterface		PVOID ?
-AddRef			PVOID ?
-Release			PVOID ?
-;;** ID3DXSPMesh **
-GetNumFaces		PVOID ?
-GetNumVertices		PVOID ?
-GetNumFVF		PVOID ?
-GetDeclaration		PVOID ?
-GetOptions		PVOID ?
-GetDevice		PVOID ?
-CloneMeshFVF		PVOID ?
-CloneMesh		PVOID ?
-ClonePMeshFVF		PVOID ?
-ClonePMesh		PVOID ?
-ReduceFaces		PVOID ?
-ReduceVertices		PVOID ?
-GetMaxFaces		PVOID ?
-GetMaxVertices		PVOID ?
-GetVertexAttributeWeights PVOID ?
-GetVertexWeights	PVOID ?
+STDMETHOD QueryInterface, :REFIID, :ptr
+STDMETHOD AddRef
+STDMETHOD Release
+STDMETHOD GetNumFaces
+STDMETHOD GetNumVertices
+STDMETHOD GetNumFVF
+STDMETHOD GetDeclaration, :ptr
+STDMETHOD GetOptions
+STDMETHOD GetDevice, :ptr
+STDMETHOD CloneMeshFVF, :DWORD, :DWORD, :ptr, :ptr, :ptr, :ptr
+STDMETHOD CloneMesh, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr
+STDMETHOD ClonePMeshFVF, :DWORD, :DWORD, :ptr, :ptr, :ptr, :ptr
+STDMETHOD ClonePMesh, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr
+STDMETHOD ReduceFaces, :DWORD
+STDMETHOD ReduceVertices, :DWORD
+STDMETHOD GetMaxFaces
+STDMETHOD GetMaxVertices
+STDMETHOD GetVertexAttributeWeights, :LPD3DXATTRIBUTEWEIGHTS
+STDMETHOD GetVertexWeights, :ptr
 ID3DXSPMesh		ENDS
 
 ID3DXPatchMesh		STRUC
-;;** IUnknown methods **
-QueryInterface		PVOID ?
-AddRef			PVOID ?
-Release			PVOID ?
-;;** ID3DXPatchMesh **
-GetNumPatches		PVOID ?
-GetNumVertices		PVOID ?
-GetDeclaration		PVOID ?
-GetControlVerticesPerPatch PVOID ?
-GetOptions		PVOID ?
-GetDevice		PVOID ?
-GetPatchInfo		PVOID ?
-GetVertexBuffer		PVOID ?
-GetIndexBuffer		PVOID ?
-LockVertexBuffer	PVOID ?
-UnlockVertexBuffer	PVOID ?
-LockIndexBuffer		PVOID ?
-UnlockIndexBuffer	PVOID ?
-LockAttributeBuffer	PVOID ?
-UnlockAttributeBuffer	PVOID ?
-GetTessSize		PVOID ?
-GenerateAdjacency	PVOID ?
-CloneMesh		PVOID ?
-Optimize		PVOID ?
-SetDisplaceParam	PVOID ?
-GetDisplaceParam	PVOID ?
-Tessellate		PVOID ?
-TessellateAdaptive	PVOID ?
+STDMETHOD QueryInterface, :REFIID, :ptr
+STDMETHOD AddRef
+STDMETHOD Release
+STDMETHOD GetNumPatches
+STDMETHOD GetNumVertices
+STDMETHOD GetDeclaration, :ptr
+STDMETHOD GetControlVerticesPerPatch
+STDMETHOD GetOptions
+STDMETHOD GetDevice, :ptr
+STDMETHOD GetPatchInfo, :LPD3DXPATCHINFO
+STDMETHOD GetVertexBuffer, :ptr
+STDMETHOD GetIndexBuffer, :ptr
+STDMETHOD LockVertexBuffer, :DWORD, :ptr
+STDMETHOD UnlockVertexBuffer
+STDMETHOD LockIndexBuffer, :DWORD, :ptr
+STDMETHOD UnlockIndexBuffer
+STDMETHOD LockAttributeBuffer, :DWORD, :ptr
+STDMETHOD UnlockAttributeBuffer
+STDMETHOD GetTessSize, :FLOAT, :DWORD, :ptr, :ptr
+STDMETHOD GenerateAdjacency, :FLOAT
+STDMETHOD CloneMesh, :DWORD, :ptr, :ptr
+STDMETHOD Optimize, :DWORD
+STDMETHOD SetDisplaceParam, :ptr, :D3DTEXTUREFILTERTYPE, :D3DTEXTUREFILTERTYPE, :D3DTEXTUREFILTERTYPE, :D3DTEXTUREADDRESS, :DWORD
+STDMETHOD GetDisplaceParam, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
+STDMETHOD Tessellate, :float, :ptr
+STDMETHOD TessellateAdaptive, :ptr, :DWORD, :DWORD, :ptr
 ID3DXPatchMesh		ENDS
 
 ID3DXSkinInfo		STRUC
-;;** IUnknown methods **
-QueryInterface		PVOID ?
-AddRef			PVOID ?
-Release			PVOID ?
-;;** ID3DXSkinInfo **
-SetBoneInfluence	PVOID ?
-SetBoneVertexInfluence	PVOID ?
-GetNumBoneInfluences	PVOID ?
-GetBoneInfluence	PVOID ?
-GetBoneVertexInfluence	PVOID ?
-GetMaxVertexInfluences	PVOID ?
-GetNumBones		PVOID ?
-FindBoneVertexInfluenceIndex PVOID ?
-GetMaxFaceInfluences	PVOID ?
-SetMinBoneInfluence	PVOID ?
-GetMinBoneInfluence	PVOID ?
-SetBoneName		PVOID ?
-GetBoneName		PVOID ?
-SetBoneOffsetMatrix	PVOID ?
-GetBoneOffsetMatrix	PVOID ?
-Clone			PVOID ?
-Remap			PVOID ?
-SetFVF			PVOID ?
-SetDeclaration		PVOID ?
-GetFVF			PVOID ?
-GetDeclaration		PVOID ?
-UpdateSkinnedMesh	PVOID ?
-ConvertToBlendedMesh	PVOID ?
-ConvertToIndexedBlendedMesh PVOID ?
+STDMETHOD QueryInterface, :REFIID, :ptr
+STDMETHOD AddRef
+STDMETHOD Release
+STDMETHOD SetBoneInfluence, :DWORD, :DWORD, :ptr, :ptr
+STDMETHOD SetBoneVertexInfluence, :DWORD, :DWORD, :float
+STDMETHOD GetNumBoneInfluences, :DWORD
+STDMETHOD GetBoneInfluence, :DWORD, :ptr, :ptr
+STDMETHOD GetBoneVertexInfluence, :DWORD, :DWORD, :ptr, :ptr
+STDMETHOD GetMaxVertexInfluences, :ptr
+STDMETHOD GetNumBones
+STDMETHOD FindBoneVertexInfluenceIndex, :DWORD, :DWORD, :ptr
+STDMETHOD GetMaxFaceInfluences, :ptr, :DWORD, :ptr
+STDMETHOD SetMinBoneInfluence, :FLOAT
+STDMETHOD GetMinBoneInfluence
+STDMETHOD SetBoneName, :DWORD, :ptr
+STDMETHOD GetBoneName, :DWORD
+STDMETHOD SetBoneOffsetMatrix, :DWORD, :ptr
+STDMETHOD GetBoneOffsetMatrix, :DWORD
+STDMETHOD Clone, :ptr
+STDMETHOD Remap, :DWORD, :ptr
+STDMETHOD SetFVF, :DWORD
+STDMETHOD SetDeclaration, :ptr
+STDMETHOD GetFVF
+STDMETHOD GetDeclaration, :ptr
+STDMETHOD UpdateSkinnedMesh, :ptr, :ptr, :ptr, :ptr
+STDMETHOD ConvertToBlendedMesh, :ptr, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
+STDMETHOD ConvertToIndexedBlendedMesh, :ptr, :DWORD, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
 ID3DXSkinInfo		ENDS
 
 ID3DXPRTBuffer		STRUC
-;;** IUnknown methods **
-QueryInterface		PVOID ?
-AddRef			PVOID ?
-Release			PVOID ?
-;;** ID3DXPRTBuffer methods **
-GetNumSamples		PVOID ?
-GetNumCoeffs		PVOID ?
-GetNumChannels		PVOID ?
-IsTexture		PVOID ?
-GetWidth		PVOID ?
-GetHeight		PVOID ?
-Resize			PVOID ?
-LockBuffer		PVOID ?
-UnlockBuffer		PVOID ?
-ScaleBuffer		PVOID ?
-AddBuffer		PVOID ?
-AttachGH		PVOID ?
-ReleaseGH		PVOID ?
-EvalGH			PVOID ?
-ExtractTexture		PVOID ?
-ExtractToMesh		PVOID ?
+STDMETHOD QueryInterface, :REFIID, :ptr
+STDMETHOD AddRef
+STDMETHOD Release
+STDMETHOD GetNumSamples
+STDMETHOD GetNumCoeffs
+STDMETHOD GetNumChannels
+STDMETHOD IsTexture
+STDMETHOD GetWidth
+STDMETHOD GetHeight
+STDMETHOD Resize, :UINT
+STDMETHOD LockBuffer, :UINT, :UINT, :ptr
+STDMETHOD UnlockBuffer
+STDMETHOD ScaleBuffer, :FLOAT
+STDMETHOD AddBuffer, :ptr
+STDMETHOD AttachGH, :ptr
+STDMETHOD ReleaseGH
+STDMETHOD EvalGH
+STDMETHOD ExtractTexture, :UINT, :UINT, :UINT, :ptr
+STDMETHOD ExtractToMesh, :UINT, :D3DDECLUSAGE, :UINT, :ptr
 ID3DXPRTBuffer		ENDS
 
 ID3DXPRTCompBuffer	STRUC
-;;** IUnknown methods **
-QueryInterface		PVOID ?
-AddRef			PVOID ?
-Release			PVOID ?
-;;** ID3DXPRTCompBuffer methods **
-GetNumSamples		PVOID ?
-GetNumCoeffs		PVOID ?
-GetNumChannels		PVOID ?
-IsTexture		PVOID ?
-GetWidth		PVOID ?
-GetHeight		PVOID ?
-GetNumClusters		PVOID ?
-GetNumPCA		PVOID ?
-NormalizeData		PVOID ?
-ExtractBasis		PVOID ?
-ExtractClusterIDs	PVOID ?
-ExtractPCA		PVOID ?
-ExtractTexture		PVOID ?
-ExtractToMesh		PVOID ?
+STDMETHOD QueryInterface, :REFIID, :ptr
+STDMETHOD AddRef
+STDMETHOD Release
+STDMETHOD GetNumSamples
+STDMETHOD GetNumCoeffs
+STDMETHOD GetNumChannels
+STDMETHOD IsTexture
+STDMETHOD GetWidth
+STDMETHOD GetHeight
+STDMETHOD GetNumClusters
+STDMETHOD GetNumPCA
+STDMETHOD NormalizeData
+STDMETHOD ExtractBasis, :UINT, :ptr
+STDMETHOD ExtractClusterIDs, :ptr
+STDMETHOD ExtractPCA, :UINT, :UINT, :ptr
+STDMETHOD ExtractTexture, :UINT, :UINT, :ptr
+STDMETHOD ExtractToMesh, :UINT, :D3DDECLUSAGE, :UINT, :ptr
 ID3DXPRTCompBuffer	ENDS
 
 ID3DXTextureGutterHelper STRUC
-;;** IUnknown methods **
-QueryInterface		PVOID ?
-AddRef			PVOID ?
-Release			PVOID ?
-;;** ID3DXTextureGutterHelper methods **
-GetWidth		PVOID ?
-GetHeight		PVOID ?
-ApplyGuttersFloat	PVOID ?
-ApplyGuttersTex		PVOID ?
-ApplyGuttersPRT		PVOID ?
-ResampleTex		PVOID ?
-GetFaceMap		PVOID ?
-GetBaryMap		PVOID ?
-GetTexelMap		PVOID ?
-GetGutterMap		PVOID ?
-SetFaceMap		PVOID ?
-SetBaryMap		PVOID ?
-SetTexelMap		PVOID ?
-SetGutterMap		PVOID ?
+STDMETHOD QueryInterface, :REFIID, :ptr
+STDMETHOD AddRef
+STDMETHOD Release
+STDMETHOD GetWidth
+STDMETHOD GetHeight
+STDMETHOD ApplyGuttersFloat, :ptr, :UINT, :ptr, :UINT
+STDMETHOD ApplyGuttersTex, :ptr
+STDMETHOD ApplyGuttersPRT, :ptr
+STDMETHOD ResampleTex, :ptr, :ptr, :D3DDECLUSAGE, :UINT, :ptr
+STDMETHOD GetFaceMap, :ptr
+STDMETHOD GetBaryMap, :ptr
+STDMETHOD GetTexelMap, :ptr
+STDMETHOD GetGutterMap, :ptr
+STDMETHOD SetFaceMap, :ptr
+STDMETHOD SetBaryMap, :ptr
+STDMETHOD SetTexelMap, :ptr
+STDMETHOD SetGutterMap, :ptr
 ID3DXTextureGutterHelper ENDS
 
 ID3DXPRTEngine		STRUC
-;;** IUnknown methods **
-QueryInterface		PVOID ?
-AddRef			PVOID ?
-Release			PVOID ?
-;;** ID3DXPRTEngine methods **
-SetMeshMaterials	PVOID ?
-SetPerVertexAlbedo	PVOID ?
-SetPerTexelAlbedo	PVOID ?
-GetVertexAlbedo		PVOID ?
-SetPerTexelNormals	PVOID ?
-ExtractPerVertexAlbedo	PVOID ?
-ResampleBuffer		PVOID ?
-GetAdaptedMesh		PVOID ?
-GetNumVerts		PVOID ?
-GetNumFaces		PVOID ?
-SetMinMaxIntersection	PVOID ?
-RobustMeshRefine	PVOID ?
-SetSamplingInfo		PVOID ?
-ComputeDirectLightingSH PVOID ?
-ComputeDirectLightingSHAdaptive PVOID ?
-ComputeDirectLightingSHGPU PVOID ?
-ComputeSS		PVOID ?
-ComputeSSAdaptive	PVOID ?
-ComputeBounce		PVOID ?
-ComputeBounceAdaptive	PVOID ?
-ComputeVolumeSamplesDirectSH PVOID ?
-ComputeVolumeSamples	PVOID ?
-ComputeSurfSamplesDirectSH PVOID ?
-ComputeSurfSamplesBounce PVOID ?
-FreeSSData		PVOID ?
-FreeBounceData		PVOID ?
-ComputeLDPRTCoeffs	PVOID ?
-ScaleMeshChunk		PVOID ?
-MultiplyAlbedo		PVOID ?
-SetCallback		PVOID ?
-DrawRayIntersects	PVOID ?
-ClosestRayIntersects	PVOID ?
+STDMETHOD QueryInterface, :REFIID, :ptr
+STDMETHOD AddRef
+STDMETHOD Release
+STDMETHOD SetMeshMaterials, :ptr, :UINT, :UINT, :BOOL, :FLOAT
+STDMETHOD SetPerVertexAlbedo, :ptr, :UINT, :UINT
+STDMETHOD SetPerTexelAlbedo, :ptr, :UINT, :ptr
+STDMETHOD GetVertexAlbedo, :ptr, :UINT
+STDMETHOD SetPerTexelNormals, :ptr
+STDMETHOD ExtractPerVertexAlbedo, :ptr, :D3DDECLUSAGE, :UINT
+STDMETHOD ResampleBuffer, :ptr, :ptr
+STDMETHOD GetAdaptedMesh, :ptr, :ptr, :ptr, :ptr, :ptr
+STDMETHOD GetNumVerts
+STDMETHOD GetNumFaces
+STDMETHOD SetMinMaxIntersection, :FLOAT, :FLOAT
+STDMETHOD RobustMeshRefine, :FLOAT, :UINT
+STDMETHOD SetSamplingInfo, :UINT, :BOOL, :BOOL, :BOOL, :FLOAT
+STDMETHOD ComputeDirectLightingSH, :UINT, :ptr
+STDMETHOD ComputeDirectLightingSHAdaptive, :UINT, :float, :float, :UINT, :ptr
+STDMETHOD ComputeDirectLightingSHGPU, :ptr, :UINT, :UINT, :float, :float, :ptr
+STDMETHOD ComputeSS, :ptr, :ptr, :ptr
+STDMETHOD ComputeSSAdaptive, :ptr, :float, :float, :UINT, :ptr, :ptr
+STDMETHOD ComputeBounce, :ptr, :ptr, :ptr
+STDMETHOD ComputeBounceAdaptive, :ptr, :float, :float, :UINT, :ptr, :ptr
+STDMETHOD ComputeVolumeSamplesDirectSH, :UINT, :UINT, :UINT, :ptr, :ptr
+STDMETHOD ComputeVolumeSamples, :ptr, :UINT, :UINT, :ptr, :ptr
+STDMETHOD ComputeSurfSamplesDirectSH, :UINT, :UINT, :ptr, :ptr, :ptr
+STDMETHOD ComputeSurfSamplesBounce, :ptr, :UINT, :ptr, :ptr, :ptr, :ptr
+STDMETHOD FreeSSData
+STDMETHOD FreeBounceData
+STDMETHOD ComputeLDPRTCoeffs, :ptr, :UINT, :ptr, :ptr
+STDMETHOD ScaleMeshChunk, :UINT, :float, :ptr
+STDMETHOD MultiplyAlbedo, :ptr
+STDMETHOD SetCallback, :LPD3DXSHPRTSIMCB, :float, :ptr
+STDMETHOD ShadowRayIntersects, :ptr, :ptr
+STDMETHOD ClosestRayIntersects, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
 ID3DXPRTEngine		ENDS
 
 ;HRESULT

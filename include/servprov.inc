@@ -4,22 +4,18 @@ endif
 include rpc.inc
 include rpcndr.inc
 ifndef __RPCNDR_H_VERSION__
-.err LT this stub requires an updated version of rpcndr.inc GT
+ .err <this stub requires an updated version of rpcndr>
 endif
 ifndef COM_NO_WINDOWS_H
 include windows.inc
 include ole2.inc
 endif
 ifndef __servprov_h__
-.xlist
 __servprov_h__ equ 1
-
 
 ifndef __IServiceProvider_FWD_DEFINED__
 __IServiceProvider_FWD_DEFINED__ equ 1
 endif
-
-
 include objidl.inc
 .xlist
 
@@ -35,27 +31,15 @@ externdef		__MIDL_itf_servprov_0000_v0_0_s_ifspec:RPC_IF_HANDLE
 ifndef __IServiceProvider_INTERFACE_DEFINED__
 __IServiceProvider_INTERFACE_DEFINED__ equ 1
 
-LPSERVICEPROVIDER	typedef ptr IServiceProvider
-
-externdef		IID_IServiceProvider:IID
-
-IServiceProviderVtbl	STRUC
-
-	BEGIN_INTERFACE
-
-	 QueryInterface PVOID ?
-		 AddRef PVOID ?
-		Release PVOID ?
-	   QueryService PVOID ?
-
-	END_INTERFACE
-
-IServiceProviderVtbl	ENDS
-
-LPIServiceProviderVtbl	typedef ptr IServiceProviderVtbl
 IServiceProvider	STRUC
-lpVtbl			LPIServiceProviderVtbl ?
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	QueryService, :REFGUID, :REFIID, :ptr
 IServiceProvider	ENDS
+LPSERVICEPROVIDER	typedef ptr IServiceProvider
+LPIServiceProvider	typedef ptr IServiceProvider
+externdef		IID_IServiceProvider:IID
 
 ;HRESULT
 IServiceProvider_RemoteQueryService_Proxy proto WINAPI \
@@ -70,8 +54,9 @@ IServiceProvider_RemoteQueryService_Stub proto WINAPI \
     _pRpcChannelBuffer: ptr IRpcChannelBuffer,
 	  _pRpcMessage: PRPC_MESSAGE,
 	 _pdwStubPhase: ptr DWORD
-endif
-endif
+
+endif ; __IServiceProvider_INTERFACE_DEFINED__
+endif ; _LPSERVICEPROVIDER_DEFINED
 
 externdef		__MIDL_itf_servprov_0074_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef		__MIDL_itf_servprov_0074_v0_0_s_ifspec:RPC_IF_HANDLE
@@ -90,6 +75,5 @@ IServiceProvider_QueryService_Stub proto WINAPI \
 		  riid: REFIID,
 	     ppvObject: ptr IUnknown
 
-
 .list
-endif
+endif ; __servprov_h__

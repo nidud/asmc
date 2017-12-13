@@ -20,7 +20,7 @@ __comcat_h__ equ <>
 include unknwn.inc
 .xlist
 ifdef __PE__
-option	dllimport:<uuid.lib>
+option	dllimport:<uuid>
 endif
 
 externdef CLSID_StdComponentCategoriesMgr:CLSID

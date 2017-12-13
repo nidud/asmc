@@ -82,7 +82,7 @@ PRECT		typedef ptr RECT
 LPRECT		typedef ptr RECT
 LPCRECT		typedef ptr RECT
 
-endif	
+endif
 UCHAR		typedef BYTE
 USHORT		typedef WORD
 DOUBLE		typedef REAL8
@@ -90,14 +90,14 @@ DOUBLE		typedef REAL8
 ifndef _DWORDLONG_
 DWORDLONG	typedef MIDL_uhyper
 PDWORDLONG	typedef ptr DWORDLONG
-endif 
+endif
 
 ifndef _ULONGLONG_
 LONGLONG	typedef hyper
 ULONGLONG	typedef MIDL_uhyper
 PLONGLONG	typedef ptr LONGLONG
 PULONGLONG	typedef ptr ULONGLONG
-endif 
+endif
 
 ifndef _WINBASE_
 ifndef _FILETIME_
@@ -108,7 +108,7 @@ dwHighDateTime	dd ?
 FILETIME	ENDS
 PFILETIME	typedef ptr FILETIME
 LPFILETIME	typedef ptr FILETIME
-endif 
+endif
 
 ifndef _SYSTEMTIME_
 _SYSTEMTIME_ equ <>
@@ -124,7 +124,7 @@ wMilliseconds	dw ?
 SYSTEMTIME	ENDS
 PSYSTEMTIME	typedef ptr SYSTEMTIME
 LPSYSTEMTIME	typedef ptr SYSTEMTIME
-endif 
+endif
 
 ifndef _SECURITY_ATTRIBUTES_
 _SECURITY_ATTRIBUTES_ equ <>
@@ -135,7 +135,7 @@ bInheritHandle		BOOL ?
 SECURITY_ATTRIBUTES	ENDS
 PSECURITY_ATTRIBUTES	typedef ptr SECURITY_ATTRIBUTES
 LPSECURITY_ATTRIBUTES	typedef ptr SECURITY_ATTRIBUTES
-endif 
+endif
 
 ifndef SECURITY_DESCRIPTOR_REVISION
 SECURITY_DESCRIPTOR_CONTROL typedef USHORT
@@ -162,9 +162,9 @@ Dacl			PACL ?
 SECURITY_DESCRIPTOR	ENDS
 PISECURITY_DESCRIPTOR	typedef ptr SECURITY_DESCRIPTOR
 
-endif 
+endif
 
-endif 
+endif
 COAUTHIDENTITY		STRUC
 User			LPWORD ?
 UserLength		ULONG ?
@@ -191,7 +191,7 @@ SCODE			typedef LONG
 ifndef _HRESULT_DEFINED
 _HRESULT_DEFINED equ <>
 HRESULT		typedef LONG
-endif 
+endif
 
 PSCODE		typedef ptr SCODE
 
@@ -203,12 +203,12 @@ Data2		dw ?
 Data3		dw ?
 Data4		db 8 dup(?)
 GUID		ENDS
-endif 
+endif
 
 ifndef __LPGUID_DEFINED__
 __LPGUID_DEFINED__ equ <>
 LPGUID		typedef ptr GUID
-endif 
+endif
 
 ifndef __OBJECTID_DEFINED
 __OBJECTID_DEFINED equ <>
@@ -217,7 +217,7 @@ OBJECTID	STRUC
 Lineage		GUID <>
 Uniquifier	dd ?
 OBJECTID	ENDS
-endif 
+endif
 
 ifndef __IID_DEFINED__
 __IID_DEFINED__ equ <>
@@ -245,7 +245,7 @@ REFGUID		typedef ptr GUID
 REFIID		typedef ptr IID
 REFCLSID	typedef ptr CLSID
 REFFMTID	typedef ptr FMTID
-endif 
+endif
 
 MEMCTX		typedef SDWORD
 MEMCTX_TASK	equ 1
@@ -258,12 +258,12 @@ ifndef _ROTFLAGS_DEFINED
 _ROTFLAGS_DEFINED	equ 1
 ROTFLAGS_REGISTRATIONKEEPSALIVE equ 0x1
 ROTFLAGS_ALLOWANYCLIENT equ 0x2
-endif 
+endif
 
 ifndef _ROT_COMPARE_MAX_DEFINED
 _ROT_COMPARE_MAX_DEFINED equ 1
 ROT_COMPARE_MAX		equ 2048
-endif 
+endif
 
 CLSCTX		typedef SDWORD
 
@@ -318,7 +318,7 @@ ifndef _LCID_DEFINED
 _LCID_DEFINED equ <>
 LCID		typedef DWORD
 
-endif 
+endif
 BYTE_BLOB	STRUC
 clSize		dd ?
 abData		db ?
@@ -497,8 +497,8 @@ wireHFONT	typedef ptr RemotableHandle
 wireHDC		typedef ptr RemotableHandle
 wireHICON	typedef ptr RemotableHandle
 
-ifndef _WIN32		 
-ifndef WINAPI		
+ifndef _WIN32
+ifndef WINAPI
 MSG		STRUC
 hwnd		HWND ?
 message		UINT ?
@@ -511,8 +511,8 @@ PMSG		typedef ptr MSG
 NPMSG		typedef ptr MSG
 LPMSG		typedef ptr MSG
 
-endif 
-endif 
+endif
+endif
 
 wireHBITMAP	typedef ptr userHBITMAP
 wireHPALETTE	typedef ptr userHPALETTE
@@ -524,7 +524,7 @@ HMETAFILEPICT	typedef PVOID
 
 externdef IWinTypes_v0_1_c_ifspec:RPC_IF_HANDLE
 externdef IWinTypes_v0_1_s_ifspec:RPC_IF_HANDLE
-endif 
+endif
 
 if ( _MSC_VER GE 800 )
 ;#pragma warning(disable:4201)
@@ -539,7 +539,7 @@ CY		STRUC
 int64		LONGLONG <>
 CY		ENDS
 
-else 
+else
 CY		UNION
 STRUC
 	Lo	dd ?
@@ -547,11 +547,11 @@ STRUC
 ENDS
 int64		dq ?
 CY		ENDS
-endif 
-endif 
+endif
+endif
 LPCY		typedef ptr CY
 
-if 0 
+if 0
 DECIMAL		STRUC
 wReserved	dw ?
 scale		db ?
@@ -560,7 +560,7 @@ Hi32		dd ?
 Lo64		dq ?
 DECIMAL		ENDS
 
-else 
+else
 
 DECIMAL		STRUC
 wReserved	dw ?
@@ -586,7 +586,7 @@ DECIMAL_SETZERO macro val
 	mov val.Hi32,0
 	mov val.signscale,0
 	endm
-endif 
+endif
 LPDECIMAL	typedef ptr DECIMAL
 
 if ( _MSC_VER GE 800 )
@@ -623,7 +623,7 @@ _BLOB_DEFINED	 equ <>
 _LPBLOB_DEFINED	 equ <>
 BLOB		STRUC
 cbSize		ULONG ?
-pBlobData	LPBYTE ?	
+pBlobData	LPBYTE ?
 BLOB		ENDS
 LPBLOB		typedef ptr BLOB
 endif
@@ -692,6 +692,14 @@ VT_ILLEGALMASKED	equ 0xfff
 VT_TYPEMASK		equ 0xfff
 
 PROPID			typedef ULONG
+
+ifndef PROPERTYKEY_DEFINED
+PROPERTYKEY_DEFINED equ <>
+PROPERTYKEY	STRUC
+fmtid		GUID <>
+pid		DWORD ?
+PROPERTYKEY	ENDS
+endif
 
 ifndef SID_IDENTIFIER_AUTHORITY_DEFINED
 SID_IDENTIFIER_AUTHORITY_DEFINED equ 1
@@ -827,8 +835,5 @@ PACKAGEINFO		ENDS
 externdef __MIDL_itf_wtypes_0001_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef __MIDL_itf_wtypes_0001_v0_0_s_ifspec:RPC_IF_HANDLE
 
-
-
 .list
-
-endif 
+endif

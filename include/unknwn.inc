@@ -12,12 +12,12 @@ include rpcndr.inc
 
 ifndef __RPCNDR_H_VERSION__
 .err <this stub requires an updated version of rpcndr.inc >
-endif 
+endif
 
 ifndef COM_NO_WINDOWS_H
 include windows.inc
 include ole2.inc
-endif 
+endif
 
 include wtypes.inc
 .xlist
@@ -45,7 +45,6 @@ IUnknown_QueryInterface_Stub proto WINAPI \
 	  _pRpcMessage: PRPC_MESSAGE,
 	 _pdwStubPhase: LPDWORD
 
-
 ;ULONG
 IUnknown_AddRef_Proxy proto WINAPI \
 		 _This: ptr IUnknown
@@ -71,54 +70,20 @@ IUnknown_Release_Stub proto WINAPI \
 	  _pRpcMessage: PRPC_MESSAGE,
 	 _pdwStubPhase: LPDWORD
 
-
-
-endif	
-
+endif
 
 ifndef __IClassFactory_INTERFACE_DEFINED__
 __IClassFactory_INTERFACE_DEFINED__ equ 1
 
+IClassFactory		STRUC
+STDMETHOD QueryInterface, :REFIID, :ptr
+STDMETHOD AddRef
+STDMETHOD Release
+STDMETHOD CreateInstance, :ptr, :REFIID, :ptr
+STDMETHOD LockServer, :BOOL
+IClassFactory		ENDS
 LPCLASSFACTORY		typedef ptr IClassFactory
-
-if 0
-
-EXTERN_C IID IID_IClassFactory;
-
-
-IClassFactoryVtbl	STRUC
-
-( STDMETHODCALLTYPE *QueryInterface )( HRESULT ?
-*This,			IClassFactory ?
-riid,			REFIID ?
-**ppvObject)		void ?
-
-( STDMETHODCALLTYPE *AddRef )( ULONG ?
-* This)			IClassFactory ?
-
-( STDMETHODCALLTYPE *Release )( ULONG ?
-* This)			IClassFactory ?
-
-( STDMETHODCALLTYPE *CreateInstance )( HRESULT ?
-* This,			IClassFactory ?
-*pUnkOuter,		IUnknown ?
-riid,			REFIID ?
-**ppvObject)		void ?
-
-( STDMETHODCALLTYPE *LockServer )( HRESULT ?
-* This,			IClassFactory ?
-fLock)			BOOL ?
-
-IClassFactoryVtbl	ENDS
-
-IClassFactory		interface ?
-struct IClassFactoryVtbl *lpVtbl CONST_VTBL ?
-			ENDS
-
-
-endif	
-
-
+externdef		IID_IClassFactory:IID
 
 ;HRESULT
 IClassFactory_RemoteCreateInstance_Proxy proto WINAPI \
@@ -148,11 +113,7 @@ IClassFactory_RemoteLockServer_Stub proto WINAPI \
 	  _pRpcMessage: PRPC_MESSAGE,
 	 _pdwStubPhase: ptr DWORD
 
-
-
-endif	
-
-
+endif
 
 ;HRESULT
 IClassFactory_CreateInstance_Proxy proto WINAPI \
@@ -176,7 +137,5 @@ IClassFactory_LockServer_Stub proto WINAPI \
 		 _This: ptr IClassFactory,
 		 fLock: BOOL
 
-
-
 .list
-endif	
+endif

@@ -18,9 +18,9 @@ DEFINE_GUID macro name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8
 	endm
 else
 DEFINE_GUID macro name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8
-	externdef name:GUID
+	exitm<_&name& equ {l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}}>
 	endm
-endif 
+endif
 
 DEFINE_OLEGUID macro name, l, w1, w2
 	exitm<DEFINE_GUID(name, l, w1, w2, 0xC0,0,0,0,0,0,0,0x46)>
@@ -88,7 +88,7 @@ _REFFMTID_DEFINED	equ <>
 REFFMTID		equ <LPIID>
 endif
 
-endif 
+endif
 
 ifndef __midl
 ifndef _SYS_GUID_OPERATORS_
@@ -116,6 +116,6 @@ IsEqualCLSID macro rclsid1, rclsid2
 	exitm<IsEqualGUID(rclsid1, rclsid2)>
 	endm
 
-endif  
-endif  
-endif  
+endif
+endif
+endif

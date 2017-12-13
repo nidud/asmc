@@ -1,9 +1,10 @@
 ifndef __LIBC_INC
  include libc.inc
 endif
-.xlist
 ifndef _WINNETWK_
 _WINNETWK_ equ 1
+.xlist
+
 ifdef __PE__
 option dllimport:<mpr>
 endif
@@ -48,14 +49,14 @@ RESOURCE_REMEMBERED	equ 0x00000003
 if(WINVER GE 0x0400)
 RESOURCE_RECENT		equ 0x00000004
 RESOURCE_CONTEXT	equ 0x00000005
-endif 
+endif
 
 RESOURCETYPE_ANY	equ 0x00000000
 RESOURCETYPE_DISK	equ 0x00000001
 RESOURCETYPE_PRINT	equ 0x00000002
 if(WINVER GE 0x0400)
 RESOURCETYPE_RESERVED	equ 0x00000008
-endif 
+endif
 RESOURCETYPE_UNKNOWN	equ 0xFFFFFFFF
 
 RESOURCEUSAGE_CONNECTABLE equ 0x00000001
@@ -65,7 +66,7 @@ RESOURCEUSAGE_NOLOCALDEVICE equ 0x00000004
 RESOURCEUSAGE_SIBLING	equ 0x00000008
 RESOURCEUSAGE_ATTACHED	equ 0x00000010
 RESOURCEUSAGE_ALL	equ RESOURCEUSAGE_CONNECTABE OR RESOURCEUSAGE_CONTAINER OR RESOURCEUSAGE_ATTACHED
-endif 
+endif
 RESOURCEUSAGE_RESERVED	equ 0x80000000
 
 RESOURCEDISPLAYTYPE_GENERIC	equ 0x00000000
@@ -79,11 +80,11 @@ RESOURCEDISPLAYTYPE_NETWORK	equ 0x00000006
 RESOURCEDISPLAYTYPE_ROOT	equ 0x00000007
 RESOURCEDISPLAYTYPE_SHAREADMIN	equ 0x00000008
 RESOURCEDISPLAYTYPE_DIRECTORY	equ 0x00000009
-endif 
+endif
 RESOURCEDISPLAYTYPE_TREE	equ 0x0000000A
 if(WINVER GE 0x0400)
 RESOURCEDISPLAYTYPE_NDSCONTAINER equ 0x0000000B
-endif 
+endif
 
 NETRESOURCEA		STRUC
 dwScope			dd ?
@@ -113,7 +114,7 @@ LPNETRESOURCE		typedef LPNETRESOURCEW
 else
 NETRESOURCE		typedef NETRESOURCEA
 LPNETRESOURCE		typedef LPNETRESOURCEA
-endif 
+endif
 
 
 NETPROPERTY_PERSISTENT	equ 1
@@ -131,7 +132,7 @@ CONNECT_LOCALDRIVE	equ 0x00000100
 CONNECT_CURRENT_MEDIA	equ 0x00000200
 CONNECT_DEFERRED	equ 0x00000400
 CONNECT_RESERVED	equ 0xFF000000
-endif 
+endif
 
 ;DWORD
 WNetAddConnectionA proto WINAPI \
@@ -147,7 +148,7 @@ ifdef _UNICODE
 WNetAddConnection	equ <WNetAddConnectionW>
 else
 WNetAddConnection	equ <WNetAddConnectionA>
-endif 
+endif
 
 ;DWORD
 WNetAddConnection2A proto WINAPI \
@@ -165,7 +166,7 @@ ifdef _UNICODE
 WNetAddConnection2	equ <WNetAddConnection2W>
 else
 WNetAddConnection2	equ <WNetAddConnection2A>
-endif 
+endif
 
 ;DWORD
 WNetAddConnection3A proto WINAPI \
@@ -185,7 +186,7 @@ ifdef _UNICODE
 WNetAddConnection3	equ <WNetAddConnection3W>
 else
 WNetAddConnection3	equ <WNetAddConnection3A>
-endif 
+endif
 
 ;DWORD
 WNetCancelConnectionA proto WINAPI \
@@ -199,7 +200,7 @@ ifdef _UNICODE
 WNetCancelConnection	equ <WNetCancelConnectionW>
 else
 WNetCancelConnection	equ <WNetCancelConnectionA>
-endif 
+endif
 
 ;DWORD
 WNetCancelConnection2A proto WINAPI \
@@ -215,7 +216,7 @@ ifdef _UNICODE
 WNetCancelConnection2	equ <WNetCancelConnection2W>
 else
 WNetCancelConnection2	equ <WNetCancelConnection2A>
-endif 
+endif
 
 ;DWORD
 WNetGetConnectionA proto WINAPI \
@@ -231,7 +232,7 @@ ifdef _UNICODE
 WNetGetConnection	equ <WNetGetConnectionW>
 else
 WNetGetConnection	equ <WNetGetConnectionA>
-endif 
+endif
 
 
 if(WINVER GE 0x0400)
@@ -259,8 +260,8 @@ ifdef _UNICODE
 WNetUseConnection	equ <WNetUseConnectionW>
 else
 WNetUseConnection	equ <WNetUseConnectionA>
-endif 
-endif 
+endif
+endif
 
 
 
@@ -276,19 +277,19 @@ WNetDisconnectDialog proto WINAPI \
 
 if(WINVER GE 0x0400)
 CONNECTDLGSTRUCTA	STRUC
-cbStructure		dd ?	
-hwndOwner		HWND ?	
-lpConnRes		LPNETRESOURCEA ?	
-dwFlags			dd ?	
-dwDevNum		dd ?	
+cbStructure		dd ?
+hwndOwner		HWND ?
+lpConnRes		LPNETRESOURCEA ?
+dwFlags			dd ?
+dwDevNum		dd ?
 CONNECTDLGSTRUCTA	ENDS
 LPCONNECTDLGSTRUCTA	typedef ptr CONNECTDLGSTRUCTA
 CONNECTDLGSTRUCTW	STRUC
-cbStructure		dd ?	
-hwndOwner		HWND ?	
-lpConnRes		LPNETRESOURCEW ?	
-dwFlags			dd ?	
-dwDevNum		dd ?	
+cbStructure		dd ?
+hwndOwner		HWND ?
+lpConnRes		LPNETRESOURCEW ?
+dwFlags			dd ?
+dwDevNum		dd ?
 CONNECTDLGSTRUCTW	ENDS
 LPCONNECTDLGSTRUCTW	typedef ptr CONNECTDLGSTRUCTW
 ifdef _UNICODE
@@ -297,15 +298,15 @@ LPCONNECTDLGSTRUCT	typedef LPCONNECTDLGSTRUCTW
 else
 CONNECTDLGSTRUCT	typedef CONNECTDLGSTRUCTA
 LPCONNECTDLGSTRUCT	typedef LPCONNECTDLGSTRUCTA
-endif 
+endif
 
-CONNDLG_RO_PATH		equ 0x00000001 
-CONNDLG_CONN_POINT	equ 0x00000002 
-CONNDLG_USE_MRU		equ 0x00000004 
-CONNDLG_HIDE_BOX	equ 0x00000008 
+CONNDLG_RO_PATH		equ 0x00000001
+CONNDLG_CONN_POINT	equ 0x00000002
+CONNDLG_USE_MRU		equ 0x00000004
+CONNDLG_HIDE_BOX	equ 0x00000008
 
-CONNDLG_PERSIST		equ 0x00000010 
-CONNDLG_NOT_PERSIST	equ 0x00000020 
+CONNDLG_PERSIST		equ 0x00000010
+CONNDLG_NOT_PERSIST	equ 0x00000020
 
 ;DWORD
 WNetConnectionDialog1A proto WINAPI \
@@ -317,22 +318,22 @@ ifdef _UNICODE
 WNetConnectionDialog1	equ <WNetConnectionDialog1W>
 else
 WNetConnectionDialog1	equ <WNetConnectionDialog1A>
-endif 
+endif
 
 DISCDLGSTRUCTA		STRUC
-cbStructure		dd ?	
-hwndOwner		HWND ?	
-lpLocalName		LPSTR ? 
-lpRemoteName		LPSTR ? 
-dwFlags			dd ?	
+cbStructure		dd ?
+hwndOwner		HWND ?
+lpLocalName		LPSTR ?
+lpRemoteName		LPSTR ?
+dwFlags			dd ?
 DISCDLGSTRUCTA		ENDS
 LPDISCDLGSTRUCTA	typedef ptr DISCDLGSTRUCTA
 DISCDLGSTRUCTW		STRUC
-cbStructure		dd ?	
-hwndOwner		HWND ?	
-lpLocalName		LPWSTR ?	
-lpRemoteName		LPWSTR ?	
-dwFlags			dd ?	
+cbStructure		dd ?
+hwndOwner		HWND ?
+lpLocalName		LPWSTR ?
+lpRemoteName		LPWSTR ?
+dwFlags			dd ?
 DISCDLGSTRUCTW		ENDS
 LPDISCDLGSTRUCTW	typedef ptr DISCDLGSTRUCTW
 ifdef _UNICODE
@@ -341,7 +342,7 @@ LPDISCDLGSTRUCT		typedef LPDISCDLGSTRUCTW
 else
 DISCDLGSTRUCT		typedef DISCDLGSTRUCTA
 LPDISCDLGSTRUCT		typedef LPDISCDLGSTRUCTA
-endif 
+endif
 
 DISC_UPDATE_PROFILE	equ 0x00000001
 DISC_NO_FORCE		equ 0x00000040
@@ -355,8 +356,8 @@ ifdef _UNICODE
 WNetDisconnectDialog1	equ <WNetDisconnectDialog1W>
 else
 WNetDisconnectDialog1	equ <WNetDisconnectDialog1A>
-endif 
-endif 
+endif
+endif
 
 
 ;DWORD
@@ -377,7 +378,7 @@ ifdef _UNICODE
 WNetOpenEnum		equ <WNetOpenEnumW>
 else
 WNetOpenEnum		equ <WNetOpenEnumA>
-endif 
+endif
 
 ;DWORD
 WNetEnumResourceA proto WINAPI \
@@ -395,7 +396,7 @@ ifdef _UNICODE
 WNetEnumResource	equ <WNetEnumResourceW>
 else
 WNetEnumResource	equ <WNetEnumResourceA>
-endif 
+endif
 
 ;DWORD
 WNetCloseEnum proto WINAPI \
@@ -420,7 +421,7 @@ LPUNIVERSAL_NAME_INFO	typedef LPUNIVERSAL_NAME_INFOW
 else
 UNIVERSAL_NAME_INFO	typedef UNIVERSAL_NAME_INFOA
 LPUNIVERSAL_NAME_INFO	typedef LPUNIVERSAL_NAME_INFOA
-endif 
+endif
 
 REMOTE_NAME_INFOA	STRUC
 lpUniversalName		LPSTR ?
@@ -440,7 +441,7 @@ LPREMOTE_NAME_INFO	typedef LPREMOTE_NAME_INFOW
 else
 REMOTE_NAME_INFO	typedef REMOTE_NAME_INFOA
 LPREMOTE_NAME_INFO	typedef LPREMOTE_NAME_INFOA
-endif 
+endif
 
 ;DWORD
 WNetGetUniversalNameA proto WINAPI \
@@ -458,7 +459,7 @@ ifdef _UNICODE
 WNetGetUniversalName	equ <WNetGetUniversalNameW>
 else
 WNetGetUniversalName	equ <WNetGetUniversalNameA>
-endif 
+endif
 
 
 ;DWORD
@@ -475,7 +476,7 @@ ifdef _UNICODE
 WNetGetUser		equ <WNetGetUserW>
 else
 WNetGetUser		equ <WNetGetUserA>
-endif 
+endif
 
 
 
@@ -484,7 +485,7 @@ WNFMT_MULTILINE		equ 0x01
 WNFMT_ABBREVIATED	equ 0x02
 WNFMT_INENUM		equ 0x10
 WNFMT_CONNECTION	equ 0x20
-endif 
+endif
 
 
 if(WINVER GE 0x0400)
@@ -502,7 +503,7 @@ ifdef _UNICODE
 WNetGetProviderName	equ <WNetGetProviderNameW>
 else
 WNetGetProviderName	equ <WNetGetProviderNameA>
-endif 
+endif
 
 NETINFOSTRUCT		STRUC
 cbStructure		dd ?
@@ -516,9 +517,9 @@ dwDrives		dd ?
 NETINFOSTRUCT		ENDS
 LPNETINFOSTRUCT		typedef ptr NETINFOSTRUCT
 
-NETINFO_DLL16		equ 0x00000001	
-NETINFO_DISKRED		equ 0x00000004	
-NETINFO_PRINTERRED	equ 0x00000008	
+NETINFO_DLL16		equ 0x00000001
+NETINFO_DISKRED		equ 0x00000004
+NETINFO_PRINTERRED	equ 0x00000008
 
 ;DWORD
 WNetGetNetworkInformationA proto WINAPI \
@@ -532,7 +533,7 @@ ifdef _UNICODE
 WNetGetNetworkInformation equ <WNetGetNetworkInformationW>
 else
 WNetGetNetworkInformation equ <WNetGetNetworkInformationA>
-endif 
+endif
 
 
 PFNGETPROFILEPATHA_T typedef proto \
@@ -549,7 +550,7 @@ ifdef _UNICODE
 PFNGETPROFILEPATH	equ <PFNGETPROFILEPATHW>
 else
 PFNGETPROFILEPATH	equ <PFNGETPROFILEPATHA>
-endif 
+endif
 
 PFNRECONCILEPROFILEA_T typedef proto \
 	pszCentralFile: LPCSTR,
@@ -565,10 +566,10 @@ ifdef _UNICODE
 PFNRECONCILEPROFILE	equ <PFNRECONCILEPROFILEW>
 else
 PFNRECONCILEPROFILE	equ <PFNRECONCILEPROFILEA>
-endif 
+endif
 
-RP_LOGON		equ 0x01	
-RP_INIFILE		equ 0x02	
+RP_LOGON		equ 0x01
+RP_INIFILE		equ 0x02
 
 
 
@@ -590,10 +591,10 @@ ifdef _UNICODE
 PFNPROCESSPOLICIES	equ <PFNPROCESSPOLICIESW>
 else
 PFNPROCESSPOLICIES	equ <PFNPROCESSPOLICIESA>
-endif 
+endif
 
-PP_DISPLAYERRORS	equ 0x01    
-endif 
+PP_DISPLAYERRORS	equ 0x01
+endif
 
 
 ;DWORD
@@ -614,7 +615,7 @@ ifdef _UNICODE
 WNetGetLastError	equ <WNetGetLastErrorW>
 else
 WNetGetLastError	equ <WNetGetLastErrorA>
-endif 
+endif
 
 
 
@@ -640,7 +641,7 @@ WN_BAD_HANDLE		equ ERROR_INVALID_HANDE
 if(WINVER GE 0x0400)
 WN_NOT_INITIALIZING	equ ERROR_ALREADY_INITIAIZED
 WN_NO_MORE_DEVICES	equ ERROR_NO_MORE_DEVICES
-endif 
+endif
 
 
 WN_NOT_CONNECTED	equ ERROR_NOT_CONNECTED
@@ -668,7 +669,7 @@ if(WINVER GE 0x0400)
 WN_NOT_AUTHENTICATED	equ ERROR_NOT_AUTHENTICATED
 WN_NOT_LOGGED_ON	equ ERROR_NOT_LOGGED_ON
 WN_NOT_VALIDATED	equ ERROR_NO_LOGON_SERVERS
-endif 
+endif
 
 
 if(WINVER GE 0x0400)
@@ -698,9 +699,9 @@ ifdef _UNICODE
 MultinetGetConnectionPerformance equ <MultinetGetConnectionPerformanceW>
 else
 MultinetGetConnectionPerformance equ <MultinetGetConnectionPerformanceA>
-endif 
-endif 
-
-endif  
+endif
+endif
 
 .list
+endif ; _WINNETWK_
+

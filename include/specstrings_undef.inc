@@ -1,0 +1,4 @@
+ifndef __SPECSTRINGS_UNDEF_INC
+__SPECSTRINGS_UNDEF_INC equ <>
+
+endif

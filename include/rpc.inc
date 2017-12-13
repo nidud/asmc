@@ -3,7 +3,7 @@ ifndef __LIBC_INC
 endif
 ifndef RPC_NO_WINDOWS_H
 include windows.inc
-endif 
+endif
 ifndef __RPC_H__
 .xlist
 __RPC_H__ equ 1
@@ -15,6 +15,19 @@ __RPC_WIN64__		equ 1
 endif
 include basetsd.inc
 .xlist
+
+COMTYPEID = 0
+STDMETHOD macro name:req, arguments:VARARG
+ifnb <arguments>
+@CatStr(<pt??>, %COMTYPEID) typedef proto WINAPI :ptr, &arguments
+else
+@CatStr(<pt??>, %COMTYPEID) typedef proto WINAPI :ptr
+endif
+@CatStr(<pp??>, %COMTYPEID) typedef ptr @CatStr(<pt??>, %COMTYPEID)
+name @CatStr(<pp??>, %COMTYPEID) ?
+COMTYPEID = COMTYPEID + 1
+	endm
+
 ifndef __MIDL_USER_DEFINED
 midl_user_allocate	equ <MID_user_allocate>
 midl_user_free		equ <MID_user_free>
@@ -83,8 +96,8 @@ ifndef RPC_NO_WINDOWS_H
 
 include rpcasync.inc
 
-endif 
+endif
 .list
-endif 
+endif
 
 

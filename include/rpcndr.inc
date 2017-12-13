@@ -1,24 +1,21 @@
 ifndef __LIBC_INC
  include libc.inc
 endif
-.xlist
 ifndef __RPCNDR_H_VERSION__
 __RPCNDR_H_VERSION__ equ 450
 endif
-
 ifndef __RPCNDR_H__
 __RPCNDR_H__ equ 1
+.xlist
 
 ifdef __REQUIRED_RPCNDR_H_VERSION__
-if ( __RPCNDR_H_VERSION__ LT __REQUIRED_RPCNDR_H_VERSION__ )
-.err <incorrect LT rpcndr.h GT version. Use the header that matches with the MIDL compiler.>
+ if ( __RPCNDR_H_VERSION__ LT __REQUIRED_RPCNDR_H_VERSION__ )
+  .err <incorrect rpcndr.inc version. Use the header that matches with the MIDL compiler.>
+ endif
 endif
-endif
-
 
 include rpcnsip.inc
 .xlist
-
 
 NDR_CHAR_REP_MASK	equ 0X0000000F
 NDR_INT_REP_MASK	equ 0X000000F0
@@ -35,8 +32,6 @@ NDR_EBCDIC_CHAR		equ 0X00000001
 
 NDR_LOCAL_DATA_REPRESENTATION equ 0X00000010
 NDR_LOCAL_ENDIAN	equ NDR_LITTLE_ENDIAN
-
-
 
 if (0x500 LE _WIN32_WINNT)
 TARGET_IS_NT50_OR_LATER equ 1
@@ -1971,21 +1966,15 @@ endif
 
 if _MSC_VER GE 1100
 EXTERN_GUID macro itf,l1,s1,s2,c1,c2,c3,c4,c5,c6,c7,c8
-	exitm<\>
+	exitm<itf IID <l1,s1,s2,<c1,c2,c3,c4,c5,c6,c7,c8>>>
 	endm
-const IID __declspec(selectany) itf = {l1,s1,s2,{c1,c2,c3,c4,c5,c6,c7,c8}} EXTERN_C ?
 else
 EXTERN_GUID macro itf,l1,s1,s2,c1,c2,c3,c4,c5,c6,c7,c8
-	exitm<EXTERN_C const IID itf>
+	exitm<externdef itf:IID>
 	endm
 endif
 
-
-if defined(__RPC_DOS__) OR defined(__RPC_WIN16__) OR defined(__RPC_MAC__)
-endif
 endif
 
 .list
-endif
-
-
+endif ; __RPCNDR_H__

@@ -5,14 +5,6 @@ include stdlib.inc
 ifndef _OBJBASE_H_
 _OBJBASE_H_ equ 1
 
-
-ifdef __PE__
-option	dllimport:<ole32>
-endif
-
-
-
-
 CLSCTX_INPROC		equ CLSCTX_INPROC_SERVER OR CLSCTX_INPROC_HANDER
 
 if (_WIN32_WINNT GE 0x0400 ) OR defined(_WIN32_DCOM)
@@ -30,9 +22,6 @@ REGCLS_SUSPENDED	equ 4
 REGCLS_SURROGATE	equ 8
 
 MARSHALINTERFACE_MIN	equ 500
-
-
-
 
 CWCSTORAGENAME		equ 32
 
@@ -97,22 +86,10 @@ GUID		ENDS
 endif
 
 DEFINE_GUID macro name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8
-	exitm <externdef name:GUID>
+	exitm<_&name& equ {l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}}>
 	endm
 
 externdef GUID_NULL:GUID
-
-COMTYPEID = 0
-STDMETHOD macro name:req, arguments:VARARG
-ifnb <arguments>
-@CatStr(<pt??>, %COMTYPEID) typedef proto WINAPI :ptr, &arguments
-else
-@CatStr(<pt??>, %COMTYPEID) typedef proto WINAPI :ptr
-endif
-@CatStr(<pp??>, %COMTYPEID) typedef ptr @CatStr(<pt??>, %COMTYPEID)
-name @CatStr(<pp??>, %COMTYPEID) ?
-COMTYPEID = COMTYPEID + 1
-	endm
 
 ifdef _OLE32_
 
@@ -154,6 +131,11 @@ COINIT_DISABLE_OLE1DDE		equ 0x4
 COINIT_SPEED_OVER_MEMORY	equ 0x8
 endif
 
+ifdef __PE__
+option	dllimport:<ole32>
+else
+includelib ole32.lib
+endif
 
 CoBuildVersion proto WINAPI
 

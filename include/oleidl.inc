@@ -6,7 +6,6 @@ include rpcndr.inc
 ifndef __RPCNDR_H_VERSION__
 .err <this stub requires an updated version of rpcndr.inc>
 endif
-
 ifndef COM_NO_WINDOWS_H
 include windows.inc
 include ole2.inc
@@ -15,116 +14,72 @@ ifndef __oleidl_h__
 .xlist
 __oleidl_h__ equ 1
 
-
 ifndef __IOleAdviseHolder_FWD_DEFINED__
 __IOleAdviseHolder_FWD_DEFINED__ equ 1
 endif
-
-
 ifndef __IOleCache_FWD_DEFINED__
 __IOleCache_FWD_DEFINED__ equ 1
 endif
-
-
 ifndef __IOleCache2_FWD_DEFINED__
 __IOleCache2_FWD_DEFINED__ equ 1
 endif
-
-
 ifndef __IOleCacheControl_FWD_DEFINED__
 __IOleCacheControl_FWD_DEFINED__ equ 1
 endif
-
-
 ifndef __IParseDisplayName_FWD_DEFINED__
 __IParseDisplayName_FWD_DEFINED__ equ 1
 endif
-
-
 ifndef __IOleContainer_FWD_DEFINED__
 __IOleContainer_FWD_DEFINED__ equ 1
 endif
-
-
 ifndef __IOleClientSite_FWD_DEFINED__
 __IOleClientSite_FWD_DEFINED__ equ 1
 endif
-
-
 ifndef __IOleObject_FWD_DEFINED__
 __IOleObject_FWD_DEFINED__ equ 1
 endif
-
-
 ifndef __IOleWindow_FWD_DEFINED__
 __IOleWindow_FWD_DEFINED__ equ 1
 endif
-
-
 ifndef __IOleLink_FWD_DEFINED__
 __IOleLink_FWD_DEFINED__ equ 1
 endif
-
-
 ifndef __IOleItemContainer_FWD_DEFINED__
 __IOleItemContainer_FWD_DEFINED__ equ 1
 endif
-
-
 ifndef __IOleInPlaceUIWindow_FWD_DEFINED__
 __IOleInPlaceUIWindow_FWD_DEFINED__ equ 1
 endif
-
-
 ifndef __IOleInPlaceActiveObject_FWD_DEFINED__
 __IOleInPlaceActiveObject_FWD_DEFINED__ equ 1
 endif
-
-
 ifndef __IOleInPlaceFrame_FWD_DEFINED__
 __IOleInPlaceFrame_FWD_DEFINED__ equ 1
 endif
-
-
 ifndef __IOleInPlaceObject_FWD_DEFINED__
 __IOleInPlaceObject_FWD_DEFINED__ equ 1
 endif
-
-
 ifndef __IOleInPlaceSite_FWD_DEFINED__
 __IOleInPlaceSite_FWD_DEFINED__ equ 1
 endif
-
-
 ifndef __IContinue_FWD_DEFINED__
 __IContinue_FWD_DEFINED__ equ 1
 endif
-
-
 ifndef __IViewObject_FWD_DEFINED__
 __IViewObject_FWD_DEFINED__ equ 1
 endif
-
-
 ifndef __IViewObject2_FWD_DEFINED__
 __IViewObject2_FWD_DEFINED__ equ 1
 endif
-
-
 ifndef __IDropSource_FWD_DEFINED__
 __IDropSource_FWD_DEFINED__ equ 1
 endif
-
-
 ifndef __IDropTarget_FWD_DEFINED__
 __IDropTarget_FWD_DEFINED__ equ 1
 endif
-
-
 ifndef __IEnumOLEVERB_FWD_DEFINED__
 __IEnumOLEVERB_FWD_DEFINED__ equ 1
 endif
-
 
 include objidl.inc
 .xlist
@@ -138,32 +93,19 @@ externdef		__MIDL_itf_oleidl_0000_v0_0_s_ifspec:RPC_IF_HANDLE
 ifndef __IOleAdviseHolder_INTERFACE_DEFINED__
 __IOleAdviseHolder_INTERFACE_DEFINED__ equ 1
 
-LPOLEADVISEHOLDER	typedef ptr IOleAdviseHolder
-
-externdef		IID_IOleAdviseHolder:IID
-
-IOleAdviseHolderVtbl	STRUC
-
-	BEGIN_INTERFACE
-
-	 QueryInterface PVOID ?
-		 AddRef PVOID ?
-		Release PVOID ?
-		 Advise PVOID ?
-	       Unadvise PVOID ?
-	     EnumAdvise PVOID ?
-	   SendOnRename PVOID ?
-	     SendOnSave PVOID ?
-	    SendOnClose PVOID ?
-
-	END_INTERFACE
-
-IOleAdviseHolderVtbl	ENDS
-
-LPIOleAdviseHolderVtbl	typedef ptr IOleAdviseHolderVtbl
 IOleAdviseHolder	STRUC
-lpVtbl			LPIOleAdviseHolderVtbl ?
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	Advise, :ptr, :ptr
+	STDMETHOD	Unadvise, :DWORD
+	STDMETHOD	EnumAdvise, :ptr ptr
+	STDMETHOD	SendOnRename, :ptr
+	STDMETHOD	SendOnSave
+	STDMETHOD	SendOnClose
 IOleAdviseHolder	ENDS
+LPOLEADVISEHOLDER	typedef ptr IOleAdviseHolder
+externdef		IID_IOleAdviseHolder:IID
 
 ;HRESULT
 IOleAdviseHolder_Advise_Proxy proto WINAPI \
@@ -241,31 +183,18 @@ endif
 ifndef __IOleCache_INTERFACE_DEFINED__
 __IOleCache_INTERFACE_DEFINED__ equ 1
 
-LPOLECACHE		typedef ptr IOleCache
-
-externdef		IID_IOleCache:IID
-
-IOleCacheVtbl		STRUC
-
-	BEGIN_INTERFACE
-
-	 QueryInterface PVOID ?
-		 AddRef PVOID ?
-		Release PVOID ?
-		  Cache PVOID ?
-		Uncache PVOID ?
-	      EnumCache PVOID ?
-	      InitCache PVOID ?
-		SetData PVOID ?
-
-	END_INTERFACE
-
-IOleCacheVtbl		ENDS
-
-LPIOleCacheVtbl		typedef ptr IOleCacheVtbl
 IOleCache		STRUC
-lpVtbl			LPIOleCacheVtbl ?
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	Cache, :ptr, :DWORD, :ptr
+	STDMETHOD	Uncache, :DWORD
+	STDMETHOD	EnumCache, :ptr
+	STDMETHOD	InitCache, :ptr
+	STDMETHOD	SetData, :ptr, :ptr, :BOOL
 IOleCache		ENDS
+LPOLECACHE		typedef ptr IOleCache
+externdef		IID_IOleCache:IID
 
 ;HRESULT
 IOleCache_Cache_Proxy proto WINAPI \
@@ -347,35 +276,23 @@ UPDFCACHE_IFBLANKORONSAVECACHE equ ( UPDFCACHE_IFBANK OR UPDFCACHE_ONSAVECACHE )
 UPDFCACHE_ALL		equ ( ( DWORD  ) NOT UPDFCACHE_ONLYIFBANK )
 UPDFCACHE_ALLBUTNODATACACHE equ ( UPDFCACHE_ALL AND ( DWORD  ) NOT UPDFCACHE_NODATACACHE )
 
-;typedef /* [v1_enum] */ enum tagDISCARDCACHE
-
+tagDISCARDCACHE		typedef SDWORD
 DISCARDCACHE_SAVEIFDIRTY equ 0
 DISCARDCACHE_NOSAVE	equ 1
 
 externdef		IID_IOleCache2:IID
 
-IOleCache2Vtbl		STRUC
-
-	BEGIN_INTERFACE
-
-	 QueryInterface PVOID ?
-		 AddRef PVOID ?
-		Release PVOID ?
-		  Cache PVOID ?
-		Uncache PVOID ?
-	      EnumCache PVOID ?
-	      InitCache PVOID ?
-		SetData PVOID ?
-	    UpdateCache PVOID ?
-	   DiscardCache PVOID ?
-
-	END_INTERFACE
-
-IOleCache2Vtbl		ENDS
-
-LPIOleCache2Vtbl	typedef ptr IOleCache2Vtbl
 IOleCache2		STRUC
-lpVtbl			LPIOleCache2Vtbl ?
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	Cache, :ptr, :DWORD, :ptr
+	STDMETHOD	Uncache, :DWORD
+	STDMETHOD	EnumCache, :ptr
+	STDMETHOD	InitCache, :ptr
+	STDMETHOD	SetData, :ptr, :ptr, :BOOL
+	STDMETHOD	UpdateCache, :LPDATAOBJECT, :DWORD, :LPVOID
+	STDMETHOD	DiscardCache, :DWORD
 IOleCache2		ENDS
 
 ;HRESULT
@@ -408,28 +325,15 @@ endif
 ifndef __IOleCacheControl_INTERFACE_DEFINED__
 __IOleCacheControl_INTERFACE_DEFINED__ equ 1
 
-PPOLECACHECONTROL	typedef ptr IOleCacheControl
-
-externdef		IID_IOleCacheControl:IID
-
-IOleCacheControlVtbl	STRUC
-
-	BEGIN_INTERFACE
-
-	 QueryInterface PVOID ?
-		 AddRef PVOID ?
-		Release PVOID ?
-		  OnRun PVOID ?
-		 OnStop PVOID ?
-
-	END_INTERFACE
-
-IOleCacheControlVtbl	ENDS
-
-LPIOleCacheControlVtbl	typedef ptr IOleCacheControlVtbl
 IOleCacheControl	STRUC
-lpVtbl			LPIOleCacheControlVtbl ?
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	OnRun, :LPDATAOBJECT
+	STDMETHOD	OnStop
 IOleCacheControl	ENDS
+PPOLECACHECONTROL	typedef ptr IOleCacheControl
+externdef		IID_IOleCacheControl:IID
 
 ;HRESULT
 IOleCacheControl_OnRun_Proxy proto WINAPI \
@@ -458,26 +362,14 @@ endif
 ifndef __IParseDisplayName_INTERFACE_DEFINED__
 __IParseDisplayName_INTERFACE_DEFINED__ equ 1
 
+IParseDisplayName	STRUC
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	ParseDisplayName, :ptr, :LPOLESTR, :ptr, :ptr
+IParseDisplayName	ENDS
 LPPARSEDISPLAYNAME	typedef ptr IParseDisplayName
 externdef		IID_IParseDisplayName:IID
-
-IParseDisplayNameVtbl	STRUC
-
-	BEGIN_INTERFACE
-
-	 QueryInterface PVOID ?
-		 AddRef PVOID ?
-		Release PVOID ?
-       ParseDisplayName PVOID ?
-
-	END_INTERFACE
-
-IParseDisplayNameVtbl	ENDS
-
-LPIParseDisplayNameVtbl typedef ptr IParseDisplayNameVtbl
-IParseDisplayName	STRUC
-lpVtbl			LPIParseDisplayNameVtbl ?
-IParseDisplayName	ENDS
 
 ;HRESULT
 IParseDisplayName_ParseDisplayName_Proxy proto WINAPI \
@@ -498,28 +390,16 @@ endif
 ifndef __IOleContainer_INTERFACE_DEFINED__
 __IOleContainer_INTERFACE_DEFINED__ equ 1
 
+IOleContainerVtbl	STRUC
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	ParseDisplayName, :ptr, :LPOLESTR, :ptr, :ptr
+	STDMETHOD	EnumObjects_, :DWORD, :ptr
+	STDMETHOD	LockContainer, :BOOL
+IOleContainerVtbl	ENDS
 LPOLECONTAINER		typedef ptr IOleContainer
 externdef		IID_IOleContainer:IID
-
-IOleContainerVtbl	STRUC
-
-	BEGIN_INTERFACE
-
-	 QueryInterface PVOID ?
-		 AddRef PVOID ?
-		Release PVOID ?
-       ParseDisplayName PVOID ?
-	    EnumObjects PVOID ?
-	  LockContainer PVOID ?
-
-	END_INTERFACE
-
-IOleContainerVtbl	ENDS
-
-LPIOleContainerVtbl	typedef ptr IOleContainerVtbl
-IOleContainer		STRUC
-lpVtbl			LPIOleContainerVtbl ?
-IOleContainer		ENDS
 
 ;HRESULT
 IOleContainer_EnumObjects_Proxy proto WINAPI \
@@ -550,36 +430,19 @@ endif
 ifndef __IOleClientSite_INTERFACE_DEFINED__
 __IOleClientSite_INTERFACE_DEFINED__ equ 1
 
+IOleClientSite		STRUC
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	SaveObject
+	STDMETHOD	GetMoniker, :DWORD, :DWORD, :ptr
+	STDMETHOD	GetContainer, :ptr
+	STDMETHOD	ShowObject
+	STDMETHOD	OnShowWindow, :BOOL
+	STDMETHOD	RequestNewObjectLayout
+IOleClientSite		ENDS
 LPOLECLIENTSITE		typedef ptr IOleClientSite
 externdef		IID_IOleClientSite:IID
-
-IOleClientSiteVtbl	STRUC
-
-	BEGIN_INTERFACE
-
-	 QueryInterface PVOID ?
-		 AddRef PVOID ?
-		Release PVOID ?
-	     SaveObject PVOID ?
-	     GetMoniker PVOID ?
-	   GetContainer PVOID ?
-	     ShowObject PVOID ?
-	   OnShowWindow PVOID ?
-
-RequestNewObjectLayout36@CT typedef proto \
-		 pThis: ptr IOleClientSite
-
-RequestNewObjectLayout36@MP typedef ptr RequestNewObjectLayout36@CT
- RequestNewObjectLayout RequestNewObjectLayout36@MP ?
-
-	END_INTERFACE
-
-IOleClientSiteVtbl	ENDS
-
-LPIOleClientSiteVtbl	typedef ptr IOleClientSiteVtbl
-IOleClientSite		STRUC
-lpVtbl			LPIOleClientSiteVtbl ?
-IOleClientSite		ENDS
 
 ;HRESULT
 IOleClientSite_SaveObject_Proxy proto WINAPI \
@@ -656,8 +519,6 @@ endif
 ifndef __IOleObject_INTERFACE_DEFINED__
 __IOleObject_INTERFACE_DEFINED__ equ 1
 
-LPOLEOBJECT		typedef ptr IOleObject
-
 ;typedef enum tagOLEGETMONIKER
 OLEGETMONIKER_ONLYIFTHERE equ 1
 OLEGETMONIKER_FORCEASSIGN equ 2
@@ -708,46 +569,34 @@ OLECLOSE_NOSAVE		equ 1
 OLECLOSE_PROMPTSAVE	equ 2
 
 
-externdef		IID_IOleObject:IID
-
-
-IOleObjectVtbl		STRUC
-
-	BEGIN_INTERFACE
-
-	 QueryInterface PVOID ?
-		 AddRef PVOID ?
-		Release PVOID ?
-	  SetClientSite PVOID ?
-	  GetClientSite PVOID ?
-	   SetHostNames PVOID ?
-		  Close PVOID ?
-	     SetMoniker PVOID ?
-	     GetMoniker PVOID ?
-	   InitFromData PVOID ?
-       GetClipboardData PVOID ?
-		 DoVerb PVOID ?
-	      EnumVerbs PVOID ?
-		 Update PVOID ?
-	     IsUpToDate PVOID ?
-	 GetUserClassID PVOID ?
-	    GetUserType PVOID ?
-	      SetExtent PVOID ?
-	      GetExtent PVOID ?
-		 Advise PVOID ?
-	       Unadvise PVOID ?
-	     EnumAdvise PVOID ?
-	  GetMiscStatus PVOID ?
-	 SetColorScheme PVOID ?
-
-	END_INTERFACE
-
-IOleObjectVtbl		ENDS
-
-LPIOleObjectVtbl	typedef ptr IOleObjectVtbl
 IOleObject		STRUC
-lpVtbl			LPIOleObjectVtbl ?
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	SetClientSite, :ptr
+	STDMETHOD	GetClientSite, :ptr
+	STDMETHOD	SetHostNames, :LPCOLESTR, :LPCOLESTR
+	STDMETHOD	Close, :DWORD
+	STDMETHOD	SetMoniker, :DWORD, :ptr
+	STDMETHOD	GetMoniker, :DWORD, :DWORD, :ptr
+	STDMETHOD	InitFromData, :ptr, :BOOL, :DWORD
+	STDMETHOD	GetClipboardData_, :DWORD ,:ptr
+	STDMETHOD	DoVerb, :SDWORD,: LPMSG, :ptr, :SDWORD, :HWND, :LPCRECT
+	STDMETHOD	EnumVerbs, :ptr
+	STDMETHOD	Update
+	STDMETHOD	IsUpToDate
+	STDMETHOD	GetUserClassID, :ptr
+	STDMETHOD	GetUserType, :DWORD, :ptr
+	STDMETHOD	SetExtent, :DWORD, :ptr
+	STDMETHOD	GetExtent, :DWORD, :ptr
+	STDMETHOD	Advise, :ptr, :ptr
+	STDMETHOD	Unadvise, :DWORD
+	STDMETHOD	EnumAdvise, :ptr
+	STDMETHOD	GetMiscStatus, :DWORD, :ptr
+	STDMETHOD	SetColorScheme, :ptr
 IOleObject		ENDS
+LPOLEOBJECT		typedef ptr IOleObject
+externdef		IID_IOleObject:IID
 
 ;HRESULT
 IOleObject_SetClientSite_Proxy proto WINAPI \
@@ -1053,28 +902,15 @@ endif
 ifndef __IOleWindow_INTERFACE_DEFINED__
 __IOleWindow_INTERFACE_DEFINED__ equ 1
 
-LPOLEWINDOW		typedef ptr IOleWindow
-
-externdef		IID_IOleWindow:IID
-
-IOleWindowVtbl		STRUC
-
-	BEGIN_INTERFACE
-
-	 QueryInterface PVOID ?
-		 AddRef PVOID ?
-		Release PVOID ?
-	      GetWindow PVOID ?
-   ContextSensitiveHelp PVOID ?
-
-	END_INTERFACE
-
-IOleWindowVtbl		ENDS
-
-LPIOleWindowVtbl	typedef ptr IOleWindowVtbl
 IOleWindow		STRUC
-lpVtbl			LPIOleWindowVtbl ?
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetWindow_, :ptr
+	STDMETHOD	ContextSensitiveHelp, :BOOL
 IOleWindow		ENDS
+LPOLEWINDOW		typedef ptr IOleWindow
+externdef		IID_IOleWindow:IID
 
 ;HRESULT
 IOleWindow_GetWindow_Proxy proto WINAPI \
@@ -1104,8 +940,6 @@ endif
 ifndef __IOleLink_INTERFACE_DEFINED__
 __IOleLink_INTERFACE_DEFINED__ equ 1
 
-LPOLELINK		typedef ptr IOleLink
-
 ;typedef enum tagOLEUPDATE
 
 OLEUPDATE_ALWAYS	equ 1
@@ -1118,35 +952,24 @@ POLEUPDATE		typedef ptr OLEUPDATE
 
 OLELINKBIND_EVENIFCLASSDIFF equ 1
 
-externdef		IID_IOleLink:IID
-
-IOleLinkVtbl		STRUC
-
-	BEGIN_INTERFACE
-
-	 QueryInterface PVOID ?
-		 AddRef PVOID ?
-		Release PVOID ?
-       SetUpdateOptions PVOID ?
-       GetUpdateOptions PVOID ?
-       SetSourceMoniker PVOID ?
-       GetSourceMoniker PVOID ?
-   SetSourceDisplayName PVOID ?
-   GetSourceDisplayName PVOID ?
-	   BindToSource PVOID ?
-	  BindIfRunning PVOID ?
-	 GetBoundSource PVOID ?
-	   UnbindSource PVOID ?
-		 Update PVOID ?
-
-	END_INTERFACE
-
-IOleLinkVtbl		ENDS
-
-LPIOleLinkVtbl		typedef ptr IOleLinkVtbl
 IOleLink		STRUC
-lpVtbl			LPIOleLinkVtbl ?
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	SetUpdateOptions, :DWORD
+	STDMETHOD	GetUpdateOptions, :ptr
+	STDMETHOD	SetSourceMoniker, :ptr, :REFCLSID
+	STDMETHOD	GetSourceMoniker, :ptr
+	STDMETHOD	SetSourceDisplayName, :LPCOLESTR
+	STDMETHOD	GetSourceDisplayName, :ptr
+	STDMETHOD	BindToSource, :DWORD, :ptr
+	STDMETHOD	BindIfRunning
+	STDMETHOD	GetBoundSource, :ptr
+	STDMETHOD	UnbindSource
+	STDMETHOD	Update, :ptr
 IOleLink		ENDS
+LPOLELINK		typedef ptr IOleLink
+externdef		IID_IOleLink:IID
 
 ;HRESULT
 IOleLink_SetUpdateOptions_Proxy proto WINAPI \
@@ -1284,8 +1107,6 @@ endif
 ifndef __IOleItemContainer_INTERFACE_DEFINED__
 __IOleItemContainer_INTERFACE_DEFINED__ equ 1
 
-LPOLEITEMCONTAINER	typedef ptr IOleItemContainer
-
 ;typedef enum tagBINDSPEED
 
 BINDSPEED_INDEFINITE	equ 1
@@ -1300,32 +1121,19 @@ OLECONTF_OTHERS		equ 4
 OLECONTF_ONLYUSER	equ 8
 OLECONTF_ONLYIFRUNNING	equ 16
 
-
-externdef		IID_IOleItemContainer:IID
-
-
-IOleItemContainerVtbl	STRUC
-
-	BEGIN_INTERFACE
-
-	 QueryInterface PVOID ?
-		 AddRef PVOID ?
-		Release PVOID ?
-       ParseDisplayName PVOID ?
-	    EnumObjects PVOID ?
-	  LockContainer PVOID ?
-	      GetObject PVOID ?
-       GetObjectStorage PVOID ?
-	      IsRunning PVOID ?
-
-	END_INTERFACE
-
-IOleItemContainerVtbl	ENDS
-
-LPIOleItemContainerVtbl typedef ptr IOleItemContainerVtbl
 IOleItemContainer	STRUC
-lpVtbl			LPIOleItemContainerVtbl ?
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	ParseDisplayName, :ptr, :LPOLESTR, :ptr, :ptr
+	STDMETHOD	EnumObjects_, :DWORD, :ptr
+	STDMETHOD	LockContainer, :BOOL
+	STDMETHOD	GetObject_, :LPOLESTR, :DWORD, :ptr, :REFIID, :ptr
+	STDMETHOD	GetObjectStorage, :LPOLESTR, :ptr, :REFIID, :ptr
+	STDMETHOD	IsRunning, :LPOLESTR
 IOleItemContainer	ENDS
+LPOLEITEMCONTAINER	typedef ptr IOleItemContainer
+externdef		IID_IOleItemContainer:IID
 
 ;HRESULT
 IOleItemContainer_GetObject_Proxy proto WINAPI \
@@ -1374,36 +1182,23 @@ endif
 ifndef __IOleInPlaceUIWindow_INTERFACE_DEFINED__
 __IOleInPlaceUIWindow_INTERFACE_DEFINED__ equ 1
 
-LPOLEINPLACEUIWINDOW	typedef ptr IOleInPlaceUIWindow
 BORDERWIDTHS		typedef RECT
 LPBORDERWIDTHS		typedef LPRECT
 LPCBORDERWIDTHS		typedef LPCRECT
 
-externdef		IID_IOleInPlaceUIWindow:IID
-
-
-IOleInPlaceUIWindowVtbl STRUC
-
-	BEGIN_INTERFACE
-
-	 QueryInterface PVOID ?
-		 AddRef PVOID ?
-		Release PVOID ?
-	      GetWindow PVOID ?
-   ContextSensitiveHelp PVOID ?
-	      GetBorder PVOID ?
-     RequestBorderSpace PVOID ?
-	 SetBorderSpace PVOID ?
-	SetActiveObject PVOID ?
-
-	END_INTERFACE
-
-IOleInPlaceUIWindowVtbl ENDS
-
-LPIOleInPlaceUIWindowVtbl typedef ptr IOleInPlaceUIWindowVtbl
 IOleInPlaceUIWindow	STRUC
-lpVtbl			LPIOleInPlaceUIWindowVtbl ?
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetWindow_, :ptr
+	STDMETHOD	ContextSensitiveHelp, :BOOL
+	STDMETHOD	GetBorder, :LPRECT
+	STDMETHOD	RequestBorderSpace, :LPCBORDERWIDTHS
+	STDMETHOD	SetBorderSpace, :LPCBORDERWIDTHS
+	STDMETHOD	SetActiveObject, :ptr, :LPCOLESTR
 IOleInPlaceUIWindow	ENDS
+LPOLEINPLACEUIWINDOW	typedef ptr IOleInPlaceUIWindow
+externdef		IID_IOleInPlaceUIWindow:IID
 
 ;HRESULT
 IOleInPlaceUIWindow_GetBorder_Proxy proto WINAPI \
@@ -1458,33 +1253,20 @@ endif
 ifndef __IOleInPlaceActiveObject_INTERFACE_DEFINED__
 __IOleInPlaceActiveObject_INTERFACE_DEFINED__ equ 1
 
-LPOLEINPLACEACTIVEOBJECT typedef ptr IOleInPlaceActiveObject
-
-externdef		IID_IOleInPlaceActiveObject:IID
-
-IOleInPlaceActiveObjectVtbl STRUC
-
-	BEGIN_INTERFACE
-
-	 QueryInterface PVOID ?
-		 AddRef PVOID ?
-		Release PVOID ?
-	      GetWindow PVOID ?
-   ContextSensitiveHelp PVOID ?
-   TranslateAccelerator PVOID ?
-  OnFrameWindowActivate PVOID ?
-    OnDocWindowActivate PVOID ?
-	   ResizeBorder PVOID ?
-	 EnableModeless PVOID ?
-
-	END_INTERFACE
-
-IOleInPlaceActiveObjectVtbl ENDS
-
-LPIOleInPlaceActiveObjectVtbl typedef ptr IOleInPlaceActiveObjectVtbl
 IOleInPlaceActiveObject STRUC
-lpVtbl			LPIOleInPlaceActiveObjectVtbl ?
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetWindow_, :ptr
+	STDMETHOD	ContextSensitiveHelp, :BOOL
+	STDMETHOD	TranslateAccelerator_, :LPMSG
+	STDMETHOD	OnFrameWindowActivate, :BOOL
+	STDMETHOD	OnDocWindowActivate, :BOOL
+	STDMETHOD	ResizeBorder, :LPCRECT, :ptr, :BOOL
+	STDMETHOD	EnableModeless, :BOOL
 IOleInPlaceActiveObject ENDS
+LPOLEINPLACEACTIVEOBJECT typedef ptr IOleInPlaceActiveObject
+externdef		IID_IOleInPlaceActiveObject:IID
 
 ;HRESULT
 IOleInPlaceActiveObject_RemoteTranslateAccelerator_Proxy proto WINAPI \
@@ -1552,8 +1334,6 @@ endif
 ifndef __IOleInPlaceFrame_INTERFACE_DEFINED__
 __IOleInPlaceFrame_INTERFACE_DEFINED__ equ 1
 
-LPOLEINPLACEFRAME	typedef ptr IOleInPlaceFrame
-
 OLEINPLACEFRAMEINFO	STRUC
 cb			UINT ?
 fMDIApp			BOOL ?
@@ -1569,36 +1349,25 @@ OLEMENUGROUPWIDTHS	ENDS
 
 LPOLEMENUGROUPWIDTHS	typedef ptr OLEMENUGROUPWIDTHS
 HOLEMENU		typedef HGLOBAL
-externdef		IID_IOleInPlaceFrame:IID
 
-IOleInPlaceFrameVtbl	STRUC
-
-	BEGIN_INTERFACE
-
-	 QueryInterface PVOID ?
-		 AddRef PVOID ?
-		Release PVOID ?
-	      GetWindow PVOID ?
-   ContextSensitiveHelp PVOID ?
-	      GetBorder PVOID ?
-     RequestBorderSpace PVOID ?
-	 SetBorderSpace PVOID ?
-	SetActiveObject PVOID ?
-	    InsertMenus PVOID ?
-		SetMenu PVOID ?
-	    RemoveMenus PVOID ?
-	  SetStatusText PVOID ?
-	 EnableModeless PVOID ?
-   TranslateAccelerator PVOID ?
-
-	END_INTERFACE
-
-IOleInPlaceFrameVtbl	ENDS
-
-LPIOleInPlaceFrameVtbl	typedef ptr IOleInPlaceFrameVtbl
 IOleInPlaceFrame	STRUC
-lpVtbl			LPIOleInPlaceFrameVtbl ?
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetWindow_, :ptr
+	STDMETHOD	ContextSensitiveHelp, :BOOL
+	STDMETHOD	GetBorder, :LPRECT
+	STDMETHOD	RequestBorderSpace, :LPCBORDERWIDTHS
+	STDMETHOD	SetBorderSpace, :LPCBORDERWIDTHS
+	STDMETHOD	SetActiveObject, :ptr, :LPCOLESTR
+	STDMETHOD	InsertMenus, :HMENU, :LPOLEMENUGROUPWIDTHS
+	STDMETHOD	SetMenu_, :HMENU, :HOLEMENU, :HWND
+	STDMETHOD	RemoveMenus, :HMENU
+	STDMETHOD	SetStatusText, :LPCOLESTR
+	STDMETHOD	EnableModeless, :BOOL
+	STDMETHOD	TranslateAccelerator_, :LPMSG, :WORD
 IOleInPlaceFrame	ENDS
+LPOLEINPLACEFRAME	typedef ptr IOleInPlaceFrame
 
 ;HRESULT
 IOleInPlaceFrame_InsertMenus_Proxy proto WINAPI \
@@ -1680,33 +1449,19 @@ endif
 ifndef __IOleInPlaceObject_INTERFACE_DEFINED__
 __IOleInPlaceObject_INTERFACE_DEFINED__ equ 1
 
-LPOLEINPLACEOBJECT	typedef ptr IOleInPlaceObject
-
-externdef		IID_IOleInPlaceObject:IID
-
-
-IOleInPlaceObjectVtbl	STRUC
-
-	BEGIN_INTERFACE
-
-	 QueryInterface PVOID ?
-		 AddRef PVOID ?
-		Release PVOID ?
-	      GetWindow PVOID ?
-   ContextSensitiveHelp PVOID ?
-      InPlaceDeactivate PVOID ?
-	   UIDeactivate PVOID ?
-	 SetObjectRects PVOID ?
-      ReactivateAndUndo PVOID ?
-
-	END_INTERFACE
-
-IOleInPlaceObjectVtbl	ENDS
-
-LPIOleInPlaceObjectVtbl typedef ptr IOleInPlaceObjectVtbl
 IOleInPlaceObject	STRUC
-lpVtbl			LPIOleInPlaceObjectVtbl ?
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetWindow_, :ptr
+	STDMETHOD	ContextSensitiveHelp, :BOOL
+	STDMETHOD	InPlaceDeactivate
+	STDMETHOD	UIDeactivate
+	STDMETHOD	SetObjectRects, :LPCRECT, :LPCRECT
+	STDMETHOD	ReactivateAndUndo
 IOleInPlaceObject	ENDS
+LPOLEINPLACEOBJECT	typedef ptr IOleInPlaceObject
+externdef		IID_IOleInPlaceObject:IID
 
 ;HRESULT
 IOleInPlaceObject_InPlaceDeactivate_Proxy proto WINAPI \
@@ -1758,37 +1513,25 @@ endif
 ifndef __IOleInPlaceSite_INTERFACE_DEFINED__
 __IOleInPlaceSite_INTERFACE_DEFINED__ equ 1
 
+IOleInPlaceSite		STRUC
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetWindow_, :ptr
+	STDMETHOD	ContextSensitiveHelp, :BOOL
+	STDMETHOD	CanInPlaceActivate
+	STDMETHOD	OnInPlaceActivate
+	STDMETHOD	OnUIActivate
+	STDMETHOD	GetWindowContext, :ptr, :ptr, :LPRECT, :LPRECT, :LPOLEINPLACEFRAMEINFO
+	STDMETHOD	Scroll, :SIZE_T
+	STDMETHOD	OnUIDeactivate, :BOOL
+	STDMETHOD	OnInPlaceDeactivate
+	STDMETHOD	DiscardUndoState
+	STDMETHOD	DeactivateAndUndo,
+	STDMETHOD	OnPosRectChange, :LPCRECT
+IOleInPlaceSite		ENDS
 LPOLEINPLACESITE	typedef ptr IOleInPlaceSite
 externdef		IID_IOleInPlaceSite:IID
-
-IOleInPlaceSiteVtbl	STRUC
-
-	BEGIN_INTERFACE
-
-	 QueryInterface PVOID ?
-		 AddRef PVOID ?
-		Release PVOID ?
-	      GetWindow PVOID ?
-   ContextSensitiveHelp PVOID ?
-     CanInPlaceActivate PVOID ?
-      OnInPlaceActivate PVOID ?
-	   OnUIActivate PVOID ?
-       GetWindowContext PVOID ?
-		 Scroll PVOID ?
-	 OnUIDeactivate PVOID ?
-    OnInPlaceDeactivate PVOID ?
-       DiscardUndoState PVOID ?
-      DeactivateAndUndo PVOID ?
-	OnPosRectChange PVOID ?
-
-	END_INTERFACE
-
-IOleInPlaceSiteVtbl	ENDS
-
-LPIOleInPlaceSiteVtbl	typedef ptr IOleInPlaceSiteVtbl
-IOleInPlaceSite		STRUC
-lpVtbl			LPIOleInPlaceSiteVtbl ?
-IOleInPlaceSite		ENDS
 
 ;HRESULT
 IOleInPlaceSite_CanInPlaceActivate_Proxy proto WINAPI \
@@ -1914,22 +1657,11 @@ __IContinue_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IContinue:IID
 
-IContinueVtbl		STRUC
-
-	BEGIN_INTERFACE
-
-	 QueryInterface PVOID ?
-		 AddRef PVOID ?
-		Release PVOID ?
-	      FContinue PVOID ?
-
-	END_INTERFACE
-
-IContinueVtbl		ENDS
-
-LPIContinueVtbl		typedef ptr IContinueVtbl
 IContinue		STRUC
-lpVtbl			LPIContinueVtbl ?
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	FContinue
 IContinue		ENDS
 
 ;HRESULT
@@ -1948,31 +1680,19 @@ endif
 ifndef __IViewObject_INTERFACE_DEFINED__
 __IViewObject_INTERFACE_DEFINED__ equ 1
 
+IViewObject		STRUC
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	Draw, :DWORD, :SDWORD, :ptr ,:ptr, :HDC, :HDC, :LPCRECTL, :LPCRECTL, :ptr, :DWORD
+	STDMETHOD	GetColorSet, :DWORD, :SDWORD, :ptr ,:ptr, :HDC, :ptr
+	STDMETHOD	Freeze, :DWORD, :SDWORD, :ptr ,:ptr
+	STDMETHOD	Unfreeze, :DWORD
+	STDMETHOD	SetAdvise, :DWORD, :DWORD, :ptr
+	STDMETHOD	GetAdvise, :ptr, :ptr, :ptr
+IViewObject		ENDS
 LPVIEWOBJECT		typedef ptr IViewObject
 externdef		IID_IViewObject:IID
-
-IViewObjectVtbl		STRUC
-
-	BEGIN_INTERFACE
-
-	 QueryInterface PVOID ?
-		 AddRef PVOID ?
-		Release PVOID ?
-		   Draw PVOID ?
-	    GetColorSet PVOID ?
-		 Freeze PVOID ?
-	       Unfreeze PVOID ?
-	      SetAdvise PVOID ?
-	      GetAdvise PVOID ?
-
-	END_INTERFACE
-
-IViewObjectVtbl		ENDS
-
-LPIViewObjectVtbl	typedef ptr IViewObjectVtbl
-IViewObject		STRUC
-lpVtbl			LPIViewObjectVtbl ?
-IViewObject		ENDS
 
 ;HRESULT
 IViewObject_RemoteDraw_Proxy proto WINAPI \
@@ -2070,32 +1790,20 @@ endif
 ifndef __IViewObject2_INTERFACE_DEFINED__
 __IViewObject2_INTERFACE_DEFINED__ equ 1
 
+IViewObject2		STRUC
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	Draw, :DWORD, :SDWORD, :ptr ,:ptr, :HDC, :HDC, :LPCRECTL, :LPCRECTL, :ptr, :DWORD
+	STDMETHOD	GetColorSet, :DWORD, :SDWORD, :ptr, :ptr, :HDC, :ptr
+	STDMETHOD	Freeze, :DWORD, :SDWORD, :ptr, :ptr
+	STDMETHOD	Unfreeze, :DWORD
+	STDMETHOD	SetAdvise, :DWORD, :DWORD, :ptr
+	STDMETHOD	GetAdvise, :ptr, :ptr, :ptr
+	STDMETHOD	GetExtent, :DWORD, :SDWORD, :ptr, :LPSIZEL
+IViewObject2		ENDS
 LPVIEWOBJECT2		typedef ptr IViewObject2
 externdef		IID_IViewObject2:IID
-
-IViewObject2Vtbl	STRUC
-
-	BEGIN_INTERFACE
-
-	 QueryInterface PVOID ?
-		 AddRef PVOID ?
-		Release PVOID ?
-		   Draw PVOID ?
-	    GetColorSet PVOID ?
-		 Freeze PVOID ?
-	       Unfreeze PVOID ?
-	      SetAdvise PVOID ?
-	      GetAdvise PVOID ?
-	      GetExtent PVOID ?
-
-	END_INTERFACE
-
-IViewObject2Vtbl	ENDS
-
-LPIViewObject2Vtbl	typedef ptr IViewObject2Vtbl
-IViewObject2		STRUC
-lpVtbl			LPIViewObject2Vtbl ?
-IViewObject2		ENDS
 
 ;HRESULT
 IViewObject2_GetExtent_Proxy proto WINAPI \
@@ -2117,27 +1825,15 @@ endif
 ifndef __IDropSource_INTERFACE_DEFINED__
 __IDropSource_INTERFACE_DEFINED__ equ 1
 
+IDropSource		STRUC
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	QueryContinueDrag, :BOOL, :DWORD
+	STDMETHOD	GiveFeedback, :DWORD
+IDropSource		ENDS
 LPDROPSOURCE		typedef ptr IDropSource
 externdef		IID_IDropSource:IID
-
-IDropSourceVtbl		STRUC
-
-	BEGIN_INTERFACE
-
-	 QueryInterface PVOID ?
-		 AddRef PVOID ?
-		Release PVOID ?
-      QueryContinueDrag PVOID ?
-	   GiveFeedback PVOID ?
-
-	END_INTERFACE
-
-IDropSourceVtbl		ENDS
-
-LPIDropSourceVtbl	typedef ptr IDropSourceVtbl
-IDropSource		STRUC
-lpVtbl			LPIDropSourceVtbl ?
-IDropSource		ENDS
 
 ;HRESULT
 IDropSource_QueryContinueDrag_Proxy proto WINAPI \
@@ -2168,7 +1864,6 @@ endif
 ifndef __IDropTarget_INTERFACE_DEFINED__
 __IDropTarget_INTERFACE_DEFINED__ equ 1
 
-LPDROPTARGET		typedef ptr IDropTarget
 MK_ALT			equ ( 0x20 )
 DROPEFFECT_NONE		equ ( 0 )
 DROPEFFECT_COPY		equ ( 1 )
@@ -2181,28 +1876,17 @@ DD_DEFSCROLLINTERVAL	equ ( 50 )
 DD_DEFDRAGDELAY		equ ( 200 )
 DD_DEFDRAGMINDIST	equ ( 2 )
 
-externdef		IID_IDropTarget:IID
-
-IDropTargetVtbl		STRUC
-
-	BEGIN_INTERFACE
-
-	 QueryInterface PVOID ?
-		 AddRef PVOID ?
-		Release PVOID ?
-	      DragEnter PVOID ?
-	       DragOver PVOID ?
-	      DragLeave PVOID ?
-		   Drop PVOID ?
-
-	END_INTERFACE
-
-IDropTargetVtbl		ENDS
-
-LPIDropTargetVtbl	typedef ptr IDropTargetVtbl
 IDropTarget		STRUC
-lpVtbl			LPIDropTargetVtbl ?
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	DragEnter, :ptr, :DWORD, :POINTL, :ptr
+	STDMETHOD	DragOver, :DWORD, :POINTL, :ptr
+	STDMETHOD	DragLeave
+	STDMETHOD	Drop, :ptr, :DWORD, :POINTL, :ptr
 IDropTarget		ENDS
+LPDROPTARGET		typedef ptr IDropTarget
+externdef		IID_IDropTarget:IID
 
 ;HRESULT
 IDropTarget_DragEnter_Proxy proto WINAPI \
@@ -2263,8 +1947,6 @@ endif
 ifndef __IEnumOLEVERB_INTERFACE_DEFINED__
 __IEnumOLEVERB_INTERFACE_DEFINED__ equ 1
 
-LPENUMOLEVERB		typedef ptr IEnumOLEVERB
-
 OLEVERB			STRUC
 lVerb			LONG ?
 lpszVerbName		LPOLESTR ?
@@ -2278,30 +1960,17 @@ LPOLEVERB		typedef ptr OLEVERB
 OLEVERBATTRIB_NEVERDIRTIES equ 1
 OLEVERBATTRIB_ONCONTAINERMENU equ 2
 
-
-externdef		IID_IEnumOLEVERB:IID
-
-
-IEnumOLEVERBVtbl	STRUC
-
-	BEGIN_INTERFACE
-
-	 QueryInterface PVOID ?
-		 AddRef PVOID ?
-		Release PVOID ?
-		   Next PVOID ?
-		   Skip PVOID ?
-		  Reset PVOID ?
-		  Clone PVOID ?
-
-	END_INTERFACE
-
-IEnumOLEVERBVtbl	ENDS
-
-LPIEnumOLEVERBVtbl	typedef ptr IEnumOLEVERBVtbl
 IEnumOLEVERB		STRUC
-lpVtbl			LPIEnumOLEVERBVtbl ?
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	Next, :DWORD, :LPOLEVERB, :ptr
+	STDMETHOD	Skip, :DWORD
+	STDMETHOD	Reset
+	STDMETHOD	Clone, :ptr
 IEnumOLEVERB		ENDS
+LPENUMOLEVERB		typedef ptr IEnumOLEVERB
+externdef		IID_IEnumOLEVERB:IID
 
 ;HRESULT
 IEnumOLEVERB_RemoteNext_Proxy proto WINAPI \

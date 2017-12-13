@@ -2,6 +2,7 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 .xlist
+.nocref
 ifndef _WINDOWS_
 _WINDOWS_ equ <>
 

@@ -89,6 +89,21 @@ DEFINE_GUID macro name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8
 	exitm<_&name& equ {l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}}>
 	endm
 
+DEFINE_IIDX macro name, x
+	exitm<_IID_&name& equ @CatStr( \
+	<{0x>, @SubStr(x, 2,8), \
+	<,0x>, @SubStr(x,11,4), \
+	<,0x>, @SubStr(x,16,4), \
+	<,{0x>,@SubStr(x,21,2), \
+	<,0x>, @SubStr(x,23,2), \
+	<,0x>, @SubStr(x,26,2), \
+	<,0x>, @SubStr(x,28,2), \
+	<,0x>, @SubStr(x,30,2), \
+	<,0x>, @SubStr(x,32,2), \
+	<,0x>, @SubStr(x,34,2), \
+	<,0x>, @SubStr(x,36,2),<}}>)>
+	endm
+
 externdef GUID_NULL:GUID
 
 ifdef _OLE32_
@@ -536,15 +551,8 @@ CoTreatAsClass proto WINAPI \
 
 
 ;HRESULT
-LPFNGETCLASSOBJECT_T typedef proto WINAPI \
-		      : REFCLSID,
-		      : REFIID,
-		      : LPVOID
-LPFNGETCLASSOBJECT typedef ptr LPFNGETCLASSOBJECT_T
-
-
-LPFNCANUNLOADNOW_T typedef proto WINAPI
-LPFNCANUNLOADNOW typedef ptr LPFNCANUNLOADNOW_T
+CALLBACK(LPFNGETCLASSOBJECT, :REFCLSID, :REFIID, :LPVOID)
+CALLBACK(LPFNCANUNLOADNOW)
 
 DllGetClassObject proto WINAPI \
 		rclsid: REFCLSID,

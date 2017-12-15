@@ -4,7 +4,7 @@ endif
 .xlist
 
 ifndef _INC_MMSYSTEM
-_INC_MMSYSTEM equ 1 
+_INC_MMSYSTEM equ 1
 
 if defined(_WINMM_) or defined(__PE__)
 option dllimport:<winmm>
@@ -46,61 +46,61 @@ WCHAR			typedef short
 endif
 
 
-MAXPNAMELEN		equ 32	   
-MAXERRORLENGTH		equ 256	   
-MAX_JOYSTICKOEMVXDNAME	equ 260 
+MAXPNAMELEN		equ 32
+MAXERRORLENGTH		equ 256
+MAX_JOYSTICKOEMVXDNAME	equ 260
 
 if (WINVER LE 0x030A)
 ifndef MM_MICROSOFT
-MM_MICROSOFT		equ 1	
+MM_MICROSOFT		equ 1
 endif
 
 ifndef MM_MIDI_MAPPER
-MM_MIDI_MAPPER		equ 1	
-MM_WAVE_MAPPER		equ 2	
-MM_SNDBLST_MIDIOUT	equ 3	
-MM_SNDBLST_MIDIIN	equ 4	
-MM_SNDBLST_SYNTH	equ 5	
-MM_SNDBLST_WAVEOUT	equ 6	
-MM_SNDBLST_WAVEIN	equ 7	
-MM_ADLIB		equ 9	
-MM_MPU401_MIDIOUT	equ 10	 
-MM_MPU401_MIDIIN	equ 11	 
-MM_PC_JOYSTICK		equ 12	 
+MM_MIDI_MAPPER		equ 1
+MM_WAVE_MAPPER		equ 2
+MM_SNDBLST_MIDIOUT	equ 3
+MM_SNDBLST_MIDIIN	equ 4
+MM_SNDBLST_SYNTH	equ 5
+MM_SNDBLST_WAVEOUT	equ 6
+MM_SNDBLST_WAVEIN	equ 7
+MM_ADLIB		equ 9
+MM_MPU401_MIDIOUT	equ 10
+MM_MPU401_MIDIIN	equ 11
+MM_PC_JOYSTICK		equ 12
 endif
 endif
 
 
 ifdef _WIN32
-MMVERSION		typedef UINT	
+MMVERSION		typedef UINT
 else
-VERSION			typedef UINT	
+VERSION			typedef UINT
 endif
-MMRESULT		typedef UINT	
+MMRESULT		typedef UINT
 _MMRESULT_		equ 1
 
 LPUINT			typedef ptr UINT
 
 MMTIME			STRUC
-wType			UINT ?	
+wType			UINT ?
 UNION
-    ms			dd ?	
-    sample		dd ?	
-    cb			dd ?	
-    ticks		dd ?	
+    ms			dd ?
+    sample		dd ?
+    cb			dd ?
+    ticks		dd ?
     STRUC smpte
-	hour		db ?	
-	min		db ?	
-	sec		db ?	
-	_frame		db ?	
-	fps		db ?	
-	dummy		db ?	
+	hour		db ?
+	min		db ?
+	sec		db ?
+	_frame		db ?
+	fps		db ?
+	dummy		db ?
 ifdef _WIN32
 	pad		db 2 dup(?)
 endif
     ENDS
     STRUC midi
-	songptrpos	dd ?	
+	songptrpos	dd ?
     ENDS
 ENDS
 MMTIME			ENDS
@@ -108,12 +108,12 @@ PMMTIME			typedef ptr MMTIME
 NPMMTIME		typedef ptr MMTIME
 LPMMTIME		typedef ptr MMTIME
 
-TIME_MS			equ 0x0001  
-TIME_SAMPLES		equ 0x0002  
-TIME_BYTES		equ 0x0004  
-TIME_SMPTE		equ 0x0008  
-TIME_MIDI		equ 0x0010  
-TIME_TICKS		equ 0x0020  
+TIME_MS			equ 0x0001
+TIME_SAMPLES		equ 0x0002
+TIME_BYTES		equ 0x0004
+TIME_SMPTE		equ 0x0008
+TIME_MIDI		equ 0x0010
+TIME_TICKS		equ 0x0020
 
 MAKEFOURCC macro ch0, ch1, ch2, ch3
 	exitm<ch0 or (ch1 shl 8) or (ch2 shl 16) or (ch3 shl 24 )>
@@ -121,7 +121,7 @@ MAKEFOURCC macro ch0, ch1, ch2, ch3
 
 
 
-MM_JOY1MOVE		equ 0x3A0	    
+MM_JOY1MOVE		equ 0x3A0
 MM_JOY2MOVE		equ 0x3A1
 MM_JOY1ZMOVE		equ 0x3A2
 MM_JOY2ZMOVE		equ 0x3A3
@@ -130,29 +130,29 @@ MM_JOY2BUTTONDOWN	equ 0x3B6
 MM_JOY1BUTTONUP		equ 0x3B7
 MM_JOY2BUTTONUP		equ 0x3B8
 
-MM_MCINOTIFY		equ 0x3B9	    
+MM_MCINOTIFY		equ 0x3B9
 
-MM_WOM_OPEN		equ 0x3BB	    
+MM_WOM_OPEN		equ 0x3BB
 MM_WOM_CLOSE		equ 0x3BC
 MM_WOM_DONE		equ 0x3BD
 
-MM_WIM_OPEN		equ 0x3BE	    
+MM_WIM_OPEN		equ 0x3BE
 MM_WIM_CLOSE		equ 0x3BF
 MM_WIM_DATA		equ 0x3C0
 
-MM_MIM_OPEN		equ 0x3C1	    
+MM_MIM_OPEN		equ 0x3C1
 MM_MIM_CLOSE		equ 0x3C2
 MM_MIM_DATA		equ 0x3C3
 MM_MIM_LONGDATA		equ 0x3C4
 MM_MIM_ERROR		equ 0x3C5
 MM_MIM_LONGERROR	equ 0x3C6
 
-MM_MOM_OPEN		equ 0x3C7	    
+MM_MOM_OPEN		equ 0x3C7
 MM_MOM_CLOSE		equ 0x3C8
 MM_MOM_DONE		equ 0x3C9
 
 ifndef MM_DRVM_OPEN
-MM_DRVM_OPEN		equ 0x3D0	    
+MM_DRVM_OPEN		equ 0x3D0
 MM_DRVM_CLOSE		equ 0x3D1
 MM_DRVM_DATA		equ 0x3D2
 MM_DRVM_ERROR		equ 0x3D3
@@ -164,17 +164,17 @@ MM_STREAM_DONE		equ 0x3D6
 MM_STREAM_ERROR		equ 0x3D7
 
 if(WINVER GE 0x0400)
-MM_MOM_POSITIONCB	equ 0x3CA	    
+MM_MOM_POSITIONCB	equ 0x3CA
 
 ifndef MM_MCISIGNAL
 MM_MCISIGNAL		equ 0x3CB
 endif
 
-MM_MIM_MOREDATA		equ 0x3CC	   
+MM_MIM_MOREDATA		equ 0x3CC
 
-endif 
-MM_MIXM_LINE_CHANGE	equ 0x3D0	
-MM_MIXM_CONTROL_CHANGE	equ 0x3D1	
+endif
+MM_MIXM_LINE_CHANGE	equ 0x3D0
+MM_MIXM_CONTROL_CHANGE	equ 0x3D1
 
 
 MMSYSERR_BASE		equ 0
@@ -192,32 +192,32 @@ MCI_WAVE_OFFSET		equ 1152
 MCI_SEQ_OFFSET		equ 1216
 
 
-MMSYSERR_NOERROR	equ 0			 
-MMSYSERR_ERROR		equ (MMSYSERR_BASE + 1)	 
-MMSYSERR_BADDEVICEID	equ (MMSYSERR_BASE + 2)	 
-MMSYSERR_NOTENABLED	equ (MMSYSERR_BASE + 3)	 
-MMSYSERR_ALLOCATED	equ (MMSYSERR_BASE + 4)	 
-MMSYSERR_INVALHANDLE	equ (MMSYSERR_BASE + 5)	 
-MMSYSERR_NODRIVER	equ (MMSYSERR_BASE + 6)	 
-MMSYSERR_NOMEM		equ (MMSYSERR_BASE + 7)	 
-MMSYSERR_NOTSUPPORTED	equ (MMSYSERR_BASE + 8)	 
-MMSYSERR_BADERRNUM	equ (MMSYSERR_BASE + 9)	 
-MMSYSERR_INVALFLAG	equ (MMSYSERR_BASE + 10) 
-MMSYSERR_INVALPARAM	equ (MMSYSERR_BASE + 11) 
-MMSYSERR_HANDLEBUSY	equ (MMSYSERR_BASE + 12) 
-MMSYSERR_INVALIDALIAS	equ (MMSYSERR_BASE + 13) 
-MMSYSERR_BADDB		equ (MMSYSERR_BASE + 14) 
-MMSYSERR_KEYNOTFOUND	equ (MMSYSERR_BASE + 15) 
-MMSYSERR_READERROR	equ (MMSYSERR_BASE + 16) 
-MMSYSERR_WRITEERROR	equ (MMSYSERR_BASE + 17) 
-MMSYSERR_DELETEERROR	equ (MMSYSERR_BASE + 18) 
-MMSYSERR_VALNOTFOUND	equ (MMSYSERR_BASE + 19) 
-MMSYSERR_NODRIVERCB	equ (MMSYSERR_BASE + 20) 
-MMSYSERR_LASTERROR	equ (MMSYSERR_BASE + 20) 
+MMSYSERR_NOERROR	equ 0
+MMSYSERR_ERROR		equ (MMSYSERR_BASE + 1)
+MMSYSERR_BADDEVICEID	equ (MMSYSERR_BASE + 2)
+MMSYSERR_NOTENABLED	equ (MMSYSERR_BASE + 3)
+MMSYSERR_ALLOCATED	equ (MMSYSERR_BASE + 4)
+MMSYSERR_INVALHANDLE	equ (MMSYSERR_BASE + 5)
+MMSYSERR_NODRIVER	equ (MMSYSERR_BASE + 6)
+MMSYSERR_NOMEM		equ (MMSYSERR_BASE + 7)
+MMSYSERR_NOTSUPPORTED	equ (MMSYSERR_BASE + 8)
+MMSYSERR_BADERRNUM	equ (MMSYSERR_BASE + 9)
+MMSYSERR_INVALFLAG	equ (MMSYSERR_BASE + 10)
+MMSYSERR_INVALPARAM	equ (MMSYSERR_BASE + 11)
+MMSYSERR_HANDLEBUSY	equ (MMSYSERR_BASE + 12)
+MMSYSERR_INVALIDALIAS	equ (MMSYSERR_BASE + 13)
+MMSYSERR_BADDB		equ (MMSYSERR_BASE + 14)
+MMSYSERR_KEYNOTFOUND	equ (MMSYSERR_BASE + 15)
+MMSYSERR_READERROR	equ (MMSYSERR_BASE + 16)
+MMSYSERR_WRITEERROR	equ (MMSYSERR_BASE + 17)
+MMSYSERR_DELETEERROR	equ (MMSYSERR_BASE + 18)
+MMSYSERR_VALNOTFOUND	equ (MMSYSERR_BASE + 19)
+MMSYSERR_NODRIVERCB	equ (MMSYSERR_BASE + 20)
+MMSYSERR_LASTERROR	equ (MMSYSERR_BASE + 20)
 
 if (WINVER LT 0x030a) OR defined(_WIN32) OR defined(_WIN64)
 HDRVR			typedef HANDLE
-endif 
+endif
 
 ifndef MMNODRV
 
@@ -291,13 +291,7 @@ DRVCNF_RESTART		equ 0x0002
 ifdef _WIN32
 ifndef _WIN32_VXD
 
-DRIVERPROC_T typedef proto \
-		      : DWORD,
-		      : HDRVR,
-		      : UINT,
-		      : LPARAM,
-		      : LPARAM
-DRIVERPROC typedef ptr DRIVERPROC_T
+CALLBACK(DRIVERPROC, :DWORD, :HDRVR, :UINT, :LPARAM, :LPARAM)
 
 ;LRESULT
 CloseDriver proto WINAPI \
@@ -329,7 +323,7 @@ DefDriverProc proto WINAPI \
 		  uMsg: UINT,
 	       lParam1: LPARAM,
 	       lParam2: LPARAM
-endif 
+endif
 else
 ;LRESULT
 DrvClose proto WINAPI \
@@ -362,38 +356,38 @@ DrvDefDriverProc proto WINAPI \
 	       lParam2: LPARAM
 
 DefDriverProc		equ <DrvDefDriverProc>
-endif 
-endif 
-endif 
+endif
+endif
+endif
 
 if (WINVER GE 0x030a)
 DRV_CANCEL		equ DRVCNF_CANCE
 DRV_OK			equ DRVCNF_OK
 DRV_RESTART		equ DRVCNF_RESTART
 
-endif 
+endif
 
 DRV_MCI_FIRST		equ DRV_RESERVED
 DRV_MCI_LAST		equ (DRV_RESERVED + 0xFFF)
 
-endif  
+endif
 
 
 
-CALLBACK_TYPEMASK	equ 0x00070000	  
-CALLBACK_NULL		equ 0x00000000	  
-CALLBACK_WINDOW		equ 0x00010000	  
-CALLBACK_TASK		equ 0x00020000	  
-CALLBACK_FUNCTION	equ 0x00030000	  
+CALLBACK_TYPEMASK	equ 0x00070000
+CALLBACK_NULL		equ 0x00000000
+CALLBACK_WINDOW		equ 0x00010000
+CALLBACK_TASK		equ 0x00020000
+CALLBACK_FUNCTION	equ 0x00030000
 ifdef _WIN32
-CALLBACK_THREAD		equ CALLBACK_TASK  
-CALLBACK_EVENT		equ 0x00050000	  
+CALLBACK_THREAD		equ CALLBACK_TASK
+CALLBACK_EVENT		equ 0x00050000
 endif
 
 ifndef _WIN32_VXD
 
 ;void
-DRVCALLBACK	typedef proto WINAPI \
+DRVCALLBACK typedef proto WINAPI \
 		 hdrvr: HDRVR,
 		  uMsg: UINT,
 		dwUser: DWORD,
@@ -405,7 +399,7 @@ ifdef _WIN32
 PDRVCALLBACK	typedef ptr DRVCALLBACK
 endif
 
-endif	
+endif
 
 ifndef MMNOMMSYSTEM
 ifndef _WIN32_VXD
@@ -422,8 +416,8 @@ OutputDebugStr proto WINAPI \
 		      : LPCSTR
 endif
 
-endif  
-endif  
+endif
+endif
 
 ifndef MMNOSOUND
 ifndef _WIN32_VXD
@@ -442,7 +436,7 @@ ifdef _UNICODE
 sndPlaySound	equ <sndPlaySoundW>
 else
 sndPlaySound	equ <sndPlaySoundA>
-endif 
+endif
 
 else
 ;BOOL
@@ -451,24 +445,24 @@ sndPlaySound proto WINAPI \
 	       fuSound: UINT
 endif
 
-SND_SYNC		equ 0x0000  
-SND_ASYNC		equ 0x0001  
-SND_NODEFAULT		equ 0x0002  
-SND_MEMORY		equ 0x0004  
-SND_LOOP		equ 0x0008  
-SND_NOSTOP		equ 0x0010  
+SND_SYNC		equ 0x0000
+SND_ASYNC		equ 0x0001
+SND_NODEFAULT		equ 0x0002
+SND_MEMORY		equ 0x0004
+SND_LOOP		equ 0x0008
+SND_NOSTOP		equ 0x0010
 
-SND_NOWAIT		equ 0x00002000 
-SND_ALIAS		equ 0x00010000 
-SND_ALIAS_ID		equ 0x00110000 
-SND_FILENAME		equ 0x00020000 
-SND_RESOURCE		equ 0x00040004 
+SND_NOWAIT		equ 0x00002000
+SND_ALIAS		equ 0x00010000
+SND_ALIAS_ID		equ 0x00110000
+SND_FILENAME		equ 0x00020000
+SND_RESOURCE		equ 0x00040004
 if(WINVER GE 0x0400)
-SND_PURGE		equ 0x0040  
-SND_APPLICATION		equ 0x0080  
-endif 
+SND_PURGE		equ 0x0040
+SND_APPLICATION		equ 0x0080
+endif
 
-SND_ALIAS_START		equ 0		
+SND_ALIAS_START		equ 0
 
 ifdef _WIN32
 sndAlias macro ch0, ch1
@@ -498,7 +492,7 @@ ifdef _UNICODE
 PlaySound		equ <PlaySoundW>
 else
 PlaySound		equ <PlaySoundA>
-endif 
+endif
 
 else
 ;BOOL
@@ -508,16 +502,16 @@ PlaySound proto WINAPI \
 	      fdwSound: DWORD
 endif
 
-endif  
-endif  
+endif
+endif
 
 ifndef MMNOWAVE
 
-WAVERR_BADFORMAT	equ (WAVERR_BASE + 0)	 
-WAVERR_STILLPLAYING	equ (WAVERR_BASE + 1)	 
-WAVERR_UNPREPARED	equ (WAVERR_BASE + 2)	 
-WAVERR_SYNC		equ (WAVERR_BASE + 3)	 
-WAVERR_LASTERROR	equ (WAVERR_BASE + 3)	 
+WAVERR_BADFORMAT	equ (WAVERR_BASE + 0)
+WAVERR_STILLPLAYING	equ (WAVERR_BASE + 1)
+WAVERR_UNPREPARED	equ (WAVERR_BASE + 2)
+WAVERR_SYNC		equ (WAVERR_BASE + 3)
+WAVERR_LASTERROR	equ (WAVERR_BASE + 3)
 
 HWAVE			typedef HANDLE
 HWAVEIN			typedef HANDLE
@@ -544,52 +538,52 @@ if(WINVER GE 0x0400)
 WAVE_MAPPED		equ 0x0004
 WAVE_FORMAT_DIRECT	equ 0x0008
 WAVE_FORMAT_DIRECT_QUERY equ (WAVE_FORMAT_QUERY OR WAVE_FORMAT_DIRECT)
-endif 
+endif
 
 WAVEHDR			STRUC
-lpData			LPSTR ? 
-dwBufferLength		dd ?	
-dwBytesRecorded		dd ?	
-dwUser			dd ?	
-dwFlags			dd ?	
-dwLoops			dd ?	
-lpNext			PVOID ? 
-reserved		dd ?	
+lpData			LPSTR ?
+dwBufferLength		dd ?
+dwBytesRecorded		dd ?
+dwUser			dd ?
+dwFlags			dd ?
+dwLoops			dd ?
+lpNext			PVOID ?
+reserved		dd ?
 WAVEHDR			ENDS
 PWAVEHDR		typedef ptr WAVEHDR
 NPWAVEHDR		typedef ptr WAVEHDR
 LPWAVEHDR		typedef ptr WAVEHDR
 
-WHDR_DONE		equ 0x00000001	
-WHDR_PREPARED		equ 0x00000002	
-WHDR_BEGINLOOP		equ 0x00000004	
-WHDR_ENDLOOP		equ 0x00000008	
-WHDR_INQUEUE		equ 0x00000010	
+WHDR_DONE		equ 0x00000001
+WHDR_PREPARED		equ 0x00000002
+WHDR_BEGINLOOP		equ 0x00000004
+WHDR_ENDLOOP		equ 0x00000008
+WHDR_INQUEUE		equ 0x00000010
 
 ifdef _WIN32
 
 WAVEOUTCAPSA		STRUC
-wMid			dw ?	
-wPid			dw ?	
-vDriverVersion		MMVERSION ?	
-szPname			db MAXPNAMELEN dup(?) 
-dwFormats		dd ?	
-wChannels		dw ?	
-wReserved1		dw ?	
-dwSupport		dd ?	
+wMid			dw ?
+wPid			dw ?
+vDriverVersion		MMVERSION ?
+szPname			db MAXPNAMELEN dup(?)
+dwFormats		dd ?
+wChannels		dw ?
+wReserved1		dw ?
+dwSupport		dd ?
 WAVEOUTCAPSA		ENDS
 PWAVEOUTCAPSA		typedef ptr WAVEOUTCAPSA
 NPWAVEOUTCAPSA		typedef ptr WAVEOUTCAPSA
 LPWAVEOUTCAPSA		typedef ptr WAVEOUTCAPSA
 WAVEOUTCAPSW		STRUC
-wMid			dw ?	
-wPid			dw ?	
-vDriverVersion		MMVERSION ?	
-szPname			dw MAXPNAMELEN dup(?) 
-dwFormats		dd ?	
-wChannels		dw ?	
-wReserved1		dw ?	
-dwSupport		dd ?	
+wMid			dw ?
+wPid			dw ?
+vDriverVersion		MMVERSION ?
+szPname			dw MAXPNAMELEN dup(?)
+dwFormats		dd ?
+wChannels		dw ?
+wReserved1		dw ?
+dwSupport		dd ?
 WAVEOUTCAPSW		ENDS
 PWAVEOUTCAPSW		typedef ptr WAVEOUTCAPSW
 NPWAVEOUTCAPSW		typedef ptr WAVEOUTCAPSW
@@ -604,27 +598,27 @@ WAVEOUTCAPS		typedef WAVEOUTCAPSA
 PWAVEOUTCAPS		typedef PWAVEOUTCAPSA
 NPWAVEOUTCAPS		typedef NPWAVEOUTCAPSA
 LPWAVEOUTCAPS		typedef LPWAVEOUTCAPSA
-endif 
+endif
 
 else
 WAVEOUTCAPS		STRUC
-wMid			dw ?	
-wPid			dw ?	
-vDriverVersion		VERSION ?	
-szPname			db MAXPNAMELEN dup(?) 
-dwFormats		dd ?	
-wChannels		dw ?	
-dwSupport		dd ?	
+wMid			dw ?
+wPid			dw ?
+vDriverVersion		VERSION ?
+szPname			db MAXPNAMELEN dup(?)
+dwFormats		dd ?
+wChannels		dw ?
+dwSupport		dd ?
 WAVEOUTCAPS		ENDS
 PWAVEOUTCAPS		typedef ptr WAVEOUTCAPS
 NPWAVEOUTCAPS		typedef ptr WAVEOUTCAPS
 LPWAVEOUTCAPS		typedef ptr WAVEOUTCAPS
 endif
 
-WAVECAPS_PITCH		equ 0x0001   
-WAVECAPS_PLAYBACKRATE	equ 0x0002   
-WAVECAPS_VOLUME		equ 0x0004   
-WAVECAPS_LRVOLUME	equ 0x0008   
+WAVECAPS_PITCH		equ 0x0001
+WAVECAPS_PLAYBACKRATE	equ 0x0002
+WAVECAPS_VOLUME		equ 0x0004
+WAVECAPS_LRVOLUME	equ 0x0008
 WAVECAPS_SYNC		equ 0x0010
 WAVECAPS_SAMPLEACCURATE equ 0x0020
 WAVECAPS_DIRECTSOUND	equ 0x0040
@@ -632,25 +626,25 @@ WAVECAPS_DIRECTSOUND	equ 0x0040
 ifdef _WIN32
 
 WAVEINCAPSA		STRUC
-wMid			dw ?	
-wPid			dw ?	
-vDriverVersion		MMVERSION ?	
-szPname			db MAXPNAMELEN dup(?) 
-dwFormats		dd ?	
-wChannels		dw ?	
-wReserved1		dw ?	
+wMid			dw ?
+wPid			dw ?
+vDriverVersion		MMVERSION ?
+szPname			db MAXPNAMELEN dup(?)
+dwFormats		dd ?
+wChannels		dw ?
+wReserved1		dw ?
 WAVEINCAPSA		ENDS
 PWAVEINCAPSA		typedef ptr WAVEINCAPSA
 NPWAVEINCAPSA		typedef ptr WAVEINCAPSA
 LPWAVEINCAPSA		typedef ptr WAVEINCAPSA
 WAVEINCAPSW		STRUC
-wMid			dw ?	
-wPid			dw ?	
-vDriverVersion		MMVERSION ?	
-szPname			dw MAXPNAMELEN dup(?) 
-dwFormats		dd ?	
-wChannels		dw ?	
-wReserved1		dw ?	
+wMid			dw ?
+wPid			dw ?
+vDriverVersion		MMVERSION ?
+szPname			dw MAXPNAMELEN dup(?)
+dwFormats		dd ?
+wChannels		dw ?
+wReserved1		dw ?
 WAVEINCAPSW		ENDS
 PWAVEINCAPSW		typedef ptr WAVEINCAPSW
 NPWAVEINCAPSW		typedef ptr WAVEINCAPSW
@@ -665,42 +659,42 @@ WAVEINCAPS		typedef WAVEINCAPSA
 PWAVEINCAPS		typedef PWAVEINCAPSA
 NPWAVEINCAPS		typedef NPWAVEINCAPSA
 LPWAVEINCAPS		typedef LPWAVEINCAPSA
-endif 
+endif
 
 else
 WAVEINCAPS		STRUC
-wMid			dw ?	
-wPid			dw ?	
-vDriverVersion		VERSION ?	
-szPname			db MAXPNAMELEN dup(?) 
-dwFormats		dd ?	
-wChannels		dw ?	
+wMid			dw ?
+wPid			dw ?
+vDriverVersion		VERSION ?
+szPname			db MAXPNAMELEN dup(?)
+dwFormats		dd ?
+wChannels		dw ?
 WAVEINCAPS		ENDS
 PWAVEINCAPS		typedef ptr WAVEINCAPS
 NPWAVEINCAPS		typedef ptr WAVEINCAPS
 LPWAVEINCAPS		typedef ptr WAVEINCAPS
 endif
 
-WAVE_INVALIDFORMAT	equ 0x00000000	     
-WAVE_FORMAT_1M08	equ 0x00000001	     
-WAVE_FORMAT_1S08	equ 0x00000002	     
-WAVE_FORMAT_1M16	equ 0x00000004	     
-WAVE_FORMAT_1S16	equ 0x00000008	     
-WAVE_FORMAT_2M08	equ 0x00000010	     
-WAVE_FORMAT_2S08	equ 0x00000020	     
-WAVE_FORMAT_2M16	equ 0x00000040	     
-WAVE_FORMAT_2S16	equ 0x00000080	     
-WAVE_FORMAT_4M08	equ 0x00000100	     
-WAVE_FORMAT_4S08	equ 0x00000200	     
-WAVE_FORMAT_4M16	equ 0x00000400	     
-WAVE_FORMAT_4S16	equ 0x00000800	     
+WAVE_INVALIDFORMAT	equ 0x00000000
+WAVE_FORMAT_1M08	equ 0x00000001
+WAVE_FORMAT_1S08	equ 0x00000002
+WAVE_FORMAT_1M16	equ 0x00000004
+WAVE_FORMAT_1S16	equ 0x00000008
+WAVE_FORMAT_2M08	equ 0x00000010
+WAVE_FORMAT_2S08	equ 0x00000020
+WAVE_FORMAT_2M16	equ 0x00000040
+WAVE_FORMAT_2S16	equ 0x00000080
+WAVE_FORMAT_4M08	equ 0x00000100
+WAVE_FORMAT_4S08	equ 0x00000200
+WAVE_FORMAT_4M16	equ 0x00000400
+WAVE_FORMAT_4S16	equ 0x00000800
 
 WAVEFORMAT		STRUC
-wFormatTag		dw ?	
-nChannels		dw ?	
-nSamplesPerSec		dd ?	
-nAvgBytesPerSec		dd ?	
-nBlockAlign		dw ?	
+wFormatTag		dw ?
+nChannels		dw ?
+nSamplesPerSec		dd ?
+nAvgBytesPerSec		dd ?
+nBlockAlign		dw ?
 WAVEFORMAT		ENDS
 PWAVEFORMAT		typedef ptr WAVEFORMAT
 NPWAVEFORMAT		typedef ptr WAVEFORMAT
@@ -720,20 +714,20 @@ ifndef _WAVEFORMATEX_
 _WAVEFORMATEX_ equ 1
 
 WAVEFORMATEX		STRUC
-wFormatTag		dw ?	
-nChannels		dw ?	
-nSamplesPerSec		dd ?	
-nAvgBytesPerSec		dd ?	
-nBlockAlign		dw ?	
-wBitsPerSample		dw ?	
-cbSize			dw ?	
+wFormatTag		dw ?
+nChannels		dw ?
+nSamplesPerSec		dd ?
+nAvgBytesPerSec		dd ?
+nBlockAlign		dw ?
+wBitsPerSample		dw ?
+cbSize			dw ?
 WAVEFORMATEX		ENDS
 PWAVEFORMATEX		typedef ptr WAVEFORMATEX
 NPWAVEFORMATEX		typedef ptr WAVEFORMATEX
 LPWAVEFORMATEX		typedef ptr WAVEFORMATEX
 LPCWAVEFORMATEX		typedef ptr WAVEFORMATEX
 
-endif 
+endif
 
 ifndef _WIN32_VXD
 ;UINT
@@ -754,7 +748,7 @@ ifdef _UNICODE
 waveOutGetDevCaps	equ <waveOutGetDevCapsW>
 else
 waveOutGetDevCaps	equ <waveOutGetDevCapsA>
-endif 
+endif
 
 else
 ;RESULT
@@ -797,7 +791,7 @@ ifdef _UNICODE
 waveOutGetErrorText	equ <waveOutGetErrorTextW>
 else
 waveOutGetErrorText	equ <waveOutGetErrorTextA>
-endif 
+endif
 
 else
 ;MMRESULT
@@ -888,7 +882,7 @@ waveOutMessage proto WINAPI \
 		   dw1: DWORD,
 		   dw2: DWORD
 endif
-endif 
+endif
 
 ;UINT
 waveInGetNumDevs proto WINAPI
@@ -909,7 +903,7 @@ ifdef _UNICODE
 waveInGetDevCaps	equ <waveInGetDevCapsW>
 else
 waveInGetDevCaps	equ <waveInGetDevCapsA>
-endif 
+endif
 
 else
 waveInGetDevCaps proto WINAPI \
@@ -934,7 +928,7 @@ ifdef _UNICODE
 waveInGetErrorText	equ <waveInGetErrorTextW>
 else
 waveInGetErrorText	equ <waveInGetErrorTextA>
-endif 
+endif
 
 else
 waveInGetErrorText proto WINAPI \
@@ -1005,21 +999,21 @@ waveInMessage proto WINAPI \
 		   dw1: DWORD,
 		   dw2: DWORD
 endif
-endif 
-endif 
-endif  
+endif
+endif
+endif
 
 ifndef MMNOMIDI
 
-MIDIERR_UNPREPARED	equ (MIDIERR_BASE + 0)	 
-MIDIERR_STILLPLAYING	equ (MIDIERR_BASE + 1)	 
-MIDIERR_NOMAP		equ (MIDIERR_BASE + 2)	 
-MIDIERR_NOTREADY	equ (MIDIERR_BASE + 3)	 
-MIDIERR_NODEVICE	equ (MIDIERR_BASE + 4)	 
-MIDIERR_INVALIDSETUP	equ (MIDIERR_BASE + 5)	 
-MIDIERR_BADOPENMODE	equ (MIDIERR_BASE + 6)	 
-MIDIERR_DONT_CONTINUE	equ (MIDIERR_BASE + 7)	 
-MIDIERR_LASTERROR	equ (MIDIERR_BASE + 7)	 
+MIDIERR_UNPREPARED	equ (MIDIERR_BASE + 0)
+MIDIERR_STILLPLAYING	equ (MIDIERR_BASE + 1)
+MIDIERR_NOMAP		equ (MIDIERR_BASE + 2)
+MIDIERR_NOTREADY	equ (MIDIERR_BASE + 3)
+MIDIERR_NODEVICE	equ (MIDIERR_BASE + 4)
+MIDIERR_INVALIDSETUP	equ (MIDIERR_BASE + 5)
+MIDIERR_BADOPENMODE	equ (MIDIERR_BASE + 6)
+MIDIERR_DONT_CONTINUE	equ (MIDIERR_BASE + 7)
+MIDIERR_LASTERROR	equ (MIDIERR_BASE + 7)
 
 HMIDI			typedef HANDLE
 HMIDIIN			typedef HANDLE
@@ -1037,7 +1031,7 @@ PATCHARRAY		typedef ptr ;WORD [MIDIPATCHSIZE]
 LPPATCHARRAY		typedef ptr WORD
 ;KEYARRAY		typedef [MIDIPATCHSIZE]:WORD
 LPKEYARRAY		typedef ptr WORD
-endif  
+endif
 
 MIM_OPEN		equ MM_MIM_OPEN
 MIM_CLOSE		equ MM_MIM_COSE
@@ -1052,14 +1046,14 @@ MOM_DONE		equ MM_MOM_DONE
 if(WINVER GE 0x0400)
 MIM_MOREDATA		equ MM_MIM_MOREDATA
 MOM_POSITIONCB		equ MM_MOM_POSITIONCB
-endif 
+endif
 
 MIDIMAPPER		equ -1
 MIDI_MAPPER		equ -1
 
 if(WINVER GE 0x0400)
 MIDI_IO_STATUS		equ 0x00000020
-endif 
+endif
 
 MIDI_CACHE_ALL		equ 1
 MIDI_CACHE_BESTFIT	equ 2
@@ -1069,29 +1063,29 @@ MIDI_UNCACHE		equ 4
 ifdef _WIN32
 
 MIDIOUTCAPSA		STRUC
-wMid			dw ?	
-wPid			dw ?	
-vDriverVersion		MMVERSION ?	
-szPname			db MAXPNAMELEN dup(?) 
-wTechnology		dw ?	
-wVoices			dw ?	
-wNotes			dw ?	
-wChannelMask		dw ?	
-dwSupport		dd ?	
+wMid			dw ?
+wPid			dw ?
+vDriverVersion		MMVERSION ?
+szPname			db MAXPNAMELEN dup(?)
+wTechnology		dw ?
+wVoices			dw ?
+wNotes			dw ?
+wChannelMask		dw ?
+dwSupport		dd ?
 MIDIOUTCAPSA		ENDS
 PMIDIOUTCAPSA		typedef ptr MIDIOUTCAPSA
 NPMIDIOUTCAPSA		typedef ptr MIDIOUTCAPSA
 LPMIDIOUTCAPSA		typedef ptr MIDIOUTCAPSA
 MIDIOUTCAPSW		STRUC
-wMid			dw ?	
-wPid			dw ?	
-vDriverVersion		MMVERSION ?	
-szPname			dw MAXPNAMELEN dup(?) 
-wTechnology		dw ?	
-wVoices			dw ?	
-wNotes			dw ?	
-wChannelMask		dw ?	
-dwSupport		dd ?	
+wMid			dw ?
+wPid			dw ?
+vDriverVersion		MMVERSION ?
+szPname			dw MAXPNAMELEN dup(?)
+wTechnology		dw ?
+wVoices			dw ?
+wNotes			dw ?
+wChannelMask		dw ?
+dwSupport		dd ?
 MIDIOUTCAPSW		ENDS
 PMIDIOUTCAPSW		typedef ptr MIDIOUTCAPSW
 NPMIDIOUTCAPSW		typedef ptr MIDIOUTCAPSW
@@ -1106,59 +1100,59 @@ MIDIOUTCAPS		typedef MIDIOUTCAPSA
 PMIDIOUTCAPS		typedef PMIDIOUTCAPSA
 NPMIDIOUTCAPS		typedef NPMIDIOUTCAPSA
 LPMIDIOUTCAPS		typedef LPMIDIOUTCAPSA
-endif 
+endif
 
 else
 MIDIOUTCAPS		STRUC
-wMid			dw ?	
-wPid			dw ?	
-vDriverVersion		VERSION ?	
-szPname			db MAXPNAMELEN dup(?) 
-wTechnology		dw ?	
-wVoices			dw ?	
-wNotes			dw ?	
-wChannelMask		dw ?	
-dwSupport		dd ?	
+wMid			dw ?
+wPid			dw ?
+vDriverVersion		VERSION ?
+szPname			db MAXPNAMELEN dup(?)
+wTechnology		dw ?
+wVoices			dw ?
+wNotes			dw ?
+wChannelMask		dw ?
+dwSupport		dd ?
 MIDIOUTCAPS		ENDS
 PMIDIOUTCAPS		typedef ptr MIDIOUTCAPS
 NPMIDIOUTCAPS		typedef ptr MIDIOUTCAPS
 LPMIDIOUTCAPS		typedef ptr MIDIOUTCAPS
 endif
 
-MOD_MIDIPORT		equ 1  
-MOD_SYNTH		equ 2  
-MOD_SQSYNTH		equ 3  
-MOD_FMSYNTH		equ 4  
-MOD_MAPPER		equ 5  
+MOD_MIDIPORT		equ 1
+MOD_SYNTH		equ 2
+MOD_SQSYNTH		equ 3
+MOD_FMSYNTH		equ 4
+MOD_MAPPER		equ 5
 
-MIDICAPS_VOLUME		equ 0x0001  
-MIDICAPS_LRVOLUME	equ 0x0002  
+MIDICAPS_VOLUME		equ 0x0001
+MIDICAPS_LRVOLUME	equ 0x0002
 MIDICAPS_CACHE		equ 0x0004
 if(WINVER GE 0x0400)
-MIDICAPS_STREAM		equ 0x0008  
-endif 
+MIDICAPS_STREAM		equ 0x0008
+endif
 
 ifdef _WIN32
 
 MIDIINCAPSA		STRUC
-wMid			dw ?	
-wPid			dw ?	
-vDriverVersion		MMVERSION ?	
-szPname			db MAXPNAMELEN dup(?) 
+wMid			dw ?
+wPid			dw ?
+vDriverVersion		MMVERSION ?
+szPname			db MAXPNAMELEN dup(?)
 if (WINVER GE 0x0400)
-dwSupport		dd ?	
+dwSupport		dd ?
 endif
 MIDIINCAPSA		ENDS
 PMIDIINCAPSA		typedef ptr MIDIINCAPSA
 NPMIDIINCAPSA		typedef ptr MIDIINCAPSA
 LPMIDIINCAPSA		typedef ptr MIDIINCAPSA
 MIDIINCAPSW		STRUC
-wMid			dw ?	
-wPid			dw ?	
-vDriverVersion		MMVERSION ?	
-szPname			dw MAXPNAMELEN dup(?) 
+wMid			dw ?
+wPid			dw ?
+vDriverVersion		MMVERSION ?
+szPname			dw MAXPNAMELEN dup(?)
 if (WINVER GE 0x0400)
-dwSupport		dd ?	
+dwSupport		dd ?
 endif
 MIDIINCAPSW		ENDS
 PMIDIINCAPSW		typedef ptr MIDIINCAPSW
@@ -1174,16 +1168,16 @@ MIDIINCAPS		typedef MIDIINCAPSA
 PMIDIINCAPS		typedef PMIDIINCAPSA
 NPMIDIINCAPS		typedef NPMIDIINCAPSA
 LPMIDIINCAPS		typedef LPMIDIINCAPSA
-endif 
+endif
 
 else
 MIDIINCAPS		STRUC
-wMid			dw ?	
-wPid			dw ?	
-vDriverVersion		VERSION ?	
-szPname			db MAXPNAMELEN dup(?) 
+wMid			dw ?
+wPid			dw ?
+vDriverVersion		VERSION ?
+szPname			db MAXPNAMELEN dup(?)
 if (WINVER GE 0x0400)
-dwSupport		dd ?	
+dwSupport		dd ?
 endif
 MIDIINCAPS		ENDS
 PMIDIINCAPS		typedef ptr MIDIINCAPS
@@ -1192,16 +1186,16 @@ LPMIDIINCAPS		typedef ptr MIDIINCAPS
 endif
 
 MIDIHDR			STRUC
-lpData			LPSTR ? 
-dwBufferLength		dd ?	
-dwBytesRecorded		dd ?	
-dwUser			dd ?	
-dwFlags			dd ?	
-lpNext			PVOID ? 
-reserved		dd ?	
+lpData			LPSTR ?
+dwBufferLength		dd ?
+dwBytesRecorded		dd ?
+dwUser			dd ?
+dwFlags			dd ?
+lpNext			PVOID ?
+reserved		dd ?
 if (WINVER GE 0x0400)
-dwOffset		dd ?	
-dwReserved		dd 8 dup(?)	
+dwOffset		dd ?
+dwReserved		dd 8 dup(?)
 endif
 MIDIHDR			ENDS
 PMIDIHDR		typedef ptr MIDIHDR
@@ -1210,23 +1204,23 @@ LPMIDIHDR		typedef ptr MIDIHDR
 
 if(WINVER GE 0x0400)
 MIDIEVENT		STRUC
-dwDeltaTime		dd ?	
-dwStreamID		dd ?	
-dwEvent			dd ?	
-dwParms			dd ?	
+dwDeltaTime		dd ?
+dwStreamID		dd ?
+dwEvent			dd ?
+dwParms			dd ?
 MIDIEVENT		ENDS
 
 MIDISTRMBUFFVER		STRUC
-dwVersion		dd ?	
-dwMid			dd ?	
-dwOEMVersion		dd ?	
+dwVersion		dd ?
+dwMid			dd ?
+dwOEMVersion		dd ?
 MIDISTRMBUFFVER		ENDS
-endif 
+endif
 
-MHDR_DONE		equ 0x00000001	     
-MHDR_PREPARED		equ 0x00000002	     
-MHDR_INQUEUE		equ 0x00000004	     
-MHDR_ISSTRM		equ 0x00000008	     
+MHDR_DONE		equ 0x00000001
+MHDR_PREPARED		equ 0x00000002
+MHDR_INQUEUE		equ 0x00000004
+MHDR_ISSTRM		equ 0x00000008
 
 if(WINVER GE 0x0400)
 
@@ -1241,14 +1235,14 @@ MEVT_EVENTPARM macro x
 	exitm<(((x) AND 0x00FFFFFF))>
 	endm
 
-MEVT_SHORTMSG		equ (0x00)    
-MEVT_TEMPO		equ (0x01)    
-MEVT_NOP		equ (0x02)    
+MEVT_SHORTMSG		equ (0x00)
+MEVT_TEMPO		equ (0x01)
+MEVT_NOP		equ (0x02)
 
 
-MEVT_LONGMSG		equ (0x80)    
-MEVT_COMMENT		equ (0x82)    
-MEVT_VERSION		equ (0x84)    
+MEVT_LONGMSG		equ (0x80)
+MEVT_COMMENT		equ (0x82)
+MEVT_VERSION		equ (0x84)
 
 
 MIDISTRM_ERROR		equ (-2)
@@ -1272,7 +1266,7 @@ dwTempo			dd ?
 MIDIPROPTEMPO		ENDS
 LPMIDIPROPTEMPO		typedef ptr MIDIPROPTEMPO
 
-endif 
+endif
 
 ifndef _WIN32_VXD
 
@@ -1329,7 +1323,7 @@ midiDisconnect proto WINAPI \
 	     pReserved: LPVOID
 
 endif
-endif 
+endif
 
 ifdef _WIN32
 
@@ -1347,7 +1341,7 @@ ifdef _UNICODE
 midiOutGetDevCaps	equ <midiOutGetDevCapsW>
 else
 midiOutGetDevCaps	equ <midiOutGetDevCapsA>
-endif 
+endif
 
 else
 midiOutGetDevCaps proto WINAPI \
@@ -1392,7 +1386,7 @@ ifdef _UNICODE
 midiOutGetErrorText	equ <midiOutGetErrorTextW>
 else
 midiOutGetErrorText	equ <midiOutGetErrorTextA>
-endif 
+endif
 
 else
 ;RESULT
@@ -1467,7 +1461,7 @@ midiOutMessage proto WINAPI \
 		   dw1: DWORD,
 		   dw2: DWORD
 endif
-endif 
+endif
 
 midiInGetNumDevs proto WINAPI
 
@@ -1486,7 +1480,7 @@ ifdef _UNICODE
 midiInGetDevCaps	equ <midiInGetDevCapsW>
 else
 midiInGetDevCaps	equ <midiInGetDevCapsA>
-endif 
+endif
 ;RESULT
 midiInGetErrorTextA proto WINAPI \
 	      mmrError: MMRESULT,
@@ -1501,7 +1495,7 @@ ifdef _UNICODE
 midiInGetErrorText	equ <midiInGetErrorTextW>
 else
 midiInGetErrorText	equ <midiInGetErrorTextA>
-endif 
+endif
 
 else
 midiInGetDevCaps proto WINAPI \
@@ -1570,11 +1564,11 @@ midiInMessage proto WINAPI \
 		   dw1: DWORD,
 		   dw2: DWORD
 endif
-endif 
+endif
 
-endif 
+endif
 
-endif  
+endif
 
 ifndef MMNOAUX
 
@@ -1583,25 +1577,25 @@ AUX_MAPPER		equ -1
 ifdef _WIN32
 
 AUXCAPSA		STRUC
-wMid			dw ?	
-wPid			dw ?	
-vDriverVersion		MMVERSION ?	
-szPname			db MAXPNAMELEN dup(?) 
-wTechnology		dw ?	
-wReserved1		dw ?	
-dwSupport		dd ?	
+wMid			dw ?
+wPid			dw ?
+vDriverVersion		MMVERSION ?
+szPname			db MAXPNAMELEN dup(?)
+wTechnology		dw ?
+wReserved1		dw ?
+dwSupport		dd ?
 AUXCAPSA		ENDS
 PAUXCAPSA		typedef ptr AUXCAPSA
 NPAUXCAPSA		typedef ptr AUXCAPSA
 LPAUXCAPSA		typedef ptr AUXCAPSA
 AUXCAPSW		STRUC
-wMid			dw ?	
-wPid			dw ?	
-vDriverVersion		MMVERSION ?	
-szPname			dw MAXPNAMELEN dup(?) 
-wTechnology		dw ?	
-wReserved1		dw ?	
-dwSupport		dd ?	
+wMid			dw ?
+wPid			dw ?
+vDriverVersion		MMVERSION ?
+szPname			dw MAXPNAMELEN dup(?)
+wTechnology		dw ?
+wReserved1		dw ?
+dwSupport		dd ?
 AUXCAPSW		ENDS
 PAUXCAPSW		typedef ptr AUXCAPSW
 NPAUXCAPSW		typedef ptr AUXCAPSW
@@ -1616,27 +1610,27 @@ AUXCAPS			typedef AUXCAPSA
 PAUXCAPS		typedef PAUXCAPSA
 NPAUXCAPS		typedef NPAUXCAPSA
 LPAUXCAPS		typedef LPAUXCAPSA
-endif 
+endif
 
 else
 AUXCAPS			STRUC
-wMid			dw ?	
-wPid			dw ?	
-vDriverVersion		VERSION ?	
-szPname			db MAXPNAMELEN dup(?) 
-wTechnology		dw ?	
-dwSupport		dd ?	
+wMid			dw ?
+wPid			dw ?
+vDriverVersion		VERSION ?
+szPname			db MAXPNAMELEN dup(?)
+wTechnology		dw ?
+dwSupport		dd ?
 AUXCAPS			ENDS
 PAUXCAPS		typedef ptr AUXCAPS
 NPAUXCAPS		typedef ptr AUXCAPS
 LPAUXCAPS		typedef ptr AUXCAPS
 endif
 
-AUXCAPS_CDAUDIO		equ 1	    
-AUXCAPS_AUXIN		equ 2	    
+AUXCAPS_CDAUDIO		equ 1
+AUXCAPS_AUXIN		equ 2
 
-AUXCAPS_VOLUME		equ 0x0001  
-AUXCAPS_LRVOLUME	equ 0x0002  
+AUXCAPS_VOLUME		equ 0x0001
+AUXCAPS_LRVOLUME	equ 0x0002
 
 ifndef _WIN32_VXD
 
@@ -1656,7 +1650,7 @@ ifdef _UNICODE
 auxGetDevCaps		equ <auxGetDevCapsW>
 else
 auxGetDevCaps		equ <auxGetDevCapsA>
-endif 
+endif
 
 else
 ;MMRESULT
@@ -1691,11 +1685,11 @@ auxOutMessage proto WINAPI \
 		   dw1: DWORD,
 		   dw2: DWORD
 endif
-endif 
+endif
 
-endif 
+endif
 
-endif  
+endif
 
 ifndef MMNOMIXER
 ifndef _WIN32_VXD
@@ -1732,22 +1726,22 @@ mixerGetNumDevs proto WINAPI
 ifdef _WIN32
 
 MIXERCAPSA		STRUC
-wMid			dw ?	
-wPid			dw ?	
-vDriverVersion		MMVERSION ?	
-szPname			db MAXPNAMELEN dup(?) 
-fdwSupport		dd ?	
-cDestinations		dd ?	
+wMid			dw ?
+wPid			dw ?
+vDriverVersion		MMVERSION ?
+szPname			db MAXPNAMELEN dup(?)
+fdwSupport		dd ?
+cDestinations		dd ?
 MIXERCAPSA		ENDS
 PMIXERCAPSA		typedef ptr MIXERCAPSA
 LPMIXERCAPSA		typedef ptr MIXERCAPSA
 MIXERCAPSW		STRUC
-wMid			dw ?	
-wPid			dw ?	
-vDriverVersion		MMVERSION ?	
-szPname			dw MAXPNAMELEN dup(?) 
-fdwSupport		dd ?	
-cDestinations		dd ?	
+wMid			dw ?
+wPid			dw ?
+vDriverVersion		MMVERSION ?
+szPname			dw MAXPNAMELEN dup(?)
+fdwSupport		dd ?
+cDestinations		dd ?
 MIXERCAPSW		ENDS
 PMIXERCAPSW		typedef ptr MIXERCAPSW
 LPMIXERCAPSW		typedef ptr MIXERCAPSW
@@ -1759,16 +1753,16 @@ else
 MIXERCAPS		typedef MIXERCAPSA
 PMIXERCAPS		typedef PMIXERCAPSA
 LPMIXERCAPS		typedef LPMIXERCAPSA
-endif 
+endif
 
 else
 MIXERCAPS		STRUC
-wMid			dw ?	
-wPid			dw ?	
-vDriverVersion		VERSION ?	
-szPname			db MAXPNAMELEN dup(?) 
-fdwSupport		dd ?	
-cDestinations		dd ?	
+wMid			dw ?
+wPid			dw ?
+vDriverVersion		VERSION ?
+szPname			db MAXPNAMELEN dup(?)
+fdwSupport		dd ?
+cDestinations		dd ?
 MIXERCAPS		ENDS
 PMIXERCAPS		typedef ptr MIXERCAPS
 LPMIXERCAPS		typedef ptr MIXERCAPS
@@ -1790,7 +1784,7 @@ ifdef _UNICODE
 mixerGetDevCaps		equ <mixerGetDevCapsW>
 else
 mixerGetDevCaps		equ <mixerGetDevCapsA>
-endif 
+endif
 
 else
 mixerGetDevCaps proto WINAPI \
@@ -1821,24 +1815,24 @@ mixerMessage proto WINAPI \
 ifdef _WIN32
 
 MIXERLINEA		STRUC
-cbStruct		dd ?	
-dwDestination		dd ?	
-dwSource		dd ?	
-dwLineID		dd ?	
-fdwLine			dd ?	
-dwUser			dd ?	
-dwComponentType		dd ?	
-cChannels		dd ?	
-cConnections		dd ?	
-cControls		dd ?	
+cbStruct		dd ?
+dwDestination		dd ?
+dwSource		dd ?
+dwLineID		dd ?
+fdwLine			dd ?
+dwUser			dd ?
+dwComponentType		dd ?
+cChannels		dd ?
+cConnections		dd ?
+cControls		dd ?
 szShortName		db MIXER_SHORT_NAME_CHARS dup(?)
 szName			db MIXER_LONG_NAME_CHARS dup(?)
 
 STRUC Target
- dwType			dd ?	
- dwDeviceID		dd ?	
- wMid			dw ?	
- wPid			dw ?	
+ dwType			dd ?
+ dwDeviceID		dd ?
+ wMid			dw ?
+ wPid			dw ?
  vDriverVersion		MMVERSION ?
  szPname		db MAXPNAMELEN dup(?)
 ENDS
@@ -1847,24 +1841,24 @@ MIXERLINEA		ENDS
 PMIXERLINEA		typedef ptr MIXERLINEA
 LPMIXERLINEA		typedef ptr MIXERLINEA
 MIXERLINEW		STRUC
-cbStruct		dd ?	
-dwDestination		dd ?	
-dwSource		dd ?	
-dwLineID		dd ?	
-fdwLine			dd ?	
-dwUser			dd ?	
-dwComponentType		dd ?	
-cChannels		dd ?	
-cConnections		dd ?	
-cControls		dd ?	
+cbStruct		dd ?
+dwDestination		dd ?
+dwSource		dd ?
+dwLineID		dd ?
+fdwLine			dd ?
+dwUser			dd ?
+dwComponentType		dd ?
+cChannels		dd ?
+cConnections		dd ?
+cControls		dd ?
 szShortName		dw MIXER_SHORT_NAME_CHARS dup(?)
 szName			dw MIXER_LONG_NAME_CHARS dup(?)
 STRUC Target
-dwType			dd ?	
-dwDeviceID		dd ?	
-wMid			dw ?	
-wPid			dw ?	
-vDriverVersion		MMVERSION ?	
+dwType			dd ?
+dwDeviceID		dd ?
+wMid			dw ?
+wPid			dw ?
+vDriverVersion		MMVERSION ?
 szPname			dw MAXPNAMELEN dup(?)
 ENDS
 MIXERLINEW		ENDS
@@ -1878,28 +1872,28 @@ else
 MIXERLINE		typedef MIXERLINEA
 PMIXERLINE		typedef PMIXERLINEA
 LPMIXERLINE		typedef LPMIXERLINEA
-endif 
+endif
 
 else
 MIXERLINE		STRUC
-cbStruct		dd ?	
-dwDestination		dd ?	
-dwSource		dd ?	
-dwLineID		dd ?	
-fdwLine			dd ?	
-dwUser			dd ?	
-dwComponentType		dd ?	
-cChannels		dd ?	
-cConnections		dd ?	
-cControls		dd ?	
+cbStruct		dd ?
+dwDestination		dd ?
+dwSource		dd ?
+dwLineID		dd ?
+fdwLine			dd ?
+dwUser			dd ?
+dwComponentType		dd ?
+cChannels		dd ?
+cConnections		dd ?
+cControls		dd ?
 szShortName		dw MIXER_SHORT_NAME_CHARS dup(?)
 szName			dw MIXER_LONG_NAME_CHARS dup(?)
 STRUC Target
-dwType			dd ?	
-dwDeviceID		dd ?	
-wMid			dw ?	
-wPid			dw ?	
-vDriverVersion		VERSION ?	
+dwType			dd ?
+dwDeviceID		dd ?
+wMid			dw ?
+wPid			dw ?
+vDriverVersion		VERSION ?
 szPname			db MAXPNAMELEN dup(?)
 ENDS
 MIXERLINE		ENDS
@@ -1960,7 +1954,7 @@ ifdef _UNICODE
 mixerGetLineInfo	equ <mixerGetLineInfoW>
 else
 mixerGetLineInfo	equ <mixerGetLineInfoA>
-endif 
+endif
 
 else
 ;MMRESULT
@@ -1987,56 +1981,56 @@ mixerGetID proto WINAPI \
 ifdef _WIN32
 
 MIXERCONTROLA		STRUC
-cbStruct		dd ?	
-dwControlID		dd ?	
-dwControlType		dd ?	
-fdwControl		dd ?	
-cMultipleItems		dd ?	
+cbStruct		dd ?
+dwControlID		dd ?
+dwControlType		dd ?
+fdwControl		dd ?
+cMultipleItems		dd ?
 szShortName		db MIXER_SHORT_NAME_CHARS dup(?)
 szName			db MIXER_LONG_NAME_CHARS dup(?)
 UNION Bounds
     STRUC
-	lMinimum	LONG ?	
-	lMaximum	LONG ?	
+	lMinimum	LONG ?
+	lMaximum	LONG ?
     ENDS
     STRUC
-	dwMinimum	dd ?	
-	dwMaximum	dd ?	
+	dwMinimum	dd ?
+	dwMaximum	dd ?
     ENDS
 dwReserved		dd 6 dup(?)
 ENDS
 UNION Metrics
-    cSteps		dd ?	
-    cbCustomData	dd ?	
-    dwReserved		dd 6 dup(?)	
+    cSteps		dd ?
+    cbCustomData	dd ?
+    dwReserved		dd 6 dup(?)
 ENDS
 MIXERCONTROLA		ENDS
 PMIXERCONTROLA		typedef ptr MIXERCONTROLA
 LPMIXERCONTROLA		typedef ptr MIXERCONTROLA
 
 MIXERCONTROLW		STRUC
-cbStruct		dd ?	
-dwControlID		dd ?	
-dwControlType		dd ?	
-fdwControl		dd ?	
-cMultipleItems		dd ?	
+cbStruct		dd ?
+dwControlID		dd ?
+dwControlType		dd ?
+fdwControl		dd ?
+cMultipleItems		dd ?
 szShortName		dw MIXER_SHORT_NAME_CHARS dup(?)
 szName			dw MIXER_LONG_NAME_CHARS dup(?)
 UNION Bounds
     STRUC
-	lMinimum	LONG ?	
-	lMaximum	LONG ?	
+	lMinimum	LONG ?
+	lMaximum	LONG ?
     ENDS
     STRUC
-	dwMinimum	dd ?	
-	dwMaximum	dd ?	
+	dwMinimum	dd ?
+	dwMaximum	dd ?
     ENDS
     dwReserved		dd 6 dup(?)
 ENDS
 UNION Metrics
-    cSteps		dd ?	
-    cbCustomData	dd ?	
-    dwReserved		dd 6 dup(?)	
+    cSteps		dd ?
+    cbCustomData	dd ?
+    dwReserved		dd 6 dup(?)
 ENDS
 MIXERCONTROLW		ENDS
 PMIXERCONTROLW		typedef ptr MIXERCONTROLW
@@ -2049,32 +2043,32 @@ else
 MIXERCONTROL		typedef MIXERCONTROLA
 PMIXERCONTROL		typedef PMIXERCONTROLA
 LPMIXERCONTROL		typedef LPMIXERCONTROLA
-endif 
+endif
 
 else
 MIXERCONTROL		STRUC
-cbStruct		dd ?	
-dwControlID		dd ?	
-dwControlType		dd ?	
-fdwControl		dd ?	
-cMultipleItems		dd ?	
+cbStruct		dd ?
+dwControlID		dd ?
+dwControlType		dd ?
+fdwControl		dd ?
+cMultipleItems		dd ?
 szShortName		db MIXER_SHORT_NAME_CHARS dup(?)
 szName			db MIXER_LONG_NAME_CHARS dup(?)
 UNION Bounds
     STRUC
-	lMinimum	LONG ?	
-	lMaximum	LONG ?	
+	lMinimum	LONG ?
+	lMaximum	LONG ?
     ENDS
     STRUC
-	dwMinimum	dd ?	
-	dwMaximum	dd ?	
+	dwMinimum	dd ?
+	dwMaximum	dd ?
     ENDS
     dwReserved		dd 6 dup(?)
 ENDS
 UNION Metrics
-    cSteps		dd ?	
-    cbCustomData	dd ?	
-    dwReserved		dd 6 dup(?)	
+    cSteps		dd ?
+    cbCustomData	dd ?
+    dwReserved		dd 6 dup(?)
 ENDS
 MIXERCONTROL		ENDS
 PMIXERCONTROL		typedef ptr MIXERCONTROL
@@ -2113,8 +2107,8 @@ MIXERCONTROL_CT_UNITS_CUSTOM equ 0x00000000
 MIXERCONTROL_CT_UNITS_BOOLEAN equ 0x00010000
 MIXERCONTROL_CT_UNITS_SIGNED equ 0x00020000
 MIXERCONTROL_CT_UNITS_UNSIGNED equ 0x00030000
-MIXERCONTROL_CT_UNITS_DECIBELS equ 0x00040000 
-MIXERCONTROL_CT_UNITS_PERCENT equ 0x00050000 
+MIXERCONTROL_CT_UNITS_DECIBELS equ 0x00040000
+MIXERCONTROL_CT_UNITS_PERCENT equ 0x00050000
 
 
 MIXERCONTROL_CONTROLTYPE_CUSTOM equ (MIXERCONTROL_CT_CLASS_CUSTOM OR MIXERCONTROL_CT_UNITS_CUSTOM)
@@ -2151,28 +2145,28 @@ MIXERCONTROL_CONTROLTYPE_MILLITIME equ (MIXERCONTROL_CT_CLASS_TIME OR MIXERCONTR
 ifdef _WIN32
 
 MIXERLINECONTROLSA	STRUC
-cbStruct		dd ?	
-dwLineID		dd ?	
+cbStruct		dd ?
+dwLineID		dd ?
 UNION
- dwControlID		dd ?	
- dwControlType		dd ?	
+ dwControlID		dd ?
+ dwControlType		dd ?
 ENDS
-cControls		dd ?	
-cbmxctrl		dd ?	
-pamxctrl		LPMIXERCONTROLA ?	
+cControls		dd ?
+cbmxctrl		dd ?
+pamxctrl		LPMIXERCONTROLA ?
 MIXERLINECONTROLSA	ENDS
 PMIXERLINECONTROLSA	typedef ptr MIXERLINECONTROLSA
 LPMIXERLINECONTROLSA	typedef ptr MIXERLINECONTROLSA
 MIXERLINECONTROLSW	STRUC
-cbStruct		dd ?	
-dwLineID		dd ?	
+cbStruct		dd ?
+dwLineID		dd ?
 UNION
- dwControlID		dd ?	
- dwControlType		dd ?	
+ dwControlID		dd ?
+ dwControlType		dd ?
 ENDS
-cControls		dd ?	
-cbmxctrl		dd ?	
-pamxctrl		LPMIXERCONTROLW ?	
+cControls		dd ?
+cbmxctrl		dd ?
+pamxctrl		LPMIXERCONTROLW ?
 MIXERLINECONTROLSW	ENDS
 PMIXERLINECONTROLSW	typedef ptr MIXERLINECONTROLSW
 LPMIXERLINECONTROLSW	typedef ptr MIXERLINECONTROLSW
@@ -2184,19 +2178,19 @@ else
 MIXERLINECONTROLS	typedef MIXERLINECONTROLSA
 PMIXERLINECONTROLS	typedef PMIXERLINECONTROLSA
 LPMIXERLINECONTROLS	typedef LPMIXERLINECONTROLSA
-endif 
+endif
 
 else
 MIXERLINECONTROLS	STRUC
-cbStruct		dd ?	
-dwLineID		dd ?	
+cbStruct		dd ?
+dwLineID		dd ?
 UNION
- dwControlID		dd ?	
- dwControlType		dd ?	
+ dwControlID		dd ?
+ dwControlType		dd ?
 ENDS
-cControls		dd ?	
-cbmxctrl		dd ?	
-pamxctrl		LPMIXERCONTROL ?	
+cControls		dd ?
+cbmxctrl		dd ?
+pamxctrl		LPMIXERCONTROL ?
 MIXERLINECONTROLS	ENDS
 PMIXERLINECONTROLS	typedef ptr MIXERLINECONTROLS
 LPMIXERLINECONTROLS	typedef ptr MIXERLINECONTROLS
@@ -2217,7 +2211,7 @@ ifdef _UNICODE
 mixerGetLineControls	equ <mixerGetLineControlsW>
 else
 mixerGetLineControls	equ <mixerGetLineControlsA>
-endif 
+endif
 
 else
 mixerGetLineControls proto WINAPI \
@@ -2233,15 +2227,15 @@ MIXER_GETLINECONTROLSF_ONEBYTYPE equ 0x00000002
 MIXER_GETLINECONTROLSF_QUERYMASK equ 0x0000000F
 
 MIXERCONTROLDETAILS	STRUC
-cbStruct		dd ?	
-dwControlID		dd ?	
-cChannels		dd ?	
+cbStruct		dd ?
+dwControlID		dd ?
+cChannels		dd ?
 UNION
- hwndOwner		HWND ?	
- cMultipleItems		dd ?	
+ hwndOwner		HWND ?
+ cMultipleItems		dd ?
 ENDS
-cbDetails		dd ?	
-paDetails		LPVOID ?	
+cbDetails		dd ?
+paDetails		LPVOID ?
 MIXERCONTROLDETAILS	ENDS
 PMIXERCONTROLDETAILS	typedef ptr MIXERCONTROLDETAILS
 LPMIXERCONTROLDETAILS	typedef ptr MIXERCONTROLDETAILS
@@ -2270,7 +2264,7 @@ else
 MIXERCONTROLDETAILS_LISTTEXT typedef MIXERCONTROLDETAILS_LISTTEXTA
 PMIXERCONTROLDETAILS_LISTTEXT typedef PMIXERCONTROLDETAILS_LISTTEXTA
 LPMIXERCONTROLDETAILS_LISTTEXT typedef LPMIXERCONTROLDETAILS_LISTTEXTA
-endif 
+endif
 
 else
 MIXERCONTROLDETAILS_LISTTEXT STRUC
@@ -2315,7 +2309,7 @@ ifdef _UNICODE
 mixerGetControlDetails	equ <mixerGetControlDetailsW>
 else
 mixerGetControlDetails	equ <mixerGetControlDetailsA>
-endif 
+endif
 
 else
 mixerGetControlDetails proto WINAPI \
@@ -2340,37 +2334,31 @@ MIXER_SETCONTROLDETAILSF_CUSTOM equ 0x00000001
 
 MIXER_SETCONTROLDETAILSF_QUERYMASK equ 0x0000000F
 
-endif 
-endif 
+endif
+endif
 
 ifndef MMNOTIMER
 ifndef _WIN32_VXD
 
-TIMERR_NOERROR		equ (0)			 
-TIMERR_NOCANDO		equ (TIMERR_BASE+1)	 
-TIMERR_STRUCT		equ (TIMERR_BASE+33)	 
+TIMERR_NOERROR		equ (0)
+TIMERR_NOCANDO		equ (TIMERR_BASE+1)
+TIMERR_STRUCT		equ (TIMERR_BASE+33)
 
 ;void
-TIMECALLBACK typedef proto WINAPI \
-	      uTimerID: UINT,
-		  uMsg: UINT,
-		dwUser: DWORD,
-		   dw1: DWORD,
-		   dw2: DWORD
-LPTIMECALLBACK		typedef ptr TIMECALLBACK
+CALLBACK(LPTIMECALLBACK, uTimerID:UINT, uMsg:UINT, dwUser:DWORD, dw1:DWORD, dw2:DWORD)
 
-TIME_ONESHOT		equ 0x0000   
-TIME_PERIODIC		equ 0x0001   
+TIME_ONESHOT		equ 0x0000
+TIME_PERIODIC		equ 0x0001
 
 ifdef _WIN32
-TIME_CALLBACK_FUNCTION	equ 0x0000  
-TIME_CALLBACK_EVENT_SET equ 0x0010  
-TIME_CALLBACK_EVENT_PULSE equ 0x0020  
+TIME_CALLBACK_FUNCTION	equ 0x0000
+TIME_CALLBACK_EVENT_SET equ 0x0010
+TIME_CALLBACK_EVENT_PULSE equ 0x0020
 endif
 
 TIMECAPS		STRUC
-wPeriodMin		UINT ?	
-wPeriodMax		UINT ?	
+wPeriodMin		UINT ?
+wPeriodMax		UINT ?
 TIMECAPS		ENDS
 PTIMECAPS		typedef ptr TIMECAPS
 NPTIMECAPS		typedef ptr TIMECAPS
@@ -2408,15 +2396,15 @@ timeBeginPeriod proto WINAPI \
 timeEndPeriod proto WINAPI \
 	       uPeriod: UINT
 
-endif  
-endif  
+endif
+endif
 
 ifndef MMNOJOY
 
-JOYERR_NOERROR		equ (0)			 
-JOYERR_PARMS		equ (JOYERR_BASE+5)	 
-JOYERR_NOCANDO		equ (JOYERR_BASE+6)	 
-JOYERR_UNPLUGGED	equ (JOYERR_BASE+7)	 
+JOYERR_NOERROR		equ (0)
+JOYERR_PARMS		equ (JOYERR_BASE+5)
+JOYERR_NOCANDO		equ (JOYERR_BASE+6)
+JOYERR_UNPLUGGED	equ (JOYERR_BASE+7)
 
 JOY_BUTTON1		equ 0x0001
 JOY_BUTTON2		equ 0x0002
@@ -2466,8 +2454,8 @@ JOY_RETURNX		equ 0x00000001
 JOY_RETURNY		equ 0x00000002
 JOY_RETURNZ		equ 0x00000004
 JOY_RETURNR		equ 0x00000008
-JOY_RETURNU		equ 0x00000010 
-JOY_RETURNV		equ 0x00000020 
+JOY_RETURNU		equ 0x00000010
+JOY_RETURNV		equ 0x00000020
 JOY_RETURNPOV		equ 0x00000040
 JOY_RETURNBUTTONS	equ 0x00000080
 JOY_RETURNRAWDATA	equ 0x00000100
@@ -2504,62 +2492,62 @@ JOYCAPS_POVCTS		equ 0x0040
 ifdef _WIN32
 
 JOYCAPSA		STRUC
-wMid			dw ?	
-wPid			dw ?	
-szPname			db MAXPNAMELEN dup(?) 
-wXmin			UINT ?	
-wXmax			UINT ?	
-wYmin			UINT ?	
-wYmax			UINT ?	
-wZmin			UINT ?	
-wZmax			UINT ?	
-wNumButtons		UINT ?	
-wPeriodMin		UINT ?	
-wPeriodMax		UINT ?	
+wMid			dw ?
+wPid			dw ?
+szPname			db MAXPNAMELEN dup(?)
+wXmin			UINT ?
+wXmax			UINT ?
+wYmin			UINT ?
+wYmax			UINT ?
+wZmin			UINT ?
+wZmax			UINT ?
+wNumButtons		UINT ?
+wPeriodMin		UINT ?
+wPeriodMax		UINT ?
 if (WINVER GE 0x0400)
-wRmin			UINT ?	
-wRmax			UINT ?	
-wUmin			UINT ?	
-wUmax			UINT ?	
-wVmin			UINT ?	
-wVmax			UINT ?	
-wCaps			UINT ?	
-wMaxAxes		UINT ?	
-wNumAxes		UINT ?	
-wMaxButtons		UINT ?	
-szRegKey		db MAXPNAMELEN dup(?) 
-szOEMVxD		db MAX_JOYSTICKOEMVXDNAME dup(?) 
+wRmin			UINT ?
+wRmax			UINT ?
+wUmin			UINT ?
+wUmax			UINT ?
+wVmin			UINT ?
+wVmax			UINT ?
+wCaps			UINT ?
+wMaxAxes		UINT ?
+wNumAxes		UINT ?
+wMaxButtons		UINT ?
+szRegKey		db MAXPNAMELEN dup(?)
+szOEMVxD		db MAX_JOYSTICKOEMVXDNAME dup(?)
 endif
 JOYCAPSA		ENDS
 PJOYCAPSA		typedef ptr JOYCAPSA
 NPJOYCAPSA		typedef ptr JOYCAPSA
 LPJOYCAPSA		typedef ptr JOYCAPSA
 JOYCAPSW		STRUC
-wMid			dw ?	
-wPid			dw ?	
-szPname			dw MAXPNAMELEN dup(?) 
-wXmin			UINT ?	
-wXmax			UINT ?	
-wYmin			UINT ?	
-wYmax			UINT ?	
-wZmin			UINT ?	
-wZmax			UINT ?	
-wNumButtons		UINT ?	
-wPeriodMin		UINT ?	
-wPeriodMax		UINT ?	
+wMid			dw ?
+wPid			dw ?
+szPname			dw MAXPNAMELEN dup(?)
+wXmin			UINT ?
+wXmax			UINT ?
+wYmin			UINT ?
+wYmax			UINT ?
+wZmin			UINT ?
+wZmax			UINT ?
+wNumButtons		UINT ?
+wPeriodMin		UINT ?
+wPeriodMax		UINT ?
 if (WINVER GE 0x0400)
-wRmin			UINT ?	
-wRmax			UINT ?	
-wUmin			UINT ?	
-wUmax			UINT ?	
-wVmin			UINT ?	
-wVmax			UINT ?	
-wCaps			UINT ?	
-wMaxAxes		UINT ?	
-wNumAxes		UINT ?	
-wMaxButtons		UINT ?	
-szRegKey		dw MAXPNAMELEN dup(?) 
-szOEMVxD		dw MAX_JOYSTICKOEMVXDNAME dup(?) 
+wRmin			UINT ?
+wRmax			UINT ?
+wUmin			UINT ?
+wUmax			UINT ?
+wVmin			UINT ?
+wVmax			UINT ?
+wCaps			UINT ?
+wMaxAxes		UINT ?
+wNumAxes		UINT ?
+wMaxButtons		UINT ?
+szRegKey		dw MAXPNAMELEN dup(?)
+szOEMVxD		dw MAX_JOYSTICKOEMVXDNAME dup(?)
 endif
 JOYCAPSW		ENDS
 PJOYCAPSW		typedef ptr JOYCAPSW
@@ -2575,35 +2563,35 @@ JOYCAPS			typedef JOYCAPSA
 PJOYCAPS		typedef PJOYCAPSA
 NPJOYCAPS		typedef NPJOYCAPSA
 LPJOYCAPS		typedef LPJOYCAPSA
-endif 
+endif
 
 else
 JOYCAPS			STRUC
-wMid			dw ?	
-wPid			dw ?	
-szPname			db MAXPNAMELEN dup(?) 
-wXmin			UINT ?	
-wXmax			UINT ?	
-wYmin			UINT ?	
-wYmax			UINT ?	
-wZmin			UINT ?	
-wZmax			UINT ?	
-wNumButtons		UINT ?	
-wPeriodMin		UINT ?	
-wPeriodMax		UINT ?	
+wMid			dw ?
+wPid			dw ?
+szPname			db MAXPNAMELEN dup(?)
+wXmin			UINT ?
+wXmax			UINT ?
+wYmin			UINT ?
+wYmax			UINT ?
+wZmin			UINT ?
+wZmax			UINT ?
+wNumButtons		UINT ?
+wPeriodMin		UINT ?
+wPeriodMax		UINT ?
 if (WINVER GE 0x0400)
-wRmin			UINT ?	
-wRmax			UINT ?	
-wUmin			UINT ?	
-wUmax			UINT ?	
-wVmin			UINT ?	
-wVmax			UINT ?	
-wCaps			UINT ?	
-wMaxAxes		UINT ?	
-wNumAxes		UINT ?	
-wMaxButtons		UINT ?	
-szRegKey		db MAXPNAMELEN dup(?) 
-szOEMVxD		db MAX_JOYSTICKOEMVXDNAME dup(?) 
+wRmin			UINT ?
+wRmax			UINT ?
+wUmin			UINT ?
+wUmax			UINT ?
+wVmin			UINT ?
+wVmax			UINT ?
+wCaps			UINT ?
+wMaxAxes		UINT ?
+wNumAxes		UINT ?
+wMaxButtons		UINT ?
+szRegKey		db MAXPNAMELEN dup(?)
+szOEMVxD		db MAX_JOYSTICKOEMVXDNAME dup(?)
 endif
 JOYCAPS			ENDS
 PJOYCAPS		typedef ptr JOYCAPS
@@ -2612,10 +2600,10 @@ LPJOYCAPS		typedef ptr JOYCAPS
 endif
 
 JOYINFO			STRUC
-wXpos			UINT ?	
-wYpos			UINT ?	
-wZpos			UINT ?	
-wButtons		UINT ?	
+wXpos			UINT ?
+wYpos			UINT ?
+wZpos			UINT ?
+wButtons		UINT ?
 JOYINFO			ENDS
 PJOYINFO		typedef ptr JOYINFO
 NPJOYINFO		typedef ptr JOYINFO
@@ -2623,24 +2611,24 @@ LPJOYINFO		typedef ptr JOYINFO
 
 if(WINVER GE 0x0400)
 JOYINFOEX		STRUC
-dwSize			dd ?	
-dwFlags			dd ?	
-dwXpos			dd ?	
-dwYpos			dd ?	
-dwZpos			dd ?	
-dwRpos			dd ?	
-dwUpos			dd ?	
-dwVpos			dd ?	
-dwButtons		dd ?	
-dwButtonNumber		dd ?	
-dwPOV			dd ?	
-dwReserved1		dd ?	
-dwReserved2		dd ?	
+dwSize			dd ?
+dwFlags			dd ?
+dwXpos			dd ?
+dwYpos			dd ?
+dwZpos			dd ?
+dwRpos			dd ?
+dwUpos			dd ?
+dwVpos			dd ?
+dwButtons		dd ?
+dwButtonNumber		dd ?
+dwPOV			dd ?
+dwReserved1		dd ?
+dwReserved2		dd ?
 JOYINFOEX		ENDS
 PJOYINFOEX		typedef ptr JOYINFOEX
 NPJOYINFOEX		typedef ptr JOYINFOEX
 LPJOYINFOEX		typedef ptr JOYINFOEX
-endif 
+endif
 
 ifndef _WIN32_VXD
 
@@ -2661,7 +2649,7 @@ ifdef _UNICODE
 joyGetDevCaps		equ <joyGetDevCapsW>
 else
 joyGetDevCaps		equ <joyGetDevCapsA>
-endif 
+endif
 
 else
 ;MMRESULT
@@ -2680,7 +2668,7 @@ if(WINVER GE 0x0400)
 joyGetPosEx proto WINAPI \
 		uJoyID: UINT,
 		   pji: LPJOYINFOEX
-endif 
+endif
 
 ;MMRESULT
 joyGetThreshold proto WINAPI \
@@ -2700,64 +2688,61 @@ joySetThreshold proto WINAPI \
 		uJoyID: UINT,
 	    uThreshold: UINT
 
-endif 
+endif
 
-endif  
+endif
 
 ifndef MMNOMMIO
 ifndef _WIN32_VXD
 
 MMIOERR_BASE		equ 256
-MMIOERR_FILENOTFOUND	equ (MMIOERR_BASE + 1)	
-MMIOERR_OUTOFMEMORY	equ (MMIOERR_BASE + 2)	
-MMIOERR_CANNOTOPEN	equ (MMIOERR_BASE + 3)	
-MMIOERR_CANNOTCLOSE	equ (MMIOERR_BASE + 4)	
-MMIOERR_CANNOTREAD	equ (MMIOERR_BASE + 5)	
-MMIOERR_CANNOTWRITE	equ (MMIOERR_BASE + 6)	
-MMIOERR_CANNOTSEEK	equ (MMIOERR_BASE + 7)	
-MMIOERR_CANNOTEXPAND	equ (MMIOERR_BASE + 8)	
-MMIOERR_CHUNKNOTFOUND	equ (MMIOERR_BASE + 9)	
-MMIOERR_UNBUFFERED	equ (MMIOERR_BASE + 10) 
-MMIOERR_PATHNOTFOUND	equ (MMIOERR_BASE + 11) 
-MMIOERR_ACCESSDENIED	equ (MMIOERR_BASE + 12) 
-MMIOERR_SHARINGVIOLATION equ (MMIOERR_BASE + 13) 
-MMIOERR_NETWORKERROR	equ (MMIOERR_BASE + 14) 
-MMIOERR_TOOMANYOPENFILES equ (MMIOERR_BASE + 15) 
-MMIOERR_INVALIDFILE	equ (MMIOERR_BASE + 16) 
+MMIOERR_FILENOTFOUND	equ (MMIOERR_BASE + 1)
+MMIOERR_OUTOFMEMORY	equ (MMIOERR_BASE + 2)
+MMIOERR_CANNOTOPEN	equ (MMIOERR_BASE + 3)
+MMIOERR_CANNOTCLOSE	equ (MMIOERR_BASE + 4)
+MMIOERR_CANNOTREAD	equ (MMIOERR_BASE + 5)
+MMIOERR_CANNOTWRITE	equ (MMIOERR_BASE + 6)
+MMIOERR_CANNOTSEEK	equ (MMIOERR_BASE + 7)
+MMIOERR_CANNOTEXPAND	equ (MMIOERR_BASE + 8)
+MMIOERR_CHUNKNOTFOUND	equ (MMIOERR_BASE + 9)
+MMIOERR_UNBUFFERED	equ (MMIOERR_BASE + 10)
+MMIOERR_PATHNOTFOUND	equ (MMIOERR_BASE + 11)
+MMIOERR_ACCESSDENIED	equ (MMIOERR_BASE + 12)
+MMIOERR_SHARINGVIOLATION equ (MMIOERR_BASE + 13)
+MMIOERR_NETWORKERROR	equ (MMIOERR_BASE + 14)
+MMIOERR_TOOMANYOPENFILES equ (MMIOERR_BASE + 15)
+MMIOERR_INVALIDFILE	equ (MMIOERR_BASE + 16)
 
-CFSEPCHAR		equ '+'		    
+CFSEPCHAR		equ '+'
 
-FOURCC			typedef DWORD	
-HPSTR			typedef ptr	
-HMMIO			typedef HANDLE	
+FOURCC			typedef DWORD
+HPSTR			typedef ptr
+HMMIO			typedef HANDLE
+
 ;LRESULT
-MMIOPROC typedef proto WINAPI \
-	    lpmmioinfo: LPSTR,
-		  uMsg: UINT,
-	       lParam1: LPARAM,
-	       lParam2: LPARAM
-LPMMIOPROC		typedef ptr MMIOPROC
+
+CALLBACK(LPMMIOPROC, lpmmioinfo:LPSTR, uMsg:UINT, lParam1:LPARAM, lParam2:LPARAM)
 
 MMIOINFO		STRUC
-dwFlags			dd ?	
-fccIOProc		FOURCC ?	
-pIOProc			LPMMIOPROC ?	
-wErrorRet		UINT ?	
-htask			HTASK ? 
+dwFlags			dd ?
+fccIOProc		FOURCC ?
+pIOProc			LPMMIOPROC ?
+wErrorRet		UINT ?
+htask			HTASK ?
 
-cchBuffer		LONG ?	
-pchBuffer		HPSTR ? 
-pchNext			HPSTR ? 
-pchEndRead		HPSTR ? 
-pchEndWrite		HPSTR ? 
-lBufOffset		LONG ?	
+cchBuffer		LONG ?
+pchBuffer		HPSTR ?
+pchNext			HPSTR ?
+pchEndRead		HPSTR ?
+pchEndWrite		HPSTR ?
+lBufOffset		LONG ?
 
-lDiskOffset		LONG ?	
-adwInfo			dd 3 dup(?)	
+lDiskOffset		LONG ?
+adwInfo			dd 3 dup(?)
 
-dwReserved1		dd ?	
-dwReserved2		dd ?	
-hmmio			HMMIO ? 
+dwReserved1		dd ?
+dwReserved2		dd ?
+hmmio			HMMIO ?
 MMIOINFO		ENDS
 PMMIOINFO		typedef ptr MMIOINFO
 NPMMIOINFO		typedef ptr MMIOINFO
@@ -2765,65 +2750,65 @@ LPMMIOINFO		typedef ptr MMIOINFO
 LPCMMIOINFO		typedef ptr MMIOINFO
 
 MMCKINFO		STRUC
-ckid			FOURCC ?	
-cksize			dd ?	
-fccType			FOURCC ?	
-dwDataOffset		dd ?	
-dwFlags			dd ?	
+ckid			FOURCC ?
+cksize			dd ?
+fccType			FOURCC ?
+dwDataOffset		dd ?
+dwFlags			dd ?
 MMCKINFO		ENDS
 PMMCKINFO		typedef ptr MMCKINFO
 NPMMCKINFO		typedef ptr MMCKINFO
 LPMMCKINFO		typedef ptr MMCKINFO
 LPCMMCKINFO		typedef ptr MMCKINFO
 
-MMIO_RWMODE		equ 0x00000003	    
-MMIO_SHAREMODE		equ 0x00000070	    
+MMIO_RWMODE		equ 0x00000003
+MMIO_SHAREMODE		equ 0x00000070
 
-MMIO_CREATE		equ 0x00001000	    
-MMIO_PARSE		equ 0x00000100	    
-MMIO_DELETE		equ 0x00000200	    
-MMIO_EXIST		equ 0x00004000	    
-MMIO_ALLOCBUF		equ 0x00010000	    
-MMIO_GETTEMP		equ 0x00020000	    
+MMIO_CREATE		equ 0x00001000
+MMIO_PARSE		equ 0x00000100
+MMIO_DELETE		equ 0x00000200
+MMIO_EXIST		equ 0x00004000
+MMIO_ALLOCBUF		equ 0x00010000
+MMIO_GETTEMP		equ 0x00020000
 
-MMIO_DIRTY		equ 0x10000000	    
+MMIO_DIRTY		equ 0x10000000
 
-MMIO_READ		equ 0x00000000	    
-MMIO_WRITE		equ 0x00000001	    
-MMIO_READWRITE		equ 0x00000002	    
+MMIO_READ		equ 0x00000000
+MMIO_WRITE		equ 0x00000001
+MMIO_READWRITE		equ 0x00000002
 
-MMIO_COMPAT		equ 0x00000000	    
-MMIO_EXCLUSIVE		equ 0x00000010	    
-MMIO_DENYWRITE		equ 0x00000020	    
-MMIO_DENYREAD		equ 0x00000030	    
-MMIO_DENYNONE		equ 0x00000040	    
+MMIO_COMPAT		equ 0x00000000
+MMIO_EXCLUSIVE		equ 0x00000010
+MMIO_DENYWRITE		equ 0x00000020
+MMIO_DENYREAD		equ 0x00000030
+MMIO_DENYNONE		equ 0x00000040
 
-MMIO_FHOPEN		equ 0x0010  
-MMIO_EMPTYBUF		equ 0x0010  
-MMIO_TOUPPER		equ 0x0010  
-MMIO_INSTALLPROC	equ 0x00010000	
-MMIO_GLOBALPROC		equ 0x10000000	
-MMIO_REMOVEPROC		equ 0x00020000	
-MMIO_UNICODEPROC	equ 0x01000000	
-MMIO_FINDPROC		equ 0x00040000	
-MMIO_FINDCHUNK		equ 0x0010  
-MMIO_FINDRIFF		equ 0x0020  
-MMIO_FINDLIST		equ 0x0040  
-MMIO_CREATERIFF		equ 0x0020  
-MMIO_CREATELIST		equ 0x0040  
+MMIO_FHOPEN		equ 0x0010
+MMIO_EMPTYBUF		equ 0x0010
+MMIO_TOUPPER		equ 0x0010
+MMIO_INSTALLPROC	equ 0x00010000
+MMIO_GLOBALPROC		equ 0x10000000
+MMIO_REMOVEPROC		equ 0x00020000
+MMIO_UNICODEPROC	equ 0x01000000
+MMIO_FINDPROC		equ 0x00040000
+MMIO_FINDCHUNK		equ 0x0010
+MMIO_FINDRIFF		equ 0x0020
+MMIO_FINDLIST		equ 0x0040
+MMIO_CREATERIFF		equ 0x0020
+MMIO_CREATELIST		equ 0x0040
 
-MMIOM_READ		equ MMIO_READ	    
-MMIOM_WRITE		equ MMIO_WRITE	     
-MMIOM_SEEK		equ 2	    
-MMIOM_OPEN		equ 3	    
-MMIOM_CLOSE		equ 4	    
-MMIOM_WRITEFLUSH	equ 5	    
+MMIOM_READ		equ MMIO_READ
+MMIOM_WRITE		equ MMIO_WRITE
+MMIOM_SEEK		equ 2
+MMIOM_OPEN		equ 3
+MMIOM_CLOSE		equ 4
+MMIOM_WRITEFLUSH	equ 5
 
 if (WINVER GE 0x030a)
-MMIOM_RENAME		equ 6	    
-endif 
+MMIOM_RENAME		equ 6
+endif
 
-MMIOM_USER		equ 0x8000	 
+MMIOM_USER		equ 0x8000
 
 mmioFOURCC macro ch0, ch1, ch2, ch3
 	exitm<MAKEFOURCC(ch0, ch1, ch2, ch3)>
@@ -2836,12 +2821,12 @@ FOURCC_DOS		equ mmioFOURCC('D', 'O', 'S', ' ')
 FOURCC_MEM		equ mmioFOURCC('M', 'E', 'M', ' ')
 
 ifndef SEEK_SET
-SEEK_SET		equ 0		    
-SEEK_CUR		equ 1		    
-SEEK_END		equ 2		    
-endif  
+SEEK_SET		equ 0
+SEEK_CUR		equ 1
+SEEK_END		equ 2
+endif
 
-MMIO_DEFAULTBUFFER	equ 8192    
+MMIO_DEFAULTBUFFER	equ 8192
 
 
 ifdef _WIN32
@@ -2857,7 +2842,7 @@ ifdef _UNICODE
 mmioStringToFOURCC	equ <mmioStringToFOURCCW>
 else
 mmioStringToFOURCC	equ <mmioStringToFOURCCA>
-endif 
+endif
 ;LPMMIOPROC
 mmioInstallIOProcA proto WINAPI \
 	     fccIOProc: FOURCC,
@@ -2871,7 +2856,7 @@ ifdef _UNICODE
 mmioInstallIOProc	equ <mmioInstallIOProcW>
 else
 mmioInstallIOProc	equ <mmioInstallIOProcA>
-endif 
+endif
 ;HMMIO
 mmioOpenA proto WINAPI \
 	   pszFileName: LPSTR,
@@ -2885,7 +2870,7 @@ ifdef _UNICODE
 mmioOpen		equ <mmioOpenW>
 else
 mmioOpen		equ <mmioOpenA>
-endif 
+endif
 ;MMRESULT
 mmioRenameA proto WINAPI \
 	   pszFileName: LPCSTR,
@@ -2901,7 +2886,7 @@ ifdef _UNICODE
 mmioRename		equ <mmioRenameW>
 else
 mmioRename		equ <mmioRenameA>
-endif 
+endif
 else
 ;FOURCC
 mmioStringToFOURCC proto WINAPI \
@@ -2923,7 +2908,7 @@ mmioRename proto WINAPI \
 	pszNewFileName: LPCSTR,
 	     pmmioinfo: ptr MMIOINFO,
 	     fdwRename: DWORD
-endif 
+endif
 endif
 
 ;MMRESULT
@@ -3003,27 +2988,25 @@ mmioCreateChunk proto WINAPI \
 		pmmcki: LPMMCKINFO,
 	      fuCreate: UINT
 
-endif  
-endif  
+endif
+endif
 
 ifndef MMNOMCI
 ifndef _WIN32_VXD
 
-ifndef _MCIERROR_	       
+ifndef _MCIERROR_
 _MCIERROR_		equ 1
-MCIERROR		typedef DWORD	     
+MCIERROR		typedef DWORD
 endif
 
-ifndef _MCIDEVICEID_	       
+ifndef _MCIDEVICEID_
 _MCIDEVICEID_		equ 1
-MCIDEVICEID		typedef UINT	 
+MCIDEVICEID		typedef UINT
 endif
 
 ;UINT
-YIELDPROC_T typedef proto WINAPI \
-		 mciId: MCIDEVICEID,
-	   dwYieldData: DWORD
-YIELDPROC typedef ptr YIELDPROC_T
+CALLBACK(YIELDPROC, mciId:MCIDEVICEID, dwYieldData:DWORD)
+
 ifdef _WIN32
 
 ;MCIERROR
@@ -3041,7 +3024,7 @@ ifdef _UNICODE
 mciSendCommand		equ <mciSendCommandW>
 else
 mciSendCommand		equ <mciSendCommandA>
-endif 
+endif
 ;MCIERROR
 mciSendStringA proto WINAPI \
 	  lpstrCommand: LPCSTR,
@@ -3057,7 +3040,7 @@ ifdef _UNICODE
 mciSendString		equ <mciSendStringW>
 else
 mciSendString		equ <mciSendStringA>
-endif 
+endif
 ;MCIDEVICEID
 mciGetDeviceIDA proto WINAPI \
 	     pszDevice: LPCSTR
@@ -3067,7 +3050,7 @@ ifdef _UNICODE
 mciGetDeviceID		equ <mciGetDeviceIDW>
 else
 mciGetDeviceID		equ <mciGetDeviceIDA>
-endif 
+endif
 ;MCIDEVICEID
 mciGetDeviceIDFromElementIDA proto WINAPI \
 	   dwElementID: DWORD,
@@ -3079,7 +3062,7 @@ ifdef _UNICODE
 mciGetDeviceIDFromElementID equ <mciGetDeviceIDFromElementIDW>
 else
 mciGetDeviceIDFromElementID equ <mciGetDeviceIDFromElementIDA>
-endif 
+endif
 
 ;BOOL
 mciGetErrorStringA proto WINAPI \
@@ -3094,7 +3077,7 @@ ifdef _UNICODE
 mciGetErrorString	equ <mciGetErrorStringW>
 else
 mciGetErrorString	equ <mciGetErrorStringA>
-endif 
+endif
 
 else
 ;MCIERROR
@@ -3133,11 +3116,11 @@ mciGetCreatorTaskg proto WINAPI \
 mciGetYieldProcg proto WINAPI \
 		 mciId: MCIDEVICEID,
 	  pdwYieldData: LPDWORD
-endif 
+endif
 
 if (WINVER LT 0x030a)
 ;WINMMAPI BOOL WINAPI mciExecute(LPCSTR pszCommand);
-endif 
+endif
 
 MCIERR_INVALID_DEVICE_ID equ (MCIERR_BASE + 1)
 MCIERR_UNRECOGNIZED_KEYWORD equ (MCIERR_BASE + 3)
@@ -3221,7 +3204,7 @@ MCIERR_NO_IDENTITY	equ (MCIERR_BASE + 94)
 
 MCIERR_CUSTOM_DRIVER_BASE equ (MCIERR_BASE + 256)
 
-MCI_FIRST		equ DRV_MCI_FIRST   
+MCI_FIRST		equ DRV_MCI_FIRST
 MCI_OPEN		equ 0x0803
 MCI_CLOSE		equ 0x0804
 MCI_ESCAPE		equ 0x0805
@@ -3259,17 +3242,17 @@ MCI_LAST		equ 0x0FFF
 
 MCI_ALL_DEVICE_ID	equ -1
 
-MCI_DEVTYPE_VCR		equ 513 
-MCI_DEVTYPE_VIDEODISC	equ 514 
-MCI_DEVTYPE_OVERLAY	equ 515 
-MCI_DEVTYPE_CD_AUDIO	equ 516 
-MCI_DEVTYPE_DAT		equ 517 
-MCI_DEVTYPE_SCANNER	equ 518 
-MCI_DEVTYPE_ANIMATION	equ 519 
-MCI_DEVTYPE_DIGITAL_VIDEO equ 520 
-MCI_DEVTYPE_OTHER	equ 521 
-MCI_DEVTYPE_WAVEFORM_AUDIO equ 522 
-MCI_DEVTYPE_SEQUENCER	equ 523 
+MCI_DEVTYPE_VCR		equ 513
+MCI_DEVTYPE_VIDEODISC	equ 514
+MCI_DEVTYPE_OVERLAY	equ 515
+MCI_DEVTYPE_CD_AUDIO	equ 516
+MCI_DEVTYPE_DAT		equ 517
+MCI_DEVTYPE_SCANNER	equ 518
+MCI_DEVTYPE_ANIMATION	equ 519
+MCI_DEVTYPE_DIGITAL_VIDEO equ 520
+MCI_DEVTYPE_OTHER	equ 521
+MCI_DEVTYPE_WAVEFORM_AUDIO equ 522
+MCI_DEVTYPE_SEQUENCER	equ 523
 
 MCI_DEVTYPE_FIRST	equ MCI_DEVTYPE_VCR
 MCI_DEVTYPE_LAST	equ MCI_DEVTYPE_SEQUENCER
@@ -3454,7 +3437,7 @@ else
 MCI_OPEN_PARMS		typedef MCI_OPEN_PARMSA
 PMCI_OPEN_PARMS		typedef PMCI_OPEN_PARMSA
 LPMCI_OPEN_PARMS	typedef LPMCI_OPEN_PARMSA
-endif 
+endif
 
 else
 MCI_OPEN_PARMS		STRUC
@@ -3512,7 +3495,7 @@ LPMCI_INFO_PARMS	typedef LPMCI_INFO_PARMSW
 else
 MCI_INFO_PARMS		typedef MCI_INFO_PARMSA
 LPMCI_INFO_PARMS	typedef LPMCI_INFO_PARMSA
-endif 
+endif
 
 else
 MCI_INFO_PARMS		STRUC
@@ -3559,7 +3542,7 @@ else
 MCI_SYSINFO_PARMS	typedef MCI_SYSINFO_PARMSA
 PMCI_SYSINFO_PARMS	typedef PMCI_SYSINFO_PARMSA
 LPMCI_SYSINFO_PARMS	typedef LPMCI_SYSINFO_PARMSA
-endif 
+endif
 else
 MCI_SYSINFO_PARMS	STRUC
 dwCallback		dd ?
@@ -3587,9 +3570,9 @@ nVirtKey		SINT ?
 hwndBreak		HWND ?
 else
 nVirtKey		SWORD ?
-wReserved0		dw ?	
+wReserved0		dw ?
 hwndBreak		HWND ?
-wReserved1		dw ?	
+wReserved1		dw ?
 endif
 MCI_BREAK_PARMS		ENDS
 PMCI_BREAK_PARMS	typedef ptr MCI_BREAK_PARMS
@@ -3617,7 +3600,7 @@ else
 MCI_SAVE_PARMS		typedef MCI_SAVE_PARMSA
 PMCI_SAVE_PARMS		typedef PMCI_SAVE_PARMSA
 LPMCI_SAVE_PARMS	typedef LPMCI_SAVE_PARMSA
-endif 
+endif
 
 else
 MCI_SAVE_PARMS		STRUC
@@ -3649,7 +3632,7 @@ else
 MCI_LOAD_PARMS		typedef MCI_LOAD_PARMSA
 PMCI_LOAD_PARMS		typedef PMCI_LOAD_PARMSA
 LPMCI_LOAD_PARMS	typedef LPMCI_LOAD_PARMSA
-endif 
+endif
 
 else
 MCI_LOAD_PARMS		STRUC
@@ -3743,7 +3726,7 @@ else
 MCI_VD_ESCAPE_PARMS	typedef MCI_VD_ESCAPE_PARMSA
 PMCI_VD_ESCAPE_PARMS	typedef PMCI_VD_ESCAPE_PARMSA
 LPMCI_VD_ESCAPE_PARMS	typedef LPMCI_VD_ESCAPE_PARMSA
-endif 
+endif
 
 else
 MCI_VD_ESCAPE_PARMS	STRUC
@@ -3819,7 +3802,7 @@ else
 MCI_WAVE_OPEN_PARMS	typedef MCI_WAVE_OPEN_PARMSA
 PMCI_WAVE_OPEN_PARMS	typedef PMCI_WAVE_OPEN_PARMSA
 LPMCI_WAVE_OPEN_PARMS	typedef LPMCI_WAVE_OPEN_PARMSA
-endif 
+endif
 
 else
 MCI_WAVE_OPEN_PARMS	STRUC
@@ -3993,7 +3976,7 @@ else
 MCI_ANIM_OPEN_PARMS	typedef MCI_ANIM_OPEN_PARMSA
 PMCI_ANIM_OPEN_PARMS	typedef PMCI_ANIM_OPEN_PARMSA
 LPMCI_ANIM_OPEN_PARMS	typedef LPMCI_ANIM_OPEN_PARMSA
-endif 
+endif
 
 else
 MCI_ANIM_OPEN_PARMS	STRUC
@@ -4052,7 +4035,7 @@ else
 MCI_ANIM_WINDOW_PARMS	typedef MCI_ANIM_WINDOW_PARMSA
 PMCI_ANIM_WINDOW_PARMS	typedef PMCI_ANIM_WINDOW_PARMSA
 LPMCI_ANIM_WINDOW_PARMS typedef LPMCI_ANIM_WINDOW_PARMSA
-endif 
+endif
 
 else
 MCI_ANIM_WINDOW_PARMS	STRUC
@@ -4071,9 +4054,9 @@ dwCallback		dd ?
 ifdef MCI_USE_OFFEXT
 ptOffset		POINT ?
 ptExtent		POINT ?
-else   
+else
 rc			RECT <>
-endif  
+endif
 MCI_ANIM_RECT_PARMS	ENDS
 PMCI_ANIM_RECT_PARMS	typedef ptr MCI_ANIM_RECT_PARMS
 LPMCI_ANIM_RECT_PARMS	typedef ptr MCI_ANIM_RECT_PARMS
@@ -4150,7 +4133,7 @@ else
 MCI_OVLY_OPEN_PARMS	typedef MCI_OVLY_OPEN_PARMSA
 PMCI_OVLY_OPEN_PARMS	typedef PMCI_OVLY_OPEN_PARMSA
 LPMCI_OVLY_OPEN_PARMS	typedef LPMCI_OVLY_OPEN_PARMSA
-endif 
+endif
 
 else
 MCI_OVLY_OPEN_PARMS	STRUC
@@ -4193,7 +4176,7 @@ else
 MCI_OVLY_WINDOW_PARMS	typedef MCI_OVLY_WINDOW_PARMSA
 PMCI_OVLY_WINDOW_PARMS	typedef PMCI_OVLY_WINDOW_PARMSA
 LPMCI_OVLY_WINDOW_PARMS typedef LPMCI_OVLY_WINDOW_PARMSA
-endif 
+endif
 else
 MCI_OVLY_WINDOW_PARMS	STRUC
 dwCallback		dd ?
@@ -4211,9 +4194,9 @@ dwCallback		dd ?
 ifdef MCI_USE_OFFEXT
 ptOffset		POINT ?
 ptExtent		POINT ?
-else   
+else
 rc			RECT <>
-endif  
+endif
 MCI_OVLY_RECT_PARMS	ENDS
 PMCI_OVLY_RECT_PARMS	typedef ptr MCI_OVLY_RECT_PARMS
  LPMCI_OVLY_RECT_PARMS	typedef ptr MCI_OVLY_RECT_PARMS
@@ -4242,7 +4225,7 @@ else
 MCI_OVLY_SAVE_PARMS	typedef MCI_OVLY_SAVE_PARMSA
 PMCI_OVLY_SAVE_PARMS	typedef PMCI_OVLY_SAVE_PARMSA
 LPMCI_OVLY_SAVE_PARMS	typedef LPMCI_OVLY_SAVE_PARMSA
-endif 
+endif
 else
 MCI_OVLY_SAVE_PARMS	STRUC
 dwCallback		dd ?
@@ -4276,7 +4259,7 @@ else
 MCI_OVLY_LOAD_PARMS	typedef MCI_OVLY_LOAD_PARMSA
 PMCI_OVLY_LOAD_PARMS	typedef PMCI_OVLY_LOAD_PARMSA
 LPMCI_OVLY_LOAD_PARMS	typedef LPMCI_OVLY_LOAD_PARMSA
-endif 
+endif
 else
 MCI_OVLY_LOAD_PARMS	STRUC
 dwCallback		dd ?
@@ -4286,18 +4269,18 @@ MCI_OVLY_LOAD_PARMS	ENDS
 LPMCI_OVLY_LOAD_PARMS	typedef ptr MCI_OVLY_LOAD_PARMS
 endif
 
-endif  
-endif  
+endif
+endif
 
 
 ifndef NEWTRANSPARENT
-NEWTRANSPARENT		equ 3		
+NEWTRANSPARENT		equ 3
 
-QUERYROPSUPPORT		equ 40		
-endif  
+QUERYROPSUPPORT		equ 40
+endif
 
 
-SELECTDIB		equ 41			    
+SELECTDIB		equ 41
 DIBINDEX macro n
 	exitm<MAKEONG(n,0x10FF)>
 	endm
@@ -4307,7 +4290,7 @@ ifndef SC_SCREENSAVE
 
 SC_SCREENSAVE		equ 0xF140
 
-endif  
-endif  
+endif
+endif
 
 .list

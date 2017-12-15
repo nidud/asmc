@@ -6,7 +6,7 @@ ifndef _WINDEF_
 endif
 .xlist
 ifndef _IMM_
-_IMM_ equ 1 
+_IMM_ equ 1
 
 if (WINVER GE 0x40A)
 HIMC			typedef HANDLE
@@ -78,7 +78,7 @@ REGISTERWORD		typedef REGISTERWORDA
 PREGISTERWORD		typedef PREGISTERWORDA
 NPREGISTERWORD		typedef NPREGISTERWORDA
 LPREGISTERWORD		typedef LPREGISTERWORDA
-endif 
+endif
 
 
 if(WINVER GE 0x040A)
@@ -123,7 +123,7 @@ STYLEBUF		typedef STYLEBUFA
 PSTYLEBUF		typedef PSTYLEBUFA
 NPSTYLEBUF		typedef NPSTYLEBUFA
 LPSTYLEBUF		typedef LPSTYLEBUFA
-endif 
+endif
 
 
 if(WINVER GE 0x040A)
@@ -167,8 +167,8 @@ IMEMENUITEMINFO		typedef IMEMENUITEMINFOA
 PIMEMENUITEMINFO	typedef PIMEMENUITEMINFOA
 NPIMEMENUITEMINFO	typedef NPIMEMENUITEMINFOA
 LPIMEMENUITEMINFO	typedef LPIMEMENUITEMINFOA
-endif 
-endif  
+endif
+endif
 
 
 ImmInstallIMEA proto WINAPI \
@@ -181,7 +181,7 @@ ifdef _UNICODE
 ImmInstallIME		equ <ImmInstallIMEW>
 else
 ImmInstallIME		equ <ImmInstallIMEA>
-endif 
+endif
 
 ;HWND
 ImmGetDefaultIMEWnd proto WINAPI \
@@ -201,7 +201,7 @@ ifdef _UNICODE
 ImmGetDescription	equ <ImmGetDescriptionW>
 else
 ImmGetDescription	equ <ImmGetDescriptionA>
-endif 
+endif
 
 ;UINT
 ImmGetIMEFileNameA proto WINAPI \
@@ -217,7 +217,7 @@ ifdef _UNICODE
 ImmGetIMEFileName	equ <ImmGetIMEFileNameW>
 else
 ImmGetIMEFileName	equ <ImmGetIMEFileNameA>
-endif 
+endif
 
 ;DWORD
 ImmGetProperty proto WINAPI \
@@ -253,7 +253,7 @@ ImmAssociateContextEx proto WINAPI \
 		      : HWND,
 		      : HIMC,
 		      : DWORD
-endif 
+endif
 
 ;LONG
 ImmGetCompositionStringA proto WINAPI \
@@ -270,7 +270,7 @@ ifdef _UNICODE
 ImmGetCompositionString equ <ImmGetCompositionStringW>
 else
 ImmGetCompositionString equ <ImmGetCompositionStringA>
-endif 
+endif
 
 ;BOOL
 ImmSetCompositionStringA proto WINAPI \
@@ -291,7 +291,7 @@ ifdef _UNICODE
 ImmSetCompositionString equ <ImmSetCompositionStringW>
 else
 ImmSetCompositionString equ <ImmSetCompositionStringA>
-endif 
+endif
 
 ;DWORD
 ImmGetCandidateListCountA proto WINAPI \
@@ -304,7 +304,7 @@ ifdef _UNICODE
 ImmGetCandidateListCount equ <ImmGetCandidateistCountW>
 else
 ImmGetCandidateListCount equ <ImmGetCandidateistCountA>
-endif 
+endif
 
 ;DWORD
 ImmGetCandidateListA proto WINAPI \
@@ -321,7 +321,7 @@ ifdef _UNICODE
 ImmGetCandidateList	equ <ImmGetCandidateistW>
 else
 ImmGetCandidateList	equ <ImmGetCandidateistA>
-endif 
+endif
 
 ;DWORD
 ImmGetGuideLineA proto WINAPI \
@@ -338,7 +338,7 @@ ifdef _UNICODE
 ImmGetGuideLine		equ <ImmGetGuideineW>
 else
 ImmGetGuideLine		equ <ImmGetGuideineA>
-endif 
+endif
 
 ;BOOL
 ImmGetConversionStatus proto WINAPI \
@@ -368,7 +368,7 @@ ifdef _UNICODE
 ImmGetCompositionFont	equ <ImmGetCompositionFontW>
 else
 ImmGetCompositionFont	equ <ImmGetCompositionFontA>
-endif 
+endif
 
 ;BOOL
 ImmSetCompositionFontA proto WINAPI \
@@ -381,9 +381,9 @@ ifdef _UNICODE
 ImmSetCompositionFont	equ <ImmSetCompositionFontW>
 else
 ImmSetCompositionFont	equ <ImmSetCompositionFontA>
-endif 
-endif  
-endif  
+endif
+endif
+endif
 
 ;BOOL
 ImmConfigureIMEA proto WINAPI \
@@ -400,7 +400,7 @@ ifdef _UNICODE
 ImmConfigureIME		equ <ImmConfigureIMEW>
 else
 ImmConfigureIME		equ <ImmConfigureIMEA>
-endif 
+endif
 
 ;LRESULT
 ImmEscapeA proto WINAPI \
@@ -417,7 +417,7 @@ ifdef _UNICODE
 ImmEscape		equ <ImmEscapeW>
 else
 ImmEscape		equ <ImmEscapeA>
-endif 
+endif
 
 ;DWORD
 ImmGetConversionListA proto WINAPI \
@@ -438,7 +438,7 @@ ifdef _UNICODE
 ImmGetConversionList	equ <ImmGetConversionListW>
 else
 ImmGetConversionList	equ <ImmGetConversionListA>
-endif 
+endif
 
 ;BOOL
 ImmNotifyIME proto WINAPI \
@@ -490,31 +490,18 @@ ifdef _UNICODE
 ImmIsUIMessage		equ <ImmIsUIMessageW>
 else
 ImmIsUIMessage		equ <ImmIsUIMessageA>
-endif 
+endif
 
 
 ;UINT
 
-REGISTERWORDENUMPROCA_T typedef proto WINAPI \
-	   lpszReading: LPCSTR,
-		      : DWORD,
-	  lpszRegister: LPCSTR,
-		      : LPVOID
-REGISTERWORDENUMPROCW_T typedef proto WINAPI \
-	   lpszReading: LPCWSTR,
-		      : DWORD,
-	  lpszRegister: LPCWSTR,
-		      : LPVOID
-
-REGISTERWORDENUMPROCA typedef ptr REGISTERWORDENUMPROCA_T
-REGISTERWORDENUMPROCW typedef ptr REGISTERWORDENUMPROCW_T
-
-
+CALLBACK(REGISTERWORDENUMPROCA, lpszReading:LPCSTR, :DWORD, lpszRegister:LPCSTR, :LPVOID)
+CALLBACK(REGISTERWORDENUMPROCW, lpszReading:LPCWSTR, :DWORD, lpszRegister:LPCWSTR, :LPVOID)
 ifdef _UNICODE
 REGISTERWORDENUMPROC	equ <<REGISTERWORDENUMPROCW>
 else
 REGISTERWORDENUMPROC	equ <<REGISTERWORDENUMPROCA>
-endif 
+endif
 
 ;BOOL
 ImmRegisterWordA proto WINAPI \
@@ -531,7 +518,7 @@ ifdef _UNICODE
 ImmRegisterWord		equ <ImmRegisterWordW>
 else
 ImmRegisterWord		equ <ImmRegisterWordA>
-endif 
+endif
 
 ;BOOL
 ImmUnregisterWordA proto WINAPI \
@@ -549,7 +536,7 @@ ifdef _UNICODE
 ImmUnregisterWord	equ <ImmUnregisterWordW>
 else
 ImmUnregisterWord	equ <ImmUnregisterWordA>
-endif 
+endif
 
 ;UINT
 ImmGetRegisterWordStyleA proto WINAPI \
@@ -565,7 +552,7 @@ ifdef _UNICODE
 ImmGetRegisterWordStyle equ <ImmGetRegisterWordStyleW>
 else
 ImmGetRegisterWordStyle equ <ImmGetRegisterWordStyleA>
-endif 
+endif
 
 ;UINT
 ImmEnumRegisterWordA proto WINAPI \
@@ -587,7 +574,7 @@ ifdef _UNICODE
 ImmEnumRegisterWord	equ <ImmEnumRegisterWordW>
 else
 ImmEnumRegisterWord	equ <ImmEnumRegisterWordA>
-endif 
+endif
 
 if(WINVER GE 0x040A)
 ;BOOL
@@ -611,9 +598,9 @@ ifdef _UNICODE
 ImmGetImeMenuItems	equ <ImmGetImeMenuItemsW>
 else
 ImmGetImeMenuItems	equ <ImmGetImeMenuItemsA>
-endif 
+endif
 
-endif 
+endif
 
 
 
@@ -800,7 +787,7 @@ IME_CMODE_CHINESE	equ IME_CMODE_NATIVE
 IME_CMODE_HANGEUL	equ IME_CMODE_NATIVE
 IME_CMODE_HANGUL	equ IME_CMODE_NATIVE
 IME_CMODE_JAPANESE	equ IME_CMODE_NATIVE
-IME_CMODE_KATAKANA	equ 0x0002  
+IME_CMODE_KATAKANA	equ 0x0002
 IME_CMODE_LANGUAGE	equ 0x0003
 IME_CMODE_FULLSHAPE	equ 0x0008
 IME_CMODE_ROMAN		equ 0x0010
@@ -907,11 +894,11 @@ IMFS_ENABLED		equ MFS_ENABED
 IMFS_UNCHECKED		equ MFS_UNCHECKED
 IMFS_UNHILITE		equ MFS_UNHILITE
 IMFS_DEFAULT		equ MFS_DEFAULT
-endif 
+endif
 
 SOFTKEYBOARD_TYPE_T1	equ 0x0001
 SOFTKEYBOARD_TYPE_C1	equ 0x0002
 
-endif  
+endif
 
 .list

@@ -37,31 +37,30 @@ RPC_MESSAGE		ENDS
 PRPC_MESSAGE		typedef ptr RPC_MESSAGE
 
 
-RPC_FORWARD_FUNCTION_T typedef proto WINAPI \
-	   InterfaceId: ptr UUID,
-      InterfaceVersion: ptr RPC_VERSION,
-	      ObjectId: ptr UUID,
-		Rpcpro: LPBYTE,
-	ppDestEndpoint: PVOID
-RPC_FORWARD_FUNCTION	typedef ptr RPC_FORWARD_FUNCTION_T
+CALLBACK(RPC_FORWARD_FUNCTION, \
+	InterfaceId:ptr UUID, \
+	InterfaceVersion:ptr RPC_VERSION, \
+	ObjectId:ptr UUID, \
+	Rpcpro:LPBYTE, \
+	ppDestEndpoint:PVOID)
 
-RPC_NCA_FLAGS_DEFAULT	equ 0x00000000	
-RPC_NCA_FLAGS_IDEMPOTENT equ 0x00000001 
-RPC_NCA_FLAGS_BROADCAST equ 0x00000002	
-RPC_NCA_FLAGS_MAYBE	equ 0x00000004	
+RPC_NCA_FLAGS_DEFAULT	equ 0x00000000
+RPC_NCA_FLAGS_IDEMPOTENT equ 0x00000001
+RPC_NCA_FLAGS_BROADCAST equ 0x00000002
+RPC_NCA_FLAGS_MAYBE	equ 0x00000004
 
-RPC_BUFFER_COMPLETE	equ 0x00001000 
-RPC_BUFFER_PARTIAL	equ 0x00002000 
-RPC_BUFFER_EXTRA	equ 0x00004000 
-RPC_BUFFER_ASYNC	equ 0x00008000 
-RPC_BUFFER_NONOTIFY	equ 0x00010000 
+RPC_BUFFER_COMPLETE	equ 0x00001000
+RPC_BUFFER_PARTIAL	equ 0x00002000
+RPC_BUFFER_EXTRA	equ 0x00004000
+RPC_BUFFER_ASYNC	equ 0x00008000
+RPC_BUFFER_NONOTIFY	equ 0x00010000
 
-RPCFLG_MESSAGE		equ 0x01000000UL
-RPCFLG_AUTO_COMPLETE	equ 0x08000000UL
-RPCFLG_LOCAL_CALL	equ 0x10000000UL
-RPCFLG_INPUT_SYNCHRONOUS equ 0x20000000UL
-RPCFLG_ASYNCHRONOUS	equ 0x40000000UL
-RPCFLG_NON_NDR		equ 0x80000000UL
+RPCFLG_MESSAGE		equ 0x01000000
+RPCFLG_AUTO_COMPLETE	equ 0x08000000
+RPCFLG_LOCAL_CALL	equ 0x10000000
+RPCFLG_INPUT_SYNCHRONOUS equ 0x20000000
+RPCFLG_ASYNCHRONOUS	equ 0x40000000
+RPCFLG_NON_NDR		equ 0x80000000
 
 
 if defined(__RPC_DOS__) OR defined(__RPC_WIN16__)
@@ -72,9 +71,7 @@ if defined(__RPC_WIN32__) OR defined(__RPC_MAC__)
 RPC_FLAGS_VALID_BIT	equ 0x00008000
 endif
 
-RPC_DISPATCH_FUNCTION_T typedef proto WINAPI \
-		Message: PRPC_MESSAGE
-RPC_DISPATCH_FUNCTION	typedef ptr RPC_DISPATCH_FUNCTION_T
+CALLBACK(RPC_DISPATCH_FUNCTION, Message:PRPC_MESSAGE)
 
 RPC_DISPATCH_TABLE	STRUC
 DispatchTableCount	UINT ?
@@ -174,9 +171,8 @@ I_RpcFree proto WINAPI \
 I_RpcPauseExecution proto WINAPI \
 	  Milliseconds: ULONG
 
-PRPC_RUNDOWN_T typedef proto WINAPI \
-    AssociationContext: PVOID
-PRPC_RUNDOWN typedef ptr PRPC_RUNDOWN_T
+CALLBACK(PRPC_RUNDOWN, AssociationContext:PVOID)
+
 ;RPC_STATUS
 I_RpcMonitorAssociation proto WINAPI \
 		Handle: RPC_BINDING_HANDLE,
@@ -340,12 +336,7 @@ I_RpcAsyncSendReceive proto WINAPI \
 	       Context: PVOID,
 		  hWnd: HWND
 
-RPC_BLOCKING_FN_T typedef proto WINAPI \
-		   wnd: PVOID,
-	       Context: PVOID,
-	    hSyncEvent: HANDLE
-
-RPC_BLOCKING_FN typedef ptr RPC_BLOCKING_FN_T
+CALLBACK(RPC_BLOCKING_FN, wnd:PVOID, Context:PVOID, hSyncEvent:HANDLE)
 
 ;RPC_STATUS
 I_RpcBindingSetAsync proto WINAPI \
@@ -373,12 +364,7 @@ I_RpcServerStartListening proto WINAPI \
 ;RPC_STATUS
 I_RpcServerStopListening proto WINAPI
 
-RPC_BLOCKING_FN_T typedef proto WINAPI \
-		  hWnd: PVOID,
-	       Context: PVOID,
-	    hSyncEvent: PVOID
-
-RPC_BLOCKING_FN typedef ptr RPC_BLOCKING_FN_T
+CALLBACK(RPC_BLOCKING_FN, hWnd:PVOID, Context:PVOID, hSyncEvent:PVOID)
 
 ;RPC_STATUS
 I_RpcBindingSetAsync proto WINAPI \
@@ -416,17 +402,12 @@ I_RpcServerUnregisterEndpoint equ <I_RpcServerUnregisterEndpointW>
 else
 I_RpcServerUnregisterEndpoint equ <I_RpcServerUnregisterEndpointA>
 endif
-endif 
+endif
 
 ;RPC_STATUS
 I_RpcServerInqTransportType proto WINAPI \
 		  _Type: LPDWORD
 
-
-if defined(__RPC_DOS__) OR defined(__RPC_WIN16__)
-;pragma pack()
 endif
-
-endif 
 
 .list

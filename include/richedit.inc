@@ -449,7 +449,7 @@ WBF_BREAKAFTER      equ 0x40
 
 ifdef _WIN32
 ;; Extended edit word break proc (character set aware)
-;typedef LONG (*EDITWORDBREAKPROCEX)(char *pchText, LONG cchText, BYTE bCharSet, INT action);
+CALLBACK(EDITWORDBREAKPROCEX, :LPSTR, :LONG, :BYTE, :SINT)
 endif
 
 ;; All character format measurements are in twips
@@ -693,7 +693,7 @@ else
 TEXTRANGE   TEXTRANGEA
 endif ;; _RICHEDIT_VER >= 0x0200
 
-;typedef DWORD (CALLBACK *EDITSTREAMCALLBACK)(DWORD_PTR dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb);
+CALLBACK(EDITSTREAMCALLBACK, :DWORD_PTR, :LPBYTE, :LONG, :ptr LONG)
 
 EDITSTREAM      STRUC
 dwCookie        DWORD_PTR ?     ;; User value passed to callback as first parameter

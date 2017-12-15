@@ -1,10 +1,9 @@
 ifndef __LIBC_INC
  include libc.inc
 endif
-.xlist
 ifndef __WINCRYPT_H__
 __WINCRYPT_H__ equ 1
-
+.xlist
 
 if(_WIN32_WINNT GE 0x0400)
 
@@ -12,7 +11,7 @@ ifndef _HRESULT_DEFINED
 _HRESULT_DEFINED	equ 1
 HRESULT			typedef LONG
 
-endif 
+endif
 
 if NOT defined(_CRYPT32_)
 WINCRYPT32API		equ DECSPEC_IMPORT
@@ -72,11 +71,11 @@ ALG_SID_RC5		equ 13
 ALG_SID_SKIPJACK	equ 10
 ALG_SID_TEK		equ 11
 
-CRYPT_MODE_CBCI		equ 6	
-CRYPT_MODE_CFBP		equ 7	
-CRYPT_MODE_OFBP		equ 8	
-CRYPT_MODE_CBCOFM	equ 9	
-CRYPT_MODE_CBCOFMI	equ 10	
+CRYPT_MODE_CBCI		equ 6
+CRYPT_MODE_CFBP		equ 7
+CRYPT_MODE_OFBP		equ 8
+CRYPT_MODE_CBCOFM	equ 9
+CRYPT_MODE_CBCOFMI	equ 10
 
 ALG_SID_RC2		equ 2
 
@@ -204,59 +203,59 @@ AT_SIGNATURE		equ 2
 
 CRYPT_USERDATA		equ 1
 
-KP_IV			equ 1	
-KP_SALT			equ 2	
-KP_PADDING		equ 3	
-KP_MODE			equ 4	
-KP_MODE_BITS		equ 5	
-KP_PERMISSIONS		equ 6	
-KP_ALGID		equ 7	
-KP_BLOCKLEN		equ 8	
-KP_KEYLEN		equ 9	
-KP_SALT_EX		equ 10	
-KP_P			equ 11	
-KP_G			equ 12	
-KP_Q			equ 13	
-KP_X			equ 14	
-KP_Y			equ 15	
-KP_RA			equ 16	
-KP_RB			equ 17	
-KP_INFO			equ 18	
-KP_EFFECTIVE_KEYLEN	equ 19	
-KP_SCHANNEL_ALG		equ 20	
-KP_CLIENT_RANDOM	equ 21	
-KP_SERVER_RANDOM	equ 22	
+KP_IV			equ 1
+KP_SALT			equ 2
+KP_PADDING		equ 3
+KP_MODE			equ 4
+KP_MODE_BITS		equ 5
+KP_PERMISSIONS		equ 6
+KP_ALGID		equ 7
+KP_BLOCKLEN		equ 8
+KP_KEYLEN		equ 9
+KP_SALT_EX		equ 10
+KP_P			equ 11
+KP_G			equ 12
+KP_Q			equ 13
+KP_X			equ 14
+KP_Y			equ 15
+KP_RA			equ 16
+KP_RB			equ 17
+KP_INFO			equ 18
+KP_EFFECTIVE_KEYLEN	equ 19
+KP_SCHANNEL_ALG		equ 20
+KP_CLIENT_RANDOM	equ 21
+KP_SERVER_RANDOM	equ 22
 KP_RP			equ 23
 KP_PRECOMP_MD5		equ 24
 KP_PRECOMP_SHA		equ 25
-KP_CERTIFICATE		equ 26	
-KP_CLEAR_KEY		equ 27	
+KP_CERTIFICATE		equ 26
+KP_CLEAR_KEY		equ 27
 KP_PUB_EX_LEN		equ 28
 KP_PUB_EX_VAL		equ 29
 
-PKCS5_PADDING		equ 1	
+PKCS5_PADDING		equ 1
 RANDOM_PADDING		equ 2
 ZERO_PADDING		equ 3
 
-CRYPT_MODE_CBC		equ 1	
-CRYPT_MODE_ECB		equ 2	
-CRYPT_MODE_OFB		equ 3	
-CRYPT_MODE_CFB		equ 4	
-CRYPT_MODE_CTS		equ 5	
+CRYPT_MODE_CBC		equ 1
+CRYPT_MODE_ECB		equ 2
+CRYPT_MODE_OFB		equ 3
+CRYPT_MODE_CFB		equ 4
+CRYPT_MODE_CTS		equ 5
 
-CRYPT_ENCRYPT		equ 0x0001	
-CRYPT_DECRYPT		equ 0x0002	
-CRYPT_EXPORT		equ 0x0004	
-CRYPT_READ		equ 0x0008	
-CRYPT_WRITE		equ 0x0010	
-CRYPT_MAC		equ 0x0020	
-CRYPT_EXPORT_KEY	equ 0x0040	
-CRYPT_IMPORT_KEY	equ 0x0080	
+CRYPT_ENCRYPT		equ 0x0001
+CRYPT_DECRYPT		equ 0x0002
+CRYPT_EXPORT		equ 0x0004
+CRYPT_READ		equ 0x0008
+CRYPT_WRITE		equ 0x0010
+CRYPT_MAC		equ 0x0020
+CRYPT_EXPORT_KEY	equ 0x0040
+CRYPT_IMPORT_KEY	equ 0x0080
 
-HP_ALGID		equ 0x0001	
-HP_HASHVAL		equ 0x0002	
-HP_HASHSIZE		equ 0x0004	
-HP_HMAC_INFO		equ 0x0005	
+HP_ALGID		equ 0x0001
+HP_HASHVAL		equ 0x0002
+HP_HASHSIZE		equ 0x0004
+HP_HMAC_INFO		equ 0x0005
 
 CRYPT_FAILED		equ FASE
 CRYPT_SUCCEED		equ TRUE
@@ -275,8 +274,8 @@ PP_NAME			equ 4
 PP_VERSION		equ 5
 PP_CONTAINER		equ 6
 PP_CHANGE_PASSWORD	equ 7
-PP_KEYSET_SEC_DESCR	equ 8	
-PP_CERTCHAIN		equ 9	
+PP_KEYSET_SEC_DESCR	equ 8
+PP_CERTCHAIN		equ 9
 PP_KEY_TYPE_SUBTYPE	equ 10
 PP_PROVTYPE		equ 16
 PP_KEYSTORAGE		equ 17
@@ -339,7 +338,6 @@ MS_ENHANCED_RSA_SCHANNEL_PROV equ <"Microsoft Enhanced RSA SChannel Cryptographi
 MS_DEF_DSS_PROV		equ <"Microsoft Base DSS Cryptographic Provider">
 MS_DEF_DSS_DH_PROV	equ <"Microsoft Base DSS and Diffie-Hellman Cryptographic Provider">
 
-
 MAXUIDLEN		equ 64
 
 CUR_BLOB_VERSION	equ 2
@@ -391,14 +389,14 @@ BLOBHEADER		ENDS
 PUBLICKEYSTRUC		typedef BLOBHEADER
 
 RSAPUBKEY		STRUC
-magic			dd ?	
-bitlen			dd ?	
-pubexp			dd ?	
+magic			dd ?
+bitlen			dd ?
+pubexp			dd ?
 RSAPUBKEY		ENDS
 
 DHPUBKEY		STRUC
 magic			dd ?
-bitlen			dd ?	
+bitlen			dd ?
 DHPUBKEY		ENDS
 DSSPUBKEY		typedef DHPUBKEY
 KEAPUBKEY		typedef DHPUBKEY
@@ -415,7 +413,6 @@ _Type			GUID <>
 Subtype			GUID <>
 KEY_TYPE_SUBTYPE	ENDS
 PKEY_TYPE_SUBTYPE	typedef ptr KEY_TYPE_SUBTYPE
-
 
 ;BOOL
 CryptAcquireContextA proto WINAPI \
@@ -435,14 +432,12 @@ ifdef _UNICODE
 CryptAcquireContext	equ <CryptAcquireContextW>
 else
 CryptAcquireContext	equ <CryptAcquireContextA>
-endif 
-
+endif
 
 ;BOOL
 CryptReleaseContext proto WINAPI \
 		 hProv: HCRYPTPROV,
 	       dwFlags: DWORD
-
 
 ;BOOL
 CryptGenKey proto WINAPI \
@@ -458,7 +453,6 @@ CryptDeriveKey proto WINAPI \
 	     hBaseData: HCRYPTHASH,
 	       dwFlags: DWORD,
 		 phKey: ptr HCRYPTKEY
-
 
 ;BOOL
 CryptDestroyKey proto WINAPI \
@@ -603,7 +597,7 @@ ifdef _UNICODE
 CryptSignHash		equ <CryptSignHashW>
 else
 CryptSignHash		equ <CryptSignHashA>
-endif 
+endif
 
 ;BOOL
 CryptVerifySignatureA proto WINAPI \
@@ -625,7 +619,7 @@ ifdef _UNICODE
 CryptVerifySignature	equ <CryptVerifySignatureW>
 else
 CryptVerifySignature	equ <CryptVerifySignatureA>
-endif 
+endif
 
 ;BOOL
 CryptSetProviderA proto WINAPI \
@@ -639,7 +633,7 @@ ifdef _UNICODE
 CryptSetProvider	equ <CryptSetProviderW>
 else
 CryptSetProvider	equ <CryptSetProviderA>
-endif 
+endif
 
 ;BOOL
 CryptSetProviderExA proto WINAPI \
@@ -657,7 +651,7 @@ ifdef _UNICODE
 CryptSetProviderEx	equ <CryptSetProviderExW>
 else
 CryptSetProviderEx	equ <CryptSetProviderExA>
-endif 
+endif
 
 ;BOOL
 CryptGetDefaultProviderA proto WINAPI \
@@ -677,7 +671,7 @@ ifdef _UNICODE
 CryptGetDefaultProvider equ <CryptGetDefaultProviderW>
 else
 CryptGetDefaultProvider equ <CryptGetDefaultProviderA>
-endif 
+endif
 
 ;BOOL
 CryptEnumProviderTypesA proto WINAPI \
@@ -699,7 +693,7 @@ ifdef _UNICODE
 CryptEnumProviderTypes	equ <CryptEnumProviderTypesW>
 else
 CryptEnumProviderTypes	equ <CryptEnumProviderTypesA>
-endif 
+endif
 
 ;BOOL
 CryptEnumProvidersA proto WINAPI \
@@ -721,7 +715,7 @@ ifdef _UNICODE
 CryptEnumProviders	equ <CryptEnumProvidersW>
 else
 CryptEnumProviders	equ <CryptEnumProvidersA>
-endif 
+endif
 
 ;BOOL
 CryptContextAddRef proto WINAPI \
@@ -952,36 +946,36 @@ Value			CERT_RDN_VALUE_BLOB <>
 CERT_RDN_ATTR		ENDS
 PCERT_RDN_ATTR		typedef ptr CERT_RDN_ATTR
 
-szOID_COMMON_NAME	equ <"2.5.4.3"> 
-szOID_SUR_NAME		equ <"2.5.4.4"> 
-szOID_DEVICE_SERIAL_NUMBER equ <"2.5.4.5">  
+szOID_COMMON_NAME	equ <"2.5.4.3">
+szOID_SUR_NAME		equ <"2.5.4.4">
+szOID_DEVICE_SERIAL_NUMBER equ <"2.5.4.5">
 
-szOID_COUNTRY_NAME	equ <"2.5.4.6"> 
-szOID_LOCALITY_NAME	equ <"2.5.4.7"> 
-szOID_STATE_OR_PROVINCE_NAME equ <"2.5.4.8">  
-szOID_STREET_ADDRESS	equ <"2.5.4.9"> 
+szOID_COUNTRY_NAME	equ <"2.5.4.6">
+szOID_LOCALITY_NAME	equ <"2.5.4.7">
+szOID_STATE_OR_PROVINCE_NAME equ <"2.5.4.8">
+szOID_STREET_ADDRESS	equ <"2.5.4.9">
 
-szOID_ORGANIZATION_NAME equ <"2.5.4.10"> 
-szOID_ORGANIZATIONAL_UNIT_NAME equ <"2.5.4.11"> 
-szOID_TITLE		equ <"2.5.4.12"> 
+szOID_ORGANIZATION_NAME equ <"2.5.4.10">
+szOID_ORGANIZATIONAL_UNIT_NAME equ <"2.5.4.11">
+szOID_TITLE		equ <"2.5.4.12">
 
-szOID_DESCRIPTION	equ <"2.5.4.13"> 
+szOID_DESCRIPTION	equ <"2.5.4.13">
 szOID_SEARCH_GUIDE	equ <"2.5.4.14">
-szOID_BUSINESS_CATEGORY equ <"2.5.4.15"> 
+szOID_BUSINESS_CATEGORY equ <"2.5.4.15">
 
 szOID_POSTAL_ADDRESS	equ <"2.5.4.16">
-szOID_POSTAL_CODE	equ <"2.5.4.17"> 
-szOID_POST_OFFICE_BOX	equ <"2.5.4.18"> 
-szOID_PHYSICAL_DELIVERY_OFFICE_NAME equ <"2.5.4.19"> 
+szOID_POSTAL_CODE	equ <"2.5.4.17">
+szOID_POST_OFFICE_BOX	equ <"2.5.4.18">
+szOID_PHYSICAL_DELIVERY_OFFICE_NAME equ <"2.5.4.19">
 
-szOID_TELEPHONE_NUMBER	equ <"2.5.4.20"> 
+szOID_TELEPHONE_NUMBER	equ <"2.5.4.20">
 szOID_TELEX_NUMBER	equ <"2.5.4.21">
 szOID_TELETEXT_TERMINAL_IDENTIFIER equ <"2.5.4.22">
 szOID_FACSIMILE_TELEPHONE_NUMBER equ <"2.5.4.23">
-szOID_X21_ADDRESS	equ <"2.5.4.24"> 
-szOID_INTERNATIONAL_ISDN_NUMBER equ <"2.5.4.25"> 
+szOID_X21_ADDRESS	equ <"2.5.4.24">
+szOID_INTERNATIONAL_ISDN_NUMBER equ <"2.5.4.25">
 szOID_REGISTERED_ADDRESS equ <"2.5.4.26">
-szOID_DESTINATION_INDICATOR equ <"2.5.4.27"> 
+szOID_DESTINATION_INDICATOR equ <"2.5.4.27">
 
 szOID_PREFERRED_DELIVERY_METHOD equ <"2.5.4.28">
 
@@ -1000,10 +994,10 @@ szOID_AUTHORITY_REVOCATION_LIST equ <"2.5.4.38">
 szOID_CERTIFICATE_REVOCATION_LIST equ <"2.5.4.39">
 szOID_CROSS_CERTIFICATE_PAIR equ <"2.5.4.40">
 
-szOID_GIVEN_NAME	equ <"2.5.4.42"> 
-szOID_INITIALS		equ <"2.5.4.43"> 
+szOID_GIVEN_NAME	equ <"2.5.4.42">
+szOID_INITIALS		equ <"2.5.4.43">
 
-szOID_DOMAIN_COMPONENT	equ <"0.9.2342.19200300.100.1.25"> 
+szOID_DOMAIN_COMPONENT	equ <"0.9.2342.19200300.100.1.25">
 
 CERT_RDN_ANY_TYPE	equ 0
 CERT_RDN_ENCODED_BLOB	equ 1
@@ -1127,12 +1121,11 @@ CERT_REQUEST_V1		equ 0
 CERT_KEYGEN_REQUEST_INFO  STRUC
 dwVersion		dd ?
 SubjectPublicKeyInfo	CERT_PUBLIC_KEY_INFO <>
-pwszChallengeString	LPWSTR ?	
+pwszChallengeString	LPWSTR ?
 CERT_KEYGEN_REQUEST_INFO ENDS
 PCERT_KEYGEN_REQUEST_INFO typedef ptr CERT_KEYGEN_REQUEST_INFO
 
 CERT_KEYGEN_REQUEST_V1	equ 0
-
 
 CERT_SIGNED_CONTENT_INFO  STRUC
 ToBeSigned		CRYPT_DER_BLOB <>
@@ -1141,35 +1134,32 @@ Signature		CRYPT_BIT_BLOB <>
 CERT_SIGNED_CONTENT_INFO ENDS
 PCERT_SIGNED_CONTENT_INFO typedef ptr CERT_SIGNED_CONTENT_INFO
 
-
-
 CTL_USAGE		STRUC
 cUsageIdentifier	dd ?
-rgpszUsageIdentifier	LPSTR ? 
+rgpszUsageIdentifier	LPSTR ?
 CTL_USAGE		ENDS
 PCTL_USAGE		typedef ptr CTL_USAGE
 PCERT_ENHKEY_USAGE	typedef ptr CERT_ENHKEY_USAGE
 
-
 CTL_ENTRY		STRUC
-SubjectIdentifier	CRYPT_DATA_BLOB <>	
+SubjectIdentifier	CRYPT_DATA_BLOB <>
 cAttribute		dd ?
-rgAttribute		PCRYPT_ATTRIBUTE ?	
+rgAttribute		PCRYPT_ATTRIBUTE ?
 CTL_ENTRY		ENDS
 PCTL_ENTRY		typedef ptr CTL_ENTRY
 
 CTL_INFO		STRUC
 dwVersion		dd ?
 SubjectUsage		CTL_USAGE <>
-ListIdentifier		CRYPT_DATA_BLOB <>	
-SequenceNumber		CRYPT_INTEGER_BLOB <>	
+ListIdentifier		CRYPT_DATA_BLOB <>
+SequenceNumber		CRYPT_INTEGER_BLOB <>
 ThisUpdate		FILETIME <>
-NextUpdate		FILETIME <> 
+NextUpdate		FILETIME <>
 SubjectAlgorithm	CRYPT_ALGORITHM_IDENTIFIER <>
 cCTLEntry		dd ?
-rgCTLEntry		PCTL_ENTRY ?	
+rgCTLEntry		PCTL_ENTRY ?
 cExtension		dd ?
-rgExtension		PCERT_EXTENSION ?	
+rgExtension		PCERT_EXTENSION ?
 CTL_INFO		ENDS
 PCTL_INFO		typedef ptr CTL_INFO
 
@@ -1177,8 +1167,8 @@ CTL_V1			equ 0
 
 
 CRYPT_TIME_STAMP_REQUEST_INFO  STRUC
-pszTimeStampAlgorithm	LPSTR ? 
-pszContentType		LPSTR ? 
+pszTimeStampAlgorithm	LPSTR ?
+pszContentType		LPSTR ?
 Content			CRYPT_OBJID_BLOB <>
 cAttribute		dd ?
 rgAttribute		PCRYPT_ATTRIBUTE ?
@@ -1213,8 +1203,6 @@ CryptFormatObject proto WINAPI \
 	     cbEncoded: DWORD,
 	      pbFormat: PVOID,
 	     pcbFormat: LPDWORD
-
-
 
 ;BOOL
 CryptEncodeObject proto WINAPI \
@@ -1311,37 +1299,21 @@ szOID_CRL_REASON_CODE	equ <"2.5.29.21">
 szOID_CRL_DIST_POINTS	equ <"2.5.29.31">
 szOID_ENHANCED_KEY_USAGE equ <"2.5.29.37">
 
-
 szOID_PKIX		equ <"1.3.6.1.5.5.7">
 szOID_AUTHORITY_INFO_ACCESS equ <"1.3.6.1.5.5.7.2">
-
 szOID_CERT_EXTENSIONS	equ <"1.3.6.1.4.1.311.2.1.14">
 szOID_NEXT_UPDATE_LOCATION equ <"1.3.6.1.4.1.311.10.2">
-
 szOID_CTL		equ <"1.3.6.1.4.1.311.10.1">
-
 szOID_POLICY_MAPPINGS	equ <"2.5.29.5">
 szOID_SUBJECT_DIR_ATTRS equ <"2.5.29.9">
-
 szOID_PKIX_KP		equ <"1.3.6.1.5.5.7.3">
-
 szOID_PKIX_KP_SERVER_AUTH equ <"1.3.6.1.5.5.7.3.1">
-
 szOID_PKIX_KP_CLIENT_AUTH equ <"1.3.6.1.5.5.7.3.2">
-
 szOID_PKIX_KP_CODE_SIGNING equ <"1.3.6.1.5.5.7.3.3">
-
 szOID_PKIX_KP_EMAIL_PROTECTION equ <"1.3.6.1.5.5.7.3.4">
-
-
 szOID_KP_CTL_USAGE_SIGNING equ <"1.3.6.1.4.1.311.10.3.1">
-
 szOID_KP_TIME_STAMP_SIGNING equ <"1.3.6.1.4.1.311.10.3.2">
-
 szOID_YESNO_TRUST_ATTR	equ <"1.3.6.1.4.1.311.10.4.1">
-
-
-
 
 
 CERT_EXTENSIONS		STRUC
@@ -1349,10 +1321,6 @@ cExtension		dd ?
 rgExtension		PCERT_EXTENSION ?
 CERT_EXTENSIONS		ENDS
 PCERT_EXTENSIONS	typedef ptr CERT_EXTENSIONS
-
-
-
-
 
 CERT_UNICODE_RDN_ERR_INDEX_MASK equ 0x3FF
 CERT_UNICODE_RDN_ERR_INDEX_SHIFT equ 22
@@ -1371,8 +1339,6 @@ GET_CERT_UNICODE_VALUE_ERR_INDEX macro X
 	exitm<(X AND CERT_UNICODE_VAUE_ERR_INDEX_MASK)>
 	endm
 
-
-
 CERT_AUTHORITY_KEY_ID_INFO  STRUC
 KeyId			CRYPT_DATA_BLOB <>
 CertIssuer		CERT_NAME_BLOB <>
@@ -1389,7 +1355,7 @@ PCERT_PRIVATE_KEY_VALIDITY typedef ptr CERT_PRIVATE_KEY_VALIDITY
 CERT_KEY_ATTRIBUTES_INFO  STRUC
 KeyId			CRYPT_DATA_BLOB <>
 IntendedKeyUsage	CRYPT_BIT_BLOB <>
-pPrivateKeyUsagePeriod	PCERT_PRIVATE_KEY_VALIDITY ?	
+pPrivateKeyUsagePeriod	PCERT_PRIVATE_KEY_VALIDITY ?
 CERT_KEY_ATTRIBUTES_INFO ENDS
 PCERT_KEY_ATTRIBUTES_INFO typedef ptr CERT_KEY_ATTRIBUTES_INFO
 
@@ -1405,7 +1371,7 @@ CERT_CRL_SIGN_KEY_USAGE equ 0x02
 
 CERT_POLICY_ID		STRUC
 cCertPolicyElementId	dd ?
-rgpszCertPolicyElementId LPSTR ?	
+rgpszCertPolicyElementId LPSTR ?
 CERT_POLICY_ID		ENDS
 PCERT_POLICY_ID		typedef ptr CERT_POLICY_ID
 
@@ -1421,12 +1387,12 @@ PCERT_KEY_USAGE_RESTRICTION_INFO typedef ptr CERT_KEY_USAGE_RESTRICTION_INFO
 CERT_ALT_NAME_ENTRY	STRUC
 dwAltNameChoice		dd ?
 UNION
-  pwszRfc822Name	LPWSTR ?	
-  pwszDNSName		LPWSTR ?	
-  DirectoryName		CERT_NAME_BLOB <> 
-  pwszURL		LPWSTR ?	
-  IPAddress		CRYPT_DATA_BLOB <>	
-  pszRegisteredID	LPSTR ? 
+  pwszRfc822Name	LPWSTR ?
+  pwszDNSName		LPWSTR ?
+  DirectoryName		CERT_NAME_BLOB <>
+  pwszURL		LPWSTR ?
+  IPAddress		CRYPT_DATA_BLOB <>
+  pszRegisteredID	LPSTR ?
 ENDS
 CERT_ALT_NAME_ENTRY	ENDS
 PCERT_ALT_NAME_ENTRY	typedef ptr CERT_ALT_NAME_ENTRY
@@ -1482,14 +1448,14 @@ PCERT_BASIC_CONSTRAINTS2_INFO typedef ptr CERT_BASIC_CONSTRAINTS2_INFO
 
 
 CERT_POLICY_QUALIFIER_INFO  STRUC
-pszPolicyQualifierId	LPSTR ? 
-Qualifier		CRYPT_OBJID_BLOB <>	
+pszPolicyQualifierId	LPSTR ?
+Qualifier		CRYPT_OBJID_BLOB <>
 CERT_POLICY_QUALIFIER_INFO ENDS
 PCERT_POLICY_QUALIFIER_INFO typedef ptr CERT_POLICY_QUALIFIER_INFO
 
 CERT_POLICY_INFO	STRUC
-pszPolicyIdentifier	LPSTR ? 
-cPolicyQualifier	dd ?	
+pszPolicyIdentifier	LPSTR ?
+cPolicyQualifier	dd ?
 rgPolicyQualifier	PVOID ?; CERT_POLICY_QUALIFIER_INFO ?
 CERT_POLICY_INFO	ENDS
 PCERT_POLICY_INFO	typedef ptr CERT_POLICY_INFO
@@ -1499,9 +1465,6 @@ cPolicyInfo		dd ?
 rgPolicyInfo		PVOID ?;ptr CERT_POLICY_INFO ?
 CERT_POLICIES_INFO	ENDS
 PCERT_POLICIES_INFO	typedef ptr CERT_POLICIES_INFO
-
-
-
 
 CRYPT_CONTENT_INFO_SEQUENCE_OF_ANY  STRUC
 pszObjId		LPSTR ?
@@ -1516,13 +1479,6 @@ Content			CRYPT_DER_BLOB <>
 CRYPT_CONTENT_INFO	ENDS
 PCRYPT_CONTENT_INFO	typedef ptr CRYPT_CONTENT_INFO
 
-
-
-
-
-
-
-
 CRYPT_SEQUENCE_OF_ANY	STRUC
 cValue			dd ?
 rgValue			PCRYPT_DER_BLOB ?
@@ -1532,7 +1488,7 @@ PCRYPT_SEQUENCE_OF_ANY	typedef ptr CRYPT_SEQUENCE_OF_ANY
 
 CERT_AUTHORITY_KEY_ID2_INFO  STRUC
 KeyId			CRYPT_DATA_BLOB <>
-AuthorityCertIssuer	CERT_ALT_NAME_INFO <>	
+AuthorityCertIssuer	CERT_ALT_NAME_INFO <>
 AuthorityCertSerialNumber CRYPT_INTEGER_BLOB <>
 CERT_AUTHORITY_KEY_ID2_INFO ENDS
 PCERT_AUTHORITY_KEY_ID2_INFO typedef ptr CERT_AUTHORITY_KEY_ID2_INFO
@@ -1562,9 +1518,9 @@ CRL_DIST_POINT_FULL_NAME equ 1
 CRL_DIST_POINT_ISSUER_RDN_NAME equ 2
 
 CRL_DIST_POINT		STRUC
-DistPointName		CRL_DIST_POINT_NAME <>	
-ReasonFlags		CRYPT_BIT_BLOB <>	
-CRLIssuer		CERT_ALT_NAME_INFO <>	
+DistPointName		CRL_DIST_POINT_NAME <>
+ReasonFlags		CRYPT_BIT_BLOB <>
+CRLIssuer		CERT_ALT_NAME_INFO <>
 CRL_DIST_POINT		ENDS
 PCRL_DIST_POINT		typedef ptr CRL_DIST_POINT
 
@@ -1594,11 +1550,6 @@ IS_CRL_DIST_POINT_ERR_CRL_ISSUER macro X
 	endm
 
 
-
-
-
-
-
 CERT_DSS_PARAMETERS	STRUC
 p			CRYPT_UINT_BLOB <>
 q			CRYPT_UINT_BLOB <>
@@ -1615,7 +1566,7 @@ CERT_MAX_ASN_ENCODED_DSS_SIGNATURE_LEN equ (2 + 2*(2 + 20 +1))
 
 CRYPT_RC2_CBC_PARAMETERS  STRUC
 dwVersion		dd ?
-fIV			BOOL ?	
+fIV			BOOL ?
 rgbIV			db 8 dup(?)
 CRYPT_RC2_CBC_PARAMETERS ENDS
 PCRYPT_RC2_CBC_PARAMETERS typedef ptr CRYPT_RC2_CBC_PARAMETERS
@@ -1637,9 +1588,6 @@ rgCapability		PCRYPT_SMIME_CAPABILITY ?
 CRYPT_SMIME_CAPABILITIES ENDS
 PCRYPT_SMIME_CAPABILITIES typedef ptr CRYPT_SMIME_CAPABILITIES
 
-
-
-
 szOID_NETSCAPE			equ <"2.16.840.1.113730">
 szOID_NETSCAPE_CERT_EXTENSION	equ <"2.16.840.1.113730.1">
 szOID_NETSCAPE_CERT_TYPE	equ <"2.16.840.1.113730.1.1">
@@ -1659,16 +1607,6 @@ NETSCAPE_SSL_CLIENT_AUTH_CERT_TYPE equ 0x80
 NETSCAPE_SSL_SERVER_AUTH_CERT_TYPE equ 0x40
 NETSCAPE_SSL_CA_CERT_TYPE equ 0x04
 
-
-
-
-
-
-
-
-
-
-
 HCRYPTOIDFUNCSET	typedef PVOID
 HCRYPTOIDFUNCADDR	typedef PVOID
 
@@ -1679,12 +1617,6 @@ CRYPT_OID_VERIFY_REVOCATION_FUNC equ <"CertDllVerifyRevocation">
 CRYPT_OID_VERIFY_CTL_USAGE_FUNC equ <"CertDllVerifyCTLUsage">
 CRYPT_OID_FORMAT_OBJECT_FUNC equ <"CryptDllFormatObject">
 CRYPT_OID_FIND_OID_INFO_FUNC equ <"CryptDllFindOIDInfo">
-
-
-
-
-
-
 
 CRYPT_OID_REGPATH	equ <"Software\\Microsoft\\Cryptography\\OID">
 CRYPT_OID_REG_ENCODING_TYPE_PREFIX equ <"EncodingType ">
@@ -1800,17 +1732,16 @@ CryptGetOIDFunctionValue proto WINAPI \
 	  pcbValueData: LPDWORD
 
 ;BOOL
-PFN_CRYPT_ENUM_OID_FUNC_T typedef proto WINAPI \
-	dwEncodingType: DWORD,
-	   pszFuncName: LPCSTR,
-		pszOID: LPCSTR,
-		cValue: DWORD,
-	 rgdwValueType: DWORD,
-       rgpwszValueName: LPCWSTR,
-	 rgpbValueData: LPBYTE,
-	 rgcbValueData: DWORD,
-		 pvArg: PVOID
-PFN_CRYPT_ENUM_OID_FUNC typedef ptr PFN_CRYPT_ENUM_OID_FUNC_T
+CALLBACK(PFN_CRYPT_ENUM_OID_FUNC, \
+	dwEncodingType: DWORD,	  \
+	   pszFuncName: LPCSTR,	  \
+		pszOID: LPCSTR,	  \
+		cValue: DWORD,	  \
+	 rgdwValueType: DWORD,	  \
+       rgpwszValueName: LPCWSTR,  \
+	 rgpbValueData: LPBYTE,	  \
+	 rgcbValueData: DWORD,	  \
+		 pvArg: PVOID)
 
 ;BOOL
 CryptEnumOIDFunction proto WINAPI \
@@ -1822,8 +1753,6 @@ CryptEnumOIDFunction proto WINAPI \
 	pfnEnumOIDFunc: PFN_CRYPT_ENUM_OID_FUNC
 
 CRYPT_MATCH_ANY_ENCODING_TYPE equ 0xFFFFFFFF
-
-
 
 CRYPT_OID_INFO		STRUC
 cbSize			dd ?
@@ -1855,11 +1784,8 @@ CRYPT_FIRST_ALG_OID_GROUP_ID equ CRYPT_HASH_AG_OID_GROUP_ID
 CRYPT_LAST_ALG_OID_GROUP_ID equ CRYPT_SIGN_AG_OID_GROUP_ID
 
 
-
-
 CRYPT_OID_INHIBIT_SIGNATURE_FORMAT_FLAG equ 0x1
 CRYPT_OID_USE_PUBKEY_PARA_FOR_PKCS7_FLAG equ 0x2
-
 
 
 ;PCCRYPT_OID_INFO
@@ -1883,7 +1809,6 @@ CRYPT_INSTALL_OID_INFO_BEFORE_FLAG equ 1
 ;BOOL
 CryptUnregisterOIDInfo proto WINAPI \
 		 pInfo: PCCRYPT_OID_INFO
-
 
 
 HCRYPTMSG		typedef PVOID
@@ -1912,8 +1837,6 @@ CMSG_ENVELOPED_FLAG	equ (1 SHL CMSG_ENVEOPED)
 CMSG_SIGNED_AND_ENVELOPED_FLAG equ (1 SHL CMSG_SIGNED_AND_ENVEOPED)
 CMSG_HASHED_FLAG	equ (1 SHL CMSG_HASHED)
 CMSG_ENCRYPTED_FLAG	equ (1 SHL CMSG_ENCRYPTED)
-
-
 
 CMSG_SIGNER_ENCODE_INFO	 STRUC
 cbSize			dd ?
@@ -1973,12 +1896,7 @@ CMSG_ENCRYPTED_ENCODE_INFO ENDS
 PCMSG_ENCRYPTED_ENCODE_INFO typedef ptr CMSG_ENCRYPTED_ENCODE_INFO
 
 ;BOOL
-PFN_CMSG_STREAM_OUTPUT_T typedef proto WINAPI \
-		 pvArg: PVOID,
-		pbData: LPBYTE,
-		cbData: DWORD,
-		fFinal: BOOL
-PFN_CMSG_STREAM_OUTPUT typedef ptr PFN_CMSG_STREAM_OUTPUT_T
+CALLBACK(PFN_CMSG_STREAM_OUTPUT, pvArg:PVOID, pbData:LPBYTE, cbData:DWORD, fFinal:BOOL)
 
 CMSG_INDEFINITE_LENGTH	equ (0xFFFFFFFF)
 
@@ -2063,10 +1981,6 @@ CMSG_CTRL_DECRYPT_PARA	ENDS
 PCMSG_CTRL_DECRYPT_PARA typedef ptr CMSG_CTRL_DECRYPT_PARA
 
 
-
-
-
-
 CMSG_CTRL_ADD_SIGNER_UNAUTH_ATTR_PARA  STRUC
 cbSize			dd ?
 dwSignerIndex		dd ?
@@ -2081,10 +1995,6 @@ dwSignerIndex		dd ?
 dwUnauthAttrIndex	dd ?
 CMSG_CTRL_DEL_SIGNER_UNAUTH_ATTR_PARA ENDS
 PCMSG_CTRL_DEL_SIGNER_UNAUTH_ATTR_PARA typedef ptr CMSG_CTRL_DEL_SIGNER_UNAUTH_ATTR_PARA
-
-
-
-
 
 
 ;BOOL
@@ -2150,11 +2060,6 @@ CMSG_ENCODED_SIGNER	equ 28
 CMSG_ENCODED_MESSAGE	equ 29
 
 
-
-
-
-
-
 CMSG_SIGNER_INFO	STRUC
 dwVersion		dd ?
 Issuer			CERT_NAME_BLOB <>
@@ -2171,34 +2076,12 @@ PCMSG_SIGNER_INFO	typedef ptr CMSG_SIGNER_INFO
 CMSG_ATTR		typedef CRYPT_ATTRIBUTES
 PCMSG_ATTR		typedef ptr CRYPT_ATTRIBUTES
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 CMSG_OID_GEN_ENCRYPT_KEY_FUNC equ <"CryptMsgDllGenEncryptKey">
-;typedef BOOL (WINAPI *PFN_CMSG_GEN_ENCRYPT_KEY) ( HCRYPTPROV		   *phCryptProv, PCRYPT_ALGORITHM_IDENTIFIER	paiEncrypt, PVOID			pvEncryptAuxInfo, PCERT_PUBLIC_KEY_INFO pPublicKeyInfo, HCRYPTKEY		       *phEncryptKey
-
+CALLBACK(PFN_CMSG_GEN_ENCRYPT_KEY, :ptr HCRYPTPROV, :PCRYPT_ALGORITHM_IDENTIFIER, :PVOID, :PCERT_PUBLIC_KEY_INFO, :ptr HCRYPTKEY)
 CMSG_OID_EXPORT_ENCRYPT_KEY_FUNC equ <"CryptMsgDllExportEncryptKey">
-;typedef BOOL (WINAPI *PFN_CMSG_EXPORT_ENCRYPT_KEY) ( HCRYPTPROV			hCryptProv, HCRYPTKEY			hEncryptKey, PCERT_PUBLIC_KEY_INFO	pPublicKeyInfo, PBYTE		       pbData, PDWORD		   pcbData
-
+CALLBACK(PFN_CMSG_EXPORT_ENCRYPT_KEY, :HCRYPTPROV, :HCRYPTKEY, :PCERT_PUBLIC_KEY_INFO, :PBYTE, :PDWORD)
 CMSG_OID_IMPORT_ENCRYPT_KEY_FUNC equ <"CryptMsgDllImportEncryptKey">
-;typedef BOOL (WINAPI *PFN_CMSG_IMPORT_ENCRYPT_KEY) ( HCRYPTPROV			hCryptProv, DWORD			dwKeySpec, PCRYPT_ALGORITHM_IDENTIFIER	paiEncrypt, PCRYPT_ALGORITHM_IDENTIFIER paiPubKey, PBYTE			pbEncodedKey, DWORD			cbEncodedKey, HCRYPTKEY		       *phEncryptKey
-
-
-
-
+CALLBACK(PFN_CMSG_IMPORT_ENCRYPT_KEY, :HCRYPTPROV, :DWORD, :PCRYPT_ALGORITHM_IDENTIFIER, :PCRYPT_ALGORITHM_IDENTIFIER, :PBYTE, :DWORD, :ptr HCRYPTKEY)
 
 HCERTSTORE		typedef PVOID
 
@@ -2284,7 +2167,7 @@ CERT_SET_KEY_PROV_HANDLE_PROP_ID equ 0x00000001
 CERT_SET_KEY_CONTEXT_PROP_ID equ 0x00000001
 
 CERT_KEY_CONTEXT	STRUC
-cbSize			dd ?	
+cbSize			dd ?
 hCryptProv		HCRYPTPROV ?
 dwKeySpec		dd ?
 CERT_KEY_CONTEXT	ENDS
@@ -2318,15 +2201,12 @@ CERT_STORE_REVOCATION_FLAG equ 0x00000004
 CERT_STORE_NO_CRL_FLAG	equ 0x00010000
 CERT_STORE_NO_ISSUER_FLAG equ 0x00020000
 
-
 CERT_STORE_NO_CRYPT_RELEASE_FLAG equ 0x00000001
 CERT_STORE_READONLY_FLAG equ 0x00008000
-
 
 CERT_SYSTEM_STORE_LOCATION_MASK equ 0x00030000
 CERT_SYSTEM_STORE_CURRENT_USER equ 0x00010000
 CERT_SYSTEM_STORE_LOCAL_MACHINE equ 0x00020000
-
 
 ;HCERTSTORE
 CertOpenStore proto WINAPI \
@@ -2335,7 +2215,6 @@ CertOpenStore proto WINAPI \
 	    hCryptProv: HCRYPTPROV,
 	       dwFlags: DWORD,
 		pvPara: PVOID
-
 
 
 HCERTSTOREPROV		typedef PVOID
@@ -2352,7 +2231,7 @@ dwStoreProvFlags	dd ?
 CERT_STORE_PROV_INFO	ENDS
 PCERT_STORE_PROV_INFO	typedef ptr CERT_STORE_PROV_INFO
 
-;typedef BOOL (WINAPI *PFN_CERT_DLL_OPEN_STORE_PROV_FUNC)( LPCSTR lpszStoreProvider, DWORD dwEncodingType, HCRYPTPROV hCryptProv, DWORD dwFlags, PVOID pvPara, HCERTSTORE hCertStore, PCERT_STORE_PROV_INFO pStoreProvInfo
+CALLBACK(PFN_CERT_DLL_OPEN_STORE_PROV_FUNC, :LPCSTR, :DWORD, :HCRYPTPROV, :DWORD, :PVOID, :HCERTSTORE, :PCERT_STORE_PROV_INFO)
 
 CERT_STORE_PROV_CLOSE_FUNC equ 0
 CERT_STORE_PROV_READ_CERT_FUNC equ 1
@@ -2368,40 +2247,24 @@ CERT_STORE_PROV_WRITE_CTL_FUNC equ 10
 CERT_STORE_PROV_DELETE_CTL_FUNC equ 11
 CERT_STORE_PROV_SET_CTL_PROPERTY_FUNC equ 12
 
-;typedef void (WINAPI *PFN_CERT_STORE_PROV_CLOSE)( HCERTSTOREPROV hStoreProv, DWORD dwFlags
-
-;typedef BOOL (WINAPI *PFN_CERT_STORE_PROV_READ_CERT)( HCERTSTOREPROV hStoreProv, PCCERT_CONTEXT pStoreCertContext, DWORD dwFlags, PCCERT_CONTEXT *ppProvCertContext
+CALLBACK(PFN_CERT_STORE_PROV_CLOSE, :HCERTSTOREPROV, :DWORD)
+CALLBACK(PFN_CERT_STORE_PROV_READ_CERT, :HCERTSTOREPROV, :PCCERT_CONTEXT, :DWORD, :ptr PCCERT_CONTEXT)
 
 CERT_STORE_PROV_WRITE_ADD_FLAG equ 0x1
 
-;typedef BOOL (WINAPI *PFN_CERT_STORE_PROV_WRITE_CERT)( HCERTSTOREPROV hStoreProv, PCCERT_CONTEXT pCertContext, DWORD dwFlags
-
-;typedef BOOL (WINAPI *PFN_CERT_STORE_PROV_DELETE_CERT)( HCERTSTOREPROV hStoreProv, PCCERT_CONTEXT pCertContext, DWORD dwFlags
-
-;typedef BOOL (WINAPI *PFN_CERT_STORE_PROV_SET_CERT_PROPERTY)( HCERTSTOREPROV hStoreProv, PCCERT_CONTEXT pCertContext, DWORD dwPropId, DWORD dwFlags, PVOID pvData
-
-;typedef BOOL (WINAPI *PFN_CERT_STORE_PROV_READ_CRL)( HCERTSTOREPROV hStoreProv, PCCRL_CONTEXT pStoreCrlContext, DWORD dwFlags, PCCRL_CONTEXT *ppProvCrlContext
-
-;typedef BOOL (WINAPI *PFN_CERT_STORE_PROV_WRITE_CRL)( HCERTSTOREPROV hStoreProv, PCCRL_CONTEXT pCrlContext, DWORD dwFlags
-
-;typedef BOOL (WINAPI *PFN_CERT_STORE_PROV_DELETE_CRL)( HCERTSTOREPROV hStoreProv, PCCRL_CONTEXT pCrlContext, DWORD dwFlags
-
-;typedef BOOL (WINAPI *PFN_CERT_STORE_PROV_SET_CRL_PROPERTY)( HCERTSTOREPROV hStoreProv, PCCRL_CONTEXT pCrlContext, DWORD dwPropId, DWORD dwFlags, PVOID pvData
-
-;typedef BOOL (WINAPI *PFN_CERT_STORE_PROV_READ_CTL)( HCERTSTOREPROV hStoreProv, PCCTL_CONTEXT pStoreCtlContext, DWORD dwFlags, PCCTL_CONTEXT *ppProvCtlContext
-
-;typedef BOOL (WINAPI *PFN_CERT_STORE_PROV_WRITE_CTL)( HCERTSTOREPROV hStoreProv, PCCTL_CONTEXT pCtlContext, DWORD dwFlags
-
-;typedef BOOL (WINAPI *PFN_CERT_STORE_PROV_DELETE_CTL)( HCERTSTOREPROV hStoreProv, PCCTL_CONTEXT pCtlContext, DWORD dwFlags
+CALLBACK(PFN_CERT_STORE_PROV_WRITE_CERT, :HCERTSTOREPROV, :PCCERT_CONTEXT, :DWORD)
+CALLBACK(PFN_CERT_STORE_PROV_DELETE_CERT, :HCERTSTOREPROV, :PCCERT_CONTEXT, :DWORD)
+;CALLBACK(PFN_CERT_STORE_PROV_SET_CERT_PROPERTY, :HCERTSTOREPROV, :PCCERT_CONTEXT, :DWORD, :DWORD, :PVOID)
+CALLBACK(PFN_CERT_STORE_PROV_READ_CRL, :HCERTSTOREPROV, :PCCRL_CONTEXT, :DWORD, :ptr PCCRL_CONTEXT)
+CALLBACK(PFN_CERT_STORE_PROV_WRITE_CRL, :HCERTSTOREPROV, :PCCRL_CONTEXT, :DWORD)
+CALLBACK(PFN_CERT_STORE_PROV_DELETE_CRL, :HCERTSTOREPROV, :PCCRL_CONTEXT, :DWORD)
+CALLBACK(PFN_CERT_STORE_PROV_SET_CRL_PROPERTY, :HCERTSTOREPROV, :PCCRL_CONTEXT, :DWORD, :DWORD, :PVOID)
+CALLBACK(PFN_CERT_STORE_PROV_READ_CTL, :HCERTSTOREPROV, :PCCTL_CONTEXT, :DWORD, :ptr PCCTL_CONTEXT)
+CALLBACK(PFN_CERT_STORE_PROV_WRITE_CTL, :HCERTSTOREPROV, :PCCTL_CONTEXT, :DWORD)
+CALLBACK(PFN_CERT_STORE_PROV_DELETE_CTL, :HCERTSTOREPROV, :PCCTL_CONTEXT, :DWORD)
 
 ;BOOL
-PFN_CERT_STORE_PROV_SET_CTL_PROPERTY_T typedef proto WINAPI \
-	  hStoreProv: HCERTSTOREPROV,
-	 pCtlContext: PCCTL_CONTEXT,
-	    dwPropId: DWORD,
-	     dwFlags: DWORD,
-	      pvData: PVOID
-PFN_CERT_STORE_PROV_SET_CTL_PROPERTY typedef ptr PFN_CERT_STORE_PROV_SET_CTL_PROPERTY_T
+CALLBACK(PFN_CERT_STORE_PROV_SET_CTL_PROPERTY, :HCERTSTOREPROV, :PCCTL_CONTEXT, :DWORD, :DWORD, :PVOID)
 
 ;HCERTSTORE
 CertDuplicateStore proto WINAPI \
@@ -2489,17 +2352,6 @@ CERT_FIND_ISSUER_STR	equ CERT_FIND_ISSUER_STR_W
 CERT_FIND_KEY_SPEC	equ (CERT_COMPARE_KEY_SPEC SHL CERT_COMPARE_SHIFT)
 CERT_FIND_ENHKEY_USAGE	equ (CERT_COMPARE_ENHKEY_USAGE SHL CERT_COMPARE_SHIFT)
 CERT_FIND_CTL_USAGE	equ CERT_FIND_ENHKEY_USAGE
-
-
-
-
-
-
-
-
-
-
-
 
 CERT_FIND_OPTIONAL_ENHKEY_USAGE_FLAG	equ 0x1
 CERT_FIND_EXT_ONLY_ENHKEY_USAGE_FLAG	equ 0x2
@@ -2671,15 +2523,12 @@ CertSerializeCertificateStoreElement proto WINAPI \
 	     pbElement: LPBYTE,
 	    pcbElement: LPDWORD
 
-
 ;BOOL
 CertSerializeCRLStoreElement proto WINAPI \
 	   pCrlContext: PCCRL_CONTEXT,
 	       dwFlags: DWORD,
 	     pbElement: LPBYTE,
 	    pcbElement: LPDWORD
-
-
 
 ;PCCTL_CONTEXT
 CertDuplicateCTLContext proto WINAPI \
@@ -2753,9 +2602,9 @@ CTL_FIND_SUBJECT	equ 4
 
 CTL_FIND_USAGE_PARA	STRUC
 cbSize			dd ?
-SubjectUsage		CTL_USAGE <>	
-ListIdentifier		CRYPT_DATA_BLOB <>	
-pSigner			PCERT_INFO ?	
+SubjectUsage		CTL_USAGE <>
+ListIdentifier		CRYPT_DATA_BLOB <>
+pSigner			PCERT_INFO ?
 CTL_FIND_USAGE_PARA	ENDS
 PCTL_FIND_USAGE_PARA	typedef ptr CTL_FIND_USAGE_PARA
 
@@ -2767,15 +2616,11 @@ CTL_FIND_SAME_USAGE_FLAG equ 0x1
 
 CTL_FIND_SUBJECT_PARA	STRUC
 cbSize			dd ?
-pUsagePara		PCTL_FIND_USAGE_PARA ?	
+pUsagePara		PCTL_FIND_USAGE_PARA ?
 dwSubjectType		dd ?
 pvSubject		PVOID ?
 CTL_FIND_SUBJECT_PARA	ENDS
 PCTL_FIND_SUBJECT_PARA	typedef ptr CTL_FIND_SUBJECT_PARA
-
-
-
-
 
 
 ;BOOL
@@ -2806,7 +2651,6 @@ CertDeleteCTLFromStore proto WINAPI \
 	   pCtlContext: PCCTL_CONTEXT
 
 
-
 ;BOOL
 CertGetEnhancedKeyUsage proto WINAPI \
 	  pCertContext: PCCERT_CONTEXT,
@@ -2829,8 +2673,6 @@ CertAddEnhancedKeyUsageIdentifier proto WINAPI \
 CertRemoveEnhancedKeyUsageIdentifier proto WINAPI \
 	  pCertContext: PCCERT_CONTEXT,
     pszUsageIdentifier: LPCSTR
-
-
 
 ;BOOL
 CryptMsgGetAndVerifySigner proto WINAPI \
@@ -2865,14 +2707,13 @@ CryptMsgEncodeAndSignCTL proto WINAPI \
 	    pcbEncoded: LPDWORD
 
 
-
 CTL_VERIFY_USAGE_PARA	STRUC
 cbSize			dd ?
-ListIdentifier		CRYPT_DATA_BLOB <>	
+ListIdentifier		CRYPT_DATA_BLOB <>
 cCtlStore		dd ?
-rghCtlStore		PVOID ?;HCERTSTORE ? 
+rghCtlStore		PVOID ?;HCERTSTORE ?
 cSignerStore		dd ?
-rghSignerStore		PVOID ?;HCERTSTORE ?	
+rghSignerStore		PVOID ?;HCERTSTORE ?
 CTL_VERIFY_USAGE_PARA	ENDS
 PCTL_VERIFY_USAGE_PARA	typedef ptr CTL_VERIFY_USAGE_PARA
 
@@ -2880,9 +2721,9 @@ CTL_VERIFY_USAGE_STATUS	 STRUC
 cbSize			dd ?
 dwError			dd ?
 dwFlags			dd ?
-ppCtl			PCCTL_CONTEXT ? 
+ppCtl			PCCTL_CONTEXT ?
 dwCtlEntryIndex		dd ?
-ppSigner		PCCERT_CONTEXT ?	
+ppSigner		PCCERT_CONTEXT ?
 dwSignerIndex		dd ?
 CTL_VERIFY_USAGE_STATUS ENDS
 PCTL_VERIFY_USAGE_STATUS typedef ptr CTL_VERIFY_USAGE_STATUS
@@ -2905,7 +2746,6 @@ CertVerifyCTLUsage proto WINAPI \
     pVerifyUsageStatus: PCTL_VERIFY_USAGE_STATUS
 
 
-
 CERT_REVOCATION_PARA	STRUC
 cbSize			dd ?
 pIssuerCert		PCCERT_CONTEXT ?
@@ -2913,7 +2753,6 @@ cCertStore		dd ?
 rgCertStore		PVOID ?;HCERTSTORE ?
 CERT_REVOCATION_PARA	ENDS
 PCERT_REVOCATION_PARA	typedef ptr CERT_REVOCATION_PARA
-
 
 CERT_REVOCATION_STATUS	STRUC
 cbSize			dd ?
@@ -2937,9 +2776,6 @@ CertVerifyRevocation proto WINAPI \
 CERT_CONTEXT_REVOCATION_TYPE equ 1
 
 CERT_VERIFY_REV_CHAIN_FLAG equ 0x1
-
-
-
 
 ;BOOL
 CertCompareIntegerBlob proto WINAPI \
@@ -3023,7 +2859,7 @@ CryptSignAndEncodeCertificate proto WINAPI \
 	     dwKeySpec: DWORD,
     dwCertEncodingType: DWORD,
 	lpszStructType: LPCSTR,
-	  pvStructInfo: PVOID,	 
+	  pvStructInfo: PVOID,
    pSignatureAlgorithm: PCRYPT_ALGORITHM_IDENTIFIER,
 	 pvHashAuxInfo: PVOID,
 	     pbEncoded: PBYTE,
@@ -3154,7 +2990,7 @@ ifdef _UNICODE
 CertRDNValueToStr	equ <CertRDNValueToStrW>
 else
 CertRDNValueToStr	equ <CertRDNValueToStrA>
-endif 
+endif
 
 
 ;DWORD
@@ -3175,7 +3011,7 @@ ifdef _UNICODE
 CertNameToStr		equ <CertNameToStrW>
 else
 CertNameToStr		equ <CertNameToStrA>
-endif 
+endif
 
 CERT_SIMPLE_NAME_STR	equ 1
 CERT_OID_NAME_STR	equ 2
@@ -3186,8 +3022,6 @@ CERT_NAME_STR_NO_PLUS_FLAG	equ 0x20000000
 CERT_NAME_STR_NO_QUOTING_FLAG	equ 0x10000000
 CERT_NAME_STR_CRLF_FLAG		equ 0x08000000
 CERT_NAME_STR_COMMA_FLAG	equ 0x04000000
-
-
 
 ;BOOL
 CertStrToNameA proto WINAPI \
@@ -3211,21 +3045,11 @@ ifdef _UNICODE
 CertStrToName		equ <CertStrToNameW>
 else
 CertStrToName		equ <CertStrToNameA>
-endif 
-
-
-
-
-
-
+endif
 
 ;PCCERT_CONTEXT
-PFN_CRYPT_GET_SIGNER_CERTIFICATE_T typedef proto WINAPI \
-	      pvGetArg: PVOID,
-    dwCertEncodingType: DWORD,
-	     pSignerId: PCERT_INFO,	
-	 hMsgCertStore: HCERTSTORE
-PFN_CRYPT_GET_SIGNER_CERTIFICATE typedef ptr PFN_CRYPT_GET_SIGNER_CERTIFICATE_T
+CALLBACK(PFN_CRYPT_GET_SIGNER_CERTIFICATE, :PVOID, :DWORD, :PCERT_INFO, :HCERTSTORE)
+
 CRYPT_SIGN_MESSAGE_PARA	 STRUC
 cbSize			dd ?
 dwMsgEncodingType	dd ?
@@ -3458,11 +3282,6 @@ CryptVerifyMessageSignatureWithKey proto WINAPI \
 	     pbDecoded: LPBYTE,
 	    pcbDecoded: LPDWORD
 
-
-
-
-
-
 ;HCERTSTORE
 CertOpenSystemStoreA proto WINAPI \
 		 hProv: HCRYPTPROV,
@@ -3475,7 +3294,7 @@ ifdef _UNICODE
 CertOpenSystemStore	equ <CertOpenSystemStoreW>
 else
 CertOpenSystemStore	equ <CertOpenSystemStoreA>
-endif 
+endif
 
 ;BOOL
 CertAddEncodedCertificateToSystemStoreA proto WINAPI \
@@ -3491,13 +3310,13 @@ ifdef _UNICODE
 CertAddEncodedCertificateToSystemStore equ <CertAddEncodedCertificateToSystemStoreW>
 else
 CertAddEncodedCertificateToSystemStore equ <CertAddEncodedCertificateToSystemStoreA>
-endif 
+endif
 
 
 CERT_CHAIN		STRUC
-cCerts			dd ?	
-certs			PCERT_BLOB ?	
-keyLocatorInfo		CRYPT_KEY_PROV_INFO <>	
+cCerts			dd ?
+certs			PCERT_BLOB ?
+keyLocatorInfo		CRYPT_KEY_PROV_INFO <>
 CERT_CHAIN		ENDS
 PCERT_CHAIN		typedef ptr CERT_CHAIN
 
@@ -3513,8 +3332,7 @@ FindCertsByIssuer proto WINAPI \
 	   pwszPurpose: LPCWSTR,	; "ClientAuth" or "CodeSigning"
 	     dwKeySpec: DWORD		; only return signers supporting this keyspec
 
-endif 
-
-endif 
+endif
 
 .list
+endif

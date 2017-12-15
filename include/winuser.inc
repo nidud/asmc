@@ -41,93 +41,25 @@ else
 LPMENUTEMPLATE		typedef LPMENUTEMPLATEA
 endif
 
-WNDPROC_T typedef proto \
-		      : HWND,
-		      : UINT,
-		      : WPARAM,
-		      : LPARAM
-WNDPROC typedef ptr WNDPROC_T
+CALLBACK(WNDPROC, :HWND, :UINT, :WPARAM, :LPARAM)
 
 ifdef STRICT
 
-DLGPROC_T typedef proto \
-		      : HWND,
-		      : UINT,
-		      : WPARAM,
-		      : LPARAM
-DLGPROC typedef ptr DLGPROC_T
-TIMERPROC_T typedef proto \
-		      : HWND,
-		      : UINT,
-		      : UINT,
-		      : DWORD
-TIMERPROC typedef ptr TIMERPROC_T
-GRAYSTRINGPROC_T typedef proto \
-		      : HDC,
-		      : LPARAM,
-		      : SINT
-GRAYSTRINGPROC typedef ptr GRAYSTRINGPROC_T
-WNDENUMPROC_T typedef proto \
-		      : HWND,
-		      : LPARAM
-WNDENUMPROC typedef ptr WNDENUMPROC_T
-HOOKPROC_T typedef proto \
-		  code: SINT,
-		wParam: WPARAM,
-		lParam: LPARAM
-HOOKPROC typedef ptr HOOKPROC_T
-SENDASYNCPROC_T typedef proto \
-		      : HWND,
-		      : UINT,
-		      : DWORD,
-		      : LRESULT
-SENDASYNCPROC typedef ptr SENDASYNCPROC_T
-
-PROPENUMPROCA_T typedef proto \
-		      : HWND,
-		      : LPCSTR,
-		      : HANDLE
-PROPENUMPROCA typedef ptr PROPENUMPROCA_T
-PROPENUMPROCW_T typedef proto \
-		      : HWND,
-		      : LPCWSTR,
-		      : HANDLE
-PROPENUMPROCW typedef ptr PROPENUMPROCW_T
-
-PROPENUMPROCEXA_T typedef proto \
-		      : HWND,
-		      : LPSTR,
-		      : HANDLE,
-		      : DWORD
-PROPENUMPROCEXA typedef ptr PROPENUMPROCEXA_T
-PROPENUMPROCEXW_T typedef proto \
-		      : HWND,
-		      : LPWSTR,
-		      : HANDLE,
-		      : DWORD
-PROPENUMPROCEXW typedef ptr PROPENUMPROCEXW_T
-
-EDITWORDBREAKPROCA_T typedef proto \
-		  lpch: LPSTR,
-	    ichCurrent: SINT,
-		   cch: SINT,
-		  code: SINT
-EDITWORDBREAKPROCA typedef ptr EDITWORDBREAKPROCA_T
-EDITWORDBREAKPROCW_T typedef proto \
-		  lpch: LPWSTR,
-	    ichCurrent: SINT,
-		   cch: SINT,
-		  code: SINT
-EDITWORDBREAKPROCW typedef ptr EDITWORDBREAKPROCW_T
+CALLBACK(DLGPROC, :HWND, :UINT, :WPARAM, :LPARAM)
+CALLBACK(TIMERPROC, :HWND, :UINT, :UINT, :DWORD)
+CALLBACK(GRAYSTRINGPROC, :HDC, :LPARAM, :SINT)
+CALLBACK(WNDENUMPROC, :HWND, :LPARAM)
+CALLBACK(HOOKPROC, :SINT, :WPARAM, :LPARAM)
+CALLBACK(SENDASYNCPROC, :HWND, :UINT, :DWORD, :LRESULT)
+CALLBACK(PROPENUMPROCA, :HWND, :LPCSTR, :HANDLE)
+CALLBACK(PROPENUMPROCW, :HWND, :LPCWSTR, :HANDLE)
+CALLBACK(PROPENUMPROCEXA, :HWND, :LPSTR, :HANDLE, :DWORD)
+CALLBACK(PROPENUMPROCEXW, :HWND, :LPWSTR, :HANDLE, :DWORD)
+CALLBACK(EDITWORDBREAKPROCA, :LPSTR, :SINT, :SINT, :SINT)
+CALLBACK(EDITWORDBREAKPROCW, :LPWSTR, :SINT, :SINT, :SINT)
 
 if(WINVER GE 0x0400)
-DRAWSTATEPROC_T typedef proto \
-		   hdc: HDC,
-		 lData: LPARAM,
-		 wData: WPARAM,
-		     x: SINT,
-		    cy: SINT
-DRAWSTATEPROC typedef ptr DRAWSTATEPROC_T
+CALLBACK(DRAWSTATEPROC, hdc:HDC, lData:LPARAM, wData:WPARAM, x:SINT, cy:SINT)
 endif
 else
 
@@ -163,16 +95,8 @@ EDITWORDBREAKPROC	typedef EDITWORDBREAKPROCA
 endif
 
 ifdef STRICT
-NAMEENUMPROCA_T typedef proto \
-		      : LPSTR,
-		      : LPARAM
-NAMEENUMPROCA typedef ptr NAMEENUMPROCA_T
-
-NAMEENUMPROCW_T typedef proto \
-		      : LPWSTR,
-		      : LPARAM
-NAMEENUMPROCW typedef ptr NAMEENUMPROCW_T
-
+CALLBACK(NAMEENUMPROCA, :LPSTR, :LPARAM)
+CALLBACK(NAMEENUMPROCW, :LPWSTR, :LPARAM)
 WINSTAENUMPROCA		typedef NAMEENUMPROCA
 DESKTOPENUMPROCA	typedef NAMEENUMPROCA
 WINSTAENUMPROCW		typedef NAMEENUMPROCW
@@ -3096,9 +3020,7 @@ CW_USEDEFAULT		equ 0x80000000
 
 HWND_DESKTOP		equ 0
 if(_WIN32_WINNT GE 0x0501)
-PREGISTERCLASSNAMEW_T typedef proto \
-		      : LPCWSTR
-PREGISTERCLASSNAMEW typedef ptr PREGISTERCLASSNAMEW_T
+CALLBACK(PREGISTERCLASSNAMEW, :LPCWSTR)
 endif
 
 ;HWND
@@ -3214,10 +3136,7 @@ if (_WIN32_WINNT LT 0x0502)
 ;WINUSERAPI
 ;BOOL
 ;WINAPI
-UpdateLayeredWindowIndirect_T typedef proto WINAPI \
-		  hWnd: HWND,
-	      pULWInfo: ptr UPDATELAYEREDWINDOWINFO
-UpdateLayeredWindowIndirect typedef ptr UpdateLayeredWindowIndirect_T
+CALLBACK(UpdateLayeredWindowIndirect, :HWND, :ptr UPDATELAYEREDWINDOWINFO)
 else
 UpdateLayeredWindowIndirect proto WINAPI \
 		  hWnd: HWND,
@@ -3304,15 +3223,7 @@ SetWindowPos proto WINAPI \
 		    cy: SINT,
 		uFlags: UINT
 else
-SetWindowPos_P	typedef proto WINAPI \
-		  hWnd: HWND,
-       hWndInsertAfter: HWND,
-		     X: SINT,
-		     Y: SINT,
-		   _cx: SINT,
-		    cy: SINT,
-		uFlags: UINT
-SetWindowPos_T	typedef ptr SetWindowPos_P
+CALLBACK(SetWindowPos_T, :HWND, :HWND, :SINT, :SINT, :SINT, :SINT, :UINT)
 externdef	SetWindowPos:SetWindowPos_T
 endif
 
@@ -4092,9 +4003,7 @@ if (WINVER GE 0x0500)
 GetKeyState proto WINAPI \
 	      nVirtKey: SINT
 else
-GetKeyState_P typedef proto WINAPI \
-	      nVirtKey: SINT
-GetKeyState_T	typedef ptr GetKeyState_P
+CALLBACK(GetKeyState_T, nVirtKey:SINT)
 externdef	GetKeyState:GetKeyState_T
 endif
 
@@ -5496,8 +5405,7 @@ if (_WIN32_WINNT GE 0x0500)
 ;HWND
 GetForegroundWindow	proto WINAPI
 else
-GetForegroundWindow_P	typedef proto WINAPI
-GetForegroundWindow_T	typedef ptr GetForegroundWindow_P
+CALLBACK(GetForegroundWindow_T)
 externdef		GetForegroundWindow:GetForegroundWindow_T
 endif
 
@@ -6046,8 +5954,7 @@ endif
 
 if(WINVER GE 0x0400)
 
-MSGBOXCALLBACK_T	typedef proto WINAPI lpHelpInfo:LPHELPINFO
-MSGBOXCALLBACK		typedef ptr MSGBOXCALLBACK_T
+CALLBACK(MSGBOXCALLBACK, lpHelpInfo:LPHELPINFO)
 
 MSGBOXPARAMSA		STRUC SIZE_T
 cbSize			UINT ?
@@ -9185,12 +9092,7 @@ else
 GetMonitorInfo		equ <GetMonitorInfoA>
 endif
 
-MONITORENUMPROC_T typedef proto \
-		      : HMONITOR,
-		      : HDC,
-		      : LPRECT,
-		      : LPARAM
-MONITORENUMPROC typedef ptr MONITORENUMPROC_T
+CALLBACK(MONITORENUMPROC, :HMONITOR, :HDC, :LPRECT, :LPARAM)
 
 ;BOOL
 EnumDisplayMonitors proto WINAPI \
@@ -9210,16 +9112,7 @@ NotifyWinEvent proto WINAPI \
 	      idObject: LONG,
 	       idChild: LONG
 
-WINEVENTPROC_T typedef proto WINAPI \
-	 hWinEventHook: HWINEVENTHOOK,
-		 event: DWORD,
-		  hwnd: HWND,
-	      idObject: LONG,
-	       idChild: LONG,
-	 idEventThread: DWORD,
-	 dwmsEventTime: DWORD
-
-WINEVENTPROC typedef ptr WINEVENTPROC_T
+CALLBACK(WINEVENTPROC, :HWINEVENTHOOK, :DWORD, :HWND, :LONG, :LONG, :DWORD, :DWORD)
 
 if(_WIN32_WINNT GE 0x0501)
 ;BOOL

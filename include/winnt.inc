@@ -5,23 +5,13 @@ include string.inc
 include basetsd.inc
 .xlist
 ifndef _WIN32_FUSION
-_WIN32_FUSION	equ 0
+_WIN32_FUSION equ 0
 endif
 
-ifndef pragma
-pragma	macro x:vararg
-	endm
-endif
 ifndef __declspec
 __declspec macro x:vararg
 	endm
 endif
-
-if _MSC_VER GE 1200
-pragma warning(push)
-endif
-pragma warning(disable:4201)
-pragma warning(disable:4214)
 
 ANYSIZE_ARRAY		equ 1
 
@@ -31,10 +21,6 @@ endif
 
 ;include specstrings.inc
 ;include kernelspecs.inc
-
-ifdef STRICT_GS_ENABLED
-pragma strict_gs_check(push, on)
-endif
 
 if defined(_M_MRX000) AND NOT defined(MIDL_PASS)
 RESTRICTED_POINTER	equ <__restrict>
@@ -473,8 +459,6 @@ endif
 PHANDLE typedef ptr HANDLE
 
 
-
-
 FCHAR		typedef BYTE
 FSHORT		typedef WORD
 FLONG		typedef DWORD
@@ -569,8 +553,6 @@ ERROR_SEVERITY_WARNING	     equ 0x80000000
 ERROR_SEVERITY_ERROR	     equ 0xC0000000
 
 
-
-
 if defined(_M_IA64) AND NOT defined(MIDL_PASS)
 ;__declspec(align(16))
 endif
@@ -597,8 +579,6 @@ ULONGLONG	typedef qword  ; double - REAL8
 endif
 PLONGLONG	typedef PTR LONGLONG
 PULONGLONG	typedef PTR ULONGLONG
-
-
 
 USN		typedef LONGLONG
 
@@ -682,11 +662,6 @@ UInt32x32To64 proto WINAPI \
   Multiplicand: DWORD
 endif
 
-if _MSC_VER GE 1200
-;pragma warning(push)
-endif
-;pragma warning(disable:4035 4793)
-
 if 0;DECLSPEC_NOINLINE
 
 ;ULONGLONG
@@ -732,12 +707,6 @@ Int64ShrlMod32 macro Value, ShiftCount
 
 endif
 
-if _MSC_VER GE 1200
-;pragma warning(pop)
-else
-;pragma warning(default:4035 4793)
-endif
-
 else
 
 .err <Must define a target architecture.>
@@ -768,11 +737,6 @@ _rotr16 proto WINAPI \
 		 Value: WORD,
 		 Shift: BYTE
 
-;pragma intrinsic(_rotl8)
-;pragma intrinsic(_rotl16)
-;pragma intrinsic(_rotr8)
-;pragma intrinsic(_rotr16)
-
 endif
 
 if _MSC_VER GE 1300
@@ -798,12 +762,6 @@ _rotr proto WINAPI \
 _rotr64 proto WINAPI \
 		 Value: qword,
 		 Shift: SINT
-
-;pragma intrinsic(_rotl)
-;pragma intrinsic(_rotl64)
-;pragma intrinsic(_rotr)
-;pragma intrinsic(_rotr64)
-
 endif
 
 ANSI_NULL	equ 0
@@ -953,14 +911,7 @@ ExceptionInformation	PVOID EXCEPTION_MAXIMUM_PARAMETERS dup(?)
 EXCEPTION_RECORD	ENDS
 PEXCEPTION_RECORD	TYPEDEF PTR EXCEPTION_RECORD
 
-EXCEPTION_ROUTINE typedef proto WINAPI \
-       ExceptionRecord: ptr EXCEPTION_RECORD,
-      EstablisherFrame: PVOID,
-	 ContextRecord: ptr CONTEXT,
-     DispatcherContext: PVOID
-
-PEXCEPTION_ROUTINE	typedef ptr EXCEPTION_ROUTINE
-
+CALLBACK(PEXCEPTION_ROUTINE, :PEXCEPTION_RECORD, :PVOID, :ptr CONTEXT, :PVOID)
 
 VER_SERVER_NT		equ 0x80000000
 VER_WORKSTATION_NT	equ 0x40000000
@@ -1817,21 +1768,6 @@ _interlockedbittestandreset64 proto WINAPI \
 	       _Offset: LONG64
 
 
-pragma intrinsic(_bittest)
-pragma intrinsic(_bittestandcomplement)
-pragma intrinsic(_bittestandset)
-pragma intrinsic(_bittestandreset)
-pragma intrinsic(_interlockedbittestandset)
-pragma intrinsic(_interlockedbittestandreset)
-
-pragma intrinsic(_bittest64)
-pragma intrinsic(_bittestandcomplement64)
-pragma intrinsic(_bittestandset64)
-pragma intrinsic(_bittestandreset64)
-pragma intrinsic(_interlockedbittestandset64)
-pragma intrinsic(_interlockedbittestandreset64)
-
-
 BitScanForward		equ <_BitScanForward>
 BitScanReverse		equ <_BitScanReverse>
 BitScanForward64	equ <_BitScanForward64>
@@ -1853,11 +1789,6 @@ _BitScanForward64 proto WINAPI \
 _BitScanReverse64 proto WINAPI \
 		 Index: ptr dword,
 		 _Mask: DWORD64
-
-pragma intrinsic(_BitScanForward)
-pragma intrinsic(_BitScanReverse)
-pragma intrinsic(_BitScanForward64)
-pragma intrinsic(_BitScanReverse64)
 
 if 0
 InterlockedIncrement16	equ <_InterlockedIncrement16>
@@ -2018,29 +1949,6 @@ InterlockedExchangePointer proto WINAPI \
 		Target: PVOID,
 		 Value: PVOID
 
-pragma intrinsic(_InterlockedIncrement16)
-pragma intrinsic(_InterlockedDecrement16)
-pragma intrinsic(_InterlockedCompareExchange16)
-pragma intrinsic(_InterlockedAnd)
-pragma intrinsic(_InterlockedOr)
-pragma intrinsic(_InterlockedXor)
-pragma intrinsic(_InterlockedIncrement)
-pragma intrinsic(_InterlockedDecrement)
-pragma intrinsic(_InterlockedExchange)
-pragma intrinsic(_InterlockedExchangeAdd)
-pragma intrinsic(_InterlockedCompareExchange)
-pragma intrinsic(_InterlockedAnd64)
-pragma intrinsic(_InterlockedOr64)
-pragma intrinsic(_InterlockedXor64)
-pragma intrinsic(_InterlockedIncrement64)
-pragma intrinsic(_InterlockedDecrement64)
-pragma intrinsic(_InterlockedExchange64)
-pragma intrinsic(_InterlockedExchangeAdd64)
-pragma intrinsic(_InterlockedCompareExchange64)
-pragma intrinsic(_InterlockedExchangePointer)
-pragma intrinsic(_InterlockedCompareExchangePointer)
-
-
 if _MSC_FULL_VER GE 140041204
 if 0
 InterlockedAnd8		equ <_InterlockedAnd8>
@@ -2076,13 +1984,6 @@ InterlockedXor16 proto WINAPI \
 	   Destination: LPWORD,
 		 Value: WORD
 
-pragma intrinsic (_InterlockedAnd8)
-pragma intrinsic (_InterlockedOr8)
-pragma intrinsic (_InterlockedXor8)
-pragma intrinsic (_InterlockedAnd16)
-pragma intrinsic (_InterlockedOr16)
-pragma intrinsic (_InterlockedXor16)
-
 endif
 
 
@@ -2094,13 +1995,8 @@ CacheLineFlush macro Address
 _mm_clflush proto WINAPI \
 	       Address: PVOID
 
-pragma intrinsic(_mm_clflush)
-
 ;VOID
 _ReadWriteBarrier proto WINAPI
-
-pragma intrinsic(_ReadWriteBarrier)
-
 
 FastFence		equ <__faststorefence>
 LoadFence		equ <_mm_lfence>
@@ -2138,14 +2034,6 @@ _MM_HINT_T1		equ 2
 _MM_HINT_T2		equ 3
 _MM_HINT_NTA		equ 0
 
-pragma intrinsic(__faststorefence)
-pragma intrinsic(_mm_pause)
-pragma intrinsic(_mm_prefetch)
-pragma intrinsic(_mm_lfence)
-pragma intrinsic(_mm_mfence)
-pragma intrinsic(_mm_sfence)
-pragma intrinsic(_m_prefetchw)
-
 YieldProcessor		equ <_mm_pause>
 MemoryBarrier		equ <__faststorefence>
 PreFetchCacheLine macro l, a
@@ -2175,14 +2063,8 @@ _mm_getcsr proto WINAPI
 _mm_setcsr proto WINAPI \
 		 MxCsr: UINT
 
-pragma intrinsic(_mm_getcsr)
-pragma intrinsic(_mm_setcsr)
-
-
 ;VOID
 __int2c proto WINAPI
-
-pragma intrinsic(__int2c)
 
 ;FORCEINLINE
 ;VOID
@@ -2198,16 +2080,12 @@ GetCallersEflags macro
 ;unsigned __int32
 __getcallerseflags proto WINAPI
 
-pragma intrinsic(__getcallerseflags)
-
 
 GetSegmentLimit equ <__segmentlimit>
 
 ;DWORD
 __segmentlimit proto WINAPI \
 	      Selector: DWORD
-
-pragma intrinsic(__segmentlimit)
 
 
 ReadPMC equ <__readpmc>
@@ -2216,8 +2094,6 @@ ReadPMC equ <__readpmc>
 __readpmc proto WINAPI \
 	       Counter: DWORD
 
-pragma intrinsic(__readpmc)
-
 
 ReadTimeStampCounter macro
 	exitm<__rdtsc()>
@@ -2225,8 +2101,6 @@ ReadTimeStampCounter macro
 
 ;DWORD64
 __rdtsc proto WINAPI
-
-pragma intrinsic(__rdtsc)
 
 
 ;VOID
@@ -2249,12 +2123,6 @@ __movsq proto WINAPI \
 	   Destination: PDWORD64,
 		Source: ptr DWORD64,
 		 Count: SIZE_T
-
-pragma intrinsic(__movsb)
-pragma intrinsic(__movsw)
-pragma intrinsic(__movsd)
-pragma intrinsic(__movsq)
-
 
 ;VOID
 __stosb proto WINAPI \
@@ -2280,11 +2148,6 @@ __stosq proto WINAPI \
 		 Value: DWORD64,
 		 Count: SIZE_T
 
-pragma intrinsic(__stosb)
-pragma intrinsic(__stosw)
-pragma intrinsic(__stosd)
-pragma intrinsic(__stosq)
-
 
 MultiplyHigh		equ <__mulh>
 UnsignedMultiplyHigh	equ <__umulh>
@@ -2297,9 +2160,6 @@ __mulh proto WINAPI \
 __umulh proto WINAPI \
 	    Multiplier: DWORD64,
 	  Multiplicand: DWORD64
-
-pragma intrinsic(__mulh)
-pragma intrinsic(__umulh)
 
 
 ShiftLeft128	equ <__shiftleft128>
@@ -2316,9 +2176,6 @@ __shiftright128 proto WINAPI \
 	      HighPart: DWORD64,
 		 Shift: BYTE
 
-pragma intrinsic(__shiftleft128)
-pragma intrinsic(__shiftright128)
-
 
 Multiply128	equ <_mul128>
 
@@ -2329,8 +2186,6 @@ _mul128 proto WINAPI \
 	   HighProduct: ptr LONG64
 
 
-pragma intrinsic(_mul128)
-
 ifndef UnsignedMultiply128
 
 UnsignedMultiply128	equ <_umul128>
@@ -2340,8 +2195,6 @@ _umul128 proto WINAPI \
 	    Multiplier: DWORD64,
 	  Multiplicand: DWORD64,
 	   HighProduct: ptr DWORD64
-
-pragma intrinsic(_umul128)
 
 endif
 
@@ -2389,15 +2242,6 @@ __writegsqword proto WINAPI \
 		  Data: DWORD64
 
 
-pragma intrinsic(__readgsbyte)
-pragma intrinsic(__readgsword)
-pragma intrinsic(__readgsdword)
-pragma intrinsic(__readgsqword)
-pragma intrinsic(__writegsbyte)
-pragma intrinsic(__writegsword)
-pragma intrinsic(__writegsdword)
-pragma intrinsic(__writegsqword)
-
 if NOT defined(_MANAGED)
 
 ;VOID
@@ -2429,20 +2273,7 @@ __addgsqword proto WINAPI \
 	       _Offset: DWORD,
 		 Value: DWORD64
 
-
-if 0
-pragma intrinsic(__incgsbyte)
-pragma intrinsic(__addgsbyte)
-pragma intrinsic(__incgsword)
-pragma intrinsic(__addgsword)
-pragma intrinsic(__incgsdword)
-pragma intrinsic(__addgsdword)
-pragma intrinsic(__incgsqword)
-pragma intrinsic(__addgsqword)
 endif
-
-endif
-
 endif
 
 
@@ -2600,27 +2431,12 @@ Entry			UNWIND_HISTORY_TABLE_ENTRY UNWIND_HISTORY_TABLE_SIZE dup(<>)
 UNWIND_HISTORY_TABLE	ENDS
 PUNWIND_HISTORY_TABLE	typedef ptr UNWIND_HISTORY_TABLE
 
-
-;typedef
 ;PRUNTIME_FUNCTION
-GET_RUNTIME_FUNCTION_CALLBACK typedef proto WINAPI \
-	     ControlPc: DWORD64,
-	       Context: PVOID
-
-PGET_RUNTIME_FUNCTION_CALLBACK typedef ptr GET_RUNTIME_FUNCTION_CALLBACK
-
-;typedef
+CALLBACK(PGET_RUNTIME_FUNCTION_CALLBACK, ControlPc:DWORD64, Context:PVOID)
 ;DWORD
-OUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK typedef proto WINAPI \
-	       Process: HANDLE,
-	  TableAddress: PVOID,
-	       Entries: PDWORD,
-		      : PRUNTIME_FUNCTION
-
-POUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK typedef ptr OUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK
+CALLBACK(POUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK, Process:HANDLE, TableAddress:PVOID, Entries:PDWORD, :PRUNTIME_FUNCTION)
 
 OUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK_EXPORT_NAME equ <"OutOfProcessFunctionTableCallback">
-
 
 ;NTSYSAPI
 ;VOID
@@ -2718,26 +2534,7 @@ endif
 
 ifdef _X86_
 
-
 ifndef MIDL_PASS
-;ifndef RC_INVOKED
-
-if _MSC_VER GE 1200
-pragma warning(push)
-endif
-pragma warning(disable:4164)
-ifdef _M_IX86
-pragma function(_enable)
-pragma function(_disable)
-endif
-
-if _MSC_VER GE 1200
-pragma warning(pop)
-else
-pragma warning(default:4164)
-endif
-
-;endif
 endif
 
 ;if defined(_M_IX86) AND NOT defined(RC_INVOKED) AND NOT defined(MIDL_PASS)
@@ -2779,14 +2576,6 @@ _interlockedbittestandreset proto WINAPI \
 	       _Offset: LONG
 
 
-pragma intrinsic(_bittest)
-pragma intrinsic(_bittestandcomplement)
-pragma intrinsic(_bittestandset)
-pragma intrinsic(_bittestandreset)
-pragma intrinsic(_interlockedbittestandset)
-pragma intrinsic(_interlockedbittestandreset)
-
-
 BitScanForward		equ <_BitScanForward>
 BitScanReverse		equ <_BitScanReverse>
 
@@ -2799,13 +2588,7 @@ _BitScanReverse proto WINAPI \
 		 Index: ptr dword,
 		 _Mask: dword
 
-pragma intrinsic(_BitScanForward)
-pragma intrinsic(_BitScanReverse)
-
 else
-
-pragma warning(push)
-pragma warning(disable:4035 4793)
 
 ;FORCEINLINE
 ;BOOLEAN
@@ -2823,8 +2606,6 @@ InterlockedBitTestAndReset macro Base, Bit
 	lock	btr [ecx],eax
 	setc	al
 	endm
-
-pragma warning(pop)
 
 endif
 
@@ -2848,15 +2629,9 @@ _InterlockedOr16 proto WINAPI \
 	   Destination: LPWORD,
 		 Value: WORD
 
-pragma intrinsic(_InterlockedAnd16)
-pragma intrinsic(_InterlockedCompareExchange16)
-pragma intrinsic(_InterlockedOr16)
-
 endif
 
 if NOT defined(_M_CEE_PURE)
-pragma warning(push)
-pragma warning(disable:4035 4793)
 
 ;FORCEINLINE
 ;BOOLEAN
@@ -2866,7 +2641,6 @@ InterlockedBitTestAndComplement macro Base, Bit
 	lock	btc [ecx], eax
 	setc	al
 	endm
-pragma warning(pop)
 endif
 
 if (_MSC_FULL_VER GE 13012035) OR defined(_PREFIX_) OR defined(_PREFAST_)
@@ -2893,13 +2667,6 @@ __writefsword proto WINAPI \
 __writefsdword proto WINAPI \
 	       _Offset: DWORD,
 		  Data: DWORD
-
-pragma intrinsic(__readfsbyte)
-pragma intrinsic(__readfsword)
-pragma intrinsic(__readfsdword)
-pragma intrinsic(__writefsbyte)
-pragma intrinsic(__writefsword)
-pragma intrinsic(__writefsdword)
 
 endif
 
@@ -2929,13 +2696,6 @@ __addfsdword proto WINAPI \
 	       _Offset: DWORD,
 		 Value: DWORD
 
-pragma intrinsic(__incfsbyte)
-pragma intrinsic(__addfsbyte)
-pragma intrinsic(__incfsword)
-pragma intrinsic(__addfsword)
-pragma intrinsic(__incfsdword)
-pragma intrinsic(__addfsdword)
-
 endif
 endif
 
@@ -2943,8 +2703,6 @@ if (_MSC_FULL_VER GE 140041204) OR defined(_PREFIX_) OR defined(_PREFAST_)
 
 ;VOID
 _mm_pause proto WINAPI
-
-pragma intrinsic(_mm_pause)
 
 YieldProcessor	equ <_mm_pause>
 
@@ -2963,14 +2721,10 @@ if NOT defined(MIDL_PASS) AND defined(_M_IX86)
 
 ifndef _M_CEE_PURE
 
-pragma warning( push )
-pragma warning( disable : 4793 )
 ;FORCEINLINE
 ;VOID
 MemoryBarrier macro
     endm
-
-pragma warning( pop )
 
 endif
 
@@ -2996,8 +2750,6 @@ __readpmc proto WINAPI \
 	       Counter: DWORD
 
 
-pragma intrinsic(__readpmc)
-
 else
 ;FORCEINLINE
 ;DWORD64
@@ -3017,8 +2769,6 @@ ReadTimeStampCounter macro
 ;DWORD64
 __rdtsc proto WINAPI
 
-pragma intrinsic(__rdtsc)
-
 else
 ;FORCEINLINE
 ;DWORD64
@@ -3036,24 +2786,18 @@ if _MSC_FULL_VER GE 140030222
 ;VOID
 __int2c proto WINAPI
 
-pragma intrinsic(__int2c)
-
 ;FORCEINLINE
 ;VOID
 DbgRaiseAssertionFailure macro
 	__int2c()
 	endm
 else
-pragma warning( push )
-pragma warning( disable : 4793 )
 
 ;FORCEINLINE
 ;VOID
 __int2c macro
 	int 0x2c
 	endm
-
-pragma warning( pop )
 
 endif
 
@@ -3072,9 +2816,7 @@ GetCurrentFiber macro
 else
 
 if _MSC_VER GE 1200
-pragma warning(push)
 endif
-pragma warning (disable:4035 4793)
 
 ;__inline PVOID
 GetFiberData macro
@@ -3090,9 +2832,7 @@ GetCurrentFiber macro
 	exitm<eax>
 	endm
 if _MSC_VER GE 1200
-pragma warning(pop)
 else
-pragma warning (default:4035 4793)
 endif
 endif
 
@@ -3276,17 +3016,6 @@ _bittestandreset64 proto WINAPI \
 		  Base: ptr LONG64,
 	       _Offset: LONG64
 
-pragma intrinsic(_bittest)
-pragma intrinsic(_bittestandcomplement)
-pragma intrinsic(_bittestandset)
-pragma intrinsic(_bittestandreset)
-
-pragma intrinsic(_bittest64)
-pragma intrinsic(_bittestandcomplement64)
-pragma intrinsic(_bittestandset64)
-pragma intrinsic(_bittestandreset64)
-
-
 BitScanForward		equ <_BitScanForward>
 BitScanReverse		equ <_BitScanReverse>
 BitScanForward64	equ <_BitScanForward64>
@@ -3309,10 +3038,6 @@ _BitScanReverse64 proto WINAPI \
 		 Index: ptr dword,
 		 _Mask: DWORD64
 
-pragma intrinsic(_BitScanForward)
-pragma intrinsic(_BitScanReverse)
-pragma intrinsic(_BitScanForward64)
-pragma intrinsic(_BitScanReverse64)
 
 InterlockedCompareExchange16 equ <_InterlockedCompareExchange16>
 
@@ -3322,7 +3047,6 @@ _InterlockedCompareExchange16 proto WINAPI \
 	      ExChange: word,
 	     Comperand: word
 
-pragma intrinsic(_InterlockedCompareExchange16)
 if 0
 InterlockedAdd		equ <_InterlockedAdd>
 InterlockedAddAcquire	equ <_InterlockedAdd_acq>
@@ -3748,85 +3472,6 @@ InterlockedAnd64Release proto WINAPI \
 	   Destination: ptr LONGLONG,
 		 Value: LONGLONG
 
-pragma intrinsic(_InterlockedAdd)
-pragma intrinsic(_InterlockedIncrement)
-pragma intrinsic(_InterlockedIncrement_acq)
-pragma intrinsic(_InterlockedIncrement_rel)
-pragma intrinsic(_InterlockedDecrement)
-pragma intrinsic(_InterlockedDecrement_acq)
-pragma intrinsic(_InterlockedDecrement_rel)
-pragma intrinsic(_InterlockedExchange)
-pragma intrinsic(_InterlockedCompareExchange)
-pragma intrinsic(_InterlockedCompareExchange_acq)
-pragma intrinsic(_InterlockedCompareExchange_rel)
-pragma intrinsic(_InterlockedExchangeAdd)
-pragma intrinsic(_InterlockedAdd64)
-pragma intrinsic(_InterlockedIncrement64)
-pragma intrinsic(_InterlockedDecrement64)
-pragma intrinsic(_InterlockedExchange64)
-pragma intrinsic(_InterlockedExchange64_acq)
-pragma intrinsic(_InterlockedCompareExchange64)
-pragma intrinsic(_InterlockedCompareExchange64_acq)
-pragma intrinsic(_InterlockedCompareExchange64_rel)
-pragma intrinsic(_InterlockedCompare64Exchange128)
-pragma intrinsic(_InterlockedCompare64Exchange128_acq)
-pragma intrinsic(_InterlockedCompare64Exchange128_rel)
-pragma intrinsic(_InterlockedExchangeAdd64)
-pragma intrinsic(_InterlockedExchangePointer)
-pragma intrinsic(_InterlockedCompareExchangePointer)
-pragma intrinsic(_InterlockedCompareExchangePointer_acq)
-pragma intrinsic(_InterlockedCompareExchangePointer_rel)
-pragma intrinsic(_InterlockedAdd_acq)
-pragma intrinsic(_InterlockedAdd_rel)
-pragma intrinsic(_InterlockedExchange_acq)
-pragma intrinsic(_InterlockedExchangeAdd_acq)
-pragma intrinsic(_InterlockedExchangeAdd_rel)
-pragma intrinsic(_InterlockedAdd64_acq)
-pragma intrinsic(_InterlockedAdd64_rel)
-pragma intrinsic(_InterlockedIncrement64_acq)
-pragma intrinsic(_InterlockedIncrement64_rel)
-pragma intrinsic(_InterlockedDecrement64_acq)
-pragma intrinsic(_InterlockedDecrement64_rel)
-pragma intrinsic(_InterlockedExchangeAdd64_acq)
-pragma intrinsic(_InterlockedExchangeAdd64_rel)
-pragma intrinsic(_InterlockedExchangePointer_acq)
-pragma intrinsic(_InterlockedOr)
-pragma intrinsic(_InterlockedOr_acq)
-pragma intrinsic(_InterlockedOr_rel)
-pragma intrinsic(_InterlockedOr8)
-pragma intrinsic(_InterlockedOr8_acq)
-pragma intrinsic(_InterlockedOr8_rel)
-pragma intrinsic(_InterlockedOr16)
-pragma intrinsic(_InterlockedOr16_acq)
-pragma intrinsic(_InterlockedOr16_rel)
-pragma intrinsic(_InterlockedOr64)
-pragma intrinsic(_InterlockedOr64_acq)
-pragma intrinsic(_InterlockedOr64_rel)
-pragma intrinsic(_InterlockedXor)
-pragma intrinsic(_InterlockedXor_acq)
-pragma intrinsic(_InterlockedXor_rel)
-pragma intrinsic(_InterlockedXor8)
-pragma intrinsic(_InterlockedXor8_acq)
-pragma intrinsic(_InterlockedXor8_rel)
-pragma intrinsic(_InterlockedXor16)
-pragma intrinsic(_InterlockedXor16_acq)
-pragma intrinsic(_InterlockedXor16_rel)
-pragma intrinsic(_InterlockedXor64)
-pragma intrinsic(_InterlockedXor64_acq)
-pragma intrinsic(_InterlockedXor64_rel)
-pragma intrinsic(_InterlockedAnd)
-pragma intrinsic(_InterlockedAnd_acq)
-pragma intrinsic(_InterlockedAnd_rel)
-pragma intrinsic(_InterlockedAnd8)
-pragma intrinsic(_InterlockedAnd8_acq)
-pragma intrinsic(_InterlockedAnd8_rel)
-pragma intrinsic(_InterlockedAnd16)
-pragma intrinsic(_InterlockedAnd16_acq)
-pragma intrinsic(_InterlockedAnd16_rel)
-pragma intrinsic(_InterlockedAnd64)
-pragma intrinsic(_InterlockedAnd64_acq)
-pragma intrinsic(_InterlockedAnd64_rel)
-
 ifndef InterlockedAnd64
 
 InterlockedAnd64	equ <InterlockedAnd64_Inline>
@@ -3935,9 +3580,6 @@ _rdtebex proto WINAPI
 
 ifdef _M_IA64
 
-pragma intrinsic(_rdteb)
-pragma intrinsic(_rdtebex)
-
 NtCurrentTeb macro
 	exitm<_rdtebex()>
 	endm
@@ -3957,8 +3599,6 @@ if defined(_IA64_) AND defined(_M_IA64) AND NOT defined(MIDL_PASS)
 ;void
 __break proto WINAPI \
 		 StIIM: SINT
-
-pragma intrinsic (__break)
 
 BREAK_DEBUG_BASE	equ 0x080000
 ASSERT_BREAKPOINT	equ (BREAK_DEBUG_BASE+3)
@@ -3998,13 +3638,6 @@ MD_LFHINT_NT1		equ 0x01
 MD_LFHINT_NT2		equ 0x02
 MD_LFHINT_NTA		equ 0x03
 
-pragma intrinsic (__yield)
-pragma intrinsic (__lfetch)
-pragma intrinsic (__lfetchfault)
-pragma intrinsic (__lfetchfault_excl)
-pragma intrinsic (__lfetch_excl)
-pragma intrinsic (__mf)
-
 
 ReadTimeStampCounter macro
 	exitm<__getReg(3116)>
@@ -4013,8 +3646,6 @@ ReadTimeStampCounter macro
 ;unsigned __int64
 __getReg proto WINAPI \
 		Number: SINT
-
-pragma intrinsic(__getReg)
 
 YieldProcessor		equ <__yield>
 MemoryBarrier		equ <__mf>
@@ -4040,7 +3671,6 @@ __UMULH proto WINAPI \
 	    Multiplier: ULONGLONG,
 	  Multiplicand: ULONGLONG
 
-pragma intrinsic(__UMULH)
 
 if (_MSC_VER GE 1400)
 
@@ -4051,8 +3681,6 @@ _umul128 proto WINAPI \
 	    Multiplier: qword,
 	  Multiplicand: qword,
 	   HighProduct: ptr qword
-
-pragma intrinsic(_umul128)
 
 endif
 
@@ -4380,24 +4008,16 @@ Entry			UNWIND_HISTORY_TABLE_ENTRY UNWIND_HISTORY_TABLE_SIZE dup(<>)
 UNWIND_HISTORY_TABLE	ENDS
 PUNWIND_HISTORY_TABLE	typedef ptr UNWIND_HISTORY_TABLE
 
-
-;typedef
 ;PRUNTIME_FUNCTION
-GET_RUNTIME_FUNCTION_CALLBACK typedef proto WINAPI \
-	     ControlPc: DWORD64,
-	       Context: PVOID
+CALLBACK(PGET_RUNTIME_FUNCTION_CALLBACK, ControlPc:DWORD64, Context:PVOID)
 
-PGET_RUNTIME_FUNCTION_CALLBACK typedef ptr GET_RUNTIME_FUNCTION_CALLBACK
-
-;typedef
 ;DWORD
-OUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK typedef proto WINAPI \
-	       Process: HANDLE,
-	  TableAddress: PVOID,
-	       Entries: PDWORD,
-	     Functions: PRUNTIME_FUNCTION
+CALLBACK(POUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK, \
+	       Process: HANDLE,			  \
+	  TableAddress: PVOID,			  \
+	       Entries: PDWORD,			  \
+	     Functions: PRUNTIME_FUNCTION)
 
-POUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK typedef ptr OUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK
 OUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK_EXPORT_NAME equ <"OutOfProcessFunctionTableCallback">
 
 ;NTSYSAPI
@@ -7125,17 +6745,11 @@ Processors		dd ?
 PPM_THERMALCHANGE_EVENT ENDS
 PPPM_THERMALCHANGE_EVENT typedef ptr PPM_THERMALCHANGE_EVENT
 
-pragma warning(push)
-pragma warning(disable:4121)
-
 PPM_THERMAL_POLICY_EVENT STRUC
 Mode			db ?
 Processors		dd ?
 PPM_THERMAL_POLICY_EVENT ENDS
 PPPM_THERMAL_POLICY_EVENT typedef ptr PPM_THERMAL_POLICY_EVENT
-
-pragma warning(pop)
-
 
 POWER_ACTION_POLICY	STRUC
 Action			POWER_ACTION ?
@@ -8526,8 +8140,7 @@ IMAGE_SNAP_BY_ORDINAL32 macro Ordinal
 	endm
 
 
-IMAGE_TLS_CALLBACK_T typedef proto WINAPI :PVOID, :DWORD, :PVOID
-PIMAGE_TLS_CALLBACK  typedef ptr IMAGE_TLS_CALLBACK_T
+CALLBACK(PIMAGE_TLS_CALLBACK, :PVOID, :DWORD, :PVOID)
 
 IMAGE_TLS_DIRECTORY64	STRUC
 StartAddressOfRawData	dq ?
@@ -9016,14 +8629,11 @@ endif
 ifdef _WIN64
 
 
-pragma warning(push)
-pragma warning(disable:4324)
 DECLSPEC_ALIGN(16)
 SLIST_ENTRY		STRUC
 Next			PVOID ?;PSLIST_ENTRY ?
 SLIST_ENTRY		ENDS
 PSLIST_ENTRY		typedef ptr SLIST_ENTRY
-pragma warning(pop)
 
 SLIST_ENTRY32		STRUC
 Next			dd ?
@@ -9158,12 +8768,7 @@ RTL_RUN_ONCE		ENDS
 PRTL_RUN_ONCE		typedef ptr RTL_RUN_ONCE
 
 ;DWORD
-RTL_RUN_ONCE_INIT_FN typedef proto WINAPI \
-	       RunOnce: PRTL_RUN_ONCE,
-	     Parameter: PVOID,
-	       Context: PVOID
-
-PRTL_RUN_ONCE_INIT_FN	typedef ptr RTL_RUN_ONCE_INIT_FN
+CALLBACK(PRTL_RUN_ONCE_INIT_FN, RunOnce:PRTL_RUN_ONCE, Parameter:PVOID, Context:PVOID)
 
 endif
 
@@ -9499,12 +9104,7 @@ UmsSchedulerThreadBlocked	equ 1
 UmsSchedulerThreadYield		equ 2
 
 ;VOID
-RTL_UMS_SCHEDULER_ENTRY_POINT typedef proto WINAPI \
-		Reason: RTL_UMS_SCHEDULER_REASON,
-     ActivationPayload: ULONG_PTR,
-	SchedulerParam: PVOID
-
-PRTL_UMS_SCHEDULER_ENTRY_POINT typedef ptr RTL_UMS_SCHEDULER_ENTRY_POINT
+CALLBACK(PRTL_UMS_SCHEDULER_ENTRY_POINT, :RTL_UMS_SCHEDULER_REASON, :ULONG_PTR, :PVOID)
 
 if (NTDDI_VERSION GE NTDDI_WIN7)
 ;DWORD
@@ -9570,13 +9170,8 @@ RTL_CRITICAL_SECTION_FLAG_RESERVED	equ (RTL_CRITICAL_SECTION_ALL_FLAG_BITS AND \
 
 RTL_CRITICAL_SECTION_DEBUG_FLAG_STATIC_INIT equ 0x00000001
 
-
-;pragma pack(push, 8)
-
 RTL_CRITICAL_SECTION	STRUC
 DebugInfo		PRTL_CRITICAL_SECTION_DEBUG ?
-
-
 LockCount		LONG ?
 RecursionCount		LONG ?
 OwningThread		HANDLE ?
@@ -9584,8 +9179,6 @@ LockSemaphore		HANDLE ?
 SpinCount		ULONG_PTR ?
 RTL_CRITICAL_SECTION	ENDS
 PRTL_CRITICAL_SECTION	typedef ptr RTL_CRITICAL_SECTION
-
-;pragma pack(pop)
 
 RTL_SRWLOCK		STRUC
 _Ptr			PVOID ?
@@ -9603,13 +9196,9 @@ RTL_CONDITION_VARIABLE_INIT equ <{0}>
 RTL_CONDITION_VARIABLE_LOCKMODE_SHARED equ 0x1
 
 ;VOID
-PAPCFUNC_T typedef proto WINAPI \
-	     Parameter: ULONG_PTR
-PAPCFUNC typedef ptr PAPCFUNC_T
+CALLBACK(PAPCFUNC, :ULONG_PTR)
 ;LONG
-PVECTORED_EXCEPTION_HANDLER_T typedef proto WINAPI \
-	 ExceptionInfo: ptr EXCEPTION_POINTERS
-PVECTORED_EXCEPTION_HANDLER typedef ptr PVECTORED_EXCEPTION_HANDLER_T
+CALLBACK(PVECTORED_EXCEPTION_HANDLER, ExceptionInfo:ptr EXCEPTION_POINTERS)
 
 HEAP_INFORMATION_CLASS	typedef sdword ; enum _
 HeapCompatibilityInformation	  equ 0
@@ -9619,18 +9208,11 @@ HEAP_INFORMATION_CLASS	typedef sdword ; enum _
 HeapCompatibilityInformation	  equ 0
 HeapEnableTerminationOnCorruption equ 1
 
-
-WAITORTIMERCALLBACK_T		typedef proto WINAPI :PVOID, :BOOLEAN
-WAITORTIMERCALLBACKFUNC		typedef ptr WAITORTIMERCALLBACK_T
-WORKERCALLBACK_T		typedef proto WINAPI :PVOID
-WORKERCALLBACKFUNC		typedef ptr WORKERCALLBACK_T
-APC_CALLBACK_FUNCTION_T		typedef proto WINAPI :DWORD, :PVOID, :PVOID
-APC_CALLBACK_FUNCTION		typedef ptr APC_CALLBACK_FUNCTION_T
-PFLS_CALLBACK_FUNCTION_T	typedef proto WINAPI :PVOID
-PFLS_CALLBACK_FUNCTION		typedef ptr PFLS_CALLBACK_FUNCTION_T
-PSECURE_MEMORY_CACHE_CALLBACK_T typedef proto WINAPI :PVOID, :SIZE_T
-PSECURE_MEMORY_CACHE_CALLBACK	typedef ptr PSECURE_MEMORY_CACHE_CALLBACK_T
-
+CALLBACK(WAITORTIMERCALLBACKFUNC, :PVOID, :BOOLEAN)
+CALLBACK(WORKERCALLBACKFUNC, :PVOID)
+CALLBACK(APC_CALLBACK_FUNCTION, :DWORD, :PVOID, :PVOID)
+CALLBACK(PFLS_CALLBACK_FUNCTION, :PVOID)
+CALLBACK(PSECURE_MEMORY_CACHE_CALLBACK, :PVOID, :SIZE_T)
 
 WT_SET_MAX_THREADPOOL_THREADS macro Flags, Limit
 	exitm<((Flags) OR ((Limit) SHL 16)))>
@@ -9742,16 +9324,11 @@ COMPATIBILITY_CONTEXT_ELEMENT ENDS
 PCOMPATIBILITY_CONTEXT_ELEMENT typedef ptr COMPATIBILITY_CONTEXT_ELEMENT
 PCCOMPATIBILITY_CONTEXT_ELEMENT typedef ptr COMPATIBILITY_CONTEXT_ELEMENT
 
-pragma warning(push)
-pragma warning(disable:4200)
-
 ACTIVATION_CONTEXT_COMPATIBILITY_INFORMATION STRUC
 ElementCount		dd ?
 Elements		COMPATIBILITY_CONTEXT_ELEMENT <>
 ACTIVATION_CONTEXT_COMPATIBILITY_INFORMATION ENDS
 PACTIVATION_CONTEXT_COMPATIBILITY_INFORMATION typedef ptr ACTIVATION_CONTEXT_COMPATIBILITY_INFORMATION
-
-pragma warning(pop)
 
 PCACTIVATION_CONTEXT_COMPATIBILITY_INFORMATION typedef ptr ACTIVATION_CONTEXT_COMPATIBILITY_INFORMATION
 
@@ -9853,9 +9430,7 @@ EVENTLOGRECORD			ENDS
 PEVENTLOGRECORD			typedef ptr EVENTLOGRECORD
 
 if _MSC_VER GE 1200
-pragma warning(push)
 endif
-pragma warning(disable : 4200)
 
 ifdef _MSC_EXTENSIONS
 EVENTSFORLOGFILE		STRUC
@@ -9883,9 +9458,7 @@ DBG_CONTROL_BREAK		equ 0x40010008
 DBG_EXCEPTION_NOT_HANDLED	equ 0x80010001
 
 if _MSC_VER GE 1200
-pragma warning(pop)
 else
-pragma warning(default : 4200)
 endif
 
 
@@ -10551,12 +10124,8 @@ endif
 
 TP_VERSION		typedef DWORD
 PTP_VERSION		typedef ptr TP_VERSION
-TP_CALLBACK_INSTANCE	typedef proto WINAPI
-PTP_CALLBACK_INSTANCE	typedef ptr TP_CALLBACK_INSTANCE
-PTP_SIMPLE_CALLBACK_T	typedef proto WINAPI \
-	      Instance: PTP_CALLBACK_INSTANCE,
-	       Context: PVOID
-PTP_SIMPLE_CALLBACK	typedef ptr PTP_SIMPLE_CALLBACK_T
+CALLBACK(PTP_CALLBACK_INSTANCE)
+CALLBACK(PTP_SIMPLE_CALLBACK, Instance:PTP_CALLBACK_INSTANCE, Context:PVOID)
 PTP_POOL		typedef ptr TP_POOL
 
 TP_CALLBACK_PRIORITY	typedef sdword;enum
@@ -10573,12 +10142,7 @@ TP_POOL_STACK_INFORMATION ENDS
 PTP_POOL_STACK_INFORMATION typedef ptr TP_POOL_STACK_INFORMATION
 
 PTP_CLEANUP_GROUP	typedef ptr TP_CLEANUP_GROUP
-PTP_CLEANUP_GROUP_CANCEL_CALLBACK_T typedef proto WINAPI \
-	 ObjectContext: PVOID,
-	CleanupContext: PVOID
-
-PTP_CLEANUP_GROUP_CANCEL_CALLBACK typedef ptr PTP_CLEANUP_GROUP_CANCEL_CALLBACK_T
-
+CALLBACK(PTP_CLEANUP_GROUP_CANCEL_CALLBACK, ObjectContext:PVOID, CleanupContext:PVOID)
 
 if (_WIN32_WINNT GE _WIN32_WINNT_WIN7)
 
@@ -10702,27 +10266,17 @@ endif
 
 
 PTP_WORK		typedef ptr TP_WORK
-PTP_WORK_CALLBACK_T typedef proto WINAPI \
-	      Instance: PTP_CALLBACK_INSTANCE,
-	       Context: PVOID,
-		  Work: PTP_WORK
-PTP_WORK_CALLBACK	typedef ptr PTP_WORK_CALLBACK_T
+
+CALLBACK(PTP_WORK_CALLBACK, Instance:PTP_CALLBACK_INSTANCE, Context:PVOID, Work:PTP_WORK)
 
 PTP_TIMER		typedef ptr TP_TIMER
-PTP_TIMER_CALLBACK_T	typedef proto WINAPI \
-	      Instance: PTP_CALLBACK_INSTANCE,
-	       Context: PVOID,
-		 Timer: PTP_TIMER
-PTP_TIMER_CALLBACK	typedef ptr PTP_TIMER_CALLBACK_T
+
+CALLBACK(PTP_TIMER_CALLBACK, Instance:PTP_CALLBACK_INSTANCE, Context:PVOID, Timer:PTP_TIMER)
 
 TP_WAIT_RESULT		typedef DWORD
 PTP_WAIT		typedef ptr TP_WAIT
-PTP_WAIT_CALLBACK_T	typedef proto WINAPI \
-	      Instance: PTP_CALLBACK_INSTANCE,
-	       Context: PVOID,
-		 _Wait: PTP_WAIT,
-	    WaitResult: TP_WAIT_RESULT
-PTP_WAIT_CALLBACK	typedef ptr PTP_WAIT_CALLBACK_T
+
+CALLBACK(PTP_WAIT_CALLBACK, Instance:PTP_CALLBACK_INSTANCE, Context:PVOID, _Wait:PTP_WAIT, WaitResult:TP_WAIT_RESULT)
 
 PTP_IO			typedef ptr TP_IO
 
@@ -10755,10 +10309,7 @@ NtCurrentTeb macro
 else
 
 if _MSC_VER GE 1200
-pragma warning(push)
 endif
-
-pragma warning (disable:4035)
 
 NtCurrentTeb macro
 	mov eax,fs:[PcTeb]
@@ -10766,9 +10317,7 @@ NtCurrentTeb macro
 	endm
 
 if _MSC_VER GE 1200
-pragma warning(pop)
 else
-pragma warning (default:4035)
 endif
 
 endif
@@ -10790,10 +10339,7 @@ ACTIVATION_CONTEXT_SECTION_COMPATIBILITY_INFO		equ 11
 endif
 
 if _MSC_VER GE 1200
-pragma warning(pop)
 else
-pragma warning(default:4201)
-pragma warning(default:4214)
 endif
 
 .list

@@ -15,7 +15,7 @@ ifdef _MAC
 ifndef _WIN32
 _WIN32 equ <>
 endif
-endif 
+endif
 
 ifndef WIN32
 WIN32 equ <>
@@ -76,7 +76,7 @@ endif
 endif
 
 ifdef _MAC
-CALLBACK	equ <PASCAL>
+;CALLBACK	equ <PASCAL>
 ;WINAPI		equ <CDECL>
 WINAPIV		equ <CDECL>
 APIENTRY	equ <WINAPI>
@@ -87,20 +87,25 @@ else
 PASCAL		equ <>
 endif
 elseif (_MSC_VER ge 800) or defined(_STDCALL_SUPPORTED)
-CALLBACK	equ <stdcall>
+;CALLBACK	equ <stdcall>
 ;WINAPI		equ <stdcall>
 WINAPIV		equ <c>
 APIENTRY	equ <WINAPI>
 APIPRIVATE	equ <stdcall>
 ;PASCAL		equ <stdcall>
 else
-CALLBACK	equ <>
+;CALLBACK	equ <>
 ;WINAPI		equ <>
 WINAPIV		equ <>
 APIENTRY	equ <WINAPI>
 APIPRIVATE	equ <>
 ;PASCAL		equ <pascal>
 endif
+
+CALLBACK macro name, arguments:VARARG
+	?&name& typedef proto WINAPI &arguments
+	exitm <name typedef ptr ?&name&>
+	endm
 
 ifdef _M_CEE_PURE
 WINAPI_INLINE	equ <__clrcall>

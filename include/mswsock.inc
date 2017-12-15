@@ -80,46 +80,15 @@ GetAcceptExSockaddrs proto WINAPI \
 
 
 ;BOOL
-LPFN_TRANSMITFILE_T typedef proto WINAPI \
-	       hSocket: SOCKET,
-		 hFile: HANDLE,
- nNumberOfBytesToWrite: DWORD,
- nNumberOfBytesPerSend: DWORD,
-	  lpOverlapped: LPOVERLAPPED,
-     lpTransmitBuffers: LPTRANSMIT_FILE_BUFFERS,
-	    dwReserved: DWORD
-LPFN_TRANSMITFILE typedef ptr LPFN_TRANSMITFILE_T
-
+CALLBACK(LPFN_TRANSMITFILE, :SOCKET, :HANDLE, :DWORD, :DWORD, :LPOVERLAPPED, :LPTRANSMIT_FILE_BUFFERS, :DWORD)
 WSAID_TRANSMITFILE	equ <{0xb5367df0,0xcbac,0x11cf,{0x95,0xca,0x00,0x80,0x5f,0x48,0xa1,0x92}}>
-
 ;BOOL
-LPFN_ACCEPTEX_T typedef proto WINAPI \
-	 sListenSocket: SOCKET,
-	 sAcceptSocket: SOCKET,
-	lpOutputBuffer: PVOID,
-   dwReceiveDataLength: DWORD,
-  dwLocalAddressLength: DWORD,
- dwRemoteAddressLength: DWORD,
-     lpdwBytesReceived: LPDWORD,
-	  lpOverlapped: LPOVERLAPPED
-LPFN_ACCEPTEX typedef ptr LPFN_ACCEPTEX_T
-
+CALLBACK(LPFN_ACCEPTEX, :SOCKET, :SOCKET, :PVOID, :DWORD, :DWORD, :DWORD, :LPDWORD, :LPOVERLAPPED)
 WSAID_ACCEPTEX		equ <{0xb5367df1,0xcbac,0x11cf,{0x95,0xca,0x00,0x80,0x5f,0x48,0xa1,0x92}}>
-
 ;VOID
-LPFN_GETACCEPTEXSOCKADDRS_T typedef proto WINAPI \
-	lpOutputBuffer: PVOID,
-   dwReceiveDataLength: DWORD,
-  dwLocalAddressLength: DWORD,
- dwRemoteAddressLength: DWORD,
-	 LocalSockaddr: ptr sockaddr,
-   LocalSockaddrLength: LPINT,
-	RemoteSockaddr: ptr sockaddr,
-  RemoteSockaddrLength: LPINT
-LPFN_GETACCEPTEXSOCKADDRS typedef ptr LPFN_GETACCEPTEXSOCKADDRS_T
-
+CALLBACK(LPFN_GETACCEPTEXSOCKADDRS, :PVOID, :DWORD, :DWORD, :DWORD, :ptr, :LPINT, :ptr, :LPINT)
 WSAID_GETACCEPTEXSOCKADDRS equ <{0xb5367df2,0xcbac,0x11cf,{0x95,0xca,0x00,0x80,0x5f,0x48,0xa1,0x92}}>
 
-endif	
+endif
 
 .list

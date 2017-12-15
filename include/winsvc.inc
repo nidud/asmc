@@ -4,10 +4,9 @@ endif
 ifndef _WINDEF_
  include windef.inc
 endif
-.xlist
 ifndef _WINSVC_
 _WINSVC_ equ 1
-
+.xlist
 
 ifdef __PE__
 option dllimport:<advapi32>
@@ -249,24 +248,14 @@ LPQUERY_SERVICE_CONFIG	typedef LPQUERY_SERVICE_CONFIGA
 endif
 
 
-
-
-SERVICE_MAIN_FUNCTIONW_T typedef proto WINAPI \
-     dwNumServicesArgs: DWORD,
-   lpServiceArgVectors: LPWSTR
-LPSERVICE_MAIN_FUNCTIONW typedef ptr SERVICE_MAIN_FUNCTIONW_T
-
-SERVICE_MAIN_FUNCTIONA_T typedef proto WINAPI \
-     dwNumServicesArgs: DWORD,
-   lpServiceArgVectors: LPSTR
-LPSERVICE_MAIN_FUNCTIONA typedef ptr SERVICE_MAIN_FUNCTIONA_T
+CALLBACK(LPSERVICE_MAIN_FUNCTIONW, :DWORD, :LPWSTR)
+CALLBACK(LPSERVICE_MAIN_FUNCTIONA, :DWORD, :LPSTR)
 
 ifdef _UNICODE
 LPSERVICE_MAIN_FUNCTION equ LPSERVICE_MAIN_FUNCTIONW
 else
 LPSERVICE_MAIN_FUNCTION equ LPSERVICE_MAIN_FUNCTIONA
 endif
-
 
 
 SERVICE_TABLE_ENTRYA	STRUC
@@ -288,10 +277,7 @@ LPSERVICE_TABLE_ENTRY	typedef LPSERVICE_TABLE_ENTRYA
 endif
 
 
-HANDLER_FUNCTION_T typedef proto WINAPI dwControl: DWORD
-LPHANDLER_FUNCTION typedef ptr HANDLER_FUNCTION_T
-
-
+CALLBACK(LPHANDLER_FUNCTION, dwControl:DWORD)
 
 ;BOOL
 ChangeServiceConfigA proto WINAPI \
@@ -628,6 +614,5 @@ UnlockServiceDatabase proto WINAPI \
 		ScLock: SC_LOCK
 
 
-endif
-
 .list
+endif

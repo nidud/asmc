@@ -256,26 +256,26 @@ D3DCURSORCAPS_LOWRES	equ 0x00000002
 ;;
 ;; DevCaps
 ;;
-D3DDEVCAPS_EXECUTESYSTEMMEMORY equ 0x00000010 ;; Device can use execute buffers from system memory
-D3DDEVCAPS_EXECUTEVIDEOMEMORY equ 0x00000020 ;; Device can use execute buffers from video memory
-D3DDEVCAPS_TLVERTEXSYSTEMMEMORY equ 0x00000040L ;; Device can use TL buffers from system memory
-D3DDEVCAPS_TLVERTEXVIDEOMEMORY equ 0x00000080L ;; Device can use TL buffers from video memory
-D3DDEVCAPS_TEXTURESYSTEMMEMORY equ 0x00000100 ;; Device can texture from system memory
-D3DDEVCAPS_TEXTUREVIDEOMEMORY equ 0x00000200 ;; Device can texture from device memory
-D3DDEVCAPS_DRAWPRIMTLVERTEX equ 0x00000400L ;; Device can draw TLVERTEX primitives
-D3DDEVCAPS_CANRENDERAFTERFLIP equ 0x00000800 ;; Device can render without waiting for flip to complete
+D3DDEVCAPS_EXECUTESYSTEMMEMORY	equ 0x00000010 ;; Device can use execute buffers from system memory
+D3DDEVCAPS_EXECUTEVIDEOMEMORY	equ 0x00000020 ;; Device can use execute buffers from video memory
+D3DDEVCAPS_TLVERTEXSYSTEMMEMORY equ 0x00000040 ;; Device can use TL buffers from system memory
+D3DDEVCAPS_TLVERTEXVIDEOMEMORY	equ 0x00000080 ;; Device can use TL buffers from video memory
+D3DDEVCAPS_TEXTURESYSTEMMEMORY	equ 0x00000100 ;; Device can texture from system memory
+D3DDEVCAPS_TEXTUREVIDEOMEMORY	equ 0x00000200 ;; Device can texture from device memory
+D3DDEVCAPS_DRAWPRIMTLVERTEX	equ 0x00000400 ;; Device can draw TLVERTEX primitives
+D3DDEVCAPS_CANRENDERAFTERFLIP	equ 0x00000800 ;; Device can render without waiting for flip to complete
 D3DDEVCAPS_TEXTURENONLOCALVIDMEM equ 0x00001000 ;; Device can texture from nonlocal video memory
-D3DDEVCAPS_DRAWPRIMITIVES2 equ 0x00002000 ;; Device can support DrawPrimitives2
+D3DDEVCAPS_DRAWPRIMITIVES2	equ 0x00002000 ;; Device can support DrawPrimitives2
 D3DDEVCAPS_SEPARATETEXTUREMEMORIES equ 0x00004000 ;; Device is texturing from separate memory pools
-D3DDEVCAPS_DRAWPRIMITIVES2EX equ 0x00008000 ;; Device can support Extended DrawPrimitives2 i.e. DX7 compliant driver
-D3DDEVCAPS_HWTRANSFORMANDLIGHT equ 0x00010000 ;; Device can support transformation and lighting in hardware and DRAWPRIMITIVES2EX must be also
-D3DDEVCAPS_CANBLTSYSTONONLOCAL equ 0x00020000 ;; Device supports a Tex Blt from system memory to non-local vidmem
-D3DDEVCAPS_HWRASTERIZATION equ 0x00080000 ;; Device has HW acceleration for rasterization
-D3DDEVCAPS_PUREDEVICE	equ 0x00100000 ;; Device supports D3DCREATE_PUREDEVICE
-D3DDEVCAPS_QUINTICRTPATCHES equ 0x00200000 ;; Device supports quintic Beziers and BSplines
-D3DDEVCAPS_RTPATCHES	equ 0x00400000 ;; Device supports Rect and Tri patches
-D3DDEVCAPS_RTPATCHHANDLEZERO equ 0x00800000 ;; Indicates that RT Patches may be drawn efficiently using handle 0
-D3DDEVCAPS_NPATCHES	equ 0x01000000 ;; Device supports N-Patches
+D3DDEVCAPS_DRAWPRIMITIVES2EX	equ 0x00008000 ;; Device can support Extended DrawPrimitives2 i.e. DX7 compliant driver
+D3DDEVCAPS_HWTRANSFORMANDLIGHT	equ 0x00010000 ;; Device can support transformation and lighting in hardware and DRAWPRIMITIVES2EX must be also
+D3DDEVCAPS_CANBLTSYSTONONLOCAL	equ 0x00020000 ;; Device supports a Tex Blt from system memory to non-local vidmem
+D3DDEVCAPS_HWRASTERIZATION	equ 0x00080000 ;; Device has HW acceleration for rasterization
+D3DDEVCAPS_PUREDEVICE		equ 0x00100000 ;; Device supports D3DCREATE_PUREDEVICE
+D3DDEVCAPS_QUINTICRTPATCHES	equ 0x00200000 ;; Device supports quintic Beziers and BSplines
+D3DDEVCAPS_RTPATCHES		equ 0x00400000 ;; Device supports Rect and Tri patches
+D3DDEVCAPS_RTPATCHHANDLEZERO	equ 0x00800000 ;; Indicates that RT Patches may be drawn efficiently using handle 0
+D3DDEVCAPS_NPATCHES		equ 0x01000000 ;; Device supports N-Patches
 
 ;;
 ;; PrimitiveMiscCaps

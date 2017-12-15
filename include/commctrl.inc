@@ -4392,11 +4392,7 @@ ListView_EnableGroupView macro hwnd, fEnable
 	exitm<SNDMSG(hwnd, LVM_ENABLEGROUPVIEW, fEnable, 0)>
 	endm
 
-FNLVGROUPCOMPARE_T typedef proto WINAPI \
-			: SINT,
-			: SINT,
-			: PVOID
-PFNLVGROUPCOMPARE  typedef ptr FNLVGROUPCOMPARE_T
+CALLBACK(PFNLVGROUPCOMPARE, :SINT, :SINT, :PVOID)
 
 LVM_SORTGROUPS		equ (LVM_FIRST + 158)
 ListView_SortGroups macro hwnd, _pfnGroupCompate, _plv
@@ -5660,11 +5656,7 @@ TreeView_GetInsertMarkColor macro hwnd
 endif
 endif
 
-PFNTVCOMPARE_T typedef proto WINAPI \
-	       lParam1: LPARAM,
-	       lParam2: LPARAM,
-	    lParamSort: LPARAM
-PFNTVCOMPARE typedef ptr PFNTVCOMPARE_T
+CALLBACK(PFNTVCOMPARE, lParam1:LPARAM, lParam2:LPARAM, lParamSort:LPARAM)
 
 if (_WIN32_IE GE 0x0300)
 LPTV_SORTCB		equ LPTVSORTCB
@@ -7679,13 +7671,7 @@ ifdef _WIN32
 ;include pshpack1.inc
 endif
 
-PFTASKDIALOGCALLBACK_T typedef proto WINAPI \
-		   hwnd: HWND,
-		    msg: UINT,
-		 wParam: WPARAM,
-		 lParam: LPARAM,
-	      lpRefData: LPLONG
-PFTASKDIALOGCALLBACK typedef ptr PFTASKDIALOGCALLBACK_T
+CALLBACK(PFTASKDIALOGCALLBACK, hwnd:HWND, msg:UINT, wParam:WPARAM, lParam:LPARAM, lpRefData:LPLONG)
 
 TDF_ENABLE_HYPERLINKS		equ 0x0001
 TDF_USE_HICON_MAIN		equ 0x0002
@@ -7848,32 +7834,13 @@ __COMMCTRL_DA_DEFINED__ equ 1
 DA_LAST			equ (0x7FFFFFFF)
 DA_ERR			equ (-1)
 
-PFNDAENUMCALLBACK_T typedef proto \
-		     p: PVOID,
-		 pData: PVOID
-PFNDAENUMCALLBACK typedef ptr PFNDAENUMCALLBACK_T
-
-PFNDAENUMCALLBACKCONST_T typedef proto \
-		     p: PVOID,
-		 pData: PVOID
-PFNDAENUMCALLBACKCONST typedef ptr PFNDAENUMCALLBACKCONST_T
-
-PFNDACOMPARE_T typedef proto \
-		    p1: PVOID,
-		    p2: PVOID,
-		lParam: LPARAM
-PFNDACOMPARE	typedef ptr PFNDACOMPARE_T
-
-PFNDACOMPARECONST_T typedef proto \
-		    p1: PVOID,
-		    p2: PVOID,
-		lParam: LPARAM
-PFNDACOMPARECONST typedef ptr PFNDACOMPARECONST_T
-
+CALLBACK(PFNDAENUMCALLBACK, :PVOID, pData:PVOID)
+CALLBACK(PFNDAENUMCALLBACKCONST, :PVOID, :PVOID)
+CALLBACK(PFNDACOMPARE, p1:PVOID, p2:PVOID, lParam:LPARAM)
+CALLBACK(PFNDACOMPARECONST, p1:PVOID, p2:PVOID, lParam:LPARAM)
 
 ;DSA			typedef DSA
 HDSA			typedef ptr DSA
-
 
 ;WINCOMMCTRLAPI
 DSA_Create proto WINAPI \
@@ -8074,12 +8041,7 @@ iPos			SINT ?
 pvItem			PVOID ?
 DPASTREAMINFO		ENDS
 
-PFNDPASTREAM_T typedef proto \
-		 pinfo: ptr DPASTREAMINFO,
-	       pstream: ptr IStream,
-	    pvInstData: PVOID
-PFNDPASTREAM typedef ptr PFNDPASTREAM_T
-
+CALLBACK(PFNDPASTREAM, pinfo:ptr DPASTREAMINFO, pstream:ptr IStream, pvInstData:PVOID)
 
 ;WINCOMMCTRLAPI
 DPA_LoadStream proto WINAPI \
@@ -8101,20 +8063,8 @@ DPAM_NORMAL		equ 0x00000002
 DPAM_UNION		equ 0x00000004
 DPAM_INTERSECT		equ 0x00000008
 
-PFNDPAMERGE_T typedef proto \
-		  uMsg: UINT,
-		pvDest: PVOID,
-		 pvSrc: PVOID,
-		lParam: LPARAM
-PFNDPAMERGE	typedef ptr PFNDPAMERGE_T
-
-PFNDPAMERGECONST_T typedef proto \
-		  uMsg: UINT,
-		pvDest: PVOID,
-		 pvSrc: PVOID,
-		lParam: LPARAM
-PFNDPAMERGECONST typedef ptr PFNDPAMERGECONST_T
-
+CALLBACK(PFNDPAMERGE, uMsg:UINT, pvDest:PVOID, pvSrc:PVOID, lParam:LPARAM)
+CALLBACK(PFNDPAMERGECONST, uMsg:UINT, pvDest:PVOID, pvSrc:PVOID, lParam:LPARAM)
 
 DPAMM_MERGE		equ 1
 DPAMM_DELETE		equ 2
@@ -8315,15 +8265,8 @@ endif
 endif
 
 if (_WIN32_WINNT GE 0x0501)
-SUBCLASSPROC_T typedef proto \
-		  hWnd: HWND,
-		  uMsg: UINT,
-		wParam: WPARAM,
-		lParam: LPARAM,
-	   uIdSubclass: LPUINT,
-	     dwRefData: LPDWORD
-SUBCLASSPROC typedef ptr SUBCLASSPROC_T
 
+CALLBACK(SUBCLASSPROC, hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM, uIdSubclass:LPUINT, dwRefData:LPDWORD)
 
 ;BOOL
 SetWindowSubclass proto WINAPI \
@@ -8399,12 +8342,6 @@ include commctrl.inl
 endif
 endif
 
-endif
-
-ifdef _MSC_VER
-if _MSC_VER GE 1200
-;pragma warning(pop)
-endif
 endif
 
 .list

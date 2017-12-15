@@ -9,23 +9,22 @@ ifndef __RPC_H__
 __RPC_H__ equ 1
 
 ifdef _WIN32
-__RPC_WIN32__		equ 1
+__RPC_WIN32__ equ 1
 else
-__RPC_WIN64__		equ 1
+__RPC_WIN64__ equ 1
 endif
 include basetsd.inc
 .xlist
 
-COMTYPEID = 0
-STDMETHOD macro name:req, arguments:VARARG
+STDMETHOD macro name, arguments:VARARG
+	local __type, __ptr
 ifnb <arguments>
-@CatStr(<pt??>, %COMTYPEID) typedef proto WINAPI :ptr, &arguments
+	__type typedef proto WINAPI :ptr, &arguments
 else
-@CatStr(<pt??>, %COMTYPEID) typedef proto WINAPI :ptr
+	__type typedef proto WINAPI :ptr
 endif
-@CatStr(<pp??>, %COMTYPEID) typedef ptr @CatStr(<pt??>, %COMTYPEID)
-name @CatStr(<pp??>, %COMTYPEID) ?
-COMTYPEID = COMTYPEID + 1
+	__ptr typedef ptr __type
+	name __ptr ?
 	endm
 
 ifndef __MIDL_USER_DEFINED
@@ -62,8 +61,7 @@ include excpt.inc
 include winerror.inc
 .xlist
 
-MACYIELDCALLBACK_T	typedef proto WINAPI :ptr sword
-MACYIELDCALLBACK	typedef ptr MACYIELDCALLBACK_T
+CALLBACK(MACYIELDCALLBACK, :ptr sword)
 ;RPC_ENTRY		typedef ptr MACYIELDCALLBACK
 
 ;RPC_ENTRY
@@ -93,10 +91,9 @@ I_RpcMapWin32Status proto WINAPI \
 		Status: RPC_STATUS
 
 ifndef RPC_NO_WINDOWS_H
-
 include rpcasync.inc
-
 endif
+
 .list
 endif
 

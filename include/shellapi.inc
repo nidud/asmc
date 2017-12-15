@@ -1395,29 +1395,13 @@ SHIL_LAST		equ SHIL_SYSSMALL
 endif
 endif
 
-;typedef HRESULT (STDMETHODCALLTYPE *
-FNCANSHAREFOLDERWT typedef proto WINAPI \
-	       pszPath: LPCWSTR
-PFNCANSHAREFOLDERW typedef ptr FNCANSHAREFOLDERWT
-;typedef HRESULT (STDMETHODCALLTYPE *
-FNSHOWSHAREFOLDERUIWT typedef proto WINAPI \
-	    hwndParent: HWND,
-	       pszPath: LPCWSTR
-PFNSHOWSHAREFOLDERUIW typedef ptr FNSHOWSHAREFOLDERUIWT
+CALLBACK(FNCANSHAREFOLDERW, pszPath:LPCWSTR)
+CALLBACK(FNSHOWSHAREFOLDERUIW, hwndParent:HWND, pszPath:LPCWSTR)
 
-endif
-
-ifdef __cplusplus
 endif
 
 ifndef _WIN64
 ;include <poppack.h>
-endif
-
-ifdef _MSC_VER
-if _MSC_VER GE 1200
-;pragma warning(pop)
-endif
 endif
 
 if (NTDDI_VERSION GE NTDDI_VISTA)

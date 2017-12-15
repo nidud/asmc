@@ -526,9 +526,6 @@ externdef IWinTypes_v0_1_c_ifspec:RPC_IF_HANDLE
 externdef IWinTypes_v0_1_s_ifspec:RPC_IF_HANDLE
 endif
 
-if ( _MSC_VER GE 800 )
-;#pragma warning(disable:4201)
-endif
 DATE		typedef REAL8
 
 ifndef _tagCY_DEFINED
@@ -589,9 +586,6 @@ DECIMAL_SETZERO macro val
 endif
 LPDECIMAL	typedef ptr DECIMAL
 
-if ( _MSC_VER GE 800 )
-;#pragma warning(default:4201)
-endif
 wireBSTR	typedef ptr FLAGGED_WORD_BLOB
 BSTR		typedef ptr OLECHAR
 LPBSTR		typedef ptr BSTR

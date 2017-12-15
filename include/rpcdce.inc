@@ -17,7 +17,7 @@ Data2			dw ?
 Data3			dw ?
 Data4			db 8 dup(?)
 GUID			ENDS
-endif 
+endif
 
 ifndef UUID_DEFINED
 UUID_DEFINED		equ 1
@@ -87,10 +87,10 @@ RPC_C_OPT_MQ_TIME_TO_BE_RECEIVED equ 8
 RPC_C_OPT_BINDING_NONCAUSAL	equ 9
 RPC_C_OPT_MAX_OPTIONS		equ 10
 
-RPC_C_MQ_EXPRESS		equ 0  
+RPC_C_MQ_EXPRESS		equ 0
 RPC_C_MQ_RECOVERABLE		equ 1
 
-RPC_C_MQ_JOURNAL_NONE		equ 0  
+RPC_C_MQ_JOURNAL_NONE		equ 0
 RPC_C_MQ_JOURNAL_DEADLETTER	equ 1
 RPC_C_MQ_JOURNAL_ALWAYS		equ 2
 
@@ -108,18 +108,18 @@ RPC_PROTSEQ_VECTORW	ENDS
 
 ifdef _UNICODE
 RPC_PROTSEQ_VECTOR	equ <RPC_PROTSEQ_VECTORW>
-else 
+else
 RPC_PROTSEQ_VECTOR	equ <RPC_PROTSEQ_VECTORA>
-endif 
+endif
 
-else 
+else
 
 RPC_PROTSEQ_VECTOR	STRUC
 Count			UINT ?
 Protseq			LPBYTE ?
 RPC_PROTSEQ_VECTOR	ENDS
 
-endif 
+endif
 RPC_POLICY		STRUC
 _Length			UINT ?
 EndpointFlags		dd ?
@@ -127,16 +127,8 @@ NICFlags		dd ?
 RPC_POLICY		ENDS
 PRPC_POLICY		typedef ptr RPC_POLICY
 
-RPC_OBJECT_INQ_FN_T typedef proto WINAPI \
-	     ObjectUuid: ptr UUID,
-	       TypeUuid: ptr UUID,
-		 Status: ptr RPC_STATUS
-RPC_OBJECT_INQ_FN	typedef ptr RPC_OBJECT_INQ_FN_T
-
-RPC_IF_CALLBACK_FN_T typedef proto WINAPI \
-	  InterfaceUuid: RPC_IF_HANDLE,
-		Context: PVOID
-RPC_IF_CALLBACK_FN	typedef ptr RPC_IF_CALLBACK_FN_T
+CALLBACK(RPC_OBJECT_INQ_FN, ObjectUuid:ptr UUID, TypeUuid:ptr UUID, Status: ptr RPC_STATUS)
+CALLBACK(RPC_IF_CALLBACK_FN, InterfaceUuid:RPC_IF_HANDLE, Context: PVOID)
 
 RPC_MGR_EPV		equ <>
 
@@ -191,18 +183,18 @@ RpcBindingFromStringBindingW proto WINAPI \
 
 ifdef _UNICODE
 RpcBindingFromStringBinding equ <RpcBindingFromStringBindingW>
-else 
+else
 RpcBindingFromStringBinding equ <RpcBindingFromStringBindingA>
-endif 
+endif
 
-else 
+else
 
 ;RPC_STATUS
 RpcBindingFromStringBinding proto WINAPI \
 	 StringBinding: PVOID,
 	       Binding: ptr RPC_BINDING_HANDLE
 
-endif 
+endif
 
 ;RPC_STATUS
 RpcBindingInqObject proto WINAPI \
@@ -239,18 +231,18 @@ RpcBindingToStringBindingW proto WINAPI \
 
 ifdef _UNICODE
 RpcBindingToStringBinding equ <RpcBindingToStringBindingW>
-else 
+else
 RpcBindingToStringBinding equ <RpcBindingToStringBindingA>
-endif 
+endif
 
-else 
+else
 
 ;RPC_STATUS
 RpcBindingToStringBinding proto WINAPI \
 	       Binding: RPC_BINDING_HANDLE,
 	 StringBinding: PVOID
 
-endif 
+endif
 
 ;RPC_STATUS
 RpcBindingVectorFree proto WINAPI \
@@ -279,11 +271,11 @@ RpcStringBindingComposeW proto WINAPI \
 
 ifdef _UNICODE
 RpcStringBindingCompose equ <RpcStringBindingComposeW>
-else 
+else
 RpcStringBindingCompose equ <RpcStringBindingComposeA>
-endif 
+endif
 
-else 
+else
 
 ;RPC_STATUS
 RpcStringBindingCompose proto WINAPI \
@@ -294,7 +286,7 @@ RpcStringBindingCompose proto WINAPI \
 	       Options: PVOID,
 	 StringBinding: PVOID
 
-endif 
+endif
 
 
 ifdef RPC_UNICODE_SUPPORTED
@@ -319,11 +311,11 @@ RpcStringBindingParseW proto WINAPI \
 
 ifdef _UNICODE
 RpcStringBindingParse	equ <RpcStringBindingParseW>
-else 
+else
 RpcStringBindingParse	equ <RpcStringBindingParseA>
-endif 
+endif
 
-else 
+else
 
 ;RPC_STATUS
 RpcStringBindingParse proto WINAPI \
@@ -334,7 +326,7 @@ RpcStringBindingParse proto WINAPI \
 	      Endpoint: PVOID,
 	NetworkOptions: PVOID
 
-endif 
+endif
 
 
 ifdef RPC_UNICODE_SUPPORTED
@@ -349,17 +341,17 @@ RpcStringFreeW proto WINAPI \
 
 ifdef _UNICODE
 RpcStringFree		equ <RpcStringFreeW>
-else 
+else
 RpcStringFree		equ <RpcStringFreeA>
-endif 
+endif
 
-else 
+else
 
 ;RPC_STATUS
 RpcStringFree proto WINAPI \
 		String: PVOID
 
-endif 
+endif
 
 ;RPC_STATUS
 RpcIfInqId proto WINAPI \
@@ -379,17 +371,17 @@ RpcNetworkIsProtseqValidW proto WINAPI \
 
 ifdef _UNICODE
 RpcNetworkIsProtseqValid equ <RpcNetworkIsProtseqValidW>
-else 
+else
 RpcNetworkIsProtseqValid equ <RpcNetworkIsProtseqValidA>
-endif 
+endif
 
-else 
+else
 
 ;RPC_STATUS
 RpcNetworkIsProtseqValid proto WINAPI \
 	       Protseq: PVOID
 
-endif 
+endif
 
 ;RPC_STATUS
 RpcMgmtInqComTimeout proto WINAPI \
@@ -419,17 +411,17 @@ RpcNetworkInqProtseqsW proto WINAPI \
 
 ifdef _UNICODE
 RpcNetworkInqProtseqs	equ <RpcNetworkInqProtseqsW>
-else 
+else
 RpcNetworkInqProtseqs	equ <RpcNetworkInqProtseqsA>
-endif 
+endif
 
-else 
+else
 
 ;RPC_STATUS
 RpcNetworkInqProtseqs proto WINAPI \
 	 ProtseqVector: ptr RPC_PROTSEQ_VECTOR
 
-endif 
+endif
 
 ;RPC_STATUS
 RpcObjectInqType proto WINAPI \
@@ -458,17 +450,17 @@ RpcProtseqVectorFreeW proto WINAPI \
 
 ifdef _UNICODE
 RpcProtseqVectorFree	equ <RpcProtseqVectorFreeW>
-else 
+else
 RpcProtseqVectorFree	equ <RpcProtseqVectorFreeA>
-endif 
+endif
 
-else 
+else
 
 ;RPC_STATUS
 RpcProtseqVectorFree proto WINAPI \
 	 ProtseqVector: ptr RPC_PROTSEQ_VECTOR
 
-endif 
+endif
 
 ;RPC_STATUS
 RpcServerInqBindings proto WINAPI \
@@ -564,12 +556,12 @@ RpcServerUseProtseqExW proto WINAPI \
 ifdef _UNICODE
 RpcServerUseProtseq	equ <RpcServerUseProtseqW>
 RpcServerUseProtseqEx	equ <RpcServerUseProtseqExW>
-else 
+else
 RpcServerUseProtseq	equ <RpcServerUseProtseqA>
 RpcServerUseProtseqEx	equ <RpcServerUseProtseqExA>
-endif 
+endif
 
-else 
+else
 
 ;RPC_STATUS
 RpcServerUseProtseq proto WINAPI \
@@ -584,7 +576,7 @@ RpcServerUseProtseqEx proto WINAPI \
     SecurityDescriptor: PVOID,
 		Policy: PRPC_POLICY
 
-endif 
+endif
 
 
 ifdef RPC_UNICODE_SUPPORTED
@@ -622,12 +614,12 @@ RpcServerUseProtseqEpExW proto WINAPI \
 ifdef _UNICODE
 RpcServerUseProtseqEp	equ <RpcServerUseProtseqEpW>
 RpcServerUseProtseqEpEx equ <RpcServerUseProtseqEpExW>
-else 
+else
 RpcServerUseProtseqEp	equ <RpcServerUseProtseqEpA>
 RpcServerUseProtseqEpEx equ <RpcServerUseProtseqEpExA>
-endif 
+endif
 
-else 
+else
 
 ;RPC_STATUS
 RpcServerUseProtseqEp proto WINAPI \
@@ -644,7 +636,7 @@ RpcServerUseProtseqEpEx proto WINAPI \
     SecurityDescriptor: PVOID,
 		Policy: PRPC_POLICY
 
-endif 
+endif
 
 
 ifdef RPC_UNICODE_SUPPORTED
@@ -682,12 +674,12 @@ RpcServerUseProtseqIfExW proto WINAPI \
 ifdef _UNICODE
 RpcServerUseProtseqIf	equ <RpcServerUseProtseqIfW>
 RpcServerUseProtseqIfEx equ <RpcServerUseProtseqIfExW>
-else 
+else
 RpcServerUseProtseqIf	equ <RpcServerUseProtseqIfA>
 RpcServerUseProtseqIfEx equ <RpcServerUseProtseqIfExA>
-endif 
+endif
 
-else 
+else
 
 ;RPC_STATUS
 RpcServerUseProtseqIf proto WINAPI \
@@ -704,7 +696,7 @@ RpcServerUseProtseqIfEx proto WINAPI \
     SecurityDescriptor: PVOID,
 		Policy: PRPC_POLICY
 
-endif 
+endif
 
 ;RPC_STATUS
 RpcMgmtStatsVectorFree proto WINAPI \
@@ -761,11 +753,11 @@ RpcMgmtInqServerPrincNameW proto WINAPI \
 
 ifdef _UNICODE
 RpcMgmtInqServerPrincName equ <RpcMgmtInqServerPrincNameW>
-else 
+else
 RpcMgmtInqServerPrincName equ <RpcMgmtInqServerPrincNameA>
-endif 
+endif
 
-else 
+else
 
 ;RPC_STATUS
 RpcMgmtInqServerPrincName proto WINAPI \
@@ -773,7 +765,7 @@ RpcMgmtInqServerPrincName proto WINAPI \
 	      AuthnSvc: DWORD,
        ServerPrincName: PVOID
 
-endif 
+endif
 
 ifdef RPC_UNICODE_SUPPORTED
 
@@ -789,18 +781,18 @@ RpcServerInqDefaultPrincNameW proto WINAPI \
 
 ifdef _UNICODE
 RpcServerInqDefaultPrincName equ <RpcServerInqDefaultPrincNameW>
-else 
+else
 RpcServerInqDefaultPrincName equ <RpcServerInqDefaultPrincNameA>
-endif 
+endif
 
-else 
+else
 
 ;RPC_STATUS
 RpcServerInqDefaultPrincName proto WINAPI \
 	      AuthnSvc: DWORD,
 	     PrincName: PVOID
 
-endif 
+endif
 
 ;RPC_STATUS
 RpcEpResolveBinding proto WINAPI \
@@ -824,11 +816,11 @@ RpcNsBindingInqEntryNameW proto WINAPI \
 
 ifdef _UNICODE
 RpcNsBindingInqEntryName equ <RpcNsBindingInqEntryNameW>
-else 
+else
 RpcNsBindingInqEntryName equ <RpcNsBindingInqEntryNameA>
-endif 
+endif
 
-else 
+else
 
 ;RPC_STATUS
 RpcNsBindingInqEntryName proto WINAPI \
@@ -836,7 +828,7 @@ RpcNsBindingInqEntryName proto WINAPI \
        EntryNameSyntax: DWORD,
 	     EntryName: PVOID
 
-endif 
+endif
 
 RPC_AUTH_IDENTITY_HANDLE typedef PVOID
 RPC_AUTHZ_HANDLE	typedef PVOID
@@ -922,12 +914,12 @@ ifdef _UNICODE
 SEC_WINNT_AUTH_IDENTITY	 equ SEC_WINNT_AUTH_IDENTITY_W
 PSEC_WINNT_AUTH_IDENTITY equ PSEC_WINNT_AUTH_IDENTITY_W
 _SEC_WINNT_AUTH_IDENTITY equ _SEC_WINNT_AUTH_IDENTITY_W
-else 
+else
 SEC_WINNT_AUTH_IDENTITY	 equ SEC_WINNT_AUTH_IDENTITY_A
 PSEC_WINNT_AUTH_IDENTITY equ PSEC_WINNT_AUTH_IDENTITY_A
 _SEC_WINNT_AUTH_IDENTITY equ _SEC_WINNT_AUTH_IDENTITY_A
-endif 
-endif 
+endif
+endif
 
 RPC_C_AUTHZ_NONE	equ 0
 RPC_C_AUTHZ_NAME	equ 1
@@ -1032,14 +1024,8 @@ RpcBindingInqAuthInfoExW proto WINAPI \
 	   SecurityQOS: ptr RPC_SECURITY_QOS
 
 
-RPC_AUTH_KEY_RETRIEVAL_FN_T typedef proto WINAPI \
-		   Arg: PVOID,
-       ServerPrincName: PVOID,
-		KeyVer: DWORD,
-		   Key: PVOID,
-		Status: ptr RPC_STATUS
+CALLBACK(RPC_AUTH_KEY_RETRIEVAL_FN, Arg:PVOID, ServerPrincName:PVOID, KeyVer:DWORD, Key:PVOID, Status: ptr RPC_STATUS)
 
-RPC_AUTH_KEY_RETRIEVAL_FN typedef ptr RPC_AUTH_KEY_RETRIEVAL_FN_T
 ;RPC_STATUS
 RpcServerRegisterAuthInfoA proto WINAPI \
        ServerPrincName: PVOID,
@@ -1061,16 +1047,16 @@ RpcBindingSetAuthInfo	equ <RpcBindingSetAuthInfoW>
 RpcServerRegisterAuthInfo equ <RpcServerRegisterAuthInfoW>
 RpcBindingInqAuthInfoEx equ <RpcBindingInqAuthInfoExW>
 RpcBindingSetAuthInfoEx equ <RpcBindingSetAuthInfoExW>
-else 
+else
 RpcBindingInqAuthClient equ <RpcBindingInqAuthClientA>
 RpcBindingInqAuthInfo	equ <RpcBindingInqAuthInfoA>
 RpcBindingSetAuthInfo	equ <RpcBindingSetAuthInfoA>
 RpcServerRegisterAuthInfo equ <RpcServerRegisterAuthInfoA>
 RpcBindingInqAuthInfoEx equ <RpcBindingInqAuthInfoExA>
 RpcBindingSetAuthInfoEx equ <RpcBindingSetAuthInfoExA>
-endif 
+endif
 
-else 
+else
 
 ;RPC_STATUS
 RpcBindingInqAuthClient proto WINAPI \
@@ -1100,14 +1086,7 @@ RpcBindingSetAuthInfo proto WINAPI \
 	      AuthzSvc: DWORD
 
 
-RPC_AUTH_KEY_RETRIEVAL_FN_T typedef proto WINAPI \
-		   Arg: PVOID,
-       ServerPrincName: PVOID,
-		KeyVer: DWORD,
-		   Key: PVOID,
-		Status: ptr RPC_STATUS
-
-RPC_AUTH_KEY_RETRIEVAL_FN typedef ptr RPC_AUTH_KEY_RETRIEVAL_FN_T
+CALLBACK(RPC_AUTH_KEY_RETRIEVAL_FN, Arg:PVOID, ServerPrincName:PVOID, KeyVer:DWORD, Key:PVOID, Status:ptr RPC_STATUS)
 
 ;RPC_STATUS
 RpcServerRegisterAuthInfo proto WINAPI \
@@ -1116,7 +1095,7 @@ RpcServerRegisterAuthInfo proto WINAPI \
 	      GetKeyFn: RPC_AUTH_KEY_RETRIEVAL_FN,
 		   Arg: PVOID
 
-endif 
+endif
 
 RPC_CLIENT_INFORMATION1 STRUC
 UserName		LPBYTE ?
@@ -1175,12 +1154,12 @@ UuidFromStringW proto WINAPI \
 ifdef _UNICODE
 UuidFromString		equ <UuidFromStringW>
 UuidToString		equ <UuidToStringW>
-else 
+else
 UuidFromString		equ <UuidFromStringA>
 UuidToString		equ <UuidToStringA>
-endif 
+endif
 
-else 
+else
 
 ;RPC_STATUS
 UuidToString proto WINAPI \
@@ -1192,7 +1171,7 @@ UuidFromString proto WINAPI \
 	    StringUuid: PVOID,
 		  Uuid: ptr UUID
 
-endif 
+endif
 
 ;signed
 UuidCompare proto WINAPI \
@@ -1253,12 +1232,12 @@ RpcEpRegisterW proto WINAPI \
 ifdef _UNICODE
 RpcEpRegisterNoReplace	equ <RpcEpRegisterNoReplaceW>
 RpcEpRegister		equ <RpcEpRegisterW>
-else 
+else
 RpcEpRegisterNoReplace	equ <RpcEpRegisterNoReplaceA>
 RpcEpRegister		equ <RpcEpRegisterA>
-endif 
+endif
 
-else 
+else
 
 ;RPC_STATUS
 RpcEpRegisterNoReplace proto WINAPI \
@@ -1274,7 +1253,7 @@ RpcEpRegister proto WINAPI \
 	    UuidVector: ptr UUID_VECTOR,
 	    Annotation: LPBYTE
 
-endif 
+endif
 
 
 ;RPC_STATUS
@@ -1297,18 +1276,18 @@ DceErrorInqTextW proto WINAPI \
 
 ifdef _UNICODE
 DceErrorInqText		equ <DceErrorInqTextW>
-else 
+else
 DceErrorInqText		equ <DceErrorInqTextA>
-endif 
+endif
 
-else 
+else
 
 ;RPC_STATUS
 DceErrorInqText proto WINAPI \
 	     RpcStatus: RPC_STATUS,
 	     ErrorText: LPBYTE
 
-endif 
+endif
 
 DCE_C_ERROR_STRING_LEN	equ 256
 
@@ -1358,11 +1337,11 @@ RpcMgmtEpEltInqNextW proto WINAPI \
 
 ifdef _UNICODE
 RpcMgmtEpEltInqNext	equ <RpcMgmtEpEltInqNextW>
-else 
+else
 RpcMgmtEpEltInqNext	equ <RpcMgmtEpEltInqNextA>
-endif 
+endif
 
-else 
+else
 
 ;RPC_STATUS
 RpcMgmtEpEltInqNext proto WINAPI \
@@ -1371,7 +1350,7 @@ RpcMgmtEpEltInqNext proto WINAPI \
 	       Binding: ptr RPC_BINDING_HANDLE,
 	    Annotation: PVOID
 
-endif 
+endif
 
 ;RPC_STATUS
 RpcMgmtEpUnregister proto WINAPI \
@@ -1380,12 +1359,7 @@ RpcMgmtEpUnregister proto WINAPI \
 	       Binding: RPC_BINDING_HANDLE,
 	    ObjectUuid: ptr UUID
 
-RPC_MGMT_AUTHORIZATION_FN_T typedef proto WINAPI \
-	 ClientBinding: RPC_BINDING_HANDLE,
-RequestedMgmtOperation: DWORD,
-		Status: ptr RPC_STATUS
-
-RPC_MGMT_AUTHORIZATION_FN typedef ptr RPC_MGMT_AUTHORIZATION_FN_T
+CALLBACK(RPC_MGMT_AUTHORIZATION_FN, ClientBinding:RPC_BINDING_HANDLE, RequestedMgmtOperation:DWORD, Status:ptr RPC_STATUS)
 
 RPC_C_MGMT_INQ_IF_IDS		equ 0
 RPC_C_MGMT_INQ_PRINC_NAME	equ 1
@@ -1428,6 +1402,6 @@ RPC_IF_OLE		equ 0x0002
 
 include rpcdcep.inc
 
-endif 
+endif
 
 .list

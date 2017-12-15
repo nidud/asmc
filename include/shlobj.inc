@@ -1000,8 +1000,7 @@ endif
 endif
 
 
-BFFCALLBACKT		typedef proto WINAPI :HWND, :UINT, :LPARAM, :LPARAM
-BFFCALLBACK		typedef ptr BFFCALLBACKT
+CALLBACK(BFFCALLBACK, :HWND, :UINT, :LPARAM, :LPARAM)
 
 ;include pshpack8.inc
 
@@ -3138,14 +3137,7 @@ SHCreateShellFolderView proto WINAPI \
 		 pcsfv: ptr SFV_CREATE,
 		  ppsv: ptr IShellView
 
-LPFNDFMCALLBACK60@CT typedef proto \
-		   psf: ptr IShellFolder,
-		  hwnd: HWND,
-		pdtobj: ptr IDataObject,
-		  uMsg: UINT,
-		wParam: WPARAM,
-		lParam: LPARAM
-LPFNDFMCALLBACK typedef ptr LPFNDFMCALLBACK60@CT
+CALLBACK(LPFNDFMCALLBACK, :ptr, :HWND, :ptr IDataObject, :UINT, :WPARAM, :LPARAM)
 
 ;SHSTDAPI
 CDefFolderMenu_Create2 proto WINAPI \
@@ -3256,14 +3248,7 @@ DFM_CMD_MODALPROP	equ (-12)
 DFM_CMD_RENAME		equ (-13)
 
 
-LPFNVIEWCALLBACK60@CT typedef proto \
-	      psvOuter: ptr IShellView,
-		   psf: ptr IShellFolder,
-	      hwndMain: HWND,
-		  uMsg: UINT,
-		wParam: WPARAM,
-		lParam: LPARAM
-LPFNVIEWCALLBACK typedef ptr LPFNVIEWCALLBACK60@CT
+CALLBACK(LPFNVIEWCALLBACK, :ptr IShellView, :ptr IShellFolder, :HWND, :UINT, :WPARAM, :LPARAM)
 
 CSFV			STRUC
 cbSize			UINT ?

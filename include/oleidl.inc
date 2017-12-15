@@ -2193,9 +2193,7 @@ IOleInPlaceActiveObject_ResizeBorder_Stub proto WINAPI \
 	  fFrameWindow: BOOL
 
 
-       pfnContinue52@CT typedef proto \
-	    dwContinue: DWORD
-       pfnContinue52@MP typedef ptr pfnContinue52@CT
+CALLBACK(pfnContinue, dwContinue:DWORD)
 
 ;HRESULT
 IViewObject_Draw_Proxy proto WINAPI \
@@ -2208,7 +2206,7 @@ IViewObject_Draw_Proxy proto WINAPI \
 	       hdcDraw: HDC,
 	    lprcBounds: LPCRECTL,
 	   lprcWBounds: LPCRECTL,
-	   pfnContinue: pfnContinue52@MP,
+	   pfnContinue: pfnContinue,
 	    dwContinue: DWORD
 
 

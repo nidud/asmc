@@ -40,10 +40,6 @@ endif
 SPOINTER_32 equ <POINTER_32 POINTER_SIGNED>
 UPOINTER_32 equ <POINTER_32 POINTER_UNSIGNED>
 
-if _MSC_VER GT 1000
-;pragma once
-endif
-
 INT8		typedef sbyte
 PINT8		typedef ptr sbyte
 INT16		typedef sword
@@ -88,7 +84,7 @@ if ( 501 < __midl )
     typedef [public] __int3264 LONG_PTR, *PLONG_PTR;
     typedef [public] unsigned __int3264 ULONG_PTR, *PULONG_PTR;
 
-else  
+else
 endif
 endif
 
@@ -121,7 +117,7 @@ else
     __int3264	equ <sdword> ; __int32
 
 endif
-;endif 
+;endif
 
 
 ifdef _WIN64
@@ -221,9 +217,9 @@ HandleToHandle32 macro h
     exitm<PtrToPtr32(h)>
     endm
 
-endif 
+endif
 
-else  
+else
 
 ADDRESS_TAG_BIT		equ 0x80000000
 
@@ -324,7 +320,7 @@ HandleToHandle32 macro h
     exitm<PtrToPtr32(h)>
     endm
 
-endif 
+endif
 
 
 HandleToUlong	equ <HandleToULong>
@@ -397,7 +393,7 @@ MININT		equ MAXINT + 1
 MAXDWORD32	equ MAXULONG32
 MAXDWORD64	equ MAXULONG64
 
-endif 
+endif
 
 
 DWORD_PTR	typedef ULONG_PTR
@@ -418,4 +414,4 @@ KAFFINITY	typedef ULONG_PTR
 PKAFFINITY	typedef ptr KAFFINITY
 
 .list
-endif 
+endif

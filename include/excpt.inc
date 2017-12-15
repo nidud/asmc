@@ -1,7 +1,7 @@
 ifndef __EXCPT_INC
 __EXCPT_INC equ <>
-ifndef __LIBC_INC
- include libc.inc
+ifndef _WINDEF_
+ include windef.inc
 endif
 .xlist
 
@@ -47,10 +47,9 @@ EXCEPTION_EXECUTE_HANDLER	equ 1
 EXCEPTION_CONTINUE_SEARCH	equ 0
 EXCEPTION_CONTINUE_EXECUTION	equ -1
 
-
 ifndef _INTERNAL_IFSTRIP_
-PHNDLR_T typedef proto WINAPI :SINT
-_PHNDLR	 typedef ptr PHNDLR_T
+
+CALLBACK(_PHNDLR, :SINT)
 
 _XCPT_ACTION STRUC
 

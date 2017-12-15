@@ -172,27 +172,8 @@ endif
 
 ;HDDEDATA
 ;CALLBACK
-FNCALLBACK_T typedef proto WINAPI \
-		 wType: UINT,
-		  wFmt: UINT,
-		 hConv: HCONV,
-		  hsz1: HSZ,
-		  hsz2: HSZ,
-		 hData: HDDEDATA,
-	       dwData1: DWORD,
-	       dwData2: DWORD
-FNCALLBACK	typedef ptr FNCALLBACK_T
-
-PFNCALLBACK_T typedef proto WINAPI \
-		 wType: UINT,
-		  wFmt: UINT,
-		 hConv: HCONV,
-		  hsz1: HSZ,
-		  hsz2: HSZ,
-		 hData: HDDEDATA,
-	       dwData1: DWORD,
-	       dwData2: DWORD
-PFNCALLBACK	typedef ptr PFNCALLBACK_T
+CALLBACK(FNCALLBACK, :UINT, :UINT, :HCONV, :HSZ, :HSZ, :HDDEDATA, :DWORD, :DWORD)
+CALLBACK(PFNCALLBACK, :UINT, :UINT, :HCONV, :HSZ, :HSZ, :HDDEDATA, :DWORD, :DWORD)
 
 CBR_BLOCK		equ 0xffffffff
 

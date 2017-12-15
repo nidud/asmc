@@ -20,15 +20,11 @@ RpcSendComplete		equ 1
 RpcReceiveComplete	equ 2
 RPC_ASYNC_EVENT		typedef sdword
 
-RPCNOTIFICATION_ROUTINE_T typedef proto WINAPI \
-		pAsync: PVOID,
-	       Context: PVOID,
-		 Event: RPC_ASYNC_EVENT
-RPCNOTIFICATION_ROUTINE typedef ptr RPCNOTIFICATION_ROUTINE_T
+CALLBACK(RPCNOTIFICATION_ROUTINE, pAsync:PVOID, Context:PVOID, Event:RPC_ASYNC_EVENT)
 PFN_RPCNOTIFICATION_ROUTINE typedef ptr RPCNOTIFICATION_ROUTINE
 
 RPC_ASYNC_STATE		STRUC
-_Size			UINT ?	
+_Size			UINT ?
 Signature		ULONG ?
 _Lock			LONG ?
 Flags			ULONG ?
@@ -104,6 +100,6 @@ I_RpcAsyncAbortCall proto WINAPI \
 		pAsync: PRPC_ASYNC_STATE,
 		ExceptionCode: DWORD
 
-endif 
+endif
 
 .list

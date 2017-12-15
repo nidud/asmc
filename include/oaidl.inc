@@ -3077,10 +3077,6 @@ IRecordInfo_RecordDestroy_Stub proto WINAPI \
 	 _pdwStubPhase: ptr DWORD
 endif
 
-if ( _MSC_VER GE 800 )
-;pragma warning(default:4201)
-endif
-
 externdef		__MIDL_itf_oaidl_0092_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef		__MIDL_itf_oaidl_0092_v0_0_s_ifspec:RPC_IF_HANDLE
 

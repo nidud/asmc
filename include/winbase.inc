@@ -1037,81 +1037,13 @@ WINBASEAPI
 if(_WIN32_WINNT GE 0x0500)
 GetConsoleWindow	proto WINAPI
 else
-GetConsoleWindow_P	typedef proto WINAPI
-GetConsoleWindow_T	typedef ptr GetConsoleWindow_P
+CALLBACK(GetConsoleWindow_T)
 externdef		GetConsoleWindow:GetConsoleWindow_T
 endif
 
 ifndef NOWINBASEINTERLOCK
 ifndef _NTOS_
 ifdef _M_IA64
-
-if 0
-InterlockedIncrement				equ <_InterlockedIncrement>
-InterlockedIncrementAcquire			equ <_InterlockedIncrement_acq>
-InterlockedIncrementRelease			equ <_InterlockedIncrement_rel>
-InterlockedDecrement				equ <_InterlockedDecrement>
-InterlockedDecrementAcquire			equ <_InterlockedDecrement_acq>
-InterlockedDecrementRelease			equ <_InterlockedDecrement_rel>
-InterlockedExchange				equ <_InterlockedExchange>
-InterlockedExchangeAdd				equ <_InterlockedExchangeAdd>
-InterlockedCompareExchange			equ <_InterlockedCompareExchange>
-InterlockedCompareExchangeAcquire		equ <_InterlockedCompareExchange_acq>
-InterlockedCompareExchangeRelease		equ <_InterlockedCompareExchange_rel>
-InterlockedExchangePointer			equ <_InterlockedExchangePointer>
-InterlockedCompareExchangePointer		equ <_InterlockedCompareExchangePointer>
-InterlockedCompareExchangePointerRelease	equ <_InterlockedCompareExchangePointer_rel>
-InterlockedCompareExchangePointerAcquire	equ <_InterlockedCompareExchangePointer_acq>
-
-InterlockedIncrement64				equ <_InterlockedIncrement64>
-InterlockedDecrement64				equ <_InterlockedDecrement64>
-InterlockedExchange64				equ <_InterlockedExchange64>
-InterlockedExchangeAcquire64			equ <_InterlockedExchange64_acq>
-InterlockedExchangeAdd64			equ <_InterlockedExchangeAdd64>
-InterlockedCompareExchange64			equ <_InterlockedCompareExchange64>
-InterlockedCompareExchangeAcquire64		equ <_InterlockedCompareExchange64_acq>
-InterlockedCompareExchangeRelease64		equ <_InterlockedCompareExchange64_rel>
-InterlockedCompare64Exchange128			equ <_InterlockedCompare64Exchange128>
-InterlockedCompare64ExchangeAcquire128		equ <_InterlockedCompare64Exchange128_acq>
-InterlockedCompare64ExchangeRelease128		equ <_InterlockedCompare64Exchange128_rel>
-
-InterlockedOr		equ <_InterlockedOr>
-InterlockedOrAcquire	equ <_InterlockedOr_acq>
-InterlockedOrRelease	equ <_InterlockedOr_rel>
-InterlockedOr8		equ <_InterlockedOr8>
-InterlockedOr8Acquire	equ <_InterlockedOr8_acq>
-InterlockedOr8Release	equ <_InterlockedOr8_rel>
-InterlockedOr16		equ <_InterlockedOr16>
-InterlockedOr16Acquire	equ <_InterlockedOr16_acq>
-InterlockedOr16Release	equ <_InterlockedOr16_rel>
-InterlockedOr64		equ <_InterlockedOr64>
-InterlockedOr64Acquire	equ <_InterlockedOr64_acq>
-InterlockedOr64Release	equ <_InterlockedOr64_rel>
-InterlockedXor		equ <_InterlockedXor>
-InterlockedXorAcquire	equ <_InterlockedXor_acq>
-InterlockedXorRelease	equ <_InterlockedXor_rel>
-InterlockedXor8		equ <_InterlockedXor8>
-InterlockedXor8Acquire	equ <_InterlockedXor8_acq>
-InterlockedXor8Release	equ <_InterlockedXor8_rel>
-InterlockedXor16	equ <_InterlockedXor16>
-InterlockedXor16Acquire equ <_InterlockedXor16_acq>
-InterlockedXor16Release equ <_InterlockedXor16_rel>
-InterlockedXor64	equ <_InterlockedXor64>
-InterlockedXor64Acquire equ <_InterlockedXor64_acq>
-InterlockedXor64Release equ <_InterlockedXor64_rel>
-InterlockedAnd		equ <_InterlockedAnd>
-InterlockedAndAcquire	equ <_InterlockedAnd_acq>
-InterlockedAndRelease	equ <_InterlockedAnd_rel>
-InterlockedAnd8		equ <_InterlockedAnd8>
-InterlockedAnd8Acquire	equ <_InterlockedAnd8_acq>
-InterlockedAnd8Release	equ <_InterlockedAnd8_rel>
-InterlockedAnd16	equ <_InterlockedAnd16>
-InterlockedAnd16Acquire equ <_InterlockedAnd16_acq>
-InterlockedAnd16Release equ <_InterlockedAnd16_rel>
-InterlockedAnd64	equ <_InterlockedAnd64>
-InterlockedAnd64Acquire equ <_InterlockedAnd64_acq>
-InterlockedAnd64Release equ <_InterlockedAnd64_rel>
-endif ; 0
 
 ;LONG
 InterlockedOr proto WINAPI \
@@ -1625,103 +1557,7 @@ endif
 
 endif ; ifndef MIDL_PASS
 
-pragma_intrinsic macro x
-	endm
-
-pragma_intrinsic(_InterlockedIncrement)
-pragma_intrinsic(_InterlockedIncrement_acq)
-pragma_intrinsic(_InterlockedIncrement_rel)
-pragma_intrinsic(_InterlockedDecrement)
-pragma_intrinsic(_InterlockedDecrement_acq)
-pragma_intrinsic(_InterlockedDecrement_rel)
-pragma_intrinsic(_InterlockedExchange)
-pragma_intrinsic(_InterlockedExchangeAdd)
-pragma_intrinsic(_InterlockedCompareExchange)
-pragma_intrinsic(_InterlockedCompareExchange_acq)
-pragma_intrinsic(_InterlockedCompareExchange_rel)
-pragma_intrinsic(_InterlockedExchangePointer)
-pragma_intrinsic(_InterlockedCompareExchangePointer)
-pragma_intrinsic(_InterlockedCompareExchangePointer_acq)
-pragma_intrinsic(_InterlockedCompareExchangePointer_rel)
-pragma_intrinsic(_InterlockedIncrement64)
-pragma_intrinsic(_InterlockedDecrement64)
-pragma_intrinsic(_InterlockedExchange64)
-pragma_intrinsic(_InterlockedExchange64_acq)
-pragma_intrinsic(_InterlockedCompareExchange64)
-pragma_intrinsic(_InterlockedCompareExchange64_acq)
-pragma_intrinsic(_InterlockedCompareExchange64_rel)
-pragma_intrinsic(_InterlockedExchangeAdd64)
-pragma_intrinsic(_InterlockedOr)
-pragma_intrinsic(_InterlockedOr_acq)
-pragma_intrinsic(_InterlockedOr_rel)
-pragma_intrinsic(_InterlockedOr8)
-pragma_intrinsic(_InterlockedOr8_acq)
-pragma_intrinsic(_InterlockedOr8_rel)
-pragma_intrinsic(_InterlockedOr16)
-pragma_intrinsic(_InterlockedOr16_acq)
-pragma_intrinsic(_InterlockedOr16_rel)
-pragma_intrinsic(_InterlockedOr64)
-pragma_intrinsic(_InterlockedOr64_acq)
-pragma_intrinsic(_InterlockedOr64_rel)
-pragma_intrinsic(_InterlockedXor)
-pragma_intrinsic(_InterlockedXor_acq)
-pragma_intrinsic(_InterlockedXor_rel)
-pragma_intrinsic(_InterlockedXor8)
-pragma_intrinsic(_InterlockedXor8_acq)
-pragma_intrinsic(_InterlockedXor8_rel)
-pragma_intrinsic(_InterlockedXor16)
-pragma_intrinsic(_InterlockedXor16_acq)
-pragma_intrinsic(_InterlockedXor16_rel)
-pragma_intrinsic(_InterlockedXor64)
-pragma_intrinsic(_InterlockedXor64_acq)
-pragma_intrinsic(_InterlockedXor64_rel)
-pragma_intrinsic(_InterlockedAnd)
-pragma_intrinsic(_InterlockedAnd_acq)
-pragma_intrinsic(_InterlockedAnd_rel)
-pragma_intrinsic(_InterlockedAnd8)
-pragma_intrinsic(_InterlockedAnd8_acq)
-pragma_intrinsic(_InterlockedAnd8_rel)
-pragma_intrinsic(_InterlockedAnd16)
-pragma_intrinsic(_InterlockedAnd16_acq)
-pragma_intrinsic(_InterlockedAnd16_rel)
-pragma_intrinsic(_InterlockedAnd64)
-pragma_intrinsic(_InterlockedAnd64_acq)
-pragma_intrinsic(_InterlockedAnd64_rel)
-
 elseifdef _M_AMD64 ; ifdef _M_IA64
-
-if 0
-InterlockedAnd		equ <_InterlockedAnd>
-InterlockedOr		equ <_InterlockedOr>
-InterlockedXor		equ <_InterlockedXor>
-InterlockedIncrement	equ <_InterlockedIncrement>
-InterlockedIncrementAcquire equ <InterlockedIncrement>
-InterlockedIncrementRelease equ <InterlockedIncrement>
-InterlockedDecrement	equ <_InterlockedDecrement>
-InterlockedDecrementAcquire equ <InterlockedDecrement>
-InterlockedDecrementRelease equ <InterlockedDecrement>
-InterlockedExchange	equ <_InterlockedExchange>
-InterlockedExchangeAdd	equ <_InterlockedExchangeAdd>
-InterlockedCompareExchange equ <_InterlockedCompareExchange>
-InterlockedCompareExchangeAcquire equ <InterlockedCompareExchange>
-InterlockedCompareExchangeRelease equ <InterlockedCompareExchange>
-InterlockedExchangePointer equ <_InterlockedExchangePointer>
-InterlockedCompareExchangePointer equ <_InterlockedCompareExchangePointer>
-InterlockedCompareExchangePointerAcquire equ <_InterlockedCompareExchangePointer>
-InterlockedCompareExchangePointerRelease equ <_InterlockedCompareExchangePointer>
-
-InterlockedAnd64	equ <_InterlockedAnd64>
-InterlockedOr64		equ <_InterlockedOr64>
-InterlockedXor64	equ <_InterlockedXor64>
-InterlockedIncrement64	equ <_InterlockedIncrement64>
-InterlockedDecrement64	equ <_InterlockedDecrement64>
-InterlockedExchange64	equ <_InterlockedExchange64>
-InterlockedExchangeAdd64 equ <_InterlockedExchangeAdd64>
-InterlockedCompareExchange64 equ <_InterlockedCompareExchange64>
-InterlockedCompareExchangeAcquire64 equ <InterlockedCompareExchange64>
-InterlockedCompareExchangeRelease64 equ <InterlockedCompareExchange64>
-
-endif
 
 ;LONG
 InterlockedAnd proto WINAPI \
@@ -1807,28 +1643,6 @@ InterlockedCompareExchange64 proto WINAPI \
 	     ExChange: LONG64,
 	    Comperand: LONG64
 
-pragma_intrinsic macro x
-	endm
-
-pragma_intrinsic(_InterlockedAnd)
-pragma_intrinsic(_InterlockedOr)
-pragma_intrinsic(_InterlockedXor)
-pragma_intrinsic(_InterlockedIncrement)
-pragma_intrinsic(_InterlockedDecrement)
-pragma_intrinsic(_InterlockedExchange)
-pragma_intrinsic(_InterlockedExchangeAdd)
-pragma_intrinsic(_InterlockedCompareExchange)
-pragma_intrinsic(_InterlockedExchangePointer)
-pragma_intrinsic(_InterlockedCompareExchangePointer)
-pragma_intrinsic(_InterlockedAnd64)
-pragma_intrinsic(_InterlockedOr64)
-pragma_intrinsic(_InterlockedXor64)
-pragma_intrinsic(_InterlockedIncrement64)
-pragma_intrinsic(_InterlockedDecrement64)
-pragma_intrinsic(_InterlockedExchange64)
-pragma_intrinsic(_InterlockedExchangeAdd64)
-pragma_intrinsic(_InterlockedCompareExchange64)
-
 if _MSC_FULL_VER GE 140041204
 
 InterlockedAnd8	 equ <_InterlockedAnd8>
@@ -1867,13 +1681,6 @@ InterlockedOr16 proto WINAPI \
 InterlockedXor16 proto WINAPI \
     Destination: LPSTR,
 	  Value: SWORD
-
-pragma_intrinsic(_InterlockedAnd8)
-pragma_intrinsic(_InterlockedOr8)
-pragma_intrinsic(_InterlockedXor8)
-pragma_intrinsic(_InterlockedAnd16)
-pragma_intrinsic(_InterlockedOr16)
-pragma_intrinsic(_InterlockedXor16)
 
 endif ; _MSC_FULL_VER GE 140041204
 
@@ -2876,8 +2683,7 @@ ifdef WINBASE_DECLARE_RESTORE_LAST_ERROR
 RestoreLastError proto WINAPI \
 	     dwErrCode: DWORD
 
-PRESTORE_LAST_ERROR_T	typedef proto WINAPI :DWORD
-PRESTORE_LAST_ERROR	typedef ptr PRESTORE_LAST_ERROR_T
+CALLBACK(PRESTORE_LAST_ERROR, :DWORD)
 RESTORE_LAST_ERROR_NAME equ <"RestoreastError">
 
 endif
@@ -3015,9 +2821,7 @@ ResumeThread proto WINAPI \
 if(_WIN32_WINNT GE 0x0400) OR (_WIN32_WINDOWS GT 0x0400)
 
 ;VOID
-PAPCFUNC_T typedef proto WINAPI \
-	     Parameter: ULONG_PTR
-PAPCFUNC typedef ptr PAPCFUNC_T
+;CALLBACK(PAPCFUNC, :ULONG_PTR)
 
 QueueUserAPC proto WINAPI \
 		pfnAPC: PAPCFUNC,
@@ -3224,10 +3028,7 @@ GetFileSizeEx proto WINAPI \
 		 hFile: HANDLE,
 	    lpFileSize: PLARGE_INTEGER
 else
-GetFileSizeEx_P typedef proto WINAPI \
-		 hFile: HANDLE,
-	    lpFileSize: PLARGE_INTEGER
-GetFileSizeEx_T typedef ptr GetFileSizeEx_P
+CALLBACK(GetFileSizeEx_T, hFile:HANDLE, lpFileSize:PLARGE_INTEGER)
 externdef GetFileSizeEx:GetFileSizeEx_T
 endif
 
@@ -3294,12 +3095,7 @@ SetFilePointerEx proto WINAPI \
       lpNewFilePointer: PLARGE_INTEGER,
 	  dwMoveMethod: DWORD
 else
-SetFilePointerEx_P typedef proto WINAPI \
-		 hFile: HANDLE,
-      liDistanceToMove: LARGE_INTEGER,
-      lpNewFilePointer: PLARGE_INTEGER,
-	  dwMoveMethod: DWORD
-SetFilePointerEx_T typedef ptr SetFilePointerEx_P
+CALLBACK(SetFilePointerEx_T, :HANDLE, :LARGE_INTEGER, :PLARGE_INTEGER, :DWORD)
 externdef SetFilePointerEx:SetFilePointerEx_T
 endif
 
@@ -4625,16 +4421,8 @@ GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT	equ 0x00000002
 GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS		equ 0x00000004
 
 ;BOOL
-PGET_MODULE_HANDLE_EXA_T typedef proto WINAPI \
-	       dwFlags: DWORD,
-	  lpModuleName: LPCSTR,
-	      phModule: ptr HMODULE
-PGET_MODULE_HANDLE_EXA	typedef ptr PGET_MODULE_HANDLE_EXA_T
-PGET_MODULE_HANDLE_EXW_T typedef proto WINAPI \
-	       dwFlags: DWORD,
-	  lpModuleName: LPCWSTR,
-	      phModule: ptr HMODULE
-PGET_MODULE_HANDLE_EXW	typedef ptr PGET_MODULE_HANDLE_EXW_T
+CALLBACK(PGET_MODULE_HANDLE_EXA, dwFlags:DWORD, lpModuleName:LPCSTR, phModule:ptr HMODULE)
+CALLBACK(PGET_MODULE_HANDLE_EXW, dwFlags:DWORD, lpModuleName:LPCWSTR, phModule:ptr HMODULE)
 ifdef _UNICODE
 PGET_MODULE_HANDLE_EX	equ <PGET_MODULE_HANDE_EXW>
 else
@@ -5421,16 +5209,8 @@ Wow64RevertWow64FsRedirection proto WINAPI \
 	       OlValue: PVOID
 
 ;UINT
-PGET_SYSTEM_WOW64_DIRECTORY_A_T typedef proto WINAPI \
-	      lpBuffer: LPSTR,
-		 uSize: UINT
-PGET_SYSTEM_WOW64_DIRECTORY_W_T typedef proto WINAPI \
-	      lpBuffer: LPWSTR,
-		 uSize: UINT
-
-PGET_SYSTEM_WOW64_DIRECTORY_A typedef ptr PGET_SYSTEM_WOW64_DIRECTORY_A_T
-PGET_SYSTEM_WOW64_DIRECTORY_W typedef ptr PGET_SYSTEM_WOW64_DIRECTORY_W_T
-
+CALLBACK(PGET_SYSTEM_WOW64_DIRECTORY_A, lpBuffer:LPSTR, uSize:UINT)
+CALLBACK(PGET_SYSTEM_WOW64_DIRECTORY_W, lpBuffer:LPWSTR, uSize:UINT)
 
 GET_SYSTEM_WOW64_DIRECTORY_NAME_A_A equ <"GetSystemWow64DirectoryA">
 GET_SYSTEM_WOW64_DIRECTORY_NAME_A_W equ <L"GetSystemWow64DirectoryA">
@@ -7751,14 +7531,8 @@ DeleteTimerQueue proto WINAPI \
 
 if (_WIN32_WINNT GE 0x0600)
 
-PTP_WIN32_IO_CALLBACK_T typedef proto WINAPI \
-	      Instance: PTP_CALLBACK_INSTANCE,
-	       Context: PVOID,
-	    Overlapped: PVOID,
-	      IoResult: ULONG,
-NumberOfBytesTransferred: LPDWORD,
-		    Io: PTP_IO
-PTP_WIN32_IO_CALLBACK typedef ptr PTP_WIN32_IO_CALLBACK_T
+CALLBACK(PTP_WIN32_IO_CALLBACK, Instance:PTP_CALLBACK_INSTANCE, Context:PVOID, \
+	Overlapped:PVOID, IoResult:ULONG, NumberOfBytesTransferred:LPDWORD, Io:PTP_IO)
 
 ;PTP_POOL
 CreateThreadpool proto WINAPI \
@@ -8729,15 +8503,7 @@ QueryActCtxW proto WINAPI \
 	      cbBuffer: SIZE_T,
   pcbWrittenOrRequired: ptr SIZE_T
 
-PQUERYACTCTXW_FUNC_T typedef proto WINAPI \
-	       dwFlags: DWORD,
-	       hActCtx: HANDLE,
-	 pvSubInstance: PVOID,
-	   ulInfoClass: ULONG,
-	      pvBuffer: PVOID,
-	      cbBuffer: SIZE_T,
-  pcbWrittenOrRequired: ptr SIZE_T
-PQUERYACTCTXW_FUNC typedef ptr PQUERYACTCTXW_FUNC_T
+CALLBACK(PQUERYACTCTXW_FUNC, :DWORD, :HANDLE, :PVOID, :ULONG, :PVOID, :SIZE_T, :ptr SIZE_T)
 
 endif
 
@@ -8861,18 +8627,12 @@ GetNumaProximityNodeEx proto WINAPI \
 
 endif
 
-APPLICATION_RECOVERY_CALLBACK_T typedef proto WINAPI \
-	   pvParameter: PVOID
-APPLICATION_RECOVERY_CALLBACK typedef ptr APPLICATION_RECOVERY_CALLBACK_T
+CALLBACK(APPLICATION_RECOVERY_CALLBACK, pvParameter:PVOID)
 
 RESTART_MAX_CMD_LINE	equ 1024
-
 RESTART_NO_CRASH	equ 1
-
 RESTART_NO_HANG		equ 2
-
 RESTART_NO_PATCH	equ 4
-
 RESTART_NO_REBOOT	equ 8
 
 ;HRESULT

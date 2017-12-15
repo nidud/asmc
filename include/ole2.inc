@@ -8,7 +8,7 @@ _OLE2_H_ equ 1
 ;#include <pshpack8.h>
 
 ;ifndef WIN32
-;WIN32 equ 100	
+;WIN32 equ 100
 ;endif
 
 
@@ -441,11 +441,7 @@ OleRegEnumVerbs proto WINAPI \
 
 LPOLESTREAM	typedef ptr OLESTREAM
 
-OLESTREAMVTBL_PT typedef proto WINAPI \
-			: LPOLESTREAM,
-			: PVOID,
-			: DWORD
-OLESTREAMVTBL_P typedef ptr OLESTREAMVTBL_PT
+CALLBACK(OLESTREAMVTBL_P, :LPOLESTREAM, :PVOID, :DWORD)
 
 OLESTREAMVTBL		STRUC
 Get			OLESTREAMVTBL_P ?
@@ -456,8 +452,6 @@ LPOLESTREAMVTBL		typedef	 ptr OLESTREAMVTBL
 OLESTREAM		STRUC
 lpstbl			LPOLESTREAMVTBL ?
 OLESTREAM		ENDS
-
-
 
 OleConvertOLESTREAMToIStorage proto WINAPI \
 	   lpolestream: LPOLESTREAM,
@@ -533,5 +527,5 @@ OleConvertOLESTREAMToIStorageEx proto WINAPI \
 
 .list
 
-endif	   
+endif
 

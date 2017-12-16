@@ -1260,7 +1260,8 @@ tview proc uses esi edi ebx filename, offs
                     .if al < 66
                         .gotosw(KEY_F7)
                     .endif
-                    .if al < 70
+                    .endc .if al <= 70
+                    .if al < 80
                         .gotosw(KEY_F10)
                     .endif
                     msloop()

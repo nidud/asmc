@@ -3461,7 +3461,7 @@ SHGetSettings proto WINAPI \
 SHBindToParent proto WINAPI \
 		  pidl: PCIDLIST_ABSOLUTE,
 		  riid: REFIID,
-		   ppv: ptr void,
+		   ppv: PVOID,
 	     ppidlLast: ptr PCUITEMID_CHILD
 
 
@@ -3472,7 +3472,7 @@ SHBindToFolderIDListParent proto WINAPI \
 	       psfRoot: ptr IShellFolder,
 		  pidl: PCUIDLIST_RELATIVE,
 		  riid: REFIID,
-		   ppv: ptr void,
+		   ppv: PVOID,
 	     ppidlLast: ptr PCUITEMID_CHILD
 
 

@@ -75,19 +75,6 @@ _W64		equ <>
 endif
 endif
 
-if 0
-if ( 501 < __midl )
-
-    typedef [public] __int3264 INT_PTR, *PINT_PTR;
-    typedef [public] unsigned __int3264 UINT_PTR, *PUINT_PTR;
-
-    typedef [public] __int3264 LONG_PTR, *PLONG_PTR;
-    typedef [public] unsigned __int3264 ULONG_PTR, *PULONG_PTR;
-
-else
-endif
-endif
-
 ifdef _WIN64
 
     INT_PTR	typedef sqword
@@ -104,21 +91,19 @@ ifdef _WIN64
 
 else
 
-    INT_PTR	typedef sdword;_W64 SINT
+    INT_PTR	typedef sdword
     PINT_PTR	typedef ptr sdword
-    UINT_PTR	typedef dword;_W64 UINT
-    PUINT_PTR	typedef ptr dword;UINT_PTR
+    UINT_PTR	typedef dword
+    PUINT_PTR	typedef ptr dword
 
-    LONG_PTR	typedef sdword;_W64 LONG
-    PLONG_PTR	typedef ptr sdword;LONG_PTR
-    ULONG_PTR	typedef dword;_W64 ULONG
-    PULONG_PTR	typedef ptr dword;ULONG_PTR
+    LONG_PTR	typedef sdword
+    PLONG_PTR	typedef ptr sdword
+    ULONG_PTR	typedef dword
+    PULONG_PTR	typedef ptr dword
 
     __int3264	equ <sdword> ; __int32
 
 endif
-;endif
-
 
 ifdef _WIN64
 

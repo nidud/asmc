@@ -1,9 +1,9 @@
 ifndef __LIBC_INC
  include libc.inc
 endif
-.xlist
 ifndef _LZEXPAND_
-_LZEXPAND_ equ 1
+_LZEXPAND_ equ <>
+.xlist
 
 LZERROR_BADINHANDLE	equ -1
 LZERROR_BADOUTHANDLE	equ -2
@@ -16,69 +16,40 @@ LZERROR_UNKNOWNALG	equ -8
 
 ;INT
 LZStart proto WINAPI
-
 ;VOID
 LZDone proto WINAPI
-
 ;LONG
-CopyLZFile proto WINAPI \
-		      : SINT,
-		      : SINT
-
+CopyLZFile proto WINAPI :SINT, :SINT
 ;LONG
-LZCopy proto WINAPI \
-		      : SINT,
-		      : SINT
+LZCopy proto WINAPI :SINT, :SINT
+;INT
+LZInit proto WINAPI :SINT
 
 ;INT
-LZInit proto WINAPI \
-		      : SINT
-
-;INT
-GetExpandedNameA proto WINAPI \
-		      : LPSTR,
-		      : LPSTR
-GetExpandedNameW proto WINAPI \
-		      : LPWSTR,
-		      : LPWSTR
-
+GetExpandedNameA proto WINAPI :LPSTR, :LPSTR
+GetExpandedNameW proto WINAPI :LPWSTR, :LPWSTR
 ifdef _UNICODE
-GetExpandedName		equ <GetExpandedNameW>
+GetExpandedName equ <GetExpandedNameW>
 else
-GetExpandedName		equ <GetExpandedNameA>
+GetExpandedName equ <GetExpandedNameA>
 endif
 
 ;INT
-LZOpenFileA proto WINAPI \
-		      : LPSTR,
-		      : LPOFSTRUCT,
-		      : WORD
-LZOpenFileW proto WINAPI \
-		      : LPWSTR,
-		      : LPOFSTRUCT,
-		      : WORD
+LZOpenFileA proto WINAPI :LPSTR, :LPOFSTRUCT, :WORD
+LZOpenFileW proto WINAPI :LPWSTR, :LPOFSTRUCT, :WORD
 ifdef _UNICODE
-LZOpenFile		equ <LZOpenFileW>
+LZOpenFile equ <LZOpenFileW>
 else
-LZOpenFile		equ <LZOpenFileA>
+LZOpenFile equ <LZOpenFileA>
 endif
 
 ;LONG
-LZSeek proto WINAPI \
-		      : SINT,
-		      : LONG,
-		      : SINT
-
+LZSeek proto WINAPI :SINT, :LONG, :SINT
 ;INT
-LZRead proto WINAPI \
-		      : SINT,
-		      : LPSTR,
-		      : SINT
-
+LZRead proto WINAPI :SINT, :LPSTR, :SINT
 ;VOID
-LZClose proto WINAPI \
-		      : SINT
-
-endif
+LZClose proto WINAPI :SINT
 
 .list
+endif
+

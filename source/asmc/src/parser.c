@@ -2276,9 +2276,113 @@ int ParseLine( struct asm_tok tokenarray[] )
 
 	if (tokenarray[2].token != T_FINAL)
 	    j++;
+
+    } else if ( Token_Count > 3 ) {
+
+	for ( q = 1; tokenarray[q+2].token != T_FINAL; q++ ) {
+
+	    if ( tokenarray[q].token == T_ID &&
+		 tokenarray[q+1].token == T_DBL_COLON &&
+		 tokenarray[q+3].token == T_OP_BRACKET ) {
+		/*
+		 * .break .if !TDialog::TDialog( &p )
+		 */
+		j = q + 1;
+		break;
+	    }
+	}
     }
 
     if ( j ) {
+
+	q = tokenarray[j-1].tokpos - tokenarray[0].tokpos;
+	buffer[q] = 0;
+	if ( q ) {
+
+	    memcpy(buffer, tokenarray[0].tokpos, q);
+	    strcat( buffer, " " );
+	}
+
+	if ( tokenarray[j].token == T_DBL_COLON &&
+	   ( tokenarray[j+2].tokval == T_ENDP || tokenarray[j+2].token == T_OP_BRACKET ) ) {
+
+	    strcat( buffer, tokenarray[j-1].string_ptr );
+	    strcat( buffer, "@" );
+	    strcat( buffer, tokenarray[j+1].string_ptr );
+	    strcat( buffer, " " );
+	    strcat( buffer, tokenarray[j+2].tokpos );
+	    //strcpy( CurrSource, buffer );
+	    Token_Count = Tokenize( buffer, 0, tokenarray, TOK_DEFAULT );
+	    return ParseLine( tokenarray );
+	}
+
+	if ( tokenarray[j].token == T_DBL_COLON &&
+	   ( tokenarray[j+2].tokval == T_PROC || tokenarray[j+2].tokval == T_PROTO ) ) {
+
+	    strcpy( buffer, tokenarray[j-1].string_ptr );
+	    strcat( buffer, "@" );
+	    strcat( buffer, tokenarray[j+1].string_ptr );
+	    strcat( buffer, " " );
+	    strcat( buffer, tokenarray[j+2].string_ptr );
+	    strcat( buffer, " " );
+
+	    i = j+3;
+	    if ( tokenarray[i].token == T_STYPE &&
+		tokenarray[i].tokval >= T_NEAR && tokenarray[i].tokval <= T_FAR32 ) {
+
+		strcat( buffer, tokenarray[i].string_ptr );
+		strcat( buffer, " " );
+		i++;
+	    }
+	    if ( tokenarray[i].token == T_ID || tokenarray[i].token == T_DIRECTIVE ) {
+
+		if ( !_stricmp( tokenarray[i].string_ptr, "PRIVATE" ) ||
+		     tokenarray[i].tokval == T_PUBLIC ||
+		     !_stricmp( tokenarray[i].string_ptr, "EXPORT" ) ||
+		     tokenarray[i].tokval == T_FRAME ) {
+
+		    strcat( buffer, tokenarray[i].string_ptr );
+		    strcat( buffer, " " );
+		    i++;
+		}
+	    }
+
+	    if ( tokenarray[i].token == T_STRING && tokenarray[i].string_delim == '<' ) {
+
+		strcat( buffer, "<" );
+		strcat( buffer, tokenarray[i].string_ptr );
+		strcat( buffer, "> " );
+		i++;
+	    }
+
+	    if ( tokenarray[i].token == T_ID && !_stricmp( tokenarray[i].string_ptr, "USES" ) ) {
+
+		i++;
+		strcat( buffer, "uses " );
+		while ( tokenarray[i].token == T_REG ) {
+
+		    strcat( buffer, tokenarray[i].string_ptr );
+		    strcat( buffer, " " );
+		    i++;
+		}
+	    }
+
+	    if ( tokenarray[j+2].tokval == T_PROC ) {
+
+		strcat( buffer, "_this:ptr " );
+		strcat( buffer, tokenarray[0].string_ptr );
+	    }
+
+	    if ( tokenarray[i].token != T_FINAL ) {
+
+		if ( tokenarray[j+2].tokval == T_PROC )
+		    strcat( buffer, ", " );
+		strcat( buffer, tokenarray[i].tokpos );
+	    }
+	    strcpy( CurrSource, buffer );
+	    Token_Count = Tokenize( buffer, 0, tokenarray, TOK_DEFAULT );
+	    return ParseLine( tokenarray );
+	}
 
 	/* break label: macro/hll lines */
 	strcpy( buffer, tokenarray[2].tokpos );

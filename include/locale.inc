@@ -14,7 +14,6 @@ LC_TIME		equ 5
 LC_MIN		equ LC_ALL
 LC_MAX		equ LC_TIME
 
-
 lconv		STRUC
 decimal_point	LPSTR ?
 thousands_sep	LPSTR ?
@@ -35,7 +34,6 @@ n_sep_by_space	BYTE ?
 p_sign_posn	BYTE ?
 n_sign_posn	BYTE ?
 lconv		ENDS
-
 
 setlocale	PROTO :SINT, :LPSTR
 localeconv	PROTO

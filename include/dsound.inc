@@ -1,0 +1,2265 @@
+COM_NO_WINDOWS_H equ 1
+include objbase.inc
+include float.inc
+include sal.inc
+
+ifndef DIRECTSOUND_VERSION
+if (NTDDI_VERSION LT NTDDI_WINXP)
+DIRECTSOUND_VERSION	equ 0x0700
+elseif (NTDDI_VERSION LT NTDDI_WINXPSP2 OR NTDDI_VERSION EQ NTDDI_WS03)
+DIRECTSOUND_VERSION	equ 0x0800
+else
+DIRECTSOUND_VERSION	equ 0x0900
+endif
+endif
+
+ifndef __DSOUND_INCLUDED__
+__DSOUND_INCLUDED__ equ 1
+.xlist
+
+ifndef DX_SHARED_DEFINES
+
+D3DVALUE		typedef REAL4
+LPD3DVALUE		typedef ptr D3DVALUE
+
+ifndef D3DCOLOR_DEFINED
+D3DCOLOR		typedef DWORD
+D3DCOLOR_DEFINED	equ 1
+endif
+
+ifndef LPD3DCOLOR_DEFINED
+LPD3DCOLOR		typedef ptr DWORD
+LPD3DCOLOR_DEFINED	equ 1
+endif
+
+ifndef D3DVECTOR_DEFINED
+D3DVECTOR		STRUC
+x			REAL4 ?
+y			REAL4 ?
+z			REAL4 ?
+D3DVECTOR		ENDS
+D3DVECTOR_DEFINED	equ 1
+endif
+
+ifndef LPD3DVECTOR_DEFINED
+LPD3DVECTOR		typedef ptr D3DVECTOR
+LPD3DVECTOR_DEFINED	equ 1
+endif
+DX_SHARED_DEFINES	equ 1
+endif
+
+_FACDS			equ 0x878
+MAKE_DSHRESULT macro code
+	exitm<MAKE_HRESULT(1, _FACDS, code)>
+	endm
+
+DEFINE_GUID(CLSID_DirectSound, 0x47d4d946, 0x62e8, 0x11cf, 0x93, 0xbc, 0x44, 0x45, 0x53, 0x54, 0x0, 0x0);
+DEFINE_GUID(CLSID_DirectSound8, 0x3901cc3f, 0x84b5, 0x4fa4, 0xba, 0x35, 0xaa, 0x81, 0x72, 0xb8, 0xa0, 0x9b);
+DEFINE_GUID(CLSID_DirectSoundCapture, 0xb0210780, 0x89cd, 0x11d0, 0xaf, 0x8, 0x0, 0xa0, 0xc9, 0x25, 0xcd, 0x16);
+DEFINE_GUID(CLSID_DirectSoundCapture8, 0xe4bcac13, 0x7f99, 0x4908, 0x9a, 0x8e, 0x74, 0xe3, 0xbf, 0x24, 0xb6, 0xe1);
+DEFINE_GUID(CLSID_DirectSoundFullDuplex, 0xfea4300c, 0x7959, 0x4147, 0xb2, 0x6a, 0x23, 0x77, 0xb9, 0xe7, 0xa9, 0x1d);
+
+DEFINE_GUID(DSDEVID_DefaultPlayback, 0xdef00000, 0x9c6d, 0x47ed, 0xaa, 0xf1, 0x4d, 0xda, 0x8f, 0x2b, 0x5c, 0x03);
+DEFINE_GUID(DSDEVID_DefaultCapture, 0xdef00001, 0x9c6d, 0x47ed, 0xaa, 0xf1, 0x4d, 0xda, 0x8f, 0x2b, 0x5c, 0x03);
+DEFINE_GUID(DSDEVID_DefaultVoicePlayback, 0xdef00002, 0x9c6d, 0x47ed, 0xaa, 0xf1, 0x4d, 0xda, 0x8f, 0x2b, 0x5c, 0x03);
+DEFINE_GUID(DSDEVID_DefaultVoiceCapture, 0xdef00003, 0x9c6d, 0x47ed, 0xaa, 0xf1, 0x4d, 0xda, 0x8f, 0x2b, 0x5c, 0x03);
+
+if DIRECTSOUND_VERSION GE 0x0800
+
+IDirectSoundCapture8	equ IDirectSoundCapture
+IDirectSound3DListener8 equ IDirectSound3DListener
+IDirectSound3DBuffer8	equ IDirectSound3DBuffer
+IDirectSoundNotify8	equ IDirectSoundNotify
+IDirectSoundFXGargle8	equ IDirectSoundFXGargle
+IDirectSoundFXChorus8	equ IDirectSoundFXChorus
+IDirectSoundFXFlanger8	equ IDirectSoundFXFlanger
+IDirectSoundFXEcho8	equ IDirectSoundFXEcho
+IDirectSoundFXDistortion8 equ IDirectSoundFXDistortion
+IDirectSoundFXCompressor8 equ IDirectSoundFXCompressor
+IDirectSoundFXParamEq8	equ IDirectSoundFXParamEq
+IDirectSoundFXWavesReverb8 equ IDirectSoundFXWavesReverb
+IDirectSoundFXI3DL2Reverb8 equ IDirectSoundFXI3DL2Reverb
+IDirectSoundCaptureFXAec8 equ IDirectSoundCaptureFXAec
+IDirectSoundCaptureFXNoiseSuppress8 equ IDirectSoundCaptureFXNoiseSuppress
+IDirectSoundFullDuplex8 equ IDirectSoundFullDuplex
+
+endif
+
+LPDIRECTSOUND		typedef ptr IDirectSound
+LPDIRECTSOUNDBUFFER	typedef ptr IDirectSoundBuffer
+LPDIRECTSOUND3DLISTENER typedef ptr IDirectSound3DListener
+LPDIRECTSOUND3DBUFFER	typedef ptr IDirectSound3DBuffer
+LPDIRECTSOUNDCAPTURE	typedef ptr IDirectSoundCapture
+LPDIRECTSOUNDCAPTUREBUFFER typedef ptr IDirectSoundCaptureBuffer
+LPDIRECTSOUNDNOTIFY	typedef ptr IDirectSoundNotify
+
+if DIRECTSOUND_VERSION GE 0x0800
+
+LPDIRECTSOUNDFXGARGLE	typedef ptr IDirectSoundFXGargle
+LPDIRECTSOUNDFXCHORUS	typedef ptr IDirectSoundFXChorus
+LPDIRECTSOUNDFXFLANGER	typedef ptr IDirectSoundFXFlanger
+LPDIRECTSOUNDFXECHO	typedef ptr IDirectSoundFXEcho
+LPDIRECTSOUNDFXDISTORTION typedef ptr IDirectSoundFXDistortion
+LPDIRECTSOUNDFXCOMPRESSOR typedef ptr IDirectSoundFXCompressor
+LPDIRECTSOUNDFXPARAMEQ	typedef ptr IDirectSoundFXParamEq
+LPDIRECTSOUNDFXWAVESREVERB typedef ptr IDirectSoundFXWavesReverb
+LPDIRECTSOUNDFXI3DL2REVERB typedef ptr IDirectSoundFXI3DL2Reverb
+LPDIRECTSOUNDCAPTUREFXAEC typedef ptr IDirectSoundCaptureFXAec
+LPDIRECTSOUNDCAPTUREFXNOISESUPPRESS typedef ptr IDirectSoundCaptureFXNoiseSuppress
+LPDIRECTSOUNDFULLDUPLEX typedef ptr IDirectSoundFullDuplex
+
+LPDIRECTSOUND8		typedef ptr IDirectSound8
+LPDIRECTSOUNDBUFFER8	typedef ptr IDirectSoundBuffer8
+LPDIRECTSOUND3DLISTENER8 typedef ptr IDirectSound3DListener8
+LPDIRECTSOUND3DBUFFER8	typedef ptr IDirectSound3DBuffer8
+LPDIRECTSOUNDCAPTURE8	typedef ptr IDirectSoundCapture8
+LPDIRECTSOUNDCAPTUREBUFFER8 typedef ptr IDirectSoundCaptureBuffer8
+LPDIRECTSOUNDNOTIFY8	typedef ptr IDirectSoundNotify8
+LPDIRECTSOUNDFXGARGLE8	typedef ptr IDirectSoundFXGargle8
+LPDIRECTSOUNDFXCHORUS8	typedef ptr IDirectSoundFXChorus8
+LPDIRECTSOUNDFXFLANGER8 typedef ptr IDirectSoundFXFlanger8
+LPDIRECTSOUNDFXECHO8	typedef ptr IDirectSoundFXEcho8
+LPDIRECTSOUNDFXDISTORTION8 typedef ptr IDirectSoundFXDistortion8
+LPDIRECTSOUNDFXCOMPRESSOR8 typedef ptr IDirectSoundFXCompressor8
+LPDIRECTSOUNDFXPARAMEQ8 typedef ptr IDirectSoundFXParamEq8
+LPDIRECTSOUNDFXWAVESREVERB8 typedef ptr IDirectSoundFXWavesReverb8
+LPDIRECTSOUNDFXI3DL2REVERB8 typedef ptr IDirectSoundFXI3DL2Reverb8
+LPDIRECTSOUNDCAPTUREFXAEC8 typedef ptr IDirectSoundCaptureFXAec8
+LPDIRECTSOUNDCAPTUREFXNOISESUPPRESS8 typedef ptr IDirectSoundCaptureFXNoiseSuppress8
+LPDIRECTSOUNDFULLDUPLEX8 typedef ptr IDirectSoundFullDuplex8
+
+endif
+
+
+if DIRECTSOUND_VERSION GE 0x0800
+
+IID_IDirectSoundCapture8 equ IID_IDirectSoundCapture
+IID_IDirectSound3DListener8 equ IID_IDirectSound3DListener
+IID_IDirectSound3DBuffer8 equ IID_IDirectSound3DBuffer
+IID_IDirectSoundNotify8 equ IID_IDirectSoundNotify
+IID_IDirectSoundFXGargle8 equ IID_IDirectSoundFXGargle
+IID_IDirectSoundFXChorus8 equ IID_IDirectSoundFXChorus
+IID_IDirectSoundFXFlanger8 equ IID_IDirectSoundFXFlanger
+IID_IDirectSoundFXEcho8 equ IID_IDirectSoundFXEcho
+IID_IDirectSoundFXDistortion8 equ IID_IDirectSoundFXDistortion
+IID_IDirectSoundFXCompressor8 equ IID_IDirectSoundFXCompressor
+IID_IDirectSoundFXParamEq8 equ IID_IDirectSoundFXParamEq
+IID_IDirectSoundFXWavesReverb8 equ IID_IDirectSoundFXWavesReverb
+IID_IDirectSoundFXI3DL2Reverb8 equ IID_IDirectSoundFXI3DL2Reverb
+IID_IDirectSoundCaptureFXAec8 equ IID_IDirectSoundCaptureFXAec
+IID_IDirectSoundCaptureFXNoiseSuppress8 equ IID_IDirectSoundCaptureFXNoiseSuppress
+IID_IDirectSoundFullDuplex8 equ IID_IDirectSoundFullDuplex
+
+endif
+
+
+ifndef _LPCWAVEFORMATEX_DEFINED
+_LPCWAVEFORMATEX_DEFINED equ 1
+LPCWAVEFORMATEX		typedef ptr WAVEFORMATEX
+endif
+
+ifndef __LPCGUID_DEFINED__
+__LPCGUID_DEFINED__ equ 1
+LPCGUID			typedef ptr GUID
+endif
+
+LPLPDIRECTSOUND		typedef ptr LPDIRECTSOUND
+LPLPDIRECTSOUNDBUFFER	typedef ptr LPDIRECTSOUNDBUFFER
+LPLPDIRECTSOUND3DLISTENER typedef ptr LPDIRECTSOUND3DLISTENER
+LPLPDIRECTSOUND3DBUFFER typedef ptr LPDIRECTSOUND3DBUFFER
+LPLPDIRECTSOUNDCAPTURE	typedef ptr LPDIRECTSOUNDCAPTURE
+LPLPDIRECTSOUNDCAPTUREBUFFER typedef ptr LPDIRECTSOUNDCAPTUREBUFFER
+LPLPDIRECTSOUNDNOTIFY	typedef ptr LPDIRECTSOUNDNOTIFY
+
+if DIRECTSOUND_VERSION GE 0x0800
+LPLPDIRECTSOUND8	typedef ptr LPDIRECTSOUND8
+LPLPDIRECTSOUNDBUFFER8	typedef ptr LPDIRECTSOUNDBUFFER8
+LPLPDIRECTSOUNDCAPTURE8 typedef ptr LPDIRECTSOUNDCAPTURE8
+LPLPDIRECTSOUNDCAPTUREBUFFER8 typedef ptr LPDIRECTSOUNDCAPTUREBUFFER8
+endif
+
+
+DSCAPS			STRUC
+dwSize			dd ?
+dwFlags			dd ?
+dwMinSecondarySampleRate dd ?
+dwMaxSecondarySampleRate dd ?
+dwPrimaryBuffers	dd ?
+dwMaxHwMixingAllBuffers dd ?
+dwMaxHwMixingStaticBuffers dd ?
+dwMaxHwMixingStreamingBuffers dd ?
+dwFreeHwMixingAllBuffers dd ?
+dwFreeHwMixingStaticBuffers dd ?
+dwFreeHwMixingStreamingBuffers dd ?
+dwMaxHw3DAllBuffers	dd ?
+dwMaxHw3DStaticBuffers	dd ?
+dwMaxHw3DStreamingBuffers dd ?
+dwFreeHw3DAllBuffers	dd ?
+dwFreeHw3DStaticBuffers dd ?
+dwFreeHw3DStreamingBuffers dd ?
+dwTotalHwMemBytes	dd ?
+dwFreeHwMemBytes	dd ?
+dwMaxContigFreeHwMemBytes dd ?
+dwUnlockTransferRateHwBuffers dd ?
+dwPlayCpuOverheadSwBuffers dd ?
+dwReserved1		dd ?
+dwReserved2		dd ?
+DSCAPS			ENDS
+LPDSCAPS		typedef ptr DSCAPS
+LPCDSCAPS		typedef ptr DSCAPS
+
+DSBCAPS			STRUC
+dwSize			dd ?
+dwFlags			dd ?
+dwBufferBytes		dd ?
+dwUnlockTransferRate	dd ?
+dwPlayCpuOverhead	dd ?
+DSBCAPS			ENDS
+LPDSBCAPS		typedef ptr DSBCAPS
+LPCDSBCAPS		typedef ptr DSBCAPS
+
+if DIRECTSOUND_VERSION GE 0x0800
+
+DSEFFECTDESC		STRUC
+dwSize			dd ?
+dwFlags			dd ?
+guidDSFXClass		GUID <>
+dwReserved1		dd ?
+dwReserved2		dd ?
+DSEFFECTDESC		ENDS
+LPDSEFFECTDESC		typedef ptr DSEFFECTDESC
+LPCDSEFFECTDESC		typedef ptr DSEFFECTDESC
+
+DSFX_LOCHARDWARE	equ 0x00000001
+DSFX_LOCSOFTWARE	equ 0x00000002
+
+DSFXR_PRESENT		equ 0
+DSFXR_LOCHARDWARE	equ 1
+DSFXR_LOCSOFTWARE	equ 2
+DSFXR_UNALLOCATED	equ 3
+DSFXR_FAILED		equ 4
+DSFXR_UNKNOWN		equ 5
+DSFXR_SENDLOOP		equ 6
+
+DSCEFFECTDESC		STRUC
+dwSize			dd ?
+dwFlags			dd ?
+guidDSCFXClass		GUID <>
+guidDSCFXInstance	GUID <>
+dwReserved1		dd ?
+dwReserved2		dd ?
+DSCEFFECTDESC		ENDS
+LPDSCEFFECTDESC		typedef ptr DSCEFFECTDESC
+LPCDSCEFFECTDESC	typedef ptr DSCEFFECTDESC
+
+DSCFX_LOCHARDWARE	equ 0x00000001
+DSCFX_LOCSOFTWARE	equ 0x00000002
+
+DSCFXR_LOCHARDWARE	equ 0x00000010
+DSCFXR_LOCSOFTWARE	equ 0x00000020
+
+endif
+
+DSBUFFERDESC		STRUC
+dwSize			dd ?
+dwFlags			dd ?
+dwBufferBytes		dd ?
+dwReserved		dd ?
+lpwfxFormat		LPWAVEFORMATEX ?
+if DIRECTSOUND_VERSION GE 0x0700
+guid3DAlgorithm		GUID <>
+endif
+DSBUFFERDESC		ENDS
+LPDSBUFFERDESC		typedef ptr DSBUFFERDESC
+
+LPCDSBUFFERDESC		typedef ptr DSBUFFERDESC
+
+
+DSBUFFERDESC1		STRUC
+dwSize			dd ?
+dwFlags			dd ?
+dwBufferBytes		dd ?
+dwReserved		dd ?
+lpwfxFormat		LPWAVEFORMATEX ?
+DSBUFFERDESC1		ENDS
+LPDSBUFFERDESC1		typedef ptr DSBUFFERDESC1
+
+LPCDSBUFFERDESC1	typedef ptr DSBUFFERDESC1
+
+DS3DBUFFER		STRUC
+dwSize			dd ?
+vPosition		D3DVECTOR <>
+vVelocity		D3DVECTOR <>
+dwInsideConeAngle	dd ?
+dwOutsideConeAngle	dd ?
+vConeOrientation	D3DVECTOR <>
+lConeOutsideVolume	LONG ?
+flMinDistance		D3DVALUE ?
+flMaxDistance		D3DVALUE ?
+dwMode			dd ?
+DS3DBUFFER		ENDS
+LPDS3DBUFFER		typedef ptr DS3DBUFFER
+
+LPCDS3DBUFFER		typedef ptr DS3DBUFFER
+
+DS3DLISTENER		STRUC
+dwSize			dd ?
+vPosition		D3DVECTOR <>
+vVelocity		D3DVECTOR <>
+vOrientFront		D3DVECTOR <>
+vOrientTop		D3DVECTOR <>
+flDistanceFactor	D3DVALUE ?
+flRolloffFactor		D3DVALUE ?
+flDopplerFactor		D3DVALUE ?
+DS3DLISTENER		ENDS
+LPDS3DLISTENER		typedef ptr DS3DLISTENER
+
+LPCDS3DLISTENER		typedef ptr DS3DLISTENER
+
+DSCCAPS			STRUC
+dwSize			dd ?
+dwFlags			dd ?
+dwFormats		dd ?
+dwChannels		dd ?
+DSCCAPS			ENDS
+LPDSCCAPS		typedef ptr DSCCAPS
+
+LPCDSCCAPS		typedef ptr DSCCAPS
+
+DSCBUFFERDESC1		STRUC
+dwSize			dd ?
+dwFlags			dd ?
+dwBufferBytes		dd ?
+dwReserved		dd ?
+lpwfxFormat		LPWAVEFORMATEX ?
+DSCBUFFERDESC1		ENDS
+LPDSCBUFFERDESC1	typedef ptr DSCBUFFERDESC1
+
+DSCBUFFERDESC		STRUC
+dwSize			dd ?
+dwFlags			dd ?
+dwBufferBytes		dd ?
+dwReserved		dd ?
+lpwfxFormat		LPWAVEFORMATEX ?
+if DIRECTSOUND_VERSION GE 0x0800
+dwFXCount		dd ?
+lpDSCFXDesc		LPDSCEFFECTDESC ?
+endif
+DSCBUFFERDESC		ENDS
+LPDSCBUFFERDESC		typedef ptr DSCBUFFERDESC
+
+LPCDSCBUFFERDESC	typedef ptr DSCBUFFERDESC
+
+DSCBCAPS		STRUC
+dwSize			dd ?
+dwFlags			dd ?
+dwBufferBytes		dd ?
+dwReserved		dd ?
+DSCBCAPS		ENDS
+LPDSCBCAPS		typedef ptr DSCBCAPS
+
+LPCDSCBCAPS		typedef ptr DSCBCAPS
+
+DSBPOSITIONNOTIFY	STRUC
+dwOffset		dd ?
+hEventNotify		HANDLE ?
+DSBPOSITIONNOTIFY	ENDS
+LPDSBPOSITIONNOTIFY	typedef ptr DSBPOSITIONNOTIFY
+
+LPCDSBPOSITIONNOTIFY	typedef ptr DSBPOSITIONNOTIFY
+
+
+CALLBACK(LPDSENUMCALLBACKA, :LPGUID, :LPCSTR, :LPCSTR, :PVOID)
+CALLBACK(LPDSENUMCALLBACKW, :LPGUID, :LPCWSTR, :LPCWSTR, :PVOID)
+
+;HRESULT
+DirectSoundCreate proto WINAPI \
+	  pcGuidDevice: LPCGUID,
+		  ppDS: ptr LPCGUID,
+	     pUnkOuter: LPUNKNOWN
+
+DirectSoundEnumerateA proto WINAPI \
+       pDSEnumCallback: LPDSENUMCALLBACKA,
+	      pContext: PVOID
+
+DirectSoundEnumerateW proto WINAPI \
+       pDSEnumCallback: LPDSENUMCALLBACKW,
+	      pContext: PVOID
+
+DirectSoundCaptureCreate proto WINAPI \
+	  pcGuidDevice: LPCGUID,
+		 ppDSC: ptr LPDIRECTSOUNDCAPTURE,
+	     pUnkOuter: LPUNKNOWN
+
+DirectSoundCaptureEnumerateA proto WINAPI \
+       pDSEnumCallback: LPDSENUMCALLBACKA,
+	      pContext: PVOID
+
+DirectSoundCaptureEnumerateW proto WINAPI \
+       pDSEnumCallback: LPDSENUMCALLBACKW,
+	      pContext: PVOID
+
+if DIRECTSOUND_VERSION GE 0x0800
+DirectSoundCreate8 proto WINAPI \
+	  pcGuidDevice: LPCGUID,
+		 ppDS8: ptr LPDIRECTSOUND8,
+	     pUnkOuter: LPUNKNOWN
+
+DirectSoundCaptureCreate8 proto WINAPI \
+	  pcGuidDevice: LPCGUID,
+		ppDSC8: ptr LPDIRECTSOUNDCAPTURE8,
+	     pUnkOuter: LPUNKNOWN
+
+DirectSoundFullDuplexCreate proto WINAPI \
+   pcGuidCaptureDevice: LPCGUID,
+    pcGuidRenderDevice: LPCGUID,
+       pcDSCBufferDesc: LPCDSCBUFFERDESC,
+	pcDSBufferDesc: LPCDSBUFFERDESC,
+		  hWnd: HWND,
+	       dwLevel: DWORD,
+		ppDSFD: ptr LPDIRECTSOUNDFULLDUPLEX,
+	  ppDSCBuffer8: ptr LPDIRECTSOUNDCAPTUREBUFFER8,
+	   ppDSBuffer8: ptr LPDIRECTSOUNDBUFFER8,
+	     pUnkOuter: LPUNKNOWN
+
+DirectSoundFullDuplexCreate8 equ <DirectSoundFullDuplexCreate>
+
+GetDeviceID proto WINAPI \
+	      pGuidSrc: LPCGUID,
+	     pGuidDest: LPGUID
+endif
+
+ifdef UNICODE
+LPDSENUMCALLBACK	equ <LPDSENUMCALLBACKW>
+DirectSoundEnumerate	equ <DirectSoundEnumerateW>
+DirectSoundCaptureEnumerate equ <DirectSoundCaptureEnumerateW>
+else
+LPDSENUMCALLBACK	equ <LPDSENUMCALLBACKA>
+DirectSoundEnumerate	equ <DirectSoundEnumerateA>
+DirectSoundCaptureEnumerate equ <DirectSoundCaptureEnumerateA>
+endif
+
+
+if NOT defined(__cplusplus) OR defined(CINTERFACE)
+ifndef IUnknown_AddRef
+IUnknown_AddRef macro p
+	exitm<p.AddRef()>
+	endm
+endif
+ifndef IUnknown_Release
+IUnknown_Release macro p
+	exitm<p.Release()>
+	endm
+endif
+endif
+
+ifndef __IReferenceClock_INTERFACE_DEFINED__
+__IReferenceClock_INTERFACE_DEFINED__ equ 1
+
+REFERENCE_TIME		typedef LONGLONG
+LPREFERENCE_TIME	typedef ptr REFERENCE_TIME
+
+DEFINE_GUID(IID_IReferenceClock, 0x56a86897, 0x0ad4, 0x11ce, 0xb0, 0x3a, 0x00, 0x20, 0xaf, 0x0b, 0xa7, 0x70);
+
+IReferenceClock		STRUC
+
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+
+	STDMETHOD	GetTime, :ptr
+	STDMETHOD	AdviseTime, :REFERENCE_TIME, :REFERENCE_TIME, :HANDLE, :LPDWORD
+	STDMETHOD	AdvisePeriodic, :REFERENCE_TIME, :REFERENCE_TIME, :HANDLE, :LPDWORD
+	STDMETHOD	Unadvise, :DWORD
+
+IReferenceClock		ENDS
+
+endif
+
+ifndef IReferenceClock_QueryInterface
+
+IReferenceClock_QueryInterface macro p,a,b
+	exitm<IUnknown_QueryInterface(p,a,b)>
+	endm
+IReferenceClock_AddRef macro p
+	exitm<IUnknown_AddRef(p)>
+	endm
+IReferenceClock_Release macro p
+	exitm<IUnknown_Release(p)>
+	endm
+
+if NOT defined(__cplusplus) OR defined(CINTERFACE)
+IReferenceClock_GetTime macro p,a
+	exitm<p.GetTime(a)>
+	endm
+IReferenceClock_AdviseTime macro p,a,b,c,d
+	exitm<p.AdviseTime(a,b,c,d)>
+	endm
+IReferenceClock_AdvisePeriodic macro p,a,b,c,d
+	exitm<p.AdvisePeriodic(a,b,c,d)>
+	endm
+IReferenceClock_Unadvise macro p,a
+	exitm<p.Unadvise(a)>
+	endm
+endif
+
+endif
+
+
+DEFINE_GUID(IID_IDirectSound, 0x279AFA83, 0x4981, 0x11CE, 0xA5, 0x21, 0x00, 0x20, 0xAF, 0x0B, 0xE5, 0x60);
+
+IDirectSound		STRUC
+
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+
+	STDMETHOD	CreateSoundBuffer, :LPCDSBUFFERDESC, :ptr, :LPUNKNOWN
+	STDMETHOD	GetCaps, :LPDSCAPS
+	STDMETHOD	DuplicateSoundBuffer, :LPDIRECTSOUNDBUFFER, :ptr
+	STDMETHOD	SetCooperativeLevel, :HWND, :DWORD
+	STDMETHOD	Compact
+	STDMETHOD	GetSpeakerConfig, :LPDWORD
+	STDMETHOD	SetSpeakerConfig, :DWORD
+	STDMETHOD	Initialize, :LPCGUID
+
+IDirectSound		ENDS
+
+IDirectSound_QueryInterface macro p,a,b
+	exitm<IUnknown_QueryInterface(p,a,b)>
+	endm
+IDirectSound_AddRef macro p
+	exitm<IUnknown_AddRef(p)>
+	endm
+IDirectSound_Release macro p
+	exitm<IUnknown_Release(p)>
+	endm
+
+if NOT defined(__cplusplus) OR defined(CINTERFACE)
+
+IDirectSound_CreateSoundBuffer macro p,a,b,c
+	exitm<p.CreateSoundBuffer(a,b,c)>
+	endm
+IDirectSound_GetCaps macro p,a
+	exitm<p.GetCaps(a)>
+	endm
+IDirectSound_DuplicateSoundBuffer macro p,a,b
+	exitm<p.DuplicateSoundBuffer(a,b)>
+	endm
+IDirectSound_SetCooperativeLevel macro p,a,b
+	exitm<p.SetCooperativeLevel(a,b)>
+	endm
+IDirectSound_Compact macro p
+	exitm<p.Compact()>
+	endm
+IDirectSound_GetSpeakerConfig macro p,a
+	exitm<p.GetSpeakerConfig(a)>
+	endm
+IDirectSound_SetSpeakerConfig macro p,b
+	exitm<p.SetSpeakerConfig(b)>
+	endm
+IDirectSound_Initialize macro p,a
+	exitm<p.Initialize(a)>
+	endm
+endif
+
+if DIRECTSOUND_VERSION GE 0x0800
+
+
+DEFINE_GUID(IID_IDirectSound8, 0xC50A7E93, 0xF395, 0x4834, 0x9E, 0xF6, 0x7F, 0xA9, 0x9D, 0xE5, 0x09, 0x66);
+
+IDirectSound8		STRUC
+
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+
+	STDMETHOD	CreateSoundBuffer, :LPCDSBUFFERDESC, :ptr, :LPUNKNOWN
+	STDMETHOD	GetCaps, :LPDSCAPS
+	STDMETHOD	DuplicateSoundBuffer, :LPDIRECTSOUNDBUFFER, :ptr
+	STDMETHOD	SetCooperativeLevel, :HWND, :DWORD
+	STDMETHOD	Compact
+	STDMETHOD	GetSpeakerConfig, :LPDWORD
+	STDMETHOD	SetSpeakerConfig, :DWORD
+	STDMETHOD	Initialize, :LPCGUID
+
+	STDMETHOD	VerifyCertification, :LPDWORD
+
+IDirectSound8		ENDS
+
+
+IDirectSound8_QueryInterface macro p,a,b
+	exitm<IDirectSound_QueryInterface(p,a,b)>
+	endm
+IDirectSound8_AddRef macro p
+	exitm<IDirectSound_AddRef(p)>
+	endm
+IDirectSound8_Release macro p
+	exitm<IDirectSound_Release(p)>
+	endm
+IDirectSound8_CreateSoundBuffer macro p,a,b,c
+	exitm<IDirectSound_CreateSoundBuffer(p,a,b,c)>
+	endm
+IDirectSound8_GetCaps macro p,a
+	exitm<IDirectSound_GetCaps(p,a)>
+	endm
+IDirectSound8_DuplicateSoundBuffer macro p,a,b
+	exitm<IDirectSound_DuplicateSoundBuffer(p,a,b)>
+	endm
+IDirectSound8_SetCooperativeLevel macro p,a,b
+	exitm<IDirectSound_SetCooperativeLevel(p,a,b)>
+	endm
+IDirectSound8_Compact macro p
+	exitm<IDirectSound_Compact(p)>
+	endm
+IDirectSound8_GetSpeakerConfig macro p,a
+	exitm<IDirectSound_GetSpeakerConfig(p,a)>
+	endm
+IDirectSound8_SetSpeakerConfig macro p,a
+	exitm<IDirectSound_SetSpeakerConfig(p,a)>
+	endm
+IDirectSound8_Initialize macro p,a
+	exitm<IDirectSound_Initialize(p,a)>
+	endm
+
+if NOT defined(__cplusplus) OR defined(CINTERFACE)
+IDirectSound8_VerifyCertification macro p,a
+	exitm<p.VerifyCertification(a)>
+	endm
+endif
+
+endif
+
+
+DEFINE_GUID(IID_IDirectSoundBuffer, 0x279AFA85, 0x4981, 0x11CE, 0xA5, 0x21, 0x00, 0x20, 0xAF, 0x0B, 0xE5, 0x60);
+
+IDirectSoundBuffer	STRUC
+
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+
+	STDMETHOD	GetCaps, :LPDSCAPS
+	STDMETHOD	GetCurrentPosition, :LPDWORD, :LPDWORD
+	STDMETHOD	GetFormat, :LPWAVEFORMATEX, :DWORD, :LPDWORD
+	STDMETHOD	GetVolume, :LPLONG
+	STDMETHOD	GetPan, :LPLONG
+	STDMETHOD	GetFrequency, :LPDWORD
+	STDMETHOD	GetStatus, :LPDWORD
+	STDMETHOD	Initialize, :LPDIRECTSOUND, :LPCDSBUFFERDESC
+	STDMETHOD	_Lock, :DWORD, :DWORD, :PVOID, :LPDWORD, :DWORD
+	STDMETHOD	Play, :DWORD, :DWORD, :DWORD
+	STDMETHOD	SetCurrentPosition, :DWORD
+	STDMETHOD	SetFormat, :LPCWAVEFORMATEX
+	STDMETHOD	SetVolume, :LONG
+	STDMETHOD	SetPan, :LONG
+	STDMETHOD	SetFrequency, :DWORD
+	STDMETHOD	Stop
+	STDMETHOD	Unlock, :PVOID, :DWORD
+	STDMETHOD	Restore
+
+IDirectSoundBuffer	ENDS
+
+IDirectSoundBuffer_QueryInterface macro p,a,b
+	exitm<IUnknown_QueryInterface(p,a,b)>
+	endm
+IDirectSoundBuffer_AddRef macro p
+	exitm<IUnknown_AddRef(p)>
+	endm
+IDirectSoundBuffer_Release macro p
+	exitm<IUnknown_Release(p)>
+	endm
+
+if NOT defined(__cplusplus) OR defined(CINTERFACE)
+IDirectSoundBuffer_GetCaps macro p,a
+	exitm<p.GetCaps(a)>
+	endm
+IDirectSoundBuffer_GetCurrentPosition macro p,a,b
+	exitm<p.GetCurrentPosition(a,b)>
+	endm
+IDirectSoundBuffer_GetFormat macro p,a,b,c
+	exitm<p.GetFormat(a,b,c)>
+	endm
+IDirectSoundBuffer_GetVolume macro p,a
+	exitm<p.GetVolume(a)>
+	endm
+IDirectSoundBuffer_GetPan macro p,a
+	exitm<p.GetPan(a)>
+	endm
+IDirectSoundBuffer_GetFrequency macro p,a
+	exitm<p.GetFrequency(a)>
+	endm
+IDirectSoundBuffer_GetStatus macro p,a
+	exitm<p.GetStatus(a)>
+	endm
+IDirectSoundBuffer_Initialize macro p,a,b
+	exitm<p.Initialize(a,b)>
+	endm
+IDirectSoundBuffer_Lock macro p,a,b,c,d,e,f,g
+	exitm<p.Lock(a,b,c,d,e,f,g)>
+	endm
+IDirectSoundBuffer_Play macro p,a,b,c
+	exitm<p.Play(a,b,c)>
+	endm
+IDirectSoundBuffer_SetCurrentPosition macro p,a
+	exitm<p.SetCurrentPosition(a)>
+	endm
+IDirectSoundBuffer_SetFormat macro p,a
+	exitm<p.SetFormat(a)>
+	endm
+IDirectSoundBuffer_SetVolume macro p,a
+	exitm<p.SetVolume(a)>
+	endm
+IDirectSoundBuffer_SetPan macro p,a
+	exitm<p.SetPan(a)>
+	endm
+IDirectSoundBuffer_SetFrequency macro p,a
+	exitm<p.SetFrequency(a)>
+	endm
+IDirectSoundBuffer_Stop macro p
+	exitm<p.Stop()>
+	endm
+IDirectSoundBuffer_Unlock macro p,a,b,c,d
+	exitm<p.Unlock(a,b,c,d)>
+	endm
+IDirectSoundBuffer_Restore macro p
+	exitm<p.Restore()>
+	endm
+endif
+
+if DIRECTSOUND_VERSION GE 0x0800
+
+
+DEFINE_GUID(IID_IDirectSoundBuffer8, 0x6825a449, 0x7524, 0x4d82, 0x92, 0x0f, 0x50, 0xe3, 0x6a, 0xb3, 0xab, 0x1e);
+
+IDirectSoundBuffer8	STRUC
+
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+
+	STDMETHOD	GetCaps, :LPDSCAPS
+	STDMETHOD	GetCurrentPosition, :LPDWORD, :LPDWORD
+	STDMETHOD	GetFormat, :LPWAVEFORMATEX, :DWORD, :LPDWORD
+	STDMETHOD	GetVolume, :LPLONG
+	STDMETHOD	GetPan, :LPLONG
+	STDMETHOD	GetFrequency, :LPDWORD
+	STDMETHOD	GetStatus, :LPDWORD
+	STDMETHOD	Initialize, :LPDIRECTSOUND, :LPCDSBUFFERDESC
+	STDMETHOD	_Lock, :DWORD, :DWORD, :PVOID, :LPDWORD, :DWORD
+	STDMETHOD	Play, :DWORD, :DWORD, :DWORD
+	STDMETHOD	SetCurrentPosition, :DWORD
+	STDMETHOD	SetFormat, :LPCWAVEFORMATEX
+	STDMETHOD	SetVolume, :LONG
+	STDMETHOD	SetPan, :LONG
+	STDMETHOD	SetFrequency, :DWORD
+	STDMETHOD	Stop
+	STDMETHOD	Unlock, :PVOID, :DWORD
+	STDMETHOD	Restore
+
+	STDMETHOD	SetFX, :DWORD, :LPDSEFFECTDESC, :LPDWORD
+	STDMETHOD	AcquireResources, :DWORD, :DWORD, :LPDWORD
+	STDMETHOD	GetObjectInPath, :REFGUID, :DWORD, :REFGUID, :ptr
+
+IDirectSoundBuffer8	ENDS
+
+DEFINE_GUID(GUID_All_Objects, 0xaa114de5, 0xc262, 0x4169, 0xa1, 0xc8, 0x23, 0xd6, 0x98, 0xcc, 0x73, 0xb5);
+
+IDirectSoundBuffer8_QueryInterface macro p,a,b
+	exitm<IUnknown_QueryInterface(p,a,b)>
+	endm
+IDirectSoundBuffer8_AddRef macro p
+	exitm<IUnknown_AddRef(p)>
+	endm
+IDirectSoundBuffer8_Release macro p
+	exitm<IUnknown_Release(p)>
+	endm
+
+IDirectSoundBuffer8_GetCaps macro p,a
+	exitm<IDirectSoundBuffer_GetCaps(p,a)>
+	endm
+IDirectSoundBuffer8_GetCurrentPosition macro p,a,b
+	exitm<IDirectSoundBuffer_GetCurrentPosition(p,a,b)>
+	endm
+IDirectSoundBuffer8_GetFormat macro p,a,b,c
+	exitm<IDirectSoundBuffer_GetFormat(p,a,b,c)>
+	endm
+IDirectSoundBuffer8_GetVolume macro p,a
+	exitm<IDirectSoundBuffer_GetVolume(p,a)>
+	endm
+IDirectSoundBuffer8_GetPan macro p,a
+	exitm<IDirectSoundBuffer_GetPan(p,a)>
+	endm
+IDirectSoundBuffer8_GetFrequency macro p,a
+	exitm<IDirectSoundBuffer_GetFrequency(p,a)>
+	endm
+IDirectSoundBuffer8_GetStatus macro p,a
+	exitm<IDirectSoundBuffer_GetStatus(p,a)>
+	endm
+IDirectSoundBuffer8_Initialize macro p,a,b
+	exitm<IDirectSoundBuffer_Initialize(p,a,b)>
+	endm
+IDirectSoundBuffer8_Lock macro p,a,b,c,d,e,f,g
+	exitm<IDirectSoundBuffer_Lock(p,a,b,c,d,e,f,g)>
+	endm
+IDirectSoundBuffer8_Play macro p,a,b,c
+	exitm<IDirectSoundBuffer_Play(p,a,b,c)>
+	endm
+IDirectSoundBuffer8_SetCurrentPosition macro p,a
+	exitm<IDirectSoundBuffer_SetCurrentPosition(p,a)>
+	endm
+IDirectSoundBuffer8_SetFormat macro p,a
+	exitm<IDirectSoundBuffer_SetFormat(p,a)>
+	endm
+IDirectSoundBuffer8_SetVolume macro p,a
+	exitm<IDirectSoundBuffer_SetVolume(p,a)>
+	endm
+IDirectSoundBuffer8_SetPan macro p,a
+	exitm<IDirectSoundBuffer_SetPan(p,a)>
+	endm
+IDirectSoundBuffer8_SetFrequency macro p,a
+	exitm<IDirectSoundBuffer_SetFrequency(p,a)>
+	endm
+IDirectSoundBuffer8_Stop macro p
+	exitm<IDirectSoundBuffer_Stop(p)>
+	endm
+IDirectSoundBuffer8_Unlock macro p,a,b,c,d
+	exitm<IDirectSoundBuffer_Unlock(p,a,b,c,d)>
+	endm
+IDirectSoundBuffer8_Restore macro p
+	exitm<IDirectSoundBuffer_Restore(p)>
+	endm
+
+if NOT defined(__cplusplus) OR defined(CINTERFACE)
+IDirectSoundBuffer8_SetFX macro p,a,b,c
+	exitm<p.SetFX(a,b,c)>
+	endm
+IDirectSoundBuffer8_AcquireResources macro p,a,b,c
+	exitm<p.AcquireResources(a,b,c)>
+	endm
+IDirectSoundBuffer8_GetObjectInPath macro p,a,b,c,d
+	exitm<p.GetObjectInPath(a,b,c,d)>
+	endm
+endif
+
+endif
+
+
+DEFINE_GUID(IID_IDirectSound3DListener, 0x279AFA84, 0x4981, 0x11CE, 0xA5, 0x21, 0x00, 0x20, 0xAF, 0x0B, 0xE5, 0x60);
+
+IDirectSound3DListener	STRUC
+
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+
+	STDMETHOD	GetAllParameters, :LPDS3DLISTENER
+	STDMETHOD	GetDistanceFactor, :ptr D3DVALUE
+	STDMETHOD	GetDopplerFactor, :ptr D3DVALUE
+	STDMETHOD	GetOrientation, :ptr D3DVECTOR, :ptr D3DVECTOR
+	STDMETHOD	GetPosition, :ptr D3DVECTOR
+	STDMETHOD	GetRolloffFactor, :ptr D3DVALUE
+	STDMETHOD	GetVelocity, :ptr D3DVECTOR
+	STDMETHOD	SetAllParameters, :LPCDS3DLISTENER, :DWORD
+	STDMETHOD	SetDistanceFactor, :D3DVALUE, :DWORD
+	STDMETHOD	SetDopplerFactor, :D3DVALUE, :DWORD
+	STDMETHOD	SetOrientation, :D3DVALUE, :D3DVALUE, :D3DVALUE, :D3DVALUE, :D3DVALUE, :D3DVALUE, :DWORD
+	STDMETHOD	SetPosition, :D3DVALUE, :D3DVALUE, :D3DVALUE, :DWORD
+	STDMETHOD	SetRolloffFactor, :D3DVALUE, :DWORD
+	STDMETHOD	SetVelocity, :D3DVALUE, :D3DVALUE, :D3DVALUE, :DWORD
+	STDMETHOD	CommitDeferredSettings
+
+IDirectSound3DListener	ENDS
+
+IDirectSound3DListener_QueryInterface macro p,a,b
+	exitm<IUnknown_QueryInterface(p,a,b)>
+	endm
+IDirectSound3DListener_AddRef macro p
+	exitm<IUnknown_AddRef(p)>
+	endm
+IDirectSound3DListener_Release macro p
+	exitm<IUnknown_Release(p)>
+	endm
+
+if NOT defined(__cplusplus) OR defined(CINTERFACE)
+IDirectSound3DListener_GetAllParameters macro p,a
+	exitm<p.GetAllParameters(a)>
+	endm
+IDirectSound3DListener_GetDistanceFactor macro p,a
+	exitm<p.GetDistanceFactor(a)>
+	endm
+IDirectSound3DListener_GetDopplerFactor macro p,a
+	exitm<p.GetDopplerFactor(a)>
+	endm
+IDirectSound3DListener_GetOrientation macro p,a,b
+	exitm<p.GetOrientation(a,b)>
+	endm
+IDirectSound3DListener_GetPosition macro p,a
+	exitm<p.GetPosition(a)>
+	endm
+IDirectSound3DListener_GetRolloffFactor macro p,a
+	exitm<p.GetRolloffFactor(a)>
+	endm
+IDirectSound3DListener_GetVelocity macro p,a
+	exitm<p.GetVelocity(a)>
+	endm
+IDirectSound3DListener_SetAllParameters macro p,a,b
+	exitm<p.SetAllParameters(a,b)>
+	endm
+IDirectSound3DListener_SetDistanceFactor macro p,a,b
+	exitm<p.SetDistanceFactor(a,b)>
+	endm
+IDirectSound3DListener_SetDopplerFactor macro p,a,b
+	exitm<p.SetDopplerFactor(a,b)>
+	endm
+IDirectSound3DListener_SetOrientation macro p,a,b,c,d,e,f,g
+	exitm<p.SetOrientation(a,b,c,d,e,f,g)>
+	endm
+IDirectSound3DListener_SetPosition macro p,a,b,c,d
+	exitm<p.SetPosition(a,b,c,d)>
+	endm
+IDirectSound3DListener_SetRolloffFactor macro p,a,b
+	exitm<p.SetRolloffFactor(a,b)>
+	endm
+IDirectSound3DListener_SetVelocity macro p,a,b,c,d
+	exitm<p.SetVelocity(a,b,c,d)>
+	endm
+IDirectSound3DListener_CommitDeferredSettings macro p
+	exitm<p.CommitDeferredSettings()>
+	endm
+endif
+
+
+DEFINE_GUID(IID_IDirectSound3DBuffer, 0x279AFA86, 0x4981, 0x11CE, 0xA5, 0x21, 0x00, 0x20, 0xAF, 0x0B, 0xE5, 0x60);
+
+IDirectSound3DBuffer	STRUC
+
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+
+	STDMETHOD	GetAllParameters, :LPDS3DLISTENER
+
+	STDMETHOD	GetConeAngles, :LPDWORD, :LPDWORD
+	STDMETHOD	GetConeOrientation, :ptr D3DVECTOR
+	STDMETHOD	GetConeOutsideVolume, :LPLONG
+	STDMETHOD	GetMaxDistance, :ptr D3DVALUE
+	STDMETHOD	GetMinDistance, :ptr D3DVALUE
+	STDMETHOD	GetMode, :LPDWORD
+	STDMETHOD	GetPosition, :ptr D3DVECTOR
+	STDMETHOD	GetVelocity, :ptr D3DVECTOR
+	STDMETHOD	SetAllParameters, :LPCDS3DBUFFER, :DWORD
+	STDMETHOD	SetConeAngles, :DWORD, :DWORD, :DWORD
+	STDMETHOD	SetConeOrientation, :D3DVALUE, :D3DVALUE, :D3DVALUE, :DWORD
+	STDMETHOD	SetConeOutsideVolume, :LONG, :DWORD
+	STDMETHOD	SetMaxDistance, :D3DVALUE, :DWORD
+	STDMETHOD	SetMinDistance, :D3DVALUE, :DWORD
+	STDMETHOD	SetMode, :DWORD, :DWORD
+	STDMETHOD	SetPosition, :D3DVALUE, :D3DVALUE, :D3DVALUE, :DWORD
+	STDMETHOD	SetVelocity, :D3DVALUE, :D3DVALUE, :D3DVALUE, :DWORD
+
+IDirectSound3DBuffer	ENDS
+
+IDirectSound3DBuffer_QueryInterface macro p,a,b
+	exitm<IUnknown_QueryInterface(p,a,b)>
+	endm
+IDirectSound3DBuffer_AddRef macro p
+	exitm<IUnknown_AddRef(p)>
+	endm
+IDirectSound3DBuffer_Release macro p
+	exitm<IUnknown_Release(p)>
+	endm
+
+if NOT defined(__cplusplus) OR defined(CINTERFACE)
+IDirectSound3DBuffer_GetAllParameters macro p,a
+	exitm<p.GetAllParameters(a)>
+	endm
+IDirectSound3DBuffer_GetConeAngles macro p,a,b
+	exitm<p.GetConeAngles(a,b)>
+	endm
+IDirectSound3DBuffer_GetConeOrientation macro p,a
+	exitm<p.GetConeOrientation(a)>
+	endm
+IDirectSound3DBuffer_GetConeOutsideVolume macro p,a
+	exitm<p.GetConeOutsideVolume(a)>
+	endm
+IDirectSound3DBuffer_GetPosition macro p,a
+	exitm<p.GetPosition(a)>
+	endm
+IDirectSound3DBuffer_GetMinDistance macro p,a
+	exitm<p.GetMinDistance(a)>
+	endm
+IDirectSound3DBuffer_GetMaxDistance macro p,a
+	exitm<p.GetMaxDistance(a)>
+	endm
+IDirectSound3DBuffer_GetMode macro p,a
+	exitm<p.GetMode(a)>
+	endm
+IDirectSound3DBuffer_GetVelocity macro p,a
+	exitm<p.GetVelocity(a)>
+	endm
+IDirectSound3DBuffer_SetAllParameters macro p,a,b
+	exitm<p.SetAllParameters(a,b)>
+	endm
+IDirectSound3DBuffer_SetConeAngles macro p,a,b,c
+	exitm<p.SetConeAngles(a,b,c)>
+	endm
+IDirectSound3DBuffer_SetConeOrientation macro p,a,b,c,d
+	exitm<p.SetConeOrientation(a,b,c,d)>
+	endm
+IDirectSound3DBuffer_SetConeOutsideVolume macro p,a,b
+	exitm<p.SetConeOutsideVolume(a,b)>
+	endm
+IDirectSound3DBuffer_SetPosition macro p,a,b,c,d
+	exitm<p.SetPosition(a,b,c,d)>
+	endm
+IDirectSound3DBuffer_SetMinDistance macro p,a,b
+	exitm<p.SetMinDistance(a,b)>
+	endm
+IDirectSound3DBuffer_SetMaxDistance macro p,a,b
+	exitm<p.SetMaxDistance(a,b)>
+	endm
+IDirectSound3DBuffer_SetMode macro p,a,b
+	exitm<p.SetMode(a,b)>
+	endm
+IDirectSound3DBuffer_SetVelocity macro p,a,b,c,d
+	exitm<p.SetVelocity(a,b,c,d)>
+	endm
+endif
+
+
+DEFINE_GUID(IID_IDirectSoundCapture, 0xb0210781, 0x89cd, 0x11d0, 0xaf, 0x8, 0x0, 0xa0, 0xc9, 0x25, 0xcd, 0x16);
+
+IDirectSoundCapture	STRUC
+
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+
+	STDMETHOD	CreateCaptureBuffer, :LPCDSCBUFFERDESC, :ptr, :LPUNKNOWN
+	STDMETHOD	GetCaps, :LPDSCCAPS
+	STDMETHOD	Initialize, :LPCGUID
+
+IDirectSoundCapture	ENDS
+
+IDirectSoundCapture_QueryInterface macro p,a,b
+	exitm<IUnknown_QueryInterface(p,a,b)>
+	endm
+IDirectSoundCapture_AddRef macro p
+	exitm<IUnknown_AddRef(p)>
+	endm
+IDirectSoundCapture_Release macro p
+	exitm<IUnknown_Release(p)>
+	endm
+
+if NOT defined(__cplusplus) OR defined(CINTERFACE)
+IDirectSoundCapture_CreateCaptureBuffer macro p,a,b,c
+	exitm<(p)- GT lpVtbl- GT CreateCaptureBuffer(p,a,b,c)>
+	endm
+IDirectSoundCapture_GetCaps macro p,a
+	exitm<(p)- GT lpVtbl- GT GetCaps(p,a)>
+	endm
+IDirectSoundCapture_Initialize macro p,a
+	exitm<(p)- GT lpVtbl- GT Initialize(p,a)>
+	endm
+else
+IDirectSoundCapture_CreateCaptureBuffer macro p,a,b,c
+	exitm<(p)- GT CreateCaptureBuffer(a,b,c)>
+	endm
+IDirectSoundCapture_GetCaps macro p,a
+	exitm<(p)- GT GetCaps(a)>
+	endm
+IDirectSoundCapture_Initialize macro p,a
+	exitm<(p)- GT Initialize(a)>
+	endm
+endif
+
+
+DEFINE_GUID(IID_IDirectSoundCaptureBuffer, 0xb0210782, 0x89cd, 0x11d0, 0xaf, 0x8, 0x0, 0xa0, 0xc9, 0x25, 0xcd, 0x16);
+
+IDirectSoundCaptureBuffer STRUC
+
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+
+	STDMETHOD	GetCaps, :LPDSCCAPS
+	STDMETHOD	GetCurrentPosition, :LPDWORD, :LPDWORD
+	STDMETHOD	GetFormat, :LPWAVEFORMATEX, :DWORD, :LPDWORD
+	STDMETHOD	GetStatus, :LPDWORD
+	STDMETHOD	Initialize, :LPDIRECTSOUNDCAPTURE, :LPCDSCBUFFERDESC
+	STDMETHOD	_Lock, :DWORD, :DWORD, :ptr PVOID, :LPDWORD, :DWORD
+	STDMETHOD	Start, :DWORD
+	STDMETHOD	Stop
+	STDMETHOD	Unlock, :LPVOID, :DWORD, :LPVOID, :DWORD
+
+IDirectSoundCaptureBuffer ENDS
+
+IDirectSoundCaptureBuffer_QueryInterface macro p,a,b
+	exitm<IUnknown_QueryInterface(p,a,b)>
+	endm
+IDirectSoundCaptureBuffer_AddRef macro p
+	exitm<IUnknown_AddRef(p)>
+	endm
+IDirectSoundCaptureBuffer_Release macro p
+	exitm<IUnknown_Release(p)>
+	endm
+
+if NOT defined(__cplusplus) OR defined(CINTERFACE)
+IDirectSoundCaptureBuffer_GetCaps macro p,a
+	exitm<(p)- GT GetCaps(a)>
+	endm
+IDirectSoundCaptureBuffer_GetCurrentPosition macro p,a,b
+	exitm<(p)- GT GetCurrentPosition(a,b)>
+	endm
+IDirectSoundCaptureBuffer_GetFormat macro p,a,b,c
+	exitm<(p)- GT GetFormat(a,b,c)>
+	endm
+IDirectSoundCaptureBuffer_GetStatus macro p,a
+	exitm<(p)- GT GetStatus(a)>
+	endm
+IDirectSoundCaptureBuffer_Initialize macro p,a,b
+	exitm<(p)- GT Initialize(a,b)>
+	endm
+IDirectSoundCaptureBuffer_Lock macro p,a,b,c,d,e,f,g
+	exitm<(p)- GT Lock(a,b,c,d,e,f,g)>
+	endm
+IDirectSoundCaptureBuffer_Start macro p,a
+	exitm<(p)- GT Start(a)>
+	endm
+IDirectSoundCaptureBuffer_Stop macro p
+	exitm<(p)- GT Stop()>
+	endm
+IDirectSoundCaptureBuffer_Unlock macro p,a,b,c,d
+	exitm<(p)- GT Unlock(a,b,c,d)>
+	endm
+endif
+
+if DIRECTSOUND_VERSION GE 0x0800
+
+
+DEFINE_GUID(IID_IDirectSoundCaptureBuffer8, 0x990df4, 0xdbb, 0x4872, 0x83, 0x3e, 0x6d, 0x30, 0x3e, 0x80, 0xae, 0xb6);
+
+IDirectSoundCaptureBuffer8 STRUC
+
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+
+	STDMETHOD	GetCaps, :LPDSCBCAPS
+	STDMETHOD	GetCurrentPosition, :LPDWORD, :LPDWORD
+	STDMETHOD	GetFormat
+	STDMETHOD	GetStatus, :LPDWORD
+	STDMETHOD	Initialize, :LPDIRECTSOUNDCAPTURE, :LPCDSCBUFFERDESC
+	STDMETHOD	_Lock, :DWORD, :DWORD, :ptr, :LPDWORD, :DWORD
+	STDMETHOD	Start, :DWORD
+	STDMETHOD	Stop
+	STDMETHOD	Unlock, :LPVOID, :DWORD
+
+	STDMETHOD	GetObjectInPath, :REFGUID, :DWORD, :REFGUID, :ptr
+	STDMETHOD	GetFXStatus, :DWORD, :LPDWORD
+
+IDirectSoundCaptureBuffer8 ENDS
+
+IDirectSoundCaptureBuffer8_QueryInterface macro p,a,b
+	exitm<IUnknown_QueryInterface(p,a,b)>
+	endm
+IDirectSoundCaptureBuffer8_AddRef macro p
+	exitm<IUnknown_AddRef(p)>
+	endm
+IDirectSoundCaptureBuffer8_Release macro p
+	exitm<IUnknown_Release(p)>
+	endm
+
+IDirectSoundCaptureBuffer8_GetCaps macro p,a
+	exitm<IDirectSoundCaptureBuffer_GetCaps(p,a)>
+	endm
+IDirectSoundCaptureBuffer8_GetCurrentPosition macro p,a,b
+	exitm<IDirectSoundCaptureBuffer_GetCurrentPosition(p,a,b)>
+	endm
+IDirectSoundCaptureBuffer8_GetFormat macro p,a,b,c
+	exitm<IDirectSoundCaptureBuffer_GetFormat(p,a,b,c)>
+	endm
+IDirectSoundCaptureBuffer8_GetStatus macro p,a
+	exitm<IDirectSoundCaptureBuffer_GetStatus(p,a)>
+	endm
+IDirectSoundCaptureBuffer8_Initialize macro p,a,b
+	exitm<IDirectSoundCaptureBuffer_Initialize(p,a,b)>
+	endm
+IDirectSoundCaptureBuffer8_Lock macro p,a,b,c,d,e,f,g
+	exitm<IDirectSoundCaptureBuffer_Lock(p,a,b,c,d,e,f,g)>
+	endm
+IDirectSoundCaptureBuffer8_Start macro p,a
+	exitm<IDirectSoundCaptureBuffer_Start(p,a)>
+	endm
+IDirectSoundCaptureBuffer8_Stop macro p
+	exitm<IDirectSoundCaptureBuffer_Stop(p))>
+	endm
+IDirectSoundCaptureBuffer8_Unlock macro p,a,b,c,d
+	exitm<IDirectSoundCaptureBuffer_Unlock(p,a,b,c,d)>
+	endm
+
+if NOT defined(__cplusplus) OR defined(CINTERFACE)
+IDirectSoundCaptureBuffer8_GetObjectInPath macro p,a,b,c,d
+	exitm<p.GetObjectInPath(a,b,c,d)>
+	endm
+IDirectSoundCaptureBuffer8_GetFXStatus macro p,a,b
+	exitm<p.GetFXStatus(a,b)>
+	endm
+endif
+
+endif
+
+
+DEFINE_GUID(IID_IDirectSoundNotify, 0xb0210783, 0x89cd, 0x11d0, 0xaf, 0x8, 0x0, 0xa0, 0xc9, 0x25, 0xcd, 0x16);
+
+IDirectSoundNotify	STRUC
+
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+
+	STDMETHOD	SetNotificationPositions, :DWORD, :LPCDSBPOSITIONNOTIFY
+
+IDirectSoundNotify	ENDS
+
+IDirectSoundNotify_QueryInterface macro p,a,b
+	exitm<IUnknown_QueryInterface(p,a,b)>
+	endm
+IDirectSoundNotify_AddRef macro p
+	exitm<IUnknown_AddRef(p)>
+	endm
+IDirectSoundNotify_Release macro p
+	exitm<IUnknown_Release(p)>
+	endm
+
+if NOT defined(__cplusplus) OR defined(CINTERFACE)
+IDirectSoundNotify_SetNotificationPositions macro p,a,b
+	exitm<p.SetNotificationPositions(a,b)>
+	endm
+endif
+
+
+ifndef _IKsPropertySet_
+_IKsPropertySet_ equ 1
+
+LPKSPROPERTYSET		typedef ptr IKsPropertySet
+
+KSPROPERTY_SUPPORT_GET	equ 0x00000001
+KSPROPERTY_SUPPORT_SET	equ 0x00000002
+
+DEFINE_GUID(IID_IKsPropertySet, 0x31efac30, 0x515c, 0x11d0, 0xa9, 0xaa, 0x00, 0xaa, 0x00, 0x61, 0xbe, 0x93);
+
+IKsPropertySet		STRUC
+
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+
+	STDMETHOD	Get, :REFGUID, :ULONG, :LPVOID, :ULONG, :PULONG
+	STDMETHOD	Set, :REFGUID, :ULONG, :PVOID, :ULONG
+	STDMETHOD	QuerySupport, :REFGUID, :ULONG, :PULONG
+
+IKsPropertySet		ENDS
+
+IKsPropertySet_QueryInterface macro p,a,b
+	exitm<IUnknown_QueryInterface(p,a,b)>
+	endm
+IKsPropertySet_AddRef macro p
+	exitm<IUnknown_AddRef(p)>
+	endm
+IKsPropertySet_Release macro p
+	exitm<IUnknown_Release(p)>
+	endm
+
+if NOT defined(__cplusplus) OR defined(CINTERFACE)
+IKsPropertySet_Get macro p,a,b,c,d,e,f,g
+	exitm<p.Get(a,b,c,d,e,f,g)>
+	endm
+IKsPropertySet_Set macro p,a,b,c,d,e,f
+	exitm<p.Set(a,b,c,d,e,f)>
+	endm
+IKsPropertySet_QuerySupport macro p,a,b,c
+	exitm<p.QuerySupport(a,b,c)>
+	endm
+endif
+
+endif
+
+if DIRECTSOUND_VERSION GE 0x0800
+
+
+DEFINE_GUID(IID_IDirectSoundFXGargle, 0xd616f352, 0xd622, 0x11ce, 0xaa, 0xc5, 0x00, 0x20, 0xaf, 0x0b, 0x99, 0xa3);
+
+DSFXGargle		STRUC
+dwRateHz		dd ?
+dwWaveShape		dd ?
+DSFXGargle		ENDS
+LPDSFXGargle		typedef ptr DSFXGargle
+
+DSFXGARGLE_WAVE_TRIANGLE equ 0
+DSFXGARGLE_WAVE_SQUARE	equ 1
+
+LPCDSFXGargle		typedef ptr DSFXGargle
+
+DSFXGARGLE_RATEHZ_MIN	equ 1
+DSFXGARGLE_RATEHZ_MAX	equ 1000
+
+IDirectSoundFXGargle	STRUC
+
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+
+	STDMETHOD	SetAllParameters, :LPCDSFXGargle
+	STDMETHOD	GetAllParameters, :LPDSFXGargle
+
+IDirectSoundFXGargle	ENDS
+
+IDirectSoundFXGargle_QueryInterface macro p,a,b
+	exitm<IUnknown_QueryInterface(p,a,b)>
+	endm
+IDirectSoundFXGargle_AddRef macro p
+	exitm<IUnknown_AddRef(p)>
+	endm
+IDirectSoundFXGargle_Release macro p
+	exitm<IUnknown_Release(p)>
+	endm
+
+if NOT defined(__cplusplus) OR defined(CINTERFACE)
+IDirectSoundFXGargle_SetAllParameters macro p,a
+	exitm<p.SetAllParameters(a)>
+	endm
+IDirectSoundFXGargle_GetAllParameters macro p,a
+	exitm<p.GetAllParameters(a)>
+	endm
+endif
+
+
+DEFINE_GUID(IID_IDirectSoundFXChorus, 0x880842e3, 0x145f, 0x43e6, 0xa9, 0x34, 0xa7, 0x18, 0x06, 0xe5, 0x05, 0x47);
+
+DSFXChorus		STRUC
+fWetDryMix		FLOAT ?
+fDepth			FLOAT ?
+fFeedback		FLOAT ?
+fFrequency		FLOAT ?
+lWaveform		LONG ?
+fDelay			FLOAT ?
+lPhase			LONG ?
+DSFXChorus		ENDS
+LPDSFXChorus		typedef ptr DSFXChorus
+
+LPCDSFXChorus		typedef ptr DSFXChorus
+
+DSFXCHORUS_WAVE_TRIANGLE equ 0
+DSFXCHORUS_WAVE_SIN	equ 1
+
+DSFXCHORUS_WETDRYMIX_MIN equ 0.0
+DSFXCHORUS_WETDRYMIX_MAX equ 100.0
+DSFXCHORUS_DEPTH_MIN	equ 0.0
+DSFXCHORUS_DEPTH_MAX	equ 100.0
+DSFXCHORUS_FEEDBACK_MIN equ -99.0
+DSFXCHORUS_FEEDBACK_MAX equ 99.0
+DSFXCHORUS_FREQUENCY_MIN equ 0.0
+DSFXCHORUS_FREQUENCY_MAX equ 10.0
+DSFXCHORUS_DELAY_MIN	equ 0.0
+DSFXCHORUS_DELAY_MAX	equ 20.0
+DSFXCHORUS_PHASE_MIN	equ 0
+DSFXCHORUS_PHASE_MAX	equ 4
+
+DSFXCHORUS_PHASE_NEG_180 equ 0
+DSFXCHORUS_PHASE_NEG_90 equ 1
+DSFXCHORUS_PHASE_ZERO	equ 2
+DSFXCHORUS_PHASE_90	equ 3
+DSFXCHORUS_PHASE_180	equ 4
+
+IDirectSoundFXChorus	STRUC
+
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+
+	STDMETHOD	SetAllParameters, :LPCDSFXChorus
+	STDMETHOD	GetAllParameters, :LPDSFXChorus
+
+IDirectSoundFXChorus	ENDS
+
+IDirectSoundFXChorus_QueryInterface macro p,a,b
+	exitm<IUnknown_QueryInterface(p,a,b)>
+	endm
+IDirectSoundFXChorus_AddRef macro p
+	exitm<IUnknown_AddRef(p)>
+	endm
+IDirectSoundFXChorus_Release macro p
+	exitm<IUnknown_Release(p)>
+	endm
+
+if NOT defined(__cplusplus) OR defined(CINTERFACE)
+IDirectSoundFXChorus_SetAllParameters macro p,a
+	exitm<p.SetAllParameters(a)>
+	endm
+IDirectSoundFXChorus_GetAllParameters macro p,a
+	exitm<p.GetAllParameters(a)>
+	endm
+endif
+
+
+DEFINE_GUID(IID_IDirectSoundFXFlanger, 0x903e9878, 0x2c92, 0x4072, 0x9b, 0x2c, 0xea, 0x68, 0xf5, 0x39, 0x67, 0x83);
+
+DSFXFlanger		STRUC
+fWetDryMix		FLOAT ?
+fDepth			FLOAT ?
+fFeedback		FLOAT ?
+fFrequency		FLOAT ?
+lWaveform		LONG ?
+fDelay			FLOAT ?
+lPhase			LONG ?
+DSFXFlanger		ENDS
+LPDSFXFlanger		typedef ptr DSFXFlanger
+LPCDSFXFlanger		typedef ptr DSFXFlanger
+
+DSFXFLANGER_WAVE_TRIANGLE equ 0
+DSFXFLANGER_WAVE_SIN	equ 1
+
+DSFXFLANGER_WETDRYMIX_MIN equ 0.0
+DSFXFLANGER_WETDRYMIX_MAX equ 100.0
+DSFXFLANGER_FREQUENCY_MIN equ 0.0
+DSFXFLANGER_FREQUENCY_MAX equ 10.0
+DSFXFLANGER_DEPTH_MIN	equ 0.0
+DSFXFLANGER_DEPTH_MAX	equ 100.0
+DSFXFLANGER_PHASE_MIN	equ 0
+DSFXFLANGER_PHASE_MAX	equ 4
+DSFXFLANGER_FEEDBACK_MIN equ -99.0
+DSFXFLANGER_FEEDBACK_MAX equ 99.0
+DSFXFLANGER_DELAY_MIN	equ 0.0
+DSFXFLANGER_DELAY_MAX	equ 4.0
+
+DSFXFLANGER_PHASE_NEG_180 equ 0
+DSFXFLANGER_PHASE_NEG_90 equ 1
+DSFXFLANGER_PHASE_ZERO	equ 2
+DSFXFLANGER_PHASE_90	equ 3
+DSFXFLANGER_PHASE_180	equ 4
+
+IDirectSoundFXFlanger	STRUC
+
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+
+	STDMETHOD	SetAllParameters, :LPCDSFXFlanger
+	STDMETHOD	GetAllParameters, :LPDSFXFlanger
+
+IDirectSoundFXFlanger	ENDS
+
+IDirectSoundFXFlanger_QueryInterface macro p,a,b
+	exitm<IUnknown_QueryInterface(p,a,b)>
+	endm
+IDirectSoundFXFlanger_AddRef macro p
+	exitm<IUnknown_AddRef(p)>
+	endm
+IDirectSoundFXFlanger_Release macro p
+	exitm<IUnknown_Release(p)>
+	endm
+
+if NOT defined(__cplusplus) OR defined(CINTERFACE)
+IDirectSoundFXFlanger_SetAllParameters macro p,a
+	exitm<(p)- GT SetAllParameters(a)>
+	endm
+IDirectSoundFXFlanger_GetAllParameters macro p,a
+	exitm<(p)- GT GetAllParameters(a)>
+	endm
+endif
+
+
+DEFINE_GUID(IID_IDirectSoundFXEcho, 0x8bd28edf, 0x50db, 0x4e92, 0xa2, 0xbd, 0x44, 0x54, 0x88, 0xd1, 0xed, 0x42);
+
+DSFXEcho		STRUC
+fWetDryMix		FLOAT ?
+fFeedback		FLOAT ?
+fLeftDelay		FLOAT ?
+fRightDelay		FLOAT ?
+lPanDelay		LONG ?
+DSFXEcho		ENDS
+LPDSFXEcho		typedef ptr DSFXEcho
+LPCDSFXEcho		typedef ptr DSFXEcho
+
+DSFXECHO_WETDRYMIX_MIN	equ 0.0
+DSFXECHO_WETDRYMIX_MAX	equ 100.0
+DSFXECHO_FEEDBACK_MIN	equ 0.0
+DSFXECHO_FEEDBACK_MAX	equ 100.0
+DSFXECHO_LEFTDELAY_MIN	equ 1.0
+DSFXECHO_LEFTDELAY_MAX	equ 2000.0
+DSFXECHO_RIGHTDELAY_MIN equ 1.0
+DSFXECHO_RIGHTDELAY_MAX equ 2000.0
+DSFXECHO_PANDELAY_MIN	equ 0
+DSFXECHO_PANDELAY_MAX	equ 1
+
+IDirectSoundFXEcho	STRUC
+
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+
+	STDMETHOD	SetAllParameters, :LPCDSFXEcho
+	STDMETHOD	GetAllParameters, :LPDSFXEcho
+
+IDirectSoundFXEcho	ENDS
+
+IDirectSoundFXEcho_QueryInterface macro p,a,b
+	exitm<IUnknown_QueryInterface(p,a,b)>
+	endm
+IDirectSoundFXEcho_AddRef macro p
+	exitm<IUnknown_AddRef(p)>
+	endm
+IDirectSoundFXEcho_Release macro p
+	exitm<IUnknown_Release(p)>
+	endm
+
+if NOT defined(__cplusplus) OR defined(CINTERFACE)
+IDirectSoundFXEcho_SetAllParameters macro p,a
+	exitm<p.SetAllParameters(a)>
+	endm
+IDirectSoundFXEcho_GetAllParameters macro p,a
+	exitm<p.GetAllParameters(a)>
+	endm
+endif
+
+
+DEFINE_GUID(IID_IDirectSoundFXDistortion, 0x8ecf4326, 0x455f, 0x4d8b, 0xbd, 0xa9, 0x8d, 0x5d, 0x3e, 0x9e, 0x3e, 0x0b);
+
+DSFXDistortion		STRUC
+fGain			FLOAT ?
+fEdge			FLOAT ?
+fPostEQCenterFrequency	FLOAT ?
+fPostEQBandwidth	FLOAT ?
+fPreLowpassCutoff	FLOAT ?
+DSFXDistortion		ENDS
+LPDSFXDistortion	typedef ptr DSFXDistortion
+LPCDSFXDistortion	typedef ptr DSFXDistortion
+
+DSFXDISTORTION_GAIN_MIN equ -60.0
+DSFXDISTORTION_GAIN_MAX equ 0.0
+DSFXDISTORTION_EDGE_MIN equ 0.0
+DSFXDISTORTION_EDGE_MAX equ 100.0
+DSFXDISTORTION_POSTEQCENTERFREQUENCY_MIN equ 100.0
+DSFXDISTORTION_POSTEQCENTERFREQUENCY_MAX equ 8000.0
+DSFXDISTORTION_POSTEQBANDWIDTH_MIN equ 100.0
+DSFXDISTORTION_POSTEQBANDWIDTH_MAX equ 8000.0
+DSFXDISTORTION_PRELOWPASSCUTOFF_MIN equ 100.0
+DSFXDISTORTION_PRELOWPASSCUTOFF_MAX equ 8000.0
+
+IDirectSoundFXDistortion STRUC
+
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+
+	STDMETHOD	SetAllParameters, :LPCDSFXDistortion
+	STDMETHOD	GetAllParameters, :LPDSFXDistortion
+
+IDirectSoundFXDistortion ENDS
+
+IDirectSoundFXDistortion_QueryInterface macro p,a,b
+	exitm<IUnknown_QueryInterface(p,a,b)>
+	endm
+IDirectSoundFXDistortion_AddRef macro p
+	exitm<IUnknown_AddRef(p)>
+	endm
+IDirectSoundFXDistortion_Release macro p
+	exitm<IUnknown_Release(p)>
+	endm
+
+if NOT defined(__cplusplus) OR defined(CINTERFACE)
+IDirectSoundFXDistortion_SetAllParameters macro p,a
+	exitm<p.SetAllParameters(a)>
+	endm
+IDirectSoundFXDistortion_GetAllParameters macro p,a
+	exitm<p.GetAllParameters(a)>
+	endm
+endif
+
+
+DEFINE_GUID(IID_IDirectSoundFXCompressor, 0x4bbd1154, 0x62f6, 0x4e2c, 0xa1, 0x5c, 0xd3, 0xb6, 0xc4, 0x17, 0xf7, 0xa0);
+
+DSFXCompressor		STRUC
+fGain			FLOAT ?
+fAttack			FLOAT ?
+fRelease		FLOAT ?
+fThreshold		FLOAT ?
+fRatio			FLOAT ?
+fPredelay		FLOAT ?
+DSFXCompressor		ENDS
+LPDSFXCompressor	typedef ptr DSFXCompressor
+LPCDSFXCompressor	typedef ptr DSFXCompressor
+
+DSFXCOMPRESSOR_GAIN_MIN equ -60.0
+DSFXCOMPRESSOR_GAIN_MAX equ 60.0
+DSFXCOMPRESSOR_ATTACK_MIN equ 0.01
+DSFXCOMPRESSOR_ATTACK_MAX equ 500.0
+DSFXCOMPRESSOR_RELEASE_MIN equ 50.0
+DSFXCOMPRESSOR_RELEASE_MAX equ 3000.0
+DSFXCOMPRESSOR_THRESHOLD_MIN equ -60.0
+DSFXCOMPRESSOR_THRESHOLD_MAX equ 0.0
+DSFXCOMPRESSOR_RATIO_MIN equ 1.0
+DSFXCOMPRESSOR_RATIO_MAX equ 100.0
+DSFXCOMPRESSOR_PREDELAY_MIN equ 0.0
+DSFXCOMPRESSOR_PREDELAY_MAX equ 4.0
+
+IDirectSoundFXCompressor STRUC
+
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+
+	STDMETHOD	SetAllParameters, :LPCDSFXCompressor
+	STDMETHOD	GetAllParameters, :LPDSFXCompressor
+
+IDirectSoundFXCompressor ENDS
+
+IDirectSoundFXCompressor_QueryInterface macro p,a,b
+	exitm<IUnknown_QueryInterface(p,a,b)>
+	endm
+IDirectSoundFXCompressor_AddRef macro p
+	exitm<IUnknown_AddRef(p)>
+	endm
+IDirectSoundFXCompressor_Release macro p
+	exitm<IUnknown_Release(p)>
+	endm
+
+if NOT defined(__cplusplus) OR defined(CINTERFACE)
+IDirectSoundFXCompressor_SetAllParameters macro p,a
+	exitm<p.SetAllParameters(a)>
+	endm
+IDirectSoundFXCompressor_GetAllParameters macro p,a
+	exitm<p.GetAllParameters(a)>
+	endm
+endif
+
+
+DEFINE_GUID(IID_IDirectSoundFXParamEq, 0xc03ca9fe, 0xfe90, 0x4204, 0x80, 0x78, 0x82, 0x33, 0x4c, 0xd1, 0x77, 0xda);
+
+DSFXParamEq		STRUC
+fCenter			FLOAT ?
+fBandwidth		FLOAT ?
+fGain			FLOAT ?
+DSFXParamEq		ENDS
+LPDSFXParamEq		typedef ptr DSFXParamEq
+LPCDSFXParamEq		typedef ptr DSFXParamEq
+
+DSFXPARAMEQ_CENTER_MIN	equ 80.0
+DSFXPARAMEQ_CENTER_MAX	equ 16000.0
+DSFXPARAMEQ_BANDWIDTH_MIN equ 1.0
+DSFXPARAMEQ_BANDWIDTH_MAX equ 36.0
+DSFXPARAMEQ_GAIN_MIN	equ -15.0
+DSFXPARAMEQ_GAIN_MAX	equ 15.0
+
+IDirectSoundFXParamEq	STRUC
+
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+
+	STDMETHOD	SetAllParameters, :LPCDSFXCompressor
+	STDMETHOD	GetAllParameters, :LPDSFXCompressor
+
+IDirectSoundFXParamEq	ENDS
+
+IDirectSoundFXParamEq_QueryInterface macro p,a,b
+	exitm<IUnknown_QueryInterface(p,a,b)>
+	endm
+IDirectSoundFXParamEq_AddRef macro p
+	exitm<IUnknown_AddRef(p)>
+	endm
+IDirectSoundFXParamEq_Release macro p
+	exitm<IUnknown_Release(p)>
+	endm
+
+if NOT defined(__cplusplus) OR defined(CINTERFACE)
+IDirectSoundFXParamEq_SetAllParameters macro p,a
+	exitm<p.SetAllParameters(a)>
+	endm
+IDirectSoundFXParamEq_GetAllParameters macro p,a
+	exitm<p.GetAllParameters(a)>
+	endm
+endif
+
+
+DEFINE_GUID(IID_IDirectSoundFXI3DL2Reverb, 0x4b166a6a, 0x0d66, 0x43f3, 0x80, 0xe3, 0xee, 0x62, 0x80, 0xde, 0xe1, 0xa4);
+
+DSFXI3DL2Reverb		STRUC
+lRoom			LONG ?
+lRoomHF			LONG ?
+flRoomRolloffFactor	FLOAT ?
+flDecayTime		FLOAT ?
+flDecayHFRatio		FLOAT ?
+lReflections		LONG ?
+flReflectionsDelay	FLOAT ?
+lReverb			LONG ?
+flReverbDelay		FLOAT ?
+flDiffusion		FLOAT ?
+flDensity		FLOAT ?
+flHFReference		FLOAT ?
+DSFXI3DL2Reverb		ENDS
+LPDSFXI3DL2Reverb	typedef ptr DSFXI3DL2Reverb
+LPCDSFXI3DL2Reverb	typedef ptr DSFXI3DL2Reverb
+
+DSFX_I3DL2REVERB_ROOM_MIN equ (-10000)
+DSFX_I3DL2REVERB_ROOM_MAX equ 0
+DSFX_I3DL2REVERB_ROOM_DEFAULT equ (-1000)
+
+DSFX_I3DL2REVERB_ROOMHF_MIN equ (-10000)
+DSFX_I3DL2REVERB_ROOMHF_MAX equ 0
+DSFX_I3DL2REVERB_ROOMHF_DEFAULT equ (-100)
+
+DSFX_I3DL2REVERB_ROOMROLLOFFFACTOR_MIN equ 0.0
+DSFX_I3DL2REVERB_ROOMROLLOFFFACTOR_MAX equ 10.0
+DSFX_I3DL2REVERB_ROOMROLLOFFFACTOR_DEFAULT equ 0.0
+
+DSFX_I3DL2REVERB_DECAYTIME_MIN equ 0.1
+DSFX_I3DL2REVERB_DECAYTIME_MAX equ 20.0
+DSFX_I3DL2REVERB_DECAYTIME_DEFAULT equ 1.49
+
+DSFX_I3DL2REVERB_DECAYHFRATIO_MIN equ 0.1
+DSFX_I3DL2REVERB_DECAYHFRATIO_MAX equ 2.0
+DSFX_I3DL2REVERB_DECAYHFRATIO_DEFAULT equ 0.83
+
+DSFX_I3DL2REVERB_REFLECTIONS_MIN equ (-10000)
+DSFX_I3DL2REVERB_REFLECTIONS_MAX equ 1000
+DSFX_I3DL2REVERB_REFLECTIONS_DEFAULT equ (-2602)
+
+DSFX_I3DL2REVERB_REFLECTIONSDELAY_MIN equ 0.0
+DSFX_I3DL2REVERB_REFLECTIONSDELAY_MAX equ 0.3
+DSFX_I3DL2REVERB_REFLECTIONSDELAY_DEFAULT equ 0.007
+
+DSFX_I3DL2REVERB_REVERB_MIN equ (-10000)
+DSFX_I3DL2REVERB_REVERB_MAX equ 2000
+DSFX_I3DL2REVERB_REVERB_DEFAULT equ (200)
+
+DSFX_I3DL2REVERB_REVERBDELAY_MIN equ 0.0
+DSFX_I3DL2REVERB_REVERBDELAY_MAX equ 0.1
+DSFX_I3DL2REVERB_REVERBDELAY_DEFAULT equ 0.011
+
+DSFX_I3DL2REVERB_DIFFUSION_MIN equ 0.0
+DSFX_I3DL2REVERB_DIFFUSION_MAX equ 100.0
+DSFX_I3DL2REVERB_DIFFUSION_DEFAULT equ 100.0
+
+DSFX_I3DL2REVERB_DENSITY_MIN equ 0.0
+DSFX_I3DL2REVERB_DENSITY_MAX equ 100.0
+DSFX_I3DL2REVERB_DENSITY_DEFAULT equ 100.0
+
+DSFX_I3DL2REVERB_HFREFERENCE_MIN equ 20.0
+DSFX_I3DL2REVERB_HFREFERENCE_MAX equ 20000.0
+DSFX_I3DL2REVERB_HFREFERENCE_DEFAULT equ 5000.0
+
+DSFX_I3DL2REVERB_QUALITY_MIN equ 0
+DSFX_I3DL2REVERB_QUALITY_MAX equ 3
+DSFX_I3DL2REVERB_QUALITY_DEFAULT equ 2
+
+IDirectSoundFXI3DL2Reverb STRUC
+
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+
+	STDMETHOD	SetAllParameters, :LPCDSFXCompressor
+	STDMETHOD	GetAllParameters, :LPDSFXCompressor
+
+	STDMETHOD	SetPreset, :DWORD
+	STDMETHOD	GetPreset, :LPDWORD
+	STDMETHOD	SetQuality, :LONG
+	STDMETHOD	GetQuality, :ptr
+
+IDirectSoundFXI3DL2Reverb ENDS
+
+IDirectSoundFXI3DL2Reverb_QueryInterface macro p,a,b
+	exitm<IUnknown_QueryInterface(p,a,b)>
+	endm
+IDirectSoundFXI3DL2Reverb_AddRef macro p
+	exitm<IUnknown_AddRef(p)>
+	endm
+IDirectSoundFXI3DL2Reverb_Release macro p
+	exitm<IUnknown_Release(p)>
+	endm
+
+if NOT defined(__cplusplus) OR defined(CINTERFACE)
+IDirectSoundFXI3DL2Reverb_SetAllParameters macro p,a
+	exitm<p.SetAllParameters(a)>
+	endm
+IDirectSoundFXI3DL2Reverb_GetAllParameters macro p,a
+	exitm<p.GetAllParameters(a)>
+	endm
+IDirectSoundFXI3DL2Reverb_SetPreset macro p,a
+	exitm<p.SetPreset(a)>
+	endm
+IDirectSoundFXI3DL2Reverb_GetPreset macro p,a
+	exitm<p.GetPreset(a)>
+	endm
+endif
+
+
+DEFINE_GUID(IID_IDirectSoundFXWavesReverb,0x46858c3a,0x0dc6,0x45e3,0xb7,0x60,0xd4,0xee,0xf1,0x6c,0xb3,0x25);
+
+DSFXWavesReverb		STRUC
+fInGain			FLOAT ?
+fReverbMix		FLOAT ?
+fReverbTime		FLOAT ?
+fHighFreqRTRatio	FLOAT ?
+DSFXWavesReverb		ENDS
+LPDSFXWavesReverb	typedef ptr DSFXWavesReverb
+LPCDSFXWavesReverb	typedef ptr DSFXWavesReverb
+
+DSFX_WAVESREVERB_INGAIN_MIN equ -96.0
+DSFX_WAVESREVERB_INGAIN_MAX equ 0.0
+DSFX_WAVESREVERB_INGAIN_DEFAULT equ 0.0
+DSFX_WAVESREVERB_REVERBMIX_MIN equ -96.0
+DSFX_WAVESREVERB_REVERBMIX_MAX equ 0.0
+DSFX_WAVESREVERB_REVERBMIX_DEFAULT equ 0.0
+DSFX_WAVESREVERB_REVERBTIME_MIN equ 0.001
+DSFX_WAVESREVERB_REVERBTIME_MAX equ 3000.0
+DSFX_WAVESREVERB_REVERBTIME_DEFAULT equ 1000.0
+DSFX_WAVESREVERB_HIGHFREQRTRATIO_MIN equ 0.001
+DSFX_WAVESREVERB_HIGHFREQRTRATIO_MAX equ 0.999
+DSFX_WAVESREVERB_HIGHFREQRTRATIO_DEFAULT equ 0.001
+
+IDirectSoundFXWavesReverb STRUC
+
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+
+	STDMETHOD	SetAllParameters, :LPCDSFXCompressor
+	STDMETHOD	GetAllParameters, :LPDSFXCompressor
+
+IDirectSoundFXWavesReverb ENDS
+
+IDirectSoundFXWavesReverb_QueryInterface macro p,a,b
+	exitm<IUnknown_QueryInterface(p,a,b)>
+	endm
+IDirectSoundFXWavesReverb_AddRef macro p
+	exitm<IUnknown_AddRef(p)>
+	endm
+IDirectSoundFXWavesReverb_Release macro p
+	exitm<IUnknown_Release(p)>
+	endm
+
+if NOT defined(__cplusplus) OR defined(CINTERFACE)
+IDirectSoundFXWavesReverb_SetAllParameters macro p,a
+	exitm<p.SetAllParameters(a)>
+	endm
+IDirectSoundFXWavesReverb_GetAllParameters macro p,a
+	exitm<p.GetAllParameters(a)>
+	endm
+endif
+
+
+DEFINE_GUID(IID_IDirectSoundCaptureFXAec, 0xad74143d, 0x903d, 0x4ab7, 0x80, 0x66, 0x28, 0xd3, 0x63, 0x03, 0x6d, 0x65);
+
+DSCFXAec		STRUC
+fEnable			BOOL ?
+fNoiseFill		BOOL ?
+dwMode			dd ?
+DSCFXAec		ENDS
+LPDSCFXAec		typedef ptr DSCFXAec
+LPCDSCFXAec		typedef ptr DSCFXAec
+
+DSCFX_AEC_MODE_PASS_THROUGH equ 0x0
+DSCFX_AEC_MODE_HALF_DUPLEX equ 0x1
+DSCFX_AEC_MODE_FULL_DUPLEX equ 0x2
+
+DSCFX_AEC_STATUS_HISTORY_UNINITIALIZED equ 0x0
+DSCFX_AEC_STATUS_HISTORY_CONTINUOUSLY_CONVERGED equ 0x1
+DSCFX_AEC_STATUS_HISTORY_PREVIOUSLY_DIVERGED equ 0x2
+DSCFX_AEC_STATUS_CURRENTLY_CONVERGED equ 0x8
+
+IDirectSoundCaptureFXAec STRUC
+
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+
+	STDMETHOD	SetAllParameters, :LPCDSFXCompressor
+	STDMETHOD	GetAllParameters, :LPDSFXCompressor
+
+	STDMETHOD	GetStatus, :LPDWORD
+	STDMETHOD	Reset
+
+IDirectSoundCaptureFXAec ENDS
+
+IDirectSoundCaptureFXAec_QueryInterface macro p,a,b
+	exitm<IUnknown_QueryInterface(p,a,b)>
+	endm
+IDirectSoundCaptureFXAec_AddRef macro p
+	exitm<IUnknown_AddRef(p)>
+	endm
+IDirectSoundCaptureFXAec_Release macro p
+	exitm<IUnknown_Release(p)>
+	endm
+
+if NOT defined(__cplusplus) OR defined(CINTERFACE)
+IDirectSoundCaptureFXAec_SetAllParameters macro p,a
+	exitm<p.SetAllParameters(a)>
+	endm
+IDirectSoundCaptureFXAec_GetAllParameters macro p,a
+	exitm<p.GetAllParameters(a)>
+	endm
+endif
+
+
+
+DEFINE_GUID(IID_IDirectSoundCaptureFXNoiseSuppress, 0xed311e41, 0xfbae, 0x4175, 0x96, 0x25, 0xcd, 0x8, 0x54, 0xf6, 0x93, 0xca);
+
+DSCFXNoiseSuppress	STRUC
+fEnable			BOOL ?
+DSCFXNoiseSuppress	ENDS
+LPDSCFXNoiseSuppress	typedef ptr DSCFXNoiseSuppress
+
+LPCDSCFXNoiseSuppress	typedef ptr DSCFXNoiseSuppress
+
+IDirectSoundCaptureFXNoiseSuppress STRUC
+
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+
+	STDMETHOD	SetAllParameters, :LPCDSFXCompressor
+	STDMETHOD	GetAllParameters, :LPDSFXCompressor
+	STDMETHOD	Reset
+
+IDirectSoundCaptureFXNoiseSuppress ENDS
+
+IDirectSoundCaptureFXNoiseSuppress_QueryInterface macro p,a,b
+	exitm<IUnknown_QueryInterface(p,a,b)>
+	endm
+IDirectSoundCaptureFXNoiseSuppress_AddRef macro p
+	exitm<IUnknown_AddRef(p)>
+	endm
+IDirectSoundCaptureFXNoiseSuppress_Release macro p
+	exitm<IUnknown_Release(p)>
+	endm
+
+if NOT defined(__cplusplus) OR defined(CINTERFACE)
+IDirectSoundCaptureFXNoiseSuppress_SetAllParameters macro p,a
+	exitm<p.SetAllParameters(a)>
+	endm
+IDirectSoundCaptureFXNoiseSuppress_GetAllParameters macro p,a
+	exitm<p.GetAllParameters(a)>
+	endm
+endif
+
+
+ifndef _IDirectSoundFullDuplex_
+_IDirectSoundFullDuplex_ equ 1
+
+DEFINE_GUID(IID_IDirectSoundFullDuplex, 0xedcb4c7a, 0xdaab, 0x4216, 0xa4, 0x2e, 0x6c, 0x50, 0x59, 0x6d, 0xdc, 0x1d);
+
+IDirectSoundFullDuplex	STRUC
+
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+
+	STDMETHOD	Initialize, :LPCGUID, :LPCGUID, :LPCDSCBUFFERDESC, :LPCDSBUFFERDESC, :HWND, :DWORD, :LPLPDIRECTSOUNDCAPTUREBUFFER8, :LPLPDIRECTSOUNDBUFFER8
+
+IDirectSoundFullDuplex	ENDS
+LPDIRECTSOUNDFULLDUPLEX typedef ptr IDirectSoundFullDuplex
+
+IDirectSoundFullDuplex_QueryInterface macro p,a,b
+	exitm<IUnknown_QueryInterface(p,a,b)>
+	endm
+IDirectSoundFullDuplex_AddRef macro p
+	exitm<IUnknown_AddRef(p)>
+	endm
+IDirectSoundFullDuplex_Release macro p
+	exitm<IUnknown_Release(p)>
+	endm
+
+if NOT defined(__cplusplus) OR defined(CINTERFACE)
+IDirectSoundFullDuplex_Initialize macro p,a,b,c,d,e,f,g,h
+	exitm<p.Initialize(a,b,c,d,e,f,g,h)>
+	endm
+endif
+endif
+endif
+
+DS_OK			equ S_OK
+DS_NO_VIRTUALIZATION	equ MAKE_HRESULT(0, _FACDS, 10)
+DSERR_ALLOCATED		equ MAKE_DSHRESULT(10)
+DSERR_CONTROLUNAVAIL	equ MAKE_DSHRESULT(30)
+DSERR_INVALIDPARAM	equ E_INVALIDARG
+DSERR_INVALIDCALL	equ MAKE_DSHRESULT(50)
+DSERR_GENERIC		equ E_FAIL
+DSERR_PRIOLEVELNEEDED	equ MAKE_DSHRESULT(70)
+DSERR_OUTOFMEMORY	equ E_OUTOFMEMORY
+DSERR_BADFORMAT		equ MAKE_DSHRESULT(100)
+DSERR_UNSUPPORTED	equ E_NOTIMPL
+DSERR_NODRIVER		equ MAKE_DSHRESULT(120)
+DSERR_ALREADYINITIALIZED equ MAKE_DSHRESULT(130)
+DSERR_NOAGGREGATION	equ CLASS_E_NOAGGREGATION
+DSERR_BUFFERLOST	equ MAKE_DSHRESULT(150)
+DSERR_OTHERAPPHASPRIO	equ MAKE_DSHRESULT(160)
+DSERR_UNINITIALIZED	equ MAKE_DSHRESULT(170)
+DSERR_NOINTERFACE	equ E_NOINTERFACE
+DSERR_ACCESSDENIED	equ E_ACCESSDENIED
+DSERR_BUFFERTOOSMALL	equ MAKE_DSHRESULT(180)
+DSERR_DS8_REQUIRED	equ MAKE_DSHRESULT(190)
+DSERR_SENDLOOP		equ MAKE_DSHRESULT(200)
+DSERR_BADSENDBUFFERGUID equ MAKE_DSHRESULT(210)
+DSERR_OBJECTNOTFOUND	equ MAKE_DSHRESULT(4449)
+DSERR_FXUNAVAILABLE	equ MAKE_DSHRESULT(220)
+
+DSCAPS_PRIMARYMONO	equ 0x00000001
+DSCAPS_PRIMARYSTEREO	equ 0x00000002
+DSCAPS_PRIMARY8BIT	equ 0x00000004
+DSCAPS_PRIMARY16BIT	equ 0x00000008
+DSCAPS_CONTINUOUSRATE	equ 0x00000010
+DSCAPS_EMULDRIVER	equ 0x00000020
+DSCAPS_CERTIFIED	equ 0x00000040
+DSCAPS_SECONDARYMONO	equ 0x00000100
+DSCAPS_SECONDARYSTEREO	equ 0x00000200
+DSCAPS_SECONDARY8BIT	equ 0x00000400
+DSCAPS_SECONDARY16BIT	equ 0x00000800
+
+DSSCL_NORMAL		equ 0x00000001
+DSSCL_PRIORITY		equ 0x00000002
+DSSCL_EXCLUSIVE		equ 0x00000003
+DSSCL_WRITEPRIMARY	equ 0x00000004
+
+DSSPEAKER_DIRECTOUT	equ 0x00000000
+DSSPEAKER_HEADPHONE	equ 0x00000001
+DSSPEAKER_MONO		equ 0x00000002
+DSSPEAKER_QUAD		equ 0x00000003
+DSSPEAKER_STEREO	equ 0x00000004
+DSSPEAKER_SURROUND	equ 0x00000005
+DSSPEAKER_5POINT1	equ 0x00000006
+DSSPEAKER_7POINT1	equ 0x00000007
+DSSPEAKER_7POINT1_SURROUND equ 0x00000008
+DSSPEAKER_5POINT1_SURROUND equ 0x00000009
+DSSPEAKER_7POINT1_WIDE	equ DSSPEAKER_7POINT1
+DSSPEAKER_5POINT1_BACK	equ DSSPEAKER_5POINT1
+
+DSSPEAKER_GEOMETRY_MIN	equ 0x00000005
+DSSPEAKER_GEOMETRY_NARROW equ <0x0000000A
+DSSPEAKER_GEOMETRY_WIDE equ 0x00000014
+DSSPEAKER_GEOMETRY_MAX	equ 0x000000B4
+
+DSSPEAKER_COMBINED macro c, g
+	exitm<((((c)) OR (((g))) SHL 16))>
+	endm
+DSSPEAKER_CONFIG macro a
+	exitm<((a))>
+	endm
+DSSPEAKER_GEOMETRY macro a
+	exitm<((((a) SHR 16) AND 0x00FF))>
+	endm
+
+DSBCAPS_PRIMARYBUFFER	equ 0x00000001
+DSBCAPS_STATIC		equ 0x00000002
+DSBCAPS_LOCHARDWARE	equ 0x00000004
+DSBCAPS_LOCSOFTWARE	equ 0x00000008
+DSBCAPS_CTRL3D		equ 0x00000010
+DSBCAPS_CTRLFREQUENCY	equ 0x00000020
+DSBCAPS_CTRLPAN		equ 0x00000040
+DSBCAPS_CTRLVOLUME	equ 0x00000080
+DSBCAPS_CTRLPOSITIONNOTIFY equ 0x00000100
+DSBCAPS_CTRLFX		equ 0x00000200
+DSBCAPS_STICKYFOCUS	equ 0x00004000
+DSBCAPS_GLOBALFOCUS	equ 0x00008000
+DSBCAPS_GETCURRENTPOSITION2 equ 0x00010000
+DSBCAPS_MUTE3DATMAXDISTANCE equ 0x00020000
+DSBCAPS_LOCDEFER	equ 0x00040000
+DSBCAPS_TRUEPLAYPOSITION equ 0x00080000
+
+DSBPLAY_LOOPING		equ 0x00000001
+DSBPLAY_LOCHARDWARE	equ 0x00000002
+DSBPLAY_LOCSOFTWARE	equ 0x00000004
+DSBPLAY_TERMINATEBY_TIME equ 0x00000008
+DSBPLAY_TERMINATEBY_DISTANCE equ 0x000000010
+DSBPLAY_TERMINATEBY_PRIORITY equ 0x000000020
+
+DSBSTATUS_PLAYING	equ 0x00000001
+DSBSTATUS_BUFFERLOST	equ 0x00000002
+DSBSTATUS_LOOPING	equ 0x00000004
+DSBSTATUS_LOCHARDWARE	equ 0x00000008
+DSBSTATUS_LOCSOFTWARE	equ 0x00000010
+DSBSTATUS_TERMINATED	equ 0x00000020
+
+DSBLOCK_FROMWRITECURSOR equ 0x00000001
+DSBLOCK_ENTIREBUFFER	equ 0x00000002
+
+DSBFREQUENCY_ORIGINAL	equ 0
+DSBFREQUENCY_MIN	equ 100
+if DIRECTSOUND_VERSION GE 0x0900
+DSBFREQUENCY_MAX	equ 200000
+else
+DSBFREQUENCY_MAX	equ 100000
+endif
+
+DSBPAN_LEFT		equ -10000
+DSBPAN_CENTER		equ 0
+DSBPAN_RIGHT		equ 10000
+
+DSBVOLUME_MIN		equ -10000
+DSBVOLUME_MAX		equ 0
+
+DSBSIZE_MIN		equ 4
+DSBSIZE_MAX		equ 0x0FFFFFFF
+DSBSIZE_FX_MIN		equ 150
+
+DSBNOTIFICATIONS_MAX	equ 100000
+
+DS3DMODE_NORMAL		equ 0x00000000
+DS3DMODE_HEADRELATIVE	equ 0x00000001
+DS3DMODE_DISABLE	equ 0x00000002
+
+DS3D_IMMEDIATE		equ 0x00000000
+DS3D_DEFERRED		equ 0x00000001
+
+DS3D_MINDISTANCEFACTOR	equ FLT_MIN
+DS3D_MAXDISTANCEFACTOR	equ FLT_MAX
+DS3D_DEFAULTDISTANCEFACTOR equ 1.0
+
+DS3D_MINROLLOFFFACTOR	equ 0.0
+DS3D_MAXROLLOFFFACTOR	equ 10.0
+DS3D_DEFAULTROLLOFFFACTOR equ 1.0
+
+DS3D_MINDOPPLERFACTOR	equ 0.0
+DS3D_MAXDOPPLERFACTOR	equ 10.0
+DS3D_DEFAULTDOPPLERFACTOR equ 1.0
+
+DS3D_DEFAULTMINDISTANCE equ 1.0
+DS3D_DEFAULTMAXDISTANCE equ 1000000000.0
+
+DS3D_MINCONEANGLE	equ 0
+DS3D_MAXCONEANGLE	equ 360
+DS3D_DEFAULTCONEANGLE	equ 360
+
+DS3D_DEFAULTCONEOUTSIDEVOLUME equ DSBVOLUME_MAX
+
+
+DSCCAPS_EMULDRIVER	equ DSCAPS_EMULDRIVER
+DSCCAPS_CERTIFIED	equ DSCAPS_CERTIFIED
+DSCCAPS_MULTIPLECAPTURE equ 0x00000001
+
+
+DSCBCAPS_WAVEMAPPED	equ 0x80000000
+if DIRECTSOUND_VERSION GE 0x0800
+DSCBCAPS_CTRLFX		equ 0x00000200
+endif
+
+DSCBLOCK_ENTIREBUFFER	equ 0x00000001
+DSCBSTATUS_CAPTURING	equ 0x00000001
+DSCBSTATUS_LOOPING	equ 0x00000002
+DSCBSTART_LOOPING	equ 0x00000001
+DSBPN_OFFSETSTOP	equ 0xFFFFFFFF
+DS_CERTIFIED		equ 0x00000000
+DS_UNCERTIFIED		equ 0x00000001
+
+DSFX_I3DL2_MATERIAL_PRESET_SINGLEWINDOW equ 0
+DSFX_I3DL2_MATERIAL_PRESET_DOUBLEWINDOW equ 1
+DSFX_I3DL2_MATERIAL_PRESET_THINDOOR equ 2
+DSFX_I3DL2_MATERIAL_PRESET_THICKDOOR equ 3
+DSFX_I3DL2_MATERIAL_PRESET_WOODWALL equ 4
+DSFX_I3DL2_MATERIAL_PRESET_BRICKWALL equ 5
+DSFX_I3DL2_MATERIAL_PRESET_STONEWALL equ 6
+DSFX_I3DL2_MATERIAL_PRESET_CURTAIN equ 7
+
+I3DL2_MATERIAL_PRESET_SINGLEWINDOW equ -2800,0.71
+I3DL2_MATERIAL_PRESET_DOUBLEWINDOW equ -5000,0.40
+I3DL2_MATERIAL_PRESET_THINDOOR equ -1800,0.66
+I3DL2_MATERIAL_PRESET_THICKDOOR equ -4400,0.64
+I3DL2_MATERIAL_PRESET_WOODWALL equ -4000,0.50
+I3DL2_MATERIAL_PRESET_BRICKWALL equ -5000,0.60
+I3DL2_MATERIAL_PRESET_STONEWALL equ -6000,0.68
+I3DL2_MATERIAL_PRESET_CURTAIN equ -1200,0.15
+
+DSFX_I3DL2_ENVIRONMENT_PRESET_DEFAULT equ 0
+DSFX_I3DL2_ENVIRONMENT_PRESET_GENERIC equ 1
+DSFX_I3DL2_ENVIRONMENT_PRESET_PADDEDCELL equ 2
+DSFX_I3DL2_ENVIRONMENT_PRESET_ROOM equ 3
+DSFX_I3DL2_ENVIRONMENT_PRESET_BATHROOM equ 4
+DSFX_I3DL2_ENVIRONMENT_PRESET_LIVINGROOM equ 5
+DSFX_I3DL2_ENVIRONMENT_PRESET_STONEROOM equ 6
+DSFX_I3DL2_ENVIRONMENT_PRESET_AUDITORIUM equ 7
+DSFX_I3DL2_ENVIRONMENT_PRESET_CONCERTHALL equ 8
+DSFX_I3DL2_ENVIRONMENT_PRESET_CAVE equ 9
+DSFX_I3DL2_ENVIRONMENT_PRESET_ARENA equ 10
+DSFX_I3DL2_ENVIRONMENT_PRESET_HANGAR equ 11
+DSFX_I3DL2_ENVIRONMENT_PRESET_CARPETEDHALLWAY equ 12
+DSFX_I3DL2_ENVIRONMENT_PRESET_HALLWAY equ 13
+DSFX_I3DL2_ENVIRONMENT_PRESET_STONECORRIDOR equ 14
+DSFX_I3DL2_ENVIRONMENT_PRESET_ALLEY equ 15
+DSFX_I3DL2_ENVIRONMENT_PRESET_FOREST equ 16
+DSFX_I3DL2_ENVIRONMENT_PRESET_CITY equ 17
+DSFX_I3DL2_ENVIRONMENT_PRESET_MOUNTAINS equ 18
+DSFX_I3DL2_ENVIRONMENT_PRESET_QUARRY equ 19
+DSFX_I3DL2_ENVIRONMENT_PRESET_PLAIN equ 20
+DSFX_I3DL2_ENVIRONMENT_PRESET_PARKINGLOT equ 21
+DSFX_I3DL2_ENVIRONMENT_PRESET_SEWERPIPE equ 22
+DSFX_I3DL2_ENVIRONMENT_PRESET_UNDERWATER equ 23
+DSFX_I3DL2_ENVIRONMENT_PRESET_SMALLROOM equ 24
+DSFX_I3DL2_ENVIRONMENT_PRESET_MEDIUMROOM equ 25
+DSFX_I3DL2_ENVIRONMENT_PRESET_LARGEROOM equ 26
+DSFX_I3DL2_ENVIRONMENT_PRESET_MEDIUMHALL equ 27
+DSFX_I3DL2_ENVIRONMENT_PRESET_LARGEHALL equ 28
+DSFX_I3DL2_ENVIRONMENT_PRESET_PLATE equ 29
+
+I3DL2_ENVIRONMENT_PRESET_DEFAULT equ <-1000, -100, 0.0, 1.49, 0.83, -2602, 0.007,   200, 0.011, 100.0, 100.0, 5000.0>
+I3DL2_ENVIRONMENT_PRESET_GENERIC equ <-1000, -100, 0.0, 1.49, 0.83, -2602, 0.007,   200, 0.011, 100.0, 100.0, 5000.0>
+I3DL2_ENVIRONMENT_PRESET_PADDEDCELL equ <-1000,-6000, 0.0, 0.17, 0.10, -1204, 0.001,	 207, 0.002, 100.0, 100.0, 5000.0>
+I3DL2_ENVIRONMENT_PRESET_ROOM equ <-1000, -454, 0.0, 0.40, 0.83, -1646, 0.002,	   53, 0.003, 100.0, 100.0, 5000.0>
+I3DL2_ENVIRONMENT_PRESET_BATHROOM equ <-1000,-1200, 0.0, 1.49, 0.54,  -370, 0.007,  1030, 0.011, 100.0,	 60.0, 5000.0>
+I3DL2_ENVIRONMENT_PRESET_LIVINGROOM equ <-1000,-6000, 0.0, 0.50, 0.10, -1376, 0.003, -1104, 0.004, 100.0, 100.0, 5000.0>
+I3DL2_ENVIRONMENT_PRESET_STONEROOM equ <-1000, -300, 0.0, 2.31, 0.64,	-711, 0.012,	 83, 0.017, 100.0, 100.0, 5000.0>
+I3DL2_ENVIRONMENT_PRESET_AUDITORIUM equ <-1000, -476, 0.0, 4.32, 0.59,	 -789, 0.020,	-289, 0.030, 100.0, 100.0, 5000.0>
+I3DL2_ENVIRONMENT_PRESET_CONCERTHALL equ <-1000, -500, 0.0, 3.92, 0.70, -1230, 0.020,	   -2, 0.029, 100.0, 100.0, 5000.0>
+I3DL2_ENVIRONMENT_PRESET_CAVE equ <-1000,    0, 0.0, 2.91, 1.30,	 -602, 0.015,	 -302, 0.022, 100.0, 100.0, 5000.0>
+I3DL2_ENVIRONMENT_PRESET_ARENA equ <-1000, -698, 0.0, 7.24, 0.33, -1166, 0.020,	   16, 0.030, 100.0, 100.0, 5000.0>
+I3DL2_ENVIRONMENT_PRESET_HANGAR equ <-1000,-1000, 0.0,10.05, 0.23,  -602, 0.020,	  198, 0.030, 100.0, 100.0, 5000.0>
+I3DL2_ENVIRONMENT_PRESET_CARPETEDHALLWAY equ <-1000,-4000, 0.0, 0.30, 0.10, -1831, 0.002, -1630, 0.030, 100.0, 100.0, 5000.0>
+I3DL2_ENVIRONMENT_PRESET_HALLWAY equ <-1000, -300, 0.0, 1.49, 0.59, -1219, 0.007,   441, 0.011, 100.0, 100.0, 5000.0>
+I3DL2_ENVIRONMENT_PRESET_STONECORRIDOR equ <-1000, -237, 0.0, 2.70, 0.79, -1214, 0.013,	  395, 0.020, 100.0, 100.0, 5000.0>
+I3DL2_ENVIRONMENT_PRESET_ALLEY equ <-1000, -270, 0.0, 1.49, 0.86, -1204, 0.007,	   -4, 0.011, 100.0, 100.0, 5000.0>
+I3DL2_ENVIRONMENT_PRESET_FOREST equ <-1000,-3300, 0.0, 1.49, 0.54, -2560, 0.162,	 -613, 0.088,	 79.0, 100.0, 5000.0>
+I3DL2_ENVIRONMENT_PRESET_CITY equ <-1000, -800, 0.0, 1.49, 0.67, -2273, 0.007, -2217, 0.011,	 50.0, 100.0, 5000.0>
+I3DL2_ENVIRONMENT_PRESET_MOUNTAINS equ <-1000,-2500, 0.0, 1.49, 0.21, -2780, 0.300, -2014, 0.100,  27.0, 100.0, 5000.0>
+I3DL2_ENVIRONMENT_PRESET_QUARRY equ <-1000,-1000, 0.0, 1.49, 0.83,-10000, 0.061,	  500, 0.025, 100.0, 100.0, 5000.0>
+I3DL2_ENVIRONMENT_PRESET_PLAIN equ <-1000,-2000, 0.0, 1.49, 0.50, -2466, 0.179, -2514, 0.100,	 21.0, 100.0, 5000.0>
+I3DL2_ENVIRONMENT_PRESET_PARKINGLOT equ <-1000,	  0, 0.0, 1.65, 1.50, -1363, 0.008, -1153, 0.012, 100.0, 100.0, 5000.0>
+I3DL2_ENVIRONMENT_PRESET_SEWERPIPE equ <-1000,-1000, 0.0, 2.81, 0.14,	 429, 0.014,	648, 0.021,  80.0,  60.0, 5000.0>
+I3DL2_ENVIRONMENT_PRESET_UNDERWATER equ <-1000,-4000, 0.0, 1.49, 0.10,	 -449, 0.007,	1700, 0.011, 100.0, 100.0, 5000.0>
+
+I3DL2_ENVIRONMENT_PRESET_SMALLROOM equ <-1000, -600, 0.0, 1.10, 0.83,	-400, 0.005,	500, 0.010, 100.0, 100.0, 5000.0>
+I3DL2_ENVIRONMENT_PRESET_MEDIUMROOM equ <-1000, -600, 0.0, 1.30, 0.83, -1000, 0.010,	-200, 0.020, 100.0, 100.0, 5000.0>
+I3DL2_ENVIRONMENT_PRESET_LARGEROOM equ <-1000, -600, 0.0, 1.50, 0.83, -1600, 0.020, -1000, 0.040, 100.0, 100.0, 5000.0>
+I3DL2_ENVIRONMENT_PRESET_MEDIUMHALL equ <-1000, -600, 0.0, 1.80, 0.70, -1300, 0.015,	-800, 0.030, 100.0, 100.0, 5000.0>
+I3DL2_ENVIRONMENT_PRESET_LARGEHALL equ <-1000, -600, 0.0, 1.80, 0.70, -2000, 0.030, -1400, 0.060, 100.0, 100.0, 5000.0>
+I3DL2_ENVIRONMENT_PRESET_PLATE equ <-1000, -200, 0.0, 1.30, 0.90,     0, 0.002,	    0, 0.010, 100.0,	 75.0, 5000.0>
+
+DS3DALG_DEFAULT		equ GUID_NULL
+DEFINE_GUID(DS3DALG_NO_VIRTUALIZATION, 0xc241333, 0x1c1b, 0x11d2, 0x94, 0xf5, 0x0, 0xc0, 0x4, 0xc2, 0x8a, 0xca);
+DEFINE_GUID(DS3DALG_HRTF_FULL, 0xc2413340, 0x1c1b, 0x11d2, 0x94, 0xf5, 0x0, 0xc0, 0x4, 0xc2, 0x8a, 0xca);
+DEFINE_GUID(DS3DALG_HRTF_LIGHT, 0xc2413342, 0x1c1b, 0x11d2, 0x94, 0xf5, 0x0, 0xc0, 0x4, 0xc2, 0x8a, 0xca);
+
+if DIRECTSOUND_VERSION GE 0x0800
+
+DEFINE_GUID(GUID_DSFX_STANDARD_GARGLE, 0xdafd8210, 0x5711, 0x4b91, 0x9f, 0xe3, 0xf7, 0x5b, 0x7a, 0xe2, 0x79, 0xbf);
+DEFINE_GUID(GUID_DSFX_STANDARD_CHORUS, 0xefe6629c, 0x81f7, 0x4281, 0xbd, 0x91, 0xc9, 0xd6, 0x04, 0xa9, 0x5a, 0xf6);
+DEFINE_GUID(GUID_DSFX_STANDARD_FLANGER, 0xefca3d92, 0xdfd8, 0x4672, 0xa6, 0x03, 0x74, 0x20, 0x89, 0x4b, 0xad, 0x98);
+DEFINE_GUID(GUID_DSFX_STANDARD_ECHO, 0xef3e932c, 0xd40b, 0x4f51, 0x8c, 0xc, 0x3f, 0x98, 0xf1, 0xb2, 0x9d, 0x5d);
+DEFINE_GUID(GUID_DSFX_STANDARD_DISTORTION, 0xef114c90, 0xcd1d, 0x484e, 0x96, 0xe5, 0x09, 0xcf, 0xaf, 0x91, 0x2a, 0x21);
+DEFINE_GUID(GUID_DSFX_STANDARD_COMPRESSOR, 0xef011f79, 0x4000, 0x406d, 0x87, 0xaf, 0xbf, 0xfb, 0x3f, 0xc3, 0x9d, 0x57);
+DEFINE_GUID(GUID_DSFX_STANDARD_PARAMEQ, 0x120ced89, 0x3bf4, 0x4173, 0xa1, 0x32, 0x3c, 0xb4, 0x06, 0xcf, 0x32, 0x31);
+DEFINE_GUID(GUID_DSFX_STANDARD_I3DL2REVERB, 0xef985e71, 0xd5c7, 0x42d4, 0xba, 0x4d, 0x2d, 0x07, 0x3e, 0x2e, 0x96, 0xf4);
+DEFINE_GUID(GUID_DSFX_WAVES_REVERB, 0x87fc0268, 0x9a55, 0x4360, 0x95, 0xaa, 0x00, 0x4a, 0x1d, 0x9d, 0xe2, 0x6c);
+DEFINE_GUID(GUID_DSCFX_CLASS_AEC, 0xBF963D80L, 0xC559, 0x11D0, 0x8A, 0x2B, 0x00, 0xA0, 0xC9, 0x25, 0x5A, 0xC1);
+DEFINE_GUID(GUID_DSCFX_MS_AEC, 0xcdebb919, 0x379a, 0x488a, 0x87, 0x65, 0xf5, 0x3c, 0xfd, 0x36, 0xde, 0x40);
+DEFINE_GUID(GUID_DSCFX_SYSTEM_AEC, 0x1c22c56d, 0x9879, 0x4f5b, 0xa3, 0x89, 0x27, 0x99, 0x6d, 0xdc, 0x28, 0x10);
+DEFINE_GUID(GUID_DSCFX_CLASS_NS, 0xe07f903f, 0x62fd, 0x4e60, 0x8c, 0xdd, 0xde, 0xa7, 0x23, 0x66, 0x65, 0xb5);
+DEFINE_GUID(GUID_DSCFX_MS_NS, 0x11c5c73b, 0x66e9, 0x4ba1, 0xa0, 0xba, 0xe8, 0x14, 0xc6, 0xee, 0xd9, 0x2d);
+DEFINE_GUID(GUID_DSCFX_SYSTEM_NS, 0x5ab0882e, 0x7274, 0x4516, 0x87, 0x7d, 0x4e, 0xee, 0x99, 0xba, 0x4f, 0xd0);
+
+endif
+
+.list
+endif
+

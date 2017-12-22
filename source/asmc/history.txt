@@ -3,6 +3,10 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.27 - xx xxx 2017
+- added support for Class::Method proto
+- added support for Class::Method proc
+- added support for Class::Method(...)
+- added support for com_ptr[Vtbl].proc_ptr(...)
 - added support for com_ptr.proc_ptr(...)
 - added support for - assume reg:ptr struct -- [reg].proc_ptr(...)
 - added support for [reg].struct.proc_ptr(...)

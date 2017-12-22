@@ -40,10 +40,13 @@ SEEK_SET	equ 0
 SEEK_CUR	equ 1
 SEEK_END	equ 2
 
+ifndef LPFILETIME
 FILETIME	STRUC
 dwLowDateTime	dd ?
 dwHighDateTime	dd ?
 FILETIME	ENDS
+LPFILETIME	typedef ptr FILETIME
+endif
 
 ifndef _TIME_T_DEFINED
 _TIME_T_DEFINED equ <>

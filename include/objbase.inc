@@ -1,9 +1,9 @@
 include rpc.inc
 include rpcndr.inc
 include stdlib.inc
-.xlist
 ifndef _OBJBASE_H_
 _OBJBASE_H_ equ 1
+.xlist
 
 CLSCTX_INPROC		equ CLSCTX_INPROC_SERVER OR CLSCTX_INPROC_HANDER
 
@@ -75,7 +75,6 @@ include unknwn.inc
 include objidl.inc
 .xlist
 
-
 ifndef GUID
 GUID		STRUC
 Data1		dd ?
@@ -138,7 +137,6 @@ include cguid.inc
 .xlist
 endif
 
-
 COINIT_APARTMENTTHREADED	equ 0x2
 if  (_WIN32_WINNT GE 0x0400) OR defined(_WIN32_DCOM)
 COINIT_MULTITHREADED		equ 0x0
@@ -153,7 +151,6 @@ includelib ole32.lib
 endif
 
 CoBuildVersion proto WINAPI
-
 
 CoInitialize proto WINAPI \
 	    pvReserved: LPVOID
@@ -188,7 +185,6 @@ DebugCoGetRpcFault proto WINAPI
 DebugCoSetRpcFault proto WINAPI \
 		      : ULONG
 ;endif
-
 
 CoGetClassObject proto WINAPI \
 		rclsid: REFCLSID,
@@ -225,10 +221,8 @@ CoRegisterPSClsid proto WINAPI \
 		  riid: REFIID,
 		rclsid: REFCLSID
 
-
 CoRegisterSurrogate proto WINAPI \
 	    pSurrogate: LPSURROGATE
-
 
 CoGetMarshalSizeMax proto WINAPI \
 	       pulSize: LPDWORD,
@@ -279,7 +273,6 @@ CoGetStandardMarshal proto WINAPI \
 	     mshlflags: DWORD,
 	     ppMarshal: LPMARSHAL
 
-
 CoGetStdMarshalEx proto WINAPI \
 	     pUnkOuter: LPUNKNOWN,
 	     smexflags: DWORD,
@@ -297,7 +290,6 @@ CoGetStaticMarshal proto WINAPI \
 
 SMEXF_SERVER		equ 0x01
 SMEXF_HANDLER		equ 0x02
-
 
 ;BOOL
 CoIsHandlerConnected proto WINAPI \
@@ -321,7 +313,6 @@ CoCreateFreeThreadedMarshaler proto WINAPI \
 	     punkOuter: LPUNKNOWN,
 	  ppunkMarshal: LPUNKNOWN
 
-
 ;HINSTANCE
 CoLoadLibrary proto WINAPI \
 	   lpszLibName: LPOLESTR,
@@ -333,9 +324,7 @@ CoFreeLibrary proto WINAPI \
 CoFreeAllLibraries proto WINAPI
 CoFreeUnusedLibraries proto WINAPI
 
-
 if (_WIN32_WINNT GE 0x0400 ) OR defined(_WIN32_DCOM)
-
 
 CoInitializeSecurity proto WINAPI \
 	      pSecDesc: PSECURITY_DESCRIPTOR,
@@ -400,14 +389,12 @@ COM_RIGHTS_EXECUTE	equ 1
 
 endif
 
-
 CoCreateInstance proto WINAPI \
 		rclsid: REFCLSID,
 	     pUnkOuter: LPUNKNOWN,
 	  dwClsContext: DWORD,
 		  riid: REFIID,
 		   ppv: LPVOID
-
 
 if (_WIN32_WINNT GE 0x0400 ) OR defined(_WIN32_DCOM)
 
@@ -442,7 +429,6 @@ endif
 
 if (_WIN32_WINNT GE 0x0500 ) OR defined(_WIN32_DCOM)
 
-
 CoGetCancelObject proto WINAPI \
 	    dwThreadId: DWORD,
 		   iid: REFIID,
@@ -457,18 +443,14 @@ CoCancelCall proto WINAPI \
 CoTestCancel proto WINAPI
 endif
 
-
-
 if (_WIN32_WINNT GE 0x0500 ) OR defined(_WIN32_DCOM)
 
 CoGetClassInfo proto WINAPI \
 	      pClassSpec: ptr uCLSSPEC,
 		pContext: ptr QUERYCONTEXT
 
-
 CoGetClassAccess proto WINAPI \
 	    ppIClassAccess: ptr IClassAccess
-
 
 CoGetPublishedAppInfo proto WINAPI \
 	     QueryType: APPINFOTYPE,
@@ -476,7 +458,6 @@ CoGetPublishedAppInfo proto WINAPI \
 		ppInfo: ptr PUBLISHEDAPPINFO
 
 endif
-
 
 StringFromCLSID proto WINAPI \
 		rclsid: REFCLSID,
@@ -538,8 +519,6 @@ CoRegisterChannelHook proto WINAPI \
 	  pChannelHook: ptr IChannelHook
 endif
 
-
-
 CoGetTreatAsClass proto WINAPI \
 	      clsidOld: REFCLSID,
 	     pClsidNew: LPCLSID
@@ -547,8 +526,6 @@ CoGetTreatAsClass proto WINAPI \
 CoTreatAsClass proto WINAPI \
 	      clsidOld: REFCLSID,
 	      clsidNew: REFCLSID
-
-
 
 ;HRESULT
 CALLBACK(LPFNGETCLASSOBJECT, :REFCLSID, :REFIID, :LPVOID)
@@ -561,7 +538,6 @@ DllGetClassObject proto WINAPI \
 
 DllCanUnloadNow proto WINAPI
 
-
 ;LPVOID
 CoTaskMemAlloc proto WINAPI \
 		    cb: ULONG
@@ -573,8 +549,6 @@ CoTaskMemRealloc proto WINAPI \
 CoTaskMemFree proto WINAPI \
 		    pv: LPVOID
 
-
-
 CreateDataAdviseHolder proto WINAPI \
 	    ppDAHolder: LPDATAADVISEHOLDER
 
@@ -583,10 +557,6 @@ CreateDataCache proto WINAPI \
 		rclsid: REFCLSID,
 		   iid: REFIID,
 		   ppv: LPVOID
-
-
-
-
 
 StgCreateDocfile proto WINAPI \
 	      pwcsName: ptr OLECHAR,
@@ -746,13 +716,12 @@ GetRunningObjectTable proto WINAPI \
 
 include urlmon.inc
 .xlist
-;?
+
 CreateStdProgressIndicator proto WINAPI \
 	    hwndParent: HWND,
 	      pszTitle: LPCOLESTR,
 	   pIbscCaller: ptr IBindStatusCallback,
 		ppIbsc: ptr IBindStatusCallback
 
-endif
-
 .list
+endif

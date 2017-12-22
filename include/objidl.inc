@@ -426,15 +426,15 @@ ifndef __IMalloc_INTERFACE_DEFINED__
 __IMalloc_INTERFACE_DEFINED__ equ 1
 
 IMalloc			STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD Alloc, :DWORD
-STDMETHOD Realloc, :ptr ,:DWORD
-STDMETHOD Free, :ptr
-STDMETHOD GetSize, :ptr
-STDMETHOD DidAlloc, :ptr
-STDMETHOD HeapMinimize
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	Alloc, :DWORD
+	STDMETHOD	Realloc, :ptr ,:DWORD
+	STDMETHOD	Free, :ptr
+	STDMETHOD	GetSize, :ptr
+	STDMETHOD	DidAlloc, :ptr
+	STDMETHOD	HeapMinimize
 IMalloc			ENDS
 LPMALLOC		typedef ptr IMalloc
 externdef		IID_IMalloc:IID
@@ -519,21 +519,21 @@ ifndef __IMallocSpy_INTERFACE_DEFINED__
 __IMallocSpy_INTERFACE_DEFINED__ equ 1
 
 IMallocSpy		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD PreAlloc, :DWORD
-STDMETHOD PostAlloc, :ptr
-STDMETHOD PreFree, :ptr, :BOOL
-STDMETHOD PostFree, :BOOL
-STDMETHOD PreRealloc, :ptr, :DWORD, :ptr, :BOOL
-STDMETHOD PostRealloc, :ptr, :BOOL
-STDMETHOD PreGetSize, :ptr, :BOOL
-STDMETHOD PostGetSize, :DWORD, :BOOL
-STDMETHOD PreDidAlloc, :ptr, :BOOL
-STDMETHOD PostDidAlloc, :ptr, :BOOL, :DWORD
-STDMETHOD PreHeapMinimize
-STDMETHOD PostHeapMinimize
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	PreAlloc, :DWORD
+	STDMETHOD	PostAlloc, :ptr
+	STDMETHOD	PreFree, :ptr, :BOOL
+	STDMETHOD	PostFree, :BOOL
+	STDMETHOD	PreRealloc, :ptr, :DWORD, :ptr, :BOOL
+	STDMETHOD	PostRealloc, :ptr, :BOOL
+	STDMETHOD	PreGetSize, :ptr, :BOOL
+	STDMETHOD	PostGetSize, :DWORD, :BOOL
+	STDMETHOD	PreDidAlloc, :ptr, :BOOL
+	STDMETHOD	PostDidAlloc, :ptr, :BOOL, :DWORD
+	STDMETHOD	PreHeapMinimize
+	STDMETHOD	PostHeapMinimize
 IMallocSpy		ENDS
 LPMALLOCSPY		typedef ptr IMallocSpy
 externdef		IID_IMallocSpy:IID
@@ -696,10 +696,10 @@ ifndef __IStdMarshalInfo_INTERFACE_DEFINED__
 __IStdMarshalInfo_INTERFACE_DEFINED__ equ 1
 
 IStdMarshalInfo		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetClassForHandler, :DWORD, :ptr, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetClassForHandler, :DWORD, :ptr, :ptr
 IStdMarshalInfo		ENDS
 LPSTDMARSHALINFO	typedef ptr IStdMarshalInfo
 externdef		IID_IStdMarshalInfo:IID
@@ -729,11 +729,11 @@ EXTCONN_WEAK		equ 0x2
 EXTCONN_CALLABLE	equ 0x4
 
 IExternalConnection	STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD AddConnection, :DWORD, :DWORD
-STDMETHOD ReleaseConnection, :DWORD, :DWORD, :BOOL
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	AddConnection, :DWORD, :DWORD
+	STDMETHOD	ReleaseConnection, :DWORD, :DWORD, :BOOL
 IExternalConnection	ENDS
 LPEXTERNALCONNECTION	typedef ptr IExternalConnection
 externdef		IID_IExternalConnection:IID
@@ -778,10 +778,10 @@ hr			HRESULT ?
 MULTI_QI		ENDS
 
 IMultiQI		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD QueryMultipleInterfaces, :DWORD, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	QueryMultipleInterfaces, :DWORD, :ptr
 IMultiQI		ENDS
 LPMULTIQI		typedef ptr IMultiQI
 externdef		IID_IMultiQI:IID
@@ -805,13 +805,13 @@ ifndef __IEnumUnknown_INTERFACE_DEFINED__
 __IEnumUnknown_INTERFACE_DEFINED__ equ 1
 
 IEnumUnknown		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD Next, :DWORD, :ptr, :ptr
-STDMETHOD Skip, :DWORD
-STDMETHOD Reset
-STDMETHOD Clone, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	Next, :DWORD, :ptr, :ptr
+	STDMETHOD	Skip, :DWORD
+	STDMETHOD	Reset
+	STDMETHOD	Clone, :ptr
 IEnumUnknown		ENDS
 LPENUMUNKNOWN		typedef ptr IEnumUnknown
 externdef		IID_IEnumUnknown:IID
@@ -904,19 +904,19 @@ BIND_MAYBOTHERUSER	equ 1
 BIND_JUSTTESTEXISTENCE	equ 2
 
 IBindCtx		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD RegisterObjectBound, :ptr
-STDMETHOD RevokeObjectBound, :ptr
-STDMETHOD ReleaseBoundObjects
-STDMETHOD SetBindOptions, :ptr
-STDMETHOD GetBindOptions, :ptr
-STDMETHOD GetRunningObjectTable, :ptr
-STDMETHOD RegisterObjectParam, :LPOLESTR, :ptr
-STDMETHOD GetObjectParam, :LPOLESTR, :ptr
-STDMETHOD EnumObjectParam, :ptr
-STDMETHOD RevokeObjectParam, :LPOLESTR
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	RegisterObjectBound, :ptr
+	STDMETHOD	RevokeObjectBound, :ptr
+	STDMETHOD	ReleaseBoundObjects
+	STDMETHOD	SetBindOptions, :ptr
+	STDMETHOD	GetBindOptions, :ptr
+	STDMETHOD	GetRunningObjectTable, :ptr
+	STDMETHOD	RegisterObjectParam, :LPOLESTR, :ptr
+	STDMETHOD	GetObjectParam, :LPOLESTR, :ptr
+	STDMETHOD	EnumObjectParam, :ptr
+	STDMETHOD	RevokeObjectParam, :LPOLESTR
 IBindCtx		ENDS
 LPBC			typedef ptr IBindCtx
 LPBINDCTX		typedef ptr IBindCtx
@@ -1049,13 +1049,13 @@ ifndef __IEnumMoniker_INTERFACE_DEFINED__
 __IEnumMoniker_INTERFACE_DEFINED__ equ 1
 
 IEnumMoniker		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD Next, :DWORD, :ptr, :ptr
-STDMETHOD Skip, :DWORD
-STDMETHOD Reset
-STDMETHOD Clone, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	Next, :DWORD, :ptr, :ptr
+	STDMETHOD	Skip, :DWORD
+	STDMETHOD	Reset
+	STDMETHOD	Clone, :ptr
 IEnumMoniker		ENDS
 LPENUMMONIKER		typedef ptr IEnumMoniker
 externdef		IID_IEnumMoniker:IID
@@ -1115,14 +1115,14 @@ ifndef __IRunnableObject_INTERFACE_DEFINED__
 __IRunnableObject_INTERFACE_DEFINED__ equ 1
 
 IRunnableObject		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetRunningClass, :LPCLSID
-STDMETHOD Run, :LPBINDCTX
-STDMETHOD IsRunning
-STDMETHOD LockRunning, :BOOL, :BOOL
-STDMETHOD SetContainedObject, :BOOL
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetRunningClass, :LPCLSID
+	STDMETHOD	Run, :LPBINDCTX
+	STDMETHOD	IsRunning
+	STDMETHOD	LockRunning, :BOOL, :BOOL
+	STDMETHOD	SetContainedObject, :BOOL
 IRunnableObject		ENDS
 LPRUNNABLEOBJECT	typedef ptr IRunnableObject
 externdef		IID_IRunnableObject:IID
@@ -1193,16 +1193,16 @@ ifndef __IRunningObjectTable_INTERFACE_DEFINED__
 __IRunningObjectTable_INTERFACE_DEFINED__ equ 1
 
 IRunningObjectTable	STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD Register, :DWORD, :ptr, :ptr, :ptr
-STDMETHOD Revoke, :DWORD
-STDMETHOD IsRunning, :ptr
-STDMETHOD GetObject_, :ptr, :ptr
-STDMETHOD NoteChangeTime, :DWORD, :ptr
-STDMETHOD GetTimeOfLastChange, :ptr, :ptr
-STDMETHOD EnumRunning, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	Register, :DWORD, :ptr, :ptr, :ptr
+	STDMETHOD	Revoke, :DWORD
+	STDMETHOD	IsRunning, :ptr
+	STDMETHOD	GetObject_, :ptr, :ptr
+	STDMETHOD	NoteChangeTime, :DWORD, :ptr
+	STDMETHOD	GetTimeOfLastChange, :ptr, :ptr
+	STDMETHOD	EnumRunning, :ptr
 IRunningObjectTable	ENDS
 LPRUNNINGOBJECTTABLE	typedef ptr IRunningObjectTable
 externdef		IID_IRunningObjectTable:IID
@@ -1303,10 +1303,10 @@ ifndef __IPersist_INTERFACE_DEFINED__
 __IPersist_INTERFACE_DEFINED__ equ 1
 
 IPersist		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetClassID, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetClassID, :ptr
 IPersist		ENDS
 LPPERSIST		typedef ptr IPersist
 externdef		IID_IPersist:IID
@@ -1329,14 +1329,14 @@ ifndef __IPersistStream_INTERFACE_DEFINED__
 __IPersistStream_INTERFACE_DEFINED__ equ 1
 
 IPersistStream		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetClassID, :ptr
-STDMETHOD IsDirty
-STDMETHOD Load, :ptr
-STDMETHOD Save, :ptr, :BOOL
-STDMETHOD GetSizeMax, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetClassID, :ptr
+	STDMETHOD	IsDirty
+	STDMETHOD	Load, :ptr
+	STDMETHOD	Save, :ptr, :BOOL
+	STDMETHOD	GetSizeMax, :ptr
 IPersistStream		ENDS
 LPPERSISTSTREAM		typedef ptr IPersistStream
 externdef		IID_IPersistStream:IID
@@ -1410,29 +1410,29 @@ MKRREDUCE_THROUGHUSER	equ 1 SHL 16
 MKRREDUCE_ALL		equ 0
 
 IMoniker		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetClassID, :ptr
-STDMETHOD IsDirty
-STDMETHOD Load, :ptr
-STDMETHOD Save, :ptr, :BOOL
-STDMETHOD GetSizeMax, :ptr
-STDMETHOD BindToObject, :ptr, :ptr, :REFIID, :ptr
-STDMETHOD BindToStorage, :ptr, :ptr, :REFIID, :ptr
-STDMETHOD Reduce, :ptr, :DWORD, :ptr, :ptr
-STDMETHOD ComposeWith, :ptr, :BOOL, :ptr
-STDMETHOD Enum, :BOOL, :ptr
-STDMETHOD IsEqual, :ptr
-STDMETHOD Hash, :ptr
-STDMETHOD IsRunning, :ptr, :ptr, :ptr
-STDMETHOD GetTimeOfLastChange, :ptr, :ptr, :ptr
-STDMETHOD Inverse, :ptr
-STDMETHOD CommonPrefixWith, :ptr, :ptr
-STDMETHOD RelativePathTo, :ptr, :ptr
-STDMETHOD GetDisplayName, :ptr, :ptr, :ptr
-STDMETHOD ParseDisplayName, :ptr, :ptr, :LPOLESTR, :ptr, :ptr
-STDMETHOD IsSystemMoniker, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetClassID, :ptr
+	STDMETHOD	IsDirty
+	STDMETHOD	Load, :ptr
+	STDMETHOD	Save, :ptr, :BOOL
+	STDMETHOD	GetSizeMax, :ptr
+	STDMETHOD	BindToObject, :ptr, :ptr, :REFIID, :ptr
+	STDMETHOD	BindToStorage, :ptr, :ptr, :REFIID, :ptr
+	STDMETHOD	Reduce, :ptr, :DWORD, :ptr, :ptr
+	STDMETHOD	ComposeWith, :ptr, :BOOL, :ptr
+	STDMETHOD	Enum, :BOOL, :ptr
+	STDMETHOD	IsEqual, :ptr
+	STDMETHOD	Hash, :ptr
+	STDMETHOD	IsRunning, :ptr, :ptr, :ptr
+	STDMETHOD	GetTimeOfLastChange, :ptr, :ptr, :ptr
+	STDMETHOD	Inverse, :ptr
+	STDMETHOD	CommonPrefixWith, :ptr, :ptr
+	STDMETHOD	RelativePathTo, :ptr, :ptr
+	STDMETHOD	GetDisplayName, :ptr, :ptr, :ptr
+	STDMETHOD	ParseDisplayName, :ptr, :ptr, :LPOLESTR, :ptr, :ptr
+	STDMETHOD	IsSystemMoniker, :ptr
 IMoniker		ENDS
 LPMONIKER		typedef ptr IMoniker
 externdef		IID_IMoniker:IID
@@ -1649,10 +1649,10 @@ __IROTData_INTERFACE_DEFINED__ equ 1
 externdef		IID_IROTData:IID
 
 IROTData		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetComparisonData, :ptr, :DWORD, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetComparisonData, :ptr, :DWORD, :ptr
 IROTData		ENDS
 LPIROTData		typedef ptr IROTData
 
@@ -1676,13 +1676,13 @@ ifndef __IEnumString_INTERFACE_DEFINED__
 __IEnumString_INTERFACE_DEFINED__ equ 1
 
 IEnumString		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD Next, :DWORD, :ptr, :ptr
-STDMETHOD Skip, :DWORD
-STDMETHOD Reset
-STDMETHOD Clone, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	Next, :DWORD, :ptr, :ptr
+	STDMETHOD	Skip, :DWORD
+	STDMETHOD	Reset
+	STDMETHOD	Clone, :ptr
 IEnumString		ENDS
 LPENUMSTRING		typedef ptr IEnumString
 externdef		IID_IEnumString:IID
@@ -1744,11 +1744,11 @@ __ISequentialStream_INTERFACE_DEFINED__ equ 1
 externdef		IID_ISequentialStream:IID
 
 ISequentialStream	STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD Read, :ptr, :DWORD, :ptr
-STDMETHOD Write, :ptr, :DWORD, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	Read, :ptr, :DWORD, :ptr
+	STDMETHOD	Write, :ptr, :DWORD, :ptr
 ISequentialStream	ENDS
 
 ;HRESULT
@@ -1814,20 +1814,20 @@ LOCK_EXCLUSIVE		equ 2
 LOCK_ONLYONCE		equ 4
 
 IStream			STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD Read, :ptr, :DWORD, :ptr
-STDMETHOD Write, :ptr, :DWORD, :ptr
-STDMETHOD Seek, :LARGE_INTEGER, :DWORD, :ptr
-STDMETHOD SetSize, :ULARGE_INTEGER
-STDMETHOD CopyTo, :ptr, :ULARGE_INTEGER, :ptr, :ptr
-STDMETHOD Commit, :DWORD
-STDMETHOD Revert
-STDMETHOD LockRegion, :ULARGE_INTEGER, :ULARGE_INTEGER, :DWORD
-STDMETHOD UnlockRegion, :ULARGE_INTEGER, :ULARGE_INTEGER, :DWORD
-STDMETHOD Stat, :ptr, :DWORD
-STDMETHOD Clone, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	Read, :ptr, :DWORD, :ptr
+	STDMETHOD	Write, :ptr, :DWORD, :ptr
+	STDMETHOD	Seek, :LARGE_INTEGER, :DWORD, :ptr
+	STDMETHOD	SetSize, :ULARGE_INTEGER
+	STDMETHOD	CopyTo, :ptr, :ULARGE_INTEGER, :ptr, :ptr
+	STDMETHOD	Commit, :DWORD
+	STDMETHOD	Revert
+	STDMETHOD	LockRegion, :ULARGE_INTEGER, :ULARGE_INTEGER, :DWORD
+	STDMETHOD	UnlockRegion, :ULARGE_INTEGER, :ULARGE_INTEGER, :DWORD
+	STDMETHOD	Stat, :ptr, :DWORD
+	STDMETHOD	Clone, :ptr
 IStream			ENDS
 LPSTREAM		typedef ptr IStream
 externdef		IID_IStream:IID
@@ -1955,13 +1955,13 @@ ifndef __IEnumSTATSTG_INTERFACE_DEFINED__
 __IEnumSTATSTG_INTERFACE_DEFINED__ equ 1
 
 IEnumSTATSTG		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD Next, :DWORD, :ptr, :ptr
-STDMETHOD Skip, :DWORD
-STDMETHOD Reset,
-STDMETHOD Clone, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	Next, :DWORD, :ptr, :ptr
+	STDMETHOD	Skip, :DWORD
+	STDMETHOD	Reset,
+	STDMETHOD	Clone, :ptr
 IEnumSTATSTG		ENDS
 LPENUMSTATSTG		typedef ptr IEnumSTATSTG
 externdef		IID_IEnumSTATSTG:IID
@@ -2030,24 +2030,24 @@ wireSNB			typedef ptr RemSNB
 SNB			typedef ptr OLECHAR
 
 IStorage		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD CreateStream, :ptr, :DWORD, :DWORD, :DWORD, :ptr
-STDMETHOD OpenStream, :ptr, :ptr, :DWORD, :DWORD, :ptr
-STDMETHOD CreateStorage, :ptr, :DWORD, :DWORD, :DWORD, :ptr
-STDMETHOD OpenStorage, :ptr, :ptr, :DWORD, :SNB, :DWORD, :ptr
-STDMETHOD CopyTo, :DWORD, :ptr, :SNB, :ptr
-STDMETHOD MoveElementTo, :ptr, :ptr, :ptr, :DWORD
-STDMETHOD Commit, :DWORD
-STDMETHOD Revert
-STDMETHOD EnumElements, :DWORD, :ptr, :DWORD, :ptr
-STDMETHOD DestroyElement, :ptr
-STDMETHOD RenameElement, :ptr, :ptr
-STDMETHOD SetElementTimes, :ptr, :ptr, :ptr, :ptr
-STDMETHOD SetClass, :REFCLSID
-STDMETHOD SetStateBits, :DWORD, :DWORD
-STDMETHOD Stat, :ptr, :DWORD
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	CreateStream, :ptr, :DWORD, :DWORD, :DWORD, :ptr
+	STDMETHOD	OpenStream, :ptr, :ptr, :DWORD, :DWORD, :ptr
+	STDMETHOD	CreateStorage, :ptr, :DWORD, :DWORD, :DWORD, :ptr
+	STDMETHOD	OpenStorage, :ptr, :ptr, :DWORD, :SNB, :DWORD, :ptr
+	STDMETHOD	CopyTo, :DWORD, :ptr, :SNB, :ptr
+	STDMETHOD	MoveElementTo, :ptr, :ptr, :ptr, :DWORD
+	STDMETHOD	Commit, :DWORD
+	STDMETHOD	Revert
+	STDMETHOD	EnumElements, :DWORD, :ptr, :DWORD, :ptr
+	STDMETHOD	DestroyElement, :ptr
+	STDMETHOD	RenameElement, :ptr, :ptr
+	STDMETHOD	SetElementTimes, :ptr, :ptr, :ptr, :ptr
+	STDMETHOD	SetClass, :REFCLSID
+	STDMETHOD	SetStateBits, :DWORD, :DWORD
+	STDMETHOD	Stat, :ptr, :DWORD
 IStorage		ENDS
 LPSTORAGE		typedef ptr IStorage
 externdef		IID_IStorage:IID
@@ -2271,15 +2271,15 @@ ifndef __IPersistFile_INTERFACE_DEFINED__
 __IPersistFile_INTERFACE_DEFINED__ equ 1
 
 IPersistFile		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetClassID, :ptr
-STDMETHOD IsDirty
-STDMETHOD Load, :LPCOLESTR, :DWORD
-STDMETHOD Save, :LPCOLESTR, :BOOL
-STDMETHOD SaveCompleted, :LPCOLESTR
-STDMETHOD GetCurFile, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetClassID, :ptr
+	STDMETHOD	IsDirty
+	STDMETHOD	Load, :LPCOLESTR, :DWORD
+	STDMETHOD	Save, :LPCOLESTR, :BOOL
+	STDMETHOD	SaveCompleted, :LPCOLESTR
+	STDMETHOD	GetCurFile, :ptr
 IPersistFile		ENDS
 LPPERSISTFILE		typedef ptr IPersistFile
 externdef		IID_IPersistFile:IID
@@ -2351,16 +2351,16 @@ ifndef __IPersistStorage_INTERFACE_DEFINED__
 __IPersistStorage_INTERFACE_DEFINED__ equ 1
 
 IPersistStorage		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetClassID, :ptr
-STDMETHOD IsDirty
-STDMETHOD InitNew, :ptr
-STDMETHOD Load, :ptr
-STDMETHOD Save, :ptr, :BOOL
-STDMETHOD SaveCompleted, :ptr
-STDMETHOD HandsOffStorage
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetClassID, :ptr
+	STDMETHOD	IsDirty
+	STDMETHOD	InitNew, :ptr
+	STDMETHOD	Load, :ptr
+	STDMETHOD	Save, :ptr, :BOOL
+	STDMETHOD	SaveCompleted, :ptr
+	STDMETHOD	HandsOffStorage
 IPersistStorage		ENDS
 LPPERSISTSTORAGE	typedef ptr IPersistStorage
 externdef		IID_IPersistStorage:IID
@@ -2442,16 +2442,16 @@ ifndef __ILockBytes_INTERFACE_DEFINED__
 __ILockBytes_INTERFACE_DEFINED__ equ 1
 
 ILockBytes		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD ReadAt, :ULARGE_INTEGER, :ptr, :DWORD, :ptr
-STDMETHOD WriteAt, :ULARGE_INTEGER, :ptr, :DWORD, :ptr
-STDMETHOD Flush
-STDMETHOD SetSize, :ULARGE_INTEGER
-STDMETHOD LockRegion, :ULARGE_INTEGER, :ULARGE_INTEGER, :DWORD
-STDMETHOD UnlockRegion, :ULARGE_INTEGER, :ULARGE_INTEGER, :DWORD
-STDMETHOD Stat, :ptr, :DWORD
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	ReadAt, :ULARGE_INTEGER, :ptr, :DWORD, :ptr
+	STDMETHOD	WriteAt, :ULARGE_INTEGER, :ptr, :DWORD, :ptr
+	STDMETHOD	Flush
+	STDMETHOD	SetSize, :ULARGE_INTEGER
+	STDMETHOD	LockRegion, :ULARGE_INTEGER, :ULARGE_INTEGER, :DWORD
+	STDMETHOD	UnlockRegion, :ULARGE_INTEGER, :ULARGE_INTEGER, :DWORD
+	STDMETHOD	Stat, :ptr, :DWORD
 ILockBytes		ENDS
 LPLOCKBYTES		typedef ptr ILockBytes
 externdef		IID_ILockBytes:IID
@@ -2577,13 +2577,13 @@ FORMATETC		ENDS
 LPFORMATETC		typedef ptr FORMATETC
 
 IEnumFORMATETC		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD Next, :DWORD, :ptr, :ptr
-STDMETHOD Skip, :DWORD
-STDMETHOD Reset
-STDMETHOD Clone, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	Next, :DWORD, :ptr, :ptr
+	STDMETHOD	Skip, :DWORD
+	STDMETHOD	Reset
+	STDMETHOD	Clone, :ptr
 IEnumFORMATETC		ENDS
 LPENUMFORMATETC		typedef ptr IEnumFORMATETC
 externdef		IID_IEnumFORMATETC:IID
@@ -2662,13 +2662,13 @@ STATDATA		ENDS
 LPSTATDATA		typedef ptr STATDATA
 
 IEnumSTATDATA		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD Next, :DWORD, :ptr, :ptr
-STDMETHOD Skip, :DWORD
-STDMETHOD Reset
-STDMETHOD Clone, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	Next, :DWORD, :ptr, :ptr
+	STDMETHOD	Skip, :DWORD
+	STDMETHOD	Reset
+	STDMETHOD	Clone, :ptr
 IEnumSTATDATA		ENDS
 LPENUMSTATDATA		typedef ptr IEnumSTATDATA
 externdef		IID_IEnumSTATDATA:IID
@@ -2728,10 +2728,10 @@ ifndef __IRootStorage_INTERFACE_DEFINED__
 __IRootStorage_INTERFACE_DEFINED__ equ 1
 
 IRootStorage		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD SwitchToFile, :LPOLESTR
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	SwitchToFile, :LPOLESTR
 IRootStorage		ENDS
 LPROOTSTORAGE		typedef ptr IRootStorage
 externdef		IID_IRootStorage:IID
@@ -2850,14 +2850,14 @@ Stgmed			STGMEDIUM <>
 FLAG_STGMEDIUM		ENDS
 
 IAdviseSink		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD OnDataChange, :ptr, :ptr
-STDMETHOD OnViewChange, :DWORD, :SDWORD
-STDMETHOD OnRename, :ptr
-STDMETHOD OnSave
-STDMETHOD OnClose
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	OnDataChange, :ptr, :ptr
+	STDMETHOD	OnViewChange, :DWORD, :SDWORD
+	STDMETHOD	OnRename, :ptr
+	STDMETHOD	OnSave
+	STDMETHOD	OnClose
 IAdviseSink		ENDS
 LPADVISESINK		typedef ptr IAdviseSink
 externdef		IID_IAdviseSink:IID
@@ -2932,15 +2932,15 @@ ifndef __IAdviseSink2_INTERFACE_DEFINED__
 __IAdviseSink2_INTERFACE_DEFINED__ equ 1
 
 IAdviseSink2		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD OnDataChange, :ptr, :ptr
-STDMETHOD OnViewChange, :DWORD, :SDWORD
-STDMETHOD OnRename, :ptr
-STDMETHOD OnSave
-STDMETHOD OnClose
-STDMETHOD OnLinkSrcChange, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	OnDataChange, :ptr, :ptr
+	STDMETHOD	OnViewChange, :DWORD, :SDWORD
+	STDMETHOD	OnRename, :ptr
+	STDMETHOD	OnSave
+	STDMETHOD	OnClose
+	STDMETHOD	OnLinkSrcChange, :ptr
 IAdviseSink2		ENDS
 LPADVISESINK2		typedef ptr IAdviseSink2
 externdef		IID_IAdviseSink2:IID
@@ -2968,21 +2968,21 @@ DATADIR_GET		equ 1
 DATADIR_SET		equ 2
 
 IDataObject		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD Begin_OnDataChange, :ptr, :ptr
-STDMETHOD Finish_OnDataChange
-STDMETHOD Begin_OnViewChange, :DWORD, :SDWORD
-STDMETHOD Finish_OnViewChange
-STDMETHOD Begin_OnRename, :ptr
-STDMETHOD Finish_OnRename
-STDMETHOD Begin_OnSave
-STDMETHOD Finish_OnSave
-STDMETHOD Begin_OnClose
-STDMETHOD Finish_OnClose
-STDMETHOD Begin_OnLinkSrcChange, :ptr
-STDMETHOD Finish_OnLinkSrcChange
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	Begin_OnDataChange, :ptr, :ptr
+	STDMETHOD	Finish_OnDataChange
+	STDMETHOD	Begin_OnViewChange, :DWORD, :SDWORD
+	STDMETHOD	Finish_OnViewChange
+	STDMETHOD	Begin_OnRename, :ptr
+	STDMETHOD	Finish_OnRename
+	STDMETHOD	Begin_OnSave
+	STDMETHOD	Finish_OnSave
+	STDMETHOD	Begin_OnClose
+	STDMETHOD	Finish_OnClose
+	STDMETHOD	Begin_OnLinkSrcChange, :ptr
+	STDMETHOD	Finish_OnLinkSrcChange
 IDataObject		ENDS
 LPDATAOBJECT		typedef ptr IDataObject
 externdef		IID_IDataObject:IID
@@ -3110,18 +3110,18 @@ ifndef __IDataAdviseHolder_INTERFACE_DEFINED__
 __IDataAdviseHolder_INTERFACE_DEFINED__ equ 1
 
 IDataAdviseHolder	STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetData, :ptr, :ptr
-STDMETHOD GetDataHere, :ptr, :ptr
-STDMETHOD QueryGetData, :ptr
-STDMETHOD GetCanonicalFormatEtc, :ptr, :ptr
-STDMETHOD SetData, :ptr, :ptr, :BOOL
-STDMETHOD EnumFormatEtc, :DWORD, :ptr
-STDMETHOD DAdvise, :ptr, :DWORD, :ptr, :ptr
-STDMETHOD DUnadvise, :DWORD
-STDMETHOD EnumDAdvise, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetData, :ptr, :ptr
+	STDMETHOD	GetDataHere, :ptr, :ptr
+	STDMETHOD	QueryGetData, :ptr
+	STDMETHOD	GetCanonicalFormatEtc, :ptr, :ptr
+	STDMETHOD	SetData, :ptr, :ptr, :BOOL
+	STDMETHOD	EnumFormatEtc, :DWORD, :ptr
+	STDMETHOD	DAdvise, :ptr, :DWORD, :ptr, :ptr
+	STDMETHOD	DUnadvise, :DWORD
+	STDMETHOD	EnumDAdvise, :ptr
 IDataAdviseHolder	ENDS
 LPDATAADVISEHOLDER	typedef ptr IDataAdviseHolder
 externdef		IID_IDataAdviseHolder:IID
@@ -3213,12 +3213,12 @@ INTERFACEINFO		ENDS
 LPINTERFACEINFO		typedef ptr INTERFACEINFO
 
 IMessageFilter		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD HandleInComingCall, :DWORD, :HTASK, :DWORD, :LPINTERFACEINFO
-STDMETHOD RetryRejectedCall, :HTASK, :DWORD, :DWORD
-STDMETHOD MessagePending, :HTASK, :DWORD, :DWORD
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	HandleInComingCall, :DWORD, :HTASK, :DWORD, :LPINTERFACEINFO
+	STDMETHOD	RetryRejectedCall, :HTASK, :DWORD, :DWORD
+	STDMETHOD	MessagePending, :HTASK, :DWORD, :DWORD
 IMessageFilter		ENDS
 LPMESSAGEFILTER		typedef ptr IMessageFilter
 externdef		IID_IMessageFilter:IID
@@ -3288,14 +3288,14 @@ PRPCOLEMESSAGE		typedef ptr RPCOLEMESSAGE
 externdef		IID_IRpcChannelBuffer:IID
 
 IRpcChannelBuffer	STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetBuffer, :ptr, :REFIID
-STDMETHOD SendReceive, :ptr, :ptr
-STDMETHOD FreeBuffer, :ptr
-STDMETHOD GetDestCtx, :ptr, :ptr
-STDMETHOD IsConnected
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetBuffer, :ptr, :REFIID
+	STDMETHOD	SendReceive, :ptr, :ptr
+	STDMETHOD	FreeBuffer, :ptr
+	STDMETHOD	GetDestCtx, :ptr, :ptr
+	STDMETHOD	IsConnected
 IRpcChannelBuffer	ENDS
 
 ;HRESULT
@@ -3368,15 +3368,15 @@ __IRpcChannelBuffer2_INTERFACE_DEFINED__ equ 1
 externdef		IID_IRpcChannelBuffer2:IID
 
 IRpcChannelBuffer2	STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetBuffer, :ptr, :REFIID
-STDMETHOD SendReceive, :ptr, :ptr
-STDMETHOD FreeBuffer, :ptr
-STDMETHOD GetDestCtx, :ptr, :ptr
-STDMETHOD IsConnected
-STDMETHOD GetProtocolVersion, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetBuffer, :ptr, :REFIID
+	STDMETHOD	SendReceive, :ptr, :ptr
+	STDMETHOD	FreeBuffer, :ptr
+	STDMETHOD	GetDestCtx, :ptr, :ptr
+	STDMETHOD	IsConnected
+	STDMETHOD	GetProtocolVersion, :ptr
 IRpcChannelBuffer2	ENDS
 
 ;HRESULT
@@ -3399,22 +3399,22 @@ __IRpcChannelBuffer3_INTERFACE_DEFINED__ equ 1
 externdef		IID_IRpcChannelBuffer3:IID
 
 IRpcChannelBuffer3	STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetBuffer, :ptr, :REFIID
-STDMETHOD SendReceive, :ptr, :ptr
-STDMETHOD FreeBuffer, :ptr
-STDMETHOD GetDestCtx, :ptr, :ptr
-STDMETHOD IsConnected
-STDMETHOD GetProtocolVersion, :ptr
-STDMETHOD Send, :ptr, :ptr
-STDMETHOD Receive, :ptr, :DWORD, :ptr
-STDMETHOD Cancel, :ptr
-STDMETHOD GetCallContext, :ptr, :REFIID, :ptr
-STDMETHOD GetDestCtxEx, :ptr, :ptr, :ptr
-STDMETHOD GetState, :ptr, :ptr
-STDMETHOD RegisterAsync, :ptr, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetBuffer, :ptr, :REFIID
+	STDMETHOD	SendReceive, :ptr, :ptr
+	STDMETHOD	FreeBuffer, :ptr
+	STDMETHOD	GetDestCtx, :ptr, :ptr
+	STDMETHOD	IsConnected
+	STDMETHOD	GetProtocolVersion, :ptr
+	STDMETHOD	Send, :ptr, :ptr
+	STDMETHOD	Receive, :ptr, :DWORD, :ptr
+	STDMETHOD	Cancel, :ptr
+	STDMETHOD	GetCallContext, :ptr, :REFIID, :ptr
+	STDMETHOD	GetDestCtxEx, :ptr, :ptr, :ptr
+	STDMETHOD	GetState, :ptr, :ptr
+	STDMETHOD	RegisterAsync, :ptr, :ptr
 IRpcChannelBuffer3	ENDS
 
 ;HRESULT
@@ -3518,11 +3518,11 @@ __IRpcProxyBuffer_INTERFACE_DEFINED__ equ 1
 externdef		IID_IRpcProxyBuffer:IID
 
 IRpcProxyBuffer		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD Connect, :ptr
-STDMETHOD Disconnect
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	Connect, :ptr
+	STDMETHOD	Disconnect
 IRpcProxyBuffer		ENDS
 
 ;HRESULT
@@ -3556,16 +3556,16 @@ __IRpcStubBuffer_INTERFACE_DEFINED__ equ 1
 externdef		IID_IRpcStubBuffer:IID
 
 IRpcStubBuffer		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD Connect, :ptr
-STDMETHOD Disconnect
-STDMETHOD _Invoke, :ptr, :ptr
-STDMETHOD IsIIDSupported, :REFIID
-STDMETHOD CountRefs
-STDMETHOD DebugServerQueryInterface, :ptr
-STDMETHOD DebugServerRelease, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	Connect, :ptr
+	STDMETHOD	Disconnect
+	STDMETHOD	_Invoke, :ptr, :ptr
+	STDMETHOD	IsIIDSupported, :REFIID
+	STDMETHOD	CountRefs
+	STDMETHOD	DebugServerQueryInterface, :ptr
+	STDMETHOD	DebugServerRelease, :ptr
 IRpcStubBuffer		ENDS
 
 ;HRESULT
@@ -3660,11 +3660,11 @@ __IPSFactoryBuffer_INTERFACE_DEFINED__ equ 1
 externdef		IID_IPSFactoryBuffer:IID
 
 IPSFactoryBuffer	STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD CreateProxy, :ptr, :REFIID, :ptr, :ptr
-STDMETHOD CreateStub, :REFIID, :ptr, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	CreateProxy, :ptr, :REFIID, :ptr, :ptr
+	STDMETHOD	CreateStub, :REFIID, :ptr, :ptr
 IPSFactoryBuffer	ENDS
 
 ;HRESULT
@@ -3717,15 +3717,15 @@ __IChannelHook_INTERFACE_DEFINED__ equ 1
 externdef		IID_IChannelHook:IID
 
 IChannelHook		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD ClientGetSize, :REFGUID, :REFIID, :ptr
-STDMETHOD ClientFillBuffer, :REFGUID, :REFIID, :ptr, :ptr
-STDMETHOD ClientNotify, :REFGUID, :REFIID, :DWORD, :ptr, :DWORD, :HRESULT
-STDMETHOD ServerNotify, :REFGUID, :REFIID, :DWORD, :ptr, :DWORD
-STDMETHOD ServerGetSize, :REFGUID, :REFIID, :HRESULT, :ptr
-STDMETHOD ServerFillBuffer, :REFGUID, :REFIID, :ptr, :ptr, :HRESULT
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	ClientGetSize, :REFGUID, :REFIID, :ptr
+	STDMETHOD	ClientFillBuffer, :REFGUID, :REFIID, :ptr, :ptr
+	STDMETHOD	ClientNotify, :REFGUID, :REFIID, :DWORD, :ptr, :DWORD, :HRESULT
+	STDMETHOD	ServerNotify, :REFGUID, :REFIID, :DWORD, :ptr, :DWORD
+	STDMETHOD	ServerGetSize, :REFGUID, :REFIID, :HRESULT, :ptr
+	STDMETHOD	ServerFillBuffer, :REFGUID, :REFIID, :ptr, :ptr, :HRESULT
 IChannelHook		ENDS
 
 ;void
@@ -4084,21 +4084,21 @@ STATPROPSETSTG		ENDS
 
 
 IPropertyStorage	STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD ReadMultiple, :ULONG, :PROPSPEC, :PROPVARIANT
-STDMETHOD WriteMultiple, :ULONG, :PROPSPEC, :PROPVARIANT, :PROPID
-STDMETHOD DeleteMultiple, :ULONG, :PROPSPEC
-STDMETHOD ReadPropertyNames, :ULONG, :PROPID, :LPOLESTR
-STDMETHOD WritePropertyNames, :ULONG, :PROPID, :LPOLESTR
-STDMETHOD DeletePropertyNames, :ULONG, :PROPID
-STDMETHOD Commit, :DWORD
-STDMETHOD Revert
-STDMETHOD Enum, :ptr
-STDMETHOD SetTimes, :ptr, :ptr, :ptr
-STDMETHOD SetClass, :REFCLSID
-STDMETHOD Stat, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	ReadMultiple, :ULONG, :PROPSPEC, :PROPVARIANT
+	STDMETHOD	WriteMultiple, :ULONG, :PROPSPEC, :PROPVARIANT, :PROPID
+	STDMETHOD	DeleteMultiple, :ULONG, :PROPSPEC
+	STDMETHOD	ReadPropertyNames, :ULONG, :PROPID, :LPOLESTR
+	STDMETHOD	WritePropertyNames, :ULONG, :PROPID, :LPOLESTR
+	STDMETHOD	DeletePropertyNames, :ULONG, :PROPID
+	STDMETHOD	Commit, :DWORD
+	STDMETHOD	Revert
+	STDMETHOD	Enum, :ptr
+	STDMETHOD	SetTimes, :ptr, :ptr, :ptr
+	STDMETHOD	SetClass, :REFCLSID
+	STDMETHOD	Stat, :ptr
 IPropertyStorage	ENDS
 LPPROPERTYSTORAGE	typedef ptr IPropertyStorage
 externdef		IID_IPropertyStorage:IID
@@ -4265,9 +4265,9 @@ ifndef __IPropertySetStorage_INTERFACE_DEFINED__
 __IPropertySetStorage_INTERFACE_DEFINED__ equ 1
 
 IPropertySetStorage STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
 Create			PVOID ?
 Open			PVOID ?
 Delete			PVOID ?
@@ -4336,9 +4336,9 @@ ifndef __IEnumSTATPROPSTG_INTERFACE_DEFINED__
 __IEnumSTATPROPSTG_INTERFACE_DEFINED__ equ 1
 
 IEnumSTATPROPSTG	STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
 Next			PVOID ?
 Skip			PVOID ?
 Reset			PVOID ?
@@ -4402,9 +4402,9 @@ ifndef __IEnumSTATPROPSETSTG_INTERFACE_DEFINED__
 __IEnumSTATPROPSETSTG_INTERFACE_DEFINED__ equ 1
 
 IEnumSTATPROPSETSTG	STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
 Next			PVOID ?
 Skip			PVOID ?
 Reset			PVOID ?
@@ -4547,12 +4547,12 @@ EOAC_APPID		equ 0x8
 externdef		IID_IClientSecurity:IID
 
 IClientSecurity		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD QueryBlanket, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
-STDMETHOD SetBlanket, :ptr, :DWORD, :DWORD, :ptr, :DWORD, :DWORD, :ptr ,:DWORD
-STDMETHOD CopyProxy, :ptr, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	QueryBlanket, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
+	STDMETHOD	SetBlanket, :ptr, :DWORD, :DWORD, :ptr, :DWORD, :DWORD, :ptr ,:DWORD
+	STDMETHOD	CopyProxy, :ptr, :ptr
 IClientSecurity		ENDS
 
 ;HRESULT
@@ -4614,13 +4614,13 @@ __IServerSecurity_INTERFACE_DEFINED__ equ 1
 externdef		IID_IServerSecurity:IID
 
 IServerSecurity		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD QueryBlanket, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
-STDMETHOD ImpersonateClient
-STDMETHOD _RevertToSelf
-STDMETHOD IsImpersonating
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	QueryBlanket, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
+	STDMETHOD	ImpersonateClient
+	STDMETHOD	_RevertToSelf
+	STDMETHOD	IsImpersonating
 IServerSecurity		ENDS
 
 ;HRESULT
@@ -4682,10 +4682,10 @@ __IClassActivator_INTERFACE_DEFINED__ equ 1
 externdef		IID_IClassActivator:IID
 
 IClassActivator		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetClassObject, :REFCLSID, :DWORD, :LCID, :REFIID, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetClassObject, :REFCLSID, :DWORD, :LCID, :REFIID, :ptr
 IClassActivator		ENDS
 
 ;HRESULT
@@ -4712,11 +4712,11 @@ __IRpcOptions_INTERFACE_DEFINED__ equ 1
 externdef		IID_IRpcOptions:IID
 
 IRpcOptions		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD Set, :ptr, :DWORD, :DWORD
-STDMETHOD Query, :ptr, :DWORD, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	Set, :ptr, :DWORD, :DWORD
+	STDMETHOD	Query, :ptr, :DWORD, :ptr
 IRpcOptions		ENDS
 
 ;HRESULT
@@ -4773,11 +4773,11 @@ __IComBinding_INTERFACE_DEFINED__ equ 1
 externdef		IID_IComBinding:IID
 
 IComBinding		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD InitBinding, :DWORD, :DWORD, :DWORD, :DWORD, :LPOLESTR
-STDMETHOD QueryBinding, :ptr, :ptr, :ptr, :ptr, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	InitBinding, :DWORD, :DWORD, :DWORD, :DWORD, :LPOLESTR
+	STDMETHOD	QueryBinding, :ptr, :ptr, :ptr, :ptr, :ptr
 IComBinding		ENDS
 
 ;HRESULT
@@ -4824,13 +4824,13 @@ __IFillLockBytes_INTERFACE_DEFINED__ equ 1
 externdef		IID_IFillLockBytes:IID
 
 IFillLockBytes		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD FillAppend, :ptr, :DWORD, :ptr
-STDMETHOD FillAt, :ULARGE_INTEGER, :ptr, :DWORD, :ptr
-STDMETHOD SetFillSize, :ULARGE_INTEGER
-STDMETHOD Terminate, :BOOL
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	FillAppend, :ptr, :DWORD, :ptr
+	STDMETHOD	FillAt, :ULARGE_INTEGER, :ptr, :DWORD, :ptr
+	STDMETHOD	SetFillSize, :ULARGE_INTEGER
+	STDMETHOD	Terminate, :BOOL
 IFillLockBytes		ENDS
 
 ;HRESULT
@@ -4894,10 +4894,10 @@ __IProgressNotify_INTERFACE_DEFINED__ equ 1
 externdef		IID_IProgressNotify:IID
 
 IProgressNotify		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD OnProgress, :DWORD, :DWORD, :BOOL, :BOOL
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	OnProgress, :DWORD, :DWORD, :BOOL, :BOOL
 IProgressNotify		ENDS
 
 ;HRESULT
@@ -4930,14 +4930,14 @@ StorageLayout		ENDS
 externdef		IID_ILayoutStorage:IID
 
 ILayoutStorage		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD LayoutScript, :ptr, :DWORD, :DWORD
-STDMETHOD BeginMonitor
-STDMETHOD EndMonitor
-STDMETHOD ReLayoutDocfile, :ptr
-STDMETHOD ReLayoutDocfileOnILockBytes, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	LayoutScript, :ptr, :DWORD, :DWORD
+	STDMETHOD	BeginMonitor
+	STDMETHOD	EndMonitor
+	STDMETHOD	ReLayoutDocfile, :ptr
+	STDMETHOD	ReLayoutDocfileOnILockBytes, :ptr
 ILayoutStorage		ENDS
 
 ;HRESULT
@@ -5006,11 +5006,11 @@ ifndef __ISurrogate_INTERFACE_DEFINED__
 __ISurrogate_INTERFACE_DEFINED__ equ 1
 
 ISurrogateVtbl		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD LoadDllServer, :REFCLSID
-STDMETHOD FreeSurrogate
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	LoadDllServer, :REFCLSID
+	STDMETHOD	FreeSurrogate
 ISurrogateVtbl		ENDS
 LPSURROGATE		typedef ptr ISurrogate
 externdef		IID_ISurrogate:IID
@@ -5044,12 +5044,12 @@ ifndef __IGlobalInterfaceTable_INTERFACE_DEFINED__
 __IGlobalInterfaceTable_INTERFACE_DEFINED__ equ 1
 
 IGlobalInterfaceTable	STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD RegisterInterfaceInGlobal, :ptr, :REFIID, :ptr
-STDMETHOD RevokeInterfaceFromGlobal, :DWORD
-STDMETHOD GetInterfaceFromGlobal, :DWORD, :REFIID, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	RegisterInterfaceInGlobal, :ptr, :REFIID, :ptr
+	STDMETHOD	RevokeInterfaceFromGlobal, :DWORD
+	STDMETHOD	GetInterfaceFromGlobal, :DWORD, :REFIID, :ptr
 IGlobalInterfaceTable	ENDS
 LPGLOBALINTERFACETABLE	typedef ptr IGlobalInterfaceTable
 externdef		IID_IGlobalInterfaceTable:IID
@@ -5102,12 +5102,12 @@ __IDirectWriterLock_INTERFACE_DEFINED__ equ 1
 externdef		IID_IDirectWriterLock:IID
 
 IDirectWriterLock	STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD WaitForWriteAccess, :DWORD
-STDMETHOD ReleaseWriteAccess
-STDMETHOD HaveWriteAccess
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	WaitForWriteAccess, :DWORD
+	STDMETHOD	ReleaseWriteAccess
+	STDMETHOD	HaveWriteAccess
 IDirectWriterLock	ENDS
 
 ;HRESULT
@@ -5152,12 +5152,12 @@ __ISynchronize_INTERFACE_DEFINED__ equ 1
 externdef		IID_ISynchronize:IID
 
 ISynchronize		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD _Wait, :DWORD, :DWORD
-STDMETHOD Signal
-STDMETHOD Reset
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	_Wait, :DWORD, :DWORD
+	STDMETHOD	Signal
+	STDMETHOD	Reset
 ISynchronize		ENDS
 
 ;HRESULT
@@ -5202,13 +5202,13 @@ __ISynchronizeMutex_INTERFACE_DEFINED__ equ 1
 externdef		IID_ISynchronizeMutex:IID
 
 ISynchronizeMutex	STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD _Wait, :DWORD, :DWORD
-STDMETHOD Signal
-STDMETHOD Reset
-STDMETHOD _ReleaseMutex
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	_Wait, :DWORD, :DWORD
+	STDMETHOD	Signal
+	STDMETHOD	Reset
+	STDMETHOD	_ReleaseMutex
 ISynchronizeMutex	ENDS
 
 ;HRESULT
@@ -5230,10 +5230,10 @@ __IAsyncSetup_INTERFACE_DEFINED__ equ 1
 externdef		IID_IAsyncSetup:IID
 
 IAsyncSetup		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetAsyncManager, :REFIID, :ptr, :DWORD, :ptr, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetAsyncManager, :REFIID, :ptr, :DWORD, :ptr, :ptr
 IAsyncSetup		ENDS
 
 ;HRESULT
@@ -5258,11 +5258,11 @@ ifndef __ICancelMethodCalls_INTERFACE_DEFINED__
 __ICancelMethodCalls_INTERFACE_DEFINED__ equ 1
 
 ICancelMethodCallsVtbl	STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD Cancel, :DWORD
-STDMETHOD TestCancel
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	Cancel, :DWORD
+	STDMETHOD	TestCancel
 ICancelMethodCallsVtbl	ENDS
 LPCANCELMETHODCALLS	typedef ptr ICancelMethodCalls
 externdef		IID_ICancelMethodCalls:IID
@@ -5313,12 +5313,12 @@ DCOM_CALL_CANCELED	equ 0x2
 externdef		IID_IAsyncManager:IID
 
 IAsyncManager		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD CompleteCall, :HRESULT
-STDMETHOD GetCallContext, :REFIID, :ptr
-STDMETHOD GetState, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	CompleteCall, :HRESULT
+	STDMETHOD	GetCallContext, :REFIID, :ptr
+	STDMETHOD	GetState, :ptr
 IAsyncManager		ENDS
 
 ;HRESULT
@@ -5366,11 +5366,11 @@ __IWaitMultiple_INTERFACE_DEFINED__ equ 1
 externdef		IID_IWaitMultiple:IID
 
 IWaitMultipleVtbl	STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD WaitMultiple, :DWORD, :ptr
-STDMETHOD AddSynchronize, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	WaitMultiple, :DWORD, :ptr
+	STDMETHOD	AddSynchronize, :ptr
 IWaitMultipleVtbl	ENDS
 
 ;HRESULT
@@ -5405,11 +5405,11 @@ __ISynchronizeEvent_INTERFACE_DEFINED__ equ 1
 externdef		IID_ISynchronizeEvent:IID
 
 ISynchronizeEvent	STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetHandle, :ptr
-STDMETHOD SetEventHandle, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetHandle, :ptr
+	STDMETHOD	SetEventHandle, :ptr
 ISynchronizeEvent	ENDS
 
 ;HRESULT
@@ -5431,10 +5431,10 @@ __IUrlMon_INTERFACE_DEFINED__ equ 1
 externdef		IID_IUrlMon:IID
 
 IUrlMon			STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD AsyncGetClassBits, :REFCLSID, :LPWSTR, :LPWSTR, :DWORD, :DWORD, :LPWSTR, :ptr, :DWORD, :REFIID, :DWORD
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	AsyncGetClassBits, :REFCLSID, :LPWSTR, :LPWSTR, :DWORD, :DWORD, :LPWSTR, :ptr, :DWORD, :REFIID, :DWORD
 IUrlMon			ENDS
 
 ;HRESULT
@@ -5472,12 +5472,12 @@ PUBLISHEDINFOLIST	ENDS
 externdef		IID_IClassAccess:IID
 
 IClassAccess		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetClassInfo, :REFCLSID, :QUERYCONTEXT, :ptr
-STDMETHOD GetClassSpecInfo, :ptr, :QUERYCONTEXT, :ptr
-STDMETHOD GetInstallablePackages, :DWORD, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetClassInfo, :REFCLSID, :QUERYCONTEXT, :ptr
+	STDMETHOD	GetClassSpecInfo, :ptr, :QUERYCONTEXT, :ptr
+	STDMETHOD	GetInstallablePackages, :DWORD, :ptr
 IClassAccess		ENDS
 
 ;HRESULT
@@ -5536,11 +5536,11 @@ PACKAGEINFOLIST		ENDS
 externdef		IID_IClassRefresh:IID
 
 IClassRefresh		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetUpgrades, :ULONG, :ptr, :CSPLATFORM, :LCID, :ptr
-STDMETHOD CommitUpgrades
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetUpgrades, :ULONG, :ptr, :CSPLATFORM, :LCID, :ptr
+	STDMETHOD	CommitUpgrades
 IClassRefresh		ENDS
 
 ;HRESULT
@@ -5598,13 +5598,13 @@ __IEnumPackage_INTERFACE_DEFINED__ equ 1
 externdef		IID_IEnumPackage:IID
 
 IEnumPackage		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD Next, :DWORD, :ptr, :ptr
-STDMETHOD Skip, :DWORD
-STDMETHOD Reset
-STDMETHOD Clone, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	Next, :DWORD, :ptr, :ptr
+	STDMETHOD	Skip, :DWORD
+	STDMETHOD	Reset
+	STDMETHOD	Clone, :ptr
 IEnumPackage		ENDS
 
 ;HRESULT
@@ -5663,13 +5663,13 @@ __IEnumClass_INTERFACE_DEFINED__ equ 1
 externdef		IID_IEnumClass:IID
 
 IEnumClass		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD Next, :DWORD, :ptr, :ptr
-STDMETHOD Skip, :DWORD
-STDMETHOD Reset
-STDMETHOD Clone, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	Next, :DWORD, :ptr, :ptr
+	STDMETHOD	Skip, :DWORD
+	STDMETHOD	Reset
+	STDMETHOD	Clone, :ptr
 IEnumClass		ENDS
 
 ;HRESULT
@@ -5733,20 +5733,20 @@ __IClassAdmin_INTERFACE_DEFINED__ equ 1
 externdef		IID_IClassAdmin:IID
 
 IClassAdmin		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD NewClass, :ptr
-STDMETHOD DeleteClass, :REFCLSID
-STDMETHOD NewInterface, :REFIID, :LPOLESTR, :REFCLSID, :REFCLSID
-STDMETHOD DeleteInterface,:REFIID
-STDMETHOD NewPackage, :ptr
-STDMETHOD DeletePackage, :LPOLESTR
-STDMETHOD GetClassesEnum, :ptr
-STDMETHOD GetPackagesEnum, :REFCLSID, :LPOLESTR, :CSPLATFORM, :DWORD, :LCID, :ptr
-STDMETHOD GetClassDetails, :REFCLSID, :ptr
-STDMETHOD GetIidDetails, :REFIID, :ptr, :ptr, :ptr
-STDMETHOD GetPackageDetails, :LPOLESTR, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	NewClass, :ptr
+	STDMETHOD	DeleteClass, :REFCLSID
+	STDMETHOD	NewInterface, :REFIID, :LPOLESTR, :REFCLSID, :REFCLSID
+	STDMETHOD	DeleteInterface,:REFIID
+	STDMETHOD	NewPackage, :ptr
+	STDMETHOD	DeletePackage, :LPOLESTR
+	STDMETHOD	GetClassesEnum, :ptr
+	STDMETHOD	GetPackagesEnum, :REFCLSID, :LPOLESTR, :CSPLATFORM, :DWORD, :LCID, :ptr
+	STDMETHOD	GetClassDetails, :REFCLSID, :ptr
+	STDMETHOD	GetIidDetails, :REFIID, :ptr, :ptr, :ptr
+	STDMETHOD	GetPackageDetails, :LPOLESTR, :ptr
 IClassAdmin		ENDS
 
 ;HRESULT
@@ -6481,7 +6481,6 @@ IFillLockBytes_FillAt_Stub proto WINAPI \
 		    pv: LPBYTE,
 		    cb: ULONG,
 	    pcbWritten: LPDWORD
-
 
 .list
 endif ; __objidl_h__

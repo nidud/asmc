@@ -32,16 +32,13 @@ __IObjectArray_INTERFACE_DEFINED__ equ 1
 externdef		IID_IObjectArray:IID
 IObjectArray		STRUC
 
-
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	GetCount, :ptr
 	STDMETHOD	GetAt, :UINT, :REFIID, :ptr
 
-
 IObjectArray		ENDS
-
 endif
 
 ifndef __IObjectCollection_INTERFACE_DEFINED__
@@ -49,7 +46,6 @@ __IObjectCollection_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IObjectCollection:IID
 IObjectCollection	STRUC
-
 
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
@@ -61,9 +57,7 @@ IObjectCollection	STRUC
 	STDMETHOD	RemoveObjectAt, :UINT
 	STDMETHOD	Clear
 
-
 IObjectCollection	ENDS
-
 endif
 
 .list

@@ -1,7 +1,7 @@
 ifndef WINTRUST_H
-WINTRUST_H equ 1
-
+WINTRUST_H equ <>
 include wincrypt.inc
+.xlist
 
 ifndef WIN_CERT_REVISION_1_0
 WT_DEFINE_ALL_APIS equ 1
@@ -12,8 +12,10 @@ endif
 ;include pshpack8.inc
 
 WINTRUST_CONFIG_REGPATH			    equ <L"Software\\Microsoft\\Cryptography\\Wintrust\\Config">
+
 WINTRUST_MAX_HEADER_BYTES_TO_MAP_VALUE_NAME equ <L"MaxHeaderBytesToMap">
 WINTRUST_MAX_HEADER_BYTES_TO_MAP_DEFAULT    equ 0x00A00000
+
 WINTRUST_MAX_HASH_BYTES_TO_MAP_VALUE_NAME   equ <L"MaxHashBytesToMap">
 WINTRUST_MAX_HASH_BYTES_TO_MAP_DEFAULT	    equ 0x00100000
 
@@ -54,28 +56,6 @@ WTD_CACHE_ONLY_URL_RETRIEVAL	equ 0x00001000	; affects CRL retrieval and AIA retr
 WTD_UICONTEXT_EXECUTE	equ 0
 WTD_UICONTEXT_INSTALL	equ 1
 
-WINTRUST_DATA		STRUC
-cbStruct		dd ?
-pPolicyCallbackData	PVOID ?
-pSIPClientData		PVOID ?
-dwUIChoice		dd ?
-fdwRevocationChecks	dd ?
-dwUnionChoice		dd ?
-UNION
- pFile			PWINTRUST_FILE_INFO ?
- pCatalog		PWINTRUST_CATALOG_INFO ?
- pBlob			PWINTRUST_BLOB_INFO ?
- pSgnr			PWINTRUST_SGNR_INFO ?
- pCert			PWINTRUST_CERT_INFO ?
-ENDS
-dwStateAction		dd ?
-hWVTStateData		HANDLE ?
-pwszURLReference	LPWCHAR ?
-dwProvFlags		dd ?
-dwUIContext		dd ?
-WINTRUST_DATA		ENDS
-PWINTRUST_DATA		typedef ptr WINTRUST_DATA
-
 WINTRUST_FILE_INFO	STRUC
 cbStruct		dd ?
 pcwszFilePath		LPCWSTR ?
@@ -111,9 +91,9 @@ PWINTRUST_BLOB_INFO	typedef ptr WINTRUST_BLOB_INFO
 WINTRUST_SGNR_INFO	STRUC
 cbStruct		dd ?
 pcwszDisplayName	LPCWSTR ?
-psSignerInfo		LPCMSG_SIGNER_INFO ?
+psSignerInfo		PCMSG_SIGNER_INFO ?
 chStores		dd ?
-pahStores		LPHCERTSTORE ?
+pahStores		HCERTSTORE ?
 WINTRUST_SGNR_INFO	ENDS
 PWINTRUST_SGNR_INFO	typedef ptr WINTRUST_SGNR_INFO
 
@@ -124,13 +104,35 @@ WTCI_USE_LOCAL_MACHINE	equ 0x00000004	; Local machine context
 WINTRUST_CERT_INFO	STRUC
 cbStruct		dd ?
 pcwszDisplayName	LPCWSTR ?
-psCertContext		LPCERT_CONTEXT ?
+psCertContext		PCERT_CONTEXT ?
 chStores		dd ?
-pahStores		LPHCERTSTORE ?
+pahStores		HCERTSTORE ?
 dwFlags			dd ?
 psftVerifyAsOf		LPFILETIME ?
 WINTRUST_CERT_INFO	ENDS
 PWINTRUST_CERT_INFO	typedef ptr WINTRUST_CERT_INFO
+
+WINTRUST_DATA		STRUC
+cbStruct		dd ?
+pPolicyCallbackData	PVOID ?
+pSIPClientData		PVOID ?
+dwUIChoice		dd ?
+fdwRevocationChecks	dd ?
+dwUnionChoice		dd ?
+UNION
+ pFile			PWINTRUST_FILE_INFO ?
+ pCatalog		PWINTRUST_CATALOG_INFO ?
+ pBlob			PWINTRUST_BLOB_INFO ?
+ pSgnr			PWINTRUST_SGNR_INFO ?
+ pCert			PWINTRUST_CERT_INFO ?
+ENDS
+dwStateAction		dd ?
+hWVTStateData		HANDLE ?
+pwszURLReference	LPWSTR ?
+dwProvFlags		dd ?
+dwUIContext		dd ?
+WINTRUST_DATA		ENDS
+PWINTRUST_DATA		typedef ptr WINTRUST_DATA
 
 ;include <poppack.h>
 
@@ -142,7 +144,7 @@ WinVerifyTrust proto WINAPI \
 WinVerifyTrustEx proto WINAPI \
 		  hwnd: HWND,
 	    pgActionID: ptr GUID,
-	 pWinTrustData: LPWINTRUST_DATA
+	 pWinTrustData: PWINTRUST_DATA
 
 WTPF_TRUSTTEST		equ 0x00000020
 WTPF_TESTCANBEVALID	equ 0x00000080
@@ -250,9 +252,18 @@ CPD_UISTATE_MODE_BLOCK			equ 0x00000001
 CPD_UISTATE_MODE_ALLOW			equ 0x00000002
 CPD_UISTATE_MODE_MASK			equ 0x00000003
 
+PCRYPT_PROVIDER_FUNCTIONS typedef ptr CRYPT_PROVIDER_FUNCTIONS
+PCRYPT_PROVIDER_SGNR	typedef ptr CRYPT_PROVIDER_SGNR
+PCRYPT_PROVIDER_PRIVDATA typedef ptr CRYPT_PROVIDER_PRIVDATA
+PPROVDATA_SIP		typedef ptr PROVDATA_SIP
+PCERT_USAGE_MATCH	typedef ptr CERT_USAGE_MATCH
+PCRYPT_PROVUI_FUNCS	typedef ptr CRYPT_PROVUI_FUNCS
+PCRYPT_PROVIDER_CERT	typedef ptr CRYPT_PROVIDER_CERT
+PCRYPT_PROVUI_DATA	typedef ptr CRYPT_PROVUI_DATA
+
 CRYPT_PROVIDER_DATA	STRUC
 cbStruct		dd ?
-pWintrustData		LPWINTRUST_DATA ?
+pWintrustData		PWINTRUST_DATA ?
 fOpenedFile		BOOL ?
 hWndParent		HWND ?
 pgActionID		LPGUID ?
@@ -264,7 +275,7 @@ psPfns			PCRYPT_PROVIDER_FUNCTIONS ?
 cdwTrustStepErrors	dd ?
 padwTrustStepErrors	LPDWORD ?
 chStores		dd ?
-pahStores		LPHCERTSTORE ?
+pahStores		HCERTSTORE ?
 dwEncoding		dd ?
 hMsg			HCRYPTMSG ?
 csSigners		dd ?
@@ -287,6 +298,9 @@ dwUIStateFlags		dd ?
 CRYPT_PROVIDER_DATA	ENDS
 PCRYPT_PROVIDER_DATA	typedef ptr CRYPT_PROVIDER_DATA
 
+;BOOL
+CALLBACK(PFN_PROVUI_CALL, :HWND, pProvData:ptr CRYPT_PROVIDER_DATA)
+
 CRYPT_PROVIDER_FUNCTIONS STRUC
 cbStruct		dd ?
 pfnAlloc		PFN_CPD_MEM_ALLOC ?
@@ -305,10 +319,6 @@ pfnTestFinalPolicy	PFN_PROVIDER_TESTFINALPOLICY_CALL ?
 psUIpfns		PCRYPT_PROVUI_FUNCS ?
 pfnCleanupPolicy	PFN_PROVIDER_CLEANUP_CALL ?
 CRYPT_PROVIDER_FUNCTIONS ENDS
-PCRYPT_PROVIDER_FUNCTIONS typedef ptr CRYPT_PROVIDER_FUNCTIONS
-
-;BOOL
-CALLBACK(PFN_PROVUI_CALL, :HWND, pProvData:ptr CRYPT_PROVIDER_DATA)
 
 CRYPT_PROVUI_FUNCS	STRUC
 cbStruct		dd ?
@@ -318,20 +328,18 @@ pfnOnMoreInfoClickDefault PFN_PROVUI_CALL ?
 pfnOnAdvancedClick	PFN_PROVUI_CALL ?
 pfnOnAdvancedClickDefault PFN_PROVUI_CALL ?
 CRYPT_PROVUI_FUNCS	ENDS
-PCRYPT_PROVUI_FUNCS	typedef ptr CRYPT_PROVUI_FUNCS
 
 CRYPT_PROVUI_DATA	STRUC
 cbStruct		dd ?
 dwFinalError		dd ?
-pYesButtonText		LPWCHAR ?
-pNoButtonText		LPWCHAR ?
-pMoreInfoButtonText	LPWCHAR ?
-pAdvancedLinkText	LPWCHAR ?
-pCopyActionText		LPWCHAR ?
-pCopyActionTextNoTS	LPWCHAR ?
-pCopyActionTextNotSigned LPWCHAR ?
+pYesButtonText		LPWSTR ?
+pNoButtonText		LPWSTR ?
+pMoreInfoButtonText	LPWSTR ?
+pAdvancedLinkText	LPWSTR ?
+pCopyActionText		LPWSTR ?
+pCopyActionTextNoTS	LPWSTR ?
+pCopyActionTextNotSigned LPWSTR ?
 CRYPT_PROVUI_DATA	ENDS
-PCRYPT_PROVUI_DATA	typedef ptr CRYPT_PROVUI_DATA
 
 SGNR_TYPE_TIMESTAMP	equ 0x00000010
 
@@ -341,13 +349,12 @@ sftVerifyAsOf		FILETIME <>
 csCertChain		dd ?
 pasCertChain		PCRYPT_PROVIDER_CERT ?
 dwSignerType		dd ?
-psSigner		LPCMSG_SIGNER_INFO ?
+psSigner		PCMSG_SIGNER_INFO ?
 dwError			dd ?
 csCounterSigners	dd ?
 pasCounterSigners	PCRYPT_PROVIDER_SGNR ?
 pChainContext		PCCERT_CHAIN_CONTEXT ?
 CRYPT_PROVIDER_SGNR	ENDS
-PCRYPT_PROVIDER_SGNR	typedef ptr CRYPT_PROVIDER_SGNR
 
 CERT_CONFIDENCE_SIG	equ 0x10000000	; this cert
 CERT_CONFIDENCE_TIME	equ 0x01000000	; issuer cert
@@ -366,14 +373,13 @@ fTestCert		BOOL ?
 dwRevokedReason		dd ?
 dwConfidence		dd ?
 dwError			dd ?
-pTrustListContext	LPCTL_CONTEXT ?
+pTrustListContext	PCTL_CONTEXT ?
 fTrustListSignerCert	BOOL ?
 pCtlContext		PCCTL_CONTEXT ?
 dwCtlError		dd ?
 fIsCyclic		BOOL ?
 pChainElement		PCERT_CHAIN_ELEMENT ?
 CRYPT_PROVIDER_CERT	ENDS
-PCRYPT_PROVIDER_CERT	typedef ptr CRYPT_PROVIDER_CERT
 
 CRYPT_PROVIDER_PRIVDATA STRUC
 cbStruct		dd ?
@@ -381,38 +387,36 @@ gProviderID		GUID <>
 cbProvData		dd ?
 pvProvData		PVOID ?
 CRYPT_PROVIDER_PRIVDATA ENDS
-PCRYPT_PROVIDER_PRIVDATA typedef ptr CRYPT_PROVIDER_PRIVDATA
 
 PROVDATA_SIP		STRUC
 cbStruct		dd ?
 gSubject		GUID <>
-pSip			PSIP_DISPATCH_INFO ?
-pCATSip			PSIP_DISPATCH_INFO ?
-psSipSubjectInfo	PSIP_SUBJECTINFO ?
-psSipCATSubjectInfo	PSIP_SUBJECTINFO ?
-psIndirectData		PSIP_INDIRECT_DATA ?
+pSip			PVOID ?;PSIP_DISPATCH_INFO ?
+pCATSip			PVOID ?;PSIP_DISPATCH_INFO ?
+psSipSubjectInfo	PVOID ?;PSIP_SUBJECTINFO ?
+psSipCATSubjectInfo	PVOID ?;PSIP_SUBJECTINFO ?
+psIndirectData		PVOID ?;PSIP_INDIRECT_DATA ?
 PROVDATA_SIP		ENDS
-PPROVDATA_SIP		typedef ptr PROVDATA_SIP
 
 WT_CURRENT_VERSION	equ 0x00000200
 
 CRYPT_TRUST_REG_ENTRY	STRUC
 cbStruct		dd ?
-pwszDLLName		LPWCHAR ?
-pwszFunctionName	LPWCHAR ?
+pwszDLLName		LPWSTR ?
+pwszFunctionName	LPWSTR ?
 CRYPT_TRUST_REG_ENTRY	ENDS
 PCRYPT_TRUST_REG_ENTRY	typedef ptr CRYPT_TRUST_REG_ENTRY
 
 CRYPT_REGISTER_ACTIONID STRUC
 cbStruct		dd ?
-sInitProvider		CRYPT_TRUST_REG_ENTRY ?
-sObjectProvider		CRYPT_TRUST_REG_ENTRY ?
-sSignatureProvider	CRYPT_TRUST_REG_ENTRY ?
-sCertificateProvider	CRYPT_TRUST_REG_ENTRY ?
-sCertificatePolicyProvider CRYPT_TRUST_REG_ENTRY ?
-sFinalPolicyProvider	CRYPT_TRUST_REG_ENTRY ?
-sTestPolicyProvider	CRYPT_TRUST_REG_ENTRY ?
-sCleanupProvider	CRYPT_TRUST_REG_ENTRY ?
+sInitProvider		CRYPT_TRUST_REG_ENTRY <>
+sObjectProvider		CRYPT_TRUST_REG_ENTRY <>
+sSignatureProvider	CRYPT_TRUST_REG_ENTRY <>
+sCertificateProvider	CRYPT_TRUST_REG_ENTRY <>
+sCertificatePolicyProvider CRYPT_TRUST_REG_ENTRY <>
+sFinalPolicyProvider	CRYPT_TRUST_REG_ENTRY <>
+sTestPolicyProvider	CRYPT_TRUST_REG_ENTRY <>
+sCleanupProvider	CRYPT_TRUST_REG_ENTRY <>
 CRYPT_REGISTER_ACTIONID ENDS
 PCRYPT_REGISTER_ACTIONID typedef ptr CRYPT_REGISTER_ACTIONID
 
@@ -426,7 +430,7 @@ CALLBACK(PFN_FREEDEFUSAGE, pszUsageOID:LPSTR, psDefUsage:ptr CRYPT_PROVIDER_DEFU
 CRYPT_PROVIDER_REGDEFUSAGE STRUC
 cbStruct		dd ?
 pgActionID		LPGUID ?
-pwszDllName		LPWCHAR ?
+pwszDllName		LPWSTR ?
 pwszLoadCallbackDataFunctionName LPSTR ?
 pwszFreeCallbackDataFunctionName LPSTR ?
 CRYPT_PROVIDER_REGDEFUSAGE ENDS
@@ -472,39 +476,39 @@ DWACTION_ALLOCANDFILL	equ 1
 DWACTION_FREE		equ 2
 
 ;BOOL
-WintrustGetDefaultForUsage
+WintrustGetDefaultForUsage proto WINAPI \
 	    dwActionID: DWORD,
 	   pszUsageOID: LPSTR,
 	       psUsage: ptr CRYPT_PROVIDER_DEFUSAGE
 
 ;CRYPT_PROVIDER_SGNR *
-WTHelperGetProvSignerFromChain
+WTHelperGetProvSignerFromChain proto WINAPI \
 	     pProvData: ptr CRYPT_PROVIDER_DATA,
 	     idxSigner: DWORD,
 	fCounterSigner: BOOL,
       idxCounterSigner: DWORD
 
 ;CRYPT_PROVIDER_CERT *
-WTHelperGetProvCertFromChain
+WTHelperGetProvCertFromChain proto WINAPI \
 		 pSgnr: ptr CRYPT_PROVIDER_SGNR,
 	       idxCert: DWORD
 
 ;CRYPT_PROVIDER_DATA *
-WTHelperProvDataFromStateData
+WTHelperProvDataFromStateData proto WINAPI \
 	    hStateData: HANDLE
 
 ;CRYPT_PROVIDER_PRIVDATA *
-WTHelperGetProvPrivateDataFromChain
+WTHelperGetProvPrivateDataFromChain proto WINAPI \
 	     pProvData: ptr CRYPT_PROVIDER_DATA,
 	  pgProviderID: ptr GUID
 
 ;BOOL
-WTHelperCertIsSelfSigned
+WTHelperCertIsSelfSigned proto WINAPI \
 	    dwEncoding: DWORD,
 		 pCert: ptr CERT_INFO
 
 ;HRESULT
-WTHelperCertCheckValidSignature
+WTHelperCertCheckValidSignature proto WINAPI \
 	     pProvData: ptr CRYPT_PROVIDER_DATA
 
 ;include <pshpack8.h>
@@ -565,7 +569,7 @@ SerializedData		CRYPT_DATA_BLOB <>
 SPC_SERIALIZED_OBJECT	ENDS
 PSPC_SERIALIZED_OBJECT	typedef ptr SPC_SERIALIZED_OBJECT
 
-SPC_SIGINFO_		STRUC
+SPC_SIGINFO		STRUC
 dwSipVersion		dd ?
 gSIPGuid		GUID <>
 dwReserved1		dd ?
@@ -590,15 +594,15 @@ SPC_LINK		ENDS
 PSPC_LINK		typedef ptr SPC_LINK
 
 SPC_PE_IMAGE_DATA	STRUC
-Flags			CRYPT_BIT_BLOB ?
+Flags			CRYPT_BIT_BLOB <>
 pFile			PSPC_LINK ?
 SPC_PE_IMAGE_DATA	ENDS
 PSPC_PE_IMAGE_DATA	typedef ptr SPC_PE_IMAGE_DATA
 
 SPC_INDIRECT_DATA_CONTENT STRUC
-_Data			CRYPT_ATTRIBUTE_TYPE_VALUE ?
-DigestAlgorithm		CRYPT_ALGORITHM_IDENTIFIER ?
-Digest			CRYPT_HASH_BLOB ?
+_Data			CRYPT_ATTRIBUTE_TYPE_VALUE <>
+DigestAlgorithm		CRYPT_ALGORITHM_IDENTIFIER <>
+Digest			CRYPT_HASH_BLOB <>
 SPC_INDIRECT_DATA_CONTENT ENDS
 PSPC_INDIRECT_DATA_CONTENT typedef ptr SPC_INDIRECT_DATA_CONTENT
 
@@ -610,10 +614,10 @@ PSPC_FINANCIAL_CRITERIA typedef ptr SPC_FINANCIAL_CRITERIA
 
 SPC_IMAGE		STRUC
 pImageLink		PSPC_LINK ?
-Bitmap			CRYPT_DATA_BLOB ?
-Metafile		CRYPT_DATA_BLOB ?
-EnhancedMetafile	CRYPT_DATA_BLOB ?
-GifFile			CRYPT_DATA_BLOB ?
+Bitmap			CRYPT_DATA_BLOB <>
+Metafile		CRYPT_DATA_BLOB <>
+EnhancedMetafile	CRYPT_DATA_BLOB <>
+GifFile			CRYPT_DATA_BLOB <>
 SPC_IMAGE		ENDS
 PSPC_IMAGE		typedef ptr SPC_IMAGE
 
@@ -627,8 +631,7 @@ PSPC_SP_AGENCY_INFO	typedef ptr SPC_SP_AGENCY_INFO
 
 SPC_STATEMENT_TYPE	STRUC
 cKeyPurposeId		dd ?
-rgpszKeyPurposeId	LPLPSTR ?
-
+rgpszKeyPurposeId	LPSTR ?
 SPC_STATEMENT_TYPE	ENDS
 PSPC_STATEMENT_TYPE	typedef ptr SPC_STATEMENT_TYPE
 
@@ -642,7 +645,7 @@ PSPC_SP_OPUS_INFO	typedef ptr SPC_SP_OPUS_INFO
 CAT_NAMEVALUE		STRUC
 pwszTag			LPWSTR ?
 fdwFlags		dd ?
-Value			CRYPT_DATA_BLOB ?
+Value			CRYPT_DATA_BLOB <>
 CAT_NAMEVALUE		ENDS
 PCAT_NAMEVALUE		typedef ptr CAT_NAMEVALUE
 
@@ -688,14 +691,10 @@ Subject			WIN_TRUST_SUBJECT ?
 WIN_TRUST_ACTDATA_SUBJECT_ONLY ENDS
 LPWIN_TRUST_ACTDATA_SUBJECT_ONLY typedef ptr WIN_TRUST_ACTDATA_SUBJECT_ONLY
 
-WIN_TRUST_SUBJTYPE_RAW_FILE equ \
-<{0x959dc450,0x8d9e,0x11cf,{0x87,0x36,0x00,0xaa,0x00,0xa4,0x85,0xeb}}>
-WIN_TRUST_SUBJTYPE_PE_IMAGE equ \
-<{0x43c9a1e0,0x8da0,0x11cf,{0x87,0x36,0x00,0xaa,0x00,0xa4,0x85,0xeb}}>
-WIN_TRUST_SUBJTYPE_JAVA_CLASS equ \
-<{0x08ad3990,0x8da1,0x11cf,{0x87,0x36,0x00,0xaa,0x00,0xa4,0x85,0xeb}}>
-WIN_TRUST_SUBJTYPE_CABINET equ \
-<{0xd17c5374,0xa392,0x11cf,{0x9d,0xf5,0x00,0xaa,0x00,0xc1,0x84,0xe0}}>
+WIN_TRUST_SUBJTYPE_RAW_FILE   equ <{0x959dc450,0x8d9e,0x11cf,{0x87,0x36,0x00,0xaa,0x00,0xa4,0x85,0xeb}}>
+WIN_TRUST_SUBJTYPE_PE_IMAGE   equ <{0x43c9a1e0,0x8da0,0x11cf,{0x87,0x36,0x00,0xaa,0x00,0xa4,0x85,0xeb}}>
+WIN_TRUST_SUBJTYPE_JAVA_CLASS equ <{0x08ad3990,0x8da1,0x11cf,{0x87,0x36,0x00,0xaa,0x00,0xa4,0x85,0xeb}}>
+WIN_TRUST_SUBJTYPE_CABINET    equ <{0xd17c5374,0xa392,0x11cf,{0x9d,0xf5,0x00,0xaa,0x00,0xc1,0x84,0xe0}}>
 
 WIN_TRUST_SUBJECT_FILE	STRUC
 hFile			HANDLE ?
@@ -703,14 +702,10 @@ lpPath			LPCWSTR ?
 WIN_TRUST_SUBJECT_FILE	ENDS
 LPWIN_TRUST_SUBJECT_FILE typedef ptr WIN_TRUST_SUBJECT_FILE
 
-WIN_TRUST_SUBJTYPE_RAW_FILEEX equ \
-<{0x6f458110,0xc2f1,0x11cf,{0x8a,0x69,0x0,0xaa,0x0,0x6c,0x37,0x6}}>
-WIN_TRUST_SUBJTYPE_PE_IMAGEEX equ \
-<{0x6f458111,0xc2f1,0x11cf,{0x8a,0x69,0x0,0xaa,0x0,0x6c,0x37,0x6}}>
-WIN_TRUST_SUBJTYPE_JAVA_CLASSEX equ \
-<{0x6f458113,0xc2f1,0x11cf,{0x8a,0x69,0x0,0xaa,0x0,0x6c,0x37,0x6}}>
-WIN_TRUST_SUBJTYPE_CABINETEX equ \
-<{0x6f458114,0xc2f1,0x11cf,{0x8a,0x69,0x0,0xaa,0x0,0x6c,0x37,0x6}}>
+WIN_TRUST_SUBJTYPE_RAW_FILEEX	equ <{0x6f458110,0xc2f1,0x11cf,{0x8a,0x69,0x0,0xaa,0x0,0x6c,0x37,0x6}}>
+WIN_TRUST_SUBJTYPE_PE_IMAGEEX	equ <{0x6f458111,0xc2f1,0x11cf,{0x8a,0x69,0x0,0xaa,0x0,0x6c,0x37,0x6}}>
+WIN_TRUST_SUBJTYPE_JAVA_CLASSEX equ <{0x6f458113,0xc2f1,0x11cf,{0x8a,0x69,0x0,0xaa,0x0,0x6c,0x37,0x6}}>
+WIN_TRUST_SUBJTYPE_CABINETEX	equ <{0x6f458114,0xc2f1,0x11cf,{0x8a,0x69,0x0,0xaa,0x0,0x6c,0x37,0x6}}>
 
 WIN_TRUST_SUBJECT_FILE_AND_DISPLAY STRUC
 hFile			HANDLE ?
@@ -719,14 +714,10 @@ lpDisplayName		LPCWSTR ?
 WIN_TRUST_SUBJECT_FILE_AND_DISPLAY ENDS
 LPWIN_TRUST_SUBJECT_FILE_AND_DISPLAY typedef ptr WIN_TRUST_SUBJECT_FILE_AND_DISPLAY
 
-WIN_TRUST_SUBJTYPE_OLE_STORAGE equ \
-<{0xc257e740,0x8da0,0x11cf,{0x87,0x36,0x00,0xaa,0x00,0xa4,0x85,0xeb}}>
-WIN_SPUB_ACTION_TRUSTED_PUBLISHER equ \
-<{0x66426730,0x8da1,0x11cf,{0x87,0x36,0x00,0xaa,0x00,0xa4,0x85,0xeb}}>
-WIN_SPUB_ACTION_NT_ACTIVATE_IMAGE equ \
-<{0x8bc96b00,0x8da1,0x11cf,{0x87,0x36,0x00,0xaa,0x00,0xa4,0x85,0xeb}}>
-WIN_SPUB_ACTION_PUBLISHED_SOFTWARE equ \
-<{0x64b9d180,0x8da2,0x11cf,{0x87,0x36,0x00,0xaa,0x00,0xa4,0x85,0xeb}}>
+WIN_TRUST_SUBJTYPE_OLE_STORAGE	   equ <{0xc257e740,0x8da0,0x11cf,{0x87,0x36,0x00,0xaa,0x00,0xa4,0x85,0xeb}}>
+WIN_SPUB_ACTION_TRUSTED_PUBLISHER  equ <{0x66426730,0x8da1,0x11cf,{0x87,0x36,0x00,0xaa,0x00,0xa4,0x85,0xeb}}>
+WIN_SPUB_ACTION_NT_ACTIVATE_IMAGE  equ <{0x8bc96b00,0x8da1,0x11cf,{0x87,0x36,0x00,0xaa,0x00,0xa4,0x85,0xeb}}>
+WIN_SPUB_ACTION_PUBLISHED_SOFTWARE equ <{0x64b9d180,0x8da2,0x11cf,{0x87,0x36,0x00,0xaa,0x00,0xa4,0x85,0xeb}}>
 
 WIN_SPUB_TRUSTED_PUBLISHER_DATA STRUC
 hClientToken		HANDLE ?
@@ -747,4 +738,5 @@ WT_TRUSTDBDIALOG_ONLY_PUB_TAB_FLAG	equ 0x00000002
 WT_TRUSTDBDIALOG_WRITE_LEGACY_REG_FLAG	equ 0x00000100
 WT_TRUSTDBDIALOG_WRITE_IEAK_STORE_FLAG	equ 0x00000200
 
+.list
 endif

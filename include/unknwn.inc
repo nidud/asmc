@@ -60,7 +60,7 @@ IUnknown_AddRef_Stub proto WINAPI \
 
 ;ULONG
 IUnknown_Release_Proxy proto WINAPI \
-		 _This: ptr,;IUnknown
+		 _This: ptr ;IUnknown
 
 
 ;void

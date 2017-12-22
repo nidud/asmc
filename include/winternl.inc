@@ -6,11 +6,6 @@ include windef.inc
 
 option fieldalign:8
 
-;;
-;; These data structures and type definitions are needed for compilation and
-;; use of the internal Windows APIs defined in this header.
-;;
-
 ;typedef __success(return >= 0) LONG NTSTATUS;
 
 NTSTATUS	typedef sdword
@@ -39,35 +34,6 @@ UNICODE_STRING	ENDS
 PUNICODE_STRING typedef ptr UNICODE_STRING
 PCUNICODE_STRING typedef ptr UNICODE_STRING
 
-;;
-;; The PEB_LDR_DATA, LDR_DATA_TABLE_ENTRY, RTL_USER_PROCESS_PARAMETERS, PEB
-;; and TEB structures are subject to changes between Windows releases; thus,
-;; the field offsets and reserved fields may change. The reserved fields are
-;; reserved for use only by the Windows operating systems. Do not assume a
-;; maximum size for these structures.
-;;
-;; Instead of using the InMemoryOrderModuleList field of the
-;;     LDR_DATA_TABLE_ENTRY structure, use the Win32 API EnumProcessModules
-;;
-;; Instead of using the IsBeingDebugged field of the PEB structure, use the
-;;     Win32 APIs IsDebuggerPresent or CheckRemoteDebuggerPresent
-;;
-;; Instead of using the SessionId field of the PEB structure, use the Win32
-;;     APIs GetCurrentProcessId and ProcessIdToSessionId
-;;
-;; Instead of using the Tls fields of the TEB structure, use the Win32 APIs
-;;     TlsAlloc, TlsGetValue, TlsSetValue and TlsFree
-;;
-;; Instead of using the ReservedForOle field, use the COM API
-;;     CoGetContextToken
-;;
-;; Sample x86 assembly code that gets the SessionId (subject to change
-;;     between Windows releases, use the Win32 APIs to make your application
-;;     resilient to changes)
-;;     mov     eax,fs:[00000018]
-;;     mov     eax,[eax+0x30]
-;;     mov     eax,[eax+0x1d4]
-;;
 
 PEB_LDR_DATA		STRUC
 Reserved1		BYTE 8 dup(?)
@@ -125,7 +91,7 @@ Reserved2		PVOID 412 dup(?)
 TlsSlots		PVOID 64 dup(?)
 Reserved3		BYTE 8 dup(?)
 Reserved4		PVOID 26 dup(?)
-ReservedForOle		PVOID ? ;; Windows 2000 only
+ReservedForOle		PVOID ?
 Reserved5		PVOID 4 dup(?)
 TlsExpansionSlots	PVOID ?
 TEB			ENDS
@@ -245,49 +211,31 @@ SystemExceptionInformation	equ 33
 SystemRegistryQuotaInformation	equ 37
 SystemLookasideInformation	equ 45
 
-;;
-;; Object Information Classes
-;;
 
 OBJECT_INFORMATION_CLASS	typedef sdword
 ObjectBasicInformation		equ 0
 ObjectTypeInformation		equ 2
 
-;;
-;;  Public Object Information definitions
-;;
 
 PUBLIC_OBJECT_BASIC_INFORMATION STRUC
 Attributes		ULONG ?
 GrantedAccess		ACCESS_MASK ?
 HandleCount		ULONG ?
 PointerCount		ULONG ?
-Reserved		ULONG 10 dup(?) ;; reserved for internal use
+Reserved		ULONG 10 dup(?)
 PUBLIC_OBJECT_BASIC_INFORMATION ENDS
 PPUBLIC_OBJECT_BASIC_INFORMATION typedef ptr PUBLIC_OBJECT_BASIC_INFORMATION
 
 PUBLIC_OBJECT_TYPE_INFORMATION	STRUC
 TypeName		UNICODE_STRING <>
-Reserved		ULONG 22 dup(?)	 ;; reserved for internal use
+Reserved		ULONG 22 dup(?)
 PUBLIC_OBJECT_TYPE_INFORMATION	ENDS
 PPUBLIC_OBJECT_TYPE_INFORMATION typedef ptr PUBLIC_OBJECT_TYPE_INFORMATION
 
 if (_WIN32_WINNT ge 0x0501)
-;;
-;; use the WTS API instead
-;;     WTSGetActiveConsoleSessionId
-;; The active console id is cached as a volatile ULONG in a constant
-;; memory location.  This x86 memory location is subject to changes between
-;; Windows releases.  Use the WTS API to make your application resilient to
-;; changes.
-;;
 ;INTERNAL_TS_ACTIVE_CONSOLE_ID equ ( *((volatile ULONG*)(0x7ffe02d8)) )
-endif ;; (_WIN32_WINNT >= 0x0501)
+endif
 
-;;
-;; These functions are intended for use by internal core Windows components
-;; since these functions may change between Windows releases.
-;;
 
 RtlMoveMemory equ <memmove>
 RtlFillMemory macro Destination, _Length, Fill
@@ -297,18 +245,10 @@ RtlZeroMemory macro Destination, _Length
 	exitm<memset(Destination, 0, _Length)>
 	endm
 
-;;
-;; use the Win32 API instead
-;;     CloseHandle
-;;
-;__kernel_entry NTSTATUS NTAPI
+;NTSTATUS NTAPI
 NtClose proto WINAPI Handle:HANDLE
 
-;;
-;; use the Win32 API instead
-;;     CreateFile
-;;
-;__kernel_entry NTSTATUS NTAPI
+;NTSTATUS NTAPI
 NtCreateFile proto WINAPI \
 	    FileHandle: PHANDLE,
 	 DesiredAccess: ACCESS_MASK,
@@ -322,11 +262,7 @@ NtCreateFile proto WINAPI \
 	      EaBuffer: PVOID,
 	      EaLength: ULONG
 
-;;
-;; use the Win32 API instead
-;;     CreateFile
-;;
-;__kernel_entry NTSTATUS NTAPI
+;NTSTATUS NTAPI
 NtOpenFile proto WINAPI \
 	    FileHandle: PHANDLE,
 	 DesiredAccess: ACCESS_MASK,
@@ -335,11 +271,7 @@ NtOpenFile proto WINAPI \
 	   ShareAccess: ULONG,
 	   OpenOptions: ULONG
 
-;;
-;; use the Win32 API instead
-;;     DeviceIoControl
-;;
-;__kernel_entry NTSTATUS NTAPI
+;NTSTATUS NTAPI
 NtDeviceIoControlFile proto WINAPI \
 	    FileHandle: HANDLE,
 		 Event: HANDLE,
@@ -352,38 +284,21 @@ NtDeviceIoControlFile proto WINAPI \
 	  OutputBuffer: PVOID,
     OutputBufferLength: ULONG
 
-;;
-;; use the Win32 API instead
-;;     WaitForSingleObjectEx
-;;
 ;NTSTATUS NTAPI
 NtWaitForSingleObject proto WINAPI \
 		Handle: HANDLE,
 	     Alertable: BOOLEAN,
 	       Timeout: PLARGE_INTEGER
 
-;;
-;; use the Win32 API instead
-;;     CheckNameLegalDOS8Dot3
-;;
 ;BOOLEAN NTAPI
 RtlIsNameLegalDOS8Dot3 proto WINAPI \
 		 _Name: PUNICODE_STRING,
 	       OemName: POEM_STRING,
     NameContainsSpaces: PBOOLEAN
 
-;;
-;; This function might be needed for some of the internal Windows functions,
-;; defined in this header file.
-;;
 ;ULONG NTAPI
 RtlNtStatusToDosError proto WINAPI Status:NTSTATUS
 
-;;
-;; use the Win32 APIs instead
-;;     GetProcessHandleCount
-;;     GetProcessId
-;;
 ;__kernel_entry NTSTATUS NTAPI
 NtQueryInformationProcess proto WINAPI \
 	 ProcessHandle: HANDLE,
@@ -392,10 +307,6 @@ ProcessInformationClass: PROCESSINFOCLASS,
 ProcessInformationLength: ULONG,
 	  ReturnLength: PULONG
 
-;;
-;; use the Win32 API instead
-;;     GetThreadIOPendingFlag
-;;
 ;__kernel_entry NTSTATUS NTAPI
 NtQueryInformationThread proto WINAPI \
 	  ThreadHandle: HANDLE,
@@ -404,13 +315,6 @@ ThreadInformationClass: THREADINFOCLASS,
 ThreadInformationLength: ULONG,
 	  ReturnLength: PULONG
 
-;;
-;; use the Win32 APIs instead
-;;     GetFileInformationByHandle
-;;     GetFileInformationByHandleEx
-;;     GetProcessInformation
-;;     GetThreadInformation
-;;
 
 ;__kernel_entry NTSYSCALLAPI NTSTATUS NTAPI
 NtQueryObject proto WINAPI \
@@ -421,13 +325,6 @@ ObjectInformationLength: ULONG,
 	  ReturnLength: PULONG
 
 
-;;
-;; use the Win32 APIs instead
-;;     GetSystemRegistryQuota
-;;     GetSystemTimes
-;; use the CryptoAPIs instead for generating random data
-;;     CryptGenRandom
-;;
 ;__kernel_entry NTSTATUS NTAPI
 NtQuerySystemInformation proto WINAPI \
 SystemInformationClass: SYSTEM_INFORMATION_CLASS,
@@ -435,37 +332,19 @@ SystemInformationClass: SYSTEM_INFORMATION_CLASS,
 SystemInformationLength: ULONG,
 	  ReturnLength: PULONG
 
-;;
-;; use the Win32 API instead
-;;     GetSystemTimeAsFileTime
-;;
 ;__kernel_entry NTSTATUS NTAPI
 NtQuerySystemTime proto WINAPI SystemTime:PLARGE_INTEGER
 
-;;
-;; use the Win32 API instead
-;;     LocalFileTimeToFileTime
-;;
 ;NTSTATUS NTAPI
 RtlLocalTimeToSystemTime proto WINAPI \
 	     LocalTime: PLARGE_INTEGER,
 	    SystemTime: PLARGE_INTEGER
 
-;;
-;; use the Win32 API instead
-;;     SystemTimeToFileTime to convert to FILETIME structures
-;;     copy the resulting FILETIME structures to ULARGE_INTEGER structures
-;;     perform the calculation
-;;
 ;BOOLEAN NTAPI
 RtlTimeToSecondsSince1970 proto WINAPI \
 		  Time: PLARGE_INTEGER,
 	ElapsedSeconds: PULONG
 
-;;
-;; These APIs might be need for some of the internal Windows functions,
-;; defined in this header file.
-;;
 ;VOID NTAPI
 RtlFreeAnsiString proto WINAPI AnsiString:PANSI_STRING
 
@@ -502,29 +381,15 @@ RtlUnicodeStringToOemString proto WINAPI \
 	  SourceString: PCUNICODE_STRING,
 AllocateDestinationString: BOOLEAN
 
-;;
-;; Use the Win32 API instead
-;;     WideCharToMultiByte
-;;     set CodePage to CP_ACP
-;;     set cbMultiByte to 0
-;;
 ;NTSTATUS NTAPI
 RtlUnicodeToMultiByteSize proto WINAPI \
 BytesInMultiByteString: PULONG,
 	 UnicodeString: PWCH,
   BytesInUnicodeString: ULONG
 
-;;
-;; Use the C runtime function instead
-;;     strtol
-;;
 ;NTSTATUS NTAPI
 RtlCharToInteger proto WINAPI String:PCSZ, Base:ULONG, Value:PULONG
 
-;;
-;; use the Win32 API instead
-;;     ConvertSidToStringSid
-;;
 ;NTSTATUS
 ;NTAPI
 RtlConvertSidToUnicodeString proto WINAPI \
@@ -532,10 +397,6 @@ RtlConvertSidToUnicodeString proto WINAPI \
 		   Sid: PSID,
 AllocateDestinationString: BOOLEAN
 
-;;
-;; use the CryptoAPIs instead
-;;     CryptGenRandom
-;;
 ;ULONG
 ;NTAPI
 RtlUniform proto WINAPI Seed:PULONG
@@ -554,18 +415,8 @@ Reserved3		BYTE 1140 dup(?)
 WINSTATIONINFORMATIONW	ENDS
 PWINSTATIONINFORMATIONW typedef ptr WINSTATIONINFORMATIONW
 
-;;
-;; this function is implemented in winsta.dll (you need to loadlibrary to call this function)
-;; this internal function retrives the LogonId (also called SessionId) for the current process
-;; You should avoid using this function as it can change. you can retrieve the same information
-;; Using public api WTSQuerySessionInformation. Pass WTSSessionId as the WTSInfoClass parameter
-;;
 CALLBACK(PWINSTATIONQUERYINFORMATIONW, :HANDLE, :ULONG, :WINSTATIONINFOCLASS, :PVOID, :ULONG, :PULONG)
 
-;;
-;; Generic test for success on any status value (non-negative numbers
-;; indicate success).
-;;
 
 ifndef NT_SUCCESS
 NT_SUCCESS macro Status
@@ -574,9 +425,6 @@ NT_SUCCESS macro Status
 	endm
 endif
 
-;;
-;; Generic test for information on any status value.
-;;
 
 ifndef NT_INFORMATION
 NT_INFORMATION macro Status
@@ -585,9 +433,6 @@ NT_INFORMATION macro Status
 	endm
 endif
 
-;;
-;; Generic test for warning on any status value.
-;;
 
 ifndef NT_WARNING
 NT_WARNING macro Status
@@ -596,9 +441,6 @@ NT_WARNING macro Status
 	endm
 endif
 
-;;
-;; Generic test for error on any status value.
-;;
 
 ifndef NT_ERROR
 NT_ERROR macro Status
@@ -607,18 +449,6 @@ NT_ERROR macro Status
 	endm
 endif
 
-;;++
-;;
-;; VOID
-;; InitializeObjectAttributes(
-;;     OUT POBJECT_ATTRIBUTES p,
-;;     IN PUNICODE_STRING n,
-;;     IN ULONG a,
-;;     IN HANDLE r,
-;;     IN PSECURITY_DESCRIPTOR s
-;;     )
-;;
-;;--
 
 ifndef InitializeObjectAttributes
 InitializeObjectAttributes macro p, n, a, r, s
@@ -631,9 +461,6 @@ InitializeObjectAttributes macro p, n, a, r, s
     endm
 endif
 
-;;
-;; Valid values for the Attributes field
-;;
 
 OBJ_INHERIT		equ 0x00000002
 OBJ_PERMANENT		equ 0x00000010
@@ -645,9 +472,6 @@ OBJ_KERNEL_HANDLE	equ 0x00000200
 OBJ_FORCE_ACCESS_CHECK	equ 0x00000400
 OBJ_VALID_ATTRIBUTES	equ 0x000007F2
 
-;;
-;; Define the create disposition values
-;;
 
 FILE_SUPERSEDE			equ 0x00000000
 FILE_OPEN			equ 0x00000001
@@ -657,9 +481,6 @@ FILE_OVERWRITE			equ 0x00000004
 FILE_OVERWRITE_IF		equ 0x00000005
 FILE_MAXIMUM_DISPOSITION	equ 0x00000005
 
-;;
-;; Define the create/open option flags
-;;
 
 FILE_DIRECTORY_FILE		equ 0x00000001
 FILE_WRITE_THROUGH		equ 0x00000002
@@ -695,9 +516,6 @@ FILE_VALID_PIPE_OPTION_FLAGS		equ 0x00000032
 FILE_VALID_MAILSLOT_OPTION_FLAGS	equ 0x00000032
 FILE_VALID_SET_FLAGS			equ 0x00000036
 
-;;
-;; Define the I/O status information return values for NtCreateFile/NtOpenFile
-;;
 
 FILE_SUPERSEDED		equ 0x00000000
 FILE_OPENED		equ 0x00000001

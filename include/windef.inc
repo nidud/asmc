@@ -10,7 +10,6 @@ STRICT equ 1
 endif
 endif
 
-
 ifdef _MAC
 ifndef _WIN32
 _WIN32 equ <>
@@ -24,7 +23,6 @@ endif
 ifndef WINVER
 WINVER equ 0x0500
 endif
-
 
 ifndef BASETYPES
 BASETYPES	equ 1

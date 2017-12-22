@@ -11,100 +11,63 @@ include windows.inc
 include ole2.inc
 endif
 ifndef __oaidl_h__
-.xlist
 __oaidl_h__ equ 1
-
+.xlist
 
 ifndef __ICreateTypeInfo_FWD_DEFINED__
 __ICreateTypeInfo_FWD_DEFINED__ equ 1
 endif
-
-
 ifndef __ICreateTypeInfo2_FWD_DEFINED__
 __ICreateTypeInfo2_FWD_DEFINED__ equ 1
 endif
-
-
 ifndef __ICreateTypeLib_FWD_DEFINED__
 __ICreateTypeLib_FWD_DEFINED__ equ 1
 endif
-
-
 ifndef __ICreateTypeLib2_FWD_DEFINED__
 __ICreateTypeLib2_FWD_DEFINED__ equ 1
 endif
-
-
 ifndef __IDispatch_FWD_DEFINED__
 __IDispatch_FWD_DEFINED__ equ 1
 endif
-
-
 ifndef __IEnumVARIANT_FWD_DEFINED__
 __IEnumVARIANT_FWD_DEFINED__ equ 1
 endif
-
-
 ifndef __ITypeComp_FWD_DEFINED__
 __ITypeComp_FWD_DEFINED__ equ 1
 endif
-
-
 ifndef __ITypeInfo_FWD_DEFINED__
 __ITypeInfo_FWD_DEFINED__ equ 1
 endif
-
-
 ifndef __ITypeInfo2_FWD_DEFINED__
 __ITypeInfo2_FWD_DEFINED__ equ 1
 endif
-
-
 ifndef __ITypeLib_FWD_DEFINED__
 __ITypeLib_FWD_DEFINED__ equ 1
 endif
-
-
 ifndef __ITypeLib2_FWD_DEFINED__
 __ITypeLib2_FWD_DEFINED__ equ 1
 endif
-
-
 ifndef __ITypeChangeEvents_FWD_DEFINED__
 __ITypeChangeEvents_FWD_DEFINED__ equ 1
 endif
-
-
 ifndef __IErrorInfo_FWD_DEFINED__
 __IErrorInfo_FWD_DEFINED__ equ 1
 endif
-
-
 ifndef __ICreateErrorInfo_FWD_DEFINED__
 __ICreateErrorInfo_FWD_DEFINED__ equ 1
 endif
-
-
 ifndef __ISupportErrorInfo_FWD_DEFINED__
 __ISupportErrorInfo_FWD_DEFINED__ equ 1
 endif
-
-
 ifndef __ITypeFactory_FWD_DEFINED__
 __ITypeFactory_FWD_DEFINED__ equ 1
 endif
-
-
 ifndef __ITypeMarshal_FWD_DEFINED__
 __ITypeMarshal_FWD_DEFINED__ equ 1
 endif
-
-
 ifndef __IRecordInfo_FWD_DEFINED__
 __IRecordInfo_FWD_DEFINED__ equ 1
 endif
-
-
 include objidl.inc
 .xlist
 
@@ -116,17 +79,11 @@ MIDL_user_allocate proto WINAPI \
 MIDL_user_free proto WINAPI \
 		      : PVOID
 
-
-if ( _MSC_VER GE 800 )
-endif
-
 externdef		__MIDL_itf_oaidl_0000_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef		__MIDL_itf_oaidl_0000_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IOleAutomationTypes_INTERFACE_DEFINED__
 __IOleAutomationTypes_INTERFACE_DEFINED__ equ 1
-
-
 
 CURRENCY		typedef CY
 
@@ -134,7 +91,6 @@ SAFEARRAYBOUND		STRUC
 cElements		ULONG ?
 lLbound			LONG ?
 SAFEARRAYBOUND		ENDS
-
 LPSAFEARRAYBOUND	typedef ptr SAFEARRAYBOUND
 
 ;wireVARIANT		 typedef ptr wireVARIANT
@@ -200,7 +156,7 @@ HyperStr		HYPER_SIZEDARR <>
 ENDS ;u
 SAFEARRAYUNION		ENDS
 
-S_wireSAFEARRAY		 STRUC
+S_wireSAFEARRAY		STRUC
 cDims			USHORT ?
 fFeatures		USHORT ?
 cbElements		ULONG ?
@@ -445,7 +401,6 @@ ELEMDESC		STRUC
 tdesc			TYPEDESC ?
 paramdesc		PARAMDESC ?
 ELEMDESC		ENDS
-
 else
 ELEMDESC		STRUC
 tdesc			TYPEDESC <>
@@ -498,7 +453,6 @@ pvReserved		ULONG ?
 pfnDeferredFillIn	ULONG ?
 scode			SCODE ?
 EXCEPINFO		ENDS
-
 else
 EXCEPINFO		STRUC
 wCode			dw ?
@@ -647,8 +601,6 @@ CUSTDATA		ENDS
 
 LPCUSTDATA		typedef ptr CUSTDATA
 
-
-
 externdef		IOleAutomationTypes_v1_0_c_ifspec:RPC_IF_HANDLE
 externdef		IOleAutomationTypes_v1_0_s_ifspec:RPC_IF_HANDLE
 endif
@@ -656,43 +608,37 @@ endif
 ifndef __ICreateTypeInfo_INTERFACE_DEFINED__
 __ICreateTypeInfo_INTERFACE_DEFINED__ equ 1
 
-
-
-LPCREATETYPEINFO	typedef ptr ICreateTypeInfo
-
-
 externdef		IID_ICreateTypeInfo:IID
-
-
 ICreateTypeInfo		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD SetGuid, :REFGUID
-STDMETHOD SetTypeFlags, :UINT
-STDMETHOD SetDocString, :LPOLESTR
-STDMETHOD SetHelpContext, :DWORD
-STDMETHOD SetVersion, :WORD, :WORD
-STDMETHOD AddRefTypeInfo, :ptr, :ptr
-STDMETHOD AddFuncDesc, :UINT, :ptr
-STDMETHOD AddImplType, :UINT, :HREFTYPE
-STDMETHOD SetImplTypeFlags, :UINT, :SINT
-STDMETHOD SetAlignment, :WORD
-STDMETHOD SetSchema, :LPOLESTR
-STDMETHOD AddVarDesc, :UINT, :ptr
-STDMETHOD SetFuncAndParamNames, :UINT, :ptr, :UINT
-STDMETHOD SetVarName, :UINT, :LPOLESTR
-STDMETHOD SetTypeDescAlias, :ptr
-STDMETHOD DefineFuncAsDllEntry, :UINT, :LPOLESTR, :LPOLESTR
-STDMETHOD SetFuncDocString, :UINT, :LPOLESTR
-STDMETHOD SetVarDocString, :UINT, :LPOLESTR
-STDMETHOD SetFuncHelpContext, :UINT, :DWORD
-STDMETHOD SetVarHelpContext, :UINT, :DWORD
-STDMETHOD SetMops, :UINT, :BSTR
-STDMETHOD SetTypeIdldesc, :ptr
-STDMETHOD LayOut
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	SetGuid, :REFGUID
+	STDMETHOD	SetTypeFlags, :UINT
+	STDMETHOD	SetDocString, :LPOLESTR
+	STDMETHOD	SetHelpContext, :DWORD
+	STDMETHOD	SetVersion, :WORD, :WORD
+	STDMETHOD	AddRefTypeInfo, :ptr, :ptr
+	STDMETHOD	AddFuncDesc, :UINT, :ptr
+	STDMETHOD	AddImplType, :UINT, :HREFTYPE
+	STDMETHOD	SetImplTypeFlags, :UINT, :SINT
+	STDMETHOD	SetAlignment, :WORD
+	STDMETHOD	SetSchema, :LPOLESTR
+	STDMETHOD	AddVarDesc, :UINT, :ptr
+	STDMETHOD	SetFuncAndParamNames, :UINT, :ptr, :UINT
+	STDMETHOD	SetVarName, :UINT, :LPOLESTR
+	STDMETHOD	SetTypeDescAlias, :ptr
+	STDMETHOD	DefineFuncAsDllEntry, :UINT, :LPOLESTR, :LPOLESTR
+	STDMETHOD	SetFuncDocString, :UINT, :LPOLESTR
+	STDMETHOD	SetVarDocString, :UINT, :LPOLESTR
+	STDMETHOD	SetFuncHelpContext, :UINT, :DWORD
+	STDMETHOD	SetVarHelpContext, :UINT, :DWORD
+	STDMETHOD	SetMops, :UINT, :BSTR
+	STDMETHOD	SetTypeIdldesc, :ptr
+	STDMETHOD	LayOut
 ICreateTypeInfo		ENDS
 LPICreateTypeInfo	typedef ptr ICreateTypeInfo
+LPCREATETYPEINFO	typedef ptr ICreateTypeInfo
 
 ;HRESULT
 ICreateTypeInfo_SetGuid_Proxy proto WINAPI \
@@ -1000,47 +946,47 @@ externdef		IID_ICreateTypeInfo2:IID
 
 
 ICreateTypeInfo2	STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD SetGuid, :REFGUID
-STDMETHOD SetTypeFlags, :UINT
-STDMETHOD SetDocString, :LPOLESTR
-STDMETHOD SetHelpContext, :DWORD
-STDMETHOD SetVersion, :WORD, :WORD
-STDMETHOD AddRefTypeInfo, :ptr, :ptr
-STDMETHOD AddFuncDesc, :UINT, :ptr
-STDMETHOD AddImplType, :UINT, :HREFTYPE
-STDMETHOD SetImplTypeFlags, :UINT, :SINT
-STDMETHOD SetAlignment, :WORD
-STDMETHOD SetSchema, :LPOLESTR
-STDMETHOD AddVarDesc, :UINT, :ptr
-STDMETHOD SetFuncAndParamNames, :UINT, :ptr, :UINT
-STDMETHOD SetVarName, :UINT, :LPOLESTR
-STDMETHOD SetTypeDescAlias, :ptr
-STDMETHOD DefineFuncAsDllEntry, :UINT, :LPOLESTR, :LPOLESTR
-STDMETHOD SetFuncDocString, :UINT, :LPOLESTR
-STDMETHOD SetVarDocString, :UINT, :LPOLESTR
-STDMETHOD SetFuncHelpContext, :UINT, :DWORD
-STDMETHOD SetVarHelpContext, :UINT, :DWORD
-STDMETHOD SetMops, :UINT, :BSTR
-STDMETHOD SetTypeIdldesc, :ptr
-STDMETHOD LayOut
-STDMETHOD DeleteFuncDesc, :DWORD
-STDMETHOD DeleteFuncDescByMemId, :MEMBERID, :INVOKEKIND
-STDMETHOD DeleteVarDesc, :DWORD
-STDMETHOD DeleteVarDescByMemId, :MEMBERID
-STDMETHOD DeleteImplType, :DWORD
-STDMETHOD SetCustData, :REFGUID, :ptr
-STDMETHOD SetFuncCustData, :DWORD, :REFGUID, :ptr
-STDMETHOD SetParamCustData, :DWORD, :DWORD, :REFGUID, :ptr
-STDMETHOD SetVarCustData, :DWORD, :REFGUID, :ptr
-STDMETHOD SetImplTypeCustData, :DWORD, :REFGUID, :ptr
-STDMETHOD SetHelpStringContext, :DWORD
-STDMETHOD SetFuncHelpStringContext, :DWORD, :DWORD
-STDMETHOD SetVarHelpStringContext, :DWORD, :DWORD
-STDMETHOD Invalidate
-STDMETHOD SetName, :LPOLESTR
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	SetGuid, :REFGUID
+	STDMETHOD	SetTypeFlags, :UINT
+	STDMETHOD	SetDocString, :LPOLESTR
+	STDMETHOD	SetHelpContext, :DWORD
+	STDMETHOD	SetVersion, :WORD, :WORD
+	STDMETHOD	AddRefTypeInfo, :ptr, :ptr
+	STDMETHOD	AddFuncDesc, :UINT, :ptr
+	STDMETHOD	AddImplType, :UINT, :HREFTYPE
+	STDMETHOD	SetImplTypeFlags, :UINT, :SINT
+	STDMETHOD	SetAlignment, :WORD
+	STDMETHOD	SetSchema, :LPOLESTR
+	STDMETHOD	AddVarDesc, :UINT, :ptr
+	STDMETHOD	SetFuncAndParamNames, :UINT, :ptr, :UINT
+	STDMETHOD	SetVarName, :UINT, :LPOLESTR
+	STDMETHOD	SetTypeDescAlias, :ptr
+	STDMETHOD	DefineFuncAsDllEntry, :UINT, :LPOLESTR, :LPOLESTR
+	STDMETHOD	SetFuncDocString, :UINT, :LPOLESTR
+	STDMETHOD	SetVarDocString, :UINT, :LPOLESTR
+	STDMETHOD	SetFuncHelpContext, :UINT, :DWORD
+	STDMETHOD	SetVarHelpContext, :UINT, :DWORD
+	STDMETHOD	SetMops, :UINT, :BSTR
+	STDMETHOD	SetTypeIdldesc, :ptr
+	STDMETHOD	LayOut
+	STDMETHOD	DeleteFuncDesc, :DWORD
+	STDMETHOD	DeleteFuncDescByMemId, :MEMBERID, :INVOKEKIND
+	STDMETHOD	DeleteVarDesc, :DWORD
+	STDMETHOD	DeleteVarDescByMemId, :MEMBERID
+	STDMETHOD	DeleteImplType, :DWORD
+	STDMETHOD	SetCustData, :REFGUID, :ptr
+	STDMETHOD	SetFuncCustData, :DWORD, :REFGUID, :ptr
+	STDMETHOD	SetParamCustData, :DWORD, :DWORD, :REFGUID, :ptr
+	STDMETHOD	SetVarCustData, :DWORD, :REFGUID, :ptr
+	STDMETHOD	SetImplTypeCustData, :DWORD, :REFGUID, :ptr
+	STDMETHOD	SetHelpStringContext, :DWORD
+	STDMETHOD	SetFuncHelpStringContext, :DWORD, :DWORD
+	STDMETHOD	SetVarHelpStringContext, :DWORD, :DWORD
+	STDMETHOD	Invalidate
+	STDMETHOD	SetName, :LPOLESTR
 ICreateTypeInfo2	ENDS
 LPICreateTypeInfo2	typedef ptr ICreateTypeInfo2
 
@@ -1248,19 +1194,19 @@ externdef		IID_ICreateTypeLib:IID
 
 
 ICreateTypeLib		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD CreateTypeInfo, :LPOLESTR, :TYPEKIND, :ptr
-STDMETHOD SetName, :LPOLESTR
-STDMETHOD SetVersion, :WORD, :WORD
-STDMETHOD SetGuid, :REFGUID
-STDMETHOD SetDocString, :LPOLESTR
-STDMETHOD SetHelpFileName, :LPOLESTR
-STDMETHOD SetHelpContext, :DWORD
-STDMETHOD SetLcid, :LCID
-STDMETHOD SetLibFlags, :DWORD
-STDMETHOD SaveAllChanges
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	CreateTypeInfo, :LPOLESTR, :TYPEKIND, :ptr
+	STDMETHOD	SetName, :LPOLESTR
+	STDMETHOD	SetVersion, :WORD, :WORD
+	STDMETHOD	SetGuid, :REFGUID
+	STDMETHOD	SetDocString, :LPOLESTR
+	STDMETHOD	SetHelpFileName, :LPOLESTR
+	STDMETHOD	SetHelpContext, :DWORD
+	STDMETHOD	SetLcid, :LCID
+	STDMETHOD	SetLibFlags, :DWORD
+	STDMETHOD	SaveAllChanges
 ICreateTypeLib		ENDS
 LPICreateTypeLib	typedef ptr ICreateTypeLib
 
@@ -1396,23 +1342,23 @@ externdef		IID_ICreateTypeLib2:IID
 
 
 ICreateTypeLib2		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD CreateTypeInfo, :LPOLESTR, :TYPEKIND, :ptr
-STDMETHOD SetName, :LPOLESTR
-STDMETHOD SetVersion, :WORD, :WORD
-STDMETHOD SetGuid, :REFGUID
-STDMETHOD SetDocString, :LPOLESTR
-STDMETHOD SetHelpFileName, :LPOLESTR
-STDMETHOD SetHelpContext, :DWORD
-STDMETHOD SetLcid, :LCID
-STDMETHOD SetLibFlags, :DWORD
-STDMETHOD SaveAllChanges
-STDMETHOD DeleteTypeInfo, :LPOLESTR
-STDMETHOD SetCustData, :REFGUID, :ptr
-STDMETHOD SetHelpStringContext, :DWORD
-STDMETHOD SetHelpStringDll, :LPOLESTR
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	CreateTypeInfo, :LPOLESTR, :TYPEKIND, :ptr
+	STDMETHOD	SetName, :LPOLESTR
+	STDMETHOD	SetVersion, :WORD, :WORD
+	STDMETHOD	SetGuid, :REFGUID
+	STDMETHOD	SetDocString, :LPOLESTR
+	STDMETHOD	SetHelpFileName, :LPOLESTR
+	STDMETHOD	SetHelpContext, :DWORD
+	STDMETHOD	SetLcid, :LCID
+	STDMETHOD	SetLibFlags, :DWORD
+	STDMETHOD	SaveAllChanges
+	STDMETHOD	DeleteTypeInfo, :LPOLESTR
+	STDMETHOD	SetCustData, :REFGUID, :ptr
+	STDMETHOD	SetHelpStringContext, :DWORD
+	STDMETHOD	SetHelpStringDll, :LPOLESTR
 ICreateTypeLib2		ENDS
 LPICreateTypeLib2	typedef ptr ICreateTypeLib2
 
@@ -1484,13 +1430,13 @@ DISPID_COLLECT		equ ( -8 )
 externdef		IID_IDispatch:IID
 
 IDispatch		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetTypeInfoCount, :ptr
-STDMETHOD GetTypeInfo, :UINT, :LCID, :ptr
-STDMETHOD GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-STDMETHOD _Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetTypeInfoCount, :ptr
+	STDMETHOD	GetTypeInfo, :UINT, :LCID, :ptr
+	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
+	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
 IDispatch		ENDS
 LPIDispatch		typedef ptr IDispatch
 
@@ -1567,13 +1513,13 @@ externdef		IID_IEnumVARIANT:IID
 
 
 IEnumVARIANT		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD Next, :DWORD, :ptr, :ptr
-STDMETHOD Skip, :DWORD
-STDMETHOD Reset,
-STDMETHOD Clone, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	Next, :DWORD, :ptr, :ptr
+	STDMETHOD	Skip, :DWORD
+	STDMETHOD	Reset,
+	STDMETHOD	Clone, :ptr
 IEnumVARIANT		ENDS
 LPIEnumVARIANT		typedef ptr IEnumVARIANT
 
@@ -1650,11 +1596,11 @@ LPBINDPTR		typedef ptr BINDPTR
 externdef		IID_ITypeComp:IID
 
 ITypeComp		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD Bind
-STDMETHOD BindType
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	Bind
+	STDMETHOD	BindType
 ITypeComp		ENDS
 LPITypeComp		typedef ptr ITypeComp
 
@@ -1701,28 +1647,28 @@ LPTYPEINFO		typedef ptr ITypeInfo
 externdef		IID_ITypeInfo:IID
 
 ITypeInfo		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetTypeAttr, :ptr
-STDMETHOD GetTypeComp, :ptr
-STDMETHOD GetFuncDesc, :DWORD, :ptr
-STDMETHOD GetVarDesc, :DWORD, :ptr
-STDMETHOD GetNames, :MEMBERID, :ptr, :DWORD, :ptr
-STDMETHOD GetRefTypeOfImplType, :DWORD, :ptr
-STDMETHOD GetImplTypeFlags, :DWORD, :ptr
-STDMETHOD GetIDsOfNames, :ptr, :DWORD, :ptr
-STDMETHOD Invoke_, :PVOID, :MEMBERID, :DWORD, :ptr, :ptr, :ptr, :ptr
-STDMETHOD GetDocumentation, :MEMBERID, :ptr, :ptr, :ptr, :ptr
-STDMETHOD GetDllEntry, :MEMBERID, :INVOKEKIND, :ptr, :ptr, :ptr
-STDMETHOD GetRefTypeInfo, :HREFTYPE, :ptr
-STDMETHOD AddressOfMember, :MEMBERID, :INVOKEKIND, :ptr
-STDMETHOD CreateInstance, :ptr, :REFIID, :ptr
-STDMETHOD GetMops, :MEMBERID, :ptr
-STDMETHOD GetContainingTypeLib, :ptr, :ptr
-STDMETHOD ReleaseTypeAttr, :ptr
-STDMETHOD ReleaseFuncDesc, :ptr
-STDMETHOD ReleaseVarDesc, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetTypeAttr, :ptr
+	STDMETHOD	GetTypeComp, :ptr
+	STDMETHOD	GetFuncDesc, :DWORD, :ptr
+	STDMETHOD	GetVarDesc, :DWORD, :ptr
+	STDMETHOD	GetNames, :MEMBERID, :ptr, :DWORD, :ptr
+	STDMETHOD	GetRefTypeOfImplType, :DWORD, :ptr
+	STDMETHOD	GetImplTypeFlags, :DWORD, :ptr
+	STDMETHOD	GetIDsOfNames, :ptr, :DWORD, :ptr
+	STDMETHOD	Invoke_, :PVOID, :MEMBERID, :DWORD, :ptr, :ptr, :ptr, :ptr
+	STDMETHOD	GetDocumentation, :MEMBERID, :ptr, :ptr, :ptr, :ptr
+	STDMETHOD	GetDllEntry, :MEMBERID, :INVOKEKIND, :ptr, :ptr, :ptr
+	STDMETHOD	GetRefTypeInfo, :HREFTYPE, :ptr
+	STDMETHOD	AddressOfMember, :MEMBERID, :INVOKEKIND, :ptr
+	STDMETHOD	CreateInstance, :ptr, :REFIID, :ptr
+	STDMETHOD	GetMops, :MEMBERID, :ptr
+	STDMETHOD	GetContainingTypeLib, :ptr, :ptr
+	STDMETHOD	ReleaseTypeAttr, :ptr
+	STDMETHOD	ReleaseFuncDesc, :ptr
+	STDMETHOD	ReleaseVarDesc, :ptr
 ITypeInfo		ENDS
 LPITypeInfo		typedef ptr ITypeInfo
 
@@ -1981,43 +1927,43 @@ externdef		IID_ITypeInfo2:IID
 
 
 ITypeInfo2		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetTypeAttr, :ptr
-STDMETHOD GetTypeComp, :ptr
-STDMETHOD GetFuncDesc, :DWORD, :ptr
-STDMETHOD GetVarDesc, :DWORD, :ptr
-STDMETHOD GetNames, :MEMBERID, :ptr, :DWORD, :ptr
-STDMETHOD GetRefTypeOfImplType, :DWORD, :ptr
-STDMETHOD GetImplTypeFlags, :DWORD, :ptr
-STDMETHOD GetIDsOfNames, :ptr, :DWORD, :ptr
-STDMETHOD Invoke_, :PVOID, :MEMBERID, :WORD, :ptr, :ptr, :ptr, :ptr
-STDMETHOD GetDocumentation, :MEMBERID, :ptr, :ptr, :ptr, :ptr
-STDMETHOD GetDllEntry, :MEMBERID, :INVOKEKIND, :ptr, :ptr, :ptr
-STDMETHOD GetRefTypeInfo, :HREFTYPE, :ptr
-STDMETHOD AddressOfMember, :MEMBERID, :INVOKEKIND, :ptr
-STDMETHOD CreateInstance, :ptr, :REFIID, :ptr
-STDMETHOD GetMops, :MEMBERID, :ptr
-STDMETHOD GetContainingTypeLib, :ptr, :ptr
-STDMETHOD ReleaseTypeAttr, :ptr
-STDMETHOD ReleaseFuncDesc, :ptr
-STDMETHOD ReleaseVarDesc, :ptr
-STDMETHOD GetTypeKind, :ptr
-STDMETHOD GetTypeFlags, :ptr
-STDMETHOD GetFuncIndexOfMemId, :MEMBERID, :INVOKEKIND, :ptr
-STDMETHOD GetVarIndexOfMemId, :MEMBERID, :ptr
-STDMETHOD GetCustData, :REFGUID, :ptr
-STDMETHOD GetFuncCustData, :DWORD, :REFGUID, :ptr
-STDMETHOD GetParamCustData, :DWORD, :DWORD, :REFGUID, :ptr
-STDMETHOD GetVarCustData, :DWORD, :REFGUID, :ptr
-STDMETHOD GetImplTypeCustData, :DWORD, :REFGUID, :ptr
-STDMETHOD GetDocumentation2, :MEMBERID, :LCID, :ptr, :ptr, :ptr
-STDMETHOD GetAllCustData, :ptr
-STDMETHOD GetAllFuncCustData, :DWORD, :ptr
-STDMETHOD GetAllParamCustData, :DWORD, :DWORD, :ptr
-STDMETHOD GetAllVarCustData, :DWORD, :ptr
-STDMETHOD GetAllImplTypeCustData, :DWORD, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetTypeAttr, :ptr
+	STDMETHOD	GetTypeComp, :ptr
+	STDMETHOD	GetFuncDesc, :DWORD, :ptr
+	STDMETHOD	GetVarDesc, :DWORD, :ptr
+	STDMETHOD	GetNames, :MEMBERID, :ptr, :DWORD, :ptr
+	STDMETHOD	GetRefTypeOfImplType, :DWORD, :ptr
+	STDMETHOD	GetImplTypeFlags, :DWORD, :ptr
+	STDMETHOD	GetIDsOfNames, :ptr, :DWORD, :ptr
+	STDMETHOD	Invoke_, :PVOID, :MEMBERID, :WORD, :ptr, :ptr, :ptr, :ptr
+	STDMETHOD	GetDocumentation, :MEMBERID, :ptr, :ptr, :ptr, :ptr
+	STDMETHOD	GetDllEntry, :MEMBERID, :INVOKEKIND, :ptr, :ptr, :ptr
+	STDMETHOD	GetRefTypeInfo, :HREFTYPE, :ptr
+	STDMETHOD	AddressOfMember, :MEMBERID, :INVOKEKIND, :ptr
+	STDMETHOD	CreateInstance, :ptr, :REFIID, :ptr
+	STDMETHOD	GetMops, :MEMBERID, :ptr
+	STDMETHOD	GetContainingTypeLib, :ptr, :ptr
+	STDMETHOD	ReleaseTypeAttr, :ptr
+	STDMETHOD	ReleaseFuncDesc, :ptr
+	STDMETHOD	ReleaseVarDesc, :ptr
+	STDMETHOD	GetTypeKind, :ptr
+	STDMETHOD	GetTypeFlags, :ptr
+	STDMETHOD	GetFuncIndexOfMemId, :MEMBERID, :INVOKEKIND, :ptr
+	STDMETHOD	GetVarIndexOfMemId, :MEMBERID, :ptr
+	STDMETHOD	GetCustData, :REFGUID, :ptr
+	STDMETHOD	GetFuncCustData, :DWORD, :REFGUID, :ptr
+	STDMETHOD	GetParamCustData, :DWORD, :DWORD, :REFGUID, :ptr
+	STDMETHOD	GetVarCustData, :DWORD, :REFGUID, :ptr
+	STDMETHOD	GetImplTypeCustData, :DWORD, :REFGUID, :ptr
+	STDMETHOD	GetDocumentation2, :MEMBERID, :LCID, :ptr, :ptr, :ptr
+	STDMETHOD	GetAllCustData, :ptr
+	STDMETHOD	GetAllFuncCustData, :DWORD, :ptr
+	STDMETHOD	GetAllParamCustData, :DWORD, :DWORD, :ptr
+	STDMETHOD	GetAllVarCustData, :DWORD, :ptr
+	STDMETHOD	GetAllImplTypeCustData, :DWORD, :ptr
 ITypeInfo2		ENDS
 LPITypeInfo2		typedef ptr ITypeInfo2
 
@@ -2256,19 +2202,19 @@ LPTLIBATTR		typedef ptr TLIBATTR
 externdef		IID_ITypeLib:IID
 
 ITypeLib		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetTypeInfoCount,
-STDMETHOD GetTypeInfo, :DWORD, :ptr
-STDMETHOD GetTypeInfoType, :DWORD, :ptr
-STDMETHOD GetTypeInfoOfGuid, :REFGUID, :ptr
-STDMETHOD GetLibAttr, :ptr
-STDMETHOD GetTypeComp, :ptr
-STDMETHOD GetDocumentation, :DWORD, :ptr, :ptr, :ptr, :ptr
-STDMETHOD IsName, :LPOLESTR, :DWORD, :ptr
-STDMETHOD FindName, :LPOLESTR, :DWORD, :ptr, :ptr, :ptr
-STDMETHOD ReleaseTLibAttr, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetTypeInfoCount,
+	STDMETHOD	GetTypeInfo, :DWORD, :ptr
+	STDMETHOD	GetTypeInfoType, :DWORD, :ptr
+	STDMETHOD	GetTypeInfoOfGuid, :REFGUID, :ptr
+	STDMETHOD	GetLibAttr, :ptr
+	STDMETHOD	GetTypeComp, :ptr
+	STDMETHOD	GetDocumentation, :DWORD, :ptr, :ptr, :ptr, :ptr
+	STDMETHOD	IsName, :LPOLESTR, :DWORD, :ptr
+	STDMETHOD	FindName, :LPOLESTR, :DWORD, :ptr, :ptr, :ptr
+	STDMETHOD	ReleaseTLibAttr, :ptr
 ITypeLib		ENDS
 LPITypeLib		typedef ptr ITypeLib
 
@@ -2417,23 +2363,23 @@ LPTYPELIB2		typedef ptr ITypeLib2
 externdef		IID_ITypeLib2:IID
 
 ITypeLib2		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetTypeInfoCount
-STDMETHOD GetTypeInfo, :DWORD, :ptr
-STDMETHOD GetTypeInfoType, :DWORD, :ptr
-STDMETHOD GetTypeInfoOfGuid, :REFGUID, :ptr
-STDMETHOD GetLibAttr, :ptr
-STDMETHOD GetTypeComp, :ptr
-STDMETHOD GetDocumentation, :DWORD, :ptr, :ptr, :ptr, :ptr
-STDMETHOD IsName, :LPOLESTR, :DWORD, :ptr
-STDMETHOD FindName, :LPOLESTR, :DWORD, :ptr, :ptr, :ptr
-STDMETHOD ReleaseTLibAttr, :ptr
-STDMETHOD GetCustData, :REFGUID, :ptr
-STDMETHOD GetLibStatistics, :ptr, :ptr
-STDMETHOD GetDocumentation2, :DWORD, :LCID, :ptr, :ptr, :ptr
-STDMETHOD GetAllCustData, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetTypeInfoCount
+	STDMETHOD	GetTypeInfo, :DWORD, :ptr
+	STDMETHOD	GetTypeInfoType, :DWORD, :ptr
+	STDMETHOD	GetTypeInfoOfGuid, :REFGUID, :ptr
+	STDMETHOD	GetLibAttr, :ptr
+	STDMETHOD	GetTypeComp, :ptr
+	STDMETHOD	GetDocumentation, :DWORD, :ptr, :ptr, :ptr, :ptr
+	STDMETHOD	IsName, :LPOLESTR, :DWORD, :ptr
+	STDMETHOD	FindName, :LPOLESTR, :DWORD, :ptr, :ptr, :ptr
+	STDMETHOD	ReleaseTLibAttr, :ptr
+	STDMETHOD	GetCustData, :REFGUID, :ptr
+	STDMETHOD	GetLibStatistics, :ptr, :ptr
+	STDMETHOD	GetDocumentation2, :DWORD, :LCID, :ptr, :ptr, :ptr
+	STDMETHOD	GetAllCustData, :ptr
 ITypeLib2		ENDS
 LPITypeLib2		typedef ptr ITypeLib2
 
@@ -2511,11 +2457,11 @@ CHANGEKIND_MAX		equ CHANGEKIND_CHANGEFAILED + 1
 externdef		IID_ITypeChangeEvents:IID
 
 ITypeChangeEvents	STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD RequestTypeChange, :CHANGEKIND, :ptr, :LPOLESTR, :ptr
-STDMETHOD AfterTypeChange, :CHANGEKIND, :ptr, :LPOLESTR
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	RequestTypeChange, :CHANGEKIND, :ptr, :LPOLESTR, :ptr
+	STDMETHOD	AfterTypeChange, :CHANGEKIND, :ptr, :LPOLESTR
 ITypeChangeEvents	ENDS
 LPITypeChangeEvents	typedef ptr ITypeChangeEvents
 
@@ -2557,14 +2503,14 @@ LPERRORINFO		typedef ptr IErrorInfo
 externdef		IID_IErrorInfo:IID
 
 IErrorInfo		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetGUID, :ptr
-STDMETHOD GetSource, :ptr
-STDMETHOD GetDescription, :ptr
-STDMETHOD GetHelpFile, :ptr
-STDMETHOD GetHelpContext, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetGUID, :ptr
+	STDMETHOD	GetSource, :ptr
+	STDMETHOD	GetDescription, :ptr
+	STDMETHOD	GetHelpFile, :ptr
+	STDMETHOD	GetHelpContext, :ptr
 IErrorInfo		ENDS
 LPIErrorInfo		typedef ptr IErrorInfo
 
@@ -2638,14 +2584,14 @@ externdef		IID_ICreateErrorInfo:IID
 
 
 ICreateErrorInfo	STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD SetGUID, :REFGUID
-STDMETHOD SetSource, :LPOLESTR
-STDMETHOD SetDescription, :LPOLESTR
-STDMETHOD SetHelpFile, :LPOLESTR
-STDMETHOD SetHelpContext, :DWORD
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	SetGUID, :REFGUID
+	STDMETHOD	SetSource, :LPOLESTR
+	STDMETHOD	SetDescription, :LPOLESTR
+	STDMETHOD	SetHelpFile, :LPOLESTR
+	STDMETHOD	SetHelpContext, :DWORD
 ICreateErrorInfo	ENDS
 LPICreateErrorInfo	typedef ptr ICreateErrorInfo
 
@@ -2717,10 +2663,10 @@ LPSUPPORTERRORINFO	typedef ptr ISupportErrorInfo
 externdef		IID_ISupportErrorInfo:IID
 
 ISupportErrorInfo	STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD InterfaceSupportsErrorInfo, :REFIID
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	InterfaceSupportsErrorInfo, :REFIID
 ISupportErrorInfo	ENDS
 LPISupportErrorInfo	typedef ptr ISupportErrorInfo
 
@@ -2743,10 +2689,10 @@ __ITypeFactory_INTERFACE_DEFINED__ equ 1
 externdef		IID_ITypeFactory:IID
 
 ITypeFactory		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD CreateFromTypeInfo, :ptr, :REFIID, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	CreateFromTypeInfo, :ptr, :REFIID, :ptr
 ITypeFactory		ENDS
 LPITypeFactory		typedef ptr ITypeFactory
 
@@ -2771,13 +2717,13 @@ __ITypeMarshal_INTERFACE_DEFINED__ equ 1
 externdef		IID_ITypeMarshal:IID
 
 ITypeMarshal		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD _Size, :PVOID, :DWORD, :PVOID, :ptr
-STDMETHOD Marshal, :PVOID, :DWORD, :PVOID, :DWORD, :ptr, :ptr
-STDMETHOD Unmarshal, :PVOID, :DWORD, :DWORD, :ptr, :ptr
-STDMETHOD Free, :PVOID
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	_Size, :PVOID, :DWORD, :PVOID, :ptr
+	STDMETHOD	Marshal, :PVOID, :DWORD, :PVOID, :DWORD, :ptr, :ptr
+	STDMETHOD	Unmarshal, :PVOID, :DWORD, :DWORD, :ptr, :ptr
+	STDMETHOD	Free, :PVOID
 ITypeMarshal		ENDS
 LPITypeMarshal		typedef ptr ITypeMarshal
 
@@ -2849,25 +2795,25 @@ LPRECORDINFO		typedef ptr IRecordInfo
 externdef		IID_IRecordInfo:IID
 
 IRecordInfo		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD RecordInit, :PVOID
-STDMETHOD RecordClear, :PVOID
-STDMETHOD RecordCopy, :PVOID, :PVOID
-STDMETHOD GetGuid, :ptr
-STDMETHOD GetName, :ptr
-STDMETHOD GetSize, :ptr
-STDMETHOD GetTypeInfo, :ptr
-STDMETHOD GetField, :PVOID, :LPCOLESTR, :ptr
-STDMETHOD GetFieldNoCopy, :PVOID, :LPCOLESTR, :ptr, :ptr
-STDMETHOD PutField, :DWORD, :PVOID, :LPCOLESTR, :ptr VARIANT
-STDMETHOD PutFieldNoCopy, :DWORD, :PVOID, :LPCOLESTR, :ptr
-STDMETHOD GetFieldNames, :ptr, :ptr
-STDMETHOD IsMatchingType, :ptr
-STDMETHOD RecordCreate
-STDMETHOD RecordCreateCopy, :PVOID, :ptr
-STDMETHOD RecordDestroy, :PVOID
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	RecordInit, :PVOID
+	STDMETHOD	RecordClear, :PVOID
+	STDMETHOD	RecordCopy, :PVOID, :PVOID
+	STDMETHOD	GetGuid, :ptr
+	STDMETHOD	GetName, :ptr
+	STDMETHOD	GetSize, :ptr
+	STDMETHOD	GetTypeInfo, :ptr
+	STDMETHOD	GetField, :PVOID, :LPCOLESTR, :ptr
+	STDMETHOD	GetFieldNoCopy, :PVOID, :LPCOLESTR, :ptr, :ptr
+	STDMETHOD	PutField, :DWORD, :PVOID, :LPCOLESTR, :ptr VARIANT
+	STDMETHOD	PutFieldNoCopy, :DWORD, :PVOID, :LPCOLESTR, :ptr
+	STDMETHOD	GetFieldNames, :ptr, :ptr
+	STDMETHOD	IsMatchingType, :ptr
+	STDMETHOD	RecordCreate
+	STDMETHOD	RecordCreateCopy, :PVOID, :ptr
+	STDMETHOD	RecordDestroy, :PVOID
 IRecordInfo		ENDS
 LPIRecordInfoV		typedef ptr IRecordInfo
 
@@ -3185,15 +3131,12 @@ IEnumVARIANT_Next_Proxy proto WINAPI \
 		 rgVar: ptr VARIANT,
 	  pCeltFetched: ptr ULONG
 
-
-
 ;HRESULT
 IEnumVARIANT_Next_Stub proto WINAPI \
 		 pThis: ptr IEnumVARIANT,
 		  celt: ULONG,
 		 rgVar: ptr VARIANT,
 	  pCeltFetched: ptr ULONG
-
 
 ;HRESULT
 ITypeComp_Bind_Proxy proto WINAPI \
@@ -3204,8 +3147,6 @@ ITypeComp_Bind_Proxy proto WINAPI \
 	       ppTInfo: ptr ITypeInfo,
 	     pDescKind: ptr DESCKIND,
 	      pBindPtr: ptr BINDPTR
-
-
 
 ;HRESULT
 ITypeComp_Bind_Stub proto WINAPI \
@@ -3220,7 +3161,6 @@ ITypeComp_Bind_Stub proto WINAPI \
 	    ppTypeComp: ptr ITypeComp,
 		pDummy: ptr CLEANLOCALSTORAGE
 
-
 ;HRESULT
 ITypeComp_BindType_Proxy proto WINAPI \
 		 pThis: ptr ITypeComp,
@@ -3229,8 +3169,6 @@ ITypeComp_BindType_Proxy proto WINAPI \
 	       ppTInfo: ptr ITypeInfo,
 	       ppTComp: ptr ITypeComp
 
-
-
 ;HRESULT
 ITypeComp_BindType_Stub proto WINAPI \
 		 pThis: ptr ITypeComp,
@@ -3238,13 +3176,10 @@ ITypeComp_BindType_Stub proto WINAPI \
 	      lHashVal: ULONG,
 	       ppTInfo: ptr ITypeInfo
 
-
 ;HRESULT
 ITypeInfo_GetTypeAttr_Proxy proto WINAPI \
 		 pThis: ptr ITypeInfo,
 	    ppTypeAttr: ptr TYPEATTR
-
-
 
 ;HRESULT
 ITypeInfo_GetTypeAttr_Stub proto WINAPI \
@@ -3252,14 +3187,11 @@ ITypeInfo_GetTypeAttr_Stub proto WINAPI \
 	    ppTypeAttr: ptr LPTYPEATTR,
 		pDummy: ptr CLEANLOCALSTORAGE
 
-
 ;HRESULT
 ITypeInfo_GetFuncDesc_Proxy proto WINAPI \
 		 pThis: ptr ITypeInfo,
 		 index: UINT,
 	    ppFuncDesc: ptr FUNCDESC
-
-
 
 ;HRESULT
 ITypeInfo_GetFuncDesc_Stub proto WINAPI \
@@ -3268,14 +3200,11 @@ ITypeInfo_GetFuncDesc_Stub proto WINAPI \
 	    ppFuncDesc: ptr LPFUNCDESC,
 		pDummy: ptr CLEANLOCALSTORAGE
 
-
 ;HRESULT
 ITypeInfo_GetVarDesc_Proxy proto WINAPI \
 		 pThis: ptr ITypeInfo,
 		 index: UINT,
 	     ppVarDesc: ptr VARDESC
-
-
 
 ;HRESULT
 ITypeInfo_GetVarDesc_Stub proto WINAPI \
@@ -3283,7 +3212,6 @@ ITypeInfo_GetVarDesc_Stub proto WINAPI \
 		 index: UINT,
 	     ppVarDesc: ptr LPVARDESC,
 		pDummy: ptr CLEANLOCALSTORAGE
-
 
 ;HRESULT
 ITypeInfo_GetNames_Proxy proto WINAPI \
@@ -3293,8 +3221,6 @@ ITypeInfo_GetNames_Proxy proto WINAPI \
 	     cMaxNames: UINT,
 	       pcNames: ptr UINT
 
-
-
 ;HRESULT
 ITypeInfo_GetNames_Stub proto WINAPI \
 		 pThis: ptr ITypeInfo,
@@ -3303,7 +3229,6 @@ ITypeInfo_GetNames_Stub proto WINAPI \
 	     cMaxNames: UINT,
 	       pcNames: ptr UINT
 
-
 ;HRESULT
 ITypeInfo_GetIDsOfNames_Proxy proto WINAPI \
 		 pThis: ptr ITypeInfo,
@@ -3311,12 +3236,9 @@ ITypeInfo_GetIDsOfNames_Proxy proto WINAPI \
 		cNames: UINT,
 		pMemId: ptr MEMBERID
 
-
-
 ;HRESULT
 ITypeInfo_GetIDsOfNames_Stub proto WINAPI \
 		 pThis: ptr ITypeInfo
-
 
 ;HRESULT
 ITypeInfo_Invoke_Proxy proto WINAPI \
@@ -3329,12 +3251,9 @@ ITypeInfo_Invoke_Proxy proto WINAPI \
 	    pExcepInfo: ptr EXCEPINFO,
 	      puArgErr: ptr UINT
 
-
-
 ;HRESULT
 ITypeInfo_Invoke_Stub proto WINAPI \
 		 pThis: ptr ITypeInfo
-
 
 ;HRESULT
 ITypeInfo_GetDocumentation_Proxy proto WINAPI \
@@ -3344,8 +3263,6 @@ ITypeInfo_GetDocumentation_Proxy proto WINAPI \
 	pBstrDocString: ptr BSTR,
 	pdwHelpContext: ptr DWORD,
 	 pBstrHelpFile: ptr BSTR
-
-
 
 ;HRESULT
 ITypeInfo_GetDocumentation_Stub proto WINAPI \
@@ -3357,7 +3274,6 @@ ITypeInfo_GetDocumentation_Stub proto WINAPI \
 	pdwHelpContext: ptr DWORD,
 	 pBstrHelpFile: ptr BSTR
 
-
 ;HRESULT
 ITypeInfo_GetDllEntry_Proxy proto WINAPI \
 		 pThis: ptr ITypeInfo,
@@ -3366,8 +3282,6 @@ ITypeInfo_GetDllEntry_Proxy proto WINAPI \
 	  pBstrDllName: ptr BSTR,
 	     pBstrName: ptr BSTR,
 	     pwOrdinal: ptr WORD
-
-
 
 ;HRESULT
 ITypeInfo_GetDllEntry_Stub proto WINAPI \
@@ -3379,7 +3293,6 @@ ITypeInfo_GetDllEntry_Stub proto WINAPI \
 	     pBstrName: ptr BSTR,
 	     pwOrdinal: ptr WORD
 
-
 ;HRESULT
 ITypeInfo_AddressOfMember_Proxy proto WINAPI \
 		 pThis: ptr ITypeInfo,
@@ -3387,12 +3300,9 @@ ITypeInfo_AddressOfMember_Proxy proto WINAPI \
 	       invKind: INVOKEKIND,
 		   ppv: ptr PVOID
 
-
-
 ;HRESULT
 ITypeInfo_AddressOfMember_Stub proto WINAPI \
 		 pThis: ptr ITypeInfo
-
 
 ;HRESULT
 ITypeInfo_CreateInstance_Proxy proto WINAPI \
@@ -3401,14 +3311,11 @@ ITypeInfo_CreateInstance_Proxy proto WINAPI \
 		  riid: REFIID,
 		ppvObj: ptr PVOID
 
-
-
 ;HRESULT
 ITypeInfo_CreateInstance_Stub proto WINAPI \
 		 pThis: ptr ITypeInfo,
 		  riid: REFIID,
 		ppvObj: ptr IUnknown
-
 
 ;HRESULT
 ITypeInfo_GetContainingTypeLib_Proxy proto WINAPI \
@@ -3416,50 +3323,38 @@ ITypeInfo_GetContainingTypeLib_Proxy proto WINAPI \
 		ppTLib: ptr ITypeLib,
 		pIndex: ptr UINT
 
-
-
 ;HRESULT
 ITypeInfo_GetContainingTypeLib_Stub proto WINAPI \
 		 pThis: ptr ITypeInfo,
 		ppTLib: ptr ITypeLib,
 		pIndex: ptr UINT
 
-
 ;void
 ITypeInfo_ReleaseTypeAttr_Proxy proto WINAPI \
 		 pThis: ptr ITypeInfo,
 	     pTypeAttr: ptr TYPEATTR
 
-
-
 ;HRESULT
 ITypeInfo_ReleaseTypeAttr_Stub proto WINAPI \
 		 pThis: ptr ITypeInfo
-
 
 ;void
 ITypeInfo_ReleaseFuncDesc_Proxy proto WINAPI \
 		 pThis: ptr ITypeInfo,
 	     pFuncDesc: ptr FUNCDESC
 
-
-
 ;HRESULT
 ITypeInfo_ReleaseFuncDesc_Stub proto WINAPI \
 		 pThis: ptr ITypeInfo
-
 
 ;void
 ITypeInfo_ReleaseVarDesc_Proxy proto WINAPI \
 		 pThis: ptr ITypeInfo,
 	      pVarDesc: ptr VARDESC
 
-
-
 ;HRESULT
 ITypeInfo_ReleaseVarDesc_Stub proto WINAPI \
 		 pThis: ptr ITypeInfo
-
 
 ;HRESULT
 ITypeInfo2_GetDocumentation2_Proxy proto WINAPI \
@@ -3469,8 +3364,6 @@ ITypeInfo2_GetDocumentation2_Proxy proto WINAPI \
        pbstrHelpString: ptr BSTR,
   pdwHelpStringContext: ptr DWORD,
     pbstrHelpStringDll: ptr BSTR
-
-
 
 ;HRESULT
 ITypeInfo2_GetDocumentation2_Stub proto WINAPI \
@@ -3482,32 +3375,25 @@ ITypeInfo2_GetDocumentation2_Stub proto WINAPI \
   pdwHelpStringContext: ptr DWORD,
     pbstrHelpStringDll: ptr BSTR
 
-
 ;UINT
 ITypeLib_GetTypeInfoCount_Proxy proto WINAPI \
 		 pThis: ptr ITypeLib
-
-
 
 ;HRESULT
 ITypeLib_GetTypeInfoCount_Stub proto WINAPI \
 		 pThis: ptr ITypeLib,
 	       pcTInfo: ptr UINT
 
-
 ;HRESULT
 ITypeLib_GetLibAttr_Proxy proto WINAPI \
 		 pThis: ptr ITypeLib,
 	    ppTLibAttr: ptr TLIBATTR
-
-
 
 ;HRESULT
 ITypeLib_GetLibAttr_Stub proto WINAPI \
 		 pThis: ptr ITypeLib,
 	    ppTLibAttr: ptr LPTLIBATTR,
 		pDummy: ptr CLEANLOCALSTORAGE
-
 
 ;HRESULT
 ITypeLib_GetDocumentation_Proxy proto WINAPI \
@@ -3517,8 +3403,6 @@ ITypeLib_GetDocumentation_Proxy proto WINAPI \
 	pBstrDocString: ptr BSTR,
 	pdwHelpContext: ptr DWORD,
 	 pBstrHelpFile: ptr BSTR
-
-
 
 ;HRESULT
 ITypeLib_GetDocumentation_Stub proto WINAPI \
@@ -3530,15 +3414,12 @@ ITypeLib_GetDocumentation_Stub proto WINAPI \
 	pdwHelpContext: ptr DWORD,
 	 pBstrHelpFile: ptr BSTR
 
-
 ;HRESULT
 ITypeLib_IsName_Proxy proto WINAPI \
 		 pThis: ptr ITypeLib,
 	     szNameBuf: LPOLESTR,
 	      lHashVal: ULONG,
 		pfName: ptr BOOL
-
-
 
 ;HRESULT
 ITypeLib_IsName_Stub proto WINAPI \
@@ -3548,7 +3429,6 @@ ITypeLib_IsName_Stub proto WINAPI \
 		pfName: ptr BOOL,
 	  pBstrLibName: ptr BSTR
 
-
 ;HRESULT
 ITypeLib_FindName_Proxy proto WINAPI \
 		 pThis: ptr ITypeLib,
@@ -3557,8 +3437,6 @@ ITypeLib_FindName_Proxy proto WINAPI \
 	       ppTInfo: ptr ITypeInfo,
 	       rgMemId: ptr MEMBERID,
 	       pcFound: ptr USHORT
-
-
 
 ;HRESULT
 ITypeLib_FindName_Stub proto WINAPI \
@@ -3570,18 +3448,14 @@ ITypeLib_FindName_Stub proto WINAPI \
 	       pcFound: ptr USHORT,
 	  pBstrLibName: ptr BSTR
 
-
 ;void
 ITypeLib_ReleaseTLibAttr_Proxy proto WINAPI \
 		 pThis: ptr ITypeLib,
 	     pTLibAttr: ptr TLIBATTR
 
-
-
 ;HRESULT
 ITypeLib_ReleaseTLibAttr_Stub proto WINAPI \
 		 pThis: ptr ITypeLib
-
 
 ;HRESULT
 ITypeLib2_GetLibStatistics_Proxy proto WINAPI \
@@ -3589,14 +3463,11 @@ ITypeLib2_GetLibStatistics_Proxy proto WINAPI \
 	 pcUniqueNames: ptr ULONG,
        pcchUniqueNames: ptr ULONG
 
-
-
 ;HRESULT
 ITypeLib2_GetLibStatistics_Stub proto WINAPI \
 		 pThis: ptr ITypeLib2,
 	 pcUniqueNames: ptr ULONG,
        pcchUniqueNames: ptr ULONG
-
 
 ;HRESULT
 ITypeLib2_GetDocumentation2_Proxy proto WINAPI \
@@ -3607,8 +3478,6 @@ ITypeLib2_GetDocumentation2_Proxy proto WINAPI \
   pdwHelpStringContext: ptr DWORD,
     pbstrHelpStringDll: ptr BSTR
 
-
-
 ;HRESULT
 ITypeLib2_GetDocumentation2_Stub proto WINAPI \
 		 pThis: ptr ITypeLib2,
@@ -3618,7 +3487,6 @@ ITypeLib2_GetDocumentation2_Stub proto WINAPI \
        pbstrHelpString: ptr BSTR,
   pdwHelpStringContext: ptr DWORD,
     pbstrHelpStringDll: ptr BSTR
-
 
 
 .list

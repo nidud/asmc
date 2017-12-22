@@ -150,123 +150,123 @@ SaveTemplates		PVOID ?
 ID3DXSaveUserData	ENDS
 
 ID3DXAnimationSet	STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetName
-STDMETHOD GetPeriod
-STDMETHOD GetPeriodicPosition, :DOUBLE
-STDMETHOD GetNumAnimations
-STDMETHOD GetAnimationNameByIndex, :UINT, :ptr
-STDMETHOD GetAnimationIndexByName, :ptr, :ptr
-STDMETHOD GetSRT, :DOUBLE, :UINT, :ptr, :ptr, :ptr
-STDMETHOD GetCallback, :double, :DWORD, :ptr, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetName
+	STDMETHOD	GetPeriod
+	STDMETHOD	GetPeriodicPosition, :DOUBLE
+	STDMETHOD	GetNumAnimations
+	STDMETHOD	GetAnimationNameByIndex, :UINT, :ptr
+	STDMETHOD	GetAnimationIndexByName, :ptr, :ptr
+	STDMETHOD	GetSRT, :DOUBLE, :UINT, :ptr, :ptr, :ptr
+	STDMETHOD	GetCallback, :double, :DWORD, :ptr, :ptr
 ID3DXAnimationSet	ENDS
 
 ID3DXKeyframedAnimationSet STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetName
-STDMETHOD GetPeriod
-STDMETHOD GetPeriodicPosition, :DOUBLE
-STDMETHOD GetNumAnimations
-STDMETHOD GetAnimationNameByIndex, :UINT, :ptr
-STDMETHOD GetAnimationIndexByName, :ptr, :ptr
-STDMETHOD GetSRT, :DOUBLE, :UINT, :ptr, :ptr, :ptr
-STDMETHOD GetCallback, :double, :DWORD, :ptr, :ptr
-STDMETHOD GetPlaybackType
-STDMETHOD GetSourceTicksPerSecond
-STDMETHOD GetNumScaleKeys, :UINT
-STDMETHOD GetScaleKeys, :UINT, :LPD3DXKEY_VECTOR3
-STDMETHOD GetScaleKey, :UINT, :UINT, :LPD3DXKEY_VECTOR3
-STDMETHOD SetScaleKey, :UINT, :UINT, :LPD3DXKEY_VECTOR3
-STDMETHOD GetNumRotationKeys, :UINT
-STDMETHOD GetRotationKeys, :UINT, :LPD3DXKEY_QUATERNION
-STDMETHOD GetRotationKey, :UINT, :UINT, :LPD3DXKEY_QUATERNION
-STDMETHOD SetRotationKey, :UINT, :UINT, :LPD3DXKEY_QUATERNION
-STDMETHOD GetNumTranslationKeys, :UINT
-STDMETHOD GetTranslationKeys, :UINT, :LPD3DXKEY_VECTOR3
-STDMETHOD GetTranslationKey, :UINT, :UINT, :LPD3DXKEY_VECTOR3
-STDMETHOD SetTranslationKey, :UINT, :UINT, :LPD3DXKEY_VECTOR3
-STDMETHOD GetNumCallbackKeys
-STDMETHOD GetCallbackKeys, :LPD3DXKEY_CALLBACK
-STDMETHOD GetCallbackKey, :UINT, :LPD3DXKEY_CALLBACK
-STDMETHOD SetCallbackKey, :UINT, :LPD3DXKEY_CALLBACK
-STDMETHOD UnregisterScaleKey, :UINT, :UINT
-STDMETHOD UnregisterRotationKey, :UINT, :UINT
-STDMETHOD UnregisterTranslationKey, :UINT, :UINT
-STDMETHOD RegisterAnimationSRTKeys, :ptr, :UINT, :UINT, :UINT, :ptr, :ptr, :ptr, :ptr
-STDMETHOD Compress, :DWORD, :float, :ptr, :ptr
-STDMETHOD UnregisterAnimation, :UINT
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetName
+	STDMETHOD	GetPeriod
+	STDMETHOD	GetPeriodicPosition, :DOUBLE
+	STDMETHOD	GetNumAnimations
+	STDMETHOD	GetAnimationNameByIndex, :UINT, :ptr
+	STDMETHOD	GetAnimationIndexByName, :ptr, :ptr
+	STDMETHOD	GetSRT, :DOUBLE, :UINT, :ptr, :ptr, :ptr
+	STDMETHOD	GetCallback, :double, :DWORD, :ptr, :ptr
+	STDMETHOD	GetPlaybackType
+	STDMETHOD	GetSourceTicksPerSecond
+	STDMETHOD	GetNumScaleKeys, :UINT
+	STDMETHOD	GetScaleKeys, :UINT, :LPD3DXKEY_VECTOR3
+	STDMETHOD	GetScaleKey, :UINT, :UINT, :LPD3DXKEY_VECTOR3
+	STDMETHOD	SetScaleKey, :UINT, :UINT, :LPD3DXKEY_VECTOR3
+	STDMETHOD	GetNumRotationKeys, :UINT
+	STDMETHOD	GetRotationKeys, :UINT, :LPD3DXKEY_QUATERNION
+	STDMETHOD	GetRotationKey, :UINT, :UINT, :LPD3DXKEY_QUATERNION
+	STDMETHOD	SetRotationKey, :UINT, :UINT, :LPD3DXKEY_QUATERNION
+	STDMETHOD	GetNumTranslationKeys, :UINT
+	STDMETHOD	GetTranslationKeys, :UINT, :LPD3DXKEY_VECTOR3
+	STDMETHOD	GetTranslationKey, :UINT, :UINT, :LPD3DXKEY_VECTOR3
+	STDMETHOD	SetTranslationKey, :UINT, :UINT, :LPD3DXKEY_VECTOR3
+	STDMETHOD	GetNumCallbackKeys
+	STDMETHOD	GetCallbackKeys, :LPD3DXKEY_CALLBACK
+	STDMETHOD	GetCallbackKey, :UINT, :LPD3DXKEY_CALLBACK
+	STDMETHOD	SetCallbackKey, :UINT, :LPD3DXKEY_CALLBACK
+	STDMETHOD	UnregisterScaleKey, :UINT, :UINT
+	STDMETHOD	UnregisterRotationKey, :UINT, :UINT
+	STDMETHOD	UnregisterTranslationKey, :UINT, :UINT
+	STDMETHOD	RegisterAnimationSRTKeys, :ptr, :UINT, :UINT, :UINT, :ptr, :ptr, :ptr, :ptr
+	STDMETHOD	Compress, :DWORD, :float, :ptr, :ptr
+	STDMETHOD	UnregisterAnimation, :UINT
 ID3DXKeyframedAnimationSet ENDS
 
 ID3DXCompressedAnimationSet STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetName
-STDMETHOD GetPeriod
-STDMETHOD GetPeriodicPosition, :DOUBLE
-STDMETHOD GetNumAnimations
-STDMETHOD GetAnimationNameByIndex, :UINT, :ptr
-STDMETHOD GetAnimationIndexByName, :ptr, :ptr
-STDMETHOD GetSRT, :DOUBLE, :UINT, :ptr, :ptr, :ptr
-STDMETHOD GetCallback, :double, :DWORD, :ptr, :ptr
-STDMETHOD GetPlaybackType
-STDMETHOD GetSourceTicksPerSecond
-STDMETHOD GetCompressedData, :ptr
-STDMETHOD GetNumCallbackKeys
-STDMETHOD GetCallbackKeys, :LPD3DXKEY_CALLBACK
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetName
+	STDMETHOD	GetPeriod
+	STDMETHOD	GetPeriodicPosition, :DOUBLE
+	STDMETHOD	GetNumAnimations
+	STDMETHOD	GetAnimationNameByIndex, :UINT, :ptr
+	STDMETHOD	GetAnimationIndexByName, :ptr, :ptr
+	STDMETHOD	GetSRT, :DOUBLE, :UINT, :ptr, :ptr, :ptr
+	STDMETHOD	GetCallback, :double, :DWORD, :ptr, :ptr
+	STDMETHOD	GetPlaybackType
+	STDMETHOD	GetSourceTicksPerSecond
+	STDMETHOD	GetCompressedData, :ptr
+	STDMETHOD	GetNumCallbackKeys
+	STDMETHOD	GetCallbackKeys, :LPD3DXKEY_CALLBACK
 ID3DXCompressedAnimationSet ENDS
 
 ID3DXAnimationCallbackHandler STRUC
-STDMETHOD HandleCallback, :UINT, :ptr
+	STDMETHOD	HandleCallback, :UINT, :ptr
 ID3DXAnimationCallbackHandler ENDS
 
 ID3DXAnimationController STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetMaxNumAnimationOutputs
-STDMETHOD GetMaxNumAnimationSets
-STDMETHOD GetMaxNumTracks
-STDMETHOD GetMaxNumEvents
-STDMETHOD RegisterAnimationOutput, :ptr, :ptr, :ptr, :ptr, :ptr
-STDMETHOD RegisterAnimationSet, :ptr
-STDMETHOD UnregisterAnimationSet, :ptr
-STDMETHOD GetNumAnimationSets
-STDMETHOD GetAnimationSet, :UINT, :ptr
-STDMETHOD GetAnimationSetByName, :ptr, :ptr
-STDMETHOD AdvanceTime, :double, :ptr
-STDMETHOD ResetTime
-STDMETHOD GetTime
-STDMETHOD SetTrackAnimationSet, :UINT, :ptr
-STDMETHOD GetTrackAnimationSet, :UINT, :ptr
-STDMETHOD SetTrackPriority, :UINT, :D3DXPRIORITY_TYPE
-STDMETHOD SetTrackSpeed, :UINT, :float
-STDMETHOD SetTrackWeight, :UINT, :float
-STDMETHOD SetTrackPosition, :UINT, :double
-STDMETHOD SetTrackEnable, :UINT, :BOOL
-STDMETHOD SetTrackDesc, :UINT, :ptr
-STDMETHOD GetTrackDesc, :UINT, :ptr
-STDMETHOD SetPriorityBlend, :float
-STDMETHOD GetPriorityBlend
-STDMETHOD KeyTrackSpeed, :UINT, :float, :double, :double, :D3DXTRANSITION_TYPE
-STDMETHOD KeyTrackWeight, :UINT, :float, :double, :double, :D3DXTRANSITION_TYPE
-STDMETHOD KeyTrackPosition, :UINT, :double, :double
-STDMETHOD KeyTrackEnable, :UINT, :BOOL, :double
-STDMETHOD KeyPriorityBlend, :float, :double, :double, :D3DXTRANSITION_TYPE
-STDMETHOD UnkeyEvent, :D3DXEVENTHANDLE
-STDMETHOD UnkeyAllTrackEvents, :UINT
-STDMETHOD UnkeyAllPriorityBlends
-STDMETHOD GetCurrentTrackEvent, :UINT, :D3DXEVENT_TYPE
-STDMETHOD GetCurrentPriorityBlend
-STDMETHOD GetUpcomingTrackEvent, :UINT, :D3DXEVENTHANDLE
-STDMETHOD GetUpcomingPriorityBlend, :D3DXEVENTHANDLE
-STDMETHOD ValidateEvent, :D3DXEVENTHANDLE
-STDMETHOD GetEventDesc, :D3DXEVENTHANDLE, :ptr
-STDMETHOD CloneAnimationController, :UINT, :UINT, :UINT, :UINT, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetMaxNumAnimationOutputs
+	STDMETHOD	GetMaxNumAnimationSets
+	STDMETHOD	GetMaxNumTracks
+	STDMETHOD	GetMaxNumEvents
+	STDMETHOD	RegisterAnimationOutput, :ptr, :ptr, :ptr, :ptr, :ptr
+	STDMETHOD	RegisterAnimationSet, :ptr
+	STDMETHOD	UnregisterAnimationSet, :ptr
+	STDMETHOD	GetNumAnimationSets
+	STDMETHOD	GetAnimationSet, :UINT, :ptr
+	STDMETHOD	GetAnimationSetByName, :ptr, :ptr
+	STDMETHOD	AdvanceTime, :double, :ptr
+	STDMETHOD	ResetTime
+	STDMETHOD	GetTime
+	STDMETHOD	SetTrackAnimationSet, :UINT, :ptr
+	STDMETHOD	GetTrackAnimationSet, :UINT, :ptr
+	STDMETHOD	SetTrackPriority, :UINT, :D3DXPRIORITY_TYPE
+	STDMETHOD	SetTrackSpeed, :UINT, :float
+	STDMETHOD	SetTrackWeight, :UINT, :float
+	STDMETHOD	SetTrackPosition, :UINT, :double
+	STDMETHOD	SetTrackEnable, :UINT, :BOOL
+	STDMETHOD	SetTrackDesc, :UINT, :ptr
+	STDMETHOD	GetTrackDesc, :UINT, :ptr
+	STDMETHOD	SetPriorityBlend, :float
+	STDMETHOD	GetPriorityBlend
+	STDMETHOD	KeyTrackSpeed, :UINT, :float, :double, :double, :D3DXTRANSITION_TYPE
+	STDMETHOD	KeyTrackWeight, :UINT, :float, :double, :double, :D3DXTRANSITION_TYPE
+	STDMETHOD	KeyTrackPosition, :UINT, :double, :double
+	STDMETHOD	KeyTrackEnable, :UINT, :BOOL, :double
+	STDMETHOD	KeyPriorityBlend, :float, :double, :double, :D3DXTRANSITION_TYPE
+	STDMETHOD	UnkeyEvent, :D3DXEVENTHANDLE
+	STDMETHOD	UnkeyAllTrackEvents, :UINT
+	STDMETHOD	UnkeyAllPriorityBlends
+	STDMETHOD	GetCurrentTrackEvent, :UINT, :D3DXEVENT_TYPE
+	STDMETHOD	GetCurrentPriorityBlend
+	STDMETHOD	GetUpcomingTrackEvent, :UINT, :D3DXEVENTHANDLE
+	STDMETHOD	GetUpcomingPriorityBlend, :D3DXEVENTHANDLE
+	STDMETHOD	ValidateEvent, :D3DXEVENTHANDLE
+	STDMETHOD	GetEventDesc, :D3DXEVENTHANDLE, :ptr
+	STDMETHOD	CloneAnimationController, :UINT, :UINT, :UINT, :UINT, :ptr
 ID3DXAnimationController ENDS
 
 ;HRESULT

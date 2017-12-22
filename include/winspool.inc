@@ -31,7 +31,7 @@ else
 PRINTER_INFO_1		typedef PRINTER_INFO_1A
 PPRINTER_INFO_1		typedef PPRINTER_INFO_1A
 LPPRINTER_INFO_1	typedef LPPRINTER_INFO_1A
-endif 
+endif
 
 PRINTER_INFO_2A		STRUC
 pServerName		LPSTR ?
@@ -91,7 +91,7 @@ else
 PRINTER_INFO_2		typedef PRINTER_INFO_2A
 PPRINTER_INFO_2		typedef PPRINTER_INFO_2A
 LPPRINTER_INFO_2	typedef LPPRINTER_INFO_2A
-endif 
+endif
 
 PRINTER_INFO_3		STRUC
 pSecurityDescriptor	PSECURITY_DESCRIPTOR ?
@@ -121,7 +121,7 @@ else
 PRINTER_INFO_4		typedef PRINTER_INFO_4A
 PPRINTER_INFO_4		typedef PPRINTER_INFO_4A
 LPPRINTER_INFO_4	typedef LPPRINTER_INFO_4A
-endif 
+endif
 
 PRINTER_INFO_5A		STRUC
 pPrinterName		LPSTR ?
@@ -149,14 +149,13 @@ else
 PRINTER_INFO_5		typedef PRINTER_INFO_5A
 PPRINTER_INFO_5		typedef PPRINTER_INFO_5A
 LPPRINTER_INFO_5	typedef LPPRINTER_INFO_5A
-endif 
+endif
 
 PRINTER_INFO_6		STRUC
 dwStatus		dd ?
 PRINTER_INFO_6		ENDS
 PPRINTER_INFO_6		typedef ptr PRINTER_INFO_6
 LPPRINTER_INFO_6	typedef ptr PRINTER_INFO_6
-
 
 PRINTER_INFO_7A		STRUC
 pszObjectGUID		LPSTR ?
@@ -178,13 +177,11 @@ else
 PRINTER_INFO_7		typedef PRINTER_INFO_7A
 PPRINTER_INFO_7		typedef PPRINTER_INFO_7A
 LPPRINTER_INFO_7	typedef LPPRINTER_INFO_7A
-endif 
+endif
 
 DSPRINT_PUBLISH		equ 1
 DSPRINT_UPDATE		equ 2
 DSPRINT_UNPUBLISH	equ 3
-
-
 
 PRINTER_CONTROL_PAUSE	equ 1
 PRINTER_CONTROL_RESUME	equ 2
@@ -216,7 +213,6 @@ PRINTER_STATUS_OUT_OF_MEMORY equ 0x00200000
 PRINTER_STATUS_DOOR_OPEN equ 0x00400000
 PRINTER_STATUS_SERVER_UNKNOWN equ 0x00800000
 PRINTER_STATUS_POWER_SAVE equ 0x01000000
-
 
 PRINTER_ATTRIBUTE_QUEUED equ 0x00000001
 PRINTER_ATTRIBUTE_DIRECT equ 0x00000002
@@ -283,7 +279,7 @@ else
 JOB_INFO_1		typedef JOB_INFO_1A
 PJOB_INFO_1		typedef PJOB_INFO_1A
 LPJOB_INFO_1		typedef LPJOB_INFO_1A
-endif 
+endif
 
 JOB_INFO_2A		STRUC
 JobId			dd ?
@@ -306,8 +302,8 @@ StartTime		dd ?
 UntilTime		dd ?
 TotalPages		dd ?
 _Size			dd ?
-Submitted		SYSTEMTIME <>	
-Time			dd ?	
+Submitted		SYSTEMTIME <>
+Time			dd ?
 PagesPrinted		dd ?
 JOB_INFO_2A		ENDS
 PJOB_INFO_2A		typedef ptr JOB_INFO_2A
@@ -333,8 +329,8 @@ StartTime		dd ?
 UntilTime		dd ?
 TotalPages		dd ?
 _Size			dd ?
-Submitted		SYSTEMTIME <>	
-Time			dd ?	
+Submitted		SYSTEMTIME <>
+Time			dd ?
 PagesPrinted		dd ?
 JOB_INFO_2W		ENDS
 PJOB_INFO_2W		typedef ptr JOB_INFO_2W
@@ -347,7 +343,7 @@ else
 JOB_INFO_2		typedef JOB_INFO_2A
 PJOB_INFO_2		typedef PJOB_INFO_2A
 LPJOB_INFO_2		typedef LPJOB_INFO_2A
-endif 
+endif
 
 JOB_INFO_3		STRUC
 JobId			dd ?
@@ -400,15 +396,15 @@ else
 ADDJOB_INFO_1		typedef ADDJOB_INFO_1A
 PADDJOB_INFO_1		typedef PADDJOB_INFO_1A
 LPADDJOB_INFO_1		typedef LPADDJOB_INFO_1A
-endif 
+endif
 
 DRIVER_INFO_1A		STRUC
-pName			LPSTR ? 
+pName			LPSTR ?
 DRIVER_INFO_1A		ENDS
 PDRIVER_INFO_1A		typedef ptr DRIVER_INFO_1A
 LPDRIVER_INFO_1A	typedef ptr DRIVER_INFO_1A
 DRIVER_INFO_1W		STRUC
-pName			LPWSTR ?	
+pName			LPWSTR ?
 DRIVER_INFO_1W		ENDS
 PDRIVER_INFO_1W		typedef ptr DRIVER_INFO_1W
 LPDRIVER_INFO_1W	typedef ptr DRIVER_INFO_1W
@@ -420,25 +416,25 @@ else
 DRIVER_INFO_1		typedef DRIVER_INFO_1A
 PDRIVER_INFO_1		typedef PDRIVER_INFO_1A
 LPDRIVER_INFO_1		typedef LPDRIVER_INFO_1A
-endif 
+endif
 
 DRIVER_INFO_2A		STRUC
 cVersion		dd ?
-pName			LPSTR ? 
-pEnvironment		LPSTR ? 
-pDriverPath		LPSTR ? 
-pDataFile		LPSTR ? 
-pConfigFile		LPSTR ? 
+pName			LPSTR ?
+pEnvironment		LPSTR ?
+pDriverPath		LPSTR ?
+pDataFile		LPSTR ?
+pConfigFile		LPSTR ?
 DRIVER_INFO_2A		ENDS
 PDRIVER_INFO_2A		typedef ptr DRIVER_INFO_2A
 LPDRIVER_INFO_2A	typedef ptr DRIVER_INFO_2A
 DRIVER_INFO_2W		STRUC
 cVersion		dd ?
-pName			LPWSTR ?	
-pEnvironment		LPWSTR ?	
-pDriverPath		LPWSTR ?	
-pDataFile		LPWSTR ?	
-pConfigFile		LPWSTR ?	
+pName			LPWSTR ?
+pEnvironment		LPWSTR ?
+pDriverPath		LPWSTR ?
+pDataFile		LPWSTR ?
+pConfigFile		LPWSTR ?
 DRIVER_INFO_2W		ENDS
 PDRIVER_INFO_2W		typedef ptr DRIVER_INFO_2W
 LPDRIVER_INFO_2W	typedef ptr DRIVER_INFO_2W
@@ -450,33 +446,33 @@ else
 DRIVER_INFO_2		typedef DRIVER_INFO_2A
 PDRIVER_INFO_2		typedef PDRIVER_INFO_2A
 LPDRIVER_INFO_2		typedef LPDRIVER_INFO_2A
-endif 
+endif
 
 DRIVER_INFO_3A		STRUC
 cVersion		dd ?
-pName			LPSTR ? 
-pEnvironment		LPSTR ? 
-pDriverPath		LPSTR ? 
-pDataFile		LPSTR ? 
-pConfigFile		LPSTR ? 
-pHelpFile		LPSTR ? 
-pDependentFiles		LPSTR ? 
-pMonitorName		LPSTR ? 
-pDefaultDataType	LPSTR ? 
+pName			LPSTR ?
+pEnvironment		LPSTR ?
+pDriverPath		LPSTR ?
+pDataFile		LPSTR ?
+pConfigFile		LPSTR ?
+pHelpFile		LPSTR ?
+pDependentFiles		LPSTR ?
+pMonitorName		LPSTR ?
+pDefaultDataType	LPSTR ?
 DRIVER_INFO_3A		ENDS
 PDRIVER_INFO_3A		typedef ptr DRIVER_INFO_3A
 LPDRIVER_INFO_3A	typedef ptr DRIVER_INFO_3A
 DRIVER_INFO_3W		STRUC
 cVersion		dd ?
-pName			LPWSTR ?	
-pEnvironment		LPWSTR ?	
-pDriverPath		LPWSTR ?	
-pDataFile		LPWSTR ?	
-pConfigFile		LPWSTR ?	
-pHelpFile		LPWSTR ?	
-pDependentFiles		LPWSTR ?	
-pMonitorName		LPWSTR ?	
-pDefaultDataType	LPWSTR ?	
+pName			LPWSTR ?
+pEnvironment		LPWSTR ?
+pDriverPath		LPWSTR ?
+pDataFile		LPWSTR ?
+pConfigFile		LPWSTR ?
+pHelpFile		LPWSTR ?
+pDependentFiles		LPWSTR ?
+pMonitorName		LPWSTR ?
+pDefaultDataType	LPWSTR ?
 DRIVER_INFO_3W		ENDS
 PDRIVER_INFO_3W		typedef ptr DRIVER_INFO_3W
 LPDRIVER_INFO_3W	typedef ptr DRIVER_INFO_3W
@@ -488,7 +484,7 @@ else
 DRIVER_INFO_3		typedef DRIVER_INFO_3A
 PDRIVER_INFO_3		typedef PDRIVER_INFO_3A
 LPDRIVER_INFO_3		typedef LPDRIVER_INFO_3A
-endif 
+endif
 
 DPD_DELETE_UNUSED_FILES equ 0x00000001
 DPD_DELETE_SPECIFIC_VERSION equ 0x00000002
@@ -521,7 +517,7 @@ else
 DOC_INFO_1		typedef DOC_INFO_1A
 PDOC_INFO_1		typedef PDOC_INFO_1A
 LPDOC_INFO_1		typedef LPDOC_INFO_1A
-endif 
+endif
 
 FORM_INFO_1A		STRUC
 Flags			dd ?
@@ -547,7 +543,7 @@ else
 FORM_INFO_1		typedef FORM_INFO_1A
 PFORM_INFO_1		typedef PFORM_INFO_1A
 LPFORM_INFO_1		typedef LPFORM_INFO_1A
-endif 
+endif
 
 DOC_INFO_2A		STRUC
 pDocName		LPSTR ?
@@ -575,13 +571,10 @@ else
 DOC_INFO_2		typedef DOC_INFO_2A
 PDOC_INFO_2		typedef PDOC_INFO_2A
 LPDOC_INFO_2		typedef LPDOC_INFO_2A
-endif 
+endif
 
-DI_CHANNEL		equ 1	 
-
-
+DI_CHANNEL		equ 1
 DI_READ_SPOOL_JOB	equ 3
-
 
 FORM_USER		equ 0x00000000
 FORM_BUILTIN		equ 0x00000001
@@ -605,7 +598,7 @@ else
 PRINTPROCESSOR_INFO_1	typedef PRINTPROCESSOR_INFO_1A
 PPRINTPROCESSOR_INFO_1	typedef PPRINTPROCESSOR_INFO_1A
 LPPRINTPROCESSOR_INFO_1 typedef LPPRINTPROCESSOR_INFO_1A
-endif 
+endif
 
 PRINTPROCESSOR_CAPS_1	STRUC
 dwLevel			dd ?
@@ -633,7 +626,7 @@ else
 PORT_INFO_1		typedef PORT_INFO_1A
 PPORT_INFO_1		typedef PPORT_INFO_1A
 LPPORT_INFO_1		typedef LPPORT_INFO_1A
-endif 
+endif
 
 PORT_INFO_2A		STRUC
 pPortName		LPSTR ?
@@ -661,7 +654,7 @@ else
 PORT_INFO_2		typedef PORT_INFO_2A
 PPORT_INFO_2		typedef PPORT_INFO_2A
 LPPORT_INFO_2		typedef LPPORT_INFO_2A
-endif 
+endif
 
 PORT_TYPE_WRITE		equ 0x0001
 PORT_TYPE_READ		equ 0x0002
@@ -690,7 +683,7 @@ else
 PORT_INFO_3		typedef PORT_INFO_3A
 PPORT_INFO_3		typedef PPORT_INFO_3A
 LPPORT_INFO_3		typedef LPPORT_INFO_3A
-endif 
+endif
 
 PORT_STATUS_TYPE_ERROR	equ 1
 PORT_STATUS_TYPE_WARNING equ 2
@@ -705,12 +698,9 @@ PORT_STATUS_NO_TONER	equ 6
 PORT_STATUS_DOOR_OPEN	equ 7
 PORT_STATUS_USER_INTERVENTION equ 8
 PORT_STATUS_OUT_OF_MEMORY equ 9
-
 PORT_STATUS_TONER_LOW	equ 10
-
 PORT_STATUS_WARMING_UP	equ 11
 PORT_STATUS_POWER_SAVE	equ 12
-
 
 MONITOR_INFO_1A		STRUC
 pName			LPSTR ?
@@ -730,7 +720,7 @@ else
 MONITOR_INFO_1		typedef MONITOR_INFO_1A
 PMONITOR_INFO_1		typedef PMONITOR_INFO_1A
 LPMONITOR_INFO_1	typedef LPMONITOR_INFO_1A
-endif 
+endif
 
 MONITOR_INFO_2A		STRUC
 pName			LPSTR ?
@@ -754,7 +744,7 @@ else
 MONITOR_INFO_2		typedef MONITOR_INFO_2A
 PMONITOR_INFO_2		typedef PMONITOR_INFO_2A
 LPMONITOR_INFO_2	typedef LPMONITOR_INFO_2A
-endif 
+endif
 
 DATATYPES_INFO_1A	STRUC
 pName			LPSTR ?
@@ -774,7 +764,7 @@ else
 DATATYPES_INFO_1	typedef DATATYPES_INFO_1A
 PDATATYPES_INFO_1	typedef PDATATYPES_INFO_1A
 LPDATATYPES_INFO_1	typedef LPDATATYPES_INFO_1A
-endif 
+endif
 
 PRINTER_DEFAULTSA	STRUC
 pDatatype		LPSTR ?
@@ -798,7 +788,7 @@ else
 PRINTER_DEFAULTS	typedef PRINTER_DEFAULTSA
 PPRINTER_DEFAULTS	typedef PPRINTER_DEFAULTSA
 LPPRINTER_DEFAULTS	typedef LPPRINTER_DEFAULTSA
-endif 
+endif
 
 PRINTER_ENUM_VALUESA	STRUC
 pValueName		LPSTR ?
@@ -826,7 +816,7 @@ else
 PRINTER_ENUM_VALUES	typedef PRINTER_ENUM_VALUESA
 PPRINTER_ENUM_VALUES	typedef PPRINTER_ENUM_VALUESA
 LPPRINTER_ENUM_VALUES	typedef LPPRINTER_ENUM_VALUESA
-endif 
+endif
 
 ;BOOL
 EnumPrintersA proto WINAPI \
@@ -850,7 +840,7 @@ ifdef _UNICODE
 EnumPrinters		equ <EnumPrintersW>
 else
 EnumPrinters		equ <EnumPrintersA>
-endif 
+endif
 
 PRINTER_ENUM_DEFAULT	equ 0x00000001
 PRINTER_ENUM_LOCAL	equ 0x00000002
@@ -860,10 +850,8 @@ PRINTER_ENUM_NAME	equ 0x00000008
 PRINTER_ENUM_REMOTE	equ 0x00000010
 PRINTER_ENUM_SHARED	equ 0x00000020
 PRINTER_ENUM_NETWORK	equ 0x00000040
-
 PRINTER_ENUM_EXPAND	equ 0x00004000
 PRINTER_ENUM_CONTAINER	equ 0x00008000
-
 PRINTER_ENUM_ICONMASK	equ 0x00ff0000
 PRINTER_ENUM_ICON1	equ 0x00010000
 PRINTER_ENUM_ICON2	equ 0x00020000
@@ -888,7 +876,7 @@ ifdef _UNICODE
 OpenPrinter		equ <OpenPrinterW>
 else
 OpenPrinter		equ <OpenPrinterA>
-endif 
+endif
 
 ;BOOL
 ResetPrinterA proto WINAPI \
@@ -902,7 +890,7 @@ ifdef _UNICODE
 ResetPrinter		equ <ResetPrinterW>
 else
 ResetPrinter		equ <ResetPrinterA>
-endif 
+endif
 
 ;BOOL
 SetJobA proto WINAPI \
@@ -922,7 +910,7 @@ ifdef _UNICODE
 SetJob			equ <SetJobW>
 else
 SetJob			equ <SetJobA>
-endif 
+endif
 
 ;BOOL
 GetJobA proto WINAPI \
@@ -944,7 +932,7 @@ ifdef _UNICODE
 GetJob			equ <GetJobW>
 else
 GetJob			equ <GetJobA>
-endif 
+endif
 
 ;BOOL
 EnumJobsA proto WINAPI \
@@ -970,7 +958,7 @@ ifdef _UNICODE
 EnumJobs		equ <EnumJobsW>
 else
 EnumJobs		equ <EnumJobsA>
-endif 
+endif
 
 ;HANDLE
 AddPrinterA proto WINAPI \
@@ -986,7 +974,7 @@ ifdef _UNICODE
 AddPrinter		equ <AddPrinterW>
 else
 AddPrinter		equ <AddPrinterA>
-endif 
+endif
 
 ;BOOL
 DeletePrinter proto WINAPI \
@@ -1008,7 +996,7 @@ ifdef _UNICODE
 SetPrinter		equ <SetPrinterW>
 else
 SetPrinter		equ <SetPrinterA>
-endif 
+endif
 
 ;BOOL
 GetPrinterA proto WINAPI \
@@ -1028,7 +1016,7 @@ ifdef _UNICODE
 GetPrinter		equ <GetPrinterW>
 else
 GetPrinter		equ <GetPrinterA>
-endif 
+endif
 
 ;BOOL
 AddPrinterDriverA proto WINAPI \
@@ -1044,7 +1032,7 @@ ifdef _UNICODE
 AddPrinterDriver	equ <AddPrinterDriverW>
 else
 AddPrinterDriver	equ <AddPrinterDriverA>
-endif 
+endif
 
 ;BOOL
 AddPrinterDriverExA proto WINAPI \
@@ -1062,7 +1050,7 @@ ifdef _UNICODE
 AddPrinterDriverEx	equ <AddPrinterDriverExW>
 else
 AddPrinterDriverEx	equ <AddPrinterDriverExA>
-endif 
+endif
 
 ;BOOL
 EnumPrinterDriversA proto WINAPI \
@@ -1086,7 +1074,7 @@ ifdef _UNICODE
 EnumPrinterDrivers	equ <EnumPrinterDriversW>
 else
 EnumPrinterDrivers	equ <EnumPrinterDriversA>
-endif 
+endif
 
 ;BOOL
 GetPrinterDriverA proto WINAPI \
@@ -1108,7 +1096,7 @@ ifdef _UNICODE
 GetPrinterDriver	equ <GetPrinterDriverW>
 else
 GetPrinterDriver	equ <GetPrinterDriverA>
-endif 
+endif
 
 ;BOOL
 GetPrinterDriverDirectoryA proto WINAPI \
@@ -1130,7 +1118,7 @@ ifdef _UNICODE
 GetPrinterDriverDirectory equ <GetPrinterDriverDirectoryW>
 else
 GetPrinterDriverDirectory equ <GetPrinterDriverDirectoryA>
-endif 
+endif
 
 ;BOOL
 DeletePrinterDriverA proto WINAPI \
@@ -1146,7 +1134,7 @@ ifdef _UNICODE
 DeletePrinterDriver	equ <DeletePrinterDriverW>
 else
 DeletePrinterDriver	equ <DeletePrinterDriverA>
-endif 
+endif
 
 ;BOOL
 DeletePrinterDriverExA proto WINAPI \
@@ -1166,7 +1154,7 @@ ifdef _UNICODE
 DeletePrinterDriverEx	equ <DeletePrinterDriverExW>
 else
 DeletePrinterDriverEx	equ <DeletePrinterDriverExA>
-endif 
+endif
 
 ;BOOL
 AddPerMachineConnectionA proto WINAPI \
@@ -1184,7 +1172,7 @@ ifdef _UNICODE
 AddPerMachineConnection equ <AddPerMachineConnectionW>
 else
 AddPerMachineConnection equ <AddPerMachineConnectionA>
-endif 
+endif
 
 ;BOOL
 DeletePerMachineConnectionA proto WINAPI \
@@ -1198,7 +1186,7 @@ ifdef _UNICODE
 DeletePerMachineConnection equ <DeletePerMachineConnectionW>
 else
 DeletePerMachineConnection equ <DeletePerMachineConnectionA>
-endif 
+endif
 
 ;BOOL
 EnumPerMachineConnectionsA proto WINAPI \
@@ -1218,7 +1206,7 @@ ifdef _UNICODE
 EnumPerMachineConnections equ <EnumPerMachineConnectionsW>
 else
 EnumPerMachineConnections equ <EnumPerMachineConnectionsA>
-endif 
+endif
 
 ;BOOL
 AddPrintProcessorA proto WINAPI \
@@ -1236,7 +1224,7 @@ ifdef _UNICODE
 AddPrintProcessor	equ <AddPrintProcessorW>
 else
 AddPrintProcessor	equ <AddPrintProcessorA>
-endif 
+endif
 
 ;BOOL
 EnumPrintProcessorsA proto WINAPI \
@@ -1260,9 +1248,7 @@ ifdef _UNICODE
 EnumPrintProcessors	equ <EnumPrintProcessorsW>
 else
 EnumPrintProcessors	equ <EnumPrintProcessorsA>
-endif 
-
-
+endif
 
 ;BOOL
 GetPrintProcessorDirectoryA proto WINAPI \
@@ -1284,7 +1270,7 @@ ifdef _UNICODE
 GetPrintProcessorDirectory equ <GetPrintProcessorDirectoryW>
 else
 GetPrintProcessorDirectory equ <GetPrintProcessorDirectoryA>
-endif 
+endif
 
 ;BOOL
 EnumPrintProcessorDatatypesA proto WINAPI \
@@ -1308,7 +1294,7 @@ ifdef _UNICODE
 EnumPrintProcessorDatatypes equ <EnumPrintProcessorDatatypesW>
 else
 EnumPrintProcessorDatatypes equ <EnumPrintProcessorDatatypesA>
-endif 
+endif
 
 ;BOOL
 DeletePrintProcessorA proto WINAPI \
@@ -1324,7 +1310,7 @@ ifdef _UNICODE
 DeletePrintProcessor	equ <DeletePrintProcessorW>
 else
 DeletePrintProcessor	equ <DeletePrintProcessorA>
-endif 
+endif
 
 ;DWORD
 StartDocPrinterA proto WINAPI \
@@ -1340,7 +1326,7 @@ ifdef _UNICODE
 StartDocPrinter		equ <StartDocPrinterW>
 else
 StartDocPrinter		equ <StartDocPrinterA>
-endif 
+endif
 
 ;BOOL
 StartPagePrinter proto WINAPI \
@@ -1352,7 +1338,6 @@ WritePrinter proto WINAPI \
 		  pBuf: LPVOID,
 		 cbBuf: DWORD,
 	     pcWritten: LPDWORD
-
 
 ;BOOL
 EndPagePrinter proto WINAPI \
@@ -1391,7 +1376,7 @@ ifdef _UNICODE
 AddJob			equ <AddJobW>
 else
 AddJob			equ <AddJobA>
-endif 
+endif
 
 ;BOOL
 ScheduleJob proto WINAPI \
@@ -1423,7 +1408,7 @@ ifdef _UNICODE
 DocumentProperties	equ <DocumentPropertiesW>
 else
 DocumentProperties	equ <DocumentPropertiesA>
-endif 
+endif
 
 ;LONG
 AdvancedDocumentPropertiesA proto WINAPI \
@@ -1443,8 +1428,7 @@ ifdef _UNICODE
 AdvancedDocumentProperties equ <AdvancedDocumentPropertiesW>
 else
 AdvancedDocumentProperties equ <AdvancedDocumentPropertiesA>
-endif 
-
+endif
 
 ;DWORD
 GetPrinterDataA proto WINAPI \
@@ -1466,7 +1450,7 @@ ifdef _UNICODE
 GetPrinterData		equ <GetPrinterDataW>
 else
 GetPrinterData		equ <GetPrinterDataA>
-endif 
+endif
 
 ;DWORD
 GetPrinterDataExA proto WINAPI \
@@ -1490,7 +1474,7 @@ ifdef _UNICODE
 GetPrinterDataEx	equ <GetPrinterDataExW>
 else
 GetPrinterDataEx	equ <GetPrinterDataExA>
-endif 
+endif
 
 ;DWORD
 EnumPrinterDataA proto WINAPI \
@@ -1518,7 +1502,7 @@ ifdef _UNICODE
 EnumPrinterData		equ <EnumPrinterDataW>
 else
 EnumPrinterData		equ <EnumPrinterDataA>
-endif 
+endif
 
 ;DWORD
 EnumPrinterDataExA proto WINAPI \
@@ -1540,7 +1524,7 @@ ifdef _UNICODE
 EnumPrinterDataEx	equ <EnumPrinterDataExW>
 else
 EnumPrinterDataEx	equ <EnumPrinterDataExA>
-endif 
+endif
 
 ;DWORD
 EnumPrinterKeyA proto WINAPI \
@@ -1560,8 +1544,7 @@ ifdef _UNICODE
 EnumPrinterKey		equ <EnumPrinterKeyW>
 else
 EnumPrinterKey		equ <EnumPrinterKeyA>
-endif 
-
+endif
 
 ;DWORD
 SetPrinterDataA proto WINAPI \
@@ -1581,8 +1564,7 @@ ifdef _UNICODE
 SetPrinterData		equ <SetPrinterDataW>
 else
 SetPrinterData		equ <SetPrinterDataA>
-endif 
-
+endif
 
 ;DWORD
 SetPrinterDataExA proto WINAPI \
@@ -1604,9 +1586,7 @@ ifdef _UNICODE
 SetPrinterDataEx	equ <SetPrinterDataExW>
 else
 SetPrinterDataEx	equ <SetPrinterDataExA>
-endif 
-
-
+endif
 
 ;DWORD
 DeletePrinterDataA proto WINAPI \
@@ -1620,8 +1600,7 @@ ifdef _UNICODE
 DeletePrinterData	equ <DeletePrinterDataW>
 else
 DeletePrinterData	equ <DeletePrinterDataA>
-endif 
-
+endif
 
 ;DWORD
 DeletePrinterDataExA proto WINAPI \
@@ -1637,8 +1616,7 @@ ifdef _UNICODE
 DeletePrinterDataEx	equ <DeletePrinterDataExW>
 else
 DeletePrinterDataEx	equ <DeletePrinterDataExA>
-endif 
-
+endif
 
 ;DWORD
 DeletePrinterKeyA proto WINAPI \
@@ -1652,8 +1630,7 @@ ifdef _UNICODE
 DeletePrinterKey	equ <DeletePrinterKeyW>
 else
 DeletePrinterKey	equ <DeletePrinterKeyA>
-endif 
-
+endif
 
 PRINTER_NOTIFY_TYPE	equ 0x00
 JOB_NOTIFY_TYPE		equ 0x01
@@ -1711,7 +1688,6 @@ JOB_NOTIFY_FIELD_PAGES_PRINTED equ 0x15
 JOB_NOTIFY_FIELD_TOTAL_BYTES equ 0x16
 JOB_NOTIFY_FIELD_BYTES_PRINTED equ 0x17
 
-
 PRINTER_NOTIFY_OPTIONS_TYPE  STRUC
 _Type			dw ?
 Reserved0		dw ?
@@ -1723,7 +1699,6 @@ PRINTER_NOTIFY_OPTIONS_TYPE ENDS
 PPRINTER_NOTIFY_OPTIONS_TYPE typedef ptr PRINTER_NOTIFY_OPTIONS_TYPE
 LPPRINTER_NOTIFY_OPTIONS_TYPE typedef ptr PRINTER_NOTIFY_OPTIONS_TYPE
 
-
 PRINTER_NOTIFY_OPTIONS_REFRESH equ 0x01
 
 PRINTER_NOTIFY_OPTIONS	STRUC
@@ -1734,8 +1709,6 @@ pTypes			PPRINTER_NOTIFY_OPTIONS_TYPE ?
 PRINTER_NOTIFY_OPTIONS	ENDS
 PPRINTER_NOTIFY_OPTIONS typedef ptr PRINTER_NOTIFY_OPTIONS
 LPPRINTER_NOTIFY_OPTIONS typedef ptr PRINTER_NOTIFY_OPTIONS
-
-
 
 PRINTER_NOTIFY_INFO_DISCARDED equ 0x01
 
@@ -1775,7 +1748,6 @@ FindFirstPrinterChangeNotification proto WINAPI \
 	      fdwFlags: DWORD,
 	    fdwOptions: DWORD,
  pPrinterNotifyOptions: LPVOID
-
 
 ;BOOL
 FindNextPrinterChangeNotification proto WINAPI \
@@ -1840,14 +1812,11 @@ ifdef _UNICODE
 PrinterMessageBox	equ <PrinterMessageBoxW>
 else
 PrinterMessageBox	equ <PrinterMessageBoxA>
-endif 
-
-
+endif
 
 PRINTER_ERROR_INFORMATION equ 0x80000000
 PRINTER_ERROR_WARNING	equ 0x40000000
 PRINTER_ERROR_SEVERE	equ 0x20000000
-
 PRINTER_ERROR_OUTOFPAPER equ 0x00000001
 PRINTER_ERROR_JAM	equ 0x00000002
 PRINTER_ERROR_OUTOFTONER equ 0x00000004
@@ -1870,9 +1839,7 @@ ifdef _UNICODE
 AddForm			equ <AddFormW>
 else
 AddForm			equ <AddFormA>
-endif 
-
-
+endif
 
 ;BOOL
 DeleteFormA proto WINAPI \
@@ -1886,9 +1853,7 @@ ifdef _UNICODE
 DeleteForm		equ <DeleteFormW>
 else
 DeleteForm		equ <DeleteFormA>
-endif 
-
-
+endif
 
 ;BOOL
 GetFormA proto WINAPI \
@@ -1910,9 +1875,7 @@ ifdef _UNICODE
 GetForm			equ <GetFormW>
 else
 GetForm			equ <GetFormA>
-endif 
-
-
+endif
 
 ;BOOL
 SetFormA proto WINAPI \
@@ -1930,9 +1893,7 @@ ifdef _UNICODE
 SetForm			equ <SetFormW>
 else
 SetForm			equ <SetFormA>
-endif 
-
-
+endif
 
 ;BOOL
 EnumFormsA proto WINAPI \
@@ -1954,9 +1915,7 @@ ifdef _UNICODE
 EnumForms		equ <EnumFormsW>
 else
 EnumForms		equ <EnumFormsA>
-endif 
-
-
+endif
 
 ;BOOL
 EnumMonitorsA proto WINAPI \
@@ -1978,9 +1937,7 @@ ifdef _UNICODE
 EnumMonitors		equ <EnumMonitorsW>
 else
 EnumMonitors		equ <EnumMonitorsA>
-endif 
-
-
+endif
 
 ;BOOL
 AddMonitorA proto WINAPI \
@@ -1996,9 +1953,7 @@ ifdef _UNICODE
 AddMonitor		equ <AddMonitorW>
 else
 AddMonitor		equ <AddMonitorA>
-endif 
-
-
+endif
 
 ;BOOL
 DeleteMonitorA proto WINAPI \
@@ -2014,9 +1969,7 @@ ifdef _UNICODE
 DeleteMonitor		equ <DeleteMonitorW>
 else
 DeleteMonitor		equ <DeleteMonitorA>
-endif 
-
-
+endif
 
 ;BOOL
 EnumPortsA proto WINAPI \
@@ -2038,9 +1991,7 @@ ifdef _UNICODE
 EnumPorts		equ <EnumPortsW>
 else
 EnumPorts		equ <EnumPortsA>
-endif 
-
-
+endif
 
 ;BOOL
 AddPortA proto WINAPI \
@@ -2056,9 +2007,7 @@ ifdef _UNICODE
 AddPort			equ <AddPortW>
 else
 AddPort			equ <AddPortA>
-endif 
-
-
+endif
 
 ;BOOL
 ConfigurePortA proto WINAPI \
@@ -2074,7 +2023,7 @@ ifdef _UNICODE
 ConfigurePort		equ <ConfigurePortW>
 else
 ConfigurePort		equ <ConfigurePortA>
-endif 
+endif
 
 ;BOOL
 DeletePortA proto WINAPI \
@@ -2090,7 +2039,7 @@ ifdef _UNICODE
 DeletePort		equ <DeletePortW>
 else
 DeletePort		equ <DeletePortA>
-endif 
+endif
 
 ;BOOL
 XcvDataW proto WINAPI \
@@ -2103,7 +2052,6 @@ XcvDataW proto WINAPI \
        pcbOutputNeeded: PDWORD,
 	     pdwStatus: PDWORD
 XcvData			equ <XcvDataW>
-
 
 ;BOOL
 SetPortA proto WINAPI \
@@ -2121,9 +2069,7 @@ ifdef _UNICODE
 SetPort			equ <SetPortW>
 else
 SetPort			equ <SetPortA>
-endif 
-
-
+endif
 
 ;BOOL
 AddPrinterConnectionA proto WINAPI \
@@ -2135,9 +2081,7 @@ ifdef _UNICODE
 AddPrinterConnection	equ <AddPrinterConnectionW>
 else
 AddPrinterConnection	equ <AddPrinterConnectionA>
-endif 
-
-
+endif
 
 ;BOOL
 DeletePrinterConnectionA proto WINAPI \
@@ -2149,9 +2093,7 @@ ifdef _UNICODE
 DeletePrinterConnection equ <DeletePrinterConnectionW>
 else
 DeletePrinterConnection equ <DeletePrinterConnectionA>
-endif 
-
-
+endif
 
 ;HANDLE
 ConnectToPrinterDlg proto WINAPI \
@@ -2180,9 +2122,7 @@ else
 PROVIDOR_INFO_1		typedef PROVIDOR_INFO_1A
 PPROVIDOR_INFO_1	typedef PPROVIDOR_INFO_1A
 LPPROVIDOR_INFO_1	typedef LPPROVIDOR_INFO_1A
-endif 
-
-
+endif
 
 ;BOOL
 AddPrintProvidorA proto WINAPI \
@@ -2198,7 +2138,7 @@ ifdef _UNICODE
 AddPrintProvidor	equ <AddPrintProvidorW>
 else
 AddPrintProvidor	equ <AddPrintProvidorA>
-endif 
+endif
 
 ;BOOL
 DeletePrintProvidorA proto WINAPI \
@@ -2214,10 +2154,7 @@ ifdef _UNICODE
 DeletePrintProvidor	equ <DeletePrintProvidorW>
 else
 DeletePrintProvidor	equ <DeletePrintProvidorA>
-endif 
-
-
-
+endif
 
 SPLREG_DEFAULT_SPOOL_DIRECTORY equ <"DefaultSpoolDirectory">
 SPLREG_PORT_THREAD_PRIORITY_DEFAULT equ <"PortThreadPriorityDefault">
@@ -2241,34 +2178,24 @@ PRINTER_ACCESS_USE	equ 0x00000008
 
 JOB_ACCESS_ADMINISTER	equ 0x00000010
 
-
-
 SERVER_ALL_ACCESS	equ STANDARD_RIGHTS_REQUIRED OR SERVER_ACCESS_ADMINISTER OR SERVER_ACCESS_ENUMERATE
 SERVER_READ		equ STANDARD_RIGHTS_READ OR SERVER_ACCESS_ENUMERATE
 SERVER_WRITE		equ STANDARD_RIGHTS_WRITE OR SERVER_ACCESS_ADMINISTER OR SERVER_ACCESS_ENUMERATE
 SERVER_EXECUTE		equ STANDARD_RIGHTS_EXECUTE OR SERVER_ACCESS_ENUMERATE
-
 
 PRINTER_ALL_ACCESS	equ STANDARD_RIGHTS_REQUIRED OR PRINTER_ACCESS_ADMINISTER OR PRINTER_ACCESS_USE
 PRINTER_READ		equ STANDARD_RIGHTS_READ OR PRINTER_ACCESS_USE
 PRINTER_WRITE		equ STANDARD_RIGHTS_WRITE OR PRINTER_ACCESS_USE
 PRINTER_EXECUTE		equ STANDARD_RIGHTS_EXECUTE OR PRINTER_ACCESS_USE
 
-
 JOB_ALL_ACCESS		equ STANDARD_RIGHTS_REQUIRED OR JOB_ACCESS_ADMINISTER
 JOB_READ		equ STANDARD_RIGHTS_READ OR JOB_ACCESS_ADMINISTER
 JOB_WRITE		equ STANDARD_RIGHTS_WRITE OR JOB_ACCESS_ADMINISTER
 JOB_EXECUTE		equ STANDARD_RIGHTS_EXECUTE OR JOB_ACCESS_ADMINISTER
 
-
-
-
-
 SPLDS_SPOOLER_KEY	equ <"DsSpooler">
 SPLDS_DRIVER_KEY	equ <"DsDriver">
 SPLDS_USER_KEY		equ <"DsUser">
-
-
 
 SPLDS_ASSET_NUMBER	equ <"assetNumber">
 SPLDS_BYTES_PER_MINUTE	equ <"bytesPerMinute">
@@ -2315,18 +2242,14 @@ SPLDS_UNC_NAME		equ <"uNCName">
 SPLDS_URL		equ <"url">
 SPLDS_VERSION_NUMBER	equ <"versionNumber">
 
-
-SPLDS_PRINTER_NAME_ALIASES equ <"printerNameAliases">	   
-SPLDS_PRINTER_LOCATIONS equ <"printerLocations"> 
-SPLDS_PRINTER_MODEL	equ <"printerModel">		
-
-
+SPLDS_PRINTER_NAME_ALIASES equ <"printerNameAliases">
+SPLDS_PRINTER_LOCATIONS equ <"printerLocations">
+SPLDS_PRINTER_MODEL	equ <"printerModel">
 
 PRINTER_HTML_VIEW_QUEUE equ 0
 PRINTER_HTML_VIEW_PRINTPROPERTIES equ 1
 PRINTER_HTML_VIEW_INSTALL equ 2
 PRINTER_HTML_VIEW_JOBPROPERTIES equ 3
-
 
 ;DWORD
 SetPrinterHTMLViewA proto WINAPI \
@@ -2342,7 +2265,7 @@ ifdef _UNICODE
 SetPrinterHTMLView	equ <SetPrinterHTMLViewW>
 else
 SetPrinterHTMLView	equ <SetPrinterHTMLViewA>
-endif 
+endif
 
 ;DWORD
 GetPrinterHTMLViewA proto WINAPI \
@@ -2362,9 +2285,9 @@ ifdef _UNICODE
 GetPrinterHTMLView	equ <GetPrinterHTMLViewW>
 else
 GetPrinterHTMLView	equ <GetPrinterHTMLViewA>
-endif 
+endif
 
 .list
-endif 
+endif
 
 

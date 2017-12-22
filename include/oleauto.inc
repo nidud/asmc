@@ -2,7 +2,6 @@ ifndef _OLEAUTO_H_
 .xlist
 _OLEAUTO_H_ equ 1
 
-
 ifdef __PE__
 option	dllimport:<oleaut32>
 endif
@@ -12,7 +11,6 @@ externdef		IID_StdOle:IID
 STDOLE_MAJORVERNUM	equ 0x1
 STDOLE_MINORVERNUM	equ 0x0
 STDOLE_LCID		equ 0x0000
-
 STDOLE2_MAJORVERNUM	equ 0x2
 STDOLE2_MINORVERNUM	equ 0x0
 STDOLE2_LCID		equ 0x0000
@@ -24,7 +22,6 @@ endif
 
 include oaidl.inc
 .xlist
-
 
 ;WINOLEAUTAPI_(BSTR)
 SysAllocString proto WINAPI \
@@ -65,7 +62,6 @@ SysAllocStringByteLen proto WINAPI \
 
 endif
 
-
 ;WINOLEAUTAPI_(INT)
 DosDateTimeToVariantTime proto WINAPI \
 	      wDosDate: USHORT,
@@ -79,7 +75,6 @@ VariantTimeToDosDateTime proto WINAPI \
 	     pwDosDate: ptr USHORT,
 	     pwDosTime: ptr USHORT
 
-
 ifdef _WIN32
 ;WINOLEAUTAPI_(INT)
 SystemTimeToVariantTime proto WINAPI \
@@ -92,8 +87,6 @@ VariantTimeToSystemTime proto WINAPI \
 	  lpSystemTime: LPSYSTEMTIME
 
 endif
-
-
 
 ;WINOLEAUTAPI
 SafeArrayAllocDescriptor proto WINAPI \
@@ -585,7 +578,6 @@ VarR4FromDec proto WINAPI \
 		pdecIn: ptr DECIMAL,
 	       pfltOut: ptr FLOAT
 
-
 ;WINOLEAUTAPI
 VarR8FromUI1 proto WINAPI \
 		   bIn: BYTE,
@@ -653,7 +645,6 @@ VarR8FromUI4 proto WINAPI \
 VarR8FromDec proto WINAPI \
 		pdecIn: ptr DECIMAL,
 	       pdblOut: ptr DOUBLE
-
 
 ;WINOLEAUTAPI
 VarDateFromUI1 proto WINAPI \
@@ -791,7 +782,6 @@ VarCyFromUI4 proto WINAPI \
 VarCyFromDec proto WINAPI \
 		pdecIn: ptr DECIMAL,
 		pcyOut: ptr CY
-
 
 ;WINOLEAUTAPI
 VarBstrFromUI1 proto WINAPI \
@@ -1091,7 +1081,6 @@ VarUI2FromDec proto WINAPI \
 		pdecIn: ptr DECIMAL,
 		puiOut: ptr USHORT
 
-
 ;WINOLEAUTAPI
 VarUI4FromUI1 proto WINAPI \
 		   bIn: BYTE,
@@ -1294,8 +1283,6 @@ VarUintFromUI4		equ <VarUI4FromUI4>
 VarUintFromDec		equ <VarUI4FromDec>
 VarUintFromInt		equ <VarUI4FromI4>
 
-
-
 NUMPARSE		STRUC
 cDig			SINT ?
 dwInFlags		ULONG ?
@@ -1343,15 +1330,12 @@ VarParseNumFromStr proto WINAPI \
 	       pnumprs: ptr NUMPARSE,
 		rgbDig: ptr BYTE
 
-
 ;WINOLEAUTAPI
 VarNumFromParseNum proto WINAPI \
 	       pnumprs: ptr NUMPARSE,
 		rgbDig: ptr BYTE,
 	      dwVtBits: ULONG,
 		  pvar: ptr VARIANT
-
-
 
 ;STDAPI
 VarAdd proto WINAPI \
@@ -1464,14 +1448,11 @@ VarRound proto WINAPI \
 	     cDecimals: SINT,
 	    pvarResult: LPVARIANT
 
-
 ;STDAPI
 VarCmp proto WINAPI \
 	      pvarLeft: LPVARIANT,
 	     pvarRight: LPVARIANT,
 		  lcid: LCID
-
-
 
 ;STDAPI
 VarDecAdd proto WINAPI \
@@ -1497,7 +1478,6 @@ VarDecSub proto WINAPI \
 	     pdecRight: LPDECIMAL,
 	    pdecResult: LPDECIMAL
 
-
 ;STDAPI
 VarDecAbs proto WINAPI \
 		pdecIn: LPDECIMAL,
@@ -1518,13 +1498,11 @@ VarDecNeg proto WINAPI \
 		pdecIn: LPDECIMAL,
 	    pdecResult: LPDECIMAL
 
-
 ;STDAPI
 VarDecRound proto WINAPI \
 		pdecIn: LPDECIMAL,
 	     cDecimals: SINT,
 	    pdecResult: LPDECIMAL
-
 
 ;STDAPI
 VarDecCmp proto WINAPI \
@@ -1535,8 +1513,6 @@ VarDecCmp proto WINAPI \
 VarDecCmpR8 proto WINAPI \
 	      pdecLeft: LPDECIMAL,
 	      dblRight: DOUBLE
-
-
 
 ;STDAPI
 VarCyAdd proto WINAPI \
@@ -1562,7 +1538,6 @@ VarCySub proto WINAPI \
 	       cyRight: CY,
 	     pcyResult: LPCY
 
-
 ;STDAPI
 VarCyAbs proto WINAPI \
 		  cyIn: CY,
@@ -1583,13 +1558,11 @@ VarCyNeg proto WINAPI \
 		  cyIn: CY,
 	     pcyResult: LPCY
 
-
 ;STDAPI
 VarCyRound proto WINAPI \
 		  cyIn: CY,
 	     cDecimals: SINT,
 	     pcyResult: LPCY
-
 
 ;STDAPI
 VarCyCmp proto WINAPI \
@@ -1600,8 +1573,6 @@ VarCyCmp proto WINAPI \
 VarCyCmpR8 proto WINAPI \
 		cyLeft: CY,
 	      dblRight: DOUBLE
-
-
 
 ;STDAPI
 VarBstrCat proto WINAPI \
@@ -1633,14 +1604,12 @@ VarR8Round proto WINAPI \
 	    pdblResult: ptr DOUBLE
 
 
-
 VARCMP_LT		equ 0
 VARCMP_EQ		equ 1
 VARCMP_GT		equ 2
 VARCMP_NULL		equ 3
 
 VT_HARDTYPE		equ VT_RESERVED
-
 
 VAR_VALIDDATE		equ 0x0004
 VAR_CALENDAR_HIJRI	equ 0x0008
@@ -1657,7 +1626,6 @@ VarDateFromUdate proto WINAPI \
 	       dwFlags: ULONG,
 	      pdateOut: ptr DATE
 
-
 ;WINOLEAUTAPI
 VarUdateFromDate proto WINAPI \
 		dateIn: DATE,
@@ -1669,8 +1637,6 @@ VarUdateFromDate proto WINAPI \
 GetAltMonthNames proto WINAPI \
 		  lcid: LCID,
 		  prgp: ptr LPOLESTR
-
-
 
 
 VAR_FORMAT_NOSUBSTITUTE equ 0x00000010
@@ -1721,7 +1687,6 @@ VarFormatCurrency proto WINAPI \
 	       dwFlags: ULONG,
 	      pbstrOut: ptr BSTR
 
-
 ;WINOLEAUTAPI
 VarWeekdayName proto WINAPI \
 	      iWeekday: SINT,
@@ -1736,7 +1701,6 @@ VarMonthName proto WINAPI \
 	       fAbbrev: SINT,
 	       dwFlags: ULONG,
 	      pbstrOut: ptr BSTR
-
 
 ;WINOLEAUTAPI
 VarFormatFromTokens proto WINAPI \
@@ -1756,13 +1720,7 @@ VarTokenizeFormatString proto WINAPI \
 	    iFirstWeek: SINT,
 		  lcid: LCID
 
-
-
-
 LPTYPELIB		typedef ptr ITypeLib
-
-
-
 
 DISPID			typedef LONG
 MEMBERID		typedef DISPID
@@ -1770,24 +1728,15 @@ MEMBERID		typedef DISPID
 MEMBERID_NIL		equ DISPID_UNKNOWN
 ID_DEFAULTINST		equ -2
 
-
 DISPATCH_METHOD		equ 0x1
 DISPATCH_PROPERTYGET	equ 0x2
 DISPATCH_PROPERTYPUT	equ 0x4
 DISPATCH_PROPERTYPUTREF equ 0x8
 
 LPTYPEINFO		typedef ptr ITypeInfo
-
-
-
 LPTYPECOMP		typedef ptr ITypeComp
-
-
-
 LPCREATETYPELIB		typedef ptr ICreateTypeLib
-
 LPCREATETYPEINFO	typedef ptr ICreateTypeInfo
-
 
 ifdef _WIN32
 ;WINOLEAUTAPI_(ULONG)
@@ -1820,7 +1769,6 @@ LoadTypeLib proto WINAPI \
 		pptlib: ptr ITypeLib
 
 
-
 REGKIND			typedef SDWORD
 REGKIND_DEFAULT		equ 0
 REGKIND_REGISTER	equ 1
@@ -1832,7 +1780,6 @@ LoadTypeLibEx proto WINAPI \
 	       regkind: REGKIND,
 		pptlib: ptr ITypeLib
 
-
 ;WINOLEAUTAPI
 LoadRegTypeLib proto WINAPI \
 		 rguid: REFGUID,
@@ -1840,7 +1787,6 @@ LoadRegTypeLib proto WINAPI \
 	     wVerMinor: WORD,
 		  lcid: LCID,
 		pptlib: ptr ITypeLib
-
 
 ;WINOLEAUTAPI
 QueryPathOfRegTypeLib proto WINAPI \
@@ -1850,14 +1796,11 @@ QueryPathOfRegTypeLib proto WINAPI \
 		  lcid: LCID,
 	lpbstrPathName: LPBSTR
 
-
 ;WINOLEAUTAPI
 RegisterTypeLib proto WINAPI \
 		 ptlib: ptr ITypeLib,
 	    szFullPath: ptr OLECHAR,
 	     szHelpDir: ptr OLECHAR
-
-
 
 ;WINOLEAUTAPI
 UnRegisterTypeLib proto WINAPI \
@@ -1867,21 +1810,17 @@ UnRegisterTypeLib proto WINAPI \
 		  lcid: LCID,
 	       syskind: SYSKIND
 
-
 ;WINOLEAUTAPI
 CreateTypeLib proto WINAPI \
 	       syskind: SYSKIND,
 		szFile: ptr OLECHAR,
 	       ppctlib: ptr ICreateTypeLib
 
-
 ;WINOLEAUTAPI
 CreateTypeLib2 proto WINAPI \
 	       syskind: SYSKIND,
 		szFile: LPCOLESTR,
 	       ppctlib: ptr ICreateTypeLib2
-
-
 
 
 LPDISPATCH		typedef ptr IDispatch
@@ -1910,8 +1849,6 @@ cMembers		UINT ?
 INTERFACEDATA		ENDS
 LPINTERFACEDATA		typedef ptr INTERFACEDATA
 
-
-
 ;WINOLEAUTAPI
 DispGetParam proto WINAPI \
 	   pdispparams: ptr DISPPARAMS,
@@ -1920,14 +1857,12 @@ DispGetParam proto WINAPI \
 	    pvarResult: ptr VARIANT,
 	      puArgErr: ptr UINT
 
-
 ;WINOLEAUTAPI
 DispGetIDsOfNames proto WINAPI \
 		ptinfo: ptr ITypeInfo,
 	     rgszNames: ptr OLECHAR,
 		cNames: UINT,
 	      rgdispid: ptr DISPID
-
 
 ;WINOLEAUTAPI
 DispInvoke proto WINAPI \
@@ -1940,13 +1875,11 @@ DispInvoke proto WINAPI \
 	    pexcepinfo: ptr EXCEPINFO,
 	      puArgErr: ptr UINT
 
-
 ;WINOLEAUTAPI
 CreateDispTypeInfo proto WINAPI \
 		pidata: ptr INTERFACEDATA,
 		  lcid: LCID,
 	       pptinfo: ptr ITypeInfo
-
 
 ;WINOLEAUTAPI
 CreateStdDispatch proto WINAPI \
@@ -1954,7 +1887,6 @@ CreateStdDispatch proto WINAPI \
 		pvThis: ptr void,
 		ptinfo: ptr ITypeInfo,
 	  ppunkStdDisp: ptr IUnknown
-
 
 ;WINOLEAUTAPI
 DispCallFunc proto WINAPI \
@@ -1967,9 +1899,6 @@ DispCallFunc proto WINAPI \
 	      prgpvarg: ptr VARIANTARG,
 	   pvargResult: ptr VARIANT
 
-
-
-
 ACTIVEOBJECT_STRONG	equ 0x0
 ACTIVEOBJECT_WEAK	equ 0x1
 
@@ -1980,19 +1909,16 @@ RegisterActiveObject proto WINAPI \
 	       dwFlags: DWORD,
 	   pdwRegister: ptr DWORD
 
-
 ;WINOLEAUTAPI
 RevokeActiveObject proto WINAPI \
 	    dwRegister: DWORD,
-
+		      : PVOID
 
 ;WINOLEAUTAPI
 GetActiveObject proto WINAPI \
 		rclsid: REFCLSID,
-	    pvReserved: ptr void,
+	    pvReserved: PVOID,
 		 ppunk: ptr IUnknown
-
-
 
 ;WINOLEAUTAPI
 SetErrorInfo proto WINAPI \
@@ -2008,13 +1934,10 @@ GetErrorInfo proto WINAPI \
 CreateErrorInfo proto WINAPI \
 	     pperrinfo: ptr ICreateErrorInfo
 
-
-
 ;WINOLEAUTAPI
 GetRecordInfoFromTypeInfo proto WINAPI \
 	     pTypeInfo: ptr ITypeInfo,
 	     ppRecInfo: ptr IRecordInfo
-
 
 ;WINOLEAUTAPI
 GetRecordInfoFromGuids proto WINAPI \
@@ -2025,16 +1948,12 @@ GetRecordInfoFromGuids proto WINAPI \
 	 rGuidTypeInfo: REFGUID,
 	     ppRecInfo: ptr IRecordInfo
 
-
-
 ;WINOLEAUTAPI_(ULONG)
 OaBuildVersion proto WINAPI
 
 ;WINOLEAUTAPI_(void)
 ClearCustData proto WINAPI \
 	     pCustData: LPCUSTDATA
-
-
 
 if __STDC__ OR defined(NONAMELESSUNION)
 V_UNION macro X, Y

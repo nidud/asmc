@@ -7385,6 +7385,7 @@ NumberOfRelocations	dw ?
 NumberOfLinenumbers	dw ?
 Characteristics		dd ?
 IMAGE_SECTION_HEADER	ENDS
+PIMAGE_SECTION_HEADER	typedef ptr IMAGE_SECTION_HEADER
 
 IMAGE_SIZEOF_SECTION_HEADER	equ 40
 

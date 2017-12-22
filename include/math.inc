@@ -2,8 +2,8 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 ifndef _INC_MATH
-.xlist
 _INC_MATH equ 1
+.xlist
 
 ifdef __PE__
 option  dllimport:<msvcrt>
@@ -11,22 +11,11 @@ else
 includelib libc.lib
 endif
 
-ifdef _MSC_VER
-;;
-;; Currently, all MS C compilers for Win32 platforms default to 8 byte
-;; alignment.
-;;
-;;#pragma pack(push,_CRT_PACKING)
-endif ; _MSC_VER
-
 ifndef double
 double typedef REAL8
 endif
 
 ifndef __assembler ; Protect from assembler
-
-;; Definition of _exception struct - this struct is passed to the matherr
-;; routine when a floating point exception is detected
 
 ifndef _EXCEPTION_DEFINED
 _exception      struc
@@ -39,23 +28,17 @@ _exception      ends
 _EXCEPTION_DEFINED equ <>
 endif
 
-;; Definition of a _complex struct to be used by those who use cabs and
-;; want type checking on their argument
-
 ifndef _COMPLEX_DEFINED
 _complex        struc
 x               double ? ; real and imaginary parts
 y               double ?
 _complex        ends
 ifndef __STDC__
-;; Non-ANSI name for compatibility
 complex         equ <_complex>
 endif
 _COMPLEX_DEFINED equ <>
 endif
 endif  ; __assembler
-
-;; Constant definitions for the exception type passed in the _exception struct
 
 _DOMAIN         equ 1 ; argument domain error
 _SING           equ 2 ; argument singularity
@@ -67,10 +50,6 @@ _PLOSS          equ 6 ; partial loss of precision
 EDOM            equ 33
 ERANGE          equ 34
 
-;; Definitions of _HUGE and HUGE_VAL - respectively the XENIX and ANSI names
-;; for a value returned in case of error by a number of the floating point
-;; math routines
-
 ifndef __assembler ; Protect from assembler
 ifndef _M_CEE_PURE
 externdef       _HUGE:double
@@ -80,8 +59,6 @@ endif ; !defined(_M_CEE_PURE)
 endif ; __assembler
 
 HUGE_VAL        equ <_HUGE>
-
-;; Function prototypes
 
 ifndef __assembler  ; Protect from assembler
 ifndef _CRT_ABS_DEFINED
@@ -151,10 +128,6 @@ endif
 
 ifdef _M_IA64
 
-;; ANSI C, 4.5 Mathematics
-
-;; 4.5.2 Trigonometric functions
-
 acosf   proto __cdecl _X:float
 asinf   proto __cdecl _X:float
 atanf   proto __cdecl _X:float
@@ -163,22 +136,18 @@ cosf    proto __cdecl _X:float
 sinf    proto __cdecl _X:float
 tanf    proto __cdecl _X:float
 
-;; 4.5.3 Hyperbolic functions
 coshf   proto __cdecl _X:float
 sinhf   proto __cdecl _X:float
 tanhf   proto __cdecl _X:float
 
-;; 4.5.4 Exponential and logarithmic functions
 expf    proto __cdecl _X:float
 logf    proto __cdecl _X:float
 log10f  proto __cdecl _X:float
 modff   proto __cdecl _X:float, _Y:ptr float
 
-;; 4.5.5 Power functions
 powf    proto __cdecl _Base:float, _Exp:float
 sqrtf   proto __cdecl _X:float
 
-;; 4.5.6 Nearest integer, absolute value, and remainder functions
 ceilf   proto __cdecl _X:float
 fabsf   proto __cdecl _X:float
 floorf  proto __cdecl _X:float
@@ -187,13 +156,9 @@ fmodf   proto __cdecl _X:float, _Y:float
 _hypotf proto __cdecl _X:float, _Y:float
 ldexpf  proto __cdecl _X:float, _Y:SINT
 
-endif ;; _M_IA64
+endif
 
 ifdef _M_AMD64
-
-;; ANSI C, 4.5 Mathematics
-
-;; 4.5.2 Trigonometric functions
 
 acosf   proto __cdecl _X:float
 asinf   proto __cdecl _X:float
@@ -203,22 +168,18 @@ cosf    proto __cdecl _X:float
 sinf    proto __cdecl _X:float
 tanf    proto __cdecl _X:float
 
-;; 4.5.3 Hyperbolic functions
 coshf   proto __cdecl _X:float
 sinhf   proto __cdecl _X:float
 tanhf   proto __cdecl _X:float
 
-;; 4.5.4 Exponential and logarithmic functions
 expf    proto __cdecl _X:float
 logf    proto __cdecl _X:float
 log10f  proto __cdecl _X:float
 modff   proto __cdecl _X:float, _Y:ptr float
 
-;; 4.5.5 Power functions
 powf    proto __cdecl _X:float, _Y:float
 sqrtf   proto __cdecl _X:float
 
-;; 4.5.6 Nearest integer, absolute value, and remainder functions
 ceilf   proto __cdecl _X:float
 floorf  proto __cdecl _X:float
 fmodf   proto __cdecl _X:float, _Y:float
@@ -233,34 +194,15 @@ _finitef    proto __cdecl _X:float
 _isnanf     proto __cdecl _X:float
 _fpclassf   proto __cdecl _X:float
 
-endif ;; _M_AMD64
-endif ;; __assembler
+endif
+endif
 .list
-endif ;; _INC_MATH
+endif
 
 ifdef _USE_MATH_DEFINES
 .xlist
 ifndef _MATH_DEFINES_DEFINED
 _MATH_DEFINES_DEFINED equ <>
-
-;; Define _USE_MATH_DEFINES before including math.h to expose these macro
-;; definitions for common math constants.  These are placed under an #ifdef
-;; since these commonly-defined names are not part of the C/C++ standards.
-
-;; Definitions of useful mathematical constants
-;;  M_E        - e
-;;  M_LOG2E    - log2(e)
-;;  M_LOG10E   - log10(e)
-;;  M_LN2      - ln(2)
-;;  M_LN10     - ln(10)
-;;  M_PI       - pi
-;;  M_PI_2     - pi/2
-;;  M_PI_4     - pi/4
-;;  M_1_PI     - 1/pi
-;;  M_2_PI     - 2/pi
-;;  M_2_SQRTPI - 2/sqrt(pi)
-;;  M_SQRT2    - sqrt(2)
-;;  M_SQRT1_2  - 1/sqrt(2)
 
 M_E             equ 2.71828182845904523536
 M_LOG2E         equ 1.44269504088896340736
@@ -275,7 +217,7 @@ M_2_PI          equ 0.636619772367581343076
 M_2_SQRTPI      equ 1.12837916709551257390
 M_SQRT2         equ 1.41421356237309504880
 M_SQRT1_2       equ 0.707106781186547524401
-endif ;; _MATH_DEFINES_DEFINED
-.list
-endif ;; _USE_MATH_DEFINES
+endif
 
+.list
+endif

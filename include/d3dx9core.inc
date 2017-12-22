@@ -32,13 +32,14 @@ LPD3DXRENDERTOSURFACE	typedef ptr ID3DXRenderToSurface
 LPD3DXSPRITE		typedef ptr ID3DXSprite
 
 ID3DXBuffer		STRUC
-;;** IUnknown methods **
-QueryInterface		PVOID ?
-AddRef			PVOID ?
-Release			PVOID ?
-;;** ID3DXBuffer methods **
-GetBufferPointer	PVOID ?
-GetBufferSize		PVOID ?
+
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+
+	STDMETHOD	GetBufferPointer
+	STDMETHOD	GetBufferSize
+
 ID3DXBuffer		ENDS
 
 D3DXFONT_DESCA		STRUC
@@ -70,47 +71,47 @@ D3DXFONT_DESCW		ENDS
 LPD3DXFONT_DESCW	typedef ptr D3DXFONT_DESCW
 
 ID3DXFont		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetDevice, :ptr
-STDMETHOD GetDescA, :ptr
-STDMETHOD GetDescW, :ptr
-STDMETHOD GetTextMetricsA, :ptr
-STDMETHOD GetTextMetricsW, :ptr
-STDMETHOD GetDC
-STDMETHOD GetGlyphData, :UINT, :ptr, :ptr, :ptr
-STDMETHOD PreloadCharacters, :UINT, :UINT
-STDMETHOD PreloadGlyphs, :UINT, :UINT
-STDMETHOD PreloadTextA, :ptr, :SINT
-STDMETHOD PreloadTextW, :ptr, :SINT
-STDMETHOD DrawTextA, :ptr, :ptr, :SINT, :ptr, :DWORD, :D3DCOLOR
-STDMETHOD DrawTextW, :ptr, :ptr, :SINT, :ptr, :DWORD, :D3DCOLOR
-STDMETHOD OnLostDevice
-STDMETHOD OnResetDevice
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetDevice, :ptr
+	STDMETHOD	GetDescA, :ptr
+	STDMETHOD	GetDescW, :ptr
+	STDMETHOD	GetTextMetricsA, :ptr
+	STDMETHOD	GetTextMetricsW, :ptr
+	STDMETHOD	GetDC
+	STDMETHOD	GetGlyphData, :UINT, :ptr, :ptr, :ptr
+	STDMETHOD	PreloadCharacters, :UINT, :UINT
+	STDMETHOD	PreloadGlyphs, :UINT, :UINT
+	STDMETHOD	PreloadTextA, :ptr, :SINT
+	STDMETHOD	PreloadTextW, :ptr, :SINT
+	STDMETHOD	DrawTextA, :ptr, :ptr, :SINT, :ptr, :DWORD, :D3DCOLOR
+	STDMETHOD	DrawTextW, :ptr, :ptr, :SINT, :ptr, :DWORD, :D3DCOLOR
+	STDMETHOD	OnLostDevice
+	STDMETHOD	OnResetDevice
 ID3DXFont		ENDS
 
 ID3DXLine		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetDevice, :ptr
-STDMETHOD Begin
-STDMETHOD Draw, :ptr, :DWORD, :D3DCOLOR
-STDMETHOD DrawTransform, :ptr, :DWORD, :ptr, :D3DCOLOR
-STDMETHOD SetPattern, :DWORD
-STDMETHOD GetPattern
-STDMETHOD SetPatternScale, :FLOAT
-STDMETHOD GetPatternScale
-STDMETHOD SetWidth, :FLOAT
-STDMETHOD GetWidth
-STDMETHOD SetAntialias, :BOOL
-STDMETHOD GetAntialias
-STDMETHOD SetGLLines, :BOOL
-STDMETHOD GetGLLines
-STDMETHOD _End
-STDMETHOD OnLostDevice
-STDMETHOD OnResetDevice
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetDevice, :ptr
+	STDMETHOD	Begin
+	STDMETHOD	Draw, :ptr, :DWORD, :D3DCOLOR
+	STDMETHOD	DrawTransform, :ptr, :DWORD, :ptr, :D3DCOLOR
+	STDMETHOD	SetPattern, :DWORD
+	STDMETHOD	GetPattern
+	STDMETHOD	SetPatternScale, :FLOAT
+	STDMETHOD	GetPatternScale
+	STDMETHOD	SetWidth, :FLOAT
+	STDMETHOD	GetWidth
+	STDMETHOD	SetAntialias, :BOOL
+	STDMETHOD	GetAntialias
+	STDMETHOD	SetGLLines, :BOOL
+	STDMETHOD	GetGLLines
+	STDMETHOD	_End
+	STDMETHOD	OnLostDevice
+	STDMETHOD	OnResetDevice
 ID3DXLine		ENDS
 
 D3DXRTE_DESC		STRUC
@@ -122,19 +123,19 @@ DepthStencilFormat	D3DFORMAT ?
 D3DXRTE_DESC		ENDS
 
 ID3DXRenderToEnvMap	STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetDevice, :ptr
-STDMETHOD GetDesc, :ptr
-STDMETHOD BeginCube, :ptr
-STDMETHOD BeginSphere, :ptr
-STDMETHOD BeginHemisphere, :ptr, :ptr
-STDMETHOD BeginParabolic, :ptr, :ptr
-STDMETHOD Face, :D3DCUBEMAP_FACES, :DWORD
-STDMETHOD _End, :DWORD
-STDMETHOD OnLostDevice
-STDMETHOD OnResetDevice
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetDevice, :ptr
+	STDMETHOD	GetDesc, :ptr
+	STDMETHOD	BeginCube, :ptr
+	STDMETHOD	BeginSphere, :ptr
+	STDMETHOD	BeginHemisphere, :ptr, :ptr
+	STDMETHOD	BeginParabolic, :ptr, :ptr
+	STDMETHOD	Face, :D3DCUBEMAP_FACES, :DWORD
+	STDMETHOD	_End, :DWORD
+	STDMETHOD	OnLostDevice
+	STDMETHOD	OnResetDevice
 ID3DXRenderToEnvMap	ENDS
 
 D3DXRTS_DESC		STRUC
@@ -146,32 +147,32 @@ DepthStencilFormat	D3DFORMAT ?
 D3DXRTS_DESC		ENDS
 
 ID3DXRenderToSurface	STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetDevice, :ptr
-STDMETHOD GetDesc, :ptr
-STDMETHOD BeginScene, :ptr, :ptr
-STDMETHOD EndScene, :DWORD
-STDMETHOD OnLostDevice
-STDMETHOD OnResetDevice
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetDevice, :ptr
+	STDMETHOD	GetDesc, :ptr
+	STDMETHOD	BeginScene, :ptr, :ptr
+	STDMETHOD	EndScene, :DWORD
+	STDMETHOD	OnLostDevice
+	STDMETHOD	OnResetDevice
 ID3DXRenderToSurface	ENDS
 
 ID3DXSprite		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetDevice, :ptr
-STDMETHOD GetTransform, :ptr
-STDMETHOD SetTransform, :ptr
-STDMETHOD SetWorldViewRH, :ptr, :ptr
-STDMETHOD SetWorldViewLH, :ptr, :ptr
-STDMETHOD Begin, :DWORD
-STDMETHOD Draw, :ptr, :ptr, :ptr, :ptr, :D3DCOLOR
-STDMETHOD Flush
-STDMETHOD _End
-STDMETHOD OnLostDevice
-STDMETHOD OnResetDevice
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetDevice, :ptr
+	STDMETHOD	GetTransform, :ptr
+	STDMETHOD	SetTransform, :ptr
+	STDMETHOD	SetWorldViewRH, :ptr, :ptr
+	STDMETHOD	SetWorldViewLH, :ptr, :ptr
+	STDMETHOD	Begin, :DWORD
+	STDMETHOD	Draw, :ptr, :ptr, :ptr, :ptr, :D3DCOLOR
+	STDMETHOD	Flush
+	STDMETHOD	_End
+	STDMETHOD	OnLostDevice
+	STDMETHOD	OnResetDevice
 ID3DXSprite		ENDS
 
 

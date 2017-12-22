@@ -1,10 +1,9 @@
 ifndef __LIBC_INC
  include libc.inc
 endif
-.xlist
 ifndef _INC_DDEMLH
 _INC_DDEMLH equ 1
-
+.xlist
 
 HCONVLIST		typedef HANDLE
 HCONV			typedef HANDLE
@@ -12,13 +11,11 @@ HSZ			typedef HANDLE
 HDDEDATA		typedef HANDLE
 EXPENTRY		equ <CALLBACK>
 
-
 HSZPAIR			STRUC
 hszSvc			HSZ ?
 hszTopic		HSZ ?
 HSZPAIR			ENDS
 PHSZPAIR		typedef ptr HSZPAIR
-
 
 CONVCONTEXT		STRUC
 cb			UINT ?
@@ -30,7 +27,6 @@ dwSecurity		dd ?
 qos			SECURITY_QUALITY_OF_SERVICE <>
 CONVCONTEXT		ENDS
 PCONVCONTEXT		typedef ptr CONVCONTEXT
-
 
 CONVINFO		STRUC
 cb			dd ?
@@ -52,7 +48,6 @@ hwndPartner		HWND ?
 CONVINFO		ENDS
 PCONVINFO		typedef ptr CONVINFO
 
-
 XST_NULL		equ 0
 XST_INCOMPLETE		equ 1
 XST_CONNECTED		equ 2
@@ -73,7 +68,6 @@ XST_ADVDATAACKRCVD	equ 16
 
 CADV_LATEACK		equ 0xFFFF
 
-
 ST_CONNECTED		equ 0x0001
 ST_ADVISE		equ 0x0002
 ST_ISLOCAL		equ 0x0004
@@ -83,7 +77,6 @@ ST_TERMINATED		equ 0x0020
 ST_INLIST		equ 0x0040
 ST_BLOCKNEXT		equ 0x0080
 ST_ISSELF		equ 0x0100
-
 
 DDE_FACK		equ 0x8000
 DDE_FBUSY		equ 0x4000
@@ -99,9 +92,7 @@ DDE_FADVRESERVED	equ ( NOT (DDE_FACKREQ OR DDE_FDEFERUPD))
 DDE_FDATRESERVED	equ ( NOT (DDE_FACKREQ OR DDE_FREEASE OR DDE_FREQUESTED))
 DDE_FPOKRESERVED	equ ( NOT (DDE_FREEASE))
 
-
 MSGF_DDEMGR		equ 0x8001
-
 
 CP_WINANSI		equ 1004
 CP_WINUNICODE		equ 1200
@@ -110,7 +101,6 @@ CP_WINNEUTRAL		equ CP_WINUNICODE
 else
 CP_WINNEUTRAL		equ CP_WINANSI
 endif
-
 
 XTYPF_NOBLOCK		equ 0x0002
 XTYPF_NODATA		equ 0x0004
@@ -141,12 +131,9 @@ XTYP_WILDCONNECT	equ (0x00E0 OR XCLASS_DATA OR XTYPF_NOBOCK)
 XTYP_MASK		equ 0x00F0
 XTYP_SHIFT		equ 4
 
-
 TIMEOUT_ASYNC		equ 0xFFFFFFFF
 
-
 QID_SYNC		equ 0xFFFFFFFF
-
 
 if 0;_UNICODE
 SZDDESYS_TOPIC		equ <L"System">
@@ -168,8 +155,6 @@ SZDDESYS_ITEM_HELP	equ <"Help">
 SZDDE_ITEM_ITEMLIST	equ <"TopicItemList">
 endif
 
-
-
 ;HDDEDATA
 ;CALLBACK
 CALLBACK(FNCALLBACK, :UINT, :UINT, :HCONV, :HSZ, :HSZ, :HDDEDATA, :DWORD, :DWORD)
@@ -177,14 +162,12 @@ CALLBACK(PFNCALLBACK, :UINT, :UINT, :HCONV, :HSZ, :HSZ, :HDDEDATA, :DWORD, :DWOR
 
 CBR_BLOCK		equ 0xffffffff
 
-
 ;UINT
 DdeInitializeA proto WINAPI \
 	       pidInst: LPDWORD,
 	   pfnCallback: PFNCALLBACK,
 		 afCmd: DWORD,
 		 ulRes: DWORD
-;UINT
 DdeInitializeW proto WINAPI \
 	       pidInst: LPDWORD,
 	   pfnCallback: PFNCALLBACK,
@@ -195,7 +178,6 @@ DdeInitialize		equ <DdeInitializeW>
 else
 DdeInitialize		equ <DdeInitializeA>
 endif
-
 
 CBF_FAIL_SELFCONNECTIONS equ 0x00001000
 CBF_FAIL_CONNECTIONS	equ 0x00002000
@@ -239,7 +221,6 @@ DdeQueryNextServer proto WINAPI \
 DdeDisconnectList proto WINAPI \
 	     hConvList: HCONVLIST
 
-
 ;HCONV
 DdeConnect proto WINAPI \
 	       idInst: DWORD,
@@ -267,8 +248,6 @@ DdeAbandonTransaction proto WINAPI \
 		idInst: DWORD,
 		 hConv: HCONV,
 	 idTransaction: DWORD
-
-
 
 ;BOOL
 DdePostAdvise proto WINAPI \
@@ -301,7 +280,6 @@ DNS_UNREGISTER		equ 0x0002
 DNS_FILTERON		equ 0x0004
 DNS_FILTEROFF		equ 0x0008
 
-
 ;HDDEDATA
 DdeClientTransaction proto WINAPI \
 		 pData: LPBYTE,
@@ -312,7 +290,6 @@ DdeClientTransaction proto WINAPI \
 		 wType: UINT,
 	     dwTimeout: DWORD,
 	     pdwResult: LPDWORD
-
 
 ;HDDEDATA
 DdeCreateDataHandle proto WINAPI \
@@ -330,34 +307,35 @@ DdeAddData proto WINAPI \
 		  pSrc: LPBYTE,
 		    cb: DWORD,
 		 cbOff: DWORD
+
 ;DWORD
 DdeGetData proto WINAPI \
 		 hData: HDDEDATA,
 		  pDst: LPBYTE,
 		 cbMax: DWORD,
 		 cbOff: DWORD
+
 ;LPBYTE
 DdeAccessData proto WINAPI \
 		 hData: HDDEDATA,
 	   pcbDataSize: LPDWORD
+
 ;BOOL
 DdeUnaccessData proto WINAPI \
 		 hData: HDDEDATA
+
 ;BOOL
 DdeFreeDataHandle proto WINAPI \
 		 hData: HDDEDATA
 
 HDATA_APPOWNED		equ 0x0001
 
-
 ;UINT
 DdeGetLastError proto WINAPI \
 		idInst: DWORD
 
 DMLERR_NO_ERROR		equ 0
-
 DMLERR_FIRST		equ 0x4000
-
 DMLERR_ADVACKTIMEOUT	equ 0x4000
 DMLERR_BUSY		equ 0x4001
 DMLERR_DATAACKTIMEOUT	equ 0x4002
@@ -376,7 +354,6 @@ DMLERR_SERVER_DIED	equ 0x400e
 DMLERR_SYS_ERROR	equ 0x400f
 DMLERR_UNADVACKTIMEOUT	equ 0x4010
 DMLERR_UNFOUND_QUEUE_ID equ 0x4011
-
 DMLERR_LAST		equ 0x4011
 
 ;HSZ
@@ -400,7 +377,6 @@ DdeQueryStringA proto WINAPI \
 		   psz: LPSTR,
 		cchMax: DWORD,
 	     iCodePage: SINT
-;DWORD
 DdeQueryStringW proto WINAPI \
 		idInst: DWORD,
 		   hsz: HSZ,
@@ -434,7 +410,6 @@ cbData			dd ?
 Data			dd 8 dup(?)
 DDEML_MSG_HOOK_DATA	ENDS
 PDDEML_MSG_HOOK_DATA	typedef ptr DDEML_MSG_HOOK_DATA
-
 
 MONMSGSTRUCT		STRUC
 cb			UINT ?
@@ -549,6 +524,6 @@ MF_CONV			equ 0x40000000
 MF_MASK			equ 0xFF000000
 
 endif
-endif
 
 .list
+endif

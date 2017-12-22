@@ -1222,7 +1222,11 @@ StripSource endp
 
 LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:PTR asm_tok
 
-  local b[MAX_LINE_LEN]:SBYTE, br_count:SINT, sym:ptr asym, comptr:LPSTR
+  local br_count:SINT
+  local sym:ptr asym
+  local comptr:LPSTR
+  local ClassVtbl[128]:SBYTE
+  local b[MAX_LINE_LEN]:SBYTE
 
     lea esi,b
     mov edi,i
@@ -1255,6 +1259,19 @@ LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:PTR 
                 strcat(esi, "[rax]." )
             .else
                 strcat(esi, "[eax]." )
+            .endif
+            ;
+            ; ClassVtbl struct
+            ;   Method()
+            ; ClassVtbl ends
+            ;
+            ; Class struct
+            ;   lpVtbl PClassVtbl ?
+            ; Class ends
+            ;
+            .if SymFind( strcat( strcpy( &ClassVtbl, comptr ), "Vtbl" ) )
+                lea eax,ClassVtbl
+                mov comptr,eax
             .endif
             strcat(esi, comptr )
             mov eax,[ebx].string_ptr

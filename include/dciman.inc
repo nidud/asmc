@@ -1,15 +1,15 @@
 ifndef _INC_DCIMAN
 _INC_DCIMAN equ <>
-include dciddi.inc	    ;; interface to the DCI provider
+include dciddi.inc
 .xlist
 
-DECLARE_HANDLE(HWINWATCH)   ;; context handle for WinWatch instance
+DECLARE_HANDLE(HWINWATCH)
 
 DCIOpenProvider proto WINAPI
+
 ;void
 DCICloseProvider proto WINAPI \
 		   hdc: HDC
-
 
 ;int
 DCICreatePrimary proto WINAPI \
@@ -57,7 +57,6 @@ WinWatchClose proto WINAPI \
 		   hWW: HWINWATCH
 
 
-;; API changed to copy region data instead of return pointer to it
 ;UINT
 WinWatchGetClipList proto WINAPI \
 		   hWW: HWINWATCH,
@@ -82,8 +81,6 @@ GetDCRegionData proto WINAPI \
 		 _size: DWORD,
 		   prd: LPRGNDATA
 
-
-
 WINWATCHNOTIFY_START	equ 0
 WINWATCHNOTIFY_STOP	equ 1
 WINWATCHNOTIFY_DESTROY	equ 2
@@ -98,9 +95,8 @@ WinWatchNotify proto WINAPI \
 	NotifyCallback: WINWATCHNOTIFYPROC,
 	   NotifyParam: LPARAM
 
-
 ifdef _WIN32
-;; helper functions to call DCIMAN16.DLL
+
 ;void
 DCIEndAccess proto WINAPI \
 		  pdci: LPDCISURFACEINFO
@@ -127,7 +123,6 @@ DCISetDestination proto WINAPI \
 		  pdci: LPDCIOFFSCREEN,
 		   dst: LPRECT,
 		   src: LPRECT
-
 else
 
 ;int
@@ -135,8 +130,7 @@ DCISendCommand proto WINAPI \
 		   hdc: HDC,
 		  pcmd: PVOID,
 		 nSize: SINT
-
 endif
-.list
-endif ;; _INC_DCIMAN
 
+.list
+endif

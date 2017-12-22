@@ -24,11 +24,13 @@ _LEAP_YEAR_ADJUST	equ 17			; Leap years 1900 - 1970
 _MAX_YEAR		equ 138			; 2038 is the max year
 
 
+ifndef LPFILETIME
 FILETIME	STRUC
 dwLowDateTime	dd ?
 dwHighDateTime	dd ?
 FILETIME	ENDS
 LPFILETIME	typedef ptr FILETIME
+endif
 
 ifndef LPSYSTEMTIME
 SYSTEMTIME	STRUC

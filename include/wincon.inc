@@ -1,28 +1,25 @@
-ifndef __LIBC_INC
- include libc.inc
-endif
 ifndef _WINDEF_
  include windef.inc
 endif
-.xlist
 ifndef _WINCON_
-_WINCON_ equ 1
+_WINCON_ equ <>
+.xlist
 
 ifdef __PE__
 option	dllimport:<kernel32>
 endif
 
 COORD			STRUC
-x			dw ?
-y			dw ?
+x			SWORD ?
+y			SWORD ?
 COORD			ENDS
 PCOORD			typedef ptr COORD
 
 SMALL_RECT		STRUC
-Left			dw ?
-Top			dw ?
-Right			dw ?
-Bottom			dw ?
+Left			SWORD ?
+Top			SWORD ?
+Right			SWORD ?
+Bottom			SWORD ?
 SMALL_RECT		ENDS
 PSMALL_RECT		typedef ptr SMALL_RECT
 
@@ -548,6 +545,6 @@ SetConsoleDisplayMode proto WINAPI \
 	       dwFlags: DWORD,
 lpNewScreenBufferDimensions: PCOORD
 
+.list
 endif
 
-.list

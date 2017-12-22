@@ -573,21 +573,18 @@ MSOCMDID_ZOOM		equ OLECMDID_ZOOM
 MSOCMDID_GETZOOMRANGE	equ OLECMDID_GETZOOMRANGE
 externdef		SID_SContainerDispatch:GUID
 
-
 externdef		__MIDL_itf_docobj_0000_0007_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef		__MIDL_itf_docobj_0000_0007_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IZoomEvents_INTERFACE_DEFINED__
 __IZoomEvents_INTERFACE_DEFINED__ equ 1
 
-
 externdef		IID_IZoomEvents:IID
-
 IZoomEvents		STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		OnZoomPercentChanged, :ULONG
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	OnZoomPercentChanged, :ULONG
 IZoomEvents		ENDS
 LPIZoomEvents		typedef ptr IZoomEvents
 
@@ -599,10 +596,10 @@ __IProtectFocus_INTERFACE_DEFINED__ equ 1
 DEFINE_GUID(IID_IProtectFocus, 0xd81f90a3, 0x8156, 0x44f7, 0xad,0x28, 0x5a,0xbb,0x87,0x00,0x32,0x74)
 
 IProtectFocus		STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		AllowFocusChange, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	AllowFocusChange, :ptr
 IProtectFocus		ENDS
 LPIProtectFocus		typedef ptr IProtectFocus
 externdef		IID_IProtectFocus:IID
@@ -621,26 +618,21 @@ __IProtectedModeMenuServices_INTERFACE_DEFINED__ equ 1
 
 
 IProtectedModeMenuServices STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		CreateMenu, :ptr
-STDMETHOD		LoadMenu, :LPCWSTR, :LPCWSTR, :ptr
-STDMETHOD		LoadMenuID, :LPCWSTR,  :WORD, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	CreateMenu, :ptr
+	STDMETHOD	LoadMenu, :LPCWSTR, :LPCWSTR, :ptr
+	STDMETHOD	LoadMenuID, :LPCWSTR, :WORD, :ptr
 IProtectedModeMenuServices ENDS
 LPIProtectedModeMenuServices typedef ptr IProtectedModeMenuServices
 externdef		IID_IProtectedModeMenuServices:IID
 
 endif
-
-
-
-
 endif
 
 externdef		__MIDL_itf_docobj_0000_0010_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef		__MIDL_itf_docobj_0000_0010_v0_0_s_ifspec:RPC_IF_HANDLE
-
 
 ;DWORD
 HMENU_UserSize proto WINAPI \

@@ -1,24 +1,24 @@
 ifndef __LIBC_INC
  include libc.inc
 endif
-.xlist
 ifndef _WINSOCKAPI_
 _WINSOCKAPI_ equ 1
+.xlist
 
 ifndef _INC_WINDOWS
 include windows.inc
 .xlist
-endif 
+endif
 
 SOCKET			typedef UINT
 
 ifndef FD_SETSIZE
 FD_SETSIZE		equ 64
-endif 
+endif
 
 fd_set			STRUC
-fd_count		UINT ?	
-fd_array		SOCKET FD_SETSIZE dup(?) 
+fd_count		UINT ?
+fd_array		SOCKET FD_SETSIZE dup(?)
 fd_set			ENDS
 
 __WSAFDIsSet		proto :SOCKET, :ptr fd_set
@@ -62,8 +62,8 @@ FD_ISSET macro fd, set
 	endm
 
 timeval			STRUC
-tv_sec			LONG ?	
-tv_usec			LONG ?	
+tv_sec			LONG ?
+tv_usec			LONG ?
 timeval			ENDS
 
 timerisset macro tvp
@@ -76,10 +76,10 @@ timerclear macro tvp
 	exitm<0>
 	endm
 
-IOCPARM_MASK		equ 0x7f		
-IOC_VOID		equ 0x20000000	
-IOC_OUT			equ 0x40000000	
-IOC_IN			equ 0x80000000	
+IOCPARM_MASK		equ 0x7f
+IOC_VOID		equ 0x20000000
+IOC_OUT			equ 0x40000000
+IOC_IN			equ 0x80000000
 IOC_INOUT		equ (IOC_IN OR IOC_OUT)
 _IO macro x,y
 	exitm<(IOC_VOID OR ((x) SHL 8) OR (y))>
@@ -93,57 +93,57 @@ _IOW macro x,y,t
 	exitm<(IOC_IN OR ((sizeof(t) AND IOCPARM_MASK) SHL 16) OR ((x) SHL 8) OR (y))>
 	endm
 
-FIONREAD		equ _IOR('f', 127, ULONG) 
-FIONBIO			equ _IOW('f', 126, ULONG) 
-FIOASYNC		equ _IOW('f', 125, ULONG) 
+FIONREAD		equ _IOR('f', 127, ULONG)
+FIONBIO			equ _IOW('f', 126, ULONG)
+FIOASYNC		equ _IOW('f', 125, ULONG)
 
-SIOCSHIWAT		equ _IOW('s',  0, ULONG) 
-SIOCGHIWAT		equ _IOR('s',  1, ULONG) 
-SIOCSLOWAT		equ _IOW('s',  2, ULONG) 
-SIOCGLOWAT		equ _IOR('s',  3, ULONG) 
-SIOCATMARK		equ _IOR('s',  7, ULONG) 
+SIOCSHIWAT		equ _IOW('s',  0, ULONG)
+SIOCGHIWAT		equ _IOR('s',  1, ULONG)
+SIOCSLOWAT		equ _IOW('s',  2, ULONG)
+SIOCGLOWAT		equ _IOR('s',  3, ULONG)
+SIOCATMARK		equ _IOR('s',  7, ULONG)
 
 
 hostent			STRUC
-h_name			LPSTR ? 
-h_aliases		LPSTR ? 
-h_addrtype		dw ?	
-h_length		dw ?	
-h_addr_list		LPSTR ? 
+h_name			LPSTR ?
+h_aliases		LPSTR ?
+h_addrtype		dw ?
+h_length		dw ?
+h_addr_list		LPSTR ?
 hostent			ENDS
 
 netent			STRUC
-n_name			LPSTR ? 
-n_aliases		LPSTR ? 
-n_addrtype		dw ?	
-n_net			dd ?	
+n_name			LPSTR ?
+n_aliases		LPSTR ?
+n_addrtype		dw ?
+n_net			dd ?
 netent			ENDS
 
 servent			STRUC
-s_name			LPSTR ? 
-s_aliases		LPSTR ? 
-s_port			dw ?	
-s_proto			LPSTR ? 
+s_name			LPSTR ?
+s_aliases		LPSTR ?
+s_port			dw ?
+s_proto			LPSTR ?
 servent			ENDS
 
 protoent		STRUC
-p_name			LPSTR ? 
-p_aliases		LPSTR ? 
-p_proto			dw ?	
+p_name			LPSTR ?
+p_aliases		LPSTR ?
+p_proto			dw ?
 protoent		ENDS
 
 
-IPPROTO_IP		equ 0		
-IPPROTO_ICMP		equ 1		
-IPPROTO_IGMP		equ 2		
-IPPROTO_GGP		equ 3		
-IPPROTO_TCP		equ 6		
-IPPROTO_PUP		equ 12		
-IPPROTO_UDP		equ 17		
-IPPROTO_IDP		equ 22		
-IPPROTO_ND		equ 77		
+IPPROTO_IP		equ 0
+IPPROTO_ICMP		equ 1
+IPPROTO_IGMP		equ 2
+IPPROTO_GGP		equ 3
+IPPROTO_TCP		equ 6
+IPPROTO_PUP		equ 12
+IPPROTO_UDP		equ 17
+IPPROTO_IDP		equ 22
+IPPROTO_ND		equ 77
 
-IPPROTO_RAW		equ 255		
+IPPROTO_RAW		equ 255
 IPPROTO_MAX		equ 256
 
 IPPORT_ECHO		equ 7
@@ -252,20 +252,20 @@ WSADATA			ENDS
 
 LPWSADATA		typedef ptr WSADATA
 
-IP_OPTIONS		equ 1		
-IP_MULTICAST_IF		equ 2		
-IP_MULTICAST_TTL	equ 3		
-IP_MULTICAST_LOOP	equ 4		
-IP_ADD_MEMBERSHIP	equ 5		
-IP_DROP_MEMBERSHIP	equ 6		
-IP_TTL			equ 7		
-IP_TOS			equ 8		
-IP_DONTFRAGMENT		equ 9		
+IP_OPTIONS		equ 1
+IP_MULTICAST_IF		equ 2
+IP_MULTICAST_TTL	equ 3
+IP_MULTICAST_LOOP	equ 4
+IP_ADD_MEMBERSHIP	equ 5
+IP_DROP_MEMBERSHIP	equ 6
+IP_TTL			equ 7
+IP_TOS			equ 8
+IP_DONTFRAGMENT		equ 9
 
 
-IP_DEFAULT_MULTICAST_TTL equ 1	
-IP_DEFAULT_MULTICAST_LOOP equ 1 
-IP_MAX_MEMBERSHIPS	equ 20	
+IP_DEFAULT_MULTICAST_TTL equ 1
+IP_DEFAULT_MULTICAST_LOOP equ 1
+IP_MAX_MEMBERSHIPS	equ 20
 
 ip_mreq			STRUC
 imr_multiaddr		in_addr <>	; IP multicast address of group
@@ -276,32 +276,32 @@ ip_mreq			ENDS
 INVALID_SOCKET		equ <( NOT 0)>
 SOCKET_ERROR		equ (-1)
 
-SOCK_STREAM		equ 1		
-SOCK_DGRAM		equ 2		
-SOCK_RAW		equ 3		
-SOCK_RDM		equ 4		
-SOCK_SEQPACKET		equ 5		
+SOCK_STREAM		equ 1
+SOCK_DGRAM		equ 2
+SOCK_RAW		equ 3
+SOCK_RDM		equ 4
+SOCK_SEQPACKET		equ 5
 
-SO_DEBUG		equ 0x0001		
-SO_ACCEPTCONN		equ 0x0002		
-SO_REUSEADDR		equ 0x0004		
-SO_KEEPALIVE		equ 0x0008		
-SO_DONTROUTE		equ 0x0010		
-SO_BROADCAST		equ 0x0020		
-SO_USELOOPBACK		equ 0x0040		
-SO_LINGER		equ 0x0080		
-SO_OOBINLINE		equ 0x0100		
+SO_DEBUG		equ 0x0001
+SO_ACCEPTCONN		equ 0x0002
+SO_REUSEADDR		equ 0x0004
+SO_KEEPALIVE		equ 0x0008
+SO_DONTROUTE		equ 0x0010
+SO_BROADCAST		equ 0x0020
+SO_USELOOPBACK		equ 0x0040
+SO_LINGER		equ 0x0080
+SO_OOBINLINE		equ 0x0100
 
 SO_DONTLINGER		equ <( NOT SO_LINGER)>
 
-SO_SNDBUF		equ 0x1001		
-SO_RCVBUF		equ 0x1002		
-SO_SNDLOWAT		equ 0x1003		
-SO_RCVLOWAT		equ 0x1004		
-SO_SNDTIMEO		equ 0x1005		
-SO_RCVTIMEO		equ 0x1006		
-SO_ERROR		equ 0x1007		
-SO_TYPE			equ 0x1008		
+SO_SNDBUF		equ 0x1001
+SO_RCVBUF		equ 0x1002
+SO_SNDLOWAT		equ 0x1003
+SO_RCVLOWAT		equ 0x1004
+SO_SNDTIMEO		equ 0x1005
+SO_RCVTIMEO		equ 0x1006
+SO_ERROR		equ 0x1007
+SO_TYPE			equ 0x1008
 
 SO_CONNDATA		equ 0x7000
 SO_CONNOPT		equ 0x7001
@@ -325,41 +325,41 @@ SO_CONNECT_TIME		equ 0x700C
 TCP_NODELAY		equ 0x0001
 TCP_BSDURGENT		equ 0x7000
 
-AF_UNSPEC		equ 0		
-AF_UNIX			equ 1		
-AF_INET			equ 2		
-AF_IMPLINK		equ 3		
-AF_PUP			equ 4		
-AF_CHAOS		equ 5		
-AF_IPX			equ 6		
-AF_NS			equ 6		
-AF_ISO			equ 7		
-AF_OSI			equ AF_ISO		
-AF_ECMA			equ 8		
-AF_DATAKIT		equ 9		
-AF_CCITT		equ 10		
-AF_SNA			equ 11		
-AF_DECnet		equ 12		
-AF_DLI			equ 13		
-AF_LAT			equ 14		
-AF_HYLINK		equ 15		
-AF_APPLETALK		equ 16		
-AF_NETBIOS		equ 17		
-AF_VOICEVIEW		equ 18		
-AF_FIREFOX		equ 19		
-AF_UNKNOWN1		equ 20		
-AF_BAN			equ 21		
+AF_UNSPEC		equ 0
+AF_UNIX			equ 1
+AF_INET			equ 2
+AF_IMPLINK		equ 3
+AF_PUP			equ 4
+AF_CHAOS		equ 5
+AF_IPX			equ 6
+AF_NS			equ 6
+AF_ISO			equ 7
+AF_OSI			equ AF_ISO
+AF_ECMA			equ 8
+AF_DATAKIT		equ 9
+AF_CCITT		equ 10
+AF_SNA			equ 11
+AF_DECnet		equ 12
+AF_DLI			equ 13
+AF_LAT			equ 14
+AF_HYLINK		equ 15
+AF_APPLETALK		equ 16
+AF_NETBIOS		equ 17
+AF_VOICEVIEW		equ 18
+AF_FIREFOX		equ 19
+AF_UNKNOWN1		equ 20
+AF_BAN			equ 21
 
 AF_MAX			equ 22
 
 sockaddr		STRUC
-sa_family		dw ?		
-sa_data			db 14 dup(?)	
+sa_family		dw ?
+sa_data			db 14 dup(?)
 sockaddr		ENDS
 
 sockproto		STRUC
-sp_family		dw ?	
-sp_protocol		dw ?	
+sp_family		dw ?
+sp_protocol		dw ?
 sockproto		ENDS
 
 PF_UNSPEC		equ AF_UNSPEC
@@ -389,21 +389,21 @@ PF_BAN			equ AF_BAN
 PF_MAX			equ AF_MAX
 
 linger			STRUC
-l_onoff			dw ?	
-l_linger		dw ?	
+l_onoff			dw ?
+l_linger		dw ?
 linger			ENDS
 
-SOL_SOCKET		equ 0xffff		
+SOL_SOCKET		equ 0xffff
 
 SOMAXCONN		equ 5
 
-MSG_OOB			equ 0x1		
-MSG_PEEK		equ 0x2		
-MSG_DONTROUTE		equ 0x4		
+MSG_OOB			equ 0x1
+MSG_PEEK		equ 0x2
+MSG_DONTROUTE		equ 0x4
 
 MSG_MAXIOVLEN		equ 16
 
-MSG_PARTIAL		equ 0x8000		
+MSG_PARTIAL		equ 0x8000
 
 MAXGETHOSTSTRUCT	equ 1024
 
@@ -885,6 +885,5 @@ WSAGETSELECTERROR macro lParam
 	exitm<HIWORD(lParam)>
 	endm
 
-endif	
-
 .list
+endif

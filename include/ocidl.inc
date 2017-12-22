@@ -248,16 +248,15 @@ endif
 ifndef __IConnectionPoint_INTERFACE_DEFINED__
 __IConnectionPoint_INTERFACE_DEFINED__ equ 1
 
-
 IConnectionPoint	STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		GetConnectionInterface, :ptr
-STDMETHOD		GetConnectionPointContainer, :ptr
-STDMETHOD		Advise, :ptr, :ptr
-STDMETHOD		Unadvise, :DWORD
-STDMETHOD		EnumConnections, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetConnectionInterface, :ptr
+	STDMETHOD	GetConnectionPointContainer, :ptr
+	STDMETHOD	Advise, :ptr, :ptr
+	STDMETHOD	Unadvise, :DWORD
+	STDMETHOD	EnumConnections, :ptr
 IConnectionPoint	ENDS
 PCONNECTIONPOINT	typedef ptr IConnectionPoint
 LPCONNECTIONPOINT	typedef ptr IConnectionPoint
@@ -270,13 +269,13 @@ __IEnumConnectionPoints_INTERFACE_DEFINED__ equ 1
 
 
 IEnumConnectionPoints	STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		Next, :DWORD, :ptr, :ptr
-STDMETHOD		Skip, :DWORD
-STDMETHOD		Reset
-STDMETHOD		Clone, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	Next, :DWORD, :ptr, :ptr
+	STDMETHOD	Skip, :DWORD
+	STDMETHOD	Reset
+	STDMETHOD	Clone, :ptr
 IEnumConnectionPoints	ENDS
 PENUMCONNECTIONPOINTS	typedef ptr IEnumConnectionPoints
 LPENUMCONNECTIONPOINTS	typedef ptr IEnumConnectionPoints
@@ -303,11 +302,11 @@ __IConnectionPointContainer_INTERFACE_DEFINED__ equ 1
 
 
 IConnectionPointContainer STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		EnumConnectionPoints, :ptr
-STDMETHOD		FindConnectionPoint, :REFIID, :ptr
+	STDMETHOD	 QueryInterface, :REFIID, :ptr
+	STDMETHOD	 AddRef
+	STDMETHOD	 Release
+	STDMETHOD	 EnumConnectionPoints, :ptr
+	STDMETHOD	 FindConnectionPoint, :REFIID, :ptr
 IConnectionPointContainer ENDS
 PCONNECTIONPOINTCONTAINER typedef ptr IConnectionPointContainer
 LPCONNECTIONPOINTCONTAINER typedef ptr IConnectionPointContainer
@@ -327,14 +326,14 @@ LICINFO			ENDS
 LPLICINFO		typedef ptr LICINFO
 
 IClassFactory2		STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		CreateInstance, :ptr, :REFIID, :ptr
-STDMETHOD		LockServer, :BOOL
-STDMETHOD		GetLicInfo, :ptr
-STDMETHOD		RequestLicKey, :DWORD, :ptr
-STDMETHOD		CreateInstanceLic, :ptr, :ptr, :REFIID, :BSTR, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	CreateInstance, :ptr, :REFIID, :ptr
+	STDMETHOD	LockServer, :BOOL
+	STDMETHOD	GetLicInfo, :ptr
+	STDMETHOD	RequestLicKey, :DWORD, :ptr
+	STDMETHOD	CreateInstanceLic, :ptr, :ptr, :REFIID, :BSTR, :ptr
 IClassFactory2		ENDS
 LPCLASSFACTORY2		typedef ptr IClassFactory2
 externdef		IID_IClassFactory2:IID
@@ -360,10 +359,10 @@ __IProvideClassInfo_INTERFACE_DEFINED__ equ 1
 
 
 IProvideClassInfo	STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		GetClassInfo, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetClassInfo, :ptr
 IProvideClassInfo	ENDS
 LPPROVIDECLASSINFO	typedef ptr IProvideClassInfo
 externdef		IID_IProvideClassInfo:IID
@@ -378,11 +377,11 @@ __IProvideClassInfo2_INTERFACE_DEFINED__ equ 1
 GUIDKIND_DEFAULT_SOURCE_DISP_IID	equ 1
 
 IProvideClassInfo2	STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		GetClassInfo, :ptr
-STDMETHOD		GetGUID, :DWORD, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetClassInfo, :ptr
+	STDMETHOD	GetGUID, :DWORD, :ptr
 IProvideClassInfo2	ENDS
 LPPROVIDECLASSINFO2	typedef ptr IProvideClassInfo2
 externdef		IID_IProvideClassInfo2:IID
@@ -402,13 +401,13 @@ TIFLAGS_EXTENDDISPATCHONLY equ 0x00000001
 
 externdef		IID_IProvideMultipleClassInfo:IID
 IProvideMultipleClassInfo STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		GetClassInfo, :ptr
-STDMETHOD		GetGUID, :DWORD, :ptr
-STDMETHOD		GetMultiTypeInfoCount, :ptr
-STDMETHOD		GetInfoOfIndex, :ULONG, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetClassInfo, :ptr
+	STDMETHOD	GetGUID, :DWORD, :ptr
+	STDMETHOD	GetMultiTypeInfoCount, :ptr
+	STDMETHOD	GetInfoOfIndex, :ULONG, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr
 IProvideMultipleClassInfo ENDS
 LPPROVIDEMULTIPLECLASSINFO typedef ptr IProvideMultipleClassInfo
 
@@ -432,13 +431,13 @@ CTRLINFO_EATS_ESCAPE	equ 2
 
 externdef		IID_IOleControl:IID
 IOleControl		STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		GetControlInfo, :ptr
-STDMETHOD		OnMnemonic, :ptr
-STDMETHOD		OnAmbientPropertyChange, :DISPID
-STDMETHOD		FreezeEvents, :BOOL
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetControlInfo, :ptr
+	STDMETHOD	OnMnemonic, :ptr
+	STDMETHOD	OnAmbientPropertyChange, :DISPID
+	STDMETHOD	FreezeEvents, :BOOL
 IOleControl		ENDS
 LPOLECONTROL		typedef ptr IOleControl
 
@@ -462,16 +461,16 @@ XFORMCOORDS_CONTAINERTOHIMETRIC equ 0x8
 XFORMCOORDS_EVENTCOMPAT equ 0x10
 
 IOleControlSite		STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		OnControlInfoChanged
-STDMETHOD		LockInPlaceActive, :BOOL
-STDMETHOD		GetExtendedControl, :ptr
-STDMETHOD		TransformCoords, :ptr, :ptr, :DWORD
-STDMETHOD		TranslateAccelerator_, :ptr, :DWORD
-STDMETHOD		OnFocus, :BOOL
-STDMETHOD		ShowPropertyFrame
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	OnControlInfoChanged
+	STDMETHOD	LockInPlaceActive, :BOOL
+	STDMETHOD	GetExtendedControl, :ptr
+	STDMETHOD	TransformCoords, :ptr, :ptr, :DWORD
+	STDMETHOD	TranslateAccelerator_, :ptr, :DWORD
+	STDMETHOD	OnFocus, :BOOL
+	STDMETHOD	ShowPropertyFrame
 IOleControlSite		ENDS
 LPOLECONTROLSITE	typedef ptr IOleControlSite
 LPIOleControlSite	typedef ptr IOleControlSite
@@ -494,20 +493,20 @@ PROPPAGEINFO		ENDS
 LPPROPPAGEINFO		typedef ptr PROPPAGEINFO
 
 IPropertyPage		STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		SetPageSite, :ptr
-STDMETHOD		Activate, :HWND, :LPCRECT, :BOOL
-STDMETHOD		Deactivate,
-STDMETHOD		GetPageInfo, :ptr
-STDMETHOD		SetObjects, :DWORD, :ptr
-STDMETHOD		Show, :DWORD
-STDMETHOD		Move, :LPCRECT
-STDMETHOD		IsPageDirty
-STDMETHOD		Apply
-STDMETHOD		Help, :LPCOLESTR
-STDMETHOD		TranslateAccelerator_, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	SetPageSite, :ptr
+	STDMETHOD	Activate, :HWND, :LPCRECT, :BOOL
+	STDMETHOD	Deactivate,
+	STDMETHOD	GetPageInfo, :ptr
+	STDMETHOD	SetObjects, :DWORD, :ptr
+	STDMETHOD	Show, :DWORD
+	STDMETHOD	Move, :LPCRECT
+	STDMETHOD	IsPageDirty
+	STDMETHOD	Apply
+	STDMETHOD	Help, :LPCOLESTR
+	STDMETHOD	TranslateAccelerator_, :ptr
 IPropertyPage		ENDS
 LPPROPERTYPAGE		typedef ptr IPropertyPage
 externdef		IID_IPropertyPage:IID
@@ -520,21 +519,21 @@ __IPropertyPage2_INTERFACE_DEFINED__ equ 1
 
 
 IPropertyPage2		STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		SetPageSite, :ptr
-STDMETHOD		Activate, :HWND, :LPCRECT, :BOOL
-STDMETHOD		Deactivate
-STDMETHOD		GetPageInfo, :ptr
-STDMETHOD		SetObjects, :DWORD, :ptr
-STDMETHOD		Show, :DWORD
-STDMETHOD		Move, :LPCRECT
-STDMETHOD		IsPageDirty
-STDMETHOD		Apply
-STDMETHOD		Help, :LPCOLESTR
-STDMETHOD		TranslateAccelerator_, :ptr
-STDMETHOD		EditProperty, :DISPID
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	SetPageSite, :ptr
+	STDMETHOD	Activate, :HWND, :LPCRECT, :BOOL
+	STDMETHOD	Deactivate
+	STDMETHOD	GetPageInfo, :ptr
+	STDMETHOD	SetObjects, :DWORD, :ptr
+	STDMETHOD	Show, :DWORD
+	STDMETHOD	Move, :LPCRECT
+	STDMETHOD	IsPageDirty
+	STDMETHOD	Apply
+	STDMETHOD	Help, :LPCOLESTR
+	STDMETHOD	TranslateAccelerator_, :ptr
+	STDMETHOD	EditProperty, :DISPID
 IPropertyPage2		ENDS
 LPPROPERTYPAGE2		typedef ptr IPropertyPage2
 externdef		IID_IPropertyPage2:IID
@@ -552,13 +551,13 @@ PROPPAGESTATUS_VALIDATE equ 0x2
 PROPPAGESTATUS_CLEAN	equ 0x4
 
 IPropertyPageSite	STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		OnStatusChange, :DWORD
-STDMETHOD		GetLocaleID, :ptr
-STDMETHOD		GetPageContainer, :ptr
-STDMETHOD		TranslateAccelerator_, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	OnStatusChange, :DWORD
+	STDMETHOD	GetLocaleID, :ptr
+	STDMETHOD	GetPageContainer, :ptr
+	STDMETHOD	TranslateAccelerator_, :ptr
 IPropertyPageSite	ENDS
 LPPROPERTYPAGESITE	typedef ptr IPropertyPageSite
 externdef		IID_IPropertyPageSite:IID
@@ -571,11 +570,11 @@ __IPropertyNotifySink_INTERFACE_DEFINED__ equ 1
 
 
 IPropertyNotifySink	STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		OnChanged, :DISPID
-STDMETHOD		OnRequestEdit, :DISPID
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	OnChanged, :DISPID
+	STDMETHOD	OnRequestEdit, :DISPID
 IPropertyNotifySink	ENDS
 LPPROPERTYNOTIFYSINK	typedef ptr IPropertyNotifySink
 externdef		IID_IPropertyNotifySink:IID
@@ -594,10 +593,10 @@ CAUUID			ENDS
 LPCAUUID		typedef ptr CAUUID
 
 ISpecifyPropertyPages	STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		GetPages, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetPages, :ptr
 ISpecifyPropertyPages	ENDS
 LPSPECIFYPROPERTYPAGES	typedef ptr ISpecifyPropertyPages
 externdef		IID_ISpecifyPropertyPages:IID
@@ -609,15 +608,15 @@ __IPersistMemory_INTERFACE_DEFINED__ equ 1
 
 
 IPersistMemory		STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		GetClassID, :ptr
-STDMETHOD		IsDirty
-STDMETHOD		Load, :LPVOID, :ULONG
-STDMETHOD		Save, :LPVOID, :BOOL, :ULONG
-STDMETHOD		GetSizeMax, :ptr
-STDMETHOD		InitNew
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetClassID, :ptr
+	STDMETHOD	IsDirty
+	STDMETHOD	Load, :LPVOID, :ULONG
+	STDMETHOD	Save, :LPVOID, :BOOL, :ULONG
+	STDMETHOD	GetSizeMax, :ptr
+	STDMETHOD	InitNew
 IPersistMemory		ENDS
 LPPERSISTMEMORY		typedef ptr IPersistMemory
 externdef		IID_IPersistMemory:IID
@@ -656,15 +655,15 @@ __IPersistStreamInit_INTERFACE_DEFINED__ equ 1
 
 
 IPersistStreamInit	STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		GetClassID, :ptr
-STDMETHOD		IsDirty
-STDMETHOD		Load, :LPSTREAM
-STDMETHOD		Save, :LPSTREAM, :BOOL
-STDMETHOD		GetSizeMax, :ptr
-STDMETHOD		InitNew
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetClassID, :ptr
+	STDMETHOD	IsDirty
+	STDMETHOD	Load, :LPSTREAM
+	STDMETHOD	Save, :LPSTREAM, :BOOL
+	STDMETHOD	GetSizeMax, :ptr
+	STDMETHOD	InitNew
 IPersistStreamInit	ENDS
 LPPERSISTSTREAMINIT	typedef ptr IPersistStreamInit
 externdef		IID_IPersistStreamInit:IID
@@ -677,13 +676,13 @@ __IPersistPropertyBag_INTERFACE_DEFINED__ equ 1
 
 
 IPersistPropertyBag	STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		GetClassID, :ptr
-STDMETHOD		InitNew
-STDMETHOD		Load, :ptr, :ptr
-STDMETHOD		Save, :ptr, :BOOL, :BOOL
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetClassID, :ptr
+	STDMETHOD	InitNew
+	STDMETHOD	Load, :ptr, :ptr
+	STDMETHOD	Save, :ptr, :BOOL, :BOOL
 IPersistPropertyBag	ENDS
 LPPERSISTPROPERTYBAG	typedef ptr IPersistPropertyBag
 externdef		IID_IPersistPropertyBag:IID
@@ -695,11 +694,11 @@ __ISimpleFrameSite_INTERFACE_DEFINED__ equ 1
 
 
 ISimpleFrameSite	STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		PreMessageFilter, :HWND, :DWORD, :WPARAM, :LPARAM, :ptr, :ptr
-STDMETHOD		PostMessageFilter, :HWND, :DWORD, :WPARAM, :LPARAM, :ptr, :DWORD
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	PreMessageFilter, :HWND, :DWORD, :WPARAM, :LPARAM, :ptr, :ptr
+	STDMETHOD	PostMessageFilter, :HWND, :DWORD, :WPARAM, :LPARAM, :ptr, :DWORD
 ISimpleFrameSite	ENDS
 LPSIMPLEFRAMESITE	typedef ptr ISimpleFrameSite
 externdef		IID_ISimpleFrameSite:IID
@@ -718,33 +717,33 @@ endif
 LPTEXTMETRICOLE		typedef ptr TEXTMETRICOLE
 
 IFont			STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		get_Name, :ptr
-STDMETHOD		put_Name, :BSTR
-STDMETHOD		get_Size, :ptr
-STDMETHOD		put_Size, :CY
-STDMETHOD		get_Bold, :ptr
-STDMETHOD		put_Bold, :BOOL
-STDMETHOD		get_Italic, :ptr
-STDMETHOD		put_Italic, :BOOL
-STDMETHOD		get_Underline, :ptr
-STDMETHOD		put_Underline, :BOOL
-STDMETHOD		get_Strikethrough, :ptr
-STDMETHOD		put_Strikethrough, :BOOL
-STDMETHOD		get_Weight, :ptr
-STDMETHOD		put_Weight, :SWORD
-STDMETHOD		get_Charset, :ptr
-STDMETHOD		put_Charset, :SWORD
-STDMETHOD		get_hFont, :ptr
-STDMETHOD		Clone, :ptr
-STDMETHOD		IsEqual, :ptr
-STDMETHOD		SetRatio, :SDWORD, :SDWORD
-STDMETHOD		QueryTextMetrics, :ptr
-STDMETHOD		AddRefHfont, :HFONT
-STDMETHOD		ReleaseHfont, :HFONT
-STDMETHOD		SetHdc, :HDC
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	get_Name, :ptr
+	STDMETHOD	put_Name, :BSTR
+	STDMETHOD	get_Size, :ptr
+	STDMETHOD	put_Size, :CY
+	STDMETHOD	get_Bold, :ptr
+	STDMETHOD	put_Bold, :BOOL
+	STDMETHOD	get_Italic, :ptr
+	STDMETHOD	put_Italic, :BOOL
+	STDMETHOD	get_Underline, :ptr
+	STDMETHOD	put_Underline, :BOOL
+	STDMETHOD	get_Strikethrough, :ptr
+	STDMETHOD	put_Strikethrough, :BOOL
+	STDMETHOD	get_Weight, :ptr
+	STDMETHOD	put_Weight, :SWORD
+	STDMETHOD	get_Charset, :ptr
+	STDMETHOD	put_Charset, :SWORD
+	STDMETHOD	get_hFont, :ptr
+	STDMETHOD	Clone, :ptr
+	STDMETHOD	IsEqual, :ptr
+	STDMETHOD	SetRatio, :SDWORD, :SDWORD
+	STDMETHOD	QueryTextMetrics, :ptr
+	STDMETHOD	AddRefHfont, :HFONT
+	STDMETHOD	ReleaseHfont, :HFONT
+	STDMETHOD	SetHdc, :HDC
 IFont			ENDS
 LPFONT			typedef ptr IFont
 LPIFont			typedef ptr IFont
@@ -769,23 +768,23 @@ OLE_YSIZE_HIMETRIC	typedef ptr GUID ; DECLSPEC_UUID("66504309-BE0F-101A-8BBB-00A
 DEFINE_IIDX(IPicture, "7BF80980-BF32-101A-8BBB-00AA00300CAB")
 
 IPicture		STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		get_Handle, :ptr
-STDMETHOD		get_hPal, :ptr
-STDMETHOD		get_Type, :ptr
-STDMETHOD		get_Width, :ptr
-STDMETHOD		get_Height, :ptr
-STDMETHOD		Render, :HDC, :SDWORD, :SDWORD, :SDWORD, :SDWORD, :OLE_XPOS_HIMETRIC, :OLE_YPOS_HIMETRIC, :OLE_XSIZE_HIMETRIC, :OLE_YSIZE_HIMETRIC, :LPCRECT
-STDMETHOD		set_hPal, :OLE_HANDLE
-STDMETHOD		get_CurDC, :ptr
-STDMETHOD		SelectPicture, :HDC, :ptr, :ptr
-STDMETHOD		get_KeepOriginalFormat, :ptr
-STDMETHOD		put_KeepOriginalFormat, :BOOL
-STDMETHOD		PictureChanged,
-STDMETHOD		SaveAsFile, :LPSTREAM, :BOOL, :ptr
-STDMETHOD		get_Attributes, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	get_Handle, :ptr
+	STDMETHOD	get_hPal, :ptr
+	STDMETHOD	get_Type, :ptr
+	STDMETHOD	get_Width, :ptr
+	STDMETHOD	get_Height, :ptr
+	STDMETHOD	Render, :HDC, :SDWORD, :SDWORD, :SDWORD, :SDWORD, :OLE_XPOS_HIMETRIC, :OLE_YPOS_HIMETRIC, :OLE_XSIZE_HIMETRIC, :OLE_YSIZE_HIMETRIC, :LPCRECT
+	STDMETHOD	set_hPal, :OLE_HANDLE
+	STDMETHOD	get_CurDC, :ptr
+	STDMETHOD	SelectPicture, :HDC, :ptr, :ptr
+	STDMETHOD	get_KeepOriginalFormat, :ptr
+	STDMETHOD	put_KeepOriginalFormat, :BOOL
+	STDMETHOD	PictureChanged,
+	STDMETHOD	SaveAsFile, :LPSTREAM, :BOOL, :ptr
+	STDMETHOD	get_Attributes, :ptr
 IPicture		ENDS
 LPPICTURE		typedef ptr IPicture
 externdef		IID_IPicture:IID
@@ -799,23 +798,23 @@ __IPicture2_INTERFACE_DEFINED__ equ 1
 HHANDLE			typedef UINT_PTR
 
 IPicture2		STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		get_Handle, :ptr
-STDMETHOD		get_hPal, :ptr
-STDMETHOD		get_Type, :ptr
-STDMETHOD		get_Width, :ptr
-STDMETHOD		get_Height, :ptr
-STDMETHOD		Render, :HDC, :LONG, :LONG, :LONG, :LONG, :OLE_XPOS_HIMETRIC, :OLE_YPOS_HIMETRIC, :OLE_XSIZE_HIMETRIC, :OLE_YSIZE_HIMETRIC, :LPCRECT
-STDMETHOD		set_hPal, :HHANDLE
-STDMETHOD		get_CurDC, :ptr
-STDMETHOD		SelectPicture, :HDC, :ptr, :ptr
-STDMETHOD		get_KeepOriginalFormat, :ptr
-STDMETHOD		put_KeepOriginalFormat, :BOOL
-STDMETHOD		PictureChanged
-STDMETHOD		SaveAsFile, :LPSTREAM, :BOOL, :ptr
-STDMETHOD		get_Attributes, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	get_Handle, :ptr
+	STDMETHOD	get_hPal, :ptr
+	STDMETHOD	get_Type, :ptr
+	STDMETHOD	get_Width, :ptr
+	STDMETHOD	get_Height, :ptr
+	STDMETHOD	Render, :HDC, :LONG, :LONG, :LONG, :LONG, :OLE_XPOS_HIMETRIC, :OLE_YPOS_HIMETRIC, :OLE_XSIZE_HIMETRIC, :OLE_YSIZE_HIMETRIC, :LPCRECT
+	STDMETHOD	set_hPal, :HHANDLE
+	STDMETHOD	get_CurDC, :ptr
+	STDMETHOD	SelectPicture, :HDC, :ptr, :ptr
+	STDMETHOD	get_KeepOriginalFormat, :ptr
+	STDMETHOD	put_KeepOriginalFormat, :BOOL
+	STDMETHOD	PictureChanged
+	STDMETHOD	SaveAsFile, :LPSTREAM, :BOOL, :ptr
+	STDMETHOD	get_Attributes, :ptr
 IPicture2		ENDS
 LPPICTURE2		typedef ptr IPicture2
 externdef		IID_IPicture2:IID
@@ -828,13 +827,13 @@ __IFontEventsDisp_INTERFACE_DEFINED__ equ 1
 
 
 IFontEventsDisp		STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		GetTypeInfoCount, :ptr
-STDMETHOD		GetTypeInfo, :DWORD, :LCID, :ptr
-STDMETHOD		GetIDsOfNames, :REFIID, :ptr, :DWORD, :LCID, :ptr
-STDMETHOD		_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetTypeInfoCount, :ptr
+	STDMETHOD	GetTypeInfo, :DWORD, :LCID, :ptr
+	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :DWORD, :LCID, :ptr
+	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
 IFontEventsDisp		ENDS
 LPFONTEVENTS		typedef ptr IFontEventsDisp
 externdef		IID_IFontEventsDisp:IID
@@ -846,13 +845,13 @@ __IFontDisp_INTERFACE_DEFINED__ equ 1
 
 
 IFontDisp		STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		GetTypeInfoCount, :ptr
-STDMETHOD		GetTypeInfo, :UINT, :LCID, :ptr
-STDMETHOD		GetIDsOfNames, :REFIID, :ptr, :DWORD, :LCID, :ptr
-STDMETHOD		_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetTypeInfoCount, :ptr
+	STDMETHOD	GetTypeInfo, :UINT, :LCID, :ptr
+	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :DWORD, :LCID, :ptr
+	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
 IFontDisp		ENDS
 LPFONTDISP		typedef ptr IFontDisp
 externdef		IID_IFontDisp:IID
@@ -864,13 +863,13 @@ __IPictureDisp_INTERFACE_DEFINED__ equ 1
 
 
 IPictureDisp		STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		GetTypeInfoCount, :ptr
-STDMETHOD		GetTypeInfo, :UINT, :LCID, :ptr
-STDMETHOD		GetIDsOfNames, :REFIID, :ptr, :DWORD, :LCID, :ptr
-STDMETHOD		_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetTypeInfoCount, :ptr
+	STDMETHOD	GetTypeInfo, :UINT, :LCID, :ptr
+	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :DWORD, :LCID, :ptr
+	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
 IPictureDisp		ENDS
 LPPICTUREDISP		typedef ptr IPictureDisp
 externdef		IID_IPictureDisp:IID
@@ -882,17 +881,17 @@ __IOleInPlaceObjectWindowless_INTERFACE_DEFINED__ equ 1
 
 
 IOleInPlaceObjectWindowless STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		GetWindow, :ptr
-STDMETHOD		ContextSensitiveHelp, :BOOL
-STDMETHOD		InPlaceDeactivate
-STDMETHOD		UIDeactivate
-STDMETHOD		SetObjectRects, :LPCRECT, :LPCRECT
-STDMETHOD		ReactivateAndUndo,
-STDMETHOD		OnWindowMessage, :DWORD, :WPARAM, :LPARAM, :ptr
-STDMETHOD		GetDropTarget, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetWindow, :ptr
+	STDMETHOD	ContextSensitiveHelp, :BOOL
+	STDMETHOD	InPlaceDeactivate
+	STDMETHOD	UIDeactivate
+	STDMETHOD	SetObjectRects, :LPCRECT, :LPCRECT
+	STDMETHOD	ReactivateAndUndo,
+	STDMETHOD	OnWindowMessage, :DWORD, :WPARAM, :LPARAM, :ptr
+	STDMETHOD	GetDropTarget, :ptr
 IOleInPlaceObjectWindowless ENDS
 LPOLEINPLACEOBJECTWINDOWLESS typedef ptr IOleInPlaceObjectWindowless
 externdef		IID_IOleInPlaceObjectWindowless:IID
@@ -908,24 +907,24 @@ ACTIVATEFLAGS		typedef SDWORD
 ACTIVATE_WINDOWLESS	equ 1
 
 IOleInPlaceSiteEx	STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		GetWindow, :ptr
-STDMETHOD		ContextSensitiveHelp, :BOOL
-STDMETHOD		CanInPlaceActivate
-STDMETHOD		OnInPlaceActivate
-STDMETHOD		OnUIActivate
-STDMETHOD		GetWindowContext, :ptr, :ptr, :LPRECT, :LPRECT, :LPOLEINPLACEFRAMEINFO
-STDMETHOD		Scroll, :tagSIZE
-STDMETHOD		OnUIDeactivate, :BOOL
-STDMETHOD		OnInPlaceDeactivate
-STDMETHOD		DiscardUndoState
-STDMETHOD		DeactivateAndUndo
-STDMETHOD		OnPosRectChange, :LPCRECT
-STDMETHOD		OnInPlaceActivateEx, :ptr, :DWORD
-STDMETHOD		OnInPlaceDeactivateEx, :BOOL
-STDMETHOD		RequestUIActivate
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetWindow, :ptr
+	STDMETHOD	ContextSensitiveHelp, :BOOL
+	STDMETHOD	CanInPlaceActivate
+	STDMETHOD	OnInPlaceActivate
+	STDMETHOD	OnUIActivate
+	STDMETHOD	GetWindowContext, :ptr, :ptr, :LPRECT, :LPRECT, :LPOLEINPLACEFRAMEINFO
+	STDMETHOD	Scroll, :tagSIZE
+	STDMETHOD	OnUIDeactivate, :BOOL
+	STDMETHOD	OnInPlaceDeactivate
+	STDMETHOD	DiscardUndoState
+	STDMETHOD	DeactivateAndUndo
+	STDMETHOD	OnPosRectChange, :LPCRECT
+	STDMETHOD	OnInPlaceActivateEx, :ptr, :DWORD
+	STDMETHOD	OnInPlaceDeactivateEx, :BOOL
+	STDMETHOD	RequestUIActivate
 IOleInPlaceSiteEx	ENDS
 LPOLEINPLACESITEEX	typedef ptr IOleInPlaceSiteEx
 externdef		IID_IOleInPlaceSiteEx:IID
@@ -943,36 +942,36 @@ OLEDC_PAINTBKGND	equ 0x2
 OLEDC_OFFSCREEN		equ 0x4
 
 IOleInPlaceSiteWindowless STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		GetWindow, :ptr
-STDMETHOD		ContextSensitiveHelp, :BOOL
-STDMETHOD		CanInPlaceActivate
-STDMETHOD		OnInPlaceActivate
-STDMETHOD		OnUIActivate
-STDMETHOD		GetWindowContext, :ptr, :ptr, :LPRECT, :LPRECT, :LPOLEINPLACEFRAMEINFO
-STDMETHOD		Scroll, :tagSIZE
-STDMETHOD		OnUIDeactivate, :BOOL
-STDMETHOD		OnInPlaceDeactivate
-STDMETHOD		DiscardUndoState
-STDMETHOD		DeactivateAndUndo
-STDMETHOD		OnPosRectChange, :LPCRECT
-STDMETHOD		OnInPlaceActivateEx, :ptr, :DWORD
-STDMETHOD		OnInPlaceDeactivateEx, :BOOL
-STDMETHOD		RequestUIActivate
-STDMETHOD		CanWindowlessActivate
-STDMETHOD		GetCapture_
-STDMETHOD		SetCapture_, :BOOL
-STDMETHOD		GetFocus_
-STDMETHOD		SetFocus_, :BOOL
-STDMETHOD		GetDC_, :LPCRECT, :DWORD, :ptr
-STDMETHOD		ReleaseDC_, :HDC
-STDMETHOD		InvalidateRect, :LPCRECT, :BOOL
-STDMETHOD		InvalidateRgn, :HRGN, :BOOL
-STDMETHOD		ScrollRect, :DWORD, :DWORD, :LPCRECT, :LPCRECT
-STDMETHOD		AdjustRect, :LPRECT
-STDMETHOD		OnDefWindowMessage, :DWORD, :WPARAM, :LPARAM, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetWindow, :ptr
+	STDMETHOD	ContextSensitiveHelp, :BOOL
+	STDMETHOD	CanInPlaceActivate
+	STDMETHOD	OnInPlaceActivate
+	STDMETHOD	OnUIActivate
+	STDMETHOD	GetWindowContext, :ptr, :ptr, :LPRECT, :LPRECT, :LPOLEINPLACEFRAMEINFO
+	STDMETHOD	Scroll, :tagSIZE
+	STDMETHOD	OnUIDeactivate, :BOOL
+	STDMETHOD	OnInPlaceDeactivate
+	STDMETHOD	DiscardUndoState
+	STDMETHOD	DeactivateAndUndo
+	STDMETHOD	OnPosRectChange, :LPCRECT
+	STDMETHOD	OnInPlaceActivateEx, :ptr, :DWORD
+	STDMETHOD	OnInPlaceDeactivateEx, :BOOL
+	STDMETHOD	RequestUIActivate
+	STDMETHOD	CanWindowlessActivate
+	STDMETHOD	GetCapture_
+	STDMETHOD	SetCapture_, :BOOL
+	STDMETHOD	GetFocus_
+	STDMETHOD	SetFocus_, :BOOL
+	STDMETHOD	GetDC_, :LPCRECT, :DWORD, :ptr
+	STDMETHOD	ReleaseDC_, :HDC
+	STDMETHOD	InvalidateRect, :LPCRECT, :BOOL
+	STDMETHOD	InvalidateRgn, :HRGN, :BOOL
+	STDMETHOD	ScrollRect, :DWORD, :DWORD, :LPCRECT, :LPCRECT
+	STDMETHOD	AdjustRect, :LPRECT
+	STDMETHOD	OnDefWindowMessage, :DWORD, :WPARAM, :LPARAM, :ptr
 IOleInPlaceSiteWindowless ENDS
 LPOLEINPLACESITEWINDOWLESS typedef ptr IOleInPlaceSiteWindowless
 externdef		IID_IOleInPlaceSiteWindowless:IID
@@ -1022,18 +1021,18 @@ DVASPECTINFO		ENDS
 CALLBACK(pDraw_pfnContinue, :DWORD)
 
 IViewObjectEx		STRUC
-STDMETHOD		Draw, :DWORD, :SDWORD, :ptr, :ptr, :HDC, :HDC, :LPCRECTL, :LPCRECTL, :pDraw_pfnContinue, :DWORD
-STDMETHOD		GetColorSet, :DWORD, :SDWORD, :ptr, :ptr, :HDC, :ptr
-STDMETHOD		Freeze, :DWORD, :SDWORD, :ptr, :ptr
-STDMETHOD		Unfreeze, :DWORD
-STDMETHOD		SetAdvise, :DWORD, :DWORD, :ptr
-STDMETHOD		GetAdvise, :ptr, :ptr, :ptr
-STDMETHOD		GetExtent, :DWORD, :SDWORD, :ptr, :LPSIZEL
-STDMETHOD		GetRect, :DWORD, :LPRECTL
-STDMETHOD		GetViewStatus, :ptr
-STDMETHOD		QueryHitPoint, :DWORD, :LPCRECT, :POINT, :SDWORD, :ptr
-STDMETHOD		QueryHitRect, :DWORD, :LPCRECT, :LPCRECT, :SDWORD, :ptr
-STDMETHOD		GetNaturalExtent, :DWORD, :SDWORD, :ptr, :HDC, :ptr, :LPSIZEL
+	STDMETHOD	Draw, :DWORD, :SDWORD, :ptr, :ptr, :HDC, :HDC, :LPCRECTL, :LPCRECTL, :pDraw_pfnContinue, :DWORD
+	STDMETHOD	GetColorSet, :DWORD, :SDWORD, :ptr, :ptr, :HDC, :ptr
+	STDMETHOD	Freeze, :DWORD, :SDWORD, :ptr, :ptr
+	STDMETHOD	Unfreeze, :DWORD
+	STDMETHOD	SetAdvise, :DWORD, :DWORD, :ptr
+	STDMETHOD	GetAdvise, :ptr, :ptr, :ptr
+	STDMETHOD	GetExtent, :DWORD, :SDWORD, :ptr, :LPSIZEL
+	STDMETHOD	GetRect, :DWORD, :LPRECTL
+	STDMETHOD	GetViewStatus, :ptr
+	STDMETHOD	QueryHitPoint, :DWORD, :LPCRECT, :POINT, :SDWORD, :ptr
+	STDMETHOD	QueryHitRect, :DWORD, :LPCRECT, :LPCRECT, :SDWORD, :ptr
+	STDMETHOD	GetNaturalExtent, :DWORD, :SDWORD, :ptr, :HDC, :ptr, :LPSIZEL
 IViewObjectEx		ends
 
 endif ; __IViewObjectEx_INTERFACE_DEFINED__
@@ -1043,13 +1042,13 @@ __IOleUndoUnit_INTERFACE_DEFINED__ equ 1
 
 
 IOleUndoUnit		STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		Do, :ptr
-STDMETHOD		GetDescription, :ptr
-STDMETHOD		GetUnitType, :ptr, :ptr
-STDMETHOD		OnNextAdd
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	Do, :ptr
+	STDMETHOD	GetDescription, :ptr
+	STDMETHOD	GetUnitType, :ptr, :ptr
+	STDMETHOD	OnNextAdd
 IOleUndoUnit		ENDS
 LPOLEUNDOUNIT		typedef ptr IOleUndoUnit
 externdef		IID_IOleUndoUnit:IID
@@ -1061,18 +1060,18 @@ __IOleParentUndoUnit_INTERFACE_DEFINED__ equ 1
 
 
 IOleParentUndoUnit	STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		Do, :ptr
-STDMETHOD		GetDescription, :ptr
-STDMETHOD		GetUnitType, :ptr, :ptr
-STDMETHOD		OnNextAdd
-STDMETHOD		Open, :ptr
-STDMETHOD		Close, :ptr, :BOOL
-STDMETHOD		_Add, :ptr
-STDMETHOD		FindUnit, :ptr
-STDMETHOD		GetParentState, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	Do, :ptr
+	STDMETHOD	GetDescription, :ptr
+	STDMETHOD	GetUnitType, :ptr, :ptr
+	STDMETHOD	OnNextAdd
+	STDMETHOD	Open, :ptr
+	STDMETHOD	Close, :ptr, :BOOL
+	STDMETHOD	_Add, :ptr
+	STDMETHOD	FindUnit, :ptr
+	STDMETHOD	GetParentState, :ptr
 IOleParentUndoUnit	ENDS
 
 endif
@@ -1083,13 +1082,13 @@ __IEnumOleUndoUnits_INTERFACE_DEFINED__ equ 1
 
 
 IEnumOleUndoUnits	STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		Next, :ULONG, :ptr, :ptr
-STDMETHOD		Skip, :ULONG
-STDMETHOD		Reset
-STDMETHOD		Clone, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	Next, :ULONG, :ptr, :ptr
+	STDMETHOD	Skip, :ULONG
+	STDMETHOD	Reset
+	STDMETHOD	Clone, :ptr
 IEnumOleUndoUnits	ENDS
 LPENUMOLEUNDOUNITS	typedef ptr IEnumOleUndoUnits
 externdef		IID_IEnumOleUndoUnits:IID
@@ -1117,21 +1116,21 @@ __IOleUndoManager_INTERFACE_DEFINED__ equ 1
 SID_SOleUndoManager	equ IID_IOleUndoManager
 
 IOleUndoManager		STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		Open, :ptr
-STDMETHOD		Close, :ptr, :BOOL
-STDMETHOD		_Add, :ptr
-STDMETHOD		GetOpenParentState, :ptr
-STDMETHOD		DiscardFrom, :ptr
-STDMETHOD		UndoTo, :ptr
-STDMETHOD		RedoTo, :ptr
-STDMETHOD		EnumUndoable, :ptr
-STDMETHOD		EnumRedoable, :ptr
-STDMETHOD		GetLastUndoDescription, :ptr
-STDMETHOD		GetLastRedoDescription, :ptr
-STDMETHOD		Enable, :BOOL
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	Open, :ptr
+	STDMETHOD	Close, :ptr, :BOOL
+	STDMETHOD	_Add, :ptr
+	STDMETHOD	GetOpenParentState, :ptr
+	STDMETHOD	DiscardFrom, :ptr
+	STDMETHOD	UndoTo, :ptr
+	STDMETHOD	RedoTo, :ptr
+	STDMETHOD	EnumUndoable, :ptr
+	STDMETHOD	EnumRedoable, :ptr
+	STDMETHOD	GetLastUndoDescription, :ptr
+	STDMETHOD	GetLastRedoDescription, :ptr
+	STDMETHOD	Enable, :BOOL
 IOleUndoManager		ENDS
 LPOLEUNDOMANAGER	typedef ptr IOleUndoManager
 LPIOleUndoManager	typedef ptr IOleUndoManager
@@ -1149,12 +1148,12 @@ POINTERINACTIVE_DEACTIVATEONLEAVE equ 2
 POINTERINACTIVE_ACTIVATEONDRAG	  equ 4
 
 IPointerInactive	STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		GetActivationPolicy, :ptr
-STDMETHOD		OnInactiveMouseMove, :LPCRECT, :LONG, :LONG, :DWORD
-STDMETHOD		OnInactiveSetCursor, :LPCRECT, :LONG, :LONG, :DWORD, :BOOL
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetActivationPolicy, :ptr
+	STDMETHOD	OnInactiveMouseMove, :LPCRECT, :LONG, :LONG, :DWORD
+	STDMETHOD	OnInactiveSetCursor, :LPCRECT, :LONG, :LONG, :DWORD, :BOOL
 IPointerInactive	ENDS
 LPPOINTERINACTIVE	typedef ptr IPointerInactive
 externdef		IID_IPointerInactive:IID
@@ -1166,11 +1165,11 @@ __IObjectWithSite_INTERFACE_DEFINED__ equ 1
 
 
 IObjectWithSite		STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		SetSite, :ptr
-STDMETHOD		GetSite, :REFIID, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	SetSite, :ptr
+	STDMETHOD	GetSite, :REFIID, :ptr
 IObjectWithSite		ENDS
 LPOBJECTWITHSITE	typedef ptr IObjectWithSite
 externdef		IID_IObjectWithSite:IID
@@ -1195,13 +1194,13 @@ CADWORD			ENDS
 LPCADWORD		typedef ptr CADWORD
 
 IPerPropertyBrowsing	STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		GetDisplayString, :DISPID, :ptr
-STDMETHOD		MapPropertyToPage, :DISPID, :ptr
-STDMETHOD		GetPredefinedStrings, :DISPID, :ptr, :ptr
-STDMETHOD		GetPredefinedValue, :DISPID, :DWORD, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetDisplayString, :DISPID, :ptr
+	STDMETHOD	MapPropertyToPage, :DISPID, :ptr
+	STDMETHOD	GetPredefinedStrings, :DISPID, :ptr, :ptr
+	STDMETHOD	GetPredefinedValue, :DISPID, :DWORD, :ptr
 IPerPropertyBrowsing	ENDS
 LPPERPROPERTYBROWSING	typedef ptr IPerPropertyBrowsing
 externdef		IID_IPerPropertyBrowsing:IID
@@ -1225,14 +1224,14 @@ clsid			CLSID <>
 PROPBAG2		ENDS
 
 IPropertyBag2		STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		Read, :DWORD,:ptr, :ptr, :ptr, :ptr
-STDMETHOD		Write, :DWORD, :ptr, :ptr
-STDMETHOD		CountProperties, :ptr
-STDMETHOD		GetPropertyInfo, :DWORD, :DWORD, :ptr, :ptr
-STDMETHOD		LoadObject, :LPCOLESTR, :DWORD, :ptr, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	Read, :DWORD,:ptr, :ptr, :ptr, :ptr
+	STDMETHOD	Write, :DWORD, :ptr, :ptr
+	STDMETHOD	CountProperties, :ptr
+	STDMETHOD	GetPropertyInfo, :DWORD, :DWORD, :ptr, :ptr
+	STDMETHOD	LoadObject, :LPCOLESTR, :DWORD, :ptr, :ptr
 IPropertyBag2		ENDS
 LPPROPERTYBAG2		typedef ptr IPropertyBag2
 externdef		IID_IPropertyBag2:IID
@@ -1245,14 +1244,14 @@ __IPersistPropertyBag2_INTERFACE_DEFINED__ equ 1
 
 
 IPersistPropertyBag2	STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		GetClassID, :ptr
-STDMETHOD		InitNew
-STDMETHOD		Load, :ptr, :ptr
-STDMETHOD		Save, :ptr, :BOOL, :BOOL
-STDMETHOD		IsDirty
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetClassID, :ptr
+	STDMETHOD	InitNew
+	STDMETHOD	Load, :ptr, :ptr
+	STDMETHOD	Save, :ptr, :BOOL, :BOOL
+	STDMETHOD	IsDirty
 IPersistPropertyBag2	ENDS
 LPPERSISTPROPERTYBAG2	typedef ptr IPersistPropertyBag2
 externdef		IID_IPersistPropertyBag2:IID
@@ -1265,15 +1264,15 @@ __IAdviseSinkEx_INTERFACE_DEFINED__ equ 1
 
 
 IAdviseSinkEx		STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		OnDataChange, :ptr, :ptr
-STDMETHOD		OnViewChange, :DWORD, :SDWORD
-STDMETHOD		OnRename, :ptr
-STDMETHOD		OnSave
-STDMETHOD		OnClose
-STDMETHOD		OnViewStatusChange, :DWORD
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	OnDataChange, :ptr, :ptr
+	STDMETHOD	OnViewChange, :DWORD, :SDWORD
+	STDMETHOD	OnRename, :ptr
+	STDMETHOD	OnSave
+	STDMETHOD	OnClose
+	STDMETHOD	OnViewStatusChange, :DWORD
 IAdviseSinkEx		ENDS
 LPADVISESINKEX		typedef ptr IAdviseSinkEx
 externdef		IID_IAdviseSinkEx:IID
@@ -1339,12 +1338,12 @@ dwPointerActivationPolicy dd ?
 QACONTROL		ENDS
 
 IQuickActivate		STRUC
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		QuickActivate, :ptr, :ptr
-STDMETHOD		SetContentExtent, :LPSIZEL
-STDMETHOD		GetContentExtent, :LPSIZEL
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	QuickActivate, :ptr, :ptr
+	STDMETHOD	SetContentExtent, :LPSIZEL
+	STDMETHOD	GetContentExtent, :LPSIZEL
 IQuickActivate		ENDS
 LPQUICKACTIVATE		typedef ptr IQuickActivate
 externdef		IID_IQuickActivate:IID
@@ -1363,7 +1362,6 @@ IQuickActivate_RemoteQuickActivate_Stub proto WINAPI \
 	 _pdwStubPhase: ptr DWORD
 
 endif
-
 
 ;unsigned
 BSTR_UserSize proto WINAPI \

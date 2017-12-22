@@ -1,36 +1,27 @@
 include rpc.inc
 include rpcndr.inc
 ifndef __msxml_h__
-.xlist
 __msxml_h__ equ 1
+.xlist
 
 ifndef __IXMLElementCollection_FWD_DEFINED__
 __IXMLElementCollection_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IXMLDocument_FWD_DEFINED__
 __IXMLDocument_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IXMLElement_FWD_DEFINED__
 __IXMLElement_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IXMLError_FWD_DEFINED__
 __IXMLError_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IXMLElementNotificationSink_FWD_DEFINED__
 __IXMLElementNotificationSink_FWD_DEFINED__ equ 1
 endif
-
 ifndef __XMLDocument_FWD_DEFINED__
 __XMLDocument_FWD_DEFINED__ equ 1
-
-;XMLDocument XMLDocument; STRUC
-
 endif
-
 include unknwn.inc
 include objidl.inc
 include oaidl.inc
@@ -41,10 +32,8 @@ MIDL_user_allocate proto WINAPI :size_t
 ;void
 MIDL_user_free proto WINAPI :PVOID
 
-
 externdef		__MIDL_itf_msxml_0000_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef		__MIDL_itf_msxml_0000_v0_0_s_ifspec:RPC_IF_HANDLE
-
 
 ifndef __MSXML_LIBRARY_DEFINED__
 __MSXML_LIBRARY_DEFINED__ equ 1
@@ -70,27 +59,24 @@ _reserved1		dd ?
 _reserved2		dd ?
 XML_ERROR		ENDS
 
-
 externdef		LIBID_MSXML:IID
 
 ifndef __IXMLElementCollection_INTERFACE_DEFINED__
 __IXMLElementCollection_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IXMLElementCollection:IID
-
-
 IXMLElementCollection	STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetTypeInfoCount, :ptr
-STDMETHOD GetTypeInfo, :UINT, :LCID, :ptr
-STDMETHOD GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-STDMETHOD _Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-STDMETHOD put_length, :LONG
-STDMETHOD get_length, :ptr
-STDMETHOD get__newEnum, :ptr
-STDMETHOD item, :ptr, :ptr, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetTypeInfoCount, :ptr
+	STDMETHOD	GetTypeInfo, :UINT, :LCID, :ptr
+	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
+	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+	STDMETHOD	put_length, :LONG
+	STDMETHOD	get_length, :ptr
+	STDMETHOD	get__newEnum, :ptr
+	STDMETHOD	item, :ptr, :ptr, :ptr
 IXMLElementCollection	ENDS
 LPIXMLElementCollection typedef ptr IXMLElementCollection
 
@@ -147,36 +133,32 @@ IXMLElementCollection_item_Stub proto WINAPI \
 
 endif
 
-
 ifndef __IXMLDocument_INTERFACE_DEFINED__
 __IXMLDocument_INTERFACE_DEFINED__ equ 1
 
-
 externdef		IID_IXMLDocument:IID
-
-
 IXMLDocument		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetTypeInfoCount, :ptr
-STDMETHOD GetTypeInfo, :UINT, :LCID, :ptr
-STDMETHOD GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-STDMETHOD _Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-STDMETHOD get_root, :ptr
-STDMETHOD get_fileSize, :ptr
-STDMETHOD get_fileModifiedDate, :ptr
-STDMETHOD get_fileUpdatedDate, :ptr
-STDMETHOD get_URL, :ptr
-STDMETHOD put_URL, :BSTR
-STDMETHOD get_mimeType, :ptr
-STDMETHOD get_readyState, :ptr
-STDMETHOD get_charset, :ptr
-STDMETHOD put_charset, :BSTR
-STDMETHOD get_version, :ptr
-STDMETHOD get_doctype, :ptr
-STDMETHOD get_dtdURL, :ptr
-STDMETHOD createElement, :VARIANT, :VARIANT, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetTypeInfoCount, :ptr
+	STDMETHOD	GetTypeInfo, :UINT, :LCID, :ptr
+	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
+	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+	STDMETHOD	get_root, :ptr
+	STDMETHOD	get_fileSize, :ptr
+	STDMETHOD	get_fileModifiedDate, :ptr
+	STDMETHOD	get_fileUpdatedDate, :ptr
+	STDMETHOD	get_URL, :ptr
+	STDMETHOD	put_URL, :BSTR
+	STDMETHOD	get_mimeType, :ptr
+	STDMETHOD	get_readyState, :ptr
+	STDMETHOD	get_charset, :ptr
+	STDMETHOD	put_charset, :BSTR
+	STDMETHOD	get_version, :ptr
+	STDMETHOD	get_doctype, :ptr
+	STDMETHOD	get_dtdURL, :ptr
+	STDMETHOD	createElement, :VARIANT, :VARIANT, :ptr
 IXMLDocument		ENDS
 LPIXMLDocument		typedef ptr IXMLDocument
 
@@ -305,8 +287,6 @@ IXMLDocument_get_version_Proxy proto WINAPI \
 		 pThis: ptr IXMLDocument,
 		     p: ptr BSTR
 
-
-
 ;void
 IXMLDocument_get_version_Stub proto WINAPI \
 		 pThis: ptr IRpcStubBuffer,
@@ -358,28 +338,26 @@ ifndef __IXMLElement_INTERFACE_DEFINED__
 __IXMLElement_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IXMLElement:IID
-
-
 IXMLElement		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetTypeInfoCount, :ptr
-STDMETHOD GetTypeInfo, :UINT, :LCID, :ptr
-STDMETHOD GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-STDMETHOD _Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-STDMETHOD get_tagName, :ptr
-STDMETHOD put_tagName, :BSTR
-STDMETHOD get_parent, :ptr
-STDMETHOD setAttribute, :BSTR, :VARIANT
-STDMETHOD getAttribute, :BSTR, :VARIANT
-STDMETHOD removeAttribute, :BSTR
-STDMETHOD get_children, :ptr
-STDMETHOD get_type, :ptr
-STDMETHOD get_text, :ptr
-STDMETHOD put_text, :BSTR
-STDMETHOD addChild, :ptr
-STDMETHOD removeChild, :ptr, :LONG, :LONG
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetTypeInfoCount, :ptr
+	STDMETHOD	GetTypeInfo, :UINT, :LCID, :ptr
+	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
+	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+	STDMETHOD	get_tagName, :ptr
+	STDMETHOD	put_tagName, :BSTR
+	STDMETHOD	get_parent, :ptr
+	STDMETHOD	setAttribute, :BSTR, :VARIANT
+	STDMETHOD	getAttribute, :BSTR, :VARIANT
+	STDMETHOD	removeAttribute, :BSTR
+	STDMETHOD	get_children, :ptr
+	STDMETHOD	get_type, :ptr
+	STDMETHOD	get_text, :ptr
+	STDMETHOD	put_text, :BSTR
+	STDMETHOD	addChild, :ptr
+	STDMETHOD	removeChild, :ptr, :LONG, :LONG
 IXMLElement		ENDS
 LPIXMLElement		typedef ptr IXMLElement
 
@@ -531,18 +509,15 @@ IXMLElement_removeChild_Stub proto WINAPI \
 
 endif
 
-
 ifndef __IXMLError_INTERFACE_DEFINED__
 __IXMLError_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IXMLError:IID
-
-
 IXMLError		STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetErrorInfo, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetErrorInfo, :ptr
 IXMLError		ENDS
 LPIXMLError		typedef ptr IXMLError
 
@@ -565,17 +540,15 @@ ifndef __IXMLElementNotificationSink_INTERFACE_DEFINED__
 __IXMLElementNotificationSink_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IXMLElementNotificationSink:IID
-
-
 IXMLElementNotificationSink STRUC
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetTypeInfoCount, :ptr
-STDMETHOD GetTypeInfo, :UINT, :LCID, :ptr
-STDMETHOD GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-STDMETHOD _Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-STDMETHOD ChildAdded, :ptr
+	STDMETHOD	QueryInterface, :REFIID, :ptr
+	STDMETHOD	AddRef
+	STDMETHOD	Release
+	STDMETHOD	GetTypeInfoCount, :ptr
+	STDMETHOD	GetTypeInfo, :UINT, :LCID, :ptr
+	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
+	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+	STDMETHOD	ChildAdded, :ptr
 IXMLElementNotificationSink ENDS
 LPIXMLElementNotificationSink typedef ptr IXMLElementNotificationSink
 
@@ -592,10 +565,8 @@ IXMLElementNotificationSink_ChildAdded_Stub proto WINAPI \
 	 _pdwStubPhase: ptr DWORD
 
 endif
-
 externdef		CLSID_XMLDocument:CLSID
 endif
-
 
 .list
 endif

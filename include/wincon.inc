@@ -7,6 +7,8 @@ _WINCON_ equ <>
 
 ifdef __PE__
 option	dllimport:<kernel32>
+else
+includelib kernel32.lib
 endif
 
 COORD			STRUC

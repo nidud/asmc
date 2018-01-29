@@ -22,13 +22,13 @@ endif
 ifdef __PE__
 WINADVAPI equ <option dllimport:<advapi32>>
 else
-WINADVAPI equ <>
+WINADVAPI equ <includelib advapi32.lib>
 endif
 
 ifdef __PE__
 WINBASEAPI equ <option dllimport:<kernel32>>
 else
-WINBASEAPI equ <>
+WINBASEAPI equ <includelib kernel32.lib>
 endif
 
 DefineHandleTable macro w

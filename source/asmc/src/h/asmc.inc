@@ -806,10 +806,11 @@ sfield			STRUC
  next			dd ?
  ivalue			db ?
 sfield			ENDS
+LPSFIELD		typedef ptr sfield
 
 struct_info		STRUC
- head			dd ?
- tail			dd ?
+ head			LPSFIELD ?
+ tail			LPSFIELD ?
  alignment		db ?
  flags			db ?
  STINF_ISINLINE		equ 1

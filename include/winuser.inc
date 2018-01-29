@@ -10,7 +10,9 @@ _WINUSER_ equ 1
 
 
 ifdef __PE__
-option	dllimport:<user32>
+option dllimport:<user32>
+else
+includelib user32.lib
 endif
 
 ifndef WINVER

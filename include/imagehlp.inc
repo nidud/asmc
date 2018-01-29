@@ -161,7 +161,7 @@ MapFileAndCheckSumW proto WINAPI \
 	      CheckSum: PDWORD
 
 
-ifdef UNICODE
+ifdef _UNICODE
 MapFileAndCheckSum	equ <MapFileAndCheckSumW>
 else
 MapFileAndCheckSum	equ <MapFileAndCheckSumA>
@@ -729,7 +729,7 @@ PFUNCTION_TABLE_ACCESS_ROUTINE equ PFUNCTION_TABLE_ACCESS_ROUTINE64
 PGET_MODULE_BASE_ROUTINE equ PGET_MODULE_BASE_ROUTINE64
 PTRANSLATE_ADDRESS_ROUTINE equ PTRANSLATE_ADDRESS_ROUTINE64
 
-StackWalk		equ StackWalk64
+StackWalk		equ <StackWalk64>
 
 else
 
@@ -876,7 +876,6 @@ SymSym			equ 6
 SymDia			equ 7
 SymVirtual		equ 8
 NumSymTypes		equ 9
-
 
 IMAGEHLP_SYMBOL64	STRUC
 SizeOfStruct		dd ?
@@ -1312,13 +1311,11 @@ SymMatchString proto WINAPI \
 	    expression: PCSTR,
 		 fCase: BOOL
 
-
 ;BOOL
 SymMatchStringA proto WINAPI \
 		string: PCSTR,
 	    expression: PCSTR,
 		 fCase: BOOL
-
 
 ;BOOL
 SymMatchStringW proto WINAPI \
@@ -1366,7 +1363,7 @@ SymEnumerateModulesW64 proto WINAPI \
 
 
 if NOT defined(_IMAGEHLP_SOURCE_) AND defined(_IMAGEHLP64)
-SymEnumerateModules	equ SymEnumerateModules64
+SymEnumerateModules	equ <SymEnumerateModules64>
 else
 ;BOOL
 SymEnumerateModules proto WINAPI \
@@ -1405,7 +1402,7 @@ EnumLoadedModulesCallback: PENUMLOADED_MODULES_CALLBACKW64,
 
 
 if NOT defined(_IMAGEHLP_SOURCE_) AND defined(_IMAGEHLP64)
-EnumerateLoadedModules	equ EnumerateLoadedModules64
+EnumerateLoadedModules	equ <EnumerateLoadedModules64>
 else
 ;BOOL
 EnumerateLoadedModules proto WINAPI \
@@ -1422,7 +1419,7 @@ SymFunctionTableAccess64 proto WINAPI \
 
 
 if NOT defined(_IMAGEHLP_SOURCE_) AND defined(_IMAGEHLP64)
-SymFunctionTableAccess	equ SymFunctionTableAccess64
+SymFunctionTableAccess	equ <SymFunctionTableAccess64>
 else
 ;PVOID
 SymFunctionTableAccess proto WINAPI \
@@ -1450,8 +1447,8 @@ SymGetModuleInfoW64 proto WINAPI \
 	    ModuleInfo: PIMAGEHLP_MODULEW64
 
 if NOT defined(_IMAGEHLP_SOURCE_) AND defined(_IMAGEHLP64)
-SymGetModuleInfo	equ SymGetModuleInfo64
-SymGetModuleInfoW	equ SymGetModuleInfoW64
+SymGetModuleInfo	equ <SymGetModuleInfo64>
+SymGetModuleInfoW	equ <SymGetModuleInfoW64>
 else
 ;BOOL
 SymGetModuleInfo proto WINAPI \
@@ -1474,7 +1471,7 @@ SymGetModuleBase64 proto WINAPI \
 
 
 if NOT defined(_IMAGEHLP_SOURCE_) AND defined(_IMAGEHLP64)
-SymGetModuleBase	equ SymGetModuleBase64
+SymGetModuleBase	equ <SymGetModuleBase64>
 else
 ;DWORD
 SymGetModuleBase proto WINAPI \
@@ -1571,8 +1568,8 @@ ESLFLAG_PREV		equ 0x4
 ESLFLAG_NEXT		equ 0x8
 
 if NOT defined(_IMAGEHLP_SOURCE_) AND defined(_IMAGEHLP64)
-SymGetLineFromAddr	equ SymGetLineFromAddr64
-SymGetLineFromAddrW	equ SymGetLineFromAddrW64
+SymGetLineFromAddr	equ <SymGetLineFromAddr64>
+SymGetLineFromAddrW	equ <SymGetLineFromAddrW64>
 else
 ;BOOL
 SymGetLineFromAddr proto WINAPI \
@@ -1609,7 +1606,7 @@ SymGetLineFromNameW64 proto WINAPI \
 		  Line: PIMAGEHLP_LINEW64
 
 if NOT defined(_IMAGEHLP_SOURCE_) AND defined(_IMAGEHLP64)
-SymGetLineFromName	equ SymGetLineFromName64
+SymGetLineFromName	equ <SymGetLineFromName64>
 else
 ;BOOL
 SymGetLineFromName proto WINAPI \
@@ -1633,7 +1630,7 @@ SymGetLineNextW64 proto WINAPI \
 		  Line: PIMAGEHLP_LINEW64
 
 if NOT defined(_IMAGEHLP_SOURCE_) AND defined(_IMAGEHLP64)
-SymGetLineNext		equ SymGetLineNext64
+SymGetLineNext		equ <SymGetLineNext64>
 else
 ;BOOL
 SymGetLineNext proto WINAPI \
@@ -1658,7 +1655,7 @@ SymGetLinePrevW64 proto WINAPI \
 
 
 if NOT defined(_IMAGEHLP_SOURCE_) AND defined(_IMAGEHLP64)
-SymGetLinePrev		equ SymGetLinePrev64
+SymGetLinePrev		equ <SymGetLinePrev64>
 else
 ;BOOL
 SymGetLinePrev proto WINAPI \
@@ -1837,7 +1834,7 @@ SymUnloadModule64 proto WINAPI \
 	     BaseOfDll: DWORD64
 
 if NOT defined(_IMAGEHLP_SOURCE_) AND defined(_IMAGEHLP64)
-SymUnloadModule		equ SymUnloadModule64
+SymUnloadModule		equ <SymUnloadModule64>
 else
 ;BOOL
 SymUnloadModule proto WINAPI \
@@ -1852,7 +1849,7 @@ SymUnDName64 proto WINAPI \
        UnDecNameLength: DWORD
 
 if NOT defined(_IMAGEHLP_SOURCE_) AND defined(_IMAGEHLP64)
-SymUnDName		equ SymUnDName64
+SymUnDName		equ <SymUnDName64>
 else
 ;BOOL
 SymUnDName proto WINAPI \
@@ -1882,8 +1879,8 @@ SymRegisterFunctionEntryCallback64 proto WINAPI \
 
 
 if NOT defined(_IMAGEHLP_SOURCE_) AND defined(_IMAGEHLP64)
-SymRegisterCallback	equ SymRegisterCallback64
-SymRegisterFunctionEntryCallback equ SymRegisterFunctionEntryCallback64
+SymRegisterCallback	equ <SymRegisterCallback64>
+SymRegisterFunctionEntryCallback equ <SymRegisterFunctionEntryCallback64>
 else
 ;BOOL
 SymRegisterCallback proto WINAPI \
@@ -1981,26 +1978,22 @@ PIMAGEHLP_STACK_FRAME	typedef ptr IMAGEHLP_STACK_FRAME
 IMAGEHLP_CONTEXT	typedef ;VOID
 PIMAGEHLP_CONTEXT	typedef ptr IMAGEHLP_CONTEXT
 
-
 ;BOOL
 SymSetContext proto WINAPI \
 	      hProcess: HANDLE,
 	    StackFrame: PIMAGEHLP_STACK_FRAME,
 	       Context: PIMAGEHLP_CONTEXT
 
-
 ;BOOL
 SymSetScopeFromAddr proto WINAPI \
 	      hProcess: HANDLE,
 	       Address: ULONG64
-
 
 ;BOOL
 SymSetScopeFromIndex proto WINAPI \
 	      hProcess: HANDLE,
 	     BaseOfDll: ULONG64,
 		 Index: DWORD
-
 
 CALLBACK(PSYM_ENUMPROCESSES_CALLBACK, :HANDLE, :PVOID)
 
@@ -2009,14 +2002,12 @@ SymEnumProcesses proto WINAPI \
  EnumProcessesCallback: PSYM_ENUMPROCESSES_CALLBACK,
 	   UserContext: PVOID
 
-
 ;BOOL
 SymFromAddr proto WINAPI \
 	      hProcess: HANDLE,
 	       Address: DWORD64,
 	  Displacement: PDWORD64,
 		Symbol: PSYMBOL_INFO
-
 
 ;BOOL
 SymFromAddrW proto WINAPI \
@@ -2025,14 +2016,12 @@ SymFromAddrW proto WINAPI \
 	  Displacement: PDWORD64,
 		Symbol: PSYMBOL_INFOW
 
-
 ;BOOL
 SymFromToken proto WINAPI \
 	      hProcess: HANDLE,
 		  Base: DWORD64,
 		 Token: DWORD,
 		Symbol: PSYMBOL_INFO
-
 
 ;BOOL
 SymFromTokenW proto WINAPI \
@@ -2041,38 +2030,31 @@ SymFromTokenW proto WINAPI \
 		 Token: DWORD,
 		Symbol: PSYMBOL_INFOW
 
-
 ;BOOL
 SymNext proto WINAPI \
 	      hProcess: HANDLE,
 		   _si: PSYMBOL_INFO
-
 
 ;BOOL
 SymNextW proto WINAPI \
 	      hProcess: HANDLE,
 		   siw: PSYMBOL_INFOW
 
-
 ;BOOL
 SymPrev proto WINAPI \
 	      hProcess: HANDLE,
 		   _si: PSYMBOL_INFO
-
 
 ;BOOL
 SymPrevW proto WINAPI \
 	      hProcess: HANDLE,
 		   siw: PSYMBOL_INFOW
 
-
-
 ;BOOL
 SymFromName proto WINAPI \
 	      hProcess: HANDLE,
 		 _Name: PCSTR,
 		Symbol: PSYMBOL_INFO
-
 
 ;BOOL
 SymFromNameW proto WINAPI \
@@ -2102,14 +2084,12 @@ SymEnumSymbolsW proto WINAPI \
    EnumSymbolsCallback: PSYM_ENUMERATESYMBOLS_CALLBACKW,
 	   UserContext: PVOID
 
-
 ;BOOL
 SymEnumSymbolsForAddr proto WINAPI \
 	      hProcess: HANDLE,
 	       Address: DWORD64,
    EnumSymbolsCallback: PSYM_ENUMERATESYMBOLS_CALLBACK,
 	   UserContext: PVOID
-
 
 ;BOOL
 SymEnumSymbolsForAddrW proto WINAPI \
@@ -2136,7 +2116,6 @@ SymSearch proto WINAPI \
 	   UserContext: PVOID,
 	       Options: DWORD
 
-
 ;BOOL
 SymSearchW proto WINAPI \
 	      hProcess: HANDLE,
@@ -2149,14 +2128,12 @@ SymSearchW proto WINAPI \
 	   UserContext: PVOID,
 	       Options: DWORD
 
-
 ;BOOL
 SymGetScope proto WINAPI \
 	      hProcess: HANDLE,
 	     BaseOfDll: ULONG64,
 		 Index: DWORD,
 		Symbol: PSYMBOL_INFO
-
 
 ;BOOL
 SymGetScopeW proto WINAPI \
@@ -2165,7 +2142,6 @@ SymGetScopeW proto WINAPI \
 		 Index: DWORD,
 		Symbol: PSYMBOL_INFOW
 
-
 ;BOOL
 SymFromIndex proto WINAPI \
 	      hProcess: HANDLE,
@@ -2173,14 +2149,12 @@ SymFromIndex proto WINAPI \
 		 Index: DWORD,
 		Symbol: PSYMBOL_INFO
 
-
 ;BOOL
 SymFromIndexW proto WINAPI \
 	      hProcess: HANDLE,
 	     BaseOfDll: ULONG64,
 		 Index: DWORD,
 		Symbol: PSYMBOL_INFOW
-
 
 IMAGEHLP_SYMBOL_TYPE_INFO typedef SDWORD
 PIMAGEHLP_SYMBOL_TYPE_INFO typedef ptr IMAGEHLP_SYMBOL_TYPE_INFO
@@ -2234,7 +2208,6 @@ SymGetTypeInfo proto WINAPI \
 	       GetType: IMAGEHLP_SYMBOL_TYPE_INFO,
 		 pInfo: PVOID
 
-
 IMAGEHLP_GET_TYPE_INFO_UNCACHED equ 0x00000001
 IMAGEHLP_GET_TYPE_INFO_CHILDREN equ 0x00000002
 
@@ -2274,14 +2247,12 @@ SymEnumTypes proto WINAPI \
    EnumSymbolsCallback: PSYM_ENUMERATESYMBOLS_CALLBACK,
 	   UserContext: PVOID
 
-
 ;BOOL
 SymEnumTypesW proto WINAPI \
 	      hProcess: HANDLE,
 	     BaseOfDll: ULONG64,
    EnumSymbolsCallback: PSYM_ENUMERATESYMBOLS_CALLBACKW,
 	   UserContext: PVOID
-
 
 ;BOOL
 SymEnumTypesByName proto WINAPI \
@@ -2291,7 +2262,6 @@ SymEnumTypesByName proto WINAPI \
    EnumSymbolsCallback: PSYM_ENUMERATESYMBOLS_CALLBACK,
 	   UserContext: PVOID
 
-
 ;BOOL
 SymEnumTypesByNameW proto WINAPI \
 	      hProcess: HANDLE,
@@ -2300,7 +2270,6 @@ SymEnumTypesByNameW proto WINAPI \
    EnumSymbolsCallback: PSYM_ENUMERATESYMBOLS_CALLBACKW,
 	   UserContext: PVOID
 
-
 ;BOOL
 SymGetTypeFromName proto WINAPI \
 	      hProcess: HANDLE,
@@ -2308,14 +2277,12 @@ SymGetTypeFromName proto WINAPI \
 		 _Name: PCSTR,
 		Symbol: PSYMBOL_INFO
 
-
 ;BOOL
 SymGetTypeFromNameW proto WINAPI \
 	      hProcess: HANDLE,
 	     BaseOfDll: ULONG64,
 		 _Name: PCWSTR,
 		Symbol: PSYMBOL_INFOW
-
 
 ;BOOL
 SymAddSymbol proto WINAPI \
@@ -2326,7 +2293,6 @@ SymAddSymbol proto WINAPI \
 		 _Size: DWORD,
 		 Flags: DWORD
 
-
 ;BOOL
 SymAddSymbolW proto WINAPI \
 	      hProcess: HANDLE,
@@ -2336,7 +2302,6 @@ SymAddSymbolW proto WINAPI \
 		 _Size: DWORD,
 		 Flags: DWORD
 
-
 ;BOOL
 SymDeleteSymbol proto WINAPI \
 	      hProcess: HANDLE,
@@ -2344,7 +2309,6 @@ SymDeleteSymbol proto WINAPI \
 		 _Name: PCSTR,
 	       Address: DWORD64,
 		 Flags: DWORD
-
 
 ;BOOL
 SymDeleteSymbolW proto WINAPI \
@@ -2376,7 +2340,6 @@ SymAddSourceStreamA proto WINAPI \
 		Buffer: PBYTE,
 		 _Size: size_t
 
-
 CALLBACK(SYMADDSOURCESTREAMA, :HANDLE, :ULONG64, :PCSTR, :PBYTE, :size_t)
 
 ;BOOL
@@ -2387,18 +2350,15 @@ SymAddSourceStreamW proto WINAPI \
 		Buffer: PBYTE,
 		 _Size: size_t
 
-
 ;BOOL
 SymSrvIsStoreW proto WINAPI \
 	      hProcess: HANDLE,
 		  path: PCWSTR
 
-
 ;BOOL
 SymSrvIsStore proto WINAPI \
 	      hProcess: HANDLE,
 		  path: PCSTR
-
 
 ;PCSTR
 SymSrvDeltaName proto WINAPI \
@@ -2408,7 +2368,6 @@ SymSrvDeltaName proto WINAPI \
 		 File1: PCSTR,
 		 File2: PCSTR
 
-
 ;PCWSTR
 SymSrvDeltaNameW proto WINAPI \
 	      hProcess: HANDLE,
@@ -2417,7 +2376,6 @@ SymSrvDeltaNameW proto WINAPI \
 		 File1: PCWSTR,
 		 File2: PCWSTR
 
-
 ;PCSTR
 SymSrvGetSupplement proto WINAPI \
 	      hProcess: HANDLE,
@@ -2425,14 +2383,12 @@ SymSrvGetSupplement proto WINAPI \
 		  Node: PCSTR,
 		  File: PCSTR
 
-
 ;PCWSTR
 SymSrvGetSupplementW proto WINAPI \
 	      hProcess: HANDLE,
 	       SymPath: PCWSTR,
 		  Node: PCWSTR,
 		  File: PCWSTR
-
 
 ;BOOL
 SymSrvGetFileIndexes proto WINAPI \
@@ -2442,7 +2398,6 @@ SymSrvGetFileIndexes proto WINAPI \
 		  Val2: PDWORD,
 		 Flags: DWORD
 
-
 ;BOOL
 SymSrvGetFileIndexesW proto WINAPI \
 		  File: PCWSTR,
@@ -2450,7 +2405,6 @@ SymSrvGetFileIndexesW proto WINAPI \
 		  Val1: PDWORD,
 		  Val2: PDWORD,
 		 Flags: DWORD
-
 
 ;BOOL
 SymSrvGetFileIndexStringW proto WINAPI \
@@ -2461,7 +2415,6 @@ SymSrvGetFileIndexStringW proto WINAPI \
 		 _Size: size_t,
 		 Flags: DWORD
 
-
 ;BOOL
 SymSrvGetFileIndexString proto WINAPI \
 	      hProcess: HANDLE,
@@ -2470,7 +2423,6 @@ SymSrvGetFileIndexString proto WINAPI \
 		 Index: PSTR,
 		 _Size: size_t,
 		 Flags: DWORD
-
 
 SYMSRV_INDEX_INFO	STRUC
 sizeofstruct		dd ?
@@ -2560,7 +2512,6 @@ SymGetSymbolFile proto WINAPI \
 	       DbgFile: PSTR,
 	      cDbgFile: size_t
 
-
 ;BOOL
 SymGetSymbolFileW proto WINAPI \
 	      hProcess: HANDLE,
@@ -2572,7 +2523,6 @@ SymGetSymbolFileW proto WINAPI \
 	       DbgFile: PWSTR,
 	      cDbgFile: size_t
 
-
 CALLBACK(PDBGHELP_CREATE_USER_DUMP_CALLBACK, :DWORD, :PVOID, :LPDWORD, :PVOID)
 
 ;BOOL
@@ -2581,13 +2531,11 @@ DbgHelpCreateUserDump proto WINAPI \
 	      Callback: PDBGHELP_CREATE_USER_DUMP_CALLBACK,
 	      UserData: PVOID
 
-
 ;BOOL
 DbgHelpCreateUserDumpW proto WINAPI \
 	      FileName: LPCWSTR,
 	      Callback: PDBGHELP_CREATE_USER_DUMP_CALLBACK,
 	      UserData: PVOID
-
 
 ;BOOL
 SymGetSymFromAddr64 proto WINAPI \
@@ -2596,9 +2544,8 @@ SymGetSymFromAddr64 proto WINAPI \
        pdwDisplacement: PDWORD64,
 		Symbol: PIMAGEHLP_SYMBOL64
 
-
 if NOT defined(_IMAGEHLP_SOURCE_) AND defined(_IMAGEHLP64)
-SymGetSymFromAddr	equ SymGetSymFromAddr64
+SymGetSymFromAddr	equ <SymGetSymFromAddr64>
 else
 ;BOOL
 SymGetSymFromAddr proto WINAPI \
@@ -2609,13 +2556,11 @@ SymGetSymFromAddr proto WINAPI \
 
 endif
 
-
 ;BOOL
 SymGetSymFromName64 proto WINAPI \
 	      hProcess: HANDLE,
 		 _Name: PCSTR,
 		Symbol: PIMAGEHLP_SYMBOL64
-
 
 if NOT defined(_IMAGEHLP_SOURCE_) AND defined(_IMAGEHLP64)
 SymGetSymFromName	equ <SymGetSymFromName64>
@@ -2717,10 +2662,10 @@ SymAddSymbol		equ <SymAddSymbolW>
 SymDeleteSymbol		equ <SymDeleteSymbolW>
 SearchTreeForFile	equ <SearchTreeForFileW>
 UnDecorateSymbolName	equ <UnDecorateSymbolNameW>
-SymGetLineFromName64	equ SymGetLineFromNameW64
-SymGetLineFromAddr64	equ SymGetLineFromAddrW64
-SymGetLineNext64	equ SymGetLineNextW64
-SymGetLinePrev64	equ SymGetLinePrevW64
+SymGetLineFromName64	equ <SymGetLineFromNameW64>
+SymGetLineFromAddr64	equ <SymGetLineFromAddrW64>
+SymGetLineNext64	equ <SymGetLineNextW64>
+SymGetLinePrev64	equ <SymGetLinePrevW64>
 SymFromName		equ <SymFromNameW>
 SymFindExecutableImage	equ <SymFindExecutableImageW>
 FindExecutableImageEx	equ <FindExecutableImageExW>
@@ -2744,11 +2689,11 @@ SymNext			equ <SymNextW>
 SymPrev			equ <SymPrevW>
 SymEnumTypes		equ <SymEnumTypesW>
 SymEnumTypesByName	equ <SymEnumTypesByNameW>
-SymRegisterCallback64	equ SymRegisterCallbackW64
+SymRegisterCallback64	equ <SymRegisterCallbackW64>
 SymFindDebugInfoFile	equ <SymFindDebugInfoFileW>
 FindDebugInfoFileEx	equ <FindDebugInfoFileExW>
 SymFindFileInPath	equ <SymFindFileInPathW>
-SymEnumerateModules64	equ SymEnumerateModulesW64
+SymEnumerateModules64	equ <SymEnumerateModulesW64>
 SymSetHomeDirectory	equ <SymSetHomeDirectoryW>
 SymGetHomeDirectory	equ <SymGetHomeDirectoryW>
 SymGetSourceFile	equ <SymGetSourceFileW>
@@ -2756,21 +2701,21 @@ SymGetSourceFileToken	equ <SymGetSourceFileTokenW>
 SymGetSourceFileFromToken equ <SymGetSourceFileFromTokenW>
 SymGetSourceVarFromToken equ <SymGetSourceVarFromTokenW>
 SymGetSourceFileToken	equ <SymGetSourceFileTokenW>
-SymGetFileLineOffsets64 equ SymGetFileLineOffsetsW64
+SymGetFileLineOffsets64 equ <SymGetFileLineOffsetsW64>
 SymFindFileInPath	equ <SymFindFileInPathW>
 SymMatchFileName	equ <SymMatchFileNameW>
 SymGetSourceFileFromToken equ <SymGetSourceFileFromTokenW>
 SymGetSourceVarFromToken equ <SymGetSourceVarFromTokenW>
-SymGetModuleInfo64	equ SymGetModuleInfoW64
+SymGetModuleInfo64	equ <SymGetModuleInfoW64>
 SymSrvIsStore		equ <SymSrvIsStoreW>
 SymSrvDeltaName		equ <SymSrvDeltaNameW>
 SymSrvGetSupplement	equ <SymSrvGetSupplementW>
 SymSrvStoreSupplement	equ <SymSrvStoreSupplementW>
-SymSrvGetFileIndexes	equ SymSrvGetFileIndexes
+SymSrvGetFileIndexes	equ <SymSrvGetFileIndexes>
 SymSrvGetFileIndexString equ <SymSrvGetFileIndexStringW>
 SymSrvStoreFile		equ <SymSrvStoreFileW>
 SymGetSymbolFile	equ <SymGetSymbolFileW>
-EnumerateLoadedModules64 equ EnumerateLoadedModulesW64
+EnumerateLoadedModules64 equ <EnumerateLoadedModulesW64>
 EnumerateLoadedModulesEx equ <EnumerateLoadedModulesExW>
 SymSrvGetFileIndexInfo	equ <SymSrvGetFileIndexInfoW>
 
@@ -2806,8 +2751,6 @@ PSYMBOLSERVERPROC	equ <PSYMBOLSERVERPROCW>
 PSYMBOLSERVERPINGPROC	equ <PSYMBOLSERVERPINGPROCW>
 endif
 
-
-
 ;DBHLP_DEPRECIATED
 ;BOOL
 FindFileInPath proto WINAPI \
@@ -2819,7 +2762,6 @@ FindFileInPath proto WINAPI \
 		 three: DWORD,
 		 flags: DWORD,
 	      FilePath: PSTR
-
 
 ;DBHLP_DEPRECIATED
 ;BOOL
@@ -2840,7 +2782,6 @@ SymEnumSym proto WINAPI \
    EnumSymbolsCallback: PSYM_ENUMERATESYMBOLS_CALLBACK,
 	   UserContext: PVOID
 
-
 ;DBHLP_DEPRECIATED
 ;BOOL
 SymEnumerateSymbols64 proto WINAPI \
@@ -2849,7 +2790,6 @@ SymEnumerateSymbols64 proto WINAPI \
    EnumSymbolsCallback: PSYM_ENUMSYMBOLS_CALLBACK64,
 	   UserContext: PVOID
 
-
 ;DBHLP_DEPRECIATED
 ;BOOL
 SymEnumerateSymbolsW64 proto WINAPI \
@@ -2857,8 +2797,6 @@ SymEnumerateSymbolsW64 proto WINAPI \
 	     BaseOfDll: ULONG64,
    EnumSymbolsCallback: PSYM_ENUMSYMBOLS_CALLBACK64W,
 	   UserContext: PVOID
-
-
 
 if NOT defined(_IMAGEHLP_SOURCE_) AND defined(_IMAGEHLP64)
 SymEnumerateSymbols	equ <SymEnumerateSymbols64>
@@ -2881,7 +2819,6 @@ SymEnumerateSymbolsW proto WINAPI \
 
 endif
 
-
 ;DWORD64
 SymLoadModule64 proto WINAPI \
 	      hProcess: HANDLE,
@@ -2893,7 +2830,7 @@ SymLoadModule64 proto WINAPI \
 
 
 if NOT defined(_IMAGEHLP_SOURCE_) AND defined(_IMAGEHLP64)
-SymLoadModule		equ SymLoadModule64
+SymLoadModule		equ <SymLoadModule64>
 else
 ;DWORD
 SymLoadModule proto WINAPI \
@@ -2911,22 +2848,19 @@ SymGetSymNext64 proto WINAPI \
 	      hProcess: HANDLE,
 		Symbol: PIMAGEHLP_SYMBOL64
 
-
 ;BOOL
 SymGetSymNextW64 proto WINAPI \
 	      hProcess: HANDLE,
 		Symbol: PIMAGEHLP_SYMBOLW64
 
-
 if NOT defined(_IMAGEHLP_SOURCE_) AND defined(_IMAGEHLP64)
-SymGetSymNext		equ SymGetSymNext64
-SymGetSymNextW		equ SymGetSymNextW64
+SymGetSymNext		equ <SymGetSymNext64>
+SymGetSymNextW		equ <SymGetSymNextW64>
 else
 ;BOOL
 SymGetSymNext proto WINAPI \
 	      hProcess: HANDLE,
 		Symbol: PIMAGEHLP_SYMBOL
-
 
 ;BOOL
 SymGetSymNextW proto WINAPI \
@@ -2940,22 +2874,19 @@ SymGetSymPrev64 proto WINAPI \
 	      hProcess: HANDLE,
 		Symbol: PIMAGEHLP_SYMBOL64
 
-
 ;BOOL
 SymGetSymPrevW64 proto WINAPI \
 	      hProcess: HANDLE,
 		Symbol: PIMAGEHLP_SYMBOLW64
 
-
 if NOT defined(_IMAGEHLP_SOURCE_) AND defined(_IMAGEHLP64)
-SymGetSymPrev		equ SymGetSymPrev64
-SymGetSymPrevW		equ SymGetSymPrevW64
+SymGetSymPrev		equ <SymGetSymPrev64>
+SymGetSymPrevW		equ <SymGetSymPrevW64>
 else
 ;BOOL
 SymGetSymPrev proto WINAPI \
 	      hProcess: HANDLE,
 		Symbol: PIMAGEHLP_SYMBOL
-
 
 ;BOOL
 SymGetSymPrevW proto WINAPI \
@@ -2963,8 +2894,6 @@ SymGetSymPrevW proto WINAPI \
 		Symbol: PIMAGEHLP_SYMBOLW
 
 endif
-
-
 
 SYMF_OMAP_GENERATED	equ 0x00000001
 SYMF_OMAP_MODIFIED	equ 0x00000002
@@ -2995,8 +2924,6 @@ IMAGEHLP_SYMBOL_THUNK	equ SYMF_THUNK
 IMAGEHLP_SYMBOL_INFO_TLSRELATIVE equ SYMF_TLSRE
 
 ;include poppack.inc
-
-
 ;include pshpack4.inc
 
 MINIDUMP_SIGNATURE	equ ('PMDM')
@@ -3013,7 +2940,6 @@ MINIDUMP_LOCATION_DESCRIPTOR64	STRUC
 DataSize		ULONG64 ?
 Rva			RVA64 ?
 MINIDUMP_LOCATION_DESCRIPTOR64 ENDS
-
 
 MINIDUMP_MEMORY_DESCRIPTOR STRUC
 StartOfMemoryRange	ULONG64 ?

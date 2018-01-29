@@ -1,37 +1,37 @@
 include stdlib.inc
 include string.inc
 
-	.code
+    .code
 
-	OPTION	WIN64:2, STACKBASE:rsp
+    option win64:rsp nosave
 
-getenv	PROC USES rsi rdi rbx rcx enval:LPSTR
+getenv proc uses rsi rdi rbx rcx enval:LPSTR
 
-	mov	rbx,rcx
-	.if	strlen( rcx )
+    mov rbx,rcx
+    .if strlen(rcx)
 
-		mov	rdi,rax
-		mov	rsi,_environ
+	mov rdi,rax
+	mov rsi,_environ
+	lodsq
 
-		lodsq
-		.while	rax
-			.if	!_strnicmp( rax, rbx, rdi )
+	.while rax
+	    .if !_strnicmp(rax, rbx, rdi)
 
-				mov	rax,[rsi-8]
-				add	rax,rdi
+		mov rax,[rsi-8]
+		add rax,rdi
 
-				.if	byte ptr [rax] == '='
+		.if byte ptr [rax] == '='
 
-					inc	rax
-					.break
-				.endif
+		    inc rax
+		    .break
+		.endif
 
-			.endif
-			lodsq
-		.endw
-	.endif
-	ret
+	    .endif
+	    lodsq
+	.endw
+    .endif
+    ret
 
-getenv	ENDP
+getenv endp
 
-	END
+    END

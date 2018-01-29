@@ -387,7 +387,6 @@ static int get_string( struct asm_tok *buf, struct line_status *p )
 }
 
 static int get_special_symbol( struct asm_tok *buf, struct line_status *p )
-/******************************************************************************/
 {
     char symbol;
 
@@ -433,29 +432,55 @@ static int get_special_symbol( struct asm_tok *buf, struct line_status *p )
 	/* v2.20: added more test code for label() calls */
 
 	if ( *(p->input+1) == ')' && (buf-1)->token == T_REG ) {
-	    //
-	    // REG() expans as CALL REG
-	    //
-	    // TODO: [...]()
-	    //
-	    // ( (buf-1)->token == T_REG || (buf-1)->token == T_CL_SQ_BRACKET )
-	    //
+
+	    /* REG() expans as CALL REG */
+
 	    (buf-1)->hll_flags |= T_HLL_PROC;
 
 	} else if ( p->index && (buf-1)->token == T_ID ) {
 
 	    char flag = 0;
+	    int state = 0;
 	    struct asym *sym = SymFind( (buf-1)->string_ptr );
+	    struct asm_tok *tok = (buf-1);
+
+	    if ( !sym && p->index >= 3 && (tok-1)->token == T_DOT ) {
+
+		/* p.x(...) | [...][.type].x(...) */
+
+		tok -= 2;
+		if ( (tok-1)->token == T_CL_SQ_BRACKET ) {
+
+		    tok += 2;
+		    sym++;
+		    state = SYM_TYPE;
+
+		} else {
+
+		    sym = SymFind( (tok-1)->string_ptr );
+		}
+	    }
 
 	    if ( sym ) {
+
+		if ( !state )
+		    state = sym->state;
+
 		while ( 1 ) {
+
 		    if ( !( ModuleInfo.aflag & _AF_ON ) ) {
-			if ( ( sym->state == SYM_MACRO ) && sym->isfunc )
+
+			if ( ( state == SYM_MACRO ) && sym->isfunc )
 			    p->flags2 &= ~DF_CEXPR;
+
 		    } else if ( sym->state == SYM_MACRO ) {
+
 			if ( sym->isfunc ) {
+
 			    p->flags2 &= ~DF_CEXPR;
+
 			    if ( sym->predefined ) {
+
 				if ( !strcmp( sym->name, "@CStr" ) ) {
 				    _brachets++;
 				    _cstring = '"';
@@ -465,29 +490,58 @@ static int get_special_symbol( struct asm_tok *buf, struct line_status *p )
 			    flag = T_HLL_MACRO;
 			    break;
 			}
+
 			if ( sym->predefined || !sym->string_ptr )
 			    break;
+
 			if ( !( sym = SymFind( sym->string_ptr ) ) )
 			    break;
+
 			if ( !sym->isproc )
 			    break;
+
 			flag = T_HLL_PROC;
 			_brachets++;
 			_cstring = '"';
-		    } else if ( sym->state == SYM_STACK ||
-			sym->state == SYM_INTERNAL ||
-			sym->state == SYM_EXTERNAL ||
-			sym->isproc ) {
+
+		    } else if ( state == SYM_STACK || state == SYM_INTERNAL || state == SYM_EXTERNAL || sym->isproc ) {
+
 			flag = T_HLL_PROC;
 			_brachets++;
 			_cstring = '"';
-		    } else if ( sym->state == SYM_UNDEFINED ) {
+
+		    } else if ( state == SYM_TYPE ) { /* structure, union, typedef, record */
+
+			/* [...].type.x(...) */
+			if ( p->index >= 5 && (tok-1)->token == T_DOT && (tok-2)->token == T_CL_SQ_BRACKET ) {
+
+			    tok -= 4;
+			    state = p->index - 4;
+
+			    while ( state && tok->token != T_OP_SQ_BRACKET ) {
+
+				tok--;
+				state--;
+			    };
+
+			    if ( tok->token == T_OP_SQ_BRACKET ) {
+
+				flag = T_HLL_PROC;
+				_brachets++;
+				_cstring = '"';
+			    }
+			}
+
+		    } else if ( state == SYM_UNDEFINED ) {
+
 			if ( *(p->input+1) == ')' )
 			    flag = T_HLL_PROC;
 		    }
 		    break;
 		}
-		(buf-1)->hll_flags |= flag;
+
+		tok->hll_flags |= flag;
+
 	    } else if ( *(p->input+1) == ')' ) {
 		//
 		// undefined code label..
@@ -496,7 +550,7 @@ static int get_special_symbol( struct asm_tok *buf, struct line_status *p )
 		// ...
 		// label:
 		//
-		(buf-1)->hll_flags |= T_HLL_PROC;
+		tok->hll_flags |= T_HLL_PROC;
 	    }
 	}
 	/* no break */

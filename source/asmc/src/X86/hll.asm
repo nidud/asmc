@@ -1244,6 +1244,7 @@ StripSource endp
 LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:ptr asm_tok
 
   local br_count:SINT
+  local static_struct:SINT
   local sqbrend:ptr asm_tok
   local sym:ptr asym
   local comptr:LPSTR
@@ -1263,6 +1264,7 @@ LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:ptr 
     mov sym,eax
     mov comptr,eax
     mov sqbrend,eax
+    mov static_struct,eax
 
     .if [ebx].token == T_OP_SQ_BRACKET
         ;
@@ -1317,7 +1319,8 @@ LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:ptr 
                     ;
                     ; If Class.Method do not exist assume ClassVtbl.Method do.
                     ;
-                    mov edx,sqbrend
+                    type_struct:
+
                     mov sym,eax
                     .if !SearchNameInStruct( sym, edi, &br_count, 0 )
                         mov eax,sym
@@ -1341,6 +1344,14 @@ LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:ptr 
                 mov eax,[eax].asym._type
                 .if [eax].asym.typekind == TYPE_TYPEDEF
                     mov ecx,[eax].asym.target_type
+                .elseif [eax].asym.typekind == TYPE_STRUCT
+
+                    .if [ebx+16].token == T_DOT && [ebx+48].token == T_OP_BRACKET
+
+                        inc static_struct
+                        mov edi,[ebx+32].string_ptr
+                        jmp type_struct
+                    .endif
                 .endif
             .elseif [eax].asym.mem_type == MT_PTR && [eax].asym.state == SYM_STACK
                 mov ecx,[eax].asym.target_type
@@ -1447,9 +1458,12 @@ LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:ptr 
 
         .if [ebx].token != T_CL_BRACKET
 
-            strcat( esi, "," )
+            strcat( esi, ", " )
 
             .if comptr
+                .if static_struct
+                    strcat( esi, "addr " )
+                .endif
                 strcat( esi, comptr )
                 strcat( esi, "," )
             .endif
@@ -1497,7 +1511,10 @@ LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:ptr 
                 add ebx,16
             .endw
         .elseif comptr
-            strcat( esi, "," )
+            strcat( esi, ", " )
+            .if static_struct
+                strcat( esi, "addr " )
+            .endif
             strcat( esi, comptr )
         .endif
 

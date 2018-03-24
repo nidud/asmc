@@ -23,17 +23,18 @@ _lk_add proc private uses rsi rdi rbx result:ptr, a:ptr, b:ptr, sign:dword
     ;
     mov r10,rcx ; save dest.
 
-    mov rbx,[r8]
+    mov rbx,[r8]        ; rdi:rbx - 128 bit value (b) of 112 bit mantissa
     shl rbx,16
     mov rdi,[r8+6]
     mov si,[r8+14]
     and si,0x7FFF
     neg si
     mov si,[r8+14]
-    rcr rdi,1
-    rcr rbx,1
+    rcr rdi,1           ; extend to 113 bit
+    rcr rbx,1           ; bit 112 set if not zero
+
     shl esi,16
-    mov r8,rdx
+    mov r8,rdx          ; rdx:rax - 128 bit value (a) of 112 bit mantissa
     mov rdx,[r8+6]
     mov rax,[r8]
     shl rax,16

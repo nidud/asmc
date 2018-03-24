@@ -103,7 +103,7 @@ D3DPERF_SetOptions proto WINAPI \
 D3DPERF_GetStatus proto WINAPI
 
 
-IDirect3D9		STRUC
+IDirect3D9Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -121,11 +121,14 @@ IDirect3D9		STRUC
 	STDMETHOD	GetDeviceCaps, :UINT, :D3DDEVTYPE, :ptr
 	STDMETHOD	GetAdapterMonitor, :UINT
 	STDMETHOD	CreateDevice, :UINT, :D3DDEVTYPE, :HWND, :DWORD, :ptr, :ptr
-IDirect3D9		ENDS
+IDirect3D9Vtbl ends
+IDirect3D9 struct
+	lpVtbl		PVOID ?
+IDirect3D9 ends
 LPDIRECT3D9		typedef ptr IDirect3D9
 PDIRECT3D9		typedef ptr IDirect3D9
 
-IDirect3DDevice9	STRUC
+IDirect3DDevice9Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -245,22 +248,28 @@ IDirect3DDevice9	STRUC
 	STDMETHOD	DrawTriPatch, :UINT, :ptr, :ptr
 	STDMETHOD	DeletePatch, :UINT
 	STDMETHOD	CreateQuery, :D3DQUERYTYPE, :ptr
-IDirect3DDevice9	ENDS
+IDirect3DDevice9Vtbl ends
+IDirect3DDevice9 struct
+	lpVtbl		PVOID ?
+IDirect3DDevice9 ends
 LPDIRECT3DDEVICE9	typedef ptr IDirect3DDevice9
 PDIRECT3DDEVICE9	typedef ptr IDirect3DDevice9
 
-IDirect3DStateBlock9	STRUC
+IDirect3DStateBlock9Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	GetDevice, :ptr
 	STDMETHOD	Capture
 	STDMETHOD	Apply
-IDirect3DStateBlock9	ENDS
+IDirect3DStateBlock9Vtbl ends
+IDirect3DStateBlock9 struct
+	lpVtbl		PVOID ?
+IDirect3DStateBlock9 ends
 LPDIRECT3DSTATEBLOCK9	typedef ptr IDirect3DStateBlock9
 PDIRECT3DSTATEBLOCK9	typedef ptr IDirect3DStateBlock9
 
-IDirect3DSwapChain9	STRUC
+IDirect3DSwapChain9Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -271,11 +280,14 @@ IDirect3DSwapChain9	STRUC
 	STDMETHOD	GetDisplayMode, :ptr
 	STDMETHOD	GetDevice, :ptr
 	STDMETHOD	GetPresentParameters, :ptr
-IDirect3DSwapChain9	ENDS
+IDirect3DSwapChain9Vtbl ends
+IDirect3DSwapChain9 struct
+	lpVtbl		PVOID ?
+IDirect3DSwapChain9 ends
 LPDIRECT3DSWAPCHAIN9	typedef ptr IDirect3DSwapChain9
 PDIRECT3DSWAPCHAIN9	typedef ptr IDirect3DSwapChain9
 
-IDirect3DResource9	STRUC
+IDirect3DResource9Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -287,41 +299,53 @@ IDirect3DResource9	STRUC
 	STDMETHOD	GetPriority
 	STDMETHOD	PreLoad
 	STDMETHOD	GetType
-IDirect3DResource9	ENDS
+IDirect3DResource9Vtbl ends
+IDirect3DResource9 struct
+	lpVtbl		PVOID ?
+IDirect3DResource9 ends
 LPDIRECT3DRESOURCE9	typedef ptr IDirect3DResource9
 PDIRECT3DRESOURCE9	typedef ptr IDirect3DResource9
 
-IDirect3DVertexDeclaration9 STRUC
+IDirect3DVertexDeclaration9Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	GetDevice, :ptr
 	STDMETHOD	GetDeclaration, :ptr, :ptr
-IDirect3DVertexDeclaration9 ENDS
+IDirect3DVertexDeclaration9Vtbl ends
+IDirect3DVertexDeclaration9 struct
+	lpVtbl		PVOID ?
+IDirect3DVertexDeclaration9 ends
 LPDIRECT3DVERTEXDECLARATION9 typedef ptr IDirect3DVertexDeclaration9
 PDIRECT3DVERTEXDECLARATION9 typedef ptr IDirect3DVertexDeclaration9
 
-IDirect3DVertexShader9	STRUC
+IDirect3DVertexShader9Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	GetDevice, :ptr
 	STDMETHOD	GetFunction, :ptr, :ptr
-IDirect3DVertexShader9	ENDS
+IDirect3DVertexShader9Vtbl ends
+IDirect3DVertexShader9 struct
+	lpVtbl		PVOID ?
+IDirect3DVertexShader9 ends
 LPDIRECT3DVERTEXSHADER9 typedef ptr IDirect3DVertexShader9
 PDIRECT3DVERTEXSHADER9	typedef ptr IDirect3DVertexShader9
 
-IDirect3DPixelShader9	STRUC
+IDirect3DPixelShader9Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	GetDevice, :ptr
 	STDMETHOD	GetFunction, :ptr, :ptr
-IDirect3DPixelShader9	ENDS
+IDirect3DPixelShader9Vtbl ends
+IDirect3DPixelShader9 struct
+	lpVtbl		PVOID ?
+IDirect3DPixelShader9 ends
 LPDIRECT3DPIXELSHADER9	typedef ptr IDirect3DPixelShader9
 PDIRECT3DPIXELSHADER9	typedef ptr IDirect3DPixelShader9
 
-IDirect3DBaseTexture9	STRUC
+IDirect3DBaseTexture9Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -339,11 +363,14 @@ IDirect3DBaseTexture9	STRUC
 	STDMETHOD	SetAutoGenFilterType, :D3DTEXTUREFILTERTYPE
 	STDMETHOD	GetAutoGenFilterType
 	STDMETHOD	GenerateMipSubLevels
-IDirect3DBaseTexture9	ENDS
+IDirect3DBaseTexture9Vtbl ends
+IDirect3DBaseTexture9 struct
+	lpVtbl		PVOID ?
+IDirect3DBaseTexture9 ends
 LPDIRECT3DBASETEXTURE9	typedef ptr IDirect3DBaseTexture9
 PDIRECT3DBASETEXTURE9	typedef ptr IDirect3DBaseTexture9
 
-IDirect3DTexture9	STRUC
+IDirect3DTexture9Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -366,11 +393,14 @@ IDirect3DTexture9	STRUC
 	STDMETHOD	LockRect, :UINT, :ptr, :ptr, :DWORD
 	STDMETHOD	UnlockRect, :UINT
 	STDMETHOD	AddDirtyRect, :ptr
-IDirect3DTexture9	ENDS
+IDirect3DTexture9Vtbl ends
+IDirect3DTexture9 struct
+	lpVtbl		PVOID ?
+IDirect3DTexture9 ends
 LPDIRECT3DTEXTURE9	typedef ptr IDirect3DTexture9
 PDIRECT3DTEXTURE9	typedef ptr IDirect3DTexture9
 
-IDirect3DVolumeTexture9 STRUC
+IDirect3DVolumeTexture9Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -393,11 +423,14 @@ IDirect3DVolumeTexture9 STRUC
 	STDMETHOD	LockBox, :UINT, :ptr, :ptr, :DWORD
 	STDMETHOD	UnlockBox, :UINT
 	STDMETHOD	AddDirtyBox, :ptr
-IDirect3DVolumeTexture9 ENDS
+IDirect3DVolumeTexture9Vtbl ends
+IDirect3DVolumeTexture9 struct
+	lpVtbl		PVOID ?
+IDirect3DVolumeTexture9 ends
 LPDIRECT3DVOLUMETEXTURE9 typedef ptr IDirect3DVolumeTexture9
 PDIRECT3DVOLUMETEXTURE9 typedef ptr IDirect3DVolumeTexture9
 
-IDirect3DCubeTexture9	STRUC
+IDirect3DCubeTexture9Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -420,11 +453,14 @@ IDirect3DCubeTexture9	STRUC
 	STDMETHOD	LockRect, :D3DCUBEMAP_FACES, :UINT, :ptr, :ptr, :DWORD
 	STDMETHOD	UnlockRect, :D3DCUBEMAP_FACES, :UINT
 	STDMETHOD	AddDirtyRect, :D3DCUBEMAP_FACES, :ptr
-IDirect3DCubeTexture9	ENDS
+IDirect3DCubeTexture9Vtbl ends
+IDirect3DCubeTexture9 struct
+	lpVtbl		PVOID ?
+IDirect3DCubeTexture9 ends
 LPDIRECT3DCUBETEXTURE9	typedef ptr IDirect3DCubeTexture9
 PDIRECT3DCUBETEXTURE9	typedef ptr IDirect3DCubeTexture9
 
-IDirect3DVertexBuffer9	STRUC
+IDirect3DVertexBuffer9Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -439,11 +475,14 @@ IDirect3DVertexBuffer9	STRUC
 	STDMETHOD	_Lock, :UINT, :UINT, :ptr, :DWORD
 	STDMETHOD	Unlock
 	STDMETHOD	GetDesc, :ptr
-IDirect3DVertexBuffer9	ENDS
+IDirect3DVertexBuffer9Vtbl ends
+IDirect3DVertexBuffer9 struct
+	lpVtbl		PVOID ?
+IDirect3DVertexBuffer9 ends
 LPDIRECT3DVERTEXBUFFER9 typedef ptr IDirect3DVertexBuffer9
 PDIRECT3DVERTEXBUFFER9	typedef ptr IDirect3DVertexBuffer9
 
-IDirect3DIndexBuffer9	STRUC
+IDirect3DIndexBuffer9Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -458,11 +497,14 @@ IDirect3DIndexBuffer9	STRUC
 	STDMETHOD	_Lock, :UINT, :UINT, :ptr, :DWORD
 	STDMETHOD	Unlock
 	STDMETHOD	GetDesc, :ptr
-IDirect3DIndexBuffer9	ENDS
+IDirect3DIndexBuffer9Vtbl ends
+IDirect3DIndexBuffer9 struct
+	lpVtbl		PVOID ?
+IDirect3DIndexBuffer9 ends
 LPDIRECT3DINDEXBUFFER9	typedef ptr IDirect3DIndexBuffer9
 PDIRECT3DINDEXBUFFER9	typedef ptr IDirect3DIndexBuffer9
 
-IDirect3DSurface9	STRUC
+IDirect3DSurface9Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -480,11 +522,14 @@ IDirect3DSurface9	STRUC
 	STDMETHOD	UnlockRect
 	STDMETHOD	GetDC, :ptr
 	STDMETHOD	ReleaseDC, :HDC
-IDirect3DSurface9	ENDS
+IDirect3DSurface9Vtbl ends
+IDirect3DSurface9 struct
+	lpVtbl		PVOID ?
+IDirect3DSurface9 ends
 LPDIRECT3DSURFACE9	typedef ptr IDirect3DSurface9
 PDIRECT3DSURFACE9	typedef ptr IDirect3DSurface9
 
-IDirect3DVolume9	STRUC
+IDirect3DVolume9Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -496,11 +541,14 @@ IDirect3DVolume9	STRUC
 	STDMETHOD	GetDesc, :ptr
 	STDMETHOD	LockBox, :ptr, :ptr, :DWORD
 	STDMETHOD	UnlockBox
-IDirect3DVolume9	ENDS
+IDirect3DVolume9Vtbl ends
+IDirect3DVolume9 struct
+	lpVtbl		PVOID ?
+IDirect3DVolume9 ends
 LPDIRECT3DVOLUME9	typedef ptr IDirect3DVolume9
 PDIRECT3DVOLUME9	typedef ptr IDirect3DVolume9
 
-IDirect3DQuery9		STRUC
+IDirect3DQuery9Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -509,7 +557,10 @@ IDirect3DQuery9		STRUC
 	STDMETHOD	GetDataSize
 	STDMETHOD	Issue, :DWORD
 	STDMETHOD	GetData, :ptr, :DWORD, :DWORD
-IDirect3DQuery9		ENDS
+IDirect3DQuery9Vtbl ends
+IDirect3DQuery9 struct
+	lpVtbl		PVOID ?
+IDirect3DQuery9 ends
 LPDIRECT3DQUERY9	typedef ptr IDirect3DQuery9
 PDIRECT3DQUERY9		typedef ptr IDirect3DQuery9
 
@@ -627,7 +678,7 @@ Direct3DCreate9Ex proto WINAPI \
 		      : ptr ptr IDirect3D9Ex
 
 
-IDirect3D9Ex		STRUC
+IDirect3D9ExVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -649,11 +700,14 @@ IDirect3D9Ex		STRUC
 	STDMETHOD	GetAdapterDisplayModeEx, :UINT, :ptr, :ptr
 	STDMETHOD	CreateDeviceEx, :UINT, :D3DDEVTYPE, :HWND, :DWORD, :ptr, :ptr, :ptr
 	STDMETHOD	GetAdapterLUID, :UINT, :ptr
-IDirect3D9Ex		ENDS
+IDirect3D9ExVtbl ends
+IDirect3D9Ex struct
+	lpVtbl		PVOID ?
+IDirect3D9Ex ends
 LPDIRECT3D9EX		typedef ptr IDirect3D9Ex
 PDIRECT3D9EX		typedef ptr IDirect3D9Ex
 
-IDirect3DDevice9Ex	STRUC
+IDirect3DDevice9ExVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -788,11 +842,14 @@ IDirect3DDevice9Ex	STRUC
 	STDMETHOD	CreateDepthStencilSurfaceEx, :UINT, :UINT, :D3DFORMAT, :D3DMULTISAMPLE_TYPE, :DWORD, :ptr, :ptr, :DWORD
 	STDMETHOD	ResetEx, :ptr, :ptr
 	STDMETHOD	GetDisplayModeEx, :UINT, :ptr, :ptr
-IDirect3DDevice9Ex	ENDS
+IDirect3DDevice9ExVtbl ends
+IDirect3DDevice9Ex struct
+	lpVtbl		PVOID ?
+IDirect3DDevice9Ex ends
 LPDIRECT3DDEVICE9EX	typedef ptr IDirect3DDevice9Ex
 PDIRECT3DDEVICE9EX	typedef ptr IDirect3DDevice9Ex
 
-IDirect3DSwapChain9Ex	STRUC
+IDirect3DSwapChain9ExVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -806,33 +863,42 @@ IDirect3DSwapChain9Ex	STRUC
 	STDMETHOD	GetLastPresentCount, :ptr
 	STDMETHOD	GetPresentStats, :ptr
 	STDMETHOD	GetDisplayModeEx, :ptr, :ptr
-IDirect3DSwapChain9Ex	ENDS
+IDirect3DSwapChain9ExVtbl ends
+IDirect3DSwapChain9Ex struct
+	lpVtbl		PVOID ?
+IDirect3DSwapChain9Ex ends
 LPDIRECT3DSWAPCHAIN9EX	typedef ptr IDirect3DSwapChain9Ex
 PDIRECT3DSWAPCHAIN9EX	typedef ptr IDirect3DSwapChain9Ex
 
 endif ; ifndef D3D_DISABLE_9EX
 
-IDirect3D9ExOverlayExtension STRUC
+IDirect3D9ExOverlayExtensionVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	CheckDeviceOverlayType, :UINT, :D3DDEVTYPE, :UINT, :UINT, :D3DFORMAT, :ptr, :D3DDISPLAYROTATION, :ptr
-IDirect3D9ExOverlayExtension ENDS
+IDirect3D9ExOverlayExtensionVtbl ends
+IDirect3D9ExOverlayExtension struct
+	lpVtbl		PVOID ?
+IDirect3D9ExOverlayExtension ends
 LPDIRECT3D9EXOVERLAYEXTENSION typedef ptr IDirect3D9ExOverlayExtension
 PDIRECT3D9EXOVERLAYEXTENSION  typedef ptr IDirect3D9ExOverlayExtension
 
-IDirect3DDevice9Video	STRUC
+IDirect3DDevice9VideoVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	GetContentProtectionCaps, :ptr, :ptr, :ptr
 	STDMETHOD	CreateAuthenticatedChannel, :D3DAUTHENTICATEDCHANNELTYPE, :ptr, :ptr
 	STDMETHOD	CreateCryptoSession, :ptr, :ptr, :ptr, :ptr
-IDirect3DDevice9Video	ENDS
+IDirect3DDevice9VideoVtbl ends
+IDirect3DDevice9Video struct
+	lpVtbl		PVOID ?
+IDirect3DDevice9Video ends
 LPDIRECT3DDEVICE9VIDEO	typedef ptr IDirect3DDevice9Video
 PDIRECT3DDEVICE9VIDEO	typedef ptr IDirect3DDevice9Video
 
-IDirect3DAuthenticatedChannel9 STRUC
+IDirect3DAuthenticatedChannel9Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -841,12 +907,15 @@ IDirect3DAuthenticatedChannel9 STRUC
 	STDMETHOD	NegotiateKeyExchange, :UINT, :ptr
 	STDMETHOD	Query, :UINT, :ptr, :UINT, :ptr
 	STDMETHOD	Configure, :UINT, :ptr, :ptr
-IDirect3DAuthenticatedChannel9	ENDS
+IDirect3DAuthenticatedChannel9Vtbl ends
+IDirect3DAuthenticatedChannel9 struct
+	lpVtbl		PVOID ?
+IDirect3DAuthenticatedChannel9 ends
 LPDIRECT3DAUTHENTICATEDCHANNEL9 typedef ptr IDirect3DAuthenticatedChannel9
 PDIRECT3DAUTHENTICATEDCHANNEL9	typedef ptr IDirect3DAuthenticatedChannel9
 
 
-IDirect3DCryptoSession9 STRUC
+IDirect3DCryptoSession9Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -859,7 +928,10 @@ IDirect3DCryptoSession9 STRUC
 	STDMETHOD	StartSessionKeyRefresh, :ptr, :UINT
 	STDMETHOD	FinishSessionKeyRefresh
 	STDMETHOD	GetEncryptionBltKey, :ptr, :UINT
-IDirect3DCryptoSession9 ENDS
+IDirect3DCryptoSession9Vtbl ends
+IDirect3DCryptoSession9 struct
+	lpVtbl		PVOID ?
+IDirect3DCryptoSession9 ends
 LPDIRECT3DCRYPTOSESSION9 typedef ptr IDirect3DCryptoSession9
 PDIRECT3DCRYPTOSESSION9 typedef ptr IDirect3DCryptoSession9
 

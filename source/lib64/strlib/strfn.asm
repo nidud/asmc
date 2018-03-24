@@ -1,31 +1,17 @@
-; char *strfn(char *path);
-;
-; EXIT: file part of path if /\ is found, else path
-;
-include string.inc
+    .code
 
-	.code
+strfn::
 
-	OPTION PROLOGUE:NONE, EPILOGUE:NONE
+    .for ( rax=rcx, dl=[rcx] : dl : rcx++, dl=[rcx] )
 
-strfn	PROC	path:LPSTR
-	push	rdi
-	mov	rdi,rcx
-	strlen( rdi )
-	lea	rax,[rdi+rax-1]
-@@:
-	cmp	byte ptr [rax],'\'
-	je	@F
-	cmp	byte ptr [rax],'/'
-	je	@F
-	dec	rax
-	cmp	rax,rdi
-	ja	@B
-	lea	rax,[rdi-1]
-@@:
-	inc	rax
-	pop	rdi
-	ret
-strfn	ENDP
+        .if ( dl == '\' || dl == '/' )
 
-	END
+            .if ( byte ptr [rcx+1] )
+
+                lea rax,[rcx+1]
+            .endif
+        .endif
+    .endf
+    ret
+
+    end

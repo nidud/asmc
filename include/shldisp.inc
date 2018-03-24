@@ -255,7 +255,7 @@ __IFolderViewOC_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IFolderViewOC:IID
 
-IFolderViewOC		STRUC
+IFolderViewOCVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -264,7 +264,10 @@ IFolderViewOC		STRUC
 	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
 	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
 	STDMETHOD	SetFolderView, :ptr
-IFolderViewOC		ENDS
+IFolderViewOCVtbl ends
+IFolderViewOC struct
+	lpVtbl		PVOID ?
+IFolderViewOC ends
 LPIFolderViewOC		typedef ptr IFolderViewOC
 
 endif
@@ -275,7 +278,7 @@ __DShellFolderViewEvents_DISPINTERFACE_DEFINED__ equ 1
 
 externdef		DIID_DShellFolderViewEvents:IID
 
-DShellFolderViewEvents	STRUC
+DShellFolderViewEventsVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -283,7 +286,10 @@ DShellFolderViewEvents	STRUC
 	STDMETHOD	GetTypeInfo, :UINT, :LCID, :ptr
 	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
 	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-DShellFolderViewEvents	ENDS
+DShellFolderViewEventsVtbl ends
+DShellFolderViewEvents struct
+	lpVtbl		PVOID ?
+DShellFolderViewEvents ends
 LPDShellFolderViewEvents typedef ptr DShellFolderViewEvents
 
 endif
@@ -295,7 +301,7 @@ __DFConstraint_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_DFConstraint:IID
-DFConstraint		STRUC
+DFConstraintVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -305,7 +311,10 @@ DFConstraint		STRUC
 	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
 	STDMETHOD	get_Name, :ptr
 	STDMETHOD	get_Value, :ptr
-DFConstraint		ENDS
+DFConstraintVtbl ends
+DFConstraint struct
+	lpVtbl		PVOID ?
+DFConstraint ends
 LPDFConstraint		typedef ptr DFConstraint
 
 endif
@@ -314,7 +323,7 @@ ifndef __FolderItem_INTERFACE_DEFINED__
 __FolderItem_INTERFACE_DEFINED__ equ 1
 
 
-FolderItem		STRUC
+FolderItemVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -339,7 +348,10 @@ FolderItem		STRUC
 	STDMETHOD	get_Type, :ptr
 	STDMETHOD	Verbs, :ptr
 	STDMETHOD	InvokeVerb, :VARIANT
-FolderItem		ENDS
+FolderItemVtbl ends
+FolderItem struct
+	lpVtbl		PVOID ?
+FolderItem ends
 LPFOLDERITEM		typedef ptr FolderItem
 LPFolderItem		typedef ptr FolderItem
 externdef		IID_FolderItem:IID
@@ -352,7 +364,7 @@ __FolderItems_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_FolderItems:IID
-FolderItems		STRUC
+FolderItemsVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -365,7 +377,10 @@ FolderItems		STRUC
 	STDMETHOD	get_Parent, :ptr
 	STDMETHOD	Item, :VARIANT, :ptr
 	STDMETHOD	_NewEnum, :ptr
-FolderItems		ENDS
+FolderItemsVtbl ends
+FolderItems struct
+	lpVtbl		PVOID ?
+FolderItems ends
 LPFolderItems		typedef ptr FolderItems
 
 endif
@@ -375,7 +390,7 @@ __FolderItemVerb_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_FolderItemVerb:IID
-FolderItemVerb		STRUC
+FolderItemVerbVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -387,7 +402,10 @@ FolderItemVerb		STRUC
 	STDMETHOD	get_Parent, :ptr
 	STDMETHOD	get_Name, :ptr
 	STDMETHOD	DoIt
-FolderItemVerb		ENDS
+FolderItemVerbVtbl ends
+FolderItemVerb struct
+	lpVtbl		PVOID ?
+FolderItemVerb ends
 LPFolderItemVerb	typedef ptr FolderItemVerb
 
 endif
@@ -397,7 +415,7 @@ __FolderItemVerbs_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_FolderItemVerbs:IID
-FolderItemVerbs		STRUC
+FolderItemVerbsVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -410,7 +428,10 @@ FolderItemVerbs		STRUC
 	STDMETHOD	get_Parent, :ptr
 	STDMETHOD	Item, :VARIANT, :ptr
 	STDMETHOD	_NewEnum, :ptr
-FolderItemVerbs		ENDS
+FolderItemVerbsVtbl ends
+FolderItemVerbs struct
+	lpVtbl		PVOID ?
+FolderItemVerbs ends
 LPFolderItemVerbs	typedef ptr FolderItemVerbs
 
 endif
@@ -420,7 +441,7 @@ __Folder_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_Folder:IID
-Folder			STRUC
+FolderVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -438,7 +459,10 @@ Folder			STRUC
 	STDMETHOD	MoveHere, :VARIANT, :VARIANT
 	STDMETHOD	CopyHere, :VARIANT, :VARIANT
 	STDMETHOD	GetDetailsOf, :VARIANT, :SINT, :ptr
-Folder			ENDS
+FolderVtbl ends
+Folder struct
+	lpVtbl		PVOID ?
+Folder ends
 LPFolder		typedef ptr Folder
 
 endif
@@ -448,7 +472,7 @@ __Folder2_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_Folder2:IID
-Folder2			STRUC
+Folder2Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -471,7 +495,10 @@ Folder2			STRUC
 	STDMETHOD	Synchronize
 	STDMETHOD	get_HaveToShowWebViewBarricade, :ptr
 	STDMETHOD	DismissedWebViewBarricade
-Folder2			ENDS
+Folder2Vtbl ends
+Folder2 struct
+	lpVtbl		PVOID ?
+Folder2 ends
 LPFolder2		typedef ptr Folder2
 
 endif
@@ -482,7 +509,7 @@ __Folder3_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_Folder3:IID
-Folder3			STRUC
+Folder3Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -507,7 +534,10 @@ Folder3			STRUC
 	STDMETHOD	DismissedWebViewBarricade
 	STDMETHOD	get_ShowWebViewBarricade, :ptr
 	STDMETHOD	put_ShowWebViewBarricade, :VARIANT_BOOL
-Folder3			ENDS
+Folder3Vtbl ends
+Folder3 struct
+	lpVtbl		PVOID ?
+Folder3 ends
 LPFolder3		typedef ptr Folder3
 
 endif
@@ -518,7 +548,7 @@ __FolderItem2_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_FolderItem2:IID
-FolderItem2		STRUC
+FolderItem2Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -545,7 +575,10 @@ FolderItem2		STRUC
 	STDMETHOD	InvokeVerb, :VARIANT
 	STDMETHOD	InvokeVerbEx, :VARIANT, :VARIANT
 	STDMETHOD	ExtendedProperty, :BSTR, :ptr
-FolderItem2		ENDS
+FolderItem2Vtbl ends
+FolderItem2 struct
+	lpVtbl		PVOID ?
+FolderItem2 ends
 LPFolderItem2		typedef ptr FolderItem2
 
 endif
@@ -557,7 +590,7 @@ __FolderItems2_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_FolderItems2:IID
-FolderItems2		STRUC
+FolderItems2Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -571,7 +604,10 @@ FolderItems2		STRUC
 	STDMETHOD	Item, :VARIANT, :ptr
 	STDMETHOD	_NewEnum, :ptr
 	STDMETHOD	InvokeVerbEx, :VARIANT, :VARIANT
-FolderItems2		ENDS
+FolderItems2Vtbl ends
+FolderItems2 struct
+	lpVtbl		PVOID ?
+FolderItems2 ends
 LPFolderItems2		typedef ptr FolderItems2
 
 endif
@@ -581,7 +617,7 @@ __FolderItems3_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_FolderItems3:IID
-FolderItems3		STRUC
+FolderItems3Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -597,7 +633,10 @@ FolderItems3		STRUC
 	STDMETHOD	InvokeVerbEx, :VARIANT, :VARIANT
 	STDMETHOD	Filter, :LONG, :BSTR
 	STDMETHOD	get_Verbs, :ptr
-FolderItems3		ENDS
+FolderItems3Vtbl ends
+FolderItems3 struct
+	lpVtbl		PVOID ?
+FolderItems3 ends
 LPFolderItems3		typedef ptr FolderItems3
 
 endif
@@ -607,7 +646,7 @@ __IShellLinkDual_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IShellLinkDual:IID
-IShellLinkDual		STRUC
+IShellLinkDualVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -631,7 +670,10 @@ IShellLinkDual		STRUC
 	STDMETHOD	GetIconLocation, :ptr, :ptr
 	STDMETHOD	SetIconLocation, :BSTR, :SINT
 	STDMETHOD	Save, :VARIANT
-IShellLinkDual		ENDS
+IShellLinkDualVtbl ends
+IShellLinkDual struct
+	lpVtbl		PVOID ?
+IShellLinkDual ends
 LPIShellLinkDual	typedef ptr IShellLinkDual
 
 endif
@@ -643,7 +685,7 @@ __IShellLinkDual2_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IShellLinkDual2:IID
-IShellLinkDual2		STRUC
+IShellLinkDual2Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -668,7 +710,10 @@ IShellLinkDual2		STRUC
 	STDMETHOD	SetIconLocation, :BSTR, :SINT
 	STDMETHOD	Save, :VARIANT
 	STDMETHOD	get_Target, :ptr
-IShellLinkDual2		ENDS
+IShellLinkDual2Vtbl ends
+IShellLinkDual2 struct
+	lpVtbl		PVOID ?
+IShellLinkDual2 ends
 LPIShellLinkDual2	typedef ptr IShellLinkDual2
 
 endif
@@ -680,7 +725,7 @@ __IShellFolderViewDual_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IShellFolderViewDual:IID
-IShellFolderViewDual	STRUC
+IShellFolderViewDualVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -697,7 +742,10 @@ IShellFolderViewDual	STRUC
 	STDMETHOD	PopupItemMenu, :ptr, :VARIANT, :VARIANT, :ptr
 	STDMETHOD	get_Script, :ptr
 	STDMETHOD	get_ViewOptions, :ptr
-IShellFolderViewDual	ENDS
+IShellFolderViewDualVtbl ends
+IShellFolderViewDual struct
+	lpVtbl		PVOID ?
+IShellFolderViewDual ends
 LPIShellFolderViewDual	typedef ptr IShellFolderViewDual
 
 endif
@@ -707,7 +755,7 @@ __IShellFolderViewDual2_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IShellFolderViewDual2:IID
-IShellFolderViewDual2	STRUC
+IShellFolderViewDual2Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -727,7 +775,10 @@ IShellFolderViewDual2	STRUC
 	STDMETHOD	get_CurrentViewMode, :ptr
 	STDMETHOD	put_CurrentViewMode, :UINT
 	STDMETHOD	SelectItemRelative, :SINT
-IShellFolderViewDual2	ENDS
+IShellFolderViewDual2Vtbl ends
+IShellFolderViewDual2 struct
+	lpVtbl		PVOID ?
+IShellFolderViewDual2 ends
 LPIShellFolderViewDual2 typedef ptr IShellFolderViewDual2
 
 endif
@@ -738,7 +789,7 @@ __IShellFolderViewDual3_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IShellFolderViewDual3:IID
 
-IShellFolderViewDual3 STRUC
+IShellFolderViewDual3Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -767,7 +818,10 @@ IShellFolderViewDual3 STRUC
 	STDMETHOD	put_IconSize, :SINT
 	STDMETHOD	get_IconSize, :ptr
 	STDMETHOD	FilterView, :BSTR
-IShellFolderViewDual3	ENDS
+IShellFolderViewDual3Vtbl ends
+IShellFolderViewDual3 struct
+	lpVtbl		PVOID ?
+IShellFolderViewDual3 ends
 LPIShellFolderViewDual3 typedef ptr IShellFolderViewDual3
 
 endif
@@ -779,7 +833,7 @@ __IShellDispatch_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IShellDispatch:IID
-IShellDispatch		STRUC
+IShellDispatchVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -810,7 +864,10 @@ IShellDispatch		STRUC
 	STDMETHOD	FindComputer
 	STDMETHOD	RefreshMenu
 	STDMETHOD	ControlPanelItem, :BSTR
-IShellDispatch		ENDS
+IShellDispatchVtbl ends
+IShellDispatch struct
+	lpVtbl		PVOID ?
+IShellDispatch ends
 LPIShellDispatch	typedef ptr IShellDispatch
 
 endif
@@ -821,7 +878,7 @@ __IShellDispatch2_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IShellDispatch2:IID
-IShellDispatch2		STRUC
+IShellDispatch2Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -861,7 +918,10 @@ IShellDispatch2		STRUC
 	STDMETHOD	IsServiceRunning, :BSTR, :ptr
 	STDMETHOD	CanStartStopService, :BSTR, :ptr
 	STDMETHOD	ShowBrowserBar, :BSTR, :VARIANT, :ptr
-IShellDispatch2		ENDS
+IShellDispatch2Vtbl ends
+IShellDispatch2 struct
+	lpVtbl		PVOID ?
+IShellDispatch2 ends
 LPIShellDispatch2	typedef ptr IShellDispatch2
 
 endif
@@ -871,7 +931,7 @@ __IShellDispatch3_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IShellDispatch3:IID
-IShellDispatch3		STRUC
+IShellDispatch3Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -912,7 +972,10 @@ IShellDispatch3		STRUC
 	STDMETHOD	CanStartStopService, :BSTR, :ptr
 	STDMETHOD	ShowBrowserBar, :BSTR, :VARIANT, :ptr
 	STDMETHOD	AddToRecent, :VARIANT, :BSTR
-IShellDispatch3		ENDS
+IShellDispatch3Vtbl ends
+IShellDispatch3 struct
+	lpVtbl		PVOID ?
+IShellDispatch3 ends
 LPIShellDispatch3	typedef ptr IShellDispatch3
 
 endif
@@ -923,7 +986,7 @@ __IShellDispatch4_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IShellDispatch4:IID
-IShellDispatch4		STRUC
+IShellDispatch4Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -968,7 +1031,10 @@ IShellDispatch4		STRUC
 	STDMETHOD	ToggleDesktop
 	STDMETHOD	ExplorerPolicy, :BSTR, :ptr
 	STDMETHOD	GetSetting, :LONG, :ptr
-IShellDispatch4		ENDS
+IShellDispatch4Vtbl ends
+IShellDispatch4 struct
+	lpVtbl		PVOID ?
+IShellDispatch4 ends
 LPIShellDispatch4	typedef ptr IShellDispatch4
 
 endif
@@ -978,7 +1044,7 @@ __IShellDispatch5_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IShellDispatch5:IID
-IShellDispatch5		STRUC
+IShellDispatch5Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1024,7 +1090,10 @@ IShellDispatch5		STRUC
 	STDMETHOD	ExplorerPolicy, :BSTR, :ptr
 	STDMETHOD	GetSetting, :LONG, :ptr
 	STDMETHOD	WindowSwitcher
-IShellDispatch5		ENDS
+IShellDispatch5Vtbl ends
+IShellDispatch5 struct
+	lpVtbl		PVOID ?
+IShellDispatch5 ends
 LPIShellDispatch5	typedef ptr IShellDispatch5
 
 endif
@@ -1037,7 +1106,7 @@ __IFileSearchBand_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IFileSearchBand:IID
-IFileSearchBand		STRUC
+IFileSearchBandVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1050,7 +1119,10 @@ IFileSearchBand		STRUC
 	STDMETHOD	get_SearchID, :ptr
 	STDMETHOD	get_Scope, :ptr
 	STDMETHOD	get_QueryFile, :ptr
-IFileSearchBand		ENDS
+IFileSearchBandVtbl ends
+IFileSearchBand struct
+	lpVtbl		PVOID ?
+IFileSearchBand ends
 LPIFileSearchBand	typedef ptr IFileSearchBand
 
 endif
@@ -1062,7 +1134,7 @@ __IWebWizardHost_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IWebWizardHost:IID
-IWebWizardHost		STRUC
+IWebWizardHostVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1079,7 +1151,10 @@ IWebWizardHost		STRUC
 	STDMETHOD	get_Property, :BSTR, :ptr
 	STDMETHOD	SetWizardButtons, :VARIANT_BOOL, :VARIANT_BOOL, :VARIANT_BOOL
 	STDMETHOD	SetHeaderText, :BSTR, :BSTR
-IWebWizardHost		ENDS
+IWebWizardHostVtbl ends
+IWebWizardHost struct
+	lpVtbl		PVOID ?
+IWebWizardHost ends
 LPIWebWizardHost	typedef ptr IWebWizardHost
 
 endif
@@ -1089,7 +1164,7 @@ __INewWDEvents_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_INewWDEvents:IID
-INewWDEvents		STRUC
+INewWDEventsVtbl struct
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	GetTypeInfoCount, :ptr
@@ -1106,7 +1181,10 @@ INewWDEvents		STRUC
 	STDMETHOD	SetWizardButtons, :VARIANT_BOOL, :VARIANT_BOOL, :VARIANT_BOOL
 	STDMETHOD	SetHeaderText, :BSTR, :BSTR
 	STDMETHOD	PassportAuthenticate, :BSTR, :ptr
-INewWDEvents		ENDS
+INewWDEventsVtbl ends
+INewWDEvents struct
+	lpVtbl		PVOID ?
+INewWDEvents ends
 LPINewWDEvents		typedef ptr INewWDEvents
 
 endif
@@ -1120,13 +1198,16 @@ ifndef __IAutoComplete_INTERFACE_DEFINED__
 __IAutoComplete_INTERFACE_DEFINED__ equ 1
 
 
-IAutoComplete		STRUC
+IAutoCompleteVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	Init, :HWND, :ptr, :LPCWSTR, :LPCWSTR
 	STDMETHOD	Enable, :BOOL
-IAutoComplete		ENDS
+IAutoCompleteVtbl ends
+IAutoComplete struct
+	lpVtbl		PVOID ?
+IAutoComplete ends
 LPAUTOCOMPLETE		typedef ptr IAutoComplete
 LPIAutoComplete		typedef ptr IAutoComplete
 externdef		IID_IAutoComplete:IID
@@ -1149,7 +1230,7 @@ ACO_RTLREADING		equ 0x40
 ACO_WORD_FILTER		equ 0x80
 ACO_NOPREFIXFILTERING	equ 0x100
 
-IAutoComplete2		STRUC
+IAutoComplete2Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1157,7 +1238,10 @@ IAutoComplete2		STRUC
 	STDMETHOD	Enable, :BOOL
 	STDMETHOD	SetOptions, :DWORD
 	STDMETHOD	GetOptions, :ptr
-IAutoComplete2		ENDS
+IAutoComplete2Vtbl ends
+IAutoComplete2 struct
+	lpVtbl		PVOID ?
+IAutoComplete2 ends
 LPAUTOCOMPLETE2		typedef ptr IAutoComplete2
 LPIAutoComplete2	typedef ptr IAutoComplete2
 externdef		IID_IAutoComplete2:IID
@@ -1179,7 +1263,7 @@ ACEO_FIRSTUNUSED	equ 0x10000
 
 
 externdef		IID_IEnumACString:IID
-IEnumACString		STRUC
+IEnumACStringVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1190,7 +1274,10 @@ IEnumACString		STRUC
 	STDMETHOD	NextItem, :LPWSTR, :ULONG, :ptr
 	STDMETHOD	SetEnumOptions, :DWORD
 	STDMETHOD	GetEnumOptions, :ptr
-IEnumACString		ENDS
+IEnumACStringVtbl ends
+IEnumACString struct
+	lpVtbl		PVOID ?
+IEnumACString ends
 PENUMACSTRING		typedef ptr IEnumACString
 LPENUMACSTRING		typedef ptr IEnumACString
 LPIEnumACString		typedef ptr IEnumACString
@@ -1203,7 +1290,7 @@ externdef		__MIDL_itf_shldisp_0000_0003_v0_0_s_ifspec:RPC_IF_HANDLE
 ifndef __IAsyncOperation_INTERFACE_DEFINED__
 __IAsyncOperation_INTERFACE_DEFINED__ equ 1
 
-IAsyncOperation		STRUC
+IAsyncOperationVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1212,7 +1299,10 @@ IAsyncOperation		STRUC
 	STDMETHOD	StartOperation, :ptr
 	STDMETHOD	InOperation, :ptr
 	STDMETHOD	EndOperation, :HRESULT, :ptr, :DWORD
-IAsyncOperation		ENDS
+IAsyncOperationVtbl ends
+IAsyncOperation struct
+	lpVtbl		PVOID ?
+IAsyncOperation ends
 LPIAsyncOperation	typedef ptr IAsyncOperation
 LPASYNCOPERATION	typedef ptr IAsyncOperation
 externdef		IID_IAsyncOperation:IID

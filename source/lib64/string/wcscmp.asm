@@ -1,10 +1,6 @@
-include string.inc
-
     .code
 
-    option win64:rsp nosave noauto
-
-wcscmp proc s1:LPWSTR, s2:LPWSTR
+wcscmp::
 
     mov eax,0xFFFF
 
@@ -22,7 +18,5 @@ wcscmp proc s1:LPWSTR, s2:LPWSTR
     .until 1
     movsx eax,ax
     ret
-
-wcscmp endp
 
     END

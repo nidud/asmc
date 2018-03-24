@@ -97,7 +97,7 @@ else
 DEFINE_GUID(IID_ID3DXConstantTable, 0xab3c758f, 0x093e, 0x4356, 0xb7, 0x62, 0x4d, 0xb1, 0x8f, 0x1b, 0x3a, 0x01);
 endif
 
-ID3DXConstantTable	STRUC
+ID3DXConstantTableVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -125,14 +125,16 @@ ID3DXConstantTable	STRUC
 	STDMETHOD	SetMatrixTranspose, :ptr, :D3DXHANDLE, :ptr
 	STDMETHOD	SetMatrixTransposeArray, :ptr, :D3DXHANDLE, :ptr, :UINT
 	STDMETHOD	SetMatrixTransposePointerArray, :ptr, :D3DXHANDLE, :ptr, :UINT
-ID3DXConstantTable	ENDS
+ID3DXConstantTableVtbl ends
+ID3DXConstantTable struct
+	lpVtbl		PVOID ?
+ID3DXConstantTable ends
 
 LPD3DXCONSTANTTABLE	typedef ptr ID3DXConstantTable
 
-
 DEFINE_GUID(IID_ID3DXTextureShader, 0x3e3d67f8, 0xaa7a, 0x405d, 0xa8, 0x57, 0xba, 0x1, 0xd4, 0x75, 0x84, 0x26);
 
-ID3DXTextureShader	STRUC
+ID3DXTextureShaderVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -159,7 +161,10 @@ ID3DXTextureShader	STRUC
 	STDMETHOD	SetMatrixTranspose, :D3DXHANDLE, :ptr
 	STDMETHOD	SetMatrixTransposeArray, :D3DXHANDLE, :ptr, :UINT
 	STDMETHOD	SetMatrixTransposePointerArray, :D3DXHANDLE, :ptr, :UINT
-ID3DXTextureShader	ENDS
+ID3DXTextureShaderVtbl ends
+ID3DXTextureShader struct
+	lpVtbl		PVOID ?
+ID3DXTextureShader ends
 
 D3DXMACRO		STRUC
 _Name			LPSTR ?
@@ -194,7 +199,7 @@ LPD3DXFRAGMENT_DESC	typedef ptr D3DXFRAGMENT_DESC
 
 DEFINE_GUID(IID_ID3DXFragmentLinker, 0x1a2c0cc2, 0xe5b6, 0x4ebc, 0x9e, 0x8d, 0x39, 0xe, 0x5, 0x78, 0x11, 0xb6);
 
-ID3DXFragmentLinker	STRUC
+ID3DXFragmentLinkerVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -210,7 +215,10 @@ ID3DXFragmentLinker	STRUC
 	STDMETHOD	LinkVertexShader, :ptr, :DWORD, :ptr, :UINT, :ptr, :ptr
 	STDMETHOD	LinkPixelShader, :ptr, :DWORD, :ptr, :UINT, :ptr, :ptr
 	STDMETHOD	ClearCache
-ID3DXFragmentLinker	ENDS
+ID3DXFragmentLinkerVtbl ends
+ID3DXFragmentLinker struct
+	lpVtbl		PVOID ?
+ID3DXFragmentLinker ends
 
 
 ;const char *

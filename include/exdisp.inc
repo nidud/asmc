@@ -166,7 +166,7 @@ REFRESH_COMPLETELY	equ 3
 
 externdef		IID_IWebBrowser:IID
 
-IWebBrowser		STRUC
+IWebBrowserVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -199,7 +199,10 @@ IWebBrowser		STRUC
 	STDMETHOD	get_LocationName, :ptr
 	STDMETHOD	get_LocationURL, :ptr
 	STDMETHOD	get_Busy, :ptr
-IWebBrowser		ENDS
+IWebBrowserVtbl ends
+IWebBrowser struct
+	lpVtbl		PVOID ?
+IWebBrowser ends
 
 endif
 
@@ -209,7 +212,7 @@ __DWebBrowserEvents_DISPINTERFACE_DEFINED__ equ 1
 
 
 externdef		DIID_DWebBrowserEvents:IID
-DWebBrowserEvents	STRUC
+DWebBrowserEventsVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -217,7 +220,10 @@ DWebBrowserEvents	STRUC
 	STDMETHOD	GetTypeInfo, :DWORD, :LCID, :ptr
 	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :DWORD, :LCID, :ptr
 	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-DWebBrowserEvents	ENDS
+DWebBrowserEventsVtbl ends
+DWebBrowserEvents struct
+	lpVtbl		PVOID ?
+DWebBrowserEvents ends
 
 endif
 
@@ -228,7 +234,7 @@ __IWebBrowserApp_INTERFACE_DEFINED__ equ 1
 DEFINE_GUID(IID_IWebBrowserApp, 0x0002df05, 0x0000, 0x0000, 0xc0,0x00, 0x00,0x00,0x00,0x00,0x00,0x46)
 
 externdef		IID_IWebBrowserApp:IID
-IWebBrowserApp		STRUC
+IWebBrowserAppVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -281,7 +287,10 @@ IWebBrowserApp		STRUC
 	STDMETHOD	put_MenuBar, :VARIANT_BOOL
 	STDMETHOD	get_FullScreen, :ptr
 	STDMETHOD	put_FullScreen, :VARIANT_BOOL
-IWebBrowserApp		ENDS
+IWebBrowserAppVtbl ends
+IWebBrowserApp struct
+	lpVtbl		PVOID ?
+IWebBrowserApp ends
 
 endif
 
@@ -290,7 +299,7 @@ __IWebBrowser2_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IWebBrowser2:IID
-IWebBrowser2		STRUC
+IWebBrowser2Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -362,7 +371,10 @@ IWebBrowser2		STRUC
 	STDMETHOD	put_AddressBar, :VARIANT_BOOL
 	STDMETHOD	get_Resizable, :ptr
 	STDMETHOD	put_Resizable, :VARIANT_BOOL
-IWebBrowser2		ENDS
+IWebBrowser2Vtbl ends
+IWebBrowser2 struct
+	lpVtbl		PVOID ?
+IWebBrowser2 ends
 
 endif
 
@@ -371,7 +383,7 @@ __DWebBrowserEvents2_DISPINTERFACE_DEFINED__ equ 1
 
 
 externdef		DIID_DWebBrowserEvents2:IID
-DWebBrowserEvents2	STRUC
+DWebBrowserEvents2Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -379,7 +391,10 @@ DWebBrowserEvents2	STRUC
 	STDMETHOD	GetTypeInfo, :DWORD, :LCID, :ptr
 	STDMETHOD	GetIDsOfNames,:REFIID, :ptr, :DWORD, :LCID, :ptr
 	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-DWebBrowserEvents2	ENDS
+DWebBrowserEvents2Vtbl ends
+DWebBrowserEvents2 struct
+	lpVtbl		PVOID ?
+DWebBrowserEvents2 ends
 endif
 
 externdef		CLSID_WebBrowser_V1:CLSID
@@ -391,7 +406,7 @@ __DShellWindowsEvents_DISPINTERFACE_DEFINED__ equ 1
 
 
 externdef		DIID_DShellWindowsEvents:IID
-DShellWindowsEvents	STRUC
+DShellWindowsEventsVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -399,7 +414,10 @@ DShellWindowsEvents	STRUC
 	STDMETHOD	GetTypeInfo, :DWORD, :LCID, :ptr
 	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :DWORD, :LCID, :ptr
 	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-DShellWindowsEvents	ENDS
+DShellWindowsEventsVtbl ends
+DShellWindowsEvents struct
+	lpVtbl		PVOID ?
+DShellWindowsEvents ends
 
 endif
 
@@ -409,7 +427,7 @@ __IShellWindows_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IShellWindows:IID
-IShellWindows		STRUC
+IShellWindowsVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -428,7 +446,10 @@ IShellWindows		STRUC
 	STDMETHOD	FindWindowSW, :ptr, :ptr, :DWORD, :ptr, :DWORD, :ptr
 	STDMETHOD	OnCreated, :SDWORD, :ptr
 	STDMETHOD	ProcessAttachDetach, :VARIANT_BOOL
-IShellWindows		ENDS
+IShellWindowsVtbl ends
+IShellWindows struct
+	lpVtbl		PVOID ?
+IShellWindows ends
 
 endif
 
@@ -439,7 +460,7 @@ __IShellUIHelper_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IShellUIHelper:IID
-IShellUIHelper		STRUC
+IShellUIHelperVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -460,7 +481,10 @@ IShellUIHelper		STRUC
 	STDMETHOD	AutoScan, :BSTR, :BSTR, :ptr
 	STDMETHOD	AutoCompleteAttach, :ptr
 	STDMETHOD	ShowBrowserUI, :BSTR, :ptr, :ptr
-IShellUIHelperVtbl	ENDS
+IShellUIHelperVtbl ends
+IShellUIHelper struct
+	lpVtbl		PVOID ?
+IShellUIHelper ends
 
 endif
 
@@ -470,11 +494,14 @@ __IShellUIHelper2_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IShellUIHelper2:IID
-IShellUIHelper2		STRUC
+IShellUIHelper2Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
-IShellUIHelper2		ENDS
+IShellUIHelper2Vtbl ends
+IShellUIHelper2 struct
+	lpVtbl		PVOID ?
+IShellUIHelper2 ends
 
 endif
 
@@ -483,7 +510,7 @@ __IShellUIHelper3_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IShellUIHelper3:IID
-IShellUIHelper3		STRUC
+IShellUIHelper3Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -533,7 +560,10 @@ IShellUIHelper3		STRUC
 	STDMETHOD	NavigateToSuggestedSites, :BSTR
 	STDMETHOD	ShowTabsHelp
 	STDMETHOD	ShowInPrivateHelp
-IShellUIHelper3		ENDS
+IShellUIHelper3Vtbl ends
+IShellUIHelper3 struct
+	lpVtbl		PVOID ?
+IShellUIHelper3 ends
 
 endif
 
@@ -544,7 +574,7 @@ __DShellNameSpaceEvents_DISPINTERFACE_DEFINED__ equ 1
 
 
 externdef		DIID_DShellNameSpaceEvents:IID
-DShellNameSpaceEvents	STRUC
+DShellNameSpaceEventsVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -552,7 +582,10 @@ DShellNameSpaceEvents	STRUC
 	STDMETHOD	GetTypeInfo, :DWORD, :LCID, :ptr
 	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :DWORD, :LCID, :ptr
 	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-DShellNameSpaceEvents	ENDS
+DShellNameSpaceEventsVtbl ends
+DShellNameSpaceEvents struct
+	lpVtbl		PVOID ?
+DShellNameSpaceEvents ends
 
 endif
 
@@ -562,7 +595,7 @@ __IShellFavoritesNameSpace_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IShellFavoritesNameSpace:IID
-IShellFavoritesNameSpace STRUC
+IShellFavoritesNameSpaceVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -583,7 +616,10 @@ IShellFavoritesNameSpace STRUC
 	STDMETHOD	CreateSubscriptionForSelection, :ptr
 	STDMETHOD	DeleteSubscriptionForSelection, :ptr
 	STDMETHOD	SetRoot, :BSTR
-IShellFavoritesNameSpace ENDS
+IShellFavoritesNameSpaceVtbl ends
+IShellFavoritesNameSpace struct
+	lpVtbl		PVOID ?
+IShellFavoritesNameSpace ends
 
 endif
 
@@ -593,7 +629,7 @@ __IShellNameSpace_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IShellNameSpace:IID
-IShellNameSpace		STRUC
+IShellNameSpaceVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -635,7 +671,10 @@ IShellNameSpace		STRUC
 	STDMETHOD	SelectedItems, :ptr
 	STDMETHOD	Expand, :VARIANT, :DWORD
 	STDMETHOD	UnselectAll
-IShellNameSpace		ENDS
+IShellNameSpaceVtbl ends
+IShellNameSpace struct
+	lpVtbl		PVOID ?
+IShellNameSpace ends
 
 endif
 
@@ -646,7 +685,7 @@ __IScriptErrorList_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IScriptErrorList:IID
-IScriptErrorList	STRUC
+IScriptErrorListVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -668,7 +707,10 @@ IScriptErrorList	STRUC
 	STDMETHOD	setDetailsPaneOpen, :BOOL
 	STDMETHOD	getPerErrorDisplay, :ptr
 	STDMETHOD	setPerErrorDisplay, :BOOL
-IScriptErrorList	ENDS
+IScriptErrorListVtbl ends
+IScriptErrorList struct
+	lpVtbl		PVOID ?
+IScriptErrorList ends
 
 endif
 

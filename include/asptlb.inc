@@ -128,7 +128,7 @@ __IStringList_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_IStringList,0xD97A6DA0,0xA85D,0x11cf,0x83,0xAE,0x00,0xA0,0xC9,0x0C,0x2B,0xD8);
 
-IStringList		STRUC
+IStringListVtbl struct
 STDMETHOD GetTypeInfoCount, :ptr
 STDMETHOD GetTypeInfo, :UINT, :LCID, :ptr
 STDMETHOD GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
@@ -136,7 +136,10 @@ STDMETHOD _Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
 STDMETHOD get_Item, :VARIANT, :ptr
 STDMETHOD get_Count, :ptr
 STDMETHOD get__NewEnum, :ptr
-IStringList		ENDS
+IStringListVtbl ends
+IStringList struct
+	lpVtbl		PVOID ?
+IStringList ends
 LPIStringList		typedef ptr IStringList
 
 endif	;; __IStringList_INTERFACE_DEFINED__
@@ -148,7 +151,7 @@ __IRequestDictionary_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_IRequestDictionary,0xD97A6DA0,0xA85F,0x11df,0x83,0xAE,0x00,0xA0,0xC9,0x0C,0x2B,0xD8);
 
-IRequestDictionary	STRUC
+IRequestDictionaryVtbl struct
 STDMETHOD QueryInterface, :REFIID, :ptr
 STDMETHOD AddRef
 STDMETHOD Release
@@ -160,7 +163,10 @@ STDMETHOD get_Item, :VARIANT, :ptr
 STDMETHOD get__NewEnum, :ptr
 STDMETHOD get_Count, :ptr
 STDMETHOD get_Key, :VARIANT, :ptr
-IRequestDictionary	ENDS
+IRequestDictionaryVtbl ends
+IRequestDictionary struct
+	lpVtbl		PVOID ?
+IRequestDictionary ends
 LPIRequestDictionary	typedef ptr IRequestDictionary
 endif	;; __IRequestDictionary_INTERFACE_DEFINED__
 
@@ -173,7 +179,7 @@ __IRequest_INTERFACE_DEFINED__ equ 1
 DEFINE_GUID(IID_IRequest,0xD97A6DA0,0xA861,0x11cf,0x93,0xAE,0x00,0xA0,0xC9,0x0C,0x2B,0xD8);
 
 
-IRequest		STRUC
+IRequestVtbl struct
 STDMETHOD QueryInterface, :REFIID, :ptr
 STDMETHOD AddRef
 STDMETHOD Release
@@ -190,7 +196,10 @@ STDMETHOD get_ClientCertificate, :ptr
 STDMETHOD get_Cookies, :ptr
 STDMETHOD get_TotalBytes, :ptr
 STDMETHOD BinaryRead, :ptr, :ptr
-IRequest		ENDS
+IRequestVtbl ends
+IRequest struct
+	lpVtbl		PVOID ?
+IRequest ends
 LPIRequest		typedef ptr IRequest
 
 endif	;; __IRequest_INTERFACE_DEFINED__
@@ -206,7 +215,7 @@ __IReadCookie_INTERFACE_DEFINED__ equ 1
 DEFINE_GUID(IID_IReadCookie,0x71EAF260,0x0CE0,0x11D0,0xA5,0x3E,0x00,0xA0,0xC9,0x0C,0x20,0x91);
 
 
-IReadCookie		STRUC
+IReadCookieVtbl struct
 STDMETHOD QueryInterface, :REFIID, :ptr
 STDMETHOD AddRef
 STDMETHOD Release
@@ -219,7 +228,10 @@ STDMETHOD get_HasKeys, :ptr
 STDMETHOD get__NewEnum, :ptr
 STDMETHOD get_Count, :ptr
 STDMETHOD get_Key, :VARIANT, :ptr
-IReadCookie		ENDS
+IReadCookieVtbl ends
+IReadCookie struct
+	lpVtbl		PVOID ?
+IReadCookie ends
 LPIReadCookie		typedef ptr IReadCookie
 
 endif	;; __IReadCookie_INTERFACE_DEFINED__
@@ -232,7 +244,7 @@ __IWriteCookie_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_IWriteCookie,0xD97A6DA0,0xA862,0x11cf,0x84,0xAE,0x00,0xA0,0xC9,0x0C,0x2B,0xD8);
 
-IWriteCookie	STRUC
+IWriteCookieVtbl struct
 STDMETHOD QueryInterface, :REFIID, :ptr
 STDMETHOD AddRef
 STDMETHOD Release
@@ -247,7 +259,10 @@ STDMETHOD put_Path, :BSTR
 STDMETHOD put_Secure, :VARIANT_BOOL
 STDMETHOD get_HasKeys, :ptr
 STDMETHOD get__NewEnum, :ptr
-IWriteCookie	ENDS
+IWriteCookieVtbl ends
+IWriteCookie struct
+	lpVtbl		PVOID ?
+IWriteCookie ends
 LPIWriteCookie	typedef ptr IWriteCookie
 
 endif	;; __IWriteCookie_INTERFACE_DEFINED__
@@ -259,7 +274,7 @@ __IResponse_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_IResponse,0xD97A6DA0,0xA864,0x11cf,0x83,0xBE,0x00,0xA0,0xC9,0x0C,0x2B,0xD8);
 
-IResponse		STRUC
+IResponseVtbl struct
 STDMETHOD QueryInterface, :REFIID, :ptr
 STDMETHOD AddRef
 STDMETHOD Release
@@ -298,7 +313,10 @@ STDMETHOD get_CodePage, :ptr
 STDMETHOD put_CodePage, :long
 STDMETHOD get_LCID, :ptr
 STDMETHOD put_LCID, :long
-IResponse		ENDS
+IResponseVtbl ends
+IResponse struct
+	lpVtbl		PVOID ?
+IResponse ends
 LPIResponse		typedef ptr IResponse
 
 endif	;; __IResponse_INTERFACE_DEFINED__
@@ -313,7 +331,7 @@ __IVariantDictionary_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_IVariantDictionary,0x4a7deb90,0xb069,0x11d0,0xb3,0x73,0x00,0xa0,0xc9,0x0c,0x2b,0xd8);
 
-IVariantDictionary	STRUC
+IVariantDictionaryVtbl struct
 STDMETHOD QueryInterface, :REFIID, :ptr
 STDMETHOD AddRef
 STDMETHOD Release
@@ -329,7 +347,10 @@ STDMETHOD get_Count, :ptr
 STDMETHOD get__NewEnum, :ptr
 STDMETHOD Remove, :VARIANT
 STDMETHOD RemoveAll
-IVariantDictionary	ENDS
+IVariantDictionaryVtbl ends
+IVariantDictionary struct
+	lpVtbl		PVOID ?
+IVariantDictionary ends
 LPIVariantDictionary	typedef ptr IVariantDictionary
 
 endif	;; __IVariantDictionary_INTERFACE_DEFINED__
@@ -342,7 +363,7 @@ __ISessionObject_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_ISessionObject,0xD97A6DA0,0xA865,0x11cf,0x83,0xAF,0x00,0xA0,0xC9,0x0C,0x2B,0xD8);
 
-ISessionObject		STRUC
+ISessionObjectVtbl struct
 STDMETHOD QueryInterface, :REFIID, :ptr
 STDMETHOD AddRef
 STDMETHOD Release
@@ -363,7 +384,10 @@ STDMETHOD get_LCID, :ptr
 STDMETHOD put_LCID, :long
 STDMETHOD get_StaticObjects, :ptr
 STDMETHOD get_Contents, :ptr
-ISessionObject		ENDS
+ISessionObjectVtbl ends
+ISessionObject struct
+	lpVtbl		PVOID ?
+ISessionObject ends
 LPISessionObject	typedef ptr ISessionObject
 
 endif	;; __ISessionObject_INTERFACE_DEFINED__
@@ -378,7 +402,7 @@ __IApplicationObject_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_IApplicationObject,0xD97A6DA0,0xA866,0x11cf,0x83,0xAE,0x10,0xA0,0xC9,0x0C,0x2B,0xD8);
 
-IApplicationObject	STRUC
+IApplicationObjectVtbl struct
 STDMETHOD QueryInterface, :REFIID, :ptr
 STDMETHOD AddRef
 STDMETHOD Release
@@ -393,7 +417,10 @@ STDMETHOD _Lock
 STDMETHOD UnLock
 STDMETHOD get_StaticObjects, :ptr
 STDMETHOD get_Contents, :ptr
-IApplicationObject	ENDS
+IApplicationObjectVtbl ends
+IApplicationObject struct
+	lpVtbl		PVOID ?
+IApplicationObject ends
 LPIApplicationObject	typedef ptr IApplicationObject
 
 endif	;; __IApplicationObject_INTERFACE_DEFINED__
@@ -409,7 +436,7 @@ __IASPError_INTERFACE_DEFINED__ equ 1
 DEFINE_GUID(IID_IASPError,0xF5A6893E,0xA0F5,0x11d1,0x8C,0x4B,0x00,0xC0,0x4F,0xC3,0x24,0xA4);
 
 
-IASPError		STRUC
+IASPErrorVtbl struct
 STDMETHOD QueryInterface, :REFIID, :ptr
 STDMETHOD AddRef
 STDMETHOD Release
@@ -426,7 +453,10 @@ STDMETHOD get_Description, :ptr
 STDMETHOD get_ASPDescription, :ptr
 STDMETHOD get_Column, :ptr
 STDMETHOD get_Source, :ptr
-IASPError		ENDS
+IASPErrorVtbl ends
+IASPError struct
+	lpVtbl		PVOID ?
+IASPError ends
 LPIASPError		typedef ptr IASPError
 
 endif	;; __IASPError_INTERFACE_DEFINED__
@@ -440,7 +470,7 @@ __IServer_INTERFACE_DEFINED__ equ 1
 DEFINE_GUID(IID_IServer,0xD97A6DA0,0xA867,0x11cf,0x83,0xAE,0x01,0xA0,0xC9,0x0C,0x2B,0xD8);
 
 
-IServer			STRUC
+IServerVtbl struct
 STDMETHOD QueryInterface, :REFIID, :ptr
 STDMETHOD AddRef
 STDMETHOD Release
@@ -458,7 +488,10 @@ STDMETHOD URLPathEncode, :BSTR, :ptr
 STDMETHOD Execute, :BSTR
 STDMETHOD Transfer, :BSTR
 STDMETHOD GetLastError, :ptr
-IServer			ENDS
+IServerVtbl ends
+IServer struct
+	lpVtbl		PVOID ?
+IServer ends
 LPIServer		typedef ptr IServer
 
 endif	;; __IServer_INTERFACE_DEFINED__
@@ -474,7 +507,7 @@ __IScriptingContext_INTERFACE_DEFINED__ equ 1
 DEFINE_GUID(IID_IScriptingContext,0xD97A6DA0,0xA868,0x11cf,0x83,0xAE,0x00,0xB0,0xC9,0x0C,0x2B,0xD8);
 
 
-IScriptingContext	STRUC
+IScriptingContextVtbl struct
 STDMETHOD QueryInterface, :REFIID, :ptr
 STDMETHOD AddRef
 STDMETHOD Release
@@ -487,7 +520,10 @@ STDMETHOD get_Response, :ptr
 STDMETHOD get_Server, :ptr
 STDMETHOD get_Session, :ptr
 STDMETHOD get_Application, :ptr
-IScriptingContext	ENDS
+IScriptingContextVtbl ends
+IScriptingContext struct
+	lpVtbl		PVOID ?
+IScriptingContext ends
 LPIScriptingContext	typedef ptr IScriptingContext
 
 endif	;; __IScriptingContext_INTERFACE_DEFINED__

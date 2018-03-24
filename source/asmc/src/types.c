@@ -70,8 +70,8 @@ struct asym *CreateTypeSymbol( struct asym *sym, const char *name, bool global )
 
 /* search a name in a struct's fieldlist */
 
-struct asym *SearchNameInStruct( const struct asym *tstruct, const char *name, uint_32 *poffset, int level )
-/**********************************************************************************************************/
+struct asym *SearchNameInStruct( const struct asym *tstruct, const char *name,
+    uint_32 *poffset, int level )
 {
     int len = strlen( name );
     struct sfield *fl = ((struct dsym *)tstruct)->e.structinfo->head;

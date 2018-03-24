@@ -1,11 +1,9 @@
-include string.inc
-
     .code
 
-    option win64:rsp nosave noauto
+wcsncmp::
 
-wcsncmp proc uses rsi rdi s1:LPWSTR, s2:LPWSTR, count:SIZE_T
-
+    push rsi
+    push rdi
     xchg rcx,r8
     .if rcx
         mov rsi,rcx
@@ -29,8 +27,8 @@ wcsncmp proc uses rsi rdi s1:LPWSTR, s2:LPWSTR, count:SIZE_T
         .endif
     .endif
     mov eax,ecx
+    pop rdi
+    pop rsi
     ret
-
-wcsncmp endp
 
     END

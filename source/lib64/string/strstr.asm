@@ -1,47 +1,36 @@
 include string.inc
 
-	.code
+    .code
 
-	OPTION	PROLOGUE:NONE, EPILOGUE:NONE
+strstr proc uses rsi rdi dst:LPSTR, src:LPSTR
 
-strstr	PROC dst:LPSTR, src:LPSTR
+    mov rdi,rcx
+    .if strlen(rdx)
+        mov rsi,rax
+        .if strlen(rdi)
+            mov rcx,rax
+            xor eax,eax
+            dec rsi
+            .repeat
+                mov al,[rdx]
+                repne scasb
+                mov al,0
+                .break .ifnz
+                .if rsi
+                    .break .if rcx < rsi
+                    mov r11,rsi
+                    .repeat
+                        mov al,[rdx+r11]
+                        .continue(01) .if al != [rdi+r11-1]
+                        dec r11
+                    .untilz
+                .endif
+                lea rax,[rdi-1]
+            .until 1
+        .endif
+    .endif
+    ret
 
-	push	rdi
-	mov	rdi,rcx
+strstr endp
 
-	strlen( rdx )
-	jz	nomatch
-
-	mov	r10,rax
-	strlen( rdi )
-	jz	nomatch
-
-	mov	rcx,rax
-	dec	r10
-scan:
-	mov	al,[rdx]
-	repne	scasb
-	jne	nomatch
-	test	r10,r10
-	jz	match
-	cmp	rcx,r10
-	jb	nomatch
-	mov	r11,r10
-compare:
-	mov	al,[rdx+r11]
-	cmp	al,[rdi+r11-1]
-	jne	scan
-	dec	r11
-	jnz	compare
-match:
-	mov	rax,rdi
-	dec	rax
-	jmp	toend
-nomatch:
-	xor	rax,rax
-toend:
-	pop	rdi
-	ret
-strstr	ENDP
-
-	END
+    END

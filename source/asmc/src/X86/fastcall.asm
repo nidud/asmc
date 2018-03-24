@@ -790,7 +790,12 @@ ms64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:SI
                         AddLineQueueX(" %s %r, %s", eax, i, paramvalue)
                     .endif
                 .elseif [edi].expr.kind != EXPR_REG || [edi].expr.flags & EXF_INDIRECT
-                    AddLineQueueX(" mov %r, %s", i, paramvalue)
+                    mov eax,paramvalue
+                    .if word ptr [eax] == "0"
+                        AddLineQueueX(" xor %r, %r", i, i)
+                    .else
+                        AddLineQueueX(" mov %r, %s", i, eax)
+                    .endif
                 .endif
                 AddLineQueueX(" mov [%r+%u], %r", T_RSP, &[esi*8], i)
             .endif
@@ -917,7 +922,12 @@ ms64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:SI
                     AddLineQueueX(" %s %r, %s", eax, ebx, paramvalue)
                 .endif
             .else
-                AddLineQueueX(" mov %r, %s", ebx, paramvalue)
+                mov eax,paramvalue
+                .if word ptr [eax] == "0"
+                    AddLineQueueX(" xor %r, %r", ebx, ebx)
+                .else
+                    AddLineQueueX(" mov %r, %s", ebx, eax)
+                .endif
             .endif
             lea ecx,[esi+RPAR_START]
             mov eax,1

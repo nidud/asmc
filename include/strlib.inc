@@ -10,7 +10,6 @@ memxchg		proto __cdecl :LPSTR, :LPSTR, :SIZE_T
 memstri		proto __cdecl :LPSTR, :SIZE_T, :LPSTR, :SIZE_T
 memrchr		proto __cdecl :LPSTR, :SIZE_T, :SIZE_T
 memquote	proto __cdecl :LPSTR, :SIZE_T
-memzero		proto __cdecl :LPSTR, :SIZE_T
 
 strfn		proto __cdecl :LPSTR
 strext		proto __cdecl :LPSTR

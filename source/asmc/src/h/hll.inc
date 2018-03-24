@@ -101,8 +101,8 @@ ExpandLine	proto :LPSTR, :PTR asm_tok
 ExpandCStrings	proto :ptr asm_tok
 ExpandHllProc	proto :LPSTR, :SINT, :ptr asm_tok
 
-GenerateCString proto :SINT,  :PTR asm_tok
-EvalOperand	proto :SINT,  :PTR asm_tok, :SINT, :PTR expr, :SINT
+GenerateCString proto :SINT, :PTR asm_tok
+EvalOperand	proto :SINT, :PTR asm_tok, :SINT, :PTR expr, :SINT
 
 GetCurrOffset	proto
 QueueTestLines	proto :LPSTR

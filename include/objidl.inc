@@ -317,7 +317,7 @@ externdef		__MIDL_itf_objidl_0000_v0_0_s_ifspec:RPC_IF_HANDLE
 ifndef __IMarshal_INTERFACE_DEFINED__
 __IMarshal_INTERFACE_DEFINED__ equ 1
 
-IMarshal		STRUC
+IMarshalVtbl struct
 STDMETHOD QueryInterface, :REFIID, :ptr
 STDMETHOD AddRef
 STDMETHOD Release
@@ -327,7 +327,10 @@ STDMETHOD MarshalInterface, :ptr, :REFIID, :ptr, :DWORD, :ptr, :DWORD
 STDMETHOD UnmarshalInterface, :ptr, :REFIID, :ptr
 STDMETHOD ReleaseMarshalData, :ptr
 STDMETHOD DisconnectObject, :DWORD
-IMarshal		ENDS
+IMarshalVtbl ends
+IMarshal struct
+	lpVtbl		PVOID ?
+IMarshal ends
 LPMARSHAL		typedef ptr IMarshal
 externdef		IID_IMarshal:IID
 
@@ -425,7 +428,7 @@ endif
 ifndef __IMalloc_INTERFACE_DEFINED__
 __IMalloc_INTERFACE_DEFINED__ equ 1
 
-IMalloc			STRUC
+IMallocVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -435,7 +438,10 @@ IMalloc			STRUC
 	STDMETHOD	GetSize, :ptr
 	STDMETHOD	DidAlloc, :ptr
 	STDMETHOD	HeapMinimize
-IMalloc			ENDS
+IMallocVtbl ends
+IMalloc struct
+	lpVtbl		PVOID ?
+IMalloc ends
 LPMALLOC		typedef ptr IMalloc
 externdef		IID_IMalloc:IID
 
@@ -518,7 +524,7 @@ endif
 ifndef __IMallocSpy_INTERFACE_DEFINED__
 __IMallocSpy_INTERFACE_DEFINED__ equ 1
 
-IMallocSpy		STRUC
+IMallocSpyVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -534,7 +540,10 @@ IMallocSpy		STRUC
 	STDMETHOD	PostDidAlloc, :ptr, :BOOL, :DWORD
 	STDMETHOD	PreHeapMinimize
 	STDMETHOD	PostHeapMinimize
-IMallocSpy		ENDS
+IMallocSpyVtbl ends
+IMallocSpy struct
+	lpVtbl		PVOID ?
+IMallocSpy ends
 LPMALLOCSPY		typedef ptr IMallocSpy
 externdef		IID_IMallocSpy:IID
 
@@ -695,12 +704,15 @@ endif
 ifndef __IStdMarshalInfo_INTERFACE_DEFINED__
 __IStdMarshalInfo_INTERFACE_DEFINED__ equ 1
 
-IStdMarshalInfo		STRUC
+IStdMarshalInfoVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	GetClassForHandler, :DWORD, :ptr, :ptr
-IStdMarshalInfo		ENDS
+IStdMarshalInfoVtbl ends
+IStdMarshalInfo struct
+	lpVtbl		PVOID ?
+IStdMarshalInfo ends
 LPSTDMARSHALINFO	typedef ptr IStdMarshalInfo
 externdef		IID_IStdMarshalInfo:IID
 
@@ -728,13 +740,16 @@ EXTCONN_STRONG		equ 0x1
 EXTCONN_WEAK		equ 0x2
 EXTCONN_CALLABLE	equ 0x4
 
-IExternalConnection	STRUC
+IExternalConnectionVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	AddConnection, :DWORD, :DWORD
 	STDMETHOD	ReleaseConnection, :DWORD, :DWORD, :BOOL
-IExternalConnection	ENDS
+IExternalConnectionVtbl ends
+IExternalConnection struct
+	lpVtbl		PVOID ?
+IExternalConnection ends
 LPEXTERNALCONNECTION	typedef ptr IExternalConnection
 externdef		IID_IExternalConnection:IID
 
@@ -777,12 +792,15 @@ pItf			LPIUnknown ?
 hr			HRESULT ?
 MULTI_QI		ENDS
 
-IMultiQI		STRUC
+IMultiQIVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	QueryMultipleInterfaces, :DWORD, :ptr
-IMultiQI		ENDS
+IMultiQIVtbl ends
+IMultiQI struct
+	lpVtbl		PVOID ?
+IMultiQI ends
 LPMULTIQI		typedef ptr IMultiQI
 externdef		IID_IMultiQI:IID
 
@@ -804,7 +822,7 @@ endif
 ifndef __IEnumUnknown_INTERFACE_DEFINED__
 __IEnumUnknown_INTERFACE_DEFINED__ equ 1
 
-IEnumUnknown		STRUC
+IEnumUnknownVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -812,7 +830,10 @@ IEnumUnknown		STRUC
 	STDMETHOD	Skip, :DWORD
 	STDMETHOD	Reset
 	STDMETHOD	Clone, :ptr
-IEnumUnknown		ENDS
+IEnumUnknownVtbl ends
+IEnumUnknown struct
+	lpVtbl		PVOID ?
+IEnumUnknown ends
 LPENUMUNKNOWN		typedef ptr IEnumUnknown
 externdef		IID_IEnumUnknown:IID
 
@@ -903,7 +924,7 @@ tagBIND_FLAGS		typedef SDWORD
 BIND_MAYBOTHERUSER	equ 1
 BIND_JUSTTESTEXISTENCE	equ 2
 
-IBindCtx		STRUC
+IBindCtxVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -917,7 +938,10 @@ IBindCtx		STRUC
 	STDMETHOD	GetObjectParam, :LPOLESTR, :ptr
 	STDMETHOD	EnumObjectParam, :ptr
 	STDMETHOD	RevokeObjectParam, :LPOLESTR
-IBindCtx		ENDS
+IBindCtxVtbl ends
+IBindCtx struct
+	lpVtbl		PVOID ?
+IBindCtx ends
 LPBC			typedef ptr IBindCtx
 LPBINDCTX		typedef ptr IBindCtx
 externdef		IID_IBindCtx:IID
@@ -1048,7 +1072,7 @@ endif
 ifndef __IEnumMoniker_INTERFACE_DEFINED__
 __IEnumMoniker_INTERFACE_DEFINED__ equ 1
 
-IEnumMoniker		STRUC
+IEnumMonikerVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1056,7 +1080,10 @@ IEnumMoniker		STRUC
 	STDMETHOD	Skip, :DWORD
 	STDMETHOD	Reset
 	STDMETHOD	Clone, :ptr
-IEnumMoniker		ENDS
+IEnumMonikerVtbl ends
+IEnumMoniker struct
+	lpVtbl		PVOID ?
+IEnumMoniker ends
 LPENUMMONIKER		typedef ptr IEnumMoniker
 externdef		IID_IEnumMoniker:IID
 
@@ -1114,7 +1141,7 @@ endif
 ifndef __IRunnableObject_INTERFACE_DEFINED__
 __IRunnableObject_INTERFACE_DEFINED__ equ 1
 
-IRunnableObject		STRUC
+IRunnableObjectVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1123,7 +1150,10 @@ IRunnableObject		STRUC
 	STDMETHOD	IsRunning
 	STDMETHOD	LockRunning, :BOOL, :BOOL
 	STDMETHOD	SetContainedObject, :BOOL
-IRunnableObject		ENDS
+IRunnableObjectVtbl ends
+IRunnableObject struct
+	lpVtbl		PVOID ?
+IRunnableObject ends
 LPRUNNABLEOBJECT	typedef ptr IRunnableObject
 externdef		IID_IRunnableObject:IID
 
@@ -1192,7 +1222,7 @@ endif
 ifndef __IRunningObjectTable_INTERFACE_DEFINED__
 __IRunningObjectTable_INTERFACE_DEFINED__ equ 1
 
-IRunningObjectTable	STRUC
+IRunningObjectTableVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1203,7 +1233,10 @@ IRunningObjectTable	STRUC
 	STDMETHOD	NoteChangeTime, :DWORD, :ptr
 	STDMETHOD	GetTimeOfLastChange, :ptr, :ptr
 	STDMETHOD	EnumRunning, :ptr
-IRunningObjectTable	ENDS
+IRunningObjectTableVtbl ends
+IRunningObjectTable struct
+	lpVtbl		PVOID ?
+IRunningObjectTable ends
 LPRUNNINGOBJECTTABLE	typedef ptr IRunningObjectTable
 externdef		IID_IRunningObjectTable:IID
 
@@ -1302,12 +1335,15 @@ endif
 ifndef __IPersist_INTERFACE_DEFINED__
 __IPersist_INTERFACE_DEFINED__ equ 1
 
-IPersist		STRUC
+IPersistVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	GetClassID, :ptr
-IPersist		ENDS
+IPersistVtbl ends
+IPersist struct
+	lpVtbl		PVOID ?
+IPersist ends
 LPPERSIST		typedef ptr IPersist
 externdef		IID_IPersist:IID
 
@@ -1328,7 +1364,7 @@ endif
 ifndef __IPersistStream_INTERFACE_DEFINED__
 __IPersistStream_INTERFACE_DEFINED__ equ 1
 
-IPersistStream		STRUC
+IPersistStreamVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1337,7 +1373,10 @@ IPersistStream		STRUC
 	STDMETHOD	Load, :ptr
 	STDMETHOD	Save, :ptr, :BOOL
 	STDMETHOD	GetSizeMax, :ptr
-IPersistStream		ENDS
+IPersistStreamVtbl ends
+IPersistStream struct
+	lpVtbl		PVOID ?
+IPersistStream ends
 LPPERSISTSTREAM		typedef ptr IPersistStream
 externdef		IID_IPersistStream:IID
 
@@ -1409,7 +1448,7 @@ MKRREDUCE_TOUSER	equ 2 SHL 16
 MKRREDUCE_THROUGHUSER	equ 1 SHL 16
 MKRREDUCE_ALL		equ 0
 
-IMoniker		STRUC
+IMonikerVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1433,7 +1472,10 @@ IMoniker		STRUC
 	STDMETHOD	GetDisplayName, :ptr, :ptr, :ptr
 	STDMETHOD	ParseDisplayName, :ptr, :ptr, :LPOLESTR, :ptr, :ptr
 	STDMETHOD	IsSystemMoniker, :ptr
-IMoniker		ENDS
+IMonikerVtbl ends
+IMoniker struct
+	lpVtbl		PVOID ?
+IMoniker ends
 LPMONIKER		typedef ptr IMoniker
 externdef		IID_IMoniker:IID
 
@@ -1648,12 +1690,15 @@ __IROTData_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IROTData:IID
 
-IROTData		STRUC
+IROTDataVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	GetComparisonData, :ptr, :DWORD, :ptr
-IROTData		ENDS
+IROTDataVtbl ends
+IROTData struct
+	lpVtbl		PVOID ?
+IROTData ends
 LPIROTData		typedef ptr IROTData
 
 ;HRESULT
@@ -1675,7 +1720,7 @@ endif
 ifndef __IEnumString_INTERFACE_DEFINED__
 __IEnumString_INTERFACE_DEFINED__ equ 1
 
-IEnumString		STRUC
+IEnumStringVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1683,7 +1728,10 @@ IEnumString		STRUC
 	STDMETHOD	Skip, :DWORD
 	STDMETHOD	Reset
 	STDMETHOD	Clone, :ptr
-IEnumString		ENDS
+IEnumStringVtbl ends
+IEnumString struct
+	lpVtbl		PVOID ?
+IEnumString ends
 LPENUMSTRING		typedef ptr IEnumString
 externdef		IID_IEnumString:IID
 
@@ -1743,13 +1791,16 @@ __ISequentialStream_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_ISequentialStream:IID
 
-ISequentialStream	STRUC
+ISequentialStreamVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	Read, :ptr, :DWORD, :ptr
 	STDMETHOD	Write, :ptr, :DWORD, :ptr
-ISequentialStream	ENDS
+ISequentialStreamVtbl ends
+ISequentialStream struct
+	lpVtbl		PVOID ?
+ISequentialStream ends
 
 ;HRESULT
 ISequentialStream_RemoteRead_Proxy proto WINAPI \
@@ -1813,7 +1864,7 @@ LOCK_WRITE		equ 1
 LOCK_EXCLUSIVE		equ 2
 LOCK_ONLYONCE		equ 4
 
-IStream			STRUC
+IStreamVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1828,7 +1879,10 @@ IStream			STRUC
 	STDMETHOD	UnlockRegion, :ULARGE_INTEGER, :ULARGE_INTEGER, :DWORD
 	STDMETHOD	Stat, :ptr, :DWORD
 	STDMETHOD	Clone, :ptr
-IStream			ENDS
+IStreamVtbl ends
+IStream struct
+	lpVtbl		PVOID ?
+IStream ends
 LPSTREAM		typedef ptr IStream
 externdef		IID_IStream:IID
 
@@ -1954,7 +2008,7 @@ endif
 ifndef __IEnumSTATSTG_INTERFACE_DEFINED__
 __IEnumSTATSTG_INTERFACE_DEFINED__ equ 1
 
-IEnumSTATSTG		STRUC
+IEnumSTATSTGVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1962,7 +2016,10 @@ IEnumSTATSTG		STRUC
 	STDMETHOD	Skip, :DWORD
 	STDMETHOD	Reset,
 	STDMETHOD	Clone, :ptr
-IEnumSTATSTG		ENDS
+IEnumSTATSTGVtbl ends
+IEnumSTATSTG struct
+	lpVtbl		PVOID ?
+IEnumSTATSTG ends
 LPENUMSTATSTG		typedef ptr IEnumSTATSTG
 externdef		IID_IEnumSTATSTG:IID
 
@@ -2029,7 +2086,7 @@ RemSNB			ENDS
 wireSNB			typedef ptr RemSNB
 SNB			typedef ptr OLECHAR
 
-IStorage		STRUC
+IStorageVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -2048,7 +2105,10 @@ IStorage		STRUC
 	STDMETHOD	SetClass, :REFCLSID
 	STDMETHOD	SetStateBits, :DWORD, :DWORD
 	STDMETHOD	Stat, :ptr, :DWORD
-IStorage		ENDS
+IStorageVtbl ends
+IStorage struct
+	lpVtbl		PVOID ?
+IStorage ends
 LPSTORAGE		typedef ptr IStorage
 externdef		IID_IStorage:IID
 
@@ -2270,7 +2330,7 @@ endif
 ifndef __IPersistFile_INTERFACE_DEFINED__
 __IPersistFile_INTERFACE_DEFINED__ equ 1
 
-IPersistFile		STRUC
+IPersistFileVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -2280,7 +2340,10 @@ IPersistFile		STRUC
 	STDMETHOD	Save, :LPCOLESTR, :BOOL
 	STDMETHOD	SaveCompleted, :LPCOLESTR
 	STDMETHOD	GetCurFile, :ptr
-IPersistFile		ENDS
+IPersistFileVtbl ends
+IPersistFile struct
+	lpVtbl		PVOID ?
+IPersistFile ends
 LPPERSISTFILE		typedef ptr IPersistFile
 externdef		IID_IPersistFile:IID
 
@@ -2350,7 +2413,7 @@ endif
 ifndef __IPersistStorage_INTERFACE_DEFINED__
 __IPersistStorage_INTERFACE_DEFINED__ equ 1
 
-IPersistStorage		STRUC
+IPersistStorageVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -2361,7 +2424,10 @@ IPersistStorage		STRUC
 	STDMETHOD	Save, :ptr, :BOOL
 	STDMETHOD	SaveCompleted, :ptr
 	STDMETHOD	HandsOffStorage
-IPersistStorage		ENDS
+IPersistStorageVtbl ends
+IPersistStorage struct
+	lpVtbl		PVOID ?
+IPersistStorage ends
 LPPERSISTSTORAGE	typedef ptr IPersistStorage
 externdef		IID_IPersistStorage:IID
 
@@ -2441,7 +2507,7 @@ endif
 ifndef __ILockBytes_INTERFACE_DEFINED__
 __ILockBytes_INTERFACE_DEFINED__ equ 1
 
-ILockBytes		STRUC
+ILockBytesVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -2452,7 +2518,10 @@ ILockBytes		STRUC
 	STDMETHOD	LockRegion, :ULARGE_INTEGER, :ULARGE_INTEGER, :DWORD
 	STDMETHOD	UnlockRegion, :ULARGE_INTEGER, :ULARGE_INTEGER, :DWORD
 	STDMETHOD	Stat, :ptr, :DWORD
-ILockBytes		ENDS
+ILockBytesVtbl ends
+ILockBytes struct
+	lpVtbl		PVOID ?
+ILockBytes ends
 LPLOCKBYTES		typedef ptr ILockBytes
 externdef		IID_ILockBytes:IID
 
@@ -2576,7 +2645,7 @@ tymed			dd ?
 FORMATETC		ENDS
 LPFORMATETC		typedef ptr FORMATETC
 
-IEnumFORMATETC		STRUC
+IEnumFORMATETCVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -2584,7 +2653,10 @@ IEnumFORMATETC		STRUC
 	STDMETHOD	Skip, :DWORD
 	STDMETHOD	Reset
 	STDMETHOD	Clone, :ptr
-IEnumFORMATETC		ENDS
+IEnumFORMATETCVtbl ends
+IEnumFORMATETC struct
+	lpVtbl		PVOID ?
+IEnumFORMATETC ends
 LPENUMFORMATETC		typedef ptr IEnumFORMATETC
 externdef		IID_IEnumFORMATETC:IID
 
@@ -2661,7 +2733,7 @@ dwConnection		dd ?
 STATDATA		ENDS
 LPSTATDATA		typedef ptr STATDATA
 
-IEnumSTATDATA		STRUC
+IEnumSTATDATAVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -2669,7 +2741,10 @@ IEnumSTATDATA		STRUC
 	STDMETHOD	Skip, :DWORD
 	STDMETHOD	Reset
 	STDMETHOD	Clone, :ptr
-IEnumSTATDATA		ENDS
+IEnumSTATDATAVtbl ends
+IEnumSTATDATA struct
+	lpVtbl		PVOID ?
+IEnumSTATDATA ends
 LPENUMSTATDATA		typedef ptr IEnumSTATDATA
 externdef		IID_IEnumSTATDATA:IID
 
@@ -2727,12 +2802,15 @@ endif
 ifndef __IRootStorage_INTERFACE_DEFINED__
 __IRootStorage_INTERFACE_DEFINED__ equ 1
 
-IRootStorage		STRUC
+IRootStorageVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	SwitchToFile, :LPOLESTR
-IRootStorage		ENDS
+IRootStorageVtbl ends
+IRootStorage struct
+	lpVtbl		PVOID ?
+IRootStorage ends
 LPROOTSTORAGE		typedef ptr IRootStorage
 externdef		IID_IRootStorage:IID
 
@@ -2849,7 +2927,7 @@ fPassOwnership		LONG ?
 Stgmed			STGMEDIUM <>
 FLAG_STGMEDIUM		ENDS
 
-IAdviseSink		STRUC
+IAdviseSinkVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -2858,7 +2936,10 @@ IAdviseSink		STRUC
 	STDMETHOD	OnRename, :ptr
 	STDMETHOD	OnSave
 	STDMETHOD	OnClose
-IAdviseSink		ENDS
+IAdviseSinkVtbl ends
+IAdviseSink struct
+	lpVtbl		PVOID ?
+IAdviseSink ends
 LPADVISESINK		typedef ptr IAdviseSink
 externdef		IID_IAdviseSink:IID
 
@@ -2931,7 +3012,7 @@ endif
 ifndef __IAdviseSink2_INTERFACE_DEFINED__
 __IAdviseSink2_INTERFACE_DEFINED__ equ 1
 
-IAdviseSink2		STRUC
+IAdviseSink2Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -2941,7 +3022,10 @@ IAdviseSink2		STRUC
 	STDMETHOD	OnSave
 	STDMETHOD	OnClose
 	STDMETHOD	OnLinkSrcChange, :ptr
-IAdviseSink2		ENDS
+IAdviseSink2Vtbl ends
+IAdviseSink2 struct
+	lpVtbl		PVOID ?
+IAdviseSink2 ends
 LPADVISESINK2		typedef ptr IAdviseSink2
 externdef		IID_IAdviseSink2:IID
 
@@ -2967,7 +3051,7 @@ DATADIR			typedef SDWORD
 DATADIR_GET		equ 1
 DATADIR_SET		equ 2
 
-IDataObject		STRUC
+IDataObjectVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -2983,7 +3067,10 @@ IDataObject		STRUC
 	STDMETHOD	Finish_OnClose
 	STDMETHOD	Begin_OnLinkSrcChange, :ptr
 	STDMETHOD	Finish_OnLinkSrcChange
-IDataObject		ENDS
+IDataObjectVtbl ends
+IDataObject struct
+	lpVtbl		PVOID ?
+IDataObject ends
 LPDATAOBJECT		typedef ptr IDataObject
 externdef		IID_IDataObject:IID
 
@@ -3109,7 +3196,7 @@ endif
 ifndef __IDataAdviseHolder_INTERFACE_DEFINED__
 __IDataAdviseHolder_INTERFACE_DEFINED__ equ 1
 
-IDataAdviseHolder	STRUC
+IDataAdviseHolderVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -3122,7 +3209,10 @@ IDataAdviseHolder	STRUC
 	STDMETHOD	DAdvise, :ptr, :DWORD, :ptr, :ptr
 	STDMETHOD	DUnadvise, :DWORD
 	STDMETHOD	EnumDAdvise, :ptr
-IDataAdviseHolder	ENDS
+IDataAdviseHolderVtbl ends
+IDataAdviseHolder struct
+	lpVtbl		PVOID ?
+IDataAdviseHolder ends
 LPDATAADVISEHOLDER	typedef ptr IDataAdviseHolder
 externdef		IID_IDataAdviseHolder:IID
 
@@ -3212,14 +3302,17 @@ wMethod			dw ?
 INTERFACEINFO		ENDS
 LPINTERFACEINFO		typedef ptr INTERFACEINFO
 
-IMessageFilter		STRUC
+IMessageFilterVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	HandleInComingCall, :DWORD, :HTASK, :DWORD, :LPINTERFACEINFO
 	STDMETHOD	RetryRejectedCall, :HTASK, :DWORD, :DWORD
 	STDMETHOD	MessagePending, :HTASK, :DWORD, :DWORD
-IMessageFilter		ENDS
+IMessageFilterVtbl ends
+IMessageFilter struct
+	lpVtbl		PVOID ?
+IMessageFilter ends
 LPMESSAGEFILTER		typedef ptr IMessageFilter
 externdef		IID_IMessageFilter:IID
 
@@ -3287,7 +3380,7 @@ PRPCOLEMESSAGE		typedef ptr RPCOLEMESSAGE
 
 externdef		IID_IRpcChannelBuffer:IID
 
-IRpcChannelBuffer	STRUC
+IRpcChannelBufferVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -3296,7 +3389,10 @@ IRpcChannelBuffer	STRUC
 	STDMETHOD	FreeBuffer, :ptr
 	STDMETHOD	GetDestCtx, :ptr, :ptr
 	STDMETHOD	IsConnected
-IRpcChannelBuffer	ENDS
+IRpcChannelBufferVtbl ends
+IRpcChannelBuffer struct
+	lpVtbl		PVOID ?
+IRpcChannelBuffer ends
 
 ;HRESULT
 IRpcChannelBuffer_GetBuffer_Proxy proto WINAPI \
@@ -3367,7 +3463,7 @@ __IRpcChannelBuffer2_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IRpcChannelBuffer2:IID
 
-IRpcChannelBuffer2	STRUC
+IRpcChannelBuffer2Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -3377,7 +3473,10 @@ IRpcChannelBuffer2	STRUC
 	STDMETHOD	GetDestCtx, :ptr, :ptr
 	STDMETHOD	IsConnected
 	STDMETHOD	GetProtocolVersion, :ptr
-IRpcChannelBuffer2	ENDS
+IRpcChannelBuffer2Vtbl ends
+IRpcChannelBuffer2 struct
+	lpVtbl		PVOID ?
+IRpcChannelBuffer2 ends
 
 ;HRESULT
 IRpcChannelBuffer2_GetProtocolVersion_Proxy proto WINAPI \
@@ -3398,7 +3497,7 @@ __IRpcChannelBuffer3_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IRpcChannelBuffer3:IID
 
-IRpcChannelBuffer3	STRUC
+IRpcChannelBuffer3Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -3415,7 +3514,10 @@ IRpcChannelBuffer3	STRUC
 	STDMETHOD	GetDestCtxEx, :ptr, :ptr, :ptr
 	STDMETHOD	GetState, :ptr, :ptr
 	STDMETHOD	RegisterAsync, :ptr, :ptr
-IRpcChannelBuffer3	ENDS
+IRpcChannelBuffer3Vtbl ends
+IRpcChannelBuffer3 struct
+	lpVtbl		PVOID ?
+IRpcChannelBuffer3 ends
 
 ;HRESULT
 IRpcChannelBuffer3_Send_Proxy proto WINAPI \
@@ -3517,13 +3619,16 @@ __IRpcProxyBuffer_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IRpcProxyBuffer:IID
 
-IRpcProxyBuffer		STRUC
+IRpcProxyBufferVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	Connect, :ptr
 	STDMETHOD	Disconnect
-IRpcProxyBuffer		ENDS
+IRpcProxyBufferVtbl ends
+IRpcProxyBuffer struct
+	lpVtbl		PVOID ?
+IRpcProxyBuffer ends
 
 ;HRESULT
 IRpcProxyBuffer_Connect_Proxy proto WINAPI \
@@ -3555,7 +3660,7 @@ __IRpcStubBuffer_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IRpcStubBuffer:IID
 
-IRpcStubBuffer		STRUC
+IRpcStubBufferVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -3566,7 +3671,10 @@ IRpcStubBuffer		STRUC
 	STDMETHOD	CountRefs
 	STDMETHOD	DebugServerQueryInterface, :ptr
 	STDMETHOD	DebugServerRelease, :ptr
-IRpcStubBuffer		ENDS
+IRpcStubBufferVtbl ends
+IRpcStubBuffer struct
+	lpVtbl		PVOID ?
+IRpcStubBuffer ends
 
 ;HRESULT
 IRpcStubBuffer_Connect_Proxy proto WINAPI \
@@ -3659,13 +3767,16 @@ __IPSFactoryBuffer_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IPSFactoryBuffer:IID
 
-IPSFactoryBuffer	STRUC
+IPSFactoryBufferVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	CreateProxy, :ptr, :REFIID, :ptr, :ptr
 	STDMETHOD	CreateStub, :REFIID, :ptr, :ptr
-IPSFactoryBuffer	ENDS
+IPSFactoryBufferVtbl ends
+IPSFactoryBuffer struct
+	lpVtbl		PVOID ?
+IPSFactoryBuffer ends
 
 ;HRESULT
 IPSFactoryBuffer_CreateProxy_Proxy proto WINAPI \
@@ -3716,7 +3827,7 @@ __IChannelHook_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IChannelHook:IID
 
-IChannelHook		STRUC
+IChannelHookVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -3726,7 +3837,10 @@ IChannelHook		STRUC
 	STDMETHOD	ServerNotify, :REFGUID, :REFIID, :DWORD, :ptr, :DWORD
 	STDMETHOD	ServerGetSize, :REFGUID, :REFIID, :HRESULT, :ptr
 	STDMETHOD	ServerFillBuffer, :REFGUID, :REFIID, :ptr, :ptr, :HRESULT
-IChannelHook		ENDS
+IChannelHookVtbl ends
+IChannelHook struct
+	lpVtbl		PVOID ?
+IChannelHook ends
 
 ;void
 IChannelHook_ClientGetSize_Proxy proto WINAPI \
@@ -4083,7 +4197,7 @@ dwOSVersion		dd ?
 STATPROPSETSTG		ENDS
 
 
-IPropertyStorage	STRUC
+IPropertyStorageVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -4099,7 +4213,10 @@ IPropertyStorage	STRUC
 	STDMETHOD	SetTimes, :ptr, :ptr, :ptr
 	STDMETHOD	SetClass, :REFCLSID
 	STDMETHOD	Stat, :ptr
-IPropertyStorage	ENDS
+IPropertyStorageVtbl ends
+IPropertyStorage struct
+	lpVtbl		PVOID ?
+IPropertyStorage ends
 LPPROPERTYSTORAGE	typedef ptr IPropertyStorage
 externdef		IID_IPropertyStorage:IID
 
@@ -4264,15 +4381,14 @@ endif
 ifndef __IPropertySetStorage_INTERFACE_DEFINED__
 __IPropertySetStorage_INTERFACE_DEFINED__ equ 1
 
-IPropertySetStorage STRUC
+IPropertySetStorageVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
-Create			PVOID ?
-Open			PVOID ?
-Delete			PVOID ?
-Enum			PVOID ?
-IPropertySetStorage	ENDS
+IPropertySetStorageVtbl ends
+IPropertySetStorage struct
+	lpVtbl		PVOID ?
+IPropertySetStorage ends
 LPPROPERTYSETSTORAGE	typedef ptr IPropertySetStorage
 externdef		IID_IPropertySetStorage:IID
 
@@ -4335,15 +4451,14 @@ endif
 ifndef __IEnumSTATPROPSTG_INTERFACE_DEFINED__
 __IEnumSTATPROPSTG_INTERFACE_DEFINED__ equ 1
 
-IEnumSTATPROPSTG	STRUC
+IEnumSTATPROPSTGVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
-Next			PVOID ?
-Skip			PVOID ?
-Reset			PVOID ?
-Clone			PVOID ?
-IEnumSTATPROPSTG	ENDS
+IEnumSTATPROPSTGVtbl ends
+IEnumSTATPROPSTG struct
+	lpVtbl		PVOID ?
+IEnumSTATPROPSTG ends
 LPENUMSTATPROPSTG	typedef ptr IEnumSTATPROPSTG
 externdef		IID_IEnumSTATPROPSTG:IID
 
@@ -4401,15 +4516,14 @@ endif
 ifndef __IEnumSTATPROPSETSTG_INTERFACE_DEFINED__
 __IEnumSTATPROPSETSTG_INTERFACE_DEFINED__ equ 1
 
-IEnumSTATPROPSETSTG	STRUC
+IEnumSTATPROPSETSTGVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
-Next			PVOID ?
-Skip			PVOID ?
-Reset			PVOID ?
-Clone			PVOID ?
-IEnumSTATPROPSETSTG	ENDS
+IEnumSTATPROPSETSTGVtbl ends
+IEnumSTATPROPSETSTG struct
+	lpVtbl		PVOID ?
+IEnumSTATPROPSETSTG ends
 LPENUMSTATPROPSETSTG	typedef ptr IEnumSTATPROPSETSTG
 externdef		IID_IEnumSTATPROPSETSTG:IID
 
@@ -4546,14 +4660,17 @@ EOAC_APPID		equ 0x8
 
 externdef		IID_IClientSecurity:IID
 
-IClientSecurity		STRUC
+IClientSecurityVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	QueryBlanket, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
 	STDMETHOD	SetBlanket, :ptr, :DWORD, :DWORD, :ptr, :DWORD, :DWORD, :ptr ,:DWORD
 	STDMETHOD	CopyProxy, :ptr, :ptr
-IClientSecurity		ENDS
+IClientSecurityVtbl ends
+IClientSecurity struct
+	lpVtbl		PVOID ?
+IClientSecurity ends
 
 ;HRESULT
 IClientSecurity_QueryBlanket_Proxy proto WINAPI \
@@ -4613,7 +4730,7 @@ __IServerSecurity_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IServerSecurity:IID
 
-IServerSecurity		STRUC
+IServerSecurityVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -4621,7 +4738,10 @@ IServerSecurity		STRUC
 	STDMETHOD	ImpersonateClient
 	STDMETHOD	_RevertToSelf
 	STDMETHOD	IsImpersonating
-IServerSecurity		ENDS
+IServerSecurityVtbl ends
+IServerSecurity struct
+	lpVtbl		PVOID ?
+IServerSecurity ends
 
 ;HRESULT
 IServerSecurity_QueryBlanket_Proxy proto WINAPI \
@@ -4681,12 +4801,15 @@ __IClassActivator_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IClassActivator:IID
 
-IClassActivator		STRUC
+IClassActivatorVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	GetClassObject, :REFCLSID, :DWORD, :LCID, :REFIID, :ptr
-IClassActivator		ENDS
+IClassActivatorVtbl ends
+IClassActivator struct
+	lpVtbl		PVOID ?
+IClassActivator ends
 
 ;HRESULT
 IClassActivator_GetClassObject_Proxy proto WINAPI \
@@ -4711,13 +4834,16 @@ __IRpcOptions_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IRpcOptions:IID
 
-IRpcOptions		STRUC
+IRpcOptionsVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	Set, :ptr, :DWORD, :DWORD
 	STDMETHOD	Query, :ptr, :DWORD, :ptr
-IRpcOptions		ENDS
+IRpcOptionsVtbl ends
+IRpcOptions struct
+	lpVtbl		PVOID ?
+IRpcOptions ends
 
 ;HRESULT
 IRpcOptions_Set_Proxy proto WINAPI \
@@ -4772,13 +4898,16 @@ __IComBinding_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IComBinding:IID
 
-IComBinding		STRUC
+IComBindingVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	InitBinding, :DWORD, :DWORD, :DWORD, :DWORD, :LPOLESTR
 	STDMETHOD	QueryBinding, :ptr, :ptr, :ptr, :ptr, :ptr
-IComBinding		ENDS
+IComBindingVtbl ends
+IComBinding struct
+	lpVtbl		PVOID ?
+IComBinding ends
 
 ;HRESULT
 IComBinding_InitBinding_Proxy proto WINAPI \
@@ -4823,7 +4952,7 @@ __IFillLockBytes_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IFillLockBytes:IID
 
-IFillLockBytes		STRUC
+IFillLockBytesVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -4831,7 +4960,10 @@ IFillLockBytes		STRUC
 	STDMETHOD	FillAt, :ULARGE_INTEGER, :ptr, :DWORD, :ptr
 	STDMETHOD	SetFillSize, :ULARGE_INTEGER
 	STDMETHOD	Terminate, :BOOL
-IFillLockBytes		ENDS
+IFillLockBytesVtbl ends
+IFillLockBytes struct
+	lpVtbl		PVOID ?
+IFillLockBytes ends
 
 ;HRESULT
 IFillLockBytes_RemoteFillAppend_Proxy proto WINAPI \
@@ -4893,12 +5025,15 @@ __IProgressNotify_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IProgressNotify:IID
 
-IProgressNotify		STRUC
+IProgressNotifyVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	OnProgress, :DWORD, :DWORD, :BOOL, :BOOL
-IProgressNotify		ENDS
+IProgressNotifyVtbl ends
+IProgressNotify struct
+	lpVtbl		PVOID ?
+IProgressNotify ends
 
 ;HRESULT
 IProgressNotify_OnProgress_Proxy proto WINAPI \
@@ -4929,7 +5064,7 @@ StorageLayout		ENDS
 
 externdef		IID_ILayoutStorage:IID
 
-ILayoutStorage		STRUC
+ILayoutStorageVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -4938,7 +5073,10 @@ ILayoutStorage		STRUC
 	STDMETHOD	EndMonitor
 	STDMETHOD	ReLayoutDocfile, :ptr
 	STDMETHOD	ReLayoutDocfileOnILockBytes, :ptr
-ILayoutStorage		ENDS
+ILayoutStorageVtbl ends
+ILayoutStorage struct
+	lpVtbl		PVOID ?
+ILayoutStorage ends
 
 ;HRESULT
 ILayoutStorage_LayoutScript_Proxy proto WINAPI \
@@ -5012,6 +5150,9 @@ ISurrogateVtbl		STRUC
 	STDMETHOD	LoadDllServer, :REFCLSID
 	STDMETHOD	FreeSurrogate
 ISurrogateVtbl		ENDS
+ISurrogate		STRUC
+	lpVtbl		PVOID ?
+ISurrogate		ENDS
 LPSURROGATE		typedef ptr ISurrogate
 externdef		IID_ISurrogate:IID
 
@@ -5043,14 +5184,17 @@ endif
 ifndef __IGlobalInterfaceTable_INTERFACE_DEFINED__
 __IGlobalInterfaceTable_INTERFACE_DEFINED__ equ 1
 
-IGlobalInterfaceTable	STRUC
+IGlobalInterfaceTableVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	RegisterInterfaceInGlobal, :ptr, :REFIID, :ptr
 	STDMETHOD	RevokeInterfaceFromGlobal, :DWORD
 	STDMETHOD	GetInterfaceFromGlobal, :DWORD, :REFIID, :ptr
-IGlobalInterfaceTable	ENDS
+IGlobalInterfaceTableVtbl ends
+IGlobalInterfaceTable struct
+	lpVtbl		PVOID ?
+IGlobalInterfaceTable ends
 LPGLOBALINTERFACETABLE	typedef ptr IGlobalInterfaceTable
 externdef		IID_IGlobalInterfaceTable:IID
 
@@ -5101,14 +5245,17 @@ __IDirectWriterLock_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IDirectWriterLock:IID
 
-IDirectWriterLock	STRUC
+IDirectWriterLockVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	WaitForWriteAccess, :DWORD
 	STDMETHOD	ReleaseWriteAccess
 	STDMETHOD	HaveWriteAccess
-IDirectWriterLock	ENDS
+IDirectWriterLockVtbl ends
+IDirectWriterLock struct
+	lpVtbl		PVOID ?
+IDirectWriterLock ends
 
 ;HRESULT
 IDirectWriterLock_WaitForWriteAccess_Proxy proto WINAPI \
@@ -5151,14 +5298,17 @@ __ISynchronize_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_ISynchronize:IID
 
-ISynchronize		STRUC
+ISynchronizeVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	_Wait, :DWORD, :DWORD
 	STDMETHOD	Signal
 	STDMETHOD	Reset
-ISynchronize		ENDS
+ISynchronizeVtbl ends
+ISynchronize struct
+	lpVtbl		PVOID ?
+ISynchronize ends
 
 ;HRESULT
 ISynchronize_Wait_Proxy proto WINAPI \
@@ -5201,7 +5351,7 @@ __ISynchronizeMutex_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_ISynchronizeMutex:IID
 
-ISynchronizeMutex	STRUC
+ISynchronizeMutexVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -5209,7 +5359,10 @@ ISynchronizeMutex	STRUC
 	STDMETHOD	Signal
 	STDMETHOD	Reset
 	STDMETHOD	_ReleaseMutex
-ISynchronizeMutex	ENDS
+ISynchronizeMutexVtbl ends
+ISynchronizeMutex struct
+	lpVtbl		PVOID ?
+ISynchronizeMutex ends
 
 ;HRESULT
 ISynchronizeMutex_ReleaseMutex_Proxy proto WINAPI \
@@ -5229,12 +5382,15 @@ __IAsyncSetup_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IAsyncSetup:IID
 
-IAsyncSetup		STRUC
+IAsyncSetupVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	GetAsyncManager, :REFIID, :ptr, :DWORD, :ptr, :ptr
-IAsyncSetup		ENDS
+IAsyncSetupVtbl ends
+IAsyncSetup struct
+	lpVtbl		PVOID ?
+IAsyncSetup ends
 
 ;HRESULT
 IAsyncSetup_GetAsyncManager_Proxy proto WINAPI \
@@ -5264,6 +5420,9 @@ ICancelMethodCallsVtbl	STRUC
 	STDMETHOD	Cancel, :DWORD
 	STDMETHOD	TestCancel
 ICancelMethodCallsVtbl	ENDS
+ICancelMethodCalls struct
+	lpVtbl		PVOID ?
+ICancelMethodCalls ends
 LPCANCELMETHODCALLS	typedef ptr ICancelMethodCalls
 externdef		IID_ICancelMethodCalls:IID
 
@@ -5312,14 +5471,17 @@ DCOM_CALL_CANCELED	equ 0x2
 
 externdef		IID_IAsyncManager:IID
 
-IAsyncManager		STRUC
+IAsyncManagerVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	CompleteCall, :HRESULT
 	STDMETHOD	GetCallContext, :REFIID, :ptr
 	STDMETHOD	GetState, :ptr
-IAsyncManager		ENDS
+IAsyncManagerVtbl ends
+IAsyncManager struct
+	lpVtbl		PVOID ?
+IAsyncManager ends
 
 ;HRESULT
 IAsyncManager_CompleteCall_Proxy proto WINAPI \
@@ -5372,6 +5534,9 @@ IWaitMultipleVtbl	STRUC
 	STDMETHOD	WaitMultiple, :DWORD, :ptr
 	STDMETHOD	AddSynchronize, :ptr
 IWaitMultipleVtbl	ENDS
+IWaitMultiple		STRUC
+	lpVtbl		PVOID ?
+IWaitMultiple		ENDS
 
 ;HRESULT
 IWaitMultiple_WaitMultiple_Proxy proto WINAPI \
@@ -5404,13 +5569,16 @@ __ISynchronizeEvent_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_ISynchronizeEvent:IID
 
-ISynchronizeEvent	STRUC
+ISynchronizeEventVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	GetHandle, :ptr
 	STDMETHOD	SetEventHandle, :ptr
-ISynchronizeEvent	ENDS
+ISynchronizeEventVtbl ends
+ISynchronizeEvent struct
+	lpVtbl		PVOID ?
+ISynchronizeEvent ends
 
 ;HRESULT
 ISynchronizeEvent_GetEvent_Proxy proto WINAPI \
@@ -5430,12 +5598,15 @@ __IUrlMon_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IUrlMon:IID
 
-IUrlMon			STRUC
+IUrlMonVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	AsyncGetClassBits, :REFCLSID, :LPWSTR, :LPWSTR, :DWORD, :DWORD, :LPWSTR, :ptr, :DWORD, :REFIID, :DWORD
-IUrlMon			ENDS
+IUrlMonVtbl ends
+IUrlMon struct
+	lpVtbl		PVOID ?
+IUrlMon ends
 
 ;HRESULT
 IUrlMon_AsyncGetClassBits_Proxy proto WINAPI \
@@ -5471,14 +5642,17 @@ PUBLISHEDINFOLIST	ENDS
 
 externdef		IID_IClassAccess:IID
 
-IClassAccess		STRUC
+IClassAccessVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	GetClassInfo, :REFCLSID, :QUERYCONTEXT, :ptr
 	STDMETHOD	GetClassSpecInfo, :ptr, :QUERYCONTEXT, :ptr
 	STDMETHOD	GetInstallablePackages, :DWORD, :ptr
-IClassAccess		ENDS
+IClassAccessVtbl ends
+IClassAccess struct
+	lpVtbl		PVOID ?
+IClassAccess ends
 
 ;HRESULT
 IClassAccess_GetClassInfo_Proxy proto WINAPI \
@@ -5535,13 +5709,16 @@ PACKAGEINFOLIST		ENDS
 
 externdef		IID_IClassRefresh:IID
 
-IClassRefresh		STRUC
+IClassRefreshVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	GetUpgrades, :ULONG, :ptr, :CSPLATFORM, :LCID, :ptr
 	STDMETHOD	CommitUpgrades
-IClassRefresh		ENDS
+IClassRefreshVtbl ends
+IClassRefresh struct
+	lpVtbl		PVOID ?
+IClassRefresh ends
 
 ;HRESULT
 IClassRefresh_GetUpgrades_Proxy proto WINAPI \
@@ -5597,7 +5774,7 @@ __IEnumPackage_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IEnumPackage:IID
 
-IEnumPackage		STRUC
+IEnumPackageVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -5605,7 +5782,10 @@ IEnumPackage		STRUC
 	STDMETHOD	Skip, :DWORD
 	STDMETHOD	Reset
 	STDMETHOD	Clone, :ptr
-IEnumPackage		ENDS
+IEnumPackageVtbl ends
+IEnumPackage struct
+	lpVtbl		PVOID ?
+IEnumPackage ends
 
 ;HRESULT
 IEnumPackage_Next_Proxy proto WINAPI \
@@ -5662,7 +5842,7 @@ __IEnumClass_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IEnumClass:IID
 
-IEnumClass		STRUC
+IEnumClassVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -5670,7 +5850,10 @@ IEnumClass		STRUC
 	STDMETHOD	Skip, :DWORD
 	STDMETHOD	Reset
 	STDMETHOD	Clone, :ptr
-IEnumClass		ENDS
+IEnumClassVtbl ends
+IEnumClass struct
+	lpVtbl		PVOID ?
+IEnumClass ends
 
 ;HRESULT
 IEnumClass_Next_Proxy proto WINAPI \
@@ -5732,7 +5915,7 @@ __IClassAdmin_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IClassAdmin:IID
 
-IClassAdmin		STRUC
+IClassAdminVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -5747,7 +5930,10 @@ IClassAdmin		STRUC
 	STDMETHOD	GetClassDetails, :REFCLSID, :ptr
 	STDMETHOD	GetIidDetails, :REFIID, :ptr, :ptr, :ptr
 	STDMETHOD	GetPackageDetails, :LPOLESTR, :ptr
-IClassAdmin		ENDS
+IClassAdminVtbl ends
+IClassAdmin struct
+	lpVtbl		PVOID ?
+IClassAdmin ends
 
 ;HRESULT
 IClassAdmin_NewClass_Proxy proto WINAPI \

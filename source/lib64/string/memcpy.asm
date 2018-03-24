@@ -1,25 +1,14 @@
-include string.inc
+    .code
 
-	OPTION	PROLOGUE:NONE, EPILOGUE:NONE
+memcpy::
 
-	.code
+    xchg rdx,rsi
+    xchg rcx,rdi
+    xchg rcx,r8
+    mov  rax,rdi
+    rep  movsb
+    mov  rdi,r8
+    mov  rsi,rdx
+    ret
 
-memcpy	PROC dst:LPSTR, src:LPSTR, count:SIZE_T
-
-	push	rsi
-	push	rdi
-
-	mov	rax,rcx		; dst -- return value
-	mov	rsi,rdx		; src
-	mov	rcx,r8		; count
-
-	mov	rdi,rax
-	rep	movsb
-
-	pop	rdi
-	pop	rsi
-	ret
-
-memcpy	ENDP
-
-	END
+    end

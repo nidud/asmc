@@ -94,8 +94,7 @@ ifndef __IEnumNetConnection_INTERFACE_DEFINED__
 __IEnumNetConnection_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IEnumNetConnection:IID
-IEnumNetConnection	STRUC
-
+IEnumNetConnectionVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -103,8 +102,10 @@ IEnumNetConnection	STRUC
 	STDMETHOD	Skip, :ULONG
 	STDMETHOD	Reset
 	STDMETHOD	Clone, :ptr
-
-IEnumNetConnection	ENDS
+IEnumNetConnectionVtbl ends
+IEnumNetConnection struct
+	lpVtbl		PVOID ?
+IEnumNetConnection ends
 endif
 
 ifndef __INetConnection_INTERFACE_DEFINED__
@@ -179,11 +180,10 @@ clsidThisObject		CLSID <>
 clsidUiObject		CLSID <>
 NETCON_PROPERTIES	ENDS
 
-S_OBJECT_NO_LONGER_VALID equ (0x00000002L)
+S_OBJECT_NO_LONGER_VALID equ (0x00000002)
 
 externdef		IID_INetConnection:IID
-INetConnection		STRUC
-
+INetConnectionVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -194,8 +194,10 @@ INetConnection		STRUC
 	STDMETHOD	GetProperties, :ptr
 	STDMETHOD	GetUiObjectClassId, :ptr
 	STDMETHOD	Rename, :LPCWSTR
-
-INetConnection		ENDS
+INetConnectionVtbl ends
+INetConnection struct
+	lpVtbl		PVOID ?
+INetConnection ends
 endif
 
 ;STDAPI_(VOID)
@@ -218,14 +220,15 @@ NCME_DEFAULT		equ 0
 NCME_HIDDEN		equ 0x1
 
 externdef		IID_INetConnectionManager:IID
-INetConnectionManager	STRUC
-
+INetConnectionManagerVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	EnumConnections, :NETCONMGR_ENUM_FLAGS, :ptr
-
-INetConnectionManager	ENDS
+INetConnectionManagerVtbl ends
+INetConnectionManager struct
+	lpVtbl		PVOID ?
+INetConnectionManager ends
 endif
 
 ifndef __INetConnectionConnectUi_INTERFACE_DEFINED__
@@ -238,24 +241,24 @@ NCUC_ENABLE_DISABLE	equ 0x2
 
 externdef		IID_INetConnectionConnectUi:IID
 
-INetConnectionConnectUi STRUC
-
+INetConnectionConnectUiVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	SetConnection, :ptr
 	STDMETHOD	Connect, :HWND, :DWORD
 	STDMETHOD	Disconnect, :HWND, :DWORD
-
-INetConnectionConnectUi ENDS
+INetConnectionConnectUiVtbl ends
+INetConnectionConnectUi struct
+	lpVtbl		PVOID ?
+INetConnectionConnectUi ends
 endif
 
 ifndef __IEnumNetSharingPortMapping_INTERFACE_DEFINED__
 __IEnumNetSharingPortMapping_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IEnumNetSharingPortMapping:IID
-IEnumNetSharingPortMapping STRUC
-
+IEnumNetSharingPortMappingVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -263,16 +266,17 @@ IEnumNetSharingPortMapping STRUC
 	STDMETHOD	Skip, :ULONG
 	STDMETHOD	Reset
 	STDMETHOD	Clone, :ptr
-
-IEnumNetSharingPortMapping ENDS
+IEnumNetSharingPortMappingVtbl ends
+IEnumNetSharingPortMapping struct
+	lpVtbl		PVOID ?
+IEnumNetSharingPortMapping ends
 endif
 
 ifndef __INetSharingPortMappingProps_INTERFACE_DEFINED__
 __INetSharingPortMappingProps_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_INetSharingPortMappingProps:IID
-INetSharingPortMappingProps STRUC
-
+INetSharingPortMappingPropsVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -288,16 +292,17 @@ INetSharingPortMappingProps STRUC
 	STDMETHOD	get_TargetName, :ptr
 	STDMETHOD	get_TargetIPAddress, :ptr
 	STDMETHOD	get_Enabled, :ptr
-
-INetSharingPortMappingProps ENDS
+INetSharingPortMappingPropsVtbl ends
+INetSharingPortMappingProps struct
+	lpVtbl		PVOID ?
+INetSharingPortMappingProps ends
 endif
 
 ifndef __INetSharingPortMapping_INTERFACE_DEFINED__
 __INetSharingPortMapping_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_INetSharingPortMapping:IID
-INetSharingPortMapping	STRUC
-
+INetSharingPortMappingVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -309,16 +314,17 @@ INetSharingPortMapping	STRUC
 	STDMETHOD	Enable
 	STDMETHOD	get_Properties, :ptr
 	STDMETHOD	Delete
-
-INetSharingPortMapping	ENDS
+INetSharingPortMappingVtbl ends
+INetSharingPortMapping struct
+	lpVtbl		PVOID ?
+INetSharingPortMapping ends
 endif
 
 ifndef __IEnumNetSharingEveryConnection_INTERFACE_DEFINED__
 __IEnumNetSharingEveryConnection_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IEnumNetSharingEveryConnection:IID
-IEnumNetSharingEveryConnection STRUC
-
+IEnumNetSharingEveryConnectionVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -326,16 +332,17 @@ IEnumNetSharingEveryConnection STRUC
 	STDMETHOD	Skip, :ULONG
 	STDMETHOD	Reset
 	STDMETHOD	Clone, :ptr
-
-IEnumNetSharingEveryConnection ENDS
+IEnumNetSharingEveryConnectionVtbl ends
+IEnumNetSharingEveryConnection struct
+	lpVtbl		PVOID ?
+IEnumNetSharingEveryConnection ends
 endif
 
 ifndef __IEnumNetSharingPublicConnection_INTERFACE_DEFINED__
 __IEnumNetSharingPublicConnection_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IEnumNetSharingPublicConnection:IID
-IEnumNetSharingPublicConnection STRUC
-
+IEnumNetSharingPublicConnectionVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -343,16 +350,17 @@ IEnumNetSharingPublicConnection STRUC
 	STDMETHOD	Skip, :ULONG
 	STDMETHOD	Reset
 	STDMETHOD	Clone, :ptr
-
-IEnumNetSharingPublicConnection ENDS
+IEnumNetSharingPublicConnectionVtbl ends
+IEnumNetSharingPublicConnection struct
+	lpVtbl		PVOID ?
+IEnumNetSharingPublicConnection ends
 endif
 
 ifndef __IEnumNetSharingPrivateConnection_INTERFACE_DEFINED__
 __IEnumNetSharingPrivateConnection_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IEnumNetSharingPrivateConnection:IID
-IEnumNetSharingPrivateConnection STRUC
-
+IEnumNetSharingPrivateConnectionVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -360,8 +368,10 @@ IEnumNetSharingPrivateConnection STRUC
 	STDMETHOD	Skip, :ULONG
 	STDMETHOD	Reset
 	STDMETHOD	Clone, :ptr
-
-IEnumNetSharingPrivateConnection ENDS
+IEnumNetSharingPrivateConnectionVtbl ends
+IEnumNetSharingPrivateConnection struct
+	lpVtbl		PVOID ?
+IEnumNetSharingPrivateConnection ends
 endif
 
 ifndef __INetSharingPortMappingCollection_INTERFACE_DEFINED__
@@ -369,8 +379,7 @@ __INetSharingPortMappingCollection_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_INetSharingPortMappingCollection:IID
 
-INetSharingPortMappingCollection STRUC
-
+INetSharingPortMappingCollectionVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -380,8 +389,10 @@ INetSharingPortMappingCollection STRUC
 	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
 	STDMETHOD	get__NewEnum, :ptr
 	STDMETHOD	get_Count, :ptr
-
-INetSharingPortMappingCollection ENDS
+INetSharingPortMappingCollectionVtbl ends
+INetSharingPortMappingCollection struct
+	lpVtbl		PVOID ?
+INetSharingPortMappingCollection ends
 endif
 
 externdef		__MIDL_itf_netcon_0000_0011_v0_0_c_ifspec:RPC_IF_HANDLE
@@ -392,8 +403,7 @@ __INetConnectionProps_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_INetConnectionProps:IID
 
-INetConnectionProps	STRUC
-
+INetConnectionPropsVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -407,8 +417,10 @@ INetConnectionProps	STRUC
 	STDMETHOD	get_Status, :ptr
 	STDMETHOD	get_MediaType, :ptr
 	STDMETHOD	get_Characteristics, :ptr
-
-INetConnectionProps	ENDS
+INetConnectionPropsVtbl ends
+INetConnectionProps struct
+	lpVtbl		PVOID ?
+INetConnectionProps ends
 endif
 
 ifndef __INetSharingConfiguration_INTERFACE_DEFINED__
@@ -431,8 +443,7 @@ ICSTT_IPADDRESS		equ ( ICSTT_NAME + 1 )
 
 externdef		IID_INetSharingConfiguration:IID
 
-INetSharingConfiguration STRUC
-
+INetSharingConfigurationVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -450,8 +461,10 @@ INetSharingConfiguration STRUC
 	STDMETHOD	get_EnumPortMappings, :SHARINGCONNECTION_ENUM_FLAGS, :ptr
 	STDMETHOD	AddPortMapping, :BSTR, :UCHAR, :USHORT, :USHORT, :DWORD, :BSTR, :ICS_TARGETTYPE, :ptr
 	STDMETHOD	RemovePortMapping, :ptr
-
-INetSharingConfiguration ENDS
+INetSharingConfigurationVtbl ends
+INetSharingConfiguration struct
+	lpVtbl		PVOID ?
+INetSharingConfiguration ends
 endif
 
 ifndef __INetSharingEveryConnectionCollection_INTERFACE_DEFINED__
@@ -459,8 +472,7 @@ __INetSharingEveryConnectionCollection_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_INetSharingEveryConnectionCollection:IID
 
-INetSharingEveryConnectionCollection STRUC
-
+INetSharingEveryConnectionCollectionVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -470,16 +482,17 @@ INetSharingEveryConnectionCollection STRUC
 	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
 	STDMETHOD	get__NewEnum, :ptr
 	STDMETHOD	get_Count, :ptr
-
-INetSharingEveryConnectionCollection ENDS
+INetSharingEveryConnectionCollectionVtbl ends
+INetSharingEveryConnectionCollection struct
+	lpVtbl		PVOID ?
+INetSharingEveryConnectionCollection ends
 endif
 
 ifndef __INetSharingPublicConnectionCollection_INTERFACE_DEFINED__
 __INetSharingPublicConnectionCollection_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_INetSharingPublicConnectionCollection:IID
-INetSharingPublicConnectionCollection STRUC
-
+INetSharingPublicConnectionCollectionVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -489,16 +502,17 @@ INetSharingPublicConnectionCollection STRUC
 	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
 	STDMETHOD	get__NewEnum, :ptr
 	STDMETHOD	get_Count, :ptr
-
-INetSharingPublicConnectionCollection ENDS
+INetSharingPublicConnectionCollectionVtbl ends
+INetSharingPublicConnectionCollection struct
+	lpVtbl		PVOID ?
+INetSharingPublicConnectionCollection ends
 endif
 
 ifndef __INetSharingPrivateConnectionCollection_INTERFACE_DEFINED__
 __INetSharingPrivateConnectionCollection_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_INetSharingPrivateConnectionCollection:IID
-INetSharingPrivateConnectionCollection STRUC
-
+INetSharingPrivateConnectionCollectionVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -508,16 +522,17 @@ INetSharingPrivateConnectionCollection STRUC
 	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
 	STDMETHOD	get__NewEnum, :ptr
 	STDMETHOD	get_Count, :ptr
-
-INetSharingPrivateConnectionCollection ENDS
+INetSharingPrivateConnectionCollectionVtbl ends
+INetSharingPrivateConnectionCollection struct
+	lpVtbl		PVOID ?
+INetSharingPrivateConnectionCollection ends
 endif
 
 ifndef __INetSharingManager_INTERFACE_DEFINED__
 __INetSharingManager_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_INetSharingManager:IID
-INetSharingManager	STRUC
-
+INetSharingManagerVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -531,8 +546,10 @@ INetSharingManager	STRUC
 	STDMETHOD	get_INetSharingConfigurationForINetConnection, :ptr, :ptr
 	STDMETHOD	get_EnumEveryConnection, :ptr
 	STDMETHOD	get_NetConnectionProps, :ptr, :ptr
-
-INetSharingManager	ENDS
+INetSharingManagerVtbl ends
+INetSharingManager struct
+	lpVtbl		PVOID ?
+INetSharingManager ends
 endif
 
 ifndef __NETCONLib_LIBRARY_DEFINED__

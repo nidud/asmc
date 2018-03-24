@@ -994,7 +994,8 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 	if ( ModuleInfo.Ofssize == USE64 ) {
 	    AddLineQueue( " mov rax,[rcx]" );
 	} else if ( ModuleInfo.Ofssize == USE32 ) {
-	    AddLineQueueX( " mov eax,%s", tokenarray[parmpos+1].string_ptr );
+	    if ( _memicmp(tokenarray[parmpos+1].string_ptr, "eax", 3) )
+		AddLineQueueX( " mov eax,%s", tokenarray[parmpos+1].string_ptr );
 	    AddLineQueue( " mov eax,[eax]" );
 	}
     }

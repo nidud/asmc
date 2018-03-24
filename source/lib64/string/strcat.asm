@@ -1,15 +1,15 @@
 include string.inc
 
-	.code
+    .code
 
-	OPTION	WIN64:3, STACKBASE:rsp
+strcat proc s1:LPSTR, s2:LPSTR
 
-strcat	PROC s1:LPSTR, s2:LPSTR
-	strlen( rcx )
-	add	rax,s1
-	strcpy( rax,s2 )
-	mov	rax,s1
-	ret
-strcat	ENDP
+    strlen(rcx)
+    add rax,s1
+    strcpy(rax,s2)
+    mov rax,s1
+    ret
 
-	END
+strcat endp
+
+    END

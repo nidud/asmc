@@ -273,12 +273,10 @@ LPDIEFFESCAPE		typedef ptr DIEFFESCAPE
 
 ifndef DIJ_RINGZERO
 
-IDirectInputEffect	STRUC
-
+IDirectInputEffectVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
-
 	STDMETHOD	Initialize, :HINSTANCE, :DWORD, :REFGUID
 	STDMETHOD	GetEffectGuid, :LPGUID
 	STDMETHOD	GetParameters, :LPDIEFFECT, :DWORD
@@ -289,8 +287,10 @@ IDirectInputEffect	STRUC
 	STDMETHOD	Download
 	STDMETHOD	Unload
 	STDMETHOD	Escape, :LPDIEFFESCAPE
-
-IDirectInputEffect	ENDS
+IDirectInputEffectVtbl ends
+IDirectInputEffect struct
+	lpVtbl		PVOID ?
+IDirectInputEffect ends
 LPDIRECTINPUTEFFECT	typedef ptr IDirectInputEffect
 
 if NOT defined(__cplusplus) OR defined(CINTERFACE)
@@ -1271,8 +1271,7 @@ LPCDIDEVICEINSTANCE	typedef LPCDIDEVICEINSTANCEA
 endif
 LPCDIDEVICEINSTANCE	typedef ptr DIDEVICEINSTANCE
 
-IDirectInputDeviceW	STRUC
-
+IDirectInputDeviceWVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1291,12 +1290,13 @@ IDirectInputDeviceW	STRUC
 	STDMETHOD	GetDeviceInfo, :LPDIDEVICEINSTANCEW
 	STDMETHOD	RunControlPanel, :HWND, :DWORD
 	STDMETHOD	Initialize, :HINSTANCE, :DWORD, :REFGUID
-
-IDirectInputDeviceW	ENDS
+IDirectInputDeviceWVtbl ends
+IDirectInputDeviceW struct
+	lpVtbl		PVOID ?
+IDirectInputDeviceW ends
 LPDIRECTINPUTDEVICEW	typedef ptr IDirectInputDeviceW
 
-IDirectInputDeviceA	STRUC
-
+IDirectInputDeviceAVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1315,8 +1315,10 @@ IDirectInputDeviceA	STRUC
 	STDMETHOD	GetDeviceInfo, :LPDIDEVICEINSTANCEA
 	STDMETHOD	RunControlPanel, :HWND, :DWORD
 	STDMETHOD	Initialize, :HINSTANCE, :DWORD, :REFGUID
-
-IDirectInputDeviceA	ENDS
+IDirectInputDeviceAVtbl ends
+IDirectInputDeviceA struct
+	lpVtbl		PVOID ?
+IDirectInputDeviceA ends
 LPDIRECTINPUTDEVICEA	typedef ptr IDirectInputDeviceA
 
 ifdef _UNICODE
@@ -1453,13 +1455,11 @@ LPDIENUMEFFECTSCALLBACK equ <LPDIENUMEFFECTSCALLBACKA>
 endif
 CALLBACK(LPDIENUMCREATEDEFFECTOBJECTSCALLBACK, :LPDIRECTINPUTEFFECT, :PVOID)
 
-IDirectInputDevice2W	STRUC
-
+IDirectInputDevice2WVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	GetCapabilities, :LPDIDEVCAPS
-
 	STDMETHOD	EnumObjects, :LPDIENUMDEVICEOBJECTSCALLBACKW,  :PVOID, :DWORD
 	STDMETHOD	GetProperty, :REFGUID, :LPDIPROPHEADER
 	STDMETHOD	SetProperty, :REFGUID, :LPCDIPROPHEADER
@@ -1474,7 +1474,6 @@ IDirectInputDevice2W	STRUC
 	STDMETHOD	GetDeviceInfo, :LPDIDEVICEINSTANCEW
 	STDMETHOD	RunControlPanel, :HWND, :DWORD
 	STDMETHOD	Initialize, :HINSTANCE, :DWORD, :REFGUID
-
 	STDMETHOD	CreateEffect, :REFGUID, :LPCDIEFFECT, :ptr, :LPUNKNOWN
 	STDMETHOD	EnumEffects, :LPDIENUMEFFECTSCALLBACKW, :PVOID, :DWORD
 	STDMETHOD	GetEffectInfo, :LPDIEFFECTINFOW, :REFGUID
@@ -1484,17 +1483,17 @@ IDirectInputDevice2W	STRUC
 	STDMETHOD	Escape, :LPDIEFFESCAPE
 	STDMETHOD	Poll
 	STDMETHOD	SendDeviceData, :DWORD, :LPCDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
-
-IDirectInputDevice2W	ENDS
+IDirectInputDevice2WVtbl ends
+IDirectInputDevice2W struct
+	lpVtbl		PVOID ?
+IDirectInputDevice2W ends
 LPDIRECTINPUTDEVICE2W	typedef ptr IDirectInputDevice2W
 
-IDirectInputDevice2A	STRUC
-
+IDirectInputDevice2AVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	GetCapabilities, :LPDIDEVCAPS
-
 	STDMETHOD	EnumObjects, :LPDIENUMDEVICEOBJECTSCALLBACKA, :PVOID, :DWORD
 	STDMETHOD	GetProperty, :REFGUID, :LPDIPROPHEADER
 	STDMETHOD	SetProperty, :REFGUID, :LPCDIPROPHEADER
@@ -1518,8 +1517,10 @@ IDirectInputDevice2A	STRUC
 	STDMETHOD	Escape, :LPDIEFFESCAPE
 	STDMETHOD	Poll
 	STDMETHOD	SendDeviceData, :DWORD, :LPCDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
-
-IDirectInputDevice2A	ENDS
+IDirectInputDevice2AVtbl ends
+IDirectInputDevice2A struct
+	lpVtbl		PVOID ?
+IDirectInputDevice2A ends
 LPDIRECTINPUTDEVICE2A	typedef ptr IDirectInputDevice2A
 
 ifdef _UNICODE
@@ -1627,12 +1628,10 @@ DIFEF_MODIFYIFNEEDED	equ 0x00000010
 
 ifndef DIJ_RINGZERO
 
-IDirectInputDevice7W	STRUC
-
+IDirectInputDevice7WVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
-
 	STDMETHOD	GetCapabilities, :LPDIDEVCAPS
 	STDMETHOD	EnumObjects, :LPDIENUMDEVICEOBJECTSCALLBACKW, :PVOID, :DWORD
 	STDMETHOD	GetProperty, :REFGUID, :LPDIPROPHEADER
@@ -1659,16 +1658,16 @@ IDirectInputDevice7W	STRUC
 	STDMETHOD	SendDeviceData, :DWORD, :LPCDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
 	STDMETHOD	EnumEffectsInFile, :LPCWSTR, :LPDIENUMEFFECTSINFILECALLBACK, :PVOID, :DWORD
 	STDMETHOD	WriteEffectToFile, :LPCWSTR, :DWORD, :LPDIFILEEFFECT, :DWORD
-
-IDirectInputDevice7W	ENDS
+IDirectInputDevice7WVtbl ends
+IDirectInputDevice7W struct
+	lpVtbl		PVOID ?
+IDirectInputDevice7W ends
 LPDIRECTINPUTDEVICE7W	typedef ptr IDirectInputDevice7W
 
-IDirectInputDevice7A	STRUC
-
+IDirectInputDevice7AVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
-
 	STDMETHOD	GetCapabilities, :LPDIDEVCAPS
 	STDMETHOD	EnumObjects, :LPDIENUMDEVICEOBJECTSCALLBACKA, :PVOID, :DWORD
 	STDMETHOD	GetProperty, :REFGUID, :LPDIPROPHEADER
@@ -1695,8 +1694,10 @@ IDirectInputDevice7A	STRUC
 	STDMETHOD	SendDeviceData, :DWORD, :LPCDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
 	STDMETHOD	EnumEffectsInFile, :LPCSTR, :LPDIENUMEFFECTSINFILECALLBACK, :PVOID, :DWORD
 	STDMETHOD	WriteEffectToFile, :LPCSTR, :DWORD, :LPDIFILEEFFECT, :DWORD
-
-IDirectInputDevice7A	ENDS
+IDirectInputDevice7AVtbl ends
+IDirectInputDevice7A struct
+	lpVtbl		PVOID ?
+IDirectInputDevice7A ends
 LPDIRECTINPUTDEVICE7A	typedef ptr IDirectInputDevice7A
 
 ifdef _UNICODE
@@ -1807,12 +1808,10 @@ if(DIRECTINPUT_VERSION GE 0x0800)
 
 ifndef DIJ_RINGZERO
 
-IDirectInputDevice8W	STRUC
-
+IDirectInputDevice8WVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
-
 	STDMETHOD	GetCapabilities, :LPDIDEVCAPS
 	STDMETHOD	EnumObjects, :LPDIENUMDEVICEOBJECTSCALLBACKW, :PVOID, :DWORD
 	STDMETHOD	GetProperty, :REFGUID, :LPDIPROPHEADER
@@ -1842,15 +1841,16 @@ IDirectInputDevice8W	STRUC
 	STDMETHOD	BuildActionMap, :LPDIACTIONFORMATW, :LPCWSTR, :DWORD
 	STDMETHOD	SetActionMap, :LPDIACTIONFORMATW, :LPCWSTR, :DWORD
 	STDMETHOD	GetImageInfo, :LPDIDEVICEIMAGEINFOHEADERW
-IDirectInputDevice8W	ENDS
+IDirectInputDevice8WVtbl ends
+IDirectInputDevice8W struct
+	lpVtbl		PVOID ?
+IDirectInputDevice8W ends
 LPDIRECTINPUTDEVICE8W	typedef ptr IDirectInputDevice8W
 
-IDirectInputDevice8A	STRUC
-
+IDirectInputDevice8AVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
-
 	STDMETHOD	GetCapabilities, :LPDIDEVCAPS
 	STDMETHOD	EnumObjects, :LPDIENUMDEVICEOBJECTSCALLBACKA, :PVOID, :DWORD
 	STDMETHOD	GetProperty, :REFGUID, :LPDIPROPHEADER
@@ -1880,7 +1880,10 @@ IDirectInputDevice8A	STRUC
 	STDMETHOD	BuildActionMap, :LPDIACTIONFORMATA, :LPCSTR, :DWORD
 	STDMETHOD	SetActionMap, :LPDIACTIONFORMATA, :LPCSTR, :DWORD
 	STDMETHOD	GetImageInfo, :LPDIDEVICEIMAGEINFOHEADERA
-IDirectInputDevice8A	ENDS
+IDirectInputDevice8AVtbl ends
+IDirectInputDevice8A struct
+	lpVtbl		PVOID ?
+IDirectInputDevice8A ends
 LPDIRECTINPUTDEVICE8A	typedef ptr IDirectInputDevice8A
 
 ifdef _UNICODE
@@ -2357,33 +2360,33 @@ DIEDBSFL_NONGAMINGDEVICES equ 0x00004000
 DIEDBSFL_VALID		equ 0x00007110
 endif
 
-IDirectInputW		STRUC
-
+IDirectInputWVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
-
 	STDMETHOD	CreateDevice, :REFGUID, :ptr, :LPUNKNOWN
 	STDMETHOD	EnumDevices, :DWORD, :LPDIENUMDEVICESCALLBACKW, :LPVOID, :DWORD
 	STDMETHOD	GetDeviceStatus, :REFGUID
 	STDMETHOD	RunControlPanel, :HWND, :DWORD
 	STDMETHOD	Initialize, :HINSTANCE, :DWORD
-
-IDirectInputW		ENDS
+IDirectInputWVtbl ends
+IDirectInputW struct
+	lpVtbl		PVOID ?
+IDirectInputW ends
 LPDIRECTINPUTW		typedef ptr IDirectInputW
-IDirectInputA		STRUC
-
+IDirectInputAVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
-
 	STDMETHOD	CreateDevice, :REFGUID, :ptr, :LPUNKNOWN
 	STDMETHOD	EnumDevices, :DWORD, :LPDIENUMDEVICESCALLBACKA, :PVOID, :DWORD
 	STDMETHOD	GetDeviceStatus, :REFGUID
 	STDMETHOD	RunControlPanel, :HWND, :DWORD
 	STDMETHOD	Initialize, :HINSTANCE, :DWORD
-
-IDirectInputA		ENDS
+IDirectInputAVtbl ends
+IDirectInputA struct
+	lpVtbl		PVOID ?
+IDirectInputA ends
 LPDIRECTINPUTA		typedef ptr IDirectInputA
 
 ifdef _UNICODE
@@ -2422,36 +2425,36 @@ IDirectInput_Initialize macro p,a,b
 	endm
 endif
 
-IDirectInput2W	STRUC
-
+IDirectInput2WVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
-
 	STDMETHOD	CreateDevice, :REFGUID, :ptr, :LPUNKNOWN
 	STDMETHOD	EnumDevices, :DWORD, :LPDIENUMDEVICESCALLBACKW, :PVOID, :DWORD
 	STDMETHOD	GetDeviceStatus, :REFGUID
 	STDMETHOD	RunControlPanel, :HWND, :DWORD
 	STDMETHOD	Initialize, :HINSTANCE, :DWORD
 	STDMETHOD	FindDevice, :REFGUID, :LPCWSTR, :LPGUID
-
-IDirectInput2W		ENDS
+IDirectInput2WVtbl ends
+IDirectInput2W struct
+	lpVtbl		PVOID ?
+IDirectInput2W ends
 LPDIRECTINPUT2W		typedef ptr IDirectInput2W
 
-IDirectInput2A		STRUC
-
+IDirectInput2AVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
-
 	STDMETHOD	CreateDevice, :REFGUID, :ptr, :LPUNKNOWN
 	STDMETHOD	EnumDevices, :DWORD, :LPDIENUMDEVICESCALLBACKA, :PVOID, :DWORD
 	STDMETHOD	GetDeviceStatus, :REFGUID
 	STDMETHOD	RunControlPanel, :HWND, :DWORD
 	STDMETHOD	Initialize, :HINSTANCE, :DWORD
 	STDMETHOD	FindDevice, :REFGUID, :LPCSTR, :LPGUID
-
-IDirectInput2A		ENDS
+IDirectInput2AVtbl ends
+IDirectInput2A struct
+	lpVtbl		PVOID ?
+IDirectInput2A ends
 LPDIRECTINPUT2A		typedef ptr IDirectInput2A
 
 ifdef _UNICODE
@@ -2494,12 +2497,10 @@ IDirectInput2_FindDevice macro p,a,b,c
 	endm
 endif
 
-IDirectInput7W		STRUC
-
+IDirectInput7WVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
-
 	STDMETHOD	CreateDevice, :REFGUID, :ptr, :LPUNKNOWN
 	STDMETHOD	EnumDevices, :DWORD, :LPDIENUMDEVICESCALLBACKW, :PVOID, :DWORD
 	STDMETHOD	GetDeviceStatus, :REFGUID
@@ -2507,16 +2508,16 @@ IDirectInput7W		STRUC
 	STDMETHOD	Initialize, :HINSTANCE, :DWORD
 	STDMETHOD	FindDevice, :REFGUID, :LPCWSTR, :LPGUID
 	STDMETHOD	CreateDeviceEx, :REFGUID, :REFIID, :ptr, :LPUNKNOWN
-
-IDirectInput7W		ENDS
+IDirectInput7WVtbl ends
+IDirectInput7W struct
+	lpVtbl		PVOID ?
+IDirectInput7W ends
 LPDIRECTINPUT7W		typedef ptr IDirectInput7W
 
-IDirectInput7A		STRUC
-
+IDirectInput7AVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
-
 	STDMETHOD	CreateDevice, :REFGUID, :ptr, :LPUNKNOWN
 	STDMETHOD	EnumDevices, :DWORD, :LPDIENUMDEVICESCALLBACKA, :PVOID, :DWORD
 	STDMETHOD	GetDeviceStatus, :REFGUID
@@ -2524,8 +2525,10 @@ IDirectInput7A		STRUC
 	STDMETHOD	Initialize, :HINSTANCE, :DWORD
 	STDMETHOD	FindDevice, :REFGUID, :LPCSTR, :LPGUID
 	STDMETHOD	CreateDeviceEx, :REFGUID, :REFIID, :ptr, :LPUNKNOWN
-
-IDirectInput7A		ENDS
+IDirectInput7AVtbl ends
+IDirectInput7A struct
+	lpVtbl		PVOID ?
+IDirectInput7A ends
 LPDIRECTINPUT7A		typedef ptr IDirectInput7A
 
 ifdef _UNICODE
@@ -2573,8 +2576,7 @@ endif
 
 if(DIRECTINPUT_VERSION GE 0x0800)
 
-IDirectInput8W		STRUC
-
+IDirectInput8WVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -2586,12 +2588,13 @@ IDirectInput8W		STRUC
 	STDMETHOD	FindDevice, :REFGUID, :LPCWSTR, :LPGUID
 	STDMETHOD	EnumDevicesBySemantics, :LPCWSTR, :LPDIACTIONFORMATW, :LPDIENUMDEVICESBYSEMANTICSCBW, :LPVOID, :DWORD
 	STDMETHOD	ConfigureDevices, :LPDICONFIGUREDEVICESCALLBACK, :LPDICONFIGUREDEVICESPARAMSW, :DWORD, :PVOID
-
-IDirectInput8W		ENDS
+IDirectInput8WVtbl ends
+IDirectInput8W struct
+	lpVtbl		PVOID ?
+IDirectInput8W ends
 LPDIRECTINPUT8W		typedef ptr IDirectInput8W
 
-IDirectInput8A		STRUC
-
+IDirectInput8AVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -2603,8 +2606,10 @@ IDirectInput8A		STRUC
 	STDMETHOD	FindDevice, :REFGUID, :LPCSTR, :LPGUID
 	STDMETHOD	EnumDevicesBySemantics, :LPCSTR, :LPDIACTIONFORMATA, :LPDIENUMDEVICESBYSEMANTICSCBA, :PVOID, :DWORD
 	STDMETHOD	ConfigureDevices, :LPDICONFIGUREDEVICESCALLBACK, :LPDICONFIGUREDEVICESPARAMSA, :DWORD, :PVOID
-
-IDirectInput8A		ENDS
+IDirectInput8AVtbl ends
+IDirectInput8A struct
+	lpVtbl		PVOID ?
+IDirectInput8A ends
 LPDIRECTINPUT8A		typedef ptr IDirectInput8A
 
 ifdef _UNICODE

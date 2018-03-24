@@ -1,47 +1,42 @@
-include stdlib.inc
+    .code
 
-	.code
+_atoi64::
 
-	OPTION	PROLOGUE:NONE, EPILOGUE:NONE
+    xor rax,rax
+    xor rdx,rdx
 
-_atoi64 PROC string:LPSTR
+    .repeat
+        mov al,[rcx]
+        inc rcx
+    .until al != ' '
 
-	xor	rax,rax
-	xor	rdx,rdx
-@@:
-	mov	al,[rcx]
-	inc	rcx
-	cmp	al,' '
-	je	@B
+    mov r8b,al
+    .if al == '-' || al == '+'
 
-	mov	r8,rax
+        mov al,[rcx]
+        inc rcx
+    .endif
 
-	cmp	al,'-'
-	je	@2
-	cmp	al,'+'
-	jne	@F
-@2:
-	mov	al,[rcx]
-	inc	rcx
-@@:
-	sub	al,'0'
-	jc	@F
-	cmp	al,9
-	ja	@F
+    .while 1
 
-	shl	rdx,3
-	add	rdx,rax
-	mov	al,[rcx]
-	inc	rcx
-	jmp	@B
-@@:
+        sub al,'0'
+        .break .ifc
+        .break .if al > 9
 
-	cmp	r8b,'-'
-	jne	@F
-	neg	rdx
-@@:
-	mov	rax,rdx
-	ret
-_atoi64 ENDP
+        mov r9,rdx
+        shl rdx,3
+        add rdx,r9
+        add rdx,r9
+        add rdx,rax
+        mov al,[rcx]
+        inc rcx
+    .endw
 
-	END
+    .if r8b == '-'
+
+        neg rdx
+    .endif
+    mov rax,rdx
+    ret
+
+    end

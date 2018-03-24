@@ -1,71 +1,83 @@
-include string.inc
+    .code
 
-	.code
+strncpy::
 
-	OPTION	PROLOGUE:NONE, EPILOGUE:NONE
+    push rcx    ; returns dest, with the character copied there.
 
-strncpy PROC dst:LPSTR, src:LPSTR, count:SIZE_T
+    .if r8d >= 8
 
-	push	rcx
-	mov	r10,8080808080808080h
-	mov	r11,0101010101010101h
+        mov r10,0x8080808080808080
+        mov r11,0x0101010101010101
 
-	cmp	r8,8
-	jb	tail
+        mov rax,[rdx]   ; read 8 bytes
 
-	mov	rax,[rdx]
-	mov	r9,rax
-	sub	r9,r11
-	not	rax
-	and	r9,rax
-	and	r9,r10
-	jnz	tail
+        mov r9,rax      ; find null character in source
+        sub r9,r11
+        not rax
+        and r9,rax
+        and r9,r10
 
-	mov	rax,rcx		; align 8
-	neg	rax
-	and	rax,111B
-	mov	r9,[rdx]	; copy the first 8 bytes
-	mov	[rcx],r9
-	add	rcx,rax		; add leading bytes
-	add	rdx,rax		;
-	sub	r8,rax
-	jmp	start
-lupe:
-	sub	r8,8
-	mov	rax,[rdx]	; copy 4 bytes
-	mov	[rcx],rax
-	add	rcx,8
-	add	rdx,8
-start:
-	cmp	r8,4
-	jb	tail
-	mov	rax,[rdx]
-	mov	r9,rax
-	sub	r9,r11
-	not	rax
-	and	r9,rax
-	and	r9,r10
-	jz	lupe
-tail:
-	test	r8,r8
-	jz	toend
-@@:
-	mov	al,[rdx]
-	mov	[rcx],al
-	dec	r8
-	jz	toend
-	inc	rcx
-	inc	rdx
-	test	al,al
-	jnz	@B
-	mov	rdx,rdi
-	mov	rdi,rcx
-	mov	rcx,r8
-	rep	stosb
-	mov	rdi,rdx
-toend:
-	pop	rax
-	ret
-strncpy ENDP
+        .ifz    ; source >= 8 ?
 
-	END
+            not rax         ; copy first 8 bytes
+            mov [rcx],rax
+
+            mov eax,ecx     ; align dest 8
+            neg eax
+            and eax,8-1
+            .ifz
+                add eax,8   ; continue if aligned
+            .endif
+            add rcx,rax
+            add rdx,rax
+            sub r8d,eax
+
+            .if r8d >= 8
+
+                .repeat
+
+                    mov rax,[rdx]
+                    mov r9,rax
+                    sub r9,r11
+                    not rax
+                    and r9,rax
+                    and r9,r10
+
+                    .break .ifnz    ; null character found ?
+
+                    not rax         ; copy 8 bytes
+                    mov [rcx],rax
+                    add rcx,8
+                    add rdx,8
+                    sub r8d,8
+                .until r8d < 8
+            .endif
+        .endif
+    .endif
+
+    .repeat
+
+        .break .if !r8d
+
+        .repeat         ; while (count && (*dest++ = *source++))
+
+            mov al,[rdx]
+            mov [rcx],al
+
+            dec r8d
+            .break(1) .ifz
+
+            inc rcx
+            inc rdx
+        .until !al
+
+        mov rdx,rdi     ; dest is padded with null characters to length count.
+        mov rdi,rcx
+        mov rcx,r8
+        rep stosb
+        mov rdi,rdx
+    .until 1
+    pop rax
+    ret
+
+    END

@@ -6,7 +6,7 @@ _mulfq proc uses rsi rdi rbx result:ptr, _a:ptr, _b:ptr
     ;
     ;  quad float [RCX] = quad float [RDX] * quad float [R8]
     ;
-local a[2]:qword, b[2]:qword, h[2]:qword
+  local a[2]:qword, b[2]:qword, h[2]:qword
 
     mov rbx,[r8]
     shl rbx,16

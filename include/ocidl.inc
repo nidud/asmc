@@ -219,7 +219,7 @@ PCONNECTDATA		typedef ptr CONNECTDATA
 LPCONNECTDATA		typedef ptr CONNECTDATA
 
 externdef		IID_IEnumConnections:IID
-IEnumConnections	STRUC
+IEnumConnectionsVtbl struct
 STDMETHOD		QueryInterface, :REFIID, :ptr
 STDMETHOD		AddRef
 STDMETHOD		Release
@@ -227,7 +227,10 @@ STDMETHOD		Next, :DWORD, :LPCONNECTDATA, :ptr
 STDMETHOD		Skip, :DWORD
 STDMETHOD		Reset
 STDMETHOD		Clone, :ptr
-IEnumConnections	ENDS
+IEnumConnectionsVtbl ends
+IEnumConnections struct
+	lpVtbl		PVOID ?
+IEnumConnections ends
 
 ;HRESULT
 IEnumConnections_RemoteNext_Proxy proto WINAPI \
@@ -248,7 +251,7 @@ endif
 ifndef __IConnectionPoint_INTERFACE_DEFINED__
 __IConnectionPoint_INTERFACE_DEFINED__ equ 1
 
-IConnectionPoint	STRUC
+IConnectionPointVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -257,7 +260,10 @@ IConnectionPoint	STRUC
 	STDMETHOD	Advise, :ptr, :ptr
 	STDMETHOD	Unadvise, :DWORD
 	STDMETHOD	EnumConnections, :ptr
-IConnectionPoint	ENDS
+IConnectionPointVtbl ends
+IConnectionPoint struct
+	lpVtbl		PVOID ?
+IConnectionPoint ends
 PCONNECTIONPOINT	typedef ptr IConnectionPoint
 LPCONNECTIONPOINT	typedef ptr IConnectionPoint
 externdef		IID_IConnectionPoint:IID
@@ -268,7 +274,7 @@ ifndef __IEnumConnectionPoints_INTERFACE_DEFINED__
 __IEnumConnectionPoints_INTERFACE_DEFINED__ equ 1
 
 
-IEnumConnectionPoints	STRUC
+IEnumConnectionPointsVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -276,7 +282,10 @@ IEnumConnectionPoints	STRUC
 	STDMETHOD	Skip, :DWORD
 	STDMETHOD	Reset
 	STDMETHOD	Clone, :ptr
-IEnumConnectionPoints	ENDS
+IEnumConnectionPointsVtbl ends
+IEnumConnectionPoints struct
+	lpVtbl		PVOID ?
+IEnumConnectionPoints ends
 PENUMCONNECTIONPOINTS	typedef ptr IEnumConnectionPoints
 LPENUMCONNECTIONPOINTS	typedef ptr IEnumConnectionPoints
 externdef		IID_IEnumConnectionPoints:IID
@@ -301,13 +310,16 @@ ifndef __IConnectionPointContainer_INTERFACE_DEFINED__
 __IConnectionPointContainer_INTERFACE_DEFINED__ equ 1
 
 
-IConnectionPointContainer STRUC
+IConnectionPointContainerVtbl struct
 	STDMETHOD	 QueryInterface, :REFIID, :ptr
 	STDMETHOD	 AddRef
 	STDMETHOD	 Release
 	STDMETHOD	 EnumConnectionPoints, :ptr
 	STDMETHOD	 FindConnectionPoint, :REFIID, :ptr
-IConnectionPointContainer ENDS
+IConnectionPointContainerVtbl ends
+IConnectionPointContainer struct
+	lpVtbl		PVOID ?
+IConnectionPointContainer ends
 PCONNECTIONPOINTCONTAINER typedef ptr IConnectionPointContainer
 LPCONNECTIONPOINTCONTAINER typedef ptr IConnectionPointContainer
 externdef		IID_IConnectionPointContainer:IID
@@ -325,7 +337,7 @@ fLicVerified		BOOL ?
 LICINFO			ENDS
 LPLICINFO		typedef ptr LICINFO
 
-IClassFactory2		STRUC
+IClassFactory2Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -334,7 +346,10 @@ IClassFactory2		STRUC
 	STDMETHOD	GetLicInfo, :ptr
 	STDMETHOD	RequestLicKey, :DWORD, :ptr
 	STDMETHOD	CreateInstanceLic, :ptr, :ptr, :REFIID, :BSTR, :ptr
-IClassFactory2		ENDS
+IClassFactory2Vtbl ends
+IClassFactory2 struct
+	lpVtbl		PVOID ?
+IClassFactory2 ends
 LPCLASSFACTORY2		typedef ptr IClassFactory2
 externdef		IID_IClassFactory2:IID
 
@@ -358,12 +373,15 @@ ifndef __IProvideClassInfo_INTERFACE_DEFINED__
 __IProvideClassInfo_INTERFACE_DEFINED__ equ 1
 
 
-IProvideClassInfo	STRUC
+IProvideClassInfoVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	GetClassInfo, :ptr
-IProvideClassInfo	ENDS
+IProvideClassInfoVtbl ends
+IProvideClassInfo struct
+	lpVtbl		PVOID ?
+IProvideClassInfo ends
 LPPROVIDECLASSINFO	typedef ptr IProvideClassInfo
 externdef		IID_IProvideClassInfo:IID
 
@@ -376,13 +394,16 @@ __IProvideClassInfo2_INTERFACE_DEFINED__ equ 1
 ;GUIDKIND		typedef enum tagGUIDKIND {
 GUIDKIND_DEFAULT_SOURCE_DISP_IID	equ 1
 
-IProvideClassInfo2	STRUC
+IProvideClassInfo2Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	GetClassInfo, :ptr
 	STDMETHOD	GetGUID, :DWORD, :ptr
-IProvideClassInfo2	ENDS
+IProvideClassInfo2Vtbl ends
+IProvideClassInfo2 struct
+	lpVtbl		PVOID ?
+IProvideClassInfo2 ends
 LPPROVIDECLASSINFO2	typedef ptr IProvideClassInfo2
 externdef		IID_IProvideClassInfo2:IID
 
@@ -400,7 +421,7 @@ MULTICLASSINFO_GETIIDSOURCE equ 0x00000008
 TIFLAGS_EXTENDDISPATCHONLY equ 0x00000001
 
 externdef		IID_IProvideMultipleClassInfo:IID
-IProvideMultipleClassInfo STRUC
+IProvideMultipleClassInfoVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -408,7 +429,10 @@ IProvideMultipleClassInfo STRUC
 	STDMETHOD	GetGUID, :DWORD, :ptr
 	STDMETHOD	GetMultiTypeInfoCount, :ptr
 	STDMETHOD	GetInfoOfIndex, :ULONG, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr
-IProvideMultipleClassInfo ENDS
+IProvideMultipleClassInfoVtbl ends
+IProvideMultipleClassInfo struct
+	lpVtbl		PVOID ?
+IProvideMultipleClassInfo ends
 LPPROVIDEMULTIPLECLASSINFO typedef ptr IProvideMultipleClassInfo
 
 endif
@@ -430,7 +454,7 @@ CTRLINFO_EATS_RETURN	equ 1
 CTRLINFO_EATS_ESCAPE	equ 2
 
 externdef		IID_IOleControl:IID
-IOleControl		STRUC
+IOleControlVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -438,7 +462,10 @@ IOleControl		STRUC
 	STDMETHOD	OnMnemonic, :ptr
 	STDMETHOD	OnAmbientPropertyChange, :DISPID
 	STDMETHOD	FreezeEvents, :BOOL
-IOleControl		ENDS
+IOleControlVtbl ends
+IOleControl struct
+	lpVtbl		PVOID ?
+IOleControl ends
 LPOLECONTROL		typedef ptr IOleControl
 
 endif
@@ -460,7 +487,7 @@ XFORMCOORDS_HIMETRICTOCONTAINER equ 0x4
 XFORMCOORDS_CONTAINERTOHIMETRIC equ 0x8
 XFORMCOORDS_EVENTCOMPAT equ 0x10
 
-IOleControlSite		STRUC
+IOleControlSiteVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -471,7 +498,10 @@ IOleControlSite		STRUC
 	STDMETHOD	TranslateAccelerator_, :ptr, :DWORD
 	STDMETHOD	OnFocus, :BOOL
 	STDMETHOD	ShowPropertyFrame
-IOleControlSite		ENDS
+IOleControlSiteVtbl ends
+IOleControlSite struct
+	lpVtbl		PVOID ?
+IOleControlSite ends
 LPOLECONTROLSITE	typedef ptr IOleControlSite
 LPIOleControlSite	typedef ptr IOleControlSite
 externdef		IID_IOleControlSite:IID
@@ -492,7 +522,7 @@ dwHelpContext		dd ?
 PROPPAGEINFO		ENDS
 LPPROPPAGEINFO		typedef ptr PROPPAGEINFO
 
-IPropertyPage		STRUC
+IPropertyPageVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -507,7 +537,10 @@ IPropertyPage		STRUC
 	STDMETHOD	Apply
 	STDMETHOD	Help, :LPCOLESTR
 	STDMETHOD	TranslateAccelerator_, :ptr
-IPropertyPage		ENDS
+IPropertyPageVtbl ends
+IPropertyPage struct
+	lpVtbl		PVOID ?
+IPropertyPage ends
 LPPROPERTYPAGE		typedef ptr IPropertyPage
 externdef		IID_IPropertyPage:IID
 
@@ -518,7 +551,7 @@ ifndef __IPropertyPage2_INTERFACE_DEFINED__
 __IPropertyPage2_INTERFACE_DEFINED__ equ 1
 
 
-IPropertyPage2		STRUC
+IPropertyPage2Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -534,7 +567,10 @@ IPropertyPage2		STRUC
 	STDMETHOD	Help, :LPCOLESTR
 	STDMETHOD	TranslateAccelerator_, :ptr
 	STDMETHOD	EditProperty, :DISPID
-IPropertyPage2		ENDS
+IPropertyPage2Vtbl ends
+IPropertyPage2 struct
+	lpVtbl		PVOID ?
+IPropertyPage2 ends
 LPPROPERTYPAGE2		typedef ptr IPropertyPage2
 externdef		IID_IPropertyPage2:IID
 
@@ -550,7 +586,7 @@ PROPPAGESTATUS_DIRTY	equ 0x1
 PROPPAGESTATUS_VALIDATE equ 0x2
 PROPPAGESTATUS_CLEAN	equ 0x4
 
-IPropertyPageSite	STRUC
+IPropertyPageSiteVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -558,7 +594,10 @@ IPropertyPageSite	STRUC
 	STDMETHOD	GetLocaleID, :ptr
 	STDMETHOD	GetPageContainer, :ptr
 	STDMETHOD	TranslateAccelerator_, :ptr
-IPropertyPageSite	ENDS
+IPropertyPageSiteVtbl ends
+IPropertyPageSite struct
+	lpVtbl		PVOID ?
+IPropertyPageSite ends
 LPPROPERTYPAGESITE	typedef ptr IPropertyPageSite
 externdef		IID_IPropertyPageSite:IID
 
@@ -569,13 +608,16 @@ ifndef __IPropertyNotifySink_INTERFACE_DEFINED__
 __IPropertyNotifySink_INTERFACE_DEFINED__ equ 1
 
 
-IPropertyNotifySink	STRUC
+IPropertyNotifySinkVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	OnChanged, :DISPID
 	STDMETHOD	OnRequestEdit, :DISPID
-IPropertyNotifySink	ENDS
+IPropertyNotifySinkVtbl ends
+IPropertyNotifySink struct
+	lpVtbl		PVOID ?
+IPropertyNotifySink ends
 LPPROPERTYNOTIFYSINK	typedef ptr IPropertyNotifySink
 externdef		IID_IPropertyNotifySink:IID
 
@@ -592,12 +634,15 @@ pElems			LPGUID ?
 CAUUID			ENDS
 LPCAUUID		typedef ptr CAUUID
 
-ISpecifyPropertyPages	STRUC
+ISpecifyPropertyPagesVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	GetPages, :ptr
-ISpecifyPropertyPages	ENDS
+ISpecifyPropertyPagesVtbl ends
+ISpecifyPropertyPages struct
+	lpVtbl		PVOID ?
+ISpecifyPropertyPages ends
 LPSPECIFYPROPERTYPAGES	typedef ptr ISpecifyPropertyPages
 externdef		IID_ISpecifyPropertyPages:IID
 
@@ -607,7 +652,7 @@ ifndef __IPersistMemory_INTERFACE_DEFINED__
 __IPersistMemory_INTERFACE_DEFINED__ equ 1
 
 
-IPersistMemory		STRUC
+IPersistMemoryVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -617,7 +662,10 @@ IPersistMemory		STRUC
 	STDMETHOD	Save, :LPVOID, :BOOL, :ULONG
 	STDMETHOD	GetSizeMax, :ptr
 	STDMETHOD	InitNew
-IPersistMemory		ENDS
+IPersistMemoryVtbl ends
+IPersistMemory struct
+	lpVtbl		PVOID ?
+IPersistMemory ends
 LPPERSISTMEMORY		typedef ptr IPersistMemory
 externdef		IID_IPersistMemory:IID
 
@@ -654,7 +702,7 @@ ifndef __IPersistStreamInit_INTERFACE_DEFINED__
 __IPersistStreamInit_INTERFACE_DEFINED__ equ 1
 
 
-IPersistStreamInit	STRUC
+IPersistStreamInitVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -664,7 +712,10 @@ IPersistStreamInit	STRUC
 	STDMETHOD	Save, :LPSTREAM, :BOOL
 	STDMETHOD	GetSizeMax, :ptr
 	STDMETHOD	InitNew
-IPersistStreamInit	ENDS
+IPersistStreamInitVtbl ends
+IPersistStreamInit struct
+	lpVtbl		PVOID ?
+IPersistStreamInit ends
 LPPERSISTSTREAMINIT	typedef ptr IPersistStreamInit
 externdef		IID_IPersistStreamInit:IID
 
@@ -675,7 +726,7 @@ ifndef __IPersistPropertyBag_INTERFACE_DEFINED__
 __IPersistPropertyBag_INTERFACE_DEFINED__ equ 1
 
 
-IPersistPropertyBag	STRUC
+IPersistPropertyBagVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -683,7 +734,10 @@ IPersistPropertyBag	STRUC
 	STDMETHOD	InitNew
 	STDMETHOD	Load, :ptr, :ptr
 	STDMETHOD	Save, :ptr, :BOOL, :BOOL
-IPersistPropertyBag	ENDS
+IPersistPropertyBagVtbl ends
+IPersistPropertyBag struct
+	lpVtbl		PVOID ?
+IPersistPropertyBag ends
 LPPERSISTPROPERTYBAG	typedef ptr IPersistPropertyBag
 externdef		IID_IPersistPropertyBag:IID
 
@@ -693,13 +747,16 @@ ifndef __ISimpleFrameSite_INTERFACE_DEFINED__
 __ISimpleFrameSite_INTERFACE_DEFINED__ equ 1
 
 
-ISimpleFrameSite	STRUC
+ISimpleFrameSiteVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	PreMessageFilter, :HWND, :DWORD, :WPARAM, :LPARAM, :ptr, :ptr
 	STDMETHOD	PostMessageFilter, :HWND, :DWORD, :WPARAM, :LPARAM, :ptr, :DWORD
-ISimpleFrameSite	ENDS
+ISimpleFrameSiteVtbl ends
+ISimpleFrameSite struct
+	lpVtbl		PVOID ?
+ISimpleFrameSite ends
 LPSIMPLEFRAMESITE	typedef ptr ISimpleFrameSite
 externdef		IID_ISimpleFrameSite:IID
 
@@ -716,7 +773,7 @@ TEXTMETRICOLE		typedef TEXTMETRIC
 endif
 LPTEXTMETRICOLE		typedef ptr TEXTMETRICOLE
 
-IFont			STRUC
+IFontVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -744,7 +801,10 @@ IFont			STRUC
 	STDMETHOD	AddRefHfont, :HFONT
 	STDMETHOD	ReleaseHfont, :HFONT
 	STDMETHOD	SetHdc, :HDC
-IFont			ENDS
+IFontVtbl ends
+IFont struct
+	lpVtbl		PVOID ?
+IFont ends
 LPFONT			typedef ptr IFont
 LPIFont			typedef ptr IFont
 externdef		IID_IFont:IID
@@ -767,7 +827,7 @@ OLE_YSIZE_HIMETRIC	typedef ptr GUID ; DECLSPEC_UUID("66504309-BE0F-101A-8BBB-00A
 
 DEFINE_IIDX(IPicture, "7BF80980-BF32-101A-8BBB-00AA00300CAB")
 
-IPicture		STRUC
+IPictureVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -785,7 +845,10 @@ IPicture		STRUC
 	STDMETHOD	PictureChanged,
 	STDMETHOD	SaveAsFile, :LPSTREAM, :BOOL, :ptr
 	STDMETHOD	get_Attributes, :ptr
-IPicture		ENDS
+IPictureVtbl ends
+IPicture struct
+	lpVtbl		PVOID ?
+IPicture ends
 LPPICTURE		typedef ptr IPicture
 externdef		IID_IPicture:IID
 
@@ -797,7 +860,7 @@ __IPicture2_INTERFACE_DEFINED__ equ 1
 
 HHANDLE			typedef UINT_PTR
 
-IPicture2		STRUC
+IPicture2Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -815,7 +878,10 @@ IPicture2		STRUC
 	STDMETHOD	PictureChanged
 	STDMETHOD	SaveAsFile, :LPSTREAM, :BOOL, :ptr
 	STDMETHOD	get_Attributes, :ptr
-IPicture2		ENDS
+IPicture2Vtbl ends
+IPicture2 struct
+	lpVtbl		PVOID ?
+IPicture2 ends
 LPPICTURE2		typedef ptr IPicture2
 externdef		IID_IPicture2:IID
 
@@ -826,7 +892,7 @@ ifndef __IFontEventsDisp_INTERFACE_DEFINED__
 __IFontEventsDisp_INTERFACE_DEFINED__ equ 1
 
 
-IFontEventsDisp		STRUC
+IFontEventsDispVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -834,7 +900,10 @@ IFontEventsDisp		STRUC
 	STDMETHOD	GetTypeInfo, :DWORD, :LCID, :ptr
 	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :DWORD, :LCID, :ptr
 	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-IFontEventsDisp		ENDS
+IFontEventsDispVtbl ends
+IFontEventsDisp struct
+	lpVtbl		PVOID ?
+IFontEventsDisp ends
 LPFONTEVENTS		typedef ptr IFontEventsDisp
 externdef		IID_IFontEventsDisp:IID
 
@@ -844,7 +913,7 @@ ifndef __IFontDisp_INTERFACE_DEFINED__
 __IFontDisp_INTERFACE_DEFINED__ equ 1
 
 
-IFontDisp		STRUC
+IFontDispVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -852,7 +921,10 @@ IFontDisp		STRUC
 	STDMETHOD	GetTypeInfo, :UINT, :LCID, :ptr
 	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :DWORD, :LCID, :ptr
 	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-IFontDisp		ENDS
+IFontDispVtbl ends
+IFontDisp struct
+	lpVtbl		PVOID ?
+IFontDisp ends
 LPFONTDISP		typedef ptr IFontDisp
 externdef		IID_IFontDisp:IID
 
@@ -862,7 +934,7 @@ ifndef __IPictureDisp_INTERFACE_DEFINED__
 __IPictureDisp_INTERFACE_DEFINED__ equ 1
 
 
-IPictureDisp		STRUC
+IPictureDispVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -870,7 +942,10 @@ IPictureDisp		STRUC
 	STDMETHOD	GetTypeInfo, :UINT, :LCID, :ptr
 	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :DWORD, :LCID, :ptr
 	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-IPictureDisp		ENDS
+IPictureDispVtbl ends
+IPictureDisp struct
+	lpVtbl		PVOID ?
+IPictureDisp ends
 LPPICTUREDISP		typedef ptr IPictureDisp
 externdef		IID_IPictureDisp:IID
 
@@ -880,7 +955,7 @@ ifndef __IOleInPlaceObjectWindowless_INTERFACE_DEFINED__
 __IOleInPlaceObjectWindowless_INTERFACE_DEFINED__ equ 1
 
 
-IOleInPlaceObjectWindowless STRUC
+IOleInPlaceObjectWindowlessVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -892,7 +967,10 @@ IOleInPlaceObjectWindowless STRUC
 	STDMETHOD	ReactivateAndUndo,
 	STDMETHOD	OnWindowMessage, :DWORD, :WPARAM, :LPARAM, :ptr
 	STDMETHOD	GetDropTarget, :ptr
-IOleInPlaceObjectWindowless ENDS
+IOleInPlaceObjectWindowlessVtbl ends
+IOleInPlaceObjectWindowless struct
+	lpVtbl		PVOID ?
+IOleInPlaceObjectWindowless ends
 LPOLEINPLACEOBJECTWINDOWLESS typedef ptr IOleInPlaceObjectWindowless
 externdef		IID_IOleInPlaceObjectWindowless:IID
 
@@ -906,7 +984,7 @@ __IOleInPlaceSiteEx_INTERFACE_DEFINED__ equ 1
 ACTIVATEFLAGS		typedef SDWORD
 ACTIVATE_WINDOWLESS	equ 1
 
-IOleInPlaceSiteEx	STRUC
+IOleInPlaceSiteExVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -925,7 +1003,10 @@ IOleInPlaceSiteEx	STRUC
 	STDMETHOD	OnInPlaceActivateEx, :ptr, :DWORD
 	STDMETHOD	OnInPlaceDeactivateEx, :BOOL
 	STDMETHOD	RequestUIActivate
-IOleInPlaceSiteEx	ENDS
+IOleInPlaceSiteExVtbl ends
+IOleInPlaceSiteEx struct
+	lpVtbl		PVOID ?
+IOleInPlaceSiteEx ends
 LPOLEINPLACESITEEX	typedef ptr IOleInPlaceSiteEx
 externdef		IID_IOleInPlaceSiteEx:IID
 
@@ -941,7 +1022,7 @@ OLEDC_NODRAW		equ 0x1
 OLEDC_PAINTBKGND	equ 0x2
 OLEDC_OFFSCREEN		equ 0x4
 
-IOleInPlaceSiteWindowless STRUC
+IOleInPlaceSiteWindowlessVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -972,7 +1053,10 @@ IOleInPlaceSiteWindowless STRUC
 	STDMETHOD	ScrollRect, :DWORD, :DWORD, :LPCRECT, :LPCRECT
 	STDMETHOD	AdjustRect, :LPRECT
 	STDMETHOD	OnDefWindowMessage, :DWORD, :WPARAM, :LPARAM, :ptr
-IOleInPlaceSiteWindowless ENDS
+IOleInPlaceSiteWindowlessVtbl ends
+IOleInPlaceSiteWindowless struct
+	lpVtbl		PVOID ?
+IOleInPlaceSiteWindowless ends
 LPOLEINPLACESITEWINDOWLESS typedef ptr IOleInPlaceSiteWindowless
 externdef		IID_IOleInPlaceSiteWindowless:IID
 
@@ -1020,7 +1104,7 @@ DVASPECTINFO		ENDS
 
 CALLBACK(pDraw_pfnContinue, :DWORD)
 
-IViewObjectEx		STRUC
+IViewObjectExVtbl struct
 	STDMETHOD	Draw, :DWORD, :SDWORD, :ptr, :ptr, :HDC, :HDC, :LPCRECTL, :LPCRECTL, :pDraw_pfnContinue, :DWORD
 	STDMETHOD	GetColorSet, :DWORD, :SDWORD, :ptr, :ptr, :HDC, :ptr
 	STDMETHOD	Freeze, :DWORD, :SDWORD, :ptr, :ptr
@@ -1033,7 +1117,10 @@ IViewObjectEx		STRUC
 	STDMETHOD	QueryHitPoint, :DWORD, :LPCRECT, :POINT, :SDWORD, :ptr
 	STDMETHOD	QueryHitRect, :DWORD, :LPCRECT, :LPCRECT, :SDWORD, :ptr
 	STDMETHOD	GetNaturalExtent, :DWORD, :SDWORD, :ptr, :HDC, :ptr, :LPSIZEL
-IViewObjectEx		ends
+IViewObjectExVtbl ends
+IViewObjectEx struct
+	lpVtbl		PVOID ?
+IViewObjectEx ends
 
 endif ; __IViewObjectEx_INTERFACE_DEFINED__
 
@@ -1041,7 +1128,7 @@ ifndef __IOleUndoUnit_INTERFACE_DEFINED__
 __IOleUndoUnit_INTERFACE_DEFINED__ equ 1
 
 
-IOleUndoUnit		STRUC
+IOleUndoUnitVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1049,7 +1136,10 @@ IOleUndoUnit		STRUC
 	STDMETHOD	GetDescription, :ptr
 	STDMETHOD	GetUnitType, :ptr, :ptr
 	STDMETHOD	OnNextAdd
-IOleUndoUnit		ENDS
+IOleUndoUnitVtbl ends
+IOleUndoUnit struct
+	lpVtbl		PVOID ?
+IOleUndoUnit ends
 LPOLEUNDOUNIT		typedef ptr IOleUndoUnit
 externdef		IID_IOleUndoUnit:IID
 
@@ -1059,7 +1149,7 @@ ifndef __IOleParentUndoUnit_INTERFACE_DEFINED__
 __IOleParentUndoUnit_INTERFACE_DEFINED__ equ 1
 
 
-IOleParentUndoUnit	STRUC
+IOleParentUndoUnitVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1072,7 +1162,10 @@ IOleParentUndoUnit	STRUC
 	STDMETHOD	_Add, :ptr
 	STDMETHOD	FindUnit, :ptr
 	STDMETHOD	GetParentState, :ptr
-IOleParentUndoUnit	ENDS
+IOleParentUndoUnitVtbl ends
+IOleParentUndoUnit struct
+	lpVtbl		PVOID ?
+IOleParentUndoUnit ends
 
 endif
 
@@ -1081,7 +1174,7 @@ ifndef __IEnumOleUndoUnits_INTERFACE_DEFINED__
 __IEnumOleUndoUnits_INTERFACE_DEFINED__ equ 1
 
 
-IEnumOleUndoUnits	STRUC
+IEnumOleUndoUnitsVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1089,7 +1182,10 @@ IEnumOleUndoUnits	STRUC
 	STDMETHOD	Skip, :ULONG
 	STDMETHOD	Reset
 	STDMETHOD	Clone, :ptr
-IEnumOleUndoUnits	ENDS
+IEnumOleUndoUnitsVtbl ends
+IEnumOleUndoUnits struct
+	lpVtbl		PVOID ?
+IEnumOleUndoUnits ends
 LPENUMOLEUNDOUNITS	typedef ptr IEnumOleUndoUnits
 externdef		IID_IEnumOleUndoUnits:IID
 
@@ -1115,7 +1211,7 @@ __IOleUndoManager_INTERFACE_DEFINED__ equ 1
 
 SID_SOleUndoManager	equ IID_IOleUndoManager
 
-IOleUndoManager		STRUC
+IOleUndoManagerVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1131,7 +1227,10 @@ IOleUndoManager		STRUC
 	STDMETHOD	GetLastUndoDescription, :ptr
 	STDMETHOD	GetLastRedoDescription, :ptr
 	STDMETHOD	Enable, :BOOL
-IOleUndoManager		ENDS
+IOleUndoManagerVtbl ends
+IOleUndoManager struct
+	lpVtbl		PVOID ?
+IOleUndoManager ends
 LPOLEUNDOMANAGER	typedef ptr IOleUndoManager
 LPIOleUndoManager	typedef ptr IOleUndoManager
 externdef		IID_IOleUndoManager:IID
@@ -1147,14 +1246,17 @@ POINTERINACTIVE_ACTIVATEONENTRY	  equ 1
 POINTERINACTIVE_DEACTIVATEONLEAVE equ 2
 POINTERINACTIVE_ACTIVATEONDRAG	  equ 4
 
-IPointerInactive	STRUC
+IPointerInactiveVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	GetActivationPolicy, :ptr
 	STDMETHOD	OnInactiveMouseMove, :LPCRECT, :LONG, :LONG, :DWORD
 	STDMETHOD	OnInactiveSetCursor, :LPCRECT, :LONG, :LONG, :DWORD, :BOOL
-IPointerInactive	ENDS
+IPointerInactiveVtbl ends
+IPointerInactive struct
+	lpVtbl		PVOID ?
+IPointerInactive ends
 LPPOINTERINACTIVE	typedef ptr IPointerInactive
 externdef		IID_IPointerInactive:IID
 
@@ -1164,13 +1266,16 @@ ifndef __IObjectWithSite_INTERFACE_DEFINED__
 __IObjectWithSite_INTERFACE_DEFINED__ equ 1
 
 
-IObjectWithSite		STRUC
+IObjectWithSiteVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	SetSite, :ptr
 	STDMETHOD	GetSite, :REFIID, :ptr
-IObjectWithSite		ENDS
+IObjectWithSiteVtbl ends
+IObjectWithSite struct
+	lpVtbl		PVOID ?
+IObjectWithSite ends
 LPOBJECTWITHSITE	typedef ptr IObjectWithSite
 externdef		IID_IObjectWithSite:IID
 
@@ -1193,7 +1298,7 @@ pElems			LPDWORD ?
 CADWORD			ENDS
 LPCADWORD		typedef ptr CADWORD
 
-IPerPropertyBrowsing	STRUC
+IPerPropertyBrowsingVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1201,7 +1306,10 @@ IPerPropertyBrowsing	STRUC
 	STDMETHOD	MapPropertyToPage, :DISPID, :ptr
 	STDMETHOD	GetPredefinedStrings, :DISPID, :ptr, :ptr
 	STDMETHOD	GetPredefinedValue, :DISPID, :DWORD, :ptr
-IPerPropertyBrowsing	ENDS
+IPerPropertyBrowsingVtbl ends
+IPerPropertyBrowsing struct
+	lpVtbl		PVOID ?
+IPerPropertyBrowsing ends
 LPPERPROPERTYBROWSING	typedef ptr IPerPropertyBrowsing
 externdef		IID_IPerPropertyBrowsing:IID
 
@@ -1223,7 +1331,7 @@ pstrName		LPOLESTR ?
 clsid			CLSID <>
 PROPBAG2		ENDS
 
-IPropertyBag2		STRUC
+IPropertyBag2Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1232,7 +1340,10 @@ IPropertyBag2		STRUC
 	STDMETHOD	CountProperties, :ptr
 	STDMETHOD	GetPropertyInfo, :DWORD, :DWORD, :ptr, :ptr
 	STDMETHOD	LoadObject, :LPCOLESTR, :DWORD, :ptr, :ptr
-IPropertyBag2		ENDS
+IPropertyBag2Vtbl ends
+IPropertyBag2 struct
+	lpVtbl		PVOID ?
+IPropertyBag2 ends
 LPPROPERTYBAG2		typedef ptr IPropertyBag2
 externdef		IID_IPropertyBag2:IID
 
@@ -1243,7 +1354,7 @@ ifndef __IPersistPropertyBag2_INTERFACE_DEFINED__
 __IPersistPropertyBag2_INTERFACE_DEFINED__ equ 1
 
 
-IPersistPropertyBag2	STRUC
+IPersistPropertyBag2Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1252,7 +1363,10 @@ IPersistPropertyBag2	STRUC
 	STDMETHOD	Load, :ptr, :ptr
 	STDMETHOD	Save, :ptr, :BOOL, :BOOL
 	STDMETHOD	IsDirty
-IPersistPropertyBag2	ENDS
+IPersistPropertyBag2Vtbl ends
+IPersistPropertyBag2 struct
+	lpVtbl		PVOID ?
+IPersistPropertyBag2 ends
 LPPERSISTPROPERTYBAG2	typedef ptr IPersistPropertyBag2
 externdef		IID_IPersistPropertyBag2:IID
 
@@ -1263,7 +1377,7 @@ ifndef __IAdviseSinkEx_INTERFACE_DEFINED__
 __IAdviseSinkEx_INTERFACE_DEFINED__ equ 1
 
 
-IAdviseSinkEx		STRUC
+IAdviseSinkExVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1273,7 +1387,10 @@ IAdviseSinkEx		STRUC
 	STDMETHOD	OnSave
 	STDMETHOD	OnClose
 	STDMETHOD	OnViewStatusChange, :DWORD
-IAdviseSinkEx		ENDS
+IAdviseSinkExVtbl ends
+IAdviseSinkEx struct
+	lpVtbl		PVOID ?
+IAdviseSinkEx ends
 LPADVISESINKEX		typedef ptr IAdviseSinkEx
 externdef		IID_IAdviseSinkEx:IID
 
@@ -1337,14 +1454,17 @@ dwPropNotifyCookie	dd ?
 dwPointerActivationPolicy dd ?
 QACONTROL		ENDS
 
-IQuickActivate		STRUC
+IQuickActivateVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	QuickActivate, :ptr, :ptr
 	STDMETHOD	SetContentExtent, :LPSIZEL
 	STDMETHOD	GetContentExtent, :LPSIZEL
-IQuickActivate		ENDS
+IQuickActivateVtbl ends
+IQuickActivate struct
+	lpVtbl		PVOID ?
+IQuickActivate ends
 LPQUICKACTIVATE		typedef ptr IQuickActivate
 externdef		IID_IQuickActivate:IID
 

@@ -31,16 +31,16 @@ LPD3DXRenderToEnvMap	typedef ptr ID3DXRenderToEnvMap
 LPD3DXRENDERTOSURFACE	typedef ptr ID3DXRenderToSurface
 LPD3DXSPRITE		typedef ptr ID3DXSprite
 
-ID3DXBuffer		STRUC
-
+ID3DXBufferVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
-
 	STDMETHOD	GetBufferPointer
 	STDMETHOD	GetBufferSize
-
-ID3DXBuffer		ENDS
+ID3DXBufferVtbl ends
+ID3DXBuffer struct
+	lpVtbl		PVOID ?
+ID3DXBuffer ends
 
 D3DXFONT_DESCA		STRUC
 Height			SINT ?
@@ -70,7 +70,7 @@ FaceName		WCHAR LF_FACESIZE dup(?)
 D3DXFONT_DESCW		ENDS
 LPD3DXFONT_DESCW	typedef ptr D3DXFONT_DESCW
 
-ID3DXFont		STRUC
+ID3DXFontVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -89,9 +89,12 @@ ID3DXFont		STRUC
 	STDMETHOD	DrawTextW, :ptr, :ptr, :SINT, :ptr, :DWORD, :D3DCOLOR
 	STDMETHOD	OnLostDevice
 	STDMETHOD	OnResetDevice
-ID3DXFont		ENDS
+ID3DXFontVtbl ends
+ID3DXFont struct
+	lpVtbl		PVOID ?
+ID3DXFont ends
 
-ID3DXLine		STRUC
+ID3DXLineVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -112,7 +115,10 @@ ID3DXLine		STRUC
 	STDMETHOD	_End
 	STDMETHOD	OnLostDevice
 	STDMETHOD	OnResetDevice
-ID3DXLine		ENDS
+ID3DXLineVtbl ends
+ID3DXLine struct
+	lpVtbl		PVOID ?
+ID3DXLine ends
 
 D3DXRTE_DESC		STRUC
 _Size			UINT ?
@@ -122,7 +128,7 @@ DepthStencil		BOOL ?
 DepthStencilFormat	D3DFORMAT ?
 D3DXRTE_DESC		ENDS
 
-ID3DXRenderToEnvMap	STRUC
+ID3DXRenderToEnvMapVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -136,7 +142,10 @@ ID3DXRenderToEnvMap	STRUC
 	STDMETHOD	_End, :DWORD
 	STDMETHOD	OnLostDevice
 	STDMETHOD	OnResetDevice
-ID3DXRenderToEnvMap	ENDS
+ID3DXRenderToEnvMapVtbl ends
+ID3DXRenderToEnvMap struct
+	lpVtbl		PVOID ?
+ID3DXRenderToEnvMap ends
 
 D3DXRTS_DESC		STRUC
 _Width			UINT ?
@@ -146,7 +155,7 @@ DepthStencil		BOOL ?
 DepthStencilFormat	D3DFORMAT ?
 D3DXRTS_DESC		ENDS
 
-ID3DXRenderToSurface	STRUC
+ID3DXRenderToSurfaceVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -156,9 +165,12 @@ ID3DXRenderToSurface	STRUC
 	STDMETHOD	EndScene, :DWORD
 	STDMETHOD	OnLostDevice
 	STDMETHOD	OnResetDevice
-ID3DXRenderToSurface	ENDS
+ID3DXRenderToSurfaceVtbl ends
+ID3DXRenderToSurface struct
+	lpVtbl		PVOID ?
+ID3DXRenderToSurface ends
 
-ID3DXSprite		STRUC
+ID3DXSpriteVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -173,7 +185,10 @@ ID3DXSprite		STRUC
 	STDMETHOD	_End
 	STDMETHOD	OnLostDevice
 	STDMETHOD	OnResetDevice
-ID3DXSprite		ENDS
+ID3DXSpriteVtbl ends
+ID3DXSprite struct
+	lpVtbl		PVOID ?
+ID3DXSprite ends
 
 
 ;BOOL

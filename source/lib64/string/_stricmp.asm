@@ -1,40 +1,36 @@
-include string.inc
+    .code
 
-	.code
+_stricmp::
 
-	OPTION PROLOGUE:NONE, EPILOGUE:NONE
+    mov r8,rdx
+    mov rax,-1
 
-_stricmp PROC dst:LPSTR, src:LPSTR
-	mov	r10,rdx
-	mov	rax,-1
-	ALIGN	16
-lupe:
-	test	al,al
-	jz	toend
+    .repeat
 
-	mov	al,[r10]
-	cmp	al,[rcx]
-	lea	r10,[r10+1]
-	lea	rcx,[rcx+1]
-	je	lupe
+        .break .if !al
 
-	mov	ah,[rcx-1]
-	sub	ax,'AA'
-	cmp	al,'Z'-'A'+1
-	sbb	dl,dl
-	and	dl,'a'-'A'
-	cmp	ah,'Z'-'A'+1
-	sbb	dh,dh
-	and	dh,'a'-'A'
-	add	ax,dx
-	add	ax,'AA'
-	cmp	ah,al
-	je	lupe
-	sbb	al,al
-	sbb	al,-1
-toend:
-	movsx	rax,al
-	ret
-_stricmp ENDP
+        mov al,[r8]
+        cmp al,[rcx]
+        lea r8,[r8+1]
+        lea rcx,[rcx+1]
+        .continue(0) .ifz
 
-	END
+        mov ah,[rcx-1]
+        sub ax,'AA'
+        cmp al,'Z'-'A'+1
+        sbb dl,dl
+        and dl,'a'-'A'
+        cmp ah,'Z'-'A'+1
+        sbb dh,dh
+        and dh,'a'-'A'
+        add ax,dx
+        add ax,'AA'
+        .continue(0) .if ah == al
+
+        sbb al,al
+        sbb al,-1
+    .until 1
+    movsx rax,al
+    ret
+
+    end

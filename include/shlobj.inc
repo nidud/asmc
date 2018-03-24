@@ -56,21 +56,27 @@ GIL_DONTCACHE		equ 0x0010
 GIL_SHIELD		equ 0x0200
 GIL_FORCENOSHIELD	equ 0x0400
 
-IExtractIconA		STRUC
+IExtractIconAVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	GetIconLocation, :UINT, :LPSTR, :UINT, :ptr, :ptr
 	STDMETHOD	Extract, :LPCSTR, :UINT, :ptr, :ptr, :UINT
-IExtractIconA		ENDS
+IExtractIconAVtbl ends
+IExtractIconA struct
+	lpVtbl		PVOID ?
+IExtractIconA ends
 LPEXTRACTICONA		typedef ptr IExtractIconA
-IExtractIconW		STRUC
+IExtractIconWVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	GetIconLocation, :UINT, :LPWSTR, :UINT, :ptr, :ptr
 	STDMETHOD	Extract, :LPCWSTR, :UINT, :ptr, :ptr, :UINT
-IExtractIconW		ENDS
+IExtractIconWVtbl ends
+IExtractIconW struct
+	lpVtbl		PVOID ?
+IExtractIconW ends
 LPEXTRACTICONW		typedef ptr IExtractIconW
 ifdef _UNICODE
 IExtractIcon		equ <IExtractIconW>
@@ -80,19 +86,22 @@ IExtractIcon		equ <IExtractIconA>
 LPEXTRACTICON		equ <LPEXTRACTICONA>
 endif
 
-IShellIconOverlayIdentifier STRUC
+IShellIconOverlayIdentifierVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	IsMemberOf, :LPCWSTR, :DWORD
 	STDMETHOD	GetOverlayInfo, :LPWSTR, :SINT, :ptr, :ptr
 	STDMETHOD	GetPriority, :ptr
-IShellIconOverlayIdentifier ENDS
+IShellIconOverlayIdentifierVtbl ends
+IShellIconOverlayIdentifier struct
+	lpVtbl		PVOID ?
+IShellIconOverlayIdentifier ends
 
 ISIOI_ICONFILE		equ 0x00000001
 ISIOI_ICONINDEX		equ 0x00000002
 
-IShellIconOverlayManager STRUC
+IShellIconOverlayManagerVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -101,7 +110,10 @@ IShellIconOverlayManager STRUC
 	STDMETHOD	RefreshOverlayImages, :DWORD
 	STDMETHOD	LoadNonloadedOverlayIdentifiers
 	STDMETHOD	OverlayIndexFromImageIndex, :SINT, :ptr, :BOOL
-IShellIconOverlayManager ENDS
+IShellIconOverlayManagerVtbl ends
+IShellIconOverlayManager struct
+	lpVtbl		PVOID ?
+IShellIconOverlayManager ends
 
 SIOM_OVERLAYINDEX	equ 1
 SIOM_ICONINDEX		equ 2
@@ -110,13 +122,16 @@ SIOM_RESERVED_LINK	equ 1
 SIOM_RESERVED_SLOWFILE	equ 2
 SIOM_RESERVED_DEFAULT	equ 3
 
-IShellIconOverlay	STRUC
+IShellIconOverlayVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	GetOverlayIndex, :PCUITEMID_CHILD, :ptr
 	STDMETHOD	GetOverlayIconIndex, :PCUITEMID_CHILD, :ptr
-IShellIconOverlay	ENDS
+IShellIconOverlayVtbl ends
+IShellIconOverlay struct
+	lpVtbl		PVOID ?
+IShellIconOverlay ends
 
 OI_DEFAULT		equ 0x00000000
 OI_ASYNC		equ 0xFFFFEEEE
@@ -273,18 +288,24 @@ endif
 
 
 ifdef _INC_SHELLAPI
-IShellExecuteHookA	STRUC
+IShellExecuteHookAVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	Execute, :LPSHELLEXECUTEINFOA
-IShellExecuteHookA	ENDS
-IShellExecuteHookW	STRUC
+IShellExecuteHookAVtbl ends
+IShellExecuteHookA struct
+	lpVtbl		PVOID ?
+IShellExecuteHookA ends
+IShellExecuteHookWVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	Execute, :LPSHELLEXECUTEINFOW
-IShellExecuteHookW	ENDS
+IShellExecuteHookWVtbl ends
+IShellExecuteHookW struct
+	lpVtbl		PVOID ?
+IShellExecuteHookW ends
 ifdef _UNICODE
 IShellExecuteHook	equ <IShellExecuteHookW>
 else
@@ -293,28 +314,37 @@ endif
 endif
 
 
-IURLSearchHook		STRUC
+IURLSearchHookVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	Translate, :LPWSTR, :DWORD
-IURLSearchHook		ENDS
+IURLSearchHookVtbl ends
+IURLSearchHook struct
+	lpVtbl		PVOID ?
+IURLSearchHook ends
 
-ISearchContext		STRUC
+ISearchContextVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	GetSearchUrl, :ptr
 	STDMETHOD	GetSearchText, :ptr
 	STDMETHOD	GetSearchStyle, :ptr
-ISearchContext		ENDS
+ISearchContextVtbl ends
+ISearchContext struct
+	lpVtbl		PVOID ?
+ISearchContext ends
 
-IURLSearchHook2		STRUC
+IURLSearchHook2Vtbl struct
 	STDMETHOD	TranslateWithSearchContext, :LPWSTR, :DWORD, :ptr
-IURLSearchHook2		ENDS
+IURLSearchHook2Vtbl ends
+IURLSearchHook2 struct
+	lpVtbl		PVOID ?
+IURLSearchHook2 ends
 
 
-INewShortcutHookA	STRUC
+INewShortcutHookAVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -324,8 +354,11 @@ INewShortcutHookA	STRUC
 	STDMETHOD	GetFolder, :LPSTR, :SINT
 	STDMETHOD	GetName, :LPSTR, :SINT
 	STDMETHOD	GetExtension, :LPSTR, :SINT
-INewShortcutHookA	ENDS
-INewShortcutHookW	STRUC
+INewShortcutHookAVtbl ends
+INewShortcutHookA struct
+	lpVtbl		PVOID ?
+INewShortcutHookA ends
+INewShortcutHookWVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -335,26 +368,35 @@ INewShortcutHookW	STRUC
 	STDMETHOD	GetFolder, :LPWSTR, :SINT
 	STDMETHOD	GetName, :LPWSTR, :SINT
 	STDMETHOD	GetExtension, :LPWSTR, :SINT
-INewShortcutHookW	ENDS
+INewShortcutHookWVtbl ends
+INewShortcutHookW struct
+	lpVtbl		PVOID ?
+INewShortcutHookW ends
 ifdef _UNICODE
 INewShortcutHook	equ <INewShortcutHookW>
 else
 INewShortcutHook	equ <INewShortcutHookA>
 endif
 
-ICopyHookA		STRUC
+ICopyHookAVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	CopyCallback, :HWND, :UINT, :UINT, :LPCSTR, :DWORD, :LPCSTR, :DWORD
-ICopyHookA		ENDS
+ICopyHookAVtbl ends
+ICopyHookA struct
+	lpVtbl		PVOID ?
+ICopyHookA ends
 LPCOPYHOOKA		typedef ptr ICopyHookA
-ICopyHookW		STRUC
+ICopyHookWVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	CopyCallback, :HWND, :UINT, :UINT, :LPCWSTR, :DWORD, :LPCWSTR, :DWORD
-ICopyHookW		ENDS
+ICopyHookWVtbl ends
+ICopyHookW struct
+	lpVtbl		PVOID ?
+ICopyHookW ends
 LPCOPYHOOKW		typedef ptr ICopyHookW
 ifdef _UNICODE
 ICopyHook		equ <ICopyHookW>
@@ -366,13 +408,16 @@ endif
 
 if (NTDDI_VERSION LT NTDDI_WIN2K)
 
-IFileViewerSite		STRUC
+IFileViewerSiteVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	SetPinnedWindow, :HWND
 	STDMETHOD	GetPinnedWindow, :ptr
-IFileViewerSite		ENDS
+IFileViewerSiteVtbl ends
+IFileViewerSite struct
+	lpVtbl		PVOID ?
+IFileViewerSite ends
 LPFILEVIEWERSITE	typedef ptr IFileViewerSite
 
 :include pshpack8.inc
@@ -401,23 +446,29 @@ FVSIF_NEWFAILED		equ 0x08000000
 FVSIF_NEWFILE		equ 0x80000000
 FVSIF_CANVIEWIT		equ 0x40000000
 
-IFileViewerA		STRUC
+IFileViewerAVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	ShowInitialize, :LPFILEVIEWERSITE
 	STDMETHOD	Show, :LPFVSHOWINFO
 	STDMETHOD	PrintTo, :LPSTR, :BOOL
-IFileViewerA		ENDS
+IFileViewerAVtbl ends
+IFileViewerA struct
+	lpVtbl		PVOID ?
+IFileViewerA ends
 LPFILEVIEWERA		typedef ptr IFileViewerA
-IFileViewerW		STRUC
+IFileViewerWVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	ShowInitialize, :LPFILEVIEWERSITE
 	STDMETHOD	Show, :LPFVSHOWINFO
 	STDMETHOD	PrintTo, :LPWSTR, :BOOL
-IFileViewerW		ENDS
+IFileViewerWVtbl ends
+IFileViewerW struct
+	lpVtbl		PVOID ?
+IFileViewerW ends
 LPFILEVIEWERW		typedef ptr IFileViewerW
 ifdef _UNICODE
 IFileViewer		equ <IFileViewerW>
@@ -1130,41 +1181,53 @@ SHGetDesktopFolder proto WINAPI \
 
 
 
-IShellDetails		STRUC
+IShellDetailsVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	GetDetailsOf, :PCUITEMID_CHILD, :UINT, :ptr
 	STDMETHOD	ColumnClick, :UINT
-IShellDetails		ENDS
+IShellDetailsVtbl ends
+IShellDetails struct
+	lpVtbl		PVOID ?
+IShellDetails ends
 
 
 
-IObjMgr			STRUC
+IObjMgrVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	Append, :ptr
 	STDMETHOD	Remove, :ptr
-IObjMgr			ENDS
+IObjMgrVtbl ends
+IObjMgr struct
+	lpVtbl		PVOID ?
+IObjMgr ends
 
 
-ICurrentWorkingDirectory STRUC
+ICurrentWorkingDirectoryVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	GetDirectory, :LPWSTR, :DWORD
 	STDMETHOD	SetDirectory, :LPCWSTR
-ICurrentWorkingDirectory ENDS
+ICurrentWorkingDirectoryVtbl ends
+ICurrentWorkingDirectory struct
+	lpVtbl		PVOID ?
+ICurrentWorkingDirectory ends
 
 
 
-IACList			STRUC
+IACListVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	Expand, :LPCWSTR
-IACList			ENDS
+IACListVtbl ends
+IACList struct
+	lpVtbl		PVOID ?
+IACList ends
 
 
 tagAUTOCOMPLETELISTOPTIONS typedef SDWORD
@@ -1181,10 +1244,13 @@ if (_WIN32_IE GE _WIN32_IE_IE70)
 ACLO_VIRTUALNAMESPACE	equ 64	; enumereate on the virual namespace
 endif
 
-IACList2		STRUC
+IACList2Vtbl struct
 	STDMETHOD	SetOptions, :DWORD
 	STDMETHOD	GetOptions, :ptr
-IACList2		ENDS
+IACList2Vtbl ends
+IACList2 struct
+	lpVtbl		PVOID ?
+IACList2 ends
 
 
 PROGDLG_NORMAL		equ 0x00000000
@@ -1204,7 +1270,7 @@ PDTIMER_PAUSE		equ 0x00000002
 PDTIMER_RESUME		equ 0x00000003
 endif
 
-IProgressDialog		STRUC
+IProgressDialogVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1218,10 +1284,13 @@ IProgressDialog		STRUC
 	STDMETHOD	SetLine, :DWORD, :LPCWSTR, :BOOL, :LPCVOID
 	STDMETHOD	SetCancelMsg, :LPCWSTR, :LPCVOID
 	STDMETHOD	Timer, :DWORD, :LPCVOID
-IProgressDialog		ENDS
+IProgressDialogVtbl ends
+IProgressDialog struct
+	lpVtbl		PVOID ?
+IProgressDialog ends
 
 
-IDockingWindowSite	STRUC
+IDockingWindowSiteVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1230,7 +1299,10 @@ IDockingWindowSite	STRUC
 	STDMETHOD	GetBorderDW, :ptr, :LPRECT
 	STDMETHOD	RequestBorderSpaceDW, :ptr, :LPCBORDERWIDTHS
 	STDMETHOD	SetBorderSpaceDW, :ptr, :LPCBORDERWIDTHS
-IDockingWindowSite	ENDS
+IDockingWindowSiteVtbl ends
+IDockingWindowSite struct
+	lpVtbl		PVOID ?
+IDockingWindowSite ends
 
 DWFRF_NORMAL		equ 0x0000
 DWFRF_DELETECONFIGDATA	equ 0x0001
@@ -1241,7 +1313,7 @@ DWFAF_GROUP1		equ 0x0002
 DWFAF_GROUP2		equ 0x0004
 DWFAF_AUTOHIDE		equ 0x0010
 
-IDockingWindowFrame	STRUC
+IDockingWindowFrameVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1250,14 +1322,20 @@ IDockingWindowFrame	STRUC
 	STDMETHOD	AddToolbar, :ptr, :LPCWSTR, :DWORD
 	STDMETHOD	RemoveToolbar, :ptr, :DWORD
 	STDMETHOD	FindToolbar, :LPCWSTR, :REFIID, :ptr
-IDockingWindowFrame	ENDS
+IDockingWindowFrameVtbl ends
+IDockingWindowFrame struct
+	lpVtbl		PVOID ?
+IDockingWindowFrame ends
 
 if (_WIN32_IE GE 0x0400)
 
 
-IThumbnailCapture	STRUC
+IThumbnailCaptureVtbl struct
 	STDMETHOD	CaptureThumbnail, :ptr, :ptr, :ptr
-IThumbnailCapture	ENDS
+IThumbnailCaptureVtbl ends
+IThumbnailCapture struct
+	lpVtbl		PVOID ?
+IThumbnailCapture ends
 LPTHUMBNAILCAPTURE	typedef ptr IThumbnailCapture
 
 endif
@@ -1275,7 +1353,7 @@ PENUMSHELLIMAGESTOREDATA typedef ptr ENUMSHELLIMAGESTOREDATA
 
 ;include poppack.inc
 
-IEnumShellImageStore	STRUC
+IEnumShellImageStoreVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1283,21 +1361,22 @@ IEnumShellImageStore	STRUC
 	STDMETHOD	Next, :ULONG, :ptr, :ptr
 	STDMETHOD	Skip, :ULONG
 	STDMETHOD	Clone, :ptr
-IEnumShellImageStore	ENDS
+IEnumShellImageStoreVtbl ends
+IEnumShellImageStore struct
+	lpVtbl		PVOID ?
+IEnumShellImageStore ends
 LPENUMSHELLIMAGESTORE	typedef ptr IEnumShellImageStore
 
 
 SHIMSTCAPFLAG_LOCKABLE	equ 0x0001
 SHIMSTCAPFLAG_PURGEABLE equ 0x0002
 
-IShellImageStore	STRUC
+IShellImageStoreVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
-
 	STDMETHOD	Open, :DWORD, :ptr
 	STDMETHOD	Create, :DWORD, :ptr
-
 	STDMETHOD	ReleaseLock, :ptr
 	STDMETHOD	Close, :ptr
 	STDMETHOD	Commit, :ptr
@@ -1309,7 +1388,10 @@ IShellImageStore	STRUC
 	STDMETHOD	DeleteEntry, :LPCWSTR
 	STDMETHOD	IsEntryInStore, :LPCWSTR, :ptr
 	STDMETHOD	Enum, :ptr
-IShellImageStore	ENDS
+IShellImageStoreVtbl ends
+IShellImageStore struct
+	lpVtbl		PVOID ?
+IShellImageStore ends
 LPSHELLIMAGESTORE	typedef ptr IShellImageStore
 
 endif
@@ -1360,16 +1442,19 @@ PBANDINFOSFB		typedef ptr BANDINFOSFB
 
 ;include poppack.inc
 
-IShellFolderBand	STRUC
+IShellFolderBandVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	InitializeSFB, :ptr, :PCIDLIST_ABSOLUTE
 	STDMETHOD	SetBandInfoSFB, :PBANDINFOSFB
 	STDMETHOD	GetBandInfoSFB, :PBANDINFOSFB
-IShellFolderBand	ENDS
+IShellFolderBandVtbl ends
+IShellFolderBand struct
+	lpVtbl		PVOID ?
+IShellFolderBand ends
 
-IDeskBarClient		STRUC
+IDeskBarClientVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1379,7 +1464,10 @@ IDeskBarClient		STRUC
 	STDMETHOD	SetModeDBC, :DWORD
 	STDMETHOD	UIActivateDBC, :DWORD
 	STDMETHOD	GetSize, :DWORD, :LPRECT
-IDeskBarClient		ENDS
+IDeskBarClientVtbl ends
+IDeskBarClient struct
+	lpVtbl		PVOID ?
+IDeskBarClient ends
 
 DBC_GS_IDEAL		equ 0
 DBC_GS_SIZEDOWN		equ 1
@@ -1559,7 +1647,7 @@ COMPONENT_DEFAULT_LEFT	equ (0xFFFF)
 COMPONENT_DEFAULT_TOP	equ (0xFFFF)
 
 
-IActiveDesktop		STRUC
+IActiveDesktopVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1582,7 +1670,10 @@ IActiveDesktop		STRUC
 	STDMETHOD	GenerateDesktopItemHtml, :LPCWSTR, :LPCOMPONENT, :DWORD
 	STDMETHOD	AddUrl, :HWND, :LPCWSTR, :LPCOMPONENT, :DWORD
 	STDMETHOD	GetDesktopItemBySource, :LPCWSTR, :LPCOMPONENT, :DWORD
-IActiveDesktop		ENDS
+IActiveDesktopVtbl ends
+IActiveDesktop struct
+	lpVtbl		PVOID ?
+IActiveDesktop ends
 LPACTIVEDESKTOP		typedef ptr IActiveDesktop
 
 SSM_CLEAR		equ 0x0000
@@ -1599,7 +1690,7 @@ SCHEME_UPDATE		equ 0x0020
 SCHEME_DONOTUSE		equ 0x0040
 SCHEME_CREATE		equ 0x0080
 
-IActiveDesktopP		STRUC
+IActiveDesktopPVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1607,12 +1698,15 @@ IActiveDesktopP		STRUC
 	STDMETHOD	EnsureUpdateHTML
 	STDMETHOD	SetScheme, :LPCWSTR, :DWORD
 	STDMETHOD	GetScheme, :LPWSTR, :ptr, :DWORD
-IActiveDesktopP		ENDS
+IActiveDesktopPVtbl ends
+IActiveDesktopP struct
+	lpVtbl		PVOID ?
+IActiveDesktopP ends
 LPACTIVEDESKTOPP	typedef ptr IActiveDesktopP
 
 GADOF_DIRTY		equ 0x00000001
 
-IADesktopP2		STRUC
+IADesktopP2Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1620,7 +1714,10 @@ IADesktopP2		STRUC
 	STDMETHOD	GetADObjectFlags, :ptr, :DWORD
 	STDMETHOD	UpdateAllDesktopSubscriptions
 	STDMETHOD	MakeDynamicChanges, :ptr
-IADesktopP2		ENDS
+IADesktopP2Vtbl ends
+IADesktopP2 struct
+	lpVtbl		PVOID ?
+IADesktopP2 ends
 LPADESKTOPP2		typedef ptr IADesktopP2
 
 
@@ -1671,14 +1768,17 @@ LPCSHCOLUMNDATA		typedef ptr SHCOLUMNDATA
 
 ;include poppack.inc
 
-IColumnProvider		STRUC
+IColumnProviderVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	Initialize, :LPCSHCOLUMNINIT
 	STDMETHOD	GetColumnInfo, :DWORD, :ptr
 	STDMETHOD	GetItemData, :LPCSHCOLUMNID, :LPCSHCOLUMNDATA, :ptr
-IColumnProvider		ENDS
+IColumnProviderVtbl ends
+IColumnProvider struct
+	lpVtbl		PVOID ?
+IColumnProvider ends
 
 endif
 endif
@@ -1934,21 +2034,27 @@ SHChangeNotify proto WINAPI \
 
 
 
-IShellChangeNotify	STRUC
+IShellChangeNotifyVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	OnChange, :LONG, :PCIDLIST_ABSOLUTE, :PCIDLIST_ABSOLUTE
-IShellChangeNotify	ENDS
+IShellChangeNotifyVtbl ends
+IShellChangeNotify struct
+	lpVtbl		PVOID ?
+IShellChangeNotify ends
 
 
-IQueryInfo		STRUC
+IQueryInfoVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	GetInfoTip, :DWORD, :ptr
 	STDMETHOD	GetInfoFlags, :ptr
-IQueryInfo		ENDS
+IQueryInfoVtbl ends
+IQueryInfo struct
+	lpVtbl		PVOID ?
+IQueryInfo ends
 
 QITIPF_DEFAULT		equ 0x00000000
 QITIPF_USENAME		equ 0x00000001
@@ -2458,14 +2564,17 @@ SHReplaceFromPropSheetExtArray proto WINAPI \
 		lParam: LPARAM
 
 if (NTDDI_VERSION GE NTDDI_WIN2K AND NTDDI_VERSION LT NTDDI_VISTA)
-IDefViewFrame		STRUC
+IDefViewFrameVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	GetWindowLV, :ptr
 	STDMETHOD	ReleaseWindowLV
 	STDMETHOD	GetShellFolder, :ptr
-IDefViewFrame		ENDS
+IDefViewFrameVtbl ends
+IDefViewFrame struct
+	lpVtbl		PVOID ?
+IDefViewFrame ends
 endif
 RESTRICTIONS		typedef SDWORD
 REST_NONE		equ 0x00000000
@@ -2856,12 +2965,15 @@ Shell_GetCachedImageIndex equ <Shell_GetCachedImageIndexA>
 endif
 endif
 
-IDocViewSite		STRUC
+IDocViewSiteVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	OnSetTitle, :ptr
-IDocViewSite		ENDS
+IDocViewSiteVtbl ends
+IDocViewSite struct
+	lpVtbl		PVOID ?
+IDocViewSite ends
 
 VALIDATEUNC_CONNECT	equ 0x0001
 VALIDATEUNC_NOUI	equ 0x0002
@@ -2949,17 +3061,20 @@ SHSetInstanceExplorer proto WINAPI \
 ;SHSTDAPI
 IsUserAnAdmin proto WINAPI
 
-IInitializeObject	STRUC
+IInitializeObjectVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	Initialize
-IInitializeObject	ENDS
+IInitializeObjectVtbl ends
+IInitializeObject struct
+	lpVtbl		PVOID ?
+IInitializeObject ends
 
 
 BMICON_LARGE		equ 0
 
-IBanneredBar		STRUC
+IBanneredBarVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -2967,7 +3082,10 @@ IBanneredBar		STRUC
 	STDMETHOD	GetIconSize, :ptr
 	STDMETHOD	SetBitmap, :HBITMAP
 	STDMETHOD	GetBitmap, :ptr
-IBanneredBar		ENDS
+IBanneredBarVtbl ends
+IBanneredBar struct
+	lpVtbl		PVOID ?
+IBanneredBar ends
 
 ;SHSTDAPI_(LRESULT)
 SHShellFolderView_Message proto WINAPI \
@@ -2978,12 +3096,15 @@ SHShellFolderView_Message proto WINAPI \
 
 
 
-IShellFolderViewCB	STRUC
+IShellFolderViewCBVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	MessageSFVCB, :UINT, :WPARAM, :LPARAM
-IShellFolderViewCB	ENDS
+IShellFolderViewCBVtbl ends
+IShellFolderViewCB struct
+	lpVtbl		PVOID ?
+IShellFolderViewCB ends
 LPIShellFolderViewCB	typedef ptr IShellFolderViewCB
 
 ;include pshpack8.inc
@@ -3089,7 +3210,7 @@ SFVS_SELECT_NONE	equ 0x0
 SFVS_SELECT_ALLITEMS	equ 0x1
 SFVS_SELECT_INVERT	equ 0x2
 
-IShellFolderView	STRUC
+IShellFolderViewVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -3121,7 +3242,10 @@ IShellFolderView	STRUC
 	STDMETHOD	Select, :UINT
 	STDMETHOD	QuerySupport, :ptr
 	STDMETHOD	SetAutomationObject, :ptr
-IShellFolderView	ENDS
+IShellFolderViewVtbl ends
+IShellFolderView struct
+	lpVtbl		PVOID ?
+IShellFolderView ends
 
 LPIShellView		typedef ptr IShellView
 
@@ -3537,14 +3661,17 @@ else
 SHPathPrepareForWrite	equ <SHPathPrepareForWriteA>
 endif
 
-INamedPropertyBag	STRUC
+INamedPropertyBagVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	ReadPropertyNPB, :LPCWSTR, :LPCWSTR, :ptr
 	STDMETHOD	WritePropertyNPB, :LPCWSTR, :LPCWSTR, :ptr
 	STDMETHOD	RemovePropertyNPB, :LPCWSTR, :LPCWSTR
-INamedPropertyBag	ENDS
+INamedPropertyBagVtbl ends
+INamedPropertyBag struct
+	lpVtbl		PVOID ?
+INamedPropertyBag ends
 
 ifdef __urlmon_h__
 

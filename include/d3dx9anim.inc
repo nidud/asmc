@@ -149,7 +149,7 @@ RegisterTemplates	PVOID ?
 SaveTemplates		PVOID ?
 ID3DXSaveUserData	ENDS
 
-ID3DXAnimationSet	STRUC
+ID3DXAnimationSetVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -161,9 +161,12 @@ ID3DXAnimationSet	STRUC
 	STDMETHOD	GetAnimationIndexByName, :ptr, :ptr
 	STDMETHOD	GetSRT, :DOUBLE, :UINT, :ptr, :ptr, :ptr
 	STDMETHOD	GetCallback, :double, :DWORD, :ptr, :ptr
-ID3DXAnimationSet	ENDS
+ID3DXAnimationSetVtbl ends
+ID3DXAnimationSet struct
+	lpVtbl		PVOID ?
+ID3DXAnimationSet ends
 
-ID3DXKeyframedAnimationSet STRUC
+ID3DXKeyframedAnimationSetVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -199,9 +202,12 @@ ID3DXKeyframedAnimationSet STRUC
 	STDMETHOD	RegisterAnimationSRTKeys, :ptr, :UINT, :UINT, :UINT, :ptr, :ptr, :ptr, :ptr
 	STDMETHOD	Compress, :DWORD, :float, :ptr, :ptr
 	STDMETHOD	UnregisterAnimation, :UINT
-ID3DXKeyframedAnimationSet ENDS
+ID3DXKeyframedAnimationSetVtbl ends
+ID3DXKeyframedAnimationSet struct
+	lpVtbl		PVOID ?
+ID3DXKeyframedAnimationSet ends
 
-ID3DXCompressedAnimationSet STRUC
+ID3DXCompressedAnimationSetVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -218,13 +224,19 @@ ID3DXCompressedAnimationSet STRUC
 	STDMETHOD	GetCompressedData, :ptr
 	STDMETHOD	GetNumCallbackKeys
 	STDMETHOD	GetCallbackKeys, :LPD3DXKEY_CALLBACK
-ID3DXCompressedAnimationSet ENDS
+ID3DXCompressedAnimationSetVtbl ends
+ID3DXCompressedAnimationSet struct
+	lpVtbl		PVOID ?
+ID3DXCompressedAnimationSet ends
 
-ID3DXAnimationCallbackHandler STRUC
+ID3DXAnimationCallbackHandlerVtbl struct
 	STDMETHOD	HandleCallback, :UINT, :ptr
-ID3DXAnimationCallbackHandler ENDS
+ID3DXAnimationCallbackHandlerVtbl ends
+ID3DXAnimationCallbackHandler struct
+	lpVtbl		PVOID ?
+ID3DXAnimationCallbackHandler ends
 
-ID3DXAnimationController STRUC
+ID3DXAnimationControllerVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -267,7 +279,10 @@ ID3DXAnimationController STRUC
 	STDMETHOD	ValidateEvent, :D3DXEVENTHANDLE
 	STDMETHOD	GetEventDesc, :D3DXEVENTHANDLE, :ptr
 	STDMETHOD	CloneAnimationController, :UINT, :UINT, :UINT, :UINT, :ptr
-ID3DXAnimationController ENDS
+ID3DXAnimationControllerVtbl ends
+ID3DXAnimationController struct
+	lpVtbl		PVOID ?
+ID3DXAnimationController ends
 
 ;HRESULT
 D3DXLoadMeshHierarchyFromXA proto WINAPI \

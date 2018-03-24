@@ -2,7 +2,7 @@
 #include <globals.h>
 
 char cp_logo[] =
- "Asmc Macro Assembler Version " ASMC_VERSSTR "E\n"
+ "Asmc Macro Assembler Version " ASMC_VERSSTR "F\n"
  "Portions Copyright (c) 1992-2002 Sybase, Inc. All Rights Reserved.\n\n";
 
 static char cp_usage[] =
@@ -45,7 +45,7 @@ static char cp_options[] =
  "/nt<name> Set name of text segment         /Zm Enable MASM 5.10 compatibility\n"
  "/pe Generate PE binary file, 32/64-bit     /Zne Disable non Masm extensions\n"
  " /cui - subsystem:console (default)        /Zp[n] Set structure alignment\n"
- " /gui - subsystem:windows		     /Zs Perform syntax check only\n"
+ " /gui - subsystem:windows	             /Zs Perform syntax check only\n"
  "/pf Preserve Flags (Epilogue/Invoke)       /zt<0|1|2> Set STDCALL decoration\n"
  "/q, /nologo Suppress copyright message     /Zv8 Enable Masm v8+ PROC visibility\n"
  "/r Recurse subdirectories                  /zze No export symbol decoration\n"

@@ -609,7 +609,7 @@ ifndef __ICreateTypeInfo_INTERFACE_DEFINED__
 __ICreateTypeInfo_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_ICreateTypeInfo:IID
-ICreateTypeInfo		STRUC
+ICreateTypeInfoVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -636,7 +636,10 @@ ICreateTypeInfo		STRUC
 	STDMETHOD	SetMops, :UINT, :BSTR
 	STDMETHOD	SetTypeIdldesc, :ptr
 	STDMETHOD	LayOut
-ICreateTypeInfo		ENDS
+ICreateTypeInfoVtbl ends
+ICreateTypeInfo struct
+	lpVtbl		PVOID ?
+ICreateTypeInfo ends
 LPICreateTypeInfo	typedef ptr ICreateTypeInfo
 LPCREATETYPEINFO	typedef ptr ICreateTypeInfo
 
@@ -945,7 +948,7 @@ LPCREATETYPEINFO2	typedef ptr ICreateTypeInfo2
 externdef		IID_ICreateTypeInfo2:IID
 
 
-ICreateTypeInfo2	STRUC
+ICreateTypeInfo2Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -987,7 +990,10 @@ ICreateTypeInfo2	STRUC
 	STDMETHOD	SetVarHelpStringContext, :DWORD, :DWORD
 	STDMETHOD	Invalidate
 	STDMETHOD	SetName, :LPOLESTR
-ICreateTypeInfo2	ENDS
+ICreateTypeInfo2Vtbl ends
+ICreateTypeInfo2 struct
+	lpVtbl		PVOID ?
+ICreateTypeInfo2 ends
 LPICreateTypeInfo2	typedef ptr ICreateTypeInfo2
 
 ;HRESULT
@@ -1193,7 +1199,7 @@ LPCREATETYPELIB		typedef ptr ICreateTypeLib
 externdef		IID_ICreateTypeLib:IID
 
 
-ICreateTypeLib		STRUC
+ICreateTypeLibVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1207,7 +1213,10 @@ ICreateTypeLib		STRUC
 	STDMETHOD	SetLcid, :LCID
 	STDMETHOD	SetLibFlags, :DWORD
 	STDMETHOD	SaveAllChanges
-ICreateTypeLib		ENDS
+ICreateTypeLibVtbl ends
+ICreateTypeLib struct
+	lpVtbl		PVOID ?
+ICreateTypeLib ends
 LPICreateTypeLib	typedef ptr ICreateTypeLib
 
 ;HRESULT
@@ -1341,7 +1350,7 @@ LPCREATETYPELIB2	typedef ptr ICreateTypeLib2
 externdef		IID_ICreateTypeLib2:IID
 
 
-ICreateTypeLib2		STRUC
+ICreateTypeLib2Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1359,7 +1368,10 @@ ICreateTypeLib2		STRUC
 	STDMETHOD	SetCustData, :REFGUID, :ptr
 	STDMETHOD	SetHelpStringContext, :DWORD
 	STDMETHOD	SetHelpStringDll, :LPOLESTR
-ICreateTypeLib2		ENDS
+ICreateTypeLib2Vtbl ends
+ICreateTypeLib2 struct
+	lpVtbl		PVOID ?
+ICreateTypeLib2 ends
 LPICreateTypeLib2	typedef ptr ICreateTypeLib2
 
 ;HRESULT
@@ -1429,7 +1441,7 @@ DISPID_COLLECT		equ ( -8 )
 
 externdef		IID_IDispatch:IID
 
-IDispatch		STRUC
+IDispatchVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1437,7 +1449,10 @@ IDispatch		STRUC
 	STDMETHOD	GetTypeInfo, :UINT, :LCID, :ptr
 	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
 	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-IDispatch		ENDS
+IDispatchVtbl ends
+IDispatch struct
+	lpVtbl		PVOID ?
+IDispatch ends
 LPIDispatch		typedef ptr IDispatch
 
 ;HRESULT
@@ -1512,7 +1527,7 @@ LPENUMVARIANT		typedef ptr IEnumVARIANT
 externdef		IID_IEnumVARIANT:IID
 
 
-IEnumVARIANT		STRUC
+IEnumVARIANTVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1520,7 +1535,10 @@ IEnumVARIANT		STRUC
 	STDMETHOD	Skip, :DWORD
 	STDMETHOD	Reset,
 	STDMETHOD	Clone, :ptr
-IEnumVARIANT		ENDS
+IEnumVARIANTVtbl ends
+IEnumVARIANT struct
+	lpVtbl		PVOID ?
+IEnumVARIANT ends
 LPIEnumVARIANT		typedef ptr IEnumVARIANT
 
 ;HRESULT
@@ -1595,13 +1613,16 @@ LPBINDPTR		typedef ptr BINDPTR
 
 externdef		IID_ITypeComp:IID
 
-ITypeComp		STRUC
+ITypeCompVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	Bind
 	STDMETHOD	BindType
-ITypeComp		ENDS
+ITypeCompVtbl ends
+ITypeComp struct
+	lpVtbl		PVOID ?
+ITypeComp ends
 LPITypeComp		typedef ptr ITypeComp
 
 ;HRESULT
@@ -1646,7 +1667,7 @@ __ITypeInfo_INTERFACE_DEFINED__ equ 1
 LPTYPEINFO		typedef ptr ITypeInfo
 externdef		IID_ITypeInfo:IID
 
-ITypeInfo		STRUC
+ITypeInfoVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1669,7 +1690,10 @@ ITypeInfo		STRUC
 	STDMETHOD	ReleaseTypeAttr, :ptr
 	STDMETHOD	ReleaseFuncDesc, :ptr
 	STDMETHOD	ReleaseVarDesc, :ptr
-ITypeInfo		ENDS
+ITypeInfoVtbl ends
+ITypeInfo struct
+	lpVtbl		PVOID ?
+ITypeInfo ends
 LPITypeInfo		typedef ptr ITypeInfo
 
 ;HRESULT
@@ -1926,7 +1950,7 @@ LPTYPEINFO2		typedef ptr ITypeInfo2
 externdef		IID_ITypeInfo2:IID
 
 
-ITypeInfo2		STRUC
+ITypeInfo2Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1964,7 +1988,10 @@ ITypeInfo2		STRUC
 	STDMETHOD	GetAllParamCustData, :DWORD, :DWORD, :ptr
 	STDMETHOD	GetAllVarCustData, :DWORD, :ptr
 	STDMETHOD	GetAllImplTypeCustData, :DWORD, :ptr
-ITypeInfo2		ENDS
+ITypeInfo2Vtbl ends
+ITypeInfo2 struct
+	lpVtbl		PVOID ?
+ITypeInfo2 ends
 LPITypeInfo2		typedef ptr ITypeInfo2
 
 ;HRESULT
@@ -2201,7 +2228,7 @@ LPTLIBATTR		typedef ptr TLIBATTR
 
 externdef		IID_ITypeLib:IID
 
-ITypeLib		STRUC
+ITypeLibVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -2215,7 +2242,10 @@ ITypeLib		STRUC
 	STDMETHOD	IsName, :LPOLESTR, :DWORD, :ptr
 	STDMETHOD	FindName, :LPOLESTR, :DWORD, :ptr, :ptr, :ptr
 	STDMETHOD	ReleaseTLibAttr, :ptr
-ITypeLib		ENDS
+ITypeLibVtbl ends
+ITypeLib struct
+	lpVtbl		PVOID ?
+ITypeLib ends
 LPITypeLib		typedef ptr ITypeLib
 
 ;HRESULT
@@ -2362,7 +2392,7 @@ __ITypeLib2_INTERFACE_DEFINED__ equ 1
 LPTYPELIB2		typedef ptr ITypeLib2
 externdef		IID_ITypeLib2:IID
 
-ITypeLib2		STRUC
+ITypeLib2Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -2380,7 +2410,10 @@ ITypeLib2		STRUC
 	STDMETHOD	GetLibStatistics, :ptr, :ptr
 	STDMETHOD	GetDocumentation2, :DWORD, :LCID, :ptr, :ptr, :ptr
 	STDMETHOD	GetAllCustData, :ptr
-ITypeLib2		ENDS
+ITypeLib2Vtbl ends
+ITypeLib2 struct
+	lpVtbl		PVOID ?
+ITypeLib2 ends
 LPITypeLib2		typedef ptr ITypeLib2
 
 ;HRESULT
@@ -2456,13 +2489,16 @@ CHANGEKIND_MAX		equ CHANGEKIND_CHANGEFAILED + 1
 
 externdef		IID_ITypeChangeEvents:IID
 
-ITypeChangeEvents	STRUC
+ITypeChangeEventsVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	RequestTypeChange, :CHANGEKIND, :ptr, :LPOLESTR, :ptr
 	STDMETHOD	AfterTypeChange, :CHANGEKIND, :ptr, :LPOLESTR
-ITypeChangeEvents	ENDS
+ITypeChangeEventsVtbl ends
+ITypeChangeEvents struct
+	lpVtbl		PVOID ?
+ITypeChangeEvents ends
 LPITypeChangeEvents	typedef ptr ITypeChangeEvents
 
 ;HRESULT
@@ -2502,7 +2538,7 @@ __IErrorInfo_INTERFACE_DEFINED__ equ 1
 LPERRORINFO		typedef ptr IErrorInfo
 externdef		IID_IErrorInfo:IID
 
-IErrorInfo		STRUC
+IErrorInfoVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -2511,7 +2547,10 @@ IErrorInfo		STRUC
 	STDMETHOD	GetDescription, :ptr
 	STDMETHOD	GetHelpFile, :ptr
 	STDMETHOD	GetHelpContext, :ptr
-IErrorInfo		ENDS
+IErrorInfoVtbl ends
+IErrorInfo struct
+	lpVtbl		PVOID ?
+IErrorInfo ends
 LPIErrorInfo		typedef ptr IErrorInfo
 
 ;HRESULT
@@ -2583,7 +2622,7 @@ LPCREATEERRORINFO	typedef ptr ICreateErrorInfo
 externdef		IID_ICreateErrorInfo:IID
 
 
-ICreateErrorInfo	STRUC
+ICreateErrorInfoVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -2592,7 +2631,10 @@ ICreateErrorInfo	STRUC
 	STDMETHOD	SetDescription, :LPOLESTR
 	STDMETHOD	SetHelpFile, :LPOLESTR
 	STDMETHOD	SetHelpContext, :DWORD
-ICreateErrorInfo	ENDS
+ICreateErrorInfoVtbl ends
+ICreateErrorInfo struct
+	lpVtbl		PVOID ?
+ICreateErrorInfo ends
 LPICreateErrorInfo	typedef ptr ICreateErrorInfo
 
 ;HRESULT
@@ -2662,12 +2704,15 @@ __ISupportErrorInfo_INTERFACE_DEFINED__ equ 1
 LPSUPPORTERRORINFO	typedef ptr ISupportErrorInfo
 externdef		IID_ISupportErrorInfo:IID
 
-ISupportErrorInfo	STRUC
+ISupportErrorInfoVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	InterfaceSupportsErrorInfo, :REFIID
-ISupportErrorInfo	ENDS
+ISupportErrorInfoVtbl ends
+ISupportErrorInfo struct
+	lpVtbl		PVOID ?
+ISupportErrorInfo ends
 LPISupportErrorInfo	typedef ptr ISupportErrorInfo
 
 ;HRESULT
@@ -2688,12 +2733,15 @@ __ITypeFactory_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_ITypeFactory:IID
 
-ITypeFactory		STRUC
+ITypeFactoryVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	CreateFromTypeInfo, :ptr, :REFIID, :ptr
-ITypeFactory		ENDS
+ITypeFactoryVtbl ends
+ITypeFactory struct
+	lpVtbl		PVOID ?
+ITypeFactory ends
 LPITypeFactory		typedef ptr ITypeFactory
 
 ;HRESULT
@@ -2716,7 +2764,7 @@ __ITypeMarshal_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_ITypeMarshal:IID
 
-ITypeMarshal		STRUC
+ITypeMarshalVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -2724,7 +2772,10 @@ ITypeMarshal		STRUC
 	STDMETHOD	Marshal, :PVOID, :DWORD, :PVOID, :DWORD, :ptr, :ptr
 	STDMETHOD	Unmarshal, :PVOID, :DWORD, :DWORD, :ptr, :ptr
 	STDMETHOD	Free, :PVOID
-ITypeMarshal		ENDS
+ITypeMarshalVtbl ends
+ITypeMarshal struct
+	lpVtbl		PVOID ?
+ITypeMarshal ends
 LPITypeMarshal		typedef ptr ITypeMarshal
 
 ;HRESULT
@@ -2794,7 +2845,7 @@ __IRecordInfo_INTERFACE_DEFINED__ equ 1
 LPRECORDINFO		typedef ptr IRecordInfo
 externdef		IID_IRecordInfo:IID
 
-IRecordInfo		STRUC
+IRecordInfoVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -2814,7 +2865,10 @@ IRecordInfo		STRUC
 	STDMETHOD	RecordCreate
 	STDMETHOD	RecordCreateCopy, :PVOID, :ptr
 	STDMETHOD	RecordDestroy, :PVOID
-IRecordInfo		ENDS
+IRecordInfoVtbl ends
+IRecordInfo struct
+	lpVtbl		PVOID ?
+IRecordInfo ends
 LPIRecordInfoV		typedef ptr IRecordInfo
 
 ;HRESULT

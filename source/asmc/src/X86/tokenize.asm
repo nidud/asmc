@@ -574,10 +574,6 @@ get_special_symbol PROC FASTCALL USES esi edi ebx buf, p
             ;
             ; REG() expans as CALL REG
             ;
-            ; TODO: [...]()
-            ;
-            ; ( [ebx-16].token == T_REG || [ebx-16].token == T_CL_SQ_BRACKET )
-            ;
             or [ebx-16].hll_flags,T_HLL_PROC
 
         .elseif [esi].index && [ebx-16].token == T_ID
@@ -596,7 +592,7 @@ get_special_symbol PROC FASTCALL USES esi edi ebx buf, p
                     inc eax
                     mov edx,SYM_TYPE
                 .else
-                    SymFind( [ebx-16*3].string_ptr )
+                    SymFind( [edi].asm_tok.string_ptr )
                     xor edx,edx
                 .endif
             .endif
@@ -653,13 +649,19 @@ get_special_symbol PROC FASTCALL USES esi edi ebx buf, p
                     .endc .if eax < 5
                     .endc .if [edi-16].asm_tok.token != T_DOT
                     .endc .if [edi-32].asm_tok.token != T_CL_SQ_BRACKET
-                    sub edi,64
-                    sub eax,4
-                    .while [edi].asm_tok.token != T_OP_SQ_BRACKET
+                    sub edi,48
+                    sub eax,3
+                    mov edx,1 ; v2.27 - added: [foo(&[..])+rcx].class.method()
+                    .repeat
+                        .if [edi].asm_tok.token == T_OP_SQ_BRACKET
+                            dec edx
+                            .break .ifz
+                        .elseif [edi].asm_tok.token == T_CL_SQ_BRACKET
+                            inc edx
+                        .endif
                         sub edi,16
                         dec eax
-                        .break .ifz
-                    .endw
+                    .untilz
                     .endc .if [edi].asm_tok.token != T_OP_SQ_BRACKET
 
                   .case edx == SYM_STACK

@@ -588,7 +588,7 @@ local   op:         SINT,
         xor edi,edi
         mov ecx,[edx].hll_item.flags
 
-        if 0 ; v2.23 removed..
+if 0 ; v2.23 removed..
         .if ecx & HLLF_IFS or HLLF_IFB or HLLF_IFW or HLLF_IFD
             ;
             ; assume .ifx proc() --> .ifx reg
@@ -599,7 +599,7 @@ local   op:         SINT,
                 jmp toend
             .endif
         .endif
-        endif
+endif
 
         .if ecx & HLLF_IFS
 
@@ -973,9 +973,16 @@ ExpandCStrings proc uses ebx tokenarray:PTR asm_tok
                     ;
                     ; invoke [...][.type].x(...)
                     ;
+                    mov eax,1
                     .repeat
                         add ebx,16
-                    .until [ebx].token == T_CL_SQ_BRACKET
+                        .if [ebx].token == T_CL_SQ_BRACKET
+                            dec eax
+                            .break .ifz
+                        .elseif [ebx].token == T_OP_SQ_BRACKET
+                            inc eax
+                        .endif
+                    .until [ebx].token == T_FINAL
                     add ebx,16
                     .if [ebx].token == T_DOT
                         add ebx,16
@@ -1110,21 +1117,34 @@ local   b[MAX_LINE_LEN]:SBYTE
     .for eax = &b, ebx = tokenarray, edi = ebx,
          esi = 0: esi < i: esi++, ebx += 16
 
-        .if esi && [ebx].token != T_DOT
-            .if [ebx].token == T_COMMA
+        .if esi
 
-            .if proc_id
-
-                inc parg_id
-            .endif
-            .else
             .if [ebx].hll_flags & T_HLL_PROC
 
                 mov proc_id,ebx
                 mov parg_id,0
             .endif
-            strcat( eax, " " )
-            .endif
+
+            movzx ecx,[ebx-16].token
+            movzx edx,[ebx].token
+            .switch
+              .case edx == T_CL_BRACKET
+              .case edx == T_CL_SQ_BRACKET
+              .case edx == T_COLON
+              .case edx == T_DOT
+              .case ecx == T_OP_BRACKET
+              .case ecx == T_OP_SQ_BRACKET
+              .case ecx == T_COLON
+              .case ecx == T_DOT
+                .endc
+              .case edx == T_COMMA
+                .if proc_id
+                    inc parg_id
+                .endif
+              .default
+                strcat( eax, " " )
+                .endc
+            .endsw
         .endif
         strcat( eax, [ebx].string_ptr )
     .endf
@@ -1139,60 +1159,61 @@ local   b[MAX_LINE_LEN]:SBYTE
     .endif
 
     mov eax,proc_id
-    .if eax
+    .if eax && [eax].asm_tok.token != T_OP_SQ_BRACKET
+
         .if GetProc([eax].asm_tok.string_ptr)
 
-        mov sym,eax
-        mov edx,[eax].nsym.procinfo
-        mov info,edx
-        mov ecx,[edx].proc_info.paralist
+            mov sym,eax
+            mov edx,[eax].nsym.procinfo
+            mov info,edx
+            mov ecx,[edx].proc_info.paralist
 
-        movzx eax,[eax].asym.langtype
-        .if eax == LANG_C || eax == LANG_SYSCALL || eax == LANG_STDCALL || \
-           (eax == LANG_FASTCALL && ModuleInfo.Ofssize != USE64)
-
-            .while ecx && [ecx].nsym.nextparam
-
-                mov ecx,[ecx].nsym.nextparam
-            .endw
-        .endif
-        mov curr,ecx
-
-        .while ecx && parg_id
-            ;
-            ; set paracurr to next parameter
-            ;
-            mov eax,sym
             movzx eax,[eax].asym.langtype
             .if eax == LANG_C || eax == LANG_SYSCALL || eax == LANG_STDCALL || \
-                (eax == LANG_FASTCALL && ModuleInfo.Ofssize != USE64)
+               (eax == LANG_FASTCALL && ModuleInfo.Ofssize != USE64)
 
-                .for eax=curr, ecx=[edx].proc_info.paralist: ecx,
-                     [ecx].nsym.nextparam != eax: ecx=[ecx].nsym.nextparam
-                .endf
-                mov curr,ecx
-            .else
-                mov ecx,[ecx].nsym.nextparam
+                .while ecx && [ecx].nsym.nextparam
+
+                    mov ecx,[ecx].nsym.nextparam
+                .endw
             .endif
-            dec parg_id
-        .endw
+            mov curr,ecx
 
-        .if ecx
-            mov eax,[ecx].asym.total_size
-            .switch eax
-              .case 1: mov esi,@CStr(" al"):  .endc
-              .case 2: mov esi,@CStr(" ax"):  .endc
-              .case 4: mov esi,@CStr(" eax"): .endc
-              .case 8
-                .if ModuleInfo.Ofssize == USE64
+            .while ecx && parg_id
+                ;
+                ; set paracurr to next parameter
+                ;
+                mov eax,sym
+                movzx eax,[eax].asym.langtype
+                .if eax == LANG_C || eax == LANG_SYSCALL || eax == LANG_STDCALL || \
+                    (eax == LANG_FASTCALL && ModuleInfo.Ofssize != USE64)
 
-                    mov esi,@CStr(" rax")
+                    .for eax=curr, ecx=[edx].proc_info.paralist: ecx,
+                         [ecx].nsym.nextparam != eax: ecx=[ecx].nsym.nextparam
+                    .endf
+                    mov curr,ecx
                 .else
-                    mov esi,@CStr(" edx::eax")
+                    mov ecx,[ecx].nsym.nextparam
                 .endif
-                .endc
-               .endsw
-        .endif
+                dec parg_id
+            .endw
+
+            .if ecx
+                mov eax,[ecx].asym.total_size
+                .switch eax
+                  .case 1: mov esi,@CStr(" al"):  .endc
+                  .case 2: mov esi,@CStr(" ax"):  .endc
+                  .case 4: mov esi,@CStr(" eax"): .endc
+                  .case 8
+                    .if ModuleInfo.Ofssize == USE64
+
+                        mov esi,@CStr(" rax")
+                    .else
+                        mov esi,@CStr(" edx::eax")
+                    .endif
+                    .endc
+                .endsw
+            .endif
         .endif
     .endif
 
@@ -1220,11 +1241,13 @@ local   b[MAX_LINE_LEN]:SBYTE
     ret
 StripSource endp
 
-LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:PTR asm_tok
+LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:ptr asm_tok
 
   local br_count:SINT
+  local sqbrend:ptr asm_tok
   local sym:ptr asym
   local comptr:LPSTR
+  local opnd:expr
   local ClassVtbl[128]:SBYTE
   local b[MAX_LINE_LEN]:SBYTE
 
@@ -1235,31 +1258,102 @@ LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:PTR 
     add ebx,tokenarray
 
     strcpy( esi, "invoke " ) ;  assume proc(...)
-    mov comptr,0
-    mov sym,SymFind( [ebx].string_ptr )
 
-    xor ecx,ecx
-    .if eax
-        .if [eax].asym.mem_type == MT_TYPE && [eax].asym._type
-            mov eax,[eax].asym._type
-            .if [eax].asym.typekind == TYPE_TYPEDEF
+    xor eax,eax
+    mov sym,eax
+    mov comptr,eax
+    mov sqbrend,eax
+
+    .if [ebx].token == T_OP_SQ_BRACKET
+        ;
+        ; v2.27 - [reg].Class.Method()
+        ;       - [reg+foo([rax])].Class.Method()
+        ;       - [reg].Method()
+        ;
+        .for ( eax=1, edi++, edx=&[ebx+16] : eax, [edx].asm_tok.token != T_FINAL : edx+=16, edi++ )
+
+            .if [edx].asm_tok.token == T_OP_SQ_BRACKET
+                inc eax
+            .elseif [edx].asm_tok.token == T_CL_SQ_BRACKET
+                dec eax
+            .elseif [edx].asm_tok.hll_flags & T_HLL_PROC
+                push eax
+                push edx
+                LKRenderHllProc( dst, edi, tokenarray )
+                pop edx
+                pop ecx
+                cmp eax,ERROR
+                je  toend
+                mov eax,ecx
+            .endif
+        .endf
+        mov sqbrend,edx
+
+        .if [edx].asm_tok.token == T_DOT
+
+            .if [edx+32].asm_tok.token == T_DOT
+                ;
+                ; [reg].Class.Method()
+                ;
+                mov edi,[edx+48].asm_tok.string_ptr
+                SymFind( [edx+16].asm_tok.string_ptr )
+            .elseif [edx+32].asm_tok.token == T_OP_BRACKET
+                ;
+                ; [reg].Method() -- assume reg:ptr Class
+                ;
+                mov edi,[edx+16].asm_tok.string_ptr
+                mov eax,i
+                mov br_count,eax
+                lea edx,[eax+3]
+                .if EvalOperand( &br_count, tokenarray, edx, &opnd, 0 ) != ERROR
+                    mov eax,opnd._type
+                .else
+                    xor eax,eax
+                .endif
+            .endif
+
+            .if eax
+                .if [eax].asym.state == SYM_TYPE && [eax].asym.typekind == TYPE_STRUCT
+                    ;
+                    ; If Class.Method do not exist assume ClassVtbl.Method do.
+                    ;
+                    mov edx,sqbrend
+                    mov sym,eax
+                    .if !SearchNameInStruct( sym, edi, &br_count, 0 )
+                        mov eax,sym
+                    .else
+                        xor eax,eax
+                        mov sym,eax
+                    .endif
+                .else
+                    xor eax,eax
+                .endif
+            .endif
+        .endif
+        mov ecx,eax
+    .else
+
+        mov sym,SymFind( [ebx].string_ptr )
+
+        xor ecx,ecx
+        .if eax
+            .if [eax].asym.mem_type == MT_TYPE && [eax].asym._type
+                mov eax,[eax].asym._type
+                .if [eax].asym.typekind == TYPE_TYPEDEF
+                    mov ecx,[eax].asym.target_type
+                .endif
+            .elseif [eax].asym.mem_type == MT_PTR && [eax].asym.state == SYM_STACK
                 mov ecx,[eax].asym.target_type
             .endif
-        .elseif [eax].asym.mem_type == MT_PTR && [eax].asym.state == SYM_STACK
-            mov ecx,[eax].asym.target_type
         .endif
     .endif
 
     .if ecx
+
         .if [ecx].asym.state == SYM_TYPE && [ecx].asym.typekind == TYPE_STRUCT
 
             mov eax,[ecx].asym._name
             mov comptr,eax
-            .if ( ModuleInfo.Ofssize == USE64 )
-                strcat(esi, "[rax]." )
-            .else
-                strcat(esi, "[eax]." )
-            .endif
             ;
             ; ClassVtbl struct
             ;   Method()
@@ -1273,12 +1367,34 @@ LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:PTR 
                 lea eax,ClassVtbl
                 mov comptr,eax
             .endif
+
+            .if ( ModuleInfo.Ofssize == USE64 )
+                strcat(esi, "[rax]." )
+            .else
+                strcat(esi, "[eax]." )
+            .endif
             strcat(esi, comptr )
-            mov eax,[ebx].string_ptr
+
+            .if [ebx].token == T_OP_SQ_BRACKET
+
+                .if [ebx+32].token == T_CL_SQ_BRACKET
+
+                    mov eax,[ebx+16].string_ptr
+                .else
+                    strcpy( &ClassVtbl, "addr [" )
+                    .for ( edi=&[ebx+16] : edi < sqbrend : edi+=16
+                        strcat( eax, [edi].asm_tok.string_ptr )
+                    .endf
+                .endif
+            .else
+                mov eax,[ebx].string_ptr
+            .endif
             mov comptr,eax
             inc ComInterface
         .endif
     .endif
+
+    mov edi,i
     .if ( !comptr )
         strcat( esi, [ebx].string_ptr )
     .endif
@@ -1291,16 +1407,23 @@ LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:PTR 
         ; invoke [...][.type].x(...)
         ;
         .repeat
-            strcat( esi, [ebx].string_ptr )
+            .if ( !comptr )
+                strcat( esi, [ebx].string_ptr )
+            .endif
             add ebx,16
             inc edi
-        .until [ebx].token == T_CL_SQ_BRACKET
-        strcat( esi, [ebx].string_ptr )
+            lea eax,[ebx+16]
+        .until eax >= sqbrend
+        .if ( !comptr )
+            strcat( esi, [ebx].string_ptr )
+        .endif
         add ebx,16
         inc edi
         .if [ebx+32].token == T_DOT
-            strcat( esi, [ebx].string_ptr )
-            strcat( esi, [ebx+16].string_ptr )
+            .if ( !comptr )
+                strcat( esi, [ebx].string_ptr )
+                strcat( esi, [ebx+16].string_ptr )
+            .endif
             add ebx,32
             add edi,2
         .endif
@@ -1462,35 +1585,27 @@ QueueTestLines proc uses esi edi src:LPSTR
         mov esi,eax
 
         .if BYTE PTR [edi]
-if 0
+if 1
             xor edx,edx
             .if esi
 
                 mov eax,[esi]
                 mov ecx,[edi]
                 ;
-                ; jmp @C0003
-                ; jmp @C0003
+                ; jmp ...
+                ; jmp ...
                 ;
                 .if eax == ' pmj' && eax == ecx
 
-                    mov eax,[esi+4]
-                    .if eax == [edi+4]
-                        mov ax,[esi+8]
-                        .if ax == [edi+8]
-
-                            inc edx
-                        .endif
-                    .endif
+                    inc edx
                 .endif
             .endif
 
             .if !edx
-
                 AddLineQueue(edi)
             .endif
 else
-                AddLineQueue(edi)
+            AddLineQueue(edi)
 endif
         .endif
     .endw
@@ -1643,17 +1758,17 @@ local   hllop:      hll_opnd,
                     .switch eax
 
                       .case HLLF_IFD
+                        mov ax,[edx]
                         .if ModuleInfo.Ofssize == USE64
 
                             mov BYTE PTR [edx],'e'
-                            .if !ecx
+                            .if !ecx && ax == [ebx] ; v2.27 - .ifd foo() & imm --> test eax,emm
 
                                 mov BYTE PTR [ebx],'e'
                             .endif
 
                         .elseif ModuleInfo.Ofssize == USE16
 
-                            mov ax,[edx]
                             .if BYTE PTR [edx+2] != ' '
 
                                 .if ecx
@@ -1676,32 +1791,32 @@ local   hllop:      hll_opnd,
                       .case HLLF_IFW
                         .if ModuleInfo.Ofssize != USE16
 
-                            mov eax,' '
-                            mov [edx],al
-                            .if !ecx
+                            mov ax,[edx]
+                            mov byte ptr [edx],' '
+                            .if !ecx && ax == [ebx]
 
-                                mov [ebx],al
+                                mov byte ptr [ebx],' '
                             .endif
                         .endif
                         .endc
 
                       .case HLLF_IFB
-                        mov eax,' l'
+                        mov ax,[edx]
                         .if ModuleInfo.Ofssize == USE16
 
-                            mov [edx+1],al
-                            .if !ecx
+                            mov byte ptr [edx+1],'l'
+                            .if !ecx && ax == [ebx]
 
-                                mov [ebx+1],al
+                                mov byte ptr [ebx+1],'l'
                             .endif
                         .else
-                            mov [edx],ah
-                            mov [edx+2],al
+                            mov byte ptr [edx],' '
+                            mov byte ptr [edx+2],'l'
 
-                            .if !ecx
+                            .if !ecx && ax == [ebx]
 
-                                mov [ebx],ah
-                                mov [ebx+2],al
+                                mov byte ptr [ebx],' '
+                                mov byte ptr [ebx+2],'l'
                             .endif
                         .endif
                         .endc
@@ -2868,7 +2983,8 @@ HllCheckOpen endp
 
 HllInit proc pass
 
-    mov ModuleInfo.hll_label,0  ; init hll label counter
+    mov ModuleInfo.hll_label,0      ; init hll label counter
+    mov ModuleInfo.class_label,0    ; init class label counter
     ret
 
 HllInit endp

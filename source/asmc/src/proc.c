@@ -2493,6 +2493,10 @@ static void write_default_epilogue( void )
 	if ( cstack && (info->locallist	 || info->stackparam ||
 			info->has_vararg || info->forceframe ) && info->pe_type )
 	    ; /* v2.21: leave will follow.. */
+	else if ( !cstack && (info->locallist || info->stackparam ||
+		  info->has_vararg || info->forceframe ) && info->pe_type &&
+		  !CurrProc->e.procinfo->regslist && info->basereg == T_RBP )
+	    ; /* v2.27: leave will follow.. */
 	else {
 	    if ( ModuleInfo.epilogueflags )
 		AddLineQueueX( "lea %r, [%r + %d + %s]",

@@ -1,32 +1,18 @@
-include string.inc
+    .code
 
-	.code
+_strrev::
 
-	OPTION	WIN64:0, STACKBASE:rsp
+    .for ( rax=rcx, rdx=rcx : byte ptr [rdx] : rdx++ )
 
-_strrev PROC USES rsi rdi string:LPSTR
-	mov	rsi,rcx
-	mov	r9,rcx
-	mov	rdi,rsi
-	xor	rax,rax
-	mov	rcx,-1
-	repnz	scasb
-	cmp	rcx,-2
-	je	toend
-	sub	rdi,2
-	xchg	rsi,rdi
-	cmp	rdi,rsi
-	jae	toend
-@@:
-	mov	al,[rdi]
-	movsb
-	mov	[rsi-1],al
-	sub	rsi,2
-	cmp	rdi,rsi
-	jb	@B
-toend:
-	mov	rax,r9
-	ret
-_strrev ENDP
+    .endf
 
-	END
+    .for ( rdx-- : rdx > rcx : rdx--, rcx++ )
+
+        mov r8b,[rcx]
+        mov r9b,[rdx]
+        mov [rcx],r9b
+        mov [rdx],r8b
+    .endf
+    ret
+
+    end

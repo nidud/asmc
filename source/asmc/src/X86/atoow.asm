@@ -1,152 +1,170 @@
 include asmc.inc
 
-	.code
+    .code
 
-_atoow	PROC USES esi edi ebx dst:LPSTR, src:LPSTR, radix:SINT, bsize:SINT
-	mov	esi,src
-	mov	edx,dst
-	mov	ebx,radix
-	mov	edi,bsize
+_atoow proc uses esi edi ebx dst:LPSTR, src:LPSTR, radix:SINT, bsize:SINT
 
-ifdef	CHEXPREFIX
-	movzx	eax,WORD PTR [esi]
-	or	eax,00002000h
-	.if	eax == 'x0'
-		add esi,2
-		sub edi,2
-	.endif
+    mov esi,src
+    mov edx,dst
+    mov ebx,radix
+    mov edi,bsize
+
+ifdef CHEXPREFIX
+    movzx eax,word ptr [esi]
+    or eax,0x2000
+    .if eax == 'x0'
+        add esi,2
+        sub edi,2
+    .endif
 endif
 
-	xor	eax,eax
-	mov	[edx],eax
-	mov	[edx+4],eax
-	mov	[edx+8],eax
-	mov	[edx+12],eax
+    xor eax,eax
+    mov [edx],eax
+    mov [edx+4],eax
+    mov [edx+8],eax
+    mov [edx+12],eax
 
-	cmp	ebx,10
-	je	radix_10
-	jb	do_slow
-	cmp	edi,16		; default to HEX DWORD
-	ja	do_slow
+    .repeat
 
-radix_16:
-	xor	edx,edx
-	xor	ecx,ecx
-	cmp	edi,8
-	ja	radix_16_QWORD
+        .if ebx == 16 && edi <= 16
 
-	ALIGN	4
-radix_16_DWORD:			; FFFFFFFF = 8
-	mov	al,[esi]
-	add	esi,1
-	and	eax,not 30h
-	bt	eax,6
-	sbb	ebx,ebx
-	and	ebx,55
-	sub	eax,ebx
-	shl	ecx,4
-	add	ecx,eax
-	dec	edi
-	jnz	radix_16_DWORD
-	jmp	done8
+            ; hex value <= qword
 
-	ALIGN	4
-radix_16_QWORD:			; FFFFFFFFFFFFFFFF = 16
-	mov	al,[esi]
-	add	esi,1
-	and	eax,not 30h
-	bt	eax,6
-	sbb	ebx,ebx
-	and	ebx,55
-	sub	eax,ebx
-	shld	edx,ecx,4
-	shl	ecx,4
-	add	ecx,eax
-	adc	edx,0
-	dec	edi
-	jnz	radix_16_QWORD
-	jmp	done8
+            xor ecx,ecx
 
-	ALIGN	4
-radix_10:
-	cmp	edi,20
-	ja	do_slow
-	xor	edx,edx
-	xor	ecx,ecx
-	mov	cl,[esi]
-	add	esi,1
-	sub	cl,'0'
-	cmp	edi,10
-	jae	radix_10_QWORD
+            .if edi <= 8
 
-	ALIGN	4
-radix_10_DWORD:			; FFFFFFFF - 4294967295 = 10
-	dec	edi
-	jz	done8
-	mov	al,[esi]
-	add	esi,1
-	sub	al,'0'
-	lea	ebx,[ecx*8+eax]
-	lea	ecx,[ecx*2+ebx]
-	jmp	radix_10_DWORD
+                ; 32-bit value
 
-	ALIGN	4
-radix_10_QWORD:			; FFFFFFFFFFFFFFFF - 18446744073709551615 = 20
-	dec	edi
-	jz	done8
-	mov	al,[esi]
-	add	esi,1
-	sub	al,'0'
-	mov	ebx,edx
-	mov	bsize,ecx
-	shld	edx,ecx,3
-	shl	ecx,3
-	add	ecx,bsize
-	adc	edx,ebx
-	add	ecx,bsize
-	adc	edx,ebx
-	add	ecx,eax
-	adc	edx,0
-	jmp	radix_10_QWORD
+                .repeat
+                    mov al,[esi]
+                    add esi,1
+                    and eax,not 0x30    ; 'a' (0x61) --> 'A' (0x41)
+                    bt  eax,6           ; digit ?
+                    sbb ebx,ebx         ; -1 : 0
+                    and ebx,0x37        ; 10 = 0x41 - 0x37
+                    sub eax,ebx
+                    shl ecx,4
+                    add ecx,eax
+                    dec edi
+                .untilz
 
-	ALIGN	4
-do_slow:
-	mov	bsize,edi
-	mov	edi,edx
-	ALIGN	4
-do:
-	mov	al,[esi]
-	and	eax,not 30h
-	bt	eax,6
-	sbb	ecx,ecx
-	and	ecx,55
-	sub	eax,ecx
-	mov	ecx,8
+                mov [edx],ecx
+                mov eax,edx
+                .break
+            .endif
 
-	ALIGN	4
-@@:
-	movzx	edx,WORD PTR [edi]
-	imul	edx,ebx
-	add	eax,edx
-	mov	[edi],ax
-	add	edi,2
-	shr	eax,16
-	dec	ecx
-	jnz	@B
-	sub	edi,16
-	add	esi,1
-	dec	bsize
-	jnz	do
-	mov	eax,dst
-	jmp	toend
+            ; 64-bit value
 
-	ALIGN	4
-done8:
-	mov	eax,dst
-	mov	[eax],ecx
-	mov	[eax+4],edx
-toend:
-	ret
-_atoow	ENDP
+            xor edx,edx
 
-	END
+            .repeat
+                mov  al,[esi]
+                add  esi,1
+                and  eax,not 0x30
+                bt   eax,6
+                sbb  ebx,ebx
+                and  ebx,0x37
+                sub  eax,ebx
+                shld edx,ecx,4
+                shl  ecx,4
+                add  ecx,eax
+                adc  edx,0
+                dec  edi
+            .untilz
+
+            mov eax,dst
+            mov [eax],ecx
+            mov [eax+4],edx
+            .break
+
+        .elseif ebx == 10 && edi <= 20
+
+            xor ecx,ecx
+
+            mov cl,[esi]
+            add esi,1
+            sub cl,'0'
+
+            .if edi < 10
+
+                .while 1
+
+                    ; FFFFFFFF - 4294967295 = 10
+
+                    dec edi
+                    .break .ifz
+
+                    mov al,[esi]
+                    add esi,1
+                    sub al,'0'
+                    lea ebx,[ecx*8+eax]
+                    lea ecx,[ecx*2+ebx]
+                .endw
+
+                mov [edx],ecx
+                mov eax,edx
+                .break
+
+            .endif
+
+            xor edx,edx
+
+            .while 1
+
+                ; FFFFFFFFFFFFFFFF - 18446744073709551615 = 20
+
+                dec edi
+                .break .ifz
+
+                mov  al,[esi]
+                add  esi,1
+                sub  al,'0'
+                mov  ebx,edx
+                mov  bsize,ecx
+                shld edx,ecx,3
+                shl  ecx,3
+                add  ecx,bsize
+                adc  edx,ebx
+                add  ecx,bsize
+                adc  edx,ebx
+                add  ecx,eax
+                adc  edx,0
+            .endw
+
+            mov eax,dst
+            mov [eax],ecx
+            mov [eax+4],edx
+
+        .else
+
+            mov bsize,edi
+            mov edi,edx
+            .repeat
+                mov al,[esi]
+                and eax,not 0x30
+                bt  eax,6
+                sbb ecx,ecx
+                and ecx,0x37
+                sub eax,ecx
+                mov ecx,8
+                .repeat
+                    movzx edx,word ptr [edi]
+                    imul  edx,ebx
+                    add   eax,edx
+                    mov   [edi],ax
+                    add   edi,2
+                    shr   eax,16
+                .untilcxz
+                sub edi,16
+                add esi,1
+                dec bsize
+            .untilz
+            mov eax,dst
+        .endif
+    .until 1
+    ret
+
+_atoow endp
+
+    END

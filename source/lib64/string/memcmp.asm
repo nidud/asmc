@@ -1,24 +1,18 @@
-include string.inc
+    .code
 
-	.code
+memcmp::
 
-	OPTION PROLOGUE:NONE, EPILOGUE:NONE
+    xchg rsi,rdx
+    xchg rdi,rcx
+    xchg rcx,r8
+    xor  rax,rax
+    repe cmpsb
+    .ifnz
+        sbb al,al
+        sbb al,-1
+    .endif
+    mov rdi,r8
+    mov rsi,rdx
+    ret
 
-memcmp	PROC s1:LPSTR, s2:LPSTR, len:SIZE_T
-	push	rsi
-	push	rdi
-	mov	rdi,rcx
-	mov	rsi,rdx
-	mov	rcx,r8
-	xor	rax,rax
-	repe	cmpsb
-	je	@F
-	sbb	rax,rax
-	sbb	rax,-1
-@@:
-	pop	rdi
-	pop	rsi
-	ret
-memcmp	ENDP
-
-	END
+    END

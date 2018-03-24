@@ -1,44 +1,38 @@
-include string.inc
+    .code
 
-	.code
+_strnicmp::
 
-	OPTION	PROLOGUE:NONE, EPILOGUE:NONE
+    mov r9,rdx
+    mov al,-1
+    .repeat
 
-_strnicmp PROC s1:LPSTR, s2:LPSTR, count:SIZE_T
+        .break .if !al
 
-	mov	r9,rdx
-	mov	al,-1
-@@:
-	test	al,al
-	jz	@F
-	xor	rax,rax
-	test	r8,r8
-	jz	toend
-	mov	al,[r9]
-	cmp	al,[rcx]
-	lea	r9,[r9+1]
-	lea	rcx,[rcx+1]
-	lea	r8,[r8-1]
-	je	@B
-	mov	ah,[rcx-1]
-	sub	ax,'AA'
-	cmp	al,'Z'-'A'+1
-	sbb	dl,dl
-	and	dl,'a'-'A'
-	cmp	ah,'Z'-'A'+1
-	sbb	dh,dh
-	and	dh,'a'-'A'
-	add	ax,dx
-	add	ax,'AA'
-	cmp	ah,al
-	je	@B
+        xor eax,eax
+        .break .if !r8
 
-	sbb	al,al
-	sbb	al,-1
-@@:
-	movsx	rax,al
-toend:
-	ret
-_strnicmp ENDP
+        mov al,[r9]
+        dec r8
+        inc r9
+        inc rcx
+        .continue(0) .if al == [rcx-1]
 
-	END
+        mov ah,[rcx-1]
+        sub ax,'AA'
+        cmp al,'Z'-'A'+1
+        sbb dl,dl
+        and dl,'a'-'A'
+        cmp ah,'Z'-'A'+1
+        sbb dh,dh
+        and dh,'a'-'A'
+        add ax,dx
+        add ax,'AA'
+        .continue(0) .if ah == al
+
+        sbb al,al
+        sbb al,-1
+    .until 1
+    movsx rax,al
+    ret
+
+    end

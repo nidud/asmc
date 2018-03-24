@@ -30,23 +30,23 @@ ifndef __IObjectArray_INTERFACE_DEFINED__
 __IObjectArray_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IObjectArray:IID
-IObjectArray		STRUC
-
+IObjectArrayVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	GetCount, :ptr
 	STDMETHOD	GetAt, :UINT, :REFIID, :ptr
-
-IObjectArray		ENDS
+IObjectArrayVtbl ends
+IObjectArray struct
+	lpVtbl		PVOID ?
+IObjectArray ends
 endif
 
 ifndef __IObjectCollection_INTERFACE_DEFINED__
 __IObjectCollection_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IObjectCollection:IID
-IObjectCollection	STRUC
-
+IObjectCollectionVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -56,8 +56,10 @@ IObjectCollection	STRUC
 	STDMETHOD	AddFromArray, :ptr
 	STDMETHOD	RemoveObjectAt, :UINT
 	STDMETHOD	Clear
-
-IObjectCollection	ENDS
+IObjectCollectionVtbl ends
+IObjectCollection struct
+	lpVtbl		PVOID ?
+IObjectCollection ends
 endif
 
 .list

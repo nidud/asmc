@@ -1,45 +1,36 @@
-include strlib.inc
-
     .code
 
-    option win64:rsp nosave noauto
+strfcat::
 
-strfcat PROC USES rsi rdi buffer:LPSTR, path:LPSTR, file:LPSTR
+    mov rax,rcx
 
-    mov rsi,rdx
-    mov rdx,rcx
-    xor eax,eax
-    xor ecx,ecx
-    dec rcx
+    .if rdx
+        .for ( : byte ptr [rdx] : r9b=[rdx], [rcx]=r9b, rdx++, rcx++ )
 
-    .if rsi
-        mov rdi,rsi     ; overwrite buffer
-        repne scasb
-        mov rdi,rdx
-        not rcx
-        rep movsb
+        .endf
     .else
-        mov rdi,rdx     ; length of buffer
-        repne scasb
+        .for ( : byte ptr [rcx] : rcx++ )
+
+        .endf
     .endif
 
-    dec rdi
-    .if rdi != rdx      ; add slash if missing
-        mov al,[rdi-1]
-        .if !(al == '\' || al == '/')
-            mov al,'\'
-            stosb
+    lea rdx,[rcx-1]
+    .if rdx > rax
+
+        mov dl,[rdx]
+
+        .if !( dl == '\' || dl == '/' )
+
+            mov dl,'\'
+            mov [rcx],dl
+            inc rcx
         .endif
     .endif
 
-    mov rsi,r8          ; add file name
-    .repeat
-        lodsb
-        stosb
-    .until !eax
-    mov rax,rdx
+    .for ( dl=[r8] : dl : [rcx]=dl, r8++, rcx++, dl=[r8] )
+
+    .endf
+    mov [rcx],dl
     ret
 
-strfcat ENDP
-
-    END
+    end

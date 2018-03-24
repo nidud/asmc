@@ -75,13 +75,16 @@ endif
 ifndef __IClassFactory_INTERFACE_DEFINED__
 __IClassFactory_INTERFACE_DEFINED__ equ 1
 
-IClassFactory		STRUC
+IClassFactoryVtbl struct
 STDMETHOD QueryInterface, :REFIID, :ptr
 STDMETHOD AddRef
 STDMETHOD Release
 STDMETHOD CreateInstance, :ptr, :REFIID, :ptr
 STDMETHOD LockServer, :BOOL
-IClassFactory		ENDS
+IClassFactoryVtbl ends
+IClassFactory struct
+	lpVtbl		PVOID ?
+IClassFactory ends
 LPCLASSFACTORY		typedef ptr IClassFactory
 externdef		IID_IClassFactory:IID
 

@@ -605,6 +605,7 @@ struct module_info {
     unsigned char	epilogueflags;		/* OPTION EPILOGUE: FLAGS */
     char *		assert_proc;		/* .assert:<handler> */
     unsigned		codepage;		/* Unicode code page */
+    unsigned		class_label;
 };
 
 #define CurrSource	ModuleInfo.currsource

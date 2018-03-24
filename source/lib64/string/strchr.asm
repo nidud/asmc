@@ -1,26 +1,18 @@
-include string.inc
+    .code
 
-	.code
+strchr::
 
-	OPTION	PROLOGUE:NONE, EPILOGUE:NONE
+    xor eax,eax
+    .repeat
 
-strchr	PROC string:LPSTR, char:SIZE_T
+	mov al,[rcx]
+	.break .if !al
 
-	xor	rax,rax
-@@:
-	mov	al,[rcx]
-	test	al,al
-	jz	toend
+	inc rcx
+	.continue(0) .if al != dl
 
-	inc	rcx
-	cmp	al,dl
-	jne	@B
+	lea rax,[rcx-1]
+    .until 1
+    ret
 
-	mov	rax,rcx
-	dec	rax
-toend:
-	ret
-
-strchr	ENDP
-
-	END
+    END

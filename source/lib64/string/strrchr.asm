@@ -1,31 +1,23 @@
-include string.inc
+    .code
 
-	.code
+strrchr::
 
-	OPTION	PROLOGUE:NONE, EPILOGUE:NONE
+    mov	  r8,rdi
+    mov	  rdi,rcx
+    xor	  rax,rax
+    mov	  rcx,-1
+    repne scasb
+    not	  rcx
+    dec	  rdi
+    mov	  al,dl
+    std
+    repne scasb
+    cld
+    mov	  al,0
+    .ifz
+	lea rax,[rdi+1]
+    .endif
+    mov rdi,r8
+    ret
 
-strrchr PROC string:LPSTR, char:SIZE_T
-
-	push	rdi
-	mov	rdi,rcx
-
-	xor	rax,rax
-	mov	rcx,-1
-	repne	scasb
-	not	rcx
-	dec	rdi
-	mov	al,dl
-	std
-	repne	scasb
-	cld
-	mov	al,0
-	jne	@F
-	lea	rax,[rdi+1]
-@@:
-	test	rax,rax
-	pop	rdi
-	ret
-
-strrchr ENDP
-
-	END
+    END

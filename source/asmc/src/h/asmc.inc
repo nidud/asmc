@@ -1147,7 +1147,10 @@ casealign		db ?	; OPTION:CASEALIGN setting
 epilogueflags		db ?	; OPTION EPILOGUE: FLAGS
 assert_proc		dd ?	; .assert:<proc/macro name>
 codepage		dd ?	;
+class_label		dd ?	;
 module_info		ENDS
+
+Token_Count		equ <ModuleInfo.token_count>
 
 equ_item		STRUC
 next			dd ?
@@ -1326,6 +1329,8 @@ _atoow			PROTO :LPSTR, :LPSTR, :SINT, :SINT
 SizeFromMemtype		PROTO :BYTE, :SINT, :ptr asym
 GetSymOfssize		proto :ptr asym
 SizeFromRegister	proto :SINT
+
+SearchNameInStruct	proto :ptr asym, :LPSTR, :ptr SINT, :SINT
 
 ;-------------------------------------------------------------------------------
 ; Text macros

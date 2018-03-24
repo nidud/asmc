@@ -44,7 +44,7 @@ D3DXFileCreate proto WINAPI \
 		  file: ptr ID3DXFile
 
 
-ID3DXFile		STRUC
+ID3DXFileVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -52,18 +52,24 @@ ID3DXFile		STRUC
 	STDMETHOD	CreateSaveObject, :ptr, :D3DXF_FILESAVEOPTIONS, :D3DXF_FILEFORMAT, :ptr
 	STDMETHOD	RegisterTemplates, :ptr, :SIZE_T
 	STDMETHOD	RegisterEnumTemplates, :ptr
-ID3DXFile		ENDS
+ID3DXFileVtbl ends
+ID3DXFile struct
+	lpVtbl		PVOID ?
+ID3DXFile ends
 
-ID3DXFileSaveObject	STRUC
+ID3DXFileSaveObjectVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	GetFile, :ptr
 	STDMETHOD	AddDataObject, :REFGUID, :ptr, :ptr, :SIZE_T, :ptr, :ptr
 	STDMETHOD	Save
-ID3DXFileSaveObject	ENDS
+ID3DXFileSaveObjectVtbl ends
+ID3DXFileSaveObject struct
+	lpVtbl		PVOID ?
+ID3DXFileSaveObject ends
 
-ID3DXFileSaveData	STRUC
+ID3DXFileSaveDataVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -73,10 +79,13 @@ ID3DXFileSaveData	STRUC
 	STDMETHOD	GetType, :ptr
 	STDMETHOD	AddDataObject, :REFGUID, :ptr, :ptr, :SIZE_T, :ptr, :ptr
 	STDMETHOD	AddDataReference, :ptr, :ptr
-ID3DXFileSaveData	ENDS
+ID3DXFileSaveDataVtbl ends
+ID3DXFileSaveData struct
+	lpVtbl		PVOID ?
+ID3DXFileSaveData ends
 
 
-ID3DXFileEnumObject	STRUC
+ID3DXFileEnumObjectVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -85,9 +94,12 @@ ID3DXFileEnumObject	STRUC
 	STDMETHOD	GetChild, :SIZE_T, :ptr
 	STDMETHOD	GetDataObjectById, :REFGUID, :ptr
 	STDMETHOD	GetDataObjectByName, :ptr, :ptr
-ID3DXFileEnumObject	ENDS
+ID3DXFileEnumObjectVtbl ends
+ID3DXFileEnumObject struct
+	lpVtbl		PVOID ?
+ID3DXFileEnumObject ends
 
-ID3DXFileData		STRUC
+ID3DXFileDataVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -100,7 +112,10 @@ ID3DXFileData		STRUC
 	STDMETHOD	IsReference
 	STDMETHOD	GetChildren, :ptr
 	STDMETHOD	GetChild, :SIZE_T, :ptr
-ID3DXFileData		ENDS
+ID3DXFileDataVtbl ends
+ID3DXFileData struct
+	lpVtbl		PVOID ?
+ID3DXFileData ends
 
 ;; D3DX File errors
 _FACD3DXF		equ 0x876

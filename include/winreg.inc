@@ -1,6 +1,6 @@
 ifndef _WINREG_
 _WINREG_ equ <>
-;.xlist
+.xlist
 
 ifdef _MAC
 include macwin32.inc
@@ -904,5 +904,5 @@ else
 RegSaveKeyEx		equ <RegSaveKeyExA>
 endif
 
- ;.list
+.list
 endif ;; _WINREG_

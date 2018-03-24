@@ -62,18 +62,15 @@ ifndef __IRichChunk_INTERFACE_DEFINED__
 __IRichChunk_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IRichChunk:IID
-IRichChunk		STRUC
-
-	;; BEGIN_INTERFACE
-
+IRichChunkVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	GetData, :ptr, :ptr, :ptr, :ptr
-
-	;; END_INTERFACE
-
-IRichChunk		ENDS
+IRichChunkVtbl ends
+IRichChunk struct
+	lpVtbl		PVOID ?
+IRichChunk ends
 
 ;HRESULT
 IRichChunk_RemoteGetData_Proxy proto WINAPI \
@@ -96,10 +93,7 @@ ifndef __ICondition_INTERFACE_DEFINED__
 __ICondition_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_ICondition:IID
-ICondition		STRUC
-
-	;; BEGIN_INTERFACE
-
+IConditionVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -115,10 +109,10 @@ ICondition		STRUC
 	STDMETHOD	GetValueNormalization, :ptr
 	STDMETHOD	GetInputTerms, :ptr, :ptr, :ptr
 	STDMETHOD	Clone, :ptr
-
-	;; END_INTERFACE
-
-ICondition		ENDS
+IConditionVtbl ends
+ICondition struct
+	lpVtbl		PVOID ?
+ICondition ends
 
 ;HRESULT
 ICondition_RemoteGetComparisonInfo_Proxy proto WINAPI \
@@ -154,10 +148,7 @@ ifndef __ICondition2_INTERFACE_DEFINED__
 __ICondition2_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_ICondition2:IID
-ICondition2		STRUC
-
-	;; BEGIN_INTERFACE
-
+ICondition2Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -175,10 +166,10 @@ ICondition2		STRUC
 	STDMETHOD	Clone, :ptr
 	STDMETHOD	GetLocale, :ptr
 	STDMETHOD	GetLeafConditionInfo, :ptr, :ptr, :ptr
-
-	;; END_INTERFACE
-
-ICondition2		ENDS
+ICondition2Vtbl ends
+ICondition2 struct
+	lpVtbl		PVOID ?
+ICondition2 ends
 
 ;HRESULT
 ICondition2_RemoteGetLeafConditionInfo_Proxy proto WINAPI \

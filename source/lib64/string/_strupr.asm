@@ -1,25 +1,18 @@
-include string.inc
+    .code
 
-	.code
+_strupr::
 
-	OPTION	PROLOGUE:NONE, EPILOGUE:NONE
+    mov rax,rcx
+    .while 1
+        mov dl,[rcx]
+        .break .if !dl
+        sub dl,'a'
+        cmp dl,'Z' - 'A' + 1
+        sbb dl,dl
+        and dl,'a' - 'A'
+        xor [rcx],dl
+        inc rcx
+    .endw
+    ret
 
-_strupr PROC string:LPSTR
-	push	rcx
-@@:
-	mov	al,[rcx]
-	test	al,al
-	jz	@F
-	sub	al,'a'
-	cmp	al,'Z' - 'A' + 1
-	sbb	al,al
-	and	al,'a' - 'A'
-	xor	[rcx],al
-	inc	rcx
-	jmp	@B
-@@:
-	pop	rax
-	ret
-_strupr ENDP
-
-	END
+    END

@@ -65,7 +65,7 @@ ifndef __IXMLElementCollection_INTERFACE_DEFINED__
 __IXMLElementCollection_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IXMLElementCollection:IID
-IXMLElementCollection	STRUC
+IXMLElementCollectionVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -77,7 +77,10 @@ IXMLElementCollection	STRUC
 	STDMETHOD	get_length, :ptr
 	STDMETHOD	get__newEnum, :ptr
 	STDMETHOD	item, :ptr, :ptr, :ptr
-IXMLElementCollection	ENDS
+IXMLElementCollectionVtbl ends
+IXMLElementCollection struct
+	lpVtbl		PVOID ?
+IXMLElementCollection ends
 LPIXMLElementCollection typedef ptr IXMLElementCollection
 
 
@@ -137,7 +140,7 @@ ifndef __IXMLDocument_INTERFACE_DEFINED__
 __IXMLDocument_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IXMLDocument:IID
-IXMLDocument		STRUC
+IXMLDocumentVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -159,7 +162,10 @@ IXMLDocument		STRUC
 	STDMETHOD	get_doctype, :ptr
 	STDMETHOD	get_dtdURL, :ptr
 	STDMETHOD	createElement, :VARIANT, :VARIANT, :ptr
-IXMLDocument		ENDS
+IXMLDocumentVtbl ends
+IXMLDocument struct
+	lpVtbl		PVOID ?
+IXMLDocument ends
 LPIXMLDocument		typedef ptr IXMLDocument
 
 ;HRESULT
@@ -338,7 +344,7 @@ ifndef __IXMLElement_INTERFACE_DEFINED__
 __IXMLElement_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IXMLElement:IID
-IXMLElement		STRUC
+IXMLElementVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -358,7 +364,10 @@ IXMLElement		STRUC
 	STDMETHOD	put_text, :BSTR
 	STDMETHOD	addChild, :ptr
 	STDMETHOD	removeChild, :ptr, :LONG, :LONG
-IXMLElement		ENDS
+IXMLElementVtbl ends
+IXMLElement struct
+	lpVtbl		PVOID ?
+IXMLElement ends
 LPIXMLElement		typedef ptr IXMLElement
 
 ;HRESULT
@@ -513,12 +522,15 @@ ifndef __IXMLError_INTERFACE_DEFINED__
 __IXMLError_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IXMLError:IID
-IXMLError		STRUC
+IXMLErrorVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	GetErrorInfo, :ptr
-IXMLError		ENDS
+IXMLErrorVtbl ends
+IXMLError struct
+	lpVtbl		PVOID ?
+IXMLError ends
 LPIXMLError		typedef ptr IXMLError
 
 ;HRESULT
@@ -540,7 +552,7 @@ ifndef __IXMLElementNotificationSink_INTERFACE_DEFINED__
 __IXMLElementNotificationSink_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IXMLElementNotificationSink:IID
-IXMLElementNotificationSink STRUC
+IXMLElementNotificationSinkVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -549,7 +561,10 @@ IXMLElementNotificationSink STRUC
 	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
 	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
 	STDMETHOD	ChildAdded, :ptr
-IXMLElementNotificationSink ENDS
+IXMLElementNotificationSinkVtbl ends
+IXMLElementNotificationSink struct
+	lpVtbl		PVOID ?
+IXMLElementNotificationSink ends
 LPIXMLElementNotificationSink typedef ptr IXMLElementNotificationSink
 
 ;HRESULT

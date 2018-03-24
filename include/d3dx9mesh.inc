@@ -252,7 +252,7 @@ CALLBACK(LPD3DXUVATLASCB, :FLOAT, :PVOID)
 CALLBACK(LPD3DXIMTSIGNALCALLBACK, :ptr D3DXVECTOR2, :UINT, :UINT, :PVOID, :ptr FLOAT)
 CALLBACK(LPD3DXSHPRTSIMCB, :FLOAT, :PVOID)
 
-ID3DXBaseMesh		STRUC
+ID3DXBaseMeshVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -277,9 +277,12 @@ ID3DXBaseMesh		STRUC
 	STDMETHOD	ConvertAdjacencyToPointReps, :ptr, :ptr
 	STDMETHOD	GenerateAdjacency, :FLOAT, :ptr
 	STDMETHOD	UpdateSemantics, :ptr
-ID3DXBaseMesh		ENDS
+ID3DXBaseMeshVtbl ends
+ID3DXBaseMesh struct
+	lpVtbl		PVOID ?
+ID3DXBaseMesh ends
 
-ID3DXMesh		STRUC
+ID3DXMeshVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -309,9 +312,12 @@ ID3DXMesh		STRUC
 	STDMETHOD	Optimize, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr
 	STDMETHOD	OptimizeInplace, :DWORD, :ptr, :ptr, :ptr, :ptr
 	STDMETHOD	SetAttributeTable, :ptr, :DWORD
-ID3DXMesh		ENDS
+ID3DXMeshVtbl ends
+ID3DXMesh struct
+	lpVtbl		PVOID ?
+ID3DXMesh ends
 
-ID3DXPMesh		STRUC
+ID3DXPMeshVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -351,9 +357,12 @@ ID3DXPMesh		STRUC
 	STDMETHOD	TrimByVertices, :DWORD, :DWORD, :ptr, :ptr
 	STDMETHOD	GetAdjacency, :ptr
 	STDMETHOD	GenerateVertexHistory, :ptr
-ID3DXPMesh		ENDS
+ID3DXPMeshVtbl ends
+ID3DXPMesh struct
+	lpVtbl		PVOID ?
+ID3DXPMesh ends
 
-ID3DXSPMesh		STRUC
+ID3DXSPMeshVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -373,9 +382,12 @@ ID3DXSPMesh		STRUC
 	STDMETHOD	GetMaxVertices
 	STDMETHOD	GetVertexAttributeWeights, :LPD3DXATTRIBUTEWEIGHTS
 	STDMETHOD	GetVertexWeights, :ptr
-ID3DXSPMesh		ENDS
+ID3DXSPMeshVtbl ends
+ID3DXSPMesh struct
+	lpVtbl		PVOID ?
+ID3DXSPMesh ends
 
-ID3DXPatchMesh		STRUC
+ID3DXPatchMeshVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -402,9 +414,12 @@ ID3DXPatchMesh		STRUC
 	STDMETHOD	GetDisplaceParam, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
 	STDMETHOD	Tessellate, :float, :ptr
 	STDMETHOD	TessellateAdaptive, :ptr, :DWORD, :DWORD, :ptr
-ID3DXPatchMesh		ENDS
+ID3DXPatchMeshVtbl ends
+ID3DXPatchMesh struct
+	lpVtbl		PVOID ?
+ID3DXPatchMesh ends
 
-ID3DXSkinInfo		STRUC
+ID3DXSkinInfoVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -432,9 +447,12 @@ ID3DXSkinInfo		STRUC
 	STDMETHOD	UpdateSkinnedMesh, :ptr, :ptr, :ptr, :ptr
 	STDMETHOD	ConvertToBlendedMesh, :ptr, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
 	STDMETHOD	ConvertToIndexedBlendedMesh, :ptr, :DWORD, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
-ID3DXSkinInfo		ENDS
+ID3DXSkinInfoVtbl ends
+ID3DXSkinInfo struct
+	lpVtbl		PVOID ?
+ID3DXSkinInfo ends
 
-ID3DXPRTBuffer		STRUC
+ID3DXPRTBufferVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -454,9 +472,12 @@ ID3DXPRTBuffer		STRUC
 	STDMETHOD	EvalGH
 	STDMETHOD	ExtractTexture, :UINT, :UINT, :UINT, :ptr
 	STDMETHOD	ExtractToMesh, :UINT, :D3DDECLUSAGE, :UINT, :ptr
-ID3DXPRTBuffer		ENDS
+ID3DXPRTBufferVtbl ends
+ID3DXPRTBuffer struct
+	lpVtbl		PVOID ?
+ID3DXPRTBuffer ends
 
-ID3DXPRTCompBuffer	STRUC
+ID3DXPRTCompBufferVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -474,9 +495,12 @@ ID3DXPRTCompBuffer	STRUC
 	STDMETHOD	ExtractPCA, :UINT, :UINT, :ptr
 	STDMETHOD	ExtractTexture, :UINT, :UINT, :ptr
 	STDMETHOD	ExtractToMesh, :UINT, :D3DDECLUSAGE, :UINT, :ptr
-ID3DXPRTCompBuffer	ENDS
+ID3DXPRTCompBufferVtbl ends
+ID3DXPRTCompBuffer struct
+	lpVtbl		PVOID ?
+ID3DXPRTCompBuffer ends
 
-ID3DXTextureGutterHelper STRUC
+ID3DXTextureGutterHelperVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -494,9 +518,12 @@ ID3DXTextureGutterHelper STRUC
 	STDMETHOD	SetBaryMap, :ptr
 	STDMETHOD	SetTexelMap, :ptr
 	STDMETHOD	SetGutterMap, :ptr
-ID3DXTextureGutterHelper ENDS
+ID3DXTextureGutterHelperVtbl ends
+ID3DXTextureGutterHelper struct
+	lpVtbl		PVOID ?
+ID3DXTextureGutterHelper ends
 
-ID3DXPRTEngine		STRUC
+ID3DXPRTEngineVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -532,7 +559,10 @@ ID3DXPRTEngine		STRUC
 	STDMETHOD	SetCallback, :LPD3DXSHPRTSIMCB, :float, :ptr
 	STDMETHOD	ShadowRayIntersects, :ptr, :ptr
 	STDMETHOD	ClosestRayIntersects, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
-ID3DXPRTEngine		ENDS
+ID3DXPRTEngineVtbl ends
+ID3DXPRTEngine struct
+	lpVtbl		PVOID ?
+ID3DXPRTEngine ends
 
 ;HRESULT
 D3DXCreateMesh proto WINAPI \

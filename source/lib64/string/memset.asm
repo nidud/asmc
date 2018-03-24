@@ -1,24 +1,15 @@
-include string.inc
+    .code
 
-	.code
+memset::
 
-	OPTION PROLOGUE:NONE, EPILOGUE:NONE
+    push    rdi
+    push    rcx
+    mov     rdi,rcx
+    mov     rax,rdx
+    mov     rcx,r8
+    rep     stosb
+    pop     rax
+    pop     rdi
+    ret
 
-memset	PROC dst:LPSTR, char:SIZE_T, count:SIZE_T
-
-	push	rdi
-	push	rcx
-
-	mov	rdi,rcx
-	mov	rax,rdx
-	mov	rcx,r8
-
-	rep	stosb
-
-	pop	rax
-	pop	rdi
-	ret
-
-memset	ENDP
-
-	END
+    END

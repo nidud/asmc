@@ -56,17 +56,20 @@ LPD3DXEFFECTPOOL	typedef ptr ID3DXEffectPool
 
 DEFINE_GUID(IID_ID3DXEffectPool, 0x9537ab04, 0x3250, 0x412e, 0x82, 0x13, 0xfc, 0xd2, 0xf8, 0x67, 0x79, 0x33);
 
-ID3DXEffectPool		STRUC
+ID3DXEffectPoolVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
-ID3DXEffectPool		ENDS
+ID3DXEffectPoolVtbl ends
+ID3DXEffectPool struct
+	lpVtbl		PVOID ?
+ID3DXEffectPool ends
 
 LPD3DXBASEEFFECT	typedef ptr ID3DXBaseEffect
 
 DEFINE_GUID(IID_ID3DXBaseEffect, 0x17c18ac, 0x103f, 0x4417, 0x8c, 0x51, 0x6b, 0xf6, 0xef, 0x1e, 0x56, 0xbe);
 
-ID3DXBaseEffect		STRUC
+ID3DXBaseEffectVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -124,13 +127,16 @@ ID3DXBaseEffect		STRUC
 	STDMETHOD	GetPixelShader, :D3DXHANDLE, :ptr
 	STDMETHOD	GetVertexShader, :D3DXHANDLE, :ptr
 	STDMETHOD	SetArrayRange, :D3DXHANDLE, :UINT, :UINT
-ID3DXBaseEffect		ENDS
+ID3DXBaseEffectVtbl ends
+ID3DXBaseEffect struct
+	lpVtbl		PVOID ?
+ID3DXBaseEffect ends
 
 LPD3DXEFFECTSTATEMANAGER typedef ptr ID3DXEffectStateManager
 
 DEFINE_GUID(IID_ID3DXEffectStateManager, 0x79aab587, 0x6dbc, 0x4fa7, 0x82, 0xde, 0x37, 0xfa, 0x17, 0x81, 0xc5, 0xce);
 
-ID3DXEffectStateManager STRUC
+ID3DXEffectStateManagerVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -152,13 +158,16 @@ ID3DXEffectStateManager STRUC
 	STDMETHOD	SetPixelShaderConstantF, :UINT, :ptr, :UINT
 	STDMETHOD	SetPixelShaderConstantI, :UINT, :ptr, :UINT
 	STDMETHOD	SetPixelShaderConstantB, :UINT, :ptr, :UINT
-ID3DXEffectStateManager ENDS
+ID3DXEffectStateManagerVtbl ends
+ID3DXEffectStateManager struct
+	lpVtbl		PVOID ?
+ID3DXEffectStateManager ends
 
 LPD3DXEFFECT		typedef ptr ID3DXEffect
 
 DEFINE_GUID(IID_ID3DXEffect, 0xf6ceb4b3, 0x4e4c, 0x40dd, 0xb8, 0x83, 0x8d, 0x8d, 0xe5, 0xea, 0xc, 0xd5);
 
-ID3DXEffect		STRUC
+ID3DXEffectVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -216,7 +225,6 @@ ID3DXEffect		STRUC
 	STDMETHOD	GetPixelShader, :D3DXHANDLE, :ptr
 	STDMETHOD	GetVertexShader, :D3DXHANDLE, :ptr
 	STDMETHOD	SetArrayRange, :D3DXHANDLE, :UINT, :UINT
-
 	STDMETHOD	GetPool, :ptr
 	STDMETHOD	SetTechnique, :D3DXHANDLE
 	STDMETHOD	GetCurrentTechnique
@@ -239,13 +247,16 @@ ID3DXEffect		STRUC
 	STDMETHOD	DeleteParameterBlock, :D3DXHANDLE
 	STDMETHOD	CloneEffect, :ptr, :ptr
 	STDMETHOD	SetRawValue, :D3DXHANDLE, :ptr, :UINT, :UINT
-ID3DXEffect		ENDS
+ID3DXEffectVtbl ends
+ID3DXEffect struct
+	lpVtbl		PVOID ?
+ID3DXEffect ends
 
 LPD3DXEFFECTCOMPILER	typedef ptr ID3DXEffectCompiler
 
 DEFINE_GUID(IID_ID3DXEffectCompiler, 0x51b8a949, 0x1a31, 0x47e6, 0xbe, 0xa0, 0x4b, 0x30, 0xdb, 0x53, 0xf1, 0xe0);
 
-ID3DXEffectCompiler	STRUC
+ID3DXEffectCompilerVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -307,7 +318,10 @@ ID3DXEffectCompiler	STRUC
 	STDMETHOD	GetLiteral, :D3DXHANDLE, :ptr
 	STDMETHOD	CompileEffect, :DWORD, :ptr, :ptr
 	STDMETHOD	CompileShader, :D3DXHANDLE, :ptr, :DWORD, :ptr, :ptr, :ptr
-ID3DXEffectCompiler	ENDS
+ID3DXEffectCompilerVtbl ends
+ID3DXEffectCompiler struct
+	lpVtbl		PVOID ?
+ID3DXEffectCompiler ends
 
 
 ;HRESULT

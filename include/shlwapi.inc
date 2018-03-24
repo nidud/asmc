@@ -2627,7 +2627,7 @@ ASSOCENUM		typedef DWORD
 ASSOCENUM_NONE		equ 0
 
 DEFINE_IIDX(IQueryAssociations, "c46ca590-3c3f-11d2-bee6-0000f805ca57")
-IQueryAssociations	STRUC
+IQueryAssociationsVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :PVOID
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -2636,7 +2636,10 @@ IQueryAssociations	STRUC
 	STDMETHOD	GetKey, :ASSOCF, :ASSOCKEY, :LPCWSTR, :ptr HKEY
 	STDMETHOD	GetData, :ASSOCF, :ASSOCDATA, :LPCWSTR, :PVOID, :ptr DWORD
 	STDMETHOD	GetEnum, :ASSOCF, :ASSOCENUM, :LPCWSTR, :REFIID, :PVOID
-IQueryAssociations	ENDS
+IQueryAssociationsVtbl ends
+IQueryAssociations struct
+	lpVtbl		PVOID ?
+IQueryAssociations ends
 
 ;LWSTDAPI
 AssocCreate proto WINAPI \

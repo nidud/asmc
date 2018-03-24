@@ -710,8 +710,7 @@ externdef		LIBID_ADODB:IID
 ifndef ___ADOCollection_INTERFACE_DEFINED__
 ___ADOCollection_INTERFACE_DEFINED__ equ 1
 externdef		IID__ADOCollection:IID
-_ADOCollection		STRUC
-
+_ADOCollectionVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -722,15 +721,16 @@ _ADOCollection		STRUC
 	STDMETHOD	get_Count, :ptr
 	STDMETHOD	_NewEnum, :ptr
 	STDMETHOD	Refresh
-
-_ADOCollection		ENDS
+_ADOCollectionVtbl ends
+_ADOCollection struct
+	lpVtbl		PVOID ?
+_ADOCollection ends
 endif
 
 ifndef ___ADODynaCollection_INTERFACE_DEFINED__
 ___ADODynaCollection_INTERFACE_DEFINED__ equ 1
 externdef		IID__ADODynaCollection:IID
-_ADODynaCollection	STRUC
-
+_ADODynaCollectionVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -743,16 +743,16 @@ _ADODynaCollection	STRUC
 	STDMETHOD	Refresh
 	STDMETHOD	Append, :ptr
 	STDMETHOD	Delete, :VARIANT
-
-_ADODynaCollection	ENDS
+_ADODynaCollectionVtbl ends
+_ADODynaCollection struct
+	lpVtbl		PVOID ?
+_ADODynaCollection ends
 
 endif
 ifndef ___ADO_INTERFACE_DEFINED__
 ___ADO_INTERFACE_DEFINED__ equ 1
 externdef		IID__ADO:IID
-_ADO			STRUC
-
-
+_ADOVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -761,17 +761,16 @@ _ADO			STRUC
 	STDMETHOD	GetIDsOfNames, :REFIID, :UINT, :LCID, :ptr
 	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
 	STDMETHOD	get_Properties, :ptr
-
-
-_ADO			ENDS
+_ADOVtbl ends
+_ADO struct
+	lpVtbl		PVOID ?
+_ADO ends
 
 endif
 ifndef __Error_INTERFACE_DEFINED__
 __Error_INTERFACE_DEFINED__ equ 1
 externdef		IID_Error:IID
-Error			STRUC
-
-
+ErrorVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -786,17 +785,16 @@ Error			STRUC
 	STDMETHOD	get_HelpContext, :ptr
 	STDMETHOD	get_SQLState, :ptr
 	STDMETHOD	get_NativeError, :ptr
-
-
-Error			ENDS
+ErrorVtbl ends
+Error struct
+	lpVtbl		PVOID ?
+Error ends
 
 endif
 ifndef __Errors_INTERFACE_DEFINED__
 __Errors_INTERFACE_DEFINED__ equ 1
 externdef		IID_Errors:IID
-Errors			STRUC
-
-
+ErrorsVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -809,17 +807,16 @@ Errors			STRUC
 	STDMETHOD	Refresh
 	STDMETHOD	get_Item, :VARIANT, :ptr
 	STDMETHOD	Clear
-
-
-Errors			ENDS
+ErrorsVtbl ends
+Errors struct
+	lpVtbl		PVOID ?
+Errors ends
 
 endif
 ifndef __Command15_INTERFACE_DEFINED__
 __Command15_INTERFACE_DEFINED__ equ 1
 externdef		IID_Command15:IID
-Command15		STRUC
-
-
+Command15Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -844,17 +841,16 @@ Command15		STRUC
 	STDMETHOD	get_CommandType, :ptr
 	STDMETHOD	get_Name, :ptr
 	STDMETHOD	put_Name, :BSTR
-
-
-Command15		ENDS
+Command15Vtbl ends
+Command15 struct
+	lpVtbl		PVOID ?
+Command15 ends
 
 endif
 ifndef __Command25_INTERFACE_DEFINED__
 __Command25_INTERFACE_DEFINED__ equ 1
 externdef		IID_Command25:IID
-Command25		STRUC
-
-
+Command25Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -881,17 +877,16 @@ Command25		STRUC
 	STDMETHOD	put_Name, :BSTR
 	STDMETHOD	get_State, :ptr
 	STDMETHOD	Cancel
-
-
-Command25		ENDS
+Command25Vtbl ends
+Command25 struct
+	lpVtbl		PVOID ?
+Command25 ends
 
 endif
 ifndef ___Command_INTERFACE_DEFINED__
 ___Command_INTERFACE_DEFINED__ equ 1
 externdef		IID__Command:IID
-_Command		STRUC
-
-
+_CommandVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -924,16 +919,16 @@ _Command		STRUC
 	STDMETHOD	get_Dialect, :ptr
 	STDMETHOD	put_NamedParameters, :VARIANT_BOOL
 	STDMETHOD	get_NamedParameters, :ptr
-
-_Command		ENDS
+_CommandVtbl ends
+_Command struct
+	lpVtbl		PVOID ?
+_Command ends
 
 endif
 ifndef __ConnectionEventsVt_INTERFACE_DEFINED__
 __ConnectionEventsVt_INTERFACE_DEFINED__ equ 1
 externdef		IID_ConnectionEventsVt:IID
-ConnectionEventsVt	STRUC
-
-
+ConnectionEventsVtVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -946,17 +941,16 @@ ConnectionEventsVt	STRUC
 	STDMETHOD	WillConnect, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
 	STDMETHOD	ConnectComplete, :ptr, :ptr, :ptr
 	STDMETHOD	Disconnect, :ptr, :ptr
-
-
-ConnectionEventsVt	ENDS
+ConnectionEventsVtVtbl ends
+ConnectionEventsVt struct
+	lpVtbl		PVOID ?
+ConnectionEventsVt ends
 
 endif
 ifndef __RecordsetEventsVt_INTERFACE_DEFINED__
 __RecordsetEventsVt_INTERFACE_DEFINED__ equ 1
 externdef		IID_RecordsetEventsVt:IID
-RecordsetEventsVt	STRUC
-
-
+RecordsetEventsVtVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -971,17 +965,16 @@ RecordsetEventsVt	STRUC
 	STDMETHOD	EndOfADORecordset, :ptr, :ptr, :ptr
 	STDMETHOD	FetchProgress, :LONG, :LONG, :ptr, :ptr
 	STDMETHOD	FetchComplete, :ptr, :ptr, :ptr
-
-
-RecordsetEventsVt	ENDS
+RecordsetEventsVtVtbl ends
+RecordsetEventsVt struct
+	lpVtbl		PVOID ?
+RecordsetEventsVt ends
 
 endif
 ifndef __ConnectionEvents_DISPINTERFACE_DEFINED__
 __ConnectionEvents_DISPINTERFACE_DEFINED__ equ 1
 externdef		DIID_ConnectionEvents:IID
-ConnectionEvents	STRUC
-
-
+ConnectionEventsVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -989,17 +982,16 @@ ConnectionEvents	STRUC
 	STDMETHOD	GetTypeInfo, :UINT, :LCID, :ptr
 	STDMETHOD	GetIDsOfNames, :REFIID, :UINT, :LCID, :ptr
 	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-
-
-ConnectionEvents	ENDS
+ConnectionEventsVtbl ends
+ConnectionEvents struct
+	lpVtbl		PVOID ?
+ConnectionEvents ends
 
 endif
 ifndef __RecordsetEvents_DISPINTERFACE_DEFINED__
 __RecordsetEvents_DISPINTERFACE_DEFINED__ equ 1
 externdef		DIID_RecordsetEvents:IID
-RecordsetEvents		STRUC
-
-
+RecordsetEventsVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1007,17 +999,16 @@ RecordsetEvents		STRUC
 	STDMETHOD	GetTypeInfo, :UINT, :LCID, :ptr
 	STDMETHOD	GetIDsOfNames, :REFIID, :UINT, :LCID, :ptr
 	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-
-
-RecordsetEvents		ENDS
+RecordsetEventsVtbl ends
+RecordsetEvents struct
+	lpVtbl		PVOID ?
+RecordsetEvents ends
 
 endif
 ifndef __Connection15_INTERFACE_DEFINED__
 __Connection15_INTERFACE_DEFINED__ equ 1
 externdef		IID_Connection15:IID
-Connection15		STRUC
-
-
+Connection15Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1054,17 +1045,16 @@ Connection15		STRUC
 	STDMETHOD	put_Provider, :BSTR
 	STDMETHOD	get_State, :ptr
 	STDMETHOD	OpenSchema, :SchemaEnum, :VARIANT, :VARIANT, :ptr
-
-
-Connection15		ENDS
+Connection15Vtbl ends
+Connection15 struct
+	lpVtbl		PVOID ?
+Connection15 ends
 
 endif
 ifndef ___Connection_INTERFACE_DEFINED__
 ___Connection_INTERFACE_DEFINED__ equ 1
 externdef		IID__Connection:IID
-_Connection		STRUC
-
-
+_ConnectionVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1102,51 +1092,49 @@ _Connection		STRUC
 	STDMETHOD	get_State, :ptr
 	STDMETHOD	OpenSchema, :SchemaEnum, :VARIANT, :VARIANT, :ptr
 	STDMETHOD	Cancel
-
-_Connection		ENDS
+_ConnectionVtbl ends
+_Connection struct
+	lpVtbl		PVOID ?
+_Connection ends
 
 endif
 ifndef __ADOConnectionConstruction15_INTERFACE_DEFINED__
 __ADOConnectionConstruction15_INTERFACE_DEFINED__ equ 1
 externdef		IID_ADOConnectionConstruction15:IID
-ADOConnectionConstruction15 STRUC
-
-
+ADOConnectionConstruction15Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	get_DSO, :ptr
 	STDMETHOD	get_Session, :ptr
 	STDMETHOD	WrapDSOandSession, :ptr, :ptr
-
-
-ADOConnectionConstruction15 ENDS
+ADOConnectionConstruction15Vtbl ends
+ADOConnectionConstruction15 struct
+	lpVtbl		PVOID ?
+ADOConnectionConstruction15 ends
 
 endif
 ifndef __ADOConnectionConstruction_INTERFACE_DEFINED__
 __ADOConnectionConstruction_INTERFACE_DEFINED__ equ 1
 externdef		IID_ADOConnectionConstruction:IID
-ADOConnectionConstruction STRUC
-
-
+ADOConnectionConstructionVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	get_DSO, :ptr
 	STDMETHOD	get_Session, :ptr
 	STDMETHOD	WrapDSOandSession, :ptr, :ptr
-
-
-ADOConnectionConstruction ENDS
+ADOConnectionConstructionVtbl ends
+ADOConnectionConstruction struct
+	lpVtbl		PVOID ?
+ADOConnectionConstruction ends
 
 endif
 externdef		CLSID_Connection:CLSID
 ifndef ___Record_INTERFACE_DEFINED__
 ___Record_INTERFACE_DEFINED__ equ 1
 externdef		IID__Record:IID
-_Record			STRUC
-
-
+_RecordVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1174,17 +1162,17 @@ _Record			STRUC
 	STDMETHOD	get_RecordType, :ptr
 	STDMETHOD	GetChildren, :ptr
 	STDMETHOD	Cancel
-
-_Record			ENDS
+_RecordVtbl ends
+_Record struct
+	lpVtbl		PVOID ?
+_Record ends
 
 endif
 externdef		CLSID_Record:CLSID
 ifndef ___Stream_INTERFACE_DEFINED__
 ___Stream_INTERFACE_DEFINED__ equ 1
 externdef		IID__Stream:IID
-_Stream			STRUC
-
-
+_StreamVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1218,17 +1206,17 @@ _Stream			STRUC
 	STDMETHOD	ReadText, :LONG, :ptr
 	STDMETHOD	WriteText, :BSTR, :StreamWriteEnum
 	STDMETHOD	Cancel
-
-_Stream			ENDS
+_StreamVtbl ends
+_Stream struct
+	lpVtbl		PVOID ?
+_Stream ends
 
 endif
 externdef		CLSID_Stream:CLSID
 ifndef __ADORecordConstruction_INTERFACE_DEFINED__
 __ADORecordConstruction_INTERFACE_DEFINED__ equ 1
 externdef		IID_ADORecordConstruction:IID
-ADORecordConstruction	STRUC
-
-
+ADORecordConstructionVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1239,17 +1227,16 @@ ADORecordConstruction	STRUC
 	STDMETHOD	get_Row, :ptr
 	STDMETHOD	put_Row, :ptr
 	STDMETHOD	put_ParentRow, :ptr
-
-
-ADORecordConstruction	ENDS
+ADORecordConstructionVtbl ends
+ADORecordConstruction struct
+	lpVtbl		PVOID ?
+ADORecordConstruction ends
 
 endif
 ifndef __ADOStreamConstruction_INTERFACE_DEFINED__
 __ADOStreamConstruction_INTERFACE_DEFINED__ equ 1
 externdef		IID_ADOStreamConstruction:IID
-ADOStreamConstruction	STRUC
-
-
+ADOStreamConstructionVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1259,25 +1246,25 @@ ADOStreamConstruction	STRUC
 	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
 	STDMETHOD	get_Stream, :ptr
 	STDMETHOD	put_Stream, :ptr
-
-
-ADOStreamConstruction	ENDS
+ADOStreamConstructionVtbl ends
+ADOStreamConstruction struct
+	lpVtbl		PVOID ?
+ADOStreamConstruction ends
 
 endif
 ifndef __ADOCommandConstruction_INTERFACE_DEFINED__
 __ADOCommandConstruction_INTERFACE_DEFINED__ equ 1
 externdef		IID_ADOCommandConstruction:IID
-ADOCommandConstruction	STRUC
-
-
+ADOCommandConstructionVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
 	STDMETHOD	get_OLEDBCommand, :ptr
 	STDMETHOD	put_OLEDBCommand, :ptr
-
-
-ADOCommandConstruction	ENDS
+ADOCommandConstructionVtbl ends
+ADOCommandConstruction struct
+	lpVtbl		PVOID ?
+ADOCommandConstruction ends
 
 endif
 externdef		CLSID_Command:CLSID
@@ -1286,9 +1273,7 @@ externdef		CLSID_Recordset:CLSID
 ifndef __Recordset15_INTERFACE_DEFINED__
 __Recordset15_INTERFACE_DEFINED__ equ 1
 externdef		IID_Recordset15:IID
-Recordset15		STRUC
-
-
+Recordset15Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1357,17 +1342,16 @@ Recordset15		STRUC
 	STDMETHOD	get_MarshalOptions, :ptr
 	STDMETHOD	put_MarshalOptions, :MarshalOptionsEnum
 	STDMETHOD	Find, :BSTR, :ADO_LONGPTR, :SearchDirectionEnum, :VARIANT
-
-
-Recordset15		ENDS
+Recordset15Vtbl ends
+Recordset15 struct
+	lpVtbl		PVOID ?
+Recordset15 ends
 
 endif
 ifndef __Recordset20_INTERFACE_DEFINED__
 __Recordset20_INTERFACE_DEFINED__ equ 1
 externdef		IID_Recordset20:IID
-Recordset20		STRUC
-
-
+Recordset20Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1449,17 +1433,16 @@ Recordset20		STRUC
 	STDMETHOD	CompareBookmarks, :VARIANT, :VARIANT, :ptr
 	STDMETHOD	Clone, :LockTypeEnum, :ptr
 	STDMETHOD	Resync, :AffectEnum, :ResyncEnum
-
-
-Recordset20		ENDS
+Recordset20Vtbl ends
+Recordset20 struct
+	lpVtbl		PVOID ?
+Recordset20 ends
 
 endif
 ifndef __Recordset21_INTERFACE_DEFINED__
 __Recordset21_INTERFACE_DEFINED__ equ 1
 externdef		IID_Recordset21:IID
-Recordset21		STRUC
-
-
+Recordset21Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1544,17 +1527,16 @@ Recordset21		STRUC
 	STDMETHOD	Seek, :VARIANT, :SeekEnum
 	STDMETHOD	put_Index, :BSTR
 	STDMETHOD	get_Index, :ptr
-
-
-Recordset21		ENDS
+Recordset21Vtbl ends
+Recordset21 struct
+	lpVtbl		PVOID ?
+Recordset21 ends
 
 endif
 ifndef ___Recordset_INTERFACE_DEFINED__
 ___Recordset_INTERFACE_DEFINED__ equ 1
 externdef		IID__Recordset:IID
-_Recordset		STRUC
-
-
+_RecordsetVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1640,17 +1622,16 @@ _Recordset		STRUC
 	STDMETHOD	put_Index, :BSTR
 	STDMETHOD	get_Index, :ptr
 	STDMETHOD	Save, :VARIANT, :PersistFormatEnum
-
-
-_Recordset		ENDS
+_RecordsetVtbl ends
+_Recordset struct
+	lpVtbl		PVOID ?
+_Recordset ends
 
 endif
 ifndef __ADORecordsetConstruction_INTERFACE_DEFINED__
 __ADORecordsetConstruction_INTERFACE_DEFINED__ equ 1
 externdef		IID_ADORecordsetConstruction:IID
-ADORecordsetConstruction STRUC
-
-
+ADORecordsetConstructionVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1664,17 +1645,16 @@ ADORecordsetConstruction STRUC
 	STDMETHOD	put_Chapter, :ADO_LONGPTR
 	STDMETHOD	get_RowPosition, :ptr
 	STDMETHOD	put_RowPosition, :ptr
-
-
-ADORecordsetConstruction ENDS
+ADORecordsetConstructionVtbl ends
+ADORecordsetConstruction struct
+	lpVtbl		PVOID ?
+ADORecordsetConstruction ends
 
 endif
 ifndef __Field15_INTERFACE_DEFINED__
 __Field15_INTERFACE_DEFINED__ equ 1
 externdef		IID_Field15:IID
-Field15			STRUC
-
-
+Field15Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1696,17 +1676,16 @@ Field15			STRUC
 	STDMETHOD	GetChunk, :LONG, :ptr
 	STDMETHOD	get_OriginalValue, :ptr
 	STDMETHOD	get_UnderlyingValue, :ptr
-
-
-Field15			ENDS
+Field15Vtbl ends
+Field15 struct
+	lpVtbl		PVOID ?
+Field15 ends
 
 endif
 ifndef __Field20_INTERFACE_DEFINED__
 __Field20_INTERFACE_DEFINED__ equ 1
 externdef		IID_Field20:IID
-Field20			STRUC
-
-
+Field20Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1735,17 +1714,16 @@ Field20			STRUC
 	STDMETHOD	put_Type, :DataTypeEnum
 	STDMETHOD	put_DefinedSize, :ADO_LONGPTR
 	STDMETHOD	put_Attributes, :LONG
-
-
-Field20			ENDS
+Field20Vtbl ends
+Field20 struct
+	lpVtbl		PVOID ?
+Field20 ends
 
 endif
 ifndef __Field_INTERFACE_DEFINED__
 __Field_INTERFACE_DEFINED__ equ 1
 externdef		IID_Field:IID
-Field			STRUC
-
-
+FieldVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1775,17 +1753,16 @@ Field			STRUC
 	STDMETHOD	put_DefinedSize, :ADO_LONGPTR
 	STDMETHOD	put_Attributes, :LONG
 	STDMETHOD	get_Status, :ptr
-
-
-Field			ENDS
+FieldVtbl ends
+Field struct
+	lpVtbl		PVOID ?
+Field ends
 
 endif
 ifndef __Fields15_INTERFACE_DEFINED__
 __Fields15_INTERFACE_DEFINED__ equ 1
 externdef		IID_Fields15:IID
-Fields15		STRUC
-
-
+Fields15Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1797,17 +1774,16 @@ Fields15		STRUC
 	STDMETHOD	_NewEnum, :ptr
 	STDMETHOD	Refresh
 	STDMETHOD	get_Item, :VARIANT, :ptr
-
-
-Fields15		ENDS
+Fields15Vtbl ends
+Fields15 struct
+	lpVtbl		PVOID ?
+Fields15 ends
 
 endif
 ifndef __Fields20_INTERFACE_DEFINED__
 __Fields20_INTERFACE_DEFINED__ equ 1
 externdef		IID_Fields20:IID
-Fields20		STRUC
-
-
+Fields20Vtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1821,17 +1797,16 @@ Fields20		STRUC
 	STDMETHOD	get_Item, :VARIANT, :ptr
 	STDMETHOD	_Append, :BSTR, :DataTypeEnum, :ADO_LONGPTR, :FieldAttributeEnum
 	STDMETHOD	Delete, :VARIANT
-
-
-Fields20		ENDS
+Fields20Vtbl ends
+Fields20 struct
+	lpVtbl		PVOID ?
+Fields20 ends
 
 endif
 ifndef __Fields_INTERFACE_DEFINED__
 __Fields_INTERFACE_DEFINED__ equ 1
 externdef		IID_Fields:IID
-Fields			STRUC
-
-
+FieldsVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1849,17 +1824,16 @@ Fields			STRUC
 	STDMETHOD	Update
 	STDMETHOD	Resync, :ResyncEnum
 	STDMETHOD	CancelUpdate
-
-
-Fields			ENDS
+FieldsVtbl ends
+Fields struct
+	lpVtbl		PVOID ?
+Fields ends
 
 endif
 ifndef ___Parameter_INTERFACE_DEFINED__
 ___Parameter_INTERFACE_DEFINED__ equ 1
 externdef		IID__Parameter:IID
-_Parameter		STRUC
-
-
+_ParameterVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1885,9 +1859,10 @@ _Parameter		STRUC
 	STDMETHOD	AppendChunk, :VARIANT
 	STDMETHOD	get_Attributes, :ptr
 	STDMETHOD	put_Attributes, :LONG
-
-
-_Parameter		ENDS
+_ParameterVtbl ends
+_Parameter struct
+	lpVtbl		PVOID ?
+_Parameter ends
 
 endif
 externdef		CLSID_Parameter:CLSID
@@ -1897,9 +1872,7 @@ endif
 ifndef __Parameters_INTERFACE_DEFINED__
 __Parameters_INTERFACE_DEFINED__ equ 1
 externdef		IID_Parameters:IID
-Parameters		STRUC
-
-
+ParametersVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1913,17 +1886,16 @@ Parameters		STRUC
 	STDMETHOD	Append, :ptr
 	STDMETHOD	Delete, :VARIANT
 	STDMETHOD	get_Item, :VARIANT, :ptr
-
-
-Parameters		ENDS
+ParametersVtbl ends
+Parameters struct
+	lpVtbl		PVOID ?
+Parameters ends
 
 endif
 ifndef __Property_INTERFACE_DEFINED__
 __Property_INTERFACE_DEFINED__ equ 1
 externdef		IID_Property:IID
-Property		STRUC
-
-
+PropertyVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1937,17 +1909,16 @@ Property		STRUC
 	STDMETHOD	get_Type, :ptr
 	STDMETHOD	get_Attributes, :ptr
 	STDMETHOD	put_Attributes, :LONG
-
-
-Property		ENDS
+PropertyVtbl ends
+Property struct
+	lpVtbl		PVOID ?
+Property ends
 
 endif
 ifndef __Properties_INTERFACE_DEFINED__
 __Properties_INTERFACE_DEFINED__ equ 1
 externdef		IID_Properties:IID
-Properties		STRUC
-
-
+PropertiesVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -1959,9 +1930,10 @@ Properties		STRUC
 	STDMETHOD	_NewEnum, :ptr
 	STDMETHOD	Refresh
 	STDMETHOD	get_Item, :VARIANT, :ptr
-
-
-Properties		ENDS
+PropertiesVtbl ends
+Properties struct
+	lpVtbl		PVOID ?
+Properties ends
 
 endif
 endif

@@ -60,4 +60,6 @@ res( CONTEXT,	ContextDirective )
 res( HLLFOR,	ForDirective )
 res( SWITCH,	SwitchDirective )
 res( ASSERT,	AssertDirective )
-res( UNDEF,	UndefDirective ) /* UNDEF directive */
+res( UNDEF,	UndefDirective )
+res( CLASSDEF,	ClassDirective )
+res( PRAGMA,	PragmaDirective )

@@ -416,9 +416,7 @@ ifndef __IPropertyStorage_INTERFACE_DEFINED__
 __IPropertyStorage_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IPropertyStorage:IID
-IPropertyStorage	STRUC
-
-
+IPropertyStorageVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -434,9 +432,10 @@ IPropertyStorage	STRUC
 	STDMETHOD	SetTimes, :ptr, :ptr, :ptr
 	STDMETHOD	SetClass, :REFCLSID
 	STDMETHOD	Stat, :ptr
-
-
-IPropertyStorage	ENDS
+IPropertyStorageVtbl ends
+IPropertyStorage struct
+	lpVtbl		PVOID ?
+IPropertyStorage ends
 
 endif
 
@@ -445,9 +444,7 @@ __IPropertySetStorage_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IPropertySetStorage:IID
-IPropertySetStorage	STRUC
-
-
+IPropertySetStorageVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -455,9 +452,10 @@ IPropertySetStorage	STRUC
 	STDMETHOD	Open, :REFFMTID, :DWORD, :ptr
 	STDMETHOD	Delete, :REFFMTID
 	STDMETHOD	Enum, :ptr
-
-
-IPropertySetStorage	ENDS
+IPropertySetStorageVtbl ends
+IPropertySetStorage struct
+	lpVtbl		PVOID ?
+IPropertySetStorage ends
 LPPROPERTYSETSTORAGE	typedef ptr IPropertySetStorage
 
 endif
@@ -467,9 +465,7 @@ __IEnumSTATPROPSTG_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IEnumSTATPROPSTG:IID
-IEnumSTATPROPSTG	STRUC
-
-
+IEnumSTATPROPSTGVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -477,9 +473,10 @@ IEnumSTATPROPSTG	STRUC
 	STDMETHOD	Skip, :ULONG
 	STDMETHOD	Reset
 	STDMETHOD	Clone, :ptr
-
-
-IEnumSTATPROPSTG	ENDS
+IEnumSTATPROPSTGVtbl ends
+IEnumSTATPROPSTG struct
+	lpVtbl		PVOID ?
+IEnumSTATPROPSTG ends
 LPENUMSTATPROPSTG	typedef ptr IEnumSTATPROPSTG
 
 ;HRESULT
@@ -504,9 +501,7 @@ __IEnumSTATPROPSETSTG_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IEnumSTATPROPSETSTG:IID
-IEnumSTATPROPSETSTG	STRUC
-
-
+IEnumSTATPROPSETSTGVtbl struct
 	STDMETHOD	QueryInterface, :REFIID, :ptr
 	STDMETHOD	AddRef
 	STDMETHOD	Release
@@ -514,9 +509,10 @@ IEnumSTATPROPSETSTG	STRUC
 	STDMETHOD	Skip, :ULONG
 	STDMETHOD	Reset
 	STDMETHOD	Clone, :ptr
-
-
-IEnumSTATPROPSETSTG	ENDS
+IEnumSTATPROPSETSTGVtbl ends
+IEnumSTATPROPSETSTG struct
+	lpVtbl		PVOID ?
+IEnumSTATPROPSETSTG ends
 LPENUMSTATPROPSETSTG	typedef ptr IEnumSTATPROPSETSTG
 
 ;HRESULT

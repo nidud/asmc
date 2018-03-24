@@ -1,23 +1,23 @@
 include string.inc
 include strlib.inc
 
-	.code
+    .code
 
-	OPTION PROLOGUE:NONE, EPILOGUE:NONE
+    .win64:rsp nosave
 
-strext	PROC string:LPSTR
+strext proc uses rsi string:LPSTR
 
-	strfn ( rcx )
-	push	rax
-	strrchr( rax, '.' )
-	pop	rcx
-	jz	@F
-	cmp	rax,rcx
-	jne	@F
-	xor	rax,rax
-@@:
+    mov rsi,strfn(rcx)
 
-	ret
-strext	ENDP
+    .if strrchr(rsi, '.')
 
-	END
+        .if rax == rsi
+
+            xor eax,eax
+        .endif
+    .endif
+    ret
+
+strext endp
+
+    END

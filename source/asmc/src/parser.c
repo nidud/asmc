@@ -2249,6 +2249,10 @@ int LabelMacro( struct asm_tok tokenarray[] )
     return 0;
 }
 
+/*
+ * callback PROC(...) [?]
+ */
+int ProcType( int, struct asm_tok[], char * );
 int PublicDirective( int, struct asm_tok[] );
 
 int ParseLine( struct asm_tok tokenarray[] )
@@ -2474,7 +2478,20 @@ int ParseLine( struct asm_tok tokenarray[] )
 	    }
 	    dirflags = GetValueSp( tokenarray[i].tokval );
 	    if( CurrStruct && ( dirflags & DF_NOSTRUC ) ) {
-		return( asmerr( 2037 ) );
+
+		if ( tokenarray[i].tokval != T_PROC )
+			return( asmerr( 2037 ) );
+
+		if ( StoreState || ( dirflags & DF_STORE ) ) {
+		    if ( ( dirflags & DF_CGEN ) && ModuleInfo.CurrComment && ModuleInfo.list_generated_code ) {
+			FStoreLine(1);
+		    } else
+			FStoreLine(0);
+		}
+		temp = ProcType( i, tokenarray, buffer );
+		if ( ModuleInfo.list && ( Parse_Pass == PASS_1 || ModuleInfo.GeneratedCode || UseSavedState == FALSE ) )
+		    LstWriteSrcLine();
+		return( temp );
 	    }
 	    /* label allowed for directive? */
 	    if ( dirflags & DF_LABEL ) {

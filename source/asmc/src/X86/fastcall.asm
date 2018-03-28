@@ -791,7 +791,8 @@ ms64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:SI
                     .endif
                 .elseif [edi].expr.kind != EXPR_REG || [edi].expr.flags & EXF_INDIRECT
                     mov eax,paramvalue
-                    .if word ptr [eax] == "0"
+                    .if ( word ptr [eax] == "0" || \
+                        ( [edi].expr.kind == EXPR_CONST && [edi].expr.value == 0 ) )
                         AddLineQueueX(" xor %r, %r", i, i)
                     .else
                         AddLineQueueX(" mov %r, %s", i, eax)
@@ -923,7 +924,8 @@ ms64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:SI
                 .endif
             .else
                 mov eax,paramvalue
-                .if word ptr [eax] == "0"
+                .if ( word ptr [eax] == "0" || \
+                    ( [edi].expr.kind == EXPR_CONST && [edi].expr.value == 0 ) )
                     AddLineQueueX(" xor %r, %r", ebx, ebx)
                 .else
                     AddLineQueueX(" mov %r, %s", ebx, eax)

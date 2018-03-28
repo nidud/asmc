@@ -2,7 +2,7 @@
 #include <globals.h>
 
 char cp_logo[] =
- "Asmc Macro Assembler Version " ASMC_VERSSTR "F\n"
+ "Asmc Macro Assembler Version " ASMC_VERSSTR "G\n"
  "Portions Copyright (c) 1992-2002 Sybase, Inc. All Rights Reserved.\n\n";
 
 static char cp_usage[] =

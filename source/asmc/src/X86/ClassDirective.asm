@@ -25,7 +25,7 @@ AddVirtualTable proc private
         add eax,4
     .endif
     AddLineQueueX( "%sVtbl struct %d", CurrClass, eax )
-    AddLineQueue ( "Release proc" )
+;    AddLineQueue ( "Release proc" )
     ret
 
 AddVirtualTable endp
@@ -34,13 +34,13 @@ ProcType proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok, buffer:LPSTR
 
   local rc:SINT, l_p[16]:SBYTE, l_t[16]:SBYTE, id:LPSTR, IsCom:BYTE
 
-    mov rc,NOT_ERROR
     mov ebx,i
     shl ebx,4
     add ebx,tokenarray
     mov edi,buffer
     mov eax,[ebx-16].string_ptr
     mov id,eax
+    mov rc,NOT_ERROR
 
     inc ModuleInfo.class_label
     sprintf(&l_t, "T$%04X", ModuleInfo.class_label )
@@ -53,7 +53,7 @@ ProcType proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok, buffer:LPSTR
     .if eax == "lbtV"
         inc IsCom
     .elseif CurrClass
-        .if [ebx+16].tokval == T_LOCAL
+        .if Token_Count > 2 && [ebx+16].tokval == T_LOCAL
             add ebx,16
         .else
             AddVirtualTable()
@@ -63,7 +63,7 @@ ProcType proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok, buffer:LPSTR
 
     .repeat
 
-        strcpy(buffer, &l_t)
+        strcpy(edi, &l_t)
         strcat(eax, " typedef proto")
         add ebx,16
         xor esi,esi
@@ -109,7 +109,7 @@ ProcType proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok, buffer:LPSTR
         AddLineQueueX( "%s typedef ptr %s", &l_p, &l_t )
         AddLineQueueX( "%s %s ?", id, &l_p )
         .if ModuleInfo.list
-            ;LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
+            LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
             ;and ModuleInfo.line_flags,NOT LOF_LISTED
         .endif
         .if ModuleInfo.line_queue.head
@@ -147,14 +147,7 @@ ClassDirective proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok
             .endif
             mov eax,CurrStruct
             mov esi,[eax].asym._name
-            mov eax,[esi+strlen(esi)-4]
-            .if eax != "lbtV"
-
-                AddVirtualTable()
-                AddLineQueueX( "%sVtbl ends", esi )
-            .else
-                AddLineQueueX( "%s ends", esi )
-            .endif
+            AddLineQueueX( "%s ends", esi )
             mov CurrClass,0
         .else
 

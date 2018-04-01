@@ -56,272 +56,257 @@ LPD3DXEFFECTPOOL	typedef ptr ID3DXEffectPool
 
 DEFINE_GUID(IID_ID3DXEffectPool, 0x9537ab04, 0x3250, 0x412e, 0x82, 0x13, 0xfc, 0xd2, 0xf8, 0x67, 0x79, 0x33);
 
-ID3DXEffectPoolVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-ID3DXEffectPoolVtbl ends
-ID3DXEffectPool struct
-	lpVtbl		PVOID ?
-ID3DXEffectPool ends
+.comdef ID3DXEffectPool
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    .ends
 
 LPD3DXBASEEFFECT	typedef ptr ID3DXBaseEffect
 
 DEFINE_GUID(IID_ID3DXBaseEffect, 0x17c18ac, 0x103f, 0x4417, 0x8c, 0x51, 0x6b, 0xf6, 0xef, 0x1e, 0x56, 0xbe);
 
-ID3DXBaseEffectVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetDesc, :ptr
-	STDMETHOD	GetParameterDesc, :D3DXHANDLE, :ptr
-	STDMETHOD	GetTechniqueDesc, :D3DXHANDLE, :ptr
-	STDMETHOD	GetPassDesc, :D3DXHANDLE, :ptr
-	STDMETHOD	GetFunctionDesc, :D3DXHANDLE, :ptr
-	STDMETHOD	GetParameter, :D3DXHANDLE, :UINT
-	STDMETHOD	GetParameterByName, :D3DXHANDLE, :LPSTR
-	STDMETHOD	GetParameterBySemantic, :D3DXHANDLE, :LPSTR
-	STDMETHOD	GetParameterElement, :D3DXHANDLE, :UINT
-	STDMETHOD	GetTechnique, :UINT
-	STDMETHOD	GetTechniqueByName, :LPSTR
-	STDMETHOD	GetPass, :D3DXHANDLE, :UINT
-	STDMETHOD	GetPassByName, :D3DXHANDLE, :LPSTR
-	STDMETHOD	GetFunction, :UINT
-	STDMETHOD	GetFunctionByName, :LPSTR
-	STDMETHOD	GetAnnotation, :D3DXHANDLE, :UINT
-	STDMETHOD	GetAnnotationByName, :D3DXHANDLE, :LPSTR
-	STDMETHOD	SetValue, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	GetValue, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	SetBool, :D3DXHANDLE, :BOOL
-	STDMETHOD	GetBool, :D3DXHANDLE, :ptr
-	STDMETHOD	SetBoolArray, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	GetBoolArray, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	SetInt, :D3DXHANDLE, :SINT
-	STDMETHOD	GetInt, :D3DXHANDLE, :ptr
-	STDMETHOD	SetIntArray, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	GetIntArray, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	SetFloat, :D3DXHANDLE, :FLOAT
-	STDMETHOD	GetFloat, :D3DXHANDLE, :ptr
-	STDMETHOD	SetFloatArray, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	GetFloatArray, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	SetVector, :D3DXHANDLE, :ptr
-	STDMETHOD	GetVector, :D3DXHANDLE, :ptr
-	STDMETHOD	SetVectorArray, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	GetVectorArray, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	SetMatrix, :D3DXHANDLE, :ptr
-	STDMETHOD	GetMatrix, :D3DXHANDLE, :ptr
-	STDMETHOD	SetMatrixArray, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	GetMatrixArray, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	SetMatrixPointerArray, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	GetMatrixPointerArray, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	SetMatrixTranspose, :D3DXHANDLE, :ptr
-	STDMETHOD	GetMatrixTranspose, :D3DXHANDLE, :ptr
-	STDMETHOD	SetMatrixTransposeArray, :D3DXHANDLE, :ptr
-	STDMETHOD	GetMatrixTransposeArray, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	SetMatrixTransposePointerArray, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	GetMatrixTransposePointerArray, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	SetString, :D3DXHANDLE, :ptr
-	STDMETHOD	GetString, :D3DXHANDLE, :ptr
-	STDMETHOD	SetTexture, :D3DXHANDLE, :ptr
-	STDMETHOD	GetTexture, :D3DXHANDLE, :ptr
-	STDMETHOD	GetPixelShader, :D3DXHANDLE, :ptr
-	STDMETHOD	GetVertexShader, :D3DXHANDLE, :ptr
-	STDMETHOD	SetArrayRange, :D3DXHANDLE, :UINT, :UINT
-ID3DXBaseEffectVtbl ends
-ID3DXBaseEffect struct
-	lpVtbl		PVOID ?
-ID3DXBaseEffect ends
+.comdef ID3DXBaseEffect
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    GetDesc             proc :ptr
+    GetParameterDesc    proc :D3DXHANDLE, :ptr
+    GetTechniqueDesc    proc :D3DXHANDLE, :ptr
+    GetPassDesc         proc :D3DXHANDLE, :ptr
+    GetFunctionDesc     proc :D3DXHANDLE, :ptr
+    GetParameter        proc :D3DXHANDLE, :UINT
+    GetParameterByName  proc :D3DXHANDLE, :LPSTR
+    GetParameterBySemantic proc :D3DXHANDLE, :LPSTR
+    GetParameterElement proc :D3DXHANDLE, :UINT
+    GetTechnique        proc :UINT
+    GetTechniqueByName  proc :LPSTR
+    GetPass             proc :D3DXHANDLE, :UINT
+    GetPassByName       proc :D3DXHANDLE, :LPSTR
+    GetFunction         proc :UINT
+    GetFunctionByName   proc :LPSTR
+    GetAnnotation       proc :D3DXHANDLE, :UINT
+    GetAnnotationByName proc :D3DXHANDLE, :LPSTR
+    SetValue            proc :D3DXHANDLE, :ptr, :UINT
+    GetValue            proc :D3DXHANDLE, :ptr, :UINT
+    SetBool             proc :D3DXHANDLE, :BOOL
+    GetBool             proc :D3DXHANDLE, :ptr
+    SetBoolArray        proc :D3DXHANDLE, :ptr, :UINT
+    GetBoolArray        proc :D3DXHANDLE, :ptr, :UINT
+    SetInt              proc :D3DXHANDLE, :SINT
+    GetInt              proc :D3DXHANDLE, :ptr
+    SetIntArray         proc :D3DXHANDLE, :ptr, :UINT
+    GetIntArray         proc :D3DXHANDLE, :ptr, :UINT
+    SetFloat            proc :D3DXHANDLE, :FLOAT
+    GetFloat            proc :D3DXHANDLE, :ptr
+    SetFloatArray       proc :D3DXHANDLE, :ptr, :UINT
+    GetFloatArray       proc :D3DXHANDLE, :ptr, :UINT
+    SetVector           proc :D3DXHANDLE, :ptr
+    GetVector           proc :D3DXHANDLE, :ptr
+    SetVectorArray      proc :D3DXHANDLE, :ptr, :UINT
+    GetVectorArray      proc :D3DXHANDLE, :ptr, :UINT
+    SetMatrix           proc :D3DXHANDLE, :ptr
+    GetMatrix           proc :D3DXHANDLE, :ptr
+    SetMatrixArray      proc :D3DXHANDLE, :ptr, :UINT
+    GetMatrixArray      proc :D3DXHANDLE, :ptr, :UINT
+    SetMatrixPointerArray proc :D3DXHANDLE, :ptr, :UINT
+    GetMatrixPointerArray proc :D3DXHANDLE, :ptr, :UINT
+    SetMatrixTranspose  proc :D3DXHANDLE, :ptr
+    GetMatrixTranspose  proc :D3DXHANDLE, :ptr
+    SetMatrixTransposeArray proc :D3DXHANDLE, :ptr
+    GetMatrixTransposeArray proc :D3DXHANDLE, :ptr, :UINT
+    SetMatrixTransposePointerArray proc :D3DXHANDLE, :ptr, :UINT
+    GetMatrixTransposePointerArray proc :D3DXHANDLE, :ptr, :UINT
+    SetString           proc :D3DXHANDLE, :ptr
+    GetString           proc :D3DXHANDLE, :ptr
+    SetTexture          proc :D3DXHANDLE, :ptr
+    GetTexture          proc :D3DXHANDLE, :ptr
+    GetPixelShader      proc :D3DXHANDLE, :ptr
+    GetVertexShader     proc :D3DXHANDLE, :ptr
+    SetArrayRange       proc :D3DXHANDLE, :UINT, :UINT
+    .ends
 
 LPD3DXEFFECTSTATEMANAGER typedef ptr ID3DXEffectStateManager
 
 DEFINE_GUID(IID_ID3DXEffectStateManager, 0x79aab587, 0x6dbc, 0x4fa7, 0x82, 0xde, 0x37, 0xfa, 0x17, 0x81, 0xc5, 0xce);
 
-ID3DXEffectStateManagerVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetTransform, :D3DTRANSFORMSTATETYPE, :ptr
-	STDMETHOD	SetMaterial, :ptr
-	STDMETHOD	SetLight, :DWORD, :ptr
-	STDMETHOD	LightEnable, :DWORD, :BOOL
-	STDMETHOD	SetRenderState, :D3DRENDERSTATETYPE, :DWORD
-	STDMETHOD	SetTexture, :DWORD, :ptr
-	STDMETHOD	SetTextureStageState, :DWORD, :D3DTEXTURESTAGESTATETYPE, :DWORD
-	STDMETHOD	SetSamplerState, :DWORD, :D3DSAMPLERSTATETYPE, :DWORD
-	STDMETHOD	SetNPatchMode, :FLOAT
-	STDMETHOD	SetFVF, :DWORD
-	STDMETHOD	SetVertexShader, :ptr
-	STDMETHOD	SetVertexShaderConstantF, :UINT, :ptr, :UINT
-	STDMETHOD	SetVertexShaderConstantI, :UINT, :ptr, :UINT
-	STDMETHOD	SetVertexShaderConstantB, :UINT, :ptr, :UINT
-	STDMETHOD	SetPixelShader, :ptr
-	STDMETHOD	SetPixelShaderConstantF, :UINT, :ptr, :UINT
-	STDMETHOD	SetPixelShaderConstantI, :UINT, :ptr, :UINT
-	STDMETHOD	SetPixelShaderConstantB, :UINT, :ptr, :UINT
-ID3DXEffectStateManagerVtbl ends
-ID3DXEffectStateManager struct
-	lpVtbl		PVOID ?
-ID3DXEffectStateManager ends
+.comdef ID3DXEffectStateManager
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    SetTransform        proc :D3DTRANSFORMSTATETYPE, :ptr
+    SetMaterial         proc :ptr
+    SetLight            proc :DWORD, :ptr
+    LightEnable         proc :DWORD, :BOOL
+    SetRenderState      proc :D3DRENDERSTATETYPE, :DWORD
+    SetTexture          proc :DWORD, :ptr
+    SetTextureStageState proc :DWORD, :D3DTEXTURESTAGESTATETYPE, :DWORD
+    SetSamplerState     proc :DWORD, :D3DSAMPLERSTATETYPE, :DWORD
+    SetNPatchMode       proc :FLOAT
+    SetFVF              proc :DWORD
+    SetVertexShader     proc :ptr
+    SetVertexShaderConstantF proc :UINT, :ptr, :UINT
+    SetVertexShaderConstantI proc :UINT, :ptr, :UINT
+    SetVertexShaderConstantB proc :UINT, :ptr, :UINT
+    SetPixelShader      proc :ptr
+    SetPixelShaderConstantF proc :UINT, :ptr, :UINT
+    SetPixelShaderConstantI proc :UINT, :ptr, :UINT
+    SetPixelShaderConstantB proc :UINT, :ptr, :UINT
+    .ends
 
 LPD3DXEFFECT		typedef ptr ID3DXEffect
 
 DEFINE_GUID(IID_ID3DXEffect, 0xf6ceb4b3, 0x4e4c, 0x40dd, 0xb8, 0x83, 0x8d, 0x8d, 0xe5, 0xea, 0xc, 0xd5);
 
-ID3DXEffectVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetDesc, :ptr
-	STDMETHOD	GetParameterDesc, :D3DXHANDLE, :ptr
-	STDMETHOD	GetTechniqueDesc, :D3DXHANDLE, :ptr
-	STDMETHOD	GetPassDesc, :D3DXHANDLE, :ptr
-	STDMETHOD	GetFunctionDesc, :D3DXHANDLE, :ptr
-	STDMETHOD	GetParameter, :D3DXHANDLE, :UINT
-	STDMETHOD	GetParameterByName, :D3DXHANDLE, :ptr
-	STDMETHOD	GetParameterBySemantic, :D3DXHANDLE, :ptr
-	STDMETHOD	GetParameterElement, :D3DXHANDLE, :UINT
-	STDMETHOD	GetTechnique, :UINT
-	STDMETHOD	GetTechniqueByName, :ptr
-	STDMETHOD	GetPass, :D3DXHANDLE, :UINT
-	STDMETHOD	GetPassByName, :D3DXHANDLE, :ptr
-	STDMETHOD	GetFunction, :UINT
-	STDMETHOD	GetFunctionByName, :ptr
-	STDMETHOD	GetAnnotation, :D3DXHANDLE, :UINT
-	STDMETHOD	GetAnnotationByName, :D3DXHANDLE, :ptr
-	STDMETHOD	SetValue, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	GetValue, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	SetBool, :D3DXHANDLE, :BOOL
-	STDMETHOD	GetBool, :D3DXHANDLE, :ptr
-	STDMETHOD	SetBoolArray, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	GetBoolArray, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	SetInt, :D3DXHANDLE, :SINT
-	STDMETHOD	GetInt, :D3DXHANDLE, :ptr
-	STDMETHOD	SetIntArray, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	GetIntArray, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	SetFloat, :D3DXHANDLE, :FLOAT
-	STDMETHOD	GetFloat, :D3DXHANDLE, :ptr
-	STDMETHOD	SetFloatArray, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	GetFloatArray, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	SetVector, :D3DXHANDLE, :ptr
-	STDMETHOD	GetVector, :D3DXHANDLE, :ptr
-	STDMETHOD	SetVectorArray, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	GetVectorArray, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	SetMatrix, :D3DXHANDLE, :ptr
-	STDMETHOD	GetMatrix, :D3DXHANDLE, :ptr
-	STDMETHOD	SetMatrixArray, :D3DXHANDLE, :ptr
-	STDMETHOD	GetMatrixArray, :D3DXHANDLE, :ptr
-	STDMETHOD	SetMatrixPointerArray, :D3DXHANDLE, :ptr
-	STDMETHOD	GetMatrixPointerArray, :D3DXHANDLE, :ptr
-	STDMETHOD	SetMatrixTranspose, :D3DXHANDLE, :ptr
-	STDMETHOD	GetMatrixTranspose, :D3DXHANDLE, :ptr
-	STDMETHOD	SetMatrixTransposeArray, :D3DXHANDLE, :ptr
-	STDMETHOD	GetMatrixTransposeArray, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	SetMatrixTransposePointerArray, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	GetMatrixTransposePointerArray, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	SetString, :D3DXHANDLE, :ptr
-	STDMETHOD	GetString, :D3DXHANDLE, :ptr
-	STDMETHOD	SetTexture, :D3DXHANDLE, :ptr
-	STDMETHOD	GetTexture, :D3DXHANDLE, :ptr
-	STDMETHOD	GetPixelShader, :D3DXHANDLE, :ptr
-	STDMETHOD	GetVertexShader, :D3DXHANDLE, :ptr
-	STDMETHOD	SetArrayRange, :D3DXHANDLE, :UINT, :UINT
-	STDMETHOD	GetPool, :ptr
-	STDMETHOD	SetTechnique, :D3DXHANDLE
-	STDMETHOD	GetCurrentTechnique
-	STDMETHOD	ValidateTechnique, :D3DXHANDLE
-	STDMETHOD	FindNextValidTechnique, :D3DXHANDLE, :ptr
-	STDMETHOD	IsParameterUsed, :D3DXHANDLE, :D3DXHANDLE
-	STDMETHOD	Begin, :ptr, :DWORD
-	STDMETHOD	BeginPass, :UINT
-	STDMETHOD	CommitChanges
-	STDMETHOD	EndPass
-	STDMETHOD	_End
-	STDMETHOD	GetDevice, :ptr
-	STDMETHOD	OnLostDevice
-	STDMETHOD	OnResetDevice
-	STDMETHOD	SetStateManager, :ptr
-	STDMETHOD	GetStateManager, :ptr
-	STDMETHOD	BeginParameterBlock
-	STDMETHOD	EndParameterBlock
-	STDMETHOD	ApplyParameterBlock, :D3DXHANDLE
-	STDMETHOD	DeleteParameterBlock, :D3DXHANDLE
-	STDMETHOD	CloneEffect, :ptr, :ptr
-	STDMETHOD	SetRawValue, :D3DXHANDLE, :ptr, :UINT, :UINT
-ID3DXEffectVtbl ends
-ID3DXEffect struct
-	lpVtbl		PVOID ?
-ID3DXEffect ends
+.comdef ID3DXEffect
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    GetDesc             proc :ptr
+    GetParameterDesc    proc :D3DXHANDLE, :ptr
+    GetTechniqueDesc    proc :D3DXHANDLE, :ptr
+    GetPassDesc         proc :D3DXHANDLE, :ptr
+    GetFunctionDesc     proc :D3DXHANDLE, :ptr
+    GetParameter        proc :D3DXHANDLE, :UINT
+    GetParameterByName  proc :D3DXHANDLE, :ptr
+    GetParameterBySemantic proc :D3DXHANDLE, :ptr
+    GetParameterElement proc :D3DXHANDLE, :UINT
+    GetTechnique        proc :UINT
+    GetTechniqueByName  proc :ptr
+    GetPass             proc :D3DXHANDLE, :UINT
+    GetPassByName       proc :D3DXHANDLE, :ptr
+    GetFunction         proc :UINT
+    GetFunctionByName   proc :ptr
+    GetAnnotation       proc :D3DXHANDLE, :UINT
+    GetAnnotationByName proc :D3DXHANDLE, :ptr
+    SetValue            proc :D3DXHANDLE, :ptr, :UINT
+    GetValue            proc :D3DXHANDLE, :ptr, :UINT
+    SetBool             proc :D3DXHANDLE, :BOOL
+    GetBool             proc :D3DXHANDLE, :ptr
+    SetBoolArray        proc :D3DXHANDLE, :ptr, :UINT
+    GetBoolArray        proc :D3DXHANDLE, :ptr, :UINT
+    SetInt              proc :D3DXHANDLE, :SINT
+    GetInt              proc :D3DXHANDLE, :ptr
+    SetIntArray         proc :D3DXHANDLE, :ptr, :UINT
+    GetIntArray         proc :D3DXHANDLE, :ptr, :UINT
+    SetFloat            proc :D3DXHANDLE, :FLOAT
+    GetFloat            proc :D3DXHANDLE, :ptr
+    SetFloatArray       proc :D3DXHANDLE, :ptr, :UINT
+    GetFloatArray       proc :D3DXHANDLE, :ptr, :UINT
+    SetVector           proc :D3DXHANDLE, :ptr
+    GetVector           proc :D3DXHANDLE, :ptr
+    SetVectorArray      proc :D3DXHANDLE, :ptr, :UINT
+    GetVectorArray      proc :D3DXHANDLE, :ptr, :UINT
+    SetMatrix           proc :D3DXHANDLE, :ptr
+    GetMatrix           proc :D3DXHANDLE, :ptr
+    SetMatrixArray      proc :D3DXHANDLE, :ptr
+    GetMatrixArray      proc :D3DXHANDLE, :ptr
+    SetMatrixPointerArray proc :D3DXHANDLE, :ptr
+    GetMatrixPointerArray proc :D3DXHANDLE, :ptr
+    SetMatrixTranspose  proc :D3DXHANDLE, :ptr
+    GetMatrixTranspose  proc :D3DXHANDLE, :ptr
+    SetMatrixTransposeArray proc :D3DXHANDLE, :ptr
+    GetMatrixTransposeArray proc :D3DXHANDLE, :ptr, :UINT
+    SetMatrixTransposePointerArray proc :D3DXHANDLE, :ptr, :UINT
+    GetMatrixTransposePointerArray proc :D3DXHANDLE, :ptr, :UINT
+    SetString           proc :D3DXHANDLE, :ptr
+    GetString           proc :D3DXHANDLE, :ptr
+    SetTexture          proc :D3DXHANDLE, :ptr
+    GetTexture          proc :D3DXHANDLE, :ptr
+    GetPixelShader      proc :D3DXHANDLE, :ptr
+    GetVertexShader     proc :D3DXHANDLE, :ptr
+    SetArrayRange       proc :D3DXHANDLE, :UINT, :UINT
+    GetPool             proc :ptr
+    SetTechnique        proc :D3DXHANDLE
+    GetCurrentTechnique proc
+    ValidateTechnique   proc :D3DXHANDLE
+    FindNextValidTechnique proc :D3DXHANDLE, :ptr
+    IsParameterUsed     proc :D3DXHANDLE, :D3DXHANDLE
+    Begin               proc :ptr, :DWORD
+    BeginPass           proc :UINT
+    CommitChanges       proc
+    EndPass             proc
+    _End                proc
+    GetDevice           proc :ptr
+    OnLostDevice        proc
+    OnResetDevice       proc
+    SetStateManager     proc :ptr
+    GetStateManager     proc :ptr
+    BeginParameterBlock proc
+    EndParameterBlock   proc
+    ApplyParameterBlock proc :D3DXHANDLE
+    DeleteParameterBlock proc :D3DXHANDLE
+    CloneEffect         proc :ptr, :ptr
+    SetRawValue         proc :D3DXHANDLE, :ptr, :UINT, :UINT
+    .ends
 
 LPD3DXEFFECTCOMPILER	typedef ptr ID3DXEffectCompiler
 
 DEFINE_GUID(IID_ID3DXEffectCompiler, 0x51b8a949, 0x1a31, 0x47e6, 0xbe, 0xa0, 0x4b, 0x30, 0xdb, 0x53, 0xf1, 0xe0);
 
-ID3DXEffectCompilerVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetDesc, :ptr
-	STDMETHOD	GetParameterDesc, :D3DXHANDLE, :ptr
-	STDMETHOD	GetTechniqueDesc, :D3DXHANDLE, :ptr
-	STDMETHOD	GetPassDesc, :D3DXHANDLE, :ptr
-	STDMETHOD	GetFunctionDesc, :D3DXHANDLE, :ptr
-	STDMETHOD	GetParameter, :D3DXHANDLE, :UINT
-	STDMETHOD	GetParameterByName, :D3DXHANDLE, :ptr
-	STDMETHOD	GetParameterBySemantic, :D3DXHANDLE, :ptr
-	STDMETHOD	GetParameterElement, :D3DXHANDLE, :UINT
-	STDMETHOD	GetTechnique, :UINT
-	STDMETHOD	GetTechniqueByName, :ptr
-	STDMETHOD	GetPass, :D3DXHANDLE, :UINT
-	STDMETHOD	GetPassByName, :D3DXHANDLE, :ptr
-	STDMETHOD	GetFunction, :UINT
-	STDMETHOD	GetFunctionByName, :ptr
-	STDMETHOD	GetAnnotation, :D3DXHANDLE, :UINT
-	STDMETHOD	GetAnnotationByName, :D3DXHANDLE, :ptr
-	STDMETHOD	SetValue, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	GetValue, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	SetBool, :D3DXHANDLE, :BOOL
-	STDMETHOD	GetBool, :D3DXHANDLE, :ptr
-	STDMETHOD	SetBoolArray, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	GetBoolArray, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	SetInt, :D3DXHANDLE, :SINT
-	STDMETHOD	GetInt, :D3DXHANDLE, :ptr
-	STDMETHOD	SetIntArray, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	GetIntArray, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	SetFloat, :D3DXHANDLE, :FLOAT
-	STDMETHOD	GetFloat, :D3DXHANDLE, :ptr
-	STDMETHOD	SetFloatArray, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	GetFloatArray, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	SetVector, :D3DXHANDLE, :ptr
-	STDMETHOD	GetVector, :D3DXHANDLE, :ptr
-	STDMETHOD	SetVectorArray, :D3DXHANDLE, :ptr
-	STDMETHOD	GetVectorArray, :D3DXHANDLE, :ptr
-	STDMETHOD	SetMatrix, :D3DXHANDLE, :ptr
-	STDMETHOD	GetMatrix, :D3DXHANDLE, :ptr
-	STDMETHOD	SetMatrixArray, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	GetMatrixArray, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	SetMatrixPointerArray, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	GetMatrixPointerArray, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	SetMatrixTranspose, :D3DXHANDLE, :ptr
-	STDMETHOD	GetMatrixTranspose, :D3DXHANDLE, :ptr
-	STDMETHOD	SetMatrixTransposeArray, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	GetMatrixTransposeArray, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	SetMatrixTransposePointerArray, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	GetMatrixTransposePointerArray, :D3DXHANDLE, :ptr, :UINT
-	STDMETHOD	SetString, :D3DXHANDLE, :ptr
-	STDMETHOD	GetString, :D3DXHANDLE, :ptr
-	STDMETHOD	SetTexture, :D3DXHANDLE, :ptr
-	STDMETHOD	GetTexture, :D3DXHANDLE, :ptr
-	STDMETHOD	GetPixelShader, :D3DXHANDLE, :ptr
-	STDMETHOD	GetVertexShader, :D3DXHANDLE, :ptr
-	STDMETHOD	SetArrayRange, :D3DXHANDLE, :UINT, :UINT
-	STDMETHOD	SetLiteral, :D3DXHANDLE, :BOOL
-	STDMETHOD	GetLiteral, :D3DXHANDLE, :ptr
-	STDMETHOD	CompileEffect, :DWORD, :ptr, :ptr
-	STDMETHOD	CompileShader, :D3DXHANDLE, :ptr, :DWORD, :ptr, :ptr, :ptr
-ID3DXEffectCompilerVtbl ends
-ID3DXEffectCompiler struct
-	lpVtbl		PVOID ?
-ID3DXEffectCompiler ends
+.comdef ID3DXEffectCompiler
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    GetDesc             proc :ptr
+    GetParameterDesc    proc :D3DXHANDLE, :ptr
+    GetTechniqueDesc    proc :D3DXHANDLE, :ptr
+    GetPassDesc         proc :D3DXHANDLE, :ptr
+    GetFunctionDesc     proc :D3DXHANDLE, :ptr
+    GetParameter        proc :D3DXHANDLE, :UINT
+    GetParameterByName  proc :D3DXHANDLE, :ptr
+    GetParameterBySemantic proc :D3DXHANDLE, :ptr
+    GetParameterElement proc :D3DXHANDLE, :UINT
+    GetTechnique        proc :UINT
+    GetTechniqueByName  proc :ptr
+    GetPass             proc :D3DXHANDLE, :UINT
+    GetPassByName       proc :D3DXHANDLE, :ptr
+    GetFunction         proc :UINT
+    GetFunctionByName   proc :ptr
+    GetAnnotation       proc :D3DXHANDLE, :UINT
+    GetAnnotationByName proc :D3DXHANDLE, :ptr
+    SetValue            proc :D3DXHANDLE, :ptr, :UINT
+    GetValue            proc :D3DXHANDLE, :ptr, :UINT
+    SetBool             proc :D3DXHANDLE, :BOOL
+    GetBool             proc :D3DXHANDLE, :ptr
+    SetBoolArray        proc :D3DXHANDLE, :ptr, :UINT
+    GetBoolArray        proc :D3DXHANDLE, :ptr, :UINT
+    SetInt              proc :D3DXHANDLE, :SINT
+    GetInt              proc :D3DXHANDLE, :ptr
+    SetIntArray         proc :D3DXHANDLE, :ptr, :UINT
+    GetIntArray         proc :D3DXHANDLE, :ptr, :UINT
+    SetFloat            proc :D3DXHANDLE, :FLOAT
+    GetFloat            proc :D3DXHANDLE, :ptr
+    SetFloatArray       proc :D3DXHANDLE, :ptr, :UINT
+    GetFloatArray       proc :D3DXHANDLE, :ptr, :UINT
+    SetVector           proc :D3DXHANDLE, :ptr
+    GetVector           proc :D3DXHANDLE, :ptr
+    SetVectorArray      proc :D3DXHANDLE, :ptr
+    GetVectorArray      proc :D3DXHANDLE, :ptr
+    SetMatrix           proc :D3DXHANDLE, :ptr
+    GetMatrix           proc :D3DXHANDLE, :ptr
+    SetMatrixArray      proc :D3DXHANDLE, :ptr, :UINT
+    GetMatrixArray      proc :D3DXHANDLE, :ptr, :UINT
+    SetMatrixPointerArray proc :D3DXHANDLE, :ptr, :UINT
+    GetMatrixPointerArray proc :D3DXHANDLE, :ptr, :UINT
+    SetMatrixTranspose  proc :D3DXHANDLE, :ptr
+    GetMatrixTranspose  proc :D3DXHANDLE, :ptr
+    SetMatrixTransposeArray proc :D3DXHANDLE, :ptr, :UINT
+    GetMatrixTransposeArray proc :D3DXHANDLE, :ptr, :UINT
+    SetMatrixTransposePointerArray proc :D3DXHANDLE, :ptr, :UINT
+    GetMatrixTransposePointerArray proc :D3DXHANDLE, :ptr, :UINT
+    SetString           proc :D3DXHANDLE, :ptr
+    GetString           proc :D3DXHANDLE, :ptr
+    SetTexture          proc :D3DXHANDLE, :ptr
+    GetTexture          proc :D3DXHANDLE, :ptr
+    GetPixelShader      proc :D3DXHANDLE, :ptr
+    GetVertexShader     proc :D3DXHANDLE, :ptr
+    SetArrayRange       proc :D3DXHANDLE, :UINT, :UINT
+    SetLiteral          proc :D3DXHANDLE, :BOOL
+    GetLiteral          proc :D3DXHANDLE, :ptr
+    CompileEffect       proc :DWORD, :ptr, :ptr
+    CompileShader       proc :D3DXHANDLE, :ptr, :DWORD, :ptr, :ptr, :ptr
+    .ends
 
 
 ;HRESULT

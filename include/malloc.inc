@@ -57,7 +57,7 @@ salloc	macro string
 	malloc(addr [strlen(string)+1])
 	pop ecx
 	.if eax
-	    strcpy(eax, string)
+	    strcpy(eax, ecx)
 	    test eax,eax
 	.endif
 	endm

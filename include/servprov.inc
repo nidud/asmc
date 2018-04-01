@@ -31,17 +31,13 @@ externdef		__MIDL_itf_servprov_0000_v0_0_s_ifspec:RPC_IF_HANDLE
 ifndef __IServiceProvider_INTERFACE_DEFINED__
 __IServiceProvider_INTERFACE_DEFINED__ equ 1
 
-IServiceProviderVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	QueryService, :REFGUID, :REFIID, :ptr
-IServiceProviderVtbl ends
-IServiceProvider struct
-	lpVtbl		PVOID ?
-IServiceProvider ends
+.comdef IServiceProvider
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    QueryService	proc :REFGUID, :REFIID, :ptr
+    .ends
 LPSERVICEPROVIDER	typedef ptr IServiceProvider
-LPIServiceProvider	typedef ptr IServiceProvider
 externdef		IID_IServiceProvider:IID
 
 ;HRESULT

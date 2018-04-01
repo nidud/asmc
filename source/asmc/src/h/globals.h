@@ -476,6 +476,7 @@ struct dll_desc {
 struct src_item;
 struct hll_item;
 struct str_item;
+struct com_item;
 struct context;
 
 struct fname_item {
@@ -509,6 +510,7 @@ unsigned	start_displ;	 /* OMF only, optional displ for start label */
 struct str_item *StrStack;	 /* v2.20 string stack */
 struct hll_item *HllStack;	 /* for .WHILE, .IF, .REPEAT */
 struct hll_item *HllFree;	 /* v2.06: stack of free <struct hll>-items */
+struct com_item *ComStack;	 /* for .CLASSDEF, .COMDEF */
 struct context *ContextStack;
 struct context *ContextFree;	 /* v2.10: "free items" heap implemented. */
 struct context *SavedContexts;

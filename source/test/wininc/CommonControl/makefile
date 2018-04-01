@@ -1,49 +1,35 @@
-test.exe:
-    make -h -s WIN32A.exe
-    make -h -s WIN32W.exe
-    make -h -s WIN64A.exe
-    make -h -s WIN64W.exe
-    make -h -s WIN32APE.exe
-    make -h -s WIN32WPE.exe
-    make -h -s WIN64APE.exe
-    make -h -s WIN64WPE.exe
-    del *.obj
-    del *.exe
+build:
+    make -h -s test_A32
+    make -h -s test_A64
+    make -h -s test_W32
+    make -h -s test_W64
+    make -h -s test_peA32
+    make -h -s test_peA64
+    make -h -s test_peW32
+    make -h -s test_peW64
     pause
 
-WIN32A.exe:
-    echo $@
-    asmc -q test.asm
-    linkw system gui_32 name $@ file test
-    $@
-WIN32W.exe:
-    echo $@
-    asmc -q -ws test.asm
-    linkw system gui_32W name $@ file test
-    $@
-WIN64A.exe:
-    echo $@
-    asmc -q -win64 test.asm
-    linkw system gui_64 name $@ file test
-    $@
-WIN64W.exe:
-    echo $@
-    asmc -q -win64 -ws test.asm
-    linkw system gui_64W name $@ file test
-    $@
-WIN32APE.exe:
-    echo $@
-    asmc -q -pe -gui test.asm
-    test.exe
-WIN32WPE.exe:
-    echo $@
-    asmc -q -pe -gui -ws test.asm
-    test.exe
-WIN64APE.exe:
-    echo $@
-    asmc -q -pe -gui -D_WIN64 test.asm
-    test.exe
-WIN64WPE.exe:
-    echo $@
-    asmc -q -pe -gui -ws -D_WIN64 test.asm
-    test.exe
+test_A32:
+    asmc -q -Fo $*.obj test.asm
+    linkw sys gui_32 file $*
+test_A64:
+    asmc -q -Fo $*.obj -win64 test.asm
+    linkw sys gui_64 file $*
+test_W32:
+    asmc -q -Fo $*.obj -ws test.asm
+    linkw sys gui_32W file $*
+test_W64:
+    asmc -q -Fo $*.obj -win64 -ws test.asm
+    linkw sys gui_64W file $*
+    del *.obj
+
+test_peA32:
+    asmc -q -pe -gui -Fo $@.exe test.asm
+test_peA64:
+    asmc -q -pe -gui -Fo $@.exe -win64 test.asm
+test_peW32:
+    asmc -q -pe -gui -Fo $@.exe -ws test.asm
+test_peW64:
+    asmc -q -pe -gui -Fo $@.exe -win64 -ws test.asm
+    dir *.exe | find ".exe"
+

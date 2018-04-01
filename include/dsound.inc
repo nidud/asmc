@@ -461,18 +461,15 @@ LPREFERENCE_TIME	typedef ptr REFERENCE_TIME
 
 DEFINE_GUID(IID_IReferenceClock, 0x56a86897, 0x0ad4, 0x11ce, 0xb0, 0x3a, 0x00, 0x20, 0xaf, 0x0b, 0xa7, 0x70);
 
-IReferenceClockVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTime, :ptr
-	STDMETHOD	AdviseTime, :REFERENCE_TIME, :REFERENCE_TIME, :HANDLE, :LPDWORD
-	STDMETHOD	AdvisePeriodic, :REFERENCE_TIME, :REFERENCE_TIME, :HANDLE, :LPDWORD
-	STDMETHOD	Unadvise, :DWORD
-IReferenceClockVtbl ends
-IReferenceClock struct
-	lpVtbl		PVOID ?
-IReferenceClock ends
+.comdef IReferenceClock
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    GetTime             proc :ptr
+    AdviseTime          proc :REFERENCE_TIME, :REFERENCE_TIME, :HANDLE, :LPDWORD
+    AdvisePeriodic      proc :REFERENCE_TIME, :REFERENCE_TIME, :HANDLE, :LPDWORD
+    Unadvise            proc :DWORD
+    .ends
 
 endif
 
@@ -508,22 +505,19 @@ endif
 
 DEFINE_GUID(IID_IDirectSound, 0x279AFA83, 0x4981, 0x11CE, 0xA5, 0x21, 0x00, 0x20, 0xAF, 0x0B, 0xE5, 0x60);
 
-IDirectSoundVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	CreateSoundBuffer, :LPCDSBUFFERDESC, :ptr, :LPUNKNOWN
-	STDMETHOD	GetCaps, :LPDSCAPS
-	STDMETHOD	DuplicateSoundBuffer, :LPDIRECTSOUNDBUFFER, :ptr
-	STDMETHOD	SetCooperativeLevel, :HWND, :DWORD
-	STDMETHOD	Compact
-	STDMETHOD	GetSpeakerConfig, :LPDWORD
-	STDMETHOD	SetSpeakerConfig, :DWORD
-	STDMETHOD	Initialize, :LPCGUID
-IDirectSoundVtbl ends
-IDirectSound struct
-	lpVtbl		PVOID ?
-IDirectSound ends
+.comdef IDirectSound
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    CreateSoundBuffer   proc :LPCDSBUFFERDESC, :ptr, :LPUNKNOWN
+    GetCaps             proc :LPDSCAPS
+    DuplicateSoundBuffer proc :LPDIRECTSOUNDBUFFER, :ptr
+    SetCooperativeLevel proc :HWND, :DWORD
+    Compact             proc
+    GetSpeakerConfig    proc :LPDWORD
+    SetSpeakerConfig    proc :DWORD
+    Initialize          proc :LPCGUID
+    .ends
 
 IDirectSound_QueryInterface macro p,a,b
 	exitm<IUnknown_QueryInterface(p,a,b)>
@@ -568,23 +562,20 @@ if DIRECTSOUND_VERSION GE 0x0800
 
 DEFINE_GUID(IID_IDirectSound8, 0xC50A7E93, 0xF395, 0x4834, 0x9E, 0xF6, 0x7F, 0xA9, 0x9D, 0xE5, 0x09, 0x66);
 
-IDirectSound8Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	CreateSoundBuffer, :LPCDSBUFFERDESC, :ptr, :LPUNKNOWN
-	STDMETHOD	GetCaps, :LPDSCAPS
-	STDMETHOD	DuplicateSoundBuffer, :LPDIRECTSOUNDBUFFER, :ptr
-	STDMETHOD	SetCooperativeLevel, :HWND, :DWORD
-	STDMETHOD	Compact
-	STDMETHOD	GetSpeakerConfig, :LPDWORD
-	STDMETHOD	SetSpeakerConfig, :DWORD
-	STDMETHOD	Initialize, :LPCGUID
-	STDMETHOD	VerifyCertification, :LPDWORD
-IDirectSound8Vtbl ends
-IDirectSound8 struct
-	lpVtbl		PVOID ?
-IDirectSound8 ends
+.comdef IDirectSound8
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    CreateSoundBuffer   proc :LPCDSBUFFERDESC, :ptr, :LPUNKNOWN
+    GetCaps             proc :LPDSCAPS
+    DuplicateSoundBuffer proc :LPDIRECTSOUNDBUFFER, :ptr
+    SetCooperativeLevel proc :HWND, :DWORD
+    Compact             proc
+    GetSpeakerConfig    proc :LPDWORD
+    SetSpeakerConfig    proc :DWORD
+    Initialize          proc :LPCGUID
+    VerifyCertification proc :LPDWORD
+    .ends
 
 
 IDirectSound8_QueryInterface macro p,a,b
@@ -632,32 +623,29 @@ endif
 
 DEFINE_GUID(IID_IDirectSoundBuffer, 0x279AFA85, 0x4981, 0x11CE, 0xA5, 0x21, 0x00, 0x20, 0xAF, 0x0B, 0xE5, 0x60);
 
-IDirectSoundBufferVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetCaps, :LPDSCAPS
-	STDMETHOD	GetCurrentPosition, :LPDWORD, :LPDWORD
-	STDMETHOD	GetFormat, :LPWAVEFORMATEX, :DWORD, :LPDWORD
-	STDMETHOD	GetVolume, :LPLONG
-	STDMETHOD	GetPan, :LPLONG
-	STDMETHOD	GetFrequency, :LPDWORD
-	STDMETHOD	GetStatus, :LPDWORD
-	STDMETHOD	Initialize, :LPDIRECTSOUND, :LPCDSBUFFERDESC
-	STDMETHOD	_Lock, :DWORD, :DWORD, :PVOID, :LPDWORD, :DWORD
-	STDMETHOD	Play, :DWORD, :DWORD, :DWORD
-	STDMETHOD	SetCurrentPosition, :DWORD
-	STDMETHOD	SetFormat, :LPCWAVEFORMATEX
-	STDMETHOD	SetVolume, :LONG
-	STDMETHOD	SetPan, :LONG
-	STDMETHOD	SetFrequency, :DWORD
-	STDMETHOD	Stop
-	STDMETHOD	Unlock, :PVOID, :DWORD
-	STDMETHOD	Restore
-IDirectSoundBufferVtbl ends
-IDirectSoundBuffer struct
-	lpVtbl		PVOID ?
-IDirectSoundBuffer ends
+.comdef IDirectSoundBuffer
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    GetCaps             proc :LPDSCAPS
+    GetCurrentPosition  proc :LPDWORD, :LPDWORD
+    GetFormat           proc :LPWAVEFORMATEX, :DWORD, :LPDWORD
+    GetVolume           proc :LPLONG
+    GetPan              proc :LPLONG
+    GetFrequency        proc :LPDWORD
+    GetStatus           proc :LPDWORD
+    Initialize          proc :LPDIRECTSOUND, :LPCDSBUFFERDESC
+    _Lock               proc :DWORD, :DWORD, :PVOID, :LPDWORD, :DWORD
+    Play                proc :DWORD, :DWORD, :DWORD
+    SetCurrentPosition  proc :DWORD
+    SetFormat           proc :LPCWAVEFORMATEX
+    SetVolume           proc :LONG
+    SetPan              proc :LONG
+    SetFrequency        proc :DWORD
+    Stop                proc
+    Unlock              proc :PVOID, :DWORD
+    Restore             proc
+    .ends
 
 IDirectSoundBuffer_QueryInterface macro p,a,b
 	exitm<IUnknown_QueryInterface(p,a,b)>
@@ -731,35 +719,32 @@ if DIRECTSOUND_VERSION GE 0x0800
 
 DEFINE_GUID(IID_IDirectSoundBuffer8, 0x6825a449, 0x7524, 0x4d82, 0x92, 0x0f, 0x50, 0xe3, 0x6a, 0xb3, 0xab, 0x1e);
 
-IDirectSoundBuffer8Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetCaps, :LPDSCAPS
-	STDMETHOD	GetCurrentPosition, :LPDWORD, :LPDWORD
-	STDMETHOD	GetFormat, :LPWAVEFORMATEX, :DWORD, :LPDWORD
-	STDMETHOD	GetVolume, :LPLONG
-	STDMETHOD	GetPan, :LPLONG
-	STDMETHOD	GetFrequency, :LPDWORD
-	STDMETHOD	GetStatus, :LPDWORD
-	STDMETHOD	Initialize, :LPDIRECTSOUND, :LPCDSBUFFERDESC
-	STDMETHOD	_Lock, :DWORD, :DWORD, :PVOID, :LPDWORD, :DWORD
-	STDMETHOD	Play, :DWORD, :DWORD, :DWORD
-	STDMETHOD	SetCurrentPosition, :DWORD
-	STDMETHOD	SetFormat, :LPCWAVEFORMATEX
-	STDMETHOD	SetVolume, :LONG
-	STDMETHOD	SetPan, :LONG
-	STDMETHOD	SetFrequency, :DWORD
-	STDMETHOD	Stop
-	STDMETHOD	Unlock, :PVOID, :DWORD
-	STDMETHOD	Restore
-	STDMETHOD	SetFX, :DWORD, :LPDSEFFECTDESC, :LPDWORD
-	STDMETHOD	AcquireResources, :DWORD, :DWORD, :LPDWORD
-	STDMETHOD	GetObjectInPath, :REFGUID, :DWORD, :REFGUID, :ptr
-IDirectSoundBuffer8Vtbl ends
-IDirectSoundBuffer8 struct
-	lpVtbl		PVOID ?
-IDirectSoundBuffer8 ends
+.comdef IDirectSoundBuffer8
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    GetCaps             proc :LPDSCAPS
+    GetCurrentPosition  proc :LPDWORD, :LPDWORD
+    GetFormat           proc :LPWAVEFORMATEX, :DWORD, :LPDWORD
+    GetVolume           proc :LPLONG
+    GetPan              proc :LPLONG
+    GetFrequency        proc :LPDWORD
+    GetStatus           proc :LPDWORD
+    Initialize          proc :LPDIRECTSOUND, :LPCDSBUFFERDESC
+    _Lock               proc :DWORD, :DWORD, :PVOID, :LPDWORD, :DWORD
+    Play                proc :DWORD, :DWORD, :DWORD
+    SetCurrentPosition  proc :DWORD
+    SetFormat           proc :LPCWAVEFORMATEX
+    SetVolume           proc :LONG
+    SetPan              proc :LONG
+    SetFrequency        proc :DWORD
+    Stop                proc
+    Unlock              proc :PVOID, :DWORD
+    Restore             proc
+    SetFX               proc :DWORD, :LPDSEFFECTDESC, :LPDWORD
+    AcquireResources    proc :DWORD, :DWORD, :LPDWORD
+    GetObjectInPath     proc :REFGUID, :DWORD, :REFGUID, :ptr
+    .ends
 
 DEFINE_GUID(GUID_All_Objects, 0xaa114de5, 0xc262, 0x4169, 0xa1, 0xc8, 0x23, 0xd6, 0x98, 0xcc, 0x73, 0xb5);
 
@@ -845,29 +830,26 @@ endif
 
 DEFINE_GUID(IID_IDirectSound3DListener, 0x279AFA84, 0x4981, 0x11CE, 0xA5, 0x21, 0x00, 0x20, 0xAF, 0x0B, 0xE5, 0x60);
 
-IDirectSound3DListenerVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetAllParameters, :LPDS3DLISTENER
-	STDMETHOD	GetDistanceFactor, :ptr D3DVALUE
-	STDMETHOD	GetDopplerFactor, :ptr D3DVALUE
-	STDMETHOD	GetOrientation, :ptr D3DVECTOR, :ptr D3DVECTOR
-	STDMETHOD	GetPosition, :ptr D3DVECTOR
-	STDMETHOD	GetRolloffFactor, :ptr D3DVALUE
-	STDMETHOD	GetVelocity, :ptr D3DVECTOR
-	STDMETHOD	SetAllParameters, :LPCDS3DLISTENER, :DWORD
-	STDMETHOD	SetDistanceFactor, :D3DVALUE, :DWORD
-	STDMETHOD	SetDopplerFactor, :D3DVALUE, :DWORD
-	STDMETHOD	SetOrientation, :D3DVALUE, :D3DVALUE, :D3DVALUE, :D3DVALUE, :D3DVALUE, :D3DVALUE, :DWORD
-	STDMETHOD	SetPosition, :D3DVALUE, :D3DVALUE, :D3DVALUE, :DWORD
-	STDMETHOD	SetRolloffFactor, :D3DVALUE, :DWORD
-	STDMETHOD	SetVelocity, :D3DVALUE, :D3DVALUE, :D3DVALUE, :DWORD
-	STDMETHOD	CommitDeferredSettings
-IDirectSound3DListenerVtbl ends
-IDirectSound3DListener struct
-	lpVtbl		PVOID ?
-IDirectSound3DListener ends
+.comdef IDirectSound3DListener
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    GetAllParameters    proc :LPDS3DLISTENER
+    GetDistanceFactor   proc :ptr D3DVALUE
+    GetDopplerFactor    proc :ptr D3DVALUE
+    GetOrientation      proc :ptr D3DVECTOR, :ptr D3DVECTOR
+    GetPosition         proc :ptr D3DVECTOR
+    GetRolloffFactor    proc :ptr D3DVALUE
+    GetVelocity         proc :ptr D3DVECTOR
+    SetAllParameters    proc :LPCDS3DLISTENER, :DWORD
+    SetDistanceFactor   proc :D3DVALUE, :DWORD
+    SetDopplerFactor    proc :D3DVALUE, :DWORD
+    SetOrientation      proc :D3DVALUE, :D3DVALUE, :D3DVALUE, :D3DVALUE, :D3DVALUE, :D3DVALUE, :DWORD
+    SetPosition         proc :D3DVALUE, :D3DVALUE, :D3DVALUE, :DWORD
+    SetRolloffFactor    proc :D3DVALUE, :DWORD
+    SetVelocity         proc :D3DVALUE, :D3DVALUE, :D3DVALUE, :DWORD
+    CommitDeferredSettings proc
+    .ends
 
 IDirectSound3DListener_QueryInterface macro p,a,b
 	exitm<IUnknown_QueryInterface(p,a,b)>
@@ -930,32 +912,29 @@ endif
 
 DEFINE_GUID(IID_IDirectSound3DBuffer, 0x279AFA86, 0x4981, 0x11CE, 0xA5, 0x21, 0x00, 0x20, 0xAF, 0x0B, 0xE5, 0x60);
 
-IDirectSound3DBufferVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetAllParameters, :LPDS3DLISTENER
-	STDMETHOD	GetConeAngles, :LPDWORD, :LPDWORD
-	STDMETHOD	GetConeOrientation, :ptr D3DVECTOR
-	STDMETHOD	GetConeOutsideVolume, :LPLONG
-	STDMETHOD	GetMaxDistance, :ptr D3DVALUE
-	STDMETHOD	GetMinDistance, :ptr D3DVALUE
-	STDMETHOD	GetMode, :LPDWORD
-	STDMETHOD	GetPosition, :ptr D3DVECTOR
-	STDMETHOD	GetVelocity, :ptr D3DVECTOR
-	STDMETHOD	SetAllParameters, :LPCDS3DBUFFER, :DWORD
-	STDMETHOD	SetConeAngles, :DWORD, :DWORD, :DWORD
-	STDMETHOD	SetConeOrientation, :D3DVALUE, :D3DVALUE, :D3DVALUE, :DWORD
-	STDMETHOD	SetConeOutsideVolume, :LONG, :DWORD
-	STDMETHOD	SetMaxDistance, :D3DVALUE, :DWORD
-	STDMETHOD	SetMinDistance, :D3DVALUE, :DWORD
-	STDMETHOD	SetMode, :DWORD, :DWORD
-	STDMETHOD	SetPosition, :D3DVALUE, :D3DVALUE, :D3DVALUE, :DWORD
-	STDMETHOD	SetVelocity, :D3DVALUE, :D3DVALUE, :D3DVALUE, :DWORD
-IDirectSound3DBufferVtbl ends
-IDirectSound3DBuffer struct
-	lpVtbl		PVOID ?
-IDirectSound3DBuffer ends
+.comdef IDirectSound3DBuffer
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    GetAllParameters    proc :LPDS3DLISTENER
+    GetConeAngles       proc :LPDWORD, :LPDWORD
+    GetConeOrientation  proc :ptr D3DVECTOR
+    GetConeOutsideVolume proc :LPLONG
+    GetMaxDistance      proc :ptr D3DVALUE
+    GetMinDistance      proc :ptr D3DVALUE
+    GetMode             proc :LPDWORD
+    GetPosition         proc :ptr D3DVECTOR
+    GetVelocity         proc :ptr D3DVECTOR
+    SetAllParameters    proc :LPCDS3DBUFFER, :DWORD
+    SetConeAngles       proc :DWORD, :DWORD, :DWORD
+    SetConeOrientation  proc :D3DVALUE, :D3DVALUE, :D3DVALUE, :DWORD
+    SetConeOutsideVolume proc :LONG, :DWORD
+    SetMaxDistance      proc :D3DVALUE, :DWORD
+    SetMinDistance      proc :D3DVALUE, :DWORD
+    SetMode             proc :DWORD, :DWORD
+    SetPosition         proc :D3DVALUE, :D3DVALUE, :D3DVALUE, :DWORD
+    SetVelocity         proc :D3DVALUE, :D3DVALUE, :D3DVALUE, :DWORD
+    .ends
 
 IDirectSound3DBuffer_QueryInterface macro p,a,b
 	exitm<IUnknown_QueryInterface(p,a,b)>
@@ -1027,17 +1006,14 @@ endif
 
 DEFINE_GUID(IID_IDirectSoundCapture, 0xb0210781, 0x89cd, 0x11d0, 0xaf, 0x8, 0x0, 0xa0, 0xc9, 0x25, 0xcd, 0x16);
 
-IDirectSoundCaptureVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	CreateCaptureBuffer, :LPCDSCBUFFERDESC, :ptr, :LPUNKNOWN
-	STDMETHOD	GetCaps, :LPDSCCAPS
-	STDMETHOD	Initialize, :LPCGUID
-IDirectSoundCaptureVtbl ends
-IDirectSoundCapture struct
-	lpVtbl		PVOID ?
-IDirectSoundCapture ends
+.comdef IDirectSoundCapture
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    CreateCaptureBuffer proc :LPCDSCBUFFERDESC, :ptr, :LPUNKNOWN
+    GetCaps             proc :LPDSCCAPS
+    Initialize          proc :LPCGUID
+    .ends
 
 IDirectSoundCapture_QueryInterface macro p,a,b
 	exitm<IUnknown_QueryInterface(p,a,b)>
@@ -1074,23 +1050,20 @@ endif
 
 DEFINE_GUID(IID_IDirectSoundCaptureBuffer, 0xb0210782, 0x89cd, 0x11d0, 0xaf, 0x8, 0x0, 0xa0, 0xc9, 0x25, 0xcd, 0x16);
 
-IDirectSoundCaptureBufferVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetCaps, :LPDSCCAPS
-	STDMETHOD	GetCurrentPosition, :LPDWORD, :LPDWORD
-	STDMETHOD	GetFormat, :LPWAVEFORMATEX, :DWORD, :LPDWORD
-	STDMETHOD	GetStatus, :LPDWORD
-	STDMETHOD	Initialize, :LPDIRECTSOUNDCAPTURE, :LPCDSCBUFFERDESC
-	STDMETHOD	_Lock, :DWORD, :DWORD, :ptr PVOID, :LPDWORD, :DWORD
-	STDMETHOD	Start, :DWORD
-	STDMETHOD	Stop
-	STDMETHOD	Unlock, :LPVOID, :DWORD, :LPVOID, :DWORD
-IDirectSoundCaptureBufferVtbl ends
-IDirectSoundCaptureBuffer struct
-	lpVtbl		PVOID ?
-IDirectSoundCaptureBuffer ends
+.comdef IDirectSoundCaptureBuffer
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    GetCaps             proc :LPDSCCAPS
+    GetCurrentPosition  proc :LPDWORD, :LPDWORD
+    GetFormat           proc :LPWAVEFORMATEX, :DWORD, :LPDWORD
+    GetStatus           proc :LPDWORD
+    Initialize          proc :LPDIRECTSOUNDCAPTURE, :LPCDSCBUFFERDESC
+    _Lock               proc :DWORD, :DWORD, :ptr PVOID, :LPDWORD, :DWORD
+    Start               proc :DWORD
+    Stop                proc
+    Unlock              proc :LPVOID, :DWORD, :LPVOID, :DWORD
+    .ends
 
 IDirectSoundCaptureBuffer_QueryInterface macro p,a,b
 	exitm<IUnknown_QueryInterface(p,a,b)>
@@ -1137,25 +1110,22 @@ if DIRECTSOUND_VERSION GE 0x0800
 
 DEFINE_GUID(IID_IDirectSoundCaptureBuffer8, 0x990df4, 0xdbb, 0x4872, 0x83, 0x3e, 0x6d, 0x30, 0x3e, 0x80, 0xae, 0xb6);
 
-IDirectSoundCaptureBuffer8Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetCaps, :LPDSCBCAPS
-	STDMETHOD	GetCurrentPosition, :LPDWORD, :LPDWORD
-	STDMETHOD	GetFormat
-	STDMETHOD	GetStatus, :LPDWORD
-	STDMETHOD	Initialize, :LPDIRECTSOUNDCAPTURE, :LPCDSCBUFFERDESC
-	STDMETHOD	_Lock, :DWORD, :DWORD, :ptr, :LPDWORD, :DWORD
-	STDMETHOD	Start, :DWORD
-	STDMETHOD	Stop
-	STDMETHOD	Unlock, :LPVOID, :DWORD
-	STDMETHOD	GetObjectInPath, :REFGUID, :DWORD, :REFGUID, :ptr
-	STDMETHOD	GetFXStatus, :DWORD, :LPDWORD
-IDirectSoundCaptureBuffer8Vtbl ends
-IDirectSoundCaptureBuffer8 struct
-	lpVtbl		PVOID ?
-IDirectSoundCaptureBuffer8 ends
+.comdef IDirectSoundCaptureBuffer8
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    GetCaps             proc :LPDSCBCAPS
+    GetCurrentPosition  proc :LPDWORD, :LPDWORD
+    GetFormat           proc
+    GetStatus           proc :LPDWORD
+    Initialize          proc :LPDIRECTSOUNDCAPTURE, :LPCDSCBUFFERDESC
+    _Lock               proc :DWORD, :DWORD, :ptr, :LPDWORD, :DWORD
+    Start               proc :DWORD
+    Stop                proc
+    Unlock              proc :LPVOID, :DWORD
+    GetObjectInPath     proc :REFGUID, :DWORD, :REFGUID, :ptr
+    GetFXStatus         proc :DWORD, :LPDWORD
+    .ends
 
 IDirectSoundCaptureBuffer8_QueryInterface macro p,a,b
 	exitm<IUnknown_QueryInterface(p,a,b)>
@@ -1209,15 +1179,12 @@ endif
 
 DEFINE_GUID(IID_IDirectSoundNotify, 0xb0210783, 0x89cd, 0x11d0, 0xaf, 0x8, 0x0, 0xa0, 0xc9, 0x25, 0xcd, 0x16);
 
-IDirectSoundNotifyVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetNotificationPositions, :DWORD, :LPCDSBPOSITIONNOTIFY
-IDirectSoundNotifyVtbl ends
-IDirectSoundNotify struct
-	lpVtbl		PVOID ?
-IDirectSoundNotify ends
+.comdef IDirectSoundNotify
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    SetNotificationPositions proc :DWORD, :LPCDSBPOSITIONNOTIFY
+    .ends
 
 IDirectSoundNotify_QueryInterface macro p,a,b
 	exitm<IUnknown_QueryInterface(p,a,b)>
@@ -1246,17 +1213,14 @@ KSPROPERTY_SUPPORT_SET	equ 0x00000002
 
 DEFINE_GUID(IID_IKsPropertySet, 0x31efac30, 0x515c, 0x11d0, 0xa9, 0xaa, 0x00, 0xaa, 0x00, 0x61, 0xbe, 0x93);
 
-IKsPropertySetVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Get, :REFGUID, :ULONG, :LPVOID, :ULONG, :PULONG
-	STDMETHOD	Set, :REFGUID, :ULONG, :PVOID, :ULONG
-	STDMETHOD	QuerySupport, :REFGUID, :ULONG, :PULONG
-IKsPropertySetVtbl ends
-IKsPropertySet struct
-	lpVtbl		PVOID ?
-IKsPropertySet ends
+.comdef IKsPropertySet
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    Get                 proc :REFGUID, :ULONG, :LPVOID, :ULONG, :PULONG
+    Set                 proc :REFGUID, :ULONG, :PVOID, :ULONG
+    QuerySupport        proc :REFGUID, :ULONG, :PULONG
+    .ends
 
 IKsPropertySet_QueryInterface macro p,a,b
 	exitm<IUnknown_QueryInterface(p,a,b)>
@@ -1301,16 +1265,13 @@ LPCDSFXGargle		typedef ptr DSFXGargle
 DSFXGARGLE_RATEHZ_MIN	equ 1
 DSFXGARGLE_RATEHZ_MAX	equ 1000
 
-IDirectSoundFXGargleVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetAllParameters, :LPCDSFXGargle
-	STDMETHOD	GetAllParameters, :LPDSFXGargle
-IDirectSoundFXGargleVtbl ends
-IDirectSoundFXGargle struct
-	lpVtbl		PVOID ?
-IDirectSoundFXGargle ends
+.comdef IDirectSoundFXGargle
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    SetAllParameters    proc :LPCDSFXGargle
+    GetAllParameters    proc :LPDSFXGargle
+    .ends
 
 IDirectSoundFXGargle_QueryInterface macro p,a,b
 	exitm<IUnknown_QueryInterface(p,a,b)>
@@ -1369,16 +1330,13 @@ DSFXCHORUS_PHASE_ZERO	equ 2
 DSFXCHORUS_PHASE_90	equ 3
 DSFXCHORUS_PHASE_180	equ 4
 
-IDirectSoundFXChorusVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetAllParameters, :LPCDSFXChorus
-	STDMETHOD	GetAllParameters, :LPDSFXChorus
-IDirectSoundFXChorusVtbl ends
-IDirectSoundFXChorus struct
-	lpVtbl		PVOID ?
-IDirectSoundFXChorus ends
+.comdef IDirectSoundFXChorus
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    SetAllParameters    proc :LPCDSFXChorus
+    GetAllParameters    proc :LPDSFXChorus
+    .ends
 
 IDirectSoundFXChorus_QueryInterface macro p,a,b
 	exitm<IUnknown_QueryInterface(p,a,b)>
@@ -1436,16 +1394,13 @@ DSFXFLANGER_PHASE_ZERO	equ 2
 DSFXFLANGER_PHASE_90	equ 3
 DSFXFLANGER_PHASE_180	equ 4
 
-IDirectSoundFXFlangerVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetAllParameters, :LPCDSFXFlanger
-	STDMETHOD	GetAllParameters, :LPDSFXFlanger
-IDirectSoundFXFlangerVtbl ends
-IDirectSoundFXFlanger struct
-	lpVtbl		PVOID ?
-IDirectSoundFXFlanger ends
+.comdef IDirectSoundFXFlanger
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    SetAllParameters    proc :LPCDSFXFlanger
+    GetAllParameters    proc :LPDSFXFlanger
+    .ends
 
 IDirectSoundFXFlanger_QueryInterface macro p,a,b
 	exitm<IUnknown_QueryInterface(p,a,b)>
@@ -1490,16 +1445,13 @@ DSFXECHO_RIGHTDELAY_MAX equ 2000.0
 DSFXECHO_PANDELAY_MIN	equ 0
 DSFXECHO_PANDELAY_MAX	equ 1
 
-IDirectSoundFXEchoVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetAllParameters, :LPCDSFXEcho
-	STDMETHOD	GetAllParameters, :LPDSFXEcho
-IDirectSoundFXEchoVtbl ends
-IDirectSoundFXEcho struct
-	lpVtbl		PVOID ?
-IDirectSoundFXEcho ends
+.comdef IDirectSoundFXEcho
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    SetAllParameters    proc :LPCDSFXEcho
+    GetAllParameters    proc :LPDSFXEcho
+    .ends
 
 IDirectSoundFXEcho_QueryInterface macro p,a,b
 	exitm<IUnknown_QueryInterface(p,a,b)>
@@ -1544,16 +1496,13 @@ DSFXDISTORTION_POSTEQBANDWIDTH_MAX equ 8000.0
 DSFXDISTORTION_PRELOWPASSCUTOFF_MIN equ 100.0
 DSFXDISTORTION_PRELOWPASSCUTOFF_MAX equ 8000.0
 
-IDirectSoundFXDistortionVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetAllParameters, :LPCDSFXDistortion
-	STDMETHOD	GetAllParameters, :LPDSFXDistortion
-IDirectSoundFXDistortionVtbl ends
-IDirectSoundFXDistortion struct
-	lpVtbl		PVOID ?
-IDirectSoundFXDistortion ends
+.comdef IDirectSoundFXDistortion
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    SetAllParameters    proc :LPCDSFXDistortion
+    GetAllParameters    proc :LPDSFXDistortion
+    .ends
 
 IDirectSoundFXDistortion_QueryInterface macro p,a,b
 	exitm<IUnknown_QueryInterface(p,a,b)>
@@ -1601,16 +1550,13 @@ DSFXCOMPRESSOR_RATIO_MAX equ 100.0
 DSFXCOMPRESSOR_PREDELAY_MIN equ 0.0
 DSFXCOMPRESSOR_PREDELAY_MAX equ 4.0
 
-IDirectSoundFXCompressorVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetAllParameters, :LPCDSFXCompressor
-	STDMETHOD	GetAllParameters, :LPDSFXCompressor
-IDirectSoundFXCompressorVtbl ends
-IDirectSoundFXCompressor struct
-	lpVtbl		PVOID ?
-IDirectSoundFXCompressor ends
+.comdef IDirectSoundFXCompressor
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    SetAllParameters    proc :LPCDSFXCompressor
+    GetAllParameters    proc :LPDSFXCompressor
+    .ends
 
 IDirectSoundFXCompressor_QueryInterface macro p,a,b
 	exitm<IUnknown_QueryInterface(p,a,b)>
@@ -1649,16 +1595,13 @@ DSFXPARAMEQ_BANDWIDTH_MAX equ 36.0
 DSFXPARAMEQ_GAIN_MIN	equ -15.0
 DSFXPARAMEQ_GAIN_MAX	equ 15.0
 
-IDirectSoundFXParamEqVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetAllParameters, :LPCDSFXCompressor
-	STDMETHOD	GetAllParameters, :LPDSFXCompressor
-IDirectSoundFXParamEqVtbl ends
-IDirectSoundFXParamEq struct
-	lpVtbl		PVOID ?
-IDirectSoundFXParamEq ends
+.comdef IDirectSoundFXParamEq
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    SetAllParameters    proc :LPCDSFXCompressor
+    GetAllParameters    proc :LPDSFXCompressor
+    .ends
 
 IDirectSoundFXParamEq_QueryInterface macro p,a,b
 	exitm<IUnknown_QueryInterface(p,a,b)>
@@ -1751,20 +1694,17 @@ DSFX_I3DL2REVERB_QUALITY_MIN equ 0
 DSFX_I3DL2REVERB_QUALITY_MAX equ 3
 DSFX_I3DL2REVERB_QUALITY_DEFAULT equ 2
 
-IDirectSoundFXI3DL2ReverbVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetAllParameters, :LPCDSFXCompressor
-	STDMETHOD	GetAllParameters, :LPDSFXCompressor
-	STDMETHOD	SetPreset, :DWORD
-	STDMETHOD	GetPreset, :LPDWORD
-	STDMETHOD	SetQuality, :LONG
-	STDMETHOD	GetQuality, :ptr
-IDirectSoundFXI3DL2ReverbVtbl ends
-IDirectSoundFXI3DL2Reverb struct
-	lpVtbl		PVOID ?
-IDirectSoundFXI3DL2Reverb ends
+.comdef IDirectSoundFXI3DL2Reverb
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    SetAllParameters    proc :LPCDSFXCompressor
+    GetAllParameters    proc :LPDSFXCompressor
+    SetPreset           proc :DWORD
+    GetPreset           proc :LPDWORD
+    SetQuality          proc :LONG
+    GetQuality          proc :ptr
+    .ends
 
 IDirectSoundFXI3DL2Reverb_QueryInterface macro p,a,b
 	exitm<IUnknown_QueryInterface(p,a,b)>
@@ -1816,16 +1756,13 @@ DSFX_WAVESREVERB_HIGHFREQRTRATIO_MIN equ 0.001
 DSFX_WAVESREVERB_HIGHFREQRTRATIO_MAX equ 0.999
 DSFX_WAVESREVERB_HIGHFREQRTRATIO_DEFAULT equ 0.001
 
-IDirectSoundFXWavesReverbVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetAllParameters, :LPCDSFXCompressor
-	STDMETHOD	GetAllParameters, :LPDSFXCompressor
-IDirectSoundFXWavesReverbVtbl ends
-IDirectSoundFXWavesReverb struct
-	lpVtbl		PVOID ?
-IDirectSoundFXWavesReverb ends
+.comdef IDirectSoundFXWavesReverb
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    SetAllParameters    proc :LPCDSFXCompressor
+    GetAllParameters    proc :LPDSFXCompressor
+    .ends
 
 IDirectSoundFXWavesReverb_QueryInterface macro p,a,b
 	exitm<IUnknown_QueryInterface(p,a,b)>
@@ -1866,18 +1803,15 @@ DSCFX_AEC_STATUS_HISTORY_CONTINUOUSLY_CONVERGED equ 0x1
 DSCFX_AEC_STATUS_HISTORY_PREVIOUSLY_DIVERGED equ 0x2
 DSCFX_AEC_STATUS_CURRENTLY_CONVERGED equ 0x8
 
-IDirectSoundCaptureFXAecVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetAllParameters, :LPCDSFXCompressor
-	STDMETHOD	GetAllParameters, :LPDSFXCompressor
-	STDMETHOD	GetStatus, :LPDWORD
-	STDMETHOD	Reset
-IDirectSoundCaptureFXAecVtbl ends
-IDirectSoundCaptureFXAec struct
-	lpVtbl		PVOID ?
-IDirectSoundCaptureFXAec ends
+.comdef IDirectSoundCaptureFXAec
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    SetAllParameters    proc :LPCDSFXCompressor
+    GetAllParameters    proc :LPDSFXCompressor
+    GetStatus           proc :LPDWORD
+    Reset               proc
+    .ends
 
 IDirectSoundCaptureFXAec_QueryInterface macro p,a,b
 	exitm<IUnknown_QueryInterface(p,a,b)>
@@ -1909,17 +1843,14 @@ LPDSCFXNoiseSuppress	typedef ptr DSCFXNoiseSuppress
 
 LPCDSCFXNoiseSuppress	typedef ptr DSCFXNoiseSuppress
 
-IDirectSoundCaptureFXNoiseSuppressVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetAllParameters, :LPCDSFXCompressor
-	STDMETHOD	GetAllParameters, :LPDSFXCompressor
-	STDMETHOD	Reset
-IDirectSoundCaptureFXNoiseSuppressVtbl ends
-IDirectSoundCaptureFXNoiseSuppress struct
-	lpVtbl		PVOID ?
-IDirectSoundCaptureFXNoiseSuppress ends
+.comdef IDirectSoundCaptureFXNoiseSuppress
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    SetAllParameters    proc :LPCDSFXCompressor
+    GetAllParameters    proc :LPDSFXCompressor
+    Reset               proc
+    .ends
 
 IDirectSoundCaptureFXNoiseSuppress_QueryInterface macro p,a,b
 	exitm<IUnknown_QueryInterface(p,a,b)>
@@ -1946,15 +1877,12 @@ _IDirectSoundFullDuplex_ equ 1
 
 DEFINE_GUID(IID_IDirectSoundFullDuplex, 0xedcb4c7a, 0xdaab, 0x4216, 0xa4, 0x2e, 0x6c, 0x50, 0x59, 0x6d, 0xdc, 0x1d);
 
-IDirectSoundFullDuplexVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Initialize, :LPCGUID, :LPCGUID, :LPCDSCBUFFERDESC, :LPCDSBUFFERDESC, :HWND, :DWORD, :LPLPDIRECTSOUNDCAPTUREBUFFER8, :LPLPDIRECTSOUNDBUFFER8
-IDirectSoundFullDuplexVtbl ends
-IDirectSoundFullDuplex struct
-	lpVtbl		PVOID ?
-IDirectSoundFullDuplex ends
+.comdef IDirectSoundFullDuplex
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    Initialize          proc :LPCGUID, :LPCGUID, :LPCDSCBUFFERDESC, :LPCDSBUFFERDESC, :HWND, :DWORD, :LPLPDIRECTSOUNDCAPTUREBUFFER8, :LPLPDIRECTSOUNDBUFFER8
+    .ends
 LPDIRECTSOUNDFULLDUPLEX typedef ptr IDirectSoundFullDuplex
 
 IDirectSoundFullDuplex_QueryInterface macro p,a,b

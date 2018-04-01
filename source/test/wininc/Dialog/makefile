@@ -1,48 +1,35 @@
-msgbox_test:
-    make -h -s win32A.exe
-    make -h -s win32W.exe
-    make -h -s win64A.exe
-    make -h -s win64W.exe
-    make -h -s win32peA.exe
-    make -h -s win32peW.exe
-    make -h -s win64peA.exe
-    make -h -s win64peW.exe
-    del win*.exe
-    del *.obj
+build:
+    make -h -s test_A32
+    make -h -s test_A64
+    make -h -s test_W32
+    make -h -s test_W64
+    make -h -s test_peA32
+    make -h -s test_peA64
+    make -h -s test_peW32
+    make -h -s test_peW64
     pause
 
-win32A.exe:
-    asmc -q test.asm
-    linkw name $@ system gui_32 file test
-    $@
+test_A32:
+    asmc -q -Fo $*.obj test.asm
+    linkw sys gui_32 file $*
+test_A64:
+    asmc -q -Fo $*.obj -win64 test.asm
+    linkw sys gui_64 file $*
+test_W32:
+    asmc -q -Fo $*.obj -ws test.asm
+    linkw sys gui_32W file $*
+test_W64:
+    asmc -q -Fo $*.obj -win64 -ws test.asm
+    linkw sys gui_64W file $*
+    del *.obj
 
-win32W.exe:
-    asmc -q -ws -D_UNICODE -Fo $*.obj test.asm
-    linkw system gui_32W file $*
-    $@
+test_peA32:
+    asmc -q -pe -gui -Fo $@.exe test.asm
+test_peA64:
+    asmc -q -pe -gui -Fo $@.exe -win64 test.asm
+test_peW32:
+    asmc -q -pe -gui -Fo $@.exe -ws test.asm
+test_peW64:
+    asmc -q -pe -gui -Fo $@.exe -win64 -ws test.asm
+    dir *.exe | find ".exe"
 
-win64A.exe:
-    asmc -q -win64 -D_WIN64 -Fo $*.obj test.asm
-    linkw system gui_64 file $*
-    $@
-
-win64W.exe:
-    asmc -q -win64 -D_WIN64 -ws -D_UNICODE -Fo $*.obj test.asm
-    linkw system gui_64W file $*
-    $@
-
-win32peA.exe:
-    asmc -q -pe -D__GUI__ -Fo $*.exe test.asm
-    $@
-
-win32peW.exe:
-    asmc -q -pe -ws -D_UNICODE -D__GUI__ -Fo $*.exe test.asm
-    $@
-
-win64peA.exe:
-    asmc -q -pe -D_WIN64 -D__GUI__ -Fo $*.exe test.asm
-    $@
-
-win64peW.exe:
-    asmc -q -pe -ws -D_WIN64 -D_UNICODE -D__GUI__ -Fo $*.exe test.asm
-    $@

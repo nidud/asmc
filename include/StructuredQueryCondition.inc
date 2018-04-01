@@ -62,15 +62,12 @@ ifndef __IRichChunk_INTERFACE_DEFINED__
 __IRichChunk_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IRichChunk:IID
-IRichChunkVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetData, :ptr, :ptr, :ptr, :ptr
-IRichChunkVtbl ends
-IRichChunk struct
-	lpVtbl		PVOID ?
-IRichChunk ends
+.comdef IRichChunk
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    GetData             proc :ptr, :ptr, :ptr, :ptr
+    .ends
 
 ;HRESULT
 IRichChunk_RemoteGetData_Proxy proto WINAPI \
@@ -93,26 +90,23 @@ ifndef __ICondition_INTERFACE_DEFINED__
 __ICondition_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_ICondition:IID
-IConditionVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetClassID, :ptr
-	STDMETHOD	IsDirty
-	STDMETHOD	Load, :ptr
-	STDMETHOD	Save, :ptr, :BOOL
-	STDMETHOD	GetSizeMax, :ptr
-	STDMETHOD	GetConditionType, :ptr
-	STDMETHOD	GetSubConditions, :REFIID, :ptr
-	STDMETHOD	GetComparisonInfo, :ptr, :ptr, :ptr
-	STDMETHOD	GetValueType, :ptr
-	STDMETHOD	GetValueNormalization, :ptr
-	STDMETHOD	GetInputTerms, :ptr, :ptr, :ptr
-	STDMETHOD	Clone, :ptr
-IConditionVtbl ends
-ICondition struct
-	lpVtbl		PVOID ?
-ICondition ends
+.comdef ICondition
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    GetClassID          proc :ptr
+    IsDirty             proc
+    Load                proc :ptr
+    Save                proc :ptr, :BOOL
+    GetSizeMax          proc :ptr
+    GetConditionType    proc :ptr
+    GetSubConditions    proc :REFIID, :ptr
+    GetComparisonInfo   proc :ptr, :ptr, :ptr
+    GetValueType        proc :ptr
+    GetValueNormalization proc :ptr
+    GetInputTerms       proc :ptr, :ptr, :ptr
+    Clone               proc :ptr
+    .ends
 
 ;HRESULT
 ICondition_RemoteGetComparisonInfo_Proxy proto WINAPI \
@@ -148,28 +142,25 @@ ifndef __ICondition2_INTERFACE_DEFINED__
 __ICondition2_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_ICondition2:IID
-ICondition2Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetClassID, :ptr
-	STDMETHOD	IsDirty
-	STDMETHOD	Load, :ptr
-	STDMETHOD	Save, :ptr, :BOOL
-	STDMETHOD	GetSizeMax, :ptr
-	STDMETHOD	GetConditionType, :ptr
-	STDMETHOD	GetSubConditions, :REFIID, :ptr
-	STDMETHOD	GetComparisonInfo, :ptr, :ptr, :ptr
-	STDMETHOD	GetValueType, :ptr
-	STDMETHOD	GetValueNormalization, :ptr
-	STDMETHOD	GetInputTerms, :ptr, :ptr, :ptr
-	STDMETHOD	Clone, :ptr
-	STDMETHOD	GetLocale, :ptr
-	STDMETHOD	GetLeafConditionInfo, :ptr, :ptr, :ptr
-ICondition2Vtbl ends
-ICondition2 struct
-	lpVtbl		PVOID ?
-ICondition2 ends
+.comdef ICondition2
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    GetClassID          proc :ptr
+    IsDirty             proc
+    Load                proc :ptr
+    Save                proc :ptr, :BOOL
+    GetSizeMax          proc :ptr
+    GetConditionType    proc :ptr
+    GetSubConditions    proc :REFIID, :ptr
+    GetComparisonInfo   proc :ptr, :ptr, :ptr
+    GetValueType        proc :ptr
+    GetValueNormalization proc :ptr
+    GetInputTerms       proc :ptr, :ptr, :ptr
+    Clone               proc :ptr
+    GetLocale           proc :ptr
+    GetLeafConditionInfo proc :ptr, :ptr, :ptr
+    .ends
 
 ;HRESULT
 ICondition2_RemoteGetLeafConditionInfo_Proxy proto WINAPI \

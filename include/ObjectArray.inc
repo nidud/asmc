@@ -30,36 +30,30 @@ ifndef __IObjectArray_INTERFACE_DEFINED__
 __IObjectArray_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IObjectArray:IID
-IObjectArrayVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetCount, :ptr
-	STDMETHOD	GetAt, :UINT, :REFIID, :ptr
-IObjectArrayVtbl ends
-IObjectArray struct
-	lpVtbl		PVOID ?
-IObjectArray ends
+.comdef IObjectArray
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    GetCount            proc :ptr
+    GetAt               proc :UINT, :REFIID, :ptr
+    .ends
 endif
 
 ifndef __IObjectCollection_INTERFACE_DEFINED__
 __IObjectCollection_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IObjectCollection:IID
-IObjectCollectionVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetCount, :ptr
-	STDMETHOD	GetAt, :UINT, :REFIID, :ptr
-	STDMETHOD	AddObject, :ptr
-	STDMETHOD	AddFromArray, :ptr
-	STDMETHOD	RemoveObjectAt, :UINT
-	STDMETHOD	Clear
-IObjectCollectionVtbl ends
-IObjectCollection struct
-	lpVtbl		PVOID ?
-IObjectCollection ends
+.comdef IObjectCollection
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    GetCount            proc :ptr
+    GetAt               proc :UINT, :REFIID, :ptr
+    AddObject           proc :ptr
+    AddFromArray        proc :ptr
+    RemoveObjectAt      proc :UINT
+    Clear               proc
+    .ends
 endif
 
 .list

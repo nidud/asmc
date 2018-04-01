@@ -394,20 +394,17 @@ externdef		__MIDL_itf_urlmon_0000_v0_0_s_ifspec:RPC_IF_HANDLE
 ifndef __IPersistMoniker_INTERFACE_DEFINED__
 __IPersistMoniker_INTERFACE_DEFINED__ equ 1
 
-IPersistMonikerVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetClassID, :ptr
-	STDMETHOD	IsDirty
-	STDMETHOD	Load, :BOOL, :ptr, :LPBC, :DWORD
-	STDMETHOD	Save, :ptr, :LPBC, :BOOL
-	STDMETHOD	SaveCompleted, :ptr, :LPBC
-	STDMETHOD	GetCurMoniker, :ptr
-IPersistMonikerVtbl ends
-IPersistMoniker struct
-	lpVtbl		PVOID ?
-IPersistMoniker ends
+.comdef IPersistMoniker
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetClassID		proc :ptr
+    IsDirty		proc
+    Load		proc :BOOL, :ptr, :LPBC, :DWORD
+    Save		proc :ptr, :LPBC, :BOOL
+    SaveCompleted	proc :ptr, :LPBC
+    GetCurMoniker	proc :ptr
+    .ends
 LPPERSISTMONIKER	typedef ptr IPersistMoniker
 externdef		IID_IPersistMoniker:IID
 
@@ -500,15 +497,12 @@ externdef		__MIDL_itf_urlmon_0111_v0_0_s_ifspec:RPC_IF_HANDLE
 ifndef __IBindProtocol_INTERFACE_DEFINED__
 __IBindProtocol_INTERFACE_DEFINED__ equ 1
 
-IBindProtocolVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	CreateBinding, :LPCWSTR, :ptr, :ptr
-IBindProtocolVtbl ends
-IBindProtocol struct
-	lpVtbl		PVOID ?
-IBindProtocol ends
+.comdef IBindProtocol
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    CreateBinding	proc :LPCWSTR, :ptr, :ptr
+    .ends
 LPBINDPROTOCOL		typedef ptr IBindProtocol
 externdef		IID_IBindProtocol:IID
 
@@ -537,20 +531,17 @@ externdef		__MIDL_itf_urlmon_0112_v0_0_s_ifspec:RPC_IF_HANDLE
 ifndef __IBinding_INTERFACE_DEFINED__
 __IBinding_INTERFACE_DEFINED__ equ 1
 
-IBindingVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Abort
-	STDMETHOD	Suspend
-	STDMETHOD	Resume
-	STDMETHOD	SetPriority, :LONG
-	STDMETHOD	GetPriority, :ptr
-	STDMETHOD	GetBindResult, :ptr, :ptr, :ptr, :DWORD
-IBindingVtbl ends
-IBinding struct
-	lpVtbl		PVOID ?
-IBinding ends
+.comdef IBinding
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Abort		proc
+    Suspend		proc
+    Resume		proc
+    SetPriority		proc :LONG
+    GetPriority		proc :ptr
+    GetBindResult	proc :ptr, :ptr, :ptr, :DWORD
+    .ends
 LPBINDING		typedef ptr IBinding
 externdef		IID_IBinding:IID
 
@@ -760,22 +751,19 @@ BINDSTATUS_LOADINGMIMEHANDLER equ BINDSTATUS_DECODING + 1
 
 externdef		IID_IBindStatusCallback:IID
 
-IBindStatusCallbackVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	OnStartBinding,:DWORD,:ptr
-	STDMETHOD	GetPriority, :ptr
-	STDMETHOD	OnLowResource, :DWORD
-	STDMETHOD	OnProgress, :DWORD, :DWORD, :DWORD,: LPWSTR
-	STDMETHOD	OnStopBinding, :HRESULT, :LPWSTR
-	STDMETHOD	GetBindInfo, :ptr, :ptr
-	STDMETHOD	OnDataAvailable, :DWORD, :DWORD, :ptr, :ptr
-	STDMETHOD	OnObjectAvailable, :REFIID, :ptr
-IBindStatusCallbackVtbl ends
-IBindStatusCallback struct
-	lpVtbl		PVOID ?
-IBindStatusCallback ends
+.comdef IBindStatusCallback
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    OnStartBinding	proc :DWORD,:ptr
+    GetPriority		proc :ptr
+    OnLowResource	proc :DWORD
+    OnProgress		proc :DWORD, :DWORD, :DWORD,: LPWSTR
+    OnStopBinding	proc :HRESULT, :LPWSTR
+    GetBindInfo		proc :ptr, :ptr
+    OnDataAvailable	proc :DWORD, :DWORD, :ptr, :ptr
+    OnObjectAvailable	proc :REFIID, :ptr
+    .ends
 
 ;HRESULT
 IBindStatusCallback_OnStartBinding_Proxy proto WINAPI \
@@ -894,15 +882,12 @@ externdef		__MIDL_itf_urlmon_0114_v0_0_s_ifspec:RPC_IF_HANDLE
 ifndef __IAuthenticate_INTERFACE_DEFINED__
 __IAuthenticate_INTERFACE_DEFINED__ equ 1
 
-IAuthenticateVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Authenticate, :ptr, :ptr, :ptr
-IAuthenticateVtbl ends
-IAuthenticate struct
-	lpVtbl		PVOID ?
-IAuthenticate ends
+.comdef IAuthenticate
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Authenticate	proc :ptr, :ptr, :ptr
+    .ends
 LPAUTHENTICATION	typedef ptr IAuthenticate
 externdef		IID_IAuthenticate:IID
 
@@ -930,16 +915,13 @@ externdef		__MIDL_itf_urlmon_0115_v0_0_s_ifspec:RPC_IF_HANDLE
 ifndef __IHttpNegotiate_INTERFACE_DEFINED__
 __IHttpNegotiate_INTERFACE_DEFINED__ equ 1
 
-IHttpNegotiateVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	BeginningTransaction, :LPCWSTR, :LPCWSTR, :DWORD, :ptr
-	STDMETHOD	OnResponse, :DWORD, :LPCWSTR, :LPCWSTR, :ptr
-IHttpNegotiateVtbl ends
-IHttpNegotiate struct
-	lpVtbl		PVOID ?
-IHttpNegotiate ends
+.comdef IHttpNegotiate
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    BeginningTransaction proc :LPCWSTR, :LPCWSTR, :DWORD, :ptr
+    OnResponse		proc :DWORD, :LPCWSTR, :LPCWSTR, :ptr
+    .ends
 LPHTTPNEGOTIATE		typedef ptr IHttpNegotiate
 externdef		IID_IHttpNegotiate:IID
 
@@ -983,15 +965,12 @@ externdef		__MIDL_itf_urlmon_0116_v0_0_s_ifspec:RPC_IF_HANDLE
 ifndef __IWindowForBindingUI_INTERFACE_DEFINED__
 __IWindowForBindingUI_INTERFACE_DEFINED__ equ 1
 
-IWindowForBindingUIVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetWindow, :REFGUID, :ptr
-IWindowForBindingUIVtbl ends
-IWindowForBindingUI struct
-	lpVtbl		PVOID ?
-IWindowForBindingUI ends
+.comdef IWindowForBindingUI
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetWindow		proc :REFGUID, :ptr
+    .ends
 LPWINDOWFORBINDINGUI	typedef ptr IWindowForBindingUI
 externdef		IID_IWindowForBindingUI:IID
 
@@ -1034,16 +1013,13 @@ CIP_NEED_REBOOT		equ CIP_UNSAFE_TO_ABORT + 1
 
 externdef		IID_ICodeInstall:IID
 
-ICodeInstallVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetWindow
-	STDMETHOD	OnCodeInstallProblem, :ULONG, :LPCWSTR, :LPCWSTR, :DWORD
-ICodeInstallVtbl ends
-ICodeInstall struct
-	lpVtbl		PVOID ?
-ICodeInstall ends
+.comdef ICodeInstall
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetWindow		proc
+    OnCodeInstallProblem proc :ULONG, :LPCWSTR, :LPCWSTR, :DWORD
+    .ends
 
 ;HRESULT
 ICodeInstall_OnCodeInstallProblem_Proxy proto WINAPI \
@@ -1070,15 +1046,12 @@ externdef		__MIDL_itf_urlmon_0118_v0_0_s_ifspec:RPC_IF_HANDLE
 ifndef __IWinInetInfo_INTERFACE_DEFINED__
 __IWinInetInfo_INTERFACE_DEFINED__ equ 1
 
-IWinInetInfoVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	QueryOption, :DWORD, :ptr, :ptr
-IWinInetInfoVtbl ends
-IWinInetInfo struct
-	lpVtbl		PVOID ?
-IWinInetInfo ends
+.comdef IWinInetInfo
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    QueryOption		proc :DWORD, :ptr, :ptr
+    .ends
 LPWININETINFO		typedef ptr IWinInetInfo
 externdef		IID_IWinInetInfo:IID
 
@@ -1107,16 +1080,13 @@ externdef		__MIDL_itf_urlmon_0119_v0_0_s_ifspec:RPC_IF_HANDLE
 ifndef __IHttpSecurity_INTERFACE_DEFINED__
 __IHttpSecurity_INTERFACE_DEFINED__ equ 1
 
-IHttpSecurityVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetWindow, :REFGUID, :ptr
-	STDMETHOD	OnSecurityProblem, :DWORD
-IHttpSecurityVtbl ends
-IHttpSecurity struct
-	lpVtbl		PVOID ?
-IHttpSecurity ends
+.comdef IHttpSecurity
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetWindow		proc :REFGUID, :ptr
+    OnSecurityProblem	proc :DWORD
+    .ends
 LPHTTPSECURITY		typedef ptr IHttpSecurity
 externdef		IID_IHttpSecurity:IID
 
@@ -1142,16 +1112,13 @@ externdef		__MIDL_itf_urlmon_0120_v0_0_s_ifspec:RPC_IF_HANDLE
 ifndef __IWinInetHttpInfo_INTERFACE_DEFINED__
 __IWinInetHttpInfo_INTERFACE_DEFINED__ equ 1
 
-IWinInetHttpInfoVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	QueryOption, :DWORD, :PVOID, :ptr
-	STDMETHOD	QueryInfo, :DWORD, :PVOID, :ptr, :ptr, :ptr
-IWinInetHttpInfoVtbl ends
-IWinInetHttpInfo struct
-	lpVtbl		PVOID ?
-IWinInetHttpInfo ends
+.comdef IWinInetHttpInfo
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    QueryOption		proc :DWORD, :PVOID, :ptr
+    QueryInfo		proc :DWORD, :PVOID, :ptr, :ptr, :ptr
+    .ends
 LPWININETHTTPINFO	typedef ptr IWinInetHttpInfo
 externdef		IID_IWinInetHttpInfo:IID
 
@@ -1184,19 +1151,15 @@ externdef		__MIDL_itf_urlmon_0121_v0_0_s_ifspec:RPC_IF_HANDLE
 ifndef __IBindHost_INTERFACE_DEFINED__
 __IBindHost_INTERFACE_DEFINED__ equ 1
 
-IBindHostVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	CreateMoniker, :LPOLESTR,:ptr, :ptr, :DWORD
-	STDMETHOD	MonikerBindToStorage, :ptr, :ptr, :ptr, :REFIID, :ptr
-	STDMETHOD	MonikerBindToObject, :ptr, :ptr, :ptr, :REFIID, :ptr
-IBindHostVtbl ends
-IBindHost struct
-	lpVtbl		PVOID ?
-IBindHost ends
+.comdef IBindHost
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    CreateMoniker	proc :LPOLESTR,:ptr, :ptr, :DWORD
+    MonikerBindToStorage proc :ptr, :ptr, :ptr, :REFIID, :ptr
+    MonikerBindToObject proc :ptr, :ptr, :ptr, :REFIID, :ptr
+    .ends
 LPBINDHOST		typedef ptr IBindHost
-LPIBindHost		typedef ptr IBindHost
 externdef		IID_IBindHost:IID
 
 ;HRESULT
@@ -1387,14 +1350,11 @@ externdef		__MIDL_itf_urlmon_0122_v0_0_s_ifspec:RPC_IF_HANDLE
 ifndef __IInternet_INTERFACE_DEFINED__
 __IInternet_INTERFACE_DEFINED__ equ 1
 
-IInternetVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-IInternetVtbl ends
-IInternet struct
-	lpVtbl		PVOID ?
-IInternet ends
+.comdef IInternet
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    .ends
 LPIINTERNET		typedef ptr IInternet
 externdef		IID_IInternet:IID
 endif
@@ -1430,16 +1390,13 @@ BINDSTRING_URL		equ BINDSTRING_POST_DATA_MIME + 1
 
 externdef		IID_IInternetBindInfo:IID
 
-IInternetBindInfoVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetBindInfo, :ptr, :ptr
-	STDMETHOD	GetBindString, :DWORD, :ptr, :DWORD, :ptr
-IInternetBindInfoVtbl ends
-IInternetBindInfo struct
-	lpVtbl		PVOID ?
-IInternetBindInfo ends
+.comdef IInternetBindInfo
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetBindInfo		proc :ptr, :ptr
+    GetBindString	proc :DWORD, :ptr, :DWORD, :ptr
+    .ends
 
 ;HRESULT
 IInternetBindInfo_GetBindInfo_Proxy proto WINAPI \
@@ -1504,20 +1461,17 @@ PROTOCOLDATA		ENDS
 
 externdef		IID_IInternetProtocolRoot:IID
 
-IInternetProtocolRootVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Start, :LPWSTR, :ptr, :ptr, :DWORD, :DWORD
-	STDMETHOD	Continue, :ptr
-	STDMETHOD	Abort, :HRESULT, :DWORD
-	STDMETHOD	Terminate, :DWORD
-	STDMETHOD	Suspend
-	STDMETHOD	Resume
-IInternetProtocolRootVtbl ends
-IInternetProtocolRoot struct
-	lpVtbl		PVOID ?
-IInternetProtocolRoot ends
+.comdef IInternetProtocolRoot
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Start		proc :LPWSTR, :ptr, :ptr, :DWORD, :DWORD
+    Continue		proc :ptr
+    Abort		proc :HRESULT, :DWORD
+    Terminate		proc :DWORD
+    Suspend		proc
+    Resume		proc
+    .ends
 
 ;HRESULT
 IInternetProtocolRoot_Start_Proxy proto WINAPI \
@@ -1604,24 +1558,21 @@ externdef		__MIDL_itf_urlmon_0125_v0_0_s_ifspec:RPC_IF_HANDLE
 ifndef __IInternetProtocol_INTERFACE_DEFINED__
 __IInternetProtocol_INTERFACE_DEFINED__ equ 1
 
-IInternetProtocolVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Start, :LPWSTR, :ptr, :ptr, :DWORD, :DWORD
-	STDMETHOD	Continue, :ptr
-	STDMETHOD	Abort, :HRESULT, :DWORD
-	STDMETHOD	Terminate, :DWORD
-	STDMETHOD	Suspend
-	STDMETHOD	Resume
-	STDMETHOD	Read, :ptr, :DWORD, :ptr
-	STDMETHOD	Seek, :LARGE_INTEGER, :DWORD, :ptr
-	STDMETHOD	LockRequest, :DWORD
-	STDMETHOD	UnlockRequest
-IInternetProtocolVtbl ends
-IInternetProtocol struct
-	lpVtbl		PVOID ?
-IInternetProtocol ends
+.comdef IInternetProtocol
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Start		proc :LPWSTR, :ptr, :ptr, :DWORD, :DWORD
+    Continue		proc :ptr
+    Abort		proc :HRESULT, :DWORD
+    Terminate		proc :DWORD
+    Suspend		proc
+    Resume		proc
+    Read		proc :ptr, :DWORD, :ptr
+    Seek		proc :LARGE_INTEGER, :DWORD, :ptr
+    LockRequest		proc :DWORD
+    UnlockRequest	proc
+    .ends
 LPIINTERNETPROTOCOL	typedef ptr IInternetProtocol
 externdef		IID_IInternetProtocol:IID
 
@@ -1689,18 +1640,15 @@ __IInternetProtocolSink_INTERFACE_DEFINED__ equ 1
 LPIINTERNETPROTOCOLSINK typedef ptr IInternetProtocolSink
 externdef		IID_IInternetProtocolSink:IID
 
-IInternetProtocolSinkVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Switch, :ptr
-	STDMETHOD	ReportProgress, :DWORD, :LPWSTR
-	STDMETHOD	ReportData, :DWORD, :DWORD, :DWORD
-	STDMETHOD	ReportResult, :HRESULT, :DWORD, :LPWSTR
-IInternetProtocolSinkVtbl ends
-IInternetProtocolSink struct
-	lpVtbl		PVOID ?
-IInternetProtocolSink ends
+.comdef IInternetProtocolSink
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Switch		proc :ptr
+    ReportProgress	proc :DWORD, :LPWSTR
+    ReportData		proc :DWORD, :DWORD, :DWORD
+    ReportResult	proc :HRESULT, :DWORD, :LPWSTR
+    .ends
 
 ;HRESULT
 IInternetProtocolSink_Switch_Proxy proto WINAPI \
@@ -1769,21 +1717,18 @@ __IInternetSession_INTERFACE_DEFINED__ equ 1
 
 OIBDG_APARTMENTTHREADED equ 0x100
 
-IInternetSessionVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	RegisterNameSpace, :ptr, :REFCLSID, :LPWSTR, :DWORD, :ptr, :DWORD
-	STDMETHOD	UnregisterNameSpace, :LPWSTR
-	STDMETHOD	RegisterMimeFilter, :ptr, :REFCLSID, :LPWSTR
-	STDMETHOD	UnregisterMimeFilter, :ptr, :LPWSTR
-	STDMETHOD	CreateBinding, :LPBC, :LPWSTR, :ptr, :ptr, :ptr, :DWORD
-	STDMETHOD	SetSessionOption, :DWORD, :PVOID, :DWORD, :DWORD
-	STDMETHOD	GetSessionOption, :DWORD, :PVOID, :ptr, :DWORD
-IInternetSessionVtbl ends
-IInternetSession struct
-	lpVtbl		PVOID ?
-IInternetSession ends
+.comdef IInternetSession
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    RegisterNameSpace	proc :ptr, :REFCLSID, :LPWSTR, :DWORD, :ptr, :DWORD
+    UnregisterNameSpace proc :LPWSTR
+    RegisterMimeFilter	proc :ptr, :REFCLSID, :LPWSTR
+    UnregisterMimeFilter proc :ptr, :LPWSTR
+    CreateBinding	proc :LPBC, :LPWSTR, :ptr, :ptr, :ptr, :DWORD
+    SetSessionOption	proc :DWORD, :PVOID, :DWORD, :DWORD
+    GetSessionOption	proc :DWORD, :PVOID, :ptr, :DWORD
+    .ends
 LPIINTERNETSESSION	typedef ptr IInternetSession
 externdef		IID_IInternetSession:IID
 
@@ -1901,16 +1846,13 @@ externdef		__MIDL_itf_urlmon_0128_v0_0_s_ifspec:RPC_IF_HANDLE
 ifndef __IInternetThreadSwitch_INTERFACE_DEFINED__
 __IInternetThreadSwitch_INTERFACE_DEFINED__ equ 1
 
-IInternetThreadSwitchVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Prepare
-	STDMETHOD	Continue, :ptr, :PRPC_MESSAGE, :ptr
-IInternetThreadSwitchVtbl ends
-IInternetThreadSwitch struct
-	lpVtbl		PVOID ?
-IInternetThreadSwitch ends
+.comdef IInternetThreadSwitch
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Prepare		proc
+    Continue		proc :ptr, :PRPC_MESSAGE, :ptr
+    .ends
 LPIINTERNETTHREADSWITCH typedef ptr IInternetThreadSwitch
 externdef		IID_IInternetThreadSwitch:IID
 
@@ -1946,16 +1888,13 @@ externdef		__MIDL_itf_urlmon_0129_v0_0_s_ifspec:RPC_IF_HANDLE
 ifndef __IInternetPriority_INTERFACE_DEFINED__
 __IInternetPriority_INTERFACE_DEFINED__ equ 1
 
-IInternetPriorityVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetPriority, :LONG
-	STDMETHOD	GetPriority, :ptr
-IInternetPriorityVtbl ends
-IInternetPriority struct
-	lpVtbl		PVOID ?
-IInternetPriority ends
+.comdef IInternetPriority
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetPriority		proc :LONG
+    GetPriority		proc :ptr
+    .ends
 LPIINTERNETPRIORITY	typedef ptr IInternetPriority
 externdef		IID_IInternetPriority:IID
 
@@ -2034,18 +1973,15 @@ QUERY_USES_CACHE	equ QUERY_IS_CACHED_OR_MAPPED + 1
 
 externdef		IID_IInternetProtocolInfo:IID
 
-IInternetProtocolInfoVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	ParseUrl, :LPWSTR, :PARSEACTION, :DWORD, :LPWSTR, :DWORD, :ptr, :DWORD
-	STDMETHOD	CombineUrl, :LPWSTR, :LPWSTR, :DWORD, :LPWSTR, :DWORD, :ptr, :DWORD
-	STDMETHOD	CompareUrl, :LPWSTR, :LPWSTR, :DWORD
-	STDMETHOD	QueryInfo, :LPWSTR, :QUERYOPTION, :DWORD, :PVOID, :DWORD, :ptr, :DWORD
-IInternetProtocolInfoVtbl ends
-IInternetProtocolInfo struct
-	lpVtbl		PVOID ?
-IInternetProtocolInfo ends
+.comdef IInternetProtocolInfo
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    ParseUrl		proc :LPWSTR, :PARSEACTION, :DWORD, :LPWSTR, :DWORD, :ptr, :DWORD
+    CombineUrl		proc :LPWSTR, :LPWSTR, :DWORD, :LPWSTR, :DWORD, :ptr, :DWORD
+    CompareUrl		proc :LPWSTR, :LPWSTR, :DWORD
+    QueryInfo		proc :LPWSTR, :QUERYOPTION, :DWORD, :PVOID, :DWORD, :ptr, :DWORD
+    .ends
 
 ;HRESULT
 IInternetProtocolInfo_ParseUrl_Proxy proto WINAPI \
@@ -2261,11 +2197,11 @@ __IInternetSecurityMgrSite_INTERFACE_DEFINED__ equ 1
 externdef		IID_IInternetSecurityMgrSite:IID
 
 IInternetSecurityMgrSiteVtbl	STRUC
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetWindow, :ptr
-	STDMETHOD	EnableModeless, :BOOL
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetWindow		proc :ptr
+    EnableModeless	proc :BOOL
 IInternetSecurityMgrSiteVtbl ENDS
 
 ;HRESULT
@@ -2319,22 +2255,19 @@ SZM_DELETE		equ 0x1
 
 externdef		IID_IInternetSecurityManager:IID
 
-IInternetSecurityManagerVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetSecuritySite, :ptr
-	STDMETHOD	GetSecuritySite
-	STDMETHOD	MapUrlToZone, :LPWSTR, :ptr, :DWORD
-	STDMETHOD	GetSecurityId, :LPWSTR, :ptr, :ptr, :DWORD
-	STDMETHOD	ProcessUrlAction, :LPWSTR, :DWORD, :ptr, :DWORD, :ptr, :DWORD, :DWORD, :DWORD
-	STDMETHOD	QueryCustomPolicy, :LPWSTR, :REFGUID, :ptr, :ptr, :ptr, :DWORD, :DWORD
-	STDMETHOD	SetZoneMapping, :DWORD, :LPWSTR, :DWORD
-	STDMETHOD	GetZoneMappings, :DWORD, :ptr, :DWORD
-IInternetSecurityManagerVtbl ends
-IInternetSecurityManager struct
-	lpVtbl		PVOID ?
-IInternetSecurityManager ends
+.comdef IInternetSecurityManager
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetSecuritySite	proc :ptr
+    GetSecuritySite	proc
+    MapUrlToZone	proc :LPWSTR, :ptr, :DWORD
+    GetSecurityId	proc :LPWSTR, :ptr, :ptr, :DWORD
+    ProcessUrlAction	proc :LPWSTR, :DWORD, :ptr, :DWORD, :ptr, :DWORD, :DWORD, :DWORD
+    QueryCustomPolicy	proc :LPWSTR, :REFGUID, :ptr, :ptr, :ptr, :DWORD, :DWORD
+    SetZoneMapping	proc :DWORD, :LPWSTR, :DWORD
+    GetZoneMappings	proc :DWORD, :ptr, :DWORD
+    .ends
 
 ;HRESULT
 IInternetSecurityManager_SetSecuritySite_Proxy proto WINAPI \
@@ -2466,17 +2399,14 @@ __IInternetHostSecurityManager_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IInternetHostSecurityManager:IID
 
-IInternetHostSecurityManagerVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetSecurityId, :ptr, :ptr, :DWORD
-	STDMETHOD	ProcessUrlAction, :DWORD, :ptr, :DWORD, :ptr, :DWORD, :DWORD, :DWORD
-	STDMETHOD	QueryCustomPolicy, :REFGUID, :ptr, :ptr, :ptr, :DWORD, :DWORD
-IInternetHostSecurityManagerVtbl ends
-IInternetHostSecurityManager struct
-	lpVtbl		PVOID ?
-IInternetHostSecurityManager ends
+.comdef IInternetHostSecurityManager
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetSecurityId	proc :ptr, :ptr, :DWORD
+    ProcessUrlAction	proc :DWORD, :ptr, :DWORD, :ptr, :DWORD, :DWORD, :DWORD
+    QueryCustomPolicy	proc :REFGUID, :ptr, :ptr, :ptr, :DWORD, :DWORD
+    .ends
 
 ;HRESULT
 IInternetHostSecurityManager_GetSecurityId_Proxy proto WINAPI \
@@ -2701,26 +2631,23 @@ URLZONEREG_DEFAULT	equ 0
 URLZONEREG_HKLM		equ URLZONEREG_DEFAULT + 1
 URLZONEREG_HKCU		equ URLZONEREG_HKLM + 1
 
-IInternetZoneManagerVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetZoneAttributes, :DWORD, :ptr
-	STDMETHOD	SetZoneAttributes, :DWORD, :ptr
-	STDMETHOD	GetZoneCustomPolicy, :DWORD, :REFGUID, :ptr, :ptr, :URLZONEREG
-	STDMETHOD	SetZoneCustomPolicy, :DWORD, :REFGUID, :ptr, :DWORD, :URLZONEREG
-	STDMETHOD	GetZoneActionPolicy, :DWORD, :DWORD, :ptr, :DWORD, :URLZONEREG
-	STDMETHOD	SetZoneActionPolicy, :DWORD, :DWORD, :ptr, :DWORD, :URLZONEREG
-	STDMETHOD	PromptAction, :DWORD, :HWND, :LPWSTR, :LPWSTR, :DWORD
-	STDMETHOD	LogAction, :DWORD, :LPWSTR, :LPWSTR, :DWORD
-	STDMETHOD	CreateZoneEnumerator, :ptr, :ptr, :DWORD
-	STDMETHOD	GetZoneAt, :DWORD, :DWORD, :ptr
-	STDMETHOD	DestroyZoneEnumerator, :DWORD
-	STDMETHOD	CopyTemplatePoliciesToZone, :DWORD, :DWORD, :DWORD
-IInternetZoneManagerVtbl ends
-IInternetZoneManager struct
-	lpVtbl		PVOID ?
-IInternetZoneManager ends
+.comdef IInternetZoneManager
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetZoneAttributes	proc :DWORD, :ptr
+    SetZoneAttributes	proc :DWORD, :ptr
+    GetZoneCustomPolicy proc :DWORD, :REFGUID, :ptr, :ptr, :URLZONEREG
+    SetZoneCustomPolicy proc :DWORD, :REFGUID, :ptr, :DWORD, :URLZONEREG
+    GetZoneActionPolicy proc :DWORD, :DWORD, :ptr, :DWORD, :URLZONEREG
+    SetZoneActionPolicy proc :DWORD, :DWORD, :ptr, :DWORD, :URLZONEREG
+    PromptAction	proc :DWORD, :HWND, :LPWSTR, :LPWSTR, :DWORD
+    LogAction		proc :DWORD, :LPWSTR, :LPWSTR, :DWORD
+    CreateZoneEnumerator proc :ptr, :ptr, :DWORD
+    GetZoneAt		proc :DWORD, :DWORD, :ptr
+    DestroyZoneEnumerator proc :DWORD
+    CopyTemplatePoliciesToZone proc :DWORD, :DWORD, :DWORD
+    .ends
 LPURLZONEMANAGER	typedef ptr IInternetZoneManager
 externdef		IID_IInternetZoneManager:IID
 
@@ -2950,18 +2877,15 @@ __ISoftDistExt_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_ISoftDistExt:IID
 
-ISoftDistExtVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	ProcessSoftDist, :LPWSTR, :ptr, :LPSOFTDISTINFO
-	STDMETHOD	GetFirstCodeBase, :ptr, :ptr
-	STDMETHOD	GetNextCodeBase, :ptr, :ptr
-	STDMETHOD	AsyncInstallDistributionUnit, :ptr, :LPVOID, :DWORD, :LPCODEBASEHOLD
-ISoftDistExtVtbl ends
-ISoftDistExt struct
-	lpVtbl		PVOID ?
-ISoftDistExt ends
+.comdef ISoftDistExt
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    ProcessSoftDist	proc :LPWSTR, :ptr, :LPSOFTDISTINFO
+    GetFirstCodeBase	proc :ptr, :ptr
+    GetNextCodeBase	proc :ptr, :ptr
+    AsyncInstallDistributionUnit proc :ptr, :LPVOID, :DWORD, :LPCODEBASEHOLD
+    .ends
 
 ;HRESULT
 ISoftDistExt_ProcessSoftDist_Proxy proto WINAPI \
@@ -3042,17 +2966,14 @@ externdef		__MIDL_itf_urlmon_0136_v0_0_s_ifspec:RPC_IF_HANDLE
 ifndef __IDataFilter_INTERFACE_DEFINED__
 __IDataFilter_INTERFACE_DEFINED__ equ 1
 
-IDataFilterVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	DoEncode, :DWORD, :SDWORD, :ptr, :SDWORD, :ptr, :SDWORD, :ptr, :ptr, :DWORD
-	STDMETHOD	DoDecode, :DWORD, :SDWORD, :ptr, :SDWORD, :ptr, :SDWORD, :ptr, :ptr, :DWORD
-	STDMETHOD	SetEncodingLevel, :DWORD
-IDataFilterVtbl ends
-IDataFilter struct
-	lpVtbl		PVOID ?
-IDataFilter ends
+.comdef IDataFilter
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    DoEncode		proc :DWORD, :SDWORD, :ptr, :SDWORD, :ptr, :SDWORD, :ptr, :ptr, :DWORD
+    DoDecode		proc :DWORD, :SDWORD, :ptr, :SDWORD, :ptr, :SDWORD, :ptr, :ptr, :DWORD
+    SetEncodingLevel	proc :DWORD
+    .ends
 LPDATAFILTER		typedef ptr IDataFilter
 externdef		IID_IDataFilter:IID
 
@@ -3133,16 +3054,13 @@ ulConnectSpeed		dd ?
 ulProcessorSpeed	dd ?
 DATAINFO		ENDS
 
-IEncodingFilterFactoryVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	FindBestFilter, :LPWSTR, :LPWSTR, :DATAINFO, :ptr
-	STDMETHOD	GetDefaultFilter, :LPWSTR, :LPWSTR, :ptr
-IEncodingFilterFactoryVtbl ends
-IEncodingFilterFactory struct
-	lpVtbl		PVOID ?
-IEncodingFilterFactory ends
+.comdef IEncodingFilterFactory
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    FindBestFilter	proc :LPWSTR, :LPWSTR, :DATAINFO, :ptr
+    GetDefaultFilter	proc :LPWSTR, :LPWSTR, :ptr
+    .ends
 LPENCODINGFILTERFACTORY typedef ptr IEncodingFilterFactory
 externdef		IID_IEncodingFilterFactory:IID
 

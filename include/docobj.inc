@@ -81,19 +81,15 @@ DOCMISC_NOFILESUPPORT	equ 8
 DEFINE_GUID(IID_IOleDocument, 0xb722bcc5, 0x4e68, 0x101b, 0xa2,0xbc, 0x00,0xaa,0x00,0x40,0x47,0x70)
 externdef		IID_IOleDocument:IID
 
-IOleDocumentVtbl struct
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		CreateView, :ptr, :ptr, :DWORD, :ptr
-STDMETHOD		GetDocMiscStatus, :ptr
-STDMETHOD		EnumViews, :ptr, :ptr
-IOleDocumentVtbl ends
-IOleDocument struct
-	lpVtbl		PVOID ?
-IOleDocument ends
+.comdef IOleDocument
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    CreateView		proc :ptr, :ptr, :DWORD, :ptr
+    GetDocMiscStatus	proc :ptr
+    EnumViews		proc :ptr, :ptr
+    .ends
 LPOLEDOCUMENT		typedef ptr IOleDocument
-LPIOleDocument		typedef ptr IOleDocument
 
 endif
 endif
@@ -109,18 +105,14 @@ __IOleDocumentSite_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_IOleDocumentSite, 0xb722bcc7, 0x4e68, 0x101b, 0xa2,0xbc, 0x00,0xaa,0x00,0x40,0x47,0x70)
 
-IOleDocumentSiteVtbl struct
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		ActivateMe, :ptr
-IOleDocumentSiteVtbl ends
-IOleDocumentSite struct
-	lpVtbl		PVOID ?
-IOleDocumentSite ends
+.comdef IOleDocumentSite
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    ActivateMe		proc :ptr
+    .ends
 externdef		IID_IOleDocumentSite:IID
 LPOLEDOCUMENTSITE	typedef ptr IOleDocumentSite
-LPIOleDocumentSite	typedef ptr IOleDocumentSite
 
 endif
 endif
@@ -136,30 +128,26 @@ __IOleDocumentView_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_IOleDocumentView, 0xb722bcc6, 0x4e68, 0x101b, 0xa2,0xbc, 0x00,0xaa,0x00,0x40,0x47,0x70)
 
-IOleDocumentViewVtbl struct
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		SetInPlaceSite, :ptr
-STDMETHOD		GetInPlaceSite, :ptr
-STDMETHOD		GetDocument, :ptr
-STDMETHOD		SetRect, :ptr
-STDMETHOD		GetRect, :ptr
-STDMETHOD		SetRectComplex, :ptr, :ptr, :ptr, :ptr
-STDMETHOD		Show, :BOOL
-STDMETHOD		UIActivate, :BOOL
-STDMETHOD		Open
-STDMETHOD		CloseView, :DWORD
-STDMETHOD		SaveViewState, :ptr
-STDMETHOD		ApplyViewState, :ptr
-STDMETHOD		Clone, :ptr, :ptr
-IOleDocumentViewVtbl ends
-IOleDocumentView struct
-	lpVtbl		PVOID ?
-IOleDocumentView ends
+.comdef IOleDocumentView
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetInPlaceSite	proc :ptr
+    GetInPlaceSite	proc :ptr
+    GetDocument		proc :ptr
+    SetRect		proc :ptr
+    GetRect		proc :ptr
+    SetRectComplex	proc :ptr, :ptr, :ptr, :ptr
+    Show		proc :BOOL
+    UIActivate		proc :BOOL
+    Open		proc
+    CloseView		proc :DWORD
+    SaveViewState	proc :ptr
+    ApplyViewState	proc :ptr
+    Clone		proc :ptr, :ptr
+    .ends
 LPOLEDOCUMENTVIEW	typedef ptr IOleDocumentView
 externdef		IID_IOleDocumentView:IID
-LPIOleDocumentView	typedef ptr IOleDocumentView
 
 endif
 endif
@@ -175,26 +163,22 @@ __IEnumOleDocumentViews_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_IEnumOleDocumentViews, 0xb722bcc8, 0x4e68, 0x101b, 0xa2,0xbc, 0x00,0xaa,0x00,0x40,0x47,0x70)
 
-IEnumOleDocumentViewsVtbl struct
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		Next, :ULONG, :LPIOleDocumentView, :PULONG
-STDMETHOD		Skip, :ULONG
-STDMETHOD		Reset
-STDMETHOD		Clone, :ptr
-IEnumOleDocumentViewsVtbl ends
-IEnumOleDocumentViews struct
-	lpVtbl		PVOID ?
-IEnumOleDocumentViews ends
+.comdef IEnumOleDocumentViews
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Next		proc :ULONG, :LPOLEDOCUMENTVIEW, :PULONG
+    Skip		proc :ULONG
+    Reset		proc
+    Clone		proc :ptr
+    .ends
 LPENUMOLEDOCUMENTVIEWS	typedef ptr IEnumOleDocumentViews
-LPIEnumOleDocumentViews typedef ptr IEnumOleDocumentViews
 externdef		IID_IEnumOleDocumentViews:IID
 
 IEnumOleDocumentViews_RemoteNext_Proxy proto WINAPI \
-		 _This: LPIEnumOleDocumentViews,
+		 _This: ptr IEnumOleDocumentViews,
 		cViews: ULONG,
-	       rgpView: LPIOleDocumentView,
+	       rgpView: LPOLEDOCUMENTVIEW,
 	     pcFetched: PULONG
 
 ;void
@@ -216,18 +200,14 @@ externdef		__MIDL_itf_docobj_0000_0004_v0_0_s_ifspec:RPC_IF_HANDLE
 ifndef __IContinueCallback_INTERFACE_DEFINED__
 __IContinueCallback_INTERFACE_DEFINED__ equ 1
 
-IContinueCallbackVtbl struct
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		FContinue
-STDMETHOD		FContinuePrinting, :LONG, :LONG, :ptr
-IContinueCallbackVtbl ends
-IContinueCallback struct
-	lpVtbl		PVOID ?
-IContinueCallback ends
+.comdef IContinueCallback
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    FContinue		proc
+    FContinuePrinting	proc :LONG, :LONG, :ptr
+    .ends
 LPCONTINUECALLBACK	typedef ptr IContinueCallback
-LPIContinueCallback	typedef ptr IContinueCallback
 externdef		IID_IContinueCallback:IID
 
 endif ; __IContinueCallback_INTERFACE_DEFINED__
@@ -267,28 +247,24 @@ PAGESET			ENDS
 
 PAGESET_TOLASTPAGE	equ ((-1))
 
-IPrintVtbl struct
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		SetInitialPageNum, :LONG
-STDMETHOD		GetPageInfo, :ptr, :ptr
-STDMETHOD		Print, :DWORD, :ptr, :ptr, :ptr, :ptr, :LONG, :ptr, :ptr
-IPrintVtbl ends
-IPrint struct
-	lpVtbl		PVOID ?
-IPrint ends
-LPIPrint		typedef ptr IPrint
+.comdef IPrint
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetInitialPageNum	proc :LONG
+    GetPageInfo		proc :ptr, :ptr
+    Print		proc :DWORD, :ptr, :ptr, :ptr, :ptr, :LONG, :ptr, :ptr
+    .ends
 LPPRINT			typedef ptr IPrint
 externdef		IID_IPrint:IID
 
 IPrint_RemotePrint_Proxy proto WINAPI \
-		 _This: LPIPrint,
+		 _This: LPPRINT,
 	      grfFlags: DWORD,
 		  pptd: LPDVTARGETDEVICE,
 	     pppageset: ptr PAGESET,
 	  pstgmOptions: ptr RemSTGMEDIUM,
-	     pcallback: LPIContinueCallback,
+	     pcallback: ptr IContinueCallback,
 	    nFirstPage: LONG,
 	pcPagesPrinted: LPLONG,
 	    pnLastPage: LPLONG
@@ -446,18 +422,14 @@ endif
 
 DEFINE_GUID(IID_IOleCommandTarget, 0xb722bccb, 0x4e68, 0x101b, 0xa2,0xbc, 0x00,0xaa,0x00,0x40,0x47,0x70)
 
-IOleCommandTargetVtbl struct
-STDMETHOD		QueryInterface, :REFIID, :ptr
-STDMETHOD		AddRef
-STDMETHOD		Release
-STDMETHOD		QueryStatus, :ptr, :ULONG, :OLECMD, :ptr
-STDMETHOD		Exec, :ptr, :DWORD, :DWORD, :ptr, :ptr
-IOleCommandTargetVtbl ends
-IOleCommandTarget struct
-	lpVtbl		PVOID ?
-IOleCommandTarget ends
+.comdef IOleCommandTarget
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    QueryStatus		proc :ptr, :ULONG, :OLECMD, :ptr
+    Exec		proc :ptr, :DWORD, :DWORD, :ptr, :ptr
+    .ends
 LPOLECOMMANDTARGET	typedef ptr IOleCommandTarget
-LPIOleCommandTarget	typedef ptr IOleCommandTarget
 externdef		IID_IOleCommandTarget:IID
 
 endif ; __IOleCommandTarget_INTERFACE_DEFINED__
@@ -601,16 +573,12 @@ ifndef __IZoomEvents_INTERFACE_DEFINED__
 __IZoomEvents_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IZoomEvents:IID
-IZoomEventsVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	OnZoomPercentChanged, :ULONG
-IZoomEventsVtbl ends
-IZoomEvents struct
-	lpVtbl		PVOID ?
-IZoomEvents ends
-LPIZoomEvents		typedef ptr IZoomEvents
+.comdef IZoomEvents
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    OnZoomPercentChanged proc :ULONG
+    .ends
 
 endif
 
@@ -619,16 +587,12 @@ __IProtectFocus_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_IProtectFocus, 0xd81f90a3, 0x8156, 0x44f7, 0xad,0x28, 0x5a,0xbb,0x87,0x00,0x32,0x74)
 
-IProtectFocusVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	AllowFocusChange, :ptr
-IProtectFocusVtbl ends
-IProtectFocus struct
-	lpVtbl		PVOID ?
-IProtectFocus ends
-LPIProtectFocus		typedef ptr IProtectFocus
+.comdef IProtectFocus
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    AllowFocusChange	proc :ptr
+    .ends
 externdef		IID_IProtectFocus:IID
 
 endif
@@ -644,18 +608,14 @@ ifndef __IProtectedModeMenuServices_INTERFACE_DEFINED__
 __IProtectedModeMenuServices_INTERFACE_DEFINED__ equ 1
 
 
-IProtectedModeMenuServicesVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	CreateMenu, :ptr
-	STDMETHOD	LoadMenu, :LPCWSTR, :LPCWSTR, :ptr
-	STDMETHOD	LoadMenuID, :LPCWSTR, :WORD, :ptr
-IProtectedModeMenuServicesVtbl ends
-IProtectedModeMenuServices struct
-	lpVtbl		PVOID ?
-IProtectedModeMenuServices ends
-LPIProtectedModeMenuServices typedef ptr IProtectedModeMenuServices
+.comdef IProtectedModeMenuServices
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    CreateMenu		proc :ptr
+    LoadMenu		proc :LPCWSTR, :LPCWSTR, :ptr
+    LoadMenuID		proc :LPCWSTR, :WORD, :ptr
+    .ends
 externdef		IID_IProtectedModeMenuServices:IID
 
 endif

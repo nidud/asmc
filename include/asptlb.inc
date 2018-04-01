@@ -128,19 +128,15 @@ __IStringList_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_IStringList,0xD97A6DA0,0xA85D,0x11cf,0x83,0xAE,0x00,0xA0,0xC9,0x0C,0x2B,0xD8);
 
-IStringListVtbl struct
-STDMETHOD GetTypeInfoCount, :ptr
-STDMETHOD GetTypeInfo, :UINT, :LCID, :ptr
-STDMETHOD GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-STDMETHOD _Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-STDMETHOD get_Item, :VARIANT, :ptr
-STDMETHOD get_Count, :ptr
-STDMETHOD get__NewEnum, :ptr
-IStringListVtbl ends
-IStringList struct
-	lpVtbl		PVOID ?
-IStringList ends
-LPIStringList		typedef ptr IStringList
+.comdef IStringList
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Item		proc :VARIANT, :ptr
+    get_Count		proc :ptr
+    get__NewEnum	proc :ptr
+    .ends
 
 endif	;; __IStringList_INTERFACE_DEFINED__
 
@@ -151,23 +147,19 @@ __IRequestDictionary_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_IRequestDictionary,0xD97A6DA0,0xA85F,0x11df,0x83,0xAE,0x00,0xA0,0xC9,0x0C,0x2B,0xD8);
 
-IRequestDictionaryVtbl struct
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetTypeInfoCount, :ptr
-STDMETHOD GetTypeInfo, :UINT, :LCID, :ptr
-STDMETHOD GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-STDMETHOD _Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-STDMETHOD get_Item, :VARIANT, :ptr
-STDMETHOD get__NewEnum, :ptr
-STDMETHOD get_Count, :ptr
-STDMETHOD get_Key, :VARIANT, :ptr
-IRequestDictionaryVtbl ends
-IRequestDictionary struct
-	lpVtbl		PVOID ?
-IRequestDictionary ends
-LPIRequestDictionary	typedef ptr IRequestDictionary
+.comdef IRequestDictionary
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Item		proc :VARIANT, :ptr
+    get__NewEnum	proc :ptr
+    get_Count		proc :ptr
+    get_Key		proc :VARIANT, :ptr
+    .ends
 endif	;; __IRequestDictionary_INTERFACE_DEFINED__
 
 ifndef __IRequest_INTERFACE_DEFINED__
@@ -179,28 +171,24 @@ __IRequest_INTERFACE_DEFINED__ equ 1
 DEFINE_GUID(IID_IRequest,0xD97A6DA0,0xA861,0x11cf,0x93,0xAE,0x00,0xA0,0xC9,0x0C,0x2B,0xD8);
 
 
-IRequestVtbl struct
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetTypeInfoCount, :ptr
-STDMETHOD GetTypeInfo, :UINT, :LCID, :ptr
-STDMETHOD GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-STDMETHOD _Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-STDMETHOD get_Item, :BSTR, :ptr
-STDMETHOD get_QueryString, :ptr
-STDMETHOD get_Form, :ptr
-STDMETHOD get_Body, :ptr
-STDMETHOD get_ServerVariables, :ptr
-STDMETHOD get_ClientCertificate, :ptr
-STDMETHOD get_Cookies, :ptr
-STDMETHOD get_TotalBytes, :ptr
-STDMETHOD BinaryRead, :ptr, :ptr
-IRequestVtbl ends
-IRequest struct
-	lpVtbl		PVOID ?
-IRequest ends
-LPIRequest		typedef ptr IRequest
+.comdef IRequest
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Item		proc :BSTR, :ptr
+    get_QueryString	proc :ptr
+    get_Form		proc :ptr
+    get_Body		proc :ptr
+    get_ServerVariables proc :ptr
+    get_ClientCertificate proc :ptr
+    get_Cookies		proc :ptr
+    get_TotalBytes	proc :ptr
+    BinaryRead		proc :ptr, :ptr
+    .ends
 
 endif	;; __IRequest_INTERFACE_DEFINED__
 
@@ -215,24 +203,20 @@ __IReadCookie_INTERFACE_DEFINED__ equ 1
 DEFINE_GUID(IID_IReadCookie,0x71EAF260,0x0CE0,0x11D0,0xA5,0x3E,0x00,0xA0,0xC9,0x0C,0x20,0x91);
 
 
-IReadCookieVtbl struct
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetTypeInfoCount, :ptr
-STDMETHOD GetTypeInfo, :UINT, :LCID, :ptr
-STDMETHOD GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-STDMETHOD _Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-STDMETHOD get_Item, :BSTR, :ptr
-STDMETHOD get_HasKeys, :ptr
-STDMETHOD get__NewEnum, :ptr
-STDMETHOD get_Count, :ptr
-STDMETHOD get_Key, :VARIANT, :ptr
-IReadCookieVtbl ends
-IReadCookie struct
-	lpVtbl		PVOID ?
-IReadCookie ends
-LPIReadCookie		typedef ptr IReadCookie
+.comdef IReadCookie
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Item		proc :BSTR, :ptr
+    get_HasKeys		proc :ptr
+    get__NewEnum	proc :ptr
+    get_Count		proc :ptr
+    get_Key		proc :VARIANT, :ptr
+    .ends
 
 endif	;; __IReadCookie_INTERFACE_DEFINED__
 
@@ -244,26 +228,22 @@ __IWriteCookie_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_IWriteCookie,0xD97A6DA0,0xA862,0x11cf,0x84,0xAE,0x00,0xA0,0xC9,0x0C,0x2B,0xD8);
 
-IWriteCookieVtbl struct
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetTypeInfoCount, :ptr
-STDMETHOD GetTypeInfo, :UINT, :LCID, :ptr
-STDMETHOD GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-STDMETHOD _Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-STDMETHOD put_Item, :VARIANT, :BSTR
-STDMETHOD put_Expires, :DATE
-STDMETHOD put_Domain, :BSTR
-STDMETHOD put_Path, :BSTR
-STDMETHOD put_Secure, :VARIANT_BOOL
-STDMETHOD get_HasKeys, :ptr
-STDMETHOD get__NewEnum, :ptr
-IWriteCookieVtbl ends
-IWriteCookie struct
-	lpVtbl		PVOID ?
-IWriteCookie ends
-LPIWriteCookie	typedef ptr IWriteCookie
+.comdef IWriteCookie
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    put_Item		proc :VARIANT, :BSTR
+    put_Expires		proc :DATE
+    put_Domain		proc :BSTR
+    put_Path		proc :BSTR
+    put_Secure		proc :VARIANT_BOOL
+    get_HasKeys		proc :ptr
+    get__NewEnum	proc :ptr
+    .ends
 
 endif	;; __IWriteCookie_INTERFACE_DEFINED__
 
@@ -274,50 +254,46 @@ __IResponse_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_IResponse,0xD97A6DA0,0xA864,0x11cf,0x83,0xBE,0x00,0xA0,0xC9,0x0C,0x2B,0xD8);
 
-IResponseVtbl struct
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetTypeInfoCount, :ptr
-STDMETHOD GetTypeInfo, :UINT, :LCID, :ptr
-STDMETHOD GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-STDMETHOD _Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-STDMETHOD get_Buffer, :ptr
-STDMETHOD put_Buffer, :VARIANT_BOOL
-STDMETHOD get_ContentType, :ptr
-STDMETHOD put_ContentType, :BSTR
-STDMETHOD get_Expires, :ptr
-STDMETHOD put_Expires, :long
-STDMETHOD get_ExpiresAbsolute, :ptr
-STDMETHOD put_ExpiresAbsolute, :DATE
-STDMETHOD get_Cookies, :ptr
-STDMETHOD get_Status, :ptr
-STDMETHOD put_Status, :BSTR
-STDMETHOD _Add, :BSTR, :BSTR
-STDMETHOD AddHeader, :BSTR, :BSTR
-STDMETHOD AppendToLog, :BSTR
-STDMETHOD BinaryWrite, :VARIANT
-STDMETHOD Clear
-STDMETHOD _End
-STDMETHOD Flush
-STDMETHOD Redirect, :BSTR
-STDMETHOD Write, :VARIANT
-STDMETHOD WriteBlock, :sword
-STDMETHOD IsClientConnected, :ptr
-STDMETHOD get_CharSet, :ptr
-STDMETHOD put_CharSet, :BSTR
-STDMETHOD Pics, :BSTR
-STDMETHOD get_CacheControl, :ptr
-STDMETHOD put_CacheControl, :BSTR
-STDMETHOD get_CodePage, :ptr
-STDMETHOD put_CodePage, :long
-STDMETHOD get_LCID, :ptr
-STDMETHOD put_LCID, :long
-IResponseVtbl ends
-IResponse struct
-	lpVtbl		PVOID ?
-IResponse ends
-LPIResponse		typedef ptr IResponse
+.comdef IResponse
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Buffer		proc :ptr
+    put_Buffer		proc :VARIANT_BOOL
+    get_ContentType	proc :ptr
+    put_ContentType	proc :BSTR
+    get_Expires		proc :ptr
+    put_Expires		proc :sdword
+    get_ExpiresAbsolute proc :ptr
+    put_ExpiresAbsolute proc :DATE
+    get_Cookies		proc :ptr
+    get_Status		proc :ptr
+    put_Status		proc :BSTR
+    _Add		proc :BSTR, :BSTR
+    AddHeader		proc :BSTR, :BSTR
+    AppendToLog		proc :BSTR
+    BinaryWrite		proc :VARIANT
+    Clear		proc
+    _End		proc
+    Flush		proc
+    Redirect		proc :BSTR
+    Write		proc :VARIANT
+    WriteBlock		proc :sword
+    IsClientConnected	proc :ptr
+    get_CharSet		proc :ptr
+    put_CharSet		proc :BSTR
+    Pics		proc :BSTR
+    get_CacheControl	proc :ptr
+    put_CacheControl	proc :BSTR
+    get_CodePage	proc :ptr
+    put_CodePage	proc :sdword
+    get_LCID		proc :ptr
+    put_LCID		proc :sdword
+    .ends
 
 endif	;; __IResponse_INTERFACE_DEFINED__
 
@@ -331,27 +307,23 @@ __IVariantDictionary_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_IVariantDictionary,0x4a7deb90,0xb069,0x11d0,0xb3,0x73,0x00,0xa0,0xc9,0x0c,0x2b,0xd8);
 
-IVariantDictionaryVtbl struct
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetTypeInfoCount, :ptr
-STDMETHOD GetTypeInfo, :UINT, :LCID, :ptr
-STDMETHOD GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-STDMETHOD _Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-STDMETHOD get_Item, :VARIANT, :ptr
-STDMETHOD put_Item, :VARIANT, :VARIANT
-STDMETHOD putref_Item, :VARIANT, :VARIANT
-STDMETHOD get_Key, :VARIANT, :ptr
-STDMETHOD get_Count, :ptr
-STDMETHOD get__NewEnum, :ptr
-STDMETHOD Remove, :VARIANT
-STDMETHOD RemoveAll
-IVariantDictionaryVtbl ends
-IVariantDictionary struct
-	lpVtbl		PVOID ?
-IVariantDictionary ends
-LPIVariantDictionary	typedef ptr IVariantDictionary
+.comdef IVariantDictionary
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Item		proc :VARIANT, :ptr
+    put_Item		proc :VARIANT, :VARIANT
+    putref_Item		proc :VARIANT, :VARIANT
+    get_Key		proc :VARIANT, :ptr
+    get_Count		proc :ptr
+    get__NewEnum	proc :ptr
+    Remove		proc :VARIANT
+    RemoveAll		proc
+    .ends
 
 endif	;; __IVariantDictionary_INTERFACE_DEFINED__
 
@@ -363,32 +335,28 @@ __ISessionObject_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_ISessionObject,0xD97A6DA0,0xA865,0x11cf,0x83,0xAF,0x00,0xA0,0xC9,0x0C,0x2B,0xD8);
 
-ISessionObjectVtbl struct
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetTypeInfoCount, :ptr
-STDMETHOD GetTypeInfo, :UINT, :LCID, :ptr
-STDMETHOD GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-STDMETHOD _Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-STDMETHOD get_SessionID, :ptr
-STDMETHOD get_Value, :BSTR, :ptr
-STDMETHOD put_Value, :BSTR, :VARIANT
-STDMETHOD putref_Value, :BSTR, :VARIANT
-STDMETHOD get_Timeout, :ptr
-STDMETHOD put_Timeout, :long
-STDMETHOD Abandon
-STDMETHOD get_CodePage, :ptr
-STDMETHOD put_CodePage, :long
-STDMETHOD get_LCID, :ptr
-STDMETHOD put_LCID, :long
-STDMETHOD get_StaticObjects, :ptr
-STDMETHOD get_Contents, :ptr
-ISessionObjectVtbl ends
-ISessionObject struct
-	lpVtbl		PVOID ?
-ISessionObject ends
-LPISessionObject	typedef ptr ISessionObject
+.comdef ISessionObject
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_SessionID	proc :ptr
+    get_Value		proc :BSTR, :ptr
+    put_Value		proc :BSTR, :VARIANT
+    putref_Value	proc :BSTR, :VARIANT
+    get_Timeout		proc :ptr
+    put_Timeout		proc :sdword
+    Abandon		proc
+    get_CodePage	proc :ptr
+    put_CodePage	proc :sdword
+    get_LCID		proc :ptr
+    put_LCID		proc :sdword
+    get_StaticObjects	proc :ptr
+    get_Contents	proc :ptr
+    .ends
 
 endif	;; __ISessionObject_INTERFACE_DEFINED__
 
@@ -402,26 +370,22 @@ __IApplicationObject_INTERFACE_DEFINED__ equ 1
 
 DEFINE_GUID(IID_IApplicationObject,0xD97A6DA0,0xA866,0x11cf,0x83,0xAE,0x10,0xA0,0xC9,0x0C,0x2B,0xD8);
 
-IApplicationObjectVtbl struct
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetTypeInfoCount, :ptr
-STDMETHOD GetTypeInfo, :UINT, :LCID, :ptr
-STDMETHOD GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-STDMETHOD _Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-STDMETHOD get_Value, :BSTR, :ptr
-STDMETHOD put_Value, :BSTR, :VARIANT
-STDMETHOD putref_Value, :BSTR, :VARIANT
-STDMETHOD _Lock
-STDMETHOD UnLock
-STDMETHOD get_StaticObjects, :ptr
-STDMETHOD get_Contents, :ptr
-IApplicationObjectVtbl ends
-IApplicationObject struct
-	lpVtbl		PVOID ?
-IApplicationObject ends
-LPIApplicationObject	typedef ptr IApplicationObject
+.comdef IApplicationObject
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Value		proc :BSTR, :ptr
+    put_Value		proc :BSTR, :VARIANT
+    putref_Value	proc :BSTR, :VARIANT
+    _Lock		proc
+    UnLock		proc
+    get_StaticObjects	proc :ptr
+    get_Contents	proc :ptr
+    .ends
 
 endif	;; __IApplicationObject_INTERFACE_DEFINED__
 
@@ -436,28 +400,24 @@ __IASPError_INTERFACE_DEFINED__ equ 1
 DEFINE_GUID(IID_IASPError,0xF5A6893E,0xA0F5,0x11d1,0x8C,0x4B,0x00,0xC0,0x4F,0xC3,0x24,0xA4);
 
 
-IASPErrorVtbl struct
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetTypeInfoCount, :ptr
-STDMETHOD GetTypeInfo, :UINT, :LCID, :ptr
-STDMETHOD GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-STDMETHOD _Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-STDMETHOD get_ASPCode, :ptr
-STDMETHOD get_Number, :ptr
-STDMETHOD get_Category, :ptr
-STDMETHOD get_File, :ptr
-STDMETHOD get_Line, :ptr
-STDMETHOD get_Description, :ptr
-STDMETHOD get_ASPDescription, :ptr
-STDMETHOD get_Column, :ptr
-STDMETHOD get_Source, :ptr
-IASPErrorVtbl ends
-IASPError struct
-	lpVtbl		PVOID ?
-IASPError ends
-LPIASPError		typedef ptr IASPError
+.comdef IASPError
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_ASPCode		proc :ptr
+    get_Number		proc :ptr
+    get_Category	proc :ptr
+    get_File		proc :ptr
+    get_Line		proc :ptr
+    get_Description	proc :ptr
+    get_ASPDescription	proc :ptr
+    get_Column		proc :ptr
+    get_Source		proc :ptr
+    .ends
 
 endif	;; __IASPError_INTERFACE_DEFINED__
 
@@ -470,29 +430,25 @@ __IServer_INTERFACE_DEFINED__ equ 1
 DEFINE_GUID(IID_IServer,0xD97A6DA0,0xA867,0x11cf,0x83,0xAE,0x01,0xA0,0xC9,0x0C,0x2B,0xD8);
 
 
-IServerVtbl struct
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetTypeInfoCount, :ptr
-STDMETHOD GetTypeInfo, :UINT, :LCID, :ptr
-STDMETHOD GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-STDMETHOD _Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-STDMETHOD get_ScriptTimeout, :ptr
-STDMETHOD put_ScriptTimeout, :long
-STDMETHOD CreateObject, :BSTR, :ptr
-STDMETHOD HTMLEncode, :BSTR, :ptr
-STDMETHOD MapPath, :BSTR, :ptr
-STDMETHOD URLEncode, :BSTR, :ptr
-STDMETHOD URLPathEncode, :BSTR, :ptr
-STDMETHOD Execute, :BSTR
-STDMETHOD Transfer, :BSTR
-STDMETHOD GetLastError, :ptr
-IServerVtbl ends
-IServer struct
-	lpVtbl		PVOID ?
-IServer ends
-LPIServer		typedef ptr IServer
+.comdef IServer
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_ScriptTimeout	proc :ptr
+    put_ScriptTimeout	proc :sdword
+    CreateObject	proc :BSTR, :ptr
+    HTMLEncode		proc :BSTR, :ptr
+    MapPath		proc :BSTR, :ptr
+    URLEncode		proc :BSTR, :ptr
+    URLPathEncode	proc :BSTR, :ptr
+    Execute		proc :BSTR
+    Transfer		proc :BSTR
+    GetLastError	proc :ptr
+    .ends
 
 endif	;; __IServer_INTERFACE_DEFINED__
 
@@ -507,24 +463,20 @@ __IScriptingContext_INTERFACE_DEFINED__ equ 1
 DEFINE_GUID(IID_IScriptingContext,0xD97A6DA0,0xA868,0x11cf,0x83,0xAE,0x00,0xB0,0xC9,0x0C,0x2B,0xD8);
 
 
-IScriptingContextVtbl struct
-STDMETHOD QueryInterface, :REFIID, :ptr
-STDMETHOD AddRef
-STDMETHOD Release
-STDMETHOD GetTypeInfoCount, :ptr
-STDMETHOD GetTypeInfo, :UINT, :LCID, :ptr
-STDMETHOD GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-STDMETHOD _Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-STDMETHOD get_Request, :ptr
-STDMETHOD get_Response, :ptr
-STDMETHOD get_Server, :ptr
-STDMETHOD get_Session, :ptr
-STDMETHOD get_Application, :ptr
-IScriptingContextVtbl ends
-IScriptingContext struct
-	lpVtbl		PVOID ?
-IScriptingContext ends
-LPIScriptingContext	typedef ptr IScriptingContext
+.comdef IScriptingContext
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Request		proc :ptr
+    get_Response	proc :ptr
+    get_Server		proc :ptr
+    get_Session		proc :ptr
+    get_Application	proc :ptr
+    .ends
 
 endif	;; __IScriptingContext_INTERFACE_DEFINED__
 

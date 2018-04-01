@@ -1046,6 +1046,7 @@ start_displ		dd ?		; OMF only, optional displ for start label
 StrStack		dd ?		; v2.20 String stack
 HllStack		dd ?		; for .WHILE, .IF, .REPEAT
 HllFree			dd ?		; v2.06: stack of free <struct hll>-items
+ComStack		dd ?		; v2.27: .CLASSDEF, .COMDEF, .ENDS
 ContextStack		dd ?
 ContextFree		dd ?		; v2.10: "free items" heap implemented.
 SavedContexts		dd ?

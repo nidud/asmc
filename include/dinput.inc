@@ -273,24 +273,21 @@ LPDIEFFESCAPE		typedef ptr DIEFFESCAPE
 
 ifndef DIJ_RINGZERO
 
-IDirectInputEffectVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Initialize, :HINSTANCE, :DWORD, :REFGUID
-	STDMETHOD	GetEffectGuid, :LPGUID
-	STDMETHOD	GetParameters, :LPDIEFFECT, :DWORD
-	STDMETHOD	SetParameters, :LPCDIEFFECT, :DWORD
-	STDMETHOD	Start, :DWORD, :DWORD
-	STDMETHOD	Stop
-	STDMETHOD	GetEffectStatus, :LPDWORD
-	STDMETHOD	Download
-	STDMETHOD	Unload
-	STDMETHOD	Escape, :LPDIEFFESCAPE
-IDirectInputEffectVtbl ends
-IDirectInputEffect struct
-	lpVtbl		PVOID ?
-IDirectInputEffect ends
+.comdef IDirectInputEffect
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Initialize		proc :HINSTANCE, :DWORD, :REFGUID
+    GetEffectGuid	proc :LPGUID
+    GetParameters	proc :LPDIEFFECT, :DWORD
+    SetParameters	proc :LPCDIEFFECT, :DWORD
+    Start		proc :DWORD, :DWORD
+    Stop		proc
+    GetEffectStatus	proc :LPDWORD
+    Download		proc
+    Unload		proc
+    Escape		proc :LPDIEFFESCAPE
+    .ends
 LPDIRECTINPUTEFFECT	typedef ptr IDirectInputEffect
 
 if NOT defined(__cplusplus) OR defined(CINTERFACE)
@@ -1271,54 +1268,48 @@ LPCDIDEVICEINSTANCE	typedef LPCDIDEVICEINSTANCEA
 endif
 LPCDIDEVICEINSTANCE	typedef ptr DIDEVICEINSTANCE
 
-IDirectInputDeviceWVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetCapabilities, :LPDIDEVCAPS
-	STDMETHOD	EnumObjects, :LPDIENUMDEVICEOBJECTSCALLBACKW, :PVOID, :DWORD
-	STDMETHOD	GetProperty, :REFGUID, :LPDIPROPHEADER
-	STDMETHOD	SetProperty, :REFGUID, :LPCDIPROPHEADER
-	STDMETHOD	Acquire
-	STDMETHOD	Unacquire
-	STDMETHOD	GetDeviceState, :DWORD, :PVOID
-	STDMETHOD	GetDeviceData, :DWORD, :LPDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
-	STDMETHOD	SetDataFormat, :LPCDIDATAFORMAT
-	STDMETHOD	SetEventNotification, :HANDLE
-	STDMETHOD	SetCooperativeLevel, :HWND, :DWORD
-	STDMETHOD	GetObjectInfo, :LPDIDEVICEOBJECTINSTANCEW, :DWORD, :DWORD
-	STDMETHOD	GetDeviceInfo, :LPDIDEVICEINSTANCEW
-	STDMETHOD	RunControlPanel, :HWND, :DWORD
-	STDMETHOD	Initialize, :HINSTANCE, :DWORD, :REFGUID
-IDirectInputDeviceWVtbl ends
-IDirectInputDeviceW struct
-	lpVtbl		PVOID ?
-IDirectInputDeviceW ends
+.comdef IDirectInputDeviceW
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetCapabilities	proc :LPDIDEVCAPS
+    EnumObjects		proc :LPDIENUMDEVICEOBJECTSCALLBACKW, :PVOID, :DWORD
+    GetProperty		proc :REFGUID, :LPDIPROPHEADER
+    SetProperty		proc :REFGUID, :LPCDIPROPHEADER
+    Acquire		proc
+    Unacquire		proc
+    GetDeviceState	proc :DWORD, :PVOID
+    GetDeviceData	proc :DWORD, :LPDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
+    SetDataFormat	proc :LPCDIDATAFORMAT
+    SetEventNotification proc :HANDLE
+    SetCooperativeLevel proc :HWND, :DWORD
+    GetObjectInfo	proc :LPDIDEVICEOBJECTINSTANCEW, :DWORD, :DWORD
+    GetDeviceInfo	proc :LPDIDEVICEINSTANCEW
+    RunControlPanel	proc :HWND, :DWORD
+    Initialize		proc :HINSTANCE, :DWORD, :REFGUID
+    .ends
 LPDIRECTINPUTDEVICEW	typedef ptr IDirectInputDeviceW
 
-IDirectInputDeviceAVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetCapabilities, :LPDIDEVCAPS
-	STDMETHOD	EnumObjects, :LPDIENUMDEVICEOBJECTSCALLBACKA, :PVOID, :DWORD
-	STDMETHOD	GetProperty, :REFGUID, :LPDIPROPHEADER
-	STDMETHOD	SetProperty, :REFGUID, :LPCDIPROPHEADER
-	STDMETHOD	Acquire
-	STDMETHOD	Unacquire
-	STDMETHOD	GetDeviceState, :DWORD, :PVOID
-	STDMETHOD	GetDeviceData, :DWORD, :LPDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
-	STDMETHOD	SetDataFormat, :LPCDIDATAFORMAT
-	STDMETHOD	SetEventNotification, :HANDLE
-	STDMETHOD	SetCooperativeLevel, :HWND, :DWORD
-	STDMETHOD	GetObjectInfo, :LPDIDEVICEOBJECTINSTANCEA, :DWORD, :DWORD
-	STDMETHOD	GetDeviceInfo, :LPDIDEVICEINSTANCEA
-	STDMETHOD	RunControlPanel, :HWND, :DWORD
-	STDMETHOD	Initialize, :HINSTANCE, :DWORD, :REFGUID
-IDirectInputDeviceAVtbl ends
-IDirectInputDeviceA struct
-	lpVtbl		PVOID ?
-IDirectInputDeviceA ends
+.comdef IDirectInputDeviceA
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetCapabilities	proc :LPDIDEVCAPS
+    EnumObjects		proc :LPDIENUMDEVICEOBJECTSCALLBACKA, :PVOID, :DWORD
+    GetProperty		proc :REFGUID, :LPDIPROPHEADER
+    SetProperty		proc :REFGUID, :LPCDIPROPHEADER
+    Acquire		proc
+    Unacquire		proc
+    GetDeviceState	proc :DWORD, :PVOID
+    GetDeviceData	proc :DWORD, :LPDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
+    SetDataFormat	proc :LPCDIDATAFORMAT
+    SetEventNotification proc :HANDLE
+    SetCooperativeLevel proc :HWND, :DWORD
+    GetObjectInfo	proc :LPDIDEVICEOBJECTINSTANCEA, :DWORD, :DWORD
+    GetDeviceInfo	proc :LPDIDEVICEINSTANCEA
+    RunControlPanel	proc :HWND, :DWORD
+    Initialize		proc :HINSTANCE, :DWORD, :REFGUID
+    .ends
 LPDIRECTINPUTDEVICEA	typedef ptr IDirectInputDeviceA
 
 ifdef _UNICODE
@@ -1455,72 +1446,66 @@ LPDIENUMEFFECTSCALLBACK equ <LPDIENUMEFFECTSCALLBACKA>
 endif
 CALLBACK(LPDIENUMCREATEDEFFECTOBJECTSCALLBACK, :LPDIRECTINPUTEFFECT, :PVOID)
 
-IDirectInputDevice2WVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetCapabilities, :LPDIDEVCAPS
-	STDMETHOD	EnumObjects, :LPDIENUMDEVICEOBJECTSCALLBACKW,  :PVOID, :DWORD
-	STDMETHOD	GetProperty, :REFGUID, :LPDIPROPHEADER
-	STDMETHOD	SetProperty, :REFGUID, :LPCDIPROPHEADER
-	STDMETHOD	Acquire
-	STDMETHOD	Unacquire
-	STDMETHOD	GetDeviceState, :DWORD, :PVOID
-	STDMETHOD	GetDeviceData, :DWORD, :LPDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
-	STDMETHOD	SetDataFormat, :LPCDIDATAFORMAT
-	STDMETHOD	SetEventNotification, :HANDLE
-	STDMETHOD	SetCooperativeLevel, :HWND, :DWORD
-	STDMETHOD	GetObjectInfo, :LPDIDEVICEOBJECTINSTANCEW, :DWORD, :DWORD
-	STDMETHOD	GetDeviceInfo, :LPDIDEVICEINSTANCEW
-	STDMETHOD	RunControlPanel, :HWND, :DWORD
-	STDMETHOD	Initialize, :HINSTANCE, :DWORD, :REFGUID
-	STDMETHOD	CreateEffect, :REFGUID, :LPCDIEFFECT, :ptr, :LPUNKNOWN
-	STDMETHOD	EnumEffects, :LPDIENUMEFFECTSCALLBACKW, :PVOID, :DWORD
-	STDMETHOD	GetEffectInfo, :LPDIEFFECTINFOW, :REFGUID
-	STDMETHOD	GetForceFeedbackState, :LPDWORD
-	STDMETHOD	SendForceFeedbackCommand, :DWORD
-	STDMETHOD	EnumCreatedEffectObjects, :LPDIENUMCREATEDEFFECTOBJECTSCALLBACK, :PVOID, :DWORD
-	STDMETHOD	Escape, :LPDIEFFESCAPE
-	STDMETHOD	Poll
-	STDMETHOD	SendDeviceData, :DWORD, :LPCDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
-IDirectInputDevice2WVtbl ends
-IDirectInputDevice2W struct
-	lpVtbl		PVOID ?
-IDirectInputDevice2W ends
+.comdef IDirectInputDevice2W
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetCapabilities	proc :LPDIDEVCAPS
+    EnumObjects		proc :LPDIENUMDEVICEOBJECTSCALLBACKW,  :PVOID, :DWORD
+    GetProperty		proc :REFGUID, :LPDIPROPHEADER
+    SetProperty		proc :REFGUID, :LPCDIPROPHEADER
+    Acquire		proc
+    Unacquire		proc
+    GetDeviceState	proc :DWORD, :PVOID
+    GetDeviceData	proc :DWORD, :LPDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
+    SetDataFormat	proc :LPCDIDATAFORMAT
+    SetEventNotification proc :HANDLE
+    SetCooperativeLevel proc :HWND, :DWORD
+    GetObjectInfo	proc :LPDIDEVICEOBJECTINSTANCEW, :DWORD, :DWORD
+    GetDeviceInfo	proc :LPDIDEVICEINSTANCEW
+    RunControlPanel	proc :HWND, :DWORD
+    Initialize		proc :HINSTANCE, :DWORD, :REFGUID
+    CreateEffect	proc :REFGUID, :LPCDIEFFECT, :ptr, :LPUNKNOWN
+    EnumEffects		proc :LPDIENUMEFFECTSCALLBACKW, :PVOID, :DWORD
+    GetEffectInfo	proc :LPDIEFFECTINFOW, :REFGUID
+    GetForceFeedbackState proc :LPDWORD
+    SendForceFeedbackCommand proc :DWORD
+    EnumCreatedEffectObjects proc :LPDIENUMCREATEDEFFECTOBJECTSCALLBACK, :PVOID, :DWORD
+    Escape		proc :LPDIEFFESCAPE
+    Poll		proc
+    SendDeviceData	proc :DWORD, :LPCDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
+    .ends
 LPDIRECTINPUTDEVICE2W	typedef ptr IDirectInputDevice2W
 
-IDirectInputDevice2AVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetCapabilities, :LPDIDEVCAPS
-	STDMETHOD	EnumObjects, :LPDIENUMDEVICEOBJECTSCALLBACKA, :PVOID, :DWORD
-	STDMETHOD	GetProperty, :REFGUID, :LPDIPROPHEADER
-	STDMETHOD	SetProperty, :REFGUID, :LPCDIPROPHEADER
-	STDMETHOD	Acquire
-	STDMETHOD	Unacquire
-	STDMETHOD	GetDeviceState, :DWORD, :PVOID
-	STDMETHOD	GetDeviceData, :DWORD, :LPDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
-	STDMETHOD	SetDataFormat, :LPCDIDATAFORMAT
-	STDMETHOD	SetEventNotification, :HANDLE
-	STDMETHOD	SetCooperativeLevel, :HWND, :DWORD
-	STDMETHOD	GetObjectInfo, :LPDIDEVICEOBJECTINSTANCEA, :DWORD, :DWORD
-	STDMETHOD	GetDeviceInfo, :LPDIDEVICEINSTANCEA
-	STDMETHOD	RunControlPanel, :HWND, :DWORD
-	STDMETHOD	Initialize, :HINSTANCE, :DWORD, :REFGUID
-	STDMETHOD	CreateEffect, :REFGUID, :LPCDIEFFECT, :ptr, :LPUNKNOWN
-	STDMETHOD	EnumEffects, :LPDIENUMEFFECTSCALLBACKA, :PVOID, :DWORD
-	STDMETHOD	GetEffectInfo, :LPDIEFFECTINFOA, :REFGUID
-	STDMETHOD	GetForceFeedbackState, :LPDWORD
-	STDMETHOD	SendForceFeedbackCommand, :DWORD
-	STDMETHOD	EnumCreatedEffectObjects, :LPDIENUMCREATEDEFFECTOBJECTSCALLBACK, :PVOID, :DWORD
-	STDMETHOD	Escape, :LPDIEFFESCAPE
-	STDMETHOD	Poll
-	STDMETHOD	SendDeviceData, :DWORD, :LPCDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
-IDirectInputDevice2AVtbl ends
-IDirectInputDevice2A struct
-	lpVtbl		PVOID ?
-IDirectInputDevice2A ends
+.comdef IDirectInputDevice2A
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetCapabilities	proc :LPDIDEVCAPS
+    EnumObjects		proc :LPDIENUMDEVICEOBJECTSCALLBACKA, :PVOID, :DWORD
+    GetProperty		proc :REFGUID, :LPDIPROPHEADER
+    SetProperty		proc :REFGUID, :LPCDIPROPHEADER
+    Acquire		proc
+    Unacquire		proc
+    GetDeviceState	proc :DWORD, :PVOID
+    GetDeviceData	proc :DWORD, :LPDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
+    SetDataFormat	proc :LPCDIDATAFORMAT
+    SetEventNotification proc :HANDLE
+    SetCooperativeLevel proc :HWND, :DWORD
+    GetObjectInfo	proc :LPDIDEVICEOBJECTINSTANCEA, :DWORD, :DWORD
+    GetDeviceInfo	proc :LPDIDEVICEINSTANCEA
+    RunControlPanel	proc :HWND, :DWORD
+    Initialize		proc :HINSTANCE, :DWORD, :REFGUID
+    CreateEffect	proc :REFGUID, :LPCDIEFFECT, :ptr, :LPUNKNOWN
+    EnumEffects		proc :LPDIENUMEFFECTSCALLBACKA, :PVOID, :DWORD
+    GetEffectInfo	proc :LPDIEFFECTINFOA, :REFGUID
+    GetForceFeedbackState proc :LPDWORD
+    SendForceFeedbackCommand proc :DWORD
+    EnumCreatedEffectObjects proc :LPDIENUMCREATEDEFFECTOBJECTSCALLBACK, :PVOID, :DWORD
+    Escape		proc :LPDIEFFESCAPE
+    Poll		proc
+    SendDeviceData	proc :DWORD, :LPCDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
+    .ends
 LPDIRECTINPUTDEVICE2A	typedef ptr IDirectInputDevice2A
 
 ifdef _UNICODE
@@ -1628,76 +1613,70 @@ DIFEF_MODIFYIFNEEDED	equ 0x00000010
 
 ifndef DIJ_RINGZERO
 
-IDirectInputDevice7WVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetCapabilities, :LPDIDEVCAPS
-	STDMETHOD	EnumObjects, :LPDIENUMDEVICEOBJECTSCALLBACKW, :PVOID, :DWORD
-	STDMETHOD	GetProperty, :REFGUID, :LPDIPROPHEADER
-	STDMETHOD	SetProperty, :REFGUID, :LPCDIPROPHEADER
-	STDMETHOD	Acquire
-	STDMETHOD	Unacquire
-	STDMETHOD	GetDeviceState, :DWORD, :PVOID
-	STDMETHOD	GetDeviceData, :DWORD, :LPDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
-	STDMETHOD	SetDataFormat, :LPCDIDATAFORMAT
-	STDMETHOD	SetEventNotification, :HANDLE
-	STDMETHOD	SetCooperativeLevel, :HWND, :DWORD
-	STDMETHOD	GetObjectInfo, :LPDIDEVICEOBJECTINSTANCEW, :DWORD, :DWORD
-	STDMETHOD	GetDeviceInfo, :LPDIDEVICEINSTANCEW
-	STDMETHOD	RunControlPanel, :HWND, :DWORD
-	STDMETHOD	Initialize, :HINSTANCE, :DWORD, :REFGUID
-	STDMETHOD	CreateEffect, :REFGUID, :LPCDIEFFECT, :ptr, :LPUNKNOWN
-	STDMETHOD	EnumEffects, :LPDIENUMEFFECTSCALLBACKW, :PVOID, :DWORD
-	STDMETHOD	GetEffectInfo, :LPDIEFFECTINFOW, :REFGUID
-	STDMETHOD	GetForceFeedbackState, :LPDWORD
-	STDMETHOD	SendForceFeedbackCommand, :DWORD
-	STDMETHOD	EnumCreatedEffectObjects, :LPDIENUMCREATEDEFFECTOBJECTSCALLBACK, :PVOID, :DWORD
-	STDMETHOD	Escape, :LPDIEFFESCAPE
-	STDMETHOD	Poll
-	STDMETHOD	SendDeviceData, :DWORD, :LPCDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
-	STDMETHOD	EnumEffectsInFile, :LPCWSTR, :LPDIENUMEFFECTSINFILECALLBACK, :PVOID, :DWORD
-	STDMETHOD	WriteEffectToFile, :LPCWSTR, :DWORD, :LPDIFILEEFFECT, :DWORD
-IDirectInputDevice7WVtbl ends
-IDirectInputDevice7W struct
-	lpVtbl		PVOID ?
-IDirectInputDevice7W ends
+.comdef IDirectInputDevice7W
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetCapabilities	proc :LPDIDEVCAPS
+    EnumObjects		proc :LPDIENUMDEVICEOBJECTSCALLBACKW, :PVOID, :DWORD
+    GetProperty		proc :REFGUID, :LPDIPROPHEADER
+    SetProperty		proc :REFGUID, :LPCDIPROPHEADER
+    Acquire		proc
+    Unacquire		proc
+    GetDeviceState	proc :DWORD, :PVOID
+    GetDeviceData	proc :DWORD, :LPDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
+    SetDataFormat	proc :LPCDIDATAFORMAT
+    SetEventNotification proc :HANDLE
+    SetCooperativeLevel proc :HWND, :DWORD
+    GetObjectInfo	proc :LPDIDEVICEOBJECTINSTANCEW, :DWORD, :DWORD
+    GetDeviceInfo	proc :LPDIDEVICEINSTANCEW
+    RunControlPanel	proc :HWND, :DWORD
+    Initialize		proc :HINSTANCE, :DWORD, :REFGUID
+    CreateEffect	proc :REFGUID, :LPCDIEFFECT, :ptr, :LPUNKNOWN
+    EnumEffects		proc :LPDIENUMEFFECTSCALLBACKW, :PVOID, :DWORD
+    GetEffectInfo	proc :LPDIEFFECTINFOW, :REFGUID
+    GetForceFeedbackState proc :LPDWORD
+    SendForceFeedbackCommand proc :DWORD
+    EnumCreatedEffectObjects proc :LPDIENUMCREATEDEFFECTOBJECTSCALLBACK, :PVOID, :DWORD
+    Escape		proc :LPDIEFFESCAPE
+    Poll		proc
+    SendDeviceData	proc :DWORD, :LPCDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
+    EnumEffectsInFile	proc :LPCWSTR, :LPDIENUMEFFECTSINFILECALLBACK, :PVOID, :DWORD
+    WriteEffectToFile	proc :LPCWSTR, :DWORD, :LPDIFILEEFFECT, :DWORD
+    .ends
 LPDIRECTINPUTDEVICE7W	typedef ptr IDirectInputDevice7W
 
-IDirectInputDevice7AVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetCapabilities, :LPDIDEVCAPS
-	STDMETHOD	EnumObjects, :LPDIENUMDEVICEOBJECTSCALLBACKA, :PVOID, :DWORD
-	STDMETHOD	GetProperty, :REFGUID, :LPDIPROPHEADER
-	STDMETHOD	SetProperty, :REFGUID, :LPCDIPROPHEADER
-	STDMETHOD	Acquire
-	STDMETHOD	Unacquire
-	STDMETHOD	GetDeviceState, :DWORD, :PVOID
-	STDMETHOD	GetDeviceData, :DWORD, :LPDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
-	STDMETHOD	SetDataFormat, :LPCDIDATAFORMAT
-	STDMETHOD	SetEventNotification, :HANDLE
-	STDMETHOD	SetCooperativeLevel, :HWND, :DWORD
-	STDMETHOD	GetObjectInfo, :LPDIDEVICEOBJECTINSTANCEA, :DWORD, :DWORD
-	STDMETHOD	GetDeviceInfo, :LPDIDEVICEINSTANCEA
-	STDMETHOD	RunControlPanel, :HWND, :DWORD
-	STDMETHOD	Initialize, :HINSTANCE, :DWORD, :REFGUID
-	STDMETHOD	CreateEffect, :REFGUID, :LPCDIEFFECT, :ptr, :LPUNKNOWN
-	STDMETHOD	EnumEffects, :LPDIENUMEFFECTSCALLBACKA, :PVOID, :DWORD
-	STDMETHOD	GetEffectInfo, :LPDIEFFECTINFOA, :REFGUID
-	STDMETHOD	GetForceFeedbackState, :LPDWORD
-	STDMETHOD	SendForceFeedbackCommand, :DWORD
-	STDMETHOD	EnumCreatedEffectObjects, :LPDIENUMCREATEDEFFECTOBJECTSCALLBACK, :PVOID, :DWORD
-	STDMETHOD	Escape, :LPDIEFFESCAPE
-	STDMETHOD	Poll
-	STDMETHOD	SendDeviceData, :DWORD, :LPCDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
-	STDMETHOD	EnumEffectsInFile, :LPCSTR, :LPDIENUMEFFECTSINFILECALLBACK, :PVOID, :DWORD
-	STDMETHOD	WriteEffectToFile, :LPCSTR, :DWORD, :LPDIFILEEFFECT, :DWORD
-IDirectInputDevice7AVtbl ends
-IDirectInputDevice7A struct
-	lpVtbl		PVOID ?
-IDirectInputDevice7A ends
+.comdef IDirectInputDevice7A
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetCapabilities	proc :LPDIDEVCAPS
+    EnumObjects		proc :LPDIENUMDEVICEOBJECTSCALLBACKA, :PVOID, :DWORD
+    GetProperty		proc :REFGUID, :LPDIPROPHEADER
+    SetProperty		proc :REFGUID, :LPCDIPROPHEADER
+    Acquire		proc
+    Unacquire		proc
+    GetDeviceState	proc :DWORD, :PVOID
+    GetDeviceData	proc :DWORD, :LPDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
+    SetDataFormat	proc :LPCDIDATAFORMAT
+    SetEventNotification proc :HANDLE
+    SetCooperativeLevel proc :HWND, :DWORD
+    GetObjectInfo	proc :LPDIDEVICEOBJECTINSTANCEA, :DWORD, :DWORD
+    GetDeviceInfo	proc :LPDIDEVICEINSTANCEA
+    RunControlPanel	proc :HWND, :DWORD
+    Initialize		proc :HINSTANCE, :DWORD, :REFGUID
+    CreateEffect	proc :REFGUID, :LPCDIEFFECT, :ptr, :LPUNKNOWN
+    EnumEffects		proc :LPDIENUMEFFECTSCALLBACKA, :PVOID, :DWORD
+    GetEffectInfo	proc :LPDIEFFECTINFOA, :REFGUID
+    GetForceFeedbackState proc :LPDWORD
+    SendForceFeedbackCommand proc :DWORD
+    EnumCreatedEffectObjects proc :LPDIENUMCREATEDEFFECTOBJECTSCALLBACK, :PVOID, :DWORD
+    Escape		proc :LPDIEFFESCAPE
+    Poll		proc
+    SendDeviceData	proc :DWORD, :LPCDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
+    EnumEffectsInFile	proc :LPCSTR, :LPDIENUMEFFECTSINFILECALLBACK, :PVOID, :DWORD
+    WriteEffectToFile	proc :LPCSTR, :DWORD, :LPDIFILEEFFECT, :DWORD
+    .ends
 LPDIRECTINPUTDEVICE7A	typedef ptr IDirectInputDevice7A
 
 ifdef _UNICODE
@@ -1808,82 +1787,76 @@ if(DIRECTINPUT_VERSION GE 0x0800)
 
 ifndef DIJ_RINGZERO
 
-IDirectInputDevice8WVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetCapabilities, :LPDIDEVCAPS
-	STDMETHOD	EnumObjects, :LPDIENUMDEVICEOBJECTSCALLBACKW, :PVOID, :DWORD
-	STDMETHOD	GetProperty, :REFGUID, :LPDIPROPHEADER
-	STDMETHOD	SetProperty, :REFGUID, :LPCDIPROPHEADER
-	STDMETHOD	Acquire
-	STDMETHOD	Unacquire
-	STDMETHOD	GetDeviceState, :DWORD, :PVOID
-	STDMETHOD	GetDeviceData, :DWORD, :LPDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
-	STDMETHOD	SetDataFormat, :LPCDIDATAFORMAT
-	STDMETHOD	SetEventNotification, :HANDLE
-	STDMETHOD	SetCooperativeLevel, :HWND, :DWORD
-	STDMETHOD	GetObjectInfo, :LPDIDEVICEOBJECTINSTANCEW, :DWORD, :DWORD
-	STDMETHOD	GetDeviceInfo, :LPDIDEVICEINSTANCEW
-	STDMETHOD	RunControlPanel, :HWND, :DWORD
-	STDMETHOD	Initialize, :HINSTANCE, :DWORD, :REFGUID
-	STDMETHOD	CreateEffect, :REFGUID, :LPCDIEFFECT, :ptr, :LPUNKNOWN
-	STDMETHOD	EnumEffects, :LPDIENUMEFFECTSCALLBACKW, :PVOID, :DWORD
-	STDMETHOD	GetEffectInfo, :LPDIEFFECTINFOW, :REFGUID
-	STDMETHOD	GetForceFeedbackState, :LPDWORD
-	STDMETHOD	SendForceFeedbackCommand, :DWORD
-	STDMETHOD	EnumCreatedEffectObjects, :LPDIENUMCREATEDEFFECTOBJECTSCALLBACK, :PVOID, :DWORD
-	STDMETHOD	Escape, :LPDIEFFESCAPE
-	STDMETHOD	Poll
-	STDMETHOD	SendDeviceData, :DWORD, :LPCDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
-	STDMETHOD	EnumEffectsInFile, :LPCWSTR, :LPDIENUMEFFECTSINFILECALLBACK, :PVOID, :DWORD
-	STDMETHOD	WriteEffectToFile, :LPCWSTR, :DWORD, :LPDIFILEEFFECT, :DWORD
-	STDMETHOD	BuildActionMap, :LPDIACTIONFORMATW, :LPCWSTR, :DWORD
-	STDMETHOD	SetActionMap, :LPDIACTIONFORMATW, :LPCWSTR, :DWORD
-	STDMETHOD	GetImageInfo, :LPDIDEVICEIMAGEINFOHEADERW
-IDirectInputDevice8WVtbl ends
-IDirectInputDevice8W struct
-	lpVtbl		PVOID ?
-IDirectInputDevice8W ends
+.comdef IDirectInputDevice8W
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetCapabilities	proc :LPDIDEVCAPS
+    EnumObjects		proc :LPDIENUMDEVICEOBJECTSCALLBACKW, :PVOID, :DWORD
+    GetProperty		proc :REFGUID, :LPDIPROPHEADER
+    SetProperty		proc :REFGUID, :LPCDIPROPHEADER
+    Acquire		proc
+    Unacquire		proc
+    GetDeviceState	proc :DWORD, :PVOID
+    GetDeviceData	proc :DWORD, :LPDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
+    SetDataFormat	proc :LPCDIDATAFORMAT
+    SetEventNotification proc :HANDLE
+    SetCooperativeLevel proc :HWND, :DWORD
+    GetObjectInfo	proc :LPDIDEVICEOBJECTINSTANCEW, :DWORD, :DWORD
+    GetDeviceInfo	proc :LPDIDEVICEINSTANCEW
+    RunControlPanel	proc :HWND, :DWORD
+    Initialize		proc :HINSTANCE, :DWORD, :REFGUID
+    CreateEffect	proc :REFGUID, :LPCDIEFFECT, :ptr, :LPUNKNOWN
+    EnumEffects		proc :LPDIENUMEFFECTSCALLBACKW, :PVOID, :DWORD
+    GetEffectInfo	proc :LPDIEFFECTINFOW, :REFGUID
+    GetForceFeedbackState proc :LPDWORD
+    SendForceFeedbackCommand proc :DWORD
+    EnumCreatedEffectObjects proc :LPDIENUMCREATEDEFFECTOBJECTSCALLBACK, :PVOID, :DWORD
+    Escape		proc :LPDIEFFESCAPE
+    Poll		proc
+    SendDeviceData	proc :DWORD, :LPCDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
+    EnumEffectsInFile	proc :LPCWSTR, :LPDIENUMEFFECTSINFILECALLBACK, :PVOID, :DWORD
+    WriteEffectToFile	proc :LPCWSTR, :DWORD, :LPDIFILEEFFECT, :DWORD
+    BuildActionMap	proc :LPDIACTIONFORMATW, :LPCWSTR, :DWORD
+    SetActionMap	proc :LPDIACTIONFORMATW, :LPCWSTR, :DWORD
+    GetImageInfo	proc :LPDIDEVICEIMAGEINFOHEADERW
+    .ends
 LPDIRECTINPUTDEVICE8W	typedef ptr IDirectInputDevice8W
 
-IDirectInputDevice8AVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetCapabilities, :LPDIDEVCAPS
-	STDMETHOD	EnumObjects, :LPDIENUMDEVICEOBJECTSCALLBACKA, :PVOID, :DWORD
-	STDMETHOD	GetProperty, :REFGUID, :LPDIPROPHEADER
-	STDMETHOD	SetProperty, :REFGUID, :LPCDIPROPHEADER
-	STDMETHOD	Acquire
-	STDMETHOD	Unacquire
-	STDMETHOD	GetDeviceState, :DWORD, :PVOID
-	STDMETHOD	GetDeviceData, :DWORD, :LPDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
-	STDMETHOD	SetDataFormat, :LPCDIDATAFORMAT
-	STDMETHOD	SetEventNotification, :HANDLE
-	STDMETHOD	SetCooperativeLevel, :HWND, :DWORD
-	STDMETHOD	GetObjectInfo, :LPDIDEVICEOBJECTINSTANCEA, :DWORD, :DWORD
-	STDMETHOD	GetDeviceInfo, :LPDIDEVICEINSTANCEA
-	STDMETHOD	RunControlPanel, :HWND, :DWORD
-	STDMETHOD	Initialize, :HINSTANCE, :DWORD, :REFGUID
-	STDMETHOD	CreateEffect, :REFGUID, :LPCDIEFFECT, :ptr, :LPUNKNOWN
-	STDMETHOD	EnumEffects, :LPDIENUMEFFECTSCALLBACKA, :PVOID, :DWORD
-	STDMETHOD	GetEffectInfo, :LPDIEFFECTINFOA, :REFGUID
-	STDMETHOD	GetForceFeedbackState, :LPDWORD
-	STDMETHOD	SendForceFeedbackCommand, :DWORD
-	STDMETHOD	EnumCreatedEffectObjects, :LPDIENUMCREATEDEFFECTOBJECTSCALLBACK, :PVOID, :DWORD
-	STDMETHOD	Escape, :LPDIEFFESCAPE
-	STDMETHOD	Poll
-	STDMETHOD	SendDeviceData, :DWORD, :LPCDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
-	STDMETHOD	EnumEffectsInFile, :LPCSTR, :LPDIENUMEFFECTSINFILECALLBACK, :PVOID, :DWORD
-	STDMETHOD	WriteEffectToFile, :LPCSTR, :DWORD, :LPDIFILEEFFECT, :DWORD
-	STDMETHOD	BuildActionMap, :LPDIACTIONFORMATA, :LPCSTR, :DWORD
-	STDMETHOD	SetActionMap, :LPDIACTIONFORMATA, :LPCSTR, :DWORD
-	STDMETHOD	GetImageInfo, :LPDIDEVICEIMAGEINFOHEADERA
-IDirectInputDevice8AVtbl ends
-IDirectInputDevice8A struct
-	lpVtbl		PVOID ?
-IDirectInputDevice8A ends
+.comdef IDirectInputDevice8A
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetCapabilities	proc :LPDIDEVCAPS
+    EnumObjects		proc :LPDIENUMDEVICEOBJECTSCALLBACKA, :PVOID, :DWORD
+    GetProperty		proc :REFGUID, :LPDIPROPHEADER
+    SetProperty		proc :REFGUID, :LPCDIPROPHEADER
+    Acquire		proc
+    Unacquire		proc
+    GetDeviceState	proc :DWORD, :PVOID
+    GetDeviceData	proc :DWORD, :LPDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
+    SetDataFormat	proc :LPCDIDATAFORMAT
+    SetEventNotification proc :HANDLE
+    SetCooperativeLevel proc :HWND, :DWORD
+    GetObjectInfo	proc :LPDIDEVICEOBJECTINSTANCEA, :DWORD, :DWORD
+    GetDeviceInfo	proc :LPDIDEVICEINSTANCEA
+    RunControlPanel	proc :HWND, :DWORD
+    Initialize		proc :HINSTANCE, :DWORD, :REFGUID
+    CreateEffect	proc :REFGUID, :LPCDIEFFECT, :ptr, :LPUNKNOWN
+    EnumEffects		proc :LPDIENUMEFFECTSCALLBACKA, :PVOID, :DWORD
+    GetEffectInfo	proc :LPDIEFFECTINFOA, :REFGUID
+    GetForceFeedbackState proc :LPDWORD
+    SendForceFeedbackCommand proc :DWORD
+    EnumCreatedEffectObjects proc :LPDIENUMCREATEDEFFECTOBJECTSCALLBACK, :PVOID, :DWORD
+    Escape		proc :LPDIEFFESCAPE
+    Poll		proc
+    SendDeviceData	proc :DWORD, :LPCDIDEVICEOBJECTDATA, :LPDWORD, :DWORD
+    EnumEffectsInFile	proc :LPCSTR, :LPDIENUMEFFECTSINFILECALLBACK, :PVOID, :DWORD
+    WriteEffectToFile	proc :LPCSTR, :DWORD, :LPDIFILEEFFECT, :DWORD
+    BuildActionMap	proc :LPDIACTIONFORMATA, :LPCSTR, :DWORD
+    SetActionMap	proc :LPDIACTIONFORMATA, :LPCSTR, :DWORD
+    GetImageInfo	proc :LPDIDEVICEIMAGEINFOHEADERA
+    .ends
 LPDIRECTINPUTDEVICE8A	typedef ptr IDirectInputDevice8A
 
 ifdef _UNICODE
@@ -2360,34 +2333,26 @@ DIEDBSFL_NONGAMINGDEVICES equ 0x00004000
 DIEDBSFL_VALID		equ 0x00007110
 endif
 
-IDirectInputWVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	CreateDevice, :REFGUID, :ptr, :LPUNKNOWN
-	STDMETHOD	EnumDevices, :DWORD, :LPDIENUMDEVICESCALLBACKW, :LPVOID, :DWORD
-	STDMETHOD	GetDeviceStatus, :REFGUID
-	STDMETHOD	RunControlPanel, :HWND, :DWORD
-	STDMETHOD	Initialize, :HINSTANCE, :DWORD
-IDirectInputWVtbl ends
-IDirectInputW struct
-	lpVtbl		PVOID ?
-IDirectInputW ends
-LPDIRECTINPUTW		typedef ptr IDirectInputW
-IDirectInputAVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	CreateDevice, :REFGUID, :ptr, :LPUNKNOWN
-	STDMETHOD	EnumDevices, :DWORD, :LPDIENUMDEVICESCALLBACKA, :PVOID, :DWORD
-	STDMETHOD	GetDeviceStatus, :REFGUID
-	STDMETHOD	RunControlPanel, :HWND, :DWORD
-	STDMETHOD	Initialize, :HINSTANCE, :DWORD
-IDirectInputAVtbl ends
-IDirectInputA struct
-	lpVtbl		PVOID ?
-IDirectInputA ends
-LPDIRECTINPUTA		typedef ptr IDirectInputA
+.comdef IDirectInputW
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    CreateDevice	proc :REFGUID, :ptr, :LPUNKNOWN
+    EnumDevices		proc :DWORD, :LPDIENUMDEVICESCALLBACKW, :LPVOID, :DWORD
+    GetDeviceStatus	proc :REFGUID
+    RunControlPanel	proc :HWND, :DWORD
+    Initialize		proc :HINSTANCE, :DWORD
+    .ends
+.comdef IDirectInputA
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    CreateDevice	proc :REFGUID, :ptr, :LPUNKNOWN
+    EnumDevices		proc :DWORD, :LPDIENUMDEVICESCALLBACKA, :PVOID, :DWORD
+    GetDeviceStatus	proc :REFGUID
+    RunControlPanel	proc :HWND, :DWORD
+    Initialize		proc :HINSTANCE, :DWORD
+    .ends
 
 ifdef _UNICODE
 IID_IDirectInput	equ <IID_IDirectInputW>
@@ -2425,37 +2390,29 @@ IDirectInput_Initialize macro p,a,b
 	endm
 endif
 
-IDirectInput2WVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	CreateDevice, :REFGUID, :ptr, :LPUNKNOWN
-	STDMETHOD	EnumDevices, :DWORD, :LPDIENUMDEVICESCALLBACKW, :PVOID, :DWORD
-	STDMETHOD	GetDeviceStatus, :REFGUID
-	STDMETHOD	RunControlPanel, :HWND, :DWORD
-	STDMETHOD	Initialize, :HINSTANCE, :DWORD
-	STDMETHOD	FindDevice, :REFGUID, :LPCWSTR, :LPGUID
-IDirectInput2WVtbl ends
-IDirectInput2W struct
-	lpVtbl		PVOID ?
-IDirectInput2W ends
-LPDIRECTINPUT2W		typedef ptr IDirectInput2W
+.comdef IDirectInput2W
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    CreateDevice	proc :REFGUID, :ptr, :LPUNKNOWN
+    EnumDevices		proc :DWORD, :LPDIENUMDEVICESCALLBACKW, :PVOID, :DWORD
+    GetDeviceStatus	proc :REFGUID
+    RunControlPanel	proc :HWND, :DWORD
+    Initialize		proc :HINSTANCE, :DWORD
+    FindDevice		proc :REFGUID, :LPCWSTR, :LPGUID
+    .ends
 
-IDirectInput2AVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	CreateDevice, :REFGUID, :ptr, :LPUNKNOWN
-	STDMETHOD	EnumDevices, :DWORD, :LPDIENUMDEVICESCALLBACKA, :PVOID, :DWORD
-	STDMETHOD	GetDeviceStatus, :REFGUID
-	STDMETHOD	RunControlPanel, :HWND, :DWORD
-	STDMETHOD	Initialize, :HINSTANCE, :DWORD
-	STDMETHOD	FindDevice, :REFGUID, :LPCSTR, :LPGUID
-IDirectInput2AVtbl ends
-IDirectInput2A struct
-	lpVtbl		PVOID ?
-IDirectInput2A ends
-LPDIRECTINPUT2A		typedef ptr IDirectInput2A
+.comdef IDirectInput2A
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    CreateDevice	proc :REFGUID, :ptr, :LPUNKNOWN
+    EnumDevices		proc :DWORD, :LPDIENUMDEVICESCALLBACKA, :PVOID, :DWORD
+    GetDeviceStatus	proc :REFGUID
+    RunControlPanel	proc :HWND, :DWORD
+    Initialize		proc :HINSTANCE, :DWORD
+    FindDevice		proc :REFGUID, :LPCSTR, :LPGUID
+    .ends
 
 ifdef _UNICODE
 IID_IDirectInput2	equ <IID_IDirectInput2W>
@@ -2497,39 +2454,31 @@ IDirectInput2_FindDevice macro p,a,b,c
 	endm
 endif
 
-IDirectInput7WVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	CreateDevice, :REFGUID, :ptr, :LPUNKNOWN
-	STDMETHOD	EnumDevices, :DWORD, :LPDIENUMDEVICESCALLBACKW, :PVOID, :DWORD
-	STDMETHOD	GetDeviceStatus, :REFGUID
-	STDMETHOD	RunControlPanel, :HWND, :DWORD
-	STDMETHOD	Initialize, :HINSTANCE, :DWORD
-	STDMETHOD	FindDevice, :REFGUID, :LPCWSTR, :LPGUID
-	STDMETHOD	CreateDeviceEx, :REFGUID, :REFIID, :ptr, :LPUNKNOWN
-IDirectInput7WVtbl ends
-IDirectInput7W struct
-	lpVtbl		PVOID ?
-IDirectInput7W ends
-LPDIRECTINPUT7W		typedef ptr IDirectInput7W
+.comdef IDirectInput7W
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    CreateDevice	proc :REFGUID, :ptr, :LPUNKNOWN
+    EnumDevices		proc :DWORD, :LPDIENUMDEVICESCALLBACKW, :PVOID, :DWORD
+    GetDeviceStatus	proc :REFGUID
+    RunControlPanel	proc :HWND, :DWORD
+    Initialize		proc :HINSTANCE, :DWORD
+    FindDevice		proc :REFGUID, :LPCWSTR, :LPGUID
+    CreateDeviceEx	proc :REFGUID, :REFIID, :ptr, :LPUNKNOWN
+    .ends
 
-IDirectInput7AVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	CreateDevice, :REFGUID, :ptr, :LPUNKNOWN
-	STDMETHOD	EnumDevices, :DWORD, :LPDIENUMDEVICESCALLBACKA, :PVOID, :DWORD
-	STDMETHOD	GetDeviceStatus, :REFGUID
-	STDMETHOD	RunControlPanel, :HWND, :DWORD
-	STDMETHOD	Initialize, :HINSTANCE, :DWORD
-	STDMETHOD	FindDevice, :REFGUID, :LPCSTR, :LPGUID
-	STDMETHOD	CreateDeviceEx, :REFGUID, :REFIID, :ptr, :LPUNKNOWN
-IDirectInput7AVtbl ends
-IDirectInput7A struct
-	lpVtbl		PVOID ?
-IDirectInput7A ends
-LPDIRECTINPUT7A		typedef ptr IDirectInput7A
+.comdef IDirectInput7A
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    CreateDevice	proc :REFGUID, :ptr, :LPUNKNOWN
+    EnumDevices		proc :DWORD, :LPDIENUMDEVICESCALLBACKA, :PVOID, :DWORD
+    GetDeviceStatus	proc :REFGUID
+    RunControlPanel	proc :HWND, :DWORD
+    Initialize		proc :HINSTANCE, :DWORD
+    FindDevice		proc :REFGUID, :LPCSTR, :LPGUID
+    CreateDeviceEx	proc :REFGUID, :REFIID, :ptr, :LPUNKNOWN
+    .ends
 
 ifdef _UNICODE
 IID_IDirectInput7	equ <IID_IDirectInput7W>
@@ -2576,41 +2525,33 @@ endif
 
 if(DIRECTINPUT_VERSION GE 0x0800)
 
-IDirectInput8WVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	CreateDevice, :REFGUID, :ptr, :LPUNKNOWN
-	STDMETHOD	EnumDevices, :DWORD, :LPDIENUMDEVICESCALLBACKW, :LPVOID, :DWORD
-	STDMETHOD	GetDeviceStatus, :REFGUID
-	STDMETHOD	RunControlPanel, :HWND, :DWORD
-	STDMETHOD	Initialize, :HINSTANCE, :DWORD
-	STDMETHOD	FindDevice, :REFGUID, :LPCWSTR, :LPGUID
-	STDMETHOD	EnumDevicesBySemantics, :LPCWSTR, :LPDIACTIONFORMATW, :LPDIENUMDEVICESBYSEMANTICSCBW, :LPVOID, :DWORD
-	STDMETHOD	ConfigureDevices, :LPDICONFIGUREDEVICESCALLBACK, :LPDICONFIGUREDEVICESPARAMSW, :DWORD, :PVOID
-IDirectInput8WVtbl ends
-IDirectInput8W struct
-	lpVtbl		PVOID ?
-IDirectInput8W ends
-LPDIRECTINPUT8W		typedef ptr IDirectInput8W
+.comdef IDirectInput8W
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    CreateDevice	proc :REFGUID, :ptr, :LPUNKNOWN
+    EnumDevices		proc :DWORD, :LPDIENUMDEVICESCALLBACKW, :LPVOID, :DWORD
+    GetDeviceStatus	proc :REFGUID
+    RunControlPanel	proc :HWND, :DWORD
+    Initialize		proc :HINSTANCE, :DWORD
+    FindDevice		proc :REFGUID, :LPCWSTR, :LPGUID
+    EnumDevicesBySemantics proc :LPCWSTR, :LPDIACTIONFORMATW, :LPDIENUMDEVICESBYSEMANTICSCBW, :LPVOID, :DWORD
+    ConfigureDevices	proc :LPDICONFIGUREDEVICESCALLBACK, :LPDICONFIGUREDEVICESPARAMSW, :DWORD, :PVOID
+    .ends
 
-IDirectInput8AVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	CreateDevice, :REFGUID, :ptr, :LPUNKNOWN
-	STDMETHOD	EnumDevices, :DWORD, :LPDIENUMDEVICESCALLBACKA, :ptr, :DWORD
-	STDMETHOD	GetDeviceStatus, :REFGUID
-	STDMETHOD	RunControlPanel, :HWND, :DWORD
-	STDMETHOD	Initialize, :HINSTANCE, :DWORD
-	STDMETHOD	FindDevice, :REFGUID, :LPCSTR, :LPGUID
-	STDMETHOD	EnumDevicesBySemantics, :LPCSTR, :LPDIACTIONFORMATA, :LPDIENUMDEVICESBYSEMANTICSCBA, :PVOID, :DWORD
-	STDMETHOD	ConfigureDevices, :LPDICONFIGUREDEVICESCALLBACK, :LPDICONFIGUREDEVICESPARAMSA, :DWORD, :PVOID
-IDirectInput8AVtbl ends
-IDirectInput8A struct
-	lpVtbl		PVOID ?
-IDirectInput8A ends
-LPDIRECTINPUT8A		typedef ptr IDirectInput8A
+.comdef IDirectInput8A
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    CreateDevice	proc :REFGUID, :ptr, :LPUNKNOWN
+    EnumDevices		proc :DWORD, :LPDIENUMDEVICESCALLBACKA, :ptr, :DWORD
+    GetDeviceStatus	proc :REFGUID
+    RunControlPanel	proc :HWND, :DWORD
+    Initialize		proc :HINSTANCE, :DWORD
+    FindDevice		proc :REFGUID, :LPCSTR, :LPGUID
+    EnumDevicesBySemantics proc :LPCSTR, :LPDIACTIONFORMATA, :LPDIENUMDEVICESBYSEMANTICSCBA, :PVOID, :DWORD
+    ConfigureDevices	proc :LPDICONFIGUREDEVICESCALLBACK, :LPDICONFIGUREDEVICESPARAMSA, :DWORD, :PVOID
+    .ends
 
 ifdef _UNICODE
 IID_IDirectInput8	equ <IID_IDirectInput8W>

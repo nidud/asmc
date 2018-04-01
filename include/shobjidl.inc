@@ -1019,17 +1019,14 @@ ifndef __IContextMenu_INTERFACE_DEFINED__
 __IContextMenu_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IContextMenu:IID
-IContextMenuVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	QueryContextMenu, :HMENU, :UINT, :UINT, :UINT, :UINT
-	STDMETHOD	InvokeCommand, :ptr
-	STDMETHOD	GetCommandString, :UINT_PTR, :UINT, :ptr, :LPSTR, :UINT
-IContextMenuVtbl ends
-IContextMenu struct
-	lpVtbl		PVOID ?
-IContextMenu ends
+.comdef IContextMenu
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    QueryContextMenu	proc :HMENU, :UINT, :UINT, :UINT, :UINT
+    InvokeCommand	proc :ptr
+    GetCommandString	proc :UINT_PTR, :UINT, :ptr, :LPSTR, :UINT
+    .ends
 
 endif
 
@@ -1042,18 +1039,15 @@ ifndef __IContextMenu2_INTERFACE_DEFINED__
 __IContextMenu2_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IContextMenu2:IID
-IContextMenu2Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	QueryContextMenu, :HMENU, :UINT, :UINT, :UINT, :UINT
-	STDMETHOD	InvokeCommand, :ptr
-	STDMETHOD	GetCommandString, :UINT_PTR, :UINT, :ptr, :LPSTR, :UINT
-	STDMETHOD	HandleMenuMsg, :UINT, :WPARAM, :LPARAM
-IContextMenu2Vtbl ends
-IContextMenu2 struct
-	lpVtbl		PVOID ?
-IContextMenu2 ends
+.comdef IContextMenu2
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    QueryContextMenu	proc :HMENU, :UINT, :UINT, :UINT, :UINT
+    InvokeCommand	proc :ptr
+    GetCommandString	proc :UINT_PTR, :UINT, :ptr, :LPSTR, :UINT
+    HandleMenuMsg	proc :UINT, :WPARAM, :LPARAM
+    .ends
 
 endif
 
@@ -1066,19 +1060,16 @@ ifndef __IContextMenu3_INTERFACE_DEFINED__
 __IContextMenu3_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IContextMenu3:IID
-IContextMenu3Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	QueryContextMenu, :HMENU, :UINT, :UINT, :UINT, :UINT
-	STDMETHOD	InvokeCommand, :ptr
-	STDMETHOD	GetCommandString, :UINT_PTR, :UINT, :ptr, :LPSTR, :UINT
-	STDMETHOD	HandleMenuMsg, :UINT, :WPARAM, :LPARAM
-	STDMETHOD	HandleMenuMsg2, :UINT, :WPARAM, :LPARAM, :ptr
-IContextMenu3Vtbl ends
-IContextMenu3 struct
-	lpVtbl		PVOID ?
-IContextMenu3 ends
+.comdef IContextMenu3
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    QueryContextMenu	proc :HMENU, :UINT, :UINT, :UINT, :UINT
+    InvokeCommand	proc :ptr
+    GetCommandString	proc :UINT_PTR, :UINT, :ptr, :LPSTR, :UINT
+    HandleMenuMsg	proc :UINT, :WPARAM, :LPARAM
+    HandleMenuMsg2	proc :UINT, :WPARAM, :LPARAM, :ptr
+    .ends
 
 endif
 
@@ -1091,21 +1082,18 @@ ifndef __IExecuteCommand_INTERFACE_DEFINED__
 __IExecuteCommand_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IExecuteCommand:IID
-IExecuteCommandVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetKeyState, :DWORD
-	STDMETHOD	SetParameters, :LPCWSTR
-	STDMETHOD	SetPosition, :POINT
-	STDMETHOD	SetShowWindow, :SINT
-	STDMETHOD	SetNoShowUI, :BOOL
-	STDMETHOD	SetDirectory, :LPCWSTR
-	STDMETHOD	Execute
-IExecuteCommandVtbl ends
-IExecuteCommand struct
-	lpVtbl		PVOID ?
-IExecuteCommand ends
+.comdef IExecuteCommand
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetKeyState		proc :DWORD
+    SetParameters	proc :LPCWSTR
+    SetPosition		proc :POINT
+    SetShowWindow	proc :SINT
+    SetNoShowUI		proc :BOOL
+    SetDirectory	proc :LPCWSTR
+    Execute		proc
+    .ends
 
 endif
 
@@ -1113,16 +1101,13 @@ ifndef __IPersistFolder_INTERFACE_DEFINED__
 __IPersistFolder_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IPersistFolder:IID
-IPersistFolderVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetClassID, :ptr
-	STDMETHOD	Initialize, :PCIDLIST_ABSOLUTE
-IPersistFolderVtbl ends
-IPersistFolder struct
-	lpVtbl		PVOID ?
-IPersistFolder ends
+.comdef IPersistFolder
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetClassID		proc :ptr
+    Initialize		proc :PCIDLIST_ABSOLUTE
+    .ends
 
 endif
 
@@ -1142,19 +1127,16 @@ ifndef __IRunnableTask_INTERFACE_DEFINED__
 __IRunnableTask_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IRunnableTask:IID
-IRunnableTaskVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Run
-	STDMETHOD	Kill, :BOOL
-	STDMETHOD	Suspend
-	STDMETHOD	Resume
-	STDMETHOD	IsRunning
-IRunnableTaskVtbl ends
-IRunnableTask struct
-	lpVtbl		PVOID ?
-IRunnableTask ends
+.comdef IRunnableTask
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Run			proc
+    Kill		proc :BOOL
+    Suspend		proc
+    Resume		proc
+    IsRunning		proc
+    .ends
 
 endif
 
@@ -1180,18 +1162,15 @@ __IShellTaskScheduler_INTERFACE_DEFINED__ equ 1
 DEFINE_GUID(IID_IShellTaskScheduler, 0x6ccb7be0, 0x6807, 0x11d0, 0xb8,0x10, 0x00,0xc0,0x4f,0xd7,0x06,0xec)
 
 externdef		IID_IShellTaskScheduler:IID
-IShellTaskSchedulerVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	AddTask, :ptr, :REFTASKOWNERID, :DWORD_PTR, :DWORD
-	STDMETHOD	RemoveTasks, :REFTASKOWNERID, :DWORD_PTR, :BOOL
-	STDMETHOD	CountTasks, :REFTASKOWNERID
-	STDMETHOD	Status, :DWORD, :DWORD
-IShellTaskSchedulerVtbl ends
-IShellTaskScheduler struct
-	lpVtbl		PVOID ?
-IShellTaskScheduler ends
+.comdef IShellTaskScheduler
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    AddTask		proc :ptr, :REFTASKOWNERID, :DWORD_PTR, :DWORD
+    RemoveTasks		proc :REFTASKOWNERID, :DWORD_PTR, :BOOL
+    CountTasks		proc :REFTASKOWNERID
+    Status		proc :DWORD, :DWORD
+    .ends
 
 endif
 
@@ -1204,16 +1183,13 @@ ifndef __IQueryCodePage_INTERFACE_DEFINED__
 __IQueryCodePage_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IQueryCodePage:IID
-IQueryCodePageVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetCodePage, :ptr
-	STDMETHOD	SetCodePage, :UINT
-IQueryCodePageVtbl ends
-IQueryCodePage struct
-	lpVtbl		PVOID ?
-IQueryCodePage ends
+.comdef IQueryCodePage
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetCodePage		proc :ptr
+    SetCodePage		proc :UINT
+    .ends
 
 endif
 
@@ -1221,17 +1197,14 @@ ifndef __IPersistFolder2_INTERFACE_DEFINED__
 __IPersistFolder2_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IPersistFolder2:IID
-IPersistFolder2Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetClassID, :ptr
-	STDMETHOD	Initialize, :PCIDLIST_ABSOLUTE
-	STDMETHOD	GetCurFolder, :ptr
-IPersistFolder2Vtbl ends
-IPersistFolder2 struct
-	lpVtbl		PVOID ?
-IPersistFolder2 ends
+.comdef IPersistFolder2
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetClassID		proc :ptr
+    Initialize		proc :PCIDLIST_ABSOLUTE
+    GetCurFolder	proc :ptr
+    .ends
 
 endif
 endif ; (_WIN32_IE GE 0x0400)
@@ -1259,19 +1232,16 @@ ifndef __IPersistFolder3_INTERFACE_DEFINED__
 __IPersistFolder3_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IPersistFolder3:IID
-IPersistFolder3Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetClassID, :ptr
-	STDMETHOD	Initialize, :PCIDLIST_ABSOLUTE
-	STDMETHOD	GetCurFolder, :ptr
-	STDMETHOD	InitializeEx, :ptr, :PCIDLIST_ABSOLUTE, :ptr
-	STDMETHOD	GetFolderTargetInfo, :ptr
-IPersistFolder3Vtbl ends
-IPersistFolder3 struct
-	lpVtbl		PVOID ?
-IPersistFolder3 ends
+.comdef IPersistFolder3
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetClassID		proc :ptr
+    Initialize		proc :PCIDLIST_ABSOLUTE
+    GetCurFolder	proc :ptr
+    InitializeEx	proc :ptr, :PCIDLIST_ABSOLUTE, :ptr
+    GetFolderTargetInfo proc :ptr
+    .ends
 
 endif
 endif
@@ -1285,17 +1255,14 @@ ifndef __IPersistIDList_INTERFACE_DEFINED__
 __IPersistIDList_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IPersistIDList:IID
-IPersistIDListVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetClassID, :ptr
-	STDMETHOD	SetIDList, :PCIDLIST_ABSOLUTE
-	STDMETHOD	GetIDList, :ptr
-IPersistIDListVtbl ends
-IPersistIDList struct
-	lpVtbl		PVOID ?
-IPersistIDList ends
+.comdef IPersistIDList
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetClassID		proc :ptr
+    SetIDList		proc :PCIDLIST_ABSOLUTE
+    GetIDList		proc :ptr
+    .ends
 
 endif
 endif
@@ -1307,22 +1274,18 @@ ifndef __IEnumIDList_INTERFACE_DEFINED__
 __IEnumIDList_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IEnumIDList:IID
-IEnumIDListVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Next, :ULONG, :ptr, :ptr
-	STDMETHOD	Skip, :ULONG
-	STDMETHOD	Reset
-	STDMETHOD	Clone, :ptr
-IEnumIDListVtbl ends
-IEnumIDList struct
-	lpVtbl		PVOID ?
-IEnumIDList ends
-LPIEnumIDList		typedef ptr IEnumIDList
+.comdef IEnumIDList
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Next		proc :ULONG, :ptr, :ptr
+    Skip		proc :ULONG
+    Reset		proc
+    Clone		proc :ptr
+    .ends
 
 IEnumIDList_RemoteNext_Proxy proto WINAPI \
-		 _This: LPIEnumIDList,
+		 _This: ptr IEnumIDList,
 		  celt: ULONG,
 		 rgelt: ptr PITEMID_CHILD,
 	  pceltFetched: LPULONG
@@ -1345,18 +1308,15 @@ ifndef __IEnumFullIDList_INTERFACE_DEFINED__
 __IEnumFullIDList_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IEnumFullIDList:IID
-IEnumFullIDListVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Next, :ULONG, :ptr, :ptr
-	STDMETHOD	Skip, :ULONG
-	STDMETHOD	Reset
-	STDMETHOD	Clone, :ptr
-IEnumFullIDListVtbl ends
-IEnumFullIDList struct
-	lpVtbl		PVOID ?
-IEnumFullIDList ends
+.comdef IEnumFullIDList
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Next		proc :ULONG, :ptr, :ptr
+    Skip		proc :ULONG
+    Reset		proc
+    Clone		proc :ptr
+    .ends
 
 IEnumFullIDList_RemoteNext_Proxy proto WINAPI \
 		 _This: ptr IEnumFullIDList,
@@ -1473,16 +1433,13 @@ ifndef __IObjectWithFolderEnumMode_INTERFACE_DEFINED__
 __IObjectWithFolderEnumMode_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IObjectWithFolderEnumMode:IID
-IObjectWithFolderEnumModeVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetMode, :FOLDER_ENUM_MODE
-	STDMETHOD	GetMode, :ptr
-IObjectWithFolderEnumModeVtbl ends
-IObjectWithFolderEnumMode struct
-	lpVtbl		PVOID ?
-IObjectWithFolderEnumMode ends
+.comdef IObjectWithFolderEnumMode
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetMode		proc :FOLDER_ENUM_MODE
+    GetMode		proc :ptr
+    .ends
 
 endif
 
@@ -1499,16 +1456,13 @@ ifndef __IParseAndCreateItem_INTERFACE_DEFINED__
 __IParseAndCreateItem_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IParseAndCreateItem:IID
-IParseAndCreateItemVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetItem, :ptr
-	STDMETHOD	GetItem, :REFIID, :ptr
-IParseAndCreateItemVtbl ends
-IParseAndCreateItem struct
-	lpVtbl		PVOID ?
-IParseAndCreateItem ends
+.comdef IParseAndCreateItem
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetItem		proc :ptr
+    GetItem		proc :REFIID, :ptr
+    .ends
 
 endif
 
@@ -1522,24 +1476,21 @@ ifndef __IShellFolder_INTERFACE_DEFINED__
 __IShellFolder_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IShellFolder:IID
-IShellFolderVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	ParseDisplayName, :HWND, :ptr, :LPWSTR, :ptr, :ptr, :ptr
-	STDMETHOD	EnumObjects, :HWND, :SHCONTF, :ptr
-	STDMETHOD	BindToObject, :PCUIDLIST_RELATIVE, :ptr, :REFIID, :ptr
-	STDMETHOD	BindToStorage, :PCUIDLIST_RELATIVE, :ptr, :REFIID, :ptr
-	STDMETHOD	CompareIDs, :LPARAM, :PCUIDLIST_RELATIVE, :PCUIDLIST_RELATIVE
-	STDMETHOD	CreateViewObject, :HWND, :REFIID, :ptr
-	STDMETHOD	GetAttributesOf, :UINT, :PCUITEMID_CHILD_ARRAY, :ptr
-	STDMETHOD	GetUIObjectOf, :HWND, :UINT, :PCUITEMID_CHILD_ARRAY, :REFIID, :ptr, :ptr
-	STDMETHOD	GetDisplayNameOf, :PCUITEMID_CHILD, :SHGDNF, :ptr
-	STDMETHOD	SetNameOf, :HWND, :PCUITEMID_CHILD, :LPCWSTR, :SHGDNF, :ptr
-IShellFolderVtbl ends
-IShellFolder struct
-	lpVtbl		PVOID ?
-IShellFolder ends
+.comdef IShellFolder
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    ParseDisplayName	proc :HWND, :ptr, :LPWSTR, :ptr, :ptr, :ptr
+    EnumObjects		proc :HWND, :SHCONTF, :ptr
+    BindToObject	proc :PCUIDLIST_RELATIVE, :ptr, :REFIID, :ptr
+    BindToStorage	proc :PCUIDLIST_RELATIVE, :ptr, :REFIID, :ptr
+    CompareIDs		proc :LPARAM, :PCUIDLIST_RELATIVE, :PCUIDLIST_RELATIVE
+    CreateViewObject	proc :HWND, :REFIID, :ptr
+    GetAttributesOf	proc :UINT, :PCUITEMID_CHILD_ARRAY, :ptr
+    GetUIObjectOf	proc :HWND, :UINT, :PCUITEMID_CHILD_ARRAY, :REFIID, :ptr, :ptr
+    GetDisplayNameOf	proc :PCUITEMID_CHILD, :SHGDNF, :ptr
+    SetNameOf		proc :HWND, :PCUITEMID_CHILD, :LPCWSTR, :SHGDNF, :ptr
+    .ends
 LPIShellFolder		typedef ptr IShellFolder
 
 IShellFolder_RemoteSetNameOf_Proxy proto WINAPI \
@@ -1577,18 +1528,15 @@ ifndef __IEnumExtraSearch_INTERFACE_DEFINED__
 __IEnumExtraSearch_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IEnumExtraSearch:IID
-IEnumExtraSearchVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Next, :ULONG, :ptr, :ptr
-	STDMETHOD	Skip, :ULONG
-	STDMETHOD	Reset
-	STDMETHOD	Clone, :ptr
-IEnumExtraSearchVtbl ends
-IEnumExtraSearch struct
-	lpVtbl		PVOID ?
-IEnumExtraSearch ends
+.comdef IEnumExtraSearch
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Next		proc :ULONG, :ptr, :ptr
+    Skip		proc :ULONG
+    Reset		proc
+    Clone		proc :ptr
+    .ends
 
 endif
 
@@ -1601,31 +1549,28 @@ ifndef __IShellFolder2_INTERFACE_DEFINED__
 __IShellFolder2_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IShellFolder2:IID
-IShellFolder2Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	ParseDisplayName, :HWND, :ptr, :LPWSTR, :ptr, :ptr, :ptr
-	STDMETHOD	EnumObjects, :HWND, :SHCONTF, :ptr
-	STDMETHOD	BindToObject, :PCUIDLIST_RELATIVE, :ptr, :REFIID, :ptr
-	STDMETHOD	BindToStorage, :PCUIDLIST_RELATIVE, :ptr, :REFIID, :ptr
-	STDMETHOD	CompareIDs, :LPARAM, :PCUIDLIST_RELATIVE, :PCUIDLIST_RELATIVE
-	STDMETHOD	CreateViewObject, :HWND, :REFIID, :ptr
-	STDMETHOD	GetAttributesOf, :UINT, :PCUITEMID_CHILD_ARRAY, :ptr
-	STDMETHOD	GetUIObjectOf, :HWND, :UINT, :PCUITEMID_CHILD_ARRAY, :REFIID, :ptr, :ptr
-	STDMETHOD	GetDisplayNameOf, :PCUITEMID_CHILD, :SHGDNF, :ptr
-	STDMETHOD	SetNameOf, :HWND, :PCUITEMID_CHILD, :LPCWSTR, :SHGDNF, :ptr
-	STDMETHOD	GetDefaultSearchGUID, :ptr
-	STDMETHOD	EnumSearches, :ptr
-	STDMETHOD	GetDefaultColumn, :DWORD, :ptr, :ptr
-	STDMETHOD	GetDefaultColumnState, :UINT, :ptr
-	STDMETHOD	GetDetailsEx, :PCUITEMID_CHILD, :ptr, :ptr
-	STDMETHOD	GetDetailsOf, :PCUITEMID_CHILD, :UINT, :ptr
-	STDMETHOD	MapColumnToSCID, :UINT, :ptr
-IShellFolder2Vtbl ends
-IShellFolder2 struct
-	lpVtbl		PVOID ?
-IShellFolder2 ends
+.comdef IShellFolder2
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    ParseDisplayName	proc :HWND, :ptr, :LPWSTR, :ptr, :ptr, :ptr
+    EnumObjects		proc :HWND, :SHCONTF, :ptr
+    BindToObject	proc :PCUIDLIST_RELATIVE, :ptr, :REFIID, :ptr
+    BindToStorage	proc :PCUIDLIST_RELATIVE, :ptr, :REFIID, :ptr
+    CompareIDs		proc :LPARAM, :PCUIDLIST_RELATIVE, :PCUIDLIST_RELATIVE
+    CreateViewObject	proc :HWND, :REFIID, :ptr
+    GetAttributesOf	proc :UINT, :PCUITEMID_CHILD_ARRAY, :ptr
+    GetUIObjectOf	proc :HWND, :UINT, :PCUITEMID_CHILD_ARRAY, :REFIID, :ptr, :ptr
+    GetDisplayNameOf	proc :PCUITEMID_CHILD, :SHGDNF, :ptr
+    SetNameOf		proc :HWND, :PCUITEMID_CHILD, :LPCWSTR, :SHGDNF, :ptr
+    GetDefaultSearchGUID proc :ptr
+    EnumSearches	proc :ptr
+    GetDefaultColumn	proc :DWORD, :ptr, :ptr
+    GetDefaultColumnState proc :UINT, :ptr
+    GetDetailsEx	proc :PCUITEMID_CHILD, :ptr, :ptr
+    GetDetailsOf	proc :PCUITEMID_CHILD, :UINT, :ptr
+    MapColumnToSCID	proc :UINT, :ptr
+    .ends
 
 endif
 
@@ -1719,16 +1664,13 @@ FVO_NOSCROLLTIPS	equ 0x20
 DEFINE_ENUM_FLAG_OPERATORS(FOLDERVIEWOPTIONS)
 
 externdef		IID_IFolderViewOptions:IID
-IFolderViewOptionsVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetFolderViewOptions, :FOLDERVIEWOPTIONS, :FOLDERVIEWOPTIONS
-	STDMETHOD	GetFolderViewOptions, :ptr
-IFolderViewOptionsVtbl ends
-IFolderViewOptions struct
-	lpVtbl		PVOID ?
-IFolderViewOptions ends
+.comdef IFolderViewOptions
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetFolderViewOptions proc :FOLDERVIEWOPTIONS, :FOLDERVIEWOPTIONS
+    GetFolderViewOptions proc :ptr
+    .ends
 
 endif
 
@@ -1787,28 +1729,24 @@ ifndef __IShellView_INTERFACE_DEFINED__
 __IShellView_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IShellView:IID
-IShellViewVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetWindow, :ptr
-	STDMETHOD	ContextSensitiveHelp, :BOOL
-	STDMETHOD	TranslateAccelerator, :ptr
-	STDMETHOD	EnableModeless, :BOOL
-	STDMETHOD	UIActivate, :UINT
-	STDMETHOD	Refresh
-	STDMETHOD	CreateViewWindow, :ptr, :LPCFOLDERSETTINGS, :ptr, :ptr, :ptr
-	STDMETHOD	DestroyViewWindow
-	STDMETHOD	GetCurrentInfo, :LPFOLDERSETTINGS
-	STDMETHOD	AddPropertySheetPages, :DWORD, :LPFNSVADDPROPSHEETPAGE, :LPARAM
-	STDMETHOD	SaveViewState
-	STDMETHOD	SelectItem, :PCUITEMID_CHILD, :SVSIF
-	STDMETHOD	GetItemObject, :UINT, :REFIID, :ptr
-IShellViewVtbl ends
-IShellView struct
-	lpVtbl		PVOID ?
-IShellView ends
-LPIShellView		typedef ptr IShellView
+.comdef IShellView
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetWindow		proc :ptr
+    ContextSensitiveHelp proc :BOOL
+    TranslateAccelerator proc :ptr
+    EnableModeless	proc :BOOL
+    UIActivate		proc :UINT
+    Refresh		proc
+    CreateViewWindow	proc :ptr, :LPCFOLDERSETTINGS, :ptr, :ptr, :ptr
+    DestroyViewWindow	proc
+    GetCurrentInfo	proc :LPFOLDERSETTINGS
+    AddPropertySheetPages proc :DWORD, :LPFNSVADDPROPSHEETPAGE, :LPARAM
+    SaveViewState	proc
+    SelectItem		proc :PCUITEMID_CHILD, :SVSIF
+    GetItemObject	proc :UINT, :REFIID, :ptr
+    .ends
 LPSHELLVIEW		typedef ptr IShellView
 
 endif
@@ -1825,7 +1763,7 @@ SV2GV_DEFAULTVIEW	equ -2
 ;include pshpack8.inc
 SV2CVW2_PARAMS		STRUC
 cbSize			dd ?
-psvPrev			LPIShellView ?
+psvPrev			LPSHELLVIEW ?
 pfs			LPCFOLDERSETTINGS ?
 psbOwner		LPIShellBrowser ?
 prcView			LPRECT ?
@@ -1837,31 +1775,28 @@ LPSV2CVW2_PARAMS	typedef ptr SV2CVW2_PARAMS
 ;include poppack.inc
 
 externdef		IID_IShellView2:IID
-IShellView2Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetWindow, :ptr
-	STDMETHOD	ContextSensitiveHelp, :BOOL
-	STDMETHOD	TranslateAccelerator, :ptr
-	STDMETHOD	EnableModeless, :BOOL
-	STDMETHOD	UIActivate, :UINT
-	STDMETHOD	Refresh
-	STDMETHOD	CreateViewWindow, :ptr, :LPCFOLDERSETTINGS, :ptr, :ptr, :ptr
-	STDMETHOD	DestroyViewWindow
-	STDMETHOD	GetCurrentInfo, :LPFOLDERSETTINGS
-	STDMETHOD	AddPropertySheetPages, :DWORD, :LPFNSVADDPROPSHEETPAGE, :LPARAM
-	STDMETHOD	SaveViewState
-	STDMETHOD	SelectItem, :PCUITEMID_CHILD, :SVSIF
-	STDMETHOD	GetItemObject, :UINT, :REFIID, :ptr
-	STDMETHOD	GetView, :ptr, :ULONG
-	STDMETHOD	CreateViewWindow2, :LPSV2CVW2_PARAMS
-	STDMETHOD	HandleRename, :PCUITEMID_CHILD
-	STDMETHOD	SelectAndPositionItem, :PCUITEMID_CHILD, :UINT, :ptr
-IShellView2Vtbl ends
-IShellView2 struct
-	lpVtbl		PVOID ?
-IShellView2 ends
+.comdef IShellView2
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetWindow		proc :ptr
+    ContextSensitiveHelp proc :BOOL
+    TranslateAccelerator proc :ptr
+    EnableModeless	proc :BOOL
+    UIActivate		proc :UINT
+    Refresh		proc
+    CreateViewWindow	proc :ptr, :LPCFOLDERSETTINGS, :ptr, :ptr, :ptr
+    DestroyViewWindow	proc
+    GetCurrentInfo	proc :LPFOLDERSETTINGS
+    AddPropertySheetPages proc :DWORD, :LPFNSVADDPROPSHEETPAGE, :LPARAM
+    SaveViewState	proc
+    SelectItem		proc :PCUITEMID_CHILD, :SVSIF
+    GetItemObject	proc :UINT, :REFIID, :ptr
+    GetView		proc :ptr, :ULONG
+    CreateViewWindow2	proc :LPSV2CVW2_PARAMS
+    HandleRename	proc :PCUITEMID_CHILD
+    SelectAndPositionItem proc :PCUITEMID_CHILD, :UINT, :ptr
+    .ends
 
 endif
 
@@ -1880,32 +1815,29 @@ SV3CVW3_FORCEFOLDERFLAGS equ 0x4
 SV3CVW3_FLAGS		typedef DWORD
 
 externdef		IID_IShellView3:IID
-IShellView3Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetWindow, :ptr
-	STDMETHOD	ContextSensitiveHelp, :BOOL
-	STDMETHOD	TranslateAccelerator, :ptr
-	STDMETHOD	EnableModeless, :BOOL
-	STDMETHOD	UIActivate, :UINT
-	STDMETHOD	Refresh
-	STDMETHOD	CreateViewWindow, :ptr, :LPCFOLDERSETTINGS, :ptr, :ptr, :ptr
-	STDMETHOD	DestroyViewWindow
-	STDMETHOD	GetCurrentInfo, :LPFOLDERSETTINGS
-	STDMETHOD	AddPropertySheetPages, :DWORD, :LPFNSVADDPROPSHEETPAGE, :LPARAM
-	STDMETHOD	SaveViewState
-	STDMETHOD	SelectItem, :PCUITEMID_CHILD, :SVSIF
-	STDMETHOD	GetItemObject, :UINT, :REFIID, :ptr
-	STDMETHOD	GetView, :ptr, :ULONG
-	STDMETHOD	CreateViewWindow2, :LPSV2CVW2_PARAMS
-	STDMETHOD	HandleRename, :PCUITEMID_CHILD
-	STDMETHOD	SelectAndPositionItem, :PCUITEMID_CHILD, :UINT, :ptr
-	STDMETHOD	CreateViewWindow3, :ptr, :ptr, :SV3CVW3_FLAGS, :FOLDERFLAGS, :FOLDERFLAGS, :FOLDERVIEWMODE, :ptr, :ptr, :ptr
-IShellView3Vtbl ends
-IShellView3 struct
-	lpVtbl		PVOID ?
-IShellView3 ends
+.comdef IShellView3
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetWindow		proc :ptr
+    ContextSensitiveHelp proc :BOOL
+    TranslateAccelerator proc :ptr
+    EnableModeless	proc :BOOL
+    UIActivate		proc :UINT
+    Refresh		proc
+    CreateViewWindow	proc :ptr, :LPCFOLDERSETTINGS, :ptr, :ptr, :ptr
+    DestroyViewWindow	proc
+    GetCurrentInfo	proc :LPFOLDERSETTINGS
+    AddPropertySheetPages proc :DWORD, :LPFNSVADDPROPSHEETPAGE, :LPARAM
+    SaveViewState	proc
+    SelectItem		proc :PCUITEMID_CHILD, :SVSIF
+    GetItemObject	proc :UINT, :REFIID, :ptr
+    GetView		proc :ptr, :ULONG
+    CreateViewWindow2	proc :LPSV2CVW2_PARAMS
+    HandleRename	proc :PCUITEMID_CHILD
+    SelectAndPositionItem proc :PCUITEMID_CHILD, :UINT, :ptr
+    CreateViewWindow3	proc :ptr, :ptr, :SV3CVW3_FLAGS, :FOLDERFLAGS, :FOLDERFLAGS, :FOLDERVIEWMODE, :ptr, :ptr, :ptr
+    .ends
 
 endif
 endif
@@ -1923,28 +1855,25 @@ __IFolderView_INTERFACE_DEFINED__ equ 1
 DEFINE_GUID(IID_IFolderView, 0xcde725b0, 0xccc9, 0x4519, 0x91,0x7e, 0x32,0x5d,0x72,0xfa,0xb4,0xce)
 
 externdef		IID_IFolderView:IID
-IFolderViewVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetCurrentViewMode, :ptr
-	STDMETHOD	SetCurrentViewMode, :UINT
-	STDMETHOD	GetFolder, :REFIID, :ptr
-	STDMETHOD	Item, :SINT, :ptr
-	STDMETHOD	ItemCount, :UINT, :ptr
-	STDMETHOD	Items, :UINT, :REFIID, :ptr
-	STDMETHOD	GetSelectionMarkedItem, :ptr
-	STDMETHOD	GetFocusedItem, :ptr
-	STDMETHOD	GetItemPosition, :PCUITEMID_CHILD, :ptr
-	STDMETHOD	GetSpacing, :ptr
-	STDMETHOD	GetDefaultSpacing, :ptr
-	STDMETHOD	GetAutoArrange
-	STDMETHOD	SelectItem, :SINT, :DWORD
-	STDMETHOD	SelectAndPositionItems, :UINT, :PCUITEMID_CHILD_ARRAY, :ptr, :DWORD
-IFolderViewVtbl ends
-IFolderView struct
-	lpVtbl		PVOID ?
-IFolderView ends
+.comdef IFolderView
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetCurrentViewMode	proc :ptr
+    SetCurrentViewMode	proc :UINT
+    GetFolder		proc :REFIID, :ptr
+    Item		proc :SINT, :ptr
+    ItemCount		proc :UINT, :ptr
+    Items		proc :UINT, :REFIID, :ptr
+    GetSelectionMarkedItem proc :ptr
+    GetFocusedItem	proc :ptr
+    GetItemPosition	proc :PCUITEMID_CHILD, :ptr
+    GetSpacing		proc :ptr
+    GetDefaultSpacing	proc :ptr
+    GetAutoArrange	proc
+    SelectItem		proc :SINT, :DWORD
+    SelectAndPositionItems proc :UINT, :PCUITEMID_CHILD_ARRAY, :ptr, :DWORD
+    .ends
 
 endif
 
@@ -1958,16 +1887,13 @@ ifndef __ISearchBoxInfo_INTERFACE_DEFINED__
 __ISearchBoxInfo_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_ISearchBoxInfo:IID
-ISearchBoxInfoVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetCondition, :REFIID, :ptr
-	STDMETHOD	GetText, :ptr
-ISearchBoxInfoVtbl ends
-ISearchBoxInfo struct
-	lpVtbl		PVOID ?
-ISearchBoxInfo ends
+.comdef ISearchBoxInfo
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetCondition	proc :REFIID, :ptr
+    GetText		proc :ptr
+    .ends
 
 endif
 endif
@@ -1992,55 +1918,52 @@ FVST_EMPTYTEXT		equ 0
 
 DEPRECATED_HRESULT	typedef HRESULT
 
-IFolderView2Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetCurrentViewMode, :ptr
-	STDMETHOD	SetCurrentViewMode, :UINT
-	STDMETHOD	GetFolder, :REFIID, :ptr
-	STDMETHOD	Item, :SINT, :ptr
-	STDMETHOD	ItemCount, :UINT, :ptr
-	STDMETHOD	Items, :UINT, :REFIID, :ptr
-	STDMETHOD	GetSelectionMarkedItem, :ptr
-	STDMETHOD	GetFocusedItem, :ptr
-	STDMETHOD	GetItemPosition, :PCUITEMID_CHILD, :ptr
-	STDMETHOD	GetSpacing, :ptr
-	STDMETHOD	GetDefaultSpacing, :ptr
-	STDMETHOD	GetAutoArrange
-	STDMETHOD	SelectItem, :SINT, :DWORD
-	STDMETHOD	SelectAndPositionItems, :UINT, :PCUITEMID_CHILD_ARRAY, :ptr, :DWORD
-	STDMETHOD	SetGroupBy, :REFPROPERTYKEY, :BOOL
-	STDMETHOD	GetGroupBy, :ptr, :ptr
-	STDMETHOD	SetViewProperty, :PCUITEMID_CHILD, :REFPROPERTYKEY, :REFPROPVARIANT
-	STDMETHOD	GetViewProperty, :PCUITEMID_CHILD, :REFPROPERTYKEY, :ptr
-	STDMETHOD	SetTileViewProperties, :PCUITEMID_CHILD, :LPCWSTR
-	STDMETHOD	SetExtendedTileViewProperties, :PCUITEMID_CHILD, :LPCWSTR
-	STDMETHOD	SetText, :FVTEXTTYPE, :LPCWSTR
-	STDMETHOD	SetCurrentFolderFlags, :DWORD, :DWORD
-	STDMETHOD	GetCurrentFolderFlags, :ptr
-	STDMETHOD	GetSortColumnCount, :ptr
-	STDMETHOD	SetSortColumns, :ptr, :SINT
-	STDMETHOD	GetSortColumns, :ptr, :SINT
-	STDMETHOD	GetItem, :SINT, :REFIID, :ptr
-	STDMETHOD	GetVisibleItem, :SINT, :BOOL, :ptr
-	STDMETHOD	GetSelectedItem, :SINT, :ptr
-	STDMETHOD	GetSelection, :BOOL, :ptr
-	STDMETHOD	GetSelectionState, :PCUITEMID_CHILD, :ptr
-	STDMETHOD	InvokeVerbOnSelection, :LPCSTR
-	STDMETHOD	SetViewModeAndIconSize, :FOLDERVIEWMODE, :SINT
-	STDMETHOD	GetViewModeAndIconSize, :ptr, :ptr
-	STDMETHOD	SetGroupSubsetCount, :UINT
-	STDMETHOD	GetGroupSubsetCount, :ptr
-	STDMETHOD	SetRedraw, :BOOL
-	STDMETHOD	IsMoveInSameFolder
-	STDMETHOD	DoRename
-IFolderView2Vtbl ends
-IFolderView2 struct
-	lpVtbl		PVOID ?
-IFolderView2 ends
+.comdef IFolderView2
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetCurrentViewMode	proc :ptr
+    SetCurrentViewMode	proc :UINT
+    GetFolder		proc :REFIID, :ptr
+    Item		proc :SINT, :ptr
+    ItemCount		proc :UINT, :ptr
+    Items		proc :UINT, :REFIID, :ptr
+    GetSelectionMarkedItem proc :ptr
+    GetFocusedItem	proc :ptr
+    GetItemPosition	proc :PCUITEMID_CHILD, :ptr
+    GetSpacing		proc :ptr
+    GetDefaultSpacing	proc :ptr
+    GetAutoArrange	proc
+    SelectItem		proc :SINT, :DWORD
+    SelectAndPositionItems proc :UINT, :PCUITEMID_CHILD_ARRAY, :ptr, :DWORD
+    SetGroupBy		proc :REFPROPERTYKEY, :BOOL
+    GetGroupBy		proc :ptr, :ptr
+    SetViewProperty	proc :PCUITEMID_CHILD, :REFPROPERTYKEY, :REFPROPVARIANT
+    GetViewProperty	proc :PCUITEMID_CHILD, :REFPROPERTYKEY, :ptr
+    SetTileViewProperties proc :PCUITEMID_CHILD, :LPCWSTR
+    SetExtendedTileViewProperties proc :PCUITEMID_CHILD, :LPCWSTR
+    SetText		proc :FVTEXTTYPE, :LPCWSTR
+    SetCurrentFolderFlags proc :DWORD, :DWORD
+    GetCurrentFolderFlags proc :ptr
+    GetSortColumnCount	proc :ptr
+    SetSortColumns	proc :ptr, :SINT
+    GetSortColumns	proc :ptr, :SINT
+    GetItem		proc :SINT, :REFIID, :ptr
+    GetVisibleItem	proc :SINT, :BOOL, :ptr
+    GetSelectedItem	proc :SINT, :ptr
+    GetSelection	proc :BOOL, :ptr
+    GetSelectionState	proc :PCUITEMID_CHILD, :ptr
+    InvokeVerbOnSelection proc :LPCSTR
+    SetViewModeAndIconSize proc :FOLDERVIEWMODE, :SINT
+    GetViewModeAndIconSize proc :ptr, :ptr
+    SetGroupSubsetCount proc :UINT
+    GetGroupSubsetCount proc :ptr
+    SetRedraw		proc :BOOL
+    IsMoveInSameFolder	proc
+    DoRename		proc
+    .ends
 
-;STDMETHODCALLTYPE
+;CALLTYPE
 IFolderView2_RemoteGetGroupBy_Proxy proto WINAPI \
 		 _This: ptr IFolderView2,
 		  pkey: ptr PROPERTYKEY,
@@ -2063,21 +1986,18 @@ ifndef __IFolderViewSettings_INTERFACE_DEFINED__
 __IFolderViewSettings_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IFolderViewSettings:IID
-IFolderViewSettingsVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetColumnPropertyList, :REFIID, :ptr
-	STDMETHOD	GetGroupByProperty, :ptr, :ptr
-	STDMETHOD	GetViewMode, :ptr
-	STDMETHOD	GetIconSize, :ptr
-	STDMETHOD	GetFolderFlags, :ptr, :ptr
-	STDMETHOD	GetSortColumns, :ptr, :UINT, :ptr
-	STDMETHOD	GetGroupSubsetCount, :ptr
-IFolderViewSettingsVtbl ends
-IFolderViewSettings struct
-	lpVtbl		PVOID ?
-IFolderViewSettings ends
+.comdef IFolderViewSettings
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetColumnPropertyList proc :REFIID, :ptr
+    GetGroupByProperty	proc :ptr, :ptr
+    GetViewMode		proc :ptr
+    GetIconSize		proc :ptr
+    GetFolderFlags	proc :ptr, :ptr
+    GetSortColumns	proc :ptr, :UINT, :ptr
+    GetGroupSubsetCount proc :ptr
+    .ends
 
 endif ; __IFolderViewSettings_INTERFACE_DEFINED__
 endif ; (NTDDI_VERSION GE NTDDI_VISTA)
@@ -2091,17 +2011,14 @@ ifndef __IPreviewHandlerVisuals_INTERFACE_DEFINED__
 __IPreviewHandlerVisuals_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IPreviewHandlerVisuals:IID
-IPreviewHandlerVisualsVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetBackgroundColor, :COLORREF
-	STDMETHOD	SetFont, :ptr
-	STDMETHOD	SetTextColor, :COLORREF
-IPreviewHandlerVisualsVtbl ends
-IPreviewHandlerVisuals struct
-	lpVtbl		PVOID ?
-IPreviewHandlerVisuals ends
+.comdef IPreviewHandlerVisuals
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetBackgroundColor	proc :COLORREF
+    SetFont		proc :ptr
+    SetTextColor	proc :COLORREF
+    .ends
 
 endif
 
@@ -2121,22 +2038,19 @@ VPCF_SUBTEXT		equ 4
 VPCF_TEXTBACKGROUND	equ 5
 
 externdef		IID_IVisualProperties:IID
-IVisualPropertiesVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetWatermark, :HBITMAP, :VPWATERMARKFLAGS
-	STDMETHOD	SetColor, :VPCOLORFLAGS, :COLORREF
-	STDMETHOD	GetColor, :VPCOLORFLAGS, :ptr
-	STDMETHOD	SetItemHeight, :SINT
-	STDMETHOD	GetItemHeight, :ptr
-	STDMETHOD	SetFont, :ptr, :BOOL
-	STDMETHOD	GetFont, :ptr
-	STDMETHOD	SetTheme, :LPCWSTR, :LPCWSTR
-IVisualPropertiesVtbl ends
-IVisualProperties struct
-	lpVtbl		PVOID ?
-IVisualProperties ends
+.comdef IVisualProperties
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetWatermark	proc :HBITMAP, :VPWATERMARKFLAGS
+    SetColor		proc :VPCOLORFLAGS, :COLORREF
+    GetColor		proc :VPCOLORFLAGS, :ptr
+    SetItemHeight	proc :SINT
+    GetItemHeight	proc :ptr
+    SetFont		proc :ptr, :BOOL
+    GetFont		proc :ptr
+    SetTheme		proc :LPCWSTR, :LPCWSTR
+    .ends
 
 endif
 
@@ -2157,17 +2071,14 @@ __ICommDlgBrowser_INTERFACE_DEFINED__ equ 1
 DEFINE_GUID(IID_ICommDlgBrowser, 0x000214f1, 0x0000, 0x0000, 0xc0,0x00, 0x00,0x00,0x00,0x00,0x00,0x46)
 
 externdef		IID_ICommDlgBrowser:IID
-ICommDlgBrowserVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	OnDefaultCommand, :ptr
-	STDMETHOD	OnStateChange, :ptr, :ULONG
-	STDMETHOD	IncludeObject, :ptr, :PCUITEMID_CHILD
-ICommDlgBrowserVtbl ends
-ICommDlgBrowser struct
-	lpVtbl		PVOID ?
-ICommDlgBrowser ends
+.comdef ICommDlgBrowser
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    OnDefaultCommand	proc :ptr
+    OnStateChange	proc :ptr, :ULONG
+    IncludeObject	proc :ptr, :PCUITEMID_CHILD
+    .ends
 
 endif
 
@@ -2194,20 +2105,17 @@ ifndef __ICommDlgBrowser2_INTERFACE_DEFINED__
 __ICommDlgBrowser2_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_ICommDlgBrowser2:IID
-ICommDlgBrowser2Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	OnDefaultCommand, :ptr
-	STDMETHOD	OnStateChange, :ptr, :ULONG
-	STDMETHOD	IncludeObject, :ptr, :PCUITEMID_CHILD
-	STDMETHOD	Notify, :ptr, :DWORD
-	STDMETHOD	GetDefaultMenuText, :ptr, :LPWSTR, :SINT
-	STDMETHOD	GetViewFlags, :ptr
-ICommDlgBrowser2Vtbl ends
-ICommDlgBrowser2 struct
-	lpVtbl		PVOID ?
-ICommDlgBrowser2 ends
+.comdef ICommDlgBrowser2
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    OnDefaultCommand	proc :ptr
+    OnStateChange	proc :ptr, :ULONG
+    IncludeObject	proc :ptr, :PCUITEMID_CHILD
+    Notify		proc :ptr, :DWORD
+    GetDefaultMenuText	proc :ptr, :LPWSTR, :SINT
+    GetViewFlags	proc :ptr
+    .ends
 
 endif
 
@@ -2223,23 +2131,20 @@ ifndef __ICommDlgBrowser3_INTERFACE_DEFINED__
 __ICommDlgBrowser3_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_ICommDlgBrowser3:IID
-ICommDlgBrowser3Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	OnDefaultCommand, :ptr
-	STDMETHOD	OnStateChange, :ptr, :ULONG
-	STDMETHOD	IncludeObject, :ptr, :PCUITEMID_CHILD
-	STDMETHOD	Notify, :ptr, :DWORD
-	STDMETHOD	GetDefaultMenuText, :ptr, :LPWSTR, :SINT
-	STDMETHOD	GetViewFlags, :ptr
-	STDMETHOD	OnColumnClicked, :ptr, :SINT
-	STDMETHOD	GetCurrentFilter, :LPWSTR, :SINT
-	STDMETHOD	OnPreViewCreated, :ptr
-ICommDlgBrowser3Vtbl ends
-ICommDlgBrowser3 struct
-	lpVtbl		PVOID ?
-ICommDlgBrowser3 ends
+.comdef ICommDlgBrowser3
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    OnDefaultCommand	proc :ptr
+    OnStateChange	proc :ptr, :ULONG
+    IncludeObject	proc :ptr, :PCUITEMID_CHILD
+    Notify		proc :ptr, :DWORD
+    GetDefaultMenuText	proc :ptr, :LPWSTR, :SINT
+    GetViewFlags	proc :ptr
+    OnColumnClicked	proc :ptr, :SINT
+    GetCurrentFilter	proc :LPWSTR, :SINT
+    OnPreViewCreated	proc :ptr
+    .ends
 
 endif
 
@@ -2285,19 +2190,16 @@ ifndef __IColumnManager_INTERFACE_DEFINED__
 __IColumnManager_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IColumnManager:IID
-IColumnManagerVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetColumnInfo, :REFPROPERTYKEY, :ptr
-	STDMETHOD	GetColumnInfo, :REFPROPERTYKEY, :ptr
-	STDMETHOD	GetColumnCount, :CM_ENUM_FLAGS, :ptr
-	STDMETHOD	GetColumns, :CM_ENUM_FLAGS, :ptr, :UINT
-	STDMETHOD	SetColumns, :ptr, :UINT
-IColumnManagerVtbl ends
-IColumnManager struct
-	lpVtbl		PVOID ?
-IColumnManager ends
+.comdef IColumnManager
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetColumnInfo	proc :REFPROPERTYKEY, :ptr
+    GetColumnInfo	proc :REFPROPERTYKEY, :ptr
+    GetColumnCount	proc :CM_ENUM_FLAGS, :ptr
+    GetColumns		proc :CM_ENUM_FLAGS, :ptr, :UINT
+    SetColumns		proc :ptr, :UINT
+    .ends
 
 endif
 endif
@@ -2309,15 +2211,12 @@ ifndef __IFolderFilterSite_INTERFACE_DEFINED__
 __IFolderFilterSite_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IFolderFilterSite:IID
-IFolderFilterSiteVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetFilter, :ptr
-IFolderFilterSiteVtbl ends
-IFolderFilterSite struct
-	lpVtbl		PVOID ?
-IFolderFilterSite ends
+.comdef IFolderFilterSite
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetFilter		proc :ptr
+    .ends
 
 endif
 
@@ -2325,16 +2224,13 @@ ifndef __IFolderFilter_INTERFACE_DEFINED__
 __IFolderFilter_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IFolderFilter:IID
-IFolderFilterVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	ShouldShow, :ptr, :PCIDLIST_ABSOLUTE, :PCUITEMID_CHILD
-	STDMETHOD	GetEnumFlags, :ptr, :PCIDLIST_ABSOLUTE, :ptr, :ptr
-IFolderFilterVtbl ends
-IFolderFilter struct
-	lpVtbl		PVOID ?
-IFolderFilter ends
+.comdef IFolderFilter
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    ShouldShow		proc :ptr, :PCIDLIST_ABSOLUTE, :PCUITEMID_CHILD
+    GetEnumFlags	proc :ptr, :PCIDLIST_ABSOLUTE, :ptr, :ptr
+    .ends
 
 endif
 
@@ -2342,15 +2238,12 @@ ifndef __IInputObjectSite_INTERFACE_DEFINED__
 __IInputObjectSite_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IInputObjectSite:IID
-IInputObjectSiteVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	OnFocusChangeIS, :ptr, :BOOL
-IInputObjectSiteVtbl ends
-IInputObjectSite struct
-	lpVtbl		PVOID ?
-IInputObjectSite ends
+.comdef IInputObjectSite
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    OnFocusChangeIS	proc :ptr, :BOOL
+    .ends
 
 endif
 
@@ -2358,17 +2251,14 @@ ifndef __IInputObject_INTERFACE_DEFINED__
 __IInputObject_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IInputObject:IID
-IInputObjectVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	UIActivateIO, :BOOL, :ptr
-	STDMETHOD	HasFocusIO
-	STDMETHOD	TranslateAcceleratorIO, :ptr
-IInputObjectVtbl ends
-IInputObject struct
-	lpVtbl		PVOID ?
-IInputObject ends
+.comdef IInputObject
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    UIActivateIO	proc :BOOL, :ptr
+    HasFocusIO		proc
+    TranslateAcceleratorIO proc :ptr
+    .ends
 
 endif
 
@@ -2376,18 +2266,15 @@ ifndef __IInputObject2_INTERFACE_DEFINED__
 __IInputObject2_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IInputObject2:IID
-IInputObject2Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	UIActivateIO, :BOOL, :ptr
-	STDMETHOD	HasFocusIO
-	STDMETHOD	TranslateAcceleratorIO, :ptr
-	STDMETHOD	TranslateAcceleratorGlobal, :ptr
-IInputObject2Vtbl ends
-IInputObject2 struct
-	lpVtbl		PVOID ?
-IInputObject2 ends
+.comdef IInputObject2
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    UIActivateIO	proc :BOOL, :ptr
+    HasFocusIO		proc
+    TranslateAcceleratorIO proc :ptr
+    TranslateAcceleratorGlobal proc :ptr
+    .ends
 
 endif
 
@@ -2395,15 +2282,12 @@ ifndef __IShellIcon_INTERFACE_DEFINED__
 __IShellIcon_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IShellIcon:IID
-IShellIconVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetIconOf, :PCUITEMID_CHILD, :UINT, :ptr
-IShellIconVtbl ends
-IShellIcon struct
-	lpVtbl		PVOID ?
-IShellIcon ends
+.comdef IShellIcon
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetIconOf		proc :PCUITEMID_CHILD, :UINT, :ptr
+    .ends
 
 endif
 
@@ -2469,29 +2353,26 @@ ifndef __IShellBrowser_INTERFACE_DEFINED__
 __IShellBrowser_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IShellBrowser:IID
-IShellBrowserVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetWindow, :ptr
-	STDMETHOD	ContextSensitiveHelp, :BOOL
-	STDMETHOD	InsertMenusSB, :HMENU, :LPOLEMENUGROUPWIDTHS
-	STDMETHOD	SetMenuSB, :HMENU, :HOLEMENU, :HWND
-	STDMETHOD	RemoveMenusSB, :HMENU
-	STDMETHOD	SetStatusTextSB, :LPCWSTR
-	STDMETHOD	EnableModelessSB, :BOOL
-	STDMETHOD	TranslateAcceleratorSB, :ptr, :WORD
-	STDMETHOD	BrowseObject, :PCUIDLIST_RELATIVE, :UINT
-	STDMETHOD	GetViewStateStream, :DWORD, :ptr
-	STDMETHOD	GetControlWindow, :UINT, :ptr
-	STDMETHOD	SendControlMsg, :UINT, :UINT, :WPARAM, :LPARAM, :ptr
-	STDMETHOD	QueryActiveShellView, :ptr
-	STDMETHOD	OnViewWindowActive, :ptr
-	STDMETHOD	SetToolbarItems, :LPTBBUTTONSB, :UINT, :UINT
-IShellBrowserVtbl ends
-IShellBrowser struct
-	lpVtbl		PVOID ?
-IShellBrowser ends
+.comdef IShellBrowser
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetWindow		proc :ptr
+    ContextSensitiveHelp proc :BOOL
+    InsertMenusSB	proc :HMENU, :LPOLEMENUGROUPWIDTHS
+    SetMenuSB		proc :HMENU, :HOLEMENU, :HWND
+    RemoveMenusSB	proc :HMENU
+    SetStatusTextSB	proc :LPCWSTR
+    EnableModelessSB	proc :BOOL
+    TranslateAcceleratorSB proc :ptr, :WORD
+    BrowseObject	proc :PCUIDLIST_RELATIVE, :UINT
+    GetViewStateStream	proc :DWORD, :ptr
+    GetControlWindow	proc :UINT, :ptr
+    SendControlMsg	proc :UINT, :UINT, :WPARAM, :LPARAM, :ptr
+    QueryActiveShellView proc :ptr
+    OnViewWindowActive	proc :ptr
+    SetToolbarItems	proc :LPTBBUTTONSB, :UINT, :UINT
+    .ends
 
 endif
 
@@ -2506,16 +2387,13 @@ __IProfferService_INTERFACE_DEFINED__ equ 1
 DEFINE_GUID(IID_IProfferService, 0xcb728b20, 0xf786, 0x11ce, 0x92,0xad, 0x00,0xaa,0x00,0xa7,0x4c,0xd0)
 
 externdef		IID_IProfferService:IID
-IProfferServiceVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	ProfferService, :REFGUID, :ptr, :ptr
-	STDMETHOD	RevokeService, :DWORD
-IProfferServiceVtbl ends
-IProfferService struct
-	lpVtbl		PVOID ?
-IProfferService ends
+.comdef IProfferService
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    ProfferService	proc :REFGUID, :ptr, :ptr
+    RevokeService	proc :DWORD
+    .ends
 
 endif
 
@@ -2548,21 +2426,17 @@ SICHINT_TEST_FILESYSPATH_IF_NOT_EQUAL equ 0x20000000
 SICHINTF		typedef DWORD
 
 externdef		IID_IShellItem:IID
-IShellItemVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	BindToHandler, :ptr, :REFGUID, :REFIID, :ptr
-	STDMETHOD	GetParent, :ptr
-	STDMETHOD	GetDisplayName, :SIGDN, :ptr
-	STDMETHOD	GetAttributes, :SFGAOF, :ptr
-	STDMETHOD	Compare, :ptr, :SICHINTF, :ptr
-IShellItemVtbl ends
-IShellItem struct
-	lpVtbl		PVOID ?
-IShellItem ends
+.comdef IShellItem
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    BindToHandler	proc :ptr, :REFGUID, :REFIID, :ptr
+    GetParent		proc :ptr
+    GetDisplayName	proc :SIGDN, :ptr
+    GetAttributes	proc :SFGAOF, :ptr
+    Compare		proc :ptr, :SICHINTF, :ptr
+    .ends
 LPIShellItem		typedef ptr IShellItem
-
 endif
 
 ;SHSTDAPI_(PIDLIST_ABSOLUTE)
@@ -2673,32 +2547,29 @@ ifndef __IShellItem2_INTERFACE_DEFINED__
 __IShellItem2_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IShellItem2:IID
-IShellItem2Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	BindToHandler, :ptr, :REFGUID, :REFIID, :ptr
-	STDMETHOD	GetParent, :ptr
-	STDMETHOD	GetDisplayName, :SIGDN, :ptr
-	STDMETHOD	GetAttributes, :SFGAOF, :ptr
-	STDMETHOD	Compare, :ptr, :SICHINTF, :ptr
-	STDMETHOD	GetPropertyStore, :GETPROPERTYSTOREFLAGS, :REFIID, :ptr
-	STDMETHOD	GetPropertyStoreWithCreateObject, :GETPROPERTYSTOREFLAGS, :ptr, :REFIID, :ptr
-	STDMETHOD	GetPropertyStoreForKeys, :ptr, :UINT, :GETPROPERTYSTOREFLAGS, :REFIID, :ptr
-	STDMETHOD	GetPropertyDescriptionList, :REFPROPERTYKEY, :REFIID, :ptr
-	STDMETHOD	Update, :ptr
-	STDMETHOD	GetProperty, :REFPROPERTYKEY, :ptr
-	STDMETHOD	GetCLSID, :REFPROPERTYKEY, :ptr
-	STDMETHOD	GetFileTime, :REFPROPERTYKEY, :ptr
-	STDMETHOD	GetInt32, :REFPROPERTYKEY, :ptr
-	STDMETHOD	GetString, :REFPROPERTYKEY, :ptr
-	STDMETHOD	GetUInt32, :REFPROPERTYKEY, :ptr
-	STDMETHOD	GetUInt64, :REFPROPERTYKEY, :ptr
-	STDMETHOD	GetBool, :REFPROPERTYKEY, :ptr
-IShellItem2Vtbl ends
-IShellItem2 struct
-	lpVtbl		PVOID ?
-IShellItem2 ends
+.comdef IShellItem2
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    BindToHandler	proc :ptr, :REFGUID, :REFIID, :ptr
+    GetParent		proc :ptr
+    GetDisplayName	proc :SIGDN, :ptr
+    GetAttributes	proc :SFGAOF, :ptr
+    Compare		proc :ptr, :SICHINTF, :ptr
+    GetPropertyStore	proc :GETPROPERTYSTOREFLAGS, :REFIID, :ptr
+    GetPropertyStoreWithCreateObject proc :GETPROPERTYSTOREFLAGS, :ptr, :REFIID, :ptr
+    GetPropertyStoreForKeys proc :ptr, :UINT, :GETPROPERTYSTOREFLAGS, :REFIID, :ptr
+    GetPropertyDescriptionList proc :REFPROPERTYKEY, :REFIID, :ptr
+    Update		proc :ptr
+    GetProperty		proc :REFPROPERTYKEY, :ptr
+    GetCLSID		proc :REFPROPERTYKEY, :ptr
+    GetFileTime		proc :REFPROPERTYKEY, :ptr
+    GetInt32		proc :REFPROPERTYKEY, :ptr
+    GetString		proc :REFPROPERTYKEY, :ptr
+    GetUInt32		proc :REFPROPERTYKEY, :ptr
+    GetUInt64		proc :REFPROPERTYKEY, :ptr
+    GetBool		proc :REFPROPERTYKEY, :ptr
+    .ends
 
 endif
 
@@ -2717,15 +2588,12 @@ ifndef __IShellItemImageFactory_INTERFACE_DEFINED__
 __IShellItemImageFactory_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IShellItemImageFactory:IID
-IShellItemImageFactoryVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetImage, :SIZEL, :SIIGBF, :ptr
-IShellItemImageFactoryVtbl ends
-IShellItemImageFactory struct
-	lpVtbl		PVOID ?
-IShellItemImageFactory ends
+.comdef IShellItemImageFactory
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetImage		proc :SIZEL, :SIIGBF, :ptr
+    .ends
 
 endif
 
@@ -2733,15 +2601,12 @@ ifndef __IUserAccountChangeCallback_INTERFACE_DEFINED__
 __IUserAccountChangeCallback_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IUserAccountChangeCallback:IID
-IUserAccountChangeCallbackVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	OnPictureChange, :LPCWSTR
-IUserAccountChangeCallbackVtbl ends
-IUserAccountChangeCallback struct
-	lpVtbl		PVOID ?
-IUserAccountChangeCallback ends
+.comdef IUserAccountChangeCallback
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    OnPictureChange	proc :LPCWSTR
+    .ends
 
 endif
 
@@ -2754,21 +2619,18 @@ ifndef __IEnumShellItems_INTERFACE_DEFINED__
 __IEnumShellItems_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IEnumShellItems:IID
-IEnumShellItemsVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Next, :ULONG, :ptr, :ptr
-	STDMETHOD	Skip, :ULONG
-	STDMETHOD	Reset
-	STDMETHOD	Clone, :ptr
-IEnumShellItemsVtbl ends
-IEnumShellItems struct
-	lpVtbl		PVOID ?
-IEnumShellItems ends
+.comdef IEnumShellItems
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Next		proc :ULONG, :ptr, :ptr
+    Skip		proc :ULONG
+    Reset		proc
+    Clone		proc :ptr
+    .ends
 LPIEnumShellItems	typedef ptr IEnumShellItems
 
-;STDMETHODCALLTYPE
+;CALLTYPE
 IEnumShellItems_RemoteNext_Proxy proto WINAPI \
 		 _This: ptr IEnumShellItems,
 		  celt: ULONG,
@@ -2828,21 +2690,18 @@ TS_INDETERMINATE	equ 0x4
 TRANSFER_ADVISE_STATE	typedef DWORD
 
 externdef		IID_ITransferAdviseSink:IID
-ITransferAdviseSinkVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	UpdateProgress, :ULONGLONG, :ULONGLONG, :SINT, :SINT, :SINT, :SINT
-	STDMETHOD	UpdateTransferState, :TRANSFER_ADVISE_STATE
-	STDMETHOD	ConfirmOverwrite, :ptr, :ptr, :LPCWSTR
-	STDMETHOD	ConfirmEncryptionLoss, :ptr
-	STDMETHOD	FileFailure, :ptr, :LPCWSTR, :HRESULT, :LPWSTR, :ULONG
-	STDMETHOD	SubStreamFailure, :ptr, :LPCWSTR, :HRESULT
-	STDMETHOD	PropertyFailure, :ptr, :ptr, :HRESULT
-ITransferAdviseSinkVtbl ends
-ITransferAdviseSink struct
-	lpVtbl		PVOID ?
-ITransferAdviseSink ends
+.comdef ITransferAdviseSink
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    UpdateProgress	proc :ULONGLONG, :ULONGLONG, :SINT, :SINT, :SINT, :SINT
+    UpdateTransferState proc :TRANSFER_ADVISE_STATE
+    ConfirmOverwrite	proc :ptr, :ptr, :LPCWSTR
+    ConfirmEncryptionLoss proc :ptr
+    FileFailure		proc :ptr, :LPCWSTR, :HRESULT, :LPWSTR, :ULONG
+    SubStreamFailure	proc :ptr, :LPCWSTR, :HRESULT
+    PropertyFailure	proc :ptr, :ptr, :HRESULT
+    .ends
 
 endif
 
@@ -2857,27 +2716,24 @@ ifndef __ITransferSource_INTERFACE_DEFINED__
 __ITransferSource_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_ITransferSource:IID
-ITransferSourceVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Advise, :ptr, :ptr
-	STDMETHOD	Unadvise, :DWORD
-	STDMETHOD	SetProperties, :ptr
-	STDMETHOD	OpenItem, :ptr, :TRANSFER_SOURCE_FLAGS, :REFIID, :ptr
-	STDMETHOD	MoveItem, :ptr, :ptr, :LPCWSTR, :TRANSFER_SOURCE_FLAGS, :ptr
-	STDMETHOD	RecycleItem, :ptr, :ptr, :TRANSFER_SOURCE_FLAGS, :ptr
-	STDMETHOD	RemoveItem, :ptr, :TRANSFER_SOURCE_FLAGS
-	STDMETHOD	RenameItem, :ptr, :LPCWSTR, :TRANSFER_SOURCE_FLAGS, :ptr
-	STDMETHOD	LinkItem, :ptr, :ptr, :LPCWSTR, :TRANSFER_SOURCE_FLAGS, :ptr
-	STDMETHOD	ApplyPropertiesToItem, :ptr, :ptr
-	STDMETHOD	GetDefaultDestinationName, :ptr, :ptr, :ptr
-	STDMETHOD	EnterFolder, :ptr
-	STDMETHOD	LeaveFolder, :ptr
-ITransferSourceVtbl ends
-ITransferSource struct
-	lpVtbl		PVOID ?
-ITransferSource ends
+.comdef ITransferSource
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Advise		proc :ptr, :ptr
+    Unadvise		proc :DWORD
+    SetProperties	proc :ptr
+    OpenItem		proc :ptr, :TRANSFER_SOURCE_FLAGS, :REFIID, :ptr
+    MoveItem		proc :ptr, :ptr, :LPCWSTR, :TRANSFER_SOURCE_FLAGS, :ptr
+    RecycleItem		proc :ptr, :ptr, :TRANSFER_SOURCE_FLAGS, :ptr
+    RemoveItem		proc :ptr, :TRANSFER_SOURCE_FLAGS
+    RenameItem		proc :ptr, :LPCWSTR, :TRANSFER_SOURCE_FLAGS, :ptr
+    LinkItem		proc :ptr, :ptr, :LPCWSTR, :TRANSFER_SOURCE_FLAGS, :ptr
+    ApplyPropertiesToItem proc :ptr, :ptr
+    GetDefaultDestinationName proc :ptr, :ptr, :ptr
+    EnterFolder		proc :ptr
+    LeaveFolder		proc :ptr
+    .ends
 
 endif
 endif
@@ -2894,18 +2750,15 @@ ifndef __IEnumResources_INTERFACE_DEFINED__
 __IEnumResources_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IEnumResources:IID
-IEnumResourcesVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Next, :ULONG, :ptr, :ptr
-	STDMETHOD	Skip, :ULONG
-	STDMETHOD	Reset
-	STDMETHOD	Clone, :ptr
-IEnumResourcesVtbl ends
-IEnumResources struct
-	lpVtbl		PVOID ?
-IEnumResources ends
+.comdef IEnumResources
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Next		proc :ULONG, :ptr, :ptr
+    Skip		proc :ULONG
+    Reset		proc
+    Clone		proc :ptr
+    .ends
 
 endif
 
@@ -2913,24 +2766,21 @@ ifndef __IShellItemResources_INTERFACE_DEFINED__
 __IShellItemResources_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IShellItemResources:IID
-IShellItemResourcesVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetAttributes, :ptr
-	STDMETHOD	GetSize, :ptr
-	STDMETHOD	GetTimes, :ptr, :ptr, :ptr
-	STDMETHOD	SetTimes, :ptr, :ptr, :ptr
-	STDMETHOD	GetResourceDescription, :ptr, :ptr
-	STDMETHOD	EnumResources, :ptr
-	STDMETHOD	SupportsResource, :ptr
-	STDMETHOD	OpenResource, :ptr, :REFIID, :ptr
-	STDMETHOD	CreateResource, :ptr, :REFIID, :ptr
-	STDMETHOD	MarkForDelete
-IShellItemResourcesVtbl ends
-IShellItemResources struct
-	lpVtbl		PVOID ?
-IShellItemResources ends
+.comdef IShellItemResources
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetAttributes	proc :ptr
+    GetSize		proc :ptr
+    GetTimes		proc :ptr, :ptr, :ptr
+    SetTimes		proc :ptr, :ptr, :ptr
+    GetResourceDescription proc :ptr, :ptr
+    EnumResources	proc :ptr
+    SupportsResource	proc :ptr
+    OpenResource	proc :ptr, :REFIID, :ptr
+    CreateResource	proc :ptr, :REFIID, :ptr
+    MarkForDelete	proc
+    .ends
 
 endif
 
@@ -2938,17 +2788,14 @@ ifndef __ITransferDestination_INTERFACE_DEFINED__
 __ITransferDestination_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_ITransferDestination:IID
-ITransferDestinationVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Advise, :ptr, :ptr
-	STDMETHOD	Unadvise, :DWORD
-	STDMETHOD	CreateItem, :LPCWSTR, :DWORD, :ULONGLONG, :TRANSFER_SOURCE_FLAGS, :REFIID, :ptr, :REFIID, :ptr
-ITransferDestinationVtbl ends
-ITransferDestination struct
-	lpVtbl		PVOID ?
-ITransferDestination ends
+.comdef ITransferDestination
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Advise		proc :ptr, :ptr
+    Unadvise		proc :DWORD
+    CreateItem		proc :LPCWSTR, :DWORD, :ULONGLONG, :TRANSFER_SOURCE_FLAGS, :REFIID, :ptr, :REFIID, :ptr
+    .ends
 
 endif
 
@@ -2976,29 +2823,26 @@ ifndef __IStreamAsync_INTERFACE_DEFINED__
 __IStreamAsync_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IStreamAsync:IID
-IStreamAsyncVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Read, :ptr, :ULONG, :ptr
-	STDMETHOD	Write, :ptr, :ULONG, :ptr
-	STDMETHOD	Seek, :LARGE_INTEGER, :DWORD, :ptr
-	STDMETHOD	SetSize, :ULARGE_INTEGER
-	STDMETHOD	CopyTo, :ptr, :ULARGE_INTEGER, :ptr, :ptr
-	STDMETHOD	Commit, :DWORD
-	STDMETHOD	Revert
-	STDMETHOD	LockRegion, :ULARGE_INTEGER, :ULARGE_INTEGER, :DWORD
-	STDMETHOD	UnlockRegion, :ULARGE_INTEGER, :ULARGE_INTEGER, :DWORD
-	STDMETHOD	Stat, :ptr, :DWORD
-	STDMETHOD	Clone, :ptr
-	STDMETHOD	ReadAsync, :ptr, :DWORD, :LPDWORD, :LPOVERLAPPED
-	STDMETHOD	WriteAsync, :ptr, :DWORD, :LPDWORD, :LPOVERLAPPED
-	STDMETHOD	OverlappedResult, :LPOVERLAPPED, :LPDWORD, :BOOL
-	STDMETHOD	CancelIo
-IStreamAsyncVtbl ends
-IStreamAsync struct
-	lpVtbl		PVOID ?
-IStreamAsync ends
+.comdef IStreamAsync
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Read		proc :ptr, :ULONG, :ptr
+    Write		proc :ptr, :ULONG, :ptr
+    Seek		proc :LARGE_INTEGER, :DWORD, :ptr
+    SetSize		proc :ULARGE_INTEGER
+    CopyTo		proc :ptr, :ULARGE_INTEGER, :ptr, :ptr
+    Commit		proc :DWORD
+    Revert		proc
+    LockRegion		proc :ULARGE_INTEGER, :ULARGE_INTEGER, :DWORD
+    UnlockRegion	proc :ULARGE_INTEGER, :ULARGE_INTEGER, :DWORD
+    Stat		proc :ptr, :DWORD
+    Clone		proc :ptr
+    ReadAsync		proc :ptr, :DWORD, :LPDWORD, :LPOVERLAPPED
+    WriteAsync		proc :ptr, :DWORD, :LPDWORD, :LPOVERLAPPED
+    OverlappedResult	proc :LPOVERLAPPED, :LPDWORD, :BOOL
+    CancelIo		proc
+    .ends
 
 endif
 
@@ -3006,15 +2850,12 @@ ifndef __IStreamUnbufferedInfo_INTERFACE_DEFINED__
 __IStreamUnbufferedInfo_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IStreamUnbufferedInfo:IID
-IStreamUnbufferedInfoVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetSectorSize, :ptr
-IStreamUnbufferedInfoVtbl ends
-IStreamUnbufferedInfo struct
-	lpVtbl		PVOID ?
-IStreamUnbufferedInfo ends
+.comdef IStreamUnbufferedInfo
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetSectorSize	proc :ptr
+    .ends
 
 endif
 
@@ -3027,30 +2868,27 @@ ifndef __IFileOperationProgressSink_INTERFACE_DEFINED__
 __IFileOperationProgressSink_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IFileOperationProgressSink:IID
-IFileOperationProgressSinkVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	StartOperations
-	STDMETHOD	FinishOperations, :HRESULT
-	STDMETHOD	PreRenameItem, :DWORD, :ptr, :LPCWSTR
-	STDMETHOD	PostRenameItem, :DWORD, :ptr, :LPCWSTR, :HRESULT, :ptr
-	STDMETHOD	PreMoveItem, :DWORD, :ptr, :ptr, :LPCWSTR
-	STDMETHOD	PostMoveItem, :DWORD, :ptr, :ptr, :LPCWSTR, :HRESULT, :ptr
-	STDMETHOD	PreCopyItem, :DWORD, :ptr, :ptr, :LPCWSTR
-	STDMETHOD	PostCopyItem, :DWORD, :ptr, :ptr, :LPCWSTR, :HRESULT, :ptr
-	STDMETHOD	PreDeleteItem, :DWORD, :ptr
-	STDMETHOD	PostDeleteItem, :DWORD, :ptr, :HRESULT, :ptr
-	STDMETHOD	PreNewItem, :DWORD, :ptr, :LPCWSTR
-	STDMETHOD	PostNewItem, :DWORD, :ptr, :LPCWSTR, :LPCWSTR, :DWORD, :HRESULT, :ptr
-	STDMETHOD	UpdateProgress, :UINT, :UINT
-	STDMETHOD	ResetTimer
-	STDMETHOD	PauseTimer
-	STDMETHOD	ResumeTimer
-IFileOperationProgressSinkVtbl ends
-IFileOperationProgressSink struct
-	lpVtbl		PVOID ?
-IFileOperationProgressSink ends
+.comdef IFileOperationProgressSink
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    StartOperations	proc
+    FinishOperations	proc :HRESULT
+    PreRenameItem	proc :DWORD, :ptr, :LPCWSTR
+    PostRenameItem	proc :DWORD, :ptr, :LPCWSTR, :HRESULT, :ptr
+    PreMoveItem		proc :DWORD, :ptr, :ptr, :LPCWSTR
+    PostMoveItem	proc :DWORD, :ptr, :ptr, :LPCWSTR, :HRESULT, :ptr
+    PreCopyItem		proc :DWORD, :ptr, :ptr, :LPCWSTR
+    PostCopyItem	proc :DWORD, :ptr, :ptr, :LPCWSTR, :HRESULT, :ptr
+    PreDeleteItem	proc :DWORD, :ptr
+    PostDeleteItem	proc :DWORD, :ptr, :HRESULT, :ptr
+    PreNewItem		proc :DWORD, :ptr, :LPCWSTR
+    PostNewItem		proc :DWORD, :ptr, :LPCWSTR, :LPCWSTR, :DWORD, :HRESULT, :ptr
+    UpdateProgress	proc :UINT, :UINT
+    ResetTimer		proc
+    PauseTimer		proc
+    ResumeTimer		proc
+    .ends
 
 endif
 endif
@@ -3071,21 +2909,18 @@ SIATTRIBFLAGS_ALLITEMS	equ 0x4000
 DEFINE_ENUM_FLAG_OPERATORS(SIATTRIBFLAGS)
 
 externdef		IID_IShellItemArray:IID
-IShellItemArrayVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	BindToHandler, :ptr, :REFGUID, :REFIID, :ptr
-	STDMETHOD	GetPropertyStore, :GETPROPERTYSTOREFLAGS, :REFIID, :ptr
-	STDMETHOD	GetPropertyDescriptionList, :REFPROPERTYKEY, :REFIID, :ptr
-	STDMETHOD	GetAttributes, :SIATTRIBFLAGS, :SFGAOF, :ptr
-	STDMETHOD	GetCount, :ptr
-	STDMETHOD	GetItemAt, :DWORD, :ptr
-	STDMETHOD	EnumItems, :ptr
-IShellItemArrayVtbl ends
-IShellItemArray struct
-	lpVtbl		PVOID ?
-IShellItemArray ends
+.comdef IShellItemArray
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    BindToHandler	proc :ptr, :REFGUID, :REFIID, :ptr
+    GetPropertyStore	proc :GETPROPERTYSTOREFLAGS, :REFIID, :ptr
+    GetPropertyDescriptionList proc :REFPROPERTYKEY, :REFIID, :ptr
+    GetAttributes	proc :SIATTRIBFLAGS, :SFGAOF, :ptr
+    GetCount		proc :ptr
+    GetItemAt		proc :DWORD, :ptr
+    EnumItems		proc :ptr
+    .ends
 
 endif
 
@@ -3125,15 +2960,12 @@ ifndef __IInitializeWithItem_INTERFACE_DEFINED__
 __IInitializeWithItem_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IInitializeWithItem:IID
-IInitializeWithItemVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Initialize, :ptr, :DWORD
-IInitializeWithItemVtbl ends
-IInitializeWithItem struct
-	lpVtbl		PVOID ?
-IInitializeWithItem ends
+.comdef IInitializeWithItem
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Initialize		proc :ptr, :DWORD
+    .ends
 
 endif
 
@@ -3141,16 +2973,13 @@ ifndef __IObjectWithSelection_INTERFACE_DEFINED__
 __IObjectWithSelection_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IObjectWithSelection:IID
-IObjectWithSelectionVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetSelection, :ptr
-	STDMETHOD	GetSelection, :REFIID, :ptr
-IObjectWithSelectionVtbl ends
-IObjectWithSelection struct
-	lpVtbl		PVOID ?
-IObjectWithSelection ends
+.comdef IObjectWithSelection
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetSelection	proc :ptr
+    GetSelection	proc :REFIID, :ptr
+    .ends
 
 endif
 
@@ -3158,15 +2987,12 @@ ifndef __IObjectWithBackReferences_INTERFACE_DEFINED__
 __IObjectWithBackReferences_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IObjectWithBackReferences:IID
-IObjectWithBackReferencesVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	RemoveBackReferences
-IObjectWithBackReferencesVtbl ends
-IObjectWithBackReferences struct
-	lpVtbl		PVOID ?
-IObjectWithBackReferences ends
+.comdef IObjectWithBackReferences
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    RemoveBackReferences proc
+    .ends
 
 endif
 
@@ -3193,22 +3019,19 @@ ifndef __IPropertyUI_INTERFACE_DEFINED__
 __IPropertyUI_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IPropertyUI:IID
-IPropertyUIVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	ParsePropertyName, :LPCWSTR, :ptr, :ptr, :ptr
-	STDMETHOD	GetCannonicalName, :REFFMTID, :PROPID, :LPWSTR, :DWORD
-	STDMETHOD	GetDisplayName, :REFFMTID, :PROPID, :PROPERTYUI_NAME_FLAGS, :LPWSTR, :DWORD
-	STDMETHOD	GetPropertyDescription, :REFFMTID, :PROPID, :LPWSTR, :DWORD
-	STDMETHOD	GetDefaultWidth, :REFFMTID, :PROPID, :ptr
-	STDMETHOD	GetFlags, :REFFMTID, :PROPID, :ptr
-	STDMETHOD	FormatForDisplay, :REFFMTID, :PROPID, :ptr, :PROPERTYUI_FORMAT_FLAGS, :LPWSTR, :DWORD
-	STDMETHOD	GetHelpInfo, :REFFMTID, :PROPID, :LPWSTR, :DWORD, :ptr
-IPropertyUIVtbl ends
-IPropertyUI struct
-	lpVtbl		PVOID ?
-IPropertyUI ends
+.comdef IPropertyUI
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    ParsePropertyName	proc :LPCWSTR, :ptr, :ptr, :ptr
+    GetCannonicalName	proc :REFFMTID, :PROPID, :LPWSTR, :DWORD
+    GetDisplayName	proc :REFFMTID, :PROPID, :PROPERTYUI_NAME_FLAGS, :LPWSTR, :DWORD
+    GetPropertyDescription proc :REFFMTID, :PROPID, :LPWSTR, :DWORD
+    GetDefaultWidth	proc :REFFMTID, :PROPID, :ptr
+    GetFlags		proc :REFFMTID, :PROPID, :ptr
+    FormatForDisplay	proc :REFFMTID, :PROPID, :ptr, :PROPERTYUI_FORMAT_FLAGS, :LPWSTR, :DWORD
+    GetHelpInfo		proc :REFFMTID, :PROPID, :LPWSTR, :DWORD, :ptr
+    .ends
 
 endif
 
@@ -3244,20 +3067,17 @@ ifndef __ICategoryProvider_INTERFACE_DEFINED__
 __ICategoryProvider_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_ICategoryProvider:IID
-ICategoryProviderVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	CanCategorizeOnSCID, :ptr
-	STDMETHOD	GetDefaultCategory, :ptr, :ptr
-	STDMETHOD	GetCategoryForSCID, :ptr, :ptr
-	STDMETHOD	EnumCategories, :ptr
-	STDMETHOD	GetCategoryName, :ptr, :LPWSTR, :UINT
-	STDMETHOD	CreateCategory, :ptr, :REFIID, :ptr
-ICategoryProviderVtbl ends
-ICategoryProvider struct
-	lpVtbl		PVOID ?
-ICategoryProvider ends
+.comdef ICategoryProvider
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    CanCategorizeOnSCID proc :ptr
+    GetDefaultCategory	proc :ptr, :ptr
+    GetCategoryForSCID	proc :ptr, :ptr
+    EnumCategories	proc :ptr
+    GetCategoryName	proc :ptr, :LPWSTR, :UINT
+    CreateCategory	proc :ptr, :REFIID, :ptr
+    .ends
 
 endif
 
@@ -3289,18 +3109,15 @@ ifndef __ICategorizer_INTERFACE_DEFINED__
 __ICategorizer_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_ICategorizer:IID
-ICategorizerVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetDescription, :LPWSTR, :UINT
-	STDMETHOD	GetCategory, :UINT, :PCUITEMID_CHILD_ARRAY, :ptr
-	STDMETHOD	GetCategoryInfo, :DWORD, :ptr
-	STDMETHOD	CompareCategory, :CATSORT_FLAGS, :DWORD, :DWORD
-ICategorizerVtbl ends
-ICategorizer struct
-	lpVtbl		PVOID ?
-ICategorizer ends
+.comdef ICategorizer
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetDescription	proc :LPWSTR, :UINT
+    GetCategory		proc :UINT, :PCUITEMID_CHILD_ARRAY, :ptr
+    GetCategoryInfo	proc :DWORD, :ptr
+    CompareCategory	proc :CATSORT_FLAGS, :DWORD, :DWORD
+    .ends
 
 endif
 
@@ -3326,19 +3143,16 @@ ifndef __IDropTargetHelper_INTERFACE_DEFINED__
 __IDropTargetHelper_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IDropTargetHelper:IID
-IDropTargetHelperVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	DragEnter, :HWND, :ptr, :ptr, :DWORD
-	STDMETHOD	DragLeave
-	STDMETHOD	DragOver, :ptr, :DWORD
-	STDMETHOD	Drop, :ptr, :ptr, :DWORD
-	STDMETHOD	Show, :BOOL
-IDropTargetHelperVtbl ends
-IDropTargetHelper struct
-	lpVtbl		PVOID ?
-IDropTargetHelper ends
+.comdef IDropTargetHelper
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    DragEnter		proc :HWND, :ptr, :ptr, :DWORD
+    DragLeave		proc
+    DragOver		proc :ptr, :DWORD
+    Drop		proc :ptr, :ptr, :DWORD
+    Show		proc :BOOL
+    .ends
 
 endif
 
@@ -3346,16 +3160,13 @@ ifndef __IDragSourceHelper_INTERFACE_DEFINED__
 __IDragSourceHelper_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IDragSourceHelper:IID
-IDragSourceHelperVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	InitializeFromBitmap, :LPSHDRAGIMAGE, :ptr
-	STDMETHOD	InitializeFromWindow, :HWND, :ptr, :ptr
-IDragSourceHelperVtbl ends
-IDragSourceHelper struct
-	lpVtbl		PVOID ?
-IDragSourceHelper ends
+.comdef IDragSourceHelper
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    InitializeFromBitmap proc :LPSHDRAGIMAGE, :ptr
+    InitializeFromWindow proc :HWND, :ptr, :ptr
+    .ends
 
 endif
 
@@ -3372,17 +3183,14 @@ ifndef __IDragSourceHelper2_INTERFACE_DEFINED__
 __IDragSourceHelper2_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IDragSourceHelper2:IID
-IDragSourceHelper2Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	InitializeFromBitmap, :LPSHDRAGIMAGE, :ptr
-	STDMETHOD	InitializeFromWindow, :HWND, :ptr, :ptr
-	STDMETHOD	SetFlags, :DWORD
-IDragSourceHelper2Vtbl ends
-IDragSourceHelper2 struct
-	lpVtbl		PVOID ?
-IDragSourceHelper2 ends
+.comdef IDragSourceHelper2
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    InitializeFromBitmap proc :LPSHDRAGIMAGE, :ptr
+    InitializeFromWindow proc :HWND, :ptr, :ptr
+    SetFlags		proc :DWORD
+    .ends
 
 endif
 endif
@@ -3424,32 +3232,29 @@ ifndef __IShellLinkA_INTERFACE_DEFINED__
 __IShellLinkA_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IShellLinkA:IID
-IShellLinkAVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetPath, :LPSTR, :SINT, :ptr, :DWORD
-	STDMETHOD	GetIDList, :ptr
-	STDMETHOD	SetIDList, :PCIDLIST_ABSOLUTE
-	STDMETHOD	GetDescription, :LPSTR, :SINT
-	STDMETHOD	SetDescription, :LPCSTR
-	STDMETHOD	GetWorkingDirectory, :LPSTR, :SINT
-	STDMETHOD	SetWorkingDirectory, :LPCSTR
-	STDMETHOD	GetArguments, :LPSTR, :SINT
-	STDMETHOD	SetArguments, :LPCSTR
-	STDMETHOD	GetHotkey, :ptr
-	STDMETHOD	SetHotkey, :WORD
-	STDMETHOD	GetShowCmd, :ptr
-	STDMETHOD	SetShowCmd, :SINT
-	STDMETHOD	GetIconLocation, :LPSTR, :SINT, :ptr
-	STDMETHOD	SetIconLocation, :LPCSTR, :SINT
-	STDMETHOD	SetRelativePath, :LPCSTR, :DWORD
-	STDMETHOD	Resolve, :HWND, :DWORD
-	STDMETHOD	SetPath, :LPCSTR
-IShellLinkAVtbl ends
-IShellLinkA struct
-	lpVtbl		PVOID ?
-IShellLinkA ends
+.comdef IShellLinkA
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetPath		proc :LPSTR, :SINT, :ptr, :DWORD
+    GetIDList		proc :ptr
+    SetIDList		proc :PCIDLIST_ABSOLUTE
+    GetDescription	proc :LPSTR, :SINT
+    SetDescription	proc :LPCSTR
+    GetWorkingDirectory proc :LPSTR, :SINT
+    SetWorkingDirectory proc :LPCSTR
+    GetArguments	proc :LPSTR, :SINT
+    SetArguments	proc :LPCSTR
+    GetHotkey		proc :ptr
+    SetHotkey		proc :WORD
+    GetShowCmd		proc :ptr
+    SetShowCmd		proc :SINT
+    GetIconLocation	proc :LPSTR, :SINT, :ptr
+    SetIconLocation	proc :LPCSTR, :SINT
+    SetRelativePath	proc :LPCSTR, :DWORD
+    Resolve		proc :HWND, :DWORD
+    SetPath		proc :LPCSTR
+    .ends
 
 endif
 
@@ -3457,32 +3262,29 @@ ifndef __IShellLinkW_INTERFACE_DEFINED__
 __IShellLinkW_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IShellLinkW:IID
-IShellLinkWVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetPath, :LPWSTR, :SINT, :ptr, :DWORD
-	STDMETHOD	GetIDList, :ptr
-	STDMETHOD	SetIDList, :PCIDLIST_ABSOLUTE
-	STDMETHOD	GetDescription, :LPWSTR, :SINT
-	STDMETHOD	SetDescription, :LPCWSTR
-	STDMETHOD	GetWorkingDirectory, :LPWSTR, :SINT
-	STDMETHOD	SetWorkingDirectory, :LPCWSTR
-	STDMETHOD	GetArguments, :LPWSTR, :SINT
-	STDMETHOD	SetArguments, :LPCWSTR
-	STDMETHOD	GetHotkey, :ptr
-	STDMETHOD	SetHotkey, :WORD
-	STDMETHOD	GetShowCmd, :ptr
-	STDMETHOD	SetShowCmd, :SINT
-	STDMETHOD	GetIconLocation, :LPWSTR, :SINT, :ptr
-	STDMETHOD	SetIconLocation, :LPCWSTR, :SINT
-	STDMETHOD	SetRelativePath, :LPCWSTR, :DWORD
-	STDMETHOD	Resolve, :HWND, :DWORD
-	STDMETHOD	SetPath, :LPCWSTR
-IShellLinkWVtbl ends
-IShellLinkW struct
-	lpVtbl		PVOID ?
-IShellLinkW ends
+.comdef IShellLinkW
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetPath		proc :LPWSTR, :SINT, :ptr, :DWORD
+    GetIDList		proc :ptr
+    SetIDList		proc :PCIDLIST_ABSOLUTE
+    GetDescription	proc :LPWSTR, :SINT
+    SetDescription	proc :LPCWSTR
+    GetWorkingDirectory proc :LPWSTR, :SINT
+    SetWorkingDirectory proc :LPCWSTR
+    GetArguments	proc :LPWSTR, :SINT
+    SetArguments	proc :LPCWSTR
+    GetHotkey		proc :ptr
+    SetHotkey		proc :WORD
+    GetShowCmd		proc :ptr
+    SetShowCmd		proc :SINT
+    GetIconLocation	proc :LPWSTR, :SINT, :ptr
+    SetIconLocation	proc :LPCWSTR, :SINT
+    SetRelativePath	proc :LPCWSTR, :DWORD
+    Resolve		proc :HWND, :DWORD
+    SetPath		proc :LPCWSTR
+    .ends
 
 endif
 
@@ -3490,19 +3292,16 @@ ifndef __IShellLinkDataList_INTERFACE_DEFINED__
 __IShellLinkDataList_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IShellLinkDataList:IID
-IShellLinkDataListVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	AddDataBlock, :ptr
-	STDMETHOD	CopyDataBlock, :DWORD, :ptr
-	STDMETHOD	RemoveDataBlock, :DWORD
-	STDMETHOD	GetFlags, :ptr
-	STDMETHOD	SetFlags, :DWORD
-IShellLinkDataListVtbl ends
-IShellLinkDataList struct
-	lpVtbl		PVOID ?
-IShellLinkDataList ends
+.comdef IShellLinkDataList
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    AddDataBlock	proc :ptr
+    CopyDataBlock	proc :DWORD, :ptr
+    RemoveDataBlock	proc :DWORD
+    GetFlags		proc :ptr
+    SetFlags		proc :DWORD
+    .ends
 
 endif
 
@@ -3515,15 +3314,12 @@ ifndef __IResolveShellLink_INTERFACE_DEFINED__
 __IResolveShellLink_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IResolveShellLink:IID
-IResolveShellLinkVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	ResolveShellLink, :ptr, :HWND, :DWORD
-IResolveShellLinkVtbl ends
-IResolveShellLink struct
-	lpVtbl		PVOID ?
-IResolveShellLink ends
+.comdef IResolveShellLink
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    ResolveShellLink	proc :ptr, :HWND, :DWORD
+    .ends
 
 endif
 endif
@@ -3540,16 +3336,13 @@ SPINITF_NOMINIMIZE	equ 0x8
 SPINITF			typedef DWORD
 
 externdef		IID_IActionProgressDialog:IID
-IActionProgressDialogVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Initialize, :SPINITF, :LPCWSTR, :LPCWSTR
-	STDMETHOD	Stop
-IActionProgressDialogVtbl ends
-IActionProgressDialog struct
-	lpVtbl		PVOID ?
-IActionProgressDialog ends
+.comdef IActionProgressDialog
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Initialize		proc :SPINITF, :LPCWSTR, :LPCWSTR
+    Stop		proc
+    .ends
 
 endif
 
@@ -3557,17 +3350,14 @@ ifndef __IHWEventHandler_INTERFACE_DEFINED__
 __IHWEventHandler_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IHWEventHandler:IID
-IHWEventHandlerVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Initialize, :LPCWSTR
-	STDMETHOD	HandleEvent, :LPCWSTR, :LPCWSTR, :LPCWSTR
-	STDMETHOD	HandleEventWithContent, :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPCWSTR, :ptr
-IHWEventHandlerVtbl ends
-IHWEventHandler struct
-	lpVtbl		PVOID ?
-IHWEventHandler ends
+.comdef IHWEventHandler
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Initialize		proc :LPCWSTR
+    HandleEvent		proc :LPCWSTR, :LPCWSTR, :LPCWSTR
+    HandleEventWithContent proc :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPCWSTR, :ptr
+    .ends
 
 endif
 
@@ -3575,18 +3365,15 @@ ifndef __IHWEventHandler2_INTERFACE_DEFINED__
 __IHWEventHandler2_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IHWEventHandler2:IID
-IHWEventHandler2Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Initialize, :LPCWSTR
-	STDMETHOD	HandleEvent, :LPCWSTR, :LPCWSTR, :LPCWSTR
-	STDMETHOD	HandleEventWithContent, :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPCWSTR, :ptr
-	STDMETHOD	HandleEventWithHWND, :LPCWSTR, :LPCWSTR, :LPCWSTR, :HWND
-IHWEventHandler2Vtbl ends
-IHWEventHandler2 struct
-	lpVtbl		PVOID ?
-IHWEventHandler2 ends
+.comdef IHWEventHandler2
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Initialize		proc :LPCWSTR
+    HandleEvent		proc :LPCWSTR, :LPCWSTR, :LPCWSTR
+    HandleEventWithContent proc :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPCWSTR, :ptr
+    HandleEventWithHWND proc :LPCWSTR, :LPCWSTR, :LPCWSTR, :HWND
+    .ends
 
 endif
 
@@ -3621,15 +3408,12 @@ ifndef __IQueryCancelAutoPlay_INTERFACE_DEFINED__
 __IQueryCancelAutoPlay_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IQueryCancelAutoPlay:IID
-IQueryCancelAutoPlayVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	AllowAutoPlay, :LPCWSTR, :DWORD, :LPCWSTR, :DWORD
-IQueryCancelAutoPlayVtbl ends
-IQueryCancelAutoPlay struct
-	lpVtbl		PVOID ?
-IQueryCancelAutoPlay ends
+.comdef IQueryCancelAutoPlay
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    AllowAutoPlay	proc :LPCWSTR, :DWORD, :LPCWSTR, :DWORD
+    .ends
 
 endif
 
@@ -3642,15 +3426,12 @@ ifndef __IDynamicHWHandler_INTERFACE_DEFINED__
 __IDynamicHWHandler_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IDynamicHWHandler:IID
-IDynamicHWHandlerVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetDynamicInfo, :LPCWSTR, :DWORD, :ptr
-IDynamicHWHandlerVtbl ends
-IDynamicHWHandler struct
-	lpVtbl		PVOID ?
-IDynamicHWHandler ends
+.comdef IDynamicHWHandler
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetDynamicInfo	proc :LPCWSTR, :DWORD, :ptr
+    .ends
 
 endif
 endif
@@ -3689,20 +3470,17 @@ SPTEXT_ACTIONDESCRIPTION equ 1
 SPTEXT_ACTIONDETAIL	equ ( SPTEXT_ACTIONDESCRIPTION + 1 )
 
 externdef		IID_IActionProgress:IID
-IActionProgressVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Begin, :SPACTION, :SPBEGINF
-	STDMETHOD	UpdateProgress, :ULONGLONG, :ULONGLONG
-	STDMETHOD	UpdateText, :SPTEXT, :LPCWSTR, :BOOL
-	STDMETHOD	QueryCancel, :ptr
-	STDMETHOD	ResetCancel
-	STDMETHOD	_End
-IActionProgressVtbl ends
-IActionProgress struct
-	lpVtbl		PVOID ?
-IActionProgress ends
+.comdef IActionProgress
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Begin		proc :SPACTION, :SPBEGINF
+    UpdateProgress	proc :ULONGLONG, :ULONGLONG
+    UpdateText		proc :SPTEXT, :LPCWSTR, :BOOL
+    QueryCancel		proc :ptr
+    ResetCancel		proc
+    _End		proc
+    .ends
 
 endif
 
@@ -3710,15 +3488,12 @@ ifndef __IShellExtInit_INTERFACE_DEFINED__
 __IShellExtInit_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IShellExtInit:IID
-IShellExtInitVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Initialize, :PCIDLIST_ABSOLUTE, :ptr, :HKEY
-IShellExtInitVtbl ends
-IShellExtInit struct
-	lpVtbl		PVOID ?
-IShellExtInit ends
+.comdef IShellExtInit
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Initialize		proc :PCIDLIST_ABSOLUTE, :ptr, :HKEY
+    .ends
 
 endif
 
@@ -3734,16 +3509,13 @@ EXPPS_FILETYPES		equ 0x1
 EXPPS			typedef UINT
 
 externdef		IID_IShellPropSheetExt:IID
-IShellPropSheetExtVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	AddPages, :LPFNSVADDPROPSHEETPAGE, :LPARAM
-	STDMETHOD	ReplacePage, :EXPPS, :LPFNSVADDPROPSHEETPAGE, :LPARAM
-IShellPropSheetExtVtbl ends
-IShellPropSheetExt struct
-	lpVtbl		PVOID ?
-IShellPropSheetExt ends
+.comdef IShellPropSheetExt
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    AddPages		proc :LPFNSVADDPROPSHEETPAGE, :LPARAM
+    ReplacePage		proc :EXPPS, :LPFNSVADDPROPSHEETPAGE, :LPARAM
+    .ends
 
 endif
 
@@ -3756,15 +3528,12 @@ ifndef __IRemoteComputer_INTERFACE_DEFINED__
 __IRemoteComputer_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IRemoteComputer:IID
-IRemoteComputerVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Initialize, :LPCWSTR, :BOOL
-IRemoteComputerVtbl ends
-IRemoteComputer struct
-	lpVtbl		PVOID ?
-IRemoteComputer ends
+.comdef IRemoteComputer
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Initialize		proc :LPCWSTR, :BOOL
+    .ends
 
 endif
 
@@ -3772,15 +3541,12 @@ ifndef __IQueryContinue_INTERFACE_DEFINED__
 __IQueryContinue_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IQueryContinue:IID
-IQueryContinueVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	QueryContinue
-IQueryContinueVtbl ends
-IQueryContinue struct
-	lpVtbl		PVOID ?
-IQueryContinue ends
+.comdef IQueryContinue
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    QueryContinue	proc
+    .ends
 
 endif
 
@@ -3788,15 +3554,12 @@ ifndef __IObjectWithCancelEvent_INTERFACE_DEFINED__
 __IObjectWithCancelEvent_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IObjectWithCancelEvent:IID
-IObjectWithCancelEventVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetCancelEvent, :ptr
-IObjectWithCancelEventVtbl ends
-IObjectWithCancelEvent struct
-	lpVtbl		PVOID ?
-IObjectWithCancelEvent ends
+.comdef IObjectWithCancelEvent
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetCancelEvent	proc :ptr
+    .ends
 
 endif
 
@@ -3804,19 +3567,16 @@ ifndef __IUserNotification_INTERFACE_DEFINED__
 __IUserNotification_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IUserNotification:IID
-IUserNotificationVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetBalloonInfo, :LPCWSTR, :LPCWSTR, :DWORD
-	STDMETHOD	SetBalloonRetry, :DWORD, :DWORD, :UINT
-	STDMETHOD	SetIconInfo, :HICON, :LPCWSTR
-	STDMETHOD	Show, :ptr, :DWORD
-	STDMETHOD	PlaySound, :LPCWSTR
-IUserNotificationVtbl ends
-IUserNotification struct
-	lpVtbl		PVOID ?
-IUserNotification ends
+.comdef IUserNotification
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetBalloonInfo	proc :LPCWSTR, :LPCWSTR, :DWORD
+    SetBalloonRetry	proc :DWORD, :DWORD, :UINT
+    SetIconInfo		proc :HICON, :LPCWSTR
+    Show		proc :ptr, :DWORD
+    PlaySound		proc :LPCWSTR
+    .ends
 
 endif
 
@@ -3824,17 +3584,14 @@ ifndef __IUserNotificationCallback_INTERFACE_DEFINED__
 __IUserNotificationCallback_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IUserNotificationCallback:IID
-IUserNotificationCallbackVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	OnBalloonUserClick, :ptr
-	STDMETHOD	OnLeftClick, :ptr
-	STDMETHOD	OnContextMenu, :ptr
-IUserNotificationCallbackVtbl ends
-IUserNotificationCallback struct
-	lpVtbl		PVOID ?
-IUserNotificationCallback ends
+.comdef IUserNotificationCallback
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    OnBalloonUserClick	proc :ptr
+    OnLeftClick		proc :ptr
+    OnContextMenu	proc :ptr
+    .ends
 
 endif
 
@@ -3842,19 +3599,16 @@ ifndef __IUserNotification2_INTERFACE_DEFINED__
 __IUserNotification2_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IUserNotification2:IID
-IUserNotification2Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetBalloonInfo, :LPCWSTR, :LPCWSTR, :DWORD
-	STDMETHOD	SetBalloonRetry, :DWORD, :DWORD, :UINT
-	STDMETHOD	SetIconInfo, :HICON, :LPCWSTR
-	STDMETHOD	Show, :ptr, :DWORD, :ptr
-	STDMETHOD	PlaySound, :LPCWSTR
-IUserNotification2Vtbl ends
-IUserNotification2 struct
-	lpVtbl		PVOID ?
-IUserNotification2 ends
+.comdef IUserNotification2
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetBalloonInfo	proc :LPCWSTR, :LPCWSTR, :DWORD
+    SetBalloonRetry	proc :DWORD, :DWORD, :UINT
+    SetIconInfo		proc :HICON, :LPCWSTR
+    Show		proc :ptr, :DWORD, :ptr
+    PlaySound		proc :LPCWSTR
+    .ends
 
 endif
 
@@ -3862,16 +3616,13 @@ ifndef __IItemNameLimits_INTERFACE_DEFINED__
 __IItemNameLimits_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IItemNameLimits:IID
-IItemNameLimitsVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetValidCharacters, :ptr, :ptr
-	STDMETHOD	GetMaxLength, :LPCWSTR, :ptr
-IItemNameLimitsVtbl ends
-IItemNameLimits struct
-	lpVtbl		PVOID ?
-IItemNameLimits ends
+.comdef IItemNameLimits
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetValidCharacters	proc :ptr, :ptr
+    GetMaxLength	proc :LPCWSTR, :ptr
+    .ends
 
 endif
 
@@ -3884,26 +3635,23 @@ ifndef __ISearchFolderItemFactory_INTERFACE_DEFINED__
 __ISearchFolderItemFactory_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_ISearchFolderItemFactory:IID
-ISearchFolderItemFactoryVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetDisplayName, :LPCWSTR
-	STDMETHOD	SetFolderTypeID, :FOLDERTYPEID
-	STDMETHOD	SetFolderLogicalViewMode, :FOLDERLOGICALVIEWMODE
-	STDMETHOD	SetIconSize, :SINT
-	STDMETHOD	SetVisibleColumns, :UINT, :ptr
-	STDMETHOD	SetSortColumns, :UINT, :ptr
-	STDMETHOD	SetGroupColumn, :REFPROPERTYKEY
-	STDMETHOD	SetStacks, :UINT, :ptr
-	STDMETHOD	SetScope, :ptr
-	STDMETHOD	SetCondition, :ptr
-	STDMETHOD	GetShellItem, :REFIID, :ptr
-	STDMETHOD	GetIDList, :ptr
-ISearchFolderItemFactoryVtbl ends
-ISearchFolderItemFactory struct
-	lpVtbl		PVOID ?
-ISearchFolderItemFactory ends
+.comdef ISearchFolderItemFactory
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetDisplayName	proc :LPCWSTR
+    SetFolderTypeID	proc :FOLDERTYPEID
+    SetFolderLogicalViewMode proc :FOLDERLOGICALVIEWMODE
+    SetIconSize		proc :SINT
+    SetVisibleColumns	proc :UINT, :ptr
+    SetSortColumns	proc :UINT, :ptr
+    SetGroupColumn	proc :REFPROPERTYKEY
+    SetStacks		proc :UINT, :ptr
+    SetScope		proc :ptr
+    SetCondition	proc :ptr
+    GetShellItem	proc :REFIID, :ptr
+    GetIDList		proc :ptr
+    .ends
 
 endif
 endif
@@ -3931,16 +3679,13 @@ ifndef __IExtractImage_INTERFACE_DEFINED__
 __IExtractImage_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IExtractImage:IID
-IExtractImageVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetLocation, :LPWSTR, :DWORD, :ptr, :ptr, :DWORD, :ptr
-	STDMETHOD	Extract, :ptr
-IExtractImageVtbl ends
-IExtractImage struct
-	lpVtbl		PVOID ?
-IExtractImage ends
+.comdef IExtractImage
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetLocation		proc :LPWSTR, :DWORD, :ptr, :ptr, :DWORD, :ptr
+    Extract		proc :ptr
+    .ends
 
 endif
 
@@ -3956,17 +3701,14 @@ ifndef __IExtractImage2_INTERFACE_DEFINED__
 __IExtractImage2_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IExtractImage2:IID
-IExtractImage2Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetLocation, :LPWSTR, :DWORD, :ptr, :ptr, :DWORD, :ptr
-	STDMETHOD	Extract, :ptr
-	STDMETHOD	GetDateStamp, :ptr
-IExtractImage2Vtbl ends
-IExtractImage2 struct
-	lpVtbl		PVOID ?
-IExtractImage2 ends
+.comdef IExtractImage2
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetLocation		proc :LPWSTR, :DWORD, :ptr, :ptr, :DWORD, :ptr
+    Extract		proc :ptr
+    GetDateStamp	proc :ptr
+    .ends
 
 endif
 
@@ -3979,15 +3721,12 @@ ifndef __IThumbnailHandlerFactory_INTERFACE_DEFINED__
 __IThumbnailHandlerFactory_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IThumbnailHandlerFactory:IID
-IThumbnailHandlerFactoryVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetThumbnailHandler, :PCUITEMID_CHILD, :ptr, :REFIID, :ptr
-IThumbnailHandlerFactoryVtbl ends
-IThumbnailHandlerFactory struct
-	lpVtbl		PVOID ?
-IThumbnailHandlerFactory ends
+.comdef IThumbnailHandlerFactory
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetThumbnailHandler proc :PCUITEMID_CHILD, :ptr, :REFIID, :ptr
+    .ends
 
 endif
 
@@ -3995,18 +3734,15 @@ ifndef __IParentAndItem_INTERFACE_DEFINED__
 __IParentAndItem_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IParentAndItem:IID
-IParentAndItemVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetParentAndItem, :PCIDLIST_ABSOLUTE, :ptr, :PCUITEMID_CHILD
-	STDMETHOD	GetParentAndItem, :ptr, :ptr, :ptr
-IParentAndItemVtbl ends
-IParentAndItem struct
-	lpVtbl		PVOID ?
-IParentAndItem ends
+.comdef IParentAndItem
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetParentAndItem	proc :PCIDLIST_ABSOLUTE, :ptr, :PCUITEMID_CHILD
+    GetParentAndItem	proc :ptr, :ptr, :ptr
+    .ends
 
-;STDMETHODCALLTYPE
+;CALLTYPE
 IParentAndItem_RemoteGetParentAndItem_Proxy proto WINAPI \
 		 _This: ptr IParentAndItem,
 	   ppidlParent: ptr PIDLIST_ABSOLUTE,
@@ -4030,19 +3766,16 @@ ifndef __IDockingWindow_INTERFACE_DEFINED__
 __IDockingWindow_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IDockingWindow:IID
-IDockingWindowVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetWindow, :ptr
-	STDMETHOD	ContextSensitiveHelp, :BOOL
-	STDMETHOD	ShowDW, :BOOL
-	STDMETHOD	CloseDW, :DWORD
-	STDMETHOD	ResizeBorderDW, :LPCRECT, :ptr, :BOOL
-IDockingWindowVtbl ends
-IDockingWindow struct
-	lpVtbl		PVOID ?
-IDockingWindow ends
+.comdef IDockingWindow
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetWindow		proc :ptr
+    ContextSensitiveHelp proc :BOOL
+    ShowDW		proc :BOOL
+    CloseDW		proc :DWORD
+    ResizeBorderDW	proc :LPCRECT, :ptr, :BOOL
+    .ends
 
 endif
 
@@ -4108,20 +3841,17 @@ ifndef __IDeskBand_INTERFACE_DEFINED__
 __IDeskBand_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IDeskBand:IID
-IDeskBandVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetWindow, :ptr
-	STDMETHOD	ContextSensitiveHelp, :BOOL
-	STDMETHOD	ShowDW, :BOOL
-	STDMETHOD	CloseDW, :DWORD
-	STDMETHOD	ResizeBorderDW, :LPCRECT, :ptr, :BOOL
-	STDMETHOD	GetBandInfo, :DWORD, :DWORD, :ptr
-IDeskBandVtbl ends
-IDeskBand struct
-	lpVtbl		PVOID ?
-IDeskBand ends
+.comdef IDeskBand
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetWindow		proc :ptr
+    ContextSensitiveHelp proc :BOOL
+    ShowDW		proc :BOOL
+    CloseDW		proc :DWORD
+    ResizeBorderDW	proc :LPCRECT, :ptr, :BOOL
+    GetBandInfo		proc :DWORD, :DWORD, :ptr
+    .ends
 
 endif
 
@@ -4134,15 +3864,12 @@ ifndef __IDeskBandInfo_INTERFACE_DEFINED__
 __IDeskBandInfo_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IDeskBandInfo:IID
-IDeskBandInfoVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetDefaultBandWidth, :DWORD, :DWORD, :ptr
-IDeskBandInfoVtbl ends
-IDeskBandInfo struct
-	lpVtbl		PVOID ?
-IDeskBandInfo ends
+.comdef IDeskBandInfo
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetDefaultBandWidth proc :DWORD, :DWORD, :ptr
+    .ends
 
 endif
 
@@ -4150,23 +3877,20 @@ ifndef __IDeskBand2_INTERFACE_DEFINED__
 __IDeskBand2_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IDeskBand2:IID
-IDeskBand2Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetWindow, :ptr
-	STDMETHOD	ContextSensitiveHelp, :BOOL
-	STDMETHOD	ShowDW, :BOOL
-	STDMETHOD	CloseDW, :DWORD
-	STDMETHOD	ResizeBorderDW, :LPCRECT, :ptr, :BOOL
-	STDMETHOD	GetBandInfo, :DWORD, :DWORD, :ptr
-	STDMETHOD	CanRenderComposited, :ptr
-	STDMETHOD	SetCompositionState, :BOOL
-	STDMETHOD	GetCompositionState, :ptr
-IDeskBand2Vtbl ends
-IDeskBand2 struct
-	lpVtbl		PVOID ?
-IDeskBand2 ends
+.comdef IDeskBand2
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetWindow		proc :ptr
+    ContextSensitiveHelp proc :BOOL
+    ShowDW		proc :BOOL
+    CloseDW		proc :DWORD
+    ResizeBorderDW	proc :LPCRECT, :ptr, :BOOL
+    GetBandInfo		proc :DWORD, :DWORD, :ptr
+    CanRenderComposited proc :ptr
+    SetCompositionState proc :BOOL
+    GetCompositionState proc :ptr
+    .ends
 
 endif
 endif
@@ -4178,19 +3902,16 @@ ifndef __ITaskbarList_INTERFACE_DEFINED__
 __ITaskbarList_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_ITaskbarList:IID
-ITaskbarListVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	HrInit
-	STDMETHOD	AddTab, :HWND
-	STDMETHOD	DeleteTab, :HWND
-	STDMETHOD	ActivateTab, :HWND
-	STDMETHOD	SetActiveAlt, :HWND
-ITaskbarListVtbl ends
-ITaskbarList struct
-	lpVtbl		PVOID ?
-ITaskbarList ends
+.comdef ITaskbarList
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    HrInit		proc
+    AddTab		proc :HWND
+    DeleteTab		proc :HWND
+    ActivateTab		proc :HWND
+    SetActiveAlt	proc :HWND
+    .ends
 
 endif
 
@@ -4198,20 +3919,17 @@ ifndef __ITaskbarList2_INTERFACE_DEFINED__
 __ITaskbarList2_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_ITaskbarList2:IID
-ITaskbarList2Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	HrInit
-	STDMETHOD	AddTab, :HWND
-	STDMETHOD	DeleteTab, :HWND
-	STDMETHOD	ActivateTab, :HWND
-	STDMETHOD	SetActiveAlt, :HWND
-	STDMETHOD	MarkFullscreenWindow, :HWND, :BOOL
-ITaskbarList2Vtbl ends
-ITaskbarList2 struct
-	lpVtbl		PVOID ?
-ITaskbarList2 ends
+.comdef ITaskbarList2
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    HrInit		proc
+    AddTab		proc :HWND
+    DeleteTab		proc :HWND
+    ActivateTab		proc :HWND
+    SetActiveAlt	proc :HWND
+    MarkFullscreenWindow proc :HWND, :BOOL
+    .ends
 
 endif
 
@@ -4266,32 +3984,29 @@ TBPF_PAUSED		equ 0x8
 DEFINE_ENUM_FLAG_OPERATORS(TBPFLAG)
 
 externdef		IID_ITaskbarList3:IID
-ITaskbarList3Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	HrInit
-	STDMETHOD	AddTab, :HWND
-	STDMETHOD	DeleteTab, :HWND
-	STDMETHOD	ActivateTab, :HWND
-	STDMETHOD	SetActiveAlt, :HWND
-	STDMETHOD	MarkFullscreenWindow, :HWND, :BOOL
-	STDMETHOD	SetProgressValue, :HWND, :ULONGLONG, :ULONGLONG
-	STDMETHOD	SetProgressState, :HWND, :TBPFLAG
-	STDMETHOD	RegisterTab, :HWND, :HWND
-	STDMETHOD	UnregisterTab, :HWND
-	STDMETHOD	SetTabOrder, :HWND, :HWND
-	STDMETHOD	SetTabActive, :HWND, :HWND, :DWORD
-	STDMETHOD	ThumbBarAddButtons, :HWND, :UINT, :LPTHUMBBUTTON
-	STDMETHOD	ThumbBarUpdateButtons, :HWND, :UINT, :LPTHUMBBUTTON
-	STDMETHOD	ThumbBarSetImageList, :HWND, :HIMAGELIST
-	STDMETHOD	SetOverlayIcon, :HWND, :HICON, :LPCWSTR
-	STDMETHOD	SetThumbnailTooltip, :HWND, :LPCWSTR
-	STDMETHOD	SetThumbnailClip, :HWND, :ptr
-ITaskbarList3Vtbl ends
-ITaskbarList3 struct
-	lpVtbl		PVOID ?
-ITaskbarList3 ends
+.comdef ITaskbarList3
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    HrInit		proc
+    AddTab		proc :HWND
+    DeleteTab		proc :HWND
+    ActivateTab		proc :HWND
+    SetActiveAlt	proc :HWND
+    MarkFullscreenWindow proc :HWND, :BOOL
+    SetProgressValue	proc :HWND, :ULONGLONG, :ULONGLONG
+    SetProgressState	proc :HWND, :TBPFLAG
+    RegisterTab		proc :HWND, :HWND
+    UnregisterTab	proc :HWND
+    SetTabOrder		proc :HWND, :HWND
+    SetTabActive	proc :HWND, :HWND, :DWORD
+    ThumbBarAddButtons	proc :HWND, :UINT, :LPTHUMBBUTTON
+    ThumbBarUpdateButtons proc :HWND, :UINT, :LPTHUMBBUTTON
+    ThumbBarSetImageList proc :HWND, :HIMAGELIST
+    SetOverlayIcon	proc :HWND, :HICON, :LPCWSTR
+    SetThumbnailTooltip proc :HWND, :LPCWSTR
+    SetThumbnailClip	proc :HWND, :ptr
+    .ends
 
 endif
 
@@ -4308,33 +4023,30 @@ STPF_USEAPPPEEKWHENACTIVE equ 0x8
 DEFINE_ENUM_FLAG_OPERATORS(STPFLAG)
 
 externdef		IID_ITaskbarList4:IID
-ITaskbarList4Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	HrInit
-	STDMETHOD	AddTab, :HWND
-	STDMETHOD	DeleteTab, :HWND
-	STDMETHOD	ActivateTab, :HWND
-	STDMETHOD	SetActiveAlt, :HWND
-	STDMETHOD	MarkFullscreenWindow, :HWND, :BOOL
-	STDMETHOD	SetProgressValue, :HWND, :ULONGLONG, :ULONGLONG
-	STDMETHOD	SetProgressState, :HWND, :TBPFLAG
-	STDMETHOD	RegisterTab, :HWND, :HWND
-	STDMETHOD	UnregisterTab, :HWND
-	STDMETHOD	SetTabOrder, :HWND, :HWND
-	STDMETHOD	SetTabActive, :HWND, :HWND, :DWORD
-	STDMETHOD	ThumbBarAddButtons, :HWND, :UINT, :LPTHUMBBUTTON
-	STDMETHOD	ThumbBarUpdateButtons, :HWND, :UINT, :LPTHUMBBUTTON
-	STDMETHOD	ThumbBarSetImageList, :HWND, :HIMAGELIST
-	STDMETHOD	SetOverlayIcon, :HWND, :HICON, :LPCWSTR
-	STDMETHOD	SetThumbnailTooltip, :HWND, :LPCWSTR
-	STDMETHOD	SetThumbnailClip, :HWND, :ptr
-	STDMETHOD	SetTabProperties, :HWND, :STPFLAG
-ITaskbarList4Vtbl ends
-ITaskbarList4 struct
-	lpVtbl		PVOID ?
-ITaskbarList4 ends
+.comdef ITaskbarList4
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    HrInit		proc
+    AddTab		proc :HWND
+    DeleteTab		proc :HWND
+    ActivateTab		proc :HWND
+    SetActiveAlt	proc :HWND
+    MarkFullscreenWindow proc :HWND, :BOOL
+    SetProgressValue	proc :HWND, :ULONGLONG, :ULONGLONG
+    SetProgressState	proc :HWND, :TBPFLAG
+    RegisterTab		proc :HWND, :HWND
+    UnregisterTab	proc :HWND
+    SetTabOrder		proc :HWND, :HWND
+    SetTabActive	proc :HWND, :HWND, :DWORD
+    ThumbBarAddButtons	proc :HWND, :UINT, :LPTHUMBBUTTON
+    ThumbBarUpdateButtons proc :HWND, :UINT, :LPTHUMBBUTTON
+    ThumbBarSetImageList proc :HWND, :HIMAGELIST
+    SetOverlayIcon	proc :HWND, :HICON, :LPCWSTR
+    SetThumbnailTooltip proc :HWND, :LPCWSTR
+    SetThumbnailClip	proc :HWND, :ptr
+    SetTabProperties	proc :HWND, :STPFLAG
+    .ends
 
 endif
 
@@ -4342,15 +4054,12 @@ ifndef __IStartMenuPinnedList_INTERFACE_DEFINED__
 __IStartMenuPinnedList_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IStartMenuPinnedList:IID
-IStartMenuPinnedListVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	RemoveFromList, :ptr
-IStartMenuPinnedListVtbl ends
-IStartMenuPinnedList struct
-	lpVtbl		PVOID ?
-IStartMenuPinnedList ends
+.comdef IStartMenuPinnedList
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    RemoveFromList	proc :ptr
+    .ends
 
 endif
 
@@ -4358,17 +4067,14 @@ ifndef __ICDBurn_INTERFACE_DEFINED__
 __ICDBurn_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_ICDBurn:IID
-ICDBurnVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetRecorderDriveLetter, :LPWSTR, :UINT
-	STDMETHOD	Burn, :HWND
-	STDMETHOD	HasRecordableDrive, :ptr
-ICDBurnVtbl ends
-ICDBurn struct
-	lpVtbl		PVOID ?
-ICDBurn ends
+.comdef ICDBurn
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetRecorderDriveLetter proc :LPWSTR, :UINT
+    Burn		proc :HWND
+    HasRecordableDrive	proc :ptr
+    .ends
 
 endif
 
@@ -4384,17 +4090,14 @@ __IWizardSite_INTERFACE_DEFINED__ equ 1
 DEFINE_GUID(IID_IWizardSite, 0x88960f5b, 0x422f, 0x4e7b, 0x80,0x13, 0x73,0x41,0x53,0x81,0xc3,0xc3)
 
 externdef		IID_IWizardSite:IID
-IWizardSiteVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetPreviousPage, :ptr
-	STDMETHOD	GetNextPage, :ptr
-	STDMETHOD	GetCancelledPage, :ptr
-IWizardSiteVtbl ends
-IWizardSite struct
-	lpVtbl		PVOID ?
-IWizardSite ends
+.comdef IWizardSite
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetPreviousPage	proc :ptr
+    GetNextPage		proc :ptr
+    GetCancelledPage	proc :ptr
+    .ends
 
 endif
 
@@ -4407,17 +4110,14 @@ ifndef __IWizardExtension_INTERFACE_DEFINED__
 __IWizardExtension_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IWizardExtension:IID
-IWizardExtensionVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	AddPages, :ptr, :UINT, :ptr
-	STDMETHOD	GetFirstPage, :ptr
-	STDMETHOD	GetLastPage, :ptr
-IWizardExtensionVtbl ends
-IWizardExtension struct
-	lpVtbl		PVOID ?
-IWizardExtension ends
+.comdef IWizardExtension
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    AddPages		proc :ptr, :UINT, :ptr
+    GetFirstPage	proc :ptr
+    GetLastPage		proc :ptr
+    .ends
 
 endif
 
@@ -4428,19 +4128,16 @@ __IWebWizardExtension_INTERFACE_DEFINED__ equ 1
 DEFINE_GUID(IID_IWebWizardExtension, 0x0e6b3f66, 0x98d1, 0x48c0, 0xa2,0x22, 0xfb,0xde,0x74,0xe2,0xfb,0xc5)
 
 externdef		IID_IWebWizardExtension:IID
-IWebWizardExtensionVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	AddPages, :ptr, :UINT, :ptr
-	STDMETHOD	GetFirstPage, :ptr
-	STDMETHOD	GetLastPage, :ptr
-	STDMETHOD	SetInitialURL, :LPCWSTR
-	STDMETHOD	SetErrorURL, :LPCWSTR
-IWebWizardExtensionVtbl ends
-IWebWizardExtension struct
-	lpVtbl		PVOID ?
-IWebWizardExtension ends
+.comdef IWebWizardExtension
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    AddPages		proc :ptr, :UINT, :ptr
+    GetFirstPage	proc :ptr
+    GetLastPage		proc :ptr
+    SetInitialURL	proc :LPCWSTR
+    SetErrorURL		proc :LPCWSTR
+    .ends
 
 endif
 
@@ -4461,19 +4158,16 @@ ifndef __IPublishingWizard_INTERFACE_DEFINED__
 __IPublishingWizard_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IPublishingWizard:IID
-IPublishingWizardVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	AddPages, :ptr, :UINT, :ptr
-	STDMETHOD	GetFirstPage, :ptr
-	STDMETHOD	GetLastPage, :ptr
-	STDMETHOD	Initialize, :ptr, :DWORD, :LPCWSTR
-	STDMETHOD	GetTransferManifest, :ptr, :ptr
-IPublishingWizardVtbl ends
-IPublishingWizard struct
-	lpVtbl		PVOID ?
-IPublishingWizard ends
+.comdef IPublishingWizard
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    AddPages		proc :ptr, :UINT, :ptr
+    GetFirstPage	proc :ptr
+    GetLastPage		proc :ptr
+    Initialize		proc :ptr, :DWORD, :LPCWSTR
+    GetTransferManifest proc :ptr, :ptr
+    .ends
 
 endif
 
@@ -4489,15 +4183,12 @@ __IFolderViewHost_INTERFACE_DEFINED__ equ 1
 DEFINE_GUID(IID_IFolderViewHost, 0x1ea58f02, 0xd55a, 0x411d, 0xb0,0x9e, 0x9e,0x65,0xac,0x21,0x60,0x5b)
 
 externdef		IID_IFolderViewHost:IID
-IFolderViewHostVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Initialize, :HWND, :ptr, :ptr
-IFolderViewHostVtbl ends
-IFolderViewHost struct
-	lpVtbl		PVOID ?
-IFolderViewHost ends
+.comdef IFolderViewHost
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Initialize		proc :HWND, :ptr, :ptr
+    .ends
 
 endif
 
@@ -4510,18 +4201,15 @@ ifndef __IExplorerBrowserEvents_INTERFACE_DEFINED__
 __IExplorerBrowserEvents_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IExplorerBrowserEvents:IID
-IExplorerBrowserEventsVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	OnNavigationPending, :PCIDLIST_ABSOLUTE
-	STDMETHOD	OnViewCreated, :ptr
-	STDMETHOD	OnNavigationComplete, :PCIDLIST_ABSOLUTE
-	STDMETHOD	OnNavigationFailed, :PCIDLIST_ABSOLUTE
-IExplorerBrowserEventsVtbl ends
-IExplorerBrowserEvents struct
-	lpVtbl		PVOID ?
-IExplorerBrowserEvents ends
+.comdef IExplorerBrowserEvents
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    OnNavigationPending proc :PCIDLIST_ABSOLUTE
+    OnViewCreated	proc :ptr
+    OnNavigationComplete proc :PCIDLIST_ABSOLUTE
+    OnNavigationFailed	proc :PCIDLIST_ABSOLUTE
+    .ends
 
 endif
 
@@ -4549,29 +4237,26 @@ ifndef __IExplorerBrowser_INTERFACE_DEFINED__
 __IExplorerBrowser_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IExplorerBrowser:IID
-IExplorerBrowserVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Initialize, :HWND, :ptr, :ptr
-	STDMETHOD	Destroy
-	STDMETHOD	SetRect, :ptr, :RECT
-	STDMETHOD	SetPropertyBag, :LPCWSTR
-	STDMETHOD	SetEmptyText, :LPCWSTR
-	STDMETHOD	SetFolderSettings, :ptr
-	STDMETHOD	Advise, :ptr, :ptr
-	STDMETHOD	Unadvise, :DWORD
-	STDMETHOD	SetOptions, :EXPLORER_BROWSER_OPTIONS
-	STDMETHOD	GetOptions, :ptr
-	STDMETHOD	BrowseToIDList, :PCUIDLIST_RELATIVE, :UINT
-	STDMETHOD	BrowseToObject, :ptr, :UINT
-	STDMETHOD	FillFromObject, :ptr, :EXPLORER_BROWSER_FILL_FLAGS
-	STDMETHOD	RemoveAll
-	STDMETHOD	GetCurrentView, :REFIID, :ptr
-IExplorerBrowserVtbl ends
-IExplorerBrowser struct
-	lpVtbl		PVOID ?
-IExplorerBrowser ends
+.comdef IExplorerBrowser
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Initialize		proc :HWND, :ptr, :ptr
+    Destroy		proc
+    SetRect		proc :ptr, :RECT
+    SetPropertyBag	proc :LPCWSTR
+    SetEmptyText	proc :LPCWSTR
+    SetFolderSettings	proc :ptr
+    Advise		proc :ptr, :ptr
+    Unadvise		proc :DWORD
+    SetOptions		proc :EXPLORER_BROWSER_OPTIONS
+    GetOptions		proc :ptr
+    BrowseToIDList	proc :PCUIDLIST_RELATIVE, :UINT
+    BrowseToObject	proc :ptr, :UINT
+    FillFromObject	proc :ptr, :EXPLORER_BROWSER_FILL_FLAGS
+    RemoveAll		proc
+    GetCurrentView	proc :REFIID, :ptr
+    .ends
 
 endif
 
@@ -4579,15 +4264,12 @@ ifndef __IAccessibleObject_INTERFACE_DEFINED__
 __IAccessibleObject_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IAccessibleObject:IID
-IAccessibleObjectVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetAccessibleName, :LPCWSTR
-IAccessibleObjectVtbl ends
-IAccessibleObject struct
-	lpVtbl		PVOID ?
-IAccessibleObject ends
+.comdef IAccessibleObject
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetAccessibleName	proc :LPCWSTR
+    .ends
 
 endif
 endif
@@ -4599,21 +4281,18 @@ ifndef __IResultsFolder_INTERFACE_DEFINED__
 __IResultsFolder_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IResultsFolder:IID
-IResultsFolderVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	AddItem, :ptr
-	STDMETHOD	AddIDList, :PCIDLIST_ABSOLUTE, :ptr
-	STDMETHOD	RemoveItem, :ptr
-	STDMETHOD	RemoveIDList, :PCIDLIST_ABSOLUTE
-	STDMETHOD	RemoveAll
-IResultsFolderVtbl ends
-IResultsFolder struct
-	lpVtbl		PVOID ?
-IResultsFolder ends
+.comdef IResultsFolder
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    AddItem		proc :ptr
+    AddIDList		proc :PCIDLIST_ABSOLUTE, :ptr
+    RemoveItem		proc :ptr
+    RemoveIDList	proc :PCIDLIST_ABSOLUTE
+    RemoveAll		proc
+    .ends
 
-;STDMETHODCALLTYPE
+;CALLTYPE
 IResultsFolder_RemoteAddIDList_Proxy proto WINAPI \
 		 _This: ptr IResultsFolder,
 		  pidl: PCIDLIST_ABSOLUTE,
@@ -4637,20 +4316,17 @@ ifndef __IEnumObjects_INTERFACE_DEFINED__
 __IEnumObjects_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IEnumObjects:IID
-IEnumObjectsVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Next, :ULONG, :REFIID, :ptr, :ptr
-	STDMETHOD	Skip, :ULONG
-	STDMETHOD	Reset
-	STDMETHOD	Clone, :ptr
-IEnumObjectsVtbl ends
-IEnumObjects struct
-	lpVtbl		PVOID ?
-IEnumObjects ends
+.comdef IEnumObjects
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Next		proc :ULONG, :REFIID, :ptr, :ptr
+    Skip		proc :ULONG
+    Reset		proc
+    Clone		proc :ptr
+    .ends
 
-;STDMETHODCALLTYPE
+;CALLTYPE
 IEnumObjects_RemoteNext_Proxy proto WINAPI \
 		 _This: ptr IEnumObjects,
 		  celt: ULONG,
@@ -4698,25 +4374,22 @@ PDOPS_STOPPED		equ 4
 PDOPS_ERRORS		equ 5
 
 externdef		IID_IOperationsProgressDialog:IID
-IOperationsProgressDialogVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	StartProgressDialog, :HWND, :OPPROGDLGF
-	STDMETHOD	StopProgressDialog
-	STDMETHOD	SetOperation, :SPACTION
-	STDMETHOD	SetMode, :PDMODE
-	STDMETHOD	UpdateProgress, :ULONGLONG, :ULONGLONG, :ULONGLONG, :ULONGLONG, :ULONGLONG, :ULONGLONG
-	STDMETHOD	UpdateLocations, :ptr, :ptr, :ptr
-	STDMETHOD	ResetTimer
-	STDMETHOD	PauseTimer
-	STDMETHOD	ResumeTimer
-	STDMETHOD	GetMilliseconds, :ptr, :ptr
-	STDMETHOD	GetOperationStatus, :ptr
-IOperationsProgressDialogVtbl ends
-IOperationsProgressDialog struct
-	lpVtbl		PVOID ?
-IOperationsProgressDialog ends
+.comdef IOperationsProgressDialog
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    StartProgressDialog proc :HWND, :OPPROGDLGF
+    StopProgressDialog	proc
+    SetOperation	proc :SPACTION
+    SetMode		proc :PDMODE
+    UpdateProgress	proc :ULONGLONG, :ULONGLONG, :ULONGLONG, :ULONGLONG, :ULONGLONG, :ULONGLONG
+    UpdateLocations	proc :ptr, :ptr, :ptr
+    ResetTimer		proc
+    PauseTimer		proc
+    ResumeTimer		proc
+    GetMilliseconds	proc :ptr, :ptr
+    GetOperationStatus	proc :ptr
+    .ends
 
 endif
 
@@ -4724,16 +4397,13 @@ ifndef __IIOCancelInformation_INTERFACE_DEFINED__
 __IIOCancelInformation_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IIOCancelInformation:IID
-IIOCancelInformationVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetCancelInformation, :DWORD, :UINT
-	STDMETHOD	GetCancelInformation, :ptr, :ptr
-IIOCancelInformationVtbl ends
-IIOCancelInformation struct
-	lpVtbl		PVOID ?
-IIOCancelInformation ends
+.comdef IIOCancelInformation
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetCancelInformation proc :DWORD, :UINT
+    GetCancelInformation proc :ptr, :ptr
+    .ends
 
 endif
 
@@ -4759,34 +4429,31 @@ ifndef __IFileOperation_INTERFACE_DEFINED__
 __IFileOperation_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IFileOperation:IID
-IFileOperationVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Advise, :ptr, :ptr
-	STDMETHOD	Unadvise, :DWORD
-	STDMETHOD	SetOperationFlags, :DWORD
-	STDMETHOD	SetProgressMessage, :LPCWSTR
-	STDMETHOD	SetProgressDialog, :ptr
-	STDMETHOD	SetProperties, :ptr
-	STDMETHOD	SetOwnerWindow, :HWND
-	STDMETHOD	ApplyPropertiesToItem, :ptr
-	STDMETHOD	ApplyPropertiesToItems, :ptr
-	STDMETHOD	RenameItem, :ptr, :LPCWSTR, :ptr
-	STDMETHOD	RenameItems, :ptr, :LPCWSTR
-	STDMETHOD	MoveItem, :ptr, :ptr, :LPCWSTR, :ptr
-	STDMETHOD	MoveItems, :ptr, :ptr
-	STDMETHOD	CopyItem, :ptr, :ptr, :LPCWSTR, :ptr
-	STDMETHOD	CopyItems, :ptr, :ptr
-	STDMETHOD	DeleteItem, :ptr, :ptr
-	STDMETHOD	DeleteItems, :ptr
-	STDMETHOD	NewItem, :ptr, :DWORD, :LPCWSTR, :LPCWSTR, :ptr
-	STDMETHOD	PerformOperations
-	STDMETHOD	GetAnyOperationsAborted, :ptr
-IFileOperationVtbl ends
-IFileOperation struct
-	lpVtbl		PVOID ?
-IFileOperation ends
+.comdef IFileOperation
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Advise		proc :ptr, :ptr
+    Unadvise		proc :DWORD
+    SetOperationFlags	proc :DWORD
+    SetProgressMessage	proc :LPCWSTR
+    SetProgressDialog	proc :ptr
+    SetProperties	proc :ptr
+    SetOwnerWindow	proc :HWND
+    ApplyPropertiesToItem proc :ptr
+    ApplyPropertiesToItems proc :ptr
+    RenameItem		proc :ptr, :LPCWSTR, :ptr
+    RenameItems		proc :ptr, :LPCWSTR
+    MoveItem		proc :ptr, :ptr, :LPCWSTR, :ptr
+    MoveItems		proc :ptr, :ptr
+    CopyItem		proc :ptr, :ptr, :LPCWSTR, :ptr
+    CopyItems		proc :ptr, :ptr
+    DeleteItem		proc :ptr, :ptr
+    DeleteItems		proc :ptr
+    NewItem		proc :ptr, :DWORD, :LPCWSTR, :LPCWSTR, :ptr
+    PerformOperations	proc
+    GetAnyOperationsAborted proc :ptr
+    .ends
 
 endif
 
@@ -4794,15 +4461,12 @@ ifndef __IObjectProvider_INTERFACE_DEFINED__
 __IObjectProvider_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IObjectProvider:IID
-IObjectProviderVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	QueryObject, :REFGUID, :REFIID, :ptr
-IObjectProviderVtbl ends
-IObjectProvider struct
-	lpVtbl		PVOID ?
-IObjectProvider ends
+.comdef IObjectProvider
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    QueryObject		proc :REFGUID, :REFIID, :ptr
+    .ends
 
 endif
 endif
@@ -4814,18 +4478,15 @@ ifndef __INamespaceWalkCB_INTERFACE_DEFINED__
 __INamespaceWalkCB_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_INamespaceWalkCB:IID
-INamespaceWalkCBVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	FoundItem, :ptr, :PCUITEMID_CHILD
-	STDMETHOD	EnterFolder, :ptr, :PCUITEMID_CHILD
-	STDMETHOD	LeaveFolder, :ptr, :PCUITEMID_CHILD
-	STDMETHOD	InitializeProgressDialog, :ptr, :ptr
-INamespaceWalkCBVtbl ends
-INamespaceWalkCB struct
-	lpVtbl		PVOID ?
-INamespaceWalkCB ends
+.comdef INamespaceWalkCB
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    FoundItem		proc :ptr, :PCUITEMID_CHILD
+    EnterFolder		proc :ptr, :PCUITEMID_CHILD
+    LeaveFolder		proc :ptr, :PCUITEMID_CHILD
+    InitializeProgressDialog proc :ptr, :ptr
+    .ends
 
 endif
 
@@ -4838,19 +4499,16 @@ ifndef __INamespaceWalkCB2_INTERFACE_DEFINED__
 __INamespaceWalkCB2_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_INamespaceWalkCB2:IID
-INamespaceWalkCB2Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	FoundItem, :ptr, :PCUITEMID_CHILD
-	STDMETHOD	EnterFolder, :ptr, :PCUITEMID_CHILD
-	STDMETHOD	LeaveFolder, :ptr, :PCUITEMID_CHILD
-	STDMETHOD	InitializeProgressDialog, :ptr, :ptr
-	STDMETHOD	WalkComplete, :HRESULT
-INamespaceWalkCB2Vtbl ends
-INamespaceWalkCB2 struct
-	lpVtbl		PVOID ?
-INamespaceWalkCB2 ends
+.comdef INamespaceWalkCB2
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    FoundItem		proc :ptr, :PCUITEMID_CHILD
+    EnterFolder		proc :ptr, :PCUITEMID_CHILD
+    LeaveFolder		proc :ptr, :PCUITEMID_CHILD
+    InitializeProgressDialog proc :ptr, :ptr
+    WalkComplete	proc :HRESULT
+    .ends
 
 endif
 endif
@@ -4885,16 +4543,13 @@ DEFINE_ENUM_FLAG_OPERATORS(NAMESPACEWALKFLAG)
 externdef		IID_INamespaceWalk:IID
 
 
-INamespaceWalkVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Walk, :ptr, :DWORD, :SINT, :ptr
-	STDMETHOD	GetIDArrayResult, :ptr, :ptr
-INamespaceWalkVtbl ends
-INamespaceWalk struct
-	lpVtbl		PVOID ?
-INamespaceWalk ends
+.comdef INamespaceWalk
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Walk		proc :ptr, :DWORD, :SINT, :ptr
+    GetIDArrayResult	proc :ptr, :ptr
+    .ends
 
 endif
 endif
@@ -4910,16 +4565,13 @@ ifndef __IAutoCompleteDropDown_INTERFACE_DEFINED__
 __IAutoCompleteDropDown_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IAutoCompleteDropDown:IID
-IAutoCompleteDropDownVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetDropDownStatus, :ptr, :ptr
-	STDMETHOD	ResetEnumerator
-IAutoCompleteDropDownVtbl ends
-IAutoCompleteDropDown struct
-	lpVtbl		PVOID ?
-IAutoCompleteDropDown ends
+.comdef IAutoCompleteDropDown
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetDropDownStatus	proc :ptr, :ptr
+    ResetEnumerator	proc
+    .ends
 
 endif
 
@@ -4965,29 +4617,25 @@ ifndef __IBandSite_INTERFACE_DEFINED__
 __IBandSite_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IBandSite:IID
-IBandSiteVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	AddBand, :ptr
-	STDMETHOD	EnumBands, :UINT, :ptr
-	STDMETHOD	QueryBand, :DWORD, :ptr, :ptr, :LPWSTR, :SINT
-	STDMETHOD	SetBandState, :DWORD, :DWORD, :DWORD
-	STDMETHOD	RemoveBand, :DWORD
-	STDMETHOD	GetBandObject, :DWORD, :REFIID, :ptr
-	STDMETHOD	SetBandSiteInfo, :ptr
-	STDMETHOD	GetBandSiteInfo, :ptr
-IBandSiteVtbl ends
-IBandSite struct
-	lpVtbl		PVOID ?
-IBandSite ends
-LPIDeskBand		typedef ptr IDeskBand
+.comdef IBandSite
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    AddBand		proc :ptr
+    EnumBands		proc :UINT, :ptr
+    QueryBand		proc :DWORD, :ptr, :ptr, :LPWSTR, :SINT
+    SetBandState	proc :DWORD, :DWORD, :DWORD
+    RemoveBand		proc :DWORD
+    GetBandObject	proc :DWORD, :REFIID, :ptr
+    SetBandSiteInfo	proc :ptr
+    GetBandSiteInfo	proc :ptr
+    .ends
 
-;STDMETHODCALLTYPE
+;CALLTYPE
 IBandSite_RemoteQueryBand_Proxy proto WINAPI \
 		 _This: ptr IBandSite,
 	      dwBandID: DWORD,
-		 ppstb: LPIDeskBand,
+		 ppstb: ptr IDeskBand,
 	      pdwState: LPDWORD,
 	       pszName: LPWSTR,
 	       cchName: SINT
@@ -5011,17 +4659,14 @@ ifndef __IModalWindow_INTERFACE_DEFINED__
 __IModalWindow_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IModalWindow:IID
-IModalWindowVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Show, :HWND
-IModalWindowVtbl ends
-IModalWindow struct
-	lpVtbl		PVOID ?
-IModalWindow ends
+.comdef IModalWindow
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Show		proc :HWND
+    .ends
 
-;STDMETHODCALLTYPE
+;CALLTYPE
 IModalWindow_RemoteShow_Proxy proto WINAPI \
 		 _This: ptr IModalWindow,
 	     hwndOwner: HWND
@@ -5055,15 +4700,12 @@ ifndef __ICDBurnExt_INTERFACE_DEFINED__
 __ICDBurnExt_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_ICDBurnExt:IID
-ICDBurnExtVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetSupportedActionTypes, :ptr
-ICDBurnExtVtbl ends
-ICDBurnExt struct
-	lpVtbl		PVOID ?
-ICDBurnExt ends
+.comdef ICDBurnExt
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetSupportedActionTypes proc :ptr
+    .ends
 
 endif
 endif
@@ -5075,30 +4717,24 @@ ifndef __IContextMenuSite_INTERFACE_DEFINED__
 __IContextMenuSite_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IContextMenuSite:IID
-IContextMenuSiteVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	DoContextMenuPopup, :ptr, :UINT, :POINT
-IContextMenuSiteVtbl ends
-IContextMenuSite struct
-	lpVtbl		PVOID ?
-IContextMenuSite ends
+.comdef IContextMenuSite
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    DoContextMenuPopup	proc :ptr, :UINT, :POINT
+    .ends
 endif
 
 ifndef __IEnumReadyCallback_INTERFACE_DEFINED__
 __IEnumReadyCallback_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IEnumReadyCallback:IID
-IEnumReadyCallbackVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	EnumReady
-IEnumReadyCallbackVtbl ends
-IEnumReadyCallback struct
-	lpVtbl		PVOID ?
-IEnumReadyCallback ends
+.comdef IEnumReadyCallback
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    EnumReady		proc
+    .ends
 
 endif
 
@@ -5108,16 +4744,13 @@ __IEnumerableView_INTERFACE_DEFINED__ equ 1
 DEFINE_GUID(IID_IEnumerableView, 0x8c8bf236, 0x1aec, 0x495f, 0x98,0x94, 0x91,0xd5,0x7c,0x3c,0x68,0x6f)
 
 externdef		IID_IEnumerableView:IID
-IEnumerableViewVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetEnumReadyCallback, :ptr
-	STDMETHOD	CreateEnumIDListFromContents, :PCIDLIST_ABSOLUTE, :DWORD, :ptr
-IEnumerableViewVtbl ends
-IEnumerableView struct
-	lpVtbl		PVOID ?
-IEnumerableView ends
+.comdef IEnumerableView
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetEnumReadyCallback proc :ptr
+    CreateEnumIDListFromContents proc :PCIDLIST_ABSOLUTE, :DWORD, :ptr
+    .ends
 
 endif
 
@@ -5131,15 +4764,12 @@ ifndef __IInsertItem_INTERFACE_DEFINED__
 __IInsertItem_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IInsertItem:IID
-IInsertItemVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	InsertItem, :PCUIDLIST_RELATIVE
-IInsertItemVtbl ends
-IInsertItem struct
-	lpVtbl		PVOID ?
-IInsertItem ends
+.comdef IInsertItem
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    InsertItem		proc :PCUIDLIST_RELATIVE
+    .ends
 
 endif
 
@@ -5155,16 +4785,13 @@ tagMENUBANDHANDLERCID	typedef SDWORD
 MBHANDCID_PIDLSELECT	equ 0
 
 externdef		IID_IMenuBand:IID
-IMenuBandVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	IsMenuMessage, :ptr
-	STDMETHOD	TranslateMenuMessage, :ptr, :ptr
-IMenuBandVtbl ends
-IMenuBand struct
-	lpVtbl		PVOID ?
-IMenuBand ends
+.comdef IMenuBand
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    IsMenuMessage	proc :ptr
+    TranslateMenuMessage proc :ptr, :ptr
+    .ends
 
 endif
 
@@ -5172,18 +4799,15 @@ ifndef __IFolderBandPriv_INTERFACE_DEFINED__
 __IFolderBandPriv_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IFolderBandPriv:IID
-IFolderBandPrivVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetCascade, :BOOL
-	STDMETHOD	SetAccelerators, :BOOL
-	STDMETHOD	SetNoIcons, :BOOL
-	STDMETHOD	SetNoText, :BOOL
-IFolderBandPrivVtbl ends
-IFolderBandPriv struct
-	lpVtbl		PVOID ?
-IFolderBandPriv ends
+.comdef IFolderBandPriv
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetCascade		proc :BOOL
+    SetAccelerators	proc :BOOL
+    SetNoIcons		proc :BOOL
+    SetNoText		proc :BOOL
+    .ends
 
 endif
 
@@ -5191,16 +4815,13 @@ ifndef __IRegTreeItem_INTERFACE_DEFINED__
 __IRegTreeItem_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IRegTreeItem:IID
-IRegTreeItemVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetCheckState, :ptr
-	STDMETHOD	SetCheckState, :BOOL
-IRegTreeItemVtbl ends
-IRegTreeItem struct
-	lpVtbl		PVOID ?
-IRegTreeItem ends
+.comdef IRegTreeItem
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetCheckState	proc :ptr
+    SetCheckState	proc :BOOL
+    .ends
 
 endif
 
@@ -5208,15 +4829,12 @@ ifndef __IImageRecompress_INTERFACE_DEFINED__
 __IImageRecompress_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IImageRecompress:IID
-IImageRecompressVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	RecompressImage, :ptr, :SINT, :SINT, :SINT, :ptr, :ptr
-IImageRecompressVtbl ends
-IImageRecompress struct
-	lpVtbl		PVOID ?
-IImageRecompress ends
+.comdef IImageRecompress
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    RecompressImage	proc :ptr, :SINT, :SINT, :SINT, :ptr, :ptr
+    .ends
 
 endif
 endif
@@ -5231,19 +4849,16 @@ ifndef __IDeskBar_INTERFACE_DEFINED__
 __IDeskBar_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IDeskBar:IID
-IDeskBarVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetWindow, :ptr
-	STDMETHOD	ContextSensitiveHelp, :BOOL
-	STDMETHOD	SetClient, :ptr
-	STDMETHOD	GetClient, :ptr
-	STDMETHOD	OnPosRectChangeDB, :ptr
-IDeskBarVtbl ends
-IDeskBar struct
-	lpVtbl		PVOID ?
-IDeskBar ends
+.comdef IDeskBar
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetWindow		proc :ptr
+    ContextSensitiveHelp proc :BOOL
+    SetClient		proc :ptr
+    GetClient		proc :ptr
+    OnPosRectChangeDB	proc :ptr
+    .ends
 
 endif
 
@@ -5276,22 +4891,19 @@ MPPF_ALIGN_RIGHT	equ 0x4000000
 MP_POPUPFLAGS		typedef SINT
 
 externdef		IID_IMenuPopup:IID
-IMenuPopupVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetWindow, :ptr
-	STDMETHOD	ContextSensitiveHelp, :BOOL
-	STDMETHOD	SetClient, :ptr
-	STDMETHOD	GetClient, :ptr
-	STDMETHOD	OnPosRectChangeDB, :ptr
-	STDMETHOD	Popup, :ptr, :ptr, :MP_POPUPFLAGS
-	STDMETHOD	OnSelect, :DWORD
-	STDMETHOD	SetSubMenu, :ptr, :BOOL
-IMenuPopupVtbl ends
-IMenuPopup struct
-	lpVtbl		PVOID ?
-IMenuPopup ends
+.comdef IMenuPopup
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetWindow		proc :ptr
+    ContextSensitiveHelp proc :BOOL
+    SetClient		proc :ptr
+    GetClient		proc :ptr
+    OnPosRectChangeDB	proc :ptr
+    Popup		proc :ptr, :ptr, :MP_POPUPFLAGS
+    OnSelect		proc :DWORD
+    SetSubMenu		proc :ptr, :BOOL
+    .ends
 
 endif
 endif
@@ -5313,19 +4925,16 @@ ifndef __IFileIsInUse_INTERFACE_DEFINED__
 __IFileIsInUse_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IFileIsInUse:IID
-IFileIsInUseVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetAppName, :ptr
-	STDMETHOD	GetUsage, :ptr
-	STDMETHOD	GetCapabilities, :ptr
-	STDMETHOD	GetSwitchToHWND, :ptr
-	STDMETHOD	CloseFile
-IFileIsInUseVtbl ends
-IFileIsInUse struct
-	lpVtbl		PVOID ?
-IFileIsInUse ends
+.comdef IFileIsInUse
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetAppName		proc :ptr
+    GetUsage		proc :ptr
+    GetCapabilities	proc :ptr
+    GetSwitchToHWND	proc :ptr
+    CloseFile		proc
+    .ends
 
 endif
 
@@ -5350,21 +4959,18 @@ ifndef __IFileDialogEvents_INTERFACE_DEFINED__
 __IFileDialogEvents_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IFileDialogEvents:IID
-IFileDialogEventsVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	OnFileOk, :ptr
-	STDMETHOD	OnFolderChanging, :ptr, :ptr
-	STDMETHOD	OnFolderChange, :ptr
-	STDMETHOD	OnSelectionChange, :ptr
-	STDMETHOD	OnShareViolation, :ptr, :ptr, :ptr
-	STDMETHOD	OnTypeChange, :ptr
-	STDMETHOD	OnOverwrite, :ptr, :ptr, :ptr
-IFileDialogEventsVtbl ends
-IFileDialogEvents struct
-	lpVtbl		PVOID ?
-IFileDialogEvents ends
+.comdef IFileDialogEvents
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    OnFileOk		proc :ptr
+    OnFolderChanging	proc :ptr, :ptr
+    OnFolderChange	proc :ptr
+    OnSelectionChange	proc :ptr
+    OnShareViolation	proc :ptr, :ptr, :ptr
+    OnTypeChange	proc :ptr
+    OnOverwrite		proc :ptr, :ptr, :ptr
+    .ends
 
 endif
 
@@ -5399,38 +5005,35 @@ FILEOPENDIALOGOPTIONS	typedef DWORD
 
 
 externdef		IID_IFileDialog:IID
-IFileDialogVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Show, :HWND
-	STDMETHOD	SetFileTypes, :UINT, :ptr
-	STDMETHOD	SetFileTypeIndex, :UINT
-	STDMETHOD	GetFileTypeIndex, :ptr
-	STDMETHOD	Advise, :ptr, :ptr
-	STDMETHOD	Unadvise, :DWORD
-	STDMETHOD	SetOptions, :FILEOPENDIALOGOPTIONS
-	STDMETHOD	GetOptions, :ptr
-	STDMETHOD	SetDefaultFolder, :ptr
-	STDMETHOD	SetFolder, :ptr
-	STDMETHOD	GetFolder, :ptr
-	STDMETHOD	GetCurrentSelection, :ptr
-	STDMETHOD	SetFileName, :LPCWSTR
-	STDMETHOD	GetFileName, :ptr
-	STDMETHOD	SetTitle, :LPCWSTR
-	STDMETHOD	SetOkButtonLabel, :LPCWSTR
-	STDMETHOD	SetFileNameLabel, :LPCWSTR
-	STDMETHOD	GetResult, :ptr
-	STDMETHOD	AddPlace, :ptr, :FDAP
-	STDMETHOD	SetDefaultExtension, :LPCWSTR
-	STDMETHOD	Close, :HRESULT
-	STDMETHOD	SetClientGuid, :REFGUID
-	STDMETHOD	ClearClientData
-	STDMETHOD	SetFilter, :ptr
-IFileDialogVtbl ends
-IFileDialog struct
-	lpVtbl		PVOID ?
-IFileDialog ends
+.comdef IFileDialog
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Show		proc :HWND
+    SetFileTypes	proc :UINT, :ptr
+    SetFileTypeIndex	proc :UINT
+    GetFileTypeIndex	proc :ptr
+    Advise		proc :ptr, :ptr
+    Unadvise		proc :DWORD
+    SetOptions		proc :FILEOPENDIALOGOPTIONS
+    GetOptions		proc :ptr
+    SetDefaultFolder	proc :ptr
+    SetFolder		proc :ptr
+    GetFolder		proc :ptr
+    GetCurrentSelection proc :ptr
+    SetFileName		proc :LPCWSTR
+    GetFileName		proc :ptr
+    SetTitle		proc :LPCWSTR
+    SetOkButtonLabel	proc :LPCWSTR
+    SetFileNameLabel	proc :LPCWSTR
+    GetResult		proc :ptr
+    AddPlace		proc :ptr, :FDAP
+    SetDefaultExtension proc :LPCWSTR
+    Close		proc :HRESULT
+    SetClientGuid	proc :REFGUID
+    ClearClientData	proc
+    SetFilter		proc :ptr
+    .ends
 
 endif
 
@@ -5438,43 +5041,40 @@ ifndef __IFileSaveDialog_INTERFACE_DEFINED__
 __IFileSaveDialog_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IFileSaveDialog:IID
-IFileSaveDialogVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Show, :HWND
-	STDMETHOD	SetFileTypes, :UINT, :ptr
-	STDMETHOD	SetFileTypeIndex, :UINT
-	STDMETHOD	GetFileTypeIndex, :ptr
-	STDMETHOD	Advise, :ptr, :ptr
-	STDMETHOD	Unadvise, :DWORD
-	STDMETHOD	SetOptions, :FILEOPENDIALOGOPTIONS
-	STDMETHOD	GetOptions, :ptr
-	STDMETHOD	SetDefaultFolder, :ptr
-	STDMETHOD	SetFolder, :ptr
-	STDMETHOD	GetFolder, :ptr
-	STDMETHOD	GetCurrentSelection, :ptr
-	STDMETHOD	SetFileName, :LPCWSTR
-	STDMETHOD	GetFileName, :ptr
-	STDMETHOD	SetTitle, :LPCWSTR
-	STDMETHOD	SetOkButtonLabel, :LPCWSTR
-	STDMETHOD	SetFileNameLabel, :LPCWSTR
-	STDMETHOD	GetResult, :ptr
-	STDMETHOD	AddPlace, :ptr, :FDAP
-	STDMETHOD	SetDefaultExtension, :LPCWSTR
-	STDMETHOD	Close, :HRESULT
-	STDMETHOD	SetClientGuid, :REFGUID
-	STDMETHOD	ClearClientData
-	STDMETHOD	SetFilter, :ptr
-	STDMETHOD	SetSaveAsItem, :ptr
-	STDMETHOD	SetProperties, :ptr
-	STDMETHOD	SetCollectedProperties, :ptr, :BOOL
-	STDMETHOD	GetProperties, :ptr
-	STDMETHOD	ApplyProperties, :ptr, :ptr, :HWND, :ptr
-IFileSaveDialogVtbl ends
-IFileSaveDialog struct
-	lpVtbl		PVOID ?
-IFileSaveDialog ends
+.comdef IFileSaveDialog
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Show		proc :HWND
+    SetFileTypes	proc :UINT, :ptr
+    SetFileTypeIndex	proc :UINT
+    GetFileTypeIndex	proc :ptr
+    Advise		proc :ptr, :ptr
+    Unadvise		proc :DWORD
+    SetOptions		proc :FILEOPENDIALOGOPTIONS
+    GetOptions		proc :ptr
+    SetDefaultFolder	proc :ptr
+    SetFolder		proc :ptr
+    GetFolder		proc :ptr
+    GetCurrentSelection proc :ptr
+    SetFileName		proc :LPCWSTR
+    GetFileName		proc :ptr
+    SetTitle		proc :LPCWSTR
+    SetOkButtonLabel	proc :LPCWSTR
+    SetFileNameLabel	proc :LPCWSTR
+    GetResult		proc :ptr
+    AddPlace		proc :ptr, :FDAP
+    SetDefaultExtension proc :LPCWSTR
+    Close		proc :HRESULT
+    SetClientGuid	proc :REFGUID
+    ClearClientData	proc
+    SetFilter		proc :ptr
+    SetSaveAsItem	proc :ptr
+    SetProperties	proc :ptr
+    SetCollectedProperties proc :ptr, :BOOL
+    GetProperties	proc :ptr
+    ApplyProperties	proc :ptr, :ptr, :HWND, :ptr
+    .ends
 
 endif
 
@@ -5482,40 +5082,37 @@ ifndef __IFileOpenDialog_INTERFACE_DEFINED__
 __IFileOpenDialog_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IFileOpenDialog:IID
-IFileOpenDialogVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Show, :HWND
-	STDMETHOD	SetFileTypes, :UINT, :ptr
-	STDMETHOD	SetFileTypeIndex, :UINT
-	STDMETHOD	GetFileTypeIndex, :ptr
-	STDMETHOD	Advise, :ptr, :ptr
-	STDMETHOD	Unadvise, :DWORD
-	STDMETHOD	SetOptions, :FILEOPENDIALOGOPTIONS
-	STDMETHOD	GetOptions, :ptr
-	STDMETHOD	SetDefaultFolder, :ptr
-	STDMETHOD	SetFolder, :ptr
-	STDMETHOD	GetFolder, :ptr
-	STDMETHOD	GetCurrentSelection, :ptr
-	STDMETHOD	SetFileName, :LPCWSTR
-	STDMETHOD	GetFileName, :ptr
-	STDMETHOD	SetTitle, :LPCWSTR
-	STDMETHOD	SetOkButtonLabel, :LPCWSTR
-	STDMETHOD	SetFileNameLabel, :LPCWSTR
-	STDMETHOD	GetResult, :ptr
-	STDMETHOD	AddPlace, :ptr, :FDAP
-	STDMETHOD	SetDefaultExtension, :LPCWSTR
-	STDMETHOD	Close, :HRESULT
-	STDMETHOD	SetClientGuid, :REFGUID
-	STDMETHOD	ClearClientData
-	STDMETHOD	SetFilter, :ptr
-	STDMETHOD	GetResults, :ptr
-	STDMETHOD	GetSelectedItems, :ptr
-IFileOpenDialogVtbl ends
-IFileOpenDialog struct
-	lpVtbl		PVOID ?
-IFileOpenDialog ends
+.comdef IFileOpenDialog
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Show		proc :HWND
+    SetFileTypes	proc :UINT, :ptr
+    SetFileTypeIndex	proc :UINT
+    GetFileTypeIndex	proc :ptr
+    Advise		proc :ptr, :ptr
+    Unadvise		proc :DWORD
+    SetOptions		proc :FILEOPENDIALOGOPTIONS
+    GetOptions		proc :ptr
+    SetDefaultFolder	proc :ptr
+    SetFolder		proc :ptr
+    GetFolder		proc :ptr
+    GetCurrentSelection proc :ptr
+    SetFileName		proc :LPCWSTR
+    GetFileName		proc :ptr
+    SetTitle		proc :LPCWSTR
+    SetOkButtonLabel	proc :LPCWSTR
+    SetFileNameLabel	proc :LPCWSTR
+    GetResult		proc :ptr
+    AddPlace		proc :ptr, :FDAP
+    SetDefaultExtension proc :LPCWSTR
+    Close		proc :HRESULT
+    SetClientGuid	proc :REFGUID
+    ClearClientData	proc
+    SetFilter		proc :ptr
+    GetResults		proc :ptr
+    GetSelectedItems	proc :ptr
+    .ends
 
 endif
 
@@ -5534,41 +5131,38 @@ ifndef __IFileDialogCustomize_INTERFACE_DEFINED__
 __IFileDialogCustomize_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IFileDialogCustomize:IID
-IFileDialogCustomizeVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	EnableOpenDropDown, :DWORD
-	STDMETHOD	AddMenu, :DWORD, :LPCWSTR
-	STDMETHOD	AddPushButton, :DWORD, :LPCWSTR
-	STDMETHOD	AddComboBox, :DWORD
-	STDMETHOD	AddRadioButtonList, :DWORD
-	STDMETHOD	AddCheckButton, :DWORD, :LPCWSTR, :BOOL
-	STDMETHOD	AddEditBox, :DWORD, :LPCWSTR
-	STDMETHOD	AddSeparator, :DWORD
-	STDMETHOD	AddText, :DWORD, :LPCWSTR
-	STDMETHOD	SetControlLabel, :DWORD, :LPCWSTR
-	STDMETHOD	GetControlState, :DWORD, :ptr
-	STDMETHOD	SetControlState, :DWORD, :CDCONTROLSTATEF
-	STDMETHOD	GetEditBoxText, :DWORD, :ptr
-	STDMETHOD	SetEditBoxText, :DWORD, :LPCWSTR
-	STDMETHOD	GetCheckButtonState, :DWORD, :ptr
-	STDMETHOD	SetCheckButtonState, :DWORD, :BOOL
-	STDMETHOD	AddControlItem, :DWORD, :DWORD, :LPCWSTR
-	STDMETHOD	RemoveControlItem, :DWORD, :DWORD
-	STDMETHOD	RemoveAllControlItems, :DWORD
-	STDMETHOD	GetControlItemState, :DWORD, :DWORD, :ptr
-	STDMETHOD	SetControlItemState, :DWORD, :DWORD, :CDCONTROLSTATEF
-	STDMETHOD	GetSelectedControlItem, :DWORD, :ptr
-	STDMETHOD	SetSelectedControlItem, :DWORD, :DWORD
-	STDMETHOD	StartVisualGroup, :DWORD, :LPCWSTR
-	STDMETHOD	EndVisualGroup
-	STDMETHOD	MakeProminent, :DWORD
-	STDMETHOD	SetControlItemText, :DWORD, :DWORD, :LPCWSTR
-IFileDialogCustomizeVtbl ends
-IFileDialogCustomize struct
-	lpVtbl		PVOID ?
-IFileDialogCustomize ends
+.comdef IFileDialogCustomize
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    EnableOpenDropDown	proc :DWORD
+    AddMenu		proc :DWORD, :LPCWSTR
+    AddPushButton	proc :DWORD, :LPCWSTR
+    AddComboBox		proc :DWORD
+    AddRadioButtonList	proc :DWORD
+    AddCheckButton	proc :DWORD, :LPCWSTR, :BOOL
+    AddEditBox		proc :DWORD, :LPCWSTR
+    AddSeparator	proc :DWORD
+    AddText		proc :DWORD, :LPCWSTR
+    SetControlLabel	proc :DWORD, :LPCWSTR
+    GetControlState	proc :DWORD, :ptr
+    SetControlState	proc :DWORD, :CDCONTROLSTATEF
+    GetEditBoxText	proc :DWORD, :ptr
+    SetEditBoxText	proc :DWORD, :LPCWSTR
+    GetCheckButtonState proc :DWORD, :ptr
+    SetCheckButtonState proc :DWORD, :BOOL
+    AddControlItem	proc :DWORD, :DWORD, :LPCWSTR
+    RemoveControlItem	proc :DWORD, :DWORD
+    RemoveAllControlItems proc :DWORD
+    GetControlItemState proc :DWORD, :DWORD, :ptr
+    SetControlItemState proc :DWORD, :DWORD, :CDCONTROLSTATEF
+    GetSelectedControlItem proc :DWORD, :ptr
+    SetSelectedControlItem proc :DWORD, :DWORD
+    StartVisualGroup	proc :DWORD, :LPCWSTR
+    EndVisualGroup	proc
+    MakeProminent	proc :DWORD
+    SetControlItemText	proc :DWORD, :DWORD, :LPCWSTR
+    .ends
 
 endif
 
@@ -5576,18 +5170,15 @@ ifndef __IFileDialogControlEvents_INTERFACE_DEFINED__
 __IFileDialogControlEvents_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IFileDialogControlEvents:IID
-IFileDialogControlEventsVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	OnItemSelected, :ptr, :DWORD, :DWORD
-	STDMETHOD	OnButtonClicked, :ptr, :DWORD
-	STDMETHOD	OnCheckButtonToggled, :ptr, :DWORD, :BOOL
-	STDMETHOD	OnControlActivating, :ptr, :DWORD
-IFileDialogControlEventsVtbl ends
-IFileDialogControlEvents struct
-	lpVtbl		PVOID ?
-IFileDialogControlEvents ends
+.comdef IFileDialogControlEvents
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    OnItemSelected	proc :ptr, :DWORD, :DWORD
+    OnButtonClicked	proc :ptr, :DWORD
+    OnCheckButtonToggled proc :ptr, :DWORD, :BOOL
+    OnControlActivating proc :ptr, :DWORD
+    .ends
 
 endif
 
@@ -5595,40 +5186,37 @@ ifndef __IFileDialog2_INTERFACE_DEFINED__
 __IFileDialog2_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IFileDialog2:IID
-IFileDialog2Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Show, :HWND
-	STDMETHOD	SetFileTypes, :UINT, :ptr
-	STDMETHOD	SetFileTypeIndex, :UINT
-	STDMETHOD	GetFileTypeIndex, :ptr
-	STDMETHOD	Advise, :ptr, :ptr
-	STDMETHOD	Unadvise, :DWORD
-	STDMETHOD	SetOptions, :FILEOPENDIALOGOPTIONS
-	STDMETHOD	GetOptions, :ptr
-	STDMETHOD	SetDefaultFolder, :ptr
-	STDMETHOD	SetFolder, :ptr
-	STDMETHOD	GetFolder, :ptr
-	STDMETHOD	GetCurrentSelection, :ptr
-	STDMETHOD	SetFileName, :LPCWSTR
-	STDMETHOD	GetFileName, :ptr
-	STDMETHOD	SetTitle, :LPCWSTR
-	STDMETHOD	SetOkButtonLabel, :LPCWSTR
-	STDMETHOD	SetFileNameLabel, :LPCWSTR
-	STDMETHOD	GetResult, :ptr
-	STDMETHOD	AddPlace, :ptr, :FDAP
-	STDMETHOD	SetDefaultExtension, :LPCWSTR
-	STDMETHOD	Close, :HRESULT
-	STDMETHOD	SetClientGuid, :REFGUID
-	STDMETHOD	ClearClientData
-	STDMETHOD	SetFilter, :ptr
-	STDMETHOD	SetCancelButtonLabel, :LPCWSTR
-	STDMETHOD	SetNavigationRoot, :ptr
-IFileDialog2Vtbl ends
-IFileDialog2 struct
-	lpVtbl		PVOID ?
-IFileDialog2 ends
+.comdef IFileDialog2
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Show		proc :HWND
+    SetFileTypes	proc :UINT, :ptr
+    SetFileTypeIndex	proc :UINT
+    GetFileTypeIndex	proc :ptr
+    Advise		proc :ptr, :ptr
+    Unadvise		proc :DWORD
+    SetOptions		proc :FILEOPENDIALOGOPTIONS
+    GetOptions		proc :ptr
+    SetDefaultFolder	proc :ptr
+    SetFolder		proc :ptr
+    GetFolder		proc :ptr
+    GetCurrentSelection proc :ptr
+    SetFileName		proc :LPCWSTR
+    GetFileName		proc :ptr
+    SetTitle		proc :LPCWSTR
+    SetOkButtonLabel	proc :LPCWSTR
+    SetFileNameLabel	proc :LPCWSTR
+    GetResult		proc :ptr
+    AddPlace		proc :ptr, :FDAP
+    SetDefaultExtension proc :LPCWSTR
+    Close		proc :HRESULT
+    SetClientGuid	proc :REFGUID
+    ClearClientData	proc
+    SetFilter		proc :ptr
+    SetCancelButtonLabel proc :LPCWSTR
+    SetNavigationRoot	proc :ptr
+    .ends
 
 endif
 
@@ -5650,20 +5238,17 @@ ifndef __IApplicationAssociationRegistration_INTERFACE_DEFINED__
 __IApplicationAssociationRegistration_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IApplicationAssociationRegistration:IID
-IApplicationAssociationRegistrationVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	QueryCurrentDefault, :LPCWSTR, :ASSOCIATIONTYPE, :ASSOCIATIONLEVEL, :ptr
-	STDMETHOD	QueryAppIsDefault, :LPCWSTR, :ASSOCIATIONTYPE, :ASSOCIATIONLEVEL, :LPCWSTR, :ptr
-	STDMETHOD	QueryAppIsDefaultAll, :ASSOCIATIONLEVEL, :LPCWSTR, :ptr
-	STDMETHOD	SetAppAsDefault, :LPCWSTR, :LPCWSTR, :ASSOCIATIONTYPE
-	STDMETHOD	SetAppAsDefaultAll, :LPCWSTR
-	STDMETHOD	ClearUserAssociations
-IApplicationAssociationRegistrationVtbl ends
-IApplicationAssociationRegistration struct
-	lpVtbl		PVOID ?
-IApplicationAssociationRegistration ends
+.comdef IApplicationAssociationRegistration
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    QueryCurrentDefault proc :LPCWSTR, :ASSOCIATIONTYPE, :ASSOCIATIONLEVEL, :ptr
+    QueryAppIsDefault	proc :LPCWSTR, :ASSOCIATIONTYPE, :ASSOCIATIONLEVEL, :LPCWSTR, :ptr
+    QueryAppIsDefaultAll proc :ASSOCIATIONLEVEL, :LPCWSTR, :ptr
+    SetAppAsDefault	proc :LPCWSTR, :LPCWSTR, :ASSOCIATIONTYPE
+    SetAppAsDefaultAll	proc :LPCWSTR
+    ClearUserAssociations proc
+    .ends
 
 endif
 
@@ -5679,15 +5264,12 @@ ifndef __IApplicationAssociationRegistrationUI_INTERFACE_DEFINED__
 __IApplicationAssociationRegistrationUI_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IApplicationAssociationRegistrationUI:IID
-IApplicationAssociationRegistrationUIVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	LaunchAdvancedAssociationUI, :LPCWSTR
-IApplicationAssociationRegistrationUIVtbl ends
-IApplicationAssociationRegistrationUI struct
-	lpVtbl		PVOID ?
-IApplicationAssociationRegistrationUI ends
+.comdef IApplicationAssociationRegistrationUI
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    LaunchAdvancedAssociationUI proc :LPCWSTR
+    .ends
 
 endif
 endif
@@ -5710,15 +5292,12 @@ ifndef __IDelegateFolder_INTERFACE_DEFINED__
 __IDelegateFolder_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IDelegateFolder:IID
-IDelegateFolderVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetItemAlloc, :ptr
-IDelegateFolderVtbl ends
-IDelegateFolder struct
-	lpVtbl		PVOID ?
-IDelegateFolder ends
+.comdef IDelegateFolder
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetItemAlloc	proc :ptr
+    .ends
 
 endif
 
@@ -5753,15 +5332,12 @@ BFO_QUERY_ALL		equ ( SINT  )0xffffffff
 BROWSERFRAMEOPTIONS	typedef DWORD
 
 externdef		IID_IBrowserFrameOptions:IID
-IBrowserFrameOptionsVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetFrameOptions, :BROWSERFRAMEOPTIONS, :ptr
-IBrowserFrameOptionsVtbl ends
-IBrowserFrameOptions struct
-	lpVtbl		PVOID ?
-IBrowserFrameOptions ends
+.comdef IBrowserFrameOptions
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetFrameOptions	proc :BROWSERFRAMEOPTIONS, :ptr
+    .ends
 LPBROWSERFRAMEOPTIONS	typedef ptr IBrowserFrameOptions
 
 endif
@@ -5794,15 +5370,12 @@ ifndef __INewWindowManager_INTERFACE_DEFINED__
 __INewWindowManager_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_INewWindowManager:IID
-INewWindowManagerVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	EvaluateNewWindow, :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPCWSTR, :BOOL, :DWORD, :DWORD
-INewWindowManagerVtbl ends
-INewWindowManager struct
-	lpVtbl		PVOID ?
-INewWindowManager ends
+.comdef INewWindowManager
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    EvaluateNewWindow	proc :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPCWSTR, :BOOL, :DWORD, :DWORD
+    .ends
 
 endif
 
@@ -5821,26 +5394,23 @@ ATTACHMENT_ACTION_SAVE	equ 0x1
 ATTACHMENT_ACTION_EXEC	equ 0x2
 
 externdef		IID_IAttachmentExecute:IID
-IAttachmentExecuteVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetClientTitle, :LPCWSTR
-	STDMETHOD	SetClientGuid, :REFGUID
-	STDMETHOD	SetLocalPath, :LPCWSTR
-	STDMETHOD	SetFileName, :LPCWSTR
-	STDMETHOD	SetSource, :LPCWSTR
-	STDMETHOD	SetReferrer, :LPCWSTR
-	STDMETHOD	CheckPolicy
-	STDMETHOD	Prompt, :HWND, :ATTACHMENT_PROMPT, :ptr
-	STDMETHOD	Save
-	STDMETHOD	Execute, :HWND, :LPCWSTR, :ptr
-	STDMETHOD	SaveWithUI, :HWND
-	STDMETHOD	ClearClientState
-IAttachmentExecuteVtbl ends
-IAttachmentExecute struct
-	lpVtbl		PVOID ?
-IAttachmentExecute ends
+.comdef IAttachmentExecute
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetClientTitle	proc :LPCWSTR
+    SetClientGuid	proc :REFGUID
+    SetLocalPath	proc :LPCWSTR
+    SetFileName		proc :LPCWSTR
+    SetSource		proc :LPCWSTR
+    SetReferrer		proc :LPCWSTR
+    CheckPolicy		proc
+    Prompt		proc :HWND, :ATTACHMENT_PROMPT, :ptr
+    Save		proc
+    Execute		proc :HWND, :LPCWSTR, :ptr
+    SaveWithUI		proc :HWND
+    ClearClientState	proc
+    .ends
 
 endif
 endif
@@ -5948,15 +5518,12 @@ ifndef __IShellMenuCallback_INTERFACE_DEFINED__
 __IShellMenuCallback_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IShellMenuCallback:IID
-IShellMenuCallbackVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	CallbackSM, :LPSMDATA, :UINT, :WPARAM, :LPARAM
-IShellMenuCallbackVtbl ends
-IShellMenuCallback struct
-	lpVtbl		PVOID ?
-IShellMenuCallback ends
+.comdef IShellMenuCallback
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    CallbackSM		proc :LPSMDATA, :UINT, :WPARAM, :LPARAM
+    .ends
 
 endif
 
@@ -5985,23 +5552,20 @@ ifndef __IShellMenu_INTERFACE_DEFINED__
 __IShellMenu_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IShellMenu:IID
-IShellMenuVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Initialize, :ptr, :UINT, :UINT, :DWORD
-	STDMETHOD	GetMenuInfo, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	SetShellFolder, :ptr, :PCIDLIST_ABSOLUTE, :HKEY, :DWORD
-	STDMETHOD	GetShellFolder, :ptr, :ptr, :REFIID, :ptr
-	STDMETHOD	SetMenu, :HMENU, :HWND, :DWORD
-	STDMETHOD	GetMenu, :ptr, :ptr, :ptr
-	STDMETHOD	InvalidateItem, :LPSMDATA, :DWORD
-	STDMETHOD	GetState, :LPSMDATA
-	STDMETHOD	SetMenuToolbar, :ptr, :DWORD
-IShellMenuVtbl ends
-IShellMenu struct
-	lpVtbl		PVOID ?
-IShellMenu ends
+.comdef IShellMenu
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Initialize		proc :ptr, :UINT, :UINT, :DWORD
+    GetMenuInfo		proc :ptr, :ptr, :ptr, :ptr
+    SetShellFolder	proc :ptr, :PCIDLIST_ABSOLUTE, :HKEY, :DWORD
+    GetShellFolder	proc :ptr, :ptr, :REFIID, :ptr
+    SetMenu		proc :HMENU, :HWND, :DWORD
+    GetMenu		proc :ptr, :ptr, :ptr
+    InvalidateItem	proc :LPSMDATA, :DWORD
+    GetState		proc :LPSMDATA
+    SetMenuToolbar	proc :ptr, :DWORD
+    .ends
 
 endif
 endif
@@ -6013,15 +5577,12 @@ ifndef __IShellRunDll_INTERFACE_DEFINED__
 __IShellRunDll_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IShellRunDll:IID
-IShellRunDllVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Run, :LPCWSTR
-IShellRunDllVtbl ends
-IShellRunDll struct
-	lpVtbl		PVOID ?
-IShellRunDll ends
+.comdef IShellRunDll
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Run			proc :LPCWSTR
+    .ends
 
 endif
 
@@ -6083,23 +5644,20 @@ ifndef __IKnownFolder_INTERFACE_DEFINED__
 __IKnownFolder_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IKnownFolder:IID
-IKnownFolderVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetId, :ptr
-	STDMETHOD	GetCategory, :ptr
-	STDMETHOD	GetShellItem, :DWORD, :REFIID, :ptr
-	STDMETHOD	GetPath, :DWORD, :ptr
-	STDMETHOD	SetPath, :DWORD, :LPCWSTR
-	STDMETHOD	GetIDList, :DWORD, :ptr
-	STDMETHOD	GetFolderType, :ptr
-	STDMETHOD	GetRedirectionCapabilities, :ptr
-	STDMETHOD	GetFolderDefinition, :ptr
-IKnownFolderVtbl ends
-IKnownFolder struct
-	lpVtbl		PVOID ?
-IKnownFolder ends
+.comdef IKnownFolder
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetId		proc :ptr
+    GetCategory		proc :ptr
+    GetShellItem	proc :DWORD, :REFIID, :ptr
+    GetPath		proc :DWORD, :ptr
+    SetPath		proc :DWORD, :LPCWSTR
+    GetIDList		proc :DWORD, :ptr
+    GetFolderType	proc :ptr
+    GetRedirectionCapabilities proc :ptr
+    GetFolderDefinition proc :ptr
+    .ends
 
 endif
 
@@ -6111,24 +5669,21 @@ FFFP_EXACTMATCH		equ 0
 FFFP_NEARESTPARENTMATCH equ ( FFFP_EXACTMATCH + 1 )
 
 externdef		IID_IKnownFolderManager:IID
-IKnownFolderManagerVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	FolderIdFromCsidl, :SINT, :ptr
-	STDMETHOD	FolderIdToCsidl, :REFKNOWNFOLDERID, :ptr
-	STDMETHOD	GetFolderIds, :ptr, :ptr
-	STDMETHOD	GetFolder, :REFKNOWNFOLDERID, :ptr
-	STDMETHOD	GetFolderByName, :LPCWSTR, :ptr
-	STDMETHOD	RegisterFolder, :REFKNOWNFOLDERID, :ptr
-	STDMETHOD	UnregisterFolder, :REFKNOWNFOLDERID
-	STDMETHOD	FindFolderFromPath, :LPCWSTR, :FFFP_MODE, :ptr
-	STDMETHOD	FindFolderFromIDList, :PCIDLIST_ABSOLUTE, :ptr
-	STDMETHOD	Redirect, :REFKNOWNFOLDERID, :HWND, :KF_REDIRECT_FLAGS, :LPCWSTR, :UINT, :ptr, :ptr
-IKnownFolderManagerVtbl ends
-IKnownFolderManager struct
-	lpVtbl		PVOID ?
-IKnownFolderManager ends
+.comdef IKnownFolderManager
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    FolderIdFromCsidl	proc :SINT, :ptr
+    FolderIdToCsidl	proc :REFKNOWNFOLDERID, :ptr
+    GetFolderIds	proc :ptr, :ptr
+    GetFolder		proc :REFKNOWNFOLDERID, :ptr
+    GetFolderByName	proc :LPCWSTR, :ptr
+    RegisterFolder	proc :REFKNOWNFOLDERID, :ptr
+    UnregisterFolder	proc :REFKNOWNFOLDERID
+    FindFolderFromPath	proc :LPCWSTR, :FFFP_MODE, :ptr
+    FindFolderFromIDList proc :PCIDLIST_ABSOLUTE, :ptr
+    Redirect		proc :REFKNOWNFOLDERID, :HWND, :KF_REDIRECT_FLAGS, :LPCWSTR, :UINT, :ptr, :ptr
+    .ends
 
 ;HRESULT
 IKnownFolderManager_RemoteRedirect_Proxy proto WINAPI \
@@ -6170,21 +5725,18 @@ ifndef __ISharingConfigurationManager_INTERFACE_DEFINED__
 __ISharingConfigurationManager_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_ISharingConfigurationManager:IID
-ISharingConfigurationManagerVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	CreateShare, :DEF_SHARE_ID, :SHARE_ROLE
-	STDMETHOD	DeleteShare, :DEF_SHARE_ID
-	STDMETHOD	ShareExists, :DEF_SHARE_ID
-	STDMETHOD	GetSharePermissions, :DEF_SHARE_ID, :ptr
-	STDMETHOD	SharePrinters
-	STDMETHOD	StopSharingPrinters
-	STDMETHOD	ArePrintersShared
-ISharingConfigurationManagerVtbl ends
-ISharingConfigurationManager struct
-	lpVtbl		PVOID ?
-ISharingConfigurationManager ends
+.comdef ISharingConfigurationManager
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    CreateShare		proc :DEF_SHARE_ID, :SHARE_ROLE
+    DeleteShare		proc :DEF_SHARE_ID
+    ShareExists		proc :DEF_SHARE_ID
+    GetSharePermissions proc :DEF_SHARE_ID, :ptr
+    SharePrinters	proc
+    StopSharingPrinters proc
+    ArePrintersShared	proc
+    .ends
 
 endif
 endif
@@ -6196,15 +5748,12 @@ ifndef __IPreviousVersionsInfo_INTERFACE_DEFINED__
 __IPreviousVersionsInfo_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IPreviousVersionsInfo:IID
-IPreviousVersionsInfoVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	AreSnapshotsAvailable, :LPCWSTR, :BOOL, :ptr
-IPreviousVersionsInfoVtbl ends
-IPreviousVersionsInfo struct
-	lpVtbl		PVOID ?
-IPreviousVersionsInfo ends
+.comdef IPreviousVersionsInfo
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    AreSnapshotsAvailable proc :LPCWSTR, :BOOL, :ptr
+    .ends
 
 endif
 
@@ -6217,16 +5766,13 @@ ifndef __IRelatedItem_INTERFACE_DEFINED__
 __IRelatedItem_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IRelatedItem:IID
-IRelatedItemVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetItemIDList, :ptr
-	STDMETHOD	GetItem, :ptr
-IRelatedItemVtbl ends
-IRelatedItem struct
-	lpVtbl		PVOID ?
-IRelatedItem ends
+.comdef IRelatedItem
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetItemIDList	proc :ptr
+    GetItem		proc :ptr
+    .ends
 
 endif
 
@@ -6234,16 +5780,13 @@ ifndef __IIdentityName_INTERFACE_DEFINED__
 __IIdentityName_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IIdentityName:IID
-IIdentityNameVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetItemIDList, :ptr
-	STDMETHOD	GetItem, :ptr
-IIdentityNameVtbl ends
-IIdentityName struct
-	lpVtbl		PVOID ?
-IIdentityName ends
+.comdef IIdentityName
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetItemIDList	proc :ptr
+    GetItem		proc :ptr
+    .ends
 
 endif
 
@@ -6251,16 +5794,13 @@ ifndef __IDelegateItem_INTERFACE_DEFINED__
 __IDelegateItem_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IDelegateItem:IID
-IDelegateItemVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetItemIDList, :ptr
-	STDMETHOD	GetItem, :ptr
-IDelegateItemVtbl ends
-IDelegateItem struct
-	lpVtbl		PVOID ?
-IDelegateItem ends
+.comdef IDelegateItem
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetItemIDList	proc :ptr
+    GetItem		proc :ptr
+    .ends
 
 endif
 
@@ -6268,16 +5808,13 @@ ifndef __ICurrentItem_INTERFACE_DEFINED__
 __ICurrentItem_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_ICurrentItem:IID
-ICurrentItemVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetItemIDList, :ptr
-	STDMETHOD	GetItem, :ptr
-ICurrentItemVtbl ends
-ICurrentItem struct
-	lpVtbl		PVOID ?
-ICurrentItem ends
+.comdef ICurrentItem
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetItemIDList	proc :ptr
+    GetItem		proc :ptr
+    .ends
 
 endif
 
@@ -6285,16 +5822,13 @@ ifndef __ITransferMediumItem_INTERFACE_DEFINED__
 __ITransferMediumItem_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_ITransferMediumItem:IID
-ITransferMediumItemVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetItemIDList, :ptr
-	STDMETHOD	GetItem, :ptr
-ITransferMediumItemVtbl ends
-ITransferMediumItem struct
-	lpVtbl		PVOID ?
-ITransferMediumItem ends
+.comdef ITransferMediumItem
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetItemIDList	proc :ptr
+    GetItem		proc :ptr
+    .ends
 
 endif
 
@@ -6302,16 +5836,13 @@ ifndef __IUseToBrowseItem_INTERFACE_DEFINED__
 __IUseToBrowseItem_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IUseToBrowseItem:IID
-IUseToBrowseItemVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetItemIDList, :ptr
-	STDMETHOD	GetItem, :ptr
-IUseToBrowseItemVtbl ends
-IUseToBrowseItem struct
-	lpVtbl		PVOID ?
-IUseToBrowseItem ends
+.comdef IUseToBrowseItem
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetItemIDList	proc :ptr
+    GetItem		proc :ptr
+    .ends
 
 endif
 
@@ -6319,16 +5850,13 @@ ifndef __IDisplayItem_INTERFACE_DEFINED__
 __IDisplayItem_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IDisplayItem:IID
-IDisplayItemVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetItemIDList, :ptr
-	STDMETHOD	GetItem, :ptr
-IDisplayItemVtbl ends
-IDisplayItem struct
-	lpVtbl		PVOID ?
-IDisplayItem ends
+.comdef IDisplayItem
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetItemIDList	proc :ptr
+    GetItem		proc :ptr
+    .ends
 
 endif
 
@@ -6336,16 +5864,13 @@ ifndef __IViewStateIdentityItem_INTERFACE_DEFINED__
 __IViewStateIdentityItem_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IViewStateIdentityItem:IID
-IViewStateIdentityItemVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetItemIDList, :ptr
-	STDMETHOD	GetItem, :ptr
-IViewStateIdentityItemVtbl ends
-IViewStateIdentityItem struct
-	lpVtbl		PVOID ?
-IViewStateIdentityItem ends
+.comdef IViewStateIdentityItem
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetItemIDList	proc :ptr
+    GetItem		proc :ptr
+    .ends
 
 endif
 
@@ -6353,16 +5878,13 @@ ifndef __IPreviewItem_INTERFACE_DEFINED__
 __IPreviewItem_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IPreviewItem:IID
-IPreviewItemVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetItemIDList, :ptr
-	STDMETHOD	GetItem, :ptr
-IPreviewItemVtbl ends
-IPreviewItem struct
-	lpVtbl		PVOID ?
-IPreviewItem ends
+.comdef IPreviewItem
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetItemIDList	proc :ptr
+    GetItem		proc :ptr
+    .ends
 
 endif
 endif
@@ -6374,15 +5896,12 @@ ifndef __IDestinationStreamFactory_INTERFACE_DEFINED__
 __IDestinationStreamFactory_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IDestinationStreamFactory:IID
-IDestinationStreamFactoryVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetDestinationStream, :ptr
-IDestinationStreamFactoryVtbl ends
-IDestinationStreamFactory struct
-	lpVtbl		PVOID ?
-IDestinationStreamFactory ends
+.comdef IDestinationStreamFactory
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetDestinationStream proc :ptr
+    .ends
 
 endif
 
@@ -6403,16 +5922,13 @@ ifndef __INewMenuClient_INTERFACE_DEFINED__
 __INewMenuClient_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_INewMenuClient:IID
-INewMenuClientVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	IncludeItems, :ptr
-	STDMETHOD	SelectAndEditItem, :PCIDLIST_ABSOLUTE, :NMCSAEI_FLAGS
-INewMenuClientVtbl ends
-INewMenuClient struct
-	lpVtbl		PVOID ?
-INewMenuClient ends
+.comdef INewMenuClient
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    IncludeItems	proc :ptr
+    SelectAndEditItem	proc :PCIDLIST_ABSOLUTE, :NMCSAEI_FLAGS
+    .ends
 
 endif
 
@@ -6429,15 +5945,12 @@ ifndef __IInitializeWithBindCtx_INTERFACE_DEFINED__
 __IInitializeWithBindCtx_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IInitializeWithBindCtx:IID
-IInitializeWithBindCtxVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Initialize, :ptr
-IInitializeWithBindCtxVtbl ends
-IInitializeWithBindCtx struct
-	lpVtbl		PVOID ?
-IInitializeWithBindCtx ends
+.comdef IInitializeWithBindCtx
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Initialize		proc :ptr
+    .ends
 
 endif
 
@@ -6445,16 +5958,13 @@ ifndef __IShellItemFilter_INTERFACE_DEFINED__
 __IShellItemFilter_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IShellItemFilter:IID
-IShellItemFilterVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	IncludeItem, :ptr
-	STDMETHOD	GetEnumFlagsForItem, :ptr, :ptr
-IShellItemFilterVtbl ends
-IShellItemFilter struct
-	lpVtbl		PVOID ?
-IShellItemFilter ends
+.comdef IShellItemFilter
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    IncludeItem		proc :ptr
+    GetEnumFlagsForItem proc :ptr, :ptr
+    .ends
 
 endif
 endif
@@ -6523,33 +6033,30 @@ NSTCGNI_LASTVISIBLE	equ 7
 DEFINE_GUID(IID_INameSpaceTreeControl, 0x028212a3, 0xb627, 0x47e9, 0x88,0x56, 0xc1,0x42,0x65,0x55,0x4e,0x4f)
 
 externdef		IID_INameSpaceTreeControl:IID
-INameSpaceTreeControlVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Initialize, :HWND, :ptr, :NSTCSTYLE
-	STDMETHOD	TreeAdvise, :ptr, :ptr
-	STDMETHOD	TreeUnadvise, :DWORD
-	STDMETHOD	AppendRoot, :ptr, :SHCONTF, :NSTCROOTSTYLE, :ptr
-	STDMETHOD	InsertRoot, :SINT, :ptr, :SHCONTF, :NSTCROOTSTYLE, :ptr
-	STDMETHOD	RemoveRoot, :ptr
-	STDMETHOD	RemoveAllRoots
-	STDMETHOD	GetRootItems, :ptr
-	STDMETHOD	SetItemState, :ptr, :NSTCITEMSTATE, :NSTCITEMSTATE
-	STDMETHOD	GetItemState, :ptr, :NSTCITEMSTATE, :ptr
-	STDMETHOD	GetSelectedItems, :ptr
-	STDMETHOD	GetItemCustomState, :ptr, :ptr
-	STDMETHOD	SetItemCustomState, :ptr, :SINT
-	STDMETHOD	EnsureItemVisible, :ptr
-	STDMETHOD	SetTheme, :LPCWSTR
-	STDMETHOD	GetNextItem, :ptr, :NSTCGNI, :ptr
-	STDMETHOD	HitTest, :ptr, :ptr
-	STDMETHOD	GetItemRect, :ptr, :ptr
-	STDMETHOD	CollapseAll
-INameSpaceTreeControlVtbl ends
-INameSpaceTreeControl struct
-	lpVtbl		PVOID ?
-INameSpaceTreeControl ends
+.comdef INameSpaceTreeControl
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Initialize		proc :HWND, :ptr, :NSTCSTYLE
+    TreeAdvise		proc :ptr, :ptr
+    TreeUnadvise	proc :DWORD
+    AppendRoot		proc :ptr, :SHCONTF, :NSTCROOTSTYLE, :ptr
+    InsertRoot		proc :SINT, :ptr, :SHCONTF, :NSTCROOTSTYLE, :ptr
+    RemoveRoot		proc :ptr
+    RemoveAllRoots	proc
+    GetRootItems	proc :ptr
+    SetItemState	proc :ptr, :NSTCITEMSTATE, :NSTCITEMSTATE
+    GetItemState	proc :ptr, :NSTCITEMSTATE, :ptr
+    GetSelectedItems	proc :ptr
+    GetItemCustomState	proc :ptr, :ptr
+    SetItemCustomState	proc :ptr, :SINT
+    EnsureItemVisible	proc :ptr
+    SetTheme		proc :LPCWSTR
+    GetNextItem		proc :ptr, :NSTCGNI, :ptr
+    HitTest		proc :ptr, :ptr
+    GetItemRect		proc :ptr, :ptr
+    CollapseAll		proc
+    .ends
 
 endif
 
@@ -6568,37 +6075,34 @@ NTSCS2_NEVERINSERTNONENUMERATED equ 0x20
 DEFINE_ENUM_FLAG_OPERATORS(NSTCSTYLE2)
 
 externdef		IID_INameSpaceTreeControl2:IID
-INameSpaceTreeControl2Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Initialize, :HWND, :ptr, :NSTCSTYLE
-	STDMETHOD	TreeAdvise, :ptr, :ptr
-	STDMETHOD	TreeUnadvise, :DWORD
-	STDMETHOD	AppendRoot, :ptr, :SHCONTF, :NSTCROOTSTYLE, :ptr
-	STDMETHOD	InsertRoot, :SINT, :ptr, :SHCONTF, :NSTCROOTSTYLE, :ptr
-	STDMETHOD	RemoveRoot, :ptr
-	STDMETHOD	RemoveAllRoots
-	STDMETHOD	GetRootItems, :ptr
-	STDMETHOD	SetItemState, :ptr, :NSTCITEMSTATE, :NSTCITEMSTATE
-	STDMETHOD	GetItemState, :ptr, :NSTCITEMSTATE, :ptr
-	STDMETHOD	GetSelectedItems, :ptr
-	STDMETHOD	GetItemCustomState, :ptr, :ptr
-	STDMETHOD	SetItemCustomState, :ptr, :SINT
-	STDMETHOD	EnsureItemVisible, :ptr
-	STDMETHOD	SetTheme, :LPCWSTR
-	STDMETHOD	GetNextItem, :ptr, :NSTCGNI, :ptr
-	STDMETHOD	HitTest, :ptr, :ptr
-	STDMETHOD	GetItemRect, :ptr, :ptr
-	STDMETHOD	CollapseAll
-	STDMETHOD	SetControlStyle, :NSTCSTYLE, :NSTCSTYLE
-	STDMETHOD	GetControlStyle, :NSTCSTYLE, :ptr
-	STDMETHOD	SetControlStyle2, :NSTCSTYLE2, :NSTCSTYLE2
-	STDMETHOD	GetControlStyle2, :NSTCSTYLE2, :ptr
-INameSpaceTreeControl2Vtbl ends
-INameSpaceTreeControl2 struct
-	lpVtbl		PVOID ?
-INameSpaceTreeControl2 ends
+.comdef INameSpaceTreeControl2
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Initialize		proc :HWND, :ptr, :NSTCSTYLE
+    TreeAdvise		proc :ptr, :ptr
+    TreeUnadvise	proc :DWORD
+    AppendRoot		proc :ptr, :SHCONTF, :NSTCROOTSTYLE, :ptr
+    InsertRoot		proc :SINT, :ptr, :SHCONTF, :NSTCROOTSTYLE, :ptr
+    RemoveRoot		proc :ptr
+    RemoveAllRoots	proc
+    GetRootItems	proc :ptr
+    SetItemState	proc :ptr, :NSTCITEMSTATE, :NSTCITEMSTATE
+    GetItemState	proc :ptr, :NSTCITEMSTATE, :ptr
+    GetSelectedItems	proc :ptr
+    GetItemCustomState	proc :ptr, :ptr
+    SetItemCustomState	proc :ptr, :SINT
+    EnsureItemVisible	proc :ptr
+    SetTheme		proc :LPCWSTR
+    GetNextItem		proc :ptr, :NSTCGNI, :ptr
+    HitTest		proc :ptr, :ptr
+    GetItemRect		proc :ptr, :ptr
+    CollapseAll		proc
+    SetControlStyle	proc :NSTCSTYLE, :NSTCSTYLE
+    GetControlStyle	proc :NSTCSTYLE, :ptr
+    SetControlStyle2	proc :NSTCSTYLE2, :NSTCSTYLE2
+    GetControlStyle2	proc :NSTCSTYLE2, :ptr
+    .ends
 
 endif
 
@@ -6643,32 +6147,29 @@ NSTCECT_DBLCLICK	equ 0x4
 NSTCECLICKTYPE		typedef DWORD
 
 externdef		IID_INameSpaceTreeControlEvents:IID
-INameSpaceTreeControlEventsVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	OnItemClick, :ptr, :NSTCEHITTEST, :NSTCECLICKTYPE
-	STDMETHOD	OnPropertyItemCommit, :ptr
-	STDMETHOD	OnItemStateChanging, :ptr, :NSTCITEMSTATE, :NSTCITEMSTATE
-	STDMETHOD	OnItemStateChanged, :ptr, :NSTCITEMSTATE, :NSTCITEMSTATE
-	STDMETHOD	OnSelectionChanged, :ptr
-	STDMETHOD	OnKeyboardInput, :UINT, :WPARAM, :LPARAM
-	STDMETHOD	OnBeforeExpand, :ptr
-	STDMETHOD	OnAfterExpand, :ptr
-	STDMETHOD	OnBeginLabelEdit, :ptr
-	STDMETHOD	OnEndLabelEdit, :ptr
-	STDMETHOD	OnGetToolTip, :ptr, :LPWSTR, :SINT
-	STDMETHOD	OnBeforeItemDelete, :ptr
-	STDMETHOD	OnItemAdded, :ptr, :BOOL
-	STDMETHOD	OnItemDeleted, :ptr, :BOOL
-	STDMETHOD	OnBeforeContextMenu, :ptr, :REFIID, :ptr
-	STDMETHOD	OnAfterContextMenu, :ptr, :ptr, :REFIID, :ptr
-	STDMETHOD	OnBeforeStateImageChange, :ptr
-	STDMETHOD	OnGetDefaultIconIndex, :ptr, :ptr, :ptr
-INameSpaceTreeControlEventsVtbl ends
-INameSpaceTreeControlEvents struct
-	lpVtbl		PVOID ?
-INameSpaceTreeControlEvents ends
+.comdef INameSpaceTreeControlEvents
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    OnItemClick		proc :ptr, :NSTCEHITTEST, :NSTCECLICKTYPE
+    OnPropertyItemCommit proc :ptr
+    OnItemStateChanging proc :ptr, :NSTCITEMSTATE, :NSTCITEMSTATE
+    OnItemStateChanged	proc :ptr, :NSTCITEMSTATE, :NSTCITEMSTATE
+    OnSelectionChanged	proc :ptr
+    OnKeyboardInput	proc :UINT, :WPARAM, :LPARAM
+    OnBeforeExpand	proc :ptr
+    OnAfterExpand	proc :ptr
+    OnBeginLabelEdit	proc :ptr
+    OnEndLabelEdit	proc :ptr
+    OnGetToolTip	proc :ptr, :LPWSTR, :SINT
+    OnBeforeItemDelete	proc :ptr
+    OnItemAdded		proc :ptr, :BOOL
+    OnItemDeleted	proc :ptr, :BOOL
+    OnBeforeContextMenu proc :ptr, :REFIID, :ptr
+    OnAfterContextMenu	proc :ptr, :ptr, :REFIID, :ptr
+    OnBeforeStateImageChange proc :ptr
+    OnGetDefaultIconIndex proc :ptr, :ptr, :ptr
+    .ends
 
 endif
 
@@ -6682,20 +6183,17 @@ ifndef __INameSpaceTreeControlDropHandler_INTERFACE_DEFINED__
 __INameSpaceTreeControlDropHandler_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_INameSpaceTreeControlDropHandler:IID
-INameSpaceTreeControlDropHandlerVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	OnDragEnter, :ptr, :ptr, :BOOL, :DWORD, :ptr
-	STDMETHOD	OnDragOver, :ptr, :ptr, :DWORD, :ptr
-	STDMETHOD	OnDragPosition, :ptr, :ptr, :SINT, :SINT
-	STDMETHOD	OnDrop, :ptr, :ptr, :SINT, :DWORD, :ptr
-	STDMETHOD	OnDropPosition, :ptr, :ptr, :SINT, :SINT
-	STDMETHOD	OnDragLeave, :ptr
-INameSpaceTreeControlDropHandlerVtbl ends
-INameSpaceTreeControlDropHandler struct
-	lpVtbl		PVOID ?
-INameSpaceTreeControlDropHandler ends
+.comdef INameSpaceTreeControlDropHandler
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    OnDragEnter		proc :ptr, :ptr, :BOOL, :DWORD, :ptr
+    OnDragOver		proc :ptr, :ptr, :DWORD, :ptr
+    OnDragPosition	proc :ptr, :ptr, :SINT, :SINT
+    OnDrop		proc :ptr, :ptr, :SINT, :DWORD, :ptr
+    OnDropPosition	proc :ptr, :ptr, :SINT, :SINT
+    OnDragLeave		proc :ptr
+    .ends
 
 endif
 
@@ -6703,17 +6201,14 @@ ifndef __INameSpaceTreeAccessible_INTERFACE_DEFINED__
 __INameSpaceTreeAccessible_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_INameSpaceTreeAccessible:IID
-INameSpaceTreeAccessibleVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	OnGetDefaultAccessibilityAction, :ptr, :ptr
-	STDMETHOD	OnDoDefaultAccessibilityAction, :ptr
-	STDMETHOD	OnGetAccessibilityRole, :ptr, :ptr
-INameSpaceTreeAccessibleVtbl ends
-INameSpaceTreeAccessible struct
-	lpVtbl		PVOID ?
-INameSpaceTreeAccessible ends
+.comdef INameSpaceTreeAccessible
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    OnGetDefaultAccessibilityAction proc :ptr, :ptr
+    OnDoDefaultAccessibilityAction proc :ptr
+    OnGetAccessibilityRole proc :ptr, :ptr
+    .ends
 
 endif
 
@@ -6732,18 +6227,15 @@ iIndent			SINT ?
 NSTCCUSTOMDRAW		ENDS
 
 externdef		IID_INameSpaceTreeControlCustomDraw:IID
-INameSpaceTreeControlCustomDrawVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	PrePaSINT, :HDC, :ptr, :ptr
-	STDMETHOD	PostPaSINT, :HDC, :ptr
-	STDMETHOD	ItemPrePaSINT, :HDC, :ptr, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	ItemPostPaSINT, :HDC, :ptr, :ptr
-INameSpaceTreeControlCustomDrawVtbl ends
-INameSpaceTreeControlCustomDraw struct
-	lpVtbl		PVOID ?
-INameSpaceTreeControlCustomDraw ends
+.comdef INameSpaceTreeControlCustomDraw
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    PrePaSINT		proc :HDC, :ptr, :ptr
+    PostPaSINT		proc :HDC, :ptr
+    ItemPrePaSINT	proc :HDC, :ptr, :ptr, :ptr, :ptr, :ptr
+    ItemPostPaSINT	proc :HDC, :ptr, :ptr
+    .ends
 
 endif
 
@@ -6763,15 +6255,12 @@ NSTCFC_DELAY_REGISTER_NOTIFY equ 0x2
 DEFINE_ENUM_FLAG_OPERATORS(NSTCFOLDERCAPABILITIES)
 
 externdef		IID_INameSpaceTreeControlFolderCapabilities:IID
-INameSpaceTreeControlFolderCapabilitiesVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetFolderCapabilities, :NSTCFOLDERCAPABILITIES, :ptr
-INameSpaceTreeControlFolderCapabilitiesVtbl ends
-INameSpaceTreeControlFolderCapabilities struct
-	lpVtbl		PVOID ?
-INameSpaceTreeControlFolderCapabilities ends
+.comdef INameSpaceTreeControlFolderCapabilities
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetFolderCapabilities proc :NSTCFOLDERCAPABILITIES, :ptr
+    .ends
 
 endif
 endif
@@ -6788,21 +6277,18 @@ ifndef __IPreviewHandler_INTERFACE_DEFINED__
 __IPreviewHandler_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IPreviewHandler:IID
-IPreviewHandlerVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetWindow, :HWND, :ptr
-	STDMETHOD	SetRect, :ptr
-	STDMETHOD	DoPreview
-	STDMETHOD	Unload
-	STDMETHOD	SetFocus
-	STDMETHOD	QueryFocus, :ptr
-	STDMETHOD	TranslateAccelerator, :ptr
-IPreviewHandlerVtbl ends
-IPreviewHandler struct
-	lpVtbl		PVOID ?
-IPreviewHandler ends
+.comdef IPreviewHandler
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetWindow		proc :HWND, :ptr
+    SetRect		proc :ptr
+    DoPreview		proc
+    Unload		proc
+    SetFocus		proc
+    QueryFocus		proc :ptr
+    TranslateAccelerator proc :ptr
+    .ends
 
 endif
 
@@ -6815,16 +6301,13 @@ cAccelEntries		UINT ?
 PREVIEWHANDLERFRAMEINFO ENDS
 
 externdef		IID_IPreviewHandlerFrame:IID
-IPreviewHandlerFrameVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetWindowContext, :ptr
-	STDMETHOD	TranslateAccelerator, :ptr
-IPreviewHandlerFrameVtbl ends
-IPreviewHandlerFrame struct
-	lpVtbl		PVOID ?
-IPreviewHandlerFrame ends
+.comdef IPreviewHandlerFrame
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetWindowContext	proc :ptr
+    TranslateAccelerator proc :ptr
+    .ends
 
 endif
 
@@ -6837,18 +6320,15 @@ ifndef __ITrayDeskBand_INTERFACE_DEFINED__
 __ITrayDeskBand_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_ITrayDeskBand:IID
-ITrayDeskBandVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	ShowDeskBand, :REFCLSID
-	STDMETHOD	HideDeskBand, :REFCLSID
-	STDMETHOD	IsDeskBandShown, :REFCLSID
-	STDMETHOD	DeskBandRegistrationChanged
-ITrayDeskBandVtbl ends
-ITrayDeskBand struct
-	lpVtbl		PVOID ?
-ITrayDeskBand ends
+.comdef ITrayDeskBand
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    ShowDeskBand	proc :REFCLSID
+    HideDeskBand	proc :REFCLSID
+    IsDeskBandShown	proc :REFCLSID
+    DeskBandRegistrationChanged proc
+    .ends
 
 endif
 
@@ -6858,17 +6338,14 @@ __IBandHost_INTERFACE_DEFINED__ equ 1
 DEFINE_GUID(IID_IBandHost, 0xb9075c7c, 0xd48e, 0x403f, 0xab,0x99, 0xd6,0xc7,0x7a,0x10,0x84,0xac)
 
 externdef		IID_IBandHost:IID
-IBandHostVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	CreateBand, :REFCLSID, :BOOL, :BOOL, :REFIID, :ptr
-	STDMETHOD	SetBandAvailability, :REFCLSID, :BOOL
-	STDMETHOD	DestroyBand, :REFCLSID
-IBandHostVtbl ends
-IBandHost struct
-	lpVtbl		PVOID ?
-IBandHost ends
+.comdef IBandHost
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    CreateBand		proc :REFCLSID, :BOOL, :BOOL, :REFIID, :ptr
+    SetBandAvailability proc :REFCLSID, :BOOL
+    DestroyBand		proc :REFCLSID
+    .ends
 
 endif
 
@@ -6893,15 +6370,12 @@ EXPLORERPANESTATE	typedef DWORD
 DEFINE_GUID(IID_IExplorerPaneVisibility, 0xe07010ec, 0xbc17, 0x44c0, 0x97,0xb0, 0x46,0xc7,0xc9,0x5b,0x9e,0xdc)
 
 externdef		IID_IExplorerPaneVisibility:IID
-IExplorerPaneVisibilityVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetPaneState, :REFEXPLORERPANE, :ptr
-IExplorerPaneVisibilityVtbl ends
-IExplorerPaneVisibility struct
-	lpVtbl		PVOID ?
-IExplorerPaneVisibility ends
+.comdef IExplorerPaneVisibility
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetPaneState	proc :REFEXPLORERPANE, :ptr
+    .ends
 
 endif
 
@@ -6914,15 +6388,12 @@ ifndef __IContextMenuCB_INTERFACE_DEFINED__
 __IContextMenuCB_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IContextMenuCB:IID
-IContextMenuCBVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	CallBack, :ptr, :HWND, :ptr, :UINT, :WPARAM, :LPARAM
-IContextMenuCBVtbl ends
-IContextMenuCB struct
-	lpVtbl		PVOID ?
-IContextMenuCB ends
+.comdef IContextMenuCB
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    CallBack		proc :ptr, :HWND, :ptr, :UINT, :WPARAM, :LPARAM
+    .ends
 LPIContextMenuCB	typedef ptr IContextMenuCB
 
 endif
@@ -6935,20 +6406,17 @@ ifndef __IDefaultExtractIconInit_INTERFACE_DEFINED__
 __IDefaultExtractIconInit_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IDefaultExtractIconInit:IID
-IDefaultExtractIconInitVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetFlags, :UINT
-	STDMETHOD	SetKey, :HKEY
-	STDMETHOD	SetNormalIcon, :LPCWSTR, :SINT
-	STDMETHOD	SetOpenIcon, :LPCWSTR, :SINT
-	STDMETHOD	SetShortcutIcon, :LPCWSTR, :SINT
-	STDMETHOD	SetDefaultIcon, :LPCWSTR, :SINT
-IDefaultExtractIconInitVtbl ends
-IDefaultExtractIconInit struct
-	lpVtbl		PVOID ?
-IDefaultExtractIconInit ends
+.comdef IDefaultExtractIconInit
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetFlags		proc :UINT
+    SetKey		proc :HKEY
+    SetNormalIcon	proc :LPCWSTR, :SINT
+    SetOpenIcon		proc :LPCWSTR, :SINT
+    SetShortcutIcon	proc :LPCWSTR, :SINT
+    SetDefaultIcon	proc :LPCWSTR, :SINT
+    .ends
 
 endif
 
@@ -6983,22 +6451,19 @@ ECF_ISDROPDOWN		equ 0x80
 EXPCMDFLAGS		typedef DWORD
 
 externdef		IID_IExplorerCommand:IID
-IExplorerCommandVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTitle, :ptr, :ptr
-	STDMETHOD	GetIcon, :ptr, :ptr
-	STDMETHOD	GetToolTip, :ptr, :ptr
-	STDMETHOD	GetCanonicalName, :ptr
-	STDMETHOD	GetState, :ptr, :BOOL, :ptr
-	STDMETHOD	_Invoke, :ptr, :ptr
-	STDMETHOD	GetFlags, :ptr
-	STDMETHOD	EnumSubCommands, :ptr
-IExplorerCommandVtbl ends
-IExplorerCommand struct
-	lpVtbl		PVOID ?
-IExplorerCommand ends
+.comdef IExplorerCommand
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTitle		proc :ptr, :ptr
+    GetIcon		proc :ptr, :ptr
+    GetToolTip		proc :ptr, :ptr
+    GetCanonicalName	proc :ptr
+    GetState		proc :ptr, :BOOL, :ptr
+    _Invoke		proc :ptr, :ptr
+    GetFlags		proc :ptr
+    EnumSubCommands	proc :ptr
+    .ends
 
 endif
 
@@ -7006,15 +6471,12 @@ ifndef __IExplorerCommandState_INTERFACE_DEFINED__
 __IExplorerCommandState_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IExplorerCommandState:IID
-IExplorerCommandStateVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetState, :ptr, :BOOL, :ptr
-IExplorerCommandStateVtbl ends
-IExplorerCommandState struct
-	lpVtbl		PVOID ?
-IExplorerCommandState ends
+.comdef IExplorerCommandState
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetState		proc :ptr, :BOOL, :ptr
+    .ends
 
 endif
 
@@ -7022,15 +6484,12 @@ ifndef __IInitializeCommand_INTERFACE_DEFINED__
 __IInitializeCommand_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IInitializeCommand:IID
-IInitializeCommandVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Initialize, :LPCWSTR, :ptr
-IInitializeCommandVtbl ends
-IInitializeCommand struct
-	lpVtbl		PVOID ?
-IInitializeCommand ends
+.comdef IInitializeCommand
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Initialize		proc :LPCWSTR, :ptr
+    .ends
 
 endif
 
@@ -7038,20 +6497,17 @@ ifndef __IEnumExplorerCommand_INTERFACE_DEFINED__
 __IEnumExplorerCommand_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IEnumExplorerCommand:IID
-IEnumExplorerCommandVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Next, :ULONG, :ptr, :ptr
-	STDMETHOD	Skip, :ULONG
-	STDMETHOD	Reset
-	STDMETHOD	Clone, :ptr
-IEnumExplorerCommandVtbl ends
-IEnumExplorerCommand struct
-	lpVtbl		PVOID ?
-IEnumExplorerCommand ends
+.comdef IEnumExplorerCommand
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Next		proc :ULONG, :ptr, :ptr
+    Skip		proc :ULONG
+    Reset		proc
+    Clone		proc :ptr
+    .ends
 
-;STDMETHODCALLTYPE
+;CALLTYPE
 IEnumExplorerCommand_RemoteNext_Proxy proto WINAPI \
 		 _This: ptr IEnumExplorerCommand,
 		  celt: ULONG,
@@ -7071,16 +6527,13 @@ ifndef __IExplorerCommandProvider_INTERFACE_DEFINED__
 __IExplorerCommandProvider_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IExplorerCommandProvider:IID
-IExplorerCommandProviderVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetCommands, :ptr, :REFIID, :ptr
-	STDMETHOD	GetCommand, :REFGUID, :REFIID, :ptr
-IExplorerCommandProviderVtbl ends
-IExplorerCommandProvider struct
-	lpVtbl		PVOID ?
-IExplorerCommandProvider ends
+.comdef IExplorerCommandProvider
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetCommands		proc :ptr, :REFIID, :ptr
+    GetCommand		proc :REFGUID, :REFIID, :ptr
+    .ends
 
 endif
 
@@ -7088,19 +6541,16 @@ ifndef __IMarkupCallback_INTERFACE_DEFINED__
 __IMarkupCallback_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IMarkupCallback:IID
-IMarkupCallbackVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetState, :DWORD, :UINT
-	STDMETHOD	Notify, :DWORD, :SINT, :SINT
-	STDMETHOD	InvalidateRect, :DWORD, :ptr
-	STDMETHOD	OnCustomDraw, :DWORD, :HDC, :ptr, :DWORD, :SINT, :UINT, :ptr
-	STDMETHOD	CustomDrawText, :HDC, :LPCWSTR, :SINT, :ptr, :UINT, :BOOL
-IMarkupCallbackVtbl ends
-IMarkupCallback struct
-	lpVtbl		PVOID ?
-IMarkupCallback ends
+.comdef IMarkupCallback
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetState		proc :DWORD, :UINT
+    Notify		proc :DWORD, :SINT, :SINT
+    InvalidateRect	proc :DWORD, :ptr
+    OnCustomDraw	proc :DWORD, :HDC, :ptr, :DWORD, :SINT, :UINT, :ptr
+    CustomDrawText	proc :HDC, :LPCWSTR, :SINT, :ptr, :UINT, :BOOL
+    .ends
 
 endif
 
@@ -7135,42 +6585,39 @@ MARKUPMESSAGE_CLICKEXECUTE equ ( MARKUPMESSAGE_KEYEXECUTE + 1 )
 MARKUPMESSAGE_WANTFOCUS equ ( MARKUPMESSAGE_CLICKEXECUTE + 1 )
 
 externdef		IID_IControlMarkup:IID
-IControlMarkupVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetCallback, :ptr
-	STDMETHOD	GetCallback, :REFIID, :ptr
-	STDMETHOD	SetId, :DWORD
-	STDMETHOD	GetId, :ptr
-	STDMETHOD	SetFonts, :HFONT, :HFONT
-	STDMETHOD	GetFonts, :ptr, :ptr
-	STDMETHOD	SetText, :LPCWSTR
-	STDMETHOD	GetText, :BOOL, :LPWSTR, :ptr
-	STDMETHOD	SetLinkText, :SINT, :UINT, :LPCWSTR
-	STDMETHOD	GetLinkText, :SINT, :UINT, :LPWSTR, :ptr
-	STDMETHOD	SetRenderFlags, :UINT
-	STDMETHOD	GetRenderFlags, :ptr, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	SetThemeRenderFlags, :UINT, :HTHEME, :SINT, :SINT, :SINT
-	STDMETHOD	GetState, :SINT, :UINT, :ptr
-	STDMETHOD	SetState, :SINT, :UINT, :UINT
-	STDMETHOD	DrawText, :HDC, :LPCRECT
-	STDMETHOD	SetLinkCursor
-	STDMETHOD	CalcIdealSize, :HDC, :UINT, :ptr
-	STDMETHOD	SetFocus
-	STDMETHOD	KillFocus
-	STDMETHOD	IsTabbable
-	STDMETHOD	OnButtonDown, :POINT
-	STDMETHOD	OnButtonUp, :POINT
-	STDMETHOD	OnKeyDown, :UINT
-	STDMETHOD	HitTest, :POINT, :ptr
-	STDMETHOD	GetLinkRect, :SINT, :ptr
-	STDMETHOD	GetControlRect, :ptr
-	STDMETHOD	GetLinkCount, :ptr
-IControlMarkupVtbl ends
-IControlMarkup struct
-	lpVtbl		PVOID ?
-IControlMarkup ends
+.comdef IControlMarkup
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetCallback		proc :ptr
+    GetCallback		proc :REFIID, :ptr
+    SetId		proc :DWORD
+    GetId		proc :ptr
+    SetFonts		proc :HFONT, :HFONT
+    GetFonts		proc :ptr, :ptr
+    SetText		proc :LPCWSTR
+    GetText		proc :BOOL, :LPWSTR, :ptr
+    SetLinkText		proc :SINT, :UINT, :LPCWSTR
+    GetLinkText		proc :SINT, :UINT, :LPWSTR, :ptr
+    SetRenderFlags	proc :UINT
+    GetRenderFlags	proc :ptr, :ptr, :ptr, :ptr, :ptr
+    SetThemeRenderFlags proc :UINT, :HTHEME, :SINT, :SINT, :SINT
+    GetState		proc :SINT, :UINT, :ptr
+    SetState		proc :SINT, :UINT, :UINT
+    DrawText		proc :HDC, :LPCRECT
+    SetLinkCursor	proc
+    CalcIdealSize	proc :HDC, :UINT, :ptr
+    SetFocus		proc
+    KillFocus		proc
+    IsTabbable		proc
+    OnButtonDown	proc :POINT
+    OnButtonUp		proc :POINT
+    OnKeyDown		proc :UINT
+    HitTest		proc :POINT, :ptr
+    GetLinkRect		proc :SINT, :ptr
+    GetControlRect	proc :ptr
+    GetLinkCount	proc :ptr
+    .ends
 
 endif
 
@@ -7178,15 +6625,12 @@ ifndef __IInitializeNetworkFolder_INTERFACE_DEFINED__
 __IInitializeNetworkFolder_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IInitializeNetworkFolder:IID
-IInitializeNetworkFolderVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Initialize, :PCIDLIST_ABSOLUTE, :PCIDLIST_ABSOLUTE, :UINT, :LPCWSTR, :LPCWSTR
-IInitializeNetworkFolderVtbl ends
-IInitializeNetworkFolder struct
-	lpVtbl		PVOID ?
-IInitializeNetworkFolder ends
+.comdef IInitializeNetworkFolder
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Initialize		proc :PCIDLIST_ABSOLUTE, :PCIDLIST_ABSOLUTE, :UINT, :LPCWSTR, :LPCWSTR
+    .ends
 
 endif
 
@@ -7203,17 +6647,14 @@ ifndef __IOpenControlPanel_INTERFACE_DEFINED__
 __IOpenControlPanel_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IOpenControlPanel:IID
-IOpenControlPanelVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Open, :LPCWSTR, :LPCWSTR, :ptr
-	STDMETHOD	GetPath, :LPCWSTR, :LPWSTR, :UINT
-	STDMETHOD	GetCurrentView, :ptr
-IOpenControlPanelVtbl ends
-IOpenControlPanel struct
-	lpVtbl		PVOID ?
-IOpenControlPanel ends
+.comdef IOpenControlPanel
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Open		proc :LPCWSTR, :LPCWSTR, :ptr
+    GetPath		proc :LPCWSTR, :LPWSTR, :UINT
+    GetCurrentView	proc :ptr
+    .ends
 
 endif
 
@@ -7221,15 +6662,12 @@ ifndef __IComputerInfoChangeNotify_INTERFACE_DEFINED__
 __IComputerInfoChangeNotify_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IComputerInfoChangeNotify:IID
-IComputerInfoChangeNotifyVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	ComputerInfoChanged
-IComputerInfoChangeNotifyVtbl ends
-IComputerInfoChangeNotify struct
-	lpVtbl		PVOID ?
-IComputerInfoChangeNotify ends
+.comdef IComputerInfoChangeNotify
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    ComputerInfoChanged proc
+    .ends
 
 endif
 
@@ -7242,16 +6680,13 @@ ifndef __IFileSystemBindData_INTERFACE_DEFINED__
 __IFileSystemBindData_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IFileSystemBindData:IID
-IFileSystemBindDataVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetFindData, :ptr
-	STDMETHOD	GetFindData, :ptr
-IFileSystemBindDataVtbl ends
-IFileSystemBindData struct
-	lpVtbl		PVOID ?
-IFileSystemBindData ends
+.comdef IFileSystemBindData
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetFindData		proc :ptr
+    GetFindData		proc :ptr
+    .ends
 
 endif
 
@@ -7259,20 +6694,17 @@ ifndef __IFileSystemBindData2_INTERFACE_DEFINED__
 __IFileSystemBindData2_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IFileSystemBindData2:IID
-IFileSystemBindData2Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetFindData, :ptr
-	STDMETHOD	GetFindData, :ptr
-	STDMETHOD	SetFileID, :LARGE_INTEGER
-	STDMETHOD	GetFileID, :ptr
-	STDMETHOD	SetJunctionCLSID, :REFCLSID
-	STDMETHOD	GetJunctionCLSID, :ptr
-IFileSystemBindData2Vtbl ends
-IFileSystemBindData2 struct
-	lpVtbl		PVOID ?
-IFileSystemBindData2 ends
+.comdef IFileSystemBindData2
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetFindData		proc :ptr
+    GetFindData		proc :ptr
+    SetFileID		proc :LARGE_INTEGER
+    GetFileID		proc :ptr
+    SetJunctionCLSID	proc :REFCLSID
+    GetJunctionCLSID	proc :ptr
+    .ends
 
 endif
 
@@ -7289,23 +6721,20 @@ KDC_FREQUENT		equ 1
 KDC_RECENT		equ ( KDC_FREQUENT + 1 )
 
 externdef		IID_ICustomDestinationList:IID
-ICustomDestinationListVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetAppID, :LPCWSTR
-	STDMETHOD	BeginList, :ptr, :REFIID, :ptr
-	STDMETHOD	AppendCategory, :LPCWSTR, :ptr
-	STDMETHOD	AppendKnownCategory, :KNOWNDESTCATEGORY
-	STDMETHOD	AddUserTasks, :ptr
-	STDMETHOD	CommitList
-	STDMETHOD	GetRemovedDestinations, :REFIID, :ptr
-	STDMETHOD	DeleteList, :LPCWSTR
-	STDMETHOD	AbortList
-ICustomDestinationListVtbl ends
-ICustomDestinationList struct
-	lpVtbl		PVOID ?
-ICustomDestinationList ends
+.comdef ICustomDestinationList
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetAppID		proc :LPCWSTR
+    BeginList		proc :ptr, :REFIID, :ptr
+    AppendCategory	proc :LPCWSTR, :ptr
+    AppendKnownCategory proc :KNOWNDESTCATEGORY
+    AddUserTasks	proc :ptr
+    CommitList		proc
+    GetRemovedDestinations proc :REFIID, :ptr
+    DeleteList		proc :LPCWSTR
+    AbortList		proc
+    .ends
 
 endif
 
@@ -7313,17 +6742,14 @@ ifndef __IApplicationDestinations_INTERFACE_DEFINED__
 __IApplicationDestinations_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IApplicationDestinations:IID
-IApplicationDestinationsVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetAppID, :LPCWSTR
-	STDMETHOD	RemoveDestination, :ptr
-	STDMETHOD	RemoveAllDestinations
-IApplicationDestinationsVtbl ends
-IApplicationDestinations struct
-	lpVtbl		PVOID ?
-IApplicationDestinations ends
+.comdef IApplicationDestinations
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetAppID		proc :LPCWSTR
+    RemoveDestination	proc :ptr
+    RemoveAllDestinations proc
+    .ends
 
 endif
 
@@ -7335,16 +6761,13 @@ ADLT_RECENT		equ 0
 ADLT_FREQUENT		equ ( ADLT_RECENT + 1 )
 
 externdef		IID_IApplicationDocumentLists:IID
-IApplicationDocumentListsVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetAppID, :LPCWSTR
-	STDMETHOD	GetList, :APPDOCLISTTYPE, :UINT, :REFIID, :ptr
-IApplicationDocumentListsVtbl ends
-IApplicationDocumentLists struct
-	lpVtbl		PVOID ?
-IApplicationDocumentLists ends
+.comdef IApplicationDocumentLists
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetAppID		proc :LPCWSTR
+    GetList		proc :APPDOCLISTTYPE, :UINT, :REFIID, :ptr
+    .ends
 
 endif
 
@@ -7352,16 +6775,13 @@ ifndef __IObjectWithAppUserModelID_INTERFACE_DEFINED__
 __IObjectWithAppUserModelID_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IObjectWithAppUserModelID:IID
-IObjectWithAppUserModelIDVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetAppID, :LPCWSTR
-	STDMETHOD	GetAppID, :ptr
-IObjectWithAppUserModelIDVtbl ends
-IObjectWithAppUserModelID struct
-	lpVtbl		PVOID ?
-IObjectWithAppUserModelID ends
+.comdef IObjectWithAppUserModelID
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetAppID		proc :LPCWSTR
+    GetAppID		proc :ptr
+    .ends
 
 endif
 
@@ -7369,16 +6789,13 @@ ifndef __IObjectWithProgID_INTERFACE_DEFINED__
 __IObjectWithProgID_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IObjectWithProgID:IID
-IObjectWithProgIDVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetProgID, :LPCWSTR
-	STDMETHOD	GetProgID, :ptr
-IObjectWithProgIDVtbl ends
-IObjectWithProgID struct
-	lpVtbl		PVOID ?
-IObjectWithProgID ends
+.comdef IObjectWithProgID
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetProgID		proc :LPCWSTR
+    GetProgID		proc :ptr
+    .ends
 
 endif
 
@@ -7386,15 +6803,12 @@ ifndef __IUpdateIDList_INTERFACE_DEFINED__
 __IUpdateIDList_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IUpdateIDList:IID
-IUpdateIDListVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Update, :ptr, :PCUITEMID_CHILD, :ptr
-IUpdateIDListVtbl ends
-IUpdateIDList struct
-	lpVtbl		PVOID ?
-IUpdateIDList ends
+.comdef IUpdateIDList
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Update		proc :ptr, :PCUITEMID_CHILD, :ptr
+    .ends
 
 endif
 
@@ -7416,15 +6830,12 @@ ifndef __IDesktopGadget_INTERFACE_DEFINED__
 __IDesktopGadget_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IDesktopGadget:IID
-IDesktopGadgetVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	RunGadget, :LPCWSTR
-IDesktopGadgetVtbl ends
-IDesktopGadget struct
-	lpVtbl		PVOID ?
-IDesktopGadget ends
+.comdef IDesktopGadget
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    RunGadget		proc :LPCWSTR
+    .ends
 
 endif
 
@@ -7447,16 +6858,13 @@ HGSC_PRINTERS		equ 0x10
 DEFINE_ENUM_FLAG_OPERATORS(HOMEGROUPSHARINGCHOICES)
 
 externdef		IID_IHomeGroup:IID
-IHomeGroupVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	IsMember, :ptr
-	STDMETHOD	ShowSharingWizard, :HWND, :ptr
-IHomeGroupVtbl ends
-IHomeGroup struct
-	lpVtbl		PVOID ?
-IHomeGroup ends
+.comdef IHomeGroup
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    IsMember		proc :ptr
+    ShowSharingWizard	proc :HWND, :ptr
+    .ends
 
 endif
 
@@ -7464,15 +6872,12 @@ ifndef __IInitializeWithPropertyStore_INTERFACE_DEFINED__
 __IInitializeWithPropertyStore_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IInitializeWithPropertyStore:IID
-IInitializeWithPropertyStoreVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Initialize, :ptr
-IInitializeWithPropertyStoreVtbl ends
-IInitializeWithPropertyStore struct
-	lpVtbl		PVOID ?
-IInitializeWithPropertyStore ends
+.comdef IInitializeWithPropertyStore
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Initialize		proc :ptr
+    .ends
 
 endif
 
@@ -7480,15 +6885,12 @@ ifndef __IOpenSearchSource_INTERFACE_DEFINED__
 __IOpenSearchSource_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IOpenSearchSource:IID
-IOpenSearchSourceVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetResults, :HWND, :LPCWSTR, :DWORD, :DWORD, :REFIID, :ptr
-IOpenSearchSourceVtbl ends
-IOpenSearchSource struct
-	lpVtbl		PVOID ?
-IOpenSearchSource ends
+.comdef IOpenSearchSource
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetResults		proc :HWND, :LPCWSTR, :DWORD, :DWORD, :REFIID, :ptr
+    .ends
 
 endif
 
@@ -7520,31 +6922,28 @@ LSF_MAKEUNIQUENAME	equ 0x2
 DEFINE_ENUM_FLAG_OPERATORS(LIBRARYSAVEFLAGS)
 
 externdef		IID_IShellLibrary:IID
-IShellLibraryVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	LoadLibraryFromItem, :ptr, :DWORD
-	STDMETHOD	LoadLibraryFromKnownFolder, :REFKNOWNFOLDERID, :DWORD
-	STDMETHOD	AddFolder, :ptr
-	STDMETHOD	RemoveFolder, :ptr
-	STDMETHOD	GetFolders, :LIBRARYFOLDERFILTER, :REFIID, :ptr
-	STDMETHOD	ResolveFolder, :ptr, :DWORD, :REFIID, :ptr
-	STDMETHOD	GetDefaultSaveFolder, :DEFAULTSAVEFOLDERTYPE, :REFIID, :ptr
-	STDMETHOD	SetDefaultSaveFolder, :DEFAULTSAVEFOLDERTYPE, :ptr
-	STDMETHOD	GetOptions, :ptr
-	STDMETHOD	SetOptions, :LIBRARYOPTIONFLAGS, :LIBRARYOPTIONFLAGS
-	STDMETHOD	GetFolderType, :ptr
-	STDMETHOD	SetFolderType, :REFFOLDERTYPEID
-	STDMETHOD	GetIcon, :ptr
-	STDMETHOD	SetIcon, :LPCWSTR
-	STDMETHOD	Commit
-	STDMETHOD	Save, :ptr, :LPCWSTR, :LIBRARYSAVEFLAGS, :ptr
-	STDMETHOD	SaveInKnownFolder, :REFKNOWNFOLDERID, :LPCWSTR, :LIBRARYSAVEFLAGS, :ptr
-IShellLibraryVtbl ends
-IShellLibrary struct
-	lpVtbl		PVOID ?
-IShellLibrary ends
+.comdef IShellLibrary
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    LoadLibraryFromItem proc :ptr, :DWORD
+    LoadLibraryFromKnownFolder proc :REFKNOWNFOLDERID, :DWORD
+    AddFolder		proc :ptr
+    RemoveFolder	proc :ptr
+    GetFolders		proc :LIBRARYFOLDERFILTER, :REFIID, :ptr
+    ResolveFolder	proc :ptr, :DWORD, :REFIID, :ptr
+    GetDefaultSaveFolder proc :DEFAULTSAVEFOLDERTYPE, :REFIID, :ptr
+    SetDefaultSaveFolder proc :DEFAULTSAVEFOLDERTYPE, :ptr
+    GetOptions		proc :ptr
+    SetOptions		proc :LIBRARYOPTIONFLAGS, :LIBRARYOPTIONFLAGS
+    GetFolderType	proc :ptr
+    SetFolderType	proc :REFFOLDERTYPEID
+    GetIcon		proc :ptr
+    SetIcon		proc :LPCWSTR
+    Commit		proc
+    Save		proc :ptr, :LPCWSTR, :LIBRARYSAVEFLAGS, :ptr
+    SaveInKnownFolder	proc :REFKNOWNFOLDERID, :LPCWSTR, :LIBRARYSAVEFLAGS, :ptr
+    .ends
 
 endif
 
@@ -7663,16 +7062,13 @@ __IAssocHandlerInvoker_INTERFACE_DEFINED__ equ 1
 externdef		IID_IAssocHandlerInvoker:IID
 
 
-IAssocHandlerInvokerVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SupportsSelection
-	STDMETHOD	_Invoke
-IAssocHandlerInvokerVtbl ends
-IAssocHandlerInvoker struct
-	lpVtbl		PVOID ?
-IAssocHandlerInvoker ends
+.comdef IAssocHandlerInvoker
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SupportsSelection	proc
+    _Invoke		proc
+    .ends
 
 endif
 
@@ -7680,21 +7076,18 @@ ifndef __IAssocHandler_INTERFACE_DEFINED__
 __IAssocHandler_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IAssocHandler:IID
-IAssocHandlerVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetName, :ptr
-	STDMETHOD	GetUIName, :ptr
-	STDMETHOD	GetIconLocation, :ptr, :ptr
-	STDMETHOD	IsRecommended
-	STDMETHOD	MakeDefault, :LPCWSTR
-	STDMETHOD	_Invoke, :ptr
-	STDMETHOD	CreateInvoker, :ptr, :ptr
-IAssocHandlerVtbl ends
-IAssocHandler struct
-	lpVtbl		PVOID ?
-IAssocHandler ends
+.comdef IAssocHandler
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetName		proc :ptr
+    GetUIName		proc :ptr
+    GetIconLocation	proc :ptr, :ptr
+    IsRecommended	proc
+    MakeDefault		proc :LPCWSTR
+    _Invoke		proc :ptr
+    CreateInvoker	proc :ptr, :ptr
+    .ends
 
 endif
 
@@ -7702,15 +7095,12 @@ ifndef __IEnumAssocHandlers_INTERFACE_DEFINED__
 __IEnumAssocHandlers_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IEnumAssocHandlers:IID
-IEnumAssocHandlersVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Next, :ULONG, :ptr, :ptr
-IEnumAssocHandlersVtbl ends
-IEnumAssocHandlers struct
-	lpVtbl		PVOID ?
-IEnumAssocHandlers ends
+.comdef IEnumAssocHandlers
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Next		proc :ULONG, :ptr, :ptr
+    .ends
 
 endif
 

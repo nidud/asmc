@@ -166,43 +166,40 @@ REFRESH_COMPLETELY	equ 3
 
 externdef		IID_IWebBrowser:IID
 
-IWebBrowserVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTypeInfoCount, :ptr
-	STDMETHOD	GetTypeInfo, :DWORD, :LCID, :ptr
-	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :DWORD, :LCID, :ptr
-	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	GoBack
-	STDMETHOD	GoForward
-	STDMETHOD	GoHome
-	STDMETHOD	GoSearch
-	STDMETHOD	Navigate, :BSTR, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	Refresh
-	STDMETHOD	Refresh2, :ptr
-	STDMETHOD	Stop
-	STDMETHOD	get_Application, :ptr
-	STDMETHOD	get_Parent, :ptr
-	STDMETHOD	get_Container, :ptr
-	STDMETHOD	get_Document, :ptr
-	STDMETHOD	get_TopLevelContainer, :ptr
-	STDMETHOD	get_Type, :ptr
-	STDMETHOD	get_Left, :ptr
-	STDMETHOD	put_Left, :SDWORD
-	STDMETHOD	get_Top, :ptr
-	STDMETHOD	put_Top, :SDWORD
-	STDMETHOD	get_Width, :ptr
-	STDMETHOD	put_Width, :SDWORD
-	STDMETHOD	get_Height, :ptr
-	STDMETHOD	put_Height, :SDWORD
-	STDMETHOD	get_LocationName, :ptr
-	STDMETHOD	get_LocationURL, :ptr
-	STDMETHOD	get_Busy, :ptr
-IWebBrowserVtbl ends
-IWebBrowser struct
-	lpVtbl		PVOID ?
-IWebBrowser ends
+.comdef IWebBrowser
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    GetTypeInfoCount    proc :ptr
+    GetTypeInfo         proc :DWORD, :LCID, :ptr
+    GetIDsOfNames       proc :REFIID, :ptr, :DWORD, :LCID, :ptr
+    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    GoBack              proc
+    GoForward           proc
+    GoHome              proc
+    GoSearch            proc
+    Navigate            proc :BSTR, :ptr, :ptr, :ptr, :ptr
+    Refresh             proc
+    Refresh2            proc :ptr
+    Stop                proc
+    get_Application     proc :ptr
+    get_Parent          proc :ptr
+    get_Container       proc :ptr
+    get_Document        proc :ptr
+    get_TopLevelContainer proc :ptr
+    get_Type            proc :ptr
+    get_Left            proc :ptr
+    put_Left            proc :SDWORD
+    get_Top             proc :ptr
+    put_Top             proc :SDWORD
+    get_Width           proc :ptr
+    put_Width           proc :SDWORD
+    get_Height          proc :ptr
+    put_Height          proc :SDWORD
+    get_LocationName    proc :ptr
+    get_LocationURL     proc :ptr
+    get_Busy            proc :ptr
+    .ends
 
 endif
 
@@ -212,18 +209,15 @@ __DWebBrowserEvents_DISPINTERFACE_DEFINED__ equ 1
 
 
 externdef		DIID_DWebBrowserEvents:IID
-DWebBrowserEventsVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTypeInfoCount, :ptr
-	STDMETHOD	GetTypeInfo, :DWORD, :LCID, :ptr
-	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :DWORD, :LCID, :ptr
-	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-DWebBrowserEventsVtbl ends
-DWebBrowserEvents struct
-	lpVtbl		PVOID ?
-DWebBrowserEvents ends
+.comdef DWebBrowserEvents
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    GetTypeInfoCount    proc :ptr
+    GetTypeInfo         proc :DWORD, :LCID, :ptr
+    GetIDsOfNames       proc :REFIID, :ptr, :DWORD, :LCID, :ptr
+    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    .ends
 
 endif
 
@@ -234,63 +228,60 @@ __IWebBrowserApp_INTERFACE_DEFINED__ equ 1
 DEFINE_GUID(IID_IWebBrowserApp, 0x0002df05, 0x0000, 0x0000, 0xc0,0x00, 0x00,0x00,0x00,0x00,0x00,0x46)
 
 externdef		IID_IWebBrowserApp:IID
-IWebBrowserAppVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTypeInfoCount, :ptr
-	STDMETHOD	GetTypeInfo, :DWORD, :LCID, :ptr
-	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :DWORD, :LCID, :ptr
-	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	GoBack
-	STDMETHOD	GoForward
-	STDMETHOD	GoHome
-	STDMETHOD	GoSearch
-	STDMETHOD	Navigate, :BSTR, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	Refresh
-	STDMETHOD	Refresh2, :ptr
-	STDMETHOD	Stop
-	STDMETHOD	get_Application, :ptr
-	STDMETHOD	get_Parent, :ptr
-	STDMETHOD	get_Container, :ptr
-	STDMETHOD	get_Document, :ptr
-	STDMETHOD	get_TopLevelContainer, :ptr
-	STDMETHOD	get_Type, :ptr
-	STDMETHOD	get_Left, :ptr
-	STDMETHOD	put_Left, :SDWORD
-	STDMETHOD	get_Top, :ptr
-	STDMETHOD	put_Top, :SDWORD
-	STDMETHOD	get_Width, :ptr
-	STDMETHOD	put_Width, :SDWORD
-	STDMETHOD	get_Height, :ptr
-	STDMETHOD	put_Height, :SDWORD
-	STDMETHOD	get_LocationName, :ptr
-	STDMETHOD	get_LocationURL, :ptr
-	STDMETHOD	get_Busy, :ptr
-	STDMETHOD	Quit
-	STDMETHOD	ClientToWindow, :ptr, :ptr
-	STDMETHOD	PutProperty, :BSTR, :VARIANT
-	STDMETHOD	GetProperty, :BSTR, :ptr
-	STDMETHOD	get_Name, :ptr
-	STDMETHOD	get_HWND, :ptr
-	STDMETHOD	get_FullName, :ptr
-	STDMETHOD	get_Path, :ptr
-	STDMETHOD	get_Visible, :ptr
-	STDMETHOD	put_Visible, :VARIANT_BOOL
-	STDMETHOD	get_StatusBar, :ptr
-	STDMETHOD	put_StatusBar, :VARIANT_BOOL
-	STDMETHOD	get_StatusText, :ptr
-	STDMETHOD	put_StatusText, :BSTR
-	STDMETHOD	get_ToolBar, :ptr
-	STDMETHOD	put_ToolBar, :DWORD
-	STDMETHOD	get_MenuBar, :ptr
-	STDMETHOD	put_MenuBar, :VARIANT_BOOL
-	STDMETHOD	get_FullScreen, :ptr
-	STDMETHOD	put_FullScreen, :VARIANT_BOOL
-IWebBrowserAppVtbl ends
-IWebBrowserApp struct
-	lpVtbl		PVOID ?
-IWebBrowserApp ends
+.comdef IWebBrowserApp
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    GetTypeInfoCount    proc :ptr
+    GetTypeInfo         proc :DWORD, :LCID, :ptr
+    GetIDsOfNames       proc :REFIID, :ptr, :DWORD, :LCID, :ptr
+    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    GoBack              proc
+    GoForward           proc
+    GoHome              proc
+    GoSearch            proc
+    Navigate            proc :BSTR, :ptr, :ptr, :ptr, :ptr
+    Refresh             proc
+    Refresh2            proc :ptr
+    Stop                proc
+    get_Application     proc :ptr
+    get_Parent          proc :ptr
+    get_Container       proc :ptr
+    get_Document        proc :ptr
+    get_TopLevelContainer proc :ptr
+    get_Type            proc :ptr
+    get_Left            proc :ptr
+    put_Left            proc :SDWORD
+    get_Top             proc :ptr
+    put_Top             proc :SDWORD
+    get_Width           proc :ptr
+    put_Width           proc :SDWORD
+    get_Height          proc :ptr
+    put_Height          proc :SDWORD
+    get_LocationName    proc :ptr
+    get_LocationURL     proc :ptr
+    get_Busy            proc :ptr
+    Quit                proc
+    ClientToWindow      proc :ptr, :ptr
+    PutProperty         proc :BSTR, :VARIANT
+    GetProperty         proc :BSTR, :ptr
+    get_Name            proc :ptr
+    get_HWND            proc :ptr
+    get_FullName        proc :ptr
+    get_Path            proc :ptr
+    get_Visible         proc :ptr
+    put_Visible         proc :VARIANT_BOOL
+    get_StatusBar       proc :ptr
+    put_StatusBar       proc :VARIANT_BOOL
+    get_StatusText      proc :ptr
+    put_StatusText      proc :BSTR
+    get_ToolBar         proc :ptr
+    put_ToolBar         proc :DWORD
+    get_MenuBar         proc :ptr
+    put_MenuBar         proc :VARIANT_BOOL
+    get_FullScreen      proc :ptr
+    put_FullScreen      proc :VARIANT_BOOL
+    .ends
 
 endif
 
@@ -299,82 +290,79 @@ __IWebBrowser2_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IWebBrowser2:IID
-IWebBrowser2Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTypeInfoCount, :ptr
-	STDMETHOD	GetTypeInfo, :DWORD, :LCID, :ptr
-	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :DWORD, :LCID, :ptr
-	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	GoBack
-	STDMETHOD	GoForward
-	STDMETHOD	GoHome
-	STDMETHOD	GoSearch
-	STDMETHOD	Navigate, :BSTR, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	Refresh
-	STDMETHOD	Refresh2, :ptr
-	STDMETHOD	Stop
-	STDMETHOD	get_Application, :ptr
-	STDMETHOD	get_Parent, :ptr
-	STDMETHOD	get_Container, :ptr
-	STDMETHOD	get_Document, :ptr
-	STDMETHOD	get_TopLevelContainer, :ptr
-	STDMETHOD	get_Type, :ptr
-	STDMETHOD	get_Left, :ptr
-	STDMETHOD	put_Left, :SDWORD
-	STDMETHOD	get_Top, :ptr
-	STDMETHOD	put_Top, :SDWORD
-	STDMETHOD	get_Width, :ptr
-	STDMETHOD	put_Width, :SDWORD
-	STDMETHOD	get_Height, :ptr
-	STDMETHOD	put_Height, :SDWORD
-	STDMETHOD	get_LocationName, :ptr
-	STDMETHOD	get_LocationURL, :ptr
-	STDMETHOD	get_Busy, :ptr
-	STDMETHOD	Quit
-	STDMETHOD	ClientToWindow, :ptr, :ptr
-	STDMETHOD	PutProperty, :BSTR, :VARIANT
-	STDMETHOD	GetProperty, :BSTR, :ptr
-	STDMETHOD	get_Name, :ptr
-	STDMETHOD	get_HWND, :ptr
-	STDMETHOD	get_FullName, :ptr
-	STDMETHOD	get_Path, :ptr BSTR
-	STDMETHOD	get_Visible, :ptr
-	STDMETHOD	put_Visible, :VARIANT_BOOL
-	STDMETHOD	get_StatusBar, :ptr
-	STDMETHOD	put_StatusBar, :VARIANT_BOOL
-	STDMETHOD	get_StatusText, :ptr
-	STDMETHOD	put_StatusText, :BSTR
-	STDMETHOD	get_ToolBar, :ptr
-	STDMETHOD	put_ToolBar, :DWORD
-	STDMETHOD	get_MenuBar, :ptr
-	STDMETHOD	put_MenuBar, :VARIANT_BOOL
-	STDMETHOD	get_FullScreen, :ptr
-	STDMETHOD	put_FullScreen, :VARIANT_BOOL
-	STDMETHOD	Navigate2, :ptr, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	QueryStatusWB, :OLECMDID, :ptr
-	STDMETHOD	ExecWB, :OLECMDID, :OLECMDEXECOPT, :ptr, :ptr
-	STDMETHOD	ShowBrowserBar, :ptr, :ptr, :ptr
-	STDMETHOD	get_ReadyState, :ptr
-	STDMETHOD	get_Offline, :ptr
-	STDMETHOD	put_Offline, :VARIANT_BOOL
-	STDMETHOD	get_Silent, :ptr
-	STDMETHOD	put_Silent, :VARIANT_BOOL
-	STDMETHOD	get_RegisterAsBrowser, :ptr
-	STDMETHOD	put_RegisterAsBrowser, :VARIANT_BOOL
-	STDMETHOD	get_RegisterAsDropTarget, :ptr
-	STDMETHOD	put_RegisterAsDropTarget, :VARIANT_BOOL
-	STDMETHOD	get_TheaterMode, :ptr
-	STDMETHOD	put_TheaterMode, :VARIANT_BOOL
-	STDMETHOD	get_AddressBar, :ptr
-	STDMETHOD	put_AddressBar, :VARIANT_BOOL
-	STDMETHOD	get_Resizable, :ptr
-	STDMETHOD	put_Resizable, :VARIANT_BOOL
-IWebBrowser2Vtbl ends
-IWebBrowser2 struct
-	lpVtbl		PVOID ?
-IWebBrowser2 ends
+.comdef IWebBrowser2
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    GetTypeInfoCount    proc :ptr
+    GetTypeInfo         proc :DWORD, :LCID, :ptr
+    GetIDsOfNames       proc :REFIID, :ptr, :DWORD, :LCID, :ptr
+    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    GoBack              proc
+    GoForward           proc
+    GoHome              proc
+    GoSearch            proc
+    Navigate            proc :BSTR, :ptr, :ptr, :ptr, :ptr
+    Refresh             proc
+    Refresh2            proc :ptr
+    Stop                proc
+    get_Application     proc :ptr
+    get_Parent          proc :ptr
+    get_Container       proc :ptr
+    get_Document        proc :ptr
+    get_TopLevelContainer proc :ptr
+    get_Type            proc :ptr
+    get_Left            proc :ptr
+    put_Left            proc :SDWORD
+    get_Top             proc :ptr
+    put_Top             proc :SDWORD
+    get_Width           proc :ptr
+    put_Width           proc :SDWORD
+    get_Height          proc :ptr
+    put_Height          proc :SDWORD
+    get_LocationName    proc :ptr
+    get_LocationURL     proc :ptr
+    get_Busy            proc :ptr
+    Quit                proc
+    ClientToWindow      proc :ptr, :ptr
+    PutProperty         proc :BSTR, :VARIANT
+    GetProperty         proc :BSTR, :ptr
+    get_Name            proc :ptr
+    get_HWND            proc :ptr
+    get_FullName        proc :ptr
+    get_Path            proc :ptr BSTR
+    get_Visible         proc :ptr
+    put_Visible         proc :VARIANT_BOOL
+    get_StatusBar       proc :ptr
+    put_StatusBar       proc :VARIANT_BOOL
+    get_StatusText      proc :ptr
+    put_StatusText      proc :BSTR
+    get_ToolBar         proc :ptr
+    put_ToolBar         proc :DWORD
+    get_MenuBar         proc :ptr
+    put_MenuBar         proc :VARIANT_BOOL
+    get_FullScreen      proc :ptr
+    put_FullScreen      proc :VARIANT_BOOL
+    Navigate2           proc :ptr, :ptr, :ptr, :ptr, :ptr
+    QueryStatusWB       proc :OLECMDID, :ptr
+    ExecWB              proc :OLECMDID, :OLECMDEXECOPT, :ptr, :ptr
+    ShowBrowserBar      proc :ptr, :ptr, :ptr
+    get_ReadyState      proc :ptr
+    get_Offline         proc :ptr
+    put_Offline         proc :VARIANT_BOOL
+    get_Silent          proc :ptr
+    put_Silent          proc :VARIANT_BOOL
+    get_RegisterAsBrowser proc :ptr
+    put_RegisterAsBrowser proc :VARIANT_BOOL
+    get_RegisterAsDropTarget proc :ptr
+    put_RegisterAsDropTarget proc :VARIANT_BOOL
+    get_TheaterMode     proc :ptr
+    put_TheaterMode     proc :VARIANT_BOOL
+    get_AddressBar      proc :ptr
+    put_AddressBar      proc :VARIANT_BOOL
+    get_Resizable       proc :ptr
+    put_Resizable       proc :VARIANT_BOOL
+    .ends
 
 endif
 
@@ -383,18 +371,15 @@ __DWebBrowserEvents2_DISPINTERFACE_DEFINED__ equ 1
 
 
 externdef		DIID_DWebBrowserEvents2:IID
-DWebBrowserEvents2Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTypeInfoCount, :ptr
-	STDMETHOD	GetTypeInfo, :DWORD, :LCID, :ptr
-	STDMETHOD	GetIDsOfNames,:REFIID, :ptr, :DWORD, :LCID, :ptr
-	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-DWebBrowserEvents2Vtbl ends
-DWebBrowserEvents2 struct
-	lpVtbl		PVOID ?
-DWebBrowserEvents2 ends
+.comdef DWebBrowserEvents2
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    GetTypeInfoCount    proc :ptr
+    GetTypeInfo         proc :DWORD, :LCID, :ptr
+    GetIDsOfNames       proc :REFIID, :ptr, :DWORD, :LCID, :ptr
+    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    .ends
 endif
 
 externdef		CLSID_WebBrowser_V1:CLSID
@@ -406,18 +391,15 @@ __DShellWindowsEvents_DISPINTERFACE_DEFINED__ equ 1
 
 
 externdef		DIID_DShellWindowsEvents:IID
-DShellWindowsEventsVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTypeInfoCount, :ptr
-	STDMETHOD	GetTypeInfo, :DWORD, :LCID, :ptr
-	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :DWORD, :LCID, :ptr
-	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-DShellWindowsEventsVtbl ends
-DShellWindowsEvents struct
-	lpVtbl		PVOID ?
-DShellWindowsEvents ends
+.comdef DShellWindowsEvents
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    GetTypeInfoCount    proc :ptr
+    GetTypeInfo         proc :DWORD, :LCID, :ptr
+    GetIDsOfNames       proc :REFIID, :ptr, :DWORD, :LCID, :ptr
+    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    .ends
 
 endif
 
@@ -427,29 +409,26 @@ __IShellWindows_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IShellWindows:IID
-IShellWindowsVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTypeInfoCount, :ptr
-	STDMETHOD	GetTypeInfo, :DWORD, :LCID, :ptr
-	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :DWORD, :LCID, :ptr
-	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	get_Count, :ptr
-	STDMETHOD	Item, :VARIANT, :ptr
-	STDMETHOD	_NewEnum, :ptr
-	STDMETHOD	Register, :ptr, :SDWORD, :DWORD, :ptr
-	STDMETHOD	RegisterPending, :SDWORD, :ptr, :ptr, :DWORD, :ptr
-	STDMETHOD	Revoke, :SDWORD
-	STDMETHOD	OnNavigate, :SDWORD, :ptr
-	STDMETHOD	OnActivated, :SDWORD, :VARIANT_BOOL
-	STDMETHOD	FindWindowSW, :ptr, :ptr, :DWORD, :ptr, :DWORD, :ptr
-	STDMETHOD	OnCreated, :SDWORD, :ptr
-	STDMETHOD	ProcessAttachDetach, :VARIANT_BOOL
-IShellWindowsVtbl ends
-IShellWindows struct
-	lpVtbl		PVOID ?
-IShellWindows ends
+.comdef IShellWindows
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    GetTypeInfoCount    proc :ptr
+    GetTypeInfo         proc :DWORD, :LCID, :ptr
+    GetIDsOfNames       proc :REFIID, :ptr, :DWORD, :LCID, :ptr
+    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Count           proc :ptr
+    Item                proc :VARIANT, :ptr
+    _NewEnum            proc :ptr
+    Register            proc :ptr, :SDWORD, :DWORD, :ptr
+    RegisterPending     proc :SDWORD, :ptr, :ptr, :DWORD, :ptr
+    Revoke              proc :SDWORD
+    OnNavigate          proc :SDWORD, :ptr
+    OnActivated         proc :SDWORD, :VARIANT_BOOL
+    FindWindowSW        proc :ptr, :ptr, :DWORD, :ptr, :DWORD, :ptr
+    OnCreated           proc :SDWORD, :ptr
+    ProcessAttachDetach proc :VARIANT_BOOL
+    .ends
 
 endif
 
@@ -460,31 +439,28 @@ __IShellUIHelper_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IShellUIHelper:IID
-IShellUIHelperVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTypeInfoCount, :ptr
-	STDMETHOD	GetTypeInfo, :DWORD, :LCID, :ptr
-	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :DWORD, :LCID, :ptr
-	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	ResetFirstBootMode
-	STDMETHOD	ResetSafeMode
-	STDMETHOD	RefreshOfflineDesktop
-	STDMETHOD	AddFavorite, :BSTR, :ptr
-	STDMETHOD	AddChannel, :BSTR
-	STDMETHOD	AddDesktopComponent, :BSTR, :BSTR, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	IsSubscribed, :BSTR, :ptr
-	STDMETHOD	NavigateAndFind, :BSTR, :BSTR, :ptr
-	STDMETHOD	ImportExportFavorites, :VARIANT_BOOL, :BSTR
-	STDMETHOD	AutoCompleteSaveForm, :ptr
-	STDMETHOD	AutoScan, :BSTR, :BSTR, :ptr
-	STDMETHOD	AutoCompleteAttach, :ptr
-	STDMETHOD	ShowBrowserUI, :BSTR, :ptr, :ptr
-IShellUIHelperVtbl ends
-IShellUIHelper struct
-	lpVtbl		PVOID ?
-IShellUIHelper ends
+.comdef IShellUIHelper
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    GetTypeInfoCount    proc :ptr
+    GetTypeInfo         proc :DWORD, :LCID, :ptr
+    GetIDsOfNames       proc :REFIID, :ptr, :DWORD, :LCID, :ptr
+    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    ResetFirstBootMode  proc
+    ResetSafeMode       proc
+    RefreshOfflineDesktop proc
+    AddFavorite         proc :BSTR, :ptr
+    AddChannel          proc :BSTR
+    AddDesktopComponent proc :BSTR, :BSTR, :ptr, :ptr, :ptr, :ptr
+    IsSubscribed        proc :BSTR, :ptr
+    NavigateAndFind     proc :BSTR, :BSTR, :ptr
+    ImportExportFavorites proc :VARIANT_BOOL, :BSTR
+    AutoCompleteSaveForm proc :ptr
+    AutoScan            proc :BSTR, :BSTR, :ptr
+    AutoCompleteAttach  proc :ptr
+    ShowBrowserUI       proc :BSTR, :ptr, :ptr
+    .ends
 
 endif
 
@@ -494,14 +470,11 @@ __IShellUIHelper2_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IShellUIHelper2:IID
-IShellUIHelper2Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-IShellUIHelper2Vtbl ends
-IShellUIHelper2 struct
-	lpVtbl		PVOID ?
-IShellUIHelper2 ends
+.comdef IShellUIHelper2
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    .ends
 
 endif
 
@@ -510,60 +483,57 @@ __IShellUIHelper3_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IShellUIHelper3:IID
-IShellUIHelper3Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTypeInfoCount, :ptr
-	STDMETHOD	GetTypeInfo, :DWORD, :LCID, :ptr
-	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :DWORD, :LCID, :ptr
-	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	ResetFirstBootMode
-	STDMETHOD	ResetSafeMode
-	STDMETHOD	RefreshOfflineDesktop
-	STDMETHOD	AddFavorite, :BSTR, :ptr
-	STDMETHOD	AddChannel, :BSTR
-	STDMETHOD	AddDesktopComponent, :BSTR, :BSTR, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	IsSubscribed, :BSTR, :ptr
-	STDMETHOD	NavigateAndFind, :BSTR, :BSTR, :ptr
-	STDMETHOD	ImportExportFavorites, :VARIANT_BOOL, :BSTR
-	STDMETHOD	AutoCompleteSaveForm, :ptr
-	STDMETHOD	AutoScan, :BSTR, :BSTR, :ptr
-	STDMETHOD	AutoCompleteAttach, :ptr
-	STDMETHOD	ShowBrowserUI, :BSTR, :ptr, :ptr
-	STDMETHOD	AddSearchProvider, :BSTR
-	STDMETHOD	RunOnceShown
-	STDMETHOD	SkipRunOnce
-	STDMETHOD	CustomizeSettings, :VARIANT_BOOL, :VARIANT_BOOL
-	STDMETHOD	SqmEnabled, :ptr
-	STDMETHOD	PhishingEnabled, :ptr
-	STDMETHOD	BrandImageUri, :ptr
-	STDMETHOD	SkipTabsWelcome
-	STDMETHOD	DiagnoseConnection
-	STDMETHOD	CustomizeClearType, :VARIANT_BOOL
-	STDMETHOD	IsSearchProviderInstalled, :BSTR, :ptr
-	STDMETHOD	IsSearchMigrated, :ptr
-	STDMETHOD	DefaultSearchProvider, :ptr
-	STDMETHOD	RunOnceRequiredSettingsComplete, :VARIANT_BOOL
-	STDMETHOD	RunOnceHasShown, :ptr
-	STDMETHOD	SearchGuideUrl, :ptr
-	STDMETHOD	AddService, :BSTR
-	STDMETHOD	IsServiceInstalled, :BSTR, :BSTR, :ptr
-	STDMETHOD	InPrivateFilteringEnabled, :ptr
-	STDMETHOD	AddToFavoritesBar, :BSTR, :BSTR, :ptr
-	STDMETHOD	BuildNewTabPage
-	STDMETHOD	SetRecentlyClosedVisible, :VARIANT_BOOL
-	STDMETHOD	SetActivitiesVisible, :VARIANT_BOOL
-	STDMETHOD	ContentDiscoveryResetSTDMETHOD
-	STDMETHOD	IsSuggestedSitesEnabled, :ptr
-	STDMETHOD	EnableSuggestedSites, :VARIANT_BOOL
-	STDMETHOD	NavigateToSuggestedSites, :BSTR
-	STDMETHOD	ShowTabsHelp
-	STDMETHOD	ShowInPrivateHelp
-IShellUIHelper3Vtbl ends
-IShellUIHelper3 struct
-	lpVtbl		PVOID ?
-IShellUIHelper3 ends
+.comdef IShellUIHelper3
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    GetTypeInfoCount    proc :ptr
+    GetTypeInfo         proc :DWORD, :LCID, :ptr
+    GetIDsOfNames       proc :REFIID, :ptr, :DWORD, :LCID, :ptr
+    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    ResetFirstBootMode  proc
+    ResetSafeMode       proc
+    RefreshOfflineDesktop proc
+    AddFavorite         proc :BSTR, :ptr
+    AddChannel          proc :BSTR
+    AddDesktopComponent proc :BSTR, :BSTR, :ptr, :ptr, :ptr, :ptr
+    IsSubscribed        proc :BSTR, :ptr
+    NavigateAndFind     proc :BSTR, :BSTR, :ptr
+    ImportExportFavorites proc :VARIANT_BOOL, :BSTR
+    AutoCompleteSaveForm proc :ptr
+    AutoScan            proc :BSTR, :BSTR, :ptr
+    AutoCompleteAttach  proc :ptr
+    ShowBrowserUI       proc :BSTR, :ptr, :ptr
+    AddSearchProvider   proc :BSTR
+    RunOnceShown        proc
+    SkipRunOnce         proc
+    CustomizeSettings   proc :VARIANT_BOOL, :VARIANT_BOOL
+    SqmEnabled          proc :ptr
+    PhishingEnabled     proc :ptr
+    BrandImageUri       proc :ptr
+    SkipTabsWelcome     proc
+    DiagnoseConnection  proc
+    CustomizeClearType  proc :VARIANT_BOOL
+    IsSearchProviderInstalled proc :BSTR, :ptr
+    IsSearchMigrated    proc :ptr
+    DefaultSearchProvider proc :ptr
+    RunOnceRequiredSettingsComplete proc :VARIANT_BOOL
+    RunOnceHasShown     proc :ptr
+    SearchGuideUrl      proc :ptr
+    AddService          proc :BSTR
+    IsServiceInstalled  proc :BSTR, :BSTR, :ptr
+    InPrivateFilteringEnabled proc :ptr
+    AddToFavoritesBar   proc :BSTR, :BSTR, :ptr
+    BuildNewTabPage     proc
+    SetRecentlyClosedVisible proc :VARIANT_BOOL
+    SetActivitiesVisible proc :VARIANT_BOOL
+    ContentDiscoveryResetSTDMETHOD proc
+    IsSuggestedSitesEnabled proc :ptr
+    EnableSuggestedSites proc :VARIANT_BOOL
+    NavigateToSuggestedSites proc :BSTR
+    ShowTabsHelp        proc
+    ShowInPrivateHelp   proc
+    .ends
 
 endif
 
@@ -574,18 +544,15 @@ __DShellNameSpaceEvents_DISPINTERFACE_DEFINED__ equ 1
 
 
 externdef		DIID_DShellNameSpaceEvents:IID
-DShellNameSpaceEventsVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTypeInfoCount, :ptr
-	STDMETHOD	GetTypeInfo, :DWORD, :LCID, :ptr
-	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :DWORD, :LCID, :ptr
-	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-DShellNameSpaceEventsVtbl ends
-DShellNameSpaceEvents struct
-	lpVtbl		PVOID ?
-DShellNameSpaceEvents ends
+.comdef DShellNameSpaceEvents
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    GetTypeInfoCount    proc :ptr
+    GetTypeInfo         proc :DWORD, :LCID, :ptr
+    GetIDsOfNames       proc :REFIID, :ptr, :DWORD, :LCID, :ptr
+    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    .ends
 
 endif
 
@@ -595,31 +562,28 @@ __IShellFavoritesNameSpace_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IShellFavoritesNameSpace:IID
-IShellFavoritesNameSpaceVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTypeInfoCount, :ptr
-	STDMETHOD	GetTypeInfo, :DWORD, :LCID, :ptr
-	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :DWORD, :LCID, :ptr
-	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	MoveSelectionUp
-	STDMETHOD	MoveSelectionDown
-	STDMETHOD	ResetSort
-	STDMETHOD	NewFolder
-	STDMETHOD	Synchronize
-	STDMETHOD	Import
-	STDMETHOD	Export
-	STDMETHOD	InvokeContextMenuCommand, :BSTR
-	STDMETHOD	MoveSelectionTo
-	STDMETHOD	get_SubscriptionsEnabled, :ptr
-	STDMETHOD	CreateSubscriptionForSelection, :ptr
-	STDMETHOD	DeleteSubscriptionForSelection, :ptr
-	STDMETHOD	SetRoot, :BSTR
-IShellFavoritesNameSpaceVtbl ends
-IShellFavoritesNameSpace struct
-	lpVtbl		PVOID ?
-IShellFavoritesNameSpace ends
+.comdef IShellFavoritesNameSpace
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    GetTypeInfoCount    proc :ptr
+    GetTypeInfo         proc :DWORD, :LCID, :ptr
+    GetIDsOfNames       proc :REFIID, :ptr, :DWORD, :LCID, :ptr
+    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    MoveSelectionUp     proc
+    MoveSelectionDown   proc
+    ResetSort           proc
+    NewFolder           proc
+    Synchronize         proc
+    Import              proc
+    Export              proc
+    InvokeContextMenuCommand proc :BSTR
+    MoveSelectionTo     proc
+    get_SubscriptionsEnabled proc :ptr
+    CreateSubscriptionForSelection proc :ptr
+    DeleteSubscriptionForSelection proc :ptr
+    SetRoot             proc :BSTR
+    .ends
 
 endif
 
@@ -629,52 +593,49 @@ __IShellNameSpace_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IShellNameSpace:IID
-IShellNameSpaceVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTypeInfoCount, :ptr
-	STDMETHOD	GetTypeInfo, :DWORD, :LCID, :ptr
-	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :DWORD, :LCID, :ptr
-	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	MoveSelectionUp
-	STDMETHOD	MoveSelectionDown
-	STDMETHOD	ResetSort
-	STDMETHOD	NewFolder
-	STDMETHOD	Synchronize
-	STDMETHOD	Import
-	STDMETHOD	Export
-	STDMETHOD	InvokeContextMenuCommand, :BSTR
-	STDMETHOD	MoveSelectionTo
-	STDMETHOD	get_SubscriptionsEnabled, :ptr
-	STDMETHOD	CreateSubscriptionForSelection, :ptr
-	STDMETHOD	DeleteSubscriptionForSelection, :ptr
-	STDMETHOD	SetRoot, :BSTR
-	STDMETHOD	get_EnumOptions, :ptr
-	STDMETHOD	put_EnumOptions, :SDWORD
-	STDMETHOD	get_SelectedItem, :ptr
-	STDMETHOD	put_SelectedItem, :ptr
-	STDMETHOD	get_Root, :ptr
-	STDMETHOD	put_Root, :VARIANT
-	STDMETHOD	get_Depth, :ptr
-	STDMETHOD	put_Depth, :DWORD
-	STDMETHOD	get_Mode, :ptr
-	STDMETHOD	put_Mode, :DWORD
-	STDMETHOD	get_Flags, :ptr
-	STDMETHOD	put_Flags, :DWORD
-	STDMETHOD	put_TVFlags, :DWORD
-	STDMETHOD	get_TVFlags, :ptr
-	STDMETHOD	get_Columns, :ptr
-	STDMETHOD	put_Columns, :BSTR
-	STDMETHOD	get_CountViewTypes, :ptr
-	STDMETHOD	SetViewType, :DWORD
-	STDMETHOD	SelectedItems, :ptr
-	STDMETHOD	Expand, :VARIANT, :DWORD
-	STDMETHOD	UnselectAll
-IShellNameSpaceVtbl ends
-IShellNameSpace struct
-	lpVtbl		PVOID ?
-IShellNameSpace ends
+.comdef IShellNameSpace
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    GetTypeInfoCount    proc :ptr
+    GetTypeInfo         proc :DWORD, :LCID, :ptr
+    GetIDsOfNames       proc :REFIID, :ptr, :DWORD, :LCID, :ptr
+    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    MoveSelectionUp     proc
+    MoveSelectionDown   proc
+    ResetSort           proc
+    NewFolder           proc
+    Synchronize         proc
+    Import              proc
+    Export              proc
+    InvokeContextMenuCommand proc :BSTR
+    MoveSelectionTo     proc
+    get_SubscriptionsEnabled proc :ptr
+    CreateSubscriptionForSelection proc :ptr
+    DeleteSubscriptionForSelection proc :ptr
+    SetRoot             proc :BSTR
+    get_EnumOptions     proc :ptr
+    put_EnumOptions     proc :SDWORD
+    get_SelectedItem    proc :ptr
+    put_SelectedItem    proc :ptr
+    get_Root            proc :ptr
+    put_Root            proc :VARIANT
+    get_Depth           proc :ptr
+    put_Depth           proc :DWORD
+    get_Mode            proc :ptr
+    put_Mode            proc :DWORD
+    get_Flags           proc :ptr
+    put_Flags           proc :DWORD
+    put_TVFlags         proc :DWORD
+    get_TVFlags         proc :ptr
+    get_Columns         proc :ptr
+    put_Columns         proc :BSTR
+    get_CountViewTypes  proc :ptr
+    SetViewType         proc :DWORD
+    SelectedItems       proc :ptr
+    Expand              proc :VARIANT, :DWORD
+    UnselectAll         proc
+    .ends
 
 endif
 
@@ -685,32 +646,29 @@ __IScriptErrorList_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IScriptErrorList:IID
-IScriptErrorListVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTypeInfoCount, :ptr
-	STDMETHOD	GetTypeInfo, :DWORD, :LCID, :ptr
-	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :DWORD, :LCID, :ptr
-	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	advanceError
-	STDMETHOD	retreatError
-	STDMETHOD	canAdvanceError, :ptr
-	STDMETHOD	canRetreatError, :ptr
-	STDMETHOD	getErrorLine, :ptr
-	STDMETHOD	getErrorChar, :ptr
-	STDMETHOD	getErrorCode, :ptr
-	STDMETHOD	getErrorMsg, :ptr
-	STDMETHOD	getErrorUrl, :ptr
-	STDMETHOD	getAlwaysShowLockState, :ptr
-	STDMETHOD	getDetailsPaneOpen, :ptr
-	STDMETHOD	setDetailsPaneOpen, :BOOL
-	STDMETHOD	getPerErrorDisplay, :ptr
-	STDMETHOD	setPerErrorDisplay, :BOOL
-IScriptErrorListVtbl ends
-IScriptErrorList struct
-	lpVtbl		PVOID ?
-IScriptErrorList ends
+.comdef IScriptErrorList
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    GetTypeInfoCount    proc :ptr
+    GetTypeInfo         proc :DWORD, :LCID, :ptr
+    GetIDsOfNames       proc :REFIID, :ptr, :DWORD, :LCID, :ptr
+    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    advanceError        proc
+    retreatError        proc
+    canAdvanceError     proc :ptr
+    canRetreatError     proc :ptr
+    getErrorLine        proc :ptr
+    getErrorChar        proc :ptr
+    getErrorCode        proc :ptr
+    getErrorMsg         proc :ptr
+    getErrorUrl         proc :ptr
+    getAlwaysShowLockState proc :ptr
+    getDetailsPaneOpen  proc :ptr
+    setDetailsPaneOpen  proc :BOOL
+    getPerErrorDisplay  proc :ptr
+    setPerErrorDisplay  proc :BOOL
+    .ends
 
 endif
 

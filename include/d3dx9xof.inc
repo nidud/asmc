@@ -44,78 +44,63 @@ D3DXFileCreate proto WINAPI \
 		  file: ptr ID3DXFile
 
 
-ID3DXFileVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	CreateEnumObject, :ptr, :D3DXF_FILELOADOPTIONS, :ptr
-	STDMETHOD	CreateSaveObject, :ptr, :D3DXF_FILESAVEOPTIONS, :D3DXF_FILEFORMAT, :ptr
-	STDMETHOD	RegisterTemplates, :ptr, :SIZE_T
-	STDMETHOD	RegisterEnumTemplates, :ptr
-ID3DXFileVtbl ends
-ID3DXFile struct
-	lpVtbl		PVOID ?
-ID3DXFile ends
+.comdef ID3DXFile
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    CreateEnumObject    proc :ptr, :D3DXF_FILELOADOPTIONS, :ptr
+    CreateSaveObject    proc :ptr, :D3DXF_FILESAVEOPTIONS, :D3DXF_FILEFORMAT, :ptr
+    RegisterTemplates   proc :ptr, :SIZE_T
+    RegisterEnumTemplates proc :ptr
+    .ends
 
-ID3DXFileSaveObjectVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetFile, :ptr
-	STDMETHOD	AddDataObject, :REFGUID, :ptr, :ptr, :SIZE_T, :ptr, :ptr
-	STDMETHOD	Save
-ID3DXFileSaveObjectVtbl ends
-ID3DXFileSaveObject struct
-	lpVtbl		PVOID ?
-ID3DXFileSaveObject ends
+.comdef ID3DXFileSaveObject
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    GetFile             proc :ptr
+    AddDataObject       proc :REFGUID, :ptr, :ptr, :SIZE_T, :ptr, :ptr
+    Save                proc
+    .ends
 
-ID3DXFileSaveDataVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetSave, :ptr
-	STDMETHOD	GetName, :ptr, :ptr
-	STDMETHOD	GetId, :LPGUID
-	STDMETHOD	GetType, :ptr
-	STDMETHOD	AddDataObject, :REFGUID, :ptr, :ptr, :SIZE_T, :ptr, :ptr
-	STDMETHOD	AddDataReference, :ptr, :ptr
-ID3DXFileSaveDataVtbl ends
-ID3DXFileSaveData struct
-	lpVtbl		PVOID ?
-ID3DXFileSaveData ends
+.comdef ID3DXFileSaveData
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    GetSave             proc :ptr
+    GetName             proc :ptr, :ptr
+    GetId               proc :LPGUID
+    GetType             proc :ptr
+    AddDataObject       proc :REFGUID, :ptr, :ptr, :SIZE_T, :ptr, :ptr
+    AddDataReference    proc :ptr, :ptr
+    .ends
 
 
-ID3DXFileEnumObjectVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetFile, :ptr
-	STDMETHOD	GetChildren, :ptr
-	STDMETHOD	GetChild, :SIZE_T, :ptr
-	STDMETHOD	GetDataObjectById, :REFGUID, :ptr
-	STDMETHOD	GetDataObjectByName, :ptr, :ptr
-ID3DXFileEnumObjectVtbl ends
-ID3DXFileEnumObject struct
-	lpVtbl		PVOID ?
-ID3DXFileEnumObject ends
+.comdef ID3DXFileEnumObject
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    GetFile             proc :ptr
+    GetChildren         proc :ptr
+    GetChild            proc :SIZE_T, :ptr
+    GetDataObjectById   proc :REFGUID, :ptr
+    GetDataObjectByName proc :ptr, :ptr
+    .ends
 
-ID3DXFileDataVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetEnum, :ptr
-	STDMETHOD	GetName, :ptr, :ptr
-	STDMETHOD	GetId, :LPGUID
-	STDMETHOD	_Lock, :ptr, :ptr
-	STDMETHOD	Unlock
-	STDMETHOD	GetType, :ptr
-	STDMETHOD	IsReference
-	STDMETHOD	GetChildren, :ptr
-	STDMETHOD	GetChild, :SIZE_T, :ptr
-ID3DXFileDataVtbl ends
-ID3DXFileData struct
-	lpVtbl		PVOID ?
-ID3DXFileData ends
+.comdef ID3DXFileData
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    GetEnum             proc :ptr
+    GetName             proc :ptr, :ptr
+    GetId               proc :LPGUID
+    _Lock               proc :ptr, :ptr
+    Unlock              proc
+    GetType             proc :ptr
+    IsReference         proc
+    GetChildren         proc :ptr
+    GetChild            proc :SIZE_T, :ptr
+    .ends
 
 ;; D3DX File errors
 _FACD3DXF		equ 0x876

@@ -31,16 +31,13 @@ LPD3DXRenderToEnvMap	typedef ptr ID3DXRenderToEnvMap
 LPD3DXRENDERTOSURFACE	typedef ptr ID3DXRenderToSurface
 LPD3DXSPRITE		typedef ptr ID3DXSprite
 
-ID3DXBufferVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetBufferPointer
-	STDMETHOD	GetBufferSize
-ID3DXBufferVtbl ends
-ID3DXBuffer struct
-	lpVtbl		PVOID ?
-ID3DXBuffer ends
+.comdef ID3DXBuffer
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    GetBufferPointer    proc
+    GetBufferSize       proc
+    .ends
 
 D3DXFONT_DESCA		STRUC
 Height			SINT ?
@@ -70,55 +67,49 @@ FaceName		WCHAR LF_FACESIZE dup(?)
 D3DXFONT_DESCW		ENDS
 LPD3DXFONT_DESCW	typedef ptr D3DXFONT_DESCW
 
-ID3DXFontVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetDevice, :ptr
-	STDMETHOD	GetDescA, :ptr
-	STDMETHOD	GetDescW, :ptr
-	STDMETHOD	GetTextMetricsA, :ptr
-	STDMETHOD	GetTextMetricsW, :ptr
-	STDMETHOD	GetDC
-	STDMETHOD	GetGlyphData, :UINT, :ptr, :ptr, :ptr
-	STDMETHOD	PreloadCharacters, :UINT, :UINT
-	STDMETHOD	PreloadGlyphs, :UINT, :UINT
-	STDMETHOD	PreloadTextA, :ptr, :SINT
-	STDMETHOD	PreloadTextW, :ptr, :SINT
-	STDMETHOD	DrawTextA, :ptr, :ptr, :SINT, :ptr, :DWORD, :D3DCOLOR
-	STDMETHOD	DrawTextW, :ptr, :ptr, :SINT, :ptr, :DWORD, :D3DCOLOR
-	STDMETHOD	OnLostDevice
-	STDMETHOD	OnResetDevice
-ID3DXFontVtbl ends
-ID3DXFont struct
-	lpVtbl		PVOID ?
-ID3DXFont ends
+.comdef ID3DXFont
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    GetDevice           proc :ptr
+    GetDescA            proc :ptr
+    GetDescW            proc :ptr
+    GetTextMetricsA     proc :ptr
+    GetTextMetricsW     proc :ptr
+    GetDC               proc
+    GetGlyphData        proc :UINT, :ptr, :ptr, :ptr
+    PreloadCharacters   proc :UINT, :UINT
+    PreloadGlyphs       proc :UINT, :UINT
+    PreloadTextA        proc :ptr, :SINT
+    PreloadTextW        proc :ptr, :SINT
+    DrawTextA           proc :ptr, :ptr, :SINT, :ptr, :DWORD, :D3DCOLOR
+    DrawTextW           proc :ptr, :ptr, :SINT, :ptr, :DWORD, :D3DCOLOR
+    OnLostDevice        proc
+    OnResetDevice       proc
+    .ends
 
-ID3DXLineVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetDevice, :ptr
-	STDMETHOD	Begin
-	STDMETHOD	Draw, :ptr, :DWORD, :D3DCOLOR
-	STDMETHOD	DrawTransform, :ptr, :DWORD, :ptr, :D3DCOLOR
-	STDMETHOD	SetPattern, :DWORD
-	STDMETHOD	GetPattern
-	STDMETHOD	SetPatternScale, :FLOAT
-	STDMETHOD	GetPatternScale
-	STDMETHOD	SetWidth, :FLOAT
-	STDMETHOD	GetWidth
-	STDMETHOD	SetAntialias, :BOOL
-	STDMETHOD	GetAntialias
-	STDMETHOD	SetGLLines, :BOOL
-	STDMETHOD	GetGLLines
-	STDMETHOD	_End
-	STDMETHOD	OnLostDevice
-	STDMETHOD	OnResetDevice
-ID3DXLineVtbl ends
-ID3DXLine struct
-	lpVtbl		PVOID ?
-ID3DXLine ends
+.comdef ID3DXLine
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    GetDevice           proc :ptr
+    Begin               proc
+    Draw                proc :ptr, :DWORD, :D3DCOLOR
+    DrawTransform       proc :ptr, :DWORD, :ptr, :D3DCOLOR
+    SetPattern          proc :DWORD
+    GetPattern          proc
+    SetPatternScale     proc :FLOAT
+    GetPatternScale     proc
+    SetWidth            proc :FLOAT
+    GetWidth            proc
+    SetAntialias        proc :BOOL
+    GetAntialias        proc
+    SetGLLines          proc :BOOL
+    GetGLLines          proc
+    _End                proc
+    OnLostDevice        proc
+    OnResetDevice       proc
+    .ends
 
 D3DXRTE_DESC		STRUC
 _Size			UINT ?
@@ -128,24 +119,21 @@ DepthStencil		BOOL ?
 DepthStencilFormat	D3DFORMAT ?
 D3DXRTE_DESC		ENDS
 
-ID3DXRenderToEnvMapVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetDevice, :ptr
-	STDMETHOD	GetDesc, :ptr
-	STDMETHOD	BeginCube, :ptr
-	STDMETHOD	BeginSphere, :ptr
-	STDMETHOD	BeginHemisphere, :ptr, :ptr
-	STDMETHOD	BeginParabolic, :ptr, :ptr
-	STDMETHOD	Face, :D3DCUBEMAP_FACES, :DWORD
-	STDMETHOD	_End, :DWORD
-	STDMETHOD	OnLostDevice
-	STDMETHOD	OnResetDevice
-ID3DXRenderToEnvMapVtbl ends
-ID3DXRenderToEnvMap struct
-	lpVtbl		PVOID ?
-ID3DXRenderToEnvMap ends
+.comdef ID3DXRenderToEnvMap
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    GetDevice           proc :ptr
+    GetDesc             proc :ptr
+    BeginCube           proc :ptr
+    BeginSphere         proc :ptr
+    BeginHemisphere     proc :ptr, :ptr
+    BeginParabolic      proc :ptr, :ptr
+    Face                proc :D3DCUBEMAP_FACES, :DWORD
+    _End                proc :DWORD
+    OnLostDevice        proc
+    OnResetDevice       proc
+    .ends
 
 D3DXRTS_DESC		STRUC
 _Width			UINT ?
@@ -155,40 +143,34 @@ DepthStencil		BOOL ?
 DepthStencilFormat	D3DFORMAT ?
 D3DXRTS_DESC		ENDS
 
-ID3DXRenderToSurfaceVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetDevice, :ptr
-	STDMETHOD	GetDesc, :ptr
-	STDMETHOD	BeginScene, :ptr, :ptr
-	STDMETHOD	EndScene, :DWORD
-	STDMETHOD	OnLostDevice
-	STDMETHOD	OnResetDevice
-ID3DXRenderToSurfaceVtbl ends
-ID3DXRenderToSurface struct
-	lpVtbl		PVOID ?
-ID3DXRenderToSurface ends
+.comdef ID3DXRenderToSurface
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    GetDevice           proc :ptr
+    GetDesc             proc :ptr
+    BeginScene          proc :ptr, :ptr
+    EndScene            proc :DWORD
+    OnLostDevice        proc
+    OnResetDevice       proc
+    .ends
 
-ID3DXSpriteVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetDevice, :ptr
-	STDMETHOD	GetTransform, :ptr
-	STDMETHOD	SetTransform, :ptr
-	STDMETHOD	SetWorldViewRH, :ptr, :ptr
-	STDMETHOD	SetWorldViewLH, :ptr, :ptr
-	STDMETHOD	Begin, :DWORD
-	STDMETHOD	Draw, :ptr, :ptr, :ptr, :ptr, :D3DCOLOR
-	STDMETHOD	Flush
-	STDMETHOD	_End
-	STDMETHOD	OnLostDevice
-	STDMETHOD	OnResetDevice
-ID3DXSpriteVtbl ends
-ID3DXSprite struct
-	lpVtbl		PVOID ?
-ID3DXSprite ends
+.comdef ID3DXSprite
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    GetDevice           proc :ptr
+    GetTransform        proc :ptr
+    SetTransform        proc :ptr
+    SetWorldViewRH      proc :ptr, :ptr
+    SetWorldViewLH      proc :ptr, :ptr
+    Begin               proc :DWORD
+    Draw                proc :ptr, :ptr, :ptr, :ptr, :D3DCOLOR
+    Flush               proc
+    _End                proc
+    OnLostDevice        proc
+    OnResetDevice       proc
+    .ends
 
 
 ;BOOL

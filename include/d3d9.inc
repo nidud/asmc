@@ -103,464 +103,413 @@ D3DPERF_SetOptions proto WINAPI \
 D3DPERF_GetStatus proto WINAPI
 
 
-IDirect3D9Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	RegisterSoftwareDevice, :ptr
-	STDMETHOD	GetAdapterCount
-	STDMETHOD	GetAdapterIdentifier, :UINT, :DWORD, :ptr
-	STDMETHOD	GetAdapterModeCount, :UINT, :D3DFORMAT
-	STDMETHOD	EnumAdapterModes, :UINT, :D3DFORMAT, :UINT, :ptr
-	STDMETHOD	GetAdapterDisplayMode, :UINT, :ptr
-	STDMETHOD	CheckDeviceType, :UINT, :D3DDEVTYPE, :D3DFORMAT, :D3DFORMAT, :BOOL
-	STDMETHOD	CheckDeviceFormat, :UINT, :D3DDEVTYPE, :D3DFORMAT, :DWORD, :D3DRESOURCETYPE, :D3DFORMAT
-	STDMETHOD	CheckDeviceMultiSampleType, :UINT, :D3DDEVTYPE, :D3DFORMAT, :BOOL, :D3DMULTISAMPLE_TYPE, :ptr
-	STDMETHOD	CheckDepthStencilMatch, :UINT, :D3DDEVTYPE, :D3DFORMAT, :D3DFORMAT, :D3DFORMAT
-	STDMETHOD	CheckDeviceFormatConversion, :UINT, :D3DDEVTYPE, :D3DFORMAT, :D3DFORMAT
-	STDMETHOD	GetDeviceCaps, :UINT, :D3DDEVTYPE, :ptr
-	STDMETHOD	GetAdapterMonitor, :UINT
-	STDMETHOD	CreateDevice, :UINT, :D3DDEVTYPE, :HWND, :DWORD, :ptr, :ptr
-IDirect3D9Vtbl ends
-IDirect3D9 struct
-	lpVtbl		PVOID ?
-IDirect3D9 ends
+.comdef IDirect3D9
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    RegisterSoftwareDevice proc :ptr
+    GetAdapterCount	proc
+    GetAdapterIdentifier proc :UINT, :DWORD, :ptr
+    GetAdapterModeCount proc :UINT, :D3DFORMAT
+    EnumAdapterModes	proc :UINT, :D3DFORMAT, :UINT, :ptr
+    GetAdapterDisplayMode proc :UINT, :ptr
+    CheckDeviceType	proc :UINT, :D3DDEVTYPE, :D3DFORMAT, :D3DFORMAT, :BOOL
+    CheckDeviceFormat	proc :UINT, :D3DDEVTYPE, :D3DFORMAT, :DWORD, :D3DRESOURCETYPE, :D3DFORMAT
+    CheckDeviceMultiSampleType proc :UINT, :D3DDEVTYPE, :D3DFORMAT, :BOOL, :D3DMULTISAMPLE_TYPE, :ptr
+    CheckDepthStencilMatch proc :UINT, :D3DDEVTYPE, :D3DFORMAT, :D3DFORMAT, :D3DFORMAT
+    CheckDeviceFormatConversion proc :UINT, :D3DDEVTYPE, :D3DFORMAT, :D3DFORMAT
+    GetDeviceCaps	proc :UINT, :D3DDEVTYPE, :ptr
+    GetAdapterMonitor	proc :UINT
+    CreateDevice	proc :UINT, :D3DDEVTYPE, :HWND, :DWORD, :ptr, :ptr
+    .ends
 LPDIRECT3D9		typedef ptr IDirect3D9
 PDIRECT3D9		typedef ptr IDirect3D9
 
-IDirect3DDevice9Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	TestCooperativeLevel
-	STDMETHOD	GetAvailableTextureMem
-	STDMETHOD	EvictManagedResources
-	STDMETHOD	GetDirect3D, :ptr
-	STDMETHOD	GetDeviceCaps, :ptr
-	STDMETHOD	GetDisplayMode, :UINT, :ptr
-	STDMETHOD	GetCreationParameters, :ptr
-	STDMETHOD	SetCursorProperties, :UINT, :UINT, :ptr
-	STDMETHOD	SetCursorPosition, :SINT, :SINT, :DWORD
-	STDMETHOD	ShowCursor, :BOOL
-	STDMETHOD	CreateAdditionalSwapChain, :ptr, :ptr
-	STDMETHOD	GetSwapChain, :UINT, :ptr
-	STDMETHOD	GetNumberOfSwapChains
-	STDMETHOD	Reset, :ptr
-	STDMETHOD	Present, :ptr, :ptr, :HWND, :ptr
-	STDMETHOD	GetBackBuffer, :UINT, :UINT, :D3DBACKBUFFER_TYPE, :ptr
-	STDMETHOD	GetRasterStatus, :UINT, :ptr
-	STDMETHOD	SetDialogBoxMode, :BOOL
-	STDMETHOD	SetGammaRamp, :UINT, :DWORD, :ptr
-	STDMETHOD	GetGammaRamp, :UINT, :ptr
-	STDMETHOD	CreateTexture, :UINT, :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :ptr, :ptr
-	STDMETHOD	CreateVolumeTexture, :UINT, :UINT, :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :ptr, :ptr
-	STDMETHOD	CreateCubeTexture, :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :ptr, :ptr
-	STDMETHOD	CreateVertexBuffer, :UINT, :DWORD, :DWORD, :D3DPOOL, :ptr, :ptr
-	STDMETHOD	CreateIndexBuffer, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :ptr, :ptr
-	STDMETHOD	CreateRenderTarget, :UINT, :UINT, :D3DFORMAT, :D3DMULTISAMPLE_TYPE, :DWORD, :BOOL, :ptr, :ptr
-	STDMETHOD	CreateDepthStencilSurface, :UINT, :UINT, :D3DFORMAT, :D3DMULTISAMPLE_TYPE, :DWORD, :BOOL, :ptr, :ptr
-	STDMETHOD	UpdateSurface, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	UpdateTexture, :ptr, :ptr
-	STDMETHOD	GetRenderTargetData, :ptr, :ptr
-	STDMETHOD	GetFrontBufferData, :UINT, :ptr
-	STDMETHOD	StretchRect, :ptr, :ptr, :ptr, :ptr, :D3DTEXTUREFILTERTYPE
-	STDMETHOD	ColorFill, :ptr, :ptr, :D3DCOLOR
-	STDMETHOD	CreateOffscreenPlainSurface, :UINT, :UINT, :D3DFORMAT, :D3DPOOL, :ptr, :ptr
-	STDMETHOD	SetRenderTarget, :DWORD, :ptr
-	STDMETHOD	GetRenderTarget, :DWORD, :ptr
-	STDMETHOD	SetDepthStencilSurface, :ptr
-	STDMETHOD	GetDepthStencilSurface, :ptr
-	STDMETHOD	BeginScene
-	STDMETHOD	EndScene
-	STDMETHOD	Clear, :DWORD, :ptr, :DWORD, :D3DCOLOR, :FLOAT, :DWORD
-	STDMETHOD	SetTransform, :D3DTRANSFORMSTATETYPE, :ptr
-	STDMETHOD	GetTransform, :D3DTRANSFORMSTATETYPE, :ptr
-	STDMETHOD	MultiplyTransform, :D3DTRANSFORMSTATETYPE, :ptr
-	STDMETHOD	SetViewport, :ptr
-	STDMETHOD	GetViewport, :ptr
-	STDMETHOD	SetMaterial, :ptr
-	STDMETHOD	GetMaterial, :ptr
-	STDMETHOD	SetLight, :DWORD, :ptr
-	STDMETHOD	GetLight, :DWORD, :ptr
-	STDMETHOD	LightEnable, :DWORD, :BOOL
-	STDMETHOD	GetLightEnable, :DWORD, :ptr
-	STDMETHOD	SetClipPlane, :DWORD, :ptr
-	STDMETHOD	GetClipPlane, :DWORD, :ptr
-	STDMETHOD	SetRenderState, :D3DRENDERSTATETYPE, :DWORD
-	STDMETHOD	GetRenderState, :D3DRENDERSTATETYPE, :ptr
-	STDMETHOD	CreateStateBlock, :D3DSTATEBLOCKTYPE, :ptr
-	STDMETHOD	BeginStateBlock
-	STDMETHOD	EndStateBlock, :ptr
-	STDMETHOD	SetClipStatus, :ptr
-	STDMETHOD	GetClipStatus, :ptr
-	STDMETHOD	GetTexture, :DWORD, :ptr
-	STDMETHOD	SetTexture, :DWORD, :ptr
-	STDMETHOD	GetTextureStageState, :DWORD, :D3DTEXTURESTAGESTATETYPE, :ptr
-	STDMETHOD	SetTextureStageState, :DWORD, :D3DTEXTURESTAGESTATETYPE, :DWORD
-	STDMETHOD	GetSamplerState, :DWORD, :D3DSAMPLERSTATETYPE, :ptr
-	STDMETHOD	SetSamplerState, :DWORD, :D3DSAMPLERSTATETYPE, :DWORD
-	STDMETHOD	ValidateDevice, :ptr
-	STDMETHOD	SetPaletteEntries, :UINT, :ptr
-	STDMETHOD	GetPaletteEntries, :UINT, :ptr
-	STDMETHOD	SetCurrentTexturePalette, :UINT
-	STDMETHOD	GetCurrentTexturePalette, :ptr
-	STDMETHOD	SetScissorRect, :ptr
-	STDMETHOD	GetScissorRect, :ptr
-	STDMETHOD	SetSoftwareVertexProcessing, :BOOL
-	STDMETHOD	GetSoftwareVertexProcessing
-	STDMETHOD	SetNPatchMode, :FLOAT
-	STDMETHOD	GetNPatchMode
-	STDMETHOD	DrawPrimitive, :D3DPRIMITIVETYPE, :UINT, :UINT
-	STDMETHOD	DrawIndexedPrimitive, :D3DPRIMITIVETYPE, :SINT, :UINT, :UINT, :UINT, :UINT
-	STDMETHOD	DrawPrimitiveUP, :D3DPRIMITIVETYPE, :UINT, :ptr, :UINT
-	STDMETHOD	DrawIndexedPrimitiveUP, :D3DPRIMITIVETYPE, :UINT, :UINT, :UINT, :ptr, :D3DFORMAT, :ptr, :UINT
-	STDMETHOD	ProcessVertices, :UINT, :UINT, :UINT, :ptr, :ptr, :DWORD
-	STDMETHOD	CreateVertexDeclaration, :ptr, :ptr
-	STDMETHOD	SetVertexDeclaration, :ptr
-	STDMETHOD	GetVertexDeclaration, :ptr
-	STDMETHOD	SetFVF, :DWORD
-	STDMETHOD	GetFVF, :ptr
-	STDMETHOD	CreateVertexShader, :ptr, :ptr
-	STDMETHOD	SetVertexShader, :ptr
-	STDMETHOD	GetVertexShader, :ptr
-	STDMETHOD	SetVertexShaderConstantF, :UINT, :ptr, :UINT
-	STDMETHOD	GetVertexShaderConstantF, :UINT, :ptr, :UINT
-	STDMETHOD	SetVertexShaderConstantI, :UINT, :ptr, :UINT
-	STDMETHOD	GetVertexShaderConstantI, :UINT, :ptr, :UINT
-	STDMETHOD	SetVertexShaderConstantB, :UINT, :ptr, :UINT
-	STDMETHOD	GetVertexShaderConstantB, :UINT, :ptr, :UINT
-	STDMETHOD	SetStreamSource, :UINT, :ptr, :UINT, :UINT
-	STDMETHOD	GetStreamSource, :UINT, :ptr, :ptr, :ptr
-	STDMETHOD	SetStreamSourceFreq, :UINT, :UINT
-	STDMETHOD	GetStreamSourceFreq, :UINT, :ptr
-	STDMETHOD	SetIndices, :ptr
-	STDMETHOD	GetIndices, :ptr
-	STDMETHOD	CreatePixelShader, :ptr, :ptr
-	STDMETHOD	SetPixelShader, :ptr
-	STDMETHOD	GetPixelShader, :ptr
-	STDMETHOD	SetPixelShaderConstantF, :UINT, :ptr, :UINT
-	STDMETHOD	GetPixelShaderConstantF, :UINT, :ptr, :UINT
-	STDMETHOD	SetPixelShaderConstantI, :UINT, :ptr, :UINT
-	STDMETHOD	GetPixelShaderConstantI, :UINT, :ptr, :UINT
-	STDMETHOD	SetPixelShaderConstantB, :UINT, :ptr, :UINT
-	STDMETHOD	GetPixelShaderConstantB, :UINT, :ptr, :UINT
-	STDMETHOD	DrawRectPatch, :UINT, :ptr, :ptr
-	STDMETHOD	DrawTriPatch, :UINT, :ptr, :ptr
-	STDMETHOD	DeletePatch, :UINT
-	STDMETHOD	CreateQuery, :D3DQUERYTYPE, :ptr
-IDirect3DDevice9Vtbl ends
-IDirect3DDevice9 struct
-	lpVtbl		PVOID ?
-IDirect3DDevice9 ends
+.comdef IDirect3DDevice9
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    TestCooperativeLevel proc
+    GetAvailableTextureMem proc
+    EvictManagedResources proc
+    GetDirect3D		proc :ptr
+    GetDeviceCaps	proc :ptr
+    GetDisplayMode	proc :UINT, :ptr
+    GetCreationParameters proc :ptr
+    SetCursorProperties proc :UINT, :UINT, :ptr
+    SetCursorPosition	proc :SINT, :SINT, :DWORD
+    ShowCursor		proc :BOOL
+    CreateAdditionalSwapChain proc :ptr, :ptr
+    GetSwapChain	proc :UINT, :ptr
+    GetNumberOfSwapChains proc
+    Reset		proc :ptr
+    Present		proc :ptr, :ptr, :HWND, :ptr
+    GetBackBuffer	proc :UINT, :UINT, :D3DBACKBUFFER_TYPE, :ptr
+    GetRasterStatus	proc :UINT, :ptr
+    SetDialogBoxMode	proc :BOOL
+    SetGammaRamp	proc :UINT, :DWORD, :ptr
+    GetGammaRamp	proc :UINT, :ptr
+    CreateTexture	proc :UINT, :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :ptr, :ptr
+    CreateVolumeTexture proc :UINT, :UINT, :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :ptr, :ptr
+    CreateCubeTexture	proc :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :ptr, :ptr
+    CreateVertexBuffer	proc :UINT, :DWORD, :DWORD, :D3DPOOL, :ptr, :ptr
+    CreateIndexBuffer	proc :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :ptr, :ptr
+    CreateRenderTarget	proc :UINT, :UINT, :D3DFORMAT, :D3DMULTISAMPLE_TYPE, :DWORD, :BOOL, :ptr, :ptr
+    CreateDepthStencilSurface proc :UINT, :UINT, :D3DFORMAT, :D3DMULTISAMPLE_TYPE, :DWORD, :BOOL, :ptr, :ptr
+    UpdateSurface	proc :ptr, :ptr, :ptr, :ptr
+    UpdateTexture	proc :ptr, :ptr
+    GetRenderTargetData proc :ptr, :ptr
+    GetFrontBufferData	proc :UINT, :ptr
+    StretchRect		proc :ptr, :ptr, :ptr, :ptr, :D3DTEXTUREFILTERTYPE
+    ColorFill		proc :ptr, :ptr, :D3DCOLOR
+    CreateOffscreenPlainSurface proc :UINT, :UINT, :D3DFORMAT, :D3DPOOL, :ptr, :ptr
+    SetRenderTarget	proc :DWORD, :ptr
+    GetRenderTarget	proc :DWORD, :ptr
+    SetDepthStencilSurface proc :ptr
+    GetDepthStencilSurface proc :ptr
+    BeginScene		proc
+    EndScene		proc
+    Clear		proc :DWORD, :ptr, :DWORD, :D3DCOLOR, :FLOAT, :DWORD
+    SetTransform	proc :D3DTRANSFORMSTATETYPE, :ptr
+    GetTransform	proc :D3DTRANSFORMSTATETYPE, :ptr
+    MultiplyTransform	proc :D3DTRANSFORMSTATETYPE, :ptr
+    SetViewport		proc :ptr
+    GetViewport		proc :ptr
+    SetMaterial		proc :ptr
+    GetMaterial		proc :ptr
+    SetLight		proc :DWORD, :ptr
+    GetLight		proc :DWORD, :ptr
+    LightEnable		proc :DWORD, :BOOL
+    GetLightEnable	proc :DWORD, :ptr
+    SetClipPlane	proc :DWORD, :ptr
+    GetClipPlane	proc :DWORD, :ptr
+    SetRenderState	proc :D3DRENDERSTATETYPE, :DWORD
+    GetRenderState	proc :D3DRENDERSTATETYPE, :ptr
+    CreateStateBlock	proc :D3DSTATEBLOCKTYPE, :ptr
+    BeginStateBlock	proc
+    EndStateBlock	proc :ptr
+    SetClipStatus	proc :ptr
+    GetClipStatus	proc :ptr
+    GetTexture		proc :DWORD, :ptr
+    SetTexture		proc :DWORD, :ptr
+    GetTextureStageState proc :DWORD, :D3DTEXTURESTAGESTATETYPE, :ptr
+    SetTextureStageState proc :DWORD, :D3DTEXTURESTAGESTATETYPE, :DWORD
+    GetSamplerState	proc :DWORD, :D3DSAMPLERSTATETYPE, :ptr
+    SetSamplerState	proc :DWORD, :D3DSAMPLERSTATETYPE, :DWORD
+    ValidateDevice	proc :ptr
+    SetPaletteEntries	proc :UINT, :ptr
+    GetPaletteEntries	proc :UINT, :ptr
+    SetCurrentTexturePalette proc :UINT
+    GetCurrentTexturePalette proc :ptr
+    SetScissorRect	proc :ptr
+    GetScissorRect	proc :ptr
+    SetSoftwareVertexProcessing proc :BOOL
+    GetSoftwareVertexProcessing proc
+    SetNPatchMode	proc :FLOAT
+    GetNPatchMode	proc
+    DrawPrimitive	proc :D3DPRIMITIVETYPE, :UINT, :UINT
+    DrawIndexedPrimitive proc :D3DPRIMITIVETYPE, :SINT, :UINT, :UINT, :UINT, :UINT
+    DrawPrimitiveUP	proc :D3DPRIMITIVETYPE, :UINT, :ptr, :UINT
+    DrawIndexedPrimitiveUP proc :D3DPRIMITIVETYPE, :UINT, :UINT, :UINT, :ptr, :D3DFORMAT, :ptr, :UINT
+    ProcessVertices	proc :UINT, :UINT, :UINT, :ptr, :ptr, :DWORD
+    CreateVertexDeclaration proc :ptr, :ptr
+    SetVertexDeclaration proc :ptr
+    GetVertexDeclaration proc :ptr
+    SetFVF		proc :DWORD
+    GetFVF		proc :ptr
+    CreateVertexShader	proc :ptr, :ptr
+    SetVertexShader	proc :ptr
+    GetVertexShader	proc :ptr
+    SetVertexShaderConstantF proc :UINT, :ptr, :UINT
+    GetVertexShaderConstantF proc :UINT, :ptr, :UINT
+    SetVertexShaderConstantI proc :UINT, :ptr, :UINT
+    GetVertexShaderConstantI proc :UINT, :ptr, :UINT
+    SetVertexShaderConstantB proc :UINT, :ptr, :UINT
+    GetVertexShaderConstantB proc :UINT, :ptr, :UINT
+    SetStreamSource	proc :UINT, :ptr, :UINT, :UINT
+    GetStreamSource	proc :UINT, :ptr, :ptr, :ptr
+    SetStreamSourceFreq proc :UINT, :UINT
+    GetStreamSourceFreq proc :UINT, :ptr
+    SetIndices		proc :ptr
+    GetIndices		proc :ptr
+    CreatePixelShader	proc :ptr, :ptr
+    SetPixelShader	proc :ptr
+    GetPixelShader	proc :ptr
+    SetPixelShaderConstantF proc :UINT, :ptr, :UINT
+    GetPixelShaderConstantF proc :UINT, :ptr, :UINT
+    SetPixelShaderConstantI proc :UINT, :ptr, :UINT
+    GetPixelShaderConstantI proc :UINT, :ptr, :UINT
+    SetPixelShaderConstantB proc :UINT, :ptr, :UINT
+    GetPixelShaderConstantB proc :UINT, :ptr, :UINT
+    DrawRectPatch	proc :UINT, :ptr, :ptr
+    DrawTriPatch	proc :UINT, :ptr, :ptr
+    DeletePatch		proc :UINT
+    CreateQuery		proc :D3DQUERYTYPE, :ptr
+    .ends
 LPDIRECT3DDEVICE9	typedef ptr IDirect3DDevice9
 PDIRECT3DDEVICE9	typedef ptr IDirect3DDevice9
 
-IDirect3DStateBlock9Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetDevice, :ptr
-	STDMETHOD	Capture
-	STDMETHOD	Apply
-IDirect3DStateBlock9Vtbl ends
-IDirect3DStateBlock9 struct
-	lpVtbl		PVOID ?
-IDirect3DStateBlock9 ends
+.comdef IDirect3DStateBlock9
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetDevice		proc :ptr
+    Capture		proc
+    Apply		proc
+    .ends
 LPDIRECT3DSTATEBLOCK9	typedef ptr IDirect3DStateBlock9
 PDIRECT3DSTATEBLOCK9	typedef ptr IDirect3DStateBlock9
 
-IDirect3DSwapChain9Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Present, :ptr, :ptr, :HWND, :ptr, :DWORD
-	STDMETHOD	GetFrontBufferData, :ptr
-	STDMETHOD	GetBackBuffer, :UINT, :D3DBACKBUFFER_TYPE, :ptr
-	STDMETHOD	GetRasterStatus, :ptr
-	STDMETHOD	GetDisplayMode, :ptr
-	STDMETHOD	GetDevice, :ptr
-	STDMETHOD	GetPresentParameters, :ptr
-IDirect3DSwapChain9Vtbl ends
-IDirect3DSwapChain9 struct
-	lpVtbl		PVOID ?
-IDirect3DSwapChain9 ends
+.comdef IDirect3DSwapChain9
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Present		proc :ptr, :ptr, :HWND, :ptr, :DWORD
+    GetFrontBufferData	proc :ptr
+    GetBackBuffer	proc :UINT, :D3DBACKBUFFER_TYPE, :ptr
+    GetRasterStatus	proc :ptr
+    GetDisplayMode	proc :ptr
+    GetDevice		proc :ptr
+    GetPresentParameters proc :ptr
+    .ends
 LPDIRECT3DSWAPCHAIN9	typedef ptr IDirect3DSwapChain9
 PDIRECT3DSWAPCHAIN9	typedef ptr IDirect3DSwapChain9
 
-IDirect3DResource9Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetDevice, :ptr
-	STDMETHOD	SetPrivateData, :REFGUID, :ptr, :DWORD, :DWORD
-	STDMETHOD	GetPrivateData, :REFGUID, :ptr, :ptr
-	STDMETHOD	FreePrivateData, :REFGUID
-	STDMETHOD	SetPriority, :DWORD
-	STDMETHOD	GetPriority
-	STDMETHOD	PreLoad
-	STDMETHOD	GetType
-IDirect3DResource9Vtbl ends
-IDirect3DResource9 struct
-	lpVtbl		PVOID ?
-IDirect3DResource9 ends
+.comdef IDirect3DResource9
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetDevice		proc :ptr
+    SetPrivateData	proc :REFGUID, :ptr, :DWORD, :DWORD
+    GetPrivateData	proc :REFGUID, :ptr, :ptr
+    FreePrivateData	proc :REFGUID
+    SetPriority		proc :DWORD
+    GetPriority		proc
+    PreLoad		proc
+    GetType		proc
+    .ends
 LPDIRECT3DRESOURCE9	typedef ptr IDirect3DResource9
 PDIRECT3DRESOURCE9	typedef ptr IDirect3DResource9
 
-IDirect3DVertexDeclaration9Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetDevice, :ptr
-	STDMETHOD	GetDeclaration, :ptr, :ptr
-IDirect3DVertexDeclaration9Vtbl ends
-IDirect3DVertexDeclaration9 struct
-	lpVtbl		PVOID ?
-IDirect3DVertexDeclaration9 ends
+.comdef IDirect3DVertexDeclaration9
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetDevice		proc :ptr
+    GetDeclaration	proc :ptr, :ptr
+    .ends
 LPDIRECT3DVERTEXDECLARATION9 typedef ptr IDirect3DVertexDeclaration9
 PDIRECT3DVERTEXDECLARATION9 typedef ptr IDirect3DVertexDeclaration9
 
-IDirect3DVertexShader9Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetDevice, :ptr
-	STDMETHOD	GetFunction, :ptr, :ptr
-IDirect3DVertexShader9Vtbl ends
-IDirect3DVertexShader9 struct
-	lpVtbl		PVOID ?
-IDirect3DVertexShader9 ends
+.comdef IDirect3DVertexShader9
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetDevice		proc :ptr
+    GetFunction		proc :ptr, :ptr
+    .ends
 LPDIRECT3DVERTEXSHADER9 typedef ptr IDirect3DVertexShader9
 PDIRECT3DVERTEXSHADER9	typedef ptr IDirect3DVertexShader9
 
-IDirect3DPixelShader9Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetDevice, :ptr
-	STDMETHOD	GetFunction, :ptr, :ptr
-IDirect3DPixelShader9Vtbl ends
-IDirect3DPixelShader9 struct
-	lpVtbl		PVOID ?
-IDirect3DPixelShader9 ends
+.comdef IDirect3DPixelShader9
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetDevice		proc :ptr
+    GetFunction		proc :ptr, :ptr
+    .ends
 LPDIRECT3DPIXELSHADER9	typedef ptr IDirect3DPixelShader9
 PDIRECT3DPIXELSHADER9	typedef ptr IDirect3DPixelShader9
 
-IDirect3DBaseTexture9Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetDevice, :ptr
-	STDMETHOD	SetPrivateData, :REFGUID, :ptr, :DWORD, :DWORD
-	STDMETHOD	GetPrivateData, :REFGUID, :ptr, :ptr
-	STDMETHOD	FreePrivateData, :REFGUID
-	STDMETHOD	SetPriority, :DWORD
-	STDMETHOD	GetPriority
-	STDMETHOD	PreLoad
-	STDMETHOD	GetType
-	STDMETHOD	SetLOD, :DWORD
-	STDMETHOD	GetLOD
-	STDMETHOD	GetLevelCount
-	STDMETHOD	SetAutoGenFilterType, :D3DTEXTUREFILTERTYPE
-	STDMETHOD	GetAutoGenFilterType
-	STDMETHOD	GenerateMipSubLevels
-IDirect3DBaseTexture9Vtbl ends
-IDirect3DBaseTexture9 struct
-	lpVtbl		PVOID ?
-IDirect3DBaseTexture9 ends
+.comdef IDirect3DBaseTexture9
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetDevice		proc :ptr
+    SetPrivateData	proc :REFGUID, :ptr, :DWORD, :DWORD
+    GetPrivateData	proc :REFGUID, :ptr, :ptr
+    FreePrivateData	proc :REFGUID
+    SetPriority		proc :DWORD
+    GetPriority		proc
+    PreLoad		proc
+    GetType		proc
+    SetLOD		proc :DWORD
+    GetLOD		proc
+    GetLevelCount	proc
+    SetAutoGenFilterType proc :D3DTEXTUREFILTERTYPE
+    GetAutoGenFilterType proc
+    GenerateMipSubLevels proc
+    .ends
 LPDIRECT3DBASETEXTURE9	typedef ptr IDirect3DBaseTexture9
 PDIRECT3DBASETEXTURE9	typedef ptr IDirect3DBaseTexture9
 
-IDirect3DTexture9Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetDevice, :ptr
-	STDMETHOD	SetPrivateData, :REFGUID, :ptr, :DWORD, :DWORD
-	STDMETHOD	GetPrivateData, :REFGUID, :ptr, :ptr
-	STDMETHOD	FreePrivateData, :REFGUID
-	STDMETHOD	SetPriority, :DWORD
-	STDMETHOD	GetPriority
-	STDMETHOD	PreLoad
-	STDMETHOD	GetType
-	STDMETHOD	SetLOD, :DWORD
-	STDMETHOD	GetLOD
-	STDMETHOD	GetLevelCount
-	STDMETHOD	SetAutoGenFilterType, :D3DTEXTUREFILTERTYPE
-	STDMETHOD	GetAutoGenFilterType
-	STDMETHOD	GenerateMipSubLevels
-	STDMETHOD	GetLevelDesc, :UINT, :ptr
-	STDMETHOD	GetSurfaceLevel, :UINT, :ptr
-	STDMETHOD	LockRect, :UINT, :ptr, :ptr, :DWORD
-	STDMETHOD	UnlockRect, :UINT
-	STDMETHOD	AddDirtyRect, :ptr
-IDirect3DTexture9Vtbl ends
-IDirect3DTexture9 struct
-	lpVtbl		PVOID ?
-IDirect3DTexture9 ends
+.comdef IDirect3DTexture9
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetDevice		proc :ptr
+    SetPrivateData	proc :REFGUID, :ptr, :DWORD, :DWORD
+    GetPrivateData	proc :REFGUID, :ptr, :ptr
+    FreePrivateData	proc :REFGUID
+    SetPriority		proc :DWORD
+    GetPriority		proc
+    PreLoad		proc
+    GetType		proc
+    SetLOD		proc :DWORD
+    GetLOD		proc
+    GetLevelCount	proc
+    SetAutoGenFilterType proc :D3DTEXTUREFILTERTYPE
+    GetAutoGenFilterType proc
+    GenerateMipSubLevels proc
+    GetLevelDesc	proc :UINT, :ptr
+    GetSurfaceLevel	proc :UINT, :ptr
+    LockRect		proc :UINT, :ptr, :ptr, :DWORD
+    UnlockRect		proc :UINT
+    AddDirtyRect	proc :ptr
+    .ends
 LPDIRECT3DTEXTURE9	typedef ptr IDirect3DTexture9
 PDIRECT3DTEXTURE9	typedef ptr IDirect3DTexture9
 
-IDirect3DVolumeTexture9Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetDevice, :ptr
-	STDMETHOD	SetPrivateData, :REFGUID, :ptr, :DWORD, :DWORD
-	STDMETHOD	GetPrivateData, :REFGUID, :ptr, :ptr
-	STDMETHOD	FreePrivateData, :REFGUID
-	STDMETHOD	SetPriority, :DWORD
-	STDMETHOD	GetPriority
-	STDMETHOD	PreLoad
-	STDMETHOD	GetType
-	STDMETHOD	SetLOD, :DWORD
-	STDMETHOD	GetLOD
-	STDMETHOD	GetLevelCount
-	STDMETHOD	SetAutoGenFilterType, :D3DTEXTUREFILTERTYPE
-	STDMETHOD	GetAutoGenFilterType
-	STDMETHOD	GenerateMipSubLevels
-	STDMETHOD	GetLevelDesc, :UINT, :ptr
-	STDMETHOD	GetVolumeLevel, :UINT, :ptr
-	STDMETHOD	LockBox, :UINT, :ptr, :ptr, :DWORD
-	STDMETHOD	UnlockBox, :UINT
-	STDMETHOD	AddDirtyBox, :ptr
-IDirect3DVolumeTexture9Vtbl ends
-IDirect3DVolumeTexture9 struct
-	lpVtbl		PVOID ?
-IDirect3DVolumeTexture9 ends
+.comdef IDirect3DVolumeTexture9
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetDevice		proc :ptr
+    SetPrivateData	proc :REFGUID, :ptr, :DWORD, :DWORD
+    GetPrivateData	proc :REFGUID, :ptr, :ptr
+    FreePrivateData	proc :REFGUID
+    SetPriority		proc :DWORD
+    GetPriority		proc
+    PreLoad		proc
+    GetType		proc
+    SetLOD		proc :DWORD
+    GetLOD		proc
+    GetLevelCount	proc
+    SetAutoGenFilterType proc :D3DTEXTUREFILTERTYPE
+    GetAutoGenFilterType proc
+    GenerateMipSubLevels proc
+    GetLevelDesc	proc :UINT, :ptr
+    GetVolumeLevel	proc :UINT, :ptr
+    LockBox		proc :UINT, :ptr, :ptr, :DWORD
+    UnlockBox		proc :UINT
+    AddDirtyBox		proc :ptr
+    .ends
 LPDIRECT3DVOLUMETEXTURE9 typedef ptr IDirect3DVolumeTexture9
 PDIRECT3DVOLUMETEXTURE9 typedef ptr IDirect3DVolumeTexture9
 
-IDirect3DCubeTexture9Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetDevice, :ptr
-	STDMETHOD	SetPrivateData, :REFGUID, :ptr, :DWORD, :DWORD
-	STDMETHOD	GetPrivateData, :REFGUID, :ptr, :ptr
-	STDMETHOD	FreePrivateData, :REFGUID
-	STDMETHOD	SetPriority, :DWORD
-	STDMETHOD	GetPriority
-	STDMETHOD	PreLoad
-	STDMETHOD	GetType
-	STDMETHOD	SetLOD, :DWORD
-	STDMETHOD	GetLOD
-	STDMETHOD	GetLevelCount
-	STDMETHOD	SetAutoGenFilterType, :D3DTEXTUREFILTERTYPE
-	STDMETHOD	GetAutoGenFilterType
-	STDMETHOD	GenerateMipSubLevels
-	STDMETHOD	GetLevelDesc, :UINT, :ptr
-	STDMETHOD	GetCubeMapSurface, :D3DCUBEMAP_FACES, :UINT, :ptr
-	STDMETHOD	LockRect, :D3DCUBEMAP_FACES, :UINT, :ptr, :ptr, :DWORD
-	STDMETHOD	UnlockRect, :D3DCUBEMAP_FACES, :UINT
-	STDMETHOD	AddDirtyRect, :D3DCUBEMAP_FACES, :ptr
-IDirect3DCubeTexture9Vtbl ends
-IDirect3DCubeTexture9 struct
-	lpVtbl		PVOID ?
-IDirect3DCubeTexture9 ends
+.comdef IDirect3DCubeTexture9
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetDevice		proc :ptr
+    SetPrivateData	proc :REFGUID, :ptr, :DWORD, :DWORD
+    GetPrivateData	proc :REFGUID, :ptr, :ptr
+    FreePrivateData	proc :REFGUID
+    SetPriority		proc :DWORD
+    GetPriority		proc
+    PreLoad		proc
+    GetType		proc
+    SetLOD		proc :DWORD
+    GetLOD		proc
+    GetLevelCount	proc
+    SetAutoGenFilterType proc :D3DTEXTUREFILTERTYPE
+    GetAutoGenFilterType proc
+    GenerateMipSubLevels proc
+    GetLevelDesc	proc :UINT, :ptr
+    GetCubeMapSurface	proc :D3DCUBEMAP_FACES, :UINT, :ptr
+    LockRect		proc :D3DCUBEMAP_FACES, :UINT, :ptr, :ptr, :DWORD
+    UnlockRect		proc :D3DCUBEMAP_FACES, :UINT
+    AddDirtyRect	proc :D3DCUBEMAP_FACES, :ptr
+    .ends
 LPDIRECT3DCUBETEXTURE9	typedef ptr IDirect3DCubeTexture9
 PDIRECT3DCUBETEXTURE9	typedef ptr IDirect3DCubeTexture9
 
-IDirect3DVertexBuffer9Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetDevice, :ptr
-	STDMETHOD	SetPrivateData, :REFGUID, :ptr, :DWORD, :DWORD
-	STDMETHOD	GetPrivateData, :REFGUID, :ptr, :ptr
-	STDMETHOD	FreePrivateData, :REFGUID
-	STDMETHOD	SetPriority, :DWORD
-	STDMETHOD	GetPriority
-	STDMETHOD	PreLoad
-	STDMETHOD	GetType
-	STDMETHOD	_Lock, :UINT, :UINT, :ptr, :DWORD
-	STDMETHOD	Unlock
-	STDMETHOD	GetDesc, :ptr
-IDirect3DVertexBuffer9Vtbl ends
-IDirect3DVertexBuffer9 struct
-	lpVtbl		PVOID ?
-IDirect3DVertexBuffer9 ends
+.comdef IDirect3DVertexBuffer9
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetDevice		proc :ptr
+    SetPrivateData	proc :REFGUID, :ptr, :DWORD, :DWORD
+    GetPrivateData	proc :REFGUID, :ptr, :ptr
+    FreePrivateData	proc :REFGUID
+    SetPriority		proc :DWORD
+    GetPriority		proc
+    PreLoad		proc
+    GetType		proc
+    _Lock		proc :UINT, :UINT, :ptr, :DWORD
+    Unlock		proc
+    GetDesc		proc :ptr
+    .ends
 LPDIRECT3DVERTEXBUFFER9 typedef ptr IDirect3DVertexBuffer9
 PDIRECT3DVERTEXBUFFER9	typedef ptr IDirect3DVertexBuffer9
 
-IDirect3DIndexBuffer9Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetDevice, :ptr
-	STDMETHOD	SetPrivateData, :REFGUID, :ptr, :DWORD, :DWORD
-	STDMETHOD	GetPrivateData, :REFGUID, :ptr, :ptr
-	STDMETHOD	FreePrivateData, :REFGUID
-	STDMETHOD	SetPriority, :DWORD
-	STDMETHOD	GetPriority
-	STDMETHOD	PreLoad
-	STDMETHOD	GetType
-	STDMETHOD	_Lock, :UINT, :UINT, :ptr, :DWORD
-	STDMETHOD	Unlock
-	STDMETHOD	GetDesc, :ptr
-IDirect3DIndexBuffer9Vtbl ends
-IDirect3DIndexBuffer9 struct
-	lpVtbl		PVOID ?
-IDirect3DIndexBuffer9 ends
+.comdef IDirect3DIndexBuffer9
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetDevice		proc :ptr
+    SetPrivateData	proc :REFGUID, :ptr, :DWORD, :DWORD
+    GetPrivateData	proc :REFGUID, :ptr, :ptr
+    FreePrivateData	proc :REFGUID
+    SetPriority		proc :DWORD
+    GetPriority		proc
+    PreLoad		proc
+    GetType		proc
+    _Lock		proc :UINT, :UINT, :ptr, :DWORD
+    Unlock		proc
+    GetDesc		proc :ptr
+    .ends
 LPDIRECT3DINDEXBUFFER9	typedef ptr IDirect3DIndexBuffer9
 PDIRECT3DINDEXBUFFER9	typedef ptr IDirect3DIndexBuffer9
 
-IDirect3DSurface9Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetDevice, :ptr
-	STDMETHOD	SetPrivateData, :REFGUID, :ptr, :DWORD, :DWORD
-	STDMETHOD	GetPrivateData, :REFGUID, :ptr, :ptr
-	STDMETHOD	FreePrivateData, :REFGUID
-	STDMETHOD	SetPriority, :DWORD
-	STDMETHOD	GetPriority
-	STDMETHOD	PreLoad
-	STDMETHOD	GetType
-	STDMETHOD	GetContainer, :REFIID, :ptr
-	STDMETHOD	GetDesc, :ptr
-	STDMETHOD	LockRect, :ptr, :ptr, :DWORD
-	STDMETHOD	UnlockRect
-	STDMETHOD	GetDC, :ptr
-	STDMETHOD	ReleaseDC, :HDC
-IDirect3DSurface9Vtbl ends
-IDirect3DSurface9 struct
-	lpVtbl		PVOID ?
-IDirect3DSurface9 ends
+.comdef IDirect3DSurface9
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetDevice		proc :ptr
+    SetPrivateData	proc :REFGUID, :ptr, :DWORD, :DWORD
+    GetPrivateData	proc :REFGUID, :ptr, :ptr
+    FreePrivateData	proc :REFGUID
+    SetPriority		proc :DWORD
+    GetPriority		proc
+    PreLoad		proc
+    GetType		proc
+    GetContainer	proc :REFIID, :ptr
+    GetDesc		proc :ptr
+    LockRect		proc :ptr, :ptr, :DWORD
+    UnlockRect		proc
+    GetDC		proc :ptr
+    ReleaseDC		proc :HDC
+    .ends
 LPDIRECT3DSURFACE9	typedef ptr IDirect3DSurface9
 PDIRECT3DSURFACE9	typedef ptr IDirect3DSurface9
 
-IDirect3DVolume9Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetDevice, :ptr
-	STDMETHOD	SetPrivateData, :REFGUID, :ptr, :DWORD, :DWORD
-	STDMETHOD	GetPrivateData, :REFGUID, :ptr, :ptr
-	STDMETHOD	FreePrivateData, :REFGUID
-	STDMETHOD	GetContainer, :REFIID, :ptr
-	STDMETHOD	GetDesc, :ptr
-	STDMETHOD	LockBox, :ptr, :ptr, :DWORD
-	STDMETHOD	UnlockBox
-IDirect3DVolume9Vtbl ends
-IDirect3DVolume9 struct
-	lpVtbl		PVOID ?
-IDirect3DVolume9 ends
+.comdef IDirect3DVolume9
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetDevice		proc :ptr
+    SetPrivateData	proc :REFGUID, :ptr, :DWORD, :DWORD
+    GetPrivateData	proc :REFGUID, :ptr, :ptr
+    FreePrivateData	proc :REFGUID
+    GetContainer	proc :REFIID, :ptr
+    GetDesc		proc :ptr
+    LockBox		proc :ptr, :ptr, :DWORD
+    UnlockBox		proc
+    .ends
 LPDIRECT3DVOLUME9	typedef ptr IDirect3DVolume9
 PDIRECT3DVOLUME9	typedef ptr IDirect3DVolume9
 
-IDirect3DQuery9Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetDevice, :ptr
-	STDMETHOD	GetType
-	STDMETHOD	GetDataSize
-	STDMETHOD	Issue, :DWORD
-	STDMETHOD	GetData, :ptr, :DWORD, :DWORD
-IDirect3DQuery9Vtbl ends
-IDirect3DQuery9 struct
-	lpVtbl		PVOID ?
-IDirect3DQuery9 ends
+.comdef IDirect3DQuery9
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetDevice		proc :ptr
+    GetType		proc
+    GetDataSize		proc
+    Issue		proc :DWORD
+    GetData		proc :ptr, :DWORD, :DWORD
+    .ends
 LPDIRECT3DQUERY9	typedef ptr IDirect3DQuery9
 PDIRECT3DQUERY9		typedef ptr IDirect3DQuery9
 
@@ -678,260 +627,238 @@ Direct3DCreate9Ex proto WINAPI \
 		      : ptr ptr IDirect3D9Ex
 
 
-IDirect3D9ExVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetAdapterCount
-	STDMETHOD	GetAdapterIdentifier, :UINT, :DWORD, :ptr
-	STDMETHOD	GetAdapterModeCount, :UINT, :D3DFORMAT
-	STDMETHOD	EnumAdapterModes, :UINT, :D3DFORMAT, :UINT, :ptr
-	STDMETHOD	GetAdapterDisplayMode, :UINT, :ptr
-	STDMETHOD	CheckDeviceType, :UINT, :D3DDEVTYPE, :D3DFORMAT, :D3DFORMAT, :BOOL
-	STDMETHOD	CheckDeviceFormat, :UINT, :D3DDEVTYPE, :D3DFORMAT, :DWORD, :D3DRESOURCETYPE, :D3DFORMAT
-	STDMETHOD	CheckDeviceMultiSampleType, :UINT, :D3DDEVTYPE, :D3DFORMAT, :BOOL, :D3DMULTISAMPLE_TYPE, :ptr
-	STDMETHOD	CheckDepthStencilMatch, :UINT, :D3DDEVTYPE, :D3DFORMAT, :D3DFORMAT, :D3DFORMAT
-	STDMETHOD	CheckDeviceFormatConversion, :UINT, :D3DDEVTYPE, :D3DFORMAT, :D3DFORMAT
-	STDMETHOD	GetDeviceCaps, :UINT, :D3DDEVTYPE, :ptr
-	STDMETHOD	GetAdapterMonitor, :UINT
-	STDMETHOD	CreateDevice, :UINT, :D3DDEVTYPE, :HWND, :DWORD, :ptr, :ptr
-	STDMETHOD	GetAdapterModeCountEx, :UINT, :ptr
-	STDMETHOD	EnumAdapterModesEx, :UINT, :ptr, :UINT, :ptr
-	STDMETHOD	GetAdapterDisplayModeEx, :UINT, :ptr, :ptr
-	STDMETHOD	CreateDeviceEx, :UINT, :D3DDEVTYPE, :HWND, :DWORD, :ptr, :ptr, :ptr
-	STDMETHOD	GetAdapterLUID, :UINT, :ptr
-IDirect3D9ExVtbl ends
-IDirect3D9Ex struct
-	lpVtbl		PVOID ?
-IDirect3D9Ex ends
+.comdef IDirect3D9Ex
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetAdapterCount	proc
+    GetAdapterIdentifier proc :UINT, :DWORD, :ptr
+    GetAdapterModeCount proc :UINT, :D3DFORMAT
+    EnumAdapterModes	proc :UINT, :D3DFORMAT, :UINT, :ptr
+    GetAdapterDisplayMode proc :UINT, :ptr
+    CheckDeviceType	proc :UINT, :D3DDEVTYPE, :D3DFORMAT, :D3DFORMAT, :BOOL
+    CheckDeviceFormat	proc :UINT, :D3DDEVTYPE, :D3DFORMAT, :DWORD, :D3DRESOURCETYPE, :D3DFORMAT
+    CheckDeviceMultiSampleType proc :UINT, :D3DDEVTYPE, :D3DFORMAT, :BOOL, :D3DMULTISAMPLE_TYPE, :ptr
+    CheckDepthStencilMatch proc :UINT, :D3DDEVTYPE, :D3DFORMAT, :D3DFORMAT, :D3DFORMAT
+    CheckDeviceFormatConversion proc :UINT, :D3DDEVTYPE, :D3DFORMAT, :D3DFORMAT
+    GetDeviceCaps	proc :UINT, :D3DDEVTYPE, :ptr
+    GetAdapterMonitor	proc :UINT
+    CreateDevice	proc :UINT, :D3DDEVTYPE, :HWND, :DWORD, :ptr, :ptr
+    GetAdapterModeCountEx proc :UINT, :ptr
+    EnumAdapterModesEx	proc :UINT, :ptr, :UINT, :ptr
+    GetAdapterDisplayModeEx proc :UINT, :ptr, :ptr
+    CreateDeviceEx	proc :UINT, :D3DDEVTYPE, :HWND, :DWORD, :ptr, :ptr, :ptr
+    GetAdapterLUID	proc :UINT, :ptr
+    .ends
 LPDIRECT3D9EX		typedef ptr IDirect3D9Ex
 PDIRECT3D9EX		typedef ptr IDirect3D9Ex
 
-IDirect3DDevice9ExVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	TestCooperativeLevel
-	STDMETHOD	GetAvailableTextureMem
-	STDMETHOD	EvictManagedResources
-	STDMETHOD	GetDirect3D, :ptr
-	STDMETHOD	GetDeviceCaps, :ptr
-	STDMETHOD	GetDisplayMode, :UINT, :ptr
-	STDMETHOD	GetCreationParameters, :ptr
-	STDMETHOD	SetCursorProperties, :UINT, :UINT, :ptr
-	STDMETHOD	SetCursorPosition, :SINT, :SINT, :DWORD
-	STDMETHOD	ShowCursor, :BOOL
-	STDMETHOD	CreateAdditionalSwapChain, :ptr, :ptr
-	STDMETHOD	GetSwapChain, :UINT, :ptr
-	STDMETHOD	GetNumberOfSwapChains
-	STDMETHOD	Reset, :ptr
-	STDMETHOD	Present, :ptr, :ptr, :HWND, :ptr
-	STDMETHOD	GetBackBuffer, :UINT, :UINT, :D3DBACKBUFFER_TYPE, :ptr
-	STDMETHOD	GetRasterStatus, :UINT, :ptr
-	STDMETHOD	SetDialogBoxMode, :BOOL
-	STDMETHOD	SetGammaRamp, :UINT, :DWORD, :ptr
-	STDMETHOD	GetGammaRamp, :UINT, :ptr
-	STDMETHOD	CreateTexture, :UINT, :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :ptr, :ptr
-	STDMETHOD	CreateVolumeTexture, :UINT, :UINT, :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :ptr, :ptr
-	STDMETHOD	CreateCubeTexture, :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :ptr, :ptr
-	STDMETHOD	CreateVertexBuffer, :UINT, :DWORD, :DWORD, :D3DPOOL, :ptr, :ptr
-	STDMETHOD	CreateIndexBuffer, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :ptr, :ptr
-	STDMETHOD	CreateRenderTarget, :UINT, :UINT, :D3DFORMAT, :D3DMULTISAMPLE_TYPE, :DWORD, :BOOL, :ptr, :ptr
-	STDMETHOD	CreateDepthStencilSurface, :UINT, :UINT, :D3DFORMAT, :D3DMULTISAMPLE_TYPE, :DWORD, :BOOL, :ptr, :ptr
-	STDMETHOD	UpdateSurface, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	UpdateTexture, :ptr, :ptr
-	STDMETHOD	GetRenderTargetData, :ptr, :ptr
-	STDMETHOD	GetFrontBufferData, :UINT, :ptr
-	STDMETHOD	StretchRect, :ptr, :ptr, :ptr, :ptr, :D3DTEXTUREFILTERTYPE
-	STDMETHOD	ColorFill, :ptr, :ptr, :D3DCOLOR
-	STDMETHOD	CreateOffscreenPlainSurface, :UINT, :UINT, :D3DFORMAT, :D3DPOOL, :ptr, :ptr
-	STDMETHOD	SetRenderTarget, :DWORD, :ptr
-	STDMETHOD	GetRenderTarget, :DWORD, :ptr
-	STDMETHOD	SetDepthStencilSurface, :ptr
-	STDMETHOD	GetDepthStencilSurface, :ptr
-	STDMETHOD	BeginScene
-	STDMETHOD	EndScene
-	STDMETHOD	Clear, :DWORD, :ptr, :DWORD, :D3DCOLOR, :FLOAT, :DWORD
-	STDMETHOD	SetTransform, :D3DTRANSFORMSTATETYPE, :ptr
-	STDMETHOD	GetTransform, :D3DTRANSFORMSTATETYPE, :ptr
-	STDMETHOD	MultiplyTransform, :D3DTRANSFORMSTATETYPE, :ptr
-	STDMETHOD	SetViewport, :ptr
-	STDMETHOD	GetViewport, :ptr
-	STDMETHOD	SetMaterial, :ptr
-	STDMETHOD	GetMaterial, :ptr
-	STDMETHOD	SetLight, :DWORD, :ptr
-	STDMETHOD	GetLight, :DWORD, :ptr
-	STDMETHOD	LightEnable, :DWORD, :BOOL
-	STDMETHOD	GetLightEnable, :DWORD, :ptr
-	STDMETHOD	SetClipPlane, :DWORD, :ptr
-	STDMETHOD	GetClipPlane, :DWORD, :ptr
-	STDMETHOD	SetRenderState, :D3DRENDERSTATETYPE, :DWORD
-	STDMETHOD	GetRenderState, :D3DRENDERSTATETYPE, :ptr
-	STDMETHOD	CreateStateBlock, :D3DSTATEBLOCKTYPE, :ptr
-	STDMETHOD	BeginStateBlock
-	STDMETHOD	EndStateBlock, :ptr
-	STDMETHOD	SetClipStatus, :ptr
-	STDMETHOD	GetClipStatus, :ptr
-	STDMETHOD	GetTexture, :DWORD, :ptr
-	STDMETHOD	SetTexture, :DWORD, :ptr
-	STDMETHOD	GetTextureStageState, :DWORD, :D3DTEXTURESTAGESTATETYPE, :ptr
-	STDMETHOD	SetTextureStageState, :DWORD, :D3DTEXTURESTAGESTATETYPE, :DWORD
-	STDMETHOD	GetSamplerState, :DWORD, :D3DSAMPLERSTATETYPE, :ptr
-	STDMETHOD	SetSamplerState, :DWORD, :D3DSAMPLERSTATETYPE, :DWORD
-	STDMETHOD	ValidateDevice, :ptr
-	STDMETHOD	SetPaletteEntries, :UINT, :ptr
-	STDMETHOD	GetPaletteEntries, :UINT, :ptr
-	STDMETHOD	SetCurrentTexturePalette, :UINT
-	STDMETHOD	GetCurrentTexturePalette, :ptr
-	STDMETHOD	SetScissorRect, :ptr
-	STDMETHOD	GetScissorRect, :ptr
-	STDMETHOD	SetSoftwareVertexProcessing, :BOOL
-	STDMETHOD	GetSoftwareVertexProcessing
-	STDMETHOD	SetNPatchMode, :FLOAT
-	STDMETHOD	GetNPatchMode
-	STDMETHOD	DrawPrimitive, :D3DPRIMITIVETYPE, :UINT, :UINT
-	STDMETHOD	DrawIndexedPrimitive, :D3DPRIMITIVETYPE, :SINT, :UINT, :UINT, :UINT, :UINT
-	STDMETHOD	DrawPrimitiveUP, :D3DPRIMITIVETYPE, :UINT, :ptr, :UINT
-	STDMETHOD	DrawIndexedPrimitiveUP, :D3DPRIMITIVETYPE, :UINT, :UINT, :UINT, :ptr, :D3DFORMAT, :ptr, :UINT
-	STDMETHOD	ProcessVertices, :UINT, :UINT, :UINT, :ptr, :ptr, :DWORD
-	STDMETHOD	CreateVertexDeclaration, :ptr, :ptr
-	STDMETHOD	SetVertexDeclaration, :ptr
-	STDMETHOD	GetVertexDeclaration, :ptr
-	STDMETHOD	SetFVF, :DWORD
-	STDMETHOD	GetFVF, :ptr
-	STDMETHOD	CreateVertexShader, :ptr, :ptr
-	STDMETHOD	SetVertexShader, :ptr
-	STDMETHOD	GetVertexShader, :ptr
-	STDMETHOD	SetVertexShaderConstantF, :UINT, :ptr, :UINT
-	STDMETHOD	GetVertexShaderConstantF, :UINT, :ptr, :UINT
-	STDMETHOD	SetVertexShaderConstantI, :UINT, :ptr, :UINT
-	STDMETHOD	GetVertexShaderConstantI, :UINT, :ptr, :UINT
-	STDMETHOD	SetVertexShaderConstantB, :UINT, :ptr, :UINT
-	STDMETHOD	GetVertexShaderConstantB, :UINT, :ptr, :UINT
-	STDMETHOD	SetStreamSource, :UINT, :ptr, :UINT, :UINT
-	STDMETHOD	GetStreamSource, :UINT, :ptr, :ptr, :ptr
-	STDMETHOD	SetStreamSourceFreq, :UINT, :UINT
-	STDMETHOD	GetStreamSourceFreq, :UINT, :ptr
-	STDMETHOD	SetIndices, :ptr
-	STDMETHOD	GetIndices, :ptr
-	STDMETHOD	CreatePixelShader, :ptr, :ptr
-	STDMETHOD	SetPixelShader, :ptr
-	STDMETHOD	GetPixelShader, :ptr
-	STDMETHOD	SetPixelShaderConstantF, :UINT, :ptr, :UINT
-	STDMETHOD	GetPixelShaderConstantF, :UINT, :ptr, :UINT
-	STDMETHOD	SetPixelShaderConstantI, :UINT, :ptr, :UINT
-	STDMETHOD	GetPixelShaderConstantI, :UINT, :ptr, :UINT
-	STDMETHOD	SetPixelShaderConstantB, :UINT, :ptr, :UINT
-	STDMETHOD	GetPixelShaderConstantB, :UINT, :ptr, :UINT
-	STDMETHOD	DrawRectPatch, :UINT, :ptr, :ptr
-	STDMETHOD	DrawTriPatch, :UINT, :ptr, :ptr
-	STDMETHOD	DeletePatch, :UINT
-	STDMETHOD	CreateQuery, :D3DQUERYTYPE, :ptr
-	STDMETHOD	SetConvolutionMonoKernel, :UINT, :UINT, :ptr, :ptr
-	STDMETHOD	ComposeRects, :ptr, :ptr, :ptr, :UINT, :ptr, :D3DCOMPOSERECTSOP, :SINT, :SINT
-	STDMETHOD	PresentEx, :ptr, :ptr, :HWND, :ptr, :DWORD
-	STDMETHOD	GetGPUThreadPriority, :ptr
-	STDMETHOD	SetGPUThreadPriority, :SINT
-	STDMETHOD	WaitForVBlank, :UINT
-	STDMETHOD	CheckResourceResidency, :ptr, :UINT
-	STDMETHOD	SetMaximumFrameLatency, :UINT
-	STDMETHOD	GetMaximumFrameLatency, :ptr
-	STDMETHOD	CheckDeviceState, :HWND
-	STDMETHOD	CreateRenderTargetEx, :UINT, :UINT, :D3DFORMAT, :D3DMULTISAMPLE_TYPE, :DWORD, :BOOL, :ptr, :ptr, :DWORD
-	STDMETHOD	CreateOffscreenPlainSurfaceEx, :UINT, :UINT, :D3DFORMAT, :D3DPOOL, :ptr, :ptr, :DWORD
-	STDMETHOD	CreateDepthStencilSurfaceEx, :UINT, :UINT, :D3DFORMAT, :D3DMULTISAMPLE_TYPE, :DWORD, :ptr, :ptr, :DWORD
-	STDMETHOD	ResetEx, :ptr, :ptr
-	STDMETHOD	GetDisplayModeEx, :UINT, :ptr, :ptr
-IDirect3DDevice9ExVtbl ends
-IDirect3DDevice9Ex struct
-	lpVtbl		PVOID ?
-IDirect3DDevice9Ex ends
+.comdef IDirect3DDevice9Ex
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    TestCooperativeLevel proc
+    GetAvailableTextureMem proc
+    EvictManagedResources proc
+    GetDirect3D		proc :ptr
+    GetDeviceCaps	proc :ptr
+    GetDisplayMode	proc :UINT, :ptr
+    GetCreationParameters proc :ptr
+    SetCursorProperties proc :UINT, :UINT, :ptr
+    SetCursorPosition	proc :SINT, :SINT, :DWORD
+    ShowCursor		proc :BOOL
+    CreateAdditionalSwapChain proc :ptr, :ptr
+    GetSwapChain	proc :UINT, :ptr
+    GetNumberOfSwapChains proc
+    Reset		proc :ptr
+    Present		proc :ptr, :ptr, :HWND, :ptr
+    GetBackBuffer	proc :UINT, :UINT, :D3DBACKBUFFER_TYPE, :ptr
+    GetRasterStatus	proc :UINT, :ptr
+    SetDialogBoxMode	proc :BOOL
+    SetGammaRamp	proc :UINT, :DWORD, :ptr
+    GetGammaRamp	proc :UINT, :ptr
+    CreateTexture	proc :UINT, :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :ptr, :ptr
+    CreateVolumeTexture proc :UINT, :UINT, :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :ptr, :ptr
+    CreateCubeTexture	proc :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :ptr, :ptr
+    CreateVertexBuffer	proc :UINT, :DWORD, :DWORD, :D3DPOOL, :ptr, :ptr
+    CreateIndexBuffer	proc :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :ptr, :ptr
+    CreateRenderTarget	proc :UINT, :UINT, :D3DFORMAT, :D3DMULTISAMPLE_TYPE, :DWORD, :BOOL, :ptr, :ptr
+    CreateDepthStencilSurface proc :UINT, :UINT, :D3DFORMAT, :D3DMULTISAMPLE_TYPE, :DWORD, :BOOL, :ptr, :ptr
+    UpdateSurface	proc :ptr, :ptr, :ptr, :ptr
+    UpdateTexture	proc :ptr, :ptr
+    GetRenderTargetData proc :ptr, :ptr
+    GetFrontBufferData	proc :UINT, :ptr
+    StretchRect		proc :ptr, :ptr, :ptr, :ptr, :D3DTEXTUREFILTERTYPE
+    ColorFill		proc :ptr, :ptr, :D3DCOLOR
+    CreateOffscreenPlainSurface proc :UINT, :UINT, :D3DFORMAT, :D3DPOOL, :ptr, :ptr
+    SetRenderTarget	proc :DWORD, :ptr
+    GetRenderTarget	proc :DWORD, :ptr
+    SetDepthStencilSurface proc :ptr
+    GetDepthStencilSurface proc :ptr
+    BeginScene		proc
+    EndScene		proc
+    Clear		proc :DWORD, :ptr, :DWORD, :D3DCOLOR, :FLOAT, :DWORD
+    SetTransform	proc :D3DTRANSFORMSTATETYPE, :ptr
+    GetTransform	proc :D3DTRANSFORMSTATETYPE, :ptr
+    MultiplyTransform	proc :D3DTRANSFORMSTATETYPE, :ptr
+    SetViewport		proc :ptr
+    GetViewport		proc :ptr
+    SetMaterial		proc :ptr
+    GetMaterial		proc :ptr
+    SetLight		proc :DWORD, :ptr
+    GetLight		proc :DWORD, :ptr
+    LightEnable		proc :DWORD, :BOOL
+    GetLightEnable	proc :DWORD, :ptr
+    SetClipPlane	proc :DWORD, :ptr
+    GetClipPlane	proc :DWORD, :ptr
+    SetRenderState	proc :D3DRENDERSTATETYPE, :DWORD
+    GetRenderState	proc :D3DRENDERSTATETYPE, :ptr
+    CreateStateBlock	proc :D3DSTATEBLOCKTYPE, :ptr
+    BeginStateBlock	proc
+    EndStateBlock	proc :ptr
+    SetClipStatus	proc :ptr
+    GetClipStatus	proc :ptr
+    GetTexture		proc :DWORD, :ptr
+    SetTexture		proc :DWORD, :ptr
+    GetTextureStageState proc :DWORD, :D3DTEXTURESTAGESTATETYPE, :ptr
+    SetTextureStageState proc :DWORD, :D3DTEXTURESTAGESTATETYPE, :DWORD
+    GetSamplerState	proc :DWORD, :D3DSAMPLERSTATETYPE, :ptr
+    SetSamplerState	proc :DWORD, :D3DSAMPLERSTATETYPE, :DWORD
+    ValidateDevice	proc :ptr
+    SetPaletteEntries	proc :UINT, :ptr
+    GetPaletteEntries	proc :UINT, :ptr
+    SetCurrentTexturePalette proc :UINT
+    GetCurrentTexturePalette proc :ptr
+    SetScissorRect	proc :ptr
+    GetScissorRect	proc :ptr
+    SetSoftwareVertexProcessing proc :BOOL
+    GetSoftwareVertexProcessing proc
+    SetNPatchMode	proc :FLOAT
+    GetNPatchMode	proc
+    DrawPrimitive	proc :D3DPRIMITIVETYPE, :UINT, :UINT
+    DrawIndexedPrimitive proc :D3DPRIMITIVETYPE, :SINT, :UINT, :UINT, :UINT, :UINT
+    DrawPrimitiveUP	proc :D3DPRIMITIVETYPE, :UINT, :ptr, :UINT
+    DrawIndexedPrimitiveUP proc :D3DPRIMITIVETYPE, :UINT, :UINT, :UINT, :ptr, :D3DFORMAT, :ptr, :UINT
+    ProcessVertices	proc :UINT, :UINT, :UINT, :ptr, :ptr, :DWORD
+    CreateVertexDeclaration proc :ptr, :ptr
+    SetVertexDeclaration proc :ptr
+    GetVertexDeclaration proc :ptr
+    SetFVF		proc :DWORD
+    GetFVF		proc :ptr
+    CreateVertexShader	proc :ptr, :ptr
+    SetVertexShader	proc :ptr
+    GetVertexShader	proc :ptr
+    SetVertexShaderConstantF proc :UINT, :ptr, :UINT
+    GetVertexShaderConstantF proc :UINT, :ptr, :UINT
+    SetVertexShaderConstantI proc :UINT, :ptr, :UINT
+    GetVertexShaderConstantI proc :UINT, :ptr, :UINT
+    SetVertexShaderConstantB proc :UINT, :ptr, :UINT
+    GetVertexShaderConstantB proc :UINT, :ptr, :UINT
+    SetStreamSource	proc :UINT, :ptr, :UINT, :UINT
+    GetStreamSource	proc :UINT, :ptr, :ptr, :ptr
+    SetStreamSourceFreq proc :UINT, :UINT
+    GetStreamSourceFreq proc :UINT, :ptr
+    SetIndices		proc :ptr
+    GetIndices		proc :ptr
+    CreatePixelShader	proc :ptr, :ptr
+    SetPixelShader	proc :ptr
+    GetPixelShader	proc :ptr
+    SetPixelShaderConstantF proc :UINT, :ptr, :UINT
+    GetPixelShaderConstantF proc :UINT, :ptr, :UINT
+    SetPixelShaderConstantI proc :UINT, :ptr, :UINT
+    GetPixelShaderConstantI proc :UINT, :ptr, :UINT
+    SetPixelShaderConstantB proc :UINT, :ptr, :UINT
+    GetPixelShaderConstantB proc :UINT, :ptr, :UINT
+    DrawRectPatch	proc :UINT, :ptr, :ptr
+    DrawTriPatch	proc :UINT, :ptr, :ptr
+    DeletePatch		proc :UINT
+    CreateQuery		proc :D3DQUERYTYPE, :ptr
+    SetConvolutionMonoKernel proc :UINT, :UINT, :ptr, :ptr
+    ComposeRects	proc :ptr, :ptr, :ptr, :UINT, :ptr, :D3DCOMPOSERECTSOP, :SINT, :SINT
+    PresentEx		proc :ptr, :ptr, :HWND, :ptr, :DWORD
+    GetGPUThreadPriority proc :ptr
+    SetGPUThreadPriority proc :SINT
+    WaitForVBlank	proc :UINT
+    CheckResourceResidency proc :ptr, :UINT
+    SetMaximumFrameLatency proc :UINT
+    GetMaximumFrameLatency proc :ptr
+    CheckDeviceState	proc :HWND
+    CreateRenderTargetEx proc :UINT, :UINT, :D3DFORMAT, :D3DMULTISAMPLE_TYPE, :DWORD, :BOOL, :ptr, :ptr, :DWORD
+    CreateOffscreenPlainSurfaceEx proc :UINT, :UINT, :D3DFORMAT, :D3DPOOL, :ptr, :ptr, :DWORD
+    CreateDepthStencilSurfaceEx proc :UINT, :UINT, :D3DFORMAT, :D3DMULTISAMPLE_TYPE, :DWORD, :ptr, :ptr, :DWORD
+    ResetEx		proc :ptr, :ptr
+    GetDisplayModeEx	proc :UINT, :ptr, :ptr
+    .ends
 LPDIRECT3DDEVICE9EX	typedef ptr IDirect3DDevice9Ex
 PDIRECT3DDEVICE9EX	typedef ptr IDirect3DDevice9Ex
 
-IDirect3DSwapChain9ExVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Present, :ptr, :ptr, :HWND, :ptr, :DWORD
-	STDMETHOD	GetFrontBufferData, :ptr
-	STDMETHOD	GetBackBuffer, :UINT, :D3DBACKBUFFER_TYPE, :ptr
-	STDMETHOD	GetRasterStatus, :ptr
-	STDMETHOD	GetDisplayMode, :ptr
-	STDMETHOD	GetDevice, :ptr
-	STDMETHOD	GetPresentParameters, :ptr
-	STDMETHOD	GetLastPresentCount, :ptr
-	STDMETHOD	GetPresentStats, :ptr
-	STDMETHOD	GetDisplayModeEx, :ptr, :ptr
-IDirect3DSwapChain9ExVtbl ends
-IDirect3DSwapChain9Ex struct
-	lpVtbl		PVOID ?
-IDirect3DSwapChain9Ex ends
+.comdef IDirect3DSwapChain9Ex
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Present		proc :ptr, :ptr, :HWND, :ptr, :DWORD
+    GetFrontBufferData	proc :ptr
+    GetBackBuffer	proc :UINT, :D3DBACKBUFFER_TYPE, :ptr
+    GetRasterStatus	proc :ptr
+    GetDisplayMode	proc :ptr
+    GetDevice		proc :ptr
+    GetPresentParameters proc :ptr
+    GetLastPresentCount proc :ptr
+    GetPresentStats	proc :ptr
+    GetDisplayModeEx	proc :ptr, :ptr
+    .ends
 LPDIRECT3DSWAPCHAIN9EX	typedef ptr IDirect3DSwapChain9Ex
 PDIRECT3DSWAPCHAIN9EX	typedef ptr IDirect3DSwapChain9Ex
 
 endif ; ifndef D3D_DISABLE_9EX
 
-IDirect3D9ExOverlayExtensionVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	CheckDeviceOverlayType, :UINT, :D3DDEVTYPE, :UINT, :UINT, :D3DFORMAT, :ptr, :D3DDISPLAYROTATION, :ptr
-IDirect3D9ExOverlayExtensionVtbl ends
-IDirect3D9ExOverlayExtension struct
-	lpVtbl		PVOID ?
-IDirect3D9ExOverlayExtension ends
+.comdef IDirect3D9ExOverlayExtension
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    CheckDeviceOverlayType proc :UINT, :D3DDEVTYPE, :UINT, :UINT, :D3DFORMAT, :ptr, :D3DDISPLAYROTATION, :ptr
+    .ends
 LPDIRECT3D9EXOVERLAYEXTENSION typedef ptr IDirect3D9ExOverlayExtension
 PDIRECT3D9EXOVERLAYEXTENSION  typedef ptr IDirect3D9ExOverlayExtension
 
-IDirect3DDevice9VideoVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetContentProtectionCaps, :ptr, :ptr, :ptr
-	STDMETHOD	CreateAuthenticatedChannel, :D3DAUTHENTICATEDCHANNELTYPE, :ptr, :ptr
-	STDMETHOD	CreateCryptoSession, :ptr, :ptr, :ptr, :ptr
-IDirect3DDevice9VideoVtbl ends
-IDirect3DDevice9Video struct
-	lpVtbl		PVOID ?
-IDirect3DDevice9Video ends
+.comdef IDirect3DDevice9Video
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetContentProtectionCaps proc :ptr, :ptr, :ptr
+    CreateAuthenticatedChannel proc :D3DAUTHENTICATEDCHANNELTYPE, :ptr, :ptr
+    CreateCryptoSession proc :ptr, :ptr, :ptr, :ptr
+    .ends
 LPDIRECT3DDEVICE9VIDEO	typedef ptr IDirect3DDevice9Video
 PDIRECT3DDEVICE9VIDEO	typedef ptr IDirect3DDevice9Video
 
-IDirect3DAuthenticatedChannel9Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetCertificateSize, :ptr
-	STDMETHOD	GetCertificate, :UINT, :ptr
-	STDMETHOD	NegotiateKeyExchange, :UINT, :ptr
-	STDMETHOD	Query, :UINT, :ptr, :UINT, :ptr
-	STDMETHOD	Configure, :UINT, :ptr, :ptr
-IDirect3DAuthenticatedChannel9Vtbl ends
-IDirect3DAuthenticatedChannel9 struct
-	lpVtbl		PVOID ?
-IDirect3DAuthenticatedChannel9 ends
+.comdef IDirect3DAuthenticatedChannel9
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetCertificateSize	proc :ptr
+    GetCertificate	proc :UINT, :ptr
+    NegotiateKeyExchange proc :UINT, :ptr
+    Query		proc :UINT, :ptr, :UINT, :ptr
+    Configure		proc :UINT, :ptr, :ptr
+    .ends
 LPDIRECT3DAUTHENTICATEDCHANNEL9 typedef ptr IDirect3DAuthenticatedChannel9
 PDIRECT3DAUTHENTICATEDCHANNEL9	typedef ptr IDirect3DAuthenticatedChannel9
 
-
-IDirect3DCryptoSession9Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetCertificateSize, :ptr
-	STDMETHOD	GetCertificate, :UINT, :ptr
-	STDMETHOD	NegotiateKeyExchange, :UINT, :ptr
-	STDMETHOD	EncryptionBlt, :ptr, :ptr, :UINT, :ptr
-	STDMETHOD	DecryptionBlt, :ptr, :ptr, :UINT, :ptr, :ptr, :ptr
-	STDMETHOD	GetSurfacePitch, :ptr, :ptr
-	STDMETHOD	StartSessionKeyRefresh, :ptr, :UINT
-	STDMETHOD	FinishSessionKeyRefresh
-	STDMETHOD	GetEncryptionBltKey, :ptr, :UINT
-IDirect3DCryptoSession9Vtbl ends
-IDirect3DCryptoSession9 struct
-	lpVtbl		PVOID ?
-IDirect3DCryptoSession9 ends
+.comdef IDirect3DCryptoSession9
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetCertificateSize	proc :ptr
+    GetCertificate	proc :UINT, :ptr
+    NegotiateKeyExchange proc :UINT, :ptr
+    EncryptionBlt	proc :ptr, :ptr, :UINT, :ptr
+    DecryptionBlt	proc :ptr, :ptr, :UINT, :ptr, :ptr, :ptr
+    GetSurfacePitch	proc :ptr, :ptr
+    StartSessionKeyRefresh proc :ptr, :UINT
+    FinishSessionKeyRefresh proc
+    GetEncryptionBltKey proc :ptr, :UINT
+    .ends
 LPDIRECT3DCRYPTOSESSION9 typedef ptr IDirect3DCryptoSession9
 PDIRECT3DCRYPTOSESSION9 typedef ptr IDirect3DCryptoSession9
 

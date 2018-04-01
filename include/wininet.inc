@@ -2962,20 +2962,17 @@ PROXY_AUTO_DETECT_TYPE_DNS_A equ 2
 
 ;			typedef AutoProxyHelperFunctions
 
-AutoProxyHelperVtbl struct
-	STDMETHOD	IsResolvable, :LPSTR
-	STDMETHOD	GetIPAddress, :LPSTR, :LPDWORD
-	STDMETHOD	ResolveHostName, :LPSTR, :LPSTR, :LPDWORD
-	STDMETHOD	IsInNet, :LPSTR, :LPSTR, :LPSTR
-	STDMETHOD	IsResolvableEx, :LPSTR
-	STDMETHOD	GetIPAddressEx, :LPSTR, :LPDWORD
-	STDMETHOD	ResolveHostNameEx, :LPSTR, :LPSTR, :LPDWORD
-	STDMETHOD	IsInNetEx, :LPSTR, :LPSTR
-	STDMETHOD	SortIpList, :LPSTR, :LPSTR, :LPDWORD
-AutoProxyHelperVtbl ends
-AutoProxyHelper struct
-	lpVtbl		PVOID ?
-AutoProxyHelper ends
+.comdef AutoProxyHelper
+    IsResolvable        proc :LPSTR
+    GetIPAddress        proc :LPSTR, :LPDWORD
+    ResolveHostName     proc :LPSTR, :LPSTR, :LPDWORD
+    IsInNet             proc :LPSTR, :LPSTR, :LPSTR
+    IsResolvableEx      proc :LPSTR
+    GetIPAddressEx      proc :LPSTR, :LPDWORD
+    ResolveHostNameEx   proc :LPSTR, :LPSTR, :LPDWORD
+    IsInNetEx           proc :LPSTR, :LPSTR
+    SortIpList          proc :LPSTR, :LPSTR, :LPDWORD
+    .ends
 
 AUTO_PROXY_SCRIPT_BUFFER STRUC
 dwStructSize		dd ?

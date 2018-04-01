@@ -255,20 +255,16 @@ __IFolderViewOC_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IFolderViewOC:IID
 
-IFolderViewOCVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTypeInfoCount, :ptr
-	STDMETHOD	GetTypeInfo, :UINT, :LCID, :ptr
-	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	SetFolderView, :ptr
-IFolderViewOCVtbl ends
-IFolderViewOC struct
-	lpVtbl		PVOID ?
-IFolderViewOC ends
-LPIFolderViewOC		typedef ptr IFolderViewOC
+.comdef IFolderViewOC
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    SetFolderView	proc :ptr
+    .ends
 
 endif
 
@@ -278,19 +274,15 @@ __DShellFolderViewEvents_DISPINTERFACE_DEFINED__ equ 1
 
 externdef		DIID_DShellFolderViewEvents:IID
 
-DShellFolderViewEventsVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTypeInfoCount, :ptr
-	STDMETHOD	GetTypeInfo, :UINT, :LCID, :ptr
-	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-DShellFolderViewEventsVtbl ends
-DShellFolderViewEvents struct
-	lpVtbl		PVOID ?
-DShellFolderViewEvents ends
-LPDShellFolderViewEvents typedef ptr DShellFolderViewEvents
+.comdef DShellFolderViewEvents
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    .ends
 
 endif
 
@@ -301,21 +293,17 @@ __DFConstraint_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_DFConstraint:IID
-DFConstraintVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTypeInfoCount, :ptr
-	STDMETHOD	GetTypeInfo, :UINT, :LCID, :ptr
-	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	get_Name, :ptr
-	STDMETHOD	get_Value, :ptr
-DFConstraintVtbl ends
-DFConstraint struct
-	lpVtbl		PVOID ?
-DFConstraint ends
-LPDFConstraint		typedef ptr DFConstraint
+.comdef DFConstraint
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Name		proc :ptr
+    get_Value		proc :ptr
+    .ends
 
 endif
 
@@ -323,37 +311,33 @@ ifndef __FolderItem_INTERFACE_DEFINED__
 __FolderItem_INTERFACE_DEFINED__ equ 1
 
 
-FolderItemVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTypeInfoCount, :ptr
-	STDMETHOD	GetTypeInfo, :UINT, :LCID, :ptr
-	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	get_Application, :ptr
-	STDMETHOD	get_Parent, :ptr
-	STDMETHOD	get_Name, :ptr
-	STDMETHOD	put_Name, :BSTR
-	STDMETHOD	get_Path, :ptr
-	STDMETHOD	get_GetLink, :ptr
-	STDMETHOD	get_GetFolder, :ptr
-	STDMETHOD	get_IsLink, :ptr
-	STDMETHOD	get_IsFolder, :ptr
-	STDMETHOD	get_IsFileSystem, :ptr
-	STDMETHOD	get_IsBrowsable, :ptr
-	STDMETHOD	get_ModifyDate, :ptr
-	STDMETHOD	put_ModifyDate, :DATE
-	STDMETHOD	get_Size, :ptr
-	STDMETHOD	get_Type, :ptr
-	STDMETHOD	Verbs, :ptr
-	STDMETHOD	InvokeVerb, :VARIANT
-FolderItemVtbl ends
-FolderItem struct
-	lpVtbl		PVOID ?
-FolderItem ends
+.comdef FolderItem
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Application	proc :ptr
+    get_Parent		proc :ptr
+    get_Name		proc :ptr
+    put_Name		proc :BSTR
+    get_Path		proc :ptr
+    get_GetLink		proc :ptr
+    get_GetFolder	proc :ptr
+    get_IsLink		proc :ptr
+    get_IsFolder	proc :ptr
+    get_IsFileSystem	proc :ptr
+    get_IsBrowsable	proc :ptr
+    get_ModifyDate	proc :ptr
+    put_ModifyDate	proc :DATE
+    get_Size		proc :ptr
+    get_Type		proc :ptr
+    Verbs		proc :ptr
+    InvokeVerb		proc :VARIANT
+    .ends
 LPFOLDERITEM		typedef ptr FolderItem
-LPFolderItem		typedef ptr FolderItem
 externdef		IID_FolderItem:IID
 
 endif
@@ -364,24 +348,20 @@ __FolderItems_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_FolderItems:IID
-FolderItemsVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTypeInfoCount, :ptr
-	STDMETHOD	GetTypeInfo, :UINT, :LCID, :ptr
-	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	get_Count, :ptr
-	STDMETHOD	get_Application, :ptr
-	STDMETHOD	get_Parent, :ptr
-	STDMETHOD	Item, :VARIANT, :ptr
-	STDMETHOD	_NewEnum, :ptr
-FolderItemsVtbl ends
-FolderItems struct
-	lpVtbl		PVOID ?
-FolderItems ends
-LPFolderItems		typedef ptr FolderItems
+.comdef FolderItems
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Count		proc :ptr
+    get_Application	proc :ptr
+    get_Parent		proc :ptr
+    Item		proc :VARIANT, :ptr
+    _NewEnum		proc :ptr
+    .ends
 
 endif
 
@@ -390,23 +370,19 @@ __FolderItemVerb_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_FolderItemVerb:IID
-FolderItemVerbVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTypeInfoCount, :ptr
-	STDMETHOD	GetTypeInfo, :UINT, :LCID, :ptr
-	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	get_Application, :ptr
-	STDMETHOD	get_Parent, :ptr
-	STDMETHOD	get_Name, :ptr
-	STDMETHOD	DoIt
-FolderItemVerbVtbl ends
-FolderItemVerb struct
-	lpVtbl		PVOID ?
-FolderItemVerb ends
-LPFolderItemVerb	typedef ptr FolderItemVerb
+.comdef FolderItemVerb
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Application	proc :ptr
+    get_Parent		proc :ptr
+    get_Name		proc :ptr
+    DoIt		proc
+    .ends
 
 endif
 
@@ -415,24 +391,20 @@ __FolderItemVerbs_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_FolderItemVerbs:IID
-FolderItemVerbsVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTypeInfoCount, :ptr
-	STDMETHOD	GetTypeInfo, :UINT, :LCID, :ptr
-	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	get_Count, :ptr
-	STDMETHOD	get_Application, :ptr
-	STDMETHOD	get_Parent, :ptr
-	STDMETHOD	Item, :VARIANT, :ptr
-	STDMETHOD	_NewEnum, :ptr
-FolderItemVerbsVtbl ends
-FolderItemVerbs struct
-	lpVtbl		PVOID ?
-FolderItemVerbs ends
-LPFolderItemVerbs	typedef ptr FolderItemVerbs
+.comdef FolderItemVerbs
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Count		proc :ptr
+    get_Application	proc :ptr
+    get_Parent		proc :ptr
+    Item		proc :VARIANT, :ptr
+    _NewEnum		proc :ptr
+    .ends
 
 endif
 
@@ -441,29 +413,25 @@ __Folder_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_Folder:IID
-FolderVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTypeInfoCount, :ptr
-	STDMETHOD	GetTypeInfo, :UINT, :LCID, :ptr
-	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	get_Title, :ptr
-	STDMETHOD	get_Application, :ptr
-	STDMETHOD	get_Parent, :ptr
-	STDMETHOD	get_ParentFolder, :ptr
-	STDMETHOD	Items, :ptr
-	STDMETHOD	ParseName, :BSTR, :ptr
-	STDMETHOD	NewFolder, :BSTR, :VARIANT
-	STDMETHOD	MoveHere, :VARIANT, :VARIANT
-	STDMETHOD	CopyHere, :VARIANT, :VARIANT
-	STDMETHOD	GetDetailsOf, :VARIANT, :SINT, :ptr
-FolderVtbl ends
-Folder struct
-	lpVtbl		PVOID ?
-Folder ends
-LPFolder		typedef ptr Folder
+.comdef Folder
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Title		proc :ptr
+    get_Application	proc :ptr
+    get_Parent		proc :ptr
+    get_ParentFolder	proc :ptr
+    Items		proc :ptr
+    ParseName		proc :BSTR, :ptr
+    NewFolder		proc :BSTR, :VARIANT
+    MoveHere		proc :VARIANT, :VARIANT
+    CopyHere		proc :VARIANT, :VARIANT
+    GetDetailsOf	proc :VARIANT, :SINT, :ptr
+    .ends
 
 endif
 
@@ -472,34 +440,30 @@ __Folder2_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_Folder2:IID
-Folder2Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTypeInfoCount, :ptr
-	STDMETHOD	GetTypeInfo, :UINT, :LCID, :ptr
-	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	get_Title, :ptr
-	STDMETHOD	get_Application, :ptr
-	STDMETHOD	get_Parent, :ptr
-	STDMETHOD	get_ParentFolder, :ptr
-	STDMETHOD	Items, :ptr
-	STDMETHOD	ParseName, :BSTR, :ptr
-	STDMETHOD	NewFolder, :BSTR, :VARIANT
-	STDMETHOD	MoveHere, :VARIANT, :VARIANT
-	STDMETHOD	CopyHere, :VARIANT, :VARIANT
-	STDMETHOD	GetDetailsOf, :VARIANT, :SINT, :ptr
-	STDMETHOD	get_Self, :ptr
-	STDMETHOD	get_OfflineStatus, :ptr
-	STDMETHOD	Synchronize
-	STDMETHOD	get_HaveToShowWebViewBarricade, :ptr
-	STDMETHOD	DismissedWebViewBarricade
-Folder2Vtbl ends
-Folder2 struct
-	lpVtbl		PVOID ?
-Folder2 ends
-LPFolder2		typedef ptr Folder2
+.comdef Folder2
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Title		proc :ptr
+    get_Application	proc :ptr
+    get_Parent		proc :ptr
+    get_ParentFolder	proc :ptr
+    Items		proc :ptr
+    ParseName		proc :BSTR, :ptr
+    NewFolder		proc :BSTR, :VARIANT
+    MoveHere		proc :VARIANT, :VARIANT
+    CopyHere		proc :VARIANT, :VARIANT
+    GetDetailsOf	proc :VARIANT, :SINT, :ptr
+    get_Self		proc :ptr
+    get_OfflineStatus	proc :ptr
+    Synchronize		proc
+    get_HaveToShowWebViewBarricade proc :ptr
+    DismissedWebViewBarricade proc
+    .ends
 
 endif
 
@@ -509,36 +473,32 @@ __Folder3_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_Folder3:IID
-Folder3Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTypeInfoCount, :ptr
-	STDMETHOD	GetTypeInfo, :UINT, :LCID, :ptr
-	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	get_Title, :ptr
-	STDMETHOD	get_Application, :ptr
-	STDMETHOD	get_Parent, :ptr
-	STDMETHOD	get_ParentFolder, :ptr
-	STDMETHOD	Items, :ptr
-	STDMETHOD	ParseName, :BSTR, :ptr
-	STDMETHOD	NewFolder, :BSTR, :VARIANT
-	STDMETHOD	MoveHere, :VARIANT, :VARIANT
-	STDMETHOD	CopyHere, :VARIANT, :VARIANT
-	STDMETHOD	GetDetailsOf, :VARIANT, :SINT, :ptr
-	STDMETHOD	get_Self, :ptr
-	STDMETHOD	get_OfflineStatus, :ptr
-	STDMETHOD	Synchronize
-	STDMETHOD	get_HaveToShowWebViewBarricade, :ptr
-	STDMETHOD	DismissedWebViewBarricade
-	STDMETHOD	get_ShowWebViewBarricade, :ptr
-	STDMETHOD	put_ShowWebViewBarricade, :VARIANT_BOOL
-Folder3Vtbl ends
-Folder3 struct
-	lpVtbl		PVOID ?
-Folder3 ends
-LPFolder3		typedef ptr Folder3
+.comdef Folder3
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Title		proc :ptr
+    get_Application	proc :ptr
+    get_Parent		proc :ptr
+    get_ParentFolder	proc :ptr
+    Items		proc :ptr
+    ParseName		proc :BSTR, :ptr
+    NewFolder		proc :BSTR, :VARIANT
+    MoveHere		proc :VARIANT, :VARIANT
+    CopyHere		proc :VARIANT, :VARIANT
+    GetDetailsOf	proc :VARIANT, :SINT, :ptr
+    get_Self		proc :ptr
+    get_OfflineStatus	proc :ptr
+    Synchronize		proc
+    get_HaveToShowWebViewBarricade proc :ptr
+    DismissedWebViewBarricade proc
+    get_ShowWebViewBarricade proc :ptr
+    put_ShowWebViewBarricade proc :VARIANT_BOOL
+    .ends
 
 endif
 
@@ -548,38 +508,34 @@ __FolderItem2_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_FolderItem2:IID
-FolderItem2Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTypeInfoCount, :ptr
-	STDMETHOD	GetTypeInfo, :UINT, :LCID, :ptr
-	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	get_Application, :ptr
-	STDMETHOD	get_Parent, :ptr
-	STDMETHOD	get_Name, :ptr
-	STDMETHOD	put_Name, :BSTR
-	STDMETHOD	get_Path, :ptr
-	STDMETHOD	get_GetLink, :ptr
-	STDMETHOD	get_GetFolder, :ptr
-	STDMETHOD	get_IsLink, :ptr
-	STDMETHOD	get_IsFolder, :ptr
-	STDMETHOD	get_IsFileSystem, :ptr
-	STDMETHOD	get_IsBrowsable, :ptr
-	STDMETHOD	get_ModifyDate, :ptr
-	STDMETHOD	put_ModifyDate, :DATE
-	STDMETHOD	get_Size, :ptr
-	STDMETHOD	get_Type, :ptr
-	STDMETHOD	Verbs, :ptr
-	STDMETHOD	InvokeVerb, :VARIANT
-	STDMETHOD	InvokeVerbEx, :VARIANT, :VARIANT
-	STDMETHOD	ExtendedProperty, :BSTR, :ptr
-FolderItem2Vtbl ends
-FolderItem2 struct
-	lpVtbl		PVOID ?
-FolderItem2 ends
-LPFolderItem2		typedef ptr FolderItem2
+.comdef FolderItem2
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Application	proc :ptr
+    get_Parent		proc :ptr
+    get_Name		proc :ptr
+    put_Name		proc :BSTR
+    get_Path		proc :ptr
+    get_GetLink		proc :ptr
+    get_GetFolder	proc :ptr
+    get_IsLink		proc :ptr
+    get_IsFolder	proc :ptr
+    get_IsFileSystem	proc :ptr
+    get_IsBrowsable	proc :ptr
+    get_ModifyDate	proc :ptr
+    put_ModifyDate	proc :DATE
+    get_Size		proc :ptr
+    get_Type		proc :ptr
+    Verbs		proc :ptr
+    InvokeVerb		proc :VARIANT
+    InvokeVerbEx	proc :VARIANT, :VARIANT
+    ExtendedProperty	proc :BSTR, :ptr
+    .ends
 
 endif
 
@@ -590,25 +546,21 @@ __FolderItems2_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_FolderItems2:IID
-FolderItems2Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTypeInfoCount, :ptr
-	STDMETHOD	GetTypeInfo, :UINT, :LCID, :ptr
-	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	get_Count, :ptr
-	STDMETHOD	get_Application, :ptr
-	STDMETHOD	get_Parent, :ptr
-	STDMETHOD	Item, :VARIANT, :ptr
-	STDMETHOD	_NewEnum, :ptr
-	STDMETHOD	InvokeVerbEx, :VARIANT, :VARIANT
-FolderItems2Vtbl ends
-FolderItems2 struct
-	lpVtbl		PVOID ?
-FolderItems2 ends
-LPFolderItems2		typedef ptr FolderItems2
+.comdef FolderItems2
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Count		proc :ptr
+    get_Application	proc :ptr
+    get_Parent		proc :ptr
+    Item		proc :VARIANT, :ptr
+    _NewEnum		proc :ptr
+    InvokeVerbEx	proc :VARIANT, :VARIANT
+    .ends
 
 endif
 
@@ -617,27 +569,23 @@ __FolderItems3_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_FolderItems3:IID
-FolderItems3Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTypeInfoCount, :ptr
-	STDMETHOD	GetTypeInfo, :UINT, :LCID, :ptr
-	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	get_Count, :ptr
-	STDMETHOD	get_Application, :ptr
-	STDMETHOD	get_Parent, :ptr
-	STDMETHOD	Item, :VARIANT, :ptr
-	STDMETHOD	_NewEnum, :ptr
-	STDMETHOD	InvokeVerbEx, :VARIANT, :VARIANT
-	STDMETHOD	Filter, :LONG, :BSTR
-	STDMETHOD	get_Verbs, :ptr
-FolderItems3Vtbl ends
-FolderItems3 struct
-	lpVtbl		PVOID ?
-FolderItems3 ends
-LPFolderItems3		typedef ptr FolderItems3
+.comdef FolderItems3
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Count		proc :ptr
+    get_Application	proc :ptr
+    get_Parent		proc :ptr
+    Item		proc :VARIANT, :ptr
+    _NewEnum		proc :ptr
+    InvokeVerbEx	proc :VARIANT, :VARIANT
+    Filter		proc :LONG, :BSTR
+    get_Verbs		proc :ptr
+    .ends
 
 endif
 
@@ -646,35 +594,31 @@ __IShellLinkDual_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IShellLinkDual:IID
-IShellLinkDualVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTypeInfoCount, :ptr
-	STDMETHOD	GetTypeInfo, :UINT, :LCID, :ptr
-	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	get_Path, :ptr
-	STDMETHOD	put_Path, :BSTR
-	STDMETHOD	get_Description, :ptr
-	STDMETHOD	put_Description, :BSTR
-	STDMETHOD	get_WorkingDirectory, :ptr
-	STDMETHOD	put_WorkingDirectory, :BSTR
-	STDMETHOD	get_Arguments, :ptr
-	STDMETHOD	put_Arguments, :BSTR
-	STDMETHOD	get_Hotkey, :ptr
-	STDMETHOD	put_Hotkey, :SINT
-	STDMETHOD	get_ShowCommand, :ptr
-	STDMETHOD	put_ShowCommand, :SINT
-	STDMETHOD	Resolve, :SINT
-	STDMETHOD	GetIconLocation, :ptr, :ptr
-	STDMETHOD	SetIconLocation, :BSTR, :SINT
-	STDMETHOD	Save, :VARIANT
-IShellLinkDualVtbl ends
-IShellLinkDual struct
-	lpVtbl		PVOID ?
-IShellLinkDual ends
-LPIShellLinkDual	typedef ptr IShellLinkDual
+.comdef IShellLinkDual
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Path		proc :ptr
+    put_Path		proc :BSTR
+    get_Description	proc :ptr
+    put_Description	proc :BSTR
+    get_WorkingDirectory proc :ptr
+    put_WorkingDirectory proc :BSTR
+    get_Arguments	proc :ptr
+    put_Arguments	proc :BSTR
+    get_Hotkey		proc :ptr
+    put_Hotkey		proc :SINT
+    get_ShowCommand	proc :ptr
+    put_ShowCommand	proc :SINT
+    Resolve		proc :SINT
+    GetIconLocation	proc :ptr, :ptr
+    SetIconLocation	proc :BSTR, :SINT
+    Save		proc :VARIANT
+    .ends
 
 endif
 
@@ -685,36 +629,32 @@ __IShellLinkDual2_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IShellLinkDual2:IID
-IShellLinkDual2Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTypeInfoCount, :ptr
-	STDMETHOD	GetTypeInfo, :UINT, :LCID, :ptr
-	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	get_Path, :ptr
-	STDMETHOD	put_Path, :BSTR
-	STDMETHOD	get_Description, :ptr
-	STDMETHOD	put_Description, :BSTR
-	STDMETHOD	get_WorkingDirectory, :ptr
-	STDMETHOD	put_WorkingDirectory, :BSTR
-	STDMETHOD	get_Arguments, :ptr
-	STDMETHOD	put_Arguments, :BSTR
-	STDMETHOD	get_Hotkey, :ptr
-	STDMETHOD	put_Hotkey, :SINT
-	STDMETHOD	get_ShowCommand, :ptr
-	STDMETHOD	put_ShowCommand, :SINT
-	STDMETHOD	Resolve, :SINT
-	STDMETHOD	GetIconLocation, :ptr, :ptr
-	STDMETHOD	SetIconLocation, :BSTR, :SINT
-	STDMETHOD	Save, :VARIANT
-	STDMETHOD	get_Target, :ptr
-IShellLinkDual2Vtbl ends
-IShellLinkDual2 struct
-	lpVtbl		PVOID ?
-IShellLinkDual2 ends
-LPIShellLinkDual2	typedef ptr IShellLinkDual2
+.comdef IShellLinkDual2
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Path		proc :ptr
+    put_Path		proc :BSTR
+    get_Description	proc :ptr
+    put_Description	proc :BSTR
+    get_WorkingDirectory proc :ptr
+    put_WorkingDirectory proc :BSTR
+    get_Arguments	proc :ptr
+    put_Arguments	proc :BSTR
+    get_Hotkey		proc :ptr
+    put_Hotkey		proc :SINT
+    get_ShowCommand	proc :ptr
+    put_ShowCommand	proc :SINT
+    Resolve		proc :SINT
+    GetIconLocation	proc :ptr, :ptr
+    SetIconLocation	proc :BSTR, :SINT
+    Save		proc :VARIANT
+    get_Target		proc :ptr
+    .ends
 
 endif
 
@@ -725,28 +665,24 @@ __IShellFolderViewDual_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IShellFolderViewDual:IID
-IShellFolderViewDualVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTypeInfoCount, :ptr
-	STDMETHOD	GetTypeInfo, :UINT, :LCID, :ptr
-	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	get_Application, :ptr
-	STDMETHOD	get_Parent, :ptr
-	STDMETHOD	get_Folder, :ptr
-	STDMETHOD	SelectedItems, :ptr
-	STDMETHOD	get_FocusedItem, :ptr
-	STDMETHOD	SelectItem, :ptr, :SINT
-	STDMETHOD	PopupItemMenu, :ptr, :VARIANT, :VARIANT, :ptr
-	STDMETHOD	get_Script, :ptr
-	STDMETHOD	get_ViewOptions, :ptr
-IShellFolderViewDualVtbl ends
-IShellFolderViewDual struct
-	lpVtbl		PVOID ?
-IShellFolderViewDual ends
-LPIShellFolderViewDual	typedef ptr IShellFolderViewDual
+.comdef IShellFolderViewDual
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Application	proc :ptr
+    get_Parent		proc :ptr
+    get_Folder		proc :ptr
+    SelectedItems	proc :ptr
+    get_FocusedItem	proc :ptr
+    SelectItem		proc :ptr, :SINT
+    PopupItemMenu	proc :ptr, :VARIANT, :VARIANT, :ptr
+    get_Script		proc :ptr
+    get_ViewOptions	proc :ptr
+    .ends
 
 endif
 
@@ -755,31 +691,27 @@ __IShellFolderViewDual2_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IShellFolderViewDual2:IID
-IShellFolderViewDual2Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTypeInfoCount, :ptr
-	STDMETHOD	GetTypeInfo, :UINT, :LCID, :ptr
-	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	get_Application, :ptr
-	STDMETHOD	get_Parent, :ptr
-	STDMETHOD	get_Folder, :ptr
-	STDMETHOD	SelectedItems, :ptr
-	STDMETHOD	get_FocusedItem, :ptr
-	STDMETHOD	SelectItem, :ptr, :SINT
-	STDMETHOD	PopupItemMenu, :ptr, :VARIANT, :VARIANT, :ptr
-	STDMETHOD	get_Script, :ptr
-	STDMETHOD	get_ViewOptions, :ptr
-	STDMETHOD	get_CurrentViewMode, :ptr
-	STDMETHOD	put_CurrentViewMode, :UINT
-	STDMETHOD	SelectItemRelative, :SINT
-IShellFolderViewDual2Vtbl ends
-IShellFolderViewDual2 struct
-	lpVtbl		PVOID ?
-IShellFolderViewDual2 ends
-LPIShellFolderViewDual2 typedef ptr IShellFolderViewDual2
+.comdef IShellFolderViewDual2
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Application	proc :ptr
+    get_Parent		proc :ptr
+    get_Folder		proc :ptr
+    SelectedItems	proc :ptr
+    get_FocusedItem	proc :ptr
+    SelectItem		proc :ptr, :SINT
+    PopupItemMenu	proc :ptr, :VARIANT, :VARIANT, :ptr
+    get_Script		proc :ptr
+    get_ViewOptions	proc :ptr
+    get_CurrentViewMode proc :ptr
+    put_CurrentViewMode proc :UINT
+    SelectItemRelative	proc :SINT
+    .ends
 
 endif
 
@@ -789,40 +721,36 @@ __IShellFolderViewDual3_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IShellFolderViewDual3:IID
 
-IShellFolderViewDual3Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTypeInfoCount, :ptr
-	STDMETHOD	GetTypeInfo, :UINT, :LCID, :ptr
-	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	get_Application, :ptr
-	STDMETHOD	get_Parent, :ptr
-	STDMETHOD	get_Folder, :ptr
-	STDMETHOD	SelectedItems, :ptr
-	STDMETHOD	get_FocusedItem, :ptr
-	STDMETHOD	SelectItem, :ptr, :SINT
-	STDMETHOD	PopupItemMenu, :ptr, :VARIANT, :VARIANT, :ptr
-	STDMETHOD	get_Script, :ptr
-	STDMETHOD	get_ViewOptions, :ptr
-	STDMETHOD	get_CurrentViewMode, :ptr
-	STDMETHOD	put_CurrentViewMode, :UINT
-	STDMETHOD	SelectItemRelative, :SINT
-	STDMETHOD	get_GroupBy, :ptr
-	STDMETHOD	put_GroupBy, :BSTR
-	STDMETHOD	get_FolderFlags, :ptr
-	STDMETHOD	put_FolderFlags, :DWORD
-	STDMETHOD	get_SortColumns, :ptr
-	STDMETHOD	put_SortColumns, :BSTR
-	STDMETHOD	put_IconSize, :SINT
-	STDMETHOD	get_IconSize, :ptr
-	STDMETHOD	FilterView, :BSTR
-IShellFolderViewDual3Vtbl ends
-IShellFolderViewDual3 struct
-	lpVtbl		PVOID ?
-IShellFolderViewDual3 ends
-LPIShellFolderViewDual3 typedef ptr IShellFolderViewDual3
+.comdef IShellFolderViewDual3
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Application	proc :ptr
+    get_Parent		proc :ptr
+    get_Folder		proc :ptr
+    SelectedItems	proc :ptr
+    get_FocusedItem	proc :ptr
+    SelectItem		proc :ptr, :SINT
+    PopupItemMenu	proc :ptr, :VARIANT, :VARIANT, :ptr
+    get_Script		proc :ptr
+    get_ViewOptions	proc :ptr
+    get_CurrentViewMode proc :ptr
+    put_CurrentViewMode proc :UINT
+    SelectItemRelative	proc :SINT
+    get_GroupBy		proc :ptr
+    put_GroupBy		proc :BSTR
+    get_FolderFlags	proc :ptr
+    put_FolderFlags	proc :DWORD
+    get_SortColumns	proc :ptr
+    put_SortColumns	proc :BSTR
+    put_IconSize	proc :SINT
+    get_IconSize	proc :ptr
+    FilterView		proc :BSTR
+    .ends
 
 endif
 
@@ -833,96 +761,87 @@ __IShellDispatch_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IShellDispatch:IID
-IShellDispatchVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTypeInfoCount, :ptr
-	STDMETHOD	GetTypeInfo, :UINT, :LCID, :ptr
-	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	get_Application, :ptr
-	STDMETHOD	get_Parent, :ptr
-	STDMETHOD	NameSpace, :VARIANT, :ptr
-	STDMETHOD	BrowseForFolder, :LONG, :BSTR, :LONG, :VARIANT, :ptr
-	STDMETHOD	Windows, :ptr
-	STDMETHOD	Open, :VARIANT
-	STDMETHOD	Explore, :VARIANT
-	STDMETHOD	MinimizeAll
-	STDMETHOD	UndoMinimizeALL
-	STDMETHOD	FileRun
-	STDMETHOD	CascadeWindows
-	STDMETHOD	TileVertically
-	STDMETHOD	TileHorizontally
-	STDMETHOD	ShutdownWindows
-	STDMETHOD	Suspend
-	STDMETHOD	EjectPC
-	STDMETHOD	SetTime
-	STDMETHOD	TrayProperties
-	STDMETHOD	Help
-	STDMETHOD	FindFiles
-	STDMETHOD	FindComputer
-	STDMETHOD	RefreshMenu
-	STDMETHOD	ControlPanelItem, :BSTR
-IShellDispatchVtbl ends
-IShellDispatch struct
-	lpVtbl		PVOID ?
-IShellDispatch ends
-LPIShellDispatch	typedef ptr IShellDispatch
+.comdef IShellDispatch
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Application	proc :ptr
+    get_Parent		proc :ptr
+    NameSpace		proc :VARIANT, :ptr
+    BrowseForFolder	proc :LONG, :BSTR, :LONG, :VARIANT, :ptr
+    Windows		proc :ptr
+    Open		proc :VARIANT
+    Explore		proc :VARIANT
+    MinimizeAll		proc
+    UndoMinimizeALL	proc
+    FileRun		proc
+    CascadeWindows	proc
+    TileVertically	proc
+    TileHorizontally	proc
+    ShutdownWindows	proc
+    Suspend		proc
+    EjectPC		proc
+    SetTime		proc
+    TrayProperties	proc
+    Help		proc
+    FindFiles		proc
+    FindComputer	proc
+    RefreshMenu		proc
+    ControlPanelItem	proc :BSTR
+    .ends
 
 endif
-
 
 ifndef __IShellDispatch2_INTERFACE_DEFINED__
 __IShellDispatch2_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IShellDispatch2:IID
-IShellDispatch2Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTypeInfoCount, :ptr
-	STDMETHOD	GetTypeInfo, :UINT, :LCID, :ptr
-	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	get_Application, :ptr
-	STDMETHOD	get_Parent, :ptr
-	STDMETHOD	NameSpace, :VARIANT, :ptr
-	STDMETHOD	BrowseForFolder, :LONG, :BSTR, :LONG, :VARIANT, :ptr
-	STDMETHOD	Windows, :ptr
-	STDMETHOD	Open, :VARIANT
-	STDMETHOD	Explore, :VARIANT
-	STDMETHOD	MinimizeAll
-	STDMETHOD	UndoMinimizeALL
-	STDMETHOD	FileRun
-	STDMETHOD	CascadeWindows
-	STDMETHOD	TileVertically
-	STDMETHOD	TileHorizontally
-	STDMETHOD	ShutdownWindows
-	STDMETHOD	Suspend
-	STDMETHOD	EjectPC
-	STDMETHOD	SetTime
-	STDMETHOD	TrayProperties
-	STDMETHOD	Help
-	STDMETHOD	FindFiles
-	STDMETHOD	FindComputer
-	STDMETHOD	RefreshMenu
-	STDMETHOD	ControlPanelItem, :BSTR
-	STDMETHOD	IsRestricted, :BSTR, :BSTR, :ptr
-	STDMETHOD	ShellExecute, :BSTR, :VARIANT, :VARIANT, :VARIANT, :VARIANT
-	STDMETHOD	FindPrinter, :BSTR, :BSTR, :BSTR
-	STDMETHOD	GetSystemInformation, :BSTR, :ptr
-	STDMETHOD	ServiceStart, :BSTR, :VARIANT, :ptr
-	STDMETHOD	ServiceStop, :BSTR, :VARIANT, :ptr
-	STDMETHOD	IsServiceRunning, :BSTR, :ptr
-	STDMETHOD	CanStartStopService, :BSTR, :ptr
-	STDMETHOD	ShowBrowserBar, :BSTR, :VARIANT, :ptr
-IShellDispatch2Vtbl ends
-IShellDispatch2 struct
-	lpVtbl		PVOID ?
-IShellDispatch2 ends
-LPIShellDispatch2	typedef ptr IShellDispatch2
+.comdef IShellDispatch2
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Application	proc :ptr
+    get_Parent		proc :ptr
+    NameSpace		proc :VARIANT, :ptr
+    BrowseForFolder	proc :LONG, :BSTR, :LONG, :VARIANT, :ptr
+    Windows		proc :ptr
+    Open		proc :VARIANT
+    Explore		proc :VARIANT
+    MinimizeAll		proc
+    UndoMinimizeALL	proc
+    FileRun		proc
+    CascadeWindows	proc
+    TileVertically	proc
+    TileHorizontally	proc
+    ShutdownWindows	proc
+    Suspend		proc
+    EjectPC		proc
+    SetTime		proc
+    TrayProperties	proc
+    Help		proc
+    FindFiles		proc
+    FindComputer	proc
+    RefreshMenu		proc
+    ControlPanelItem	proc :BSTR
+    IsRestricted	proc :BSTR, :BSTR, :ptr
+    ShellExecute	proc :BSTR, :VARIANT, :VARIANT, :VARIANT, :VARIANT
+    FindPrinter		proc :BSTR, :BSTR, :BSTR
+    GetSystemInformation proc :BSTR, :ptr
+    ServiceStart	proc :BSTR, :VARIANT, :ptr
+    ServiceStop		proc :BSTR, :VARIANT, :ptr
+    IsServiceRunning	proc :BSTR, :ptr
+    CanStartStopService proc :BSTR, :ptr
+    ShowBrowserBar	proc :BSTR, :VARIANT, :ptr
+    .ends
 
 endif
 
@@ -931,52 +850,48 @@ __IShellDispatch3_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IShellDispatch3:IID
-IShellDispatch3Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTypeInfoCount, :ptr
-	STDMETHOD	GetTypeInfo, :UINT, :LCID, :ptr
-	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	get_Application, :ptr
-	STDMETHOD	get_Parent, :ptr
-	STDMETHOD	NameSpace, :VARIANT, :ptr
-	STDMETHOD	BrowseForFolder, :LONG, :BSTR, :LONG, :VARIANT, :ptr
-	STDMETHOD	Windows, :ptr
-	STDMETHOD	Open, :VARIANT
-	STDMETHOD	Explore, :VARIANT
-	STDMETHOD	MinimizeAll
-	STDMETHOD	UndoMinimizeALL
-	STDMETHOD	FileRun
-	STDMETHOD	CascadeWindows
-	STDMETHOD	TileVertically
-	STDMETHOD	TileHorizontally
-	STDMETHOD	ShutdownWindows
-	STDMETHOD	Suspend
-	STDMETHOD	EjectPC
-	STDMETHOD	SetTime
-	STDMETHOD	TrayProperties
-	STDMETHOD	Help
-	STDMETHOD	FindFiles
-	STDMETHOD	FindComputer
-	STDMETHOD	RefreshMenu
-	STDMETHOD	ControlPanelItem, :BSTR
-	STDMETHOD	IsRestricted, :BSTR, :BSTR, :ptr
-	STDMETHOD	ShellExecute, :BSTR, :VARIANT, :VARIANT, :VARIANT, :VARIANT
-	STDMETHOD	FindPrinter, :BSTR, :BSTR, :BSTR
-	STDMETHOD	GetSystemInformation, :BSTR, :ptr
-	STDMETHOD	ServiceStart, :BSTR, :VARIANT, :ptr
-	STDMETHOD	ServiceStop, :BSTR, :VARIANT, :ptr
-	STDMETHOD	IsServiceRunning, :BSTR, :ptr
-	STDMETHOD	CanStartStopService, :BSTR, :ptr
-	STDMETHOD	ShowBrowserBar, :BSTR, :VARIANT, :ptr
-	STDMETHOD	AddToRecent, :VARIANT, :BSTR
-IShellDispatch3Vtbl ends
-IShellDispatch3 struct
-	lpVtbl		PVOID ?
-IShellDispatch3 ends
-LPIShellDispatch3	typedef ptr IShellDispatch3
+.comdef IShellDispatch3
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Application	proc :ptr
+    get_Parent		proc :ptr
+    NameSpace		proc :VARIANT, :ptr
+    BrowseForFolder	proc :LONG, :BSTR, :LONG, :VARIANT, :ptr
+    Windows		proc :ptr
+    Open		proc :VARIANT
+    Explore		proc :VARIANT
+    MinimizeAll		proc
+    UndoMinimizeALL	proc
+    FileRun		proc
+    CascadeWindows	proc
+    TileVertically	proc
+    TileHorizontally	proc
+    ShutdownWindows	proc
+    Suspend		proc
+    EjectPC		proc
+    SetTime		proc
+    TrayProperties	proc
+    Help		proc
+    FindFiles		proc
+    FindComputer	proc
+    RefreshMenu		proc
+    ControlPanelItem	proc :BSTR
+    IsRestricted	proc :BSTR, :BSTR, :ptr
+    ShellExecute	proc :BSTR, :VARIANT, :VARIANT, :VARIANT, :VARIANT
+    FindPrinter		proc :BSTR, :BSTR, :BSTR
+    GetSystemInformation proc :BSTR, :ptr
+    ServiceStart	proc :BSTR, :VARIANT, :ptr
+    ServiceStop		proc :BSTR, :VARIANT, :ptr
+    IsServiceRunning	proc :BSTR, :ptr
+    CanStartStopService proc :BSTR, :ptr
+    ShowBrowserBar	proc :BSTR, :VARIANT, :ptr
+    AddToRecent		proc :VARIANT, :BSTR
+    .ends
 
 endif
 
@@ -986,56 +901,52 @@ __IShellDispatch4_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IShellDispatch4:IID
-IShellDispatch4Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTypeInfoCount, :ptr
-	STDMETHOD	GetTypeInfo, :UINT, :LCID, :ptr
-	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	get_Application, :ptr
-	STDMETHOD	get_Parent, :ptr
-	STDMETHOD	NameSpace, :VARIANT, :ptr
-	STDMETHOD	BrowseForFolder, :LONG, :BSTR, :LONG, :VARIANT, :ptr
-	STDMETHOD	Windows, :ptr
-	STDMETHOD	Open, :VARIANT
-	STDMETHOD	Explore, :VARIANT
-	STDMETHOD	MinimizeAll
-	STDMETHOD	UndoMinimizeALL
-	STDMETHOD	FileRun
-	STDMETHOD	CascadeWindows
-	STDMETHOD	TileVertically
-	STDMETHOD	TileHorizontally
-	STDMETHOD	ShutdownWindows
-	STDMETHOD	Suspend
-	STDMETHOD	EjectPC
-	STDMETHOD	SetTime
-	STDMETHOD	TrayProperties
-	STDMETHOD	Help
-	STDMETHOD	FindFiles
-	STDMETHOD	FindComputer
-	STDMETHOD	RefreshMenu
-	STDMETHOD	ControlPanelItem, :BSTR
-	STDMETHOD	IsRestricted, :BSTR, :BSTR, :ptr
-	STDMETHOD	ShellExecute, :BSTR, :VARIANT, :VARIANT, :VARIANT, :VARIANT
-	STDMETHOD	FindPrinter, :BSTR, :BSTR, :BSTR
-	STDMETHOD	GetSystemInformation, :BSTR, :ptr
-	STDMETHOD	ServiceStart, :BSTR, :VARIANT, :ptr
-	STDMETHOD	ServiceStop, :BSTR, :VARIANT, :ptr
-	STDMETHOD	IsServiceRunning, :BSTR, :ptr
-	STDMETHOD	CanStartStopService, :BSTR, :ptr
-	STDMETHOD	ShowBrowserBar, :BSTR, :VARIANT, :ptr
-	STDMETHOD	AddToRecent, :VARIANT, :BSTR
-	STDMETHOD	WindowsSecurity
-	STDMETHOD	ToggleDesktop
-	STDMETHOD	ExplorerPolicy, :BSTR, :ptr
-	STDMETHOD	GetSetting, :LONG, :ptr
-IShellDispatch4Vtbl ends
-IShellDispatch4 struct
-	lpVtbl		PVOID ?
-IShellDispatch4 ends
-LPIShellDispatch4	typedef ptr IShellDispatch4
+.comdef IShellDispatch4
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Application	proc :ptr
+    get_Parent		proc :ptr
+    NameSpace		proc :VARIANT, :ptr
+    BrowseForFolder	proc :LONG, :BSTR, :LONG, :VARIANT, :ptr
+    Windows		proc :ptr
+    Open		proc :VARIANT
+    Explore		proc :VARIANT
+    MinimizeAll		proc
+    UndoMinimizeALL	proc
+    FileRun		proc
+    CascadeWindows	proc
+    TileVertically	proc
+    TileHorizontally	proc
+    ShutdownWindows	proc
+    Suspend		proc
+    EjectPC		proc
+    SetTime		proc
+    TrayProperties	proc
+    Help		proc
+    FindFiles		proc
+    FindComputer	proc
+    RefreshMenu		proc
+    ControlPanelItem	proc :BSTR
+    IsRestricted	proc :BSTR, :BSTR, :ptr
+    ShellExecute	proc :BSTR, :VARIANT, :VARIANT, :VARIANT, :VARIANT
+    FindPrinter		proc :BSTR, :BSTR, :BSTR
+    GetSystemInformation proc :BSTR, :ptr
+    ServiceStart	proc :BSTR, :VARIANT, :ptr
+    ServiceStop		proc :BSTR, :VARIANT, :ptr
+    IsServiceRunning	proc :BSTR, :ptr
+    CanStartStopService proc :BSTR, :ptr
+    ShowBrowserBar	proc :BSTR, :VARIANT, :ptr
+    AddToRecent		proc :VARIANT, :BSTR
+    WindowsSecurity	proc
+    ToggleDesktop	proc
+    ExplorerPolicy	proc :BSTR, :ptr
+    GetSetting		proc :LONG, :ptr
+    .ends
 
 endif
 
@@ -1044,57 +955,53 @@ __IShellDispatch5_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IShellDispatch5:IID
-IShellDispatch5Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTypeInfoCount, :ptr
-	STDMETHOD	GetTypeInfo, :UINT, :LCID, :ptr
-	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	get_Application, :ptr
-	STDMETHOD	get_Parent, :ptr
-	STDMETHOD	NameSpace, :VARIANT, :ptr
-	STDMETHOD	BrowseForFolder, :LONG, :BSTR, :LONG, :VARIANT, :ptr
-	STDMETHOD	Windows, :ptr
-	STDMETHOD	Open, :VARIANT
-	STDMETHOD	Explore, :VARIANT
-	STDMETHOD	MinimizeAll
-	STDMETHOD	UndoMinimizeALL
-	STDMETHOD	FileRun
-	STDMETHOD	CascadeWindows
-	STDMETHOD	TileVertically
-	STDMETHOD	TileHorizontally
-	STDMETHOD	ShutdownWindows
-	STDMETHOD	Suspend
-	STDMETHOD	EjectPC
-	STDMETHOD	SetTime
-	STDMETHOD	TrayProperties
-	STDMETHOD	Help
-	STDMETHOD	FindFiles
-	STDMETHOD	FindComputer
-	STDMETHOD	RefreshMenu
-	STDMETHOD	ControlPanelItem, :BSTR
-	STDMETHOD	IsRestricted, :BSTR, :BSTR, :ptr
-	STDMETHOD	ShellExecute, :BSTR, :VARIANT, :VARIANT, :VARIANT, :VARIANT
-	STDMETHOD	FindPrinter, :BSTR, :BSTR, :BSTR
-	STDMETHOD	GetSystemInformation, :BSTR, :ptr
-	STDMETHOD	ServiceStart, :BSTR, :VARIANT, :ptr
-	STDMETHOD	ServiceStop, :BSTR, :VARIANT, :ptr
-	STDMETHOD	IsServiceRunning, :BSTR, :ptr
-	STDMETHOD	CanStartStopService, :BSTR, :ptr
-	STDMETHOD	ShowBrowserBar, :BSTR, :VARIANT, :ptr
-	STDMETHOD	AddToRecent, :VARIANT, :BSTR
-	STDMETHOD	WindowsSecurity
-	STDMETHOD	ToggleDesktop
-	STDMETHOD	ExplorerPolicy, :BSTR, :ptr
-	STDMETHOD	GetSetting, :LONG, :ptr
-	STDMETHOD	WindowSwitcher
-IShellDispatch5Vtbl ends
-IShellDispatch5 struct
-	lpVtbl		PVOID ?
-IShellDispatch5 ends
-LPIShellDispatch5	typedef ptr IShellDispatch5
+.comdef IShellDispatch5
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Application	proc :ptr
+    get_Parent		proc :ptr
+    NameSpace		proc :VARIANT, :ptr
+    BrowseForFolder	proc :LONG, :BSTR, :LONG, :VARIANT, :ptr
+    Windows		proc :ptr
+    Open		proc :VARIANT
+    Explore		proc :VARIANT
+    MinimizeAll		proc
+    UndoMinimizeALL	proc
+    FileRun		proc
+    CascadeWindows	proc
+    TileVertically	proc
+    TileHorizontally	proc
+    ShutdownWindows	proc
+    Suspend		proc
+    EjectPC		proc
+    SetTime		proc
+    TrayProperties	proc
+    Help		proc
+    FindFiles		proc
+    FindComputer	proc
+    RefreshMenu		proc
+    ControlPanelItem	proc :BSTR
+    IsRestricted	proc :BSTR, :BSTR, :ptr
+    ShellExecute	proc :BSTR, :VARIANT, :VARIANT, :VARIANT, :VARIANT
+    FindPrinter		proc :BSTR, :BSTR, :BSTR
+    GetSystemInformation proc :BSTR, :ptr
+    ServiceStart	proc :BSTR, :VARIANT, :ptr
+    ServiceStop		proc :BSTR, :VARIANT, :ptr
+    IsServiceRunning	proc :BSTR, :ptr
+    CanStartStopService proc :BSTR, :ptr
+    ShowBrowserBar	proc :BSTR, :VARIANT, :ptr
+    AddToRecent		proc :VARIANT, :BSTR
+    WindowsSecurity	proc
+    ToggleDesktop	proc
+    ExplorerPolicy	proc :BSTR, :ptr
+    GetSetting		proc :LONG, :ptr
+    WindowSwitcher	proc
+    .ends
 
 endif
 
@@ -1106,24 +1013,20 @@ __IFileSearchBand_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IFileSearchBand:IID
-IFileSearchBandVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTypeInfoCount, :ptr
-	STDMETHOD	GetTypeInfo, :UINT, :LCID, :ptr
-	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	SetFocus
-	STDMETHOD	SetSearchParameters, :ptr, :VARIANT_BOOL, :ptr, :ptr
-	STDMETHOD	get_SearchID, :ptr
-	STDMETHOD	get_Scope, :ptr
-	STDMETHOD	get_QueryFile, :ptr
-IFileSearchBandVtbl ends
-IFileSearchBand struct
-	lpVtbl		PVOID ?
-IFileSearchBand ends
-LPIFileSearchBand	typedef ptr IFileSearchBand
+.comdef IFileSearchBand
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    SetFocus		proc
+    SetSearchParameters proc :ptr, :VARIANT_BOOL, :ptr, :ptr
+    get_SearchID	proc :ptr
+    get_Scope		proc :ptr
+    get_QueryFile	proc :ptr
+    .ends
 
 endif
 
@@ -1134,28 +1037,24 @@ __IWebWizardHost_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IWebWizardHost:IID
-IWebWizardHostVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTypeInfoCount, :ptr
-	STDMETHOD	GetTypeInfo, :UINT, :LCID, :ptr
-	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	FinalBack
-	STDMETHOD	FinalNext
-	STDMETHOD	Cancel
-	STDMETHOD	put_Caption, :BSTR
-	STDMETHOD	get_Caption, :ptr
-	STDMETHOD	put_Property, :BSTR, :ptr
-	STDMETHOD	get_Property, :BSTR, :ptr
-	STDMETHOD	SetWizardButtons, :VARIANT_BOOL, :VARIANT_BOOL, :VARIANT_BOOL
-	STDMETHOD	SetHeaderText, :BSTR, :BSTR
-IWebWizardHostVtbl ends
-IWebWizardHost struct
-	lpVtbl		PVOID ?
-IWebWizardHost ends
-LPIWebWizardHost	typedef ptr IWebWizardHost
+.comdef IWebWizardHost
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    FinalBack		proc
+    FinalNext		proc
+    Cancel		proc
+    put_Caption		proc :BSTR
+    get_Caption		proc :ptr
+    put_Property	proc :BSTR, :ptr
+    get_Property	proc :BSTR, :ptr
+    SetWizardButtons	proc :VARIANT_BOOL, :VARIANT_BOOL, :VARIANT_BOOL
+    SetHeaderText	proc :BSTR, :BSTR
+    .ends
 
 endif
 
@@ -1164,28 +1063,24 @@ __INewWDEvents_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_INewWDEvents:IID
-INewWDEventsVtbl struct
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	GetTypeInfoCount, :ptr
-	STDMETHOD	GetTypeInfo, :UINT, :LCID, :ptr
-	STDMETHOD	GetIDsOfNames, :REFIID, :ptr, :UINT, :LCID, :ptr
-	STDMETHOD	_Invoke, :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-	STDMETHOD	FinalBack
-	STDMETHOD	FinalNext
-	STDMETHOD	Cancel
-	STDMETHOD	put_Caption, :BSTR
-	STDMETHOD	get_Caption, :ptr
-	STDMETHOD	put_Property, :BSTR, :ptr
-	STDMETHOD	get_Property, :BSTR, :ptr
-	STDMETHOD	SetWizardButtons, :VARIANT_BOOL, :VARIANT_BOOL, :VARIANT_BOOL
-	STDMETHOD	SetHeaderText, :BSTR, :BSTR
-	STDMETHOD	PassportAuthenticate, :BSTR, :ptr
-INewWDEventsVtbl ends
-INewWDEvents struct
-	lpVtbl		PVOID ?
-INewWDEvents ends
-LPINewWDEvents		typedef ptr INewWDEvents
+.comdef INewWDEvents
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    FinalBack		proc
+    FinalNext		proc
+    Cancel		proc
+    put_Caption		proc :BSTR
+    get_Caption		proc :ptr
+    put_Property	proc :BSTR, :ptr
+    get_Property	proc :BSTR, :ptr
+    SetWizardButtons	proc :VARIANT_BOOL, :VARIANT_BOOL, :VARIANT_BOOL
+    SetHeaderText	proc :BSTR, :BSTR
+    PassportAuthenticate proc :BSTR, :ptr
+    .ends
 
 endif
 endif
@@ -1198,18 +1093,14 @@ ifndef __IAutoComplete_INTERFACE_DEFINED__
 __IAutoComplete_INTERFACE_DEFINED__ equ 1
 
 
-IAutoCompleteVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Init, :HWND, :ptr, :LPCWSTR, :LPCWSTR
-	STDMETHOD	Enable, :BOOL
-IAutoCompleteVtbl ends
-IAutoComplete struct
-	lpVtbl		PVOID ?
-IAutoComplete ends
+.comdef IAutoComplete
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Init		proc :HWND, :ptr, :LPCWSTR, :LPCWSTR
+    Enable		proc :BOOL
+    .ends
 LPAUTOCOMPLETE		typedef ptr IAutoComplete
-LPIAutoComplete		typedef ptr IAutoComplete
 externdef		IID_IAutoComplete:IID
 
 endif
@@ -1230,20 +1121,16 @@ ACO_RTLREADING		equ 0x40
 ACO_WORD_FILTER		equ 0x80
 ACO_NOPREFIXFILTERING	equ 0x100
 
-IAutoComplete2Vtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Init, :HWND, :ptr, :LPCWSTR, :LPCWSTR
-	STDMETHOD	Enable, :BOOL
-	STDMETHOD	SetOptions, :DWORD
-	STDMETHOD	GetOptions, :ptr
-IAutoComplete2Vtbl ends
-IAutoComplete2 struct
-	lpVtbl		PVOID ?
-IAutoComplete2 ends
+.comdef IAutoComplete2
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Init		proc :HWND, :ptr, :LPCWSTR, :LPCWSTR
+    Enable		proc :BOOL
+    SetOptions		proc :DWORD
+    GetOptions		proc :ptr
+    .ends
 LPAUTOCOMPLETE2		typedef ptr IAutoComplete2
-LPIAutoComplete2	typedef ptr IAutoComplete2
 externdef		IID_IAutoComplete2:IID
 
 endif
@@ -1263,24 +1150,20 @@ ACEO_FIRSTUNUSED	equ 0x10000
 
 
 externdef		IID_IEnumACString:IID
-IEnumACStringVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Next, :ULONG, :ptr, :ptr
-	STDMETHOD	Skip, :ULONG
-	STDMETHOD	Reset
-	STDMETHOD	Clone, :ptr
-	STDMETHOD	NextItem, :LPWSTR, :ULONG, :ptr
-	STDMETHOD	SetEnumOptions, :DWORD
-	STDMETHOD	GetEnumOptions, :ptr
-IEnumACStringVtbl ends
-IEnumACString struct
-	lpVtbl		PVOID ?
-IEnumACString ends
+.comdef IEnumACString
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Next		proc :ULONG, :ptr, :ptr
+    Skip		proc :ULONG
+    Reset		proc
+    Clone		proc :ptr
+    NextItem		proc :LPWSTR, :ULONG, :ptr
+    SetEnumOptions	proc :DWORD
+    GetEnumOptions	proc :ptr
+    .ends
 PENUMACSTRING		typedef ptr IEnumACString
 LPENUMACSTRING		typedef ptr IEnumACString
-LPIEnumACString		typedef ptr IEnumACString
 
 endif
 
@@ -1290,20 +1173,16 @@ externdef		__MIDL_itf_shldisp_0000_0003_v0_0_s_ifspec:RPC_IF_HANDLE
 ifndef __IAsyncOperation_INTERFACE_DEFINED__
 __IAsyncOperation_INTERFACE_DEFINED__ equ 1
 
-IAsyncOperationVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	SetAsyncMode, :BOOL
-	STDMETHOD	GetAsyncMode, :ptr
-	STDMETHOD	StartOperation, :ptr
-	STDMETHOD	InOperation, :ptr
-	STDMETHOD	EndOperation, :HRESULT, :ptr, :DWORD
-IAsyncOperationVtbl ends
-IAsyncOperation struct
-	lpVtbl		PVOID ?
-IAsyncOperation ends
-LPIAsyncOperation	typedef ptr IAsyncOperation
+.comdef IAsyncOperation
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetAsyncMode	proc :BOOL
+    GetAsyncMode	proc :ptr
+    StartOperation	proc :ptr
+    InOperation		proc :ptr
+    EndOperation	proc :HRESULT, :ptr, :DWORD
+    .ends
 LPASYNCOPERATION	typedef ptr IAsyncOperation
 externdef		IID_IAsyncOperation:IID
 

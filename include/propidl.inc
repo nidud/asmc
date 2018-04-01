@@ -416,26 +416,23 @@ ifndef __IPropertyStorage_INTERFACE_DEFINED__
 __IPropertyStorage_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IPropertyStorage:IID
-IPropertyStorageVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	ReadMultiple, :ULONG, :PROPSPEC, :PROPVARIANT
-	STDMETHOD	WriteMultiple, :ULONG, :PROPSPEC, :PROPVARIANT, :PROPID
-	STDMETHOD	DeleteMultiple, :ULONG, :PROPSPEC
-	STDMETHOD	ReadPropertyNames, :ULONG, :PROPID, :LPOLESTR
-	STDMETHOD	WritePropertyNames, :ULONG, :PROPID, :LPOLESTR
-	STDMETHOD	DeletePropertyNames, :ULONG, :PROPID
-	STDMETHOD	Commit, :DWORD
-	STDMETHOD	Revert
-	STDMETHOD	Enum, :ptr
-	STDMETHOD	SetTimes, :ptr, :ptr, :ptr
-	STDMETHOD	SetClass, :REFCLSID
-	STDMETHOD	Stat, :ptr
-IPropertyStorageVtbl ends
-IPropertyStorage struct
-	lpVtbl		PVOID ?
-IPropertyStorage ends
+.comdef IPropertyStorage
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    ReadMultiple        proc :ULONG, :PROPSPEC, :PROPVARIANT
+    WriteMultiple       proc :ULONG, :PROPSPEC, :PROPVARIANT, :PROPID
+    DeleteMultiple      proc :ULONG, :PROPSPEC
+    ReadPropertyNames   proc :ULONG, :PROPID, :LPOLESTR
+    WritePropertyNames  proc :ULONG, :PROPID, :LPOLESTR
+    DeletePropertyNames proc :ULONG, :PROPID
+    Commit              proc :DWORD
+    Revert              proc
+    Enum                proc :ptr
+    SetTimes            proc :ptr, :ptr, :ptr
+    SetClass            proc :REFCLSID
+    Stat                proc :ptr
+    .ends
 
 endif
 
@@ -444,18 +441,15 @@ __IPropertySetStorage_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IPropertySetStorage:IID
-IPropertySetStorageVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Create, :REFFMTID, :ptr, :DWORD, :DWORD, :ptr
-	STDMETHOD	Open, :REFFMTID, :DWORD, :ptr
-	STDMETHOD	Delete, :REFFMTID
-	STDMETHOD	Enum, :ptr
-IPropertySetStorageVtbl ends
-IPropertySetStorage struct
-	lpVtbl		PVOID ?
-IPropertySetStorage ends
+.comdef IPropertySetStorage
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    Create              proc :REFFMTID, :ptr, :DWORD, :DWORD, :ptr
+    Open                proc :REFFMTID, :DWORD, :ptr
+    Delete              proc :REFFMTID
+    Enum                proc :ptr
+    .ends
 LPPROPERTYSETSTORAGE	typedef ptr IPropertySetStorage
 
 endif
@@ -465,18 +459,15 @@ __IEnumSTATPROPSTG_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IEnumSTATPROPSTG:IID
-IEnumSTATPROPSTGVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Next, :ULONG, :ptr, :ptr
-	STDMETHOD	Skip, :ULONG
-	STDMETHOD	Reset
-	STDMETHOD	Clone, :ptr
-IEnumSTATPROPSTGVtbl ends
-IEnumSTATPROPSTG struct
-	lpVtbl		PVOID ?
-IEnumSTATPROPSTG ends
+.comdef IEnumSTATPROPSTG
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    Next                proc :ULONG, :ptr, :ptr
+    Skip                proc :ULONG
+    Reset               proc
+    Clone               proc :ptr
+    .ends
 LPENUMSTATPROPSTG	typedef ptr IEnumSTATPROPSTG
 
 ;HRESULT
@@ -501,18 +492,15 @@ __IEnumSTATPROPSETSTG_INTERFACE_DEFINED__ equ 1
 
 
 externdef		IID_IEnumSTATPROPSETSTG:IID
-IEnumSTATPROPSETSTGVtbl struct
-	STDMETHOD	QueryInterface, :REFIID, :ptr
-	STDMETHOD	AddRef
-	STDMETHOD	Release
-	STDMETHOD	Next, :ULONG, :ptr, :ptr
-	STDMETHOD	Skip, :ULONG
-	STDMETHOD	Reset
-	STDMETHOD	Clone, :ptr
-IEnumSTATPROPSETSTGVtbl ends
-IEnumSTATPROPSETSTG struct
-	lpVtbl		PVOID ?
-IEnumSTATPROPSETSTG ends
+.comdef IEnumSTATPROPSETSTG
+    QueryInterface      proc :REFIID, :ptr
+    AddRef              proc
+    Release             proc
+    Next                proc :ULONG, :ptr, :ptr
+    Skip                proc :ULONG
+    Reset               proc
+    Clone               proc :ptr
+    .ends
 LPENUMSTATPROPSETSTG	typedef ptr IEnumSTATPROPSETSTG
 
 ;HRESULT

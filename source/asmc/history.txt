@@ -3,6 +3,7 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.27 - xx xxx 2017
+- added support for externdef pointer:ptr class
 - added .COMDEF directive
 - added mov reg,0 test for args - convert to xor reg,reg
 - removed some unnecessary stack adjustments in 64-bit if LEAVE used

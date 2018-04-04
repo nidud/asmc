@@ -208,13 +208,13 @@ endif
 ;VARIANT		 typedef VARIANT
 
 VARIANT			STRUC
-UNION __VARIANT_NAME_1
- STRUC __VARIANT_NAME_2
+UNION ;__VARIANT_NAME_1
+ STRUC ;__VARIANT_NAME_2
   vt			VARTYPE ?
   wReserved1		dw ?
   wReserved2		dw ?
   wReserved3		dw ?
-  UNION __VARIANT_NAME_3
+  UNION ;__VARIANT_NAME_3
    lVal			LONG ?
    bVal			db ?
    iVal			SWORD ?
@@ -256,7 +256,7 @@ UNION __VARIANT_NAME_1
    pulVal		PVOID ?;LPULONG ?
    pintVal		PVOID ?;LPSINT ?
    puintVal		LPUINT ?
-   STRUC __VARIANT_NAME_4
+   STRUC ;__VARIANT_NAME_4
     pvRecord		PVOID ?
     pRecInfo		PVOID ?;LPIRecordInfo ?
    ENDS ; __VARIANT_NAME_4

@@ -1353,7 +1353,9 @@ LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:ptr 
                         jmp type_struct
                     .endif
                 .endif
-            .elseif [eax].asym.mem_type == MT_PTR && [eax].asym.state == SYM_STACK
+            .elseif ( [eax].asym.mem_type == MT_PTR && \
+                ( [eax].asym.state == SYM_STACK || [eax].asym.state == SYM_EXTERNAL ) )
+
                 mov ecx,[eax].asym.target_type
             .endif
         .endif

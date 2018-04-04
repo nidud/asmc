@@ -758,7 +758,9 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 			AddLineQueueX( " push%s %s", instr, fullparam );
 		}
 	    }
+#if defined(_ASMLIB_)
 skip_push:
+#endif
 	    if ( curr->sym.is_vararg ) {
 		size_vararg += psize;
 	    }

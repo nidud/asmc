@@ -215,7 +215,7 @@ ClassDirective proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok
                 .break
             .endif
 
-            mov ModuleInfo.ComStack,LclAlloc( sizeof( hll_item ) )
+            mov ModuleInfo.ComStack,LclAlloc( sizeof( com_item ) )
             mov ecx,cmd
             mov [eax].com_item.cmd,ecx
 

@@ -4,6 +4,8 @@ _OLEAUTO_H_ equ 1
 
 ifdef __PE__
 option	dllimport:<oleaut32>
+else
+includelib oleaut32.lib
 endif
 
 externdef		IID_StdOle:IID

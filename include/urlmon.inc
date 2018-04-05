@@ -2196,13 +2196,13 @@ __IInternetSecurityMgrSite_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IInternetSecurityMgrSite:IID
 
-IInternetSecurityMgrSiteVtbl	STRUC
+.comdef IInternetSecurityMgrSite
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
     Release		proc
     GetWindow		proc :ptr
     EnableModeless	proc :BOOL
-IInternetSecurityMgrSiteVtbl ENDS
+    .ends
 
 ;HRESULT
 IInternetSecurityMgrSite_GetWindow_Proxy proto WINAPI \
@@ -2515,10 +2515,8 @@ URLPOLICY_AUTHENTICATE_CLEARTEXT_OK equ 0x00000000
 URLPOLICY_AUTHENTICATE_CHALLENGE_RESPONSE equ 0x00010000
 URLPOLICY_AUTHENTICATE_MUTUAL_ONLY equ 0x00030000
 
-
 URLACTION_NETWORK_CURR_MAX equ 0x00001A01
 URLACTION_NETWORK_MAX	equ 0x00001Bff
-
 
 URLACTION_JAVA_MIN	equ 0x00001C00
 URLACTION_JAVA_PERMISSIONS equ 0x00001C00
@@ -2529,8 +2527,6 @@ URLPOLICY_JAVA_LOW	equ 0x00030000
 URLPOLICY_JAVA_CUSTOM	equ 0x00800000
 URLACTION_JAVA_CURR_MAX equ 0x00001C00
 URLACTION_JAVA_MAX	equ 0x00001Cff
-
-
 
 URLACTION_INFODELIVERY_MIN equ 0x00001D00
 URLACTION_INFODELIVERY_NO_ADDING_CHANNELS equ 0x00001D00
@@ -2561,11 +2557,11 @@ URLPOLICY_LOG_ON_ALLOW	equ 0x40
 URLPOLICY_LOG_ON_DISALLOW equ 0x80
 
 URLPOLICY_MASK_PERMISSIONS equ 0x0f
-GetUrlPolicyPermissions macro dw
-	exitm<(dw AND URLPOLICY_MASK_PERMISSIONS)>
+GetUrlPolicyPermissions macro d
+	exitm<(d AND URLPOLICY_MASK_PERMISSIONS)>
 	endm
-SetUrlPolicyPermissions macro dw,dw2
-	exitm<((dw) = ((dw) AND NOT (URLPOLICY_MASK_PERMISSIONS)) OR (dw2))>
+SetUrlPolicyPermissions macro d,d2
+	exitm<((d) = ((d) AND NOT (URLPOLICY_MASK_PERMISSIONS)) OR (d2))>
 	endm
 
 

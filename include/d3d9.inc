@@ -62,8 +62,8 @@ DEFINE_GUID(IID_IDirect3DCryptoSession9, 0xfa0ab799, 0x7a9c, 0x48ca, 0x8c, 0x5b,
 endif
 endif
 
-include <d3d9types.inc>
-include <d3d9caps.inc>
+include d3d9types.inc
+include d3d9caps.inc
 .xlist
 ifdef __PE__
 option	dllimport:<d3d9>

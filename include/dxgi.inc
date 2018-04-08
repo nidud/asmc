@@ -65,18 +65,18 @@ include ocidl.inc
 include dxgitype.inc
 .xlist
 
-DXGI_CPU_ACCESS_NONE	equ ( 0 )
-DXGI_CPU_ACCESS_DYNAMIC equ ( 1 )
-DXGI_CPU_ACCESS_READ_WRITE equ ( 2 )
-DXGI_CPU_ACCESS_SCRATCH equ ( 3 )
+DXGI_CPU_ACCESS_NONE	equ 0
+DXGI_CPU_ACCESS_DYNAMIC equ 1
+DXGI_CPU_ACCESS_READ_WRITE equ 2
+DXGI_CPU_ACCESS_SCRATCH equ 3
 DXGI_CPU_ACCESS_FIELD	equ 15
-DXGI_USAGE_SHADER_INPUT equ ( 1L SHL (0 + 4) )
-DXGI_USAGE_RENDER_TARGET_OUTPUT equ ( 1L SHL (1 + 4) )
-DXGI_USAGE_BACK_BUFFER	equ ( 1L SHL (2 + 4) )
-DXGI_USAGE_SHARED	equ ( 1L SHL (3 + 4) )
-DXGI_USAGE_READ_ONLY	equ ( 1L SHL (4 + 4) )
-DXGI_USAGE_DISCARD_ON_PRESENT equ ( 1L SHL (5 + 4) )
-DXGI_USAGE_UNORDERED_ACCESS equ ( 1L SHL (6 + 4) )
+DXGI_USAGE_SHADER_INPUT equ ( 1 SHL (0 + 4) )
+DXGI_USAGE_RENDER_TARGET_OUTPUT equ ( 1 SHL (1 + 4) )
+DXGI_USAGE_BACK_BUFFER	equ ( 1 SHL (2 + 4) )
+DXGI_USAGE_SHARED	equ ( 1 SHL (3 + 4) )
+DXGI_USAGE_READ_ONLY	equ ( 1 SHL (4 + 4) )
+DXGI_USAGE_DISCARD_ON_PRESENT equ ( 1 SHL (5 + 4) )
+DXGI_USAGE_UNORDERED_ACCESS equ ( 1 SHL (6 + 4) )
 DXGI_USAGE		typedef UINT
 
 DXGI_FRAME_STATISTICS	STRUC
@@ -184,7 +184,7 @@ externdef		IID_IDXGIObject:IID
     SetPrivateData	proc :REFGUID, :UINT, :ptr
     SetPrivateDataInterface proc :REFGUID, :ptr
     GetPrivateData	proc :REFGUID, :ptr, :ptr
-    GetParent		proc :REFIID, :ptr
+    _GetParent		proc :REFIID, :ptr
     .ends
 endif
 
@@ -200,7 +200,7 @@ externdef		IID_IDXGIDeviceSubObject:IID
     SetPrivateData	proc :REFGUID, :UINT, :ptr
     SetPrivateDataInterface proc :REFGUID, :ptr
     GetPrivateData	proc :REFGUID, :ptr, :ptr
-    GetParent		proc :REFIID, :ptr
+    _GetParent		proc :REFIID, :ptr
     GetDevice		proc :REFIID, :ptr
     .ends
 endif
@@ -217,7 +217,7 @@ externdef		IID_IDXGIResource:IID
     SetPrivateData	proc :REFGUID, :UINT, :ptr
     SetPrivateDataInterface proc :REFGUID, :ptr
     GetPrivateData	proc :REFGUID, :ptr, :ptr
-    GetParent		proc :REFIID, :ptr
+    _GetParent		proc :REFIID, :ptr
     GetDevice		proc :REFIID, :ptr
     GetSharedHandle	proc :ptr
     GetUsage		proc :ptr
@@ -238,7 +238,7 @@ externdef		IID_IDXGIKeyedMutex:IID
     SetPrivateData	proc :REFGUID, :UINT, :ptr
     SetPrivateDataInterface proc :REFGUID, :ptr
     GetPrivateData	proc :REFGUID, :ptr, :ptr
-    GetParent		proc :REFIID, :ptr
+    _GetParent		proc :REFIID, :ptr
     GetDevice		proc :REFIID, :ptr
     AcquireSync		proc :UINT64, :DWORD
     ReleaseSync		proc :UINT64
@@ -264,7 +264,7 @@ externdef		IID_IDXGISurface:IID
     SetPrivateData	proc :REFGUID, :UINT, :ptr
     SetPrivateDataInterface proc :REFGUID, :ptr
     GetPrivateData	proc :REFGUID, :ptr, :ptr
-    GetParent		proc :REFIID, :ptr
+    _GetParent		proc :REFIID, :ptr
     GetDevice		proc :REFIID, :ptr
     GetDesc		proc :ptr
     Map			proc :ptr, :UINT
@@ -284,7 +284,7 @@ externdef		IID_IDXGISurface1:IID
     SetPrivateData	proc :REFGUID, :UINT, :ptr
     SetPrivateDataInterface proc :REFGUID, :ptr
     GetPrivateData	proc :REFGUID, :ptr, :ptr
-    GetParent		proc :REFIID, :ptr
+    _GetParent		proc :REFIID, :ptr
     GetDevice		proc :REFIID, :ptr
     GetDesc		proc :ptr
     Map			proc :ptr, :UINT
@@ -309,15 +309,15 @@ externdef		IID_IDXGIAdapter:IID
     SetPrivateData	proc :REFGUID, :UINT, :ptr
     SetPrivateDataInterface proc :REFGUID, :ptr
     GetPrivateData	proc :REFGUID, :ptr, :ptr
-    GetParent		proc :REFIID, :ptr
+    _GetParent		proc :REFIID, :ptr
     EnumOutputs		proc :UINT, :ptr
     GetDesc		proc :ptr
     CheckInterfaceSupport proc :REFGUID, :ptr
     .ends
 endif
 
-DXGI_ENUM_MODES_INTERLACED equ ( 1UL )
-DXGI_ENUM_MODES_SCALING equ ( 2UL )
+DXGI_ENUM_MODES_INTERLACED equ 1
+DXGI_ENUM_MODES_SCALING equ 2
 
 externdef		__MIDL_itf_dxgi_0000_0007_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef		__MIDL_itf_dxgi_0000_0007_v0_0_s_ifspec:RPC_IF_HANDLE
@@ -334,7 +334,7 @@ externdef		IID_IDXGIOutput:IID
     SetPrivateData	proc :REFGUID, :UINT, :ptr
     SetPrivateDataInterface proc :REFGUID, :ptr
     GetPrivateData	proc :REFGUID, :ptr, :ptr
-    GetParent		proc :REFIID, :ptr
+    _GetParent		proc :REFIID, :ptr
     GetDesc		proc :ptr
     GetDisplayModeList	proc :DXGI_FORMAT, :UINT, :ptr, :ptr
     FindClosestMatchingMode proc :ptr, :ptr, :ptr
@@ -370,7 +370,7 @@ externdef		IID_IDXGISwapChain:IID
     SetPrivateData	proc :REFGUID, :UINT, :ptr
     SetPrivateDataInterface proc :REFGUID, :ptr
     GetPrivateData	proc :REFGUID, :ptr, :ptr
-    GetParent		proc :REFIID, :ptr
+    _GetParent		proc :REFIID, :ptr
     GetDevice		proc :REFIID, :ptr
     Present		proc :UINT, :UINT
     GetBuffer		proc :UINT, :REFIID, :ptr
@@ -383,6 +383,8 @@ externdef		IID_IDXGISwapChain:IID
     GetFrameStatistics	proc :ptr
     GetLastPresentCount proc :ptr
     .ends
+
+LPIDXGISwapChain	typedef ptr IDXGISwapChain
 endif
 
 DXGI_MWA_NO_WINDOW_CHANGES equ ( 1 SHL 0 )
@@ -405,7 +407,7 @@ externdef		IID_IDXGIFactory:IID
     SetPrivateData	proc :REFGUID, :UINT, :ptr
     SetPrivateDataInterface proc :REFGUID, :ptr
     GetPrivateData	proc :REFGUID, :ptr, :ptr
-    GetParent		proc :REFIID, :ptr
+    _GetParent		proc :REFIID, :ptr
     EnumAdapters	proc :UINT, :ptr
     MakeWindowAssociation proc :HWND, :UINT
     GetWindowAssociation proc :ptr
@@ -439,13 +441,15 @@ externdef		IID_IDXGIDevice:IID
     SetPrivateData	proc :REFGUID, :UINT, :ptr
     SetPrivateDataInterface proc :REFGUID, :ptr
     GetPrivateData	proc :REFGUID, :ptr, :ptr
-    GetParent		proc :REFIID, :ptr
+    _GetParent		proc :REFIID, :ptr
     GetAdapter		proc :ptr
     CreateSurface	proc :ptr, :UINT, :DXGI_USAGE, :ptr, :ptr
     QueryResourceResidency proc :ptr, :ptr, :UINT
     SetGPUThreadPriority proc :SINT
     GetGPUThreadPriority proc :ptr
     .ends
+
+LPIDXGIDevice		typedef ptr IDXGIDevice
 endif
 
 DXGI_ADAPTER_FLAG	typedef SDWORD
@@ -486,7 +490,7 @@ externdef		IID_IDXGIFactory1:IID
     SetPrivateData	proc :REFGUID, :UINT, :ptr
     SetPrivateDataInterface proc :REFGUID, :ptr
     GetPrivateData	proc :REFGUID, :ptr, :ptr
-    GetParent		proc :REFIID, :ptr
+    _GetParent		proc :REFIID, :ptr
     EnumAdapters	proc :UINT, :ptr
     MakeWindowAssociation proc :HWND, :UINT
     GetWindowAssociation proc :ptr
@@ -495,6 +499,8 @@ externdef		IID_IDXGIFactory1:IID
     EnumAdapters1	proc :UINT, :ptr
     IsCurrent		proc
     .ends
+
+LPIDXGIFactory1		typedef ptr IDXGIFactory1
 endif
 
 ifndef __IDXGIAdapter1_INTERFACE_DEFINED__
@@ -509,7 +515,7 @@ externdef		IID_IDXGIAdapter1:IID
     SetPrivateData	proc :REFGUID, :UINT, :ptr
     SetPrivateDataInterface proc :REFGUID, :ptr
     GetPrivateData	proc :REFGUID, :ptr, :ptr
-    GetParent		proc :REFIID, :ptr
+    _GetParent		proc :REFIID, :ptr
     EnumOutputs		proc :UINT, :ptr
     GetDesc		proc :ptr
     CheckInterfaceSupport proc :REFGUID, :ptr
@@ -529,7 +535,7 @@ externdef		IID_IDXGIDevice1:IID
     SetPrivateData	proc :REFGUID, :UINT, :ptr
     SetPrivateDataInterface proc :REFGUID, :ptr
     GetPrivateData	proc :REFGUID, :ptr, :ptr
-    GetParent		proc :REFIID, :ptr
+    _GetParent		proc :REFIID, :ptr
     GetAdapter		proc :ptr
     CreateSurface	proc :ptr, :UINT, :DXGI_USAGE, :ptr, :ptr
     QueryResourceResidency proc :ptr, :ptr, :UINT

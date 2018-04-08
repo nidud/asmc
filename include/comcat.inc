@@ -73,20 +73,15 @@ LPENUMGUID typedef ptr IEnumGUID
 
 externdef IID_IEnumGUID:IID
 
-IEnumGUIDVtbl	STRUC
-QueryInterface	PVOID ?
-AddRef		PVOID ?
-Release		PVOID ?
-Next		PVOID ?
-Skip		PVOID ?
-Reset		PVOID ?
-Clone		PVOID ?
-IEnumGUIDVtbl	ENDS
-
-LPIEnumGUIDVtbl typedef ptr IEnumGUIDVtbl
-IEnumGUID	STRUC
-lpVtbl		LPIEnumGUIDVtbl ?
-IEnumGUID	ENDS
+.comdef IEnumGUID
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Next		proc
+    Skip		proc
+    Reset		proc
+    Clone		proc
+    .ends
 
 
 ;HRESULT STDMETHODCALLTYPE
@@ -128,21 +123,15 @@ LPCATEGORYINFO	typedef ptr CATEGORYINFO
 
 externdef IID_IEnumCATEGORYINFO:IID
 
-IEnumCATEGORYINFOVtbl	STRUC
-QueryInterface		PVOID ?
-AddRef			PVOID ?
-Release			PVOID ?
-Next			PVOID ?
-Skip			PVOID ?
-Reset			PVOID ?
-Clone			PVOID ?
-IEnumCATEGORYINFOVtbl	ENDS
-LPIEnumCATEGORYINFOVtbl typedef ptr IEnumCATEGORYINFOVtbl
-
-IEnumCATEGORYINFO	STRUC
-lpVtbl			LPIEnumCATEGORYINFOVtbl ?
-IEnumCATEGORYINFO	ENDS
-
+.comdef IEnumCATEGORYINFO
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Next		proc
+    Skip		proc
+    Reset		proc
+    Clone		proc
+    .ends
 endif ;; __IEnumCATEGORYINFO_INTERFACE_DEFINED__
 endif
 
@@ -159,24 +148,17 @@ LPCATREGISTER typedef ptr ICatRegister
 
 externdef IID_ICatRegister:IID
 
-ICatRegisterVtbl		STRUC
-QueryInterface			PVOID ?
-AddRef				PVOID ?
-Release				PVOID ?
-RegisterCategories		PVOID ?
-UnRegisterCategories		PVOID ?
-RegisterClassImplCategories	PVOID ?
-UnRegisterClassImplCategories	PVOID ?
-RegisterClassReqCategories	PVOID ?
-UnRegisterClassReqCategories	PVOID ?
-ICatRegisterVtbl		ENDS
-LPICatRegisterVtbl		typedef ptr ICatRegisterVtbl
-
-ICatRegister	STRUC
-lpVtbl		LPICatRegisterVtbl ?
-ICatRegister	ENDS
-
-
+.comdef ICatRegister
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    RegisterCategories	proc
+    UnRegisterCategories proc
+    RegisterClassImplCategories proc
+    UnRegisterClassImplCategories proc
+    RegisterClassReqCategories proc
+    UnRegisterClassReqCategories proc
+    .ends
 endif ;; __ICatRegister_INTERFACE_DEFINED__
 endif
 
@@ -193,22 +175,17 @@ LPCATINFORMATION typedef ptr ICatInformation
 
 externdef IID_ICatInformation:IID
 
-ICatInformationVtbl		STRUC
-QueryInterface			PVOID ?
-AddRef				PVOID ?
-Release				PVOID ?
-EnumCategories			PVOID ?
-GetCategoryDesc			PVOID ?
-EnumClassesOfCategories		PVOID ?
-IsClassOfCategories		PVOID ?
-EnumImplCategoriesOfClass	PVOID ?
-EnumReqCategoriesOfClass	PVOID ?
-ICatInformationVtbl		ENDS
-LPICatInformationVtbl		typedef ptr ICatInformationVtbl
-
-ICatInformation STRUC
-lpVtbl		LPICatInformationVtbl ?
-ICatInformation ENDS
+.comdef ICatInformation
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    EnumCategories	proc
+    GetCategoryDesc	proc
+    EnumClassesOfCategories proc
+    IsClassOfCategories proc
+    EnumImplCategoriesOfClass proc
+    EnumReqCategoriesOfClass proc
+    .ends
 
 
 ;HRESULT STDMETHODCALLTYPE

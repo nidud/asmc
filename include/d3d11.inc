@@ -1325,6 +1325,8 @@ externdef		IID_ID3D11RenderTargetView:IID
     GetResource		proc :ptr
     GetDesc		proc :ptr
     .ends
+
+LPID3D11RenderTargetView typedef ptr ID3D11RenderTargetView
 endif
 
 D3D11_TEX1D_DSV		STRUC
@@ -1987,16 +1989,16 @@ externdef		IID_ID3D11DeviceContext:IID
     SetPrivateDataInterface proc :REFGUID, :ptr
     VSSetConstantBuffers proc :UINT, :UINT, :ptr
     PSSetShaderResources proc :UINT, :UINT, :ptr
-    PSSetShader		proc :ptr
+    PSSetShader		proc :ptr, :ptr, :UINT
     PSSetSamplers	proc :UINT, :UINT, :ptr
-    VSSetShader		proc :ptr
+    VSSetShader		proc :ptr, :ptr, :UINT
     DrawIndexed		proc :UINT, :UINT, :SINT
     Draw		proc :UINT, :UINT
     Map			proc :ptr, :UINT, :D3D11_MAP, :UINT, :ptr
     Unmap		proc :ptr, :UINT
     PSSetConstantBuffers proc :UINT, :UINT, :ptr
     IASetInputLayout	proc :ptr
-    IASetVertexBuffers	proc :UINT, :UINT, :ptr, :ptr
+    IASetVertexBuffers	proc :UINT, :UINT, :ptr, :ptr, :ptr
     IASetIndexBuffer	proc :ptr, :DXGI_FORMAT, :UINT
     DrawIndexedInstanced proc :UINT, :UINT, :UINT, :SINT, :UINT
     DrawInstanced	proc :UINT, :UINT, :UINT, :UINT
@@ -2011,7 +2013,7 @@ externdef		IID_ID3D11DeviceContext:IID
     SetPredication	proc :ptr, :BOOL
     GSSetShaderResources proc :UINT, :UINT, :ptr
     GSSetSamplers	proc :UINT, :UINT, :ptr
-    OMSetRenderTargets	proc :UINT
+    OMSetRenderTargets	proc :UINT, :ptr, :ptr
     OMSetRenderTargetsAndUnorderedAccessViews proc :UINT, :UINT, :UINT, :ptr
     OMSetBlendState	proc :ptr, :ptr, :UINT
     OMSetDepthStencilState proc :ptr, :UINT
@@ -2094,6 +2096,7 @@ externdef		IID_ID3D11DeviceContext:IID
     GetContextFlags	proc
     FinishCommandList	proc :BOOL, :ptr
     .ends
+LPID3D11DeviceContext	typedef ptr ID3D11DeviceContext
 endif
 
 ifndef __ID3D11Device_INTERFACE_DEFINED__
@@ -2113,7 +2116,7 @@ externdef		IID_ID3D11Device:IID
     CreateUnorderedAccessView proc :ptr, :ptr, :ptr
     CreateRenderTargetView proc :ptr, :ptr, :ptr
     CreateDepthStencilView proc :ptr, :ptr, :ptr
-    CreateInputLayout	proc :UINT, :ptr, :SIZE_T, :ptr
+    CreateInputLayout	proc :ptr, :UINT, :ptr, :SIZE_T, :ptr
     CreateVertexShader	proc :ptr, :SIZE_T, :ptr, :ptr
     CreateGeometryShader proc :ptr, :SIZE_T, :ptr, :ptr
     CreateGeometryShaderWithStreamOutput proc :ptr, :SIZE_T, :UINT, :UINT, :UINT, :ptr, :ptr
@@ -2146,6 +2149,7 @@ externdef		IID_ID3D11Device:IID
     SetExceptionMode	proc :UINT
     GetExceptionMode	proc
     .ends
+LPID3D11Device		typedef ptr ID3D11Device
 endif
 
 D3D11_CREATE_DEVICE_FLAG typedef SDWORD

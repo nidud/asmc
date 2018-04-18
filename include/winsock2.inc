@@ -24,9 +24,9 @@ include windows.inc
 endif
 
 
-if NOT defined(MAKEWORD)
+ifndef MAKEWORD
 MAKEWORD macro low,high
-	exitm<(((low)) OR (((high)) SHL 8)))>
+	exitm<((low) OR ((high) SHL 8))>
 	endm
 endif
 

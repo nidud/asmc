@@ -1285,13 +1285,11 @@ NPMSG			typedef ptr MSG
 LPMSG			typedef ptr MSG
 
 POINTSTOPOINT macro pt, pts
-	movzx	eax,word ptr pts
-	mov	pt.x,ax
-	movzx	eax,word ptr pts[2]
-	mov	pt.y,ax
+	movsx pt.POINT.x, LOWORD(pts)
+	movsx pt.POINT.y, HIWORD(pts)
 	endm
 POINTTOPOINTS macro pt
-	exitm<(MAKEONG(((pt).x), ((pt).y)))>
+	exitm<(MAKEONG((pt.POINT.x), (pt.POINT.y)))>
 	endm
 MAKEWPARAM macro l,h
 	exitm<MAKEONG(l, h)>

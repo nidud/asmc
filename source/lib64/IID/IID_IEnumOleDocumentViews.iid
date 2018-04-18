@@ -1,6 +1,4 @@
-; IID_IENUMOLEDOCUMENTVIEWS.ASM--
-; Copyright (C) 2017 Asmc Developers
-;
+COM_NO_WINDOWS_H equ 1
 include shlobj.inc
 
 .data

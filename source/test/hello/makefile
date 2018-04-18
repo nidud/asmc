@@ -3,7 +3,8 @@ hello.exe:
     echo PE-WIN32A:
     $@
     del $@
-    asmc -q -pe -D_WIN64 $*.asm
+    pause
+    asmc -q -pe -win64 $*.asm
     echo PE-WIN64A:
     $@
     pause

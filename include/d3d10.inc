@@ -1638,7 +1638,7 @@ D3D10_CREATE_DEVICE_STRICT_VALIDATION equ 0x200
 
 D3D10_SDK_VERSION	equ ( 29 )
 
-if NOT defined( D3D10_IGNORE_SDK_LAYERS )
+ifndef D3D10_IGNORE_SDK_LAYERS
 include d3d10sdklayers.inc
 endif
 include d3d10misc.inc

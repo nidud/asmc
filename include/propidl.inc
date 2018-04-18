@@ -185,7 +185,7 @@ PROPVAR_PAD3		typedef WORD
 tag_inner_PROPVARIANT equ 1
 endif
 
-if NOT defined(_MSC_EXTENSIONS)
+ifndef _MSC_EXTENSIONS
 ;struct tagPROPVARIANT;
 else
 ifndef MIDL_PASS
@@ -417,21 +417,21 @@ __IPropertyStorage_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IPropertyStorage:IID
 .comdef IPropertyStorage
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    ReadMultiple        proc :ULONG, :PROPSPEC, :PROPVARIANT
-    WriteMultiple       proc :ULONG, :PROPSPEC, :PROPVARIANT, :PROPID
-    DeleteMultiple      proc :ULONG, :PROPSPEC
-    ReadPropertyNames   proc :ULONG, :PROPID, :LPOLESTR
-    WritePropertyNames  proc :ULONG, :PROPID, :LPOLESTR
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    ReadMultiple	proc :ULONG, :PROPSPEC, :PROPVARIANT
+    WriteMultiple	proc :ULONG, :PROPSPEC, :PROPVARIANT, :PROPID
+    DeleteMultiple	proc :ULONG, :PROPSPEC
+    ReadPropertyNames	proc :ULONG, :PROPID, :LPOLESTR
+    WritePropertyNames	proc :ULONG, :PROPID, :LPOLESTR
     DeletePropertyNames proc :ULONG, :PROPID
-    Commit              proc :DWORD
-    Revert              proc
-    Enum                proc :ptr
-    SetTimes            proc :ptr, :ptr, :ptr
-    SetClass            proc :REFCLSID
-    Stat                proc :ptr
+    Commit		proc :DWORD
+    Revert		proc
+    Enum		proc :ptr
+    SetTimes		proc :ptr, :ptr, :ptr
+    SetClass		proc :REFCLSID
+    Stat		proc :ptr
     .ends
 
 endif
@@ -442,13 +442,13 @@ __IPropertySetStorage_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IPropertySetStorage:IID
 .comdef IPropertySetStorage
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    Create              proc :REFFMTID, :ptr, :DWORD, :DWORD, :ptr
-    Open                proc :REFFMTID, :DWORD, :ptr
-    Delete              proc :REFFMTID
-    Enum                proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Create		proc :REFFMTID, :ptr, :DWORD, :DWORD, :ptr
+    Open		proc :REFFMTID, :DWORD, :ptr
+    Delete		proc :REFFMTID
+    Enum		proc :ptr
     .ends
 LPPROPERTYSETSTORAGE	typedef ptr IPropertySetStorage
 
@@ -460,13 +460,13 @@ __IEnumSTATPROPSTG_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IEnumSTATPROPSTG:IID
 .comdef IEnumSTATPROPSTG
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    Next                proc :ULONG, :ptr, :ptr
-    Skip                proc :ULONG
-    Reset               proc
-    Clone               proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Next		proc :ULONG, :ptr, :ptr
+    Skip		proc :ULONG
+    Reset		proc
+    Clone		proc :ptr
     .ends
 LPENUMSTATPROPSTG	typedef ptr IEnumSTATPROPSTG
 
@@ -493,13 +493,13 @@ __IEnumSTATPROPSETSTG_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IEnumSTATPROPSETSTG:IID
 .comdef IEnumSTATPROPSETSTG
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    Next                proc :ULONG, :ptr, :ptr
-    Skip                proc :ULONG
-    Reset               proc
-    Clone               proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Next		proc :ULONG, :ptr, :ptr
+    Skip		proc :ULONG
+    Reset		proc
+    Clone		proc :ptr
     .ends
 LPENUMSTATPROPSETSTG	typedef ptr IEnumSTATPROPSETSTG
 
@@ -537,7 +537,7 @@ FreePropVariantArray proto WINAPI \
 	  cVariants: ULONG,
 	     rgvars: ptr PROPVARIANT
 
-if defined(_MSC_EXTENSIONS)
+ifdef _MSC_EXTENSIONS
 
 
 _PROPVARIANTINIT_DEFINED_ equ 1

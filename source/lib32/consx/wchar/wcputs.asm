@@ -2,12 +2,12 @@ include consx.inc
 
     .code
 
-wcputs proc uses ecx edx esi edi p:PVOID, l, max, string:LPSTR
+wcputs proc uses ecx edx esi edi p:PVOID, l, m, string:LPSTR
 
     mov   edi,p
     movzx edx,byte ptr l
     add   edx,edx
-    movzx ecx,word ptr max
+    movzx ecx,word ptr m
     mov   ah,ch
     mov   ch,[edi+1]
     and   ch,0xF0

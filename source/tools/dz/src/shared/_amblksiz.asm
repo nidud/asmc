@@ -1,1 +1,1 @@
-include ..\..\lib32\alloc\_amblksiz.asm
+include ..\..\lib32\malloc\_amblksiz.asm

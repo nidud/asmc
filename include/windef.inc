@@ -40,15 +40,12 @@ MAX_PATH	equ 260
 ifndef NULL
 NULL		equ 0
 endif
-
 ifndef FALSE
 FALSE		equ 0
 endif
-
 ifndef TRUE
 TRUE		equ 1
 endif
-
 ifndef OPTIONAL
 OPTIONAL	equ <>
 endif
@@ -144,9 +141,6 @@ LRESULT		typedef LONG_PTR
 
 ifndef NOMINMAX
 NOMINMAX equ <>
-endif
-
-ifndef NOMINMAX
 ifndef	max
 max	macro a, b
 	if a GT b
@@ -164,6 +158,25 @@ min	macro a, b
 	endm
 endif
 endif
+
+MAKEWORD macro a, b
+     exitm<((a AND 0xff) OR ((b AND 0xff) SHL 8))>
+     endm
+MAKELONG macro a, b
+     exitm<((a AND 0xffff) OR ((b AND 0xffff) SHL 16))>
+     endm
+LOWORD macro l
+     exitm<(l AND 0xffff)>
+     endm
+HIWORD macro l
+     exitm<((l SHR 16) AND 0xffff)>
+     endm
+LOBYTE macro w
+     exitm<(w AND 0xff)>
+     endm
+HIBYTE macro w
+     exitm<((w SHR 8) AND 0xff)>
+     endm
 
 ifndef WIN_INTERNAL
 DECLARE_HANDLE(HWND)
@@ -244,10 +257,10 @@ LPCOLORREF	typedef PTR DWORD
 HFILE_ERROR	equ -1
 
 RECT		STRUC
-left		dd ?
-top		dd ?
-right		dd ?
-bottom		dd ?
+left		sdword ?
+top		sdword ?
+right		sdword ?
+bottom		sdword ?
 RECT		ENDS
 
 PRECT		typedef ptr RECT
@@ -260,8 +273,8 @@ LPRECTL		typedef ptr RECT
 LPCRECTL	typedef ptr RECTL
 
 POINT		STRUC
-x		dd ?
-y		dd ?
+x		sdword ?
+y		sdword ?
 POINT		ENDS
 
 PPOINT		typedef ptr POINT
@@ -280,8 +293,8 @@ PSIZEL		typedef ptr POINT
 LPSIZEL		typedef ptr POINT
 
 POINTS		STRUC
-x		dw ?
-y		dw ?
+x		sword ?
+y		sword ?
 POINTS		ENDS
 
 PPOINTS		typedef ptr POINTS

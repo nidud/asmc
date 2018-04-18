@@ -25,68 +25,68 @@ endif
 ifndef DIJ_RINGZERO
 
 DEFINE_GUID(CLSID_DirectInput,	     0x25E609E0,0xB259,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00)
-DEFINE_GUID(CLSID_DirectInputDevice, 0x25E609E1,0xB259,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00);
+DEFINE_GUID(CLSID_DirectInputDevice, 0x25E609E1,0xB259,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00)
 
-DEFINE_GUID(CLSID_DirectInput8,	     0x25E609E4,0xB259,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00);
-DEFINE_GUID(CLSID_DirectInputDevice8,0x25E609E5,0xB259,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00);
-
-
-DEFINE_GUID(IID_IDirectInputA,	   0x89521360,0xAA8A,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00);
-DEFINE_GUID(IID_IDirectInputW,	   0x89521361,0xAA8A,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00);
-DEFINE_GUID(IID_IDirectInput2A,	   0x5944E662,0xAA8A,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00);
-DEFINE_GUID(IID_IDirectInput2W,	   0x5944E663,0xAA8A,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00);
-DEFINE_GUID(IID_IDirectInput7A,	   0x9A4CB684,0x236D,0x11D3,0x8E,0x9D,0x00,0xC0,0x4F,0x68,0x44,0xAE);
-DEFINE_GUID(IID_IDirectInput7W,	   0x9A4CB685,0x236D,0x11D3,0x8E,0x9D,0x00,0xC0,0x4F,0x68,0x44,0xAE);
-DEFINE_GUID(IID_IDirectInput8A,	   0xBF798030,0x483A,0x4DA2,0xAA,0x99,0x5D,0x64,0xED,0x36,0x97,0x00);
-DEFINE_GUID(IID_IDirectInput8W,	   0xBF798031,0x483A,0x4DA2,0xAA,0x99,0x5D,0x64,0xED,0x36,0x97,0x00);
-DEFINE_GUID(IID_IDirectInputDeviceA, 0x5944E680,0xC92E,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00);
-DEFINE_GUID(IID_IDirectInputDeviceW, 0x5944E681,0xC92E,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00);
-DEFINE_GUID(IID_IDirectInputDevice2A,0x5944E682,0xC92E,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00);
-DEFINE_GUID(IID_IDirectInputDevice2W,0x5944E683,0xC92E,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00);
-DEFINE_GUID(IID_IDirectInputDevice7A,0x57D7C6BC,0x2356,0x11D3,0x8E,0x9D,0x00,0xC0,0x4F,0x68,0x44,0xAE);
-DEFINE_GUID(IID_IDirectInputDevice7W,0x57D7C6BD,0x2356,0x11D3,0x8E,0x9D,0x00,0xC0,0x4F,0x68,0x44,0xAE);
-DEFINE_GUID(IID_IDirectInputDevice8A,0x54D41080,0xDC15,0x4833,0xA4,0x1B,0x74,0x8F,0x73,0xA3,0x81,0x79);
-DEFINE_GUID(IID_IDirectInputDevice8W,0x54D41081,0xDC15,0x4833,0xA4,0x1B,0x74,0x8F,0x73,0xA3,0x81,0x79);
-DEFINE_GUID(IID_IDirectInputEffect,  0xE7E1F7C0,0x88D2,0x11D0,0x9A,0xD0,0x00,0xA0,0xC9,0xA0,0x6E,0x35);
+DEFINE_GUID(CLSID_DirectInput8,	     0x25E609E4,0xB259,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00)
+DEFINE_GUID(CLSID_DirectInputDevice8,0x25E609E5,0xB259,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00)
 
 
-DEFINE_GUID(GUID_XAxis,	  0xA36D02E0,0xC9F3,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00);
-DEFINE_GUID(GUID_YAxis,	  0xA36D02E1,0xC9F3,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00);
-DEFINE_GUID(GUID_ZAxis,	  0xA36D02E2,0xC9F3,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00);
-DEFINE_GUID(GUID_RxAxis,  0xA36D02F4,0xC9F3,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00);
-DEFINE_GUID(GUID_RyAxis,  0xA36D02F5,0xC9F3,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00);
-DEFINE_GUID(GUID_RzAxis,  0xA36D02E3,0xC9F3,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00);
-DEFINE_GUID(GUID_Slider,  0xA36D02E4,0xC9F3,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00);
-
-DEFINE_GUID(GUID_Button,  0xA36D02F0,0xC9F3,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00);
-DEFINE_GUID(GUID_Key,	  0x55728220,0xD33C,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00);
-
-DEFINE_GUID(GUID_POV,	  0xA36D02F2,0xC9F3,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00);
-
-DEFINE_GUID(GUID_Unknown, 0xA36D02F3,0xC9F3,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00);
-
-
-DEFINE_GUID(GUID_SysMouse,   0x6F1D2B60,0xD5A0,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00);
-DEFINE_GUID(GUID_SysKeyboard,0x6F1D2B61,0xD5A0,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00);
-DEFINE_GUID(GUID_Joystick   ,0x6F1D2B70,0xD5A0,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00);
-DEFINE_GUID(GUID_SysMouseEm, 0x6F1D2B80,0xD5A0,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00);
-DEFINE_GUID(GUID_SysMouseEm2,0x6F1D2B81,0xD5A0,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00);
-DEFINE_GUID(GUID_SysKeyboardEm, 0x6F1D2B82,0xD5A0,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00);
-DEFINE_GUID(GUID_SysKeyboardEm2,0x6F1D2B83,0xD5A0,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00);
+DEFINE_GUID(IID_IDirectInputA,	   0x89521360,0xAA8A,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00)
+DEFINE_GUID(IID_IDirectInputW,	   0x89521361,0xAA8A,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00)
+DEFINE_GUID(IID_IDirectInput2A,	   0x5944E662,0xAA8A,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00)
+DEFINE_GUID(IID_IDirectInput2W,	   0x5944E663,0xAA8A,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00)
+DEFINE_GUID(IID_IDirectInput7A,	   0x9A4CB684,0x236D,0x11D3,0x8E,0x9D,0x00,0xC0,0x4F,0x68,0x44,0xAE)
+DEFINE_GUID(IID_IDirectInput7W,	   0x9A4CB685,0x236D,0x11D3,0x8E,0x9D,0x00,0xC0,0x4F,0x68,0x44,0xAE)
+DEFINE_GUID(IID_IDirectInput8A,	   0xBF798030,0x483A,0x4DA2,0xAA,0x99,0x5D,0x64,0xED,0x36,0x97,0x00)
+DEFINE_GUID(IID_IDirectInput8W,	   0xBF798031,0x483A,0x4DA2,0xAA,0x99,0x5D,0x64,0xED,0x36,0x97,0x00)
+DEFINE_GUID(IID_IDirectInputDeviceA, 0x5944E680,0xC92E,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00)
+DEFINE_GUID(IID_IDirectInputDeviceW, 0x5944E681,0xC92E,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00)
+DEFINE_GUID(IID_IDirectInputDevice2A,0x5944E682,0xC92E,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00)
+DEFINE_GUID(IID_IDirectInputDevice2W,0x5944E683,0xC92E,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00)
+DEFINE_GUID(IID_IDirectInputDevice7A,0x57D7C6BC,0x2356,0x11D3,0x8E,0x9D,0x00,0xC0,0x4F,0x68,0x44,0xAE)
+DEFINE_GUID(IID_IDirectInputDevice7W,0x57D7C6BD,0x2356,0x11D3,0x8E,0x9D,0x00,0xC0,0x4F,0x68,0x44,0xAE)
+DEFINE_GUID(IID_IDirectInputDevice8A,0x54D41080,0xDC15,0x4833,0xA4,0x1B,0x74,0x8F,0x73,0xA3,0x81,0x79)
+DEFINE_GUID(IID_IDirectInputDevice8W,0x54D41081,0xDC15,0x4833,0xA4,0x1B,0x74,0x8F,0x73,0xA3,0x81,0x79)
+DEFINE_GUID(IID_IDirectInputEffect,  0xE7E1F7C0,0x88D2,0x11D0,0x9A,0xD0,0x00,0xA0,0xC9,0xA0,0x6E,0x35)
 
 
-DEFINE_GUID(GUID_ConstantForce, 0x13541C20,0x8E33,0x11D0,0x9A,0xD0,0x00,0xA0,0xC9,0xA0,0x6E,0x35);
-DEFINE_GUID(GUID_RampForce,	0x13541C21,0x8E33,0x11D0,0x9A,0xD0,0x00,0xA0,0xC9,0xA0,0x6E,0x35);
-DEFINE_GUID(GUID_Square,	0x13541C22,0x8E33,0x11D0,0x9A,0xD0,0x00,0xA0,0xC9,0xA0,0x6E,0x35);
-DEFINE_GUID(GUID_Sine,		0x13541C23,0x8E33,0x11D0,0x9A,0xD0,0x00,0xA0,0xC9,0xA0,0x6E,0x35);
-DEFINE_GUID(GUID_Triangle,	0x13541C24,0x8E33,0x11D0,0x9A,0xD0,0x00,0xA0,0xC9,0xA0,0x6E,0x35);
-DEFINE_GUID(GUID_SawtoothUp,	0x13541C25,0x8E33,0x11D0,0x9A,0xD0,0x00,0xA0,0xC9,0xA0,0x6E,0x35);
-DEFINE_GUID(GUID_SawtoothDown,	0x13541C26,0x8E33,0x11D0,0x9A,0xD0,0x00,0xA0,0xC9,0xA0,0x6E,0x35);
-DEFINE_GUID(GUID_Spring,	0x13541C27,0x8E33,0x11D0,0x9A,0xD0,0x00,0xA0,0xC9,0xA0,0x6E,0x35);
-DEFINE_GUID(GUID_Damper,	0x13541C28,0x8E33,0x11D0,0x9A,0xD0,0x00,0xA0,0xC9,0xA0,0x6E,0x35);
-DEFINE_GUID(GUID_Inertia,	0x13541C29,0x8E33,0x11D0,0x9A,0xD0,0x00,0xA0,0xC9,0xA0,0x6E,0x35);
-DEFINE_GUID(GUID_Friction,	0x13541C2A,0x8E33,0x11D0,0x9A,0xD0,0x00,0xA0,0xC9,0xA0,0x6E,0x35);
-DEFINE_GUID(GUID_CustomForce,	0x13541C2B,0x8E33,0x11D0,0x9A,0xD0,0x00,0xA0,0xC9,0xA0,0x6E,0x35);
+DEFINE_GUID(GUID_XAxis,	  0xA36D02E0,0xC9F3,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00)
+DEFINE_GUID(GUID_YAxis,	  0xA36D02E1,0xC9F3,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00)
+DEFINE_GUID(GUID_ZAxis,	  0xA36D02E2,0xC9F3,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00)
+DEFINE_GUID(GUID_RxAxis,  0xA36D02F4,0xC9F3,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00)
+DEFINE_GUID(GUID_RyAxis,  0xA36D02F5,0xC9F3,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00)
+DEFINE_GUID(GUID_RzAxis,  0xA36D02E3,0xC9F3,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00)
+DEFINE_GUID(GUID_Slider,  0xA36D02E4,0xC9F3,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00)
+
+DEFINE_GUID(GUID_Button,  0xA36D02F0,0xC9F3,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00)
+DEFINE_GUID(GUID_Key,	  0x55728220,0xD33C,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00)
+
+DEFINE_GUID(GUID_POV,	  0xA36D02F2,0xC9F3,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00)
+
+DEFINE_GUID(GUID_Unknown, 0xA36D02F3,0xC9F3,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00)
+
+
+DEFINE_GUID(GUID_SysMouse,   0x6F1D2B60,0xD5A0,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00)
+DEFINE_GUID(GUID_SysKeyboard,0x6F1D2B61,0xD5A0,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00)
+DEFINE_GUID(GUID_Joystick   ,0x6F1D2B70,0xD5A0,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00)
+DEFINE_GUID(GUID_SysMouseEm, 0x6F1D2B80,0xD5A0,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00)
+DEFINE_GUID(GUID_SysMouseEm2,0x6F1D2B81,0xD5A0,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00)
+DEFINE_GUID(GUID_SysKeyboardEm, 0x6F1D2B82,0xD5A0,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00)
+DEFINE_GUID(GUID_SysKeyboardEm2,0x6F1D2B83,0xD5A0,0x11CF,0xBF,0xC7,0x44,0x45,0x53,0x54,0x00,0x00)
+
+
+DEFINE_GUID(GUID_ConstantForce, 0x13541C20,0x8E33,0x11D0,0x9A,0xD0,0x00,0xA0,0xC9,0xA0,0x6E,0x35)
+DEFINE_GUID(GUID_RampForce,	0x13541C21,0x8E33,0x11D0,0x9A,0xD0,0x00,0xA0,0xC9,0xA0,0x6E,0x35)
+DEFINE_GUID(GUID_Square,	0x13541C22,0x8E33,0x11D0,0x9A,0xD0,0x00,0xA0,0xC9,0xA0,0x6E,0x35)
+DEFINE_GUID(GUID_Sine,		0x13541C23,0x8E33,0x11D0,0x9A,0xD0,0x00,0xA0,0xC9,0xA0,0x6E,0x35)
+DEFINE_GUID(GUID_Triangle,	0x13541C24,0x8E33,0x11D0,0x9A,0xD0,0x00,0xA0,0xC9,0xA0,0x6E,0x35)
+DEFINE_GUID(GUID_SawtoothUp,	0x13541C25,0x8E33,0x11D0,0x9A,0xD0,0x00,0xA0,0xC9,0xA0,0x6E,0x35)
+DEFINE_GUID(GUID_SawtoothDown,	0x13541C26,0x8E33,0x11D0,0x9A,0xD0,0x00,0xA0,0xC9,0xA0,0x6E,0x35)
+DEFINE_GUID(GUID_Spring,	0x13541C27,0x8E33,0x11D0,0x9A,0xD0,0x00,0xA0,0xC9,0xA0,0x6E,0x35)
+DEFINE_GUID(GUID_Damper,	0x13541C28,0x8E33,0x11D0,0x9A,0xD0,0x00,0xA0,0xC9,0xA0,0x6E,0x35)
+DEFINE_GUID(GUID_Inertia,	0x13541C29,0x8E33,0x11D0,0x9A,0xD0,0x00,0xA0,0xC9,0xA0,0x6E,0x35)
+DEFINE_GUID(GUID_Friction,	0x13541C2A,0x8E33,0x11D0,0x9A,0xD0,0x00,0xA0,0xC9,0xA0,0x6E,0x35)
+DEFINE_GUID(GUID_CustomForce,	0x13541C2B,0x8E33,0x11D0,0x9A,0xD0,0x00,0xA0,0xC9,0xA0,0x6E,0x35)
 
 endif
 
@@ -290,51 +290,7 @@ ifndef DIJ_RINGZERO
     .ends
 LPDIRECTINPUTEFFECT	typedef ptr IDirectInputEffect
 
-if NOT defined(__cplusplus) OR defined(CINTERFACE)
-
-IDirectInputEffect_QueryInterface macro p,a,b
-	exitm<p.QueryInterface(a,b)>
-	endm
-IDirectInputEffect_AddRef macro p
-	exitm<p.AddRef()>
-	endm
-IDirectInputEffect_Release macro p
-	exitm<p.Release()>
-	endm
-IDirectInputEffect_Initialize macro p,a,b,c
-	exitm<p.Initialize(a,b,c)>
-	endm
-IDirectInputEffect_GetEffectGuid macro p,a
-	exitm<p.GetEffectGuid(a)>
-	endm
-IDirectInputEffect_GetParameters macro p,a,b
-	exitm<p.GetParameters(a,b)>
-	endm
-IDirectInputEffect_SetParameters macro p,a,b
-	exitm<p.SetParameters(a,b)>
-	endm
-IDirectInputEffect_Start macro p,a,b
-	exitm<p.Start(a,b)>
-	endm
-IDirectInputEffect_Stop macro p
-	exitm<p.Stop()>
-	endm
-IDirectInputEffect_GetEffectStatus macro p,a
-	exitm<p.GetEffectStatus(a)>
-	endm
-IDirectInputEffect_Download macro p
-	exitm<p.Download()>
-	endm
-IDirectInputEffect_Unload macro p
-	exitm<p.Unload()>
-	endm
-IDirectInputEffect_Escape macro p,a
-	exitm<p.Escape(a)>
-	endm
 endif
-
-endif
-
 endif
 
 
@@ -360,7 +316,7 @@ DI8DEVTYPE_DRIVING	equ 0x16
 DI8DEVTYPE_FLIGHT	equ 0x17
 DI8DEVTYPE_1STPERSON	equ 0x18
 DI8DEVTYPE_DEVICECTRL	equ 0x19
-DI8DEVTYPE_SCREENPOINTER equ <0x1A>
+DI8DEVTYPE_SCREENPOINTER equ 0x1A
 DI8DEVTYPE_REMOTE	equ 0x1B
 DI8DEVTYPE_SUPPLEMENTAL equ 0x1C
 endif
@@ -1094,16 +1050,9 @@ LPDIPROPCPOINTS		typedef ptr DIPROPCPOINTS
 LPCDIPROPCPOINTS	typedef ptr DIPROPCPOINTS
 endif
 
-
-ifdef __cplusplus
 MAKEDIPROP macro prop
-	exitm<(*(GUID *)(prop))>
+	exitm<(prop)>
 	endm
-else
-MAKEDIPROP macro prop
-	exitm<((REFGUID)(prop))>
-	endm
-endif
 
 DIPROP_BUFFERSIZE	equ MAKEDIPROP(1)
 DIPROP_AXISMODE		equ MAKEDIPROP(2)
@@ -1189,7 +1138,7 @@ DISCL_FOREGROUND	equ 0x00000004
 DISCL_BACKGROUND	equ 0x00000008
 DISCL_NOWINKEY		equ 0x00000010
 
-if(DIRECTINPUT_VERSION GE 0x0500)
+if (DIRECTINPUT_VERSION GE 0x0500)
 
 DIDEVICEINSTANCE_DX3A	STRUC
 dwSize			dd ?
@@ -1320,64 +1269,6 @@ IID_IDirectInputDevice	equ <IID_IDirectInputDeviceA>
 IDirectInputDevice	equ <IDirectInputDeviceA>
 endif
 LPDIRECTINPUTDEVICE	typedef ptr IDirectInputDevice
-
-if NOT defined(__cplusplus) OR defined(CINTERFACE)
-
-IDirectInputDevice_QueryInterface macro p,a,b
-	exitm<p.QueryInterface(a,b)>
-	endm
-IDirectInputDevice_AddRef macro p
-	exitm<p.AddRef()>
-	endm
-IDirectInputDevice_Release macro p
-	exitm<p.Release()>
-	endm
-IDirectInputDevice_GetCapabilities macro p,a
-	exitm<p.GetCapabilities(a)>
-	endm
-IDirectInputDevice_EnumObjects macro p,a,b,c
-	exitm<p.EnumObjects(a,b,c)>
-	endm
-IDirectInputDevice_GetProperty macro p,a,b
-	exitm<p.GetProperty(a,b)>
-	endm
-IDirectInputDevice_SetProperty macro p,a,b
-	exitm<p.SetProperty(a,b)>
-	endm
-IDirectInputDevice_Acquire macro p
-	exitm<p.Acquire()>
-	endm
-IDirectInputDevice_Unacquire macro p
-	exitm<p.Unacquire()>
-	endm
-IDirectInputDevice_GetDeviceState macro p,a,b
-	exitm<p.GetDeviceState(a,b)>
-	endm
-IDirectInputDevice_GetDeviceData macro p,a,b,c,d
-	exitm<p.GetDeviceData(a,b,c,d)>
-	endm
-IDirectInputDevice_SetDataFormat macro p,a
-	exitm<p.SetDataFormat(a)>
-	endm
-IDirectInputDevice_SetEventNotification macro p,a
-	exitm<p.SetEventNotification(a)>
-	endm
-IDirectInputDevice_SetCooperativeLevel macro p,a,b
-	exitm<p.SetCooperativeLevel(a,b)>
-	endm
-IDirectInputDevice_GetObjectInfo macro p,a,b,c
-	exitm<p.GetObjectInfo(a,b,c)>
-	endm
-IDirectInputDevice_GetDeviceInfo macro p,a
-	exitm<p.GetDeviceInfo(a)>
-	endm
-IDirectInputDevice_RunControlPanel macro p,a,b
-	exitm<p.RunControlPanel(a,b)>
-	endm
-IDirectInputDevice_Initialize macro p,a,b,c
-	exitm<p.Initialize(a,b,c)>
-	endm
-endif
 
 endif
 
@@ -1517,93 +1408,7 @@ IDirectInputDevice2	equ <IDirectInputDevice2A>
 endif
 LPDIRECTINPUTDEVICE2	typedef ptr IDirectInputDevice2
 
-if NOT defined(__cplusplus) OR defined(CINTERFACE)
-
-IDirectInputDevice2_QueryInterface macro p,a,b
-	exitm<p.QueryInterface(a,b)>
-	endm
-IDirectInputDevice2_AddRef macro p
-	exitm<p.AddRef()>
-	endm
-IDirectInputDevice2_Release macro p
-	exitm<p.Release()>
-	endm
-IDirectInputDevice2_GetCapabilities macro p,a
-	exitm<p.GetCapabilities(a)>
-	endm
-IDirectInputDevice2_EnumObjects macro p,a,b,c
-	exitm<p.EnumObjects(a,b,c)>
-	endm
-IDirectInputDevice2_GetProperty macro p,a,b
-	exitm<p.GetProperty(a,b)>
-	endm
-IDirectInputDevice2_SetProperty macro p,a,b
-	exitm<p.SetProperty(a,b)>
-	endm
-IDirectInputDevice2_Acquire macro p
-	exitm<p.Acquire()>
-	endm
-IDirectInputDevice2_Unacquire macro p
-	exitm<p.Unacquire()>
-	endm
-IDirectInputDevice2_GetDeviceState macro p,a,b
-	exitm<p.GetDeviceState(a,b)>
-	endm
-IDirectInputDevice2_GetDeviceData macro p,a,b,c,d
-	exitm<p.GetDeviceData(a,b,c,d)>
-	endm
-IDirectInputDevice2_SetDataFormat macro p,a
-	exitm<p.SetDataFormat(a)>
-	endm
-IDirectInputDevice2_SetEventNotification macro p,a
-	exitm<p.SetEventNotification(a)>
-	endm
-IDirectInputDevice2_SetCooperativeLevel macro p,a,b
-	exitm<p.SetCooperativeLevel(a,b)>
-	endm
-IDirectInputDevice2_GetObjectInfo macro p,a,b,c
-	exitm<p.GetObjectInfo(a,b,c)>
-	endm
-IDirectInputDevice2_GetDeviceInfo macro p,a
-	exitm<p.GetDeviceInfo(a)>
-	endm
-IDirectInputDevice2_RunControlPanel macro p,a,b
-	exitm<p.RunControlPanel(a,b)>
-	endm
-IDirectInputDevice2_Initialize macro p,a,b,c
-	exitm<p.Initialize(a,b,c)>
-	endm
-IDirectInputDevice2_CreateEffect macro p,a,b,c,d
-	exitm<p.CreateEffect(a,b,c,d)>
-	endm
-IDirectInputDevice2_EnumEffects macro p,a,b,c
-	exitm<p.EnumEffects(a,b,c)>
-	endm
-IDirectInputDevice2_GetEffectInfo macro p,a,b
-	exitm<p.GetEffectInfo(a,b)>
-	endm
-IDirectInputDevice2_GetForceFeedbackState macro p,a
-	exitm<p.GetForceFeedbackState(a)>
-	endm
-IDirectInputDevice2_SendForceFeedbackCommand macro p,a
-	exitm<p.SendForceFeedbackCommand(a)>
-	endm
-IDirectInputDevice2_EnumCreatedEffectObjects macro p,a,b,c
-	exitm<p.EnumCreatedEffectObjects(a,b,c)>
-	endm
-IDirectInputDevice2_Escape macro p,a
-	exitm<p.Escape(a)>
-	endm
-IDirectInputDevice2_Poll macro p
-	exitm<p.Poll()>
-	endm
-IDirectInputDevice2_SendDeviceData macro p,a,b,c,d
-	exitm<p.SendDeviceData(a,b,c,d)>
-	endm
 endif
-
-endif
-
 endif
 
 if(DIRECTINPUT_VERSION GE 0x0700)
@@ -1688,99 +1493,7 @@ IDirectInputDevice7	equ <IDirectInputDevice7A>
 endif
 LPDIRECTINPUTDEVICE7	typedef ptr IDirectInputDevice7
 
-if NOT defined(__cplusplus) OR defined(CINTERFACE)
-
-IDirectInputDevice7_QueryInterface macro p,a,b
-	exitm<p.QueryInterface(a,b)>
-	endm
-IDirectInputDevice7_AddRef macro p
-	exitm<p.AddRef()>
-	endm
-IDirectInputDevice7_Release macro p
-	exitm<p.Release()>
-	endm
-IDirectInputDevice7_GetCapabilities macro p,a
-	exitm<p.GetCapabilities(a)>
-	endm
-IDirectInputDevice7_EnumObjects macro p,a,b,c
-	exitm<p.EnumObjects(a,b,c)>
-	endm
-IDirectInputDevice7_GetProperty macro p,a,b
-	exitm<p.GetProperty(a,b)>
-	endm
-IDirectInputDevice7_SetProperty macro p,a,b
-	exitm<p.SetProperty(a,b)>
-	endm
-IDirectInputDevice7_Acquire macro p
-	exitm<p.Acquire()>
-	endm
-IDirectInputDevice7_Unacquire macro p
-	exitm<p.Unacquire()>
-	endm
-IDirectInputDevice7_GetDeviceState macro p,a,b
-	exitm<p.GetDeviceState(a,b)>
-	endm
-IDirectInputDevice7_GetDeviceData macro p,a,b,c,d
-	exitm<p.GetDeviceData(a,b,c,d)>
-	endm
-IDirectInputDevice7_SetDataFormat macro p,a
-	exitm<p.SetDataFormat(a)>
-	endm
-IDirectInputDevice7_SetEventNotification macro p,a
-	exitm<p.SetEventNotification(a)>
-	endm
-IDirectInputDevice7_SetCooperativeLevel macro p,a,b
-	exitm<p.SetCooperativeLevel(a,b)>
-	endm
-IDirectInputDevice7_GetObjectInfo macro p,a,b,c
-	exitm<p.GetObjectInfo(a,b,c)>
-	endm
-IDirectInputDevice7_GetDeviceInfo macro p,a
-	exitm<p.GetDeviceInfo(a)>
-	endm
-IDirectInputDevice7_RunControlPanel macro p,a,b
-	exitm<p.RunControlPanel(a,b)>
-	endm
-IDirectInputDevice7_Initialize macro p,a,b,c
-	exitm<p.Initialize(a,b,c)>
-	endm
-IDirectInputDevice7_CreateEffect macro p,a,b,c,d
-	exitm<p.CreateEffect(a,b,c,d)>
-	endm
-IDirectInputDevice7_EnumEffects macro p,a,b,c
-	exitm<p.EnumEffects(a,b,c)>
-	endm
-IDirectInputDevice7_GetEffectInfo macro p,a,b
-	exitm<p.GetEffectInfo(a,b)>
-	endm
-IDirectInputDevice7_GetForceFeedbackState macro p,a
-	exitm<p.GetForceFeedbackState(a)>
-	endm
-IDirectInputDevice7_SendForceFeedbackCommand macro p,a
-	exitm<p.SendForceFeedbackCommand(a)>
-	endm
-IDirectInputDevice7_EnumCreatedEffectObjects macro p,a,b,c
-	exitm<p.EnumCreatedEffectObjects(a,b,c)>
-	endm
-IDirectInputDevice7_Escape macro p,a
-	exitm<p.Escape(a)>
-	endm
-IDirectInputDevice7_Poll macro p
-	exitm<p.Poll()>
-	endm
-IDirectInputDevice7_SendDeviceData macro p,a,b,c,d
-	exitm<p.SendDeviceData(a,b,c,d)>
-	endm
-IDirectInputDevice7_EnumEffectsInFile macro p,a,b,c,d
-	exitm<p.EnumEffectsInFile(a,b,c,d)>
-	endm
-IDirectInputDevice7_WriteEffectToFile macro p,a,b,c,d
-	exitm<p.WriteEffectToFile(a,b,c,d)>
-	endm
 endif
-
-endif
-
 endif
 
 if(DIRECTINPUT_VERSION GE 0x0800)
@@ -1868,110 +1581,8 @@ IDirectInputDevice8	equ <IDirectInputDevice8A>
 endif
 LPDIRECTINPUTDEVICE8	typedef ptr IDirectInputDevice8
 
-if NOT defined(__cplusplus) OR defined(CINTERFACE)
-
-IDirectInputDevice8_QueryInterface macro p,a,b
-	exitm<p.QueryInterface(a,b)>
-	endm
-IDirectInputDevice8_AddRef macro p
-	exitm<p.AddRef()>
-	endm
-IDirectInputDevice8_Release macro p
-	exitm<p.Release()>
-	endm
-IDirectInputDevice8_GetCapabilities macro p,a
-	exitm<p.GetCapabilities(a)>
-	endm
-IDirectInputDevice8_EnumObjects macro p,a,b,c
-	exitm<p.EnumObjects(a,b,c)>
-	endm
-IDirectInputDevice8_GetProperty macro p,a,b
-	exitm<p.GetProperty(a,b)>
-	endm
-IDirectInputDevice8_SetProperty macro p,a,b
-	exitm<p.SetProperty(a,b)>
-	endm
-IDirectInputDevice8_Acquire macro p
-	exitm<p.Acquire()>
-	endm
-IDirectInputDevice8_Unacquire macro p
-	exitm<p.Unacquire()>
-	endm
-IDirectInputDevice8_GetDeviceState macro p,a,b
-	exitm<p.GetDeviceState(a,b)>
-	endm
-IDirectInputDevice8_GetDeviceData macro p,a,b,c,d
-	exitm<p.GetDeviceData(a,b,c,d)>
-	endm
-IDirectInputDevice8_SetDataFormat macro p,a
-	exitm<p.SetDataFormat(a)>
-	endm
-IDirectInputDevice8_SetEventNotification macro p,a
-	exitm<p.SetEventNotification(a)>
-	endm
-IDirectInputDevice8_SetCooperativeLevel macro p,a,b
-	exitm<p.SetCooperativeLevel(a,b)>
-	endm
-IDirectInputDevice8_GetObjectInfo macro p,a,b,c
-	exitm<p.GetObjectInfo(a,b,c)>
-	endm
-IDirectInputDevice8_GetDeviceInfo macro p,a
-	exitm<p.GetDeviceInfo(a)>
-	endm
-IDirectInputDevice8_RunControlPanel macro p,a,b
-	exitm<p.RunControlPanel(a,b)>
-	endm
-IDirectInputDevice8_Initialize macro p,a,b,c
-	exitm<p.Initialize(a,b,c)>
-	endm
-IDirectInputDevice8_CreateEffect macro p,a,b,c,d
-	exitm<p.CreateEffect(a,b,c,d)>
-	endm
-IDirectInputDevice8_EnumEffects macro p,a,b,c
-	exitm<p.EnumEffects(a,b,c)>
-	endm
-IDirectInputDevice8_GetEffectInfo macro p,a,b
-	exitm<p.GetEffectInfo(a,b)>
-	endm
-IDirectInputDevice8_GetForceFeedbackState macro p,a
-	exitm<p.GetForceFeedbackState(a)>
-	endm
-IDirectInputDevice8_SendForceFeedbackCommand macro p,a
-	exitm<p.SendForceFeedbackCommand(a)>
-	endm
-IDirectInputDevice8_EnumCreatedEffectObjects macro p,a,b,c
-	exitm<p.EnumCreatedEffectObjects(a,b,c)>
-	endm
-IDirectInputDevice8_Escape macro p,a
-	exitm<p.Escape(a)>
-	endm
-IDirectInputDevice8_Poll macro p
-	exitm<p.Poll()>
-	endm
-IDirectInputDevice8_SendDeviceData macro p,a,b,c,d
-	exitm<p.SendDeviceData(a,b,c,d)>
-	endm
-IDirectInputDevice8_EnumEffectsInFile macro p,a,b,c,d
-	exitm<p.EnumEffectsInFile(a,b,c,d)>
-	endm
-IDirectInputDevice8_WriteEffectToFile macro p,a,b,c,d
-	exitm<p.WriteEffectToFile(a,b,c,d)>
-	endm
-IDirectInputDevice8_BuildActionMap macro p,a,b,c
-	exitm<p.BuildActionMap(a,b,c)>
-	endm
-IDirectInputDevice8_SetActionMap macro p,a,b,c
-	exitm<p.SetActionMap(a,b,c)>
-	endm
-IDirectInputDevice8_GetImageInfo macro p,a
-	exitm<p.GetImageInfo(a)>
-	endm
 endif
-
 endif
-
-endif
-
 
 ifndef DIJ_RINGZERO
 
@@ -2363,33 +1974,6 @@ IDirectInput		equ <IDirectInputA>
 endif
 LPDIRECTINPUT		typedef ptr IDirectInput
 
-if NOT defined(__cplusplus) OR defined(CINTERFACE)
-IDirectInput_QueryInterface macro p,a,b
-	exitm<p.QueryInterface(a,b)>
-	endm
-IDirectInput_AddRef macro p
-	exitm<p.AddRef()>
-	endm
-IDirectInput_Release macro p
-	exitm<p.Release()>
-	endm
-IDirectInput_CreateDevice macro p,a,b,c
-	exitm<p.CreateDevice(a,b,c)>
-	endm
-IDirectInput_EnumDevices macro p,a,b,c,d
-	exitm<p.EnumDevices(a,b,c,d)>
-	endm
-IDirectInput_GetDeviceStatus macro p,a
-	exitm<p.GetDeviceStatus(a)>
-	endm
-IDirectInput_RunControlPanel macro p,a,b
-	exitm<p.RunControlPanel(a,b)>
-	endm
-IDirectInput_Initialize macro p,a,b
-	exitm<p.Initialize(a,b)>
-	endm
-endif
-
 .comdef IDirectInput2W
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -2422,37 +2006,6 @@ IID_IDirectInput2	equ <IID_IDirectInput2A>
 IDirectInput2		equ <IDirectInput2A>
 endif
 LPDIRECTINPUT2		typedef ptr IDirectInput2
-
-if NOT defined(__cplusplus) OR defined(CINTERFACE)
-
-IDirectInput2_QueryInterface macro p,a,b
-	exitm<p.QueryInterface(a,b)>
-	endm
-IDirectInput2_AddRef macro p
-	exitm<p.AddRef()>
-	endm
-IDirectInput2_Release macro p
-	exitm<p.Release()>
-	endm
-IDirectInput2_CreateDevice macro p,a,b,c
-	exitm<p.CreateDevice(a,b,c)>
-	endm
-IDirectInput2_EnumDevices macro p,a,b,c,d
-	exitm<p.EnumDevices(a,b,c,d)>
-	endm
-IDirectInput2_GetDeviceStatus macro p,a
-	exitm<p.GetDeviceStatus(a)>
-	endm
-IDirectInput2_RunControlPanel macro p,a,b
-	exitm<p.RunControlPanel(a,b)>
-	endm
-IDirectInput2_Initialize macro p,a,b
-	exitm<p.Initialize(a,b)>
-	endm
-IDirectInput2_FindDevice macro p,a,b,c
-	exitm<p.FindDevice(a,b,c)>
-	endm
-endif
 
 .comdef IDirectInput7W
     QueryInterface	proc :REFIID, :ptr
@@ -2489,46 +2042,14 @@ IDirectInput7		equ <IDirectInput7A>
 endif
 LPDIRECTINPUT7		typedef ptr IDirectInput7
 
-if NOT defined(__cplusplus) OR defined(CINTERFACE)
-
-IDirectInput7_QueryInterface macro p,a,b
-	exitm<p.QueryInterface(a,b)>
-	endm
-IDirectInput7_AddRef macro p
-	exitm<p.AddRef()>
-	endm
-IDirectInput7_Release macro p
-	exitm<p.Release()>
-	endm
-IDirectInput7_CreateDevice macro p,a,b,c
-	exitm<p.CreateDevice(a,b,c)>
-	endm
-IDirectInput7_EnumDevices macro p,a,b,c,d
-	exitm<p.EnumDevices(a,b,c,d)>
-	endm
-IDirectInput7_GetDeviceStatus macro p,a
-	exitm<p.GetDeviceStatus(a)>
-	endm
-IDirectInput7_RunControlPanel macro p,a,b
-	exitm<p.RunControlPanel(a,b)>
-	endm
-IDirectInput7_Initialize macro p,a,b
-	exitm<p.Initialize(a,b)>
-	endm
-IDirectInput7_FindDevice macro p,a,b,c
-	exitm<p.FindDevice(a,b,c)>
-	endm
-IDirectInput7_CreateDeviceEx macro p,a,b,c,d
-	exitm<p.CreateDeviceEx(a,b,c,d)>
-	endm
-endif
-
 if(DIRECTINPUT_VERSION GE 0x0800)
 
 .comdef IDirectInput8W
+
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
     Release		proc
+
     CreateDevice	proc :REFGUID, :ptr, :LPUNKNOWN
     EnumDevices		proc :DWORD, :LPDIENUMDEVICESCALLBACKW, :LPVOID, :DWORD
     GetDeviceStatus	proc :REFGUID
@@ -2537,12 +2058,15 @@ if(DIRECTINPUT_VERSION GE 0x0800)
     FindDevice		proc :REFGUID, :LPCWSTR, :LPGUID
     EnumDevicesBySemantics proc :LPCWSTR, :LPDIACTIONFORMATW, :LPDIENUMDEVICESBYSEMANTICSCBW, :LPVOID, :DWORD
     ConfigureDevices	proc :LPDICONFIGUREDEVICESCALLBACK, :LPDICONFIGUREDEVICESPARAMSW, :DWORD, :PVOID
+
     .ends
 
 .comdef IDirectInput8A
+
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
     Release		proc
+
     CreateDevice	proc :REFGUID, :ptr, :LPUNKNOWN
     EnumDevices		proc :DWORD, :LPDIENUMDEVICESCALLBACKA, :ptr, :DWORD
     GetDeviceStatus	proc :REFGUID
@@ -2551,6 +2075,7 @@ if(DIRECTINPUT_VERSION GE 0x0800)
     FindDevice		proc :REFGUID, :LPCSTR, :LPGUID
     EnumDevicesBySemantics proc :LPCSTR, :LPDIACTIONFORMATA, :LPDIENUMDEVICESBYSEMANTICSCBA, :PVOID, :DWORD
     ConfigureDevices	proc :LPDICONFIGUREDEVICESCALLBACK, :LPDICONFIGUREDEVICESPARAMSA, :DWORD, :PVOID
+
     .ends
 
 ifdef _UNICODE
@@ -2562,41 +2087,6 @@ IDirectInput8		equ <IDirectInput8A>
 endif
 LPDIRECTINPUT8		typedef ptr IDirectInput8
 
-if NOT defined(__cplusplus) OR defined(CINTERFACE)
-IDirectInput8_QueryInterface macro p,a,b
-	exitm<p.QueryInterface(a,b)>
-	endm
-IDirectInput8_AddRef macro p
-	exitm<p.AddRef()>
-	endm
-IDirectInput8_Release macro p
-	exitm<p.Release()>
-	endm
-IDirectInput8_CreateDevice macro p,a,b,c
-	exitm<p.CreateDevice(a,b,c)>
-	endm
-IDirectInput8_EnumDevices macro p,a,b,c,d
-	exitm<p.EnumDevices(a,b,c,d)>
-	endm
-IDirectInput8_GetDeviceStatus macro p,a
-	exitm<p.GetDeviceStatus(a)>
-	endm
-IDirectInput8_RunControlPanel macro p,a,b
-	exitm<p.RunControlPanel(a,b)>
-	endm
-IDirectInput8_Initialize macro p,a,b
-	exitm<p.Initialize(a,b)>
-	endm
-IDirectInput8_FindDevice macro p,a,b,c
-	exitm<p.FindDevice(a,b,c)>
-	endm
-IDirectInput8_EnumDevicesBySemantics macro p,a,b,c,d,e
-	exitm<p.EnumDevicesBySemantics(a,b,c,d,e)>
-	endm
-IDirectInput8_ConfigureDevices macro p,a,b,c,d
-	exitm<p.ConfigureDevices(a,b,c,d)>
-	endm
-endif
 endif
 
 if DIRECTINPUT_VERSION GT 0x0700
@@ -2993,7 +2483,7 @@ DIAXIS_FLYINGM_FLAPS	equ 0x05055206
 DIBUTTON_FLYINGM_FLAPSUP equ 0x05005407
 DIBUTTON_FLYINGM_FLAPSDOWN equ 0x05005408
 DIBUTTON_FLYINGM_FIRESECONDARY equ 0x05004C09
-DIBUTTON_FLYINGM_GEAR	equ <0x0500640A
+DIBUTTON_FLYINGM_GEAR	equ 0x0500640A
 DIBUTTON_FLYINGM_BRAKE_LINK equ 0x050464E0
 DIBUTTON_FLYINGM_FASTER_LINK equ 0x0503D4E0
 DIBUTTON_FLYINGM_SLOWER_LINK equ 0x0503D4E8
@@ -3078,7 +2568,7 @@ DIBUTTON_FIGHTINGH_SELECT equ 0x08004408
 DIHATSWITCH_FIGHTINGH_SLIDE equ 0x08004601
 DIBUTTON_FIGHTINGH_DISPLAY equ 0x08004409
 DIAXIS_FIGHTINGH_ROTATE equ 0x08024203
-DIBUTTON_FIGHTINGH_DODGE equ <0x0800440A
+DIBUTTON_FIGHTINGH_DODGE equ 0x0800440A
 DIBUTTON_FIGHTINGH_LEFT_LINK equ 0x0800C4E4
 DIBUTTON_FIGHTINGH_RIGHT_LINK equ 0x0800C4EC
 DIBUTTON_FIGHTINGH_FORWARD_LINK equ 0x080144E0
@@ -3103,7 +2593,7 @@ DIHATSWITCH_FPS_GLANCE	equ 0x09004601
 DIBUTTON_FPS_DISPLAY	equ 0x09004408
 DIAXIS_FPS_SIDESTEP	equ 0x09024204
 DIBUTTON_FPS_DODGE	equ 0x09004409
-DIBUTTON_FPS_GLANCEL	equ <0x0900440A
+DIBUTTON_FPS_GLANCEL	equ 0x0900440A
 DIBUTTON_FPS_GLANCER	equ 0x0900440B
 DIBUTTON_FPS_FIRESECONDARY equ 0x0900440C
 DIBUTTON_FPS_ROTATE_LEFT_LINK equ 0x0900C4E4
@@ -3133,7 +2623,7 @@ DIBUTTON_TPS_STEPLEFT	equ 0x0A004407
 DIBUTTON_TPS_STEPRIGHT	equ 0x0A004408
 DIAXIS_TPS_STEP		equ 0x0A00C203
 DIBUTTON_TPS_DODGE	equ 0x0A004409
-DIBUTTON_TPS_INVENTORY	equ <0x0A00440A
+DIBUTTON_TPS_INVENTORY	equ 0x0A00440A
 DIBUTTON_TPS_TURN_LEFT_LINK equ 0x0A0244E4
 DIBUTTON_TPS_TURN_RIGHT_LINK equ 0x0A0244EC
 DIBUTTON_TPS_FORWARD_LINK equ 0x0A0144E0
@@ -3206,7 +2696,7 @@ DIHATSWITCH_HUNTING_GLANCE equ 0x0D004601
 DIBUTTON_HUNTING_DISPLAY equ 0x0D004408
 DIAXIS_HUNTING_ROTATE	equ 0x0D024203
 DIBUTTON_HUNTING_CROUCH equ 0x0D004409
-DIBUTTON_HUNTING_JUMP	equ <0x0D00440A
+DIBUTTON_HUNTING_JUMP	equ 0x0D00440A
 DIBUTTON_HUNTING_FIRESECONDARY equ 0x0D00440B
 DIBUTTON_HUNTING_LEFT_LINK equ 0x0D00C4E4
 DIBUTTON_HUNTING_RIGHT_LINK equ 0x0D00C4EC
@@ -3255,7 +2745,7 @@ DIBUTTON_BASEBALLB_CONTACT equ 0x0F000408
 DIBUTTON_BASEBALLB_MENU equ 0x0F0004FD
 
 DIBUTTON_BASEBALLB_NOSTEAL equ 0x0F004409
-DIBUTTON_BASEBALLB_BOX	equ <0x0F00440A
+DIBUTTON_BASEBALLB_BOX	equ 0x0F00440A
 DIBUTTON_BASEBALLB_LEFT_LINK equ 0x0F00C4E4
 DIBUTTON_BASEBALLB_RIGHT_LINK equ 0x0F00C4EC
 DIBUTTON_BASEBALLB_FORWARD_LINK equ 0x0F0144E0
@@ -3317,7 +2807,7 @@ DIBUTTON_BBALLO_MENU	equ 0x120004FD
 
 DIHATSWITCH_BBALLO_GLANCE equ 0x12004601
 DIBUTTON_BBALLO_SCREEN	equ 0x12004409
-DIBUTTON_BBALLO_PLAY	equ <0x1200440A
+DIBUTTON_BBALLO_PLAY	equ 0x1200440A
 DIBUTTON_BBALLO_JAB	equ 0x1200440B
 DIBUTTON_BBALLO_POST	equ 0x1200440C
 DIBUTTON_BBALLO_TIMEOUT equ 0x1200440D
@@ -3395,7 +2885,7 @@ DIBUTTON_FOOTBALLO_JUKE equ 0x16004406
 DIBUTTON_FOOTBALLO_SHOULDER equ 0x16004407
 DIBUTTON_FOOTBALLO_TURBO equ 0x16004408
 DIBUTTON_FOOTBALLO_DIVE equ 0x16004409
-DIBUTTON_FOOTBALLO_ZOOM equ <0x1600440A
+DIBUTTON_FOOTBALLO_ZOOM equ 0x1600440A
 DIBUTTON_FOOTBALLO_SUBSTITUTE equ 0x1600440B
 DIBUTTON_FOOTBALLO_LEFT_LINK equ 0x1600C4E4
 DIBUTTON_FOOTBALLO_RIGHT_LINK equ 0x1600C4EC
@@ -3418,7 +2908,7 @@ DIBUTTON_FOOTBALLD_MENU equ 0x170004FD
 DIBUTTON_FOOTBALLD_SPIN equ 0x17004407
 DIBUTTON_FOOTBALLD_SWIM equ 0x17004408
 DIBUTTON_FOOTBALLD_BULLRUSH equ 0x17004409
-DIBUTTON_FOOTBALLD_RIP	equ <0x1700440A
+DIBUTTON_FOOTBALLD_RIP	equ 0x1700440A
 DIBUTTON_FOOTBALLD_AUDIBLE equ 0x1700440B
 DIBUTTON_FOOTBALLD_ZOOM equ 0x1700440C
 DIBUTTON_FOOTBALLD_SUBSTITUTE equ 0x1700440D
@@ -3573,7 +3063,7 @@ DIHATSWITCH_SOCCERO_GLANCE equ 0x1E004601
 DIBUTTON_SOCCERO_SUBSTITUTE equ 0x1E004407
 DIBUTTON_SOCCERO_SHOOTLOW equ 0x1E004408
 DIBUTTON_SOCCERO_SHOOTHIGH equ 0x1E004409
-DIBUTTON_SOCCERO_PASSTHRU equ <0x1E00440A
+DIBUTTON_SOCCERO_PASSTHRU equ 0x1E00440A
 DIBUTTON_SOCCERO_SPRINT equ 0x1E00440B
 DIBUTTON_SOCCERO_CONTROL equ 0x1E00440C
 DIBUTTON_SOCCERO_HEAD	equ 0x1E00440D
@@ -3599,7 +3089,7 @@ DIBUTTON_SOCCERD_MENU	equ 0x1F0004FD
 DIHATSWITCH_SOCCERD_GLANCE equ 0x1F004601
 DIBUTTON_SOCCERD_FOUL	equ 0x1F004408
 DIBUTTON_SOCCERD_HEAD	equ 0x1F004409
-DIBUTTON_SOCCERD_CLEAR	equ <0x1F00440A
+DIBUTTON_SOCCERD_CLEAR	equ 0x1F00440A
 DIBUTTON_SOCCERD_GOALIECHARGE equ 0x1F00440B
 DIBUTTON_SOCCERD_SUBSTITUTE equ 0x1F00440C
 DIBUTTON_SOCCERD_LEFT_LINK equ 0x1F00C4E4
@@ -3685,28 +3175,28 @@ DIBUTTON_2DCONTROL_SPECIAL2 equ 0x23000404
 DIBUTTON_2DCONTROL_MENU equ 0x230004FD
 
 DIHATSWITCH_2DCONTROL_HATSWITCH equ 0x23004601
-DIAXIS_2DCONTROL_ROTATEZ equ 0x23024204
-DIBUTTON_2DCONTROL_DISPLAY equ 0x23004405
-DIBUTTON_2DCONTROL_DEVICE equ 0x230044FE
-DIBUTTON_2DCONTROL_PAUSE equ 0x230044FC
+DIAXIS_2DCONTROL_ROTATEZ	equ 0x23024204
+DIBUTTON_2DCONTROL_DISPLAY	equ 0x23004405
+DIBUTTON_2DCONTROL_DEVICE	equ 0x230044FE
+DIBUTTON_2DCONTROL_PAUSE	equ 0x230044FC
 
-DIVIRTUAL_CAD_3DCONTROL equ 0x24000000
-DIAXIS_3DCONTROL_LATERAL equ 0x24008201
-DIAXIS_3DCONTROL_MOVE	equ 0x24010202
-DIAXIS_3DCONTROL_INOUT	equ 0x24018203
-DIBUTTON_3DCONTROL_SELECT equ 0x24000401
-DIBUTTON_3DCONTROL_SPECIAL1 equ 0x24000402
-DIBUTTON_3DCONTROL_SPECIAL equ 0x24000403
-DIBUTTON_3DCONTROL_SPECIAL2 equ 0x24000404
-DIBUTTON_3DCONTROL_MENU equ 0x240004FD
+DIVIRTUAL_CAD_3DCONTROL		equ 0x24000000
+DIAXIS_3DCONTROL_LATERAL	equ 0x24008201
+DIAXIS_3DCONTROL_MOVE		equ 0x24010202
+DIAXIS_3DCONTROL_INOUT		equ 0x24018203
+DIBUTTON_3DCONTROL_SELECT	equ 0x24000401
+DIBUTTON_3DCONTROL_SPECIAL1	equ 0x24000402
+DIBUTTON_3DCONTROL_SPECIAL	equ 0x24000403
+DIBUTTON_3DCONTROL_SPECIAL2	equ 0x24000404
+DIBUTTON_3DCONTROL_MENU		equ 0x240004FD
 
 DIHATSWITCH_3DCONTROL_HATSWITCH equ 0x24004601
-DIAXIS_3DCONTROL_ROTATEX equ 0x24034204
-DIAXIS_3DCONTROL_ROTATEY equ 0x2402C205
-DIAXIS_3DCONTROL_ROTATEZ equ 0x24024206
-DIBUTTON_3DCONTROL_DISPLAY equ 0x24004405
-DIBUTTON_3DCONTROL_DEVICE equ 0x240044FE
-DIBUTTON_3DCONTROL_PAUSE equ 0x240044FC
+DIAXIS_3DCONTROL_ROTATEX	equ 0x24034204
+DIAXIS_3DCONTROL_ROTATEY	equ 0x2402C205
+DIAXIS_3DCONTROL_ROTATEZ	equ 0x24024206
+DIBUTTON_3DCONTROL_DISPLAY	equ 0x24004405
+DIBUTTON_3DCONTROL_DEVICE	equ 0x240044FE
+DIBUTTON_3DCONTROL_PAUSE	equ 0x240044FC
 
 DIVIRTUAL_CAD_FLYBY	equ 0x25000000
 DIAXIS_CADF_LATERAL	equ 0x25008201
@@ -3791,7 +3281,7 @@ DIBUTTON_BROWSER_FAVORITES equ 0x28004406
 DIBUTTON_BROWSER_NEXT	equ 0x28004407
 DIBUTTON_BROWSER_PREVIOUS equ 0x28004408
 DIBUTTON_BROWSER_HISTORY equ 0x28004409
-DIBUTTON_BROWSER_PRINT	equ <0x2800440A
+DIBUTTON_BROWSER_PRINT	equ 0x2800440A
 DIBUTTON_BROWSER_DEVICE equ 0x280044FE
 DIBUTTON_BROWSER_PAUSE	equ 0x280044FC
 

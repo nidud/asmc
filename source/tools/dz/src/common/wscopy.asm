@@ -14,18 +14,23 @@ wscopyremove proc file:LPSTR
 wscopyremove endp
 
 wscopyopen proc srcfile:LPSTR, outfile:LPSTR
+
     mov errno,0
     .if !ioopen(&STDO, outfile, M_WRONLY, OO_MEM64K)
-	mov copy_jump,1
+        mov copy_jump,1
     .elseif eax != -1
-	ioopen(&STDI, srcfile, M_RDONLY, OO_MEM64K)
-	or STDI.S_IOST.ios_flag,IO_USECRC
-	.if eax == -1
-	eropen(srcfile)
-	wscopyremove(outfile)
-	.endif
+
+        ioopen(&STDI, srcfile, M_RDONLY, OO_MEM64K)
+        or STDI.S_IOST.ios_flag,IO_USECRC
+
+        .if eax == -1
+
+            eropen(srcfile)
+            wscopyremove(outfile)
+        .endif
     .endif
     ret
+
 wscopyopen endp
 
     end

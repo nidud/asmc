@@ -31,7 +31,7 @@ endif
 if defined(_M_MRX000) OR defined(_M_ALPHA) OR defined(_M_PPC) OR defined(_M_IA64) OR defined(_M_AMD64)
 ALIGNMENT_MACHINE	equ <>
 UNALIGNED		equ <__unaligned>
-if defined(_WIN64)
+ifdef _WIN64
 UNALIGNED64		equ <__unaligned>
 else
 UNALIGNED64		equ <>
@@ -2242,7 +2242,7 @@ __writegsqword proto WINAPI \
 		  Data: DWORD64
 
 
-if NOT defined(_MANAGED)
+ifndef _MANAGED
 
 ;VOID
 __incgsbyte proto WINAPI \
@@ -2631,7 +2631,7 @@ _InterlockedOr16 proto WINAPI \
 
 endif
 
-if NOT defined(_M_CEE_PURE)
+ifndef _M_CEE_PURE
 
 ;FORCEINLINE
 ;BOOLEAN
@@ -2846,7 +2846,7 @@ EXCEPTION_EXECUTE_FAULT equ 8
 SIZE_OF_80387_REGISTERS equ 80
 
 
-;if NOT defined(RC_INVOKED)
+;ifndef RC_INVOKED
 
 CONTEXT_i386		equ 0x00010000
 CONTEXT_i486		equ 0x00010000
@@ -3701,7 +3701,7 @@ EXCEPTION_WRITE_FAULT	equ 1
 EXCEPTION_EXECUTE_FAULT equ 2
 
 
-;if NOT defined(RC_INVOKED)
+;ifndef RC_INVOKED
 
 CONTEXT_IA64		equ 0x00080000
 
@@ -4137,7 +4137,7 @@ __jump_unwind proto WINAPI \
 
 endif
 
-;if NOT defined(RC_INVOKED)
+;ifndef RC_INVOKED
 
 WOW64_CONTEXT_i386	equ 0x00010000
 WOW64_CONTEXT_i486	equ 0x00010000
@@ -6469,7 +6469,6 @@ PCM_POWER_DATA		typedef ptr CM_POWER_DATA
 
 endif
 
-
 SYSTEM_POWER_CONDITION	typedef sdword ; enum {
 PoAc			equ 0
 PoDc			equ 1
@@ -6477,17 +6476,10 @@ PoHot			equ 2
 PoConditionMaximum	equ 3
 
 SET_POWER_SETTING_VALUE STRUC
-
 Version			dd ?
-
-
 Guid			GUID <>
-
-
 PowerCondition		SYSTEM_POWER_CONDITION ?
-
 DataLength		dd ?
-
 Data			db ANYSIZE_ARRAY dup(?)
 SET_POWER_SETTING_VALUE ENDS
 PSET_POWER_SETTING_VALUE typedef ptr SET_POWER_SETTING_VALUE
@@ -7272,12 +7264,7 @@ endif
 
 
 IMAGE_FIRST_SECTION macro ntheader
-ifdef _WIN64
-else
-endif
 	endm
-
-
 
 IMAGE_SUBSYSTEM_UNKNOWN		equ 0
 IMAGE_SUBSYSTEM_NATIVE		equ 1
@@ -7698,10 +7685,10 @@ IMAGE_REL_I386_REL16		equ 0x0002
 IMAGE_REL_I386_DIR32		equ 0x0006
 IMAGE_REL_I386_DIR32NB		equ 0x0007
 IMAGE_REL_I386_SEG12		equ 0x0009
-IMAGE_REL_I386_SECTION		equ 000Ah ; 16bit section index
-IMAGE_REL_I386_SECREL		equ 000Bh ; 32bit offset (SECTIONREL)
-IMAGE_REL_I386_TOKEN		equ 000Ch ; CLR token
-IMAGE_REL_I386_SECREL7		equ 000Dh ; 7bit offset
+IMAGE_REL_I386_SECTION		equ 0x000A ; 16bit section index
+IMAGE_REL_I386_SECREL		equ 0x000B ; 32bit offset (SECTIONREL)
+IMAGE_REL_I386_TOKEN		equ 0x000C ; CLR token
+IMAGE_REL_I386_SECREL7		equ 0x000D ; 7bit offset
 IMAGE_REL_I386_REL32		equ 0x0014
 
 IMAGE_REL_MIPS_ABSOLUTE		equ 0x0000
@@ -7835,20 +7822,20 @@ IMAGE_REL_AM_SECTION		equ 0x0008
 IMAGE_REL_AM_TOKEN		equ 0x0009
 
 
-IMAGE_REL_AMD64_ABSOLUTE	equ 0000h ; Reference is absolute, no relocation is necessary
-IMAGE_REL_AMD64_ADDR64		equ 0001h ; 64-bit address (VA)
-IMAGE_REL_AMD64_ADDR32		equ 0002h ; 32-bit address (VA)
-IMAGE_REL_AMD64_ADDR32NB	equ 0003h ; 32-bit address w/o image base (RVA)
-IMAGE_REL_AMD64_REL32		equ 0004h ; 32-bit relative address from byte following reloc
-IMAGE_REL_AMD64_REL32_1		equ 0005h ; 32-bit relative address from byte distance 1 from reloc
-IMAGE_REL_AMD64_REL32_2		equ 0006h ; 32-bit relative address from byte distance 2 from reloc
-IMAGE_REL_AMD64_REL32_3		equ 0007h ; 32-bit relative address from byte distance 3 from reloc
-IMAGE_REL_AMD64_REL32_4		equ 0008h ; 32-bit relative address from byte distance 4 from reloc
-IMAGE_REL_AMD64_REL32_5		equ 0009h ; 32-bit relative address from byte distance 5 from reloc
-IMAGE_REL_AMD64_SECTION		equ 000Ah ; Section index
-IMAGE_REL_AMD64_SECREL		equ 000Bh ; 32 bit offset from base of section containing target
-IMAGE_REL_AMD64_SECREL7		equ 000Ch ; 7 bit unsigned offset from base of section containing target
-IMAGE_REL_AMD64_TOKEN		equ 000Dh ; 32 bit metadata token
+IMAGE_REL_AMD64_ABSOLUTE	equ 0x0000 ; Reference is absolute, no relocation is necessary
+IMAGE_REL_AMD64_ADDR64		equ 0x0001 ; 64-bit address (VA)
+IMAGE_REL_AMD64_ADDR32		equ 0x0002 ; 32-bit address (VA)
+IMAGE_REL_AMD64_ADDR32NB	equ 0x0003 ; 32-bit address w/o image base (RVA)
+IMAGE_REL_AMD64_REL32		equ 0x0004 ; 32-bit relative address from byte following reloc
+IMAGE_REL_AMD64_REL32_1		equ 0x0005 ; 32-bit relative address from byte distance 1 from reloc
+IMAGE_REL_AMD64_REL32_2		equ 0x0006 ; 32-bit relative address from byte distance 2 from reloc
+IMAGE_REL_AMD64_REL32_3		equ 0x0007 ; 32-bit relative address from byte distance 3 from reloc
+IMAGE_REL_AMD64_REL32_4		equ 0x0008 ; 32-bit relative address from byte distance 4 from reloc
+IMAGE_REL_AMD64_REL32_5		equ 0x0009 ; 32-bit relative address from byte distance 5 from reloc
+IMAGE_REL_AMD64_SECTION		equ 0x000A ; Section index
+IMAGE_REL_AMD64_SECREL		equ 0x000B ; 32 bit offset from base of section containing target
+IMAGE_REL_AMD64_SECREL7		equ 0x000C ; 7 bit unsigned offset from base of section containing target
+IMAGE_REL_AMD64_TOKEN		equ 0x000D ; 32 bit metadata token
 IMAGE_REL_AMD64_SREL32		equ 0x000E
 IMAGE_REL_AMD64_PAIR		equ 0x000F
 IMAGE_REL_AMD64_SSPAN32		equ 0x0010
@@ -8019,7 +8006,6 @@ X3_EMPTY_SIZE_X		equ 2
 X3_EMPTY_INST_WORD_POS_X equ 14
 X3_EMPTY_INST_VAL_POS_X equ 0
 
-
 IMAGE_LINENUMBER	STRUC
 UNION
     SymbolTableIndex	dd ?
@@ -8031,7 +8017,6 @@ PIMAGE_LINENUMBER	typedef ptr IMAGE_LINENUMBER
 
 IMAGE_SIZEOF_LINENUMBER equ 6
 
-
 IMAGE_BASE_RELOCATION	STRUC
 VirtualAddress		dd ?
 SizeOfBlock		dd ?
@@ -8039,7 +8024,6 @@ IMAGE_BASE_RELOCATION	ENDS
 PIMAGE_BASE_RELOCATION	typedef ptr IMAGE_BASE_RELOCATION
 
 IMAGE_SIZEOF_BASE_RELOCATION	equ 8
-
 
 IMAGE_REL_BASED_ABSOLUTE	equ 0
 IMAGE_REL_BASED_HIGH		equ 1
@@ -8054,8 +8038,6 @@ IMAGE_REL_BASED_MIPS_JMPADDR16	equ 9
 IMAGE_REL_BASED_IA64_IMM64	equ 9
 IMAGE_REL_BASED_DIR64		equ 10
 IMAGE_REL_BASED_HIGH3ADJ	equ 11
-
-
 
 IMAGE_ARCHIVE_START_SIZE	equ 8
 IMAGE_ARCHIVE_START		equ <"!",3Ch,"arch",3Eh,0Ah>
@@ -8077,8 +8059,6 @@ PIMAGE_ARCHIVE_MEMBER_HEADER	typedef ptr IMAGE_ARCHIVE_MEMBER_HEADER
 
 IMAGE_SIZEOF_ARCHIVE_MEMBER_HDR equ 60
 
-
-
 IMAGE_EXPORT_DIRECTORY		STRUC
 Characteristics			dd ?
 TimeDateStamp			dd ?
@@ -8093,7 +8073,6 @@ AddressOfNames			dd ?
 AddressOfNameOrdinals		dd ?
 IMAGE_EXPORT_DIRECTORY		ENDS
 PIMAGE_EXPORT_DIRECTORY		typedef ptr IMAGE_EXPORT_DIRECTORY
-
 
 IMAGE_IMPORT_BY_NAME	STRUC
 Hint			dw ?
@@ -8230,8 +8209,6 @@ IA64_STUB_NOT_AVAILABLE		equ -1
 IA64_JMPE_MASK			equ 0x00ffffff
 IA64_JMPE_MARKER		equ 0x0035000f
 
-
-
 IMAGE_RESOURCE_DIRECTORY	STRUC
 Characteristics			dd ?
 TimeDateStamp			dd ?
@@ -8265,21 +8242,17 @@ ENDS
 IMAGE_RESOURCE_DIRECTORY_ENTRY	ENDS
 PIMAGE_RESOURCE_DIRECTORY_ENTRY typedef ptr IMAGE_RESOURCE_DIRECTORY_ENTRY
 
-
 IMAGE_RESOURCE_DIRECTORY_STRING STRUC
 _Length				dw ?
 NameString			db ?
 IMAGE_RESOURCE_DIRECTORY_STRING ENDS
 PIMAGE_RESOURCE_DIRECTORY_STRING typedef ptr IMAGE_RESOURCE_DIRECTORY_STRING
 
-
 IMAGE_RESOURCE_DIR_STRING_U	STRUC
 _Length				dw ?
 NameString			dw ?
 IMAGE_RESOURCE_DIR_STRING_U	ENDS
 PIMAGE_RESOURCE_DIR_STRING_U	typedef ptr IMAGE_RESOURCE_DIR_STRING_U
-
-
 
 IMAGE_RESOURCE_DATA_ENTRY	STRUC
 OffsetToData			dd ?
@@ -8288,7 +8261,6 @@ CodePage			dd ?
 Reserved			dd ?
 IMAGE_RESOURCE_DATA_ENTRY	ENDS
 PIMAGE_RESOURCE_DATA_ENTRY	typedef ptr IMAGE_RESOURCE_DATA_ENTRY
-
 
 IMAGE_LOAD_CONFIG_DIRECTORY	STRUC
 Characteristics			dd ?
@@ -8311,8 +8283,6 @@ EditList			PVOID ?
 Reserved			dd ?
 IMAGE_LOAD_CONFIG_DIRECTORY	ENDS
 PIMAGE_LOAD_CONFIG_DIRECTORY	typedef ptr IMAGE_LOAD_CONFIG_DIRECTORY
-
-
 
 IMAGE_IA64_RUNTIME_FUNCTION_ENTRY	STRUC
 BeginAddress				dd ?
@@ -8356,14 +8326,13 @@ r0					IMAGE_CE_RUNTIME_FUNCTION_ENTRY_R0 <>
 IMAGE_CE_RUNTIME_FUNCTION_ENTRY		ENDS
 PIMAGE_CE_RUNTIME_FUNCTION_ENTRY	typedef ptr IMAGE_CE_RUNTIME_FUNCTION_ENTRY
 
-if defined(_IA64_)
+ifdef _IA64_
 IMAGE_RUNTIME_FUNCTION_ENTRY	typedef IMAGE_IA64_RUNTIME_FUNCTION_ENTRY
 PIMAGE_RUNTIME_FUNCTION_ENTRY	typedef PIMAGE_IA64_RUNTIME_FUNCTION_ENTRY
 else
 IMAGE_RUNTIME_FUNCTION_ENTRY	typedef IMAGE_ALPHA_RUNTIME_FUNCTION_ENTRY
 PIMAGE_RUNTIME_FUNCTION_ENTRY	typedef PIMAGE_ALPHA_RUNTIME_FUNCTION_ENTRY
 endif
-
 
 IMAGE_DEBUG_DIRECTORY		STRUC
 Characteristics			dd ?
@@ -8426,7 +8395,6 @@ FPO_DATA	ENDS
 PFPO_DATA	typedef ptr FPO_DATA
 SIZEOF_RFPO_DATA	equ 16
 
-
 IMAGE_DEBUG_MISC_EXENAME	equ 1
 
 IMAGE_DEBUG_MISC	STRUC
@@ -8437,8 +8405,6 @@ Reserved		db 3 dup(?)
 Data			db ?
 IMAGE_DEBUG_MISC	ENDS
 PIMAGE_DEBUG_MISC	typedef ptr IMAGE_DEBUG_MISC
-
-
 
 IMAGE_FUNCTION_ENTRY	STRUC
 StartingAddress		dd ?
@@ -8720,7 +8686,6 @@ SLIST_HEADER32		typedef SLIST_HEADER
 PSLIST_HEADER32		typedef ptr SLIST_HEADER
 
 endif
-
 endif
 
 ;NTSYSAPI
@@ -9430,9 +9395,6 @@ DataOffset			dd ?
 EVENTLOGRECORD			ENDS
 PEVENTLOGRECORD			typedef ptr EVENTLOGRECORD
 
-if _MSC_VER GE 1200
-endif
-
 ifdef _MSC_EXTENSIONS
 EVENTSFORLOGFILE		STRUC
 ulSize				dd ?
@@ -9457,11 +9419,6 @@ DBG_TERMINATE_PROCESS		equ 0x40010004
 DBG_CONTROL_C			equ 0x40010005
 DBG_CONTROL_BREAK		equ 0x40010008
 DBG_EXCEPTION_NOT_HANDLED	equ 0x80010001
-
-if _MSC_VER GE 1200
-else
-endif
-
 
 KEY_QUERY_VALUE		equ 0x0001
 KEY_SET_VALUE		equ 0x0002
@@ -9959,8 +9916,6 @@ TransactionOutcomeUndetermined	equ 1
 TransactionOutcomeCommitted	equ 2
 TransactionOutcomeAborted	equ 3
 
-
-
 TRANSACTION_STATE	typedef sdword;enum _TRANSACTION_STATE {
 TransactionStateNormal		equ 1
 TransactionStateIndoubt		equ 2
@@ -10302,27 +10257,17 @@ if defined(_M_IX86) AND NOT defined(MIDL_PASS)
 PcTeb			equ 0x18
 
 if (_MSC_FULL_VER GE 13012035)
-
 NtCurrentTeb macro
 	exitm<__readfsdword(PcTeb)>
 	endm
 
 else
-
-if _MSC_VER GE 1200
-endif
-
 NtCurrentTeb macro
 	mov eax,fs:[PcTeb]
 	exitm<eax>
 	endm
 
-if _MSC_VER GE 1200
-else
 endif
-
-endif
-
 endif
 
 if (_WIN32_WINNT GT 0x0500) OR (_WIN32_FUSION GE 0x0100) ;OR ISOLATION_AWARE_ENABLED
@@ -10339,10 +10284,5 @@ ACTIVATION_CONTEXT_SECTION_APPLICATION_SETTINGS		equ 10
 ACTIVATION_CONTEXT_SECTION_COMPATIBILITY_INFO		equ 11
 endif
 
-if _MSC_VER GE 1200
-else
-endif
-
 .list
 endif	; _WINNT_
-

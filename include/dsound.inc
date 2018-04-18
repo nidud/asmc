@@ -429,7 +429,7 @@ GetDeviceID proto WINAPI \
 	     pGuidDest: LPGUID
 endif
 
-ifdef UNICODE
+ifdef _UNICODE
 LPDSENUMCALLBACK	equ <LPDSENUMCALLBACKW>
 DirectSoundEnumerate	equ <DirectSoundEnumerateW>
 DirectSoundCaptureEnumerate equ <DirectSoundCaptureEnumerateW>
@@ -439,184 +439,60 @@ DirectSoundEnumerate	equ <DirectSoundEnumerateA>
 DirectSoundCaptureEnumerate equ <DirectSoundCaptureEnumerateA>
 endif
 
-
-if NOT defined(__cplusplus) OR defined(CINTERFACE)
-ifndef IUnknown_AddRef
-IUnknown_AddRef macro p
-	exitm<p.AddRef()>
-	endm
-endif
-ifndef IUnknown_Release
-IUnknown_Release macro p
-	exitm<p.Release()>
-	endm
-endif
-endif
-
 ifndef __IReferenceClock_INTERFACE_DEFINED__
 __IReferenceClock_INTERFACE_DEFINED__ equ 1
 
 REFERENCE_TIME		typedef LONGLONG
 LPREFERENCE_TIME	typedef ptr REFERENCE_TIME
 
-DEFINE_GUID(IID_IReferenceClock, 0x56a86897, 0x0ad4, 0x11ce, 0xb0, 0x3a, 0x00, 0x20, 0xaf, 0x0b, 0xa7, 0x70);
+DEFINE_GUID(IID_IReferenceClock, 0x56a86897, 0x0ad4, 0x11ce, 0xb0, 0x3a, 0x00, 0x20, 0xaf, 0x0b, 0xa7, 0x70)
 
 .comdef IReferenceClock
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTime             proc :ptr
-    AdviseTime          proc :REFERENCE_TIME, :REFERENCE_TIME, :HANDLE, :LPDWORD
-    AdvisePeriodic      proc :REFERENCE_TIME, :REFERENCE_TIME, :HANDLE, :LPDWORD
-    Unadvise            proc :DWORD
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTime		proc :ptr
+    AdviseTime		proc :REFERENCE_TIME, :REFERENCE_TIME, :HANDLE, :LPDWORD
+    AdvisePeriodic	proc :REFERENCE_TIME, :REFERENCE_TIME, :HANDLE, :LPDWORD
+    Unadvise		proc :DWORD
     .ends
 
 endif
 
-ifndef IReferenceClock_QueryInterface
-
-IReferenceClock_QueryInterface macro p,a,b
-	exitm<IUnknown_QueryInterface(p,a,b)>
-	endm
-IReferenceClock_AddRef macro p
-	exitm<IUnknown_AddRef(p)>
-	endm
-IReferenceClock_Release macro p
-	exitm<IUnknown_Release(p)>
-	endm
-
-if NOT defined(__cplusplus) OR defined(CINTERFACE)
-IReferenceClock_GetTime macro p,a
-	exitm<p.GetTime(a)>
-	endm
-IReferenceClock_AdviseTime macro p,a,b,c,d
-	exitm<p.AdviseTime(a,b,c,d)>
-	endm
-IReferenceClock_AdvisePeriodic macro p,a,b,c,d
-	exitm<p.AdvisePeriodic(a,b,c,d)>
-	endm
-IReferenceClock_Unadvise macro p,a
-	exitm<p.Unadvise(a)>
-	endm
-endif
-
-endif
-
-
-DEFINE_GUID(IID_IDirectSound, 0x279AFA83, 0x4981, 0x11CE, 0xA5, 0x21, 0x00, 0x20, 0xAF, 0x0B, 0xE5, 0x60);
+DEFINE_GUID(IID_IDirectSound, 0x279AFA83, 0x4981, 0x11CE, 0xA5, 0x21, 0x00, 0x20, 0xAF, 0x0B, 0xE5, 0x60)
 
 .comdef IDirectSound
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    CreateSoundBuffer   proc :LPCDSBUFFERDESC, :ptr, :LPUNKNOWN
-    GetCaps             proc :LPDSCAPS
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    CreateSoundBuffer	proc :LPCDSBUFFERDESC, :ptr, :LPUNKNOWN
+    GetCaps		proc :LPDSCAPS
     DuplicateSoundBuffer proc :LPDIRECTSOUNDBUFFER, :ptr
     SetCooperativeLevel proc :HWND, :DWORD
-    Compact             proc
-    GetSpeakerConfig    proc :LPDWORD
-    SetSpeakerConfig    proc :DWORD
-    Initialize          proc :LPCGUID
+    Compact		proc
+    GetSpeakerConfig	proc :LPDWORD
+    SetSpeakerConfig	proc :DWORD
+    Initialize		proc :LPCGUID
     .ends
-
-IDirectSound_QueryInterface macro p,a,b
-	exitm<IUnknown_QueryInterface(p,a,b)>
-	endm
-IDirectSound_AddRef macro p
-	exitm<IUnknown_AddRef(p)>
-	endm
-IDirectSound_Release macro p
-	exitm<IUnknown_Release(p)>
-	endm
-
-if NOT defined(__cplusplus) OR defined(CINTERFACE)
-
-IDirectSound_CreateSoundBuffer macro p,a,b,c
-	exitm<p.CreateSoundBuffer(a,b,c)>
-	endm
-IDirectSound_GetCaps macro p,a
-	exitm<p.GetCaps(a)>
-	endm
-IDirectSound_DuplicateSoundBuffer macro p,a,b
-	exitm<p.DuplicateSoundBuffer(a,b)>
-	endm
-IDirectSound_SetCooperativeLevel macro p,a,b
-	exitm<p.SetCooperativeLevel(a,b)>
-	endm
-IDirectSound_Compact macro p
-	exitm<p.Compact()>
-	endm
-IDirectSound_GetSpeakerConfig macro p,a
-	exitm<p.GetSpeakerConfig(a)>
-	endm
-IDirectSound_SetSpeakerConfig macro p,b
-	exitm<p.SetSpeakerConfig(b)>
-	endm
-IDirectSound_Initialize macro p,a
-	exitm<p.Initialize(a)>
-	endm
-endif
 
 if DIRECTSOUND_VERSION GE 0x0800
 
-
-DEFINE_GUID(IID_IDirectSound8, 0xC50A7E93, 0xF395, 0x4834, 0x9E, 0xF6, 0x7F, 0xA9, 0x9D, 0xE5, 0x09, 0x66);
+DEFINE_GUID(IID_IDirectSound8, 0xC50A7E93, 0xF395, 0x4834, 0x9E, 0xF6, 0x7F, 0xA9, 0x9D, 0xE5, 0x09, 0x66)
 
 .comdef IDirectSound8
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    CreateSoundBuffer   proc :LPCDSBUFFERDESC, :ptr, :LPUNKNOWN
-    GetCaps             proc :LPDSCAPS
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    CreateSoundBuffer	proc :LPCDSBUFFERDESC, :ptr, :LPUNKNOWN
+    GetCaps		proc :LPDSCAPS
     DuplicateSoundBuffer proc :LPDIRECTSOUNDBUFFER, :ptr
     SetCooperativeLevel proc :HWND, :DWORD
-    Compact             proc
-    GetSpeakerConfig    proc :LPDWORD
-    SetSpeakerConfig    proc :DWORD
-    Initialize          proc :LPCGUID
+    Compact		proc
+    GetSpeakerConfig	proc :LPDWORD
+    SetSpeakerConfig	proc :DWORD
+    Initialize		proc :LPCGUID
     VerifyCertification proc :LPDWORD
     .ends
-
-
-IDirectSound8_QueryInterface macro p,a,b
-	exitm<IDirectSound_QueryInterface(p,a,b)>
-	endm
-IDirectSound8_AddRef macro p
-	exitm<IDirectSound_AddRef(p)>
-	endm
-IDirectSound8_Release macro p
-	exitm<IDirectSound_Release(p)>
-	endm
-IDirectSound8_CreateSoundBuffer macro p,a,b,c
-	exitm<IDirectSound_CreateSoundBuffer(p,a,b,c)>
-	endm
-IDirectSound8_GetCaps macro p,a
-	exitm<IDirectSound_GetCaps(p,a)>
-	endm
-IDirectSound8_DuplicateSoundBuffer macro p,a,b
-	exitm<IDirectSound_DuplicateSoundBuffer(p,a,b)>
-	endm
-IDirectSound8_SetCooperativeLevel macro p,a,b
-	exitm<IDirectSound_SetCooperativeLevel(p,a,b)>
-	endm
-IDirectSound8_Compact macro p
-	exitm<IDirectSound_Compact(p)>
-	endm
-IDirectSound8_GetSpeakerConfig macro p,a
-	exitm<IDirectSound_GetSpeakerConfig(p,a)>
-	endm
-IDirectSound8_SetSpeakerConfig macro p,a
-	exitm<IDirectSound_SetSpeakerConfig(p,a)>
-	endm
-IDirectSound8_Initialize macro p,a
-	exitm<IDirectSound_Initialize(p,a)>
-	endm
-
-if NOT defined(__cplusplus) OR defined(CINTERFACE)
-IDirectSound8_VerifyCertification macro p,a
-	exitm<p.VerifyCertification(a)>
-	endm
-endif
 
 endif
 
@@ -624,95 +500,28 @@ endif
 DEFINE_GUID(IID_IDirectSoundBuffer, 0x279AFA85, 0x4981, 0x11CE, 0xA5, 0x21, 0x00, 0x20, 0xAF, 0x0B, 0xE5, 0x60);
 
 .comdef IDirectSoundBuffer
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetCaps             proc :LPDSCAPS
-    GetCurrentPosition  proc :LPDWORD, :LPDWORD
-    GetFormat           proc :LPWAVEFORMATEX, :DWORD, :LPDWORD
-    GetVolume           proc :LPLONG
-    GetPan              proc :LPLONG
-    GetFrequency        proc :LPDWORD
-    GetStatus           proc :LPDWORD
-    Initialize          proc :LPDIRECTSOUND, :LPCDSBUFFERDESC
-    _Lock               proc :DWORD, :DWORD, :PVOID, :LPDWORD, :DWORD
-    Play                proc :DWORD, :DWORD, :DWORD
-    SetCurrentPosition  proc :DWORD
-    SetFormat           proc :LPCWAVEFORMATEX
-    SetVolume           proc :LONG
-    SetPan              proc :LONG
-    SetFrequency        proc :DWORD
-    Stop                proc
-    Unlock              proc :PVOID, :DWORD
-    Restore             proc
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetCaps		proc :LPDSCAPS
+    GetCurrentPosition	proc :LPDWORD, :LPDWORD
+    GetFormat		proc :LPWAVEFORMATEX, :DWORD, :LPDWORD
+    GetVolume		proc :LPLONG
+    GetPan		proc :LPLONG
+    GetFrequency	proc :LPDWORD
+    GetStatus		proc :LPDWORD
+    Initialize		proc :LPDIRECTSOUND, :LPCDSBUFFERDESC
+    _Lock		proc :DWORD, :DWORD, :PVOID, :LPDWORD, :DWORD
+    Play		proc :DWORD, :DWORD, :DWORD
+    SetCurrentPosition	proc :DWORD
+    SetFormat		proc :LPCWAVEFORMATEX
+    SetVolume		proc :LONG
+    SetPan		proc :LONG
+    SetFrequency	proc :DWORD
+    Stop		proc
+    Unlock		proc :PVOID, :DWORD
+    Restore		proc
     .ends
-
-IDirectSoundBuffer_QueryInterface macro p,a,b
-	exitm<IUnknown_QueryInterface(p,a,b)>
-	endm
-IDirectSoundBuffer_AddRef macro p
-	exitm<IUnknown_AddRef(p)>
-	endm
-IDirectSoundBuffer_Release macro p
-	exitm<IUnknown_Release(p)>
-	endm
-
-if NOT defined(__cplusplus) OR defined(CINTERFACE)
-IDirectSoundBuffer_GetCaps macro p,a
-	exitm<p.GetCaps(a)>
-	endm
-IDirectSoundBuffer_GetCurrentPosition macro p,a,b
-	exitm<p.GetCurrentPosition(a,b)>
-	endm
-IDirectSoundBuffer_GetFormat macro p,a,b,c
-	exitm<p.GetFormat(a,b,c)>
-	endm
-IDirectSoundBuffer_GetVolume macro p,a
-	exitm<p.GetVolume(a)>
-	endm
-IDirectSoundBuffer_GetPan macro p,a
-	exitm<p.GetPan(a)>
-	endm
-IDirectSoundBuffer_GetFrequency macro p,a
-	exitm<p.GetFrequency(a)>
-	endm
-IDirectSoundBuffer_GetStatus macro p,a
-	exitm<p.GetStatus(a)>
-	endm
-IDirectSoundBuffer_Initialize macro p,a,b
-	exitm<p.Initialize(a,b)>
-	endm
-IDirectSoundBuffer_Lock macro p,a,b,c,d,e,f,g
-	exitm<p.Lock(a,b,c,d,e,f,g)>
-	endm
-IDirectSoundBuffer_Play macro p,a,b,c
-	exitm<p.Play(a,b,c)>
-	endm
-IDirectSoundBuffer_SetCurrentPosition macro p,a
-	exitm<p.SetCurrentPosition(a)>
-	endm
-IDirectSoundBuffer_SetFormat macro p,a
-	exitm<p.SetFormat(a)>
-	endm
-IDirectSoundBuffer_SetVolume macro p,a
-	exitm<p.SetVolume(a)>
-	endm
-IDirectSoundBuffer_SetPan macro p,a
-	exitm<p.SetPan(a)>
-	endm
-IDirectSoundBuffer_SetFrequency macro p,a
-	exitm<p.SetFrequency(a)>
-	endm
-IDirectSoundBuffer_Stop macro p
-	exitm<p.Stop()>
-	endm
-IDirectSoundBuffer_Unlock macro p,a,b,c,d
-	exitm<p.Unlock(a,b,c,d)>
-	endm
-IDirectSoundBuffer_Restore macro p
-	exitm<p.Restore()>
-	endm
-endif
 
 if DIRECTSOUND_VERSION GE 0x0800
 
@@ -720,488 +529,148 @@ if DIRECTSOUND_VERSION GE 0x0800
 DEFINE_GUID(IID_IDirectSoundBuffer8, 0x6825a449, 0x7524, 0x4d82, 0x92, 0x0f, 0x50, 0xe3, 0x6a, 0xb3, 0xab, 0x1e);
 
 .comdef IDirectSoundBuffer8
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetCaps             proc :LPDSCAPS
-    GetCurrentPosition  proc :LPDWORD, :LPDWORD
-    GetFormat           proc :LPWAVEFORMATEX, :DWORD, :LPDWORD
-    GetVolume           proc :LPLONG
-    GetPan              proc :LPLONG
-    GetFrequency        proc :LPDWORD
-    GetStatus           proc :LPDWORD
-    Initialize          proc :LPDIRECTSOUND, :LPCDSBUFFERDESC
-    _Lock               proc :DWORD, :DWORD, :PVOID, :LPDWORD, :DWORD
-    Play                proc :DWORD, :DWORD, :DWORD
-    SetCurrentPosition  proc :DWORD
-    SetFormat           proc :LPCWAVEFORMATEX
-    SetVolume           proc :LONG
-    SetPan              proc :LONG
-    SetFrequency        proc :DWORD
-    Stop                proc
-    Unlock              proc :PVOID, :DWORD
-    Restore             proc
-    SetFX               proc :DWORD, :LPDSEFFECTDESC, :LPDWORD
-    AcquireResources    proc :DWORD, :DWORD, :LPDWORD
-    GetObjectInPath     proc :REFGUID, :DWORD, :REFGUID, :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetCaps		proc :LPDSCAPS
+    GetCurrentPosition	proc :LPDWORD, :LPDWORD
+    GetFormat		proc :LPWAVEFORMATEX, :DWORD, :LPDWORD
+    GetVolume		proc :LPLONG
+    GetPan		proc :LPLONG
+    GetFrequency	proc :LPDWORD
+    GetStatus		proc :LPDWORD
+    Initialize		proc :LPDIRECTSOUND, :LPCDSBUFFERDESC
+    _Lock		proc :DWORD, :DWORD, :PVOID, :LPDWORD, :DWORD
+    Play		proc :DWORD, :DWORD, :DWORD
+    SetCurrentPosition	proc :DWORD
+    SetFormat		proc :LPCWAVEFORMATEX
+    SetVolume		proc :LONG
+    SetPan		proc :LONG
+    SetFrequency	proc :DWORD
+    Stop		proc
+    Unlock		proc :PVOID, :DWORD
+    Restore		proc
+    SetFX		proc :DWORD, :LPDSEFFECTDESC, :LPDWORD
+    AcquireResources	proc :DWORD, :DWORD, :LPDWORD
+    GetObjectInPath	proc :REFGUID, :DWORD, :REFGUID, :ptr
     .ends
 
-DEFINE_GUID(GUID_All_Objects, 0xaa114de5, 0xc262, 0x4169, 0xa1, 0xc8, 0x23, 0xd6, 0x98, 0xcc, 0x73, 0xb5);
-
-IDirectSoundBuffer8_QueryInterface macro p,a,b
-	exitm<IUnknown_QueryInterface(p,a,b)>
-	endm
-IDirectSoundBuffer8_AddRef macro p
-	exitm<IUnknown_AddRef(p)>
-	endm
-IDirectSoundBuffer8_Release macro p
-	exitm<IUnknown_Release(p)>
-	endm
-
-IDirectSoundBuffer8_GetCaps macro p,a
-	exitm<IDirectSoundBuffer_GetCaps(p,a)>
-	endm
-IDirectSoundBuffer8_GetCurrentPosition macro p,a,b
-	exitm<IDirectSoundBuffer_GetCurrentPosition(p,a,b)>
-	endm
-IDirectSoundBuffer8_GetFormat macro p,a,b,c
-	exitm<IDirectSoundBuffer_GetFormat(p,a,b,c)>
-	endm
-IDirectSoundBuffer8_GetVolume macro p,a
-	exitm<IDirectSoundBuffer_GetVolume(p,a)>
-	endm
-IDirectSoundBuffer8_GetPan macro p,a
-	exitm<IDirectSoundBuffer_GetPan(p,a)>
-	endm
-IDirectSoundBuffer8_GetFrequency macro p,a
-	exitm<IDirectSoundBuffer_GetFrequency(p,a)>
-	endm
-IDirectSoundBuffer8_GetStatus macro p,a
-	exitm<IDirectSoundBuffer_GetStatus(p,a)>
-	endm
-IDirectSoundBuffer8_Initialize macro p,a,b
-	exitm<IDirectSoundBuffer_Initialize(p,a,b)>
-	endm
-IDirectSoundBuffer8_Lock macro p,a,b,c,d,e,f,g
-	exitm<IDirectSoundBuffer_Lock(p,a,b,c,d,e,f,g)>
-	endm
-IDirectSoundBuffer8_Play macro p,a,b,c
-	exitm<IDirectSoundBuffer_Play(p,a,b,c)>
-	endm
-IDirectSoundBuffer8_SetCurrentPosition macro p,a
-	exitm<IDirectSoundBuffer_SetCurrentPosition(p,a)>
-	endm
-IDirectSoundBuffer8_SetFormat macro p,a
-	exitm<IDirectSoundBuffer_SetFormat(p,a)>
-	endm
-IDirectSoundBuffer8_SetVolume macro p,a
-	exitm<IDirectSoundBuffer_SetVolume(p,a)>
-	endm
-IDirectSoundBuffer8_SetPan macro p,a
-	exitm<IDirectSoundBuffer_SetPan(p,a)>
-	endm
-IDirectSoundBuffer8_SetFrequency macro p,a
-	exitm<IDirectSoundBuffer_SetFrequency(p,a)>
-	endm
-IDirectSoundBuffer8_Stop macro p
-	exitm<IDirectSoundBuffer_Stop(p)>
-	endm
-IDirectSoundBuffer8_Unlock macro p,a,b,c,d
-	exitm<IDirectSoundBuffer_Unlock(p,a,b,c,d)>
-	endm
-IDirectSoundBuffer8_Restore macro p
-	exitm<IDirectSoundBuffer_Restore(p)>
-	endm
-
-if NOT defined(__cplusplus) OR defined(CINTERFACE)
-IDirectSoundBuffer8_SetFX macro p,a,b,c
-	exitm<p.SetFX(a,b,c)>
-	endm
-IDirectSoundBuffer8_AcquireResources macro p,a,b,c
-	exitm<p.AcquireResources(a,b,c)>
-	endm
-IDirectSoundBuffer8_GetObjectInPath macro p,a,b,c,d
-	exitm<p.GetObjectInPath(a,b,c,d)>
-	endm
-endif
+DEFINE_GUID(GUID_All_Objects, 0xaa114de5, 0xc262, 0x4169, 0xa1, 0xc8, 0x23, 0xd6, 0x98, 0xcc, 0x73, 0xb5)
 
 endif
 
 
-DEFINE_GUID(IID_IDirectSound3DListener, 0x279AFA84, 0x4981, 0x11CE, 0xA5, 0x21, 0x00, 0x20, 0xAF, 0x0B, 0xE5, 0x60);
+DEFINE_GUID(IID_IDirectSound3DListener, 0x279AFA84, 0x4981, 0x11CE, 0xA5, 0x21, 0x00, 0x20, 0xAF, 0x0B, 0xE5, 0x60)
 
 .comdef IDirectSound3DListener
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetAllParameters    proc :LPDS3DLISTENER
-    GetDistanceFactor   proc :ptr D3DVALUE
-    GetDopplerFactor    proc :ptr D3DVALUE
-    GetOrientation      proc :ptr D3DVECTOR, :ptr D3DVECTOR
-    GetPosition         proc :ptr D3DVECTOR
-    GetRolloffFactor    proc :ptr D3DVALUE
-    GetVelocity         proc :ptr D3DVECTOR
-    SetAllParameters    proc :LPCDS3DLISTENER, :DWORD
-    SetDistanceFactor   proc :D3DVALUE, :DWORD
-    SetDopplerFactor    proc :D3DVALUE, :DWORD
-    SetOrientation      proc :D3DVALUE, :D3DVALUE, :D3DVALUE, :D3DVALUE, :D3DVALUE, :D3DVALUE, :DWORD
-    SetPosition         proc :D3DVALUE, :D3DVALUE, :D3DVALUE, :DWORD
-    SetRolloffFactor    proc :D3DVALUE, :DWORD
-    SetVelocity         proc :D3DVALUE, :D3DVALUE, :D3DVALUE, :DWORD
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetAllParameters	proc :LPDS3DLISTENER
+    GetDistanceFactor	proc :ptr D3DVALUE
+    GetDopplerFactor	proc :ptr D3DVALUE
+    GetOrientation	proc :ptr D3DVECTOR, :ptr D3DVECTOR
+    GetPosition		proc :ptr D3DVECTOR
+    GetRolloffFactor	proc :ptr D3DVALUE
+    GetVelocity		proc :ptr D3DVECTOR
+    SetAllParameters	proc :LPCDS3DLISTENER, :DWORD
+    SetDistanceFactor	proc :D3DVALUE, :DWORD
+    SetDopplerFactor	proc :D3DVALUE, :DWORD
+    SetOrientation	proc :D3DVALUE, :D3DVALUE, :D3DVALUE, :D3DVALUE, :D3DVALUE, :D3DVALUE, :DWORD
+    SetPosition		proc :D3DVALUE, :D3DVALUE, :D3DVALUE, :DWORD
+    SetRolloffFactor	proc :D3DVALUE, :DWORD
+    SetVelocity		proc :D3DVALUE, :D3DVALUE, :D3DVALUE, :DWORD
     CommitDeferredSettings proc
     .ends
 
-IDirectSound3DListener_QueryInterface macro p,a,b
-	exitm<IUnknown_QueryInterface(p,a,b)>
-	endm
-IDirectSound3DListener_AddRef macro p
-	exitm<IUnknown_AddRef(p)>
-	endm
-IDirectSound3DListener_Release macro p
-	exitm<IUnknown_Release(p)>
-	endm
 
-if NOT defined(__cplusplus) OR defined(CINTERFACE)
-IDirectSound3DListener_GetAllParameters macro p,a
-	exitm<p.GetAllParameters(a)>
-	endm
-IDirectSound3DListener_GetDistanceFactor macro p,a
-	exitm<p.GetDistanceFactor(a)>
-	endm
-IDirectSound3DListener_GetDopplerFactor macro p,a
-	exitm<p.GetDopplerFactor(a)>
-	endm
-IDirectSound3DListener_GetOrientation macro p,a,b
-	exitm<p.GetOrientation(a,b)>
-	endm
-IDirectSound3DListener_GetPosition macro p,a
-	exitm<p.GetPosition(a)>
-	endm
-IDirectSound3DListener_GetRolloffFactor macro p,a
-	exitm<p.GetRolloffFactor(a)>
-	endm
-IDirectSound3DListener_GetVelocity macro p,a
-	exitm<p.GetVelocity(a)>
-	endm
-IDirectSound3DListener_SetAllParameters macro p,a,b
-	exitm<p.SetAllParameters(a,b)>
-	endm
-IDirectSound3DListener_SetDistanceFactor macro p,a,b
-	exitm<p.SetDistanceFactor(a,b)>
-	endm
-IDirectSound3DListener_SetDopplerFactor macro p,a,b
-	exitm<p.SetDopplerFactor(a,b)>
-	endm
-IDirectSound3DListener_SetOrientation macro p,a,b,c,d,e,f,g
-	exitm<p.SetOrientation(a,b,c,d,e,f,g)>
-	endm
-IDirectSound3DListener_SetPosition macro p,a,b,c,d
-	exitm<p.SetPosition(a,b,c,d)>
-	endm
-IDirectSound3DListener_SetRolloffFactor macro p,a,b
-	exitm<p.SetRolloffFactor(a,b)>
-	endm
-IDirectSound3DListener_SetVelocity macro p,a,b,c,d
-	exitm<p.SetVelocity(a,b,c,d)>
-	endm
-IDirectSound3DListener_CommitDeferredSettings macro p
-	exitm<p.CommitDeferredSettings()>
-	endm
-endif
-
-
-DEFINE_GUID(IID_IDirectSound3DBuffer, 0x279AFA86, 0x4981, 0x11CE, 0xA5, 0x21, 0x00, 0x20, 0xAF, 0x0B, 0xE5, 0x60);
+DEFINE_GUID(IID_IDirectSound3DBuffer, 0x279AFA86, 0x4981, 0x11CE, 0xA5, 0x21, 0x00, 0x20, 0xAF, 0x0B, 0xE5, 0x60)
 
 .comdef IDirectSound3DBuffer
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetAllParameters    proc :LPDS3DLISTENER
-    GetConeAngles       proc :LPDWORD, :LPDWORD
-    GetConeOrientation  proc :ptr D3DVECTOR
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetAllParameters	proc :LPDS3DLISTENER
+    GetConeAngles	proc :LPDWORD, :LPDWORD
+    GetConeOrientation	proc :ptr D3DVECTOR
     GetConeOutsideVolume proc :LPLONG
-    GetMaxDistance      proc :ptr D3DVALUE
-    GetMinDistance      proc :ptr D3DVALUE
-    GetMode             proc :LPDWORD
-    GetPosition         proc :ptr D3DVECTOR
-    GetVelocity         proc :ptr D3DVECTOR
-    SetAllParameters    proc :LPCDS3DBUFFER, :DWORD
-    SetConeAngles       proc :DWORD, :DWORD, :DWORD
-    SetConeOrientation  proc :D3DVALUE, :D3DVALUE, :D3DVALUE, :DWORD
+    GetMaxDistance	proc :ptr D3DVALUE
+    GetMinDistance	proc :ptr D3DVALUE
+    GetMode		proc :LPDWORD
+    GetPosition		proc :ptr D3DVECTOR
+    GetVelocity		proc :ptr D3DVECTOR
+    SetAllParameters	proc :LPCDS3DBUFFER, :DWORD
+    SetConeAngles	proc :DWORD, :DWORD, :DWORD
+    SetConeOrientation	proc :D3DVALUE, :D3DVALUE, :D3DVALUE, :DWORD
     SetConeOutsideVolume proc :LONG, :DWORD
-    SetMaxDistance      proc :D3DVALUE, :DWORD
-    SetMinDistance      proc :D3DVALUE, :DWORD
-    SetMode             proc :DWORD, :DWORD
-    SetPosition         proc :D3DVALUE, :D3DVALUE, :D3DVALUE, :DWORD
-    SetVelocity         proc :D3DVALUE, :D3DVALUE, :D3DVALUE, :DWORD
+    SetMaxDistance	proc :D3DVALUE, :DWORD
+    SetMinDistance	proc :D3DVALUE, :DWORD
+    SetMode		proc :DWORD, :DWORD
+    SetPosition		proc :D3DVALUE, :D3DVALUE, :D3DVALUE, :DWORD
+    SetVelocity		proc :D3DVALUE, :D3DVALUE, :D3DVALUE, :DWORD
     .ends
 
-IDirectSound3DBuffer_QueryInterface macro p,a,b
-	exitm<IUnknown_QueryInterface(p,a,b)>
-	endm
-IDirectSound3DBuffer_AddRef macro p
-	exitm<IUnknown_AddRef(p)>
-	endm
-IDirectSound3DBuffer_Release macro p
-	exitm<IUnknown_Release(p)>
-	endm
 
-if NOT defined(__cplusplus) OR defined(CINTERFACE)
-IDirectSound3DBuffer_GetAllParameters macro p,a
-	exitm<p.GetAllParameters(a)>
-	endm
-IDirectSound3DBuffer_GetConeAngles macro p,a,b
-	exitm<p.GetConeAngles(a,b)>
-	endm
-IDirectSound3DBuffer_GetConeOrientation macro p,a
-	exitm<p.GetConeOrientation(a)>
-	endm
-IDirectSound3DBuffer_GetConeOutsideVolume macro p,a
-	exitm<p.GetConeOutsideVolume(a)>
-	endm
-IDirectSound3DBuffer_GetPosition macro p,a
-	exitm<p.GetPosition(a)>
-	endm
-IDirectSound3DBuffer_GetMinDistance macro p,a
-	exitm<p.GetMinDistance(a)>
-	endm
-IDirectSound3DBuffer_GetMaxDistance macro p,a
-	exitm<p.GetMaxDistance(a)>
-	endm
-IDirectSound3DBuffer_GetMode macro p,a
-	exitm<p.GetMode(a)>
-	endm
-IDirectSound3DBuffer_GetVelocity macro p,a
-	exitm<p.GetVelocity(a)>
-	endm
-IDirectSound3DBuffer_SetAllParameters macro p,a,b
-	exitm<p.SetAllParameters(a,b)>
-	endm
-IDirectSound3DBuffer_SetConeAngles macro p,a,b,c
-	exitm<p.SetConeAngles(a,b,c)>
-	endm
-IDirectSound3DBuffer_SetConeOrientation macro p,a,b,c,d
-	exitm<p.SetConeOrientation(a,b,c,d)>
-	endm
-IDirectSound3DBuffer_SetConeOutsideVolume macro p,a,b
-	exitm<p.SetConeOutsideVolume(a,b)>
-	endm
-IDirectSound3DBuffer_SetPosition macro p,a,b,c,d
-	exitm<p.SetPosition(a,b,c,d)>
-	endm
-IDirectSound3DBuffer_SetMinDistance macro p,a,b
-	exitm<p.SetMinDistance(a,b)>
-	endm
-IDirectSound3DBuffer_SetMaxDistance macro p,a,b
-	exitm<p.SetMaxDistance(a,b)>
-	endm
-IDirectSound3DBuffer_SetMode macro p,a,b
-	exitm<p.SetMode(a,b)>
-	endm
-IDirectSound3DBuffer_SetVelocity macro p,a,b,c,d
-	exitm<p.SetVelocity(a,b,c,d)>
-	endm
-endif
-
-
-DEFINE_GUID(IID_IDirectSoundCapture, 0xb0210781, 0x89cd, 0x11d0, 0xaf, 0x8, 0x0, 0xa0, 0xc9, 0x25, 0xcd, 0x16);
+DEFINE_GUID(IID_IDirectSoundCapture, 0xb0210781, 0x89cd, 0x11d0, 0xaf, 0x8, 0x0, 0xa0, 0xc9, 0x25, 0xcd, 0x16)
 
 .comdef IDirectSoundCapture
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
     CreateCaptureBuffer proc :LPCDSCBUFFERDESC, :ptr, :LPUNKNOWN
-    GetCaps             proc :LPDSCCAPS
-    Initialize          proc :LPCGUID
+    GetCaps		proc :LPDSCCAPS
+    Initialize		proc :LPCGUID
     .ends
 
-IDirectSoundCapture_QueryInterface macro p,a,b
-	exitm<IUnknown_QueryInterface(p,a,b)>
-	endm
-IDirectSoundCapture_AddRef macro p
-	exitm<IUnknown_AddRef(p)>
-	endm
-IDirectSoundCapture_Release macro p
-	exitm<IUnknown_Release(p)>
-	endm
 
-if NOT defined(__cplusplus) OR defined(CINTERFACE)
-IDirectSoundCapture_CreateCaptureBuffer macro p,a,b,c
-	exitm<(p)- GT lpVtbl- GT CreateCaptureBuffer(p,a,b,c)>
-	endm
-IDirectSoundCapture_GetCaps macro p,a
-	exitm<(p)- GT lpVtbl- GT GetCaps(p,a)>
-	endm
-IDirectSoundCapture_Initialize macro p,a
-	exitm<(p)- GT lpVtbl- GT Initialize(p,a)>
-	endm
-else
-IDirectSoundCapture_CreateCaptureBuffer macro p,a,b,c
-	exitm<(p)- GT CreateCaptureBuffer(a,b,c)>
-	endm
-IDirectSoundCapture_GetCaps macro p,a
-	exitm<(p)- GT GetCaps(a)>
-	endm
-IDirectSoundCapture_Initialize macro p,a
-	exitm<(p)- GT Initialize(a)>
-	endm
-endif
-
-
-DEFINE_GUID(IID_IDirectSoundCaptureBuffer, 0xb0210782, 0x89cd, 0x11d0, 0xaf, 0x8, 0x0, 0xa0, 0xc9, 0x25, 0xcd, 0x16);
+DEFINE_GUID(IID_IDirectSoundCaptureBuffer, 0xb0210782, 0x89cd, 0x11d0, 0xaf, 0x8, 0x0, 0xa0, 0xc9, 0x25, 0xcd, 0x16)
 
 .comdef IDirectSoundCaptureBuffer
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetCaps             proc :LPDSCCAPS
-    GetCurrentPosition  proc :LPDWORD, :LPDWORD
-    GetFormat           proc :LPWAVEFORMATEX, :DWORD, :LPDWORD
-    GetStatus           proc :LPDWORD
-    Initialize          proc :LPDIRECTSOUNDCAPTURE, :LPCDSCBUFFERDESC
-    _Lock               proc :DWORD, :DWORD, :ptr PVOID, :LPDWORD, :DWORD
-    Start               proc :DWORD
-    Stop                proc
-    Unlock              proc :LPVOID, :DWORD, :LPVOID, :DWORD
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetCaps		proc :LPDSCCAPS
+    GetCurrentPosition	proc :LPDWORD, :LPDWORD
+    GetFormat		proc :LPWAVEFORMATEX, :DWORD, :LPDWORD
+    GetStatus		proc :LPDWORD
+    Initialize		proc :LPDIRECTSOUNDCAPTURE, :LPCDSCBUFFERDESC
+    _Lock		proc :DWORD, :DWORD, :ptr PVOID, :LPDWORD, :DWORD
+    Start		proc :DWORD
+    Stop		proc
+    Unlock		proc :LPVOID, :DWORD, :LPVOID, :DWORD
     .ends
-
-IDirectSoundCaptureBuffer_QueryInterface macro p,a,b
-	exitm<IUnknown_QueryInterface(p,a,b)>
-	endm
-IDirectSoundCaptureBuffer_AddRef macro p
-	exitm<IUnknown_AddRef(p)>
-	endm
-IDirectSoundCaptureBuffer_Release macro p
-	exitm<IUnknown_Release(p)>
-	endm
-
-if NOT defined(__cplusplus) OR defined(CINTERFACE)
-IDirectSoundCaptureBuffer_GetCaps macro p,a
-	exitm<(p)- GT GetCaps(a)>
-	endm
-IDirectSoundCaptureBuffer_GetCurrentPosition macro p,a,b
-	exitm<(p)- GT GetCurrentPosition(a,b)>
-	endm
-IDirectSoundCaptureBuffer_GetFormat macro p,a,b,c
-	exitm<(p)- GT GetFormat(a,b,c)>
-	endm
-IDirectSoundCaptureBuffer_GetStatus macro p,a
-	exitm<(p)- GT GetStatus(a)>
-	endm
-IDirectSoundCaptureBuffer_Initialize macro p,a,b
-	exitm<(p)- GT Initialize(a,b)>
-	endm
-IDirectSoundCaptureBuffer_Lock macro p,a,b,c,d,e,f,g
-	exitm<(p)- GT Lock(a,b,c,d,e,f,g)>
-	endm
-IDirectSoundCaptureBuffer_Start macro p,a
-	exitm<(p)- GT Start(a)>
-	endm
-IDirectSoundCaptureBuffer_Stop macro p
-	exitm<(p)- GT Stop()>
-	endm
-IDirectSoundCaptureBuffer_Unlock macro p,a,b,c,d
-	exitm<(p)- GT Unlock(a,b,c,d)>
-	endm
-endif
 
 if DIRECTSOUND_VERSION GE 0x0800
 
-
-DEFINE_GUID(IID_IDirectSoundCaptureBuffer8, 0x990df4, 0xdbb, 0x4872, 0x83, 0x3e, 0x6d, 0x30, 0x3e, 0x80, 0xae, 0xb6);
+DEFINE_GUID(IID_IDirectSoundCaptureBuffer8, 0x990df4, 0xdbb, 0x4872, 0x83, 0x3e, 0x6d, 0x30, 0x3e, 0x80, 0xae, 0xb6)
 
 .comdef IDirectSoundCaptureBuffer8
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetCaps             proc :LPDSCBCAPS
-    GetCurrentPosition  proc :LPDWORD, :LPDWORD
-    GetFormat           proc
-    GetStatus           proc :LPDWORD
-    Initialize          proc :LPDIRECTSOUNDCAPTURE, :LPCDSCBUFFERDESC
-    _Lock               proc :DWORD, :DWORD, :ptr, :LPDWORD, :DWORD
-    Start               proc :DWORD
-    Stop                proc
-    Unlock              proc :LPVOID, :DWORD
-    GetObjectInPath     proc :REFGUID, :DWORD, :REFGUID, :ptr
-    GetFXStatus         proc :DWORD, :LPDWORD
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetCaps		proc :LPDSCBCAPS
+    GetCurrentPosition	proc :LPDWORD, :LPDWORD
+    GetFormat		proc
+    GetStatus		proc :LPDWORD
+    Initialize		proc :LPDIRECTSOUNDCAPTURE, :LPCDSCBUFFERDESC
+    _Lock		proc :DWORD, :DWORD, :ptr, :LPDWORD, :DWORD
+    Start		proc :DWORD
+    Stop		proc
+    Unlock		proc :LPVOID, :DWORD
+    GetObjectInPath	proc :REFGUID, :DWORD, :REFGUID, :ptr
+    GetFXStatus		proc :DWORD, :LPDWORD
     .ends
 
-IDirectSoundCaptureBuffer8_QueryInterface macro p,a,b
-	exitm<IUnknown_QueryInterface(p,a,b)>
-	endm
-IDirectSoundCaptureBuffer8_AddRef macro p
-	exitm<IUnknown_AddRef(p)>
-	endm
-IDirectSoundCaptureBuffer8_Release macro p
-	exitm<IUnknown_Release(p)>
-	endm
-
-IDirectSoundCaptureBuffer8_GetCaps macro p,a
-	exitm<IDirectSoundCaptureBuffer_GetCaps(p,a)>
-	endm
-IDirectSoundCaptureBuffer8_GetCurrentPosition macro p,a,b
-	exitm<IDirectSoundCaptureBuffer_GetCurrentPosition(p,a,b)>
-	endm
-IDirectSoundCaptureBuffer8_GetFormat macro p,a,b,c
-	exitm<IDirectSoundCaptureBuffer_GetFormat(p,a,b,c)>
-	endm
-IDirectSoundCaptureBuffer8_GetStatus macro p,a
-	exitm<IDirectSoundCaptureBuffer_GetStatus(p,a)>
-	endm
-IDirectSoundCaptureBuffer8_Initialize macro p,a,b
-	exitm<IDirectSoundCaptureBuffer_Initialize(p,a,b)>
-	endm
-IDirectSoundCaptureBuffer8_Lock macro p,a,b,c,d,e,f,g
-	exitm<IDirectSoundCaptureBuffer_Lock(p,a,b,c,d,e,f,g)>
-	endm
-IDirectSoundCaptureBuffer8_Start macro p,a
-	exitm<IDirectSoundCaptureBuffer_Start(p,a)>
-	endm
-IDirectSoundCaptureBuffer8_Stop macro p
-	exitm<IDirectSoundCaptureBuffer_Stop(p))>
-	endm
-IDirectSoundCaptureBuffer8_Unlock macro p,a,b,c,d
-	exitm<IDirectSoundCaptureBuffer_Unlock(p,a,b,c,d)>
-	endm
-
-if NOT defined(__cplusplus) OR defined(CINTERFACE)
-IDirectSoundCaptureBuffer8_GetObjectInPath macro p,a,b,c,d
-	exitm<p.GetObjectInPath(a,b,c,d)>
-	endm
-IDirectSoundCaptureBuffer8_GetFXStatus macro p,a,b
-	exitm<p.GetFXStatus(a,b)>
-	endm
 endif
-
-endif
-
 
 DEFINE_GUID(IID_IDirectSoundNotify, 0xb0210783, 0x89cd, 0x11d0, 0xaf, 0x8, 0x0, 0xa0, 0xc9, 0x25, 0xcd, 0x16);
 
 .comdef IDirectSoundNotify
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
     SetNotificationPositions proc :DWORD, :LPCDSBPOSITIONNOTIFY
     .ends
-
-IDirectSoundNotify_QueryInterface macro p,a,b
-	exitm<IUnknown_QueryInterface(p,a,b)>
-	endm
-IDirectSoundNotify_AddRef macro p
-	exitm<IUnknown_AddRef(p)>
-	endm
-IDirectSoundNotify_Release macro p
-	exitm<IUnknown_Release(p)>
-	endm
-
-if NOT defined(__cplusplus) OR defined(CINTERFACE)
-IDirectSoundNotify_SetNotificationPositions macro p,a,b
-	exitm<p.SetNotificationPositions(a,b)>
-	endm
-endif
-
 
 ifndef _IKsPropertySet_
 _IKsPropertySet_ equ 1
@@ -1214,42 +683,19 @@ KSPROPERTY_SUPPORT_SET	equ 0x00000002
 DEFINE_GUID(IID_IKsPropertySet, 0x31efac30, 0x515c, 0x11d0, 0xa9, 0xaa, 0x00, 0xaa, 0x00, 0x61, 0xbe, 0x93);
 
 .comdef IKsPropertySet
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    Get                 proc :REFGUID, :ULONG, :LPVOID, :ULONG, :PULONG
-    Set                 proc :REFGUID, :ULONG, :PVOID, :ULONG
-    QuerySupport        proc :REFGUID, :ULONG, :PULONG
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Get			proc :REFGUID, :ULONG, :LPVOID, :ULONG, :PULONG
+    Set			proc :REFGUID, :ULONG, :PVOID, :ULONG
+    QuerySupport	proc :REFGUID, :ULONG, :PULONG
     .ends
-
-IKsPropertySet_QueryInterface macro p,a,b
-	exitm<IUnknown_QueryInterface(p,a,b)>
-	endm
-IKsPropertySet_AddRef macro p
-	exitm<IUnknown_AddRef(p)>
-	endm
-IKsPropertySet_Release macro p
-	exitm<IUnknown_Release(p)>
-	endm
-
-if NOT defined(__cplusplus) OR defined(CINTERFACE)
-IKsPropertySet_Get macro p,a,b,c,d,e,f,g
-	exitm<p.Get(a,b,c,d,e,f,g)>
-	endm
-IKsPropertySet_Set macro p,a,b,c,d,e,f
-	exitm<p.Set(a,b,c,d,e,f)>
-	endm
-IKsPropertySet_QuerySupport macro p,a,b,c
-	exitm<p.QuerySupport(a,b,c)>
-	endm
-endif
 
 endif
 
 if DIRECTSOUND_VERSION GE 0x0800
 
-
-DEFINE_GUID(IID_IDirectSoundFXGargle, 0xd616f352, 0xd622, 0x11ce, 0xaa, 0xc5, 0x00, 0x20, 0xaf, 0x0b, 0x99, 0xa3);
+DEFINE_GUID(IID_IDirectSoundFXGargle, 0xd616f352, 0xd622, 0x11ce, 0xaa, 0xc5, 0x00, 0x20, 0xaf, 0x0b, 0x99, 0xa3)
 
 DSFXGargle		STRUC
 dwRateHz		dd ?
@@ -1266,32 +712,12 @@ DSFXGARGLE_RATEHZ_MIN	equ 1
 DSFXGARGLE_RATEHZ_MAX	equ 1000
 
 .comdef IDirectSoundFXGargle
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    SetAllParameters    proc :LPCDSFXGargle
-    GetAllParameters    proc :LPDSFXGargle
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetAllParameters	proc :LPCDSFXGargle
+    GetAllParameters	proc :LPDSFXGargle
     .ends
-
-IDirectSoundFXGargle_QueryInterface macro p,a,b
-	exitm<IUnknown_QueryInterface(p,a,b)>
-	endm
-IDirectSoundFXGargle_AddRef macro p
-	exitm<IUnknown_AddRef(p)>
-	endm
-IDirectSoundFXGargle_Release macro p
-	exitm<IUnknown_Release(p)>
-	endm
-
-if NOT defined(__cplusplus) OR defined(CINTERFACE)
-IDirectSoundFXGargle_SetAllParameters macro p,a
-	exitm<p.SetAllParameters(a)>
-	endm
-IDirectSoundFXGargle_GetAllParameters macro p,a
-	exitm<p.GetAllParameters(a)>
-	endm
-endif
-
 
 DEFINE_GUID(IID_IDirectSoundFXChorus, 0x880842e3, 0x145f, 0x43e6, 0xa9, 0x34, 0xa7, 0x18, 0x06, 0xe5, 0x05, 0x47);
 
@@ -1331,32 +757,12 @@ DSFXCHORUS_PHASE_90	equ 3
 DSFXCHORUS_PHASE_180	equ 4
 
 .comdef IDirectSoundFXChorus
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    SetAllParameters    proc :LPCDSFXChorus
-    GetAllParameters    proc :LPDSFXChorus
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetAllParameters	proc :LPCDSFXChorus
+    GetAllParameters	proc :LPDSFXChorus
     .ends
-
-IDirectSoundFXChorus_QueryInterface macro p,a,b
-	exitm<IUnknown_QueryInterface(p,a,b)>
-	endm
-IDirectSoundFXChorus_AddRef macro p
-	exitm<IUnknown_AddRef(p)>
-	endm
-IDirectSoundFXChorus_Release macro p
-	exitm<IUnknown_Release(p)>
-	endm
-
-if NOT defined(__cplusplus) OR defined(CINTERFACE)
-IDirectSoundFXChorus_SetAllParameters macro p,a
-	exitm<p.SetAllParameters(a)>
-	endm
-IDirectSoundFXChorus_GetAllParameters macro p,a
-	exitm<p.GetAllParameters(a)>
-	endm
-endif
-
 
 DEFINE_GUID(IID_IDirectSoundFXFlanger, 0x903e9878, 0x2c92, 0x4072, 0x9b, 0x2c, 0xea, 0x68, 0xf5, 0x39, 0x67, 0x83);
 
@@ -1395,32 +801,12 @@ DSFXFLANGER_PHASE_90	equ 3
 DSFXFLANGER_PHASE_180	equ 4
 
 .comdef IDirectSoundFXFlanger
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    SetAllParameters    proc :LPCDSFXFlanger
-    GetAllParameters    proc :LPDSFXFlanger
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetAllParameters	proc :LPCDSFXFlanger
+    GetAllParameters	proc :LPDSFXFlanger
     .ends
-
-IDirectSoundFXFlanger_QueryInterface macro p,a,b
-	exitm<IUnknown_QueryInterface(p,a,b)>
-	endm
-IDirectSoundFXFlanger_AddRef macro p
-	exitm<IUnknown_AddRef(p)>
-	endm
-IDirectSoundFXFlanger_Release macro p
-	exitm<IUnknown_Release(p)>
-	endm
-
-if NOT defined(__cplusplus) OR defined(CINTERFACE)
-IDirectSoundFXFlanger_SetAllParameters macro p,a
-	exitm<(p)- GT SetAllParameters(a)>
-	endm
-IDirectSoundFXFlanger_GetAllParameters macro p,a
-	exitm<(p)- GT GetAllParameters(a)>
-	endm
-endif
-
 
 DEFINE_GUID(IID_IDirectSoundFXEcho, 0x8bd28edf, 0x50db, 0x4e92, 0xa2, 0xbd, 0x44, 0x54, 0x88, 0xd1, 0xed, 0x42);
 
@@ -1446,34 +832,14 @@ DSFXECHO_PANDELAY_MIN	equ 0
 DSFXECHO_PANDELAY_MAX	equ 1
 
 .comdef IDirectSoundFXEcho
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    SetAllParameters    proc :LPCDSFXEcho
-    GetAllParameters    proc :LPDSFXEcho
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetAllParameters	proc :LPCDSFXEcho
+    GetAllParameters	proc :LPDSFXEcho
     .ends
 
-IDirectSoundFXEcho_QueryInterface macro p,a,b
-	exitm<IUnknown_QueryInterface(p,a,b)>
-	endm
-IDirectSoundFXEcho_AddRef macro p
-	exitm<IUnknown_AddRef(p)>
-	endm
-IDirectSoundFXEcho_Release macro p
-	exitm<IUnknown_Release(p)>
-	endm
-
-if NOT defined(__cplusplus) OR defined(CINTERFACE)
-IDirectSoundFXEcho_SetAllParameters macro p,a
-	exitm<p.SetAllParameters(a)>
-	endm
-IDirectSoundFXEcho_GetAllParameters macro p,a
-	exitm<p.GetAllParameters(a)>
-	endm
-endif
-
-
-DEFINE_GUID(IID_IDirectSoundFXDistortion, 0x8ecf4326, 0x455f, 0x4d8b, 0xbd, 0xa9, 0x8d, 0x5d, 0x3e, 0x9e, 0x3e, 0x0b);
+DEFINE_GUID(IID_IDirectSoundFXDistortion, 0x8ecf4326, 0x455f, 0x4d8b, 0xbd, 0xa9, 0x8d, 0x5d, 0x3e, 0x9e, 0x3e, 0x0b)
 
 DSFXDistortion		STRUC
 fGain			FLOAT ?
@@ -1497,32 +863,12 @@ DSFXDISTORTION_PRELOWPASSCUTOFF_MIN equ 100.0
 DSFXDISTORTION_PRELOWPASSCUTOFF_MAX equ 8000.0
 
 .comdef IDirectSoundFXDistortion
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    SetAllParameters    proc :LPCDSFXDistortion
-    GetAllParameters    proc :LPDSFXDistortion
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetAllParameters	proc :LPCDSFXDistortion
+    GetAllParameters	proc :LPDSFXDistortion
     .ends
-
-IDirectSoundFXDistortion_QueryInterface macro p,a,b
-	exitm<IUnknown_QueryInterface(p,a,b)>
-	endm
-IDirectSoundFXDistortion_AddRef macro p
-	exitm<IUnknown_AddRef(p)>
-	endm
-IDirectSoundFXDistortion_Release macro p
-	exitm<IUnknown_Release(p)>
-	endm
-
-if NOT defined(__cplusplus) OR defined(CINTERFACE)
-IDirectSoundFXDistortion_SetAllParameters macro p,a
-	exitm<p.SetAllParameters(a)>
-	endm
-IDirectSoundFXDistortion_GetAllParameters macro p,a
-	exitm<p.GetAllParameters(a)>
-	endm
-endif
-
 
 DEFINE_GUID(IID_IDirectSoundFXCompressor, 0x4bbd1154, 0x62f6, 0x4e2c, 0xa1, 0x5c, 0xd3, 0xb6, 0xc4, 0x17, 0xf7, 0xa0);
 
@@ -1551,32 +897,12 @@ DSFXCOMPRESSOR_PREDELAY_MIN equ 0.0
 DSFXCOMPRESSOR_PREDELAY_MAX equ 4.0
 
 .comdef IDirectSoundFXCompressor
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    SetAllParameters    proc :LPCDSFXCompressor
-    GetAllParameters    proc :LPDSFXCompressor
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetAllParameters	proc :LPCDSFXCompressor
+    GetAllParameters	proc :LPDSFXCompressor
     .ends
-
-IDirectSoundFXCompressor_QueryInterface macro p,a,b
-	exitm<IUnknown_QueryInterface(p,a,b)>
-	endm
-IDirectSoundFXCompressor_AddRef macro p
-	exitm<IUnknown_AddRef(p)>
-	endm
-IDirectSoundFXCompressor_Release macro p
-	exitm<IUnknown_Release(p)>
-	endm
-
-if NOT defined(__cplusplus) OR defined(CINTERFACE)
-IDirectSoundFXCompressor_SetAllParameters macro p,a
-	exitm<p.SetAllParameters(a)>
-	endm
-IDirectSoundFXCompressor_GetAllParameters macro p,a
-	exitm<p.GetAllParameters(a)>
-	endm
-endif
-
 
 DEFINE_GUID(IID_IDirectSoundFXParamEq, 0xc03ca9fe, 0xfe90, 0x4204, 0x80, 0x78, 0x82, 0x33, 0x4c, 0xd1, 0x77, 0xda);
 
@@ -1596,32 +922,12 @@ DSFXPARAMEQ_GAIN_MIN	equ -15.0
 DSFXPARAMEQ_GAIN_MAX	equ 15.0
 
 .comdef IDirectSoundFXParamEq
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    SetAllParameters    proc :LPCDSFXCompressor
-    GetAllParameters    proc :LPDSFXCompressor
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetAllParameters	proc :LPCDSFXCompressor
+    GetAllParameters	proc :LPDSFXCompressor
     .ends
-
-IDirectSoundFXParamEq_QueryInterface macro p,a,b
-	exitm<IUnknown_QueryInterface(p,a,b)>
-	endm
-IDirectSoundFXParamEq_AddRef macro p
-	exitm<IUnknown_AddRef(p)>
-	endm
-IDirectSoundFXParamEq_Release macro p
-	exitm<IUnknown_Release(p)>
-	endm
-
-if NOT defined(__cplusplus) OR defined(CINTERFACE)
-IDirectSoundFXParamEq_SetAllParameters macro p,a
-	exitm<p.SetAllParameters(a)>
-	endm
-IDirectSoundFXParamEq_GetAllParameters macro p,a
-	exitm<p.GetAllParameters(a)>
-	endm
-endif
-
 
 DEFINE_GUID(IID_IDirectSoundFXI3DL2Reverb, 0x4b166a6a, 0x0d66, 0x43f3, 0x80, 0xe3, 0xee, 0x62, 0x80, 0xde, 0xe1, 0xa4);
 
@@ -1695,42 +1001,16 @@ DSFX_I3DL2REVERB_QUALITY_MAX equ 3
 DSFX_I3DL2REVERB_QUALITY_DEFAULT equ 2
 
 .comdef IDirectSoundFXI3DL2Reverb
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    SetAllParameters    proc :LPCDSFXCompressor
-    GetAllParameters    proc :LPDSFXCompressor
-    SetPreset           proc :DWORD
-    GetPreset           proc :LPDWORD
-    SetQuality          proc :LONG
-    GetQuality          proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetAllParameters	proc :LPCDSFXCompressor
+    GetAllParameters	proc :LPDSFXCompressor
+    SetPreset		proc :DWORD
+    GetPreset		proc :LPDWORD
+    SetQuality		proc :LONG
+    GetQuality		proc :ptr
     .ends
-
-IDirectSoundFXI3DL2Reverb_QueryInterface macro p,a,b
-	exitm<IUnknown_QueryInterface(p,a,b)>
-	endm
-IDirectSoundFXI3DL2Reverb_AddRef macro p
-	exitm<IUnknown_AddRef(p)>
-	endm
-IDirectSoundFXI3DL2Reverb_Release macro p
-	exitm<IUnknown_Release(p)>
-	endm
-
-if NOT defined(__cplusplus) OR defined(CINTERFACE)
-IDirectSoundFXI3DL2Reverb_SetAllParameters macro p,a
-	exitm<p.SetAllParameters(a)>
-	endm
-IDirectSoundFXI3DL2Reverb_GetAllParameters macro p,a
-	exitm<p.GetAllParameters(a)>
-	endm
-IDirectSoundFXI3DL2Reverb_SetPreset macro p,a
-	exitm<p.SetPreset(a)>
-	endm
-IDirectSoundFXI3DL2Reverb_GetPreset macro p,a
-	exitm<p.GetPreset(a)>
-	endm
-endif
-
 
 DEFINE_GUID(IID_IDirectSoundFXWavesReverb,0x46858c3a,0x0dc6,0x45e3,0xb7,0x60,0xd4,0xee,0xf1,0x6c,0xb3,0x25);
 
@@ -1757,32 +1037,12 @@ DSFX_WAVESREVERB_HIGHFREQRTRATIO_MAX equ 0.999
 DSFX_WAVESREVERB_HIGHFREQRTRATIO_DEFAULT equ 0.001
 
 .comdef IDirectSoundFXWavesReverb
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    SetAllParameters    proc :LPCDSFXCompressor
-    GetAllParameters    proc :LPDSFXCompressor
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetAllParameters	proc :LPCDSFXCompressor
+    GetAllParameters	proc :LPDSFXCompressor
     .ends
-
-IDirectSoundFXWavesReverb_QueryInterface macro p,a,b
-	exitm<IUnknown_QueryInterface(p,a,b)>
-	endm
-IDirectSoundFXWavesReverb_AddRef macro p
-	exitm<IUnknown_AddRef(p)>
-	endm
-IDirectSoundFXWavesReverb_Release macro p
-	exitm<IUnknown_Release(p)>
-	endm
-
-if NOT defined(__cplusplus) OR defined(CINTERFACE)
-IDirectSoundFXWavesReverb_SetAllParameters macro p,a
-	exitm<p.SetAllParameters(a)>
-	endm
-IDirectSoundFXWavesReverb_GetAllParameters macro p,a
-	exitm<p.GetAllParameters(a)>
-	endm
-endif
-
 
 DEFINE_GUID(IID_IDirectSoundCaptureFXAec, 0xad74143d, 0x903d, 0x4ab7, 0x80, 0x66, 0x28, 0xd3, 0x63, 0x03, 0x6d, 0x65);
 
@@ -1804,35 +1064,14 @@ DSCFX_AEC_STATUS_HISTORY_PREVIOUSLY_DIVERGED equ 0x2
 DSCFX_AEC_STATUS_CURRENTLY_CONVERGED equ 0x8
 
 .comdef IDirectSoundCaptureFXAec
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    SetAllParameters    proc :LPCDSFXCompressor
-    GetAllParameters    proc :LPDSFXCompressor
-    GetStatus           proc :LPDWORD
-    Reset               proc
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetAllParameters	proc :LPCDSFXCompressor
+    GetAllParameters	proc :LPDSFXCompressor
+    GetStatus		proc :LPDWORD
+    Reset		proc
     .ends
-
-IDirectSoundCaptureFXAec_QueryInterface macro p,a,b
-	exitm<IUnknown_QueryInterface(p,a,b)>
-	endm
-IDirectSoundCaptureFXAec_AddRef macro p
-	exitm<IUnknown_AddRef(p)>
-	endm
-IDirectSoundCaptureFXAec_Release macro p
-	exitm<IUnknown_Release(p)>
-	endm
-
-if NOT defined(__cplusplus) OR defined(CINTERFACE)
-IDirectSoundCaptureFXAec_SetAllParameters macro p,a
-	exitm<p.SetAllParameters(a)>
-	endm
-IDirectSoundCaptureFXAec_GetAllParameters macro p,a
-	exitm<p.GetAllParameters(a)>
-	endm
-endif
-
-
 
 DEFINE_GUID(IID_IDirectSoundCaptureFXNoiseSuppress, 0xed311e41, 0xfbae, 0x4175, 0x96, 0x25, 0xcd, 0x8, 0x54, 0xf6, 0x93, 0xca);
 
@@ -1844,33 +1083,13 @@ LPDSCFXNoiseSuppress	typedef ptr DSCFXNoiseSuppress
 LPCDSCFXNoiseSuppress	typedef ptr DSCFXNoiseSuppress
 
 .comdef IDirectSoundCaptureFXNoiseSuppress
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    SetAllParameters    proc :LPCDSFXCompressor
-    GetAllParameters    proc :LPDSFXCompressor
-    Reset               proc
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetAllParameters	proc :LPCDSFXCompressor
+    GetAllParameters	proc :LPDSFXCompressor
+    Reset		proc
     .ends
-
-IDirectSoundCaptureFXNoiseSuppress_QueryInterface macro p,a,b
-	exitm<IUnknown_QueryInterface(p,a,b)>
-	endm
-IDirectSoundCaptureFXNoiseSuppress_AddRef macro p
-	exitm<IUnknown_AddRef(p)>
-	endm
-IDirectSoundCaptureFXNoiseSuppress_Release macro p
-	exitm<IUnknown_Release(p)>
-	endm
-
-if NOT defined(__cplusplus) OR defined(CINTERFACE)
-IDirectSoundCaptureFXNoiseSuppress_SetAllParameters macro p,a
-	exitm<p.SetAllParameters(a)>
-	endm
-IDirectSoundCaptureFXNoiseSuppress_GetAllParameters macro p,a
-	exitm<p.GetAllParameters(a)>
-	endm
-endif
-
 
 ifndef _IDirectSoundFullDuplex_
 _IDirectSoundFullDuplex_ equ 1
@@ -1878,28 +1097,13 @@ _IDirectSoundFullDuplex_ equ 1
 DEFINE_GUID(IID_IDirectSoundFullDuplex, 0xedcb4c7a, 0xdaab, 0x4216, 0xa4, 0x2e, 0x6c, 0x50, 0x59, 0x6d, 0xdc, 0x1d);
 
 .comdef IDirectSoundFullDuplex
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    Initialize          proc :LPCGUID, :LPCGUID, :LPCDSCBUFFERDESC, :LPCDSBUFFERDESC, :HWND, :DWORD, :LPLPDIRECTSOUNDCAPTUREBUFFER8, :LPLPDIRECTSOUNDBUFFER8
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Initialize		proc :LPCGUID, :LPCGUID, :LPCDSCBUFFERDESC, :LPCDSBUFFERDESC, :HWND, :DWORD, :LPLPDIRECTSOUNDCAPTUREBUFFER8, :LPLPDIRECTSOUNDBUFFER8
     .ends
 LPDIRECTSOUNDFULLDUPLEX typedef ptr IDirectSoundFullDuplex
 
-IDirectSoundFullDuplex_QueryInterface macro p,a,b
-	exitm<IUnknown_QueryInterface(p,a,b)>
-	endm
-IDirectSoundFullDuplex_AddRef macro p
-	exitm<IUnknown_AddRef(p)>
-	endm
-IDirectSoundFullDuplex_Release macro p
-	exitm<IUnknown_Release(p)>
-	endm
-
-if NOT defined(__cplusplus) OR defined(CINTERFACE)
-IDirectSoundFullDuplex_Initialize macro p,a,b,c,d,e,f,g,h
-	exitm<p.Initialize(a,b,c,d,e,f,g,h)>
-	endm
-endif
 endif
 endif
 
@@ -1960,7 +1164,7 @@ DSSPEAKER_7POINT1_WIDE	equ DSSPEAKER_7POINT1
 DSSPEAKER_5POINT1_BACK	equ DSSPEAKER_5POINT1
 
 DSSPEAKER_GEOMETRY_MIN	equ 0x00000005
-DSSPEAKER_GEOMETRY_NARROW equ <0x0000000A
+DSSPEAKER_GEOMETRY_NARROW equ 0x0000000A
 DSSPEAKER_GEOMETRY_WIDE equ 0x00000014
 DSSPEAKER_GEOMETRY_MAX	equ 0x000000B4
 

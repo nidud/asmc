@@ -13,7 +13,7 @@ HRESULT			typedef LONG
 
 endif
 
-if NOT defined(_CRYPT32_)
+ifndef _CRYPT32_
 WINCRYPT32API		equ DECSPEC_IMPORT
 else
 WINCRYPT32API		equ 1

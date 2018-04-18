@@ -1,1 +1,1 @@
-include ..\..\lib32\alloc\alloc.asm
+include ..\..\lib32\malloc\alloc.asm

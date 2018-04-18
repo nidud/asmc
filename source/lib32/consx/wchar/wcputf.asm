@@ -3,10 +3,10 @@ include stdio.inc
 
     .code
 
-wcputf proc c b:PVOID, l, max, format:LPSTR, argptr:VARARG
+wcputf proc c b:PVOID, l, m, format:LPSTR, argptr:VARARG
 
     ftobufin(format, addr argptr)
-    wcputs(b, l, max, addr _bufin)
+    wcputs(b, l, m, addr _bufin)
     ret
 
 wcputf endp

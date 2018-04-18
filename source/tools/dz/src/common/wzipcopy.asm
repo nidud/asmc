@@ -213,13 +213,13 @@ error:
 	jmp	toend
 warning:
 	stdmsg( addr cp_warning, addr cp_emaxfb, eax, eax )
-	jmp	max
+	jmp	max1
 sort:
 	wssort( edi )
 	mov	eax,[edi].S_WSUB.ws_maxfb
 	cmp	eax,[edi].S_WSUB.ws_count
 	je	warning
-max:
+max1:
 	mov	eax,[edi].S_WSUB.ws_count
 	dec	eax
 	mov	zs.zs_index,eax

@@ -3488,7 +3488,7 @@ PCRYPT_CREDENTIALS	typedef ptr CRYPT_CREDENTIALS
 CREDENTIAL_OID_PASSWORD_CREDENTIALS_A equ (1)
 CREDENTIAL_OID_PASSWORD_CREDENTIALS_W equ (2)
 
-ifdef UNICODE
+ifdef _UNICODE
 CREDENTIAL_OID_PASSWORD_CREDENTIALS equ <CREDENTIAL_OID_PASSWORD_CREDENTIALS_W>
 else
 CREDENTIAL_OID_PASSWORD_CREDENTIALS equ <CREDENTIAL_OID_PASSWORD_CREDENTIALS_A>
@@ -3506,7 +3506,7 @@ pszUsername		LPWSTR ?
 pszPassword		LPWSTR ?
 CRYPT_PASSWORD_CREDENTIALSW ENDS
 PCRYPT_PASSWORD_CREDENTIALSW typedef ptr CRYPT_PASSWORD_CREDENTIALSW
-ifdef UNICODE
+ifdef _UNICODE
 CRYPT_PASSWORD_CREDENTIALS typedef CRYPT_PASSWORD_CREDENTIALSW
 PCRYPT_PASSWORD_CREDENTIALS typedef PCRYPT_PASSWORD_CREDENTIALSW
 else
@@ -3638,7 +3638,7 @@ CryptRetrieveObjectByUrlW proto WINAPI \
 	      pvVerify: PVOID,
 	      pAuxInfo: PCRYPT_RETRIEVE_AUX_INFO
 
-ifdef UNICODE
+ifdef _UNICODE
 CryptRetrieveObjectByUrl equ <CryptRetrieveObjectByUrlW>
 else
 CryptRetrieveObjectByUrl equ <CryptRetrieveObjectByUrlA>
@@ -4457,7 +4457,7 @@ CryptStringToBinaryW proto WINAPI \
 	     pcbBinary: ptr DWORD,
 	       pdwSkip: ptr DWORD,
 	      pdwFlags: ptr DWORD
-ifdef UNICODE
+ifdef _UNICODE
 CryptStringToBinary	equ <CryptStringToBinaryW>
 else
 CryptStringToBinary	equ <CryptStringToBinaryA>
@@ -4476,7 +4476,7 @@ CryptBinaryToStringW proto WINAPI \
 	       dwFlags: DWORD,
 	     pszString: LPWSTR,
 	    pcchString: ptr DWORD
-ifdef UNICODE
+ifdef _UNICODE
 CryptBinaryToString	equ <CryptBinaryToStringW>
 else
 CryptBinaryToString	equ <CryptBinaryToStringA>

@@ -5190,7 +5190,7 @@ GetSystemWow64DirectoryA proto WINAPI \
 GetSystemWow64DirectoryW proto WINAPI \
 	      lpBuffer: LPWSTR,
 		 uSize: UINT
-ifdef UNICODE
+ifdef _UNICODE
 GetSystemWow64Directory equ <GetSystemWow64DirectoryW>
 else
 GetSystemWow64Directory equ <GetSystemWow64DirectoryA>
@@ -7095,7 +7095,7 @@ IsBadStringPtrA proto WINAPI \
 IsBadStringPtrW proto WINAPI \
 		  lpsz: LPCWSTR,
 	       ucchMax: UINT
-ifdef UNICODE
+ifdef _UNICODE
 IsBadStringPtr equ <IsBadStringPtrW>
 else
 IsBadStringPtr equ <IsBadStringPtrA>

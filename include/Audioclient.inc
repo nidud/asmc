@@ -265,8 +265,8 @@ AUDCLNT_S_BUFFER_EMPTY	equ AUDCLNT_SUCCESS(0x001)
 AUDCLNT_S_THREAD_ALREADY_REGISTERED equ AUDCLNT_SUCCESS(0x002)
 AUDCLNT_S_POSITION_STALLED equ AUDCLNT_SUCCESS(0x003)
 
-externdef		__MIDL_itf_audioclient_0000_0009_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_audioclient_0000_0009_v0_0_s_ifspec:RPC_IF_HANDLE
+externdef __MIDL_itf_audioclient_0000_0009_v0_0_c_ifspec:RPC_IF_HANDLE
+externdef __MIDL_itf_audioclient_0000_0009_v0_0_s_ifspec:RPC_IF_HANDLE
 
 .list
 endif

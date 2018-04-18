@@ -1374,7 +1374,7 @@ DnsQuery_W proto WINAPI \
 	ppQueryResults: PDNS_RECORD,
 	     pReserved: PVOID
 
-ifdef UNICODE
+ifdef _UNICODE
 DnsQuery		equ <DnsQuery_W>
 else
 DnsQuery		equ <DnsQuery_A>
@@ -1471,7 +1471,7 @@ DnsReplaceRecordSetUTF8 proto WINAPI \
 	    pExtraInfo: PVOID,
 	     pReserved: PVOID
 
-ifdef UNICODE
+ifdef _UNICODE
 DnsReplaceRecordSet	equ <DnsReplaceRecordSetW>
 else
 DnsReplaceRecordSet	equ <DnsReplaceRecordSetA>
@@ -1502,7 +1502,7 @@ DnsValidateName_UTF8 proto WINAPI \
 	       pszName: PCSTR,
 		Format: DNS_NAME_FORMAT
 
-ifdef UNICODE
+ifdef _UNICODE
 DnsValidateName macro p,f
 	exitm<DnsValidateName_W( (p), (f) )>
 	endm

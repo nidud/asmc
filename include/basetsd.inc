@@ -4,6 +4,7 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 .xlist
+
 if (defined(_M_MRX000) OR defined(_M_AMD64) OR defined(_M_IA64)) AND (_MSC_VER GE 1100) AND NOT defined(MIDL_PASS)
  POINTER_64 equ <ptr>
  POINTER_64_INT typedef qword
@@ -58,7 +59,6 @@ PUINT32		typedef ptr dword
 UINT64		typedef qword
 PUINT64		typedef ptr qword
 
-
 LONG32		typedef sdword
 PLONG32		typedef ptr sdword
 
@@ -90,7 +90,6 @@ ifdef _WIN64
     __int3264	equ <sqword> ; __int64
 
 else
-
     INT_PTR	typedef sdword
     PINT_PTR	typedef ptr sdword
     UINT_PTR	typedef dword
@@ -102,7 +101,6 @@ else
     PULONG_PTR	typedef ptr dword
 
     __int3264	equ <sdword> ; __int32
-
 endif
 
 ifdef _WIN64
@@ -307,7 +305,6 @@ HandleToHandle32 macro h
 
 endif
 
-
 HandleToUlong	equ <HandleToULong>
 UlongToHandle	equ <ULongToHandle>
 UlongToPtr	equ <ULongToPtr>
@@ -330,7 +327,6 @@ MINLONG_PTR	equ MININT_PTR
 
 MAXHALF_PTR	equ MAXUHALF_PTR shr 1
 MINHALF_PTR	equ MAXHALF_PTR + 1
-
 
 SIZE_T		typedef ULONG_PTR
 PSIZE_T		typedef ptr ULONG_PTR
@@ -380,20 +376,16 @@ MAXDWORD64	equ MAXULONG64
 
 endif
 
-
 DWORD_PTR	typedef ULONG_PTR
 PDWORD_PTR	typedef ptr ULONG_PTR
 
-
 LONG64		typedef sqword
 PLONG64		typedef ptr sqword
-
 
 ULONG64		typedef qword
 PULONG64	typedef ptr qword
 DWORD64		typedef qword
 PDWORD64	typedef ptr qword
-
 
 KAFFINITY	typedef ULONG_PTR
 PKAFFINITY	typedef ptr KAFFINITY

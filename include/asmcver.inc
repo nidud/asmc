@@ -1,3 +1,0 @@
-VERSION equ 224
-VERSSTR equ <'2.24'>
-

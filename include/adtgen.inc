@@ -1,0 +1,122 @@
+ifndef _ADTGEN_H
+_ADTGEN_H equ <>
+
+AUDIT_TYPE_LEGACY	equ 1
+AUDIT_TYPE_WMI		equ 2
+
+AUDIT_PARAM_TYPE	typedef SDWORD
+APT_None		equ 1
+APT_String		equ 1
+APT_Ulong		equ 2
+APT_Pointer		equ 3
+APT_Sid			equ 4
+APT_LogonId		equ 5
+APT_ObjectTypeList	equ 6
+APT_Luid		equ 7
+APT_Guid		equ 8
+APT_Time		equ 9
+APT_Int64		equ 10
+APT_IpAddress		equ 11
+APT_LogonIdWithSid	equ 12
+
+AP_ParamTypeBits	equ 8
+AP_ParamTypeMask	equ 0x000000ff
+
+AP_FormatHex		equ (0x0001 SHL AP_ParamTypeBits)
+AP_AccessMask		equ (0x0002 SHL AP_ParamTypeBits)
+AP_Filespec		equ (0x0001 SHL AP_ParamTypeBits)
+AP_PrimaryLogonId	equ (0x0001 SHL AP_ParamTypeBits)
+AP_ClientLogonId	equ (0x0002 SHL AP_ParamTypeBits)
+
+ApExtractType macro TypeFlags
+	exitm<((TypeFlags AND AP_ParamTypeMask))>
+	endm
+ApExtractFlags macro TypeFlags
+	exitm<((TypeFlags AND NOT AP_ParamTypeMask))>
+	endm
+
+AUDIT_OBJECT_TYPE	STRUC
+ObjectType		GUID <>
+Flags			USHORT ?
+Level			USHORT ?
+AccessMask		ACCESS_MASK ?
+AUDIT_OBJECT_TYPE	ENDS
+PAUDIT_OBJECT_TYPE	typedef ptr AUDIT_OBJECT_TYPE
+
+AUDIT_OBJECT_TYPES	STRUC
+Count			USHORT ?
+Flags			USHORT ?
+pObjectTypes		PAUDIT_OBJECT_TYPE ?
+AUDIT_OBJECT_TYPES	ENDS
+PAUDIT_OBJECT_TYPES	typedef ptr AUDIT_OBJECT_TYPES
+
+_AUTHZ_SS_MAXSIZE	equ 128
+
+AUDIT_IP_ADDRESS	STRUC
+pIpAddress		db _AUTHZ_SS_MAXSIZE dup(?)
+AUDIT_IP_ADDRESS	ENDS
+PAUDIT_IP_ADDRESS	typedef ptr AUDIT_IP_ADDRESS
+
+AUDIT_PARAM		STRUC
+_Type			AUDIT_PARAM_TYPE ?
+_Length			ULONG ?
+Flags			dd ?
+UNION
+ Data0			ULONG_PTR ?
+ String			PWSTR ?
+ u			ULONG_PTR ?
+ psid			PVOID ?
+ pguid			LPGUID ?
+ LogonId_LowPart	ULONG ?
+ pObjectTypes		PAUDIT_OBJECT_TYPES ?
+ pIpAddress		PAUDIT_IP_ADDRESS ?
+ENDS
+UNION
+ Data1			ULONG_PTR ?
+ LogonId_HighPart	LONG ?
+ENDS
+AUDIT_PARAM		ENDS
+PAUDIT_PARAM		typedef ptr AUDIT_PARAM
+
+APF_AuditFailure	equ 0x00000000
+APF_AuditSuccess	equ 0x00000001
+
+APF_ValidFlags		equ (APF_AuditSuccess)
+
+AUDIT_PARAMS		STRUC
+_Length			ULONG ?
+Flags			dd ?
+Count			USHORT ?
+Parameters		PAUDIT_PARAM ?
+AUDIT_PARAMS		ENDS
+PAUDIT_PARAMS		typedef ptr AUDIT_PARAMS
+
+AUTHZ_AUDIT_EVENT_TYPE_LEGACY STRUC
+CategoryId		USHORT ?
+AuditId			USHORT ?
+ParameterCount		USHORT ?
+AUTHZ_AUDIT_EVENT_TYPE_LEGACY ENDS
+PAUTHZ_AUDIT_EVENT_TYPE_LEGACY typedef ptr AUTHZ_AUDIT_EVENT_TYPE_LEGACY
+
+AUTHZ_AUDIT_EVENT_TYPE_UNION UNION
+Legacy			AUTHZ_AUDIT_EVENT_TYPE_LEGACY <>
+AUTHZ_AUDIT_EVENT_TYPE_UNION ENDS
+PAUTHZ_AUDIT_EVENT_TYPE_UNION typedef ptr AUTHZ_AUDIT_EVENT_TYPE_UNION
+
+AUTHZ_AUDIT_EVENT_TYPE_OLD STRUC
+Version			ULONG ?
+dwFlags			dd ?
+RefCount		LONG ?
+hAudit			ULONG_PTR ?
+LinkId			LUID <>
+u			AUTHZ_AUDIT_EVENT_TYPE_UNION <>
+AUTHZ_AUDIT_EVENT_TYPE_OLD ENDS
+PAUTHZ_AUDIT_EVENT_TYPE_OLD typedef ptr AUTHZ_AUDIT_EVENT_TYPE_OLD
+
+PAUDIT_HANDLE		typedef ptr AUDIT_HANDLE
+
+AUTHZ_ALLOW_MULTIPLE_SOURCE_INSTANCES equ 0x1
+AUTHZ_MIGRATED_LEGACY_PUBLISHER equ 0x2
+AUTHZ_AUDIT_INSTANCE_INFORMATION equ 0x2
+
+endif

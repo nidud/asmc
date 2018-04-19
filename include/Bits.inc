@@ -51,7 +51,9 @@ endif
 
 include unknwn.inc
 include bitsmsg.inc
-BG_SIZE_UNKNOWN		equ (UINT64)(-1)
+.xlist
+
+BG_SIZE_UNKNOWN		equ (-1)
 
 externdef		__MIDL_itf_bits_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef		__MIDL_itf_bits_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
@@ -318,5 +320,5 @@ include bits1_5.inc
 externdef __MIDL_itf_bits_0000_0007_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef __MIDL_itf_bits_0000_0007_v0_0_s_ifspec:RPC_IF_HANDLE
 
-.xlist
+.list
 endif

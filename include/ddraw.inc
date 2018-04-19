@@ -1,0 +1,1777 @@
+ifndef __DDRAW_INCLUDED__
+__DDRAW_INCLUDED__ equ <>
+.xlist
+
+ifdef DIRECTX_REDIST
+ENABLE_NAMELESS_UNION_PRAGMA equ 1
+endif
+
+ifndef DIRECTDRAW_VERSION
+DIRECTDRAW_VERSION	equ 0x0700
+endif
+
+if defined( _WIN32 ) AND NOT defined( _NO_COM )
+COM_NO_WINDOWS_H equ 1
+include objbase.inc
+.xlist
+else
+IUnknown		equ <>
+if NOT defined( NT_BUILD_ENVIRONMENT ) AND NOT defined(WINNT)
+CO_E_NOTINITIALIZED	equ 0x800401F0
+endif
+endif
+
+_FACDD			equ 0x876
+MAKE_DDHRESULT macro code
+	exitm<MAKE_HRESULT( 1, _FACDD, code )>
+	endm
+
+ifndef MAKEFOURCC
+MAKEFOURCC macro ch0, ch1, ch2, ch3
+	exitm<((ch0) OR ((ch1) SHL 8) OR ((ch2) SHL 16) OR ((ch3) SHL 24))>
+	endm
+endif
+
+FOURCC_DXT1		equ (MAKEFOURCC('D','X','T','1'))
+FOURCC_DXT2		equ (MAKEFOURCC('D','X','T','2'))
+FOURCC_DXT3		equ (MAKEFOURCC('D','X','T','3'))
+FOURCC_DXT4		equ (MAKEFOURCC('D','X','T','4'))
+FOURCC_DXT5		equ (MAKEFOURCC('D','X','T','5'))
+
+if defined( _WIN32 ) AND NOT defined( _NO_COM )
+
+DEFINE_GUID(CLSID_DirectDraw,		       0xD7B70EE0,0x4340,0x11CF,0xB0,0x63,0x00,0x20,0xAF,0xC2,0xCD,0x35)
+DEFINE_GUID(CLSID_DirectDraw7,		       0x3c305196,0x50db,0x11d3,0x9c,0xfe,0x00,0xc0,0x4f,0xd9,0x30,0xc5)
+DEFINE_GUID(CLSID_DirectDrawClipper,	       0x593817A0,0x7DB3,0x11CF,0xA2,0xDE,0x00,0xAA,0x00,0xb9,0x33,0x56)
+DEFINE_GUID(IID_IDirectDraw,		       0x6C14DB80,0xA733,0x11CE,0xA5,0x21,0x00,0x20,0xAF,0x0B,0xE5,0x60)
+DEFINE_GUID(IID_IDirectDraw2,		       0xB3A6F3E0,0x2B43,0x11CF,0xA2,0xDE,0x00,0xAA,0x00,0xB9,0x33,0x56)
+DEFINE_GUID(IID_IDirectDraw4,		       0x9c59509a,0x39bd,0x11d1,0x8c,0x4a,0x00,0xc0,0x4f,0xd9,0x30,0xc5)
+DEFINE_GUID(IID_IDirectDraw7,		       0x15e65ec0,0x3b9c,0x11d2,0xb9,0x2f,0x00,0x60,0x97,0x97,0xea,0x5b)
+DEFINE_GUID(IID_IDirectDrawSurface,	       0x6C14DB81,0xA733,0x11CE,0xA5,0x21,0x00,0x20,0xAF,0x0B,0xE5,0x60)
+DEFINE_GUID(IID_IDirectDrawSurface2,	       0x57805885,0x6eec,0x11cf,0x94,0x41,0xa8,0x23,0x03,0xc1,0x0e,0x27)
+DEFINE_GUID(IID_IDirectDrawSurface3,	       0xDA044E00,0x69B2,0x11D0,0xA1,0xD5,0x00,0xAA,0x00,0xB8,0xDF,0xBB)
+DEFINE_GUID(IID_IDirectDrawSurface4,	       0x0B2B8630,0xAD35,0x11D0,0x8E,0xA6,0x00,0x60,0x97,0x97,0xEA,0x5B)
+DEFINE_GUID(IID_IDirectDrawSurface7,	       0x06675a80,0x3b9b,0x11d2,0xb9,0x2f,0x00,0x60,0x97,0x97,0xea,0x5b)
+DEFINE_GUID(IID_IDirectDrawPalette,	       0x6C14DB84,0xA733,0x11CE,0xA5,0x21,0x00,0x20,0xAF,0x0B,0xE5,0x60)
+DEFINE_GUID(IID_IDirectDrawClipper,	       0x6C14DB85,0xA733,0x11CE,0xA5,0x21,0x00,0x20,0xAF,0x0B,0xE5,0x60)
+DEFINE_GUID(IID_IDirectDrawColorControl,       0x4B9F0EE0,0x0D7E,0x11D0,0x9B,0x06,0x00,0xA0,0xC9,0x03,0xA3,0xB8)
+DEFINE_GUID(IID_IDirectDrawGammaControl,       0x69C11C3E,0xB46B,0x11D1,0xAD,0x7A,0x00,0xC0,0x4F,0xC2,0x9B,0x4E)
+
+endif
+
+LPDIRECTDRAW		typedef ptr IDirectDraw
+LPDIRECTDRAW2		typedef ptr IDirectDraw2
+LPDIRECTDRAW4		typedef ptr IDirectDraw4
+LPDIRECTDRAW7		typedef ptr IDirectDraw7
+LPDIRECTDRAWSURFACE	typedef ptr IDirectDrawSurface
+LPDIRECTDRAWSURFACE2	typedef ptr IDirectDrawSurface2
+LPDIRECTDRAWSURFACE3	typedef ptr IDirectDrawSurface3
+LPDIRECTDRAWSURFACE4	typedef ptr IDirectDrawSurface4
+LPDIRECTDRAWSURFACE7	typedef ptr IDirectDrawSurface7
+LPDIRECTDRAWPALETTE	typedef ptr IDirectDrawPalette
+LPDIRECTDRAWCLIPPER	typedef ptr IDirectDrawClipper
+LPDIRECTDRAWCOLORCONTROL typedef ptr IDirectDrawColorControl
+LPDIRECTDRAWGAMMACONTROL typedef ptr IDirectDrawGammaControl
+LPDDFXROP		typedef ptr DDFXROP
+LPDDSURFACEDESC		typedef ptr DDSURFACEDESC
+LPDDSURFACEDESC2	typedef ptr DDSURFACEDESC2
+LPDDCOLORCONTROL	typedef ptr DDCOLORCONTROL
+
+if (defined (WIN32) OR defined( _WIN32 ) ) AND NOT defined( _NO_COM )
+CALLBACK(LPDDENUMCALLBACKA, :ptr, :LPSTR, :LPSTR, :PVOID)
+CALLBACK(LPDDENUMCALLBACKW, :ptr, :LPWSTR, :LPWSTR, :PVOID)
+DirectDrawEnumerateW proto WINAPI :LPDDENUMCALLBACKW, :PVOID
+DirectDrawEnumerateA proto WINAPI :LPDDENUMCALLBACKA, :PVOID
+if NOT defined(HMONITOR_DECLARED) AND (WINVER LT 0x0500)
+HMONITOR_DECLARED equ 1
+DECLARE_HANDLE(HMONITOR)
+endif
+CALLBACK(LPDDENUMCALLBACKEXA, :LPGUID, :LPSTR, :LPSTR, :PVOID, :HMONITOR)
+CALLBACK(LPDDENUMCALLBACKEXW, :LPGUID, :LPWSTR, :LPWSTR, :PVOID, :HMONITOR)
+DirectDrawEnumerateExW proto WINAPI :LPDDENUMCALLBACKEXW, :PVOID, :DWORD
+DirectDrawEnumerateExA proto WINAPI :LPDDENUMCALLBACKEXA, :PVOID, :DWORD
+CALLBACK(LPDIRECTDRAWENUMERATEEXA, :LPDDENUMCALLBACKEXA, :LPVOID, :DWORD)
+CALLBACK(LPDIRECTDRAWENUMERATEEXW, :LPDDENUMCALLBACKEXW, :LPVOID, :DWORD)
+ifdef _UNICODE
+LPDDENUMCALLBACK	typedef LPDDENUMCALLBACKW
+DirectDrawEnumerate	equ <DirectDrawEnumerateW>
+LPDDENUMCALLBACKEX	typedef LPDDENUMCALLBACKEXW
+LPDIRECTDRAWENUMERATEEX typedef LPDIRECTDRAWENUMERATEEXW
+DirectDrawEnumerateEx	equ <DirectDrawEnumerateExW>
+else
+LPDDENUMCALLBACK	typedef LPDDENUMCALLBACKA
+DirectDrawEnumerate	equ <DirectDrawEnumerateA>
+LPDDENUMCALLBACKEX	typedef LPDDENUMCALLBACKEXA
+LPDIRECTDRAWENUMERATEEX typedef LPDIRECTDRAWENUMERATEEXA
+DirectDrawEnumerateEx	equ <DirectDrawEnumerateExA>
+endif
+DirectDrawCreate	proto WINAPI :ptr GUID, :ptr LPDIRECTDRAW, :ptr
+DirectDrawCreateEx	proto WINAPI :ptr GUID, :PVOID, :REFIID, :ptr
+DirectDrawCreateClipper proto WINAPI :DWORD, :ptr LPDIRECTDRAWCLIPPER, :ptr
+endif
+
+DDENUM_ATTACHEDSECONDARYDEVICES equ 0x00000001
+DDENUM_DETACHEDSECONDARYDEVICES equ 0x00000002
+DDENUM_NONDISPLAYDEVICES equ 0x00000004
+
+REGSTR_KEY_DDHW_DESCRIPTION equ <"Description">
+REGSTR_KEY_DDHW_DRIVERNAME equ <"DriverName">
+REGSTR_PATH_DDHW	equ <"Hardware\\DirectDrawDrivers">
+
+DDCREATE_HARDWAREONLY	equ 0x00000001
+DDCREATE_EMULATIONONLY	equ 0x00000002
+
+if defined(WINNT) OR NOT defined(WIN32)
+ifndef _HRESULT_DEFINED
+_HRESULT_DEFINED equ 1
+;HRESULT		 typedef __success(return >= 0) long
+endif
+endif
+
+CALLBACK(LPDDENUMMODESCALLBACK, :LPDDSURFACEDESC, :PVOID)
+CALLBACK(LPDDENUMMODESCALLBACK2, :LPDDSURFACEDESC2, :PVOID)
+CALLBACK(LPDDENUMSURFACESCALLBACK, :LPDIRECTDRAWSURFACE, :LPDDSURFACEDESC, :PVOID)
+CALLBACK(LPDDENUMSURFACESCALLBACK2, :LPDIRECTDRAWSURFACE4, :LPDDSURFACEDESC2, :PVOID)
+CALLBACK(LPDDENUMSURFACESCALLBACK7, :LPDIRECTDRAWSURFACE7, :LPDDSURFACEDESC2, :PVOID)
+
+DDARGB			STRUC
+blue			db ?
+green			db ?
+red			db ?
+alpha			db ?
+DDARGB			ENDS
+LPDDARGB		typedef ptr DDARGB
+
+DDRGBA			STRUC
+red			db ?
+green			db ?
+blue			db ?
+alpha			db ?
+DDRGBA			ENDS
+LPDDRGBA		typedef ptr DDRGBA
+
+DDCOLORKEY		STRUC
+dwColorSpaceLowValue	dd ?
+dwColorSpaceHighValue	dd ?
+DDCOLORKEY		ENDS
+LPDDCOLORKEY		typedef ptr DDCOLORKEY
+
+DDBLTFX			STRUC
+dwSize			dd ?
+dwDDFX			dd ?
+dwROP			dd ?
+dwDDROP			dd ?
+dwRotationAngle		dd ?
+dwZBufferOpCode		dd ?
+dwZBufferLow		dd ?
+dwZBufferHigh		dd ?
+dwZBufferBaseDest	dd ?
+dwZDestConstBitDepth	dd ?
+UNION
+ dwZDestConst		dd ?
+ lpDDSZBufferDest	LPDIRECTDRAWSURFACE ?
+ENDS
+dwZSrcConstBitDepth	dd ?
+UNION
+ dwZSrcConst		dd ?
+ lpDDSZBufferSrc	LPDIRECTDRAWSURFACE ?
+ENDS
+dwAlphaEdgeBlendBitDepth dd ?
+dwAlphaEdgeBlend	dd ?
+dwReserved		dd ?
+dwAlphaDestConstBitDepth dd ?
+UNION
+ dwAlphaDestConst	dd ?
+ lpDDSAlphaDest		LPDIRECTDRAWSURFACE ?
+ENDS
+dwAlphaSrcConstBitDepth dd ?
+UNION
+ dwAlphaSrcConst	dd ?
+ lpDDSAlphaSrc		LPDIRECTDRAWSURFACE ?
+ENDS
+UNION
+ dwFillColor		dd ?
+ dwFillDepth		dd ?
+ dwFillPixel		dd ?
+ lpDDSPattern		LPDIRECTDRAWSURFACE ?
+ENDS
+ddckDestColorkey	DDCOLORKEY <>
+ddckSrcColorkey		DDCOLORKEY <>
+DDBLTFX			ENDS
+LPDDBLTFX		typedef ptr DDBLTFX
+
+DDSCAPS			STRUC
+dwCaps			dd ?
+DDSCAPS			ENDS
+LPDDSCAPS		typedef ptr DDSCAPS
+
+DDOSCAPS		STRUC
+dwCaps			dd ?
+DDOSCAPS		ENDS
+LPDDOSCAPS		typedef ptr DDOSCAPS
+
+DDSCAPSEX		STRUC
+dwCaps2			dd ?
+dwCaps3			dd ?
+UNION
+ dwCaps4		dd ?
+ dwVolumeDepth		dd ?
+ENDS
+DDSCAPSEX		ENDS
+LPDDSCAPSEX		typedef ptr DDSCAPSEX
+
+DDSCAPS2		STRUC
+dwCaps			dd ?
+dwCaps2			dd ?
+dwCaps3			dd ?
+UNION
+ dwCaps4		dd ?
+ dwVolumeDepth		dd ?
+ENDS
+DDSCAPS2		ENDS
+LPDDSCAPS2		typedef ptr DDSCAPS2
+
+DD_ROP_SPACE		equ (256/32)
+
+DDCAPS_DX1		STRUC
+dwSize			dd ?
+dwCaps			dd ?
+dwCaps2			dd ?
+dwCKeyCaps		dd ?
+dwFXCaps		dd ?
+dwFXAlphaCaps		dd ?
+dwPalCaps		dd ?
+dwSVCaps		dd ?
+dwAlphaBltConstBitDepths dd ?
+dwAlphaBltPixelBitDepths dd ?
+dwAlphaBltSurfaceBitDepths dd ?
+dwAlphaOverlayConstBitDepths dd ?
+dwAlphaOverlayPixelBitDepths dd ?
+dwAlphaOverlaySurfaceBitDepths dd ?
+dwZBufferBitDepths	dd ?
+dwVidMemTotal		dd ?
+dwVidMemFree		dd ?
+dwMaxVisibleOverlays	dd ?
+dwCurrVisibleOverlays	dd ?
+dwNumFourCCCodes	dd ?
+dwAlignBoundarySrc	dd ?
+dwAlignSizeSrc		dd ?
+dwAlignBoundaryDest	dd ?
+dwAlignSizeDest		dd ?
+dwAlignStrideAlign	dd ?
+dwRops			dd DD_ROP_SPACE dup(?)
+ddsCaps			DDSCAPS <>
+dwMinOverlayStretch	dd ?
+dwMaxOverlayStretch	dd ?
+dwMinLiveVideoStretch	dd ?
+dwMaxLiveVideoStretch	dd ?
+dwMinHwCodecStretch	dd ?
+dwMaxHwCodecStretch	dd ?
+dwReserved1		dd ?
+dwReserved2		dd ?
+dwReserved3		dd ?
+DDCAPS_DX1		ENDS
+LPDDCAPS_DX1		typedef ptr DDCAPS_DX1
+
+DDCAPS_DX3		STRUC
+dwSize			dd ?
+dwCaps			dd ?
+dwCaps2			dd ?
+dwCKeyCaps		dd ?
+dwFXCaps		dd ?
+dwFXAlphaCaps		dd ?
+dwPalCaps		dd ?
+dwSVCaps		dd ?
+dwAlphaBltConstBitDepths dd ?
+dwAlphaBltPixelBitDepths dd ?
+dwAlphaBltSurfaceBitDepths dd ?
+dwAlphaOverlayConstBitDepths dd ?
+dwAlphaOverlayPixelBitDepths dd ?
+dwAlphaOverlaySurfaceBitDepths dd ?
+dwZBufferBitDepths	dd ?
+dwVidMemTotal		dd ?
+dwVidMemFree		dd ?
+dwMaxVisibleOverlays	dd ?
+dwCurrVisibleOverlays	dd ?
+dwNumFourCCCodes	dd ?
+dwAlignBoundarySrc	dd ?
+dwAlignSizeSrc		dd ?
+dwAlignBoundaryDest	dd ?
+dwAlignSizeDest		dd ?
+dwAlignStrideAlign	dd ?
+dwRops			dd DD_ROP_SPACE dup(?)
+ddsCaps			DDSCAPS <>
+dwMinOverlayStretch	dd ?
+dwMaxOverlayStretch	dd ?
+dwMinLiveVideoStretch	dd ?
+dwMaxLiveVideoStretch	dd ?
+dwMinHwCodecStretch	dd ?
+dwMaxHwCodecStretch	dd ?
+dwReserved1		dd ?
+dwReserved2		dd ?
+dwReserved3		dd ?
+dwSVBCaps		dd ?
+dwSVBCKeyCaps		dd ?
+dwSVBFXCaps		dd ?
+dwSVBRops		dd DD_ROP_SPACE dup(?)
+dwVSBCaps		dd ?
+dwVSBCKeyCaps		dd ?
+dwVSBFXCaps		dd ?
+dwVSBRops		dd DD_ROP_SPACE dup(?)
+dwSSBCaps		dd ?
+dwSSBCKeyCaps		dd ?
+dwSSBFXCaps		dd ?
+dwSSBRops		dd DD_ROP_SPACE dup(?)
+dwReserved4		dd ?
+dwReserved5		dd ?
+dwReserved6		dd ?
+DDCAPS_DX3		ENDS
+LPDDCAPS_DX3		typedef ptr DDCAPS_DX3
+
+DDCAPS_DX5		STRUC
+dwSize			dd ?
+dwCaps			dd ?
+dwCaps2			dd ?
+dwCKeyCaps		dd ?
+dwFXCaps		dd ?
+dwFXAlphaCaps		dd ?
+dwPalCaps		dd ?
+dwSVCaps		dd ?
+dwAlphaBltConstBitDepths dd ?
+dwAlphaBltPixelBitDepths dd ?
+dwAlphaBltSurfaceBitDepths dd ?
+dwAlphaOverlayConstBitDepths dd ?
+dwAlphaOverlayPixelBitDepths dd ?
+dwAlphaOverlaySurfaceBitDepths dd ?
+dwZBufferBitDepths	dd ?
+dwVidMemTotal		dd ?
+dwVidMemFree		dd ?
+dwMaxVisibleOverlays	dd ?
+dwCurrVisibleOverlays	dd ?
+dwNumFourCCCodes	dd ?
+dwAlignBoundarySrc	dd ?
+dwAlignSizeSrc		dd ?
+dwAlignBoundaryDest	dd ?
+dwAlignSizeDest		dd ?
+dwAlignStrideAlign	dd ?
+dwRops			dd DD_ROP_SPACE dup(?)
+ddsCaps			DDSCAPS <>
+dwMinOverlayStretch	dd ?
+dwMaxOverlayStretch	dd ?
+dwMinLiveVideoStretch	dd ?
+dwMaxLiveVideoStretch	dd ?
+dwMinHwCodecStretch	dd ?
+dwMaxHwCodecStretch	dd ?
+dwReserved1		dd ?
+dwReserved2		dd ?
+dwReserved3		dd ?
+dwSVBCaps		dd ?
+dwSVBCKeyCaps		dd ?
+dwSVBFXCaps		dd ?
+dwSVBRops		dd DD_ROP_SPACE dup(?)
+dwVSBCaps		dd ?
+dwVSBCKeyCaps		dd ?
+dwVSBFXCaps		dd ?
+dwVSBRops		dd DD_ROP_SPACE dup(?)
+dwSSBCaps		dd ?
+dwSSBCKeyCaps		dd ?
+dwSSBFXCaps		dd ?
+dwSSBRops		dd DD_ROP_SPACE dup(?)
+dwMaxVideoPorts		dd ?
+dwCurrVideoPorts	dd ?
+dwSVBCaps2		dd ?
+dwNLVBCaps		dd ?
+dwNLVBCaps2		dd ?
+dwNLVBCKeyCaps		dd ?
+dwNLVBFXCaps		dd ?
+dwNLVBRops		dd DD_ROP_SPACE dup(?)
+DDCAPS_DX5		ENDS
+LPDDCAPS_DX5		typedef ptr DDCAPS_DX5
+
+DDCAPS_DX6		STRUC
+dwSize			dd ?
+dwCaps			dd ?
+dwCaps2			dd ?
+dwCKeyCaps		dd ?
+dwFXCaps		dd ?
+dwFXAlphaCaps		dd ?
+dwPalCaps		dd ?
+dwSVCaps		dd ?
+dwAlphaBltConstBitDepths dd ?
+dwAlphaBltPixelBitDepths dd ?
+dwAlphaBltSurfaceBitDepths dd ?
+dwAlphaOverlayConstBitDepths dd ?
+dwAlphaOverlayPixelBitDepths dd ?
+dwAlphaOverlaySurfaceBitDepths dd ?
+dwZBufferBitDepths	dd ?
+dwVidMemTotal		dd ?
+dwVidMemFree		dd ?
+dwMaxVisibleOverlays	dd ?
+dwCurrVisibleOverlays	dd ?
+dwNumFourCCCodes	dd ?
+dwAlignBoundarySrc	dd ?
+dwAlignSizeSrc		dd ?
+dwAlignBoundaryDest	dd ?
+dwAlignSizeDest		dd ?
+dwAlignStrideAlign	dd ?
+dwRops			dd DD_ROP_SPACE dup(?)
+ddsOldCaps		DDSCAPS <>
+dwMinOverlayStretch	dd ?
+dwMaxOverlayStretch	dd ?
+dwMinLiveVideoStretch	dd ?
+dwMaxLiveVideoStretch	dd ?
+dwMinHwCodecStretch	dd ?
+dwMaxHwCodecStretch	dd ?
+dwReserved1		dd ?
+dwReserved2		dd ?
+dwReserved3		dd ?
+dwSVBCaps		dd ?
+dwSVBCKeyCaps		dd ?
+dwSVBFXCaps		dd ?
+dwSVBRops		dd DD_ROP_SPACE dup(?)
+dwVSBCaps		dd ?
+dwVSBCKeyCaps		dd ?
+dwVSBFXCaps		dd ?
+dwVSBRops		dd DD_ROP_SPACE dup(?)
+dwSSBCaps		dd ?
+dwSSBCKeyCaps		dd ?
+dwSSBFXCaps		dd ?
+dwSSBRops		dd DD_ROP_SPACE dup(?)
+dwMaxVideoPorts		dd ?
+dwCurrVideoPorts	dd ?
+dwSVBCaps2		dd ?
+dwNLVBCaps		dd ?
+dwNLVBCaps2		dd ?
+dwNLVBCKeyCaps		dd ?
+dwNLVBFXCaps		dd ?
+dwNLVBRops		dd DD_ROP_SPACE dup(?)
+ddsCaps			DDSCAPS2 <>
+DDCAPS_DX6		ENDS
+LPDDCAPS_DX6		typedef ptr DDCAPS_DX6
+
+DDCAPS_DX7		STRUC
+dwSize			dd ?
+dwCaps			dd ?
+dwCaps2			dd ?
+dwCKeyCaps		dd ?
+dwFXCaps		dd ?
+dwFXAlphaCaps		dd ?
+dwPalCaps		dd ?
+dwSVCaps		dd ?
+dwAlphaBltConstBitDepths dd ?
+dwAlphaBltPixelBitDepths dd ?
+dwAlphaBltSurfaceBitDepths dd ?
+dwAlphaOverlayConstBitDepths dd ?
+dwAlphaOverlayPixelBitDepths dd ?
+dwAlphaOverlaySurfaceBitDepths dd ?
+dwZBufferBitDepths	dd ?
+dwVidMemTotal		dd ?
+dwVidMemFree		dd ?
+dwMaxVisibleOverlays	dd ?
+dwCurrVisibleOverlays	dd ?
+dwNumFourCCCodes	dd ?
+dwAlignBoundarySrc	dd ?
+dwAlignSizeSrc		dd ?
+dwAlignBoundaryDest	dd ?
+dwAlignSizeDest		dd ?
+dwAlignStrideAlign	dd ?
+dwRops			dd DD_ROP_SPACE dup(?)
+ddsOldCaps		dd ?
+dwMinOverlayStretch	dd ?
+dwMaxOverlayStretch	dd ?
+dwMinLiveVideoStretch	dd ?
+dwMaxLiveVideoStretch	dd ?
+dwMinHwCodecStretch	dd ?
+dwMaxHwCodecStretch	dd ?
+dwReserved1		dd ?
+dwReserved2		dd ?
+dwReserved3		dd ?
+dwSVBCaps		dd ?
+dwSVBCKeyCaps		dd ?
+dwSVBFXCaps		dd ?
+dwSVBRops		dd DD_ROP_SPACE dup(?)
+dwVSBCaps		dd ?
+dwVSBCKeyCaps		dd ?
+dwVSBFXCaps		dd ?
+dwVSBRops		dd DD_ROP_SPACE dup(?)
+dwSSBCaps		dd ?
+dwSSBCKeyCaps		dd ?
+dwSSBFXCaps		dd ?
+dwSSBRops		dd DD_ROP_SPACE dup(?)
+dwMaxVideoPorts		dd ?
+dwCurrVideoPorts	dd ?
+dwSVBCaps2		dd ?
+dwNLVBCaps		dd ?
+dwNLVBCaps2		dd ?
+dwNLVBCKeyCaps		dd ?
+dwNLVBFXCaps		dd ?
+dwNLVBRops		dd DD_ROP_SPACE dup(?)
+ddsCaps			DDSCAPS2 <>
+DDCAPS_DX7		ENDS
+LPDDCAPS_DX7		typedef ptr DDCAPS_DX7
+
+if DIRECTDRAW_VERSION LE 0x300
+DDCAPS			typedef DDCAPS_DX3
+elif DIRECTDRAW_VERSION LE 0x500
+DDCAPS			typedef DDCAPS_DX5
+elif DIRECTDRAW_VERSION LE 0x600
+DDCAPS			typedef DDCAPS_DX6
+else
+DDCAPS			typedef DDCAPS_DX7
+endif
+LPDDCAPS		typedef ptr DDCAPS
+
+DDPIXELFORMAT		STRUC
+dwSize			dd ?
+dwFlags			dd ?
+dwFourCC		dd ?
+UNION
+ dwRGBBitCount		dd ?
+ dwYUVBitCount		dd ?
+ dwZBufferBitDepth	dd ?
+ dwAlphaBitDepth	dd ?
+ dwLuminanceBitCount	dd ?
+ dwBumpBitCount		dd ?
+ dwPrivateFormatBitCount dd ?
+ENDS
+UNION
+ dwRBitMask		dd ?
+ dwYBitMask		dd ?
+ dwStencilBitDepth	dd ?
+ dwLuminanceBitMask	dd ?
+ dwBumpDuBitMask	dd ?
+ dwOperations		dd ?
+ENDS
+UNION
+ dwGBitMask		dd ?
+ dwUBitMask		dd ?
+ dwZBitMask		dd ?
+ dwBumpDvBitMask	dd ?
+ STRUC MultiSampleCaps
+  wFlipMSTypes		dw ?
+  wBltMSTypes		dw ?
+ ENDS
+ENDS
+UNION
+ dwBBitMask		dd ?
+ dwVBitMask		dd ?
+ dwStencilBitMask	dd ?
+ dwBumpLuminanceBitMask dd ?
+ENDS
+UNION
+ dwRGBAlphaBitMask	dd ?
+ dwYUVAlphaBitMask	dd ?
+ dwLuminanceAlphaBitMask dd ?
+ dwRGBZBitMask		dd ?
+ dwYUVZBitMask		dd ?
+ENDS
+DDPIXELFORMAT		ENDS
+LPDDPIXELFORMAT		typedef ptr DDPIXELFORMAT
+
+DDOVERLAYFX		STRUC
+dwSize			dd ?
+dwAlphaEdgeBlendBitDepth dd ?
+dwAlphaEdgeBlend	dd ?
+dwReserved		dd ?
+dwAlphaDestConstBitDepth dd ?
+UNION
+ dwAlphaDestConst	dd ?
+ lpDDSAlphaDest		LPDIRECTDRAWSURFACE ?
+ENDS
+dwAlphaSrcConstBitDepth dd ?
+UNION
+ dwAlphaSrcConst	dd ?
+ lpDDSAlphaSrc		LPDIRECTDRAWSURFACE ?
+ENDS
+dckDestColorkey		DDCOLORKEY <>
+dckSrcColorkey		DDCOLORKEY <>
+dwDDFX			dd ?
+dwFlags			dd ?
+DDOVERLAYFX		ENDS
+LPDDOVERLAYFX		typedef ptr DDOVERLAYFX
+
+DDBLTBATCH		STRUC
+lprDest			LPRECT ?
+lpDDSSrc		LPDIRECTDRAWSURFACE ?
+lprSrc			LPRECT ?
+dwFlags			dd ?
+lpDDBltFx		LPDDBLTFX ?
+DDBLTBATCH		ENDS
+LPDDBLTBATCH		typedef ptr DDBLTBATCH
+
+DDGAMMARAMP		STRUC
+red			dw 256 dup(?)
+green			dw 256 dup(?)
+blue			dw 256 dup(?)
+DDGAMMARAMP		ENDS
+LPDDGAMMARAMP		typedef ptr DDGAMMARAMP
+
+MAX_DDDEVICEID_STRING	equ 512
+
+DDDEVICEIDENTIFIER	STRUC
+szDriver		db MAX_DDDEVICEID_STRING dup(?)
+szDescription		db MAX_DDDEVICEID_STRING dup(?)
+ifdef _WIN32
+liDriverVersion		LARGE_INTEGER <>
+else
+dwDriverVersionLowPart	dd ?
+dwDriverVersionHighPart dd ?
+endif
+dwVendorId		dd ?
+dwDeviceId		dd ?
+dwSubSysId		dd ?
+dwRevision		dd ?
+guidDeviceIdentifier	GUID <>
+DDDEVICEIDENTIFIER	ENDS
+LPDDDEVICEIDENTIFIER	typedef ptr DDDEVICEIDENTIFIER
+
+DDDEVICEIDENTIFIER2	STRUC
+szDriver		db MAX_DDDEVICEID_STRING dup(?)
+szDescription		db MAX_DDDEVICEID_STRING dup(?)
+ifdef _WIN32
+liDriverVersion		LARGE_INTEGER <>
+else
+dwDriverVersionLowPart	dd ?
+dwDriverVersionHighPart dd ?
+endif
+dwVendorId		dd ?
+dwDeviceId		dd ?
+dwSubSysId		dd ?
+dwRevision		dd ?
+guidDeviceIdentifier	GUID <>
+dwWHQLLevel		dd ?
+DDDEVICEIDENTIFIER2	ENDS
+LPDDDEVICEIDENTIFIER2	typedef ptr DDDEVICEIDENTIFIER2
+
+
+DDGDI_GETHOSTIDENTIFIER equ 0x00000001
+
+GET_WHQL_YEAR macro dwWHQLLevel
+	exitm<((dwWHQLLevel) / 0x10000 )>
+	endm
+
+GET_WHQL_MONTH macro dwWHQLLevel
+	exitm<(((dwWHQLLevel) / 0x100 ) & 0x00ff)>
+	endm
+
+GET_WHQL_DAY macro dwWHQLLevel
+	exitm<((dwWHQLLevel) & 0xff)>
+	endm
+
+CALLBACK(LPCLIPPERCALLBACK, :LPDIRECTDRAWCLIPPER, :HWND, :DWORD, :PVOID)
+ifdef STREAMING
+CALLBACK(LPSURFACESTREAMINGCALLBACK, :DWORD)
+endif
+
+if defined( _WIN32 ) AND NOT defined( _NO_COM )
+.comdef IDirectDraw
+	QueryInterface		proc :REFIID, :PVOID
+	AddRef			proc
+	Release			proc
+	_Compact		proc
+	CreateClipper		proc :DWORD, :ptr LPDIRECTDRAWCLIPPER, :ptr
+	CreatePalette		proc :DWORD, :LPPALETTEENTRY, :ptr LPDIRECTDRAWPALETTE, :ptr
+	CreateSurface		proc :LPDDSURFACEDESC, :ptr LPDIRECTDRAWSURFACE, :ptr
+	DuplicateSurface	proc :LPDIRECTDRAWSURFACE, :ptr LPDIRECTDRAWSURFACE
+	EnumDisplayModes	proc :DWORD, :LPDDSURFACEDESC, :PVOID, :LPDDENUMMODESCALLBACK
+	EnumSurfaces		proc :DWORD, :LPDDSURFACEDESC, :PVOID, :LPDDENUMSURFACESCALLBACK
+	FlipToGDISurface	proc
+	GetCaps			proc :LPDDCAPS, :LPDDCAPS
+	GetDisplayMode		proc :LPDDSURFACEDESC
+	GetFourCCCodes		proc :LPDWORD, :LPDWORD
+	GetGDISurface		proc :ptr LPDIRECTDRAWSURFACE
+	GetMonitorFrequency	proc :LPDWORD
+	GetScanLine		proc :LPDWORD
+	GetVerticalBlankStatus	proc :LPBOOL
+	Initialize		proc :ptr GUID
+	RestoreDisplayMode	proc
+	SetCooperativeLevel	proc :HWND, :DWORD
+	SetDisplayMode		proc :DWORD, :DWORD, :DWORD
+	WaitForVerticalBlank	proc :DWORD, :HANDLE
+	.ends
+endif
+
+if defined( _WIN32 ) AND NOT defined( _NO_COM )
+.comdef IDirectDraw2
+	QueryInterface		proc :REFIID, :PVOID
+	AddRef			proc
+	Release			proc
+	_Compact		proc
+	CreateClipper		proc :DWORD, :ptr LPDIRECTDRAWCLIPPER, :ptr
+	CreatePalette		proc :DWORD, :LPPALETTEENTRY, :ptr LPDIRECTDRAWPALETTE, :ptr
+	CreateSurface		proc :LPDDSURFACEDESC, :ptr LPDIRECTDRAWSURFACE, :ptr
+	DuplicateSurface	proc :LPDIRECTDRAWSURFACE, :ptr LPDIRECTDRAWSURFACE
+	EnumDisplayModes	proc :DWORD, :LPDDSURFACEDESC, :PVOID, :LPDDENUMMODESCALLBACK
+	EnumSurfaces		proc :DWORD, :LPDDSURFACEDESC, :PVOID, :LPDDENUMSURFACESCALLBACK
+	FlipToGDISurface	proc
+	GetCaps			proc :LPDDCAPS, :LPDDCAPS
+	GetDisplayMode		proc :LPDDSURFACEDESC
+	GetFourCCCodes		proc :LPDWORD, :LPDWORD
+	GetGDISurface		proc :ptr LPDIRECTDRAWSURFACE
+	GetMonitorFrequency	proc :LPDWORD
+	GetScanLine		proc :LPDWORD
+	GetVerticalBlankStatus	proc :LPBOOL
+	Initialize		proc :ptr GUID
+	RestoreDisplayMode	proc
+	SetCooperativeLevel	proc :HWND, :DWORD
+	SetDisplayMode		proc :DWORD, :DWORD, :DWORD
+	WaitForVerticalBlank	proc :DWORD, :HANDLE
+	GetAvailableVidMem	proc :LPDDSCAPS, :LPDWORD, :LPDWORD
+	.ends
+endif
+
+if defined( _WIN32 ) AND NOT defined( _NO_COM )
+.comdef IDirectDraw4
+	QueryInterface		proc :REFIID, :PVOID
+	AddRef			proc
+	Release			proc
+	_Compact		proc
+	CreateClipper		proc :DWORD, :ptr LPDIRECTDRAWCLIPPER, :ptr
+	CreatePalette		proc :DWORD, :LPPALETTEENTRY, :ptr LPDIRECTDRAWPALETTE, :ptr
+	CreateSurface		proc :LPDDSURFACEDESC, :ptr LPDIRECTDRAWSURFACE, :ptr
+	DuplicateSurface	proc :LPDIRECTDRAWSURFACE, :ptr LPDIRECTDRAWSURFACE
+	EnumDisplayModes	proc :DWORD, :LPDDSURFACEDESC, :PVOID, :LPDDENUMMODESCALLBACK
+	EnumSurfaces		proc :DWORD, :LPDDSURFACEDESC, :PVOID, :LPDDENUMSURFACESCALLBACK
+	FlipToGDISurface	proc
+	GetCaps			proc :LPDDCAPS, :LPDDCAPS
+	GetDisplayMode		proc :LPDDSURFACEDESC2
+	GetFourCCCodes		proc :LPDWORD, :LPDWORD
+	GetGDISurface		proc :ptr LPDIRECTDRAWSURFACE4
+	GetMonitorFrequency	proc :LPDWORD
+	GetScanLine		proc :LPDWORD
+	GetVerticalBlankStatus	proc :LPBOOL
+	Initialize		proc :ptr GUID
+	RestoreDisplayMode	proc
+	SetCooperativeLevel	proc :HWND, :DWORD
+	SetDisplayMode		proc :DWORD, :DWORD, :DWORD, :DWORD, :DWORD
+	WaitForVerticalBlank	proc :DWORD, :HANDLE
+	GetAvailableVidMem	proc :LPDDSCAPS2, :LPDWORD, :LPDWORD
+	GetSurfaceFromDC	proc :HDC, :ptr LPDIRECTDRAWSURFACE4
+	RestoreAllSurfaces	proc
+	TestCooperativeLevel	proc
+	GetDeviceIdentifier	proc :LPDDDEVICEIDENTIFIER, :DWORD
+	.ends
+endif
+
+if defined( _WIN32 ) AND NOT defined( _NO_COM )
+.comdef IDirectDraw7
+	QueryInterface		proc :REFIID, :PVOID
+	AddRef			proc
+	Release			proc
+	_Compact		proc
+	CreateClipper		proc :DWORD, :ptr LPDIRECTDRAWCLIPPER, :ptr
+	CreatePalette		proc :DWORD, :LPPALETTEENTRY, :ptr LPDIRECTDRAWPALETTE, :ptr
+	CreateSurface		proc :LPDDSURFACEDESC, :ptr LPDIRECTDRAWSURFACE, :ptr
+	DuplicateSurface	proc :LPDIRECTDRAWSURFACE, :ptr LPDIRECTDRAWSURFACE
+	EnumDisplayModes	proc :DWORD, :LPDDSURFACEDESC, :PVOID, :LPDDENUMMODESCALLBACK
+	EnumSurfaces		proc :DWORD, :LPDDSURFACEDESC, :PVOID, :LPDDENUMSURFACESCALLBACK
+	FlipToGDISurface	proc
+	GetCaps			proc :LPDDCAPS, :LPDDCAPS
+	GetDisplayMode		proc :LPDDSURFACEDESC2
+	GetFourCCCodes		proc :LPDWORD, :LPDWORD
+	GetGDISurface		proc :ptr LPDIRECTDRAWSURFACE7
+	GetMonitorFrequency	proc :LPDWORD
+	GetScanLine		proc :LPDWORD
+	GetVerticalBlankStatus	proc :LPBOOL
+	Initialize		proc :ptr GUID
+	RestoreDisplayMode	proc
+	SetCooperativeLeve	proc :HWND, :DWORD
+	SetDisplayMode		proc :DWORD, :DWORD, :DWORD, :DWORD, :DWORD
+	WaitForVerticalBlank	proc :DWORD, :HANDLE
+	GetAvailableVidMem	proc :LPDDSCAPS2, :LPDWORD, :LPDWORD
+	GetSurfaceFromDC	proc :HDC, :ptr LPDIRECTDRAWSURFACE7
+	RestoreAllSurfaces	proc
+	TestCooperativeLevel	proc
+	GetDeviceIdentifier	proc :LPDDDEVICEIDENTIFIER2, :DWORD
+	StartModeTest		proc :LPSIZE, :DWORD, :DWORD
+	EvaluateMode		proc :DWORD, :ptr
+	.ends
+endif
+
+
+if defined( _WIN32 ) AND NOT defined( _NO_COM )
+.comdef IDirectDrawPalette
+	QueryInterface	proc :REFIID, :PVOID
+	AddRef		proc
+	Release		proc
+	GetCaps		proc :LPDWORD
+	GetEntries	proc :DWORD, :DWORD, :DWORD, :LPPALETTEENTRY
+	Initialize	proc :LPDIRECTDRAW, :DWORD, :LPPALETTEENTRY
+	SetEntries	proc :DWORD, :DWORD, :DWORD, :LPPALETTEENTRY
+	.ends
+endif
+
+
+if defined( _WIN32 ) AND NOT defined( _NO_COM )
+.comdef IDirectDrawClipper
+	QueryInterface		proc :REFIID, :PVOID
+	AddRef			proc
+	Release			proc
+	GetClipList		proc :LPRECT, :LPRGNDATA, :LPDWORD
+	GetHWnd			proc :ptr HWND
+	Initialize		proc :LPDIRECTDRAW, :DWORD
+	IsClipListChanged	proc :ptr BOOL
+	SetClipList		proc :LPRGNDATA, :DWORD
+	SetHWnd			proc :DWORD, :HWND
+	.ends
+endif
+
+if defined( _WIN32 ) AND NOT defined( _NO_COM )
+.comdef IDirectDrawSurface
+	QueryInterface		proc :REFIID, :PVOID
+	AddRef			proc
+	Release			proc
+	AddAttachedSurface	proc :LPDIRECTDRAWSURFACE
+	AddOverlayDirtyRect	proc :LPRECT
+	Blt			proc :LPRECT, :LPDIRECTDRAWSURFACE, :LPRECT, :DWORD, :LPDDBLTFX
+	BltBatch		proc :LPDDBLTBATCH, :DWORD, :DWORD
+	BltFast			proc :DWORD, :DWORD, :LPDIRECTDRAWSURFACE, :LPRECT, :DWORD
+	DeleteAttachedSurface	proc :DWORD, :LPDIRECTDRAWSURFACE
+	EnumAttachedSurfaces	proc :PVOID, :LPDDENUMSURFACESCALLBACK
+	EnumOverlayZOrders	proc :DWORD, :LPVOID, :LPDDENUMSURFACESCALLBACK
+	Flip			proc :LPDIRECTDRAWSURFACE, :DWORD
+	GetAttachedSurface	proc :LPDDSCAPS, :ptr LPDIRECTDRAWSURFACE
+	GetBltStatus		proc :DWORD
+	GetCaps			proc :LPDDSCAPS
+	GetClipper		proc :ptr LPDIRECTDRAWCLIPPER
+	GetColorKey		proc :DWORD, :LPDDCOLORKEY
+	GetDC			proc :ptr HDC
+	GetFlipStatus		proc :DWORD
+	GetOverlayPosition	proc :LPLONG, :LPLONG
+	GetPalette		proc :ptr LPDIRECTDRAWPALETTE
+	GetPixelFormat		proc :LPDDPIXELFORMAT
+	GetSurfaceDesc		proc :LPDDSURFACEDESC
+	Initialize		proc :LPDIRECTDRAW, :LPDDSURFACEDESC
+	IsLost			proc
+	_Lock			proc :LPRECT, :LPDDSURFACEDESC, :DWORD, :HANDLE
+	ReleaseDC		proc :HDC
+	Restore			proc
+	SetClipper		proc :LPDIRECTDRAWCLIPPER
+	SetColorKey		proc :DWORD, :LPDDCOLORKEY
+	SetOverlayPosition	proc :LONG, :LONG
+	SetPalette		proc :LPDIRECTDRAWPALETTE
+	Unlock			proc :PVOID
+	UpdateOverlay		proc :LPRECT, :LPDIRECTDRAWSURFACE, :LPRECT, :DWORD, :LPDDOVERLAYFX
+	UpdateOverlayDisplay	proc :DWORD
+	UpdateOverlayZOrder	proc :DWORD, :LPDIRECTDRAWSURFACE
+	.ends
+
+
+.comdef IDirectDrawSurface2
+	QueryInterface		proc :REFIID, :PVOID
+	AddRef			proc
+	Release			proc
+	AddAttachedSurface	proc :LPDIRECTDRAWSURFACE
+	AddOverlayDirtyRect	proc :LPRECT
+	Blt			proc :LPRECT, :LPDIRECTDRAWSURFACE, :LPRECT, :DWORD, :LPDDBLTFX
+	BltBatch		proc :LPDDBLTBATCH, :DWORD, :DWORD
+	BltFast			proc :DWORD, :DWORD, :LPDIRECTDRAWSURFACE, :LPRECT, :DWORD
+	DeleteAttachedSurface	proc :DWORD, :LPDIRECTDRAWSURFACE
+	EnumAttachedSurfaces	proc :PVOID, :LPDDENUMSURFACESCALLBACK
+	EnumOverlayZOrders	proc :DWORD, :LPVOID, :LPDDENUMSURFACESCALLBACK
+	Flip			proc :LPDIRECTDRAWSURFACE, :DWORD
+	GetAttachedSurface	proc :LPDDSCAPS, :ptr LPDIRECTDRAWSURFACE
+	GetBltStatus		proc :DWORD
+	GetCaps			proc :LPDDSCAPS
+	GetClipper		proc :ptr LPDIRECTDRAWCLIPPER
+	GetColorKey		proc :DWORD, :LPDDCOLORKEY
+	GetDC			proc :ptr HDC
+	GetFlipStatus		proc :DWORD
+	GetOverlayPosition	proc :LPLONG, :LPLONG
+	GetPalette		proc :ptr LPDIRECTDRAWPALETTE
+	GetPixelFormat		proc :LPDDPIXELFORMAT
+	GetSurfaceDesc		proc :LPDDSURFACEDESC
+	Initialize		proc :LPDIRECTDRAW, :LPDDSURFACEDESC
+	IsLost			proc
+	_Lock			proc :LPRECT, :LPDDSURFACEDESC, :DWORD, :HANDLE
+	ReleaseDC		proc :HDC
+	Restore			proc
+	SetClipper		proc :LPDIRECTDRAWCLIPPER
+	SetColorKey		proc :DWORD, :LPDDCOLORKEY
+	SetOverlayPosition	proc :LONG, :LONG
+	SetPalette		proc :LPDIRECTDRAWPALETTE
+	Unlock			proc :PVOID
+	UpdateOverlay		proc :LPRECT, :LPDIRECTDRAWSURFACE, :LPRECT, :DWORD, :LPDDOVERLAYFX
+	UpdateOverlayDisplay	proc :DWORD
+	UpdateOverlayZOrder	proc :DWORD, :LPDIRECTDRAWSURFACE
+	GetDDInterface		proc :ptr LPVOID
+	PageLock		proc :DWORD
+	PageUnlock		proc :DWORD
+	.ends
+
+
+.comdef IDirectDrawSurface3
+	QueryInterface		proc :REFIID, :PVOID
+	AddRef			proc
+	Release			proc
+	AddAttachedSurface	proc :LPDIRECTDRAWSURFACE
+	AddOverlayDirtyRect	proc :LPRECT
+	Blt			proc :LPRECT, :LPDIRECTDRAWSURFACE, :LPRECT, :DWORD, :LPDDBLTFX
+	BltBatch		proc :LPDDBLTBATCH, :DWORD, :DWORD
+	BltFast			proc :DWORD, :DWORD, :LPDIRECTDRAWSURFACE, :LPRECT, :DWORD
+	DeleteAttachedSurface	proc :DWORD, :LPDIRECTDRAWSURFACE
+	EnumAttachedSurfaces	proc :PVOID, :LPDDENUMSURFACESCALLBACK
+	EnumOverlayZOrders	proc :DWORD, :LPVOID, :LPDDENUMSURFACESCALLBACK
+	Flip			proc :LPDIRECTDRAWSURFACE, :DWORD
+	GetAttachedSurface	proc :LPDDSCAPS, :ptr LPDIRECTDRAWSURFACE
+	GetBltStatus		proc :DWORD
+	GetCaps			proc :LPDDSCAPS
+	GetClipper		proc :ptr LPDIRECTDRAWCLIPPER
+	GetColorKey		proc :DWORD, :LPDDCOLORKEY
+	GetDC			proc :ptr HDC
+	GetFlipStatus		proc :DWORD
+	GetOverlayPosition	proc :LPLONG, :LPLONG
+	GetPalette		proc :ptr LPDIRECTDRAWPALETTE
+	GetPixelFormat		proc :LPDDPIXELFORMAT
+	GetSurfaceDesc		proc :LPDDSURFACEDESC
+	Initialize		proc :LPDIRECTDRAW, :LPDDSURFACEDESC
+	IsLost			proc
+	_Lock			proc :LPRECT, :LPDDSURFACEDESC, :DWORD, :HANDLE
+	ReleaseDC		proc :HDC
+	Restore			proc
+	SetClipper		proc :LPDIRECTDRAWCLIPPER
+	SetColorKey		proc :DWORD, :LPDDCOLORKEY
+	SetOverlayPosition	proc :LONG, :LONG
+	SetPalette		proc :LPDIRECTDRAWPALETTE
+	Unlock			proc :PVOID
+	UpdateOverlay		proc :LPRECT, :LPDIRECTDRAWSURFACE, :LPRECT, :DWORD, :LPDDOVERLAYFX
+	UpdateOverlayDisplay	proc :DWORD
+	UpdateOverlayZOrder	proc :DWORD, :LPDIRECTDRAWSURFACE
+	GetDDInterface		proc :ptr LPVOID
+	PageLock		proc :DWORD
+	PageUnlock		proc :DWORD
+	SetSurfaceDesc		proc :LPDDSURFACEDESC, :DWORD
+	.ends
+
+
+.comdef IDirectDrawSurface4
+	QueryInterface		proc :REFIID, :PVOID
+	AddRef			proc
+	Release			proc
+	AddAttachedSurface	proc :LPDIRECTDRAWSURFACE
+	AddOverlayDirtyRect	proc :LPRECT
+	Blt			proc :LPRECT, :LPDIRECTDRAWSURFACE, :LPRECT, :DWORD, :LPDDBLTFX
+	BltBatch		proc :LPDDBLTBATCH, :DWORD, :DWORD
+	BltFast			proc :DWORD, :DWORD, :LPDIRECTDRAWSURFACE, :LPRECT, :DWORD
+	DeleteAttachedSurface	proc :DWORD, :LPDIRECTDRAWSURFACE
+	EnumAttachedSurfaces	proc :PVOID, :LPDDENUMSURFACESCALLBACK
+	EnumOverlayZOrders	proc :DWORD, :LPVOID, :LPDDENUMSURFACESCALLBACK
+	Flip			proc :LPDIRECTDRAWSURFACE, :DWORD
+	GetAttachedSurface	proc :LPDDSCAPS, :ptr LPDIRECTDRAWSURFACE
+	GetBltStatus		proc :DWORD
+	GetCaps			proc :LPDDSCAPS
+	GetClipper		proc :ptr LPDIRECTDRAWCLIPPER
+	GetColorKey		proc :DWORD, :LPDDCOLORKEY
+	GetDC			proc :ptr HDC
+	GetFlipStatus		proc :DWORD
+	GetOverlayPosition	proc :LPLONG, :LPLONG
+	GetPalette		proc :ptr LPDIRECTDRAWPALETTE
+	GetPixelFormat		proc :LPDDPIXELFORMAT
+	GetSurfaceDesc		proc :LPDDSURFACEDESC
+	Initialize		proc :LPDIRECTDRAW, :LPDDSURFACEDESC
+	IsLost			proc
+	_Lock			proc :LPRECT, :LPDDSURFACEDESC, :DWORD, :HANDLE
+	ReleaseDC		proc :HDC
+	Restore			proc
+	SetClipper		proc :LPDIRECTDRAWCLIPPER
+	SetColorKey		proc :DWORD, :LPDDCOLORKEY
+	SetOverlayPosition	proc :LONG, :LONG
+	SetPalette		proc :LPDIRECTDRAWPALETTE
+	Unlock			proc :PVOID
+	UpdateOverlay		proc :LPRECT, :LPDIRECTDRAWSURFACE, :LPRECT, :DWORD, :LPDDOVERLAYFX
+	UpdateOverlayDisplay	proc :DWORD
+	UpdateOverlayZOrder	proc :DWORD, :LPDIRECTDRAWSURFACE
+	GetDDInterface		proc :ptr LPVOID
+	PageLock		proc :DWORD
+	PageUnlock		proc :DWORD
+	SetSurfaceDesc		proc :LPDDSURFACEDESC, :DWORD
+	SetPrivateData		proc :REFGUID, :LPVOID, :DWORD, :DWORD
+	GetPrivateData		proc :REFGUID, :LPVOID, :LPDWORD
+	FreePrivateData		proc :REFGUID
+	GetUniquenessValue	proc :LPDWORD
+	ChangeUniquenessValue	proc
+	.ends
+
+
+.comdef IDirectDrawSurface7
+	QueryInterface		proc :REFIID, :PVOID
+	AddRef			proc
+	Release			proc
+	AddAttachedSurface	proc :LPDIRECTDRAWSURFACE
+	AddOverlayDirtyRect	proc :LPRECT
+	Blt			proc :LPRECT, :LPDIRECTDRAWSURFACE, :LPRECT, :DWORD, :LPDDBLTFX
+	BltBatch		proc :LPDDBLTBATCH, :DWORD, :DWORD
+	BltFast			proc :DWORD, :DWORD, :LPDIRECTDRAWSURFACE, :LPRECT, :DWORD
+	DeleteAttachedSurface	proc :DWORD, :LPDIRECTDRAWSURFACE
+	EnumAttachedSurfaces	proc :PVOID, :LPDDENUMSURFACESCALLBACK
+	EnumOverlayZOrders	proc :DWORD, :LPVOID, :LPDDENUMSURFACESCALLBACK
+	Flip			proc :LPDIRECTDRAWSURFACE, :DWORD
+	GetAttachedSurface	proc :LPDDSCAPS, :ptr LPDIRECTDRAWSURFACE
+	GetBltStatus		proc :DWORD
+	GetCaps			proc :LPDDSCAPS
+	GetClipper		proc :ptr LPDIRECTDRAWCLIPPER
+	GetColorKey		proc :DWORD, :LPDDCOLORKEY
+	GetDC			proc :ptr HDC
+	GetFlipStatus		proc :DWORD
+	GetOverlayPosition	proc :LPLONG, :LPLONG
+	GetPalette		proc :ptr LPDIRECTDRAWPALETTE
+	GetPixelFormat		proc :LPDDPIXELFORMAT
+	GetSurfaceDesc		proc :LPDDSURFACEDESC
+	Initialize		proc :LPDIRECTDRAW, :LPDDSURFACEDESC
+	IsLost			proc
+	_Lock			proc :LPRECT, :LPDDSURFACEDESC, :DWORD, :HANDLE
+	ReleaseDC		proc :HDC
+	Restore			proc
+	SetClipper		proc :LPDIRECTDRAWCLIPPER
+	SetColorKey		proc :DWORD, :LPDDCOLORKEY
+	SetOverlayPosition	proc :LONG, :LONG
+	SetPalette		proc :LPDIRECTDRAWPALETTE
+	Unlock			proc :PVOID
+	UpdateOverlay		proc :LPRECT, :LPDIRECTDRAWSURFACE, :LPRECT, :DWORD, :LPDDOVERLAYFX
+	UpdateOverlayDisplay	proc :DWORD
+	UpdateOverlayZOrder	proc :DWORD, :LPDIRECTDRAWSURFACE
+	GetDDInterface		proc :ptr LPVOID
+	PageLock		proc :DWORD
+	PageUnlock		proc :DWORD
+	SetSurfaceDesc		proc :LPDDSURFACEDESC, :DWORD
+	SetPrivateData		proc :REFGUID, :LPVOID, :DWORD, :DWORD
+	GetPrivateData		proc :REFGUID, :LPVOID, :LPDWORD
+	FreePrivateData		proc :REFGUID
+	GetUniquenessValue	proc :LPDWORD
+	ChangeUniquenessValue	proc
+	SetPriority		proc :DWORD
+	GetPriority		proc :LPDWORD
+	SetLOD			proc :DWORD
+	GetLOD			proc :LPDWORD
+	.ends
+
+
+if defined( _WIN32 ) AND NOT defined( _NO_COM )
+.comdef IDirectDrawColorControl
+	QueryInterface		proc :REFIID, :PVOID
+	AddRef			proc
+	Release			proc
+	GetColorControls	proc :LPDDCOLORCONTROL
+	SetColorControls	proc :LPDDCOLORCONTROL
+	.ends
+
+endif
+
+if defined( _WIN32 ) AND NOT defined( _NO_COM )
+.comdef IDirectDrawGammaControl
+	QueryInterface		proc :REFIID, :PVOID
+	AddRef			proc
+	Release			proc
+	GetGammaRamp		proc :DWORD, :LPDDGAMMARAMP
+	SetGammaRamp		proc :DWORD, :LPDDGAMMARAMP
+	.ends
+endif
+
+endif
+
+DDSURFACEDESC		STRUC
+dwSize			dd ?
+dwFlags			dd ?
+dwHeight		dd ?
+dwWidth			dd ?
+UNION
+ lPitch			LONG ?
+ dwLinearSize		dd ?
+ENDS
+dwBackBufferCount	dd ?
+UNION
+ dwMipMapCount		dd ?
+ dwZBufferBitDepth	dd ?
+ dwRefreshRate		dd ?
+ENDS
+dwAlphaBitDepth		dd ?
+dwReserved		dd ?
+lpSurface		LPVOID ?
+ddckCKDestOverlay	DDCOLORKEY <>
+ddckCKDestBlt		DDCOLORKEY <>
+ddckCKSrcOverlay	DDCOLORKEY <>
+ddckCKSrcBlt		DDCOLORKEY <>
+ddpfPixelFormat		DDPIXELFORMAT <>
+ddsCaps			DDSCAPS <>
+DDSURFACEDESC		ENDS
+
+DDSURFACEDESC2		STRUC
+dwSize			dd ?
+dwFlags			dd ?
+dwHeight		dd ?
+dwWidth			dd ?
+UNION
+ lPitch			LONG ?
+ dwLinearSize		dd ?
+ENDS
+UNION
+ dwBackBufferCount	dd ?
+ dwDepth		dd ?
+ENDS
+UNION
+ dwMipMapCount		dd ?
+ dwRefreshRate		dd ?
+ dwSrcVBHandle		dd ?
+ENDS
+dwAlphaBitDepth		dd ?
+dwReserved		dd ?
+lpSurface		LPVOID ?
+UNION
+ ddckCKDestOverlay	DDCOLORKEY <>
+ dwEmptyFaceColor	dd ?
+ENDS
+ddckCKDestBlt		DDCOLORKEY <>
+ddckCKSrcOverlay	DDCOLORKEY <>
+ddckCKSrcBlt		DDCOLORKEY <>
+UNION
+ ddpfPixelFormat	DDPIXELFORMAT <>
+ dwFVF			dd ?
+ENDS
+ddsCaps			DDSCAPS2 <>
+dwTextureStage		dd ?
+DDSURFACEDESC2		ENDS
+
+DDSD_CAPS		equ 0x00000001
+DDSD_HEIGHT		equ 0x00000002
+DDSD_WIDTH		equ 0x00000004
+DDSD_PITCH		equ 0x00000008
+DDSD_BACKBUFFERCOUNT	equ 0x00000020
+DDSD_ZBUFFERBITDEPTH	equ 0x00000040
+DDSD_ALPHABITDEPTH	equ 0x00000080
+DDSD_LPSURFACE		equ 0x00000800
+DDSD_PIXELFORMAT	equ 0x00001000
+DDSD_CKDESTOVERLAY	equ 0x00002000
+DDSD_CKDESTBLT		equ 0x00004000
+DDSD_CKSRCOVERLAY	equ 0x00008000
+DDSD_CKSRCBLT		equ 0x00010000
+DDSD_MIPMAPCOUNT	equ 0x00020000
+DDSD_REFRESHRATE	equ 0x00040000
+DDSD_LINEARSIZE		equ 0x00080000
+DDSD_TEXTURESTAGE	equ 0x00100000
+DDSD_FVF		equ 0x00200000
+DDSD_SRCVBHANDLE	equ 0x00400000
+DDSD_DEPTH		equ 0x00800000
+DDSD_ALL		equ 0x00fff9ee
+
+DDOPTSURFACEDESC	STRUC
+dwSize			dd ?
+dwFlags			dd ?
+ddSCaps			DDSCAPS2 <>
+ddOSCaps		DDOSCAPS <>
+guid			GUID <>
+dwCompressionRatio	dd ?
+DDOPTSURFACEDESC	ENDS
+
+DDOSD_GUID		equ 0x00000001
+DDOSD_COMPRESSION_RATIO equ 0x00000002
+DDOSD_SCAPS		equ 0x00000004
+DDOSD_OSCAPS		equ 0x00000008
+DDOSD_ALL		equ 0x0000000f
+DDOSDCAPS_OPTCOMPRESSED equ 0x00000001
+DDOSDCAPS_OPTREORDERED	equ 0x00000002
+DDOSDCAPS_MONOLITHICMIPMAP equ 0x00000004
+DDOSDCAPS_VALIDSCAPS	equ 0x30004800
+DDOSDCAPS_VALIDOSCAPS	equ 0x00000007
+
+DDCOLORCONTROL		STRUC
+dwSize			dd ?
+dwFlags			dd ?
+lBrightness		LONG ?
+lContrast		LONG ?
+lHue			LONG ?
+lSaturation		LONG ?
+lSharpness		LONG ?
+lGamma			LONG ?
+lColorEnable		LONG ?
+dwReserved1		dd ?
+DDCOLORCONTROL		ENDS
+
+DDCOLOR_BRIGHTNESS	equ 0x00000001
+DDCOLOR_CONTRAST	equ 0x00000002
+DDCOLOR_HUE		equ 0x00000004
+DDCOLOR_SATURATION	equ 0x00000008
+DDCOLOR_SHARPNESS	equ 0x00000010
+DDCOLOR_GAMMA		equ 0x00000020
+DDCOLOR_COLORENABLE	equ 0x00000040
+DDSCAPS_RESERVED1	equ 0x00000001
+DDSCAPS_ALPHA		equ 0x00000002
+DDSCAPS_BACKBUFFER	equ 0x00000004
+DDSCAPS_COMPLEX		equ 0x00000008
+DDSCAPS_FLIP		equ 0x00000010
+DDSCAPS_FRONTBUFFER	equ 0x00000020
+DDSCAPS_OFFSCREENPLAIN	equ 0x00000040
+DDSCAPS_OVERLAY		equ 0x00000080
+DDSCAPS_PALETTE		equ 0x00000100
+DDSCAPS_PRIMARYSURFACE	equ 0x00000200
+
+DDSCAPS_RESERVED3	equ 0x00000400
+DDSCAPS_PRIMARYSURFACELEFT equ 0x00000000
+DDSCAPS_SYSTEMMEMORY	equ 0x00000800
+DDSCAPS_TEXTURE		equ 0x00001000
+DDSCAPS_3DDEVICE	equ 0x00002000
+DDSCAPS_VIDEOMEMORY	equ 0x00004000
+DDSCAPS_VISIBLE		equ 0x00008000
+DDSCAPS_WRITEONLY	equ 0x00010000
+DDSCAPS_ZBUFFER		equ 0x00020000
+DDSCAPS_OWNDC		equ 0x00040000
+DDSCAPS_LIVEVIDEO	equ 0x00080000
+DDSCAPS_HWCODEC		equ 0x00100000
+DDSCAPS_MODEX		equ 0x00200000
+DDSCAPS_MIPMAP		equ 0x00400000
+DDSCAPS_RESERVED2	equ 0x00800000
+
+DDSCAPS_ALLOCONLOAD	equ 0x04000000
+DDSCAPS_VIDEOPORT	equ 0x08000000
+DDSCAPS_LOCALVIDMEM	equ 0x10000000
+DDSCAPS_NONLOCALVIDMEM	equ 0x20000000
+DDSCAPS_STANDARDVGAMODE equ 0x40000000
+DDSCAPS_OPTIMIZED	equ 0x80000000
+
+DDSCAPS2_RESERVED4	equ 0x00000002
+DDSCAPS2_HARDWAREDEINTERLACE equ 0x00000000
+DDSCAPS2_HINTDYNAMIC	equ 0x00000004
+DDSCAPS2_HINTSTATIC	equ 0x00000008
+DDSCAPS2_TEXTUREMANAGE	equ 0x00000010
+DDSCAPS2_RESERVED1	equ 0x00000020
+DDSCAPS2_RESERVED2	equ 0x00000040
+DDSCAPS2_OPAQUE		equ 0x00000080
+DDSCAPS2_HINTANTIALIASING equ 0x00000100
+DDSCAPS2_CUBEMAP	equ 0x00000200
+DDSCAPS2_CUBEMAP_POSITIVEX equ 0x00000400
+DDSCAPS2_CUBEMAP_NEGATIVEX equ 0x00000800
+DDSCAPS2_CUBEMAP_POSITIVEY equ 0x00001000
+DDSCAPS2_CUBEMAP_NEGATIVEY equ 0x00002000
+DDSCAPS2_CUBEMAP_POSITIVEZ equ 0x00004000
+DDSCAPS2_CUBEMAP_NEGATIVEZ equ 0x00008000
+
+DDSCAPS2_CUBEMAP_ALLFACES equ \
+	DDSCAPS2_CUBEMAP_POSITIVEX OR \
+	DDSCAPS2_CUBEMAP_NEGATIVEX OR \
+	DDSCAPS2_CUBEMAP_POSITIVEY OR \
+	DDSCAPS2_CUBEMAP_NEGATIVEY OR \
+	DDSCAPS2_CUBEMAP_POSITIVEZ OR \
+	DDSCAPS2_CUBEMAP_NEGATIVEZ
+
+DDSCAPS2_MIPMAPSUBLEVEL equ 0x00010000
+DDSCAPS2_D3DTEXTUREMANAGE equ 0x00020000
+DDSCAPS2_DONOTPERSIST	equ 0x00040000
+DDSCAPS2_STEREOSURFACELEFT equ 0x00080000
+
+DDSCAPS2_VOLUME		equ 0x00200000
+DDSCAPS2_NOTUSERLOCKABLE equ 0x00400000
+DDSCAPS2_POINTS		equ 0x00800000
+DDSCAPS2_RTPATCHES	equ 0x01000000
+DDSCAPS2_NPATCHES	equ 0x02000000
+DDSCAPS2_RESERVED3	equ 0x04000000
+
+DDSCAPS2_DISCARDBACKBUFFER equ 0x10000000
+DDSCAPS2_ENABLEALPHACHANNEL equ 0x20000000
+DDSCAPS2_EXTENDEDFORMATPRIMARY equ 0x40000000
+DDSCAPS2_ADDITIONALPRIMARY equ 0x80000000
+DDSCAPS3_MULTISAMPLE_MASK equ 0x0000001F
+DDSCAPS3_MULTISAMPLE_QUALITY_MASK equ 0x000000E0
+DDSCAPS3_MULTISAMPLE_QUALITY_SHIFT equ 5
+DDSCAPS3_RESERVED1	equ 0x00000100
+DDSCAPS3_RESERVED2	equ 0x00000200
+DDSCAPS3_LIGHTWEIGHTMIPMAP equ 0x00000400
+DDSCAPS3_AUTOGENMIPMAP	equ 0x00000800
+DDSCAPS3_DMAP		equ 0x00001000
+
+ifndef D3D_DISABLE_9EX
+DDSCAPS3_CREATESHAREDRESOURCE equ 0x00002000
+DDSCAPS3_READONLYRESOURCE equ 0x00004000
+DDSCAPS3_OPENSHAREDRESOURCE equ 0x00008000
+endif
+
+DDCAPS_3D		equ 0x00000001
+DDCAPS_ALIGNBOUNDARYDEST equ 0x00000002
+DDCAPS_ALIGNSIZEDEST	equ 0x00000004
+DDCAPS_ALIGNBOUNDARYSRC equ 0x00000008
+DDCAPS_ALIGNSIZESRC	equ 0x00000010
+DDCAPS_ALIGNSTRIDE	equ 0x00000020
+DDCAPS_BLT		equ 0x00000040
+DDCAPS_BLTQUEUE		equ 0x00000080
+DDCAPS_BLTFOURCC	equ 0x00000100
+DDCAPS_BLTSTRETCH	equ 0x00000200
+DDCAPS_GDI		equ 0x00000400
+DDCAPS_OVERLAY		equ 0x00000800
+DDCAPS_OVERLAYCANTCLIP	equ 0x00001000
+DDCAPS_OVERLAYFOURCC	equ 0x00002000
+DDCAPS_OVERLAYSTRETCH	equ 0x00004000
+DDCAPS_PALETTE		equ 0x00008000
+DDCAPS_PALETTEVSYNC	equ 0x00010000
+DDCAPS_READSCANLINE	equ 0x00020000
+
+DDCAPS_RESERVED1	equ 0x00040000
+DDCAPS_VBI		equ 0x00080000
+DDCAPS_ZBLTS		equ 0x00100000
+DDCAPS_ZOVERLAYS	equ 0x00200000
+DDCAPS_COLORKEY		equ 0x00400000
+DDCAPS_ALPHA		equ 0x00800000
+DDCAPS_COLORKEYHWASSIST equ 0x01000000
+DDCAPS_NOHARDWARE	equ 0x02000000
+DDCAPS_BLTCOLORFILL	equ 0x04000000
+DDCAPS_BANKSWITCHED	equ 0x08000000
+DDCAPS_BLTDEPTHFILL	equ 0x10000000
+DDCAPS_CANCLIP		equ 0x20000000
+DDCAPS_CANCLIPSTRETCHED equ 0x40000000
+DDCAPS_CANBLTSYSMEM	equ 0x80000000
+
+DDCAPS2_CERTIFIED	equ 0x00000001
+DDCAPS2_NO2DDURING3DSCENE equ 0x00000002
+
+DDCAPS2_VIDEOPORT	equ 0x00000004
+DDCAPS2_AUTOFLIPOVERLAY equ 0x00000008
+DDCAPS2_CANBOBINTERLEAVED equ 0x00000010
+DDCAPS2_CANBOBNONINTERLEAVED equ 0x00000020
+DDCAPS2_COLORCONTROLOVERLAY equ 0x00000040
+DDCAPS2_COLORCONTROLPRIMARY equ 0x00000080
+DDCAPS2_CANDROPZ16BIT	equ 0x00000100
+DDCAPS2_NONLOCALVIDMEM	equ 0x00000200
+DDCAPS2_NONLOCALVIDMEMCAPS equ 0x00000400
+DDCAPS2_NOPAGELOCKREQUIRED equ 0x00000800
+DDCAPS2_WIDESURFACES	equ 0x00001000
+DDCAPS2_CANFLIPODDEVEN	equ 0x00002000
+DDCAPS2_CANBOBHARDWARE	equ 0x00004000
+DDCAPS2_COPYFOURCC	equ 0x00008000
+
+DDCAPS2_PRIMARYGAMMA	equ 0x00020000
+DDCAPS2_CANRENDERWINDOWED equ 0x00080000
+DDCAPS2_CANCALIBRATEGAMMA equ 0x00100000
+DDCAPS2_FLIPINTERVAL	equ 0x00200000
+DDCAPS2_FLIPNOVSYNC	equ 0x00400000
+DDCAPS2_CANMANAGETEXTURE equ 0x00800000
+DDCAPS2_TEXMANINNONLOCALVIDMEM equ 0x01000000
+DDCAPS2_STEREO		equ 0x02000000
+DDCAPS2_SYSTONONLOCAL_AS_SYSTOLOCAL equ 0x04000000
+DDCAPS2_RESERVED1	equ 0x08000000
+DDCAPS2_CANMANAGERESOURCE equ 0x10000000
+DDCAPS2_DYNAMICTEXTURES equ 0x20000000
+DDCAPS2_CANAUTOGENMIPMAP equ 0x40000000
+
+ifndef D3D_DISABLE_9EX
+DDCAPS2_CANSHARERESOURCE equ 0x80000000
+endif
+
+DDFXALPHACAPS_BLTALPHAEDGEBLEND equ 0x00000001
+DDFXALPHACAPS_BLTALPHAPIXELS equ 0x00000002
+DDFXALPHACAPS_BLTALPHAPIXELSNEG equ 0x00000004
+DDFXALPHACAPS_BLTALPHASURFACES equ 0x00000008
+DDFXALPHACAPS_BLTALPHASURFACESNEG equ 0x00000010
+DDFXALPHACAPS_OVERLAYALPHAEDGEBLEND equ 0x00000020
+DDFXALPHACAPS_OVERLAYALPHAPIXELS equ 0x00000040
+DDFXALPHACAPS_OVERLAYALPHAPIXELSNEG equ 0x00000080
+DDFXALPHACAPS_OVERLAYALPHASURFACES equ 0x00000100
+DDFXALPHACAPS_OVERLAYALPHASURFACESNEG equ 0x00000200
+
+DDFXCAPS_BLTARITHSTRETCHY equ 0x00000020
+DDFXCAPS_BLTARITHSTRETCHYN equ 0x00000010
+DDFXCAPS_BLTMIRRORLEFTRIGHT equ 0x00000040
+DDFXCAPS_BLTMIRRORUPDOWN equ 0x00000080
+DDFXCAPS_BLTROTATION	equ 0x00000100
+DDFXCAPS_BLTROTATION90	equ 0x00000200
+DDFXCAPS_BLTSHRINKX	equ 0x00000400
+DDFXCAPS_BLTSHRINKXN	equ 0x00000800
+DDFXCAPS_BLTSHRINKY	equ 0x00001000
+DDFXCAPS_BLTSHRINKYN	equ 0x00002000
+DDFXCAPS_BLTSTRETCHX	equ 0x00004000
+DDFXCAPS_BLTSTRETCHXN	equ 0x00008000
+DDFXCAPS_BLTSTRETCHY	equ 0x00010000
+DDFXCAPS_BLTSTRETCHYN	equ 0x00020000
+DDFXCAPS_OVERLAYARITHSTRETCHY equ 0x00040000
+DDFXCAPS_OVERLAYARITHSTRETCHYN equ 0x00000008
+DDFXCAPS_OVERLAYSHRINKX equ 0x00080000
+DDFXCAPS_OVERLAYSHRINKXN equ 0x00100000
+DDFXCAPS_OVERLAYSHRINKY equ 0x00200000
+DDFXCAPS_OVERLAYSHRINKYN equ 0x00400000
+DDFXCAPS_OVERLAYSTRETCHX equ 0x00800000
+DDFXCAPS_OVERLAYSTRETCHXN equ 0x01000000
+DDFXCAPS_OVERLAYSTRETCHY equ 0x02000000
+DDFXCAPS_OVERLAYSTRETCHYN equ 0x04000000
+DDFXCAPS_OVERLAYMIRRORLEFTRIGHT equ 0x08000000
+DDFXCAPS_OVERLAYMIRRORUPDOWN equ 0x10000000
+DDFXCAPS_OVERLAYDEINTERLACE equ 0x20000000
+DDFXCAPS_BLTALPHA	equ 0x00000001
+
+DDFXCAPS_BLTFILTER	equ DDFXCAPS_BTARITHSTRETCHY
+DDFXCAPS_OVERLAYALPHA	equ 0x00000004
+DDFXCAPS_OVERLAYFILTER	equ DDFXCAPS_OVERLAYARITHSTRETCHY
+
+DDSVCAPS_RESERVED1	equ 0x00000001
+DDSVCAPS_RESERVED2	equ 0x00000002
+DDSVCAPS_RESERVED3	equ 0x00000004
+DDSVCAPS_RESERVED4	equ 0x00000008
+
+DDSVCAPS_STEREOSEQUENTIAL equ 0x00000010
+
+DDPCAPS_4BIT		equ 0x00000001
+DDPCAPS_8BITENTRIES	equ 0x00000002
+DDPCAPS_8BIT		equ 0x00000004
+DDPCAPS_INITIALIZE	equ 0x00000000
+DDPCAPS_PRIMARYSURFACE	equ 0x00000010
+DDPCAPS_PRIMARYSURFACELEFT equ 0x00000020
+DDPCAPS_ALLOW256	equ 0x00000040
+DDPCAPS_VSYNC		equ 0x00000080
+DDPCAPS_1BIT		equ 0x00000100
+DDPCAPS_2BIT		equ 0x00000200
+DDPCAPS_ALPHA		equ 0x00000400
+
+DDSPD_IUNKNOWNPOINTER	equ 0x00000001
+DDSPD_VOLATILE		equ 0x00000002
+
+DDBD_1			equ 0x00004000
+DDBD_2			equ 0x00002000
+DDBD_4			equ 0x00001000
+DDBD_8			equ 0x00000800
+DDBD_16			equ 0x00000400
+DDBD_24			equ 0X00000200
+DDBD_32			equ 0x00000100
+
+DDCKEY_COLORSPACE	equ 0x00000001
+DDCKEY_DESTBLT		equ 0x00000002
+DDCKEY_DESTOVERLAY	equ 0x00000004
+DDCKEY_SRCBLT		equ 0x00000008
+DDCKEY_SRCOVERLAY	equ 0x00000010
+
+DDCKEYCAPS_DESTBLT	equ 0x00000001
+DDCKEYCAPS_DESTBLTCLRSPACE equ 0x00000002
+DDCKEYCAPS_DESTBLTCLRSPACEYUV equ 0x00000004
+DDCKEYCAPS_DESTBLTYUV	equ 0x00000008
+DDCKEYCAPS_DESTOVERLAY	equ 0x00000010
+DDCKEYCAPS_DESTOVERLAYCLRSPACE equ 0x00000020
+DDCKEYCAPS_DESTOVERLAYCLRSPACEYUV equ 0x00000040
+DDCKEYCAPS_DESTOVERLAYONEACTIVE equ 0x00000080
+DDCKEYCAPS_DESTOVERLAYYUV equ 0x00000100
+DDCKEYCAPS_SRCBLT	equ 0x00000200
+DDCKEYCAPS_SRCBLTCLRSPACE equ 0x00000400
+DDCKEYCAPS_SRCBLTCLRSPACEYUV equ 0x00000800
+DDCKEYCAPS_SRCBLTYUV	equ 0x00001000
+DDCKEYCAPS_SRCOVERLAY	equ 0x00002000
+DDCKEYCAPS_SRCOVERLAYCLRSPACE equ 0x00004000
+DDCKEYCAPS_SRCOVERLAYCLRSPACEYUV equ 0x00008000
+DDCKEYCAPS_SRCOVERLAYONEACTIVE equ 0x00010000
+DDCKEYCAPS_SRCOVERLAYYUV equ 0x00020000
+DDCKEYCAPS_NOCOSTOVERLAY equ 0x00040000
+
+DDPF_ALPHAPIXELS	equ 0x00000001
+DDPF_ALPHA		equ 0x00000002
+DDPF_FOURCC		equ 0x00000004
+DDPF_PALETTEINDEXED4	equ 0x00000008
+DDPF_PALETTEINDEXEDTO8	equ 0x00000010
+DDPF_PALETTEINDEXED8	equ 0x00000020
+DDPF_RGB		equ 0x00000040
+DDPF_COMPRESSED		equ 0x00000080
+DDPF_RGBTOYUV		equ 0x00000100
+DDPF_YUV		equ 0x00000200
+DDPF_ZBUFFER		equ 0x00000400
+DDPF_PALETTEINDEXED1	equ 0x00000800
+DDPF_PALETTEINDEXED2	equ 0x00001000
+DDPF_ZPIXELS		equ 0x00002000
+DDPF_STENCILBUFFER	equ 0x00004000
+DDPF_ALPHAPREMULT	equ 0x00008000
+
+DDPF_LUMINANCE		equ 0x00020000
+DDPF_BUMPLUMINANCE	equ 0x00040000
+DDPF_BUMPDUDV		equ 0x00080000
+
+DDENUMSURFACES_ALL	equ 0x00000001
+DDENUMSURFACES_MATCH	equ 0x00000002
+DDENUMSURFACES_NOMATCH	equ 0x00000004
+DDENUMSURFACES_CANBECREATED equ 0x00000008
+DDENUMSURFACES_DOESEXIST equ 0x00000010
+
+DDSDM_STANDARDVGAMODE	equ 0x00000001
+DDEDM_REFRESHRATES	equ 0x00000001
+DDEDM_STANDARDVGAMODES	equ 0x00000002
+
+DDSCL_FULLSCREEN	equ 0x00000001
+DDSCL_ALLOWREBOOT	equ 0x00000002
+DDSCL_NOWINDOWCHANGES	equ 0x00000004
+DDSCL_NORMAL		equ 0x00000008
+DDSCL_EXCLUSIVE		equ 0x00000010
+
+DDSCL_ALLOWMODEX	equ 0x00000040
+DDSCL_SETFOCUSWINDOW	equ 0x00000080
+DDSCL_SETDEVICEWINDOW	equ 0x00000100
+DDSCL_CREATEDEVICEWINDOW equ 0x00000200
+DDSCL_MULTITHREADED	equ 0x00000400
+DDSCL_FPUSETUP		equ 0x00000800
+DDSCL_FPUPRESERVE	equ 0x00001000
+
+DDBLT_ALPHADEST		equ 0x00000001
+DDBLT_ALPHADESTCONSTOVERRIDE equ 0x00000002
+DDBLT_ALPHADESTNEG	equ 0x00000004
+DDBLT_ALPHADESTSURFACEOVERRIDE equ 0x00000008
+DDBLT_ALPHAEDGEBLEND	equ 0x00000010
+DDBLT_ALPHASRC		equ 0x00000020
+DDBLT_ALPHASRCCONSTOVERRIDE equ 0x00000040
+DDBLT_ALPHASRCNEG	equ 0x00000080
+DDBLT_ALPHASRCSURFACEOVERRIDE equ 0x00000100
+DDBLT_ASYNC		equ 0x00000200
+DDBLT_COLORFILL		equ 0x00000400
+DDBLT_DDFX		equ 0x00000800
+DDBLT_DDROPS		equ 0x00001000
+DDBLT_KEYDEST		equ 0x00002000
+DDBLT_KEYDESTOVERRIDE	equ 0x00004000
+DDBLT_KEYSRC		equ 0x00008000
+DDBLT_KEYSRCOVERRIDE	equ 0x00010000
+DDBLT_ROP		equ 0x00020000
+DDBLT_ROTATIONANGLE	equ 0x00040000
+DDBLT_ZBUFFER		equ 0x00080000
+DDBLT_ZBUFFERDESTCONSTOVERRIDE equ 0x00100000
+DDBLT_ZBUFFERDESTOVERRIDE equ 0x00200000
+DDBLT_ZBUFFERSRCCONSTOVERRIDE equ 0x00400000
+DDBLT_ZBUFFERSRCOVERRIDE equ 0x00800000
+DDBLT_WAIT		equ 0x01000000
+DDBLT_DEPTHFILL		equ 0x02000000
+
+DDBLT_DONOTWAIT		equ 0x08000000
+DDBLT_PRESENTATION	equ 0x10000000
+DDBLT_LAST_PRESENTATION equ 0x20000000
+DDBLT_EXTENDED_FLAGS	equ 0x40000000
+DDBLT_EXTENDED_LINEAR_CONTENT equ 0x00000004
+
+DDBLTFAST_NOCOLORKEY	equ 0x00000000
+DDBLTFAST_SRCCOLORKEY	equ 0x00000001
+DDBLTFAST_DESTCOLORKEY	equ 0x00000002
+DDBLTFAST_WAIT		equ 0x00000010
+DDBLTFAST_DONOTWAIT	equ 0x00000020
+
+DDFLIP_WAIT		equ 0x00000001
+DDFLIP_EVEN		equ 0x00000002
+DDFLIP_ODD		equ 0x00000004
+DDFLIP_NOVSYNC		equ 0x00000008
+
+DDFLIP_INTERVAL2	equ 0x02000000
+DDFLIP_INTERVAL3	equ 0x03000000
+
+DDFLIP_INTERVAL4	equ 0x04000000
+DDFLIP_STEREO		equ 0x00000010
+DDFLIP_DONOTWAIT	equ 0x00000020
+
+DDOVER_ALPHADEST	equ 0x00000001
+DDOVER_ALPHADESTCONSTOVERRIDE equ 0x00000002
+DDOVER_ALPHADESTNEG	equ 0x00000004
+DDOVER_ALPHADESTSURFACEOVERRIDE equ 0x00000008
+DDOVER_ALPHAEDGEBLEND	equ 0x00000010
+DDOVER_ALPHASRC		equ 0x00000020
+DDOVER_ALPHASRCCONSTOVERRIDE equ 0x00000040
+DDOVER_ALPHASRCNEG	equ 0x00000080
+DDOVER_ALPHASRCSURFACEOVERRIDE equ 0x00000100
+DDOVER_HIDE		equ 0x00000200
+DDOVER_KEYDEST		equ 0x00000400
+DDOVER_KEYDESTOVERRIDE	equ 0x00000800
+DDOVER_KEYSRC		equ 0x00001000
+DDOVER_KEYSRCOVERRIDE	equ 0x00002000
+DDOVER_SHOW		equ 0x00004000
+DDOVER_ADDDIRTYRECT	equ 0x00008000
+DDOVER_REFRESHDIRTYRECTS equ 0x00010000
+DDOVER_REFRESHALL	equ 0x00020000
+
+DDOVER_DDFX		equ 0x00080000
+DDOVER_AUTOFLIP		equ 0x00100000
+DDOVER_BOB		equ 0x00200000
+DDOVER_OVERRIDEBOBWEAVE equ 0x00400000
+DDOVER_INTERLEAVED	equ 0x00800000
+DDOVER_BOBHARDWARE	equ 0x01000000
+DDOVER_ARGBSCALEFACTORS equ 0x02000000
+DDOVER_DEGRADEARGBSCALING equ 0x04000000
+
+ifdef  COMBOX_SANDBOX
+DX_LONGHORN_PRESERVEDC equ 1
+endif
+
+ifdef DX_LONGHORN_PRESERVEDC
+DDSETSURFACEDESC_RECREATEDC equ 0x00000000
+DDSETSURFACEDESC_PRESERVEDC equ 0x00000001
+endif
+
+DDLOCK_SURFACEMEMORYPTR equ 0x00000000
+DDLOCK_WAIT		equ 0x00000001
+DDLOCK_EVENT		equ 0x00000002
+DDLOCK_READONLY		equ 0x00000010
+DDLOCK_WRITEONLY	equ 0x00000020
+
+DDLOCK_NOSYSLOCK	equ 0x00000800
+DDLOCK_NOOVERWRITE	equ 0x00001000
+DDLOCK_DISCARDCONTENTS	equ 0x00002000
+DDLOCK_OKTOSWAP		equ 0x00002000
+DDLOCK_DONOTWAIT	equ 0x00004000
+DDLOCK_HASVOLUMETEXTUREBOXRECT equ 0x00008000
+DDLOCK_NODIRTYUPDATE	equ 0x00010000
+
+DDBLTFX_ARITHSTRETCHY	equ 0x00000001
+DDBLTFX_MIRRORLEFTRIGHT equ 0x00000002
+DDBLTFX_MIRRORUPDOWN	equ 0x00000004
+DDBLTFX_NOTEARING	equ 0x00000008
+DDBLTFX_ROTATE180	equ 0x00000010
+DDBLTFX_ROTATE270	equ 0x00000020
+DDBLTFX_ROTATE90	equ 0x00000040
+DDBLTFX_ZBUFFERRANGE	equ 0x00000080
+DDBLTFX_ZBUFFERBASEDEST equ 0x00000100
+
+DDOVERFX_ARITHSTRETCHY	equ 0x00000001
+DDOVERFX_MIRRORLEFTRIGHT equ 0x00000002
+DDOVERFX_MIRRORUPDOWN	equ 0x00000004
+DDOVERFX_DEINTERLACE	equ 0x00000008
+
+DDWAITVB_BLOCKBEGIN	equ 0x00000001
+DDWAITVB_BLOCKBEGINEVENT equ 0x00000002
+DDWAITVB_BLOCKEND	equ 0x00000004
+
+DDGFS_CANFLIP		equ 0x00000001
+DDGFS_ISFLIPDONE	equ 0x00000002
+
+DDGBS_CANBLT		equ 0x00000001
+DDGBS_ISBLTDONE		equ 0x00000002
+
+DDENUMOVERLAYZ_BACKTOFRONT equ 0x00000000
+DDENUMOVERLAYZ_FRONTTOBACK equ 0x00000001
+
+DDOVERZ_SENDTOFRONT	equ 0x00000000
+DDOVERZ_SENDTOBACK	equ 0x00000001
+DDOVERZ_MOVEFORWARD	equ 0x00000002
+DDOVERZ_MOVEBACKWARD	equ 0x00000003
+DDOVERZ_INSERTINFRONTOF equ 0x00000004
+DDOVERZ_INSERTINBACKOF	equ 0x00000005
+
+DDSGR_CALIBRATE		equ 0x00000001
+
+DDSMT_ISTESTREQUIRED	equ 0x00000001
+
+DDEM_MODEPASSED		equ 0x00000001
+DDEM_MODEFAILED		equ 0x00000002
+
+DD_OK			equ S_OK
+DD_FALSE		equ S_FASE
+
+DDENUMRET_CANCEL	equ 0
+DDENUMRET_OK		equ 1
+
+DDERR_ALREADYINITIALIZED equ MAKE_DDHRESULT( 5 )
+DDERR_CANNOTATTACHSURFACE equ MAKE_DDHRESULT( 10 )
+DDERR_CANNOTDETACHSURFACE equ MAKE_DDHRESULT( 20 )
+DDERR_CURRENTLYNOTAVAIL equ MAKE_DDHRESULT( 40 )
+DDERR_EXCEPTION		equ MAKE_DDHRESULT( 55 )
+DDERR_GENERIC		equ E_FAIL
+DDERR_HEIGHTALIGN	equ MAKE_DDHRESULT( 90 )
+DDERR_INCOMPATIBLEPRIMARY equ MAKE_DDHRESULT( 95 )
+DDERR_INVALIDCAPS	equ MAKE_DDHRESULT( 100 )
+DDERR_INVALIDCLIPLIST	equ MAKE_DDHRESULT( 110 )
+DDERR_INVALIDMODE	equ MAKE_DDHRESULT( 120 )
+DDERR_INVALIDOBJECT	equ MAKE_DDHRESULT( 130 )
+DDERR_INVALIDPARAMS	equ E_INVAIDARG
+DDERR_INVALIDPIXELFORMAT equ MAKE_DDHRESULT( 145 )
+DDERR_INVALIDRECT	equ MAKE_DDHRESULT( 150 )
+DDERR_LOCKEDSURFACES	equ MAKE_DDHRESULT( 160 )
+DDERR_NO3D		equ MAKE_DDHRESULT( 170 )
+DDERR_NOALPHAHW		equ MAKE_DDHRESULT( 180 )
+DDERR_NOSTEREOHARDWARE	equ MAKE_DDHRESULT( 181 )
+DDERR_NOSURFACELEFT	equ MAKE_DDHRESULT( 182 )
+DDERR_NOCLIPLIST	equ MAKE_DDHRESULT( 205 )
+
+DDERR_NOCOLORCONVHW	equ MAKE_DDHRESULT( 210 )
+DDERR_NOCOOPERATIVELEVELSET equ MAKE_DDHRESULT( 212 )
+DDERR_NOCOLORKEY	equ MAKE_DDHRESULT( 215 )
+DDERR_NOCOLORKEYHW	equ MAKE_DDHRESULT( 220 )
+DDERR_NODIRECTDRAWSUPPORT equ MAKE_DDHRESULT( 222 )
+DDERR_NOEXCLUSIVEMODE	equ MAKE_DDHRESULT( 225 )
+DDERR_NOFLIPHW		equ MAKE_DDHRESULT( 230 )
+DDERR_NOGDI		equ MAKE_DDHRESULT( 240 )
+DDERR_NOMIRRORHW	equ MAKE_DDHRESULT( 250 )
+DDERR_NOTFOUND		equ MAKE_DDHRESULT( 255 )
+DDERR_NOOVERLAYHW	equ MAKE_DDHRESULT( 260 )
+DDERR_OVERLAPPINGRECTS	equ MAKE_DDHRESULT( 270 )
+DDERR_NORASTEROPHW	equ MAKE_DDHRESULT( 280 )
+DDERR_NOROTATIONHW	equ MAKE_DDHRESULT( 290 )
+DDERR_NOSTRETCHHW	equ MAKE_DDHRESULT( 310 )
+DDERR_NOT4BITCOLOR	equ MAKE_DDHRESULT( 316 )
+DDERR_NOT4BITCOLORINDEX equ MAKE_DDHRESULT( 317 )
+DDERR_NOT8BITCOLOR	equ MAKE_DDHRESULT( 320 )
+DDERR_NOTEXTUREHW	equ MAKE_DDHRESULT( 330 )
+DDERR_NOVSYNCHW		equ MAKE_DDHRESULT( 335 )
+DDERR_NOZBUFFERHW	equ MAKE_DDHRESULT( 340 )
+DDERR_NOZOVERLAYHW	equ MAKE_DDHRESULT( 350 )
+DDERR_OUTOFCAPS		equ MAKE_DDHRESULT( 360 )
+DDERR_OUTOFMEMORY	equ E_OUTOFMEMORY
+DDERR_OUTOFVIDEOMEMORY	equ MAKE_DDHRESULT( 380 )
+DDERR_OVERLAYCANTCLIP	equ MAKE_DDHRESULT( 382 )
+DDERR_OVERLAYCOLORKEYONLYONEACTIVE equ MAKE_DDHRESULT( 384 )
+DDERR_PALETTEBUSY	equ MAKE_DDHRESULT( 387 )
+DDERR_COLORKEYNOTSET	equ MAKE_DDHRESULT( 400 )
+DDERR_SURFACEALREADYATTACHED equ MAKE_DDHRESULT( 410 )
+DDERR_SURFACEALREADYDEPENDENT equ MAKE_DDHRESULT( 420 )
+DDERR_SURFACEBUSY	equ MAKE_DDHRESULT( 430 )
+DDERR_CANTLOCKSURFACE	equ MAKE_DDHRESULT( 435 )
+DDERR_SURFACEISOBSCURED equ MAKE_DDHRESULT( 440 )
+DDERR_SURFACELOST	equ MAKE_DDHRESULT( 450 )
+DDERR_SURFACENOTATTACHED equ MAKE_DDHRESULT( 460 )
+DDERR_TOOBIGHEIGHT	equ MAKE_DDHRESULT( 470 )
+DDERR_TOOBIGSIZE	equ MAKE_DDHRESULT( 480 )
+DDERR_TOOBIGWIDTH	equ MAKE_DDHRESULT( 490 )
+DDERR_UNSUPPORTED	equ E_NOTIMPL
+DDERR_UNSUPPORTEDFORMAT equ MAKE_DDHRESULT( 510 )
+DDERR_UNSUPPORTEDMASK	equ MAKE_DDHRESULT( 520 )
+DDERR_INVALIDSTREAM	equ MAKE_DDHRESULT( 521 )
+DDERR_VERTICALBLANKINPROGRESS equ MAKE_DDHRESULT( 537 )
+DDERR_WASSTILLDRAWING	equ MAKE_DDHRESULT( 540 )
+DDERR_DDSCAPSCOMPLEXREQUIRED equ MAKE_DDHRESULT( 542 )
+
+DDERR_XALIGN		equ MAKE_DDHRESULT( 560 )
+DDERR_INVALIDDIRECTDRAWGUID equ MAKE_DDHRESULT( 561 )
+DDERR_DIRECTDRAWALREADYCREATED equ MAKE_DDHRESULT( 562 )
+DDERR_NODIRECTDRAWHW	equ MAKE_DDHRESULT( 563 )
+DDERR_PRIMARYSURFACEALREADYEXISTS equ MAKE_DDHRESULT( 564 )
+DDERR_NOEMULATION	equ MAKE_DDHRESULT( 565 )
+DDERR_REGIONTOOSMALL	equ MAKE_DDHRESULT( 566 )
+DDERR_CLIPPERISUSINGHWND equ MAKE_DDHRESULT( 567 )
+DDERR_NOCLIPPERATTACHED equ MAKE_DDHRESULT( 568 )
+DDERR_NOHWND		equ MAKE_DDHRESULT( 569 )
+DDERR_HWNDSUBCLASSED	equ MAKE_DDHRESULT( 570 )
+DDERR_HWNDALREADYSET	equ MAKE_DDHRESULT( 571 )
+DDERR_NOPALETTEATTACHED equ MAKE_DDHRESULT( 572 )
+DDERR_NOPALETTEHW	equ MAKE_DDHRESULT( 573 )
+DDERR_BLTFASTCANTCLIP	equ MAKE_DDHRESULT( 574 )
+DDERR_NOBLTHW		equ MAKE_DDHRESULT( 575 )
+DDERR_NODDROPSHW	equ MAKE_DDHRESULT( 576 )
+DDERR_OVERLAYNOTVISIBLE equ MAKE_DDHRESULT( 577 )
+DDERR_NOOVERLAYDEST	equ MAKE_DDHRESULT( 578 )
+DDERR_INVALIDPOSITION	equ MAKE_DDHRESULT( 579 )
+DDERR_NOTAOVERLAYSURFACE equ MAKE_DDHRESULT( 580 )
+DDERR_EXCLUSIVEMODEALREADYSET equ MAKE_DDHRESULT( 581 )
+DDERR_NOTFLIPPABLE	equ MAKE_DDHRESULT( 582 )
+DDERR_CANTDUPLICATE	equ MAKE_DDHRESULT( 583 )
+DDERR_NOTLOCKED		equ MAKE_DDHRESULT( 584 )
+DDERR_CANTCREATEDC	equ MAKE_DDHRESULT( 585 )
+DDERR_NODC		equ MAKE_DDHRESULT( 586 )
+DDERR_WRONGMODE		equ MAKE_DDHRESULT( 587 )
+DDERR_IMPLICITLYCREATED equ MAKE_DDHRESULT( 588 )
+DDERR_NOTPALETTIZED	equ MAKE_DDHRESULT( 589 )
+
+DDERR_UNSUPPORTEDMODE	equ MAKE_DDHRESULT( 590 )
+DDERR_NOMIPMAPHW	equ MAKE_DDHRESULT( 591 )
+DDERR_INVALIDSURFACETYPE equ MAKE_DDHRESULT( 592 )
+
+DDERR_NOOPTIMIZEHW	equ MAKE_DDHRESULT( 600 )
+DDERR_NOTLOADED		equ MAKE_DDHRESULT( 601 )
+DDERR_NOFOCUSWINDOW	equ MAKE_DDHRESULT( 602 )
+DDERR_NOTONMIPMAPSUBLEVEL equ MAKE_DDHRESULT( 603 )
+DDERR_DCALREADYCREATED	equ MAKE_DDHRESULT( 620 )
+DDERR_NONONLOCALVIDMEM	equ MAKE_DDHRESULT( 630 )
+DDERR_CANTPAGELOCK	equ MAKE_DDHRESULT( 640 )
+
+DDERR_CANTPAGEUNLOCK	equ MAKE_DDHRESULT( 660 )
+DDERR_NOTPAGELOCKED	equ MAKE_DDHRESULT( 680 )
+DDERR_MOREDATA		equ MAKE_DDHRESULT( 690 )
+DDERR_EXPIRED		equ MAKE_DDHRESULT( 691 )
+DDERR_TESTFINISHED	equ MAKE_DDHRESULT( 692 )
+DDERR_NEWMODE		equ MAKE_DDHRESULT( 693 )
+DDERR_D3DNOTINITIALIZED equ MAKE_DDHRESULT( 694 )
+DDERR_VIDEONOTACTIVE	equ MAKE_DDHRESULT( 695 )
+DDERR_NOMONITORINFORMATION equ MAKE_DDHRESULT( 696 )
+DDERR_NODRIVERSUPPORT	equ MAKE_DDHRESULT( 697 )
+DDERR_DEVICEDOESNTOWNSURFACE equ MAKE_DDHRESULT( 699 )
+DDERR_NOTINITIALIZED	equ CO_E_NOTINITIAIZED
+
+.list
+endif

@@ -1,10 +1,12 @@
+ifndef _INC_MALLOC
+_INC_MALLOC equ <>
 ifndef __LIBC_INC
  include libc.inc
 endif
 .xlist
-IFDEF __PE__
+ifdef __PE__
 option	dllimport:<msvcrt>
-ENDIF
+endif
 ;
 ; All allocations are of size n * _GRANULARITY
 ;
@@ -68,10 +70,10 @@ endif
 __coreleft	proto __cdecl
 __purgeheap	proto __cdecl
 
-ELSE
+else
 alloca		proto __cdecl :dword
 option		dllimport:<kernel32>
-ENDIF
+endif
 ;;;;;;;;;;;;;;; kernel32
 
 GMEM_MOVEABLE	equ 0x0002
@@ -86,3 +88,4 @@ HeapAlloc	proto WINAPI :HANDLE, dwFlags:DWORD, dwBytes:SIZE_T
 HeapFree	proto WINAPI :HANDLE, dwFlags:DWORD, lpMem:PVOID
 
 .list
+endif

@@ -23,6 +23,7 @@ _WIN32		equ <>	; default
 endif
 ifdef _WIN64
 _IA64_		equ <>
+_M_X64		equ <>
 _M_IA64		equ <>
 elseifdef _AMD64
 _AMD64_		equ <>

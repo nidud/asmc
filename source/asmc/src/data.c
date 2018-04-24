@@ -45,6 +45,12 @@
 #include <macro.h>
 #include <omf.h>
 #include <atofloat.h>
+#include <float.h>
+
+#ifdef _ASMC
+void _qftod(void *, const void *);
+void _qftold(void *, const void *);
+#endif
 
 int segm_override( const struct expr *, struct code_info * );
 extern struct asym *SegOverride;
@@ -364,14 +370,18 @@ static char *little_endian( const char *src, unsigned len )
     return( StringBufferEnd );
 }
 
-static void output_float( const struct expr *opnd, unsigned size )
+static void output_float( struct expr *opnd, unsigned size )
 {
     /* v2.07: buffer extended to max size of a data item (=32).
      * test case: XMMWORD REAL10 ptr 1.0
      */
     char buffer[32];
 
-    if ( opnd->mem_type != MT_EMPTY ) {
+    if ( opnd->mem_type != MT_EMPTY
+#ifdef _ASMC
+	&& opnd->float_tok
+#endif
+    ) {
 	int i;
 	memset( buffer, 0, sizeof( buffer ) );
 	i = SizeFromMemtype( opnd->mem_type, USE_EMPTY, NULL );
@@ -380,10 +390,43 @@ static void output_float( const struct expr *opnd, unsigned size )
 	else {
 	    atofloat( buffer, opnd->float_tok->string_ptr, i , opnd->negative, opnd->float_tok->floattype );
 	}
-    } else {
+	OutputDataBytes( buffer, size );
+    } else
+#ifdef _ASMC
+    if ( opnd->float_tok )
+#endif
+    {
 	atofloat( buffer, opnd->float_tok->string_ptr, size, opnd->negative, opnd->float_tok->floattype );
+	OutputDataBytes( buffer, size );
+#ifdef _ASMC
+    } else {
+	if ( size != 16 ) {
+	    if ( size == 10 )
+		_qftold(opnd->chararray, opnd->chararray);
+	    else if ( size == 8 ) {
+		errno = 0;
+		_qftod(opnd->chararray, opnd->chararray);
+		if ( errno == ERANGE )
+		    asmerr( 2071 );
+		opnd->hlvalue = 0;
+	    } else {
+		double double_value;
+		if ( opnd->chararray[15] & 0x80 ) {
+		    opnd->negative = 1;
+		    opnd->chararray[15] &= 0x7F;
+		}
+		_qftod(&double_value, opnd->chararray);
+		if ( double_value > FLT_MAX ||
+		   ( double_value < FLT_MIN && double_value != 0 ) )
+		       asmerr( 2071 );
+		if ( opnd->negative )
+		    double_value *= -1;
+		opnd->fvalue = double_value;
+	    }
+	}
+	OutputDataBytes( opnd->chararray, size );
+#endif
     }
-    OutputDataBytes( buffer, size );
     return;
 }
 

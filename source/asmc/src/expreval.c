@@ -56,6 +56,13 @@ enum labelsize {
     LS_FAR32  = 0xFF06,
 };
 
+#ifdef _ASMC
+void _mulfq(void *, void *, void *);
+void _divfq(void *, void *, void *);
+void _subfq(void *, void *, void *);
+void _addfq(void *, void *, void *);
+#endif
+
 #if 0 //def _ASMC
 void __fastcall TokenAssign( struct expr *, const struct expr * );
 void __fastcall init_expr( struct expr * );
@@ -480,7 +487,8 @@ static ret_code get_operand( struct expr *opnd, int *idx, struct asm_tok tokenar
     return( NOT_ERROR );
 }
 
-static bool check_both( const struct expr *opnd1, const struct expr *opnd2, enum exprtype type1, enum exprtype type2 )
+static bool check_both( const struct expr *opnd1, const struct expr *opnd2,
+	enum exprtype type1, enum exprtype type2 )
 {
     if( opnd1->kind == type1 && opnd2->kind == type2 )
 	return( 1 );
@@ -1074,6 +1082,12 @@ static int plus_op( struct expr *opnd1, struct expr *opnd2 )
     }
     if( ( opnd1->kind == EXPR_CONST && opnd2->kind == EXPR_CONST ) ) {
 	opnd1->llvalue += opnd2->llvalue;
+#ifdef _ASMC
+    } else if ( opnd1->kind == EXPR_FLOAT && opnd2->kind == EXPR_FLOAT ) {
+	if ( opnd2->float_tok )
+	    atofloat( opnd2->chararray, opnd2->float_tok->string_ptr, 16, opnd2->negative, 0 );
+	_addfq( opnd1->chararray, opnd1->chararray, opnd2->chararray );
+#endif
     } else if( ( opnd1->kind == EXPR_ADDR && opnd2->kind == EXPR_ADDR ) ) {
 	fix_struct_value( opnd1 );
 	fix_struct_value( opnd2 );
@@ -1139,14 +1153,18 @@ static int minus_op( struct expr *opnd1, struct expr *opnd2 )
     else
 	MakeConst( opnd2 );
     if( ( opnd1->kind == EXPR_CONST && opnd2->kind == EXPR_CONST ) ) {
-	 ;
 	opnd1->llvalue -= opnd2->llvalue;
-    } else if( opnd1->kind == EXPR_ADDR &&
-	      opnd2->kind == EXPR_CONST ) {
+#ifdef _ASMC
+    } else if ( opnd1->kind == EXPR_FLOAT && opnd2->kind == EXPR_FLOAT ) {
+	if ( opnd2->float_tok )
+	    atofloat( opnd2->chararray, opnd2->float_tok->string_ptr, 16, opnd2->negative, 0 );
+	_subfq( opnd1->chararray, opnd1->chararray, opnd2->chararray );
+#endif
+    } else if( opnd1->kind == EXPR_ADDR && opnd2->kind == EXPR_CONST ) {
 	opnd1->llvalue -= opnd2->llvalue;
 	fix_struct_value( opnd1 );
     } else if( ( opnd1->kind == EXPR_ADDR && opnd2->kind == EXPR_ADDR ) ){
-	 ;
+
 	fix_struct_value( opnd1 );
 	fix_struct_value( opnd2 );
 	if( opnd2->indirect ) {
@@ -1203,7 +1221,6 @@ static int minus_op( struct expr *opnd1, struct expr *opnd2 )
 	opnd1->indirect |= opnd2->indirect;
 	opnd1->kind = EXPR_ADDR;
     } else {
-	 ;
 	return( ConstError( opnd1, opnd2 ) );
     }
     return( NOT_ERROR );
@@ -1498,7 +1515,11 @@ static int calculate( struct expr *opnd1, struct expr *opnd2, const struct asm_t
     char	*name;
 
     opnd1->quoted_string = NULL;
-    if ( opnd2->hlvalue ) {
+    if ( opnd2->hlvalue
+#ifdef _ASMC
+	&& opnd2->mem_type != MT_REAL16
+#endif
+    ) {
 	if ( !(opnd2->is_opattr || ((oper->token == '+' || oper->token == '-') && oper->specval == 0)) )
 	    return( fnasmerr( 2084, opnd2->hlvalue, opnd2->value64 ) );
     }
@@ -1525,7 +1546,6 @@ static int calculate( struct expr *opnd1, struct expr *opnd2, const struct asm_t
 	return( plus_op( opnd1, opnd2 ) );
     case T_OP_BRACKET:
 	if ( opnd1->kind == EXPR_EMPTY ) {
-	     ;
 	    TokenAssign( opnd1, opnd2 );
 	    opnd1->type = opnd2->type;
 	    break;
@@ -1535,7 +1555,7 @@ static int calculate( struct expr *opnd1, struct expr *opnd2, const struct asm_t
 	}
 	if ( opnd1->base_reg && opnd1->base_reg->tokval == T_ST )
 	    return( check_streg( opnd1, opnd2 ) );
-	 ;
+
 	return( plus_op( opnd1, opnd2 ) );
     case '+':
 	if ( oper->specval == 0 )
@@ -1572,11 +1592,25 @@ static int calculate( struct expr *opnd1, struct expr *opnd2, const struct asm_t
 	    opnd1->base_reg = NULL;
 	    opnd1->indirect = 1;
 	    opnd1->kind = EXPR_ADDR;
+#ifdef _ASMC
+	} else if ( ( opnd1->kind == EXPR_FLOAT && opnd2->kind == EXPR_FLOAT ) ) {
+	    if ( opnd2->float_tok )
+		atofloat( opnd2->chararray, opnd2->float_tok->string_ptr, 16, opnd2->negative, 0);
+	    _mulfq(opnd1->chararray, opnd1->chararray, opnd2->chararray);
+#endif
 	} else {
 	    return( ConstError( opnd1, opnd2 ) );
 	}
 	break;
     case '/':
+#ifdef _ASMC
+	if ( ( opnd1->kind == EXPR_FLOAT && opnd2->kind == EXPR_FLOAT ) ) {
+	    if ( opnd2->float_tok )
+		atofloat( opnd2->chararray, opnd2->float_tok->string_ptr, 16, opnd2->negative, 0);
+	    _divfq(opnd1->chararray, opnd1->chararray, opnd2->chararray);
+	    break;
+	}
+#endif
 	MakeConst( opnd1 );
 	MakeConst( opnd2 );
 	if( ( opnd1->kind == EXPR_CONST && opnd2->kind == EXPR_CONST ) == 0 ) {
@@ -1847,7 +1881,8 @@ static void OperErr( int i, struct asm_tok tokenarray[] )
     return;
 }
 
-static int evaluate( struct expr *opnd1, int *i, struct asm_tok tokenarray[], const int end, const uint_8 flags )
+static int evaluate( struct expr *opnd1, int *i, struct asm_tok tokenarray[], const int end,
+	const uint_8 flags )
 {
     int rc = NOT_ERROR;
 
@@ -1858,11 +1893,14 @@ static int evaluate( struct expr *opnd1, int *i, struct asm_tok tokenarray[], co
 	int curr_operator;
 	struct expr opnd2;
 	curr_operator = *i;
-		    ;
+
 	if ( opnd1->kind != EXPR_EMPTY ) {
 	    if ( tokenarray[curr_operator].token == '+' || tokenarray[curr_operator].token == '-' )
 		tokenarray[curr_operator].specval = 1;
-	    else if( !( tokenarray[curr_operator].token >= T_OP_BRACKET || tokenarray[curr_operator].token == T_UNARY_OPERATOR || tokenarray[curr_operator].token == T_BINARY_OPERATOR ) || tokenarray[curr_operator].token == T_UNARY_OPERATOR ) {
+	    else if( !( tokenarray[curr_operator].token >= T_OP_BRACKET ||
+		tokenarray[curr_operator].token == T_UNARY_OPERATOR ||
+		tokenarray[curr_operator].token == T_BINARY_OPERATOR ) ||
+		tokenarray[curr_operator].token == T_UNARY_OPERATOR ) {
 
 		/* v2.26 - added for {k1}{z}.. */
 		if ( tokenarray[curr_operator].token == T_STRING &&
@@ -1877,6 +1915,18 @@ static int evaluate( struct expr *opnd1, int *i, struct asm_tok tokenarray[], co
 		    break;
 		}
 	    }
+#ifdef _ASMC
+	    if ( opnd1->kind == EXPR_FLOAT && opnd1->mem_type != MT_REAL16 ) {
+
+		if ( tokenarray[curr_operator].token == '*' ||
+		     tokenarray[curr_operator].token == '/' ||
+		     tokenarray[curr_operator].specval == 1 ) {
+
+		    opnd1->mem_type = MT_REAL16;
+		    atofloat( opnd1->chararray, opnd1->float_tok->string_ptr, 16, opnd1->negative, 0);
+		}
+	    }
+#endif
 	}
 	(*i)++;
 	init_expr( &opnd2 );

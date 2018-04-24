@@ -17,6 +17,8 @@
 #define FLT_RADIX	2
 #define FLT_ROUNDS	1
 
+#define DBL_MIN		2.2250738585072014e-308
+
 typedef float		REAL4;
 typedef double		REAL8;
 typedef long double	REAL10;

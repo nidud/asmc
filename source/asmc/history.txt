@@ -3,6 +3,9 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.27 - xx xxx 2017
+- added support for float const: (2.0 / (1.0 + 3.0))
+- added .pragma(pack(push, <alignment>))
+- added .pragma(pack(pop))
 - added support for externdef pointer:ptr class
 - added .COMDEF directive
 - added mov reg,0 test for args - convert to xor reg,reg

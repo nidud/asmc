@@ -13,9 +13,8 @@ ifndef COM_NO_WINDOWS_H
 include windows.inc
 include ole2.inc
 endif
-.xlist
 ifndef __bits2_5_h__
-__bits2_5_h__ equ 1
+__bits2_5_h__ equ <>
 
 ifndef __IBackgroundCopyJobHttpOptions_FWD_DEFINED__
 __IBackgroundCopyJobHttpOptions_FWD_DEFINED__ equ 1
@@ -31,7 +30,6 @@ endif
 include bits.inc
 include bits1_5.inc
 include bits2_0.inc
-.xlist
 
 ifndef __IBackgroundCopyJobHttpOptions_INTERFACE_DEFINED__
 __IBackgroundCopyJobHttpOptions_INTERFACE_DEFINED__ equ 1
@@ -90,5 +88,4 @@ include bits3_0.inc
 externdef __MIDL_itf_bits2_5_0000_0001_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef __MIDL_itf_bits2_5_0000_0001_v0_0_s_ifspec:RPC_IF_HANDLE
 
-.list
 endif

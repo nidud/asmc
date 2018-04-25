@@ -1,3 +1,5 @@
+.pragma list(push, 0)
+
 ifndef __REQUIRED_RPCNDR_H_VERSION__
 __REQUIRED_RPCNDR_H_VERSION__ equ 500
 endif
@@ -15,7 +17,6 @@ include ole2.inc
 endif
 ifndef __audioclient_h__
 __audioclient_h__ equ <>
-.xlist
 
 ifndef __IAudioClient_FWD_DEFINED__
 __IAudioClient_FWD_DEFINED__ equ 1
@@ -47,7 +48,6 @@ endif
 include wtypes.inc
 include unknwn.inc
 include AudioSessionTypes.inc
-.xlist
 
 if 0
 wFormatTag		typedef	 struct WAVEFORMATEX { WORD
@@ -68,7 +68,6 @@ else
 _IKsControl_ equ 1
 include ks.inc
 include ksmedia.inc
-.xlist
 endif
 
 AUDCLNT_BUFFERFLAGS	typedef SDWORD
@@ -268,5 +267,5 @@ AUDCLNT_S_POSITION_STALLED equ AUDCLNT_SUCCESS(0x003)
 externdef __MIDL_itf_audioclient_0000_0009_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef __MIDL_itf_audioclient_0000_0009_v0_0_s_ifspec:RPC_IF_HANDLE
 
-.list
 endif
+.pragma list(pop)

@@ -1,3 +1,4 @@
+.pragma list(push, 0)
 ifndef _WINDEF_
  include windef.inc
 endif
@@ -6,7 +7,6 @@ ifndef _WINNT_
 endif
 ifndef _INC_DCIDDI
 _INC_DCIDDI equ <>
-.xlist
 
 DCICOMMAND		equ 3075
 DCI_VERSION		equ 0x0100
@@ -208,5 +208,5 @@ ifndef Y211
 Y211			equ mmioFOURCC('Y','2','1','1')
 endif
 
-.list
 endif
+.pragma list(pop)

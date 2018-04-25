@@ -1,8 +1,9 @@
+.pragma list(push, 0)
+
 ifndef __LIBC_INC
  include libc.inc
 endif
 
-.xlist
 IFDEF __PE__
 option		dllimport:<msvcrt>
 ENDIF
@@ -30,4 +31,4 @@ CreateConsole	PROTO :LPSTR, :DWORD
 CreateBatch	PROTO :LPSTR, :DWORD, :DWORD
 CmdIsExe	PROTO :LPSTR
 
-.list
+.pragma list(pop)

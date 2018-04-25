@@ -1,6 +1,5 @@
 ifndef _D3DX9ANIM_H
 _D3DX9ANIM_H equ <>
-.xlist
 
 DEFINE_GUID(IID_ID3DXAnimationSet,	     0x698cfb3f, 0x9289, 0x4d95, 0x9a, 0x57, 0x33, 0xa9, 0x4b, 0x5a, 0x65, 0xf9);
 DEFINE_GUID(IID_ID3DXKeyframedAnimationSet,  0xfa4e8e3a, 0x9786, 0x407d, 0x8b, 0x4c, 0x59, 0x95, 0x89, 0x37, 0x64, 0xaf);
@@ -150,122 +149,122 @@ SaveTemplates		PVOID ?
 ID3DXSaveUserData	ENDS
 
 .comdef ID3DXAnimationSet
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetName             proc
-    GetPeriod           proc
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetName		proc
+    GetPeriod		proc
     GetPeriodicPosition proc :DOUBLE
-    GetNumAnimations    proc
+    GetNumAnimations	proc
     GetAnimationNameByIndex proc :UINT, :ptr
     GetAnimationIndexByName proc :ptr, :ptr
-    GetSRT              proc :DOUBLE, :UINT, :ptr, :ptr, :ptr
-    GetCallback         proc :double, :DWORD, :ptr, :ptr
+    GetSRT		proc :DOUBLE, :UINT, :ptr, :ptr, :ptr
+    GetCallback		proc :double, :DWORD, :ptr, :ptr
     .ends
 
 .comdef ID3DXKeyframedAnimationSet
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetName             proc
-    GetPeriod           proc
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetName		proc
+    GetPeriod		proc
     GetPeriodicPosition proc :DOUBLE
-    GetNumAnimations    proc
+    GetNumAnimations	proc
     GetAnimationNameByIndex proc :UINT, :ptr
     GetAnimationIndexByName proc :ptr, :ptr
-    GetSRT              proc :DOUBLE, :UINT, :ptr, :ptr, :ptr
-    GetCallback         proc :double, :DWORD, :ptr, :ptr
-    GetPlaybackType     proc
+    GetSRT		proc :DOUBLE, :UINT, :ptr, :ptr, :ptr
+    GetCallback		proc :double, :DWORD, :ptr, :ptr
+    GetPlaybackType	proc
     GetSourceTicksPerSecond proc
-    GetNumScaleKeys     proc :UINT
-    GetScaleKeys        proc :UINT, :LPD3DXKEY_VECTOR3
-    GetScaleKey         proc :UINT, :UINT, :LPD3DXKEY_VECTOR3
-    SetScaleKey         proc :UINT, :UINT, :LPD3DXKEY_VECTOR3
-    GetNumRotationKeys  proc :UINT
-    GetRotationKeys     proc :UINT, :LPD3DXKEY_QUATERNION
-    GetRotationKey      proc :UINT, :UINT, :LPD3DXKEY_QUATERNION
-    SetRotationKey      proc :UINT, :UINT, :LPD3DXKEY_QUATERNION
+    GetNumScaleKeys	proc :UINT
+    GetScaleKeys	proc :UINT, :LPD3DXKEY_VECTOR3
+    GetScaleKey		proc :UINT, :UINT, :LPD3DXKEY_VECTOR3
+    SetScaleKey		proc :UINT, :UINT, :LPD3DXKEY_VECTOR3
+    GetNumRotationKeys	proc :UINT
+    GetRotationKeys	proc :UINT, :LPD3DXKEY_QUATERNION
+    GetRotationKey	proc :UINT, :UINT, :LPD3DXKEY_QUATERNION
+    SetRotationKey	proc :UINT, :UINT, :LPD3DXKEY_QUATERNION
     GetNumTranslationKeys proc :UINT
-    GetTranslationKeys  proc :UINT, :LPD3DXKEY_VECTOR3
-    GetTranslationKey   proc :UINT, :UINT, :LPD3DXKEY_VECTOR3
-    SetTranslationKey   proc :UINT, :UINT, :LPD3DXKEY_VECTOR3
-    GetNumCallbackKeys  proc
-    GetCallbackKeys     proc :LPD3DXKEY_CALLBACK
-    GetCallbackKey      proc :UINT, :LPD3DXKEY_CALLBACK
-    SetCallbackKey      proc :UINT, :LPD3DXKEY_CALLBACK
-    UnregisterScaleKey  proc :UINT, :UINT
+    GetTranslationKeys	proc :UINT, :LPD3DXKEY_VECTOR3
+    GetTranslationKey	proc :UINT, :UINT, :LPD3DXKEY_VECTOR3
+    SetTranslationKey	proc :UINT, :UINT, :LPD3DXKEY_VECTOR3
+    GetNumCallbackKeys	proc
+    GetCallbackKeys	proc :LPD3DXKEY_CALLBACK
+    GetCallbackKey	proc :UINT, :LPD3DXKEY_CALLBACK
+    SetCallbackKey	proc :UINT, :LPD3DXKEY_CALLBACK
+    UnregisterScaleKey	proc :UINT, :UINT
     UnregisterRotationKey proc :UINT, :UINT
     UnregisterTranslationKey proc :UINT, :UINT
     RegisterAnimationSRTKeys proc :ptr, :UINT, :UINT, :UINT, :ptr, :ptr, :ptr, :ptr
-    Compress            proc :DWORD, :float, :ptr, :ptr
+    Compress		proc :DWORD, :float, :ptr, :ptr
     UnregisterAnimation proc :UINT
     .ends
 
 .comdef ID3DXCompressedAnimationSet
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetName             proc
-    GetPeriod           proc
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetName		proc
+    GetPeriod		proc
     GetPeriodicPosition proc :DOUBLE
-    GetNumAnimations    proc
+    GetNumAnimations	proc
     GetAnimationNameByIndex proc :UINT, :ptr
     GetAnimationIndexByName proc :ptr, :ptr
-    GetSRT              proc :DOUBLE, :UINT, :ptr, :ptr, :ptr
-    GetCallback         proc :double, :DWORD, :ptr, :ptr
-    GetPlaybackType     proc
+    GetSRT		proc :DOUBLE, :UINT, :ptr, :ptr, :ptr
+    GetCallback		proc :double, :DWORD, :ptr, :ptr
+    GetPlaybackType	proc
     GetSourceTicksPerSecond proc
-    GetCompressedData   proc :ptr
-    GetNumCallbackKeys  proc
-    GetCallbackKeys     proc :LPD3DXKEY_CALLBACK
+    GetCompressedData	proc :ptr
+    GetNumCallbackKeys	proc
+    GetCallbackKeys	proc :LPD3DXKEY_CALLBACK
     .ends
 
 .comdef ID3DXAnimationCallbackHandler
-    HandleCallback      proc :UINT, :ptr
+    HandleCallback	proc :UINT, :ptr
     .ends
 
 .comdef ID3DXAnimationController
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
     GetMaxNumAnimationOutputs proc
     GetMaxNumAnimationSets proc
-    GetMaxNumTracks     proc
-    GetMaxNumEvents     proc
+    GetMaxNumTracks	proc
+    GetMaxNumEvents	proc
     RegisterAnimationOutput proc :ptr, :ptr, :ptr, :ptr, :ptr
     RegisterAnimationSet proc :ptr
     UnregisterAnimationSet proc :ptr
     GetNumAnimationSets proc
-    GetAnimationSet     proc :UINT, :ptr
+    GetAnimationSet	proc :UINT, :ptr
     GetAnimationSetByName proc :ptr, :ptr
-    AdvanceTime         proc :double, :ptr
-    ResetTime           proc
-    GetTime             proc
+    AdvanceTime		proc :double, :ptr
+    ResetTime		proc
+    GetTime		proc
     SetTrackAnimationSet proc :UINT, :ptr
     GetTrackAnimationSet proc :UINT, :ptr
-    SetTrackPriority    proc :UINT, :D3DXPRIORITY_TYPE
-    SetTrackSpeed       proc :UINT, :float
-    SetTrackWeight      proc :UINT, :float
-    SetTrackPosition    proc :UINT, :double
-    SetTrackEnable      proc :UINT, :BOOL
-    SetTrackDesc        proc :UINT, :ptr
-    GetTrackDesc        proc :UINT, :ptr
-    SetPriorityBlend    proc :float
-    GetPriorityBlend    proc
-    KeyTrackSpeed       proc :UINT, :float, :double, :double, :D3DXTRANSITION_TYPE
-    KeyTrackWeight      proc :UINT, :float, :double, :double, :D3DXTRANSITION_TYPE
-    KeyTrackPosition    proc :UINT, :double, :double
-    KeyTrackEnable      proc :UINT, :BOOL, :double
-    KeyPriorityBlend    proc :float, :double, :double, :D3DXTRANSITION_TYPE
-    UnkeyEvent          proc :D3DXEVENTHANDLE
+    SetTrackPriority	proc :UINT, :D3DXPRIORITY_TYPE
+    SetTrackSpeed	proc :UINT, :float
+    SetTrackWeight	proc :UINT, :float
+    SetTrackPosition	proc :UINT, :double
+    SetTrackEnable	proc :UINT, :BOOL
+    SetTrackDesc	proc :UINT, :ptr
+    GetTrackDesc	proc :UINT, :ptr
+    SetPriorityBlend	proc :float
+    GetPriorityBlend	proc
+    KeyTrackSpeed	proc :UINT, :float, :double, :double, :D3DXTRANSITION_TYPE
+    KeyTrackWeight	proc :UINT, :float, :double, :double, :D3DXTRANSITION_TYPE
+    KeyTrackPosition	proc :UINT, :double, :double
+    KeyTrackEnable	proc :UINT, :BOOL, :double
+    KeyPriorityBlend	proc :float, :double, :double, :D3DXTRANSITION_TYPE
+    UnkeyEvent		proc :D3DXEVENTHANDLE
     UnkeyAllTrackEvents proc :UINT
     UnkeyAllPriorityBlends proc
     GetCurrentTrackEvent proc :UINT, :D3DXEVENT_TYPE
     GetCurrentPriorityBlend proc
     GetUpcomingTrackEvent proc :UINT, :D3DXEVENTHANDLE
     GetUpcomingPriorityBlend proc :D3DXEVENTHANDLE
-    ValidateEvent       proc :D3DXEVENTHANDLE
-    GetEventDesc        proc :D3DXEVENTHANDLE, :ptr
+    ValidateEvent	proc :D3DXEVENTHANDLE
+    GetEventDesc	proc :D3DXEVENTHANDLE, :ptr
     CloneAnimationController proc :UINT, :UINT, :UINT, :UINT, :ptr
     .ends
 
@@ -375,5 +374,4 @@ max_animation_set_count: UINT,
        max_event_count: UINT,
   animation_controller: ptr ID3DXAnimationController
 
-.list
-endif ;; _D3DX9ANIM_H
+endif

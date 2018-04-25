@@ -1,12 +1,13 @@
 ifndef __SHELLAPI_INC
 __SHELLAPI_INC equ <>
+
 ifndef __LIBC_INC
  include libc.inc
 endif
 ifndef _WINDEF_
  include windef.inc
 endif
-.xlist
+
 ifdef __PE__
 option	dllimport:<shell32>
 endif
@@ -14,9 +15,10 @@ endif
 ifdef _WIN64
 SHELL_ALIGN	equ <QWORD>
 else
-;#include <pshpack1.h>
 SHELL_ALIGN	equ <BYTE>
 endif
+
+.pragma pack(push, SHELL_ALIGN)
 
 HDROP	typedef HANDLE
 HKEY	typedef HANDLE
@@ -144,7 +146,7 @@ ExtractIcon equ <ExtractIconA>
 endif
 
 if(WINVER GE 0x0400)
-DRAGINFOA		STRUC SHELL_ALIGN
+DRAGINFOA		STRUC
 uSize			UINT ?
 pt			POINT <>
 fNC			BOOL ?
@@ -153,7 +155,7 @@ grfKeyState		dd ?
 DRAGINFOA		ENDS
 LPDRAGINFOA		typedef ptr DRAGINFOA
 
-DRAGINFOW		STRUC SHELL_ALIGN
+DRAGINFOW		STRUC
 uSize			UINT ?
 pt			POINT <>
 fNC			BOOL ?
@@ -198,7 +200,7 @@ ABE_TOP			equ 1
 ABE_RIGHT		equ 2
 ABE_BOTTOM		equ 3
 
-APPBARDATA		STRUC SHELL_ALIGN
+APPBARDATA		STRUC
 cbSize			dd ?
 hWnd			HWND ?
 uCallbackMessage	UINT ?
@@ -264,8 +266,6 @@ ExtractIconEx equ <ExtractIconExA>
 endif
 
 
-
-
 ifndef FO_MOVE
 
 FO_MOVE			equ 0x0001
@@ -307,7 +307,7 @@ PRINTEROP_FLAGS		typedef WORD
 endif
 
 
-SHFILEOPSTRUCTA		STRUC SHELL_ALIGN
+SHFILEOPSTRUCTA		STRUC
 hwnd			HWND ?
 wFunc			UINT ?
 pFrom			LPCSTR ?
@@ -318,7 +318,7 @@ hNameMappings		LPVOID ?
 lpszProgressTitle	LPCSTR ?
 SHFILEOPSTRUCTA		ENDS
 LPSHFILEOPSTRUCTA	typedef ptr SHFILEOPSTRUCTA
-SHFILEOPSTRUCTW		STRUC SHELL_ALIGN
+SHFILEOPSTRUCTW		STRUC
 hwnd			HWND ?
 wFunc			UINT ?
 pFrom			LPCWSTR ?
@@ -353,14 +353,14 @@ endif
 SHFreeNameMappings proto WINAPI \
 	 hNameMappings: HANDLE
 
-SHNAMEMAPPINGA		STRUC SHELL_ALIGN
+SHNAMEMAPPINGA		STRUC
 pszOldPath		LPSTR ?
 pszNewPath		LPSTR ?
 cchOldPath		SINT ?
 cchNewPath		SINT ?
 SHNAMEMAPPINGA		ENDS
 LPSHNAMEMAPPINGA	typedef ptr SHNAMEMAPPINGA
-SHNAMEMAPPINGW		STRUC SHELL_ALIGN
+SHNAMEMAPPINGW		STRUC
 pszOldPath		LPWSTR ?
 pszNewPath		LPWSTR ?
 cchOldPath		SINT ?
@@ -374,10 +374,6 @@ else
 SHNAMEMAPPING		typedef SHNAMEMAPPINGA
 LPSHNAMEMAPPING		typedef LPSHNAMEMAPPINGA
 endif
-
-
-
-
 
 
 SE_ERR_FNF		equ 2
@@ -427,7 +423,7 @@ if (NTDDI_VERSION GE NTDDI_WINXP)
 SEE_MASK_FLAG_LOG_USAGE equ 0x04000000
 endif
 
-SHELLEXECUTEINFOA	STRUC SHELL_ALIGN
+SHELLEXECUTEINFOA	STRUC
 cbSize			dd ?
 fMask			dd ?
 hwnd			HWND ?
@@ -451,7 +447,7 @@ hProcess		HANDLE ?
 SHELLEXECUTEINFOA	ENDS
 LPSHELLEXECUTEINFOA	typedef ptr SHELLEXECUTEINFOA
 
-SHELLEXECUTEINFOW	STRUC SHELL_ALIGN
+SHELLEXECUTEINFOW	STRUC
 cbSize			dd ?
 fMask			ULONG ?
 hwnd			HWND ?
@@ -637,9 +633,7 @@ endif
 
 if (NTDDI_VERSION GE NTDDI_WIN2K)
 
-
-
-SHQUERYRBINFO		STRUC SHELL_ALIGN
+SHQUERYRBINFO		STRUC
 cbSize			dd ?
 i64Size			dq ?
 i64NumItems		dq ?
@@ -706,7 +700,7 @@ SHGetPropertyStoreForWindow proto WINAPI \
 		   ppv: ptr PVOID
 endif
 
-NOTIFYICONDATAA		STRUC SHELL_ALIGN
+NOTIFYICONDATAA		STRUC
 cbSize			dd ?
 hWnd			HWND ?
 uID			UINT ?
@@ -736,7 +730,7 @@ hBalloonIcon		HICON ?
 endif
 NOTIFYICONDATAA		ENDS
 PNOTIFYICONDATAA	typedef ptr NOTIFYICONDATAA
-NOTIFYICONDATAW		STRUC SHELL_ALIGN
+NOTIFYICONDATAW		STRUC
 cbSize			dd ?
 hWnd			HWND ?
 uID			UINT ?
@@ -904,7 +898,7 @@ SHFILEINFO_DEFINED equ <>
 
 
 
-SHFILEINFOA		STRUC SHELL_ALIGN
+SHFILEINFOA		STRUC
 hIcon			HICON ?
 iIcon			SINT ?
 dwAttributes		dd ?
@@ -912,7 +906,7 @@ szDisplayName		DB MAX_PATH DUP(?)
 szTypeName		DB 80 DUP(?)
 SHFILEINFOA		ENDS
 
-SHFILEINFOW		STRUC SHELL_ALIGN
+SHFILEINFOW		STRUC
 hIcon			HICON ?
 iIcon			SINT ?
 dwAttributes		dd ?
@@ -1401,7 +1395,8 @@ CALLBACK(FNSHOWSHAREFOLDERUIW, hwndParent:HWND, pszPath:LPCWSTR)
 endif
 
 ifndef _WIN64
-;include <poppack.h>
+.pragma pack(pop)
+.pragma pack(push, 1)
 endif
 
 if (NTDDI_VERSION GE NTDDI_VISTA)
@@ -1450,5 +1445,5 @@ endif
 if (NTDDI_VERSION GE NTDDI_VISTA)
 endif
 
-.list
+.pragma pack(pop)
 endif

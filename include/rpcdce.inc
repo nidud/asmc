@@ -1,9 +1,9 @@
+ifndef __RPCDCE_H__
+__RPCDCE_H__ equ <>
+
 ifndef __LIBC_INC
  include libc.inc
 endif
-.xlist
-ifndef __RPCDCE_H__
-__RPCDCE_H__ equ 1
 
 RPC_BINDING_HANDLE	typedef I_RPC_HANDLE
 handle_t		typedef RPC_BINDING_HANDLE
@@ -1073,7 +1073,7 @@ RpcBindingInqAuthInfo proto WINAPI \
        ServerPrincName: PVOID,
 	    AuthnLevel: LPDWORD,
 	      AuthnSvc: LPDWORD,
-	  AuthIdentity: RPC_AUTH_IDENTITY_HANDLE*,
+	  AuthIdentity: ptr RPC_AUTH_IDENTITY_HANDLE,
 	      AuthzSvc: LPDWORD
 
 ;RPC_STATUS
@@ -1403,5 +1403,3 @@ RPC_IF_OLE		equ 0x0002
 include rpcdcep.inc
 
 endif
-
-.list

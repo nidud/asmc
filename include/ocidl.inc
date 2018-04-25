@@ -14,8 +14,7 @@ include windows.inc
 include ole2.inc
 endif
 ifndef __ocidl_h__
-__ocidl_h__ equ 1
-.xlist
+__ocidl_h__ equ <>
 
 ifndef __IEnumConnections_FWD_DEFINED__
 __IEnumConnections_FWD_DEFINED__ equ 1
@@ -181,7 +180,6 @@ include oleidl.inc
 include oaidl.inc
 include servprov.inc
 include urlmon.inc
-.xlist
 
 externdef		__MIDL_itf_ocidl_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef		__MIDL_itf_ocidl_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
@@ -1894,5 +1892,4 @@ IQuickActivate_QuickActivate_Stub proto WINAPI \
 	    pQaControl: ptr QACONTROL
 
 
-.list
-endif ; __ocidl_h__
+endif

@@ -2,8 +2,7 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 ifndef _INC_DDEMLH
-_INC_DDEMLH equ 1
-.xlist
+_INC_DDEMLH equ <>
 
 HCONVLIST		typedef HANDLE
 HCONV			typedef HANDLE
@@ -525,5 +524,4 @@ MF_MASK			equ 0xFF000000
 
 endif
 
-.list
 endif

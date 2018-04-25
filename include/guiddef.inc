@@ -1,3 +1,4 @@
+.pragma list(push, 0)
 ifndef GUID_DEFINED
 GUID_DEFINED		equ <>
 GUID			STRUC
@@ -9,12 +10,13 @@ GUID			ENDS
 endif
 
 ifdef DEFINE_GUID
-;undef DEFINE_GUID
+undef DEFINE_GUID
 endif
 
 ifdef INITGUID
 DEFINE_GUID macro name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8
-	name GUID <l,w1,w2,<b1,b2,b3,b4,b5,b6,b7,b8>>
+	;name GUID <l,w1,w2,<b1,b2,b3,b4,b5,b6,b7,b8>>
+	exitm<_&name& equ {l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}}>
 	endm
 else
 DEFINE_GUID macro name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8
@@ -94,7 +96,6 @@ ifndef __midl
 ifndef _SYS_GUID_OPERATORS_
 _SYS_GUID_OPERATORS_	equ <>
 include string.inc
-.xlist
 
 InlineIsEqualGUID macro rguid1, rguid2
 	.if !memcmp(rguid1, rguid2, sizeof(GUID))
@@ -119,3 +120,4 @@ IsEqualCLSID macro rclsid1, rclsid2
 endif
 endif
 endif
+.pragma list(pop)

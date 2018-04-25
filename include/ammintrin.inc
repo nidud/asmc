@@ -1,6 +1,6 @@
 ifndef _INCLUDED_AMM
 _INCLUDED_AMM equ <>
-.xlist
+.pragma list(push, 0)
 
 ifndef _M_IX86
 ifndef _M_X64
@@ -418,5 +418,5 @@ _mm_monitorx	proto :ptr, :dword, :dword
 _mm_mwaitx	proto :dword, :dword, :dword
 _mm_clzero	proto
 
-.list
-endif ;; _INCLUDED_AMM
+.pragma list(pop)
+endif

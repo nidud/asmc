@@ -1,4 +1,4 @@
-.xlist
+.pragma list(push, 0)
 
 O_RDONLY	equ 0x0000
 O_WRONLY	equ 0x0001
@@ -15,4 +15,4 @@ O_SHORT_LIVED	equ 0x1000
 O_TEXT		equ 0x4000
 O_BINARY	equ 0x8000
 
-.list
+.pragma list(pop)

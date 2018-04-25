@@ -1,3 +1,4 @@
+.pragma list(push, 0)
 ifndef __REQUIRED_RPCNDR_H_VERSION__
 __REQUIRED_RPCNDR_H_VERSION__ equ 500
 endif
@@ -14,7 +15,8 @@ include windows.inc
 include ole2.inc
 endif
 ifndef __d3d10_1_h__
-__d3d10_1_h__ equ 1
+__d3d10_1_h__ equ <>
+
 ifndef __ID3D10BlendState1_FWD_DEFINED__
 __ID3D10BlendState1_FWD_DEFINED__ equ 1
 endif
@@ -26,11 +28,11 @@ __ID3D10Device1_FWD_DEFINED__ equ 1
 endif
 include oaidl.inc
 include ocidl.inc
-.xlist
 
 if defined( __d3d10_h__ ) AND NOT defined( D3D10_ARBITRARY_HEADER_ORDERING )
 .err <d3d10.inc is included before d3d10_1.h, and it will confuse tools that honor SAL annotations>
 endif
+
 ifndef _D3D10_1_CONSTANTS
 _D3D10_1_CONSTANTS equ 1
 D3D10_1_DEFAULT_SAMPLE_MASK equ ( 0xffffffff )
@@ -59,8 +61,6 @@ D3D10_1_VS_OUTPUT_REGISTER_COUNT equ ( 32 )
 endif
 
 include d3d10.inc
-.xlist
-
 
 D3D10_FEATURE_LEVEL1	typedef SDWORD
 D3D10_FEATURE_LEVEL_10_0 equ 0xa000
@@ -286,7 +286,6 @@ endif
 D3D10_1_SDK_VERSION	equ ( ( 0 + 0x20 )  )
 
 include d3d10_1shader.inc
-.xlist
 
 CALLBACK(PFN_D3D10_CREATE_DEVICE1, \
 		      : ptr IDXGIAdapter, \
@@ -338,8 +337,5 @@ DEFINE_GUID(IID_ID3D10Device1,0x9B7E4C8F,0x342C,0x4106,0xA1,0x9F,0x4F,0x27,0x04,
 externdef		__MIDL_itf_d3d10_1_0000_0003_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef		__MIDL_itf_d3d10_1_0000_0003_v0_0_s_ifspec:RPC_IF_HANDLE
 
-.list
 endif
-
-
-
+.pragma list(pop)

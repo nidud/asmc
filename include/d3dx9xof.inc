@@ -1,7 +1,6 @@
 ifndef _D3DX9XOF_H
 _D3DX9XOF_H equ <>
 include d3dx9.inc
-.xlist
 
 D3DXF_FILEFORMAT	typedef DWORD
 D3DXF_FILEFORMAT_BINARY equ 0
@@ -45,61 +44,61 @@ D3DXFileCreate proto WINAPI \
 
 
 .comdef ID3DXFile
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    CreateEnumObject    proc :ptr, :D3DXF_FILELOADOPTIONS, :ptr
-    CreateSaveObject    proc :ptr, :D3DXF_FILESAVEOPTIONS, :D3DXF_FILEFORMAT, :ptr
-    RegisterTemplates   proc :ptr, :SIZE_T
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    CreateEnumObject	proc :ptr, :D3DXF_FILELOADOPTIONS, :ptr
+    CreateSaveObject	proc :ptr, :D3DXF_FILESAVEOPTIONS, :D3DXF_FILEFORMAT, :ptr
+    RegisterTemplates	proc :ptr, :SIZE_T
     RegisterEnumTemplates proc :ptr
     .ends
 
 .comdef ID3DXFileSaveObject
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetFile             proc :ptr
-    AddDataObject       proc :REFGUID, :ptr, :ptr, :SIZE_T, :ptr, :ptr
-    Save                proc
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetFile		proc :ptr
+    AddDataObject	proc :REFGUID, :ptr, :ptr, :SIZE_T, :ptr, :ptr
+    Save		proc
     .ends
 
 .comdef ID3DXFileSaveData
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetSave             proc :ptr
-    GetName             proc :ptr, :ptr
-    GetId               proc :LPGUID
-    GetType             proc :ptr
-    AddDataObject       proc :REFGUID, :ptr, :ptr, :SIZE_T, :ptr, :ptr
-    AddDataReference    proc :ptr, :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetSave		proc :ptr
+    GetName		proc :ptr, :ptr
+    GetId		proc :LPGUID
+    GetType		proc :ptr
+    AddDataObject	proc :REFGUID, :ptr, :ptr, :SIZE_T, :ptr, :ptr
+    AddDataReference	proc :ptr, :ptr
     .ends
 
 
 .comdef ID3DXFileEnumObject
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetFile             proc :ptr
-    GetChildren         proc :ptr
-    GetChild            proc :SIZE_T, :ptr
-    GetDataObjectById   proc :REFGUID, :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetFile		proc :ptr
+    GetChildren		proc :ptr
+    GetChild		proc :SIZE_T, :ptr
+    GetDataObjectById	proc :REFGUID, :ptr
     GetDataObjectByName proc :ptr, :ptr
     .ends
 
 .comdef ID3DXFileData
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetEnum             proc :ptr
-    GetName             proc :ptr, :ptr
-    GetId               proc :LPGUID
-    _Lock               proc :ptr, :ptr
-    Unlock              proc
-    GetType             proc :ptr
-    IsReference         proc
-    GetChildren         proc :ptr
-    GetChild            proc :SIZE_T, :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetEnum		proc :ptr
+    GetName		proc :ptr, :ptr
+    GetId		proc :LPGUID
+    _Lock		proc :ptr, :ptr
+    Unlock		proc
+    GetType		proc :ptr
+    IsReference		proc
+    GetChildren		proc :ptr
+    GetChild		proc :SIZE_T, :ptr
     .ends
 
 ;; D3DX File errors
@@ -124,5 +123,4 @@ D3DXFERR_NOMOREOBJECTS	equ MAKE_HRESULT(1,_FACD3DXF,915)
 D3DXFERR_NOMOREDATA	equ MAKE_HRESULT(1,_FACD3DXF,916)
 D3DXFERR_BADCACHEFILE	equ MAKE_HRESULT(1,_FACD3DXF,917)
 
-.list
-endif ;; _D3DX9XOF_H
+endif

@@ -1,9 +1,10 @@
 ifndef _WINDNS_INCLUDED_
 _WINDNS_INCLUDED_ equ <>
+.pragma list(push, 0)
+
 ifndef _WINDEF_
  include windef.inc
 endif
-.xlist
 
 PQWORD			typedef ptr QWORD
 DNS_STATUS		typedef SDWORD
@@ -124,13 +125,13 @@ DNS_MAX_REVERSE_NAME_BUFFER_LENGTH equ DNS_MAX_REVERSE_NAME_LENGTH
 
 DNS_MAX_TEXT_STRING_LENGTH equ 255
 
-;pragma pack(push, 1)
+.pragma pack(push, 1)
 
 ;;
 ;;  DNS Message Header
 ;;
 
-DNS_HEADER		STRUC BYTE
+DNS_HEADER		STRUC
 Xid			dw ?
 
 ;RecursionDesired : 1	db ?
@@ -154,7 +155,7 @@ AdditionalCount		dw ?
 DNS_HEADER		ENDS
 PDNS_HEADER		typedef ptr DNS_HEADER
 
-DNS_HEADER_EXT		STRUC BYTE
+DNS_HEADER_EXT		STRUC
 ;Reserved : 15		dw ?
 ;DnssecOk : 1		dw ?
 flag1			dw ?
@@ -182,13 +183,13 @@ DNS_ANSWER_FROM_QUESTION macro _pQuestion_
 	exitm<BYTE PTR [_pQuestion_+1]>
 	endm
 
-DNS_WIRE_QUESTION	STRUC BYTE
+DNS_WIRE_QUESTION	STRUC
 QuestionType		dw ?
 QuestionClass		dw ?
 DNS_WIRE_QUESTION	ENDS
 PDNS_WIRE_QUESTION	typedef ptr DNS_WIRE_QUESTION
 
-DNS_WIRE_RECORD		STRUC BYTE
+DNS_WIRE_RECORD		STRUC
 RecordType		dw ?
 RecordClass		dw ?
 TimeToLive		dd ?
@@ -196,7 +197,7 @@ DataLength		dw ?
 DNS_WIRE_RECORD		ENDS
 PDNS_WIRE_RECORD	typedef ptr DNS_WIRE_RECORD
 
-;pragma pack(pop)
+.pragma pack(pop)
 
 DNS_OPCODE_QUERY	equ 0
 DNS_OPCODE_IQUERY	equ 1
@@ -1600,7 +1601,5 @@ defaultProxyInformation: ptr DNS_PROXY_INFORMATION,
 DnsFreeProxyName proto WINAPI \
 	     proxyName: PWSTR
 
-
-.list
-endif ;; _WINDNS_INCLUDED_
-
+.pragma list(pop)
+endif

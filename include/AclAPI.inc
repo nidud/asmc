@@ -2,7 +2,7 @@ ifndef __ACCESS_CONTROL_API__
 __ACCESS_CONTROL_API__ equ <>
 include windows.inc
 include accctrl.inc
-.xlist
+.pragma list(push, 0)
 
 ;VOID
 CALLBACK(FN_PROGRESS, :LPWSTR, :DWORD, :PPROG_INVOKE_SETTING, :PVOID, :BOOL)
@@ -463,5 +463,5 @@ else
 GetMultipleTrustee      equ <GetMultipleTrusteeA>
 endif
 
-.list
-endif ;; __ACCESS_CONTROL_API__
+.pragma list(pop)
+endif

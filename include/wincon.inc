@@ -1,9 +1,9 @@
+ifndef _WINCON_
+_WINCON_ equ <>
+.pragma list(push, 0)
 ifndef _WINDEF_
  include windef.inc
 endif
-ifndef _WINCON_
-_WINCON_ equ <>
-.xlist
 
 ifdef __PE__
 option	dllimport:<kernel32>
@@ -547,6 +547,5 @@ SetConsoleDisplayMode proto WINAPI \
 	       dwFlags: DWORD,
 lpNewScreenBufferDimensions: PCOORD
 
-.list
+.pragma list(pop)
 endif
-

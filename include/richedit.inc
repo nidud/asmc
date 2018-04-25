@@ -1,6 +1,6 @@
 ifndef _RICHEDIT_
 _RICHEDIT_ equ <>
-.xlist
+.pragma list(push, 0)
 
 ifndef _RICHEDIT_VER
 _RICHEDIT_VER       equ 0x0800
@@ -452,8 +452,10 @@ ifdef _WIN32
 CALLBACK(EDITWORDBREAKPROCEX, :LPSTR, :LONG, :BYTE, :SINT)
 endif
 
+.pragma pack(push, 4)
+
 ;; All character format measurements are in twips
-CHARFORMATA     STRUC 4
+CHARFORMATA     STRUC
 cbSize          UINT ?
 dwMask          DWORD ?
 dwEffects       DWORD ?
@@ -465,7 +467,7 @@ bPitchAndFamily BYTE ?
 szFaceName      SBYTE LF_FACESIZE dup(?)
 CHARFORMATA     ENDS
 
-CHARFORMATW     STRUC 4
+CHARFORMATW     STRUC
 cbSize          UINT ?
 dwMask          DWORD ?
 dwEffects       DWORD ?
@@ -489,7 +491,7 @@ endif ;; _RICHEDIT_VER >= 0x0200
 
 ;; CHARFORMAT2 structure
 
-CHARFORMAT2W    STRUC 4
+CHARFORMAT2W    STRUC
 cbSize          UINT ?
 dwMask          DWORD ?
 dwEffects       DWORD ?
@@ -514,7 +516,7 @@ bUnderlineColor BYTE ?
 endif
 CHARFORMAT2W    ENDS
 
-CHARFORMAT2A    STRUC 4
+CHARFORMAT2A    STRUC
 cbSize          UINT ?
 dwMask          DWORD ?
 dwEffects       DWORD ?
@@ -544,6 +546,8 @@ CHARFORMAT2 equ <CHARFORMAT2W>
 else
 CHARFORMAT2 equ <CHARFORMAT2A>
 endif
+
+.pragma pack(pop)
 
 CHARFORMATDELTA equ (sizeof(CHARFORMAT2) - sizeof(CHARFORMAT))
 
@@ -1184,7 +1188,5 @@ dxHyphenateZone SWORD ?     ;; If a space character is closer to the margin
 pfnHyphenate    PVOID ?     ;; (WCHAR*, LANGID, long, HYPHRESULT*);
 HYPHENATEINFO   ENDS
 
-.list
-endif ; !_RICHEDIT_
-
-
+.pragma list(pop)
+endif

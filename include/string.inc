@@ -1,9 +1,9 @@
 ifndef __STRING_INC
 __STRING_INC equ <>
+.pragma list(push, 0)
 ifndef __LIBC_INC
  include libc.inc
 endif
-.xlist
 ifdef __PE__
 option	dllimport:<msvcrt>
 else
@@ -85,5 +85,5 @@ endif  ;; NOT __STDC__
 
 _WSTRING_DEFINED equ 1
 endif
-.list
-endif ;; __STRING_INC
+.pragma list(pop)
+endif

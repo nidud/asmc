@@ -1,7 +1,6 @@
 ifndef __D3D10EFFECT_H__
-__D3D10EFFECT_H__ equ 1
+__D3D10EFFECT_H__ equ <>
 include d3d10.inc
-.xlist
 
 D3D10_DEVICE_STATE_TYPES typedef SDWORD
 D3D10_DST_SO_BUFFERS	equ 1
@@ -819,8 +818,4 @@ D3D10DisassembleEffect proto WINAPI \
 	 ppDisassembly: ptr ID3D10Blob
 
 
-.list
-endif ;;__D3D10EFFECT_H__
-
-
-
+endif

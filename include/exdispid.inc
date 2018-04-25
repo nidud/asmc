@@ -1,6 +1,6 @@
 ifndef EXDISPID_H_
 EXDISPID_H_ equ <>
-.xlist
+.pragma list(push, 0)
 
 DISPID_BEFORENAVIGATE   equ 100
 DISPID_NAVIGATECOMPLETE equ 101
@@ -151,6 +151,6 @@ DISPID_SELECTEDITEMS    equ 24
 DISPID_EXPAND           equ 25
 DISPID_UNSELECTALL      equ 26
 
-.list
+.pragma list(pop)
 endif
 

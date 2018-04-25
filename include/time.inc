@@ -1,8 +1,8 @@
+.pragma list(push, 0)
 ifndef __LIBC_INC
  include libc.inc
 endif
 
-.xlist
 ifdef __PE__
 option	dllimport:<msvcrt>
 endif
@@ -127,6 +127,5 @@ TDateToString	proto __cdecl :ptr sbyte, :time_t
 SystemTimeToString proto __cdecl :ptr sbyte, :LPSYSTEMTIME
 SystemDateToString proto __cdecl :ptr sbyte, :LPSYSTEMTIME
 
-endif	;; __PE__
-
-.list
+endif
+.pragma list(pop)

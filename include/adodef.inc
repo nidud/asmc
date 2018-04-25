@@ -1,6 +1,6 @@
 ifndef _ADODEF_H_
 _ADODEF_H_ equ <>
-.xlist
+.pragma list(push, 0)
 
 ADO_MAJOR		equ 6
 ADOR_MAJOR		equ 2
@@ -34,6 +34,6 @@ JRO_LIBRARYNAME		equ <"Microsoft Jet and Replication Objects 2.6 Library">
 ;ADOMD_TYPELIB_UUID	 equ uuid(22813728-8BD3-11D0-B4EF-00A0C9138CA4)
 ;JRO_TYPELIB_UUID	 equ uuid(AC3B8B4C-B6CA-11d1-9F31-00C04FC29D52)
 
-.list
-endif ;; _ADODEF_H_
+.pragma list(pop)
+endif
 

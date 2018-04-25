@@ -13,9 +13,8 @@ ifndef COM_NO_WINDOWS_H
 include windows.inc
 include ole2.inc
 endif
-.xlist
 ifndef __bits3_0_h__
-__bits3_0_h__ equ 1
+__bits3_0_h__ equ <>
 
 ifndef __IBitsPeerCacheRecord_FWD_DEFINED__
 __IBitsPeerCacheRecord_FWD_DEFINED__ equ 1
@@ -52,7 +51,7 @@ include bits.inc
 include bits1_5.inc
 include bits2_0.inc
 include bits2_5.inc
-.xlist
+
 ifndef __IBitsPeerCacheRecord_INTERFACE_DEFINED__
 __IBitsPeerCacheRecord_INTERFACE_DEFINED__ equ 1
 
@@ -285,5 +284,4 @@ include bits4_0.inc
 externdef __MIDL_itf_bits3_0_0000_0008_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef __MIDL_itf_bits3_0_0000_0008_v0_0_s_ifspec:RPC_IF_HANDLE
 
-.list
 endif

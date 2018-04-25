@@ -1,5 +1,6 @@
 ifndef __D3DX9_H__
 __D3DX9_H__ equ <>
+.pragma list(push, 0)
 include limits.inc
 
 D3DX_DEFAULT		equ (-1)
@@ -22,8 +23,6 @@ include d3dx9shape.inc
 include d3dx9anim.inc
 include d3dx9tex.inc
 
-.xlist
-
 _FACDD			equ 0x876
 MAKE_DDHRESULT macro code
 	exitm<MAKE_HRESULT(1, _FACDD, code)>
@@ -40,5 +39,5 @@ D3DXERR_LOADEDMESHASNODATA	equ MAKE_DDHRESULT(2906)
 D3DXERR_DUPLICATENAMEDFRAGMENT	equ MAKE_DDHRESULT(2907)
 D3DXERR_CANNOTREMOVELASTITEM	equ MAKE_DDHRESULT(2908)
 
-.list
+.pragma list(pop)
 endif

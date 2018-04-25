@@ -2,8 +2,7 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 ifndef _OLE2_H_
-.xlist
-_OLE2_H_ equ 1
+_OLE2_H_ equ <>
 
 ;#include <pshpack8.h>
 
@@ -15,8 +14,6 @@ _OLE2_H_ equ 1
 include winerror.inc
 include objbase.inc
 include oleauto.inc
-.xlist
-
 
 E_DRAW			equ VIEW_E_DRAW
 
@@ -38,11 +35,7 @@ EMBDHLP_DELAYCREATE	equ 0x00010000
 
 OLECREATE_LEAVERUNNING	equ 0x00000001
 
-
 include oleidl.inc
-.xlist
-
-
 
 CreateDataAdviseHolder proto WINAPI \
 	    ppDAHolder: LPDATAADVISEHOLDER
@@ -524,8 +517,6 @@ OleConvertOLESTREAMToIStorageEx proto WINAPI \
 	      plHeight: ptr LONG,
 	       pdwSize: LPDWORD,
 	       pmedium: LPSTGMEDIUM
-
-.list
 
 endif
 

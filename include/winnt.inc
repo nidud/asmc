@@ -1,9 +1,10 @@
 ifndef _WINNT_
 _WINNT_ equ <>
+.pragma list(push, 0)
+
 include ctype.inc
 include string.inc
 include basetsd.inc
-.xlist
 ifndef _WIN32_FUSION
 _WIN32_FUSION equ 0
 endif
@@ -895,7 +896,6 @@ CONTAINING_RECORD macro address, x, field
 
 ifndef __EXCPT_INC
  include excpt.inc
- .xlist
 endif
 
 EXCEPTION_MAXIMUM_PARAMETERS	equ 15	; maximum number of exception parameters
@@ -1719,51 +1719,51 @@ InterlockedBitTestAndSet64 equ <_interlockedbittestandset64>
 InterlockedBitTestAndReset64 equ <_interlockedbittestandreset64>
 
 ;BOOLEAN
-_bittest proto WINAPI \
+_bittest proto \
 		  Base: ptr LONG,
 	       _Offset: LONG
 ;BOOLEAN
-_bittestandcomplement proto WINAPI \
+_bittestandcomplement proto \
 		  Base: ptr LONG,
 	       _Offset: LONG
 ;BOOLEAN
-_bittestandset proto WINAPI \
+_bittestandset proto \
 		  Base: ptr LONG,
 	       _Offset: LONG
 ;BOOLEAN
-_bittestandreset proto WINAPI \
+_bittestandreset proto \
 		  Base: ptr LONG,
 	       _Offset: LONG
 ;BOOLEAN
-_interlockedbittestandset proto WINAPI \
-		  Base: ptr LONG,
-	       _Offset: LONG
+_interlockedbittestandset proto \
+		  Base: :ptr,
+	       _Offset: sdword
 ;BOOLEAN
-_interlockedbittestandreset proto WINAPI \
-		  Base: ptr LONG,
-	       _Offset: LONG
+_interlockedbittestandreset proto \
+		  Base: ptr,
+	       _Offset: sdword
 ;BOOLEAN
-_bittest64 proto WINAPI \
+_bittest64 proto \
 		  Base: ptr LONG64,
 	       _Offset: LONG64
 ;BOOLEAN
-_bittestandcomplement64 proto WINAPI \
+_bittestandcomplement64 proto \
 		  Base: ptr LONG64,
 	       _Offset: LONG64
 ;BOOLEAN
-_bittestandset64 proto WINAPI \
+_bittestandset64 proto \
 		  Base: ptr LONG64,
 	       _Offset: LONG64
 ;BOOLEAN
-_bittestandreset64 proto WINAPI \
+_bittestandreset64 proto \
 		  Base: ptr LONG64,
 	       _Offset: LONG64
 ;BOOLEAN
-_interlockedbittestandset64 proto WINAPI \
+_interlockedbittestandset64 proto \
 		  Base: ptr LONG64,
 	       _Offset: LONG64
 ;BOOLEAN
-_interlockedbittestandreset64 proto WINAPI \
+_interlockedbittestandreset64 proto \
 		  Base: ptr LONG64,
 	       _Offset: LONG64
 
@@ -1774,19 +1774,19 @@ BitScanForward64	equ <_BitScanForward64>
 BitScanReverse64	equ <_BitScanReverse64>
 
 ;BOOLEAN
-_BitScanForward proto WINAPI \
+_BitScanForward proto \
 		 Index: ptr dword,
 		 _Mask: dword
 ;BOOLEAN
-_BitScanReverse proto WINAPI \
+_BitScanReverse proto \
 		 Index: ptr dword,
 		 _Mask: dword
 ;BOOLEAN
-_BitScanForward64 proto WINAPI \
+_BitScanForward64 proto \
 		 Index: ptr dword,
 		 _Mask: DWORD64
 ;BOOLEAN
-_BitScanReverse64 proto WINAPI \
+_BitScanReverse64 proto \
 		 Index: ptr dword,
 		 _Mask: DWORD64
 
@@ -2551,40 +2551,40 @@ InterlockedBitTestAndSet equ <_interlockedbittestandset>
 InterlockedBitTestAndReset equ <_interlockedbittestandreset>
 
 ;BOOLEAN
-_bittest proto WINAPI \
+_bittest proto \
 		  Base: ptr LONG,
 	       _Offset: LONG
 ;BOOLEAN
-_bittestandcomplement proto WINAPI \
+_bittestandcomplement proto \
 		  Base: ptr LONG,
 	       _Offset: LONG
 ;BOOLEAN
-_bittestandset proto WINAPI \
+_bittestandset proto \
 		  Base: ptr LONG,
 	       _Offset: LONG
 ;BOOLEAN
-_bittestandreset proto WINAPI \
+_bittestandreset proto \
 		  Base: ptr LONG,
 	       _Offset: LONG
 ;BOOLEAN
-_interlockedbittestandset proto WINAPI \
-		  Base: ptr LONG,
-	       _Offset: LONG
+_interlockedbittestandset proto \
+		  Base: ptr,
+	       _Offset: sdword
 ;BOOLEAN
-_interlockedbittestandreset proto WINAPI \
-		  Base: ptr LONG,
-	       _Offset: LONG
+_interlockedbittestandreset proto \
+		  Base: ptr,
+	       _Offset: sdword
 
 
 BitScanForward		equ <_BitScanForward>
 BitScanReverse		equ <_BitScanReverse>
 
 ;BOOLEAN
-_BitScanForward proto WINAPI \
+_BitScanForward proto \
 		 Index: ptr dword,
 		 _Mask: dword
 ;BOOLEAN
-_BitScanReverse proto WINAPI \
+_BitScanReverse proto \
 		 Index: ptr dword,
 		 _Mask: dword
 
@@ -2621,9 +2621,9 @@ _InterlockedAnd16 proto WINAPI \
 		 Value: WORD
 ;SHORT
 _InterlockedCompareExchange16 proto WINAPI \
-	   Destination: LPWORD,
-	      ExChange: WORD,
-	     Comperand: WORD
+	   Destination: PTR SWORD,
+	      ExChange: SWORD,
+	     Comperand: SWORD
 ;SHORT
 _InterlockedOr16 proto WINAPI \
 	   Destination: LPWORD,
@@ -3043,9 +3043,9 @@ InterlockedCompareExchange16 equ <_InterlockedCompareExchange16>
 
 ;SHORT
 _InterlockedCompareExchange16 proto WINAPI \
-	   Destination: ptr word,
-	      ExChange: word,
-	     Comperand: word
+	   Destination: ptr sword,
+	      ExChange: sword,
+	     Comperand: sword
 
 if 0
 InterlockedAdd		equ <_InterlockedAdd>
@@ -8080,14 +8080,19 @@ _Name			db ?
 IMAGE_IMPORT_BY_NAME	ENDS
 PIMAGE_IMPORT_BY_NAME	typedef ptr IMAGE_IMPORT_BY_NAME
 
-IMAGE_THUNK_DATA64	STRUC 8 ; Use align 8 for the 64-bit IAT.
-UNION ; u1
+.pragma pack(push, 8)
+
+IMAGE_THUNK_DATA64	STRUC
+UNION
   ForwarderString	LPBYTE ?
   Function		PDWORD ?
-  Ordinal			ULONGLONG ?
+  Ordinal		ULONGLONG ?
   AddressOfData		PIMAGE_IMPORT_BY_NAME ?
 ENDS
 IMAGE_THUNK_DATA64	ENDS
+
+.pragma pack(pop)
+
 PIMAGE_THUNK_DATA64	typedef ptr IMAGE_THUNK_DATA64
 
 IMAGE_THUNK_DATA32	STRUC
@@ -8580,8 +8585,6 @@ PIMAGE_COR20_HEADER	typedef ptr IMAGE_COR20_HEADER
 
 endif
 
-
-
 ifdef _MAC
 ifndef __STRING_INC
 include string.inc
@@ -8589,12 +8592,13 @@ endif
 else
 ifndef __STRING_INC
 include string.inc
-.xlist
 endif
 endif
+
+ifndef _SLIST_HEADER_
+_SLIST_HEADER_ equ <>
 
 ifdef _WIN64
-
 
 DECLSPEC_ALIGN(16)
 SLIST_ENTRY		STRUC
@@ -8686,7 +8690,7 @@ SLIST_HEADER32		typedef SLIST_HEADER
 PSLIST_HEADER32		typedef ptr SLIST_HEADER
 
 endif
-endif
+endif ;; _SLIST_HEADER_
 
 ;NTSYSAPI
 ;VOID
@@ -8863,7 +8867,6 @@ RtlZeroMemory macro Destination, L
 	exitm<memset(Destination,0,L)>
 	endm
 
-ifndef MIDL_PASS
 ;FORCEINLINE
 ;PVOID
 RtlSecureZeroMemory macro vptr, cnt
@@ -8875,7 +8878,6 @@ else
     .endf
 endif
     exitm<vptr>
-endif
     endm
 
 SEF_DACL_AUTO_INHERIT		  equ 0x01
@@ -10057,8 +10059,6 @@ TransactionInformation	TRANSACTION_LIST_ENTRY <>
 TRANSACTION_LIST_INFORMATION ENDS
 PTRANSACTION_LIST_INFORMATION typedef ptr TRANSACTION_LIST_INFORMATION
 
-
-
 KTMOBJECT_TYPE		typedef sdword; ptr enum _KTMOBJECT_TYPE {
 PKTMOBJECT_TYPE		typedef ptr KTMOBJECT_TYPE
 
@@ -10076,7 +10076,7 @@ ObjectIds		GUID <>
 KTMOBJECT_CURSOR	ENDS
 PKTMOBJECT_CURSOR	typedef ptr KTMOBJECT_CURSOR
 
-endif
+endif ;; _NTTMAPI_
 
 TP_VERSION		typedef DWORD
 PTP_VERSION		typedef ptr TP_VERSION
@@ -10218,8 +10218,7 @@ TpSetCallbackPersistent macro CallbackEnviron
 TpDestroyCallbackEnviron macro CallbackEnviron
 	endm
 
-endif
-
+endif ;; !MIDL_PASS
 
 PTP_WORK		typedef ptr TP_WORK
 
@@ -10236,7 +10235,7 @@ CALLBACK(PTP_WAIT_CALLBACK, Instance:PTP_CALLBACK_INSTANCE, Context:PVOID, _Wait
 
 PTP_IO			typedef ptr TP_IO
 
-if defined(_M_AMD64) AND NOT defined(__midl)
+ifdef _M_AMD64
 ;TEB *
 NtCurrentTeb macro
 	exitm<__readgsqword(FIELD_OFFSET(NT_TIB, Self))>
@@ -10284,5 +10283,6 @@ ACTIVATION_CONTEXT_SECTION_APPLICATION_SETTINGS		equ 10
 ACTIVATION_CONTEXT_SECTION_COMPATIBILITY_INFO		equ 11
 endif
 
-.list
-endif	; _WINNT_
+.pragma list(pop)
+endif
+

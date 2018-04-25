@@ -11,7 +11,7 @@ ifndef __RPCNDR_H_VERSION__
 endif
 ifndef __asptlb_h__
 __asptlb_h__ equ <>
-.xlist
+.pragma list(push, 0)
 
 ifndef __IStringList_FWD_DEFINED__
 __IStringList_FWD_DEFINED__ equ 1
@@ -403,5 +403,5 @@ DEFINE_GUID(CLSID_ScriptingContext,0xD97A6DA0,0xA868,0x11cf,0x83,0xAE,0x11,0xB0,
 
 endif
 
-.list
+.pragma list(pop)
 endif

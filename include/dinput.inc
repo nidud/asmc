@@ -1,3 +1,5 @@
+.pragma list(push, 0)
+
 ifndef __DINPUT_INCLUDED__
 __DINPUT_INCLUDED__ equ 1
 ifndef __LIBC_INC
@@ -9,7 +11,6 @@ ifndef DIJ_RINGZERO
   include objbase.inc
  endif
 endif
-.xlist
 
 DIRECTINPUT_HEADER_VERSION equ 0x0800
 ifndef DIRECTINPUT_VERSION
@@ -3378,8 +3379,7 @@ JOY_US_VOLATILE		equ 0x00000008
 endif ;; __VJOYDX_INCLUDED__
 endif ;; MMNOJOY
 
-.list
-endif ;; _INC_MMSYSTEM
+endif
 
 ifndef DIJ_RINGZERO
  ifdef _INC_MMDDK
@@ -3391,3 +3391,5 @@ ifndef DIJ_RINGZERO
   endif
  endif
 endif
+
+.pragma list(pop)

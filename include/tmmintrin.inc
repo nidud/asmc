@@ -14,7 +14,6 @@ ifndef _MM_FUNCTIONALITY
 _MM_FUNCTIONALITY equ <>
 endif
 endif
-.xlist
 
 _mm_hadd_epi16	proto :oword, :oword
 _mm_hadd_epi32	proto :oword, :oword
@@ -80,5 +79,4 @@ _mm_abs_pi16 proto :qword
 _mm_abs_pi32 proto :qword
 endif
 
-.list
-endif  ;; _INCLUDED_TMM
+endif

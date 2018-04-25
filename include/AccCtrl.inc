@@ -1,10 +1,7 @@
 ifndef __ACCESS_CONTROL__
-__ACCESS_CONTROL__ equ 1
-.xlist
-
-ifndef __midl
+__ACCESS_CONTROL__ equ <>
 include wtypes.inc
-endif
+.pragma list(push, 0)
 
 AccFree			equ <LocalFree>
 
@@ -498,5 +495,5 @@ INHERITED_FROM		typedef INHERITED_FROMA
 PINHERITED_FROM		typedef PINHERITED_FROMA
 endif
 
-.list
-endif ;; __ACCESS_CONTROL__
+.pragma list(pop)
+endif

@@ -27,7 +27,6 @@ endif
 include oaidl.inc
 include ocidl.inc
 include dxgi.inc
-.xlist
 
 D3D10_SDK_LAYERS_VERSION equ ( 11 )
 D3D10_DEBUG_FEATURE_FLUSH_PER_RENDER_OP equ ( 0x1 )
@@ -675,8 +674,4 @@ DEFINE_GUID(IID_ID3D10InfoQueue,0x1b940b17,0x2642,0x4d1f,0xab,0x1f,0xb9,0x9b,0xa
 externdef		__MIDL_itf_d3d10sdklayers_0000_0003_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef		__MIDL_itf_d3d10sdklayers_0000_0003_v0_0_s_ifspec:RPC_IF_HANDLE
 
-.list
 endif
-
-
-

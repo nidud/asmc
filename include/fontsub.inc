@@ -1,6 +1,6 @@
 ifndef FONTSUB_DOT_H_DEFINED
 FONTSUB_DOT_H_DEFINED equ <>
-.xlist
+.pragma list(push, 0)
 
 ?CFP_ALLOCPROC		typedef proto __cdecl :SIZE_T
 ?CFP_REALLOCPROC	typedef proto __cdecl :PVOID, :SIZE_T
@@ -155,6 +155,6 @@ ERR_PARAMETER16		equ 1116
 
 endif ;; ERR_GENERIC
 
-.list
-endif ;; FONTSUB_DOT_H_DEFINED
+.pragma list(pop)
+endif
 

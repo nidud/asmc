@@ -16,6 +16,7 @@ endif
 
 ifndef __propsys_h__
 __propsys_h__ equ <>
+.pragma list(push, 0)
 
 include objidl.inc
 include oleidl.inc
@@ -23,7 +24,6 @@ include ocidl.inc
 include shtypes.inc
 include StructuredQueryCondition.inc
 include propkeydef.inc
-.xlist
 
 externdef		__MIDL_itf_propsys_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef		__MIDL_itf_propsys_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
@@ -33,10 +33,10 @@ __IInitializeWithFile_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IInitializeWithFile:IID
 .comdef IInitializeWithFile
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    Initialize          proc :LPCWSTR, :DWORD
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Initialize		proc :LPCWSTR, :DWORD
     .ends
 
 endif
@@ -46,10 +46,10 @@ __IInitializeWithStream_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IInitializeWithStream:IID
 .comdef IInitializeWithStream
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    Initialize          proc :ptr, :DWORD
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Initialize		proc :ptr, :DWORD
     .ends
 
 ;HRESULT
@@ -72,14 +72,14 @@ __IPropertyStore_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IPropertyStore:IID
 .comdef IPropertyStore
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetCount            proc :ptr
-    GetAt               proc :DWORD, :ptr
-    GetValue            proc :REFPROPERTYKEY, :ptr
-    SetValue            proc :REFPROPERTYKEY, :REFPROPVARIANT
-    Commit              proc
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetCount		proc :ptr
+    GetAt		proc :DWORD, :ptr
+    GetValue		proc :REFPROPERTYKEY, :ptr
+    SetValue		proc :REFPROPERTYKEY, :REFPROPVARIANT
+    Commit		proc
     .ends
 LPPROPERTYSTORE		typedef ptr IPropertyStore
 
@@ -93,13 +93,13 @@ __INamedPropertyStore_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_INamedPropertyStore:IID
 .comdef INamedPropertyStore
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetNamedValue       proc :LPCWSTR, :ptr
-    SetNamedValue       proc :LPCWSTR, :REFPROPVARIANT
-    GetNameCount        proc :ptr
-    GetNameAt           proc :DWORD, :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetNamedValue	proc :LPCWSTR, :ptr
+    SetNamedValue	proc :LPCWSTR, :REFPROPVARIANT
+    GetNameCount	proc :ptr
+    GetNameAt		proc :DWORD, :ptr
     .ends
 
 endif
@@ -126,11 +126,11 @@ __IObjectWithPropertyKey_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IObjectWithPropertyKey:IID
 .comdef IObjectWithPropertyKey
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    SetPropertyKey      proc :REFPROPERTYKEY
-    GetPropertyKey      proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetPropertyKey	proc :REFPROPERTYKEY
+    GetPropertyKey	proc :ptr
     .ends
 
 endif
@@ -148,12 +148,12 @@ __IPropertyChange_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IPropertyChange:IID
 .comdef IPropertyChange
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    SetPropertyKey      proc :REFPROPERTYKEY
-    GetPropertyKey      proc :ptr
-    ApplyToPropVariant  proc :REFPROPVARIANT, :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetPropertyKey	proc :REFPROPERTYKEY
+    GetPropertyKey	proc :ptr
+    ApplyToPropVariant	proc :REFPROPVARIANT, :ptr
     .ends
 
 endif
@@ -163,16 +163,16 @@ __IPropertyChangeArray_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IPropertyChangeArray:IID
 .comdef IPropertyChangeArray
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetCount            proc :ptr
-    GetAt               proc :UINT, :REFIID, :ptr
-    InsertAt            proc :UINT, :ptr
-    Append              proc :ptr
-    AppendOrReplace     proc :ptr
-    RemoveAt            proc :UINT
-    IsKeyInArray        proc :REFPROPERTYKEY
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetCount		proc :ptr
+    GetAt		proc :UINT, :REFIID, :ptr
+    InsertAt		proc :UINT, :ptr
+    Append		proc :ptr
+    AppendOrReplace	proc :ptr
+    RemoveAt		proc :UINT
+    IsKeyInArray	proc :REFPROPERTYKEY
     .ends
 
 endif
@@ -182,10 +182,10 @@ __IPropertyStoreCapabilities_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IPropertyStoreCapabilities:IID
 .comdef IPropertyStoreCapabilities
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    IsPropertyWritable  proc :REFPROPERTYKEY
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    IsPropertyWritable	proc :REFPROPERTYKEY
     .ends
 
 endif
@@ -201,18 +201,18 @@ PSC_READONLY		equ 3
 
 externdef		IID_IPropertyStoreCache:IID
 .comdef IPropertyStoreCache
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetCount            proc :ptr
-    GetAt               proc :DWORD, :ptr
-    GetValue            proc :REFPROPERTYKEY, :ptr
-    SetValue            proc :REFPROPERTYKEY, :REFPROPVARIANT
-    Commit              proc
-    GetState            proc :REFPROPERTYKEY, :ptr
-    GetValueAndState    proc :REFPROPERTYKEY, :ptr, :ptr
-    SetState            proc :REFPROPERTYKEY, :PSC_STATE
-    SetValueAndState    proc :REFPROPERTYKEY, :ptr, :PSC_STATE
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetCount		proc :ptr
+    GetAt		proc :DWORD, :ptr
+    GetValue		proc :REFPROPERTYKEY, :ptr
+    SetValue		proc :REFPROPERTYKEY, :REFPROPVARIANT
+    Commit		proc
+    GetState		proc :REFPROPERTYKEY, :ptr
+    GetValueAndState	proc :REFPROPERTYKEY, :ptr, :ptr
+    SetState		proc :REFPROPERTYKEY, :PSC_STATE
+    SetValueAndState	proc :REFPROPERTYKEY, :ptr, :PSC_STATE
     .ends
 
 endif
@@ -228,14 +228,14 @@ PET_ENDRANGE		equ 3
 
 externdef		IID_IPropertyEnumType:IID
 .comdef IPropertyEnumType
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetEnumType         proc :ptr
-    GetValue            proc :ptr
-    GetRangeMinValue    proc :ptr
-    GetRangeSetValue    proc :ptr
-    GetDisplayText      proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetEnumType		proc :ptr
+    GetValue		proc :ptr
+    GetRangeMinValue	proc :ptr
+    GetRangeSetValue	proc :ptr
+    GetDisplayText	proc :ptr
     .ends
 
 endif
@@ -245,15 +245,15 @@ __IPropertyEnumType2_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IPropertyEnumType2:IID
 .comdef IPropertyEnumType2
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetEnumType         proc :ptr
-    GetValue            proc :ptr
-    GetRangeMinValue    proc :ptr
-    GetRangeSetValue    proc :ptr
-    GetDisplayText      proc :ptr
-    GetImageReference   proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetEnumType		proc :ptr
+    GetValue		proc :ptr
+    GetRangeMinValue	proc :ptr
+    GetRangeSetValue	proc :ptr
+    GetDisplayText	proc :ptr
+    GetImageReference	proc :ptr
     .ends
 
 endif
@@ -264,13 +264,13 @@ __IPropertyEnumTypeList_INTERFACE_DEFINED__ equ 1
 externdef		IID_IPropertyEnumTypeList:IID
 
 .comdef IPropertyEnumTypeList
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetCount            proc :ptr
-    GetAt               proc :UINT, :REFIID, :ptr
-    GetConditionAt      proc :UINT, :REFIID, :ptr
-    FindMatchingIndex   proc :REFPROPVARIANT, :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetCount		proc :ptr
+    GetAt		proc :UINT, :REFIID, :ptr
+    GetConditionAt	proc :UINT, :REFIID, :ptr
+    FindMatchingIndex	proc :REFPROPVARIANT, :ptr
     .ends
 
 endif
@@ -389,30 +389,30 @@ PDCOT_NUMBER		equ 5
 
 externdef		IID_IPropertyDescription:IID
 .comdef IPropertyDescription
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetPropertyKey      proc :ptr
-    GetCanonicalName    proc :ptr
-    GetPropertyType     proc :ptr
-    GetDisplayName      proc :ptr
-    GetEditInvitation   proc :ptr
-    GetTypeFlags        proc :PROPDESC_TYPE_FLAGS, :ptr
-    GetViewFlags        proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetPropertyKey	proc :ptr
+    GetCanonicalName	proc :ptr
+    GetPropertyType	proc :ptr
+    GetDisplayName	proc :ptr
+    GetEditInvitation	proc :ptr
+    GetTypeFlags	proc :PROPDESC_TYPE_FLAGS, :ptr
+    GetViewFlags	proc :ptr
     GetDefaultColumnWidth proc :ptr
-    GetDisplayType      proc :ptr
-    GetColumnState      proc :ptr
-    GetGroupingRange    proc :ptr
+    GetDisplayType	proc :ptr
+    GetColumnState	proc :ptr
+    GetGroupingRange	proc :ptr
     GetRelativeDescriptionType proc :ptr
     GetRelativeDescription proc :REFPROPVARIANT, :REFPROPVARIANT, :ptr, :ptr
-    GetSortDescription  proc :ptr
+    GetSortDescription	proc :ptr
     GetSortDescriptionLabel proc :BOOL, :ptr
-    GetAggregationType  proc :ptr
-    GetConditionType    proc :ptr, :ptr
-    GetEnumTypeList     proc :REFIID, :ptr
+    GetAggregationType	proc :ptr
+    GetConditionType	proc :ptr, :ptr
+    GetEnumTypeList	proc :REFIID, :ptr
     CoerceToCanonicalValue proc :ptr
-    FormatForDisplay    proc :REFPROPVARIANT, :PROPDESC_FORMAT_FLAGS, :ptr
-    IsValueCanonical    proc :REFPROPVARIANT
+    FormatForDisplay	proc :REFPROPVARIANT, :PROPDESC_FORMAT_FLAGS, :ptr
+    IsValueCanonical	proc :REFPROPVARIANT
     .ends
 
 ;HRESULT
@@ -435,30 +435,30 @@ __IPropertyDescription2_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IPropertyDescription2:IID
 .comdef IPropertyDescription2
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetPropertyKey      proc :ptr
-    GetCanonicalName    proc :ptr
-    GetPropertyType     proc :ptr
-    GetDisplayName      proc :ptr
-    GetEditInvitation   proc :ptr
-    GetTypeFlags        proc :PROPDESC_TYPE_FLAGS, :ptr
-    GetViewFlags        proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetPropertyKey	proc :ptr
+    GetCanonicalName	proc :ptr
+    GetPropertyType	proc :ptr
+    GetDisplayName	proc :ptr
+    GetEditInvitation	proc :ptr
+    GetTypeFlags	proc :PROPDESC_TYPE_FLAGS, :ptr
+    GetViewFlags	proc :ptr
     GetDefaultColumnWidth proc :ptr
-    GetDisplayType      proc :ptr
-    GetColumnState      proc :ptr
-    GetGroupingRange    proc :ptr
+    GetDisplayType	proc :ptr
+    GetColumnState	proc :ptr
+    GetGroupingRange	proc :ptr
     GetRelativeDescriptionType proc :ptr
     GetRelativeDescription proc :REFPROPVARIANT, :REFPROPVARIANT, :ptr, :ptr
-    GetSortDescription  proc :ptr
+    GetSortDescription	proc :ptr
     GetSortDescriptionLabel proc :BOOL, :ptr
-    GetAggregationType  proc :ptr
-    GetConditionType    proc :ptr, :ptr
-    GetEnumTypeList     proc :REFIID, :ptr
+    GetAggregationType	proc :ptr
+    GetConditionType	proc :ptr, :ptr
+    GetEnumTypeList	proc :REFIID, :ptr
     CoerceToCanonicalValue proc :ptr
-    FormatForDisplay    proc :REFPROPVARIANT, :PROPDESC_FORMAT_FLAGS, :ptr
-    IsValueCanonical    proc :REFPROPVARIANT
+    FormatForDisplay	proc :REFPROPVARIANT, :PROPDESC_FORMAT_FLAGS, :ptr
+    IsValueCanonical	proc :REFPROPVARIANT
     GetImageReferenceForValue proc :REFPROPVARIANT, :ptr
     .ends
 
@@ -469,31 +469,31 @@ __IPropertyDescriptionAliasInfo_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IPropertyDescriptionAliasInfo:IID
 .comdef IPropertyDescriptionAliasInfo
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetPropertyKey      proc :ptr
-    GetCanonicalName    proc :ptr
-    GetPropertyType     proc :ptr
-    GetDisplayName      proc :ptr
-    GetEditInvitation   proc :ptr
-    GetTypeFlags        proc :PROPDESC_TYPE_FLAGS, :ptr
-    GetViewFlags        proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetPropertyKey	proc :ptr
+    GetCanonicalName	proc :ptr
+    GetPropertyType	proc :ptr
+    GetDisplayName	proc :ptr
+    GetEditInvitation	proc :ptr
+    GetTypeFlags	proc :PROPDESC_TYPE_FLAGS, :ptr
+    GetViewFlags	proc :ptr
     GetDefaultColumnWidth proc :ptr
-    GetDisplayType      proc :ptr
-    GetColumnState      proc :ptr
-    GetGroupingRange    proc :ptr
+    GetDisplayType	proc :ptr
+    GetColumnState	proc :ptr
+    GetGroupingRange	proc :ptr
     GetRelativeDescriptionType proc :ptr
     GetRelativeDescription proc :REFPROPVARIANT, :REFPROPVARIANT, :ptr, :ptr
-    GetSortDescription  proc :ptr
+    GetSortDescription	proc :ptr
     GetSortDescriptionLabel proc :BOOL, :ptr
-    GetAggregationType  proc :ptr
-    GetConditionType    proc :ptr, :ptr
-    GetEnumTypeList     proc :REFIID, :ptr
+    GetAggregationType	proc :ptr
+    GetConditionType	proc :ptr, :ptr
+    GetEnumTypeList	proc :REFIID, :ptr
     CoerceToCanonicalValue proc :ptr
-    FormatForDisplay    proc :REFPROPVARIANT, :PROPDESC_FORMAT_FLAGS, :ptr
-    IsValueCanonical    proc :REFPROPVARIANT
-    GetSortByAlias      proc :REFIID, :ptr
+    FormatForDisplay	proc :REFPROPVARIANT, :PROPDESC_FORMAT_FLAGS, :ptr
+    IsValueCanonical	proc :REFPROPVARIANT
+    GetSortByAlias	proc :REFIID, :ptr
     GetAdditionalSortByAliases proc :REFIID, :ptr
     .ends
 
@@ -520,34 +520,34 @@ PDCIT_ONDISKVECTOR	equ 5
 
 externdef		IID_IPropertyDescriptionSearchInfo:IID
 .comdef IPropertyDescriptionSearchInfo
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetPropertyKey      proc :ptr
-    GetCanonicalName    proc :ptr
-    GetPropertyType     proc :ptr
-    GetDisplayName      proc :ptr
-    GetEditInvitation   proc :ptr
-    GetTypeFlags        proc :PROPDESC_TYPE_FLAGS, :ptr
-    GetViewFlags        proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetPropertyKey	proc :ptr
+    GetCanonicalName	proc :ptr
+    GetPropertyType	proc :ptr
+    GetDisplayName	proc :ptr
+    GetEditInvitation	proc :ptr
+    GetTypeFlags	proc :PROPDESC_TYPE_FLAGS, :ptr
+    GetViewFlags	proc :ptr
     GetDefaultColumnWidth proc :ptr
-    GetDisplayType      proc :ptr
-    GetColumnState      proc :ptr
-    GetGroupingRange    proc :ptr
+    GetDisplayType	proc :ptr
+    GetColumnState	proc :ptr
+    GetGroupingRange	proc :ptr
     GetRelativeDescriptionType proc :ptr
     GetRelativeDescription proc :REFPROPVARIANT, :REFPROPVARIANT, :ptr, :ptr
-    GetSortDescription  proc :ptr
+    GetSortDescription	proc :ptr
     GetSortDescriptionLabel proc :BOOL, :ptr
-    GetAggregationType  proc :ptr
-    GetConditionType    proc :ptr, :ptr
-    GetEnumTypeList     proc :REFIID, :ptr
+    GetAggregationType	proc :ptr
+    GetConditionType	proc :ptr, :ptr
+    GetEnumTypeList	proc :REFIID, :ptr
     CoerceToCanonicalValue proc :ptr
-    FormatForDisplay    proc :REFPROPVARIANT, :PROPDESC_FORMAT_FLAGS, :ptr
-    IsValueCanonical    proc :REFPROPVARIANT
-    GetSearchInfoFlags  proc :ptr
-    GetColumnIndexType  proc :ptr
+    FormatForDisplay	proc :REFPROPVARIANT, :PROPDESC_FORMAT_FLAGS, :ptr
+    IsValueCanonical	proc :REFPROPVARIANT
+    GetSearchInfoFlags	proc :ptr
+    GetColumnIndexType	proc :ptr
     GetProjectionString proc :ptr
-    GetMaxSize          proc :ptr
+    GetMaxSize		proc :ptr
     .ends
 
 endif
@@ -557,31 +557,31 @@ __IPropertyDescriptionRelatedPropertyInfo_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IPropertyDescriptionRelatedPropertyInfo:IID
 .comdef IPropertyDescriptionRelatedPropertyInfo
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetPropertyKey      proc :ptr
-    GetCanonicalName    proc :ptr
-    GetPropertyType     proc :ptr
-    GetDisplayName      proc :ptr
-    GetEditInvitation   proc :ptr
-    GetTypeFlags        proc :PROPDESC_TYPE_FLAGS, :ptr
-    GetViewFlags        proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetPropertyKey	proc :ptr
+    GetCanonicalName	proc :ptr
+    GetPropertyType	proc :ptr
+    GetDisplayName	proc :ptr
+    GetEditInvitation	proc :ptr
+    GetTypeFlags	proc :PROPDESC_TYPE_FLAGS, :ptr
+    GetViewFlags	proc :ptr
     GetDefaultColumnWidth proc :ptr
-    GetDisplayType      proc :ptr
-    GetColumnState      proc :ptr
-    GetGroupingRange    proc :ptr
+    GetDisplayType	proc :ptr
+    GetColumnState	proc :ptr
+    GetGroupingRange	proc :ptr
     GetRelativeDescriptionType proc :ptr
     GetRelativeDescription proc :REFPROPVARIANT, :REFPROPVARIANT, :ptr, :ptr
-    GetSortDescription  proc :ptr
+    GetSortDescription	proc :ptr
     GetSortDescriptionLabel proc :BOOL, :ptr
-    GetAggregationType  proc :ptr
-    GetConditionType    proc :ptr, :ptr
-    GetEnumTypeList     proc :REFIID, :ptr
+    GetAggregationType	proc :ptr
+    GetConditionType	proc :ptr, :ptr
+    GetEnumTypeList	proc :REFIID, :ptr
     CoerceToCanonicalValue proc :ptr
-    FormatForDisplay    proc :REFPROPVARIANT, :PROPDESC_FORMAT_FLAGS, :ptr
-    IsValueCanonical    proc :REFPROPVARIANT
-    GetRelatedProperty  proc :LPCWSTR, :REFIID, :ptr
+    FormatForDisplay	proc :REFPROPVARIANT, :PROPDESC_FORMAT_FLAGS, :ptr
+    IsValueCanonical	proc :REFPROPVARIANT
+    GetRelatedProperty	proc :LPCWSTR, :REFIID, :ptr
     .ends
 
 endif
@@ -604,14 +604,14 @@ __IPropertySystem_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IPropertySystem:IID
 .comdef IPropertySystem
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
     GetPropertyDescription proc :REFPROPERTYKEY, :REFIID, :ptr
     GetPropertyDescriptionByName proc :LPCWSTR, :REFIID, :ptr
     GetPropertyDescriptionListFromString proc :LPCWSTR, :REFIID, :ptr
     EnumeratePropertyDescriptions proc :PROPDESC_ENUMFILTER, :REFIID, :ptr
-    FormatForDisplay    proc :REFPROPERTYKEY, :REFPROPVARIANT, :PROPDESC_FORMAT_FLAGS, :LPWSTR, :DWORD
+    FormatForDisplay	proc :REFPROPERTYKEY, :REFPROPVARIANT, :PROPDESC_FORMAT_FLAGS, :LPWSTR, :DWORD
     FormatForDisplayAlloc proc :REFPROPERTYKEY, :REFPROPVARIANT, :PROPDESC_FORMAT_FLAGS, :ptr
     RegisterPropertySchema proc :LPCWSTR
     UnregisterPropertySchema proc :LPCWSTR
@@ -625,11 +625,11 @@ __IPropertyDescriptionList_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IPropertyDescriptionList:IID
 .comdef IPropertyDescriptionList
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetCount            proc :ptr
-    GetAt               proc :UINT, :REFIID, :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetCount		proc :ptr
+    GetAt		proc :UINT, :REFIID, :ptr
     .ends
 
 endif
@@ -639,10 +639,10 @@ __IPropertyStoreFactory_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IPropertyStoreFactory:IID
 .comdef IPropertyStoreFactory
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetPropertyStore    proc :GETPROPERTYSTOREFLAGS, :ptr, :REFIID, :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetPropertyStore	proc :GETPROPERTYSTOREFLAGS, :ptr, :REFIID, :ptr
     GetPropertyStoreForKeys proc :UINT, :GETPROPERTYSTOREFLAGS, :REFIID, :ptr
     .ends
 
@@ -653,10 +653,10 @@ __IDelayedPropertyStoreFactory_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IDelayedPropertyStoreFactory:IID
 .comdef IDelayedPropertyStoreFactory
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetPropertyStore    proc :GETPROPERTYSTOREFLAGS, :ptr, :REFIID, :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetPropertyStore	proc :GETPROPERTYSTOREFLAGS, :ptr, :REFIID, :ptr
     GetPropertyStoreForKeys proc :UINT, :GETPROPERTYSTOREFLAGS, :REFIID, :ptr
     GetDelayedPropertyStore proc :GETPROPERTYSTOREFLAGS, :DWORD, :REFIID, :ptr
     .ends
@@ -680,12 +680,12 @@ __IPersistSerializedPropStorage_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IPersistSerializedPropStorage:IID
 .comdef IPersistSerializedPropStorage
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    SetFlags            proc :PERSIST_SPROPSTORE_FLAGS
-    SetPropertyStorage  proc :PCUSERIALIZEDPROPSTORAGE, :DWORD
-    GetPropertyStorage  proc :ptr, :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetFlags		proc :PERSIST_SPROPSTORE_FLAGS
+    SetPropertyStorage	proc :PCUSERIALIZEDPROPSTORAGE, :DWORD
+    GetPropertyStorage	proc :ptr, :ptr
     .ends
 
 endif
@@ -695,12 +695,12 @@ __IPersistSerializedPropStorage2_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IPersistSerializedPropStorage2:IID
 .comdef IPersistSerializedPropStorage2
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    SetFlags            proc :PERSIST_SPROPSTORE_FLAGS
-    SetPropertyStorage  proc :PCUSERIALIZEDPROPSTORAGE, :DWORD
-    GetPropertyStorage  proc :ptr, :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetFlags		proc :PERSIST_SPROPSTORE_FLAGS
+    SetPropertyStorage	proc :PCUSERIALIZEDPROPSTORAGE, :DWORD
+    GetPropertyStorage	proc :ptr, :ptr
     GetPropertyStorageSize proc :ptr
     GetPropertyStorageBuffer proc :ptr, :DWORD, :ptr
     .ends
@@ -712,10 +712,10 @@ __IPropertySystemChangeNotify_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IPropertySystemChangeNotify:IID
 .comdef IPropertySystemChangeNotify
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    SchemaRefreshed     proc
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SchemaRefreshed	proc
     .ends
 
 endif
@@ -725,10 +725,10 @@ __ICreateObject_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_ICreateObject:IID
 .comdef ICreateObject
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    CreateObject        proc :REFCLSID, :ptr, :REFIID, :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    CreateObject	proc :REFCLSID, :ptr, :REFIID, :ptr
     .ends
 
 endif
@@ -1266,5 +1266,5 @@ IPropertyDescription_CoerceToCanonicalValue_Stub proto WINAPI \
 	       propvar: REFPROPVARIANT,
 	      ppropvar: ptr PROPVARIANT
 
-.list
-endif ; __propsys_h__
+.pragma list(pop)
+endif

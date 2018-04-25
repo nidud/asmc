@@ -1,7 +1,6 @@
 include d3dx9.inc
 ifndef _D3DX9TEX_H
 _D3DX9TEX_H equ <>
-.xlist
 
 D3DX_FILTER_NONE	equ 0x00000001
 D3DX_FILTER_POINT	equ 0x00000002
@@ -818,6 +817,4 @@ D3DXComputeNormalMap proto WINAPI \
 	       channel: DWORD,
 	     amplitude: float
 
-
-.list
-endif ;; __WINE_D3DX9TEX_H
+endif

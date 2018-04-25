@@ -1,6 +1,6 @@
 ifndef _D3D9_H_
 _D3D9_H_ equ <>
-.xlist
+.pragma list(push, 0)
 
 ifndef DIRECT3D_VERSION
 DIRECT3D_VERSION equ 0x0900
@@ -20,7 +20,6 @@ include stdlib.inc
 COM_NO_WINDOWS_H equ 1
 include objbase.inc
 include windows.inc
-.xlist
 
 if NOT defined(HMONITOR_DECLARED) AND (WINVER LT 0x0500)
 HMONITOR_DECLARED equ 1
@@ -64,7 +63,6 @@ endif
 
 include d3d9types.inc
 include d3d9caps.inc
-.xlist
 ifdef __PE__
 option	dllimport:<d3d9>
 else
@@ -863,5 +861,6 @@ LPDIRECT3DCRYPTOSESSION9 typedef ptr IDirect3DCryptoSession9
 PDIRECT3DCRYPTOSESSION9 typedef ptr IDirect3DCryptoSession9
 
 endif
-.list
+
+.pragma list(pop)
 endif

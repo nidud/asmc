@@ -1,7 +1,7 @@
 ifndef __D3D10_1SHADER_H__
-__D3D10_1SHADER_H__ equ 1
+__D3D10_1SHADER_H__ equ <>
+
 include d3d10shader.inc
-.xlist
 
 D3D10_SHADER_DEBUG_REGTYPE typedef SDWORD
 D3D10_SHADER_DEBUG_REG_INPUT equ 0
@@ -171,7 +171,4 @@ DEFINE_GUID(IID_ID3D10ShaderReflection1, 0xc3457783, 0xa846, 0x47ce, 0x95, 0x20,
     IsSampleFrequencyShader	proc :ptr
     .ends
 
-.list
 endif
-
-

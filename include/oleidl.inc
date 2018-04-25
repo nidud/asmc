@@ -11,8 +11,7 @@ include windows.inc
 include ole2.inc
 endif
 ifndef __oleidl_h__
-.xlist
-__oleidl_h__ equ 1
+__oleidl_h__ equ <>
 
 ifndef __IOleAdviseHolder_FWD_DEFINED__
 __IOleAdviseHolder_FWD_DEFINED__ equ 1
@@ -82,7 +81,6 @@ __IEnumOLEVERB_FWD_DEFINED__ equ 1
 endif
 
 include objidl.inc
-.xlist
 
 ;void
 MIDL_user_free proto WINAPI :PVOID
@@ -2309,5 +2307,4 @@ IOleCache2_UpdateCache_Stub proto WINAPI \
 	       grfUpdf: DWORD,
 	     pReserved: DWORD
 
-.list
 endif

@@ -15,6 +15,7 @@ include ole2.inc
 endif
 ifndef __activprof_h__
 __activprof_h__ equ <>
+.pragma list(push, 0)
 
 ifndef __IActiveScriptProfilerControl_FWD_DEFINED__
 __IActiveScriptProfilerControl_FWD_DEFINED__ equ 1
@@ -87,4 +88,5 @@ endif
 externdef __MIDL_itf_activprof_0000_0002_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef __MIDL_itf_activprof_0000_0002_v0_0_s_ifspec:RPC_IF_HANDLE
 
+.pragma list(pop)
 endif

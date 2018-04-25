@@ -1,5 +1,7 @@
 ifndef _WINBASE_
 _WINBASE_ equ <>
+.pragma list(push, 0)
+
 ifndef __LIBC_INC
  include libc.inc
 endif
@@ -9,7 +11,6 @@ endif
 ifndef _WINDEF_
  include windef.inc
 endif
-.xlist
 
 ifndef _WIN32_WINDOWS
 _WIN32_WINDOWS equ 0x400
@@ -17,7 +18,6 @@ endif
 ifndef _WIN32_WINNT
 _WIN32_WINNT equ _WIN32_WINDOWS
 endif
-
 
 ifdef __PE__
 WINADVAPI equ <option dllimport:<advapi32>>
@@ -9031,6 +9031,6 @@ ReadThreadProfilingData proto WINAPI \
 endif
 endif ; (_WIN32_WINNT >= 0x0500)
 
-.list
-endif ; _WINBASE_
+.pragma list(pop)
+endif
 

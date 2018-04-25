@@ -1,6 +1,6 @@
 include conio.inc
 
-.xlist
+.pragma list(push, 0)
 
 B_Desktop	equ 0		; at_background
 B_Panel		equ 1
@@ -584,4 +584,4 @@ ClipboardFree	PROTO __cdecl
 
 cliprintf	PROTO _CDecl :LPSTR, :VARARG
 
-.list
+.pragma list(pop)

@@ -1,6 +1,6 @@
 ifndef _WINERROR_
-.xlist
-_WINERROR_ equ 1
+_WINERROR_ equ <>
+.pragma list(push, 0)
 
 FACILITY_WINDOWS	equ 8
 FACILITY_STORAGE	equ 3
@@ -1569,7 +1569,5 @@ SPAPI_E_DI_DONT_INSTALL equ 0x800F022B
 SPAPI_E_INVALID_FILTER_DRIVER equ 0x800F022C
 SPAPI_E_ERROR_NOT_INSTALLED equ 0x800F1000
 
-.list
+.pragma list(pop)
 endif
-
-

@@ -1,3 +1,5 @@
+.pragma list(push, 0)
+
 ifndef __REQUIRED_RPCNDR_H_VERSION__
 __REQUIRED_RPCNDR_H_VERSION__ equ 500
 endif
@@ -18,7 +20,6 @@ endif
 ifndef __comcat_h__
 __comcat_h__ equ <>
 include unknwn.inc
-.xlist
 ifdef __PE__
 option	dllimport:<uuid>
 endif
@@ -268,5 +269,5 @@ ICatInformation_IsClassOfCategories_Stub proto WINAPI \
 	     cRequired: ULONG,
 	    rgcatidReq: ptr CATID
 
-.list
 endif
+.pragma list(pop)

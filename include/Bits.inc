@@ -1,3 +1,4 @@
+.pragma list(push, 0)
 ifndef __REQUIRED_RPCNDR_H_VERSION__
 __REQUIRED_RPCNDR_H_VERSION__ equ 500
 endif
@@ -14,8 +15,7 @@ include windows.inc
 include ole2.inc
 endif
 ifndef __bits_h__
-__bits_h__ equ 1
-.xlist
+__bits_h__ equ <>
 
 ifndef __IBackgroundCopyFile_FWD_DEFINED__
 __IBackgroundCopyFile_FWD_DEFINED__ equ 1
@@ -51,7 +51,6 @@ endif
 
 include unknwn.inc
 include bitsmsg.inc
-.xlist
 
 BG_SIZE_UNKNOWN		equ (-1)
 
@@ -320,5 +319,5 @@ include bits1_5.inc
 externdef __MIDL_itf_bits_0000_0007_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef __MIDL_itf_bits_0000_0007_v0_0_s_ifspec:RPC_IF_HANDLE
 
-.list
 endif
+.pragma list(pop)

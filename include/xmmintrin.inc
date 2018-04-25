@@ -1,6 +1,5 @@
 ifndef _INCLUDED_MM2
 _INCLUDED_MM2 equ <>
-.xlist
 
 ifndef _M_IX86
 ifndef _M_X64
@@ -13,7 +12,6 @@ endif
 
 ifndef _MMINTRIN_H_INCLUDED
 include mmintrin.inc
-.xlist
 endif
 
 ifdef _MM2_FUNCTIONALITY
@@ -25,7 +23,6 @@ endif
 ifdef __ICL
 ifdef _MM_FUNCTIONALITY
 include xmm_func.inc
-.xlist
 else
 __m128			typedef oword
 endif
@@ -305,5 +302,4 @@ _mm_cvtpi32x2_ps macro _A, _B
 	endm
 endif
 
-.list
-endif ;; _INCLUDED_MM2
+endif

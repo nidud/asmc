@@ -1,8 +1,8 @@
 ifndef _HTTPEXT_H_
 _HTTPEXT_H_ equ <>
+.pragma list(push, 0)
 
 include windows.inc
-.xlist
 
 HSE_VERSION_MAJOR	equ 7
 HSE_VERSION_MINOR	equ 5
@@ -274,6 +274,5 @@ HttpExtensionProc proto WINAPI \
 TerminateExtension proto WINAPI \
 	       dwFlags: DWORD
 
-.list
-endif ; _HTTPEXT_H_
-
+.pragma list(pop)
+endif

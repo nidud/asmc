@@ -1,9 +1,9 @@
 ifndef __INI_INC
+__INI_INC equ <>
+.pragma list(push, 0)
 ifndef __LIBC_INC
  include libc.inc
 endif
-.xlist
-__INI_INC equ <>
 
 INI_BASE	equ 0
 INI_SECTION	equ 1
@@ -32,5 +32,5 @@ INIDelEntries	proto __cdecl :LPINI
 INIAddSectionX	proto c :LPINI, :LPSTR, :VARARG
 INIAddEntryX	proto c :LPINI, :LPSTR, :VARARG
 
-.list
+.pragma list(pop)
 endif

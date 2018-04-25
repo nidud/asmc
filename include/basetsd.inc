@@ -3,7 +3,6 @@ _BASETSD_ equ <>
 ifndef __LIBC_INC
  include libc.inc
 endif
-.xlist
 
 if (defined(_M_MRX000) OR defined(_M_AMD64) OR defined(_M_IA64)) AND (_MSC_VER GE 1100) AND NOT defined(MIDL_PASS)
  POINTER_64 equ <ptr>
@@ -390,5 +389,4 @@ PDWORD64	typedef ptr qword
 KAFFINITY	typedef ULONG_PTR
 PKAFFINITY	typedef ptr KAFFINITY
 
-.list
 endif

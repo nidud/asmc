@@ -4,11 +4,8 @@ endif
 ifndef _WINSOCK2API_
 _WINSOCK2API_ equ 1
 _WINSOCKAPI_  equ 1
-.xlist
-
 
 ;include <pshpack4.h>
-
 
 ifndef INCL_WINSOCK_API_PROTOTYPES
 INCL_WINSOCK_API_PROTOTYPES equ 1
@@ -20,7 +17,6 @@ endif
 
 ifndef _INC_WINDOWS
 include windows.inc
-.xlist
 endif
 
 
@@ -628,7 +624,6 @@ WSABUF			ENDS
 LPWSABUF		typedef ptr WSABUF
 
 include qos.inc
-.xlist
 
 QOS			STRUC
 SendingFlowspec		FLOWSPEC <>
@@ -2380,5 +2375,4 @@ WSAGETSELECTERROR macro lParam
 
 ;include <poppack.h>
 
-.list
 endif

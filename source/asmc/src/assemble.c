@@ -509,6 +509,8 @@ static void PassOneChecks( void )
      */
     HllCheckOpen();
     CondCheckOpen();
+    ClassCheckOpen();
+    PragmaCheckOpen();
 
     if( ModuleInfo.EndDirFound == FALSE )
 	asmerr( 2088 );
@@ -651,6 +653,8 @@ static int OnePass( void )
     ProcInit();
     TypesInit();
     HllInit( Parse_Pass );
+    ClassInit();
+    PragmaInit();
     MacroInit( Parse_Pass ); /* insert predefined macros */
     AssumeInit( Parse_Pass );
     CmdlParamsInit( Parse_Pass );

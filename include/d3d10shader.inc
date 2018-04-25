@@ -1,7 +1,7 @@
 ifndef __D3D10SHADER_H__
-__D3D10SHADER_H__ equ 1
+__D3D10SHADER_H__ equ <>
+
 include d3d10.inc
-.xlist
 
 D3D10_TX_VERSION macro _Major,_Minor
 	exitm<(('T' SHL 24) OR ('X' SHL 16) OR ((_Major) SHL 8) OR (_Minor))>
@@ -366,8 +366,4 @@ D3D10GetShaderDebugInfo proto WINAPI \
 	BytecodeLength: SIZE_T,
 	   ppDebugInfo: ptr ptr ID3D10Blob
 
-
-.list
 endif
-
-

@@ -2,8 +2,7 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 ifndef _INC_MMSYSTEM
-_INC_MMSYSTEM equ 1
-.xlist
+_INC_MMSYSTEM equ <>
 
 if defined(_WINMM_) or defined(__PE__)
 option dllimport:<winmm>
@@ -4230,5 +4229,4 @@ ifndef SC_SCREENSAVE
 SC_SCREENSAVE		equ 0xF140
 endif
 
-.list
 endif

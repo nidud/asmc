@@ -1,6 +1,6 @@
 ifndef __GDIPLUS_COLOR_H
 __GDIPLUS_COLOR_H equ <>
-.xlist
+.pragma list(push, 0)
 
 ColorChannelFlags	typedef sdword
 ColorChannelFlagsC	equ 0
@@ -157,5 +157,5 @@ ARGB_WhiteSmoke		  equ 0xFFF5F5F5
 ARGB_Yellow		  equ 0xFFFFFF00
 ARGB_YellowGreen	  equ 0xFF9ACD32
 
-.list
+.pragma list(pop)
 endif

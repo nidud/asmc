@@ -1,9 +1,9 @@
+.pragma list(push, 0)
 ifndef _WINDEF_
  include windef.inc
 endif
 ifndef INCLUDED_TYPES_FCI_FDI
 INCLUDED_TYPES_FCI_FDI	equ <>
-.xlist
 
 ifndef DIAMONDAPI
 DIAMONDAPI equ <__cdecl>
@@ -313,6 +313,5 @@ ifndef _WIN64
 ;include poppack.inc
 endif
 
-.list
-endif ;; NOT INCLUDED_FDI
-
+endif
+.pragma list(pop)

@@ -1,7 +1,6 @@
 ifndef __dxgitype_h__
-__dxgitype_h__ equ 1
+__dxgitype_h__ equ <>
 include dxgiformat.inc
-.xlist
 
 _FACDXGI		equ 0x87a
 MAKE_DXGI_HRESULT macro code
@@ -109,7 +108,4 @@ Count			UINT ?
 Quality			UINT ?
 DXGI_SAMPLE_DESC	ENDS
 
-.list
-endif ;; __dxgitype_h__
-
-
+endif

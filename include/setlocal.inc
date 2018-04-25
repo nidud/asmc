@@ -1,6 +1,6 @@
-include locale.inc
+.pragma list(push, 0)
 
-.xlist
+include locale.inc
 
 ERR_BUFFER_TOO_SMALL	equ 1	; should be in windef.h
 
@@ -75,4 +75,4 @@ __init_numeric		PROTO
 __init_time		PROTO
 __init_dummy		PROTO
 
-.list
+.pragma list(pop)

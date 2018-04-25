@@ -1,3 +1,5 @@
+.pragma list(push, 0)
+
 ifndef __REQUIRED_RPCNDR_H_VERSION__
 __REQUIRED_RPCNDR_H_VERSION__ equ 500
 endif
@@ -40,8 +42,7 @@ endif
 include unknwn.inc
 include mmstream.inc
 include strmif.inc
-
-;include ddraw.inc
+include ddraw.inc
 ;include mmsystem.inc
 ;include mmstream.inc
 ;include ddstream.inc
@@ -261,3 +262,5 @@ externdef __MIDL_itf_amstream_0000_0007_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef __MIDL_itf_amstream_0000_0007_v0_0_s_ifspec:RPC_IF_HANDLE
 
 endif
+
+.pragma list(pop)

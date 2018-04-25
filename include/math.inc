@@ -1,9 +1,9 @@
+ifndef _INC_MATH
+_INC_MATH equ <>
+.pragma list(push, 0)
 ifndef __LIBC_INC
  include libc.inc
 endif
-ifndef _INC_MATH
-_INC_MATH equ 1
-.xlist
 
 ifdef __PE__
 option  dllimport:<msvcrt>
@@ -196,12 +196,12 @@ _fpclassf   proto __cdecl _X:float
 
 endif
 endif
-.list
+.pragma list(pop)
 endif
 
 ifdef _USE_MATH_DEFINES
-.xlist
 ifndef _MATH_DEFINES_DEFINED
+.pragma list(push, 0)
 _MATH_DEFINES_DEFINED equ <>
 
 M_E             equ 2.71828182845904523536
@@ -217,7 +217,6 @@ M_2_PI          equ 0.636619772367581343076
 M_2_SQRTPI      equ 1.12837916709551257390
 M_SQRT2         equ 1.41421356237309504880
 M_SQRT1_2       equ 0.707106781186547524401
+.pragma list(pop)
 endif
-
-.list
 endif

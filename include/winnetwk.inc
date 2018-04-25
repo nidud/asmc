@@ -2,8 +2,8 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 ifndef _WINNETWK_
-_WINNETWK_ equ 1
-.xlist
+_WINNETWK_ equ <>
+.pragma list(push, 0)
 
 ifdef __PE__
 option dllimport:<mpr>
@@ -672,6 +672,6 @@ MultinetGetConnectionPerformance equ <MultinetGetConnectionPerformanceA>
 endif
 endif
 
-.list
-endif ; _WINNETWK_
+.pragma list(pop)
+endif
 

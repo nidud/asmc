@@ -5,8 +5,7 @@ ifndef RPC_NO_WINDOWS_H
 include windows.inc
 endif
 ifndef __RPC_H__
-.xlist
-__RPC_H__ equ 1
+__RPC_H__ equ <>
 
 ifdef _WIN32
 __RPC_WIN32__ equ 1
@@ -14,7 +13,6 @@ else
 __RPC_WIN64__ equ 1
 endif
 include basetsd.inc
-.xlist
 
 STDMETHOD macro name, arguments:VARARG
 	local __type, __ptr
@@ -59,7 +57,6 @@ include rpcnsi.inc
 include rpcnterr.inc
 include excpt.inc
 include winerror.inc
-.xlist
 
 CALLBACK(MACYIELDCALLBACK, :ptr sword)
 ;RPC_ENTRY		typedef ptr MACYIELDCALLBACK
@@ -94,7 +91,4 @@ ifndef RPC_NO_WINDOWS_H
 include rpcasync.inc
 endif
 
-.list
 endif
-
-

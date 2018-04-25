@@ -3,6 +3,8 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.27 - xx xxx 2017
+- added .pragma(list(push, <1|0>))
+- added .pragma(list(pop))
 - added support for float const: (2.0 / (1.0 + 3.0))
 - added .pragma(pack(push, <alignment>))
 - added .pragma(pack(pop))

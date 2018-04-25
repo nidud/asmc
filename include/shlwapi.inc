@@ -1,5 +1,7 @@
 ifndef _INC_SHLWAPI
 _INC_SHLWAPI equ <>
+.pragma list(push, 0)
+
 ifndef __LIBC_INC
  include libc.inc
 endif
@@ -7,7 +9,6 @@ ifndef NOSHLWAPI
 include SpecStrings.inc
 include objbase.inc
 include shtypes.inc
-.xlist
 
 ifndef WINSHLWAPI
 ifndef _SHLWAPI_
@@ -17,7 +18,7 @@ else
 includelib shlwapi.lib
 endif
 endif
-endif ;; WINSHLWAPI
+endif
 
 ifdef _WIN32
 ;include pshpack8.inc
@@ -2628,14 +2629,14 @@ ASSOCENUM_NONE		equ 0
 
 DEFINE_IIDX(IQueryAssociations, "c46ca590-3c3f-11d2-bee6-0000f805ca57")
 .comdef IQueryAssociations
-    QueryInterface      proc :REFIID, :PVOID
-    AddRef              proc
-    Release             proc
-    Init                proc :ASSOCF, :LPCWSTR, :HKEY, :HWND
-    GetString           proc :ASSOCF, :ASSOCSTR, :LPCWSTR, :LPWSTR, :ptr DWORD
-    GetKey              proc :ASSOCF, :ASSOCKEY, :LPCWSTR, :ptr HKEY
-    GetData             proc :ASSOCF, :ASSOCDATA, :LPCWSTR, :PVOID, :ptr DWORD
-    GetEnum             proc :ASSOCF, :ASSOCENUM, :LPCWSTR, :REFIID, :PVOID
+    QueryInterface	proc :REFIID, :PVOID
+    AddRef		proc
+    Release		proc
+    Init		proc :ASSOCF, :LPCWSTR, :HKEY, :HWND
+    GetString		proc :ASSOCF, :ASSOCSTR, :LPCWSTR, :LPWSTR, :ptr DWORD
+    GetKey		proc :ASSOCF, :ASSOCKEY, :LPCWSTR, :ptr HKEY
+    GetData		proc :ASSOCF, :ASSOCDATA, :LPCWSTR, :PVOID, :ptr DWORD
+    GetEnum		proc :ASSOCF, :ASSOCENUM, :LPCWSTR, :REFIID, :PVOID
     .ends
 
 ;LWSTDAPI
@@ -3535,18 +3536,17 @@ DllInstall proto WINAPI \
 	      bInstall: BOOL,
 	    pszCmdLine: LPCWSTR
 
-
 if (_WIN32_IE GE 0x0602)
 ;LWSTDAPI
 IsInternetESCEnabled proto WINAPI
 endif
-
 
 ifdef _WIN32
 ;include poppack.inc
 endif
 
 endif
-.list
-endif ;; _INC_SHLWAPI
+
+.pragma list(pop)
+endif
 

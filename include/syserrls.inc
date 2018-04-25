@@ -1,4 +1,4 @@
-.xlist
+.pragma list(push, 0)
 
 externdef CP_NOERROR:	BYTE ; 'No '
 externdef CP_ERROR:	BYTE ; 'Error'
@@ -42,4 +42,4 @@ externdef CP_ENOTEMPTY: BYTE ; "Directory not empty"
 externdef CP_EILSEQ:	BYTE ; "Illegal byte sequence"
 externdef CP_UNKNOWN:	BYTE ; "Unknown error"
 
-.list
+.pragma list(pop)

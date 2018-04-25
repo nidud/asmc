@@ -1,8 +1,9 @@
 ifndef __ROBJECT_INC
 __ROBJECT_INC equ <>
-.xlist
+.pragma list(push, 0)
+.pragma pack(push, 1)
 
-ROBJECT	    STRUC BYTE
+ROBJECT	    STRUC
 flags	    dw ?
 count	    db ?
 index	    db ?
@@ -12,13 +13,15 @@ col	    db ?
 row	    db ?
 ROBJECT	    ENDS
 
-IDDOBJ	    STRUC BYTE
+IDDOBJ	    STRUC
 memsize	    dw ?
 dialog	    ROBJECT <>
 IDDOBJ	    ENDS
 
+.pragma pack(pop)
+
 LPROBJECT   typedef ptr ROBJECT
 LPIDDOBJ    typedef ptr IDDOBJ
 
-.list
+.pragma list(pop)
 endif

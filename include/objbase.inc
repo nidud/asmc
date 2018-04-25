@@ -2,8 +2,7 @@ include rpc.inc
 include rpcndr.inc
 include stdlib.inc
 ifndef _OBJBASE_H_
-_OBJBASE_H_ equ 1
-.xlist
+_OBJBASE_H_ equ <>
 
 CLSCTX_INPROC		equ CLSCTX_INPROC_SERVER OR CLSCTX_INPROC_HANDER
 
@@ -73,7 +72,6 @@ STGFMT_DOCUMENT		equ 0
 include wtypes.inc
 include unknwn.inc
 include objidl.inc
-.xlist
 
 ifndef GUID
 GUID		STRUC
@@ -134,7 +132,6 @@ IsEqualCLSID macro rclsid1,rclsid2
 
 ifndef INITGUID
 include cguid.inc
-.xlist
 endif
 
 COINIT_APARTMENTTHREADED	equ 0x2
@@ -715,7 +712,6 @@ GetRunningObjectTable proto WINAPI \
 		 pprot: LPRUNNINGOBJECTTABLE
 
 include urlmon.inc
-.xlist
 
 CreateStdProgressIndicator proto WINAPI \
 	    hwndParent: HWND,
@@ -723,5 +719,4 @@ CreateStdProgressIndicator proto WINAPI \
 	   pIbscCaller: ptr IBindStatusCallback,
 		ppIbsc: ptr IBindStatusCallback
 
-.list
 endif

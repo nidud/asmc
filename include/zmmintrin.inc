@@ -1,6 +1,5 @@
 ifndef _ZMMINTRIN_H_INCLUDED
 _ZMMINTRIN_H_INCLUDED equ <>
-.xlist
 
 ifndef _INCLUDED_IMM
 .err <Header should only be included from immintrin.h>
@@ -4116,6 +4115,4 @@ _mm512_maskz_cvttps_epu64 macro k1, v2
 	exitm<_mm512_maskz_cvtt_roundps_epu64((k1), (v2), _MM_FROUND_CUR_DIRECTION)>
 	endm
 
-
-.list
-endif ;; _ZMMINTRIN_H_INCLUDED
+endif

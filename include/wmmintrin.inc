@@ -1,6 +1,5 @@
 ifndef _INCLUDED_WMM
 _INCLUDED_WMM equ <>
-.xlist
 ifndef _M_IX86
 ifndef _M_X64
 .err <This header is specific to X86 and X64 targets>
@@ -19,5 +18,4 @@ _mm_aesimc_si128		proto __cdecl :oword
 _mm_aeskeygenassist_si128	proto __cdecl :oword, :dword
 _mm_clmulepi64_si128		proto __cdecl :oword, :oword
 
-.list
-endif ;; _INCLUDED_WMM
+endif

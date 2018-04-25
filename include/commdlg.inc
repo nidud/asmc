@@ -1,6 +1,5 @@
 ifndef _INC_COMMDLG
-.xlist
-_INC_COMMDLG equ 1
+_INC_COMMDLG equ <>
 
 ifdef __PE__
 option dllimport:<comdlg32>
@@ -784,6 +783,5 @@ PSD_NONETWORKBUTTON	equ 0x00200000
 endif
 
 ;#include <poppack.h>
-.list
 endif
 

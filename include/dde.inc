@@ -1,12 +1,9 @@
 ifndef _DDEHEADER_INCLUDED_
-.xlist
-_DDEHEADER_INCLUDED_ equ 1
+_DDEHEADER_INCLUDED_ equ <>
 
 ifndef _WINDEF_
 include windef.inc
-.xlist
 endif
-
 
 WM_DDE_FIRST		equ 0x03E0
 WM_DDE_INITIATE		equ WM_DDE_FIRST
@@ -87,7 +84,6 @@ ReuseDDElParam proto WINAPI \
 		msgOut: UINT,
 		  uiLo: UINT,
 		  uiHi: UINT
-.list
 endif
 
 

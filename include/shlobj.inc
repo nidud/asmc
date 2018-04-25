@@ -1,6 +1,6 @@
 ifndef _SHLOBJ_H_
 _SHLOBJ_H_ equ <>
-.xlist
+.pragma list(push, 0)
 
 ifndef SNDMSG
 SNDMSG	equ <SendMessage>
@@ -24,8 +24,8 @@ include shlguid.inc
 endif
 include shtypes.inc
 include shobjidl.inc
-;include pshpack1.inc
-.xlist
+
+;.pragma pack(push, 1)
 
 ;SHSTDAPI
 SHGetMalloc proto WINAPI \
@@ -375,9 +375,9 @@ if (NTDDI_VERSION LT NTDDI_WIN2K)
     .ends
 LPFILEVIEWERSITE	typedef ptr IFileViewerSite
 
-:include pshpack8.inc
+.pragma pack(push, 8)
 
-FVSHOWINFO		STRUC 8
+FVSHOWINFO		STRUC
 cbSize			dd ?
 hwndOwner		HWND ?
 iShow			SINT ?
@@ -391,7 +391,7 @@ strNewFile		OLECHAR MAX_PATH dup(?)
 FVSHOWINFO		ENDS
 LPFVSHOWINFO		typedef ptr FVSHOWINFO
 
-;include poppack.inc
+.pragma pack(pop)
 
 FVSIF_RECT		equ 0x00000001
 FVSIF_PINNED		equ 0x00000002
@@ -964,7 +964,8 @@ FCSM_LOGO		equ 0x00000020
 FCSM_FLAGS		equ 0x00000040
 
 if (NTDDI_VERSION GE NTDDI_VISTA)
-;include pshpack8.inc
+
+.pragma pack(push, 8)
 
 LPSHELLVIEWID		typedef ptr SHELLVIEWID
 
@@ -987,7 +988,7 @@ cchLogo			dd ?
 SHFOLDERCUSTOMSETTINGS	ENDS
 LPSHFOLDERCUSTOMSETTINGS typedef ptr SHFOLDERCUSTOMSETTINGS
 
-;include poppack.inc
+.pragma pack(pop)
 
 ;SHSTDAPI
 SHGetSetFolderCustomSettings proto WINAPI \
@@ -1002,9 +1003,9 @@ endif
 
 CALLBACK(BFFCALLBACK, :HWND, :UINT, :LPARAM, :LPARAM)
 
-;include pshpack8.inc
+.pragma pack(push, 8)
 
-BROWSEINFOA		STRUC 8
+BROWSEINFOA		STRUC
 hwndOwner		HWND ?
 pidlRoot		PCIDLIST_ABSOLUTE ?
 pszDisplayName		LPSTR ?
@@ -1030,7 +1031,7 @@ BROWSEINFOW		ENDS
 PBROWSEINFOW		typedef ptr BROWSEINFOW
 LPBROWSEINFOW		typedef ptr BROWSEINFOW
 
-;include poppack.inc
+.pragma pack(pop)
 
 ifdef _UNICODE
 BROWSEINFO		equ <BROWSEINFOW>
@@ -1260,7 +1261,7 @@ endif
 
 if (NTDDI_VERSION GE NTDDI_WIN2K AND NTDDI_VERSION LT NTDDI_VISTA)
 
-;include pshpack8.inc
+.pragma pack(push, 8)
 
 EnumImageStoreDATAtag	STRUC
 szPath			WCHAR MAX_PATH dup(?)
@@ -1268,7 +1269,7 @@ ftTimeStamp		FILETIME ?
 ENUMSHELLIMAGESTOREDATA ENDS
 PENUMSHELLIMAGESTOREDATA typedef ptr ENUMSHELLIMAGESTOREDATA
 
-;include poppack.inc
+.pragma pack(pop)
 
 .comdef IEnumShellImageStore
     QueryInterface	proc :REFIID, :ptr
@@ -1333,7 +1334,7 @@ if (_WIN32_IE LT _WIN32_IE_IE70)
 ISFBVIEWMODE_LOGOS	equ 0x0003
 endif
 
-;include pshpack8.inc
+.pragma pack(push, 8)
 
 LPIShellFolder		typedef ptr IShellFolder
 
@@ -1351,7 +1352,7 @@ pidl			PIDLIST_ABSOLUTE ?
 BANDINFOSFB		ENDS
 PBANDINFOSFB		typedef ptr BANDINFOSFB
 
-;include poppack.inc
+.pragma pack(pop)
 
 .comdef IShellFolderBand
     QueryInterface	proc :REFIID, :ptr
@@ -1440,10 +1441,7 @@ COMPSTATEINFO		ENDS
 LPCOMPSTATEINFO		typedef ptr COMPSTATEINFO
 LPCCOMPSTATEINFO	typedef ptr COMPSTATEINFO
 
-
-
 COMPONENT_TOP		equ (0x3fffffff)
-
 
 COMP_TYPE_HTMLDOC	equ 0
 COMP_TYPE_PICTURE	equ 1
@@ -1516,7 +1514,6 @@ WPSTYLE_MAX		equ 5
 else
 WPSTYLE_MAX		equ 3
 endif
-
 
 
 COMP_ELEM_TYPE		equ 0x00000001
@@ -1624,7 +1621,7 @@ if (_WIN32_IE GE 0x0500)
 MAX_COLUMN_NAME_LEN	equ 80
 MAX_COLUMN_DESC_LEN	equ 128
 
-;include pshpack1.inc
+.pragma pack(push, 1)
 
 SHCOLUMNINFO		STRUC
 scid			SHCOLUMNID <>
@@ -1638,9 +1635,9 @@ SHCOLUMNINFO		ENDS
 LPSHCOLUMNINFO		typedef ptr SHCOLUMNINFO
 LPCSHCOLUMNINFO		typedef ptr SHCOLUMNINFO
 
-;include poppack.inc
+.pragma pack(pop)
 
-;include pshpack8.inc
+.pragma pack(push, 8)
 
 SHCOLUMNINIT		STRUC
 dwFlags			ULONG ?
@@ -1662,7 +1659,7 @@ SHCOLUMNDATA		ENDS
 LPSHCOLUMNDATA		typedef ptr SHCOLUMNDATA
 LPCSHCOLUMNDATA		typedef ptr SHCOLUMNDATA
 
-;include poppack.inc
+.pragma pack(pop)
 
 .comdef IColumnProvider
     QueryInterface	proc :REFIID, :ptr
@@ -1722,13 +1719,15 @@ DVASPECT_SHORTNAME	equ 2
 DVASPECT_COPY		equ 3
 DVASPECT_LINK		equ 4
 
-;include pshpack8.inc
+.pragma pack(push, 8)
+
 NRESARRAY		STRUC
 cItems			UINT ?
 nr			NETRESOURCE 1 dup(<>)
 NRESARRAY		ENDS
 LPNRESARRAY		typedef ptr NRESARRAY
-;include poppack.inc
+
+.pragma pack(pop)
 
 CIDA			STRUC
 cidl			UINT ?
@@ -2977,7 +2976,7 @@ SHShellFolderView_Message proto WINAPI \
     .ends
 LPIShellFolderViewCB	typedef ptr IShellFolderViewCB
 
-;include pshpack8.inc
+.pragma pack(push, 8)
 
 QCMINFO_PLACE_BEFORE	equ 0
 QCMINFO_PLACE_AFTER	equ 1
@@ -3072,6 +3071,8 @@ cySmall			SINT ?
 cxLarge			SINT ?
 cyLarge			SINT ?
 ITEMSPACING		ENDS
+
+.pragma pack(pop)
 
 SFVSOC_INVALIDATE_ALL	equ 0x00000001
 SFVSOC_NOSCROLL		equ LVSICF_NOSCROLL
@@ -3356,8 +3357,6 @@ PIDISF_FOLLOWALLLINKS	equ 0x00000020
 PIDISM_GLOBAL		equ 0
 PIDISM_WATCH		equ 1
 PIDISM_DONTWATCH	equ 2
-
-
 
 SHELLSTATEA		STRUC
 Flags			UINT ?
@@ -3655,9 +3654,9 @@ PickIconDlg proto WINAPI \
 	   piIconIndex: ptr SINT
 
 
-;include pshpack8.inc
+.pragma pack(push, 8)
 
-AASHELLMENUFILENAME	STRUC 8
+AASHELLMENUFILENAME	STRUC
 cbTotal			SWORD ?
 rgbReserved		db 12 dup(?)
 szFileName		WCHAR 1 dup(?)
@@ -3673,7 +3672,7 @@ psz			LPWSTR ?
 AASHELLMENUITEM		ENDS
 LPAASHELLMENUITEM	typedef ptr AASHELLMENUITEM
 
-;include poppack.inc
+.pragma pack(pop)
 
 
 if (NTDDI_VERSION GE NTDDI_WIN7)
@@ -3712,7 +3711,6 @@ DoPrivacyDlg proto WINAPI \
 
 endif
 
-;include poppack.inc
-
-.list
-endif ; _SHLOBJ_H_
+;.pragma pack(pop)
+.pragma list(pop)
+endif

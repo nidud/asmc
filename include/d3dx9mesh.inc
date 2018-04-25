@@ -1,7 +1,6 @@
 include d3dx9.inc
 ifndef _D3DX9MESH_H
 _D3DX9MESH_H equ <>
-.xlist
 
 DEFINE_GUID(IID_ID3DXBaseMesh, 0x7ed943dd, 0x52e8, 0x40b5, 0xa8, 0xd8, 0x76, 0x68, 0x5c, 0x40, 0x63, 0x30);
 DEFINE_GUID(IID_ID3DXMesh,     0x4020e5c2, 0x1403, 0x4929, 0x88, 0x3f, 0xe2, 0xe8, 0x49, 0xfa, 0xc1, 0x95);
@@ -253,283 +252,283 @@ CALLBACK(LPD3DXIMTSIGNALCALLBACK, :ptr D3DXVECTOR2, :UINT, :UINT, :PVOID, :ptr F
 CALLBACK(LPD3DXSHPRTSIMCB, :FLOAT, :PVOID)
 
 .comdef ID3DXBaseMesh
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    DrawSubset          proc :DWORD
-    GetNumFaces         proc
-    GetNumVertices      proc
-    GetFVF              proc
-    GetDeclaration      proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    DrawSubset		proc :DWORD
+    GetNumFaces		proc
+    GetNumVertices	proc
+    GetFVF		proc
+    GetDeclaration	proc :ptr
     GetNumBytesPerVertex proc
-    GetOptions          proc
-    GetDevice           proc :ptr
-    CloneMeshFVF        proc :DWORD, :DWORD, :ptr, :ptr
-    CloneMesh           proc :DWORD, :ptr, :ptr, :ptr
-    GetVertexBuffer     proc :ptr
-    GetIndexBuffer      proc :ptr
-    LockVertexBuffer    proc :DWORD, :ptr
-    UnlockVertexBuffer  proc
-    LockIndexBuffer     proc :DWORD, :ptr
-    UnlockIndexBuffer   proc
-    GetAttributeTable   proc :ptr, :ptr
+    GetOptions		proc
+    GetDevice		proc :ptr
+    CloneMeshFVF	proc :DWORD, :DWORD, :ptr, :ptr
+    CloneMesh		proc :DWORD, :ptr, :ptr, :ptr
+    GetVertexBuffer	proc :ptr
+    GetIndexBuffer	proc :ptr
+    LockVertexBuffer	proc :DWORD, :ptr
+    UnlockVertexBuffer	proc
+    LockIndexBuffer	proc :DWORD, :ptr
+    UnlockIndexBuffer	proc
+    GetAttributeTable	proc :ptr, :ptr
     ConvertPointRepsToAdjacency proc :ptr, :ptr
     ConvertAdjacencyToPointReps proc :ptr, :ptr
-    GenerateAdjacency   proc :FLOAT, :ptr
-    UpdateSemantics     proc :ptr
+    GenerateAdjacency	proc :FLOAT, :ptr
+    UpdateSemantics	proc :ptr
     .ends
 
 .comdef ID3DXMesh
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    DrawSubset          proc :DWORD
-    GetNumFaces         proc
-    GetNumVertices      proc
-    GetFVF              proc
-    GetDeclaration      proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    DrawSubset		proc :DWORD
+    GetNumFaces		proc
+    GetNumVertices	proc
+    GetFVF		proc
+    GetDeclaration	proc :ptr
     GetNumBytesPerVertex proc
-    GetOptions          proc
-    GetDevice           proc :ptr
-    CloneMeshFVF        proc :DWORD, :DWORD, :ptr, :ptr
-    CloneMesh           proc :DWORD, :ptr, :ptr, :ptr
-    GetVertexBuffer     proc :ptr
-    GetIndexBuffer      proc :ptr
-    LockVertexBuffer    proc :DWORD, :ptr
-    UnlockVertexBuffer  proc
-    LockIndexBuffer     proc :DWORD, :ptr
-    UnlockIndexBuffer   proc
-    GetAttributeTable   proc :ptr, :ptr
+    GetOptions		proc
+    GetDevice		proc :ptr
+    CloneMeshFVF	proc :DWORD, :DWORD, :ptr, :ptr
+    CloneMesh		proc :DWORD, :ptr, :ptr, :ptr
+    GetVertexBuffer	proc :ptr
+    GetIndexBuffer	proc :ptr
+    LockVertexBuffer	proc :DWORD, :ptr
+    UnlockVertexBuffer	proc
+    LockIndexBuffer	proc :DWORD, :ptr
+    UnlockIndexBuffer	proc
+    GetAttributeTable	proc :ptr, :ptr
     ConvertPointRepsToAdjacency proc :ptr, :ptr
     ConvertAdjacencyToPointReps proc :ptr, :ptr
-    GenerateAdjacency   proc :FLOAT, :ptr
-    UpdateSemantics     proc :ptr
+    GenerateAdjacency	proc :FLOAT, :ptr
+    UpdateSemantics	proc :ptr
     LockAttributeBuffer proc :DWORD, :ptr
     UnlockAttributeBuffer proc
-    Optimize            proc :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr
-    OptimizeInplace     proc :DWORD, :ptr, :ptr, :ptr, :ptr
-    SetAttributeTable   proc :ptr, :DWORD
+    Optimize		proc :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr
+    OptimizeInplace	proc :DWORD, :ptr, :ptr, :ptr, :ptr
+    SetAttributeTable	proc :ptr, :DWORD
     .ends
 
 .comdef ID3DXPMesh
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    DrawSubset          proc :DWORD
-    GetNumFaces         proc
-    GetNumVertices      proc
-    GetFVF              proc
-    GetDeclaration      proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    DrawSubset		proc :DWORD
+    GetNumFaces		proc
+    GetNumVertices	proc
+    GetFVF		proc
+    GetDeclaration	proc :ptr
     GetNumBytesPerVertex proc
-    GetOptions          proc
-    GetDevice           proc :ptr
-    CloneMeshFVF        proc :DWORD, :DWORD, :ptr, :ptr
-    CloneMesh           proc :DWORD, :ptr, :ptr, :ptr
-    GetVertexBuffer     proc :ptr
-    GetIndexBuffer      proc :ptr
-    LockVertexBuffer    proc :DWORD, :ptr
-    UnlockVertexBuffer  proc
-    LockIndexBuffer     proc :DWORD, :ptr
-    UnlockIndexBuffer   proc
-    GetAttributeTable   proc :ptr, :ptr
+    GetOptions		proc
+    GetDevice		proc :ptr
+    CloneMeshFVF	proc :DWORD, :DWORD, :ptr, :ptr
+    CloneMesh		proc :DWORD, :ptr, :ptr, :ptr
+    GetVertexBuffer	proc :ptr
+    GetIndexBuffer	proc :ptr
+    LockVertexBuffer	proc :DWORD, :ptr
+    UnlockVertexBuffer	proc
+    LockIndexBuffer	proc :DWORD, :ptr
+    UnlockIndexBuffer	proc
+    GetAttributeTable	proc :ptr, :ptr
     ConvertPointRepsToAdjacency proc :ptr, :ptr
     ConvertAdjacencyToPointReps proc :ptr, :ptr
-    GenerateAdjacency   proc :FLOAT, :ptr
-    UpdateSemantics     proc :ptr
-    ClonePMeshFVF       proc :DWORD, :DWORD, :ptr, :ptr
-    ClonePMesh          proc :DWORD, :ptr, :ptr, :ptr
-    SetNumFaces         proc :DWORD
-    SetNumVertices      proc :DWORD
-    GetMaxFaces         proc
-    GetMinFaces         proc
-    GetMaxVertices      proc
-    GetMinVertices      proc
-    Save                proc :ptr, :ptr, :ptr, :DWORD
-    Optimize            proc :DWORD, :ptr, :ptr, :ptr, :ptr
-    OptimizeBaseLOD     proc :DWORD, :ptr
-    TrimByFaces         proc :DWORD, :DWORD, :ptr, :ptr
-    TrimByVertices      proc :DWORD, :DWORD, :ptr, :ptr
-    GetAdjacency        proc :ptr
+    GenerateAdjacency	proc :FLOAT, :ptr
+    UpdateSemantics	proc :ptr
+    ClonePMeshFVF	proc :DWORD, :DWORD, :ptr, :ptr
+    ClonePMesh		proc :DWORD, :ptr, :ptr, :ptr
+    SetNumFaces		proc :DWORD
+    SetNumVertices	proc :DWORD
+    GetMaxFaces		proc
+    GetMinFaces		proc
+    GetMaxVertices	proc
+    GetMinVertices	proc
+    Save		proc :ptr, :ptr, :ptr, :DWORD
+    Optimize		proc :DWORD, :ptr, :ptr, :ptr, :ptr
+    OptimizeBaseLOD	proc :DWORD, :ptr
+    TrimByFaces		proc :DWORD, :DWORD, :ptr, :ptr
+    TrimByVertices	proc :DWORD, :DWORD, :ptr, :ptr
+    GetAdjacency	proc :ptr
     GenerateVertexHistory proc :ptr
     .ends
 
 .comdef ID3DXSPMesh
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetNumFaces         proc
-    GetNumVertices      proc
-    GetNumFVF           proc
-    GetDeclaration      proc :ptr
-    GetOptions          proc
-    GetDevice           proc :ptr
-    CloneMeshFVF        proc :DWORD, :DWORD, :ptr, :ptr, :ptr, :ptr
-    CloneMesh           proc :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr
-    ClonePMeshFVF       proc :DWORD, :DWORD, :ptr, :ptr, :ptr, :ptr
-    ClonePMesh          proc :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr
-    ReduceFaces         proc :DWORD
-    ReduceVertices      proc :DWORD
-    GetMaxFaces         proc
-    GetMaxVertices      proc
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetNumFaces		proc
+    GetNumVertices	proc
+    GetNumFVF		proc
+    GetDeclaration	proc :ptr
+    GetOptions		proc
+    GetDevice		proc :ptr
+    CloneMeshFVF	proc :DWORD, :DWORD, :ptr, :ptr, :ptr, :ptr
+    CloneMesh		proc :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr
+    ClonePMeshFVF	proc :DWORD, :DWORD, :ptr, :ptr, :ptr, :ptr
+    ClonePMesh		proc :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr
+    ReduceFaces		proc :DWORD
+    ReduceVertices	proc :DWORD
+    GetMaxFaces		proc
+    GetMaxVertices	proc
     GetVertexAttributeWeights proc :LPD3DXATTRIBUTEWEIGHTS
-    GetVertexWeights    proc :ptr
+    GetVertexWeights	proc :ptr
     .ends
 
 .comdef ID3DXPatchMesh
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetNumPatches       proc
-    GetNumVertices      proc
-    GetDeclaration      proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetNumPatches	proc
+    GetNumVertices	proc
+    GetDeclaration	proc :ptr
     GetControlVerticesPerPatch proc
-    GetOptions          proc
-    GetDevice           proc :ptr
-    GetPatchInfo        proc :LPD3DXPATCHINFO
-    GetVertexBuffer     proc :ptr
-    GetIndexBuffer      proc :ptr
-    LockVertexBuffer    proc :DWORD, :ptr
-    UnlockVertexBuffer  proc
-    LockIndexBuffer     proc :DWORD, :ptr
-    UnlockIndexBuffer   proc
+    GetOptions		proc
+    GetDevice		proc :ptr
+    GetPatchInfo	proc :LPD3DXPATCHINFO
+    GetVertexBuffer	proc :ptr
+    GetIndexBuffer	proc :ptr
+    LockVertexBuffer	proc :DWORD, :ptr
+    UnlockVertexBuffer	proc
+    LockIndexBuffer	proc :DWORD, :ptr
+    UnlockIndexBuffer	proc
     LockAttributeBuffer proc :DWORD, :ptr
     UnlockAttributeBuffer proc
-    GetTessSize         proc :FLOAT, :DWORD, :ptr, :ptr
-    GenerateAdjacency   proc :FLOAT
-    CloneMesh           proc :DWORD, :ptr, :ptr
-    Optimize            proc :DWORD
-    SetDisplaceParam    proc :ptr, :D3DTEXTUREFILTERTYPE, :D3DTEXTUREFILTERTYPE, :D3DTEXTUREFILTERTYPE, :D3DTEXTUREADDRESS, :DWORD
-    GetDisplaceParam    proc :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
-    Tessellate          proc :float, :ptr
-    TessellateAdaptive  proc :ptr, :DWORD, :DWORD, :ptr
+    GetTessSize		proc :FLOAT, :DWORD, :ptr, :ptr
+    GenerateAdjacency	proc :FLOAT
+    CloneMesh		proc :DWORD, :ptr, :ptr
+    Optimize		proc :DWORD
+    SetDisplaceParam	proc :ptr, :D3DTEXTUREFILTERTYPE, :D3DTEXTUREFILTERTYPE, :D3DTEXTUREFILTERTYPE, :D3DTEXTUREADDRESS, :DWORD
+    GetDisplaceParam	proc :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
+    Tessellate		proc :float, :ptr
+    TessellateAdaptive	proc :ptr, :DWORD, :DWORD, :ptr
     .ends
 
 .comdef ID3DXSkinInfo
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    SetBoneInfluence    proc :DWORD, :DWORD, :ptr, :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetBoneInfluence	proc :DWORD, :DWORD, :ptr, :ptr
     SetBoneVertexInfluence proc :DWORD, :DWORD, :float
     GetNumBoneInfluences proc :DWORD
-    GetBoneInfluence    proc :DWORD, :ptr, :ptr
+    GetBoneInfluence	proc :DWORD, :ptr, :ptr
     GetBoneVertexInfluence proc :DWORD, :DWORD, :ptr, :ptr
     GetMaxVertexInfluences proc :ptr
-    GetNumBones         proc
+    GetNumBones		proc
     FindBoneVertexInfluenceIndex proc :DWORD, :DWORD, :ptr
     GetMaxFaceInfluences proc :ptr, :DWORD, :ptr
     SetMinBoneInfluence proc :FLOAT
     GetMinBoneInfluence proc
-    SetBoneName         proc :DWORD, :ptr
-    GetBoneName         proc :DWORD
+    SetBoneName		proc :DWORD, :ptr
+    GetBoneName		proc :DWORD
     SetBoneOffsetMatrix proc :DWORD, :ptr
     GetBoneOffsetMatrix proc :DWORD
-    Clone               proc :ptr
-    Remap               proc :DWORD, :ptr
-    SetFVF              proc :DWORD
-    SetDeclaration      proc :ptr
-    GetFVF              proc
-    GetDeclaration      proc :ptr
-    UpdateSkinnedMesh   proc :ptr, :ptr, :ptr, :ptr
+    Clone		proc :ptr
+    Remap		proc :DWORD, :ptr
+    SetFVF		proc :DWORD
+    SetDeclaration	proc :ptr
+    GetFVF		proc
+    GetDeclaration	proc :ptr
+    UpdateSkinnedMesh	proc :ptr, :ptr, :ptr, :ptr
     ConvertToBlendedMesh proc :ptr, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
     ConvertToIndexedBlendedMesh proc :ptr, :DWORD, :DWORD, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
     .ends
 
 .comdef ID3DXPRTBuffer
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetNumSamples       proc
-    GetNumCoeffs        proc
-    GetNumChannels      proc
-    IsTexture           proc
-    GetWidth            proc
-    GetHeight           proc
-    Resize              proc :UINT
-    LockBuffer          proc :UINT, :UINT, :ptr
-    UnlockBuffer        proc
-    ScaleBuffer         proc :FLOAT
-    AddBuffer           proc :ptr
-    AttachGH            proc :ptr
-    ReleaseGH           proc
-    EvalGH              proc
-    ExtractTexture      proc :UINT, :UINT, :UINT, :ptr
-    ExtractToMesh       proc :UINT, :D3DDECLUSAGE, :UINT, :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetNumSamples	proc
+    GetNumCoeffs	proc
+    GetNumChannels	proc
+    IsTexture		proc
+    GetWidth		proc
+    GetHeight		proc
+    Resize		proc :UINT
+    LockBuffer		proc :UINT, :UINT, :ptr
+    UnlockBuffer	proc
+    ScaleBuffer		proc :FLOAT
+    AddBuffer		proc :ptr
+    AttachGH		proc :ptr
+    ReleaseGH		proc
+    EvalGH		proc
+    ExtractTexture	proc :UINT, :UINT, :UINT, :ptr
+    ExtractToMesh	proc :UINT, :D3DDECLUSAGE, :UINT, :ptr
     .ends
 
 .comdef ID3DXPRTCompBuffer
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetNumSamples       proc
-    GetNumCoeffs        proc
-    GetNumChannels      proc
-    IsTexture           proc
-    GetWidth            proc
-    GetHeight           proc
-    GetNumClusters      proc
-    GetNumPCA           proc
-    NormalizeData       proc
-    ExtractBasis        proc :UINT, :ptr
-    ExtractClusterIDs   proc :ptr
-    ExtractPCA          proc :UINT, :UINT, :ptr
-    ExtractTexture      proc :UINT, :UINT, :ptr
-    ExtractToMesh       proc :UINT, :D3DDECLUSAGE, :UINT, :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetNumSamples	proc
+    GetNumCoeffs	proc
+    GetNumChannels	proc
+    IsTexture		proc
+    GetWidth		proc
+    GetHeight		proc
+    GetNumClusters	proc
+    GetNumPCA		proc
+    NormalizeData	proc
+    ExtractBasis	proc :UINT, :ptr
+    ExtractClusterIDs	proc :ptr
+    ExtractPCA		proc :UINT, :UINT, :ptr
+    ExtractTexture	proc :UINT, :UINT, :ptr
+    ExtractToMesh	proc :UINT, :D3DDECLUSAGE, :UINT, :ptr
     .ends
 
 .comdef ID3DXTextureGutterHelper
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetWidth            proc
-    GetHeight           proc
-    ApplyGuttersFloat   proc :ptr, :UINT, :ptr, :UINT
-    ApplyGuttersTex     proc :ptr
-    ApplyGuttersPRT     proc :ptr
-    ResampleTex         proc :ptr, :ptr, :D3DDECLUSAGE, :UINT, :ptr
-    GetFaceMap          proc :ptr
-    GetBaryMap          proc :ptr
-    GetTexelMap         proc :ptr
-    GetGutterMap        proc :ptr
-    SetFaceMap          proc :ptr
-    SetBaryMap          proc :ptr
-    SetTexelMap         proc :ptr
-    SetGutterMap        proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetWidth		proc
+    GetHeight		proc
+    ApplyGuttersFloat	proc :ptr, :UINT, :ptr, :UINT
+    ApplyGuttersTex	proc :ptr
+    ApplyGuttersPRT	proc :ptr
+    ResampleTex		proc :ptr, :ptr, :D3DDECLUSAGE, :UINT, :ptr
+    GetFaceMap		proc :ptr
+    GetBaryMap		proc :ptr
+    GetTexelMap		proc :ptr
+    GetGutterMap	proc :ptr
+    SetFaceMap		proc :ptr
+    SetBaryMap		proc :ptr
+    SetTexelMap		proc :ptr
+    SetGutterMap	proc :ptr
     .ends
 
 .comdef ID3DXPRTEngine
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    SetMeshMaterials    proc :ptr, :UINT, :UINT, :BOOL, :FLOAT
-    SetPerVertexAlbedo  proc :ptr, :UINT, :UINT
-    SetPerTexelAlbedo   proc :ptr, :UINT, :ptr
-    GetVertexAlbedo     proc :ptr, :UINT
-    SetPerTexelNormals  proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetMeshMaterials	proc :ptr, :UINT, :UINT, :BOOL, :FLOAT
+    SetPerVertexAlbedo	proc :ptr, :UINT, :UINT
+    SetPerTexelAlbedo	proc :ptr, :UINT, :ptr
+    GetVertexAlbedo	proc :ptr, :UINT
+    SetPerTexelNormals	proc :ptr
     ExtractPerVertexAlbedo proc :ptr, :D3DDECLUSAGE, :UINT
-    ResampleBuffer      proc :ptr, :ptr
-    GetAdaptedMesh      proc :ptr, :ptr, :ptr, :ptr, :ptr
-    GetNumVerts         proc
-    GetNumFaces         proc
+    ResampleBuffer	proc :ptr, :ptr
+    GetAdaptedMesh	proc :ptr, :ptr, :ptr, :ptr, :ptr
+    GetNumVerts		proc
+    GetNumFaces		proc
     SetMinMaxIntersection proc :FLOAT, :FLOAT
-    RobustMeshRefine    proc :FLOAT, :UINT
-    SetSamplingInfo     proc :UINT, :BOOL, :BOOL, :BOOL, :FLOAT
+    RobustMeshRefine	proc :FLOAT, :UINT
+    SetSamplingInfo	proc :UINT, :BOOL, :BOOL, :BOOL, :FLOAT
     ComputeDirectLightingSH proc :UINT, :ptr
     ComputeDirectLightingSHAdaptive proc :UINT, :float, :float, :UINT, :ptr
     ComputeDirectLightingSHGPU proc :ptr, :UINT, :UINT, :float, :float, :ptr
-    ComputeSS           proc :ptr, :ptr, :ptr
-    ComputeSSAdaptive   proc :ptr, :float, :float, :UINT, :ptr, :ptr
-    ComputeBounce       proc :ptr, :ptr, :ptr
+    ComputeSS		proc :ptr, :ptr, :ptr
+    ComputeSSAdaptive	proc :ptr, :float, :float, :UINT, :ptr, :ptr
+    ComputeBounce	proc :ptr, :ptr, :ptr
     ComputeBounceAdaptive proc :ptr, :float, :float, :UINT, :ptr, :ptr
     ComputeVolumeSamplesDirectSH proc :UINT, :UINT, :UINT, :ptr, :ptr
     ComputeVolumeSamples proc :ptr, :UINT, :UINT, :ptr, :ptr
     ComputeSurfSamplesDirectSH proc :UINT, :UINT, :ptr, :ptr, :ptr
     ComputeSurfSamplesBounce proc :ptr, :UINT, :ptr, :ptr, :ptr, :ptr
-    FreeSSData          proc
-    FreeBounceData      proc
-    ComputeLDPRTCoeffs  proc :ptr, :UINT, :ptr, :ptr
-    ScaleMeshChunk      proc :UINT, :float, :ptr
-    MultiplyAlbedo      proc :ptr
-    SetCallback         proc :LPD3DXSHPRTSIMCB, :float, :ptr
+    FreeSSData		proc
+    FreeBounceData	proc
+    ComputeLDPRTCoeffs	proc :ptr, :UINT, :ptr, :ptr
+    ScaleMeshChunk	proc :UINT, :float, :ptr
+    MultiplyAlbedo	proc :ptr
+    SetCallback		proc :LPD3DXSHPRTSIMCB, :float, :ptr
     ShadowRayIntersects proc :ptr, :ptr
     ClosestRayIntersects proc :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
     .ends
@@ -1221,5 +1220,4 @@ DEFINE_GUID(DXFILEOBJ_EffectInstance,		0xe331f7e4, 0x0559, 0x4cc2, 0x8e, 0x99, 0
 DEFINE_GUID(DXFILEOBJ_AnimTicksPerSecond,	0x9e415a43, 0x7ba6, 0x4a73, 0x87, 0x43, 0xb7, 0x3d, 0x47, 0xe8, 0x84, 0x76);
 DEFINE_GUID(DXFILEOBJ_CompressedAnimationSet,	0x7f9b00b3, 0xf125, 0x4890, 0x87, 0x6e, 0x1c, 0x42, 0xbf, 0x69, 0x7c, 0x4d);
 
-.list
-endif ;; _D3DX9MESH_H
+endif

@@ -1,3 +1,4 @@
+.pragma list(push, 0)
 ifndef __REQUIRED_RPCNDR_H_VERSION__
 __REQUIRED_RPCNDR_H_VERSION__ equ 475
 endif
@@ -11,7 +12,6 @@ ifndef __RPCNDR_H_VERSION__
 endif
 ifndef __exdisp_h__
 __exdisp_h__ equ <>
-.xlist
 
 ifndef __IWebBrowser_FWD_DEFINED__
 __IWebBrowser_FWD_DEFINED__ equ 1
@@ -94,7 +94,6 @@ endif
 
 include ocidl.inc
 include docobj.inc
-.xlist
 
 SID_SkipHung		equ <IID_IEnumVARIANT>
 
@@ -167,38 +166,38 @@ REFRESH_COMPLETELY	equ 3
 externdef		IID_IWebBrowser:IID
 
 .comdef IWebBrowser
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :DWORD, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :ptr, :DWORD, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    GoBack              proc
-    GoForward           proc
-    GoHome              proc
-    GoSearch            proc
-    Navigate            proc :BSTR, :ptr, :ptr, :ptr, :ptr
-    Refresh             proc
-    Refresh2            proc :ptr
-    Stop                proc
-    get_Application     proc :ptr
-    get_Parent          proc :ptr
-    get_Container       proc :ptr
-    get_Document        proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :DWORD, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :DWORD, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    GoBack		proc
+    GoForward		proc
+    GoHome		proc
+    GoSearch		proc
+    Navigate		proc :BSTR, :ptr, :ptr, :ptr, :ptr
+    Refresh		proc
+    Refresh2		proc :ptr
+    Stop		proc
+    get_Application	proc :ptr
+    get_Parent		proc :ptr
+    get_Container	proc :ptr
+    get_Document	proc :ptr
     get_TopLevelContainer proc :ptr
-    get_Type            proc :ptr
-    get_Left            proc :ptr
-    put_Left            proc :SDWORD
-    get_Top             proc :ptr
-    put_Top             proc :SDWORD
-    get_Width           proc :ptr
-    put_Width           proc :SDWORD
-    get_Height          proc :ptr
-    put_Height          proc :SDWORD
-    get_LocationName    proc :ptr
-    get_LocationURL     proc :ptr
-    get_Busy            proc :ptr
+    get_Type		proc :ptr
+    get_Left		proc :ptr
+    put_Left		proc :SDWORD
+    get_Top		proc :ptr
+    put_Top		proc :SDWORD
+    get_Width		proc :ptr
+    put_Width		proc :SDWORD
+    get_Height		proc :ptr
+    put_Height		proc :SDWORD
+    get_LocationName	proc :ptr
+    get_LocationURL	proc :ptr
+    get_Busy		proc :ptr
     .ends
 
 endif
@@ -210,13 +209,13 @@ __DWebBrowserEvents_DISPINTERFACE_DEFINED__ equ 1
 
 externdef		DIID_DWebBrowserEvents:IID
 .comdef DWebBrowserEvents
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :DWORD, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :ptr, :DWORD, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :DWORD, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :DWORD, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     .ends
 
 endif
@@ -229,58 +228,58 @@ DEFINE_GUID(IID_IWebBrowserApp, 0x0002df05, 0x0000, 0x0000, 0xc0,0x00, 0x00,0x00
 
 externdef		IID_IWebBrowserApp:IID
 .comdef IWebBrowserApp
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :DWORD, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :ptr, :DWORD, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    GoBack              proc
-    GoForward           proc
-    GoHome              proc
-    GoSearch            proc
-    Navigate            proc :BSTR, :ptr, :ptr, :ptr, :ptr
-    Refresh             proc
-    Refresh2            proc :ptr
-    Stop                proc
-    get_Application     proc :ptr
-    get_Parent          proc :ptr
-    get_Container       proc :ptr
-    get_Document        proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :DWORD, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :DWORD, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    GoBack		proc
+    GoForward		proc
+    GoHome		proc
+    GoSearch		proc
+    Navigate		proc :BSTR, :ptr, :ptr, :ptr, :ptr
+    Refresh		proc
+    Refresh2		proc :ptr
+    Stop		proc
+    get_Application	proc :ptr
+    get_Parent		proc :ptr
+    get_Container	proc :ptr
+    get_Document	proc :ptr
     get_TopLevelContainer proc :ptr
-    get_Type            proc :ptr
-    get_Left            proc :ptr
-    put_Left            proc :SDWORD
-    get_Top             proc :ptr
-    put_Top             proc :SDWORD
-    get_Width           proc :ptr
-    put_Width           proc :SDWORD
-    get_Height          proc :ptr
-    put_Height          proc :SDWORD
-    get_LocationName    proc :ptr
-    get_LocationURL     proc :ptr
-    get_Busy            proc :ptr
-    Quit                proc
-    ClientToWindow      proc :ptr, :ptr
-    PutProperty         proc :BSTR, :VARIANT
-    GetProperty         proc :BSTR, :ptr
-    get_Name            proc :ptr
-    get_HWND            proc :ptr
-    get_FullName        proc :ptr
-    get_Path            proc :ptr
-    get_Visible         proc :ptr
-    put_Visible         proc :VARIANT_BOOL
-    get_StatusBar       proc :ptr
-    put_StatusBar       proc :VARIANT_BOOL
-    get_StatusText      proc :ptr
-    put_StatusText      proc :BSTR
-    get_ToolBar         proc :ptr
-    put_ToolBar         proc :DWORD
-    get_MenuBar         proc :ptr
-    put_MenuBar         proc :VARIANT_BOOL
-    get_FullScreen      proc :ptr
-    put_FullScreen      proc :VARIANT_BOOL
+    get_Type		proc :ptr
+    get_Left		proc :ptr
+    put_Left		proc :SDWORD
+    get_Top		proc :ptr
+    put_Top		proc :SDWORD
+    get_Width		proc :ptr
+    put_Width		proc :SDWORD
+    get_Height		proc :ptr
+    put_Height		proc :SDWORD
+    get_LocationName	proc :ptr
+    get_LocationURL	proc :ptr
+    get_Busy		proc :ptr
+    Quit		proc
+    ClientToWindow	proc :ptr, :ptr
+    PutProperty		proc :BSTR, :VARIANT
+    GetProperty		proc :BSTR, :ptr
+    get_Name		proc :ptr
+    get_HWND		proc :ptr
+    get_FullName	proc :ptr
+    get_Path		proc :ptr
+    get_Visible		proc :ptr
+    put_Visible		proc :VARIANT_BOOL
+    get_StatusBar	proc :ptr
+    put_StatusBar	proc :VARIANT_BOOL
+    get_StatusText	proc :ptr
+    put_StatusText	proc :BSTR
+    get_ToolBar		proc :ptr
+    put_ToolBar		proc :DWORD
+    get_MenuBar		proc :ptr
+    put_MenuBar		proc :VARIANT_BOOL
+    get_FullScreen	proc :ptr
+    put_FullScreen	proc :VARIANT_BOOL
     .ends
 
 endif
@@ -291,77 +290,77 @@ __IWebBrowser2_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IWebBrowser2:IID
 .comdef IWebBrowser2
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :DWORD, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :ptr, :DWORD, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    GoBack              proc
-    GoForward           proc
-    GoHome              proc
-    GoSearch            proc
-    Navigate            proc :BSTR, :ptr, :ptr, :ptr, :ptr
-    Refresh             proc
-    Refresh2            proc :ptr
-    Stop                proc
-    get_Application     proc :ptr
-    get_Parent          proc :ptr
-    get_Container       proc :ptr
-    get_Document        proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :DWORD, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :DWORD, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    GoBack		proc
+    GoForward		proc
+    GoHome		proc
+    GoSearch		proc
+    Navigate		proc :BSTR, :ptr, :ptr, :ptr, :ptr
+    Refresh		proc
+    Refresh2		proc :ptr
+    Stop		proc
+    get_Application	proc :ptr
+    get_Parent		proc :ptr
+    get_Container	proc :ptr
+    get_Document	proc :ptr
     get_TopLevelContainer proc :ptr
-    get_Type            proc :ptr
-    get_Left            proc :ptr
-    put_Left            proc :SDWORD
-    get_Top             proc :ptr
-    put_Top             proc :SDWORD
-    get_Width           proc :ptr
-    put_Width           proc :SDWORD
-    get_Height          proc :ptr
-    put_Height          proc :SDWORD
-    get_LocationName    proc :ptr
-    get_LocationURL     proc :ptr
-    get_Busy            proc :ptr
-    Quit                proc
-    ClientToWindow      proc :ptr, :ptr
-    PutProperty         proc :BSTR, :VARIANT
-    GetProperty         proc :BSTR, :ptr
-    get_Name            proc :ptr
-    get_HWND            proc :ptr
-    get_FullName        proc :ptr
-    get_Path            proc :ptr BSTR
-    get_Visible         proc :ptr
-    put_Visible         proc :VARIANT_BOOL
-    get_StatusBar       proc :ptr
-    put_StatusBar       proc :VARIANT_BOOL
-    get_StatusText      proc :ptr
-    put_StatusText      proc :BSTR
-    get_ToolBar         proc :ptr
-    put_ToolBar         proc :DWORD
-    get_MenuBar         proc :ptr
-    put_MenuBar         proc :VARIANT_BOOL
-    get_FullScreen      proc :ptr
-    put_FullScreen      proc :VARIANT_BOOL
-    Navigate2           proc :ptr, :ptr, :ptr, :ptr, :ptr
-    QueryStatusWB       proc :OLECMDID, :ptr
-    ExecWB              proc :OLECMDID, :OLECMDEXECOPT, :ptr, :ptr
-    ShowBrowserBar      proc :ptr, :ptr, :ptr
-    get_ReadyState      proc :ptr
-    get_Offline         proc :ptr
-    put_Offline         proc :VARIANT_BOOL
-    get_Silent          proc :ptr
-    put_Silent          proc :VARIANT_BOOL
+    get_Type		proc :ptr
+    get_Left		proc :ptr
+    put_Left		proc :SDWORD
+    get_Top		proc :ptr
+    put_Top		proc :SDWORD
+    get_Width		proc :ptr
+    put_Width		proc :SDWORD
+    get_Height		proc :ptr
+    put_Height		proc :SDWORD
+    get_LocationName	proc :ptr
+    get_LocationURL	proc :ptr
+    get_Busy		proc :ptr
+    Quit		proc
+    ClientToWindow	proc :ptr, :ptr
+    PutProperty		proc :BSTR, :VARIANT
+    GetProperty		proc :BSTR, :ptr
+    get_Name		proc :ptr
+    get_HWND		proc :ptr
+    get_FullName	proc :ptr
+    get_Path		proc :ptr BSTR
+    get_Visible		proc :ptr
+    put_Visible		proc :VARIANT_BOOL
+    get_StatusBar	proc :ptr
+    put_StatusBar	proc :VARIANT_BOOL
+    get_StatusText	proc :ptr
+    put_StatusText	proc :BSTR
+    get_ToolBar		proc :ptr
+    put_ToolBar		proc :DWORD
+    get_MenuBar		proc :ptr
+    put_MenuBar		proc :VARIANT_BOOL
+    get_FullScreen	proc :ptr
+    put_FullScreen	proc :VARIANT_BOOL
+    Navigate2		proc :ptr, :ptr, :ptr, :ptr, :ptr
+    QueryStatusWB	proc :OLECMDID, :ptr
+    ExecWB		proc :OLECMDID, :OLECMDEXECOPT, :ptr, :ptr
+    ShowBrowserBar	proc :ptr, :ptr, :ptr
+    get_ReadyState	proc :ptr
+    get_Offline		proc :ptr
+    put_Offline		proc :VARIANT_BOOL
+    get_Silent		proc :ptr
+    put_Silent		proc :VARIANT_BOOL
     get_RegisterAsBrowser proc :ptr
     put_RegisterAsBrowser proc :VARIANT_BOOL
     get_RegisterAsDropTarget proc :ptr
     put_RegisterAsDropTarget proc :VARIANT_BOOL
-    get_TheaterMode     proc :ptr
-    put_TheaterMode     proc :VARIANT_BOOL
-    get_AddressBar      proc :ptr
-    put_AddressBar      proc :VARIANT_BOOL
-    get_Resizable       proc :ptr
-    put_Resizable       proc :VARIANT_BOOL
+    get_TheaterMode	proc :ptr
+    put_TheaterMode	proc :VARIANT_BOOL
+    get_AddressBar	proc :ptr
+    put_AddressBar	proc :VARIANT_BOOL
+    get_Resizable	proc :ptr
+    put_Resizable	proc :VARIANT_BOOL
     .ends
 
 endif
@@ -372,13 +371,13 @@ __DWebBrowserEvents2_DISPINTERFACE_DEFINED__ equ 1
 
 externdef		DIID_DWebBrowserEvents2:IID
 .comdef DWebBrowserEvents2
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :DWORD, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :ptr, :DWORD, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :DWORD, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :DWORD, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     .ends
 endif
 
@@ -392,13 +391,13 @@ __DShellWindowsEvents_DISPINTERFACE_DEFINED__ equ 1
 
 externdef		DIID_DShellWindowsEvents:IID
 .comdef DShellWindowsEvents
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :DWORD, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :ptr, :DWORD, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :DWORD, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :DWORD, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     .ends
 
 endif
@@ -410,23 +409,23 @@ __IShellWindows_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IShellWindows:IID
 .comdef IShellWindows
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :DWORD, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :ptr, :DWORD, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Count           proc :ptr
-    Item                proc :VARIANT, :ptr
-    _NewEnum            proc :ptr
-    Register            proc :ptr, :SDWORD, :DWORD, :ptr
-    RegisterPending     proc :SDWORD, :ptr, :ptr, :DWORD, :ptr
-    Revoke              proc :SDWORD
-    OnNavigate          proc :SDWORD, :ptr
-    OnActivated         proc :SDWORD, :VARIANT_BOOL
-    FindWindowSW        proc :ptr, :ptr, :DWORD, :ptr, :DWORD, :ptr
-    OnCreated           proc :SDWORD, :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :DWORD, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :DWORD, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Count		proc :ptr
+    Item		proc :VARIANT, :ptr
+    _NewEnum		proc :ptr
+    Register		proc :ptr, :SDWORD, :DWORD, :ptr
+    RegisterPending	proc :SDWORD, :ptr, :ptr, :DWORD, :ptr
+    Revoke		proc :SDWORD
+    OnNavigate		proc :SDWORD, :ptr
+    OnActivated		proc :SDWORD, :VARIANT_BOOL
+    FindWindowSW	proc :ptr, :ptr, :DWORD, :ptr, :DWORD, :ptr
+    OnCreated		proc :SDWORD, :ptr
     ProcessAttachDetach proc :VARIANT_BOOL
     .ends
 
@@ -440,26 +439,26 @@ __IShellUIHelper_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IShellUIHelper:IID
 .comdef IShellUIHelper
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :DWORD, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :ptr, :DWORD, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    ResetFirstBootMode  proc
-    ResetSafeMode       proc
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :DWORD, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :DWORD, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    ResetFirstBootMode	proc
+    ResetSafeMode	proc
     RefreshOfflineDesktop proc
-    AddFavorite         proc :BSTR, :ptr
-    AddChannel          proc :BSTR
+    AddFavorite		proc :BSTR, :ptr
+    AddChannel		proc :BSTR
     AddDesktopComponent proc :BSTR, :BSTR, :ptr, :ptr, :ptr, :ptr
-    IsSubscribed        proc :BSTR, :ptr
-    NavigateAndFind     proc :BSTR, :BSTR, :ptr
+    IsSubscribed	proc :BSTR, :ptr
+    NavigateAndFind	proc :BSTR, :BSTR, :ptr
     ImportExportFavorites proc :VARIANT_BOOL, :BSTR
     AutoCompleteSaveForm proc :ptr
-    AutoScan            proc :BSTR, :BSTR, :ptr
-    AutoCompleteAttach  proc :ptr
-    ShowBrowserUI       proc :BSTR, :ptr, :ptr
+    AutoScan		proc :BSTR, :BSTR, :ptr
+    AutoCompleteAttach	proc :ptr
+    ShowBrowserUI	proc :BSTR, :ptr, :ptr
     .ends
 
 endif
@@ -471,9 +470,9 @@ __IShellUIHelper2_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IShellUIHelper2:IID
 .comdef IShellUIHelper2
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
     .ends
 
 endif
@@ -484,55 +483,55 @@ __IShellUIHelper3_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IShellUIHelper3:IID
 .comdef IShellUIHelper3
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :DWORD, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :ptr, :DWORD, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    ResetFirstBootMode  proc
-    ResetSafeMode       proc
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :DWORD, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :DWORD, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    ResetFirstBootMode	proc
+    ResetSafeMode	proc
     RefreshOfflineDesktop proc
-    AddFavorite         proc :BSTR, :ptr
-    AddChannel          proc :BSTR
+    AddFavorite		proc :BSTR, :ptr
+    AddChannel		proc :BSTR
     AddDesktopComponent proc :BSTR, :BSTR, :ptr, :ptr, :ptr, :ptr
-    IsSubscribed        proc :BSTR, :ptr
-    NavigateAndFind     proc :BSTR, :BSTR, :ptr
+    IsSubscribed	proc :BSTR, :ptr
+    NavigateAndFind	proc :BSTR, :BSTR, :ptr
     ImportExportFavorites proc :VARIANT_BOOL, :BSTR
     AutoCompleteSaveForm proc :ptr
-    AutoScan            proc :BSTR, :BSTR, :ptr
-    AutoCompleteAttach  proc :ptr
-    ShowBrowserUI       proc :BSTR, :ptr, :ptr
-    AddSearchProvider   proc :BSTR
-    RunOnceShown        proc
-    SkipRunOnce         proc
-    CustomizeSettings   proc :VARIANT_BOOL, :VARIANT_BOOL
-    SqmEnabled          proc :ptr
-    PhishingEnabled     proc :ptr
-    BrandImageUri       proc :ptr
-    SkipTabsWelcome     proc
-    DiagnoseConnection  proc
-    CustomizeClearType  proc :VARIANT_BOOL
+    AutoScan		proc :BSTR, :BSTR, :ptr
+    AutoCompleteAttach	proc :ptr
+    ShowBrowserUI	proc :BSTR, :ptr, :ptr
+    AddSearchProvider	proc :BSTR
+    RunOnceShown	proc
+    SkipRunOnce		proc
+    CustomizeSettings	proc :VARIANT_BOOL, :VARIANT_BOOL
+    SqmEnabled		proc :ptr
+    PhishingEnabled	proc :ptr
+    BrandImageUri	proc :ptr
+    SkipTabsWelcome	proc
+    DiagnoseConnection	proc
+    CustomizeClearType	proc :VARIANT_BOOL
     IsSearchProviderInstalled proc :BSTR, :ptr
-    IsSearchMigrated    proc :ptr
+    IsSearchMigrated	proc :ptr
     DefaultSearchProvider proc :ptr
     RunOnceRequiredSettingsComplete proc :VARIANT_BOOL
-    RunOnceHasShown     proc :ptr
-    SearchGuideUrl      proc :ptr
-    AddService          proc :BSTR
-    IsServiceInstalled  proc :BSTR, :BSTR, :ptr
+    RunOnceHasShown	proc :ptr
+    SearchGuideUrl	proc :ptr
+    AddService		proc :BSTR
+    IsServiceInstalled	proc :BSTR, :BSTR, :ptr
     InPrivateFilteringEnabled proc :ptr
-    AddToFavoritesBar   proc :BSTR, :BSTR, :ptr
-    BuildNewTabPage     proc
+    AddToFavoritesBar	proc :BSTR, :BSTR, :ptr
+    BuildNewTabPage	proc
     SetRecentlyClosedVisible proc :VARIANT_BOOL
     SetActivitiesVisible proc :VARIANT_BOOL
     ContentDiscoveryResetSTDMETHOD proc
     IsSuggestedSitesEnabled proc :ptr
     EnableSuggestedSites proc :VARIANT_BOOL
     NavigateToSuggestedSites proc :BSTR
-    ShowTabsHelp        proc
-    ShowInPrivateHelp   proc
+    ShowTabsHelp	proc
+    ShowInPrivateHelp	proc
     .ends
 
 endif
@@ -545,13 +544,13 @@ __DShellNameSpaceEvents_DISPINTERFACE_DEFINED__ equ 1
 
 externdef		DIID_DShellNameSpaceEvents:IID
 .comdef DShellNameSpaceEvents
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :DWORD, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :ptr, :DWORD, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :DWORD, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :DWORD, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     .ends
 
 endif
@@ -563,26 +562,26 @@ __IShellFavoritesNameSpace_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IShellFavoritesNameSpace:IID
 .comdef IShellFavoritesNameSpace
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :DWORD, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :ptr, :DWORD, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    MoveSelectionUp     proc
-    MoveSelectionDown   proc
-    ResetSort           proc
-    NewFolder           proc
-    Synchronize         proc
-    Import              proc
-    Export              proc
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :DWORD, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :DWORD, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    MoveSelectionUp	proc
+    MoveSelectionDown	proc
+    ResetSort		proc
+    NewFolder		proc
+    Synchronize		proc
+    Import		proc
+    Export		proc
     InvokeContextMenuCommand proc :BSTR
-    MoveSelectionTo     proc
+    MoveSelectionTo	proc
     get_SubscriptionsEnabled proc :ptr
     CreateSubscriptionForSelection proc :ptr
     DeleteSubscriptionForSelection proc :ptr
-    SetRoot             proc :BSTR
+    SetRoot		proc :BSTR
     .ends
 
 endif
@@ -594,47 +593,47 @@ __IShellNameSpace_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IShellNameSpace:IID
 .comdef IShellNameSpace
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :DWORD, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :ptr, :DWORD, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    MoveSelectionUp     proc
-    MoveSelectionDown   proc
-    ResetSort           proc
-    NewFolder           proc
-    Synchronize         proc
-    Import              proc
-    Export              proc
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :DWORD, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :DWORD, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    MoveSelectionUp	proc
+    MoveSelectionDown	proc
+    ResetSort		proc
+    NewFolder		proc
+    Synchronize		proc
+    Import		proc
+    Export		proc
     InvokeContextMenuCommand proc :BSTR
-    MoveSelectionTo     proc
+    MoveSelectionTo	proc
     get_SubscriptionsEnabled proc :ptr
     CreateSubscriptionForSelection proc :ptr
     DeleteSubscriptionForSelection proc :ptr
-    SetRoot             proc :BSTR
-    get_EnumOptions     proc :ptr
-    put_EnumOptions     proc :SDWORD
-    get_SelectedItem    proc :ptr
-    put_SelectedItem    proc :ptr
-    get_Root            proc :ptr
-    put_Root            proc :VARIANT
-    get_Depth           proc :ptr
-    put_Depth           proc :DWORD
-    get_Mode            proc :ptr
-    put_Mode            proc :DWORD
-    get_Flags           proc :ptr
-    put_Flags           proc :DWORD
-    put_TVFlags         proc :DWORD
-    get_TVFlags         proc :ptr
-    get_Columns         proc :ptr
-    put_Columns         proc :BSTR
-    get_CountViewTypes  proc :ptr
-    SetViewType         proc :DWORD
-    SelectedItems       proc :ptr
-    Expand              proc :VARIANT, :DWORD
-    UnselectAll         proc
+    SetRoot		proc :BSTR
+    get_EnumOptions	proc :ptr
+    put_EnumOptions	proc :SDWORD
+    get_SelectedItem	proc :ptr
+    put_SelectedItem	proc :ptr
+    get_Root		proc :ptr
+    put_Root		proc :VARIANT
+    get_Depth		proc :ptr
+    put_Depth		proc :DWORD
+    get_Mode		proc :ptr
+    put_Mode		proc :DWORD
+    get_Flags		proc :ptr
+    put_Flags		proc :DWORD
+    put_TVFlags		proc :DWORD
+    get_TVFlags		proc :ptr
+    get_Columns		proc :ptr
+    put_Columns		proc :BSTR
+    get_CountViewTypes	proc :ptr
+    SetViewType		proc :DWORD
+    SelectedItems	proc :ptr
+    Expand		proc :VARIANT, :DWORD
+    UnselectAll		proc
     .ends
 
 endif
@@ -647,27 +646,27 @@ __IScriptErrorList_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IScriptErrorList:IID
 .comdef IScriptErrorList
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :DWORD, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :ptr, :DWORD, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    advanceError        proc
-    retreatError        proc
-    canAdvanceError     proc :ptr
-    canRetreatError     proc :ptr
-    getErrorLine        proc :ptr
-    getErrorChar        proc :ptr
-    getErrorCode        proc :ptr
-    getErrorMsg         proc :ptr
-    getErrorUrl         proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :DWORD, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :ptr, :DWORD, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    advanceError	proc
+    retreatError	proc
+    canAdvanceError	proc :ptr
+    canRetreatError	proc :ptr
+    getErrorLine	proc :ptr
+    getErrorChar	proc :ptr
+    getErrorCode	proc :ptr
+    getErrorMsg		proc :ptr
+    getErrorUrl		proc :ptr
     getAlwaysShowLockState proc :ptr
-    getDetailsPaneOpen  proc :ptr
-    setDetailsPaneOpen  proc :BOOL
-    getPerErrorDisplay  proc :ptr
-    setPerErrorDisplay  proc :BOOL
+    getDetailsPaneOpen	proc :ptr
+    setDetailsPaneOpen	proc :BOOL
+    getPerErrorDisplay	proc :ptr
+    setPerErrorDisplay	proc :BOOL
     .ends
 
 endif
@@ -676,5 +675,5 @@ externdef		CLSID_CScriptErrorList:CLSID
 
 endif ; __SHDocVw_LIBRARY_DEFINED__
 
-.list
-endif ; __exdisp_h__
+endif
+.pragma list(pop)

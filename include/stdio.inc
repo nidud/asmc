@@ -1,9 +1,9 @@
 ifndef __STDIO_INC
 __STDIO_INC equ <>
+.pragma list(push, 0)
 ifndef __LIBC_INC
  include libc.inc
 endif
-.xlist
 ifdef __PE__
 option	dllimport:<msvcrt>
 else
@@ -169,5 +169,5 @@ _woutput	proto __cdecl :LPFILE, :LPWSTR, :PVOID
 
 endif ; _WSTDIO_DEFINED
 
-.list
-endif ; __STDIO_INC
+.pragma list(pop)
+endif

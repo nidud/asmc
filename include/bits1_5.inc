@@ -15,6 +15,7 @@ include ole2.inc
 endif
 ifndef __bits1_5_h__
 __bits1_5_h__ equ <>
+
 ifndef __IBackgroundCopyJob2_FWD_DEFINED__
 __IBackgroundCopyJob2_FWD_DEFINED__ equ 1
 endif
@@ -26,7 +27,6 @@ ifndef __IBackgroundCopyJob2_FWD_DEFINED__
 __IBackgroundCopyJob2_FWD_DEFINED__ equ 1
 endif
 include bits.inc
-.xlist
 
 ifndef __IBackgroundCopyJob2_INTERFACE_DEFINED__
 __IBackgroundCopyJob2_INTERFACE_DEFINED__ equ 1
@@ -130,5 +130,4 @@ include bits2_0.inc
 externdef __MIDL_itf_bits1_5_0000_0001_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef __MIDL_itf_bits1_5_0000_0001_v0_0_s_ifspec:RPC_IF_HANDLE
 
-.list
 endif

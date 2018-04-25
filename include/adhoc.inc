@@ -1,3 +1,5 @@
+.pragma list(push, 0)
+
 ifndef __REQUIRED_RPCNDR_H_VERSION__
 __REQUIRED_RPCNDR_H_VERSION__ equ 500
 endif
@@ -14,7 +16,7 @@ include windows.inc
 include ole2.inc
 endif
 ifndef __adhoc_h__
-__adhoc_h__ equ 1
+__adhoc_h__ equ <>
 
 ifndef __IDot11AdHocManager_FWD_DEFINED__
 __IDot11AdHocManager_FWD_DEFINED__ equ 1
@@ -50,7 +52,6 @@ ifndef __Dot11AdHocManager_FWD_DEFINED__
 __Dot11AdHocManager_FWD_DEFINED__ equ 1
 Dot11AdHocManager typedef Dot11AdHocManager
 endif
-
 include oaidl.inc
 
 externdef		CLSID_AdHocManager:CLSID
@@ -280,3 +281,4 @@ endif
 endif
 
 endif
+.pragma list(pop)

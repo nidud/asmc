@@ -1,3 +1,4 @@
+.pragma list(push, 0)
 ifndef __REQUIRED_RPCNDR_H_VERSION__
 __REQUIRED_RPCNDR_H_VERSION__ equ 475
 endif
@@ -32,7 +33,6 @@ include ocidl.inc
 include dxgi1_2.inc
 include d3dcommon.inc
 include d3d11.inc
-.xlist
 
 D3D11_LOGIC_OP		typedef SDWORD
 D3D11_LOGIC_OP_CLEAR	equ 0
@@ -361,5 +361,5 @@ DEFINE_GUID(IID_ID3D11Device1, 0xa04bfb29, 0x08ef, 0x43d6, 0xa4,0x9c, 0xa9,0xbd,
 LPID3D11Device1		typedef ptr ID3D11Device1
 endif
 
-.list
 endif
+.pragma list(pop)

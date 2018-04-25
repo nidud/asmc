@@ -27,7 +27,6 @@ endif
 include oaidl.inc
 include ocidl.inc
 include d3d11.inc
-.xlist
 
 D3D11_SDK_LAYERS_VERSION equ ( 1 )
 D3D11_DEBUG_FEATURE_FLUSH_PER_RENDER_OP equ ( 0x1 )
@@ -938,8 +937,4 @@ DEFINE_GUID(IID_ID3D11InfoQueue,0x6543dbb6,0x1b48,0x42f5,0xab,0x82,0xe9,0x7e,0xc
 externdef __MIDL_itf_d3d11sdklayers_0000_0003_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef __MIDL_itf_d3d11sdklayers_0000_0003_v0_0_s_ifspec:RPC_IF_HANDLE
 
-.list
 endif
-
-
-

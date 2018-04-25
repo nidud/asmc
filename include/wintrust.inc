@@ -1,7 +1,8 @@
 ifndef WINTRUST_H
 WINTRUST_H equ <>
+.pragma list(push, 0)
+
 include wincrypt.inc
-.xlist
 
 ifndef WIN_CERT_REVISION_1_0
 WT_DEFINE_ALL_APIS equ 1
@@ -738,5 +739,5 @@ WT_TRUSTDBDIALOG_ONLY_PUB_TAB_FLAG	equ 0x00000002
 WT_TRUSTDBDIALOG_WRITE_LEGACY_REG_FLAG	equ 0x00000100
 WT_TRUSTDBDIALOG_WRITE_IEAK_STORE_FLAG	equ 0x00000200
 
-.list
+.pragma list(pop)
 endif

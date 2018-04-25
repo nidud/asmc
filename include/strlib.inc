@@ -1,9 +1,9 @@
 ifndef __STRLIB_INC
 __STRLIB_INC equ <>
+.pragma list(push, 0)
 ifndef __LIBC_INC
  include libc.inc
 endif
-.xlist
 ifndef __PE__
 
 memxchg		proto __cdecl :LPSTR, :LPSTR, :SIZE_T
@@ -38,5 +38,5 @@ btohex		proto __cdecl :LPSTR, :SINT
 hextob		proto __cdecl :LPSTR
 
 endif ;; __PE__
-.list
-endif ;; __STRLIB_INC
+.pragma list(pop)
+endif

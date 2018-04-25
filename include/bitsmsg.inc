@@ -1,6 +1,5 @@
 ifndef _BGCPYMSG_
 _BGCPYMSG_ equ <>
-.xlist
 
 BG_E_NOT_FOUND          equ 0x80200001
 BG_E_INVALID_STATE      equ 0x80200002
@@ -122,6 +121,4 @@ BITS_MC_FATAL_IGD_ERROR equ 0x80194009
 BITS_MC_PEERCACHING_PORT equ 0x8019400A
 BITS_MC_WSD_PORT        equ 0x8019400B
 
-.list
-endif ;;_BGCPYMSG_
-
+endif

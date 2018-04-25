@@ -1,3 +1,5 @@
+.pragma list(push, 0)
+
 ifndef __REQUIRED_RPCNDR_H_VERSION__
 __REQUIRED_RPCNDR_H_VERSION__ equ 500
 endif
@@ -18,8 +20,7 @@ include ole2.inc
 endif
 
 ifndef __netcon_h__
-__netcon_h__ equ 1
-.xlist
+__netcon_h__ equ <>
 
 ifndef __IEnumNetConnection_FWD_DEFINED__
 __IEnumNetConnection_FWD_DEFINED__ equ 1
@@ -80,7 +81,6 @@ endif
 
 include oaidl.inc
 include prsht.inc
-.xlist
 
 externdef		CLSID_ConnectionManager:CLSID
 externdef		CLSID_NetSharingManager:CLSID
@@ -653,5 +653,5 @@ VARIANT_UserFree64 proto WINAPI \
 		      : ptr DWORD,
 		      : ptr VARIANT
 
-.list
 endif
+.pragma list(pop)

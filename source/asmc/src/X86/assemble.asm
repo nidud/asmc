@@ -578,6 +578,9 @@ PassOneChecks proc uses esi edi
     ;
     HllCheckOpen()
     CondCheckOpen()
+    ClassCheckOpen()
+    PragmaCheckOpen()
+
     .if !ModuleInfo.EndDirFound
 
 	asmerr(2088)
@@ -757,6 +760,8 @@ OnePass proc uses esi edi
     ProcInit()
     TypesInit()
     HllInit(Parse_Pass)
+    ClassInit()
+    PragmaInit()
     MacroInit(Parse_Pass)
     AssumeInit(Parse_Pass)
     CmdlParamsInit(Parse_Pass)

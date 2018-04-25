@@ -1,7 +1,6 @@
 include d3dx9.inc
 ifndef _D3DX9CORE_H
 _D3DX9CORE_H equ <>
-.xlist
 
 D3DX_VERSION		equ 0x0902
 ifndef D3DX_SDK_VERSION
@@ -32,11 +31,11 @@ LPD3DXRENDERTOSURFACE	typedef ptr ID3DXRenderToSurface
 LPD3DXSPRITE		typedef ptr ID3DXSprite
 
 .comdef ID3DXBuffer
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetBufferPointer    proc
-    GetBufferSize       proc
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetBufferPointer	proc
+    GetBufferSize	proc
     .ends
 
 D3DXFONT_DESCA		STRUC
@@ -68,47 +67,47 @@ D3DXFONT_DESCW		ENDS
 LPD3DXFONT_DESCW	typedef ptr D3DXFONT_DESCW
 
 .comdef ID3DXFont
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetDevice           proc :ptr
-    GetDescA            proc :ptr
-    GetDescW            proc :ptr
-    GetTextMetricsA     proc :ptr
-    GetTextMetricsW     proc :ptr
-    GetDC               proc
-    GetGlyphData        proc :UINT, :ptr, :ptr, :ptr
-    PreloadCharacters   proc :UINT, :UINT
-    PreloadGlyphs       proc :UINT, :UINT
-    PreloadTextA        proc :ptr, :SINT
-    PreloadTextW        proc :ptr, :SINT
-    DrawTextA           proc :ptr, :ptr, :SINT, :ptr, :DWORD, :D3DCOLOR
-    DrawTextW           proc :ptr, :ptr, :SINT, :ptr, :DWORD, :D3DCOLOR
-    OnLostDevice        proc
-    OnResetDevice       proc
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetDevice		proc :ptr
+    GetDescA		proc :ptr
+    GetDescW		proc :ptr
+    GetTextMetricsA	proc :ptr
+    GetTextMetricsW	proc :ptr
+    GetDC		proc
+    GetGlyphData	proc :UINT, :ptr, :ptr, :ptr
+    PreloadCharacters	proc :UINT, :UINT
+    PreloadGlyphs	proc :UINT, :UINT
+    PreloadTextA	proc :ptr, :SINT
+    PreloadTextW	proc :ptr, :SINT
+    DrawTextA		proc :ptr, :ptr, :SINT, :ptr, :DWORD, :D3DCOLOR
+    DrawTextW		proc :ptr, :ptr, :SINT, :ptr, :DWORD, :D3DCOLOR
+    OnLostDevice	proc
+    OnResetDevice	proc
     .ends
 
 .comdef ID3DXLine
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetDevice           proc :ptr
-    Begin               proc
-    Draw                proc :ptr, :DWORD, :D3DCOLOR
-    DrawTransform       proc :ptr, :DWORD, :ptr, :D3DCOLOR
-    SetPattern          proc :DWORD
-    GetPattern          proc
-    SetPatternScale     proc :FLOAT
-    GetPatternScale     proc
-    SetWidth            proc :FLOAT
-    GetWidth            proc
-    SetAntialias        proc :BOOL
-    GetAntialias        proc
-    SetGLLines          proc :BOOL
-    GetGLLines          proc
-    _End                proc
-    OnLostDevice        proc
-    OnResetDevice       proc
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetDevice		proc :ptr
+    Begin		proc
+    Draw		proc :ptr, :DWORD, :D3DCOLOR
+    DrawTransform	proc :ptr, :DWORD, :ptr, :D3DCOLOR
+    SetPattern		proc :DWORD
+    GetPattern		proc
+    SetPatternScale	proc :FLOAT
+    GetPatternScale	proc
+    SetWidth		proc :FLOAT
+    GetWidth		proc
+    SetAntialias	proc :BOOL
+    GetAntialias	proc
+    SetGLLines		proc :BOOL
+    GetGLLines		proc
+    _End		proc
+    OnLostDevice	proc
+    OnResetDevice	proc
     .ends
 
 D3DXRTE_DESC		STRUC
@@ -120,19 +119,19 @@ DepthStencilFormat	D3DFORMAT ?
 D3DXRTE_DESC		ENDS
 
 .comdef ID3DXRenderToEnvMap
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetDevice           proc :ptr
-    GetDesc             proc :ptr
-    BeginCube           proc :ptr
-    BeginSphere         proc :ptr
-    BeginHemisphere     proc :ptr, :ptr
-    BeginParabolic      proc :ptr, :ptr
-    Face                proc :D3DCUBEMAP_FACES, :DWORD
-    _End                proc :DWORD
-    OnLostDevice        proc
-    OnResetDevice       proc
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetDevice		proc :ptr
+    GetDesc		proc :ptr
+    BeginCube		proc :ptr
+    BeginSphere		proc :ptr
+    BeginHemisphere	proc :ptr, :ptr
+    BeginParabolic	proc :ptr, :ptr
+    Face		proc :D3DCUBEMAP_FACES, :DWORD
+    _End		proc :DWORD
+    OnLostDevice	proc
+    OnResetDevice	proc
     .ends
 
 D3DXRTS_DESC		STRUC
@@ -144,32 +143,32 @@ DepthStencilFormat	D3DFORMAT ?
 D3DXRTS_DESC		ENDS
 
 .comdef ID3DXRenderToSurface
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetDevice           proc :ptr
-    GetDesc             proc :ptr
-    BeginScene          proc :ptr, :ptr
-    EndScene            proc :DWORD
-    OnLostDevice        proc
-    OnResetDevice       proc
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetDevice		proc :ptr
+    GetDesc		proc :ptr
+    BeginScene		proc :ptr, :ptr
+    EndScene		proc :DWORD
+    OnLostDevice	proc
+    OnResetDevice	proc
     .ends
 
 .comdef ID3DXSprite
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetDevice           proc :ptr
-    GetTransform        proc :ptr
-    SetTransform        proc :ptr
-    SetWorldViewRH      proc :ptr, :ptr
-    SetWorldViewLH      proc :ptr, :ptr
-    Begin               proc :DWORD
-    Draw                proc :ptr, :ptr, :ptr, :ptr, :D3DCOLOR
-    Flush               proc
-    _End                proc
-    OnLostDevice        proc
-    OnResetDevice       proc
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetDevice		proc :ptr
+    GetTransform	proc :ptr
+    SetTransform	proc :ptr
+    SetWorldViewRH	proc :ptr, :ptr
+    SetWorldViewLH	proc :ptr, :ptr
+    Begin		proc :DWORD
+    Draw		proc :ptr, :ptr, :ptr, :ptr, :D3DCOLOR
+    Flush		proc
+    _End		proc
+    OnLostDevice	proc
+    OnResetDevice	proc
     .ends
 
 
@@ -257,5 +256,4 @@ D3DXDebugMute proto WINAPI \
 ;UINT
 D3DXGetDriverLevel proto WINAPI \
 		device: ptr IDirect3DDevice9
-.list
-endif ;; _D3DX9CORE_H
+endif

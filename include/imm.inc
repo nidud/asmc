@@ -1,12 +1,13 @@
+.pragma list(push, 0)
+
 ifndef __LIBC_INC
  include libc.inc
 endif
 ifndef _WINDEF_
  include windef.inc
 endif
-.xlist
 ifndef _IMM_
-_IMM_ equ 1
+_IMM_ equ <>
 
 if (WINVER GE 0x40A)
 HIMC			typedef HANDLE
@@ -900,5 +901,5 @@ SOFTKEYBOARD_TYPE_T1	equ 0x0001
 SOFTKEYBOARD_TYPE_C1	equ 0x0002
 
 endif
+.pragma list(pop)
 
-.list

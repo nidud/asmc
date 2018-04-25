@@ -14,8 +14,8 @@ include windows.inc
 include ole2.inc
 endif
 ifndef __bits2_0_h__
-__bits2_0_h__ equ 1
-.xlist
+__bits2_0_h__ equ <>
+
 ifndef __IBackgroundCopyJob3_FWD_DEFINED__
 __IBackgroundCopyJob3_FWD_DEFINED__ equ 1
 endif
@@ -34,7 +34,6 @@ __IBackgroundCopyFile2_FWD_DEFINED__ equ 1
 endif
 include bits.inc
 include bits1_5.inc
-.xlist
 
 BG_LENGTH_TO_EOF	equ (-1)
 BG_FILE_RANGE		STRUC
@@ -144,8 +143,4 @@ include bits2_5.inc
 externdef __MIDL_itf_bits2_0_0000_0002_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef __MIDL_itf_bits2_0_0000_0002_v0_0_s_ifspec:RPC_IF_HANDLE
 
-.list
 endif
-
-
-

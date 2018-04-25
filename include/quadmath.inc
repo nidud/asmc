@@ -1,11 +1,9 @@
+ifndef _INC_QUADMATH
+_INC_QUADMATH equ <>
+.pragma list(push, 0)
 ifndef __LIBC_INC
  include libc.inc
 endif
-ifndef _INC_QUADMATH
-_INC_QUADMATH equ <>
-.xlist
-
-;; Function prototypes
 
 PQFLOAT	    typedef ptr real16
 
@@ -128,6 +126,6 @@ _divfq	proto __cdecl :ptr, :ptr, :ptr
 _addfq	proto __cdecl :ptr, :ptr, :ptr
 _subfq	proto __cdecl :ptr, :ptr, :ptr
 
-.list
-endif ;; _INC_QUADMATH
+.pragma list(pop)
+endif
 

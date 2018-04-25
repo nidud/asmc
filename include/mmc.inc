@@ -1,3 +1,5 @@
+.pragma list(push, 0)
+
 ifndef __REQUIRED_RPCNDR_H_VERSION__
 __REQUIRED_RPCNDR_H_VERSION__ equ 500
 endif
@@ -14,8 +16,7 @@ include windows.inc
 include ole2.inc
 endif
 ifndef __mmc_h__
-__mmc_h__ equ 1
-.xlist
+__mmc_h__ equ <>
 
 ifndef __IComponentData_FWD_DEFINED__
 __IComponentData_FWD_DEFINED__ equ 1
@@ -165,9 +166,7 @@ __IResultData2_FWD_DEFINED__ equ 1
 endif
 
 include basetsd.inc
-.xlist
 include oaidl.inc
-.xlist
 
 ifdef __PE__
 option	dllimport:<Comctl32>
@@ -335,8 +334,9 @@ MMC_CONSOLE_VERB	typedef SDWORD
 MMC_VERB__dummy_	equ 0
 endif
 
-;include pshpack8.inc
-MMCBUTTON		STRUC 8
+.pragma pack(push, 8)
+
+MMCBUTTON		STRUC
 nBitmap			SINT ?
 idCommand		SINT ?
 fsState			db ?
@@ -344,7 +344,9 @@ fsType			db ?
 lpButtonText		LPOLESTR ?
 lpTooltipText		LPOLESTR ?
 MMCBUTTON		ENDS
-;include poppack.inc
+
+.pragma pack(pop)
+
 LPMMCBUTTON		typedef ptr MMCBUTTON
 
 MMC_BUTTON_STATE	typedef SDWORD
@@ -602,7 +604,6 @@ MMCPropertyChangeNotify proto WINAPI \
 
 if (MMC_VER GE 0x0110)
 include specstrings.inc
-.xlist
 ;STDAPI
 MMCPropertyHelp proto WINAPI \
 	  pszHelpTopic: LPOLESTR
@@ -1950,5 +1951,5 @@ HWND_UserFree64 proto WINAPI \
 		      : ptr DWORD,
 		      : ptr HWND
 
-.list
 endif
+.pragma list(pop)

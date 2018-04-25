@@ -1,3 +1,4 @@
+.pragma list(push, 0)
 ifndef __REQUIRED_RPCNDR_H_VERSION__
 __REQUIRED_RPCNDR_H_VERSION__ equ 500
 endif
@@ -14,8 +15,7 @@ include windows.inc
 include ole2.inc
 endif
 ifndef __d3d10_h__
-__d3d10_h__ equ 1
-.xlist
+__d3d10_h__ equ <>
 
 ifndef __ID3D10DeviceChild_FWD_DEFINED__
 __ID3D10DeviceChild_FWD_DEFINED__ equ 1
@@ -92,7 +92,6 @@ endif
 include oaidl.inc
 include ocidl.inc
 include dxgi.inc
-.xlist
 
 ifndef _D3D10_CONSTANTS
 _D3D10_CONSTANTS equ 1
@@ -1644,7 +1643,6 @@ endif
 include d3d10misc.inc
 include d3d10shader.inc
 include d3d10effect.inc
-.xlist
 
 DEFINE_GUID(IID_ID3D10DeviceChild,0x9B7E4C00,0x342C,0x4106,0xA1,0x9F,0x4F,0x27,0x04,0xF6,0x89,0xF0);
 DEFINE_GUID(IID_ID3D10DepthStencilState,0x2B4B1CC8,0xA4AD,0x41f8,0x83,0x22,0xCA,0x86,0xFC,0x3E,0xC6,0x75);
@@ -1674,8 +1672,5 @@ DEFINE_GUID(IID_ID3D10Multithread,0x9B7E4E00,0x342C,0x4106,0xA1,0x9F,0x4F,0x27,0
 externdef __MIDL_itf_d3d10_0000_0024_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef __MIDL_itf_d3d10_0000_0024_v0_0_s_ifspec:RPC_IF_HANDLE
 
-.list
 endif
-
-
-
+.pragma list(pop)

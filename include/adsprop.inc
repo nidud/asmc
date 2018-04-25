@@ -1,5 +1,6 @@
 ifndef _ADSPROP_H_
 _ADSPROP_H_ equ <>
+.pragma list(push, 0)
 
 WM_ADSPROP_NOTIFY_PAGEINIT equ (WM_USER + 1101)
 WM_ADSPROP_NOTIFY_PAGEHWND equ (WM_USER + 1102)
@@ -62,4 +63,5 @@ ADsPropShowErrorDialog proto WINAPI \
 	    hNotifyObj: HWND,
 		 hPage: HWND
 
+.pragma list(pop)
 endif

@@ -1,6 +1,5 @@
 ifndef _d3d9TYPES_H_
 _d3d9TYPES_H_ equ <>
-.xlist
 
 ifndef DIRECT3D_VERSION
 DIRECT3D_VERSION equ 0x0900
@@ -9,7 +8,6 @@ endif
 if (DIRECT3D_VERSION GE 0x0900)
 
 include float.inc
-.xlist
 
 ifndef D3DCOLOR_DEFINED
 D3DCOLOR typedef DWORD
@@ -1836,5 +1834,4 @@ D3DAES_CTR_IV		ENDS
 endif
 endif
 
-.list
 endif

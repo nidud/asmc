@@ -1,3 +1,4 @@
+.pragma list(push, 0)
 ifndef __REQUIRED_RPCNDR_H_VERSION__
 __REQUIRED_RPCNDR_H_VERSION__ equ 475
 endif
@@ -8,7 +9,8 @@ include windows.inc
 include ole2.inc
 endif
 ifndef __dxgi1_2_h__
-__dxgi1_2_h__ equ 1
+__dxgi1_2_h__ equ <>
+
 ifndef __IDXGIDevice2_FWD_DEFINED__
 __IDXGIDevice2_FWD_DEFINED__ equ 1
 endif
@@ -22,7 +24,6 @@ ifndef __IDXGIAdapter2_FWD_DEFINED__
 __IDXGIAdapter2_FWD_DEFINED__ equ 1
 endif
 include dxgi.inc
-.xlist
 
 DXGI_OFFER_RESOURCE_PRIORITY typedef SDWORD
 DXGI_OFFER_RESOURCE_PRIORITY_LOW equ 1
@@ -217,6 +218,5 @@ DEFINE_GUID(IID_IDXGIAdapter2, 0x0aa1ae0a, 0xfa0e, 0x4b84, 0x86,0x44, 0xe0,0x5f,
     .ends
 
 endif
-
-.list
 endif
+.pragma list(pop)

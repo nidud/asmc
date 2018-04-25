@@ -1,10 +1,10 @@
 ifndef _IMAGEHLP_
-_IMAGEHLP_ equ 1
-.xlist
+_IMAGEHLP_ equ <>
+.pragma list(push, 0)
 
 ifdef _WIN64
 ifndef _IMAGEHLP64
-_IMAGEHLP64 equ 1
+_IMAGEHLP64 equ <>
 endif
 endif
 
@@ -3587,7 +3587,5 @@ MiniDumpReadDumpStream proto WINAPI \
 	 StreamPointer: ptr PVOID,
 	    StreamSize: ptr ULONG
 
-;include poppack.inc
-
-.list
-endif ; _IMAGEHLP_
+.pragma list(pop)
+endif

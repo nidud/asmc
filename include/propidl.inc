@@ -1,3 +1,5 @@
+.pragma list(push, 0)
+
 ifndef __REQUIRED_RPCNDR_H_VERSION__
 __REQUIRED_RPCNDR_H_VERSION__ equ 500
 endif
@@ -17,8 +19,7 @@ include ole2.inc
 endif
 
 ifndef __propidl_h__
-__propidl_h__ equ 1
-.xlist
+__propidl_h__ equ <>
 
 ifndef __IPropertyStorage_FWD_DEFINED__
 __IPropertyStorage_FWD_DEFINED__ equ 1
@@ -35,7 +36,6 @@ endif
 
 include objidl.inc
 include oaidl.inc
-.xlist
 
 VERSIONEDSTREAM		STRUC
 guidVersion		GUID <>
@@ -742,3 +742,4 @@ IEnumSTATPROPSETSTG_Next_Stub proto WINAPI \
 
 endif
 
+.pragma list(pop)

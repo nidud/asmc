@@ -1,8 +1,8 @@
+.pragma list(push, 0)
+
 ifndef __LIBC_INC
  include libc.inc
 endif
-
-.xlist
 
 SIGINT		equ 2	; interrupt
 SIGILL		equ 4	; illegal instruction - invalid function image
@@ -229,4 +229,4 @@ IFDEF _WIN64
 	DispatcherContext: LPDWORD
 ENDIF
 
-.list
+.pragma list(pop)

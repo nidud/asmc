@@ -1,6 +1,5 @@
 ifndef _MMINTRIN_H_INCLUDED
 _MMINTRIN_H_INCLUDED equ <>
-.xlist
 
 ifndef _M_IX86
 ifndef _M_X64
@@ -161,5 +160,4 @@ _mm_cmpgt_pi16		equ <_m_pcmpgtw>
 _mm_cmpgt_pi32		equ <_m_pcmpgtd>
 endif
 
-.list
-endif  ;; _MMINTRIN_H_INCLUDED
+endif

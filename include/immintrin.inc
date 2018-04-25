@@ -1,6 +1,5 @@
 ifndef _INCLUDED_IMM
 _INCLUDED_IMM equ <>
-.xlist
 
 ifndef _M_IX86
 ifndef _M_X64
@@ -8,7 +7,6 @@ ifndef _M_X64
 endif
 endif
 include wmmintrin.inc
-.xlist
 
 __m256		union
 m256_f32	real4 8 dup(?)
@@ -843,4 +841,4 @@ endif
 
 include zmmintrin.inc
 
-endif  ;; _INCLUDED_IMM
+endif

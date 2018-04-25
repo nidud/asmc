@@ -1,6 +1,6 @@
 ifndef _WINREG_
 _WINREG_ equ <>
-.xlist
+.pragma list(push, 0)
 
 ifdef _MAC
 include macwin32.inc
@@ -904,5 +904,5 @@ else
 RegSaveKeyEx		equ <RegSaveKeyExA>
 endif
 
-.list
-endif ;; _WINREG_
+.pragma list(pop)
+endif

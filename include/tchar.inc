@@ -1,9 +1,9 @@
+ifndef _INC_TCHAR
+_INC_TCHAR equ <>
+.pragma list(push, 0)
 ifndef __LIBC_INC
  include libc.inc
 endif
-.xlist
-ifndef _INC_TCHAR
-_INC_TCHAR equ <>
 
 _ftcscat		equ <_tcscat>
 _ftcschr		equ <_tcschr>
@@ -62,7 +62,6 @@ _ftccmp			equ <_tccmp>
 ifdef  _UNICODE
 
 include wchar.inc
-.xlist
 
 ifndef _WCTYPE_T_DEFINED
 _WCTYPE_T_DEFINED equ <>
@@ -389,7 +388,6 @@ else
 
 
 include string.inc
-.xlist
 
 _TEOF			equ EOF
 
@@ -1078,6 +1076,5 @@ _tstart equ <>
 
 endif ; __PE__
 
+.pragma list(pop)
 endif
-
-.list

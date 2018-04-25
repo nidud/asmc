@@ -1,9 +1,9 @@
+.pragma list(push, 0)
 ifndef __CTYPE_INC
 __CTYPE_INC equ <>
 ifndef __LIBC_INC
  include libc.inc
 endif
-.xlist
 ifdef __PE__
 option	dllimport:<msvcrt>
 ifndef _MSVCRT
@@ -76,5 +76,5 @@ towlower	proto __cdecl :wchar_t
 iswctype	proto __cdecl :wint_t, :wctype_t
 endif
 
-.list
-endif ; __CTYPE_INC
+endif
+.pragma list(pop)

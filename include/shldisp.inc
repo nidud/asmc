@@ -1,3 +1,5 @@
+.pragma list(push, 0)
+
 ifndef __REQUIRED_RPCNDR_H_VERSION__
 __REQUIRED_RPCNDR_H_VERSION__ equ 500
 endif
@@ -18,8 +20,7 @@ include ole2.inc
 endif
 
 ifndef __shldisp_h__
-__shldisp_h__ equ 1
-.xlist
+__shldisp_h__ equ <>
 
 ifndef __IFolderViewOC_FWD_DEFINED__
 __IFolderViewOC_FWD_DEFINED__ equ 1
@@ -177,7 +178,6 @@ __IAsyncOperation_FWD_DEFINED__ equ 1
 endif
 
 include ocidl.inc
-.xlist
 
 DECLSPEC_UUID("35f1a0d0-3e9a-11d2-8499-005345000000")
 
@@ -1187,6 +1187,5 @@ LPASYNCOPERATION	typedef ptr IAsyncOperation
 externdef		IID_IAsyncOperation:IID
 
 endif
-
-.list
-endif ; __shldisp_h__
+endif
+.pragma list(pop)

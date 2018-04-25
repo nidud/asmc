@@ -1,21 +1,20 @@
+.pragma list(push, 0)
+
 COM_NO_WINDOWS_H equ 1
 include objbase.inc
 include float.inc
 include sal.inc
-
 ifndef DIRECTSOUND_VERSION
 if (NTDDI_VERSION LT NTDDI_WINXP)
-DIRECTSOUND_VERSION	equ 0x0700
+DIRECTSOUND_VERSION equ 0x0700
 elseif (NTDDI_VERSION LT NTDDI_WINXPSP2 OR NTDDI_VERSION EQ NTDDI_WS03)
-DIRECTSOUND_VERSION	equ 0x0800
+DIRECTSOUND_VERSION equ 0x0800
 else
-DIRECTSOUND_VERSION	equ 0x0900
+DIRECTSOUND_VERSION equ 0x0900
 endif
 endif
-
 ifndef __DSOUND_INCLUDED__
-__DSOUND_INCLUDED__ equ 1
-.xlist
+__DSOUND_INCLUDED__ equ <>
 
 ifndef DX_SHARED_DEFINES
 
@@ -1386,6 +1385,5 @@ DEFINE_GUID(GUID_DSCFX_SYSTEM_NS, 0x5ab0882e, 0x7274, 0x4516, 0x87, 0x7d, 0x4e, 
 
 endif
 
-.list
 endif
-
+.pragma list(pop)

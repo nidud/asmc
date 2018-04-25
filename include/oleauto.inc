@@ -1,6 +1,5 @@
 ifndef _OLEAUTO_H_
-.xlist
-_OLEAUTO_H_ equ 1
+_OLEAUTO_H_ equ <>
 
 ifdef __PE__
 option	dllimport:<oleaut32>
@@ -23,7 +22,6 @@ _LCID_DEFINED		equ 1
 endif
 
 include oaidl.inc
-.xlist
 
 ;WINOLEAUTAPI_(BSTR)
 SysAllocString proto WINAPI \
@@ -2120,5 +2118,4 @@ V_DECIMALREF macro X
 	exitm<V_UNION(X, pdecVal)>
 	endm
 
-.list
 endif

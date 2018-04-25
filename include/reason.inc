@@ -1,5 +1,6 @@
 ifndef SENTINEL_Reason
 SENTINEL_Reason equ <>
+.pragma list(push, 0)
 
 SHTDN_REASON_FLAG_COMMENT_REQUIRED equ 0x01000000
 SHTDN_REASON_FLAG_DIRTY_PROBLEM_ID_REQUIRED equ 0x02000000
@@ -80,5 +81,6 @@ SNAPSHOT_POLICY_UNPLANNED equ 2
 
 MAX_NUM_REASONS		equ 256
 
-endif ;; NOT defined SENTINEL_Reason
+.pragma list(pop)
+endif
 

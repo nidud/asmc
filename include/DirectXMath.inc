@@ -1,7 +1,9 @@
+.pragma list(push, 0)
+
 ifndef __DIRECTXMATH_INC
 __DIRECTXMATH_INC equ <>
+
 include libc.inc
-.xlist
 
 DIRECTX_MATH_VERSION	equ 312
 
@@ -109,7 +111,6 @@ endif ;; not _XM_NO_INTRINSICS_
 include sal.inc
 ;include assert.inc
 include stdint.inc
-.xlist
 
 if defined(_XM_SSE_INTRINSICS_) and not defined(_XM_NO_INTRINSICS_)
 
@@ -293,7 +294,7 @@ endif
 if ( (_XM_VECTORCALL_ and not defined(_M_IX86) ) ) and not defined(_XM_NO_INTRINSICS_)
 GXMVECTOR typedef XMVECTOR
 else
-GXMVECTOR typedef XMVECTOR&
+GXMVECTOR typedef ptr XMVECTOR
 endif
 
 if _XM_VECTORCALL_ and not defined(_XM_NO_INTRINSICS_)
@@ -1251,5 +1252,5 @@ if defined(_XM_NO_INTRINSICS_)
 else
 endif
 
-.list
-endif ;; __DIRECTXMATH_INC
+.pragma list(pop)
+endif

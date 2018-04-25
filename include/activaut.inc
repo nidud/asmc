@@ -14,7 +14,8 @@ include windows.inc
 include ole2.inc
 endif
 ifndef __activaut_h__
-__activaut_h__ equ 1
+__activaut_h__ equ <>
+.pragma list(push, 0)
 
 ifndef __IScriptNode_FWD_DEFINED__
 __IScriptNode_FWD_DEFINED__ equ 1
@@ -275,4 +276,5 @@ BSTR_UserFree64 proto WINAPI \
 		      : ptr DWORD,
 		      : ptr BSTR
 
+.pragma list(pop)
 endif

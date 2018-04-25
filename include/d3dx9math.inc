@@ -1,8 +1,7 @@
 include d3dx9.inc
 ifndef __D3DX9MATH_H__
-__D3DX9MATH_H__ equ 1
+__D3DX9MATH_H__ equ <>
 include math.inc
-.xlist
 ifdef __PE__
 option dllimport:<d3dx9_40>
 endif
@@ -872,6 +871,4 @@ endif
     endm
 endif
 
-;include d3dx9math.inl
-.list
-endif ;; __D3DX9MATH_H__
+endif

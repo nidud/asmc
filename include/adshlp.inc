@@ -1,5 +1,6 @@
 ifndef _ADSHLP_
-_ADSHLP_ equ 1
+_ADSHLP_ equ <>
+.pragma list(push, 0)
 
 ;HRESULT
 ADsGetObject proto WINAPI \
@@ -7,52 +8,43 @@ ADsGetObject proto WINAPI \
                   riid: REFIID,
               ppObject: ptr ptr
 
-;HRESULT
 ADsBuildEnumerator proto WINAPI \
          pADsContainer: ptr IADsContainer,
          ppEnumVariant: ptr IEnumVARIANT
 
-;HRESULT
 ADsFreeEnumerator proto WINAPI \
           pEnumVariant: ptr IEnumVARIANT
 
-;HRESULT
 ADsEnumerateNext proto WINAPI \
           pEnumVariant: ptr IEnumVARIANT,
              cElements: ULONG,
                   pvar: ptr,
      pcElementsFetched: ptr
 
-;HRESULT
 ADsBuildVarArrayStr proto WINAPI \
           lppPathNames: ptr LPWSTR,
            dwPathNames: DWORD,
                   pVar: ptr
 
-;HRESULT
 ADsBuildVarArrayInt proto WINAPI \
        lpdwObjectTypes: LPDWORD,
          dwObjectTypes: DWORD,
                   pVar: ptr
 
-
-;HRESULT
 ADsOpenObject proto WINAPI \
           lpszPathName: LPCWSTR,
           lpszUserName: LPCWSTR,
           lpszPassword: LPCWSTR,
             dwReserved: DWORD,
                   riid: REFIID,
+                  pVar: ptr
 
-
-;HRESULT
 ADsGetLastError proto WINAPI \
                lpError: LPDWORD,
             lpErrorBuf: LPWSTR,
          dwErrorBufLen: DWORD,
              lpNameBuf: LPWSTR,
           dwNameBufLen: DWORD
-
 
 ;VOID
 ADsSetLastError proto WINAPI \
@@ -61,19 +53,18 @@ ADsSetLastError proto WINAPI \
            pszProvider: LPCWSTR
 
 
-;VOID
 ADsFreeAllErrorRecords proto WINAPI
-;LPVOID WINAPI
+;LPVOID
 AllocADsMem proto WINAPI :DWORD
 ;BOOL
 FreeADsMem proto WINAPI pMem:LPVOID
-;LPVOID WINAPI
+;LPVOID
 ReallocADsMem proto WINAPI \
                pOldMem: LPVOID,
                  cbOld: DWORD,
                  cbNew: DWORD
 
-;LPWSTR WINAPI
+;LPWSTR
 AllocADsStr proto WINAPI pStr:LPCWSTR
 ;BOOL
 FreeADsStr proto WINAPI pStr:LPWSTR
@@ -82,35 +73,27 @@ ReallocADsStr proto WINAPI \
                  ppStr: ptr LPWSTR,
                   pStr: LPWSTR
 
-
 ;HRESULT
 ADsEncodeBinaryData proto WINAPI \
              pbSrcData: PBYTE,
               dwSrcLen: DWORD,
           ppszDestData: ptr LPWSTR
 
-
-;HRESULT
 ADsDecodeBinaryData proto WINAPI \
              szSrcData: LPCWSTR,
            ppbDestData: ptr PBYTE,
             pdwDestLen: ptr ULONG
 
-
-;HRESULT
 PropVariantToAdsType proto WINAPI \
               pVariant: ptr,
           dwNumVariant: DWORD,
            ppAdsValues: ptr PADSVALUE,
           pdwNumValues: PDWORD
 
-
-;HRESULT
 AdsTypeToPropVariant proto WINAPI \
             pAdsValues: PADSVALUE,
            dwNumValues: DWORD,
               pVariant: ptr
-
 
 ;void
 AdsFreeAdsValues proto WINAPI \
@@ -125,7 +108,6 @@ BinarySDToSecurityDescriptor proto WINAPI \
               userName: LPCWSTR,
               passWord: LPCWSTR,
                dwFlags: DWORD
-
 
 ;HRESULT
 SecurityDescriptorToBinarySD proto WINAPI \
@@ -154,6 +136,5 @@ DumpMemoryTracker macro
 endif
 endif
 
-endif ;; _ADSHLP_
-
-
+.pragma list(pop)
+endif

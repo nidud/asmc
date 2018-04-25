@@ -1,8 +1,6 @@
-ifndef __LIBC_INC
- include libc.inc
-endif
+.pragma list(push, 0)
 
-.xlist
+include libc.inc
 
 ; Single precision - binary32 -- REAL4 (float) 1:8:23
 
@@ -134,4 +132,4 @@ _finite		proto __cdecl :REAL8
 _fpclass	proto __cdecl :REAL8
 _isnan		proto __cdecl :REAL8
 
-.list
+.pragma list(pop)

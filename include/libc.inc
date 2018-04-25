@@ -2,10 +2,12 @@ ifndef __LIBC_INC
 ;
 ; Master include file for the Asmc RTL library.
 ;
+.pragma list(push, 0)
+
 _ASMLIB_	equ 227 ; Asmc Version
-.xlist
 __LIBC_INC	equ 1
 __STDC__	equ 1
+
 ;;
 ;; Architecture kinds:
 ;;     _WIN64 (#define symbols)
@@ -171,5 +173,5 @@ option		casemap:none
 size_t		typedef SIZE_T
 assert_exit	proto
 
-.list
-endif	;; __LIBC_INC
+.pragma list(pop)
+endif

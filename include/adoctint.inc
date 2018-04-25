@@ -1,9 +1,10 @@
 ifndef _ADOCTINT_H_
 _ADOCTINT_H_ equ <>
+.pragma list(push, 0)
+
 ifndef _INC_TCHAR
 include tchar.inc
 endif
-
 ifndef __REQUIRED_RPCNDR_H_VERSION__
 __REQUIRED_RPCNDR_H_VERSION__ equ 500
 endif
@@ -16,7 +17,7 @@ ifndef __RPCNDR_H_VERSION__
 .err <this stub requires an updated version of rpcndr.h>
 endif
 ifndef __adocat_h__
-__adocat_h__ equ 1
+__adocat_h__ equ <>
 
 ifndef ___ADOCollection_FWD_DEFINED__
 ___ADOCollection_FWD_DEFINED__ equ 1
@@ -796,4 +797,6 @@ externdef		IID_Properties:IID
 endif
 endif
 endif
+
+.pragma list(pop)
 endif

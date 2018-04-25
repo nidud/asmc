@@ -1,9 +1,9 @@
 ifndef __STDARG_INC
 __STDARG_INC equ <>
+.pragma list(push, 0)
 ifndef __LIBC_INC
  include libc.inc
 endif
-.xlist
 
 ;ifdef	_MSC_VER
 if 0;def _WINDOWS_
@@ -41,5 +41,5 @@ va_end	macro ap
 	endm
 endif
 
-.list
-endif ; __STDARG_INC
+.pragma list(pop)
+endif

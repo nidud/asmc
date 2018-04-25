@@ -1,6 +1,5 @@
 ifndef _INCLUDED_EMM
 _INCLUDED_EMM equ <>
-.xlist
 
 ifndef _M_IX86
 ifndef _M_X64
@@ -12,7 +11,6 @@ ifdef _M_CEE_PURE
 endif
 
 include xmmintrin.inc
-.xlist
 
 __m128i union
 m128i_i8	db 16 dup(?)
@@ -298,5 +296,4 @@ _mm_cvtsi128_si64	proto :oword
 _mm_stream_si64		equ <_mm_stream_si64x>
 endif
 
-.list
-endif  ;; _INCLUDED_EMM
+endif

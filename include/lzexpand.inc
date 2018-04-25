@@ -3,7 +3,6 @@ ifndef __LIBC_INC
 endif
 ifndef _LZEXPAND_
 _LZEXPAND_ equ <>
-.xlist
 
 LZERROR_BADINHANDLE	equ -1
 LZERROR_BADOUTHANDLE	equ -2
@@ -50,6 +49,4 @@ LZRead proto WINAPI :SINT, :LPSTR, :SINT
 ;VOID
 LZClose proto WINAPI :SINT
 
-.list
 endif
-

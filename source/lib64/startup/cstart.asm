@@ -2,7 +2,6 @@
 ;
 ; Startup module for LIBC
 ;
-include asmcver.inc
 include stdlib.inc
 include crtl.inc
 
@@ -26,13 +25,16 @@ main	proto :dword, :ptr, :ptr
 
 	dd 495A440Ah
 	dd 564A4A50h
-	db VERSSTR
+	db _ASMLIB_ / 100 + '0','.',_ASMLIB_ mod 100 / 10 + '0',_ASMLIB_ mod 10 + '0'
 
-mainCRTStartup:
+mainCRTStartup::
+
 	lea rcx,IStart
 	and rcx,-4096	; LINK - to start of page
 	jmp @F
-cstart:
+
+cstart::
+
 	lea rcx,IStart
 @@:
 	lea rdx,IEnd

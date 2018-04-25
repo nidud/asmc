@@ -1259,6 +1259,10 @@ SymPassInit		PROTO :DWORD
 SegmentInit		PROTO :DWORD
 ContextInit		PROTO :DWORD
 HllInit			PROTO :DWORD
+ClassInit		PROTO
+PragmaInit		PROTO
+ClassCheckOpen		PROTO
+PragmaCheckOpen		PROTO
 MacroInit		PROTO :DWORD
 AssumeInit		PROTO :DWORD
 RunLineQueue		PROTO

@@ -1,3 +1,5 @@
+.pragma list(push, 0)
+
 NAMESPACE_CLASS_NAME    equ TEXT("Namespace")
 COUNTRY_CLASS_NAME      equ TEXT("Country")
 LOCALITY_CLASS_NAME     equ TEXT("Locality")
@@ -40,3 +42,5 @@ FPNW_FILESERVICE_SCHEMA_NAME equ TEXT("FPNWFileService")
 FPNW_SESSION_SCHEMA_NAME equ TEXT("FPNWSession")
 FPNW_RESOURCE_SCHEMA_NAME equ TEXT("FPNWResource")
 FPNW_FILESHARE_SCHEMA_NAME equ TEXT("FPNWFileShare")
+
+.pragma list(pop)

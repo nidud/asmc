@@ -1,7 +1,8 @@
 ifndef _INC_DCIMAN
 _INC_DCIMAN equ <>
+.pragma list(push, 0)
+
 include dciddi.inc
-.xlist
 
 DECLARE_HANDLE(HWINWATCH)
 
@@ -132,5 +133,5 @@ DCISendCommand proto WINAPI \
 		 nSize: SINT
 endif
 
-.list
+.pragma list(pop)
 endif

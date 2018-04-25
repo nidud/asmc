@@ -3,7 +3,6 @@ __EXCPT_INC equ <>
 ifndef _WINDEF_
  include windef.inc
 endif
-.xlist
 
 if not defined(_CRTAPI1) and defined(_MSC_VER) and defined(_M_IX86)
  if (_MSC_VER GE 800) and (_M_IX86 GE 300)
@@ -53,7 +52,6 @@ externdef _Num_FPE:SINT
 
 _XcptFilter proto WINAPI :ULONG, :PVOID
 
-endif	; _INTERNAL_IFSTRIP_
+endif
 
-.list
-endif	; _INC_EXCPT
+endif

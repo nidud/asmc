@@ -1,3 +1,5 @@
+.pragma list(push, 0)
+
 ifndef __REQUIRED_RPCNDR_H_VERSION__
 __REQUIRED_RPCNDR_H_VERSION__ equ 500
 endif
@@ -10,8 +12,8 @@ ifndef __RPCNDR_H_VERSION__
 .err <this stub requires an updated version of rpcndr.h>
 endif
 ifndef __adojet_h__
-__adojet_h__ equ 1
-.xlist
+__adojet_h__ equ <>
+
 ifndef __IReplica_FWD_DEFINED__
 __IReplica_FWD_DEFINED__ equ 1
 endif
@@ -194,8 +196,5 @@ DECLSPEC_UUID("DE88C160-FF2C-11D1-BB6F-00C04FAE22DA")
 endif
 endif
 
-.list
 endif
-
-
-
+.pragma list(pop)

@@ -1,6 +1,5 @@
 ifndef _INCLUDED_NMM
 _INCLUDED_NMM equ <>
-.xlist
 
 ifndef _M_IX86
 ifndef _M_X64
@@ -11,7 +10,6 @@ ifdef _M_CEE_PURE
 .err <ERROR: This file is not supported in the pure mode!>
 endif
 include smmintrin.inc
-.xlist
 
 _SIDD_UBYTE_OPS		equ 0x00
 _SIDD_UWORD_OPS		equ 0x01
@@ -68,4 +66,4 @@ ifdef _M_X64
 _mm_crc32_u64		proto :qword, :qword
 endif
 
-endif ;; _INCLUDED_NMM
+endif

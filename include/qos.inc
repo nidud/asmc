@@ -1,31 +1,31 @@
+ifndef __QOS_H_
+__QOS_H_ equ <>
 ifndef __LIBC_INC
  include libc.inc
 endif
-.xlist
-ifndef __QOS_H_
-__QOS_H_ equ 1
+
 SERVICETYPE		typedef ULONG
-SERVICETYPE_NOTRAFFIC	equ 0x00000000	
-SERVICETYPE_BESTEFFORT	equ 0x00000001	
-SERVICETYPE_CONTROLLEDLOAD equ 0x00000002	
-SERVICETYPE_GUARANTEED	equ 0x00000003	
-SERVICETYPE_NETWORK_UNAVAILABLE equ 0x00000004	
-SERVICETYPE_GENERAL_INFORMATION equ 0x00000005	
-SERVICETYPE_NOCHANGE	equ 0x00000006	
+SERVICETYPE_NOTRAFFIC	equ 0x00000000
+SERVICETYPE_BESTEFFORT	equ 0x00000001
+SERVICETYPE_CONTROLLEDLOAD equ 0x00000002
+SERVICETYPE_GUARANTEED	equ 0x00000003
+SERVICETYPE_NETWORK_UNAVAILABLE equ 0x00000004
+SERVICETYPE_GENERAL_INFORMATION equ 0x00000005
+SERVICETYPE_NOCHANGE	equ 0x00000006
 
 SERVICE_IMMEDIATE_TRAFFIC_CONTROL equ 0x80000000
 
 SERVICE_NO_QOS_SIGNALING equ 0x40000000
 
 FLOWSPEC		STRUC
-TokenRate		ULONG ? 
-TokenBucketSize		ULONG ? 
-PeakBandwidth		ULONG ? 
-Latency			ULONG ? 
-DelayVariation		ULONG ? 
+TokenRate		ULONG ?
+TokenBucketSize		ULONG ?
+PeakBandwidth		ULONG ?
+Latency			ULONG ?
+DelayVariation		ULONG ?
 ServiceType		SERVICETYPE ?
-MaxSduSize		ULONG ? 
-MinimumPolicedSize	ULONG ? 
+MaxSduSize		ULONG ?
+MinimumPolicedSize	ULONG ?
 
 FLOWSPEC		ENDS
 PFLOWSPEC		typedef ptr FLOWSPEC
@@ -36,7 +36,7 @@ LPFLOWSPEC		typedef ptr FLOWSPEC
 QOS_OBJECT_HDR		STRUC
 
 ObjectType		ULONG ?
-ObjectLength		ULONG ? 
+ObjectLength		ULONG ?
 
 QOS_OBJECT_HDR		ENDS
 LPQOS_OBJECT_HDR	typedef ptr QOS_OBJECT_HDR
@@ -63,7 +63,7 @@ IN_ADDR_IPV4		ENDS
 LPIN_ADDR_IPV4		typedef ptr IN_ADDR_IPV4
 
 IN_ADDR_IPV6		STRUC
-_Addr			db 16 dup(?)	
+_Addr			db 16 dup(?)
 IN_ADDR_IPV6		ENDS
 LPIN_ADDR_IPV6		typedef ptr IN_ADDR_IPV6
 LPCIN_ADDR_IPV6		typedef ptr IN_ADDR_IPV6
@@ -131,7 +131,7 @@ FLOWDESCRIPTOR		ENDS
 LPFLOWDESCRIPTOR	typedef ptr FLOWDESCRIPTOR
 
 RSVP_POLICY		STRUC
-_Type			HANDLE ?	
+_Type			HANDLE ?
 RSVP_POLICY		ENDS
 LPRSVP_POLICY		typedef ptr RSVP_POLICY
 LPCRSVP_POLICY		typedef ptr RSVP_POLICY
@@ -139,12 +139,12 @@ LPCRSVP_POLICY		typedef ptr RSVP_POLICY
 
 
 RSVP_RESERVE_INFO	STRUC
-ObjectHdr		QOS_OBJECT_HDR <>	
-Style			dd ?			
-ConfirmRequest		dd ?			
-Policy			LPRSVP_POLICY ?		
-NumFlowDesc		dd ?			
-FlowDescList		LPFLOWDESCRIPTOR ?	
+ObjectHdr		QOS_OBJECT_HDR <>
+Style			dd ?
+ConfirmRequest		dd ?
+Policy			LPRSVP_POLICY ?
+NumFlowDesc		dd ?
+FlowDescList		LPFLOWDESCRIPTOR ?
 RSVP_RESERVE_INFO	ENDS
 LPRSVP_RESERVE_INFO	typedef ptr RSVP_RESERVE_INFO
 LPCRSVP_RESERVE_INFO	typedef ptr RSVP_RESERVE_INFO
@@ -155,19 +155,19 @@ RSVP_SHARED_EXPLICIT_STYLE equ 0x00000003
 
 
 RSVP_STATUS_INFO	STRUC
-ObjectHdr		QOS_OBJECT_HDR <>	
-StatusCode		dd ?	
-ExtendedStatus1		dd ?	
-ExtendedStatus2		dd ?	
+ObjectHdr		QOS_OBJECT_HDR <>
+StatusCode		dd ?
+ExtendedStatus1		dd ?
+ExtendedStatus2		dd ?
 RSVP_STATUS_INFO	ENDS
 LPRSVP_STATUS_INFO	typedef ptr RSVP_STATUS_INFO
 LPCRSVP_STATUS_INFO	typedef ptr RSVP_STATUS_INFO
 
 QOS_PRIORITY		STRUC
 ObjectHdr		QOS_OBJECT_HDR <>
-SendPriority		db ?	
-SendFlags		db ?	
-ReceivePriority		db ?	
+SendPriority		db ?
+SendFlags		db ?
+ReceivePriority		db ?
 Unused			db ?
 QOS_PRIORITY		ENDS
 LPQOS_PRIORITY		typedef ptr QOS_PRIORITY
@@ -193,11 +193,11 @@ QOS_TRAFFIC_CLASS	ENDS
 LPQOS_TRAFFIC_CLASS	typedef ptr QOS_TRAFFIC_CLASS
 
 AD_GENERAL_PARAMS	STRUC
-IntServAwareHopCount	dd ?	
-PathBandwidthEstimate	dd ?	
-MinimumLatency		dd ?	
-PathMTU			dd ?	
-Flags			dd ? 
+IntServAwareHopCount	dd ?
+PathBandwidthEstimate	dd ?
+MinimumLatency		dd ?
+PathMTU			dd ?
+Flags			dd ?
 AD_GENERAL_PARAMS	ENDS
 LPAD_GENERAL_PARAMS	typedef ptr AD_GENERAL_PARAMS
 
@@ -214,9 +214,9 @@ AD_GUARANTEED		ENDS
 LPAD_GUARANTEED		typedef ptr AD_GUARANTEED
 
 PARAM_BUFFER		STRUC
-ParameterId		dd ?	
-_Length			dd ?	
-Buffer			db ?	
+ParameterId		dd ?
+_Length			dd ?
+Buffer			db ?
 PARAM_BUFFER		ENDS
 LPPARAM_BUFFER		typedef ptr PARAM_BUFFER
 
@@ -226,19 +226,18 @@ Service			SERVICETYPE ?
 Overrides		AD_GENERAL_PARAMS <>
 UNION
  Guaranteed		 AD_GUARANTEED <>
- ParamBuffer		 PARAM_BUFFER <> 
+ ParamBuffer		 PARAM_BUFFER <>
 ENDS
 CONTROL_SERVICE		ENDS
 LPCONTROL_SERVICE	typedef ptr CONTROL_SERVICE
 
 RSVP_ADSPEC		STRUC
 ObjectHdr		QOS_OBJECT_HDR <>
-GeneralParams		AD_GENERAL_PARAMS <>	
-NumberOfServices	dd ?			
-Services		CONTROL_SERVICE <>	
+GeneralParams		AD_GENERAL_PARAMS <>
+NumberOfServices	dd ?
+Services		CONTROL_SERVICE <>
 RSVP_ADSPEC		ENDS
 LPRSVP_ADSPEC		typedef ptr RSVP_ADSPEC
 
-endif	
+endif
 
-.list

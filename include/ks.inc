@@ -1,6 +1,5 @@
 ifndef _KS_
 _KS_ equ <>
-.xlist
 
 ifdef __TCS__
 _KS_NO_ANONYMOUS_STRUCTURES_ equ 1
@@ -1781,11 +1780,15 @@ DEFINE_GUIDSTRUCT("4EC35C3E-201B-11D2-8745-00A0C9223196", GUID_BUS_INTERFACE_MED
 
 endif ;; _NTDDK_
 
-KSPROPERTY_SERIALHDR	STRUC 1
+.pragma pack(push, 1)
+
+KSPROPERTY_SERIALHDR	STRUC
 PropertySet		GUID <>
 Count			ULONG ?
 KSPROPERTY_SERIALHDR	ENDS
 PKSPROPERTY_SERIALHDR	typedef ptr KSPROPERTY_SERIALHDR
+
+.pragma pack(pop)
 
 KSPROPERTY_SERIAL	STRUC
 PropTypeSet		KSIDENTIFIER <>
@@ -3633,6 +3636,4 @@ endif
 
 endif ;; !defined(_NTDDK_)
 
-.list
-endif ;; _KS_
-
+endif

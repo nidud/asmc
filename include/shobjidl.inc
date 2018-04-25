@@ -14,8 +14,7 @@ include windows.inc
 include ole2.inc
 endif
 ifndef __shobjidl_h__
-__shobjidl_h__ equ 1
-.xlist
+__shobjidl_h__ equ <>
 
 ifndef __IContextMenu_FWD_DEFINED__
 __IContextMenu_FWD_DEFINED__ equ 1
@@ -859,7 +858,6 @@ include prsht.inc
 include propsys.inc ;
 include ObjectArray.inc
 include sherrors.inc
-.xlist
 
 ifdef __PE__
 option	dllimport:<shell32>
@@ -1140,7 +1138,7 @@ externdef		IID_IRunnableTask:IID
 
 endif
 
-TOID_NULL		equ GUID_NULL
+TOID_NULL		equ <GUID_NULL>
 ITSAT_DEFAULT_LPARAM	equ (-1)
 ITSAT_DEFAULT_PRIORITY	equ 0x10000000
 ITSAT_MAX_PRIORITY	equ 0x7fffffff
@@ -1174,7 +1172,7 @@ externdef		IID_IShellTaskScheduler:IID
 
 endif
 
-SID_ShellTaskScheduler	equ IID_IShellTaskScheduler
+SID_ShellTaskScheduler	equ <IID_IShellTaskScheduler>
 
 externdef		__MIDL_itf_shobjidl_0000_0007_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef		__MIDL_itf_shobjidl_0000_0007_v0_0_s_ifspec:RPC_IF_HANDLE
@@ -1718,7 +1716,6 @@ ifdef _NEVER_
 LPFNSVADDPROPSHEETPAGE	typedef LPARAM
 else
 include prsht.inc
-.xlist
 LPFNSVADDPROPSHEETPAGE	typedef LPFNADDPROPSHEETPAGE
 endif
 
@@ -1877,7 +1874,7 @@ externdef		IID_IFolderView:IID
 
 endif
 
-SID_SFolderView		equ IID_IFolderView
+SID_SFolderView		equ <IID_IFolderView>
 if (NTDDI_VERSION GE NTDDI_WIN7)
 
 externdef		__MIDL_itf_shobjidl_0000_0023_v0_0_c_ifspec:RPC_IF_HANDLE
@@ -2084,7 +2081,7 @@ endif
 
 LPCOMMDLGBROWSER	typedef ptr ICommDlgBrowser
 
-SID_SExplorerBrowserFrame equ IID_ICommDlgBrowser
+SID_SExplorerBrowserFrame equ <IID_ICommDlgBrowser>
 if (NTDDI_VERSION GE NTDDI_WIN2K)
 CDB2N_CONTEXTMENU_DONE	equ 0x00000001
 CDB2N_CONTEXTMENU_START equ 0x00000002
@@ -2397,7 +2394,7 @@ externdef		IID_IProfferService:IID
 
 endif
 
-SID_SProfferService	equ IID_IProfferService
+SID_SProfferService	equ <IID_IProfferService>
 STR_DONT_RESOLVE_LINK	equ <L"Don't Resolve Link">
 STR_GET_ASYNC_HANDLER	equ <L"GetAsyncHandler">
 
@@ -4101,7 +4098,7 @@ externdef		IID_IWizardSite:IID
 
 endif
 
-SID_WizardSite		equ IID_IWizardSite
+SID_WizardSite		equ <IID_IWizardSite>
 
 externdef		__MIDL_itf_shobjidl_0000_0098_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef		__MIDL_itf_shobjidl_0000_0098_v0_0_s_ifspec:RPC_IF_HANDLE
@@ -4141,7 +4138,7 @@ externdef		IID_IWebWizardExtension:IID
 
 endif
 
-SID_WebWizardHost	equ IID_IWebWizardExtension
+SID_WebWizardHost	equ <IID_IWebWizardExtension>
 SHPWHF_NORECOMPRESS	equ 0x00000001
 SHPWHF_NONETPLACECREATE equ 0x00000002
 SHPWHF_NOFILESELECTOR	equ 0x00000004
@@ -4754,7 +4751,7 @@ externdef		IID_IEnumerableView:IID
 
 endif
 
-SID_EnumerableView	equ IID_IEnumerableView
+SID_EnumerableView	equ <IID_IEnumerableView>
 if (NTDDI_VERSION GE NTDDI_WINXP) OR (_WIN32_IE GE _WIN32_IE_IE70)
 
 externdef		__MIDL_itf_shobjidl_0000_0121_v0_0_c_ifspec:RPC_IF_HANDLE
@@ -5932,7 +5929,7 @@ externdef		IID_INewMenuClient:IID
 
 endif
 
-SID_SNewMenuClient	equ IID_INewMenuClient
+SID_SNewMenuClient	equ <IID_INewMenuClient>
 DEFINE_GUID(SID_SCommandBarState, 0xB99EAA5C, 0x3850, 0x4400, 0xBC, 0x33, 0x2C, 0xE5, 0x34, 0x04, 0x8B, 0xF8);
 DEFINE_GUID(IID_INewMenuClient, 0xdcb07fdc, 0x3bb5, 0x451c, 0x90,0xbe, 0x96,0x66,0x44,0xfe,0xd7,0xb0)
 
@@ -6107,7 +6104,7 @@ externdef		IID_INameSpaceTreeControl2:IID
 endif
 
 NSTCS2_ALLMASK		equ (NSTCS2_INTERRUPTNOTIFICATIONS OR NSTCS2_SHOWNULLSPACEMENU OR NSTCS2_DISPLAYPADDING)
-SID_SNavigationPane	equ IID_INameSpaceTreeControl
+SID_SNavigationPane	equ <IID_INameSpaceTreeControl>
 ISLBUTTON macro x
 	exitm<(NSTCECT_LBUTTON EQ ((x) AND NSTCECT_BUTTON))>
 	endm
@@ -6349,7 +6346,7 @@ externdef		IID_IBandHost:IID
 
 endif
 
-SID_SBandHost		equ IID_IBandHost
+SID_SBandHost		equ <IID_IBandHost>
 EXPLORERPANE		typedef GUID
 REFEXPLORERPANE		typedef ptr EXPLORERPANE
 
@@ -6379,7 +6376,7 @@ externdef		IID_IExplorerPaneVisibility:IID
 
 endif
 
-SID_ExplorerPaneVisibility equ IID_IExplorerPaneVisibility
+SID_ExplorerPaneVisibility equ <IID_IExplorerPaneVisibility>
 
 externdef		__MIDL_itf_shobjidl_0000_0174_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef		__MIDL_itf_shobjidl_0000_0174_v0_0_s_ifspec:RPC_IF_HANDLE
@@ -8041,5 +8038,4 @@ IEnumExplorerCommand_Next_Stub proto WINAPI \
 	    pUICommand: ptr IExplorerCommand,
 	  pceltFetched: ptr ULONG
 
-.list
-endif ; __shobjidl_h__
+endif

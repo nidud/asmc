@@ -10,20 +10,19 @@ endif
 if defined (_M_IX86) AND NOT defined(_CHPE_ONLY_)
 include mm3dnow.inc
 endif
-.xlist
 
 __MACHINE(_AddressOfReturnAddress proto)
-__MACHINE(_BitScanForward proto :ptr, :dword)
-__MACHINEX64(_BitScanForward64 proto :ptr, :qword)
-__MACHINE(_BitScanReverse proto :ptr, :dword)
-__MACHINEX64(_BitScanReverse64 proto :ptr, :qword)
+__MACHINE(_BitScanForward proto :ptr dword, :dword)
+__MACHINEX64(_BitScanForward64 proto :ptr dword, :qword)
+__MACHINE(_BitScanReverse proto :ptr dword, :dword)
+__MACHINEX64(_BitScanReverse64 proto :ptr dword, :qword)
 __MACHINEX86(_InterlockedAddLargeStatistic proto :ptr, :sdword)
 __MACHINEX64(_InterlockedAnd16_np proto :ptr, :sword)
 __MACHINEX64(_InterlockedAnd64_np proto :ptr, :qword)
 __MACHINEX64(_InterlockedAnd8_np proto :ptr, :sbyte)
 __MACHINEX64(_InterlockedAnd_np proto :ptr, :sdword)
 __MACHINEX64(_InterlockedCompareExchange128_np proto :ptr, :qword, :qword, :ptr)
-__MACHINEX64(_InterlockedCompareExchange16_np proto :ptr, :sword, :sword)
+__MACHINEX64(_InterlockedCompareExchange16_np proto :ptr sword, :sword, :sword)
 __MACHINEX64(_InterlockedCompareExchange64_np proto :ptr, :qword, :qword)
 __MACHINE(_InterlockedCompareExchangePointer proto :ptr, :ptr, :ptr)
 __MACHINEX64(_InterlockedCompareExchangePointer_np proto :ptr, :ptr, :ptr)
@@ -173,10 +172,10 @@ __MACHINEX64(__writegsdword proto :dword, :dword)
 __MACHINEX64(__writegsqword proto :dword, :qword)
 __MACHINEX64(__writegsword proto :dword, :word)
 __MACHINEX86_X64(__writemsr proto :dword, :qword)
-__MACHINE(_bittest proto :ptr, :sdword)
-__MACHINE(_bittestandcomplement proto :ptr, :sdword)
-__MACHINE(_bittestandreset proto :ptr, :sdword)
-__MACHINE(_bittestandset proto :ptr, :sdword)
+__MACHINE(_bittest proto :ptr LONG, :sdword)
+__MACHINE(_bittestandcomplement proto :ptr sdword, :sdword)
+__MACHINE(_bittestandreset proto :ptr LONG, :sdword)
+__MACHINE(_bittestandset proto :ptr LONG, :sdword)
 __MACHINE(_byteswap_uint64 proto __cdecl :qword)
 __MACHINE(_byteswap_ulong proto __cdecl :dword)
 __MACHINE(_byteswap_ushort proto __cdecl :word)
@@ -766,5 +765,4 @@ __MACHINEX64(_subborrow_u64 proto __cdecl :byte, :qword, :qword, :ptr)
 __MACHINEX86_X64(_mm_monitorx proto :ptr, :dword, :dword)
 __MACHINEX86_X64(_mm_mwaitx proto :dword, :dword, :dword)
 
-.list
-endif ;; __INTRIN_H_
+endif

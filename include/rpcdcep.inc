@@ -1,14 +1,8 @@
 ifndef __LIBC_INC
  include libc.inc
 endif
-.xlist
 ifndef __RPCDCEP_H__
-__RPCDCEP_H__ equ 1
-
-
-if defined(__RPC_DOS__) OR defined(__RPC_WIN16__)
-;pragma pack(2)
-endif
+__RPCDCEP_H__ equ <>
 
 RPC_VERSION		STRUC
 MajorVersion		dw ?
@@ -409,5 +403,3 @@ I_RpcServerInqTransportType proto WINAPI \
 		  _Type: LPDWORD
 
 endif
-
-.list

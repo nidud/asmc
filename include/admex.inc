@@ -11,7 +11,8 @@ include windows.inc
 include ole2.inc
 endif
 ifndef __admex_h__
-__admex_h__ equ 1
+__admex_h__ equ <>
+.pragma list(push, 0)
 
 ifndef __IMSAdminReplication_FWD_DEFINED__
 __IMSAdminReplication_FWD_DEFINED__ equ 1
@@ -218,4 +219,5 @@ endif
 externdef __MIDL_itf_admex_0256_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef __MIDL_itf_admex_0256_v0_0_s_ifspec:RPC_IF_HANDLE
 
+.pragma list(pop)
 endif

@@ -6,7 +6,6 @@ __RPCNDR_H_VERSION__ equ 500
 endif
 ifndef __RPCNDR_H__
 __RPCNDR_H__ equ <>
-.xlist
 
 ifdef __REQUIRED_RPCNDR_H_VERSION__
  if ( __RPCNDR_H_VERSION__ LT __REQUIRED_RPCNDR_H_VERSION__ )
@@ -15,7 +14,6 @@ ifdef __REQUIRED_RPCNDR_H_VERSION__
 endif
 
 include rpcnsip.inc
-.xlist
 
 NDR_CHAR_REP_MASK	equ 0X0000000F
 NDR_INT_REP_MASK	equ 0X000000F0
@@ -1934,6 +1932,4 @@ EXTERN_GUID macro itf,l1,s1,s2,c1,c2,c3,c4,c5,c6,c7,c8
 endif
 
 endif
-
-.list
-endif ; __RPCNDR_H__
+endif

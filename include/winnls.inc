@@ -1,3 +1,4 @@
+.pragma list(push, 0)
 ifndef __LIBC_INC
  include libc.inc
 endif
@@ -5,7 +6,6 @@ ifndef _WINDEF_
  include windef.inc
 endif
 
-.xlist
 if defined(_KERNEL32_) or defined(__PE__)
 option dllimport:<kernel32>
 endif
@@ -1011,5 +1011,5 @@ EnumSystemCodePages equ <EnumSystemCodePagesW>
 else
 EnumSystemCodePages equ <EnumSystemCodePagesA>
 endif
+.pragma list(pop)
 
-.list

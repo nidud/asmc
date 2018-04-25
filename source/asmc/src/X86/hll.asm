@@ -3003,7 +3003,6 @@ HllCheckOpen endp
 HllInit proc pass
 
     mov ModuleInfo.hll_label,0      ; init hll label counter
-    mov ModuleInfo.class_label,0    ; init class label counter
     ret
 
 HllInit endp

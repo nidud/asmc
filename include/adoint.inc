@@ -1,5 +1,6 @@
 ifndef _ADOINT_H_
-_ADOINT_H_ equ 1
+_ADOINT_H_ equ <>
+.pragma list(push, 0)
 
 ifndef _INC_TCHAR
 include tchar.inc
@@ -27,7 +28,7 @@ ifndef __RPCNDR_H_VERSION__
 .err <this stub requires an updated version of rpcndr>
 endif
 ifndef __ado10_h__
-__ado10_h__ equ 1
+__ado10_h__ equ <>
 
 ifndef ___ADOCollection_FWD_DEFINED__
 ___ADOCollection_FWD_DEFINED__ equ 1
@@ -711,16 +712,16 @@ ifndef ___ADOCollection_INTERFACE_DEFINED__
 ___ADOCollection_INTERFACE_DEFINED__ equ 1
 externdef		IID__ADOCollection:IID
 .comdef _ADOCollection
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :UINT, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Count           proc :ptr
-    _NewEnum            proc :ptr
-    Refresh             proc
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Count		proc :ptr
+    _NewEnum		proc :ptr
+    Refresh		proc
     .ends
 endif
 
@@ -728,18 +729,18 @@ ifndef ___ADODynaCollection_INTERFACE_DEFINED__
 ___ADODynaCollection_INTERFACE_DEFINED__ equ 1
 externdef		IID__ADODynaCollection:IID
 .comdef _ADODynaCollection
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :UINT, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Count           proc :ptr
-    _NewEnum            proc :ptr
-    Refresh             proc
-    Append              proc :ptr
-    Delete              proc :VARIANT
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Count		proc :ptr
+    _NewEnum		proc :ptr
+    Refresh		proc
+    Append		proc :ptr
+    Delete		proc :VARIANT
     .ends
 
 endif
@@ -747,14 +748,14 @@ ifndef ___ADO_INTERFACE_DEFINED__
 ___ADO_INTERFACE_DEFINED__ equ 1
 externdef		IID__ADO:IID
 .comdef _ADO
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :UINT, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Properties      proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Properties	proc :ptr
     .ends
 
 endif
@@ -762,20 +763,20 @@ ifndef __Error_INTERFACE_DEFINED__
 __Error_INTERFACE_DEFINED__ equ 1
 externdef		IID_Error:IID
 .comdef Error
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :UINT, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Number          proc :ptr
-    get_Source          proc :ptr
-    get_Description     proc :ptr
-    get_HelpFile        proc :ptr
-    get_HelpContext     proc :ptr
-    get_SQLState        proc :ptr
-    get_NativeError     proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Number		proc :ptr
+    get_Source		proc :ptr
+    get_Description	proc :ptr
+    get_HelpFile	proc :ptr
+    get_HelpContext	proc :ptr
+    get_SQLState	proc :ptr
+    get_NativeError	proc :ptr
     .ends
 
 endif
@@ -783,18 +784,18 @@ ifndef __Errors_INTERFACE_DEFINED__
 __Errors_INTERFACE_DEFINED__ equ 1
 externdef		IID_Errors:IID
 .comdef Errors
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :UINT, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Count           proc :ptr
-    _NewEnum            proc :ptr
-    Refresh             proc
-    get_Item            proc :VARIANT, :ptr
-    Clear               proc
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Count		proc :ptr
+    _NewEnum		proc :ptr
+    Refresh		proc
+    get_Item		proc :VARIANT, :ptr
+    Clear		proc
     .ends
 
 endif
@@ -802,30 +803,30 @@ ifndef __Command15_INTERFACE_DEFINED__
 __Command15_INTERFACE_DEFINED__ equ 1
 externdef		IID_Command15:IID
 .comdef Command15
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :UINT, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Properties      proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Properties	proc :ptr
     get_ActiveConnection proc :ptr
     putref_ActiveADOConnection proc :ptr
     put_ActiveConnection proc :VARIANT
-    get_CommandText     proc :ptr
-    put_CommandText     proc :BSTR
-    get_CommandTimeout  proc :ptr
-    put_CommandTimeout  proc :LONG
-    get_Prepared        proc :ptr
-    put_Prepared        proc :VARIANT_BOOL
-    Execute             proc :ptr, :ptr, :LONG, :ptr
-    CreateParameter     proc :BSTR, :DataTypeEnum, :ParameterDirectionEnum, :ADO_LONGPTR, :VARIANT, :ptr
-    get_Parameters      proc :ptr
-    put_CommandType     proc :CommandTypeEnum
-    get_CommandType     proc :ptr
-    get_Name            proc :ptr
-    put_Name            proc :BSTR
+    get_CommandText	proc :ptr
+    put_CommandText	proc :BSTR
+    get_CommandTimeout	proc :ptr
+    put_CommandTimeout	proc :LONG
+    get_Prepared	proc :ptr
+    put_Prepared	proc :VARIANT_BOOL
+    Execute		proc :ptr, :ptr, :LONG, :ptr
+    CreateParameter	proc :BSTR, :DataTypeEnum, :ParameterDirectionEnum, :ADO_LONGPTR, :VARIANT, :ptr
+    get_Parameters	proc :ptr
+    put_CommandType	proc :CommandTypeEnum
+    get_CommandType	proc :ptr
+    get_Name		proc :ptr
+    put_Name		proc :BSTR
     .ends
 
 endif
@@ -833,32 +834,32 @@ ifndef __Command25_INTERFACE_DEFINED__
 __Command25_INTERFACE_DEFINED__ equ 1
 externdef		IID_Command25:IID
 .comdef Command25
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :UINT, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Properties      proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Properties	proc :ptr
     get_ActiveConnection proc :ptr
     putref_ActiveADOConnection proc :ptr
     put_ActiveConnection proc :VARIANT
-    get_CommandText     proc :ptr
-    put_CommandText     proc :BSTR
-    get_CommandTimeout  proc :ptr
-    put_CommandTimeout  proc :LONG
-    get_Prepared        proc :ptr
-    put_Prepared        proc :VARIANT_BOOL
-    Execute             proc :ptr, :ptr, :LONG, :ptr
-    CreateParameter     proc :BSTR, :DataTypeEnum, :ParameterDirectionEnum, :ADO_LONGPTR, :VARIANT, :ptr
-    get_Parameters      proc :ptr
-    put_CommandType     proc :CommandTypeEnum
-    get_CommandType     proc :ptr
-    get_Name            proc :ptr
-    put_Name            proc :BSTR
-    get_State           proc :ptr
-    Cancel              proc
+    get_CommandText	proc :ptr
+    put_CommandText	proc :BSTR
+    get_CommandTimeout	proc :ptr
+    put_CommandTimeout	proc :LONG
+    get_Prepared	proc :ptr
+    put_Prepared	proc :VARIANT_BOOL
+    Execute		proc :ptr, :ptr, :LONG, :ptr
+    CreateParameter	proc :BSTR, :DataTypeEnum, :ParameterDirectionEnum, :ADO_LONGPTR, :VARIANT, :ptr
+    get_Parameters	proc :ptr
+    put_CommandType	proc :CommandTypeEnum
+    get_CommandType	proc :ptr
+    get_Name		proc :ptr
+    put_Name		proc :BSTR
+    get_State		proc :ptr
+    Cancel		proc
     .ends
 
 endif
@@ -866,36 +867,36 @@ ifndef ___Command_INTERFACE_DEFINED__
 ___Command_INTERFACE_DEFINED__ equ 1
 externdef		IID__Command:IID
 .comdef _Command
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :UINT, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Properties      proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Properties	proc :ptr
     get_ActiveConnection proc :ptr
     putref_ActiveADOConnection proc :ptr
     put_ActiveConnection proc :VARIANT
-    get_CommandText     proc :ptr
-    put_CommandText     proc :BSTR
-    get_CommandTimeout  proc :ptr
-    put_CommandTimeout  proc :LONG
-    get_Prepared        proc :ptr
-    put_Prepared        proc :VARIANT_BOOL
-    Execute             proc :ptr, :ptr, :LONG, :ptr
-    CreateParameter     proc :BSTR, :DataTypeEnum, :ParameterDirectionEnum, :ADO_LONGPTR, :VARIANT, :ptr
-    get_Parameters      proc :ptr
-    put_CommandType     proc :CommandTypeEnum
-    get_CommandType     proc :ptr
-    get_Name            proc :ptr
-    put_Name            proc :BSTR
-    get_State           proc :ptr
-    Cancel              proc
+    get_CommandText	proc :ptr
+    put_CommandText	proc :BSTR
+    get_CommandTimeout	proc :ptr
+    put_CommandTimeout	proc :LONG
+    get_Prepared	proc :ptr
+    put_Prepared	proc :VARIANT_BOOL
+    Execute		proc :ptr, :ptr, :LONG, :ptr
+    CreateParameter	proc :BSTR, :DataTypeEnum, :ParameterDirectionEnum, :ADO_LONGPTR, :VARIANT, :ptr
+    get_Parameters	proc :ptr
+    put_CommandType	proc :CommandTypeEnum
+    get_CommandType	proc :ptr
+    get_Name		proc :ptr
+    put_Name		proc :BSTR
+    get_State		proc :ptr
+    Cancel		proc
     putref_CommandADOStream proc :ptr
-    get_CommandStream   proc :ptr
-    put_Dialect         proc :BSTR
-    get_Dialect         proc :ptr
+    get_CommandStream	proc :ptr
+    put_Dialect		proc :BSTR
+    get_Dialect		proc :ptr
     put_NamedParameters proc :VARIANT_BOOL
     get_NamedParameters proc :ptr
     .ends
@@ -905,18 +906,18 @@ ifndef __ConnectionEventsVt_INTERFACE_DEFINED__
 __ConnectionEventsVt_INTERFACE_DEFINED__ equ 1
 externdef		IID_ConnectionEventsVt:IID
 .comdef ConnectionEventsVt
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    InfoMessage         proc :ptr, :ptr, :ptr
-    BeginTransComplete  proc :LONG, :ptr, :ptr, :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    InfoMessage		proc :ptr, :ptr, :ptr
+    BeginTransComplete	proc :LONG, :ptr, :ptr, :ptr
     CommitTransComplete proc :ptr, :ptr, :ptr
     RollbackTransComplete proc :ptr, :ptr, :ptr
-    WillExecute         proc :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
-    ExecuteComplete     proc :LONG, :ptr, :ptr, :ptr, :ptr, :ptr
-    WillConnect         proc :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
-    ConnectComplete     proc :ptr, :ptr, :ptr
-    Disconnect          proc :ptr, :ptr
+    WillExecute		proc :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
+    ExecuteComplete	proc :LONG, :ptr, :ptr, :ptr, :ptr, :ptr
+    WillConnect		proc :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
+    ConnectComplete	proc :ptr, :ptr, :ptr
+    Disconnect		proc :ptr, :ptr
     .ends
 
 endif
@@ -924,20 +925,20 @@ ifndef __RecordsetEventsVt_INTERFACE_DEFINED__
 __RecordsetEventsVt_INTERFACE_DEFINED__ equ 1
 externdef		IID_RecordsetEventsVt:IID
 .comdef RecordsetEventsVt
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    WillChangeADOField  proc :LONG, :VARIANT, :ptr, :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    WillChangeADOField	proc :LONG, :VARIANT, :ptr, :ptr
     FieldChangeComplete proc :LONG, :VARIANT, :ptr, :ptr, :ptr
     WillChangeADORecord proc :EventReasonEnum, :LONG, :ptr, :ptr
     RecordChangeComplete proc :EventReasonEnum, :LONG, :ptr, :ptr, :ptr
     WillChangeADORecordset proc :EventReasonEnum, :ptr, :ptr
     RecordsetChangeComplete proc :EventReasonEnum, :ptr, :ptr, :ptr
-    WillMove            proc :EventReasonEnum, :ptr, :ptr
-    MoveComplete        proc :EventReasonEnum, :ptr, :ptr, :ptr
-    EndOfADORecordset   proc :ptr, :ptr, :ptr
-    FetchProgress       proc :LONG, :LONG, :ptr, :ptr
-    FetchComplete       proc :ptr, :ptr, :ptr
+    WillMove		proc :EventReasonEnum, :ptr, :ptr
+    MoveComplete	proc :EventReasonEnum, :ptr, :ptr, :ptr
+    EndOfADORecordset	proc :ptr, :ptr, :ptr
+    FetchProgress	proc :LONG, :LONG, :ptr, :ptr
+    FetchComplete	proc :ptr, :ptr, :ptr
     .ends
 
 endif
@@ -945,13 +946,13 @@ ifndef __ConnectionEvents_DISPINTERFACE_DEFINED__
 __ConnectionEvents_DISPINTERFACE_DEFINED__ equ 1
 externdef		DIID_ConnectionEvents:IID
 .comdef ConnectionEvents
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :UINT, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     .ends
 
 endif
@@ -959,13 +960,13 @@ ifndef __RecordsetEvents_DISPINTERFACE_DEFINED__
 __RecordsetEvents_DISPINTERFACE_DEFINED__ equ 1
 externdef		DIID_RecordsetEvents:IID
 .comdef RecordsetEvents
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :UINT, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     .ends
 
 endif
@@ -973,42 +974,42 @@ ifndef __Connection15_INTERFACE_DEFINED__
 __Connection15_INTERFACE_DEFINED__ equ 1
 externdef		IID_Connection15:IID
 .comdef Connection15
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :UINT, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Properties      proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Properties	proc :ptr
     get_ConnectionString proc :ptr
     put_ConnectionString proc :BSTR
-    get_CommandTimeout  proc :ptr
-    put_CommandTimeout  proc :LONG
+    get_CommandTimeout	proc :ptr
+    put_CommandTimeout	proc :LONG
     get_ConnectionTimeout proc :ptr
     put_ConnectionTimeout proc :LONG
-    get_Version         proc :ptr
-    Close               proc
-    Execute             proc :BSTR, :ptr, :LONG, :ptr
-    BeginTrans          proc :ptr
-    CommitTrans         proc
-    RollbackTrans       proc
-    Open                proc :BSTR, :BSTR, :BSTR, :LONG
-    get_Errors          proc :ptr
+    get_Version		proc :ptr
+    Close		proc
+    Execute		proc :BSTR, :ptr, :LONG, :ptr
+    BeginTrans		proc :ptr
+    CommitTrans		proc
+    RollbackTrans	proc
+    Open		proc :BSTR, :BSTR, :BSTR, :LONG
+    get_Errors		proc :ptr
     get_DefaultDatabase proc :ptr
     put_DefaultDatabase proc :BSTR
-    get_IsolationLevel  proc :ptr
-    put_IsolationLevel  proc :IsolationLevelEnum
-    get_Attributes      proc :ptr
-    put_Attributes      proc :LONG
-    get_CursorLocation  proc :ptr
-    put_CursorLocation  proc :CursorLocationEnum
-    get_Mode            proc :ptr
-    put_Mode            proc :ConnectModeEnum
-    get_Provider        proc :ptr
-    put_Provider        proc :BSTR
-    get_State           proc :ptr
-    OpenSchema          proc :SchemaEnum, :VARIANT, :VARIANT, :ptr
+    get_IsolationLevel	proc :ptr
+    put_IsolationLevel	proc :IsolationLevelEnum
+    get_Attributes	proc :ptr
+    put_Attributes	proc :LONG
+    get_CursorLocation	proc :ptr
+    put_CursorLocation	proc :CursorLocationEnum
+    get_Mode		proc :ptr
+    put_Mode		proc :ConnectModeEnum
+    get_Provider	proc :ptr
+    put_Provider	proc :BSTR
+    get_State		proc :ptr
+    OpenSchema		proc :SchemaEnum, :VARIANT, :VARIANT, :ptr
     .ends
 
 endif
@@ -1016,43 +1017,43 @@ ifndef ___Connection_INTERFACE_DEFINED__
 ___Connection_INTERFACE_DEFINED__ equ 1
 externdef		IID__Connection:IID
 .comdef _Connection
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :UINT, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Properties      proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Properties	proc :ptr
     get_ConnectionString proc :ptr
     put_ConnectionString proc :BSTR
-    get_CommandTimeout  proc :ptr
-    put_CommandTimeout  proc :LONG
+    get_CommandTimeout	proc :ptr
+    put_CommandTimeout	proc :LONG
     get_ConnectionTimeout proc :ptr
     put_ConnectionTimeout proc :LONG
-    get_Version         proc :ptr
-    Close               proc
-    Execute             proc :BSTR, :ptr, :LONG, :ptr
-    BeginTrans          proc :ptr
-    CommitTrans         proc
-    RollbackTrans       proc
-    Open                proc :BSTR, :BSTR, :BSTR, :LONG
-    get_Errors          proc :ptr
+    get_Version		proc :ptr
+    Close		proc
+    Execute		proc :BSTR, :ptr, :LONG, :ptr
+    BeginTrans		proc :ptr
+    CommitTrans		proc
+    RollbackTrans	proc
+    Open		proc :BSTR, :BSTR, :BSTR, :LONG
+    get_Errors		proc :ptr
     get_DefaultDatabase proc :ptr
     put_DefaultDatabase proc :BSTR
-    get_IsolationLevel  proc :ptr
-    put_IsolationLevel  proc :IsolationLevelEnum
-    get_Attributes      proc :ptr
-    put_Attributes      proc :LONG
-    get_CursorLocation  proc :ptr
-    put_CursorLocation  proc :CursorLocationEnum
-    get_Mode            proc :ptr
-    put_Mode            proc :ConnectModeEnum
-    get_Provider        proc :ptr
-    put_Provider        proc :BSTR
-    get_State           proc :ptr
-    OpenSchema          proc :SchemaEnum, :VARIANT, :VARIANT, :ptr
-    Cancel              proc
+    get_IsolationLevel	proc :ptr
+    put_IsolationLevel	proc :IsolationLevelEnum
+    get_Attributes	proc :ptr
+    put_Attributes	proc :LONG
+    get_CursorLocation	proc :ptr
+    put_CursorLocation	proc :CursorLocationEnum
+    get_Mode		proc :ptr
+    put_Mode		proc :ConnectModeEnum
+    get_Provider	proc :ptr
+    put_Provider	proc :BSTR
+    get_State		proc :ptr
+    OpenSchema		proc :SchemaEnum, :VARIANT, :VARIANT, :ptr
+    Cancel		proc
     .ends
 
 endif
@@ -1060,12 +1061,12 @@ ifndef __ADOConnectionConstruction15_INTERFACE_DEFINED__
 __ADOConnectionConstruction15_INTERFACE_DEFINED__ equ 1
 externdef		IID_ADOConnectionConstruction15:IID
 .comdef ADOConnectionConstruction15
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    get_DSO             proc :ptr
-    get_Session         proc :ptr
-    WrapDSOandSession   proc :ptr, :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    get_DSO		proc :ptr
+    get_Session		proc :ptr
+    WrapDSOandSession	proc :ptr, :ptr
     .ends
 
 endif
@@ -1073,12 +1074,12 @@ ifndef __ADOConnectionConstruction_INTERFACE_DEFINED__
 __ADOConnectionConstruction_INTERFACE_DEFINED__ equ 1
 externdef		IID_ADOConnectionConstruction:IID
 .comdef ADOConnectionConstruction
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    get_DSO             proc :ptr
-    get_Session         proc :ptr
-    WrapDSOandSession   proc :ptr, :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    get_DSO		proc :ptr
+    get_Session		proc :ptr
+    WrapDSOandSession	proc :ptr, :ptr
     .ends
 
 endif
@@ -1087,33 +1088,33 @@ ifndef ___Record_INTERFACE_DEFINED__
 ___Record_INTERFACE_DEFINED__ equ 1
 externdef		IID__Record:IID
 .comdef _Record
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :UINT, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Properties      proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Properties	proc :ptr
     get_ActiveConnection proc :ptr
     put_ActiveConnection proc :BSTR
     putref_ActiveADOConnection proc :ptr
-    get_State           proc :ptr
-    get_Source          proc :ptr
-    put_Source          proc :BSTR
-    putref_Source       proc :ptr
-    get_Mode            proc :ptr
-    put_Mode            proc :ConnectModeEnum
-    get_ParentURL       proc :ptr
-    MoveADORecord       proc :BSTR, :BSTR, :BSTR, :BSTR, :MoveRecordOptionsEnum, :VARIANT_BOOL, :ptr
-    CopyADORecord       proc :BSTR, :BSTR, :BSTR, :BSTR, :CopyRecordOptionsEnum, :VARIANT_BOOL, :ptr
-    DeleteADORecord     proc :BSTR, :VARIANT_BOOL
-    Open                proc :VARIANT, :VARIANT, :ConnectModeEnum, :RecordCreateOptionsEnum, :RecordOpenOptionsEnum, :BSTR, :BSTR
-    Close               proc
-    get_Fields          proc :ptr
-    get_RecordType      proc :ptr
-    GetChildren         proc :ptr
-    Cancel              proc
+    get_State		proc :ptr
+    get_Source		proc :ptr
+    put_Source		proc :BSTR
+    putref_Source	proc :ptr
+    get_Mode		proc :ptr
+    put_Mode		proc :ConnectModeEnum
+    get_ParentURL	proc :ptr
+    MoveADORecord	proc :BSTR, :BSTR, :BSTR, :BSTR, :MoveRecordOptionsEnum, :VARIANT_BOOL, :ptr
+    CopyADORecord	proc :BSTR, :BSTR, :BSTR, :BSTR, :CopyRecordOptionsEnum, :VARIANT_BOOL, :ptr
+    DeleteADORecord	proc :BSTR, :VARIANT_BOOL
+    Open		proc :VARIANT, :VARIANT, :ConnectModeEnum, :RecordCreateOptionsEnum, :RecordOpenOptionsEnum, :BSTR, :BSTR
+    Close		proc
+    get_Fields		proc :ptr
+    get_RecordType	proc :ptr
+    GetChildren		proc :ptr
+    Cancel		proc
     .ends
 
 endif
@@ -1122,39 +1123,39 @@ ifndef ___Stream_INTERFACE_DEFINED__
 ___Stream_INTERFACE_DEFINED__ equ 1
 externdef		IID__Stream:IID
 .comdef _Stream
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :UINT, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Size            proc :ptr
-    get_EOS             proc :ptr
-    get_Position        proc :ptr
-    put_Position        proc :ADO_LONGPTR
-    get_Type            proc :ptr
-    put_Type            proc :StreamTypeEnum
-    get_LineSeparator   proc :ptr
-    put_LineSeparator   proc :LineSeparatorEnum
-    get_State           proc :ptr
-    get_Mode            proc :ptr
-    put_Mode            proc :ConnectModeEnum
-    get_Charset         proc :ptr
-    put_Charset         proc :BSTR
-    Read                proc :LONG, :ptr
-    Open                proc :VARIANT, :ConnectModeEnum, :StreamOpenOptionsEnum, :BSTR, :BSTR
-    Close               proc
-    SkipLine            proc
-    Write               proc :VARIANT
-    SetEOS              proc
-    CopyTo              proc :ptr, :ADO_LONGPTR
-    Flush               proc
-    SaveToFile          proc :BSTR, :SaveOptionsEnum
-    LoadFromFile        proc :BSTR
-    ReadText            proc :LONG, :ptr
-    WriteText           proc :BSTR, :StreamWriteEnum
-    Cancel              proc
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Size		proc :ptr
+    get_EOS		proc :ptr
+    get_Position	proc :ptr
+    put_Position	proc :ADO_LONGPTR
+    get_Type		proc :ptr
+    put_Type		proc :StreamTypeEnum
+    get_LineSeparator	proc :ptr
+    put_LineSeparator	proc :LineSeparatorEnum
+    get_State		proc :ptr
+    get_Mode		proc :ptr
+    put_Mode		proc :ConnectModeEnum
+    get_Charset		proc :ptr
+    put_Charset		proc :BSTR
+    Read		proc :LONG, :ptr
+    Open		proc :VARIANT, :ConnectModeEnum, :StreamOpenOptionsEnum, :BSTR, :BSTR
+    Close		proc
+    SkipLine		proc
+    Write		proc :VARIANT
+    SetEOS		proc
+    CopyTo		proc :ptr, :ADO_LONGPTR
+    Flush		proc
+    SaveToFile		proc :BSTR, :SaveOptionsEnum
+    LoadFromFile	proc :BSTR
+    ReadText		proc :LONG, :ptr
+    WriteText		proc :BSTR, :StreamWriteEnum
+    Cancel		proc
     .ends
 
 endif
@@ -1163,16 +1164,16 @@ ifndef __ADORecordConstruction_INTERFACE_DEFINED__
 __ADORecordConstruction_INTERFACE_DEFINED__ equ 1
 externdef		IID_ADORecordConstruction:IID
 .comdef ADORecordConstruction
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :UINT, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Row             proc :ptr
-    put_Row             proc :ptr
-    put_ParentRow       proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Row		proc :ptr
+    put_Row		proc :ptr
+    put_ParentRow	proc :ptr
     .ends
 
 endif
@@ -1180,15 +1181,15 @@ ifndef __ADOStreamConstruction_INTERFACE_DEFINED__
 __ADOStreamConstruction_INTERFACE_DEFINED__ equ 1
 externdef		IID_ADOStreamConstruction:IID
 .comdef ADOStreamConstruction
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :UINT, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Stream          proc :ptr
-    put_Stream          proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Stream		proc :ptr
+    put_Stream		proc :ptr
     .ends
 
 endif
@@ -1196,11 +1197,11 @@ ifndef __ADOCommandConstruction_INTERFACE_DEFINED__
 __ADOCommandConstruction_INTERFACE_DEFINED__ equ 1
 externdef		IID_ADOCommandConstruction:IID
 .comdef ADOCommandConstruction
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    get_OLEDBCommand    proc :ptr
-    put_OLEDBCommand    proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    get_OLEDBCommand	proc :ptr
+    put_OLEDBCommand	proc :ptr
     .ends
 
 endif
@@ -1211,74 +1212,74 @@ ifndef __Recordset15_INTERFACE_DEFINED__
 __Recordset15_INTERFACE_DEFINED__ equ 1
 externdef		IID_Recordset15:IID
 .comdef Recordset15
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :UINT, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Properties      proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Properties	proc :ptr
     get_AbsolutePosition proc :ptr
     put_AbsolutePosition proc :PositionEnum_Param
     putref_ActiveADOConnection proc :ptr
     put_ActiveConnection proc :VARIANT
     get_ActiveConnection proc :ptr
-    get_BOF             proc :ptr
-    get_Bookmark        proc :ptr
-    put_Bookmark        proc :VARIANT
-    get_CacheSize       proc :ptr
-    put_CacheSize       proc :LONG
-    get_CursorType      proc :ptr
-    put_CursorType      proc :CursorTypeEnum
-    get_EOF             proc :ptr
-    get_Fields          proc :ptr
-    get_LockType        proc :ptr
-    put_LockType        proc :LockTypeEnum
-    get_MaxRecords      proc :ptr
-    put_MaxRecords      proc :ADO_LONGPTR
-    get_RecordCount     proc :ptr
-    putref_Source       proc :ptr
-    put_Source          proc :BSTR
-    get_Source          proc :ptr
-    AddNew              proc :VARIANT, :VARIANT
-    CancelUpdate        proc
-    Close               proc
-    Delete              proc :AffectEnum
-    GetRows             proc :LONG, :VARIANT, :VARIANT, :ptr
-    Move                proc :ADO_LONGPTR, :VARIANT
-    MoveNext            proc
-    MovePrevious        proc
-    MoveFirst           proc
-    MoveLast            proc
-    Open                proc :VARIANT, :VARIANT, :CursorTypeEnum, :LockTypeEnum, :LONG
-    Requery             proc :LONG
-    _xResync            proc :AffectEnum
-    Update              proc :VARIANT, :VARIANT
-    get_AbsolutePage    proc :ptr
-    put_AbsolutePage    proc :PositionEnum_Param
-    get_EditMode        proc :ptr
-    get_Filter          proc :ptr
-    put_Filter          proc :VARIANT
-    get_PageCount       proc :ptr
-    get_PageSize        proc :ptr
-    put_PageSize        proc :LONG
-    get_Sort            proc :ptr
-    put_Sort            proc :BSTR
-    get_Status          proc :ptr
-    get_State           proc :ptr
-    _xClone             proc :ptr
-    UpdateBatch         proc :AffectEnum
-    CancelBatch         proc :AffectEnum
-    get_CursorLocation  proc :ptr
-    put_CursorLocation  proc :CursorLocationEnum
-    NextADORecordset    proc :ptr, :ptr
-    Supports            proc :CursorOptionEnum, :ptr
-    get_Collect         proc :VARIANT, :ptr
-    put_Collect         proc :VARIANT, :VARIANT
-    get_MarshalOptions  proc :ptr
-    put_MarshalOptions  proc :MarshalOptionsEnum
-    Find                proc :BSTR, :ADO_LONGPTR, :SearchDirectionEnum, :VARIANT
+    get_BOF		proc :ptr
+    get_Bookmark	proc :ptr
+    put_Bookmark	proc :VARIANT
+    get_CacheSize	proc :ptr
+    put_CacheSize	proc :LONG
+    get_CursorType	proc :ptr
+    put_CursorType	proc :CursorTypeEnum
+    get_EOF		proc :ptr
+    get_Fields		proc :ptr
+    get_LockType	proc :ptr
+    put_LockType	proc :LockTypeEnum
+    get_MaxRecords	proc :ptr
+    put_MaxRecords	proc :ADO_LONGPTR
+    get_RecordCount	proc :ptr
+    putref_Source	proc :ptr
+    put_Source		proc :BSTR
+    get_Source		proc :ptr
+    AddNew		proc :VARIANT, :VARIANT
+    CancelUpdate	proc
+    Close		proc
+    Delete		proc :AffectEnum
+    GetRows		proc :LONG, :VARIANT, :VARIANT, :ptr
+    Move		proc :ADO_LONGPTR, :VARIANT
+    MoveNext		proc
+    MovePrevious	proc
+    MoveFirst		proc
+    MoveLast		proc
+    Open		proc :VARIANT, :VARIANT, :CursorTypeEnum, :LockTypeEnum, :LONG
+    Requery		proc :LONG
+    _xResync		proc :AffectEnum
+    Update		proc :VARIANT, :VARIANT
+    get_AbsolutePage	proc :ptr
+    put_AbsolutePage	proc :PositionEnum_Param
+    get_EditMode	proc :ptr
+    get_Filter		proc :ptr
+    put_Filter		proc :VARIANT
+    get_PageCount	proc :ptr
+    get_PageSize	proc :ptr
+    put_PageSize	proc :LONG
+    get_Sort		proc :ptr
+    put_Sort		proc :BSTR
+    get_Status		proc :ptr
+    get_State		proc :ptr
+    _xClone		proc :ptr
+    UpdateBatch		proc :AffectEnum
+    CancelBatch		proc :AffectEnum
+    get_CursorLocation	proc :ptr
+    put_CursorLocation	proc :CursorLocationEnum
+    NextADORecordset	proc :ptr, :ptr
+    Supports		proc :CursorOptionEnum, :ptr
+    get_Collect		proc :VARIANT, :ptr
+    put_Collect		proc :VARIANT, :VARIANT
+    get_MarshalOptions	proc :ptr
+    put_MarshalOptions	proc :MarshalOptionsEnum
+    Find		proc :BSTR, :ADO_LONGPTR, :SearchDirectionEnum, :VARIANT
     .ends
 
 endif
@@ -1286,87 +1287,87 @@ ifndef __Recordset20_INTERFACE_DEFINED__
 __Recordset20_INTERFACE_DEFINED__ equ 1
 externdef		IID_Recordset20:IID
 .comdef Recordset20
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :UINT, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Properties      proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Properties	proc :ptr
     get_AbsolutePosition proc :ptr
     put_AbsolutePosition proc :PositionEnum_Param
     putref_ActiveADOConnection proc :ptr
     put_ActiveConnection proc :VARIANT
     get_ActiveConnection proc :ptr
-    get_BOF             proc :ptr
-    get_Bookmark        proc :ptr
-    put_Bookmark        proc :VARIANT
-    get_CacheSize       proc :ptr
-    put_CacheSize       proc :LONG
-    get_CursorType      proc :ptr
-    put_CursorType      proc :CursorTypeEnum
-    get_EOF             proc :ptr
-    get_Fields          proc :ptr
-    get_LockType        proc :ptr
-    put_LockType        proc :LockTypeEnum
-    get_MaxRecords      proc :ptr
-    put_MaxRecords      proc :ADO_LONGPTR
-    get_RecordCount     proc :ptr
-    putref_Source       proc :ptr
-    put_Source          proc :BSTR
-    get_Source          proc :ptr
-    AddNew              proc :VARIANT, :VARIANT
-    CancelUpdate        proc
-    Close               proc
-    Delete              proc :AffectEnum
-    GetRows             proc :LONG, :VARIANT, :VARIANT, :ptr
-    Move                proc :ADO_LONGPTR, :VARIANT
-    MoveNext            proc
-    MovePrevious        proc
-    MoveFirst           proc
-    MoveLast            proc
-    Open                proc :VARIANT, :VARIANT, :CursorTypeEnum, :LockTypeEnum, :LONG
-    Requery             proc :LONG
-    _xResync            proc :AffectEnum
-    Update              proc :VARIANT, :VARIANT
-    get_AbsolutePage    proc :ptr
-    put_AbsolutePage    proc :PositionEnum_Param
-    get_EditMode        proc :ptr
-    get_Filter          proc :ptr
-    put_Filter          proc :VARIANT
-    get_PageCount       proc :ptr
-    get_PageSize        proc :ptr
-    put_PageSize        proc :LONG
-    get_Sort            proc :ptr
-    put_Sort            proc :BSTR
-    get_Status          proc :ptr
-    get_State           proc :ptr
-    _xClone             proc :ptr
-    UpdateBatch         proc :AffectEnum
-    CancelBatch         proc :AffectEnum
-    get_CursorLocation  proc :ptr
-    put_CursorLocation  proc :CursorLocationEnum
-    NextADORecordset    proc :ptr, :ptr
-    Supports            proc :CursorOptionEnum, :ptr
-    get_Collect         proc :VARIANT, :ptr
-    put_Collect         proc :VARIANT, :VARIANT
-    get_MarshalOptions  proc :ptr
-    put_MarshalOptions  proc :MarshalOptionsEnum
-    Find                proc :BSTR, :ADO_LONGPTR, :SearchDirectionEnum, :VARIANT
-    Cancel              proc
-    get_DataSource      proc :ptr
-    putref_DataSource   proc :ptr
-    _xSave              proc :BSTR, :PersistFormatEnum
-    get_ActiveCommand   proc :ptr
-    put_StayInSync      proc :VARIANT_BOOL
-    get_StayInSync      proc :ptr
-    GetString           proc :StringFormatEnum, :LONG, :BSTR, :BSTR, :BSTR, :ptr
-    get_DataMember      proc :ptr
-    put_DataMember      proc :BSTR
-    CompareBookmarks    proc :VARIANT, :VARIANT, :ptr
-    Clone               proc :LockTypeEnum, :ptr
-    Resync              proc :AffectEnum, :ResyncEnum
+    get_BOF		proc :ptr
+    get_Bookmark	proc :ptr
+    put_Bookmark	proc :VARIANT
+    get_CacheSize	proc :ptr
+    put_CacheSize	proc :LONG
+    get_CursorType	proc :ptr
+    put_CursorType	proc :CursorTypeEnum
+    get_EOF		proc :ptr
+    get_Fields		proc :ptr
+    get_LockType	proc :ptr
+    put_LockType	proc :LockTypeEnum
+    get_MaxRecords	proc :ptr
+    put_MaxRecords	proc :ADO_LONGPTR
+    get_RecordCount	proc :ptr
+    putref_Source	proc :ptr
+    put_Source		proc :BSTR
+    get_Source		proc :ptr
+    AddNew		proc :VARIANT, :VARIANT
+    CancelUpdate	proc
+    Close		proc
+    Delete		proc :AffectEnum
+    GetRows		proc :LONG, :VARIANT, :VARIANT, :ptr
+    Move		proc :ADO_LONGPTR, :VARIANT
+    MoveNext		proc
+    MovePrevious	proc
+    MoveFirst		proc
+    MoveLast		proc
+    Open		proc :VARIANT, :VARIANT, :CursorTypeEnum, :LockTypeEnum, :LONG
+    Requery		proc :LONG
+    _xResync		proc :AffectEnum
+    Update		proc :VARIANT, :VARIANT
+    get_AbsolutePage	proc :ptr
+    put_AbsolutePage	proc :PositionEnum_Param
+    get_EditMode	proc :ptr
+    get_Filter		proc :ptr
+    put_Filter		proc :VARIANT
+    get_PageCount	proc :ptr
+    get_PageSize	proc :ptr
+    put_PageSize	proc :LONG
+    get_Sort		proc :ptr
+    put_Sort		proc :BSTR
+    get_Status		proc :ptr
+    get_State		proc :ptr
+    _xClone		proc :ptr
+    UpdateBatch		proc :AffectEnum
+    CancelBatch		proc :AffectEnum
+    get_CursorLocation	proc :ptr
+    put_CursorLocation	proc :CursorLocationEnum
+    NextADORecordset	proc :ptr, :ptr
+    Supports		proc :CursorOptionEnum, :ptr
+    get_Collect		proc :VARIANT, :ptr
+    put_Collect		proc :VARIANT, :VARIANT
+    get_MarshalOptions	proc :ptr
+    put_MarshalOptions	proc :MarshalOptionsEnum
+    Find		proc :BSTR, :ADO_LONGPTR, :SearchDirectionEnum, :VARIANT
+    Cancel		proc
+    get_DataSource	proc :ptr
+    putref_DataSource	proc :ptr
+    _xSave		proc :BSTR, :PersistFormatEnum
+    get_ActiveCommand	proc :ptr
+    put_StayInSync	proc :VARIANT_BOOL
+    get_StayInSync	proc :ptr
+    GetString		proc :StringFormatEnum, :LONG, :BSTR, :BSTR, :BSTR, :ptr
+    get_DataMember	proc :ptr
+    put_DataMember	proc :BSTR
+    CompareBookmarks	proc :VARIANT, :VARIANT, :ptr
+    Clone		proc :LockTypeEnum, :ptr
+    Resync		proc :AffectEnum, :ResyncEnum
     .ends
 
 endif
@@ -1374,90 +1375,90 @@ ifndef __Recordset21_INTERFACE_DEFINED__
 __Recordset21_INTERFACE_DEFINED__ equ 1
 externdef		IID_Recordset21:IID
 .comdef Recordset21
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :UINT, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Properties      proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Properties	proc :ptr
     get_AbsolutePosition proc :ptr
     put_AbsolutePosition proc :PositionEnum_Param
     putref_ActiveADOConnection proc :ptr
     put_ActiveConnection proc :VARIANT
     get_ActiveConnection proc :ptr
-    get_BOF             proc :ptr
-    get_Bookmark        proc :ptr
-    put_Bookmark        proc :VARIANT
-    get_CacheSize       proc :ptr
-    put_CacheSize       proc :LONG
-    get_CursorType      proc :ptr
-    put_CursorType      proc :CursorTypeEnum
-    get_EOF             proc :ptr
-    get_Fields          proc :ptr
-    get_LockType        proc :ptr
-    put_LockType        proc :LockTypeEnum
-    get_MaxRecords      proc :ptr
-    put_MaxRecords      proc :ADO_LONGPTR
-    get_RecordCount     proc :ptr
-    putref_Source       proc :ptr
-    put_Source          proc :BSTR
-    get_Source          proc :ptr
-    AddNew              proc :VARIANT, :VARIANT
-    CancelUpdate        proc
-    Close               proc
-    Delete              proc :AffectEnum
-    GetRows             proc :LONG, :VARIANT, :VARIANT, :ptr
-    Move                proc :ADO_LONGPTR, :VARIANT
-    MoveNext            proc
-    MovePrevious        proc
-    MoveFirst           proc
-    MoveLast            proc
-    Open                proc :VARIANT, :VARIANT, :CursorTypeEnum, :LockTypeEnum, :LONG
-    Requery             proc :LONG
-    _xResync            proc :AffectEnum
-    Update              proc :VARIANT, :VARIANT
-    get_AbsolutePage    proc :ptr
-    put_AbsolutePage    proc :PositionEnum_Param
-    get_EditMode        proc :ptr
-    get_Filter          proc :ptr
-    put_Filter          proc :VARIANT
-    get_PageCount       proc :ptr
-    get_PageSize        proc :ptr
-    put_PageSize        proc :LONG
-    get_Sort            proc :ptr
-    put_Sort            proc :BSTR
-    get_Status          proc :ptr
-    get_State           proc :ptr
-    _xClone             proc :ptr
-    UpdateBatch         proc :AffectEnum
-    CancelBatch         proc :AffectEnum
-    get_CursorLocation  proc :ptr
-    put_CursorLocation  proc :CursorLocationEnum
-    NextADORecordset    proc :ptr, :ptr
-    Supports            proc :CursorOptionEnum, :ptr
-    get_Collect         proc :VARIANT, :ptr
-    put_Collect         proc :VARIANT, :VARIANT
-    get_MarshalOptions  proc :ptr
-    put_MarshalOptions  proc :MarshalOptionsEnum
-    Find                proc :BSTR, :ADO_LONGPTR, :SearchDirectionEnum, :VARIANT
-    Cancel              proc
-    get_DataSource      proc :ptr
-    putref_DataSource   proc :ptr
-    _xSave              proc :BSTR, :PersistFormatEnum
-    get_ActiveCommand   proc :ptr
-    put_StayInSync      proc :VARIANT_BOOL
-    get_StayInSync      proc :ptr
-    GetString           proc :StringFormatEnum, :LONG, :BSTR, :BSTR, :BSTR, :ptr
-    get_DataMember      proc :ptr
-    put_DataMember      proc :BSTR
-    CompareBookmarks    proc :VARIANT, :VARIANT, :ptr
-    Clone               proc :LockTypeEnum, :ptr
-    Resync              proc :AffectEnum, :ResyncEnum
-    Seek                proc :VARIANT, :SeekEnum
-    put_Index           proc :BSTR
-    get_Index           proc :ptr
+    get_BOF		proc :ptr
+    get_Bookmark	proc :ptr
+    put_Bookmark	proc :VARIANT
+    get_CacheSize	proc :ptr
+    put_CacheSize	proc :LONG
+    get_CursorType	proc :ptr
+    put_CursorType	proc :CursorTypeEnum
+    get_EOF		proc :ptr
+    get_Fields		proc :ptr
+    get_LockType	proc :ptr
+    put_LockType	proc :LockTypeEnum
+    get_MaxRecords	proc :ptr
+    put_MaxRecords	proc :ADO_LONGPTR
+    get_RecordCount	proc :ptr
+    putref_Source	proc :ptr
+    put_Source		proc :BSTR
+    get_Source		proc :ptr
+    AddNew		proc :VARIANT, :VARIANT
+    CancelUpdate	proc
+    Close		proc
+    Delete		proc :AffectEnum
+    GetRows		proc :LONG, :VARIANT, :VARIANT, :ptr
+    Move		proc :ADO_LONGPTR, :VARIANT
+    MoveNext		proc
+    MovePrevious	proc
+    MoveFirst		proc
+    MoveLast		proc
+    Open		proc :VARIANT, :VARIANT, :CursorTypeEnum, :LockTypeEnum, :LONG
+    Requery		proc :LONG
+    _xResync		proc :AffectEnum
+    Update		proc :VARIANT, :VARIANT
+    get_AbsolutePage	proc :ptr
+    put_AbsolutePage	proc :PositionEnum_Param
+    get_EditMode	proc :ptr
+    get_Filter		proc :ptr
+    put_Filter		proc :VARIANT
+    get_PageCount	proc :ptr
+    get_PageSize	proc :ptr
+    put_PageSize	proc :LONG
+    get_Sort		proc :ptr
+    put_Sort		proc :BSTR
+    get_Status		proc :ptr
+    get_State		proc :ptr
+    _xClone		proc :ptr
+    UpdateBatch		proc :AffectEnum
+    CancelBatch		proc :AffectEnum
+    get_CursorLocation	proc :ptr
+    put_CursorLocation	proc :CursorLocationEnum
+    NextADORecordset	proc :ptr, :ptr
+    Supports		proc :CursorOptionEnum, :ptr
+    get_Collect		proc :VARIANT, :ptr
+    put_Collect		proc :VARIANT, :VARIANT
+    get_MarshalOptions	proc :ptr
+    put_MarshalOptions	proc :MarshalOptionsEnum
+    Find		proc :BSTR, :ADO_LONGPTR, :SearchDirectionEnum, :VARIANT
+    Cancel		proc
+    get_DataSource	proc :ptr
+    putref_DataSource	proc :ptr
+    _xSave		proc :BSTR, :PersistFormatEnum
+    get_ActiveCommand	proc :ptr
+    put_StayInSync	proc :VARIANT_BOOL
+    get_StayInSync	proc :ptr
+    GetString		proc :StringFormatEnum, :LONG, :BSTR, :BSTR, :BSTR, :ptr
+    get_DataMember	proc :ptr
+    put_DataMember	proc :BSTR
+    CompareBookmarks	proc :VARIANT, :VARIANT, :ptr
+    Clone		proc :LockTypeEnum, :ptr
+    Resync		proc :AffectEnum, :ResyncEnum
+    Seek		proc :VARIANT, :SeekEnum
+    put_Index		proc :BSTR
+    get_Index		proc :ptr
     .ends
 
 endif
@@ -1465,91 +1466,91 @@ ifndef ___Recordset_INTERFACE_DEFINED__
 ___Recordset_INTERFACE_DEFINED__ equ 1
 externdef		IID__Recordset:IID
 .comdef _Recordset
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :UINT, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Properties      proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Properties	proc :ptr
     get_AbsolutePosition proc :ptr
     put_AbsolutePosition proc :PositionEnum_Param
     putref_ActiveADOConnection proc :ptr
     put_ActiveConnection proc :VARIANT
     get_ActiveConnection proc :ptr
-    get_BOF             proc :ptr
-    get_Bookmark        proc :ptr
-    put_Bookmark        proc :VARIANT
-    get_CacheSize       proc :ptr
-    put_CacheSize       proc :LONG
-    get_CursorType      proc :ptr
-    put_CursorType      proc :CursorTypeEnum
-    get_EOF             proc :ptr
-    get_Fields          proc :ptr
-    get_LockType        proc :ptr
-    put_LockType        proc :LockTypeEnum
-    get_MaxRecords      proc :ptr
-    put_MaxRecords      proc :ADO_LONGPTR
-    get_RecordCount     proc :ptr
-    putref_Source       proc :ptr
-    put_Source          proc :BSTR
-    get_Source          proc :ptr
-    AddNew              proc :VARIANT, :VARIANT
-    CancelUpdate        proc
-    Close               proc
-    Delete              proc :AffectEnum
-    GetRows             proc :LONG, :VARIANT, :VARIANT, :ptr
-    Move                proc :ADO_LONGPTR, :VARIANT
-    MoveNext            proc
-    MovePrevious        proc
-    MoveFirst           proc
-    MoveLast            proc
-    Open                proc :VARIANT, :VARIANT, :CursorTypeEnum, :LockTypeEnum, :LONG
-    Requery             proc :LONG
-    _xResync            proc :AffectEnum
-    Update              proc :VARIANT, :VARIANT
-    get_AbsolutePage    proc :ptr
-    put_AbsolutePage    proc :PositionEnum_Param
-    get_EditMode        proc :ptr
-    get_Filter          proc :ptr
-    put_Filter          proc :VARIANT
-    get_PageCount       proc :ptr
-    get_PageSize        proc :ptr
-    put_PageSize        proc :LONG
-    get_Sort            proc :ptr
-    put_Sort            proc :BSTR
-    get_Status          proc :ptr
-    get_State           proc :ptr
-    _xClone             proc :ptr
-    UpdateBatch         proc :AffectEnum
-    CancelBatch         proc :AffectEnum
-    get_CursorLocation  proc :ptr
-    put_CursorLocation  proc :CursorLocationEnum
-    NextADORecordset    proc :ptr, :ptr
-    Supports            proc :CursorOptionEnum, :ptr
-    get_Collect         proc :VARIANT, :ptr
-    put_Collect         proc :VARIANT, :VARIANT
-    get_MarshalOptions  proc :ptr
-    put_MarshalOptions  proc :MarshalOptionsEnum
-    Find                proc :BSTR, :ADO_LONGPTR, :SearchDirectionEnum, :VARIANT
-    Cancel              proc
-    get_DataSource      proc :ptr
-    putref_DataSource   proc :ptr
-    _xSave              proc :BSTR, :PersistFormatEnum
-    get_ActiveCommand   proc :ptr
-    put_StayInSync      proc :VARIANT_BOOL
-    get_StayInSync      proc :ptr
-    GetString           proc :StringFormatEnum, :LONG, :BSTR, :BSTR, :BSTR, :ptr
-    get_DataMember      proc :ptr
-    put_DataMember      proc :BSTR
-    CompareBookmarks    proc :VARIANT, :VARIANT, :ptr
-    Clone               proc :LockTypeEnum, :ptr
-    Resync              proc :AffectEnum, :ResyncEnum
-    Seek                proc :VARIANT, :SeekEnum
-    put_Index           proc :BSTR
-    get_Index           proc :ptr
-    Save                proc :VARIANT, :PersistFormatEnum
+    get_BOF		proc :ptr
+    get_Bookmark	proc :ptr
+    put_Bookmark	proc :VARIANT
+    get_CacheSize	proc :ptr
+    put_CacheSize	proc :LONG
+    get_CursorType	proc :ptr
+    put_CursorType	proc :CursorTypeEnum
+    get_EOF		proc :ptr
+    get_Fields		proc :ptr
+    get_LockType	proc :ptr
+    put_LockType	proc :LockTypeEnum
+    get_MaxRecords	proc :ptr
+    put_MaxRecords	proc :ADO_LONGPTR
+    get_RecordCount	proc :ptr
+    putref_Source	proc :ptr
+    put_Source		proc :BSTR
+    get_Source		proc :ptr
+    AddNew		proc :VARIANT, :VARIANT
+    CancelUpdate	proc
+    Close		proc
+    Delete		proc :AffectEnum
+    GetRows		proc :LONG, :VARIANT, :VARIANT, :ptr
+    Move		proc :ADO_LONGPTR, :VARIANT
+    MoveNext		proc
+    MovePrevious	proc
+    MoveFirst		proc
+    MoveLast		proc
+    Open		proc :VARIANT, :VARIANT, :CursorTypeEnum, :LockTypeEnum, :LONG
+    Requery		proc :LONG
+    _xResync		proc :AffectEnum
+    Update		proc :VARIANT, :VARIANT
+    get_AbsolutePage	proc :ptr
+    put_AbsolutePage	proc :PositionEnum_Param
+    get_EditMode	proc :ptr
+    get_Filter		proc :ptr
+    put_Filter		proc :VARIANT
+    get_PageCount	proc :ptr
+    get_PageSize	proc :ptr
+    put_PageSize	proc :LONG
+    get_Sort		proc :ptr
+    put_Sort		proc :BSTR
+    get_Status		proc :ptr
+    get_State		proc :ptr
+    _xClone		proc :ptr
+    UpdateBatch		proc :AffectEnum
+    CancelBatch		proc :AffectEnum
+    get_CursorLocation	proc :ptr
+    put_CursorLocation	proc :CursorLocationEnum
+    NextADORecordset	proc :ptr, :ptr
+    Supports		proc :CursorOptionEnum, :ptr
+    get_Collect		proc :VARIANT, :ptr
+    put_Collect		proc :VARIANT, :VARIANT
+    get_MarshalOptions	proc :ptr
+    put_MarshalOptions	proc :MarshalOptionsEnum
+    Find		proc :BSTR, :ADO_LONGPTR, :SearchDirectionEnum, :VARIANT
+    Cancel		proc
+    get_DataSource	proc :ptr
+    putref_DataSource	proc :ptr
+    _xSave		proc :BSTR, :PersistFormatEnum
+    get_ActiveCommand	proc :ptr
+    put_StayInSync	proc :VARIANT_BOOL
+    get_StayInSync	proc :ptr
+    GetString		proc :StringFormatEnum, :LONG, :BSTR, :BSTR, :BSTR, :ptr
+    get_DataMember	proc :ptr
+    put_DataMember	proc :BSTR
+    CompareBookmarks	proc :VARIANT, :VARIANT, :ptr
+    Clone		proc :LockTypeEnum, :ptr
+    Resync		proc :AffectEnum, :ResyncEnum
+    Seek		proc :VARIANT, :SeekEnum
+    put_Index		proc :BSTR
+    get_Index		proc :ptr
+    Save		proc :VARIANT, :PersistFormatEnum
     .ends
 
 endif
@@ -1557,19 +1558,19 @@ ifndef __ADORecordsetConstruction_INTERFACE_DEFINED__
 __ADORecordsetConstruction_INTERFACE_DEFINED__ equ 1
 externdef		IID_ADORecordsetConstruction:IID
 .comdef ADORecordsetConstruction
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :UINT, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Rowset          proc :ptr
-    put_Rowset          proc :ptr
-    get_Chapter         proc :ptr
-    put_Chapter         proc :ADO_LONGPTR
-    get_RowPosition     proc :ptr
-    put_RowPosition     proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Rowset		proc :ptr
+    put_Rowset		proc :ptr
+    get_Chapter		proc :ptr
+    put_Chapter		proc :ADO_LONGPTR
+    get_RowPosition	proc :ptr
+    put_RowPosition	proc :ptr
     .ends
 
 endif
@@ -1577,26 +1578,26 @@ ifndef __Field15_INTERFACE_DEFINED__
 __Field15_INTERFACE_DEFINED__ equ 1
 externdef		IID_Field15:IID
 .comdef Field15
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :UINT, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Properties      proc :ptr
-    get_ActualSize      proc :ptr
-    get_Attributes      proc :ptr
-    get_DefinedSize     proc :ptr
-    get_Name            proc :ptr
-    get_Type            proc :ptr
-    get_Value           proc :ptr
-    put_Value           proc :VARIANT
-    get_Precision       proc :ptr
-    get_NumericScale    proc :ptr
-    AppendChunk         proc :VARIANT
-    GetChunk            proc :LONG, :ptr
-    get_OriginalValue   proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Properties	proc :ptr
+    get_ActualSize	proc :ptr
+    get_Attributes	proc :ptr
+    get_DefinedSize	proc :ptr
+    get_Name		proc :ptr
+    get_Type		proc :ptr
+    get_Value		proc :ptr
+    put_Value		proc :VARIANT
+    get_Precision	proc :ptr
+    get_NumericScale	proc :ptr
+    AppendChunk		proc :VARIANT
+    GetChunk		proc :LONG, :ptr
+    get_OriginalValue	proc :ptr
     get_UnderlyingValue proc :ptr
     .ends
 
@@ -1605,34 +1606,34 @@ ifndef __Field20_INTERFACE_DEFINED__
 __Field20_INTERFACE_DEFINED__ equ 1
 externdef		IID_Field20:IID
 .comdef Field20
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :UINT, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Properties      proc :ptr
-    get_ActualSize      proc :ptr
-    get_Attributes      proc :ptr
-    get_DefinedSize     proc :ptr
-    get_Name            proc :ptr
-    get_Type            proc :ptr
-    get_Value           proc :ptr
-    put_Value           proc :VARIANT
-    get_Precision       proc :ptr
-    get_NumericScale    proc :ptr
-    AppendChunk         proc :VARIANT
-    GetChunk            proc :LONG, :ptr
-    get_OriginalValue   proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Properties	proc :ptr
+    get_ActualSize	proc :ptr
+    get_Attributes	proc :ptr
+    get_DefinedSize	proc :ptr
+    get_Name		proc :ptr
+    get_Type		proc :ptr
+    get_Value		proc :ptr
+    put_Value		proc :VARIANT
+    get_Precision	proc :ptr
+    get_NumericScale	proc :ptr
+    AppendChunk		proc :VARIANT
+    GetChunk		proc :LONG, :ptr
+    get_OriginalValue	proc :ptr
     get_UnderlyingValue proc :ptr
-    get_DataFormat      proc :ptr
-    putref_DataFormat   proc :ptr
-    put_Precision       proc :BYTE
-    put_NumericScale    proc :BYTE
-    put_Type            proc :DataTypeEnum
-    put_DefinedSize     proc :ADO_LONGPTR
-    put_Attributes      proc :LONG
+    get_DataFormat	proc :ptr
+    putref_DataFormat	proc :ptr
+    put_Precision	proc :BYTE
+    put_NumericScale	proc :BYTE
+    put_Type		proc :DataTypeEnum
+    put_DefinedSize	proc :ADO_LONGPTR
+    put_Attributes	proc :LONG
     .ends
 
 endif
@@ -1640,35 +1641,35 @@ ifndef __Field_INTERFACE_DEFINED__
 __Field_INTERFACE_DEFINED__ equ 1
 externdef		IID_Field:IID
 .comdef Field
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :UINT, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Properties      proc :ptr
-    get_ActualSize      proc :ptr
-    get_Attributes      proc :ptr
-    get_DefinedSize     proc :ptr
-    get_Name            proc :ptr
-    get_Type            proc :ptr
-    get_Value           proc :ptr
-    put_Value           proc :VARIANT
-    get_Precision       proc :ptr
-    get_NumericScale    proc :ptr
-    AppendChunk         proc :VARIANT
-    GetChunk            proc :LONG, :ptr
-    get_OriginalValue   proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Properties	proc :ptr
+    get_ActualSize	proc :ptr
+    get_Attributes	proc :ptr
+    get_DefinedSize	proc :ptr
+    get_Name		proc :ptr
+    get_Type		proc :ptr
+    get_Value		proc :ptr
+    put_Value		proc :VARIANT
+    get_Precision	proc :ptr
+    get_NumericScale	proc :ptr
+    AppendChunk		proc :VARIANT
+    GetChunk		proc :LONG, :ptr
+    get_OriginalValue	proc :ptr
     get_UnderlyingValue proc :ptr
-    get_DataFormat      proc :ptr
-    putref_DataFormat   proc :ptr
-    put_Precision       proc :BYTE
-    put_NumericScale    proc :BYTE
-    put_Type            proc :DataTypeEnum
-    put_DefinedSize     proc :ADO_LONGPTR
-    put_Attributes      proc :LONG
-    get_Status          proc :ptr
+    get_DataFormat	proc :ptr
+    putref_DataFormat	proc :ptr
+    put_Precision	proc :BYTE
+    put_NumericScale	proc :BYTE
+    put_Type		proc :DataTypeEnum
+    put_DefinedSize	proc :ADO_LONGPTR
+    put_Attributes	proc :LONG
+    get_Status		proc :ptr
     .ends
 
 endif
@@ -1676,17 +1677,17 @@ ifndef __Fields15_INTERFACE_DEFINED__
 __Fields15_INTERFACE_DEFINED__ equ 1
 externdef		IID_Fields15:IID
 .comdef Fields15
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :UINT, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Count           proc :ptr
-    _NewEnum            proc :ptr
-    Refresh             proc
-    get_Item            proc :VARIANT, :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Count		proc :ptr
+    _NewEnum		proc :ptr
+    Refresh		proc
+    get_Item		proc :VARIANT, :ptr
     .ends
 
 endif
@@ -1694,19 +1695,19 @@ ifndef __Fields20_INTERFACE_DEFINED__
 __Fields20_INTERFACE_DEFINED__ equ 1
 externdef		IID_Fields20:IID
 .comdef Fields20
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :UINT, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Count           proc :ptr
-    _NewEnum            proc :ptr
-    Refresh             proc
-    get_Item            proc :VARIANT, :ptr
-    _Append             proc :BSTR, :DataTypeEnum, :ADO_LONGPTR, :FieldAttributeEnum
-    Delete              proc :VARIANT
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Count		proc :ptr
+    _NewEnum		proc :ptr
+    Refresh		proc
+    get_Item		proc :VARIANT, :ptr
+    _Append		proc :BSTR, :DataTypeEnum, :ADO_LONGPTR, :FieldAttributeEnum
+    Delete		proc :VARIANT
     .ends
 
 endif
@@ -1714,23 +1715,23 @@ ifndef __Fields_INTERFACE_DEFINED__
 __Fields_INTERFACE_DEFINED__ equ 1
 externdef		IID_Fields:IID
 .comdef Fields
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :UINT, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Count           proc :ptr
-    _NewEnum            proc :ptr
-    Refresh             proc
-    get_Item            proc :VARIANT, :ptr
-    _Append             proc :BSTR, :DataTypeEnum, :ADO_LONGPTR, :FieldAttributeEnum
-    Delete              proc :VARIANT
-    Append              proc :BSTR, :DataTypeEnum, :ADO_LONGPTR, :FieldAttributeEnum, :VARIANT
-    Update              proc
-    Resync              proc :ResyncEnum
-    CancelUpdate        proc
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Count		proc :ptr
+    _NewEnum		proc :ptr
+    Refresh		proc
+    get_Item		proc :VARIANT, :ptr
+    _Append		proc :BSTR, :DataTypeEnum, :ADO_LONGPTR, :FieldAttributeEnum
+    Delete		proc :VARIANT
+    Append		proc :BSTR, :DataTypeEnum, :ADO_LONGPTR, :FieldAttributeEnum, :VARIANT
+    Update		proc
+    Resync		proc :ResyncEnum
+    CancelUpdate	proc
     .ends
 
 endif
@@ -1738,31 +1739,31 @@ ifndef ___Parameter_INTERFACE_DEFINED__
 ___Parameter_INTERFACE_DEFINED__ equ 1
 externdef		IID__Parameter:IID
 .comdef _Parameter
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :UINT, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Properties      proc :ptr
-    get_Name            proc :ptr
-    put_Name            proc :BSTR
-    get_Value           proc :ptr
-    put_Value           proc :VARIANT
-    get_Type            proc :ptr
-    put_Type            proc :DataTypeEnum
-    put_Direction       proc :ParameterDirectionEnum
-    get_Direction       proc :ptr
-    put_Precision       proc :BYTE
-    get_Precision       proc :ptr
-    put_NumericScale    proc :BYTE
-    get_NumericScale    proc :ptr
-    put_Size            proc :ADO_LONGPTR
-    get_Size            proc :ptr
-    AppendChunk         proc :VARIANT
-    get_Attributes      proc :ptr
-    put_Attributes      proc :LONG
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Properties	proc :ptr
+    get_Name		proc :ptr
+    put_Name		proc :BSTR
+    get_Value		proc :ptr
+    put_Value		proc :VARIANT
+    get_Type		proc :ptr
+    put_Type		proc :DataTypeEnum
+    put_Direction	proc :ParameterDirectionEnum
+    get_Direction	proc :ptr
+    put_Precision	proc :BYTE
+    get_Precision	proc :ptr
+    put_NumericScale	proc :BYTE
+    get_NumericScale	proc :ptr
+    put_Size		proc :ADO_LONGPTR
+    get_Size		proc :ptr
+    AppendChunk		proc :VARIANT
+    get_Attributes	proc :ptr
+    put_Attributes	proc :LONG
     .ends
 
 endif
@@ -1774,19 +1775,19 @@ ifndef __Parameters_INTERFACE_DEFINED__
 __Parameters_INTERFACE_DEFINED__ equ 1
 externdef		IID_Parameters:IID
 .comdef Parameters
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :UINT, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Count           proc :ptr
-    _NewEnum            proc :ptr
-    Refresh             proc
-    Append              proc :ptr
-    Delete              proc :VARIANT
-    get_Item            proc :VARIANT, :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Count		proc :ptr
+    _NewEnum		proc :ptr
+    Refresh		proc
+    Append		proc :ptr
+    Delete		proc :VARIANT
+    get_Item		proc :VARIANT, :ptr
     .ends
 
 endif
@@ -1794,19 +1795,19 @@ ifndef __Property_INTERFACE_DEFINED__
 __Property_INTERFACE_DEFINED__ equ 1
 externdef		IID_Property:IID
 .comdef Property
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :UINT, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Value           proc :ptr
-    put_Value           proc :VARIANT
-    get_Name            proc :ptr
-    get_Type            proc :ptr
-    get_Attributes      proc :ptr
-    put_Attributes      proc :LONG
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Value		proc :ptr
+    put_Value		proc :VARIANT
+    get_Name		proc :ptr
+    get_Type		proc :ptr
+    get_Attributes	proc :ptr
+    put_Attributes	proc :LONG
     .ends
 
 endif
@@ -1814,17 +1815,17 @@ ifndef __Properties_INTERFACE_DEFINED__
 __Properties_INTERFACE_DEFINED__ equ 1
 externdef		IID_Properties:IID
 .comdef Properties
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetTypeInfoCount    proc :ptr
-    GetTypeInfo         proc :UINT, :LCID, :ptr
-    GetIDsOfNames       proc :REFIID, :UINT, :LCID, :ptr
-    _Invoke             proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
-    get_Count           proc :ptr
-    _NewEnum            proc :ptr
-    Refresh             proc
-    get_Item            proc :VARIANT, :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTypeInfoCount	proc :ptr
+    GetTypeInfo		proc :UINT, :LCID, :ptr
+    GetIDsOfNames	proc :REFIID, :UINT, :LCID, :ptr
+    _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
+    get_Count		proc :ptr
+    _NewEnum		proc :ptr
+    Refresh		proc
+    get_Item		proc :VARIANT, :ptr
     .ends
 
 endif
@@ -1833,7 +1834,7 @@ externdef		__MIDL_itf_ado10_0001_0035_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef		__MIDL_itf_ado10_0001_0035_v0_0_s_ifspec:RPC_IF_HANDLE
 
 endif
-
+if 0
 ADOCommand		equ <_ADOCommand>
 ADORecordset		equ <_ADORecordset>
 ADOTransaction		equ <_ADOTransaction>
@@ -1844,5 +1845,7 @@ ADODynaCollection	equ <_ADODynaCollection>
 ADORecord		equ <_ADORecord>
 ADORecField		equ <_ADORecField>
 ADOStream		equ <_ADOStream>
+endif
 
+.pragma list(pop)
 endif

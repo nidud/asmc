@@ -1,16 +1,15 @@
+ifndef __WCHAR_INC
+__WCHAR_INC equ <>
+.pragma list(push, 0)
 ifndef _WINDEF_
  include windef.inc
 endif
-.xlist
-ifndef __WCHAR_INC
-__WCHAR_INC equ <>
 
 ifndef _WIN32
 ifndef _WIN64
 .err <ERROR: Only Win64 or Win32 targets supported>
 endif
 endif
-
 
 ifdef __PE__
 option	dllimport:<msvcrt>
@@ -65,6 +64,7 @@ _bufsiz		SINT ?
 _tmpfname	LPSTR ?
 _iobuf		ENDS
 FILE		typedef _iobuf
+LPFILE		typedef ptr _iobuf
 endif
 
 
@@ -115,8 +115,6 @@ externdef	_pctype:ptr word
 externdef	_pwctype:ptr wctype_t
 endif
 
-
-
 _UPPER		equ 0x1
 _LOWER		equ 0x2
 _DIGIT		equ 0x4
@@ -129,10 +127,7 @@ _HEX		equ 0x80
 _LEADBYTE	equ 0x8000
 _ALPHA		equ 0x0100 OR _UPPER OR _LOWER
 
-
-
 ifndef _WCTYPE_DEFINED
-
 
 iswalpha	proto __cdecl :wint_t
 iswupper	proto __cdecl :wint_t
@@ -158,7 +153,6 @@ endif
 
 ifndef _WDIRECT_DEFINED
 
-
 _wchdir		proto __cdecl :ptr wchar_t
 _wgetcwd	proto __cdecl :ptr wchar_t, :SINT
 _wgetdcwd	proto __cdecl :SINT, :ptr wchar_t, :SINT
@@ -169,7 +163,6 @@ _WDIRECT_DEFINED equ 1
 endif
 
 ifndef _WIO_DEFINED
-
 
 _waccess	proto __cdecl :ptr wchar_t, :SINT
 _wchmod		proto __cdecl :ptr wchar_t, :SINT
@@ -192,7 +185,6 @@ endif
 
 ifndef _WLOCALE_DEFINED
 
-
 _wsetlocale	proto __cdecl :SINT, :ptr wchar_t
 
 _WLOCALE_DEFINED equ 1
@@ -200,7 +192,6 @@ endif
 
 ifndef _WPROCESS_DEFINED
 _WPROCESS_DEFINED equ <>
-
 
 _wexecl		proto _CDecl :ptr wchar_t, :ptr wchar_t, :VARARG
 _wexecle	proto _CDecl :ptr wchar_t, :ptr wchar_t, :VARARG
@@ -270,9 +261,7 @@ endif
 endif
 endif
 
-
 ifndef _POSIX_
-
 
 ifndef _INO_T_DEFINED
 _INO_T_DEFINED equ <>
@@ -305,7 +294,7 @@ endif
 ifndef _STAT_DEFINED
 _STAT_DEFINED equ <>
 
-_stat		STRUC
+_STAT		STRUC
 st_dev		_dev_t ?
 st_ino		_ino_t ?
 st_mode		dw ?
@@ -317,7 +306,7 @@ st_size		_off_t ?
 st_atime	time_t ?
 st_mtime	time_t ?
 st_ctime	time_t ?
-_stat		ENDS
+_STAT		ENDS
 
 if NOT __STDC__
 stat		STRUC
@@ -352,10 +341,9 @@ _stati64	ENDS
 endif
 endif
 
-
 ifndef _WSTAT_DEFINED
 _WSTAT_DEFINED	equ <>
-_wstatproto	proto __cdecl :ptr wchar_t, :ptr _stat
+_wstatproto	proto __cdecl :ptr wchar_t, :ptr _STAT
 if _INTEGRAL_MAX_BITS GE 64
 _wstati64	proto __cdecl :ptr wchar_t, :ptr _stati64
 endif
@@ -363,9 +351,7 @@ endif
 
 endif
 
-
 ifndef _WSTDIO_DEFINED
-
 
 ifdef  _POSIX_
 _wfsopenproto	proto __cdecl :ptr wchar_t, :ptr wchar_t
@@ -424,9 +410,7 @@ _wtmpnam	proto __cdecl :ptr wchar_t
 _WSTDIO_DEFINED equ 1
 endif
 
-
 ifndef _WSTDLIB_DEFINED
-
 
 _itow		proto __cdecl :SINT, :ptr wchar_t, :SINT
 _ltow		proto __cdecl :LONG, :ptr wchar_t, :SINT
@@ -452,7 +436,6 @@ ifndef _POSIX_
 
 ifndef _WSTDLIBP_DEFINED
 
-
 _wfullpath	proto __cdecl :ptr wchar_t, :ptr wchar_t, :size_t
 _wmakepath	proto __cdecl :ptr wchar_t, :ptr wchar_t, :ptr wchar_t, :ptr wchar_t, :ptr wchar_t
 _wperror	proto __cdecl :ptr wchar_t
@@ -465,9 +448,7 @@ endif
 
 endif
 
-
 ifndef _WSTRING_DEFINED
-
 
 wcscat		proto __cdecl :ptr wchar_t, :ptr wchar_t
 wcschr		proto __cdecl :ptr wchar_t, :wchar_t
@@ -533,7 +514,6 @@ endif
 
 ifndef _WTIME_DEFINED
 
-
 _wasctime	proto __cdecl :ptr tm
 _wctime		proto __cdecl :ptr time_t
 wcsftime	proto __cdecl :ptr wchar_t, :size_t, :ptr wchar_t, :ptr tm
@@ -542,8 +522,6 @@ _wstrtime	proto __cdecl :ptr wchar_t
 
 _WTIME_DEFINED	equ 1
 endif
-
-
 
 mbstate_t	typedef SINT
 _Wint_t		typedef wchar_t
@@ -557,6 +535,5 @@ wcrtomb		proto __cdecl :LPSTR, :wchar_t, :ptr mbstate_t
 wcsrtombs	proto __cdecl :LPSTR, :ptr wchar_t, :size_t, :ptr mbstate_t
 wctob		proto __cdecl :wint_t
 
+.pragma list(pop)
 endif
-
-.list

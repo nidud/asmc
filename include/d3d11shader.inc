@@ -1,7 +1,8 @@
 ifndef __D3D11SHADER_H__
 __D3D11SHADER_H__ equ <>
+.pragma list(push, 0)
+
 include d3dcommon.inc
-.xlist
 
 D3D11_CBUFFER_TYPE	typedef D3D_CBUFFER_TYPE
 D3D11_RESOURCE_RETURN_TYPE typedef D3D_RESOURCE_RETURN_TYPE
@@ -162,5 +163,5 @@ DEFINE_GUID(IID_ID3D11ShaderReflection, 0x0a233719, 0x3960, 0x4578, 0x9d, 0x7c, 
     GetThreadGroupSize	proc :ptr, :ptr, :ptr
     .ends
 
-.list
+.pragma list(pop)
 endif

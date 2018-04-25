@@ -1,3 +1,4 @@
+.pragma list(push, 0)
 ifndef __LIBC_INC
  include libc.inc
 endif
@@ -10,8 +11,6 @@ _MAX_DRIVE	equ 3
 _MAX_DIR	equ 256
 _MAX_FNAME	equ 256
 _MAX_EXT	equ 256
-
-.xlist
 
 _getdrive	PROTO __cdecl
 _chdrive	PROTO __cdecl :SINT
@@ -34,5 +33,4 @@ externdef	_diskflag:DWORD
 endif
 
 ENDIF
-
-.list
+.pragma list(pop)

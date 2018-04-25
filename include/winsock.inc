@@ -2,12 +2,10 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 ifndef _WINSOCKAPI_
-_WINSOCKAPI_ equ 1
-.xlist
+_WINSOCKAPI_ equ <>
 
 ifndef _INC_WINDOWS
 include windows.inc
-.xlist
 endif
 
 SOCKET			typedef UINT
@@ -885,5 +883,4 @@ WSAGETSELECTERROR macro lParam
 	exitm<HIWORD(lParam)>
 	endm
 
-.list
 endif

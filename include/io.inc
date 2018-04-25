@@ -1,9 +1,10 @@
+.pragma list(push, 0)
 ifndef __IO_INC
 __IO_INC equ <>
 ifndef __LIBC_INC
  include libc.inc
 endif
-.xlist
+
 ifdef __PE__
 option	dllimport:<msvcrt>
 else
@@ -162,5 +163,5 @@ getfattr	proto __cdecl :LPSTR
 _wgetfattr	proto __cdecl :LPWSTR
 endif ; __PE__
 
-.list
-endif ; __IO_INC
+.pragma list(pop)
+endif

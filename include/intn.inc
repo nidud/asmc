@@ -1,7 +1,8 @@
+.pragma list(push, 0)
+
 ifndef __LIBC_INC
  include libc.inc
 endif
-.xlist
 
 ; Parsing flags
 
@@ -155,4 +156,4 @@ _qcvt	proto :ptr, :LPSTR, :SINT, :SINT, :SINT
 _dcvt	proto :ptr, :LPSTR, :SINT, :SINT, :SINT
 _ldcvt	proto :ptr, :LPSTR, :SINT, :SINT, :SINT
 
-.list
+.pragma list(pop)

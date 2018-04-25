@@ -1,10 +1,11 @@
+ifndef _WINDOWS_
+_WINDOWS_ equ <>
+.pragma list(push, 0)
+.nocref
+
 ifndef __LIBC_INC
  include libc.inc
 endif
-.xlist
-.nocref
-ifndef _WINDOWS_
-_WINDOWS_ equ <>
 
 if not defined(_68K_)	and \
    not defined(_MPPC_)	and \
@@ -519,6 +520,7 @@ endif
 endif ; WINVER >= 0x0400
 
 endif ; _INC_WINDOWS
-endif ; _WINDOWS_
 
-.list
+.pragma list(pop)
+endif
+

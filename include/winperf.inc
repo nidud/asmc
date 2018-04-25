@@ -1,9 +1,9 @@
+ifndef _WINPERF_
+_WINPERF_ equ <>
+.pragma list(push, 0)
 ifndef __LIBC_INC
  include libc.inc
 endif
-ifndef _WINPERF_
-_WINPERF_ equ 1
-.xlist
 
 PERF_DATA_VERSION	equ 1
 PERF_DATA_REVISION	equ 1
@@ -158,5 +158,5 @@ CALLBACK(PM_QUERY_PROC, :LPDWORD, :LPVOID, :LPDWORD, :LPDWORD)
 
 MAX_PERF_OBJECTS_IN_QUERY_FUNCTION equ (8)
 
-.list
+.pragma list(pop)
 endif

@@ -1,6 +1,5 @@
 ifndef _INCLUDED_SMM
 _INCLUDED_SMM equ <>
-.xlist
 ifndef _M_IX86
 ifndef _M_X64
 .err <This header is specific to X86 and X64 targets>
@@ -10,7 +9,6 @@ ifdef _M_CEE_PURE
 .err <ERROR: This file is not supported in the pure mode!>
 endif
 include tmmintrin.inc
-.xlist
 
 _MM_FROUND_TO_NEAREST_INT equ 0x00
 _MM_FROUND_TO_NEG_INF	equ 0x01
@@ -153,5 +151,4 @@ _mm_packus_epi32	proto :oword, :oword
 _mm_mpsadbw_epu8	proto :oword, :oword, :sdword
 _mm_stream_load_si128	proto :oword
 
-.list
-endif  ;; _INCLUDED_SMM
+endif

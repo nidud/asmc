@@ -1,6 +1,5 @@
 ifndef __dxgiformat_h__
-__dxgiformat_h__ equ 1
-.xlist
+__dxgiformat_h__ equ <>
 
 DXGI_FORMAT_DEFINED     equ 1
 
@@ -107,6 +106,4 @@ DXGI_FORMAT_BC7_UNORM   equ 98
 DXGI_FORMAT_BC7_UNORM_SRGB equ 99
 DXGI_FORMAT_FORCE_UINT  equ 0xffffffff
 
-.list
-endif ;; __dxgiformat_h__
-
+endif

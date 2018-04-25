@@ -1,4 +1,4 @@
-.xlist
+.pragma list(push, 0)
 
 DEFINE_GUID(CLSID_NetworkDomain,        0x46e06680, 0x4bf0, 0x11d1, 0x83,0xee,0x00,0xa0,0xc9,0x0d,0xc8,0x49)
 DEFINE_GUID(CLSID_NetworkServer,        0xc0542a90, 0x4bf0, 0x11d1, 0x83,0xee,0x00,0xa0,0xc9,0x0d,0xc8,0x49)
@@ -9,7 +9,6 @@ DEFINE_GUID(CLSID_RecycleBin,           0x645FF040, 0x5081, 0x101B, 0x9F,0x08,0x
 DEFINE_GUID(CLSID_ControlPanel,         0x21EC2020, 0x3AEA, 0x1069, 0xA2,0xDD,0x08,0x00,0x2B,0x30,0x30,0x9D)
 DEFINE_GUID(CLSID_Printers,             0x2227A280, 0x3AEA, 0x1069, 0xA2,0xDE,0x08,0x00,0x2B,0x30,0x30,0x9D);
 DEFINE_GUID(CLSID_MyDocuments,          0x450d8fba, 0xad25, 0x11d0, 0x98,0xa8,0x08,0x00,0x36,0x1b,0x11,0x03)
-
 
 STR_MYDOCS_CLSID        equ <"{450D8FBA-AD25-11D0-98A8-0800361B1103}">
 
@@ -34,7 +33,6 @@ if (_WIN32_IE GE 0x0400)
 DEFINE_GUID(CGID_ShellServiceObject, 0x000214D2, 0, 0, 0xC0,0,0,0,0,0,0,0x46);
 DEFINE_GUID(CGID_ExplorerBarDoc,     0x000214D3, 0, 0, 0xC0,0,0,0,0,0,0,0x46);
 endif
-
 
 DEFINE_GUID(IID_INewShortcutHookA,   0x000214E1, 0, 0, 0xC0,0,0,0,0,0,0,0x46);
 DEFINE_GUID(IID_IShellBrowser,       0x000214E2, 0, 0, 0xC0,0,0,0,0,0,0,0x46);
@@ -142,19 +140,19 @@ DEFINE_GUID(IID_IShellChangeNotify, 0xD82BE2B1, 0x5764, 0x11D0, 0xA9, 0x6E, 0x00
 endif
 
 ifdef _UNICODE
-IID_IFileViewer         equ IID_IFileViewerW
-IID_IShellLink          equ IID_IShellLinkW
-IID_IExtractIcon        equ IID_IExtractIconW
-IID_IShellCopyHook      equ IID_IShellCopyHookW
-IID_IShellExecuteHook   equ IID_IShellExecuteHookW
-IID_INewShortcutHook    equ IID_INewShortcutHookW
+IID_IFileViewer         equ <IID_IFileViewerW>
+IID_IShellLink          equ <IID_IShellLinkW>
+IID_IExtractIcon        equ <IID_IExtractIconW>
+IID_IShellCopyHook      equ <IID_IShellCopyHookW>
+IID_IShellExecuteHook   equ <IID_IShellExecuteHookW>
+IID_INewShortcutHook    equ <IID_INewShortcutHookW>
 else
-IID_IFileViewer         equ IID_IFileViewerA
-IID_IShellLink          equ IID_IShellLinkA
-IID_IExtractIcon        equ IID_IExtractIconA
-IID_IShellCopyHook      equ IID_IShellCopyHookA
-IID_IShellExecuteHook   equ IID_IShellExecuteHookA
-IID_INewShortcutHook    equ IID_INewShortcutHookA
+IID_IFileViewer         equ <IID_IFileViewerA>
+IID_IShellLink          equ <IID_IShellLinkA>
+IID_IExtractIcon        equ <IID_IExtractIconA>
+IID_IShellCopyHook      equ <IID_IShellCopyHookA>
+IID_IShellExecuteHook   equ <IID_IShellExecuteHookA>
+IID_INewShortcutHook    equ <IID_INewShortcutHookA>
 endif
 
 ifndef NO_INTSHCUT_GUIDS
@@ -167,18 +165,17 @@ ifndef GUID_DEFS_ONLY
 include exdisp.inc
 include shldisp.inc
 endif
-.xlist
 
 if (_WIN32_IE GE 0x0400)
 DEFINE_GUID(CLSID_CUrlHistory,          0x3C374A40, 0xBAE4, 0x11CF, 0xBF, 0x7D, 0x00, 0xAA, 0x00, 0x69, 0x46, 0xEE);
-SID_SUrlHistory         equ CSID_CUrlHistory
+SID_SUrlHistory         equ <CSID_CUrlHistory>
 
 DEFINE_GUID(CLSID_CURLSearchHook,       0xCFBFAE00, 0x17A6, 0x11D0, 0x99, 0xCB, 0x00, 0xC0, 0x4F, 0xD6, 0x44, 0x97);
 
-SID_SInternetExplorer   equ IID_IWebBrowserApp
-SID_SWebBrowserApp      equ IID_IWebBrowserApp
+SID_SInternetExplorer   equ <IID_IWebBrowserApp>
+SID_SWebBrowserApp      equ <IID_IWebBrowserApp>
 
-SID_SWebBrowserEventsService equ IID_IWebBrowserEventsService
+SID_SWebBrowserEventsService equ <IID_IWebBrowserEventsService>
 
 DEFINE_GUID(IID_IObjMgr,                0x00BB2761, 0x6A77, 0x11D0, 0xA5, 0x35, 0x00, 0xC0, 0x4F, 0xD7, 0xD0, 0x62);
 DEFINE_GUID(IID_IACList,                0x77A130B0, 0x94FD, 0x11D0, 0xA5, 0x44, 0x00, 0xC0, 0x4F, 0xD7, 0xd0, 0x62);
@@ -198,7 +195,7 @@ DEFINE_GUID(CLSID_ProgressDialog,       0xf8383852, 0xfcd3, 0x11d1, 0xa6, 0xb9, 
 DEFINE_GUID(IID_IProgressDialog,        0xebbc7c04, 0x315e, 0x11d2, 0xb6, 0x2f, 0x0, 0x60, 0x97, 0xdf, 0x5b, 0xd4);
 endif
 
-SID_SProgressUI         equ CSID_ProgressDialog
+SID_SProgressUI         equ <CSID_ProgressDialog>
 
 DEFINE_GUID(SID_STopLevelBrowser,       0x4C96BE40, 0x915C, 0x11CF, 0x99, 0xD3, 0x00, 0xAA, 0x00, 0x4A, 0xE8, 0x37);
 
@@ -400,7 +397,6 @@ DEFINE_GUID(CPFG_SMARTCARD_USERNAME, 0x3e1ecf69, 0x568c, 0x4d96, 0x9d, 0x59, 0x4
 DEFINE_GUID(CPFG_SMARTCARD_PIN, 0x4fe5263b, 0x9181, 0x46c1, 0xb0, 0xa4, 0x9d, 0xed, 0xd4, 0xdb, 0x7d, 0xea);
 
 include knownfolders.inc
-.xlist
 
 DEFINE_GUID(FOLDERTYPEID_Invalid,              0x57807898, 0x8c4f, 0x4462, 0xbb, 0x63, 0x71, 0x04, 0x23, 0x80, 0xb1, 0x09);
 DEFINE_GUID(FOLDERTYPEID_Generic,              0x5c4f28b5, 0xf869, 0x4e84, 0x8e, 0x60, 0xf1, 0x1d, 0xb9, 0x7c, 0x5c, 0xc7);
@@ -459,4 +455,4 @@ DEFINE_GUID(ItemCount_Property_GUID, 0xabbf5c45, 0x5ccc, 0x47b7, 0xbb, 0x4e, 0x8
 DEFINE_GUID(SelectedItemCount_Property_GUID, 0x8fe316d2, 0xe52, 0x460a, 0x9c, 0x1e, 0x48, 0xf2, 0x73, 0xd4, 0x70, 0xa3);
 DEFINE_GUID(ItemIndex_Property_GUID, 0x92a053da, 0x2969, 0x4021, 0xbf, 0x27, 0x51, 0x4c, 0xfc, 0x2e, 0x4a, 0x69);
 
-.list
+.pragma list(pop)

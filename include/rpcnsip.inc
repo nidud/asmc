@@ -1,9 +1,8 @@
+ifndef __RPCNSIP_H__
+__RPCNSIP_H__ equ <>
 ifndef __LIBC_INC
  include libc.inc
 endif
-ifndef __RPCNSIP_H__
-__RPCNSIP_H__ equ 1
-.xlist
 
 PRPC_BINDING_VECTOR	typedef ptr RPC_BINDING_VECTOR
 
@@ -43,5 +42,4 @@ I_NsClientBindSearch proto WINAPI
 ;void
 I_NsClientBindDone proto WINAPI
 
-.list
 endif

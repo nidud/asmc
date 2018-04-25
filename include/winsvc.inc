@@ -1,9 +1,8 @@
+ifndef _WINSVC_
+_WINSVC_ equ <>
 ifndef _WINDEF_
  include windef.inc
 endif
-ifndef _WINSVC_
-_WINSVC_ equ <>
-.xlist
 
 ifdef __PE__
 option dllimport:<advapi32>
@@ -593,6 +592,4 @@ endif
 UnlockServiceDatabase proto WINAPI \
 		ScLock: SC_LOCK
 
-
-.list
 endif

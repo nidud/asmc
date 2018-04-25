@@ -1,7 +1,7 @@
 ifndef __CHEAP_INC
 __CHEAP_INC equ <>
+.pragma list(push, 0)
 include libc.inc
-.xlist
 
 _GRANULARITY    equ 0x10    ; align 16
 
@@ -34,6 +34,6 @@ _GRANULARITY    equ 0x10    ; align 16
 
     .ends
 
-.list
+.pragma list(pop)
 endif
 

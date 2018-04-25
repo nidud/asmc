@@ -1,10 +1,9 @@
 ifndef _WINSPOOL_
-.xlist
-_WINSPOOL_ equ 1
+_WINSPOOL_ equ <>
+.pragma list(push, 0)
 
 ifdef _WINUSER_
 include prsht.inc
-.xlist
 endif
 
 PRINTER_INFO_1A		STRUC
@@ -2287,7 +2286,5 @@ else
 GetPrinterHTMLView	equ <GetPrinterHTMLViewA>
 endif
 
-.list
+.pragma list(pop)
 endif
-
-

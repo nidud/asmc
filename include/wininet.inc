@@ -1,10 +1,10 @@
 ifndef _WININET_
+.pragma list(push, 0)
 ifndef __LIBC_INC
  include libc.inc
 endif
 include SpecStrings.inc
-_WININET_ equ 1
-.xlist
+_WININET_ equ <>
 
 ifdef _WIN64
 _WININET_ALIGN equ 8
@@ -2963,15 +2963,15 @@ PROXY_AUTO_DETECT_TYPE_DNS_A equ 2
 ;			typedef AutoProxyHelperFunctions
 
 .comdef AutoProxyHelper
-    IsResolvable        proc :LPSTR
-    GetIPAddress        proc :LPSTR, :LPDWORD
-    ResolveHostName     proc :LPSTR, :LPSTR, :LPDWORD
-    IsInNet             proc :LPSTR, :LPSTR, :LPSTR
-    IsResolvableEx      proc :LPSTR
-    GetIPAddressEx      proc :LPSTR, :LPDWORD
-    ResolveHostNameEx   proc :LPSTR, :LPSTR, :LPDWORD
-    IsInNetEx           proc :LPSTR, :LPSTR
-    SortIpList          proc :LPSTR, :LPSTR, :LPDWORD
+    IsResolvable	proc :LPSTR
+    GetIPAddress	proc :LPSTR, :LPDWORD
+    ResolveHostName	proc :LPSTR, :LPSTR, :LPDWORD
+    IsInNet		proc :LPSTR, :LPSTR, :LPSTR
+    IsResolvableEx	proc :LPSTR
+    GetIPAddressEx	proc :LPSTR, :LPDWORD
+    ResolveHostNameEx	proc :LPSTR, :LPSTR, :LPDWORD
+    IsInNetEx		proc :LPSTR, :LPSTR
+    SortIpList		proc :LPSTR, :LPSTR, :LPDWORD
     .ends
 
 AUTO_PROXY_SCRIPT_BUFFER STRUC
@@ -3171,5 +3171,5 @@ PrivacyGetZonePreferenceW proto WINAPI \
 
 ;include <poppack.h>
 
-.list
-endif ;; !defined(_WININET_)
+.pragma list(pop)
+endif

@@ -1,5 +1,6 @@
 ifndef _INC_SDKDDKVER
-_INC_SDKDDKVER		equ <>
+_INC_SDKDDKVER equ <>
+.pragma list(push, 0)
 
 ifndef WINAPI	; default (API) type
 ifdef _WIN64
@@ -233,5 +234,6 @@ endif
 
 endif
 
+.pragma list(pop)
 endif
 

@@ -15,7 +15,6 @@ include ole2.inc
 endif
 ifndef __structuredquerycondition_h__
 __structuredquerycondition_h__ equ <>
-.xlist
 
 ifndef __IRichChunk_FWD_DEFINED__
 __IRichChunk_FWD_DEFINED__ equ 1
@@ -30,15 +29,14 @@ endif
 include oaidl.inc
 include ocidl.inc
 include propidl.inc
-.xlist
 
-tagCONDITION_TYPE	typedef SDWORD
+CONDITION_TYPE		typedef SDWORD
 CT_AND_CONDITION	equ 0
 CT_OR_CONDITION		equ ( CT_AND_CONDITION + 1 )
 CT_NOT_CONDITION	equ ( CT_OR_CONDITION + 1 )
 CT_LEAF_CONDITION	equ ( CT_NOT_CONDITION + 1 )
 
-tagCONDITION_OPERATION	typedef SDWORD
+CONDITION_OPERATION	typedef SDWORD
 COP_IMPLICIT		equ 0
 COP_EQUAL		equ ( COP_IMPLICIT + 1 )
 COP_NOTEQUAL		equ ( COP_EQUAL + 1 )
@@ -63,10 +61,10 @@ __IRichChunk_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_IRichChunk:IID
 .comdef IRichChunk
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetData             proc :ptr, :ptr, :ptr, :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetData		proc :ptr, :ptr, :ptr, :ptr
     .ends
 
 ;HRESULT
@@ -91,21 +89,21 @@ __ICondition_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_ICondition:IID
 .comdef ICondition
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetClassID          proc :ptr
-    IsDirty             proc
-    Load                proc :ptr
-    Save                proc :ptr, :BOOL
-    GetSizeMax          proc :ptr
-    GetConditionType    proc :ptr
-    GetSubConditions    proc :REFIID, :ptr
-    GetComparisonInfo   proc :ptr, :ptr, :ptr
-    GetValueType        proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetClassID		proc :ptr
+    IsDirty		proc
+    Load		proc :ptr
+    Save		proc :ptr, :BOOL
+    GetSizeMax		proc :ptr
+    GetConditionType	proc :ptr
+    GetSubConditions	proc :REFIID, :ptr
+    GetComparisonInfo	proc :ptr, :ptr, :ptr
+    GetValueType	proc :ptr
     GetValueNormalization proc :ptr
-    GetInputTerms       proc :ptr, :ptr, :ptr
-    Clone               proc :ptr
+    GetInputTerms	proc :ptr, :ptr, :ptr
+    Clone		proc :ptr
     .ends
 
 ;HRESULT
@@ -143,22 +141,22 @@ __ICondition2_INTERFACE_DEFINED__ equ 1
 
 externdef		IID_ICondition2:IID
 .comdef ICondition2
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    GetClassID          proc :ptr
-    IsDirty             proc
-    Load                proc :ptr
-    Save                proc :ptr, :BOOL
-    GetSizeMax          proc :ptr
-    GetConditionType    proc :ptr
-    GetSubConditions    proc :REFIID, :ptr
-    GetComparisonInfo   proc :ptr, :ptr, :ptr
-    GetValueType        proc :ptr
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetClassID		proc :ptr
+    IsDirty		proc
+    Load		proc :ptr
+    Save		proc :ptr, :BOOL
+    GetSizeMax		proc :ptr
+    GetConditionType	proc :ptr
+    GetSubConditions	proc :REFIID, :ptr
+    GetComparisonInfo	proc :ptr, :ptr, :ptr
+    GetValueType	proc :ptr
     GetValueNormalization proc :ptr
-    GetInputTerms       proc :ptr, :ptr, :ptr
-    Clone               proc :ptr
-    GetLocale           proc :ptr
+    GetInputTerms	proc :ptr, :ptr, :ptr
+    Clone		proc :ptr
+    GetLocale		proc :ptr
     GetLeafConditionInfo proc :ptr, :ptr, :ptr
     .ends
 
@@ -269,5 +267,4 @@ ICondition2_GetLeafConditionInfo_Stub proto WINAPI \
 		  pcop: ptr CONDITION_OPERATION,
 	      ppropvar: ptr PROPVARIANT
 
-.list
-endif ; __structuredquerycondition_h__
+endif

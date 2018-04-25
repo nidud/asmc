@@ -1,6 +1,5 @@
 ifndef _INCLUDED_PMM
 _INCLUDED_PMM equ <>
-.xlist
 ifndef _M_IX86
 ifndef _M_X64
 .err <This header is specific to X86 and X64 targets>
@@ -10,7 +9,6 @@ ifdef _M_CEE_PURE
 .err <ERROR: This file is not supported in the pure mode!>
 endif
 include emmintrin.inc
-.xlist
 
 _MM_DENORMALS_ZERO_MASK equ 0x0040
 _MM_DENORMALS_ZERO_ON	equ 0x0040
@@ -41,5 +39,4 @@ _mm_lddqu_si128 proto :oword
 _mm_monitor	proto :ptr, :dword, :dword
 _mm_mwait	proto :dword, :dword
 
-.list
-endif  ;; _INCLUDED_PMM
+endif

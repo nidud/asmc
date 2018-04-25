@@ -1,3 +1,5 @@
+.pragma list(push, 0)
+
 ifndef __REQUIRED_RPCNDR_H_VERSION__
 __REQUIRED_RPCNDR_H_VERSION__ equ 500
 endif
@@ -14,8 +16,8 @@ include windows.inc
 include ole2.inc
 endif
 ifndef __d3d11_h__
-__d3d11_h__ equ 1
-.xlist
+__d3d11_h__ equ <>
+
 ifdef __PE__
 option	dllimport:<d3d11>
 else
@@ -120,7 +122,6 @@ include oaidl.inc
 include ocidl.inc
 include dxgi.inc
 include d3dcommon.inc
-.xlist
 
 ifndef _D3D11_CONSTANTS
 _D3D11_CONSTANTS equ 1
@@ -2169,7 +2170,6 @@ include d3d10misc.inc
 include d3d10shader.inc
 include d3d10effect.inc
 include d3d10_1shader.inc
-.xlist
 
 CALLBACK(PFN_D3D11_CREATE_DEVICE, \
 	:ptr IDXGIAdapter, \
@@ -2263,8 +2263,5 @@ DEFINE_GUID(IID_ID3D11Device,0xdb6f6ddb,0xac77,0x4e88,0x82,0x53,0x81,0x9d,0xf9,0
 externdef __MIDL_itf_d3d11_0000_0031_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef __MIDL_itf_d3d11_0000_0031_v0_0_s_ifspec:RPC_IF_HANDLE
 
-.list
 endif
-
-
-
+.pragma list(pop)

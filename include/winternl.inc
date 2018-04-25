@@ -1,10 +1,11 @@
 ifndef _WINTERNL_
 _WINTERNL_ equ <>
+.pragma list(push, 0)
+
 if (_WIN32_WINNT ge 0x0500)
 include windef.inc
-.xlist
 
-option fieldalign:8
+.pragma pack(push, 8)
 
 ;typedef __success(return >= 0) LONG NTSTATUS;
 
@@ -524,7 +525,9 @@ FILE_OVERWRITTEN	equ 0x00000003
 FILE_EXISTS		equ 0x00000004
 FILE_DOES_NOT_EXIST	equ 0x00000005
 
-.list
+.pragma pack(pop)
 
 endif ; (_WIN32_WINNT >= 0x0500)
-endif ; _WINTERNL_
+
+.pragma list(pop)
+endif

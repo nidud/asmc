@@ -1,8 +1,7 @@
 include rpc.inc
 include rpcndr.inc
 ifndef __msxml_h__
-__msxml_h__ equ 1
-.xlist
+__msxml_h__ equ <>
 
 ifndef __IXMLElementCollection_FWD_DEFINED__
 __IXMLElementCollection_FWD_DEFINED__ equ 1
@@ -25,7 +24,6 @@ endif
 include unknwn.inc
 include objidl.inc
 include oaidl.inc
-.xlist
 
 ;void *
 MIDL_user_allocate proto WINAPI :size_t
@@ -563,5 +561,4 @@ endif
 externdef		CLSID_XMLDocument:CLSID
 endif
 
-.list
 endif

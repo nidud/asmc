@@ -3,7 +3,7 @@ ifndef _WINDEF_
 endif
 ifndef INCLUDED_TYPES_FCI_FDI
 INCLUDED_TYPES_FCI_FDI	equ <>
-.xlist
+.pragma list(push, 0)
 
 ifndef DIAMONDAPI
 DIAMONDAPI equ <__cdecl>
@@ -271,6 +271,5 @@ FCIFlushFolder proto WINAPI \
 ;BOOL
 FCIDestroy proto WINAPI hfci:HFCI
 
-.list
-endif ;; NOT INCLUDED_FCI
-
+.pragma list(pop)
+endif

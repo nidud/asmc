@@ -1,7 +1,7 @@
 ifndef _STDINT
 _STDINT equ <>
+.pragma list(push, 0)
 include vcruntime.inc
-.xlist
 
 int8_t			typedef sbyte
 int16_t			typedef sword
@@ -137,5 +137,5 @@ UINTMAX_C macro x
 	exitm<UINT64_C(x)>
 	endm
 
-.list
-endif ;; _STDINT
+.pragma list(pop)
+endif

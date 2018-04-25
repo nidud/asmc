@@ -1,7 +1,7 @@
 ifndef __D3DCOMPILER_H__
 __D3DCOMPILER_H__ equ <>
+.pragma list(push, 0)
 include d3d11shader.inc
-.xlist
 
 ifdef __PE__
 option dllimport:<D3DCompiler_47>
@@ -175,5 +175,5 @@ D3DPreprocess proto WINAPI \
 
 CALLBACK(pD3DPreprocess, :ptr, :SIZE_T, :ptr, :ptr, :ptr, :ptr, :ptr)
 
-.list
+.pragma list(pop)
 endif

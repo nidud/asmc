@@ -1,8 +1,8 @@
 ifndef _VCRUNTIME_H
 _VCRUNTIME_H equ <>
+.pragma list(push, 0)
 include sal.inc
 include vadefs.inc
-.xlist
 
 _CRT_BEGIN_C_HEADER macro
     .pragma(pack(push, _CRT_PACKING))
@@ -169,5 +169,5 @@ endif
 
 _CRT_END_C_HEADER
 
-.list
-endif ;; _VCRUNTIME_H
+.pragma list(pop)
+endif

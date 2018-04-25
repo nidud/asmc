@@ -1,11 +1,11 @@
+.pragma list(push, 0)
+
 ifndef __LIBC_INC
  include libc.inc
 endif
 ifndef _WINERROR_
  include winerror.inc
 endif
-
-.xlist
 
 ENOERR		equ 0
 EPERM		equ 1
@@ -57,4 +57,4 @@ externdef	sys_errlist:size_t
 
 osmaperr	proto __cdecl
 
-.list
+.pragma list(pop)

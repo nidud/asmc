@@ -1,10 +1,10 @@
+ifndef _WINVER_
+_WINVER_ equ <>
+.pragma list(push, 0)
 ifndef __LIBC_INC
  include libc.inc
 endif
-.xlist
 
-ifndef _WINVER_
-_WINVER_ equ 1
 ifdef __PE__
 option	dllimport:<version>
 endif
@@ -106,19 +106,19 @@ VIF_BUFFTOOSMALL	equ 0x00040000
 
 
 VS_FIXEDFILEINFO	STRUC
-dwSignature		dd ?	
-dwStrucVersion		dd ?	
-dwFileVersionMS		dd ?	
-dwFileVersionLS		dd ?	
-dwProductVersionMS	dd ?	
-dwProductVersionLS	dd ?	
-dwFileFlagsMask		dd ?	
-dwFileFlags		dd ?	
-dwFileOS		dd ?	
-dwFileType		dd ?	
-dwFileSubtype		dd ?	
-dwFileDateMS		dd ?	
-dwFileDateLS		dd ?	
+dwSignature		dd ?
+dwStrucVersion		dd ?
+dwFileVersionMS		dd ?
+dwFileVersionLS		dd ?
+dwProductVersionMS	dd ?
+dwProductVersionLS	dd ?
+dwFileFlagsMask		dd ?
+dwFileFlags		dd ?
+dwFileOS		dd ?
+dwFileType		dd ?
+dwFileSubtype		dd ?
+dwFileDateMS		dd ?
+dwFileDateLS		dd ?
 VS_FIXEDFILEINFO	ENDS
 
 
@@ -147,7 +147,7 @@ ifdef _UNICODE
 VerFindFile		equ <VerFindFileW>
 else
 VerFindFile		equ <VerFindFileA>
-endif 
+endif
 
 ;DWORD
 VerInstallFileA proto WINAPI \
@@ -172,12 +172,12 @@ ifdef _UNICODE
 VerInstallFile		equ <VerInstallFileW>
 else
 VerInstallFile		equ <VerInstallFileA>
-endif 
+endif
 
 ;DWORD
 GetFileVersionInfoSizeA proto WINAPI \
-	lptstrFilename: LPSTR,	
-	    lpdwHandle: LPDWORD 
+	lptstrFilename: LPSTR,
+	    lpdwHandle: LPDWORD
 GetFileVersionInfoSizeW proto WINAPI \
 	lptstrFilename: LPWSTR,
 	    lpdwHandle: LPDWORD
@@ -185,14 +185,14 @@ ifdef _UNICODE
 GetFileVersionInfoSize	equ <GetFileVersionInfoSizeW>
 else
 GetFileVersionInfoSize	equ <GetFileVersionInfoSizeA>
-endif 
+endif
 
 ;BOOL
 GetFileVersionInfoA proto WINAPI \
-	lptstrFilename: LPSTR,	
-	      dwHandle: DWORD,	
-		 dwLen: DWORD,	
-		lpData: PVOID	
+	lptstrFilename: LPSTR,
+	      dwHandle: DWORD,
+		 dwLen: DWORD,
+		lpData: PVOID
 
 ;BOOL
 GetFileVersionInfoW proto WINAPI \
@@ -204,7 +204,7 @@ ifdef _UNICODE
 GetFileVersionInfo	equ <GetFileVersionInfoW>
 else
 GetFileVersionInfo	equ <GetFileVersionInfoA>
-endif 
+endif
 
 ;DWORD
 VerLanguageNameA proto WINAPI \
@@ -219,7 +219,7 @@ ifdef _UNICODE
 VerLanguageName		equ <VerLanguageNameW>
 else
 VerLanguageName		equ <VerLanguageNameA>
-endif 
+endif
 
 ;BOOL
 VerQueryValueA proto WINAPI \
@@ -237,9 +237,7 @@ ifdef _UNICODE
 VerQueryValue		equ <VerQueryValueW>
 else
 VerQueryValue		equ <VerQueryValueA>
-endif 
+endif
 
-endif  
-
-.list
-
+.pragma list(pop)
+endif

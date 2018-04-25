@@ -1,9 +1,8 @@
+ifndef _MSWSOCK_
+_MSWSOCK_ equ <>
 ifndef __LIBC_INC
  include libc.inc
 endif
-.xlist
-ifndef _MSWSOCK_
-_MSWSOCK_ equ 1
 
 SO_CONNDATA		equ 0x7000
 SO_CONNOPT		equ 0x7001
@@ -91,4 +90,3 @@ WSAID_GETACCEPTEXSOCKADDRS equ <{0xb5367df2,0xcbac,0x11cf,{0x95,0xca,0x00,0x80,0
 
 endif
 
-.list

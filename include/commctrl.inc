@@ -1,6 +1,6 @@
 ifndef _INC_COMMCTRL
-_INC_COMMCTRL equ 1
-.xlist
+_INC_COMMCTRL equ <>
+.pragma list(push, 0)
 
 ifndef _WIN32_IE
 _WIN32_IE equ 0x0400
@@ -21,7 +21,6 @@ includelib comctl32.lib
 endif
 
 include prsht.inc
-.xlist
 
 ifndef SNDMSG
 SNDMSG	equ <SendMessage>
@@ -4706,12 +4705,16 @@ endif
 
 LVN_KEYDOWN		equ (LVN_FIRST-55)
 
-NMLVKEYDOWN		STRUC BYTE
+.pragma pack(push, 1)
+
+NMLVKEYDOWN		STRUC
 hdr			NMHDR <>
 wVKey			dw ?
 flags			UINT ?
 NMLVKEYDOWN		ENDS
 LPNMLVKEYDOWN		typedef ptr NMLVKEYDOWN
+
+.pragma pack(pop)
 
 if (_WIN32_IE GE 0x0300)
 LV_KEYDOWN		equ <NMLVKEYDOWN>
@@ -5605,12 +5608,16 @@ tagTVKEYDOWN		equ _TV_KEYDOWN
 NMTVKEYDOWN		equ TV_KEYDOWN
 endif
 
-NMTVKEYDOWN		STRUC BYTE
+.pragma pack(push, 1)
+
+NMTVKEYDOWN		STRUC
 hdr			NMHDR <>
 wVKey			dw ?
 flags			UINT ?
 NMTVKEYDOWN		ENDS
 LPNMTVKEYDOWN		typedef ptr NMTVKEYDOWN
+
+.pragma pack(pop)
 
 ifdef _UNICODE
 TVN_SELCHANGING		equ TVN_SECHANGINGW
@@ -6290,11 +6297,16 @@ tagTCKEYDOWN		equ _TC_KEYDOWN
 NMTCKEYDOWN		equ TC_KEYDOWN
 endif
 endif
-NMTCKEYDOWN		STRUC BYTE
+
+.pragma pack(push, 1)
+
+NMTCKEYDOWN		STRUC
 hdr			NMHDR <>
 wVKey			dw ?
 flags			UINT ?
 NMTCKEYDOWN		ENDS
+
+.pragma pack(pop)
 
 TCN_SELCHANGE		equ (TCN_FIRST - 1)
 TCN_SELCHANGING		equ (TCN_FIRST - 2)
@@ -7048,7 +7060,9 @@ PGK_SHIFT		equ 1
 PGK_CONTROL		equ 2
 PGK_MENU		equ 4
 
-NMPGSCROLL		STRUC BYTE
+.pragma pack(push, 1)
+
+NMPGSCROLL		STRUC
 hdr			NMHDR <>
 fwKeys			dw ?
 rcParent		RECT <>
@@ -7058,6 +7072,8 @@ iYpos			SINT ?
 iScroll			SINT ?
 NMPGSCROLL		ENDS
 LPNMPGSCROLL		typedef ptr NMPGSCROLL
+
+.pragma pack(pop)
 
 PGN_CALCSIZE		equ (PGN_FIRST-2)
 PGF_CALCWIDTH		equ 1
@@ -7404,12 +7420,15 @@ TDN_EXPANDO_BUTTON_CLICKED	equ 10
 
 TASKDIALOG_NOTIFICATIONS typedef SDWORD
 
+.pragma pack(push, 1)
 
-TASKDIALOG_BUTTON	STRUC BYTE
+TASKDIALOG_BUTTON	STRUC
 nButtonID		SINT ?
 pszButtonText		PCWSTR ?
 TASKDIALOG_BUTTON	ENDS
 LPTASKDIALOG_BUTTON	typedef ptr TASKDIALOG_BUTTON
+
+.pragma pack(pop)
 
 TASKDIALOG_ELEMENTS	typedef SDWORD ; enum _TASKDIALOG_ELEMENTS {
 TDE_CONTENT		equ 0
@@ -7439,7 +7458,9 @@ TDCBF_CLOSE_BUTTON	equ 0x0020
 
 TASKDIALOG_COMMON_BUTTON_FLAGS typedef SINT ; Note: _TASKDIALOG_COMMON_BUTTON_FLAGS is an int
 
-TASKDIALOGCONFIG	STRUC BYTE
+.pragma pack(push, 1)
+
+TASKDIALOGCONFIG	STRUC
 cbSize			UINT ?
 hwndParent		HWND ?
 hInstance		HINSTANCE ?
@@ -7472,8 +7493,7 @@ lpCallbackData		LPLONG ?
 cxWidth			UINT ?
 TASKDIALOGCONFIG	ENDS
 
-ifdef _WIN32
-endif
+.pragma pack(pop)
 
 ;WINCOMMCTRLAPI
 TaskDialogIndirect proto WINAPI \
@@ -8012,5 +8032,5 @@ endif
 
 endif
 
-.list
-endif ; _INC_COMMCTRL
+.pragma list(pop)
+endif

@@ -1,6 +1,5 @@
 ifndef __INTRIN0_H_
 __INTRIN0_H_ equ <>
-.xlist
 
 __MACHINEZ macro X:vararg
 	exitm<>
@@ -50,7 +49,6 @@ __MACHINE(_InterlockedXor proto :ptr sdword, :sdword)
 __MACHINE(_InterlockedXor16 proto :ptr sword, :sword)
 __MACHINE(_InterlockedXor8 proto :ptr sbyte, :sbyte)
 __MACHINE(_ReadWriteBarrier proto)
-__MACHINE(_interlockedbittestandset proto :ptr sdword, :sdword)
+__MACHINE(_interlockedbittestandset proto :ptr, :sdword)
 
-.list
 endif

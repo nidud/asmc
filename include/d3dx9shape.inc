@@ -1,7 +1,6 @@
 include d3dx9.inc
 ifndef __D3DX9SHAPE_H__
 __D3DX9SHAPE_H__ equ <>
-.xlist
 
 ;HRESULT
 D3DXCreateBox proto WINAPI \
@@ -78,5 +77,4 @@ D3DXCreateTorus proto WINAPI \
                   mesh: ptr ID3DXMesh,
              adjacency: ptr ID3DXBuffer
 
-.list
-endif ;; __D3DX9SHAPE_H__
+endif

@@ -11,8 +11,7 @@ include windows.inc
 include ole2.inc
 endif
 ifndef __objidl_h__
-__objidl_h__ equ 1
-.xlist
+__objidl_h__ equ <>
 
 ifndef __IMarshal_FWD_DEFINED__
 __IMarshal_FWD_DEFINED__ equ 1
@@ -279,7 +278,6 @@ __IClassAdmin_FWD_DEFINED__ equ 1
 endif
 
 include unknwn.inc
-.xlist
 
 ;void
 MIDL_user_free proto WINAPI \
@@ -6478,5 +6476,4 @@ IFillLockBytes_FillAt_Stub proto WINAPI \
 		    cb: ULONG,
 	    pcbWritten: LPDWORD
 
-.list
-endif ; __objidl_h__
+endif

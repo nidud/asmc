@@ -1,3 +1,4 @@
+.pragma list(push, 0)
 ifndef __REQUIRED_RPCNDR_H_VERSION__
 __REQUIRED_RPCNDR_H_VERSION__ equ 500
 endif
@@ -19,7 +20,6 @@ __ID3DInclude_FWD_DEFINED__ equ <>
 endif
 include oaidl.inc
 include ocidl.inc
-.xlist
 
 D3D_SHADER_MACRO        STRUC
 _Name                   LPSTR ?
@@ -640,5 +640,5 @@ DEFINE_GUID(WKPDID_D3DDebugObjectName,0x429b8c22,0x9188,0x4b0c,0x87,0x42,0xac,0x
 ;externdef __MIDL_itf_d3dcommon_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
 ;externdef __MIDL_itf_d3dcommon_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
 
-.list
 endif
+.pragma list(pop)

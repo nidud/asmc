@@ -1,6 +1,5 @@
-.xlist
 ifndef _DLGSH_INCLUDED_
-_DLGSH_INCLUDED_ equ 1
+_DLGSH_INCLUDED_ equ <>
 
 ctlFirst		equ 0x0400
 ctlLast			equ 0x04ff
@@ -192,5 +191,3 @@ bExtra			db ?
 CRGB			ENDS
 
 endif
-
-.list

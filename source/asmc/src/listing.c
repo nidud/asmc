@@ -996,6 +996,7 @@ void LstWriteCRef( void )
  * .[NO]LISTIF, .[LF|SF|TF]COND,
  * PAGE, TITLE, SUBTITLE, SUBTTL directives
  */
+
 int ListingDirective( int i, struct asm_tok tokenarray[] )
 {
     int directive = tokenarray[i].tokval;

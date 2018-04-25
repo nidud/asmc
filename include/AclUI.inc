@@ -3,7 +3,7 @@ _ACLUI_H_ equ <>
 include objbase.inc
 include commctrl.inc
 include accctrl.inc
-.xlist
+.pragma list(push, 0)
 
 ifdef __PE__
 dllimport:<aclui>
@@ -191,6 +191,6 @@ EditSecurityAdvanced proto WINAPI \
 
 endif
 
-.list
+.pragma list(pop)
 endif
 

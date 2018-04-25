@@ -1,4 +1,4 @@
-.xlist
+.pragma list(push, 0)
 
 S_IEXEC		equ 0040h
 S_IWRITE	equ 0080h
@@ -24,6 +24,6 @@ st_mtime	dd ?
 st_ctime	dd ?
 S_STAT		ENDS
 
-_stat		proto __cdecl :LPSTR, :PVOID
+_stat	proto __cdecl :LPSTR, :PVOID
 
-.list
+.pragma list(pop)

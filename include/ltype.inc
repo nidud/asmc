@@ -1,8 +1,8 @@
+.pragma list(push, 0)
+
 ifndef __LIBC_INC
  include libc.inc
 endif
-
-.xlist
 
 _UPPER		equ 01h		; upper case letter
 _LOWER		equ 02h		; lower case letter
@@ -15,4 +15,5 @@ _HEX		equ 80h		; hexadecimal digit
 
 externdef	_ltype: BYTE	; Label type array
 
-.list
+.pragma list(pop)
+

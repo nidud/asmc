@@ -1,9 +1,9 @@
 ifndef _WINDEF_
 _WINDEF_ equ <>
+.pragma list(push, 0)
 ifndef __LIBC_INC
  include libc.inc
 endif
-.xlist
 ifndef NO_STRICT
 ifndef STRICT
 STRICT equ 1
@@ -130,7 +130,6 @@ PUINT		typedef ptr dword
 
 ifndef _WINNT_ ; NT_INCLUDED
 include winnt.inc
-.xlist
 endif
 
 ;include specstrings.inc
@@ -329,5 +328,5 @@ DC_PAPERNAMES	    equ 16
 DC_ORIENTATION	    equ 17
 DC_COPIES	    equ 18
 
-.list
-endif ; _WINDEF_
+.pragma list(pop)
+endif

@@ -1,11 +1,11 @@
+.pragma list(push, 0)
+
 ifndef __CRTL_INC
 __CRTL_INC equ <>
 
 ifndef __LIBC_INC
  include libc.inc
 endif
-
-.xlist
 
 _EXEC_BAT	equ 1
 _EXEC_COM	equ 2
@@ -72,5 +72,6 @@ pragma_exit macro pp, priority
 pragma_init pp, priority, EXIT
 	endm
 
-.list
-endif ; __CRTL_INC
+endif
+
+.pragma list(pop)

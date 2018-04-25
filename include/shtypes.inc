@@ -11,9 +11,9 @@ ifndef __RPCNDR_H_VERSION__
 .err <this stub requires an updated version of rpcndr.inc>
 endif
 ifndef __shtypes_h__
-__shtypes_h__ equ 1
+__shtypes_h__ equ <>
+
 include wtypes.inc
-.xlist
 
 ;include pshpack1.inc
 SHITEMID		STRUC
@@ -250,5 +250,4 @@ LPCSHCOLUMNID		typedef ptr SHCOLUMNID
 externdef		__MIDL_itf_shtypes_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef		__MIDL_itf_shtypes_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
 
-.list
 endif

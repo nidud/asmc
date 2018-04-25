@@ -13,9 +13,8 @@ ifndef COM_NO_WINDOWS_H
 include windows.inc
 include ole2.inc
 endif
-
 ifndef __mmstream_h__
-__mmstream_h__ equ 1
+__mmstream_h__ equ <>
 
 ifndef __IMultiMediaStream_FWD_DEFINED__
 __IMultiMediaStream_FWD_DEFINED__ equ 1

@@ -6,7 +6,6 @@ include ole2.inc
 endif
 ifndef __urlmon_h__
 __urlmon_h__ equ <>
-.xlist
 
 ifndef __IPersistMoniker_FWD_DEFINED__
 __IPersistMoniker_FWD_DEFINED__ equ 1
@@ -124,7 +123,6 @@ include objidl.inc
 include oleidl.inc
 include servprov.inc
 include msxml.inc
-.xlist
 
 ;void *
 MIDL_user_allocate proto WINAPI :size_t
@@ -3234,5 +3232,4 @@ IBindHost_MonikerBindToObject_Stub proto WINAPI \
 		  riid: REFIID,
 		ppvObj: ptr IUnknown
 
-.list
 endif

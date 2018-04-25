@@ -1,4 +1,4 @@
-.xlist
+.pragma list(push, 0)
 
 CHAR_BIT	equ 8		; number of bits in a char
 ifdef _CHAR_UNSIGNED
@@ -35,5 +35,4 @@ else
 SIZE_MAX	equ UINT_MAX
 endif
 endif
-
-.list
+.pragma list(pop)

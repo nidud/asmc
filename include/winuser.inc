@@ -1,13 +1,12 @@
+.pragma list(push, 0)
+
 include stdarg.inc
 ifndef _WINBASE_
  include winbase.inc
 endif
 
-.xlist
-
 ifndef _WINUSER_
-_WINUSER_ equ 1
-
+_WINUSER_ equ <>
 
 ifdef __PE__
 option dllimport:<user32>
@@ -3321,9 +3320,9 @@ HWND_NOTOPMOST		equ ((HWND)-2)
 ifndef NOCTLMGR
 
 
-;include pshpack2.inc
+.pragma pack(push, 2)
 
-DLGTEMPLATE		STRUC WORD
+DLGTEMPLATE		STRUC
 style			dd ?
 dwExtendedStyle		dd ?
 cdit			dw ?
@@ -3347,7 +3346,7 @@ else
 LPCDLGTEMPLATE		typedef LPCDLGTEMPLATEA
 endif
 
-DLGITEMTEMPLATE		STRUC WORD
+DLGITEMTEMPLATE		STRUC
 style			dd ?
 dwExtendedStyle		dd ?
 x			dw ?
@@ -3371,7 +3370,7 @@ else
 LPDLGITEMTEMPLATE	typedef LPDLGITEMTEMPLATEA
 endif
 
-;include poppack.inc
+.pragma pack(pop)
 
 ;HWND
 CreateDialogParamA proto WINAPI \
@@ -10093,4 +10092,4 @@ endif
 
 endif
 
-.list
+.pragma list(pop)

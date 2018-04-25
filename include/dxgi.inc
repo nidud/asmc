@@ -1,3 +1,5 @@
+.pragma list(push, 0)
+
 ifndef __REQUIRED_RPCNDR_H_VERSION__
 __REQUIRED_RPCNDR_H_VERSION__ equ 500
 endif
@@ -14,8 +16,7 @@ include windows.inc
 include ole2.inc
 endif
 ifndef __dxgi_h__
-__dxgi_h__ equ 1
-.xlist
+__dxgi_h__ equ <>
 
 ifndef __IDXGIObject_FWD_DEFINED__
 __IDXGIObject_FWD_DEFINED__ equ 1
@@ -63,7 +64,6 @@ endif
 include oaidl.inc
 include ocidl.inc
 include dxgitype.inc
-.xlist
 
 DXGI_CPU_ACCESS_NONE	equ 0
 DXGI_CPU_ACCESS_DYNAMIC equ 1
@@ -564,8 +564,5 @@ DEFINE_GUID(IID_IDXGIDevice1,0x77db970f,0x6276,0x48ba,0xba,0x28,0x07,0x01,0x43,0
 externdef		__MIDL_itf_dxgi_0000_0014_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef		__MIDL_itf_dxgi_0000_0014_v0_0_s_ifspec:RPC_IF_HANDLE
 
-.list
 endif
-
-
-
+.pragma list(pop)

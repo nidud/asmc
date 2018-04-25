@@ -287,5 +287,21 @@ ClassDirective proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok
 
 ClassDirective endp
 
-    END
+ClassInit proc
 
+    mov ModuleInfo.class_label,0    ; init class label counter
+    ret
+
+ClassInit endp
+
+ClassCheckOpen proc
+
+    .if ModuleInfo.ComStack
+
+        asmerr( 1010, ".comdef-.classdef-.ends" )
+    .endif
+    ret
+
+ClassCheckOpen endp
+
+    END

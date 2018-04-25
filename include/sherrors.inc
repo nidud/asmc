@@ -1,7 +1,8 @@
 ifndef _SHERROR_
-_SHERROR_ equ 1
+_SHERROR_ equ <>
+.pragma list(push, 0)
+
 include winerror.inc
-.xlist
 
 COPYENGINE_S_YES            equ _HRESULT_TYPEDEF_(0x00270001)
 COPYENGINE_S_NOT_HANDLED    equ _HRESULT_TYPEDEF_(0x00270003)
@@ -99,5 +100,5 @@ LINK_E_DELETE           equ _HRESULT_TYPEDEF_(0x80270103)
 LIBRARY_E_NO_SAVE_LOCATION equ _HRESULT_TYPEDEF_(0x80270200)
 LIBRARY_E_NO_ACCESSIBLE_LOCATION equ _HRESULT_TYPEDEF_(0x80270201)
 
-.list
-endif ;;  _SHERROR_
+.pragma list(pop)
+endif

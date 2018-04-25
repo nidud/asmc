@@ -15,7 +15,6 @@ include ole2.inc
 endif
 ifndef __strmif_h__
 __strmif_h__ equ <>
-.xlist
 
 ifndef __ICreateDevEnum_FWD_DEFINED__
 __ICreateDevEnum_FWD_DEFINED__ equ 1
@@ -444,7 +443,6 @@ include unknwn.inc
 include objidl.inc
 include oaidl.inc
 include ocidl.inc
-.xlist
 
 CDEF_CLASS_DEFAULT	equ 0x0001
 CDEF_BYPASS_CLASS_MANAGER equ 0x0002
@@ -3434,7 +3432,6 @@ externdef		IID_IAMPluginControl:IID
 endif
 
 include ddraw.inc
-.xlist
 
 DVD_DOMAIN		typedef SDWORD
 DVD_DOMAIN_FirstPlay	equ 1
@@ -4282,7 +4279,6 @@ LPDDCOLORKEY		typedef ptr DDCOLORKEY
 endif
 
 include ddraw.inc
-.xlist
 
 VMRPresentationFlags	typedef SDWORD
 VMRSample_SyncPoint	equ 0x1
@@ -4801,5 +4797,4 @@ endif
 externdef		__MIDL_itf_strmif_0000_0141_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef		__MIDL_itf_strmif_0000_0141_v0_0_s_ifspec:RPC_IF_HANDLE
 
-.list
 endif

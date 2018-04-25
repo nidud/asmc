@@ -1,6 +1,5 @@
 ifndef _d3d9CAPS_H
 _d3d9CAPS_H equ <>
-.xlist
 
 ifndef DIRECT3D_VERSION
 DIRECT3D_VERSION	equ 0x0900
@@ -399,7 +398,4 @@ D3DDTCAPS_FLOAT16_4	equ 0x00000200
 
 endif ; (DIRECT3D_VERSION GE 0x0900)
 
-.list
-endif ; _d3d9CAPS_H_
-
-
+endif

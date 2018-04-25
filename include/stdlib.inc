@@ -1,9 +1,9 @@
 ifndef __STDLIB_INC
+__STDLIB_INC equ <>
+.pragma list(push, 0)
 ifndef __LIBC_INC
  include libc.inc
 endif
-.xlist
-__STDLIB_INC equ <>
 ifdef __PE__
 option	dllimport:<msvcrt>
 endif
@@ -105,5 +105,5 @@ __wgetmainargs	proto __cdecl :ptr, :ptr, :ptr, :ptr, :ptr
 __iob_func	proto __cdecl
 endif
 
-.list
+.pragma list(pop)
 endif

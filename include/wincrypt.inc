@@ -1,9 +1,9 @@
+ifndef __WINCRYPT_H__
+__WINCRYPT_H__ equ <>
+.pragma list(push, 0)
 ifndef _WINDEF_
  include windef.inc
 endif
-ifndef __WINCRYPT_H__
-__WINCRYPT_H__ equ 1
-.xlist
 
 if(_WIN32_WINNT GE 0x0400)
 
@@ -4801,5 +4801,5 @@ CryptVerifyTimeStampSignature proto WINAPI \
 endif
 endif
 
-.list
+.pragma list(pop)
 endif

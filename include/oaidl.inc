@@ -11,8 +11,7 @@ include windows.inc
 include ole2.inc
 endif
 ifndef __oaidl_h__
-__oaidl_h__ equ 1
-.xlist
+__oaidl_h__ equ <>
 
 ifndef __ICreateTypeInfo_FWD_DEFINED__
 __ICreateTypeInfo_FWD_DEFINED__ equ 1
@@ -69,7 +68,6 @@ ifndef __IRecordInfo_FWD_DEFINED__
 __IRecordInfo_FWD_DEFINED__ equ 1
 endif
 include objidl.inc
-.xlist
 
 ;PVOID
 MIDL_user_allocate proto WINAPI \
@@ -3471,5 +3469,4 @@ ITypeLib2_GetDocumentation2_Stub proto WINAPI \
     pbstrHelpStringDll: ptr BSTR
 
 
-.list
 endif

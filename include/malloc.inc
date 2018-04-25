@@ -1,9 +1,9 @@
 ifndef _INC_MALLOC
 _INC_MALLOC equ <>
+.pragma list(push, 0)
 ifndef __LIBC_INC
  include libc.inc
 endif
-.xlist
 ifdef __PE__
 option	dllimport:<msvcrt>
 endif
@@ -87,5 +87,5 @@ GetProcessHeap	proto WINAPI
 HeapAlloc	proto WINAPI :HANDLE, dwFlags:DWORD, dwBytes:SIZE_T
 HeapFree	proto WINAPI :HANDLE, dwFlags:DWORD, lpMem:PVOID
 
-.list
+.pragma list(pop)
 endif

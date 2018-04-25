@@ -1,9 +1,8 @@
+ifndef _PRSHT_H_
+_PRSHT_H_ equ <>
 ifndef __LIBC_INC
  include libc.inc
 endif
-.xlist
-ifndef _PRSHT_H_
-_PRSHT_H_ equ 1
 
 ifndef _WIN32_IE
 _WIN32_IE equ 0x0400
@@ -476,5 +475,3 @@ PROP_LG_CXDLG		equ 252
 PROP_LG_CYDLG		equ 218
 
 endif
-
-.list

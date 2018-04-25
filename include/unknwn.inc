@@ -1,6 +1,5 @@
 ifndef __unknwn_h__
-.xlist
-__unknwn_h__ equ 1
+__unknwn_h__ equ <>
 
 ifndef __REQUIRED_RPCNDR_H_VERSION__
 __REQUIRED_RPCNDR_H_VERSION__ equ 440
@@ -8,7 +7,6 @@ endif
 
 include rpc.inc
 include rpcndr.inc
-.xlist
 
 ifndef __RPCNDR_H_VERSION__
 .err <this stub requires an updated version of rpcndr.inc >
@@ -20,7 +18,6 @@ include ole2.inc
 endif
 
 include wtypes.inc
-.xlist
 
 externdef __MIDL_itf_unknwn_0000_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef __MIDL_itf_unknwn_0000_v0_0_s_ifspec:RPC_IF_HANDLE
@@ -76,11 +73,11 @@ ifndef __IClassFactory_INTERFACE_DEFINED__
 __IClassFactory_INTERFACE_DEFINED__ equ 1
 
 .comdef IClassFactory
-    QueryInterface      proc :REFIID, :ptr
-    AddRef              proc
-    Release             proc
-    CreateInstance      proc :ptr, :REFIID, :ptr
-    LockServer          proc :BOOL
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    CreateInstance	proc :ptr, :REFIID, :ptr
+    LockServer		proc :BOOL
     .ends
 LPCLASSFACTORY		typedef ptr IClassFactory
 externdef		IID_IClassFactory:IID
@@ -137,5 +134,4 @@ IClassFactory_LockServer_Stub proto WINAPI \
 		 _This: ptr IClassFactory,
 		 fLock: BOOL
 
-.list
 endif

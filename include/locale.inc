@@ -1,8 +1,8 @@
+.pragma list(push, 0)
+
 ifndef __LIBC_INC
  include libc.inc
 endif
-
-.xlist
 
 LC_ALL		equ 0
 LC_COLLATE	equ 1
@@ -39,4 +39,4 @@ setlocale	PROTO :SINT, :LPSTR
 localeconv	PROTO
 _wsetlocale	PROTO :SINT, :LPWSTR
 
-.list
+.pragma list(pop)

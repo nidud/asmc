@@ -1,10 +1,9 @@
+ifndef _WINGDI_
+_WINGDI_ equ <>
+.pragma list(push, 0)
 ifndef _WINDEF_
  include windef.inc
 endif
-ifndef _WINGDI_
-_WINGDI_ equ <>
-.xlist
-
 ifdef __PE__
 WINGDIAPI	equ <option dllimport:<gdi32>>
 WINSPOOLAPI	equ <option dllimport:<winspool>>
@@ -4548,5 +4547,5 @@ wglSwapMultipleBuffers proto WINAPI :UINT, :LPWGLSWAP
 endif
 endif
 
-.list
+.pragma list(pop)
 endif

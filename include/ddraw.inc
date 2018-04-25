@@ -1,6 +1,9 @@
 ifndef __DDRAW_INCLUDED__
 __DDRAW_INCLUDED__ equ <>
-.xlist
+.pragma list(push, 0)
+ifndef _WINDEF_
+include windef.inc
+endif
 
 ifdef DIRECTX_REDIST
 ENABLE_NAMELESS_UNION_PRAGMA equ 1
@@ -13,7 +16,6 @@ endif
 if defined( _WIN32 ) AND NOT defined( _NO_COM )
 COM_NO_WINDOWS_H equ 1
 include objbase.inc
-.xlist
 else
 IUnknown		equ <>
 if NOT defined( NT_BUILD_ENVIRONMENT ) AND NOT defined(WINNT)
@@ -1773,5 +1775,5 @@ DDERR_NODRIVERSUPPORT	equ MAKE_DDHRESULT( 697 )
 DDERR_DEVICEDOESNTOWNSURFACE equ MAKE_DDHRESULT( 699 )
 DDERR_NOTINITIALIZED	equ CO_E_NOTINITIAIZED
 
-.list
+.pragma list(pop)
 endif

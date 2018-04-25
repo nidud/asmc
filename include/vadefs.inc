@@ -1,6 +1,6 @@
 ifndef _INC_VADEFS
 _INC_VADEFS equ <>
-.xlist
+.pragma list(push, 0)
 
 _CRT_PACKING equ 8
 .pragma pack(push, _CRT_PACKING)
@@ -77,5 +77,5 @@ __crt_va_start macro ap, x
 	endm
 
 .pragma pack(pop)
-.list
-endif ;; _INC_VADEFS
+.pragma list(pop)
+endif

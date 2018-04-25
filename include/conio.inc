@@ -1,5 +1,6 @@
 ifndef __INC_CONIO
 __INC_CONIO equ <>
+.pragma list(push, 0)
 ifndef __LIBC_INC
  include libc.inc
 endif
@@ -9,7 +10,6 @@ endif
 ifndef _WINUSER_
  include winuser.inc
 endif
-.xlist
 ifdef __PE__
 option	dllimport:<msvcrt>
 else
@@ -93,5 +93,5 @@ externdef _confh:intptr_t
 
 endif
 
-.list
-endif	; __INC_CONIO
+.pragma list(pop)
+endif

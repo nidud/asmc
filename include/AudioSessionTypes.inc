@@ -1,19 +1,10 @@
 ifndef __AUDIOSESSIONTYPES__
 __AUDIOSESSIONTYPES__ equ <>
-.xlist
-ifdef __midl
-MIDL_SIZE_IS macro x
-	exitm<[size_is(x)]>
-	endm
-MIDL_STRING		equ [string]
-MIDL_ANYSIZE_ARRAY equ 1
-else
 MIDL_SIZE_IS macro x
 	 exitm<1>
 	 endm
 MIDL_STRING equ 1
 MIDL_ANYSIZE_ARRAY	equ ANYSIZE_ARRAY
-endif
 
 AUDCLNT_SHAREMODE	typedef SDWORD
 AUDCLNT_SHAREMODE_SHARED equ 0
@@ -32,8 +23,6 @@ AudioSessionState	typedef SDWORD
 AudioSessionStateInactive equ 0
 AudioSessionStateActive equ 1
 AudioSessionStateExpired equ 2
-
-.list
 endif
 
 

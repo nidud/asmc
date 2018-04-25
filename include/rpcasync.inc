@@ -1,9 +1,8 @@
 ifndef __LIBC_INC
  include libc.inc
 endif
-.xlist
 ifndef __RPCASYNC_H__
-__RPCASYNC_H__ equ 1
+__RPCASYNC_H__ equ <>
 
 RPC_ASYNC_VERSION_1_0	equ sizeof(RPC_ASYNC_STATE)
 
@@ -101,5 +100,3 @@ I_RpcAsyncAbortCall proto WINAPI \
 		ExceptionCode: DWORD
 
 endif
-
-.list

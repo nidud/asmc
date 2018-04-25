@@ -1,6 +1,6 @@
 ifndef __AMAUDIO__
 __AMAUDIO__ equ <>
-
+.pragma list(push, 0)
 include mmsystem.inc
 include dsound.inc
 
@@ -20,6 +20,7 @@ include dsound.inc
 	GetFocusWindow	proc :ptr HWND, :ptr BOOL
 	.ends
 
+.pragma list(pop)
 endif
 
 

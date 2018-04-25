@@ -2,8 +2,7 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 ifndef NCB_INCLUDED
-NCB_INCLUDED equ 1
-.xlist
+NCB_INCLUDED equ <>
 
 IFDEF __PE__
 option	dllimport:<netapi32>
@@ -215,5 +214,4 @@ Netbios proto WINAPI pncb:PNCB
 
 NCB_POST		equ <>
 
-.list
 endif

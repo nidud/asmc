@@ -11,13 +11,12 @@ include windows.inc
 include ole2.inc
 endif
 ifndef __servprov_h__
-__servprov_h__ equ 1
+__servprov_h__ equ <>
 
 ifndef __IServiceProvider_FWD_DEFINED__
 __IServiceProvider_FWD_DEFINED__ equ 1
 endif
 include objidl.inc
-.xlist
 
 ;void
 MIDL_user_free proto WINAPI :PVOID
@@ -74,5 +73,4 @@ IServiceProvider_QueryService_Stub proto WINAPI \
 		  riid: REFIID,
 	     ppvObject: ptr IUnknown
 
-.list
-endif ; __servprov_h__
+endif

@@ -13,9 +13,8 @@ ifndef COM_NO_WINDOWS_H
 include windows.inc
 include ole2.inc
 endif
-.xlist
 ifndef __bits4_0_h__
-__bits4_0_h__ equ 1
+__bits4_0_h__ equ <>
 
 ifndef __IBitsTokenOptions_FWD_DEFINED__
 __IBitsTokenOptions_FWD_DEFINED__ equ 1
@@ -32,7 +31,6 @@ include bits1_5.inc
 include bits2_0.inc
 include bits2_5.inc
 include bits3_0.inc
-.xlist
 
 ifndef __IBitsTokenOptions_INTERFACE_DEFINED__
 __IBitsTokenOptions_INTERFACE_DEFINED__ equ 1
@@ -90,5 +88,4 @@ class DECLSPEC_UUID("bb6df56b-cace-11dc-9992-0019b93a3a84")
 endif
 endif
 
-.list
 endif

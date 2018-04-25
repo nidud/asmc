@@ -1,8 +1,8 @@
+.pragma list(push, 0)
+
 ifndef __LIBC_INC
  include libc.inc
 endif
-
-.xlist
 
 S_JMPBUF STRUC
 IFDEF _WIN64
@@ -31,4 +31,4 @@ S_JMPBUF ENDS
 _setjmp PROTO __cdecl :PTR S_JMPBUF
 longjmp PROTO __cdecl :PTR S_JMPBUF, :SIZE_T
 
-.list
+.pragma list(pop)

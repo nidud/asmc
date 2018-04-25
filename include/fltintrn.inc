@@ -1,8 +1,8 @@
+.pragma list(push, 0)
+
 ifndef __LIBC_INC
  include libc.inc
 endif
-
-.xlist
 
 _ST_SIGN	equ 0x0001
 _ST_NEGNUM	equ 0x0002
@@ -49,4 +49,4 @@ _qcvt		proto __cdecl :ptr, :LPSTR, :SINT, :SINT, :SINT
 _dcvt		proto __cdecl :ptr, :LPSTR, :SINT, :SINT, :SINT
 _ldcvt		proto __cdecl :ptr, :LPSTR, :SINT, :SINT, :SINT
 
-.list
+.pragma list(pop)

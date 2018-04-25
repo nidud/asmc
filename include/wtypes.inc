@@ -1,13 +1,12 @@
+.pragma list(push, 0)
 ifndef __WTYPES_INC
 __WTYPES_INC equ <>
-.xlist
 ifndef __REQUIRED_RPCNDR_H_VERSION__
 __REQUIRED_RPCNDR_H_VERSION__ equ 440
 endif
 
 include rpc.inc
 include rpcndr.inc
-.xlist
 
 ;PVOID
 MIDL_user_allocate proto WINAPI :size_t
@@ -825,9 +824,8 @@ cPackages		dd ?
 pPackageDetail		LPPACKAGEDETAIL ?
 PACKAGEINFO		ENDS
 
-
 externdef __MIDL_itf_wtypes_0001_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef __MIDL_itf_wtypes_0001_v0_0_s_ifspec:RPC_IF_HANDLE
 
-.list
 endif
+.pragma list(pop)

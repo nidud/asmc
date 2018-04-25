@@ -1,9 +1,8 @@
+ifndef __RPCNSI_H__
+__RPCNSI_H__ equ <>
 ifndef __LIBC_INC
  include libc.inc
 endif
-.xlist
-ifndef __RPCNSI_H__
-__RPCNSI_H__ equ 1
 
 RPC_NS_HANDLE	typedef ptr
 
@@ -435,8 +434,7 @@ RpcNsProfileEltRemove	equ <RpcNsProfileEltRemoveA>
 RpcNsProfileEltInqBegin equ <RpcNsProfileEltInqBeginA>
 RpcNsProfileEltInqNext	equ <RpcNsProfileEltInqNextA>
 
-endif 
+endif
 
-endif 
+endif
 
-.list

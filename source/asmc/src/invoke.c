@@ -730,7 +730,7 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 			    }
 			    sprintf(fullparam, "0x%016" I64_SPEC "X", opnd.llvalue);
 			    if ( ( ModuleInfo.curr_cpu & P_CPU_MASK ) >= P_64 &&
-				opnd.llvalue >	 0xFFFFFFFF ) {
+				opnd.llvalue > 0xFFFFFFFF ) {
 				*r0flags |= R0_USED;
 				AddLineQueueX( " mov %r, %s", T_RAX, fullparam );
 				AddLineQueueX( " push %r", T_RAX );

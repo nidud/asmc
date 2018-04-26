@@ -652,8 +652,10 @@ int segm_override( const struct expr *opndx, struct code_info *CodeInfo )
  *   CodeInfo->prefix.opsiz
  *   CodeInfo->iswide
  */
-static int idata_nofixup( struct code_info *CodeInfo, unsigned CurrOpnd, const struct expr *opndx )
-/******************************************************************************************************/
+
+void resize_float( struct expr *, unsigned );
+
+static int idata_nofixup( struct code_info *CodeInfo, unsigned CurrOpnd, struct expr *opndx )
 {
     enum operand_type op_type;
     int_32	value;
@@ -665,6 +667,17 @@ static int idata_nofixup( struct code_info *CodeInfo, unsigned CurrOpnd, const s
     }
     value = opndx->value;
     CodeInfo->opnd[CurrOpnd].data32l = value;
+
+#ifdef _ASMC
+    if ( opndx->mem_type == MT_REAL16 ) {
+
+	if ( CodeInfo->token == T_MOV && CodeInfo->Ofssize == USE64
+	    && CurrOpnd == OPND2 && ( CodeInfo->opnd[OPND1].type & OP_R64 ))
+	    resize_float( opndx, 8 );
+	else
+	    resize_float( opndx, 4 );
+    }
+#endif
 
     /* 64bit immediates are restricted to MOV <reg>,<imm64>
      */
@@ -2729,12 +2742,14 @@ int ParseLine( struct asm_tok tokenarray[] )
 		    int m = 4;
 		    if ( opndx[j].mem_type == MT_REAL8 )
 			m = 8;
-#if defined(_ASMLIB_)
+#ifdef _ASMC
 		    else if ( opndx[j].mem_type == MT_REAL16 )
 			m = 16;
+		    if ( opndx[j].float_tok )
 #endif
-		    atofloat( &opndx[j].fvalue, opndx[j].float_tok->string_ptr,
-			m, opndx[j].negative, opndx[j].float_tok->floattype );
+			atofloat( &opndx[j].fvalue, opndx[j].float_tok->string_ptr,
+				m, opndx[j].negative, opndx[j].float_tok->floattype );
+
 		    opndx[j].kind = EXPR_CONST;
 		    opndx[j].float_tok = NULL;
 		    break;

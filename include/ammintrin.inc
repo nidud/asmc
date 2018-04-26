@@ -223,6 +223,51 @@ _mm_comtrue_epi64 macro v1, v2
 ;; SSE5 intrinsics
 ;; Float/double multiply-accumulate
 
+ifndef _MM_NOINLINE
+
+_mm_macc_ps macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
+	endm
+_mm_macc_pd macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
+	endm
+_mm_macc_ss macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
+	endm
+_mm_macc_sd macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
+	endm
+_mm_maddsub_ps macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
+	endm
+_mm_maddsub_pd macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
+	endm
+_mm_msubadd_ps macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
+	endm
+_mm_msubadd_pd macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
+	endm
+_mm_msub_ps macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
+	endm
+_mm_msub_pd macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
+	endm
+_mm_msub_ss macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
+	endm
+_mm_msub_sd macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
+	endm
+_mm_nmacc_ps macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
+	endm
+_mm_nmacc_pd macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
+	endm
+_mm_nmacc_ss macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
+	endm
+_mm_nmacc_sd macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
+	endm
+_mm_nmsub_ps macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
+	endm
+_mm_nmsub_pd macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
+	endm
+_mm_nmsub_ss macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
+	endm
+_mm_nmsub_sd macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
+	endm
+
+else
+
 _mm_macc_ps	proto :oword, :oword, :oword
 _mm_macc_pd	proto :oword, :oword, :oword
 _mm_macc_ss	proto :oword, :oword, :oword
@@ -243,6 +288,8 @@ _mm_nmsub_ps	proto :oword, :oword, :oword
 _mm_nmsub_pd	proto :oword, :oword, :oword
 _mm_nmsub_ss	proto :oword, :oword, :oword
 _mm_nmsub_sd	proto :oword, :oword, :oword
+
+endif
 
 ;; Integer multiply-accumulate
 

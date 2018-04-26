@@ -1,6 +1,5 @@
 ifndef __INTRIN_H_
 __INTRIN_H_ equ <>
-include setjmp.inc
 include intrin0.inc
 include vcruntime.inc
 if (defined(_M_IX86) OR defined(_M_X64)) AND NOT defined(_CHPE_ONLY_)
@@ -436,22 +435,16 @@ __MACHINEX86(_mm_cvtpi32_pd proto sqword)
 __MACHINEX86_X64(_mm_cvtps_epi32 proto :oword)
 __MACHINEX86_X64(_mm_cvtps_pd proto :oword)
 __MACHINEX86_X64(_mm_cvtsd_si32 proto :oword)
-__MACHINEX64(_mm_cvtsd_si64 proto :oword)
 __MACHINEX64(_mm_cvtsd_si64x proto :oword)
 __MACHINEX86_X64(_mm_cvtsd_ss proto :oword, :oword)
 __MACHINEX86_X64(_mm_cvtsi128_si32 proto :oword)
-__MACHINEX64(_mm_cvtsi128_si64 proto :oword)
 __MACHINEX64(_mm_cvtsi128_si64x proto :oword)
 __MACHINEX86_X64(_mm_cvtsi32_sd proto :oword, :sdword)
 __MACHINEX86_X64(_mm_cvtsi32_si128 proto :sdword)
-__MACHINEX64(_mm_cvtsi64_sd proto :oword, :qword)
-__MACHINEX64(_mm_cvtsi64_si128 proto :qword)
-__MACHINEX64(_mm_cvtsi64_ss proto :oword, :qword)
 __MACHINEX64(_mm_cvtsi64x_sd proto :oword, :qword)
 __MACHINEX64(_mm_cvtsi64x_si128 proto :qword)
 __MACHINEX64(_mm_cvtsi64x_ss proto :oword, :qword)
 __MACHINEX86_X64(_mm_cvtss_sd proto :oword, :oword)
-__MACHINEX64(_mm_cvtss_si64 proto :oword)
 __MACHINEX64(_mm_cvtss_si64x proto :oword)
 __MACHINEX86(_mm_cvtt_ps2pi proto :oword)
 __MACHINEX86_X64(_mm_cvtt_ss2si proto :oword)
@@ -459,9 +452,7 @@ __MACHINEX86_X64(_mm_cvttpd_epi32 proto :oword)
 __MACHINEX86(_mm_cvttpd_pi32 proto :oword)
 __MACHINEX86_X64(_mm_cvttps_epi32 proto :oword)
 __MACHINEX86_X64(_mm_cvttsd_si32 proto :oword)
-__MACHINEX64(_mm_cvttsd_si64 proto :oword)
 __MACHINEX64(_mm_cvttsd_si64x proto :oword)
-__MACHINEX64(_mm_cvttss_si64 proto :oword)
 __MACHINEX64(_mm_cvttss_si64x proto :oword)
 __MACHINEX86_X64(_mm_div_pd proto :oword, :oword)
 __MACHINEX86_X64(_mm_div_ps proto :oword, :oword)
@@ -747,7 +738,6 @@ __MACHINE(_rotr proto __cdecl :dword, :sdword)
 __MACHINE(_rotr16 proto __cdecl :word, :byte)
 __MACHINE(_rotr64 proto __cdecl :qword, :sdword)
 __MACHINE(_rotr8 proto __cdecl :byte, :byte)
-;__MACHINE(_setjmp proto __cdecl :jmp_buf)
 __MACHINEX64(_umul128 proto :qword, :qword, :ptr)
 __MACHINEX86_X64(_rsm proto)
 __MACHINEX86_X64(_lgdt proto :ptr)
@@ -764,5 +754,18 @@ __MACHINEX64(_addcarry_u64 proto __cdecl :byte, :qword, :qword, :ptr)
 __MACHINEX64(_subborrow_u64 proto __cdecl :byte, :qword, :qword, :ptr)
 __MACHINEX86_X64(_mm_monitorx proto :ptr, :dword, :dword)
 __MACHINEX86_X64(_mm_mwaitx proto :dword, :dword, :dword)
+
+ifdef _MM_NOINLINE
+
+__MACHINEX64(_mm_cvtsd_si64 proto :oword)
+__MACHINEX64(_mm_cvtsi128_si64 proto :oword)
+__MACHINEX64(_mm_cvtsi64_sd proto :oword, :qword)
+__MACHINEX64(_mm_cvtsi64_si128 proto :qword)
+__MACHINEX64(_mm_cvtsi64_ss proto :oword, :qword)
+__MACHINEX64(_mm_cvtss_si64 proto :oword)
+__MACHINEX64(_mm_cvttsd_si64 proto :oword)
+__MACHINEX64(_mm_cvttss_si64 proto :oword)
+
+endif
 
 endif

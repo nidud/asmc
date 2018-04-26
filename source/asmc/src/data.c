@@ -370,6 +370,36 @@ static char *little_endian( const char *src, unsigned len )
     return( StringBufferEnd );
 }
 
+void resize_float( struct expr *opnd, unsigned size )
+{
+    double double_value;
+
+    if ( size == 10 )
+	_qftold(opnd->chararray, opnd->chararray);
+    else if ( size == 8 ) {
+	errno = 0;
+	_qftod(opnd->chararray, opnd->chararray);
+	if ( errno == ERANGE )
+	    asmerr( 2071 );
+	opnd->hlvalue = 0;
+	opnd->mem_type = MT_REAL8;
+    } else {
+	if ( opnd->chararray[15] & 0x80 ) {
+	    opnd->negative = 1;
+	    opnd->chararray[15] &= 0x7F;
+	}
+	_qftod(&double_value, opnd->chararray);
+	if ( double_value > FLT_MAX || ( double_value < FLT_MIN && double_value != 0 ) )
+	    asmerr( 2071 );
+	if ( opnd->negative )
+	    double_value *= -1;
+	opnd->fvalue = double_value;
+	opnd->hlvalue = 0;
+	opnd->hvalue = 0;
+	opnd->mem_type = MT_REAL4;
+    }
+}
+
 static void output_float( struct expr *opnd, unsigned size )
 {
     /* v2.07: buffer extended to max size of a data item (=32).
@@ -400,30 +430,8 @@ static void output_float( struct expr *opnd, unsigned size )
 	OutputDataBytes( buffer, size );
 #ifdef _ASMC
     } else {
-	if ( size != 16 ) {
-	    if ( size == 10 )
-		_qftold(opnd->chararray, opnd->chararray);
-	    else if ( size == 8 ) {
-		errno = 0;
-		_qftod(opnd->chararray, opnd->chararray);
-		if ( errno == ERANGE )
-		    asmerr( 2071 );
-		opnd->hlvalue = 0;
-	    } else {
-		double double_value;
-		if ( opnd->chararray[15] & 0x80 ) {
-		    opnd->negative = 1;
-		    opnd->chararray[15] &= 0x7F;
-		}
-		_qftod(&double_value, opnd->chararray);
-		if ( double_value > FLT_MAX ||
-		   ( double_value < FLT_MIN && double_value != 0 ) )
-		       asmerr( 2071 );
-		if ( opnd->negative )
-		    double_value *= -1;
-		opnd->fvalue = double_value;
-	    }
-	}
+	if ( size != 16 )
+	    resize_float( opnd, size );
 	OutputDataBytes( opnd->chararray, size );
 #endif
     }

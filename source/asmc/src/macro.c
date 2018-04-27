@@ -472,7 +472,7 @@ ret_code StoreMacro( struct dsym *macro, int i, struct asm_tok tokenarray[], boo
 	     */
 	    src = ls.input - 1;
 	} else if( tok[0].token == T_DIRECTIVE ) {
-	    if ( tok[0].tokval == T_EXITM ) {
+	    if ( tok[0].tokval == T_EXITM || tok[0].tokval == T_RETM ) {
 		if ( nesting_depth == 0 ) {
 		    ptr = ls.input;
 		    while( islspace( *ptr ) ) ptr++;

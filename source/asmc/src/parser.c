@@ -2535,6 +2535,7 @@ int ParseLine( struct asm_tok tokenarray[] )
 		case T_ENDM:
 		    asmerr( 1008 );
 		    break;
+		case T_RETM:
 		case T_EXITM:
 		case T_GOTO:
 		    asmerr( 2170 );

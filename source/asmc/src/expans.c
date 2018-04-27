@@ -101,6 +101,7 @@ int RunMacro( struct dsym *macro, int idx, struct asm_tok tokenarray[],
     char	*currparm;
     char	*savedStringBuffer = StringBufferEnd;
     int		i;
+    int		retm = (idx > 1);
     int		parmidx;
     int		skipcomma;
     int		varargcnt;
@@ -557,7 +558,7 @@ int RunMacro( struct dsym *macro, int idx, struct asm_tok tokenarray[],
 	    }
 
 	    if ( tokenarray[0].token == T_DIRECTIVE ) {
-		if ( tokenarray[0].tokval == T_EXITM ) {
+		if ( tokenarray[0].tokval == T_EXITM || tokenarray[0].tokval == T_RETM ) {
 		    if ( ModuleInfo.list && ModuleInfo.list_macro == LM_LISTMACROALL )
 			LstWriteSrcLine();
 		    if ( tokenarray[1].token != T_FINAL ) {
@@ -578,7 +579,9 @@ int RunMacro( struct dsym *macro, int idx, struct asm_tok tokenarray[],
 			     * To determine text macro or macro function expansion,
 			     * check if there's a literal in the original line.
 			     */
-			    if ( mi.currline->ph_count || *(mi.currline->line+(tokenarray[1].tokpos-CurrSource)) != '<' ) {
+			    if ( !retm && tokenarray[0].tokval == T_RETM )
+				*out = NULLC;
+			    else if ( mi.currline->ph_count || *(mi.currline->line+(tokenarray[1].tokpos-CurrSource)) != '<' ) {
 				memcpy( out, tokenarray[1].string_ptr, tokenarray[1].stringlen + 1 );
 			    } else {
 				/* since the string_ptr member has the !-operator stripped, it

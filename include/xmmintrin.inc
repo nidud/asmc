@@ -147,7 +147,11 @@ _MM_OPCSX1 macro op, sx, a
 	&op&&sx& a
 	retm<a>
     else
-	mov&sx& xmm0,_MM_MREG(a)
+	ifidni <sx>,<ps>
+	    movaps xmm0,_MM_MREG(a)
+	else
+	    mov&sx& xmm0,_MM_MREG(a)
+	endif
 	&op&&sx& xmm0
 	retm<xmm0>
     endif
@@ -158,16 +162,29 @@ _MM_OPCSX2 macro op, sx, a, b
 	&op&&sx& a,b
 	retm<a>
     elseif _MM_ISXMM(a)
-	mov&sx& xmm1,_MM_MREG(b)
+	ifidni <sx>,<ps>
+	    movaps xmm1,_MM_MREG(b)
+	else
+	    movss xmm1,_MM_MREG(b)
+	endif
 	&op&&sx& a,xmm1
 	retm<a>
     elseif _MM_ISXMM(b)
-	mov&sx& xmm0,_MM_MREG(a)
+	ifidni <sx>,<ps>
+	    movaps xmm0,_MM_MREG(a)
+	else
+	    mov&sx& xmm0,_MM_MREG(a)
+	endif
 	&op&&sx& xmm0,b
 	retm<xmm0>
     else
-	mov&sx& xmm0,_MM_MREG(a)
-	mov&sx& xmm1,_MM_MREG(b)
+	ifidni <sx>,<ps>
+	    movaps xmm0,_MM_MREG(a)
+	    movaps xmm1,_MM_MREG(b)
+	else
+	    mov&sx& xmm0,_MM_MREG(a)
+	    mov&sx& xmm1,_MM_MREG(b)
+	endif
 	&op&&sx& xmm0,xmm1
 	retm<xmm0>
     endif
@@ -221,34 +238,34 @@ _mm_div_ps macro a:=<xmm0>, b:=<xmm1>
 	endm
 
 _mm_sqrt_ss macro a:=<xmm0>
-	exitm<_MM_OPCSX1(sqrt, ss, a)>
+	exitm<_MM_OPCSX2(sqrt, ss, xmm0, a)>
 	endm
 _mm_sqrt_ps macro a:=<xmm0>
-	exitm<_MM_OPCSX1(sqrt, ps, a)>
+	exitm<_MM_OPCSX2(sqrt, ps, xmm0, a)>
 	endm
 _mm_rcp_ss macro a:=<xmm0>
-	exitm<_MM_OPCSX1(rcp, ss, a)>
+	exitm<_MM_OPCSX2(rcp, ss, xmm0, a)>
 	endm
 _mm_rcp_ps macro a:=<xmm0>
-	exitm<_MM_OPCSX1(rcp, ps, a)>
+	exitm<_MM_OPCSX2(rcp, ps, xmm0, a)>
 	endm
 _mm_rsqrt_ss macro a:=<xmm0>
-	exitm<_MM_OPCSX1(rsqrt, ss, a)>
+	exitm<_MM_OPCSX2(rsqrt, ss, xmm0, a)>
 	endm
 _mm_rsqrt_ps macro a:=<xmm0>
-	exitm<_MM_OPCSX1(rsqrt, ps, a)>
+	exitm<_MM_OPCSX2(rsqrt, ps, xmm0, a)>
 	endm
 _mm_min_ss macro a:=<xmm0>, b:=<xmm1>
-	exitm<_MM_OPCSX1(min, ss, a)>
+	exitm<_MM_OPCSX2(min, ss, a, b)>
 	endm
 _mm_min_ps macro a:=<xmm0>, b:=<xmm1>
-	exitm<_MM_OPCSX1(min, ps, a)>
+	exitm<_MM_OPCSX2(min, ps, a, b)>
 	endm
 _mm_max_ss macro a:=<xmm0>, b:=<xmm1>
-	exitm<_MM_OPCSX1(max, ss, a)>
+	exitm<_MM_OPCSX2(max, ss, a, b)>
 	endm
 _mm_max_ps macro a:=<xmm0>, b:=<xmm1>
-	exitm<_MM_OPCSX1(max, ps, a)>
+	exitm<_MM_OPCSX2(max, ps, a, b)>
 	endm
 
 _mm_and_ps macro a:=<xmm0>, b:=<xmm1>

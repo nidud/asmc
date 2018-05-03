@@ -278,7 +278,7 @@ __n128 ends
 float32x4_t typedef __n128
 
 if defined(_XM_SSE_INTRINSICS_) and not defined(_XM_NO_INTRINSICS_)
-XMVECTOR typedef oword
+XMVECTOR typedef REAL16
 elseifndef _XM_NO_INTRINSICS_
 XMVECTOR typedef float32x4_t
 else
@@ -288,7 +288,7 @@ endif
 if ( defined(_M_IX86) OR _XM_VECTORCALL_ ) and not defined(_XM_NO_INTRINSICS_)
 FXMVECTOR typedef XMVECTOR
 else
-FXMVECTOR typedef XMVECTOR&
+FXMVECTOR typedef ptr XMVECTOR
 endif
 
 if ( (_XM_VECTORCALL_ and not defined(_M_IX86) ) ) and not defined(_XM_NO_INTRINSICS_)
@@ -308,28 +308,44 @@ CXMVECTOR typedef ptr XMVECTOR
 XMVECTORF32	STRUC
 UNION
  f		REAL4 4 dup(?)
+ifdef _XM_NO_INTRINSICS_
+ v		XMVECTOR <>
+else
  v		XMVECTOR ?
+endif
 ENDS
 XMVECTORF32	ENDS
 
 XMVECTORI32	STRUC
 UNION
  i		dd 4 dup(?)
+ifdef _XM_NO_INTRINSICS_
+ v		XMVECTOR <>
+else
  v		XMVECTOR ?
+endif
 ENDS
 XMVECTORI32	ENDS
 
 XMVECTORU8	STRUC
 UNION
  u		db 16 dup(?)
+ifdef _XM_NO_INTRINSICS_
+ v		XMVECTOR <>
+else
  v		XMVECTOR ?
+endif
 ENDS
 XMVECTORU8	ENDS
 
 XMVECTORU32	STRUC
 UNION
  u		dd 4 dup(?)
+ifdef _XM_NO_INTRINSICS_
+ v		XMVECTOR <>
+else
  v		XMVECTOR ?
+endif
 ENDS
 XMVECTORU32	ENDS
 
@@ -361,7 +377,11 @@ UNION
  m		REAL4 4*4 dup(?)
 ENDS
 else
+ifdef _XM_NO_INTRINSICS_
+r		XMVECTOR 4 dup(<>)
+else
 r		XMVECTOR 4 dup(?)
+endif
 endif
 XMMATRIX	ENDS
 CXMMATRIX	typedef ptr XMMATRIX
@@ -487,10 +507,134 @@ UNION
 ENDS
 XMFLOAT4X4	ENDS
 
-XMConvertVectorIntToFloat proto :FXMVECTOR, :uint32_t
-XMConvertVectorFloatToInt proto :FXMVECTOR, :uint32_t
-XMConvertVectorUIntToFloat proto :FXMVECTOR, :uint32_t
-XMConvertVectorFloatToUInt proto :FXMVECTOR, :uint32_t
+XMConvertVectorIntToFloat macro VInt, DivExponent
+    ;;
+    ;; Convert to floats
+    ;;
+    _mm_store_ps(xmm1, _mm_cvtepi32_ps(_mm_castps_si128(VInt)))
+    ;;
+    ;; Convert DivExponent into 1.0f/(1<<DivExponent)
+    ;;
+    ;; uScale = 0x3F800000 - (DivExponent << 23)
+    ;;
+    ;; Splat the scalar value
+    ;;
+    _mm_set1_epi32(0x3F800000 - (DivExponent shl 23))
+    _mm_mul_ps(_mm_castsi128_ps(xmm0), xmm1)
+    retm<xmm0>
+    endm
+
+XMConvertVectorFloatToInt macro VFloat, MulExponent
+    .assert( MulExponent < 32 )
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_ARM_NEON_INTRINSICS_
+else
+    _mm_store_ps(xmm1, VFloat)
+    _mm_set_ps1(_mm_cvtsi32_ss(xmm0, (1 shl MulExponent)))
+    _mm_store_ps(xmm1, _mm_mul_ps(xmm0, xmm1))
+    ;;
+    ;; In case of positive overflow, detect it
+    ;;
+    _mm_store_ps(xmm2, _mm_cmpgt_ps(xmm0, g_XMMaxInt))
+    ;;
+    ;; Float to int conversion
+    ;;
+    _mm_cvttps_epi32(xmm1)
+    ;;
+    ;; If there was positive overflow, set to 0x7FFFFFFF
+    ;;
+    _mm_and_ps(xmm2, g_XMAbsMask)
+    _mm_andnot_ps(xmm0, _mm_castsi128_ps(xmm1))
+    _mm_or_ps(xmm0, xmm2)
+    retm<xmm0>
+endif
+    endm
+
+XMConvertVectorUIntToFloat macro VUInt, DivExponent
+    .assert(DivExponent < 32)
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_ARM_NEON_INTRINSICS_
+else
+    _mm_store_ps(xmm0, VUInt)
+    _mm_store_ps(xmm1, xmm0)
+    ;;
+    ;; For the values that are higher than 0x7FFFFFFF, a fixup is needed
+    ;; Determine which ones need the fix.
+    ;;
+    _mm_and_ps(xmm1, g_XMNegativeZero)
+    ;;
+    ;; Force all values positive
+    ;;
+    _mm_xor_ps(xmm0, xmm1)
+    ;;
+    ;; Convert to floats
+    ;;
+    _mm_cvtepi32_ps(_mm_castps_si128(xmm0))
+    ;;
+    ;; Convert 0x80000000 -> 0xFFFFFFFF
+    ;;
+    _mm_srai_epi32(_mm_castps_si128(xmm1), 31)
+    ;;
+    ;; For only the ones that are too big, add the fixup
+    ;;
+    _mm_and_ps(_mm_castsi128_ps(xmm1), g_XMFixUnsigned)
+    _mm_add_ps(xmm1, xmm0)
+    ;;
+    ;; Convert DivExponent into 1.0f/(1<<DivExponent)
+    ;;
+    ;; uint32_t uScale = 0x3F800000U - (DivExponent << 23);
+    ;;
+    ;; Splat
+    ;;
+    _mm_set1_epi32(0x3F800000 - (DivExponent shl 23))
+    _mm_mul_ps(_mm_castsi128_ps(xmm0), xmm1)
+    retm<xmm0>
+endif
+    endm
+
+XMConvertVectorFloatToUInt macro VFloat, MulExponent
+    .assert(MulExponent < 32)
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_ARM_NEON_INTRINSICS_
+else
+    _mm_store_ps(xmm1, VFloat)
+    _mm_set_ps1(_mm_cvtsi32_ss(xmm0, (1 shl MulExponent)))
+    _mm_mul_ps(xmm0, xmm1)
+    ;;
+    ;; Clamp to >=0
+    ;;
+    _mm_store_ps(xmm1, _mm_max_ps(xmm0, g_XMZero))
+    ;;
+    ;; Any numbers that are too big, set to 0xFFFFFFFFU
+    ;;
+    _mm_cmpgt_ps(xmm0, g_XMMaxUInt)
+    _mm_store_ps(xmm3, g_XMUnsignedFix)
+    ;;
+    ;; Too large for a signed integer?
+    ;;
+    _mm_store_ps(xmm2, xmm1)
+    _mm_cmpge_ps(xmm2, xmm3)
+    ;;
+    ;; Zero for number's lower than 0x80000000, 32768.0f*65536.0f otherwise
+    ;;
+    _mm_and_ps(xmm3, xmm2)
+    ;;
+    ;; Perform fixup only on numbers too large (Keeps low bit precision)
+    ;;
+    _mm_sub_ps(xmm1, xmm3)
+    _mm_cvttps_epi32(xmm1)
+    ;;
+    ;; Convert from signed to unsigned pnly if greater than 0x80000000
+    ;;
+    _mm_and_ps(xmm2, g_XMNegativeZero)
+    _mm_xor_ps(_mm_castsi128_ps(xmm1), xmm2)
+    ;;
+    ;; On those that are too large, set to 0xFFFFFFFF
+    ;;
+    _mm_or_ps(xmm0, xmm1)
+    retm<xmm0>
+endif
+    endm
 
 if defined(__XNAMATH_H__) and defined(XMVectorSetBinaryConstant)
 undef XMVectorSetBinaryConstant
@@ -498,33 +642,351 @@ undef XMVectorSplatConstant
 undef XMVectorSplatConstantInt
 endif
 
-XMVectorSetBinaryConstant proto :uint32_t, :uint32_t, :uint32_t, :uint32_t
-XMVectorSplatConstant	proto :int32_t, :uint32_t
-XMVectorSplatConstantInt proto :int32_t
+XMVectorSetBinaryConstant macro C0, C1, C2, C3
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_ARM_NEON_INTRINSICS_
+else
+ ifndef g_vMask1
+    .data
+    align 16
+    g_vMask1 XMVECTORU32 { { { 1, 1, 1, 1 } } }
+    .code
+ endif
+    ;;
+    ;; Move the parms to a vector
+    ;;
+    _mm_set_epi32(C3, C2, C1, C0)
+    ;;
+    ;; Mask off the low bits
+    ;;
+    _mm_and_si128(xmm0, g_vMask1)
+    ;;
+    ;; 0xFFFFFFFF on true bits
+    ;;
+    _mm_cmpeq_epi32(xmm0, g_vMask1)
+    ;;
+    ;; 0xFFFFFFFF -> 1.0f, 0x00000000 -> 0.0f
+    ;;
+    _mm_and_si128(xmm0, g_XMOne)
+    _mm_castsi128_ps(xmm0)
+    retm<xmm0>
+endif
+    endm
 
-XMLoadInt	proto :ptr uint32_t
-XMLoadFloat	proto :ptr REAL4
+XMVectorSplatConstant macro IntConstant, DivExponent
+    .assert( IntConstant >= -16 && IntConstant <= 15 )
+    .assert( DivExponent < 32 )
+ifdef _XM_NO_INTRINSICS_
+    exitm<XMConvertVectorIntToFloat(_mm_set1_epi32(IntConstant), DivExponent)>
+elseifdef _XM_ARM_NEON_INTRINSICS_
+else
+    ;;
+    ;; Splat the int
+    ;;
+    _mm_store_ps(xmm1, _mm_set1_epi32(IntConstant)))
+    ;;
+    ;; Convert to a float
+    ;;
+    _mm_cvtepi32_ps(xmm1)
+    ;;
+    ;; Convert DivExponent into 1.0f/(1<<DivExponent)
+    ;;
+    ;; uint32_t uScale = 0x3F800000U - (DivExponent << 23);
+    ;; Splat the scalar value (It's really a float)
+    ;;
+    _mm_set1_epi32(0x3F800000 - (DivExponent shl 23))
+    ;;
+    ;; Multiply by the reciprocal (Perform a right shift by DivExponent)
+    ;;
+    _mm_mul_ps(_mm_castsi128_ps(xmm0), xmm1)
+    retm<xmm0>
+endif
+    endm
 
-XMLoadInt2	proto :ptr uint32_t
-XMLoadInt2A	proto :ptr uint32_t
-XMLoadFloat2	proto :ptr XMFLOAT2
-XMLoadFloat2A	proto :ptr XMFLOAT2A
-XMLoadSInt2	proto :ptr XMINT2
-XMLoadUInt2	proto :ptr XMUINT2
+XMVectorSplatConstantInt macro IntConstant
+    .assert( IntConstant >= -16 && IntConstant <= 15 )
+ifdef _XM_NO_INTRINSICS_
+    exitm<_mm_set1_epi32(IntConstant)>
+elseifdef _XM_ARM_NEON_INTRINSICS_
+else
+    _mm_set1_epi32( IntConstant )
+    _mm_castsi128_ps(xmm0)
+    retm<xmm0>
+endif
+    endm
 
-XMLoadInt3	proto :ptr uint32_t
-XMLoadInt3A	proto :ptr uint32_t
-XMLoadFloat3	proto :ptr XMFLOAT3
-XMLoadFloat3A	proto :ptr XMFLOAT3A
-XMLoadSInt3	proto :ptr XMINT3
-XMLoadUInt3	proto :ptr XMUINT3
+XMLoadInt macro pSource
+    .assert(pSource)
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_ARM_NEON_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_load_ss(xmm0, pSource)
+    _mm_load_ss(xmm1, pSource+4)
+    _mm_unpacklo_ps(xmm0, xmm1)
+    retm<xmm0>
+endif
+    endm
 
-XMLoadInt4	proto :ptr uint32_t
-XMLoadInt4A	proto :ptr uint32_t
-XMLoadFloat4	proto :ptr XMFLOAT4
-XMLoadFloat4A	proto :ptr XMFLOAT4A
-XMLoadSInt4	proto :ptr XMINT4
-XMLoadUInt4	proto :ptr XMUINT4
+XMLoadFloat macro pSource
+    .assert(pSource)
+    .assert(!(pSource & 0xF))
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_ARM_NEON_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_load_ss(pSource)
+    retm<xmm0>
+endif
+    endm
+
+XMLoadInt2 macro pSource
+    .assert(pSource);
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_ARM_NEON_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_load_ss(xmm0, pSource)
+    _mm_load_ss(xmm1, pSource+4)
+    _mm_unpacklo_ps(xmm0, xmm1)
+    retm<xmm0>
+endif
+    endm
+
+XMLoadInt2A macro pSource
+    .assert(pSource)
+    .assert(!(pSource & 0xF))
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_ARM_NEON_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_loadl_epi64(pSource)
+    _mm_castsi128_ps(xmm0)
+    retm<xmm0>
+endif
+    endm
+
+XMLoadFloat2 macro pSource
+    .assert(pSource)
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_ARM_NEON_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_load_ss(xmm0, pSource)
+    _mm_load_ss(xmm1, pSource+4)
+    _mm_unpacklo_ps(xmm0, xmm1)
+    retm<xmm0>
+endif
+    endm
+
+XMLoadFloat2A macro pSource
+    .assert(pSource)
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_ARM_NEON_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_loadl_epi64(pSource)
+    _mm_castsi128_ps(xmm0)
+    retm<xmm0>
+endif
+    endm
+
+XMLoadSInt2 macro pSource
+    .assert(pSource)
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_ARM_NEON_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_load_ss(xmm0, pSource)
+    _mm_load_ss(xmm1, pSource+4)
+    _mm_unpacklo_ps(xmm0, xmm1)
+    _mm_cvtepi32_ps(_mm_castps_si128(xmm0))
+    retm<xmm0>
+endif
+    endm
+
+XMLoadUInt2 macro pSource
+    .assert(pSource)
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_ARM_NEON_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_load_ss(xmm0, pSource)
+    _mm_load_ss(xmm1, pSource+4)
+    _mm_store_ps(xmm1, _mm_unpacklo_ps(xmm0, xmm1))
+    ;;
+    ;; For the values that are higher than 0x7FFFFFFF, a fixup is needed
+    ;; Determine which ones need the fix.
+    ;;
+    _mm_and_ps(xmm0, g_XMNegativeZero)
+    ;;
+    ;; Force all values positive
+    ;;
+    _mm_xor_ps(xmm1, xmm0)
+    ;;
+    ;; Convert to floats
+    ;;
+    _mm_cvtepi32_ps(_mm_castps_si128(xmm1))
+    ;;
+    ;; Convert 0x80000000 -> 0xFFFFFFFF
+    ;;
+    _mm_srai_epi32(_mm_castps_si128(xmm0), 31)
+    ;;
+    ;; For only the ones that are too big, add the fixup
+    ;;
+    _mm_and_ps(_mm_castsi128_ps(xmm0), g_XMFixUnsigned)
+    _mm_add_ps(xmm0, xmm1)
+    retm<xmm0>
+endif
+    endm
+
+XMLoadInt3 macro pSource
+    .assert(pSource)
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_ARM_NEON_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_load_ss(xmm0, pSource)
+    _mm_load_ss(xmm1, pSource+4)
+    _mm_load_ss(xmm2, pSource+8)
+    _mm_unpacklo_ps(xmm0, xmm1)
+    _mm_movelh_ps(xmm0, xmm2)
+    retm<xmm0>
+endif
+    endm
+
+XMLoadInt3A macro pSource
+    .assert(pSource)
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_ARM_NEON_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    ;;
+    ;; Reads an extra integer which is zero'd
+    ;;
+    _mm_load_si128(xmm0, pSource)
+    _mm_and_si128(xmm0, g_XMMask3)
+    _mm_castsi128_ps(xmm0)
+    retm<xmm0>
+endif
+    endm
+
+XMLoadFloat3 macro pSource
+    .assert(pSource)
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_ARM_NEON_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_load_ss(xmm0, pSource)
+    _mm_load_ss(xmm1, pSource+4)
+    _mm_load_ss(xmm2, pSource+8)
+    _mm_unpacklo_ps(xmm0, xmm1)
+    _mm_movelh_ps(xmm0, xmm2)
+    retm<xmm0>
+endif
+    endm
+
+XMLoadFloat3A macro pSource
+    .assert(pSource)
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_ARM_NEON_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    ;;
+    ;; Reads an extra float which is zero'd
+    ;;
+    _mm_load_ps(pSource)
+    _mm_and_ps(xmm0, g_XMMask3)
+    retm<xmm0>
+endif
+    endm
+
+XMLoadSInt3 macro pSource
+    .assert(pSource)
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_ARM_NEON_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_load_ss(xmm0, pSource)
+    _mm_load_ss(xmm1, pSource+4)
+    _mm_load_ss(xmm2, pSource+8)
+    _mm_unpacklo_ps(xmm0, xmm1)
+    _mm_movelh_ps(xmm0, xmm2)
+    _mm_cvtepi32_ps(_mm_castps_si128(xmm0))
+    retm<xmm0>
+endif
+    endm
+
+XMLoadUInt3 macro pSource
+    .assert(pSource)
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_ARM_NEON_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_load_ss(xmm0, pSource)
+    _mm_load_ss(xmm1, pSource+4)
+    _mm_load_ss(xmm2, pSource+8)
+    _mm_unpacklo_ps(xmm0, xmm1)
+    _mm_store_ps(xmm1, _mm_movelh_ps(xmm0, xmm2))
+    ;;
+    ;; For the values that are higher than 0x7FFFFFFF, a fixup is needed
+    ;; Determine which ones need the fix.
+    ;;
+    _mm_and_ps(xmm1, g_XMNegativeZero)
+    ;;
+    ;; Force all values positive
+    ;;
+    _mm_xor_ps(xmm0, xmm1)
+    ;;
+    ;; Convert to floats
+    ;;
+    _mm_cvtepi32_ps(_mm_castps_si128(xmm0))
+    ;;
+    ;; Convert 0x80000000 -> 0xFFFFFFFF
+    ;;
+    _mm_srai_epi32(_mm_castps_si128(xmm1), 31)
+    ;;
+    ;; For only the ones that are too big, add the fixup
+    ;;
+    _mm_and_ps(_mm_castsi128_ps(xmm1), g_XMFixUnsigned)
+    _mm_add_ps(xmm0, xmm1)
+    retm<xmm0>
+endif
+    endm
+
+XMLoadInt4 macro ptr_uint32_t
+    exitm<_mm_castsi128_ps(_mm_loadu_si128(ptr_uint32_t))>
+    endm
+XMLoadInt4A macro ptr_uint32_t
+    exitm<_mm_castsi128_ps(_mm_load_si128(ptr_uint32_t))>
+    endm
+XMLoadFloat4 macro ptr_XMFLOAT4
+    exitm<_mm_loadu_ps(ptr_XMFLOAT4)>
+    endm
+
+XMLoadFloat4A macro ptr_XMFLOAT4A
+    exitm<_mm_load_ps(ptr_XMFLOAT4A)>
+    endm
+XMLoadSInt4 macro ptr_XMINT4
+    exitm<_mm_cvtepi32_ps(_mm_loadu_si128(ptr_XMINT4))>
+    endm
+XMLoadUInt4 macro ptr_XMUINT4
+ifdef _XM_NO_INTRINSICS_
+    exitm<ptr_XMUINT4>
+elseifdef _XM_ARM_NEON_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm2, _mm_loadu_si128(ptr_XMUINT4))
+    ;;
+    ;; For the values that are higher than 0x7FFFFFFF, a fixup is needed
+    ;; Determine which ones need the fix.
+    ;;
+    _mm_store_ps(xmm3, _mm_and_ps(_mm_castsi128_ps(xmm0), g_XMNegativeZero))
+    ;;
+    ;; Force all values positive
+    ;;
+    _mm_store_ps(xmm1, _mm_xor_ps(_mm_castsi128_ps(xmm2), xmm3))
+    ;;
+    ;; Convert to floats
+    ;;
+    _mm_cvtepi32_ps(_mm_castps_si128(xmm1))
+    ;;
+    ;; Convert 0x80000000 -> 0xFFFFFFFF
+    ;;
+    _mm_store_ps(xmm0, _mm_srai_epi32(_mm_castps_si128(xmm3), 31))
+    ;;
+    ;; For only the ones that are too big, add the fixup
+    ;;
+    _mm_and_ps(_mm_castsi128_ps(xmm0), g_XMFixUnsigned)
+    _mm_add_ps(xmm0, xmm1)
+    retm<xmm0>
+endif
+    endm
 
 XMLoadFloat3x3	proto :ptr XMFLOAT3X3
 XMLoadFloat4x3	proto :ptr XMFLOAT4X3
@@ -632,7 +1094,25 @@ endif
 XMVectorSwizzle		proto :FXMVECTOR, :uint32_t, :uint32_t, :uint32_t, :uint32_t
 XMVectorPermute		proto :FXMVECTOR, :FXMVECTOR, :uint32_t, :uint32_t, :uint32_t, :uint32_t
 XMVectorSelectControl	proto :uint32_t, :uint32_t, :uint32_t, :uint32_t
-XMVectorSelect		proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
+
+XMVectorSelect macro V1:=<xmm0>, V2:=<xmm1>, Control:=<xmm2>
+    ifidn <Control>,<xmm0>
+	_mm_andnot_ps(Control, V1)
+    else
+	if _MM_ISXMM(Control)
+	    _mm_store_ps(xmm0, _mm_andnot_ps(Control, V1))
+	else
+	    _mm_andnot_ps(Control, V1)
+	endif
+    endif
+    ifidn <V2>,<xmm1>
+	_mm_and_ps(xmm1, xmm0)
+    else
+	_mm_store_ps(xmm1, _mm_and_ps(V2, xmm0) )
+    endif
+    exitm<_mm_or_ps(xmm0, xmm1)>
+    endm
+
 XMVectorMergeXY		proto :FXMVECTOR, :FXMVECTOR
 XMVectorMergeZW		proto :FXMVECTOR, :FXMVECTOR
 
@@ -682,11 +1162,17 @@ XMVectorOrInt		proto :FXMVECTOR, :FXMVECTOR
 XMVectorNorInt		proto :FXMVECTOR, :FXMVECTOR
 XMVectorXorInt		proto :FXMVECTOR, :FXMVECTOR
 
-XMVectorNegate		proto :FXMVECTOR
+XMVectorNegate macro x:req
+    _mm_store_ps(xmm1, x)
+    exitm<_mm_sub_ps(_mm_setzero_ps(), xmm1)>
+    endm
+
 XMVectorAdd		proto :FXMVECTOR, :FXMVECTOR
 XMVectorSum		proto :FXMVECTOR
 XMVectorAddAngles	proto :FXMVECTOR, :FXMVECTOR
-XMVectorSubtract	proto :FXMVECTOR, :FXMVECTOR
+
+XMVectorSubtract	equ <_mm_sub_ps>
+
 XMVectorSubtractAngles	proto :FXMVECTOR, :FXMVECTOR
 XMVectorMultiply	proto :FXMVECTOR, :FXMVECTOR
 XMVectorMultiplyAdd	proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
@@ -804,15 +1290,142 @@ XMVector3InBounds	proto :FXMVECTOR, :FXMVECTOR
 XMVector3IsNaN		proto :FXMVECTOR
 XMVector3IsInfinite	proto :FXMVECTOR
 
-XMVector3Dot		proto :FXMVECTOR, :FXMVECTOR
-XMVector3Cross		proto :FXMVECTOR, :FXMVECTOR
+XMVector3Dot macro V1:=<xmm0>, V2:=<xmm1>
+ifdef _XM_SSE4_INTRINSICS_
+    ifidn <V1>,<xmm0>
+	exitm<_mm_dp_ps( V1, V2, 0x7f )>
+    endif
+    if not _MM_ISXMM(V1)
+	exitm<_mm_dp_ps( V1, V2, 0x7f )>
+    endif
+    _mm_store_ps(xmm0, _mm_dp_ps( V1, V2, 0x7f ) )
+elseifdef _XM_SSE3_INTRINSICS_
+    ifidn <V1>,<xmm0>
+	_mm_mul_ps(V1, V2)
+    else
+	if _MM_ISXMM(V1)
+	    _mm_store_ps(xmm0, _mm_mul_ps(V1, V2))
+	else
+	    _mm_mul_ps(V1, V2)
+	endif
+    endif
+    _mm_and_ps(xmm0, g_XMMask3)
+    _mm_hadd_ps(xmm0, xmm0)
+    _mm_hadd_ps(xmm0, xmm0)
+elseifdef _XM_SSE_INTRINSICS_
+    ifidn <V1>,<xmm0>
+	_mm_mul_ps(V1, V2)
+    else
+	if _MM_ISXMM(V1)
+	    _mm_store_ps(xmm0, _mm_mul_ps(V1, V2))
+	else
+	    _mm_mul_ps(V1, V2)
+	endif
+    endif
+    _mm_store_ps(xmm2, xmm0)
+    _mm_shuffle_ps(xmm2, xmm0, _MM_SHUFFLE(2,1,2,1))
+    _mm_add_ss(xmm0, xmm2)
+    XM_PERMUTE_PS(xmm2, _MM_SHUFFLE(1,1,1,1))
+    _mm_add_ss(xmm0, xmm2)
+    XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(0,0,0,0))
+endif
+    retm<xmm0>
+    endm
+
+XMVector3Cross macro V1:=<xmm0>, V2:=<xmm1>
+    _mm_store_ps(xmm0, V1)
+    _mm_store_ps(xmm1, V2)
+    _mm_store_ps(xmm2, XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,0,2,1)))
+    _mm_store_ps(xmm3, XM_PERMUTE_PS(xmm1, _MM_SHUFFLE(3,1,0,2)))
+    _mm_shuffle_ps(xmm3, xmm1, _MM_SHUFFLE(3,1,0,2))
+    _mm_shuffle_ps(xmm2, xmm0, _MM_SHUFFLE(3,0,2,1))
+    _mm_mul_ps(xmm0, xmm1)
+    _mm_mul_ps(xmm2, xmm3)
+    _mm_sub_ps(xmm0, xmm2)
+    _mm_and_ps(xmm0, g_XMMask3)
+    retm<xmm0>
+    endm
+
 XMVector3LengthSq	proto :FXMVECTOR
 XMVector3ReciprocalLengthEst proto :FXMVECTOR
 XMVector3ReciprocalLength proto :FXMVECTOR
 XMVector3LengthEst	proto :FXMVECTOR
 XMVector3Length		proto :FXMVECTOR
 XMVector3NormalizeEst	proto :FXMVECTOR
-XMVector3Normalize	proto :FXMVECTOR
+
+XMVector3Normalize macro V:=<xmm0>
+ifdef _XM_SSE4_INTRINSICS_
+elseifdef _XM_SSE3_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    _mm_store_ps(xmm1, xmm0)
+    _mm_store_ps(xmm2, _mm_mul_ps(xmm1, xmm0))
+    _mm_shuffle_ps(xmm2, xmm1, _MM_SHUFFLE(2,1,2,1))
+    _mm_add_ss(xmm1, xmm2)
+    _mm_add_ss(xmm1, XM_PERMUTE_PS(xmm2, _MM_SHUFFLE(1,1,1,1)))
+    _mm_sqrt_ps(xmm3, XM_PERMUTE_PS(xmm1, _MM_SHUFFLE(0,0,0,0)))
+    _mm_cmpneq_ps(xmm1, g_XMInfinity)
+    _mm_div_ps(xmm0, xmm3)
+    _mm_cmpneq_ps(xmm2, xmm3)
+    _mm_and_ps(xmm0, xmm2)
+    _mm_store_ps(xmm2, xmm1)
+    _mm_andnot_ps(xmm2, g_XMQNaN)
+    _mm_and_ps(xmm1, xmm0)
+    _mm_or_ps(xmm0, xmm1)
+    retm<xmm0>
+endif
+    endm
+
+XMMatrixTranspose macro M:req, O
+    _mm_store_ps(xmm0, M.r[0x00])
+    _mm_store_ps(xmm1, M.r[0x10])
+    _mm_store_ps(xmm2, M.r[0x20])
+    _mm_store_ps(xmm3, M.r[0x30])
+    _mm_store_ps(xmm4, xmm0)
+    _mm_store_ps(xmm5, xmm2)
+    _mm_shuffle_ps(xmm0, xmm1, _MM_SHUFFLE(1,0,1,0))
+    _mm_shuffle_ps(xmm4, xmm1, _MM_SHUFFLE(3,2,3,2))
+    _mm_shuffle_ps(xmm2, xmm3, _MM_SHUFFLE(1,0,1,0))
+    _mm_shuffle_ps(xmm5, xmm3, _MM_SHUFFLE(3,2,3,2))
+    _mm_store_ps(xmm1, xmm0)
+    _mm_store_ps(xmm3, xmm2)
+    _mm_shuffle_ps(xmm0, xmm4, _MM_SHUFFLE(2,0,2,0))
+    _mm_shuffle_ps(xmm1, xmm4, _MM_SHUFFLE(3,1,3,1))
+    _mm_shuffle_ps(xmm2, xmm5, _MM_SHUFFLE(2,0,2,0))
+    _mm_shuffle_ps(xmm3, xmm5, _MM_SHUFFLE(3,1,3,1))
+    ifnb <O>
+	_mm_store_ps(O.r[0x00], xmm0)
+	_mm_store_ps(O.r[0x10], xmm1)
+	_mm_store_ps(O.r[0x20], xmm2)
+	_mm_store_ps(O.r[0x30], xmm3)
+    endif
+    exitm<>
+    endm
+
+XMMatrixTransposex macro O
+    _mm_store_ps(xmm4, xmm0)
+    _mm_store_ps(xmm5, xmm2)
+    _mm_shuffle_ps(xmm0, xmm1, _MM_SHUFFLE(1,0,1,0))
+    _mm_shuffle_ps(xmm4, xmm1, _MM_SHUFFLE(3,2,3,2))
+    _mm_shuffle_ps(xmm2, xmm3, _MM_SHUFFLE(1,0,1,0))
+    _mm_shuffle_ps(xmm5, xmm3, _MM_SHUFFLE(3,2,3,2))
+    _mm_store_ps(xmm1, xmm0)
+    _mm_shuffle_ps(xmm0, xmm4, _MM_SHUFFLE(2,0,2,0))
+    _mm_shuffle_ps(xmm1, xmm4, _MM_SHUFFLE(3,1,3,1))
+    _mm_store_ps(xmm3, xmm2)
+    _mm_store_ps(xmm2, xmm4)
+    _mm_shuffle_ps(xmm2, xmm5, _MM_SHUFFLE(2,0,2,0))
+    _mm_shuffle_ps(xmm3, xmm5, _MM_SHUFFLE(3,1,3,1))
+    ifnb <O>
+	_mm_store_ps(O.r[0*16], xmm0)
+	_mm_store_ps(O.r[1*16], xmm1)
+	_mm_store_ps(O.r[2*16], xmm2)
+	_mm_store_ps(O.r[3*16], xmm3)
+    endif
+    exitm<>
+    endm
+XMMatrixMultiplyTranspose proto :FXMMATRIX, :CXMMATRIX
+
 XMVector3ClampLength	proto :FXMVECTOR, :float, :float
 XMVector3ClampLengthV	proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
 XMVector3Reflect	proto :FXMVECTOR, :FXMVECTOR
@@ -828,7 +1441,22 @@ XMVector3ComponentsFromNormal	proto :ptr XMVECTOR, :ptr XMVECTOR, :FXMVECTOR, :F
 
 XMVector3Rotate			proto :FXMVECTOR, :FXMVECTOR
 XMVector3InverseRotate		proto :FXMVECTOR, :FXMVECTOR
-XMVector3Transform		proto :FXMVECTOR, :FXMMATRIX
+XMVector3Transform macro V, M
+    _mm_store_ps(xmm0, V)
+    _mm_store_ps(xmm2, xmm0)
+    _mm_store_ps(xmm0, XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(0,0,0,0)))
+    _mm_store_ps(xmm4, _mm_mul_ps(xmm0, M.r[0*16]))
+    _mm_store_ps(xmm3, xmm2)
+    _mm_store_ps(xmm3, XM_PERMUTE_PS(xmm3, _MM_SHUFFLE(1,1,1,1)))
+    _mm_store_ps(xmm3, _mm_mul_ps(xmm3, M.r[1*16]))
+    _mm_store_ps(xmm4, _mm_add_ps(xmm4, xmm3))
+    _mm_store_ps(xmm3, XM_PERMUTE_PS(xmm2, _MM_SHUFFLE(2,2,2,2)))
+    _mm_store_ps(xmm3, _mm_mul_ps(xmm3, M.r[2*16]))
+    _mm_store_ps(xmm4, _mm_add_ps(xmm4, xmm3))
+    _mm_store_ps(xmm0, _mm_add_ps(xmm4, M.r[3*16]))
+    retm<xmm0>
+    endm
+
 XMVector3TransformStream	proto :ptr XMFLOAT4, :size_t, :ptr XMFLOAT3, :size_t, :size_t, :FXMMATRIX
 XMVector3TransformCoord		proto :FXMVECTOR, :FXMMATRIX
 XMVector3TransformCoordStream	proto :ptr XMFLOAT3, :size_t, :ptr XMFLOAT3, :size_t, :size_t, :FXMMATRIX
@@ -881,24 +1509,185 @@ XMMatrixIsNaN			proto :FXMMATRIX
 XMMatrixIsInfinite		proto :FXMMATRIX
 XMMatrixIsIdentity		proto :FXMMATRIX
 
-XMMatrixMultiply		proto :FXMMATRIX, :CXMMATRIX
-XMMatrixMultiplyTranspose	proto :FXMMATRIX, :CXMMATRIX
-XMMatrixTranspose		proto :FXMMATRIX
+XMMatrixMultiply macro M1, M2
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_ARM_NEON_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+ifdifi <M1>,<rcx>
+    lea rcx,M1
+endif
+ifdifi <M2>,<rdx>
+    lea rdx,M2
+endif
+    vX equ <xmm2>
+    vY equ <xmm3>
+    vZ equ <xmm4>
+    vW equ <xmm5>
+    ;;
+    ;; Splat the component X,Y,Z then W
+    ;;
+ifdef _XM_AVX_INTRINSICS_
+    _mm_store_ps(vX, _mm_broadcast_ss([rcx].XMFLOAT4X4._11))
+    _mm_store_ps(vY, _mm_broadcast_ss([rcx].XMFLOAT4X4._12))
+    _mm_store_ps(vZ, _mm_broadcast_ss([rcx].XMFLOAT4X4._13))
+    _mm_store_ps(vW, _mm_broadcast_ss([rcx].XMFLOAT4X4._14))
+else
+    ;;
+    ;; Use vW to hold the original row
+    ;;
+    _mm_store_ps(vX, XM_PERMUTE_PS([rcx], _MM_SHUFFLE(0,0,0,0)))
+    _mm_store_ps(vY, XM_PERMUTE_PS([rcx], _MM_SHUFFLE(1,1,1,1)))
+    _mm_store_ps(vZ, XM_PERMUTE_PS([rcx], _MM_SHUFFLE(2,2,2,2)))
+    _mm_store_ps(vW, XM_PERMUTE_PS([rcx], _MM_SHUFFLE(3,3,3,3)))
+endif
+    ;;
+    ;; Perform the operation on the first row
+    ;;
+    _mm_mul_ps(vX, [rdx][0x00])
+    _mm_mul_ps(vY, [rdx][0x10])
+    _mm_mul_ps(vZ, [rdx][0x20])
+    _mm_mul_ps(vW, [rdx][0x30])
+    ;;
+    ;; Perform a binary add to reduce cumulative errors
+    ;;
+    _mm_add_ps(vX, vZ)
+    _mm_add_ps(vY, vW)
+    _mm_add_ps(vX, vY)
+    _mm_store_ps(xmm6, vX)
+    ;;
+    ;; Repeat for the other 3 rows
+    ;;
+ifdef _XM_AVX_INTRINSICS_
+    _mm_store_ps(vX, _mm_broadcast_ss([rcx].XMFLOAT4X4._21))
+    _mm_store_ps(vY, _mm_broadcast_ss([rcx].XMFLOAT4X4._22))
+    _mm_store_ps(vZ, _mm_broadcast_ss([rcx].XMFLOAT4X4._23))
+    _mm_store_ps(vW, _mm_broadcast_ss([rcx].XMFLOAT4X4._24))
+else
+    _mm_store_ps(vX, XM_PERMUTE_PS([rcx][0x10], _MM_SHUFFLE(0,0,0,0)))
+    _mm_store_ps(vY, XM_PERMUTE_PS([rcx][0x10], _MM_SHUFFLE(1,1,1,1)))
+    _mm_store_ps(vZ, XM_PERMUTE_PS([rcx][0x10], _MM_SHUFFLE(2,2,2,2)))
+    _mm_store_ps(vW, XM_PERMUTE_PS([rcx][0x10], _MM_SHUFFLE(3,3,3,3)))
+endif
+    _mm_mul_ps(vX, [rdx][0x00])
+    _mm_mul_ps(vY, [rdx][0x10])
+    _mm_mul_ps(vZ, [rdx][0x20])
+    _mm_mul_ps(vW, [rdx][0x30])
+    _mm_add_ps(vX, vZ)
+    _mm_add_ps(vY, vW)
+    _mm_add_ps(vX, vY)
+    _mm_store_ps(xmm7, vX)
+ifdef _XM_AVX_INTRINSICS_
+    _mm_store_ps(vX, _mm_broadcast_ss([rcx].XMFLOAT4X4._31))
+    _mm_store_ps(vY, _mm_broadcast_ss([rcx].XMFLOAT4X4._32))
+    _mm_store_ps(vZ, _mm_broadcast_ss([rcx].XMFLOAT4X4._33))
+    _mm_store_ps(vW, _mm_broadcast_ss([rcx].XMFLOAT4X4._34))
+else
+    _mm_store_ps(vX,  XM_PERMUTE_PS([rcx][0x20], _MM_SHUFFLE(0,0,0,0)))
+    _mm_store_ps(vY,  XM_PERMUTE_PS([rcx][0x20], _MM_SHUFFLE(1,1,1,1)))
+    _mm_store_ps(vZ,  XM_PERMUTE_PS([rcx][0x20], _MM_SHUFFLE(2,2,2,2)))
+    _mm_store_ps(vW,  XM_PERMUTE_PS([rcx][0x20], _MM_SHUFFLE(3,3,3,3)))
+endif
+    _mm_mul_ps(vX, [rdx][0x00])
+    _mm_mul_ps(vY, [rdx][0x10])
+    _mm_mul_ps(vZ, [rdx][0x20])
+    _mm_mul_ps(vW, [rdx][0x30])
+    _mm_add_ps(vX, vZ)
+    _mm_add_ps(vY, vW)
+    _mm_add_ps(vX, vY)
+    _mm_store_ps(xmm1, vX)
+ifdef _XM_AVX_INTRINSICS_
+    _mm_store_ps(vX, _mm_broadcast_ss([rcx].XMFLOAT4X4._41))
+    _mm_store_ps(vY, _mm_broadcast_ss([rcx].XMFLOAT4X4._42))
+    _mm_store_ps(vZ, _mm_broadcast_ss([rcx].XMFLOAT4X4._43))
+    _mm_store_ps(vW, _mm_broadcast_ss([rcx].XMFLOAT4X4._44))
+else
+    _mm_store_ps(vX,  XM_PERMUTE_PS([rcx][0x30], _MM_SHUFFLE(0,0,0,0)))
+    _mm_store_ps(vY,  XM_PERMUTE_PS([rcx][0x30], _MM_SHUFFLE(1,1,1,1)))
+    _mm_store_ps(vZ,  XM_PERMUTE_PS([rcx][0x30], _MM_SHUFFLE(2,2,2,2)))
+    _mm_store_ps(vW,  XM_PERMUTE_PS([rcx][0x30], _MM_SHUFFLE(3,3,3,3)))
+endif
+    _mm_mul_ps(vX, [rdx][0x00])
+    _mm_mul_ps(vY, [rdx][0x10])
+    _mm_mul_ps(vZ, [rdx][0x20])
+    _mm_mul_ps(vW, [rdx][0x30])
+    _mm_add_ps(vX, vZ)
+    _mm_add_ps(vY, vW)
+    _mm_add_ps(vX, vY)
+    _mm_store_ps(xmm3, vX)
+    _mm_store_ps(xmm2, xmm1)
+    _mm_store_ps(xmm0, xmm6)
+    _mm_store_ps(xmm1, xmm7)
+    undef vX
+    undef vY
+    undef vZ
+    undef vW
+    exitm<>
+endif
+    endm
+
 XMMatrixInverse			proto :ptr XMVECTOR, :FXMMATRIX
 XMMatrixDeterminant		proto :FXMMATRIX
 
 XMMatrixDecompose		proto :ptr XMVECTOR, :ptr XMVECTOR, :ptr XMVECTOR, :FXMMATRIX
 
-XMMatrixIdentity		proto
-XMMatrixSet			proto :float, :float, :float, :float,
-				      :float, :float, :float, :float,
-				      :float, :float, :float, :float,
-				      :float, :float, :float, :float
+XMMatrixIdentity macro M
+    _mm_store_ps(xmm0, g_XMIdentityR0.v)
+    _mm_store_ps(xmm1, g_XMIdentityR1.v)
+    _mm_store_ps(xmm2, g_XMIdentityR2.v)
+    _mm_store_ps(xmm3, g_XMIdentityR3.v)
+    ifnb <M>
+	_mm_store_ps(M.r[0*16], xmm0)
+	_mm_store_ps(M.r[1*16], xmm1)
+	_mm_store_ps(M.r[2*16], xmm2)
+	_mm_store_ps(M.r[3*16], xmm3)
+    endif
+    exitm<>
+    endm
+
+XMMatrixSet macro m00, m01, m02, m03, m10, m11, m12, m13,
+		  m20, m21, m22, m23, m30, m31, m32, m33
+    _mm_set_epi32(xmm0, m00, m01, m02, m03)
+    _mm_set_epi32(xmm1, m10, m11, m12, m13)
+    _mm_set_epi32(xmm2, m20, m21, m22, m23)
+    _mm_set_epi32(xmm3, m30, m31, m32, m33)
+    exitm<>
+    endm
 
 XMMatrixTranslation		proto :float, :float, :float
-XMMatrixTranslationFromVector	proto :FXMVECTOR
-XMMatrixScaling			proto :float, :float, :float
+
+XMMatrixScaling macro ScaleX, ScaleY, ScaleZ, M
+    _mm_set_epi32(xmm0, 0, 0, 0, ScaleX)
+    _mm_set_epi32(xmm1, 0, 0, ScaleY, 0)
+    _mm_set_epi32(xmm2, 0, ScaleZ, 0, 0)
+    _mm_store_ps(xmm3, g_XMIdentityR3.v)
+    ifnb <M>
+     _mm_store_ps(M.r[0*16], xmm0)
+     _mm_store_ps(M.r[1*16], xmm1)
+     _mm_store_ps(M.r[2*16], xmm2)
+     _mm_store_ps(M.r[3*16], xmm3)
+    endif
+    retm<xmm0>
+    endm
+
+XMMatrixTranslationFromVector macro V, M
+    _mm_store_ps(xmm1, V)
+    _mm_store_ps(xmm0, g_XMIdentityR3.v)
+    _mm_store_ps(xmm2, g_XMSelect1110.v)
+    _mm_store_ps(xmm3, XMVectorSelect(xmm0, xmm1, xmm2))
+    _mm_store_ps(xmm2, g_XMIdentityR2.v)
+    _mm_store_ps(xmm1, g_XMIdentityR1.v)
+    _mm_store_ps(xmm0, g_XMIdentityR0.v)
+    ifnb <M>
+     _mm_store_ps(M.r[0*16], xmm0)
+     _mm_store_ps(M.r[1*16], xmm1)
+     _mm_store_ps(M.r[2*16], xmm2)
+     _mm_store_ps(M.r[3*16], xmm3)
+    endif
+    retm<xmm0>
+    endm
+
 XMMatrixScalingFromVector	proto :FXMVECTOR
+
 XMMatrixRotationX		proto :float
 XMMatrixRotationY		proto :float
 XMMatrixRotationZ		proto :float
@@ -914,13 +1703,71 @@ XMMatrixAffineTransformation	proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR, :GXMVECTO
 XMMatrixReflect			proto :FXMVECTOR
 XMMatrixShadow			proto :FXMVECTOR, :FXMVECTOR
 
-XMMatrixLookAtLH		proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
-XMMatrixLookAtRH		proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
-XMMatrixLookToLH		proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
+XMMatrixLookAtLH macro EyePosition, FocusPosition, UpDirection
+    _mm_store_ps(xmm0, EyePosition)
+    _mm_store_ps(xmm1, FocusPosition)
+    _mm_store_ps(xmm2, UpDirection)
+    _mm_store_ps(xmm3, xmm0)
+    _mm_store_ps(xmm0, xmm3)
+    _mm_sub_ps(xmm0, xmm1)
+    _mm_store_ps(xmm1, xmm0)
+    _mm_store_ps(xmm0, xmm3)
+    XMMatrixLookToLH(xmm0, xmm1, xmm2)
+    retm<xmm0>
+    endm
+
+XMMatrixLookAtRH macro EyePosition, FocusPosition, UpDirection
+    _mm_store_ps(xmm0, EyePosition)
+    _mm_store_ps(xmm1, FocusPosition)
+    _mm_store_ps(xmm2, UpDirection)
+    _mm_store_ps(xmm3 xmm0)
+    XMVectorSubtract(xmm3, xmm1)
+    XMMatrixLookToLH(xmm0, xmm3, xmm2)
+    retm<xmm0>
+    endm
+
+XMMatrixLookToLH macro EyePosition, EyeDirection, UpDirection
+    _mm_store_ps(xmm0, EyePosition)
+    _mm_store_ps(xmm1, EyeDirection)
+    _mm_store_ps(xmm2, UpDirection)
+    _mm_store_ps(xmm6, xmm0)
+    _mm_store_ps(xmm7, xmm2)
+    _mm_store_ps(xmm5, XMVector3Normalize(xmm1))
+    _mm_store_ps(xmm0, xmm7)
+    _mm_store_ps(xmm1, xmm5)
+    _mm_store_ps(xmm4, XMVector3Normalize(XMVector3Cross(xmm0, xmm1)))
+    _mm_store_ps(xmm1, xmm0)
+    _mm_store_ps(xmm0, xmm5)
+    _mm_store_ps(xmm3, XMVector3Cross(xmm0, xmm1))
+    _mm_store_ps(xmm6, _mm_sub_ps( _mm_setzero_ps(), xmm6 ))
+    _mm_store_ps(xmm7, XMVector3Dot(_mm_store_ps(xmm0, xmm4), _mm_store_ps(xmm1, xmm6)))
+    _mm_store_ps(xmm1, XMVector3Dot(_mm_store_ps(xmm0, xmm3), _mm_store_ps(xmm1, xmm6)))
+    _mm_store_ps(xmm6, XMVector3Dot(_mm_store_ps(xmm0, xmm5), _mm_store_ps(xmm1, xmm6)))
+    _mm_store_ps(xmm3, XMVectorSelect(xmm1, xmm3, g_XMSelect1110.v))
+    _mm_store_ps(xmm7, XMVectorSelect(xmm7, xmm4, g_XMSelect1110.v))
+    _mm_store_ps(xmm6, XMVectorSelect(xmm6, xmm5, g_XMSelect1110.v))
+    _mm_store_ps(xmm0, xmm7)
+    _mm_store_ps(xmm2, _mm_shuffle_ps(xmm0, xmm3, _MM_SHUFFLE(1,0,1,0)))
+    _mm_store_ps(xmm3, _mm_shuffle_ps(xmm7, xmm3, _MM_SHUFFLE(3,2,3,2)))
+    _mm_store_ps(xmm5, g_XMIdentityR3.v)
+    _mm_store_ps(xmm7, xmm6)
+    _mm_store_ps(xmm4, _mm_shuffle_ps(xmm6, xmm5, _MM_SHUFFLE(1,0,1,0)))
+    _mm_store_ps(xmm5, _mm_shuffle_ps(xmm7, xmm5, _MM_SHUFFLE(3,2,3,2)))
+    _mm_store_ps(xmm0, xmm2)
+    _mm_shuffle_ps(xmm0, xmm3, _MM_SHUFFLE(2,0,2,0))
+    _mm_store_ps(xmm1, _mm_shuffle_ps(xmm2, xmm3,_MM_SHUFFLE(3,1,3,1)))
+    _mm_store_ps(xmm2, xmm4)
+    _mm_shuffle_ps(xmm2, xmm5, _MM_SHUFFLE(2,0,2,0))
+    _mm_store_ps(xmm3, _mm_shuffle_ps(xmm4, xmm5, _MM_SHUFFLE(3,1,3,1)))
+    retm<xmm0>
+    endm
+
 XMMatrixLookToRH		proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
 XMMatrixPerspectiveLH		proto :float, :float, :float, :float
 XMMatrixPerspectiveRH		proto :float, :float, :float, :float
+
 XMMatrixPerspectiveFovLH	proto :float, :float, :float, :float
+
 XMMatrixPerspectiveFovRH	proto :float, :float, :float, :float
 XMMatrixPerspectiveOffCenterLH	proto :float, :float, :float, :float, :float, :float
 XMMatrixPerspectiveOffCenterRH	proto :float, :float, :float, :float, :float, :float
@@ -1048,18 +1895,18 @@ undef XMMax
 endif
 
 XMMin macro a, b
-	if a < b
-	    exitm<a>
-	endif
-	exitm<b>
-	endm
+    if a < b
+	exitm<a>
+    endif
+    exitm<b>
+    endm
 
 XMMax macro a, b
-	if a > b
-	    exitm<a>
-	endif
-	exitm<b>
-	endm
+    if a > b
+	exitm<a>
+    endif
+    exitm<b>
+    endm
 
 if defined(_XM_SSE_INTRINSICS_) and not defined(_XM_NO_INTRINSICS_)
 endif
@@ -1244,6 +2091,148 @@ externdef g_ByteMax		:XMVECTORF32
 externdef g_ShortMin		:XMVECTORF32
 externdef g_ShortMax		:XMVECTORF32
 externdef g_UShortMax		:XMVECTORF32
+
+externdef RGBA_AliceBlue	:XMVECTORF32
+externdef RGBA_AntiqueWhite	:XMVECTORF32
+externdef RGBA_Aqua		:XMVECTORF32
+externdef RGBA_Aquamarine	:XMVECTORF32
+externdef RGBA_Azure		:XMVECTORF32
+externdef RGBA_Beige		:XMVECTORF32
+externdef RGBA_Bisque		:XMVECTORF32
+externdef RGBA_Black		:XMVECTORF32
+externdef RGBA_BlanchedAlmond	:XMVECTORF32
+externdef RGBA_Blue		:XMVECTORF32
+externdef RGBA_BlueViolet	:XMVECTORF32
+externdef RGBA_Brown		:XMVECTORF32
+externdef RGBA_BurlyWood	:XMVECTORF32
+externdef RGBA_CadetBlue	:XMVECTORF32
+externdef RGBA_Chartreuse	:XMVECTORF32
+externdef RGBA_Chocolate	:XMVECTORF32
+externdef RGBA_Coral		:XMVECTORF32
+externdef RGBA_CornflowerBlue	:XMVECTORF32
+externdef RGBA_Cornsilk		:XMVECTORF32
+externdef RGBA_Crimson		:XMVECTORF32
+externdef RGBA_Cyan		:XMVECTORF32
+externdef RGBA_DarkBlue		:XMVECTORF32
+externdef RGBA_DarkCyan		:XMVECTORF32
+externdef RGBA_DarkGoldenrod	:XMVECTORF32
+externdef RGBA_DarkGray		:XMVECTORF32
+externdef RGBA_DarkGreen	:XMVECTORF32
+externdef RGBA_DarkKhaki	:XMVECTORF32
+externdef RGBA_DarkMagenta	:XMVECTORF32
+externdef RGBA_DarkOliveGreen	:XMVECTORF32
+externdef RGBA_DarkOrange	:XMVECTORF32
+externdef RGBA_DarkOrchid	:XMVECTORF32
+externdef RGBA_DarkRed		:XMVECTORF32
+externdef RGBA_DarkSalmon	:XMVECTORF32
+externdef RGBA_DarkSeaGreen	:XMVECTORF32
+externdef RGBA_DarkSlateBlue	:XMVECTORF32
+externdef RGBA_DarkSlateGray	:XMVECTORF32
+externdef RGBA_DarkTurquoise	:XMVECTORF32
+externdef RGBA_DarkViolet	:XMVECTORF32
+externdef RGBA_DeepPink		:XMVECTORF32
+externdef RGBA_DeepSkyBlue	:XMVECTORF32
+externdef RGBA_DimGray		:XMVECTORF32
+externdef RGBA_DodgerBlue	:XMVECTORF32
+externdef RGBA_Firebrick	:XMVECTORF32
+externdef RGBA_FloralWhite	:XMVECTORF32
+externdef RGBA_ForestGreen	:XMVECTORF32
+externdef RGBA_Fuchsia		:XMVECTORF32
+externdef RGBA_Gainsboro	:XMVECTORF32
+externdef RGBA_GhostWhite	:XMVECTORF32
+externdef RGBA_Gold		:XMVECTORF32
+externdef RGBA_Goldenrod	:XMVECTORF32
+externdef RGBA_Gray		:XMVECTORF32
+externdef RGBA_Green		:XMVECTORF32
+externdef RGBA_GreenYellow	:XMVECTORF32
+externdef RGBA_Honeydew		:XMVECTORF32
+externdef RGBA_HotPink		:XMVECTORF32
+externdef RGBA_IndianRed	:XMVECTORF32
+externdef RGBA_Indigo		:XMVECTORF32
+externdef RGBA_Ivory		:XMVECTORF32
+externdef RGBA_Khaki		:XMVECTORF32
+externdef RGBA_Lavender		:XMVECTORF32
+externdef RGBA_LavenderBlush	:XMVECTORF32
+externdef RGBA_LawnGreen	:XMVECTORF32
+externdef RGBA_LemonChiffon	:XMVECTORF32
+externdef RGBA_LightBlue	:XMVECTORF32
+externdef RGBA_LightCoral	:XMVECTORF32
+externdef RGBA_LightCyan	:XMVECTORF32
+externdef RGBA_LightGoldenrodYellow :XMVECTORF32
+externdef RGBA_LightGreen	:XMVECTORF32
+externdef RGBA_LightGray	:XMVECTORF32
+externdef RGBA_LightPink	:XMVECTORF32
+externdef RGBA_LightSalmon	:XMVECTORF32
+externdef RGBA_LightSeaGreen	:XMVECTORF32
+externdef RGBA_LightSkyBlue	:XMVECTORF32
+externdef RGBA_LightSlateGray	:XMVECTORF32
+externdef RGBA_LightSteelBlue	:XMVECTORF32
+externdef RGBA_LightYellow	:XMVECTORF32
+externdef RGBA_Lime		:XMVECTORF32
+externdef RGBA_LimeGreen	:XMVECTORF32
+externdef RGBA_Linen		:XMVECTORF32
+externdef RGBA_Magenta		:XMVECTORF32
+externdef RGBA_Maroon		:XMVECTORF32
+externdef RGBA_MediumAquamarine :XMVECTORF32
+externdef RGBA_MediumBlue	:XMVECTORF32
+externdef RGBA_MediumOrchid	:XMVECTORF32
+externdef RGBA_MediumPurple	:XMVECTORF32
+externdef RGBA_MediumSeaGreen	:XMVECTORF32
+externdef RGBA_MediumSlateBlue	:XMVECTORF32
+externdef RGBA_MediumSpringGreen:XMVECTORF32
+externdef RGBA_MediumTurquoise	:XMVECTORF32
+externdef RGBA_MediumVioletRed	:XMVECTORF32
+externdef RGBA_MidnightBlue	:XMVECTORF32
+externdef RGBA_MintCream	:XMVECTORF32
+externdef RGBA_MistyRose	:XMVECTORF32
+externdef RGBA_Moccasin		:XMVECTORF32
+externdef RGBA_NavajoWhite	:XMVECTORF32
+externdef RGBA_Navy		:XMVECTORF32
+externdef RGBA_OldLace		:XMVECTORF32
+externdef RGBA_Olive		:XMVECTORF32
+externdef RGBA_OliveDrab	:XMVECTORF32
+externdef RGBA_Orange		:XMVECTORF32
+externdef RGBA_OrangeRed	:XMVECTORF32
+externdef RGBA_Orchid		:XMVECTORF32
+externdef RGBA_PaleGoldenrod	:XMVECTORF32
+externdef RGBA_PaleGreen	:XMVECTORF32
+externdef RGBA_PaleTurquoise	:XMVECTORF32
+externdef RGBA_PaleVioletRed	:XMVECTORF32
+externdef RGBA_PapayaWhip	:XMVECTORF32
+externdef RGBA_PeachPuff	:XMVECTORF32
+externdef RGBA_Peru		:XMVECTORF32
+externdef RGBA_Pink		:XMVECTORF32
+externdef RGBA_Plum		:XMVECTORF32
+externdef RGBA_PowderBlue	:XMVECTORF32
+externdef RGBA_Purple		:XMVECTORF32
+externdef RGBA_Red		:XMVECTORF32
+externdef RGBA_RosyBrown	:XMVECTORF32
+externdef RGBA_RoyalBlue	:XMVECTORF32
+externdef RGBA_SaddleBrown	:XMVECTORF32
+externdef RGBA_Salmon		:XMVECTORF32
+externdef RGBA_SandyBrown	:XMVECTORF32
+externdef RGBA_SeaGreen		:XMVECTORF32
+externdef RGBA_SeaShell		:XMVECTORF32
+externdef RGBA_Sienna		:XMVECTORF32
+externdef RGBA_Silver		:XMVECTORF32
+externdef RGBA_SkyBlue		:XMVECTORF32
+externdef RGBA_SlateBlue	:XMVECTORF32
+externdef RGBA_SlateGray	:XMVECTORF32
+externdef RGBA_Snow		:XMVECTORF32
+externdef RGBA_SpringGreen	:XMVECTORF32
+externdef RGBA_SteelBlue	:XMVECTORF32
+externdef RGBA_Tan		:XMVECTORF32
+externdef RGBA_Teal		:XMVECTORF32
+externdef RGBA_Thistle		:XMVECTORF32
+externdef RGBA_Tomato		:XMVECTORF32
+externdef RGBA_Transparent	:XMVECTORF32
+externdef RGBA_Turquoise	:XMVECTORF32
+externdef RGBA_Violet		:XMVECTORF32
+externdef RGBA_Wheat		:XMVECTORF32
+externdef RGBA_White		:XMVECTORF32
+externdef RGBA_WhiteSmoke	:XMVECTORF32
+externdef RGBA_Yellow		:XMVECTORF32
+externdef RGBA_YellowGreen	:XMVECTORF32
 
 if defined(_XM_NO_INTRINSICS_)
 else

@@ -69,7 +69,7 @@ extern ret_code (* const directive_tab[])( int, struct asm_tok[] );
 /* parsing of branch instructions with imm operand is found in branch.c */
 int process_branch( struct code_info *, unsigned, const struct expr * );
 int ExpandLine( char *, struct asm_tok[] );
-int ExpandHllProc( char *, int, struct asm_tok[] );
+int ExpandHllProcEx( char *, int, struct asm_tok[] );
 
 extern enum proc_status ProcStatus;
 extern const int_64	maxintvalues[];
@@ -2282,8 +2282,8 @@ int ParseLine( struct asm_tok tokenarray[] )
     uint_32		oldofs;
     struct code_info	CodeInfo;
     struct expr		opndx[MAX_OPND+1];
-    char		buffer[MAX_LINE_LEN];
     char		hllbuf[MAX_LINE_LEN];
+    char		buffer[MAX_LINE_LEN];
 
     i = 0;
     j = 0;
@@ -2657,36 +2657,20 @@ int ParseLine( struct asm_tok tokenarray[] )
 	}
     }
 
-    if ( ( ModuleInfo.aflag & _AF_ON ) && Parse_Pass == PASS_1 ) {
+    if ( ( ModuleInfo.aflag & _AF_ON ) /*&& Parse_Pass == PASS_1*/ ) {
 
 	for ( q = 1; tokenarray[q].token != T_FINAL; q++ ) {
 
 	    if ( tokenarray[q].hll_flags & T_HLL_PROC ) {
 
 		/* v2.21 - mov reg,proc(...) */
-
-		if ( ExpandHllProc( buffer, q, tokenarray ) == ERROR)
+		/* v2.27 - mov reg,class.proc(...) */
+		q = ExpandHllProcEx( buffer, q, tokenarray );
+		if ( q == ERROR )
 		    return ERROR;
-
-		if ( buffer[0] != 0 ) {
-
-		    b = buffer;
-		    strcpy( hllbuf, tokenarray[0].tokpos );
-		    while ( b ) {
-			p = b;
-			if ( ( b = strchr( b, '\n' ) ) != NULL )
-			    *b++ = 0;
-			if ( *p ) {
-			    strcpy( CurrSource, p );
-			    Token_Count = Tokenize( CurrSource, 0,
-				tokenarray, TOK_DEFAULT );
-			    if ( ERROR == ParseLine( tokenarray ) )
-				return ERROR;
-			}
-		    }
-		    strcpy( CurrSource, hllbuf );
-		    Token_Count = Tokenize( CurrSource, 0, tokenarray, TOK_DEFAULT );
-		    return ParseLine( tokenarray );
+		else if ( q == STRING_EXPANDED ) {
+		    FStoreLine(0);
+		    return NOT_ERROR;
 		}
 		break;
 	    }

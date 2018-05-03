@@ -1,3 +1,6 @@
+;
+; https://code.msdn.microsoft.com/windowsdesktop/Direct3D-Tutorial-Win32-829979ef
+;
 ;;--------------------------------------------------------------------------------------
 ;; File: Tutorial01.cpp
 ;;
@@ -16,17 +19,18 @@
 include windows.inc
 include SpecStrings.inc
 include d3d11_1.inc
-include gdipluscolor.inc
 include tchar.inc
+
 ifndef _WIN64
     .686
     .xmm
 endif
-
     .data
+
 ;;--------------------------------------------------------------------------------------
 ;; Global Variables
 ;;--------------------------------------------------------------------------------------
+
 g_hInst			HINSTANCE NULL
 g_hWnd			HWND NULL
 g_driverType		D3D_DRIVER_TYPE D3D_DRIVER_TYPE_NULL
@@ -48,9 +52,11 @@ IID_IDXGISwapChain	GUID _IID_IDXGISwapChain
 IID_ID3D11Texture2D	GUID _IID_ID3D11Texture2D
 
     .code
+
 ;;--------------------------------------------------------------------------------------
 ;; Forward declarations
 ;;--------------------------------------------------------------------------------------
+
 ifdef __PE__
 option dllimport:none
 endif
@@ -424,10 +430,10 @@ Render proc
 
   local ColorRGBA[4]:FLOAT
 
-    mov ColorRGBA[0],ARGB_MidnightBlue
-    mov ColorRGBA[4],ARGB_MintCream
-    mov ColorRGBA[8],ARGB_MistyRose
-    mov ColorRGBA[12],ARGB_Moccasin
+    mov ColorRGBA[0*4],0.098039225
+    mov ColorRGBA[1*4],0.098039225
+    mov ColorRGBA[2*4],0.439215720
+    mov ColorRGBA[3*4],1.000000000
 
     ;; Just clear the backbuffer
     g_pImmediateContext.ClearRenderTargetView( g_pRenderTargetView, &ColorRGBA )

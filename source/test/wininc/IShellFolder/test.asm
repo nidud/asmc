@@ -9,9 +9,6 @@ include stdio.inc
 include tchar.inc
 
 .data
-IID_IShellFolder  GUID _IID_IShellFolder
-
-ifdef __PE__
 GUID_NULL			GUID <0>
 IID_IOleDocument		GUID _IID_IOleDocument
 IID_IOleDocumentView		GUID _IID_IOleDocumentView
@@ -31,7 +28,7 @@ IID_IShellTaskScheduler		GUID _IID_IShellTaskScheduler
 IID_IWebBrowserApp		GUID _IID_IWebBrowserApp
 IID_IProtectFocus		GUID _IID_IProtectFocus
 IID_IEnumOleDocumentViews	GUID _IID_IEnumOleDocumentViews
-endif
+IID_IShellFolder		GUID _IID_IShellFolder
 
 .code
 

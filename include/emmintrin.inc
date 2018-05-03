@@ -31,150 +31,161 @@ _MM_SHUFFLE2 macro x,y
 	exitm<(((x) SHL 1) OR (y))>
 	endm
 
-ifndef _MM_NOINLINE
+ifndef __XMMMACROS_INC
+include xmmmacros.inc
+endif
 
 _mm_add_sd macro a:=<xmm0>, b:=<xmm1>
-	exitm<addsd a, b>
+	exitm<_MM_OPCSX2(add, sd, a, b)>
 	endm
 _mm_add_pd macro a:=<xmm0>, b:=<xmm1>
-	exitm<addpd a, b>
+	exitm<_MM_OPCSX2(add, pd, a, b)>
 	endm
 _mm_sub_sd macro a:=<xmm0>, b:=<xmm1>
-	exitm<subsd a, b>
+	exitm<_MM_OPCSX2(sub, sd, a, b)>
 	endm
 _mm_sub_pd macro a:=<xmm0>, b:=<xmm1>
-	exitm<subpd a, b>
+	exitm<_MM_OPCSX2(sub, pd, a, b)>
 	endm
 _mm_mul_sd macro a:=<xmm0>, b:=<xmm1>
-	exitm<mulsd a, b>
+	exitm<_MM_OPCSX2(mul, sd, a, b)>
 	endm
 _mm_mul_pd macro a:=<xmm0>, b:=<xmm1>
-	exitm<mulpd a, b>
+	exitm<_MM_OPCSX2(mul, pd, a, b)>
 	endm
+
 _mm_sqrt_sd macro a:=<xmm0>, b:=<xmm1>
 	movsd a,b
-	exitm<sqrtsd a, a>
+	exitm<_MM_OPCSX2(sqrt, sd, a, b)>
 	endm
 _mm_sqrt_pd macro a:=<xmm0>
-	exitm<sqrtpd a, a>
+	exitm<_MM_OPCSX2(sqrt, pd, a, a)>
 	endm
 _mm_div_sd macro a:=<xmm0>, b:=<xmm1>
-	exitm<divsd a, b>
+	exitm<_MM_OPCSX2(div, sd, a, b)>
 	endm
 _mm_div_pd macro a:=<xmm0>, b:=<xmm1>
-	exitm<divpd a, b>
+	exitm<_MM_OPCSX2(div, pd, a, b)>
 	endm
 _mm_min_sd macro a:=<xmm0>, b:=<xmm1>
-	exitm<minsd a, b>
+	exitm<_MM_OPCSX2(min, sd, a, b)>
 	endm
 _mm_min_pd macro a:=<xmm0>, b:=<xmm1>
-	exitm<minpd a, b>
+	exitm<_MM_OPCSX2(min, pd, a, b)>
 	endm
 _mm_max_sd macro a:=<xmm0>, b:=<xmm1>
-	exitm<maxsd a, b>
+	exitm<_MM_OPCSX2(max, sd, a, b)>
 	endm
 _mm_max_pd macro a:=<xmm0>, b:=<xmm1>
-	exitm<maxpd a, b>
+	exitm<_MM_OPCSX2(max, pd, a, b)>
 	endm
 _mm_and_pd macro a:=<xmm0>, b:=<xmm1>
-	exitm<andpd a, b>
+	exitm<_MM_OPCSX2(and, pd, a, b)>
 	endm
 _mm_andnot_pd macro a:=<xmm0>, b:=<xmm1>
-	exitm<andnpd a, b>
+	exitm<_MM_OPCSX2(andn, pd, a, b)>
 	endm
 _mm_or_pd macro a:=<xmm0>, b:=<xmm1>
-	exitm<orpd a, b>
+	exitm<_MM_OPCSX2(or, pd, a, b)>
 	endm
 _mm_xor_pd macro a:=<xmm0>, b:=<xmm1>
-	exitm<xorpd a, b>
+	exitm<_MM_OPCSX2(xor, pd, a, b)>
 	endm
 
 _mm_cmpeq_sd macro a:=<xmm0>, b:=<xmm1>
-	exitm<cmpeqsd a, b>
+	exitm<_MM_OPCSX2(cmpeq, sd, a, b)>
 	endm
 _mm_cmpeq_pd macro a:=<xmm0>, b:=<xmm1>
-	exitm<cmpeqpd a, b>
+	exitm<_MM_OPCSX2(cmpeq, pd, a, b)>
 	endm
 _mm_cmplt_sd macro a:=<xmm0>, b:=<xmm1>
-	exitm<cmpltsd a, b>
+	exitm<_MM_OPCSX2(cmplt, sd, a, b)>
 	endm
 _mm_cmplt_pd macro a:=<xmm0>, b:=<xmm1>
-	exitm<cmpltpd a, b>
+	exitm<_MM_OPCSX2(cmplt, pd, a, b)>
 	endm
 _mm_cmple_sd macro a:=<xmm0>, b:=<xmm1>
-	exitm<cmplesd a, b>
+	exitm<_MM_OPCSX2(cmple, sd, a, b)>
 	endm
 _mm_cmple_pd macro a:=<xmm0>, b:=<xmm1>
-	exitm<cmplepd a, b>
+	exitm<_MM_OPCSX2(cmple, pd, a, b)>
 	endm
 _mm_cmpgt_sd macro a:=<xmm0>, b:=<xmm1>
 	_mm_cmplt_sd(b, a)
-	exitm<movsd a, b>
+	movsd a, b
+	retm<a>
 	endm
 _mm_cmpgt_pd macro a:=<xmm0>, b:=<xmm1>
 	_mm_cmplt_pd(b, a)
-	exitm<movapd a, b>
+	movapd a, b
+	retm<a>
 	endm
 _mm_cmpge_sd macro a:=<xmm0>, b:=<xmm1>
 	_mm_cmplt_sd(b, a)
-	exitm<movsd a, b>
+	movsd a, b
+	retm<a>
 	endm
 _mm_cmpge_pd macro a:=<xmm0>, b:=<xmm1>
 	_mm_cmple_pd(b, a)
-	exitm<movapd a, b>
+	movapd a, b
+	retm<a>
 	endm
 _mm_cmpneq_sd macro a:=<xmm0>, b:=<xmm1>
-	exitm<cmpneqsd a, b>
+	exitm<_MM_OPCSX2(cmpneq, sd, a, b)>
 	endm
 _mm_cmpneq_pd macro a:=<xmm0>, b:=<xmm1>
-	exitm<cmpneqpd a, b>
+	exitm<_MM_OPCSX2(cmpneq, pd, a, b)>
 	endm
 _mm_cmpnlt_sd macro a:=<xmm0>, b:=<xmm1>
-	exitm<cmpnltsd a, b>
+	exitm<_MM_OPCSX2(cmpnlt, sd, a, b)>
 	endm
 _mm_cmpnlt_pd macro a:=<xmm0>, b:=<xmm1>
-	exitm<cmpnltpd a, b>
+	exitm<_MM_OPCSX2(cmpnlt, pd, a, b)>
 	endm
 _mm_cmpnle_sd macro a:=<xmm0>, b:=<xmm1>
-	exitm<cmpnlesd a, b>
+	exitm<_MM_OPCSX2(cmpnle, sd, a, b)>
 	endm
 _mm_cmpnle_pd macro a:=<xmm0>, b:=<xmm1>
-	exitm<cmpnlepd a, b>
+	exitm<_MM_OPCSX2(cmpnle, pd, a, b)>
 	endm
 _mm_cmpngt_sd macro a:=<xmm0>, b:=<xmm1>
 	_mm_cmpnlt_sd(b, a)
-	exitm<movsd a, b>
+	movsd a, b
+	retm<a>
 	endm
 _mm_cmpngt_pd macro a:=<xmm0>, b:=<xmm1>
 	_mm_cmpnlt_pd(b, a)
-	exitm<movapd a, b>
+	movapd a, b
+	retm<a>
 	endm
 _mm_cmpnge_sd macro a:=<xmm0>, b:=<xmm1>
 	_mm_cmpnle_sd(b, a)
-	exitm<movsd a, b>
+	movsd a, b
+	retm<a>
 	endm
 _mm_cmpnge_pd macro a:=<xmm0>, b:=<xmm1>
 	_mm_cmpnle_pd(b, a)
-	exitm<movapd a, b>
+	movapd a, b
+	retm<a>
 	endm
 _mm_cmpord_pd macro a:=<xmm0>, b:=<xmm1>
-	exitm<cmpordpd a, b>
+	exitm<_MM_OPCSX2(cmpord, pd, a, b)>
 	endm
 _mm_cmpord_sd macro a:=<xmm0>, b:=<xmm1>
-	exitm<cmpordsd a, b>
+	exitm<_MM_OPCSX2(cmpord, sd, a, b)>
 	endm
 _mm_cmpunord_pd macro a:=<xmm0>, b:=<xmm1>
-	exitm<cmpunordpd a, b>
+	exitm<_MM_OPCSX2(cmpunord, pd, a, b)>
 	endm
 _mm_cmpunord_sd macro a:=<xmm0>, b:=<xmm1>
-	exitm<cmpunordsd a, b>
+	exitm<_MM_OPCSX2(cmpunord, sd, a, b)>
 	endm
 
 _mm_comisd macro set, a, b
 	xor eax,eax
-	ucomisd a,b
+	_MM_OPCSX2(ucomi, sd, a, b)
 	set al
-	exitm<eax>
+	retm<eax>
 	endm
 
 _mm_comieq_sd macro a:=<xmm0>, b:=<xmm1>
@@ -215,436 +226,493 @@ _mm_ucomineq_sd macro a:=<xmm0>, b:=<xmm1>
 	endm
 
 _mm_cvtepi32_pd macro a:=<xmm0>
-	exitm<cvtdq2pd a, a>
+	exitm<_MM_OPCSX2(cvtdq2, pd, a, a)>
 	endm
 _mm_cvtpd_epi32 macro a:=<xmm0>
-	exitm<cvtpd2dq a, a>
+	exitm<_MM_OPCSX2(cvtpd2, dq, a, a)>
 	endm
 _mm_cvttpd_epi32 macro a:=<xmm0>
-	exitm<cvttpd2dq a, a>
+	exitm<_MM_OPCSX2(cvttpd2, dq, a, a)>
 	endm
 _mm_cvtepi32_ps macro a:=<xmm0>
-	exitm<cvtdq2ps a, a>
+	exitm<_MM_OPCSX2(cvtdq2, ps, a, a)>
 	endm
 _mm_cvtps_epi32 macro a:=<xmm0>
-	exitm<cvtps2dq a, a>
+	exitm<_MM_OPCSX2(cvtps2, dq, a, a)>
 	endm
 _mm_cvttps_epi32 macro a:=<xmm0>
-	exitm<cvttps2dq a, a>
+	exitm<_MM_OPCSX2(cvttps2, dq, a, a)>
 	endm
 _mm_cvtpd_ps macro a:=<xmm0>
-	exitm<cvtpd2ps a, a>
+	exitm<_MM_OPCSX2(cvtpd2, ps, a, a)>
 	endm
 _mm_cvtps_pd macro a:=<xmm0>
-	exitm<cvtps2pd a, a>
+	exitm<_MM_OPCSX2(cvtps2, pd, a, a)>
 	endm
 _mm_cvtsd_ss macro a:=<xmm0>, b:=<xmm1>
-	exitm<cvtsd2ss a, b>
+	exitm<_MM_OPCSX2(cvtsd2, ss, a, b)>
 	endm
 _mm_cvtss_sd macro a:=<xmm0>, b:=<xmm1>
-	exitm<cvtss2sd a, b>
+	exitm<_MM_OPCSX2(cvtss2, sd, a, b)>
 	endm
 
 _mm_cvtsd_si32 macro a:=<xmm0>
-	exitm<cvtsd2si eax,a>
+	cvtsd2si eax,a
+	retm<eax>
 	endm
 _mm_cvttsd_si32 macro a:=<xmm0>
-	exitm<cvttsd2si eax,a>
+	cvttsd2si eax,a
+	retm<eax>
 	endm
-_mm_cvtsi32_sd macro a:=<xmm0>, b
-	exitm<cvtsi2sd a,b>
+_mm_cvtsi32_sd macro a:=<xmm0>, b:=<xmm1>
+	exitm<_MM_OPCSX2(cvtsi2, sd, a, b)>
 	endm
 
 _mm_unpackhi_pd macro a:=<xmm0>, b:=<xmm1>
-	exitm<unpckhpd a,b>
+	exitm<_MM_OPCSX2(unpckh, pd, a, b)>
 	endm
 _mm_unpacklo_pd macro a:=<xmm0>, b:=<xmm1>
-	exitm<unpcklpd a,b>
+	exitm<_MM_OPCSX2(unpckl, pd, a, b)>
 	endm
 _mm_movemask_pd macro a:=<xmm0>
-	exitm<movmskpd eax,a>
-	endm
-_mm_shuffle_pd macro a:=<xmm0>, b:=<xmm1>, imm
-	exitm<shufpd a,b,imm>
+	movmskpd eax,a
+	retm<eax>
 	endm
 
-_mm_load_pd macro reg
-	exitm<movapd xmm0,[reg]>
+_mm_shuffle_pd macro a:=<xmm0>, b:=<xmm1>, imm
+	exitm<_MM_SHUFXX(pd, a, b, imm)>
 	endm
-_mm_load1_pd macro reg
-	movsd xmm0,[reg]
-	exitm<unpcklpd xmm0,xmm0>
+
+_mm_load_pd macro p
+	movapd xmm0,_MM_MREG(p)
+	retm<xmm0>
+	endm
+_mm_load1_pd macro p
+	movsd xmm0,_MM_MREG(p)
+	exitm<_mm_unpacklo_pd(xmm0, xmm0)>
 	endm
 _mm_loadr_pd macro reg
 	_mm_load_pd(reg)
 	exitm<_mm_shuffle_pd(xmm0,xmm0,1)>
 	endm
-_mm_loadu_pd macro reg
-	exitm<movupd xmm0,[reg]>
+_mm_loadu_pd macro p
+	movupd xmm0,_MM_MREG(p)
+	retm<xmm0>
 	endm
-_mm_load_sd macro reg
-	exitm<movq xmm0,[reg]>
+_mm_load_sd macro p
+	movq xmm0,_MM_MREG(p)
+	retm<xmm0>
 	endm
-_mm_loadh_pd macro x:=<xmm0>, reg
-	exitm<movhpd x,[reg]>
+_mm_loadh_pd macro x:=<xmm0>, p
+	movhpd x,_MM_MREG(p)
+	retm<x>
 	endm
-_mm_loadl_pd macro x:=<xmm0>, reg
-	exitm<movlpd x,[reg]>
+_mm_loadl_pd macro x:=<xmm0>, p
+	movlpd x,_MM_MREG(p)
+	retm<x>
 	endm
 
 _mm_set_sd macro r
-	exitm<movq xmm0,r>
+	movq xmm0,r
+	retm<xmm0>
 	endm
 _mm_set1_pd macro r
-	exitm<unpcklpd xmm0,r>
+	unpcklpd xmm0,r
+	retm<xmm0>
 	endm
 _mm_set_pd macro d0:=<xmm0>, d1:=<xmm1>
 	movapd xmm2,d1
 	unpcklpd xmm2,d0
-	exitm<movapd xmm0,xmm2>
+	movapd xmm0,xmm2
+	retm<xmm0>
 	endm
-_mm_setr_pd macro r1:=<xmm0>, r2:=<xmm1>
-	exitm<unpcklpd r1,r2>
+_mm_setr_pd macro a:=<xmm0>, b:=<xmm1>
+	exitm<_MM_OPCSX2(unpckl, pd, a, b)>
 	endm
-_mm_setzero_pd macro
-	exitm<pxor xmm0,xmm0>
+_mm_setzero_pd macro x:=<xmm0>
+	pxor x,x
+	retm<x>
 	endm
-_mm_move_sd macro x1, x2
-	exitm<movsd x1,x2>
+_mm_move_sd macro a, b
+	exitm<_MM_OPCSX2(mov, sd, a, b)>
 	endm
 
-_mm_store_sd macro p, x0:=<xmm0>
-	exitm<movlpd [p],x0>
+_mm_store_sd macro p, x:=<xmm0>
+	movlpd _MM_MREG(p),x
+	retm<p>
 	endm
-_mm_store1_pd macro p, x0:=<xmm0>
-	movapd xmm1,x0
-	unpcklpd xmm1,x0
-	exitm<movaps [p],x0>
+_mm_store1_pd macro p, x:=<xmm0>
+	movapd xmm1,x
+	unpcklpd xmm1,x
+	movaps _MM_MREG(p),x
+	retm<p>
 	endm
-_mm_store_pd macro p, x0:=<xmm0>
-	exitm<movaps [p],x0>
+_mm_store_pd macro p, x:=<xmm0>
+	movaps _MM_MREG(p),x
+	retm<p>
 	endm
-_mm_storeu_pd macro p, x0:=<xmm0>
-	exitm<movups [p],x0>
+_mm_storeu_pd macro p, x:=<xmm0>
+	movups _MM_MREG(p),x
+	retm<p>
 	endm
-_mm_storer_pd macro p, x0:=<xmm0>
-	movapd xmm1,x0
-	shufpd xmm1,x0,1
-	exitm<movaps [p],xmm1>
+_mm_storer_pd macro p, x:=<xmm0>
+	movapd xmm1,x
+	shufpd xmm1,x,1
+	movaps _MM_MREG(p),xmm1
+	retm<p>
 	endm
-_mm_storeh_pd macro p, x0:=<xmm0>
-	exitm<movhpd [p],x0>
+_mm_storeh_pd macro p, x:=<xmm0>
+	movhpd _MM_MREG(p),x
+	retm<p>
 	endm
-_mm_storel_pd macro p, x0:=<xmm0>
-	exitm<movlpd [p],x0>
+_mm_storel_pd macro p, x:=<xmm0>
+	movlpd _MM_MREG(p),x
+	retm<p>
 	endm
 
 _mm_add_epi8 macro a:=<xmm0>, b:=<xmm1>
-	exitm<paddb a,b>
+	exitm<_MM_OPCSX2(pad, db, a, b)>
 	endm
 _mm_add_epi16 macro a:=<xmm0>, b:=<xmm1>
-	exitm<paddw a,b>
+	exitm<_MM_OPCSX2(pad, dw, a, b)>
 	endm
 _mm_add_epi32 macro a:=<xmm0>, b:=<xmm1>
-	exitm<paddd a,b>
+	exitm<_MM_OPCSX2(pad, dd, a, b)>
 	endm
 _mm_add_epi64 macro a:=<xmm0>, b:=<xmm1>
-	exitm<paddq a,b>
+	exitm<_MM_OPCSX2(pad, dq, a, b)>
 	endm
 
 _mm_adds_epi8 macro a:=<xmm0>, b:=<xmm1>
-	exitm<paddsb a,b>
+	exitm<_MM_OPCSX2(padd, sb, a, b)>
 	endm
 _mm_adds_epi16 macro a:=<xmm0>, b:=<xmm1>
-	exitm<paddsw a,b>
+	exitm<_MM_OPCSX2(padd, sw, a, b)>
 	endm
 _mm_adds_epu8 macro a:=<xmm0>, b:=<xmm1>
-	exitm<paddusb a,b>
+	exitm<_MM_OPCSX2(paddu, sb, a, b)>
 	endm
 _mm_adds_epu16 macro a:=<xmm0>, b:=<xmm1>
-	exitm<paddusw a,b>
+	exitm<_MM_OPCSX2(paddu, sw, a, b)>
 	endm
 _mm_avg_epu8 macro a:=<xmm0>, b:=<xmm1>
-	exitm<pavgb a,b>
+	exitm<_MM_OPCSX2(pav, gb, a, b)>
 	endm
 _mm_avg_epu16 macro a:=<xmm0>, b:=<xmm1>
-	exitm<pavgw a,b>
+	exitm<_MM_OPCSX2(pav, gw, a, b)>
 	endm
 _mm_madd_epi16 macro a:=<xmm0>, b:=<xmm1>
-	exitm<pmaddwd a,b>
+	exitm<_MM_OPCSX2(pmadd, wd, a, b)>
 	endm
 _mm_max_epi16 macro a:=<xmm0>, b:=<xmm1>
-	exitm<pmaxsw a,b>
+	exitm<_MM_OPCSX2(pmax, sw, a, b)>
 	endm
 _mm_max_epu8 macro a:=<xmm0>, b:=<xmm1>
-	exitm<pmaxub a,b>
+	exitm<_MM_OPCSX2(pmax, ub, a, b)>
 	endm
 _mm_min_epi16 macro a:=<xmm0>, b:=<xmm1>
-	exitm<pminsw a,b>
+	exitm<_MM_OPCSX2(pmin, sw, a, b)>
 	endm
 _mm_min_epu8 macro a:=<xmm0>, b:=<xmm1>
-	exitm<pminub a,b>
+	exitm<_MM_OPCSX2(pmin, ub, a, b)>
 	endm
 _mm_mulhi_epi16 macro a:=<xmm0>, b:=<xmm1>
-	exitm<pmulhw a,b>
+	exitm<_MM_OPCSX2(pmul, hw, a, b)>
 	endm
 _mm_mulhi_epu16 macro a:=<xmm0>, b:=<xmm1>
-	exitm<pmulhuw a,b>
+	exitm<_MM_OPCSX2(pmulh, uw, a, b)>
 	endm
 _mm_mullo_epi16 macro a:=<xmm0>, b:=<xmm1>
-	exitm<pmullw a,b>
+	exitm<_MM_OPCSX2(pmul, lw, a, b)>
 	endm
 
 _mm_mul_epu32 macro a:=<xmm0>, b:=<xmm1>
-	exitm<pmuludq a,b>
+	exitm<_MM_OPCSX2(pmulu, dq, a, b)>
 	endm
 _mm_sad_epu8 macro a:=<xmm0>, b:=<xmm1>
-	exitm<psadbw a,b>
+	exitm<_MM_OPCSX2(psad, bw, a, b)>
 	endm
 _mm_sub_epi8 macro a:=<xmm0>, b:=<xmm1>
-	exitm<psubb a,b>
+	exitm<_MM_OPCSX2(psu, bb, a, b)>
 	endm
 _mm_sub_epi16 macro a:=<xmm0>, b:=<xmm1>
-	exitm<psubw a,b>
+	exitm<_MM_OPCSX2(psu, bw, a, b)>
 	endm
 _mm_sub_epi32 macro a:=<xmm0>, b:=<xmm1>
-	exitm<psubd a,b>
+	exitm<_MM_OPCSX2(psu, bd, a, b)>
 	endm
 
 _mm_sub_epi64 macro a:=<xmm0>, b:=<xmm1>
-	exitm<psubq a,b>
+	exitm<_MM_OPCSX2(psu, bq, a, b)>
 	endm
 _mm_subs_epi8 macro a:=<xmm0>, b:=<xmm1>
-	exitm<psubsb a,b>
+	exitm<_MM_OPCSX2(psub, sb, a, b)>
 	endm
 _mm_subs_epi16 macro a:=<xmm0>, b:=<xmm1>
-	exitm<psubsw a,b>
+	exitm<_MM_OPCSX2(psub, sw, a, b)>
 	endm
 _mm_subs_epu8 macro a:=<xmm0>, b:=<xmm1>
-	exitm<psubusb a,b>
+	exitm<_MM_OPCSX2(psubu, sb, a, b)>
 	endm
 _mm_subs_epu16 macro a:=<xmm0>, b:=<xmm1>
-	exitm<psubusw a,b>
+	exitm<_MM_OPCSX2(psubu, sw, a, b)>
 	endm
 
 _mm_and_si128 macro a:=<xmm0>, b:=<xmm1>
-	exitm<pand a,b>
+	exitm<_MM_OPCSX2(pa, nd, a, b)>
 	endm
 _mm_andnot_si128 macro a:=<xmm0>, b:=<xmm1>
-	exitm<pandn a,b>
+	exitm<_MM_OPCSX2(pan, dn, a, b)>
 	endm
 _mm_or_si128 macro a:=<xmm0>, b:=<xmm1>
-	exitm<por a,b>
+	exitm<_MM_OPCSX2(p, or, a, b)>
 	endm
 _mm_xor_si128 macro a:=<xmm0>, b:=<xmm1>
-	exitm<pxor a,b>
+	exitm<_MM_OPCSX2(px, or, a, b)>
 	endm
 
 _mm_slli_si128 macro a:=<xmm0>, imm
-	exitm<pslldq a,imm>
+	pslldq a,imm
+	retm<a>
 	endm
 _mm_slli_epi16 macro a:=<xmm0>, imm
-	exitm<psllw a,imm>
+	psllw a,imm
+	retm<a>
 	endm
 _mm_sll_epi16 macro a:=<xmm0>, b:=<xmm1>
-	exitm<psllw a,b>
+	exitm<_MM_OPCSX2(psl, lw, a, b)>
 	endm
 _mm_slli_epi32 macro a:=<xmm0>, imm
-	exitm<pslld a,b>
+	pslld a,imm
+	retm<a>
 	endm
 _mm_sll_epi32 macro a:=<xmm0>, b:=<xmm1>
-	exitm<pslld a,b>
+	exitm<_MM_OPCSX2(psl, ld, a, b)>
 	endm
 _mm_slli_epi64 macro a:=<xmm0>, imm
-	exitm<psllq a,b>
+	psllq a,imm
+	retm<a>
 	endm
 _mm_sll_epi64 macro a:=<xmm0>, b:=<xmm1>
-	exitm<psllq a,b>
+	exitm<_MM_OPCSX2(psl, lq, a, b)>
 	endm
 _mm_srai_epi16 macro a:=<xmm0>, imm
-	exitm<psraw a,b>
+	psraw a,imm
+	retm<a>
 	endm
 _mm_sra_epi16 macro a:=<xmm0>, b:=<xmm1>
-	exitm<psraw a,b>
+	exitm<_MM_OPCSX2(psr, aw, a, b)>
 	endm
 _mm_srai_epi32 macro a:=<xmm0>, imm
-	exitm<psrad a,b>
+	psrad, a,imm
+	retm<a>
 	endm
 _mm_sra_epi32 macro a:=<xmm0>, b:=<xmm1>
-	exitm<psrad a,b>
+	exitm<_MM_OPCSX2(psr, ad, a, b)>
 	endm
 _mm_srli_si128 macro a:=<xmm0>, imm
-	exitm<psrldq a,b>
+	psrldq a,imm
+	retm<a>
 	endm
 _mm_srli_epi16 macro a:=<xmm0>, imm
-	exitm<psrlw a,b>
+	psrlw a,imm
+	retm<a>
 	endm
 _mm_srl_epi16 macro a:=<xmm0>, b:=<xmm1>
-	exitm<psrlw a,b>
+	exitm<_MM_OPCSX2(psr, lw, a, b)>
 	endm
 _mm_srli_epi32 macro a:=<xmm0>, imm
-	exitm<psrld a,b>
+	psrld a,imm
+	retm<a>
 	endm
 _mm_srl_epi32 macro a:=<xmm0>, b:=<xmm1>
-	exitm<psrld a,b>
+	exitm<_MM_OPCSX2(psr, ld, a, b)>
 	endm
 _mm_srli_epi64 macro a:=<xmm0>, imm
-	exitm<psrlq a,b>
+	psrlq a,imm
+	retm<a>
 	endm
 _mm_srl_epi64 macro a:=<xmm0>, b:=<xmm1>
-	exitm<psrlq a,b>
+	exitm<_MM_OPCSX2(psr, lq, a, b)>
 	endm
 
 _mm_cmpeq_epi8 macro a:=<xmm0>, b:=<xmm1>
-	exitm<pcmpeqb a,b>
+	exitm<_MM_OPCSX2(pcmpe, qb, a, b)>
 	endm
 _mm_cmpeq_epi16 macro a:=<xmm0>, b:=<xmm1>
-	exitm<pcmpeqw a,b>
+	exitm<_MM_OPCSX2(pcmpe, qw, a, b)>
 	endm
 _mm_cmpeq_epi32 macro a:=<xmm0>, b:=<xmm1>
-	exitm<pcmpeqd a,b>
+	exitm<_MM_OPCSX2(pcmpe, qd, a, b)>
 	endm
 _mm_cmpgt_epi8 macro a:=<xmm0>, b:=<xmm1>
-	exitm<pcmpgtb a,b>
+	exitm<_MM_OPCSX2(pcmpg, tb, a, b)>
 	endm
 _mm_cmpgt_epi16 macro a:=<xmm0>, b:=<xmm1>
-	exitm<pcmpgtw a,b>
+	exitm<_MM_OPCSX2(pcmpg, tw, a, b)>
 	endm
 _mm_cmpgt_epi32 macro a:=<xmm0>, b:=<xmm1>
-	exitm<pcmpgtd a,b>
+	exitm<_MM_OPCSX2(pcmpg, td, a, b)>
 	endm
 _mm_cmplt_epi8 macro a:=<xmm0>, b:=<xmm1>
 	movdqa xmm2,b
 	pcmpgtb xmm2,a
-	exitm<movdqa a,xmm2>
+	movdqa a,xmm2
+	retm<a>
 	endm
 _mm_cmplt_epi16 macro a:=<xmm0>, b:=<xmm1>
 	movdqa xmm2,b
 	pcmpgtw xmm2,a
-	exitm<movdqa a,xmm2>
+	movdqa a,xmm2
+	retm<a>
 	endm
 _mm_cmplt_epi32 macro a:=<xmm0>, b:=<xmm1>
 	movdqa xmm2,b
 	pcmpgtd xmm2,a
-	exitm<movdqa a,xmm2>
+	movdqa a,xmm2
+	retm<a>
 	endm
-_mm_cvtsi32_si128 macro a
-	local value
-	.data
-	align 16
-	value dq a,0
-	.code
-	movdqa xmm0,xmmword ptr value
-	exitm<>
+_mm_cvtsi32_si128 macro x, d
+    ifnb <d>
+	mov eax,d
+	movd x,eax
+	retm<x>
+    else
+	mov eax,x
+	movd xmm0,eax
+	retm<xmm0>
+    endif
 	endm
 _mm_cvtsi128_si32 macro a:=<xmm0>
-	exitm<movd eax,a>
+	movd eax,a
+	retm<eax>
 	endm
 
 _mm_packs_epi16 macro a:=<xmm0>, b:=<xmm1>
-	exitm<packsswb a,b>
+	exitm<_MM_OPCSX2(packss, wb, a, b)>
 	endm
 _mm_packs_epi32 macro a:=<xmm0>, b:=<xmm1>
-	exitm<packssdw a,b>
+	exitm<_MM_OPCSX2(packss, dw, a, b)>
 	endm
 _mm_packus_epi16 macro a:=<xmm0>, b:=<xmm1>
-	exitm<packuswb a,b>
+	exitm<_MM_OPCSX2(packus, wb, a, b)>
 	endm
 _mm_extract_epi16 macro a:=<xmm0>, imm
-	exitm<pextrw eax, a, imm>
+	pextrw eax, a, imm
+	retm<eax>
 	endm
 _mm_insert_epi16 macro a:=<xmm0>, reg, imm
-	exitm<pinsrw a, reg, imm>
+	pinsrw a, reg, imm
+	retm<a>
 	endm
 
 _mm_movemask_epi8 macro a:=<xmm0>
-	exitm<pmovmskb eax,a>
+	pmovmskb eax,a
+	retm<eax>
 	endm
 _mm_shuffle_epi32 macro a:=<xmm0>, imm
-	exitm<pshufd a, a, imm>
+	pshufd a, a, imm
+	retm<a>
 	endm
 _mm_shufflehi_epi16 macro a:=<xmm0>, imm
-	exitm<pshufhw a, a, imm>
+	pshufhw a, a, imm
+	retm<a>
 	endm
 _mm_shufflelo_epi16 macro a:=<xmm0>, imm
-	exitm<pshuflw a, a, imm>
+	pshuflw a, a, imm
+	retm<a>
 	endm
 _mm_unpackhi_epi8 macro a:=<xmm0>, b:=<xmm1>
-	exitm<punpckhbw a, b>
+	exitm<_MM_OPCSX2(punpckh, bw, a, b)>
 	endm
 _mm_unpackhi_epi16 macro a:=<xmm0>, b:=<xmm1>
-	exitm<punpckhwd a, b>
+	exitm<_MM_OPCSX2(punpckh, wd, a, b)>
 	endm
 _mm_unpackhi_epi32 macro a:=<xmm0>, b:=<xmm1>
-	exitm<punpckhdq a, b>
+	exitm<_MM_OPCSX2(punpckh, dq, a, b)>
 	endm
 _mm_unpackhi_epi64 macro a:=<xmm0>, b:=<xmm1>
-	exitm<punpckhqdq a, b>
+	exitm<_MM_OPCSX2(punpckhq, dq, a, b)>
 	endm
 _mm_unpacklo_epi8 macro a:=<xmm0>, b:=<xmm1>
-	exitm<punpcklbw a, b>
+	exitm<_MM_OPCSX2(punpckl, bw, a, b)>
 	endm
 _mm_unpacklo_epi16 macro a:=<xmm0>, b:=<xmm1>
-	exitm<punpcklwd a, b>
+	exitm<_MM_OPCSX2(punpckl, wd, a, b)>
 	endm
 _mm_unpacklo_epi32 macro a:=<xmm0>, b:=<xmm1>
-	exitm<punpckldq a, b>
+	exitm<_MM_OPCSX2(punpckl, dq, a, b)>
 	endm
 _mm_unpacklo_epi64 macro a:=<xmm0>, b:=<xmm1>
-	exitm<punpcklqdq a, b>
+	exitm<_MM_OPCSX2(punpcklq, dq, a, b)>
 	endm
 
-_mm_load_si128 macro reg
-	exitm<movdqa xmm0,[reg]>
+_mm_load_si128 macro p
+	movdqa xmm0,_MM_MREG(p)
+	retm<xmm0>
 	endm
-_mm_loadu_si128 macro reg
-	exitm<movdqu xmm0,[reg]>
+_mm_loadu_si128 macro p
+	movdqu xmm0,_MM_MREG(p)
+	retm<xmm0>
 	endm
 _mm_loadl_epi64 macro p
-	exitm<movq xmm0,[reg]>
+	movq xmm0,_MM_MREG(p)
+	retm<xmm0>
 	endm
 
-_mm_set_epi64x macro a, b
-	local value
+_mm_set_epix macro x, op, args:vararg
+	local v
 	.data
 	align 16
-	value dq a,b
+	v op &args
 	.code
-	movdqa xmm0,xmmword ptr value
-	exitm<>
+	movdqa x,xmmword ptr v
+	retm<x>
 	endm
-_mm_set_epi32 macro a, b, c, d
-	exitm<_mm_set_epi64x(a or (b shl 32), c or (d shl 32))>
+_mm_set_epi64x macro x, a, b
+    ifnb <b>
+	exitm<_mm_set_epix(x, dq, a, b)>
+    else
+	exitm<_mm_set_epix(xmm0, dq, a, b)>
+    endif
+	endm
+_mm_set_epi32 macro x, a, b, c, d
+    ifnb <d>
+	exitm<_mm_set_epix(x, dd, a, b, c, d)>
+    else
+	exitm<_mm_set_epix(xmm0, dd, x, a, b, c)>
+    endif
+	endm
+_mm_get_epi32 macro a, b, c, d
+	local x
+	.data
+	align 16
+	x label oword
+	dd a, b, c, d
+	.code
+	exitm<x>
 	endm
 _mm_set_epi16 macro a, b, c, d, e, f, g, h
-	exitm<_mm_set_epi32(a or (b shl 16), c or (d shl 16), e or (f shl 16), g or (h shl 16))>
+	exitm<_mm_set_epix(xmm0, dw, a, b, c, d, e, f, g, h)>
 	endm
 _mm_set_epi8 macro a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p
-	exitm<_mm_set_epi16(a or (b shl 8), c or (d shl 8), e or (f shl 8), g or (h shl 8) \
-		i or (j shl 8), k or (l shl 8), m or (n shl 8), o or (p shl 8))>
+	exitm<_mm_set_epix(xmm0, db, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p)>
 	endm
 _mm_set1_epi64x macro a
-	local value
-	.data
-	align 16
-	value dq a,a
-	.code
-	movdqa xmm0,xmmword ptr value
-	exitm<>
+	exitm<_mm_set_epix(xmm0, dq, a, a)>
 	endm
 _mm_set1_epi32 macro a
-	exitm<_mm_set1_epi64x((a) or ((a) shl 32))>
+	exitm<_mm_set_epix(xmm0, dd, a, a, a, a)>
 	endm
 _mm_set1_epi16 macro a
-	exitm<_mm_set1_epi32(a or (a shl 16))>
+	exitm<_mm_set1_epi32(xmm0, a or (a shl 16))>
 	endm
 _mm_set1_epi8 macro a
-	exitm<_mm_set1_epi16(a or (a shl 8))>
+	exitm<_mm_set1_epi16(xmm0, a or (a shl 8))>
 	endm
-
 ifdef _M_X64
 _mm_set1_epi64 macro a:=<xmm0>
-	exitm<punpcklqdq a, a>
+	exitm<_MM_OPCSX2(punpcklq, dq, a, b)>
 	endm
 endif
 
@@ -658,35 +726,36 @@ _mm_setr_epi8 macro a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p
 	exitm<_mm_setr_epi16(a or (b shl 8), c or (d shl 8), e or (f shl 8), g or (h shl 8) \
 		i or (j shl 8), k or (l shl 8), m or (n shl 8), o or (p shl 8))>
 	endm
-_mm_setzero_si128 macro
-	exitm<pxor xmm0, xmm0>
+_mm_setzero_si128 macro x:=<xmm0>
+	pxor x, x
+	retm<x>
 	endm
 
-_mm_store_si128 macro reg, x:=<xmm0>
-	exitm<movaps [reg], x>
+_mm_store_si128 macro p, x:=<xmm0>
+	movaps _MM_MREG(p), x
 	endm
-_mm_storeu_si128 macro reg, x:=<xmm0>
-	exitm<movups [reg], x>
+_mm_storeu_si128 macro p, x:=<xmm0>
+	movups _MM_MREG(p), x
 	endm
-_mm_storel_epi64 macro reg, x:=<xmm0>
-	exitm<movq [reg], x>
+_mm_storel_epi64 macro p, x:=<xmm0>
+	movq _MM_MREG(p), x
 	endm
 _mm_maskmoveu_si128 macro a:=<xmm0>, b:=<xmm1>, reg
-	exitm<maskmovdqu a,b>
+	maskmovdqu a,b
 	endm
 
 _mm_move_epi64 macro a:=<xmm0>
-	exitm<movq xmm0,a>
+	movq xmm0,a
 	endm
 
 _mm_stream_pd macro reg, x:=<xmm0>
-	exitm<movntpd [reg], x>
+	movntpd _MM_MREG(p), x
 	endm
 _mm_stream_si128 macro reg, x:=<xmm0>
-	exitm<movntdq [reg], x>
+	movntdq _MM_MREG(p), x
 	endm
 _mm_clflush macro reg
-	exitm<clflush [reg]>
+	clflush _MM_MREG(p)
 	endm
 _mm_lfence macro
 	exitm<lfence>
@@ -694,15 +763,17 @@ _mm_lfence macro
 _mm_mfence macro
 	exitm<mfence>
 	endm
-_mm_stream_si32 macro r1, r2
-	exitm<movnti [r1],r2>
+_mm_stream_si32 macro p, x
+	movnti _MM_MREG(p),x
+	retm<p>
 	endm
 _mm_pause macro
 	exitm<nop>
 	endm
 
 _mm_cvtsd_f64 macro x:=<xmm0>
-	exitm<xmm0>
+	cvtsd2ss x,x
+	retm<x>
 	endm
 
 _mm_castpd_ps macro x:=<xmm0>
@@ -726,278 +797,38 @@ _mm_castsi128_pd macro x:=<xmm0>
 
 ifdef _M_X64
 _mm_cvtsd_si64 macro x:=<xmm0>
-	exitm<cvtsd2si rax,x>
+	cvtsd2si rax,x
+	retm<rax>
 	endm
 _mm_cvttsd_si64 macro x:=<xmm0>
-	exitm<cvttsd2si rax,x>
+	cvttsd2si rax,x
+	retm<rax>
 	endm
 _mm_cvtsi64_sd macro x:=<xmm0>, reg
-	exitm<cvtsi2sdq x,reg>
+	cvtsi2sd x,reg
+	retm<x>
 	endm
-_mm_cvtsi64_si128 macro imm
-	exitm<_mm_set_epi64x(imm, 0)>
+_mm_cvtsi64_si128 macro x, q
+    ifnb <q>
+	mov rax,q
+	movq x,rax
+	retm<x>
+    else
+	mov rax,x
+	movq xmm0,rax
+	retm<xmm0>
+    endif
 	endm
-
 _mm_cvtsi128_si64 macro x:=<xmm0>
-	exitm<movq rax,x>
+	movq rax,x
+	retm<rax>
 	endm
 
 endif
 
-else
-
-_mm_add_sd		proto :oword, :oword
-_mm_add_pd		proto :oword, :oword
-_mm_sub_sd		proto :oword, :oword
-_mm_sub_pd		proto :oword, :oword
-_mm_mul_sd		proto :oword, :oword
-_mm_mul_pd		proto :oword, :oword
-_mm_sqrt_sd		proto :oword, :oword
-_mm_sqrt_pd		proto :oword
-_mm_div_sd		proto :oword, :oword
-_mm_div_pd		proto :oword, :oword
-
-_mm_min_sd		proto :oword, :oword
-_mm_min_pd		proto :oword, :oword
-_mm_max_sd		proto :oword, :oword
-_mm_max_pd		proto :oword, :oword
-
-_mm_and_pd		proto :oword, :oword
-_mm_andnot_pd		proto :oword, :oword
-_mm_or_pd		proto :oword, :oword
-_mm_xor_pd		proto :oword, :oword
-
-_mm_cmpeq_sd		proto :oword, :oword
-_mm_cmpeq_pd		proto :oword, :oword
-_mm_cmplt_sd		proto :oword, :oword
-_mm_cmplt_pd		proto :oword, :oword
-_mm_cmple_sd		proto :oword, :oword
-_mm_cmple_pd		proto :oword, :oword
-_mm_cmpgt_sd		proto :oword, :oword
-_mm_cmpgt_pd		proto :oword, :oword
-_mm_cmpge_sd		proto :oword, :oword
-_mm_cmpge_pd		proto :oword, :oword
-
-_mm_cmpneq_sd		proto :oword, :oword
-_mm_cmpneq_pd		proto :oword, :oword
-_mm_cmpnlt_sd		proto :oword, :oword
-_mm_cmpnlt_pd		proto :oword, :oword
-_mm_cmpnle_sd		proto :oword, :oword
-_mm_cmpnle_pd		proto :oword, :oword
-_mm_cmpngt_sd		proto :oword, :oword
-_mm_cmpngt_pd		proto :oword, :oword
-_mm_cmpnge_sd		proto :oword, :oword
-_mm_cmpnge_pd		proto :oword, :oword
-_mm_cmpord_pd		proto :oword, :oword
-_mm_cmpord_sd		proto :oword, :oword
-
-_mm_cmpunord_pd		proto :oword, :oword
-_mm_cmpunord_sd		proto :oword, :oword
-_mm_comieq_sd		proto :oword, :oword
-_mm_comilt_sd		proto :oword, :oword
-_mm_comile_sd		proto :oword, :oword
-_mm_comigt_sd		proto :oword, :oword
-_mm_comige_sd		proto :oword, :oword
-_mm_comineq_sd		proto :oword, :oword
-_mm_ucomieq_sd		proto :oword, :oword
-_mm_ucomilt_sd		proto :oword, :oword
-_mm_ucomile_sd		proto :oword, :oword
-_mm_ucomigt_sd		proto :oword, :oword
-_mm_ucomige_sd		proto :oword, :oword
-_mm_ucomineq_sd		proto :oword, :oword
-
-_mm_cvtepi32_pd		proto :oword
-_mm_cvtpd_epi32		proto :oword
-_mm_cvttpd_epi32	proto :oword
-_mm_cvtepi32_ps		proto :oword
-_mm_cvtps_epi32		proto :oword
-_mm_cvttps_epi32	proto :oword
-_mm_cvtpd_ps		proto :oword
-_mm_cvtps_pd		proto :oword
-_mm_cvtsd_ss		proto :oword, :oword
-_mm_cvtss_sd		proto :oword, :oword
-
-_mm_cvtsd_si32		proto :oword
-_mm_cvttsd_si32		proto :oword
-_mm_cvtsi32_sd		proto :oword, :dword
-
-_mm_unpackhi_pd		proto :oword, :oword
-_mm_unpacklo_pd		proto :oword, :oword
-_mm_movemask_pd		proto :oword
-_mm_shuffle_pd		proto :oword, :oword, :dword
-
-_mm_load_pd		proto :ptr
-_mm_load1_pd		proto :ptr
-_mm_loadr_pd		proto :ptr
-_mm_loadu_pd		proto :ptr
-_mm_load_sd		proto :ptr
-_mm_loadh_pd		proto :oword, :ptr
-_mm_loadl_pd		proto :oword, :ptr
-
-_mm_set_sd		proto :real8
-_mm_set1_pd		proto :real8
-_mm_set_pd		proto :real8, :real8
-_mm_setr_pd		proto :real8, :real8
-_mm_setzero_pd		proto
-_mm_move_sd		proto :oword, :oword
-
-_mm_store_sd		proto :ptr, :oword
-_mm_store1_pd		proto :ptr, :oword
-_mm_store_pd		proto :ptr, :oword
-_mm_storeu_pd		proto :ptr, :oword
-_mm_storer_pd		proto :ptr, :oword
-_mm_storeh_pd		proto :ptr, :oword
-_mm_storel_pd		proto :ptr, :oword
-
-_mm_add_epi8		proto :oword, :oword
-_mm_add_epi16		proto :oword, :oword
-_mm_add_epi32		proto :oword, :oword
-_mm_add_epi64		proto :oword, :oword
-
-_mm_adds_epi8		proto :oword, :oword
-_mm_adds_epi16		proto :oword, :oword
-_mm_adds_epu8		proto :oword, :oword
-_mm_adds_epu16		proto :oword, :oword
-_mm_avg_epu8		proto :oword, :oword
-_mm_avg_epu16		proto :oword, :oword
-_mm_madd_epi16		proto :oword, :oword
-_mm_max_epi16		proto :oword, :oword
-_mm_max_epu8		proto :oword, :oword
-_mm_min_epi16		proto :oword, :oword
-_mm_min_epu8		proto :oword, :oword
-_mm_mulhi_epi16		proto :oword, :oword
-_mm_mulhi_epu16		proto :oword, :oword
-_mm_mullo_epi16		proto :oword, :oword
-
-_mm_mul_epu32		proto :oword, :oword
-_mm_sad_epu8		proto :oword, :oword
-_mm_sub_epi8		proto :oword, :oword
-_mm_sub_epi16		proto :oword, :oword
-_mm_sub_epi32		proto :oword, :oword
-
-_mm_sub_epi64		proto :oword, :oword
-_mm_subs_epi8		proto :oword, :oword
-_mm_subs_epi16		proto :oword, :oword
-_mm_subs_epu8		proto :oword, :oword
-_mm_subs_epu16		proto :oword, :oword
-
-_mm_and_si128		proto :oword, :oword
-_mm_andnot_si128	proto :oword, :oword
-_mm_or_si128		proto :oword, :oword
-_mm_xor_si128		proto :oword, :oword
-
-_mm_slli_si128		proto :oword, :sdword
-_mm_slli_epi16		proto :oword, :sdword
-_mm_sll_epi16		proto :oword, :oword
-_mm_slli_epi32		proto :oword, :sdword
-_mm_sll_epi32		proto :oword, :oword
-_mm_slli_epi64		proto :oword, :sdword
-_mm_sll_epi64		proto :oword, :oword
-_mm_srai_epi16		proto :oword, :sdword
-_mm_sra_epi16		proto :oword, :oword
-_mm_srai_epi32		proto :oword, :sdword
-_mm_sra_epi32		proto :oword, :oword
-_mm_srli_si128		proto :oword, :sdword
-_mm_srli_epi16		proto :oword, :sdword
-_mm_srl_epi16		proto :oword, :oword
-_mm_srli_epi32		proto :oword, :sdword
-_mm_srl_epi32		proto :oword, :oword
-_mm_srli_epi64		proto :oword, :sdword
-_mm_srl_epi64		proto :oword, :oword
-
-_mm_cmpeq_epi8		proto :oword, :oword
-_mm_cmpeq_epi16		proto :oword, :oword
-_mm_cmpeq_epi32		proto :oword, :oword
-_mm_cmpgt_epi8		proto :oword, :oword
-_mm_cmpgt_epi16		proto :oword, :oword
-_mm_cmpgt_epi32		proto :oword, :oword
-_mm_cmplt_epi8		proto :oword, :oword
-_mm_cmplt_epi16		proto :oword, :oword
-_mm_cmplt_epi32		proto :oword, :oword
-
-_mm_cvtsi32_si128	proto :sdword
-_mm_cvtsi128_si32	proto :oword
-
-_mm_packs_epi16		proto :oword, :oword
-_mm_packs_epi32		proto :oword, :oword
-_mm_packus_epi16	proto :oword, :oword
-_mm_extract_epi16	proto :oword, :sdword
-_mm_insert_epi16	proto :oword, :sdword, :sdword
-_mm_movemask_epi8	proto :oword
-_mm_shuffle_epi32	proto :oword, :sdword
-_mm_shufflehi_epi16	proto :oword, :sdword
-_mm_shufflelo_epi16	proto :oword, :sdword
-_mm_unpackhi_epi8	proto :oword, :oword
-_mm_unpackhi_epi16	proto :oword, :oword
-_mm_unpackhi_epi32	proto :oword, :oword
-_mm_unpackhi_epi64	proto :oword, :oword
-_mm_unpacklo_epi8	proto :oword, :oword
-_mm_unpacklo_epi16	proto :oword, :oword
-_mm_unpacklo_epi32	proto :oword, :oword
-_mm_unpacklo_epi64	proto :oword, :oword
-
-_mm_load_si128		proto :ptr
-_mm_loadu_si128		proto :ptr
-_mm_loadl_epi64		proto :ptr
-
-_mm_set_epi64x		proto :qword, :qword
-_mm_set_epi32		proto :sdword, :sdword, :sdword, :sdword
-_mm_set_epi16		proto :sword, :sword, :sword, :sword, :sword, :sword, :sword, :sword
-_mm_set_epi8		proto :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte,
-			      :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte
-
-_mm_set1_epi64x		proto :sqword
-_mm_set1_epi32		proto :sdword
-_mm_set1_epi16		proto :sword
-_mm_set1_epi8		proto :sbyte
-_mm_setl_epi64		proto :oword
-
-ifdef _M_X64
-_mm_set1_epi64		proto :sqword
-endif
-
-_mm_setr_epi32		proto :sdword, :sdword, :sdword, :sdword
-_mm_setr_epi16		proto :sword, :sword, :sword, :sword, :sword, :sword, :sword, :sword
-_mm_setr_epi8		proto :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte,
-			      :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte
-_mm_setzero_si128	proto
-
-_mm_store_si128		proto :ptr, :oword
-_mm_storeu_si128	proto :ptr, :oword
-_mm_storel_epi64	proto :ptr, :oword
-_mm_maskmoveu_si128	proto :ptr, :oword, :ptr
-
-_mm_move_epi64		proto :oword
 ifdef _M_IX86
 _mm_movpi64_epi64	proto :qword
 _mm_movepi64_pi64	proto :oword
-endif
-
-_mm_stream_pd		proto :ptr, :oword
-_mm_stream_si128	proto :ptr, :oword
-_mm_clflush		proto :ptr
-_mm_lfence		proto
-_mm_mfence		proto
-_mm_stream_si32		proto :ptr, :sdword
-_mm_pause		proto
-
-_mm_cvtsd_f64		proto :oword
-
-_mm_castpd_ps		proto :oword
-_mm_castpd_si128	proto :oword
-_mm_castps_pd		proto :oword
-_mm_castps_si128	proto :oword
-_mm_castsi128_ps	proto :oword
-_mm_castsi128_pd	proto :oword
-
-ifdef _M_X64
-_mm_cvtsd_si64		proto :oword
-_mm_cvttsd_si64		proto :oword
-_mm_cvtsi64_sd		proto :oword, :qword
-_mm_cvtsi64_si128	proto :qword
-_mm_cvtsi128_si64	proto :oword
-endif
-
 endif
 
 ifdef _M_X64
@@ -1014,4 +845,5 @@ _mm_sub_si64		proto :qword, :qword
 _mm_set_epi64		proto :qword, :qword
 _mm_setr_epi64		proto :sqword, :sqword
 endif
+
 endif

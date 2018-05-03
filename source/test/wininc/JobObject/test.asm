@@ -40,5 +40,5 @@ _tmain proc
 
 _tmain endp
 
-    end _tmain
+    end _tstart
 

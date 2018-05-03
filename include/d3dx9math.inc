@@ -817,40 +817,37 @@ D3DXSHScale proto WINAPI \
 
 DEFINE_GUID(IID_ID3DXMatrixStack, 0xc7885ba7, 0xf990, 0x4fe7, 0x92, 0x2d, 0x85, 0x15, 0xe4, 0x77, 0xdd, 0x85);
 
-ID3DXMatrixStack	STRUC
-QueryInterface		PVOID ?
-AddRef			PVOID ?
-Release			PVOID ?
-_Pop			PVOID ?
-_Push			PVOID ?
-LoadIdentity		PVOID ?
-LoadMatrix		PVOID ?
-MultMatrix		PVOID ?
-MultMatrixLocal		PVOID ?
-RotateAxis		PVOID ?
-RotateAxisLocal		PVOID ?
-RotateYawPitchRoll	PVOID ?
-RotateYawPitchRollLocal PVOID ?
-Scale			PVOID ?
-ScaleLocal		PVOID ?
-Translate		PVOID ?
-TranslateLocal		PVOID ?
-GetTop			PVOID ?
-ID3DXMatrixStack	ENDS
-
+.comdef ID3DXMatrixStack
+    QueryInterface		proc :REFIID, :ptr
+    AddRef			proc
+    Release			proc
+    _Pop			proc
+    _Push			proc
+    LoadIdentity		proc
+    LoadMatrix			proc :ptr D3DXMATRIX
+    MultMatrix			proc :ptr D3DXMATRIX
+    MultMatrixLocal		proc :ptr D3DXMATRIX
+    RotateAxis			proc :ptr D3DXVECTOR3, :FLOAT
+    RotateAxisLocal		proc
+    RotateYawPitchRoll		proc :FLOAT, :FLOAT, :FLOAT
+    RotateYawPitchRollLocal	proc :FLOAT, :FLOAT, :FLOAT
+    Scale			proc :FLOAT, :FLOAT, :FLOAT
+    ScaleLocal			proc :FLOAT, :FLOAT, :FLOAT
+    Translate			proc :FLOAT, :FLOAT, :FLOAT
+    TranslateLocal		proc :FLOAT, :FLOAT, :FLOAT
+    GetTop			proc :ptr D3DXMATRIX
+    .ends
 
 ;HRESULT
 D3DXCreateMatrixStack proto WINAPI \
 		 flags: DWORD,
 		_stack: ptr ID3DXMatrixStack
 
-if 0
-D3DXMatrixIdentity proto WINAPI \
-		pOut: ptr D3DXMATRIX
-else
 D3DXMatrixIdentity macro pout
 ifdef _WIN64
-    ;mov rcx,pout
+    ifdif <pout>,<rcx>
+	lea rcx,pout
+    endif
     mov [rcx].D3DMATRIX._12,0.0
     mov [rcx].D3DMATRIX._13,0.0
     mov [rcx].D3DMATRIX._14,0.0
@@ -867,8 +864,8 @@ ifdef _WIN64
     mov [rcx].D3DMATRIX._22,1.0
     mov [rcx].D3DMATRIX._33,1.0
     mov [rcx].D3DMATRIX._44,1.0
+    retm<rcx>
 endif
     endm
-endif
 
 endif

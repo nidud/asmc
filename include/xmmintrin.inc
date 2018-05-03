@@ -122,94 +122,8 @@ _MM_GET_FLUSH_ZERO_MODE macro
 	exitm<(_mm_getcsr() & _MM_FLUSH_ZERO_MASK)>
 	endm
 
-ifndef _MM_NOINLINE
-
-ifndef _MM_ISXMM
-
-_MM_ISXMM macro op
-    if (type op) eq 16 and (opattr op) eq 48
-	exitm<1>
-    else
-	exitm<0>
-    endif
-	endm
-
-_MM_MREG macro op
-    if (opattr op) eq 48
-	exitm<[op]>
-    else
-	exitm<op>
-    endif
-	endm
-
-_MM_OPCSX1 macro op, sx, a
-    if _MM_ISXMM(a)
-	&op&&sx& a
-	retm<a>
-    else
-	ifidni <sx>,<ps>
-	    movaps xmm0,_MM_MREG(a)
-	else
-	    mov&sx& xmm0,_MM_MREG(a)
-	endif
-	&op&&sx& xmm0
-	retm<xmm0>
-    endif
-	endm
-
-_MM_OPCSX2 macro op, sx, a, b
-    if _MM_ISXMM(a) and _MM_ISXMM(b)
-	&op&&sx& a,b
-	retm<a>
-    elseif _MM_ISXMM(a)
-	ifidni <sx>,<ps>
-	    movaps xmm1,_MM_MREG(b)
-	else
-	    movss xmm1,_MM_MREG(b)
-	endif
-	&op&&sx& a,xmm1
-	retm<a>
-    elseif _MM_ISXMM(b)
-	ifidni <sx>,<ps>
-	    movaps xmm0,_MM_MREG(a)
-	else
-	    mov&sx& xmm0,_MM_MREG(a)
-	endif
-	&op&&sx& xmm0,b
-	retm<xmm0>
-    else
-	ifidni <sx>,<ps>
-	    movaps xmm0,_MM_MREG(a)
-	    movaps xmm1,_MM_MREG(b)
-	else
-	    mov&sx& xmm0,_MM_MREG(a)
-	    mov&sx& xmm1,_MM_MREG(b)
-	endif
-	&op&&sx& xmm0,xmm1
-	retm<xmm0>
-    endif
-	endm
-
-_MM_OPCSX2I macro op, sx, a, b, imm
-    if _MM_ISXMM(a) and _MM_ISXMM(b)
-	&op&&sx& a,b,imm
-	retm<a>
-    elseif _MM_ISXMM(a)
-	mov&sx& xmm1,_MM_MREG(b)
-	&op&&sx& a,xmm1,imm
-	retm<a>
-    elseif _MM_ISXMM(b)
-	mov&sx& xmm0,_MM_MREG(a)
-	&op&&sx& xmm0,b,imm
-	retm<xmm0>
-    else
-	mov&sx& xmm0,_MM_MREG(a)
-	mov&sx& xmm1,_MM_MREG(b)
-	&op&&sx& xmm0,xmm1,imm
-	retm<xmm0>
-    endif
-	endm
-
+ifndef __XMMMACROS_INC
+include xmmmacros.inc
 endif
 
 _mm_add_ss macro a:=<xmm0>, b:=<xmm1>
@@ -237,23 +151,47 @@ _mm_div_ps macro a:=<xmm0>, b:=<xmm1>
 	exitm<_MM_OPCSX2(div, ps, a, b)>
 	endm
 
-_mm_sqrt_ss macro a:=<xmm0>
-	exitm<_MM_OPCSX2(sqrt, ss, xmm0, a)>
+_mm_sqrt_ss macro a:=<xmm0>, b
+    ifnb <b>
+	exitm<_MM_OPCSX2(sqrt, ss, a, b)>
+    else
+	exitm<_MM_OPCSX2(sqrt, ss, a, a)>
+    endif
 	endm
-_mm_sqrt_ps macro a:=<xmm0>
-	exitm<_MM_OPCSX2(sqrt, ps, xmm0, a)>
+_mm_sqrt_ps macro a:=<xmm0>, b
+    ifnb <b>
+	exitm<_MM_OPCSX2(sqrt, ps, a, b)>
+    else
+	exitm<_MM_OPCSX2(sqrt, ps, a, a)>
+    endif
 	endm
-_mm_rcp_ss macro a:=<xmm0>
-	exitm<_MM_OPCSX2(rcp, ss, xmm0, a)>
+_mm_rcp_ss macro a:=<xmm0>, b
+    ifnb <b>
+	exitm<_MM_OPCSX2(rcp, ss, a, b)>
+    else
+	exitm<_MM_OPCSX2(rcp, ss, a, a)>
+    endif
 	endm
-_mm_rcp_ps macro a:=<xmm0>
-	exitm<_MM_OPCSX2(rcp, ps, xmm0, a)>
+_mm_rcp_ps macro a:=<xmm0>, b
+    ifnb <b>
+	exitm<_MM_OPCSX2(rcp, ps, a, b)>
+    else
+	exitm<_MM_OPCSX2(rcp, ps, a, a)>
+    endif
 	endm
-_mm_rsqrt_ss macro a:=<xmm0>
-	exitm<_MM_OPCSX2(rsqrt, ss, xmm0, a)>
+_mm_rsqrt_ss macro a:=<xmm0>, b
+    ifnb <b>
+	exitm<_MM_OPCSX2(rsqrt, ss, a, b)>
+    else
+	exitm<_MM_OPCSX2(rsqrt, ss, a, a)>
+    endif
 	endm
-_mm_rsqrt_ps macro a:=<xmm0>
-	exitm<_MM_OPCSX2(rsqrt, ps, xmm0, a)>
+_mm_rsqrt_ps macro a:=<xmm0>, b
+    ifnb <b>
+	exitm<_MM_OPCSX2(rsqrt, ps, a, b)>
+    else
+	exitm<_MM_OPCSX2(rsqrt, ps, a, a)>
+    endif
 	endm
 _mm_min_ss macro a:=<xmm0>, b:=<xmm1>
 	exitm<_MM_OPCSX2(min, ss, a, b)>
@@ -418,10 +356,12 @@ _mm_cvtt_ss2si macro a:=<xmm0>
 	cvttss2si eax,a
 	retm<eax>
 	endm
-_mm_cvt_si2ss macro a:=<xmm0>, d
+_mm_cvt_si2ss macro x:=<xmm0>, d
+    ifdif <d>,<eax>
 	mov eax,d
-	cvtsi2ss a,eax
-	retm<a>
+    endif
+	cvtsi2ss x,eax
+	retm<x>
 	endm
 _mm_cvtss_f32 macro a:=<xmm0>
 	exitm<>
@@ -451,8 +391,8 @@ _mm_cvtsi64_ss macro a:=<xmm0>, p
 	endm
 endif
 
-_mm_shuffle_ps macro a:=<xmm0>, b:=<xmm1>, imm
-	exitm<_MM_OPCSX2I(shuf, ps, a, b, imm)>
+_mm_shuffle_ps macro a:=<xmm0>, b:=<xmm1>, imm:=<0>
+	exitm<_MM_SHUFXX(ps, a, b, imm)>
 	endm
 _mm_unpackhi_ps macro a:=<xmm0>, b:=<xmm1>
 	exitm<_MM_OPCSX2(unpckh, ps, a, b)>
@@ -505,16 +445,13 @@ _m_psadbw	proto :qword, :qword
 endif
 
 _mm_set_ss macro x:=<xmm0>
-	local val
-	.data
-	val real4 ?
-	.code
-	movss val,x
-	movss x,val
+	movd eax,x
+	movd x,eax
 	retm<x>
 	endm
 _mm_set_ps1 macro x:=<xmm0>
-	exitm<shufps x,x,0>
+	shufps x,x,0
+	retm<x>
 	endm
 _mm_set_ps macro x0:=<xmm0>, x1:=<xmm1>, x2:=<xmm2>, x3:=<xmm3>
 	unpcklps x3,x2
@@ -529,12 +466,24 @@ _mm_setr_ps macro x0:=<xmm0>, x1:=<xmm1>, x2:=<xmm2>, x3:=<xmm3>
 	movlhps x0,x2
 	retm<x0>
 	endm
-_mm_setzero_ps macro
-	exitm<pxor xmm0,xmm0>
+_mm_setzero_ps macro x:=<xmm0>
+	pxor x,x
+	retm<x>
 	endm
-_mm_load_ss macro p
-	movss xmm0,_MM_MREG(p)
+_mm_movemm_ps macro a, b
+	movaps xmm0,oword ptr _MM_MREG(b)
+	movaps oword ptr _MM_MREG(a),xmm0
 	retm<xmm0>
+	endm
+
+_mm_load_ss macro x, p
+    ifnb <p>
+	movss x,_MM_MREG(p)
+	retm<x>
+    else
+	movss xmm0,_MM_MREG(x)
+	retm<xmm0>
+    endif
 	endm
 _mm_load_ps1 macro p
 	movss xmm0,_MM_MREG(p)
@@ -555,7 +504,9 @@ _mm_loadu_ps macro p
 	retm<xmm0>
 	endm
 _mm_store_ss macro p, x:=<xmm0>
-	movss _MM_MREG(p),x
+	ifdif <p>,<x>
+	    movss _MM_MREG(p),x
+	endif
 	retm<p>
 	endm
 _mm_store_ps1 macro p, x:=<xmm0>
@@ -564,7 +515,9 @@ _mm_store_ps1 macro p, x:=<xmm0>
 	retm<p>
 	endm
 _mm_store_ps macro p, x:=<xmm0>
-	movaps _MM_MREG(p),x
+	ifdif <p>,<x>
+	    movaps _MM_MREG(p),x
+	endif
 	retm<p>
 	endm
 _mm_storer_ps macro p, x:=<xmm0>
@@ -597,150 +550,16 @@ _mm_getcsr macro
 	sub rsp,16
 	stmxcsr [rsp]
 	mov eax,[rsp]
-	exitm<sub rsp-16>
+	sub rsp-16
+	retm<eax>
 	endm
 _mm_setcsr macro reg
 	sub rsp,16
 	mov [rsp],reg
 	ldmxcsr [rsp]
-	exitm<sub rsp-16>
+	sub rsp-16
+	exitm<>
 	endm
-
-else ;; _MM_NOINLINE
-
-_mm_add_ss	proto :oword, :oword
-_mm_add_ps	proto :oword, :oword
-_mm_sub_ss	proto :oword, :oword
-_mm_sub_ps	proto :oword, :oword
-_mm_mul_ss	proto :oword, :oword
-_mm_mul_ps	proto :oword, :oword
-_mm_div_ss	proto :oword, :oword
-_mm_div_ps	proto :oword, :oword
-_mm_sqrt_ss	proto :oword
-_mm_sqrt_ps	proto :oword
-_mm_rcp_ss	proto :oword
-_mm_rcp_ps	proto :oword
-_mm_rsqrt_ss	proto :oword
-_mm_rsqrt_ps	proto :oword
-_mm_min_ss	proto :oword, :oword
-_mm_min_ps	proto :oword, :oword
-_mm_max_ss	proto :oword, :oword
-_mm_max_ps	proto :oword, :oword
-
-_mm_and_ps	proto :oword, :oword
-_mm_andnot_ps	proto :oword, :oword
-_mm_or_ps	proto :oword, :oword
-_mm_xor_ps	proto :oword, :oword
-
-_mm_cmpeq_ss	proto :oword, :oword
-_mm_cmpeq_ps	proto :oword, :oword
-_mm_cmplt_ss	proto :oword, :oword
-_mm_cmplt_ps	proto :oword, :oword
-_mm_cmple_ss	proto :oword, :oword
-_mm_cmple_ps	proto :oword, :oword
-_mm_cmpgt_ss	proto :oword, :oword
-_mm_cmpgt_ps	proto :oword, :oword
-_mm_cmpge_ss	proto :oword, :oword
-_mm_cmpge_ps	proto :oword, :oword
-_mm_cmpneq_ss	proto :oword, :oword
-_mm_cmpneq_ps	proto :oword, :oword
-_mm_cmpnlt_ss	proto :oword, :oword
-_mm_cmpnlt_ps	proto :oword, :oword
-_mm_cmpnle_ss	proto :oword, :oword
-_mm_cmpnle_ps	proto :oword, :oword
-_mm_cmpngt_ss	proto :oword, :oword
-_mm_cmpngt_ps	proto :oword, :oword
-_mm_cmpnge_ss	proto :oword, :oword
-_mm_cmpnge_ps	proto :oword, :oword
-_mm_cmpord_ss	proto :oword, :oword
-_mm_cmpord_ps	proto :oword, :oword
-_mm_cmpunord_ss proto :oword, :oword
-_mm_cmpunord_ps proto :oword, :oword
-_mm_comieq_ss	proto :oword, :oword
-_mm_comilt_ss	proto :oword, :oword
-_mm_comile_ss	proto :oword, :oword
-_mm_comigt_ss	proto :oword, :oword
-_mm_comige_ss	proto :oword, :oword
-_mm_comineq_ss	proto :oword, :oword
-_mm_ucomieq_ss	proto :oword, :oword
-_mm_ucomilt_ss	proto :oword, :oword
-_mm_ucomile_ss	proto :oword, :oword
-_mm_ucomigt_ss	proto :oword, :oword
-_mm_ucomige_ss	proto :oword, :oword
-_mm_ucomineq_ss proto :oword, :oword
-
-_mm_cvt_ss2si	proto :oword
-_mm_cvtt_ss2si	proto :oword
-_mm_cvt_si2ss	proto :oword, :sdword
-_mm_cvtss_f32	proto :oword
-
-ifdef _M_IX86
-_mm_cvt_ps2pi	proto :oword
-_mm_cvtt_ps2pi	proto :oword
-_mm_cvt_pi2ps	proto :oword, :qword
-endif
-
-ifdef _M_X64
-_mm_cvtss_si64	proto :oword
-_mm_cvttss_si64 proto :oword
-_mm_cvtsi64_ss	proto :oword, :qword
-endif
-
-_mm_shuffle_ps	proto :oword, :oword, :sdword
-_mm_unpackhi_ps proto :oword, :oword
-_mm_unpacklo_ps proto :oword, :oword
-_mm_loadh_pi	proto :oword, :ptr
-_mm_movehl_ps	proto :oword, :oword
-_mm_movelh_ps	proto :oword, :oword
-_mm_storeh_pi	proto :ptr, :oword
-_mm_loadl_pi	proto :oword, :ptr
-_mm_storel_pi	proto :ptr, :oword
-_mm_movemask_ps proto :oword
-
-
-ifdef _M_IX86
-_m_pextrw	proto :qword, :sdword
-_m_pinsrw	proto :qword, :sdword, :sdword
-_m_pmaxsw	proto :qword, :qword
-_m_pmaxub	proto :qword, :qword
-_m_pminsw	proto :qword, :qword
-_m_pminub	proto :qword, :qword
-_m_pmovmskb	proto :qword
-_m_pmulhuw	proto :qword, :qword
-_m_pshufw	proto :qword, :sdword
-_m_maskmovq	proto :qword, :qword, :ptr
-_m_pavgb	proto :qword, :qword
-_m_pavgw	proto :qword, :qword
-_m_psadbw	proto :qword, :qword
-endif
-
-_mm_set_ss	proto :real4
-_mm_set_ps1	proto :real4
-_mm_set_ps	proto :real4, :real4, :real4, :real4
-_mm_setr_ps	proto :real4, :real4, :real4, :real4
-_mm_setzero_ps	proto
-_mm_load_ss	proto :ptr
-_mm_load_ps1	proto :ptr
-_mm_load_ps	proto :ptr
-_mm_loadr_ps	proto :ptr
-_mm_loadu_ps	proto :ptr
-_mm_store_ss	proto :ptr, :oword
-_mm_store_ps1	proto :ptr, :oword
-_mm_store_ps	proto :ptr, :oword
-_mm_storer_ps	proto :ptr, :oword
-_mm_storeu_ps	proto :ptr, :oword
-_mm_prefetch	proto :ptr, :sdword
-ifdef _M_IX86
-_mm_stream_pi	proto :ptr, :qword
-endif
-_mm_stream_ps	proto :ptr, :oword
-_mm_move_ss	proto :oword, :oword
-
-_mm_sfence	proto
-_mm_getcsr	proto
-_mm_setcsr	proto :sdword
-
-endif ;;  _MM_NOINLINE
 
 ifdef __ICL
 _mm_malloc	proto __cdecl :size_t, :size_t
@@ -788,7 +607,8 @@ _mm_cvtps_pi8 macro a:=<xmm0>
 _mm_cvtpi32x2_ps macro a:=<xmm0>, b:=<xmm1>
 	cvtpi2ps xmm2,b
 	cvtpi2ps xmm0,a
-	exitm<movlhps xmm0,xmm2>
+	movlhps xmm0,xmm2
+	retm<xmm0>
 	endm
 endif
 

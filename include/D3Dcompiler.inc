@@ -6,7 +6,7 @@ include d3d11shader.inc
 ifdef __PE__
 option dllimport:<D3DCompiler_47>
 else
-includelib D3DCompiler.lib
+includelib D3DCompiler_47.lib
 endif
 
 D3DCOMPILER_DLL_W       equ <L"d3dcompiler_43.dll">

@@ -521,6 +521,7 @@ endif ; WINVER >= 0x0400
 
 endif ; _INC_WINDOWS
 
+.cref
 .pragma list(pop)
 endif
 

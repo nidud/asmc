@@ -117,7 +117,16 @@ _mm256_zeroupper	proto __cdecl
 _mm256_permutevar_ps	proto __cdecl :yword, :yword
 _mm_permutevar_ps	proto __cdecl :yword, :yword
 _mm256_permute_ps	proto __cdecl :yword, :sdword
-_mm_permute_ps		proto __cdecl :yword, :sdword
+
+ifdef _XM_NO_INTRINSICS_
+_mm_permute_ps		proto __cdecl :oword, :sdword
+else
+_mm_permute_ps macro x:=<xmm0>, imm:req
+	vpermilps x, x, imm
+	retm<x>
+	endm
+endif
+
 _mm256_permutevar_pd	proto __cdecl :yword, :yword
 _mm_permutevar_pd	proto __cdecl :yword, :yword
 _mm256_permute_pd	proto __cdecl :yword, :sdword

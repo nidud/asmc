@@ -1666,6 +1666,41 @@ ExpandHllProc proc uses esi edi dst:LPSTR, i:SINT, tokenarray:PTR asm_tok
 
 ExpandHllProc endp
 
+ExpandHllProcEx proc uses esi edi buffer:LPSTR, i:SINT, tokenarray:PTR asm_tok
+
+  local rc:SINT
+
+    mov rc,ExpandHllProc(buffer, i, tokenarray)
+
+    .repeat
+
+        .break .if eax == ERROR
+
+        mov esi,buffer
+        .break .if byte ptr [esi] == 0
+
+        strcat(esi, "\n")
+        mov ebx,tokenarray
+        strcat(esi, [ebx].asm_tok.tokpos)
+        QueueTestLines(esi)
+        mov rc,STRING_EXPANDED
+
+    .until 1
+
+    .if ModuleInfo.list
+
+        LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
+    .endif
+
+    .if ModuleInfo.line_queue.head
+
+        RunLineQueue()
+    .endif
+    mov eax,rc
+    ret
+
+ExpandHllProcEx endp
+
 EvaluateHllExpression proc uses esi edi ebx,
         hll:        ptr hll_item,
         i:          ptr SINT,

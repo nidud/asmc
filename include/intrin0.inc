@@ -5,7 +5,7 @@ __MACHINEZ macro X:vararg
 	exitm<>
 	endm
 __MACHINE macro X:vararg
-	exitm<&X>
+	exitm<>;&X>
 	endm
 __MACHINEWVMPURE macro X:vararg
 	exitm<__MACHINEZ(&X)>

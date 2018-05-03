@@ -167,8 +167,7 @@ WinMain proc WINAPI uses rdi hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmd
             mov eax,E_FAIL
             .break
         .endif
-        lea rcx,g_ShaderMatrix
-        D3DXMatrixIdentity(rcx)
+        D3DXMatrixIdentity(g_ShaderMatrix)
         g_lpEffect.SetMatrix( "ShaderMatrix", &g_ShaderMatrix )
 
         .while ( g_bContinue )

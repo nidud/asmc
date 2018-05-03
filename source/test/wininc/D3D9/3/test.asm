@@ -4,6 +4,7 @@
 
 ;; Every windows application needs to include this
 include windows.inc
+include xmmintrin.inc
 include tchar.inc
 
 ;; Every Direct3D application this
@@ -54,33 +55,23 @@ MsgProc proc WINAPI hWnd:HWND, msg:UINT, wParam:WPARAM, lParam:LPARAM
       .case WM_KEYDOWN
         xor eax,eax
         lea rcx,g_v3LookAt
+        assume rcx:ptr D3DXVECTOR3
         .switch(wParam)
         ;; change lookAt with arrow keys
         .case VK_UP
-            movss xmm0,[rcx].D3DXVECTOR3.y
-            movss xmm1,FL2_0
-            addss xmm0,xmm1
-            movss [rcx].D3DXVECTOR3.y,xmm0
+            _mm_store_ss([rcx].y, _mm_add_ss([rcx].y, FL2_0))
             .endc
         .case VK_DOWN
-            movss xmm0,[rcx].D3DXVECTOR3.y
-            movss xmm1,FL2_0
-            subss xmm0,xmm1
-            movss [rcx].D3DXVECTOR3.y,xmm0
+            _mm_store_ss([rcx].y,_mm_sub_ss([rcx].y, FL2_0))
             .endc
         .case VK_LEFT
-            movss xmm0,[rcx].D3DXVECTOR3.x
-            movss xmm1,FL2_0
-            addss xmm0,xmm1
-            movss [rcx].D3DXVECTOR3.x,xmm0
+            _mm_store_ss([rcx].x,_mm_add_ss([rcx].x, FL2_0))
             .endc
         .case VK_RIGHT
-            movss xmm0,[rcx].D3DXVECTOR3.x
-            movss xmm1,FL2_0
-            subss xmm0,xmm1
-            movss [rcx].D3DXVECTOR3.x,xmm0
+            _mm_store_ss([rcx].x,_mm_sub_ss([rcx].x, FL2_0))
             .endc
         .endsw
+        assume rcx:nothing
         .endc
       .default
         DefWindowProc( hWnd, msg, wParam, lParam )
@@ -221,14 +212,11 @@ WinMain proc WINAPI uses rdi hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmd
         .endif
 
         ;;we initialize them with identity
-        lea rcx,g_ShaderMatrix
-        D3DXMatrixIdentity(rcx)
-        lea rcx,WorldMatrix
-        D3DXMatrixIdentity(rcx)
-        lea rcx,ViewMatrix
-        D3DXMatrixIdentity(rcx)
-        lea rcx,PerspectiveMatrix
-        D3DXMatrixIdentity(rcx)
+        D3DXMatrixIdentity(&g_ShaderMatrix)
+        D3DXMatrixIdentity(&g_ShaderMatrix)
+        D3DXMatrixIdentity(&WorldMatrix)
+        D3DXMatrixIdentity(&ViewMatrix)
+        D3DXMatrixIdentity(&PerspectiveMatrix)
 
         ;;calculating a perspective projection matrix
         ;;parameters besides the output matrix are:

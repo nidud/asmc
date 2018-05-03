@@ -463,6 +463,7 @@ __MACHINEX86_X64(_mm_dp_ps proto :oword, :oword, :sdword)
 __MACHINEX86_X64(_mm_extract_epi16 proto :oword, :sdword)
 __MACHINEX86_X64(_mm_extract_epi32 proto :oword, :sdword)
 __MACHINEX64(_mm_extract_epi64 proto :oword, :sdword)
+
 __MACHINEX86_X64(_mm_extract_epi8 proto :oword, :sdword)
 __MACHINEX86_X64(_mm_extract_ps proto :oword, :sdword)
 __MACHINEX86_X64(_mm_extract_si64 proto :oword, :oword)
@@ -755,8 +756,6 @@ __MACHINEX64(_subborrow_u64 proto __cdecl :byte, :qword, :qword, :ptr)
 __MACHINEX86_X64(_mm_monitorx proto :ptr, :dword, :dword)
 __MACHINEX86_X64(_mm_mwaitx proto :dword, :dword, :dword)
 
-ifdef _MM_NOINLINE
-
 __MACHINEX64(_mm_cvtsd_si64 proto :oword)
 __MACHINEX64(_mm_cvtsi128_si64 proto :oword)
 __MACHINEX64(_mm_cvtsi64_sd proto :oword, :qword)
@@ -765,7 +764,5 @@ __MACHINEX64(_mm_cvtsi64_ss proto :oword, :qword)
 __MACHINEX64(_mm_cvtss_si64 proto :oword)
 __MACHINEX64(_mm_cvttsd_si64 proto :oword)
 __MACHINEX64(_mm_cvttss_si64 proto :oword)
-
-endif
 
 endif

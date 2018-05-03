@@ -15,10 +15,10 @@
 include windows.inc
 include SpecStrings.inc
 include d3d11_1.inc
-include gdipluscolor.inc
 include D3Dcompiler.inc
-include D3Dcommon.inc
+include directxmath.inc
 include tchar.inc
+
 ifndef _WIN64
     .686
     .xmm
@@ -27,16 +27,17 @@ endif
 ;;--------------------------------------------------------------------------------------
 ;; Structures
 ;;--------------------------------------------------------------------------------------
+
 SimpleVertex struct
-x   FLOAT ?
-y   FLOAT ?
-z   FLOAT ?
+Pos          XMFLOAT3 <>
 SimpleVertex ends
 
     .data
+
 ;;--------------------------------------------------------------------------------------
 ;; Global Variables
 ;;--------------------------------------------------------------------------------------
+
 LPID3D11VertexShader    typedef ptr ID3D11VertexShader
 LPID3D11PixelShader     typedef ptr ID3D11PixelShader
 LPID3D11InputLayout     typedef ptr ID3D11InputLayout
@@ -66,15 +67,23 @@ IID_ID3D11DeviceContext1 GUID _IID_ID3D11DeviceContext1
 IID_IDXGISwapChain      GUID _IID_IDXGISwapChain
 IID_ID3D11Texture2D     GUID _IID_ID3D11Texture2D
 Semantic                db "POSITION",0
-layout                  D3D11_INPUT_ELEMENT_DESC <Semantic, 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0>
-vertices                SimpleVertex <0.0, 0.5, 0.5 >
-                        SimpleVertex <0.5, 0.5, 0.5 >
-                        SimpleVertex <-0.5, -0.5, 0.5 >
+layout                  D3D11_INPUT_ELEMENT_DESC <Semantic,
+                            0,
+                            DXGI_FORMAT_R32G32B32_FLOAT,
+                            0,
+                            0,
+                            D3D11_INPUT_PER_VERTEX_DATA,
+                            0>
+vertices                SimpleVertex {{ 0.0, 0.5, 0.5 }}
+                        SimpleVertex {{ 0.5, 0.5, 0.5 }}
+                        SimpleVertex {{-0.5,-0.5, 0.5 }}
 
     .code
+
 ;;--------------------------------------------------------------------------------------
 ;; Forward declarations
 ;;--------------------------------------------------------------------------------------
+
 ifdef __PE__
 option dllimport:none
 endif
@@ -337,10 +346,17 @@ endif
         mov eax,[rsi+rbx*4]
         mov g_driverType,eax
 
-        .ifd D3D11CreateDevice(NULL, g_driverType, NULL, createDeviceFlags,
-            &featureLevels, numFeatureLevels, D3D11_SDK_VERSION,
-            &g_pd3dDevice, &g_featureLevel,
-            &g_pImmediateContext ) == E_INVALIDARG
+        .ifd D3D11CreateDevice(
+                NULL,
+                g_driverType,
+                NULL,
+                createDeviceFlags,
+                &featureLevels,
+                numFeatureLevels,
+                D3D11_SDK_VERSION,
+                &g_pd3dDevice,
+                &g_featureLevel,
+                &g_pImmediateContext ) == E_INVALIDARG
 
             ;; DirectX 11.0 platforms will not recognize D3D_FEATURE_LEVEL_11_1
             ;; so we need to retry without it
@@ -348,9 +364,17 @@ endif
             dec edi
             lea rsi,featureLevels
             add rsi,4
-            D3D11CreateDevice( NULL, g_driverType, NULL, createDeviceFlags,
-            rsi, edi, D3D11_SDK_VERSION, &g_pd3dDevice, &g_featureLevel,
-            &g_pImmediateContext )
+            D3D11CreateDevice(
+                    NULL,
+                    g_driverType,
+                    NULL,
+                    createDeviceFlags,
+                    rsi,
+                    edi,
+                    D3D11_SDK_VERSION,
+                    &g_pd3dDevice,
+                    &g_featureLevel,
+                    &g_pImmediateContext )
         .endif
 
         .break .if eax == S_OK
@@ -460,10 +484,8 @@ endif
         g_pImmediateContext.OMSetRenderTargets( 1, &g_pRenderTargetView, NULL )
 
         ;; Setup the viewport
-        pxor xmm0,xmm0
         cvtsi2ss xmm0,_width
         movss vp._Width,xmm0
-        pxor xmm0,xmm0
         cvtsi2ss xmm0,height
         movss vp.Height,xmm0
         mov vp.MinDepth,0.0
@@ -487,10 +509,9 @@ endif
         .endif
 
         ;; Create the vertex shader
-        pVSBlob.GetBufferPointer()
-        mov rsi,rax
-        pVSBlob.GetBufferSize()
-        mov rdi,rax
+
+        mov rsi,pVSBlob.GetBufferPointer()
+        mov rdi,pVSBlob.GetBufferSize()
 
         .ifd g_pd3dDevice.CreateVertexShader(
                 rsi, rdi, NULL, &g_pVertexShader ) != S_OK
@@ -504,10 +525,9 @@ endif
         mov numElements,1; = ARRAYSIZE( layout );
 
         ;; Create the input layout
-        pVSBlob.GetBufferPointer()
-        mov rsi,rax
-        pVSBlob.GetBufferSize()
-        mov rdi,rax
+
+        mov rsi,pVSBlob.GetBufferPointer()
+        mov rdi,pVSBlob.GetBufferSize()
         g_pd3dDevice.CreateInputLayout( &layout, numElements, rsi, rdi, &g_pVertexLayout )
         mov hr,eax
         pVSBlob.Release()
@@ -530,10 +550,9 @@ endif
         .endif
 
         ;; Create the pixel shader
-        pPSBlob.GetBufferPointer()
-        mov rsi,rax
-        pPSBlob.GetBufferSize()
-        mov rdi,rax
+
+        mov rsi,pPSBlob.GetBufferPointer()
+        mov rdi,pPSBlob.GetBufferSize()
         g_pd3dDevice.CreatePixelShader( rsi, rdi, NULL, &g_pPixelShader )
         pPSBlob.Release()
         mov eax,hr
@@ -542,7 +561,7 @@ endif
         ;; Create vertex buffer
         ZeroMemory( &bd, sizeof(bd) )
         mov bd.Usage,D3D11_USAGE_DEFAULT
-        mov bd.ByteWidth,sizeof( SimpleVertex ) * 3
+        mov bd.ByteWidth,sizeof(SimpleVertex) * 3
         mov bd.BindFlags,D3D11_BIND_VERTEX_BUFFER
         mov bd.CPUAccessFlags,0
 
@@ -574,10 +593,10 @@ Render proc
 
   local ColorRGBA[4]:FLOAT
 
-    mov ColorRGBA[0],ARGB_MidnightBlue
-    mov ColorRGBA[4],ARGB_MintCream
-    mov ColorRGBA[8],ARGB_MistyRose
-    mov ColorRGBA[12],ARGB_Moccasin
+    mov ColorRGBA[0*4],0.098039225
+    mov ColorRGBA[1*4],0.098039225
+    mov ColorRGBA[2*4],0.439215720
+    mov ColorRGBA[3*4],1.000000000
 
     ;; Just clear the backbuffer
     g_pImmediateContext.ClearRenderTargetView( g_pRenderTargetView, &ColorRGBA )

@@ -1,17 +1,34 @@
 ifndef _INCLUDED_MM2
 _INCLUDED_MM2 equ <>
-
+;;
+;; Principal header file for Streaming SIMD Extensions intrinsics
+;;
+;; The intrinsics package can be used in 2 ways, based whether or not
+;; _MM_FUNCTIONALITY is defined; if it is, the C/x87 implementation
+;; will be used (the "faux intrinsics").
+;;
+;; Note that the m128 datatype provided using _MM2_FUNCTIONALITY mode is
+;;   implemented as struct, will not be 128b aligned, will be passed
+;;   via the stack, etc.  MM_FUNCTIONALITY mode is not intended for
+;;   performance, just semantics.
+;;
 ifndef _M_IX86
 ifndef _M_X64
 .err <This header is specific to X86 and X64 targets>
 endif
 endif
+
 ifdef _M_CEE_PURE
 .err <ERROR: EMM intrinsics not supported in the pure mode>
 endif
-
+;;
+;; the m64 type is required for the integer Streaming SIMD Extensions intrinsics
+;;
 ifndef _MMINTRIN_H_INCLUDED
 include mmintrin.inc
+endif
+ifndef __XMMMACROS_INC
+include xmmmacros.inc
 endif
 
 ifdef _MM2_FUNCTIONALITY
@@ -24,10 +41,10 @@ ifdef __ICL
 ifdef _MM_FUNCTIONALITY
 include xmm_func.inc
 else
-__m128			typedef oword
+;; using real intrinsics
+__m128			typedef sqword
 endif
 else ;; __ICL
-
 __m128			union
 m128_f32		real4 4 dup(?)
 m128_u64		dq 2 dup(?)
@@ -39,20 +56,54 @@ m128_u8			db 16 dup(?)
 m128_u16		dw 8 dup(?)
 m128_u32		dd 4 dup(?)
 __m128			ends
-
 ifndef _VCRT_BUILD
 ifndef _INC_MALLOC
 include malloc.inc
 endif
 endif
-
 endif;; __ICL
 
-_MM_SHUFFLE macro fp3,fp2,fp1,fp0
+;;
+;; MACRO for shuffle parameter for _mm_shuffle_ps().
+;; Argument fp3 is a digit[0123] that represents the fp
+;; from argument "b" of mm_shuffle_ps that will be
+;; placed in fp3 of result. fp2 is the same for fp2 in
+;; result. fp1 is a digit[0123] that represents the fp
+;; from argument "a" of mm_shuffle_ps that will be
+;; places in fp1 of result. fp0 is the same for fp0 of
+;; result
+;;
+_MM_SHUFFLE macro fp3, fp2, fp1, fp0
 	exitm<(((fp3) SHL 6) OR ((fp2) SHL 4) OR ((fp1) SHL 2) OR ((fp0)))>
 	endm
 
+;;
+;; MACRO for performing the transpose of a 4x4 matrix
+;; of single precision floating point values.
+;; Arguments row0, row1, row2, and row3 are __m128
+;; values whose elements form the corresponding rows
+;; of a 4x4 matrix.  The matrix transpose is returned
+;; in arguments row0, row1, row2, and row3 where row0
+;; now holds column 0 of the original matrix, row1 now
+;; holds column 1 of the original matrix, etc.
+;;
 _MM_TRANSPOSE4_PS macro row0, row1, row2, row3
+	_mm_store_ps(xmm0, row0)
+	_mm_store_ps(xmm1, row1)
+	_mm_store_ps(xmm2, row2)
+	_mm_store_ps(xmm3, row3)
+	_mm_store_ps(xmm4, xmm0)
+	_mm_store_ps(xmm5, xmm2)
+	_mm_shuffle_ps(xmm0, xmm1, 0x44)
+	_mm_shuffle_ps(xmm4, xmm1, 0xEE)
+	_mm_shuffle_ps(xmm2, xmm3, 0x44)
+	_mm_shuffle_ps(xmm5, xmm3, 0xEE)
+	_mm_store_ps(xmm1, xmm0)
+	_mm_store_ps(xmm3, xmm2)
+	_mm_shuffle_ps(xmm0, xmm4, 0x88)
+	_mm_shuffle_ps(xmm1, xmm4, 0xDD)
+	_mm_shuffle_ps(xmm2, xmm5, 0x88)
+	_mm_shuffle_ps(xmm3, xmm5, 0xDD)
 	exitm<>
 	endm
 
@@ -90,16 +141,16 @@ _MM_FLUSH_ZERO_MASK	equ 0x8000
 _MM_FLUSH_ZERO_ON	equ 0x8000
 _MM_FLUSH_ZERO_OFF	equ 0x0000
 
-_MM_SET_EXCEPTION_STATE macro mask
-	exitm<_mm_setcsr((_mm_getcsr() & ~_MM_EXCEPT_MASK) | (mask))>
+_MM_SET_EXCEPTION_STATE macro m
+	exitm<_mm_setcsr((_mm_getcsr() & ~_MM_EXCEPT_MASK) | (m))>
 	endm
 
 _MM_GET_EXCEPTION_STATE macro
 	exitm<(_mm_getcsr() & _MM_EXCEPT_MASK)>
 	endm
 
-_MM_SET_EXCEPTION_MASK macro mask
-	exitm<_mm_setcsr((_mm_getcsr() & ~_MM_MASK_MASK) | (mask))>
+_MM_SET_EXCEPTION_MASK macro m
+	exitm<_mm_setcsr((_mm_getcsr() & ~_MM_MASK_MASK) | (m))>
 	endm
 
 _MM_GET_EXCEPTION_MASK macro
@@ -121,10 +172,6 @@ _MM_SET_FLUSH_ZERO_MODE macro mode
 _MM_GET_FLUSH_ZERO_MODE macro
 	exitm<(_mm_getcsr() & _MM_FLUSH_ZERO_MASK)>
 	endm
-
-ifndef __XMMMACROS_INC
-include xmmmacros.inc
-endif
 
 _mm_add_ss macro a:=<xmm0>, b:=<xmm1>
 	exitm<_MM_OPCSX2(add, ss, a, b)>
@@ -304,48 +351,53 @@ _mm_cmpunord_ps macro a:=<xmm0>, b:=<xmm1>
 	exitm<_MM_OPCSX2(cmpunord, ps, a, b)>
 	endm
 
-_mm_comiss macro set, a, b
-	xor eax,eax
-	_MM_OPCSX2(ucomi, ss, a, b)
-	set al
-	retm<eax>
-	endm
-
 _mm_comieq_ss macro a:=<xmm0>, b:=<xmm1>
-	exitm<_mm_comiss(sete, a, b)>
+	ucomiss a, b
+	retm<ZERO?>
 	endm
 _mm_comilt_ss macro a:=<xmm0>, b:=<xmm1>
-	exitm<_mm_comiss(setb, a, b)>
+	ucomiss a, b
+	retm<CARRY?>
 	endm
 _mm_comile_ss macro a:=<xmm0>, b:=<xmm1>
-	exitm<_mm_comiss(setbe, a, b)>
+	ucomiss a, b
+	retm<CARRY? || ZERO?>
 	endm
 _mm_comigt_ss macro a:=<xmm0>, b:=<xmm1>
-	exitm<_mm_comiss(seta, a, b)>
+	ucomiss a, b
+	retm<!CARRY? && !ZERO?>
 	endm
 _mm_comige_ss macro a:=<xmm0>, b:=<xmm1>
-	exitm<_mm_comiss(setnb, a, b)>
+	ucomiss a, b
+	retm<!CARRY?>
 	endm
 _mm_comineq_ss macro a:=<xmm0>, b:=<xmm1>
-	exitm<_mm_comiss(setne, a, b)>
+	ucomiss a, b
+	retm<!ZERO?>
 	endm
 _mm_ucomieq_ss macro a:=<xmm0>, b:=<xmm1>
-	exitm<_mm_comiss(sete, a, b)>
+	ucomiss a, b
+	retm<ZERO?>
 	endm
 _mm_ucomilt_ss macro a:=<xmm0>, b:=<xmm1>
-	exitm<_mm_comiss(setb, a, b)>
+	ucomiss a, b
+	retm<CARRY?>
 	endm
 _mm_ucomile_ss macro a:=<xmm0>, b:=<xmm1>
-	exitm<_mm_comiss(setbe, a, b)>
+	ucomiss a, b
+	retm<CARRY? || ZERO?>
 	endm
 _mm_ucomigt_ss macro a:=<xmm0>, b:=<xmm1>
-	exitm<_mm_comiss(seta, a, b)>
+	ucomiss a, b
+	retm<!CARRY? && !ZERO?>
 	endm
 _mm_ucomige_ss macro a:=<xmm0>, b:=<xmm1>
-	exitm<_mm_comiss(setnb, a, b)>
+	ucomiss a, b
+	retm<!CARRY?>
 	endm
 _mm_ucomineq_ss macro a:=<xmm0>, b:=<xmm1>
-	exitm<_mm_comiss(setne, a, b)>
+	ucomiss a, b
+	retm<!ZERO?>
 	endm
 
 _mm_cvt_ss2si macro a:=<xmm0>
@@ -357,10 +409,12 @@ _mm_cvtt_ss2si macro a:=<xmm0>
 	retm<eax>
 	endm
 _mm_cvt_si2ss macro x:=<xmm0>, d
-    ifdif <d>,<eax>
+    if (type d) eq 4 and (opattr d) eq 48
+	cvtsi2ss x,d
+    else
 	mov eax,d
-    endif
 	cvtsi2ss x,eax
+    endif
 	retm<x>
 	endm
 _mm_cvtss_f32 macro a:=<xmm0>

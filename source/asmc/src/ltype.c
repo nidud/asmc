@@ -1,6 +1,6 @@
 #include <globals.h>
 
-#if !defined(_ASMLIB_)
+#if !defined(__LIBC__)
 
 unsigned char _ltype[257] = {
 	0,			/* -1 EOF   */

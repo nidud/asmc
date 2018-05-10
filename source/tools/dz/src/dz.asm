@@ -1,7 +1,6 @@
 ; MAIN.ASM--
 ; Copyright (C) 2016 Doszip Developers -- see LICENSE.TXT
 
-include asmcver.inc
 include doszip.inc
 include stdio.inc
 include stdlib.inc
@@ -57,7 +56,7 @@ cptitle db "Doszip Commander",0
 
 	dd 495A440Ah
 	dd 564A4A50h
-	db VERSSTR
+	db __LIBC__ / 100 + '0','.',__LIBC__ mod 100 / 10 + '0',__LIBC__ mod 10 + '0'
 
 ifdef __SIGNAL__
 

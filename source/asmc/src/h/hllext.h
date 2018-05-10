@@ -23,7 +23,7 @@ extern int QueueTestLines(char *);
 extern int HllContinueIf(struct hll_item *, int *, char *, struct asm_tok[], int, struct hll_item *);
 extern int GenerateCString( int, struct asm_tok[] );
 
-#define MIN_JTABLE 4
+#define MIN_JTABLE 8
 #define LABELSIZE 8
 #define LABELSGLOBAL 0 /* make the generated labels global */
 #define JMPPREFIX      /* define spaces before "jmp" or "loop" */

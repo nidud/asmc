@@ -129,12 +129,12 @@ XM_SFENCE macro
 endif
 
 ifdef _XM_AVX_INTRINSICS_
-XM_PERMUTE_PS macro v, c
-	exitm<_mm_permute_ps( v, c )>
+XM_PERMUTE_PS macro v, q
+	exitm<_mm_permute_ps( v, q )>
 	endm
 else
-XM_PERMUTE_PS macro v, c
-	exitm<_mm_shuffle_ps( v, v, c )>
+XM_PERMUTE_PS macro v, q
+	exitm<_mm_shuffle_ps( v, v, q )>
 	endm
 endif
 
@@ -1022,7 +1022,15 @@ XMStoreFloat4x4		proto :ptr XMFLOAT4X4, :FXMMATRIX
 XMStoreFloat4x4A	proto :ptr XMFLOAT4X4A, :FXMMATRIX
 
 XMVectorZero		proto
-XMVectorSet		proto :float, :float, :float, :float
+XMVectorSet macro x, y, z, w
+ifdef _XM_NO_INTRINSICS_
+    exitm<_mm_set_ps( w, z, y, x )>
+elseifdef _XM_ARM_NEON_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    exitm<_mm_set_ps( w, z, y, x )>
+endif
+    endm
+
 XMVectorSetInt		proto :uint32_t, :uint32_t, :uint32_t, :uint32_t
 XMVectorReplicate	proto :float
 XMVectorReplicatePtr	proto :ptr float
@@ -1376,7 +1384,7 @@ elseifdef _XM_SSE_INTRINSICS_
 endif
     endm
 
-XMMatrixTranspose macro M:req, O
+XMMatrixTranspose macro M:req, M
     _mm_store_ps(xmm0, M.r[0x00])
     _mm_store_ps(xmm1, M.r[0x10])
     _mm_store_ps(xmm2, M.r[0x20])
@@ -1393,11 +1401,11 @@ XMMatrixTranspose macro M:req, O
     _mm_shuffle_ps(xmm1, xmm4, _MM_SHUFFLE(3,1,3,1))
     _mm_shuffle_ps(xmm2, xmm5, _MM_SHUFFLE(2,0,2,0))
     _mm_shuffle_ps(xmm3, xmm5, _MM_SHUFFLE(3,1,3,1))
-    ifnb <O>
-	_mm_store_ps(O.r[0x00], xmm0)
-	_mm_store_ps(O.r[0x10], xmm1)
-	_mm_store_ps(O.r[0x20], xmm2)
-	_mm_store_ps(O.r[0x30], xmm3)
+    ifnb <M>
+	_mm_store_ps(M.r[0x00], xmm0)
+	_mm_store_ps(M.r[0x10], xmm1)
+	_mm_store_ps(M.r[0x20], xmm2)
+	_mm_store_ps(M.r[0x30], xmm3)
     endif
     exitm<>
     endm
@@ -1510,6 +1518,7 @@ XMMatrixIsInfinite		proto :FXMMATRIX
 XMMatrixIsIdentity		proto :FXMMATRIX
 
 XMMatrixMultiply macro M1, M2
+local vX,vY,vZ,vW
 ifdef _XM_NO_INTRINSICS_
 elseifdef _XM_ARM_NEON_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
@@ -1617,10 +1626,6 @@ endif
     _mm_store_ps(xmm2, xmm1)
     _mm_store_ps(xmm0, xmm6)
     _mm_store_ps(xmm1, xmm7)
-    undef vX
-    undef vY
-    undef vZ
-    undef vW
     exitm<>
 endif
     endm
@@ -1653,7 +1658,22 @@ XMMatrixSet macro m00, m01, m02, m03, m10, m11, m12, m13,
     exitm<>
     endm
 
-XMMatrixTranslation		proto :float, :float, :float
+XMMatrixTranslation macro OffsetX, OffsetY, OffsetZ, M
+ifdef _XM_NO_INTRINSICS_
+elseif defined(_XM_SSE_INTRINSICS_) or defined(_XM_ARM_NEON_INTRINSICS_)
+    _mm_store_ps(xmm0, g_XMIdentityR0.v)
+    _mm_store_ps(xmm1, g_XMIdentityR1.v)
+    _mm_store_ps(xmm2, g_XMIdentityR2.v)
+    _mm_set_epi32(xmm3, OffsetX, OffsetY, OffsetZ, 1.0 )
+    ifnb <M>
+     _mm_store_ps(M.r[0*16], xmm0)
+     _mm_store_ps(M.r[1*16], xmm1)
+     _mm_store_ps(M.r[2*16], xmm2)
+     _mm_store_ps(M.r[3*16], xmm3)
+    endif
+    exitm<>
+endif
+    endm
 
 XMMatrixScaling macro ScaleX, ScaleY, ScaleZ, M
     _mm_set_epi32(xmm0, 0, 0, 0, ScaleX)

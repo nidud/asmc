@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <malloc.h>
+#include <limits.h>
 
 #include <globals.h>
 #include <hllext.h>
@@ -681,6 +682,10 @@ static int RenderSwitch( struct hll_item *hll, struct asm_tok tokenarray[],
 		    AddLineQueueX("jmp [%s*4+%s-(%d*4)]", hll->condlines, l_jtab, min);
 		}
 	    }
+	} else if ( ( min <= ( UINT_MAX / 8 ) ) && !use_index && ( hll->flags & HLLF_ARGREG ) ) {
+
+	    AddLineQueueX("jmp [%s*8+%s-(%d*8)]", hll->condlines, l_jtab, min);
+
 	} else {
 
 	    if ( !( hll->flags & HLLF_ARGREG ) ) {
@@ -703,7 +708,12 @@ static int RenderSwitch( struct hll_item *hll, struct asm_tok tokenarray[],
 		AddLineQueue("mov rax,[rcx+rax*8]");
 	    } else {
 		AddLineQueueX("lea rcx,%s", l_jtab);
-		AddLineQueueX("mov rax,[rcx+rax*8-(%d*8)]", min);
+		if ( (unsigned int)min < ( UINT_MAX / 8 ) )
+		    AddLineQueueX("mov rax,[rcx+rax*8-(%d*8)]", min);
+		else {
+		    AddLineQueueX("sub rax,%d", min);
+		    AddLineQueue("mov rax,[rcx+rax*8]");
+		}
 	    }
 	    if ( ModuleInfo.aflag & _AF_REGAX ) {
 		AddLineQueue("pop rcx");

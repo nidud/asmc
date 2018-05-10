@@ -5,7 +5,7 @@
 #include <globals.h>
 #include <hllext.h>
 
-#ifndef _ASMC
+#ifndef __LIBC__
 
 int strtrim( char *string )
 {
@@ -59,109 +59,155 @@ static char *GetCondition( char *string, char **pp )
 	return NULL;
 }
 
+
+static int Assignopc( char *buffer, char *opc1, char *opc2, char *string )
+{
+    if ( opc1 ) {
+	strcat( buffer, opc1 );
+	strtrim( buffer );
+	strcat( buffer, " " );
+    }
+    if ( opc2 ) {
+	strcat( buffer, opc2 );
+	strtrim( buffer );
+	if ( opc1 && string )
+	    strcat( buffer, "," );
+	if ( string )
+	    strcat( buffer, " " );
+    }
+    if ( string ) {
+	strcat( buffer, string );
+	strtrim( buffer );
+    }
+    strcat( buffer, "\n" );
+    return 1;
+}
+
 static int ParseAssignment( char *buffer, struct asm_tok tokenarray[] )
 {
-	char *p, *q, *cp;
-	char a, b;
+    int k, n, i;
+    char *p;
 
-	q = tokenarray[0].tokpos;
+    if ( tokenarray[0].string_ptr[0] == '~' )
+	return Assignopc( buffer, "not", &tokenarray[0].string_ptr[1], NULL );
+    if ( tokenarray[0].token == '-' && tokenarray[1].token == '-' )
+	return Assignopc( buffer, "dec", tokenarray[2].tokpos, NULL );
+    if ( tokenarray[0].token == '+' && tokenarray[1].token == '+' )
+	return Assignopc( buffer, "inc", tokenarray[2].tokpos, NULL );
 
-	if ( !(p = strchr(q, '+')) ) {
-	    if ( !(p = strchr(q, '-')) )
-		p = strchr(q, '=');
+    for ( k = 0, i = 1; i < Token_Count; i++ ) {
+
+	if ( ( tokenarray[i].tokval == T_EQU && tokenarray[i].dirtype == DRT_EQUALSGN ) ||
+	    tokenarray[i].token == '+' || tokenarray[i].token == '-' ||
+	    tokenarray[i].token == '&' ) {
+
+	    k = tokenarray[i].string_ptr[0];
+	    n = tokenarray[i+1].string_ptr[0];
+	    p = tokenarray[i+1].tokpos;
+	    break;
+	} else if ( tokenarray[i].string_ptr[0] == '>' || tokenarray[i].string_ptr[0] == '<' ) {
+	    k = tokenarray[i].string_ptr[0];
+	    n = tokenarray[i].string_ptr[1];
+	    p = &tokenarray[i].tokpos[3];
+	    if ( *p == 0 )
+		p = tokenarray[i+1].tokpos;
+	    break;
+	} else if ( tokenarray[i].string_ptr[0] == '^' || tokenarray[i].string_ptr[0] == '~' ||
+		    tokenarray[i].string_ptr[0] == '|') {
+	    k = tokenarray[i].string_ptr[0];
+	    n = tokenarray[i].string_ptr[1];
+	    p = &tokenarray[i].string_ptr[2];
+	    if ( p[0] == 0 )
+		p = tokenarray[i+1].tokpos;
+	    break;
 	}
-	if ( !p ) {
+    }
 
-	    asmerr( 2008, q );
-	    return 0;
+    switch ( k ) {
+    case '=':
+	if ( n == '&' ) {
+	    tokenarray[i].tokpos[0] = 0;
+	    return Assignopc( buffer, "lea", tokenarray[0].tokpos, tokenarray[i+2].tokpos );
 	}
-
-	while ( p[1] == ' ' || p[1] == 9 )
-	    strcpy( p + 1, p + 2 );
-
-	if ( q[0] == '-' && q[1] == '-' ) {
-
-	    strcat( buffer, "dec " );
-	    strcat( buffer, q + 2 );
-	    strcat( buffer, "\n" );
-	    return 1;
+	if ( tokenarray[i+1].string_ptr[0] == '~' ) {
+	    tokenarray[i].tokpos[0] = 0;
+	    Assignopc( buffer, "mov", tokenarray[0].tokpos, &tokenarray[i+1].tokpos[1] );
+	    return Assignopc( buffer, "not", tokenarray[0].tokpos, NULL );
 	}
+	tokenarray[i].tokpos[0] = 0;
+	/* mov reg,0 --> xor reg,reg */
+	if ( tokenarray[i+1].token == T_NUM &&
+	     tokenarray[i+1].stringlen == 1 &&
+	     tokenarray[i+1].string_ptr[0] == '0' &&
+	     ( ( tokenarray[0].tokval >= T_AL &&
+		 tokenarray[0].tokval <= T_EDI ) ||
+	       ( ModuleInfo.Ofssize == USE64 &&
+		 tokenarray[0].tokval >= T_R8B &&
+		 tokenarray[0].tokval <= T_R15 ) ) ) {
 
-	if ( q[0] == '+' && q[1] == '+' ) {
-
-	    strcat( buffer, "inc " );
-	    strcat( buffer, q + 2 );
-	    strcat( buffer, "\n" );
-	    return 1;
+	    return Assignopc( buffer, "xor", tokenarray[0].string_ptr, tokenarray[0].string_ptr );
 	}
-
-	a = p[0];
-	b = p[1];
-	p[0] = NULLC;
-	p += 2;
-
-	if ( a == '+' && b == '+' )
-	    q = "inc ";
-	else if ( a == '-' && b == '-' )
-	    q = "dec ";
-	else if ( a == '=' && b == '&' )
-	    q = "lea ";
-	else if ( a == '+' && b == '=' )
-	    q = "add ";
-	else if ( a == '-' && b == '=' )
-	    q = "sub ";
-	else if ( a == '=' && b == '~' )
-	    q = "mov ";
-	else if ( a == '=' ) {
-	    q = "mov ";
-	    p--;
-	} else {
-	    asmerr( 2008, q );
-	    return 0;
+	return Assignopc( buffer, "mov", tokenarray[0].tokpos, tokenarray[i+1].tokpos );
+    case '~':
+	if ( n == '=' ) {
+	    tokenarray[i].tokpos[0] = 0;
+	    Assignopc( buffer, "mov", tokenarray[0].tokpos, p );
+	    return Assignopc( buffer, "not", tokenarray[0].tokpos, NULL );
 	}
-
-	while ( *p == ' ' || *p == 9 )
-	    p++;
-	cp = p + strlen(p) - 1;
-	while ( cp > p && (*cp == ' ' || *cp == 9) )
-	    *cp-- = NULLC;
-
-	cp = tokenarray[0].tokpos;
-
-	if ( a == '=' && b == '~' ) {
-	    /* = ~# -->
-	     * mov reg,#
-	     * not reg
-	     */
-	    strcat( buffer, q );
-	    strcat( buffer, cp );
-	    strcat( buffer, ", " );
-	    strcat( buffer, p );
-	    strcat( buffer, "\n" );
-	    *p = NULLC;
-	    q = "not ";
-
-	} else if ( a == '=' && p[0] == '0' && p[1] == 0 ) {
-
-	    /* mov reg,0 --> xor reg,reg */
-	    int tv = tokenarray[0].tokval;
-
-	    if ( ( tv >= T_AL && tv <= T_EDI) ||
-		( ModuleInfo.Ofssize == USE64 && tv >= T_R8B && tv <= T_R15 ) ) {
-
-		q = "xor ";
-		p = cp;
-	    }
+	break;
+    case '^':
+	if ( n == '=' ) {
+	    tokenarray[i].tokpos[0] = 0;
+	    return Assignopc( buffer, "xor", tokenarray[0].tokpos, p );
 	}
-
-	strcat( buffer, q );
-	strcat( buffer, cp );
-	if ( *p ) {
-	    strcat( buffer, ", " );
-	    strcat( buffer, p );
+	break;
+    case '|':
+	if ( n == '=' ) {
+	    tokenarray[i].tokpos[0] = 0;
+	    return Assignopc( buffer, "or ", tokenarray[0].tokpos, p );
 	}
-	strcat( buffer, "\n" );
-	return 1;
+	break;
+    case '&':
+	if ( n == '=' ) {
+	    tokenarray[i].tokpos[0] = 0;
+	    return Assignopc( buffer, "and", tokenarray[0].tokpos, tokenarray[i+2].tokpos );
+	}
+	break;
+    case '>':
+	if ( n == '>' && tokenarray[i].string_ptr[2] == '=' ) {
+	    tokenarray[i].tokpos[0] = 0;
+	    return Assignopc( buffer, "shr", tokenarray[0].tokpos, p );
+	}
+	break;
+    case '<':
+	if ( n == '<' && tokenarray[i].string_ptr[2] == '=' ) {
+	    tokenarray[i].tokpos[0] = 0;
+	    return Assignopc( buffer, "shl", tokenarray[0].tokpos, p );
+	}
+	break;
+    case '+':
+	if ( n == '+' ) {
+	    tokenarray[i].tokpos[0] = 0;
+	    return Assignopc( buffer, "inc", tokenarray[0].tokpos, NULL );
+	}
+	if ( n == '=' ) {
+	    tokenarray[i].tokpos[0] = 0;
+	    return Assignopc( buffer, "add", tokenarray[0].tokpos, tokenarray[i+2].tokpos );
+	}
+	break;
+    case '-':
+	if ( n == '-' ) {
+	    tokenarray[i].tokpos[0] = 0;
+	    return Assignopc( buffer, "dec", tokenarray[0].tokpos, NULL );
+	}
+	if ( n == '=' ) {
+	    tokenarray[i].tokpos[0] = 0;
+	    return Assignopc( buffer, "sub", tokenarray[0].tokpos, tokenarray[i+2].tokpos );
+	}
+	break;
+    }
+    asmerr( 2008, tokenarray[i].tokpos );
+    return 0;
 }
 
 static int RenderAssignment( char *dest, char *source, struct asm_tok tokenarray[] )
@@ -174,7 +220,7 @@ static int RenderAssignment( char *dest, char *source, struct asm_tok tokenarray
 	 */
 	while ( (source = GetCondition( source, &p )) ) {
 
-	    ModuleInfo.token_count = Tokenize(
+	    Token_Count = Tokenize(
 		strcpy( tokbuf, source ), 0, tokenarray, TOK_DEFAULT );
 	    if ( ExpandHllProc( buffer, 0, tokenarray ) == ERROR )
 		break;

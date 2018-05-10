@@ -19,7 +19,8 @@ endif
 
 ifndef DEFINE_GUID
 DEFINE_GUID macro name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8
-	exitm<_&name& equ {l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}}>
+	_&name& equ <{l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}}>
+	exitm<externdef name:IID>
 	endm
 endif
 

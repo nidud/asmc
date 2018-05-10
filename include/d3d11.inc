@@ -1002,6 +1002,8 @@ externdef		IID_ID3D11Buffer:IID
     GetEvictionPriority proc
     GetDesc		proc :ptr
     .ends
+
+LPID3D11Buffer		typedef ptr ID3D11Buffer
 endif
 
 D3D11_TEXTURE1D_DESC	STRUC
@@ -1072,6 +1074,8 @@ externdef		IID_ID3D11Texture2D:IID
     GetEvictionPriority proc
     GetDesc		proc :ptr
     .ends
+
+LPID3D11Texture2D	typedef ptr ID3D11Texture2D
 endif
 
 D3D11_TEXTURE3D_DESC	STRUC
@@ -1396,6 +1400,8 @@ externdef		IID_ID3D11DepthStencilView:IID
     GetResource		proc :ptr
     GetDesc		proc :ptr
     .ends
+
+LPID3D11DepthStencilView typedef ptr ID3D11DepthStencilView
 endif
 
 D3D11_BUFFER_UAV_FLAG	typedef SDWORD
@@ -1483,6 +1489,8 @@ externdef		IID_ID3D11VertexShader:IID
     SetPrivateData	proc :REFGUID, :UINT, :UINT
     SetPrivateDataInterface proc :REFGUID, :ptr
     .ends
+
+LPID3D11VertexShader	typedef ptr ID3D11VertexShader
 endif
 
 ifndef __ID3D11HullShader_INTERFACE_DEFINED__
@@ -1547,6 +1555,8 @@ externdef		IID_ID3D11PixelShader:IID
     SetPrivateData	proc :REFGUID, :UINT, :UINT
     SetPrivateDataInterface proc :REFGUID, :ptr
     .ends
+
+LPID3D11PixelShader	typedef ptr ID3D11PixelShader
 endif
 
 ifndef __ID3D11ComputeShader_INTERFACE_DEFINED__
@@ -1579,6 +1589,8 @@ externdef		IID_ID3D11InputLayout:IID
     SetPrivateData	proc :REFGUID, :UINT, :UINT
     SetPrivateDataInterface proc :REFGUID, :ptr
     .ends
+
+LPID3D11InputLayout	typedef ptr ID3D11InputLayout
 endif
 
 D3D11_FILTER		typedef SDWORD

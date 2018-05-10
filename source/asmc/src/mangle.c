@@ -38,6 +38,7 @@ typedef int (*mangle_func)( const struct asym *, char * );
 static int ms32_decorate( const struct asym *sym, char *buffer );
 static int ow_decorate( const struct asym *sym, char *buffer );
 static int ms64_decorate( const struct asym *sym, char *buffer );
+static int vect_decorate( const struct asym *sym, char *buffer );
 
 /* table of FASTCALL types.
  * order must match the one of enum fastcall_type
@@ -48,13 +49,14 @@ static const mangle_func fcmanglers[] = {
     ms32_decorate, /* FCT_MSC */
     ow_decorate,   /* FCT_WATCOMC */
     ms64_decorate, /* FCT_WIN64 */
-    ms64_decorate  /* FCT_ELF64 */
+    ms64_decorate, /* FCT_ELF64 */
+    vect_decorate, /* FCT_VEC32 */
+    vect_decorate  /* FCT_VEC64 */
 };
 
 /* VoidMangler: no change to symbol name */
 
 static int VoidMangler( const struct asym *sym, char *buffer )
-/************************************************************/
 {
     memcpy( buffer, sym->name, sym->name_size + 1 );
     return( sym->name_size );
@@ -63,7 +65,6 @@ static int VoidMangler( const struct asym *sym, char *buffer )
 /* UCaseMangler: convert symbol name to upper case */
 
 static int UCaseMangler( const struct asym *sym, char *buffer )
-/*************************************************************/
 {
     memcpy( buffer, sym->name, sym->name_size + 1 );
     _strupr( buffer );
@@ -73,7 +74,6 @@ static int UCaseMangler( const struct asym *sym, char *buffer )
 /* UScoreMangler: add '_' prefix to symbol name */
 
 static int UScoreMangler( const struct asym *sym, char *buffer )
-/**************************************************************/
 {
     buffer[0] = '_';
     memcpy( buffer+1, sym->name, sym->name_size + 1 );
@@ -84,7 +84,6 @@ static int UScoreMangler( const struct asym *sym, char *buffer )
 /*		   add '_' prefix to other symbols */
 
 static int StdcallMangler( const struct asym *sym, char *buffer )
-/***************************************************************/
 {
     const struct dsym *dir = (struct dsym *)sym;
 
@@ -98,7 +97,6 @@ static int StdcallMangler( const struct asym *sym, char *buffer )
 /* MS FASTCALL 32bit */
 
 static int ms32_decorate( const struct asym *sym, char *buffer )
-/**************************************************************/
 {
     return ( sprintf( buffer, "@%s@%u", sym->name, ((struct dsym *)sym)->e.procinfo->parasize ) );
 }
@@ -116,7 +114,6 @@ enum changes {
  */
 
 static int ow_decorate( const struct asym *sym, char *buffer )
-/************************************************************/
 {
     char		*name;
     enum changes	changes = NORMAL;
@@ -151,14 +148,21 @@ static int ow_decorate( const struct asym *sym, char *buffer )
 /* MS FASTCALL 64bit */
 
 static int ms64_decorate( const struct asym *sym, char *buffer )
-/**************************************************************/
 {
     memcpy( buffer, sym->name, sym->name_size + 1 );
     return( sym->name_size );
 }
 
+static int vect_decorate( const struct asym *sym, char *buffer )
+{
+    if ( !_stricmp( sym->name, "main" ) ) {
+	strcpy( buffer, sym->name );
+	return 4;
+    }
+    return ( sprintf( buffer, "%s@@%u", sym->name, ((struct dsym *)sym)->e.procinfo->parasize ) );
+}
+
 int Mangle( struct asym *sym, char *buffer )
-/******************************************/
 {
     mangle_func mangler;
 
@@ -179,6 +183,7 @@ int Mangle( struct asym *sym, char *buffer )
 	mangler = UCaseMangler;
 	break;
     case LANG_FASTCALL:		 /* registers passing parameters */
+    case LANG_VECTORCALL:
 	mangler = fcmanglers[ModuleInfo.fctype];
 	break;
     default: /* LANG_NONE */
@@ -192,7 +197,6 @@ int Mangle( struct asym *sym, char *buffer )
  * accepted are "C" and "N". It's NULL if MANGLESUPP == 0 (standard)
  */
 void SetMangler( struct asym *sym, int langtype, const char *mangle_type )
-/************************************************************************/
 {
     if( langtype != LANG_NONE )
 	sym->langtype = langtype;

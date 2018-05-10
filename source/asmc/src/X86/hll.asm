@@ -28,8 +28,6 @@ COP_SIGN        equ 13      ; SIGN?  not really a valid C operator
 COP_PARITY      equ 14      ; PARITY?   not really a valid C operator
 COP_OVERFLOW    equ 15      ; OVERFLOW? not really a valid C operator
 
-externdef ComInterface:SINT
-
 .data
 
 EOLSTR          db EOLCHAR,0
@@ -1247,6 +1245,7 @@ LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:ptr 
   local static_struct:SINT
   local sqbrend:ptr asm_tok
   local sym:ptr asym
+  local method:ptr asym
   local comptr:LPSTR
   local opnd:expr
   local ClassVtbl[128]:SBYTE
@@ -1264,7 +1263,16 @@ LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:ptr 
     mov sym,eax
     mov comptr,eax
     mov sqbrend,eax
+    mov method,eax
     mov static_struct,eax
+
+    ; ClassVtbl struct
+    ;   Method()
+    ; ClassVtbl ends
+    ;
+    ; Class struct
+    ;   lpVtbl LPClassVtbl ?
+    ; Class ends
 
     .if [ebx].token == T_OP_SQ_BRACKET
         ;
@@ -1272,13 +1280,14 @@ LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:ptr 
         ;       - [reg+foo([rax])].Class.Method()
         ;       - [reg].Method()
         ;
-        .for ( eax=1, edi++, edx=&[ebx+16] : eax, [edx].asm_tok.token != T_FINAL : edx+=16, edi++ )
+        .for ( eax=1, edi++, edx=&[ebx+16] : eax,
+               _tok_token(edx) != T_FINAL : edx+=16, edi++ )
 
-            .if [edx].asm_tok.token == T_OP_SQ_BRACKET
+            .if _tok_token(edx) == T_OP_SQ_BRACKET
                 inc eax
-            .elseif [edx].asm_tok.token == T_CL_SQ_BRACKET
+            .elseif _tok_token(edx) == T_CL_SQ_BRACKET
                 dec eax
-            .elseif [edx].asm_tok.hll_flags & T_HLL_PROC
+            .elseif _tok_flags(edx) & T_HLL_PROC
                 push eax
                 push edx
                 LKRenderHllProc( dst, edi, tokenarray )
@@ -1291,19 +1300,23 @@ LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:ptr 
         .endf
         mov sqbrend,edx
 
-        .if [edx].asm_tok.token == T_DOT
+        xor edi,edi
+        xor eax,eax
 
-            .if [edx+32].asm_tok.token == T_DOT
-                ;
+        .if _tok_token(edx) == T_DOT
+
+            .if _tok_token(edx, 2) == T_DOT
+
                 ; [reg].Class.Method()
-                ;
-                mov edi,[edx+48].asm_tok.string_ptr
-                SymFind( [edx+16].asm_tok.string_ptr )
-            .elseif [edx+32].asm_tok.token == T_OP_BRACKET
-                ;
+
+                mov edi,_tok_string(edx, 3)
+                SymFind( _tok_string(edx, 1) )
+
+            .elseif _tok_token(edx, 2) == T_OP_BRACKET
+
                 ; [reg].Method() -- assume reg:ptr Class
-                ;
-                mov edi,[edx+16].asm_tok.string_ptr
+
+                mov edi,_tok_string(edx, 1)
                 mov eax,i
                 mov br_count,eax
                 lea edx,[eax+3]
@@ -1319,64 +1332,79 @@ LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:ptr 
                     ;
                     ; If Class.Method do not exist assume ClassVtbl.Method do.
                     ;
-                    type_struct:
-
-                    mov sym,eax
-                    .if !SearchNameInStruct( sym, edi, &br_count, 0 )
-                        mov eax,sym
-                    .else
-                        xor eax,eax
-                        mov sym,eax
-                    .endif
+                    jmp type_struct
                 .else
                     xor eax,eax
                 .endif
+            .else
+                xor edi,edi
             .endif
         .endif
         mov ecx,eax
+
     .else
 
-        mov sym,SymFind( [ebx].string_ptr )
-
+        mov sym,SymFind( _tok_string() )
         xor ecx,ecx
+
+        .if _tok_token(ebx, 1) == T_DOT && _tok_token(ebx, 3) == T_OP_BRACKET
+
+            mov edi,_tok_string(ebx, 2)
+        .else
+            xor edi,edi
+            xor eax,eax
+        .endif
+
         .if eax
-            .if [eax].asym.mem_type == MT_TYPE && [eax].asym._type
-                mov eax,[eax].asym._type
-                .if [eax].asym.typekind == TYPE_TYPEDEF
-                    mov ecx,[eax].asym.target_type
-                .elseif [eax].asym.typekind == TYPE_STRUCT
 
-                    .if [ebx+16].token == T_DOT && [ebx+48].token == T_OP_BRACKET
+            .if _asym_mem_type() == MT_TYPE && _asym_type()
 
-                        inc static_struct
-                        mov edi,[ebx+32].string_ptr
-                        jmp type_struct
+                mov eax,_asym_type()
+
+                .if _asym_typekind() == TYPE_TYPEDEF
+
+                    mov ecx,_asym_target_type()
+
+                .elseif _asym_typekind() == TYPE_STRUCT
+
+                    inc static_struct
+
+                    type_struct:
+
+                    mov sym,eax
+                    .if SearchNameInStruct( sym, edi, &br_count, 0 )
+                        mov method,eax
+                        xor ecx,ecx
+                        mov sym,ecx
+                    .else
+                        mov ecx,sym
                     .endif
                 .endif
-            .elseif ( [eax].asym.mem_type == MT_PTR && \
-                ( [eax].asym.state == SYM_STACK || [eax].asym.state == SYM_EXTERNAL ) )
 
-                mov ecx,[eax].asym.target_type
+            .elseif _asym_mem_type() == MT_PTR && \
+                    ( _asym_state() == SYM_STACK || _asym_state() == SYM_EXTERNAL )
+
+                mov ecx,_asym_target_type()
             .endif
         .endif
     .endif
 
     .if ecx
 
-        .if [ecx].asym.state == SYM_TYPE && [ecx].asym.typekind == TYPE_STRUCT
+        .if _asym_state(ecx) == SYM_TYPE && _asym_typekind(ecx) == TYPE_STRUCT
 
-            mov eax,[ecx].asym._name
+            mov eax,_asym_name(ecx)
             mov comptr,eax
-            ;
-            ; ClassVtbl struct
-            ;   Method()
-            ; ClassVtbl ends
-            ;
-            ; Class struct
-            ;   lpVtbl PClassVtbl ?
-            ; Class ends
-            ;
-            .if SymFind( strcat( strcpy( &ClassVtbl, comptr ), "Vtbl" ) )
+
+            .if SearchNameInStruct( ecx, edi, &br_count, 0 )
+
+                mov method,eax
+
+            .elseif SymFind( strcat( strcpy( &ClassVtbl, comptr ), "Vtbl" ) )
+
+                mov ecx,eax
+                mov method,SearchNameInStruct( ecx, edi, &br_count, 0 )
+
                 lea eax,ClassVtbl
                 mov comptr,eax
             .endif
@@ -1388,22 +1416,26 @@ LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:ptr 
             .endif
             strcat(esi, comptr )
 
-            .if [ebx].token == T_OP_SQ_BRACKET
+            .if _tok_token() == T_OP_SQ_BRACKET
 
-                .if [ebx+32].token == T_CL_SQ_BRACKET
+                .if _tok_token(ebx, 2) == T_CL_SQ_BRACKET
 
-                    mov eax,[ebx+16].string_ptr
+                    mov eax,_tok_string(ebx, 1)
                 .else
                     strcpy( &ClassVtbl, "addr [" )
-                    .for ( edi=&[ebx+16] : edi < sqbrend : edi+=16
-                        strcat( eax, [edi].asm_tok.string_ptr )
+                    .for edi = &[ebx+16] : edi < sqbrend : edi += 16
+
+                        strcat( eax, _tok_string(edi) )
                     .endf
                 .endif
             .else
-                mov eax,[ebx].string_ptr
+                mov eax,_tok_string(ebx)
             .endif
             mov comptr,eax
-            inc ComInterface
+            mov eax,method
+            .if eax
+                or [eax].asym.flag,SFL_METHOD
+            .endif
         .endif
     .endif
 
@@ -1452,11 +1484,11 @@ LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:ptr 
         add edi,2
     .endif
 
+    mov br_count,0
     .if [ebx].token == T_OP_BRACKET
 
         add ebx,16
         add edi,1
-        mov br_count,0
 
         .if [ebx].token != T_CL_BRACKET
 
@@ -1470,7 +1502,7 @@ LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:ptr 
                 strcat( esi, "," )
             .endif
 
-            .while  1
+            .while 1
 
                 .if [ebx].token == '&'
 
@@ -1536,7 +1568,7 @@ LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:ptr 
     lea ecx,[eax+3]
     inc eax
 
-    .if !comptr && ( ( edi == eax && eax > 1 ) || ( edi == ecx && br_count == 0 ) )
+    .if !comptr && ( ( edi == eax && eax > 1 ) || edi == ecx )
 
         mov eax,sym
         .if eax
@@ -1550,8 +1582,7 @@ LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:ptr 
         .if !eax
 
             strcpy( esi, "call" )
-            add eax,6
-            strcat( esi, eax )
+            strcat( esi, &[esi+6] )
         .endif
     .endif
 
@@ -2052,7 +2083,7 @@ CheckCXZLines endp
 
 RenderUntilXX proc private uses edi hll:PTR hll_item, cmd:UINT
 
-local   buffer[32]:SBYTE
+  local buffer[32]:SBYTE
 
     mov eax,cmd
     mov ecx,T_CX - T_AX

@@ -1,7 +1,8 @@
 ifndef _WINDOWS_
 _WINDOWS_ equ <>
+
 .pragma list(push, 0)
-.nocref
+.pragma cref(push, 0)
 
 ifndef __LIBC_INC
  include libc.inc
@@ -521,7 +522,7 @@ endif ; WINVER >= 0x0400
 
 endif ; _INC_WINDOWS
 
-.cref
 .pragma list(pop)
+.pragma cref(pop)
 endif
 

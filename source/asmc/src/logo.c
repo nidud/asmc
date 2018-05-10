@@ -2,7 +2,7 @@
 #include <globals.h>
 
 char cp_logo[] =
- "Asmc Macro Assembler Version " ASMC_VERSSTR ".16\n"
+ "Asmc Macro Assembler Version " ASMC_VERSSTR ".17\n"
  "Portions Copyright (c) 1992-2002 Sybase, Inc. All Rights Reserved.\n\n";
 
 static char cp_usage[] =
@@ -35,7 +35,7 @@ static char cp_options[] =
  "/FPi87 80x87 instructions (default)        /Xc Disable ASMC extensions\n"
  "/fpc Disallow floating-point instructions  /zcw No decoration for C symbols\n"
  "/fp<n> Set FPU: 0=8087, 2=80287, 3=80387   /Zd Add line number debug info\n"
- "/G<c|d|z> Use Pascal, C, or Stdcall calls  /Zf Make all symbols public\n"
+ "/G<cdzv> Pascal, C, Stdcall or Vectorcall  /Zf Make all symbols public\n"
  "/I<name> Add include path                  /zf<0|1> Set FASTCALL type: MS/OW\n"
  "/m<t|s|c|m|l|h|f> Set memory model         /Zg Generate code to match Masm\n"
  "/mz Generate DOS MZ binary file            /Zi[0|1|2|3] Add symbolic debug info\n"

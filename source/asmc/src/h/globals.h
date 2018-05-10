@@ -151,7 +151,8 @@ enum lang_type {
     LANG_PASCAL	  = 4,
     LANG_FORTRAN  = 5,
     LANG_BASIC	  = 6,
-    LANG_FASTCALL = 7
+    LANG_FASTCALL = 7,
+    LANG_VECTORCALL = 8
 };
 
 /* Memory model type.
@@ -278,6 +279,8 @@ enum segofssize {
 #define FCT_WATCOMC	1 /* OW register calling convention (eax, ebx, ecx, edx) */
 #define FCT_WIN64	2 /* Win64 fastcall convention (rcx, rdx, r8, r9) */
 #define FCT_ELF64	3 /* Linux 64 calling convention (rdi, esi, rdx, rcx, r8, r9) */
+#define FCT_VEC32	4 /* Win32 vectorcall convention */
+#define FCT_VEC64	5 /* Win64 vectorcall convention */
 
 enum stdcall_decoration {
     STDCALL_FULL,
@@ -455,6 +458,7 @@ unsigned char	casealign;		/* OPTION:CASEALIGN setting */
 unsigned char	epilogueflags;		/* OPTION EPILOGUE: FLAGS */
 unsigned char	segmentalign;		/* -Sp[n] Set segment alignment */
 unsigned char	pe_subsystem;		/* -cui, -gui */
+unsigned char	homeparams;		/* -homeparams */
 };
 
 /* if the structure changes, option.c, SetMZ() might need adjustment! */

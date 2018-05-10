@@ -40,6 +40,7 @@
 #include <input.h>
 #include <listing.h>
 #include <reswords.h>
+#include <proc.h>
 
 extern const struct opnd_class opnd_clstab[];
 extern struct ReservedWord ResWordTable[];
@@ -931,7 +932,8 @@ static int match_phase_3( struct code_info *CodeInfo, enum operand_type opnd1 )
  * - possible return codes: NOT_ERROR (=done), ERROR (=nothing found)
  */
 {
-    enum operand_type determinant = opnd_clstab[CodeInfo->pinstr->opclsidx].opnd_type[OPND1]; /* remember first op type */
+    /* remember first op type */
+    enum operand_type determinant = opnd_clstab[CodeInfo->pinstr->opclsidx].opnd_type[OPND1];
     enum operand_type opnd2 = CodeInfo->opnd[OPND2].type;
     enum operand_type tbl_op2;
 
@@ -959,6 +961,14 @@ static int match_phase_3( struct code_info *CodeInfo, enum operand_type opnd1 )
 	    if ( opnd2 & ( OP_YMM | OP_ZMM ) )
 		opnd2 |= OP_XMM;
 	}
+    } else if ( opnd1 == OP_XMM && opnd2 == OP_M64 ) {
+
+	/* v2.27: case xmm,m64 (real4 or 8) */
+	if ( CurrProc ) {
+	    if ( CurrProc->sym.langtype == LANG_VECTORCALL )
+		opnd2 |= OP_M128;
+	} else if ( ModuleInfo.langtype == LANG_VECTORCALL )
+	    opnd2 |= OP_M128;
     }
     do	{
 	tbl_op2 = opnd_clstab[CodeInfo->pinstr->opclsidx].opnd_type[OPND2];

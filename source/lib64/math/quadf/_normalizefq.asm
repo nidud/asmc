@@ -2,69 +2,97 @@ include intn.inc
 
 .code
 
-_lk_doscale proc private uses rdi rbx
+_normalizefq proc uses rsi rdi rbx r12 mantissa:ptr, exponent:dword
 
-    mov rbx,rax
-    lea rdi,_Q_1E1
-    .if esi >= 8192
-        mov esi,8192    ; set to infinity multiplier
-    .endif
-    .if esi
-        .repeat
-            .if esi & 1
-                _mulfq(rbx, rbx, rdi)
-            .endif
-            add rdi,16
-            shr esi,1
-        .untilz
-    .endif
-    ret
+  local factor:REAL16
 
-_lk_doscale endp
+    mov esi,edx ; exponent
 
-_lk_scale proc private
+    lea r12,factor
 
-  local factor:oword
-
-    .if esi
-
-        xor edx,edx
-        lea rax,factor
-        mov [rax],rdx
-        mov [rax+8],rdx
-        mov word ptr [rax+14],0x3FFF  ; 1.0
-
-        .ifs esi < 0
-            neg esi
-            _lk_doscale()
-            _divfq(rbx, rbx, &factor)
-        .else
-            _lk_doscale()
-            _mulfq(rbx, rbx, &factor)
-        .endif
-    .endif
-    ret
-
-_lk_scale endp
-
-_normalizefq proc uses rsi rdi rbx mantissa:ptr, exponent:dword
-
-    mov esi,exponent
-    mov rbx,mantissa
+    xor edi,edi
     .ifs esi > 4096
-        mov esi,4096
-        _lk_scale()
-        mov esi,exponent
-        sub esi,4096
+
+        inc edi
     .else
         .ifs esi < -4096
-            mov esi,-4096
-            _lk_scale()
-            mov esi,exponent
+
+            mov edi,2
+        .endif
+    .endif
+
+    .if edi
+
+        mov esi,4096
+
+        xor eax,eax
+        mov [r12],rax
+        mov [r12+8],rax
+        mov word ptr [r12+14],0x3FFF  ; 1.0
+        lea rbx,_Q_1E1
+
+        .repeat
+            .if esi & 1
+
+                _mulfq(r12, r12, rbx)
+            .endif
+            add rbx,16
+            shr esi,1
+        .untilz
+
+        mov esi,exponent
+        mov rbx,mantissa
+        .if edi == 1
+            _mulfq(rbx, rbx, r12)
+            sub esi,4096
+        .else
+            _divfq(rbx, rbx, r12)
             add esi,4096
         .endif
     .endif
-    _lk_scale()
+
+    .if esi
+
+        xor ebx,ebx
+        mov [r12],rbx
+        mov [r12+8],rbx
+        mov word ptr [r12+14],0x3FFF
+
+        lea rdi,_Q_1E1
+
+        .ifs esi < 0
+
+            neg esi
+            inc ebx
+        .endif
+
+        .if esi >= 8192
+
+            mov esi,8192
+        .endif
+
+        .if esi
+            .repeat
+                .if esi & 1
+
+                    _mulfq(r12, r12, rdi)
+                .endif
+                add rdi,16
+                shr esi,1
+            .untilz
+        .endif
+
+        mov  rax,mantissa
+        xchg rax,rbx
+
+        .if eax
+
+            _divfq(rbx, rbx, r12)
+        .else
+
+            _mulfq(rbx, rbx, r12)
+        .endif
+    .endif
     mov rax,rbx
     ret
 

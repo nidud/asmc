@@ -10,6 +10,8 @@ ifdef _M_CEE_PURE
 .err <ERROR: EMM intrinsics not supported in the pure mode>
 endif
 
+;; the __m128 & __m64 types are required for the intrinsics
+
 include xmmintrin.inc
 
 __m128i union
@@ -26,6 +28,8 @@ __m128i ends
 __m128d struc
 m128d_f64	real8 2 dup(?)
 __m128d ends
+
+;; Macro function for shuffle
 
 _MM_SHUFFLE2 macro x,y
 	exitm<(((x) SHL 1) OR (y))>
@@ -664,9 +668,10 @@ _mm_set_epix macro x, op, args:vararg
 	local v
 	.data
 	align 16
-	v op &args
+	v label xmmword
+	op &args
 	.code
-	movdqa x,xmmword ptr v
+	movdqa x,v
 	retm<x>
 	endm
 _mm_set_epi64x macro x, a, b
@@ -676,27 +681,27 @@ _mm_set_epi64x macro x, a, b
 	exitm<_mm_set_epix(xmm0, dq, a, b)>
     endif
 	endm
-_mm_set_epi32 macro x, a, b, c, d
+_mm_set_epi32 macro x, a, b, q, d
     ifnb <d>
-	exitm<_mm_set_epix(x, dd, a, b, c, d)>
+	exitm<_mm_set_epix(x, dd, a, b, q, d)>
     else
-	exitm<_mm_set_epix(xmm0, dd, x, a, b, c)>
+	exitm<_mm_set_epix(xmm0, dd, x, a, b, q)>
     endif
 	endm
-_mm_get_epi32 macro a, b, c, d
+_mm_get_epi32 macro a, b, q, d
 	local x
 	.data
 	align 16
 	x label oword
-	dd a, b, c, d
+	dd a, b, q, d
 	.code
 	exitm<x>
 	endm
-_mm_set_epi16 macro a, b, c, d, e, f, g, h
-	exitm<_mm_set_epix(xmm0, dw, a, b, c, d, e, f, g, h)>
+_mm_set_epi16 macro a, b, q, d, e, f, g, h
+	exitm<_mm_set_epix(xmm0, dw, a, b, q, d, e, f, g, h)>
 	endm
-_mm_set_epi8 macro a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p
-	exitm<_mm_set_epix(xmm0, db, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p)>
+_mm_set_epi8 macro a, b, q, d, e, f, g, h, i, j, k, l, m, n, o, p
+	exitm<_mm_set_epix(xmm0, db, a, b, q, d, e, f, g, h, i, j, k, l, m, n, o, p)>
 	endm
 _mm_set1_epi64x macro a
 	exitm<_mm_set_epix(xmm0, dq, a, a)>
@@ -716,14 +721,14 @@ _mm_set1_epi64 macro a:=<xmm0>
 	endm
 endif
 
-_mm_setr_epi32 macro a, b, c, d
-	exitm<_mm_set_epi64x(a or (b shl 32), c or (d shl 32))>
+_mm_setr_epi32 macro a, b, q, d
+	exitm<_mm_set_epi64x(a or (b shl 32), q or (d shl 32))>
 	endm
-_mm_setr_epi16 macro a, b, c, d, e, f, g, h
-	exitm<_mm_setr_epi32(a or (b shl 16), c or (d shl 16), e or (f shl 16), g or (h shl 16))>
+_mm_setr_epi16 macro a, b, q, d, e, f, g, h
+	exitm<_mm_setr_epi32(a or (b shl 16), q or (d shl 16), e or (f shl 16), g or (h shl 16))>
 	endm
-_mm_setr_epi8 macro a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p
-	exitm<_mm_setr_epi16(a or (b shl 8), c or (d shl 8), e or (f shl 8), g or (h shl 8) \
+_mm_setr_epi8 macro a, b, q, d, e, f, g, h, i, j, k, l, m, n, o, p
+	exitm<_mm_setr_epi16(a or (b shl 8), q or (d shl 8), e or (f shl 8), g or (h shl 8) \
 		i or (j shl 8), k or (l shl 8), m or (n shl 8), o or (p shl 8))>
 	endm
 _mm_setzero_si128 macro x:=<xmm0>
@@ -771,30 +776,41 @@ _mm_pause macro
 	exitm<nop>
 	endm
 
+;;
+;; New convert to float
+;;
 _mm_cvtsd_f64 macro x:=<xmm0>
 	cvtsd2ss x,x
 	retm<x>
 	endm
 
+;;
+;; Support for casting between various SP, DP, INT vector types.
+;; Note that these do no conversion of values, they just change
+;; the type.
+;;
 _mm_castpd_ps macro x:=<xmm0>
-	exitm<x>
+	retm<x>
 	endm
 _mm_castpd_si128 macro x:=<xmm0>
-	exitm<x>
+	retm<x>
 	endm
 _mm_castps_pd macro x:=<xmm0>
-	exitm<x>
+	retm<x>
 	endm
 _mm_castps_si128 macro x:=<xmm0>
-	exitm<x>
+	retm<x>
 	endm
 _mm_castsi128_ps macro x:=<xmm0>
-	exitm<x>
+	retm<x>
 	endm
 _mm_castsi128_pd macro x:=<xmm0>
-	exitm<x>
+	retm<x>
 	endm
 
+;;
+;; Support for 64-bit extension intrinsics
+;;
 ifdef _M_X64
 _mm_cvtsd_si64 macro x:=<xmm0>
 	cvtsd2si rax,x
@@ -830,6 +846,8 @@ ifdef _M_IX86
 _mm_movpi64_epi64	proto :qword
 _mm_movepi64_pi64	proto :oword
 endif
+
+;; Alternate intrinsic name definitions
 
 ifdef _M_X64
 _mm_stream_si64		equ <_mm_stream_si64x>

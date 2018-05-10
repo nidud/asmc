@@ -314,6 +314,8 @@ externdef		IID_IDXGIAdapter:IID
     GetDesc		proc :ptr
     CheckInterfaceSupport proc :REFGUID, :ptr
     .ends
+
+LPIDXGIAdapter		typedef ptr IDXGIAdapter
 endif
 
 DXGI_ENUM_MODES_INTERLACED equ 1

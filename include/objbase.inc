@@ -83,11 +83,12 @@ GUID		ENDS
 endif
 
 DEFINE_GUID macro name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8
-	exitm<_&name& equ {l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}}>
+	_&name& equ <{l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}}>
+	exitm<externdef name:IID>
 	endm
 
 DEFINE_IIDX macro name, x
-	exitm<_IID_&name& equ @CatStr( \
+	_IID_&name& equ <@CatStr( \
 	<{0x>, @SubStr(x, 2,8), \
 	<,0x>, @SubStr(x,11,4), \
 	<,0x>, @SubStr(x,16,4), \
@@ -99,6 +100,7 @@ DEFINE_IIDX macro name, x
 	<,0x>, @SubStr(x,32,2), \
 	<,0x>, @SubStr(x,34,2), \
 	<,0x>, @SubStr(x,36,2),<}}>)>
+	exitm<externdef IID_&name&:IID>
 	endm
 
 externdef GUID_NULL:GUID

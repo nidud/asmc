@@ -33,13 +33,14 @@ _setjmp ENDP
 longjmp PROC C JMPBUF:PTR S_JMPBUF, retval:DWORD
 	mov	edx,[esp+4]
 	mov	eax,[esp+8]
-	mov	ecx,[edx].J_ECX
 	mov	ebp,[edx].J_EBP
 	mov	ebx,[edx].J_EBX
 	mov	edi,[edx].J_EDI
 	mov	esi,[edx].J_ESI
 	mov	esp,[edx].J_ESP
-	push	[edx].J_EIP
+	mov	ecx,[edx].J_EIP
+	mov	[esp],ecx
+	mov	ecx,[edx].J_ECX
 	mov	edx,[edx].J_EDX
 	ret
 longjmp ENDP

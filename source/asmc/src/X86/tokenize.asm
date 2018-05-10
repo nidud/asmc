@@ -1078,6 +1078,8 @@ get_id PROC FASTCALL USES esi edi ebx buf, p
     mov ebx,buf
     mov esi,[edx].input
     mov edi,[edx].output
+    mov [ebx].bytval,0 ; added v2.27
+
     mov eax,[esi]
 
     .if ax == '"L' && _brachets
@@ -1297,7 +1299,7 @@ toend:
     ret
 GetToken ENDP
 
-Tokenize PROC USES esi edi ebx line, start, tokenarray:PTR asm_tok, flags
+Tokenize PROC USES esi edi ebx line, start, tokenarray:ptr asm_tok, flags
 
   local rc, p:line_status
 ;

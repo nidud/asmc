@@ -56,7 +56,7 @@ enum labelsize {
     LS_FAR32  = 0xFF06,
 };
 
-#ifdef _ASMC
+#ifdef __LIBC__
 void _mulfq(void *, void *, void *);
 void _divfq(void *, void *, void *);
 void _subfq(void *, void *, void *);
@@ -1082,7 +1082,7 @@ static int plus_op( struct expr *opnd1, struct expr *opnd2 )
     }
     if( ( opnd1->kind == EXPR_CONST && opnd2->kind == EXPR_CONST ) ) {
 	opnd1->llvalue += opnd2->llvalue;
-#ifdef _ASMC
+#ifdef __LIBC__
     } else if ( opnd1->kind == EXPR_FLOAT && opnd2->kind == EXPR_FLOAT ) {
 	if ( opnd2->float_tok )
 	    atofloat( opnd2->chararray, opnd2->float_tok->string_ptr, 16, opnd2->negative, 0 );
@@ -1154,7 +1154,7 @@ static int minus_op( struct expr *opnd1, struct expr *opnd2 )
 	MakeConst( opnd2 );
     if( ( opnd1->kind == EXPR_CONST && opnd2->kind == EXPR_CONST ) ) {
 	opnd1->llvalue -= opnd2->llvalue;
-#ifdef _ASMC
+#ifdef __LIBC__
     } else if ( opnd1->kind == EXPR_FLOAT && opnd2->kind == EXPR_FLOAT ) {
 	if ( opnd2->float_tok )
 	    atofloat( opnd2->chararray, opnd2->float_tok->string_ptr, 16, opnd2->negative, 0 );
@@ -1342,14 +1342,12 @@ static int colon_op( struct expr *opnd1, struct expr *opnd2 )
     if( opnd2->override != NULL ) {
 	if ( ( opnd1->kind == EXPR_REG && opnd2->override->token == T_REG ) ||
 	    ( opnd1->kind == EXPR_ADDR && opnd2->override->token == T_ID ) ) {
-	     ;
 	    return( fnasmerr( 3013 ) );
 	}
     }
     switch ( opnd2->kind ) {
     case EXPR_REG:
 	if ( opnd2->indirect == 0 ) {
-	     ;
 	    return( fnasmerr( 2032 ) );
 	}
 	break;
@@ -1436,7 +1434,6 @@ static int negative_op( struct expr *opnd1, struct expr *opnd2 )
 	opnd1->float_tok = opnd2->float_tok;
 	opnd1->negative = 1 - opnd2->negative;
     } else {
-	 ;
 	return( fnasmerr( 2026 ) );
     }
     return( NOT_ERROR );
@@ -1445,9 +1442,9 @@ static int negative_op( struct expr *opnd1, struct expr *opnd2 )
 static void CheckAssume( struct expr *opnd )
 {
     struct asym *sym = NULL;
+
     if ( opnd->explicit ) {
 	if ( opnd->type && opnd->type->mem_type == MT_PTR ) {
-	     ;
 	    if ( opnd->type->is_ptr == 1 ) {
 		opnd->mem_type = opnd->type->ptr_memtype;
 		opnd->type = opnd->type->target_type;
@@ -1455,14 +1452,13 @@ static void CheckAssume( struct expr *opnd )
 	    }
 	}
     }
-    if ( opnd->base_reg ) {
+
+    if ( opnd->base_reg )
 	sym = GetStdAssumeEx( opnd->base_reg->bytval );
-    }
-    if (!sym && opnd->idx_reg ) {
+    if (!sym && opnd->idx_reg )
 	sym = GetStdAssumeEx( opnd->idx_reg->bytval );
-    }
+
     if ( sym ) {
-		    ;
 	if ( sym->mem_type == MT_TYPE )
 	    opnd->type = sym->type;
 	else if ( sym->is_ptr == 1 ) {
@@ -1516,7 +1512,7 @@ static int calculate( struct expr *opnd1, struct expr *opnd2, const struct asm_t
 
     opnd1->quoted_string = NULL;
     if ( opnd2->hlvalue
-#ifdef _ASMC
+#ifdef __LIBC__
 	&& opnd2->mem_type != MT_REAL16
 #endif
     ) {
@@ -1592,7 +1588,7 @@ static int calculate( struct expr *opnd1, struct expr *opnd2, const struct asm_t
 	    opnd1->base_reg = NULL;
 	    opnd1->indirect = 1;
 	    opnd1->kind = EXPR_ADDR;
-#ifdef _ASMC
+#ifdef __LIBC__
 	} else if ( ( opnd1->kind == EXPR_FLOAT && opnd2->kind == EXPR_FLOAT ) ) {
 	    if ( opnd2->float_tok )
 		atofloat( opnd2->chararray, opnd2->float_tok->string_ptr, 16, opnd2->negative, 0);
@@ -1603,7 +1599,7 @@ static int calculate( struct expr *opnd1, struct expr *opnd2, const struct asm_t
 	}
 	break;
     case '/':
-#ifdef _ASMC
+#ifdef __LIBC__
 	if ( ( opnd1->kind == EXPR_FLOAT && opnd2->kind == EXPR_FLOAT ) ) {
 	    if ( opnd2->float_tok )
 		atofloat( opnd2->chararray, opnd2->float_tok->string_ptr, 16, opnd2->negative, 0);
@@ -1915,7 +1911,7 @@ static int evaluate( struct expr *opnd1, int *i, struct asm_tok tokenarray[], co
 		    break;
 		}
 	    }
-#ifdef _ASMC
+#ifdef __LIBC__
 	    if ( opnd1->kind == EXPR_FLOAT && opnd1->mem_type != MT_REAL16 ) {
 
 		if ( tokenarray[curr_operator].token == '*' ||

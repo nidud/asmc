@@ -39,7 +39,7 @@ tioption proc uses esi edi ti:PTINFO
         and eax,_T_USETABS
         and ecx,_T_USETABS
 
-        .if eax != ecx || esi != titabsize
+        .if eax != ecx || esi != [edx].ti_tabz
 
             .if edi & _T_MODIFIED
 

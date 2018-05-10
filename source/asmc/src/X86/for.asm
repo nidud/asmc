@@ -30,22 +30,23 @@ GetCondition proc private string:ptr sbyte
 
     mov ecx,string
     mov al,[ecx]
-    .while al == ' ' || al == 9
 
+    .while al == ' ' || al == 9
         add ecx,1
         mov al,[ecx]
     .endw
-    mov string,ecx
 
+    mov string,ecx
     xor edx,edx
-    .while  1
+
+    .while 1
+
         mov al,[ecx]
         .switch al
-          .case 0: .break
-          .case '(': inc edx : .endc
-          .case ')': dec edx : .endc
-          .case ','
-            .endc .if edx
+          .case 0   : .break
+          .case '(' : inc edx : .endc
+          .case ')' : dec edx : .endc
+          .case ',' : .endc .if edx
 
             mov [ecx],dl
             mov al,[ecx-1]
@@ -68,6 +69,7 @@ GetCondition proc private string:ptr sbyte
             .endif
             .break
         .endsw
+
         add ecx,1
     .endw
 
@@ -77,141 +79,198 @@ GetCondition proc private string:ptr sbyte
 
 GetCondition ENDP
 
-ParseAssignment proc private uses ecx edx esi edi ebx buffer:ptr sbyte, tokenarray:ptr asm_tok
+Assignopc proc private uses edi buffer:LPSTR, opc1:LPSTR, opc2:LPSTR, string:LPSTR
 
-    mov esi,buffer
-    mov edx,tokenarray
-    mov ebx,[edx].asm_tok.tokpos
+    mov edi,buffer
+
+    .if ( opc1 )
+        strcat( edi, opc1 )
+        strtrim( edi )
+        strcat( edi, " " )
+    .endif
+    .if ( opc2 )
+        strcat( edi, opc2 )
+        strtrim( edi );
+        .if ( opc1 && string )
+            strcat( edi, "," )
+        .endif
+        .if ( string )
+            strcat( edi, " " )
+        .endif
+    .endif
+    .if ( string )
+        strcat( edi, string )
+        strtrim( edi )
+    .endif
+    strcat( edi, "\n" )
+    mov eax,1
+    ret
+
+Assignopc endp
+
+ParseAssignment proc private uses esi edi ebx buffer:ptr sbyte, tokenarray:ptr asm_tok
+
+    mov edi,buffer
+    mov ebx,tokenarray
+
+    assume ebx:ptr asm_tok
+    assume esi:ptr asm_tok
+
+    mov edx,[ebx].string_ptr
+    mov cl,[ebx].token
+    mov ch,[ebx+16].token
+    mov eax,[edx]
 
     .repeat
-ifdef _LINUX
-        .if !strchr(ebx, '+')
-            .if !strchr(ebx, '-')
-            strchr(ebx, '=')
-            .endif
-        .endif
-        .if !eax
-else
-        .if !_mbspbrk(ebx, "+-=")
-endif
 
-            asmerr( 2008, ebx )
+        .switch
+        .case ( al == '~' )
+            Assignopc( edi, "not", &[edx+1], NULL )
+            .break
+        .case ( cl == '-' && ch == '-' )
+            Assignopc( edi, "dec", [ebx+16*2].tokpos, NULL )
+            .break
+        .case ( cl == '+' && ch == '+' )
+            Assignopc( edi, "inc", [ebx+16*2].tokpos, NULL )
+            .break
+        .endsw
+
+        .for ( eax = 0, ecx = 1: ecx < Token_Count: ecx++ )
+
+            lea esi,[ecx*4]
+            lea esi,[ebx+esi*4]
+            mov edx,[esi].string_ptr
+            mov edx,[edx]
+
+            .if ( [esi].tokval == T_EQU && [esi].dirtype == DRT_EQUALSGN ) || \
+                [esi].token == '+' || [esi].token == '-' || [esi].token == '&'
+
+                mov eax,[esi].tokpos
+                mov dl,[eax]
+                mov dh,[esi+16].token
+                mov ecx,[esi+16].tokpos
+                .break
+
+            .elseif [esi].token == T_STRING
+
+                .if dl == '>' || dl == '<'
+
+                    mov eax,[esi].tokpos
+                    lea ecx,[eax+3]
+                    .if byte ptr [ecx] == 0
+                        mov ecx,[esi+16].tokpos
+                    .endif
+                    .break
+
+                .elseif dl == '|' || dl == '~' || dl == '^'
+
+                    mov eax,[esi].tokpos
+                    lea ecx,[eax+2]
+                    .if byte ptr [ecx] == 0
+                        mov ecx,[esi+16].tokpos
+                    .endif
+                    .break
+                .endif
+            .endif
+        .endf
+
+        .if !eax
+
+            asmerr( 2008, [ebx].tokpos )
             xor eax,eax
             .break
         .endif
-        mov edi,eax
-        .if byte ptr [eax+1] == ' '
 
-            lea ecx,[eax+2]
-            inc eax
-            strcpy(eax, ecx)
-        .endif
+        .switch dl
 
-        mov ecx,[ebx]
-        .switch cx
-
-          .case '--'
-            add ebx,2
-            strcat( esi, "dec " )
-            strcat( esi, ebx )
-            strcat( esi, "\n" )
-            .endc
-
-          .case '++'
-            add ebx,2
-            strcat( esi, "inc " )
-            strcat( esi, ebx )
-            strcat( esi, "\n" )
-            .endc
-
-          .default
-
-            mov eax,[edi]
-            mov BYTE PTR [edi],0
-            add edi,2
-            .switch
-              .case ax == '&='
-                mov ecx,@CStr( "lea " )
-                .endc
-              .case ax == '++'
-                mov ecx,@CStr( "inc " )
-                .endc
-              .case ax == '--'
-                mov ecx,@CStr( "dec " )
-                .endc
-              .case ax == '=+'
-                mov ecx,@CStr( "add " )
-                .endc
-              .case ax == '=-'
-                mov ecx,@CStr( "sub " )
-                .endc
-              .case al == '='
-                mov ecx,@CStr( "mov " )
-                sub edi,1
-                .endc
-              .default
-                asmerr( 2008, ebx )
-                xor ecx,ecx
-                xor eax,eax
-            .endsw
-            .endc .if !ecx
-
-            push eax
-            push ecx
-            M_SKIP_SPACE eax, edi
-            strtrim(ebx)
-            strtrim(edi)
-            pop ecx
-            pop eax
-            ;
-            ; = &# --> lea #
-            ; = ~# --> mov reg,# : not reg
-            ;
-            ; mov reg,0 --> xor reg,reg
-            ;
-            .if al == '='
-
-                .if BYTE PTR [edi] == '&'
-
-                    inc edi
-                    mov ecx,@CStr( "lea " )
-
-                .elseif BYTE PTR [edi] == '~'
-
-                    inc edi
-                    strcat( esi, ecx )
-                    strcat( esi, ebx )
-                    strcat( esi, ", " )
-                    strcat( esi, edi )
-                    strcat( esi, "\n" )
-                    mov BYTE PTR [edi],0
-                    mov ecx,@CStr( "not " )
-
-                .elseif WORD PTR [edi] == '0'
-
-                    mov edx,tokenarray
-                    mov eax,[edx].asm_tok.tokval
-
-                    .if (eax >= T_AL && eax <= T_EDI) || \
-                        (ModuleInfo.Ofssize == USE64 && \
-                        eax >= T_R8B && eax <= T_R15)
-
-                        mov ecx,@CStr( "xor " )
-                        mov edi,ebx
-                    .endif
+        .case '='
+            mov byte ptr [eax],0
+            .if dh == '&'
+                Assignopc( edi, "lea", [ebx].tokpos, [esi+32].tokpos )
+            .elseif byte ptr [ecx] == '~'
+                Assignopc( edi, "mov", [ebx].tokpos, &[ecx+1] )
+                Assignopc( edi, "not", [ebx].tokpos, NULL )
+            .else
+                ;;
+                ;; mov reg,0 --> xor reg,reg
+                ;;
+                mov eax,[esi+16].string_ptr
+                mov ax,[eax]
+                .if ( dh == T_NUM && ax == '0' && \
+                    ( ( [ebx].tokval >= T_AL && [ebx].tokval <= T_EDI ) || \
+                    ( ModuleInfo.Ofssize == USE64 && [ebx].tokval >= T_R8B && [ebx].tokval <= T_R15 ) ) )
+                    Assignopc( edi, "xor", [ebx].string_ptr, [ebx].string_ptr )
+                .else
+                    Assignopc( edi, "mov", [ebx].tokpos, ecx )
                 .endif
             .endif
-            strcat( esi, ecx )
-            strcat( esi, ebx )
-            .if BYTE PTR [edi]
+            .break
 
-                strcat( esi, ", " )
-                strcat( esi, edi )
+        .case '|'
+            .endc .if dh != '='
+            mov byte ptr [eax],0
+            Assignopc( edi, "or ", [ebx].tokpos, ecx )
+            .break
+        .case '~'
+            .endc .if dh != '='
+            mov byte ptr [eax],0
+            Assignopc( edi, "mov", [ebx].tokpos, ecx )
+            Assignopc( edi, "not", [ebx].tokpos, NULL )
+            .break
+        .case '^'
+            .endc .if dh != '='
+            mov byte ptr [eax],0
+            Assignopc( edi, "xor", [ebx].tokpos, ecx )
+            .break
+        .case '&'
+            .endc .if [esi+16].dirtype != DRT_EQUALSGN
+            mov byte ptr [eax],0
+            Assignopc( edi, "and", [ebx].tokpos, [esi+32].tokpos )
+            .break
+        .case '>'
+            shr edx,8
+            .endc .if !( dl == '>' && dh == '=' )
+            mov byte ptr [eax],0
+            Assignopc( edi, "shr", [ebx].tokpos, ecx )
+            .break
+        .case '<'
+            shr edx,8
+            .endc .if !( dl == '<' && dh == '=' )
+            mov byte ptr [eax],0
+            Assignopc( edi, "shl", [ebx].tokpos, ecx )
+            .break
+
+        .case '+'
+            .if dh == '+'
+                mov byte ptr [eax],0
+                Assignopc( edi, "inc", [ebx].tokpos, NULL )
+                .break
+            .elseif [esi+16].dirtype == DRT_EQUALSGN
+                mov byte ptr [eax],0
+                Assignopc( edi, "add", [ebx].tokpos, [esi+32].tokpos )
+                .break
             .endif
-            strcat( esi, "\n" )
+            .endc
+        .case '-'
+            .if dh == '-'
+                mov byte ptr [eax],0
+                Assignopc( edi, "dec", [ebx].tokpos, NULL )
+                .break
+            .elseif [esi+16].dirtype == DRT_EQUALSGN
+                mov byte ptr [eax],0
+                Assignopc( edi, "sub", [ebx].tokpos, [esi+32].tokpos )
+                .break
+            .endif
+            .endc
         .endsw
-    .until  1
+
+        asmerr( 2008, [esi].tokpos )
+        xor eax,eax
+    .until 1
     ret
+
+    assume ebx:nothing
+    assume esi:nothing
 
 ParseAssignment endp
 
@@ -230,9 +289,8 @@ RenderAssignment proc private uses esi edi ebx dest:ptr sbyte,
 
         mov ebx,ecx ; next expression
         mov edi,edx ; this expression
-        lea edx,tokbuf
-        Tokenize( strcpy( edx, edi ), 0, tokenarray, TOK_DEFAULT )
-        mov ModuleInfo.token_count,eax
+        Tokenize( strcpy( &tokbuf, edi ), 0, tokenarray, TOK_DEFAULT )
+        mov Token_Count,eax
 
         .break .if ExpandHllProc( esi, 0, tokenarray ) == ERROR
 
@@ -242,7 +300,7 @@ RenderAssignment proc private uses esi edi ebx dest:ptr sbyte,
             mov byte ptr [esi],0
         .endif
 
-        .break .if !ParseAssignment(esi, tokenarray)
+        .break .if !ParseAssignment( esi, tokenarray )
         strcat( strcat( dest, esi ), "\n" )
         mov edi,ebx
     .endw

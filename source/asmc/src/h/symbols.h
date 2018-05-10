@@ -149,7 +149,8 @@ struct asym {
 		    isproc:1,	  /* symbol is PROC or PROTO; has proc_info extension */
 		    issaved:1,	  /* assembly-time variables only: symbol has been saved */
 		    fwdref:1,	  /* symbol was forward referenced */
-		    included:1;	  /* COFF: static symbol added to public queue. ELF:symbol added to symbol table (SYM_INTERNAL) */
+		    included:1,	  /* COFF: static symbol added to public queue. ELF:symbol added to symbol table (SYM_INTERNAL) */
+		    method:1;	  /* v2.27: ptr is a class method */
     union {
 	/* for SYM_INTERNAL (data labels, memtype != NEAR|FAR), SYM_STRUCT_FIELD */
 	uint_32		first_size;   /* size of 1st initializer's dimension in bytes */

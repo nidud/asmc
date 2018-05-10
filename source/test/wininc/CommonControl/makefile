@@ -32,4 +32,3 @@ test_peW32:
 test_peW64:
     asmc -q -pe -gui -Fo $@.exe -win64 -ws test.asm
     dir *.exe | find ".exe"
-

@@ -134,7 +134,7 @@ ticlippaste proc uses esi edi ebx ti:PTINFO
     .if ClipboardPaste()
 
         mov ebx,eax
-
+if 0
         mov ecx,clipbsize   ; case not tabs and inserted
         mov al,9            ; text include tabs..
         mov edi,ebx
@@ -142,7 +142,7 @@ ticlippaste proc uses esi edi ebx ti:PTINFO
         .ifz
             or [esi].ti_flag,_T_USETABS
         .endif
-
+endif
         push [esi].ti_flag
         push [esi].ti_yoff
         push [esi].ti_loff

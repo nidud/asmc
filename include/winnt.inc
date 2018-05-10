@@ -1487,10 +1487,7 @@ endif
 if (_MSC_VER GT 1200)
 DEFAULT_UNREACHABLE	equ <default: __assume(0)>
 else
-
-
 DEFAULT_UNREACHABLE	equ <>
-
 endif
 
 DEFINE_ENUM_FLAG_OPERATORS macro ENUMTYPE
@@ -1499,14 +1496,14 @@ DEFINE_ENUM_FLAG_OPERATORS macro ENUMTYPE
 COMPILETIME_OR_2FLAGS macro a,b
 	exitm<((a) OR (b))>
 	endm
-COMPILETIME_OR_3FLAGS macro a,b,c
-	exitm<((a) OR (b) OR (c))>
+COMPILETIME_OR_3FLAGS macro a,b,q
+	exitm<((a) OR (b) OR (q))>
 	endm
-COMPILETIME_OR_4FLAGS macro a,b,c,d
-	exitm<((a) OR (b) OR (c) OR (d))>
+COMPILETIME_OR_4FLAGS macro a,b,q,d
+	exitm<((a) OR (b) OR (q) OR (d))>
 	endm
-COMPILETIME_OR_5FLAGS macro a,b,c,d,e
-	exitm<((a) OR (b) OR (c) OR (d) OR (e))>
+COMPILETIME_OR_5FLAGS macro a,b,q,d,e
+	exitm<((a) OR (b) OR (q) OR (d) OR (e))>
 	endm
 
 ifndef WIN32_NO_STATUS

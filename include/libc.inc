@@ -4,9 +4,10 @@ ifndef __LIBC_INC
 ;
 .pragma list(push, 0)
 
-_ASMLIB_	equ 227 ; Asmc Version
 __LIBC_INC	equ 1
+
 __STDC__	equ 1
+__LIBC__	equ 227 ; Asmc Version
 
 ;;
 ;; Architecture kinds:

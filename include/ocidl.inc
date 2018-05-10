@@ -761,8 +761,6 @@ OLE_YPOS_HIMETRIC	typedef ptr GUID ; DECLSPEC_UUID("66504307-BE0F-101A-8BBB-00AA
 OLE_XSIZE_HIMETRIC	typedef ptr GUID ; DECLSPEC_UUID("66504308-BE0F-101A-8BBB-00AA00300CAB")
 OLE_YSIZE_HIMETRIC	typedef ptr GUID ; DECLSPEC_UUID("66504309-BE0F-101A-8BBB-00AA00300CAB")
 
-DEFINE_IIDX(IPicture, "7BF80980-BF32-101A-8BBB-00AA00300CAB")
-
 .comdef IPicture
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -782,8 +780,9 @@ DEFINE_IIDX(IPicture, "7BF80980-BF32-101A-8BBB-00AA00300CAB")
     SaveAsFile		proc :LPSTREAM, :BOOL, :ptr
     get_Attributes	proc :ptr
     .ends
+
 LPPICTURE		typedef ptr IPicture
-externdef		IID_IPicture:IID
+DEFINE_IIDX(IPicture, "7BF80980-BF32-101A-8BBB-00AA00300CAB")
 
 endif
 
@@ -812,6 +811,7 @@ HHANDLE			typedef UINT_PTR
     SaveAsFile		proc :LPSTREAM, :BOOL, :ptr
     get_Attributes	proc :ptr
     .ends
+
 LPPICTURE2		typedef ptr IPicture2
 externdef		IID_IPicture2:IID
 
@@ -831,6 +831,7 @@ __IFontEventsDisp_INTERFACE_DEFINED__ equ 1
     GetIDsOfNames	proc :REFIID, :ptr, :DWORD, :LCID, :ptr
     _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     .ends
+
 LPFONTEVENTS		typedef ptr IFontEventsDisp
 externdef		IID_IFontEventsDisp:IID
 
@@ -849,6 +850,7 @@ __IFontDisp_INTERFACE_DEFINED__ equ 1
     GetIDsOfNames	proc :REFIID, :ptr, :DWORD, :LCID, :ptr
     _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     .ends
+
 LPFONTDISP		typedef ptr IFontDisp
 externdef		IID_IFontDisp:IID
 
@@ -867,6 +869,7 @@ __IPictureDisp_INTERFACE_DEFINED__ equ 1
     GetIDsOfNames	proc :REFIID, :ptr, :DWORD, :LCID, :ptr
     _Invoke		proc :DISPID, :REFIID, :LCID, :WORD, :ptr, :ptr, :ptr, :ptr
     .ends
+
 LPPICTUREDISP		typedef ptr IPictureDisp
 externdef		IID_IPictureDisp:IID
 
@@ -889,6 +892,7 @@ __IOleInPlaceObjectWindowless_INTERFACE_DEFINED__ equ 1
     OnWindowMessage	proc :DWORD, :WPARAM, :LPARAM, :ptr
     GetDropTarget	proc :ptr
     .ends
+
 LPOLEINPLACEOBJECTWINDOWLESS typedef ptr IOleInPlaceObjectWindowless
 externdef		IID_IOleInPlaceObjectWindowless:IID
 
@@ -922,6 +926,7 @@ ACTIVATE_WINDOWLESS	equ 1
     OnInPlaceDeactivateEx proc :BOOL
     RequestUIActivate	proc
     .ends
+
 LPOLEINPLACESITEEX	typedef ptr IOleInPlaceSiteEx
 externdef		IID_IOleInPlaceSiteEx:IID
 
@@ -969,6 +974,7 @@ OLEDC_OFFSCREEN		equ 0x4
     AdjustRect		proc :LPRECT
     OnDefWindowMessage	proc :DWORD, :WPARAM, :LPARAM, :ptr
     .ends
+
 LPOLEINPLACESITEWINDOWLESS typedef ptr IOleInPlaceSiteWindowless
 externdef		IID_IOleInPlaceSiteWindowless:IID
 

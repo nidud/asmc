@@ -131,18 +131,16 @@ static void SetModel( void )
 	 * to enable the win64 ABI from the source.
 	 */
 	if ( ( ModuleInfo.curr_cpu & P_CPU_MASK ) == P_64 )
-	    if ( ModuleInfo.langtype == LANG_FASTCALL
-#ifdef FCT_ELF64
-	    || ModuleInfo.langtype == LANG_SYSCALL
-#endif
-	    ) {
-		if ( Options.output_format != OFORMAT_ELF ) {
+	    if ( ModuleInfo.langtype == LANG_FASTCALL ||
+		 ModuleInfo.langtype == LANG_SYSCALL ||
+		 ModuleInfo.langtype == LANG_VECTORCALL ) {
+
+		if ( ModuleInfo.langtype == LANG_VECTORCALL )
+		    ModuleInfo.fctype = FCT_VEC64;
+		else if ( Options.output_format != OFORMAT_ELF )
 		    ModuleInfo.fctype = FCT_WIN64;
-#ifdef FCT_ELF64
-		} else {
+		else
 		    ModuleInfo.fctype = FCT_ELF64;
-#endif
-		}
 	    }
 	/* v2.11: define symbol FLAT - after default offset size has been set! */
 	DefineFlatGroup();
@@ -196,7 +194,8 @@ static void SetModel( void )
     sym_Model	  = AddPredefinedConstant( "@Model", ModuleInfo.model );
     sym_Interface = AddPredefinedConstant( "@Interface", ModuleInfo.langtype );
 
-    if ( ModuleInfo.defOfssize == USE64 && ModuleInfo.fctype == FCT_WIN64 ) {
+    if ( ModuleInfo.defOfssize == USE64 &&
+	( ModuleInfo.fctype == FCT_WIN64 || ModuleInfo.fctype == FCT_VEC64 ) ) {
 	sym_ReservedStack = AddPredefinedConstant( "@ReservedStack", 0 );
     }
     if ( ModuleInfo.sub_format == SFORMAT_PE ||

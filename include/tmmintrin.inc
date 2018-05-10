@@ -10,73 +10,170 @@ ifdef _M_CEE_PURE
 endif
 include pmmintrin.inc
 ifdef _MM2_FUNCTIONALITY
+;; support old notation
 ifndef _MM_FUNCTIONALITY
 _MM_FUNCTIONALITY equ <>
 endif
 endif
 
-_mm_hadd_epi16	proto :oword, :oword
-_mm_hadd_epi32	proto :oword, :oword
-_mm_hadds_epi16 proto :oword, :oword
+_mm_hadd_epi16 macro a, b
+	phaddw a,b
+	retm<a>
+	endm
+_mm_hadd_epi32 macro a, b
+	phaddd a,b
+	retm<a>
+	endm
+_mm_hadds_epi16 macro a, b
+	phaddsw a,b
+	retm<a>
+	endm
 
 ifdef _M_IX86
-_mm_hadd_pi16 proto :sqword, :sqword
-_mm_hadd_pi32 proto :sqword, :sqword
-_mm_hadds_pi16 proto :sqword, :sqword
+_mm_hadd_pi16 macro a, b
+	phaddw a,b
+	retm<a>
+	endm
+_mm_hadd_pi32 macro a, b
+	phaddd a,b
+	retm<a>
+	endm
+_mm_hadds_pi16 macro a, b
+	phaddsw a,b
+	retm<a>
+	endm
 endif
 
-_mm_hsub_epi16 proto :oword, :oword
-_mm_hsub_epi32 proto :oword, :oword
-_mm_hsubs_epi16 proto :oword, :oword
+_mm_hsub_epi16 macro a, b
+	phsubw a,b
+	retm<a>
+	endm
+_mm_hsub_epi32 macro a, b
+	phsubd a,b
+	retm<a>
+	endm
+_mm_hsubs_epi16 macro a, b
+	phsubsw a,b
+	retm<a>
+	endm
 
 ifdef _M_IX86
-_mm_hsub_pi16 proto :sqword, :sqword
-_mm_hsub_pi32 proto :sqword, :sqword
-_mm_hsubs_pi16 proto :sqword, :sqword
+_mm_hsub_pi16 macro a, b
+	phsubw a,b
+	retm<a>
+	endm
+_mm_hsub_pi32 macro a, b
+	phsubd a,b
+	retm<a>
+	endm
+_mm_hsubs_pi16 macro a, b
+	phsubsw a,b
+	retm<a>
+	endm
 endif
 
-_mm_maddubs_epi16 proto :oword, :oword
+_mm_maddubs_epi16 macro a, b
+	pmaddubsw a,b
+	retm<a>
+	endm
 
 ifdef _M_IX86
-_mm_maddubs_pi16 proto :sqword, :sqword
+_mm_maddubs_pi16 macro a, b
+	pmaddubsw a,b
+	retm<a>
+	endm
 endif
 
-_mm_mulhrs_epi16 proto :oword, :oword
+_mm_mulhrs_epi16 macro a, b
+	pmulhrsw a,b
+	retm<a>
+	endm
 
 ifdef _M_IX86
-_mm_mulhrs_pi16 proto :sqword, :sqword
+_mm_mulhrs_pi16 macro a, b
+	pmulhrsw a,b
+	retm<a>
+	endm
 endif
 
-_mm_shuffle_epi8 proto :oword, :oword
+_mm_shuffle_epi8 macro a, b
+	pshufb a,b
+	retm<a>
+	endm
 
 ifdef _M_IX86
-_mm_shuffle_pi8 proto :sqword, :sqword
+_mm_shuffle_pi8 macro a, b
+	pshufb a,b
+	retm<a>
+	endm
 endif
 
-_mm_sign_epi8	proto :oword, :oword
-_mm_sign_epi16	proto :oword, :oword
-_mm_sign_epi32	proto :oword, :oword
+_mm_sign_epi8 macro a, b
+	psignb a,b
+	retm<a>
+	endm
+_mm_sign_epi16 macro a, b
+	psignw a,b
+	retm<a>
+	endm
+_mm_sign_epi32 macro a, b
+	psignd a,b
+	retm<a>
+	endm
 
 ifdef _M_IX86
-_mm_sign_pi8	proto :sqword, :sqword
-_mm_sign_pi16	proto :sqword, :sqword
-_mm_sign_pi32	proto :sqword, :sqword
+_mm_sign_pi8 macro a, b
+	psignb a,b
+	retm<a>
+	endm
+_mm_sign_pi16 macro a, b
+	psignw a,b
+	retm<a>
+	endm
+_mm_sign_pi32 macro a, b
+	psignd a,b
+	retm<a>
+	endm
 endif
 
-_mm_alignr_epi8 proto :oword, :oword
+_mm_alignr_epi8 macro a, b, i
+	palignr a,b,i
+	retm<a>
+	endm
 
 ifdef _M_IX86
-_mm_alignr_pi8	proto :sqword, :sqword, :sdword
+_mm_alignr_pi8 macro a, b, i
+	palignr a,b,i
+	retm<a>
+	endm
 endif
 
-_mm_abs_epi8	proto :oword
-_mm_abs_epi16	proto :oword
-_mm_abs_epi32	proto :oword
+_mm_abs_epi8 macro a
+	pabsb a,a
+	retm<a>
+	endm
+_mm_abs_epi16 macro a
+	pabsw a,a
+	retm<a>
+	endm
+_mm_abs_epi32 macro a
+	pabsd a,a
+	retm<a>
+	endm
 
 ifdef _M_IX86
-_mm_abs_pi8 proto :qword
-_mm_abs_pi16 proto :qword
-_mm_abs_pi32 proto :qword
+_mm_abs_pi8 macro a
+	pabsb a,a
+	retm<a>
+	endm
+_mm_abs_pi16 macro a
+	pabsw a,a
+	retm<a>
+	endm
+_mm_abs_pi32 macro a
+	pabsd a,a
+	retm<a>
+	endm
 endif
 
 endif

@@ -434,7 +434,7 @@ ret_code StoreMacro( struct dsym *macro, int i, struct asm_tok tokenarray[], boo
 		ls.output = StringBufferEnd;
 		GetToken( &tok[0], &ls );
 		if ( !is_valid_id_first_char( *StringBufferEnd ) ) {
-		    asmerr(2008, StringBufferEnd );
+		    asmerr( 2008, StringBufferEnd );
 		    break;
 		} else if ( tok[0].token != T_ID )
 		    asmerr( 7006, StringBufferEnd );
@@ -454,7 +454,7 @@ ret_code StoreMacro( struct dsym *macro, int i, struct asm_tok tokenarray[], boo
 		if ( *ls.input == ',' ) {
 		    ls.input++;
 		} else if ( is_valid_id_first_char( *ls.input ) ) {
-		    asmerr(2008, ls.input );
+		    asmerr( 2008, ls.input );
 		    break;
 		}
 	    }

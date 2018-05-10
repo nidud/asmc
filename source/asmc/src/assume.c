@@ -82,7 +82,6 @@ void SetSegAssumeTable( void *savedstate )
 }
 
 void GetSegAssumeTable( void *savedstate )
-/****************************************/
 {
     memcpy( savedstate, &SegAssumeTable, sizeof(SegAssumeTable) );
 }
@@ -95,7 +94,6 @@ void GetSegAssumeTable( void *savedstate )
  */
 
 void SetStdAssumeTable( void *savedstate, struct stdassume_typeinfo *ti )
-/***********************************************************************/
 {
     int i;
 
@@ -165,7 +163,6 @@ void AssumeInit( int pass ) /* pass may be -1 here! */
  * model is in ModuleInfo.model, it can't be MODEL_NONE.
  */
 void ModelAssumeInit( void )
-/**************************/
 {
     const char *pCS;
     const char *pFSassume = szError;
@@ -175,7 +172,7 @@ void ModelAssumeInit( void )
     /* Generates codes for assume */
     switch( ModuleInfo.model ) {
     case MODEL_FLAT:
-	if ( ModuleInfo.fctype == FCT_WIN64 )
+	if ( ModuleInfo.fctype == FCT_WIN64 || ModuleInfo.fctype == FCT_VEC64 )
 	    pGSassume = szNothing;
 	AddLineQueueX( "%r %r:%r,%r:%r,%r:%r,%r:%r,%r:%s,%r:%s",
 		  T_ASSUME, T_CS, T_FLAT, T_DS, T_FLAT, T_SS, T_FLAT, T_ES, T_FLAT, T_FS, pFSassume, T_GS, pGSassume );
@@ -208,7 +205,6 @@ void ModelAssumeInit( void )
 /* used by INVOKE directive */
 
 struct asym *GetStdAssume( int reg )
-/**********************************/
 {
     if ( StdAssumeTable[reg].symbol )
 	if ( StdAssumeTable[reg].symbol->mem_type == MT_TYPE )
@@ -223,13 +219,13 @@ struct asym *GetStdAssume( int reg )
  */
 
 struct asym *GetStdAssumeEx( int reg )
-/************************************/
 {
-    return( StdAssumeTable[reg].symbol );
+    if ( reg < NUM_STDREGS )
+	return( StdAssumeTable[reg].symbol );
+    return NULL;
 }
 
 int AssumeDirective( int i, struct asm_tok tokenarray[] )
-/************************************************************/
 /* Handles ASSUME
  * syntax is :
  * - ASSUME

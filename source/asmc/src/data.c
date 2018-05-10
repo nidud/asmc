@@ -47,9 +47,11 @@
 #include <atofloat.h>
 #include <float.h>
 
-#ifdef _ASMC
+#ifdef __LIBC__
+
 void _qftod(void *, const void *);
 void _qftold(void *, const void *);
+
 #endif
 
 int segm_override( const struct expr *, struct code_info * );
@@ -370,6 +372,8 @@ static char *little_endian( const char *src, unsigned len )
     return( StringBufferEnd );
 }
 
+#ifdef __LIBC__
+
 void resize_float( struct expr *opnd, unsigned size )
 {
     double double_value;
@@ -400,6 +404,8 @@ void resize_float( struct expr *opnd, unsigned size )
     }
 }
 
+#endif
+
 static void output_float( struct expr *opnd, unsigned size )
 {
     /* v2.07: buffer extended to max size of a data item (=32).
@@ -408,7 +414,7 @@ static void output_float( struct expr *opnd, unsigned size )
     char buffer[32];
 
     if ( opnd->mem_type != MT_EMPTY
-#ifdef _ASMC
+#ifdef __LIBC__
 	&& opnd->float_tok
 #endif
     ) {
@@ -422,13 +428,13 @@ static void output_float( struct expr *opnd, unsigned size )
 	}
 	OutputDataBytes( buffer, size );
     } else
-#ifdef _ASMC
+#ifdef __LIBC__
     if ( opnd->float_tok )
 #endif
     {
 	atofloat( buffer, opnd->float_tok->string_ptr, size, opnd->negative, opnd->float_tok->floattype );
 	OutputDataBytes( buffer, size );
-#ifdef _ASMC
+#ifdef __LIBC__
     } else {
 	if ( size != 16 )
 	    resize_float( opnd, size );

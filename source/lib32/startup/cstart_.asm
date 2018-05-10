@@ -16,9 +16,9 @@ main_	proto syscall
 
 	dd 495A440Ah
 	dd 564A4A50h
-	db _ASMLIB_ / 100 + '0','.',_ASMLIB_ mod 100 / 10 + '0',_ASMLIB_ mod 10 + '0'
+	db __LIBC__ / 100 + '0','.',__LIBC__ mod 100 / 10 + '0',__LIBC__ mod 10 + '0'
 
-cstart_ PROC
+cstart_ proc
 	mov eax,offset _INIT
 	mov edx,offset _IEND
 	__initialize(eax, edx)
@@ -27,7 +27,6 @@ cstart_ PROC
 	mov ebx,_environ
 	mov eax,ecx
 	exit(main_())
-
 cstart_ endp
 
 	END	cstart_

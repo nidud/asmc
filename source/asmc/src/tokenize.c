@@ -146,7 +146,6 @@ static int get_float( struct asm_tok *buf, struct line_status *p )
 }
 
 static int ConcatLine( char *src, int cnt, char *out, struct line_status *ls )
-/*********************************************************************************/
 {
     char *p = src+1;
     int max;
@@ -174,7 +173,6 @@ static int ConcatLine( char *src, int cnt, char *out, struct line_status *ls )
 }
 
 static int get_string( struct asm_tok *buf, struct line_status *p )
-/**********************************************************************/
 {
     char    symbol_o;
     char    symbol_c;
@@ -444,21 +442,18 @@ static int get_special_symbol( struct asm_tok *buf, struct line_status *p )
 	    struct asym *sym = SymFind( (buf-1)->string_ptr );
 	    struct asm_tok *tok = (buf-1);
 
-	    if ( !sym && p->index >= 3 && (tok-1)->token == T_DOT ) {
+	    if ( !sym && p->index >= 3 && (buf-2)->token == T_DOT ) {
 
 		/* p.x(...) | [...][.type].x(...) */
 
-		tok -= 2;
-		if ( (tok-1)->token == T_CL_SQ_BRACKET ) {
+		tok = (buf-3);
+		if ( tok->token == T_CL_SQ_BRACKET ) {
 
 		    tok += 2;
-		    sym++;
-		    state = SYM_TYPE;
+		    goto case_type;
 
-		} else {
-
-		    sym = SymFind( (tok-1)->string_ptr );
-		}
+		} else
+		    sym = SymFind( tok->string_ptr );
 	    }
 
 	    if ( sym ) {
@@ -512,17 +507,24 @@ static int get_special_symbol( struct asm_tok *buf, struct line_status *p )
 
 		    } else if ( state == SYM_TYPE ) { /* structure, union, typedef, record */
 
+			case_type:
 			/* [...].type.x(...) */
 			if ( p->index >= 5 && (tok-1)->token == T_DOT && (tok-2)->token == T_CL_SQ_BRACKET ) {
 
-			    tok -= 4;
-			    state = p->index - 4;
+			    int q = 1;
 
-			    while ( state && tok->token != T_OP_SQ_BRACKET ) {
-
+			    tok -= 3;
+			    state = p->index - 3;
+			    do {
+				if ( tok->token == T_OP_SQ_BRACKET ) {
+				    q--;
+				    if ( q == 0 )
+					break;
+				} else if ( tok->token == T_CL_SQ_BRACKET ) {
+				    q++;
+				}
 				tok--;
-				state--;
-			    };
+			    } while ( --state );
 
 			    if ( tok->token == T_OP_SQ_BRACKET ) {
 
@@ -543,13 +545,9 @@ static int get_special_symbol( struct asm_tok *buf, struct line_status *p )
 		tok->hll_flags |= flag;
 
 	    } else if ( *(p->input+1) == ')' ) {
-		//
-		// undefined code label..
-		//
-		// label() or .if label()
-		// ...
-		// label:
-		//
+
+		/* undefined code label.. */
+
 		tok->hll_flags |= T_HLL_PROC;
 	    }
 	}
@@ -816,6 +814,8 @@ static int get_id( struct asm_tok *buf, struct line_status *p )
     char *dst = p->output;
     int	 index;
     unsigned size;
+
+    buf->bytval = 0; /* added v2.27 */
 
     if ( *src == 'L' && *(src+1) == '"' && _brachets ) {
 	*dst = 'L';

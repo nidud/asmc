@@ -18,7 +18,7 @@ _IEND	ENDS
 
     dd 495A440Ah
     dd 564A4A50h
-    db _ASMLIB_ / 100 + '0','.',_ASMLIB_ mod 100 / 10 + '0',_ASMLIB_ mod 10 + '0'
+    db __LIBC__ / 100 + '0','.',__LIBC__ mod 100 / 10 + '0',__LIBC__ mod 10 + '0'
 
 wWinStart proc
 

@@ -80,6 +80,7 @@ LANG_PASCAL		equ 4
 LANG_FORTRAN		equ 5
 LANG_BASIC		equ 6
 LANG_FASTCALL		equ 7
+LANG_VECTORCALL		equ 8
 
 MODEL_NONE		equ 0	; Memory model type.
 MODEL_TINY		equ 1	; the order cannot be changed, it's
@@ -177,6 +178,8 @@ FCT_MSC			equ 0	; MS 16-/32-bit fastcall (ax,dx,cx / ecx,edx)
 FCT_WATCOMC		equ 1	; OW register calling convention (eax, ebx, ecx, edx)
 FCT_WIN64		equ 2	; Win64 fastcall convention (rcx, rdx, r8, r9)
 FCT_ELF64		equ 3	; Linux 64 syscall
+FCT_VEC32		equ 4
+FCT_VEC64		equ 5
 
 STDCALL_FULL		equ 0
 STDCALL_NONE		equ 1
@@ -591,6 +594,8 @@ func_ptr_p		typedef ptr func_ptr_t
 internal_func_t		typedef proto :ptr asym, :PVOID
 internal_func		typedef ptr internal_func_t
 
+LPASYM			typedef ptr asym
+
 asym			STRUC
 ;;
 ;; v2.11: name changed from 'next' to 'nextitem'
@@ -610,21 +615,22 @@ asym			STRUC
  _segment		PVOID ?
  state			db ?
  mem_type		db ?
- SFL_USED		equ 0001h
- SFL_ISDEFINED		equ 0002h
- SFL_SCOPED		equ 0004h
- SFL_IAT_USED		equ 0008h
- SFL_ISEQUATE		equ 0010h
- SFL_PREDEFINED		equ 0020h
- SFL_VARIABLE		equ 0040h
- SFL_ISPUBLIC		equ 0080h
- SFL_LIST		equ 0100h
- SFL_ISARRAY		equ 0200h
- SFL_ISDATA		equ 0400h
- SFL_ISPROC		equ 0800h
- SFL_ISSAVED		equ 1000h
- SFL_FWDREF		equ 2000h
- SFL_INCLUDED		equ 4000h
+ SFL_USED		equ 0x0001
+ SFL_ISDEFINED		equ 0x0002
+ SFL_SCOPED		equ 0x0004
+ SFL_IAT_USED		equ 0x0008
+ SFL_ISEQUATE		equ 0x0010
+ SFL_PREDEFINED		equ 0x0020
+ SFL_VARIABLE		equ 0x0040
+ SFL_ISPUBLIC		equ 0x0080
+ SFL_LIST		equ 0x0100
+ SFL_ISARRAY		equ 0x0200
+ SFL_ISDATA		equ 0x0400
+ SFL_ISPROC		equ 0x0800
+ SFL_ISSAVED		equ 0x1000
+ SFL_FWDREF		equ 0x2000
+ SFL_INCLUDED		equ 0x4000
+ SFL_METHOD		equ 0x8000
  flag			dw ?	; remove bitfield
  UNION
     first_size		dd ?
@@ -677,7 +683,7 @@ asym			STRUC
  ENDS
  name_size		dw ?
  langtype		dw ?
- _type			PVOID ?
+ _type			LPASYM ?
  UNION
     bp_fixup		PVOID ? ; fixup *
     ext_idx		dd ?
@@ -687,7 +693,25 @@ asym			STRUC
     ENDS
  ENDS
 asym			ENDS
-LPASYM			typedef ptr asym
+
+_asym_state macro reg:=<eax>
+    exitm<[reg].asym.state>
+    endm
+_asym_name macro reg:=<eax>
+    exitm<[reg].asym._name>
+    endm
+_asym_mem_type macro reg:=<eax>
+    exitm<[reg].asym.mem_type>
+    endm
+_asym_type macro reg:=<eax>
+    exitm<[reg].asym._type>
+    endm
+_asym_target_type macro reg:=<eax>
+    exitm<[reg].asym.target_type>
+    endm
+_asym_typekind macro reg:=<eax>
+    exitm<[reg].asym.typekind>
+    endm
 
 seg_item		STRUC
  next			dd ?
@@ -870,6 +894,25 @@ asm_tok			STRUC
 asm_tok			ENDS
 LPTOKEN			TYPEDEF PTR asm_tok
 
+_tok_token macro reg:=<ebx>, id:=<0>
+    exitm<[reg+(id)*16].asm_tok.token>
+    endm
+_tok_dirtype macro reg:=<ebx>, id:=<0>
+    exitm<[reg+(id)*16].asm_tok.dirtype>
+    endm
+_tok_flags macro reg:=<ebx>, id:=<0>
+    exitm<[reg+(id)*16].asm_tok.hll_flags>
+    endm
+_tok_tokval macro reg:=<ebx>, id:=<0>
+    exitm<[reg+(id)*16].asm_tok.tokval>
+    endm
+_tok_string macro reg:=<ebx>, id:=<0>
+    exitm<[reg+(id)*16].asm_tok.string_ptr>
+    endm
+_tok_tokpos macro reg:=<ebx>, id:=<0>
+    exitm<[reg+(id)*16].asm_tok.tokpos>
+    endm
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 EXPR_EMPTY	equ EMPTY
@@ -1019,6 +1062,7 @@ casealign		db ?	; OPTION:CASEALIGN setting
 epilogueflags		db ?	; OPTION EPILOGUE: FLAGS
 segmentalign		db ?	; -Sp[n] Set segment alignment
 pe_subsystem		db ?	; -cui, -gui
+homeparams		db ?	; -homeparams
 global_options		ENDS
 
 PLPSTR			typedef PTR LPSTR

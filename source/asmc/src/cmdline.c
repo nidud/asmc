@@ -66,7 +66,9 @@ struct global_options Options = {
 	0,			// .casealign
 	0,			// .epilogueflags
 	4,			// .segmentalign
-	0			// .pe_subsystem
+	0,			// .pe_subsystem
+	0			// .homeparams
+
 };
 
 char *DefaultDir[NUM_FILE_TYPES] = { NULL };
@@ -348,7 +350,7 @@ static void ProcessOption( char **cmdline, char *buffer )
 	j &= 0xFFFF;
 
     switch ( j ) {
-    case 'essa':		// -assert
+    case 'essa':	// -assert
 	Options.xflag = _XF_ASSERT;
 	return;
     case 'c':		// -c
@@ -418,16 +420,19 @@ static void ProcessOption( char **cmdline, char *buffer )
     case 'cpf':		// -fpc
 	Options.cpu = P_NO87;
 	return;
-    case 'cg':		// -gc
+    case 'cG':		// -Gc
 	Options.langtype = LANG_PASCAL;
 	return;
-    case 'dg':		// -gd
+    case 'dG':		// -Gd
 	Options.langtype = LANG_C;
 	return;
-    case 'rg':		// -gr
+    case 'rG':		// -Gr
 	Options.langtype = LANG_FASTCALL;
 	return;
-    case 'zg':		// -gz
+    case 'vG':		// -Gv
+	Options.langtype = LANG_VECTORCALL;
+	return;
+    case 'zG':		// -Gz
 	Options.langtype = LANG_STDCALL;
 	return;
     case 'iug':		// -gui - subsystem:windows
@@ -438,6 +443,9 @@ static void ProcessOption( char **cmdline, char *buffer )
     case 'h':
 	write_options();
 	exit( 1 );
+    case 'emoh':	// -homeparams
+	Options.homeparams = W64F_SAVEREGPARAMS;
+	return;
     case 'zm':		// -mz
 	Options.output_format = OFORMAT_BIN;
 	Options.sub_format = SFORMAT_MZ;
@@ -526,7 +534,8 @@ static void ProcessOption( char **cmdline, char *buffer )
 	    Options.output_format = OFORMAT_COFF;
 	} else {
 	    Options.model = MODEL_FLAT;
-	    Options.langtype = LANG_FASTCALL;
+	    if ( Options.langtype != LANG_VECTORCALL )
+		Options.langtype = LANG_FASTCALL;
 	}
 	Options.sub_format = SFORMAT_64BIT;
 	define_name( "_WIN64", 1 );

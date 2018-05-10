@@ -167,6 +167,7 @@ DEFINE_GUID(IID_IDXGIFactory2, 0x50c83a1c, 0xe072, 0x4c48, 0x87,0xb0, 0x36,0x30,
     CreateSwapChainForComposition proc :ptr, :ptr, :ptr, :ptr
     .ends
 
+LPIDXGIFactory2 typedef ptr IDXGIFactory2
 endif
 
 DXGI_GRAPHICS_PREEMPTION_GRANULARITY typedef SDWORD

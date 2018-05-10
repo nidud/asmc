@@ -15,6 +15,7 @@
 ****************************************************************************/
 
 #include <globals.h>
+#include <types.h>
 #include <hllext.h>
 
 static int GetExpression( struct hll_item *hll, int *i, struct asm_tok[], int ilabel, int is_true, char *buffer, struct hll_opnd * );
@@ -613,9 +614,7 @@ static int GetExpression( struct hll_item *hll, int *i, struct asm_tok tokenarra
 
 int ExpandCStrings( struct asm_tok tokenarray[] )
 {
-    int i;
-    int j;
-    int k;
+    int i,j,k;
 
     if ( !( ModuleInfo.aflag & _AF_ON ) )
 	return 0;
@@ -625,13 +624,29 @@ int ExpandCStrings( struct asm_tok tokenarray[] )
 
 	    if ( Parse_Pass == PASS_1 )
 		return ( GenerateCString( k, tokenarray ) );
-	    j = 1;
+
+	    if ( tokenarray[i].token == T_OP_SQ_BRACKET ) {
+		j = 1;
+		do {
+		    i++;
+		    if ( tokenarray[i].token == T_CL_SQ_BRACKET ) {
+		       j--;
+			if ( j == 0 ) break;
+		    } else if ( tokenarray[i].token == T_OP_SQ_BRACKET )
+		       j++;
+		} while ( tokenarray[i].token != T_FINAL );
+		i++;
+		if ( tokenarray[i].token == T_DOT )
+		    i++;
+	    }
+	    if ( tokenarray[i+1].token == T_DOT )
+		i += 2;
+
 	    i += 2;
 	    if ( tokenarray[i-1].token != T_OP_BRACKET )
-		return( asmerr( 3018, tokenarray[i-2].string_ptr,
-			tokenarray[i-1].string_ptr ) );
+		return( asmerr( 3018, tokenarray[i-2].string_ptr, tokenarray[i-1].string_ptr ) );
 
-	    for( ; tokenarray[i].token != T_FINAL; i++ ) {
+	    for( j = 1; tokenarray[i].token != T_FINAL; i++ ) {
 		if ( *tokenarray[i].string_ptr == '"' ) {
 		    return ( asmerr( 2004, tokenarray[i].string_ptr ) );
 		} else if ( *tokenarray[i].string_ptr == ')' ) {
@@ -762,7 +777,7 @@ static int StripSource( int i, int e, struct asm_tok tokenarray[] )
     else if ( ModuleInfo.Ofssize == USE16 )
 	p = " ax";
 
-    if ( proc_id ) {
+    if ( proc_id && tokenarray[proc_id].token != T_OP_SQ_BRACKET ) {
 
 	if ( (sym = (struct dsym *)GetProc( tokenarray[proc_id].string_ptr )) ) {
 
@@ -831,13 +846,194 @@ static int StripSource( int i, int e, struct asm_tok tokenarray[] )
 static int LKRenderHllProc( char *dst, int i, struct asm_tok tokenarray[] )
 {
     char b[MAX_LINE_LEN];
-    int br_count, j, k;
-    struct asym *sym;
+    char ClassVtbl[128];
+    int br_count;
+    int j, k, x;
+    struct asym *sym = NULL;
+    struct asym *target = NULL;
+    int static_struct = 0;
+    char *comptr = NULL;
+    char *method;
+    struct expr opnd;
+    int sqbrend = 0;
+    uint_32 u;
 
-    strcpy( b, "invoke " );  // assume proc(...)
-    strcat( b, tokenarray[i].string_ptr );
+    strcpy( b, "invoke " );
+
+    if ( tokenarray[i].token == T_OP_SQ_BRACKET ) {
+	/*
+	 * v2.27 - [reg].Class.Method()
+	 *	 - [reg+foo([rax])].Class.Method()
+	 *	 - [reg].Method()
+	 */
+	for ( k = 1, j = i + 1; k && tokenarray[j].token != T_FINAL; j++ ) {
+
+	    if ( tokenarray[j].token == T_OP_SQ_BRACKET )
+		k++;
+	    else if ( tokenarray[j].token == T_CL_SQ_BRACKET )
+		k--;
+	    else if ( tokenarray[j].hll_flags & T_HLL_PROC ) {
+		if ( LKRenderHllProc( dst, j, tokenarray ) == ERROR )
+		    return ERROR;
+	    }
+	}
+	sqbrend = j;
+
+	if ( tokenarray[j].token == T_DOT ) {
+
+	    if ( tokenarray[j+2].token == T_DOT ) {
+
+		/* [reg].Class.Method() */
+
+		method = tokenarray[j+3].string_ptr;
+		target = SymFind( tokenarray[j+1].string_ptr );
+	    } else if ( tokenarray[j+2].token == T_OP_BRACKET ) {
+
+		/* [reg].Method() -- assume reg:ptr Class */
+
+		method = tokenarray[j+1].string_ptr;
+		br_count = i;
+		if ( EvalOperand( &br_count, tokenarray, i + 3, &opnd, 0 ) != ERROR )
+		    target = opnd.type;
+	    }
+
+	    if ( target ) {
+
+		if ( target->state == SYM_TYPE && target->typekind == TYPE_STRUCT ) {
+
+		    /* If Class.Method do not exist assume ClassVtbl.Method do. */
+
+		    u = 0;
+		    sym = target;
+		    if ( SearchNameInStruct( sym, method, &u, 0 ) ) {
+			sym = NULL;
+			target = NULL;
+		    }
+		} else
+		    target = NULL;
+	    }
+	}
+
+    } else {
+
+	sym = SymFind( tokenarray[i].string_ptr );
+	if ( tokenarray[i+1].token == T_DOT && tokenarray[i+3].token == T_OP_BRACKET )
+	    method = tokenarray[i+2].string_ptr;
+	else
+	    method = NULL;
+
+	if ( sym && method ) {
+
+	    if ( sym->mem_type == MT_TYPE && sym->type ) {
+		target = sym->type;
+		if ( target->typekind == TYPE_TYPEDEF )
+		    target = target->target_type;
+		else if ( target->typekind == TYPE_STRUCT ) {
+
+		    if ( tokenarray[i+1].token == T_DOT && tokenarray[i+3].token == T_OP_BRACKET ) {
+
+			static_struct++;
+			sym = target;
+			if ( SearchNameInStruct( sym, method, &u, 0 ) ) {
+			    sym = NULL;
+			    target = NULL;
+			}
+		    }
+		} else
+		    target = NULL;
+	    } else if ( sym->mem_type == MT_PTR && \
+		( sym->state == SYM_STACK || sym->state == SYM_EXTERNAL ) ) {
+
+		target = sym->target_type;
+	    }
+	}
+    }
+
+    if ( target ) {
+
+	if ( target->state == SYM_TYPE && target->typekind == TYPE_STRUCT ) {
+
+	    comptr = target->name;
+	    /*
+	     * ClassVtbl struct
+	     *	 Method()
+	     * ClassVtbl ends
+	     *
+	     * Class struct
+	     *	 lpVtbl PClassVtbl ?
+	     * Class ends
+	     */
+	    target = SearchNameInStruct( target, method, &u, 0 );
+	    if ( target == NULL ) {
+
+		target = SymFind( strcat( strcpy( ClassVtbl, comptr ), "Vtbl" ) );
+
+		if ( target ) {
+
+		    comptr = ClassVtbl;
+		    target = SearchNameInStruct( target, method, &u, 0 );
+		}
+	    }
+
+	    if ( ModuleInfo.Ofssize == USE64 )
+		strcat(b, "[rax]." );
+	    else
+		strcat(b, "[eax]." );
+
+	    comptr = strcat(b, comptr );
+	    if ( tokenarray[i].token == T_OP_SQ_BRACKET ) {
+
+		if ( tokenarray[i+2].token == T_CL_SQ_BRACKET )
+		    comptr = tokenarray[i+1].string_ptr;
+		else {
+		    comptr = strcpy( ClassVtbl, "addr [" );
+		    for ( j = i + 1; j < sqbrend; j++ )
+			strcat( comptr, tokenarray[j].string_ptr );
+		}
+	    } else
+		comptr = tokenarray[i].string_ptr;
+
+	    if ( target )
+		target->method = 1;
+	}
+    }
+
+    if ( !comptr )
+	strcat( b, tokenarray[i].string_ptr );
 
     k = i + 1;
+    if ( tokenarray[i].token == T_OP_SQ_BRACKET ) {
+
+	/* invoke [...][.type].x(...) */
+
+	do {
+	    if ( !comptr )
+		strcat( b, tokenarray[k].string_ptr );
+	    k++;
+	} while ( k + 1 < sqbrend );
+
+	if ( !comptr )
+	    strcat( b, tokenarray[k].string_ptr );
+
+	k++;
+	if ( tokenarray[k+2].token == T_DOT ) {
+	    if ( !comptr ) {
+		strcat( b, tokenarray[k].string_ptr );
+		strcat( b, tokenarray[k+1].string_ptr );
+	    }
+	    k += 2;
+	}
+    }
+
+    if ( tokenarray[k].token == T_DOT ) {
+
+	/* invoke p.x(...) */
+
+	strcat( b, tokenarray[k].string_ptr );
+	strcat( b, tokenarray[k+1].string_ptr );
+	k += 2;
+    }
+
     j = k;
     if ( tokenarray[k].token == T_OP_BRACKET ) {
 
@@ -847,6 +1043,12 @@ static int LKRenderHllProc( char *dst, int i, struct asm_tok tokenarray[] )
 	if ( tokenarray[k].token != T_CL_BRACKET ) {
 
 	    strcat( b, "," );
+	    if ( comptr ) {
+		if ( static_struct )
+		    strcat( b, "addr " );
+		strcat( b, comptr );
+		strcat( b, "," );
+	    }
 
 	    while( 1 ) {
 
@@ -880,11 +1082,15 @@ static int LKRenderHllProc( char *dst, int i, struct asm_tok tokenarray[] )
 		strcat( b, tokenarray[k].string_ptr );
 		k++;
 	    }
+	} else if ( comptr ) {
+	    strcat( b, ", " );
+	    if ( static_struct )
+		strcat( b, "addr " );
+	    strcat( b, comptr );
 	}
 
 	if ( br_count || tokenarray[k].token != T_CL_BRACKET )
 	    return ERROR;
-	j = k;
 	k++;
     }
 
@@ -893,16 +1099,12 @@ static int LKRenderHllProc( char *dst, int i, struct asm_tok tokenarray[] )
      * externals need invoke for the [_]_imp_ prefix
      */
 
-    if ( k == i + 1 || ( k == i + 3 && br_count == 0 ) ) {
+    if ( !comptr && ( ( k == i + 1 && i ) || ( k == i + 3 && br_count == 0 ) ) ) {
 
-	if ( ( sym = SymFind( tokenarray[j-2].string_ptr ) ) ) {
-
-	    if ( !( sym->state == SYM_EXTERNAL && sym->dll ) )
-		sym = NULL;
-	}
+	if ( sym && !( sym->state == SYM_EXTERNAL && sym->dll ) )
+	    sym = NULL;
 
 	if ( !sym ) {
-
 	    strcpy( b, "call" );
 	    strcat( b, &b[6] );
 	}
@@ -944,6 +1146,9 @@ int QueueTestLines( char *src )
 	if ( src = strchr( src, EOLCHAR ) )
 	    *src++ = NULLC;
 	if ( *start ) {
+#if 1
+	    if ( !( src && !_memicmp(src, "jmp ", 4) && !_memicmp(src, start, 4) ) )
+#endif
 	    AddLineQueue( start );
 	}
     }
@@ -967,6 +1172,26 @@ int ExpandHllProc( char *dst, int i, struct asm_tok tokenarray[] )
 	}
     }
     return NOT_ERROR;
+}
+
+int ExpandHllProcEx( char *dst, int i, struct asm_tok tokenarray[] )
+{
+    int rc = ExpandHllProc(dst, i, tokenarray);
+
+    if ( rc != ERROR && dst[0] ) {
+
+	strcat(dst, "\n");
+	strcat(dst, tokenarray[0].tokpos);
+	QueueTestLines(dst);
+	rc = STRING_EXPANDED;
+    }
+
+    if ( ModuleInfo.list )
+	LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), NULL );
+    if ( is_linequeue_populated() )
+	RunLineQueue();
+
+    return rc;
 }
 
 int EvaluateHllExpression( struct hll_item *hll, int *i, struct asm_tok tokenarray[],
@@ -1023,15 +1248,16 @@ int EvaluateHllExpression( struct hll_item *hll, int *i, struct asm_tok tokenarr
 	    cp = p + 4;
 	    while ( *cp == ' ' || *cp == ',' ) cp++;
 
+	    a = p[0];
+	    d = p[1];
+
 	    switch (hll->flags & (HLLF_IFD | HLLF_IFW | HLLF_IFB)) {
 	    case HLLF_IFD:
-		if (ModuleInfo.Ofssize == USE64) {
+		if ( ModuleInfo.Ofssize == USE64 ) {
 		    *p = 'e';
-		    if ( q == 0 )
+		    if ( q == 0 && a == cp[0] && d == cp[1] )
 			*cp = 'e';
-		} else if (ModuleInfo.Ofssize == USE16) {
-		    a = p[0];
-		    d = p[1];
+		} else if ( ModuleInfo.Ofssize == USE16 ) {
 		    if ( p[2] != ' ' ) {
 			if ( q )
 			    memcpy( p - 4, " or", 4);
@@ -1047,21 +1273,21 @@ int EvaluateHllExpression( struct hll_item *hll, int *i, struct asm_tok tokenarr
 		}
 		break;
 	    case HLLF_IFW:
-		if (ModuleInfo.Ofssize != USE16) {
-		    *p = ' ';
-		    if ( q == 0 )
+		if ( ModuleInfo.Ofssize != USE16 ) {
+		    p[0] = ' ';
+		    if ( q == 0 && a == cp[0] && d == cp[1] )
 			*cp = ' ';
 		}
 		break;
 	    case HLLF_IFB:
-		if (ModuleInfo.Ofssize == USE16) {
+		if ( ModuleInfo.Ofssize == USE16 ) {
 		    p[1] = 'l';
-		    if ( q == 0 )
+		    if ( q == 0 && a == cp[0] && d == cp[1] )
 			cp[1] = 'l';
 		} else {
 		    p[0] = ' ';
 		    p[2] = 'l';
-		    if ( q == 0 ) {
+		    if ( q == 0 && a == cp[0] && d == cp[1] ) {
 			cp[0] = ' ';
 			cp[2] = 'l';
 		    }

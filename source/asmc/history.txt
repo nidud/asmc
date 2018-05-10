@@ -3,9 +3,15 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.27 - xx xxx 2017
+- added command line option /homeparams
+- added command line option /Gv for vectorcall
+- added vectorcall calling convention
+- added .pragma(cref(push, <1|0>))
+- added .pragma(cref(pop))
 - added REAL16 as xmm parameter
-- fixed bug in mov rdx,p.Proc() -- missing mov rdx,rax
-- added RETM -- Macro Return
+- added <mov rdx,rax> after <mov rdx,p.Proc()> -- missing
+- added support for .comdef and .classdef to syscall -- use EDI/RDI
+- added RETM for optional Macro Return
 - added .pragma(list(push, <1|0>))
 - added .pragma(list(pop))
 - added support for float const: (2.0 / (1.0 + 3.0))

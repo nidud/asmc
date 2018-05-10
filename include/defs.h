@@ -1,6 +1,7 @@
 #ifndef __INC_DEFS
 #define __INC_DEFS
-#define _ASMLIB_ 224
+#define __LIBC__ 227
+
 #ifdef __cplusplus
  extern "C" {
 #endif

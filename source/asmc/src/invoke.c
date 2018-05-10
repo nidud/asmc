@@ -29,7 +29,6 @@
 
 int QueueTestLines( char * );
 int ExpandHllProc( char *, int, struct asm_tok[] );
-int ComInterface = 0;
 
 extern uint_32 list_pos;  /* current LST file position */
 extern int_64 maxintvalues[];
@@ -149,10 +148,8 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 	    return( NOT_ERROR );
 	}
 
-	if ( proc->sym.langtype == LANG_FASTCALL
-#ifdef FCT_ELF64
+	if ( proc->sym.langtype == LANG_FASTCALL || proc->sym.langtype == LANG_VECTORCALL
 	|| ( proc->sym.langtype == LANG_SYSCALL && ModuleInfo.Ofssize == USE64 )
-#endif
 	    ) {
 	    if ( fastcall_tab[ModuleInfo.fctype].handleparam( proc, reqParam, curr, addr, &opnd, fullparam, r0flags ) )
 		return( NOT_ERROR );
@@ -297,11 +294,8 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 
 	pushsize = CurrWordSize;
 
-	if ( proc->sym.langtype == LANG_FASTCALL
-#ifdef FCT_ELF64
-	|| ( proc->sym.langtype == LANG_SYSCALL && ModuleInfo.Ofssize == USE64 )
-#endif
-	)
+	if ( proc->sym.langtype == LANG_FASTCALL || proc->sym.langtype == LANG_VECTORCALL ||
+	    ( proc->sym.langtype == LANG_SYSCALL && ModuleInfo.Ofssize == USE64 ) )
 	    if (fastcall_tab[ModuleInfo.fctype].handleparam(
 		 proc, reqParam, curr, addr, &opnd, fullparam, r0flags))
 		return(NOT_ERROR);
@@ -709,7 +703,7 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 			    qual = T_LOW32;
 			    instr = "d";
 			    break;
-#if defined(_ASMLIB_)
+#if defined(__LIBC__)
 			case 16:
 			    if ( Ofssize == USE16 || Options.strict_masm_compat == TRUE )
 				break;
@@ -758,7 +752,7 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 			AddLineQueueX( " push%s %s", instr, fullparam );
 		}
 	    }
-#if defined(_ASMLIB_)
+#if defined(__LIBC__)
 skip_push:
 #endif
 	    if ( curr->sym.is_vararg ) {
@@ -869,11 +863,8 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 
     for (curr = info->paralist, numParam = 0 ; curr ; curr = curr->nextparam, numParam++);
 
-    if ( proc->sym.langtype == LANG_FASTCALL
-#ifdef FCT_ELF64
-	|| ( proc->sym.langtype == LANG_SYSCALL && ModuleInfo.Ofssize == USE64 )
-#endif
-    ) {
+    if ( proc->sym.langtype == LANG_FASTCALL || proc->sym.langtype == LANG_VECTORCALL ||
+	( proc->sym.langtype == LANG_SYSCALL && ModuleInfo.Ofssize == USE64 ) ) {
 	fastcall_init();
 	porder = fastcall_tab[ModuleInfo.fctype].invokestart(
 		   proc, numParam, i, tokenarray, &value);
@@ -960,10 +951,9 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 	    }
 	}
     }
-#ifdef FCT_ELF64
+
     if ( info->has_vararg && proc->sym.langtype == LANG_SYSCALL && ModuleInfo.Ofssize == USE64 )
 	 AddLineQueueX( " xor %r, %r", T_EAX, T_EAX );
-#endif
 
     /* v2.05 added. A warning only, because Masm accepts this. */
     if ( opnd.base_reg != NULL && Parse_Pass == PASS_1 &&
@@ -990,15 +980,21 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 	}
     }
 
-    if ( ComInterface && tokenarray[namepos].token == T_OP_SQ_BRACKET
-	 && tokenarray[namepos+3].token == T_DOT ) {
-	ComInterface--;
+    if ( tokenarray[namepos].token == T_OP_SQ_BRACKET && tokenarray[namepos+3].token == T_DOT &&
+	opnd.mbr && opnd.mbr->method ) {
+
 	if ( ModuleInfo.Ofssize == USE64 ) {
-	    AddLineQueue( " mov rax,[rcx]" );
+
+	    if ( sym->langtype == LANG_SYSCALL )
+		AddLineQueueX( " mov %r, [%r]", T_RAX, T_RDI );
+	    else
+		AddLineQueueX( " mov %r, [%r]", T_RAX, T_RCX );
+
 	} else if ( ModuleInfo.Ofssize == USE32 ) {
-	    if ( _memicmp(tokenarray[parmpos+1].string_ptr, "eax", 3) )
-		AddLineQueueX( " mov eax,%s", tokenarray[parmpos+1].string_ptr );
-	    AddLineQueue( " mov eax,[eax]" );
+
+	    if ( tokenarray[parmpos+1].tokval != T_EAX )
+		AddLineQueueX( " mov %r, %s", T_EAX, tokenarray[parmpos+1].string_ptr );
+	    AddLineQueueX( " mov %r, [%r]", T_EAX, T_EAX );
 	}
     }
 
@@ -1009,12 +1005,7 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 
     AddLineQueue( StringBufferEnd );
 
-    if (( sym->langtype == LANG_C ||
-	( sym->langtype == LANG_SYSCALL
-#ifdef FCT_ELF64
-	&& ModuleInfo.fctype != FCT_ELF64
-#endif
-	)) &&
+    if ( ( sym->langtype == LANG_C || ( sym->langtype == LANG_SYSCALL && ModuleInfo.fctype != FCT_ELF64 ) ) &&
 	( info->parasize || ( info->has_vararg && size_vararg ) )) {
 	if ( info->has_vararg ) {
 	    if ( ModuleInfo.epilogueflags )
@@ -1029,11 +1020,8 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 	    else
 		AddLineQueueX( " add %r, %u", stackreg[ModuleInfo.Ofssize], NUMQUAL info->parasize );
 	}
-    } else if ( sym->langtype == LANG_FASTCALL
-#ifdef FCT_ELF64
-	|| ( proc->sym.langtype == LANG_SYSCALL && ModuleInfo.fctype == FCT_ELF64 )
-#endif
-    ) {
+    } else if ( sym->langtype == LANG_FASTCALL || sym->langtype == LANG_VECTORCALL ||
+	( proc->sym.langtype == LANG_SYSCALL && ModuleInfo.fctype == FCT_ELF64 ) ) {
 	fastcall_tab[ModuleInfo.fctype].invokeend( proc, numParam, value );
     }
     LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), NULL );

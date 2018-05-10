@@ -216,8 +216,8 @@ _mm256_unpacklo_pd	proto __cdecl :yword, :yword
 _mm256_unpacklo_ps	proto __cdecl :yword, :yword
 _mm256_testz_si256	proto __cdecl :yword, :yword
 
-_mm256_test_all_zeros macro mask, val
-	exitm<_mm256_testz_si256((mask), (val))>
+_mm256_test_all_zeros macro m, val
+	exitm<_mm256_testz_si256((m), (val))>
 	endm
 
 _mm256_testc_si256	proto __cdecl :yword, :yword
@@ -226,8 +226,8 @@ _mm256_test_all_ones macro val
 	endm
 
 _mm256_testnzc_si256	proto __cdecl :yword, :yword
-_mm256_test_mix_ones_zeros macro mask, val
-	exitm<_mm256_testnzc_si256((mask), (val))>
+_mm256_test_mix_ones_zeros macro m, val
+	exitm<_mm256_testnzc_si256((m), (val))>
 	endm
 
 _mm256_testz_pd		proto __cdecl :yword, :yword

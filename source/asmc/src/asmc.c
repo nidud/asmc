@@ -25,7 +25,7 @@
 void CmdlineFini( void );
 char *ParseCmdline( char **, int * );
 
-#ifndef _ASMC
+#ifndef __LIBC__
 
 char *strfcat( char *buffer, const char *path, const char *file )
 {
@@ -88,6 +88,14 @@ static int AssembleSubdir( char *directory, char *wild )
     return rc;
 }
 
+typedef struct {
+ void  *ExceptionRecord;
+ void  *ContextRecord;
+} EXCEPTION_POINTERS, *PEXCEPTION_POINTERS;
+extern EXCEPTION_POINTERS *pCurrentException;
+
+void PrintContext(void *, void *);
+
 static void GeneralFailure( int signo )
 {
 #if CATCHBREAK
@@ -95,10 +103,10 @@ static void GeneralFailure( int signo )
 #else
     if ( signo != SIGTERM ) {
 #endif
+
+	//PrintContext( pCurrentException->ContextRecord, pCurrentException->ExceptionRecord );
 	asmerr( 1901 );
     }
-    close_files();
-    exit( 1 );
 }
 
 int main( int argc, char **argv )

@@ -550,7 +550,8 @@ ModulePassInit proc uses esi
     mov ModuleInfo.codepage,eax
     mov al,Options.epilogueflags
     mov ModuleInfo.epilogueflags,al
-
+    mov al,Options.homeparams
+    mov ModuleInfo.win64_flags,al
     ;
     ; if OPTION DLLIMPORT was used, reset all iat_used flags
     ;

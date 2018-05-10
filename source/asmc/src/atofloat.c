@@ -9,7 +9,6 @@
 ****************************************************************************/
 
 #include <float.h>
-//#include <math.h>
 
 #include <globals.h>
 #include <tbyte.h>
@@ -17,17 +16,18 @@
 
 #define USESTRTOF 0 /* 0=use strtod() and convert "manually", 1=use strtof() */
 
-#ifdef _ASMC
+#ifdef __LIBC__
+
 void _qftod(void *, void *);
 void _qftold(void *, void *);
+
 #endif
 
 /* it's ensured that 'out' points to a buffer with a size of at least 16 */
 
 void atofloat( void *out, const char *inp, unsigned size, bool negative, uint_8 ftype )
-/*************************************************************************************/
 {
-#ifdef _ASMC
+#ifdef __LIBC__
     uint_8 mant[16];
 #endif
     double double_value;
@@ -52,7 +52,7 @@ void atofloat( void *out, const char *inp, unsigned size, bool negative, uint_8 
 	    }
     } else {
 	switch ( size ) {
-#ifdef _ASMC
+#ifdef __LIBC__
 	case 4:
 	case 8:
 	case 10:
@@ -135,4 +135,3 @@ void atofloat( void *out, const char *inp, unsigned size, bool negative, uint_8 
     }
     return;
 }
-

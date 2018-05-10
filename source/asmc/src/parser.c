@@ -131,7 +131,6 @@ void sym_remove_table( struct symbol_queue *queue, struct dsym *item )
 }
 
 void sym_ext2int( struct asym *sym )
-/**********************************/
 /* Change symbol state from SYM_EXTERNAL to SYM_INTERNAL.
  * called by:
  * - CreateConstant()		  EXTERNDEF name:ABS	       -> constant
@@ -153,11 +152,10 @@ void sym_ext2int( struct asym *sym )
 }
 
 int GetLangType( int *i, struct asm_tok tokenarray[], unsigned char *plang )
-/********************************************************************************/
 {
     if( tokenarray[*i].token == T_RES_ID ) {
 	if ( tokenarray[(*i)].tokval >= T_C &&
-	    tokenarray[(*i)].tokval <= T_FASTCALL ) {
+	    tokenarray[(*i)].tokval <= T_VECTORCALL ) {
 	    *plang = tokenarray[(*i)].bytval;
 	    (*i)++;
 	    return( NOT_ERROR );
@@ -172,7 +170,6 @@ int GetLangType( int *i, struct asm_tok tokenarray[], unsigned char *plang )
  */
 
 int SizeFromRegister( int registertoken )
-/***************************************/
 {
     unsigned flags;
     flags = GetSflagsSp( registertoken ) & SFR_SIZMSK;
@@ -196,7 +193,6 @@ int SizeFromRegister( int registertoken )
  * target_type member.
  */
 int SizeFromMemtype( unsigned char mem_type, int Ofssize, struct asym *type )
-/**************************************************************************/
 {
     if ( ( mem_type & MT_SPECIAL) == 0 )
 	return ( (mem_type & MT_SIZE_MASK) + 1 );
@@ -223,7 +219,6 @@ int SizeFromMemtype( unsigned char mem_type, int Ofssize, struct asym *type )
 
 /* get memory type from size */
 int MemtypeFromSize( int size, unsigned char *ptype )
-/*******************************************************/
 {
     int i;
     for ( i = T_BYTE; SpecialTable[i].type == RWT_STYPE; i++ ) {
@@ -295,8 +290,8 @@ static int comp_mem16( int reg1, int reg2 )
     return( asmerr( 2029 ) );
 }
 
-static void check_assume( struct code_info *CodeInfo, const struct asym *sym, enum assume_segreg default_reg )
-/************************************************************************************************************/
+static void check_assume( struct code_info *CodeInfo, const struct asym *sym,
+	enum assume_segreg default_reg )
 /* Check if an assumed segment register is found, and
  * set CodeInfo->RegOverride if necessary.
  * called by seg_override().
@@ -328,7 +323,6 @@ static void check_assume( struct code_info *CodeInfo, const struct asym *sym, en
 }
 
 static void seg_override( struct code_info *CodeInfo, int seg_reg, const struct asym *sym, bool direct )
-/******************************************************************************************************/
 /*
  * called by set_rm_sib(). determine if segment override is necessary
  * with the current address mode;
@@ -668,7 +662,7 @@ static int idata_nofixup( struct code_info *CodeInfo, unsigned CurrOpnd, struct 
     value = opndx->value;
     CodeInfo->opnd[CurrOpnd].data32l = value;
 
-#ifdef _ASMC
+#ifdef __LIBC__
     if ( opndx->mem_type == MT_REAL16 ) {
 
 	if ( CodeInfo->token == T_MOV && CodeInfo->Ofssize == USE64
@@ -2727,7 +2721,7 @@ int ParseLine( struct asm_tok tokenarray[] )
 		    int m = 4;
 		    if ( opndx[j].mem_type == MT_REAL8 )
 			m = 8;
-#ifdef _ASMC
+#ifdef __LIBC__
 		    else if ( opndx[j].mem_type == MT_REAL16 )
 			m = 16;
 		    if ( opndx[j].float_tok )

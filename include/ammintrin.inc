@@ -2,6 +2,8 @@ ifndef _INCLUDED_AMM
 _INCLUDED_AMM equ <>
 .pragma list(push, 0)
 
+; Definitions for AMD-specific intrinsics
+
 ifndef _M_IX86
 ifndef _M_X64
 .err <This header is specific to X86 and X64 targets>
@@ -223,8 +225,6 @@ _mm_comtrue_epi64 macro v1, v2
 ;; SSE5 intrinsics
 ;; Float/double multiply-accumulate
 
-ifndef _MM_NOINLINE
-
 _mm_macc_ps macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
 	endm
 _mm_macc_pd macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
@@ -265,31 +265,6 @@ _mm_nmsub_ss macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
 	endm
 _mm_nmsub_sd macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
 	endm
-
-else
-
-_mm_macc_ps	proto :oword, :oword, :oword
-_mm_macc_pd	proto :oword, :oword, :oword
-_mm_macc_ss	proto :oword, :oword, :oword
-_mm_macc_sd	proto :oword, :oword, :oword
-_mm_maddsub_ps	proto :oword, :oword, :oword
-_mm_maddsub_pd	proto :oword, :oword, :oword
-_mm_msubadd_ps	proto :oword, :oword, :oword
-_mm_msubadd_pd	proto :oword, :oword, :oword
-_mm_msub_ps	proto :oword, :oword, :oword
-_mm_msub_pd	proto :oword, :oword, :oword
-_mm_msub_ss	proto :oword, :oword, :oword
-_mm_msub_sd	proto :oword, :oword, :oword
-_mm_nmacc_ps	proto :oword, :oword, :oword
-_mm_nmacc_pd	proto :oword, :oword, :oword
-_mm_nmacc_ss	proto :oword, :oword, :oword
-_mm_nmacc_sd	proto :oword, :oword, :oword
-_mm_nmsub_ps	proto :oword, :oword, :oword
-_mm_nmsub_pd	proto :oword, :oword, :oword
-_mm_nmsub_ss	proto :oword, :oword, :oword
-_mm_nmsub_sd	proto :oword, :oword, :oword
-
-endif
 
 ;; Integer multiply-accumulate
 

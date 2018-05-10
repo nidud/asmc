@@ -129,16 +129,16 @@ tigetline proc uses esi edi ebx ti:PTINFO, line_id:UINT
     mov eax,line_id         ; ARG: line id
     mov ebx,eax
     mov edx,ti
-    mov edi,[edx].ti_bp         ; file is string[MAXFILESIZE]
+    mov edi,[edx].ti_bp     ; file is string[MAXFILESIZE]
 
     .repeat
 
-        .if eax             ; first line ?
-            mov ecx,[edx].ti_curl   ; current line ?
-            .if eax == ecx      ; save time on repeated calls..
+        .if eax                         ; first line ?
+            mov ecx,[edx].ti_curl       ; current line ?
+            .if eax == ecx              ; save time on repeated calls..
                 mov edi,[edx].ti_flp    ; pointer to current line in buffer
             .else
-                mov esi,eax     ; loop from EDI to line id in EAX
+                mov esi,eax             ; loop from EDI to line id in EAX
                 .repeat
                     .if !strchr(edi, 10)
                         mov [edx].ti_curl,eax
@@ -170,24 +170,41 @@ tigetline proc uses esi edi ebx ti:PTINFO, line_id:UINT
         xor eax,eax
 
         .if ecx < [edx].ti_blen
+
             mov [edi],eax
             mov ebx,[edx].ti_tabz   ; create mask for tabs in EBX
             dec ebx
             and ebx,TIMAXTABSIZE-1
-            .while  ecx
+
+            .while ecx
+
                 lodsb
                 .if eax == 9
-                    .repeat
+
+                    .if [edx].ti_flag & _T_USETABS
+
+                        .repeat
+                            mov [edi],ax
+                            inc edi
+                            mov eax,TITABCHAR
+                        .until !( edi & ebx )
+                    .else
+                        or [edx].ti_flag,_T_MODIFIED
+                        mov al,' '
                         mov [edi],ax
                         inc edi
-                        mov eax,TITABCHAR
-                    .until !( edi & ebx )
+                        .while ebx & edi
+                            mov [edi],ax
+                            inc edi
+                        .endw
+                    .endif
                 .else
                     mov [edi],ax
                     inc edi
                 .endif
                 dec ecx
             .endw
+
             mov eax,[edx].ti_lp     ; set expanded line size
             mov ecx,edi
             sub ecx,eax
@@ -232,18 +249,32 @@ tigetnextl proc uses esi edi ebx ti:PTINFO
             mov edi,[edx].ti_lp
             xor eax,eax
             mov [edi],eax
+
             .if ecx < [edx].ti_blen
+
                 mov ebx,[edx].ti_tabz
                 dec ebx
                 and ebx,TIMAXTABSIZE-1
-                .while  ecx
+
+                .while ecx
                     lodsb
-                    stosb
                     .if al == 9
-                        mov eax,TITABCHAR
-                        .while  edi & ebx
+                        .if [edx].ti_flag & _T_USETABS
                             stosb
-                        .endw
+                            mov eax,TITABCHAR
+                            .while edi & ebx
+                                stosb
+                            .endw
+                        .else
+                            or [edx].ti_flag,_T_MODIFIED
+                            mov al,' '
+                            stosb
+                            .while ebx & edi
+                                stosb
+                            .endw
+                        .endif
+                    .else
+                        stosb
                     .endif
                     dec ecx
                 .endw

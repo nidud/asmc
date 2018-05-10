@@ -4,6 +4,17 @@ include asmc.inc
 include token.inc
 include hll.inc
 
+conditional_assembly_prepare proto :dword
+
+MAXSAVESTACK equ 124
+
+    .data
+
+    externdef CurrIfState:DWORD
+
+    assert_stack dw MAXSAVESTACK dup(0)
+    assert_stid  dd 0
+
     .code
 
     assume ebx: ptr asm_tok
@@ -59,15 +70,6 @@ local rc:SINT,cmd:UINT,
                 .endif
             .endif
 
-            .data
-                assert_stack dw 124 dup(0)
-                assert_stid  dd 0
-
-                externdef CurrIfState:DWORD
-            .code
-
-            conditional_assembly_prepare proto :dword
-
             .if !_stricmp(edi, "CODE")
 
                 .if !(ModuleInfo.xflag & _XF_ASSERT)
@@ -90,7 +92,7 @@ local rc:SINT,cmd:UINT,
                 mov al,ModuleInfo.aflag
                 mov ah,ModuleInfo.xflag
                 mov ecx,assert_stid
-                .if ecx < 124
+                .if ecx < MAXSAVESTACK
 
                     mov assert_stack[ecx*2],ax
                     inc assert_stid
@@ -137,7 +139,7 @@ local rc:SINT,cmd:UINT,
 
         .elseif al == T_FINAL || !(ModuleInfo.xflag & _XF_ASSERT)
 
-            ;.if    !Options.quiet
+            ;.if !Options.quiet
             ;.endif
             .endc
         .endif

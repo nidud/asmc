@@ -664,7 +664,7 @@ static int GetStartLabel( char *buffer, bool msg )
 		ModuleInfo.g.start_label->langtype != LANG_STDCALL &&
 		ModuleInfo.g.start_label->langtype != LANG_SYSCALL ) {
 		if ( *ModuleInfo.g.start_label->name != '_' ) {
-		    if ( msg && ( ModuleInfo.fctype != FCT_WIN64 ) )
+		    if ( msg && ( ModuleInfo.fctype != FCT_WIN64 && ModuleInfo.fctype != FCT_VEC64 ) )
 			asmerr( 8011, ModuleInfo.g.start_label->name );
 		    strcpy( buffer, temp );
 		} else {

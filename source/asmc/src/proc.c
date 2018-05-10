@@ -1222,7 +1222,6 @@ void DeleteProc( struct dsym *proc )
 /* PROC directive. */
 
 ret_code ProcDir( int i, struct asm_tok tokenarray[] )
-/****************************************************/
 {
     struct asym		*sym;
     unsigned int	ofs;
@@ -1387,7 +1386,6 @@ ret_code ProcDir( int i, struct asm_tok tokenarray[] )
 }
 
 ret_code CopyPrototype( struct dsym *proc, struct dsym *src )
-/***********************************************************/
 {
     struct dsym *curr;
     struct dsym *newl;
@@ -1420,7 +1418,6 @@ ret_code CopyPrototype( struct dsym *proc, struct dsym *src )
 /* for FRAME procs, write .pdata and .xdata SEH unwind information */
 
 static void WriteSEHData( struct dsym *proc )
-/*******************************************/
 {
     struct dsym *xdata;
     char *segname = ".xdata";
@@ -1513,7 +1510,6 @@ static void SetLocalOffsets( struct proc_info *info );
  */
 
 static void ProcFini( struct dsym *proc )
-/***************************************/
 {
     struct dsym *curr;
     /* v2.06: emit an error if current segment isn't equal to
@@ -1578,7 +1574,6 @@ static void ProcFini( struct dsym *proc )
 /* ENDP directive */
 
 ret_code EndpDir( int i, struct asm_tok tokenarray[] )
-/****************************************************/
 {
     if( i != 1 || tokenarray[2].token != T_FINAL ) {
 	return( asmerr(2008, tokenarray[i].tokpos ) );
@@ -1604,7 +1599,6 @@ ret_code EndpDir( int i, struct asm_tok tokenarray[] )
  */
 
 ret_code ExcFrameDirective( int i, struct asm_tok tokenarray[] )
-/**************************************************************/
 {
     struct expr opndx;
     int token;
@@ -1811,7 +1805,6 @@ ret_code ExcFrameDirective( int i, struct asm_tok tokenarray[] )
  * called when the END directive has been found.
  */
 void ProcCheckOpen( void )
-/************************/
 {
     while( CurrProc != NULL ) {
 	asmerr( 1010, CurrProc->sym.name );
@@ -1820,7 +1813,6 @@ void ProcCheckOpen( void )
 }
 
 static ret_code write_userdef_prologue( struct asm_tok tokenarray[] )
-/*******************************************************************/
 {
     int			len;
     int			i;
@@ -1912,7 +1904,6 @@ static void win64_SaveRegParams( struct proc_info *info )
 	count = 6;
 	size = 16;
     }
-
     for ( i = 0, param = info->paralist; param && ( i < count ); i++ ) {
 	/* v2.05: save XMMx if type is float/double */
 	if ( param->sym.is_vararg == FALSE ) {
@@ -1923,18 +1914,12 @@ static void win64_SaveRegParams( struct proc_info *info )
 		    AddLineQueueX( "movq [%r+%u], %r", T_RSP, 8 + i * size, T_XMM0 + i );
 		else
 		    AddLineQueueX( "movaps [%r+%u], %r", T_RSP, 8 + i * size, T_XMM0 + i );
-	    } else {
-		if ( i < 4 )
-		    AddLineQueueX( "mov [%r+%u], %r", T_RSP, 8 + i * size, ms64_regs[i] );
-		else
-		    AddLineQueueX( "movq [%r+%u], %r", T_RSP, 8 + i * size, T_XMM0 + i );
+	    } else if ( i < 4 ) {
+		AddLineQueueX( "mov [%r+%u], %r", T_RSP, 8 + i * size, ms64_regs[i] );
 	    }
 	    param = param->nextparam;
-	} else { /* v2.09: else branch added */
-	    if ( i < 4 )
-		AddLineQueueX( "mov [%r+%u], %r", T_RSP, 8 + i * size, ms64_regs[i] );
-	    else
-		AddLineQueueX( "movq [%r+%u], %r", T_RSP, 8 + i * size, T_XMM0 + i );
+	} else if ( i < 4 ) { /* v2.09: else branch added */
+	    AddLineQueueX( "mov [%r+%u], %r", T_RSP, 8 + i * size, ms64_regs[i] );
 	}
     }
     return;

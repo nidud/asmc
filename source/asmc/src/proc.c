@@ -1903,7 +1903,7 @@ static ret_code write_userdef_prologue( struct asm_tok tokenarray[] )
 
 static void win64_SaveRegParams( struct proc_info *info )
 {
-    int i;
+    int x, i;
     struct dsym *param;
     int count = 4;
     int size = 8;
@@ -1923,11 +1923,18 @@ static void win64_SaveRegParams( struct proc_info *info )
 		    AddLineQueueX( "movq [%r+%u], %r", T_RSP, 8 + i * size, T_XMM0 + i );
 		else
 		    AddLineQueueX( "movaps [%r+%u], %r", T_RSP, 8 + i * size, T_XMM0 + i );
-	    } else
-		AddLineQueueX( "mov [%r+%u], %r", T_RSP, 8 + i * size, ms64_regs[i] );
+	    } else {
+		if ( i < 4 )
+		    AddLineQueueX( "mov [%r+%u], %r", T_RSP, 8 + i * size, ms64_regs[i] );
+		else
+		    AddLineQueueX( "movq [%r+%u], %r", T_RSP, 8 + i * size, T_XMM0 + i );
+	    }
 	    param = param->nextparam;
 	} else { /* v2.09: else branch added */
-	    AddLineQueueX( "mov [%r+%u], %r", T_RSP, 8 + i * size, ms64_regs[i] );
+	    if ( i < 4 )
+		AddLineQueueX( "mov [%r+%u], %r", T_RSP, 8 + i * size, ms64_regs[i] );
+	    else
+		AddLineQueueX( "movq [%r+%u], %r", T_RSP, 8 + i * size, T_XMM0 + i );
 	}
     }
     return;

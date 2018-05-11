@@ -2,9 +2,9 @@
 ; https://blogs.msdn.microsoft.com/oldnewthing/20180509-00/?p=98715
 ;
 include windows.inc
-include ole2.inc
 include shlobj.inc
 include stdio.inc
+include tchar.inc
 
 .data
 
@@ -35,4 +35,4 @@ wmain proc
 
 wmain endp
 
-    end
+    end _tstart

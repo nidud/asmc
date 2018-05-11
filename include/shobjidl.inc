@@ -6947,7 +6947,9 @@ endif
 ifndef __ShellObjects_LIBRARY_DEFINED__
 __ShellObjects_LIBRARY_DEFINED__ equ 1
 
-SID_PublishingWizard	equ CSID_PublishingWizard
+SID_PublishingWizard	equ <CSID_PublishingWizard>
+
+DEFINE_GUID(CLSID_ShellLink,	0x00021401,0,0,0xC0,0,0,0,0,0,0,0x46)
 
 externdef		LIBID_ShellObjects:IID
 externdef		CLSID_ShellDesktop:CLSID

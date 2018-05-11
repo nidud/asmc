@@ -62,10 +62,10 @@ DEFINE_GUID(IID_IShellExecuteHookW,  0x000214FB, 0, 0, 0xC0,0,0,0,0,0,0,0x46);
 DEFINE_GUID(IID_ICopyHookW,          0x000214FC, 0, 0, 0xC0,0,0,0,0,0,0,0x46);
 DEFINE_GUID(IID_IRemoteComputer,     0x000214FE, 0, 0, 0xC0,0,0,0,0,0,0,0x46);
 
-IID_IShellCopyHookA     equ IID_ICopyHookA
-IID_IShellCopyHookW     equ IID_ICopyHookW
+IID_IShellCopyHookA     equ <IID_ICopyHookA>
+IID_IShellCopyHookW     equ <IID_ICopyHookW>
 
-SID_LinkSite            equ IID_IShellLinkW
+SID_LinkSite            equ <IID_IShellLinkW>
 
 if (_WIN32_IE GE 0x0400)
 DEFINE_GUID(IID_IQueryInfo,          0x00021500, 0, 0, 0xC0,0,0,0,0,0,0,0x46);
@@ -119,9 +119,9 @@ DEFINE_GUID(VID_Thumbnails, 0x8bebb290, 0x52d0, 0x11d0, 0xb7, 0xf4, 0x0, 0xc0, 0
 DEFINE_GUID(VID_ThumbStrip, 0x8EEFA624, 0xD1E9, 0x445B, 0x94, 0xB7, 0x74, 0xFB, 0xCE, 0x2E, 0xA1, 0x1A);
 
 
-SID_SShellBrowser       equ IID_IShellBrowser
+SID_SShellBrowser       equ <IID_IShellBrowser>
 if (_WIN32_IE GE 0x0400)
-SID_SShellDesktop       equ CSID_ShellDesktop
+SID_SShellDesktop       equ <CSID_ShellDesktop>
 endif
 
 if (NTDDI_VERSION GE NTDDI_WIN7)

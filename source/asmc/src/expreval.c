@@ -1042,7 +1042,11 @@ static int wimask_op( int oper, struct expr *opnd1, struct expr *opnd2, struct a
 	    opnd1->llvalue = GetRecordMask( (struct dsym *)sym );
 	} else {
 	    for ( i = sym->offset ;i < sym->offset + sym->total_size; i++ )
+#if defined(LLONG_MAX) || defined(__GNUC__) || defined(__TINYC__)
+		opnd1->llvalue |= 1ULL << i;
+#else
 		opnd1->llvalue |= 1i64 << i;
+#endif
 	}
     } else {
 	if ( opnd2->is_type ) {

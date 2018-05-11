@@ -13,8 +13,10 @@ void	MemFini(void);
 #define myalloca  alloca
 #include <malloc.h>
 #elif defined(__GNUC__) || defined(__TINYC__)
-#define alloca(x) __builtin_alloca(x)
-#define myalloca alloca
+#include <malloc.h>
+#undef _alloca
+#define _alloca(x) __builtin_alloca((x))
+#define myalloca _alloca
 #ifndef __FreeBSD__  /* added v2.08 */
 #include <malloc.h>  /* added v2.07 */
 #endif

@@ -2267,6 +2267,8 @@ endif
 ifndef __IPersistFile_INTERFACE_DEFINED__
 __IPersistFile_INTERFACE_DEFINED__ equ 1
 
+DEFINE_GUID(IID_IPersistFile,	0x0000010b,0,0,0xC0,0,0,0,0,0,0,0x46)
+
 .comdef IPersistFile
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -2278,6 +2280,7 @@ __IPersistFile_INTERFACE_DEFINED__ equ 1
     SaveCompleted	proc :LPCOLESTR
     GetCurFile		proc :ptr
     .ends
+
 LPPERSISTFILE		typedef ptr IPersistFile
 externdef		IID_IPersistFile:IID
 

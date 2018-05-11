@@ -1,7 +1,7 @@
 #include <string.h>
 #include <globals.h>
-#include <types.h>
 #include <hllext.h>
+#include <types.h>
 
 #define MAXSTACK 16
 

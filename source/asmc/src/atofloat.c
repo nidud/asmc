@@ -16,13 +16,6 @@
 
 #define USESTRTOF 0 /* 0=use strtod() and convert "manually", 1=use strtof() */
 
-#ifdef __LIBC__
-
-void _qftod(void *, void *);
-void _qftold(void *, void *);
-
-#endif
-
 /* it's ensured that 'out' points to a buffer with a size of at least 16 */
 
 void atofloat( void *out, const char *inp, unsigned size, bool negative, uint_8 ftype )

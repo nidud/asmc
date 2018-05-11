@@ -47,12 +47,17 @@
 #ifdef __cplusplus
  extern "C" {
 #endif
-#if defined(__MT__) || defined(_DLL)
-extern int * _CDecl __errno(void);
+
+#ifndef _CRT_ERRNO_DEFINED
+#define _CRT_ERRNO_DEFINED
+#if defined(__MT__) || defined(_DLL) || defined(__GNUC__)
+extern int *__cdecl __errno(void);
 #define errno  (*__errno())
 #else
 extern int errno;
 #endif
+#endif
+
 #ifdef __cplusplus
  }
 #endif

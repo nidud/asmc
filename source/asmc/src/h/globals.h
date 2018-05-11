@@ -9,7 +9,6 @@
 #include <errno.h> /* needed for errno declaration ( "sometimes" it's defined in stdlib.h ) */
 
 #if defined(__UNIX__) || defined(__CYGWIN__) || defined(__DJGPP__) /* avoid for MinGW! */
-
 #define _stricmp strcasecmp
 #ifndef __WATCOMC__
 #define _memicmp strncasecmp

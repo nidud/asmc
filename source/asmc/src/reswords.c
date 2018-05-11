@@ -434,7 +434,6 @@ unsigned FindResWord( char *name, unsigned size )
 /* add reserved word to hash table */
 
 static void AddResWord( int token )
-/*********************************/
 {
     int i;
     int old;
@@ -463,7 +462,6 @@ static void AddResWord( int token )
 /* remove a reserved word from the hash table. */
 
 static int RemoveResWord( int token )
-/***********************************/
 {
     int i;
     int old;
@@ -500,7 +498,6 @@ struct rename_node {
  */
 
 void RenameKeyword( unsigned token, const char *name, uint_8 length )
-/**********************************************************************/
 {
     struct rename_node *curr;
     struct rename_node *prev;
@@ -563,7 +560,6 @@ void RenameKeyword( unsigned token, const char *name, uint_8 length )
  * some removed. Currently this is a bit hackish.
  */
 void Set64Bit( bool newmode )
-/***************************/
 {
     int token;
     int i;
@@ -605,7 +601,6 @@ void Set64Bit( bool newmode )
 }
 
 void DisableKeyword( unsigned token )
-/***********************************/
 {
     if ( !( ResWordTable[token].flags & RWF_DISABLED ) ) {
 	RemoveResWord( token );
@@ -624,7 +619,6 @@ void DisableKeyword( unsigned token )
  */
 
 bool IsKeywordDisabled( const char *name, int len )
-/*************************************************/
 {
     unsigned token;
     for ( token = Removed.Head; token != 0; token = ResWordTable[token].next )
@@ -638,7 +632,6 @@ bool IsKeywordDisabled( const char *name, int len )
  */
 
 char *GetResWName( unsigned resword, char *buff )
-/***********************************************/
 {
     static char intbuff[256];
     if ( !buff )
@@ -653,7 +646,6 @@ char *GetResWName( unsigned resword, char *buff )
  */
 
 void ResWordsInit( void )
-/***********************/
 {
     int i;
     const char *p = resw_strings;
@@ -688,7 +680,6 @@ void ResWordsInit( void )
  */
 
 void ResWordsFini( void )
-/***********************/
 {
     int i;
     int next;
@@ -720,4 +711,3 @@ void ResWordsFini( void )
 
     return;
 }
-

@@ -160,22 +160,31 @@ static int ms32_param( struct dsym const *proc, int index, struct dsym *param, b
 
 static int ms64_fcstart( struct dsym const *proc, int numparams, int start, struct asm_tok tokenarray[], int *value )
 {
+    int size = 8;
+    int args = 4;
+
+    if ( proc->sym.langtype == LANG_VECTORCALL ) {
+	size = 16;
+	args = 6;
+    }
     /* v2.04: VARARG didn't work */
     if ( proc->e.procinfo->has_vararg ) {
 	for ( numparams = 0; tokenarray[start].token != T_FINAL; start++ )
 	    if ( tokenarray[start].token == T_COMMA )
 		numparams++;
     }
-    if ( numparams < 4 )
-	numparams = 4;
+    if ( numparams < args )
+	numparams = args;
     else if ( numparams & 1 )
 	numparams++;
-    *value = numparams;
+    size = args * size + (numparams - args) ? (numparams - args) * 8: 0;
+    *value = size;
+
     if ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) {
-	if ( ( numparams * sizeof( uint_64 ) ) > sym_ReservedStack->value )
-	    sym_ReservedStack->value = numparams * sizeof( uint_64 );
+	if ( size > sym_ReservedStack->value )
+	    sym_ReservedStack->value = size;
     } else
-	AddLineQueueX( " sub %r, %d", T_RSP, numparams * sizeof( uint_64 ) );
+	AddLineQueueX( " sub %r, %d", T_RSP, size );
     /* since Win64 fastcall doesn't push, it's a better/faster strategy to
      * handle the arguments from left to right.
      */
@@ -187,9 +196,9 @@ static void ms64_fcend( struct dsym const *proc, int numparams, int value )
     /* use <value>, which has been set by ms64_fcstart() */
     if ( !( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) ) {
 	if ( ModuleInfo.epilogueflags )
-	    AddLineQueueX( " lea %r, [%r+%d]", T_RSP, T_RSP, value * 8 );
+	    AddLineQueueX( " lea %r, [%r+%d]", T_RSP, T_RSP, value );
 	else
-	    AddLineQueueX( " add %r, %d", T_RSP, value * 8 );
+	    AddLineQueueX( " add %r, %d", T_RSP, value );
     }
     return;
 }

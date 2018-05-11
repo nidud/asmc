@@ -138,16 +138,15 @@ int __cdecl ftobufin(const char *, ...);
 #define _fileno(s)	((s)->_file)
 #define _lastiob	&_iob[_NSTREAM_ - 1]
 
+#ifndef _MT
+#ifdef __GNUC__
+int __cdecl getc(FILE *_File);
+#else
 #define getc(s)		(--(s)->_cnt >= 0 ? 0xFF & *(s)->_ptr++ : _filbuf(s))
+#endif
 #define putc(c,s)	(--(s)->_cnt >= 0 ? 0xFF & (*(s)->_ptr++ = (char)(c)) : _flsbuf((c),(s)))
 #define getchar()	getc(stdin)
 #define putchar(c)	putc((c),stdout)
-
-#ifdef	_MT
-#undef	getc
-#undef	putc
-#undef	getchar
-#undef	putchar
 #endif
 
 #define inuse(s)	((s)->_flag & (_IOREAD|_IOWRT|_IORW))

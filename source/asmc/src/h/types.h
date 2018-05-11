@@ -19,11 +19,11 @@ extern struct dsym *CurrStruct; /* start of current STRUCT list */
 
 extern struct asym *CreateTypeSymbol( struct asym *, const char *, bool );
 extern struct asym *SearchNameInStruct( const struct asym *, const char *, uint_32 *, int level );
-extern ret_code	   GetQualifiedType( int *, struct asm_tok[], struct qualified_type * );
+extern int	   GetQualifiedType( int *, struct asm_tok[], struct qualified_type * );
 extern struct asym *CreateStructField( int, struct asm_tok[], const char *, unsigned char, struct asym *, uint_32 );
 extern void	   UpdateStructSize( struct asym * );
-extern ret_code	   SetStructCurrentOffset( int_32 );
-extern ret_code	   AlignInStruct( int );
+extern int	   SetStructCurrentOffset( int_32 );
+extern int	   AlignInStruct( int );
 extern void	   TypesInit( void );
 //extern void	    DeleteType( struct dsym * );
 

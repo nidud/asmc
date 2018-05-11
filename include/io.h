@@ -110,7 +110,13 @@ struct _wfinddatai64_t {
 
 _CRTIMP int __cdecl _access(const char *, int);
 _CRTIMP int __cdecl _chmod(const char *, int);
+
+#ifdef __GNUC__
+_CRTIMP int __cdecl ftruncate(int, _off_t);
+#define _chsize ftruncate
+#else
 _CRTIMP int __cdecl _chsize(int, long);
+#endif
 _CRTIMP int __cdecl _close(int);
 _CRTIMP int __cdecl close(int);
 _CRTIMP int __cdecl _commit(int);
@@ -159,6 +165,29 @@ int __cdecl getosfhnd(int);
 int __cdecl osopen(const char *, int, int, int);
 int __cdecl osread(int, void *, unsigned);
 int __cdecl oswrite(int, const void *, unsigned);
+
+#ifndef NO_OLDNAMES
+int	__cdecl access(const char *, int);
+int	__cdecl chmod(const char *, int);
+int	__cdecl chsize(int, long);
+int	__cdecl close(int);
+int	__cdecl creat(const char *, int);
+int	__cdecl dup(int);
+int	__cdecl dup2(int, int);
+int	__cdecl eof(int);
+long	__cdecl filelength(int);
+int	__cdecl isatty(int);
+int	__cdecl locking(int, int, long);
+long	__cdecl lseek(int, long, int);
+char *	__cdecl mktemp(char *);
+int	__cdecl open(const char *, int, ...);
+int	__cdecl read(int, void *, unsigned int);
+int	__cdecl setmode(int, int);
+int	__cdecl sopen(const char *, int, int, ...);
+long	__cdecl tell(int);
+int	__cdecl umask(int);
+int	__cdecl write(int, const void *, unsigned int);
+#endif
 
 #if !__STDC__
 #define access _access

@@ -994,7 +994,6 @@ static unsigned put_comdef_number( uint_8 *buffer, uint_32 value )
  */
 
 static uint_16 omf_write_comdef( uint_16 index )
-/**********************************************/
 {
     struct omf_rec obj;
     struct dsym	   *curr;
@@ -1069,9 +1068,8 @@ static uint_16 omf_write_comdef( uint_16 index )
 }
 
 static time_t GetFileTimeStamp( const char *filename )
-/****************************************************/
 {
-    struct _stat statbuf;
+    struct _Stat statbuf;
 
     if( _stat( filename, &statbuf ) != 0 ) {
 	return( 0 );
@@ -1084,7 +1082,6 @@ static time_t GetFileTimeStamp( const char *filename )
  * if line numbers are on; this is a Borland/OW thing.
  */
 static ret_code omf_write_autodep( void )
-/***************************************/
 {
     struct omf_rec  obj;
     struct fname_item *curr;

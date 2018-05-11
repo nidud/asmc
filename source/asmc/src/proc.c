@@ -2336,7 +2336,9 @@ void write_prologue( struct asm_tok tokenarray[] )
 	} else {
 	    sym_ReservedStack->value = CurrProc->e.procinfo->ReservedStack;
 	}
-    }
+    } //else if ( ModuleInfo.fctype == FCT_VEC64 )
+      // sym_ReservedStack->value = 6 * 16;
+
     if ( Parse_Pass == PASS_1 ) {
 	/* v2.12: calculation of offsets of local variables is done delayed now */
 	SetLocalOffsets( CurrProc->e.procinfo );

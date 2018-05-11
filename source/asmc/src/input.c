@@ -201,7 +201,6 @@ static void FreeFiles( void )
  */
 
 void ClearSrcStack( void )
-/************************/
 {
     struct src_item   *nextfile;
 
@@ -222,7 +221,6 @@ void ClearSrcStack( void )
 /* get/set value of predefined symbol @Line */
 
 void UpdateLineNumber( struct asym *sym, void *p )
-/************************************************/
 {
     struct src_item *curr;
     for ( curr = src_stack; curr ; curr = curr->next )
@@ -234,7 +232,6 @@ void UpdateLineNumber( struct asym *sym, void *p )
 }
 
 uint_32 GetLineNumber( void )
-/***************************/
 {
     UpdateLineNumber( LineCur, NULL );
     return( LineCur->uvalue );
@@ -246,11 +243,10 @@ uint_32 GetLineNumber( void )
  * char occurs in the comment part, everything is ok.
  */
 static char *my_fgets( char *buffer, int max, FILE *fp )
-/******************************************************/
 {
-    char	*ptr = buffer;
-    char	*last = buffer + max;
-    int		c;
+    char *ptr = buffer;
+    char *last = buffer + max;
+    int	 c;
 
     c = getc( fp );
     while( ptr < last ) {
@@ -282,7 +278,6 @@ static char *my_fgets( char *buffer, int max, FILE *fp )
 
 #if FILESEQ
 void AddFileSeq( unsigned file )
-/******************************/
 {
     struct file_seq *node;
     node = LclAlloc( sizeof( struct file_seq ) );
@@ -301,7 +296,6 @@ void AddFileSeq( unsigned file )
  * type: SIT_FILE or SIT_MACRO
  */
 static struct src_item *PushSrcItem( char type, void *pv )
-/********************************************************/
 {
     struct src_item   *curr;
 
@@ -321,14 +315,12 @@ static struct src_item *PushSrcItem( char type, void *pv )
 /* push a macro onto the source stack. */
 
 void PushMacro( struct macro_instance *mi )
-/*****************************************/
 {
     PushSrcItem( SIT_MACRO, mi );
     return;
 }
 
 unsigned get_curr_srcfile( void )
-/*******************************/
 {
     struct src_item *curr;
     for ( curr = src_stack; curr ; curr = curr->next )
@@ -345,7 +337,6 @@ void set_curr_srcfile( unsigned file, uint_32 line_num )
 }
 
 void SetLineNumber( unsigned line )
-/*********************************/
 {
     src_stack->line_num = line;
     return;
@@ -356,7 +347,6 @@ void SetLineNumber( unsigned line )
  * which is a problem for FASTPASS because the file stack is empty.
  */
 int GetCurrSrcPos( char *buffer )
-/*******************************/
 {
     struct src_item *curr;
     char *p;
@@ -377,7 +367,6 @@ int GetCurrSrcPos( char *buffer )
  */
 
 void print_source_nesting_structure( void )
-/*****************************************/
 {
     struct src_item *curr;
     unsigned	    tab = 1;
@@ -406,13 +395,12 @@ void print_source_nesting_structure( void )
  * variable ModuleInfo.g.IncludePath also contains directories set with -I cmdline option.
  */
 static FILE *open_file_in_include_path( const char *name, char fullpath[] )
-/*************************************************************************/
 {
-    char	    *curr;
-    char	    *next;
-    int		    i;
-    int		    namelen;
-    FILE	    *file = NULL;
+    char *curr;
+    char *next;
+    int	 i;
+    int	 namelen;
+    FILE *file = NULL;
 
     while( islspace( *name ) )
 	name++;
@@ -538,7 +526,6 @@ FILE *SearchFile( char *path, bool queue )
  */
 
 char *GetTextLine( char *buffer )
-/*******************************/
 {
     struct src_item *curr = src_stack;
 
@@ -638,7 +625,6 @@ void AddStringToIncludePath( char *string )
  */
 
 struct asm_tok *PushInputStatus( struct input_status *oldstat )
-/*************************************************************/
 {
     oldstat->token_stringbuf = token_stringbuf;
     oldstat->token_count = Token_Count;
@@ -658,7 +644,6 @@ struct asm_tok *PushInputStatus( struct input_status *oldstat )
 }
 
 void PopInputStatus( struct input_status *newstat )
-/*************************************************/
 {
     StringBufferEnd = token_stringbuf;
     token_stringbuf = newstat->token_stringbuf;
@@ -678,7 +663,6 @@ void PopInputStatus( struct input_status *newstat )
 /* Initializer, called once for each module. */
 
 void InputInit( void )
-/********************/
 {
     struct src_item *fl;
 
@@ -702,7 +686,6 @@ void InputInit( void )
 /* init for each pass */
 
 void InputPassInit( void )
-/************************/
 {
     src_stack->line_num = 0;
     CurrSource = srclinebuffer;
@@ -714,7 +697,6 @@ void InputPassInit( void )
 /* release input buffers for a module */
 
 void InputFini( void )
-/********************/
 {
     if ( ModuleInfo.g.IncludePath )
 	MemFree( ModuleInfo.g.IncludePath );

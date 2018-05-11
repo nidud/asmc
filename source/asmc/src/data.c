@@ -47,13 +47,6 @@
 #include <atofloat.h>
 #include <float.h>
 
-#ifdef __LIBC__
-
-void _qftod(void *, const void *);
-void _qftold(void *, const void *);
-
-#endif
-
 int segm_override( const struct expr *, struct code_info * );
 extern struct asym *SegOverride;
 extern const char szNull[];

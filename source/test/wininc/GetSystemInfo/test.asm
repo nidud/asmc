@@ -12,8 +12,6 @@ main proc
     local s:SYSTEM_INFO
 
     GetSystemInfo(&s)
-    printf("\nMaximum Application Address: %p\n\n", s.lpMaximumApplicationAddress)
-
     printf(
         "Configuration\t\tLARGEADDRESSAWARE?\tResult\t\tMeaning\n"
         "==============================================================================\n"
@@ -22,7 +20,7 @@ main proc
         "increaseuserva = 2995\tAny\t\t\tBB3EFFFF\t2995 MB\n"
         "64-bit Windows\t\tNo\t\t000007FFFFFEFFFF\t2GB minus 64KB\n"
         "64-bit Windows\t\tYes\t\t\tFFFEFFFF\t4GB minus 64KB\n" )
-
+    printf("\nMaximum Application Address: %p\n\n", s.lpMaximumApplicationAddress)
     xor eax,eax
     ret
 

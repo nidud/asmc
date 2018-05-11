@@ -180,7 +180,6 @@ static unsigned int hashpjw( const char *s )
 }
 
 void SymSetCmpFunc( void )
-/************************/
 {
     SymCmpFunc = ( ModuleInfo.case_sensitive == TRUE ? memcmp : (StrCmpFunc)_memicmp );
     return;
@@ -189,7 +188,6 @@ void SymSetCmpFunc( void )
 /* reset local hash table */
 
 void SymClearLocal( void )
-/************************/
 {
     memset( &lsym_table, 0, sizeof( lsym_table ) );
     return;
@@ -198,7 +196,6 @@ void SymClearLocal( void )
 /* store local hash table in proc's list of local symbols */
 
 void SymGetLocal( struct asym *proc )
-/***********************************/
 {
     int i;
     struct dsym	 **l = &((struct dsym *)proc)->e.procinfo->labellist;
@@ -221,7 +218,6 @@ void SymGetLocal( struct asym *proc )
  */
 
 void SymSetLocal( struct asym *proc )
-/***********************************/
 {
     int i;
     struct dsym *l;
@@ -235,7 +231,6 @@ void SymSetLocal( struct asym *proc )
 }
 
 struct asym *SymAlloc( const char *name )
-/***************************************/
 {
     int len = strlen( name );
     struct asym *sym;
@@ -263,7 +258,6 @@ struct asym *SymAlloc( const char *name )
 }
 
 struct asym * FASTCALL SymFind( const char *name )
-/**************************************/
 /* find a symbol in the local/global symbol table,
  * return ptr to next free entry in global table if not found.
  * Note: lsym must be global, thus if the symbol isn't
@@ -297,7 +291,6 @@ struct asym * FASTCALL SymFind( const char *name )
 /* SymLookup() creates a global label if it isn't defined yet */
 
 struct asym *SymLookup( const char *name )
-/****************************************/
 {
     struct asym	     *sym;
 
@@ -315,7 +308,6 @@ struct asym *SymLookup( const char *name )
  * called by LabelCreate() [see labels.c]
  */
 struct asym *SymLookupLocal( const char *name )
-/*********************************************/
 {
     //struct asym      **sym_ptr;
     struct asym	     *sym;
@@ -375,7 +367,6 @@ void SymFree( struct asym *sym )
  * - ParseParams() in proc.c for procedure parameters.
  */
 struct asym *SymAddLocal( struct asym *sym, const char *name )
-/************************************************************/
 {
     struct asym *sym2;
     /* v2.10: ignore symbols with state SYM_UNDEFINED! */

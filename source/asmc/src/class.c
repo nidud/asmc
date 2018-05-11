@@ -1,7 +1,7 @@
 #include <string.h>
 #include <globals.h>
-#include <types.h>
 #include <hllext.h>
+#include <types.h>
 //
 // item for .CLASSDEF, .ENDS, and .COMDEF
 //
@@ -138,7 +138,7 @@ int ProcType(int i, struct asm_tok tokenarray[], char *buffer)
     return rc;
 }
 
-int ClassDirective(int i, struct asm_tok tokenarray[])
+int ClassDirective( int i, struct asm_tok tokenarray[] )
 {
     int     rc = NOT_ERROR;
     int     x,q,cmd;

@@ -15,8 +15,8 @@
 ****************************************************************************/
 
 #include <globals.h>
-#include <types.h>
 #include <hllext.h>
+#include <types.h>
 
 static int GetExpression( struct hll_item *hll, int *i, struct asm_tok[], int ilabel, int is_true, char *buffer, struct hll_opnd * );
 

@@ -2,6 +2,7 @@
 #include <signal.h>
 #include <globals.h>
 #include <input.h>
+#include <io.h>
 
 #if defined(__UNIX__) || defined(__CYGWIN__)
 #define WILDCARDS 0

@@ -20,7 +20,7 @@ cflags += /O2 /Ot /Ox /Og
 !endif
 
 asmc32.exe:
- $(bindir)\cl $(cflags) src\*.c
+ $(bindir)\cl $(cflags) src\*.c src\quadmath\*.c
  $(bindir)\link /out:$@ $(lflags) *.obj
  del *.obj
 !if $(regress)

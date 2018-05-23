@@ -939,6 +939,7 @@ expr			STRUC
     ENDS
     uvalue		dword ?
     value64		sqword ?
+    dvalue		REAL8 ?
     fvalue		REAL4 ?
     st_idx		sdword ?	; EXPR_REG: index if reg is ST
     chararray		db 16 dup(?)

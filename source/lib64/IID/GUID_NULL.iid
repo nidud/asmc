@@ -1,7 +1,0 @@
-COM_NO_WINDOWS_H equ 1
-include shlobj.inc
-
-.data
-GUID_NULL GUID <0,0,0,<0,0,0,0,0,0,0,0>>
-
-    end

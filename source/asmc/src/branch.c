@@ -90,8 +90,8 @@ static void jumpExtend( struct code_info *CodeInfo, int far_flag )
 	next_ins_size = CodeInfo->Ofssize ? 5 : 3;
     }
 
-    OutputCodeByte( CodeInfo->pinstr->opcode ^ 1 );
-    OutputCodeByte( next_ins_size );
+    OutputCodeByte( (unsigned char)(CodeInfo->pinstr->opcode ^ 1) );
+    OutputCodeByte( (unsigned char)next_ins_size );
     CodeInfo->token = T_JMP;
     CodeInfo->pinstr = &InstrTable[ IndexFromToken( T_JMP )];
 

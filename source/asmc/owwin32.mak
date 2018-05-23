@@ -15,6 +15,7 @@ CFLAG = -q -bc -bt=nt -3s -fpi87 -zc -oxa -s
 wasmc.exe:
  if exist *.obj del *.obj
  for %%q in (src\*.c) do $(watcom)\binnt\wcc386 -I$(watcom)\h -Isrc\h $(CFLAG) %%q
+ $(watcom)\binnt\wcc386 -I$(watcom)\h -Isrc\h $(CFLAG) src\quadmath\atoquad.c
  $(watcom)\binnt\wlink @<<
 format	windows pe runtime console
 name	$@

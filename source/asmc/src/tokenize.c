@@ -723,6 +723,11 @@ static int get_number( struct asm_tok *buf, struct line_status *p )
 	    base = 8;
 	    dig_end = ptr;
 	    ptr++;
+	} else {
+	    buf->token = T_FLOAT;
+	    buf->floattype = 'q';
+	    ptr++;
+	    goto number_done;
 	}
 	break;
     default:

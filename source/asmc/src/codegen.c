@@ -713,7 +713,7 @@ static void output_opc( struct code_info *CodeInfo )
 	    if ( CodeInfo->Ofssize != USE64 ) {
 		asmerr( 2024 );
 	    }
-	    OutputByte( CodeInfo->prefix.rex | 0x40 );
+	    OutputByte( (unsigned char)(CodeInfo->prefix.rex | 0x40) );
 	}
 
 	/*
@@ -736,10 +736,10 @@ static void output_opc( struct code_info *CodeInfo )
 
     switch( ins->rm_info ) {
     case R_in_OP:
-	OutputByte( ins->opcode | ( CodeInfo->rm_byte & NOT_BIT_67 ) );
+	OutputByte( (unsigned char)(ins->opcode | ( CodeInfo->rm_byte & NOT_BIT_67 )) );
 	break;
     case no_RM:
-	OutputByte( ins->opcode | CodeInfo->iswide );
+	OutputByte( (unsigned char)(ins->opcode | CodeInfo->iswide) );
 	break;
     case no_WDS:
 	CodeInfo->iswide = 0;
@@ -747,13 +747,13 @@ static void output_opc( struct code_info *CodeInfo )
     default: /* opcode (with w d s bits), rm-byte */
 	/* don't emit opcode for 3DNow! instructions */
 	if( ins->byte1_info != F_0F0F ) {
-	    OutputByte( ins->opcode | CodeInfo->iswide | CodeInfo->opc_or );
+	    OutputByte( (unsigned char)(ins->opcode | CodeInfo->iswide | CodeInfo->opc_or) );
 	}
 	/* emit ModRM byte; bits 7-6 = Mod, bits 5-3 = Reg, bits 2-0 = R/M */
 	tmp = ins->rm_byte | CodeInfo->rm_byte;
 	if (CodeInfo->base_rip) /* @RIP */
 	    tmp &= ~MOD_10;
-	OutputByte( tmp );
+	OutputByte( (unsigned char)tmp );
 
 	if( ( CodeInfo->Ofssize == USE16 && CodeInfo->prefix.adrsiz == 0 ) ||
 	   ( CodeInfo->Ofssize == USE32 && CodeInfo->prefix.adrsiz == 1 ) )
@@ -1090,7 +1090,7 @@ static int match_phase_3( struct code_info *CodeInfo, enum operand_type opnd1 )
 		    !( CodeInfo->pinstr->evex & VX_XMMI ) )
 		    output_3rd_operand( CodeInfo );
 		if( CodeInfo->pinstr->byte1_info == F_0F0F ) /* output 3dNow opcode? */
-		    OutputByte( CodeInfo->pinstr->opcode | CodeInfo->iswide );
+		    OutputByte( (unsigned char)(CodeInfo->pinstr->opcode | CodeInfo->iswide) );
 		return( NOT_ERROR );
 	    }
 	    break;

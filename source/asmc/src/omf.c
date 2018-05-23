@@ -286,8 +286,8 @@ void omf_OutSelect( bool is_data )
 	    } else {
 		Put8( &obj, DDIR_SCAN_TABLE );
 		PutIndex( &obj, sel_idx );
-		Put16( &obj, sel_start );
-		Put16( &obj, currofs );
+		Put16( &obj, (uint_16)sel_start );
+		Put16( &obj, (uint_16)currofs );
 	    }
 	    TruncRec( &obj );
 	    omf_write_record( &obj );
@@ -637,7 +637,7 @@ static void omf_write_export( void )
 	    for ( parm = dir->e.procinfo->paralist, parmcnt = 0; parm; parm = parm->nextparam, parmcnt++ );
 	    parmcnt &= 0x1F; /* ensure bits 5-7 are still 0 */
 	    Put8( &obj, parmcnt ); /* v2.01: changed from fix 0x00 */
-	    Put8( &obj, len );
+	    Put8( &obj, (uint_8)len );
 	    obj.curoff += len;
 	    Put8( &obj, 0 );
 	    omf_write_record( &obj );
@@ -1069,7 +1069,7 @@ static uint_16 omf_write_comdef( uint_16 index )
 
 static time_t GetFileTimeStamp( const char *filename )
 {
-    struct _Stat statbuf;
+    struct _stat statbuf;
 
     if( _stat( filename, &statbuf ) != 0 ) {
 	return( 0 );

@@ -47,7 +47,6 @@ struct outbuff {
 #pragma pack( pop )
 
 static void safeWrite( FILE *file, const uint_8 *buf, unsigned len )
-/******************************************************************/
 {
     if( fwrite( buf, 1, len, file ) != len )
 	WriteError();
@@ -56,7 +55,6 @@ static void safeWrite( FILE *file, const uint_8 *buf, unsigned len )
 /* start a buffered OMF record output */
 
 static void WBegRec( struct outbuff *out, uint_8 command )
-/********************************************************/
 {
     out->in_buf = 0;
     out->cmd = command;
@@ -101,9 +99,9 @@ static void PutIndex( struct outbuff *out, uint_16 index )
 /********************************************************/
 {
     if( index > 0x7f ) {
-	PutByte( out, 0x80 | ( index >> 8 ) );
+	PutByte( out, (unsigned char)(0x80 | ( index >> 8 ) ) );
     }
-    PutByte( out, index & 0xff );
+    PutByte( out, (unsigned char)(index & 0xff) );
 }
 
 /* write a word to the current record */
@@ -254,12 +252,12 @@ static int FFQUAL writeSegdef( struct outbuff *out, const struct omf_rec *objr )
 static int FFQUAL writeLedata( struct outbuff *out, const struct omf_rec *objr )
 /******************************************************************************/
 {
-    WBegRec( out, objr->command + objr->is_32 );
+    WBegRec( out, (uint_8)(objr->command + objr->is_32) );
     PutIndex( out, objr->d.ledata.idx );
     if( objr->is_32 ) {
 	PutDword( out, objr->d.ledata.offset );
     } else {
-	PutWord( out, objr->d.ledata.offset );
+	PutWord( out, (uint_16)objr->d.ledata.offset );
     }
     PutMem( out, objr->data, objr->length );
     WEndRec( out );
@@ -280,7 +278,7 @@ static int FFQUAL writeModend( struct outbuff *out, const struct omf_rec *objr )
     uint_8  mtype;
 
     is32 = ( ( objr->is_32 && objr->d.modend.start_addrs ) ? TRUE : FALSE );
-    WBegRec( out, CMD_MODEND + is32 );
+    WBegRec( out, (uint_8)(CMD_MODEND + is32) );
     /* first byte is Module Type:
      * bit 7: 1=main program module
      * bit 6: 1=contains start address
@@ -316,7 +314,7 @@ static void PutBase( struct outbuff *out, const struct base_info *base )
 static int FFQUAL writePubdef( struct outbuff *out, const struct omf_rec *objr )
 /******************************************************************************/
 {
-    WBegRec( out, objr->command + objr->is_32 );
+    WBegRec( out, (uint_8)(objr->command + objr->is_32) );
     PutBase( out, &objr->d.pubdef.base );
     PutMem( out, objr->data, objr->length );
     WEndRec( out );
@@ -326,7 +324,7 @@ static int FFQUAL writePubdef( struct outbuff *out, const struct omf_rec *objr )
 static int FFQUAL writeLinnum( struct outbuff *out, const struct omf_rec *objr )
 /******************************************************************************/
 {
-    WBegRec( out, CMD_LINNUM + objr->is_32 );
+    WBegRec( out, (uint_8)(CMD_LINNUM + objr->is_32) );
     PutBase( out, &objr->d.linnum.base );
     PutMem( out, objr->data, objr->length );
     WEndRec( out );
@@ -341,14 +339,14 @@ static int FFQUAL writeComdat( struct outbuff *out, const struct omf_rec *objr )
 /******************************************************************************/
 {
     /* write CMD_COMDAT/CMD_COMD32 */
-    WBegRec( out, objr->command + objr->is_32 );
+    WBegRec( out, (uint_8)(objr->command + objr->is_32) );
     PutByte( out, objr->d.comdat.flags );
     PutByte( out, objr->d.comdat.attributes );
     PutByte( out, objr->d.comdat.align );
     if( objr->is_32 ) {
 	PutDword( out, objr->d.comdat.offset );
     } else {
-	PutWord( out, objr->d.comdat.offset );
+	PutWord( out, (uint_16)objr->d.comdat.offset );
     }
     PutIndex( out, objr->d.comdat.type_idx );
     if( ( objr->d.comdat.attributes & COMDAT_ALLOC_MASK ) == COMDAT_EXPLICIT ) {
@@ -366,7 +364,7 @@ static int FFQUAL writeComdat( struct outbuff *out, const struct omf_rec *objr )
 static int FFQUAL writeLinsym( struct outbuff *out, const struct omf_rec *objr )
 /******************************************************************************/
 {
-    WBegRec( out, CMD_LINSYM + objr->is_32 );
+    WBegRec( out, (uint_8)(CMD_LINSYM + objr->is_32) );
     PutByte( out, objr->d.linsym.flags );
     PutIndex( out, objr->d.linsym.public_lname_idx );
     PutMem( out, objr->data, objr->length );

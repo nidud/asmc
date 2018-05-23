@@ -7,6 +7,10 @@ include libc.inc
 
 DIRECTX_MATH_VERSION	equ 312
 
+ifndef __PE__
+includelib directxmath.lib
+endif
+
 ifdef _MSC_VER
 if _MSC_VER LT 1200 ; 1800
  .err <DirectX Math requires Visual C++ 2013 or later.>
@@ -1384,11 +1388,13 @@ elseifdef _XM_SSE_INTRINSICS_
 endif
     endm
 
-XMMatrixTranspose macro M:req, M
-    _mm_store_ps(xmm0, M.r[0x00])
-    _mm_store_ps(xmm1, M.r[0x10])
-    _mm_store_ps(xmm2, M.r[0x20])
-    _mm_store_ps(xmm3, M.r[0x30])
+XMMatrixTranspose macro M, O
+    ifnb <M>
+	_mm_store_ps(xmm0, M.r[0x00])
+	_mm_store_ps(xmm1, M.r[0x10])
+	_mm_store_ps(xmm2, M.r[0x20])
+	_mm_store_ps(xmm3, M.r[0x30])
+    endif
     _mm_store_ps(xmm4, xmm0)
     _mm_store_ps(xmm5, xmm2)
     _mm_shuffle_ps(xmm0, xmm1, _MM_SHUFFLE(1,0,1,0))
@@ -1401,11 +1407,11 @@ XMMatrixTranspose macro M:req, M
     _mm_shuffle_ps(xmm1, xmm4, _MM_SHUFFLE(3,1,3,1))
     _mm_shuffle_ps(xmm2, xmm5, _MM_SHUFFLE(2,0,2,0))
     _mm_shuffle_ps(xmm3, xmm5, _MM_SHUFFLE(3,1,3,1))
-    ifnb <M>
-	_mm_store_ps(M.r[0x00], xmm0)
-	_mm_store_ps(M.r[0x10], xmm1)
-	_mm_store_ps(M.r[0x20], xmm2)
-	_mm_store_ps(M.r[0x30], xmm3)
+    ifnb <O>
+	_mm_store_ps(O.r[0x00], xmm0)
+	_mm_store_ps(O.r[0x10], xmm1)
+	_mm_store_ps(O.r[0x20], xmm2)
+	_mm_store_ps(O.r[0x30], xmm3)
     endif
     exitm<>
     endm
@@ -1432,6 +1438,7 @@ XMMatrixTransposex macro O
     endif
     exitm<>
     endm
+
 XMMatrixMultiplyTranspose proto :FXMMATRIX, :CXMMATRIX
 
 XMVector3ClampLength	proto :FXMVECTOR, :float, :float

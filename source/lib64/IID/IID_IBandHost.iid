@@ -1,7 +1,0 @@
-COM_NO_WINDOWS_H equ 1
-include shlobj.inc
-
-.data
-IID_IBandHost GUID _IID_IBandHost
-
-    end

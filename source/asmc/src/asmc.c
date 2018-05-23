@@ -78,7 +78,7 @@ static int AssembleSubdir( char *directory, char *wild )
 		if ( (ff.attrib & _A_SUBDIR) &&
 		    !(ff.name[0] == '.' && ff.name[1] == 0) &&
 		    !(ff.name[0] == '.' && ff.name[1] == '.' && ff.name[2] == 0)) {
-			if ( (rc = AssembleSubdir( strfcat( path, directory, ff.name ), wild )) )
+			if ( !(rc = AssembleSubdir( strfcat( path, directory, ff.name ), wild )) )
 			    break;
 		}
 	    } while ( _findnext( h, &ff ) != -1 );

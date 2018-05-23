@@ -95,6 +95,7 @@ _CRTIMP void __cdecl setbuf(FILE *, char *);
 _CRTIMP int __cdecl setvbuf(FILE *, char *, int, size_t);
 _CRTIMP int __cdecl sprintf(char *, const char *, ...);
 _CRTIMP int __cdecl vfprintf(FILE *, const char *, va_list);
+_CRTIMP int __cdecl getc(FILE *);
 _CRTIMP int __cdecl ungetc(int, FILE *);
 _CRTIMP int __cdecl vsprintf(char *, const char *, va_list);
 _CRTIMP int __cdecl fclose(FILE *);
@@ -139,11 +140,7 @@ int __cdecl ftobufin(const char *, ...);
 #define _lastiob	&_iob[_NSTREAM_ - 1]
 
 #ifndef _MT
-#ifdef __GNUC__
-int __cdecl getc(FILE *_File);
-#else
 #define getc(s)		(--(s)->_cnt >= 0 ? 0xFF & *(s)->_ptr++ : _filbuf(s))
-#endif
 #define putc(c,s)	(--(s)->_cnt >= 0 ? 0xFF & (*(s)->_ptr++ = (char)(c)) : _flsbuf((c),(s)))
 #define getchar()	getc(stdin)
 #define putchar(c)	putc((c),stdout)

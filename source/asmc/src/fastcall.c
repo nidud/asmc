@@ -177,7 +177,7 @@ static int ms64_fcstart( struct dsym const *proc, int numparams, int start, stru
 	numparams = args;
     else if ( numparams & 1 )
 	numparams++;
-    size = args * size + (numparams - args) ? (numparams - args) * 8: 0;
+    size = args * size + ((numparams - args) ? (numparams - args) * 8: 0);
     *value = size;
 
     if ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) {

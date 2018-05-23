@@ -427,35 +427,48 @@ watc_fcend endp
 ; FCT_WIN64
 ;-------------------------------------------------------------------------------
 
-ms64_fcstart proc pp:ptr nsym, numparams:SINT, start:SINT,
+ms64_fcstart proc uses esi edi pp:ptr nsym, numparams:SINT, start:SINT,
     tokenarray:ptr asm_tok, value:ptr SINT
 
     mov edx,pp
-    mov edx,[edx].nsym.procinfo
     mov eax,numparams
+    mov esi,4
+    mov edi,8
+    .if [edx].nsym.sym.langtype == LANG_VECTORCALL
+
+        mov esi,6
+        mov edi,16
+    .endif
 
     ; v2.04: VARARG didn't work
 
+    mov edx,[edx].nsym.procinfo
     .if [edx].proc_info.flags & PINF_HAS_VARARG
+
         mov ecx,start
         shl ecx,4
         add ecx,tokenarray
         .for eax=0: [ecx].asm_tok.token != T_FINAL: ecx+=16
             .if [ecx].asm_tok.token == T_COMMA
+
                 inc eax
             .endif
         .endf
     .endif
 
-    .if eax < 4
-        mov eax,4
+    .if eax < esi
+        mov eax,esi
     .elseif eax & 1
         inc eax
     .endif
+    sub eax,esi
+    shl eax,3
+    xchg eax,edi
+    mul esi
+    add eax,edi
     mov edx,value
     mov [edx],eax
 
-    shl eax,3
     .if ModuleInfo.win64_flags & W64F_AUTOSTACKSP
 
         mov edx,sym_ReservedStack
@@ -1015,7 +1028,6 @@ ms64_fcend proc pp, numparams, value
     .if !( ModuleInfo.win64_flags & W64F_AUTOSTACKSP )
 
         mov eax,value
-        shl eax,3
         .if ( ModuleInfo.epilogueflags )
             AddLineQueueX( " lea %r, [%r+%d]", T_RSP, T_RSP, eax )
         .else

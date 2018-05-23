@@ -815,7 +815,7 @@ ret_code GetQualifiedType( int *pi, struct asm_tok tokenarray[], struct qualifie
 	else
 	    pti->mem_type = GetMemtypeSp( type );
 	if ( pti->mem_type == MT_PTR )
-	    pti->size = SizeFromMemtype( pti->is_far ? MT_FAR : MT_NEAR, pti->Ofssize, NULL );
+	    pti->size = SizeFromMemtype( (unsigned char)(pti->is_far ? MT_FAR : MT_NEAR), pti->Ofssize, NULL );
 	else
 	    pti->size = SizeFromMemtype( pti->mem_type, pti->Ofssize, NULL );
     }

@@ -82,6 +82,7 @@ struct expr {
 	};
 	uint_32	    uvalue;
 	int_64	    value64;
+	double	    dvalue;
 	float	    fvalue;
 	int	    st_idx;	    /* EXPR_REG: index if reg is ST */
 	uint_8	    chararray[16];

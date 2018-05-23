@@ -1,7 +1,0 @@
-COM_NO_WINDOWS_H equ 1
-include shlobj.inc
-
-.data
-IID_IShellTaskScheduler GUID _IID_IShellTaskScheduler
-
-    end

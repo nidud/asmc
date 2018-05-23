@@ -85,12 +85,11 @@ static const uint_8 NopList64[] = {
 static const uint_8 * const NopLists[] = { NopList16, NopList32, NopList64 };
 
 int OrgDirective( int i, struct asm_tok tokenarray[] )
-/*********************************************************/
 {
     struct expr opndx;
 
     i++;
-    if ( ( ERROR == EvalOperand( &i, tokenarray, Token_Count, &opndx, Options.strict_masm_compat ? EXPF_NOUNDEF : 0 ) ) )
+    if ( ( ERROR == EvalOperand( &i, tokenarray, Token_Count, &opndx, (uint_8)(Options.strict_masm_compat ? EXPF_NOUNDEF : 0 ) ) ) )
 	return( ERROR );
     if ( tokenarray[i].token != T_FINAL ) {
 	return( asmerr(2008, tokenarray[i].string_ptr ) );

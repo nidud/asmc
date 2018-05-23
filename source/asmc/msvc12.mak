@@ -27,6 +27,7 @@ cflags += /O2 /Ot /Ox /Og
 
 $(target).exe:
  $(bindir)\cl $(cflags) src\*.c
+ $(bindir)\cl $(cflags) src\quadmath\*.c
  $(bindir)\link /out:$@ $(lflags) *.obj
  del *.obj
 !if $(regress)

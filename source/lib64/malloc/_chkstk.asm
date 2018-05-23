@@ -1,28 +1,21 @@
-;include malloc.inc
 
-public	_chkstk
-public	_alloca_probe
+    .code
 
-	.code
+__chkstk::
+__alloca_probe::
 
-_chkstk:
-_alloca_probe:
-
-	mov	[rsp-8],rcx
-	lea	rcx,[rsp+8]
+    lea r11,[rsp+8]
+    mov r10,rax
 @@:
-	cmp	rax,1000h	; probe pages
-	jb	@F
-	sub	rcx,1000h
-	test	[rcx],rax
-	sub	rax,1000h
-	jmp	@B
+    cmp r10,1000h   ; probe pages
+    jb  @F
+    sub r11,1000h
+    test [r11],al
+    sub r10,1000h
+    jmp @B
 @@:
-	sub	rcx,rax
-	and	cl,-16		; align 16
-	test	[rcx],rax	; probe page
-	mov	rax,rcx
-	mov	rcx,[rsp-8]
-	ret
+    sub r11,r10
+    test [r11],al   ; probe page
+    ret
 
-	end
+    end

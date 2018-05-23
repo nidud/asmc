@@ -70,13 +70,13 @@ lsym        dd ?        ; asym ** pointer into local hash table
 SymCount    dd ?        ; Number of symbols in global table
 szDate      db 16 dup(?)    ; value of @Date symbol
 szTime      db 16 dup(?)    ; value of @Time symbol
-        ALIGN 16
+            ALIGN 16
 lsym_table  dd LHASH_TABLE_SIZE+1 dup(?)
-        ALIGN 16
+            ALIGN 16
 gsym_table  dd GHASH_TABLE_SIZE dup(?)
-        ALIGN 16
+            ALIGN 16
 resw_table  LABEL WORD
-        dd HASH_TABITEMS / 2 + 1 dup(?)
+            dd HASH_TABITEMS / 2 + 1 dup(?)
 
 .data
 
@@ -91,7 +91,7 @@ MLVersion   db "800",0
 @@CurSeg    db "@CurSeg"
 @@Null      db 0
 
-ALIGN   4
+            ALIGN 4
 
 ;
 ; table of predefined text macros

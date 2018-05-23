@@ -532,6 +532,7 @@ quit:
 	    remove( CurrFName[OBJ] );
 	}
 	exit( 1 );
+	return -1; /*.*/
 }
 
 void WriteError(void)

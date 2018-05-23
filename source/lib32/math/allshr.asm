@@ -1,32 +1,29 @@
-	.486
-	.model	flat, c
+    .486
+    .model flat, c
+    .code
 
-PUBLIC	_allshr
-PUBLIC	_I8RS
+_I8RS::
 
-	.code
+    mov ecx,ebx
 
-_I8RS:
-	mov	ecx,ebx
+_allshr::
 
-_allshr:
-
-	cmp	cl,63
-	ja	SIGN
-	cmp	cl,31
-	ja	__I63
-	shrd	eax,edx,cl
-	sar	edx,cl
-	ret
+    cmp cl,63
+    ja  SIGN
+    cmp cl,31
+    ja  __I63
+    shrd eax,edx,cl
+    sar edx,cl
+    ret
 __I63:
-	mov	eax,edx
-	sar	edx,31
-	and	cl,31
-	sar	eax,cl
-	ret
+    mov eax,edx
+    sar edx,31
+    and cl,31
+    sar eax,cl
+    ret
 SIGN:
-	sar	edx,31
-	mov	eax,edx
-	ret
+    sar edx,31
+    mov eax,edx
+    ret
 
-	END
+    END

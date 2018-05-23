@@ -46,4 +46,4 @@ cstart::
 	sub rsp,0x28
 	exit( main( ecx, rdx, r8 ) )
 
-	end	cstart
+	end cstart

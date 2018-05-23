@@ -955,10 +955,17 @@ endif
         .endc
 
       .case 'q'
+        .if !( edi & 0x00FF )
+            mov [ebx].token,T_FLOAT
+            mov [ebx].floattype,'q'
+            inc edx
+            jmp number_done
+        .endif
+
       .case 'o'
 
         xor eax,eax
-        .endc .if !(edi & 00FFh)
+        .endc .if !( edi & 0x00FF )
         mov eax,8
         inc edx
         .endc

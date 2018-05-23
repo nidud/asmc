@@ -647,8 +647,6 @@ int segm_override( const struct expr *opndx, struct code_info *CodeInfo )
  *   CodeInfo->iswide
  */
 
-void resize_float( struct expr *, unsigned );
-
 static int idata_nofixup( struct code_info *CodeInfo, unsigned CurrOpnd, struct expr *opndx )
 {
     enum operand_type op_type;
@@ -659,19 +657,17 @@ static int idata_nofixup( struct code_info *CodeInfo, unsigned CurrOpnd, struct 
     if( IS_ANY_BRANCH( CodeInfo->token ) ) {
 	return( process_branch( CodeInfo, CurrOpnd, opndx ) );
     }
-    value = opndx->value;
-    CodeInfo->opnd[CurrOpnd].data32l = value;
 
-#ifdef __LIBC__
     if ( opndx->mem_type == MT_REAL16 ) {
 
 	if ( CodeInfo->token == T_MOV && CodeInfo->Ofssize == USE64
 	    && CurrOpnd == OPND2 && ( CodeInfo->opnd[OPND1].type & OP_R64 ))
-	    resize_float( opndx, 8 );
+	    quad_resize( opndx, 8 );
 	else
-	    resize_float( opndx, 4 );
+	    quad_resize( opndx, 4 );
     }
-#endif
+    value = opndx->value;
+    CodeInfo->opnd[CurrOpnd].data32l = value;
 
     /* 64bit immediates are restricted to MOV <reg>,<imm64>
      */
@@ -2717,20 +2713,23 @@ int ParseLine( struct asm_tok tokenarray[] )
 	    /* v2.06: accept float constants for PUSH */
 	    if ( j == OPND2 || CodeInfo.token == T_PUSH || CodeInfo.token == T_PUSHD ) {
 		if ( Options.strict_masm_compat == FALSE ) {
-		    /* convert to REAL4, REAL8, or REAL16 */
-		    int m = 4;
-		    if ( opndx[j].mem_type == MT_REAL8 )
-			m = 8;
-#ifdef __LIBC__
-		    else if ( opndx[j].mem_type == MT_REAL16 )
-			m = 16;
-		    if ( opndx[j].float_tok )
-#endif
+		    /* v2.27: convert to REAL */
+		    if ( opndx[j].float_tok ) {
+			int m;
+			switch ( opndx[j].mem_type ) {
+			case MT_REAL4:	m = 4;	break;
+			case MT_REAL8:	m = 8;	break;
+			case MT_REAL10: m = 10; break;
+			default:
+			    m = 16;
+			    opndx[j].mem_type = MT_REAL16;
+			    break;
+			}
 			atofloat( &opndx[j].fvalue, opndx[j].float_tok->string_ptr,
 				m, opndx[j].negative, opndx[j].float_tok->floattype );
-
+			opndx[j].float_tok = NULL;
+		    }
 		    opndx[j].kind = EXPR_CONST;
-		    opndx[j].float_tok = NULL;
 		    break;
 		}
 		/* Masm message is: real or BCD number not allowed */

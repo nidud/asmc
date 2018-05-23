@@ -1,7 +1,11 @@
 !include srcpath
 
+AFLAGS = -win64 -Cs -Zi -I$(inc_dir)
+
 $(lib_dir)\amd64\libc.lib:
-    asmc /win64 /D_WIN64 /Cs /Zi /I$(inc_dir) /r $(src_dir)\lib64\*.asm
+    asmc $(AFLAGS) $(src_dir)\quadmath\src\const\*.asm
+    asmc $(AFLAGS) $(src_dir)\quadmath\src\x64\*.asm
+    asmc $(AFLAGS) /r $(src_dir)\lib64\*.asm
     libw /q /b /n /c /fac $@ *.obj
     del *.obj
 

@@ -365,74 +365,34 @@ static char *little_endian( const char *src, unsigned len )
     return( StringBufferEnd );
 }
 
-#ifdef __LIBC__
-
-void resize_float( struct expr *opnd, unsigned size )
-{
-    double double_value;
-
-    if ( size == 10 )
-	_qftold(opnd->chararray, opnd->chararray);
-    else if ( size == 8 ) {
-	errno = 0;
-	_qftod(opnd->chararray, opnd->chararray);
-	if ( errno == ERANGE )
-	    asmerr( 2071 );
-	opnd->hlvalue = 0;
-	opnd->mem_type = MT_REAL8;
-    } else {
-	if ( opnd->chararray[15] & 0x80 ) {
-	    opnd->negative = 1;
-	    opnd->chararray[15] &= 0x7F;
-	}
-	_qftod(&double_value, opnd->chararray);
-	if ( double_value > FLT_MAX || ( double_value < FLT_MIN && double_value != 0 ) )
-	    asmerr( 2071 );
-	if ( opnd->negative )
-	    double_value *= -1;
-	opnd->fvalue = double_value;
-	opnd->hlvalue = 0;
-	opnd->hvalue = 0;
-	opnd->mem_type = MT_REAL4;
-    }
-}
-
-#endif
-
 static void output_float( struct expr *opnd, unsigned size )
 {
     /* v2.07: buffer extended to max size of a data item (=32).
      * test case: XMMWORD REAL10 ptr 1.0
      */
+    int i;
     char buffer[32];
 
-    if ( opnd->mem_type != MT_EMPTY
-#ifdef __LIBC__
-	&& opnd->float_tok
-#endif
-    ) {
-	int i;
+    if ( opnd->mem_type != MT_EMPTY && opnd->float_tok ) {
+
 	memset( buffer, 0, sizeof( buffer ) );
 	i = SizeFromMemtype( opnd->mem_type, USE_EMPTY, NULL );
 	if ( i > size )
 	    asmerr( 2156 );
-	else {
+	else
 	    atofloat( buffer, opnd->float_tok->string_ptr, i , opnd->negative, opnd->float_tok->floattype );
-	}
 	OutputDataBytes( buffer, size );
-    } else
-#ifdef __LIBC__
-    if ( opnd->float_tok )
-#endif
-    {
+
+    } else if ( opnd->float_tok ) {
+
 	atofloat( buffer, opnd->float_tok->string_ptr, size, opnd->negative, opnd->float_tok->floattype );
 	OutputDataBytes( buffer, size );
-#ifdef __LIBC__
+
     } else {
-	if ( size != 16 )
-	    resize_float( opnd, size );
+
+	 if ( size != 16 )
+	    quad_resize( opnd, size );
 	OutputDataBytes( opnd->chararray, size );
-#endif
     }
     return;
 }

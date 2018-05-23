@@ -590,10 +590,9 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
     /*
      * find "first" parameter ( that is, the first to be pushed in INVOKE ).
      */
-    if ( proc->sym.langtype == LANG_C || proc->sym.langtype == LANG_SYSCALL ||
-	( proc->sym.langtype == LANG_FASTCALL && ModuleInfo.Ofssize != USE64 ) ||
-	( proc->sym.langtype == LANG_VECTORCALL && ModuleInfo.Ofssize != USE64 ) ||
-	proc->sym.langtype == LANG_STDCALL )
+    if ( proc->sym.langtype == LANG_C || proc->sym.langtype == LANG_STDCALL ||
+	( ModuleInfo.Ofssize != USE64 && ( proc->sym.langtype == LANG_SYSCALL ||
+	  proc->sym.langtype == LANG_FASTCALL || proc->sym.langtype == LANG_VECTORCALL ) ) )
 	for ( paracurr = proc->e.procinfo->paralist; paracurr && paracurr->nextparam;
 	      paracurr = paracurr->nextparam );
     else
@@ -683,7 +682,8 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 	     * regression test proc9.asm.
 	     * v2.23: proto fastcall :type - fast32.asm
 	     */
-	    if ( proc->sym.langtype == LANG_FASTCALL && ModuleInfo.Ofssize == USE32 )
+	    if ( ( proc->sym.langtype == LANG_SYSCALL && ModuleInfo.Ofssize == USE64 ) ||
+		 ( proc->sym.langtype == LANG_FASTCALL && ModuleInfo.Ofssize == USE32 ) )
 		paracurr->sym.target_type = NULL;
 	    if ( paracurr->sym.mem_type == MT_TYPE )
 		to = paracurr->sym.type;
@@ -707,11 +707,9 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 		SymAddLocal( &paracurr->sym, name );
 	    }
 	    /* set paracurr to next parameter */
-	    if ( proc->sym.langtype == LANG_C ||
-		proc->sym.langtype == LANG_SYSCALL ||
-		( proc->sym.langtype == LANG_FASTCALL && ti.Ofssize != USE64 ) ||
-		( proc->sym.langtype == LANG_VECTORCALL && ti.Ofssize != USE64 ) ||
-		proc->sym.langtype == LANG_STDCALL) {
+	    if ( proc->sym.langtype == LANG_C || proc->sym.langtype == LANG_STDCALL ||
+		( ModuleInfo.Ofssize != USE64 && ( proc->sym.langtype == LANG_SYSCALL ||
+		  proc->sym.langtype == LANG_FASTCALL || proc->sym.langtype == LANG_VECTORCALL ) ) ) {
 		struct dsym *l;
 		for (l = proc->e.procinfo->paralist;
 		     l && ( l->nextparam != paracurr );

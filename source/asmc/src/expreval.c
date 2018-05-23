@@ -41,6 +41,7 @@
 #include <types.h>
 #include <label.h>
 #include <atofloat.h>
+#include <quadmath.h>
 
 extern uint_32 StackAdj;
 static struct asym *thissym;
@@ -56,20 +57,7 @@ enum labelsize {
     LS_FAR32  = 0xFF06,
 };
 
-#ifdef __LIBC__
-void _mulfq(void *, void *, void *);
-void _divfq(void *, void *, void *);
-void _subfq(void *, void *, void *);
-void _addfq(void *, void *, void *);
-#endif
-
-#if 0 //def _ASMC
-void __fastcall TokenAssign( struct expr *, const struct expr * );
-void __fastcall init_expr( struct expr * );
-int  __fastcall is_expr_item( struct asm_tok * );
-#else
 static void init_expr( struct expr *opnd )
-/****************************************/
 {
     opnd->value	   = 0;
     opnd->hvalue   = 0;
@@ -91,7 +79,6 @@ static void init_expr( struct expr *opnd )
 }
 
 static void TokenAssign( struct expr *opnd1, const struct expr *opnd2 )
-/*********************************************************************/
 {
 #if 1
     /* note that offsetof() is used. This means, don't change position
@@ -173,7 +160,6 @@ static int is_expr_item( struct asm_tok *item )
     }
     return( TRUE );
 }
-#endif
 
 static int get_precedence( const struct asm_tok *item )
 {
@@ -1086,12 +1072,10 @@ static int plus_op( struct expr *opnd1, struct expr *opnd2 )
     }
     if( ( opnd1->kind == EXPR_CONST && opnd2->kind == EXPR_CONST ) ) {
 	opnd1->llvalue += opnd2->llvalue;
-#ifdef __LIBC__
     } else if ( opnd1->kind == EXPR_FLOAT && opnd2->kind == EXPR_FLOAT ) {
 	if ( opnd2->float_tok )
 	    atofloat( opnd2->chararray, opnd2->float_tok->string_ptr, 16, opnd2->negative, 0 );
-	_addfq( opnd1->chararray, opnd1->chararray, opnd2->chararray );
-#endif
+	quadadd( opnd1->chararray, opnd2->chararray );
     } else if( ( opnd1->kind == EXPR_ADDR && opnd2->kind == EXPR_ADDR ) ) {
 	fix_struct_value( opnd1 );
 	fix_struct_value( opnd2 );
@@ -1158,12 +1142,10 @@ static int minus_op( struct expr *opnd1, struct expr *opnd2 )
 	MakeConst( opnd2 );
     if( ( opnd1->kind == EXPR_CONST && opnd2->kind == EXPR_CONST ) ) {
 	opnd1->llvalue -= opnd2->llvalue;
-#ifdef __LIBC__
     } else if ( opnd1->kind == EXPR_FLOAT && opnd2->kind == EXPR_FLOAT ) {
 	if ( opnd2->float_tok )
 	    atofloat( opnd2->chararray, opnd2->float_tok->string_ptr, 16, opnd2->negative, 0 );
-	_subfq( opnd1->chararray, opnd1->chararray, opnd2->chararray );
-#endif
+	quadsub( opnd1->chararray, opnd2->chararray );
     } else if( opnd1->kind == EXPR_ADDR && opnd2->kind == EXPR_CONST ) {
 	opnd1->llvalue -= opnd2->llvalue;
 	fix_struct_value( opnd1 );
@@ -1515,11 +1497,7 @@ static int calculate( struct expr *opnd1, struct expr *opnd2, const struct asm_t
     char	*name;
 
     opnd1->quoted_string = NULL;
-    if ( opnd2->hlvalue
-#ifdef __LIBC__
-	&& opnd2->mem_type != MT_REAL16
-#endif
-    ) {
+    if ( opnd2->hlvalue && opnd2->mem_type != MT_REAL16 ) {
 	if ( !(opnd2->is_opattr || ((oper->token == '+' || oper->token == '-') && oper->specval == 0)) )
 	    return( fnasmerr( 2084, opnd2->hlvalue, opnd2->value64 ) );
     }
@@ -1592,25 +1570,21 @@ static int calculate( struct expr *opnd1, struct expr *opnd2, const struct asm_t
 	    opnd1->base_reg = NULL;
 	    opnd1->indirect = 1;
 	    opnd1->kind = EXPR_ADDR;
-#ifdef __LIBC__
 	} else if ( ( opnd1->kind == EXPR_FLOAT && opnd2->kind == EXPR_FLOAT ) ) {
 	    if ( opnd2->float_tok )
 		atofloat( opnd2->chararray, opnd2->float_tok->string_ptr, 16, opnd2->negative, 0);
-	    _mulfq(opnd1->chararray, opnd1->chararray, opnd2->chararray);
-#endif
+	    quadmul(opnd1->chararray, opnd2->chararray);
 	} else {
 	    return( ConstError( opnd1, opnd2 ) );
 	}
 	break;
     case '/':
-#ifdef __LIBC__
 	if ( ( opnd1->kind == EXPR_FLOAT && opnd2->kind == EXPR_FLOAT ) ) {
 	    if ( opnd2->float_tok )
 		atofloat( opnd2->chararray, opnd2->float_tok->string_ptr, 16, opnd2->negative, 0);
-	    _divfq(opnd1->chararray, opnd1->chararray, opnd2->chararray);
+	    quaddiv(opnd1->chararray, opnd2->chararray);
 	    break;
 	}
-#endif
 	MakeConst( opnd1 );
 	MakeConst( opnd2 );
 	if( ( opnd1->kind == EXPR_CONST && opnd2->kind == EXPR_CONST ) == 0 ) {
@@ -1915,18 +1889,14 @@ static int evaluate( struct expr *opnd1, int *i, struct asm_tok tokenarray[], co
 		    break;
 		}
 	    }
-#ifdef __LIBC__
 	    if ( opnd1->kind == EXPR_FLOAT && opnd1->mem_type != MT_REAL16 ) {
-
 		if ( tokenarray[curr_operator].token == '*' ||
 		     tokenarray[curr_operator].token == '/' ||
 		     tokenarray[curr_operator].specval == 1 ) {
-
 		    opnd1->mem_type = MT_REAL16;
 		    atofloat( opnd1->chararray, opnd1->float_tok->string_ptr, 16, opnd1->negative, 0);
 		}
 	    }
-#endif
 	}
 	(*i)++;
 	init_expr( &opnd2 );
@@ -1940,7 +1910,8 @@ static int evaluate( struct expr *opnd1, int *i, struct asm_tok tokenarray[], co
 		opnd2.type = opnd1->type;
 		opnd2.is_dot = 1;
 	    }
-	    rc = evaluate( &opnd2, i, tokenarray, end, ( flags | ( exp_token == T_CL_SQ_BRACKET ? EXPF_IN_SQBR : 0 ) ) & ~EXPF_ONEOPND );
+	    rc = evaluate( &opnd2, i, tokenarray, end,
+		(const uint_8)( ( flags | ( exp_token == T_CL_SQ_BRACKET ? EXPF_IN_SQBR : 0 ) ) & ~EXPF_ONEOPND ) );
 	    if( !( tokenarray[*i].token == exp_token ) ) {
 		if ( rc != ERROR ) {
 		    fnasmerr( 2157 );
@@ -1952,7 +1923,7 @@ static int evaluate( struct expr *opnd1, int *i, struct asm_tok tokenarray[], co
 		(*i)++;
 	    }
 	} else if( ( tokenarray[*i].token == T_OP_BRACKET || tokenarray[*i].token == T_OP_SQ_BRACKET || tokenarray[*i].token == '+' || tokenarray[*i].token == '-' || tokenarray[*i].token == T_UNARY_OPERATOR ) ) {
-	    rc = evaluate( &opnd2, i, tokenarray, end, flags | EXPF_ONEOPND );
+	    rc = evaluate( &opnd2, i, tokenarray, end, (const uint_8)(flags | EXPF_ONEOPND) );
 	} else {
 	    rc = get_operand( &opnd2, i, tokenarray, flags );
 	}
@@ -1975,7 +1946,7 @@ static int evaluate( struct expr *opnd1, int *i, struct asm_tok tokenarray[], co
 	    }
 	    if( get_precedence( &tokenarray[*i] ) >= get_precedence( &tokenarray[curr_operator] ) )
 		break;
-	    rc = evaluate( &opnd2, i, tokenarray, end, flags | EXPF_ONEOPND );
+	    rc = evaluate( &opnd2, i, tokenarray, end, (const uint_8)(flags | EXPF_ONEOPND) );
 	}
 	if ( rc == ERROR && opnd2.is_opattr ) {
 	    while( *i < end && !( tokenarray[*i].token == T_CL_BRACKET ) && !( tokenarray[*i].token == T_CL_SQ_BRACKET ) ) {

@@ -418,7 +418,7 @@ unsigned FindResWord( char *name, unsigned size )
     __segment seg = FP_SEG( resw_strings );
 #endif
 
-    for( i = resw_table[ get_hash( name, size ) ]; i != 0; i = inst->next ) {
+    for( i = resw_table[ get_hash( (const char *)name, (unsigned char)size ) ]; i != 0; i = inst->next ) {
 	inst = &ResWordTable[i];
 	/* check if the name matches the entry for this inst in AsmChars */
 	if( inst->len == size ) {

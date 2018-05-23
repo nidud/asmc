@@ -9,9 +9,9 @@ _iLDFD proc
     ; long double[rax] to double[rdx]
     ;
     push    rdx
-    movzx   ecx,word ptr [eax+8]
-    mov     edx,[eax+4]
-    mov     eax,[eax]
+    movzx   ecx,word ptr [rax+8]
+    mov     edx,[rax+4]
+    mov     eax,[rax]
     mov     r8d,0FFFFF800h
     mov     r10d,eax
     shl     r10d,22

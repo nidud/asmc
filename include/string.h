@@ -55,7 +55,7 @@ char *	__cdecl strupr(char *);
 #ifndef _WSTRING_DEFINED
 #define _WSTRING_DEFINED
 _CRTIMP short * __cdecl wcscat(short *, short *);
-_CRTIMP int	__cdecl wcslen(short *);
+_CRTIMP size_t	__cdecl wcslen(short *);
 _CRTIMP short * __cdecl wcschr(short *, int);
 _CRTIMP int	__cdecl wcscmp(short *, short *);
 _CRTIMP short * __cdecl wcscpy(short *, short *);

@@ -703,7 +703,7 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 			    qual = T_LOW32;
 			    instr = "d";
 			    break;
-#if defined(__LIBC__)
+
 			case 16:
 			    if ( Ofssize == USE16 || Options.strict_masm_compat == TRUE )
 				break;
@@ -731,7 +731,7 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 				goto skip_push;
 			    }
 			    /* no break */
-#endif
+
 			case 8:
 			    if (( ModuleInfo.curr_cpu & P_CPU_MASK ) >= P_64 )
 				break;
@@ -752,9 +752,7 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 			AddLineQueueX( " push%s %s", instr, fullparam );
 		}
 	    }
-#if defined(__LIBC__)
 skip_push:
-#endif
 	    if ( curr->sym.is_vararg ) {
 		size_vararg += psize;
 	    }

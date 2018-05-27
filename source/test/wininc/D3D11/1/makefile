@@ -1,4 +1,4 @@
 test.exe:
-    asmc -pe -win64 -gui -Zp8 $*.asm
+    asmc -pe -ws -gui -Zp8 $*.asm
     $@
 

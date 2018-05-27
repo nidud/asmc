@@ -1,17 +1,3 @@
-;;--------------------------------------------------------------------------------------
-;; File: Tutorial02.cpp
-;;
-;; This application displays a triangle using Direct3D 11
-;;
-;; http://msdn.microsoft.com/en-us/library/windows/apps/ff729718.aspx
-;;
-;; THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-;; ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-;; THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-;; PARTICULAR PURPOSE.
-;;
-;; Copyright (c) Microsoft Corporation. All rights reserved.
-;;--------------------------------------------------------------------------------------
 include windows.inc
 include SpecStrings.inc
 include d3d11_1.inc
@@ -24,19 +10,11 @@ ifndef _WIN64
     .xmm
 endif
 
-;;--------------------------------------------------------------------------------------
-;; Structures
-;;--------------------------------------------------------------------------------------
-
 SimpleVertex struct
 Pos          XMFLOAT3 <>
 SimpleVertex ends
 
     .data
-
-;;--------------------------------------------------------------------------------------
-;; Global Variables
-;;--------------------------------------------------------------------------------------
 
 LPID3D11VertexShader    typedef ptr ID3D11VertexShader
 LPID3D11PixelShader     typedef ptr ID3D11PixelShader
@@ -59,24 +37,24 @@ g_pPixelShader          LPID3D11PixelShader NULL
 g_pVertexLayout         LPID3D11InputLayout NULL
 g_pVertexBuffer         LPID3D11Buffer NULL
 
-IID_IDXGIFactory1       GUID _IID_IDXGIFactory1
-IID_IDXGIDevice         GUID _IID_IDXGIDevice
-IID_IDXGIFactory2       GUID _IID_IDXGIFactory2
-IID_ID3D11Device1       GUID _IID_ID3D11Device1
-IID_ID3D11DeviceContext1 GUID _IID_ID3D11DeviceContext1
-IID_IDXGISwapChain      GUID _IID_IDXGISwapChain
-IID_ID3D11Texture2D     GUID _IID_ID3D11Texture2D
-Semantic                db "POSITION",0
-layout                  D3D11_INPUT_ELEMENT_DESC <Semantic,
-                            0,
-                            DXGI_FORMAT_R32G32B32_FLOAT,
-                            0,
-                            0,
-                            D3D11_INPUT_PER_VERTEX_DATA,
-                            0>
-vertices                SimpleVertex {{ 0.0, 0.5, 0.5 }}
-                        SimpleVertex {{ 0.5, 0.5, 0.5 }}
-                        SimpleVertex {{-0.5,-0.5, 0.5 }}
+IID_IDXGIFactory1        IID _IID_IDXGIFactory1
+IID_IDXGIDevice          IID _IID_IDXGIDevice
+IID_IDXGIFactory2        IID _IID_IDXGIFactory2
+IID_ID3D11Device1        IID _IID_ID3D11Device1
+IID_ID3D11DeviceContext1 IID _IID_ID3D11DeviceContext1
+IID_IDXGISwapChain       IID _IID_IDXGISwapChain
+IID_ID3D11Texture2D      IID _IID_ID3D11Texture2D
+
+Semantic db "POSITION",0
+layout   D3D11_INPUT_ELEMENT_DESC <Semantic,
+                        0,
+                        DXGI_FORMAT_R32G32B32_FLOAT,
+                        0,
+                        0,
+                        D3D11_INPUT_PER_VERTEX_DATA,
+                        0>
+align 16
+vertices SimpleVertex   {{ 0.0, 0.5, 0.5 }}, {{ 0.5,-0.5, 0.5 }}, {{-0.5,-0.5, 0.5 }}
 
     .code
 
@@ -186,14 +164,24 @@ InitWindow proc uses rsi rdi hInstance:HINSTANCE, nCmdShow:SINT
         mov edi,rc.bottom
         sub edi,rc.top
 
-        .if CreateWindow("TutorialWindowClass", "Direct3D 11 Tutorial 2: Rendering a Triangle",
+        .if CreateWindow( "TutorialWindowClass",
+                "Direct3D 11 Tutorial 3: Shaders",
                 WS_OVERLAPPED or WS_CAPTION or WS_SYSMENU or WS_MINIMIZEBOX,
-                CW_USEDEFAULT, CW_USEDEFAULT, esi, edi, NULL, NULL, hInstance, NULL)
+                CW_USEDEFAULT,
+                CW_USEDEFAULT,
+                esi,
+                edi,
+                NULL,
+                NULL,
+                hInstance,
+                NULL )
 
             mov g_hWnd,rax
             ShowWindow( rax, nCmdShow )
             mov eax,S_OK
+
         .else
+
             mov eax,E_FAIL
         .endif
     .until 1
@@ -229,8 +217,17 @@ endif
 
         mov pErrorBlob,NULL
 
-        .ifd D3DCompileFromFile( szFileName, NULL, NULL, szEntryPoint,
-            szShaderModel, dwShaderFlags, 0, ppBlobOut, &pErrorBlob ) != S_OK
+        .ifd D3DCompileFromFile(
+                szFileName,
+                NULL,
+                NULL,
+                szEntryPoint,
+                szShaderModel,
+                dwShaderFlags,
+                0,
+                ppBlobOut,
+                &pErrorBlob ) != S_OK
+
             mov hr,eax
             .if pErrorBlob
 
@@ -243,7 +240,6 @@ endif
 
         .if pErrorBlob
 
-            pErrorBlob.GetBufferSize()
             pErrorBlob.Release()
         .endif
 
@@ -406,6 +402,7 @@ endif
         .break .if eax != S_OK
 
         ;; Create swap chain
+
         mov dxgiFactory2,NULL
         dxgiFactory.QueryInterface( &IID_IDXGIFactory2, &dxgiFactory2 )
         mov hr,eax
@@ -496,7 +493,7 @@ endif
 
         ;; Compile the vertex shader
         mov pVSBlob,NULL
-        .ifd CompileShaderFromFile( L"Tutorial02.fx", "VS", "vs_4_0", &pVSBlob ) != S_OK
+        .ifd CompileShaderFromFile( L"Tutorial03.fx", "VS", "vs_4_0", &pVSBlob ) != S_OK
 
             mov hr,eax
             MessageBox(
@@ -539,7 +536,7 @@ endif
 
         ;; Compile the pixel shader
         mov pPSBlob,NULL
-        .ifd CompileShaderFromFile( L"Tutorial02.fx", "PS", "ps_4_0", &pPSBlob ) != S_OK
+        .ifd CompileShaderFromFile( L"Tutorial03.fx", "PS", "ps_4_0", &pPSBlob ) != S_OK
 
             mov hr,eax
             MessageBox( NULL, "The FX file cannot be compiled."

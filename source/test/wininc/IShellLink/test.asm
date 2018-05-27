@@ -8,10 +8,10 @@ include tchar.inc
 
 .data
 
-CLSID_ShellLink         IID _CLSID_ShellLink
-IID_IShellLink          IID _IID_IShellLinkW
-IID_IPersistFile        IID _IID_IPersistFile
-IID_IShellFolderViewCB  IID _IID_IShellFolderViewCB
+CLSID_ShellLink                 IID _CLSID_ShellLink
+IID_IShellLink                  IID _IID_IShellLinkW
+IID_IPersistFile                IID _IID_IPersistFile
+IID_IShellFolderViewCB          IID _IID_IShellFolderViewCB
 
 .code
 

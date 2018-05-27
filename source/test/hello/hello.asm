@@ -1,13 +1,13 @@
 include stdio.inc
-include stdlib.inc
+include tchar.inc
 
-.code
+    .code
 
-main proc
+_tmain proc
 
-    printf("Hello Word!\n")
-    exit(0)
+    _putts( "Hello Word!\n" )
+    ret
 
-main endp
+_tmain endp
 
-    end main
+    end _tstart

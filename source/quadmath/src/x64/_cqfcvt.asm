@@ -745,9 +745,7 @@ _ldcvt endp
 
 _dcvt proc d:ptr, buffer:LPSTR, ch_type:SINT, precision:SINT, flags:SINT
 local q:REAL16
-    mov rcx,d
-    mov rax,[rcx]
-    dtoquad(&q, rax)
+    dtoquad(&q, d)
     _qcvt(&q, buffer, ch_type, precision, flags)
     ret
 _dcvt endp

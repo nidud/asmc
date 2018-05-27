@@ -4,7 +4,7 @@
 
 ;; Every windows application needs to include this
 include windows.inc
-include xmmintrin.inc
+include emmintrin.inc
 include tchar.inc
 
 ;; Every Direct3D application this
@@ -212,11 +212,11 @@ WinMain proc WINAPI uses rdi hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmd
         .endif
 
         ;;we initialize them with identity
-        D3DXMatrixIdentity(&g_ShaderMatrix)
-        D3DXMatrixIdentity(&g_ShaderMatrix)
-        D3DXMatrixIdentity(&WorldMatrix)
-        D3DXMatrixIdentity(&ViewMatrix)
-        D3DXMatrixIdentity(&PerspectiveMatrix)
+        D3DXMatrixIdentity(g_ShaderMatrix)
+        D3DXMatrixIdentity(g_ShaderMatrix)
+        D3DXMatrixIdentity(WorldMatrix)
+        D3DXMatrixIdentity(ViewMatrix)
+        D3DXMatrixIdentity(PerspectiveMatrix)
 
         ;;calculating a perspective projection matrix
         ;;parameters besides the output matrix are:
@@ -226,13 +226,15 @@ WinMain proc WINAPI uses rdi hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmd
         .while ( g_bContinue )
 
             ;;Do a little position animation here for the objects world matrix
+
             GetTickCount()
-            pxor xmm0,xmm0
-            cvtsi2ss xmm0,rax
-            movss xmm1,FL1000
-            divss xmm0,xmm1
-            sinf(xmm0)
-            D3DXMatrixTranslation(&WorldMatrix,temp,0.0,0.0)
+            _mm_cvtsi32_ss(xmm0, eax)
+            _mm_cvtsi32_si128(xmm1, 1000.0)
+            _mm_div_ss(xmm0, xmm1)
+            _mm_store_ss(temp, xmm0)
+            sinf(temp)
+            _mm_store_ss(temp, xmm0)
+            D3DXMatrixTranslation(&WorldMatrix, temp, 0.0, 0.0)
 
             ;;Calculate a view matrix with position and look at vector
             D3DXMatrixLookAtLH(&ViewMatrix, &g_v3Position, &g_v3LookAt, &Vectors)

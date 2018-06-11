@@ -149,10 +149,10 @@ static void get_fname( int type, char *token )
     */
     if ( *p == 0 ) {
 	if ( type < NUM_FILE_TYPES && *token ) {
-		if ( DefaultDir[type] )
-		    free( DefaultDir[type] );
-		DefaultDir[type] = malloc( strlen( token ) + 1 );
-		strcpy( DefaultDir[type], token );
+	    if ( DefaultDir[type] )
+		free( DefaultDir[type] );
+	    DefaultDir[type] = malloc( strlen( token ) + 1 );
+	    strcpy( DefaultDir[type], token );
 	}
 	return;
     }
@@ -215,23 +215,6 @@ static char *ReadParamFile( const char *name )
     fclose( file );
     if ( len == 0)
 	return( NULL );
-#if 0
-    /* zip through characters changing \r, \n etc into ' ' */
-    str = env;
-    while( *str ) {
-	ch = *str;
-	if( ch == '\r' || ch == '\n' ) {
-	    *str = ' ';
-	}
-#if HANDLECTRLZ
-	if( ch == 0x1A ) {	/* if end of file */
-	    *str = '\0';	/* - mark end of str */
-	    break;
-	}
-#endif
-	++str;
-    }
-#endif
     return( env );
 }
 

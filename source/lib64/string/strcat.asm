@@ -1,15 +1,20 @@
-include string.inc
-
     .code
 
-strcat proc s1:LPSTR, s2:LPSTR
+strcat::
 
-    strlen(rcx)
-    add rax,s1
-    strcpy(rax,s2)
-    mov rax,s1
+    push rcx
+    xor eax,eax
+    .while [rcx] != al
+        inc rcx
+    .endw
+    .while [rdx] != ah
+        mov al,[rdx]
+        mov [rcx],al
+        inc rcx
+        inc rdx
+    .endw
+    mov [rcx],ah
+    pop rax
     ret
 
-strcat endp
-
-    END
+    end

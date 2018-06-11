@@ -5,6 +5,7 @@ include winbase.inc
     .code
 
 rewind proc fp:LPFILE
+
     fflush(rcx)
     mov rcx,fp
     mov eax,[rcx]._iobuf._flag
@@ -20,6 +21,7 @@ rewind proc fp:LPFILE
     mov rcx,[rcx+rax*8]
     SetFilePointer(rcx, 0, 0, SEEK_SET)
     ret
+
 rewind endp
 
-    END
+    end

@@ -1,21 +1,18 @@
 include time.inc
 include winbase.inc
 
-	.code
+    .code
 
-	OPTION	WIN64:2, STACKBASE:rsp
+__FTToTime proc ft:LPFILETIME
 
-__FTToTime PROC ft:LPFILETIME
+  local ftime:FILETIME
+  local stime:SYSTEMTIME
 
-local	ftime:FILETIME
-local	stime:SYSTEMTIME
+    FileTimeToLocalFileTime( rcx, &ftime )
+    FileTimeToSystemTime( &ftime, &stime )
+    __STToTime( &stime )
+    ret
 
-	FileTimeToLocalFileTime( rcx, addr ftime )
-	FileTimeToSystemTime( addr ftime, addr stime )
-	__STToTime( addr stime )
+__FTToTime endp
 
-	ret
-
-__FTToTime ENDP
-
-	END
+    end

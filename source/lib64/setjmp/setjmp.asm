@@ -20,7 +20,7 @@ setjmp	PROC PJMPBUF:PTR S_JMPBUF
 	mov	[rcx].J_R15,r15
 	mov	[rcx].J_RSP,rsp
 	mov	rax,[rsp]
-	mov	[rcx].J_RIP,rsp
+	mov	[rcx].J_RIP,rax
 	xor	rax,rax
 	ret
 setjmp	ENDP

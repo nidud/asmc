@@ -5,7 +5,7 @@
 #include <globals.h>
 #include <hllext.h>
 
-#ifndef __LIBC__
+#ifndef _LIBC
 
 int strtrim( char *string )
 {

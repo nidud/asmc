@@ -2,20 +2,20 @@ include io.inc
 include errno.inc
 include winbase.inc
 
-.code
+    .code
 
     option win64:nosave
 
 oswrite proc uses rbx h:SINT, b:PVOID, z:SIZE_T
 
-local lpNumberOfBytesWritten:dword
+  local NumberOfBytesWritten:dword
 
     mov ebx,r8d
     lea rax,_osfhnd
     mov rcx,[rax+rcx*8]
-    .if WriteFile(rcx, rdx, r8d, &lpNumberOfBytesWritten, 0)
+    .if WriteFile(rcx, rdx, r8d, &NumberOfBytesWritten, 0)
 
-        mov eax,lpNumberOfBytesWritten
+        mov eax,NumberOfBytesWritten
         .if eax != ebx
             mov errno,ERROR_DISK_FULL
             xor eax,eax

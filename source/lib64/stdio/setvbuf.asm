@@ -4,50 +4,50 @@ include limits.inc
 
     .code
 
-    option win64:nosave
-    assume rbx:LPFILE
+    assume rcx:LPFILE
 
-setvbuf proc uses rsi rdi rbx r12 r13 fp:LPFILE, buf:LPSTR, tp:SIZE_T, bsize:SIZE_T
-
-    mov rbx,rcx ; fp
-    mov rdi,rdx ; buf
-    mov r12,r8  ; tp
-    mov r13,r9  ; bsize
+setvbuf proc fp:LPFILE, buf:LPSTR, tp:SIZE_T, bsize:SIZE_T
 
     .repeat
-        .if r12d != _IONBF && (r13 < 2 || r13 > INT_MAX || (r12d != _IOFBF && r12d != _IOLBF))
-            mov rax,-1
-            .break
-        .endif
 
-        fflush(rbx)
-        _freebuf(rbx)
+        mov eax,-1
+        .break .if r8d != _IONBF && (r9d < 2 || r9d > INT_MAX || (r8d != _IOFBF && r8d != _IOLBF))
 
-        mov esi,[rbx]._flag
-        and esi,not (_IOMYBUF or _IOYOURBUF or _IONBF or _IOSETVBUF or _IOFEOF or _IOFLRTN or _IOCTRLZ)
+        fflush(rcx)
+        _freebuf(fp)
 
-        .if r12d & _IONBF
-            or  esi,_IONBF
-            lea rdi,[rbx]._charbuf
-            mov r13,4
-        .elseif !rdi
-            .if !malloc(r13)
-                mov rax,-1
+        mov edx,_IOYOURBUF or _IOSETVBUF
+        mov rax,buf
+        mov r8,tp
+        mov r9,bsize
+        mov rcx,fp
+
+        .if r8d & _IONBF
+
+            mov edx,_IONBF
+            lea rax,[rcx]._charbuf
+            mov r9d,4
+
+        .elseif !rax
+
+            .if !malloc(r9)
+
+                dec eax
                 .break
             .endif
-            mov rdi,rax
-            or  esi,_IOMYBUF or _IOSETVBUF
-        .else
-            or  esi,_IOYOURBUF or _IOSETVBUF
+            mov r9,bsize
+            mov edx,_IOMYBUF or _IOSETVBUF
+            mov rcx,fp
         .endif
-        mov [rbx]._flag,esi
-        mov [rbx]._bufsiz,r13d
-        mov [rbx]._ptr,rdi
-        mov [rbx]._base,rdi
+        and [rcx]._flag,not (_IOMYBUF or _IOYOURBUF or _IONBF or _IOSETVBUF or _IOFEOF or _IOFLRTN or _IOCTRLZ)
+        or  [rcx]._flag,edx
+        mov [rcx]._bufsiz,r9d
+        mov [rcx]._ptr,rax
+        mov [rcx]._base,rax
         xor eax,eax
-        mov [rbx]._cnt,eax
+        mov [rcx]._cnt,eax
     .until 1
     ret
 setvbuf endp
 
-    END
+    end

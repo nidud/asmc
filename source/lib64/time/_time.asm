@@ -1,25 +1,26 @@
 include time.inc
 include winbase.inc
 
-	.code
+    .code
 
-_time	PROC timeptr:LPTIME
+_time proc timeptr:LPTIME
 
-local	STime:SYSTEMTIME
+  local STime:SYSTEMTIME
 
-	GetLocalTime( addr STime )
-	_loctotime_t( STime.wYear,
-		      STime.wMonth,
-		      STime.wDay,
-		      STime.wHour,
-		      STime.wMinute,
-		      STime.wSecond )
-	mov	rcx,timeptr
-	test	rcx,rcx
-	jz	@F
-	mov	[rcx],eax
-@@:
-	ret
-_time	ENDP
+    GetLocalTime( &STime )
+    _loctotime_t(
+        STime.wYear,
+        STime.wMonth,
+        STime.wDay,
+        STime.wHour,
+        STime.wMinute,
+        STime.wSecond )
+    mov rcx,timeptr
+    .if rcx
+        mov [rcx],eax
+    .endif
+    ret
 
-	END
+_time endp
+
+    end

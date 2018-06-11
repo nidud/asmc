@@ -1,7 +1,5 @@
 include quadmath.inc
 
-option win64:nosave
-
 .code
 
 quadnormalize proc uses rbx r12 r13 r14 q:ptr, exponent:SINT

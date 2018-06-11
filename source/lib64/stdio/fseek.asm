@@ -12,47 +12,54 @@ fseek proc uses rsi rdi rbx fp:LPFILE, off:SIZE_T, whence:SIZE_T
 
     mov rbx,rcx ; fp
     mov rsi,rdx ; offset
-    mov rdi,r8	; whence
+    mov rdi,r8  ; whence
 
-    .if r8b != SEEK_SET && r8b != SEEK_CUR && r8b != SEEK_END
-	jmp error
-    .endif
-    mov eax,[rbx]._flag
-    .if !(eax & _IOREAD or _IOWRT or _IORW)
-	jmp error
-    .endif
-    and eax,not _IOEOF
-    mov [rbx]._flag,eax
+    .repeat
 
-    .if r8b == SEEK_CUR
-	ftell (rbx)
-	add rsi,rax
-	mov rdi,SEEK_SET
-    .endif
-    fflush(rbx)
+        mov eax,[rbx]._flag
+        .if r8b != SEEK_SET && r8b != SEEK_CUR && r8b != SEEK_END \
+                && !( eax & _IOREAD or _IOWRT or _IORW )
 
-    mov eax,[rbx]._flag
-    .if eax & _IORW
-	and eax,not (_IOWRT or _IOREAD)
-	mov [rbx]._flag,eax
-    .elseif eax & _IOREAD && eax & _IOMYBUF && !(eax & _IOSETVBUF)
-	mov [rbx]._bufsiz,_MINIOBUF
-    .endif
+            mov errno,EINVAL
+            xor eax,eax
+            dec rax
+            .break
+        .endif
 
-    mov eax,[rbx]._file
-    lea r8,_osfhnd
-    mov rax,[r8+rax*8]
-    .if SetFilePointer(rax, esi, 0, edi) == -1
-	call	osmaperr
-	jmp toend
-    .endif
-    xor rax,rax
-toend:
+        and eax,not _IOEOF
+        mov [rbx]._flag,eax
+
+        .if r8b == SEEK_CUR
+
+            add rsi,ftell(rbx)
+            mov edi,SEEK_SET
+        .endif
+
+        fflush(rbx)
+
+        mov eax,[rbx]._flag
+        .if eax & _IORW
+
+            and eax,not (_IOWRT or _IOREAD)
+            mov [rbx]._flag,eax
+
+        .elseif eax & _IOREAD && eax & _IOMYBUF && !(eax & _IOSETVBUF)
+
+            mov [rbx]._bufsiz,_MINIOBUF
+        .endif
+
+        mov eax,[rbx]._file
+        lea r8,_osfhnd
+        mov rcx,[r8+rax*8]
+        .ifd SetFilePointer(rcx, esi, 0, edi) == -1
+
+            osmaperr()
+            .break
+        .endif
+        xor eax,eax
+    .until 1
     ret
-error:
-    mov errno,EINVAL
-    mov rax,-1
-    jmp toend
+
 fseek endp
 
     END

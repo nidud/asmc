@@ -1,84 +1,101 @@
 include stdio.inc
 include io.inc
-include errno.inc
-include string.inc
 
     .code
 
     assume rbx:ptr _iobuf
-    option win64:rsp nosave
 
-fread proc uses rsi rdi rbx r12 r13 r14 r15 buf:LPSTR, rsize:SINT, num:SINT, fp:LPFILE
+fread proc uses rsi rdi rbx buffer:LPSTR, rsize:SINT, num:SINT, fp:LPFILE
 
-    mov rsi,rcx	    ; buf
-    mov r14d,edx    ; rsize
-    mov r15d,r8d    ; num
-    mov rbx,r9	    ; fp
-    mov eax,edx
-    mul r8d
-    mov r12d,eax
-    mov edi,eax
-    test eax,eax
-    jz	toend
-    mov edx,_MAXIOBUF
+    local total:UINT        ; total bytes to read
+    local count:UINT        ; num bytes left to read
+    local bufsize:UINT      ; size of stream buffer
 
-    .if [rbx]._flag & _IOMYBUF or _IONBF or _IOYOURBUF
+    mov rdi,rcx             ; buffer
+    mov rbx,r9              ; fp
 
-	mov edx,[rbx]._bufsiz
-    .endif
-    mov r13d,edx
+    .repeat
 
-    .while  edi
+        mov eax,edx         ; size * num
+        mul r8d
+        .break .if !eax
 
-	mov r8d,[rbx]._cnt
-	.if [rbx]._flag & _IOMYBUF or _IOYOURBUF && r8d
-	    .if edi < r8d
-		mov r8d,edi
-	    .endif
-	    memcpy(rsi, [rbx]._ptr, r8)
-	    sub edi,r8d
-	    sub [rbx]._cnt,r8d
-	    add [rbx]._ptr,r8
-	    add rsi,r8
-	.elseif edi >= r13d
-	    mov eax,edi
-	    mov ecx,r13d
-	    .if ecx
-		xor edx,edx
-		div ecx
-		mov eax,edi
-		sub eax,edx
-	    .endif
+        mov count,eax
+        mov total,eax
 
-	    .if !_read([rbx]._file, rsi, rax)
-		jmp error
-	    .elseif eax == -1
-		jmp error
-	    .endif
-	    sub edi,eax
-	    add rsi,rax
-	.else
-	    .if _filbuf(rbx) == -1
-		jmp break
-	    .endif
-	    mov [rsi],al
-	    inc rsi
-	    dec edi
-	    mov eax,[rbx]._bufsiz
-	    mov r13d,eax
-	.endif
-    .endw
-    mov rax,r15
-toend:
+        mov eax,_MAXIOBUF
+        .if [rbx]._flag & _IOMYBUF or _IONBF or _IOYOURBUF
+
+            mov eax,[rbx]._bufsiz ; already has buffer, use its size
+        .endif
+        mov bufsize,eax
+
+        .repeat ; here is the main loop -- we go through here until we're done
+
+            mov eax,count
+            mov ecx,[rbx]._cnt
+            .if [rbx]._flag & _IOMYBUF or _IOYOURBUF && ecx
+
+                .if eax < ecx
+                    mov ecx,eax
+                .endif
+
+                mov rsi,[rbx]._ptr
+                sub count,ecx
+                sub [rbx]._cnt,ecx
+                add [rbx]._ptr,rcx
+                rep movsb
+
+            .elseif eax >= bufsize
+
+                ; If we have more than bufsize chars to read, get data
+                ; by calling read with an integral number of bufsiz
+                ; blocks.  Note that if the stream is text mode, read
+                ; will return less chars than we ordered.
+
+                ; calc chars to read -- (count/bufsize) * bufsize
+
+                mov ecx,bufsize
+                .if ecx
+                    xor edx,edx
+                    div ecx
+                    mov eax,count
+                    sub eax,edx
+                .endif
+
+                .ifsd _read([rbx]._file, rdi, rax) <= 0
+
+                    or [rbx]._flag,_IOEOF
+                    mov eax,total
+                    sub eax,count
+                    xor edx,edx
+                    div rsize
+                    .break
+                .endif
+
+                sub count,eax
+                add rdi,rax
+
+            .else
+
+                .ifd _filbuf(rbx) == -1
+
+                    mov eax,total
+                    sub eax,count
+                    xor edx,edx
+                    div rsize
+                    .break
+                .endif
+                stosb
+                dec count
+                mov eax,[rbx]._bufsiz
+                mov bufsize,eax
+            .endif
+        .until !count
+        mov eax,num
+    .until 1
     ret
-error:
-    or [rbx]._flag,_IOEOF
-break:
-    mov eax,r12d
-    sub eax,edi
-    xor edx,edx
-    div r14d
-    jmp toend
+
 fread endp
 
-    END
+    end

@@ -119,6 +119,10 @@ endif
     pop rax
     mov [rax],ecx
     mov [rax+4],edx
+    .if rax == r10
+        xor edx,edx
+        mov [rax+8],rdx
+    .endif
     ret
 
 quadtod endp

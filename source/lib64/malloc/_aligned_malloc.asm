@@ -20,7 +20,7 @@ _aligned_malloc proc uses rdi dwSize:size_t, Alignment:UINT
             and rax,rdi
             lea rcx,[rax-sizeof(S_HEAP)]
             mov [rcx].S_HEAP.h_prev,rdx
-            mov [rcx].S_HEAP.h_type,3
+            mov [rcx].S_HEAP.h_type,_HEAP_ALIGNED
 
         .endif
     .endif

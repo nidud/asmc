@@ -1349,9 +1349,11 @@ XMVector3Cross macro V1:=<xmm0>, V2:=<xmm1>
     _mm_store_ps(xmm1, V2)
     _mm_store_ps(xmm2, XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,0,2,1)))
     _mm_store_ps(xmm3, XM_PERMUTE_PS(xmm1, _MM_SHUFFLE(3,1,0,2)))
-    _mm_shuffle_ps(xmm3, xmm1, _MM_SHUFFLE(3,1,0,2))
-    _mm_shuffle_ps(xmm2, xmm0, _MM_SHUFFLE(3,0,2,1))
+    _mm_store_ps(xmm0, xmm2)
+    _mm_store_ps(xmm1, xmm3)
     _mm_mul_ps(xmm0, xmm1)
+    _mm_shuffle_ps(xmm2, xmm2, _MM_SHUFFLE(3,0,2,1))
+    _mm_shuffle_ps(xmm3, xmm3, _MM_SHUFFLE(3,1,0,2))
     _mm_mul_ps(xmm2, xmm3)
     _mm_sub_ps(xmm0, xmm2)
     _mm_and_ps(xmm0, g_XMMask3)
@@ -1375,43 +1377,70 @@ elseifdef _XM_SSE_INTRINSICS_
     _mm_shuffle_ps(xmm2, xmm1, _MM_SHUFFLE(2,1,2,1))
     _mm_add_ss(xmm1, xmm2)
     _mm_add_ss(xmm1, XM_PERMUTE_PS(xmm2, _MM_SHUFFLE(1,1,1,1)))
+    _mm_setzero_ps(xmm2)
     _mm_sqrt_ps(xmm3, XM_PERMUTE_PS(xmm1, _MM_SHUFFLE(0,0,0,0)))
     _mm_cmpneq_ps(xmm1, g_XMInfinity)
     _mm_div_ps(xmm0, xmm3)
     _mm_cmpneq_ps(xmm2, xmm3)
     _mm_and_ps(xmm0, xmm2)
-    _mm_store_ps(xmm2, xmm1)
-    _mm_andnot_ps(xmm2, g_XMQNaN)
+    _mm_andnot_ps(_mm_store_ps(xmm2, xmm1), g_XMQNaN)
     _mm_and_ps(xmm1, xmm0)
-    _mm_or_ps(xmm0, xmm1)
+    _mm_or_ps(_mm_store_ps(xmm0, xmm2), xmm1)
     retm<xmm0>
 endif
     endm
 
 XMMatrixTranspose macro M, O
     ifnb <M>
-	_mm_store_ps(xmm0, M.r[0x00])
-	_mm_store_ps(xmm1, M.r[0x10])
-	_mm_store_ps(xmm2, M.r[0x20])
-	_mm_store_ps(xmm3, M.r[0x30])
-    endif
-    _mm_store_ps(xmm4, xmm0)
-    _mm_store_ps(xmm5, xmm2)
-    _mm_shuffle_ps(xmm0, xmm1, _MM_SHUFFLE(1,0,1,0))
-    _mm_shuffle_ps(xmm4, xmm1, _MM_SHUFFLE(3,2,3,2))
-    _mm_shuffle_ps(xmm2, xmm3, _MM_SHUFFLE(1,0,1,0))
-    _mm_shuffle_ps(xmm5, xmm3, _MM_SHUFFLE(3,2,3,2))
-    _mm_store_ps(xmm1, xmm0)
-    _mm_store_ps(xmm3, xmm2)
-    _mm_shuffle_ps(xmm0, xmm4, _MM_SHUFFLE(2,0,2,0))
-    _mm_shuffle_ps(xmm1, xmm4, _MM_SHUFFLE(3,1,3,1))
-    _mm_shuffle_ps(xmm2, xmm5, _MM_SHUFFLE(2,0,2,0))
-    _mm_shuffle_ps(xmm3, xmm5, _MM_SHUFFLE(3,1,3,1))
-    ifnb <O>
-	_mm_store_ps(O.r[0x00], xmm0)
-	_mm_store_ps(O.r[0x10], xmm1)
-	_mm_store_ps(O.r[0x20], xmm2)
-	_mm_store_ps(O.r[0x30], xmm3)
+	movaps xmm2,M.r[0x00]
+	movaps xmm3,M.r[0x20]
+	movaps xmm0,M.r[0x00]
+	shufps xmm0,M.r[0x10],_MM_SHUFFLE(3,2,3,2)
+	movaps xmm1,M.r[0x20]
+	shufps xmm1,M.r[0x30],_MM_SHUFFLE(3,2,3,2)
+	movhps xmm2,QWORD PTR M.r[0x10]
+	movhps xmm3,QWORD PTR M.r[0x30]
+	movaps xmm4,xmm2
+	shufps xmm2,xmm3,_MM_SHUFFLE(3,1,3,1)
+	ifnb <O>
+	    movaps O.r[0x10],xmm2
+	else
+	    movaps xmm5,xmm2
+	endif
+	movaps xmm2,xmm0
+	shufps xmm4,xmm3,_MM_SHUFFLE(2,0,2,0)
+	shufps xmm2,xmm1,_MM_SHUFFLE(2,0,2,0)
+	shufps xmm0,xmm1,_MM_SHUFFLE(3,1,3,1)
+	ifnb <O>
+	    movaps O.r[0x00],xmm4
+	    movaps O.r[0x20],xmm2
+	    movaps O.r[0x30],xmm0
+	else
+	    movaps xmm3,xmm0
+	    movaps xmm0,xmm4
+	    movaps xmm1,xmm5
+	endif
+    else
+	movaps xmm5,xmm1
+	movaps xmm6,xmm2
+	movaps xmm4,xmm3
+	movaps xmm2,xmm0
+	movaps xmm3,xmm6
+	shufps xmm0,xmm1,_MM_SHUFFLE(3,2,3,2)
+	movaps xmm1,xmm6
+	shufps xmm1,xmm4,_MM_SHUFFLE(3,2,3,2)
+	movhps xmm2,xmm5
+	movhps xmm3,xmm4
+	movaps xmm4,xmm2
+	shufps xmm2,xmm3,_MM_SHUFFLE(3,1,3,1)
+	movaps xmm5,xmm2
+	movaps xmm2,xmm0
+	shufps xmm4,xmm3,_MM_SHUFFLE(2,0,2,0)
+	shufps xmm2,xmm1,_MM_SHUFFLE(2,0,2,0)
+	shufps xmm0,xmm1,_MM_SHUFFLE(3,1,3,1)
+	movaps xmm3,xmm0
+	movaps xmm0,xmm4
+	movaps xmm1,xmm5
     endif
     exitm<>
     endm
@@ -1734,11 +1763,7 @@ XMMatrixLookAtLH macro EyePosition, FocusPosition, UpDirection
     _mm_store_ps(xmm0, EyePosition)
     _mm_store_ps(xmm1, FocusPosition)
     _mm_store_ps(xmm2, UpDirection)
-    _mm_store_ps(xmm3, xmm0)
-    _mm_store_ps(xmm0, xmm3)
-    _mm_sub_ps(xmm0, xmm1)
-    _mm_store_ps(xmm1, xmm0)
-    _mm_store_ps(xmm0, xmm3)
+    _mm_sub_ps(xmm1, xmm0)
     XMMatrixLookToLH(xmm0, xmm1, xmm2)
     retm<xmm0>
     endm
@@ -1754,9 +1779,11 @@ XMMatrixLookAtRH macro EyePosition, FocusPosition, UpDirection
     endm
 
 XMMatrixLookToLH macro EyePosition, EyeDirection, UpDirection
+
     _mm_store_ps(xmm0, EyePosition)
     _mm_store_ps(xmm1, EyeDirection)
     _mm_store_ps(xmm2, UpDirection)
+
     _mm_store_ps(xmm6, xmm0)
     _mm_store_ps(xmm7, xmm2)
     _mm_store_ps(xmm5, XMVector3Normalize(xmm1))

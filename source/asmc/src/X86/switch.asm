@@ -841,9 +841,15 @@ local \
                 .endif
             .endif
 
-        .elseif ( edx <= ( UINT_MAX / 8 ) ) && !use_index && [esi].flags & HLLF_ARGREG
+        .elseif ( edx <= ( UINT_MAX / 8 ) ) && !use_index && [esi].flags & HLLF_ARGREG && \
+                ModuleInfo.aflag & _AF_REGAX
 
-            AddLineQueueX("jmp [%s*8+%s-(%d*8)]", ebx, &l_jtab, min)
+            .if !_memicmp(ebx, "r11", 3)
+                asmerr( 2008, "register r11 overwritten by SWITCH" )
+            .endif
+
+            AddLineQueueX("lea r11,%s", &l_jtab)
+            AddLineQueueX("jmp qword ptr [%s*8+r11-(%d*8)]", ebx, min)
         .else
             .if !([esi].flags & HLLF_ARGREG)
                 GetSwitchArg(T_RAX, [esi].flags, ebx)

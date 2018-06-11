@@ -56,9 +56,9 @@ endif
 
 _finddata_t	STRUC
 attrib		dd ?
-time_create	size_t ?	; File creation time
-time_access	size_t ?	; Last access time
-time_write	size_t ?	; Last modification time
+time_create	time_t ?	; File creation time
+time_access	time_t ?	; Last access time
+time_write	time_t ?	; Last modification time
 _size		size_t ?
 _name		db 260 dup(?)
 _finddata_t	ENDS

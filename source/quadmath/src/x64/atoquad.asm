@@ -223,7 +223,7 @@ atoquad proc uses rsi rdi rbx number:ptr, string:LPSTR, endptr:ptr LPSTR
             neg rax
             sbb rdx,0
         .endif
-        ;
+         ;
         ; get bit-count of number
         ;
         xor ecx,ecx
@@ -277,13 +277,10 @@ atoquad proc uses rsi rdi rbx number:ptr, string:LPSTR, endptr:ptr LPSTR
             ;
             ; create exponent bias and mask
             ;
-            add edi,Q_EXPBIAS   ; bits + bias
+            mov edi,Q_EXPBIAS+Q_SIGBITS-1
             sub edi,ebx         ; - shift count
-            dec edi
             and edi,Q_EXPMASK   ; remove sign bit
-
             .if flags & _ST_NEGNUM
-
                 or di,0x8000
             .endif
             mov [r10+14],di

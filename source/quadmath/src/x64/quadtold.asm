@@ -2,6 +2,8 @@ include quadmath.inc
 
     .code
 
+    option win64:rsp nosave noauto
+
 quadtold proc ld:ptr, q:ptr
 
     mov r8w,[rdx+14]
@@ -10,9 +12,9 @@ quadtold proc ld:ptr, q:ptr
     neg eax
     mov rax,[rdx+6]
     rcr rax,1
-    ;
-    ; round result
-    ;
+
+    ;; round result
+
     .ifc
         .if rax == -1
             mov rax,0x8000000000000000

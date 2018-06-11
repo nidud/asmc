@@ -6,7 +6,6 @@ include asmc.inc
 include token.inc
 
 public  SymCmpFunc
-public  resw_table
 
 DeleteProc          PROTO :DWORD
 ReleaseMacroData    PROTO :DWORD
@@ -34,8 +33,6 @@ LHASH_TABLE_SIZE    equ 128
 USEFIXSYMCMP    equ 0   ; 1=don't use a function pointer for string compare
 USESTRFTIME     equ 0   ; 1=use strftime()
 
-HASH_TABITEMS   equ 1024
-
 tmitem          STRUC
 _name           dd ?
 value           dd ?
@@ -49,18 +46,10 @@ sfunc_ptr       dd ?    ; ( struct asym *, void * );
 store           dd ?    ; asym **
 eqitem          ENDS
 
-ReservedWord    STRUC
-next            dw ?    ; index next entry (used for hash table)
-len             db ?    ; length of reserved word, i.e. 'AX' = 2
-flags           db ?    ; see enum reservedword_flags
-_name           dd ?    ; reserved word (char[])
-ReservedWord    ENDS
-
-extrn   FileCur     : DWORD ; @FileCur symbol
-extrn   LineCur     : DWORD ; @Line symbol
-extrn   symCurSeg   : DWORD ; @CurSeg symbol
-extrn   CurrProc    : DWORD ;
-extrn   ResWordTable: ReservedWord
+externdef       FileCur     : DWORD ; @FileCur symbol
+externdef       LineCur     : DWORD ; @Line symbol
+externdef       symCurSeg   : DWORD ; @CurSeg symbol
+externdef       CurrProc    : DWORD ;
 
 .data?
 
@@ -70,13 +59,11 @@ lsym        dd ?        ; asym ** pointer into local hash table
 SymCount    dd ?        ; Number of symbols in global table
 szDate      db 16 dup(?)    ; value of @Date symbol
 szTime      db 16 dup(?)    ; value of @Time symbol
-            ALIGN 16
+
+ALIGN       16
 lsym_table  dd LHASH_TABLE_SIZE+1 dup(?)
-            ALIGN 16
+ALIGN       16
 gsym_table  dd GHASH_TABLE_SIZE dup(?)
-            ALIGN 16
-resw_table  LABEL WORD
-            dd HASH_TABITEMS / 2 + 1 dup(?)
 
 .data
 
@@ -248,7 +235,7 @@ SymAlloc proc uses esi edi sname
     ret
 SymAlloc ENDP
 
-SymFind proc fastcall uses esi edi ebx ebp sname
+SymFind proc fastcall uses esi edi ebx ebp sname:LPSTR
     ;
     ; find a symbol in the local/global symbol table,
     ; return ptr to next free entry in global table if not found.
@@ -584,7 +571,7 @@ SymAddGlobal endp
 ;
 ; Create symbol and optionally insert it into the symbol table
 ;
-SymCreate proc sname
+SymCreate proc sname:LPSTR
     .if SymFind(sname)
         asmerr(2005, sname)
         xor eax,eax
@@ -872,367 +859,5 @@ QEnqueue proc fastcall q, item
     ret
 
 QEnqueue endp
-
-get_hash proc fastcall uses ebx s, z
-
-    xor eax,eax
-    and edx,0xFF
-    .while edx
-        movzx ebx,byte ptr [ecx]
-        inc   ecx
-        or    ebx,0x20
-        shl   eax,3
-        add   eax,ebx
-        mov   ebx,eax
-        and   ebx,not 0x1FFF
-        xor   eax,ebx
-        shr   ebx,13
-        xor   eax,ebx
-        dec   edx
-    .endw
-    and eax,( HASH_TABITEMS - 1 )
-    ret
-
-get_hash endp
-
-FindResWord proc fastcall w_name, w_size
-
-    movzx eax,BYTE PTR [ecx]
-    or al,0x20
-
-    .switch edx
-
-      .case 0
-        xor eax,eax
-        ret
-
-      .case 1
-        mov cl,al
-        movzx eax,resw_table[eax*2]
-        .while eax
-            .if ResWordTable[eax*8].len == 1
-                mov edx,ResWordTable[eax*8]._name
-                .break .if cl == [edx]
-            .endif
-            movzx eax,ResWordTable[eax*8].next
-        .endw
-        ret
-
-      .case 2
-        shl     eax,3
-        movzx   edx,BYTE PTR [ecx+1]
-        or      edx,0x20
-        add     eax,edx
-        and     eax,HASH_TABITEMS - 1
-        movzx   eax,resw_table[eax*2]
-        movzx   ecx,WORD PTR [ecx]
-        or      ecx,0x2020
-
-        .while eax
-            .if ResWordTable[eax*8].len == 2
-                mov edx,ResWordTable[eax*8]._name
-                .break .if cx == [edx]
-            .endif
-            movzx eax,ResWordTable[eax*8].next
-        .endw
-        ret
-
-      .case 3
-        shl     eax,3
-        movzx   edx,BYTE PTR [ecx+1]
-        or      edx,0x20
-        add     eax,edx
-        shl     eax,3
-        movzx   edx,BYTE PTR [ecx+2]
-        or      edx,0x20
-        add     eax,edx
-        mov     edx,eax
-        and     edx,not 0x1FFF
-        xor     eax,edx
-        shr     edx,13
-        xor     eax,edx
-        and     eax,HASH_TABITEMS - 1
-        movzx   eax,resw_table[eax*2]
-        mov     ecx,[ecx]
-        or      ecx,0x202020
-        and     ecx,0xFFFFFF
-
-        .while eax
-            .if ResWordTable[eax*8].len == 3
-                mov edx,ResWordTable[eax*8]._name
-                mov edx,[edx]
-                and edx,0xFFFFFF
-                .break .if ecx == edx
-            .endif
-            movzx eax,ResWordTable[eax*8].next
-        .endw
-        ret
-
-      .case 4
-        movzx   edx,BYTE PTR [ecx+1]
-        or      dl,0x20
-        shl     eax,3
-        add     eax,edx
-        mov     dl,[ecx+2]
-        or      dl,0x20
-        shl     eax,3
-        add     eax,edx
-        mov     edx,eax
-        and     edx,not 0x1FFF
-        xor     eax,edx
-        shr     edx,13
-        xor     eax,edx
-        movzx   edx,BYTE PTR [ecx+3]
-        or      dl,0x20
-        shl     eax,3
-        add     eax,edx
-        mov     edx,eax
-        and     edx,not 0x1FFF
-        xor     eax,edx
-        shr     edx,13
-        xor     eax,edx
-        and     eax,HASH_TABITEMS - 1
-        movzx   eax,resw_table[eax*2]
-        mov     ecx,[ecx]
-        or      ecx,0x20202020
-
-        .while eax
-            .if ResWordTable[eax*8].len == 4
-                mov edx,ResWordTable[eax*8]._name
-                .break .if ecx == [edx]
-            .endif
-            movzx eax,ResWordTable[eax*8].next
-        .endw
-        ret
-
-      .case 5
-      .case 6
-      .case 7
-        push    edi
-        push    ebx
-        mov     ebx,edx
-        mov     edi,ecx
-if 1
-        mov ecx,1
-        .repeat
-            movzx edx,BYTE PTR [ecx+edi]
-            or  edx,0x20
-            shl eax,3
-            add eax,edx
-            mov edx,eax
-            and edx,not 0x00001FFF
-            xor eax,edx
-            shr edx,13
-            xor eax,edx
-            add ecx,1
-            cmp ecx,ebx
-        .untilnl
-else
-        mov     ecx,[edi+1]
-        or      ecx,0x20202020
-
-        movzx   edx,cl
-        shl     eax,3
-        add     eax,edx
-        mov     edx,eax
-        and     edx,not 0x1FFF
-        xor     eax,edx
-        shr     edx,13
-        xor     eax,edx
-
-        movzx   edx,ch
-        shl     eax,3
-        add     eax,edx
-        mov     edx,eax
-        and     edx,not 0x1FFF
-        xor     eax,edx
-        shr     edx,13
-        xor     eax,edx
-
-        shr     ecx,16
-        movzx   edx,cl
-        shl     eax,3
-        add     eax,edx
-        mov     edx,eax
-        and     edx,not 0x1FFF
-        xor     eax,edx
-        shr     edx,13
-        xor     eax,edx
-
-        movzx   edx,ch
-        shl     eax,3
-        add     eax,edx
-        mov     edx,eax
-        and     edx,not 0x1FFF
-        xor     eax,edx
-        shr     edx,13
-        xor     eax,edx
-
-        .if ebx > 5
-            movzx   edx,BYTE PTR [edi+5]
-            or      edx,0x20
-            shl     eax,3
-            add     eax,edx
-            mov     edx,eax
-            and     edx,not 0x1FFF
-            xor     eax,edx
-            shr     edx,13
-            xor     eax,edx
-            .if ebx > 6
-                movzx   edx,BYTE PTR [edi+6]
-                or  edx,0x20
-                shl eax,3
-                add eax,edx
-                mov edx,eax
-                and edx,not 0x1FFF
-                xor eax,edx
-                shr edx,13
-                xor eax,edx
-            .endif
-        .endif
-endif
-        and    eax,HASH_TABITEMS - 1
-        movzx  eax,resw_table[eax*2]
-        align  4
-        .while eax
-            .if ResWordTable[eax*8].len == bl
-                mov edx,ResWordTable[eax*8]._name
-                mov ecx,[edi]
-                or  ecx,0x20202020
-                .if ecx == [edx]
-                    mov cl,[edi+4]
-                    or  cl,0x20
-                    .if cl == [edx+4]
-                        .break .if ebx == 5
-                        mov cl,[edi+5]
-                        or  cl,0x20
-                        .if cl == [edx+5]
-                            .break .if ebx == 6
-                            mov cl,[edi+6]
-                            or  cl,0x20
-                            .break .if cl == [edx+6]
-                        .endif
-                    .endif
-                .endif
-            .endif
-            movzx eax,ResWordTable[eax*8].next
-        .endw
-        pop ebx
-        pop edi
-        ret
-
-      .default
-
-        push esi
-        push edi
-        push ebx
-        mov ebx,edx
-        mov edi,ecx
-
-        mov ecx,[edi+1]
-        or  ecx,0x20202020
-
-        movzx edx,cl
-        shl eax,3
-        add eax,edx
-        mov esi,eax
-        and esi,not 0x1FFF
-        xor eax,esi
-        shr esi,13
-        xor eax,esi
-
-        mov dl,ch
-        shl eax,3
-        add eax,edx
-        mov esi,eax
-        and esi,not 0x1FFF
-        xor eax,esi
-        shr esi,13
-        xor eax,esi
-
-        shr ecx,16
-        mov dl,cl
-        shl eax,3
-        add eax,edx
-        mov esi,eax
-        and esi,not 0x1FFF
-        xor eax,esi
-        shr esi,13
-        xor eax,esi
-
-        mov dl,ch
-        shl eax,3
-        add eax,edx
-        mov esi,eax
-        and esi,not 0x1FFF
-        xor eax,esi
-        shr esi,13
-        xor eax,esi
-
-        mov dl,[edi+5]
-        or  dl,0x20
-        shl eax,3
-        add eax,edx
-        mov esi,eax
-        and esi,not 0x1FFF
-        xor eax,esi
-        shr esi,13
-        xor eax,esi
-
-        mov dl,[edi+6]
-        or  dl,0x20
-        shl eax,3
-        add eax,edx
-        mov esi,eax
-        and esi,not 0x1FFF
-        xor eax,esi
-        shr esi,13
-        xor eax,esi
-
-        mov ecx,7
-        .repeat
-            movzx edx,BYTE PTR [ecx+edi]
-            or  edx,0x20
-            shl eax,3
-            add eax,edx
-            mov edx,eax
-            and edx,not 0x1FFF
-            xor eax,edx
-            shr edx,13
-            xor eax,edx
-            add ecx,1
-            cmp ecx,ebx
-        .untilnl
-        and eax,HASH_TABITEMS - 1
-        movzx eax,resw_table[eax*2]
-        align  4
-        .while eax
-            .if ResWordTable[eax*8].len == bl
-                mov esi,ResWordTable[eax*8]._name
-                mov ecx,[edi]
-                or  ecx,0x20202020
-                .if ecx == [esi]
-                    mov ecx,[edi+4]
-                    or  ecx,0x20202020
-                    .if ecx == [esi+4]
-                        mov edx,ebx
-                        .repeat
-                            .break(1) .if edx == 8
-                            sub edx,1
-                            mov cl,[edi+edx]
-                            or  cl,0x20
-                        .until cl != [esi+edx]
-                    .endif
-                .endif
-            .endif
-            mov ax,ResWordTable[eax*8].next
-        .endw
-        pop ebx
-        pop edi
-        pop esi
-        ret
-    .endsw
-
-FindResWord endp
 
     end

@@ -9,10 +9,11 @@ include io.inc
 fflush proc uses rbx rdi rsi r12 fp:LPFILE
 
     mov rbx,rcx
-    xor rsi,rsi
+    xor esi,esi
     mov eax,[rbx]._flag
     mov edi,eax
     and eax,_IOREAD or _IOWRT
+
     .if eax == _IOWRT && edi & _IOMYBUF or _IOYOURBUF
         mov r12,[rbx]._ptr
         sub r12,[rbx]._base
@@ -35,6 +36,7 @@ fflush proc uses rbx rdi rsi r12 fp:LPFILE
     mov [rbx]._cnt,0
     mov rax,rsi
     ret
+
 fflush endp
 
-    END
+    end

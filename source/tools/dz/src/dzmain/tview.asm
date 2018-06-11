@@ -1236,7 +1236,7 @@ tview proc uses esi edi ebx filename, offs
                         .gotosw(KEY_F1)
                     .endif
                     .endc .ifz
-                    .if al < 10
+                    .if al < 20
                         .gotosw(KEY_F2)
                     .endif
                     .endc .ifz

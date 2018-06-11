@@ -3,26 +3,24 @@ include string.inc
 
     .code
 
-    option win64:rsp nosave
+fputs proc string:LPSTR, fp:LPFILE
 
-fputs proc uses rsi rdi rbx string:LPSTR, fp:LPFILE
-
-    mov rsi,rdx
-    mov rdi,rcx
+  local buffing:SINT, ndone:UINT, lengt:UINT
 
     _stbuf(rdx)
-    mov rbx,rax
-    strlen(rdi)
-    fwrite(rdi, 1, eax, rsi)
-    xchg    rbx,rax
-    _ftbuf(eax, rsi)
-    strlen(rdi)
-    cmp rax,rbx
-    mov rax,0
-    je	@F
-    dec rax
-@@:
+    mov buffing,eax
+    strlen(string)
+    mov lengt,eax
+    fwrite(string, 1, eax, fp)
+    mov ndone,eax
+    _ftbuf(buffing, fp)
+    mov ecx,lengt
+    xor eax,eax
+    .if eax != ndone
+	dec rax
+    .endif
     ret
+
 fputs endp
 
     END

@@ -21,25 +21,27 @@ fwrite proc uses rsi rdi rbx r12 r13 r14 buf:LPSTR, rsize:SINT, num:SINT, fp:LPF
 	mov r13d,[rbx]._bufsiz
     .endif
 
-    .while  edi
-	mov r8d,[rbx]._cnt
-	.if [rbx]._flag & _IOMYBUF or _IOYOURBUF && r8d
+    .while edi
 
-	    .if edi < r8d
-		mov r8d,edi
+	mov ecx,[rbx]._cnt
+	.if ecx && [rbx]._flag & _IOMYBUF or _IOYOURBUF
+
+	    .if edi < ecx
+		mov ecx,edi
 	    .endif
-
-	    memcpy([rbx]._ptr, rsi, r8)
-	    sub edi,r8d
-	    sub [rbx]._cnt,r8d
-	    add [rbx]._ptr,r8
-	    add rsi,r8
+	    sub edi,ecx
+	    sub [rbx]._cnt,ecx
+	    mov edx,edi
+	    mov rdi,[rbx]._ptr
+	    rep movsb
+	    mov [rbx]._ptr,rdi
+	    mov edi,edx
 
 	.elseif edi >= r13d
 
 	    .if [rbx]._flag & _IOMYBUF or _IOYOURBUF
 		fflush(rbx)
-		test	rax,rax
+		test rax,rax
 		jnz break
 	    .endif
 
@@ -63,9 +65,9 @@ fwrite proc uses rsi rdi rbx r12 r13 r14 buf:LPSTR, rsize:SINT, num:SINT, fp:LPF
 	    cmp eax,r14d
 	    jb	error
 	.else
-	    movzx   rax,byte ptr [rsi]
+	    movzx eax,byte ptr [rsi]
 	    _flsbuf(rax, rbx)
-	    cmp rax,-1
+	    cmp eax,-1
 	    je	break
 	    inc rsi
 	    dec rdi

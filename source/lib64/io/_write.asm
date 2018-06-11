@@ -5,7 +5,7 @@ include errno.inc
 
 _write proc uses rdi rsi rbx r12 h:SINT, b:PVOID, l:SIZE_T
 
-local result:SIZE_T, count:SIZE_T, lb[1026]:SBYTE
+  local result:SIZE_T, count:SIZE_T, lb[1026]:SBYTE
 
     mov rax,r8  ; l
     mov rbx,rcx ; h
@@ -16,7 +16,7 @@ local result:SIZE_T, count:SIZE_T, lb[1026]:SBYTE
 
         .if ecx >= _NFILE_
 
-            xor rax,rax
+            xor eax,eax
             mov oserrno,eax
             mov errno,EBADF
             dec rax
@@ -49,11 +49,9 @@ local result:SIZE_T, count:SIZE_T, lb[1026]:SBYTE
                     mov rax,rdi
                     sub rax,rdx
                     .break .if rax >= 1024
-
                     mov rax,rsi
                     sub rax,b
                     .break .if rax >= l
-
                     lodsb
                     .if al == 10
                         mov byte ptr [rdi],13

@@ -26,16 +26,22 @@ _HEAP_GROWSTART		equ _PAGESIZE_	; Startup grow increment
 _HEAP_COALESCE		equ -1		; Coalesce heap value
 _HEAP_EMPTYLIST_SIZE	equ (1 * _PAGESIZE_)
 
+_HEAP_FREE	equ 0
+_HEAP_LOCAL	equ 1
+_HEAP_GLOBAL	equ 2
+_HEAP_ALIGNED	equ 3
+
 S_HEAP		STRUC SIZE_T		; Memory Block Header: 16/32 byte
 h_size		SIZE_T ?
-h_type		BYTE ?			; 0 unused, 1 local, 2 global, 3 aligned
-h_prev		PVOID ?			; global block's (user size)
-h_next		PVOID ?			; local block's (chunck size)
+h_type		BYTE ?
+h_prev		PVOID ?
+h_next		PVOID ?
 S_HEAP		ENDS
+LPHEAP		typedef ptr S_HEAP
 
 externdef	_amblksiz:dword
-externdef	_heap_base:size_t
-externdef	_heap_free:size_t
+externdef	_heap_base:LPHEAP
+externdef	_heap_free:LPHEAP
 
 malloc		proto __cdecl :size_t
 realloc		PROTO __cdecl :ptr, :size_t

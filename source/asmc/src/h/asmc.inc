@@ -5,8 +5,8 @@ include version.inc
 include ltype.inc
 
 	.xlist
-	option loopalign: 4
-	option fieldalign: 4
+
+	option fieldalign: size_t
 
 CHEXPREFIX		equ 1			; 0x prefix
 
@@ -524,8 +524,8 @@ input_status		STRUC
 token_stringbuf		LPSTR ?
 currsource		LPSTR ?
 CurrComment		LPSTR ?
-token_count		DWORD ?
-line_flags		BYTE ?	; v2.08: added
+token_count		SINT ?
+line_flags		SBYTE ? ; v2.08: added
 input_status		ENDS
 LPINPUT			TYPEDEF PTR input_status
 
@@ -533,48 +533,48 @@ PushInputStatus		PROTO :LPINPUT
 PopInputStatus		PROTO :LPINPUT
 endif
 qditem			STRUC
-next			dd ?
-_size			dd ?
+next			PVOID ?
+_size			UINT ?
 qditem			ends
 
 dll_desc		STRUC
-next			dd ?
-cnt			dd ?
+next			PVOID ?
+cnt			SINT ?
 dname			db ?
 dll_desc		ENDS
 
 qnode			STRUC
-next			dd ?
+next			PVOID ?
 UNION
-    elmt		dd ?
-    sym			dd ?
+    elmt		PVOID ?
+    sym			PVOID ?
 ENDS
 qnode			ENDS
 
 qitem			STRUC
-next			dd ?
+next			PVOID ?
 value			db ?
 qitem			ENDS
 
 qdesc			STRUC
-head			dd ?
-tail			dd ?
+head			PVOID ?
+tail			PVOID ?
 qdesc			ENDS
 
 src_item		STRUC
-next			dd ?
+next			PVOID ?
 _type			dw ?	; item type ( see enum src_item_type )
 srcfile			dw ?	; index of file in ModuleInfo.FNames
 UNION
-    content		dd ?	; generic
-    file		dd ?	; if item is a file
-    mi			dd ?	; if item is a macro
+    content		PVOID ? ; generic
+    file		PVOID ? ; if item is a file
+    mi			PVOID ? ; if item is a macro
 ENDS
-line_num		dd ?	; current line #
+line_num		UINT ?	; current line #
 src_item		ENDS
 
 format_options		STRUC
-init			dd ?
+init			PVOID ?
 invalid_fixup_type	dw ?
 formatname		db 6 dup(?)
 format_options		ENDS
@@ -714,12 +714,12 @@ _asym_typekind macro reg:=<eax>
     endm
 
 seg_item		STRUC
- next			dd ?
- iseg			dd ?
+ next			PVOID ?
+ iseg			PVOID ?
 seg_item		ENDS
 
 grp_info		STRUC
- seglist		dd ?
+ seglist		PVOID ?
  grp_idx		dd ?
  lname_idx		dd ?
  numseg			dd ?
@@ -727,25 +727,25 @@ grp_info		ENDS
 LPGRPINFO		typedef ptr grp_info
 
 seg_info		STRUC
- sgroup			dd ?
+ sgroup			PVOID ?
  start_loc		dd ?
  UNION
     current_loc		dd ?
     reloc_offset	dd ?
     start_offset	dd ?
  ENDS
- CodeBuffer		dd ?
+ CodeBuffer		PVOID ?
  bytes_written		dd ?
  UNION
-    label_list		dd ?
-    flushfunc		dd ?
+    label_list		PVOID ?
+    flushfunc		PVOID ?
  ENDS
  STRUC
-    head		dd ?
-    tail		dd ?
+    head		PVOID ?
+    tail		PVOID ?
  ENDS
  UNION
-    LinnumQueue		dd ?
+    LinnumQueue		PVOID ?
     fileoffset		dd ?
     num_linnums		dd ?
  ENDS
@@ -753,7 +753,7 @@ seg_info		STRUC
  seg_idx		dd ?
  segtype		dd ?
  lname_idx		dd ?
- clsym			dd ?
+ clsym			PVOID ?
  UNION
     abs_frame		dd ?
     comdat_number	dd ?
@@ -761,7 +761,7 @@ seg_info		STRUC
  ENDS
  UNION
     abs_offset		dd ?
-    aliasname		dd ?
+    aliasname		LPSTR ?
  ENDS
  Ofssize		db ?
  characteristics	db ?
@@ -779,14 +779,14 @@ seg_info		ENDS
 LPSEGINFO		typedef ptr seg_info
 
 proc_info		STRUC
- regslist		db ?
- paralist		dd ?
- locallist		dd ?
- labellist		dd ?
+ regslist		PVOID ?
+ paralist		PVOID ?
+ locallist		PVOID ?
+ labellist		PVOID ?
  parasize		dd ?
  localsize		dd ?
- rologuearg		dd ?
- exc_handler		dd ?
+ prologuearg		LPSTR ?
+ exc_handler		PVOID ?
  ReservedStack		dd ?
  prolog_list_pos	dd ?
  flags			db ?
@@ -804,12 +804,12 @@ proc_info		ENDS
 LPPROCINFO		typedef ptr proc_info
 
 mparm_list		STRUC
- deflt			dd ?
+ deflt			LPSTR ?
  required		db ?
 mparm_list		ENDS
 
 srcline			STRUC
- next			dd ?
+ next			PVOID ?
  ph_count		db ?
  line1			db ?
 srcline			ENDS
@@ -820,15 +820,15 @@ macro_info		STRUC
     localcnt		dw ?
     autoexp		dw ?
  ENDS
- parmlist		dd ?
- datap			dd ?
+ parmlist		PVOID ?
+ datap			PVOID ?
  srcfile		dd ?
 macro_info		ENDS
 LPMACROINFO		typedef ptr macro_info
 
 sfield			STRUC
  sym			asym <>
- next			dd ?
+ next			PVOID ?
  ivalue			db ?
 sfield			ENDS
 LPSFIELD		typedef ptr sfield
@@ -865,8 +865,8 @@ nsym			ENDS
 LPDSYM			typedef ptr nsym
 
 symbol_queue		STRUC
- head			dd ?
- tail			dd ?
+ head			PVOID ?
+ tail			PVOID ?
 symbol_queue		ENDS
 
 asm_tok			STRUC
@@ -1019,8 +1019,8 @@ no_error_disp		db ?	; -eq option
 warning_level		db ?	; -Wn option
 warning_error		db ?	; -WX option
 process_subdir		db ?	; -r option
-names			dd OPTN_LAST dup(?)	; char *  4
-queues			dd OPTQ_LAST dup(?)	; qitem * 4
+names			LPSTR OPTN_LAST dup(?)	; char *  4
+queues			PVOID OPTQ_LAST dup(?)	; qitem * 4
 no_comment_in_code_rec	db ?	; -zlc option
 no_opt_farcall		db ?	; -zld option
 no_file_entry		db ?	; -zlf option
@@ -1075,34 +1075,34 @@ PubQueue		qdesc <>	; PUBLIC items
 Lnam			qdesc <>	; LNAME items (segments, groups and classes)
 SafeSEHQueue		qdesc <>	; list of safeseh handlers
 LibQueue		qdesc <>	; includelibs
-DllQueue		dd ?		; dlls of OPTION DLLIMPORT
-imp_prefix		dd ?		;
-curr_file		dd NUM_FILE_TYPES dup(?) ; ASM, ERR, OBJ and LST
+DllQueue		PVOID ?		; dlls of OPTION DLLIMPORT
+imp_prefix		LPSTR ?		;
+curr_file		PVOID NUM_FILE_TYPES dup(?) ; ASM, ERR, OBJ and LST
 curr_fname		LPSTR NUM_FILE_TYPES dup(?)
-FNames			PLPSTR ?	; array of input files
+FNames			PVOID ?		; array of input files
 cnt_fnames		dd ?		; items in FNames array
 IncludePath		LPSTR ?		;
 line_queue		qdesc <>	; line queue
-src_stack		dd ?		; source item (files & macros) stack
+src_stack		PVOID ?		; source item (files & macros) stack
 UNION
-    start_fixup		dd ?		; OMF only
-    start_label		dd ?		; non-OMF only: start label
+    start_fixup		PVOID ?		; OMF only
+    start_label		PVOID ?		; non-OMF only: start label
 ENDS
 start_displ		dd ?		; OMF only, optional displ for start label
-StrStack		dd ?		; v2.20 String stack
-HllStack		dd ?		; for .WHILE, .IF, .REPEAT
-HllFree			dd ?		; v2.06: stack of free <struct hll>-items
-ComStack		dd ?		; v2.27: .CLASSDEF, .COMDEF, .ENDS
-ContextStack		dd ?
-ContextFree		dd ?		; v2.10: "free items" heap implemented.
-SavedContexts		dd ?
+StrStack		PVOID ?		; v2.20 String stack
+HllStack		PVOID ?		; for .WHILE, .IF, .REPEAT
+HllFree			PVOID ?		; v2.06: stack of free <struct hll>-items
+ComStack		PVOID ?		; v2.27: .CLASSDEF, .COMDEF, .ENDS
+ContextStack		PVOID ?
+ContextFree		PVOID ?		; v2.10: "free items" heap implemented.
+SavedContexts		PVOID ?
 cntSavedContexts	dd ?
 anonymous_label		dd ?		; "anonymous label" counter
-StackBase		dd ?
-ProcStatus		dd ?
-WriteModule		dd ?		; (*WriteModule)( struct module_info * );
-EndDirHook		dd ?		; (*EndDirHook) ( struct module_info * );
-Pass1Checks		dd ?		; (*Pass1Checks)( struct module_info * );
+StackBase		PVOID ?
+ProcStatus		PVOID ?
+WriteModule		PVOID ?		; (*WriteModule)( struct module_info * );
+EndDirHook		PVOID ?		; (*EndDirHook) ( struct module_info * );
+Pass1Checks		PVOID ?		; (*Pass1Checks)( struct module_info * );
 pe_flags		dd ?		; for PE
 			ENDM
 
@@ -1110,12 +1110,12 @@ module_vars		STRUC
 M_MODULEVARS
 module_vars		ENDS
 
-module_info		STRUC
+module_info		STRUC SIZE_T
 M_MODULEVARS
-proc_prologue		dd ?	; prologue macro if PEM_MACRO
-proc_epilogue		dd ?	; epilogue macro if PEM_MACRO
-CurrDll			dd ?	; OPTION DLLIMPORT dll
-fmtopt			dd ?	; v2.07: added
+proc_prologue		LPSTR ? ; prologue macro if PEM_MACRO
+proc_epilogue		LPSTR ? ; epilogue macro if PEM_MACRO
+CurrDll			PVOID ? ; OPTION DLLIMPORT dll
+fmtopt			PVOID ? ; v2.07: added
 hll_label		dd ?	; hll directive label counter
 distance		db ?	; stack distance
 _model			db ?	; memory model
@@ -1177,14 +1177,14 @@ epiloguemode		db ?	; current PEM_ enum value for OPTION EPILOGUE
 invoke_exprparm		db ?	; flag: forward refs for INVOKE params ok?
 cv_opt			db ?	; option codeview
 srcfile			dd ?	; main source file - is an index for FNames[]
-currseg			dd ?	; currently active segment - nsym *
-flat_grp		dd ?	; magic FLAT group - dsym *
-pCodeBuff		dd ?	;
+currseg			PVOID ? ; currently active segment - nsym *
+flat_grp		PVOID ? ; magic FLAT group - dsym *
+pCodeBuff		PVOID ? ;
 GeneratedCode		dd ?	; nesting level generated code
-currsource		dd ?	; current source line
-CurrComment		dd ?	; current comment
-tokenarray		dd ?	; start token buffer
-stringbufferend		dd ?	; start free space in string buffer
+currsource		LPSTR ? ; current source line
+CurrComment		LPSTR ? ; current comment
+tokenarray		PVOID ? ; start token buffer
+stringbufferend		LPSTR ? ; start free space in string buffer
 token_count		dd ?	; number of tokens in curr line
 basereg			dd 3 dup(?)	; stack base register (16-, 32-, 64-bit
 _name			db 260 dup(?)	; name of module
@@ -1192,7 +1192,7 @@ xflag			db ?	; extended option
 loopalign		db ?	; OPTION:LOOPALIGN setting
 casealign		db ?	; OPTION:CASEALIGN setting
 epilogueflags		db ?	; OPTION EPILOGUE: FLAGS
-assert_proc		dd ?	; .assert:<proc/macro name>
+assert_proc		PVOID ? ; .assert:<proc/macro name>
 codepage		dd ?	;
 class_label		dd ?	;
 module_info		ENDS
@@ -1200,8 +1200,8 @@ module_info		ENDS
 Token_Count		equ <ModuleInfo.token_count>
 
 equ_item		STRUC
-next			dd ?
-sym			dd ? ; asym *
+next			PVOID ?
+sym			PVOID ? ; asym *
 lvalue			dd ?
 hvalue			dd ?
 mem_type		db ?
@@ -1222,25 +1222,25 @@ line_item		ENDS
 
 mod_state		STRUC
 init			dd ?
-head			dd ? ; equ_item *
-tail			dd ?
+head			PVOID ? ; equ_item *
+tail			PVOID ?
 modinfo			db sizeof(module_info) - sizeof(module_vars) dup(?)
 mod_state		ENDS
 
 externdef		Parse_Pass	: DWORD
 externdef		StoreState	: DWORD
 externdef		UseSavedState	: DWORD
-externdef		LineStoreCurr	: PTR line_item
+externdef		LineStoreCurr	: ptr line_item
 externdef		LineStore	: qdesc
 externdef		NoLineStore	: DWORD
 externdef		ModuleInfo	: module_info
 externdef		Options		: global_options
 externdef		write_to_file	: DWORD
 externdef		SymTables	: symbol_queue	; * TAB_LAST
-externdef		DefaultDir	: DWORD		; * NUM_FILE_TYPES
+externdef		DefaultDir	: LPSTR		; * NUM_FILE_TYPES
 externdef		MacroLevel	: DWORD
 externdef		LinnumQueue	: qdesc
-externdef		ModelToken	: DWORD
+externdef		ModelToken	: LPSTR
 externdef		LastCodeBufSize : DWORD
 externdef		banner_printed	: DWORD
 
@@ -1289,8 +1289,8 @@ SymSetCmpFunc		PROTO
 SetCPU			PROTO :DWORD
 AddLineQueueX		PROTO :DWORD, :VARARG
 AddStringToIncludePath	PROTO :DWORD
-SymFind			PROTO FASTCALL :DWORD
-SymCreate		PROTO :DWORD
+SymFind			PROTO FASTCALL :LPSTR
+SymCreate		PROTO :LPSTR
 
 
 DisableKeyword		PROTO :DWORD
@@ -1298,8 +1298,8 @@ ParseLine		PROTO :DWORD
 SearchFile		PROTO :DWORD, :DWORD
 ProcessFile		PROTO :DWORD
 ClearSrcStack		PROTO
-Tokenize		PROTO :DWORD, :DWORD, :PTR asm_tok, :DWORD
-PreprocessLine		PROTO :LPSTR, :PTR asm_tok
+Tokenize		PROTO :DWORD, :DWORD, :ptr asm_tok, :DWORD
+PreprocessLine		PROTO :LPSTR, :ptr asm_tok
 
 SymPassInit		PROTO :DWORD
 SegmentInit		PROTO :DWORD

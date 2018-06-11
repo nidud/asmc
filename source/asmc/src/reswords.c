@@ -16,15 +16,10 @@
 #include <condasm.h>
 #include <codegen.h>
 
-#define HASH_TABITEMS 1024//811
+#define HASH_TABITEMS 1024
 #define GetPtr( x, y ) x->y
 
 /* reserved words hash table */
-#ifndef _ASMC
-static
-#else
-extern
-#endif
 uint_16 resw_table[ HASH_TABITEMS ];
 
 /* define unary operand (LOW, HIGH, OFFSET, ...) type flags */
@@ -391,46 +386,8 @@ static struct {
 
 static bool  b64bit = FALSE; /* resw tables in 64bit mode? */
 
-#ifdef _ASMC
 unsigned FASTCALL get_hash( const char *s, unsigned char size );
-#else
-static unsigned FASTCALL get_hash( const char *s, unsigned char size )
-{
-    uint_32 h;
-    uint_32 g;
 
-    for( h = 0; size; size-- ) {
-	/* ( h & ~0x0fff ) == 0 is always true here */
-	h = (h << 3) + (*s++ | ' ');
-	g = h & ~0x1fff;
-	h ^= g;
-	h ^= g >> 13;
-    }
-    return( h & ( HASH_TABITEMS - 1 ) );
-}
-
-unsigned FindResWord( char *name, unsigned size )
-/* search reserved word in hash table */
-{
-    struct ReservedWord *inst;
-    unsigned i,l;
-#ifdef BASEPTR
-    __segment seg = FP_SEG( resw_strings );
-#endif
-
-    for( i = resw_table[ get_hash( (const char *)name, (unsigned char)size ) ]; i != 0; i = inst->next ) {
-	inst = &ResWordTable[i];
-	/* check if the name matches the entry for this inst in AsmChars */
-	if( inst->len == size ) {
-	    for (l = 0; l < size && inst->name[l] == ( name[l] | ' ' ); l++ );
-	    if ( l == size )
-		return( i );
-	}
-    }
-    return( 0 );
-}
-
-#endif
 /* add reserved word to hash table */
 
 static void AddResWord( int token )

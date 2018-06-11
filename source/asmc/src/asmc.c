@@ -2,7 +2,6 @@
 #include <signal.h>
 #include <globals.h>
 #include <input.h>
-#include <io.h>
 
 #if defined(__UNIX__) || defined(__CYGWIN__)
 #define WILDCARDS 0
@@ -26,7 +25,7 @@
 void CmdlineFini( void );
 char *ParseCmdline( char **, int * );
 
-#ifndef __LIBC__
+#ifndef _LIBC
 
 char *strfcat( char *buffer, const char *path, const char *file )
 {

@@ -5,9 +5,11 @@ DDFLT_MIN equ 0x00800000
 
     .code
 
+    option win64:rsp nosave noauto
+
 quadtof proc d:ptr, q:ptr
 
-    mov r8d,0xFFFFFF00  ; get mask of bits to keep
+    mov r9d,0xFFFFFF00  ; get mask of bits to keep
     mov eax,[rdx+10]    ; get top part
     mov r8w,[rdx+14]
     and r8d,Q_EXPMASK
@@ -19,7 +21,7 @@ quadtof proc d:ptr, q:ptr
     .ifc                ; if have to round
         .ifz            ; - if half way between
             .if dword ptr [rdx+6] == 0
-                shl r8d,1
+                shl r9d,1
             .endif
         .endif
         add eax,0x0100
@@ -31,7 +33,7 @@ quadtof proc d:ptr, q:ptr
             ;
         .endif
     .endif
-    and eax,r8d         ; mask off bottom bits
+    and eax,r9d         ; mask off bottom bits
     mov r9d,r8d         ; save exponent and sign
     and r8w,0x7FFF      ; if number not 0
     .ifnz

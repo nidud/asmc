@@ -286,22 +286,19 @@ atoquad proc uses esi edi ebx number:ptr, string:LPSTR, endptr:ptr LPSTR
                 shrd ebx,esi,cl
                 shr esi,cl
 
-            .else
-
-                .if edi
-                    mov ecx,edi
-                    .while cl >= 32
-                        mov esi,ebx
-                        mov ebx,edx
-                        mov edx,eax
-                        xor eax,eax
-                        sub cl,32
-                    .endw
-                    shld esi,ebx,cl
-                    shld ebx,edx,cl
-                    shld edx,eax,cl
-                    shl eax,cl
-                .endif
+            .elseif edi
+                mov ecx,edi
+                .while cl >= 32
+                    mov esi,ebx
+                    mov ebx,edx
+                    mov edx,eax
+                    xor eax,eax
+                    sub cl,32
+                .endw
+                shld esi,ebx,cl
+                shld ebx,edx,cl
+                shld edx,eax,cl
+                shl eax,cl
             .endif
             mov ecx,number
             mov [ecx],eax

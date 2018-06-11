@@ -1,14 +1,10 @@
 include malloc.inc
 include errno.inc
 
-_FREE   equ 0
-_USED   equ 1
-_ALIGN  equ 3
-
     .data
 
-    _heap_base dq 0     ; address of main memory block
-    _heap_free dq 0     ; address of free memory block
+    _heap_base LPHEAP 0     ; address of main memory block
+    _heap_free LPHEAP 0     ; address of free memory block
 
     .code
 
@@ -28,21 +24,21 @@ malloc proc byte_count:size_t
 
         .if rdx
 
-            .if [rdx].S_HEAP.h_type == _FREE
+            .if [rdx].S_HEAP.h_type == _HEAP_FREE
                 ;
                 ; Use a free block.
                 ;
                 mov rax,[rdx].S_HEAP.h_size
                 .if rax >= rcx
 
-                    mov [rdx].S_HEAP.h_type,_USED
+                    mov [rdx].S_HEAP.h_type,_HEAP_LOCAL
 
                     .ifnz
 
                         mov [rdx].S_HEAP.h_size,rcx
                         sub rax,rcx
                         mov [rdx+rcx].S_HEAP.h_size,rax
-                        mov [rdx+rcx].S_HEAP.h_type,_FREE
+                        mov [rdx+rcx].S_HEAP.h_type,_HEAP_FREE
                     .endif
 
                     lea rax,[rdx+sizeof(S_HEAP)]
@@ -74,13 +70,13 @@ malloc proc byte_count:size_t
                         .break
                     .endif
 
-                    .continue(0) .if [rdx].S_HEAP.h_type != _FREE
+                    .continue(0) .if [rdx].S_HEAP.h_type != _HEAP_FREE
                     .continue(01) .if rax >= rcx
-                    .continue(0) .if [rdx+rax].S_HEAP.h_type != _FREE
+                    .continue(0) .if [rdx+rax].S_HEAP.h_type != _HEAP_FREE
                     .repeat
                         add rax,[rdx+rax].S_HEAP.h_size
                         mov [rdx].S_HEAP.h_size,rax
-                    .until [rdx+rax].S_HEAP.h_type != _FREE
+                    .until [rdx+rax].S_HEAP.h_type != _HEAP_FREE
                     .continue(01) .if rax >= rcx
                 .endw
             .endif
@@ -116,7 +112,7 @@ malloc proc byte_count:size_t
         mov [rax].S_HEAP.h_next,r8
         mov [rax].S_HEAP.h_prev,r8
         mov [rax+rdx].S_HEAP.h_size,r8
-        mov [rax+rdx].S_HEAP.h_type,_USED
+        mov [rax+rdx].S_HEAP.h_type,_HEAP_LOCAL
         mov [rax+rdx].S_HEAP.h_prev,rax
 
         mov rdx,_heap_base
@@ -156,12 +152,12 @@ free proc memblock:PVOID
         ; If memblock is NULL, the pointer is ignored. Attempting to free an
         ; invalid pointer not allocated by malloc() may cause errors.
         ;
-        .if [rcx].S_HEAP.h_type == _ALIGN
+        .if [rcx].S_HEAP.h_type == _HEAP_ALIGNED
 
             mov rcx,[rcx].S_HEAP.h_prev
         .endif
 
-        .if [rcx].S_HEAP.h_type == _USED
+        .if [rcx].S_HEAP.h_type == _HEAP_LOCAL
 
             xor edx,edx
             mov [rcx+8],rdx ; Delete this block.

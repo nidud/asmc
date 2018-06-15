@@ -24,7 +24,7 @@ perror proc uses rdi string:LPSTR
 	    mov rdi,[rdi]
 
 	    strlen(rdi)
-	    _write(2, rdi, rax)
+	    _write(2, rdi, eax)
 	    _write(2, "\n", 1)
 	.endif
     .endif

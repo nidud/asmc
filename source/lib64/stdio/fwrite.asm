@@ -56,7 +56,7 @@ fwrite proc uses rsi rdi rbx r12 r13 r14 buf:LPSTR, rsize:SINT, num:SINT, fp:LPF
 	    .endif
 	    mov r14d,eax
 
-	    _write([rbx]._file, rsi, rax)
+	    _write([rbx]._file, rsi, eax)
 	    cmp rax,-1
 	    je	error
 
@@ -66,7 +66,7 @@ fwrite proc uses rsi rdi rbx r12 r13 r14 buf:LPSTR, rsize:SINT, num:SINT, fp:LPF
 	    jb	error
 	.else
 	    movzx eax,byte ptr [rsi]
-	    _flsbuf(rax, rbx)
+	    _flsbuf(eax, rbx)
 	    cmp eax,-1
 	    je	break
 	    inc rsi

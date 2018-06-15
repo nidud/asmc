@@ -5,7 +5,9 @@ include winbase.inc
 .code
 
 oswrite proc h:SINT, b:PVOID, z:SIZE_T
-local NumberOfBytesWritten:dword
+
+  local NumberOfBytesWritten:dword
+
     mov eax,h
     mov edx,_osfhnd[eax*4]
     .if WriteFile(edx, b, z, &NumberOfBytesWritten, 0)
@@ -19,6 +21,7 @@ local NumberOfBytesWritten:dword
         xor eax,eax
     .endif
     ret
+
 oswrite endp
 
     end

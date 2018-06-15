@@ -6,7 +6,7 @@ include winbase.inc
 
     assume esi:LPFILE
 
-_flsbuf proc uses esi edi ebx char:SIZE_T, fp:LPFILE
+_flsbuf proc uses esi edi ebx char:SINT, fp:LPFILE
 
     mov esi,fp
     mov edi,[esi]._flag

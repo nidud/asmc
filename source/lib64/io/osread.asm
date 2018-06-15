@@ -2,27 +2,28 @@ include io.inc
 include errno.inc
 include winbase.inc
 
-	.code
+    .code
 
-	option	win64:rsp nosave
+    option win64:rsp nosave
 
-osread	PROC h:SINT, b:PVOID, z:SIZE_T
+osread proc h:SINT, b:PVOID, z:SIZE_T
 
-	local	count:DWORD
+  local count:UINT
 
-	lea	rax,_osfhnd
-	mov	rcx,[rax+rcx*8]
-	ReadFile(rcx, rdx, r8d, &count, 0)
-	test	eax,eax
-	mov	ecx,eax
-	mov	eax,count
-	jz	error
-toend:
-	ret
-error:
-	call	osmaperr
-	xor	eax,eax
-	jmp	toend
-osread	ENDP
+    lea rax,_osfhnd
+    mov rcx,[rax+rcx*8]
 
-	END
+    .ifd !ReadFile(rcx, rdx, r8d, &count, 0)
+
+        osmaperr()
+        xor eax,eax
+    .else
+
+        mov ecx,eax
+        mov eax,count
+    .endif
+    ret
+
+osread endp
+
+    end

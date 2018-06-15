@@ -747,22 +747,10 @@ RotateLeft64		equ <_rotl64>
 RotateRight32		equ <_rotr>
 RotateRight64		equ <_rotr64>
 
-;unsigned int
-_rotl proto WINAPI \
-		 Value: dword,
-		 Shift: SINT
-;unsigned __int64
-_rotl64 proto WINAPI \
-		 Value: qword,
-		 Shift: SINT
-;unsigned int
-_rotr proto WINAPI \
-		 Value: dword,
-		 Shift: SINT
-;unsigned __int64
-_rotr64 proto WINAPI \
-		 Value: qword,
-		 Shift: SINT
+_rotl	proto __cdecl Value:UINT, Shift:SINT
+_rotl64 proto __cdecl Value:qword, Shift:SINT
+_rotr	proto __cdecl Value:UINT, Shift:SINT
+_rotr64 proto __cdecl Value:qword, Shift:SINT
 endif
 
 ANSI_NULL	equ 0

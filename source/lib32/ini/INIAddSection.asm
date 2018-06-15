@@ -1,5 +1,5 @@
 include io.inc
-include malloc.inc
+include string.inc
 include ini.inc
 
     .code
@@ -12,7 +12,7 @@ INIAddSection proc uses esi ini:LPINI, section:LPSTR
 
             mov esi,eax
             mov [esi].S_INI.flags,INI_SECTION
-            mov [esi].S_INI.entry,salloc(section)
+            mov [esi].S_INI.entry,_strdup(section)
 
             mov eax,ini
             .if eax

@@ -1,12 +1,14 @@
 include io.inc
 
-	.code
+    .code
 
-	OPTION	WIN64:2, STACKBASE:rsp
+    option win64:rsp nosave
 
-_tell	proc handle:SINT
-	_lseek( ecx, 0, SEEK_CUR )
-	ret
-_tell	endp
+_tell proc handle:SINT
 
-	end
+    _lseek(ecx, 0, SEEK_CUR)
+    ret
+
+_tell endp
+
+    end

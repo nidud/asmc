@@ -21,9 +21,6 @@ __LIBC__	equ 227 ; Asmc Version
 ;;     _M_AMD64
 ;;     _M_IA64
 ;;
-ifndef _WIN32
-_WIN32		equ <>	; default
-endif
 ifdef _WIN64
 _IA64_		equ <>
 _M_X64		equ <>
@@ -104,6 +101,10 @@ ifndef _MSC_FULL_VER
 ;; to view the compiler's version number. This macro is always defined.
 ;;
 _MSC_FULL_VER	equ 120000000 ;; Visual C++ version 12.0
+endif
+
+ifndef _WIN32
+_WIN32		equ <>	; default
 endif
 
 ifdef _WIN64

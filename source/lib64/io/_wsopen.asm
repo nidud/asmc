@@ -38,157 +38,168 @@ _wsopen proc uses rsi rdi rbx path:LPWSTR, oflag:SINT, shflag:SINT, args:VARARG
         .endif
     .endif
 
-    ;
-    ; decode the access flags
-    ;
-    and eax,O_RDONLY or O_WRONLY or O_RDWR
-    mov edi,GENERIC_READ        ; read access
-    .if eax != O_RDONLY
-        mov edi,GENERIC_WRITE   ; write access
-        .if eax != O_WRONLY
-            mov edi,GENERIC_READ or GENERIC_WRITE
-            .if eax != O_RDWR
-                jmp error_inval
+    .repeat
+        ;
+        ; decode the access flags
+        ;
+        and eax,O_RDONLY or O_WRONLY or O_RDWR
+        mov edi,GENERIC_READ        ; read access
+        .if eax != O_RDONLY
+            mov edi,GENERIC_WRITE   ; write access
+            .if eax != O_WRONLY
+                mov edi,GENERIC_READ or GENERIC_WRITE
+                .if eax != O_RDWR
+                    mov errno,EINVAL
+                    xor eax,eax
+                    mov oserrno,eax
+                    dec rax
+                    .break
+                .endif
             .endif
         .endif
-    .endif
-    ;
-    ; decode sharing flags
-    ;
-    mov eax,shflag
-    .switch eax
-      .case SH_DENYNO           ; share read and write access
-        mov ebx,FILE_SHARE_READ or FILE_SHARE_WRITE
-        .endc
-      .case SH_DENYWR
-        mov ebx,FILE_SHARE_READ     ; share read access
-        .endc
-      .case SH_DENYRD
-        mov ebx,FILE_SHARE_WRITE    ; share write access
-        .endc
-      .default
-        xor ebx,ebx         ; exclusive access
-        .if eax != SH_DENYRW
-            jmp error_inval
+        ;
+        ; decode sharing flags
+        ;
+        mov eax,shflag
+        .switch eax
+          .case SH_DENYNO           ; share read and write access
+            mov ebx,FILE_SHARE_READ or FILE_SHARE_WRITE
+            .endc
+          .case SH_DENYWR
+            mov ebx,FILE_SHARE_READ     ; share read access
+            .endc
+          .case SH_DENYRD
+            mov ebx,FILE_SHARE_WRITE    ; share write access
+            .endc
+          .default
+            xor ebx,ebx         ; exclusive access
+            .if eax != SH_DENYRW
+                mov errno,EINVAL
+                xor eax,eax
+                mov oserrno,eax
+                dec rax
+                .break
+            .endif
+        .endsw
+        ;
+        ; decode open/create method flags
+        ;
+        mov eax,oflag
+        and eax,O_CREAT or O_EXCL or O_TRUNC
+        .switch eax
+          .case 0
+          .case O_EXCL
+            mov ecx,OPEN_EXISTING
+            .endc
+          .case O_CREAT
+            mov ecx,OPEN_ALWAYS
+            .endc
+          .case O_CREAT or O_EXCL
+          .case O_CREAT or O_EXCL or O_TRUNC
+            mov ecx,CREATE_NEW
+            .endc
+          .case O_CREAT or O_TRUNC
+            mov ecx,CREATE_ALWAYS
+            .endc
+          .case O_TRUNC
+          .case O_TRUNC or O_EXCL
+            mov ecx,TRUNCATE_EXISTING
+            .endc
+          .default
+            mov errno,EINVAL
+            xor eax,eax
+            mov oserrno,eax
+            dec rax
+            .break
+        .endsw
+
+        mov eax,ecx
+        mov ecx,FILE_ATTRIBUTE_NORMAL
+        mov edx,oflag
+        .if edx & O_CREAT
+
+            push rax
+            lea  rax,args
+            mov  eax,[rax]      ; fopen(0284h)
+            mov  edx,_umaskval  ; 0
+            not  edx            ; -1
+            and  eax,edx        ; 0284h
+            mov  edx,oflag
+            and  eax,S_IWRITE   ; 0080h
+            pop  rax
+            .ifz
+                mov ecx,FILE_ATTRIBUTE_READONLY
+            .endif
         .endif
-    .endsw
-    ;
-    ; decode open/create method flags
-    ;
-    mov eax,oflag
-    and eax,O_CREAT or O_EXCL or O_TRUNC
-    .switch eax
-      .case 0
-      .case O_EXCL
-        mov ecx,OPEN_EXISTING
-        .endc
-      .case O_CREAT
-        mov ecx,OPEN_ALWAYS
-        .endc
-      .case O_CREAT or O_EXCL
-      .case O_CREAT or O_EXCL or O_TRUNC
-        mov ecx,CREATE_NEW
-        .endc
-      .case O_CREAT or O_TRUNC
-        mov ecx,CREATE_ALWAYS
-        .endc
-      .case O_TRUNC
-      .case O_TRUNC or O_EXCL
-        mov ecx,TRUNCATE_EXISTING
-        .endc
-      .default
-        jmp error_inval
-    .endsw
 
-    mov eax,ecx
-    mov ecx,FILE_ATTRIBUTE_NORMAL
-    mov edx,oflag
-    .if edx & O_CREAT
-
-        push rax
-        lea  rax,args
-        mov  eax,[rax]      ; fopen(0284h)
-        mov  edx,_umaskval  ; 0
-        not  edx        ; -1
-        and  eax,edx        ; 0284h
-        mov  edx,oflag
-        and  eax,S_IWRITE   ; 0080h
-        pop  rax
-        .ifz
-            mov ecx,FILE_ATTRIBUTE_READONLY
+        .if edx & O_TEMPORARY
+            or ecx,FILE_FLAG_DELETE_ON_CLOSE
+            or edi,M_DELETE
         .endif
-    .endif
-
-    .if edx & O_TEMPORARY
-        or ecx,FILE_FLAG_DELETE_ON_CLOSE
-        or edi,M_DELETE
-    .endif
-    .if edx & O_SHORT_LIVED
-        or ecx,FILE_ATTRIBUTE_TEMPORARY
-    .endif
-    .if edx & O_SEQUENTIAL
-        or ecx,FILE_FLAG_SEQUENTIAL_SCAN
-    .elseif edx & O_RANDOM
-        or ecx,FILE_FLAG_RANDOM_ACCESS
-    .endif
-
-    mov r10d,ecx
-    .if _osopenW(path, edi, ebx, &sa, eax, r10d) != -1
-
-        mov esi,eax
-        mov bl,fileflags
-        lea r8,_osfhnd
-        mov rcx,[r8+rsi*8]
-        .if GetFileType(rcx) == FILE_TYPE_UNKNOWN
-            jmp error
-        .elseif eax == FILE_TYPE_CHAR
-            or bl,FH_DEVICE
-        .elseif eax == FILE_TYPE_PIPE
-            or bl,FH_PIPE
+        .if edx & O_SHORT_LIVED
+            or ecx,FILE_ATTRIBUTE_TEMPORARY
         .endif
-        lea r8,_osfile
-        or [r8+rsi],bl
+        .if edx & O_SEQUENTIAL
+            or ecx,FILE_FLAG_SEQUENTIAL_SCAN
+        .elseif edx & O_RANDOM
+            or ecx,FILE_FLAG_RANDOM_ACCESS
+        .endif
 
-        .if !(bl & FH_DEVICE or FH_PIPE) && bl & FH_TEXT && oflag & O_RDWR
+        mov r10d,ecx
+        .if _osopenW(path, edi, ebx, &sa, eax, r10d) != -1
 
-            .if _lseek(esi, -1, SEEK_END) != -1
+            mov esi,eax
+            mov bl,fileflags
+            lea r8,_osfhnd
+            mov rcx,[r8+rsi*8]
+            .if GetFileType(rcx) == FILE_TYPE_UNKNOWN
+                _close(esi)
+                mov eax,-1
+                .break
+            .elseif eax == FILE_TYPE_CHAR
+                or bl,FH_DEVICE
+            .elseif eax == FILE_TYPE_PIPE
+                or bl,FH_PIPE
+            .endif
+            lea r8,_osfile
+            or [r8+rsi],bl
 
-                mov ebx,eax
-                mov eof,0
-                osread(esi, &eof, 1)
-                .if !eax && eof == 26
+            .if !(bl & FH_DEVICE or FH_PIPE) && bl & FH_TEXT && oflag & O_RDWR
 
-                    .if _chsize(esi, ebx) == -1
-                        jmp error
+                .if _lseek(esi, -1, SEEK_END) != -1
+
+                    mov ebx,eax
+                    mov eof,0
+                    osread(esi, &eof, 1)
+                    .if !eax && eof == 26
+
+                        .if _chsize(esi, ebx) == -1
+                            _close(esi)
+                            mov eax,-1
+                            .break
+                        .endif
                     .endif
-                .endif
 
-                .if _lseek(esi, 0, SEEK_SET) == -1
-                    jmp error
+                    .if _lseek(esi, 0, SEEK_SET) == -1
+                        _close(esi)
+                        mov eax,-1
+                        .break
+                    .endif
+                .elseif oserrno != ERROR_NEGATIVE_SEEK
+                    _close(esi)
+                    mov eax,-1
+                    .break
                 .endif
-            .elseif oserrno != ERROR_NEGATIVE_SEEK
-                jmp error
             .endif
+            lea r8,_osfile
+            mov al,[r8+rsi]
+            .if ( !( al & FH_DEVICE or FH_PIPE ) && oflag & O_APPEND )
+                or byte ptr [r8+rsi],FH_APPEND
+            .endif
+            mov eax,esi
         .endif
-        lea r8,_osfile
-        mov al,[r8+rsi]
-        .if ( !( al & FH_DEVICE or FH_PIPE ) && oflag & O_APPEND )
-            or byte ptr [r8+rsi],FH_APPEND
-        .endif
-        mov eax,esi
-    .endif
-toend:
+    .until 1
     ret
-error:
-    _close(esi)
-    mov rax,-1
-    jmp toend
-error_inval:
-    mov errno,EINVAL
-    xor eax,eax
-    mov oserrno,eax
-    dec rax
-    jmp toend
 _wsopen endp
 
     end

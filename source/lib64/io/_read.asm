@@ -13,13 +13,13 @@ ER_BROKEN_PIPE   equ 109
 
 _read proc uses rsi rdi rbx r12 r13 h:SINT, b:PVOID, count:SIZE_T
 
-local NumberOfBytesRead:qword
+  local NumberOfBytesRead:qword
 
-    xor rsi,rsi         ; nothing read yet
+    xor esi,esi         ; nothing read yet
     mov rdi,rdx
     mov rbx,rcx
 
-    xor rax,rax         ; nothing to read or at EOF
+    xor eax,eax         ; nothing to read or at EOF
 
     .repeat
 

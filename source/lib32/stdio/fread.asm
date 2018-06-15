@@ -11,13 +11,13 @@ fread proc uses esi edi ebx buf:LPSTR, rsize:SINT, num:SINT, fp:LPFILE
 
   local total:SIZE_T, bufsize:SIZE_T, nbytes:SIZE_T
 
-    mov esi,buf
+    mov edi,buf
     mov eax,rsize
     mov ecx,num
     mov ebx,fp
     mul ecx
     mov total,eax
-    mov edi,eax
+    mov esi,eax
 
     test eax,eax
     jz  toend
@@ -25,40 +25,43 @@ fread proc uses esi edi ebx buf:LPSTR, rsize:SINT, num:SINT, fp:LPFILE
     mov edx,_MAXIOBUF
     .if [ebx]._flag & _IOMYBUF or _IONBF or _IOYOURBUF
 
-        mov edx,[ebx]._bufsiz
+        mov edx,[ebx]._bufsiz   ; already has buffer, use its size
     .endif
     mov bufsize,edx
 
-    .while edi
+    .while esi
 
         mov edx,[ebx]._cnt
         .if [ebx]._flag & _IOMYBUF or _IOYOURBUF && edx
 
-            .if edi < edx
+            .if esi < edx
 
-                mov edx,edi
+                mov edx,esi
             .endif
-            memcpy(esi, [ebx]._ptr, edx)
 
-            sub edi,edx
+            mov eax,esi
+            mov ecx,edx
+            mov esi,[ebx]._ptr
+            rep movsb
+            mov [ebx]._ptr,esi
+            mov esi,eax
+            sub esi,edx
             sub [ebx]._cnt,edx
-            add [ebx]._ptr,edx
-            add esi,edx
 
-        .elseif edi >= bufsize
+        .elseif esi >= bufsize
 
-            mov eax,edi
+            mov eax,esi
             mov ecx,bufsize
             .if ecx
 
                 xor edx,edx
                 div ecx
-                mov eax,edi
+                mov eax,esi
                 sub eax,edx
             .endif
             mov nbytes,eax
 
-            .if !_read( [ebx]._file, esi, eax )
+            .if !_read( [ebx]._file, edi, eax )
 
                 jmp error
 
@@ -67,8 +70,8 @@ fread proc uses esi edi ebx buf:LPSTR, rsize:SINT, num:SINT, fp:LPFILE
                 jmp error
             .endif
 
-            sub edi,eax
-            add esi,eax
+            sub esi,eax
+            add edi,eax
 
         .else
             .if _filbuf(ebx) == -1
@@ -76,9 +79,9 @@ fread proc uses esi edi ebx buf:LPSTR, rsize:SINT, num:SINT, fp:LPFILE
                 jmp break
             .endif
 
-            mov [esi],al
-            inc esi
-            dec edi
+            mov [edi],al
+            inc edi
+            dec esi
             mov eax,[ebx]._bufsiz
             mov bufsize,eax
         .endif
@@ -90,10 +93,10 @@ error:
     or  [ebx]._flag,_IOEOF
 break:
     mov eax,total
-    sub eax,edi
+    sub eax,esi
     xor edx,edx
     div rsize
     jmp toend
-fread   endp
+fread endp
 
     END

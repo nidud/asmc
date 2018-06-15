@@ -64,7 +64,7 @@ local rc:SINT,cmd:UINT,
                 .if SymFind(edi)
 
                     free(ModuleInfo.assert_proc)
-                    salloc(edi)
+                    _strdup(edi)
                     mov ModuleInfo.assert_proc,eax
                     .endc
                 .endif

@@ -7,8 +7,8 @@ _ALIGN	equ 3
 
 	.data
 
-	_heap_base dd 0		; address of main memory block
-	_heap_free dd 0		; address of free memory block
+	_heap_base PVOID 0	; address of main memory block
+	_heap_free PVOID 0	; address of free memory block
 
 	option stackbase:esp
 

@@ -27,6 +27,7 @@ strcat		proto __cdecl :LPSTR, :LPSTR
 _stricmp	proto __cdecl :LPSTR, :LPSTR
 _strnicmp	proto __cdecl :LPSTR, :LPSTR, :SIZE_T
 _strupr		proto __cdecl :LPSTR
+_strdup		proto __cdecl :LPSTR
 _strrev		proto __cdecl :LPSTR
 _strlwr		proto __cdecl :LPSTR
 strrchr		proto __cdecl :LPSTR, :SIZE_T

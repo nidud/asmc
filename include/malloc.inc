@@ -59,23 +59,7 @@ alloca	macro dwSize:req, ReservedStack:=<@ReservedStack>
 else
 alloca		proto __cdecl :dword
 endif
-ifdef _LINUX
-salloc	macro string
-	push string
-	malloc(addr [strlen(string)+1])
-	pop ecx
-	.if eax
-	    strcpy(eax, ecx)
-	    test eax,eax
-	.endif
-	endm
-else
-salloc		proto __cdecl :LPSTR
-endif
-
 __coreleft	proto __cdecl
-__purgeheap	proto __cdecl
-
 else
 alloca		proto __cdecl :dword
 option		dllimport:<kernel32>

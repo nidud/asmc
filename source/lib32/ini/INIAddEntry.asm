@@ -26,7 +26,7 @@ INIAddEntry proc __cdecl uses esi edi ebx cf:LPINI, string:LPSTR
 	    mov edi,eax
 	    strtrim(esi)
 	    mov [edi].S_INI.flags,INI_COMMENT
-	    mov [edi].S_INI.entry,salloc(esi)
+	    mov [edi].S_INI.entry,_strdup(esi)
 	    mov eax,edi
 
 	.elseif strchr(esi, '=')

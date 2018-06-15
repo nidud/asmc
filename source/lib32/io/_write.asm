@@ -5,9 +5,10 @@ include errno.inc
 
 _write proc uses edi esi ebx h:SINT, b:PVOID, l:SIZE_T
 
-local result, count, lb[1026]:byte
+  local result, count, lb[1026]:byte
 
     .repeat
+
         mov eax,l
         .break .if !eax
 

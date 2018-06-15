@@ -91,7 +91,7 @@ ftell		proto __cdecl :LPFILE
 perror		proto __cdecl :LPSTR
 fflush		proto __cdecl :LPFILE
 rewind		proto __cdecl :LPFILE
-_flsbuf		proto __cdecl :SIZE_T, :LPFILE
+_flsbuf		proto __cdecl :SINT, :LPFILE
 _flushall	proto __cdecl
 _freebuf	proto __cdecl :LPFILE
 _filbuf		proto __cdecl :LPFILE

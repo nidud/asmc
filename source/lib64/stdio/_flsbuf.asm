@@ -6,96 +6,102 @@ include winbase.inc
 
     assume rsi:LPFILE
 
-_flsbuf proc uses rsi rdi rbx char:SIZE_T, fp:LPFILE
+_flsbuf proc uses rsi rdi rbx char:SINT, fp:LPFILE
 
     mov rsi,rdx
-    mov edi,[rsi]._flag
-    test edi,_IOREAD or _IOWRT or _IORW
-    jz error
-    test edi,_IOSTRG
-    jnz error
-    mov ebx,[rsi]._file
-
-    .if edi & _IOREAD
-
-	xor eax,eax
-	mov [rsi]._cnt,eax
-	test edi,_IOEOF
-	jz  error
-
-	mov rax,[rsi]._base
-	mov [rsi]._ptr,rax
-	and edi,not _IOREAD
-    .endif
-
-    or	edi,_IOWRT
-    and edi,not _IOEOF
-    mov [rsi]._flag,edi
     xor eax,eax
-    mov [rsi]._cnt,eax
 
-    .if !(edi & _IOMYBUF or _IONBF or _IOYOURBUF)
+    .repeat
 
-	_isatty(ebx)
-	lea r8,stdout
-	lea r9,stderr
+        mov edi,[rsi]._flag
+        .if !( edi & _IOREAD or _IOWRT or _IORW ) || edi & _IOSTRG
 
-	.if !((rsi == r8 || rsi == r9) && rax)
+            or [rsi]._flag,_IOERR
+            dec rax
+            .break
+        .endif
 
-	    _getbuf(rsi)
-	.endif
-    .endif
+        .if edi & _IOREAD
 
-    mov eax,[rsi]._flag
-    xor edi,edi
-    mov [rsi]._cnt,edi
+            mov [rsi]._cnt,eax
+            .if !( edi & _IOEOF )
 
-    .if eax & _IOMYBUF or _IOYOURBUF
+                dec rax
+                or [rsi]._flag,_IOERR
+                .break
+            .endif
 
-	mov rax,[rsi]._base
-	mov rdi,[rsi]._ptr
-	sub rdi,rax
-	inc rax
-	mov [rsi]._ptr,rax
-	mov eax,[rsi]._bufsiz
-	dec eax
-	mov [rsi]._cnt,eax
+            mov rax,[rsi]._base
+            mov [rsi]._ptr,rax
+            and edi,not _IOREAD
+        .endif
 
-	xor eax,eax
+        or  edi,_IOWRT
+        and edi,not _IOEOF
+        mov [rsi]._flag,edi
+        mov [rsi]._cnt,0
+        mov ebx,[rsi]._file
 
-	.ifs edi > eax
+        .if !(edi & _IOMYBUF or _IONBF or _IOYOURBUF)
 
-	    _write(ebx, [rsi]._base, rdi)
+            _isatty(ebx)
+            lea r8,stdout
+            lea r9,stderr
 
-	.else
-	    lea r8,_osfile
-	    mov dl,[r8+rbx]
-	    .ifs ebx > eax && dl & FH_APPEND
+            .if !((rsi == r8 || rsi == r9) && rax)
 
-		lea rcx,_osfhnd
-		mov rcx,[rcx+rbx*8]
-		SetFilePointer(rcx, eax, rax, SEEK_END)
-		xor eax,eax
-	    .endif
-	.endif
+                _getbuf(rsi)
+            .endif
+        .endif
 
-	mov rdx,char
-	mov rbx,[rsi]._base
-	mov [rbx],dl
-    .else
-	inc edi
-	_write(ebx, addr char, rdi)
-    .endif
-    cmp eax,edi
-    jne error
-    movzx eax,byte ptr char
-toend:
+        mov eax,[rsi]._flag
+        xor edi,edi
+        mov [rsi]._cnt,edi
+
+        .if eax & _IOMYBUF or _IOYOURBUF
+
+            mov rax,[rsi]._base
+            mov rdi,[rsi]._ptr
+            sub rdi,rax
+            inc rax
+            mov [rsi]._ptr,rax
+            mov eax,[rsi]._bufsiz
+            dec eax
+            mov [rsi]._cnt,eax
+            xor eax,eax
+
+            .ifs edi > eax
+
+                _write(ebx, [rsi]._base, edi)
+
+            .else
+                lea r8,_osfile
+                mov dl,[r8+rbx]
+                .ifs ebx > eax && dl & FH_APPEND
+
+                    lea rcx,_osfhnd
+                    mov rcx,[rcx+rbx*8]
+                    SetFilePointer(rcx, eax, rax, SEEK_END)
+                    xor eax,eax
+                .endif
+            .endif
+
+            mov edx,char
+            mov rbx,[rsi]._base
+            mov [rbx],dl
+        .else
+            inc edi
+            _write(ebx, addr char, edi)
+        .endif
+
+        .if eax != edi
+            or [rsi]._flag,_IOERR
+            or eax,-1
+        .else
+            movzx eax,byte ptr char
+        .endif
+    .until 1
     ret
-error:
-    or	edi,_IOERR
-    mov [rsi]._flag,edi
-    mov rax,-1
-    jmp toend
 _flsbuf endp
 
     END

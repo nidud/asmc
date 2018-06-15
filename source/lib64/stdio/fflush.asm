@@ -18,7 +18,7 @@ fflush proc uses rbx rdi rsi r12 fp:LPFILE
         mov r12,[rbx]._ptr
         sub r12,[rbx]._base
         .ifg
-            .if _write([rbx]._file, [rbx]._base, r12) == r12
+            .ifd _write([rbx]._file, [rbx]._base, r12d) == r12d
                 mov eax,[rbx]._flag
                 .if eax & _IORW
                     and eax,not _IOWRT

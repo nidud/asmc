@@ -112,7 +112,7 @@ _creat		proto __cdecl :LPSTR, :UINT
 _close		proto __cdecl :SINT
 close		proto __cdecl :SINT
 _lseek		proto __cdecl :SINT, :SIZE_T, :UINT
-_write		proto __cdecl :SINT, :PVOID, :SIZE_T
+_write		proto __cdecl :SINT, :PVOID, :UINT
 _access		proto __cdecl :LPSTR, :UINT
 _isatty		proto __cdecl :SINT
 _eof		proto __cdecl :SINT

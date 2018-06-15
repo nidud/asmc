@@ -3,21 +3,18 @@ include string.inc
 
     .code
 
-    option win64:rsp nosave
+_strdup proc string:LPSTR
 
-salloc proc uses rbx string:LPSTR
-
-    mov rbx,rcx
     .if strlen(rcx)
 
         inc rax
         .if malloc(rax)
 
-            strcpy(rax, rbx)
+            strcpy(rax, string)
         .endif
     .endif
     ret
 
-salloc endp
+_strdup endp
 
     end

@@ -1,15 +1,15 @@
 include ctype.inc
 
-	.code
+    .code
 
-	OPTION PROLOGUE:NONE, EPILOGUE:NONE
+    OPTION PROLOGUE:NONE, EPILOGUE:NONE
 
-iscntrl PROC char:SINT
-	lea	rax,_ctype
-	mov	al,[rax+rcx*2+2]
-	and	rax,_CONTROL
-	ret
-iscntrl ENDP
+iscntrl proc char:SINT
+    lea rax,_ctype
+    mov al,[rax+rcx*2+2]
+    and eax,_CONTROL
+    ret
+iscntrl endp
 
-	END
+    end
 

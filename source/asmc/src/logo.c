@@ -2,7 +2,7 @@
 #include <globals.h>
 
 char cp_logo[] =
- "Asmc Macro Assembler Version " ASMC_VERSSTR ".21\n"
+ "Asmc Macro Assembler Version " ASMC_VERSSTR ".22\n"
  "Portions Copyright (c) 1992-2002 Sybase, Inc. All Rights Reserved.\n\n";
 
 static char cp_usage[] =
@@ -36,20 +36,21 @@ static char cp_options[] =
  "/fpc Disallow floating-point instructions  /zcw No decoration for C symbols\n"
  "/fp<n> Set FPU: 0=8087, 2=80287, 3=80387   /Zd Add line number debug info\n"
  "/G<cdzv> Pascal, C, Stdcall or Vectorcall  /Zf Make all symbols public\n"
- "/I<name> Add include path                  /zf<0|1> Set FASTCALL type: MS/OW\n"
- "/m<t|s|c|m|l|h|f> Set memory model         /Zg Generate code to match Masm\n"
- "/mz Generate DOS MZ binary file            /Zi[0|1|2|3] Add symbolic debug info\n"
- "/nc<name> Set class name of code segment   /zlc No OMF records of data in code\n"
- "/nd<name> Set name of data segment         /zld No OMF records of far call\n"
- "/nm<name> Set name of module               /zl<f|p|s> Suppress items in COFF\n"
- "/nt<name> Set name of text segment         /Zm Enable MASM 5.10 compatibility\n"
- "/pe Generate PE binary file, 32/64-bit     /Zne Disable non Masm extensions\n"
- " /cui - subsystem:console (default)        /Zp[n] Set structure alignment\n"
- " /gui - subsystem:windows	             /Zs Perform syntax check only\n"
- "/pf Preserve Flags (Epilogue/Invoke)       /zt<0|1|2> Set STDCALL decoration\n"
- "/q, /nologo Suppress copyright message     /Zv8 Enable Masm v8+ PROC visibility\n"
- "/r Recurse subdirectories                  /zze No export symbol decoration\n"
- "/Sa Maximize source listing                /zzs Store name of start address\n";
+ "/homeparams Copy Reg. parameters to Stack  /zf<0|1> Set FASTCALL type: MS/OW\n"
+ "/I<name> Add include path                  /Zg Generate code to match Masm\n"
+ "/m<t|s|c|m|l|h|f> Set memory model         /Zi[0|1|2|3] Add symbolic debug info\n"
+ "/mz Generate DOS MZ binary file            /zlc No OMF records of data in code\n"
+ "/nc<name> Set class name of code segment   /zld No OMF records of far call\n"
+ "/nd<name> Set name of data segment         /zl<f|p|s> Suppress items in COFF\n"
+ "/nm<name> Set name of module               /Zm Enable MASM 5.10 compatibility\n"
+ "/nt<name> Set name of text segment         /Zne Disable non Masm extensions\n"
+ "/pe Generate PE binary file, 32/64-bit     /Zp[n] Set structure alignment\n"
+ " /cui - subsystem:console (default)        /Zs Perform syntax check only\n"
+ " /gui - subsystem:windows                  /zt<0|1|2> Set STDCALL decoration\n"
+ "/pf Preserve Flags (Epilogue/Invoke)       /Zv8 Enable Masm v8+ PROC visibility\n"
+ "/q, /nologo Suppress copyright message     /zze No export symbol decoration\n"
+ "/r Recurse subdirectories                  /zzs Store name of start address\n"
+ "/Sa Maximize source listing\n";
 
 int banner_printed = 0;
 

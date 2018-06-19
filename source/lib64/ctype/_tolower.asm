@@ -1,16 +1,16 @@
 include ctype.inc
 
-	.code
+    .code
 
-	OPTION PROLOGUE:NONE, EPILOGUE:NONE
+    OPTION PROLOGUE:NONE, EPILOGUE:NONE
 
-_tolower PROC char:SINT
+_tolower proc char:SINT
 
-	movzx	eax,BYTE PTR [esp+4]
-	sub	al,'A'+'a'
-	ret	4
+    movzx eax,cl
+    sub al,'A'+'a'
+    ret
 
 _tolower ENDP
 
-	END
+    END
 

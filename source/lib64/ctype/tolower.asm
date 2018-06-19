@@ -1,20 +1,20 @@
 include ctype.inc
 
-	.code
+    .code
 
-	OPTION PROLOGUE:NONE, EPILOGUE:NONE
+    OPTION PROLOGUE:NONE, EPILOGUE:NONE
 
-tolower PROC char:SINT
-	mov	rax,rcx
-	sub	al,'A'
-	cmp	al,'Z'-'A'+1
-	sbb	ah,ah
-	and	ah,'a'-'A'
-	add	al,ah
-	add	al,'A'
-	and	rax,000000FFh
-	ret
-tolower ENDP
+tolower proc char:SINT
+    mov eax,ecx
+    sub al,'A'
+    cmp al,'Z'-'A'+1
+    sbb ah,ah
+    and ah,'a'-'A'
+    add al,ah
+    add al,'A'
+    and eax,0xFF
+    ret
+tolower endp
 
-	END
+    end
 

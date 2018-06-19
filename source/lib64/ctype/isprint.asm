@@ -1,20 +1,18 @@
 include ctype.inc
 
-	.code
+    .code
 
-	OPTION PROLOGUE:NONE, EPILOGUE:NONE
+    OPTION PROLOGUE:NONE, EPILOGUE:NONE
 
-isprint PROC char:SINT
-	mov	rax,rcx
-	cmp	al,20h
-	jb	@F
-	cmp	al,7Fh
-	jnb	@F
-	ret
-@@:
-	xor	rax,rax
-	ret
-isprint ENDP
+isprint proc char:SINT
 
-	END
+    mov eax,ecx
+    .if al < 0x20 || al >= 0x7F
+        xor eax,eax
+    .endif
+    ret
+
+isprint endp
+
+    END
 

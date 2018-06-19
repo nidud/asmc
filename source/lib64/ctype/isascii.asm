@@ -1,15 +1,15 @@
 include ctype.inc
 
-	.code
+    .code
 
-	OPTION PROLOGUE:NONE, EPILOGUE:NONE
+    OPTION PROLOGUE:NONE, EPILOGUE:NONE
 
-isascii PROC char:SINT
-	mov	rax,rcx
-	and	rax,80h
-	setz	al
-	ret
-isascii ENDP
+isascii proc char:SINT
+    mov eax,ecx
+    and eax,80h
+    setz al
+    ret
+isascii endp
 
-	END
+    end
 

@@ -1,19 +1,15 @@
 include ctype.inc
 
-	.code
+    .code
 
-	OPTION PROLOGUE:NONE, EPILOGUE:NONE
+    OPTION PROLOGUE:NONE, EPILOGUE:NONE
 
-isgraph PROC char:SINT
-	mov	rax,rcx
-	cmp	al,21h
-	jb	@F
-	cmp	al,7Fh
-	jnb	@F
-	ret
-@@:
-	xor	rax,rax
-	ret
-isgraph ENDP
+isgraph proc char:SINT
+    mov eax,ecx
+    .if al < 0x21 || al >= 0x7F
+        xor eax,eax
+    .endif
+    ret
+isgraph endp
 
-	END
+    END

@@ -3,6 +3,8 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.27 - xx xxx 2017
+- added command line option /stackalign
+- added command line option /autostack
 - added command line option /homeparams
 - added command line option /Gv for vectorcall
 - added vectorcall calling convention

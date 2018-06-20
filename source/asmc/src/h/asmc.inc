@@ -1063,7 +1063,7 @@ casealign		db ?	; OPTION:CASEALIGN setting
 epilogueflags		db ?	; OPTION EPILOGUE: FLAGS
 segmentalign		db ?	; -Sp[n] Set segment alignment
 pe_subsystem		db ?	; -cui, -gui
-homeparams		db ?	; -homeparams
+win64_flags		db ?	; -homeparams
 global_options		ENDS
 
 PLPSTR			typedef PTR LPSTR

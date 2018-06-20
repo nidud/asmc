@@ -23,6 +23,10 @@ The command-line options are case sensitive.</p>
       <TD>Generate .assert(code). Same as .assert:on.
       </TD></TR>
     <TR>
+      <TD><B>/autostack</B></TD>
+      <TD><code>[<B>-auto</B>] [[<B>.win64</B>:[NO]AUTO]]</code> Calculate required stack space for arguments.
+      </TD></TR>
+    <TR>
       <TD><B>/bin</B></TD>
       <TD>Generate plain binary file.
       </TD></TR>
@@ -132,7 +136,7 @@ The command-line options are case sensitive.</p>
       </TD></TR>
     <TR>
       <TD><B>/homeparams</B></TD>
-      <TD>Copy Register Parameters to Stack. Forces parameters passed in registers to be written to their locations on the stack upon function entry.
+      <TD><code>[<B>-home</B>] [[<B>.win64</B>:[NO]SAVE]]</code> Forces parameters passed in registers to be written to their locations on the stack upon function entry.
       </TD></TR>
     <TR>
       <TD><B>/I<i>pathname</i></B></TD>
@@ -209,6 +213,10 @@ The command-line options are case sensitive.</p>
     <TR>
       <TD><B>/Sp[n]</B></TD>
       <TD>Set segment alignment.
+      </TD></TR>
+    <TR>
+      <TD><B>/stackalign</B></TD>
+      <TD><code>[<B>-stac</B>] [[<B>.win64</B>:[NO]ALIGN]]</code> Align stack variables to 16-byte.
       </TD></TR>
     <TR>
       <TD><B>/swc</B></TD>

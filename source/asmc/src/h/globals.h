@@ -457,7 +457,7 @@ unsigned char	casealign;		/* OPTION:CASEALIGN setting */
 unsigned char	epilogueflags;		/* OPTION EPILOGUE: FLAGS */
 unsigned char	segmentalign;		/* -Sp[n] Set segment alignment */
 unsigned char	pe_subsystem;		/* -cui, -gui */
-unsigned char	homeparams;		/* -homeparams */
+unsigned char	win64_flags;		/* -homeparams, -autostack, -alignstack16 */
 };
 
 /* if the structure changes, option.c, SetMZ() might need adjustment! */

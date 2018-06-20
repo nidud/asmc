@@ -67,7 +67,7 @@ struct global_options Options = {
 	0,			// .epilogueflags
 	4,			// .segmentalign
 	0,			// .pe_subsystem
-	0			// .homeparams
+	0			// .win64_flags
 
 };
 
@@ -336,6 +336,9 @@ static void ProcessOption( char **cmdline, char *buffer )
     case 'essa':	// -assert
 	Options.xflag = _XF_ASSERT;
 	return;
+    case 'otua':	// -autostack
+	Options.win64_flags |= W64F_AUTOSTACKSP;
+	return;
     case 'c':		// -c
 	return;
     case 'ffoc':	// -coff
@@ -427,7 +430,7 @@ static void ProcessOption( char **cmdline, char *buffer )
 	write_options();
 	exit( 1 );
     case 'emoh':	// -homeparams
-	Options.homeparams = W64F_SAVEREGPARAMS;
+	Options.win64_flags |= W64F_SAVEREGPARAMS;
 	return;
     case 'zm':		// -mz
 	Options.output_format = OFORMAT_BIN;
@@ -480,6 +483,9 @@ static void ProcessOption( char **cmdline, char *buffer )
 	return;
     case 'nS':		// -Sn
 	Options.no_symbol_listing = 1;
+	return;
+    case 'cats':	// -stackalign
+	Options.win64_flags |= W64F_STACKALIGN16;
 	return;
     case 'xS':		// -Sx
 	Options.listif = 1;

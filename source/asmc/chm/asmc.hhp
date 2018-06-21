@@ -50,6 +50,8 @@ html/dir_cstack.htm
 html/dir_casealign.htm
 html/dir_loopalign.htm
 html/dir_wstring.htm
+html/defined.htm
+html/undef.htm
 html/cstr.htm
 html/date.htm
 html/extensions.htm

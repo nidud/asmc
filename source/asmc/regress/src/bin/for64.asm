@@ -4,6 +4,10 @@
 	.model	flat, fastcall
 	.code
 
+	; v2.27 --
+	.for al <<= cl, al >>= 2, al |= cl, al ^= cl, al ~= cl, al &= cl ::
+	.endf
+
 	.FOR::
 	.ENDF
 	.FOR(::)

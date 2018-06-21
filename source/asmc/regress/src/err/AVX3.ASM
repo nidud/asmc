@@ -10,7 +10,7 @@
 m08  label byte
 m16  label word
 m32  label dword
-m64  label mmword
+m64  label qword
 m128 label xmmword
 m256 label ymmword
 
@@ -21,17 +21,17 @@ m256 label ymmword
 	vcmppd xmm0, xmm1, xmm2
 	vcmppd ymm0, ymm1, ymm2
 	vcmppd ymm0, ymm1
-	vpsrlw  xmm0, xmm1, ymm2
-	vpsrld  xmm0, xmm1, ymm2
-	vpsrld  xmm0, xmm1, m64
+	vpsrlw	xmm0, xmm1, ymm2
+	vpsrld	xmm0, xmm1, ymm2
+	vpsrld	xmm0, xmm1, m64
 	vmovd  xmm0, ax
 	vmovd  ymm0, m64
 	vmovd  m16,  xmm0
 	vmovq  xmm0, m128
 	vmovq  m64,  xmm0, xmm1
 	vpslldq xmm0, 1
-	vpsllq  xmm0, xmm1, xmm2
-	vpsrlw  xmm0, xmm1, m64
+	vpsllq	xmm0, xmm1, xmm2
+	vpsrlw	xmm0, xmm1, m64
 	vpabsb xmm0, xmm1, xmm2
 	vpabsb xmm0, xmm1, m128
 	vpmovsxbw xmm0, xmm1, xmm2
@@ -49,7 +49,7 @@ m256 label ymmword
 	vcvtdq2pd xmm0, xmm1, xmm2
 	vcvtdq2pd xmm0, m128
 	vcvtdq2pd ymm0, xmm1, xmm2
-	vcvtdq2pd ymm0, m256
+	vcvtdq2pd ymm0, m256 ; * no error..v2.26
 	vcvtpd2dq xmm0, xmm1, xmm2
 	vcvtps2pd xmm0, xmm1, xmm2
 	vcvtsd2si eax, ymm1, ymm2

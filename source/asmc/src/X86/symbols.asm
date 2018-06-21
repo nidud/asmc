@@ -126,7 +126,7 @@ dyneqvalue dd _MAX_DYNEQ dup(0)
 
     .code
 
-define_name proc string:LPSTR, value:SINT
+define_name proc string:LPSTR, value:LPSTR
 
     mov edx,dyneqcount
     mov eax,string
@@ -724,7 +724,8 @@ else
         or  [eax].asym.flag,SFL_ISDEFINED or SFL_PREDEFINED
 endif
         mov ecx,dyneqvalue[esi*4]
-        mov [eax].asym._offset,ecx
+        ;mov [eax].asym._offset,ecx
+        mov [eax].asym.string_ptr,ecx
         mov [eax].asym.sfunc_ptr,0
         inc esi
     .endw

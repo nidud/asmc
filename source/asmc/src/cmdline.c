@@ -74,7 +74,7 @@ struct global_options Options = {
 char *DefaultDir[NUM_FILE_TYPES] = { NULL };
 static int OptValue;
 
-void define_name( char *, int );
+void define_name( char *, char * );
 
 /* current cmdline string is done, get the next one! */
 
@@ -380,13 +380,13 @@ static void ProcessOption( char **cmdline, char *buffer )
     case '6fle':	// -elf64
 	Options.output_format = OFORMAT_ELF;
 	Options.sub_format = SFORMAT_64BIT;
-	define_name( "_LINUX", 2 );
-	define_name( "_WIN64", 1 );
+	define_name( "_LINUX", "2" );
+	define_name( "_WIN64", "1" );
 	return;
     case 'fle':		// -elf
 	Options.output_format = OFORMAT_ELF;
 	Options.sub_format = SFORMAT_NONE;
-	define_name( "_LINUX", 1 );
+	define_name( "_LINUX", "1" );
 	return;
     case '8iPF':	// -FPi87
 	Options.floating_point = FPO_NO_EMULATION;
@@ -423,7 +423,7 @@ static void ProcessOption( char **cmdline, char *buffer )
 	return;
     case 'iug':		// -gui - subsystem:windows
 	Options.pe_subsystem = 1;
-	define_name( "__GUI__", 1 );
+	define_name( "__GUI__", "1" );
 	return;
     case '?':
     case 'h':
@@ -468,7 +468,7 @@ static void ProcessOption( char **cmdline, char *buffer )
 	if ( Options.sub_format != SFORMAT_64BIT )
 	    Options.sub_format = SFORMAT_PE;
 	Options.output_format = OFORMAT_BIN;
-	define_name( "__PE__", 1 );
+	define_name( "__PE__", "1" );
 	return;
     case 'r':		// -r
 	Options.process_subdir = 1;
@@ -513,7 +513,7 @@ static void ProcessOption( char **cmdline, char *buffer )
 	return;
     case 'sw':		// -ws
 	Options.aflag |= _AF_WSTRING;
-	define_name( "_UNICODE", 1 );
+	define_name( "_UNICODE", "1" );
 	return;
     case 'XW':		// -WX
 	Options.warning_error = 1;
@@ -527,7 +527,7 @@ static void ProcessOption( char **cmdline, char *buffer )
 		Options.langtype = LANG_FASTCALL;
 	}
 	Options.sub_format = SFORMAT_64BIT;
-	define_name( "_WIN64", 1 );
+	define_name( "_WIN64", "1" );
 	return;
     case 'X':		// -X
 	Options.ignore_include = 1;

@@ -346,6 +346,66 @@ static ret_code get_operand( struct expr *opnd, int *idx, struct asm_tok tokenar
 		    }
 		}
 	    } else {
+
+		if ( sym == NULL && _stricmp( tmp, "defined" ) == 0 ) {
+
+		    if ( i && tokenarray[i+1].token == T_OP_BRACKET ) {
+
+			i += 2;
+			opnd->kind = EXPR_CONST;
+			opnd->value = 0;
+
+			if ( tokenarray[i].token == T_CL_BRACKET ) {
+
+			    *idx = i;
+			    opnd->value++; /* <> -- defined() */
+			    break;
+			}
+
+			if ( tokenarray[i].token == T_NUM && tokenarray[i+1].token == T_CL_BRACKET ) {
+
+			    opnd->value++;
+			    *idx = i + 1;
+			    break;
+			}
+
+
+			if ( tokenarray[i].token == T_ID && tokenarray[i+1].token == T_CL_BRACKET ) {
+
+			    *idx = i + 1;
+			    sym = SymFind( tokenarray[i].string_ptr );
+			    if ( sym && sym->state != SYM_UNDEFINED ) {
+
+				opnd->value++; /* symbol defined */
+				break;
+			    }
+
+			    /* -- symbol not defined -- */
+
+			    if ( tokenarray[i+2].tokval != T_AND || tokenarray[i-3].tokval == T_NOT )
+
+				/* [not defined(symbol)] - return 0 */
+
+				break;
+
+			    /* [defined(symbol) and] - return 0 and skip rest of line... */
+			    i += 3;
+			    for ( j = 0; i < Token_Count; i++ ) {
+
+				if ( tokenarray[i].token == T_CL_BRACKET ) {
+
+				    if ( j == 0 )
+					break;
+				    j--;
+				} else if ( tokenarray[i].token == T_OP_BRACKET ) {
+				    j++;
+				}
+			    }
+			    *idx = i - 1;
+			    break;
+			}
+		    }
+		}
 		return( fnasmerr( 2006, *(tmp+1) == '&' ? "@@" : tmp ) );
 	    }
 	} else if ( sym->state == SYM_ALIAS ) {

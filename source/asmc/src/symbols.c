@@ -146,14 +146,14 @@ static const struct eqitem eqtab[] = {
 #define _MAX_DYNEQ 10
 
 static int dyneqcount = 0;
-static int dyneqvalue[_MAX_DYNEQ];
+static char *dyneqvalue[_MAX_DYNEQ];
 static char *dyneqtable[_MAX_DYNEQ];
 
-void define_name(char *name, int value)
+void define_name( char *name, char *value )
 {
-	dyneqvalue[dyneqcount] = value;
-	dyneqtable[dyneqcount] = name;
-	dyneqcount++;
+    dyneqvalue[dyneqcount] = value;
+    dyneqtable[dyneqcount] = name;
+    dyneqcount++;
 }
 
 static unsigned int hashpjw( const char *s )
@@ -513,7 +513,7 @@ void SymInit( void )
 	sym->state = SYM_TMACRO;
 	sym->isdefined = TRUE;
 	sym->predefined = TRUE;
-	sym->offset = dyneqvalue[i];
+	sym->string_ptr = dyneqvalue[i];
 	sym->sfunc_ptr = NULL;
     }
 

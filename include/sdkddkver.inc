@@ -107,15 +107,6 @@ OSVERSION_MASK		equ 0xFFFF0000
 SPVERSION_MASK		equ 0x0000FF00
 SUBVERSION_MASK		equ 0x000000FF
 
-
-defined macro x
-ifdef x
-	exitm<1>
-else
-	exitm<0>
-endif
-	endm
-
 ifdef DECLSPEC_DEPRECATED_DDK
 
 if (NTDDI_VERSION GE NTDDI_WIN2K)

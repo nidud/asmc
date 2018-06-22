@@ -5,9 +5,6 @@
 #include <hllext.h>
 #include <condasm.h>
 
-#define _XF_ASSERT 0x01 // Generate .assert code
-#define _XF_PUSHF  0x02 // Push/Pop flags
-
 #define MAXSAVESTACK 124
 
 static int  assert_stid = 0;

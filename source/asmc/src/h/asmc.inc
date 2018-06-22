@@ -35,6 +35,7 @@ _AF_ON			equ 0x01
 _AF_CSTACK		equ 0x02
 _AF_WSTRING		equ 0x04 ; convert "string" to unicode
 _AF_LSTRING		equ 0x08 ; L"Unicode" used --> allow dw "string"
+
 _AF_PASCAL		equ 0x10 ; auto insert break after cases
 _AF_NOTABLE		equ 0x20 ; no indexed jump table
 _AF_REGAX		equ 0x40 ; use [R|E]AX to render jump-code
@@ -1063,7 +1064,7 @@ casealign		db ?	; OPTION:CASEALIGN setting
 epilogueflags		db ?	; OPTION EPILOGUE: FLAGS
 segmentalign		db ?	; -Sp[n] Set segment alignment
 pe_subsystem		db ?	; -cui, -gui
-win64_flags		db ?	; -homeparams
+win64_flags		db ?	; -homeparams, -autostack, -stackalign
 global_options		ENDS
 
 PLPSTR			typedef PTR LPSTR

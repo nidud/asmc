@@ -528,6 +528,7 @@ static void ProcessOption( char **cmdline, char *buffer )
 	}
 	Options.sub_format = SFORMAT_64BIT;
 	define_name( "_WIN64", "1" );
+	Options.aflag |= _AF_REGAX;
 	return;
     case 'X':		// -X
 	Options.ignore_include = 1;

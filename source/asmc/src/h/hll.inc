@@ -62,6 +62,8 @@ HLLF_IFD	equ 0x00040000	; .ifd proc() --> eax
 HLLF_IFS	equ 0x00080000	; Signed compare --> CMP REG,val
 HLLF_CONT0	equ 0x00100000	; .continue(0) [.if]
 
+HLLF_JTABLE	equ 0x00200000	; if HLLF_NOTEST direct .case jump
+
 ;
 ; item for .IF, .WHILE, .REPEAT, ...
 ;

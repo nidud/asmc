@@ -28,9 +28,6 @@ FindResWord::
 
         option switch:table, switch:notest, switch:regax
 
-        lea r11,@C0024
-        jmp qword ptr [rdx*8+r11]
-
         .switch rdx
 
           .case 0

@@ -21,10 +21,7 @@ FindResWord proc fastcall w_name, w_size
 
     .if edx < 8
 
-        option switch:table
-        option switch:notest
-
-        jmp [edx*4+@C0024] ; direct jump to case 0..7
+        option switch:table, switch:notest
 
         .switch edx
 

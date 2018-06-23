@@ -77,9 +77,9 @@ WINAPIV		equ <CDECL>
 APIENTRY	equ <WINAPI>
 APIPRIVATE	equ <CDECL>
 ifdef _68K_
-PASCAL		equ <__pascal>
+;PASCAL		equ <__pascal>
 else
-PASCAL		equ <>
+;PASCAL		equ <>
 endif
 elseif (_MSC_VER ge 800) or defined(_STDCALL_SUPPORTED)
 ;CALLBACK	equ <stdcall>

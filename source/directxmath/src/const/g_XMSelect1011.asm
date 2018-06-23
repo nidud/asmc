@@ -1,6 +1,0 @@
-include DirectXMath.inc
-
-.data
-g_XMSelect1011 XMVECTORU32 { { { XM_SELECT_1, XM_SELECT_0, XM_SELECT_1, XM_SELECT_1 } } }
-
- end

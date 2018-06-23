@@ -382,7 +382,9 @@ static ret_code get_operand( struct expr *opnd, int *idx, struct asm_tok tokenar
 
 			    /* -- symbol not defined -- */
 
-			    if ( tokenarray[i+2].tokval != T_AND || tokenarray[i-3].tokval == T_NOT )
+			    if ( tokenarray[i+2].token == T_FINAL ||
+				 tokenarray[i+2].tokval != T_AND  ||
+				 tokenarray[i-3].tokval == T_NOT )
 
 				/* [not defined(symbol)] - return 0 */
 

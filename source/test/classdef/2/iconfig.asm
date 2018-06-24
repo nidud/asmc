@@ -8,14 +8,14 @@ endif
     .data
 
     virtual_table label qword
-        dq IConfig@Release
-        dq IConfig@Read
-        dq IConfig@Write
-        dq IConfig@Find
-        dq IConfig@Create
-        dq IConfig@Delete
-        dq IConfig@GetValue
-        dq IConfig@Unlink
+        dq IConfig_Release
+        dq IConfig_Read
+        dq IConfig_Write
+        dq IConfig_Find
+        dq IConfig_Create
+        dq IConfig_Delete
+        dq IConfig_GetValue
+        dq IConfig_Unlink
 
     .code
 
@@ -73,7 +73,7 @@ IConfig::Release proc uses rbx
 
 IConfig::Release endp
 
-TruncateString proc private uses rsi rdi rbx string:LPSTR
+TruncateString proc private string:LPSTR
 
     .repeat
 
@@ -228,12 +228,11 @@ IConfig::GetValue proc uses rsi rdi rbx Section:LPSTR, Entry:LPSTR
 
 IConfig::GetValue endp
 
+    option win64:save
+
 IConfig::Create proc uses rsi rdi rbx r12 format:LPSTR, argptr:VARARG
 
  local string[256]:sbyte
-
-    mov argptr,r8
-    mov argptr[8],r9
 
     mov rbx,rcx
     lea rdi,string
@@ -318,6 +317,8 @@ IConfig::Create proc uses rsi rdi rbx r12 format:LPSTR, argptr:VARARG
     ret
 
 IConfig::Create endp
+
+    option win64:nosave
 
 IConfig::Delete proc SectionName:LPSTR
 

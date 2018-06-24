@@ -61,7 +61,7 @@ XPush::XPush proc ReservedStack:UINT
 
         lea rdx,[rax+0x80]
         mov [rcx],rdx
-        lea rax,XPush@Release
+        lea rax,XPush_Release
         mov [rdx],rax
         mov rax,rcx
     .until 1

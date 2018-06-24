@@ -10,7 +10,7 @@ fputc proc char:SINT, fp: LPFILE
     jl	flush
     mov r8,[rdx]._iobuf._ptr
     inc [rdx]._iobuf._ptr
-    mov rax,rcx
+    mov eax,ecx
     mov [r8],al
 toend:
     ret

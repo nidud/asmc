@@ -11,7 +11,7 @@ extrn _umaskval:DWORD
 
     .code
 
-    option win64:nosave
+;    option win64:nosave
 
 _sopen proc uses rsi rdi rbx path:LPSTR, oflag:UINT, shflag:UINT, args:VARARG
 

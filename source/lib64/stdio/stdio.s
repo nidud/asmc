@@ -54,6 +54,10 @@ main proc
     .assert fread(rdi,3,1,rsi) == 1
     .assert !fclose(rsi)
     .assert !strncmp(rdi,"003",3)
+
+    .assert fopen("..\\lib64\\test.fil","rt") == rsi
+    .assert !fclose(rsi)
+
     .assert !remove("test.fil")
 
     ret

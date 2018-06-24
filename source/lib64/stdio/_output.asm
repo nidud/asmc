@@ -320,9 +320,9 @@ local   tmp:REAL16
                     ; print a single character specified by int argument
                     ;
                     mov bufferiswide,1
-                    mov rax,arglist
+                    mov rcx,arglist
                     add arglist,8
-                    mov edx,[rax]
+                    mov dl,[rcx]
                     lea rax,buffer
                     mov [rax],dl
                     mov textlen,1 ; print just a single character
@@ -342,9 +342,9 @@ local   tmp:REAL16
                     ;   min(precision, length) if precision given.
                     ; prints '(null)' if a null string is passed
 
-                    mov rax,arglist
+                    mov rcx,arglist
                     add arglist,8
-                    mov rax,[rax]
+                    mov rax,[rcx]
                     mov ecx,edi
                     .if edi == -1
                         mov ecx,INT_MAX

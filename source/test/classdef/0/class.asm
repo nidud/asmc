@@ -3,7 +3,7 @@ include class.inc
     .data
     virtual_table label qword
         dq free
-        dq Class@Print
+        dq Class_Print
 
     .code
 

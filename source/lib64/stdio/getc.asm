@@ -2,7 +2,7 @@ include stdio.inc
 
     .code
 
-    option win64:rsp nosave noauto
+    option win64:rsp nosave
 
 getc proc fp:LPFILE
     dec [rcx]._iobuf._cnt

@@ -256,9 +256,9 @@ ClassDirective proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok
 
                 .if edx
 
-                    AddLineQueueX( "%s::%s proto :ptr %s, %s", esi, esi, esi, [ebx+16].tokpos )
+                    AddLineQueueX( "%s::%s proto %s", esi, esi, [ebx+16].tokpos )
                 .else
-                    AddLineQueueX( "%s::%s proto :ptr %s", esi, esi, esi )
+                    AddLineQueueX( "%s::%s proto", esi, esi )
                 .endif
             .endif
 

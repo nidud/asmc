@@ -70,6 +70,7 @@ _openfile proc uses rsi filename:LPSTR, mode:LPSTR, shflag:SINT, stream:LPFILE
             mov rax,rsi
         .else
             xor eax,eax
+            mov [rsi]._iobuf._flag,eax
         .endif
     .until 1
     ret

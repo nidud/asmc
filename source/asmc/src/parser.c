@@ -2278,19 +2278,19 @@ int ParseLine( struct asm_tok tokenarray[] )
     i = 0;
     j = 0;
 
-    if (Token_Count > 2 && tokenarray[0].token == T_ID &&
-       (tokenarray[1].token == T_COLON || tokenarray[1].token == T_DBL_COLON)) {
+    if ( Token_Count > 2 &&
+       ( tokenarray[0].token == T_ID || tokenarray[0].token == T_STYPE ) &&
+       ( tokenarray[1].token == T_COLON || tokenarray[1].token == T_DBL_COLON ) ) {
 
-	if (tokenarray[2].token != T_FINAL)
+	if ( tokenarray[2].token != T_FINAL )
 	    j++;
 
     } else if ( Token_Count > 3 ) {
 
 	for ( q = 1; tokenarray[q+2].token != T_FINAL; q++ ) {
 
-	    if ( tokenarray[q].token == T_ID &&
-		 tokenarray[q+1].token == T_DBL_COLON &&
-		 tokenarray[q+3].token == T_OP_BRACKET ) {
+	    if ( ( tokenarray[q].token == T_ID || tokenarray[q].token == T_STYPE ) &&
+		tokenarray[q+1].token == T_DBL_COLON && tokenarray[q+3].token == T_OP_BRACKET ) {
 		/*
 		 * .break .if !TDialog::TDialog( &p )
 		 */
@@ -2314,11 +2314,10 @@ int ParseLine( struct asm_tok tokenarray[] )
 	   ( tokenarray[j+2].tokval == T_ENDP || tokenarray[j+2].token == T_OP_BRACKET ) ) {
 
 	    strcat( buffer, tokenarray[j-1].string_ptr );
-	    strcat( buffer, "@" );
+	    strcat( buffer, "_" );
 	    strcat( buffer, tokenarray[j+1].string_ptr );
 	    strcat( buffer, " " );
 	    strcat( buffer, tokenarray[j+2].tokpos );
-	    //strcpy( CurrSource, buffer );
 	    Token_Count = Tokenize( buffer, 0, tokenarray, TOK_DEFAULT );
 	    return ParseLine( tokenarray );
 	}
@@ -2327,7 +2326,7 @@ int ParseLine( struct asm_tok tokenarray[] )
 	   ( tokenarray[j+2].tokval == T_PROC || tokenarray[j+2].tokval == T_PROTO ) ) {
 
 	    strcpy( buffer, tokenarray[j-1].string_ptr );
-	    strcat( buffer, "@" );
+	    strcat( buffer, "_" );
 	    strcat( buffer, tokenarray[j+1].string_ptr );
 	    strcat( buffer, " " );
 	    strcat( buffer, tokenarray[j+2].string_ptr );
@@ -2374,15 +2373,20 @@ int ParseLine( struct asm_tok tokenarray[] )
 		}
 	    }
 
-	    if ( tokenarray[j+2].tokval == T_PROC ) {
+	    if ( tokenarray[j+2].tokval == T_PROC || tokenarray[j+2].tokval == T_PROTO ) {
 
-		strcat( buffer, "_this:ptr " );
+		if ( tokenarray[j+2].tokval == T_PROC )
+		    strcat( buffer, "_this" );
+		strcat( buffer, ":" );
+		if ( ( ModuleInfo.Ofssize != USE64 && tokenarray[j-1].token != T_STYPE ) ||
+		    strcmp(tokenarray[j-1].string_ptr, tokenarray[j+1].string_ptr ) == 0 )
+		   strcat( buffer, "ptr " );
 		strcat( buffer, tokenarray[0].string_ptr );
 	    }
 
 	    if ( tokenarray[i].token != T_FINAL ) {
 
-		if ( tokenarray[j+2].tokval == T_PROC )
+		if ( tokenarray[j+2].tokval == T_PROC || tokenarray[j+2].tokval == T_PROTO )
 		    strcat( buffer, ", " );
 		strcat( buffer, tokenarray[i].tokpos );
 	    }

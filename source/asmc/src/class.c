@@ -198,9 +198,9 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
             }
 
             if ( x )
-                AddLineQueueX( "%s::%s proto :ptr %s, %s", p, p, p, tokenarray[i+1].tokpos );
+                AddLineQueueX( "%s::%s proto %s", p, p, tokenarray[i+1].tokpos );
             else
-                AddLineQueueX( "%s::%s proto :ptr %s", p, p, p );
+                AddLineQueueX( "%s::%s proto", p, p );
         }
 
         x = 4;

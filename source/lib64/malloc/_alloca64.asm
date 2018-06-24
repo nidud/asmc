@@ -11,13 +11,13 @@ _alloca64 PROC byte_count, res_stack
 
     .while rcx > _PAGESIZE_
         sub  rax,_PAGESIZE_
-        test [rax],rax
+        test [rax],dl
         sub  rcx,_PAGESIZE_
     .endw
 
     sub rax,rcx
     and rax,-(_GRANULARITY)
-    test [rax],rax
+    test [rax],dl
     mov rcx,[rsp]
     mov rsp,rax
     add rax,rdx

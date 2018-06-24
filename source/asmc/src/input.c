@@ -394,6 +394,7 @@ void print_source_nesting_structure( void )
 /* Scan the include path for a file!
  * variable ModuleInfo.g.IncludePath also contains directories set with -I cmdline option.
  */
+
 static FILE *open_file_in_include_path( const char *name, char fullpath[] )
 {
     char *curr;
@@ -488,6 +489,7 @@ FILE *SearchFile( char *path, bool queue )
 	}
     }
     if ( file == NULL ) {
+
 	fullpath[0] = NULLC;
 	file = fopen( path, "rb" );
 	/* if the file isn't found yet and include paths have been set,

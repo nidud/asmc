@@ -5,11 +5,13 @@ include stdio.inc
     option win64:noauto
 
 _getst proc
-    lea r11,_iob
-    lea r10,[r11+(_NSTREAM_ * sizeof(_iobuf))]
-    xor eax,eax
-    .repeat
-        .if !([r11]._iobuf._flag & _IOREAD or _IOWRT or _IORW )
+
+    .for r11 = &_iob,
+         r10 = &[r11+(_NSTREAM_ * sizeof(_iobuf))],
+         eax = 0: r11 < r10: r11 += sizeof(_iobuf)
+
+        .if !( [r11]._iobuf._flag & _IOREAD or _IOWRT or _IORW )
+
             mov [r11]._iobuf._cnt,eax
             mov [r11]._iobuf._flag,eax
             mov [r11]._iobuf._ptr,rax
@@ -19,9 +21,9 @@ _getst proc
             mov rax,r11
             .break
         .endif
-        add r11,sizeof(_iobuf)
-    .until r11 >= r10
+    .endf
     ret
+
 _getst endp
 
     END

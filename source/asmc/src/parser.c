@@ -2333,8 +2333,9 @@ int ParseLine( struct asm_tok tokenarray[] )
 	    strcat( buffer, " " );
 
 	    i = j+3;
-	    if ( tokenarray[i].token == T_STYPE &&
-		tokenarray[i].tokval >= T_NEAR && tokenarray[i].tokval <= T_FAR32 ) {
+	    if ( ( tokenarray[i].tokval >= T_SYSCALL && tokenarray[i].tokval <= T_VECTORCALL ) ||
+		 ( tokenarray[i].token == T_STYPE &&
+		 tokenarray[i].tokval >= T_NEAR && tokenarray[i].tokval <= T_FAR32 ) ) {
 
 		strcat( buffer, tokenarray[i].string_ptr );
 		strcat( buffer, " " );
@@ -2378,8 +2379,7 @@ int ParseLine( struct asm_tok tokenarray[] )
 		if ( tokenarray[j+2].tokval == T_PROC )
 		    strcat( buffer, "_this" );
 		strcat( buffer, ":" );
-		if ( ( ModuleInfo.Ofssize != USE64 && tokenarray[j-1].token != T_STYPE ) ||
-		    strcmp(tokenarray[j-1].string_ptr, tokenarray[j+1].string_ptr ) == 0 )
+		if ( tokenarray[j-1].token != T_STYPE )
 		   strcat( buffer, "ptr " );
 		strcat( buffer, tokenarray[0].string_ptr );
 	    }

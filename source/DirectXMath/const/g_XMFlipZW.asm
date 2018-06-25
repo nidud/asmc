@@ -1,0 +1,6 @@
+include DirectXMath.inc
+
+.data
+g_XMFlipZW XMVECTORU32 { { { 0, 0, 0x80000000, 0x80000000 } } }
+
+ end

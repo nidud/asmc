@@ -1421,26 +1421,24 @@ XMMatrixTranspose macro M, O
 	    movaps xmm1,xmm5
 	endif
     else
-	movaps xmm5,xmm1
-	movaps xmm6,xmm2
-	movaps xmm4,xmm3
-	movaps xmm2,xmm0
-	movaps xmm3,xmm6
+	movaps xmm4,xmm0
+	movlhps xmm4,xmm1
 	shufps xmm0,xmm1,_MM_SHUFFLE(3,2,3,2)
-	movaps xmm1,xmm6
-	shufps xmm1,xmm4,_MM_SHUFFLE(3,2,3,2)
-	movhps xmm2,xmm5
-	movhps xmm3,xmm4
-	movaps xmm4,xmm2
-	shufps xmm2,xmm3,_MM_SHUFFLE(3,1,3,1)
-	movaps xmm5,xmm2
-	movaps xmm2,xmm0
-	shufps xmm4,xmm3,_MM_SHUFFLE(2,0,2,0)
-	shufps xmm2,xmm1,_MM_SHUFFLE(2,0,2,0)
+	movaps xmm1,xmm2
+	shufps xmm1,xmm3,_MM_SHUFFLE(3,2,3,2)
+	movlhps xmm2,xmm3
+	movaps xmm3,xmm4
+	shufps xmm4,xmm2,_MM_SHUFFLE(3,1,3,1)
+	movaps xmm5,xmm4
+	movaps xmm4,xmm0
+	shufps xmm3,xmm2,_MM_SHUFFLE(2,0,2,0)
+	shufps xmm4,xmm1,_MM_SHUFFLE(2,0,2,0)
 	shufps xmm0,xmm1,_MM_SHUFFLE(3,1,3,1)
+	movaps xmm1,xmm5
+	movaps xmm2,xmm4
+	movaps xmm4,xmm3
 	movaps xmm3,xmm0
 	movaps xmm0,xmm4
-	movaps xmm1,xmm5
     endif
     exitm<>
     endm

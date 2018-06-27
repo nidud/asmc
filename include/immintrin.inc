@@ -685,78 +685,78 @@ _shlx_u32		proto __cdecl :dword, :dword
 _shrx_u32		proto __cdecl :dword, :dword
 
 ifdef _M_X64
-_bextr_u64		proto :qword, :dword, :dword
-_blsi_u64		proto :qword
-_blsmsk_u64		proto :qword
-_blsr_u64		proto :qword
-_bzhi_u64		proto :qword, :dword
-_mulx_u64		proto :qword, :dword
-_pdep_u64		proto :qword, :dword
-_pext_u64		proto :qword, :dword
-_rorx_u64		proto :qword, :dword
-_srx_i64		proto :sqword, :sdword
-_shlx_u64		proto :qword, :dword
-_shrx_u64		proto :qword, :dword
+_bextr_u64		proto __cdecl :qword, :dword, :dword
+_blsi_u64		proto __cdecl :qword
+_blsmsk_u64		proto __cdecl :qword
+_blsr_u64		proto __cdecl :qword
+_bzhi_u64		proto __cdecl :qword, :dword
+_mulx_u64		proto __cdecl :qword, :dword
+_pdep_u64		proto __cdecl :qword, :dword
+_pext_u64		proto __cdecl :qword, :dword
+_rorx_u64		proto __cdecl :qword, :dword
+_srx_i64		proto __cdecl :sqword, :sdword
+_shlx_u64		proto __cdecl :qword, :dword
+_shrx_u64		proto __cdecl :qword, :dword
 endif
 
-_lzcnt_u32		proto :dword
+_lzcnt_u32		proto __cdecl :dword
 ifdef _M_X64
-_lzcnt_u64		proto :qword
+_lzcnt_u64		proto __cdecl :qword
 endif
 
-_tzcnt_u32		proto :dword
+_tzcnt_u32		proto __cdecl :dword
 ifdef _M_X64
-_tzcnt_u64		proto :qword
+_tzcnt_u64		proto __cdecl :qword
 endif
 
-_invpcid		proto :dword, :ptr
+_invpcid		proto __cdecl :dword, :ptr
 
-_Store_HLERelease	proto :ptr, :sdword
-_StorePointer_HLERelease proto :ptr, :ptr
+_Store_HLERelease	proto __cdecl :ptr, :sdword
+_StorePointer_HLERelease proto __cdecl :ptr, :ptr
 
-_InterlockedExchange_HLEAcquire proto :ptr
-_InterlockedExchange_HLERelease proto :ptr, :sdword
-_InterlockedExchangePointer_HLEAcquire proto :ptr, :ptr
-_InterlockedExchangePointer_HLERelease proto :ptr, :ptr
+_InterlockedExchange_HLEAcquire proto __cdecl :ptr
+_InterlockedExchange_HLERelease proto __cdecl :ptr, :sdword
+_InterlockedExchangePointer_HLEAcquire proto __cdecl :ptr, :ptr
+_InterlockedExchangePointer_HLERelease proto __cdecl :ptr, :ptr
 
-_InterlockedCompareExchange_HLEAcquire proto :ptr, :sdword, :sdword
-_InterlockedCompareExchange_HLERelease proto :ptr, :sdword, :sdword
-_InterlockedCompareExchange64_HLEAcquire proto :ptr, :sqword, :sqword
-_InterlockedCompareExchange64_HLERelease proto :ptr, :sqword, :sqword
-_InterlockedCompareExchangePointer_HLEAcquire proto :ptr, :ptr, :ptr
-_InterlockedCompareExchangePointer_HLERelease proto :ptr, :ptr, :ptr
+_InterlockedCompareExchange_HLEAcquire proto __cdecl :ptr, :sdword, :sdword
+_InterlockedCompareExchange_HLERelease proto __cdecl :ptr, :sdword, :sdword
+_InterlockedCompareExchange64_HLEAcquire proto __cdecl :ptr, :sqword, :sqword
+_InterlockedCompareExchange64_HLERelease proto __cdecl :ptr, :sqword, :sqword
+_InterlockedCompareExchangePointer_HLEAcquire proto __cdecl :ptr, :ptr, :ptr
+_InterlockedCompareExchangePointer_HLERelease proto __cdecl :ptr, :ptr, :ptr
 
-_InterlockedExchangeAdd_HLEAcquire proto :ptr, :sdword
-_InterlockedExchangeAdd_HLERelease proto :ptr, :sdword
+_InterlockedExchangeAdd_HLEAcquire proto __cdecl :ptr, :sdword
+_InterlockedExchangeAdd_HLERelease proto __cdecl :ptr, :sdword
 
-_InterlockedAnd_HLEAcquire proto :ptr, :sdword
-_InterlockedAnd_HLERelease proto :ptr, :sdword
-_InterlockedOr_HLEAcquire proto :ptr, :sdword
-_InterlockedOr_HLERelease proto :ptr, :sdword
-_InterlockedXor_HLEAcquire proto :ptr, :sdword
-_InterlockedXor_HLERelease proto :ptr, :sdword
+_InterlockedAnd_HLEAcquire proto __cdecl :ptr, :sdword
+_InterlockedAnd_HLERelease proto __cdecl :ptr, :sdword
+_InterlockedOr_HLEAcquire proto __cdecl :ptr, :sdword
+_InterlockedOr_HLERelease proto __cdecl :ptr, :sdword
+_InterlockedXor_HLEAcquire proto __cdecl :ptr, :sdword
+_InterlockedXor_HLERelease proto __cdecl :ptr, :sdword
 
-_interlockedbittestandset_HLEAcquire proto :ptr, :sdword
-_interlockedbittestandset_HLERelease proto :ptr, :sdword
-_interlockedbittestandreset_HLEAcquire proto :ptr, :sdword
-_interlockedbittestandreset_HLERelease proto :ptr, :sdword
+_interlockedbittestandset_HLEAcquire proto __cdecl :ptr, :sdword
+_interlockedbittestandset_HLERelease proto __cdecl :ptr, :sdword
+_interlockedbittestandreset_HLEAcquire proto __cdecl :ptr, :sdword
+_interlockedbittestandreset_HLERelease proto __cdecl :ptr, :sdword
 
 ifdef _M_X64
-_Store64_HLERelease	proto :ptr, :sqword
-_InterlockedExchange64_HLEAcquire proto :ptr, :sqword
-_InterlockedExchange64_HLERelease proto :ptr, :sqword
-_InterlockedExchangeAdd64_HLEAcquire proto :ptr, :sqword
-_InterlockedExchangeAdd64_HLERelease proto :ptr, :sqword
-_InterlockedAnd64_HLEAcquire proto :ptr, :sqword
-_InterlockedAnd64_HLERelease proto :ptr, :sqword
-_InterlockedOr64_HLEAcquire proto :ptr, :sqword
-_InterlockedOr64_HLERelease proto :ptr, :sqword
-_InterlockedXor64_HLEAcquire proto :ptr, :sqword
-_InterlockedXor64_HLERelease proto :ptr, :sqword
-_interlockedbittestandset64_HLEAcquire	proto :ptr, :sqword
-_interlockedbittestandset64_HLERelease	proto :ptr, :sqword
-_interlockedbittestandreset64_HLEAcquire proto :ptr, :sqword
-_interlockedbittestandreset64_HLERelease proto :ptr, :sqword
+_Store64_HLERelease	proto __cdecl :ptr, :sqword
+_InterlockedExchange64_HLEAcquire proto __cdecl :ptr, :sqword
+_InterlockedExchange64_HLERelease proto __cdecl :ptr, :sqword
+_InterlockedExchangeAdd64_HLEAcquire proto __cdecl :ptr, :sqword
+_InterlockedExchangeAdd64_HLERelease proto __cdecl :ptr, :sqword
+_InterlockedAnd64_HLEAcquire proto __cdecl :ptr, :sqword
+_InterlockedAnd64_HLERelease proto __cdecl :ptr, :sqword
+_InterlockedOr64_HLEAcquire proto __cdecl :ptr, :sqword
+_InterlockedOr64_HLERelease proto __cdecl :ptr, :sqword
+_InterlockedXor64_HLEAcquire proto __cdecl :ptr, :sqword
+_InterlockedXor64_HLERelease proto __cdecl :ptr, :sqword
+_interlockedbittestandset64_HLEAcquire	proto __cdecl :ptr, :sqword
+_interlockedbittestandset64_HLERelease	proto __cdecl :ptr, :sqword
+_interlockedbittestandreset64_HLEAcquire proto __cdecl :ptr, :sqword
+_interlockedbittestandreset64_HLERelease proto __cdecl :ptr, :sqword
 endif
 
 ;;  Restricted Transactional Memory

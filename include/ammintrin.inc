@@ -268,78 +268,78 @@ _mm_nmsub_sd macro x0:=<xmm0>, x2:=<xmm1>, x2:=<xmm2>
 
 ;; Integer multiply-accumulate
 
-_mm_maccs_epi16		proto :oword, :oword, :oword
-_mm_macc_epi16		proto :oword, :oword, :oword
-_mm_maccsd_epi16	proto :oword, :oword, :oword
-_mm_maccd_epi16		proto :oword, :oword, :oword
-_mm_maccs_epi32		proto :oword, :oword, :oword
-_mm_macc_epi32		proto :oword, :oword, :oword
-_mm_maccslo_epi32	proto :oword, :oword, :oword
-_mm_macclo_epi32	proto :oword, :oword, :oword
-_mm_maccshi_epi32	proto :oword, :oword, :oword
-_mm_macchi_epi32	proto :oword, :oword, :oword
-_mm_maddsd_epi16	proto :oword, :oword, :oword
-_mm_maddd_epi16		proto :oword, :oword, :oword
+_mm_maccs_epi16		proto __cdecl :oword, :oword, :oword
+_mm_macc_epi16		proto __cdecl :oword, :oword, :oword
+_mm_maccsd_epi16	proto __cdecl :oword, :oword, :oword
+_mm_maccd_epi16		proto __cdecl :oword, :oword, :oword
+_mm_maccs_epi32		proto __cdecl :oword, :oword, :oword
+_mm_macc_epi32		proto __cdecl :oword, :oword, :oword
+_mm_maccslo_epi32	proto __cdecl :oword, :oword, :oword
+_mm_macclo_epi32	proto __cdecl :oword, :oword, :oword
+_mm_maccshi_epi32	proto __cdecl :oword, :oword, :oword
+_mm_macchi_epi32	proto __cdecl :oword, :oword, :oword
+_mm_maddsd_epi16	proto __cdecl :oword, :oword, :oword
+_mm_maddd_epi16		proto __cdecl :oword, :oword, :oword
 
 ;; Horizontal add/subtract
 
-_mm_haddw_epi8		proto :oword
-_mm_haddd_epi8		proto :oword
-_mm_haddq_epi8		proto :oword
-_mm_haddd_epi16		proto :oword
-_mm_haddq_epi16		proto :oword
-_mm_haddq_epi32		proto :oword
-_mm_haddw_epu8		proto :oword
-_mm_haddd_epu8		proto :oword
-_mm_haddq_epu8		proto :oword
-_mm_haddd_epu16		proto :oword
-_mm_haddq_epu16		proto :oword
-_mm_haddq_epu32		proto :oword
-_mm_hsubw_epi8		proto :oword
-_mm_hsubd_epi16		proto :oword
-_mm_hsubq_epi32		proto :oword
+_mm_haddw_epi8		proto __cdecl :oword
+_mm_haddd_epi8		proto __cdecl :oword
+_mm_haddq_epi8		proto __cdecl :oword
+_mm_haddd_epi16		proto __cdecl :oword
+_mm_haddq_epi16		proto __cdecl :oword
+_mm_haddq_epi32		proto __cdecl :oword
+_mm_haddw_epu8		proto __cdecl :oword
+_mm_haddd_epu8		proto __cdecl :oword
+_mm_haddq_epu8		proto __cdecl :oword
+_mm_haddd_epu16		proto __cdecl :oword
+_mm_haddq_epu16		proto __cdecl :oword
+_mm_haddq_epu32		proto __cdecl :oword
+_mm_hsubw_epi8		proto __cdecl :oword
+_mm_hsubd_epi16		proto __cdecl :oword
+_mm_hsubq_epi32		proto __cdecl :oword
 
 ;; Vector conditional moves
 
-_mm_cmov_si128		proto :oword, :oword, :oword
-_mm_perm_epi8		proto :oword, :oword, :oword
+_mm_cmov_si128		proto __cdecl :oword, :oword, :oword
+_mm_perm_epi8		proto __cdecl :oword, :oword, :oword
 
 ;; Vector shifts and rotates
 
-_mm_rot_epi8		proto :oword, :oword
-_mm_rot_epi16		proto :oword, :oword
-_mm_rot_epi32		proto :oword, :oword
-_mm_rot_epi64		proto :oword, :oword
-_mm_roti_epi8		proto :oword, :sdword
-_mm_roti_epi16		proto :oword, :sdword
-_mm_roti_epi32		proto :oword, :sdword
-_mm_roti_epi64		proto :oword, :sdword
-_mm_shl_epi8		proto :oword, :oword
-_mm_shl_epi16		proto :oword, :oword
-_mm_shl_epi32		proto :oword, :oword
-_mm_shl_epi64		proto :oword, :oword
-_mm_sha_epi8		proto :oword, :oword
-_mm_sha_epi16		proto :oword, :oword
-_mm_sha_epi32		proto :oword, :oword
-_mm_sha_epi64		proto :oword, :oword
+_mm_rot_epi8		proto __cdecl :oword, :oword
+_mm_rot_epi16		proto __cdecl :oword, :oword
+_mm_rot_epi32		proto __cdecl :oword, :oword
+_mm_rot_epi64		proto __cdecl :oword, :oword
+_mm_roti_epi8		proto __cdecl :oword, :sdword
+_mm_roti_epi16		proto __cdecl :oword, :sdword
+_mm_roti_epi32		proto __cdecl :oword, :sdword
+_mm_roti_epi64		proto __cdecl :oword, :sdword
+_mm_shl_epi8		proto __cdecl :oword, :oword
+_mm_shl_epi16		proto __cdecl :oword, :oword
+_mm_shl_epi32		proto __cdecl :oword, :oword
+_mm_shl_epi64		proto __cdecl :oword, :oword
+_mm_sha_epi8		proto __cdecl :oword, :oword
+_mm_sha_epi16		proto __cdecl :oword, :oword
+_mm_sha_epi32		proto __cdecl :oword, :oword
+_mm_sha_epi64		proto __cdecl :oword, :oword
 
 ;; Vector integer comparisons
 
-_mm_com_epu8		proto :oword, :oword, :sdword
-_mm_com_epu16		proto :oword, :oword, :sdword
-_mm_com_epu32		proto :oword, :oword, :sdword
-_mm_com_epu64		proto :oword, :oword, :sdword
-_mm_com_epi8		proto :oword, :oword, :sdword
-_mm_com_epi16		proto :oword, :oword, :sdword
-_mm_com_epi32		proto :oword, :oword, :sdword
-_mm_com_epi64		proto :oword, :oword, :sdword
+_mm_com_epu8		proto __cdecl :oword, :oword, :sdword
+_mm_com_epu16		proto __cdecl :oword, :oword, :sdword
+_mm_com_epu32		proto __cdecl :oword, :oword, :sdword
+_mm_com_epu64		proto __cdecl :oword, :oword, :sdword
+_mm_com_epi8		proto __cdecl :oword, :oword, :sdword
+_mm_com_epi16		proto __cdecl :oword, :oword, :sdword
+_mm_com_epi32		proto __cdecl :oword, :oword, :sdword
+_mm_com_epi64		proto __cdecl :oword, :oword, :sdword
 
 ;; Precision control
 
-_mm_frcz_ps		proto :oword
-_mm_frcz_pd		proto :oword
-_mm_frcz_ss		proto :oword, :oword
-_mm_frcz_sd		proto :oword, :oword
+_mm_frcz_ps		proto __cdecl :oword
+_mm_frcz_pd		proto __cdecl :oword
+_mm_frcz_ss		proto __cdecl :oword, :oword
+_mm_frcz_sd		proto __cdecl :oword, :oword
 
 ;; Control values for permute2 intrinsics
 _MM_PERMUTE2_COPY	equ 0 ;; just copy the selected value
@@ -348,97 +348,97 @@ _MM_PERMUTE2_ZEROIF1	equ 2 ;; zero selected value if src3 bit is 1
 _MM_PERMUTE2_ZEROIF0	equ 3 ;; zero selected value if src3 bit is 3
 
 ;; Permutation
-_mm_permute2_ps		proto :oword, :oword, :oword, :sdword
-_mm_permute2_pd		proto :oword, :oword, :oword, :sdword
+_mm_permute2_ps		proto __cdecl :oword, :oword, :oword, :sdword
+_mm_permute2_pd		proto __cdecl :oword, :oword, :oword, :sdword
 
 ;; YMM versions
-_mm256_macc_ps		proto :yword, :yword, :yword
-_mm256_macc_pd		proto :yword, :yword, :yword
-_mm256_maddsub_ps	proto :yword, :yword, :yword
-_mm256_maddsub_pd	proto :yword, :yword, :yword
-_mm256_msubadd_ps	proto :yword, :yword, :yword
-_mm256_msubadd_pd	proto :yword, :yword, :yword
-_mm256_msub_ps		proto :yword, :yword, :yword
-_mm256_msub_pd		proto :yword, :yword, :yword
-_mm256_nmacc_ps		proto :yword, :yword, :yword
-_mm256_nmacc_pd		proto :yword, :yword, :yword
-_mm256_nmsub_ps		proto :yword, :yword, :yword
-_mm256_nmsub_pd		proto :yword, :yword, :yword
-_mm256_cmov_si256	proto :yword, :yword, :yword
-_mm256_frcz_ps		proto :yword
-_mm256_frcz_pd		proto :yword
-_mm256_permute2_ps	proto :yword, :yword, :yword, :sdword
-_mm256_permute2_pd	proto :yword, :yword, :yword, :sdword
+_mm256_macc_ps		proto __cdecl :yword, :yword, :yword
+_mm256_macc_pd		proto __cdecl :yword, :yword, :yword
+_mm256_maddsub_ps	proto __cdecl :yword, :yword, :yword
+_mm256_maddsub_pd	proto __cdecl :yword, :yword, :yword
+_mm256_msubadd_ps	proto __cdecl :yword, :yword, :yword
+_mm256_msubadd_pd	proto __cdecl :yword, :yword, :yword
+_mm256_msub_ps		proto __cdecl :yword, :yword, :yword
+_mm256_msub_pd		proto __cdecl :yword, :yword, :yword
+_mm256_nmacc_ps		proto __cdecl :yword, :yword, :yword
+_mm256_nmacc_pd		proto __cdecl :yword, :yword, :yword
+_mm256_nmsub_ps		proto __cdecl :yword, :yword, :yword
+_mm256_nmsub_pd		proto __cdecl :yword, :yword, :yword
+_mm256_cmov_si256	proto __cdecl :yword, :yword, :yword
+_mm256_frcz_ps		proto __cdecl :yword
+_mm256_frcz_pd		proto __cdecl :yword
+_mm256_permute2_ps	proto __cdecl :yword, :yword, :yword, :sdword
+_mm256_permute2_pd	proto __cdecl :yword, :yword, :yword, :sdword
 
 ;; LWP intrinsics
 
 ;void
-__llwpcb	proto
+__llwpcb	proto __cdecl
 ;void *
-__slwpcb	proto
+__slwpcb	proto __cdecl
 ;void
-__lwpval32	proto :dword, :dword, :dword
+__lwpval32	proto __cdecl :dword, :dword, :dword
 ;unsigned
-__lwpins32	proto :dword, :dword, :dword
+__lwpins32	proto __cdecl :dword, :dword, :dword
 ifdef _M_X64
 ;void
-__lwpval64	proto :qword, :dword, :dword
+__lwpval64	proto __cdecl :qword, :dword, :dword
 ;unsigned
-__lwpins64	proto :qword, :dword, :dword
+__lwpins64	proto __cdecl :qword, :dword, :dword
 endif
 
 ;;BMI intrinsics
 
 ;unsigned
-_bextr_u32	proto :dword, :dword, :dword
-_andn_u32	proto :dword, :dword
-_tzcnt_u32	proto :dword
-_lzcnt_u32	proto :dword
-_blsr_u32	proto :dword
-_blsmsk_u32	proto :dword
-_blsi_u32	proto :dword
+_bextr_u32	proto __cdecl :dword, :dword, :dword
+_andn_u32	proto __cdecl :dword, :dword
+_tzcnt_u32	proto __cdecl :dword
+_lzcnt_u32	proto __cdecl :dword
+_blsr_u32	proto __cdecl :dword
+_blsmsk_u32	proto __cdecl :dword
+_blsi_u32	proto __cdecl :dword
 
 ifdef _M_X64
-_bextr_u64	proto :qword, :dword, :dword
-_andn_u64	proto :qword, :qword
-_tzcnt_u64	proto :qword
-_lzcnt_u64	proto :qword
-_blsr_u64	proto :qword
-_blsmsk_u64	proto :qword
-_blsi_u64	proto :qword
+_bextr_u64	proto __cdecl :qword, :dword, :dword
+_andn_u64	proto __cdecl :qword, :qword
+_tzcnt_u64	proto __cdecl :qword
+_lzcnt_u64	proto __cdecl :qword
+_blsr_u64	proto __cdecl :qword
+_blsmsk_u64	proto __cdecl :qword
+_blsi_u64	proto __cdecl :qword
 endif
 
 ;; TBM intrinsics
 
-_bextri_u32	proto :dword, :dword
-_blcfill_u32	proto :dword
-_blsfill_u32	proto :dword
-_blcs_u32	proto :dword
+_bextri_u32	proto __cdecl :dword, :dword
+_blcfill_u32	proto __cdecl :dword
+_blsfill_u32	proto __cdecl :dword
+_blcs_u32	proto __cdecl :dword
 
-_tzmsk_u32	proto :dword
-_blcic_u32	proto :dword
-_blsic_u32	proto :dword
-_t1mskc_u32	proto :dword
-_blcmsk_u32	proto :dword
-_blci_u32	proto :dword
+_tzmsk_u32	proto __cdecl :dword
+_blcic_u32	proto __cdecl :dword
+_blsic_u32	proto __cdecl :dword
+_t1mskc_u32	proto __cdecl :dword
+_blcmsk_u32	proto __cdecl :dword
+_blci_u32	proto __cdecl :dword
 
 ifdef _M_X64
-_bextri_u64	proto :qword, :dword
-_blcfill_u64	proto :qword
-_blsfill_u64	proto :qword
-_blcs_u64	proto :qword
-_tzmsk_u64	proto :qword
-_blcic_u64	proto :qword
-_blsic_u64	proto :qword
-_t1mskc_u64	proto :qword
-_blcmsk_u64	proto :qword
-_blci_u64	proto :qword
+_bextri_u64	proto __cdecl :qword, :dword
+_blcfill_u64	proto __cdecl :qword
+_blsfill_u64	proto __cdecl :qword
+_blcs_u64	proto __cdecl :qword
+_tzmsk_u64	proto __cdecl :qword
+_blcic_u64	proto __cdecl :qword
+_blsic_u64	proto __cdecl :qword
+_t1mskc_u64	proto __cdecl :qword
+_blcmsk_u64	proto __cdecl :qword
+_blci_u64	proto __cdecl :qword
 endif
 
 ;void
-_mm_monitorx	proto :ptr, :dword, :dword
-_mm_mwaitx	proto :dword, :dword, :dword
-_mm_clzero	proto
+_mm_monitorx	proto __cdecl :ptr, :dword, :dword
+_mm_mwaitx	proto __cdecl :dword, :dword, :dword
+_mm_clzero	proto __cdecl
 
 .pragma list(pop)
 endif

@@ -2,6 +2,10 @@
 
 include libc.inc
 
+ifndef double
+double typedef REAL8
+endif
+
 ; Single precision - binary32 -- REAL4 (float) 1:8:23
 
 F_SIGBITS	equ 24
@@ -99,8 +103,8 @@ _FPE_EXPLICITGEN equ 0x8c ; raise( SIGFPE )
 ;; i.e. change the bits in unMask to have the values they have in unNew,
 ;; leaving other bits unchanged.
 
-_controlfp	proto __cdecl unNew:UINT, unMask:UINT
-_control87	proto __cdecl unNew:UINT, unMask:UINT
+_controlfp	proto __cdecl :UINT, :UINT
+_control87	proto __cdecl :UINT, :UINT
 
 _clearfp	proto __cdecl ; Clear the FPU status word
 _statusfp	proto __cdecl ; Report the FPU status word
@@ -123,13 +127,17 @@ _fpreset	proto __cdecl
 ;; but they really belong in math.h.
 ;;
 
-_chgsign	proto __cdecl :REAL8
-_copysign	proto __cdecl :REAL8, :REAL8
-_logb		proto __cdecl :REAL8
-_scalb		proto __cdecl :REAL8, :SDWORD
+ifndef _SIGN_DEFINED
+_copysign proto __cdecl _Number:double, _Sign:double
+_chgsign proto __cdecl _X:double
+_SIGN_DEFINED equ <>
+endif
 
-_finite		proto __cdecl :REAL8
-_fpclass	proto __cdecl :REAL8
-_isnan		proto __cdecl :REAL8
+_logb		proto __cdecl :double
+_scalb		proto __cdecl :double, :SDWORD
+
+_finite		proto __cdecl :double
+_fpclass	proto __cdecl :double
+_isnan		proto __cdecl :double
 
 .pragma list(pop)

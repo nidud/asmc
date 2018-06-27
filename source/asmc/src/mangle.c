@@ -155,11 +155,13 @@ static int ms64_decorate( const struct asym *sym, char *buffer )
 
 static int vect_decorate( const struct asym *sym, char *buffer )
 {
-    if ( !_stricmp( sym->name, "main" ) ) {
+    const struct dsym *dir = (struct dsym *)sym;
+
+    if ( !sym->isproc || !_stricmp( sym->name, "main" ) ) {
 	strcpy( buffer, sym->name );
-	return 4;
+	return( sym->name_size );
     }
-    return ( sprintf( buffer, "%s@@%u", sym->name, ((struct dsym *)sym)->e.procinfo->parasize ) );
+    return ( sprintf( buffer, "%s@@%u", sym->name, dir->e.procinfo->parasize ) );
 }
 
 int Mangle( struct asym *sym, char *buffer )
@@ -183,11 +185,13 @@ int Mangle( struct asym *sym, char *buffer )
 	mangler = UCaseMangler;
 	break;
     case LANG_FASTCALL:		 /* registers passing parameters */
-    case LANG_VECTORCALL:
 	mangler = fcmanglers[ModuleInfo.fctype];
 	break;
+    case LANG_VECTORCALL:
+	mangler = vect_decorate;
+	break;
     default: /* LANG_NONE */
-	    mangler = VoidMangler;
+	mangler = VoidMangler;
 	break;
     }
     return( mangler( sym, buffer ) );

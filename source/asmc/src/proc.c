@@ -683,6 +683,7 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 	     * v2.23: proto fastcall :type - fast32.asm
 	     */
 	    if ( ( proc->sym.langtype == LANG_SYSCALL && ModuleInfo.Ofssize == USE64 ) ||
+		 ( proc->sym.langtype == LANG_VECTORCALL && ModuleInfo.Ofssize == USE32 ) ||
 		 ( proc->sym.langtype == LANG_FASTCALL && ModuleInfo.Ofssize == USE32 ) )
 		paracurr->sym.target_type = NULL;
 	    if ( paracurr->sym.mem_type == MT_TYPE )

@@ -11,10 +11,8 @@ ifndef __PE__
 includelib directxmath.lib
 endif
 
-ifdef _MSC_VER
-if _MSC_VER LT 1200 ; 1800
+if defined(_MSC_VER) and  _MSC_VER LT 1200 ; 1800
  .err <DirectX Math requires Visual C++ 2013 or later.>
-endif
 endif
 
 if defined(_MSC_VER) and \
@@ -22,14 +20,14 @@ if defined(_MSC_VER) and \
    not defined(_XM_NO_INTRINSICS_) and \
    not defined(_XM_VECTORCALL_)
 _XM_VECTORCALL_		equ 1
-else
+elseifndef _XM_VECTORCALL_
 _XM_VECTORCALL_		equ 0
 endif
 
 if _XM_VECTORCALL_
 XM_CALLCONV		equ <vectorcall>
 else
-XM_CALLCONV		equ <fastcall>
+XM_CALLCONV		equ <>
 endif
 
 if defined(_MSC_VER) and (_MSC_FULL_VER LT 190023506)
@@ -392,8 +390,12 @@ CXMMATRIX	typedef ptr XMMATRIX
 
 if _XM_VECTORCALL_ and not defined(_XM_NO_INTRINSICS_)
 FXMMATRIX	typedef XMMATRIX
+AXMMATRIX	equ <V0:XMVECTOR,V1:XMVECTOR,V2:XMVECTOR,V3:XMVECTOR>
+XMTHISPTR	equ <>
 else
 FXMMATRIX	typedef ptr XMMATRIX
+AXMMATRIX	equ <M:FXMMATRIX>
+XMTHISPTR	equ <_this:ptr>
 endif
 
 XMFLOAT2	STRUC
@@ -511,134 +513,10 @@ UNION
 ENDS
 XMFLOAT4X4	ENDS
 
-XMConvertVectorIntToFloat macro VInt, DivExponent
-    ;;
-    ;; Convert to floats
-    ;;
-    _mm_store_ps(xmm1, _mm_cvtepi32_ps(_mm_castps_si128(VInt)))
-    ;;
-    ;; Convert DivExponent into 1.0f/(1<<DivExponent)
-    ;;
-    ;; uScale = 0x3F800000 - (DivExponent << 23)
-    ;;
-    ;; Splat the scalar value
-    ;;
-    _mm_set1_epi32(0x3F800000 - (DivExponent shl 23))
-    _mm_mul_ps(_mm_castsi128_ps(xmm0), xmm1)
-    retm<xmm0>
-    endm
-
-XMConvertVectorFloatToInt macro VFloat, MulExponent
-    .assert( MulExponent < 32 )
-ifdef _XM_NO_INTRINSICS_
-elseifdef _XM_ARM_NEON_INTRINSICS_
-else
-    _mm_store_ps(xmm1, VFloat)
-    _mm_set_ps1(_mm_cvtsi32_ss(xmm0, (1 shl MulExponent)))
-    _mm_store_ps(xmm1, _mm_mul_ps(xmm0, xmm1))
-    ;;
-    ;; In case of positive overflow, detect it
-    ;;
-    _mm_store_ps(xmm2, _mm_cmpgt_ps(xmm0, g_XMMaxInt))
-    ;;
-    ;; Float to int conversion
-    ;;
-    _mm_cvttps_epi32(xmm1)
-    ;;
-    ;; If there was positive overflow, set to 0x7FFFFFFF
-    ;;
-    _mm_and_ps(xmm2, g_XMAbsMask)
-    _mm_andnot_ps(xmm0, _mm_castsi128_ps(xmm1))
-    _mm_or_ps(xmm0, xmm2)
-    retm<xmm0>
-endif
-    endm
-
-XMConvertVectorUIntToFloat macro VUInt, DivExponent
-    .assert(DivExponent < 32)
-ifdef _XM_NO_INTRINSICS_
-elseifdef _XM_ARM_NEON_INTRINSICS_
-else
-    _mm_store_ps(xmm0, VUInt)
-    _mm_store_ps(xmm1, xmm0)
-    ;;
-    ;; For the values that are higher than 0x7FFFFFFF, a fixup is needed
-    ;; Determine which ones need the fix.
-    ;;
-    _mm_and_ps(xmm1, g_XMNegativeZero)
-    ;;
-    ;; Force all values positive
-    ;;
-    _mm_xor_ps(xmm0, xmm1)
-    ;;
-    ;; Convert to floats
-    ;;
-    _mm_cvtepi32_ps(_mm_castps_si128(xmm0))
-    ;;
-    ;; Convert 0x80000000 -> 0xFFFFFFFF
-    ;;
-    _mm_srai_epi32(_mm_castps_si128(xmm1), 31)
-    ;;
-    ;; For only the ones that are too big, add the fixup
-    ;;
-    _mm_and_ps(_mm_castsi128_ps(xmm1), g_XMFixUnsigned)
-    _mm_add_ps(xmm1, xmm0)
-    ;;
-    ;; Convert DivExponent into 1.0f/(1<<DivExponent)
-    ;;
-    ;; uint32_t uScale = 0x3F800000U - (DivExponent << 23);
-    ;;
-    ;; Splat
-    ;;
-    _mm_set1_epi32(0x3F800000 - (DivExponent shl 23))
-    _mm_mul_ps(_mm_castsi128_ps(xmm0), xmm1)
-    retm<xmm0>
-endif
-    endm
-
-XMConvertVectorFloatToUInt macro VFloat, MulExponent
-    .assert(MulExponent < 32)
-ifdef _XM_NO_INTRINSICS_
-elseifdef _XM_ARM_NEON_INTRINSICS_
-else
-    _mm_store_ps(xmm1, VFloat)
-    _mm_set_ps1(_mm_cvtsi32_ss(xmm0, (1 shl MulExponent)))
-    _mm_mul_ps(xmm0, xmm1)
-    ;;
-    ;; Clamp to >=0
-    ;;
-    _mm_store_ps(xmm1, _mm_max_ps(xmm0, g_XMZero))
-    ;;
-    ;; Any numbers that are too big, set to 0xFFFFFFFFU
-    ;;
-    _mm_cmpgt_ps(xmm0, g_XMMaxUInt)
-    _mm_store_ps(xmm3, g_XMUnsignedFix)
-    ;;
-    ;; Too large for a signed integer?
-    ;;
-    _mm_store_ps(xmm2, xmm1)
-    _mm_cmpge_ps(xmm2, xmm3)
-    ;;
-    ;; Zero for number's lower than 0x80000000, 32768.0f*65536.0f otherwise
-    ;;
-    _mm_and_ps(xmm3, xmm2)
-    ;;
-    ;; Perform fixup only on numbers too large (Keeps low bit precision)
-    ;;
-    _mm_sub_ps(xmm1, xmm3)
-    _mm_cvttps_epi32(xmm1)
-    ;;
-    ;; Convert from signed to unsigned pnly if greater than 0x80000000
-    ;;
-    _mm_and_ps(xmm2, g_XMNegativeZero)
-    _mm_xor_ps(_mm_castsi128_ps(xmm1), xmm2)
-    ;;
-    ;; On those that are too large, set to 0xFFFFFFFF
-    ;;
-    _mm_or_ps(xmm0, xmm1)
-    retm<xmm0>
-endif
-    endm
+XMConvertVectorIntToFloat	proto XM_CALLCONV :FXMVECTOR, :uint32_t
+XMConvertVectorFloatToInt	proto XM_CALLCONV :FXMVECTOR, :uint32_t
+XMConvertVectorUIntToFloat	proto XM_CALLCONV :FXMVECTOR, :uint32_t
+XMConvertVectorFloatToUInt	proto XM_CALLCONV :FXMVECTOR, :uint32_t
 
 if defined(__XNAMATH_H__) and defined(XMVectorSetBinaryConstant)
 undef XMVectorSetBinaryConstant
@@ -646,487 +524,144 @@ undef XMVectorSplatConstant
 undef XMVectorSplatConstantInt
 endif
 
-XMVectorSetBinaryConstant macro C0, C1, C2, C3
-ifdef _XM_NO_INTRINSICS_
-elseifdef _XM_ARM_NEON_INTRINSICS_
-else
- ifndef g_vMask1
-    .data
-    align 16
-    g_vMask1 XMVECTORU32 { { { 1, 1, 1, 1 } } }
-    .code
- endif
-    ;;
-    ;; Move the parms to a vector
-    ;;
-    _mm_set_epi32(C3, C2, C1, C0)
-    ;;
-    ;; Mask off the low bits
-    ;;
-    _mm_and_si128(xmm0, g_vMask1)
-    ;;
-    ;; 0xFFFFFFFF on true bits
-    ;;
-    _mm_cmpeq_epi32(xmm0, g_vMask1)
-    ;;
-    ;; 0xFFFFFFFF -> 1.0f, 0x00000000 -> 0.0f
-    ;;
-    _mm_and_si128(xmm0, g_XMOne)
-    _mm_castsi128_ps(xmm0)
-    retm<xmm0>
-endif
-    endm
+XMVectorSetBinaryConstant	proto XM_CALLCONV :uint32_t, :uint32_t, :uint32_t, :uint32_t
+XMVectorSplatConstant		proto XM_CALLCONV :int32_t, :uint32_t
+XMVectorSplatConstantInt	proto XM_CALLCONV :uint32_t
 
-XMVectorSplatConstant macro IntConstant, DivExponent
-    .assert( IntConstant >= -16 && IntConstant <= 15 )
-    .assert( DivExponent < 32 )
-ifdef _XM_NO_INTRINSICS_
-    exitm<XMConvertVectorIntToFloat(_mm_set1_epi32(IntConstant), DivExponent)>
-elseifdef _XM_ARM_NEON_INTRINSICS_
-else
-    ;;
-    ;; Splat the int
-    ;;
-    _mm_store_ps(xmm1, _mm_set1_epi32(IntConstant)))
-    ;;
-    ;; Convert to a float
-    ;;
-    _mm_cvtepi32_ps(xmm1)
-    ;;
-    ;; Convert DivExponent into 1.0f/(1<<DivExponent)
-    ;;
-    ;; uint32_t uScale = 0x3F800000U - (DivExponent << 23);
-    ;; Splat the scalar value (It's really a float)
-    ;;
-    _mm_set1_epi32(0x3F800000 - (DivExponent shl 23))
-    ;;
-    ;; Multiply by the reciprocal (Perform a right shift by DivExponent)
-    ;;
-    _mm_mul_ps(_mm_castsi128_ps(xmm0), xmm1)
-    retm<xmm0>
-endif
-    endm
+XMLoadInt	proto XM_CALLCONV :ptr uint32_t
+XMLoadFloat	proto XM_CALLCONV :ptr float
 
-XMVectorSplatConstantInt macro IntConstant
-    .assert( IntConstant >= -16 && IntConstant <= 15 )
-ifdef _XM_NO_INTRINSICS_
-    exitm<_mm_set1_epi32(IntConstant)>
-elseifdef _XM_ARM_NEON_INTRINSICS_
-else
-    _mm_set1_epi32( IntConstant )
-    _mm_castsi128_ps(xmm0)
-    retm<xmm0>
-endif
-    endm
+XMLoadInt2	proto XM_CALLCONV :ptr uint32_t
+XMLoadInt2A	proto XM_CALLCONV :ptr uint32_t
+XMLoadFloat2	proto XM_CALLCONV :ptr XMFLOAT2
+XMLoadFloat2A	proto XM_CALLCONV :ptr XMFLOAT2A
+XMLoadSInt2	proto XM_CALLCONV :ptr XMINT2
+XMLoadUInt2	proto XM_CALLCONV :ptr XMUINT2
 
-XMLoadInt macro pSource
-    .assert(pSource)
-ifdef _XM_NO_INTRINSICS_
-elseifdef _XM_ARM_NEON_INTRINSICS_
-elseifdef _XM_SSE_INTRINSICS_
-    _mm_load_ss(xmm0, pSource)
-    _mm_load_ss(xmm1, pSource+4)
-    _mm_unpacklo_ps(xmm0, xmm1)
-    retm<xmm0>
-endif
-    endm
+XMLoadInt3	proto XM_CALLCONV :ptr uint32_t
+XMLoadInt3A	proto XM_CALLCONV :ptr uint32_t
+XMLoadFloat3	proto XM_CALLCONV :ptr XMFLOAT3
+XMLoadFloat3A	proto XM_CALLCONV :ptr XMFLOAT3A
+XMLoadSInt3	proto XM_CALLCONV :ptr XMINT3
+XMLoadUInt3	proto XM_CALLCONV :ptr XMUINT3
 
-XMLoadFloat macro pSource
-    .assert(pSource)
-    .assert(!(pSource & 0xF))
-ifdef _XM_NO_INTRINSICS_
-elseifdef _XM_ARM_NEON_INTRINSICS_
-elseifdef _XM_SSE_INTRINSICS_
-    _mm_load_ss(pSource)
-    retm<xmm0>
-endif
-    endm
+XMLoadInt4	proto XM_CALLCONV :ptr uint32_t
+XMLoadInt4A	proto XM_CALLCONV :ptr uint32_t
+XMLoadFloat4	proto XM_CALLCONV :ptr XMFLOAT4
+XMLoadFloat4A	proto XM_CALLCONV :ptr XMFLOAT4A
+XMLoadSInt4	proto XM_CALLCONV :ptr XMINT4
+XMLoadUInt4	proto XM_CALLCONV :ptr XMUINT4
 
-XMLoadInt2 macro pSource
-    .assert(pSource);
-ifdef _XM_NO_INTRINSICS_
-elseifdef _XM_ARM_NEON_INTRINSICS_
-elseifdef _XM_SSE_INTRINSICS_
-    _mm_load_ss(xmm0, pSource)
-    _mm_load_ss(xmm1, pSource+4)
-    _mm_unpacklo_ps(xmm0, xmm1)
-    retm<xmm0>
-endif
-    endm
+XMLoadFloat3x3	proto XM_CALLCONV XMTHISPTR, :ptr XMFLOAT3X3
+XMLoadFloat4x3	proto XM_CALLCONV XMTHISPTR, :ptr XMFLOAT4X3
+XMLoadFloat4x3A proto XM_CALLCONV XMTHISPTR, :ptr XMFLOAT4X3A
+XMLoadFloat4x4	proto XM_CALLCONV XMTHISPTR, :ptr XMFLOAT4X4
+XMLoadFloat4x4A proto XM_CALLCONV XMTHISPTR, :ptr XMFLOAT4X4A
 
-XMLoadInt2A macro pSource
-    .assert(pSource)
-    .assert(!(pSource & 0xF))
-ifdef _XM_NO_INTRINSICS_
-elseifdef _XM_ARM_NEON_INTRINSICS_
-elseifdef _XM_SSE_INTRINSICS_
-    _mm_loadl_epi64(pSource)
-    _mm_castsi128_ps(xmm0)
-    retm<xmm0>
-endif
-    endm
+XMStoreInt	proto XM_CALLCONV :ptr uint32_t, :FXMVECTOR
+XMStoreFloat	proto XM_CALLCONV :ptr REAL4, :FXMVECTOR
+XMStoreInt2	proto XM_CALLCONV :ptr uint32_t, :FXMVECTOR
+XMStoreInt2A	proto XM_CALLCONV :ptr uint32_t, :FXMVECTOR
+XMStoreFloat2	proto XM_CALLCONV :ptr XMFLOAT2, :FXMVECTOR
+XMStoreFloat2A	proto XM_CALLCONV :ptr XMFLOAT2A, :FXMVECTOR
+XMStoreSInt2	proto XM_CALLCONV :ptr XMINT2, :FXMVECTOR
+XMStoreUInt2	proto XM_CALLCONV :ptr XMUINT2, :FXMVECTOR
+XMStoreInt3	proto XM_CALLCONV :ptr uint32_t, :FXMVECTOR
+XMStoreInt3A	proto XM_CALLCONV :ptr uint32_t, :FXMVECTOR
+XMStoreFloat3	proto XM_CALLCONV :ptr XMFLOAT3, :FXMVECTOR
+XMStoreFloat3A	proto XM_CALLCONV :ptr XMFLOAT3A, :FXMVECTOR
+XMStoreSInt3	proto XM_CALLCONV :ptr XMINT3, :FXMVECTOR
+XMStoreUInt3	proto XM_CALLCONV :ptr XMUINT3, :FXMVECTOR
+XMStoreInt4	proto XM_CALLCONV :ptr uint32_t, :FXMVECTOR
+XMStoreInt4A	proto XM_CALLCONV :ptr uint32_t, :FXMVECTOR
+XMStoreFloat4	proto XM_CALLCONV :ptr XMFLOAT4, :FXMVECTOR
+XMStoreFloat4A	proto XM_CALLCONV :ptr XMFLOAT4A, :FXMVECTOR
+XMStoreSInt4	proto XM_CALLCONV :ptr XMINT4, :FXMVECTOR
+XMStoreUInt4	proto XM_CALLCONV :ptr XMUINT4, :FXMVECTOR
 
-XMLoadFloat2 macro pSource
-    .assert(pSource)
-ifdef _XM_NO_INTRINSICS_
-elseifdef _XM_ARM_NEON_INTRINSICS_
-elseifdef _XM_SSE_INTRINSICS_
-    _mm_load_ss(xmm0, pSource)
-    _mm_load_ss(xmm1, pSource+4)
-    _mm_unpacklo_ps(xmm0, xmm1)
-    retm<xmm0>
-endif
-    endm
+XMStoreFloat3x3 proto XM_CALLCONV :ptr XMFLOAT3X3, :FXMMATRIX
+XMStoreFloat4x3 proto XM_CALLCONV :ptr XMFLOAT4X3, :FXMMATRIX
+XMStoreFloat4x3A proto XM_CALLCONV :ptr XMFLOAT4X3A, :FXMMATRIX
+XMStoreFloat4x4 proto XM_CALLCONV :ptr XMFLOAT4X4, :FXMMATRIX
+XMStoreFloat4x4A proto XM_CALLCONV :ptr XMFLOAT4X4A, :FXMMATRIX
 
-XMLoadFloat2A macro pSource
-    .assert(pSource)
-ifdef _XM_NO_INTRINSICS_
-elseifdef _XM_ARM_NEON_INTRINSICS_
-elseifdef _XM_SSE_INTRINSICS_
-    _mm_loadl_epi64(pSource)
-    _mm_castsi128_ps(xmm0)
-    retm<xmm0>
-endif
-    endm
+XMVectorZero	proto XM_CALLCONV
+XMVectorSet	proto XM_CALLCONV :float, :float, :float, :float
 
-XMLoadSInt2 macro pSource
-    .assert(pSource)
-ifdef _XM_NO_INTRINSICS_
-elseifdef _XM_ARM_NEON_INTRINSICS_
-elseifdef _XM_SSE_INTRINSICS_
-    _mm_load_ss(xmm0, pSource)
-    _mm_load_ss(xmm1, pSource+4)
-    _mm_unpacklo_ps(xmm0, xmm1)
-    _mm_cvtepi32_ps(_mm_castps_si128(xmm0))
-    retm<xmm0>
-endif
-    endm
+XMVectorSetInt		proto XM_CALLCONV :uint32_t, :uint32_t, :uint32_t, :uint32_t
+XMVectorReplicate	proto XM_CALLCONV :float
+XMVectorReplicatePtr	proto XM_CALLCONV :ptr float
+XMVectorReplicateInt	proto XM_CALLCONV :uint32_t
+XMVectorReplicateIntPtr proto XM_CALLCONV :ptr uint32_t
+XMVectorTrueInt		proto XM_CALLCONV
+XMVectorFalseInt	proto XM_CALLCONV
+XMVectorSplatX		proto XM_CALLCONV :FXMVECTOR
+XMVectorSplatY		proto XM_CALLCONV :FXMVECTOR
+XMVectorSplatZ		proto XM_CALLCONV :FXMVECTOR
+XMVectorSplatW		proto XM_CALLCONV :FXMVECTOR
+XMVectorSplatOne	proto XM_CALLCONV
+XMVectorSplatInfinity	proto XM_CALLCONV
+XMVectorSplatQNaN	proto XM_CALLCONV
+XMVectorSplatEpsilon	proto XM_CALLCONV
+XMVectorSplatSignMask	proto XM_CALLCONV
 
-XMLoadUInt2 macro pSource
-    .assert(pSource)
-ifdef _XM_NO_INTRINSICS_
-elseifdef _XM_ARM_NEON_INTRINSICS_
-elseifdef _XM_SSE_INTRINSICS_
-    _mm_load_ss(xmm0, pSource)
-    _mm_load_ss(xmm1, pSource+4)
-    _mm_store_ps(xmm1, _mm_unpacklo_ps(xmm0, xmm1))
-    ;;
-    ;; For the values that are higher than 0x7FFFFFFF, a fixup is needed
-    ;; Determine which ones need the fix.
-    ;;
-    _mm_and_ps(xmm0, g_XMNegativeZero)
-    ;;
-    ;; Force all values positive
-    ;;
-    _mm_xor_ps(xmm1, xmm0)
-    ;;
-    ;; Convert to floats
-    ;;
-    _mm_cvtepi32_ps(_mm_castps_si128(xmm1))
-    ;;
-    ;; Convert 0x80000000 -> 0xFFFFFFFF
-    ;;
-    _mm_srai_epi32(_mm_castps_si128(xmm0), 31)
-    ;;
-    ;; For only the ones that are too big, add the fixup
-    ;;
-    _mm_and_ps(_mm_castsi128_ps(xmm0), g_XMFixUnsigned)
-    _mm_add_ps(xmm0, xmm1)
-    retm<xmm0>
-endif
-    endm
+XMVectorGetByIndex	proto XM_CALLCONV :FXMVECTOR, :size_t
+XMVectorGetX		proto XM_CALLCONV :FXMVECTOR
+XMVectorGetY		proto XM_CALLCONV :FXMVECTOR
+XMVectorGetZ		proto XM_CALLCONV :FXMVECTOR
+XMVectorGetW		proto XM_CALLCONV :FXMVECTOR
+XMVectorGetByIndexPtr	proto XM_CALLCONV :ptr float, :FXMVECTOR, :size_t
+XMVectorGetXPtr		proto XM_CALLCONV :ptr float, :FXMVECTOR
+XMVectorGetYPtr		proto XM_CALLCONV :ptr float, :FXMVECTOR
+XMVectorGetZPtr		proto XM_CALLCONV :ptr float, :FXMVECTOR
+XMVectorGetWPtr		proto XM_CALLCONV :ptr float, :FXMVECTOR
 
-XMLoadInt3 macro pSource
-    .assert(pSource)
-ifdef _XM_NO_INTRINSICS_
-elseifdef _XM_ARM_NEON_INTRINSICS_
-elseifdef _XM_SSE_INTRINSICS_
-    _mm_load_ss(xmm0, pSource)
-    _mm_load_ss(xmm1, pSource+4)
-    _mm_load_ss(xmm2, pSource+8)
-    _mm_unpacklo_ps(xmm0, xmm1)
-    _mm_movelh_ps(xmm0, xmm2)
-    retm<xmm0>
-endif
-    endm
+XMVectorGetIntByIndex	proto XM_CALLCONV :FXMVECTOR, :size_t
+XMVectorGetIntX		proto XM_CALLCONV :FXMVECTOR
+XMVectorGetIntY		proto XM_CALLCONV :FXMVECTOR
+XMVectorGetIntZ		proto XM_CALLCONV :FXMVECTOR
+XMVectorGetIntW		proto XM_CALLCONV :FXMVECTOR
 
-XMLoadInt3A macro pSource
-    .assert(pSource)
-ifdef _XM_NO_INTRINSICS_
-elseifdef _XM_ARM_NEON_INTRINSICS_
-elseifdef _XM_SSE_INTRINSICS_
-    ;;
-    ;; Reads an extra integer which is zero'd
-    ;;
-    _mm_load_si128(xmm0, pSource)
-    _mm_and_si128(xmm0, g_XMMask3)
-    _mm_castsi128_ps(xmm0)
-    retm<xmm0>
-endif
-    endm
+XMVectorGetIntByIndexPtr proto XM_CALLCONV :ptr uint32_t, :FXMVECTOR, :size_t
+XMVectorGetIntXPtr	proto XM_CALLCONV :ptr uint32_t, :FXMVECTOR
+XMVectorGetIntYPtr	proto XM_CALLCONV :ptr uint32_t, :FXMVECTOR
+XMVectorGetIntZPtr	proto XM_CALLCONV :ptr uint32_t, :FXMVECTOR
+XMVectorGetIntWPtr	proto XM_CALLCONV :ptr uint32_t, :FXMVECTOR
 
-XMLoadFloat3 macro pSource
-    .assert(pSource)
-ifdef _XM_NO_INTRINSICS_
-elseifdef _XM_ARM_NEON_INTRINSICS_
-elseifdef _XM_SSE_INTRINSICS_
-    _mm_load_ss(xmm0, pSource)
-    _mm_load_ss(xmm1, pSource+4)
-    _mm_load_ss(xmm2, pSource+8)
-    _mm_unpacklo_ps(xmm0, xmm1)
-    _mm_movelh_ps(xmm0, xmm2)
-    retm<xmm0>
-endif
-    endm
+XMVectorSetByIndex	proto XM_CALLCONV :FXMVECTOR, :float, :size_t
+XMVectorSetX		proto XM_CALLCONV :FXMVECTOR, :float
+XMVectorSetY		proto XM_CALLCONV :FXMVECTOR, :float
+XMVectorSetZ		proto XM_CALLCONV :FXMVECTOR, :float
+XMVectorSetW		proto XM_CALLCONV :FXMVECTOR, :float
 
-XMLoadFloat3A macro pSource
-    .assert(pSource)
-ifdef _XM_NO_INTRINSICS_
-elseifdef _XM_ARM_NEON_INTRINSICS_
-elseifdef _XM_SSE_INTRINSICS_
-    ;;
-    ;; Reads an extra float which is zero'd
-    ;;
-    _mm_load_ps(pSource)
-    _mm_and_ps(xmm0, g_XMMask3)
-    retm<xmm0>
-endif
-    endm
+XMVectorSetByIndexPtr	proto XM_CALLCONV :FXMVECTOR, :ptr float, :size_t
+XMVectorSetXPtr		proto XM_CALLCONV :FXMVECTOR, :ptr float
+XMVectorSetYPtr		proto XM_CALLCONV :FXMVECTOR, :ptr float
+XMVectorSetZPtr		proto XM_CALLCONV :FXMVECTOR, :ptr float
+XMVectorSetWPtr		proto XM_CALLCONV :FXMVECTOR, :ptr float
 
-XMLoadSInt3 macro pSource
-    .assert(pSource)
-ifdef _XM_NO_INTRINSICS_
-elseifdef _XM_ARM_NEON_INTRINSICS_
-elseifdef _XM_SSE_INTRINSICS_
-    _mm_load_ss(xmm0, pSource)
-    _mm_load_ss(xmm1, pSource+4)
-    _mm_load_ss(xmm2, pSource+8)
-    _mm_unpacklo_ps(xmm0, xmm1)
-    _mm_movelh_ps(xmm0, xmm2)
-    _mm_cvtepi32_ps(_mm_castps_si128(xmm0))
-    retm<xmm0>
-endif
-    endm
+XMVectorSetIntByIndex	proto XM_CALLCONV :FXMVECTOR, :uint32_t, :size_t
+XMVectorSetIntX		proto XM_CALLCONV :FXMVECTOR, :uint32_t
+XMVectorSetIntY		proto XM_CALLCONV :FXMVECTOR, :uint32_t
+XMVectorSetIntZ		proto XM_CALLCONV :FXMVECTOR, :uint32_t
+XMVectorSetIntW		proto XM_CALLCONV :FXMVECTOR, :uint32_t
 
-XMLoadUInt3 macro pSource
-    .assert(pSource)
-ifdef _XM_NO_INTRINSICS_
-elseifdef _XM_ARM_NEON_INTRINSICS_
-elseifdef _XM_SSE_INTRINSICS_
-    _mm_load_ss(xmm0, pSource)
-    _mm_load_ss(xmm1, pSource+4)
-    _mm_load_ss(xmm2, pSource+8)
-    _mm_unpacklo_ps(xmm0, xmm1)
-    _mm_store_ps(xmm1, _mm_movelh_ps(xmm0, xmm2))
-    ;;
-    ;; For the values that are higher than 0x7FFFFFFF, a fixup is needed
-    ;; Determine which ones need the fix.
-    ;;
-    _mm_and_ps(xmm1, g_XMNegativeZero)
-    ;;
-    ;; Force all values positive
-    ;;
-    _mm_xor_ps(xmm0, xmm1)
-    ;;
-    ;; Convert to floats
-    ;;
-    _mm_cvtepi32_ps(_mm_castps_si128(xmm0))
-    ;;
-    ;; Convert 0x80000000 -> 0xFFFFFFFF
-    ;;
-    _mm_srai_epi32(_mm_castps_si128(xmm1), 31)
-    ;;
-    ;; For only the ones that are too big, add the fixup
-    ;;
-    _mm_and_ps(_mm_castsi128_ps(xmm1), g_XMFixUnsigned)
-    _mm_add_ps(xmm0, xmm1)
-    retm<xmm0>
-endif
-    endm
-
-XMLoadInt4 macro ptr_uint32_t
-    exitm<_mm_castsi128_ps(_mm_loadu_si128(ptr_uint32_t))>
-    endm
-XMLoadInt4A macro ptr_uint32_t
-    exitm<_mm_castsi128_ps(_mm_load_si128(ptr_uint32_t))>
-    endm
-XMLoadFloat4 macro ptr_XMFLOAT4
-    exitm<_mm_loadu_ps(ptr_XMFLOAT4)>
-    endm
-
-XMLoadFloat4A macro ptr_XMFLOAT4A
-    exitm<_mm_load_ps(ptr_XMFLOAT4A)>
-    endm
-XMLoadSInt4 macro ptr_XMINT4
-    exitm<_mm_cvtepi32_ps(_mm_loadu_si128(ptr_XMINT4))>
-    endm
-XMLoadUInt4 macro ptr_XMUINT4
-ifdef _XM_NO_INTRINSICS_
-    exitm<ptr_XMUINT4>
-elseifdef _XM_ARM_NEON_INTRINSICS_
-elseifdef _XM_SSE_INTRINSICS_
-    _mm_store_ps(xmm2, _mm_loadu_si128(ptr_XMUINT4))
-    ;;
-    ;; For the values that are higher than 0x7FFFFFFF, a fixup is needed
-    ;; Determine which ones need the fix.
-    ;;
-    _mm_store_ps(xmm3, _mm_and_ps(_mm_castsi128_ps(xmm0), g_XMNegativeZero))
-    ;;
-    ;; Force all values positive
-    ;;
-    _mm_store_ps(xmm1, _mm_xor_ps(_mm_castsi128_ps(xmm2), xmm3))
-    ;;
-    ;; Convert to floats
-    ;;
-    _mm_cvtepi32_ps(_mm_castps_si128(xmm1))
-    ;;
-    ;; Convert 0x80000000 -> 0xFFFFFFFF
-    ;;
-    _mm_store_ps(xmm0, _mm_srai_epi32(_mm_castps_si128(xmm3), 31))
-    ;;
-    ;; For only the ones that are too big, add the fixup
-    ;;
-    _mm_and_ps(_mm_castsi128_ps(xmm0), g_XMFixUnsigned)
-    _mm_add_ps(xmm0, xmm1)
-    retm<xmm0>
-endif
-    endm
-
-XMLoadFloat3x3	proto :ptr XMFLOAT3X3
-XMLoadFloat4x3	proto :ptr XMFLOAT4X3
-XMLoadFloat4x3A proto :ptr XMFLOAT4X3A
-XMLoadFloat4x4	proto :ptr XMFLOAT4X4
-XMLoadFloat4x4A proto :ptr XMFLOAT4X4A
-
-XMStoreInt	proto :ptr uint32_t, :FXMVECTOR
-XMStoreFloat	proto :ptr REAL4, :FXMVECTOR
-XMStoreInt2	proto :ptr uint32_t, :FXMVECTOR
-XMStoreInt2A	proto :ptr uint32_t, :FXMVECTOR
-XMStoreFloat2	proto :ptr XMFLOAT2, :FXMVECTOR
-XMStoreFloat2A	proto :ptr XMFLOAT2A, :FXMVECTOR
-XMStoreSInt2	proto :ptr XMINT2, :FXMVECTOR
-XMStoreUInt2	proto :ptr XMUINT2, :FXMVECTOR
-XMStoreInt3	proto :ptr uint32_t, :FXMVECTOR
-XMStoreInt3A	proto :ptr uint32_t, :FXMVECTOR
-XMStoreFloat3	proto :ptr XMFLOAT3, :FXMVECTOR
-XMStoreFloat3A	proto :ptr XMFLOAT3A, :FXMVECTOR
-XMStoreSInt3	proto :ptr XMINT3, :FXMVECTOR
-XMStoreUInt3	proto :ptr XMUINT3, :FXMVECTOR
-XMStoreInt4	proto :ptr uint32_t, :FXMVECTOR
-XMStoreInt4A	proto :ptr uint32_t, :FXMVECTOR
-XMStoreFloat4	proto :ptr XMFLOAT4, :FXMVECTOR
-XMStoreFloat4A	proto :ptr XMFLOAT4A, :FXMVECTOR
-XMStoreSInt4	proto :ptr XMINT4, :FXMVECTOR
-XMStoreUInt4	proto :ptr XMUINT4, :FXMVECTOR
-
-XMStoreFloat3x3		proto :ptr XMFLOAT3X3, :FXMMATRIX
-XMStoreFloat4x3		proto :ptr XMFLOAT4X3, :FXMMATRIX
-XMStoreFloat4x3A	proto :ptr XMFLOAT4X3A, :FXMMATRIX
-XMStoreFloat4x4		proto :ptr XMFLOAT4X4, :FXMMATRIX
-XMStoreFloat4x4A	proto :ptr XMFLOAT4X4A, :FXMMATRIX
-
-XMVectorZero		proto
-XMVectorSet macro x, y, z, w
-ifdef _XM_NO_INTRINSICS_
-    exitm<_mm_set_ps( w, z, y, x )>
-elseifdef _XM_ARM_NEON_INTRINSICS_
-elseifdef _XM_SSE_INTRINSICS_
-    exitm<_mm_set_ps( w, z, y, x )>
-endif
-    endm
-
-XMVectorSetInt		proto :uint32_t, :uint32_t, :uint32_t, :uint32_t
-XMVectorReplicate	proto :float
-XMVectorReplicatePtr	proto :ptr float
-XMVectorReplicateInt	proto :uint32_t
-XMVectorReplicateIntPtr proto :ptr uint32_t
-XMVectorTrueInt		proto
-XMVectorFalseInt	proto
-XMVectorSplatX		proto :FXMVECTOR
-XMVectorSplatY		proto :FXMVECTOR
-XMVectorSplatZ		proto :FXMVECTOR
-XMVectorSplatW		proto :FXMVECTOR
-XMVectorSplatOne	proto
-XMVectorSplatInfinity	proto
-XMVectorSplatQNaN	proto
-XMVectorSplatEpsilon	proto
-XMVectorSplatSignMask	proto
-
-XMVectorGetByIndex	proto :FXMVECTOR, :size_t
-XMVectorGetX		proto :FXMVECTOR
-XMVectorGetY		proto :FXMVECTOR
-XMVectorGetZ		proto :FXMVECTOR
-XMVectorGetW		proto :FXMVECTOR
-XMVectorGetByIndexPtr	proto :ptr float, :FXMVECTOR, :size_t
-XMVectorGetXPtr		proto :ptr float, :FXMVECTOR
-XMVectorGetYPtr		proto :ptr float, :FXMVECTOR
-XMVectorGetZPtr		proto :ptr float, :FXMVECTOR
-XMVectorGetWPtr		proto :ptr float, :FXMVECTOR
-
-XMVectorGetIntByIndex	proto :FXMVECTOR, :size_t
-XMVectorGetIntX		proto :FXMVECTOR
-XMVectorGetIntY		proto :FXMVECTOR
-XMVectorGetIntZ		proto :FXMVECTOR
-XMVectorGetIntW		proto :FXMVECTOR
-
-XMVectorGetIntByIndexPtr proto :ptr uint32_t, :FXMVECTOR, :size_t
-XMVectorGetIntXPtr	proto :ptr uint32_t, :FXMVECTOR
-XMVectorGetIntYPtr	proto :ptr uint32_t, :FXMVECTOR
-XMVectorGetIntZPtr	proto :ptr uint32_t, :FXMVECTOR
-XMVectorGetIntWPtr	proto :ptr uint32_t, :FXMVECTOR
-
-XMVectorSetByIndex	proto :FXMVECTOR, :float, :size_t
-XMVectorSetX		proto :FXMVECTOR, :float
-XMVectorSetY		proto :FXMVECTOR, :float
-XMVectorSetZ		proto :FXMVECTOR, :float
-XMVectorSetW		proto :FXMVECTOR, :float
-
-XMVectorSetByIndexPtr	proto :FXMVECTOR, :ptr float, :size_t
-XMVectorSetXPtr		proto :FXMVECTOR, :ptr float
-XMVectorSetYPtr		proto :FXMVECTOR, :ptr float
-XMVectorSetZPtr		proto :FXMVECTOR, :ptr float
-XMVectorSetWPtr		proto :FXMVECTOR, :ptr float
-
-XMVectorSetIntByIndex	proto :FXMVECTOR, :uint32_t, :size_t
-XMVectorSetIntX		proto :FXMVECTOR, :uint32_t
-XMVectorSetIntY		proto :FXMVECTOR, :uint32_t
-XMVectorSetIntZ		proto :FXMVECTOR, :uint32_t
-XMVectorSetIntW		proto :FXMVECTOR, :uint32_t
-
-XMVectorSetIntByIndexPtr proto :FXMVECTOR, :ptr uint32_t, :size_t
-XMVectorSetIntXPtr	proto :FXMVECTOR, :ptr uint32_t
-XMVectorSetIntYPtr	proto :FXMVECTOR, :ptr uint32_t
-XMVectorSetIntZPtr	proto :FXMVECTOR, :ptr uint32_t
-XMVectorSetIntWPtr	proto :FXMVECTOR, :ptr uint32_t
+XMVectorSetIntByIndexPtr proto XM_CALLCONV :FXMVECTOR, :ptr uint32_t, :size_t
+XMVectorSetIntXPtr	proto XM_CALLCONV :FXMVECTOR, :ptr uint32_t
+XMVectorSetIntYPtr	proto XM_CALLCONV :FXMVECTOR, :ptr uint32_t
+XMVectorSetIntZPtr	proto XM_CALLCONV :FXMVECTOR, :ptr uint32_t
+XMVectorSetIntWPtr	proto XM_CALLCONV :FXMVECTOR, :ptr uint32_t
 
 if defined(__XNAMATH_H__) and defined(XMVectorSwizzle)
 undef XMVectorSwizzle
 endif
 
-XMVectorSwizzle		proto :FXMVECTOR, :uint32_t, :uint32_t, :uint32_t, :uint32_t
-XMVectorPermute		proto :FXMVECTOR, :FXMVECTOR, :uint32_t, :uint32_t, :uint32_t, :uint32_t
-XMVectorSelectControl	proto :uint32_t, :uint32_t, :uint32_t, :uint32_t
-
-XMVectorSelect macro V1:=<xmm0>, V2:=<xmm1>, Control:=<xmm2>
-    ifidn <Control>,<xmm0>
-	_mm_andnot_ps(Control, V1)
-    else
-	if _MM_ISXMM(Control)
-	    _mm_store_ps(xmm0, _mm_andnot_ps(Control, V1))
-	else
-	    _mm_andnot_ps(Control, V1)
-	endif
-    endif
-    ifidn <V2>,<xmm1>
-	_mm_and_ps(xmm1, xmm0)
-    else
-	_mm_store_ps(xmm1, _mm_and_ps(V2, xmm0) )
-    endif
-    exitm<_mm_or_ps(xmm0, xmm1)>
-    endm
-
-XMVectorMergeXY		proto :FXMVECTOR, :FXMVECTOR
-XMVectorMergeZW		proto :FXMVECTOR, :FXMVECTOR
+XMVectorSwizzle		proto XM_CALLCONV :FXMVECTOR, :uint32_t, :uint32_t, :uint32_t, :uint32_t
+XMVectorPermute		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :uint32_t, :uint32_t, :uint32_t, :uint32_t
+XMVectorSelectControl	proto XM_CALLCONV :uint32_t, :uint32_t, :uint32_t, :uint32_t
+XMVectorSelect		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
+XMVectorMergeXY		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVectorMergeZW		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
 
 if defined(__XNAMATH_H__) and defined(XMVectorShiftLeft)
 undef XMVectorShiftLeft
@@ -1135,811 +670,398 @@ undef XMVectorRotateRight
 undef XMVectorInsert
 endif
 
-XMVectorShiftLeft	proto :FXMVECTOR, :FXMVECTOR, :uint32_t
-XMVectorRotateLeft	proto :FXMVECTOR, :uint32_t
-XMVectorRotateRight	proto :FXMVECTOR, :uint32_t
-XMVectorInsert		proto :FXMVECTOR, :FXMVECTOR, :uint32_t, :uint32_t, :uint32_t, :uint32_t, :uint32_t
+XMVectorShiftLeft	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :uint32_t
+XMVectorRotateLeft	proto XM_CALLCONV :FXMVECTOR, :uint32_t
+XMVectorRotateRight	proto XM_CALLCONV :FXMVECTOR, :uint32_t
+XMVectorInsert		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :uint32_t, :uint32_t, :uint32_t, :uint32_t, :uint32_t
 
-XMVectorEqual		proto :FXMVECTOR, :FXMVECTOR
-XMVectorEqualR		proto :ptr uint32_t, :FXMVECTOR, :FXMVECTOR
-XMVectorEqualInt	proto :FXMVECTOR, :FXMVECTOR
-XMVectorEqualIntR	proto :ptr uint32_t, :FXMVECTOR, :FXMVECTOR
-XMVectorNearEqual	proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
-XMVectorNotEqual	proto :FXMVECTOR, :FXMVECTOR
-XMVectorNotEqualInt	proto :FXMVECTOR, :FXMVECTOR
-XMVectorGreater		proto :FXMVECTOR, :FXMVECTOR
-XMVectorGreaterR	proto :ptr uint32_t, :FXMVECTOR, :FXMVECTOR
-XMVectorGreaterOrEqual	proto :FXMVECTOR, :FXMVECTOR
-XMVectorGreaterOrEqualR proto :ptr uint32_t, :FXMVECTOR, :FXMVECTOR
-XMVectorLess		proto :FXMVECTOR, :FXMVECTOR
-XMVectorLessOrEqual	proto :FXMVECTOR, :FXMVECTOR
-XMVectorInBounds	proto :FXMVECTOR, :FXMVECTOR
-XMVectorInBoundsR	proto :ptr uint32_t, :FXMVECTOR, :FXMVECTOR
+XMVectorEqual		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVectorEqualR		proto XM_CALLCONV :ptr uint32_t, :FXMVECTOR, :FXMVECTOR
+XMVectorEqualInt	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVectorEqualIntR	proto XM_CALLCONV :ptr uint32_t, :FXMVECTOR, :FXMVECTOR
+XMVectorNearEqual	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
+XMVectorNotEqual	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVectorNotEqualInt	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVectorGreater		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVectorGreaterR	proto XM_CALLCONV :ptr uint32_t, :FXMVECTOR, :FXMVECTOR
+XMVectorGreaterOrEqual	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVectorGreaterOrEqualR proto XM_CALLCONV :ptr uint32_t, :FXMVECTOR, :FXMVECTOR
+XMVectorLess		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVectorLessOrEqual	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVectorInBounds	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVectorInBoundsR	proto XM_CALLCONV :ptr uint32_t, :FXMVECTOR, :FXMVECTOR
 
-XMVectorIsNaN		proto :FXMVECTOR
-XMVectorIsInfinite	proto :FXMVECTOR
+XMVectorIsNaN		proto XM_CALLCONV :FXMVECTOR
+XMVectorIsInfinite	proto XM_CALLCONV :FXMVECTOR
 
-XMVectorMin		proto :FXMVECTOR, :FXMVECTOR
-XMVectorMax		proto :FXMVECTOR, :FXMVECTOR
-XMVectorRound		proto :FXMVECTOR
-XMVectorTruncate	proto :FXMVECTOR
-XMVectorFloor		proto :FXMVECTOR
-XMVectorCeiling		proto :FXMVECTOR
-XMVectorClamp		proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
-XMVectorSaturate	proto :FXMVECTOR
+XMVectorMin		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVectorMax		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVectorRound		proto XM_CALLCONV :FXMVECTOR
+XMVectorTruncate	proto XM_CALLCONV :FXMVECTOR
+XMVectorFloor		proto XM_CALLCONV :FXMVECTOR
+XMVectorCeiling		proto XM_CALLCONV :FXMVECTOR
+XMVectorClamp		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
+XMVectorSaturate	proto XM_CALLCONV :FXMVECTOR
 
-XMVectorAndInt		proto :FXMVECTOR, :FXMVECTOR
-XMVectorAndCInt		proto :FXMVECTOR, :FXMVECTOR
-XMVectorOrInt		proto :FXMVECTOR, :FXMVECTOR
-XMVectorNorInt		proto :FXMVECTOR, :FXMVECTOR
-XMVectorXorInt		proto :FXMVECTOR, :FXMVECTOR
+XMVectorAndInt		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVectorAndCInt		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVectorOrInt		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVectorNorInt		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVectorXorInt		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVectorNegate		proto XM_CALLCONV :FXMVECTOR
 
-XMVectorNegate macro x:req
-    _mm_store_ps(xmm1, x)
-    exitm<_mm_sub_ps(_mm_setzero_ps(), xmm1)>
-    endm
+XMVectorAdd		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVectorSum		proto XM_CALLCONV :FXMVECTOR
+XMVectorAddAngles	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVectorSubtract	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
 
-XMVectorAdd		proto :FXMVECTOR, :FXMVECTOR
-XMVectorSum		proto :FXMVECTOR
-XMVectorAddAngles	proto :FXMVECTOR, :FXMVECTOR
+XMVectorSubtractAngles	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVectorMultiply	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVectorMultiplyAdd	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
+XMVectorDivide		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVectorNegativeMultiplySubtract proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
+XMVectorScale		proto XM_CALLCONV :FXMVECTOR, :float
+XMVectorReciprocalEst	proto XM_CALLCONV :FXMVECTOR
+XMVectorReciprocal	proto XM_CALLCONV :FXMVECTOR
+XMVectorSqrtEst		proto XM_CALLCONV :FXMVECTOR
+XMVectorSqrt		proto XM_CALLCONV :FXMVECTOR
+XMVectorReciprocalSqrtEst proto XM_CALLCONV :FXMVECTOR
+XMVectorReciprocalSqrt	proto XM_CALLCONV :FXMVECTOR
+XMVectorExp2		proto XM_CALLCONV :FXMVECTOR
+XMVectorExpE		proto XM_CALLCONV :FXMVECTOR
+XMVectorExp		proto XM_CALLCONV :FXMVECTOR
+XMVectorLog2		proto XM_CALLCONV :FXMVECTOR
+XMVectorLogE		proto XM_CALLCONV :FXMVECTOR
+XMVectorLog		proto XM_CALLCONV :FXMVECTOR
+XMVectorPow		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVectorAbs		proto XM_CALLCONV :FXMVECTOR
+XMVectorMod		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVectorModAngles	proto XM_CALLCONV :FXMVECTOR
+XMVectorSin		proto XM_CALLCONV :FXMVECTOR
+XMVectorSinEst		proto XM_CALLCONV :FXMVECTOR
+XMVectorCos		proto XM_CALLCONV :FXMVECTOR
+XMVectorCosEst		proto XM_CALLCONV :FXMVECTOR
 
-XMVectorSubtract	equ <_mm_sub_ps>
+XMVectorSinCos		proto XM_CALLCONV :ptr XMVECTOR, :ptr XMVECTOR, :FXMVECTOR
+XMVectorSinCosEst	proto XM_CALLCONV :ptr XMVECTOR, :ptr XMVECTOR, :FXMVECTOR
 
-XMVectorSubtractAngles	proto :FXMVECTOR, :FXMVECTOR
-XMVectorMultiply	proto :FXMVECTOR, :FXMVECTOR
-XMVectorMultiplyAdd	proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
-XMVectorDivide		proto :FXMVECTOR, :FXMVECTOR
-XMVectorNegativeMultiplySubtract proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
-XMVectorScale		proto :FXMVECTOR, :float
-XMVectorReciprocalEst	proto :FXMVECTOR
-XMVectorReciprocal	proto :FXMVECTOR
-XMVectorSqrtEst		proto :FXMVECTOR
-XMVectorSqrt		proto :FXMVECTOR
-XMVectorReciprocalSqrtEst proto :FXMVECTOR
-XMVectorReciprocalSqrt	proto :FXMVECTOR
-XMVectorExp2		proto :FXMVECTOR
-XMVectorExpE		proto :FXMVECTOR
-XMVectorExp		proto :FXMVECTOR
-XMVectorLog2		proto :FXMVECTOR
-XMVectorLogE		proto :FXMVECTOR
-XMVectorLog		proto :FXMVECTOR
-XMVectorPow		proto :FXMVECTOR, :FXMVECTOR
-XMVectorAbs		proto :FXMVECTOR
-XMVectorMod		proto :FXMVECTOR, :FXMVECTOR
-XMVectorModAngles	proto :FXMVECTOR
-XMVectorSin		proto :FXMVECTOR
-XMVectorSinEst		proto :FXMVECTOR
-XMVectorCos		proto :FXMVECTOR
-XMVectorCosEst		proto :FXMVECTOR
+XMVectorTan		proto XM_CALLCONV :FXMVECTOR
+XMVectorTanEst		proto XM_CALLCONV :FXMVECTOR
+XMVectorSinH		proto XM_CALLCONV :FXMVECTOR
+XMVectorCosH		proto XM_CALLCONV :FXMVECTOR
+XMVectorTanH		proto XM_CALLCONV :FXMVECTOR
+XMVectorASin		proto XM_CALLCONV :FXMVECTOR
+XMVectorASinEst		proto XM_CALLCONV :FXMVECTOR
+XMVectorACos		proto XM_CALLCONV :FXMVECTOR
+XMVectorACosEst		proto XM_CALLCONV :FXMVECTOR
+XMVectorATan		proto XM_CALLCONV :FXMVECTOR
+XMVectorATanEst		proto XM_CALLCONV :FXMVECTOR
+XMVectorATan2		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVectorATan2Est	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVectorLerp		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :float
+XMVectorLerpV		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
+XMVectorHermite		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :FXMVECTOR, :GXMVECTOR, :float
+XMVectorHermiteV	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :FXMVECTOR, :GXMVECTOR, :HXMVECTOR
+XMVectorCatmullRom	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :FXMVECTOR, :GXMVECTOR, :float
+XMVectorCatmullRomV	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :FXMVECTOR, :GXMVECTOR, :HXMVECTOR
+XMVectorBaryCentric	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :FXMVECTOR, :float, :float
+XMVectorBaryCentricV	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :FXMVECTOR, :GXMVECTOR, :HXMVECTOR
 
-XMVectorSinCos		proto :ptr XMVECTOR, :ptr XMVECTOR, :FXMVECTOR
-XMVectorSinCosEst	proto :ptr XMVECTOR, :ptr XMVECTOR, :FXMVECTOR
+XMVector2Equal		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector2EqualR		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector2EqualInt	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector2EqualIntR	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector2NearEqual	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
+XMVector2NotEqual	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector2NotEqualInt	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector2Greater	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector2GreaterR	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector2GreaterOrEqual proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector2GreaterOrEqualR proto XM_CALLCONV :FXMVECTOR,:FXMVECTOR
+XMVector2Less		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector2LessOrEqual	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector2InBounds	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
 
-XMVectorTan		proto :FXMVECTOR
-XMVectorTanEst		proto :FXMVECTOR
-XMVectorSinH		proto :FXMVECTOR
-XMVectorCosH		proto :FXMVECTOR
-XMVectorTanH		proto :FXMVECTOR
-XMVectorASin		proto :FXMVECTOR
-XMVectorASinEst		proto :FXMVECTOR
-XMVectorACos		proto :FXMVECTOR
-XMVectorACosEst		proto :FXMVECTOR
-XMVectorATan		proto :FXMVECTOR
-XMVectorATanEst		proto :FXMVECTOR
-XMVectorATan2		proto :FXMVECTOR, :FXMVECTOR
-XMVectorATan2Est	proto :FXMVECTOR, :FXMVECTOR
-XMVectorLerp		proto :FXMVECTOR, :FXMVECTOR, :float
-XMVectorLerpV		proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
-XMVectorHermite		proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR, :GXMVECTOR, :float
-XMVectorHermiteV	proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR, :GXMVECTOR, :HXMVECTOR
-XMVectorCatmullRom	proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR, :GXMVECTOR, :float
-XMVectorCatmullRomV	proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR, :GXMVECTOR, :HXMVECTOR
-XMVectorBaryCentric	proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR, :float, :float
-XMVectorBaryCentricV	proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR, :GXMVECTOR, :HXMVECTOR
+XMVector2IsNaN		proto XM_CALLCONV :FXMVECTOR
+XMVector2IsInfinite	proto XM_CALLCONV :FXMVECTOR
 
-XMVector2Equal		proto :FXMVECTOR, :FXMVECTOR
-XMVector2EqualR		proto :FXMVECTOR, :FXMVECTOR
-XMVector2EqualInt	proto :FXMVECTOR, :FXMVECTOR
-XMVector2EqualIntR	proto :FXMVECTOR, :FXMVECTOR
-XMVector2NearEqual	proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
-XMVector2NotEqual	proto :FXMVECTOR, :FXMVECTOR
-XMVector2NotEqualInt	proto :FXMVECTOR, :FXMVECTOR
-XMVector2Greater	proto :FXMVECTOR, :FXMVECTOR
-XMVector2GreaterR	proto :FXMVECTOR, :FXMVECTOR
-XMVector2GreaterOrEqual proto :FXMVECTOR, :FXMVECTOR
-XMVector2GreaterOrEqualR proto :FXMVECTOR,:FXMVECTOR
-XMVector2Less		proto :FXMVECTOR, :FXMVECTOR
-XMVector2LessOrEqual	proto :FXMVECTOR, :FXMVECTOR
-XMVector2InBounds	proto :FXMVECTOR, :FXMVECTOR
+XMVector2Dot		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector2Cross		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector2LengthSq	proto XM_CALLCONV :FXMVECTOR
+XMVector2ReciprocalLengthEst proto XM_CALLCONV :FXMVECTOR
+XMVector2ReciprocalLength proto XM_CALLCONV :FXMVECTOR
+XMVector2LengthEst	proto XM_CALLCONV :FXMVECTOR
+XMVector2Length		proto XM_CALLCONV :FXMVECTOR
+XMVector2NormalizeEst	proto XM_CALLCONV :FXMVECTOR
+XMVector2Normalize	proto XM_CALLCONV :FXMVECTOR
+XMVector2ClampLength	proto XM_CALLCONV :FXMVECTOR, :float, :float
+XMVector2ClampLengthV	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
+XMVector2Reflect	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector2Refract	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :float
+XMVector2RefractV	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
+XMVector2Orthogonal	proto XM_CALLCONV :FXMVECTOR
 
-XMVector2IsNaN		proto :FXMVECTOR
-XMVector2IsInfinite	proto :FXMVECTOR
+XMVector2AngleBetweenNormalsEst proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector2AngleBetweenNormals	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector2AngleBetweenVectors	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector2LinePointDistance	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
+XMVector2IntersectLine		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :FXMVECTOR, :GXMVECTOR
+XMVector2Transform		proto XM_CALLCONV :FXMVECTOR, :FXMMATRIX
 
-XMVector2Dot		proto :FXMVECTOR, :FXMVECTOR
-XMVector2Cross		proto :FXMVECTOR, :FXMVECTOR
-XMVector2LengthSq	proto :FXMVECTOR
-XMVector2ReciprocalLengthEst proto :FXMVECTOR
-XMVector2ReciprocalLength proto :FXMVECTOR
-XMVector2LengthEst	proto :FXMVECTOR
-XMVector2Length		proto :FXMVECTOR
-XMVector2NormalizeEst	proto :FXMVECTOR
-XMVector2Normalize	proto :FXMVECTOR
-XMVector2ClampLength	proto :FXMVECTOR, :float, :float
-XMVector2ClampLengthV	proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
-XMVector2Reflect	proto :FXMVECTOR, :FXMVECTOR
-XMVector2Refract	proto :FXMVECTOR, :FXMVECTOR, :float
-XMVector2RefractV	proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
-XMVector2Orthogonal	proto :FXMVECTOR
+XMVector2TransformStream	proto XM_CALLCONV :ptr XMFLOAT4, :size_t, :ptr XMFLOAT2, :size_t, :size_t, :FXMMATRIX
+XMVector2TransformCoord		proto XM_CALLCONV :FXMVECTOR, :FXMMATRIX
+XMVector2TransformCoordStream	proto XM_CALLCONV :ptr XMFLOAT2, :size_t, :ptr XMFLOAT2, :size_t, :size_t, :FXMMATRIX
+XMVector2TransformNormal	proto XM_CALLCONV :FXMVECTOR, :FXMMATRIX
+XMVector2TransformNormalStream	proto XM_CALLCONV :ptr XMFLOAT2, :size_t, :ptr XMFLOAT2, :size_t, :size_t, :FXMMATRIX
 
-XMVector2AngleBetweenNormalsEst proto :FXMVECTOR, :FXMVECTOR
-XMVector2AngleBetweenNormals	proto :FXMVECTOR, :FXMVECTOR
-XMVector2AngleBetweenVectors	proto :FXMVECTOR, :FXMVECTOR
-XMVector2LinePointDistance	proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
-XMVector2IntersectLine		proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR, :GXMVECTOR
-XMVector2Transform		proto :FXMVECTOR, :FXMMATRIX
+XMVector3Equal		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector3EqualR		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector3EqualInt	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector3EqualIntR	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector3NearEqual	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
+XMVector3NotEqual	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector3NotEqualInt	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector3Greater	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector3GreaterR	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector3GreaterOrEqual proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector3GreaterOrEqualR proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector3Less		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector3LessOrEqual	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector3InBounds	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
 
-XMVector2TransformStream	proto :ptr XMFLOAT4, :size_t, :ptr XMFLOAT2, :size_t, :size_t, :FXMMATRIX
-XMVector2TransformCoord		proto :FXMVECTOR, :FXMMATRIX
-XMVector2TransformCoordStream	proto :ptr XMFLOAT2, :size_t, :ptr XMFLOAT2, :size_t, :size_t, :FXMMATRIX
-XMVector2TransformNormal	proto :FXMVECTOR, :FXMMATRIX
-XMVector2TransformNormalStream	proto :ptr XMFLOAT2, :size_t, :ptr XMFLOAT2, :size_t, :size_t, :FXMMATRIX
+XMVector3IsNaN		proto XM_CALLCONV :FXMVECTOR
+XMVector3IsInfinite	proto XM_CALLCONV :FXMVECTOR
+XMVector3Dot		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector3Cross		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector3LengthSq	proto XM_CALLCONV :FXMVECTOR
+XMVector3ReciprocalLengthEst proto XM_CALLCONV :FXMVECTOR
+XMVector3ReciprocalLength proto XM_CALLCONV :FXMVECTOR
+XMVector3LengthEst	proto XM_CALLCONV :FXMVECTOR
+XMVector3Length		proto XM_CALLCONV :FXMVECTOR
+XMVector3NormalizeEst	proto XM_CALLCONV :FXMVECTOR
+XMVector3Normalize	proto XM_CALLCONV :FXMVECTOR
+XMMatrixTranspose	proto XM_CALLCONV XMTHISPTR, AXMMATRIX
+XMMatrixMultiplyTranspose proto XM_CALLCONV :FXMMATRIX, :CXMMATRIX
 
-XMVector3Equal		proto :FXMVECTOR, :FXMVECTOR
-XMVector3EqualR		proto :FXMVECTOR, :FXMVECTOR
-XMVector3EqualInt	proto :FXMVECTOR, :FXMVECTOR
-XMVector3EqualIntR	proto :FXMVECTOR, :FXMVECTOR
-XMVector3NearEqual	proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
-XMVector3NotEqual	proto :FXMVECTOR, :FXMVECTOR
-XMVector3NotEqualInt	proto :FXMVECTOR, :FXMVECTOR
-XMVector3Greater	proto :FXMVECTOR, :FXMVECTOR
-XMVector3GreaterR	proto :FXMVECTOR, :FXMVECTOR
-XMVector3GreaterOrEqual proto :FXMVECTOR, :FXMVECTOR
-XMVector3GreaterOrEqualR proto :FXMVECTOR, :FXMVECTOR
-XMVector3Less		proto :FXMVECTOR, :FXMVECTOR
-XMVector3LessOrEqual	proto :FXMVECTOR, :FXMVECTOR
-XMVector3InBounds	proto :FXMVECTOR, :FXMVECTOR
+XMVector3ClampLength	proto XM_CALLCONV :FXMVECTOR, :float, :float
+XMVector3ClampLengthV	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
+XMVector3Reflect	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector3Refract	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :float
+XMVector3RefractV	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
+XMVector3Orthogonal	proto XM_CALLCONV :FXMVECTOR
+XMVector3AngleBetweenNormalsEst proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector3AngleBetweenNormals	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector3AngleBetweenVectors	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector3LinePointDistance	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
 
-XMVector3IsNaN		proto :FXMVECTOR
-XMVector3IsInfinite	proto :FXMVECTOR
+XMVector3ComponentsFromNormal	proto XM_CALLCONV :ptr XMVECTOR, :ptr XMVECTOR, :FXMVECTOR, :FXMVECTOR
 
-XMVector3Dot macro V1:=<xmm0>, V2:=<xmm1>
-ifdef _XM_SSE4_INTRINSICS_
-    ifidn <V1>,<xmm0>
-	exitm<_mm_dp_ps( V1, V2, 0x7f )>
-    endif
-    if not _MM_ISXMM(V1)
-	exitm<_mm_dp_ps( V1, V2, 0x7f )>
-    endif
-    _mm_store_ps(xmm0, _mm_dp_ps( V1, V2, 0x7f ) )
-elseifdef _XM_SSE3_INTRINSICS_
-    ifidn <V1>,<xmm0>
-	_mm_mul_ps(V1, V2)
-    else
-	if _MM_ISXMM(V1)
-	    _mm_store_ps(xmm0, _mm_mul_ps(V1, V2))
-	else
-	    _mm_mul_ps(V1, V2)
-	endif
-    endif
-    _mm_and_ps(xmm0, g_XMMask3)
-    _mm_hadd_ps(xmm0, xmm0)
-    _mm_hadd_ps(xmm0, xmm0)
-elseifdef _XM_SSE_INTRINSICS_
-    ifidn <V1>,<xmm0>
-	_mm_mul_ps(V1, V2)
-    else
-	if _MM_ISXMM(V1)
-	    _mm_store_ps(xmm0, _mm_mul_ps(V1, V2))
-	else
-	    _mm_mul_ps(V1, V2)
-	endif
-    endif
-    _mm_store_ps(xmm2, xmm0)
-    _mm_shuffle_ps(xmm2, xmm0, _MM_SHUFFLE(2,1,2,1))
-    _mm_add_ss(xmm0, xmm2)
-    XM_PERMUTE_PS(xmm2, _MM_SHUFFLE(1,1,1,1))
-    _mm_add_ss(xmm0, xmm2)
-    XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(0,0,0,0))
-endif
-    retm<xmm0>
-    endm
+XMVector3Rotate			proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector3InverseRotate		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector3Transform		proto XM_CALLCONV :FXMVECTOR, :FXMMATRIX
+XMVector3TransformStream	proto XM_CALLCONV :ptr XMFLOAT4, :size_t, :ptr XMFLOAT3, :size_t, :size_t, :FXMMATRIX
+XMVector3TransformCoord		proto XM_CALLCONV :FXMVECTOR, :FXMMATRIX
+XMVector3TransformCoordStream	proto XM_CALLCONV :ptr XMFLOAT3, :size_t, :ptr XMFLOAT3, :size_t, :size_t, :FXMMATRIX
+XMVector3TransformNormal	proto XM_CALLCONV :FXMVECTOR, :FXMMATRIX
+XMVector3TransformNormalStream	proto XM_CALLCONV :ptr XMFLOAT3, :size_t, :ptr XMFLOAT3, :size_t, :size_t, :FXMMATRIX
+XMVector3Project		proto XM_CALLCONV :FXMVECTOR, :float, :float, :float, :float, :float, :float, :FXMMATRIX, :CXMMATRIX, :CXMMATRIX
+XMVector3ProjectStream		proto XM_CALLCONV :ptr XMFLOAT3, :size_t, :ptr XMFLOAT3, :size_t, :size_t, :float, :float, :float, :float, :float, :float, :FXMMATRIX, :CXMMATRIX, :CXMMATRIX
+XMVector3Unproject		proto XM_CALLCONV :FXMVECTOR, :float, :float, :float, :float, :float, :float, :FXMMATRIX, :CXMMATRIX, :CXMMATRIX
+XMVector3UnprojectStream	proto XM_CALLCONV :ptr XMFLOAT3, :size_t, :ptr XMFLOAT3, :size_t, :size_t, :float, :float, :float, :float, :float, :float, :FXMMATRIX, :CXMMATRIX, :CXMMATRIX
 
-XMVector3Cross macro V1:=<xmm0>, V2:=<xmm1>
-    _mm_store_ps(xmm0, V1)
-    _mm_store_ps(xmm1, V2)
-    _mm_store_ps(xmm2, XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,0,2,1)))
-    _mm_store_ps(xmm3, XM_PERMUTE_PS(xmm1, _MM_SHUFFLE(3,1,0,2)))
-    _mm_store_ps(xmm0, xmm2)
-    _mm_store_ps(xmm1, xmm3)
-    _mm_mul_ps(xmm0, xmm1)
-    _mm_shuffle_ps(xmm2, xmm2, _MM_SHUFFLE(3,0,2,1))
-    _mm_shuffle_ps(xmm3, xmm3, _MM_SHUFFLE(3,1,0,2))
-    _mm_mul_ps(xmm2, xmm3)
-    _mm_sub_ps(xmm0, xmm2)
-    _mm_and_ps(xmm0, g_XMMask3)
-    retm<xmm0>
-    endm
+XMVector4Equal			proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector4EqualR			proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector4EqualInt		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector4EqualIntR		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector4NearEqual		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
+XMVector4NotEqual		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector4NotEqualInt		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector4Greater		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector4GreaterR		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector4GreaterOrEqual		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector4GreaterOrEqualR	proto XM_CALLCONV :FXMVECTOR,:FXMVECTOR
+XMVector4Less			proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector4LessOrEqual		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector4InBounds		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector4IsNaN			proto XM_CALLCONV :FXMVECTOR
+XMVector4IsInfinite		proto XM_CALLCONV :FXMVECTOR
 
-XMVector3LengthSq	proto :FXMVECTOR
-XMVector3ReciprocalLengthEst proto :FXMVECTOR
-XMVector3ReciprocalLength proto :FXMVECTOR
-XMVector3LengthEst	proto :FXMVECTOR
-XMVector3Length		proto :FXMVECTOR
-XMVector3NormalizeEst	proto :FXMVECTOR
+XMVector4Dot			proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector4Cross			proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
+XMVector4LengthSq		proto XM_CALLCONV :FXMVECTOR
+XMVector4ReciprocalLengthEst	proto XM_CALLCONV :FXMVECTOR
+XMVector4ReciprocalLength	proto XM_CALLCONV :FXMVECTOR
+XMVector4LengthEst		proto XM_CALLCONV :FXMVECTOR
+XMVector4Length			proto XM_CALLCONV :FXMVECTOR
+XMVector4NormalizeEst		proto XM_CALLCONV :FXMVECTOR
+XMVector4Normalize		proto XM_CALLCONV :FXMVECTOR
+XMVector4ClampLength		proto XM_CALLCONV :FXMVECTOR, :float, :float
+XMVector4ClampLengthV		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
+XMVector4Reflect		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector4Refract		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :float
+XMVector4RefractV		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
+XMVector4Orthogonal		proto XM_CALLCONV :FXMVECTOR
+XMVector4AngleBetweenNormalsEst proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector4AngleBetweenNormals	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector4AngleBetweenVectors	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMVector4Transform		proto XM_CALLCONV :FXMVECTOR, :FXMMATRIX
+XMVector4TransformStream	proto XM_CALLCONV :ptr XMFLOAT4, :size_t, :ptr XMFLOAT4, :size_t, :size_t, :FXMMATRIX
 
-XMVector3Normalize macro V:=<xmm0>
-ifdef _XM_SSE4_INTRINSICS_
-elseifdef _XM_SSE3_INTRINSICS_
-elseifdef _XM_SSE_INTRINSICS_
-    _mm_store_ps(xmm0, V)
-    _mm_store_ps(xmm1, xmm0)
-    _mm_store_ps(xmm2, _mm_mul_ps(xmm1, xmm0))
-    _mm_shuffle_ps(xmm2, xmm1, _MM_SHUFFLE(2,1,2,1))
-    _mm_add_ss(xmm1, xmm2)
-    _mm_add_ss(xmm1, XM_PERMUTE_PS(xmm2, _MM_SHUFFLE(1,1,1,1)))
-    _mm_setzero_ps(xmm2)
-    _mm_sqrt_ps(xmm3, XM_PERMUTE_PS(xmm1, _MM_SHUFFLE(0,0,0,0)))
-    _mm_cmpneq_ps(xmm1, g_XMInfinity)
-    _mm_div_ps(xmm0, xmm3)
-    _mm_cmpneq_ps(xmm2, xmm3)
-    _mm_and_ps(xmm0, xmm2)
-    _mm_andnot_ps(_mm_store_ps(xmm2, xmm1), g_XMQNaN)
-    _mm_and_ps(xmm1, xmm0)
-    _mm_or_ps(_mm_store_ps(xmm0, xmm2), xmm1)
-    retm<xmm0>
-endif
-    endm
+XMMatrixIsNaN		proto XM_CALLCONV :FXMMATRIX
+XMMatrixIsInfinite	proto XM_CALLCONV :FXMMATRIX
+XMMatrixIsIdentity	proto XM_CALLCONV :FXMMATRIX
+XMMatrixMultiply	proto XM_CALLCONV :FXMMATRIX, :CXMMATRIX
+XMMatrixInverse		proto XM_CALLCONV :ptr XMVECTOR, :FXMMATRIX
+XMMatrixDeterminant	proto XM_CALLCONV :FXMMATRIX
+XMMatrixDecompose	proto XM_CALLCONV :ptr XMVECTOR, :ptr XMVECTOR, :ptr XMVECTOR, :FXMMATRIX
+XMMatrixIdentity	proto XM_CALLCONV XMTHISPTR
+XMMatrixSet		proto XM_CALLCONV XMTHISPTR, :float, :float, :float, :float, :float, :float, :float, :float,
+			      :float, :float, :float, :float, :float, :float, :float, :float
+XMMatrixTranslation	proto XM_CALLCONV XMTHISPTR, :float, :float, :float
+XMMatrixScaling		proto XM_CALLCONV XMTHISPTR, :float, :float, :float
 
-XMMatrixTranspose macro M, O
-    ifnb <M>
-	movaps xmm2,M.r[0x00]
-	movaps xmm3,M.r[0x20]
-	movaps xmm0,M.r[0x00]
-	shufps xmm0,M.r[0x10],_MM_SHUFFLE(3,2,3,2)
-	movaps xmm1,M.r[0x20]
-	shufps xmm1,M.r[0x30],_MM_SHUFFLE(3,2,3,2)
-	movhps xmm2,QWORD PTR M.r[0x10]
-	movhps xmm3,QWORD PTR M.r[0x30]
-	movaps xmm4,xmm2
-	shufps xmm2,xmm3,_MM_SHUFFLE(3,1,3,1)
-	ifnb <O>
-	    movaps O.r[0x10],xmm2
-	else
-	    movaps xmm5,xmm2
-	endif
-	movaps xmm2,xmm0
-	shufps xmm4,xmm3,_MM_SHUFFLE(2,0,2,0)
-	shufps xmm2,xmm1,_MM_SHUFFLE(2,0,2,0)
-	shufps xmm0,xmm1,_MM_SHUFFLE(3,1,3,1)
-	ifnb <O>
-	    movaps O.r[0x00],xmm4
-	    movaps O.r[0x20],xmm2
-	    movaps O.r[0x30],xmm0
-	else
-	    movaps xmm3,xmm0
-	    movaps xmm0,xmm4
-	    movaps xmm1,xmm5
-	endif
-    else
-	movaps xmm4,xmm0
-	movlhps xmm4,xmm1
-	shufps xmm0,xmm1,_MM_SHUFFLE(3,2,3,2)
-	movaps xmm1,xmm2
-	shufps xmm1,xmm3,_MM_SHUFFLE(3,2,3,2)
-	movlhps xmm2,xmm3
-	movaps xmm3,xmm4
-	shufps xmm4,xmm2,_MM_SHUFFLE(3,1,3,1)
-	movaps xmm5,xmm4
-	movaps xmm4,xmm0
-	shufps xmm3,xmm2,_MM_SHUFFLE(2,0,2,0)
-	shufps xmm4,xmm1,_MM_SHUFFLE(2,0,2,0)
-	shufps xmm0,xmm1,_MM_SHUFFLE(3,1,3,1)
-	movaps xmm1,xmm5
-	movaps xmm2,xmm4
-	movaps xmm4,xmm3
-	movaps xmm3,xmm0
-	movaps xmm0,xmm4
-    endif
-    exitm<>
-    endm
+XMMatrixTranslationFromVector	proto XM_CALLCONV XMTHISPTR, :FXMVECTOR
+XMMatrixScalingFromVector	proto XM_CALLCONV XMTHISPTR, :FXMVECTOR
+XMMatrixRotationX		proto XM_CALLCONV XMTHISPTR, :float
+XMMatrixRotationY		proto XM_CALLCONV XMTHISPTR, :float
+XMMatrixRotationZ		proto XM_CALLCONV XMTHISPTR, :float
+XMMatrixRotationRollPitchYaw	proto XM_CALLCONV XMTHISPTR, :float, :float, :float
+XMMatrixRotationRollPitchYawFromVector proto XM_CALLCONV XMTHISPTR, :FXMVECTOR
+XMMatrixRotationNormal		proto XM_CALLCONV XMTHISPTR, :FXMVECTOR, :float
+XMMatrixRotationAxis		proto XM_CALLCONV XMTHISPTR, :FXMVECTOR, :float
+XMMatrixRotationQuaternion	proto XM_CALLCONV XMTHISPTR, :FXMVECTOR
+XMMatrixTransformation2D	proto XM_CALLCONV XMTHISPTR, :FXMVECTOR, :float, :FXMVECTOR, :FXMVECTOR, :float, :GXMVECTOR
+XMMatrixTransformation		proto XM_CALLCONV XMTHISPTR, :FXMVECTOR, :FXMVECTOR, :FXMVECTOR, :GXMVECTOR, :HXMVECTOR, :HXMVECTOR
+XMMatrixAffineTransformation2D	proto XM_CALLCONV XMTHISPTR, :FXMVECTOR, :FXMVECTOR, :float, :FXMVECTOR
+XMMatrixAffineTransformation	proto XM_CALLCONV XMTHISPTR, :FXMVECTOR, :FXMVECTOR, :FXMVECTOR, :GXMVECTOR
+XMMatrixReflect			proto XM_CALLCONV XMTHISPTR, :FXMVECTOR
+XMMatrixShadow			proto XM_CALLCONV XMTHISPTR, :FXMVECTOR, :FXMVECTOR
 
-XMMatrixTransposex macro O
-    _mm_store_ps(xmm4, xmm0)
-    _mm_store_ps(xmm5, xmm2)
-    _mm_shuffle_ps(xmm0, xmm1, _MM_SHUFFLE(1,0,1,0))
-    _mm_shuffle_ps(xmm4, xmm1, _MM_SHUFFLE(3,2,3,2))
-    _mm_shuffle_ps(xmm2, xmm3, _MM_SHUFFLE(1,0,1,0))
-    _mm_shuffle_ps(xmm5, xmm3, _MM_SHUFFLE(3,2,3,2))
-    _mm_store_ps(xmm1, xmm0)
-    _mm_shuffle_ps(xmm0, xmm4, _MM_SHUFFLE(2,0,2,0))
-    _mm_shuffle_ps(xmm1, xmm4, _MM_SHUFFLE(3,1,3,1))
-    _mm_store_ps(xmm3, xmm2)
-    _mm_store_ps(xmm2, xmm4)
-    _mm_shuffle_ps(xmm2, xmm5, _MM_SHUFFLE(2,0,2,0))
-    _mm_shuffle_ps(xmm3, xmm5, _MM_SHUFFLE(3,1,3,1))
-    ifnb <O>
-	_mm_store_ps(O.r[0*16], xmm0)
-	_mm_store_ps(O.r[1*16], xmm1)
-	_mm_store_ps(O.r[2*16], xmm2)
-	_mm_store_ps(O.r[3*16], xmm3)
-    endif
-    exitm<>
-    endm
+XMMatrixLookAtLH		proto XM_CALLCONV XMTHISPTR, :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
+XMMatrixLookAtRH		proto XM_CALLCONV XMTHISPTR, :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
+XMMatrixLookToLH		proto XM_CALLCONV XMTHISPTR, :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
+XMMatrixLookToRH		proto XM_CALLCONV XMTHISPTR, :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
+XMMatrixPerspectiveLH		proto XM_CALLCONV XMTHISPTR, :float, :float, :float, :float
+XMMatrixPerspectiveRH		proto XM_CALLCONV XMTHISPTR, :float, :float, :float, :float
+XMMatrixPerspectiveFovLH	proto XM_CALLCONV XMTHISPTR, :float, :float, :float, :float
+XMMatrixPerspectiveFovRH	proto XM_CALLCONV XMTHISPTR, :float, :float, :float, :float
+XMMatrixPerspectiveOffCenterLH	proto XM_CALLCONV XMTHISPTR, :float, :float, :float, :float, :float, :float
+XMMatrixPerspectiveOffCenterRH	proto XM_CALLCONV XMTHISPTR, :float, :float, :float, :float, :float, :float
+XMMatrixOrthographicLH		proto XM_CALLCONV XMTHISPTR, :float, :float, :float, :float
+XMMatrixOrthographicRH		proto XM_CALLCONV XMTHISPTR, :float, :float, :float, :float
+XMMatrixOrthographicOffCenterLH proto XM_CALLCONV XMTHISPTR, :float, :float, :float, :float, :float, :float
+XMMatrixOrthographicOffCenterRH proto XM_CALLCONV XMTHISPTR, :float, :float, :float, :float, :float, :float
 
-XMMatrixMultiplyTranspose proto :FXMMATRIX, :CXMMATRIX
+XMQuaternionEqual	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMQuaternionNotEqual	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMQuaternionIsNaN	proto XM_CALLCONV :FXMVECTOR
+XMQuaternionIsInfinite	proto XM_CALLCONV :FXMVECTOR
+XMQuaternionIsIdentity	proto XM_CALLCONV :FXMVECTOR
 
-XMVector3ClampLength	proto :FXMVECTOR, :float, :float
-XMVector3ClampLengthV	proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
-XMVector3Reflect	proto :FXMVECTOR, :FXMVECTOR
-XMVector3Refract	proto :FXMVECTOR, :FXMVECTOR, :float
-XMVector3RefractV	proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
-XMVector3Orthogonal	proto :FXMVECTOR
-XMVector3AngleBetweenNormalsEst proto :FXMVECTOR, :FXMVECTOR
-XMVector3AngleBetweenNormals	proto :FXMVECTOR, :FXMVECTOR
-XMVector3AngleBetweenVectors	proto :FXMVECTOR, :FXMVECTOR
-XMVector3LinePointDistance	proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
+XMQuaternionDot		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMQuaternionMultiply	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMQuaternionLengthSq	proto XM_CALLCONV :FXMVECTOR
+XMQuaternionReciprocalLength proto XM_CALLCONV :FXMVECTOR
+XMQuaternionLength	proto XM_CALLCONV :FXMVECTOR
+XMQuaternionNormalizeEst proto XM_CALLCONV :FXMVECTOR
+XMQuaternionNormalize	proto XM_CALLCONV :FXMVECTOR
+XMQuaternionConjugate	proto XM_CALLCONV :FXMVECTOR
+XMQuaternionInverse	proto XM_CALLCONV :FXMVECTOR
+XMQuaternionLn		proto XM_CALLCONV :FXMVECTOR
+XMQuaternionExp		proto XM_CALLCONV :FXMVECTOR
+XMQuaternionSlerp	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :float
+XMQuaternionSlerpV	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
+XMQuaternionSquad	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :FXMVECTOR, :GXMVECTOR, :float
+XMQuaternionSquadV	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :FXMVECTOR, :GXMVECTOR, :HXMVECTOR
 
-XMVector3ComponentsFromNormal	proto :ptr XMVECTOR, :ptr XMVECTOR, :FXMVECTOR, :FXMVECTOR
-
-XMVector3Rotate			proto :FXMVECTOR, :FXMVECTOR
-XMVector3InverseRotate		proto :FXMVECTOR, :FXMVECTOR
-XMVector3Transform macro V, M
-    _mm_store_ps(xmm0, V)
-    _mm_store_ps(xmm2, xmm0)
-    _mm_store_ps(xmm0, XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(0,0,0,0)))
-    _mm_store_ps(xmm4, _mm_mul_ps(xmm0, M.r[0*16]))
-    _mm_store_ps(xmm3, xmm2)
-    _mm_store_ps(xmm3, XM_PERMUTE_PS(xmm3, _MM_SHUFFLE(1,1,1,1)))
-    _mm_store_ps(xmm3, _mm_mul_ps(xmm3, M.r[1*16]))
-    _mm_store_ps(xmm4, _mm_add_ps(xmm4, xmm3))
-    _mm_store_ps(xmm3, XM_PERMUTE_PS(xmm2, _MM_SHUFFLE(2,2,2,2)))
-    _mm_store_ps(xmm3, _mm_mul_ps(xmm3, M.r[2*16]))
-    _mm_store_ps(xmm4, _mm_add_ps(xmm4, xmm3))
-    _mm_store_ps(xmm0, _mm_add_ps(xmm4, M.r[3*16]))
-    retm<xmm0>
-    endm
-
-XMVector3TransformStream	proto :ptr XMFLOAT4, :size_t, :ptr XMFLOAT3, :size_t, :size_t, :FXMMATRIX
-XMVector3TransformCoord		proto :FXMVECTOR, :FXMMATRIX
-XMVector3TransformCoordStream	proto :ptr XMFLOAT3, :size_t, :ptr XMFLOAT3, :size_t, :size_t, :FXMMATRIX
-XMVector3TransformNormal	proto :FXMVECTOR, :FXMMATRIX
-XMVector3TransformNormalStream	proto :ptr XMFLOAT3, :size_t, :ptr XMFLOAT3, :size_t, :size_t, :FXMMATRIX
-XMVector3Project		proto :FXMVECTOR, :float, :float, :float, :float, :float, :float, :FXMMATRIX, :CXMMATRIX, :CXMMATRIX
-XMVector3ProjectStream		proto :ptr XMFLOAT3, :size_t, :ptr XMFLOAT3, :size_t, :size_t, :float, :float, :float, :float, :float, :float, :FXMMATRIX, :CXMMATRIX, :CXMMATRIX
-XMVector3Unproject		proto :FXMVECTOR, :float, :float, :float, :float, :float, :float, :FXMMATRIX, :CXMMATRIX, :CXMMATRIX
-XMVector3UnprojectStream	proto :ptr XMFLOAT3, :size_t, :ptr XMFLOAT3, :size_t, :size_t, :float, :float, :float, :float, :float, :float, :FXMMATRIX, :CXMMATRIX, :CXMMATRIX
-
-XMVector4Equal			proto :FXMVECTOR, :FXMVECTOR
-XMVector4EqualR			proto :FXMVECTOR, :FXMVECTOR
-XMVector4EqualInt		proto :FXMVECTOR, :FXMVECTOR
-XMVector4EqualIntR		proto :FXMVECTOR, :FXMVECTOR
-XMVector4NearEqual		proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
-XMVector4NotEqual		proto :FXMVECTOR, :FXMVECTOR
-XMVector4NotEqualInt		proto :FXMVECTOR, :FXMVECTOR
-XMVector4Greater		proto :FXMVECTOR, :FXMVECTOR
-XMVector4GreaterR		proto :FXMVECTOR, :FXMVECTOR
-XMVector4GreaterOrEqual		proto :FXMVECTOR, :FXMVECTOR
-XMVector4GreaterOrEqualR	proto :FXMVECTOR,:FXMVECTOR
-XMVector4Less			proto :FXMVECTOR, :FXMVECTOR
-XMVector4LessOrEqual		proto :FXMVECTOR, :FXMVECTOR
-XMVector4InBounds		proto :FXMVECTOR, :FXMVECTOR
-XMVector4IsNaN			proto :FXMVECTOR
-XMVector4IsInfinite		proto :FXMVECTOR
-
-XMVector4Dot			proto :FXMVECTOR, :FXMVECTOR
-XMVector4Cross			proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
-XMVector4LengthSq		proto :FXMVECTOR
-XMVector4ReciprocalLengthEst	proto :FXMVECTOR
-XMVector4ReciprocalLength	proto :FXMVECTOR
-XMVector4LengthEst		proto :FXMVECTOR
-XMVector4Length			proto :FXMVECTOR
-XMVector4NormalizeEst		proto :FXMVECTOR
-XMVector4Normalize		proto :FXMVECTOR
-XMVector4ClampLength		proto :FXMVECTOR, :float, :float
-XMVector4ClampLengthV		proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
-XMVector4Reflect		proto :FXMVECTOR, :FXMVECTOR
-XMVector4Refract		proto :FXMVECTOR, :FXMVECTOR, :float
-XMVector4RefractV		proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
-XMVector4Orthogonal		proto :FXMVECTOR
-XMVector4AngleBetweenNormalsEst proto :FXMVECTOR, :FXMVECTOR
-XMVector4AngleBetweenNormals	proto :FXMVECTOR, :FXMVECTOR
-XMVector4AngleBetweenVectors	proto :FXMVECTOR, :FXMVECTOR
-XMVector4Transform		proto :FXMVECTOR, :FXMMATRIX
-XMVector4TransformStream	proto :ptr XMFLOAT4, :size_t, :ptr XMFLOAT4, :size_t, :size_t, :FXMMATRIX
-
-XMMatrixIsNaN			proto :FXMMATRIX
-XMMatrixIsInfinite		proto :FXMMATRIX
-XMMatrixIsIdentity		proto :FXMMATRIX
-
-XMMatrixMultiply macro M1, M2
-local vX,vY,vZ,vW
-ifdef _XM_NO_INTRINSICS_
-elseifdef _XM_ARM_NEON_INTRINSICS_
-elseifdef _XM_SSE_INTRINSICS_
-ifdifi <M1>,<rcx>
-    lea rcx,M1
-endif
-ifdifi <M2>,<rdx>
-    lea rdx,M2
-endif
-    vX equ <xmm2>
-    vY equ <xmm3>
-    vZ equ <xmm4>
-    vW equ <xmm5>
-    ;;
-    ;; Splat the component X,Y,Z then W
-    ;;
-ifdef _XM_AVX_INTRINSICS_
-    _mm_store_ps(vX, _mm_broadcast_ss([rcx].XMFLOAT4X4._11))
-    _mm_store_ps(vY, _mm_broadcast_ss([rcx].XMFLOAT4X4._12))
-    _mm_store_ps(vZ, _mm_broadcast_ss([rcx].XMFLOAT4X4._13))
-    _mm_store_ps(vW, _mm_broadcast_ss([rcx].XMFLOAT4X4._14))
-else
-    ;;
-    ;; Use vW to hold the original row
-    ;;
-    _mm_store_ps(vX, XM_PERMUTE_PS([rcx], _MM_SHUFFLE(0,0,0,0)))
-    _mm_store_ps(vY, XM_PERMUTE_PS([rcx], _MM_SHUFFLE(1,1,1,1)))
-    _mm_store_ps(vZ, XM_PERMUTE_PS([rcx], _MM_SHUFFLE(2,2,2,2)))
-    _mm_store_ps(vW, XM_PERMUTE_PS([rcx], _MM_SHUFFLE(3,3,3,3)))
-endif
-    ;;
-    ;; Perform the operation on the first row
-    ;;
-    _mm_mul_ps(vX, [rdx][0x00])
-    _mm_mul_ps(vY, [rdx][0x10])
-    _mm_mul_ps(vZ, [rdx][0x20])
-    _mm_mul_ps(vW, [rdx][0x30])
-    ;;
-    ;; Perform a binary add to reduce cumulative errors
-    ;;
-    _mm_add_ps(vX, vZ)
-    _mm_add_ps(vY, vW)
-    _mm_add_ps(vX, vY)
-    _mm_store_ps(xmm6, vX)
-    ;;
-    ;; Repeat for the other 3 rows
-    ;;
-ifdef _XM_AVX_INTRINSICS_
-    _mm_store_ps(vX, _mm_broadcast_ss([rcx].XMFLOAT4X4._21))
-    _mm_store_ps(vY, _mm_broadcast_ss([rcx].XMFLOAT4X4._22))
-    _mm_store_ps(vZ, _mm_broadcast_ss([rcx].XMFLOAT4X4._23))
-    _mm_store_ps(vW, _mm_broadcast_ss([rcx].XMFLOAT4X4._24))
-else
-    _mm_store_ps(vX, XM_PERMUTE_PS([rcx][0x10], _MM_SHUFFLE(0,0,0,0)))
-    _mm_store_ps(vY, XM_PERMUTE_PS([rcx][0x10], _MM_SHUFFLE(1,1,1,1)))
-    _mm_store_ps(vZ, XM_PERMUTE_PS([rcx][0x10], _MM_SHUFFLE(2,2,2,2)))
-    _mm_store_ps(vW, XM_PERMUTE_PS([rcx][0x10], _MM_SHUFFLE(3,3,3,3)))
-endif
-    _mm_mul_ps(vX, [rdx][0x00])
-    _mm_mul_ps(vY, [rdx][0x10])
-    _mm_mul_ps(vZ, [rdx][0x20])
-    _mm_mul_ps(vW, [rdx][0x30])
-    _mm_add_ps(vX, vZ)
-    _mm_add_ps(vY, vW)
-    _mm_add_ps(vX, vY)
-    _mm_store_ps(xmm7, vX)
-ifdef _XM_AVX_INTRINSICS_
-    _mm_store_ps(vX, _mm_broadcast_ss([rcx].XMFLOAT4X4._31))
-    _mm_store_ps(vY, _mm_broadcast_ss([rcx].XMFLOAT4X4._32))
-    _mm_store_ps(vZ, _mm_broadcast_ss([rcx].XMFLOAT4X4._33))
-    _mm_store_ps(vW, _mm_broadcast_ss([rcx].XMFLOAT4X4._34))
-else
-    _mm_store_ps(vX,  XM_PERMUTE_PS([rcx][0x20], _MM_SHUFFLE(0,0,0,0)))
-    _mm_store_ps(vY,  XM_PERMUTE_PS([rcx][0x20], _MM_SHUFFLE(1,1,1,1)))
-    _mm_store_ps(vZ,  XM_PERMUTE_PS([rcx][0x20], _MM_SHUFFLE(2,2,2,2)))
-    _mm_store_ps(vW,  XM_PERMUTE_PS([rcx][0x20], _MM_SHUFFLE(3,3,3,3)))
-endif
-    _mm_mul_ps(vX, [rdx][0x00])
-    _mm_mul_ps(vY, [rdx][0x10])
-    _mm_mul_ps(vZ, [rdx][0x20])
-    _mm_mul_ps(vW, [rdx][0x30])
-    _mm_add_ps(vX, vZ)
-    _mm_add_ps(vY, vW)
-    _mm_add_ps(vX, vY)
-    _mm_store_ps(xmm1, vX)
-ifdef _XM_AVX_INTRINSICS_
-    _mm_store_ps(vX, _mm_broadcast_ss([rcx].XMFLOAT4X4._41))
-    _mm_store_ps(vY, _mm_broadcast_ss([rcx].XMFLOAT4X4._42))
-    _mm_store_ps(vZ, _mm_broadcast_ss([rcx].XMFLOAT4X4._43))
-    _mm_store_ps(vW, _mm_broadcast_ss([rcx].XMFLOAT4X4._44))
-else
-    _mm_store_ps(vX,  XM_PERMUTE_PS([rcx][0x30], _MM_SHUFFLE(0,0,0,0)))
-    _mm_store_ps(vY,  XM_PERMUTE_PS([rcx][0x30], _MM_SHUFFLE(1,1,1,1)))
-    _mm_store_ps(vZ,  XM_PERMUTE_PS([rcx][0x30], _MM_SHUFFLE(2,2,2,2)))
-    _mm_store_ps(vW,  XM_PERMUTE_PS([rcx][0x30], _MM_SHUFFLE(3,3,3,3)))
-endif
-    _mm_mul_ps(vX, [rdx][0x00])
-    _mm_mul_ps(vY, [rdx][0x10])
-    _mm_mul_ps(vZ, [rdx][0x20])
-    _mm_mul_ps(vW, [rdx][0x30])
-    _mm_add_ps(vX, vZ)
-    _mm_add_ps(vY, vW)
-    _mm_add_ps(vX, vY)
-    _mm_store_ps(xmm3, vX)
-    _mm_store_ps(xmm2, xmm1)
-    _mm_store_ps(xmm0, xmm6)
-    _mm_store_ps(xmm1, xmm7)
-    exitm<>
-endif
-    endm
-
-XMMatrixInverse			proto :ptr XMVECTOR, :FXMMATRIX
-XMMatrixDeterminant		proto :FXMMATRIX
-
-XMMatrixDecompose		proto :ptr XMVECTOR, :ptr XMVECTOR, :ptr XMVECTOR, :FXMMATRIX
-
-XMMatrixIdentity macro M
-    _mm_store_ps(xmm0, g_XMIdentityR0.v)
-    _mm_store_ps(xmm1, g_XMIdentityR1.v)
-    _mm_store_ps(xmm2, g_XMIdentityR2.v)
-    _mm_store_ps(xmm3, g_XMIdentityR3.v)
-    ifnb <M>
-	_mm_store_ps(M.r[0*16], xmm0)
-	_mm_store_ps(M.r[1*16], xmm1)
-	_mm_store_ps(M.r[2*16], xmm2)
-	_mm_store_ps(M.r[3*16], xmm3)
-    endif
-    exitm<>
-    endm
-
-XMMatrixSet macro m00, m01, m02, m03, m10, m11, m12, m13,
-		  m20, m21, m22, m23, m30, m31, m32, m33
-    _mm_set_epi32(xmm0, m00, m01, m02, m03)
-    _mm_set_epi32(xmm1, m10, m11, m12, m13)
-    _mm_set_epi32(xmm2, m20, m21, m22, m23)
-    _mm_set_epi32(xmm3, m30, m31, m32, m33)
-    exitm<>
-    endm
-
-XMMatrixTranslation macro OffsetX, OffsetY, OffsetZ, M
-ifdef _XM_NO_INTRINSICS_
-elseif defined(_XM_SSE_INTRINSICS_) or defined(_XM_ARM_NEON_INTRINSICS_)
-    _mm_store_ps(xmm0, g_XMIdentityR0.v)
-    _mm_store_ps(xmm1, g_XMIdentityR1.v)
-    _mm_store_ps(xmm2, g_XMIdentityR2.v)
-    _mm_set_epi32(xmm3, OffsetX, OffsetY, OffsetZ, 1.0 )
-    ifnb <M>
-     _mm_store_ps(M.r[0*16], xmm0)
-     _mm_store_ps(M.r[1*16], xmm1)
-     _mm_store_ps(M.r[2*16], xmm2)
-     _mm_store_ps(M.r[3*16], xmm3)
-    endif
-    exitm<>
-endif
-    endm
-
-XMMatrixScaling macro ScaleX, ScaleY, ScaleZ, M
-    _mm_set_epi32(xmm0, 0, 0, 0, ScaleX)
-    _mm_set_epi32(xmm1, 0, 0, ScaleY, 0)
-    _mm_set_epi32(xmm2, 0, ScaleZ, 0, 0)
-    _mm_store_ps(xmm3, g_XMIdentityR3.v)
-    ifnb <M>
-     _mm_store_ps(M.r[0*16], xmm0)
-     _mm_store_ps(M.r[1*16], xmm1)
-     _mm_store_ps(M.r[2*16], xmm2)
-     _mm_store_ps(M.r[3*16], xmm3)
-    endif
-    retm<xmm0>
-    endm
-
-XMMatrixTranslationFromVector macro V, M
-    _mm_store_ps(xmm1, V)
-    _mm_store_ps(xmm0, g_XMIdentityR3.v)
-    _mm_store_ps(xmm2, g_XMSelect1110.v)
-    _mm_store_ps(xmm3, XMVectorSelect(xmm0, xmm1, xmm2))
-    _mm_store_ps(xmm2, g_XMIdentityR2.v)
-    _mm_store_ps(xmm1, g_XMIdentityR1.v)
-    _mm_store_ps(xmm0, g_XMIdentityR0.v)
-    ifnb <M>
-     _mm_store_ps(M.r[0*16], xmm0)
-     _mm_store_ps(M.r[1*16], xmm1)
-     _mm_store_ps(M.r[2*16], xmm2)
-     _mm_store_ps(M.r[3*16], xmm3)
-    endif
-    retm<xmm0>
-    endm
-
-XMMatrixScalingFromVector	proto :FXMVECTOR
-
-XMMatrixRotationX		proto :float
-XMMatrixRotationY		proto :float
-XMMatrixRotationZ		proto :float
-XMMatrixRotationRollPitchYaw	proto :float, :float, :float
-XMMatrixRotationRollPitchYawFromVector proto :FXMVECTOR
-XMMatrixRotationNormal		proto :FXMVECTOR, :float
-XMMatrixRotationAxis		proto :FXMVECTOR, :float
-XMMatrixRotationQuaternion	proto :FXMVECTOR
-XMMatrixTransformation2D	proto :FXMVECTOR, :float, :FXMVECTOR, :FXMVECTOR, :float, :GXMVECTOR
-XMMatrixTransformation		proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR, :GXMVECTOR, :HXMVECTOR, :HXMVECTOR
-XMMatrixAffineTransformation2D	proto :FXMVECTOR, :FXMVECTOR, :float, :FXMVECTOR
-XMMatrixAffineTransformation	proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR, :GXMVECTOR
-XMMatrixReflect			proto :FXMVECTOR
-XMMatrixShadow			proto :FXMVECTOR, :FXMVECTOR
-
-XMMatrixLookAtLH macro EyePosition, FocusPosition, UpDirection
-    _mm_store_ps(xmm0, EyePosition)
-    _mm_store_ps(xmm1, FocusPosition)
-    _mm_store_ps(xmm2, UpDirection)
-    _mm_sub_ps(xmm1, xmm0)
-    XMMatrixLookToLH(xmm0, xmm1, xmm2)
-    retm<xmm0>
-    endm
-
-XMMatrixLookAtRH macro EyePosition, FocusPosition, UpDirection
-    _mm_store_ps(xmm0, EyePosition)
-    _mm_store_ps(xmm1, FocusPosition)
-    _mm_store_ps(xmm2, UpDirection)
-    _mm_store_ps(xmm3 xmm0)
-    XMVectorSubtract(xmm3, xmm1)
-    XMMatrixLookToLH(xmm0, xmm3, xmm2)
-    retm<xmm0>
-    endm
-
-XMMatrixLookToLH macro EyePosition, EyeDirection, UpDirection
-
-    _mm_store_ps(xmm0, EyePosition)
-    _mm_store_ps(xmm1, EyeDirection)
-    _mm_store_ps(xmm2, UpDirection)
-
-    _mm_store_ps(xmm6, xmm0)
-    _mm_store_ps(xmm7, xmm2)
-    _mm_store_ps(xmm5, XMVector3Normalize(xmm1))
-    _mm_store_ps(xmm0, xmm7)
-    _mm_store_ps(xmm1, xmm5)
-    _mm_store_ps(xmm4, XMVector3Normalize(XMVector3Cross(xmm0, xmm1)))
-    _mm_store_ps(xmm1, xmm0)
-    _mm_store_ps(xmm0, xmm5)
-    _mm_store_ps(xmm3, XMVector3Cross(xmm0, xmm1))
-    _mm_store_ps(xmm6, _mm_sub_ps( _mm_setzero_ps(), xmm6 ))
-    _mm_store_ps(xmm7, XMVector3Dot(_mm_store_ps(xmm0, xmm4), _mm_store_ps(xmm1, xmm6)))
-    _mm_store_ps(xmm1, XMVector3Dot(_mm_store_ps(xmm0, xmm3), _mm_store_ps(xmm1, xmm6)))
-    _mm_store_ps(xmm6, XMVector3Dot(_mm_store_ps(xmm0, xmm5), _mm_store_ps(xmm1, xmm6)))
-    _mm_store_ps(xmm3, XMVectorSelect(xmm1, xmm3, g_XMSelect1110.v))
-    _mm_store_ps(xmm7, XMVectorSelect(xmm7, xmm4, g_XMSelect1110.v))
-    _mm_store_ps(xmm6, XMVectorSelect(xmm6, xmm5, g_XMSelect1110.v))
-    _mm_store_ps(xmm0, xmm7)
-    _mm_store_ps(xmm2, _mm_shuffle_ps(xmm0, xmm3, _MM_SHUFFLE(1,0,1,0)))
-    _mm_store_ps(xmm3, _mm_shuffle_ps(xmm7, xmm3, _MM_SHUFFLE(3,2,3,2)))
-    _mm_store_ps(xmm5, g_XMIdentityR3.v)
-    _mm_store_ps(xmm7, xmm6)
-    _mm_store_ps(xmm4, _mm_shuffle_ps(xmm6, xmm5, _MM_SHUFFLE(1,0,1,0)))
-    _mm_store_ps(xmm5, _mm_shuffle_ps(xmm7, xmm5, _MM_SHUFFLE(3,2,3,2)))
-    _mm_store_ps(xmm0, xmm2)
-    _mm_shuffle_ps(xmm0, xmm3, _MM_SHUFFLE(2,0,2,0))
-    _mm_store_ps(xmm1, _mm_shuffle_ps(xmm2, xmm3,_MM_SHUFFLE(3,1,3,1)))
-    _mm_store_ps(xmm2, xmm4)
-    _mm_shuffle_ps(xmm2, xmm5, _MM_SHUFFLE(2,0,2,0))
-    _mm_store_ps(xmm3, _mm_shuffle_ps(xmm4, xmm5, _MM_SHUFFLE(3,1,3,1)))
-    retm<xmm0>
-    endm
-
-XMMatrixLookToRH		proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
-XMMatrixPerspectiveLH		proto :float, :float, :float, :float
-XMMatrixPerspectiveRH		proto :float, :float, :float, :float
-
-XMMatrixPerspectiveFovLH	proto :float, :float, :float, :float
-
-XMMatrixPerspectiveFovRH	proto :float, :float, :float, :float
-XMMatrixPerspectiveOffCenterLH	proto :float, :float, :float, :float, :float, :float
-XMMatrixPerspectiveOffCenterRH	proto :float, :float, :float, :float, :float, :float
-XMMatrixOrthographicLH		proto :float, :float, :float, :float
-XMMatrixOrthographicRH		proto :float, :float, :float, :float
-XMMatrixOrthographicOffCenterLH proto :float, :float, :float, :float, :float, :float
-XMMatrixOrthographicOffCenterRH proto :float, :float, :float, :float, :float, :float
-
-XMQuaternionEqual	proto :FXMVECTOR, :FXMVECTOR
-XMQuaternionNotEqual	proto :FXMVECTOR, :FXMVECTOR
-XMQuaternionIsNaN	proto :FXMVECTOR
-XMQuaternionIsInfinite	proto :FXMVECTOR
-XMQuaternionIsIdentity	proto :FXMVECTOR
-
-XMQuaternionDot		proto :FXMVECTOR, :FXMVECTOR
-XMQuaternionMultiply	proto :FXMVECTOR, :FXMVECTOR
-XMQuaternionLengthSq	proto :FXMVECTOR
-XMQuaternionReciprocalLength proto :FXMVECTOR
-XMQuaternionLength	proto :FXMVECTOR
-XMQuaternionNormalizeEst proto :FXMVECTOR
-XMQuaternionNormalize	proto :FXMVECTOR
-XMQuaternionConjugate	proto :FXMVECTOR
-XMQuaternionInverse	proto :FXMVECTOR
-XMQuaternionLn		proto :FXMVECTOR
-XMQuaternionExp		proto :FXMVECTOR
-XMQuaternionSlerp	proto :FXMVECTOR, :FXMVECTOR, :float
-XMQuaternionSlerpV	proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
-XMQuaternionSquad	proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR, :GXMVECTOR, :float
-XMQuaternionSquadV	proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR, :GXMVECTOR, :HXMVECTOR
-
-XMQuaternionSquadSetup	proto :ptr XMVECTOR, :ptr XMVECTOR, :ptr XMVECTOR, :FXMVECTOR,
+XMQuaternionSquadSetup	proto XM_CALLCONV :ptr XMVECTOR, :ptr XMVECTOR, :ptr XMVECTOR, :FXMVECTOR,
 				:FXMVECTOR, :FXMVECTOR, :GXMVECTOR
 
-XMQuaternionBaryCentric		proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR, :float, :float
-XMQuaternionBaryCentricV	proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR, :GXMVECTOR, :HXMVECTOR
+XMQuaternionBaryCentric		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :FXMVECTOR, :float, :float
+XMQuaternionBaryCentricV	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :FXMVECTOR, :GXMVECTOR, :HXMVECTOR
 
-XMQuaternionIdentity		proto
-XMQuaternionRotationRollPitchYaw proto :float, :float, :float
-XMQuaternionRotationRollPitchYawFromVector proto :FXMVECTOR
-XMQuaternionRotationNormal	proto :FXMVECTOR, :float
-XMQuaternionRotationAxis	proto :FXMVECTOR, :float
-XMQuaternionRotationMatrix	proto :FXMMATRIX
+XMQuaternionIdentity		proto XM_CALLCONV
+XMQuaternionRotationRollPitchYaw proto XM_CALLCONV :float, :float, :float
+XMQuaternionRotationRollPitchYawFromVector proto XM_CALLCONV :FXMVECTOR
+XMQuaternionRotationNormal	proto XM_CALLCONV :FXMVECTOR, :float
+XMQuaternionRotationAxis	proto XM_CALLCONV :FXMVECTOR, :float
+XMQuaternionRotationMatrix	proto XM_CALLCONV :FXMMATRIX
 
-XMQuaternionToAxisAngle		proto :ptr XMVECTOR, :ptr float, :FXMVECTOR
+XMQuaternionToAxisAngle		proto XM_CALLCONV :ptr XMVECTOR, :ptr float, :FXMVECTOR
 
-XMPlaneEqual		proto :FXMVECTOR, :FXMVECTOR
-XMPlaneNearEqual	proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
-XMPlaneNotEqual		proto :FXMVECTOR, :FXMVECTOR
-XMPlaneIsNaN		proto :FXMVECTOR
-XMPlaneIsInfinite	proto :FXMVECTOR
+XMPlaneEqual		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMPlaneNearEqual	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
+XMPlaneNotEqual		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMPlaneIsNaN		proto XM_CALLCONV :FXMVECTOR
+XMPlaneIsInfinite	proto XM_CALLCONV :FXMVECTOR
 
-XMPlaneDot		proto :FXMVECTOR, :FXMVECTOR
-XMPlaneDotCoord		proto :FXMVECTOR, :FXMVECTOR
-XMPlaneDotNormal	proto :FXMVECTOR, :FXMVECTOR
-XMPlaneNormalizeEst	proto :FXMVECTOR
-XMPlaneNormalize	proto :FXMVECTOR
-XMPlaneIntersectLine	proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
+XMPlaneDot		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMPlaneDotCoord		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMPlaneDotNormal	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMPlaneNormalizeEst	proto XM_CALLCONV :FXMVECTOR
+XMPlaneNormalize	proto XM_CALLCONV :FXMVECTOR
+XMPlaneIntersectLine	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
 
-XMPlaneIntersectPlane	proto :ptr XMVECTOR, :ptr XMVECTOR, :FXMVECTOR, :FXMVECTOR
+XMPlaneIntersectPlane	proto XM_CALLCONV :ptr XMVECTOR, :ptr XMVECTOR, :FXMVECTOR, :FXMVECTOR
 
-XMPlaneTransform	proto :FXMVECTOR, :FXMMATRIX
-XMPlaneTransformStream	proto :ptr XMFLOAT4, :size_t, :ptr XFLOAT4, :size_t, :size_t, :FXMMATRIX
+XMPlaneTransform	proto XM_CALLCONV :FXMVECTOR, :FXMMATRIX
+XMPlaneTransformStream	proto XM_CALLCONV :ptr XMFLOAT4, :size_t, :ptr XFLOAT4, :size_t, :size_t, :FXMMATRIX
 
-XMPlaneFromPointNormal	proto :FXMVECTOR, :FXMVECTOR
-XMPlaneFromPoints	proto :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
+XMPlaneFromPointNormal	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMPlaneFromPoints	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR, :FXMVECTOR
 
-XMColorEqual		proto :FXMVECTOR, :FXMVECTOR
-XMColorNotEqual		proto :FXMVECTOR, :FXMVECTOR
-XMColorGreater		proto :FXMVECTOR, :FXMVECTOR
-XMColorGreaterOrEqual	proto :FXMVECTOR, :FXMVECTOR
-XMColorLess		proto :FXMVECTOR, :FXMVECTOR
-XMColorLessOrEqual	proto :FXMVECTOR, :FXMVECTOR
+XMColorEqual		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMColorNotEqual		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMColorGreater		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMColorGreaterOrEqual	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMColorLess		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMColorLessOrEqual	proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
 
-XMColorIsNaN		proto :FXMVECTOR
-XMColorIsInfinite	proto :FXMVECTOR
+XMColorIsNaN		proto XM_CALLCONV :FXMVECTOR
+XMColorIsInfinite	proto XM_CALLCONV :FXMVECTOR
 
-XMColorNegative		proto :FXMVECTOR
-XMColorModulate		proto :FXMVECTOR, :FXMVECTOR
-XMColorAdjustSaturation proto :FXMVECTOR, :float
-XMColorAdjustContrast	proto :FXMVECTOR, :float
+XMColorNegative		proto XM_CALLCONV :FXMVECTOR
+XMColorModulate		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
+XMColorAdjustSaturation proto XM_CALLCONV :FXMVECTOR, :float
+XMColorAdjustContrast	proto XM_CALLCONV :FXMVECTOR, :float
 
-XMColorRGBToHSL		proto :FXMVECTOR
-XMColorHSLToRGB		proto :FXMVECTOR
+XMColorRGBToHSL		proto XM_CALLCONV :FXMVECTOR
+XMColorHSLToRGB		proto XM_CALLCONV :FXMVECTOR
 
-XMColorRGBToHSV		proto :FXMVECTOR
-XMColorHSVToRGB		proto :FXMVECTOR
+XMColorRGBToHSV		proto XM_CALLCONV :FXMVECTOR
+XMColorHSVToRGB		proto XM_CALLCONV :FXMVECTOR
 
-XMColorRGBToYUV		proto :FXMVECTOR
-XMColorYUVToRGB		proto :FXMVECTOR
+XMColorRGBToYUV		proto XM_CALLCONV :FXMVECTOR
+XMColorYUVToRGB		proto XM_CALLCONV :FXMVECTOR
 
-XMColorRGBToYUV_HD	proto :FXMVECTOR
-XMColorYUVToRGB_HD	proto :FXMVECTOR
+XMColorRGBToYUV_HD	proto XM_CALLCONV :FXMVECTOR
+XMColorYUVToRGB_HD	proto XM_CALLCONV :FXMVECTOR
 
-XMColorRGBToXYZ		proto :FXMVECTOR
-XMColorXYZToRGB		proto :FXMVECTOR
+XMColorRGBToXYZ		proto XM_CALLCONV :FXMVECTOR
+XMColorXYZToRGB		proto XM_CALLCONV :FXMVECTOR
 
-XMColorXYZToSRGB	proto :FXMVECTOR
-XMColorSRGBToXYZ	proto :FXMVECTOR
+XMColorXYZToSRGB	proto XM_CALLCONV :FXMVECTOR
+XMColorSRGBToXYZ	proto XM_CALLCONV :FXMVECTOR
 
-XMColorRGBToSRGB	proto :FXMVECTOR
-XMColorSRGBToRGB	proto :FXMVECTOR
+XMColorRGBToSRGB	proto XM_CALLCONV :FXMVECTOR
+XMColorSRGBToRGB	proto XM_CALLCONV :FXMVECTOR
 
-XMVerifyCPUSupport	proto
+XMVerifyCPUSupport	proto XM_CALLCONV
 
-XMFresnelTerm		proto :FXMVECTOR, :FXMVECTOR
+XMFresnelTerm		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
 
-XMScalarNearEqual	proto :float, :float, :float
-XMScalarModAngle	proto :float
-XMScalarSin		proto :float
-XMScalarSinEst		proto :float
-XMScalarCos		proto :float
-XMScalarCosEst		proto :float
-
-XMScalarSinCos		proto :ptr float, :ptr float, :float
-XMScalarSinCosEst	proto :ptr float, :ptr float, :float
-XMScalarASin		proto :float
-XMScalarASinEst		proto :float
-
-XMScalarACos		proto :float
-XMScalarACosEst		proto :float
+XMScalarNearEqual	proto XM_CALLCONV :float, :float, :float
+XMScalarModAngle	proto XM_CALLCONV :float
+XMScalarSin		proto XM_CALLCONV :float
+XMScalarSinEst		proto XM_CALLCONV :float
+XMScalarCos		proto XM_CALLCONV :float
+XMScalarCosEst		proto XM_CALLCONV :float
+XMScalarSinCos		proto XM_CALLCONV :ptr float, :ptr float, :float
+XMScalarSinCosEst	proto XM_CALLCONV :ptr float, :ptr float, :float
+XMScalarASin		proto XM_CALLCONV :float
+XMScalarASinEst		proto XM_CALLCONV :float
+XMScalarACos		proto XM_CALLCONV :float
+XMScalarACosEst		proto XM_CALLCONV :float
 
 if defined(__XNAMATH_H__) and defined(XMMin)
 undef XMMin
@@ -2292,6 +1414,8 @@ endif
 if defined(_XM_NO_INTRINSICS_)
 else
 endif
+
+include DirectXMath.inl
 
 .pragma list(pop)
 endif

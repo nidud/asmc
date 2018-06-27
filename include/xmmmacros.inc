@@ -1,6 +1,23 @@
 ifndef __XMMMACROS_INC
 __XMMMACROS_INC equ <>
 
+FLT4 macro value
+    local m
+    .data
+    m REAL4 value
+    .code
+    exitm<m>
+    endm
+
+FLT8 macro value
+    local m
+    .data
+    align 8
+    m REAL8 value
+    .code
+    exitm<m>
+    endm
+
 _MM_ISXMM macro op
     if (type op) eq 16 and (opattr op) eq 48
         exitm<1>
@@ -15,6 +32,17 @@ _MM_MREG macro op
     else
         exitm<op>
     endif
+    endm
+
+_MM_STORE_SS macro x, f
+    if _MM_ISXMM(f)
+        ifdif <x>,<f>
+            movss x,f
+        endif
+    else
+       movd x,FLT4(f)
+    endif
+    retm<x>
     endm
 
 _MM_OPCSX2 macro op, sx, a, b

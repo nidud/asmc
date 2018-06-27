@@ -285,28 +285,23 @@ _mm_cmple_ps macro a:=<xmm0>, b:=<xmm1>
 	exitm<_MM_OPCSX2(cmple, ps, a, b)>
 	endm
 
-_MM_CMPREV macro move, op, sx, a, b
-    if _MM_ISXMM(a)
-	&move&&sx& a,_MM_OPCSX2(op, sx, b, a)
-	retm<a>
-    else
-	&move&&sx& xmm0,_MM_OPCSX2(op, sx, b, a)
-	retm<xmm0>
-    endif
+; --- reverse order: result returned in B
+
+_mm_cmpgt_ss macro a, b
+	exitm<_MM_OPCSX2(cmplt, ss, b, a)>
+	endm
+_mm_cmpgt_ps macro a, b
+	exitm<_MM_OPCSX2(cmplt, ps, b, a)>
+	endm
+_mm_cmpge_ss macro a, b
+	exitm<_MM_OPCSX2(cmple, ss, b, a)>
+	endm
+_mm_cmpge_ps macro a, b
+	exitm<_MM_OPCSX2(cmple, ps, b, a)>
 	endm
 
-_mm_cmpgt_ss macro a:=<xmm0>, b:=<xmm1>
-	exitm<_MM_CMPREV(mov, cmplt, ss, a, b)>
-	endm
-_mm_cmpgt_ps macro a:=<xmm0>, b:=<xmm1>
-	exitm<_MM_CMPREV(mova, cmplt, ps, a, b)>
-	endm
-_mm_cmpge_ss macro a:=<xmm0>, b:=<xmm1>
-	exitm<_MM_CMPREV(mov, cmple, ss, a, b)>
-	endm
-_mm_cmpge_ps macro a:=<xmm0>, b:=<xmm1>
-	exitm<_MM_CMPREV(mova, cmple, ps, a, b)>
-	endm
+; ---
+
 _mm_cmpneq_ss macro a:=<xmm0>, b:=<xmm1>
 	exitm<_MM_OPCSX2(cmpneq, ss, a, b)>
 	endm
@@ -326,18 +321,22 @@ _mm_cmpnle_ps macro a:=<xmm0>, b:=<xmm1>
 	exitm<_MM_OPCSX2(cmpnle, ps, a, b)>
 	endm
 
+; --- reverse order: result returned in B
+
 _mm_cmpngt_ss macro a:=<xmm0>, b:=<xmm1>
-	exitm<_MM_CMPREV(mov, cmpnlt, ss, a, b)>
+	exitm<_MM_OPCSX2(cmpnlt, ss, b, a)>
 	endm
 _mm_cmpngt_ps macro a:=<xmm0>, b:=<xmm1>
-	exitm<_MM_CMPREV(mova, cmpnlt, ps, a, b)>
+	exitm<_MM_OPCSX2(cmpnlt, ps, b, a)>
 	endm
 _mm_cmpnge_ss macro a:=<xmm0>, b:=<xmm1>
-	exitm<_MM_CMPREV(mov, cmpnle, ss, a, b)>
+	exitm<_MM_OPCSX2(cmpnle, ss, b, a)>
 	endm
 _mm_cmpnge_ps macro a:=<xmm0>, b:=<xmm1>
-	exitm<_MM_CMPREV(mova, cmpnle, ps, a, b)>
+	exitm<_MM_OPCSX2(cmpnle, ps, b, a)>
 	endm
+; ---
+
 _mm_cmpord_ss macro a:=<xmm0>, b:=<xmm1>
 	exitm<_MM_OPCSX2(cmpord, ss, a, b)>
 	endm

@@ -2,10 +2,7 @@ ifndef __DIRECTXMATH_INL
 __DIRECTXMATH_INL equ <>
 
 inl_XMConvertVectorIntToFloat macro VInt, DivExponent
-    ;;
-    ;; Convert to floats
-    ;;
-    _mm_store_ps(xmm1, _mm_cvtepi32_ps(_mm_castps_si128(VInt)))
+    _mm_store_ps(xmm0, VInt)
     ;;
     ;; Convert DivExponent into 1.0f/(1<<DivExponent)
     ;;
@@ -13,39 +10,46 @@ inl_XMConvertVectorIntToFloat macro VInt, DivExponent
     ;;
     ;; Splat the scalar value
     ;;
-    _mm_set1_epi32(0x3F800000 - (DivExponent shl 23))
-    _mm_mul_ps(_mm_castsi128_ps(xmm0), xmm1)
+    mov eax,0x3F800000 - (DivExponent shl 23)
+    movd xmm1,eax
+    _mm_mul_ps(_mm_cvtepi32_ps(), XM_PERMUTE_PS(xmm1))
     retm<xmm0>
     endm
 
 inl_XMConvertVectorFloatToInt macro VFloat, MulExponent
+
     .assert( MulExponent < 32 )
+
 ifdef _XM_NO_INTRINSICS_
 elseifdef _XM_ARM_NEON_INTRINSICS_
 else
-    _mm_store_ps(xmm1, VFloat)
-    _mm_set_ps1(_mm_cvtsi32_ss(xmm0, (1 shl MulExponent)))
-    _mm_store_ps(xmm1, _mm_mul_ps(xmm0, xmm1))
+    mov eax,(1 shl MulExponent)
+    _mm_cvt_si2ss(xmm1, eax)
+    _mm_mul_ps(xmm0, XM_PERMUTE_PS(xmm1, _MM_SHUFFLE(0,0,0,0)))
     ;;
     ;; In case of positive overflow, detect it
     ;;
-    _mm_store_ps(xmm2, _mm_cmpgt_ps(xmm0, g_XMMaxInt))
+    ;; Note: cmpltps xmm2,xmm0
+    ;;
+    _mm_cmpgt_ps(xmm0, _mm_store_ps(xmm2, g_XMMaxInt))
     ;;
     ;; Float to int conversion
     ;;
-    _mm_cvttps_epi32(xmm1)
+    _mm_cvttps_epi32(xmm1, xmm0)
     ;;
     ;; If there was positive overflow, set to 0x7FFFFFFF
     ;;
-    _mm_and_ps(xmm2, g_XMAbsMask)
-    _mm_andnot_ps(xmm0, _mm_castsi128_ps(xmm1))
+    _mm_and_ps(_mm_store_ps(xmm0, g_XMAbsMask), xmm2)
+    _mm_andnot_ps(xmm2, _mm_castsi128_ps(xmm1))
     _mm_or_ps(xmm0, xmm2)
     retm<xmm0>
 endif
     endm
 
 inl_XMConvertVectorUIntToFloat macro VUInt, DivExponent
+
     .assert(DivExponent < 32)
+
 ifdef _XM_NO_INTRINSICS_
 elseifdef _XM_ARM_NEON_INTRINSICS_
 else

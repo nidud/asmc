@@ -229,35 +229,75 @@ _mm_ucomineq_sd macro a:=<xmm0>, b:=<xmm1>
 	exitm<_mm_comisd(sete, a, b)>
 	endm
 
-_mm_cvtepi32_pd macro a:=<xmm0>
+_mm_cvtepi32_pd macro a:=<xmm0>, b
+    ifnb <b>
+	exitm<_MM_OPCSX2(cvtdq2, pd, a, b)>
+    else
 	exitm<_MM_OPCSX2(cvtdq2, pd, a, a)>
+    endif
 	endm
-_mm_cvtpd_epi32 macro a:=<xmm0>
+_mm_cvtpd_epi32 macro a:=<xmm0>, b
+    ifnb <b>
+	exitm<_MM_OPCSX2(cvtpd2, dq, a, b)>
+    else
 	exitm<_MM_OPCSX2(cvtpd2, dq, a, a)>
+    endif
 	endm
-_mm_cvttpd_epi32 macro a:=<xmm0>
+_mm_cvttpd_epi32 macro a:=<xmm0>, b
+    ifnb <b>
+	exitm<_MM_OPCSX2(cvttpd2, dq, a, b)>
+    else
 	exitm<_MM_OPCSX2(cvttpd2, dq, a, a)>
+    endif
 	endm
-_mm_cvtepi32_ps macro a:=<xmm0>
+_mm_cvtepi32_ps macro a:=<xmm0>, b
+    ifnb <b>
+	exitm<_MM_OPCSX2(cvtdq2, ps, a, b)>
+    else
 	exitm<_MM_OPCSX2(cvtdq2, ps, a, a)>
+    endif
 	endm
-_mm_cvtps_epi32 macro a:=<xmm0>
+_mm_cvtps_epi32 macro a:=<xmm0>, b
+    ifnb <b>
+	exitm<_MM_OPCSX2(cvtps2, dq, a, b)>
+    else
 	exitm<_MM_OPCSX2(cvtps2, dq, a, a)>
+    endif
 	endm
-_mm_cvttps_epi32 macro a:=<xmm0>
+_mm_cvttps_epi32 macro a:=<xmm0>, b
+    ifnb <b>
+	exitm<_MM_OPCSX2(cvttps2, dq, a, b)>
+    else
 	exitm<_MM_OPCSX2(cvttps2, dq, a, a)>
+    endif
 	endm
-_mm_cvtpd_ps macro a:=<xmm0>
+_mm_cvtpd_ps macro a:=<xmm0>, b
+    ifnb <b>
+	exitm<_MM_OPCSX2(cvtpd2, ps, a, b)>
+    else
 	exitm<_MM_OPCSX2(cvtpd2, ps, a, a)>
+    endif
 	endm
-_mm_cvtps_pd macro a:=<xmm0>
+_mm_cvtps_pd macro a:=<xmm0>, b
+    ifnb <b>
+	exitm<_MM_OPCSX2(cvtps2, pd, a, b)>
+    else
 	exitm<_MM_OPCSX2(cvtps2, pd, a, a)>
+    endif
 	endm
-_mm_cvtsd_ss macro a:=<xmm0>, b:=<xmm1>
+_mm_cvtsd_ss macro a:=<xmm0>, b
+    ifnb <b>
 	exitm<_MM_OPCSX2(cvtsd2, ss, a, b)>
+    else
+	exitm<_MM_OPCSX2(cvtsd2, ss, a, a)>
+    endif
 	endm
-_mm_cvtss_sd macro a:=<xmm0>, b:=<xmm1>
+_mm_cvtss_sd macro a:=<xmm0>, b
+    ifnb <b>
 	exitm<_MM_OPCSX2(cvtss2, sd, a, b)>
+    else
+	exitm<_MM_OPCSX2(cvtss2, sd, a, a)>
+    endif
 	endm
 
 _mm_cvtsd_si32 macro a:=<xmm0>
@@ -269,11 +309,19 @@ _mm_cvttsd_si32 macro a:=<xmm0>
 	retm<eax>
 	endm
 _mm_cvtsi32_sd macro a:=<xmm0>, b:=<xmm1>
+    ifnb <b>
 	exitm<_MM_OPCSX2(cvtsi2, sd, a, b)>
+    else
+	exitm<_MM_OPCSX2(cvtsi2, sd, a, a)>
+    endif
 	endm
 
 _mm_unpackhi_pd macro a:=<xmm0>, b:=<xmm1>
+    ifnb <b>
 	exitm<_MM_OPCSX2(unpckh, pd, a, b)>
+    else
+	exitm<_MM_OPCSX2(unpckh, pd, a, a)>
+    endif
 	endm
 _mm_unpacklo_pd macro a:=<xmm0>, b:=<xmm1>
 	exitm<_MM_OPCSX2(unpckl, pd, a, b)>
@@ -508,7 +556,7 @@ _mm_sra_epi16 macro a:=<xmm0>, b:=<xmm1>
 	exitm<_MM_OPCSX2(psr, aw, a, b)>
 	endm
 _mm_srai_epi32 macro a:=<xmm0>, imm
-	psrad, a,imm
+	psrad a,imm
 	retm<a>
 	endm
 _mm_sra_epi32 macro a:=<xmm0>, b:=<xmm1>

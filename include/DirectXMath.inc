@@ -131,12 +131,12 @@ XM_SFENCE macro
 endif
 
 ifdef _XM_AVX_INTRINSICS_
-XM_PERMUTE_PS macro v, q
-	exitm<_mm_permute_ps( v, q )>
+XM_PERMUTE_PS macro v, imm
+	exitm<_mm_permute_ps( v, imm )>
 	endm
 else
-XM_PERMUTE_PS macro v, q
-	exitm<_mm_shuffle_ps( v, v, q )>
+XM_PERMUTE_PS macro v:=<xmm0>, imm:=<0>
+	exitm<_MM_SHUFXX(ps, v, v, imm)>
 	endm
 endif
 

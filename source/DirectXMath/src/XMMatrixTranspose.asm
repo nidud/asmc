@@ -1,9 +1,8 @@
-; XMMATRIXTRANSPOSE.ASM--
-; Copyright (C) 2018 Asmc Developers
 
 include DirectXMath.inc
 
     .code
+
     option win64:rsp nosave noauto
 
 XMMatrixTranspose proc XM_CALLCONV XMTHISPTR, AXMMATRIX

@@ -526,7 +526,7 @@ endif
 
 XMVectorSetBinaryConstant	proto XM_CALLCONV :uint32_t, :uint32_t, :uint32_t, :uint32_t
 XMVectorSplatConstant		proto XM_CALLCONV :int32_t, :uint32_t
-XMVectorSplatConstantInt	proto XM_CALLCONV :uint32_t
+XMVectorSplatConstantInt	proto XM_CALLCONV :int32_t
 
 XMLoadInt	proto XM_CALLCONV :ptr uint32_t
 XMLoadFloat	proto XM_CALLCONV :ptr float
@@ -554,28 +554,28 @@ XMLoadUInt4	proto XM_CALLCONV :ptr XMUINT4
 
 XMLoadFloat3x3	proto XM_CALLCONV XMTHISPTR, :ptr XMFLOAT3X3
 XMLoadFloat4x3	proto XM_CALLCONV XMTHISPTR, :ptr XMFLOAT4X3
-XMLoadFloat4x3A proto XM_CALLCONV XMTHISPTR, :ptr XMFLOAT4X3A
+XMLoadFloat4x3A proto XM_CALLCONV XMTHISPTR, :ptr XMFLOAT4X3;A
 XMLoadFloat4x4	proto XM_CALLCONV XMTHISPTR, :ptr XMFLOAT4X4
-XMLoadFloat4x4A proto XM_CALLCONV XMTHISPTR, :ptr XMFLOAT4X4A
+XMLoadFloat4x4A proto XM_CALLCONV XMTHISPTR, :ptr XMFLOAT4X4;A
 
 XMStoreInt	proto XM_CALLCONV :ptr uint32_t, :FXMVECTOR
 XMStoreFloat	proto XM_CALLCONV :ptr REAL4, :FXMVECTOR
 XMStoreInt2	proto XM_CALLCONV :ptr uint32_t, :FXMVECTOR
 XMStoreInt2A	proto XM_CALLCONV :ptr uint32_t, :FXMVECTOR
 XMStoreFloat2	proto XM_CALLCONV :ptr XMFLOAT2, :FXMVECTOR
-XMStoreFloat2A	proto XM_CALLCONV :ptr XMFLOAT2A, :FXMVECTOR
+XMStoreFloat2A	proto XM_CALLCONV :ptr XMFLOAT2, :FXMVECTOR
 XMStoreSInt2	proto XM_CALLCONV :ptr XMINT2, :FXMVECTOR
 XMStoreUInt2	proto XM_CALLCONV :ptr XMUINT2, :FXMVECTOR
 XMStoreInt3	proto XM_CALLCONV :ptr uint32_t, :FXMVECTOR
 XMStoreInt3A	proto XM_CALLCONV :ptr uint32_t, :FXMVECTOR
 XMStoreFloat3	proto XM_CALLCONV :ptr XMFLOAT3, :FXMVECTOR
-XMStoreFloat3A	proto XM_CALLCONV :ptr XMFLOAT3A, :FXMVECTOR
+XMStoreFloat3A	proto XM_CALLCONV :ptr XMFLOAT3, :FXMVECTOR
 XMStoreSInt3	proto XM_CALLCONV :ptr XMINT3, :FXMVECTOR
 XMStoreUInt3	proto XM_CALLCONV :ptr XMUINT3, :FXMVECTOR
 XMStoreInt4	proto XM_CALLCONV :ptr uint32_t, :FXMVECTOR
 XMStoreInt4A	proto XM_CALLCONV :ptr uint32_t, :FXMVECTOR
 XMStoreFloat4	proto XM_CALLCONV :ptr XMFLOAT4, :FXMVECTOR
-XMStoreFloat4A	proto XM_CALLCONV :ptr XMFLOAT4A, :FXMVECTOR
+XMStoreFloat4A	proto XM_CALLCONV :ptr XMFLOAT4, :FXMVECTOR
 XMStoreSInt4	proto XM_CALLCONV :ptr XMINT4, :FXMVECTOR
 XMStoreUInt4	proto XM_CALLCONV :ptr XMUINT4, :FXMVECTOR
 

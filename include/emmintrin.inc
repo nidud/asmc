@@ -699,16 +699,28 @@ _mm_unpacklo_epi64 macro a:=<xmm0>, b:=<xmm1>
 	exitm<_MM_OPCSX2(punpcklq, dq, a, b)>
 	endm
 
-_mm_load_si128 macro p
-	movdqa xmm0,_MM_MREG(p)
+_mm_load_si128 macro x, p
+    ifnb <p>
+	movdqa x,_MM_MREG(p)
+    else
+	movdqa xmm0,_MM_MREG(x)
+    endif
+	retm<x>
+	endm
+_mm_loadu_si128 macro x, p
+    ifnb <p>
+	movdqu x,_MM_MREG(p)
+    else
+	movdqu xmm0,_MM_MREG(x)
+    endif
 	retm<xmm0>
 	endm
-_mm_loadu_si128 macro p
-	movdqu xmm0,_MM_MREG(p)
-	retm<xmm0>
-	endm
-_mm_loadl_epi64 macro p
-	movq xmm0,_MM_MREG(p)
+_mm_loadl_epi64 macro x, p
+    ifnb <p>
+	movq x,_MM_MREG(p)
+    else
+	movq xmm0,_MM_MREG(x)
+    endif
 	retm<xmm0>
 	endm
 
@@ -785,30 +797,31 @@ _mm_setzero_si128 macro x:=<xmm0>
 	endm
 
 _mm_store_si128 macro p, x:=<xmm0>
-	movaps _MM_MREG(p), x
+	exitm<movaps _MM_MREG(p), x>
 	endm
 _mm_storeu_si128 macro p, x:=<xmm0>
-	movups _MM_MREG(p), x
+	exitm<movups _MM_MREG(p), x>
 	endm
 _mm_storel_epi64 macro p, x:=<xmm0>
-	movq _MM_MREG(p), x
+	exitm<movq _MM_MREG(p), x>
 	endm
 _mm_maskmoveu_si128 macro a:=<xmm0>, b:=<xmm1>, reg
-	maskmovdqu a,b
+	exitm<maskmovdqu a,b>
 	endm
 
 _mm_move_epi64 macro a:=<xmm0>
 	movq xmm0,a
+	retm<xmm0>
 	endm
 
 _mm_stream_pd macro reg, x:=<xmm0>
-	movntpd _MM_MREG(p), x
+	exitm<movntpd _MM_MREG(p), x>
 	endm
 _mm_stream_si128 macro reg, x:=<xmm0>
-	movntdq _MM_MREG(p), x
+	exitm<movntdq _MM_MREG(p), x>
 	endm
 _mm_clflush macro reg
-	clflush _MM_MREG(p)
+	exitm<clflush _MM_MREG(p)>
 	endm
 _mm_lfence macro
 	exitm<lfence>

@@ -15,9 +15,7 @@ main proc
     mov x.w,5
 
     XMConvertVectorIntToFloat(x, Value)
-
-    movaps x,xmm0
-    _mm_store_sd(result, _mm_cvtss_sd(_mm_load_ss(xmm0, x.x)))
+    _mm_store_sd(result, _mm_cvtss_sd(xmm0))
 
     printf("result: %f\n", result)
 

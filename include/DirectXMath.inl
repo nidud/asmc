@@ -21,11 +21,12 @@ inl_XMConvertVectorFloatToInt macro VFloat, MulExponent
     .assert( MulExponent < 32 )
 
 ifdef _XM_NO_INTRINSICS_
-elseifdef _XM_ARM_NEON_INTRINSICS_
 else
+    _mm_store_ps(xmm0, VFloat)
+
     mov eax,(1 shl MulExponent)
     _mm_cvt_si2ss(xmm1, eax)
-    _mm_mul_ps(xmm0, XM_PERMUTE_PS(xmm1, _MM_SHUFFLE(0,0,0,0)))
+    _mm_mul_ps(xmm0, XM_PERMUTE_PS(xmm1))
     ;;
     ;; In case of positive overflow, detect it
     ;;
@@ -40,7 +41,7 @@ else
     ;; If there was positive overflow, set to 0x7FFFFFFF
     ;;
     _mm_and_ps(_mm_store_ps(xmm0, g_XMAbsMask), xmm2)
-    _mm_andnot_ps(xmm2, _mm_castsi128_ps(xmm1))
+    _mm_andnot_ps(xmm2, xmm1)
     _mm_or_ps(xmm0, xmm2)
     retm<xmm0>
 endif
@@ -51,7 +52,6 @@ inl_XMConvertVectorUIntToFloat macro VUInt, DivExponent
     .assert(DivExponent < 32)
 
 ifdef _XM_NO_INTRINSICS_
-elseifdef _XM_ARM_NEON_INTRINSICS_
 else
     _mm_store_ps(xmm0, VUInt)
     _mm_store_ps(xmm1, xmm0)
@@ -75,7 +75,7 @@ else
     ;;
     ;; For only the ones that are too big, add the fixup
     ;;
-    _mm_and_ps(_mm_castsi128_ps(xmm1), g_XMFixUnsigned)
+    _mm_and_ps(xmm1, g_XMFixUnsigned)
     _mm_add_ps(xmm1, xmm0)
     ;;
     ;; Convert DivExponent into 1.0f/(1<<DivExponent)
@@ -85,33 +85,40 @@ else
     ;; Splat
     ;;
     _mm_set1_epi32(0x3F800000 - (DivExponent shl 23))
-    _mm_mul_ps(_mm_castsi128_ps(xmm0), xmm1)
+    _mm_mul_ps(xmm0, xmm1)
     retm<xmm0>
 endif
     endm
 
 inl_XMConvertVectorFloatToUInt macro VFloat, MulExponent
+
     .assert(MulExponent < 32)
+
 ifdef _XM_NO_INTRINSICS_
-elseifdef _XM_ARM_NEON_INTRINSICS_
 else
-    _mm_store_ps(xmm1, VFloat)
-    _mm_set_ps1(_mm_cvtsi32_ss(xmm0, (1 shl MulExponent)))
-    _mm_mul_ps(xmm0, xmm1)
+    _mm_store_ps(xmm0, VFloat)
+
+    mov eax,(1 shl MulExponent)
+    _mm_xor_ps(xmm1, xmm1)
+    _mm_cvt_si2ss(xmm1, eax)
+    XM_PERMUTE_PS(xmm1)
+
+    _mm_mul_ps(xmm1, xmm0)
     ;;
     ;; Clamp to >=0
     ;;
-    _mm_store_ps(xmm1, _mm_max_ps(xmm0, g_XMZero))
+    _mm_max_ps(xmm1, g_XMZero)
     ;;
     ;; Any numbers that are too big, set to 0xFFFFFFFFU
     ;;
-    _mm_cmpgt_ps(xmm0, g_XMMaxUInt)
     _mm_store_ps(xmm3, g_XMUnsignedFix)
+    _mm_store_ps(xmm4, g_XMMaxUInt)
+    _mm_store_ps(xmm2, xmm3)
+    _mm_cmpgt_ps(xmm1, xmm4)
     ;;
     ;; Too large for a signed integer?
     ;;
-    _mm_store_ps(xmm2, xmm1)
-    _mm_cmpge_ps(xmm2, xmm3)
+    _mm_cmpge_ps(xmm1, xmm2)
     ;;
     ;; Zero for number's lower than 0x80000000, 32768.0f*65536.0f otherwise
     ;;
@@ -120,23 +127,22 @@ else
     ;; Perform fixup only on numbers too large (Keeps low bit precision)
     ;;
     _mm_sub_ps(xmm1, xmm3)
-    _mm_cvttps_epi32(xmm1)
+    _mm_cvttps_epi32(xmm0, xmm1)
     ;;
     ;; Convert from signed to unsigned pnly if greater than 0x80000000
     ;;
     _mm_and_ps(xmm2, g_XMNegativeZero)
-    _mm_xor_ps(_mm_castsi128_ps(xmm1), xmm2)
+    _mm_xor_ps(xmm0, xmm2)
     ;;
     ;; On those that are too large, set to 0xFFFFFFFF
     ;;
-    _mm_or_ps(xmm0, xmm1)
+    _mm_or_ps(xmm0, xmm4)
     retm<xmm0>
 endif
     endm
 
 inl_XMVectorSetBinaryConstant macro C0, C1, C2, C3
 ifdef _XM_NO_INTRINSICS_
-elseifdef _XM_ARM_NEON_INTRINSICS_
 else
  ifndef g_vMask1
     .data
@@ -160,17 +166,17 @@ else
     ;; 0xFFFFFFFF -> 1.0f, 0x00000000 -> 0.0f
     ;;
     _mm_and_si128(xmm0, g_XMOne)
-    _mm_castsi128_ps(xmm0)
     retm<xmm0>
 endif
     endm
 
 inl_XMVectorSplatConstant macro IntConstant, DivExponent
+
     .assert( IntConstant >= -16 && IntConstant <= 15 )
     .assert( DivExponent < 32 )
+
 ifdef _XM_NO_INTRINSICS_
     exitm<inl_XMConvertVectorIntToFloat(_mm_set1_epi32(IntConstant), DivExponent)>
-elseifdef _XM_ARM_NEON_INTRINSICS_
 else
     ;;
     ;; Splat the int
@@ -190,19 +196,19 @@ else
     ;;
     ;; Multiply by the reciprocal (Perform a right shift by DivExponent)
     ;;
-    _mm_mul_ps(_mm_castsi128_ps(xmm0), xmm1)
+    _mm_mul_ps(xmm0, xmm1)
     retm<xmm0>
 endif
     endm
 
 inl_XMVectorSplatConstantInt macro IntConstant
+
     .assert( IntConstant >= -16 && IntConstant <= 15 )
+
 ifdef _XM_NO_INTRINSICS_
     exitm<_mm_set1_epi32(IntConstant)>
-elseifdef _XM_ARM_NEON_INTRINSICS_
 else
     _mm_set1_epi32( IntConstant )
-    _mm_castsi128_ps(xmm0)
     retm<xmm0>
 endif
     endm
@@ -210,7 +216,6 @@ endif
 inl_XMLoadInt macro pSource
     .assert(pSource)
 ifdef _XM_NO_INTRINSICS_
-elseifdef _XM_ARM_NEON_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
     _mm_load_ss(xmm0, pSource)
     _mm_load_ss(xmm1, pSource+4)
@@ -223,7 +228,6 @@ inl_XMLoadFloat macro pSource
     .assert(pSource)
     .assert(!(pSource & 0xF))
 ifdef _XM_NO_INTRINSICS_
-elseifdef _XM_ARM_NEON_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
     _mm_load_ss(pSource)
     retm<xmm0>
@@ -233,7 +237,6 @@ endif
 inl_XMLoadInt2 macro pSource
     .assert(pSource);
 ifdef _XM_NO_INTRINSICS_
-elseifdef _XM_ARM_NEON_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
     _mm_load_ss(xmm0, pSource)
     _mm_load_ss(xmm1, pSource+4)
@@ -246,10 +249,8 @@ inl_XMLoadInt2A macro pSource
     .assert(pSource)
     .assert(!(pSource & 0xF))
 ifdef _XM_NO_INTRINSICS_
-elseifdef _XM_ARM_NEON_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
     _mm_loadl_epi64(pSource)
-    _mm_castsi128_ps(xmm0)
     retm<xmm0>
 endif
     endm
@@ -257,7 +258,6 @@ endif
 inl_XMLoadFloat2 macro pSource
     .assert(pSource)
 ifdef _XM_NO_INTRINSICS_
-elseifdef _XM_ARM_NEON_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
     _mm_load_ss(xmm0, pSource)
     _mm_load_ss(xmm1, pSource+4)
@@ -269,10 +269,8 @@ endif
 inl_XMLoadFloat2A macro pSource
     .assert(pSource)
 ifdef _XM_NO_INTRINSICS_
-elseifdef _XM_ARM_NEON_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
     _mm_loadl_epi64(pSource)
-    _mm_castsi128_ps(xmm0)
     retm<xmm0>
 endif
     endm
@@ -280,7 +278,6 @@ endif
 inl_XMLoadSInt2 macro pSource
     .assert(pSource)
 ifdef _XM_NO_INTRINSICS_
-elseifdef _XM_ARM_NEON_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
     _mm_load_ss(xmm0, pSource)
     _mm_load_ss(xmm1, pSource+4)
@@ -293,7 +290,6 @@ endif
 inl_XMLoadUInt2 macro pSource
     .assert(pSource)
 ifdef _XM_NO_INTRINSICS_
-elseifdef _XM_ARM_NEON_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
     _mm_load_ss(xmm0, pSource)
     _mm_load_ss(xmm1, pSource+4)
@@ -327,7 +323,6 @@ endif
 inl_XMLoadInt3 macro pSource
     .assert(pSource)
 ifdef _XM_NO_INTRINSICS_
-elseifdef _XM_ARM_NEON_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
     _mm_load_ss(xmm0, pSource)
     _mm_load_ss(xmm1, pSource+4)
@@ -341,14 +336,12 @@ endif
 inl_XMLoadInt3A macro pSource
     .assert(pSource)
 ifdef _XM_NO_INTRINSICS_
-elseifdef _XM_ARM_NEON_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
     ;;
     ;; Reads an extra integer which is zero'd
     ;;
     _mm_load_si128(xmm0, pSource)
     _mm_and_si128(xmm0, g_XMMask3)
-    _mm_castsi128_ps(xmm0)
     retm<xmm0>
 endif
     endm
@@ -356,7 +349,6 @@ endif
 inl_XMLoadFloat3 macro pSource
     .assert(pSource)
 ifdef _XM_NO_INTRINSICS_
-elseifdef _XM_ARM_NEON_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
     _mm_load_ss(xmm0, pSource)
     _mm_load_ss(xmm1, pSource+4)
@@ -370,7 +362,6 @@ endif
 inl_XMLoadFloat3A macro pSource
     .assert(pSource)
 ifdef _XM_NO_INTRINSICS_
-elseifdef _XM_ARM_NEON_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
     ;;
     ;; Reads an extra float which is zero'd
@@ -384,7 +375,6 @@ endif
 inl_XMLoadSInt3 macro pSource
     .assert(pSource)
 ifdef _XM_NO_INTRINSICS_
-elseifdef _XM_ARM_NEON_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
     _mm_load_ss(xmm0, pSource)
     _mm_load_ss(xmm1, pSource+4)
@@ -399,7 +389,6 @@ endif
 inl_XMLoadUInt3 macro pSource
     .assert(pSource)
 ifdef _XM_NO_INTRINSICS_
-elseifdef _XM_ARM_NEON_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
     _mm_load_ss(xmm0, pSource)
     _mm_load_ss(xmm1, pSource+4)
@@ -451,39 +440,427 @@ inl_XMLoadSInt4 macro ptr_XMINT4
 inl_XMLoadUInt4 macro ptr_XMUINT4
 ifdef _XM_NO_INTRINSICS_
     exitm<ptr_XMUINT4>
-elseifdef _XM_ARM_NEON_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
     _mm_store_ps(xmm2, _mm_loadu_si128(ptr_XMUINT4))
     ;;
     ;; For the values that are higher than 0x7FFFFFFF, a fixup is needed
     ;; Determine which ones need the fix.
     ;;
-    _mm_store_ps(xmm3, _mm_and_ps(_mm_castsi128_ps(xmm0), g_XMNegativeZero))
+    _mm_store_ps(xmm3, _mm_and_ps(xmm0, g_XMNegativeZero))
     ;;
     ;; Force all values positive
     ;;
-    _mm_store_ps(xmm1, _mm_xor_ps(_mm_castsi128_ps(xmm2), xmm3))
+    _mm_store_ps(xmm1, _mm_xor_ps(xmm2, xmm3))
     ;;
     ;; Convert to floats
     ;;
-    _mm_cvtepi32_ps(_mm_castps_si128(xmm1))
+    _mm_cvtepi32_ps(xmm1)
     ;;
     ;; Convert 0x80000000 -> 0xFFFFFFFF
     ;;
-    _mm_store_ps(xmm0, _mm_srai_epi32(_mm_castps_si128(xmm3), 31))
+    _mm_store_ps(xmm0, _mm_srai_epi32(xmm3, 31))
     ;;
     ;; For only the ones that are too big, add the fixup
     ;;
-    _mm_and_ps(_mm_castsi128_ps(xmm0), g_XMFixUnsigned)
+    _mm_and_ps(xmm0, g_XMFixUnsigned)
     _mm_add_ps(xmm0, xmm1)
     retm<xmm0>
+endif
+    endm
+
+inl_XMLoadFloat3x3 macro pSource, M
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_loadu_ps(xmm2, pSource[12][4])
+    _mm_load_ss(xmm4, pSource[24][8])
+    _mm_setzero_ps(xmm5)
+    _mm_loadu_ps(xmm0, pSource)
+    _mm_store_ps(xmm1, xmm2)
+    _mm_shuffle_ps(xmm2, xmm4, _MM_SHUFFLE(1, 0, 3, 2))
+    _mm_unpacklo_ps(xmm1, xmm5)
+    _mm_store_ps(xmm3, xmm0)
+    _mm_unpackhi_ps(xmm3, xmm5)
+    _mm_shuffle_ps(xmm4, xmm1, _MM_SHUFFLE(0, 1, 0, 0))
+    _mm_movelh_ps(xmm0, xmm3)
+    _mm_movehl_ps(xmm1, xmm4)
+    _mm_movehl_ps(xmm5, xmm3)
+    _mm_add_ps(xmm1, xmm5)
+    _mm_store_ps(xmm3, g_XMIdentityR3)
+    ifnb <M>
+	_mm_store_ps(M.r[0*16], xmm0)
+	_mm_store_ps(M.r[1*16], xmm1)
+	_mm_store_ps(M.r[2*16], xmm2)
+	_mm_store_ps(M.r[3*16], xmm3)
+    endif
+    retm<>
+endif
+    endm
+
+inl_XMLoadFloat4x3 macro pSource, M
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_loadu_ps(xmm1, pSource[12][4])
+    _mm_loadu_ps(xmm3, pSource[24][8])
+    _mm_store_ps(xmm4, g_XMMask3)
+    _mm_loadu_ps(xmm0, pSource[0][0])
+    _mm_store_ps(xmm2, xmm1)
+    _mm_shuffle_ps(xmm2, xmm3, _MM_SHUFFLE(0,0,3,2))
+    _mm_srli_si128(xmm3, 32/8)
+    _mm_shuffle_ps(xmm1, xmm0, _MM_SHUFFLE(3,3,1,0))
+    _mm_and_ps(xmm2, xmm4)
+    _mm_or_ps(xmm3, g_XMIdentityR3)
+    _mm_and_ps(xmm0, xmm4)
+    _mm_shuffle_ps(xmm1, xmm1, _MM_SHUFFLE(1,1,0,2))
+    _mm_and_ps(xmm1, xmm4)
+    ifnb <M>
+	_mm_store_ps(M.r[0*16], xmm0)
+	_mm_store_ps(M.r[1*16], xmm1)
+	_mm_store_ps(M.r[2*16], xmm2)
+	_mm_store_ps(M.r[3*16], xmm3)
+    endif
+    retm<>
+endif
+    endm
+
+inl_XMLoadFloat4x3A macro pSource, M
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_load_ps(xmm1, pSource[12][4])
+    _mm_load_ps(xmm3, pSource[24][8])
+    _mm_store_ps(xmm4, g_XMMask3)
+    _mm_load_ps(xmm0, pSource[0][0])
+    _mm_store_ps(xmm2, xmm1)
+    _mm_shuffle_ps(xmm2, xmm3, _MM_SHUFFLE(0,0,3,2))
+    _mm_srli_si128(xmm3, 32/8)
+    _mm_shuffle_ps(xmm1, xmm0, _MM_SHUFFLE(3,3,1,0))
+    _mm_and_ps(xmm2, xmm4)
+    _mm_or_ps(xmm3, g_XMIdentityR3)
+    _mm_and_ps(xmm0, xmm4)
+    XM_PERMUTE_PS(xmm1, _MM_SHUFFLE(1,1,0,2))
+    _mm_and_ps(xmm1, xmm4)
+    ifnb <M>
+	_mm_store_ps(M.r[0*16], xmm0)
+	_mm_store_ps(M.r[1*16], xmm1)
+	_mm_store_ps(M.r[2*16], xmm2)
+	_mm_store_ps(M.r[3*16], xmm3)
+    endif
+    retm<>
+endif
+    endm
+
+inl_XMLoadFloat4x4 macro pSource, M
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_loadu_ps(xmm0, xmmword ptr pSource._11)
+    _mm_loadu_ps(xmm1, xmmword ptr pSource._21)
+    _mm_loadu_ps(xmm2, xmmword ptr pSource._31)
+    _mm_loadu_ps(xmm3, xmmword ptr pSource._41)
+    ifnb <M>
+	_mm_store_ps(M.r[0*16], xmm0)
+	_mm_store_ps(M.r[1*16], xmm1)
+	_mm_store_ps(M.r[2*16], xmm2)
+	_mm_store_ps(M.r[3*16], xmm3)
+    endif
+    retm<>
+endif
+    endm
+
+inl_XMLoadFloat4x4A macro pSource, M
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_load_ps(xmm0, xmmword ptr pSource._11)
+    _mm_load_ps(xmm1, xmmword ptr pSource._21)
+    _mm_load_ps(xmm2, xmmword ptr pSource._31)
+    _mm_load_ps(xmm3, xmmword ptr pSource._41)
+    ifnb <M>
+	_mm_store_ps(M.r[0*16], xmm0)
+	_mm_store_ps(M.r[1*16], xmm1)
+	_mm_store_ps(M.r[2*16], xmm2)
+	_mm_store_ps(M.r[3*16], xmm3)
+    endif
+    retm<>
+endif
+    endm
+
+inl_XMStoreInt macro pDestination, V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    exitm<_mm_store_ss( pDestination, V )>
+endif
+    endm
+
+inl_XMStoreFloat macro pDestination, V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    exitm<_mm_store_ss( pDestination, V )>
+endif
+    endm
+
+inl_XMStoreInt2 macro pDestination, V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm1, V)
+    _mm_store_ps(xmm0, V)
+    XM_PERMUTE_PS(xmm1, _MM_SHUFFLE(1, 1, 1, 1))
+    _mm_store_ss(pDestination[0], xmm0)
+    _mm_store_ss(pDestination[4], xmm1)
+    exitm<>
+endif
+    endm
+
+inl_XMStoreInt2A macro pDestination, V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    exitm<_mm_storel_epi64(pDestination, V)>
+endif
+    endm
+
+inl_XMStoreFloat2 macro pDestination, V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm1, V)
+    _mm_store_ps(xmm0, V)
+    XM_PERMUTE_PS(xmm1, _MM_SHUFFLE(1, 1, 1, 1))
+    _mm_store_ss(pDestination[0], xmm0)
+    _mm_store_ss(pDestination[4], xmm1)
+    exitm<>
+endif
+    endm
+
+inl_XMStoreFloat2A macro pDestination, V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    exitm<_mm_storel_epi64(pDestination, V)>
+endif
+    endm
+
+inl_XMStoreSInt2 macro pDestination, V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    _mm_store_ps(xmm1, g_XMMaxInt)
+    _mm_store_ps(xmm3, g_XMAbsMask)
+    ;;
+    ;; Float to int conversion
+    ;;
+    _mm_cvttps_epi32(xmm2, xmm0)
+    ;;
+    ;; In case of positive overflow, detect it
+    ;;
+    _mm_cmpgt_ps(xmm0, xmm1)
+    ;;
+    ;; If there was positive overflow, set to 0x7FFFFFFF
+    ;;
+    _mm_and_ps(xmm3, xmm1)
+    _mm_andnot_ps(xmm1, xmm2)
+    _mm_or_ps(xmm1, xmm3)
+    ;;
+    ;; Write two ints
+    ;;
+    _mm_store_ss(pDestination[0], xmm1)
+    XM_PERMUTE_PS(xmm1, _MM_SHUFFLE(1, 1, 1, 1))
+    _mm_store_ss(pDestination[4], xmm1)
+    exitm<>
+endif
+    endm
+
+inl_XMStoreUInt2 macro pDestination, V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    _mm_max_ps(xmm0, g_XMZero)
+    _mm_store_ps(xmm2, g_XMUnsignedFix)
+    _mm_store_ps(xmm3, g_XMMaxUInt)
+    _mm_store_ps(xmm1, xmm2)
+    _mm_cmple_ps(xmm1, xmm0)
+    _mm_cmplt_ps(xmm3, xmm0)
+    _mm_and_ps(xmm2, xmm1)
+    _mm_and_ps(xmm1, g_XMNegativeZero)
+    _mm_sub_ps(xmm0, xmm2)
+    _mm_cvttps_epi32(xmm0, xmm0)
+    _mm_xor_ps(xmm0, xmm1)
+    _mm_or_ps(xmm0, xmm3)
+    _mm_store_ps(xmm1, xmm0)
+    _mm_store_ss(pDestination[0], xmm0)
+    XM_PERMUTE_PS(xmm1, _MM_SHUFFLE(1, 1, 1, 1))
+    _mm_store_ss(pDestination[4], xmm1)
+    exitm<>
+endif
+    endm
+
+inl_XMStoreInt3 macro pDestination, V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    _mm_store_ps(xmm1, V)
+    _mm_store_ps(xmm2, xmm0)
+    XM_PERMUTE_PS(xmm1, _MM_SHUFFLE(1, 1, 1, 1))
+    XM_PERMUTE_PS(xmm2, _MM_SHUFFLE(2, 2, 2, 2))
+    _mm_store_ss(pDestination[0], xmm0)
+    _mm_store_ss(pDestination[4], xmm1)
+    _mm_store_ss(pDestination[8], xmm2)
+    exitm<>
+endif
+    endm
+
+inl_XMStoreInt3A macro pDestination, V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    _mm_storel_epi64(pDestination[0], xmm0)
+    XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(2, 2, 2, 2))
+    _mm_store_ss(pDestination[8], xmm0)
+    exitm<>
+endif
+    endm
+
+inl_XMStoreFloat3 macro pDestination, V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    _mm_store_ps(xmm1, V)
+    _mm_store_ps(xmm2, xmm0)
+    XM_PERMUTE_PS(xmm1, _MM_SHUFFLE(1, 1, 1, 1))
+    XM_PERMUTE_PS(xmm2, _MM_SHUFFLE(2, 2, 2, 2))
+    _mm_store_ss(pDestination[0], xmm0)
+    _mm_store_ss(pDestination[4], xmm1)
+    _mm_store_ss(pDestination[8], xmm2)
+    exitm<>
+endif
+    endm
+
+inl_XMStoreFloat3A macro pDestination, V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    _mm_storel_epi64(pDestination[0], xmm0)
+    XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(2, 2, 2, 2))
+    _mm_store_ss(pDestination[8], xmm0)
+    exitm<>
+endif
+    endm
+
+inl_XMStoreSInt3 macro pDestination, V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    _mm_store_ps(xmm1, g_XMMaxInt)
+    _mm_store_ps(xmm3, g_XMAbsMask)
+    ;;
+    ;; Float to int conversion
+    ;;
+    _mm_cvttps_epi32(xmm2, xmm0)
+    _mm_cmplt_ps(xmm1, xmm0)
+    _mm_and_ps(xmm3, xmm1)
+    _mm_andnot_ps(xmm1, xmm2)
+    _mm_store_ps(xmm0, xmm1)
+    _mm_or_ps(xmm0, xmm3)
+    _mm_store_ps(xmm2, xmm0)
+    _mm_store_ps(xmm1, xmm0)
+    _mm_store_ss(pDestination[0], xmm0)
+    _mm_shuffle_ps(xmm1, xmm0, _MM_SHUFFLE(1, 1, 1, 1))
+    _mm_shuffle_ps(xmm2, xmm0, _MM_SHUFFLE(2, 2, 2, 2))
+    _mm_store_ss(pDestination[4], xmm1)
+    _mm_store_ss(pDestination[8], xmm2)
+    exitm<>
+endif
+    endm
+
+inl_XMStoreUInt3 macro pDestination, V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    _mm_max_ps(xmm0, g_XMZero)
+    _mm_store_ps(xmm2, g_XMUnsignedFix)
+    _mm_store_ps(xmm3, g_XMMaxUInt)
+    _mm_store_ps(xmm1, xmm2)
+    _mm_cmple_ps(xmm1, xmm0)
+    _mm_cmplt_ps(xmm3, xmm0)
+    _mm_and_ps(xmm2, xmm1)
+    _mm_and_ps(xmm1, g_XMNegativeZero)
+    _mm_sub_ps(xmm0, xmm2)
+    _mm_cvttps_epi32(xmm0, xmm0)
+    _mm_xor_ps(xmm0, xmm1)
+    _mm_or_ps(xmm0, xmm3)
+    _mm_store_ps(xmm1, xmm0)
+    _mm_store_ps(xmm2, xmm0)
+    _mm_store_ss(pDestination[0], xmm0)
+    XM_PERMUTE_PS(xmm1, _MM_SHUFFLE(1, 1, 1, 1))
+    XM_PERMUTE_PS(xmm2, _MM_SHUFFLE(2, 2, 2, 2))
+    _mm_store_ss(pDestination[4], xmm1)
+    _mm_store_ss(pDestination[8], xmm2)
+    exitm<>
+endif
+    endm
+
+inl_XMStoreInt4 macro pDestination, V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    exitm<_mm_storeu_si128(pDestination, V)>
+endif
+    endm
+
+inl_XMStoreInt4A macro pDestination, V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    exitm<_mm_store_si128(pDestination, V)>
+endif
+    endm
+
+inl_XMStoreFloat4 macro pDestination, V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    exitm<_mm_storeu_ps(pDestination, V)>
+endif
+    endm
+
+inl_XMStoreFloat4A macro pDestination, V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    exitm<_mm_store_ps(pDestination, V)>
+endif
+    endm
+
+inl_XMStoreSInt4 macro pDestination, V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm1, V)
+    _mm_store_ps(xmm0, g_XMMaxInt)
+    _mm_store_ps(xmm2, g_XMAbsMask)
+    _mm_cmpgt_ps(xmm1, xmm0)
+    _mm_cvttps_epi32(xmm1)
+    _mm_and_ps(xmm2, xmm0)
+    _mm_andnot_ps(xmm0, xmm1)
+    _mm_or_ps(xmm0, xmm2)
+    _mm_storeu_si128(pDestination, xmm0)
+    exitm<>
+endif
+    endm
+
+inl_XMStoreUInt4 macro pDestination, V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    _mm_max_ps(xmm0, g_XMZero)
+    _mm_store_ps(xmm2, g_XMUnsignedFix)
+    _mm_store_ps(xmm3, g_XMMaxUInt)
+    _mm_store_ps(xmm1, xmm2)
+    _mm_cmpgt_ps(xmm0, xmm3)
+    _mm_cmpge_ps(xmm0, xmm1)
+    _mm_and_ps(xmm2, xmm1)
+    _mm_and_ps(xmm1, g_XMNegativeZero)
+    _mm_sub_ps(xmm0, xmm2)
+    _mm_cvttps_epi32(xmm0)
+    _mm_xor_ps(xmm0, xmm1)
+    _mm_or_ps(xmm0, xmm3)
+    _mm_storeu_si128(pDestination, xmm0)
+    exitm<>
 endif
     endm
 
 inl_XMVectorSet macro x, y, z, w
 ifdef _XM_NO_INTRINSICS_
     exitm<_mm_set_ps( w, z, y, x )>
-elseifdef _XM_ARM_NEON_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
     exitm<_mm_set_ps( w, z, y, x )>
 endif

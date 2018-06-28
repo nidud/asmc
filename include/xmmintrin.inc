@@ -538,23 +538,45 @@ _mm_load_ss macro x, p
 	retm<xmm0>
     endif
 	endm
-_mm_load_ps1 macro p
-	movss xmm0,_MM_MREG(p)
+_mm_load_ps1 macro x, p
+    ifnb <p>
+	movss x,_MM_MREG(p)
+	shufps x,x,0
+	retm<x>
+    else
+	movss xmm0,_MM_MREG(x)
 	shufps xmm0,xmm0,0
 	retm<xmm0>
+    endif
 	endm
-_mm_load_ps macro p
-	movaps xmm0,_MM_MREG(p)
+_mm_load_ps macro x, p
+    ifnb <p>
+	movaps x,_MM_MREG(p)
+	retm<x>
+    else
+	movaps xmm0,_MM_MREG(x)
 	retm<xmm0>
+    endif
 	endm
-_mm_loadr_ps macro p
-	movaps xmm0,_MM_MREG(p)
+_mm_loadr_ps macro x, p
+    ifnb <p>
+	movaps x,_MM_MREG(p)
+	shufps x,x,27
+	retm<x>
+    else
+	movaps xmm0,_MM_MREG(x)
 	shufps xmm0,xmm0,27
 	retm<xmm0>
+    endif
 	endm
-_mm_loadu_ps macro p
-	movups xmm0,_MM_MREG(p)
+_mm_loadu_ps macro x, p
+    ifnb <p>
+	movups x,_MM_MREG(p)
+	retm<x>
+    else
+	movups xmm0,_MM_MREG(x)
 	retm<xmm0>
+    endif
 	endm
 _mm_store_ss macro p, x:=<xmm0>
 	ifdif <p>,<x>

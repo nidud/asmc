@@ -1,5 +1,3 @@
-; XMScalarSinCos.ASM--
-; Copyright (C) 2018 Asmc Developers
 
 include DirectXMath.inc
 

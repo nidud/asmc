@@ -858,38 +858,970 @@ elseifdef _XM_SSE_INTRINSICS_
 endif
     endm
 
+inl_XMStoreFloat3x3 macro pDestination, M
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    ifnb <M>
+	_mm_store_ps(xmm1, M.r[0x00])
+	_mm_store_ps(xmm2, M.r[0x10])
+	_mm_store_ps(xmm3, M.r[0x20])
+    endif
+    _mm_store_ps(xmm0, xmm1)
+    _mm_shuffle_ps(xmm0, xmm2, _MM_SHUFFLE(0,0,2,2))
+    _mm_shuffle_ps(xmm2, xmm3, _MM_SHUFFLE(1,0,2,1))
+    _mm_shuffle_ps(xmm1, xmm0, _MM_SHUFFLE(2,0,1,0))
+    _mm_storeu_ps(pDestination[0], xmm1)
+    _mm_shuffle_ps(xmm3, xmm3, _MM_SHUFFLE(2,2,2,2))
+    _mm_storeu_ps(pDestination[16], xmm2)
+    _mm_store_ss(pDestination[32], xmm3)
+    exitm<>
+endif
+    endm
+
+inl_XMStoreFloat4x3 macro pDestination, M
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    ifnb <M>
+	_mm_store_ps(xmm1, M.r[0x00])
+	_mm_store_ps(xmm2, M.r[0x10])
+	_mm_store_ps(xmm3, M.r[0x20])
+	_mm_store_ps(xmm4, M.r[0x30])
+    endif
+    _mm_store_ps(xmm0, xmm2)
+    _mm_shuffle_ps(xmm2, xmm3, _MM_SHUFFLE(1,0,2,1))
+    _mm_shuffle_ps(xmm0, xmm1, _MM_SHUFFLE(2,2,0,0))
+    _mm_shuffle_ps(xmm1, xmm0, _MM_SHUFFLE(0,2,1,0))
+    _mm_storeu_ps(pDestination[0], xmm1)
+    _mm_shuffle_ps(xmm3, xmm4, _MM_SHUFFLE(0,0,2,2))
+    _mm_shuffle_ps(xmm3, xmm4, _MM_SHUFFLE(2,1,2,0))
+    _mm_storeu_ps(pDestination[16], xmm2)
+    _mm_storeu_ps(pDestination[32], xmm3)
+    exitm<>
+endif
+    endm
+
+inl_XMStoreFloat4x3A macro pDestination, M
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    ifnb <M>
+	_mm_store_ps(xmm1, M.r[0x00])
+	_mm_store_ps(xmm2, M.r[0x10])
+	_mm_store_ps(xmm3, M.r[0x20])
+	_mm_store_ps(xmm4, M.r[0x30])
+    endif
+    _mm_store_ps(xmm0, xmm1)
+    _mm_shuffle_ps(xmm0, xmm2, _MM_SHUFFLE(1,0,2,2))
+    _mm_shuffle_ps(xmm2, xmm3, _MM_SHUFFLE(1,0,2,1))
+    _mm_shuffle_ps(xmm1, xmm0, _MM_SHUFFLE(2,0,1,0))
+    _mm_store_ps(pDestination[0], xmm1)
+    _mm_shuffle_ps(xmm3, xmm4, _MM_SHUFFLE(0,0,2,2))
+    _mm_shuffle_ps(xmm3, xmm4, _MM_SHUFFLE(2,1,2,0))
+    _mm_store_ps(pDestination[16], xmm2)
+    _mm_store_ps(pDestination[32], xmm3)
+    exitm<>
+endif
+    endm
+
+inl_XMStoreFloat4x4 macro pDestination, M
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    ifnb <M>
+	_mm_storeu_ps(xmm0, M.r[0x00])
+	_mm_storeu_ps(xmm1, M.r[0x10])
+	_mm_storeu_ps(xmm2, M.r[0x20])
+	_mm_storeu_ps(xmm3, M.r[0x30])
+    endif
+    _mm_storeu_ps(pDestination[0x00], xmm0)
+    _mm_storeu_ps(pDestination[0x10], xmm1)
+    _mm_storeu_ps(pDestination[0x20], xmm2)
+    _mm_storeu_ps(pDestination[0x30], xmm3)
+endif
+    endm
+
+inl_XMStoreFloat4x4A macro pDestination, M
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    ifnb <M>
+	_mm_store_ps(xmm0, M.r[0x00])
+	_mm_store_ps(xmm1, M.r[0x10])
+	_mm_store_ps(xmm2, M.r[0x20])
+	_mm_store_ps(xmm3, M.r[0x30])
+    endif
+    _mm_store_ps(pDestination[0x00], xmm0)
+    _mm_store_ps(pDestination[0x10], xmm1)
+    _mm_store_ps(pDestination[0x20], xmm2)
+    _mm_store_ps(pDestination[0x30], xmm3)
+endif
+    endm
+
+inl_XMVectorZero macro
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    exitm<_mm_setzero_ps()>
+endif
+    endm
+
 inl_XMVectorSet macro x, y, z, w
 ifdef _XM_NO_INTRINSICS_
-    exitm<_mm_set_ps( w, z, y, x )>
 elseifdef _XM_SSE_INTRINSICS_
     exitm<_mm_set_ps( w, z, y, x )>
 endif
     endm
 
-inl_XMVectorSelect macro V1:=<xmm0>, V2:=<xmm1>, Control:=<xmm2>
-    ifidn <Control>,<xmm0>
-	_mm_andnot_ps(Control, V1)
-    else
-	if _MM_ISXMM(Control)
-	    _mm_store_ps(xmm0, _mm_andnot_ps(Control, V1))
-	else
-	    _mm_andnot_ps(Control, V1)
-	endif
-    endif
-    ifidn <V2>,<xmm1>
-	_mm_and_ps(xmm1, xmm0)
-    else
-	_mm_store_ps(xmm1, _mm_and_ps(V2, xmm0) )
-    endif
+inl_XMVectorSetInt macro x, y, z, w
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    exitm<_mm_set_epi32( w, z, y, x )>
+endif
+    endm
+
+inl_XMVectorReplicate macro Value
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    exitm<_mm_set_ps1(Value)>
+endif
+    endm
+
+inl_XMVectorReplicatePtr macro pValue
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    exitm<_mm_load_ps1(pValue)>
+endif
+    endm
+
+inl_XMVectorReplicateInt macro Value
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    exitm<_mm_set1_epi32(Value)>
+endif
+    endm
+
+inl_XMVectorReplicateIntPtr macro pValue
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    exitm<_mm_load_ps1(pValue)>
+endif
+    endm
+
+inl_XMVectorTrueInt macro
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    exitm<_mm_set1_epi32(-1)>
+endif
+    endm
+
+inl_XMVectorFalseInt macro
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    exitm<_mm_setzero_ps()>
+endif
+    endm
+
+inl_XMVectorSplatX macro V:=<xmm0>
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    exitm<XM_PERMUTE_PS()>
+endif
+    endm
+
+inl_XMVectorSplatY macro V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    exitm<XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(1, 1, 1, 1))>
+endif
+    endm
+
+inl_XMVectorSplatZ macro V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    exitm<XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(2, 2, 2, 2))>
+endif
+    endm
+
+inl_XMVectorSplatW macro V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    exitm<XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3, 3, 3, 3))>
+endif
+    endm
+
+inl_XMVectorSplatOne macro
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    exitm<_mm_store_ps(xmm0, g_XMOne)>
+endif
+    endm
+
+inl_XMVectorSplatInfinity macro
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    exitm<_mm_store_ps(xmm0, g_XMInfinity)>
+endif
+    endm
+
+inl_XMVectorSplatQNaN macro
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    exitm<_mm_store_ps(xmm0, g_XMQNaN)>
+endif
+    endm
+
+inl_XMVectorSplatEpsilon macro
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    exitm<_mm_store_ps(xmm0, g_XMEpsilon)>
+endif
+    endm
+
+inl_XMVectorSplatSignMask macro
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    exitm<_mm_set1_epi32(0x80000000)>
+endif
+    endm
+
+inl_XMVectorGetX macro V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    exitm<_mm_cvtss_f32(xmm0)>
+endif
+    endm
+
+inl_XMVectorGetY macro V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    XM_PERMUTE_PS(xmm0,_MM_SHUFFLE(1,1,1,1))
+    exitm<_mm_cvtss_f32(xmm0)>
+endif
+    endm
+
+inl_XMVectorGetZ macro V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    XM_PERMUTE_PS(xmm0,_MM_SHUFFLE(2,2,2,2))
+    exitm<_mm_cvtss_f32(xmm0)>
+endif
+    endm
+
+inl_XMVectorGetW macro V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    XM_PERMUTE_PS(xmm0,_MM_SHUFFLE(3,3,3,3))
+    exitm<_mm_cvtss_f32(xmm0)>
+endif
+    endm
+
+inl_XMVectorGetXPtr macro p, V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    exitm<_mm_store_ss(p, V)>
+endif
+    endm
+
+inl_XMVectorGetYPtr macro p, V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm1, V)
+    XM_PERMUTE_PS(xmm1, _MM_SHUFFLE(1,1,1,1))
+    exitm<_mm_store_ss(p, xmm1)>
+endif
+    endm
+
+inl_XMVectorGetZPtr macro p, V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm1, V)
+    XM_PERMUTE_PS(xmm1, _MM_SHUFFLE(2,2,2,2))
+    exitm<_mm_store_ss(p, xmm1)>
+endif
+    endm
+
+inl_XMVectorGetWPtr macro p, V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm1, V)
+    XM_PERMUTE_PS(xmm1, _MM_SHUFFLE(3,3,3,3))
+    exitm<_mm_store_ss(p, xmm1)>
+endif
+    endm
+
+inl_XMVectorGetIntX macro V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    exitm<_mm_cvtsi128_si32(xmm0)>
+endif
+    endm
+
+inl_XMVectorGetIntY macro V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(1,1,1,1))
+    exitm<_mm_cvtsi128_si32(xmm0)>
+endif
+    endm
+
+inl_XMVectorGetIntZ macro V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(2,2,2,2))
+    exitm<_mm_cvtsi128_si32(xmm0)>
+endif
+    endm
+
+inl_XMVectorGetIntW macro V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,3,3,3))
+    exitm<_mm_cvtsi128_si32(xmm0)>
+endif
+    endm
+
+inl_XMVectorGetIntXPtr macro x, V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm1, V)
+    exitm<_mm_store_ss(x, xmm1)>
+endif
+    endm
+
+inl_XMVectorGetIntYPtr macro p, V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm1, V)
+    XM_PERMUTE_PS(xmm1, _MM_SHUFFLE(1,1,1,1))
+    exitm<_mm_store_ss(p, xmm1)>
+endif
+    endm
+
+inl_XMVectorGetIntZPtr macro p, V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm1, V)
+    XM_PERMUTE_PS(xmm1, _MM_SHUFFLE(2,2,2,2))
+    exitm<_mm_store_ss(p, xmm1)>
+endif
+    endm
+
+inl_XMVectorGetIntWPtr macro p, V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm1, V)
+    XM_PERMUTE_PS(xmm1, _MM_SHUFFLE(3,3,3,3))
+    exitm<_mm_store_ss(p, xmm1)>
+endif
+    endm
+
+inl_XMVectorSetX macro V, x
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    _mm_store_ss(xmm1, x)
+    exitm<_mm_store_ss(xmm0, xmm1)>
+endif
+    endm
+
+inl_XMVectorSetY macro V, x
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    ;; Swap y and x
+    XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,2,0,1))
+    ;; Convert input to vector
+    _mm_store_ss(xmm1, x)
+    ;; Replace the x component
+    _mm_move_ss(xmm0, xmm1)
+    ;; Swap y and x again
+    exitm<XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,2,0,1))>
+endif
+    endm
+
+inl_XMVectorSetZ macro V, x
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    ;; Swap z and x
+    XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,0,1,2))
+    ;; Convert input to vector
+    _mm_store_ss(xmm1, x)
+    ;; Replace the x component
+    _mm_move_ss(xmm0, xmm1)
+    ;; Swap z and x again
+    exitm<XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,0,1,2))>
+endif
+    endm
+
+inl_XMVectorSetW macro V, x
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    ;; Swap w and x
+    XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(0,2,1,3))
+    ;; Convert input to vector
+    _mm_store_ss(xmm1, x)
+    ;; Replace the x component
+    _mm_move_ss(xmm0, xmm1)
+    ;; Swap w and x again
+    exitm<XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(0,2,1,3))>
+endif
+    endm
+
+inl_XMVectorSetXPtr macro V, x
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    _mm_store_ss(xmm1, x)
+    exitm<_mm_move_ss(xmm0, xmm1)>
+endif
+    endm
+
+inl_XMVectorSetYPtr macro V, x
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    ;; Swap y and x
+    XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,2,0,1))
+    ;; Convert input to vector
+    _mm_store_ss(xmm1, x)
+    ;; Replace the x component
+    _mm_move_ss(xmm0, xmm1)
+    ;; Swap y and x again
+    exitm<XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,2,0,1))>
+endif
+    endm
+
+inl_XMVectorSetZPtr macro V, x
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    ;; Swap z and x
+    XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,0,1,2))
+    ;; Convert input to vector
+    _mm_store_ss(xmm1, x)
+    ;; Replace the x component
+    _mm_move_ss(xmm0, xmm1)
+    ;; Swap z and x again
+    exitm<XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,0,1,2))>
+endif
+    endm
+
+inl_XMVectorSetWPtr macro V, x
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    ;; Swap w and x
+    XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(0,2,1,3))
+    ;; Convert input to vector
+    _mm_store_ss(xmm1, x)
+    ;; Replace the x component
+    _mm_move_ss(xmm0, xmm1)
+    ;; Swap w and x again
+    exitm<XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(0,2,1,3))>
+endif
+    endm
+
+inl_XMVectorSetIntX macro V, x
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    _mm_cvtsi32_si128(xmm1, x)
+    exitm<_mm_move_ss(xmm0, xmm1)>
+endif
+    endm
+
+inl_XMVectorSetIntY macro V, x
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    ;; Swap y and x
+    XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,2,0,1))
+    ;; Convert input to vector
+    _mm_cvtsi32_si128(xmm1, x)
+    ;; Replace the x component
+    _mm_move_ss(xmm0, xmm1)
+    ;; Swap y and x again
+    exitm<XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,2,0,1))>
+endif
+    endm
+
+inl_XMVectorSetIntZ macro V, x
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    ;; Swap z and x
+    XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,0,1,2))
+    ;; Convert input to vector
+    _mm_cvtsi32_si128(xmm1, x)
+    ;; Replace the x component
+    _mm_move_ss(xmm0, xmm1)
+    ;; Swap z and x again
+    exitm<XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,0,1,2))>
+endif
+    endm
+
+inl_XMVectorSetIntW macro V, x
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    ;; Swap w and x
+    XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(0,2,1,3))
+    ;; Convert input to vector
+    _mm_cvtsi32_si128(xmm1, x)
+    ;; Replace the x component
+    _mm_move_ss(xmm0, xmm1)
+    ;; Swap w and x again
+    exitm<XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(0,2,1,3))>
+endif
+    endm
+
+inl_XMVectorSetIntXPtr macro V, x
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    exitm<_mm_move_ss(xmm0, x)>
+endif
+    endm
+
+inl_XMVectorSetIntYPtr macro V, x
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    ;; Swap y and x
+    XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,2,0,1))
+    ;; Replace the x component
+    _mm_move_ss(xmm0, x)
+    ;; Swap y and x again
+    exitm<XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,2,0,1))>
+endif
+    endm
+
+inl_XMVectorSetIntZPtr macro V, x
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    ;; Swap z and x
+    XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,0,1,2))
+    ;; Replace the x component
+    _mm_move_ss(xmm0, x)
+    ;; Swap z and x again
+    exitm<XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,0,1,2))>
+endif
+    endm
+
+inl_XMVectorSetIntWPtr macro V, x
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    ;; Swap w and x
+    XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(0,2,1,3))
+    ;; Replace the x component
+    _mm_move_ss(xmm0, x)
+    ;; Swap w and x again
+    exitm<XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(0,2,1,3))>
+endif
+    endm
+
+inl_XMVectorSelect macro V1, V2, Control
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V1)
+    _mm_store_ps(xmm1, V2)
+    _mm_store_ps(xmm2, Control)
+    _mm_andnot_ps(xmm0, xmm2)
+    _mm_and_ps(xmm1, xmm2)
     exitm<_mm_or_ps(xmm0, xmm1)>
+endif
     endm
 
-inl_XMVectorNegate macro x:req
-    _mm_store_ps(xmm1, x)
+inl_XMVectorMergeXY macro V1, V2
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    exitm<_mm_unpacklo_ps(V1, V2)>
+endif
+    endm
+
+inl_XMVectorMergeZW macro V1, V2
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    exitm<_mm_unpackhi_ps(V1, V2)>
+endif
+    endm
+
+inl_XMVectorEqual macro V1, V2
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    exitm<_mm_cmpeq_ps(V1, V2)>
+endif
+    endm
+
+inl_XMVectorEqualInt macro V1, V2
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    exitm<_mm_cmpeq_epi32(V1, V2)>
+endif
+    endm
+
+inl_XMVectorNearEqual macro V1, V2, Epsilon
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V1)
+    _mm_store_ps(xmm1, V2)
+    _mm_store_ps(xmm2, Epsilon)
+    ;; Get the difference
+    _mm_sub_ps(xmm0, xmm1)
+    ;; Get the absolute value of the difference
+    _mm_setzero_ps(xmm3)
+    _mm_sub_ps(xmm3, xmm0)
+    _mm_max_ps(xmm0, xmm3)
+    exitm<_mm_cmple_ps(xmm0, xmm2)>
+endif
+    endm
+
+inl_XMVectorNotEqual macro V1, V2
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    exitm<_mm_cmpneq_ps(V1, V2)>
+endif
+    endm
+
+inl_XMVectorNotEqualInt macro V1, V2
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V1)
+    _mm_store_ps(xmm1, V2)
+    _mm_cmpeq_epi32(xmm0, xmm1)
+    exitm<_mm_xor_ps(xmm0, g_XMNegOneMask)>
+endif
+    endm
+
+inl_XMVectorGreater macro V1, V2
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V1)
+    _mm_store_ps(xmm1, V2)
+    _mm_cmpgt_ps(xmm0, xmm1)
+    exitm<_mm_store_ps(xmm0, xmm1)>
+endif
+    endm
+
+inl_XMVectorGreaterOrEqual macro V1, V2
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V1)
+    _mm_store_ps(xmm1, V2)
+    _mm_cmpge_ps(xmm0, xmm1)
+    exitm<_mm_store_ps(xmm0, xmm1)>
+endif
+    endm
+
+inl_XMVectorLess macro V1, V2
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    exitm<_mm_cmple_ps(V1, V2)>
+endif
+    endm
+
+inl_XMVectorInBounds macro V, Bounds
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    _mm_store_ps(xmm1, Bounds)
+    _mm_store_ps(xmm2, xmm0)
+    ;; Test if less than or equal
+    _mm_cmple_ps(xmm0, xmm1)
+    ;; Negate the bounds
+    _mm_mul_ps(xmm1, g_XMNegativeOne)
+    ;; Test if greater or equal (Reversed)
+    exitm<_mm_and_ps(xmm0, xmm1)>
+endif
+    endm
+
+inl_XMVectorIsNaN macro V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    exitm<_mm_cmpneq_ps(V, V)>
+endif
+    endm
+
+inl_XMVectorIsInfinite macro V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    ;; Mask off the sign bit
+    _mm_and_ps(xmm0, g_XMAbsMask)
+    ;; Compare to infinity
+    _mm_cmpeq_ps(xmm0, g_XMInfinity)
+    ;; If any are infinity, the signs are true.
+    retm<xmm0>
+endif
+    endm
+
+inl_XMVectorMin macro V1, V2
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    exitm<_mm_min_ps(V1, V2)>
+endif
+    endm
+
+inl_XMVectorMax macro V1, V2
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    exitm<_mm_max_ps(V1, V2)>
+endif
+    endm
+
+inl_XMVectorRound macro V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE4_INTRINSICS_
+    exitm<_mm_round_ps(V, _MM_FROUND_TO_NEAREST_INT or _MM_FROUND_NO_EXC)>
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    _mm_store_ps(xmm4, xmm0)
+    _mm_store_ps(xmm2, g_XMNegativeZero)
+    _mm_store_ps(xmm3, g_XMAbsMask)
+    _mm_and_ps(xmm2, xmm0)
+    _mm_or_ps(xmm2, g_XMNoFraction)
+    _mm_and_ps(xmm3, xmm0)
+    _mm_cmple_ps(xmm3, g_XMNoFraction)
+    _mm_store_ps(xmm0, xmm2)
+    _mm_add_ps(xmm0, xmm4)
+    _mm_sub_ps(xmm0, xmm2)
+    _mm_and_ps(xmm0, xmm3)
+    _mm_andnot_ps(xmm3, xmm4)
+    exitm<_mm_xor_ps(xmm0, xmm3)>
+endif
+    endm
+
+inl_XMVectorTruncate macro V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE4_INTRINSICS_
+    exitm<_mm_round_ps(V, _MM_FROUND_TO_ZERO or _MM_FROUND_NO_EXC)>
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    _mm_store_ps(xmm1, g_XMAbsMask)
+    _mm_store_ps(xmm2, g_XMNoFraction)
+    _mm_and_ps(xmm1, xmm0)
+    _mm_cmplt_epi32(xmm1, xmm2) ; reverse..
+    _mm_cvttps_epi32(xmm1, xmm0)
+    _mm_cvtepi32_ps(xmm1)
+    _mm_store_ps(xmm3, xmm2)
+    _mm_and_ps(xmm1, xmm2)
+    _mm_andnot_si128(xmm3, xmm0)
+    _mm_store_ps(xmm0, xmm3)
+    _mm_or_ps(xmm0, xmm1)
+    retm<>
+endif
+    endm
+
+inl_XMVectorFloor macro V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE4_INTRINSICS_
+    exitm<_mm_floor_ps(V)>
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    _mm_store_ps(xmm1, g_XMAbsMask)
+    _mm_store_ps(xmm3, g_XMNoFraction)
+    _mm_cvttps_epi32(xmm2, xmm0)
+    _mm_and_ps(xmm1, xmm0)
+    pcmpgtd xmm3,xmm1
+    _mm_cvtepi32_ps(xmm1, xmm2)
+    _mm_store_ps(xmm2, xmm0)
+    cmpltps xmm2, xmm1
+    _mm_store_ps(xmm4, xmm3)
+    cvtdq2ps xmm2, xmm2
+    _mm_add_ps(xmm1, xmm2)
+    _mm_andnot_si128(xmm4, xmm0)
+    _mm_store_ps(xmm0, xmm4)
+    _mm_and_ps(xmm1, xmm3)
+    _mm_or_ps(xmm0, xmm1)
+    retm<>
+endif
+    endm
+
+inl_XMVectorCeiling macro V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE4_INTRINSICS_
+    exitm<_mm_ceil_ps(V)>
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    _mm_store_ps(xmm1, g_XMAbsMask)
+    _mm_store_ps(xmm3, g_XMNoFraction)
+    _mm_cvttps_epi32(xmm2, xmm0)
+    _mm_and_ps(xmm1, xmm0)
+    pcmpgtd xmm3,xmm1
+    _mm_cvtepi32_ps(xmm1, xmm2)
+    _mm_store_ps(xmm2, xmm1)
+    cmpltps xmm2, xmm0
+    _mm_store_ps(xmm4, xmm3)
+    cvtdq2ps xmm2, xmm2
+    _mm_sub_ps(xmm1, xmm2)
+    _mm_andnot_si128(xmm4, xmm0)
+    _mm_store_ps(xmm0, xmm4)
+    _mm_and_ps(xmm1, xmm3)
+    _mm_or_ps(xmm0, xmm1)
+    retm<>
+endif
+    endm
+
+inl_XMVectorClamp macro V, Min, Max
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    _mm_max_ps(xmm0, Min)
+    _mm_min_ps(xmm0, Max)
+    retm<xmm0>
+endif
+    endm
+
+inl_XMVectorSaturate macro V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    ;; Set <0 to 0
+    _mm_max_ps(xmm0, g_XMZero)
+    ;; Set>1 to 1
+    _mm_min_ps(xmm0, g_XMOne)
+    retm<>
+endif
+    endm
+
+inl_XMVectorAndInt macro V1, V2
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    exitm<_mm_and_ps(V1, V2)>
+endif
+    endm
+
+inl_XMVectorAndCInt macro V1, V2
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V1)
+    _mm_store_ps(xmm1, V2)
+    _mm_andnot_si128(xmm1, xmm0)
+    exitm<_mm_store_ps(xmm0, xmm1)>
+endif
+    endm
+
+inl_XMVectorOrInt macro V1, V2
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V1)
+    _mm_store_ps(xmm1, V2)
+    exitm<_mm_or_si128(xmm0, xmm1)>
+endif
+    endm
+
+inl_XMVectorNorInt macro V1, V2
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V1)
+    _mm_store_ps(xmm1, V2)
+    _mm_or_si128(xmm0, xmm1)
+    exitm<_mm_andnot_si128(xmm0, g_XMNegOneMask)>
+endif
+    endm
+
+inl_XMVectorXorInt macro V1, V2
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V1)
+    _mm_store_ps(xmm1, V2)
+    exitm<_mm_xor_si128(xmm0, xmm1)>
+endif
+    endm
+
+inl_XMVectorNegate macro V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm1, V)
     exitm<_mm_sub_ps(_mm_setzero_ps(), xmm1)>
+endif
     endm
 
-inl_XMVectorSubtract	equ <_mm_sub_ps>
+inl_XMVectorAdd macro V1, V2
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    exitm<_mm_add_ps(V1, V2)>
+endif
+    endm
+
+inl_XMVectorSubtract macro V1, V2
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    exitm<_mm_sub_ps(V1, V2)>
+endif
+    endm
+
+inl_XMVectorSum macro V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE3_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    _mm_hadd_ps(xmm0, xmm0)
+    _mm_hadd_ps(xmm0, xmm0)
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    _mm_store_ps(xmm1, xmm0)
+    XM_PERMUTE_PS(xmm1, _MM_SHUFFLE(2, 3, 0, 1))
+    _mm_add_ps(xmm0, xmm1)
+    XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(1, 0, 3, 2))
+    exitm<_mm_add_ps(xmm0, xmm0)>
+endif
+    endm
+
+inl_XMVectorAddAngles macro V1, V2
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V1)
+    _mm_store_ps(xmm1, V2)
+    ;; Adjust the angles
+    _mm_add_ps(xmm0, xmm1)
+    _mm_store_ps(xmm1, xmm0)
+    _mm_cmplt_ps(xmm1, g_XMNegativePi)
+    ;; Less than Pi?
+    _mm_and_ps(xmm1, g_XMTwoPi)
+    ;; Add 2Pi to all entries less than -Pi
+    _mm_add_ps(xmm0, xmm1)
+    ;; Greater than or equal to Pi?
+    _mm_store_ps(xmm1, g_XMPi)
+    _mm_cmple_ps(xmm1, xmm0)
+    _mm_and_ps(xmm1, g_XMTwoPi)
+    ;; Sub 2Pi to all entries greater than Pi
+    exitm<_mm_sub_ps(xmm0, xmm1)>
+endif
+    endm
+
+inl_XMVectorSubtractAngles macro V1, V2
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V1)
+    _mm_store_ps(xmm1, V2)
+    ;; Adjust the angles
+    _mm_sub_ps(xmm0, xmm1)
+    _mm_store_ps(xmm1, xmm0)
+    _mm_cmplt_ps(xmm1, g_XMNegativePi)
+    ;; Less than Pi?
+    _mm_and_ps(xmm1, g_XMTwoPi)
+    ;; Add 2Pi to all entries less than -Pi
+    _mm_add_ps(xmm0, xmm1)
+    ;; Greater than or equal to Pi?
+    _mm_store_ps(xmm1, g_XMPi)
+    _mm_cmple_ps(xmm1, xmm0)
+    _mm_and_ps(xmm1, g_XMTwoPi)
+    ;; Sub 2Pi to all entries greater than Pi
+    exitm<_mm_sub_ps(xmm0, xmm1)>
+endif
+    endm
 
 inl_XMVector3Dot macro V1:=<xmm0>, V2:=<xmm1>
 ifdef _XM_SSE4_INTRINSICS_

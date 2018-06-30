@@ -607,27 +607,25 @@ _mm_cmpgt_epi32 macro a:=<xmm0>, b:=<xmm1>
 	exitm<_MM_OPCSX2(pcmpg, td, a, b)>
 	endm
 _mm_cmplt_epi8 macro a:=<xmm0>, b:=<xmm1>
-	movdqa xmm2,b
-	pcmpgtb xmm2,a
-	movdqa a,xmm2
-	retm<a>
+	pcmpgtb b,a
+	retm<b>
 	endm
 _mm_cmplt_epi16 macro a:=<xmm0>, b:=<xmm1>
-	movdqa xmm2,b
-	pcmpgtw xmm2,a
-	movdqa a,xmm2
-	retm<a>
+	pcmpgtw b,a
+	retm<b>
 	endm
 _mm_cmplt_epi32 macro a:=<xmm0>, b:=<xmm1>
-	movdqa xmm2,b
-	pcmpgtd xmm2,a
-	movdqa a,xmm2
-	retm<a>
+	pcmpgtd b,a
+	retm<b>
 	endm
 _mm_cvtsi32_si128 macro x, d
     ifnb <d>
-	mov eax,d
-	movd x,eax
+	if (type d) eq 4 and (opattr d) eq 48
+	    movd x,d
+	else
+	    mov eax,d
+	    movd x,eax
+	endif
 	retm<x>
     else
 	mov eax,x

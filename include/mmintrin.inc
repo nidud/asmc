@@ -22,7 +22,7 @@ m64_u16		dw 4 dup(?)
 m64_u32		dd 2 dup(?)
 __m64		ends
 
-ifdef _M_IX86
+;ifdef _M_IX86
 _m_empty	proto
 _m_from_int	proto :sdword
 _m_to_int	proto :qword
@@ -39,23 +39,74 @@ _m_punpckldq	proto :qword, :qword
 
 ;; Packed arithmetic intrinsics
 
-_m_paddb	proto :qword, :qword
-_m_paddw	proto :qword, :qword
-_m_paddd	proto :qword, :qword
-_m_paddsb	proto :qword, :qword
-_m_paddsw	proto :qword, :qword
-_m_paddusb	proto :qword, :qword
-_m_paddusw	proto :qword, :qword
-_m_psubb	proto :qword, :qword
-_m_psubw	proto :qword, :qword
-_m_psubd	proto :qword, :qword
-_m_psubsb	proto :qword, :qword
-_m_psubsw	proto :qword, :qword
-_m_psubusb	proto :qword, :qword
-_m_psubusw	proto :qword, :qword
-_m_pmaddwd	proto :qword, :qword
-_m_pmulhw	proto :qword, :qword
-_m_pmullw	proto :qword, :qword
+_m_paddb macro a, b
+    paddb a,b
+    retm<a>
+    endm
+_m_paddw macro a, b
+    paddw a,b
+    retm<a>
+    endm
+_m_paddd macro a, b
+    paddd a,b
+    retm<a>
+    endm
+_m_paddsb macro a, b
+    paddsb a,b
+    retm<a>
+    endm
+_m_paddsw macro a, b
+    paddsw a,b
+    retm<a>
+    endm
+_m_paddusb macro a, b
+    paddusb a,b
+    retm<a>
+    endm
+_m_paddusw macro a, b
+    paddusw a,b
+    retm<a>
+    endm
+_m_psubb macro a, b
+    psubb a,b
+    retm<a>
+    endm
+_m_psubw macro a, b
+    psubw a,b
+    retm<a>
+    endm
+_m_psubd macro a, b
+    psubd a,b
+    retm<a>
+    endm
+_m_psubsb macro a, b
+    psubsb a,b
+    retm<a>
+    endm
+_m_psubsw macro a, b
+    psubsw a,b
+    retm<a>
+    endm
+_m_psubusb macro a, b
+    psubusb a,b
+    retm<a>
+    endm
+_m_psubusw macro a, b
+    psubusw a,b
+    retm<a>
+    endm
+_m_pmaddwd macro a, b
+    pmaddwd a,b
+    retm<a>
+    endm
+_m_pmulhw macro a, b
+    pmulhw a,b
+    retm<a>
+    endm
+_m_pmullw macro a, b
+    pmullw a,b
+    retm<a>
+    endm
 
 ;; Shift intrinsics
 
@@ -77,18 +128,48 @@ _m_psrlq	proto :qword, :qword
 _m_psrlqi	proto :qword, :sdword
 
 ;; Logical intrinsics
-_m_pand		proto :qword, :qword
-_m_pandn	proto :qword, :qword
-_m_por		proto :qword, :qword
-_m_pxor		proto :qword, :qword
+_m_pand macro a, b
+    pand a,b
+    retm<a>
+    endm
+_m_pandn macro a, b
+    pandn a,b
+    retm<a>
+    endm
+_m_por macro a, b
+    por a,b
+    retm<a>
+    endm
+_m_pxor macro a, b
+    pxor a,b
+    retm<a>
+    endm
 
 ;; Comparison intrinsics
-_m_pcmpeqb	proto :qword, :qword
-_m_pcmpeqw	proto :qword, :qword
-_m_pcmpeqd	proto :qword, :qword
-_m_pcmpgtb	proto :qword, :qword
-_m_pcmpgtw	proto :qword, :qword
-_m_pcmpgtd	proto :qword, :qword
+_m_pcmpeqb macro a, b
+    pcmpeqb a,b
+    retm<a>
+    endm
+_m_pcmpeqw macro a, b
+    pcmpeqw a,b
+    retm<a>
+    endm
+_m_pcmpeqd macro a, b
+    pcmpeqd a,b
+    retm<a>
+    endm
+_m_pcmpgtb macro a, b
+    pcmpgtb a,b
+    retm<a>
+    endm
+_m_pcmpgtw macro a, b
+    pcmpgtw a,b
+    retm<a>
+    endm
+_m_pcmpgtd macro a, b
+    pcmpgtd a,b
+    retm<a>
+    endm
 
 ;; Utility intrinsics
 _mm_setzero_si64 proto
@@ -158,6 +239,6 @@ _mm_cmpeq_pi32		equ <_m_pcmpeqd>
 _mm_cmpgt_pi8		equ <_m_pcmpgtb>
 _mm_cmpgt_pi16		equ <_m_pcmpgtw>
 _mm_cmpgt_pi32		equ <_m_pcmpgtd>
-endif
+;endif
 
 endif

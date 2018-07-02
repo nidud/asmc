@@ -1210,6 +1210,12 @@ local   b[MAX_LINE_LEN]:SBYTE
                         mov esi,@CStr(" edx::eax")
                     .endif
                     .endc
+                  .case 16:
+                    .if [ecx].asym.mem_type & MT_FLOAT
+
+                        mov esi,@CStr(" xmm0")
+                    .endif
+                    .endc
                 .endsw
             .endif
         .endif

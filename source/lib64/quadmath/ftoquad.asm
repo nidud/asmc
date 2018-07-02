@@ -45,7 +45,7 @@ ftoquad proc p:ptr, f:ptr
     xor eax,eax
     mov [r8],rax
     mov [r8+8],ax
-    shl ecx,1
+    add ecx,ecx
     rcr cx,1
     mov [r8+14],cx
     mov rax,r8

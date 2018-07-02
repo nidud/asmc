@@ -2379,8 +2379,12 @@ int ParseLine( struct asm_tok tokenarray[] )
 		if ( tokenarray[j+2].tokval == T_PROC )
 		    strcat( buffer, "_this" );
 		strcat( buffer, ":" );
-		if ( tokenarray[j-1].token != T_STYPE )
-		   strcat( buffer, "ptr " );
+		if ( tokenarray[j-1].token != T_STYPE ) {
+
+		    sym = IsType( tokenarray[j-1].string_ptr );
+		    if ( !sym || sym->typekind != TYPE_TYPEDEF || sym->total_size != 16 )
+		       strcat( buffer, "ptr " );
+		}
 		strcat( buffer, tokenarray[0].string_ptr );
 	    }
 

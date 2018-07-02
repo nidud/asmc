@@ -717,7 +717,8 @@ ms64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:SI
 
                         asmerr(2114, &[esi+1])
                     .else
-                        .if vector_call && esi < 6 && [edx].asym.mem_type == MT_REAL16
+                        .if vector_call && esi < 6 && \
+                            ( [edx].asym.mem_type == MT_REAL16 || [edx].asym.mem_type == MT_OWORD )
 
                             jmp vector_0_5
                         .endif
@@ -790,7 +791,8 @@ ms64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:SI
 
                 .if [edi].expr.kind == EXPR_REG && !( [edi].expr.flags & EXF_INDIRECT )
 
-                    .if vector_call && esi < 6 && ( [edx].asym.mem_type & MT_FLOAT )
+                    .if vector_call && esi < 6 && ( [edx].asym.mem_type & MT_FLOAT || \
+                        [edx].asym.mem_type == MT_OWORD )
 
                         jmp vector_0_5
                     .endif
@@ -879,7 +881,8 @@ ms64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:SI
 
         .elseif [edx].asym.mem_type == MT_REAL4 || \
                 [edx].asym.mem_type == MT_REAL8 || \
-                [edx].asym.mem_type == MT_REAL16
+                [edx].asym.mem_type == MT_REAL16 || \
+                ( [edx].asym.mem_type == MT_OWORD && vector_call )
 
             vector_0_5:
             CheckXMM(reg, paramvalue, regs_used, param)

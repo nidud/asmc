@@ -20,13 +20,13 @@ endif
     mov ecx,edx
     shld edx,eax,11
     shl eax,11
-    shr ecx,20
-    and ecx,0x7FF
+    sar ecx,32-12
+    and cx,0x7FF
     .ifnz
-        .if ecx != 0x7FF
-            add ecx,0x3C00
+        .if cx != 0x7FF
+            add cx,0x3FFF-0x03FF
         .else
-            or ecx,0x7F00
+            or ch,0x7F
             .if edx & 0x7FFFFFFF || eax
                 ;
                 ; Invalid exception
@@ -36,10 +36,10 @@ endif
         .endif
         or  edx,0x80000000
     .elseif edx || eax
-        or ecx,0x3C01
+        or ecx,0x3FFF-0x03FF+1
         .if !edx
             xchg edx,eax
-            sub ecx,32
+            sub cx,32
         .endif
         .repeat
             test edx,edx

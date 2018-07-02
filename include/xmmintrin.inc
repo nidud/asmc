@@ -520,7 +520,7 @@ _mm_setr_ps macro x0:=<xmm0>, x1:=<xmm1>, x2:=<xmm2>, x3:=<xmm3>
 	retm<x0>
 	endm
 _mm_setzero_ps macro x:=<xmm0>
-	pxor x,x
+	xorps x,x
 	retm<x>
 	endm
 _mm_movemm_ps macro a, b

@@ -114,26 +114,36 @@ _mm_cmple_sd macro a:=<xmm0>, b:=<xmm1>
 _mm_cmple_pd macro a:=<xmm0>, b:=<xmm1>
 	exitm<_MM_OPCSX2(cmple, pd, a, b)>
 	endm
-_mm_cmpgt_sd macro a:=<xmm0>, b:=<xmm1>
-	_mm_cmplt_sd(b, a)
-	movsd a, b
-	retm<a>
+
+_mm_cmpgt_sd macro x:req, a:req, b:req
+    ifdif <x>,<b>
+	movsd x,b
+    endif
+	_mm_cmplt_sd(x, a)
+	retm<x>
 	endm
-_mm_cmpgt_pd macro a:=<xmm0>, b:=<xmm1>
-	_mm_cmplt_pd(b, a)
-	movapd a, b
-	retm<a>
+_mm_cmpgt_pd macro x:req, a:req, b:req
+    ifdif <x>,<b>
+	movapd x,b
+    endif
+	_mm_cmplt_pd(x, a)
+	retm<x>
 	endm
-_mm_cmpge_sd macro a:=<xmm0>, b:=<xmm1>
-	_mm_cmplt_sd(b, a)
-	movsd a, b
-	retm<a>
+_mm_cmpge_sd macro x:req, a:req, b:req
+    ifdif <x>,<b>
+	movapd x,b
+    endif
+	_mm_cmplt_sd(x, a)
+	retm<x>
 	endm
-_mm_cmpge_pd macro a:=<xmm0>, b:=<xmm1>
-	_mm_cmple_pd(b, a)
-	movapd a, b
-	retm<a>
+_mm_cmpge_pd macro x:req, a:req, b:req
+    ifdif <x>,<b>
+	movapd x,b
+    endif
+	_mm_cmple_pd(x, a)
+	retm<x>
 	endm
+
 _mm_cmpneq_sd macro a:=<xmm0>, b:=<xmm1>
 	exitm<_MM_OPCSX2(cmpneq, sd, a, b)>
 	endm
@@ -606,17 +616,26 @@ _mm_cmpgt_epi16 macro a:=<xmm0>, b:=<xmm1>
 _mm_cmpgt_epi32 macro a:=<xmm0>, b:=<xmm1>
 	exitm<_MM_OPCSX2(pcmpg, td, a, b)>
 	endm
-_mm_cmplt_epi8 macro a:=<xmm0>, b:=<xmm1>
-	pcmpgtb b,a
-	retm<b>
+_mm_cmplt_epi8 macro x:req, a:req, b:req
+    ifdif <x>,<b>
+	movaps x,b
+    endif
+	pcmpgtb x,a
+	retm<x>
 	endm
-_mm_cmplt_epi16 macro a:=<xmm0>, b:=<xmm1>
-	pcmpgtw b,a
-	retm<b>
+_mm_cmplt_epi16 macro x:req, a:req, b:req
+    ifdif <x>,<b>
+	movaps x,b
+    endif
+	pcmpgtw x,a
+	retm<x>
 	endm
-_mm_cmplt_epi32 macro a:=<xmm0>, b:=<xmm1>
-	pcmpgtd b,a
-	retm<b>
+_mm_cmplt_epi32 macro x:req, a:req, b:req
+    ifdif <x>,<b>
+	movaps x,b
+    endif
+	pcmpgtd x,a
+	retm<x>
 	endm
 _mm_cvtsi32_si128 macro x, d
     ifnb <d>
@@ -790,7 +809,7 @@ _mm_setr_epi8 macro a, b, q, d, e, f, g, h, i, j, k, l, m, n, o, p
 		i or (j shl 8), k or (l shl 8), m or (n shl 8), o or (p shl 8))>
 	endm
 _mm_setzero_si128 macro x:=<xmm0>
-	pxor x, x
+	xorps x, x
 	retm<x>
 	endm
 

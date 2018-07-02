@@ -50,7 +50,7 @@ _iFDLD proc c uses ecx ebx
     .until 1
     mov [ebx],eax
     mov [ebx+4],edx
-    shl ecx,1
+    add ecx,ecx
     rcr cx,1
     mov [ebx+8],cx
     ret

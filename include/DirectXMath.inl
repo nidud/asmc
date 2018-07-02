@@ -1438,9 +1438,10 @@ elseifdef _XM_SSE_INTRINSICS_
     _mm_store_ps(xmm0, V1)
     _mm_store_ps(xmm1, V2)
     _mm_store_ps(xmm2, Control)
-    _mm_andnot_ps(xmm0, xmm2)
     _mm_and_ps(xmm1, xmm2)
-    exitm<_mm_or_ps(xmm0, xmm1)>
+    _mm_andnot_ps(xmm2, xmm0)
+    _mm_or_ps(xmm2, xmm1)
+    exitm<_mm_store_ps(xmm0, xmm2)>
 endif
     endm
 
@@ -1543,6 +1544,7 @@ elseifdef _XM_SSE_INTRINSICS_
     ;; Negate the bounds
     _mm_mul_ps(xmm1, g_XMNegativeOne)
     ;; Test if greater or equal (Reversed)
+    _mm_cmple_ps(xmm1, xmm2)
     exitm<_mm_and_ps(xmm0, xmm1)>
 endif
     endm
@@ -1587,7 +1589,7 @@ elseifdef _XM_SSE4_INTRINSICS_
     exitm<_mm_round_ps(V, _MM_FROUND_TO_NEAREST_INT or _MM_FROUND_NO_EXC)>
 elseifdef _XM_SSE_INTRINSICS_
     _mm_store_ps(xmm0, V)
-    _mm_store_ps(xmm4, xmm0)
+    _mm_store_ps(xmm1, xmm0)
     _mm_store_ps(xmm2, g_XMNegativeZero)
     _mm_store_ps(xmm3, g_XMAbsMask)
     _mm_and_ps(xmm2, xmm0)
@@ -1595,10 +1597,10 @@ elseifdef _XM_SSE_INTRINSICS_
     _mm_and_ps(xmm3, xmm0)
     _mm_cmple_ps(xmm3, g_XMNoFraction)
     _mm_store_ps(xmm0, xmm2)
-    _mm_add_ps(xmm0, xmm4)
+    _mm_add_ps(xmm0, xmm1)
     _mm_sub_ps(xmm0, xmm2)
     _mm_and_ps(xmm0, xmm3)
-    _mm_andnot_ps(xmm3, xmm4)
+    _mm_andnot_ps(xmm3, xmm1)
     exitm<_mm_xor_ps(xmm0, xmm3)>
 endif
     endm
@@ -1612,7 +1614,7 @@ elseifdef _XM_SSE_INTRINSICS_
     _mm_store_ps(xmm1, g_XMAbsMask)
     _mm_store_ps(xmm2, g_XMNoFraction)
     _mm_and_ps(xmm1, xmm0)
-    _mm_cmplt_epi32(xmm1, xmm2) ; reverse..
+    _mm_cmplt_epi32(xmm2, xmm1, xmm2) ; reverse..
     _mm_cvttps_epi32(xmm1, xmm0)
     _mm_cvtepi32_ps(xmm1)
     _mm_store_ps(xmm3, xmm2)
@@ -1820,6 +1822,411 @@ elseifdef _XM_SSE_INTRINSICS_
     _mm_and_ps(xmm1, g_XMTwoPi)
     ;; Sub 2Pi to all entries greater than Pi
     exitm<_mm_sub_ps(xmm0, xmm1)>
+endif
+    endm
+
+inl_XMVectorMultiply macro V1, V2
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    exitm<_mm_mul_ps(V1, V2)>
+endif
+    endm
+
+inl_XMVectorMultiplyAdd macro V1, V2, V3
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V1)
+    _mm_store_ps(xmm1, V2)
+    _mm_mul_ps(xmm0, xmm1)
+    exitm<_mm_add_ps(xmm0, V3)>
+endif
+    endm
+
+inl_XMVectorDivide macro V1, V2
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    exitm<_mm_div_ps(V1, V2)>
+endif
+    endm
+
+inl_XMVectorNegativeMultiplySubtract macro V1, V2, V3
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V1)
+    _mm_store_ps(xmm1, V2)
+    _mm_store_ps(xmm2, V3)
+    _mm_mul_ps(xmm1, xmm0)
+    _mm_store_ps(xmm0, xmm2)
+    exitm<_mm_sub_ps(xmm0, xmm1)>
+endif
+    endm
+
+inl_XMVectorScale macro V, ScaleFactor
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    _mm_store_ss(xmm1, ScaleFactor)
+    _mm_set_ps1(xmm1)
+    exitm<_mm_mul_ps(xmm0, xmm1)>
+endif
+    endm
+
+inl_XMVectorReciprocalEst macro V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    exitm<_mm_rcp_ps(V)>
+endif
+    endm
+
+inl_XMVectorReciprocal macro V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm1, V)
+    _mm_store_ps(xmm0, g_XMOne)
+    exitm<_mm_div_ps(xmm0, xmm1)>
+endif
+    endm
+
+inl_XMVectorSqrtEst macro V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    exitm<_mm_sqrt_ps(xmm0)>
+endif
+    endm
+
+inl_XMVectorSqrt macro V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    exitm<_mm_sqrt_ps(xmm0)>
+endif
+    endm
+
+inl_XMVectorReciprocalSqrtEst macro V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    exitm<_mm_rsqrt_ps(xmm0)>
+endif
+    endm
+
+inl_XMVectorReciprocalSqrt macro V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm1, V)
+    _mm_store_ps(xmm0, g_XMOne)
+    exitm<_mm_div_ps(xmm0, xmm1)>
+endif
+    endm
+
+inl_XMVectorExp2 macro V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    _mm_load_si128(xmm3, g_XMExpEst7)
+    _mm_load_si128(xmm4, g_XMInfinity)
+    _mm_load_si128(xmm2, xmm0)
+    _mm_cvttps_epi32(xmm5, xmm0)
+    _mm_cvtepi32_ps(xmm1, xmm5)
+    _mm_load_si128(xmm7, xmm0)
+    _mm_load_si128(xmm0, g_XMBin128)
+    _mm_sub_ps(xmm2, xmm1)
+    _mm_load_si128(xmm1, g_XM253)
+    _mm_cmpgt_epi32(xmm0, xmm7)
+    _mm_load_si128(xmm6, xmm0)
+    _mm_add_pi32(xmm1, xmm5)
+    _mm_slli_epi32(xmm1, 23)
+    _mm_andnot_si64(xmm6, xmm4)
+    _mm_mul_ps(xmm3, xmm2)
+    _mm_add_ps(xmm3, g_XMExpEst6)
+    _mm_mul_ps(xmm3, xmm2)
+    _mm_add_ps(xmm3, g_XMExpEst5)
+    _mm_mul_ps(xmm3, xmm2)
+    _mm_add_ps(xmm3, g_XMExpEst4)
+    _mm_mul_ps(xmm3, xmm2)
+    _mm_add_ps(xmm3, g_XMExpEst3)
+    _mm_mul_ps(xmm3, xmm2)
+    _mm_add_ps(xmm3, g_XMExpEst2)
+    _mm_mul_ps(xmm3, xmm2)
+    _mm_add_ps(xmm3, g_XMExpEst1)
+    _mm_mul_ps(xmm3, xmm2)
+    _mm_load_si128(xmm2, g_XMExponentBias)
+    _mm_add_pi32(xmm2, xmm5)
+    _mm_slli_epi32(xmm2, 23)
+    _mm_add_ps(xmm3, g_XMOne)
+    _mm_div_ps(xmm2, xmm3)
+    _mm_div_ps(xmm1, xmm3)
+    _mm_load_si128(xmm3, g_XMQNaNTest)
+    _mm_and_si64(xmm0, xmm2)
+    _mm_mul_ps(xmm1, g_XMMinNormal)
+    _mm_or_si64(xmm6, xmm0)
+    _mm_load_si128(xmm0, g_XMSubnormalExponent)
+    _mm_and_si64(xmm3, xmm7)
+    _mm_cmpeq_epi32(xmm3, g_XMZero)
+    _mm_cmpgt_epi32(xmm0, xmm5)
+    _mm_load_si128(xmm5, xmm0)
+    _mm_andnot_si64(xmm0, xmm2)
+    _mm_load_si128(xmm2, g_XMNegativeZero)
+    _mm_and_si64(xmm5, xmm1)
+    _mm_or_si64(xmm5, xmm0)
+    _mm_and_si64(xmm2, xmm7)
+    _mm_cmpeq_epi32(xmm2, g_XMNegativeZero)
+    _mm_load_si128(xmm0, g_XMBinNeg150)
+    _mm_cmplt_epi32(xmm0, xmm7, xmm0)
+    _mm_and_si64(xmm5, xmm0)
+    _mm_andnot_si64(xmm0, g_XMZero)
+    _mm_or_si64(xmm5, xmm0)
+    _mm_store_ps(xmm0, xmm4)
+    _mm_and_si64(xmm0, xmm7)
+    _mm_and_si64(xmm5, xmm2)
+    _mm_cmpeq_epi32(xmm0, xmm4)
+    _mm_andnot_si64(xmm3, xmm0)
+    _mm_andnot_si64(xmm2, xmm6)
+    _mm_load_si128(xmm0, xmm3)
+    _mm_and_si64(xmm3, g_XMQNaN)
+    _mm_or_si64(xmm5, xmm2)
+    _mm_andnot_si64(xmm0, xmm5)
+    _mm_or_si64(xmm0, xmm3)
+    retm<xmm0>
+endif
+    endm
+
+inl_XMVectorExpE macro V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    _mm_load_si128(xmm3, g_XMExponentBias)
+    _mm_load_si128(xmm4, g_XMInfinity)
+    _mm_load_si128(xmm7, g_XMLgE)
+    _mm_mul_ps(xmm7, xmm0)
+    _mm_cvttps_epi32(xmm3, xmm7)
+    _mm_load_si128(xmm1, xmm7)
+    _mm_add_pi32(xmm2, xmm3)
+    _mm_cvtepi32_ps(xmm0, xmm3)
+    _mm_slli_epi32(xmm2, 23)
+    _mm_sub_ps(xmm1, xmm0)
+    _mm_store_ps(xmm0, g_XMExpEst7)
+    _mm_mul_ps(xmm0, xmm1)
+    _mm_add_ps(xmm0, g_XMExpEst6)
+    _mm_mul_ps(xmm0, xmm1)
+    _mm_add_ps(xmm0, g_XMExpEst5)
+    _mm_mul_ps(xmm0, xmm1)
+    _mm_add_ps(xmm0, g_XMExpEst4)
+    _mm_mul_ps(xmm0, xmm1)
+    _mm_add_ps(xmm0, g_XMExpEst3)
+    _mm_mul_ps(xmm0, xmm1)
+    _mm_add_ps(xmm0, g_XMExpEst2)
+    _mm_mul_ps(xmm0, xmm1)
+    _mm_add_ps(xmm0, g_XMExpEst1)
+    _mm_mul_ps(xmm0, xmm1)
+    _mm_load_si128(xmm1, g_XM253)
+    _mm_add_pi32(xmm1, xmm3)
+    _mm_slli_epi32(xmm1, 23)
+    _mm_add_ps(xmm0, g_XMOne)
+    _mm_div_ps(xmm2, xmm0)
+    _mm_div_ps( xmm1, xmm0)
+    _mm_load_si128(xmm0, g_XMBin128)
+    _mm_mul_ps(xmm1, g_XMMinNormal)
+    _mm_cmpgt_epi32(xmm0, xmm7)
+    _mm_load_si128(xmm6, xmm0)
+    _mm_and_si64(xmm0, xmm2)
+    _mm_andnot_si64(xmm6, xmm4)
+    _mm_or_si64(xmm6, xmm0)
+    _mm_load_si128(xmm0, g_XMSubnormalExponent)
+    _mm_cmpgt_epi32(xmm0, xmm3)
+    _mm_load_si128(xmm3, g_XMQNaNTest)
+    _mm_load_si128(xmm5, xmm0)
+    _mm_and_si64(xmm3, xmm7)
+    _mm_cmpeq_epi32(xmm3, g_XMZero)
+    _mm_andnot_si64(xmm0, xmm2)
+    _mm_load_si128(xmm2, g_XMNegativeZero)
+    _mm_and_si64(xmm5, xmm1)
+    _mm_or_si64(xmm5, xmm0)
+    _mm_and_si64(xmm2, xmm7)
+    _mm_cmpeq_epi32(xmm2, g_XMNegativeZero)
+    _mm_load_si128(xmm0, g_XMBinNeg150)
+    _mm_cmpgt_epi32(xmm0, xmm7)
+    _mm_and_si64(xmm5, xmm0)
+    _mm_andnot_si64(xmm0, g_XMZero)
+    _mm_or_si64(xmm5, xmm0)
+    _mm_load_si128(xmm0, xmm4)
+    _mm_and_si64(xmm0, xmm7)
+    _mm_and_si64(xmm5, xmm2)
+    _mm_cmpeq_epi32(xmm0, xmm4)
+    _mm_andnot_si64(xmm3, xmm0)
+    _mm_andnot_si64(xmm2, xmm6)
+    _mm_load_si128(xmm0, xmm3)
+    _mm_and_si64(xmm3, g_XMQNaN)
+    _mm_or_si64(xmm5, xmm2)
+    _mm_andnot_si64(xmm0, xmm5)
+    _mm_or_si64(xmm0, xmm3)
+    retm<xmm0>
+endif
+    endm
+
+inl_XMVectorExp macro V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    exitm<XMVectorExp2(V)>
+endif
+    endm
+
+inl_XMVectorAbs macro V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm1, V)
+    _mm_sub_ps(_mm_setzero_ps(), xmm1)
+    exitm<_mm_max_ps(xmm0, xmm1)>
+endif
+    endm
+
+inl_XMVectorMod macro V1, V2
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE4_INTRINSICS_
+    _mm_store_ps(xmm0, V1)
+    _mm_store_ps(xmm1, V2)
+    _mm_store_ps(xmm2, xmm0)
+    _mm_div_ps(xmm2, xmm1)
+    _mm_round_ps(xmm2, _MM_FROUND_TO_ZERO or _MM_FROUND_NO_EXC)
+    _mm_mul_ps(xmm2, xmm1)
+    exitm<_mm_sub_ps(xmm0, xmm2)>
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V1)
+    _mm_store_ps(xmm1, V2)
+    _mm_store_ps(xmm2, xmm0)
+    _mm_div_ps(xmm2, xmm1)
+    _mm_store_ps(xmm3, g_XMAbsMask)
+    _mm_store_ps(xmm4, g_XMNoFraction)
+    _mm_and_ps(xmm3, xmm0)
+    _mm_cmplt_epi32(xmm4, xmm3, xmm4)
+    _mm_cvttps_epi32(xmm3, xmm0)
+    _mm_cvtepi32_ps(xmm3)
+    _mm_store_ps(xmm5, xmm4)
+    _mm_and_ps(xmm3, xmm4)
+    _mm_andnot_si128(xmm5, xmm2)
+    _mm_store_ps(xmm2, xmm5)
+    _mm_or_ps(xmm2, xmm3)
+    _mm_mul_ps(xmm2, xmm1)
+    exitm<_mm_sub_ps(xmm0, xmm2)>
+endif
+    endm
+
+inl_XMVectorModAngles macro Angles
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, Angles)
+    _mm_store_ps(xmm5, xmm0)
+    ;; Modulo the range of the given angles such that -XM_PI <= Angles < XM_PI
+    _mm_mul_ps(xmm0, g_XMReciprocalTwoPi)
+    ;; Use the inline function due to complexity for rounding
+    inl_XMVectorRound(xmm0)
+    _mm_mul_ps(xmm0, g_XMTwoPi)
+    _mm_sub_ps(xmm5, xmm0)
+    exitm<_mm_store_ps(xmm0, xmm5)>
+endif
+    endm
+
+inl_XMVectorSin macro V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    ;; Force the value within the bounds of pi
+    inl_XMVectorModAngles(xmm0)
+    _mm_store_ps(xmm1, xmm0)
+    ;; Map in [-pi/2,pi/2] with sin(y) = sin(x).
+    _mm_and_ps(xmm1, g_XMNegativeZero)
+    _mm_store_ps(xmm2, xmm1)
+    _mm_or_ps(xmm2, g_XMPi)	; pi when x >= 0, -pi when x < 0
+    _mm_store_ps(xmm3, xmm1)
+    _mm_andnot_ps(xmm3, xmm0)	; |x|
+    _mm_sub_ps(xmm2, xmm0)
+    _mm_cmple_ps(xmm3, g_XMHalfPi)
+    _mm_and_ps(xmm0, xmm3)
+    _mm_andnot_ps(xmm3, xmm2)
+    _mm_or_ps(xmm0, xmm3)
+    _mm_store_ps(xmm1, xmm0)
+    _mm_mul_ps(xmm1, xmm0)
+    ;; Compute polynomial approximation
+    _mm_store_ps(xmm3, g_XMSinCoefficients1)
+    XM_PERMUTE_PS(xmm3, _MM_SHUFFLE(0, 0, 0, 0))
+    _mm_store_ps(xmm2, xmm3)
+    _mm_mul_ps(xmm2, xmm1)
+    _mm_store_ps(xmm3, g_XMSinCoefficients0)
+    _mm_store_ps(xmm4, xmm3)
+    XM_PERMUTE_PS(xmm4, _MM_SHUFFLE(3, 3, 3, 3))
+    _mm_add_ps(xmm2, xmm4)
+    _mm_mul_ps(xmm2, xmm1)
+    _mm_store_ps(xmm4, xmm3)
+    XM_PERMUTE_PS(xmm4, _MM_SHUFFLE(2, 2, 2, 2))
+    _mm_add_ps(xmm2, xmm4)
+    _mm_mul_ps(xmm2, xmm1)
+    _mm_store_ps(xmm4, xmm3)
+    XM_PERMUTE_PS(xmm4, _MM_SHUFFLE(1, 1, 1, 1))
+    _mm_add_ps(xmm2, xmm4)
+    _mm_mul_ps(xmm2, xmm1)
+    XM_PERMUTE_PS(xmm3, _MM_SHUFFLE(0, 0, 0, 0))
+    _mm_add_ps(xmm2, xmm3)
+    _mm_mul_ps(xmm2, xmm1)
+    _mm_add_ps(xmm2, g_XMOne)
+    exitm<_mm_mul_ps(xmm0, xmm2)>
+endif
+    endm
+
+inl_XMVectorCos macro V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    ;; Map V to x in [-pi,pi].
+    inl_XMVectorModAngles(xmm0)		;; x
+    _mm_store_ps(xmm1, xmm0)		;; sign
+    _mm_and_ps(xmm1, g_XMNegativeZero)
+    _mm_store_ps(xmm2, xmm1)
+    _mm_or_ps(xmm2, g_XMPi)		;; pi when x >= 0, -pi when x < 0
+    _mm_store_ps(xmm3, xmm1)
+    _mm_andnot_ps(xmm3, xmm0)		;; absx
+    _mm_sub_ps(xmm2, xmm0)		;; rflx
+    _mm_cmple_ps(xmm3, g_XMHalfPi)	;; comp
+    _mm_store_ps(xmm4, xmm3)
+    _mm_and_ps(xmm0, xmm3)
+    _mm_andnot_ps(xmm3, xmm2)
+    _mm_or_ps(xmm0, xmm3)
+    _mm_store_ps(xmm1, xmm0)
+    _mm_mul_ps(xmm1, xmm0)		;; x2
+    _mm_store_ps(xmm0, xmm4)		;; sign
+    _mm_and_ps(xmm0, g_XMOne)
+    _mm_andnot_ps(xmm4, g_XMNegativeOne)
+    _mm_or_ps(xmm0, xmm4)
+    ;; Compute polynomial approximation
+    _mm_store_ps(xmm3, g_XMCosCoefficients1)
+    XM_PERMUTE_PS(xmm3, _MM_SHUFFLE(0, 0, 0, 0))
+    _mm_store_ps(xmm2, xmm3)
+    _mm_mul_ps(xmm2, xmm1)
+    _mm_store_ps(xmm3, g_XMCosCoefficients0)
+    _mm_store_ps(xmm4, xmm3)
+    XM_PERMUTE_PS(xmm4, _MM_SHUFFLE(3, 3, 3, 3))
+    _mm_add_ps(xmm2, xmm4)
+    _mm_mul_ps(xmm2, xmm1)
+    _mm_store_ps(xmm4, xmm3)
+    XM_PERMUTE_PS(xmm4, _MM_SHUFFLE(2, 2, 2, 2))
+    _mm_add_ps(xmm2, xmm4)
+    _mm_mul_ps(xmm2, xmm1)
+    _mm_store_ps(xmm4, xmm3)
+    XM_PERMUTE_PS(xmm4, _MM_SHUFFLE(1, 1, 1, 1))
+    _mm_add_ps(xmm2, xmm4)
+    _mm_mul_ps(xmm2, xmm1)
+    XM_PERMUTE_PS(xmm3, _MM_SHUFFLE(0, 0, 0, 0))
+    _mm_add_ps(xmm2, xmm3)
+    _mm_mul_ps(xmm2, xmm1)
+    _mm_add_ps(xmm2, g_XMOne)
+    exitm<_mm_mul_ps(xmm0, xmm2)>
+endif
+    endm
+
+inl_XMVectorTan macro V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    exitm<.err>
 endif
     endm
 

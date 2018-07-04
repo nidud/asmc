@@ -25,11 +25,11 @@ XMConvertVectorFloatToUInt proc XM_CALLCONV VFloat:FXMVECTOR, MulExponent:uint32
     _mm_store_ps(xmm3, g_XMUnsignedFix)
     _mm_store_ps(xmm4, g_XMMaxUInt)
     _mm_store_ps(xmm2, xmm3)
-    _mm_cmpgt_ps(xmm1, xmm4)
+    _mm_cmpgt_ps(xmm4, xmm1, xmm4)
     ;;
     ;; Too large for a signed integer?
     ;;
-    _mm_cmpge_ps(xmm1, xmm2)
+    _mm_cmpge_ps(xmm2, xmm1, xmm2)
     ;;
     ;; Zero for number's lower than 0x80000000, 32768.0f*65536.0f otherwise
     ;;

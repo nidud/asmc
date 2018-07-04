@@ -1110,7 +1110,7 @@ local   b[MAX_LINE_LEN]:SBYTE
     xor eax,eax
     mov b,al
     mov proc_id,eax ; foo( 1, bar(...), ...)
-    mov parg_id,eax ; foo.paralist[1] = return type[al|ax|eax|[edx::eax|rax]]
+    mov parg_id,eax ; foo.paralist[1] = return type[al|ax|eax|[edx::eax|rax|xmm0]]
 
     .for eax = &b, ebx = tokenarray, edi = ebx,
          esi = 0: esi < i: esi++, ebx += 16
@@ -1147,15 +1147,7 @@ local   b[MAX_LINE_LEN]:SBYTE
         strcat( eax, [ebx].string_ptr )
     .endf
 
-    mov esi,@CStr( " eax" )
-    .if ModuleInfo.Ofssize == USE64
-
-        mov esi,@CStr( " rax" )
-    .elseif ModuleInfo.Ofssize == USE16
-
-        mov esi,@CStr( " ax" )
-    .endif
-
+    xor esi,esi
     mov eax,proc_id
     .if eax && [eax].asm_tok.token != T_OP_SQ_BRACKET
 
@@ -1201,22 +1193,76 @@ local   b[MAX_LINE_LEN]:SBYTE
                 .switch eax
                   .case 1: mov esi,@CStr(" al"):  .endc
                   .case 2: mov esi,@CStr(" ax"):  .endc
-                  .case 4: mov esi,@CStr(" eax"): .endc
+                  .case 4:
+                    .if ModuleInfo.Ofssize == USE64
+                        .if [ecx].asym.mem_type & MT_FLOAT
+                            mov esi,@CStr(" xmm0")
+                        .else
+                            mov esi,@CStr(" eax")
+                        .endif
+                    .else
+                        mov esi,@CStr(" eax")
+                    .endif
+                    .endc
                   .case 8
                     .if ModuleInfo.Ofssize == USE64
-
-                        mov esi,@CStr(" rax")
+                        .if [ecx].asym.mem_type & MT_FLOAT
+                            mov esi,@CStr(" xmm0")
+                        .else
+                            mov esi,@CStr(" rax")
+                        .endif
                     .else
                         mov esi,@CStr(" edx::eax")
                     .endif
                     .endc
                   .case 16:
                     .if [ecx].asym.mem_type & MT_FLOAT
-
                         mov esi,@CStr(" xmm0")
                     .endif
                     .endc
                 .endsw
+            .endif
+        .endif
+    .endif
+
+    .if !esi
+
+        mov esi,@CStr( " eax" )
+        .if ModuleInfo.Ofssize == USE64
+            mov esi,@CStr( " rax" )
+        .elseif ModuleInfo.Ofssize == USE16
+            mov esi,@CStr( " ax" )
+        .endif
+        mov eax,i
+        .if !proc_id && eax > 1
+
+            shl eax,4
+            lea ebx,[edi+eax-32]
+            .if [ebx+16].token == T_COMMA && [ebx].token != T_CL_SQ_BRACKET
+                ;
+                ; <op> <reg|id> <,> <proc>
+                ;
+                xor eax,eax
+                .if [ebx].token == T_REG
+                    SizeFromRegister( [ebx].tokval )
+                .elseif SymFind( [ebx].string_ptr )
+                    mov eax,[eax].asym.total_size
+                .endif
+                .if eax
+                    .switch eax
+                      .case 1: mov esi,@CStr(" al"):  .endc
+                      .case 2: mov esi,@CStr(" ax"):  .endc
+                      .case 4: mov esi,@CStr(" eax"): .endc
+                      .case 8
+                        .if ModuleInfo.Ofssize == USE64
+                            mov esi,@CStr(" rax")
+                        .endif
+                        .endc
+                      .case 16:
+                        mov esi,@CStr(" xmm0")
+                        .endc
+                    .endsw
+                .endif
             .endif
         .endif
     .endif

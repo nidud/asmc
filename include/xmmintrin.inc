@@ -285,19 +285,31 @@ _mm_cmple_ps macro a:=<xmm0>, b:=<xmm1>
 	exitm<_MM_OPCSX2(cmple, ps, a, b)>
 	endm
 
-; --- reverse order: result returned in B
+; --- reverse order: result returned in x
 
-_mm_cmpgt_ss macro a, b
-	exitm<_MM_OPCSX2(cmplt, ss, b, a)>
+_mm_cmpgt_ss macro x:req, a:req, b:req
+    ifdif <x>,<b>
+	movss x,b
+    endif
+	exitm<_MM_OPCSX2(cmplt, ss, x, a)>
 	endm
-_mm_cmpgt_ps macro a, b
-	exitm<_MM_OPCSX2(cmplt, ps, b, a)>
+_mm_cmpgt_ps macro x:req, a:req, b:req
+    ifdif <x>,<b>
+	movaps x,b
+    endif
+	exitm<_MM_OPCSX2(cmplt, ps, x, a)>
 	endm
-_mm_cmpge_ss macro a, b
-	exitm<_MM_OPCSX2(cmple, ss, b, a)>
+_mm_cmpge_ss macro x:req, a:req, b:req
+    ifdif <x>,<b>
+	movss x,b
+    endif
+	exitm<_MM_OPCSX2(cmple, ss, x, a)>
 	endm
-_mm_cmpge_ps macro a, b
-	exitm<_MM_OPCSX2(cmple, ps, b, a)>
+_mm_cmpge_ps macro x:req, a:req, b:req
+    ifdif <x>,<b>
+	movaps x,b
+    endif
+	exitm<_MM_OPCSX2(cmple, ps, x, a)>
 	endm
 
 ; ---
@@ -323,17 +335,29 @@ _mm_cmpnle_ps macro a:=<xmm0>, b:=<xmm1>
 
 ; --- reverse order: result returned in B
 
-_mm_cmpngt_ss macro a:=<xmm0>, b:=<xmm1>
-	exitm<_MM_OPCSX2(cmpnlt, ss, b, a)>
+_mm_cmpngt_ss macro x:req, a:req, b:req
+    ifdif <x>,<b>
+	movaps x,b
+    endif
+	exitm<_MM_OPCSX2(cmpnlt, ss, x, a)>
 	endm
-_mm_cmpngt_ps macro a:=<xmm0>, b:=<xmm1>
-	exitm<_MM_OPCSX2(cmpnlt, ps, b, a)>
+_mm_cmpngt_ps macro x:req, a:req, b:req
+    ifdif <x>,<b>
+	movaps x,b
+    endif
+	exitm<_MM_OPCSX2(cmpnlt, ps, x, a)>
 	endm
-_mm_cmpnge_ss macro a:=<xmm0>, b:=<xmm1>
-	exitm<_MM_OPCSX2(cmpnle, ss, b, a)>
+_mm_cmpnge_ss macro x:req, a:req, b:req
+    ifdif <x>,<b>
+	movaps x,b
+    endif
+	exitm<_MM_OPCSX2(cmpnle, ss, x, a)>
 	endm
-_mm_cmpnge_ps macro a:=<xmm0>, b:=<xmm1>
-	exitm<_MM_OPCSX2(cmpnle, ps, b, a)>
+_mm_cmpnge_ps macro x:req, a:req, b:req
+    ifdif <x>,<b>
+	movaps x,b
+    endif
+	exitm<_MM_OPCSX2(cmpnle, ps, x, a)>
 	endm
 ; ---
 

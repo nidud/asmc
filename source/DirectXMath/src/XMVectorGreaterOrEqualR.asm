@@ -8,7 +8,7 @@ include DirectXMath.inc
 XMVectorGreaterOrEqualR proc XM_CALLCONV pCR:ptr uint32_t, V1:FXMVECTOR, V2:FXMVECTOR
 
     _mm_store_ps(xmm0, xmm2)
-    _mm_cmpge_ps(xmm1, xmm0)
+    _mm_cmpge_ps(xmm0, xmm1, xmm0)
 
     xor edx,edx
     .if _mm_movemask_ps() == 0x0F

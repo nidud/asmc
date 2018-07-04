@@ -9,7 +9,7 @@ include DirectXMath.inc
 
     .code
 
-XMVectorSinH proc XM_CALLCONV V:FXMVECTOR
+XMVectorCosH proc XM_CALLCONV V:FXMVECTOR
 
     _mm_mul_ps(xmm0, Scale)
     _mm_store_ps(xmm1, xmm0)
@@ -20,9 +20,9 @@ XMVectorSinH proc XM_CALLCONV V:FXMVECTOR
     XMVectorExp(xmm3)
     _mm_store_ps(V[16], xmm0)
     XMVectorExp(V)
-    _mm_sub_ps(xmm0, V[16])
+    _mm_add_ps(xmm0, V[16])
     ret
 
-XMVectorSinH endp
+XMVectorCosH endp
 
     end

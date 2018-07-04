@@ -18,7 +18,7 @@ XMConvertVectorFloatToInt proc XM_CALLCONV VFloat:FXMVECTOR, MulExponent:uint32_
     ;;
     ;; Note: cmpltps xmm2,xmm0
     ;;
-    _mm_cmpgt_ps(xmm0, _mm_store_ps(xmm2, g_XMMaxInt))
+    _mm_cmpgt_ps(xmm2, xmm0, _mm_store_ps(xmm2, g_XMMaxInt))
     ;;
     ;; Float to int conversion
     ;;

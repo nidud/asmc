@@ -7,9 +7,7 @@ XMVectorLog2 proc XM_CALLCONV V:FXMVECTOR
 
   local x6:XMVECTOR, x7:XMVECTOR
   local exponentSub:XMVECTOR
-if _XM_VECTORCALL_ eq 0
-    _mm_storeu_ps(xmm0, [rcx])
-endif
+
     _mm_store_ps(x6, xmm6)
     _mm_store_ps(x7, xmm7)
     _mm_store_ps(xmm6, xmm0)

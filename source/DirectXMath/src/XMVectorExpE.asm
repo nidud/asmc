@@ -6,9 +6,7 @@ include DirectXMath.inc
     option win64:rsp nosave noauto
 
 XMVectorExpE proc XM_CALLCONV V:FXMVECTOR
-if _XM_VECTORCALL_ eq 0
-    _mm_storeu_ps(xmm0, [rcx])
-endif
+
     _mm_store_ps(V, xmm6)
     _mm_store_ps(V[16], xmm7)
 

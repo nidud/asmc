@@ -860,7 +860,7 @@ XMVector3ComponentsFromNormal	proto XM_CALLCONV :ptr XMVECTOR, :ptr XMVECTOR, :F
 
 XMVector3Rotate			proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
 XMVector3InverseRotate		proto XM_CALLCONV :FXMVECTOR, :FXMVECTOR
-XMVector3Transform		proto XM_CALLCONV :FXMVECTOR, :FXMMATRIX
+XMVector3Transform		proto XM_CALLCONV :FXMVECTOR, AXMMATRIX
 XMVector3TransformStream	proto XM_CALLCONV :ptr XMFLOAT4, :size_t, :ptr XMFLOAT3, :size_t, :size_t, :FXMMATRIX
 XMVector3TransformCoord		proto XM_CALLCONV :FXMVECTOR, :FXMMATRIX
 XMVector3TransformCoordStream	proto XM_CALLCONV :ptr XMFLOAT3, :size_t, :ptr XMFLOAT3, :size_t, :size_t, :FXMMATRIX

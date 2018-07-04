@@ -624,6 +624,7 @@ static void ProcessOption( char **cmdline, char *buffer )
     case 'sw':		// -ws<number>
 	Options.codepage = OptValue;
 	Options.aflag |= _AF_WSTRING;
+	define_name( "_UNICODE", "1" );
 	return;
     case 'pS':		// -Zp<number>
 	j = 0;

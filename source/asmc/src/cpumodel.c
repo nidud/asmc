@@ -130,7 +130,7 @@ static void SetModel( void )
 	 * This is rather hackish, but currently there's no other possibility
 	 * to enable the win64 ABI from the source.
 	 */
-	if ( ( ModuleInfo.curr_cpu & P_CPU_MASK ) == P_64 )
+	if ( ( ModuleInfo.curr_cpu & P_CPU_MASK ) == P_64 ) {
 	    if ( ModuleInfo.langtype == LANG_FASTCALL ||
 		 ModuleInfo.langtype == LANG_SYSCALL ||
 		 ModuleInfo.langtype == LANG_VECTORCALL ) {
@@ -142,6 +142,10 @@ static void SetModel( void )
 		else
 		    ModuleInfo.fctype = FCT_ELF64;
 	    }
+	} else if ( ModuleInfo.langtype == LANG_VECTORCALL ) {
+	    ModuleInfo.fctype = FCT_VEC32;
+	}
+
 	/* v2.11: define symbol FLAT - after default offset size has been set! */
 	DefineFlatGroup();
     } else

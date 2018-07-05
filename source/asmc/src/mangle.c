@@ -40,20 +40,6 @@ static int ow_decorate( const struct asym *sym, char *buffer );
 static int ms64_decorate( const struct asym *sym, char *buffer );
 static int vect_decorate( const struct asym *sym, char *buffer );
 
-/* table of FASTCALL types.
- * order must match the one of enum fastcall_type
- * also see proc.c and invoke.c!
- */
-
-static const mangle_func fcmanglers[] = {
-    ms32_decorate, /* FCT_MSC */
-    ow_decorate,   /* FCT_WATCOMC */
-    ms64_decorate, /* FCT_WIN64 */
-    ms64_decorate, /* FCT_ELF64 */
-    vect_decorate, /* FCT_VEC32 */
-    vect_decorate  /* FCT_VEC64 */
-};
-
 /* VoidMangler: no change to symbol name */
 
 static int VoidMangler( const struct asym *sym, char *buffer )
@@ -185,7 +171,12 @@ int Mangle( struct asym *sym, char *buffer )
 	mangler = UCaseMangler;
 	break;
     case LANG_FASTCALL:		 /* registers passing parameters */
-	mangler = fcmanglers[ModuleInfo.fctype];
+	if ( ModuleInfo.Ofssize == USE64 )
+	    mangler = ms64_decorate;
+	else if ( ModuleInfo.fctype == FCT_WATCOMC )
+	    mangler = ow_decorate;
+	else
+	    mangler = ms32_decorate;
 	break;
     case LANG_VECTORCALL:
 	mangler = vect_decorate;

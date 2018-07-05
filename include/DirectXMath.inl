@@ -954,6 +954,20 @@ elseifdef _XM_SSE_INTRINSICS_
 endif
     endm
 
+inl_XMStoreMatrix macro M
+    _mm_store_ps(M.r[0x00], xmm0)
+    _mm_store_ps(M.r[0x10], xmm1)
+    _mm_store_ps(M.r[0x20], xmm2)
+    _mm_store_ps(M.r[0x30], xmm3)
+    endm
+
+inl_XMLoadMatrix macro M
+    _mm_store_ps(xmm0, M.r[0x00])
+    _mm_store_ps(xmm1, M.r[0x10])
+    _mm_store_ps(xmm2, M.r[0x20])
+    _mm_store_ps(xmm3, M.r[0x30])
+    endm
+
 inl_XMVectorZero macro
 ifdef _XM_NO_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
@@ -2797,7 +2811,26 @@ inl_XMMatrixTranslationFromVector macro V, M
     retm<xmm0>
     endm
 
+inl_XMMatrixRotationX macro V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    inl_XMScalarSinCos(xmm0)
+    ;; x = 0,y = cos,z = sin, w = 0
+    _mm_shuffle_ps(xmm1, xmm0, _MM_SHUFFLE(3,0,0,3))
+    ;; x = 0,y = sin,z = cos, w = 0
+    XM_PERMUTE_PS(_mm_store_ps(xmm2, xmm1), _MM_SHUFFLE(3,1,2,0))
+    ;; x = 0,y = -sin,z = cos, w = 0
+    _mm_mul_ps(xmm2, g_XMNegateY)
+    _mm_store_ps(xmm0, g_XMIdentityR0)
+    _mm_store_ps(xmm3, g_XMIdentityR3)
+endif
+    retm<>
+    endm
+
 inl_XMMatrixRotationY macro V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
     _mm_store_ps(xmm0, V)
     inl_XMScalarSinCos(xmm0)
     _mm_shuffle_ps(xmm0, xmm1, _MM_SHUFFLE(3,0,3,0))
@@ -2806,6 +2839,25 @@ inl_XMMatrixRotationY macro V
     _mm_mul_ps(xmm0, g_XMNegateZ)
     _mm_store_ps(xmm1, g_XMIdentityR1)
     _mm_store_ps(xmm3, g_XMIdentityR3)
+endif
+    retm<>
+    endm
+
+inl_XMMatrixRotationZ macro V
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
+    _mm_store_ps(xmm0, V)
+    inl_XMScalarSinCos(xmm0)
+    ;; x = cos,y = sin,z = 0, w = 0
+    _mm_unpacklo_ps(xmm1, xmm0)
+    _mm_store_ps(xmm0, xmm1)
+    ;; x = sin,y = cos,z = 0, w = 0
+    XM_PERMUTE_PS(xmm1, _MM_SHUFFLE(3,2,0,1))
+    ;; x = cos,y = -sin,z = 0, w = 0
+    _mm_mul_ps(xmm1, g_XMNegateX)
+    _mm_store_ps(xmm2, g_XMIdentityR2)
+    _mm_store_ps(xmm3, g_XMIdentityR3)
+endif
     retm<>
     endm
 

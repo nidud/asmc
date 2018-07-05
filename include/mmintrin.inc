@@ -10,6 +10,22 @@ ifdef _M_CEE_PURE
 .err <ERROR: EMM intrinsics not supported in the pure mode>
 endif
 
+ifndef _WIN64
+    .686
+    .xmm
+ifndef _REGS6432
+    rax equ <eax>
+    rbx equ <ebx>
+    rcx equ <ecx>
+    rdx equ <edx>
+    rdi equ <edi>
+    rsi equ <esi>
+    rbp equ <ebp>
+    rsp equ <esp>
+_REGS6432 equ 1
+endif
+endif
+
 __m64		union
 m64_u64		dq ?
 m64_f32		real4 2 dup(?)

@@ -88,6 +88,8 @@ static void SkipTypecast( char *fullparam, int i, struct asm_tok tokenarray[] )
  * psize,asize: size of parameter/argument in bytes.
  */
 
+int GetFastcallId( int );
+
 static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *proc, struct dsym *curr, int reqParam, uint_8 *r0flags)
 {
     int currParm;
@@ -101,6 +103,8 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
     struct expr opnd;
     char fullparam[MAX_LINE_LEN];
     char buffer[MAX_LINE_LEN];
+    int	 fastcall_id = GetFastcallId( proc->sym.langtype );
+
 
     for ( currParm = 0; currParm <= reqParam; ) {
 	if ( tokenarray[i].token == T_FINAL ) { /* this is no real error! */
@@ -148,10 +152,9 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 	    return( NOT_ERROR );
 	}
 
-	if ( proc->sym.langtype == LANG_FASTCALL || proc->sym.langtype == LANG_VECTORCALL
-	|| ( proc->sym.langtype == LANG_SYSCALL && ModuleInfo.Ofssize == USE64 )
-	    ) {
-	    if ( fastcall_tab[ModuleInfo.fctype].handleparam( proc, reqParam, curr, addr, &opnd, fullparam, r0flags ) )
+	if ( fastcall_id && fastcall_id != FCT_WATCOMC + 1 ) {
+	    if ( fastcall_tab[fastcall_id - 1].handleparam( proc,
+		reqParam, curr, addr, &opnd, fullparam, r0flags ) )
 		return( NOT_ERROR );
 	}
 
@@ -294,9 +297,8 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 
 	pushsize = CurrWordSize;
 
-	if ( proc->sym.langtype == LANG_FASTCALL || proc->sym.langtype == LANG_VECTORCALL ||
-	    ( proc->sym.langtype == LANG_SYSCALL && ModuleInfo.Ofssize == USE64 ) )
-	    if (fastcall_tab[ModuleInfo.fctype].handleparam(
+	if ( fastcall_id && fastcall_id != FCT_WATCOMC + 1 )
+	    if (fastcall_tab[fastcall_id - 1].handleparam(
 		 proc, reqParam, curr, addr, &opnd, fullparam, r0flags))
 		return(NOT_ERROR);
 
@@ -779,6 +781,7 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
     struct dsym *	curr;
     struct expr		opnd;
     char		buffer[MAX_LINE_LEN];
+    int			fastcall_id;
 
     i++; /* skip INVOKE directive */
     namepos = i;
@@ -861,10 +864,11 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 
     for (curr = info->paralist, numParam = 0 ; curr ; curr = curr->nextparam, numParam++);
 
-    if ( proc->sym.langtype == LANG_FASTCALL || proc->sym.langtype == LANG_VECTORCALL ||
-	( proc->sym.langtype == LANG_SYSCALL && ModuleInfo.Ofssize == USE64 ) ) {
+    fastcall_id = GetFastcallId( proc->sym.langtype );
+
+    if ( fastcall_id ) {
 	fastcall_init();
-	porder = fastcall_tab[ModuleInfo.fctype].invokestart(
+	porder = fastcall_tab[fastcall_id - 1].invokestart(
 		   proc, numParam, i, tokenarray, &value);
     }
 
@@ -896,7 +900,8 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 
     if ( sym->langtype == LANG_STDCALL ||
 	sym->langtype == LANG_C ||
-	(sym->langtype == LANG_FASTCALL && porder) ||
+	fastcall_id == FCT_VEC32 + 1 ||
+	( sym->langtype == LANG_FASTCALL && porder ) ||
 	sym->langtype == LANG_SYSCALL ) {
 
 	/* v2.23 if stack base is ESP */
@@ -1018,9 +1023,8 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 	    else
 		AddLineQueueX( " add %r, %u", stackreg[ModuleInfo.Ofssize], NUMQUAL info->parasize );
 	}
-    } else if ( sym->langtype == LANG_FASTCALL || sym->langtype == LANG_VECTORCALL ||
-	( proc->sym.langtype == LANG_SYSCALL && ModuleInfo.fctype == FCT_ELF64 ) ) {
-	fastcall_tab[ModuleInfo.fctype].invokeend( proc, numParam, value );
+    } else if ( fastcall_id ) {
+	fastcall_tab[fastcall_id - 1].invokeend( proc, numParam, value );
     }
     LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), NULL );
     RunLineQueue();

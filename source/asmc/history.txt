@@ -3,6 +3,7 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.27 - xx xxx 2018
+- added more support for 32-bit vectorcall
 - added vector(16) return values (xmm0)
 - fixed bug in float convertion routines
 - fixed bug in vectorcall name mangling routines

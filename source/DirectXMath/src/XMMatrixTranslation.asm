@@ -12,9 +12,9 @@ if _XM_VECTORCALL_
     movss [rsp+8][4],xmm1
     movss [rsp+8][8],xmm2
 else
-    movss [rsp+8],xmm0
-    movss [rsp+8][4],xmm1
-    movss [rsp+8][8],xmm2
+    movss [rsp+8],xmm1
+    movss [rsp+8][4],xmm2
+    movss [rsp+8][8],xmm3
 endif
     mov real4 ptr [rsp+8][12],1.0
     _mm_store_ps(xmm0, g_XMIdentityR0.v)

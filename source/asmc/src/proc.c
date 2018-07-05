@@ -80,7 +80,7 @@ struct asym *sym_ReservedStack; /* max stack space required by INVOKE */
  */
 //static const enum special_token ms32_regs16[] = { T_CX, T_DX };
 static const enum special_token ms32_regs16[] = { T_AX, T_DX, T_BX };
-static const enum special_token ms32_regs32[] = { T_ECX,T_EDX };
+static const enum special_token ms32_regs32[] = { T_ECX, T_EDX };
 /* v2.07: added */
 static const int ms32_maxreg[] = {
     sizeof( ms32_regs16) / sizeof(ms32_regs16[0] ),
@@ -105,6 +105,8 @@ struct fastcall_conv {
 
 static	int ms32_pcheck( struct dsym *, struct dsym *, int * );
 static void ms32_return( struct dsym *, char * );
+static	int vc32_pcheck( struct dsym *, struct dsym *, int * );
+static void vc32_return( struct dsym *, char * );
 static	int watc_pcheck( struct dsym *, struct dsym *, int * );
 static void watc_return( struct dsym *, char * );
 static	int ms64_pcheck( struct dsym *, struct dsym *, int * );
@@ -121,7 +123,7 @@ static const struct fastcall_conv fastcall_tab[] = {
     { watc_pcheck, watc_return }, /* FCT_WATCOMC */
     { ms64_pcheck, ms64_return }, /* FCT_WIN64 */
     { elf64_pcheck,ms64_return }, /* FCT_ELF64 */
-    { ms32_pcheck, ms32_return }, /* FCT_VEC32 */
+    { vc32_pcheck, vc32_return }, /* FCT_VEC32 */
     { ms64_pcheck, ms64_return }, /* FCT_VEC64 */
 };
 
@@ -280,6 +282,60 @@ static void ms32_return( struct dsym *proc, char *buffer )
 {
     if( proc->e.procinfo->parasize > ( ms32_maxreg[ModuleInfo.Ofssize] * CurrWordSize ) )
 	sprintf( buffer + strlen( buffer ), "%d%c", proc->e.procinfo->parasize - ( ms32_maxreg[ModuleInfo.Ofssize] * CurrWordSize), ModuleInfo.radix != 10 ? 't' : NULLC );
+    return;
+}
+
+/* The vectorcall calling convention follows the fastcall convention for 32-bit
+ * integer type arguments, and takes advantage of the SSE vector registers for
+ * vector type and HVA arguments.
+ *
+ * The first two integer type arguments found in the parameter list from left to
+ * right are placed in ECX and EDX, respectively. A hidden this pointer is
+ * treated as the first integer type argument, and is passed in ECX. The first
+ * six vector type arguments are passed by value through SSE vector registers 0
+ * to 5, in the XMM or YMM registers, depending on argument size.
+ */
+static int vc32_pcheck( struct dsym *proc, struct dsym *paranode, int *used )
+{
+    char regname[32];
+    int reg;
+    int size = SizeFromMemtype( paranode->sym.mem_type, paranode->sym.Ofssize, paranode->sym.type );
+
+    if ( paranode->sym.mem_type & MT_FLOAT )
+	size = 16;
+
+    if ( size < 4 )
+	size = 4;
+
+    if ( size != 4 && size != 16 )
+	return( 0 );
+    if ( ( size == 4 && *used > 1 ) || ( size == 16 && *used > 5 ) )
+	return( 0 );
+
+    reg = T_XMM0 + *used;
+    if ( size == 4 )
+	reg = ms32_regs32[*used];
+
+    paranode->sym.state = SYM_TMACRO;
+    paranode->sym.regist[0] = reg;
+    GetResWName( reg, regname );
+    paranode->sym.string_ptr = (char *)LclAlloc( strlen( regname ) + 1 );
+    strcpy( paranode->sym.string_ptr, regname );
+    (*used)++;
+    return( 1 );
+}
+
+static void vc32_return( struct dsym *proc, char *buffer )
+{
+    struct dsym *p;
+    int retval = 0;
+
+    for ( p = proc->e.procinfo->paralist; p; p = p->nextparam )
+	if ( p->sym.state != SYM_TMACRO )
+	    retval += ROUND_UP( p->sym.total_size, 4 );
+
+    if( retval )
+	sprintf( buffer + strlen( buffer ), "%d%c", retval, ModuleInfo.radix != 10 ? 't' : NULLC );
     return;
 }
 
@@ -568,6 +624,25 @@ void UpdateProcStatus( struct asym *sym, struct expr *opnd )
     sym->value = ( CurrProc ? ProcStatus : 0 );
 }
 
+/* Added v2.27 */
+
+int GetFastcallId( int langtype )
+{
+    if ( langtype == LANG_FASTCALL ) {
+	if ( ModuleInfo.Ofssize == USE64 )
+	    return FCT_WIN64 + 1;
+	return FCT_MSC + 1;
+    } else if ( langtype == LANG_SYSCALL ) {
+	if ( ModuleInfo.Ofssize == USE64 )
+	    return FCT_ELF64 + 1;
+    } else if ( langtype == LANG_VECTORCALL ) {
+	if ( ModuleInfo.Ofssize == USE64 )
+	    return FCT_VEC64 + 1;
+	return FCT_VEC32 + 1;
+    }
+    return 0;
+}
+
 /* parse parameters of a PROC/PROTO.
  * Called in pass one only.
  * i=start parameters
@@ -586,13 +661,15 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
     struct dsym	    *paranode;
     struct dsym	    *paracurr;
     int		    curr;
+    int		    fastcall_id = GetFastcallId( proc->sym.langtype );
 
     /*
      * find "first" parameter ( that is, the first to be pushed in INVOKE ).
      */
     if ( proc->sym.langtype == LANG_C || proc->sym.langtype == LANG_STDCALL ||
-	( ModuleInfo.Ofssize != USE64 && ( proc->sym.langtype == LANG_SYSCALL ||
-	  proc->sym.langtype == LANG_FASTCALL || proc->sym.langtype == LANG_VECTORCALL ) ) )
+	fastcall_id == FCT_VEC32 + 1 || fastcall_id == FCT_MSC + 1 ||
+	( !fastcall_id && proc->sym.langtype == LANG_SYSCALL ) )
+
 	for ( paracurr = proc->e.procinfo->paralist; paracurr && paracurr->nextparam;
 	      paracurr = paracurr->nextparam );
     else
@@ -682,9 +759,8 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 	     * regression test proc9.asm.
 	     * v2.23: proto fastcall :type - fast32.asm
 	     */
-	    if ( ( proc->sym.langtype == LANG_SYSCALL && ModuleInfo.Ofssize == USE64 ) ||
-		 ( proc->sym.langtype == LANG_VECTORCALL && ModuleInfo.Ofssize == USE32 ) ||
-		 ( proc->sym.langtype == LANG_FASTCALL && ModuleInfo.Ofssize == USE32 ) )
+	    if ( fastcall_id == FCT_ELF64 + 1 || fastcall_id == FCT_VEC32 + 1 ||
+		 fastcall_id == FCT_MSC + 1 )
 		paracurr->sym.target_type = NULL;
 	    if ( paracurr->sym.mem_type == MT_TYPE )
 		to = paracurr->sym.type;
@@ -709,8 +785,9 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 	    }
 	    /* set paracurr to next parameter */
 	    if ( proc->sym.langtype == LANG_C || proc->sym.langtype == LANG_STDCALL ||
-		( ModuleInfo.Ofssize != USE64 && ( proc->sym.langtype == LANG_SYSCALL ||
-		  proc->sym.langtype == LANG_FASTCALL || proc->sym.langtype == LANG_VECTORCALL ) ) ) {
+		 fastcall_id == FCT_VEC32 + 1 || fastcall_id == FCT_MSC + 1 ||
+		 ( !fastcall_id && proc->sym.langtype == LANG_SYSCALL ) ) {
+
 		struct dsym *l;
 		for (l = proc->e.procinfo->paralist;
 		     l && ( l->nextparam != paracurr );
@@ -746,9 +823,8 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 	    paranode->sym.ptr_memtype = ti.ptr_memtype;
 	    paranode->sym.is_vararg = is_vararg;
 
-	    if ( ( proc->sym.langtype == LANG_FASTCALL || proc->sym.langtype == LANG_VECTORCALL ||
-		( proc->sym.langtype == LANG_SYSCALL && ModuleInfo.fctype == FCT_ELF64 ) ) &&
-		fastcall_tab[ModuleInfo.fctype].paramcheck( proc, paranode, &fcint ) ) {
+	    if ( fastcall_id &&
+		fastcall_tab[fastcall_id - 1].paramcheck( proc, paranode, &fcint ) ) {
 	    } else {
 		paranode->sym.state = SYM_STACK;
 	    }
@@ -833,8 +909,8 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 
 	/* now calculate the [E|R]BP offsets */
 
-	if ( ModuleInfo.Ofssize == USE64 && ( proc->sym.langtype == LANG_FASTCALL ||
-	    proc->sym.langtype == LANG_SYSCALL || proc->sym.langtype == LANG_VECTORCALL ) ) {
+	if ( fastcall_id == FCT_VEC64 + 1 || fastcall_id == FCT_WIN64 + 1 ||
+	     fastcall_id == FCT_ELF64 + 1 ) {
 	    for ( paranode = proc->e.procinfo->paralist; paranode ;paranode = paranode->nextparam )
 		if ( paranode->sym.state == SYM_TMACRO ) /* register param */
 		    ;
@@ -2731,7 +2807,7 @@ ret_code RetInstr( int i, struct asm_tok tokenarray[], int count )
 
 	    case LANG_FASTCALL:
 	    case LANG_VECTORCALL:
-		fastcall_tab[ModuleInfo.fctype].handlereturn( CurrProc, buffer );
+		fastcall_tab[GetFastcallId( CurrProc->sym.langtype ) - 1].handlereturn( CurrProc, buffer );
 		break;
 	    case LANG_STDCALL:
 		if( !info->has_vararg && info->parasize != 0 )

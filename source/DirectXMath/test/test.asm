@@ -3,8 +3,10 @@ include stdio.inc
 include directxmath.inc
 
 .data
-R XMVECTORF32 <>
-V XMVECTORF32 {{{ 1.0, 2.0, 3.0, 4.0 }}}
+R  XMVECTORF32 <>
+R2 XMVECTORF32 <>
+V  XMVECTORF32 {{{ 0.5, 1.0, 3.0, 4.0 }}}
+V2 XMVECTORF32 {{{ 5.0, 6.0, 7.0, 8.0 }}}
 
 .code
 
@@ -21,6 +23,20 @@ print4 proc string:LPSTR
 
 print4 endp
 
+run macro p
+    p( V )
+    movdqa R.v,xmm0
+    print4("&p&")
+    exitm<>
+    endm
+
+run2 macro p
+    p( V, V2 )
+    movdqa R.v,xmm0
+    print4("&p&")
+    exitm<>
+    endm
+
 main proc
 
   local pSin:float, pCos:float
@@ -29,20 +45,37 @@ main proc
     XMScalarSinCos(&pSin, &pCos, 0.5)
     _mm_store_sd(Sin, _mm_cvtss_sd(_mm_load_ss(xmm0, pSin)))
     _mm_store_sd(Cos, _mm_cvtss_sd(_mm_load_ss(xmm1, pCos)))
-    printf("XMScalarSinCos:\t%f, %f\n", Sin, Cos)
+    printf("XMScalarSinCos:\t\t%f, %f\n", Sin, Cos)
 
-    XMVectorLog2( V )
+    XMVectorSinCosEst(&R, &R2, V)
     movdqa R.v,xmm0
-    print4("XMVectorLog2")
-    XMVectorSin( V )
+    movdqa R2.v,xmm1
+    print4("XMVectorSinCosEst")
+    movdqa xmm0,R2.v
     movdqa R.v,xmm0
-    print4("XMVectorSin")
-    XMVectorCos( V )
+    print4("XMVectorSinCosEst")
+    XMVectorModAngles( V )
     movdqa R.v,xmm0
-    print4("XMVectorCos")
-    XMVectorTan( V )
-    movdqa R.v,xmm0
-    print4("XMVectorTan")
+    print4("XMVectorModAngles")
+
+    run(XMVectorLog2)
+    run(XMVectorSin)
+    run(XMVectorSinH)
+    run(XMVectorCos)
+    run(XMVectorCosH)
+    run(XMVectorExp)
+    run(XMVectorTan)
+    run(XMVectorTanH)
+    run(XMVectorASin)
+    run(XMVectorACos)
+    run(XMVectorATan)
+    run2(XMVectorATan2)
+    run(XMVectorSinEst)
+    run(XMVectorCosEst)
+    run(XMVectorTanEst)
+    run(XMVector3Normalize)
+    run2(XMVector3Cross)
+    run2(XMVector3Dot)
     xor eax,eax
     ret
 

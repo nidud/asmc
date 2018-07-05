@@ -70,24 +70,14 @@ _MM_OPCSX2 macro op, sx, a, b
     endm
 
 _MM_SHUFXX macro sx, a, b, imm
-  local retval, source
+  local retval
     if _MM_ISXMM(a)
         retval equ <a>
     else
         retval equ <xmm0>
         movaps retval,_MM_MREG(a)
     endif
-    ifidn <b>,<a>
-        source equ <retval>
-    else
-        if _MM_ISXMM(b)
-            source equ <b>
-        else
-            source equ <xmm1>
-            movaps source,_MM_MREG(b)
-        endif
-    endif
-    shuf&sx& retval,source,imm
+    shuf&sx& retval,b,imm
     retm<retval>
     endm
 

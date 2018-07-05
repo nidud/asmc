@@ -1005,14 +1005,17 @@ _TEXT	macro x
 endif
 
 ifndef _WIN64
-	rax equ <eax>
-	rbx equ <ebx>
-	rcx equ <ecx>
-	rdx equ <edx>
-	rdi equ <edi>
-	rsi equ <esi>
-	rbp equ <ebp>
-	rsp equ <esp>
+ifndef _REGS6432
+    rax equ <eax>
+    rbx equ <ebx>
+    rcx equ <ecx>
+    rdx equ <edx>
+    rdi equ <edi>
+    rsi equ <esi>
+    rbp equ <ebp>
+    rsp equ <esp>
+_REGS6432 equ 1
+endif
 endif
 
 ifdef __PE__

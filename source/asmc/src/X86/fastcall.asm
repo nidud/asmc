@@ -48,7 +48,7 @@ fastcall_tab label invoke_conv
     dd watc_fcstart, watc_fcend , watc_param ; FCT_WATCOMC
     dd ms64_fcstart, ms64_fcend , ms64_param ; FCT_WIN64
     dd elf64_fcstart,elf64_fcend,elf64_param ; FCT_ELF64
-    dd ms32_fcstart, ms32_fcend , ms32_param ; FCT_VEC32
+    dd vc32_fcstart, ms32_fcend , vc32_param ; FCT_VEC32
     dd ms64_fcstart, ms64_fcend , ms64_param ; FCT_VEC64
 
 ms16_regs label byte
@@ -266,6 +266,138 @@ ms32_param endp
 ms32_fcend proc pp, numparams, value
     ret
 ms32_fcend endp
+
+;-------------------------------------------------------------------------------
+; FCT_VEC32
+;-------------------------------------------------------------------------------
+
+vc32_fcstart proc pp:ptr nsym, numparams:SINT, start:SINT,
+    tokenarray:ptr asm_tok, value:ptr SINT
+
+    .repeat
+        .for eax=pp, eax=[eax].nsym.procinfo,
+             eax=[eax].proc_info.paralist: eax: eax=[eax].nsym.nextparam
+
+            .if [eax].asym.state == SYM_TMACRO || \
+                ( [eax].asym.state == SYM_STACK && [eax].asym.total_size <= 16 )
+
+                inc fcscratch
+            .endif
+        .endf
+        mov eax,1
+    .until 1
+    ret
+
+vc32_fcstart endp
+
+vc32_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:SINT,
+    opnd:ptr expr, paramvalue:LPSTR, r0used:ptr byte
+
+    local z
+
+    mov esi,param
+    xor eax,eax
+
+    .repeat
+
+        mov cl,[esi].asym.state
+        .break .if !( cl == SYM_TMACRO || cl == SYM_STACK || !fcscratch )
+        .break .if ( cl == SYM_STACK && [esi].asym.total_size > 16 )
+
+        dec fcscratch
+        mov edx,fcscratch
+        .if cl == SYM_STACK || edx > 1 || [esi].asym.mem_type & MT_FLOAT
+            .break .if edx > 5
+            lea ebx,[edx+T_XMM0]
+        .else
+            .break .if edx > 1
+            movzx ebx,ms32_regs[edx]
+        .endif
+
+        .if adr
+
+            AddLineQueueX( " lea %r, %s", ebx, paramvalue )
+        .else
+
+            SizeFromMemtype([esi].asym.mem_type, USE_EMPTY, [esi].asym._type)
+            mov edi,opnd
+
+            .if ebx < T_XMM0 && [edi].expr.kind != EXPR_CONST && eax < 4
+
+                mov ecx,[edi].expr.base_reg
+                .if !eax && [edi].expr.kind == EXPR_REG && !( [edi].expr.flags & EXF_INDIRECT ) && ecx
+
+                    .if [ecx].asm_tok.tokval == ebx
+
+                        inc eax
+                        .break
+                    .endif
+                    AddLineQueueX(" mov %r, %s", ebx, paramvalue)
+                    .break
+                .endif
+
+                mov eax,@CStr("movzx")
+                .if [esi].asym.mem_type & MT_SIGNED
+                    mov eax,@CStr("movsx")
+                .endif
+                AddLineQueueX(" %s %r, %s", eax, ebx, paramvalue)
+            .else
+                mov ecx,[edi].expr.base_reg
+                .if [edi].expr.kind == EXPR_REG && !( [edi].expr.flags & EXF_INDIRECT ) && ecx
+
+                    .if [ecx].asm_tok.tokval == ebx
+
+                        inc eax
+                        .break
+                    .endif
+                .endif
+
+                .if [edi].expr.kind == EXPR_CONST
+
+                    xor eax,eax
+                    .break .if index > 1 || ebx >= T_XMM0
+
+                    AddLineQueueX(" mov %r, %s", ebx, paramvalue)
+
+                .elseif [edi].expr.kind == EXPR_FLOAT
+
+                    mov edx,param
+                    .if [edx].asym.mem_type == MT_REAL4
+                        mov eax,r0used
+                        or  byte ptr [eax],R0_USED
+                        AddLineQueueX( " mov %r, %s", T_EAX, paramvalue )
+                        AddLineQueueX( " movd %r, %r", ebx, T_EAX )
+                    .elseif [edx].asym.mem_type == MT_REAL8
+                        AddLineQueueX( " pushd %r (%s)", T_HIGH32, paramvalue )
+                        AddLineQueueX( " pushd %r (%s)", T_LOW32, paramvalue )
+                        AddLineQueueX( " movq %r, [esp]", ebx )
+                        AddLineQueueX( " add esp, 8" )
+                    .else
+                        AddLineQueueX( " movaps %r, %s", ebx, paramvalue )
+                    .endif
+                .else
+                    mov edx,param
+                    .if [edx].asym.mem_type == MT_REAL4
+                        AddLineQueueX(" movss %r, %s", ebx, paramvalue)
+                    .elseif [edx].asym.mem_type == MT_REAL8
+                        AddLineQueueX(" movsd %r, %s", ebx, paramvalue)
+                    .elseif eax == 16
+                        AddLineQueueX(" movaps %r, %s", ebx, paramvalue)
+                    .else
+                        xor eax,eax
+                        .break
+                    .endif
+                .endif
+            .endif
+            .if ebx == T_AX
+                mov eax,r0used
+                or byte ptr [eax],R0_USED
+            .endif
+        .endif
+        mov eax,1
+    .until 1
+    ret
+vc32_param endp
 
 ;-------------------------------------------------------------------------------
 ; FCT_WATCOMC

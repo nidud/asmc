@@ -850,10 +850,11 @@ _mm_stream_si32 macro p, x
 	movnti _MM_MREG(p),x
 	retm<p>
 	endm
+if 0
 _mm_pause macro
 	exitm<nop>
 	endm
-
+endif
 ;;
 ;; New convert to float
 ;;

@@ -9,7 +9,7 @@ endif
 if defined (_M_IX86) AND NOT defined(_CHPE_ONLY_)
 include mm3dnow.inc
 endif
-
+if 0
 __MACHINE(_AddressOfReturnAddress proto)
 __MACHINE(_BitScanForward proto :ptr dword, :dword)
 __MACHINEX64(_BitScanForward64 proto :ptr dword, :qword)
@@ -764,5 +764,5 @@ __MACHINEX64(_mm_cvtsi64_ss proto :oword, :qword)
 __MACHINEX64(_mm_cvtss_si64 proto :oword)
 __MACHINEX64(_mm_cvttsd_si64 proto :oword)
 __MACHINEX64(_mm_cvttss_si64 proto :oword)
-
+endif
 endif

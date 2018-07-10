@@ -142,7 +142,7 @@ _MM_FLUSH_ZERO_ON	equ 0x8000
 _MM_FLUSH_ZERO_OFF	equ 0x0000
 
 _MM_SET_EXCEPTION_STATE macro m
-	exitm<_mm_setcsr((_mm_getcsr() & ~_MM_EXCEPT_MASK) | (m))>
+	exitm<_mm_setcsr((_mm_getcsr() AND NOT _MM_EXCEPT_MASK) OR (m))>
 	endm
 
 _MM_GET_EXCEPTION_STATE macro
@@ -150,7 +150,7 @@ _MM_GET_EXCEPTION_STATE macro
 	endm
 
 _MM_SET_EXCEPTION_MASK macro m
-	exitm<_mm_setcsr((_mm_getcsr() & ~_MM_MASK_MASK) | (m))>
+	exitm<_mm_setcsr((_mm_getcsr() AND NOT _MM_MASK_MASK) OR (m))>
 	endm
 
 _MM_GET_EXCEPTION_MASK macro
@@ -158,7 +158,7 @@ _MM_GET_EXCEPTION_MASK macro
 	endm
 
 _MM_SET_ROUNDING_MODE macro mode
-	exitm<_mm_setcsr((_mm_getcsr() & ~_MM_ROUND_MASK) | (mode))>
+	exitm<_mm_setcsr((_mm_getcsr() AND NOT _MM_ROUND_MASK) OR (mode))>
 	endm
 
 _MM_GET_ROUNDING_MODE macro
@@ -166,11 +166,11 @@ _MM_GET_ROUNDING_MODE macro
 	endm
 
 _MM_SET_FLUSH_ZERO_MODE macro mode
-	exitm<_mm_setcsr((_mm_getcsr() & ~_MM_FLUSH_ZERO_MASK) | (mode))>
+	exitm<_mm_setcsr((_mm_getcsr() AND NOT _MM_FLUSH_ZERO_MASK) OR (mode))>
 	endm
 
 _MM_GET_FLUSH_ZERO_MODE macro
-	exitm<(_mm_getcsr() & _MM_FLUSH_ZERO_MASK)>
+	exitm<(_mm_getcsr() AND _MM_FLUSH_ZERO_MASK)>
 	endm
 
 _mm_add_ss macro a:=<xmm0>, b:=<xmm1>

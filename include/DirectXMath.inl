@@ -2485,41 +2485,22 @@ endif
 
 inl_XMVector3Dot macro V1:=<xmm0>, V2:=<xmm1>
 ifdef _XM_SSE4_INTRINSICS_
-    ifidn <V1>,<xmm0>
-	exitm<_mm_dp_ps( V1, V2, 0x7f )>
-    endif
-    if not _MM_ISXMM(V1)
-	exitm<_mm_dp_ps( V1, V2, 0x7f )>
-    endif
-    _mm_store_ps(xmm0, _mm_dp_ps( V1, V2, 0x7f ) )
+    _mm_store_ps(xmm0, V1)
+    exitm<_mm_dp_ps(xmm0, V2, 0x7f)>
 elseifdef _XM_SSE3_INTRINSICS_
-    ifidn <V1>,<xmm0>
-	_mm_mul_ps(V1, V2)
-    else
-	if _MM_ISXMM(V1)
-	    _mm_store_ps(xmm0, _mm_mul_ps(V1, V2))
-	else
-	    _mm_mul_ps(V1, V2)
-	endif
-    endif
+    _mm_store_ps(xmm0, V1)
+    _mm_mul_ps(xmm0, V2)
     _mm_and_ps(xmm0, g_XMMask3)
     _mm_hadd_ps(xmm0, xmm0)
     _mm_hadd_ps(xmm0, xmm0)
 elseifdef _XM_SSE_INTRINSICS_
-    ifidn <V1>,<xmm0>
-	_mm_mul_ps(V1, V2)
-    else
-	if _MM_ISXMM(V1)
-	    _mm_store_ps(xmm0, _mm_mul_ps(V1, V2))
-	else
-	    _mm_mul_ps(V1, V2)
-	endif
-    endif
-    _mm_store_ps(xmm2, xmm0)
-    _mm_shuffle_ps(xmm2, xmm0, _MM_SHUFFLE(2,1,2,1))
-    _mm_add_ss(xmm0, xmm2)
-    XM_PERMUTE_PS(xmm2, _MM_SHUFFLE(1,1,1,1))
-    _mm_add_ss(xmm0, xmm2)
+    _mm_store_ps(xmm0, V1)
+    _mm_mul_ps(xmm0, V2)
+    _mm_store_ps(xmm1, xmm0)
+    _mm_shuffle_ps(xmm1, xmm0, _MM_SHUFFLE(2,1,2,1))
+    _mm_add_ss(xmm0, xmm1)
+    XM_PERMUTE_PS(xmm1, _MM_SHUFFLE(1,1,1,1))
+    _mm_add_ss(xmm0, xmm1)
     XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(0,0,0,0))
 endif
     retm<xmm0>
@@ -2628,115 +2609,122 @@ inl_XMVector3Transform macro V, M
     retm<xmm0>
     endm
 
-inl_XMMatrixMultiply macro M1, M2
-local vX,vY,vZ,vW
+inl_XMMatrixMultiply macro M1, M2, result
+local vX,vY,vZ,vW,A,B
 ifdef _XM_NO_INTRINSICS_
 elseifdef _XM_ARM_NEON_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
-ifdifi <M1>,<rcx>
-    lea rcx,M1
+    vX equ <xmm3>
+    vY equ <xmm4>
+    vZ equ <xmm5>
+    vW equ <xmm6>
+ifdef _XM_AVX_INTRINSICS_
+    A  equ <real4 ptr M1>
+else
+    A  equ <xmmword ptr M1>
 endif
-ifdifi <M2>,<rdx>
-    lea rdx,M2
-endif
-    vX equ <xmm2>
-    vY equ <xmm3>
-    vZ equ <xmm4>
-    vW equ <xmm5>
+    B  equ <xmmword ptr M2>
     ;;
     ;; Splat the component X,Y,Z then W
     ;;
 ifdef _XM_AVX_INTRINSICS_
-    _mm_store_ps(vX, _mm_broadcast_ss([rcx].XMFLOAT4X4._11))
-    _mm_store_ps(vY, _mm_broadcast_ss([rcx].XMFLOAT4X4._12))
-    _mm_store_ps(vZ, _mm_broadcast_ss([rcx].XMFLOAT4X4._13))
-    _mm_store_ps(vW, _mm_broadcast_ss([rcx].XMFLOAT4X4._14))
+    _mm_store_ps(vX, _mm_broadcast_ss(A[0x00]))
+    _mm_store_ps(vY, _mm_broadcast_ss(A[0x04]))
+    _mm_store_ps(vZ, _mm_broadcast_ss(A[0x08]))
+    _mm_store_ps(vW, _mm_broadcast_ss(A[0x0C]))
 else
     ;;
     ;; Use vW to hold the original row
     ;;
-    _mm_store_ps(vX, XM_PERMUTE_PS([rcx], _MM_SHUFFLE(0,0,0,0)))
-    _mm_store_ps(vY, XM_PERMUTE_PS([rcx], _MM_SHUFFLE(1,1,1,1)))
-    _mm_store_ps(vZ, XM_PERMUTE_PS([rcx], _MM_SHUFFLE(2,2,2,2)))
-    _mm_store_ps(vW, XM_PERMUTE_PS([rcx], _MM_SHUFFLE(3,3,3,3)))
+    _mm_store_ps(vW, A[0x00])
+    XM_PERMUTE_PS(_mm_store_ps(vX, vW), _MM_SHUFFLE(0,0,0,0))
+    XM_PERMUTE_PS(_mm_store_ps(vY, vW), _MM_SHUFFLE(1,1,1,1))
+    XM_PERMUTE_PS(_mm_store_ps(vZ, vW), _MM_SHUFFLE(2,2,2,2))
+    XM_PERMUTE_PS(vW, _MM_SHUFFLE(3,3,3,3))
 endif
     ;;
     ;; Perform the operation on the first row
     ;;
-    _mm_mul_ps(vX, [rdx][0x00])
-    _mm_mul_ps(vY, [rdx][0x10])
-    _mm_mul_ps(vZ, [rdx][0x20])
-    _mm_mul_ps(vW, [rdx][0x30])
+    _mm_mul_ps(vX, B[0x00])
+    _mm_mul_ps(vY, B[0x10])
+    _mm_mul_ps(vZ, B[0x20])
+    _mm_mul_ps(vW, B[0x30])
     ;;
     ;; Perform a binary add to reduce cumulative errors
     ;;
     _mm_add_ps(vX, vZ)
     _mm_add_ps(vY, vW)
     _mm_add_ps(vX, vY)
-    _mm_store_ps(xmm6, vX)
+    _mm_store_ps(xmm0, vX)
     ;;
     ;; Repeat for the other 3 rows
     ;;
 ifdef _XM_AVX_INTRINSICS_
-    _mm_store_ps(vX, _mm_broadcast_ss([rcx].XMFLOAT4X4._21))
-    _mm_store_ps(vY, _mm_broadcast_ss([rcx].XMFLOAT4X4._22))
-    _mm_store_ps(vZ, _mm_broadcast_ss([rcx].XMFLOAT4X4._23))
-    _mm_store_ps(vW, _mm_broadcast_ss([rcx].XMFLOAT4X4._24))
+    _mm_store_ps(vX, _mm_broadcast_ss(A[0x10]))
+    _mm_store_ps(vY, _mm_broadcast_ss(A[0x14]))
+    _mm_store_ps(vZ, _mm_broadcast_ss(A[0x18]))
+    _mm_store_ps(vW, _mm_broadcast_ss(A[0x1C]))
 else
-    _mm_store_ps(vX, XM_PERMUTE_PS([rcx][0x10], _MM_SHUFFLE(0,0,0,0)))
-    _mm_store_ps(vY, XM_PERMUTE_PS([rcx][0x10], _MM_SHUFFLE(1,1,1,1)))
-    _mm_store_ps(vZ, XM_PERMUTE_PS([rcx][0x10], _MM_SHUFFLE(2,2,2,2)))
-    _mm_store_ps(vW, XM_PERMUTE_PS([rcx][0x10], _MM_SHUFFLE(3,3,3,3)))
+    _mm_store_ps(vW, A[0x10])
+    XM_PERMUTE_PS(_mm_store_ps(vX, vW), _MM_SHUFFLE(0,0,0,0))
+    XM_PERMUTE_PS(_mm_store_ps(vY, vW), _MM_SHUFFLE(1,1,1,1))
+    XM_PERMUTE_PS(_mm_store_ps(vZ, vW), _MM_SHUFFLE(2,2,2,2))
+    XM_PERMUTE_PS(vW, _MM_SHUFFLE(3,3,3,3))
 endif
-    _mm_mul_ps(vX, [rdx][0x00])
-    _mm_mul_ps(vY, [rdx][0x10])
-    _mm_mul_ps(vZ, [rdx][0x20])
-    _mm_mul_ps(vW, [rdx][0x30])
-    _mm_add_ps(vX, vZ)
-    _mm_add_ps(vY, vW)
-    _mm_add_ps(vX, vY)
-    _mm_store_ps(xmm7, vX)
-ifdef _XM_AVX_INTRINSICS_
-    _mm_store_ps(vX, _mm_broadcast_ss([rcx].XMFLOAT4X4._31))
-    _mm_store_ps(vY, _mm_broadcast_ss([rcx].XMFLOAT4X4._32))
-    _mm_store_ps(vZ, _mm_broadcast_ss([rcx].XMFLOAT4X4._33))
-    _mm_store_ps(vW, _mm_broadcast_ss([rcx].XMFLOAT4X4._34))
-else
-    _mm_store_ps(vX,  XM_PERMUTE_PS([rcx][0x20], _MM_SHUFFLE(0,0,0,0)))
-    _mm_store_ps(vY,  XM_PERMUTE_PS([rcx][0x20], _MM_SHUFFLE(1,1,1,1)))
-    _mm_store_ps(vZ,  XM_PERMUTE_PS([rcx][0x20], _MM_SHUFFLE(2,2,2,2)))
-    _mm_store_ps(vW,  XM_PERMUTE_PS([rcx][0x20], _MM_SHUFFLE(3,3,3,3)))
-endif
-    _mm_mul_ps(vX, [rdx][0x00])
-    _mm_mul_ps(vY, [rdx][0x10])
-    _mm_mul_ps(vZ, [rdx][0x20])
-    _mm_mul_ps(vW, [rdx][0x30])
+    _mm_mul_ps(vX, B[0x00])
+    _mm_mul_ps(vY, B[0x10])
+    _mm_mul_ps(vZ, B[0x20])
+    _mm_mul_ps(vW, B[0x30])
     _mm_add_ps(vX, vZ)
     _mm_add_ps(vY, vW)
     _mm_add_ps(vX, vY)
     _mm_store_ps(xmm1, vX)
 ifdef _XM_AVX_INTRINSICS_
-    _mm_store_ps(vX, _mm_broadcast_ss([rcx].XMFLOAT4X4._41))
-    _mm_store_ps(vY, _mm_broadcast_ss([rcx].XMFLOAT4X4._42))
-    _mm_store_ps(vZ, _mm_broadcast_ss([rcx].XMFLOAT4X4._43))
-    _mm_store_ps(vW, _mm_broadcast_ss([rcx].XMFLOAT4X4._44))
+    _mm_store_ps(vX, _mm_broadcast_ss(A[0x20]))
+    _mm_store_ps(vY, _mm_broadcast_ss(A[0x24]))
+    _mm_store_ps(vZ, _mm_broadcast_ss(A[0x28]))
+    _mm_store_ps(vW, _mm_broadcast_ss(A[0x2C]))
 else
-    _mm_store_ps(vX,  XM_PERMUTE_PS([rcx][0x30], _MM_SHUFFLE(0,0,0,0)))
-    _mm_store_ps(vY,  XM_PERMUTE_PS([rcx][0x30], _MM_SHUFFLE(1,1,1,1)))
-    _mm_store_ps(vZ,  XM_PERMUTE_PS([rcx][0x30], _MM_SHUFFLE(2,2,2,2)))
-    _mm_store_ps(vW,  XM_PERMUTE_PS([rcx][0x30], _MM_SHUFFLE(3,3,3,3)))
+    _mm_store_ps(vW, A[0x20])
+    XM_PERMUTE_PS(_mm_store_ps(vX, vW), _MM_SHUFFLE(0,0,0,0))
+    XM_PERMUTE_PS(_mm_store_ps(vY, vW), _MM_SHUFFLE(1,1,1,1))
+    XM_PERMUTE_PS(_mm_store_ps(vZ, vW), _MM_SHUFFLE(2,2,2,2))
+    XM_PERMUTE_PS(vW, _MM_SHUFFLE(3,3,3,3))
 endif
-    _mm_mul_ps(vX, [rdx][0x00])
-    _mm_mul_ps(vY, [rdx][0x10])
-    _mm_mul_ps(vZ, [rdx][0x20])
-    _mm_mul_ps(vW, [rdx][0x30])
+    _mm_mul_ps(vX, B[0x00])
+    _mm_mul_ps(vY, B[0x10])
+    _mm_mul_ps(vZ, B[0x20])
+    _mm_mul_ps(vW, B[0x30])
+    _mm_add_ps(vX, vZ)
+    _mm_add_ps(vY, vW)
+    _mm_add_ps(vX, vY)
+    _mm_store_ps(xmm2, vX)
+ifdef _XM_AVX_INTRINSICS_
+    _mm_store_ps(vX, _mm_broadcast_ss(A[0x30]))
+    _mm_store_ps(vY, _mm_broadcast_ss(A[0x34]))
+    _mm_store_ps(vZ, _mm_broadcast_ss(A[0x38]))
+    _mm_store_ps(vW, _mm_broadcast_ss(A[0x3C]))
+else
+    _mm_store_ps(vW, A[0x30])
+    XM_PERMUTE_PS(_mm_store_ps(vX, vW), _MM_SHUFFLE(0,0,0,0))
+    XM_PERMUTE_PS(_mm_store_ps(vY, vW), _MM_SHUFFLE(1,1,1,1))
+    XM_PERMUTE_PS(_mm_store_ps(vZ, vW), _MM_SHUFFLE(2,2,2,2))
+    XM_PERMUTE_PS(vW, _MM_SHUFFLE(3,3,3,3))
+endif
+    _mm_mul_ps(vX, B[0x00])
+    _mm_mul_ps(vY, B[0x10])
+    _mm_mul_ps(vZ, B[0x20])
+    _mm_mul_ps(vW, B[0x30])
     _mm_add_ps(vX, vZ)
     _mm_add_ps(vY, vW)
     _mm_add_ps(vX, vY)
     _mm_store_ps(xmm3, vX)
-    _mm_store_ps(xmm2, xmm1)
-    _mm_store_ps(xmm0, xmm6)
-    _mm_store_ps(xmm1, xmm7)
+ifnb <result>
+    _mm_store_ps(xmmword ptr result[0x00], xmm0)
+    _mm_store_ps(xmmword ptr result[0x10], xmm1)
+    _mm_store_ps(xmmword ptr result[0x20], xmm2)
+    _mm_store_ps(xmmword ptr result[0x30], xmm3)
+endif
     exitm<>
 endif
     endm
@@ -2763,38 +2751,38 @@ inl_XMMatrixSet macro m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23
     exitm<>
     endm
 
-inl_XMMatrixTranslation macro OffsetX, OffsetY, OffsetZ, M
+inl_XMMatrixTranslation macro OffsetX, OffsetY, OffsetZ, result
 ifdef _XM_NO_INTRINSICS_
 elseif defined(_XM_SSE_INTRINSICS_) or defined(_XM_ARM_NEON_INTRINSICS_)
     _mm_store_ps(xmm0, g_XMIdentityR0.v)
     _mm_store_ps(xmm1, g_XMIdentityR1.v)
     _mm_store_ps(xmm2, g_XMIdentityR2.v)
     _mm_set_epi32(xmm3, OffsetX, OffsetY, OffsetZ, 1.0 )
-    ifnb <M>
-     _mm_store_ps(M.r[0*16], xmm0)
-     _mm_store_ps(M.r[1*16], xmm1)
-     _mm_store_ps(M.r[2*16], xmm2)
-     _mm_store_ps(M.r[3*16], xmm3)
-    endif
+ ifnb <result>
+    _mm_store_ps(xmmword ptr result[0x00], xmm0)
+    _mm_store_ps(xmmword ptr result[0x10], xmm1)
+    _mm_store_ps(xmmword ptr result[0x20], xmm2)
+    _mm_store_ps(xmmword ptr result[0x30], xmm3)
+ endif
     exitm<>
 endif
     endm
 
-inl_XMMatrixScaling macro ScaleX, ScaleY, ScaleZ, M
-    _mm_set_epi32(xmm0, 0, 0, 0, ScaleX)
-    _mm_set_epi32(xmm1, 0, 0, ScaleY, 0)
-    _mm_set_epi32(xmm2, 0, ScaleZ, 0, 0)
+inl_XMMatrixScaling macro ScaleX, ScaleY, ScaleZ, result
+    _mm_set_epi32(xmm0, ScaleX, 0, 0, 0)
+    _mm_set_epi32(xmm1, 0, ScaleY, 0, 0)
+    _mm_set_epi32(xmm2, 0, 0, ScaleZ, 0)
     _mm_store_ps(xmm3, g_XMIdentityR3.v)
-    ifnb <M>
-     _mm_store_ps(M.r[0*16], xmm0)
-     _mm_store_ps(M.r[1*16], xmm1)
-     _mm_store_ps(M.r[2*16], xmm2)
-     _mm_store_ps(M.r[3*16], xmm3)
-    endif
+ ifnb <result>
+    _mm_store_ps(xmmword ptr result[0x00], xmm0)
+    _mm_store_ps(xmmword ptr result[0x10], xmm1)
+    _mm_store_ps(xmmword ptr result[0x20], xmm2)
+    _mm_store_ps(xmmword ptr result[0x30], xmm3)
+ endif
     retm<xmm0>
     endm
 
-inl_XMMatrixTranslationFromVector macro V, M
+inl_XMMatrixTranslationFromVector macro V, result
     _mm_store_ps(xmm1, V)
     _mm_store_ps(xmm0, g_XMIdentityR3.v)
     _mm_store_ps(xmm2, g_XMSelect1110.v)
@@ -2802,16 +2790,16 @@ inl_XMMatrixTranslationFromVector macro V, M
     _mm_store_ps(xmm2, g_XMIdentityR2.v)
     _mm_store_ps(xmm1, g_XMIdentityR1.v)
     _mm_store_ps(xmm0, g_XMIdentityR0.v)
-    ifnb <M>
-     _mm_store_ps(M.r[0*16], xmm0)
-     _mm_store_ps(M.r[1*16], xmm1)
-     _mm_store_ps(M.r[2*16], xmm2)
-     _mm_store_ps(M.r[3*16], xmm3)
-    endif
+ ifnb <result>
+    _mm_store_ps(xmmword ptr result[0x00], xmm0)
+    _mm_store_ps(xmmword ptr result[0x10], xmm1)
+    _mm_store_ps(xmmword ptr result[0x20], xmm2)
+    _mm_store_ps(xmmword ptr result[0x30], xmm3)
+ endif
     retm<xmm0>
     endm
 
-inl_XMMatrixRotationX macro V
+inl_XMMatrixRotationX macro V, result
 ifdef _XM_NO_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
     _mm_store_ps(xmm0, V)
@@ -2824,11 +2812,17 @@ elseifdef _XM_SSE_INTRINSICS_
     _mm_mul_ps(xmm2, g_XMNegateY)
     _mm_store_ps(xmm0, g_XMIdentityR0)
     _mm_store_ps(xmm3, g_XMIdentityR3)
+ ifnb <result>
+    _mm_store_ps(xmmword ptr result[0x00], xmm0)
+    _mm_store_ps(xmmword ptr result[0x10], xmm1)
+    _mm_store_ps(xmmword ptr result[0x20], xmm2)
+    _mm_store_ps(xmmword ptr result[0x30], xmm3)
+ endif
 endif
     retm<>
     endm
 
-inl_XMMatrixRotationY macro V
+inl_XMMatrixRotationY macro V, result
 ifdef _XM_NO_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
     _mm_store_ps(xmm0, V)
@@ -2839,11 +2833,17 @@ elseifdef _XM_SSE_INTRINSICS_
     _mm_mul_ps(xmm0, g_XMNegateZ)
     _mm_store_ps(xmm1, g_XMIdentityR1)
     _mm_store_ps(xmm3, g_XMIdentityR3)
+ ifnb <result>
+    _mm_store_ps(xmmword ptr result[0x00], xmm0)
+    _mm_store_ps(xmmword ptr result[0x10], xmm1)
+    _mm_store_ps(xmmword ptr result[0x20], xmm2)
+    _mm_store_ps(xmmword ptr result[0x30], xmm3)
+ endif
 endif
     retm<>
     endm
 
-inl_XMMatrixRotationZ macro V
+inl_XMMatrixRotationZ macro V, result
 ifdef _XM_NO_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
     _mm_store_ps(xmm0, V)
@@ -2857,8 +2857,38 @@ elseifdef _XM_SSE_INTRINSICS_
     _mm_mul_ps(xmm1, g_XMNegateX)
     _mm_store_ps(xmm2, g_XMIdentityR2)
     _mm_store_ps(xmm3, g_XMIdentityR3)
+ ifnb <result>
+    _mm_store_ps(xmmword ptr result[0x00], xmm0)
+    _mm_store_ps(xmmword ptr result[0x10], xmm1)
+    _mm_store_ps(xmmword ptr result[0x20], xmm2)
+    _mm_store_ps(xmmword ptr result[0x30], xmm3)
+ endif
 endif
     retm<>
+    endm
+
+inl_XMMatrixLookToLH macro EyePosition, EyeDirection, UpDirection
+    _mm_store_ps(xmm0, EyePosition)
+    _mm_store_ps(xmm1, EyeDirection)
+    _mm_store_ps(xmm4, UpDirection)
+    _mm_sub_ps(_mm_setzero_ps(xmm6), xmm0)
+    inl_XMVector3Normalize(xmm1)
+    _mm_store_ps(xmm5, xmm0)
+    inl_XMVector3Cross(xmm4, xmm5)
+    inl_XMVector3Normalize(xmm0)
+    _mm_store_ps(xmm4, xmm0)
+    inl_XMVector3Cross(xmm5, xmm4)
+    _mm_store_ps(xmm3, xmm0)
+    _mm_store_ps(xmm7, inl_XMVector3Dot(xmm4, xmm6))
+    _mm_store_ps(xmm2, inl_XMVector3Dot(xmm3, xmm6))
+    _mm_store_ps(xmm6, inl_XMVector3Dot(xmm5, xmm6))
+    _mm_store_ps(xmm3, inl_XMVectorSelect(xmm2, xmm3, g_XMSelect1110.v))
+    _mm_store_ps(xmm4, inl_XMVectorSelect(xmm7, xmm4, g_XMSelect1110.v))
+    _mm_store_ps(xmm2, inl_XMVectorSelect(xmm6, xmm5, g_XMSelect1110.v))
+    _mm_store_ps(xmm1, xmm3)
+    _mm_store_ps(xmm0, xmm4)
+    _mm_store_ps(xmm3, g_XMIdentityR3.v)
+    exitm<inl_XMMatrixTranspose()>
     endm
 
 inl_XMMatrixLookAtRH macro EyePosition, FocusPosition, UpDirection
@@ -2868,44 +2898,6 @@ inl_XMMatrixLookAtRH macro EyePosition, FocusPosition, UpDirection
     _mm_store_ps(xmm3 xmm0)
     inl_XMVectorSubtract(xmm3, xmm1)
     inl_XMMatrixLookToLH(xmm0, xmm3, xmm2)
-    retm<xmm0>
-    endm
-
-inl_XMMatrixLookToLH macro EyePosition, EyeDirection, UpDirection
-
-    _mm_store_ps(xmm0, EyePosition)
-    _mm_store_ps(xmm1, EyeDirection)
-    _mm_store_ps(xmm2, UpDirection)
-
-    _mm_store_ps(xmm6, xmm0)
-    _mm_store_ps(xmm7, xmm2)
-    _mm_store_ps(xmm5, inl_XMVector3Normalize(xmm1))
-    _mm_store_ps(xmm0, xmm7)
-    _mm_store_ps(xmm1, xmm5)
-    _mm_store_ps(xmm4, inl_XMVector3Normalize(inl_XMVector3Cross(xmm0, xmm1)))
-    _mm_store_ps(xmm1, xmm0)
-    _mm_store_ps(xmm0, xmm5)
-    _mm_store_ps(xmm3, inl_XMVector3Cross(xmm0, xmm1))
-    _mm_store_ps(xmm6, _mm_sub_ps( _mm_setzero_ps(), xmm6 ))
-    _mm_store_ps(xmm7, inl_XMVector3Dot(_mm_store_ps(xmm0, xmm4), _mm_store_ps(xmm1, xmm6)))
-    _mm_store_ps(xmm1, inl_XMVector3Dot(_mm_store_ps(xmm0, xmm3), _mm_store_ps(xmm1, xmm6)))
-    _mm_store_ps(xmm6, inl_XMVector3Dot(_mm_store_ps(xmm0, xmm5), _mm_store_ps(xmm1, xmm6)))
-    _mm_store_ps(xmm3, inl_XMVectorSelect(xmm1, xmm3, g_XMSelect1110.v))
-    _mm_store_ps(xmm7, inl_XMVectorSelect(xmm7, xmm4, g_XMSelect1110.v))
-    _mm_store_ps(xmm6, inl_XMVectorSelect(xmm6, xmm5, g_XMSelect1110.v))
-    _mm_store_ps(xmm0, xmm7)
-    _mm_store_ps(xmm2, _mm_shuffle_ps(xmm0, xmm3, _MM_SHUFFLE(1,0,1,0)))
-    _mm_store_ps(xmm3, _mm_shuffle_ps(xmm7, xmm3, _MM_SHUFFLE(3,2,3,2)))
-    _mm_store_ps(xmm5, g_XMIdentityR3.v)
-    _mm_store_ps(xmm7, xmm6)
-    _mm_store_ps(xmm4, _mm_shuffle_ps(xmm6, xmm5, _MM_SHUFFLE(1,0,1,0)))
-    _mm_store_ps(xmm5, _mm_shuffle_ps(xmm7, xmm5, _MM_SHUFFLE(3,2,3,2)))
-    _mm_store_ps(xmm0, xmm2)
-    _mm_shuffle_ps(xmm0, xmm3, _MM_SHUFFLE(2,0,2,0))
-    _mm_store_ps(xmm1, _mm_shuffle_ps(xmm2, xmm3,_MM_SHUFFLE(3,1,3,1)))
-    _mm_store_ps(xmm2, xmm4)
-    _mm_shuffle_ps(xmm2, xmm5, _MM_SHUFFLE(2,0,2,0))
-    _mm_store_ps(xmm3, _mm_shuffle_ps(xmm4, xmm5, _MM_SHUFFLE(3,1,3,1)))
     retm<xmm0>
     endm
 

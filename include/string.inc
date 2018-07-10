@@ -14,7 +14,7 @@ memchr		proto __cdecl :LPSTR, :SIZE_T,:SIZE_T
 memcpy		proto __cdecl :LPSTR, :LPSTR, :SIZE_T
 memmove		proto __cdecl :LPSTR, :LPSTR, :SIZE_T
 memcmp		proto __cdecl :LPSTR, :LPSTR, :SIZE_T
-memset		proto __cdecl :LPSTR, :SIZE_T,:SIZE_T
+memset		proto __cdecl :LPSTR, :SINT,:SIZE_T
 _memicmp	proto __cdecl :LPSTR, :LPSTR, :SIZE_T
 
 strlen		proto __cdecl :LPSTR

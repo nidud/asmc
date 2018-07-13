@@ -19,6 +19,7 @@ include SpecStrings.inc
 include d3d11_1.inc
 include D3Dcompiler.inc
 include directxmath.inc
+include tchar.inc
 
 ;;--------------------------------------------------------------------------------------
 ;; Structures
@@ -71,6 +72,19 @@ g_World1                XMMATRIX <>
 g_World2                XMMATRIX <>
 g_View                  XMMATRIX <>
 g_Projection            XMMATRIX <>
+
+g_XMIdentityR0          XMVECTORF32 { { { 1.0, 0.0, 0.0, 0.0 } } }
+g_XMIdentityR1          XMVECTORF32 { { { 0.0, 1.0, 0.0, 0.0 } } }
+g_XMIdentityR2          XMVECTORF32 { { { 0.0, 0.0, 1.0, 0.0 } } }
+g_XMIdentityR3          XMVECTORF32 { { { 0.0, 0.0, 0.0, 1.0 } } }
+g_XMMask3               XMVECTORU32 { { { 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0x00000000 } } }
+g_XMMaskY               XMVECTORU32 { { { 0x00000000, 0xFFFFFFFF, 0x00000000, 0x00000000 } } }
+g_XMInfinity            XMVECTORI32 { { { 0x7F800000, 0x7F800000, 0x7F800000, 0x7F800000 } } }
+g_XMQNaN                XMVECTORI32 { { { 0x7FC00000, 0x7FC00000, 0x7FC00000, 0x7FC00000 } } }
+g_XMNegateX             XMVECTORF32 { { { -1.0, 1.0, 1.0, 1.0 } } }
+g_XMNegateZ             XMVECTORF32 { { { 1.0, 1.0, -1.0, 1.0 } } }
+g_XMSelect1110          XMVECTORU32 { { { XM_SELECT_1, XM_SELECT_1, XM_SELECT_1, XM_SELECT_0 } } }
+RGBA_MidnightBlue       XMVECTORF32 { { { 0.098039225, 0.098039225, 0.439215720, 1.000000000 } } }
 
 vertices SimpleVertex   {{-1.0, 1.0,-1.0}, {0.0, 0.0, 1.0, 1.0}},
                         {{ 1.0, 1.0,-1.0}, {0.0, 1.0, 0.0, 1.0}},
@@ -773,18 +787,12 @@ Render proc
     .else
 
         GetTickCount64()
-        mov rcx,timeStart
-        .if !rcx
-            mov timeStart,rax
-            mov rcx,rax
-        .endif
+        mov   rcx,timeStart
+        test  rcx,rcx
+        cmove rcx,rax
+        mov   timeStart,rcx
         sub rax,rcx
-        ;ifdef _WIN64
-        ;  _mm_cvtsi64_sd(xmm1, rax)
-        ;  _mm_cvtsd_ss(xmm1, xmm1)
-        ;else
-          _mm_cvtsi32_ss(xmm1, eax)
-        ;endif
+        _mm_cvtsi32_ss(xmm1, eax)
         _mm_div_ss(xmm1, FLT4(1000.0))
     .endif
     _mm_store_ss(t_time, xmm1)
@@ -792,7 +800,9 @@ Render proc
     ;; 1st Cube: Rotate around the origin
 
     _mm_store_ss(_mm_setzero_ps(), xmm1)
-    inl_XMMatrixRotationY( xmm0, g_World1 )
+
+    inl_XMMatrixRotationY( xmm0 )
+    inl_XMStoreMatrix( g_World1 )
 
     ;; 2nd Cube:  Rotate around origin
 
@@ -815,12 +825,10 @@ Render proc
     ;; Clear the backbuffer
 
     g_pImmediateContext.ClearRenderTargetView( g_pRenderTargetView, &RGBA_MidnightBlue )
-
     ;;
     ;; Clear the depth buffer to 1.0 (max depth)
     ;;
     g_pImmediateContext.ClearDepthStencilView( g_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0, 0 )
-
     ;;
     ;; Update variables for the first cube
     ;;
@@ -828,7 +836,6 @@ Render proc
     inl_XMMatrixTranspose( g_View, cb1.mView )
     inl_XMMatrixTranspose( g_Projection, cb1.mProjection )
     g_pImmediateContext.UpdateSubresource( g_pConstantBuffer, 0, NULL, &cb1, 0, 0 )
-
     ;;
     ;; Render the first cube
     ;;
@@ -836,7 +843,6 @@ Render proc
     g_pImmediateContext.VSSetConstantBuffers( 0, 1, &g_pConstantBuffer )
     g_pImmediateContext.PSSetShader( g_pPixelShader, NULL, 0 )
     g_pImmediateContext.DrawIndexed( 36, 0, 0 )
-
     ;;
     ;; Update variables for the second cube
     ;;
@@ -844,12 +850,10 @@ Render proc
     inl_XMMatrixTranspose( g_View, cb2.mView )
     inl_XMMatrixTranspose( g_Projection, cb2.mProjection )
     g_pImmediateContext.UpdateSubresource( g_pConstantBuffer, 0, NULL, &cb2, 0, 0 )
-
     ;;
     ;; Render the second cube
     ;;
     g_pImmediateContext.DrawIndexed( 36, 0, 0 )
-
     ;;
     ;; Present our back buffer to our front buffer
     ;;
@@ -858,4 +862,4 @@ Render proc
 
 Render endp
 
-    end
+    end _tstart

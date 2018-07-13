@@ -2,20 +2,55 @@ ifndef __XMMMACROS_INC
 __XMMMACROS_INC equ <>
 
 FLT4 macro value
-    local m
-    .data
-    m REAL4 value
-    .code
-    exitm<m>
+  local string
+    string textequ <FLT4@>
+    forc q,<value>
+        ifidn <q>,<->
+            string CatStr string, <M>
+        elseifidn <q>,<+>
+            string CatStr string, <P>
+        elseifidn <q>,< >
+            string CatStr string, <_>
+        elseifidn <q>,<*>
+            string CatStr string, <x>
+        elseifidn <q>,</>
+            string CatStr string, <d>
+        elseifidn <q>,<.>
+            string CatStr string, <_>
+        else
+            string CatStr string, <q>
+        endif
+        endm
+%   ifndef string
+        .data
+        align 4
+        string REAL4 value
+        .code
+    endif
+    exitm<string>
     endm
 
 FLT8 macro value
-    local m
-    .data
-    align 8
-    m REAL8 value
-    .code
-    exitm<m>
+  local string
+    string textequ <FLT8@>
+    forc q,<value>
+        ifidn <q>,<->
+            string CatStr string, <M>
+        elseifidn <q>,<+>
+            string CatStr string, <P>
+        elseifidn <q>,<.>
+            string CatStr string, <_>
+        else
+            string CatStr string, <q>
+        endif
+        endm
+%   ifndef string
+        .data
+        align 8
+        string REAL8 value
+        .code
+    endif
+    exitm<string>
     endm
 
 _MM_ISXMM macro op

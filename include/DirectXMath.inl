@@ -1251,13 +1251,21 @@ inl_XMVectorSetY macro V, x
 ifdef _XM_NO_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
     _mm_store_ps(xmm0, V)
+    ;;
     ;; Swap y and x
+    ;;
     XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,2,0,1))
+    ;;
     ;; Convert input to vector
+    ;;
     _mm_store_ss(xmm1, x)
+    ;;
     ;; Replace the x component
+    ;;
     _mm_move_ss(xmm0, xmm1)
+    ;;
     ;; Swap y and x again
+    ;;
     XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,2,0,1))
     retm<xmm0>
 endif
@@ -1267,13 +1275,21 @@ inl_XMVectorSetZ macro V, x
 ifdef _XM_NO_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
     _mm_store_ps(xmm0, V)
+    ;;
     ;; Swap z and x
+    ;;
     XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,0,1,2))
+    ;;
     ;; Convert input to vector
+    ;;
     _mm_store_ss(xmm1, x)
+    ;;
     ;; Replace the x component
+    ;;
     _mm_move_ss(xmm0, xmm1)
+    ;;
     ;; Swap z and x again
+    ;;
     XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,0,1,2))
     retm<xmm0>
 endif
@@ -1283,13 +1299,21 @@ inl_XMVectorSetW macro V, x
 ifdef _XM_NO_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
     _mm_store_ps(xmm0, V)
+    ;;
     ;; Swap w and x
+    ;;
     XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(0,2,1,3))
+    ;;
     ;; Convert input to vector
+    ;;
     _mm_store_ss(xmm1, x)
+    ;;
     ;; Replace the x component
+    ;;
     _mm_move_ss(xmm0, xmm1)
+    ;;
     ;; Swap w and x again
+    ;;
     XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(0,2,1,3))
     retm<xmm0>
 endif
@@ -1309,13 +1333,21 @@ inl_XMVectorSetYPtr macro V, x
 ifdef _XM_NO_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
     _mm_store_ps(xmm0, V)
+    ;;
     ;; Swap y and x
+    ;;
     XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,2,0,1))
+    ;;
     ;; Convert input to vector
+    ;;
     _mm_store_ss(xmm1, x)
+    ;;
     ;; Replace the x component
+    ;;
     _mm_move_ss(xmm0, xmm1)
+    ;;
     ;; Swap y and x again
+    ;;
     XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,2,0,1))
     retm<xmm0>
 endif
@@ -1325,13 +1357,21 @@ inl_XMVectorSetZPtr macro V, x
 ifdef _XM_NO_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
     _mm_store_ps(xmm0, V)
+    ;;
     ;; Swap z and x
+    ;;
     XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,0,1,2))
+    ;;
     ;; Convert input to vector
+    ;;
     _mm_store_ss(xmm1, x)
+    ;;
     ;; Replace the x component
+    ;;
     _mm_move_ss(xmm0, xmm1)
+    ;;
     ;; Swap z and x again
+    ;;
     XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,0,1,2))
     retm<xmm0>
 endif
@@ -1341,13 +1381,21 @@ inl_XMVectorSetWPtr macro V, x
 ifdef _XM_NO_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
     _mm_store_ps(xmm0, V)
+    ;;
     ;; Swap w and x
+    ;;
     XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(0,2,1,3))
+    ;;
     ;; Convert input to vector
+    ;;
     _mm_store_ss(xmm1, x)
+    ;;
     ;; Replace the x component
+    ;;
     _mm_move_ss(xmm0, xmm1)
+    ;;
     ;; Swap w and x again
+    ;;
     XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(0,2,1,3))
     retm<xmm0>
 endif
@@ -1367,13 +1415,21 @@ inl_XMVectorSetIntY macro V, x
 ifdef _XM_NO_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
     _mm_store_ps(xmm0, V)
+    ;;
     ;; Swap y and x
+    ;;
     XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,2,0,1))
+    ;;
     ;; Convert input to vector
+    ;;
     _mm_cvtsi32_si128(xmm1, x)
+    ;;
     ;; Replace the x component
+    ;;
     _mm_move_ss(xmm0, xmm1)
+    ;;
     ;; Swap y and x again
+    ;;
     XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,2,0,1))
     retm<xmm0>
 endif
@@ -1383,13 +1439,21 @@ inl_XMVectorSetIntZ macro V, x
 ifdef _XM_NO_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
     _mm_store_ps(xmm0, V)
+    ;;
     ;; Swap z and x
+    ;;
     XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,0,1,2))
+    ;;
     ;; Convert input to vector
+    ;;
     _mm_cvtsi32_si128(xmm1, x)
+    ;;
     ;; Replace the x component
+    ;;
     _mm_move_ss(xmm0, xmm1)
+    ;;
     ;; Swap z and x again
+    ;;
     XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,0,1,2))
     retm<xmm0>
 endif
@@ -1399,13 +1463,21 @@ inl_XMVectorSetIntW macro V, x
 ifdef _XM_NO_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
     _mm_store_ps(xmm0, V)
+    ;;
     ;; Swap w and x
+    ;;
     XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(0,2,1,3))
+    ;;
     ;; Convert input to vector
+    ;;
     _mm_cvtsi32_si128(xmm1, x)
+    ;;
     ;; Replace the x component
+    ;;
     _mm_move_ss(xmm0, xmm1)
+    ;;
     ;; Swap w and x again
+    ;;
     XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(0,2,1,3))
     retm<xmm0>
 endif
@@ -1424,11 +1496,17 @@ inl_XMVectorSetIntYPtr macro V, x
 ifdef _XM_NO_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
     _mm_store_ps(xmm0, V)
+    ;;
     ;; Swap y and x
+    ;;
     XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,2,0,1))
+    ;;
     ;; Replace the x component
+    ;;
     _mm_move_ss(xmm0, x)
+    ;;
     ;; Swap y and x again
+    ;;
     XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,2,0,1))
     retm<xmm0>
 endif
@@ -1438,11 +1516,17 @@ inl_XMVectorSetIntZPtr macro V, x
 ifdef _XM_NO_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
     _mm_store_ps(xmm0, V)
+    ;;
     ;; Swap z and x
+    ;;
     XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,0,1,2))
+    ;;
     ;; Replace the x component
+    ;;
     _mm_move_ss(xmm0, x)
+    ;;
     ;; Swap z and x again
+    ;;
     XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,0,1,2))
     retm<xmm0>
 endif
@@ -1452,11 +1536,17 @@ inl_XMVectorSetIntWPtr macro V, x
 ifdef _XM_NO_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
     _mm_store_ps(xmm0, V)
+    ;;
     ;; Swap w and x
+    ;;
     XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(0,2,1,3))
+    ;;
     ;; Replace the x component
+    ;;
     _mm_move_ss(xmm0, x)
+    ;;
     ;; Swap w and x again
+    ;;
     XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(0,2,1,3))
     retm<xmm0>
 endif
@@ -1510,9 +1600,13 @@ elseifdef _XM_SSE_INTRINSICS_
     _mm_store_ps(xmm0, V1)
     _mm_store_ps(xmm1, V2)
     _mm_store_ps(xmm2, Epsilon)
+    ;;
     ;; Get the difference
+    ;;
     _mm_sub_ps(xmm0, xmm1)
+    ;;
     ;; Get the absolute value of the difference
+    ;;
     _mm_setzero_ps(xmm3)
     _mm_sub_ps(xmm3, xmm0)
     _mm_max_ps(xmm0, xmm3)
@@ -1574,11 +1668,17 @@ elseifdef _XM_SSE_INTRINSICS_
     _mm_store_ps(xmm0, V)
     _mm_store_ps(xmm1, Bounds)
     _mm_store_ps(xmm2, xmm0)
+    ;;
     ;; Test if less than or equal
+    ;;
     _mm_cmple_ps(xmm0, xmm1)
+    ;;
     ;; Negate the bounds
+    ;;
     _mm_mul_ps(xmm1, g_XMNegativeOne)
+    ;;
     ;; Test if greater or equal (Reversed)
+    ;;
     _mm_cmple_ps(xmm1, xmm2)
     _mm_and_ps(xmm0, xmm1)
     retm<xmm0>
@@ -1596,11 +1696,17 @@ inl_XMVectorIsInfinite macro V
 ifdef _XM_NO_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
     _mm_store_ps(xmm0, V)
+    ;;
     ;; Mask off the sign bit
+    ;;
     _mm_and_ps(xmm0, g_XMAbsMask)
+    ;;
     ;; Compare to infinity
+    ;;
     _mm_cmpeq_ps(xmm0, g_XMInfinity)
+    ;;
     ;; If any are infinity, the signs are true.
+    ;;
     retm<xmm0>
 endif
     endm
@@ -1727,9 +1833,13 @@ inl_XMVectorSaturate macro V
 ifdef _XM_NO_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
     _mm_store_ps(xmm0, V)
+    ;;
     ;; Set <0 to 0
+    ;;
     _mm_max_ps(xmm0, g_XMZero)
+    ;;
     ;; Set>1 to 1
+    ;;
     _mm_min_ps(xmm0, g_XMOne)
     retm<xmm0>
 endif
@@ -1830,19 +1940,29 @@ ifdef _XM_NO_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
     _mm_store_ps(xmm0, V1)
     _mm_store_ps(xmm1, V2)
+    ;;
     ;; Adjust the angles
+    ;;
     _mm_add_ps(xmm0, xmm1)
     _mm_store_ps(xmm1, xmm0)
     _mm_cmplt_ps(xmm1, g_XMNegativePi)
+    ;;
     ;; Less than Pi?
+    ;;
     _mm_and_ps(xmm1, g_XMTwoPi)
+    ;;
     ;; Add 2Pi to all entries less than -Pi
+    ;;
     _mm_add_ps(xmm0, xmm1)
+    ;;
     ;; Greater than or equal to Pi?
+    ;;
     _mm_store_ps(xmm1, g_XMPi)
     _mm_cmple_ps(xmm1, xmm0)
     _mm_and_ps(xmm1, g_XMTwoPi)
+    ;;
     ;; Sub 2Pi to all entries greater than Pi
+    ;;
     _mm_sub_ps(xmm0, xmm1)
     retm<xmm0>
 endif
@@ -1853,19 +1973,29 @@ ifdef _XM_NO_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
     _mm_store_ps(xmm0, V1)
     _mm_store_ps(xmm1, V2)
+    ;;
     ;; Adjust the angles
+    ;;
     _mm_sub_ps(xmm0, xmm1)
     _mm_store_ps(xmm1, xmm0)
     _mm_cmplt_ps(xmm1, g_XMNegativePi)
+    ;;
     ;; Less than Pi?
+    ;;
     _mm_and_ps(xmm1, g_XMTwoPi)
+    ;;
     ;; Add 2Pi to all entries less than -Pi
+    ;;
     _mm_add_ps(xmm0, xmm1)
+    ;;
     ;; Greater than or equal to Pi?
+    ;;
     _mm_store_ps(xmm1, g_XMPi)
     _mm_cmple_ps(xmm1, xmm0)
     _mm_and_ps(xmm1, g_XMTwoPi)
+    ;;
     ;; Sub 2Pi to all entries greater than Pi
+    ;;
     _mm_sub_ps(xmm0, xmm1)
     retm<xmm0>
 endif
@@ -2192,10 +2322,14 @@ inl_XMVectorSin macro V
 ifdef _XM_NO_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
     _mm_store_ps(xmm0, V)
+    ;;
     ;; Force the value within the bounds of pi
+    ;;
     inl_XMVectorModAngles(xmm0)
     _mm_store_ps(xmm1, xmm0)
+    ;;
     ;; Map in [-pi/2,pi/2] with sin(y) = sin(x).
+    ;;
     _mm_and_ps(xmm1, g_XMNegativeZero)
     _mm_store_ps(xmm2, xmm1)
     _mm_or_ps(xmm2, g_XMPi)	; pi when x >= 0, -pi when x < 0
@@ -2208,26 +2342,23 @@ elseifdef _XM_SSE_INTRINSICS_
     _mm_or_ps(xmm0, xmm3)
     _mm_store_ps(xmm1, xmm0)
     _mm_mul_ps(xmm1, xmm0)
+    ;;
     ;; Compute polynomial approximation
+    ;;
     _mm_store_ps(xmm3, g_XMSinCoefficients1)
-    XM_PERMUTE_PS(xmm3, _MM_SHUFFLE(0, 0, 0, 0))
-    _mm_store_ps(xmm2, xmm3)
+    _mm_store_ps(xmm2, XM_PERMUTE_PS(xmm3, _MM_SHUFFLE(0,0,0,0)))
     _mm_mul_ps(xmm2, xmm1)
     _mm_store_ps(xmm3, g_XMSinCoefficients0)
     _mm_store_ps(xmm4, xmm3)
-    XM_PERMUTE_PS(xmm4, _MM_SHUFFLE(3, 3, 3, 3))
-    _mm_add_ps(xmm2, xmm4)
+    _mm_add_ps(xmm2, XM_PERMUTE_PS(xmm4, _MM_SHUFFLE(3,3,3,3)))
     _mm_mul_ps(xmm2, xmm1)
     _mm_store_ps(xmm4, xmm3)
-    XM_PERMUTE_PS(xmm4, _MM_SHUFFLE(2, 2, 2, 2))
-    _mm_add_ps(xmm2, xmm4)
+    _mm_add_ps(xmm2, XM_PERMUTE_PS(xmm4, _MM_SHUFFLE(2,2,2,2)))
     _mm_mul_ps(xmm2, xmm1)
     _mm_store_ps(xmm4, xmm3)
-    XM_PERMUTE_PS(xmm4, _MM_SHUFFLE(1, 1, 1, 1))
-    _mm_add_ps(xmm2, xmm4)
+    _mm_add_ps(xmm2, XM_PERMUTE_PS(xmm4, _MM_SHUFFLE(1,1,1,1)))
     _mm_mul_ps(xmm2, xmm1)
-    XM_PERMUTE_PS(xmm3, _MM_SHUFFLE(0, 0, 0, 0))
-    _mm_add_ps(xmm2, xmm3)
+    _mm_add_ps(xmm2, XM_PERMUTE_PS(xmm3, _MM_SHUFFLE(0,0,0,0)))
     _mm_mul_ps(xmm2, xmm1)
     _mm_add_ps(xmm2, g_XMOne)
     _mm_mul_ps(xmm0, xmm2)
@@ -2239,7 +2370,9 @@ inl_XMVectorCos macro V
 ifdef _XM_NO_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
     _mm_store_ps(xmm0, V)
+    ;;
     ;; Map V to x in [-pi,pi].
+    ;;
     inl_XMVectorModAngles(xmm0)		;; x
     _mm_store_ps(xmm1, xmm0)		;; sign
     _mm_and_ps(xmm1, g_XMNegativeZero)
@@ -2259,26 +2392,23 @@ elseifdef _XM_SSE_INTRINSICS_
     _mm_and_ps(xmm0, g_XMOne)
     _mm_andnot_ps(xmm4, g_XMNegativeOne)
     _mm_or_ps(xmm0, xmm4)
+    ;;
     ;; Compute polynomial approximation
+    ;;
     _mm_store_ps(xmm3, g_XMCosCoefficients1)
-    XM_PERMUTE_PS(xmm3, _MM_SHUFFLE(0, 0, 0, 0))
-    _mm_store_ps(xmm2, xmm3)
+    _mm_store_ps(xmm2, XM_PERMUTE_PS(xmm3, _MM_SHUFFLE(0,0,0,0)))
     _mm_mul_ps(xmm2, xmm1)
     _mm_store_ps(xmm3, g_XMCosCoefficients0)
     _mm_store_ps(xmm4, xmm3)
-    XM_PERMUTE_PS(xmm4, _MM_SHUFFLE(3, 3, 3, 3))
-    _mm_add_ps(xmm2, xmm4)
+    _mm_add_ps(xmm2, XM_PERMUTE_PS(xmm4, _MM_SHUFFLE(3,3,3,3)))
     _mm_mul_ps(xmm2, xmm1)
     _mm_store_ps(xmm4, xmm3)
-    XM_PERMUTE_PS(xmm4, _MM_SHUFFLE(2, 2, 2, 2))
-    _mm_add_ps(xmm2, xmm4)
+    _mm_add_ps(xmm2, XM_PERMUTE_PS(xmm4, _MM_SHUFFLE(2,2,2,2)))
     _mm_mul_ps(xmm2, xmm1)
     _mm_store_ps(xmm4, xmm3)
-    XM_PERMUTE_PS(xmm4, _MM_SHUFFLE(1, 1, 1, 1))
-    _mm_add_ps(xmm2, xmm4)
+    _mm_add_ps(xmm2, XM_PERMUTE_PS(xmm4, _MM_SHUFFLE(1,1,1,1)))
     _mm_mul_ps(xmm2, xmm1)
-    XM_PERMUTE_PS(xmm3, _MM_SHUFFLE(0, 0, 0, 0))
-    _mm_add_ps(xmm2, xmm3)
+    _mm_add_ps(xmm2, XM_PERMUTE_PS(xmm3, _MM_SHUFFLE(0,0,0,0)))
     _mm_mul_ps(xmm2, xmm1)
     _mm_add_ps(xmm2, g_XMOne)
     _mm_mul_ps(xmm0, xmm2)
@@ -2294,29 +2424,29 @@ elseifdef _XM_SSE_INTRINSICS_
     _mm_cmpge_ps(xmm1, xmm0, _mm_setzero_ps(xmm2))
     _mm_sub_ps(xmm2, xmm0)
     _mm_max_ps(xmm0, xmm2)
-
+    ;;
     ;; Compute (1-|V|), clamp to zero to avoid sqrt of negative number.
-
+    ;;
     _mm_sub_ps(_mm_store_ps(xmm2, g_XMOne), xmm0)
     _mm_sqrt_ps(_mm_max_ps(_mm_setzero_ps(xmm3), xmm2))
-
+    ;;
     ;; Compute polynomial approximation
-
+    ;;
     _mm_store_ps(xmm4, _mm_store_ps(xmm2, g_XMArcCoefficients1))
     _mm_store_ps(xmm5, xmm2)
-    _mm_mul_ps(XM_PERMUTE_PS(xmm2, _MM_SHUFFLE(3, 3, 3, 3)), xmm0)
-    _mm_mul_ps(_mm_add_ps(xmm2, XM_PERMUTE_PS(xmm5, _MM_SHUFFLE(2, 2, 2, 2))), xmm0)
+    _mm_mul_ps(XM_PERMUTE_PS(xmm2, _MM_SHUFFLE(3,3,3,3)), xmm0)
+    _mm_mul_ps(_mm_add_ps(xmm2, XM_PERMUTE_PS(xmm5, _MM_SHUFFLE(2,2,2,2))), xmm0)
     _mm_store_ps(xmm5, xmm4)
-    _mm_mul_ps(_mm_add_ps(xmm2, XM_PERMUTE_PS(xmm5, _MM_SHUFFLE(1, 1, 1, 1))), xmm0)
-    _mm_mul_ps(_mm_add_ps(xmm2, XM_PERMUTE_PS(xmm4, _MM_SHUFFLE(0, 0, 0, 0))), xmm0)
+    _mm_mul_ps(_mm_add_ps(xmm2, XM_PERMUTE_PS(xmm5, _MM_SHUFFLE(1,1,1,1))), xmm0)
+    _mm_mul_ps(_mm_add_ps(xmm2, XM_PERMUTE_PS(xmm4, _MM_SHUFFLE(0,0,0,0))), xmm0)
 
     _mm_store_ps(xmm4, _mm_store_ps(xmm5, g_XMArcCoefficients0))
-    _mm_mul_ps(_mm_add_ps(xmm2, XM_PERMUTE_PS(xmm5, _MM_SHUFFLE(3, 3, 3, 3))), xmm0)
+    _mm_mul_ps(_mm_add_ps(xmm2, XM_PERMUTE_PS(xmm5, _MM_SHUFFLE(3,3,3,3))), xmm0)
     _mm_store_ps(xmm5, xmm4)
-    _mm_mul_ps(_mm_add_ps(xmm2, XM_PERMUTE_PS(xmm5, _MM_SHUFFLE(2, 2, 2, 2))), xmm0)
+    _mm_mul_ps(_mm_add_ps(xmm2, XM_PERMUTE_PS(xmm5, _MM_SHUFFLE(2,2,2,2))), xmm0)
     _mm_store_ps(xmm5, xmm4)
-    _mm_mul_ps(_mm_add_ps(xmm2, XM_PERMUTE_PS(xmm5, _MM_SHUFFLE(1, 1, 1, 1))), xmm0)
-    _mm_mul_ps(_mm_add_ps(xmm2, XM_PERMUTE_PS(xmm4, _MM_SHUFFLE(0, 0, 0, 0))), xmm3)
+    _mm_mul_ps(_mm_add_ps(xmm2, XM_PERMUTE_PS(xmm5, _MM_SHUFFLE(1,1,1,1))), xmm0)
+    _mm_mul_ps(_mm_add_ps(xmm2, XM_PERMUTE_PS(xmm4, _MM_SHUFFLE(0,0,0,0))), xmm3)
 
     _mm_store_ps(xmm0, g_XMPi)
     _mm_store_ps(xmm3, xmm1)
@@ -2362,14 +2492,14 @@ elseifdef _XM_SSE_INTRINSICS_
     _mm_store_ps(xmm2, xmm0)
     _mm_store_ps(xmm4, xmm0)
 
-    XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3, 3, 3, 3))
+    XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,3,3,3))
     _mm_mul_ps(xmm0, xmm1)
 
-    XM_PERMUTE_PS(xmm2, _MM_SHUFFLE(2, 2, 2, 2))
+    XM_PERMUTE_PS(xmm2, _MM_SHUFFLE(2,2,2,2))
     _mm_add_ps(xmm0, xmm2)
     _mm_mul_ps(xmm0, xmm1)
 
-    XM_PERMUTE_PS(xmm4, _MM_SHUFFLE(1, 1, 1, 1))
+    XM_PERMUTE_PS(xmm4, _MM_SHUFFLE(1,1,1,1))
     _mm_add_ps(xmm0, xmm4)
     _mm_mul_ps(xmm0, xmm1)
 
@@ -2417,11 +2547,11 @@ elseifdef _XM_SSE_INTRINSICS_
     _mm_store_ps(xmm0, g_XMCosCoefficients1)
     _mm_store_ps(xmm2, xmm0)
     _mm_store_ps(xmm3, xmm0)
-    XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3, 3, 3, 3))
+    XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,3,3,3))
     _mm_mul_ps(xmm0, xmm1)
-    _mm_add_ps(xmm0, XM_PERMUTE_PS(xmm2, _MM_SHUFFLE(2, 2, 2, 2)))
+    _mm_add_ps(xmm0, XM_PERMUTE_PS(xmm2, _MM_SHUFFLE(2,2,2,2)))
     _mm_mul_ps(xmm0, xmm1)
-    _mm_add_ps(xmm0, XM_PERMUTE_PS(xmm3, _MM_SHUFFLE(1, 1, 1, 1)))
+    _mm_add_ps(xmm0, XM_PERMUTE_PS(xmm3, _MM_SHUFFLE(1,1,1,1)))
     _mm_mul_ps(xmm0, xmm1)
     _mm_add_ps(xmm0, g_XMOne)
     _mm_mul_ps(xmm0, xmm4)
@@ -2456,11 +2586,11 @@ elseifdef _XM_SSE_INTRINSICS_
     _mm_store_ps(xmm0, g_XMCosCoefficients1)
     _mm_store_ps(xmm2, xmm0)
     _mm_store_ps(xmm3, xmm0)
-    XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3, 3, 3, 3))
+    XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,3,3,3))
     _mm_mul_ps(xmm0, xmm1)
-    _mm_add_ps(xmm0, XM_PERMUTE_PS(xmm2, _MM_SHUFFLE(2, 2, 2, 2)))
+    _mm_add_ps(xmm0, XM_PERMUTE_PS(xmm2, _MM_SHUFFLE(2,2,2,2)))
     _mm_mul_ps(xmm0, xmm1)
-    _mm_add_ps(xmm0, XM_PERMUTE_PS(xmm3, _MM_SHUFFLE(1, 1, 1, 1)))
+    _mm_add_ps(xmm0, XM_PERMUTE_PS(xmm3, _MM_SHUFFLE(1,1,1,1)))
     _mm_mul_ps(xmm0, xmm1)
     _mm_add_ps(xmm0, g_XMOne)
     _mm_mul_ps(xmm4, xmm0)
@@ -2468,11 +2598,11 @@ elseifdef _XM_SSE_INTRINSICS_
     _mm_store_ps(xmm0, g_XMSinCoefficients1)
     _mm_store_ps(xmm2, xmm0)
     _mm_store_ps(xmm3, xmm0)
-    XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3, 3, 3, 3))
+    XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,3,3,3))
     _mm_mul_ps(xmm0, xmm1)
-    _mm_add_ps(xmm0, XM_PERMUTE_PS(xmm2, _MM_SHUFFLE(2, 2, 2, 2)))
+    _mm_add_ps(xmm0, XM_PERMUTE_PS(xmm2, _MM_SHUFFLE(2,2,2,2)))
     _mm_mul_ps(xmm0, xmm1)
-    _mm_add_ps(xmm0, XM_PERMUTE_PS(xmm3, _MM_SHUFFLE(1, 1, 1, 1)))
+    _mm_add_ps(xmm0, XM_PERMUTE_PS(xmm3, _MM_SHUFFLE(1,1,1,1)))
     _mm_mul_ps(xmm0, xmm1)
     _mm_add_ps(xmm0, g_XMOne)
     _mm_mul_ps(xmm0, xmm5)
@@ -2511,8 +2641,6 @@ inl_XMVector3Cross macro V1:=<xmm0>, V2:=<xmm1>
     _mm_store_ps(xmm1, V2)
     _mm_store_ps(xmm2, XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(3,0,2,1)))
     _mm_store_ps(xmm3, XM_PERMUTE_PS(xmm1, _MM_SHUFFLE(3,1,0,2)))
-    _mm_store_ps(xmm0, xmm2)
-    _mm_store_ps(xmm1, xmm3)
     _mm_mul_ps(xmm0, xmm1)
     _mm_shuffle_ps(xmm2, xmm2, _MM_SHUFFLE(3,0,2,1))
     _mm_shuffle_ps(xmm3, xmm3, _MM_SHUFFLE(3,1,0,2))
@@ -2594,19 +2722,20 @@ inl_XMMatrixTranspose macro M, O
     endm
 
 inl_XMVector3Transform macro V, M
+ifdef _XM_NO_INTRINSICS_
+elseifdef _XM_ARM_NEON_INTRINSICS_
+elseifdef _XM_SSE_INTRINSICS_
     _mm_store_ps(xmm0, V)
+    _mm_store_ps(xmm1, xmm0)
     _mm_store_ps(xmm2, xmm0)
-    _mm_store_ps(xmm0, XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(0,0,0,0)))
-    _mm_store_ps(xmm4, _mm_mul_ps(xmm0, M.r[0*16]))
-    _mm_store_ps(xmm3, xmm2)
-    _mm_store_ps(xmm3, XM_PERMUTE_PS(xmm3, _MM_SHUFFLE(1,1,1,1)))
-    _mm_store_ps(xmm3, _mm_mul_ps(xmm3, M.r[1*16]))
-    _mm_store_ps(xmm4, _mm_add_ps(xmm4, xmm3))
-    _mm_store_ps(xmm3, XM_PERMUTE_PS(xmm2, _MM_SHUFFLE(2,2,2,2)))
-    _mm_store_ps(xmm3, _mm_mul_ps(xmm3, M.r[2*16]))
-    _mm_store_ps(xmm4, _mm_add_ps(xmm4, xmm3))
-    _mm_store_ps(xmm0, _mm_add_ps(xmm4, M.r[3*16]))
-    retm<xmm0>
+    _mm_mul_ps(XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(0,0,0,0)), xmmword ptr M[0x00])
+    _mm_mul_ps(XM_PERMUTE_PS(xmm1, _MM_SHUFFLE(1,1,1,1)), xmmword ptr M[0x10])
+    _mm_mul_ps(XM_PERMUTE_PS(xmm2, _MM_SHUFFLE(2,2,2,2)), xmmword ptr M[0x20])
+    _mm_add_ps(xmm0, xmm1)
+    _mm_add_ps(xmm0, xmm2)
+    _mm_add_ps(xmm0, xmmword ptr M[0x30])
+endif
+    exitm<>
     endm
 
 inl_XMMatrixMultiply macro M1, M2, result
@@ -2804,11 +2933,17 @@ ifdef _XM_NO_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
     _mm_store_ps(xmm0, V)
     inl_XMScalarSinCos(xmm0)
+    ;;
     ;; x = 0,y = cos,z = sin, w = 0
+    ;;
     _mm_shuffle_ps(xmm1, xmm0, _MM_SHUFFLE(3,0,0,3))
+    ;;
     ;; x = 0,y = sin,z = cos, w = 0
+    ;;
     XM_PERMUTE_PS(_mm_store_ps(xmm2, xmm1), _MM_SHUFFLE(3,1,2,0))
+    ;;
     ;; x = 0,y = -sin,z = cos, w = 0
+    ;;
     _mm_mul_ps(xmm2, g_XMNegateY)
     _mm_store_ps(xmm0, g_XMIdentityR0)
     _mm_store_ps(xmm3, g_XMIdentityR3)
@@ -2911,86 +3046,62 @@ inl_XMMatrixLookAtLH macro EyePosition, FocusPosition, UpDirection
     endm
 
 inl_XMScalarSinCos macro Value
-    ;
-    ; uses xmm0..3
-    ;
-    _mm_store_ps(xmm0, Value)
-    ;
-    ; Map Value to y in [-pi,pi], x = 2*pi*quotient + remainder.
-    ;
-    _mm_move_sd(xmm2, FLT8(XM_1DIV2PI))
+    _mm_store_ss(xmm0, Value)
+    ;;
+    ;; Map Value to y in [-pi,pi], x = 2*pi*quotient + remainder.
+    ;;
     _mm_setzero_ps(xmm1)
     comiss xmm0,xmm1
-
-    _mm_cvtss_sd(xmm1, xmm0)
-    _mm_mul_sd(xmm2, xmm1)
-    _mm_cvtsd_ss(xmm2, xmm2)
-
-    _mm_move_ss(xmm3, FLT4(0.5))
+    _mm_store_ss(xmm1, xmm0)
+    _mm_mul_ss(xmm1, FLT4(XM_1DIV2PI))
     .ifnb
-	_mm_add_ss(xmm2, xmm3)
+	_mm_add_ss(xmm1, FLT4(0.5))
     .else
-	_mm_sub_ss(xmm2, xmm3)
+	_mm_sub_ss(xmm1, FLT4(0.5))
     .endif
-    _mm_setzero_ps(xmm0)
-    _mm_cvt_si2ss(xmm0, _mm_cvtt_ss2si(xmm2))
-
-    _mm_cvtss_sd(xmm0, xmm0)
-    _mm_mul_sd(xmm0, FLT8(XM_2PI))
-    _mm_setzero_ps(xmm2)
-    _mm_sub_sd(xmm1, xmm0)
-    _mm_setzero_ps(xmm0)
-    _mm_cvtsd_ss(xmm0, xmm1)
-    _mm_cvtss_sd(xmm2, xmm0)
-    ;
-    ; Map y to [-pi/2,pi/2] with sin(y) = sin(Value).
-    ;
-    comisd xmm2,FLT8(XM_PIDIV2)
+    _mm_cvt_si2ss(xmm1, _mm_cvtt_ss2si(xmm1))
+    _mm_mul_ss(xmm1, FLT4(XM_2PI))
+    _mm_sub_ss(xmm0, xmm1)
+    _mm_move_ss(xmm1, FLT4(-1.0))
+    _mm_move_ss(xmm2, xmm0)
+    ;;
+    ;; Map y to [-pi/2,pi/2] with sin(y) = sin(Value).
+    ;;
+    comiss xmm0,FLT4(XM_PIDIV2)
     .ifa
-	_mm_move_sd(xmm1, FLT8(XM_PI))
-	_mm_setzero_ps(xmm0)
-	_mm_sub_sd(xmm1, xmm2)
-	_mm_move_ss(xmm3, FLT4(-1.0))
-	_mm_cvtsd_ss(xmm0, xmm1)
+	_mm_move_ss(xmm0, FLT4(XM_PI))
+	_mm_sub_ss(xmm0, xmm2)
     .else
-	_mm_move_sd(xmm1, FLT8(-XM_PIDIV2))
-	comisd xmm1,xmm2
-	.ifna
-	    _mm_move_ss(xmm3, FLT4(1.0))
-	    _mm_store_ps(xmm2, xmm3)
+	comiss xmm0,FLT4(-XM_PIDIV2)
+	.ifa
+	    _mm_move_ss(xmm1, FLT4(1.0))
 	.else
-	    _mm_move_sd(xmm1, FLT8(-XM_PI))
-	    _mm_setzero_ps(xmm0)
-	    _mm_move_ss(xmm3, FLT4(-1.0))
-	    _mm_sub_sd(xmm1, xmm2)
-	    _mm_cvtsd_ss(xmm0, xmm1)
+	    _mm_move_ss(xmm0, FLT4(-XM_PI))
+	    _mm_sub_ss(xmm0, xmm2)
 	.endif
     .endif
-    _mm_store_ps(xmm2, xmm0)
-    _mm_store_ps(xmm1, _mm_mul_ss(xmm0, xmm0))
-    ;
-    ; 11-degree minimax approximation
-    ;
-    _mm_move_ss(xmm0, FLT4(-2.3889859e-08))
-    _mm_add_ss(_mm_mul_ss(xmm0, xmm1), FLT4(2.7525562e-06))
-    _mm_sub_ss(_mm_mul_ss(xmm0, xmm1), FLT4(0.00019840874))
-    _mm_add_ss(_mm_mul_ss(xmm0, xmm1), FLT4(0.0083333310))
-    _mm_sub_ss(_mm_mul_ss(xmm0, xmm1), FLT4(0.16666667))
-    _mm_add_ss(_mm_mul_ss(xmm0, xmm1), FLT4(1.0))
-    _mm_store_ps(xmm2,_mm_mul_ss(xmm0, xmm2))
-    ;
-    ; 10-degree minimax approximation
-    ;
-    _mm_move_ss(xmm0, FLT4(-2.6051615e-07))
-    _mm_add_ss(_mm_mul_ss(xmm0, xmm1), FLT4(2.4760495e-05))
-    _mm_sub_ss(_mm_mul_ss(xmm0, xmm1), FLT4(0.0013888378))
-    _mm_add_ss(_mm_mul_ss(xmm0, xmm1), FLT4(0.041666638))
-    _mm_sub_ss(_mm_mul_ss(xmm0, xmm1), FLT4(0.5))
-    _mm_add_ss(_mm_mul_ss(xmm0, xmm1), FLT4(1.0))
-
-    _mm_store_ps(xmm1, xmm3)
-    _mm_mul_ss(xmm1, xmm0)
-    _mm_store_ps(xmm0, xmm2)
+    _mm_store_ss(xmm3, xmm0)
+    _mm_mul_ss(xmm3, xmm3)
+    ;;
+    ;; 11-degree minimax approximation
+    ;;
+    _mm_move_ss(xmm2, FLT4(-2.3889859e-08))
+    _mm_add_ss(_mm_mul_ss(xmm2, xmm3), FLT4(2.7525562e-06))
+    _mm_sub_ss(_mm_mul_ss(xmm2, xmm3), FLT4(0.00019840874))
+    _mm_add_ss(_mm_mul_ss(xmm2, xmm3), FLT4(0.0083333310))
+    _mm_sub_ss(_mm_mul_ss(xmm2, xmm3), FLT4(0.16666667))
+    _mm_add_ss(_mm_mul_ss(xmm2, xmm3), FLT4(1.0))
+    _mm_mul_ss(xmm0, xmm2)
+    ;;
+    ;; 10-degree minimax approximation
+    ;;
+    _mm_move_ss(xmm2, FLT4(-2.6051615e-07))
+    _mm_add_ss(_mm_mul_ss(xmm2, xmm3), FLT4(2.4760495e-05))
+    _mm_sub_ss(_mm_mul_ss(xmm2, xmm3), FLT4(0.0013888378))
+    _mm_add_ss(_mm_mul_ss(xmm2, xmm3), FLT4(0.041666638))
+    _mm_sub_ss(_mm_mul_ss(xmm2, xmm3), FLT4(0.5))
+    _mm_add_ss(_mm_mul_ss(xmm2, xmm3), FLT4(1.0))
+    _mm_mul_ss(xmm1, xmm2)
     retm<>
     endm
 
@@ -2998,21 +3109,21 @@ inl_XMMatrixPerspectiveFovLH macro FovAngleY, AspectRatio, NearZ, FarZ, M
 
     _MM_STORE_SS(xmm0, FovAngleY)
     _MM_STORE_SS(xmm5, AspectRatio)
-    _MM_STORE_SS(xmm7, NearZ)
+    _MM_STORE_SS(xmm4, NearZ)
     _MM_STORE_SS(xmm6, FarZ)
 
-    inl_XMScalarSinCos(_mm_mul_ss(xmm0, _MM_STORE_SS(xmm4, 0.5)))
+    inl_XMScalarSinCos(_mm_mul_ss(xmm0, FLT4(0.5)))
 
     _mm_move_ss(xmm3, xmm0)
     _mm_div_ss(xmm3, xmm1)
     _mm_store_ps(xmm0, xmm6)
-    _mm_sub_ss(xmm0, xmm7)
+    _mm_sub_ss(xmm0, xmm4)
     _mm_div_ss(xmm6, xmm0)
     _mm_store_ps(xmm0, xmm3)
     _mm_div_ss(xmm0, xmm5)
     _mm_store_ps(xmm1, xmm6)
     _mm_xor_ps(xmm1, _mm_get_epi32(0x80000000, 0, 0, 0))
-    _mm_mul_ss(xmm1, xmm7)
+    _mm_mul_ss(xmm1, xmm4)
     _mm_unpacklo_ps(xmm6, xmm1)
     _mm_setzero_ps(xmm1)
     _mm_store_ps(xmm2, xmm1)

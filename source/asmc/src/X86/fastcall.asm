@@ -1,6 +1,8 @@
 include string.inc
 include limits.inc
 include malloc.inc
+include stdio.inc
+include quadmath.inc
 include asmc.inc
 include token.inc
 
@@ -332,7 +334,9 @@ vc32_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:SI
                         inc eax
                         .break
                     .endif
+
                     AddLineQueueX(" mov %r, %s", ebx, paramvalue)
+                    mov eax,1
                     .break
                 .endif
 
@@ -737,7 +741,9 @@ GetPSize proc adr
     ret
 GetPSize endp
 
-CheckXMM proc reg, paramvalue:LPSTR, regs_used:ptr byte, param:ptr nsym
+CheckXMM proc uses ebx reg:SINT, paramvalue:LPSTR, regs_used:ptr byte, param:ptr nsym
+
+    local buffer[64]:sbyte, _sign:byte
     ;
     ; v2.04: check if argument is the correct XMM register already
     ;
@@ -779,20 +785,47 @@ CheckXMM proc reg, paramvalue:LPSTR, regs_used:ptr byte, param:ptr nsym
             mov eax,regs_used
             or  byte ptr [eax],R0_USED
             mov edx,param
-            .if [edx].asym.mem_type != MT_REAL8
+            .if [edx].asym.mem_type == MT_REAL4
                 AddLineQueueX(" mov %r, %s", T_EAX, paramvalue)
                 AddLineQueueX(" movd %r, %r", &[esi+T_XMM0], T_EAX)
-            .else
+            .elseif [edx].asym.mem_type == MT_REAL8
                 AddLineQueueX(" mov %r, %r ptr %s", T_RAX, T_REAL8, paramvalue)
                 AddLineQueueX(" movq %r, %r", &[esi+T_XMM0], T_RAX)
+            .else
+                xor ebx,ebx
+                mov edx,paramvalue
+                mov al,[edx]
+                .if al == '+'
+                    inc edx
+                .elseif al == '-'
+                    inc edx
+                    mov bl,0x80
+                .endif
+                atoquad(edi, edx, 0)
+                or byte ptr [edi+15],bl
+                .if dword ptr [edi].expr.llvalue[4]
+                    sprintf( &buffer, "0x%llX", [edi].expr.llvalue )
+                    AddLineQueueX( " mov rax, %s", &buffer )
+                    AddLineQueueX( " mov [rsp], rax" )
+                .else
+                    AddLineQueueX( " mov qword ptr [rsp], 0x%x", dword ptr [edi].expr.llvalue )
+                .endif
+                .if dword ptr [edi].expr.hlvalue[4]
+                    sprintf( &buffer, "0x%llX", [edi].expr.hlvalue )
+                    AddLineQueueX( " mov rax, %s", &buffer )
+                    AddLineQueueX( " mov [rsp+8], rax" )
+                .else
+                    AddLineQueueX( " mov qword ptr [rsp+8], 0x%x", dword ptr [edi].expr.hlvalue )
+                .endif
+                AddLineQueueX( " movaps %r, [rsp]", &[esi+T_XMM0] )
             .endif
         .else
             .if [edx].asym.mem_type == MT_REAL4
-                AddLineQueueX(" movd %r, %s", &[esi+T_XMM0], paramvalue)
+                AddLineQueueX( " movd %r, %s", &[esi+T_XMM0], paramvalue )
             .elseif [edx].asym.mem_type == MT_REAL8
-                AddLineQueueX(" movq %r, %s", &[esi+T_XMM0], paramvalue)
+                AddLineQueueX( " movq %r, %s", &[esi+T_XMM0], paramvalue )
             .else
-                AddLineQueueX(" movaps %r, %s", &[esi+T_XMM0], paramvalue)
+                AddLineQueueX( " movaps %r, %s", &[esi+T_XMM0], paramvalue )
             .endif
 
         .endif

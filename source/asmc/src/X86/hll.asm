@@ -449,7 +449,30 @@ local   op:         SINT,
         movzx ecx,flaginstr[edx - COP_ZERO]
         mov edx,is_true
         xor edx,1
-        RenderJcc( eax, ecx, edx, _label )
+
+        ; v2.27.30: ZERO? || CARRY? --> LE
+
+        lea eax,[edi+1]
+        .if eax < ModuleInfo.token_count && ( op == COP_ZERO || op == COP_CARRY )
+
+            push ecx
+            push edx
+            shl eax,4
+            add eax,ebx
+            GetCOp(eax)
+            pop edx
+            pop ecx
+
+            .if eax == COP_ZERO || eax == COP_CARRY
+
+                mov ecx,'a'
+                xor edx,1
+                add edi,2
+                mov [esi],edi
+            .endif
+        .endif
+
+        RenderJcc( buffer, ecx, edx, _label )
         mov eax,NOT_ERROR
         jmp toend
     .endif
@@ -756,7 +779,7 @@ local   truelabel:  SINT,
     mov esi,buffer
     mov truelabel,0
 
-    .while  1
+    .while 1
 
         GetSimpleExpression( hll, i, tokenarray, ilabel, is_true, esi, edi )
         cmp eax,ERROR
@@ -823,25 +846,16 @@ GetAndExpression endp
 
 ; operator ||, which has the lowest precedence, is handled here
 
-GetExpression proc private uses esi edi ebx,
-    hll:        PTR hll_item,
-    i:          PTR SINT,
-    tokenarray: PTR asm_tok,
-    ilabel:     SINT,
-    is_true:    UINT,
-    buffer:     LPSTR,
-    hllop:      PTR hll_opnd
+GetExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr SINT, tokenarray:ptr asm_tok,
+    ilabel:SINT, is_true:UINT, buffer:LPSTR, hllop:ptr hll_opnd
 
-local   truelabel:  SINT,
-        nlabel:     SINT,
-        olabel:     SINT,
-        buff[16]:   SBYTE
+  local truelabel:SINT, nlabel:SINT, olabel:SINT, buff[16]:SBYTE
 
     mov esi,buffer
     mov edi,hllop
     mov truelabel,0
 
-    .while  1
+    .while 1
 
         GetAndExpression( hll, i, tokenarray, ilabel, is_true, esi, edi )
         cmp eax,ERROR

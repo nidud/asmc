@@ -43,6 +43,8 @@ static int fcscratch;  /* exclusively to be used by FASTCALL helper functions */
 static	int ms32_fcstart( struct dsym const *, int, int, struct asm_tok[], int * );
 static void ms32_fcend	( struct dsym const *, int, int );
 static	int ms32_param	( struct dsym const *, int, struct dsym *, bool, struct expr *, char *, uint_8 * );
+static	int vc32_fcstart( struct dsym const *, int, int, struct asm_tok[], int * );
+static	int vc32_param	( struct dsym const *, int, struct dsym *, bool, struct expr *, char *, uint_8 * );
 static	int watc_fcstart( struct dsym const *, int, int, struct asm_tok[], int * );
 static void watc_fcend	( struct dsym const *, int, int );
 static	int watc_param	( struct dsym const *, int, struct dsym *, bool, struct expr *, char *, uint_8 * );
@@ -67,7 +69,7 @@ const struct fastcall_conv fastcall_tab[] = {
  { watc_fcstart, watc_fcend , watc_param }, /* FCT_WATCOMC */
  { ms64_fcstart, ms64_fcend , ms64_param }, /* FCT_WIN64 */
  { elf64_fcstart, elf64_fcend, elf64_param }, /* FCT_ELF64 */
- { ms32_fcstart, ms32_fcend , ms32_param }, /* FCT_VEC32 */
+ { vc32_fcstart, ms32_fcend , vc32_param }, /* FCT_VEC32 */
  { ms64_fcstart, ms64_fcend , ms64_param }, /* FCT_VEC64 */
 };
 
@@ -154,6 +156,97 @@ static int ms32_param( struct dsym const *proc, int index, struct dsym *param, b
 	}
     }
     if ( *pst == T_AX )
+	*r0used |= R0_USED;
+    return( 1 );
+}
+
+/* FCT_VEC32 */
+
+static int vc32_fcstart( struct dsym const *proc, int numparams, int start,
+	struct asm_tok tokenarray[], int *value )
+{
+    struct dsym *param;
+
+    for ( param = proc->e.procinfo->paralist ; param ; param = param->nextparam )
+	if ( param->sym.state == SYM_TMACRO ||
+	   ( param->sym.state == SYM_STACK && param->sym.total_size <= 16 ) )
+	    fcscratch++;
+    return( 1 );
+}
+
+static int vc32_param( struct dsym const *proc, int index, struct dsym *param,
+	bool addr, struct expr *opnd, char *paramvalue, uint_8 *r0used )
+{
+    int reg;
+
+    if ( !( param->sym.state == SYM_TMACRO || param->sym.state == SYM_STACK ) ||
+	( param->sym.state == SYM_STACK && param->sym.total_size > 16 ) )
+	return( 0 );
+
+    fcscratch--;
+    if ( param->sym.state == SYM_STACK || fcscratch > 1 || param->sym.mem_type & MT_FLOAT ) {
+	if ( fcscratch > 5 )
+	    return 0;
+	reg = fcscratch + T_XMM0;
+    } else {
+	if ( fcscratch > 1 )
+	    return 0;
+	reg = ms32_regs[fcscratch];
+    }
+
+    if ( addr )
+	AddLineQueueX( " lea %r, %s", reg, paramvalue );
+    else {
+
+	int size;
+
+	if ( reg < T_XMM0 && ( opnd->kind != EXPR_CONST ) &&
+	    ( size = SizeFromMemtype( param->sym.mem_type, USE_EMPTY, param->sym.type ) ) < 4 ) {
+
+	    if ( !size && opnd->kind == EXPR_REG && opnd->indirect == 0 && opnd->base_reg ) {
+
+		if ( opnd->base_reg->tokval == reg )
+		    return 0;
+		AddLineQueueX( " mov %r, %s", reg, paramvalue );
+	    } else
+		AddLineQueueX( " %s %r, %s", ( param->sym.mem_type & MT_SIGNED ) ? "movsx" : "movzx", reg, paramvalue );
+
+	} else {
+
+	    if ( opnd->kind == EXPR_REG && opnd->indirect == 0 && opnd->base_reg ) {
+		if ( opnd->base_reg->tokval == reg )
+		    return( 1 );
+	    }
+	    if ( opnd->kind == EXPR_CONST ) {
+		if ( index > 1 || reg >= T_XMM0 )
+		    return 0;
+		AddLineQueueX(" mov %r, %s", reg, paramvalue );
+	    } else if ( opnd->kind == EXPR_FLOAT ) {
+		if ( param->sym.mem_type == MT_REAL4 ) {
+		    *r0used |= R0_USED;
+		    AddLineQueueX( " mov %r, %s", T_EAX, paramvalue );
+		    AddLineQueueX( " movd %r, %r", reg, T_EAX );
+		} else if ( param->sym.mem_type == MT_REAL8 ) {
+		    AddLineQueueX( " pushd %r (%s)", T_HIGH32, paramvalue );
+		    AddLineQueueX( " pushd %r (%s)", T_LOW32, paramvalue );
+		    AddLineQueueX( " movq %r, [esp]", reg );
+		    AddLineQueue ( " add esp, 8" );
+		} else
+		    AddLineQueueX( " movaps %r, %s", reg, paramvalue );
+	    } else {
+		if ( param->sym.mem_type == MT_REAL4 )
+		    AddLineQueueX(" movss %r, %s", reg, paramvalue );
+		else if ( param->sym.mem_type == MT_REAL8 )
+		    AddLineQueueX(" movsd %r, %s", reg, paramvalue );
+		else if ( size == 16 )
+		    AddLineQueueX(" movaps %r, %s", reg, paramvalue );
+		else
+		    return 0;
+	    }
+	    AddLineQueueX( " mov %r, %s", reg, paramvalue );
+	}
+    }
+    if ( reg == T_AX )
 	*r0used |= R0_USED;
     return( 1 );
 }

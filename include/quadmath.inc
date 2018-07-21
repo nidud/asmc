@@ -159,7 +159,6 @@ externdef   _Q_ZERO:	XQFLOAT
 externdef   _Q_NAN:	XQFLOAT
 externdef   _Q_ONE:	XQFLOAT
 
-
 acosq	    proto vectorcall :XQFLOAT
 acoshq	    proto vectorcall :XQFLOAT
 asinq	    proto vectorcall :XQFLOAT
@@ -205,7 +204,7 @@ log1pq	    proto vectorcall :XQFLOAT
 lrintq	    proto vectorcall :XQFLOAT
 lroundq	    proto vectorcall :XQFLOAT
 modfq	    proto vectorcall :XQFLOAT, :XQFLOAT
-nanq	    proto vectorcall :LPSTR
+nanq	    proto vectorcall
 nearbyintq  proto vectorcall :XQFLOAT
 nextafterq  proto vectorcall :XQFLOAT, :XQFLOAT
 powq	    proto vectorcall :XQFLOAT, :XQFLOAT
@@ -230,18 +229,76 @@ ynq	    proto vectorcall :SINT, :XQFLOAT
 
 quadmath_snprintf proto __cdecl :LPSTR, __size:size_t, __format:LPSTR, :vararg
 
+mulq	    proto vectorcall :XQFLOAT, :XQFLOAT
+divq	    proto vectorcall :XQFLOAT, :XQFLOAT
+addq	    proto vectorcall :XQFLOAT, :XQFLOAT
+subq	    proto vectorcall :XQFLOAT, :XQFLOAT
+cmpq	    proto vectorcall :XQFLOAT, :XQFLOAT
+normalizeq  proto vectorcall :XQFLOAT, :SINT
+
 ifndef _INC_MATH
-_DOMAIN		equ 1 ; argument domain error
-_SING		equ 2 ; argument singularity
-_OVERFLOW	equ 3 ; overflow range error
-_UNDERFLOW	equ 4 ; underflow range error
-_TLOSS		equ 5 ; total loss of precision
-_PLOSS		equ 6 ; partial loss of precision
-EDOM		equ 33
-ERANGE		equ 34
+_DOMAIN	    equ 1 ; argument domain error
+_SING	    equ 2 ; argument singularity
+_OVERFLOW   equ 3 ; overflow range error
+_UNDERFLOW  equ 4 ; underflow range error
+_TLOSS	    equ 5 ; total loss of precision
+_PLOSS	    equ 6 ; partial loss of precision
+EDOM	    equ 33
+ERANGE	    equ 34
 endif
 
-externdef	qerrno:SINT
+externdef   qerrno:SINT
+
+ifdef _WIN64
+
+; Using FPU -- long double precision
+
+acosqf	    proto vectorcall :XQFLOAT
+atanqf	    proto vectorcall :XQFLOAT
+atan2qf	    proto vectorcall :XQFLOAT, :XQFLOAT
+cbrtqf	    proto vectorcall :XQFLOAT
+ceilqf	    proto vectorcall :XQFLOAT
+cosqf	    proto vectorcall :XQFLOAT
+expqf	    proto vectorcall :XQFLOAT
+floorqf	    proto vectorcall :XQFLOAT
+fmodqf	    proto vectorcall :XQFLOAT, :XQFLOAT
+logqf	    proto vectorcall :XQFLOAT
+log10qf	    proto vectorcall :XQFLOAT
+sinqf	    proto vectorcall :XQFLOAT
+sqrtqf	    proto vectorcall :XQFLOAT
+tanqf	    proto vectorcall :XQFLOAT
+
+XQFLOATTOLD macro d, x:=<xmm0>
+    movq    rax,x
+    shufps  x,x,01001110B
+    movq    rdx,x
+    shld    rcx,rdx,16
+    mov	    word ptr d[8],cx
+    shld    rdx,rax,16
+    and	    ecx,Q_EXPMASK
+    neg	    cx
+    rcr	    rdx,1
+    mov	    qword ptr d,rdx
+    exitm<>
+    endm
+
+LDTOXQFLOAT macro d, x:=<xmm0>, tmp:=<xmm1>
+    xor	    eax,eax
+    mov	    rdx,qword ptr d
+    mov	    cx,word ptr d[8]
+    and	    ecx,Q_EXPMASK
+    neg	    cx
+    rcl	    rdx,1
+    mov	    cx,word ptr d[8]
+    shrd    rax,rdx,16
+    shrd    rdx,rcx,16
+    movq    tmp,rdx
+    movq    x,rax
+    shufpd  x,tmp,0
+    exitm<>
+    endm
+
+endif
 
 .pragma list(pop)
 endif

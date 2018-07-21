@@ -3,6 +3,9 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.27 - xx xxx 2018
+- added fix for flags (ZERO? || CARRY?) in hll
+- fixed bug in using double 0.0 as argument -- asin(0.0)
+- allowed support for movq rax,xmm0
 - added more support for 32-bit vectorcall
 - added vector(16) return values (xmm0)
 - fixed bug in float convertion routines

@@ -715,6 +715,16 @@ static int idata_nofixup( struct code_info *CodeInfo, unsigned CurrOpnd, struct 
 	case 1: op_type = OP_I8;  break;
 	case 2: op_type = OP_I16; break;
 	case 4: op_type = OP_I32; break;
+	/* v2.27: handle asin(0.0) in 64-bit */
+	case 8:
+	    if ( CodeInfo->Ofssize == USE64 &&
+		 opndx->mem_type == MT_REAL8 &&
+		 value == 0 && opndx->hvalue == 0 ) {
+
+		op_type = OP_I64;
+		CodeInfo->opnd[CurrOpnd].data32h = 0;
+		break;
+	    }
 	default:
 	    return( asmerr( 2070 ) );
 	}

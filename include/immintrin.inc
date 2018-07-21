@@ -1,5 +1,6 @@
 ifndef _INCLUDED_IMM
 _INCLUDED_IMM equ <>
+.pragma list(push, 0)
 
 ifndef _M_IX86
 ifndef _M_X64
@@ -93,13 +94,33 @@ _mm256_sub_pd		proto __cdecl :yword, :yword
 _mm256_sub_ps		proto __cdecl :yword, :yword
 _mm256_xor_pd		proto __cdecl :yword, :yword
 _mm256_xor_ps		proto __cdecl :yword, :yword
-_mm_cmp_pd		proto __cdecl :yword, :yword, :sdword
-_mm256_cmp_pd		proto __cdecl :yword, :yword, :sdword
-_mm_cmp_ps		proto __cdecl :yword, :yword, :sdword
-_mm256_cmp_ps		proto __cdecl :yword, :yword, :sdword
-_mm_cmp_sd		proto __cdecl :yword, :yword, :sdword
+
+_mm_cmp_pd macro a, b, imm
+	cmppd a,b,imm
+	retm<a>
+	endm
+_mm256_cmp_pd macro a, b, imm
+	vcmppd a,b,imm
+	retm<a>
+	endm
+_mm_cmp_ps macro a, b, imm
+	cmpps a,b,imm
+	retm<a>
+	endm
+_mm256_cmp_ps macro a, b, imm
+	vcmpps a,b,imm
+	retm<a>
+	endm
+_mm_cmp_sd macro a, b, imm
+	cmpsd a,b,imm
+	retm<a>
+	endm
+_mm_cmp_ss macro a, b, imm
+	cmpss a,b,imm
+	retm<a>
+	endm
+
 _mm_comi_sd		proto __cdecl :yword, :yword, :sdword
-_mm_cmp_ss		proto __cdecl :yword, :yword, :sdword
 _mm_comi_ss		proto __cdecl :yword, :yword, :sdword
 _mm256_cvtepi32_pd	proto __cdecl :yword
 _mm256_cvtepi32_ps	proto __cdecl :yword
@@ -850,4 +871,5 @@ endif
 
 include zmmintrin.inc
 
+.pragma list(pop)
 endif

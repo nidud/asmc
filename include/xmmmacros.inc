@@ -38,8 +38,16 @@ FLT8 macro value
             string CatStr string, <M>
         elseifidn <q>,<+>
             string CatStr string, <P>
+        elseifidn <q>,< >
+            string CatStr string, <_>
+        elseifidn <q>,<*>
+            string CatStr string, <x>
+        elseifidn <q>,</>
+            string CatStr string, <d>
         elseifidn <q>,<.>
             string CatStr string, <_>
+        elseifidn <q>,<(>
+            exitm
         else
             string CatStr string, <q>
         endif
@@ -47,7 +55,8 @@ FLT8 macro value
 %   ifndef string
         .data
         align 8
-        string REAL8 value
+        string label REAL8
+            dq value
         .code
     endif
     exitm<string>
@@ -84,8 +93,10 @@ _MM_OPCSX2 macro op, sx, a, b
   local retval, source, move
     ifidn <sx>,<ss>
         move equ <movss>
+    elseifidn <sx>,<sd>
+        move equ <movsd>
     else
-        move equ <movaps>
+        move equ <mova&sx&>
     endif
     if _MM_ISXMM(a)
         retval equ <a>

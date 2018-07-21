@@ -92,7 +92,7 @@ _mm_andnot_pd macro a:=<xmm0>, b:=<xmm1>
 _mm_or_pd macro a:=<xmm0>, b:=<xmm1>
 	exitm<_MM_OPCSX2(or, pd, a, b)>
 	endm
-_mm_xor_pd macro a:=<xmm0>, b:=<xmm1>
+_mm_xor_pd macro a, b
 	exitm<_MM_OPCSX2(xor, pd, a, b)>
 	endm
 
@@ -144,7 +144,7 @@ _mm_cmpge_pd macro x:req, a:req, b:req
 	retm<x>
 	endm
 
-_mm_cmpneq_sd macro a:=<xmm0>, b:=<xmm1>
+_mm_cmpneq_sd macro a, b
 	exitm<_MM_OPCSX2(cmpneq, sd, a, b)>
 	endm
 _mm_cmpneq_pd macro a:=<xmm0>, b:=<xmm1>
@@ -195,48 +195,64 @@ _mm_cmpunord_sd macro a:=<xmm0>, b:=<xmm1>
 	exitm<_MM_OPCSX2(cmpunord, sd, a, b)>
 	endm
 
-_mm_comisd macro set, a, b
-	xor eax,eax
-	_MM_OPCSX2(ucomi, sd, a, b)
-	set al
-	retm<eax>
+_mm_comieq_sd macro a, b
+	comisd a, b
+	retm<ZERO?>
+	endm
+_mm_comilt_sd macro a, b
+	comisd a, b
+	retm<CARRY?>
+	endm
+_mm_comile_sd macro a, b
+	comisd a, b
+	retm<ZERO? || CARRY?>
+	endm
+_mm_comigt_sd macro a, b
+	comisd a, b
+	retm<!(ZERO? || CARRY?)>
+	endm
+_mm_comige_sd macro a, b
+	comisd a, b
+	retm<!CARRY?>
+	endm
+_mm_comineq_sd macro a, b
+	comisd a, b
+	retm<!ZERO?>
 	endm
 
-_mm_comieq_sd macro a:=<xmm0>, b:=<xmm1>
-	exitm<_mm_comisd(sete, a, b)>
+_mm_ucomieq_sd macro a, b
+	ucomisd a, b
+	retm<ZERO?>
 	endm
-_mm_comilt_sd macro a:=<xmm0>, b:=<xmm1>
-	exitm<_mm_comisd(setb, a, b)>
+_mm_ucomilt_sd macro a, b
+	ucomisd a, b
+	retm<CARRY?>
 	endm
-_mm_comile_sd macro a:=<xmm0>, b:=<xmm1>
-	exitm<_mm_comisd(setbe, a, b)>
+_mm_ucomile_sd macro a, b
+	ucomisd a, b
+	retm<ZERO? || CARRY?>
 	endm
-_mm_comigt_sd macro a:=<xmm0>, b:=<xmm1>
-	exitm<_mm_comisd(seta, a, b)>
+_mm_ucomigt_sd macro a, b
+	ucomisd a, b
+	retm<!(ZERO? || CARRY?)>
 	endm
-_mm_comige_sd macro a:=<xmm0>, b:=<xmm1>
-	exitm<_mm_comisd(setnb, a, b)>
+_mm_ucomige_sd macro a, b
+	ucomisd a, b
+	retm<!CARRY?>
 	endm
-_mm_comineq_sd macro a:=<xmm0>, b:=<xmm1>
-	exitm<_mm_comisd(setne, a, b)>
+_mm_ucomineq_sd macro a, b
+	ucomisd a, b
+	retm<!ZERO?>
 	endm
-_mm_ucomieq_sd macro a:=<xmm0>, b:=<xmm1>
-	exitm<_mm_comisd(sete, a, b)>
+
+; added for NaN return
+_mm_ucominan_sd macro a, b
+	ucomisd a, b
+	retm<PARITY?>
 	endm
-_mm_ucomilt_sd macro a:=<xmm0>, b:=<xmm1>
-	exitm<_mm_comisd(setb, a, b)>
-	endm
-_mm_ucomile_sd macro a:=<xmm0>, b:=<xmm1>
-	exitm<_mm_comisd(setbe, a, b)>
-	endm
-_mm_ucomigt_sd macro a:=<xmm0>, b:=<xmm1>
-	exitm<_mm_comisd(seta, a, b)>
-	endm
-_mm_ucomige_sd macro a:=<xmm0>, b:=<xmm1>
-	exitm<_mm_comisd(setnb, a, b)>
-	endm
-_mm_ucomineq_sd macro a:=<xmm0>, b:=<xmm1>
-	exitm<_mm_comisd(sete, a, b)>
+_mm_ucominnan_sd macro a, b
+	ucomisd a, b
+	retm<!PARITY?>
 	endm
 
 _mm_cvtepi32_pd macro a:=<xmm0>, b
@@ -318,7 +334,7 @@ _mm_cvttsd_si32 macro a:=<xmm0>
 	cvttsd2si eax,a
 	retm<eax>
 	endm
-_mm_cvtsi32_sd macro a:=<xmm0>, b:=<xmm1>
+_mm_cvtsi32_sd macro a, b
     ifnb <b>
 	exitm<_MM_OPCSX2(cvtsi2, sd, a, b)>
     else
@@ -326,7 +342,7 @@ _mm_cvtsi32_sd macro a:=<xmm0>, b:=<xmm1>
     endif
 	endm
 
-_mm_unpackhi_pd macro a:=<xmm0>, b:=<xmm1>
+_mm_unpackhi_pd macro a, b
     ifnb <b>
 	exitm<_MM_OPCSX2(unpckh, pd, a, b)>
     else
@@ -396,7 +412,18 @@ _mm_setzero_pd macro x:=<xmm0>
 	retm<x>
 	endm
 _mm_move_sd macro a, b
-	exitm<_MM_OPCSX2(mov, sd, a, b)>
+    ifdif <a>,<b>
+	exitm<movsd a, b>
+    else
+	retm<>
+    endif
+	endm
+_mm_move_pd macro a, b
+    ifdif <a>,<b>
+	exitm<movapd a, b>
+    else
+	retm<>
+    endif
 	endm
 
 _mm_store_sd macro p, x:=<xmm0>
@@ -558,7 +585,7 @@ _mm_slli_epi64 macro a:=<xmm0>, imm
 _mm_sll_epi64 macro a:=<xmm0>, b:=<xmm1>
 	exitm<_MM_OPCSX2(psl, lq, a, b)>
 	endm
-_mm_srai_epi16 macro a:=<xmm0>, imm
+_mm_srai_epi16 macro a, imm
 	psraw a,imm
 	retm<a>
 	endm
@@ -826,9 +853,9 @@ _mm_maskmoveu_si128 macro a:=<xmm0>, b:=<xmm1>, reg
 	exitm<maskmovdqu a,b>
 	endm
 
-_mm_move_epi64 macro a:=<xmm0>
-	movq xmm0,a
-	retm<xmm0>
+_mm_move_epi64 macro x:=<xmm0>, r:=<rax>
+	movq x,r
+	retm<x>
 	endm
 
 _mm_stream_pd macro reg, x:=<xmm0>
@@ -899,7 +926,7 @@ _mm_cvttsd_si64 macro x:=<xmm0>
 	cvttsd2si rax,x
 	retm<rax>
 	endm
-_mm_cvtsi64_sd macro x:=<xmm0>, reg
+_mm_cvtsi64_sd macro x:=<xmm0>, reg:=<rax>
 	cvtsi2sd x,reg
 	retm<x>
 	endm

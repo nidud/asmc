@@ -1,6 +1,6 @@
+.pragma list(push, 0)
 ifndef _INC_MATH
 _INC_MATH equ <>
-.pragma list(push, 0)
 ifndef __LIBC_INC
  include libc.inc
 endif
@@ -72,13 +72,14 @@ asin    proto __cdecl _X:double
 atan    proto __cdecl _X:double
 atan2   proto __cdecl _Y:double, _X:double
 ifndef _SIGN_DEFINED
-_copysign proto __cdecl _Number:double, _Sign:double
+copysign proto __cdecl _Number:double, _Sign:double
 _chgsign proto __cdecl _X:double
 _SIGN_DEFINED equ <>
 endif
 cos     proto __cdecl _X:double
 cosh    proto __cdecl _X:double
 exp     proto __cdecl _X:double
+exp2    proto __cdecl _X:double
 _fabs   proto __cdecl _X:double
 fmod    proto __cdecl _X:double, _Y:double
 log     proto __cdecl _X:double
@@ -186,7 +187,7 @@ fmodf   proto __cdecl _X:float, _Y:float
 
 _hypotf proto __cdecl _X:float, _Y:float
 
-_copysignf  proto __cdecl _Number:float, _Sign:float
+copysignf   proto __cdecl _Number:float, _Sign:float
 _chgsignf   proto __cdecl _X:float
 _logbf      proto __cdecl _X:float
 _nextafterf proto __cdecl _X:float, _Y:float
@@ -196,14 +197,11 @@ _fpclassf   proto __cdecl _X:float
 
 endif
 endif
-.pragma list(pop)
 endif
 
 ifdef _USE_MATH_DEFINES
 ifndef _MATH_DEFINES_DEFINED
-.pragma list(push, 0)
 _MATH_DEFINES_DEFINED equ <>
-
 M_E             equ 2.71828182845904523536
 M_LOG2E         equ 1.44269504088896340736
 M_LOG10E        equ 0.434294481903251827651
@@ -217,6 +215,8 @@ M_2_PI          equ 0.636619772367581343076
 M_2_SQRTPI      equ 1.12837916709551257390
 M_SQRT2         equ 1.41421356237309504880
 M_SQRT1_2       equ 0.707106781186547524401
+INFINITY        equ 1.0e999999999
+NAN             equ 0.0/0.0
+endif
+endif
 .pragma list(pop)
-endif
-endif

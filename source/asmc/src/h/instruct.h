@@ -920,6 +920,7 @@ insn(MOVQ, 1,         OpCls( M64,      MMX,      NONE ), F_0F,   0,  no_WDS, 0x7
 insn(MOVQ, 2,         OpCls( M64,      XMM,      NONE ), F_660F, 0,  no_WDS, 0xD6, 0x00, P_686|P_SSE2,0,0x20)
 insn(MOVQ, 3,         OpCls( XMM,      XMM_M64,  NONE ), F_F30F, 1,  no_WDS, 0x7E, 0x00, P_686|P_SSE2,0,0x20)
 insn(MOVQ, 4,         OpCls( XMM,      RMGT16,   NONE ), F_660F, 1,  no_WDS, 0x6E, 0x00, P_686|P_SSE2,0,0xE0)
+insn(MOVQ, 5,         OpCls( RMGT16,   XMM,      NONE ), F_660F, 0,  no_WDS, 0x7E, 0x00, P_686|P_SSE2,0,0x20)
 
 insa(MOVAPD, movapd,  OpCls( XMM,      XMM_M128, NONE ), F_660F, 1,  no_WDS, 0x28, 0x00, P_686|P_SSE2,0,0xE0)
 insn(MOVAPD, 1,       OpCls( M128,     XMM,      NONE ), F_660F, 0,  no_WDS, 0x29, 0x00, P_686|P_SSE2,0,0xE0)

@@ -471,20 +471,20 @@ endif
 _mm_shuffle_ps macro a:=<xmm0>, b:=<xmm1>, imm:=<0>
 	exitm<_MM_SHUFXX(ps, a, b, imm)>
 	endm
-_mm_unpackhi_ps macro a:=<xmm0>, b:=<xmm1>
+_mm_unpackhi_ps macro a, b
 	exitm<_MM_OPCSX2(unpckh, ps, a, b)>
 	endm
-_mm_unpacklo_ps macro a:=<xmm0>, b:=<xmm1>
+_mm_unpacklo_ps macro a, b
 	exitm<_MM_OPCSX2(unpckl, ps, a, b)>
 	endm
 _mm_loadh_pi macro x:=<xmm0>, p
 	movhps x,_MM_MREG(p)
 	retm<x>
 	endm
-_mm_movehl_ps macro a:=<xmm0>, b:=<xmm1>
+_mm_movehl_ps macro a, b
 	exitm<_MM_OPCSX2(movhl, ps, a, b)>
 	endm
-_mm_movelh_ps macro a:=<xmm0>, b:=<xmm1>
+_mm_movelh_ps macro a, b
 	exitm<_MM_OPCSX2(movlh, ps, a, b)>
 	endm
 _mm_storeh_pi macro p, x:=<xmm0>

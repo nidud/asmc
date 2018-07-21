@@ -184,8 +184,8 @@ static void CalcOffset( struct dsym *curr, struct calc_param *cp )
     if ( grp == NULL ) {
 	offset = cp->fileoffset - cp->sizehdr;	// + alignbytes;
     } else {
-	if ( ModuleInfo.sub_format == SFORMAT_PE || ModuleInfo.sub_format == SFORMAT_64BIT )
-
+	if ( ModuleInfo.sub_format == SFORMAT_PE
+	  || ModuleInfo.sub_format == SFORMAT_64BIT ) /* v2.24 */
 	    offset = cp->rva;
 	else
 	    if ( grp->sym.total_size == 0 ) {

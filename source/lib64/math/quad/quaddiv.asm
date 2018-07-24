@@ -1,15 +1,14 @@
-
 include quadmath.inc
 
     .code
 
-    option win64:rsp nosave noauto
+    option win64:rsp noauto nosave
 
-divq proc vectorcall uses rsi rdi rbx r12 r13 r14 r15 A:XQFLOAT, B:XQFLOAT
+quaddiv proc uses rsi rdi rbx r12 r13 r14 r15 a:ptr, b:ptr
 
-    movq    rbx,xmm1
-    shufpd  xmm1,xmm1,1
-    movq    rcx,xmm1
+    mov     r15,rcx
+    mov     rbx,[rdx]
+    mov     rcx,[rdx+8]
     shld    rsi,rcx,16
     shld    rcx,rbx,16
     shl     rbx,16
@@ -18,9 +17,9 @@ divq proc vectorcall uses rsi rdi rbx r12 r13 r14 r15 A:XQFLOAT, B:XQFLOAT
     neg     eax
     rcr     rcx,1
     rcr     rbx,1
-    movq    rax,xmm0
-    shufpd  xmm0,xmm0,1
-    movq    rdx,xmm0
+
+    mov     rax,[r15]
+    mov     rdx,[r15+8]
     shld    rsi,rdx,16
     shld    rdx,rax,16
     shl     rax,16
@@ -77,98 +76,69 @@ L6:
     add     di,Q_EXPBIAS
     js      L8
     cmp     di,Q_EXPMASK
-    jb      L8
-    mov     si,Q_EXPMASK
-    jmp     return_si0
+    jnb     overflow
 L8:
     cmp     di,-65
     jl      return_0
 
-    mov     r8,rbx
-    mov     r9,rcx
-    mov     r14,rax
-    mov     r15,rdx
+    mov     r10,rbx
+    mov     r11,rcx
+    mov     r13,rax
+    mov     r14,rdx
     xor     eax,eax
     xor     edx,edx
     xor     ebx,ebx
-    or      rcx,rbx
-    jz      break
+    or      rcx,r10
+    jz      D4
 
+    xor     r8d,r8d
+    xor     r9d,r9d
     xor     ecx,ecx
-    xor     r10d,r10d
-    xor     r11d,r11d
     xor     r12d,r12d
-    xor     r13d,r13d
-
-    cmp     r11,r15
-    jne     @F
-    cmp     r10,r14
-    jne     @F
-    cmp     r9,r13
-    jne     @F
-    cmp     r8,r12
-@@:
-    ja      break
-    lea     rax,[rax+1]
-    jz      break
-
-    dec     eax
-    xor     esi,esi
-
-    .while 1
-        add r8,r8
-        adc r9,r9
-        adc r10,r10
-        adc r11,r11
-        .break .ifc
-        .if r11 == r15
-            .if r10 == r14
-                .if r9 == r13
-                    cmp r8,r12
-                .endif
-            .endif
-        .endif
-        .break .ifa
-        inc esi
-    .endw
-
-    .while 1
-        rcr r11,1
-        rcr r10,1
-        rcr r9,1
-        rcr r8,1
-        sub r12,r8
-        sbb r13,r9
-        sbb r14,r10
-        sbb r15,r11
-        cmc
-        .ifnc
-            .repeat
-                add rax,rax
-                adc rdx,rdx
-                adc rbx,rbx
-                adc rcx,rcx
-                dec esi
-                js  break
-                shr r11,1
-                rcr r10,1
-                rcr r9,1
-                rcr r8,1
-                add r12,r8
-                adc r13,r9
-                adc r14,r10
-                adc r15,r11
-            .untilb
-        .endif
-        adc rax,rax
-        adc rdx,rdx
-        adc rbx,rbx
-        adc rcx,rcx
-        dec esi
-        js  break
-    .endw
-
-break:
+    mov     esi,127
+D0:
+    inc     esi
+    add     r10,r10
+    adc     r11,r11
+    jc      D1
+    cmp     r11,r14
+    jb      D0
+    ja      D1
+    cmp     r10,r13
+    jbe     D0
+D1:
+    rcr     r11,1
+    rcr     r10,1
+    rcr     r9,1
+    rcr     r8,1
+    sub     rcx,r8
+    sbb     r12,r9
+    sbb     r13,r10
+    sbb     r14,r11
+    cmc
+    jc      D3
+D2:
+    add     rax,rax
+    adc     rdx,rdx
+    adc     rbx,rbx
+    dec     esi
+    js      D4
+    shr     r11,1
+    rcr     r10,1
+    rcr     r9,1
+    rcr     r8,1
+    add     rcx,r8
+    adc     r12,r9
+    adc     r13,r10
+    adc     r14,r11
+    jnc     D2
+D3:
+    adc     rax,rax
+    adc     rdx,rdx
+    adc     rbx,rbx
+    dec     esi
+    jns     D1
+D4:
     mov     esi,edi
     dec     si
     shr     bl,1
@@ -197,10 +167,9 @@ done:
     rcl     rdx,1
     shrd    rax,rdx,16
     shrd    rdx,rsi,16
-    movq    xmm1,rdx
-    movq    xmm0,rax
-    shufpd  xmm0,xmm1,0
-toend:
+    mov     [r15],rax
+    mov     [r15+8],rdx
+    mov     rax,r15
     ret
 
 A_zero?:
@@ -211,29 +180,25 @@ A_zero?:
 
 B_zero?:
     test    esi,0x7FFF0000
-    jz      @F
-    jmp     L1
-@@:
-    mov     rdi,rax
-    or      rdi,rdx
-    jnz     @F
+    jnz     L1
     mov     edi,esi
+    mov     esi,0xFFFF
+    or      rax,rdx
+    jnz     return_m0
     add     di,di
-    jnz     @F
-    mov     rcx,0x4000000000000000
+    jnz     done
+    mov     rdx,0x4000000000000000
     mov     esi,0x7FFF
     jmp     done
-@@:
-    mov     esi,0xFFFF
-    jmp     return_m0
 
 return_0:
-    xorps   xmm0,xmm0
-    jmp     toend
+    xor     esi,esi
+    jmp     return_m0
 
 exp_too_small:
     dec     si
     jmp     return_si0
+
 overflow:
     mov     esi,0x7FFF
 return_si0:
@@ -311,6 +276,6 @@ er_NaN_A:
     xor     esi,0x80000000
     jmp     return_B
 
-divq endp
+quaddiv endp
 
     end

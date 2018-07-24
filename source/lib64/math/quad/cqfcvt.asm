@@ -598,12 +598,11 @@ __fconv proc private uses rsi rdi rbx fp:ptr, cvt:ptr, buf:LPSTR, flags:dword
             mov edi,xexp
             .ifs edi >= 0
                 mov byte ptr [r9+r8],'+'
-                inc r8d
             .else
                 mov byte ptr [r9+r8],'-'
-                inc r8d
                 neg edi
             .endif
+            inc r8d
 
             mov ecx,[rbx].expwidth
             .switch ecx
@@ -649,11 +648,12 @@ __fconv proc private uses rsi rdi rbx fp:ptr, cvt:ptr, buf:LPSTR, flags:dword
 
             .if ecx >= 3
                 xor esi,esi
+                mov eax,edi
                 .ifs edi >= 100
                     mov ecx,100
                     xor edx,edx
                     div ecx
-                    mov esi,edi
+                    mov esi,eax
                     mul ecx
                     sub edi,eax
                     mov ecx,[rbx].expwidth
@@ -666,11 +666,12 @@ __fconv proc private uses rsi rdi rbx fp:ptr, cvt:ptr, buf:LPSTR, flags:dword
 
             .if ecx >= 2
                 xor esi,esi
+                mov eax,edi
                 .ifs edi >= 10
                     mov ecx,10
                     xor edx,edx
                     div ecx
-                    mov esi,edi
+                    mov esi,eax
                     mul ecx
                     sub edi,eax
                     mov ecx,[rbx].expwidth

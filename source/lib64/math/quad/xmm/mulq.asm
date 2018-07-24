@@ -8,7 +8,7 @@ include quadmath.inc
 mulq proc vectorcall uses rsi rdi rbx A:XQFLOAT, B:XQFLOAT
 
     movq    rbx,xmm1
-    shufpd  xmm1,xmm1,1
+    movhlps xmm1,xmm1
     movq    rcx,xmm1
     shld    rsi,rcx,16
     shld    rcx,rbx,16
@@ -20,7 +20,7 @@ mulq proc vectorcall uses rsi rdi rbx A:XQFLOAT, B:XQFLOAT
     rcr     rbx,1
 
     movq    rax,xmm0
-    shufpd  xmm0,xmm0,1
+    movhlps xmm0,xmm0
     movq    rdx,xmm0
     shld    rsi,rdx,16
     shld    rdx,rax,16

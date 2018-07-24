@@ -5,7 +5,7 @@ include quadmath.inc
 
     option win64:rsp nosave noauto
 
-addq proc vectorcall uses rsi rdi rbx A:XQFLOAT, B:XQFLOAT
+subq proc vectorcall uses rsi rdi rbx A:XQFLOAT, B:XQFLOAT
 
     movq    rbx,xmm1
     shufpd  xmm1,xmm1,1
@@ -38,6 +38,7 @@ addq proc vectorcall uses rsi rdi rbx A:XQFLOAT, B:XQFLOAT
     jc      er_NaN_B        ; quit if NaN
     jo      er_NaN_B        ; ...
     sub     esi,0x10000     ; readjust high exponent
+    xor     esi,0x80000000
 
     mov     rcx,rax         ; A is 0 ?
     or      rcx,rdx
@@ -206,7 +207,7 @@ A_zero?:
 
 B_zero?:
     test    esi,0x7FFF0000
-    jz      return_0
+    jz      done
     jmp     L1
 
 return_0:
@@ -259,6 +260,6 @@ er_NaN_A:   ; A is a NaN or infinity
     jna     return_B
     jmp     done
 
-addq endp
+subq endp
 
     end

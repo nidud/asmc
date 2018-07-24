@@ -257,11 +257,8 @@ GetCaseValue proc uses esi edi ebx hll, tokenarray, dcount, scount
 
                 .if GetCaseVal( esi, [esi].labels )
 
-                    asmerr( 3022,
-                        [esi].condlines,
-                        [esi].labels,
-                        [eax].hll_item.condlines,
-                        [eax].hll_item.labels )
+                    asmerr( 3022, [esi].condlines, [esi].labels,
+                        [eax].hll_item.condlines, [eax].hll_item.labels )
                 .endif
             .endif
             mov esi,[esi].caselist
@@ -493,7 +490,8 @@ CompareMaxMin endp
 ; Move .SWITCH <arg> to [R|E]AX
 ;
 GetSwitchArg proc uses ebx reg, flags, arg
-local buffer[64]:sbyte
+
+  local buffer[64]:sbyte
 
     .if !( ModuleInfo.aflag & _AF_REGAX )
 
@@ -912,13 +910,11 @@ local \
                     AddLineQueue( "retn" )
                 .endif
             .endif
-        .endif
-        ;
-        ; Create the jump table
-        ;
-        .if !( [esi].flags & HLLF_NOTEST && [esi].flags & HLLF_JTABLE )
-            AddLineQueueX("ALIGN %d", r_size)
-            AddLineQueueX("%s%s", &l_jtab, LABELQUAL)
+            ;
+            ; Create the jump table
+            ;
+            AddLineQueueX( "ALIGN %d", r_size )
+            AddLineQueueX( "%s%s", &l_jtab, LABELQUAL )
         .endif
 
         .if use_index
@@ -1409,7 +1405,7 @@ _lk_HllContinueIf proto :ptr sdword, :ptr asm_tok
 
 SwitchExit proc uses esi edi ebx i, tokenarray:ptr asm_tok
 
-local   rc:     SINT,
+  local rc:     SINT,
         cont0:  SINT,
         cmd:    SINT,
         buff    [16]:SBYTE,

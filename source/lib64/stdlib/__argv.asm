@@ -10,8 +10,8 @@ _pgmptr dq 0
 
 Install proc private
     mov __argv,setargv(addr __argc, GetCommandLineA())
-    mov rax,[rax]
-    mov _pgmptr,rax
+    mov rcx,[rax]
+    mov _pgmptr,rcx
     ret
 Install endp
 

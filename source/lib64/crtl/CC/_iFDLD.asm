@@ -13,12 +13,12 @@ _iFDLD	proc
 	mov	r8d,edx
 	shld	edx,eax,11
 	shl	eax,11
-	shr	r8d,20
-	and	r8d,000007FFh
+	sar	r8d,20
+	and	r8w,07FFh
 	jz	L004
-	cmp	r8d,000007FFh
+	cmp	r8w,07FFh
 	je	@F
-	add	r8d,00003C00h
+	add	r8w,3C00h
 	jmp	L003
 @@:
 	or	r8d,00007F00h

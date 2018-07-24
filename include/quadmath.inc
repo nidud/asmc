@@ -234,7 +234,13 @@ divq	    proto vectorcall :XQFLOAT, :XQFLOAT
 addq	    proto vectorcall :XQFLOAT, :XQFLOAT
 subq	    proto vectorcall :XQFLOAT, :XQFLOAT
 cmpq	    proto vectorcall :XQFLOAT, :XQFLOAT
+qtof	    proto vectorcall :XQFLOAT
+qtod	    proto vectorcall :XQFLOAT
+ftoq	    proto vectorcall :real4
+dtoq	    proto vectorcall :real8
 normalizeq  proto vectorcall :XQFLOAT, :SINT
+qtoi32	    proto vectorcall :XQFLOAT
+i32toq	    proto vectorcall :SINT
 
 ifndef _INC_MATH
 _DOMAIN	    equ 1 ; argument domain error
@@ -267,6 +273,37 @@ log10qf	    proto vectorcall :XQFLOAT
 sinqf	    proto vectorcall :XQFLOAT
 sqrtqf	    proto vectorcall :XQFLOAT
 tanqf	    proto vectorcall :XQFLOAT
+
+FLTQ macro value
+  local string
+    string textequ <FLT8@>
+    forc q,<value>
+	ifidn <q>,<->
+	    string CatStr string, <M>
+	elseifidn <q>,<+>
+	    string CatStr string, <P>
+	elseifidn <q>,< >
+	    string CatStr string, <_>
+	elseifidn <q>,<*>
+	    string CatStr string, <x>
+	elseifidn <q>,</>
+	    string CatStr string, <d>
+	elseifidn <q>,<.>
+	    string CatStr string, <_>
+	elseifidn <q>,<(>
+	    exitm
+	else
+	    string CatStr string, <q>
+	endif
+	endm
+%   ifndef string
+	.data
+	align 16
+	string oword value
+	.code
+    endif
+    exitm<string>
+    endm
 
 XQFLOATTOLD macro d, x:=<xmm0>
     movq    rax,x

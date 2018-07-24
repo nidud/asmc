@@ -15,6 +15,7 @@
 #include <proc.h>
 #include <tokenize.h>
 #include <fastpass.h>
+#include <quadmath.h>
 
 extern enum special_token stackreg[];
 extern int size_vararg; /* size of :VARARG arguments */
@@ -243,7 +244,6 @@ static int vc32_param( struct dsym const *proc, int index, struct dsym *param,
 		else
 		    return 0;
 	    }
-	    AddLineQueueX( " mov %r, %s", reg, paramvalue );
 	}
     }
     if ( reg == T_AX )
@@ -303,6 +303,85 @@ static void ms64_fcend( struct dsym const *proc, int numparams, int value )
  * 9 -> 3 (r9)
  */
 #define GetParmIndex( x)  ( ( (x) >= 8 ) ? (x) - 6 : (x) - 1 )
+
+static int CheckXMM( int reg, int index, struct dsym *param, struct expr *opnd,
+	char *paramvalue, uint_8 *regs_used )
+{
+
+    char buffer[64];
+    uint_8 sign;
+    char *p;
+
+    /* v2.04: check if argument is the correct XMM register already */
+    if ( opnd->kind == EXPR_REG && opnd->indirect == FALSE ) {
+
+	if ( GetValueSp( reg ) & OP_XMM ) {
+	    if ( reg != T_XMM0 + index ) {
+
+		if ( reg >= T_XMM0 ) {
+		    if ( param->sym.mem_type == MT_REAL4 )
+			AddLineQueueX( " movss %r, %r", T_XMM0 + index, reg );
+		    else if ( param->sym.mem_type == MT_REAL8 )
+			AddLineQueueX( " movsd %r, %r", T_XMM0 + index, reg );
+		    else
+			AddLineQueueX( " movaps %r, %r", T_XMM0 + index, reg );
+		} else {
+		    if ( param->sym.mem_type == MT_REAL4 )
+			AddLineQueueX( " movd %r, %s", T_XMM0 + index, paramvalue );
+		    else
+			AddLineQueueX( " movq %r, %s", T_XMM0 + index, paramvalue );
+		}
+	    }
+	    return( 1 );
+	}
+    }
+
+    if ( opnd->kind == EXPR_FLOAT ) {
+	*regs_used |= R0_USED;
+	if ( param->sym.mem_type == MT_REAL4 ) {
+	    AddLineQueueX( " mov %r, %s", T_EAX, paramvalue );
+	    AddLineQueueX( " movd %r, %r", T_XMM0 + index, T_EAX );
+	} else if ( param->sym.mem_type == MT_REAL8 ) {
+	    AddLineQueueX( " mov %r, %r ptr %s", T_RAX, T_REAL8, paramvalue );
+	    AddLineQueueX( " movq %r, %r", T_XMM0 + index, T_RAX );
+	} else {
+	    p = paramvalue;
+	    sign = 0;
+	    if ( *p == '+' )
+		p++;
+	    else if ( *p == '-' ) {
+		p++;
+		sign++;
+	    }
+	    atoquad(opnd->chararray, p, NULL);
+	    if ( sign )
+		opnd->chararray[15] |= 0x80;
+	    if ( opnd->llvalue > 0xFFFFFFFF ) {
+		sprintf( buffer, "0x%" I64_SPEC "X", opnd->llvalue );
+		AddLineQueueX( " mov rax, %s", buffer );
+		AddLineQueue( " mov [rsp], rax" );
+	    } else {
+		AddLineQueueX( " mov qword ptr [rsp], 0x%x", opnd->uvalue );
+	    }
+	    if ( opnd->hlvalue > 0xFFFFFFFF ) {
+		sprintf( buffer, "0x%" I64_SPEC "X", opnd->hlvalue );
+		AddLineQueueX( " mov rax, %s", buffer );
+		AddLineQueue( " mov [rsp+8], rax" );
+	    } else {
+		AddLineQueueX( " mov qword ptr [rsp+8], 0x%x", (uint_32)opnd->hlvalue );
+	    }
+	    AddLineQueueX( " movaps %r, [rsp]", T_XMM0 + index );
+	}
+    } else {
+	if ( param->sym.mem_type == MT_REAL4 )
+	    AddLineQueueX( " movd %r, %s", T_XMM0 + index, paramvalue );
+	else if ( param->sym.mem_type == MT_REAL8 )
+	    AddLineQueueX( " movq %r, %s", T_XMM0 + index, paramvalue );
+	else
+	    AddLineQueueX( " movaps %r, %s", T_XMM0 + index, paramvalue );
+    }
+    return 1;
+}
 
 /*
  * parameter for Win64 FASTCALL.
@@ -433,7 +512,7 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
 
 		if ( proc->sym.langtype == LANG_VECTORCALL && index < 6 &&
 		     param->sym.mem_type & MT_FLOAT )
-			goto vector_0_5;
+			return CheckXMM( reg, index, param, opnd, paramvalue, regs_used );
 
 		size = SizeFromRegister( reg );
 		if ( size == psize )
@@ -490,49 +569,8 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
     } else if ( param->sym.mem_type == MT_REAL4 || param->sym.mem_type == MT_REAL8 ||
 	       param->sym.mem_type == MT_REAL16 ) {
 
-	vector_0_5:
+	return CheckXMM( reg, index, param, opnd, paramvalue, regs_used );
 
-	/* v2.04: check if argument is the correct XMM register already */
-	if ( opnd->kind == EXPR_REG && opnd->indirect == FALSE ) {
-
-	    if ( GetValueSp( reg ) & OP_XMM ) {
-		if ( reg != T_XMM0 + index ) {
-
-		    if ( reg >= T_XMM0 ) {
-			if ( param->sym.mem_type == MT_REAL4 )
-			    AddLineQueueX( " movss %r, %r", T_XMM0 + index, reg );
-			else if ( param->sym.mem_type == MT_REAL8 )
-			    AddLineQueueX( " movsd %r, %r", T_XMM0 + index, reg );
-			else
-			    AddLineQueueX( " movaps %r, %r", T_XMM0 + index, reg );
-		    } else {
-			if ( param->sym.mem_type == MT_REAL4 )
-			    AddLineQueueX( " movd %r, %s", T_XMM0 + index, paramvalue );
-			else
-			    AddLineQueueX( " movq %r, %s", T_XMM0 + index, paramvalue );
-		    }
-		}
-		return( 1 );
-	    }
-	}
-	if ( opnd->kind == EXPR_FLOAT ) {
-
-	    *regs_used |= R0_USED;
-	    if ( param->sym.mem_type != MT_REAL8 ) {
-		AddLineQueueX( " mov %r, %s", T_EAX, paramvalue );
-		AddLineQueueX( " movd %r, %r", T_XMM0 + index, T_EAX );
-	    } else {
-		AddLineQueueX( " mov %r, %r ptr %s", T_RAX, T_REAL8, paramvalue );
-		AddLineQueueX( " movq %r, %r", T_XMM0 + index, T_RAX );
-	    }
-	} else {
-	    if ( param->sym.mem_type == MT_REAL4 )
-		AddLineQueueX( " movd %r, %s", T_XMM0 + index, paramvalue );
-	    else if ( param->sym.mem_type == MT_REAL8 )
-		AddLineQueueX( " movq %r, %s", T_XMM0 + index, paramvalue );
-	    else
-		AddLineQueueX(" movaps %r, %s", T_XMM0 + index, paramvalue );
-	}
     } else {
 
 	if ( addr || psize > 8 ) { /* psize > 8 shouldn't happen! */

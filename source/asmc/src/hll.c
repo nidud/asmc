@@ -241,10 +241,12 @@ static int GetSimpleExpression( struct hll_item *hll, int *i, struct asm_tok tok
     int op1_end;
     int op2_pos;
     int op2_end;
+    int id;
     char *p;
     struct expr op1;
     struct expr op2;
     uint_32 label;
+    bool state;
 
     while ( tokenarray[*i].string_ptr[0] == '!' && tokenarray[*i].string_ptr[1] == '\0' ) {
 	(*i)++;
@@ -307,7 +309,24 @@ static int GetSimpleExpression( struct hll_item *hll, int *i, struct asm_tok tok
 	}
 	p = buffer;
 	hllop->lastjmp = p;
-	RenderJcc( p, flaginstr[ op - COP_ZERO ], !is_true, label );
+	instr = flaginstr[ op - COP_ZERO ];
+	state = !is_true;
+
+	/* v2.27.30: ZERO? || CARRY? --> LE */
+	id = *i + 1;
+	if ( id < ModuleInfo.token_count && ( op == COP_ZERO || op == COP_CARRY ) ) {
+
+	    op = GetCOp( &tokenarray[id] );
+
+	    if ( op == COP_ZERO || op == COP_CARRY ) {
+
+		instr = 'a';
+		state = is_true;
+		*i = id + 1;
+	    }
+	}
+
+	RenderJcc( p, instr, state, label );
 	return( NOT_ERROR );
     }
 
@@ -738,6 +757,7 @@ isfnptr:
 
 static int StripSource( int i, int e, struct asm_tok tokenarray[] )
 {
+    struct asym *a;
     struct dsym *sym;
     struct dsym *dp;
     struct proc_info *info;
@@ -771,12 +791,7 @@ static int StripSource( int i, int e, struct asm_tok tokenarray[] )
 	strcat( b, tokenarray[j].string_ptr );
     }
 
-    p = " eax";
-    if ( ModuleInfo.Ofssize == USE64 )
-	p = " rax";
-    else if ( ModuleInfo.Ofssize == USE16 )
-	p = " ax";
-
+    p = NULL;
     if ( proc_id && tokenarray[proc_id].token != T_OP_SQ_BRACKET ) {
 
 	if ( (sym = (struct dsym *)GetProc( tokenarray[proc_id].string_ptr )) ) {
@@ -817,17 +832,68 @@ static int StripSource( int i, int e, struct asm_tok tokenarray[] )
 		    break;
 		case 4:
 		    p = " eax";
+		    if ( ModuleInfo.Ofssize == USE64 ) {
+			if ( curr->sym.mem_type & MT_FLOAT )
+			    p = " xmm0";
+		    }
 		    break;
 		case 8:
-		    if ( ModuleInfo.Ofssize == USE64 )
-			p = " rax";
-		    else
+		    if ( ModuleInfo.Ofssize == USE64 ) {
+			if ( curr->sym.mem_type & MT_FLOAT )
+			    p = " xmm0";
+			else
+			    p = " rax";
+		    } else
 			p = " edx::eax";
+		    break;
+		case 16:
+		    if ( curr->sym.mem_type & MT_FLOAT )
+			p = " xmm0";
 		    break;
 	       }
 	    }
 	}
     }
+
+    if ( p == NULL ) {
+
+	p = " eax";
+	if ( ModuleInfo.Ofssize == USE64 )
+	    p = " rax";
+	else if ( ModuleInfo.Ofssize == USE16 )
+	    p = " ax";
+
+	if ( !proc_id && i > 1 ) {
+
+	    j = i - 2;
+	    if ( tokenarray[j+1].token == T_COMMA && tokenarray[j].token != T_CL_SQ_BRACKET ) {
+
+		/* <op> <reg|id> <,> <proc> */
+
+		k = 0;
+		if ( tokenarray[j].token == T_REG )
+		    k = SizeFromRegister( tokenarray[j].tokval );
+		else if ( ( a = SymFind( tokenarray[j].string_ptr ) ) != NULL )
+		    k = a->total_size;
+
+		if ( k ) {
+		    switch ( k ) {
+		      case 1: p = " al";  break;
+		      case 2: p = " ax";  break;
+		      case 4: p = " eax"; break;
+		      case 8:
+			if ( ModuleInfo.Ofssize == USE64 )
+			    p = " rax";
+			break;
+		      case 16:
+			p = " xmm0";
+			break;
+		    }
+		}
+	    }
+	}
+    }
+
     strcat( b, p );
     if ( tokenarray[e].token != T_FINAL ) {
 

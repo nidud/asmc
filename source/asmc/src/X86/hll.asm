@@ -761,19 +761,10 @@ ReplaceLabel endp
 
 ; operator &&, which has the second lowest precedence, is handled here
 
-GetAndExpression proc private uses esi edi ebx,
-    hll:        PTR hll_item,
-    i:          PTR SINT,
-    tokenarray: PTR asm_tok,
-    ilabel:     UINT,
-    is_true:    UINT,
-    buffer:     LPSTR,
-    hllop:      PTR hll_opnd
+GetAndExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr SINT, tokenarray:ptr asm_tok,
+    ilabel:UINT, is_true:UINT, buffer:LPSTR, hllop:ptr hll_opnd
 
-local   truelabel:  SINT,
-        nlabel:     SINT,
-        olabel:     SINT,
-        buff[16]:   SBYTE
+  local truelabel:SINT, nlabel:SINT, olabel:SINT, buff[16]:SBYTE
 
     mov edi,hllop
     mov esi,buffer
@@ -1110,16 +1101,10 @@ GetProc proc private token:LPSTR
 
 GetProc endp
 
-StripSource proc private uses esi edi ebx,
-        i:          UINT,       ; index first token
-        e:          UINT,       ; index last token
-        tokenarray: ptr asm_tok
-local   sym:        ptr asym
-local   info:       ptr proc_info
-local   curr:       ptr asym
-local   proc_id:    ptr asm_tok
-local   parg_id:    SINT
-local   b[MAX_LINE_LEN]:SBYTE
+StripSource proc private uses esi edi ebx i:UINT, e:UINT, tokenarray:ptr asm_tok
+
+  local sym:ptr asym, info:ptr proc_info, curr:ptr asym
+  local proc_id:ptr asm_tok, parg_id:SINT, b[MAX_LINE_LEN]:SBYTE
 
     xor eax,eax
     mov b,al

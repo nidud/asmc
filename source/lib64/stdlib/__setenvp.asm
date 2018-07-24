@@ -9,9 +9,10 @@ __setenvp PROC USES rsi rdi rbx envp:LPSTR
 
 	mov rdi,GetEnvironmentStringsA()
 	mov rsi,rax			; save start of block in ESI
-	xor rax,rax
-	xor rbx,rbx
-	mov rcx,-1
+	xor ecx,ecx
+	xor eax,eax
+	xor ebx,ebx
+	dec rcx
 	.while	BYTE PTR [rdi]		; size up the environment
 	    .if BYTE PTR [rdi] != '='
 		mov  rdx,rdi		; save offset of string
@@ -23,21 +24,21 @@ __setenvp PROC USES rsi rdi rbx envp:LPSTR
 	.endw
 	inc rbx				; count strings plus NULL
 	sub rdi,rsi			; EDI to size
-	lea rax,[rdi+rbx*8]		; pointers plus size of environment
-	malloc(rax)
+	lea rcx,[rdi+rbx*8]		; pointers plus size of environment
+	malloc(rcx)
 	mov rcx,envp			; return result
 	mov [rcx],rax
 	.if rax
-	    lea rax,[rax+rbx*8]		; new adderss of block
-	    memcpy(rax, rsi, rdi)
+	    lea rcx,[rax+rbx*8]		; new adderss of block
+	    memcpy(rcx, rsi, rdi)
 	    xchg rax,rsi		; ESI to block
 	    FreeEnvironmentStringsA(rax)
 	    lea rdi,[rsi-8]		; EDI to end of pointers array
 	    std				; move backwards
-	    xor rax,rax			; set last pointer to NULL
+	    xor eax,eax			; set last pointer to NULL
 	    stosq
 	    dec rbx
-	    .while rbx
+	    .whilenz
 		pop rax			; pop offset in reverse
 		add rax,rsi		; add address of block
 		stosq
@@ -45,8 +46,8 @@ __setenvp PROC USES rsi rdi rbx envp:LPSTR
 	    .endw
 	    cld
 	    inc rbx			; remove ZERO flag
-	    mov rax,envp		; return address of new _environ
-	    mov rax,[rax]
+	    mov rcx,envp		; return address of new _environ
+	    mov rax,[rcx]
 	.endif
 	ret
 __setenvp ENDP

@@ -27,6 +27,13 @@ static void addlq_jxx_label( int x, int id )
     AddLineQueueX( "%r %s", x, GetLabelStr( id, buffer ) );
 }
 
+static void addlq_jxx_label64( int x, char *base, int id )
+{
+    char buffer[32];
+
+    AddLineQueueX( "%r %s-%s", x, base, GetLabelStr( id, buffer ) );
+}
+
 static void RenderCase( struct hll_item *hll, struct hll_item *hll_c, char *buffer )
 {
     int l;
@@ -496,12 +503,9 @@ static int RenderSwitch( struct hll_item *hll, struct asm_tok tokenarray[],
 
     r_size = 2;
     r_dw = T_DW;
-    if ( ModuleInfo.Ofssize == USE32 ) {
+    if ( ModuleInfo.Ofssize != USE16 ) {
 	r_size = 4;
 	r_dw = T_DD;
-    } else if ( ModuleInfo.Ofssize == USE64 ) {
-	r_size = 8;
-	r_dw = T_DQ;
     }
     strcpy( l_start, buffer );
 
@@ -526,6 +530,8 @@ static int RenderSwitch( struct hll_item *hll, struct asm_tok tokenarray[],
 
     if ( ModuleInfo.casealign )
 	AddLineQueueX( "ALIGN %d", (1 << ModuleInfo.casealign) );
+    else if ( hll->flags & HLLF_NOTEST && hll->flags & HLLF_JTABLE )
+	AddLineQueueX( "ALIGN %d", r_size );
 
     AddLineQueueX( "%s" LABELQUAL, l_start );
 
@@ -586,7 +592,11 @@ static int RenderSwitch( struct hll_item *hll, struct asm_tok tokenarray[],
 
 	/* Create the jump table lable */
 
-	GetLabelStr( GetHllLabel(), l_jtab );
+	if ( hll->flags & HLLF_NOTEST && hll->flags & HLLF_JTABLE ) {
+	    strcpy( l_jtab, l_start );
+	    AddLineQueueX( "MIN%s equ %d", l_jtab, min );
+	} else
+	    GetLabelStr( GetHllLabel(), l_jtab );
 
 	p = l_exit;
 	if ( ncases )
@@ -595,143 +605,154 @@ static int RenderSwitch( struct hll_item *hll, struct asm_tok tokenarray[],
 	if ( !( hll->flags & HLLF_NOTEST ) )
 	    CompareMaxMin( hll->condlines, max, min, p );
 
-	if ( ModuleInfo.Ofssize == USE16 ) {
+	if ( !( hll->flags & HLLF_NOTEST && hll->flags & HLLF_JTABLE ) ) {
 
-	    if ( !( ModuleInfo.aflag & _AF_REGAX ) )
-		AddLineQueue( "push ax" );
+	    if ( ModuleInfo.Ofssize == USE16 ) {
 
-	    if ( hll->flags & HLLF_ARGREG ) {
-		if ( ModuleInfo.aflag & _AF_REGAX ) {
-		    if ( _stricmp( "ax", hll->condlines ) )
-			AddLineQueueX( "mov ax,%s", hll->condlines );
-		    AddLineQueue( "xchg ax,bx" );
-		} else {
-		    AddLineQueue( "push bx" );
-		    AddLineQueue( "push ax" );
-		    if ( _stricmp( "bx", hll->condlines ) )
-			AddLineQueueX( "mov bx,%s", hll->condlines );
-		}
-	    } else {
 		if ( !( ModuleInfo.aflag & _AF_REGAX ) )
-		    AddLineQueue( "push bx" );
-		GetSwitchArg( T_AX, hll->flags, hll->condlines );
-		if ( ModuleInfo.aflag & _AF_REGAX )
-		    AddLineQueue( "xchg ax,bx" );
-		else
-		    AddLineQueue( "mov bx,ax" );
-	    }
-	    if ( min )
-		AddLineQueueX( "sub bx,%d", min );
-	    AddLineQueue ( "add bx,bx" );
-	    if ( ModuleInfo.aflag & _AF_REGAX ) {
-		AddLineQueueX( "mov bx,cs:[bx+%s]", l_jtab );
-		AddLineQueue ( "xchg ax,bx" );
-		AddLineQueue ( "jmp ax" );
-	    } else {
-		AddLineQueueX( "mov ax,cs:[bx+%s]", l_jtab );
-		AddLineQueue ( "mov bx,sp" );
-		AddLineQueue ( "mov ss:[bx+4],ax" );
-		AddLineQueue ( "pop ax" );
-		AddLineQueue ( "pop bx" );
-		AddLineQueue ( "retn" );
-	    }
+		    AddLineQueue( "push ax" );
 
-	} else if ( ModuleInfo.Ofssize == USE32 ) {
-
-	    if ( !( hll->flags & HLLF_ARGREG ) ) {
-		GetSwitchArg(T_EAX, hll->flags, hll->condlines);
-		if ( use_index ) {
-		    if ( dist < 256 )
-			AddLineQueueX("movzx eax,BYTE PTR [eax+IT%s-(%d)]", l_jtab, min);
-		    else
-			AddLineQueueX("movzx eax,WORD PTR [eax*2+IT%s-(%d*2)]", l_jtab, min);
-		    if ( ModuleInfo.aflag & _AF_REGAX )
-			AddLineQueueX("jmp [eax*4+%s]", l_jtab);
-		    else
-			AddLineQueueX("mov eax,[eax*4+%s]", l_jtab);
-		} else if ( ModuleInfo.aflag & _AF_REGAX ) {
-		    AddLineQueueX("jmp [eax*4+%s-(%d*4)]", l_jtab, min);
-		} else {
-		    AddLineQueueX("mov eax,[eax*4+%s-(%d*4)]", l_jtab, min);
-		}
-		if ( !( ModuleInfo.aflag & _AF_REGAX ) ) {
-		    AddLineQueue("xchg eax,[esp]");
-		    AddLineQueue("retn");
-		}
-	    } else {
-		if ( use_index ) {
-		    if ( !( ModuleInfo.aflag & _AF_REGAX ) )
-			AddLineQueueX("push %s", hll->condlines);
-
-		    if ( dist < 256 )
-			AddLineQueueX("movzx %s,BYTE PTR [%s+IT%s-(%d)]",
-				hll->condlines, hll->condlines, l_jtab, min);
-		    else
-			AddLineQueueX("movzx %s,WORD PTR [%s*2+IT%s-(%d*2)]",
-				hll->condlines, hll->condlines, &l_jtab, min);
-
+		if ( hll->flags & HLLF_ARGREG ) {
 		    if ( ModuleInfo.aflag & _AF_REGAX ) {
-			AddLineQueueX("jmp [%s*4+%s]", hll->condlines, l_jtab);
+			if ( _stricmp( "ax", hll->condlines ) )
+			    AddLineQueueX( "mov ax,%s", hll->condlines );
+			AddLineQueue( "xchg ax,bx" );
 		    } else {
-			AddLineQueueX("mov %s,[%s*4+%s]", hll->condlines,
-				hll->condlines, l_jtab);
-			AddLineQueueX("xchg %s,[esp]", hll->condlines);
-			AddLineQueue ("retn");
+			AddLineQueue( "push bx" );
+			AddLineQueue( "push ax" );
+			if ( _stricmp( "bx", hll->condlines ) )
+			    AddLineQueueX( "mov bx,%s", hll->condlines );
 		    }
 		} else {
-		    AddLineQueueX("jmp [%s*4+%s-(%d*4)]", hll->condlines, l_jtab, min);
+		    if ( !( ModuleInfo.aflag & _AF_REGAX ) )
+			AddLineQueue( "push bx" );
+		    GetSwitchArg( T_AX, hll->flags, hll->condlines );
+		    if ( ModuleInfo.aflag & _AF_REGAX )
+			AddLineQueue( "xchg ax,bx" );
+		    else
+			AddLineQueue( "mov bx,ax" );
 		}
-	    }
-	} else if ( ( min <= ( UINT_MAX / 8 ) ) && !use_index && ( hll->flags & HLLF_ARGREG ) ) {
+		if ( min )
+		    AddLineQueueX( "sub bx,%d", min );
+		AddLineQueue ( "add bx,bx" );
+		if ( ModuleInfo.aflag & _AF_REGAX ) {
+		    AddLineQueueX( "mov bx,cs:[bx+%s]", l_jtab );
+		    AddLineQueue ( "xchg ax,bx" );
+		    AddLineQueue ( "jmp ax" );
+		} else {
+		    AddLineQueueX( "mov ax,cs:[bx+%s]", l_jtab );
+		    AddLineQueue ( "mov bx,sp" );
+		    AddLineQueue ( "mov ss:[bx+4],ax" );
+		    AddLineQueue ( "pop ax" );
+		    AddLineQueue ( "pop bx" );
+		    AddLineQueue ( "retn" );
+		}
 
-	    AddLineQueueX("jmp [%s*8+%s-(%d*8)]", hll->condlines, l_jtab, min);
+	    } else if ( ModuleInfo.Ofssize == USE32 ) {
 
-	} else {
+		if ( !( hll->flags & HLLF_ARGREG ) ) {
+		    GetSwitchArg(T_EAX, hll->flags, hll->condlines);
+		    if ( use_index ) {
+			if ( dist < 256 )
+			    AddLineQueueX("movzx eax,BYTE PTR [eax+IT%s-(%d)]", l_jtab, min);
+			else
+			    AddLineQueueX("movzx eax,WORD PTR [eax*2+IT%s-(%d*2)]", l_jtab, min);
+			if ( ModuleInfo.aflag & _AF_REGAX )
+			    AddLineQueueX("jmp [eax*4+%s]", l_jtab);
+			else
+			    AddLineQueueX("mov eax,[eax*4+%s]", l_jtab);
+		    } else if ( ModuleInfo.aflag & _AF_REGAX )
+			AddLineQueueX("jmp [eax*4+%s-(%d*4)]", l_jtab, min);
+		    else
+			AddLineQueueX("mov eax,[eax*4+%s-(%d*4)]", l_jtab, min);
 
-	    if ( !( hll->flags & HLLF_ARGREG ) ) {
-		GetSwitchArg(T_RAX, hll->flags, hll->condlines);
+		    if ( !( ModuleInfo.aflag & _AF_REGAX ) ) {
+			AddLineQueue("xchg eax,[esp]");
+			AddLineQueue("retn");
+		    }
+		} else {
+		    if ( use_index ) {
+			if ( !( ModuleInfo.aflag & _AF_REGAX ) )
+			    AddLineQueueX("push %s", hll->condlines);
+
+			if ( dist < 256 )
+			    AddLineQueueX("movzx %s,BYTE PTR [%s+IT%s-(%d)]",
+				hll->condlines, hll->condlines, l_jtab, min);
+			else
+			    AddLineQueueX("movzx %s,WORD PTR [%s*2+IT%s-(%d*2)]",
+				hll->condlines, hll->condlines, &l_jtab, min);
+
+			if ( ModuleInfo.aflag & _AF_REGAX ) {
+			    AddLineQueueX("jmp [%s*4+%s]", hll->condlines, l_jtab);
+			} else {
+			    AddLineQueueX("mov %s,[%s*4+%s]", hll->condlines,
+				hll->condlines, l_jtab);
+			    AddLineQueueX("xchg %s,[esp]", hll->condlines);
+			    AddLineQueue ("retn");
+			}
+		    } else {
+			AddLineQueueX("jmp [%s*4+%s-(%d*4)]", hll->condlines, l_jtab, min);
+		    }
+		}
+	    } else if ( ( min <= ( UINT_MAX / 8 ) ) && !use_index
+		   && ( hll->flags & HLLF_ARGREG ) && ModuleInfo.aflag & _AF_REGAX ) {
+
+		if ( !_memicmp( hll->condlines, "r10", 3 ) || !_memicmp( hll->condlines, "r11", 3 ) )
+		    asmerr( 2008, "register r10/r11 overwritten by SWITCH" );
+		AddLineQueueX( "lea r11,%s", l_exit );
+		AddLineQueueX( "mov r10d,[%s*4+r11-(%d*4)+(%s-%s)]", hll->condlines, min, l_jtab, l_exit );
+		AddLineQueue ( "sub r11,r10" );
+		AddLineQueue ( "jmp r11" );
+
 	    } else {
+
+		if ( !( hll->flags & HLLF_ARGREG ) ) {
+		    GetSwitchArg(T_R11, hll->flags, hll->condlines);
+		} else {
+		    if ( !( ModuleInfo.aflag & _AF_REGAX ) )
+			AddLineQueue("push r11");
+		    if ( _memicmp(hll->condlines, "r11", 3) )
+			AddLineQueueX( "mov r11,%s", hll->condlines );
+		}
 		if ( !( ModuleInfo.aflag & _AF_REGAX ) )
-		    AddLineQueue("push rax");
-		if ( _memicmp(hll->condlines, "rax", 3) )
-		    AddLineQueueX("mov rax,%s", hll->condlines);
-	    }
-	    AddLineQueue("push rcx");
+		    AddLineQueue( "push r10" );
+		AddLineQueueX( "lea r10,%s", l_exit );
 
-	    if ( use_index ) {
-		AddLineQueueX("lea rcx,IT%s", l_jtab);
-		if ( dist < 256 )
-		    AddLineQueueX("movzx rax,BYTE PTR [rcx+rax-(%d)]", min);
-		else
-		    AddLineQueueX("movzx rax,WORD PTR [rcx+rax*2-(%d*2)]", min);
-		AddLineQueueX("lea rcx,%s", l_jtab);
-		AddLineQueue("mov rax,[rcx+rax*8]");
-	    } else {
-		AddLineQueueX("lea rcx,%s", l_jtab);
-		if ( (unsigned int)min < ( UINT_MAX / 8 ) )
-		    AddLineQueueX("mov rax,[rcx+rax*8-(%d*8)]", min);
-		else {
-		    AddLineQueueX("sub rax,%d", min);
-		    AddLineQueue("mov rax,[rcx+rax*8]");
+		if ( use_index ) {
+
+		    if ( dist < 256 )
+			AddLineQueueX( "movzx r11d,BYTE PTR [r10+r11-(%d)+(IT%s-%s)]", min, l_jtab, l_exit );
+		    else
+			AddLineQueueX( "movzx r11d,WORD PTR [r10+r11*2-(%d*2)+(IT%s-%s)]", min, l_jtab, l_exit );
+		    AddLineQueueX( "mov r11d,[r10+r11*4+(%s-%s)]", l_jtab, l_exit );
+
+		} else {
+
+		    if ( (unsigned int)min < ( UINT_MAX / 8 ) )
+			AddLineQueueX( "mov r11d,[r10+r11*4-(%d*4)+(%s-%s)]", min, l_jtab, l_exit );
+		    else {
+			AddLineQueueX( "sub r11,%d", min );
+			AddLineQueueX( "mov r11d,[r10+r11*4+(%s-%s)]", l_jtab, l_exit );
+		    }
+		}
+
+		AddLineQueue ( "sub r10,r11" );
+		if ( ModuleInfo.aflag & _AF_REGAX ) {
+		    AddLineQueue( "jmp r10" );
+		} else {
+		    AddLineQueue( "mov r11,[rsp+8]" );
+		    AddLineQueue( "mov [rsp+8],r10" );
+		    AddLineQueue( "mov r10,r11" );
+		    AddLineQueue( "pop r11" );
+		    AddLineQueue( "retn" );
 		}
 	    }
-	    if ( ModuleInfo.aflag & _AF_REGAX ) {
-		AddLineQueue("pop rcx");
-		AddLineQueue("jmp rax");
-	    } else {
-		AddLineQueue("mov rcx,[rsp+8]");
-		AddLineQueue("mov [rsp+8],rax");
-		AddLineQueue("mov rax,rcx");
-		AddLineQueue("pop rcx");
-		AddLineQueue("retn");
-	    }
+
+	    /* Create the jump table */
+
+	    AddLineQueueX( "ALIGN %d", r_size );
+	    AddLineQueueX( "%s" LABELQUAL, l_jtab );
 	}
-
-
-	/* Create the jump table */
-
-	AddLineQueueX( "ALIGN %d", r_size );
-	AddLineQueueX( "%s" LABELQUAL, l_jtab );
 
 	if ( use_index ) {
 
@@ -763,13 +784,21 @@ static int RenderSwitch( struct hll_item *hll, struct asm_tok tokenarray[],
 
 		if ( ( hp->flags & HLLF_TABLE ) && x != hp->index ) {
 
-		    AddLineQueueX( " %r %s ; .case %s", r_dw,
-			GetLabelStr( hp->labels[LSTART], labelx ), hp->condlines );
+		    if ( ModuleInfo.Ofssize == USE64 )
+			AddLineQueueX( " dd %s-%s ; .case %s", l_exit,
+			    GetLabelStr( hp->labels[LSTART], labelx ), hp->condlines );
+		    else
+			AddLineQueueX( " %r %s ; .case %s", r_dw,
+			    GetLabelStr( hp->labels[LSTART], labelx ), hp->condlines );
+
 		    x = hp->index;
 		}
 	    }
 
-	    AddLineQueueX(" %r %s ; .default", r_dw, l_exit );
+	    if ( ModuleInfo.Ofssize == USE64 )
+		AddLineQueueX( " dd 0 ; .default" );
+	    else
+		AddLineQueueX(" %r %s ; .default", r_dw, l_exit );
 
 	    r_db = T_DB;
 	    icount = max - min + 1;
@@ -830,12 +859,19 @@ static int RenderSwitch( struct hll_item *hll, struct asm_tok tokenarray[],
 
 		    /* write block to table */
 
-		    addlq_jxx_label( r_dw, xp->labels[LSTART] );
+		    if ( ModuleInfo.Ofssize == USE64 )
+			addlq_jxx_label64( r_dw, l_exit, xp->labels[LSTART] );
+		    else
+			addlq_jxx_label( r_dw, xp->labels[LSTART] );
+
 		} else {
 
 		    /* else make a jump to exit or default label */
 
-		    AddLineQueueX( "%r %s", r_dw, l_exit );
+		    if ( ModuleInfo.Ofssize == USE64 )
+			AddLineQueue( "dd 0" );
+		    else
+			AddLineQueueX( "%r %s", r_dw, l_exit );
 		}
 	    }
 	}
@@ -857,6 +893,71 @@ static int RenderSwitch( struct hll_item *hll, struct asm_tok tokenarray[],
 	AddLineQueueX( "jmp %s", l_exit );
 
     return 0;
+}
+
+static void RenderJTable( struct hll_item *hll	 )
+{
+    char l_exit[16];
+    char l_jtab[16];  /* jump table address */
+
+    if ( hll->labels[LEXIT] == 0 )
+	hll->labels[LEXIT] = GetHllLabel();
+
+    GetLabelStr( hll->labels[LSTART], l_jtab );
+    GetLabelStr( hll->labels[LEXIT], l_exit );
+
+    if ( ModuleInfo.Ofssize == USE16 ) {
+
+	if ( ModuleInfo.aflag & _AF_REGAX ) {
+	    if ( _stricmp( "ax", hll->condlines ) )
+		AddLineQueueX( "mov ax,%s", hll->condlines );
+
+	    AddLineQueue ( "xchg ax,bx" );
+	    AddLineQueue ( "add bx,bx" );
+	    AddLineQueueX( "mov bx,cs:[bx+%s]", l_jtab );
+	    AddLineQueue ( "xchg ax,bx" );
+	    AddLineQueue ( "jmp ax" );
+	} else {
+	    AddLineQueue( "push ax" );
+	    AddLineQueue( "push bx" );
+	    AddLineQueue( "push ax" );
+	    if ( _stricmp( "bx", hll->condlines ) )
+		AddLineQueueX( "mov bx,%s", hll->condlines );
+	    AddLineQueue ( "add bx,bx" );
+	    AddLineQueueX( "mov ax,cs:[bx+%s]", l_jtab );
+	    AddLineQueue ( "mov bx,sp" );
+	    AddLineQueue ( "mov ss:[bx+4],ax" );
+	    AddLineQueue ( "pop ax" );
+	    AddLineQueue ( "pop bx" );
+	    AddLineQueue ( "retn" );
+	}
+
+    } else if ( ModuleInfo.Ofssize == USE32 ) {
+
+	AddLineQueueX( "jmp [%s*4+%s-(MIN%s*4)]", hll->condlines, l_jtab, l_jtab );
+
+    } else if ( ModuleInfo.aflag & _AF_REGAX ) {
+	if ( !_memicmp( hll->condlines, "r10", 3 ) || !_memicmp( hll->condlines, "r11", 3 ) )
+	    asmerr( 2008, "register r10/r11 overwritten by SWITCH" );
+
+	AddLineQueueX( "lea r11,%s", l_exit );
+	AddLineQueueX( "mov r10d,[%s*4+r11-(MIN%s*4)+(%s-%s)]", hll->condlines, l_jtab, l_jtab, l_exit );
+	AddLineQueue ( "sub r11,r10" );
+	AddLineQueue ( "jmp r11" );
+    } else {
+	AddLineQueue( "push r11" );
+	AddLineQueue( "push r10" );
+	if ( _memicmp( hll->condlines, "r11", 3 ) )
+	    AddLineQueueX( "mov r11,%s", hll->condlines );
+	AddLineQueueX( "lea r10,%s", l_exit );
+	AddLineQueueX( "mov r11d,[r10+r11*4-(MIN%s*4)+(%s-%s)]", l_jtab, l_jtab, l_exit );
+	AddLineQueue( "sub r10,r11" );
+	AddLineQueue( "mov r11,[rsp+8]" );
+	AddLineQueue( "mov [rsp+8],r10" );
+	AddLineQueue( "mov r10,r11" );
+	AddLineQueue( "pop r11" );
+	AddLineQueue( "retn" );
+    }
 }
 
 int SwitchStart( int i, struct asm_tok tokenarray[] )
@@ -915,8 +1016,11 @@ int SwitchStart( int i, struct asm_tok tokenarray[] )
 	    case T_DI:
 
 		hll->flags |= HLLF_ARG16;
-		if ( ModuleInfo.Ofssize == USE16 )
+		if ( ModuleInfo.Ofssize == USE16 ) {
 		    hll->flags |= HLLF_ARGREG;
+		    if ( hll->flags & HLLF_NOTEST )
+			hll->flags |= HLLF_JTABLE;
+		}
 
 	    case T_AL:
 	    case T_CL:
@@ -929,8 +1033,6 @@ int SwitchStart( int i, struct asm_tok tokenarray[] )
 		break;
 
 	    case T_EAX:
-		if ( ModuleInfo.Ofssize == USE64 )
-		    hll->flags |= HLLF_ARG3264;
 	    case T_ECX:
 	    case T_EDX:
 	    case T_EBX:
@@ -939,8 +1041,13 @@ int SwitchStart( int i, struct asm_tok tokenarray[] )
 	    case T_ESI:
 	    case T_EDI:
 		hll->flags |= HLLF_ARG32;
-		if ( ModuleInfo.Ofssize == USE32 )
+		if ( ModuleInfo.Ofssize == USE32 ) {
 		    hll->flags |= HLLF_ARGREG;
+		    if ( hll->flags & HLLF_NOTEST )
+			hll->flags |= HLLF_JTABLE;
+		}
+		if ( ModuleInfo.Ofssize == USE64 )
+		    hll->flags |= HLLF_ARG3264;
 		break;
 
 	    case T_RAX:
@@ -960,8 +1067,11 @@ int SwitchStart( int i, struct asm_tok tokenarray[] )
 	    case T_R14:
 	    case T_R15:
 		hll->flags |= HLLF_ARG64;
-		if ( ModuleInfo.Ofssize == USE64 )
+		if ( ModuleInfo.Ofssize == USE64 ) {
 		    hll->flags |= HLLF_ARGREG;
+		    if ( hll->flags & HLLF_NOTEST )
+			hll->flags |= HLLF_JTABLE;
+		}
 		break;
 	    default:
 		hll->flags |= HLLF_ARGMEM;
@@ -993,17 +1103,17 @@ int SwitchStart( int i, struct asm_tok tokenarray[] )
     }
 
     if ( !hll->flags && (tokenarray[i].token != T_FINAL && rc == NOT_ERROR) )
-	    rc = asmerr( 2008, tokenarray[i].tokpos );
+	rc = asmerr( 2008, tokenarray[i].tokpos );
 
     if ( hll == HllFree )
-	    HllFree = hll->next;
+	HllFree = hll->next;
     hll->next = HllStack;
     HllStack = hll;
 
     if ( ModuleInfo.list )
-	    LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), NULL );
+	LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), NULL );
     if ( is_linequeue_populated() )
-	    RunLineQueue();
+	RunLineQueue();
 
     return( rc );
 }
@@ -1119,7 +1229,10 @@ int SwitchExit( int i, struct asm_tok tokenarray[] )
 	    /* first case */
 
 	    hll->labels[LSTART] = GetHllLabel();
-	    addlq_jxx_label( T_JMP, hll->labels[LSTART] );
+	    if ( hll->flags & HLLF_NOTEST && hll->flags & HLLF_JTABLE )
+		RenderJTable( hll );
+	    else
+		addlq_jxx_label( T_JMP, hll->labels[LSTART] );
 
 	} else if ( ModuleInfo.aflag & _AF_PASCAL ) {
 

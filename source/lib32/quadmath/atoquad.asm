@@ -4,7 +4,7 @@
 include quadmath.inc
 include ltype.inc
 
-MAXDIGIT    equ 39
+MAXDIGIT    equ 38
 MAXSIGDIGIT equ 49
 
     .code

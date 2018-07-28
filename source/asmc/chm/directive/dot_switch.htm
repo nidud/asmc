@@ -1,0 +1,57 @@
+<HTML><HEAD><TITLE>.SWITCH</TITLE></HEAD>
+<link href="../style.css" rel="stylesheet" type="text/css">
+<BODY>
+Asmc Macro Assembler Reference
+<H2>.SWITCH</H2>
+
+<p>The switch comes in three main variants: a structured switch, as in Pascal,
+which takes exactly one branch, an unstructured switch, as in C, which functions
+as a type of goto, and a control table switch with the added possibility of testing
+for combinations of input values, using boolean style AND/OR conditions, and
+potentially calling subroutines instead of just a single set of values.</p>
+
+<p>The control table switch is declared with no arguments and each .CASE
+directive does all the testing.</p>
+
+<pre>
+    .switch
+      .case strchr( esi, '&lt;' )
+      .case strchr( esi, '&gt;' )
+	    jmp around
+      ...
+    .endsw
+</pre>
+
+<p>The unstructured switch works as a regular C switch where each .CASE
+directive is just a label.</p>
+
+<pre>
+    .switch eax
+      .case 0: .repeat : movsb
+      .case 7: movsb
+      .case 6: movsb
+      .case 5: movsb
+      .case 4: movsb
+      .case 3: movsb
+      .case 2: movsb
+      .case 1: movsb : .untilcxz
+    .endsw
+</pre>
+
+<p>The structured switch works as a regular Pascal switch where each .CASE
+directive is a closed branch.</p>
+
+<pre>
+    .switch eax
+      .case 1: printf("Gold medal")
+      .case 2: printf("Silver medal")
+      .case 3: printf("Bronze medal")
+      .default
+	  printf("Better luck next time")
+    .endsw
+</pre>
+
+<h4>See Also</h4>
+<a href="index.htm">Directives Reference</a>
+</BODY>
+</HTML>

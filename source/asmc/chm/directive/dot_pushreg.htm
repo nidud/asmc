@@ -1,0 +1,53 @@
+<HTML><HEAD><TITLE>.PUSHREG</TITLE></HEAD>
+<link href="../style.css" rel="stylesheet" type="text/css">
+<BODY>
+Asmc Macro Assembler Reference
+<H3>.PUSHREG</H3>
+
+<p>Generates a UWOP_PUSH_NONVOL unwind code entry for the specified register
+number using the current offset in the prologue.</p>
+
+<pre><b>.PUSHREG</b> register</pre>
+
+<p>.PUSHREG allows users to specify how a frame function unwinds, and
+is only allowed within the prologue, which extends from the PROC FRAME
+declaration to the <A HREF="dot_endprolog.htm">.ENDPROLOG</A> directive.
+These directives do not generate code;
+they only generate .xdata and .pdata. .PUSHREG should be preceded by
+instructions that actually implement the actions to be unwound. It is a good
+practice to wrap both the unwind directives and the code they are meant to
+unwind in a macro to ensure agreement.</p>
+
+<h4>Sample</h4>
+
+<p>The following sample shows how to push non-volatile tegisters.</p>
+
+<pre>
+; asmc -win64 main.asm
+; link /entry:main /subsystem:console main.obj
+
+    .code
+
+main proc frame
+
+    push r10
+    .pushreg r10
+    push r15
+    .pushreg r15
+    push rbx
+    .pushreg rbx
+    push rsi
+    .pushreg rsi
+    .endprolog
+    ; rest of function ...
+    ret
+
+main endp
+
+    end
+</pre>
+
+<h4>See Also</h4>
+<a href="index.htm">Directives Reference</a>
+</BODY>
+</HTML>

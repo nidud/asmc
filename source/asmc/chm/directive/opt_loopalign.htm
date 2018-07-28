@@ -1,0 +1,21 @@
+<HTML><HEAD><TITLE>OPTION LOOPALIGN</TITLE></HEAD>
+<link href="../style.css" rel="stylesheet" type="text/css">
+<BODY>
+Asmc Macro Assembler Reference
+<H3>OPTION LOOPALIGN</H3>
+
+<pre><b>OPTION LOOPALIGN</b>:[0|2|4|8|16]</pre>
+
+<p>This controls the alignment for .WHILE and .REPEAT labels.
+The default value is 0.</p>
+
+<pre>
+	jmp loop_start
+*	ALIGN &lt;loopalign&gt; ; align label after jump
+	loop_label:
+</pre>
+
+<h4>See Also</h4>
+<a href="index.htm">Directives Reference</a>
+</BODY>
+</HTML>

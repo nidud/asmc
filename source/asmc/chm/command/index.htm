@@ -1,0 +1,372 @@
+<html><head><title>Asmc Command-Line Reference</title></head>
+<link href="../style.css" rel="stylesheet" type="text/css">
+<body>
+Asmc Macro Assembler Reference
+<H2>Asmc Command-Line Reference</H2>
+
+<p>Assembles and links one or more assembly-language source files.
+The command-line options are case sensitive.</p>
+
+<p><b>ASMC</b> [[options]] filename [[ [[options]] filename]]</p>
+
+<p><I>options</I></p>
+
+  <p>The options listed in the following table.</p>
+  <TABLE cellSpacing=5>
+    <TR vAlign=top>
+      <TD><B>/[0..10][p]</B></TD>
+      <TD>Set CPU: 0=8086 (default), 1=80186, 2=80286, 3=80386, 4=80486,
+       5=Pentium,6=PPro,7=P2,8=P3,9=P4,10=x86-64. [p] allows privileged instructions.
+      </TD></TR>
+    <TR>
+      <TD><B>/assert</B></TD>
+      <TD>Generate .assert(code). Same as .assert:on.
+      </TD></TR>
+    <TR>
+      <TD><B>/autostack</B></TD>
+      <TD><code>[<B>-auto</B>] [[<B>.win64</B>:[NO]AUTO]]</code> Calculate required stack space for arguments.
+      </TD></TR>
+    <TR>
+      <TD><B>/bin</B></TD>
+      <TD>Generate plain binary file.
+      </TD></TR>
+    <TR>
+      <TD><B>/Cs</B></TD>
+      <TD>Push user registers before <a href="../directive/opt_cstack.htm">stack-frame</a> is created in a proc.
+      </TD></TR>
+    <TR>
+      <TD><B>/coff</B></TD>
+      <TD>Generate COFF format object file.
+      </TD></TR>
+    <TR>
+      <TD><B>/Cp</B></TD>
+      <TD>Preserves case of all user identifiers.
+      </TD></TR>
+    <TR>
+      <TD><B>/Cu</B></TD>
+      <TD>Maps all identifiers to upper case (default).
+      </TD></TR>
+    <TR>
+      <TD><B>/cui</B></TD>
+      <TD>Link switch used with <B>/pe</B> -- subsystem:console (default).
+      </TD></TR>
+    <TR>
+      <TD><B>/Cx</B></TD>
+      <TD>Preserves case in public and extern symbols.
+      </TD></TR>
+    <TR>
+      <TD><B>/D<i>symbol</i>[[=<i>value</i>]]</B></TD>
+      <TD>Defines a text macro with the given name. If value is missing, it is blank. Multiple tokens separated by spaces must be enclosed in quotation marks.
+      </TD></TR>
+    <TR>
+      <TD><B>/e<i>number</i></B></TD>
+      <TD>Set error limit number.
+      </TD></TR>
+    <TR>
+      <TD><B>/elf</B></TD>
+      <TD>Generate 32-bit ELF object file.
+      </TD></TR>
+    <TR>
+      <TD><B>/elf64</B></TD>
+      <TD>Generate 64-bit ELF object file.
+      </TD></TR>
+    <TR>
+      <TD><B>/EP</B></TD>
+      <TD>Generates a preprocessed source listing (sent to STDOUT). See /Sf.
+      </TD></TR>
+    <TR>
+      <TD><B>/eq</B></TD>
+      <TD>Don't display error messages.
+      </TD></TR>
+    <TR>
+      <TD><B>/Fd[<i>file</i>]</B></TD>
+      <TD>Write import definition file.
+      </TD></TR>
+    <TR>
+      <TD><B>/Fi<i>file</i></B></TD>
+      <TD>Force <i>file</i> to be included.
+      </TD></TR>
+    <TR>
+      <TD><B>/Fl[[<i>filename</i>]]</B></TD>
+      <TD>Generates an assembled code listing. See /Sf.
+      </TD></TR>
+    <TR>
+      <TD><B>/Fo<i>filename</i></B></TD>
+      <TD>Names an object file.
+      </TD></TR>
+    <TR>
+      <TD><B>/Fw<i>filename</i></B></TD>
+      <TD>Set errors file name.
+      </TD></TR>
+    <TR>
+      <TD><B>/FPi</B></TD>
+      <TD>Generates emulator fix-ups for floating-point arithmetic (mixed language only).
+      </TD></TR>
+    <TR>
+      <TD><B>/FPi87</B></TD>
+      <TD>80x87 instructions (default).
+      </TD></TR>
+    <TR>
+      <TD><B>/fpc</B></TD>
+      <TD>Disallow floating-point instructions.
+      </TD></TR>
+    <TR>
+      <TD><B>/fp<i>n</i></B></TD>
+      <TD>Set FPU: 0=8087, 2=80287, 3=80387.
+      </TD></TR>
+    <TR>
+      <TD><B>/Gc</B></TD>
+      <TD>Specifies use of FORTRAN- or Pascal-style function calling and naming conventions. Same as <b>OPTION LANGUAGE:PASCAL</b>.
+      </TD></TR>
+    <TR>
+      <TD><B>/Gd</B></TD>
+      <TD>Specifies use of C-style function calling and naming conventions. Same as <b>OPTION LANGUAGE:C</b>.
+      </TD></TR>
+    <TR>
+      <TD><B>/gui</B></TD>
+      <TD>Link switch used with <B>/pe</B> -- subsystem:windows.
+      </TD></TR>
+    <TR>
+      <TD><B>/Gv</B></TD>
+      <TD>Specifies use of VECTORCALL-style function calling and naming conventions.
+      </TD></TR>
+    <TR>
+      <TD><B>/Gz</B></TD>
+      <TD>Specifies use of STDCALL-style function calling and naming conventions. Same as <b>OPTION LANGUAGE:STDCALL</b>.
+      </TD></TR>
+    <TR>
+      <TD><B>/homeparams</B></TD>
+      <TD><code>[<B>-home</B>] [[<B>.win64</B>:[NO]SAVE]]</code> Forces parameters passed in registers to be written to their locations on the stack upon function entry.
+      </TD></TR>
+    <TR>
+      <TD><B>/I<i>pathname</i></B></TD>
+      <TD>Sets path for include file.
+      </TD></TR>
+    <TR>
+      <TD><B>/m[<i>t|s|c|m|l|h|f</i>]</B></TD>
+      <TD>Set memory model.
+      </TD></TR>
+    <TR>
+      <TD><B>/mz</B></TD>
+      <TD>Generate DOS MZ binary file.
+      </TD></TR>
+    <TR>
+      <TD><B>/nc<i>name</i></B></TD>
+      <TD>Set class name of code segment.
+      </TD></TR>
+    <TR>
+      <TD><B>/nd<i>name</i></B></TD>
+      <TD>Set name of data segment.
+      </TD></TR>
+    <TR>
+      <TD><B>/nm<i>name</i></B></TD>
+      <TD>Set name of module.
+      </TD></TR>
+    <TR>
+      <TD><B>/nt<i>name</i></B></TD>
+      <TD>Set name of text segment.
+      </TD></TR>
+    <TR>
+      <TD><B>/nologo</B></TD>
+      <TD>Suppresses messages for successful assembly.
+      </TD></TR>
+    <TR>
+      <TD><B>/omf</B></TD>
+      <TD>Generates object module file format (OMF) type of object module.
+      </TD></TR>
+    <TR>
+      <TD><B>/pe</B></TD>
+      <TD>Generate PE binary file, 32/64-bit.
+      </TD></TR>
+    <TR>
+      <TD><B>/pf</B></TD>
+      <TD>Preserve Flags (Epilogue/Invoke).
+      </TD></TR>
+    <TR>
+      <TD><B>/q</B></TD>
+      <TD>Suppress copyright message.
+      </TD></TR>
+    <TR>
+      <TD><B>/r</B></TD>
+      <TD>Recurse subdirectories with use of wild args.
+      </TD></TR>
+    <TR>
+      <TD><B>/Sa</B></TD>
+      <TD>Turns on listing of all available information.
+      </TD></TR>
+    <TR>
+      <TD><B>/safeseh</B></TD>
+      <TD>Marks the object as either containing no exception handlers or containing exception handlers that are all declared with SAFESEH.
+      </TD></TR>
+    <TR>
+      <TD><B>/Sf</B></TD>
+      <TD>Adds first-pass listing to listing file.
+      </TD></TR>
+    <TR>
+      <TD><B>/Sg</B></TD>
+      <TD>Turns on listing of assembly-generated code.
+      </TD></TR>
+    <TR>
+      <TD><B>/Sn</B></TD>
+      <TD>Turns off symbol table when producing a listing.
+      </TD></TR>
+    <TR>
+      <TD><B>/Sp[n]</B></TD>
+      <TD>Set segment alignment.
+      </TD></TR>
+    <TR>
+      <TD><B>/stackalign</B></TD>
+      <TD><code>[<B>-stac</B>] [[<B>.win64</B>:[NO]ALIGN]]</code> Align stack variables to 16-byte.
+      </TD></TR>
+    <TR>
+      <TD><B>/swc</B></TD>
+      <TD>Specifies use of <a href="../directive/dot_switch.htm">C-style</a> .SWITCH convention (default).
+      </TD></TR>
+    <TR>
+      <TD><B>/swn</B></TD>
+      <TD>No jump-table creation in <a href="../directive/dot_switch.htm">.SWITCH</a>.
+      </TD></TR>
+    <TR>
+      <TD><B>/swp</B></TD>
+      <TD>Specifies use of Pascal-style .SWITCH convention (auto break).
+      </TD></TR>
+    <TR>
+      <TD><B>/swr</B></TD>
+      <TD>Allows use of register [R|E]AX in .SWITCH code.
+      </TD></TR>
+    <TR>
+      <TD><B>/swt</B></TD>
+      <TD>Allows use of jump-table creation in .SWITCH code (default).
+      </TD></TR>
+    <TR>
+      <TD><B>/Sx</B></TD>
+      <TD>Turns on false conditionals in listing.
+      </TD></TR>
+    <TR>
+      <TD><B>/w</B></TD>
+      <TD>Same as /W0.
+      </TD></TR>
+    <TR>
+      <TD><B>/W</B><I>level</I></B></TD>
+      <TD>Sets the warning level, where <I>level</I> = 0, 1, 2, or 3.
+      </TD></TR>
+    <TR>
+      <TD><B>/win64</B></TD>
+      <TD>Generate 64-bit COFF object.
+      </TD></TR>
+    <TR>
+      <TD><B>/ws[<i>CodePage</i>]</B></TD>
+      <TD>Store quoted strings as Unicode. See <a href="../directive/opt_wstring.htm">OPTION WSTRING</a>.
+      </TD></TR>
+    <TR>
+      <TD><B>/WX</B></TD>
+      <TD>Returns an error code if warnings are generated.
+      </TD></TR>
+    <TR>
+      <TD><B>/X</B></TD>
+      <TD>Ignore INCLUDE environment path.
+      </TD></TR>
+    <TR>
+      <TD><B>/Xc</B></TD>
+      <TD>Disable Asmc extensions.
+      </TD></TR>
+    <TR>
+      <TD><B>/zcw</B></TD>
+      <TD>No decoration for C symbols.
+      </TD></TR>
+    <TR>
+      <TD><B>/Zd</B></TD>
+      <TD>Generates line-number information in object file.
+      </TD></TR>
+    <TR>
+      <TD><B>/Zf</B></TD>
+      <TD>Make all symbols public.
+      </TD></TR>
+    <TR>
+      <TD><B>/zf[0|1]</B></TD>
+      <TD>Set FASTCALL type: MS/OW.
+      </TD></TR>
+    <TR>
+      <TD><B>/Zg</B></TD>
+      <TD>Generate code to match Masm.
+      </TD></TR>
+    <TR>
+      <TD><B>/Zi[0|1|2|3]</B></TD>
+      <TD>Add symbolic debug info.
+      </TD></TR>
+    <TR>
+      <TD><B>/zlc</B></TD>
+      <TD>No OMF records of data in code.
+      </TD></TR>
+    <TR>
+      <TD><B>/zld</B></TD>
+      <TD>No OMF records of far call.
+      </TD></TR>
+    <TR>
+      <TD><B>/zlf</B></TD>
+      <TD>Suppress items in COFF: No file entry.
+      </TD></TR>
+    <TR>
+      <TD><B>/zlp</B></TD>
+      <TD>Suppress items in COFF: No static procs.
+      </TD></TR>
+    <TR>
+      <TD><B>/zls</B></TD>
+      <TD>Suppress items in COFF: No section aux entry.
+      </TD></TR>
+    <TR>
+      <TD><B>/Zm</B></TD>
+      <TD>Enable MASM 5.10 compatibility.
+      </TD></TR>
+    <TR>
+      <TD><B>/Zne</B></TD>
+      <TD>Disable non Masm extensions.
+      </TD></TR>
+    <TR>
+      <TD><B>/Zp[[alignment]]</B></TD>
+      <TD>Packs structures on the specified byte boundary.
+      </TD></TR>
+    <TR>
+      <TD><B>/Zs</B></TD>
+      <TD>Perform syntax check only.
+      </TD></TR>
+    <TR>
+      <TD><B>/zt<0|1|2></B></TD>
+      <TD>Set STDCALL decoration.
+      </TD></TR>
+    <TR>
+      <TD><B>/Zv8</B></TD>
+      <TD>Enable Masm v8+ PROC visibility.
+      </TD></TR>
+    <TR>
+      <TD><B>/zze</B></TD>
+      <TD>No export symbol decoration.
+      </TD></TR>
+    <TR>
+      <TD><B>/zzs</B></TD>
+      <TD>Store name of start address.
+      </TD></TR>
+ </TABLE>
+
+<p><I>filename</I></p>
+
+  <DD>The name of the file.</DD>
+
+<H4>Environment Variables</H4>
+ <TABLE cellSpacing=5>
+  <TR vAlign=top>
+    <TD>INCLUDE</TD>
+    <TD>Specifies search path for include files.</TD></TR>
+  <TR>
+    <TD>ASMC</TD>
+    <TD>Specifies default command-line options.</TD></TR>
+  <TR>
+    <TD>TEMP</TD>
+    <TD>Specifies path for temporary files.</TD>
+  </TR>
+ </TABLE>
+
+
+<H4>See Also</H4>
+<A href="../error/error.htm">ASMC Error Messages</A>
+</BODY></HTML>

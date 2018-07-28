@@ -1,0 +1,26 @@
+<HTML><HEAD><TITLE>IF</TITLE></HEAD>
+<link href="../style.css" rel="stylesheet" type="text/css">
+<BODY>
+Asmc Macro Assembler Reference
+<H3>IF</H3>
+
+<pre><b>IF</b> <i>expression1</i>
+   <i>ifstatements</i>
+   [[<b>ELSEIF</b> <i>expression2</i>
+      <i>elseifstatements</i>]]
+   [[<b>ELSE</b>
+      <i>elsestatements</i>]]
+   <b>ENDIF</b></pre>
+
+<p>Grants assembly of <i>ifstatements</i> if <i>expression1</i> is true (nonzero)
+or <i>elseifstatements</i> if <i>expression1</i> is false (0) and <i>expression2</i> is true.</p>
+
+<p>The following directives may be substituted for ELSEIF: ELSEIFB, ELSEIFDEF,
+ELSEIFDIF, ELSEIFDIFI, ELSEIFE, ELSEIFIDN, ELSEIFIDNI, ELSEIFNB, and ELSEIFNDEF.
+Optionally, assembles elsestatements if the previous expression is false. Note
+that the expressions are evaluated at assembly time.</p>
+
+<h4>See Also</h4>
+<a href="index.htm">Directives Reference</a>
+</BODY>
+</HTML>

@@ -7,21 +7,23 @@ include quadmath.inc
 
 subq proc vectorcall uses rsi rdi rbx A:XQFLOAT, B:XQFLOAT
 
-    movq    rbx,xmm1
-    shufpd  xmm1,xmm1,1
-    movq    rdi,xmm1
+    movq    rax,xmm0
+    movhlps xmm0,xmm0
+    movq    rdx,xmm0
+    movaps  xmm0,xmm1
+    movq    rbx,xmm0
+    movhlps xmm0,xmm0
+    movq    rdi,xmm0
+
     shld    rsi,rdi,16
     shld    rdi,rbx,16
     shl     rbx,16
-    mov     eax,esi
-    and     eax,Q_EXPMASK
-    neg     eax
+    mov     r8d,esi
+    and     r8d,Q_EXPMASK
+    neg     r8d
     rcr     rdi,1
     rcr     rbx,1
 
-    movq    rax,xmm0
-    shufpd  xmm0,xmm0,1
-    movq    rdx,xmm0
     shld    rsi,rdx,16
     shld    rdx,rax,16
     shl     rax,16
@@ -177,9 +179,9 @@ done:
     rcl     rdx,1
     shrd    rax,rdx,16
     shrd    rdx,rsi,16
-    movq    xmm1,rdx
-    movq    xmm0,rax
-    shufpd  xmm0,xmm1,0
+    mov     qword ptr A[0],rax
+    mov     qword ptr A[8],rdx
+    movaps  xmm0,A
 toend:
     ret
 

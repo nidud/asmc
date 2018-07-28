@@ -1,0 +1,20 @@
+<HTML><HEAD><TITLE>LOCAL</TITLE></HEAD>
+<link href="../style.css" rel="stylesheet" type="text/css">
+<BODY>
+Asmc Macro Assembler Reference
+<H3>LOCAL</H3>
+
+<pre><b>LOCAL</b> localname [[, localname]]...</pre>
+<pre><b>LOCAL</b> label [[ [count ] ]] [[:type]] [[, label [[ [count] ]] [[type]]]]...</pre>
+
+<p>In the first directive, within a macro, <b>LOCAL</b> defines labels that are unique
+to each instance of the macro.</p>
+
+<p>In the second directive, within a procedure definition (<b>PROC</b>), <b>LOCAL</b> creates
+stack-based variables that exist for the duration of the procedure. The label
+may be a simple variable or an array containing count elements.</p>
+
+<h4>See Also</h4>
+<a href="index.htm">Directives Reference</a>
+</BODY>
+</HTML>

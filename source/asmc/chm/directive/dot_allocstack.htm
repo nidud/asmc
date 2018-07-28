@@ -1,0 +1,58 @@
+<HTML><HEAD><TITLE>.ALLOCSTACK</TITLE></HEAD>
+<link href="../style.css" rel="stylesheet" type="text/css">
+<BODY>
+Asmc Macro Assembler Reference
+<H2>.ALLOCSTACK</H2>
+
+<p>Generates a UWOP_ALLOC_SMALL or a UWOP_ALLOC_LARGE with the specified size
+for the current offset in the prologue.</p>
+
+<pre><b>.ALLOCSTACK</b> size</pre>
+
+<p>.ALLOCSTACK allows users to specify how a frame function unwinds and is only
+allowed within the prologue, which extends from the PROC FRAME declaration to
+the <a href="dot_endprolog.htm">.ENDPROLOG</a> directive. These directives do not generate code; they only
+generate .xdata and .pdata. .ALLOCSTACK should be preceded by instructions that
+actually implement the actions to be unwound. It is a good practice to wrap both
+the unwind directives and the code they are meant to unwind in a macro to ensure
+agreement.</p>
+
+<p>The size operand must be a multiple of 8.</p>
+
+<p><b>Sample</b></p>
+
+<p>The following sample shows how to specify an unwind/exception handler:</p>
+<pre>
+
+; asmc -win64 test.asm
+; link /entry:main /subsystem:console test.obj
+
+    .code
+
+unwind proc
+
+   ; exception/unwind handler body
+
+   ret
+
+unwind endp
+
+main proc frame : unwind
+
+    sub rsp,16
+    .allocstack 16
+    .endprolog
+
+    ; function body
+    add rsp,16
+    ret
+
+main endp
+
+    end
+</pre>
+
+<h4>See Also</h4>
+<a href="index.htm">Directives Reference</a>
+</BODY>
+</HTML>

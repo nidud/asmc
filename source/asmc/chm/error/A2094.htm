@@ -1,0 +1,27 @@
+<html><head><title>ASMC Nonfatal Error A2094</title></head>
+<link href="../style.css" rel="stylesheet" type="text/css">
+<body>
+Asmc Macro Assembler Reference
+<h2>ASMC Nonfatal Error A2094</h2>
+
+<h4>operand must be relocatable</h4>
+
+<p>An operand was not relative to a label.
+One of the following occurred:</p>
+
+<UL>
+    <li>An operand specified with the END directive was not relative to a
+    label.</li>
+    <li>An operand to the SEG operator was not relative to a label.</li>
+    <li>The right operand to the minus operator was relative to a label, but
+    the left operand was not.</li>
+    <li>The operands to a relational operator were either not both integer
+    constants or not both memory operands. Relational operators can take
+    operands that are both addresses or both non-addresses but not one of
+    each.</li>
+</UL>
+
+<small><i>* ML 6.0 compatible error</i></small>
+<h4>See Also</h4>
+<A href="index.htm">ASMC Error Messages</A>
+</BODY></HTML>

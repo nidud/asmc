@@ -1,0 +1,73 @@
+<HTML><HEAD><TITLE>.CLASSDEF</TITLE></HEAD>
+<link href="../style.css" rel="stylesheet" type="text/css">
+<BODY>
+Asmc Macro Assembler Reference
+<H2>.CLASSDEF</H2>
+
+<p><b>.CLASSDEF</b> <i>name</i> [args]</p>
+
+<p>Declares a structure type for a <a href="dot_comdef.htm">COM interface</a>.</p>
+
+<p>.CLASSDEF adds the following types:</p>
+<pre>
+.classdef Class
+  <font color="#008040">* LPCLASS typedef ptr Class
+  * LPCLASSVtbl typedef ptr ClassVtbl
+  * Class@Class proto :ptr Class
+  * Class struct 8
+  * lpVtbl LPCLASSVtbl ?</font>
+</pre>
+
+<p>Release() is added as the first method:</p>
+<pre>
+
+    Method1 proc local  ; static
+    Method2 proc :ptr   ; first virtual function
+  <font color="#008040">* Class ends
+  * ClassVtbl struct
+  * T$000B typedef proto :ptr Class
+  * P$000B typedef ptr T$000B
+  * Release P$000B ?
+  * T$000B typedef proto :ptr Class
+  * P$000B typedef ptr T$000B
+  * Method2 P$000B ?</font>
+</pre>
+
+<p>To define a method locally in the base class the keyword LOCAL may be used.
+Locally defined functions are called directly without the _this argument omitted.</p>
+
+<pre>
+    assume rcx:LPCLASS
+
+foo proc
+
+  local p:LPCLASS
+
+    [rcx].Method1()
+    [rcx].Method2(rdx)
+    [rcx].Release()
+    ret
+
+foo endp
+</pre>
+
+<p>Code produced:</p>
+
+<pre>
+   0: 55            push   rbp
+   1: 48 8b ec      mov    rbp,rsp
+   4: 48 83 ec 30   sub    rsp,0x30
+   8: ff 51 10      call   QWORD PTR [rcx+0x10]
+   b: 48 8b 01      mov    rax,QWORD PTR [rcx]
+   e: ff 50 08      call   QWORD PTR [rax+0x8]
+  11: 48 8b 01      mov    rax,QWORD PTR [rcx]
+  14: ff 10         call   QWORD PTR [rax]
+  16: c9            leave
+  17: c3            ret
+</pre>
+
+<h4>See Also</h4>
+<a href="dot_ends.htm">.ENDS</a> |
+<a href="dot_comdef.htm">.COMDEF</a>
+</BODY>
+</HTML>

@@ -1,0 +1,21 @@
+<html><head><title>ASMC Warning A7007</title></head>
+<link href="../style.css" rel="stylesheet" type="text/css">
+<body>
+Asmc Macro Assembler Reference
+<h2>ASMC Warning A7007</h2>
+
+<h4>.CASE without .ENDC: assumed fall through</h4>
+
+<p>In case OPTION SWITCH:C is set (default)</p>
+
+<pre>
+	.switch eax
+	  .case 1 : mov al,1	; warning
+	  .case 2 : .endc
+	.endsw
+</pre>
+
+<small><i>* Non ML compatible warning</i></small>
+<h4>See Also</h4>
+<A href="index.htm">ASMC Error Messages</A>
+</BODY></HTML>

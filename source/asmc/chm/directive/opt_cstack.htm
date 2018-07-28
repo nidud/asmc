@@ -1,0 +1,36 @@
+<HTML><HEAD><TITLE>OPTION CSTACK</TITLE></HEAD>
+<link href="../style.css" rel="stylesheet" type="text/css">
+<BODY>
+Asmc Macro Assembler Reference
+<H2>OPTION CSTACK</H2>
+
+<pre><b>OPTION CSTACK</b>:[ ON | OFF ]</pre>
+
+<p>The <b>CSTACK</b> option change the stack frame creation on a <a href="proc.htm">PROC</a>
+entry if the <b>USES</b> clause is used. If set the registers will be pushed before
+the stack frame is created and popped after the stack is restored.
+The default setting is OFF.
+
+<h4>Sample</h4>
+
+<p>The following sample shows how to use the command line argument -<b>Cs</b>
+to create a re-sizable stack:</p>
+<pre>
+; asmc -pe -win64 -Cs foo.asm
+
+    .code
+
+foo proc uses rsi rdi a1:byte
+
+    mov al,a1
+    ret
+
+foo endp
+
+    end foo
+</pre>
+
+<h4>See Also</h4>
+<a href="index.htm">Directives Reference</a>
+</BODY>
+</HTML>

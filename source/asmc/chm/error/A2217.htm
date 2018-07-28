@@ -1,0 +1,36 @@
+<html><head><title>ASMC Nonfatal Error A2217</title></head>
+<link href="../style.css" rel="stylesheet" type="text/css">
+<body>
+Asmc Macro Assembler Reference
+<h2>ASMC Nonfatal Error A2217</h2>
+
+<h4>must be public or external</h4>
+
+<p>An alternate symbol was not public or external.</p>
+
+<p>Example</p>
+
+<p>The code sample below would generate A2217 if the line:</p>
+<pre>
+	public	alternate
+</pre>
+<p>were not present.</p>
+<pre>
+	.686
+	.model	flat
+
+	extrn	primary(alternate):near
+
+	.code
+
+	public	alternate
+alternate:
+	ret
+
+	end
+</pre>
+
+<small><i>* ML 8 compatible error</i></small>
+<h4>See Also</h4>
+<A href="index.htm">ASMC Error Messages</A>
+</BODY></HTML>

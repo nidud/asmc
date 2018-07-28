@@ -7,10 +7,7 @@ include quadmath.inc
 
 fabsq proc vectorcall Q:XQFLOAT
 
-    mov     rax,0x7FFFFFFFFFFFFFFF
-    movq    xmm1,rax
-    shufps  xmm1,xmm1,01000000B
-    andps   xmm0,xmm1
+    andps xmm0,FLTQ(0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
     ret
 
 fabsq endp

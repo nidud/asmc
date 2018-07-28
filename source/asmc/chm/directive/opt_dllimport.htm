@@ -1,0 +1,61 @@
+<HTML><HEAD><TITLE>OPTION DLLIMPORT</TITLE></HEAD>
+<link href="../style.css" rel="stylesheet" type="text/css">
+<BODY>
+Asmc Macro Assembler Reference
+<H3>OPTION DLLIMPORT</H3>
+
+<p>This option makes the assembler assume that all PROTOs that follow
+this directive represent functions located in a dll. Syntax:</p>
+
+<pre><b>OPTION DLLIMPORT</b>:&lt;dll_name&gt; | NONE</pre>
+
+<p>&lt;dll_name&gt; must be enclosed in angle brackets. Argument NONE
+will switch back to the default mode.</p>
+
+<h4>Sample</h4>
+
+<p>The following sample builds two files with the following command:</p>
+
+<pre>asmc -pe -win64 main.asm -Fo extern.dll extern.asm</pre>
+
+The dll file imports printf() and export dllproc():
+
+<pre>
+    .code ; extern.asm
+
+    option dllimport:&lt;msvcrt&gt;
+    printf proto :ptr, :vararg
+
+dllproc proc export
+    printf("dllproc() called\n")
+    ret
+dllproc endp
+
+DllMain::
+    mov eax,1
+    ret
+    end DllMain
+</pre>
+
+The main file import exit() and dllproc():
+
+<pre>
+    .code ; main.asm
+
+    option dllimport:&lt;msvcrt&gt;
+    exit proto :dword
+    option dllimport:&lt;extern&gt;
+    dllproc proto
+
+main proc
+    dllproc()
+    exit(0)
+main endp
+
+    end main
+</pre>
+
+<h4>See Also</h4>
+<a href="index.htm">Directives Reference</a>
+</BODY>
+</HTML>

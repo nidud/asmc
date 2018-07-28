@@ -474,6 +474,7 @@ endif
                     ; output in big hex.
                     ;
                     mov edi,size_t * 2
+                    or  esi,FL_I64
                     ;
                     ; DROP THROUGH to hex formatting
                     ;

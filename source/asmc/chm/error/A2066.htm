@@ -1,0 +1,19 @@
+<html><head><title>ASMC Nonfatal Error A2066</title></head>
+<link href="../style.css" rel="stylesheet" type="text/css">
+<body>
+Asmc Macro Assembler Reference
+<h2>ASMC Nonfatal Error A2066</h2>
+
+<h4>incompatible CPU mode and segment size</h4>
+
+<p>An attempt was made to open a segment with a USE16, USE32, or FLAT
+attribute that was not compatible with the specified CPU, or to change
+to a 16-bit CPU while in a 32bit segment.</p>
+
+<p>The USE32 and FLAT attributes must be preceded by one of the following
+processor directives: .386, .386C, .386P, .486, or .486P.</p>
+
+<small><i>* ML 6.0 compatible error</i></small>
+<h4>See Also</h4>
+<A href="index.htm">ASMC Error Messages</A>
+</BODY></HTML>

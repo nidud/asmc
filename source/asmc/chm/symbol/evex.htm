@@ -1,0 +1,22 @@
+<HTML><HEAD><TITLE>{evex}</TITLE></HEAD>
+<link href="../style.css" rel="stylesheet" type="text/css">
+<BODY>
+Asmc Macro Assembler Reference
+<H2>Enhanced vector extension</H2>
+
+<pre>{<b>evex</b>}</pre>
+
+<p>
+The EVEX encoding prefix will be omitted by using an EVEX exclusive
+instruction or any of the extended SIMD registers. A preceding prefix
+(<b>{evex}</b>) may be used for EVEX encoding of other instructions.</p>
+<pre>
+    vcomisd xmm0,xmm1        ; normal
+    vcomisd xmm0,xmm16       ; prefix (auto)
+    {evex} vcomisd xmm0,xmm1 ; prefix
+</pre>
+
+<h4>See Also</h4>
+<a href="index.htm">Symbols Reference</a>
+</BODY>
+</HTML>

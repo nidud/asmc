@@ -7,21 +7,23 @@ include quadmath.inc
 
 mulq proc vectorcall uses rsi rdi rbx A:XQFLOAT, B:XQFLOAT
 
-    movq    rbx,xmm1
-    movhlps xmm1,xmm1
-    movq    rcx,xmm1
-    shld    rsi,rcx,16
-    shld    rcx,rbx,16
-    shl     rbx,16
-    mov     eax,esi
-    and     eax,Q_EXPMASK
-    neg     eax
-    rcr     rcx,1
-    rcr     rbx,1
-
     movq    rax,xmm0
     movhlps xmm0,xmm0
     movq    rdx,xmm0
+    movaps  xmm0,xmm1
+    movq    rbx,xmm0
+    movhlps xmm0,xmm0
+    movq    rcx,xmm0
+
+    shld    rsi,rcx,16
+    shld    rcx,rbx,16
+    shl     rbx,16
+    mov     r8d,esi
+    and     r8d,Q_EXPMASK
+    neg     r8d
+    rcr     rcx,1
+    rcr     rbx,1
+
     shld    rsi,rdx,16
     shld    rdx,rax,16
     shl     rax,16
@@ -140,10 +142,9 @@ done:
     rcl     rdx,1
     shrd    rax,rdx,16
     shrd    rdx,rsi,16
-    movq    xmm1,rdx
-    movq    xmm0,rax
-    shufpd  xmm0,xmm1,0
-
+    mov     qword ptr A[0],rax
+    mov     qword ptr A[8],rdx
+    movaps  xmm0,A
 toend:
     ret
 

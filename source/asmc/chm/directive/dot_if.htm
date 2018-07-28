@@ -1,0 +1,28 @@
+<HTML><HEAD><TITLE>.IF</TITLE></HEAD>
+<link href="../style.css" rel="stylesheet" type="text/css">
+<BODY>
+Asmc Macro Assembler Reference
+<H2>.IF</H2>
+
+<PRE>
+<B>.IF</B> <I>condition1</I>
+   <I>statements</I>
+   [[<B>.ELSEIF</B> <I>condition2</I>
+      <I>statements</I>]]
+   [[<B>.ELSE</B>
+      <I>statements</I>]]
+   <B>.ENDIF</B>
+</PRE>
+
+<p>Generates code that tests <I>condition1</I> (for example, AX > 7) and executes the
+<I>statements</I> if that condition is true. If a .ELSE follows, its statements are
+executed if the original condition was false. Note that the conditions are
+evaluated at run time.</p>
+
+<h4>See Also</h4>
+<a href="index.htm">Directives Reference</a> |
+<a href="flags.htm">Flag conditions</a> |
+<a href="signed.htm">Signed compare</a> |
+<a href="return.htm">Return code</a>
+</BODY>
+</HTML>

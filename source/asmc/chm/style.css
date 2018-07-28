@@ -1,0 +1,59 @@
+body
+{
+  FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif;
+  FONT-SIZE: 80%;
+  COLOR: Black;
+  PADDING: 0px 0px 0px 20px;
+}
+h1, h2, h3, h4
+{
+  FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif;
+}
+h1
+{
+  FONT-SIZE: 160%;
+  MARGIN-LEFT: -20px;
+}
+h2
+{
+  FONT-SIZE: 140%;
+  MARGIN-LEFT: -10px;
+}
+h3
+{
+  FONT-SIZE: 130%;
+  MARGIN-LEFT: -10px;
+}
+h4
+{
+  FONT-SIZE: 110%;
+}
+table
+{
+  FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif;
+  FONT-SIZE: 100%;
+}
+td
+{
+  VERTICAL-ALIGN: top;
+}
+a
+{
+  TEXT-DECORATION: none;
+}
+a:hover
+{
+    COLOR: #ffffff;
+    BACKGROUND: #1b2466;
+}
+pre
+{
+  WIDTH: 96%;
+  PADDING: 4px 10px;
+  FONT-SIZE: 120%;
+}
+code
+{
+  WIDTH: 96%;
+  PADDING: 4px 10px;
+}

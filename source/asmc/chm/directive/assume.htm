@@ -1,0 +1,21 @@
+<HTML><HEAD><TITLE>ASSUME</TITLE></HEAD>
+<link href="../style.css" rel="stylesheet" type="text/css">
+<BODY>
+Asmc Macro Assembler Reference
+<H3>ASSUME</H3>
+<pre>
+<b>ASSUME</b> segregister:name [[, segregister:name]]...
+<b>ASSUME</b> dataregister:type [[, dataregister:type]]...
+<b>ASSUME</b> register:ERROR [[, register:ERROR]]...
+<b>ASSUME</b> [[register:]] NOTHING [[, register:NOTHING]]...
+</pre>
+
+<p>Enables error checking for register values. After an ASSUME is put into
+effect, the assembler watches for changes to the values of the given registers.
+ERROR generates an error if the register is used. NOTHING removes register
+error checking. You can combine different kinds of assumptions in one statement.</p>
+
+<h4>See Also</h4>
+<a href="index.htm">Directives Reference</a>
+</BODY>
+</HTML>

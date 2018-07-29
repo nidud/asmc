@@ -9,21 +9,17 @@ Asmc Macro Assembler Reference
 <B>.ASSERT</B>:[&lt;handler&gt; | ON | OFF | PUSH | POP | PUSHF | POPF | CODE | ENDS]
 </pre>
 
-<H3>Options</H3>
+<H4>Options</H4>
 
-<DD>
-  <TABLE width="80">
-    <TR vAlign=top; width="80">
-      <TD width="25"><B>ON/OFF</B></TD>
-      <TD width="75">Main switch.</TD>
-    </TR>
-    <TR><TD><B>PUSH/POP</B></TD><TD>Save and restore the ASMC flag. Stack level is 128.</TD></TR>
-    <TR><TD><B>PUSHF/POPF</B></TD><TD>Toggles using PUSHF[D|Q] before calling handler.</TD></TR>
-    <TR><TD><B>CODE/ENDS</B></TD><TD>Assemble code section if ASSERT is ON.</TD></TR>
-    <TR><TD><B>Handler</B></TD><TD>
+<DD><TABLE cellSpacing=5>
+  <TR vAlign=top><TD><B>ON/OFF</B></TD><TD>Main switch.</TD></TR>
+  <TR><TD><B>PUSH/POP</B></TD><TD>Save and restore the ASMC flag. Stack level is 128.</TD></TR>
+  <TR><TD><B>PUSHF/POPF</B></TD><TD>Toggles using PUSHF[D|Q] before calling handler.</TD></TR>
+  <TR><TD><B>CODE/ENDS</B></TD><TD>Assemble code section if ASSERT is ON.</TD></TR>
+  <TR><TD><B>Handler</B></TD><TD>
     The assert macro calls this routine if <I>expression</I> is not
     true. The default handler name is <I>assert_exit</I>.</TD></TR>
-  </TABLE>
+</TABLE></DD>
 
 <h4>See Also</h4>
 <a href="index.htm">Directives Reference</a> |

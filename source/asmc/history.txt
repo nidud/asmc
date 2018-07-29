@@ -3,6 +3,8 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.27 - xx xxx 2018
+- added asmc64
+- removed .amd64 and .win64
 - added fix for flags (ZERO? || CARRY?) in hll
 - fixed bug in using double 0.0 as argument -- asin(0.0)
 - allowed support for movq rax,xmm0

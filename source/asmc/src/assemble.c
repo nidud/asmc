@@ -60,7 +60,9 @@ jmp_buf jmpenv;
 
 extern int_32 LastCodeBufSize;
 extern char *DefaultDir[NUM_FILE_TYPES];
+#ifndef __ASMC64__
 extern const char *ModelToken[];
+#endif
 extern int MacroLocals;
 
 /* parameters for output formats. order must match enum oformat */
@@ -436,7 +438,9 @@ static void ModulePassInit( void )
     if ( UseSavedState == FALSE ) {
 	ModuleInfo.langtype = Options.langtype;
 	ModuleInfo.fctype = Options.fctype;
+#ifndef __ASMC64__
 	if ( ModuleInfo.sub_format == SFORMAT_64BIT ) {
+#endif
 	    /* v2.06: force cpu to be at least P_64, without side effect to Options.cpu */
 	    if ( ( cpu &  P_CPU_MASK ) < P_64 ) /* enforce cpu to be 64-bit */
 		cpu = P_64;
@@ -450,6 +454,7 @@ static void ModulePassInit( void )
 		else
 		    ModuleInfo.langtype = LANG_SYSCALL;
 	    }
+#ifndef __ASMC64__
 	} else
 	    /* if model FLAT is to be set, ensure that cpu is compat. */
 	    if ( model == MODEL_FLAT && ( cpu & P_CPU_MASK ) < P_386 ) /* cpu < 386? */
@@ -459,10 +464,17 @@ static void ModulePassInit( void )
 	/* table ModelToken starts with MODEL_TINY, which is index 1"" */
 	if ( model != MODEL_NONE )
 	    AddLineQueueX( "%r %s", T_DOT_MODEL, ModelToken[model - 1] );
+#else
+	SetCPU( cpu );
+#endif
     }
 
     SetMasm510( Options.masm51_compat );
+#ifndef __ASMC64__
     ModuleInfo.defOfssize = USE16;
+#else
+    ModuleInfo.defOfssize = USE64;
+#endif
     ModuleInfo.ljmp	= TRUE;
 
     ModuleInfo.list   = Options.write_listing;
@@ -950,16 +962,6 @@ static void AssembleFini( void )
 	CurrFName[i] = NULL;
     }
     MemFini();
-}
-
-void RewindToWin64( void )
-{
-    if ( Options.output_format != OFORMAT_BIN )
-	Options.output_format = OFORMAT_COFF;
-    else
-	Options.langtype = LANG_FASTCALL;
-    Options.sub_format = SFORMAT_64BIT;
-    longjmp( jmpenv, 1 );
 }
 
 /* AssembleModule() assembles one source file */

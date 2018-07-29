@@ -212,6 +212,7 @@ directive/real4.htm
 directive/real8.htm
 directive/record.htm
 directive/repeat.htm
+directive/retm.htm
 directive/return.htm
 directive/segment.htm
 directive/signed.htm

@@ -596,7 +596,7 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
 	    size = psize;
 	} else if ( opnd->mem_type != MT_EMPTY ) {
 	    size = SizeFromMemtype( opnd->mem_type, USE64, opnd->type );
-	} else if ( opnd->kind == EXPR_ADDR && opnd->sym->state == SYM_UNDEFINED ) {
+	} else if ( opnd->kind == EXPR_ADDR && ( !opnd->sym || opnd->sym->state == SYM_UNDEFINED ) ) {
 	    size = psize;
 	} else
 	    size = ( opnd->instr == T_OFFSET ? 8 : 4 );

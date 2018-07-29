@@ -14,7 +14,9 @@ res( MACINT,	StubDir )	   /* "internal macro" directives EXITM, ENDM, GOTO */
 res( DATADIR,	StubDir )	   /* "data" directives DB, DW, DD, ... */
 res( END,	EndDirective )
 res( ERRDIR,	ErrorDirective )   /* v2.05: no longer preprocessor directives */
+#ifndef __ASMC64__
 res( CPU,	CpuDirective )
+#endif
 res( LISTING,	ListingDirective )
 res( LISTMAC,	ListMacroDirective )
 res( SEGORDER,	SegOrderDirective )
@@ -22,8 +24,12 @@ res( SIMSEG,	SimplifiedSegDir )
 res( HLLSTART,	HllStartDir )
 res( HLLEXIT,	HllExitDir )
 res( HLLEND,	HllEndDir )
+#ifndef __ASMC64__
 res( STARTEXIT, StartupExitDirective )
+#endif
+#ifndef __ASMC64__
 res( MODEL,	ModelDirective )
+#endif
 res( RADIX,	RadixDirective )
 res( SAFESEH,	SafeSEHDirective )
 res( INSTR,	InStrDir )

@@ -51,7 +51,7 @@ OpCls	macro op1, op2, op3
 	echo ;
 include ..\special.h
 	echo ;
-include ..\directve.h
+include directve.inc
 %	echo SPECIAL_LAST	equ @CatStr(%enumval)
 	echo ;
 include ..\instruct.h

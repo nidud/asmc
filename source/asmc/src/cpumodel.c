@@ -26,6 +26,14 @@
 
 #define DOT_XMMARG 0 /* 1=optional argument for .XMM directive */
 
+struct asym *sym_Interface ; /* numeric. requires model */
+struct asym *sym_Cpu	   ; /* numeric. This is ALWAYS set */
+
+const struct format_options coff64_fmtopt = { NULL, COFF64_DISALLOWED, "PE32+" };
+const struct format_options elf64_fmtopt  = { NULL, ELF64_DISALLOWED,  "ELF64" };
+
+#ifndef __ASMC64__
+
 extern const char szDgroup[];
 
 /* prototypes */
@@ -59,11 +67,6 @@ static const struct typeinfo ModelAttrValue[] = {
 static struct asym *sym_CodeSize  ; /* numeric. requires model */
 static struct asym *sym_DataSize  ; /* numeric. requires model */
 static struct asym *sym_Model	  ; /* numeric. requires model */
-struct asym *sym_Interface ; /* numeric. requires model */
-struct asym *sym_Cpu	   ; /* numeric. This is ALWAYS set */
-
-const struct format_options coff64_fmtopt = { NULL, COFF64_DISALLOWED, "PE32+" };
-const struct format_options elf64_fmtopt  = { NULL, ELF64_DISALLOWED,  "ELF64" };
 
 /* find token in a string table */
 
@@ -405,8 +408,6 @@ int SetCPU( enum cpu_info newcpu )
     return( NOT_ERROR );
 }
 
-int SetWin64( int *, struct asm_tok[] );
-
 /* handles
  .8086,
  .[1|2|3|4|5|6]86[p],
@@ -421,30 +422,7 @@ int CpuDirective( int i, struct asm_tok tokenarray[] )
     enum cpu_info newcpu;
     int x;
 
-    if (tokenarray[i].tokval == T_DOT_WIN64) {
-
-	if ( !UseSavedState && Options.sub_format != SFORMAT_64BIT )
-	    RewindToWin64();
-
-	if ( tokenarray[i+1].token == T_COLON ) {
-	    x = i + 2;
-	    SetWin64( &x, tokenarray );
-	}
-	return( NOT_ERROR );
-    }
-
-    if (tokenarray[i].tokval == T_DOT_AMD64)
-	newcpu = GetSflagsSp( T_DOT_X64 );
-    else
-	newcpu = GetSflagsSp( tokenarray[i].tokval );
-
-    if (tokenarray[i].tokval == T_DOT_X64 ||
-	tokenarray[i].tokval == T_DOT_AMD64) {
-	if ( tokenarray[i+1].token == T_COLON ) {
-	    x = i + 2;
-	    SetWin64( &x, tokenarray );
-	}
-    }
+    newcpu = GetSflagsSp( tokenarray[i].tokval );
 
 #if DOT_XMMARG
     .if ( tokenarray[i].tokval == T_DOT_XMM && tokenarray[i+1].token != T_FINAL ) {
@@ -473,3 +451,113 @@ int CpuDirective( int i, struct asm_tok tokenarray[] )
     return( SetCPU( newcpu ) );
 }
 
+#else
+
+static struct asym *AddPredefinedConstant( const char *name, int value )
+{
+    struct asym *sym = CreateVariable( name, value );
+    if (sym)
+	sym->predefined = TRUE;
+    return(sym);
+}
+
+int SetCPU( enum cpu_info newcpu )
+{
+    int temp;
+
+
+    if ( newcpu == P_86 || ( newcpu & P_CPU_MASK ) ) {
+	/* reset CPU and EXT bits */
+	ModuleInfo.curr_cpu &= ~( P_CPU_MASK | P_EXT_MASK | P_PM );
+
+	/* set CPU bits */
+	ModuleInfo.curr_cpu |= newcpu & ( P_CPU_MASK | P_PM );
+
+	/* set default FPU bits if nothing is given and .NO87 not active */
+	if ( ( newcpu & P_FPU_MASK ) == 0 ) {
+	    ModuleInfo.curr_cpu &= ~P_FPU_MASK;
+	    ModuleInfo.curr_cpu |= P_387;
+	}
+
+    }
+    if( newcpu & P_FPU_MASK ) {
+	ModuleInfo.curr_cpu &= ~P_FPU_MASK;
+	ModuleInfo.curr_cpu |= (newcpu & P_FPU_MASK);
+    }
+    /* enable MMX, K3D, SSEx for 64bit cpus */
+    ModuleInfo.curr_cpu |= P_EXT_ALL;
+    if( newcpu & P_EXT_MASK ) {
+	ModuleInfo.curr_cpu &= ~P_EXT_MASK;
+	ModuleInfo.curr_cpu |= (newcpu & P_EXT_MASK);
+    }
+
+    /* set the Masm compatible @Cpu value */
+
+    temp = ModuleInfo.curr_cpu & P_CPU_MASK;
+    ModuleInfo.cpu = M_8086 | M_186 | M_286 | M_386 | M_486 | M_686;
+
+    if ( ModuleInfo.curr_cpu & P_PM )
+	ModuleInfo.cpu = ModuleInfo.cpu | M_PROT;
+
+    ModuleInfo.cpu = ModuleInfo.cpu | M_8087 | M_287 | M_387;
+    ModuleInfo.model = MODEL_FLAT;
+
+    /* Set @Cpu */
+    /* differs from Codeinfo cpu setting */
+    sym_Cpu = (struct asym *)CreateVariable( "@Cpu", ModuleInfo.cpu );
+
+    if ( Options.output_format == OFORMAT_ELF )
+	ModuleInfo.fmtopt = &elf64_fmtopt;
+    else
+	ModuleInfo.fmtopt = &coff64_fmtopt;
+
+    SetModelDefaultSegNames();
+
+    ModuleInfo.offsettype = OT_FLAT;
+
+    if( CurrSeg == NULL )
+	ModuleInfo.defOfssize = USE64;
+    SetOfssize();
+
+    if ( ModuleInfo.langtype == LANG_VECTORCALL )
+	ModuleInfo.fctype = FCT_VEC64;
+    else if ( Options.output_format != OFORMAT_ELF )
+	ModuleInfo.fctype = FCT_WIN64;
+    else
+	ModuleInfo.fctype = FCT_ELF64;
+
+    DefineFlatGroup();
+
+    ModelSimSegmInit( ModuleInfo.model ); /* create segments in first pass */
+    ModelAssumeInit();
+
+    if ( ModuleInfo.list )
+	LstWriteSrcLine();
+    //debug_break();
+
+    if ( Parse_Pass != PASS_1 )
+	return( NOT_ERROR );
+
+    AddPredefinedConstant( "@CodeSize", 0 );
+    AddPredefinedText( "@code", SimGetSegName( SIM_CODE ) );
+    AddPredefinedConstant( "@DataSize", 0 );
+
+    AddPredefinedText( "@data",	 "FLAT" );
+    AddPredefinedText( "@stack", "FLAT" );
+
+    /* Set @Model and @Interface */
+
+    AddPredefinedConstant( "@Model", ModuleInfo.model );
+    sym_Interface = AddPredefinedConstant( "@Interface", ModuleInfo.langtype );
+
+    if ( ( ModuleInfo.fctype == FCT_WIN64 || ModuleInfo.fctype == FCT_VEC64 ) )
+	sym_ReservedStack = AddPredefinedConstant( "@ReservedStack", 0 );
+
+    if ( ModuleInfo.sub_format == SFORMAT_PE ||
+       ( ModuleInfo.sub_format == SFORMAT_64BIT && Options.output_format == OFORMAT_BIN ) )
+	pe_create_PE_header();
+
+    return( NOT_ERROR );
+}
+
+#endif

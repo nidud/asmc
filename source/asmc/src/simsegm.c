@@ -176,8 +176,7 @@ ret_code SimplifiedSegDir( int i, struct asm_tok tokenarray[] )
     struct expr opndx;
 
     if( ModuleInfo.model == MODEL_NONE ) {
-	/* v2.26 - default to /win64 */
-	RewindToWin64();
+
 	return( ERROR );
     }
     LstWrite( LSTTYPE_DIRECTIVE, 0, NULL );

@@ -3,7 +3,7 @@ include string.inc
 
     .code
 
-    .win64:rsp nosave
+    option win64:rsp nosave
 
 cmpwarg proc path:LPSTR, wild:LPSTR
 

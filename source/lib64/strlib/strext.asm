@@ -3,7 +3,7 @@ include strlib.inc
 
     .code
 
-    .win64:rsp nosave
+    option win64:rsp nosave
 
 strext proc uses rsi string:LPSTR
 

@@ -3,7 +3,7 @@ include string.inc
 
     .code
 
-    .win64:rsp
+    option win64:rsp
 
 strmove proc dst:LPSTR, src:LPSTR
 

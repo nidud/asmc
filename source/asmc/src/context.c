@@ -97,8 +97,9 @@ struct context {
     };
 };
 
+#ifndef __ASMC64__
 extern struct asym *sym_Cpu;
-
+#endif
 /* v2.10: major rewrite of this function */
 
 ret_code ContextDirective( int i, struct asm_tok tokenarray[] )
@@ -175,8 +176,10 @@ ret_code ContextDirective( int i, struct asm_tok tokenarray[] )
 		    break;
 		case CONT_CPU:
 		    ModuleInfo.cpu	= curr->cc.cpu;
+#ifndef __ASMC64__
 		    if ( sym_Cpu )
 			sym_Cpu->value	= curr->cc.cpu;
+#endif
 		    ModuleInfo.curr_cpu = curr->cc.curr_cpu;
 		}
 	    }

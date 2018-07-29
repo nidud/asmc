@@ -24,6 +24,7 @@
 
 void CmdlineFini( void );
 char *ParseCmdline( char **, int * );
+void define_name( char *, char * );
 
 #ifndef _LIBC
 
@@ -59,7 +60,7 @@ static int AssembleSubdir( char *directory, char *wild )
     rc = AssembleModule( Options.names[ASM] );
 #else
     char path[_MAX_PATH];
-    long h;
+    intptr_t h;
     struct _finddata_t ff;
 
     rc = 0;
@@ -72,13 +73,15 @@ static int AssembleSubdir( char *directory, char *wild )
     }
 
     if ( Options.process_subdir ) {
-	if ( (h = _findfirst( strfcat( path, directory, "*.*" ), &ff )) != -1 ) {
+
+	if ( ( h = _findfirst( strfcat( path, directory, "*.*" ), &ff ) ) != -1 ) {
 	    do {
-		if ( (ff.attrib & _A_SUBDIR) &&
-		    !(ff.name[0] == '.' && ff.name[1] == 0) &&
-		    !(ff.name[0] == '.' && ff.name[1] == '.' && ff.name[2] == 0)) {
-			if ( !(rc = AssembleSubdir( strfcat( path, directory, ff.name ), wild )) )
-			    break;
+		if ( ( ff.attrib & _A_SUBDIR ) &&
+		    !( ff.name[0] == '.' && ff.name[1] == 0 ) &&
+		    !( ff.name[0] == '.' && ff.name[1] == '.' && ff.name[2] == 0 ) ) {
+			if ( AssembleSubdir( strfcat( path, directory, ff.name ), wild ) ) {
+			    rc = 1;
+			}
 		}
 	    } while ( _findnext( h, &ff ) != -1 );
 	    _findclose( h );
@@ -136,12 +139,16 @@ int main( int argc, char **argv )
 #else
     signal(SIGTERM, GeneralFailure);
 #endif
+#ifdef __ASMC64__
+    define_name( "_WIN64", "1" );
+#endif
 
     while ( ParseCmdline( argv, &numArgs ) ) {
 
 	numFiles++;
 	write_logo();
 #if WILDCARDS
+
 	if ( Options.process_subdir == 0 ) {
 
 	    if ( (h = _findfirst( Options.names[ASM], &ff )) == -1 ) {

@@ -3,7 +3,8 @@
 ;
 include windows.inc
 
-	.win64: rbp
+	option win64: rbp
+
 	.code
 
 WinMain PROC hInstance: HINSTANCE,
@@ -53,7 +54,7 @@ WinMain PROC hInstance: HINSTANCE,
 
 WinMain ENDP
 
-	.win64: rsp nosave
+	option win64: rsp nosave
 
 WndProc PROC hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 

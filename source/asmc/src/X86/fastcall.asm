@@ -1101,7 +1101,7 @@ ms64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:SI
             .case [edi].expr.mem_type != MT_EMPTY
                 SizeFromMemtype([edi].expr.mem_type, USE64, [edi].expr._type)
                 .endc
-            .case ecx == EXPR_ADDR && [edx].asym.state == SYM_UNDEFINED
+            .case ecx == EXPR_ADDR && ( !edx || [edx].asym.state == SYM_UNDEFINED )
                 mov eax,psize
                 .endc
             .default
@@ -1112,7 +1112,7 @@ ms64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:SI
             mov z,eax
 
             mov edx,param
-            .if eax > psize || (eax < psize && [edx].asym.mem_type == MT_PTR)
+            .if eax > psize || ( eax < psize && [edx].asym.mem_type == MT_PTR )
                 asmerr( 2114, &[esi+1] )
             .endif
 

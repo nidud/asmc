@@ -16,7 +16,9 @@
 #include <equate.h>
 
 /* prototypes */
+#ifndef __ASMC64__
 extern struct asym *sym_Interface;
+#endif
 
 #define OPTQUAL
 #define OPTFUNC( name ) static ret_code OPTQUAL name( int *pi, struct asm_tok tokenarray[] )
@@ -260,8 +262,10 @@ OPTFUNC( SetLanguage )
     if ( tokenarray[i].token == T_RES_ID ) {
 	if ( GetLangType( &i, tokenarray, &ModuleInfo.langtype ) == NOT_ERROR ) {
 	    /* update @Interface assembly time variable */
+#ifndef __ASMC64__
 	    if ( ModuleInfo.model != MODEL_NONE && sym_Interface )
 		sym_Interface->value = ModuleInfo.langtype;
+#endif
 	    *pi = i;
 	    return( NOT_ERROR );
 	}

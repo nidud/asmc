@@ -1,18 +1,57 @@
 #include <stdio.h>
 #include <globals.h>
 
+#ifdef __ASMC64__
+#define X64 " (x64)"
+#define ASMC64 "ASMC64"
+#else
+#define X64
+#define ASMC64 "ASMC"
+#endif
+
 char cp_logo[] =
- "Asmc Macro Assembler Version " ASMC_VERSSTR ".32\n"
- "Portions Copyright (c) 1992-2002 Sybase, Inc. All Rights Reserved.\n\n";
+ "Asmc Macro Assembler" X64 " Version " ASMC_VERSSTR ".33\n"
+ "Copyright (C) The Asmc Contributors. All Rights Reserved.\n\n";
 
 static char cp_usage[] =
- "USAGE: ASMC [ options ] filelist\n"
+ "USAGE: " ASMC64 " [ options ] filelist\n"
  "Use option /? for more info\n";
 
 static char cp_options[] =
 
- "         ASMC [ /options ] filelist\n"
+ "        " ASMC64 " [ /options ] filelist\n"
  "\n"
+#ifdef __ASMC64__
+ "/assert Generate .assert() code            /Sa Maximize source listing\n"
+ "/autostack Auto stack space for arguments  /safeseh Assert exception handlers\n"
+ "/bin Generate plain binary file            /Sf Generate first pass listing\n"
+ "/Cs C stack: push USER regs first          /Sg Display generated code in listing\n"
+ "/coff Generate COFF format object file     /Sn Suppress symbol-table listing\n"
+ "/C<p|u|x> Set OPTION CASEMAP               /Sp[n] Set segment alignment\n"
+ "/D<name>[=text] Define text macro          /stackalign Align locals to 16-byte\n"
+ "/e<number> Set error limit number          /swc C .SWITCH (default)\n"
+ "/elf64 Generate 64-bit ELF object file     /swn No table in .SWITCH\n"
+ "/EP Output preprocessed listing to stdout  /swp Pascal .SWITCH (auto.break)\n"
+ "/eq Don't display error messages           /swr Use reg [R|E]AX in switch code\n"
+ "/Fd[file] Write import definition file     /swt Use table in .SWITCH (default)\n"
+ "/Fi<file> Force <file> to be included      /Sx List false conditionals\n"
+ "/Fl[file] Generate listing                 /w Same as /W0 /WX\n"
+ "/Fo<file> Name object file                 /W<number> Set warning level\n"
+ "/Fw<file> Set errors file name             /win64 Generate 64-bit COFF object\n"
+ "/G<cdzv> Pascal, C, Stdcall or Vectorcall  /ws Store quoted strings as unicode\n"
+ "/homeparams Copy Reg. parameters to Stack  /WX Treat all warnings as errors\n"
+ "/I<name> Add include path                  /X Ignore INCLUDE environment path\n"
+ "/nc<name> Set class name of code segment   /Zd Add line number debug info\n"
+ "/nd<name> Set name of data segment         /Zf Make all symbols public\n"
+ "/nm<name> Set name of module               /Zg Generate code to match Masm\n"
+ "/nt<name> Set name of text segment         /Zi[0|1|2|3] Add symbolic debug info\n"
+ "/pe Generate PE binary file                /zl<f|p|s> Suppress items in COFF\n"
+ " /cui - subsystem:console (default)        /Zne Disable non Masm extensions\n"
+ " /gui - subsystem:windows                  /Zp[n] Set structure alignment\n"
+ "/pf Preserve Flags (Epilogue/Invoke)       /Zs Perform syntax check only\n"
+ "/q, /nologo Suppress copyright message     /zze No export symbol decoration\n"
+ "/r Recurse subdirectories                  /zzs Store name of start address\n";
+#else
  "/<0|1|..|10>[p] Set CPU: 0=8086 (default), 1=80186, 2=80286, 3=80386, 4=80486,\n"
  " 5=Pentium,6=PPro,7=P2,8=P3,9=P4,10=x86-64; <p> allows privileged instructions\n"
  "/assert Generate .assert() code            /safeseh Assert exception handlers\n"
@@ -52,6 +91,7 @@ static char cp_options[] =
  "/q, /nologo Suppress copyright message     /zze No export symbol decoration\n"
  "/r Recurse subdirectories                  /zzs Store name of start address\n"
  "/Sa Maximize source listing\n";
+#endif
 
 int banner_printed = 0;
 

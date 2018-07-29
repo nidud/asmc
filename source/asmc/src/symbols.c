@@ -115,7 +115,11 @@ struct tmitem {
 static const struct tmitem tmtab[] = {
     /* @Version contains the Masm compatible version */
     /* v2.06: value of @Version changed to 800 */
+#ifdef __ASMC64__
+    {"@Version",  "1000", NULL },
+#else
     {"@Version",  "800", NULL },
+#endif
     {"@Date",	  szDate, NULL },
     {"@Time",	  szTime, NULL },
     {"@FileName", ModuleInfo.name, NULL },
@@ -135,7 +139,10 @@ struct eqitem {
 
 /* table of predefined numeric equates */
 static const struct eqitem eqtab[] = {
-    { "__ASMC__",  226, NULL, NULL },
+    { "__ASMC__",  227, NULL, NULL },
+#ifdef __ASMC64__
+    { "__ASMC64__",227, NULL, NULL },
+#endif
     { "__JWASM__", 212, NULL, NULL },
     { "$",	   0, UpdateCurPC, &symPC },
     { "@Line",	   0, UpdateLineNumber, &LineCur },

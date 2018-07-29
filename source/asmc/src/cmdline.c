@@ -50,17 +50,30 @@ struct global_options Options = {
 	0,			// .first_pass_listing
 	0,			// .all_symbols_public
 	0,			// .safeseh
+#ifdef __ASMC64__
+	OFORMAT_COFF,		// .output_format
+	SFORMAT_64BIT,		// .sub_format
+	LANG_FASTCALL,		// .langtype
+	MODEL_FLAT,		// ._model
+	P_64,			// .cpu
+	FCT_WIN64,		// .fctype
+#else
 	OFORMAT_OMF,		// .output_format
 	SFORMAT_NONE,		// .sub_format
 	LANG_NONE,		// .langtype
 	MODEL_NONE,		// ._model
 	P_86,			// .cpu
 	FCT_MSC,		// .fctype
+#endif
 	0,			// .codepage
 	0,			// .ignore_include
 	0,			// .fieldalign
 	0,			// .syntax_check_only
-	1,			// .aflag
+#ifdef __ASMC64__
+	_AF_REGAX | _AF_ON,	// .aflag
+#else
+	_AF_ON,			// .aflag
+#endif
 	0,			// .xflag
 	0,			// .loopalign
 	0,			// .casealign
@@ -296,6 +309,7 @@ static void ProcessOption( char **cmdline, char *buffer )
     int j;
     char *p = *cmdline;
 
+#ifndef __ASMC64__
     /* numeric option (-0, -1, ... ) handled separately since
      * the value can be >= 10.
      */
@@ -313,6 +327,7 @@ static void ProcessOption( char **cmdline, char *buffer )
 	}
 	p = *cmdline;	/* v2.11: restore option pointer */
     }
+#endif
     if ( *p == 'D' ) {	// -D<name>[=text]
 	*cmdline = GetNameToken( buffer, p+1, 256, '$' );
 	queue_item( OPTQ_MACRO, buffer );
@@ -383,6 +398,7 @@ static void ProcessOption( char **cmdline, char *buffer )
 	define_name( "_LINUX", "2" );
 	define_name( "_WIN64", "1" );
 	return;
+#ifndef __ASMC64__
     case 'fle':		// -elf
 	Options.output_format = OFORMAT_ELF;
 	Options.sub_format = SFORMAT_NONE;
@@ -412,15 +428,18 @@ static void ProcessOption( char **cmdline, char *buffer )
     case 'dG':		// -Gd
 	Options.langtype = LANG_C;
 	return;
+#endif
     case 'rG':		// -Gr
 	Options.langtype = LANG_FASTCALL;
 	return;
     case 'vG':		// -Gv
 	Options.langtype = LANG_VECTORCALL;
 	return;
+#ifndef __ASMC64__
     case 'zG':		// -Gz
 	Options.langtype = LANG_STDCALL;
 	return;
+#endif
     case 'iug':		// -gui - subsystem:windows
 	Options.pe_subsystem = 1;
 	define_name( "__GUI__", "1" );
@@ -432,6 +451,7 @@ static void ProcessOption( char **cmdline, char *buffer )
     case 'emoh':	// -homeparams
 	Options.win64_flags |= W64F_SAVEREGPARAMS;
 	return;
+#ifndef __ASMC64__
     case 'zm':		// -mz
 	Options.output_format = OFORMAT_BIN;
 	Options.sub_format = SFORMAT_MZ;
@@ -461,6 +481,7 @@ static void ProcessOption( char **cmdline, char *buffer )
 	Options.output_format = OFORMAT_OMF;
 	Options.sub_format = SFORMAT_NONE;
 	return;
+#endif
     case 'fp':		// -pf
 	Options.epilogueflags = 1;
 	return;
@@ -533,6 +554,7 @@ static void ProcessOption( char **cmdline, char *buffer )
     case 'X':		// -X
 	Options.ignore_include = 1;
 	return;
+#ifndef __ASMC64__
     case 'cX':		// -Xc
 	Options.aflag &= ~_AF_ON;
 	return;
@@ -542,15 +564,18 @@ static void ProcessOption( char **cmdline, char *buffer )
     case 'wcz':		// -zcw
 	Options.no_cdecl_decoration = 1;
 	return;
+#endif
     case 'fZ':		// -Zf
 	Options.all_symbols_public = 1;
 	return;
+#ifdef __ASMC64__
     case '0fz':		// -zf0
 	Options.fctype = FCT_MSC;
 	return;
     case '1fz':		// -zf1
 	Options.fctype = FCT_WATCOMC;
 	return;
+#endif
     case 'gZ':		// -Zg
 	Options.masm_compat_gencode = 1;
 	return;
@@ -572,8 +597,10 @@ static void ProcessOption( char **cmdline, char *buffer )
     case 'slz':		// -zls
 	Options.no_section_aux_entry = 1;
 	return;
+#ifndef __ASMC64__
     case 'mZ':		// -Zm
 	Options.masm51_compat = 1;
+#endif
     case 'enZ':		// -Zne
 	Options.strict_masm_compat = 1;
 	Options.aflag = 0;
@@ -581,6 +608,7 @@ static void ProcessOption( char **cmdline, char *buffer )
     case 'sZ':		// -Zs
 	Options.syntax_check_only = 1;
 	return;
+#ifndef __ASMC64__
     case '0tz':		// -zt0
 	Options.stdcall_decoration = 0;
 	return;
@@ -593,6 +621,7 @@ static void ProcessOption( char **cmdline, char *buffer )
     case '8vZ':		// -Zv8
 	Options.masm8_proc_visibility = 1;
 	return;
+#endif
     case 'ezz':		// -zze
 	Options.no_export_decoration = 1;
 	return;
@@ -712,7 +741,6 @@ char *ParseCmdline( char **cmdline, int *numargs )
 	    MemFree( Options.names[i] );
 	    Options.names[i] = NULL;
 	}
-
     for( ; str; ) {
 	switch( *str ) {
 	case '\r':

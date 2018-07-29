@@ -35,6 +35,7 @@ struct code_line {
 
 /* startup code for 8086 */
 
+#ifndef __ASMC64__
 static const struct code_line StartupDosNear0[] = {
     { "mov %r,DGROUP", T_DX, T_NULL },
     { "mov %r,%r", T_DS, T_DX	    },
@@ -164,7 +165,6 @@ int StartupExitDirective( int i, struct asm_tok tokenarray[] )
 	}
 	break;
     }
-
     if ( tokenarray[i].token != T_FINAL ) {
 	asmerr(2008, tokenarray[i].tokpos );
 	rc = ERROR;
@@ -174,6 +174,8 @@ int StartupExitDirective( int i, struct asm_tok tokenarray[] )
 
     return( rc );
 }
+
+#endif
 
 /* END directive */
 
@@ -190,6 +192,7 @@ ret_code EndDirective( int i, struct asm_tok tokenarray[] )
     /* v2.05: first parse the arguments. this allows
      * SegmentModuleExit() later to run generated code.
      */
+#ifndef __ASMC64__
     if( ModuleInfo.StartupDirectiveFound ) {
 	/* start label behind END ignored if .STARTUP has been found */
 	if( i < Token_Count && Parse_Pass == PASS_1 ) {
@@ -202,6 +205,7 @@ ret_code EndDirective( int i, struct asm_tok tokenarray[] )
 	tokenarray[i+1].string_ptr = "";
 	Token_Count = i+1;
     }
+#endif
     /* v2.11: flag EXPF_NOUNDEF added - will return ERROR if start label isn't defined */
     if( EvalOperand( &i, tokenarray, Token_Count, &opndx, EXPF_NOUNDEF ) == ERROR ) {
 	return( ERROR );

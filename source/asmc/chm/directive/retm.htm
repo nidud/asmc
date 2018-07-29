@@ -1,0 +1,26 @@
+<HTML><HEAD><TITLE>RETM</TITLE></HEAD>
+<link href="../style.css" rel="stylesheet" type="text/css">
+<BODY>
+Asmc Macro Assembler Reference
+<H3>RETM</H3>
+
+<pre><b>RETM</b> [[<i>textitem</i>]]</pre>
+
+<p>Terminates expansion of the current repeat or macro block and begins
+assembly of the next statement outside the block. In a macro function,
+<i>textitem</i> is the value returned.</p>
+
+<p>RETM deviates from EXITM by skipping the return value if not used.</p>
+
+<h4>Sample</h4>
+
+<p>In this case the latter returns a value but the former do not:</p>
+<pre>
+    _mm_sqrt_ss( _mm_min_ss( a, b ) )
+    _mm_min_ss( _mm_sqrt_ss( a ), b )
+</pre>
+
+<h4>See Also</h4>
+<a href="index.htm">Directives Reference</a>
+</BODY>
+</HTML>

@@ -6,6 +6,11 @@ endif
 ifndef _WINERROR_
  include winerror.inc
 endif
+ifdef __PE__
+option	dllimport:<msvcrt>
+else
+includelib libc.lib
+endif
 
 ENOERR		equ 0
 EPERM		equ 1
@@ -51,9 +56,14 @@ ENOSYS		equ 40
 ENOTEMPTY	equ 41
 EILSEQ		equ 42
 
+if defined(__PE__) or defined(_LINUX)
+_get_errno proto __cdecl
+errno equ <_get_errno()>
+else
 externdef	errno:dword
 externdef	oserrno:dword
 externdef	sys_errlist:size_t
+endif
 
 osmaperr	proto __cdecl
 

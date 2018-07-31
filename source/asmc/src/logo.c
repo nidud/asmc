@@ -10,7 +10,7 @@
 #endif
 
 char cp_logo[] =
- "Asmc Macro Assembler" X64 " Version " ASMC_VERSSTR ".33\n"
+ "Asmc Macro Assembler" X64 " Version " ASMC_VERSSTR "\n"
  "Copyright (C) The Asmc Contributors. All Rights Reserved.\n\n";
 
 static char cp_usage[] =
@@ -31,14 +31,14 @@ static char cp_options[] =
  "/D<name>[=text] Define text macro          /stackalign Align locals to 16-byte\n"
  "/e<number> Set error limit number          /swc C .SWITCH (default)\n"
  "/elf64 Generate 64-bit ELF object file     /swn No table in .SWITCH\n"
- "/EP Output preprocessed listing to stdout  /swp Pascal .SWITCH (auto.break)\n"
- "/eq Don't display error messages           /swr Use reg [R|E]AX in switch code\n"
+ "/EP Output preprocessed listing to stdout  /swp Pascal .SWITCH (auto .break)\n"
+ "/eq Don't display error messages           /swr Switch uses R10/R11 (default)\n"
  "/Fd[file] Write import definition file     /swt Use table in .SWITCH (default)\n"
  "/Fi<file> Force <file> to be included      /Sx List false conditionals\n"
  "/Fl[file] Generate listing                 /w Same as /W0 /WX\n"
  "/Fo<file> Name object file                 /W<number> Set warning level\n"
  "/Fw<file> Set errors file name             /win64 Generate 64-bit COFF object\n"
- "/G<cdzv> Pascal, C, Stdcall or Vectorcall  /ws Store quoted strings as unicode\n"
+ "/Gv Use VECTORCALL calling convention      /ws Store quoted strings as unicode\n"
  "/homeparams Copy Reg. parameters to Stack  /WX Treat all warnings as errors\n"
  "/I<name> Add include path                  /X Ignore INCLUDE environment path\n"
  "/nc<name> Set class name of code segment   /Zd Add line number debug info\n"

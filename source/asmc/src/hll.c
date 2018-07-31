@@ -857,11 +857,15 @@ static int StripSource( int i, int e, struct asm_tok tokenarray[] )
 
     if ( p == NULL ) {
 
+#ifndef __ASMC64__
 	p = " eax";
 	if ( ModuleInfo.Ofssize == USE64 )
 	    p = " rax";
 	else if ( ModuleInfo.Ofssize == USE16 )
 	    p = " ax";
+#else
+	p = " rax";
+#endif
 
 	if ( !proc_id && i > 1 ) {
 
@@ -1323,7 +1327,9 @@ int EvaluateHllExpression( struct hll_item *hll, int *i, struct asm_tok tokenarr
 		    *p = 'e';
 		    if ( q == 0 && a == cp[0] && d == cp[1] )
 			*cp = 'e';
-		} else if ( ModuleInfo.Ofssize == USE16 ) {
+		}
+#ifndef __ASMC64__
+		else if ( ModuleInfo.Ofssize == USE16 ) {
 		    if ( p[2] != ' ' ) {
 			if ( q )
 			    memcpy( p - 4, " or", 4);
@@ -1337,6 +1343,7 @@ int EvaluateHllExpression( struct hll_item *hll, int *i, struct asm_tok tokenarr
 		    if ( q == 0 )
 			*(cp - 1) = 'e';
 		}
+#endif
 		break;
 	    case HLLF_IFW:
 		if ( ModuleInfo.Ofssize != USE16 ) {
@@ -1346,18 +1353,22 @@ int EvaluateHllExpression( struct hll_item *hll, int *i, struct asm_tok tokenarr
 		}
 		break;
 	    case HLLF_IFB:
+#ifndef __ASMC64__
 		if ( ModuleInfo.Ofssize == USE16 ) {
 		    p[1] = 'l';
 		    if ( q == 0 && a == cp[0] && d == cp[1] )
 			cp[1] = 'l';
 		} else {
+#endif
 		    p[0] = ' ';
 		    p[2] = 'l';
 		    if ( q == 0 && a == cp[0] && d == cp[1] ) {
 			cp[0] = ' ';
 			cp[2] = 'l';
 		    }
+#ifndef __ASMC64__
 		}
+#endif
 		break;
 	    }
 	}
@@ -1481,11 +1492,13 @@ static void RenderUntilXX( struct hll_item *hll, unsigned cmd )
       case T_DOT_UNTILDXZ: T = T_DX - T_AX; break;
     }
 
+#ifndef __ASMC64__
     if ( ModuleInfo.Ofssize == USE16 )
 	T += T_AX;
     else if ( ModuleInfo.Ofssize == USE32 )
 	T += T_EAX;
     else
+#endif
 	T += T_RAX;
 
     AddLineQueueX( " %r %r", T_DEC, T );

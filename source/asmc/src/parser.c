@@ -411,7 +411,8 @@ void set_frame2( const struct asym *sym )
     SetFixupFrame( SegOverride ? SegOverride : sym, TRUE );
 }
 
-static int set_rm_sib( struct code_info *CodeInfo, unsigned CurrOpnd, char ss, int index, int base, const struct asym *sym )
+static int set_rm_sib( struct code_info *CodeInfo, unsigned CurrOpnd, char ss,
+	int index, int base, const struct asym *sym )
 /*
  * encode ModRM and SIB byte for memory addressing.
  * called by memory_operand().
@@ -459,6 +460,7 @@ static int set_rm_sib( struct code_info *CodeInfo, unsigned CurrOpnd, char ss, i
 	/* default is DS:[], DS: segment override is not needed */
 	seg_override( CodeInfo, T_DS, sym, TRUE );
 
+#ifndef __ASMC64__
 	if( ( CodeInfo->Ofssize == USE16 && CodeInfo->prefix.adrsiz == 0 ) ||
 	    ( CodeInfo->Ofssize == USE32 && CodeInfo->prefix.adrsiz == 1 )) {
 	    if( !InWordRange( CodeInfo->opnd[CurrOpnd].data32l ) ) {
@@ -466,8 +468,11 @@ static int set_rm_sib( struct code_info *CodeInfo, unsigned CurrOpnd, char ss, i
 	    }
 	    rm_field = RM_D16; /* D16=110b */
 	} else {
+#endif
 	    rm_field = RM_D32; /* D32=101b */
+#ifndef __ASMC64__
 	    if ( CodeInfo->Ofssize == USE64 ) {
+#endif
 		 if ( CodeInfo->opnd[CurrOpnd].InsFixup == NULL ) {
 		    rm_field = RM_SIB;	  /* 64-bit non-RIP direct addressing */
 		    CodeInfo->sib = 0x25; /* IIIBBB, base=101b, index=100b */
@@ -475,8 +480,10 @@ static int set_rm_sib( struct code_info *CodeInfo, unsigned CurrOpnd, char ss, i
 		    /* added v2.26 */
 		    CodeInfo->opnd[CurrOpnd].InsFixup->type = FIX_RELOFF32;
 		}
+#ifndef __ASMC64__
 	    }
 	}
+#endif
     } else if( ( index == EMPTY ) && ( base != EMPTY ) ) {
 	/* for SI, DI and BX: default is DS:[],
 	 * DS: segment override is not needed
@@ -682,9 +689,7 @@ static int idata_nofixup( struct code_info *CodeInfo, unsigned CurrOpnd, struct 
      * current workaround: query the 'explicit' flag.
      */
     /* use long format of MOV for 64-bit if value won't fit in a signed DWORD */
-    if ( CodeInfo->Ofssize == USE64 &&
-	CodeInfo->token == T_MOV &&
-	CurrOpnd == OPND2 &&
+    if ( CodeInfo->Ofssize == USE64 && CodeInfo->token == T_MOV && CurrOpnd == OPND2 &&
 	( CodeInfo->opnd[OPND1].type & OP_R64 ) &&
 	( opndx->value64 > LONG_MAX || opndx->value64 < LONG_MIN ||
 	 (opndx->explicit && ( opndx->mem_type == MT_QWORD || opndx->mem_type == MT_SQWORD ) ) ) ) {

@@ -41,6 +41,7 @@ enum reg_used_flags {
 
 static int fcscratch;  /* exclusively to be used by FASTCALL helper functions */
 
+#ifndef __ASMC64__
 static	int ms32_fcstart( struct dsym const *, int, int, struct asm_tok[], int * );
 static void ms32_fcend	( struct dsym const *, int, int );
 static	int ms32_param	( struct dsym const *, int, struct dsym *, bool, struct expr *, char *, uint_8 * );
@@ -49,6 +50,7 @@ static	int vc32_param	( struct dsym const *, int, struct dsym *, bool, struct ex
 static	int watc_fcstart( struct dsym const *, int, int, struct asm_tok[], int * );
 static void watc_fcend	( struct dsym const *, int, int );
 static	int watc_param	( struct dsym const *, int, struct dsym *, bool, struct expr *, char *, uint_8 * );
+#endif
 static	int ms64_fcstart( struct dsym const *, int, int, struct asm_tok[], int * );
 static void ms64_fcend	( struct dsym const *, int, int );
 static	int ms64_param	( struct dsym const *, int, struct dsym *, bool, struct expr *, char *, uint_8 * );
@@ -66,24 +68,34 @@ struct fastcall_conv {
 };
 
 const struct fastcall_conv fastcall_tab[] = {
+#ifndef __ASMC64__
  { ms32_fcstart, ms32_fcend , ms32_param }, /* FCT_MSC */
  { watc_fcstart, watc_fcend , watc_param }, /* FCT_WATCOMC */
+#else
+ { 0, 0, 0 },
+ { 0, 0, 0 },
+#endif
  { ms64_fcstart, ms64_fcend , ms64_param }, /* FCT_WIN64 */
  { elf64_fcstart, elf64_fcend, elf64_param }, /* FCT_ELF64 */
+#ifndef __ASMC64__
  { vc32_fcstart, ms32_fcend , vc32_param }, /* FCT_VEC32 */
+#else
+ { 0, 0, 0 },
+#endif
  { ms64_fcstart, ms64_fcend , ms64_param }, /* FCT_VEC64 */
 };
 
 /* 16-bit MS fastcall uses up to 3 registers (AX, DX, BX )
  * and additional params are pushed in PASCAL order!
  */
+#ifndef __ASMC64__
 static const enum special_token ms16_regs[] = {
     T_AX, T_DX, T_BX
 };
 static const enum special_token ms32_regs[] = {
     T_ECX, T_EDX
 };
-
+#endif
 static const enum special_token ms64_regs[] = {
  T_CL,	T_DL,  T_R8B, T_R9B,
  T_CX,	T_DX,  T_R8W, T_R9W,
@@ -100,6 +112,7 @@ unsigned char elf64_regs[] = {
 
 /* segment register names, order must match ASSUME_ enum */
 
+#ifndef __ASMC64__
 static int ms32_fcstart( struct dsym const *proc, int numparams, int start,
 	struct asm_tok tokenarray[], int *value )
 {
@@ -250,6 +263,8 @@ static int vc32_param( struct dsym const *proc, int index, struct dsym *param,
 	*r0used |= R0_USED;
     return( 1 );
 }
+
+#endif
 
 static int ms64_fcstart( struct dsym const *proc, int numparams, int start, struct asm_tok tokenarray[], int *value )
 {
@@ -879,6 +894,7 @@ short GetSegmentPart( struct expr *opnd, char *buffer, const char *fullparam )
  *   the third!
  */
 
+#ifndef __ASMC64__
 static int watc_fcstart( struct dsym const *proc, int numparams, int start, struct asm_tok tokenarray[], int *value )
 {
     return( 1 );
@@ -984,6 +1000,8 @@ static int watc_param( struct dsym const *proc, int index, struct dsym *param,
     }
     return( 1 );
 }
+
+#endif
 
 void fastcall_init(void)
 {

@@ -78,7 +78,7 @@ struct asym *sym_ReservedStack; /* max stack space required by INVOKE */
 /* v2.07: 16-bit MS FASTCALL registers are AX, DX, BX.
  * And params on stack are in PASCAL order.
  */
-//static const enum special_token ms32_regs16[] = { T_CX, T_DX };
+#ifndef __ASMC64__
 static const enum special_token ms32_regs16[] = { T_AX, T_DX, T_BX };
 static const enum special_token ms32_regs32[] = { T_ECX, T_EDX };
 /* v2.07: added */
@@ -90,6 +90,7 @@ static const enum special_token watc_regs8[] = {T_AL, T_DL, T_BL, T_CL };
 static const enum special_token watc_regs16[] = {T_AX, T_DX, T_BX, T_CX };
 static const enum special_token watc_regs32[] = {T_EAX, T_EDX, T_EBX, T_ECX };
 static const enum special_token watc_regs_qw[] = {T_AX, T_BX, T_CX, T_DX };
+#endif
 static const enum special_token ms64_regs[] = {T_RCX, T_RDX, T_R8, T_R9 };
 /* win64 non-volatile GPRs:
  * T_RBX, T_RBP, T_RSI, T_RDI, T_R12, T_R13, T_R14, T_R15
@@ -103,12 +104,14 @@ struct fastcall_conv {
     void (* handlereturn)( struct dsym *, char *buffer );
 };
 
+#ifndef __ASMC64__
 static	int ms32_pcheck( struct dsym *, struct dsym *, int * );
 static void ms32_return( struct dsym *, char * );
 static	int vc32_pcheck( struct dsym *, struct dsym *, int * );
 static void vc32_return( struct dsym *, char * );
 static	int watc_pcheck( struct dsym *, struct dsym *, int * );
 static void watc_return( struct dsym *, char * );
+#endif
 static	int ms64_pcheck( struct dsym *, struct dsym *, int * );
 static void ms64_return( struct dsym *, char * );
 static	int elf64_pcheck( struct dsym *, struct dsym *, int * );
@@ -119,11 +122,20 @@ static	int elf64_pcheck( struct dsym *, struct dsym *, int * );
  */
 
 static const struct fastcall_conv fastcall_tab[] = {
+#ifndef __ASMC64__
     { ms32_pcheck, ms32_return }, /* FCT_MSC */
     { watc_pcheck, watc_return }, /* FCT_WATCOMC */
+#else
+    { 0, 0 },
+    { 0, 0 },
+#endif
     { ms64_pcheck, ms64_return }, /* FCT_WIN64 */
     { elf64_pcheck,ms64_return }, /* FCT_ELF64 */
+#ifndef __ASMC64__
     { vc32_pcheck, vc32_return }, /* FCT_VEC32 */
+#else
+    { 0, 0 },
+#endif
     { ms64_pcheck, ms64_return }, /* FCT_VEC64 */
 };
 
@@ -160,6 +172,7 @@ static const char * const fmtstk1[] = {
  * in VARARG procs, all parameters are pushed onto the stack!
  */
 
+#ifndef __ASMC64__
 static int watc_pcheck( struct dsym *proc, struct dsym *paranode, int *used )
 /***************************************************************************/
 {
@@ -338,7 +351,7 @@ static void vc32_return( struct dsym *proc, char *buffer )
 	sprintf( buffer + strlen( buffer ), "%d%c", retval, ModuleInfo.radix != 10 ? 't' : NULLC );
     return;
 }
-
+#endif
 /* the MS Win64 fastcall ABI is strict: the first four parameters are
  * passed in registers. If a parameter's value doesn't fit in a register,
  * it's address is used instead. parameter 1 is stored in rcx/xmm0,
@@ -666,6 +679,7 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
     /*
      * find "first" parameter ( that is, the first to be pushed in INVOKE ).
      */
+#ifndef __ASMC64__
     if ( proc->sym.langtype == LANG_C || proc->sym.langtype == LANG_STDCALL ||
 	fastcall_id == FCT_VEC32 + 1 || fastcall_id == FCT_MSC + 1 ||
 	( !fastcall_id && proc->sym.langtype == LANG_SYSCALL ) )
@@ -673,6 +687,7 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 	for ( paracurr = proc->e.procinfo->paralist; paracurr && paracurr->nextparam;
 	      paracurr = paracurr->nextparam );
     else
+#endif
 	paracurr = proc->e.procinfo->paralist;
 
     /* v2.11: proc_info.init_done has been removed, sym.isproc flag is used instead */
@@ -784,6 +799,7 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 		SymAddLocal( &paracurr->sym, name );
 	    }
 	    /* set paracurr to next parameter */
+#ifndef __ASMC64__
 	    if ( proc->sym.langtype == LANG_C || proc->sym.langtype == LANG_STDCALL ||
 		 fastcall_id == FCT_VEC32 + 1 || fastcall_id == FCT_MSC + 1 ||
 		 ( !fastcall_id && proc->sym.langtype == LANG_SYSCALL ) ) {
@@ -794,6 +810,7 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 		     l = l->nextparam );
 		paracurr = l;
 	    } else
+#endif
 		paracurr = paracurr->nextparam;
 
 	} else if ( init_done == TRUE ) {
@@ -909,8 +926,10 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 
 	/* now calculate the [E|R]BP offsets */
 
+#ifndef __ASMC64__
 	if ( fastcall_id == FCT_VEC64 + 1 || fastcall_id == FCT_WIN64 + 1 ||
 	     fastcall_id == FCT_ELF64 + 1 ) {
+#endif
 	    for ( paranode = proc->e.procinfo->paralist; paranode ;paranode = paranode->nextparam )
 		if ( paranode->sym.state == SYM_TMACRO ) /* register param */
 		    ;
@@ -919,6 +938,7 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 		    proc->e.procinfo->stackparam = TRUE;
 		    offset += ROUND_UP( paranode->sym.total_size, CurrWordSize );
 		}
+#ifndef __ASMC64__
 	} else
 	for ( ; cntParam; cntParam-- ) {
 	    for ( curr = 1, paranode = proc->e.procinfo->paralist; curr < cntParam;paranode = paranode->nextparam, curr++ );
@@ -930,6 +950,7 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 		offset += ROUND_UP( paranode->sym.total_size, CurrWordSize );
 	    }
 	}
+#endif
     }
     return ( NOT_ERROR );
 }

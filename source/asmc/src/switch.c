@@ -458,7 +458,7 @@ static int RenderSwitch( struct hll_item *hll, struct asm_tok tokenarray[],
 	char *l_exit)  /* switch.labels[LEXIT]	*/
 {
 
-    int r_dw;		/* dw/dd/dq				*/
+    int r_dw;		/* dw/dd				*/
     int r_db;		/* "DB"/"DW"				*/
     int r_size;		/* 2/4/8				*/
     int dynamic;	/* number of dynmaic cases		*/

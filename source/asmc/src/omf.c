@@ -136,6 +136,8 @@ struct dbg_section {
     const char *cname;
 };
 
+#ifndef __ASMC64__
+
 static const struct dbg_section SymDebParm[DBGS_MAX] = {
     { "$$SYMBOLS", "DEBSYM" },
     { "$$TYPES",   "DEBTYP" },
@@ -242,7 +244,7 @@ unsigned omf_GetGrpIdx( struct asym *sym )
 {
     return( sym ? ((struct dsym *)sym)->e.grpinfo->grp_idx : 0 );
 }
-
+#endif
 /*
  * write OMF comment records about data in code.
  */
@@ -250,6 +252,7 @@ unsigned omf_GetGrpIdx( struct asym *sym )
 void omf_OutSelect( bool is_data )
 /********************************/
 {
+#ifndef __ASMC64__
     struct omf_rec	obj;
     uint_32		currofs;
     int			sel_idx;
@@ -293,6 +296,7 @@ void omf_OutSelect( bool is_data )
 	    omf_write_record( &obj );
 	}
     }
+#endif
 }
 
 /* write line number debug info.
@@ -306,6 +310,7 @@ void omf_OutSelect( bool is_data )
  * v2.11: create 16- or 32-bit data variant here!
  */
 
+#ifndef __ASMC64__
 static void omf_write_linnum( uint_8 is32 )
 /*****************************************/
 {
@@ -437,7 +442,7 @@ static void omf_write_ledata( struct dsym *seg )
     }
     seg->e.seginfo->start_loc = seg->e.seginfo->current_loc;
 }
-
+#endif
 /*
  * flush current segment.
  * write_to_file is always TRUE here
@@ -446,15 +451,18 @@ static void omf_write_ledata( struct dsym *seg )
 void omf_FlushCurrSeg( void )
 /***************************/
 {
+#ifndef __ASMC64__
     omf_write_ledata( CurrSeg );
     /* add line numbers if debugging info is desired */
     if( Options.line_numbers ) {
 	omf_write_linnum( ln_is32 );
 	ln_size = 0;
     }
+#endif
     return;
 }
 
+#ifndef __ASMC64__
 /* Write a THEADR record.
  */
 static void omf_write_theadr( const char *name )
@@ -474,7 +482,7 @@ static void omf_write_theadr( const char *name )
     PutName( &obj, name, len );
     omf_write_record( &obj );
 }
-
+#endif
 /* v2.11: check if
  * - source file is changing
  * - offset magnitude is changing
@@ -492,6 +500,7 @@ static void omf_write_theadr( const char *name )
 void omf_check_flush( const struct line_num_info *curr )
 /******************************************************/
 {
+#ifndef __ASMC64__
     uint_8 is_32;
     uint_16 size;
 #if MULTIHDR
@@ -526,6 +535,7 @@ void omf_check_flush( const struct line_num_info *curr )
 	    omf_FlushCurrSeg();
     }
     ln_size += size;
+#endif
     return;
 };
 
@@ -533,6 +543,7 @@ void omf_check_flush( const struct line_num_info *curr )
 
 /* write end of pass 1 record. */
 
+#ifndef __ASMC64__
 static void omf_end_of_pass1( void )
 /**********************************/
 {
@@ -544,7 +555,7 @@ static void omf_end_of_pass1( void )
     AttachData( &obj, (uint_8 *)"\x001", 1 );
     omf_write_record( &obj );
 }
-
+#endif
 /* called when a new path is started
  * the OMF "path 2" records (LEDATA, FIXUP, LINNUM ) are written in all passes.
  */
@@ -552,9 +563,12 @@ static void omf_end_of_pass1( void )
 void omf_set_filepos( void )
 /**************************/
 {
+#ifndef __ASMC64__
     fseek( CurrFile[OBJ], end_of_header, SEEK_SET );
+#endif
 }
 
+#ifndef __ASMC64__
 static void omf_write_dosseg( void )
 /**********************************/
 {
@@ -1446,12 +1460,13 @@ static int omf_write_header_initial( struct module_info *modinfo )
     end_of_header = ftell( CurrFile[OBJ] );
     return( NOT_ERROR );
 }
-
+#endif
 /* init. called once per module */
 
 void omf_init( struct module_info *modinfo )
 /******************************************/
 {
+#ifndef __ASMC64__
     modinfo->g.WriteModule = omf_write_module;
     modinfo->g.Pass1Checks = omf_write_header_initial;
     SymDebSeg[DBGS_SYMBOLS] = NULL;
@@ -1460,5 +1475,6 @@ void omf_init( struct module_info *modinfo )
     ln_srcfile = modinfo->srcfile;
 #endif
     ln_size = 0;
+#endif
     return;
 }

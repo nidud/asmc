@@ -45,7 +45,9 @@
 extern void SortSegments( int );
 
 /* default values for OPTION MZ */
+#ifndef __ASMC64__
 static const struct MZDATA mzdata = {0x1E, 0x10, 0, 0xFFFF };
+#endif
 
 /* these strings are to be moved to ltext.h */
 static const char szCaption[]  = { "Binary Map:" };
@@ -120,6 +122,7 @@ static const char mzcode[] = {
     "db 'This is a PE executable',0Dh,0Ah,'$'"
 };
 
+#ifndef __ASMC64__
 /* default 32-bit PE header */
 static struct IMAGE_PE_HEADER32 pe32def = {
     'P'+ ('E' << 8 ),
@@ -138,6 +141,7 @@ static struct IMAGE_PE_HEADER32 pe32def = {
     0, IMAGE_NUMBEROF_DIRECTORY_ENTRIES, /* loaderflags, numberofRVAandSizes */
     }
 };
+#endif
 /* default 64-bit PE header */
 static struct IMAGE_PE_HEADER64 pe64def = {
     'P'+ ('E' << 8 ),
@@ -586,7 +590,9 @@ void pe_create_PE_header( void )
 	if ( ModuleInfo.model != MODEL_FLAT ) {
 	    asmerr( 3002 );
 	}
+#ifndef __ASMC64__
 	if ( ModuleInfo.defOfssize == USE64 ) {
+#endif
 	    size = sizeof( struct IMAGE_PE_HEADER64 );
 	    p = (void *)&pe64def;
 
@@ -596,6 +602,7 @@ void pe_create_PE_header( void )
 		pe64def.OptionalHeader.Subsystem = IMAGE_SUBSYSTEM_WINDOWS_GUI;
 	    if ( ModuleInfo.sub_format == SFORMAT_64BIT )
 		pe64def.OptionalHeader.ImageBase = 0x140000000;
+#ifndef __ASMC64__
 	} else {
 	    size = sizeof( struct IMAGE_PE_HEADER32 );
 	    p = (void *)&pe32def;
@@ -604,6 +611,7 @@ void pe_create_PE_header( void )
 		pe32def.OptionalHeader.Subsystem = IMAGE_SUBSYSTEM_WINDOWS_GUI;
 
 	}
+#endif
 	pehdr = ( struct dsym *)SymSearch( hdrname "2" );
 	if ( pehdr == NULL ) {
 	    pehdr = (struct dsym *)CreateIntSegment( hdrname "2", "HDR", 2, ModuleInfo.defOfssize, TRUE );
@@ -815,8 +823,13 @@ static void pe_emit_import_data( void )
 {
     struct dll_desc *p;
     int type = 0;
+#ifndef __ASMC64__
     int ptrtype = ( ModuleInfo.defOfssize == USE64 ? T_QWORD : T_DWORD );
     char *align = ( ModuleInfo.defOfssize == USE64 ? "ALIGN(8)" : "ALIGN(4)" );
+#else
+    int ptrtype = T_QWORD;
+    char *align = "ALIGN(8)";
+#endif
 
     for ( p = ModuleInfo.g.DllQueue; p; p = p->next ) {
 	if ( p->cnt ) {
@@ -1007,8 +1020,11 @@ static void pe_set_base_relocs( struct dsym *reloc )
     }
 }
 
+#ifndef __ASMC64__
 #define GHF( x ) ( ( ModuleInfo.defOfssize == USE64 ) ? ph64->x : ph32->x )
-
+#else
+#define GHF( x ) ( ph64->x )
+#endif
 /*
  * set values in PE header
  * including data directories:
@@ -1039,7 +1055,9 @@ static void pe_set_values( struct calc_param *cp )
     struct dsym *pehdr;
     struct dsym *objtab;
     struct dsym *reloc = NULL;
+#ifndef __ASMC64__
     struct IMAGE_PE_HEADER32 *ph32;
+#endif
     struct IMAGE_PE_HEADER64 *ph64;
     struct IMAGE_FILE_HEADER *fh;
     struct IMAGE_SECTION_HEADER *section;
@@ -1053,13 +1071,17 @@ static void pe_set_values( struct calc_param *cp )
 
     /* make sure all header objects are in FLAT group */
     mzhdr->e.seginfo->group = &ModuleInfo.flat_grp->sym;
+#ifndef __ASMC64__
     if ( ModuleInfo.defOfssize == USE64 ) {
+#endif
 	ph64 = ( struct IMAGE_PE_HEADER64 *)pehdr->e.seginfo->CodeBuffer;
 	ff = ph64->FileHeader.Characteristics;
+#ifndef __ASMC64__
     } else {
 	ph32 = ( struct IMAGE_PE_HEADER32 *)pehdr->e.seginfo->CodeBuffer;
 	ff = ph32->FileHeader.Characteristics;
     }
+#endif
     if ( !( ff & IMAGE_FILE_RELOCS_STRIPPED ) ) {
 	reloc = (struct dsym *)CreateIntSegment( ".reloc", "RELOC", 2, ModuleInfo.defOfssize, TRUE );
 	if ( reloc ) {
@@ -1121,7 +1143,11 @@ static void pe_set_values( struct calc_param *cp )
     fh->NumberOfSections = objtab->sym.max_offset / sizeof( struct IMAGE_SECTION_HEADER );
 
 #if RAWSIZE_ROUND
+#ifndef __ASMC64__
     cp->rawpagesize = ( ModuleInfo.defOfssize == USE64 ? ph64->OptionalHeader.FileAlignment : ph32->OptionalHeader.FileAlignment );
+#else
+    cp->rawpagesize = ph64->OptionalHeader.FileAlignment;
+#endif
 #endif
 
     /* fill object table values */
@@ -1172,15 +1198,21 @@ static void pe_set_values( struct calc_param *cp )
 
 
     if ( ModuleInfo.g.start_label ) {
+#ifndef __ASMC64__
 	if ( ModuleInfo.defOfssize == USE64 )
+#endif
 	    ph64->OptionalHeader.AddressOfEntryPoint = ((struct dsym *)ModuleInfo.g.start_label->segment)->e.seginfo->start_offset + ModuleInfo.g.start_label->offset;
+#ifndef __ASMC64__
 	else
 	    ph32->OptionalHeader.AddressOfEntryPoint = ((struct dsym *)ModuleInfo.g.start_label->segment)->e.seginfo->start_offset + ModuleInfo.g.start_label->offset;
+#endif
     } else {
 	asmerr( 8009 );
     }
 
+#ifndef __ASMC64__
     if ( ModuleInfo.defOfssize == USE64 ) {
+#endif
 #if IMGSIZE_ROUND
 	/* round up the SizeOfImage field to page boundary */
 	sizeimg = ( sizeimg + ph64->OptionalHeader.SectionAlignment - 1 ) & ~(ph64->OptionalHeader.SectionAlignment - 1);
@@ -1190,6 +1222,7 @@ static void pe_set_values( struct calc_param *cp )
 	ph64->OptionalHeader.SizeOfImage = sizeimg;
 	ph64->OptionalHeader.SizeOfHeaders = sizehdr;
 	datadir = &ph64->OptionalHeader.DataDirectory[0];
+#ifndef __ASMC64__
     } else {
 #if IMGSIZE_ROUND
 	/* round up the SizeOfImage field to page boundary */
@@ -1203,6 +1236,7 @@ static void pe_set_values( struct calc_param *cp )
 	ph32->OptionalHeader.SizeOfHeaders = sizehdr;
 	datadir = &ph32->OptionalHeader.DataDirectory[0];
     }
+#endif
 
     /* set export directory data dir value */
     if ( curr = (struct dsym *)SymSearch( edataname ) ) {
@@ -1244,14 +1278,18 @@ static void pe_set_values( struct calc_param *cp )
 	datadir[IMAGE_DIRECTORY_ENTRY_TLS].Size = curr->sym.max_offset;
     }
 
+#ifndef __ASMC64__
     if ( ModuleInfo.defOfssize == USE64 ) {
+#endif
 	if ( curr = (struct dsym *)SymSearch( ".pdata" ) ) {
 	    datadir[IMAGE_DIRECTORY_ENTRY_EXCEPTION].VirtualAddress = curr->e.seginfo->start_offset;
 	    datadir[IMAGE_DIRECTORY_ENTRY_EXCEPTION].Size = curr->sym.max_offset;
 	}
 	cp->imagebase64 = GHF( OptionalHeader.ImageBase );
+#ifndef __ASMC64__
     } else
 	cp->imagebase = GHF( OptionalHeader.ImageBase );
+#endif
 }
 
 /* v2.11: this function is called when the END directive has been found.
@@ -1345,7 +1383,6 @@ static ret_code bin_write_module( struct module_info *modinfo )
 	    CalcOffset( curr, &cp );
 	}
     }
-
     /* handle relocs */
     for( curr = SymTables[TAB_SEG].head; curr; curr = curr->next ) {
 	DoFixup( curr, &cp );
@@ -1519,9 +1556,11 @@ void bin_init( struct module_info *modinfo )
     modinfo->g.WriteModule = bin_write_module;
     modinfo->g.Pass1Checks = bin_check_external;
     switch ( modinfo->sub_format ) {
+#ifndef __ASMC64__
     case SFORMAT_MZ:
 	memcpy( &modinfo->mz_data, &mzdata, sizeof( struct MZDATA ) );
 	break;
+#endif
     case SFORMAT_PE:
     case SFORMAT_64BIT:
 	modinfo->g.EndDirHook = pe_enddirhook; /* v2.11 */

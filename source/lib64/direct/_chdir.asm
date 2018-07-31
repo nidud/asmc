@@ -1,45 +1,42 @@
 include direct.inc
-include io.inc
-include stdlib.inc
+include errno.inc
 include winbase.inc
 
-	.code
+    .code
 
-	OPTION	WIN64:2, STACKBASE:rsp
+    option win64:nosave
 
-_chdir	PROC directory:LPSTR
-local	abspath[_MAX_PATH]:BYTE,
-	result:QWORD
+_chdir proc directory:LPSTR
 
-	SetCurrentDirectory( rcx )
-	test	eax,eax
-	jz	error
-	GetCurrentDirectory( _MAX_PATH, addr abspath )
-	test	eax,eax
-	jz	error
-	mov	ecx,DWORD PTR abspath
-	cmp	ch,':'
-	jne	success
-	mov	eax,003A003Dh
-	mov	ah,cl
-	cmp	ah,'a'
-	jb	@F
-	cmp	ah,'z'
-	ja	@F
-	sub	ah,'a' - 'A'
-@@:
-	lea	rcx,result
-	lea	rdx,abspath
-	SetEnvironmentVariable( rcx, rdx )
-	test	eax,eax
-	jz	error
-success:
-	xor	eax,eax
-toend:
-	ret
-error:
-	call	osmaperr
-	jmp	toend
-_chdir	ENDP
+  local abspath[_MAX_PATH]:SBYTE, result:DWORD
 
-	END
+    .repeat
+
+        .ifd SetCurrentDirectory( rcx )
+
+            .ifd GetCurrentDirectory( _MAX_PATH, &abspath )
+
+                xor eax,eax
+                mov ecx,DWORD PTR abspath
+                .break .if ch != ':'
+
+                mov eax,0x003A003D
+                mov ah,cl
+                .if cl >= 'a' && cl <= 'z'
+                    sub ah,'a' - 'A'
+                .endif
+                mov result,eax
+                .ifd SetEnvironmentVariable( &result, &abspath )
+
+                    xor eax,eax
+                    .break
+                .endif
+            .endif
+        .endif
+        osmaperr()
+    .until 1
+    ret
+
+_chdir endp
+
+    end

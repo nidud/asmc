@@ -37,6 +37,8 @@
 #include <omfint.h>
 #include <omfspec.h>
 
+#ifndef __ASMC64__
+
 extern const char szNull[];
 extern unsigned omf_GetGrpIdx( struct asym *sym );
 
@@ -147,12 +149,13 @@ static unsigned TranslateLogref( const struct logref *lr, uint_8 *buf, enum fixg
     }
     return( p - buf );
 }
-
+#endif
 /* generate start address subfield for MODEND */
 
 unsigned OmfFixGenFixModend( const struct fixup *fixup, uint_8 *buf, uint_32 displ, enum fixgen_types type )
 /**********************************************************************************************************/
 {
+#ifndef __ASMC64__
     struct asym *sym = fixup->sym;
     struct logref lr;
 
@@ -185,10 +188,14 @@ unsigned OmfFixGenFixModend( const struct fixup *fixup, uint_8 *buf, uint_32 dis
 	lr.frame = FRAME_TARG;
     }
     return( TranslateLogref( &lr, buf, type ) );
+#else
+    return 0;
+#endif
+
 }
 
 /* fill a logref from a fixup's info */
-
+#ifndef __ASMC64__
 static int omf_fill_logref( const struct fixup *fixup, struct logref *lr )
 /************************************************************************/
 {
@@ -285,7 +292,7 @@ static int omf_fill_logref( const struct fixup *fixup, struct logref *lr )
 
     return( 1 );
 }
-
+#endif
 /* translate a fixup into its binary representation,
  * which is a "FIXUPP subrecord" according to OMF docs.
  * structure:
@@ -308,6 +315,7 @@ static int omf_fill_logref( const struct fixup *fixup, struct logref *lr )
 unsigned OmfFixGenFix( const struct fixup *fixup, uint_32 start_loc, uint_8 *buf, enum fixgen_types type )
 /********************************************************************************************************/
 {
+#ifndef __ASMC64__
     uint_8  locat1;
     uint_8  self_relative = FALSE;
     unsigned data_rec_offset;
@@ -365,5 +373,8 @@ unsigned OmfFixGenFix( const struct fixup *fixup, uint_32 start_loc, uint_8 *buf
     *buf = locat1;
     *(buf+1) = (uint_8)data_rec_offset;
     return( 2 + TranslateLogref( &lr, buf+2, type ) );
+#else
+    return 0;
+#endif
 }
 

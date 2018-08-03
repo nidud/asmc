@@ -3,7 +3,7 @@
 #include <globals.h>
 #include <input.h>
 
-#if defined(__UNIX__) || defined(__CYGWIN__)
+#if defined(__UNIX__) //|| defined(__CYGWIN__)
 #define WILDCARDS 0
 #define CATCHBREAK 0
 #else

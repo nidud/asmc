@@ -74,6 +74,7 @@ sprintf		proto _CDecl :LPSTR, :LPSTR, :VARARG
 ftobufin	proto _CDecl :LPSTR, :VARARG
 printf		proto _CDecl :LPSTR, :VARARG
 fprintf		proto _CDecl :LPFILE, :LPSTR, :VARARG
+scanf		proto _CDecl :LPSTR, :VARARG
 puts		proto __cdecl :LPSTR
 fopen		proto __cdecl :LPSTR, :LPSTR
 fclose		proto __cdecl :LPFILE
@@ -153,7 +154,6 @@ vswprintf	proto __cdecl :ptr wchar_t, :ptr wchar_t, :PVOID
 fwscanf		proto _CDecl :ptr FILE, :ptr wchar_t, :VARARG
 swscanf		proto _CDecl :ptr wchar_t, :ptr wchar_t, :VARARG
 wscanf		proto _CDecl :ptr wchar_t, :VARARG
-
 _wfdopen	proto __cdecl :SINT, :ptr wchar_t
 _wfopen		proto __cdecl :ptr wchar_t, :ptr wchar_t
 _wfreopen	proto __cdecl :ptr wchar_t, :ptr wchar_t, :ptr FILE

@@ -66,7 +66,7 @@
 #endif
 #endif
 
-#if defined(__UNIX__) || defined(__CYGWIN__)
+#if defined(__UNIX__) //|| defined(__CYGWIN__)
 #define _stat stat
 #endif
 
@@ -1083,7 +1083,12 @@ static uint_16 omf_write_comdef( uint_16 index )
 
 static time_t GetFileTimeStamp( const char *filename )
 {
-    struct _stat statbuf;
+#if defined(__CYGWIN__)
+    struct stat
+#else
+    struct _stat
+#endif
+    statbuf;
 
     if( _stat( filename, &statbuf ) != 0 ) {
 	return( 0 );

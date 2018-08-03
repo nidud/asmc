@@ -136,6 +136,7 @@ int __cdecl ftobufin(const char *, ...);
 
 #define feof(s)		((s)->_flag & _IOEOF)
 #define ferror(s)	((s)->_flag & _IOERR)
+#define fileno(s)	((s)->_file)
 #define _fileno(s)	((s)->_file)
 #define _lastiob	&_iob[_NSTREAM_ - 1]
 

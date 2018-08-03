@@ -26,11 +26,9 @@ _wgetcwd	PROTO __cdecl :LPWSTR, :SINT
 _wgetdcwd	PROTO __cdecl :SINT, :LPWSTR, :SINT
 
 IFNDEF __PE__
-
 __allocwpath	PROTO __cdecl :LPSTR
 ifdef __DZ__
 externdef	_diskflag:DWORD
 endif
-
 ENDIF
 .pragma list(pop)

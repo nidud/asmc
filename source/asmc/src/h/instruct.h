@@ -2006,8 +2006,10 @@ insv(VINSERTI32x8, vinserti32x8, OpCls( YMM, XMM_M128,      I8_U ), F_660F3A, 1,
 insv(VINSERTI64x4, vinserti64x4, OpCls( YMM, XMM_M128,      I8_U ), F_660F3A, 1, no_WDS, 0x3A, 0x00, P_686|P_AVX, 0,0xF0, RWF_VEX | RWF_EVEX, VX_L | VX_RW1 )
 
 insv(VPABSQ, vpabsq,             OpCls( XMM,  XMM_M128_M64, NONE ), F_660F38, 1, no_WDS, 0x1F, 0x00, P_686|P_AVX, 0,0xF0, RWF_VEX | RWF_EVEX, VX_L | VX_NND | VX_RW1 )
+insv(VPCMPB, vpcmpb,             OpCls( K,    XMM_M128_M32, I8_U ), F_660F3A, 1, no_WDS, 0x3F, 0x00, P_686|P_AVX, 0,0xF0, RWF_VEX | RWF_EVEX, VX_L | VX_RW0 )
 insv(VPCMPD, vpcmpd,             OpCls( K,    XMM_M128_M32, I8_U ), F_660F3A, 1, no_WDS, 0x1F, 0x00, P_686|P_AVX, 0,0xF0, RWF_VEX | RWF_EVEX, VX_L | VX_RW0 )
 insv(VPCMPQ, vpcmpq,             OpCls( K,    XMM_M128_M64, I8_U ), F_660F3A, 1, no_WDS, 0x1F, 0x00, P_686|P_AVX, 0,0xF0, RWF_VEX | RWF_EVEX, VX_L | VX_RW1 )
+insv(VPCMPUB, vpcmpub,           OpCls( K,    XMM_M128_M32, I8_U ), F_660F3A, 1, no_WDS, 0x3E, 0x00, P_686|P_AVX, 0,0xF0, RWF_VEX | RWF_EVEX, VX_L | VX_RW0 )
 insv(VPCMPUD, vpcmpud,           OpCls( K,    XMM_M128_M32, I8_U ), F_660F3A, 1, no_WDS, 0x1E, 0x00, P_686|P_AVX, 0,0xF0, RWF_VEX | RWF_EVEX, VX_L | VX_RW0 )
 insv(VPCMPUQ, vpcmpuq,           OpCls( K,    XMM_M128_M64, I8_U ), F_660F3A, 1, no_WDS, 0x1E, 0x00, P_686|P_AVX, 0,0xF0, RWF_VEX | RWF_EVEX, VX_L | VX_RW1 )
 insv(VPBLENDMD, vpblendmd,       OpCls( XMM,  XMM_M128_M32, NONE ), F_660F38, 1, no_WDS, 0x64, 0x00, P_686|P_AVX, 0,0xF0, RWF_VEX | RWF_EVEX, VX_L | VX_RW0 )

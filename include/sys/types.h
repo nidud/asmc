@@ -30,4 +30,7 @@ typedef long off_t;
 #define _OFF_T_DEFINED
 #endif
 
+typedef unsigned long __useconds_t;   /* microseconds (unsigned) */
+typedef __useconds_t useconds_t;
+
 #endif

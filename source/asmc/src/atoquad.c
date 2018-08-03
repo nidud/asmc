@@ -1,4 +1,5 @@
 #include <globals.h>
+#include <token.h>
 #include <expreval.h>
 #include <symbols.h>
 #include <quadmath.h>

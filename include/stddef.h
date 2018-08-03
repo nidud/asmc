@@ -7,7 +7,11 @@
  extern "C" {
 #endif
 
-#define offsetof(s,m)	(size_t)&(((s *)0)->m)
+#if defined(__CYGWIN__)
+#define offsetof(s,m) __builtin_offsetof(s,m)
+#else
+#define offsetof(s,m) (size_t)&(((s *)0)->m)
+#endif
 
 #ifdef __cplusplus
  }

@@ -115,7 +115,7 @@ _TE_CONTINUE	equ 0	; continue edit
 _TE_RETEVENT	equ 1	; return current event (keystroke)
 _TE_CMFAILED	equ -1	; operation fail (end of line/buffer)
 
-S_TEDIT		STRUC
+TEDIT		STRUC
 ti_bp		LPSTR ? ; base pointer
 ti_flag		dd ?	; config
 ti_xpos		dd ?	; text window x,y
@@ -128,7 +128,7 @@ ti_boff		dd ?	; base offset - start of screen-line
 ti_bcnt		dd ?	; byte count in line
 ti_clso		dd ?	; Clipboard start offset
 ti_cleo		dd ?	; Clipboard end offset
-S_TEDIT		ENDS	; 48 byte
+TEDIT		ENDS	; 48 byte
 
 S_RECT		STRUC
 rc_x		db ?
@@ -212,7 +212,6 @@ externdef	tdidle:PVOID
 externdef	at_background:BYTE
 externdef	at_foreground:BYTE
 externdef	tclrascii:BYTE
-externdef	clipbsize:SIZE_T
 
 TIMAXSCRLINE	equ 256		; max screen size
 
@@ -576,9 +575,9 @@ MAXCLIPSIZE	equ 0x100000
 CF_TEXT		equ 1
 
 externdef	clipboard: SIZE_T
-externdef	clipbsize: SIZE_T
+externdef	clipbsize: UINT
 
-ClipboardCopy	PROTO __cdecl :LPSTR, :SIZE_T
+ClipboardCopy	PROTO __cdecl :LPSTR, :UINT
 ClipboardPaste	PROTO __cdecl
 ClipboardFree	PROTO __cdecl
 

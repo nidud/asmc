@@ -1,20 +1,11 @@
 #ifndef QUADMATH_H
 #define QUADMATH_H
-#ifdef __cplusplus
-extern "C" {
+#ifndef _INTTYPE_H_INCLUDED_
+#include <inttype.h>
 #endif
 
-#ifndef int_64
-#if defined(LONG_IS_64BITS) || defined(__LP64__)
-typedef signed long int_64;
-typedef signed long uint_64;
-#elseif defined(LLONG_MAX) || defined(__GNUC__)
-typedef signed long long int_64;
-typedef unsigned long long uint_64;
-#else
-typedef signed __int64 int_64;
-typedef unsigned __int64 uint_64;
-#endif
+#ifdef __cplusplus
+extern "C" {
 #endif
 
 typedef union {

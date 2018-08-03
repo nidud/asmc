@@ -1008,7 +1008,8 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 
     AddLineQueue( StringBufferEnd );
 
-    if ( ( sym->langtype == LANG_C || ( sym->langtype == LANG_SYSCALL && ModuleInfo.fctype != FCT_ELF64 ) ) &&
+    if ( ( sym->langtype == LANG_C || ( sym->langtype == LANG_SYSCALL &&
+	!fastcall_id/*ModuleInfo.fctype != FCT_ELF64*/ ) ) &&
 	( info->parasize || ( info->has_vararg && size_vararg ) )) {
 	if ( info->has_vararg ) {
 	    if ( ModuleInfo.epilogueflags )

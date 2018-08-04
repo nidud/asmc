@@ -258,7 +258,7 @@ externdef path_b:		S_WSUB
 externdef opfilter:		S_FILT
 externdef config:		S_CONFIG
 externdef mklist:		S_MKLST
-externdef com_info:		S_TEDIT
+externdef com_info:		TEDIT
 externdef MOBJ_Statusline:	S_MSOBJ
 
 externdef DLG_Commandline:	DWORD

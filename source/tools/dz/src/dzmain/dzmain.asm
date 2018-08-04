@@ -9,6 +9,7 @@ include malloc.inc
 include io.inc
 include process.inc
 include cfini.inc
+include crtl.inc
 
 config_create proto
 
@@ -90,6 +91,8 @@ test_path endp
 
 doszip_init proc uses esi edi ebx argv
 
+  local result
+
     malloc(5*WMAXPATH)	; directory buffers
     mov __srcfile,eax	; source
     add eax,WMAXPATH
@@ -104,15 +107,22 @@ doszip_init proc uses esi edi ebx argv
     wsopen(addr path_a) ; panels
     wsopen(addr path_b)
 
-    mov edi,_pgmpath	; %DZ%
+    strcpy(__srcfile, _pgmpath)
+    mov edi,eax		; %DZ%
     SetEnvironmentVariable("DZ", edi)
 
-    mov bl,[edi+2]
+    mov ebx,strfn(edi)
+    .if !strcmp(ebx, "bin")
+	mov byte ptr [ebx-1],0
+    .endif
+    SetEnvironmentVariable("ASMCDIR", edi)
+
+
     mov byte ptr [edi+2],0
     SetEnvironmentVariable("DZDRIVE", edi)
-    mov [edi+2],bl
+    mov byte ptr [edi],0
 
-    mov ebx,edi
+    mov ebx,_pgmpath
     ;
     ; Create and read the DZ.INI file
     ;
@@ -130,6 +140,7 @@ doszip_init proc uses esi edi ebx argv
     ; Read section [Environ]
     ;
     xor edi,edi
+    mov result,edi
     mov esi,__srcfile
     .if CFGetSection("Environ")
 
@@ -194,6 +205,12 @@ doszip_init proc uses esi edi ebx argv
 	.if filexist(ebx) == 1
 
 	    lea edi,[strfn(ebx)-S_FBLK.fb_name]
+
+	    .if __isexec(ebx)
+
+		jmp isexec
+	    .endif
+
 	    readword(ebx)
 
 	    .if ax == 4B50h
@@ -227,6 +244,7 @@ doszip_init proc uses esi edi ebx argv
 	    .endif
 
 	.elseif eax
+
 	 chdir_arg:
 
 	    and cflag,not _C_PANELID
@@ -241,6 +259,20 @@ doszip_init proc uses esi edi ebx argv
 		_chdrive(eax)
 	    .endif
 	    _chdir(ebx)
+	 .else
+
+	 isexec:
+
+	    .if __isexec(ebx)
+
+		.if CFAddSection("Load")
+
+		    mov edi,eax
+		    INIDelEntries(edi)
+		    INIAddEntryX(edi, "0=%s", ebx)
+		    inc result
+		.endif
+	    .endif
 	.endif
     .endif
 
@@ -279,14 +311,14 @@ endif
 	.endif
     .endif
 
-    xor eax,eax
+    mov eax,result
     ret
 
 doszip_init endp
 
 doszip_open proc uses esi edi ebx
 
-local	path[_MAX_PATH]:sbyte
+  local path[_MAX_PATH]:sbyte
 
     xor eax,eax
     mov dzexitcode,eax

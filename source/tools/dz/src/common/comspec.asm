@@ -35,7 +35,7 @@ __initcomspec PROC
 	.if	eax
 
 		free(__pCommandCom)
-		mov  __pCommandCom,salloc(addr buffer)
+		mov  __pCommandCom,_strdup(addr buffer)
 	.endif
 	ret
 

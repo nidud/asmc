@@ -83,7 +83,7 @@ read_environ proc uses esi edi ebx
         mov al,[esi]
         .break .if !al
         .if al != '='
-            salloc(esi)
+            _strdup(esi)
             stosd
             inc [ebx].S_LOBJ.ll_count
             mov eax,[ebx].S_LOBJ.ll_count

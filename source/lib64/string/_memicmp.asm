@@ -1,6 +1,7 @@
     .code
 
 _memicmp::
+strncasecmp::
 
     mov r9,rdx
     .repeat

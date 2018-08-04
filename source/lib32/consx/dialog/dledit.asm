@@ -15,7 +15,7 @@ tistripend  proto :dword
     .code
 
     option proc: private
-    assume edx: ptr S_TEDIT
+    assume edx: ptr TEDIT
 
 getline proc uses esi edi
     mov edx,TI
@@ -553,25 +553,25 @@ ClipEvent proc uses esi edi ebx
                         .break
                     .endif
                     mov ebx,TI
-                    mov eax,[ebx].S_TEDIT.ti_boff
-                    add eax,[ebx].S_TEDIT.ti_xoff
-                    .if eax >= [ebx].S_TEDIT.ti_clso
+                    mov eax,[ebx].TEDIT.ti_boff
+                    add eax,[ebx].TEDIT.ti_xoff
+                    .if eax >= [ebx].TEDIT.ti_clso
                         .if esi == KEY_RIGHT
                             mov edx,eax
                             dec edx
-                            .if edx == [ebx].S_TEDIT.ti_clso
-                                .if edx != [ebx].S_TEDIT.ti_cleo
-                                    mov [ebx].S_TEDIT.ti_clso,eax
+                            .if edx == [ebx].TEDIT.ti_clso
+                                .if edx != [ebx].TEDIT.ti_cleo
+                                    mov [ebx].TEDIT.ti_clso,eax
                                     xor eax,eax
                                     .break
                                 .endif
                             .endif
                         .endif
-                        mov [ebx].S_TEDIT.ti_cleo,eax
+                        mov [ebx].TEDIT.ti_cleo,eax
                         xor eax,eax
                         .break
                     .endif
-                    mov [ebx].S_TEDIT.ti_clso,eax
+                    mov [ebx].TEDIT.ti_clso,eax
                     xor eax,eax
                     .break
                 .endsw
@@ -713,14 +713,14 @@ modal endp
 ;-------------------------------------------------------------------------------
 
 dledit proc uses edi b:LPSTR, rc, bz, oflag
-  local t:S_TEDIT
+  local t:TEDIT
   local cursor:S_CURSOR
 
     CursorGet(&cursor)
 
     lea edi,t
     xor eax,eax
-    mov ecx,SIZE S_TEDIT
+    mov ecx,SIZE TEDIT
     rep stosb
     mov edi,TI
     lea eax,t

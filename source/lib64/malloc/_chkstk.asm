@@ -2,6 +2,7 @@
     .code
 
 __chkstk::
+___chkstk_ms::
 __alloca_probe::
 
     lea r11,[rsp+8]

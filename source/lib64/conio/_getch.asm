@@ -4,8 +4,8 @@ include conio.inc
 
 _getch proc uses rbx rdi rsi
 
-local Count:QWORD
-local Event[MAXINPUTRECORDS]:INPUT_RECORD
+  local Count:QWORD
+  local Event[MAXINPUTRECORDS]:INPUT_RECORD
 
     xor edi,edi
     .while !edi

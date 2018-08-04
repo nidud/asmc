@@ -258,7 +258,7 @@ local	arch[256]:BYTE
 local	cmd[512]:BYTE
 
 	.if $LIST == 0
-		.if salloc( strfcat( addr cmd, envtemp, "ziplst.tmp" ) )
+		.if _strdup( strfcat( addr cmd, envtemp, "ziplst.tmp" ) )
 			mov	$LIST,eax
 		.endif
 	.endif

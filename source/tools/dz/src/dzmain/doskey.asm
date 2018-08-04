@@ -37,7 +37,7 @@ doskeysave proc
 	    .endif
 	.endif
 	push edx
-	salloc(&com_base)
+	_strdup(&com_base)
 	pop edx
 	mov [edx],eax
 	mov eax,1

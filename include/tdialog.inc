@@ -287,14 +287,18 @@ MAXKEYSTACK equ 32
 
 .pragma pack(push, 1)
 
-ROBJECT     STRUC
-flags       dw ?
-count       db ?
-index       db ?
+TRECT       STRUC
 x           db ?
 y           db ?
 col         db ?
 row         db ?
+TRECT       ENDS
+
+ROBJECT     STRUC
+flags       dw ?
+count       db ?
+index       db ?
+rc          TRECT <>
 ROBJECT     ENDS
 
 IDDOBJ      STRUC
@@ -389,9 +393,21 @@ _TW_USECOLOR    equ 0x10
 .classdef TConsole
 
     flags   UINT ?
-    window  LPTWINDOW ?
-    dialog  LPTDIALOG ?
-    cursor  LPTCURSOR ?
+    rect    SMALL_RECT <>
+    window  PCHAR_INFO ?
+    backgr  PCHAR_INFO ?
+
+    Show    proc
+    Hide    proc
+    Read    proc
+    Write   proc :PCHAR_INFO
+    GetChar proc :SINT, :SINT
+    PutChar proc :SINT, :SINT, :UINT
+    IsInsideX proc :SINT
+    IsInsideY proc :SINT
+    IsInsideXY proc :SINT, :SINT
+    SetMaxConsole proc
+    SetConsoleSize proc cols:UINT, rows:UINT
 
     .ends
 

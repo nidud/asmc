@@ -38,7 +38,7 @@ local buffer[1024]:sbyte
 	lea esi,buffer
 	.if filexist(esi) == file_flag
 
-	    mov edi,salloc(esi)
+	    mov edi,_strdup(esi)
 	    .break
 	.endif
     .endw

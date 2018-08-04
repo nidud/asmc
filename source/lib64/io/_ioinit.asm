@@ -43,7 +43,7 @@ _ioexit proc uses rsi rdi
 	ret
 _ioexit endp
 
-pragma_init _ioinit, 1
-pragma_exit _ioexit, 2
+.pragma(init(_ioinit, 1))
+.pragma(exit(_ioexit, 2))
 
 	END

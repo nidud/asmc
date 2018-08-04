@@ -10,7 +10,7 @@ getenvp proc uses ecx edx enval:LPSTR
 
     .if GetEnvironmentVariable(enval, &buf, 2048)
 
-	salloc(&buf)
+	_strdup(&buf)
     .endif
     ret
 

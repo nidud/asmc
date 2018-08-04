@@ -91,7 +91,7 @@ historysave proc uses esi ecx edx
 		free(eax)
 
 
-		mov [esi],salloc(addr _bufin)
+		mov [esi],_strdup(addr _bufin)
 		mov edx,cpanel
 		mov eax,[edx].S_PANEL.pn_fcb_index
 		mov [esi].S_DIRECTORY.fcb_index,eax

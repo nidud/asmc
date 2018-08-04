@@ -1,12 +1,13 @@
 include stdlib.inc
 include malloc.inc
+include string.inc
 include crtl.inc
 include winbase.inc
 include dzlib.inc
 
-PUBLIC	cp_temp
-PUBLIC	envtemp
-EXTERN	_pgmpath:dword
+PUBLIC  cp_temp
+PUBLIC  envtemp
+EXTERN  _pgmpath:dword
 
     .data
     envtemp dd 0
@@ -19,13 +20,12 @@ GetEnvironmentTEMP proc
     getenvp(&cp_temp)
     mov envtemp,eax
     .if !eax
-	mov eax,_pgmpath
-	.if eax
-	salloc(eax)
-	mov envtemp,eax
-	SetEnvironmentVariable(&cp_temp, eax)
-	mov eax,envtemp
-	.endif
+        mov eax,_pgmpath
+        .if eax
+            mov envtemp,_strdup(eax)
+            SetEnvironmentVariable(&cp_temp, eax)
+            mov eax,envtemp
+        .endif
     .endif
     ret
 GetEnvironmentTEMP endp

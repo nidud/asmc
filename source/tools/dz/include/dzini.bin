@@ -10,11 +10,11 @@
 ;
 
 [Environ]
-;0=<var>=<value>
+0=INCLUDE=%ASMCDIR%\include
 
 [Path]
-;0=%DZ%\BIN
-;1=%PATH%
+0=%DZ%
+1=%PATH%
 
 [Comspec]
 0=%SystemRoot%\system32\cmd.exe
@@ -73,7 +73,20 @@ makefile=make -f
 1=&Obj List,obj.mif@%n.obj \\\n
 
 [AltF3]
-asm=asmc -X -I%dz%\lib\inc
+asm=asmc -Fl -Sg
+[AltF4]
+asm=ml -c -Fl -Sg
+[AltF9]
+inc=build
+asm=build
+makefile=build
+mak=make -f
+cmd=!.!
+
+[ShiftF1]
+asm=asmc64 -Fl -Sg
+[ShiftF2]
+asm=ml64 -c -Fl -Sg
 
 [Compress]
 0=7-Zip

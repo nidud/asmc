@@ -273,7 +273,7 @@ endif
 
             .while INIGetEntryID(ebx, entry)
 
-                salloc(eax)
+                _strdup(eax)
                 stosd
                 inc entry
                 dec esi

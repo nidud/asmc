@@ -2,9 +2,9 @@ include consx.inc
 
     .code
 
-    assume edx: ptr S_TEDIT
+    assume edx: ptr TEDIT
 
-tidecx proc uses eax ecx ti:ptr S_TEDIT
+tidecx proc uses eax ecx ti:ptr TEDIT
 
     mov edx,ti
     mov eax,[edx].ti_boff
@@ -29,7 +29,7 @@ tidecx proc uses eax ecx ti:ptr S_TEDIT
 
 tidecx endp
 
-tiincx proc uses eax ecx ti:ptr S_TEDIT
+tiincx proc uses eax ecx ti:ptr TEDIT
 
     mov edx,ti
     mov eax,[edx].ti_boff

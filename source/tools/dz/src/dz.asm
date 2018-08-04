@@ -131,7 +131,7 @@ main proc c argc:UINT, argv:ptr, environ:ptr
 				.if filexist(ebx) == 2
 
 					free(_pgmpath)
-					salloc(ebx)
+					_strdup(ebx)
 					mov _pgmpath,eax
 					.endc
 				.endif

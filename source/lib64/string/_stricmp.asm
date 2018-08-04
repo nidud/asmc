@@ -1,6 +1,7 @@
     .code
 
 _stricmp::
+strcasecmp::
 
     mov r8,rdx
     mov rax,-1

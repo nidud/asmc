@@ -1,5 +1,6 @@
     .code
 
+strupr::
 _strupr::
 
     mov rax,rcx

@@ -32,7 +32,7 @@ local buffer[512]:byte
 		.if !_access(expenviron(strcpy(ebx, eax)), 0)
 
 		    free(__pCommandCom)
-		    mov __pCommandCom,salloc(ebx)
+		    mov __pCommandCom,_strdup(ebx)
 
 		    mov eax,__pCommandArg
 		    mov byte ptr [eax],0

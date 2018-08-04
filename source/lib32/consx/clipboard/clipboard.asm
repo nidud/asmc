@@ -19,7 +19,7 @@ ClipboardFree proc
 
 ClipboardFree endp
 
-ClipboardCopy proc uses esi edi ebx string:LPSTR, len
+ClipboardCopy proc uses esi edi ebx string:LPSTR, len:UINT
 
     mov edi,len
     ClipboardFree()

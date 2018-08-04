@@ -17,7 +17,7 @@ include winbase.inc
 
 com_wsub  dd path_a
 com_base  db WMAXPATH dup(0)
-com_info  S_TEDIT <com_base,_TE_OVERWRITE,0,24,80,WMAXPATH,0720h,0,0,0,0,0>
+com_info  TEDIT <com_base,_TE_OVERWRITE,0,24,80,WMAXPATH,0720h,0,0,0,0,0>
 
     .code
 

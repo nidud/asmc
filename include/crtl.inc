@@ -20,24 +20,31 @@ __wsetenvp	proto __cdecl :LPWSTR
 __initialize	proto __cdecl :PVOID, :PVOID
 __allocwpath	proto __cdecl :LPSTR
 
+; GCC
+
+__divti3	proto __cdecl ; rdx::rcx / r9::r8
+__modti3	proto __cdecl ; rdx::rcx % r9::r8
+__udivti3	proto __cdecl ; rdx::rcx / r9::r8
+__umodti3	proto __cdecl ; rdx::rcx % r9::r8
+
 ; Microsoft
 
 _allshr		proto __cdecl ; edx:eax >> cl
-_aullshr	proto __cdecl ; edx:eax >> cl
+_aullshr	proto __cdecl ; edx:eax >> cl | rdx:rax << cl
 __ullshr	proto __cdecl ; edx:eax >> cl
-_allshl		proto __cdecl ; edx:eax << cl
+_allshl		proto __cdecl ; edx:eax << cl | rdx:rax << cl
 __llshl		proto __cdecl ; edx:eax << cl
 
-; stdcall / no decoration
+; stdcall / no decoration | fastcall
 
 __lldiv		proto __cdecl ;:qword, :qword
-_alldiv		proto __cdecl ;:qword, :qword
+_alldiv		proto __cdecl ;:qword, :qword | rdx::rcx / r9::r8
 __llmul		proto __cdecl ;:qword, :qword
-_allmul		proto __cdecl ;:qword, :qword
-_allrem		proto __cdecl ;:qword, :qword
-_aulldiv	proto __cdecl ;:qword, :qword
+_allmul		proto __cdecl ;:qword, :qword | rdx::rcx * r9::r8
+_allrem		proto __cdecl ;:qword, :qword | rdx::rcx % r9::r8
+_aulldiv	proto __cdecl ;:qword, :qword | rdx::rcx / r9::r8
 __ullmod	proto __cdecl ;:qword, :qword
-_aullrem	proto __cdecl ;:qword, :qword
+_aullrem	proto __cdecl ;:qword, :qword | rdx::rcx % r9::r8
 
 ; Watcom
 

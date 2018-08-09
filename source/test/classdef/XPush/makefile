@@ -1,5 +1,5 @@
 
 test.exe:
-    asmc -pe -win64 $*.asm
+    asmc64 -pe $*.asm
     $@
     pause

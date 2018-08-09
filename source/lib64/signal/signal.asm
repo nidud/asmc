@@ -1,29 +1,32 @@
 include signal.inc
 
-	.data
-	sig_table dq NSIG dup(0)
+    .data
+    sig_table dq NSIG dup(0)
 
-	.code
+    .code
 
-	option	win64:0
-	option	stackbase:rsp
+    option win64:nosave
 
-signal	PROC index:DWORD, func:PVOID
-	lea	r8,sig_table
-	mov	rax,[r8+rcx*8]
-	mov	[r8+rcx*8],rdx
-	ret
-signal	ENDP
+raise proc index:UINT
 
-	option	win64:2
+    lea r8,sig_table
+    mov rax,[r8+rcx*8]
+    .if rax
+        call rax
+    .endif
+    ret
 
-raise	PROC index:DWORD
-	lea	r8,sig_table
-	mov	rax,[r8+rcx*8]
-	.if	rax
-		call rax
-	.endif
-	ret
-raise	ENDP
+raise endp
 
-	END
+    option win64:rsp noauto
+
+signal proc index:UINT, func:ptr proc
+
+    lea r8,sig_table
+    mov rax,[r8+rcx*8]
+    mov [r8+rcx*8],rdx
+    ret
+
+signal endp
+
+    end

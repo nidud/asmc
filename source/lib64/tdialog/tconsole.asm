@@ -420,7 +420,7 @@ TConsole::CPuta proc uses rsi rdi x:SINT, y:SINT, l:SINT, a:BYTE
 
 TConsole::CPuta endp
 
-TConsole::Setconsole proc uses rsi rdi cols:UINT, rows:UINT
+TConsole::Setconsole proc uses rsi rdi rcx cols:UINT, rows:UINT
 
   local bz:COORD
   local rc:SMALL_RECT
@@ -508,7 +508,7 @@ TConsole::Maxconsole proc
 
 TConsole::Maxconsole endp
 
-TConsole::Moveconsole proc x:UINT, y:UINT
+TConsole::Moveconsole proc uses rcx x:UINT, y:UINT
 
     SetWindowPos( GetConsoleWindow(), 0, x, y, 0, 0, SWP_NOSIZE or SWP_NOACTIVATE or SWP_NOZORDER )
     ret
@@ -929,13 +929,14 @@ TConsole::ClipPaste proc uses rsi rbx
             mov rax,rsi
         .endif
     .endif
+    mov rcx,rbx
     ret
 
 TConsole::ClipPaste endp
 
     assume rbx:nothing
 
-TConsole::CursorOn proc
+TConsole::CursorOn proc uses rcx
 
   local cu:CONSOLE_CURSOR_INFO
 
@@ -946,7 +947,7 @@ TConsole::CursorOn proc
 
 TConsole::CursorOn endp
 
-TConsole::CursorOff proc
+TConsole::CursorOff proc uses rcx
 
   local cu:CONSOLE_CURSOR_INFO
 
@@ -957,7 +958,7 @@ TConsole::CursorOff proc
 
 TConsole::CursorOff endp
 
-TConsole::CursorGet proc uses rbx cursor:PCURSOR
+TConsole::CursorGet proc uses rbx rcx cursor:PCURSOR
 
   local ci:CONSOLE_SCREEN_BUFFER_INFO
 
@@ -975,7 +976,7 @@ TConsole::CursorGet proc uses rbx cursor:PCURSOR
 
 TConsole::CursorGet endp
 
-TConsole::CursorSet proc uses rax cursor:PCURSOR
+TConsole::CursorSet proc uses rax rcx cursor:PCURSOR
 
     mov eax,dword ptr [rdx].CURSOR.x
     SetConsoleCursorPosition(hStdOutput, eax)

@@ -90,7 +90,8 @@ static void SkipTypecast( char *fullparam, int i, struct asm_tok tokenarray[] )
 
 int GetFastcallId( int );
 
-static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *proc, struct dsym *curr, int reqParam, uint_8 *r0flags)
+static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *proc,
+	struct dsym *curr, int reqParam, uint_8 *r0flags)
 {
     int currParm;
     int psize;
@@ -908,7 +909,7 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 	sym->langtype == LANG_C ||
 	fastcall_id == FCT_VEC32 + 1 ||
 	( sym->langtype == LANG_FASTCALL && porder ) ||
-	sym->langtype == LANG_SYSCALL ) {
+	( sym->langtype == LANG_SYSCALL && !fastcall_id ) ) {
 
 	/* v2.23 if stack base is ESP */
 

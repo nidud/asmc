@@ -107,6 +107,7 @@ ProcType proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok, buffer:LPSTR
             .if IsCom
 
                 .if ( [ebx+16].token == T_FINAL || \
+                    ( [ebx].tokval >= T_C && [ebx].tokval <= T_VECTORCALL ) || \
                     ( [ebx].token != T_COLON && [ebx+16].token != T_COLON ) )
 
                     strcat(edi, " ")

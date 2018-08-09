@@ -87,6 +87,7 @@ int ProcType(int i, struct asm_tok tokenarray[], char *buffer)
         if ( IsCom ) {
 
             if ( tokenarray[i+1].token == T_FINAL ||
+               ( tokenarray[i].tokval >= T_C && tokenarray[i].tokval <= T_VECTORCALL ) ||
                ( tokenarray[i].token != T_COLON && tokenarray[i+1].token != T_COLON ) ) {
 
                 strcat(buffer, " ");

@@ -197,7 +197,8 @@ RemoveVal proc fastcall private hll, val
 RemoveVal endp
 
 GetCaseValue proc uses esi edi ebx hll, tokenarray, dcount, scount
-    local   i, opnd:expr
+
+  local i, opnd:expr
 
     xor edi,edi ; dynamic count
     xor ebx,ebx ; static count
@@ -508,16 +509,18 @@ GetSwitchArg proc uses ebx reg, flags, arg
         ;
         ; BYTE value
         ;
+ifndef __ASMC64__
         mov ecx,ModuleInfo.curr_cpu
         and ecx,P_CPU_MASK
         .if ecx >= P_386
-
+endif
             .if eax & HLLF_ARGMEM
 
                 AddLineQueueX( "movsx %r,BYTE PTR %s", edx, ebx )
             .else
                 AddLineQueueX( "movsx %r,%s", edx, ebx )
             .endif
+ifndef __ASMC64__
         .else
             .if _stricmp( "al", ebx )
 
@@ -525,11 +528,12 @@ GetSwitchArg proc uses ebx reg, flags, arg
             .endif
             AddLineQueue ( "cbw" )
         .endif
-
+endif
     .elseif eax & HLLF_ARG16
         ;
         ; WORD value
         ;
+ifndef __ASMC64__
         .if ModuleInfo.Ofssize == USE16
 
             .if eax & HLLF_ARGMEM
@@ -540,7 +544,9 @@ GetSwitchArg proc uses ebx reg, flags, arg
                 AddLineQueueX( "mov %r,%s", edx, ebx )
             .endif
         .elseif eax & HLLF_ARGMEM
-
+else
+        .if eax & HLLF_ARGMEM
+endif
             AddLineQueueX( "%r %r,WORD PTR %s", T_MOVSX, edx, ebx )
         .else
             AddLineQueueX( "%r %r,%s", T_MOVSX, edx, ebx )
@@ -550,6 +556,7 @@ GetSwitchArg proc uses ebx reg, flags, arg
         ;
         ; DWORD value
         ;
+ifndef __ASMC64__
         .if ModuleInfo.Ofssize == USE32
             .if eax & HLLF_ARGMEM
                 AddLineQueueX( "mov %r,%r PTR %s", edx, T_DWORD, ebx )
@@ -557,6 +564,9 @@ GetSwitchArg proc uses ebx reg, flags, arg
                 AddLineQueueX( "mov %r,%s", edx, ebx )
             .endif
         .elseif eax & HLLF_ARGMEM
+else
+        .if eax & HLLF_ARGMEM
+endif
             AddLineQueueX( "%r %r,%r PTR %s", T_MOVSXD, edx, T_DWORD, ebx )
         .else
             AddLineQueueX( "%r %r,%s", T_MOVSXD, edx, ebx )
@@ -625,6 +635,7 @@ local \
         jmp toend
     .endif
 
+ifndef __ASMC64__
     mov ecx,2
     mov eax,T_DW
     .if ModuleInfo.Ofssize != USE16
@@ -633,7 +644,10 @@ local \
     .endif
     mov r_dw,eax
     mov r_size,ecx
-
+else
+    mov r_dw,T_DD
+    mov r_size,4
+endif
     strcpy( &l_start, edi )
     ;
     ; flip exit to default if exist
@@ -754,6 +768,7 @@ local \
 
         .if !( [esi].flags & HLLF_NOTEST && [esi].flags & HLLF_JTABLE )
 
+ifndef __ASMC64__
             .if cl == USE16
 
                 .if !( ModuleInfo.aflag & _AF_REGAX )
@@ -849,6 +864,10 @@ local \
 
             .elseif ( edx <= ( UINT_MAX / 8 ) ) && !use_index && [esi].flags & HLLF_ARGREG && \
                 ModuleInfo.aflag & _AF_REGAX
+else
+            .if ( edx <= ( UINT_MAX / 8 ) ) && !use_index && [esi].flags & HLLF_ARGREG && \
+                ModuleInfo.aflag & _AF_REGAX
+endif
 
                 .if _memicmp( ebx, "r10", 3 )
                     _memicmp( ebx, "r11", 3 )
@@ -951,24 +970,31 @@ local \
 
                 .if [esi].flags & HLLF_TABLE && ebx != [esi].next
 
+ifndef __ASMC64__
                     .if ModuleInfo.Ofssize == USE64
+endif
                         AddLineQueueX(" dd %s-%s ; .case %s", l_exit,
                             GetLabelStr([esi].labels[LSTART*4], &labelx), [esi].condlines)
+ifndef __ASMC64__
                     .else
                         AddLineQueueX(" %r %s ; .case %s", r_dw,
                             GetLabelStr([esi].labels[LSTART*4], &labelx), [esi].condlines)
                     .endif
+endif
                     mov ebx,[esi].next
                 .endif
             .endf
 
             mov esi,hll
+ifndef __ASMC64__
             .if ModuleInfo.Ofssize == USE64
+endif
                 AddLineQueueX( " dd 0 ; .default" )
+ifndef __ASMC64__
             .else
                 AddLineQueueX( " %r %s ; .default", r_dw, l_exit )
             .endif
-
+endif
             mov eax,max
             sub eax,min
             inc eax
@@ -976,11 +1002,13 @@ local \
             mov ebx,T_DB
             .if eax > 256
 
+ifndef __ASMC64__
                 .if ModuleInfo.Ofssize == USE16
 
                     asmerr(2022, 1, 2)
                     jmp toend
                 .endif
+endif
                 mov ebx,T_DW
             .endif
             mov r_db,ebx
@@ -1030,20 +1058,28 @@ local \
                     ; write block to table
                     ;
                     mov ecx,[eax].hll_item.labels[LSTART*4]
+ifndef __ASMC64__
                     .if ModuleInfo.Ofssize == USE64
+endif
                         addlq_jxx_label64( r_dw, l_exit, ecx )
+ifndef __ASMC64__
                     .else
                         addlq_jxx_label( r_dw, ecx )
                     .endif
+endif
                 .else
                     ;
                     ; else make a jump to exit or default label
                     ;
+ifndef __ASMC64__
                     .if ModuleInfo.Ofssize == USE64
+endif
                         AddLineQueue( "dd 0" )
+ifndef __ASMC64__
                     .else
                         AddLineQueueX( "%r %s", r_dw, l_exit )
                     .endif
+endif
                 .endif
             .endf
         .endif
@@ -1091,6 +1127,7 @@ RenderJTable proc uses esi edi ebx hll:ptr hll_item
     GetLabelStr( [esi].labels[LEXIT*4], &l_exit )
 
     mov ebx,[esi].condlines
+ifndef __ASMC64__
     mov cl,ModuleInfo.Ofssize
 
     .if cl == USE16
@@ -1125,6 +1162,9 @@ RenderJTable proc uses esi edi ebx hll:ptr hll_item
             AddLineQueueX("jmp [%s*4+%s-(MIN%s*4)]", ebx, edi, edi)
 
     .elseif ModuleInfo.aflag & _AF_REGAX
+else
+    .if ModuleInfo.aflag & _AF_REGAX
+endif
         .if _memicmp( ebx, "r10", 3 )
             _memicmp( ebx, "r11", 3 )
         .endif
@@ -1206,13 +1246,17 @@ SwitchStart proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok
 
                 QueueTestLines( edi )
                 or  [esi].flags,HLLF_ARGREG
+ifndef __ASMC64__
                 .if ModuleInfo.Ofssize == USE16
                     or [esi].flags,HLLF_ARG16
                 .elseif ModuleInfo.Ofssize == USE32
                     or [esi].flags,HLLF_ARG32
                 .else
+endif
                     or [esi].flags,HLLF_ARG64
+ifndef __ASMC64__
                 .endif
+endif
             .else
 
                 mov ecx,i
@@ -1222,18 +1266,20 @@ SwitchStart proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok
                 .switch eax
                   .case T_AX .. T_DI
                     or  [esi].flags,HLLF_ARG16
+ifndef __ASMC64__
                     .if ModuleInfo.Ofssize == USE16
                         or [esi].flags,HLLF_ARGREG
                         .if [esi].flags & HLLF_NOTEST
                             or [esi].flags,HLLF_JTABLE
                         .endif
                     .endif
-
+endif
                   .case T_AL .. T_BH
                     .endc
 
                   .case T_EAX .. T_EDI
                     or  [esi].flags,HLLF_ARG32
+ifndef __ASMC64__
                     .if ModuleInfo.Ofssize == USE32
                         or [esi].flags,HLLF_ARGREG
                         .if [esi].flags & HLLF_NOTEST
@@ -1241,8 +1287,11 @@ SwitchStart proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok
                         .endif
                     .endif
                     .if ModuleInfo.Ofssize == USE64
+endif
                         or [esi].flags,HLLF_ARG3264
+ifndef __ASMC64__
                     .endif
+endif
                     .endc
 
                   .case T_RAX .. T_R15
@@ -1269,12 +1318,14 @@ SwitchStart proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok
                             or [esi].flags,HLLF_ARG64
                         .endif
                         .endc
+ifndef __ASMC64__
                     .case ModuleInfo.Ofssize == USE16
                         or [esi].flags,HLLF_ARG16
                         .endc
                     .case ModuleInfo.Ofssize == USE32
                         or [esi].flags,HLLF_ARG32
                         .endc
+endif
                     .default
                         or [esi].flags,HLLF_ARG64
                     .endsw

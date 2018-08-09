@@ -1,4 +1,4 @@
-
+ifndef __ASMC64__
 res(DOT_8086,	    .8086,	 0,						DRT_CPU, 0, P_86, P_86)
 res(DOT_186,	    .186,	 0,						DRT_CPU, 0, P_86, P_186)
 res(DOT_286,	    .286,	 0,						DRT_CPU, 0, P_86, P_286)
@@ -22,6 +22,8 @@ res(DOT_8087,	    .8087,	 0,						DRT_CPU, 0, P_86, P_87)
 res(DOT_287,	    .287,	 0,						DRT_CPU, 0, P_86, P_287)
 res(DOT_387,	    .387,	 0,						DRT_CPU, 0, P_86, P_387)
 res(DOT_NO87,	    .no87,	 0,						DRT_CPU, 0, P_86, P_NO87)
+endif
+
 res(DOT_CREF,	    .cref,	 0,						DRT_LISTING, 0, P_86, 0)
 res(DOT_LFCOND,	    .lfcond,	 0,						DRT_LISTING, 0, P_86, 0)
 res(DOT_LIST,	    .list,	 0,						DRT_LISTING, 0, P_86, 0)
@@ -45,15 +47,23 @@ res(DOT_XALL,	    .xall,	 0,						DRT_LISTMAC, 0, P_86, LM_LISTMACRO)
 res(DOT_LALL,	    .lall,	 0,						DRT_LISTMAC, 0, P_86, LM_LISTMACROALL)
 res(DOT_SALL,	    .sall,	 0,						DRT_LISTMAC, 0, P_86, LM_NOLISTMACRO)
 res(DOT_ALPHA,	    .alpha,	 0,						DRT_SEGORDER, 0, P_86, SEGORDER_ALPHA)
+ifndef __ASMC64__
 res(DOT_DOSSEG,	    .dosseg,	 0,						DRT_SEGORDER, 0, P_86, SEGORDER_DOSSEG)
+endif
 res(DOT_SEQ,	    .seq,	 0,						DRT_SEGORDER, 0, P_86, SEGORDER_SEQ)
+ifndef __ASMC64__
 res(DOSSEG,	    dosseg,	 0,						DRT_SEGORDER, 0, P_86, SEGORDER_DOSSEG)
+endif
 res(DOT_CODE,	    .code,	 DF_NOSTRUC|DF_PROC|DF_CGEN,			DRT_SIMSEG, 0, P_86, 0)
+ifndef __ASMC64__
 res(DOT_STACK,	    .stack,	 DF_NOSTRUC|DF_PROC|DF_CGEN,			DRT_SIMSEG, 0, P_86, 1)
+endif
 res(DOT_DATA,	    .data,	 DF_NOSTRUC|DF_PROC|DF_CGEN,			DRT_SIMSEG, 0, P_86, 2)
 res(DOT_DATA_UN,    .data?,	 DF_NOSTRUC|DF_PROC|DF_CGEN,			DRT_SIMSEG, 0, P_86, 3)
+ifndef __ASMC64__
 res(DOT_FARDATA,    .fardata,	 DF_NOSTRUC|DF_PROC|DF_CGEN,			DRT_SIMSEG, 0, P_86, 4)
 res(DOT_FARDATA_UN, .fardata?,	 DF_NOSTRUC|DF_PROC|DF_CGEN,			DRT_SIMSEG, 0, P_86, 5)
+endif
 res(DOT_CONST,	    .const,	 DF_NOSTRUC|DF_PROC|DF_CGEN,			DRT_SIMSEG, 0, P_86, 6)
 res(DOT_IF,	    .if,	 DF_CGEN|DF_CEXPR|DF_NOSTRUC|DF_STORE|DF_PROC,	DRT_HLLSTART, 0, P_86, 0)
 res(DOT_REPEAT,	    .repeat,	 DF_CGEN|DF_NOSTRUC|DF_STORE|DF_PROC,		DRT_HLLSTART, 0, P_86, 0)
@@ -165,9 +175,11 @@ res(DOT_GOTOSW3,    .gotosw3,	 DF_CGEN,					DRT_SWITCH, 0, P_86, 0)
 res(DOT_DEFAULT,    .default,	 DF_CGEN|DF_CEXPR,				DRT_SWITCH, 0, P_86, 0)
 res(DOT_ENDSW,	    .endsw,	 DF_CGEN,					DRT_SWITCH, 0, P_86, 0)
 
+ifndef __ASMC64__
 res(DOT_EXIT,	    .exit,	 DF_CGEN|DF_STORE,				DRT_STARTEXIT, 0, P_86, 0)
 res(DOT_STARTUP,    .startup,	 DF_CGEN|DF_STORE,				DRT_STARTEXIT, 0, P_86, 0)
 res(DOT_MODEL,	    .model,	 DF_CGEN,					DRT_MODEL, 0, P_86, 0)
+endif
 res(DOT_RADIX,	    .radix,	 0,						DRT_RADIX, 0, P_86, 0)
 res(DOT_SAFESEH,    .safeseh,	 0,						DRT_SAFESEH, RWF_IA32, P_386, 0)
 res(DOT_ERR,	    .err,	 DF_STRPARM|DF_STORE,				DRT_ERRDIR, 0, P_86, 0)

@@ -9,7 +9,9 @@ include token.inc
 public  fastcall_tab
 
 GetGroup        proto :ptr asym
+ifndef __ASMC64__
 GetSegmentPart  proto :ptr expr, :LPSTR, :LPSTR
+endif
 search_assume   proto :ptr asym, :SINT, :SINT
 
 invoke_conv     struc
@@ -46,6 +48,7 @@ REGPAR_WIN64    equ 0x0306 ; regs 1, 2, 8 and 9
 REGPAR_ELF64    equ 0x03C6 ; regs 1, 2, 6, 7, 8 and 9
 
 fastcall_tab label invoke_conv
+ifndef __ASMC64__
     dd ms32_fcstart, ms32_fcend , ms32_param ; FCT_MSC
     dd watc_fcstart, watc_fcend , watc_param ; FCT_WATCOMC
     dd ms64_fcstart, ms64_fcend , ms64_param ; FCT_WIN64
@@ -58,6 +61,14 @@ ms16_regs label byte
 
 ms32_regs label byte
     db T_ECX, T_EDX
+else
+    dd 0, 0, 0 ; FCT_MSC
+    dd 0, 0, 0 ; FCT_WATCOMC
+    dd ms64_fcstart, ms64_fcend , ms64_param ; FCT_WIN64
+    dd elf64_fcstart,elf64_fcend,elf64_param ; FCT_ELF64
+    dd 0, 0, 0 ; FCT_VEC32
+    dd ms64_fcstart, ms64_fcend , ms64_param ; FCT_VEC64
+endif
 
 ms64_regs label byte
     db T_CL,  T_DL,  T_R8B, T_R9B
@@ -97,6 +108,7 @@ GetSegm macro x
     exitm<[x].asym._segment>
     endm
 
+ifndef __ASMC64__
 GetSegmentPart proc uses esi edi ebx opnd:ptr expr, buffer:LPSTR, fullparam:LPSTR
 
     mov esi,T_NULL
@@ -147,6 +159,7 @@ GetSegmentPart proc uses esi edi ebx opnd:ptr expr, buffer:LPSTR, fullparam:LPST
     ret
 
 GetSegmentPart endp
+endif
 
 option proc:private
 
@@ -169,6 +182,7 @@ GetParmIndex macro x
 ;-------------------------------------------------------------------------------
 ; FCT_MSC
 ;-------------------------------------------------------------------------------
+ifndef __ASMC64__
 
 ms32_fcstart proc pp:ptr nsym, numparams:SINT, start:SINT,
     tokenarray:ptr asm_tok, value:ptr SINT
@@ -558,6 +572,7 @@ watc_fcend proc pp, numparams, value
     ret
 
 watc_fcend endp
+endif
 
 ;-------------------------------------------------------------------------------
 ; FCT_WIN64

@@ -70,7 +70,11 @@ gsym_table  dd GHASH_TABLE_SIZE dup(?)
 symPC       dd 0        ; the $ symbol -- asym *
 
 @@Version   db "@Version",0
+ifdef __ASMC64__
+MLVersion   db "1000",0
+else
 MLVersion   db "800",0
+endif
 @@Date      db "@Date",0
 @@Time      db "@Time",0
 @@FileName  db "@FileName",0
@@ -103,6 +107,9 @@ tmtab   LABEL tmitem
 ;
 ; table of predefined numeric equates
 ;
+ifdef __ASMC64__
+CP__ASMC64__ db "__ASMC64__",0
+endif
 CP__ASMC__  db "__ASMC__",0
 CP__JWASM__ db "__JWASM__",0
 CP_$        db "$",0
@@ -113,6 +120,9 @@ CP_$        db "$",0
 
 eqtab LABEL eqitem
     eqitem  < CP__ASMC__,  ASMC_VERSION, 0, 0 >
+ifdef __ASMC64__
+    eqitem  < CP__ASMC64__,  ASMC_VERSION, 0, 0 >
+endif
     eqitem  < CP__JWASM__, 212, 0, 0 >
     eqitem  < CP_$,        0, UpdateCurPC, symPC >
     eqitem  < @@Line,      0, UpdateLineNumber, LineCur >

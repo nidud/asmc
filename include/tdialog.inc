@@ -39,33 +39,6 @@ B_InvMenus  equ 10
 B_TextView  equ 12
 B_TextEdit  equ 13
 
-TCOLOR      struc
-foreground  db 16 dup(?)
-background  db 16 dup(?)
-TCOLOR      ends
-
-CURSOR_NORMAL equ 16
-
-.classdef TCursor
-
-    CursorInfo      CONSOLE_CURSOR_INFO <>
-    CursorPosition  COORD <>
-
-    .ends
-
-
-.classdef Clipboard
-
-    cp      LPSTR ?
-    clen    UINT ?
-
-    Free    proc
-    Copy    proc :LPSTR, :UINT
-    Paste   proc
-
-    .ends
-
-
 KEY_ALT         equ 0x08
 KEY_CTRL        equ 0x04
 KEY_SHIFT       equ 0x03
@@ -258,34 +231,18 @@ SHIFT_MOUSEMOVED        equ 0x00800000
 SHIFT_MOUSEFLAGS        equ 0x00FF0000
 SHIFT_RELEASEKEY        equ 0x80000000
 
-MAXKEYSTACK equ 32
-
-.classdef TEvent
-
-    keyshift    dd ?
-    keybchar    db ?
-    keybscan    db ?
-    keybcode    db ?
-    keybstate   db ?
-    keybmouse_x dd ?
-    keybmouse_y dd ?
-    keybcount   dd ?
-    keybstack   dd MAXKEYSTACK dup(?)
-
-    ReadEvent       proc
-    GetEvent        proc
-    GetShiftState   proc
-    MousePress      proc
-    GetMouseX       proc
-    GetMouseY       proc
-    PushEvent       proc :UINT
-    PopEvent        proc
-    SetKeyState     proc
-
-    .ends
-
+MAXKEYSTACK     equ 32
+CURSOR_NORMAL   equ 16
 
 .pragma pack(push, 1)
+
+CURSOR      STRUC   ; CONSOLE_CURSOR_INFO
+dwSize      dd ?    ; .dwSize   1..100
+bVisible    dd ?    ; .bVisible 0..1
+x           dw ?    ; word x,y  COORD
+y           dw ?
+CURSOR      ENDS
+PCURSOR     TYPEDEF PTR CURSOR
 
 TRECT       STRUC
 x           db ?
@@ -339,11 +296,10 @@ _O_DEACT    equ _O_STATE
 
 .classdef TObject :LPROBJECT
 
-    _prev   LPTOBJECT ?
-    _next   LPTOBJECT ?
-
-    Flags   UINT ?
-    Rect    SMALL_RECT <>
+    flags       dw ?
+    count       db ?
+    index       db ?
+    rc          TRECT <>
     pData   PVOID ?
 
     .ends
@@ -355,28 +311,39 @@ _TW_MOVEABLE    equ 0x04
 _TW_USESHADE    equ 0x08
 _TW_USECOLOR    equ 0x10
 
-.classdef TWindow :SINT, :SINT, :SINT, :SINT
+.classdef TWindow
 
-    flags   UINT ?
-    rect    SMALL_RECT <>
-    window  PCHAR_INFO ?
-    backgr  PCHAR_INFO ?
-    shade   PCHAR_INFO ?
+    flags       UINT ?
+    rc          TRECT <>
+    window      PCHAR_INFO ?
 
     Show        proc
     Hide        proc
-    Read        proc
-    Write       proc :PCHAR_INFO
     Move        proc :SINT, :SINT
-    SetShade    proc
-    ClearShade  proc
-    Putc        proc :SINT, :SINT, :BYTE, :SINT, :SBYTE
-    Puts        proc :SINT, :SINT, :BYTE, :SINT, :LPSTR
+    Read        proc
+    Write       proc
+    Exchange    proc
+    Setshade    proc
+    Clearshade  proc
+    Getshadeptr proc
+    Readshade   proc
+    Alloc       proc
+    Windowsize  proc
+    Xyrow       proc :SINT, :SINT
+    Winoffset   proc :SINT, :SINT
+    Inside      proc :TRECT
+    OPutw       proc :UINT, :UINT, :UINT
+    OPutfg      proc :UINT, :UINT, :BYTE
+    OPutbg      proc :UINT, :UINT, :BYTE
+    OPuts       proc :UINT, :UINT, :LPSTR
+    OPutsEx     proc :UINT, :UINT, :BYTE, :BYTE, :LPSTR
+    OPath       proc :UINT, :UINT, :LPSTR
+    OCenter     proc :UINT, :UINT, :LPSTR
 
     .ends
 
 
-.classdef TDialog :LPIDDOBJ
+.classdef TDialog
 
     flags   UINT ?
     count   UINT ?
@@ -384,30 +351,75 @@ _TW_USECOLOR    equ 0x10
     window  LPTWINDOW ?
     object  LPTOBJECT ?
 
-    Show    proc
-    Hide    proc
+    Open    proc :TRECT, :UINT
+    OpenIDD proc :LPIDDOBJ
 
     .ends
 
 
 .classdef TConsole
 
-    flags   UINT ?
-    rect    SMALL_RECT <>
-    window  PCHAR_INFO ?
-    backgr  PCHAR_INFO ?
+    flags       UINT ?
+    rc          TRECT <>
+    window      PCHAR_INFO ?
+    backgr      PCHAR_INFO ?
 
-    Show    proc
-    Hide    proc
-    Read    proc
-    Write   proc :PCHAR_INFO
-    GetChar proc :SINT, :SINT
-    PutChar proc :SINT, :SINT, :UINT
-    IsInsideX proc :SINT
-    IsInsideY proc :SINT
-    IsInsideXY proc :SINT, :SINT
-    SetMaxConsole proc
-    SetConsoleSize proc cols:UINT, rows:UINT
+    foreground  db 16 dup(?)
+    background  db 16 dup(?)
+
+    keyshift    dd ?
+    keybchar    db ?
+    keybscan    db ?
+    keybcode    db ?
+    keybstate   db ?
+    keybmouse_x dd ?
+    keybmouse_y dd ?
+    keybcount   dd ?
+    keybstack   dd MAXKEYSTACK dup(?)
+
+    clipboard   dq ?
+    clipbsize   dd ?
+
+
+    Update      proc
+    Hide        proc
+    Read        proc
+    Write       proc :PCHAR_INFO
+    Getchar     proc :SINT, :SINT
+    Putchar     proc :SINT, :SINT, :UINT
+    Putattrib   proc :SINT, :SINT, :UINT
+    Getattrib   proc :UINT, :UINT
+    Setattrib   proc :BYTE
+    Clrconsole  proc
+    CPrintf     proc :SINT, :SINT, :LPSTR, :VARARG
+    CPuta       proc :SINT, :SINT, :SINT, :BYTE
+    Getrectptr  proc :TRECT
+    Insidex     proc :SINT
+    Insidey     proc :SINT
+    Inside      proc :SINT, :SINT
+    Maxconsole  proc
+    Setconsole  proc :UINT, :UINT
+    Moveconsole proc :UINT, :UINT
+
+    Readevent   proc
+    Getevent    proc
+    Getch       proc
+    Shiftstate  proc
+    Mousepress  proc
+    Getmousex   proc
+    Getmousey   proc
+    Pushevent   proc :UINT
+    Popevent    proc
+    SetKeystate proc
+
+    ClipFree    proc
+    ClipCopy    proc :LPSTR, :UINT
+    ClipPaste   proc
+
+    CursorOn    proc
+    CursorOff   proc
+    CursorGet   proc :PCURSOR
+    CursorSet   proc :PCURSOR
 
     .ends
 

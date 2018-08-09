@@ -473,7 +473,9 @@ ModulePassInit proc uses esi
 	mov eax,ecx
 	and eax,P_CPU_MASK
 
+ifndef __ASMC64__
 	.if ModuleInfo.sub_format == SFORMAT_64BIT
+endif
 	    ;
 	    ; v2.06: force cpu to be at least P_64, without side effect to Options.cpu
 	    ;
@@ -494,6 +496,7 @@ ModulePassInit proc uses esi
 		    mov ModuleInfo.langtype,LANG_SYSCALL
 		.endif
 	    .endif
+ifndef __ASMC64__
 	.else
 	    ;
 	    ; if model FLAT is to be set, ensure that cpu is compat.
@@ -503,19 +506,26 @@ ModulePassInit proc uses esi
 		mov ecx,P_386
 	    .endif
 	.endif
+endif
 	SetCPU(ecx)
 	;
 	; table ModelToken starts with MODEL_TINY, which is index 1"
 	;
+ifndef __ASMC64__
 	.if esi != MODEL_NONE
 
 	    AddLineQueueX("%r %s", T_DOT_MODEL, ModelToken[esi*4-4])
 	.endif
+endif
     .endif
 
     movzx eax,Options.masm51_compat
     SetMasm510(eax)
+ifndef __ASMC64__
     mov ModuleInfo.defOfssize,USE16
+else
+    mov ModuleInfo.defOfssize,USE64
+endif
     mov ModuleInfo.ljmp,1
     mov al,Options.write_listing
     mov ModuleInfo.list,al

@@ -1226,12 +1226,16 @@ StripSource proc private uses esi edi ebx i:UINT, e:UINT, tokenarray:ptr asm_tok
 
     .if !esi
 
+ifndef __ASMC64__
         mov esi,@CStr( " eax" )
         .if ModuleInfo.Ofssize == USE64
             mov esi,@CStr( " rax" )
         .elseif ModuleInfo.Ofssize == USE16
             mov esi,@CStr( " ax" )
         .endif
+else
+        mov esi,@CStr( " rax" )
+endif
         mov eax,i
         .if !proc_id && eax > 1
 
@@ -1895,14 +1899,16 @@ local   hllop:      hll_opnd,
 
                       .case HLLF_IFD
                         mov ax,[edx]
+ifndef __ASMC64__
                         .if ModuleInfo.Ofssize == USE64
-
+endif
                             mov BYTE PTR [edx],'e'
                             .if !ecx && ax == [ebx] ; v2.27 - .ifd foo() & imm --> test eax,emm
 
                                 mov BYTE PTR [ebx],'e'
                             .endif
 
+ifndef __ASMC64__
                         .elseif ModuleInfo.Ofssize == USE16
 
                             .if BYTE PTR [edx+2] != ' '
@@ -1922,22 +1928,27 @@ local   hllop:      hll_opnd,
                                 mov BYTE PTR [ebx-1],'e'
                             .endif
                         .endif
+endif
                         .endc
 
                       .case HLLF_IFW
+ifndef __ASMC64__
                         .if ModuleInfo.Ofssize != USE16
-
+endif
                             mov ax,[edx]
                             mov byte ptr [edx],' '
                             .if !ecx && ax == [ebx]
 
                                 mov byte ptr [ebx],' '
                             .endif
+ifndef __ASMC64__
                         .endif
+endif
                         .endc
 
                       .case HLLF_IFB
                         mov ax,[edx]
+ifndef __ASMC64__
                         .if ModuleInfo.Ofssize == USE16
 
                             mov byte ptr [edx+1],'l'
@@ -1946,6 +1957,7 @@ local   hllop:      hll_opnd,
                                 mov byte ptr [ebx+1],'l'
                             .endif
                         .else
+endif
                             mov byte ptr [edx],' '
                             mov byte ptr [edx+2],'l'
 
@@ -1954,7 +1966,9 @@ local   hllop:      hll_opnd,
                                 mov byte ptr [ebx],' '
                                 mov byte ptr [ebx+2],'l'
                             .endif
+ifndef __ASMC64__
                         .endif
+endif
                         .endc
                     .endsw
                 .endif
@@ -2143,6 +2157,7 @@ RenderUntilXX proc private uses edi hll:PTR hll_item, cmd:UINT
       .case T_DOT_UNTILBXZ : mov ecx,T_BX - T_AX : .endc
       .case T_DOT_UNTILDXZ : mov ecx,T_DX - T_AX : .endc
     .endsw
+ifndef __ASMC64__
     .if ModuleInfo.Ofssize == USE16
         add ecx,T_AX
     .elseif ModuleInfo.Ofssize == USE32
@@ -2150,6 +2165,9 @@ RenderUntilXX proc private uses edi hll:PTR hll_item, cmd:UINT
     .else
         add ecx,T_RAX
     .endif
+else
+    add ecx,T_RAX
+endif
     AddLineQueueX( " %r %r", T_DEC, ecx )
     mov edx,hll
     mov ecx,[edx].hll_item.labels[LSTART*4]

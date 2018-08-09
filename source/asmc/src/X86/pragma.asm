@@ -77,7 +77,7 @@ PragmaDirective proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok
                 mov edi,@CStr("dq")
             .endif
             lea edx,@CStr("EXIT")
-            .if eax == "tini"
+            .if eax == "init"
                 lea edx,@CStr("INIT")
             .endif
             push edx

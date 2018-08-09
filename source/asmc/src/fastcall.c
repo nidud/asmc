@@ -842,7 +842,7 @@ static void elf64_fcend( struct dsym const *proc, int numparams, int value )
  * v2.05: extracted from PushInvokeParam(),
  * so it could be used by watc_param() as well.
  */
-
+#ifndef __ASMC64__
 short GetSegmentPart( struct expr *opnd, char *buffer, const char *fullparam )
 {
     short reg = T_NULL;
@@ -894,7 +894,6 @@ short GetSegmentPart( struct expr *opnd, char *buffer, const char *fullparam )
  *   the third!
  */
 
-#ifndef __ASMC64__
 static int watc_fcstart( struct dsym const *proc, int numparams, int start, struct asm_tok tokenarray[], int *value )
 {
     return( 1 );

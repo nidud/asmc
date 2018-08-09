@@ -171,7 +171,9 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 	    AddLineQueueX( " lea %r, %s", regax[ModuleInfo.Ofssize], fullparam );
 	    *r0flags |= R0_USED;
 	    AddLineQueueX( " push %r", regax[ModuleInfo.Ofssize] );
-	} else {
+	}
+#ifndef __ASMC64__
+	else {
 	push_address:
 
 	    /* push segment part of address?
@@ -193,6 +195,7 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 		} else
 		    AddLineQueueX( " push %s", buffer );
 	    }
+
 	    /* push offset part of address */
 	    if ( (ModuleInfo.curr_cpu & P_CPU_MASK ) < P_186 ) {
 		AddLineQueueX( " mov %r, offset %s", T_AX, fullparam );
@@ -220,6 +223,7 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 		}
 	    }
 	}
+#endif
 	if ( curr->sym.is_vararg ) {
 	    size_vararg += CurrWordSize + ( curr->sym.isfar ? CurrWordSize : 0 );
 	}
@@ -275,12 +279,14 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 			asize = SizeFromMemtype( opnd.mbr->mem_type, opnd.Ofssize, opnd.mbr->type );
 		}
 	    } else if ( opnd.mem_type != MT_TYPE ) {
+#ifndef __ASMC64__
 		if ( opnd.kind == EXPR_ADDR &&
 		     opnd.indirect == FALSE &&
 		     opnd.sym &&
 		     opnd.instr == EMPTY &&
 		     ( opnd.mem_type == MT_NEAR || opnd.mem_type == MT_FAR ) )
 		    goto push_address;
+#endif
 		if ( opnd.Ofssize == USE_EMPTY )
 		    opnd.Ofssize = ModuleInfo.Ofssize;
 		asize = SizeFromMemtype( opnd.mem_type, opnd.Ofssize, opnd.type );

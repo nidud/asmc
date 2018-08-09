@@ -14,7 +14,9 @@ close_files     proto
 CmdlineFini     proto
 ParseCmdline    proto :ptr, :ptr
 write_usage     proto
-
+ifdef __ASMC64__
+define_name     proto :LPSTR, :LPSTR
+endif
 .code
 
 strfcat proc uses esi edi ecx edx buffer:LPSTR, path:LPSTR, file:LPSTR
@@ -124,6 +126,9 @@ if CATCHBREAK
     signal(SIGBREAK, GeneralFailure)
 else
     signal(SIGTERM, GeneralFailure)
+endif
+ifdef __ASMC64__
+    define_name( "_WIN64", "1" )
 endif
 
     xor eax,eax

@@ -1,36 +1,36 @@
 .pragma list(push, 0)
 ifndef GUID_DEFINED
-GUID_DEFINED		equ <>
-GUID			STRUC
-Data1			dd ?
-Data2			dw ?
-Data3			dw ?
-Data4			db 8 dup(?)
-GUID			ENDS
+GUID_DEFINED equ <>
+GUID	STRUC
+Data1	dd ?
+Data2	dw ?
+Data3	dw ?
+Data4	db 8 dup(?)
+GUID	ENDS
 endif
 
-ifdef DEFINE_GUID
-undef DEFINE_GUID
-endif
-
-ifdef INITGUID
+ifndef DEFINE_GUID
 DEFINE_GUID macro name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8
-	_&name& equ <{l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}}>
-	exitm<externdef name:IID>
-	endm
+ifdef __PE__
+_&name& equ <{l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}}>
+elseifdef INITGUID
+echo name GUID {l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}}
 else
-DEFINE_GUID macro name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8
-	_&name& equ <{l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}}>
-	exitm<externdef name:IID>
-	endm
+externdef name:GUID
+endif
+    exitm<>
+    endm
 endif
 
 DEFINE_OLEGUID macro name, l, w1, w2
-	exitm<DEFINE_GUID(name, l, w1, w2, 0xC0,0,0,0,0,0,0,0x46)>
-	endm
+    exitm<DEFINE_GUID(name, l, w1, w2, 0xC0,0,0,0,0,0,0,0x46)>
+    endm
 
 ifndef _GUIDDEF_H_
-_GUIDDEF_H_ equ 1
+_GUIDDEF_H_ equ <>
+ifndef __PE__
+includelib uuid.lib
+endif
 
 ifndef __LPGUID_DEFINED__
 __LPGUID_DEFINED__	equ 1

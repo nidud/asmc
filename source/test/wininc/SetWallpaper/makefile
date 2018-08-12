@@ -1,5 +1,5 @@
 test.exe:
-    asmc -Zp4 $*.asm
+    asmc $*.asm
     linkw system con_32 file $*
-    $@
+    #$@
 

@@ -7,9 +7,11 @@ include shlwapi.inc
 include stdio.inc
 include tchar.inc
 
+ifdef __PE__
 .data
 IID_IShellFolder	GUID _IID_IShellFolder
 IID_IShellFolderViewCB	GUID _IID_IShellFolderViewCB
+endif
 
 .code
 

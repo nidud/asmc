@@ -1,14 +1,15 @@
 .pragma list(push, 0)
 
-ifdef INITGUID
 DEFINE_KNOWN_FOLDER macro name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8
-	exitm<_&name& equ <{ l, w1, w2, { b1, b2, b3, b4, b5, b6, b7, b8 } }>>
-	endm
+ifdef __PE__
+_&name& equ <{l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}}>
+elseifdef INITGUID
+echo name GUID {l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}}
 else
-DEFINE_KNOWN_FOLDER macro name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8
-	exitm<externdef name:GUID>
-	endm
+externdef name:GUID
 endif
+    exitm<>
+    endm
 
 DEFINE_KNOWN_FOLDER(FOLDERID_NetworkFolder, 0xD20BEEC4, 0x5CA8, 0x4905, 0xAE, 0x3B, 0xBF, 0x25, 0x1E, 0xA0, 0x9B, 0x53)
 DEFINE_KNOWN_FOLDER(FOLDERID_ComputerFolder,   0x0AC0837C, 0xBBF8, 0x452A, 0x85, 0x0D, 0x79, 0xD0, 0x8E, 0x66, 0x7C, 0xA7)

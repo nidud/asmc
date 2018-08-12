@@ -74,18 +74,30 @@ include unknwn.inc
 include objidl.inc
 
 ifndef GUID
-GUID		STRUC
-Data1		dd ?
-Data2		dw ?
-Data3		dw ?
-Data4		db 8 dup(?)
-GUID		ENDS
+GUID	STRUC
+Data1	dd ?
+Data2	dw ?
+Data3	dw ?
+Data4	db 8 dup(?)
+GUID	ENDS
 endif
 
+ifndef DEFINE_GUID
 DEFINE_GUID macro name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8
-	_&name& equ <{l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}}>
-	exitm<externdef name:IID>
-	endm
+ifdef __PE__
+_&name& equ <{l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}}>
+elseifdef INITGUID
+echo name GUID {l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}}
+else
+externdef name:GUID
+endif
+    exitm<>
+    endm
+endif
+
+ifndef __PE__
+includelib uuid.lib
+endif
 
 DEFINE_IIDX macro name, x
 	_IID_&name& equ <@CatStr( \

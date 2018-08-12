@@ -59,14 +59,6 @@ g_pVertexBuffer         LPID3D11Buffer NULL
 g_pIndexBuffer          LPID3D11Buffer NULL
 g_pConstantBuffer       LPID3D11Buffer NULL
 
-IID_IDXGIDevice         IID _IID_IDXGIDevice
-IID_IDXGIFactory1       IID _IID_IDXGIFactory1
-IID_IDXGIFactory2       IID _IID_IDXGIFactory2
-IID_ID3D11Device1       IID _IID_ID3D11Device1
-IID_IDXGISwapChain      IID _IID_IDXGISwapChain
-IID_ID3D11Texture2D     IID _IID_ID3D11Texture2D
-IID_ID3D11DeviceContext1 IID _IID_ID3D11DeviceContext1
-
 align 16
 g_World1                XMMATRIX <>
 g_World2                XMMATRIX <>
@@ -117,15 +109,23 @@ indices                 dw 3,1,0
 timeStart               size_t 0
 t_time                  float 0.0
 
+ifdef __PE__
+IID_IDXGIDevice         IID _IID_IDXGIDevice
+IID_IDXGIFactory1       IID _IID_IDXGIFactory1
+IID_IDXGIFactory2       IID _IID_IDXGIFactory2
+IID_ID3D11Device1       IID _IID_ID3D11Device1
+IID_IDXGISwapChain      IID _IID_IDXGISwapChain
+IID_ID3D11Texture2D     IID _IID_ID3D11Texture2D
+IID_ID3D11DeviceContext1 IID _IID_ID3D11DeviceContext1
+option dllimport:none
+endif
+
     .code
 
 ;;--------------------------------------------------------------------------------------
 ;; Forward declarations
 ;;--------------------------------------------------------------------------------------
 
-ifdef __PE__
-option dllimport:none
-endif
 InitWindow      proto :HINSTANCE, :SINT
 InitDevice      proto
 CleanupDevice   proto

@@ -5,13 +5,14 @@ include windows.inc
 include shlobj.inc
 include stdio.inc
 include tchar.inc
-
+ifdef __PE__
 .data
 
 CLSID_ShellLink                 IID _CLSID_ShellLink
 IID_IShellLink                  IID _IID_IShellLinkW
 IID_IPersistFile                IID _IID_IPersistFile
 IID_IShellFolderViewCB          IID _IID_IShellFolderViewCB
+endif
 
 .code
 

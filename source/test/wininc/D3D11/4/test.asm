@@ -41,14 +41,6 @@ g_pVertexBuffer         LPID3D11Buffer NULL
 g_pIndexBuffer          LPID3D11Buffer NULL
 g_pConstantBuffer       LPID3D11Buffer NULL
 
-IID_IDXGIFactory1       IID _IID_IDXGIFactory1
-IID_IDXGIDevice         IID _IID_IDXGIDevice
-IID_IDXGIFactory2       IID _IID_IDXGIFactory2
-IID_ID3D11Device1       IID _IID_ID3D11Device1
-IID_ID3D11DeviceContext1 IID _IID_ID3D11DeviceContext1
-IID_IDXGISwapChain      IID _IID_IDXGISwapChain
-IID_ID3D11Texture2D     IID _IID_ID3D11Texture2D
-
 Semantic                db "POSITION",0
 Color                   db "COLOR",0
 align 4
@@ -89,6 +81,16 @@ vertices SimpleVertex   {{ -1.0, 1.0, -1.0 }, {0.0, 0.0, 1.0, 1.0}},
                         {{  1.0,-1.0,  1.0 }, {1.0, 1.0, 1.0, 1.0}},
                         {{ -1.0,-1.0,  1.0 }, {0.0, 0.0, 0.0, 1.0}}
 
+ifdef __PE__
+IID_IDXGIFactory1        IID _IID_IDXGIFactory1
+IID_IDXGIDevice          IID _IID_IDXGIDevice
+IID_IDXGIFactory2        IID _IID_IDXGIFactory2
+IID_ID3D11Device1        IID _IID_ID3D11Device1
+IID_ID3D11DeviceContext1 IID _IID_ID3D11DeviceContext1
+IID_IDXGISwapChain       IID _IID_IDXGISwapChain
+IID_ID3D11Texture2D      IID _IID_ID3D11Texture2D
+option dllimport:none
+endif
 
     .code
 
@@ -96,9 +98,6 @@ vertices SimpleVertex   {{ -1.0, 1.0, -1.0 }, {0.0, 0.0, 1.0, 1.0}},
 ;; Forward declarations
 ;;--------------------------------------------------------------------------------------
 
-ifdef __PE__
-option dllimport:none
-endif
 InitWindow      proto :HINSTANCE, :SINT
 InitDevice      proto
 CleanupDevice   proto

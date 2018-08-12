@@ -928,7 +928,7 @@ tview proc uses esi edi ebx filename, offs
                                 inc ebx
                                 inc ecx
                                 .if ecx == MAXLINE
-                                    xor edi,edi
+                                    xor ecx,ecx
                                     mov eax,10
                                 .endif
 

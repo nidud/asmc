@@ -43,13 +43,16 @@ g_pSwapChain		LPIDXGISwapChain NULL
 g_pSwapChain1		LPIDXGISwapChain1 NULL
 g_pRenderTargetView	LPID3D11RenderTargetView NULL
 
-IID_IDXGIFactory1	GUID _IID_IDXGIFactory1
-IID_IDXGIDevice		GUID _IID_IDXGIDevice
-IID_IDXGIFactory2	GUID _IID_IDXGIFactory2
-IID_ID3D11Device1	GUID _IID_ID3D11Device1
-IID_ID3D11DeviceContext1 GUID _IID_ID3D11DeviceContext1
-IID_IDXGISwapChain	GUID _IID_IDXGISwapChain
-IID_ID3D11Texture2D	GUID _IID_ID3D11Texture2D
+ifdef __PE__
+ IID_IDXGIFactory1	  GUID _IID_IDXGIFactory1
+ IID_IDXGIDevice	  GUID _IID_IDXGIDevice
+ IID_IDXGIFactory2	  GUID _IID_IDXGIFactory2
+ IID_ID3D11Device1	  GUID _IID_ID3D11Device1
+ IID_ID3D11DeviceContext1 GUID _IID_ID3D11DeviceContext1
+ IID_IDXGISwapChain	  GUID _IID_IDXGISwapChain
+ IID_ID3D11Texture2D	  GUID _IID_ID3D11Texture2D
+ option dllimport:none
+endif
 
     .code
 
@@ -57,9 +60,6 @@ IID_ID3D11Texture2D	GUID _IID_ID3D11Texture2D
 ;; Forward declarations
 ;;--------------------------------------------------------------------------------------
 
-ifdef __PE__
-option dllimport:none
-endif
 InitWindow	proto :HINSTANCE, :SINT
 InitDevice	proto
 CleanupDevice	proto

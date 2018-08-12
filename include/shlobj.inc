@@ -19,9 +19,9 @@ endif
 ifndef _INC_COMMCTRL
 include commctrl.inc
 endif
-ifndef INITGUID
+;ifndef INITGUID
 include shlguid.inc
-endif
+;endif
 include shtypes.inc
 include shobjidl.inc
 

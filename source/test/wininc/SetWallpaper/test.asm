@@ -8,10 +8,12 @@ include shlobj.inc
 BITMAP0 equ <L"%SystemRoot%\\web\\wallpaper\\Windows\\img0.jpg">
 BITMAP1 equ <L"%AsmcDir%\\source\\test\\wininc\\SetWallpaper\\test.bmp">
 
+ifdef __PE__
 .data
 
 CLSID_ActiveDesktop GUID _CLSID_ActiveDesktop
 IID_IActiveDesktop  GUID _IID_IActiveDesktop
+endif
 
 .code
 

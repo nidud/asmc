@@ -349,6 +349,7 @@ MAKE_D3D10_STATUS macro code
 	endm
 D3D10_ERROR_TOO_MANY_UNIQUE_STATE_OBJECTS equ MAKE_D3D10_HRESULT(1)
 D3D10_ERROR_FILE_NOT_FOUND equ MAKE_D3D10_HRESULT(2)
+if 0
 if __SAL_H_FULL_VER LT 140050727
 undef __in_range
 undef __in_xcount_opt
@@ -358,6 +359,7 @@ __in_range macro x, y
 __in_xcount_opt macro x
 	exitm<1>
 	endm
+endif
 endif
 D3D10_INPUT_CLASSIFICATION typedef SDWORD
 D3D10_INPUT_PER_VERTEX_DATA equ 0

@@ -34,12 +34,6 @@ __IActiveScriptAuthorProcedure_FWD_DEFINED__ equ 1
 endif
 include ocidl.inc
 
-ifdef __PE__
-option dllimport:<uuid>
-else
-includelib uuid.lib
-endif
-
 ifndef __ActivAut_h
 __ActivAut_h equ 1
 

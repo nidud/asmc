@@ -14,14 +14,24 @@ endif
 
 DIRECTINPUT_HEADER_VERSION equ 0x0800
 ifndef DIRECTINPUT_VERSION
-DIRECTINPUT_VERSION	equ DIRECTINPUT_HEADER_VERSION
+DIRECTINPUT_VERSION equ DIRECTINPUT_HEADER_VERSION
 endif
 
 ifndef DEFINE_GUID
 DEFINE_GUID macro name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8
-	_&name& equ <{l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}}>
-	exitm<externdef name:IID>
-	endm
+ifdef __PE__
+_&name& equ <{l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}}>
+elseifdef INITGUID
+echo name GUID {l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}}
+else
+externdef name:GUID
+endif
+    exitm<>
+    endm
+endif
+
+ifndef __PE__
+includelib uuid.lib
 endif
 
 ifndef DIJ_RINGZERO

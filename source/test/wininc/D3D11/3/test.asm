@@ -37,14 +37,6 @@ g_pPixelShader          LPID3D11PixelShader NULL
 g_pVertexLayout         LPID3D11InputLayout NULL
 g_pVertexBuffer         LPID3D11Buffer NULL
 
-IID_IDXGIFactory1        IID _IID_IDXGIFactory1
-IID_IDXGIDevice          IID _IID_IDXGIDevice
-IID_IDXGIFactory2        IID _IID_IDXGIFactory2
-IID_ID3D11Device1        IID _IID_ID3D11Device1
-IID_ID3D11DeviceContext1 IID _IID_ID3D11DeviceContext1
-IID_IDXGISwapChain       IID _IID_IDXGISwapChain
-IID_ID3D11Texture2D      IID _IID_ID3D11Texture2D
-
 Semantic db "POSITION",0
 layout   D3D11_INPUT_ELEMENT_DESC <Semantic,
                         0,
@@ -56,15 +48,23 @@ layout   D3D11_INPUT_ELEMENT_DESC <Semantic,
 align 16
 vertices SimpleVertex   {{ 0.0, 0.5, 0.5 }}, {{ 0.5,-0.5, 0.5 }}, {{-0.5,-0.5, 0.5 }}
 
+ifdef __PE__
+IID_IDXGIFactory1        IID _IID_IDXGIFactory1
+IID_IDXGIDevice          IID _IID_IDXGIDevice
+IID_IDXGIFactory2        IID _IID_IDXGIFactory2
+IID_ID3D11Device1        IID _IID_ID3D11Device1
+IID_ID3D11DeviceContext1 IID _IID_ID3D11DeviceContext1
+IID_IDXGISwapChain       IID _IID_IDXGISwapChain
+IID_ID3D11Texture2D      IID _IID_ID3D11Texture2D
+option dllimport:none
+endif
+
     .code
 
 ;;--------------------------------------------------------------------------------------
 ;; Forward declarations
 ;;--------------------------------------------------------------------------------------
 
-ifdef __PE__
-option dllimport:none
-endif
 InitWindow      proto :HINSTANCE, :SINT
 InitDevice      proto
 CleanupDevice   proto

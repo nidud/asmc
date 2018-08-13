@@ -13,4 +13,5 @@ include dinput.inc
 include dsound.inc
 include shlguid.inc
 include shobjidl.inc
+include lmaccess.inc
 end

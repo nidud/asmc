@@ -7,7 +7,7 @@
 ; exit /b %errorlevel%
 ;
 
-procs  equ <for x,<0,1>> ; add functions to test...
+procs  equ <for x,<0,1,2,3>> ; add functions to test...
 args_x macro
     lea rcx,dst_1
     lea rdx,str_1
@@ -20,7 +20,7 @@ args_x macro
 
 include ../timeit.inc
 
-size_s  equ 2048 ; maximum data size
+size_s  equ 4096 ; maximum data size
 
 .data?
 str_1   db size_s dup(?)
@@ -29,10 +29,10 @@ dst_1   db size_s dup(?)
 
     .data
 
-info_0  db "msvcrt.dll",0
-info_1  db "switch",0
-info_2  db "2.asm",0
-info_3  db "3.asm",0
+info_0  db "msvcrt.memcpy()",0
+info_1  db "switch 32 SSE",0
+info_2  db "switch 32 AVX",0
+info_3  db "switch 64 AVX",0
 info_4  db "4.asm",0
 info_5  db "5.asm",0
 info_6  db "6.asm",0
@@ -131,7 +131,9 @@ main proc
     ; A jump table is created if number of cases >= 8
     ;
     GetCycleCount(1, 4, 1, 1000)
-    GetCycleCount(900, 902, 1, 1000)
+    GetCycleCount(127, 129, 1, 1000)
+    GetCycleCount(511, 513, 1, 1000)
+    GetCycleCount(1023, 1025, 1, 1000)
 
 toend:
     ret

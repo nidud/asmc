@@ -1,0 +1,1397 @@
+ifndef _LMUSER_
+_LMUSER_ equ <>
+
+include lmcons.inc
+
+;NET_API_STATUS
+NetUserAdd proto WINAPI \
+	    servername: LPCWSTR,
+		 level: DWORD,
+		   buf: LPBYTE,
+	      parm_err: LPDWORD
+
+
+;NET_API_STATUS
+NetUserEnum proto WINAPI \
+	    servername: LPCWSTR,
+		 level: DWORD,
+		filter: DWORD,
+		bufptr: ptr LPBYTE,
+	    prefmaxlen: DWORD,
+	   entriesread: LPDWORD,
+	  totalentries: LPDWORD,
+	 resume_handle: LPDWORD
+
+
+;NET_API_STATUS
+NetUserGetInfo proto WINAPI \
+	    servername: LPCWSTR,
+	      username: LPCWSTR,
+		 level: DWORD,
+		bufptr: ptr LPBYTE
+
+
+;NET_API_STATUS
+NetUserSetInfo proto WINAPI \
+	    servername: LPCWSTR,
+	      username: LPCWSTR,
+		 level: DWORD,
+		   buf: LPBYTE,
+	      parm_err: LPDWORD
+
+
+;NET_API_STATUS
+NetUserDel proto WINAPI \
+	    servername: LPCWSTR,
+	      username: LPCWSTR
+
+
+;NET_API_STATUS
+NetUserGetGroups proto WINAPI \
+	    servername: LPCWSTR,
+	      username: LPCWSTR,
+		 level: DWORD,
+		bufptr: ptr LPBYTE,
+	    prefmaxlen: DWORD,
+	   entriesread: LPDWORD,
+	  totalentries: LPDWORD
+
+
+;NET_API_STATUS
+NetUserSetGroups proto WINAPI \
+	    servername: LPCWSTR,
+	      username: LPCWSTR,
+		 level: DWORD,
+		   buf: LPBYTE,
+	   num_entries: DWORD
+
+
+;NET_API_STATUS
+NetUserGetLocalGroups proto WINAPI \
+	    servername: LPCWSTR,
+	      username: LPCWSTR,
+		 level: DWORD,
+		 flags: DWORD,
+		bufptr: ptr LPBYTE,
+	    prefmaxlen: DWORD,
+	   entriesread: LPDWORD,
+	  totalentries: LPDWORD
+
+
+;NET_API_STATUS
+NetUserModalsGet proto WINAPI \
+	    servername: LPCWSTR,
+		 level: DWORD,
+		bufptr: ptr LPBYTE
+
+
+;NET_API_STATUS
+NetUserModalsSet proto WINAPI \
+	    servername: LPCWSTR,
+		 level: DWORD,
+		   buf: LPBYTE,
+	      parm_err: LPDWORD
+
+
+;NET_API_STATUS
+NetUserChangePassword proto WINAPI \
+	    domainname: LPCWSTR,
+	      username: LPCWSTR,
+	   oldpassword: LPCWSTR,
+	   newpassword: LPCWSTR
+
+
+USER_INFO_0		STRUC
+usri0_name		LPWSTR ?
+USER_INFO_0		ENDS
+PUSER_INFO_0		typedef ptr USER_INFO_0
+LPUSER_INFO_0		typedef ptr USER_INFO_0
+
+USER_INFO_1		STRUC
+usri1_name		LPWSTR ?
+usri1_password		LPWSTR ?
+usri1_password_age	dd ?
+usri1_priv		dd ?
+usri1_home_dir		LPWSTR ?
+usri1_comment		LPWSTR ?
+usri1_flags		dd ?
+usri1_script_path	LPWSTR ?
+USER_INFO_1		ENDS
+PUSER_INFO_1		typedef ptr USER_INFO_1
+LPUSER_INFO_1		typedef ptr USER_INFO_1
+
+USER_INFO_2		STRUC
+usri2_name		LPWSTR ?
+usri2_password		LPWSTR ?
+usri2_password_age	dd ?
+usri2_priv		dd ?
+usri2_home_dir		LPWSTR ?
+usri2_comment		LPWSTR ?
+usri2_flags		dd ?
+usri2_script_path	LPWSTR ?
+usri2_auth_flags	dd ?
+usri2_full_name		LPWSTR ?
+usri2_usr_comment	LPWSTR ?
+usri2_parms		LPWSTR ?
+usri2_workstations	LPWSTR ?
+usri2_last_logon	dd ?
+usri2_last_logoff	dd ?
+usri2_acct_expires	dd ?
+usri2_max_storage	dd ?
+usri2_units_per_week	dd ?
+usri2_logon_hours	PBYTE ?
+usri2_bad_pw_count	dd ?
+usri2_num_logons	dd ?
+usri2_logon_server	LPWSTR ?
+usri2_country_code	dd ?
+usri2_code_page		dd ?
+USER_INFO_2		ENDS
+PUSER_INFO_2		typedef ptr USER_INFO_2
+LPUSER_INFO_2		typedef ptr USER_INFO_2
+
+USER_INFO_3		STRUC
+usri3_name		LPWSTR ?
+usri3_password		LPWSTR ?
+usri3_password_age	dd ?
+usri3_priv		dd ?
+usri3_home_dir		LPWSTR ?
+usri3_comment		LPWSTR ?
+usri3_flags		dd ?
+usri3_script_path	LPWSTR ?
+usri3_auth_flags	dd ?
+usri3_full_name		LPWSTR ?
+usri3_usr_comment	LPWSTR ?
+usri3_parms		LPWSTR ?
+usri3_workstations	LPWSTR ?
+usri3_last_logon	dd ?
+usri3_last_logoff	dd ?
+usri3_acct_expires	dd ?
+usri3_max_storage	dd ?
+usri3_units_per_week	dd ?
+usri3_logon_hours	PBYTE ?
+usri3_bad_pw_count	dd ?
+usri3_num_logons	dd ?
+usri3_logon_server	LPWSTR ?
+usri3_country_code	dd ?
+usri3_code_page		dd ?
+usri3_user_id		dd ?
+usri3_primary_group_id	dd ?
+usri3_profile		LPWSTR ?
+usri3_home_dir_drive	LPWSTR ?
+usri3_password_expired	dd ?
+USER_INFO_3		ENDS
+PUSER_INFO_3		typedef ptr USER_INFO_3
+LPUSER_INFO_3		typedef ptr USER_INFO_3
+
+USER_INFO_4		STRUC
+usri4_name		LPWSTR ?
+usri4_password		LPWSTR ?
+usri4_password_age	dd ?
+usri4_priv		dd ?
+usri4_home_dir		LPWSTR ?
+usri4_comment		LPWSTR ?
+usri4_flags		dd ?
+usri4_script_path	LPWSTR ?
+usri4_auth_flags	dd ?
+usri4_full_name		LPWSTR ?
+usri4_usr_comment	LPWSTR ?
+usri4_parms		LPWSTR ?
+usri4_workstations	LPWSTR ?
+usri4_last_logon	dd ?
+usri4_last_logoff	dd ?
+usri4_acct_expires	dd ?
+usri4_max_storage	dd ?
+usri4_units_per_week	dd ?
+usri4_logon_hours	PBYTE ?
+usri4_bad_pw_count	dd ?
+usri4_num_logons	dd ?
+usri4_logon_server	LPWSTR ?
+usri4_country_code	dd ?
+usri4_code_page		dd ?
+usri4_user_sid		PSID ?
+usri4_primary_group_id	dd ?
+usri4_profile		LPWSTR ?
+usri4_home_dir_drive	LPWSTR ?
+usri4_password_expired	dd ?
+USER_INFO_4		ENDS
+PUSER_INFO_4		typedef ptr USER_INFO_4
+LPUSER_INFO_4		typedef ptr USER_INFO_4
+
+USER_INFO_10		STRUC
+usri10_name		LPWSTR ?
+usri10_comment		LPWSTR ?
+usri10_usr_comment	LPWSTR ?
+usri10_full_name	LPWSTR ?
+USER_INFO_10		ENDS
+PUSER_INFO_10		typedef ptr USER_INFO_10
+LPUSER_INFO_10		typedef ptr USER_INFO_10
+
+USER_INFO_11		STRUC
+usri11_name		LPWSTR ?
+usri11_comment		LPWSTR ?
+usri11_usr_comment	LPWSTR ?
+usri11_full_name	LPWSTR ?
+usri11_priv		dd ?
+usri11_auth_flags	dd ?
+usri11_password_age	dd ?
+usri11_home_dir		LPWSTR ?
+usri11_parms		LPWSTR ?
+usri11_last_logon	dd ?
+usri11_last_logoff	dd ?
+usri11_bad_pw_count	dd ?
+usri11_num_logons	dd ?
+usri11_logon_server	LPWSTR ?
+usri11_country_code	dd ?
+usri11_workstations	LPWSTR ?
+usri11_max_storage	dd ?
+usri11_units_per_week	dd ?
+usri11_logon_hours	PBYTE ?
+usri11_code_page	dd ?
+USER_INFO_11		ENDS
+PUSER_INFO_11		typedef ptr USER_INFO_11
+LPUSER_INFO_11		typedef ptr USER_INFO_11
+
+USER_INFO_20		STRUC
+usri20_name		LPWSTR ?
+usri20_full_name	LPWSTR ?
+usri20_comment		LPWSTR ?
+usri20_flags		dd ?
+usri20_user_id		dd ?
+USER_INFO_20		ENDS
+PUSER_INFO_20		typedef ptr USER_INFO_20
+LPUSER_INFO_20		typedef ptr USER_INFO_20
+
+USER_INFO_21		STRUC
+usri21_password		db ENCRYPTED_PWLEN dup(?)
+USER_INFO_21		ENDS
+PUSER_INFO_21		typedef ptr USER_INFO_21
+LPUSER_INFO_21		typedef ptr USER_INFO_21
+
+USER_INFO_22		STRUC
+usri22_name		LPWSTR ?
+usri22_password		db ENCRYPTED_PWLEN dup(?)
+usri22_password_age	dd ?
+usri22_priv		dd ?
+usri22_home_dir		LPWSTR ?
+usri22_comment		LPWSTR ?
+usri22_flags		dd ?
+usri22_script_path	LPWSTR ?
+usri22_auth_flags	dd ?
+usri22_full_name	LPWSTR ?
+usri22_usr_comment	LPWSTR ?
+usri22_parms		LPWSTR ?
+usri22_workstations	LPWSTR ?
+usri22_last_logon	dd ?
+usri22_last_logoff	dd ?
+usri22_acct_expires	dd ?
+usri22_max_storage	dd ?
+usri22_units_per_week	dd ?
+usri22_logon_hours	PBYTE ?
+usri22_bad_pw_count	dd ?
+usri22_num_logons	dd ?
+usri22_logon_server	LPWSTR ?
+usri22_country_code	dd ?
+usri22_code_page	dd ?
+USER_INFO_22		ENDS
+PUSER_INFO_22		typedef ptr USER_INFO_22
+LPUSER_INFO_22		typedef ptr USER_INFO_22
+
+USER_INFO_23		STRUC
+usri23_name		LPWSTR ?
+usri23_full_name	LPWSTR ?
+usri23_comment		LPWSTR ?
+usri23_flags		dd ?
+usri23_user_sid		PSID ?
+USER_INFO_23		ENDS
+PUSER_INFO_23		typedef ptr USER_INFO_23
+LPUSER_INFO_23		typedef ptr USER_INFO_23
+
+USER_INFO_1003		STRUC
+usri1003_password	LPWSTR ?
+USER_INFO_1003		ENDS
+PUSER_INFO_1003		typedef ptr USER_INFO_1003
+LPUSER_INFO_1003	typedef ptr USER_INFO_1003
+
+USER_INFO_1005		STRUC
+usri1005_priv		dd ?
+USER_INFO_1005		ENDS
+PUSER_INFO_1005		typedef ptr USER_INFO_1005
+LPUSER_INFO_1005	typedef ptr USER_INFO_1005
+
+USER_INFO_1006		STRUC
+usri1006_home_dir	LPWSTR ?
+USER_INFO_1006		ENDS
+PUSER_INFO_1006		typedef ptr USER_INFO_1006
+LPUSER_INFO_1006	typedef ptr USER_INFO_1006
+
+USER_INFO_1007		STRUC
+usri1007_comment	LPWSTR ?
+USER_INFO_1007		ENDS
+PUSER_INFO_1007		typedef ptr USER_INFO_1007
+LPUSER_INFO_1007	typedef ptr USER_INFO_1007
+
+USER_INFO_1008		STRUC
+usri1008_flags		dd ?
+USER_INFO_1008		ENDS
+PUSER_INFO_1008		typedef ptr USER_INFO_1008
+LPUSER_INFO_1008	typedef ptr USER_INFO_1008
+
+USER_INFO_1009		STRUC
+usri1009_script_path	LPWSTR ?
+USER_INFO_1009		ENDS
+PUSER_INFO_1009		typedef ptr USER_INFO_1009
+LPUSER_INFO_1009	typedef ptr USER_INFO_1009
+
+USER_INFO_1010		STRUC
+usri1010_auth_flags	dd ?
+USER_INFO_1010		ENDS
+PUSER_INFO_1010		typedef ptr USER_INFO_1010
+LPUSER_INFO_1010	typedef ptr USER_INFO_1010
+
+USER_INFO_1011		STRUC
+usri1011_full_name	LPWSTR ?
+USER_INFO_1011		ENDS
+PUSER_INFO_1011		typedef ptr USER_INFO_1011
+LPUSER_INFO_1011	typedef ptr USER_INFO_1011
+
+USER_INFO_1012		STRUC
+usri1012_usr_comment	LPWSTR ?
+USER_INFO_1012		ENDS
+PUSER_INFO_1012		typedef ptr USER_INFO_1012
+LPUSER_INFO_1012	typedef ptr USER_INFO_1012
+
+USER_INFO_1013		STRUC
+usri1013_parms		LPWSTR ?
+USER_INFO_1013		ENDS
+PUSER_INFO_1013		typedef ptr USER_INFO_1013
+LPUSER_INFO_1013	typedef ptr USER_INFO_1013
+
+USER_INFO_1014		STRUC
+usri1014_workstations	LPWSTR ?
+USER_INFO_1014		ENDS
+PUSER_INFO_1014		typedef ptr USER_INFO_1014
+LPUSER_INFO_1014	typedef ptr USER_INFO_1014
+
+USER_INFO_1017		STRUC
+usri1017_acct_expires	dd ?
+USER_INFO_1017		ENDS
+PUSER_INFO_1017		typedef ptr USER_INFO_1017
+LPUSER_INFO_1017	typedef ptr USER_INFO_1017
+
+USER_INFO_1018		STRUC
+usri1018_max_storage	dd ?
+USER_INFO_1018		ENDS
+PUSER_INFO_1018		typedef ptr USER_INFO_1018
+LPUSER_INFO_1018	typedef ptr USER_INFO_1018
+
+USER_INFO_1020		STRUC
+usri1020_units_per_week dd ?
+usri1020_logon_hours	LPBYTE ?
+USER_INFO_1020		ENDS
+PUSER_INFO_1020		typedef ptr USER_INFO_1020
+LPUSER_INFO_1020	typedef ptr USER_INFO_1020
+
+USER_INFO_1023		STRUC
+usri1023_logon_server	LPWSTR ?
+USER_INFO_1023		ENDS
+PUSER_INFO_1023		typedef ptr USER_INFO_1023
+LPUSER_INFO_1023	typedef ptr USER_INFO_1023
+
+USER_INFO_1024		STRUC
+usri1024_country_code	dd ?
+USER_INFO_1024		ENDS
+PUSER_INFO_1024		typedef ptr USER_INFO_1024
+LPUSER_INFO_1024	typedef ptr USER_INFO_1024
+
+USER_INFO_1025		STRUC
+usri1025_code_page	dd ?
+USER_INFO_1025		ENDS
+PUSER_INFO_1025		typedef ptr USER_INFO_1025
+LPUSER_INFO_1025	typedef ptr USER_INFO_1025
+
+USER_INFO_1051		STRUC
+usri1051_primary_group_id dd ?
+USER_INFO_1051		ENDS
+PUSER_INFO_1051		typedef ptr USER_INFO_1051
+LPUSER_INFO_1051	typedef ptr USER_INFO_1051
+
+USER_INFO_1052		STRUC
+usri1052_profile	LPWSTR ?
+USER_INFO_1052		ENDS
+PUSER_INFO_1052		typedef ptr USER_INFO_1052
+LPUSER_INFO_1052	typedef ptr USER_INFO_1052
+
+USER_INFO_1053		STRUC
+usri1053_home_dir_drive LPWSTR ?
+USER_INFO_1053		ENDS
+PUSER_INFO_1053		typedef ptr USER_INFO_1053
+LPUSER_INFO_1053	typedef ptr USER_INFO_1053
+
+USER_MODALS_INFO_0	STRUC
+usrmod0_min_passwd_len	dd ?
+usrmod0_max_passwd_age	dd ?
+usrmod0_min_passwd_age	dd ?
+usrmod0_force_logoff	dd ?
+usrmod0_password_hist_len dd ?
+USER_MODALS_INFO_0	ENDS
+PUSER_MODALS_INFO_0	typedef ptr USER_MODALS_INFO_0
+LPUSER_MODALS_INFO_0	typedef ptr USER_MODALS_INFO_0
+
+USER_MODALS_INFO_1	STRUC
+usrmod1_role		dd ?
+usrmod1_primary		LPWSTR ?
+USER_MODALS_INFO_1	ENDS
+PUSER_MODALS_INFO_1	typedef ptr USER_MODALS_INFO_1
+LPUSER_MODALS_INFO_1	typedef ptr USER_MODALS_INFO_1
+
+USER_MODALS_INFO_2	STRUC
+usrmod2_domain_name	LPWSTR ?
+usrmod2_domain_id	PSID ?
+USER_MODALS_INFO_2	ENDS
+PUSER_MODALS_INFO_2	typedef ptr USER_MODALS_INFO_2
+LPUSER_MODALS_INFO_2	typedef ptr USER_MODALS_INFO_2
+
+USER_MODALS_INFO_3	STRUC
+usrmod3_lockout_duration dd ?
+usrmod3_lockout_observation_window dd ?
+usrmod3_lockout_threshold dd ?
+USER_MODALS_INFO_3	ENDS
+PUSER_MODALS_INFO_3	typedef ptr USER_MODALS_INFO_3
+LPUSER_MODALS_INFO_3	typedef ptr USER_MODALS_INFO_3
+
+USER_MODALS_INFO_1001	STRUC
+usrmod1001_min_passwd_len dd ?
+USER_MODALS_INFO_1001	ENDS
+PUSER_MODALS_INFO_1001	typedef ptr USER_MODALS_INFO_1001
+LPUSER_MODALS_INFO_1001 typedef ptr USER_MODALS_INFO_1001
+
+USER_MODALS_INFO_1002	STRUC
+usrmod1002_max_passwd_age dd ?
+USER_MODALS_INFO_1002	ENDS
+PUSER_MODALS_INFO_1002	typedef ptr USER_MODALS_INFO_1002
+LPUSER_MODALS_INFO_1002 typedef ptr USER_MODALS_INFO_1002
+
+USER_MODALS_INFO_1003	STRUC
+usrmod1003_min_passwd_age dd ?
+USER_MODALS_INFO_1003	ENDS
+PUSER_MODALS_INFO_1003	typedef ptr USER_MODALS_INFO_1003
+LPUSER_MODALS_INFO_1003 typedef ptr USER_MODALS_INFO_1003
+
+USER_MODALS_INFO_1004	STRUC
+usrmod1004_force_logoff dd ?
+USER_MODALS_INFO_1004	ENDS
+PUSER_MODALS_INFO_1004	typedef ptr USER_MODALS_INFO_1004
+LPUSER_MODALS_INFO_1004 typedef ptr USER_MODALS_INFO_1004
+
+USER_MODALS_INFO_1005	STRUC
+usrmod1005_password_hist_len dd ?
+USER_MODALS_INFO_1005	ENDS
+PUSER_MODALS_INFO_1005	typedef ptr USER_MODALS_INFO_1005
+LPUSER_MODALS_INFO_1005 typedef ptr USER_MODALS_INFO_1005
+
+USER_MODALS_INFO_1006	STRUC
+usrmod1006_role		dd ?
+USER_MODALS_INFO_1006	ENDS
+PUSER_MODALS_INFO_1006	typedef ptr USER_MODALS_INFO_1006
+LPUSER_MODALS_INFO_1006 typedef ptr USER_MODALS_INFO_1006
+
+USER_MODALS_INFO_1007	STRUC
+usrmod1007_primary	LPWSTR ?
+USER_MODALS_INFO_1007	ENDS
+PUSER_MODALS_INFO_1007	typedef ptr USER_MODALS_INFO_1007
+LPUSER_MODALS_INFO_1007 typedef ptr USER_MODALS_INFO_1007
+
+
+UF_SCRIPT		equ 0x0001
+UF_ACCOUNTDISABLE	equ 0x0002
+UF_HOMEDIR_REQUIRED	equ 0x0008
+UF_LOCKOUT		equ 0x0010
+UF_PASSWD_NOTREQD	equ 0x0020
+UF_PASSWD_CANT_CHANGE	equ 0x0040
+UF_ENCRYPTED_TEXT_PASSWORD_ALLOWED equ 0x0080
+
+UF_TEMP_DUPLICATE_ACCOUNT equ 0x0100
+UF_NORMAL_ACCOUNT	equ 0x0200
+UF_INTERDOMAIN_TRUST_ACCOUNT equ 0x0800
+UF_WORKSTATION_TRUST_ACCOUNT equ 0x1000
+UF_SERVER_TRUST_ACCOUNT equ 0x2000
+
+UF_MACHINE_ACCOUNT_MASK equ ( UF_INTERDOMAIN_TRUST_ACCOUNT OR UF_WORKSTATION_TRUST_ACCOUNT OR UF_SERVER_TRUST_ACCOUNT )
+UF_ACCOUNT_TYPE_MASK	equ ( UF_TEMP_DUPLICATE_ACCOUNT OR UF_NORMAL_ACCOUNT OR UF_INTERDOMAIN_TRUST_ACCOUNT OR \
+			      UF_WORKSTATION_TRUST_ACCOUNT OR UF_SERVER_TRUST_ACCOUNT )
+
+
+UF_DONT_EXPIRE_PASSWD	equ 0x10000
+UF_MNS_LOGON_ACCOUNT	equ 0x20000
+UF_SMARTCARD_REQUIRED	equ 0x40000
+UF_TRUSTED_FOR_DELEGATION equ 0x80000
+UF_NOT_DELEGATED	equ 0x100000
+UF_USE_DES_KEY_ONLY	equ 0x200000
+UF_DONT_REQUIRE_PREAUTH equ 0x400000
+UF_PASSWORD_EXPIRED	equ 0x800000
+UF_TRUSTED_TO_AUTHENTICATE_FOR_DELEGATION equ 0x1000000
+UF_NO_AUTH_DATA_REQUIRED equ 0x2000000
+UF_PARTIAL_SECRETS_ACCOUNT equ 0x4000000
+UF_USE_AES_KEYS		equ 0x8000000
+
+UF_SETTABLE_BITS	equ ( UF_SCRIPT OR UF_ACCOUNTDISABLE OR UF_LOCKOUT OR UF_HOMEDIR_REQUIRED OR UF_PASSWD_NOTREQD OR \
+			      UF_PASSWD_CANT_CHANGE OR UF_ACCOUNT_TYPE_MASK OR UF_DONT_EXPIRE_PASSWD OR UF_MNS_LOGON_ACCOUNT OR \
+			      UF_ENCRYPTED_TEXT_PASSWORD_ALLOWED OR UF_SMARTCARD_REQUIRED OR UF_TRUSTED_FOR_DELEGATION OR \
+			      UF_NOT_DELEGATED OR UF_USE_DES_KEY_ONLY OR UF_DONT_REQUIRE_PREAUTH OR UF_PASSWORD_EXPIRED OR \
+			      UF_TRUSTED_TO_AUTHENTICATE_FOR_DELEGATION OR UF_NO_AUTH_DATA_REQUIRED OR UF_USE_AES_KEYS OR \
+			      UF_PARTIAL_SECRETS_ACCOUNT )
+
+FILTER_TEMP_DUPLICATE_ACCOUNT equ (0x0001)
+FILTER_NORMAL_ACCOUNT	equ (0x0002)
+FILTER_INTERDOMAIN_TRUST_ACCOUNT equ (0x0008)
+FILTER_WORKSTATION_TRUST_ACCOUNT equ (0x0010)
+FILTER_SERVER_TRUST_ACCOUNT equ (0x0020)
+
+LG_INCLUDE_INDIRECT	equ (0x0001)
+
+AF_OP_PRINT		equ 0x1
+AF_OP_COMM		equ 0x2
+AF_OP_SERVER		equ 0x4
+AF_OP_ACCOUNTS		equ 0x8
+AF_SETTABLE_BITS	equ (AF_OP_PRINT OR AF_OP_COMM OR AF_OP_SERVER OR AF_OP_ACCOUNTS)
+
+UAS_ROLE_STANDALONE	equ 0
+UAS_ROLE_MEMBER		equ 1
+UAS_ROLE_BACKUP		equ 2
+UAS_ROLE_PRIMARY	equ 3
+
+USER_NAME_PARMNUM	equ 1
+USER_PASSWORD_PARMNUM	equ 3
+USER_PASSWORD_AGE_PARMNUM equ 4
+USER_PRIV_PARMNUM	equ 5
+USER_HOME_DIR_PARMNUM	equ 6
+USER_COMMENT_PARMNUM	equ 7
+USER_FLAGS_PARMNUM	equ 8
+USER_SCRIPT_PATH_PARMNUM equ 9
+USER_AUTH_FLAGS_PARMNUM equ 10
+USER_FULL_NAME_PARMNUM	equ 11
+USER_USR_COMMENT_PARMNUM equ 12
+USER_PARMS_PARMNUM	equ 13
+USER_WORKSTATIONS_PARMNUM equ 14
+USER_LAST_LOGON_PARMNUM equ 15
+USER_LAST_LOGOFF_PARMNUM equ 16
+USER_ACCT_EXPIRES_PARMNUM equ 17
+USER_MAX_STORAGE_PARMNUM equ 18
+USER_UNITS_PER_WEEK_PARMNUM equ 19
+USER_LOGON_HOURS_PARMNUM equ 20
+USER_PAD_PW_COUNT_PARMNUM equ 21
+USER_NUM_LOGONS_PARMNUM equ 22
+USER_LOGON_SERVER_PARMNUM equ 23
+USER_COUNTRY_CODE_PARMNUM equ 24
+USER_CODE_PAGE_PARMNUM	equ 25
+USER_PRIMARY_GROUP_PARMNUM equ 51
+USER_PROFILE		equ 52 ;; ?? Delete when convenient
+USER_PROFILE_PARMNUM	equ 52
+USER_HOME_DIR_DRIVE_PARMNUM equ 53
+
+USER_NAME_INFOLEVEL	equ (PARMNUM_BASE_INFOLEVE + USER_NAME_PARMNUM)
+USER_PASSWORD_INFOLEVEL equ (PARMNUM_BASE_INFOLEVE + USER_PASSWORD_PARMNUM)
+USER_PASSWORD_AGE_INFOLEVEL equ (PARMNUM_BASE_INFOLEVE + USER_PASSWORD_AGE_PARMNUM)
+USER_PRIV_INFOLEVEL	equ (PARMNUM_BASE_INFOLEVE + USER_PRIV_PARMNUM)
+USER_HOME_DIR_INFOLEVEL equ (PARMNUM_BASE_INFOLEVE + USER_HOME_DIR_PARMNUM)
+USER_COMMENT_INFOLEVEL	equ (PARMNUM_BASE_INFOLEVE + USER_COMMENT_PARMNUM)
+USER_FLAGS_INFOLEVEL	equ (PARMNUM_BASE_INFOLEVE + USER_FLAGS_PARMNUM)
+USER_SCRIPT_PATH_INFOLEVEL equ (PARMNUM_BASE_INFOLEVE + USER_SCRIPT_PATH_PARMNUM)
+USER_AUTH_FLAGS_INFOLEVEL equ (PARMNUM_BASE_INFOLEVE + USER_AUTH_FLAGS_PARMNUM)
+USER_FULL_NAME_INFOLEVEL equ (PARMNUM_BASE_INFOLEVE + USER_FULL_NAME_PARMNUM)
+USER_USR_COMMENT_INFOLEVEL equ (PARMNUM_BASE_INFOLEVE + USER_USR_COMMENT_PARMNUM)
+USER_PARMS_INFOLEVEL	equ (PARMNUM_BASE_INFOLEVE + USER_PARMS_PARMNUM)
+USER_WORKSTATIONS_INFOLEVEL equ (PARMNUM_BASE_INFOLEVE + USER_WORKSTATIONS_PARMNUM)
+USER_LAST_LOGON_INFOLEVEL equ (PARMNUM_BASE_INFOLEVE + USER_LAST_LOGON_PARMNUM)
+USER_LAST_LOGOFF_INFOLEVEL equ (PARMNUM_BASE_INFOLEVE + USER_LAST_LOGOFF_PARMNUM)
+USER_ACCT_EXPIRES_INFOLEVEL equ (PARMNUM_BASE_INFOLEVE + USER_ACCT_EXPIRES_PARMNUM)
+USER_MAX_STORAGE_INFOLEVEL equ (PARMNUM_BASE_INFOLEVE + USER_MAX_STORAGE_PARMNUM)
+USER_UNITS_PER_WEEK_INFOLEVEL equ (PARMNUM_BASE_INFOLEVE + USER_UNITS_PER_WEEK_PARMNUM)
+USER_LOGON_HOURS_INFOLEVEL equ (PARMNUM_BASE_INFOLEVE + USER_LOGON_HOURS_PARMNUM)
+USER_PAD_PW_COUNT_INFOLEVEL equ (PARMNUM_BASE_INFOLEVE + USER_PAD_PW_COUNT_PARMNUM)
+USER_NUM_LOGONS_INFOLEVEL equ (PARMNUM_BASE_INFOLEVE + USER_NUM_LOGONS_PARMNUM)
+USER_LOGON_SERVER_INFOLEVEL equ (PARMNUM_BASE_INFOLEVE + USER_LOGON_SERVER_PARMNUM)
+USER_COUNTRY_CODE_INFOLEVEL equ (PARMNUM_BASE_INFOLEVE + USER_COUNTRY_CODE_PARMNUM)
+USER_CODE_PAGE_INFOLEVEL equ (PARMNUM_BASE_INFOLEVE + USER_CODE_PAGE_PARMNUM)
+USER_PRIMARY_GROUP_INFOLEVEL equ (PARMNUM_BASE_INFOLEVE + USER_PRIMARY_GROUP_PARMNUM)
+USER_POSIX_ID_INFOLEVEL equ (PARMNUM_BASE_INFOLEVE + USER_POSIX_ID_PARMNUM)
+USER_HOME_DIR_DRIVE_INFOLEVEL equ (PARMNUM_BASE_INFOLEVE + USER_HOME_DIR_DRIVE_PARMNUM)
+
+NULL_USERSETINFO_PASSWD equ <"              ">
+
+TIMEQ_FOREVER		equ ( -1)
+USER_MAXSTORAGE_UNLIMITED equ ( -1)
+USER_NO_LOGOFF		equ ( -1)
+UNITS_PER_DAY		equ 24
+UNITS_PER_WEEK		equ UNITS_PER_DAY * 7
+
+USER_PRIV_MASK		equ 0x3
+USER_PRIV_GUEST		equ 0
+USER_PRIV_USER		equ 1
+USER_PRIV_ADMIN		equ 2
+
+MAX_PASSWD_LEN		equ PWLEN
+DEF_MIN_PWLEN		equ 6
+DEF_PWUNIQUENESS	equ 5
+DEF_MAX_PWHIST		equ 8
+
+DEF_MAX_PWAGE		equ TIMEQ_FOREVER ;; forever
+DEF_MIN_PWAGE		equ 0		  ;; 0 days
+DEF_FORCE_LOGOFF	equ 0xffffffff	  ;; never
+DEF_MAX_BADPW		equ 0		  ;; no limit
+ONE_DAY			equ 01*24*3600	  ;; 01 day
+
+VALIDATED_LOGON		equ 0
+PASSWORD_EXPIRED	equ 2
+NON_VALIDATED_LOGON	equ 3
+
+VALID_LOGOFF		equ 1
+
+MODALS_MIN_PASSWD_LEN_PARMNUM equ 1
+MODALS_MAX_PASSWD_AGE_PARMNUM equ 2
+MODALS_MIN_PASSWD_AGE_PARMNUM equ 3
+MODALS_FORCE_LOGOFF_PARMNUM equ 4
+MODALS_PASSWD_HIST_LEN_PARMNUM equ 5
+MODALS_ROLE_PARMNUM	equ 6
+MODALS_PRIMARY_PARMNUM	equ 7
+MODALS_DOMAIN_NAME_PARMNUM equ 8
+MODALS_DOMAIN_ID_PARMNUM equ 9
+MODALS_LOCKOUT_DURATION_PARMNUM equ 10
+MODALS_LOCKOUT_OBSERVATION_WINDOW_PARMNUM equ 11
+MODALS_LOCKOUT_THRESHOLD_PARMNUM equ 12
+
+MODALS_MIN_PASSWD_LEN_INFOLEVEL equ (PARMNUM_BASE_INFOLEVE + MODALS_MIN_PASSWD_LEN_PARMNUM)
+MODALS_MAX_PASSWD_AGE_INFOLEVEL equ (PARMNUM_BASE_INFOLEVE + MODALS_MAX_PASSWD_AGE_PARMNUM)
+MODALS_MIN_PASSWD_AGE_INFOLEVEL equ (PARMNUM_BASE_INFOLEVE + MODALS_MIN_PASSWD_AGE_PARMNUM)
+MODALS_FORCE_LOGOFF_INFOLEVEL equ (PARMNUM_BASE_INFOLEVE + MODALS_FORCE_LOGOFF_PARMNUM)
+MODALS_PASSWD_HIST_LEN_INFOLEVEL equ (PARMNUM_BASE_INFOLEVE + MODALS_PASSWD_HIST_LEN_PARMNUM)
+MODALS_ROLE_INFOLEVEL	equ (PARMNUM_BASE_INFOLEVE + MODALS_ROLE_PARMNUM)
+MODALS_PRIMARY_INFOLEVEL equ (PARMNUM_BASE_INFOLEVE + MODALS_PRIMARY_PARMNUM)
+MODALS_DOMAIN_NAME_INFOLEVEL equ (PARMNUM_BASE_INFOLEVE + MODALS_DOMAIN_NAME_PARMNUM)
+MODALS_DOMAIN_ID_INFOLEVEL equ (PARMNUM_BASE_INFOLEVE + MODALS_DOMAIN_ID_PARMNUM)
+
+endif ;; _LMUSER_
+
+ifndef _LMGROUP_
+_LMGROUP_ equ <>
+
+;NET_API_STATUS
+NetGroupAdd proto WINAPI \
+	    servername: LPCWSTR,
+		 level: DWORD,
+		   buf: LPBYTE,
+	      parm_err: LPDWORD
+
+
+;NET_API_STATUS
+NetGroupAddUser proto WINAPI \
+	    servername: LPCWSTR,
+	     GroupName: LPCWSTR,
+	      username: LPCWSTR
+
+
+;NET_API_STATUS
+NetGroupEnum proto WINAPI \
+	    servername: LPCWSTR,
+		 level: DWORD,
+		bufptr: ptr LPBYTE,
+	    prefmaxlen: DWORD,
+	   entriesread: LPDWORD,
+	  totalentries: LPDWORD,
+	 resume_handle: PDWORD_PTR
+
+
+;NET_API_STATUS
+NetGroupGetInfo proto WINAPI \
+	    servername: LPCWSTR,
+	     groupname: LPCWSTR,
+		 level: DWORD,
+		bufptr: ptr LPBYTE
+
+
+;NET_API_STATUS
+NetGroupSetInfo proto WINAPI \
+	    servername: LPCWSTR,
+	     groupname: LPCWSTR,
+		 level: DWORD,
+		   buf: LPBYTE,
+	      parm_err: LPDWORD
+
+
+;NET_API_STATUS
+NetGroupDel proto WINAPI \
+	    servername: LPCWSTR,
+	     groupname: LPCWSTR
+
+
+;NET_API_STATUS
+NetGroupDelUser proto WINAPI \
+	    servername: LPCWSTR,
+	     GroupName: LPCWSTR,
+	      Username: LPCWSTR
+
+
+;NET_API_STATUS
+NetGroupGetUsers proto WINAPI \
+	    servername: LPCWSTR,
+	     groupname: LPCWSTR,
+		 level: DWORD,
+		bufptr: ptr LPBYTE,
+	    prefmaxlen: DWORD,
+	   entriesread: LPDWORD,
+	  totalentries: LPDWORD,
+	  ResumeHandle: PDWORD_PTR
+
+
+;NET_API_STATUS
+NetGroupSetUsers proto WINAPI \
+	    servername: LPCWSTR,
+	     groupname: LPCWSTR,
+		 level: DWORD,
+		   buf: LPBYTE,
+	  totalentries: DWORD
+
+
+GROUP_INFO_0		STRUC
+grpi0_name		LPWSTR ?
+GROUP_INFO_0		ENDS
+PGROUP_INFO_0		typedef ptr GROUP_INFO_0
+LPGROUP_INFO_0		typedef ptr GROUP_INFO_0
+
+GROUP_INFO_1		STRUC
+grpi1_name		LPWSTR ?
+grpi1_comment		LPWSTR ?
+GROUP_INFO_1		ENDS
+PGROUP_INFO_1		typedef ptr GROUP_INFO_1
+LPGROUP_INFO_1		typedef ptr GROUP_INFO_1
+
+GROUP_INFO_2		STRUC
+grpi2_name		LPWSTR ?
+grpi2_comment		LPWSTR ?
+grpi2_group_id		dd ?
+grpi2_attributes	dd ?
+GROUP_INFO_2		ENDS
+PGROUP_INFO_2		typedef ptr GROUP_INFO_2
+
+GROUP_INFO_3		STRUC
+grpi3_name		LPWSTR ?
+grpi3_comment		LPWSTR ?
+grpi3_group_sid		PSID ?
+grpi3_attributes	dd ?
+GROUP_INFO_3		ENDS
+PGROUP_INFO_3		typedef ptr GROUP_INFO_3
+
+GROUP_INFO_1002		STRUC
+grpi1002_comment	LPWSTR ?
+GROUP_INFO_1002		ENDS
+PGROUP_INFO_1002	typedef ptr GROUP_INFO_1002
+LPGROUP_INFO_1002	typedef ptr GROUP_INFO_1002
+
+GROUP_INFO_1005		STRUC
+grpi1005_attributes	dd ?
+GROUP_INFO_1005		ENDS
+PGROUP_INFO_1005	typedef ptr GROUP_INFO_1005
+LPGROUP_INFO_1005	typedef ptr GROUP_INFO_1005
+
+
+GROUP_USERS_INFO_0	STRUC
+grui0_name		LPWSTR ?
+GROUP_USERS_INFO_0	ENDS
+PGROUP_USERS_INFO_0	typedef ptr GROUP_USERS_INFO_0
+LPGROUP_USERS_INFO_0	typedef ptr GROUP_USERS_INFO_0
+
+GROUP_USERS_INFO_1	STRUC
+grui1_name		LPWSTR ?
+grui1_attributes	dd ?
+GROUP_USERS_INFO_1	ENDS
+PGROUP_USERS_INFO_1	typedef ptr GROUP_USERS_INFO_1
+LPGROUP_USERS_INFO_1	typedef ptr GROUP_USERS_INFO_1
+
+GROUPIDMASK		equ 0x8000	;; MSB set if uid refers
+					;; to a group
+
+GROUP_SPECIALGRP_USERS	equ <L"USERS">
+GROUP_SPECIALGRP_ADMINS equ <L"ADMINS">
+GROUP_SPECIALGRP_GUESTS equ <L"GUESTS">
+GROUP_SPECIALGRP_LOCAL	equ <L"LOCAL">
+
+GROUP_ALL_PARMNUM	equ 0
+GROUP_NAME_PARMNUM	equ 1
+GROUP_COMMENT_PARMNUM	equ 2
+GROUP_ATTRIBUTES_PARMNUM equ 3
+
+GROUP_ALL_INFOLEVEL	equ (PARMNUM_BASE_INFOLEVE + GROUP_ALL_PARMNUM)
+GROUP_NAME_INFOLEVEL	equ (PARMNUM_BASE_INFOLEVE + GROUP_NAME_PARMNUM)
+GROUP_COMMENT_INFOLEVEL equ (PARMNUM_BASE_INFOLEVE + GROUP_COMMENT_PARMNUM)
+GROUP_ATTRIBUTES_INFOLEVEL equ (PARMNUM_BASE_INFOLEVE + GROUP_ATTRIBUTES_PARMNUM)
+GROUP_POSIX_ID_INFOLEVEL equ (PARMNUM_BASE_INFOLEVE + GROUP_POSIX_ID_PARMNUM)
+
+endif  ;; _LMGROUP_
+
+ifndef _LMLOCALGROUP_
+_LMLOCALGROUP_ equ <>
+
+;NET_API_STATUS
+NetLocalGroupAdd proto WINAPI \
+	    servername: LPCWSTR,
+		 level: DWORD,
+		   buf: LPBYTE,
+	      parm_err: LPDWORD
+
+;NET_API_STATUS
+NetLocalGroupAddMember proto WINAPI \
+	    servername: LPCWSTR,
+	     groupname: LPCWSTR,
+	     membersid: PSID
+
+
+;NET_API_STATUS
+NetLocalGroupEnum proto WINAPI \
+	    servername: LPCWSTR,
+		 level: DWORD,
+		bufptr: ptr LPBYTE,
+	    prefmaxlen: DWORD,
+	   entriesread: LPDWORD,
+	  totalentries: LPDWORD,
+	  resumehandle: PDWORD_PTR
+
+
+;NET_API_STATUS
+NetLocalGroupGetInfo proto WINAPI \
+	    servername: LPCWSTR,
+	     groupname: LPCWSTR,
+		 level: DWORD,
+		bufptr: ptr LPBYTE
+
+
+;NET_API_STATUS
+NetLocalGroupSetInfo proto WINAPI \
+	    servername: LPCWSTR,
+	     groupname: LPCWSTR,
+		 level: DWORD,
+		   buf: LPBYTE,
+	      parm_err: LPDWORD
+
+
+;NET_API_STATUS
+NetLocalGroupDel proto WINAPI \
+	    servername: LPCWSTR,
+	     groupname: LPCWSTR
+
+
+;NET_API_STATUS
+NetLocalGroupDelMember proto WINAPI \
+	    servername: LPCWSTR,
+	     groupname: LPCWSTR,
+	     membersid: PSID
+
+
+;NET_API_STATUS
+NetLocalGroupGetMembers proto WINAPI \
+	    servername: LPCWSTR,
+	localgroupname: LPCWSTR,
+		 level: DWORD,
+		bufptr: ptr LPBYTE,
+	    prefmaxlen: DWORD,
+	   entriesread: LPDWORD,
+	  totalentries: LPDWORD,
+	  resumehandle: PDWORD_PTR
+
+
+;NET_API_STATUS
+NetLocalGroupSetMembers proto WINAPI \
+	    servername: LPCWSTR,
+	     groupname: LPCWSTR,
+		 level: DWORD,
+		   buf: LPBYTE,
+	  totalentries: DWORD
+
+
+;NET_API_STATUS
+NetLocalGroupAddMembers proto WINAPI \
+	    servername: LPCWSTR,
+	     groupname: LPCWSTR,
+		 level: DWORD,
+		   buf: LPBYTE,
+	  totalentries: DWORD
+
+
+;NET_API_STATUS
+NetLocalGroupDelMembers proto WINAPI \
+	    servername: LPCWSTR,
+	     groupname: LPCWSTR,
+		 level: DWORD,
+		   buf: LPBYTE,
+	  totalentries: DWORD
+
+
+LOCALGROUP_INFO_0	STRUC
+lgrpi0_name		LPWSTR ?
+LOCALGROUP_INFO_0	ENDS
+PLOCALGROUP_INFO_0	typedef ptr LOCALGROUP_INFO_0
+LPLOCALGROUP_INFO_0	typedef ptr LOCALGROUP_INFO_0
+
+LOCALGROUP_INFO_1	STRUC
+lgrpi1_name		LPWSTR ?
+lgrpi1_comment		LPWSTR ?
+LOCALGROUP_INFO_1	ENDS
+PLOCALGROUP_INFO_1	typedef ptr LOCALGROUP_INFO_1
+LPLOCALGROUP_INFO_1	typedef ptr LOCALGROUP_INFO_1
+
+LOCALGROUP_INFO_1002	STRUC
+lgrpi1002_comment	LPWSTR ?
+LOCALGROUP_INFO_1002	ENDS
+PLOCALGROUP_INFO_1002	typedef ptr LOCALGROUP_INFO_1002
+LPLOCALGROUP_INFO_1002	typedef ptr LOCALGROUP_INFO_1002
+
+LOCALGROUP_MEMBERS_INFO_0  STRUC
+lgrmi0_sid		PSID ?
+LOCALGROUP_MEMBERS_INFO_0 ENDS
+PLOCALGROUP_MEMBERS_INFO_0 typedef ptr LOCALGROUP_MEMBERS_INFO_0
+;;LPLOCALGROUP_MEMBERS_INFO_0;
+
+LOCALGROUP_MEMBERS_INFO_1  STRUC
+lgrmi1_sid		PSID ?
+lgrmi1_sidusage		SID_NAME_USE ?
+lgrmi1_name		LPWSTR ?
+LOCALGROUP_MEMBERS_INFO_1 ENDS
+PLOCALGROUP_MEMBERS_INFO_1 typedef ptr LOCALGROUP_MEMBERS_INFO_1
+;;LPLOCALGROUP_MEMBERS_INFO_1;
+
+LOCALGROUP_MEMBERS_INFO_2  STRUC
+lgrmi2_sid		PSID ?
+lgrmi2_sidusage		SID_NAME_USE ?
+lgrmi2_domainandname	LPWSTR ?
+LOCALGROUP_MEMBERS_INFO_2 ENDS
+PLOCALGROUP_MEMBERS_INFO_2 typedef ptr LOCALGROUP_MEMBERS_INFO_2
+;;LPLOCALGROUP_MEMBERS_INFO_2;
+
+LOCALGROUP_MEMBERS_INFO_3  STRUC
+lgrmi3_domainandname	LPWSTR ?
+LOCALGROUP_MEMBERS_INFO_3 ENDS
+PLOCALGROUP_MEMBERS_INFO_3 typedef ptr LOCALGROUP_MEMBERS_INFO_3
+;;LPLOCALGROUP_MEMBERS_INFO_3;
+
+LOCALGROUP_USERS_INFO_0	 STRUC
+lgrui0_name		LPWSTR ?
+LOCALGROUP_USERS_INFO_0 ENDS
+PLOCALGROUP_USERS_INFO_0 typedef ptr LOCALGROUP_USERS_INFO_0
+;;LPLOCALGROUP_USERS_INFO_0;
+
+
+LOCALGROUP_NAME_PARMNUM equ 1
+LOCALGROUP_COMMENT_PARMNUM equ 2
+
+;NET_API_STATUS
+NetQueryDisplayInformation proto WINAPI \
+	    ServerName: LPCWSTR,
+		 Level: DWORD,
+		 Index: DWORD,
+      EntriesRequested: DWORD,
+PreferredMaximumLength: DWORD,
+    ReturnedEntryCount: LPDWORD,
+	  SortedBuffer: ptr PVOID
+
+
+;NET_API_STATUS
+NetGetDisplayInformationIndex proto WINAPI \
+	    ServerName: LPCWSTR,
+		 Level: DWORD,
+		Prefix: LPCWSTR,
+		 Index: LPDWORD
+
+NET_DISPLAY_USER	STRUC
+usri1_name		LPWSTR ?
+usri1_comment		LPWSTR ?
+usri1_flags		dd ?
+usri1_full_name		LPWSTR ?
+usri1_user_id		dd ?
+usri1_next_index	dd ?
+NET_DISPLAY_USER	ENDS
+PNET_DISPLAY_USER	typedef ptr NET_DISPLAY_USER
+
+NET_DISPLAY_MACHINE	STRUC
+usri2_name		LPWSTR ?
+usri2_comment		LPWSTR ?
+usri2_flags		dd ?
+usri2_user_id		dd ?
+usri2_next_index	dd ?
+NET_DISPLAY_MACHINE	ENDS
+PNET_DISPLAY_MACHINE	typedef ptr NET_DISPLAY_MACHINE
+
+NET_DISPLAY_GROUP	STRUC
+grpi3_name		LPWSTR ?
+grpi3_comment		LPWSTR ?
+grpi3_group_id		dd ?
+grpi3_attributes	dd ?
+grpi3_next_index	dd ?
+NET_DISPLAY_GROUP	ENDS
+PNET_DISPLAY_GROUP	typedef ptr NET_DISPLAY_GROUP
+
+endif  ;; _LMLOCALGROUP_
+
+ifndef _LMACCESS_
+_LMACCESS_ equ <>
+
+;NET_API_STATUS
+NetAccessAdd proto WINAPI \
+	    servername: LPCWSTR,
+		 level: DWORD,
+		   buf: LPBYTE,
+	      parm_err: LPDWORD
+
+
+;NET_API_STATUS
+NetAccessEnum proto WINAPI \
+	    servername: LPCWSTR,
+	      BasePath: LPCWSTR,
+	     Recursive: DWORD,
+		 level: DWORD,
+		bufptr: ptr LPBYTE,
+	    prefmaxlen: DWORD,
+	   entriesread: LPDWORD,
+	  totalentries: LPDWORD,
+	 resume_handle: LPDWORD
+
+
+;NET_API_STATUS
+NetAccessGetInfo proto WINAPI \
+	    servername: LPCWSTR,
+	      resource: LPCWSTR,
+		 level: DWORD,
+		bufptr: ptr LPBYTE
+
+
+;NET_API_STATUS
+NetAccessSetInfo proto WINAPI \
+	    servername: LPCWSTR,
+	      resource: LPCWSTR,
+		 level: DWORD,
+		   buf: LPBYTE,
+	      parm_err: LPDWORD
+
+
+;NET_API_STATUS
+NetAccessDel proto WINAPI \
+	    servername: LPCWSTR,
+	      resource: LPCWSTR
+
+
+;NET_API_STATUS
+NetAccessGetUserPerms proto WINAPI \
+	    servername: LPCWSTR,
+		UGname: LPCWSTR,
+	      resource: LPCWSTR,
+		 Perms: LPDWORD
+
+ACCESS_INFO_0		STRUC
+acc0_resource_name	LPWSTR ?
+ACCESS_INFO_0		ENDS
+PACCESS_INFO_0		typedef ptr ACCESS_INFO_0
+LPACCESS_INFO_0		typedef ptr ACCESS_INFO_0
+
+ACCESS_INFO_1		STRUC
+acc1_resource_name	LPWSTR ?
+acc1_attr		dd ?
+acc1_count		dd ?
+ACCESS_INFO_1		ENDS
+PACCESS_INFO_1		typedef ptr ACCESS_INFO_1
+LPACCESS_INFO_1		typedef ptr ACCESS_INFO_1
+
+ACCESS_INFO_1002	STRUC
+acc1002_attr		dd ?
+ACCESS_INFO_1002	ENDS
+PACCESS_INFO_1002	typedef ptr ACCESS_INFO_1002
+LPACCESS_INFO_1002	typedef ptr ACCESS_INFO_1002
+
+
+ACCESS_LIST		STRUC
+acl_ugname		LPWSTR ?
+acl_access		dd ?
+ACCESS_LIST		ENDS
+PACCESS_LIST		typedef ptr ACCESS_LIST
+LPACCESS_LIST		typedef ptr ACCESS_LIST
+
+MAXPERMENTRIES		equ 64
+
+ACCESS_NONE		equ 0
+ACCESS_ALL		equ ( ACCESS_READ OR ACCESS_WRITE OR ACCESS_CREATE OR \
+			      ACCESS_EXEC OR ACCESS_DELETE OR ACCESS_ATRIB OR ACCESS_PERM )
+
+ACCESS_READ		equ 0x01
+ACCESS_WRITE		equ 0x02
+ACCESS_CREATE		equ 0x04
+ACCESS_EXEC		equ 0x08
+ACCESS_DELETE		equ 0x10
+ACCESS_ATRIB		equ 0x20
+ACCESS_PERM		equ 0x40
+
+ACCESS_GROUP		equ 0x8000
+
+ACCESS_AUDIT		equ 0x1
+
+ACCESS_SUCCESS_OPEN	equ 0x10
+ACCESS_SUCCESS_WRITE	equ 0x20
+ACCESS_SUCCESS_DELETE	equ 0x40
+ACCESS_SUCCESS_ACL	equ 0x80
+ACCESS_SUCCESS_MASK	equ 0xF0
+
+ACCESS_FAIL_OPEN	equ 0x100
+ACCESS_FAIL_WRITE	equ 0x200
+ACCESS_FAIL_DELETE	equ 0x400
+ACCESS_FAIL_ACL		equ 0x800
+ACCESS_FAIL_MASK	equ 0xF00
+
+ACCESS_FAIL_SHIFT	equ 4
+
+ACCESS_RESOURCE_NAME_PARMNUM equ 1
+ACCESS_ATTR_PARMNUM	equ 2
+ACCESS_COUNT_PARMNUM	equ 3
+ACCESS_ACCESS_LIST_PARMNUM equ 4
+
+ACCESS_RESOURCE_NAME_INFOLEVEL equ (PARMNUM_BASE_INFOLEVE + ACCESS_RESOURCE_NAME_PARMNUM)
+ACCESS_ATTR_INFOLEVEL	equ (PARMNUM_BASE_INFOLEVE + ACCESS_ATTR_PARMNUM)
+ACCESS_COUNT_INFOLEVEL	equ (PARMNUM_BASE_INFOLEVE + ACCESS_COUNT_PARMNUM)
+ACCESS_ACCESS_LIST_INFOLEVEL equ (PARMNUM_BASE_INFOLEVE + ACCESS_ACCESS_LIST_PARMNUM)
+
+ACCESS_LETTERS		equ <"RWCXDAP         ">
+
+NET_VALIDATE_PASSWORD_TYPE typedef SDWORD
+NetValidateAuthentication equ 1
+NetValidatePasswordChange equ 1
+NetValidatePasswordReset equ 2
+
+NET_VALIDATE_PASSWORD_HASH STRUC
+_Length			ULONG ?
+Hash			LPBYTE ?
+NET_VALIDATE_PASSWORD_HASH ENDS
+PNET_VALIDATE_PASSWORD_HASH typedef ptr NET_VALIDATE_PASSWORD_HASH
+
+NET_VALIDATE_PASSWORD_LAST_SET equ 0x00000001
+NET_VALIDATE_BAD_PASSWORD_TIME equ 0x00000002
+NET_VALIDATE_LOCKOUT_TIME equ 0x00000004
+NET_VALIDATE_BAD_PASSWORD_COUNT equ 0x00000008
+NET_VALIDATE_PASSWORD_HISTORY_LENGTH equ 0x00000010
+NET_VALIDATE_PASSWORD_HISTORY equ 0x00000020
+
+if NOT defined(_WINBASE_) AND NOT defined(_FILETIME_)
+_FILETIME_ equ 1
+FILETIME		STRUC
+dwLowDateTime		dd ?
+dwHighDateTime		dd ?
+FILETIME		ENDS
+ LPFILETIME		typedef ptr FILETIME
+PFILETIME		typedef ptr FILETIME
+endif
+
+NET_VALIDATE_PERSISTED_FIELDS STRUC
+PresentFields		ULONG ?
+PasswordLastSet		FILETIME <>
+BadPasswordTime		FILETIME <>
+LockoutTime		FILETIME <>
+BadPasswordCount	ULONG ?
+PasswordHistoryLength	ULONG ?
+PasswordHistory		PNET_VALIDATE_PASSWORD_HASH ?
+NET_VALIDATE_PERSISTED_FIELDS ENDS
+PNET_VALIDATE_PERSISTED_FIELDS typedef ptr NET_VALIDATE_PERSISTED_FIELDS
+
+NET_VALIDATE_OUTPUT_ARG STRUC
+ChangedPersistedFields	NET_VALIDATE_PERSISTED_FIELDS <>
+ValidationStatus	NET_API_STATUS ?
+NET_VALIDATE_OUTPUT_ARG ENDS
+PNET_VALIDATE_OUTPUT_ARG typedef ptr NET_VALIDATE_OUTPUT_ARG
+
+NET_VALIDATE_AUTHENTICATION_INPUT_ARG STRUC
+InputPersistedFields	NET_VALIDATE_PERSISTED_FIELDS <>
+PasswordMatched		BOOLEAN ?
+NET_VALIDATE_AUTHENTICATION_INPUT_ARG ENDS
+PNET_VALIDATE_AUTHENTICATION_INPUT_ARG typedef ptr NET_VALIDATE_AUTHENTICATION_INPUT_ARG
+
+NET_VALIDATE_PASSWORD_CHANGE_INPUT_ARG STRUC
+InputPersistedFields	NET_VALIDATE_PERSISTED_FIELDS <>
+ClearPassword		LPWSTR ?
+UserAccountName		LPWSTR ?
+HashedPassword		NET_VALIDATE_PASSWORD_HASH <>
+PasswordMatch		BOOLEAN ?
+NET_VALIDATE_PASSWORD_CHANGE_INPUT_ARG ENDS
+PNET_VALIDATE_PASSWORD_CHANGE_INPUT_ARG typedef ptr NET_VALIDATE_PASSWORD_CHANGE_INPUT_ARG
+
+NET_VALIDATE_PASSWORD_RESET_INPUT_ARG STRUC
+InputPersistedFields	NET_VALIDATE_PERSISTED_FIELDS <>
+ClearPassword		LPWSTR ?
+UserAccountName		LPWSTR ?
+HashedPassword		NET_VALIDATE_PASSWORD_HASH <>
+PasswordMustChangeAtNextLogon BOOLEAN ?
+ClearLockout		BOOLEAN ?
+NET_VALIDATE_PASSWORD_RESET_INPUT_ARG ENDS
+PNET_VALIDATE_PASSWORD_RESET_INPUT_ARG typedef ptr NET_VALIDATE_PASSWORD_RESET_INPUT_ARG
+
+;NET_API_STATUS
+NetValidatePasswordPolicy proto WINAPI \
+	    ServerName: LPCWSTR,
+	     Qualifier: LPVOID,
+	ValidationType: NET_VALIDATE_PASSWORD_TYPE,
+	      InputArg: LPVOID,
+	     OutputArg: ptr LPVOID
+
+;NET_API_STATUS
+NetValidatePasswordPolicyFree proto WINAPI \
+	     OutputArg: ptr LPVOID
+
+
+endif ;; _LMACCESS_
+
+ifndef _LMDOMAIN_
+_LMDOMAIN_ equ <>
+
+;NET_API_STATUS
+NetGetDCName proto WINAPI \
+	    servername: LPCWSTR,
+	    domainname: LPCWSTR,
+		bufptr: ptr LPBYTE
+
+;NET_API_STATUS
+NetGetAnyDCName proto WINAPI \
+	    servername: LPCWSTR,
+	    domainname: LPCWSTR,
+		bufptr: ptr LPBYTE
+
+
+;NET_API_STATUS
+I_NetLogonControl proto WINAPI \
+	    ServerName: LPCWSTR,
+	  FunctionCode: DWORD,
+	    QueryLevel: DWORD,
+		Buffer: ptr LPBYTE
+
+;NET_API_STATUS
+I_NetLogonControl2 proto WINAPI \
+	    ServerName: LPCWSTR,
+	  FunctionCode: DWORD,
+	    QueryLevel: DWORD,
+		  Data: LPBYTE,
+		Buffer: ptr LPBYTE
+
+ifndef _NTDEF_
+NTSTATUS  typedef LONG
+PNTSTATUS typedef ptr LONG
+endif
+
+;NET_API_FUNCTION
+NetEnumerateTrustedDomains proto WINAPI \
+	    ServerName: LPWSTR,
+	   DomainNames: ptr LPWSTR
+
+NETLOGON_CONTROL_QUERY	equ 1
+NETLOGON_CONTROL_REPLICATE equ 2
+NETLOGON_CONTROL_SYNCHRONIZE equ 3
+NETLOGON_CONTROL_PDC_REPLICATE equ 4
+NETLOGON_CONTROL_REDISCOVER equ 5
+NETLOGON_CONTROL_TC_QUERY equ 6
+NETLOGON_CONTROL_TRANSPORT_NOTIFY equ 7
+NETLOGON_CONTROL_FIND_USER equ 8
+NETLOGON_CONTROL_CHANGE_PASSWORD equ 9
+NETLOGON_CONTROL_TC_VERIFY equ 10
+NETLOGON_CONTROL_FORCE_DNS_REG equ 11
+NETLOGON_CONTROL_QUERY_DNS_REG equ 12
+
+NETLOGON_CONTROL_UNLOAD_NETLOGON_DLL equ 0xFFFB
+NETLOGON_CONTROL_BACKUP_CHANGE_LOG equ 0xFFFC
+NETLOGON_CONTROL_TRUNCATE_LOG equ 0xFFFD
+NETLOGON_CONTROL_SET_DBFLAG equ 0xFFFE
+NETLOGON_CONTROL_BREAKPOINT equ 0xFFFF
+
+NETLOGON_INFO_1		STRUC
+netlog1_flags		dd ?
+netlog1_pdc_connection_status NET_API_STATUS ?
+NETLOGON_INFO_1		ENDS
+PNETLOGON_INFO_1	typedef ptr NETLOGON_INFO_1
+
+NETLOGON_INFO_2		STRUC
+netlog2_flags		dd ?
+netlog2_pdc_connection_status NET_API_STATUS ?
+netlog2_trusted_dc_name LPWSTR ?
+netlog2_tc_connection_status NET_API_STATUS ?
+NETLOGON_INFO_2		ENDS
+PNETLOGON_INFO_2	typedef ptr NETLOGON_INFO_2
+
+NETLOGON_INFO_3		STRUC
+netlog3_flags		dd ?
+netlog3_logon_attempts	dd ?
+netlog3_reserved1	dd ?
+netlog3_reserved2	dd ?
+netlog3_reserved3	dd ?
+netlog3_reserved4	dd ?
+netlog3_reserved5	dd ?
+NETLOGON_INFO_3		ENDS
+PNETLOGON_INFO_3	typedef ptr NETLOGON_INFO_3
+
+NETLOGON_INFO_4		STRUC
+netlog4_trusted_dc_name LPWSTR ?
+netlog4_trusted_domain_name LPWSTR ?
+NETLOGON_INFO_4		ENDS
+PNETLOGON_INFO_4	typedef ptr NETLOGON_INFO_4
+
+NETLOGON_REPLICATION_NEEDED equ 0x01
+NETLOGON_REPLICATION_IN_PROGRESS equ 0x02
+NETLOGON_FULL_SYNC_REPLICATION equ 0x04
+NETLOGON_REDO_NEEDED	equ 0x08
+NETLOGON_HAS_IP		equ 0x10
+NETLOGON_HAS_TIMESERV	equ 0x20
+NETLOGON_DNS_UPDATE_FAILURE equ 0x40
+NETLOGON_VERIFY_STATUS_RETURNED equ 0x80
+
+;SERVICE_ACCOUNT_PASSWORD equ TEXT("_SA_{262E99C9-6160-4871-ACEC-4E61736B6F21}")
+;SERVICE_ACCOUNT_SECRET_PREFIX equ TEXT("_SC_{262E99C9-6160-4871-ACEC-4E61736B6F21}_")
+
+DEFINE_GUID(ServiceAccountPasswordGUID, 0x262E99C9, 0x6160, 0x4871, 0xAC, 0xEC, 0x4E, 0x61, 0x73, 0x6B, 0x6F, 0x21 )
+
+NetAddServiceAccount proto WINAPI \
+	    ServerName: LPWSTR,
+	   AccountName: LPWSTR,
+	      Reserved: LPWSTR,
+		 Flags: DWORD
+
+SERVICE_ACCOUNT_FLAG_LINK_TO_HOST_ONLY equ 0x00000001
+SERVICE_ACCOUNT_FLAG_UNLINK_FROM_HOST_ONLY equ 0x00000001
+
+NetRemoveServiceAccount proto WINAPI \
+	    ServerName: LPWSTR,
+	   AccountName: LPWSTR,
+		 Flags: DWORD
+
+NetEnumerateServiceAccounts proto WINAPI \
+	    ServerName: LPWSTR,
+		 Flags: DWORD,
+	 AccountsCount: ptr DWORD,
+	      Accounts: ptr PZPWSTR
+
+NetIsServiceAccount proto WINAPI \
+	    ServerName: LPWSTR,
+	   AccountName: LPWSTR,
+	     IsService: ptr BOOL
+
+NetQueryServiceAccount proto WINAPI \
+	    ServerName: LPWSTR,
+	   AccountName: LPWSTR,
+	     InfoLevel: DWORD,
+		Buffer: ptr PBYTE
+
+MSA_INFO_LEVEL		typedef SDWORD
+MsaInfoLevel0		equ 0
+MsaInfoLevelMax		equ 1
+
+MSA_INFO_STATE		typedef SDWORD
+MsaInfoNotExist		equ 1
+MsaInfoNotService	equ 1
+MsaInfoCannotInstall	equ 2
+MsaInfoCanInstall	equ 3
+MsaInfoInstalled	equ 4
+
+MSA_INFO_0		STRUC
+State			MSA_INFO_STATE ?
+MSA_INFO_0		ENDS
+PMSA_INFO_0		typedef ptr MSA_INFO_0
+LPMSA_INFO_0		typedef ptr MSA_INFO_0
+
+endif ;; _LMDOMAIN_

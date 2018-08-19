@@ -449,9 +449,9 @@ static void ModulePassInit( void )
 	     */
 	    model = MODEL_FLAT;
 	    if ( ModuleInfo.langtype == LANG_NONE ) {
-		if ( Options.output_format == OFORMAT_COFF )
+		if ( Options.output_format == OFORMAT_COFF || Options.output_format == OFORMAT_BIN )
 		    ModuleInfo.langtype = LANG_FASTCALL;
-		else
+		else if ( Options.output_format == OFORMAT_ELF )
 		    ModuleInfo.langtype = LANG_SYSCALL;
 	    }
 #ifndef __ASMC64__

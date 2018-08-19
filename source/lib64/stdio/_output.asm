@@ -3,6 +3,7 @@ include stdlib.inc
 include limits.inc
 include wchar.inc
 include fltintrn.inc
+include winnls.inc
 
 ;
 ; the following should be set depending on the sizes of various types
@@ -113,7 +114,7 @@ local   padding:    dword
 local   text:       LPSTR
 local   number:     qword
 local   wchar:      wint_t
-local   mbuf[MB_LEN_MAX+1]:byte
+local   mbuf[MB_LEN_MAX+1]:wint_t
 local   buffer[BUFFERSIZE]:byte
 local   tmp:REAL16
 
@@ -121,6 +122,7 @@ local   tmp:REAL16
     mov textlen,eax
     mov charsout,eax
     mov state,eax
+    mov bufferiswide,eax
 
     .while  1
         lea     rbx,__lookuptable
@@ -166,8 +168,8 @@ local   tmp:REAL16
                 mov fldwidth,eax
                 mov prefixlen,eax
                 mov bufferiswide,eax
-                mov esi,eax ; flags
-                mov edi,eax ; precision
+                xor esi,esi ; flags
+                xor edi,edi ; precision
                 dec edi
                 .endc
 
@@ -319,14 +321,20 @@ local   tmp:REAL16
                     ;
                     ; print a single character specified by int argument
                     ;
-                    mov bufferiswide,1
                     mov rcx,arglist
                     add arglist,8
-                    mov dl,[rcx]
                     lea rax,buffer
-                    mov [rax],dl
                     mov textlen,1 ; print just a single character
                     mov text,rax
+
+                    .if esi & (FL_LONG or FL_WIDECHAR)
+                        movzx edx,word ptr [rcx]
+                        mov [rax],edx
+                        WideCharToMultiByte(0, 0, rax, 1, rax, 1, 0, 0)
+                    .else
+                        mov dl,[rcx]
+                        mov [rax],dl
+                    .endif
                     .endc
 
                   .case 'S' ; ISO wide character string
@@ -351,12 +359,22 @@ local   tmp:REAL16
                     .endif
                     .if !rax
                         lea rax,__nullstring
+                        and esi,not (FL_LONG or FL_WIDECHAR)
                     .endif
                     mov text,rax
-                    .repeat
-                        .break .if BYTE PTR [rax] == 0
-                        inc rax
-                    .untilcxz
+
+                    .if esi & (FL_LONG or FL_WIDECHAR)
+                        mov bufferiswide,1
+                        .repeat
+                            .break .if WORD PTR [rax] == 0
+                            add rax,2
+                        .untilcxz
+                    .else
+                        .repeat
+                            .break .if BYTE PTR [rax] == 0
+                            inc rax
+                        .untilcxz
+                    .endif
                     sub rax,text
                     mov textlen,eax
                     .endc
@@ -685,7 +703,21 @@ endif
                     ; write text
                     ;
                     mov edx,textlen
-                    write_string(text, edx, fp, &charsout)
+                    .if bufferiswide && edx
+
+                        mov rbx,text
+                        .while textlen
+
+                            .break .ifd !WideCharToMultiByte(0, 0, rbx, 1, &mbuf, 1, 0, 0)
+                            movzx ecx,mbuf
+                            write_char(ecx, fp, &charsout)
+                            add rbx,2
+                            sub textlen,2
+                            .break .ifs
+                        .endw
+                    .else
+                        write_string(text, edx, fp, &charsout)
+                    .endif
                     .if esi & FL_LEFT
                         ;
                         ; pad on right with blanks

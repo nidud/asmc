@@ -1,5 +1,6 @@
 ifndef _INCLUDED_EMM
 _INCLUDED_EMM equ <>
+.pragma list(push, 0)
 
 ifndef _M_IX86
 ifndef _M_X64
@@ -278,10 +279,11 @@ _mm_cvttpd_epi32 macro a:=<xmm0>, b
 	endm
 _mm_cvtepi32_ps macro a:=<xmm0>, b
     ifnb <b>
-	exitm<_MM_OPCSX2(cvtdq2, ps, a, b)>
+	cvtdq2ps a,b
     else
-	exitm<_MM_OPCSX2(cvtdq2, ps, a, a)>
+	cvtdq2ps a,a
     endif
+	retm<a>
 	endm
 _mm_cvtps_epi32 macro a:=<xmm0>, b
     ifnb <b>
@@ -780,16 +782,21 @@ _mm_set_epix macro x, op, args:vararg
 	endm
 _mm_set_epi64x macro x, a, b
     ifnb <b>
-	exitm<_mm_set_epix(x, dq, a, b)>
+	_mm_set_epix(x, dq, a, b)
+	retm<x>
     else
-	exitm<_mm_set_epix(xmm0, dq, a, b)>
+	_mm_set_epix(xmm0, dq, a, b)
+	retm<xmm0>
     endif
 	endm
+
 _mm_set_epi32 macro x, a, b, q, d
     ifnb <d>
-	exitm<_mm_set_epix(x, dd, a, b, q, d)>
+	_mm_set_epix(x, dd, a, b, q, d)
+	retm<x>
     else
-	exitm<_mm_set_epix(xmm0, dd, x, a, b, q)>
+	_mm_set_epix(xmm0, dd, x, a, b, q)
+	retm<xmm0>
     endif
 	endm
 _mm_get_epi32 macro a, b, q, d
@@ -802,22 +809,28 @@ _mm_get_epi32 macro a, b, q, d
 	exitm<x>
 	endm
 _mm_set_epi16 macro a, b, q, d, e, f, g, h
-	exitm<_mm_set_epix(xmm0, dw, a, b, q, d, e, f, g, h)>
+	_mm_set_epix(xmm0, dw, a, b, q, d, e, f, g, h)
+	retm<xmm0>
 	endm
 _mm_set_epi8 macro a, b, q, d, e, f, g, h, i, j, k, l, m, n, o, p
-	exitm<_mm_set_epix(xmm0, db, a, b, q, d, e, f, g, h, i, j, k, l, m, n, o, p)>
+	_mm_set_epix(xmm0, db, a, b, q, d, e, f, g, h, i, j, k, l, m, n, o, p)
+	retm<xmm0>
 	endm
 _mm_set1_epi64x macro a
-	exitm<_mm_set_epix(xmm0, dq, a, a)>
+	_mm_set_epix(xmm0, dq, a, a)
+	retm<xmm0>
 	endm
 _mm_set1_epi32 macro a
-	exitm<_mm_set_epix(xmm0, dd, a, a, a, a)>
+	_mm_set_epix(xmm0, dd, a, a, a, a)
+	retm<xmm0>
 	endm
 _mm_set1_epi16 macro a
-	exitm<_mm_set1_epi32(xmm0, a or (a shl 16))>
+	_mm_set1_epi32(xmm0, a or (a shl 16))
+	retm<xmm0>
 	endm
 _mm_set1_epi8 macro a
-	exitm<_mm_set1_epi16(xmm0, a or (a shl 8))>
+	_mm_set1_epi16(xmm0, a or (a shl 8))
+	retm<xmm0>
 	endm
 ifdef _M_X64
 _mm_set1_epi64 macro a:=<xmm0>
@@ -970,4 +983,5 @@ _mm_set_epi64		proto :qword, :qword
 _mm_setr_epi64		proto :sqword, :sqword
 endif
 
+.pragma list(pop)
 endif

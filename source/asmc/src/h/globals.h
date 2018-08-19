@@ -16,6 +16,10 @@
 #define _ltoa	ltoa
 #define _strupr strupr
 
+#if defined(__UNIX__) /* v2.12: added */
+char *strupr( char * ); /* defined in apiemu.c */
+#endif
+
 #elif defined(__POCC__)
 
 #pragma warn(disable:2030) /* disable '=' used in a conditional expression */
@@ -397,7 +401,6 @@ enum seg_type {
 #define _AF_PASCAL	0x10 /* auto insert break after .case */
 #define _AF_NOTABLE	0x20 /* no indexed jump table */
 #define _AF_REGAX	0x40 /* use [E]AX or R10+R11 to render jump-code */
-#define _AF_NOTEST	0x80 /* skip test code - just jump */
 
 #define _XF_ASSERT	0x01 /* Generate .assert code */
 #define _XF_PUSHF	0x02 /* Push/Pop flags */

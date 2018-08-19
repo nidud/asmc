@@ -26,9 +26,9 @@ FindResWord::
 
     .if edx < 8
 
-        option switch:table, switch:notest, switch:regax
+        option switch:table;, switch:regax
 
-        .switch rdx
+        .switch notest rdx
 
           .case 0
             xor eax,eax

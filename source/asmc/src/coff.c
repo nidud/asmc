@@ -391,7 +391,7 @@ static uint_32 coff_write_symbols( struct module_info *modinfo, struct coffmod *
     /* .file item (optionally disabled by -zlf) */
 
     if ( Options.no_file_entry == FALSE ) {
-	strncpy( is.N.ShortName, ".file", IMAGE_SIZEOF_SHORT_NAME );
+	strncpy( (char *)is.N.ShortName, ".file", IMAGE_SIZEOF_SHORT_NAME );
 	is.Value = ( Options.line_numbers ? cm->start_files : 0 );  /* index of next .file entry */
 	is.SectionNumber = (uint_16)IMAGE_SYM_DEBUG;
 	is.Type = IMAGE_SYM_TYPE_NULL;
@@ -404,7 +404,7 @@ static uint_32 coff_write_symbols( struct module_info *modinfo, struct coffmod *
 	    WriteError();
 
 	for ( i = is.NumberOfAuxSymbols;i;i--, p += sizeof(IMAGE_AUX_SYMBOL) ) {
-	    strncpy( ias.File.Name, p, sizeof(IMAGE_AUX_SYMBOL) );
+	    strncpy( (char *)ias.File.Name, p, sizeof(IMAGE_AUX_SYMBOL) );
 	    if ( fwrite( &ias, 1, sizeof(ias), CurrFile[OBJ] ) != sizeof(ias) )
 		WriteError();
 	}
@@ -418,7 +418,7 @@ static uint_32 coff_write_symbols( struct module_info *modinfo, struct coffmod *
 	p = ( curr->e.seginfo->aliasname ? curr->e.seginfo->aliasname : ConvertSectionName( &curr->sym, NULL, buffer ) );
 	len = strlen( p );
 	if ( len <= IMAGE_SIZEOF_SHORT_NAME )
-	    strncpy( is.N.ShortName, p, IMAGE_SIZEOF_SHORT_NAME );
+	    strncpy( (char *)is.N.ShortName, p, IMAGE_SIZEOF_SHORT_NAME );
 	else {
 	    is.N.Name.Short = 0;
 	    is.N.Name.Long = Coff_AllocString( cm, p, len );
@@ -482,7 +482,7 @@ static uint_32 coff_write_symbols( struct module_info *modinfo, struct coffmod *
 	is.NumberOfAuxSymbols = (( curr->sym.iscomm == FALSE && curr->sym.altname ) ? 1 : 0 );
 
 	if ( len <= IMAGE_SIZEOF_SHORT_NAME )
-	    strncpy( is.N.ShortName, buffer, IMAGE_SIZEOF_SHORT_NAME );
+	    strncpy( (char *)is.N.ShortName, buffer, IMAGE_SIZEOF_SHORT_NAME );
 	else {
 	    is.N.Name.Short = 0;
 	    is.N.Name.Long = Coff_AllocString( cm, buffer, len );
@@ -515,7 +515,7 @@ static uint_32 coff_write_symbols( struct module_info *modinfo, struct coffmod *
 	    sym->isproc &&
 	    sym->debuginfo->file != lastfile ) {
 	    lastfile = sym->debuginfo->file;
-	    strncpy( is.N.ShortName, ".file", IMAGE_SIZEOF_SHORT_NAME );
+	    strncpy( (char *)is.N.ShortName, ".file", IMAGE_SIZEOF_SHORT_NAME );
 	    is.SectionNumber = (uint_16)IMAGE_SYM_DEBUG;
 	    is.Type = IMAGE_SYM_TYPE_NULL;
 	    is.StorageClass = IMAGE_SYM_CLASS_FILE;
@@ -525,7 +525,7 @@ static uint_32 coff_write_symbols( struct module_info *modinfo, struct coffmod *
 		WriteError();
 
 	    for ( i = is.NumberOfAuxSymbols; i; i--, p += sizeof(IMAGE_AUX_SYMBOL) ) {
-		strncpy( ias.File.Name, p, sizeof(IMAGE_AUX_SYMBOL) );
+		strncpy( (char *)ias.File.Name, p, sizeof(IMAGE_AUX_SYMBOL) );
 		if ( fwrite( &ias, 1, sizeof(ias), CurrFile[OBJ] ) != sizeof(ias) )
 		    WriteError();
 	    }
@@ -546,7 +546,7 @@ static uint_32 coff_write_symbols( struct module_info *modinfo, struct coffmod *
 	    is.NumberOfAuxSymbols++;
 
 	if ( len <= IMAGE_SIZEOF_SHORT_NAME )
-	    strncpy( is.N.ShortName, buffer, IMAGE_SIZEOF_SHORT_NAME );
+	    strncpy( (char *)is.N.ShortName, buffer, IMAGE_SIZEOF_SHORT_NAME );
 	else {
 	    is.N.Name.Short = 0;
 	    is.N.Name.Long = Coff_AllocString( cm, buffer, len );
@@ -569,7 +569,7 @@ static uint_32 coff_write_symbols( struct module_info *modinfo, struct coffmod *
 	    if ( fwrite( &ias, 1, sizeof(ias), CurrFile[OBJ] ) != sizeof(ias) )
 		WriteError();
 
-	    strncpy( is.N.ShortName, ".bf", IMAGE_SIZEOF_SHORT_NAME );
+	    strncpy( (char *)is.N.ShortName, ".bf", IMAGE_SIZEOF_SHORT_NAME );
 	    is.Type = IMAGE_SYM_TYPE_NULL;
 	    is.NumberOfAuxSymbols = 1;
 	    is.StorageClass = IMAGE_SYM_CLASS_FUNCTION;
@@ -584,7 +584,7 @@ static uint_32 coff_write_symbols( struct module_info *modinfo, struct coffmod *
 	    if ( fwrite( &ias, 1, sizeof(ias), CurrFile[OBJ] ) != sizeof(ias) )
 		WriteError();
 
-	    strncpy( is.N.ShortName, ".lf", IMAGE_SIZEOF_SHORT_NAME );
+	    strncpy( (char *)is.N.ShortName, ".lf", IMAGE_SIZEOF_SHORT_NAME );
 	    is.Type = IMAGE_SYM_TYPE_NULL;
 	    is.NumberOfAuxSymbols = 0;
 	    is.StorageClass = IMAGE_SYM_CLASS_FUNCTION;
@@ -592,7 +592,7 @@ static uint_32 coff_write_symbols( struct module_info *modinfo, struct coffmod *
 	    if ( fwrite( &is, 1, sizeof(is), CurrFile[OBJ] ) != sizeof(is) )
 		WriteError();
 
-	    strncpy( is.N.ShortName, ".ef", IMAGE_SIZEOF_SHORT_NAME );
+	    strncpy( (char *)is.N.ShortName, ".ef", IMAGE_SIZEOF_SHORT_NAME );
 	    is.Type = IMAGE_SYM_TYPE_NULL;
 	    is.NumberOfAuxSymbols = 1;
 	    is.StorageClass = IMAGE_SYM_CLASS_FUNCTION;
@@ -616,7 +616,7 @@ static uint_32 coff_write_symbols( struct module_info *modinfo, struct coffmod *
 	len = Mangle( &curr->sym, buffer );
 
 	if ( len <= IMAGE_SIZEOF_SHORT_NAME )
-	    strncpy( is.N.ShortName, buffer, IMAGE_SIZEOF_SHORT_NAME );
+	    strncpy( (char *)is.N.ShortName, buffer, IMAGE_SIZEOF_SHORT_NAME );
 	else {
 	    is.N.Name.Short = 0;
 	    is.N.Name.Long = Coff_AllocString( cm, buffer, len );
@@ -649,23 +649,22 @@ static uint_32 coff_write_symbols( struct module_info *modinfo, struct coffmod *
     return( cntSymbols );
 }
 
-static int GetStartLabel( char *buffer, bool msg )
-/************************************************/
+static int GetStartLabel( struct module_info *modinfo, char *buffer, bool msg )
 {
     int size = 0;
     char temp[ MAX_ID_LEN + MANGLE_BYTES + 1 ];
 
-    if ( ModuleInfo.g.start_label ) {
-	Mangle( ModuleInfo.g.start_label, temp );
+    if ( modinfo->g.start_label ) {
+	Mangle( modinfo->g.start_label, temp );
 	if ( Options.entry_decorated )
 	    strcpy( buffer, temp );
 	else {
-	    if ( ModuleInfo.g.start_label->langtype != LANG_C &&
-		ModuleInfo.g.start_label->langtype != LANG_STDCALL &&
-		ModuleInfo.g.start_label->langtype != LANG_SYSCALL ) {
-		if ( *ModuleInfo.g.start_label->name != '_' ) {
-		    if ( msg && ( ModuleInfo.fctype != FCT_WIN64 && ModuleInfo.fctype != FCT_VEC64 ) )
-			asmerr( 8011, ModuleInfo.g.start_label->name );
+	    if ( modinfo->g.start_label->langtype != LANG_C &&
+		modinfo->g.start_label->langtype != LANG_STDCALL &&
+		modinfo->g.start_label->langtype != LANG_SYSCALL ) {
+		if ( *modinfo->g.start_label->name != '_' ) {
+		    if ( msg && ( modinfo->defOfssize != USE64 ) )
+			asmerr( 8011, modinfo->g.start_label->name );
 		    strcpy( buffer, temp );
 		} else {
 		    strcpy( buffer, temp+1 );
@@ -1102,7 +1101,7 @@ static void coff_create_drectve( struct module_info *modinfo, struct coffmod *cm
 		    size += 2;
 	    }
 	    /* 3. start label */
-	    size += GetStartLabel( buffer, TRUE );
+	    size += GetStartLabel( modinfo, buffer, TRUE );
 	    /* 4. impdefs */
 	    for( tmp = imp; tmp ; tmp = tmp->next ) {
 		if ( tmp->sym.isproc && ( tmp->sym.weak == FALSE || tmp->sym.iat_used == TRUE ) &&
@@ -1142,19 +1141,19 @@ static void coff_create_drectve( struct module_info *modinfo, struct coffmod *cm
 	    }
 	    /* 3. entry */
 	    if ( modinfo->g.start_label ) {
-		GetStartLabel( buffer, FALSE );
+		GetStartLabel( modinfo, buffer, FALSE );
 		p += sprintf( (char *)p, "-entry:%s ", buffer );
 	    }
 	    /* 4. impdefs */
 	    for( tmp = imp; tmp ; tmp = tmp->next ) {
 		if ( tmp->sym.isproc && ( tmp->sym.weak == FALSE || tmp->sym.iat_used == TRUE ) &&
 		    tmp->sym.dll && *tmp->sym.dll->name ) {
-		    strcpy( p, "-import:" );
+		    strcpy( (char *)p, "-import:" );
 		    p += 8;
 		    p += Mangle( &tmp->sym, p );
 		    *p++ = '=';
-		    strcpy( p, tmp->sym.dll->name );
-		    p += strlen( p );
+		    strcpy( (char *)p, tmp->sym.dll->name );
+		    p += strlen( (char *)p );
 		    *p++ = '.';
 		    memcpy( p, tmp->sym.name, tmp->sym.name_size );
 		    p += tmp->sym.name_size;
@@ -1196,7 +1195,7 @@ static int coff_write_module( struct module_info *modinfo )
 		break;
 	    cm.SymDeb[i].seg->e.seginfo->characteristics = (IMAGE_SCN_MEM_READ | IMAGE_SCN_MEM_DISCARDABLE) >> 24;
 	    /* use the source line buffer as code buffer. It isn't needed anymore */
-	    cm.SymDeb[i].seg->e.seginfo->CodeBuffer = CurrSource + i * SIZE_CV_SEGBUF;
+	    cm.SymDeb[i].seg->e.seginfo->CodeBuffer = (uint_8 *)CurrSource + i * SIZE_CV_SEGBUF;
 	    cm.SymDeb[i].seg->e.seginfo->flushfunc = coff_flushfunc;
 	    cm.SymDeb[i].q.head = NULL;
 	}

@@ -59,6 +59,8 @@ static void SetValue( struct asym *sym, struct expr *opndx )
 	if ( sym->isproc ) {
 	    struct dsym *dir = (struct dsym *)sym;
 	    dir->e.procinfo = ((struct dsym *)opndx->sym)->e.procinfo;
+	    /* v2.12: must be copied as well, or INVOKE won't work correctly */
+	    sym->langtype = opndx->sym->langtype;
 	}
 	sym->mem_type = opndx->mem_type;
 	/* v2.01: allow equates of variables with arbitrary type.

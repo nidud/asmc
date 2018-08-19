@@ -1184,7 +1184,7 @@ void SegmentInit( int pass )
     /* Reset length of all segments to zero.
      * set start of segment buffers.
      */
-    for( curr = SymTables[TAB_SEG].head, p = ModuleInfo.pCodeBuff; curr; curr = curr->next ) {
+    for( curr = SymTables[TAB_SEG].head, p = (char *)ModuleInfo.pCodeBuff; curr; curr = curr->next ) {
 	curr->e.seginfo->current_loc = 0;
 	if ( curr->e.seginfo->internal )
 	    continue;
@@ -1192,7 +1192,7 @@ void SegmentInit( int pass )
 	    if ( Options.output_format == OFORMAT_OMF ) {
 		curr->e.seginfo->CodeBuffer = codebuf;
 	    } else {
-		curr->e.seginfo->CodeBuffer = p;
+		curr->e.seginfo->CodeBuffer = (uint_8 *)p;
 		i = curr->sym.max_offset - curr->e.seginfo->start_loc;
 		p += i;
 	    }

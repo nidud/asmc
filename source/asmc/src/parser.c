@@ -338,7 +338,7 @@ static void seg_override( struct code_info *CodeInfo, int seg_reg, const struct 
 	return;
 
     if( CodeInfo->token == T_LEA ) {
-	CodeInfo->prefix.RegOverride = EMPTY; /* skip segment override */
+	CodeInfo->prefix.RegOverride = ASSUME_NOTHING; /* skip segment override */
 	SetFixupFrame( sym, FALSE );
 	return;
     }
@@ -382,7 +382,7 @@ static void seg_override( struct code_info *CodeInfo, int seg_reg, const struct 
     }
 
     if( CodeInfo->prefix.RegOverride == default_seg ) {
-	CodeInfo->prefix.RegOverride = EMPTY;
+	CodeInfo->prefix.RegOverride = ASSUME_NOTHING;
     }
 }
 
@@ -989,7 +989,7 @@ int idata_fixup( struct code_info *CodeInfo, unsigned CurrOpnd, struct expr *opn
 	    } else
 		fixup_type = FIX_OFF16;
     } else {
-	    fixup_type = FIX_OFF16;
+	fixup_type = FIX_OFF16;
     }
     /* v2.04: 'if' added, don't set W bit if size == 1
      * code example:

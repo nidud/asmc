@@ -291,7 +291,7 @@ static void RenderCaseExit( struct hll_item *hll )
 
 	if ( !( p->flags & HLLF_ENDCOCCUR ) ) {
 
-	    if ( Parse_Pass == PASS_1 && !( ModuleInfo.aflag & _AF_PASCAL ) )
+	    if ( Parse_Pass == PASS_1 && !( hll->flags & HLLF_PASCAL ) )
 		asmerr( 7007 );
 
 	    addlq_jxx_label( T_JMP, hll->labels[LEXIT] );
@@ -320,7 +320,7 @@ static int IsCaseColon( int i, struct asm_tok tokenarray[] )
     return 0;
 }
 
-static int RenderMultiCase( int *ip, char *buffer, struct asm_tok tokenarray[] )
+static int RenderMultiCase( struct hll_item *hll, int *ip, char *buffer, struct asm_tok tokenarray[] )
 {
     int i = *ip + 1;
     int result = 0;
@@ -365,15 +365,15 @@ static int RenderMultiCase( int *ip, char *buffer, struct asm_tok tokenarray[] )
 	while ( tokenarray[*ip].token != T_FINAL )
 	    (*ip)++;
 
-	if ( ModuleInfo.aflag & _AF_PASCAL ) {
+	if ( hll->flags & HLLF_PASCAL ) {
 
-	    ModuleInfo.aflag &= ~_AF_PASCAL;
+	    hll->flags &= ~HLLF_PASCAL;
 
 	    if ( ModuleInfo.list )
 		LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), NULL );
 
 	    RunLineQueue();
-	    ModuleInfo.aflag |= _AF_PASCAL;
+	    hll->flags |= HLLF_PASCAL;
 	}
 	return 1;
     }
@@ -978,18 +978,25 @@ int SwitchStart( int i, struct asm_tok tokenarray[] )
     ExpandCStrings( tokenarray );
 
     hll->cmd = HLL_SWITCH;
-    hll->labels[LEXIT] = 0;
-    hll->flags = HLLF_WHILE;
-    if ( ModuleInfo.aflag & _AF_NOTEST ) {
-	hll->flags |= HLLF_NOTEST;
-	ModuleInfo.aflag &= ~_AF_NOTEST;
-    }
-
     hll->labels[LSTART] = 0; // set by .CASE
     hll->labels[LTEST]	= 0; // set by .CASE
     hll->labels[LEXIT]	= 0; // set by .BREAK
     hll->condlines = 0;
     hll->caselist = 0;
+
+    hll->flags = HLLF_WHILE;
+    if ( _stricmp(tokenarray[i].string_ptr, "NOTEST") == 0 ) {
+	i++;
+	hll->flags |= HLLF_NOTEST;
+    }
+
+    if ( tokenarray[i].tokval == T_C ) {
+	i++;
+    } else if ( tokenarray[i].tokval == T_PASCAL ) {
+	i++;
+	hll->flags |= HLLF_PASCAL;
+    } else if ( ModuleInfo.aflag & _AF_PASCAL )
+	hll->flags |= HLLF_PASCAL;
 
     if ( tokenarray[i].token != T_FINAL ) {
 
@@ -1234,7 +1241,7 @@ int SwitchExit( int i, struct asm_tok tokenarray[] )
 	    else
 		addlq_jxx_label( T_JMP, hll->labels[LSTART] );
 
-	} else if ( ModuleInfo.aflag & _AF_PASCAL ) {
+	} else if ( hll->flags & HLLF_PASCAL ) {
 
 	    if ( hll->labels[LEXIT] == 0 )
 		hll->labels[LEXIT] = GetHllLabel();
@@ -1255,7 +1262,7 @@ int SwitchExit( int i, struct asm_tok tokenarray[] )
 
 	/* .case a, b, c, ... */
 
-	if ( RenderMultiCase( &i, buffer, tokenarray ) )
+	if ( RenderMultiCase( hll, &i, buffer, tokenarray ) )
 	    break;
 
 	/* add case label */

@@ -60,8 +60,8 @@ HLLF_IFB	equ 0x00010000	; .ifb proc() --> al
 HLLF_IFW	equ 0x00020000	; .ifw proc() --> ax
 HLLF_IFD	equ 0x00040000	; .ifd proc() --> eax
 HLLF_IFS	equ 0x00080000	; Signed compare --> CMP REG,val
-HLLF_CONT0	equ 0x00100000	; .continue(0) [.if]
 
+HLLF_PASCAL	equ 0x00100000	; option switch:pascal | .switch pascal <args>
 HLLF_JTABLE	equ 0x00200000	; if HLLF_NOTEST direct .case jump
 
 ;

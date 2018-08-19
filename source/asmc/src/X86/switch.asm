@@ -351,7 +351,7 @@ RenderCaseExit proc fastcall private hll
 
         .if !( [eax].hll_item.flags & HLLF_ENDCOCCUR )
 
-            .if Parse_Pass == PASS_1 && !( ModuleInfo.aflag & _AF_PASCAL )
+            .if Parse_Pass == PASS_1 && !( [hll].hll_item.flags & HLLF_PASCAL )
 
                 asmerr( 7007 )
             .endif
@@ -395,9 +395,9 @@ IsCaseColon endp
 
     assume  ebx: ptr asm_tok
 
-RenderMultiCase proc uses esi edi ebx i:ptr SDWORD, buffer:ptr SBYTE, tokenarray:ptr asm_tok
+RenderMultiCase proc uses esi edi ebx hll:ptr hll_item, i:ptr SDWORD, buffer:ptr SBYTE, tokenarray:ptr asm_tok
 
-local result, colon
+  local result, colon
 
     mov ebx,tokenarray
     add ebx,16
@@ -462,9 +462,12 @@ local result, colon
         mov ebx,i
         mov [ebx],eax
 
-        .if ModuleInfo.aflag & _AF_PASCAL
+        mov esi,hll
+        assume esi:ptr hll_item
 
-            and ModuleInfo.aflag,NOT _AF_PASCAL
+        .if [esi].flags & HLLF_PASCAL
+
+            and [esi].flags,NOT HLLF_PASCAL
 
             .if ModuleInfo.list
 
@@ -472,7 +475,7 @@ local result, colon
             .endif
             RunLineQueue()
 
-            or ModuleInfo.aflag,_AF_PASCAL
+            or [esi].flags,HLLF_PASCAL
         .endif
         mov eax,1
     .endif
@@ -581,7 +584,6 @@ endif
 
 GetSwitchArg endp
 
-    assume esi:ptr hll_item
     assume ebx:ptr hll_item
 
 RenderSwitch proc uses esi edi ebx hll:ptr hll_item, tokenarray:ptr asm_tok,
@@ -1217,28 +1219,46 @@ SwitchStart proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok
     ExpandCStrings( tokenarray )
 
     xor eax,eax
-    mov [esi].labels[LEXIT*4],eax
-    mov [esi].flags,eax
-    mov [esi].cmd,HLL_SWITCH
-    mov [esi].flags,HLLF_WHILE
-    .if ModuleInfo.aflag & _AF_NOTEST
-
-        or  [esi].flags,HLLF_NOTEST
-        and ModuleInfo.aflag,NOT _AF_NOTEST
-    .endif
-
-    xor eax,eax
     mov [esi].labels[LSTART*4],eax  ; set by .CASE
     mov [esi].labels[LTEST*4],eax   ; set by .CASE
     mov [esi].labels[LEXIT*4],eax   ; set by .BREAK
     mov [esi].condlines,eax
     mov [esi].caselist,eax
+    mov [esi].cmd,HLL_SWITCH
 
-    mov eax,i
-    shl eax,4
+    mov edx,i ; v2.27.38: .SWITCH [NOTEST] [C|PASCAL] ...
+    shl edx,4
+    .if !_stricmp([ebx+edx].string_ptr, "NOTEST")
+
+        inc i
+        mov eax,HLLF_NOTEST or HLLF_WHILE
+    .else
+        mov eax,HLLF_WHILE
+    .endif
+
+    mov edx,i
+    shl edx,4
+    .if [ebx+edx].tokval == T_C
+
+        inc i
+        add edx,16
+
+    .elseif [ebx+edx].tokval == T_PASCAL
+
+        inc i
+        add edx,16
+        or eax,HLLF_PASCAL
+
+    .elseif ModuleInfo.aflag & _AF_PASCAL
+
+        or eax,HLLF_PASCAL
+    .endif
+
+    mov [esi].flags,eax
+
     .repeat
 
-        .if [ebx+eax].token != T_FINAL
+        .if [ebx+edx].token != T_FINAL
 
             .break .if ExpandHllProc(edi, i, ebx) == ERROR
 
@@ -1332,7 +1352,9 @@ endif
                 .endsw
             .endif
 
-            strlen( strcpy( edi, [ebx+16].asm_tok.tokpos ) )
+            mov edx,i
+            shl edx,4
+            strlen( strcpy( edi, [ebx+edx].asm_tok.tokpos ) )
             inc eax
             push eax
             LclAlloc(eax)
@@ -1363,10 +1385,8 @@ SwitchStart endp
 
 SwitchEnd proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok
 
-  local rc                      :SINT,
-        cmd                     :SINT,
-        buffer[MAX_LINE_LEN]    :SBYTE,
-        l_exit[16]              :SBYTE ; exit or default label
+  local rc:SINT, cmd:SINT, buffer[MAX_LINE_LEN]:SBYTE,
+        l_exit[16]:SBYTE ; exit or default label
 
     .repeat
 
@@ -1520,7 +1540,7 @@ SwitchExit proc uses esi edi ebx i, tokenarray:ptr asm_tok
                 addlq_jxx_label(T_JMP, eax)
             .endif
 
-        .elseif ModuleInfo.aflag & _AF_PASCAL
+        .elseif [esi].flags & HLLF_PASCAL
 
             .if [esi].labels[LEXIT*4] == 0
 
@@ -1547,7 +1567,7 @@ SwitchExit proc uses esi edi ebx i, tokenarray:ptr asm_tok
         ;
         ; .case a, b, c, ...
         ;
-        .endc .if RenderMultiCase( &i, edi, ebx )
+        .endc .if RenderMultiCase( esi, &i, edi, ebx )
 
         mov cl,ModuleInfo.casealign
         .if cl

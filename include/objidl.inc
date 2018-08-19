@@ -3606,9 +3606,7 @@ IRpcStubBuffer_Invoke_Stub proto WINAPI \
 
 ;IRpcStubBuffer *
 ;STDMETHODCALLTYPE
-IRpcStubBuffer_IsIIDSupported_Proxy typedef proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-		  riid: REFIID
+CALLBACK(IRpcStubBuffer_IsIIDSupported_Proxy, :ptr IRpcStubBuffer, :REFIID)
 
 ;void
 IRpcStubBuffer_IsIIDSupported_Stub proto WINAPI \

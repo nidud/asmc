@@ -386,7 +386,7 @@ static void output_float( struct expr *opnd, unsigned size )
     } else if ( opnd->float_tok ) {
 
 	atofloat( buffer, opnd->float_tok->string_ptr, size, opnd->negative, opnd->float_tok->floattype );
-	OutputDataBytes( buffer, size );
+	OutputDataBytes( (uint_8 *)buffer, size );
 
     } else {
 
@@ -688,7 +688,7 @@ next_item:  /* <--- continue scan if a comma has been detected */
 			}
 		} else {
 		    if ( string_len > 1 && no_of_bytes > 1 )
-			pchar = little_endian( (const char *)pchar, string_len );
+			pchar = (uint_8 *)little_endian( (const char *)pchar, string_len );
 		    OutputDataBytes( pchar, string_len );
 		}
 		if ( no_of_bytes > string_len )

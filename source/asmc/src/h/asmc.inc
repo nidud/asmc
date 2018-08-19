@@ -39,7 +39,6 @@ _AF_LSTRING		equ 0x08 ; L"Unicode" used --> allow dw "string"
 _AF_PASCAL		equ 0x10 ; auto insert break after cases
 _AF_NOTABLE		equ 0x20 ; no indexed jump table
 _AF_REGAX		equ 0x40 ; use [R|E]AX to render jump-code
-_AF_NOTEST		equ 0x80 ; skip test code - just jump
 
 ;.xflag
 

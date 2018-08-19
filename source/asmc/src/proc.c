@@ -941,7 +941,8 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 #ifndef __ASMC64__
 	} else
 	for ( ; cntParam; cntParam-- ) {
-	    for ( curr = 1, paranode = proc->e.procinfo->paralist; curr < cntParam;paranode = paranode->nextparam, curr++ );
+	    for ( curr = 1, paranode = proc->e.procinfo->paralist; curr < cntParam;paranode = paranode->nextparam, curr++ )
+		;
 	    if ( paranode->sym.state == SYM_TMACRO ) /* register param? */
 		;
 	    else {

@@ -386,9 +386,8 @@ endif
 	.endsw
 
 	OPTION SWITCH:REGAX
-	OPTION SWITCH:NOTEST
 
-	.switch eax
+	.switch notest eax
 	  .case 'A','C','D','E','F','G','H','I'
 	  .default
 	.endsw
@@ -398,9 +397,7 @@ endif
 	  .default
 	.endsw
 
-	OPTION SWITCH:NOTEST
-
-	.switch al
+	.switch notest al
 	  .case 'A','C','D','E','F','G','H','I'
 	  .default
 	.endsw

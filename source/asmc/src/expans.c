@@ -356,12 +356,16 @@ int RunMacro( struct dsym *macro, int idx, struct asm_tok tokenarray[],
 			int tmp;
 			int size;
 
+#if 0
+			/* v2.12: this #if block was introduced in v2.09, but there's
+			 * a problem if the argument string contains '!'. See expans42.asm.
+			 */
 			if ( !strchr( tokenarray[idx].string_ptr, '%' ) ) {
 			    memcpy( ptr, tokenarray[idx].string_ptr, tokenarray[idx].stringlen );
 			    ptr += tokenarray[idx].stringlen;
 			    continue;
 			}
-
+#endif
 			tmp = idx;
 			size = tokenarray[idx+1].tokpos - (tokenarray[idx].tokpos+1);
 			p = StringBufferEnd;

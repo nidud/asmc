@@ -7,9 +7,7 @@ memmove::
 
     .if r8 <= 16
 
-        option switch:table, switch:notest, switch:regax
-
-        .switch r8
+        .switch notest r8
 
           .case 0
             ret

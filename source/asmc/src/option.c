@@ -748,8 +748,6 @@ OPTFUNC( SetSwitch )
 	ModuleInfo.aflag |= _AF_REGAX;
     } else if ( 0 == _stricmp( tokenarray[i].string_ptr, "NOREGS" ) ) {
 	ModuleInfo.aflag &= ~(_AF_REGAX);
-    } else if ( 0 == _stricmp( tokenarray[i].string_ptr, "NOTEST" ) ) {
-	ModuleInfo.aflag |= _AF_NOTEST;
     } else {
 	return( asmerr(2008, tokenarray[i].string_ptr ) );
     }

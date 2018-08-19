@@ -489,10 +489,15 @@ endif
 	    ;
 	    mov esi,MODEL_FLAT
 	    .if ModuleInfo.langtype == LANG_NONE
-
-		.if Options.output_format == OFORMAT_COFF
+		;
+		; v2.27.38: asmc -pe -win64
+		;	    asmc -win64 -pe
+		;	    asmc64 -pe
+		;
+		.if Options.output_format == OFORMAT_COFF || \
+		    Options.output_format == OFORMAT_BIN
 		    mov ModuleInfo.langtype,LANG_FASTCALL
-		.else
+		.elseif Options.output_format == OFORMAT_ELF
 		    mov ModuleInfo.langtype,LANG_SYSCALL
 		.endif
 	    .endif

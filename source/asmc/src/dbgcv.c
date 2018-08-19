@@ -201,8 +201,10 @@ static void PadBytes( uint_8 *curr, uint_8 *base )
 /************************************************/
 {
     static const char padtab[] = { LF_PAD1, LF_PAD2, LF_PAD3 };
-    while( ( curr - base ) & 3 )
-	*curr++ = padtab[3-((curr - base) & 3)];
+
+    for( ;( curr - base ) & 3; curr++ )
+	*curr = padtab[3-((curr - base) & 3)];
+
 }
 
 /* write a bitfield to $$TYPES */

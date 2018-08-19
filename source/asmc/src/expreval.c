@@ -980,7 +980,7 @@ static int highword_op( int oper, struct expr *opnd1, struct expr *opnd2, struct
 	opnd1->instr = T_HIGHWORD;
 	opnd1->mem_type = MT_EMPTY;
     }
-    opnd1->llvalue = (opnd1->value >> 16) & 0xFFFF;
+    opnd1->llvalue = (opnd1->llvalue >> 16) & 0xFFFF;
     return( NOT_ERROR );
 }
 
@@ -1344,16 +1344,16 @@ static int dot_op( struct expr *opnd1, struct expr *opnd2 )
 	}
 	if ( opnd2->is_type && opnd2->type ) {
 	    opnd1->assumecheck = 0;
-	    opnd2->llvalue = 0;
+	    /* v2.37: adjust for type's size only (japheth) */
+	    opnd2->llvalue -= opnd2->type->total_size;
 	}
 	if ( opnd2->mbr && opnd2->mbr->state == SYM_TYPE )
 	    opnd2->llvalue = opnd2->mbr->offset;
 	opnd1->llvalue += opnd2->llvalue;
 	opnd1->mem_type = opnd2->mem_type;
-	if( opnd2->mbr != NULL ) {
+	if( opnd2->mbr != NULL )
 	    opnd1->mbr = opnd2->mbr;
-	}
-	    opnd1->type = opnd2->type;
+	opnd1->type = opnd2->type;
     } else if ( opnd1->kind == EXPR_CONST && opnd2->kind == EXPR_CONST ) {
 	if ( opnd2->mbr == NULL && !ModuleInfo.oldstructs ) {
 	    return( struct_field_error( opnd1 ) );

@@ -869,7 +869,8 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 
     /* get the number of parameters */
 
-    for (curr = info->paralist, numParam = 0 ; curr ; curr = curr->nextparam, numParam++);
+    for (curr = info->paralist, numParam = 0 ; curr ; curr = curr->nextparam, numParam++)
+	;
 
     fastcall_id = GetFastcallId( proc->sym.langtype );
 

@@ -1,5 +1,9 @@
 ifndef _MMINTRIN_H_INCLUDED
 _MMINTRIN_H_INCLUDED equ <>
+.pragma list(push, 0)
+ifndef __LIBC_INC
+ include libc.inc
+endif
 
 ifndef _M_IX86
 ifndef _M_X64
@@ -257,4 +261,5 @@ _mm_cmpgt_pi16		equ <_m_pcmpgtw>
 _mm_cmpgt_pi32		equ <_m_pcmpgtd>
 ;endif
 
+.pragma list(pop)
 endif

@@ -1,5 +1,9 @@
 ifndef _INCLUDED_MM2
 _INCLUDED_MM2 equ <>
+.pragma list(push, 0)
+ifndef __LIBC_INC
+ include libc.inc
+endif
 ;;
 ;; Principal header file for Streaming SIMD Extensions intrinsics
 ;;
@@ -711,4 +715,5 @@ _mm_cvtpi32x2_ps macro a:=<xmm0>, b:=<xmm1>
 	endm
 endif
 
+.pragma list(pop)
 endif

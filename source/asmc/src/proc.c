@@ -2246,14 +2246,20 @@ static int write_default_prologue( void )
 		AddLineQueueX( "push %r", *regist );
 	    regist = NULL;
 	}
-	AddLineQueueX( "sub %r, %d + %s", stackreg[ModuleInfo.Ofssize], NUMQUAL info->localsize, sym_ReservedStack->name );
+	if ( ModuleInfo.epilogueflags )
+	    AddLineQueueX( "lea %r,[%r-(%d + %s)]", stackreg[ModuleInfo.Ofssize],
+		stackreg[ModuleInfo.Ofssize], NUMQUAL info->localsize, sym_ReservedStack->name );
+	else
+	    AddLineQueueX( "sub %r, %d + %s", stackreg[ModuleInfo.Ofssize], NUMQUAL info->localsize, sym_ReservedStack->name );
 
     } else if( info->localsize ) {
 	/* using ADD and the 2-complement has one advantage:
 	 * it will generate short instructions up to a size of 128.
 	 * with SUB, short instructions work up to 127 only.
 	 */
-	if ( Options.masm_compat_gencode || info->localsize == 128 )
+	if ( ModuleInfo.epilogueflags )
+	    AddLineQueueX( "lea %r, [%r-%d]", stackreg[ModuleInfo.Ofssize], stackreg[ModuleInfo.Ofssize], NUMQUAL - info->localsize );
+	else if ( Options.masm_compat_gencode || info->localsize == 128 )
 	    AddLineQueueX( "add %r, %d", stackreg[ModuleInfo.Ofssize], NUMQUAL - info->localsize );
 	else
 	    AddLineQueueX( "sub %r, %d", stackreg[ModuleInfo.Ofssize], NUMQUAL info->localsize );

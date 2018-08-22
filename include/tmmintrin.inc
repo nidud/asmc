@@ -1,5 +1,9 @@
 ifndef _INCLUDED_TMM
 _INCLUDED_TMM equ <>
+.pragma list(push, 0)
+ifndef __LIBC_INC
+ include libc.inc
+endif
 ifndef _M_IX86
 ifndef _M_X64
 .err <This header is specific to X86 and X64 targets>
@@ -176,4 +180,5 @@ _mm_abs_pi32 macro a
 	endm
 endif
 
+.pragma list(pop)
 endif

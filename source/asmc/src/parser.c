@@ -2381,6 +2381,23 @@ int ParseLine( struct asm_tok tokenarray[] )
 
 		i++;
 		strcat( buffer, "uses " );
+
+		q = i;
+		while ( tokenarray[q].token == T_ID ) {
+
+		    sym = SymSearch( tokenarray[q].string_ptr );
+		    if ( sym && sym->state == SYM_TMACRO ) {
+
+			tokenarray[q].tokval = FindResWord( sym->string_ptr, strlen(sym->string_ptr) );
+			tokenarray[q].string_ptr = sym->string_ptr;
+			if ( SpecialTable[tokenarray[q].tokval].type == RWT_REG )
+			    tokenarray[q].token = T_REG;
+
+		    } else
+			break;
+		    q++;
+		}
+
 		while ( tokenarray[i].token == T_REG ) {
 
 		    strcat( buffer, tokenarray[i].string_ptr );

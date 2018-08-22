@@ -1,5 +1,9 @@
 ifndef _INCLUDED_PMM
 _INCLUDED_PMM equ <>
+.pragma list(push, 0)
+ifndef __LIBC_INC
+ include libc.inc
+endif
 ifndef _M_IX86
 ifndef _M_X64
 .err <This header is specific to X86 and X64 targets>
@@ -108,4 +112,5 @@ _mm_mwait macro extensions, hints
 	retm<>
 	endm
 
+.pragma list(pop)
 endif

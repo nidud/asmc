@@ -42,6 +42,10 @@ LPQSORTCMD	typedef ptr QSORTCMD_T
 qsort		proto :PVOID, :SIZE_T, :SIZE_T, :LPQSORTCMD
 qsort4		proto :PVOID, :SIZE_T, :LPQSORTCMD
 
+rand		proto __cdecl
+rand_s		proto __cdecl :ptr UINT
+srand		proto __cdecl :UINT
+
 getenv		proto __cdecl :LPSTR
 strtod		proto __cdecl :LPSTR, :LPSTR
 _strtold	proto __cdecl :LPSTR, :LPSTR
@@ -53,11 +57,12 @@ realloc		proto __cdecl :PVOID, :SIZE_T
 free		proto __cdecl :PVOID
 setargv		proto __cdecl :ptr, :ptr sbyte
 _makepath	proto __cdecl :LPSTR, :LPSTR, :LPSTR, :LPSTR, :LPSTR
+if 0 ; use intrin.inc
 _rotl		proto __cdecl :UINT, :SINT
 _rotr		proto __cdecl :UINT, :SINT
 _lrotl		proto __cdecl :ULONG, :SINT
 _lrotr		proto __cdecl :ULONG, :SINT
-
+endif
 ifndef _WSTDLIB_DEFINED
 _WSTDLIB_DEFINED equ <>
 

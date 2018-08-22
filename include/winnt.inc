@@ -721,23 +721,6 @@ RotateLeft16		equ <_rotl16>
 RotateRight8		equ <_rotr8>
 RotateRight16		equ <_rotr16>
 
-;unsigned char
-_rotl8 proto WINAPI \
-		 Value: BYTE,
-		 Shift: BYTE
-;unsigned short
-_rotl16 proto WINAPI \
-		 Value: WORD,
-		 Shift: BYTE
-;unsigned char
-_rotr8 proto WINAPI \
-		 Value: BYTE,
-		 Shift: BYTE
-;unsigned short
-_rotr16 proto WINAPI \
-		 Value: WORD,
-		 Shift: BYTE
-
 endif
 
 if _MSC_VER GE 1300
@@ -747,10 +730,6 @@ RotateLeft64		equ <_rotl64>
 RotateRight32		equ <_rotr>
 RotateRight64		equ <_rotr64>
 
-_rotl	proto __cdecl Value:UINT, Shift:SINT
-_rotl64 proto __cdecl Value:qword, Shift:SINT
-_rotr	proto __cdecl Value:UINT, Shift:SINT
-_rotr64 proto __cdecl Value:qword, Shift:SINT
 endif
 
 ANSI_NULL	equ 0
@@ -1640,16 +1619,9 @@ PCONTEXT_CHUNK		typedef ptr CONTEXT_CHUNK
 
 
 CONTEXT_EX		STRUC
-
-
 All			CONTEXT_CHUNK <>
-
-
 Legacy			CONTEXT_CHUNK <>
-
-
 XState			CONTEXT_CHUNK <>
-
 CONTEXT_EX		ENDS
 PCONTEXT_EX		typedef ptr CONTEXT_EX
 
@@ -1688,7 +1660,7 @@ ifdef _AMD64_
 
 if defined(_M_AMD64) AND NOT defined(RC_INVOKED) AND NOT defined(MIDL_PASS)
 
-
+if 0
 BitTest			equ <_bittest>
 BitTestAndComplement	equ <_bittestandcomplement>
 BitTestAndSet		equ <_bittestandset>
@@ -1703,79 +1675,11 @@ BitTestAndReset64	equ <_bittestandreset64>
 InterlockedBitTestAndSet64 equ <_interlockedbittestandset64>
 InterlockedBitTestAndReset64 equ <_interlockedbittestandreset64>
 
-;BOOLEAN
-_bittest proto \
-		  Base: ptr LONG,
-	       _Offset: LONG
-;BOOLEAN
-_bittestandcomplement proto \
-		  Base: ptr LONG,
-	       _Offset: LONG
-;BOOLEAN
-_bittestandset proto \
-		  Base: ptr LONG,
-	       _Offset: LONG
-;BOOLEAN
-_bittestandreset proto \
-		  Base: ptr LONG,
-	       _Offset: LONG
-;BOOLEAN
-_interlockedbittestandset proto \
-		  Base: :ptr,
-	       _Offset: sdword
-;BOOLEAN
-_interlockedbittestandreset proto \
-		  Base: ptr,
-	       _Offset: sdword
-;BOOLEAN
-_bittest64 proto \
-		  Base: ptr LONG64,
-	       _Offset: LONG64
-;BOOLEAN
-_bittestandcomplement64 proto \
-		  Base: ptr LONG64,
-	       _Offset: LONG64
-;BOOLEAN
-_bittestandset64 proto \
-		  Base: ptr LONG64,
-	       _Offset: LONG64
-;BOOLEAN
-_bittestandreset64 proto \
-		  Base: ptr LONG64,
-	       _Offset: LONG64
-;BOOLEAN
-_interlockedbittestandset64 proto \
-		  Base: ptr LONG64,
-	       _Offset: LONG64
-;BOOLEAN
-_interlockedbittestandreset64 proto \
-		  Base: ptr LONG64,
-	       _Offset: LONG64
-
-
 BitScanForward		equ <_BitScanForward>
 BitScanReverse		equ <_BitScanReverse>
 BitScanForward64	equ <_BitScanForward64>
 BitScanReverse64	equ <_BitScanReverse64>
 
-;BOOLEAN
-_BitScanForward proto \
-		 Index: ptr dword,
-		 _Mask: dword
-;BOOLEAN
-_BitScanReverse proto \
-		 Index: ptr dword,
-		 _Mask: dword
-;BOOLEAN
-_BitScanForward64 proto \
-		 Index: ptr dword,
-		 _Mask: DWORD64
-;BOOLEAN
-_BitScanReverse64 proto \
-		 Index: ptr dword,
-		 _Mask: DWORD64
-
-if 0
 InterlockedIncrement16	equ <_InterlockedIncrement16>
 InterlockedDecrement16	equ <_InterlockedDecrement16>
 InterlockedCompareExchange16 equ <_InterlockedCompareExchange16>
@@ -1788,25 +1692,15 @@ InterlockedOrAcquire	equ <_InterlockedOr>
 InterlockedOrRelease	equ <_InterlockedOr>
 InterlockedXor		equ <_InterlockedXor>
 InterlockedIncrement	equ <_InterlockedIncrement>
-InterlockedIncrementAcquire equ <InterlockedIncrement>
-InterlockedIncrementRelease equ <InterlockedIncrement>
 InterlockedDecrement	equ <_InterlockedDecrement>
-InterlockedDecrementAcquire equ <InterlockedDecrement>
-InterlockedDecrementRelease equ <InterlockedDecrement>
 InterlockedAdd		equ <_InterlockedAdd>
 InterlockedExchange	equ <_InterlockedExchange>
 InterlockedExchangeAdd	equ <_InterlockedExchangeAdd>
 InterlockedCompareExchange equ <_InterlockedCompareExchange>
-InterlockedCompareExchangeAcquire equ <InterlockedCompareExchange>
-InterlockedCompareExchangeRelease equ <InterlockedCompareExchange>
 
 InterlockedAnd64	equ <_InterlockedAnd64>
-InterlockedAnd64Acquire equ <_InterlockedAnd64>
-InterlockedAnd64Release equ <_InterlockedAnd64>
 InterlockedAndAffinity	equ <InterlockedAnd64>
 InterlockedOr64		equ <_InterlockedOr64>
-InterlockedOr64Acquire	equ <_InterlockedOr64>
-InterlockedOr64Release	equ <_InterlockedOr64>
 InterlockedOrAffinity	equ <InterlockedOr64>
 InterlockedXor64	equ <_InterlockedXor64>
 InterlockedIncrement64	equ <_InterlockedIncrement64>
@@ -1816,13 +1710,9 @@ InterlockedExchange64	equ <_InterlockedExchange64>
 InterlockedExchangeAcquire64 equ <InterlockedExchange64>
 InterlockedExchangeAdd64 equ <_InterlockedExchangeAdd64>
 InterlockedCompareExchange64 equ <_InterlockedCompareExchange64>
-InterlockedCompareExchangeAcquire64 equ <InterlockedCompareExchange64>
-InterlockedCompareExchangeRelease64 equ <InterlockedCompareExchange64>
 
 InterlockedExchangePointer equ <_InterlockedExchangePointer>
 InterlockedCompareExchangePointer equ <_InterlockedCompareExchangePointer>
-InterlockedCompareExchangePointerAcquire equ <_InterlockedCompareExchangePointer>
-InterlockedCompareExchangePointerRelease equ <_InterlockedCompareExchangePointer>
 endif
 
 InterlockedExchangeAddSizeT macro a, b
@@ -1835,139 +1725,26 @@ InterlockedDecrementSizeT macro a
 	exitm<InterlockedDecrement64(a)>
 	endm
 
-InterlockedIncrement16 proto WINAPI \
-		Addend: ptr word,
-		 Value: LONG
-;SHORT
-InterlockedDecrement16 proto WINAPI \
-		Addend: ptr word
-;SHORT
-InterlockedCompareExchange16 proto WINAPI \
-	   Destination: ptr word,
-	      ExChange: word,
-	     Comperand: word
-;LONG
-InterlockedAnd proto WINAPI \
-	   Destination: ptr LONG,
-		 Value: LONG
-;LONG
-InterlockedOr proto WINAPI \
-	   Destination: LPLONG,
-		 Value: LONG
-;LONG
-InterlockedXor proto WINAPI \
-	   Destination: LPLONG,
-		 Value: LONG
-;LONG64
-InterlockedAnd64 proto WINAPI \
-	   Destination: ptr LONG64,
-		 Value: LONG64
-;LONG64
-InterlockedOr64 proto WINAPI \
-	   Destination: ptr LONG64,
-		 Value: LONG64
-;LONG64
-InterlockedXor64 proto WINAPI \
-	   Destination: ptr LONG64,
-		 Value: LONG64
-;LONG
-InterlockedIncrement proto WINAPI \
-		Addend: ptr LONG
-;LONG
-InterlockedDecrement proto WINAPI \
-		Addend: ptr LONG
-;LONG
-InterlockedExchange proto WINAPI \
-		Target: ptr LONG,
-		 Value: LONG
-;LONG
-InterlockedExchangeAdd proto WINAPI \
-		Addend: ptr LONG,
-		 Value: LONG
 ifndef _X86AMD64_
-;__forceinline
-;LONG
 InterlockedAdd macro Addend, Value
 	endm
 endif
-;LONG
-InterlockedCompareExchange proto WINAPI \
-	   Destination: ptr LONG,
-	      Exchange: LONG,
-	     Comperand: LONG
-;LONG64
-InterlockedIncrement64 proto WINAPI \
-		Addend: ptr LONG64
-;LONG64
-InterlockedDecrement64 proto WINAPI \
-		Addend: ptr LONG64
-;LONG64
-InterlockedExchange64 proto WINAPI \
-		Target: ptr LONG64,
-		 Value: LONG64
-;LONG64
-InterlockedExchangeAdd64 proto WINAPI \
-		Addend: ptr LONG64,
-		 Value: LONG64
 
 ifndef _X86AMD64_
-;__forceinline
-;LONG64
 InterlockedAdd64 macro Addend, Value
 	add InterlockedExchangeAdd64(Addend, Value),Value
 	exitm<rax>
 	endm
 endif
 
-;LONG64
-InterlockedCompareExchange64 proto WINAPI \
-	   Destination: ptr LONG64,
-	      Exchange: LONG64,
-	     Comperand: LONG64
-;PVOID
-InterlockedCompareExchangePointer proto WINAPI \
-	   Destination: PVOID,
-	      Exchange: PVOID,
-	     Comperand: PVOID
-;PVOID
-InterlockedExchangePointer proto WINAPI \
-		Target: PVOID,
-		 Value: PVOID
-
 if _MSC_FULL_VER GE 140041204
-if 0
+
 InterlockedAnd8		equ <_InterlockedAnd8>
 InterlockedOr8		equ <_InterlockedOr8>
 InterlockedXor8		equ <_InterlockedXor8>
 InterlockedAnd16	equ <_InterlockedAnd16>
 InterlockedOr16		equ <_InterlockedOr16>
 InterlockedXor16	equ <_InterlockedXor16>
-endif
-
-;char
-InterlockedAnd8 proto WINAPI \
-	   Destination: LPSTR,
-		 Value: CHAR
-;char
-InterlockedOr8 proto WINAPI \
-	   Destination: LPSTR,
-		 Value: CHAR
-;char
-InterlockedXor8 proto WINAPI \
-	   Destination: LPSTR,
-		 Value: CHAR
-;SHORT
-InterlockedAnd16 proto WINAPI \
-	   Destination: LPWORD,
-		 Value: WORD
-;SHORT
-InterlockedOr16 proto WINAPI \
-	   Destination: LPWORD,
-		 Value: WORD
-;SHORT
-InterlockedXor16 proto WINAPI \
-	   Destination: LPWORD,
-		 Value: WORD
 
 endif
 
@@ -1976,43 +1753,10 @@ CacheLineFlush macro Address
 	exitm<_mm_clflush(Address)>
 	endm
 
-;VOID
-_mm_clflush proto WINAPI \
-	       Address: PVOID
-
-;VOID
-_ReadWriteBarrier proto WINAPI
-
 FastFence		equ <__faststorefence>
 LoadFence		equ <_mm_lfence>
 MemoryFence		equ <_mm_mfence>
 StoreFence		equ <_mm_sfence>
-
-;VOID
-__faststorefence proto WINAPI
-
-;VOID
-_mm_lfence proto WINAPI
-
-;VOID
-_mm_mfence proto WINAPI
-
-;VOID
-_mm_sfence proto WINAPI
-
-;VOID
-_mm_pause proto WINAPI
-
-;VOID
-_mm_prefetch proto WINAPI \
-		     a: LPSTR,
-		   sel: SINT
-
-;VOID
-_m_prefetchw proto WINAPI \
-		Source: PVOID
-
-
 
 _MM_HINT_T0		equ 1
 _MM_HINT_T1		equ 2
@@ -2165,10 +1909,7 @@ __shiftright128 proto WINAPI \
 Multiply128	equ <_mul128>
 
 ;LONG64
-_mul128 proto WINAPI \
-	    Multiplier: LONG64,
-	  Multiplicand: LONG64,
-	   HighProduct: ptr LONG64
+;_mul128 proto Multiplier: LONG64, Multiplicand: LONG64, HighProduct: ptr LONG64
 
 
 ifndef UnsignedMultiply128
@@ -2176,10 +1917,7 @@ ifndef UnsignedMultiply128
 UnsignedMultiply128	equ <_umul128>
 
 ;DWORD64
-_umul128 proto WINAPI \
-	    Multiplier: DWORD64,
-	  Multiplicand: DWORD64,
-	   HighProduct: ptr DWORD64
+;_umul128 proto Multiplier: DWORD64, Multiplicand: DWORD64, HighProduct: ptr DWORD64
 
 endif
 
@@ -2229,43 +1967,46 @@ __writegsqword proto WINAPI \
 
 ifndef _MANAGED
 
-;VOID
-__incgsbyte proto WINAPI \
-	       _Offset: DWORD
-;VOID
-__addgsbyte proto WINAPI \
-	       _Offset: DWORD,
-		 Value: BYTE
-;VOID
-__incgsword proto WINAPI \
-	       _Offset: DWORD
-;VOID
-__addgsword proto WINAPI \
-	       _Offset: DWORD,
-		 Value: WORD
-;VOID
-__incgsdword proto WINAPI \
-	       _Offset: DWORD
-;VOID
-__addgsdword proto WINAPI \
-	       _Offset: DWORD,
-		 Value: DWORD
-;VOID
-__incgsqword proto WINAPI \
-	       _Offset: DWORD
-;VOID
-__addgsqword proto WINAPI \
-	       _Offset: DWORD,
-		 Value: DWORD64
+__addgsbyte macro offs, v
+    add byte ptr gs:[offs],v
+    retm<>
+    endm
+__addgsword macro offs, v
+    add word ptr gs:[offs],v
+    retm<>
+    endm
+__addgsdword macro offs, v
+    add dword ptr gs:[offs],v
+    retm<>
+    endm
+__addgsqword macro offs, v
+    add qword ptr gs:[offs],v
+    retm<>
+    endm
+
+__incgsbyte macro offs, v
+    inc byte ptr gs:[offs],v
+    retm<>
+    endm
+__incgsword macro offs, v
+    inc word ptr gs:[offs],v
+    retm<>
+    endm
+__incgsdword macro offs, v
+    inc dword ptr gs:[offs],v
+    retm<>
+    endm
+__incgsqword macro offs, v
+    inc qword ptr gs:[offs],v
+    retm<>
+    endm
 
 endif
 endif
-
 
 EXCEPTION_READ_FAULT	equ 0
 EXCEPTION_WRITE_FAULT	equ 1
 EXCEPTION_EXECUTE_FAULT equ 8
-
 
 CONTEXT_AMD64		equ 0x100000
 
@@ -2286,30 +2027,22 @@ CONTEXT_SERVICE_ACTIVE	equ 0x10000000
 CONTEXT_EXCEPTION_REQUEST equ 0x40000000
 CONTEXT_EXCEPTION_REPORTING equ 0x80000000
 
-
 INITIAL_MXCSR		equ 0x1f80
 INITIAL_FPCSR		equ 0x027f
 
 XMM_SAVE_AREA32		typedef XSAVE_FORMAT
 PXMM_SAVE_AREA32	typedef ptr XSAVE_FORMAT
 
-
 DECLSPEC_ALIGN(16)
 CONTEXT			STRUC
-
-
 P1Home			dd ?
 P2Home			dd ?
 P3Home			dd ?
 P4Home			dd ?
 P5Home			dd ?
 P6Home			dd ?
-
-
 ContextFlags		dd ?
 MxCsr			dd ?
-
-
 SegCs			dw ?
 SegDs			dw ?
 SegEs			dw ?
@@ -2317,16 +2050,12 @@ SegFs			dw ?
 SegGs			dw ?
 SegSs			dw ?
 EFlags			dd ?
-
-
 _Dr0			dd ?
 _Dr1			dd ?
 _Dr2			dd ?
 _Dr3			dd ?
 _Dr6			dd ?
 _Dr7			dd ?
-
-
 _Rax			dd ?
 _Rcx			dd ?
 _Rdx			dd ?
@@ -2343,11 +2072,7 @@ _R12			dd ?
 _R13			dd ?
 _R14			dd ?
 _R15			dd ?
-
-
 _Rip			dd ?
-
-
 UNION
  FltSave		XMM_SAVE_AREA32 <>
  STRUC
@@ -2371,12 +2096,8 @@ UNION
   _Xmm15		M128A <>
  ENDS ;DUMMYSTRUCTNAME
 ENDS ;DUMMYUNIONNAME
-
-
 VectorRegister		M128A 26 dup(<>)
 VectorControl		dd ?
-
-
 DebugControl		dd ?
 LastBranchToRip		dd ?
 LastBranchFromRip	dd ?
@@ -2384,7 +2105,6 @@ LastExceptionToRip	dd ?
 LastExceptionFromRip	dd ?
 CONTEXT			ENDS
 PCONTEXT		typedef ptr CONTEXT
-
 
 RUNTIME_FUNCTION_INDIRECT equ 0x1
 
@@ -2394,7 +2114,6 @@ EndAddress		dd ?
 UnwindData		dd ?
 RUNTIME_FUNCTION	ENDS
 PRUNTIME_FUNCTION	typedef ptr RUNTIME_FUNCTION
-
 
 UNWIND_HISTORY_TABLE_SIZE equ 12
 
@@ -2519,14 +2238,10 @@ endif
 
 ifdef _X86_
 
-ifndef MIDL_PASS
-endif
-
 ;if defined(_M_IX86) AND NOT defined(RC_INVOKED) AND NOT defined(MIDL_PASS)
 if defined(_M_IX86) AND NOT defined(MIDL_PASS)
 
 if (_MSC_FULL_VER GE 14000101)
-
 
 BitTest			equ <_bittest>
 BitTestAndComplement	equ <_bittestandcomplement>
@@ -2535,43 +2250,8 @@ BitTestAndReset		equ <_bittestandreset>
 InterlockedBitTestAndSet equ <_interlockedbittestandset>
 InterlockedBitTestAndReset equ <_interlockedbittestandreset>
 
-;BOOLEAN
-_bittest proto \
-		  Base: ptr LONG,
-	       _Offset: LONG
-;BOOLEAN
-_bittestandcomplement proto \
-		  Base: ptr LONG,
-	       _Offset: LONG
-;BOOLEAN
-_bittestandset proto \
-		  Base: ptr LONG,
-	       _Offset: LONG
-;BOOLEAN
-_bittestandreset proto \
-		  Base: ptr LONG,
-	       _Offset: LONG
-;BOOLEAN
-_interlockedbittestandset proto \
-		  Base: ptr,
-	       _Offset: sdword
-;BOOLEAN
-_interlockedbittestandreset proto \
-		  Base: ptr,
-	       _Offset: sdword
-
-
 BitScanForward		equ <_BitScanForward>
 BitScanReverse		equ <_BitScanReverse>
-
-;BOOLEAN
-_BitScanForward proto \
-		 Index: ptr dword,
-		 _Mask: dword
-;BOOLEAN
-_BitScanReverse proto \
-		 Index: ptr dword,
-		 _Mask: dword
 
 else
 
@@ -2599,20 +2279,6 @@ if (_MSC_FULL_VER GE 140040816) OR (defined(_PREFAST_) AND (_MSC_VER GE 1400))
 InterlockedAnd16	equ <_InterlockedAnd16>
 InterlockedCompareExchange16 equ <_InterlockedCompareExchange16>
 InterlockedOr16		equ <_InterlockedOr16>
-
-;SHORT
-_InterlockedAnd16 proto WINAPI \
-	   Destination: LPWORD,
-		 Value: WORD
-;SHORT
-_InterlockedCompareExchange16 proto WINAPI \
-	   Destination: PTR SWORD,
-	      ExChange: SWORD,
-	     Comperand: SWORD
-;SHORT
-_InterlockedOr16 proto WINAPI \
-	   Destination: LPWORD,
-		 Value: WORD
 
 endif
 
@@ -2659,27 +2325,43 @@ if (_MSC_FULL_VER GE 140050727) OR defined(_PREFIX_) OR defined(_PREFAST_)
 
 ifndef _MANAGED
 
-;VOID
-__incfsbyte proto WINAPI \
-	       _Offset: DWORD
-;VOID
-__addfsbyte proto WINAPI \
-	       _Offset: DWORD,
-		 Value: BYTE
-;VOID
-__incfsword proto WINAPI \
-	       _Offset: DWORD
-;VOID
-__addfsword proto WINAPI \
-	       _Offset: DWORD,
-		 Value: WORD
-;VOID
-__incfsdword proto WINAPI \
-	       _Offset: DWORD
-;VOID
-__addfsdword proto WINAPI \
-	       _Offset: DWORD,
-		 Value: DWORD
+__addfsbyte macro offs, b
+    assume fs:nothing
+    add byte ptr fs:[offs],b
+    assume fs:error
+    retm<>
+    endm
+__addfsdword macro offs, w
+    assume fs:nothing
+    add word ptr fs:[offs],w
+    assume fs:error
+    retm<>
+    endm
+__addfsword macro offs, l
+    assume fs:nothing
+    add dword ptr fs:[offs],l
+    assume fs:error
+    retm<>
+    endm
+
+__incfsbyte macro offs, b
+    assume fs:nothing
+    inc byte ptr fs:[offs],b
+    assume fs:error
+    retm<>
+    endm
+__incfsdword macro offs, w
+    assume fs:nothing
+    inc word ptr fs:[offs],w
+    assume fs:error
+    retm<>
+    endm
+__incfsword macro offs, l
+    assume fs:nothing
+    inc dword ptr fs:[offs],l
+    assume fs:error
+    retm<>
+    endm
 
 endif
 endif
@@ -2750,16 +2432,7 @@ if _MSC_FULL_VER GE 140040310
 ReadTimeStampCounter macro
 	exitm<__rdtsc()>
 	endm
-
-;DWORD64
-__rdtsc proto WINAPI
-
 else
-;FORCEINLINE
-;DWORD64
-__rdtsc macro
-	rdtsc
-	endm
 endif
 
 
@@ -2767,23 +2440,10 @@ endif
 if defined(_X86_) AND defined(_M_IX86) AND NOT defined(MIDL_PASS)
 
 if _MSC_FULL_VER GE 140030222
-
-;VOID
-__int2c proto WINAPI
-
-;FORCEINLINE
 ;VOID
 DbgRaiseAssertionFailure macro
 	__int2c()
 	endm
-else
-
-;FORCEINLINE
-;VOID
-__int2c macro
-	int 0x2c
-	endm
-
 endif
 
 endif
@@ -2872,45 +2532,29 @@ endif
 
 ;include "pshpack4.h"
 
-
-CONTEXT			STRUC
-
-
-    ContextFlags	dd ?
-
-
-    _Dr0		dd ?
-    _Dr1		dd ?
-    _Dr2		dd ?
-    _Dr3		dd ?
-    _Dr6		dd ?
-    _Dr7		dd ?
-
-
-    FloatSave	FLOATING_SAVE_AREA <>
-
-
-
-
-    _Edi	dd ?
-    _Esi	dd ?
-    _Ebx	dd ?
-    _Edx	dd ?
-    _Ecx	dd ?
-    _Eax	dd ?
-
-
-    _Ebp	dd ?
-    _Eip	dd ?
-    SegCs	dd ? ; MUST BE SANITIZED
-    EFlags	dd ? ; MUST BE SANITIZED
-    _Esp	dd ?
-    SegSs	dd ?
-
-
-    ExtendedRegisters db MAXIMUM_SUPPORTED_EXTENSION dup(?)
-
-CONTEXT ENDS
+CONTEXT		STRUC
+ContextFlags	dd ?
+_Dr0		dd ?
+_Dr1		dd ?
+_Dr2		dd ?
+_Dr3		dd ?
+_Dr6		dd ?
+_Dr7		dd ?
+FloatSave	FLOATING_SAVE_AREA <>
+_Edi		dd ?
+_Esi		dd ?
+_Ebx		dd ?
+_Edx		dd ?
+_Ecx		dd ?
+_Eax		dd ?
+_Ebp		dd ?
+_Eip		dd ?
+SegCs		dd ? ; MUST BE SANITIZED
+EFlags		dd ? ; MUST BE SANITIZED
+_Esp		dd ?
+SegSs		dd ?
+ExtendedRegisters db MAXIMUM_SUPPORTED_EXTENSION dup(?)
+CONTEXT		ENDS
 
 PCONTEXT typedef ptr CONTEXT
 
@@ -2956,7 +2600,7 @@ endif
 ;if defined(_M_IA64) AND NOT defined(RC_INVOKED) AND NOT defined(MIDL_PASS)
 if defined(_M_IA64) AND NOT defined(MIDL_PASS)
 
-
+if 0
 BitTest			equ <_bittest>
 BitTestAndComplement	equ <_bittestandcomplement>
 BitTestAndSet		equ <_bittestandset>
@@ -2967,129 +2611,28 @@ BitTestAndComplement64	equ <_bittestandcomplement64>
 BitTestAndSet64		equ <_bittestandset64>
 BitTestAndReset64	equ <_bittestandreset64>
 
-;BOOLEAN
-_bittest proto WINAPI \
-		  Base: ptr LONG,
-	       _Offset: LONG
-;BOOLEAN
-_bittestandcomplement proto WINAPI \
-		  Base: ptr LONG,
-	       _Offset: LONG
-;BOOLEAN
-_bittestandset proto WINAPI \
-		  Base: ptr LONG,
-	       _Offset: LONG
-;BOOLEAN
-_bittestandreset proto WINAPI \
-		  Base: ptr LONG,
-	       _Offset: LONG
-
-;BOOLEAN
-_bittest64 proto WINAPI \
-		  Base: ptr LONG64,
-	       _Offset: LONG64
-;BOOLEAN
-_bittestandcomplement64 proto WINAPI \
-		  Base: ptr LONG64,
-	       _Offset: LONG64
-;BOOLEAN
-_bittestandset64 proto WINAPI \
-		  Base: ptr LONG64,
-	       _Offset: LONG64
-;BOOLEAN
-_bittestandreset64 proto WINAPI \
-		  Base: ptr LONG64,
-	       _Offset: LONG64
-
 BitScanForward		equ <_BitScanForward>
 BitScanReverse		equ <_BitScanReverse>
 BitScanForward64	equ <_BitScanForward64>
 BitScanReverse64	equ <_BitScanReverse64>
 
-;BOOLEAN
-_BitScanForward proto WINAPI \
-		 Index: ptr dword,
-		 _Mask: dword
-;BOOLEAN
-_BitScanReverse proto WINAPI \
-		 Index: ptr dword,
-		 _Mask: dword
-;BOOLEAN
-_BitScanForward64 proto WINAPI \
-		 Index: ptr dword,
-		 _Mask: DWORD64
-;BOOLEAN
-_BitScanReverse64 proto WINAPI \
-		 Index: ptr dword,
-		 _Mask: DWORD64
-
-
 InterlockedCompareExchange16 equ <_InterlockedCompareExchange16>
 
-;SHORT
-_InterlockedCompareExchange16 proto WINAPI \
-	   Destination: ptr sword,
-	      ExChange: sword,
-	     Comperand: sword
-
-if 0
 InterlockedAdd		equ <_InterlockedAdd>
-InterlockedAddAcquire	equ <_InterlockedAdd_acq>
-InterlockedAddRelease	equ <_InterlockedAdd_rel>
-
 InterlockedIncrement	equ <_InterlockedIncrement>
-InterlockedIncrementAcquire equ <_InterlockedIncrement_acq>
-InterlockedIncrementRelease equ <_InterlockedIncrement_rel>
-
 InterlockedDecrement	equ <_InterlockedDecrement>
-InterlockedDecrementAcquire equ <_InterlockedDecrement_acq>
-InterlockedDecrementRelease equ <_InterlockedDecrement_rel>
-
 InterlockedExchange	equ <_InterlockedExchange>
-InterlockedExchangeAcquire equ <_InterlockedExchange_acq>
-
 InterlockedExchangeAdd	equ <_InterlockedExchangeAdd>
-InterlockedExchangeAddAcquire equ <_InterlockedExchangeAdd_acq>
-InterlockedExchangeAddRelease equ <_InterlockedExchangeAdd_rel>
-
 InterlockedAdd64	equ <_InterlockedAdd64>
-InterlockedAddAcquire64 equ <_InterlockedAdd64_acq>
-InterlockedAddRelease64 equ <_InterlockedAdd64_rel>
-
 InterlockedIncrement64	equ <_InterlockedIncrement64>
-InterlockedIncrementAcquire64 equ <_InterlockedIncrement64_acq>
-InterlockedIncrementRelease64 equ <_InterlockedIncrement64_rel>
-
 InterlockedDecrement64	equ <_InterlockedDecrement64>
-InterlockedDecrementAcquire64 equ <_InterlockedDecrement64_acq>
-InterlockedDecrementRelease64 equ <_InterlockedDecrement64_rel>
-
 InterlockedExchange64	equ <_InterlockedExchange64>
-InterlockedExchangeAcquire64 equ <_InterlockedExchange64_acq>
-
 InterlockedExchangeAdd64 equ <_InterlockedExchangeAdd64>
-InterlockedExchangeAddAcquire64 equ <_InterlockedExchangeAdd64_acq>
-InterlockedExchangeAddRelease64 equ <_InterlockedExchangeAdd64_rel>
-
 InterlockedCompareExchange64 equ <_InterlockedCompareExchange64>
-InterlockedCompareExchangeAcquire64 equ <_InterlockedCompareExchange64_acq>
-InterlockedCompareExchangeRelease64 equ <_InterlockedCompareExchange64_rel>
-
 InterlockedCompare64Exchange128 equ <_InterlockedCompare64Exchange128>
-InterlockedCompare64ExchangeAcquire128 equ <_InterlockedCompare64Exchange128_acq>
-InterlockedCompare64ExchangeRelease128 equ <_InterlockedCompare64Exchange128_rel>
-
 InterlockedCompareExchange equ <_InterlockedCompareExchange>
-InterlockedCompareExchangeAcquire equ <_InterlockedCompareExchange_acq>
-InterlockedCompareExchangeRelease equ <_InterlockedCompareExchange_rel>
-
 InterlockedExchangePointer equ <_InterlockedExchangePointer>
-InterlockedExchangePointerAcquire equ <_InterlockedExchangePointer_acq>
-
 InterlockedCompareExchangePointer equ <_InterlockedCompareExchangePointer>
-InterlockedCompareExchangePointerRelease equ <_InterlockedCompareExchangePointer_rel>
-InterlockedCompareExchangePointerAcquire equ <_InterlockedCompareExchangePointer_acq>
-endif
 
 InterlockedExchangeAddSizeT macro a, b
 	exitm<InterlockedExchangeAdd64(a, b)>
@@ -3101,474 +2644,59 @@ InterlockedDecrementSizeT macro a
 	exitm<InterlockedDecrement64(a)>
 	endm
 
-if 0
 InterlockedOr		equ <_InterlockedOr>
-InterlockedOrAcquire	equ <_InterlockedOr_acq>
-InterlockedOrRelease	equ <_InterlockedOr_rel>
 InterlockedOr8		equ <_InterlockedOr8>
-InterlockedOr8Acquire	equ <_InterlockedOr8_acq>
-InterlockedOr8Release	equ <_InterlockedOr8_rel>
 InterlockedOr16		equ <_InterlockedOr16>
-InterlockedOr16Acquire	equ <_InterlockedOr16_acq>
-InterlockedOr16Release	equ <_InterlockedOr16_rel>
 InterlockedOr64		equ <_InterlockedOr64>
-InterlockedOr64Acquire	equ <_InterlockedOr64_acq>
-InterlockedOr64Release	equ <_InterlockedOr64_rel>
 InterlockedXor		equ <_InterlockedXor>
-InterlockedXorAcquire	equ <_InterlockedXor_acq>
-InterlockedXorRelease	equ <_InterlockedXor_rel>
 InterlockedXor8		equ <_InterlockedXor8>
-InterlockedXor8Acquire	equ <_InterlockedXor8_acq>
-InterlockedXor8Release	equ <_InterlockedXor8_rel>
 InterlockedXor16	equ <_InterlockedXor16>
-InterlockedXor16Acquire equ <_InterlockedXor16_acq>
-InterlockedXor16Release equ <_InterlockedXor16_rel>
 InterlockedXor64	equ <_InterlockedXor64>
-InterlockedXor64Acquire equ <_InterlockedXor64_acq>
-InterlockedXor64Release equ <_InterlockedXor64_rel>
 InterlockedAnd		equ <_InterlockedAnd>
-InterlockedAndAcquire	equ <_InterlockedAnd_acq>
-InterlockedAndRelease	equ <_InterlockedAnd_rel>
 InterlockedAnd8		equ <_InterlockedAnd8>
-InterlockedAnd8Acquire	equ <_InterlockedAnd8_acq>
-InterlockedAnd8Release	equ <_InterlockedAnd8_rel>
 InterlockedAnd16	equ <_InterlockedAnd16>
-InterlockedAnd16Acquire equ <_InterlockedAnd16_acq>
-InterlockedAnd16Release equ <_InterlockedAnd16_rel>
 InterlockedAnd64	equ <_InterlockedAnd64>
-InterlockedAnd64Acquire equ <_InterlockedAnd64_acq>
-InterlockedAnd64Release equ <_InterlockedAnd64_rel>
-endif
-
-;LONG
-InterlockedAdd proto WINAPI \
-		Addend: ptr LONG,
-		 Value: LONG
-;LONG
-InterlockedAddAcquire proto WINAPI \
-		Addend: ptr LONG,
-		 Value: LONG
-;LONG
-InterlockedAddRelease proto WINAPI \
-		Addend: ptr LONG,
-		 Value: LONG
-;LONGLONG
-InterlockedAdd64 proto WINAPI \
-		Addend: ptr LONGLONG,
-		 Value: LONGLONG
-;LONGLONG
-InterlockedAddAcquire64 proto WINAPI \
-		Addend: ptr LONGLONG,
-		 Value: LONGLONG
-;LONGLONG
-InterlockedAddRelease64 proto WINAPI \
-		Addend: ptr LONGLONG,
-		 Value: LONGLONG
-;LONG
-InterlockedIncrement proto WINAPI \
-		Addend: ptr LONG
-;LONG
-InterlockedDecrement proto WINAPI \
-		Addend: ptr LONG
-;LONG
-InterlockedIncrementAcquire proto WINAPI \
-		Addend: ptr LONG
-;LONG
-InterlockedDecrementAcquire proto WINAPI \
-		Addend: ptr LONG
-;LONG
-InterlockedIncrementRelease proto WINAPI \
-		Addend: ptr LONG
-;LONG
-InterlockedDecrementRelease proto WINAPI \
-		Addend: ptr LONG
-;LONG
-InterlockedExchange proto WINAPI \
-		Target: ptr LONG,
-		 Value: LONG
-;LONG
-InterlockedExchangeAcquire proto WINAPI \
-		Target: ptr LONG,
-		 Value: LONG
-;LONG
-InterlockedExchangeAdd proto WINAPI \
-		Addend: ptr LONG,
-		 Value: LONG
-;LONG
-InterlockedExchangeAddAcquire proto WINAPI \
-		Addend: ptr LONG,
-		 Value: LONG
-;LONG
-InterlockedExchangeAddRelease proto WINAPI \
-		Addend: ptr LONG,
-		 Value: LONG
-;LONG
-InterlockedCompareExchange proto WINAPI \
-	   Destination: ptr LONG,
-	      ExChange: LONG,
-	     Comperand: LONG
-;LONG
-InterlockedCompareExchangeRelease proto WINAPI \
-	   Destination: ptr LONG,
-	      ExChange: LONG,
-	     Comperand: LONG
-;LONG
-InterlockedCompareExchangeAcquire proto WINAPI \
-	   Destination: ptr LONG,
-	      ExChange: LONG,
-	     Comperand: LONG
-;LONGLONG
-InterlockedIncrement64 proto WINAPI \
-		Addend: ptr LONGLONG
-;LONGLONG
-InterlockedIncrementAcquire64 proto WINAPI \
-		Addend: ptr LONGLONG
-;LONGLONG
-InterlockedIncrementRelease64 proto WINAPI \
-		Addend: ptr LONGLONG
-;LONGLONG
-InterlockedDecrement64 proto WINAPI \
-		Addend: ptr LONGLONG
-;LONGLONG
-InterlockedDecrementAcquire64 proto WINAPI \
-		Addend: ptr LONGLONG
-;LONGLONG
-InterlockedDecrementRelease64 proto WINAPI \
-		Addend: ptr LONGLONG
-;LONGLONG
-InterlockedExchange64 proto WINAPI \
-		Target: ptr LONGLONG,
-		 Value: LONGLONG
-;LONGLONG
-InterlockedExchangeAcquire64 proto WINAPI \
-		Target: ptr LONGLONG,
-		 Value: LONGLONG
-;LONGLONG
-InterlockedExchangeAdd64 proto WINAPI \
-		Addend: ptr LONGLONG,
-		 Value: LONGLONG
-;LONGLONG
-InterlockedExchangeAddAcquire64 proto WINAPI \
-		Addend: ptr LONGLONG,
-		 Value: LONGLONG
-;LONGLONG
-InterlockedExchangeAddRelease64 proto WINAPI \
-		Addend: ptr LONGLONG,
-		 Value: LONGLONG
-;LONGLONG
-InterlockedCompareExchange64 proto WINAPI \
-	   Destination: ptr LONGLONG,
-	      Exchange: LONGLONG,
-	     Comperand: LONGLONG
-;LONGLONG
-InterlockedCompareExchangeAcquire64 proto WINAPI \
-	   Destination: ptr LONGLONG,
-	      Exchange: LONGLONG,
-	     Comperand: LONGLONG
-;LONGLONG
-InterlockedCompareExchangeRelease64 proto WINAPI \
-	   Destination: ptr LONGLONG,
-	      Exchange: LONGLONG,
-	     Comperand: LONGLONG
-;LONG64
-InterlockedCompare64Exchange128 proto WINAPI \
-	   Destination: ptr LONG64,
-	  ExchangeHigh: LONG64,
-	   ExchangeLow: LONG64,
-	     Comperand: LONG64
-;LONG64
-InterlockedCompare64ExchangeAcquire128 proto WINAPI \
-	   Destination: ptr LONG64,
-	  ExchangeHigh: LONG64,
-	   ExchangeLow: LONG64,
-	     Comperand: LONG64
-;LONG64
-InterlockedCompare64ExchangeRelease128 proto WINAPI \
-	   Destination: ptr LONG64,
-	  ExchangeHigh: LONG64,
-	   ExchangeLow: LONG64,
-	     Comperand: LONG64
-;PVOID
-InterlockedCompareExchangePointer proto WINAPI \
-	   Destination: PVOID,
-	      Exchange: PVOID,
-	     Comperand: PVOID
-;PVOID
-InterlockedCompareExchangePointerAcquire proto WINAPI \
-	   Destination: PVOID,
-	      Exchange: PVOID,
-	     Comperand: PVOID
-;PVOID
-InterlockedCompareExchangePointerRelease proto WINAPI \
-	   Destination: PVOID,
-	      Exchange: PVOID,
-	     Comperand: PVOID
-;PVOID
-InterlockedExchangePointer proto WINAPI \
-		Target: PVOID,
-		 Value: PVOID
-;PVOID
-InterlockedExchangePointerAcquire proto WINAPI \
-		Target: PVOID,
-		 Value: PVOID
-;LONG
-InterlockedOr proto WINAPI \
-	   Destination: PLONG,
-		 Value: LONG
-;LONG
-InterlockedOrAcquire proto WINAPI \
-	   Destination: PLONG,
-		 Value: LONG
-;LONG
-InterlockedOrRelease proto WINAPI \
-	   Destination: PLONG,
-		 Value: LONG
-;CHAR
-;InterlockedOr8
-InterlockedOr8 proto WINAPI \
-	   Destination: LPSTR,
-		 Value: CHAR
-;CHAR
-InterlockedOr8Acquire proto WINAPI \
-	   Destination: LPSTR,
-		 Value: CHAR
-;CHAR
-InterlockedOr8Release proto WINAPI \
-	   Destination: LPSTR,
-		 Value: CHAR
-;SHORT
-InterlockedOr16 proto WINAPI \
-	   Destination: ptr sword,
-		 Value: sword
-;SHORT
-InterlockedOr16Acquire proto WINAPI \
-	   Destination: ptr sword,
-		 Value: sword
-;SHORT
-InterlockedOr16Release proto WINAPI \
-	   Destination: ptr sword,
-		 Value: sword
-;LONGLONG
-InterlockedOr64 proto WINAPI \
-	   Destination: ptr LONGLONG,
-		 Value: LONGLONG
-;LONGLONG
-InterlockedOr64Acquire proto WINAPI \
-	   Destination: ptr LONGLONG,
-		 Value: LONGLONG
-;LONGLONG
-InterlockedOr64Release proto WINAPI \
-	   Destination: ptr LONGLONG,
-		 Value: LONGLONG
-;LONG
-InterlockedXor proto WINAPI \
-	   Destination: ptr LONG,
-		 Value: LONG
-;LONG
-InterlockedXorAcquire proto WINAPI \
-	   Destination: ptr LONG,
-		 Value: LONG
-;LONG
-InterlockedXorRelease proto WINAPI \
-	   Destination: ptr LONG,
-		 Value: LONG
-;CHAR
-InterlockedXor8 proto WINAPI \
-	   Destination: LPSTR,
-		 Value: CHAR
-;CHAR
-InterlockedXor8Acquire proto WINAPI \
-	   Destination: LPSTR,
-		 Value: CHAR
-;CHAR
-InterlockedXor8Release proto WINAPI \
-	   Destination: LPSTR,
-		 Value: CHAR
-;SHORT
-InterlockedXor16 proto WINAPI \
-	   Destination: ptr sword,
-		 Value: sword
-;SHORT
-InterlockedXor16Acquire proto WINAPI \
-	   Destination: ptr sword,
-		 Value: sword
-;SHORT
-InterlockedXor16Release proto WINAPI \
-	   Destination: ptr sword,
-		 Value: sword
-;LONGLONG
-InterlockedXor64 proto WINAPI \
-	   Destination: ptr LONGLONG,
-		 Value: LONGLONG
-;LONGLONG
-InterlockedXor64Acquire proto WINAPI \
-	   Destination: ptr LONGLONG,
-		 Value: LONGLONG
-;LONGLONG
-InterlockedXor64Release proto WINAPI \
-	   Destination: ptr LONGLONG,
-		 Value: LONGLONG
-;LONG
-InterlockedAnd proto WINAPI \
-	   Destination: ptr LONG,
-		 Value: LONG
-;LONG
-InterlockedAndAcquire proto WINAPI \
-	   Destination: ptr LONG,
-		 Value: LONG
-;LONG
-InterlockedAndRelease proto WINAPI \
-	   Destination: ptr LONG,
-		 Value: LONG
-;CHAR
-InterlockedAnd8 proto WINAPI \
-	   Destination: LPSTR,
-		 Value: CHAR
-;CHAR
-InterlockedAnd8Acquire proto WINAPI \
-	   Destination: LPSTR,
-		 Value: CHAR
-;CHAR
-InterlockedAnd8Release proto WINAPI \
-	   Destination: LPSTR,
-		 Value: CHAR
-;SHORT
-InterlockedAnd16 proto WINAPI \
-	   Destination: ptr sword,
-		 Value: sword
-;SHORT
-InterlockedAnd16Acquire proto WINAPI \
-	   Destination: ptr sword,
-		 Value: sword
-;SHORT
-InterlockedAnd16Release proto WINAPI \
-	   Destination: ptr sword,
-		 Value: sword
-;LONGLONG
-InterlockedAnd64 proto WINAPI \
-	   Destination: ptr LONGLONG,
-		 Value: LONGLONG
-;LONGLONG
-InterlockedAnd64Acquire proto WINAPI \
-	   Destination: ptr LONGLONG,
-		 Value: LONGLONG
-;LONGLONG
-InterlockedAnd64Release proto WINAPI \
-	   Destination: ptr LONGLONG,
-		 Value: LONGLONG
 
 ifndef InterlockedAnd64
-
-InterlockedAnd64	equ <InterlockedAnd64_Inline>
-
-;LONGLONG
-InterlockedAnd64_Inline proto WINAPI \
-	   Destination: ptr LONGLONG,
-		 Value: LONGLONG
+InterlockedAnd64	equ <_InterlockedAnd64>
 endif
-
 InterlockedAndAffinity	equ <InterlockedAnd64>
-
 ifndef InterlockedOr64
-
-InterlockedOr64		equ <InterlockedOr64_Inline>
-
-;LONGLONG
-InterlockedOr64_Inline proto WINAPI \
-	   Destination: ptr LONGLONG,
-		 Value: LONGLONG
+InterlockedOr64		equ <_InterlockedOr64>
 endif
-
-InterlockedOrAffinity	equ <InterlockedOr64>
-
+InterlockedOrAffinity	equ <_InterlockedOr64>
 ifndef InterlockedXor64
-
-InterlockedXor64	equ <InterlockedXor64_Inline>
-
-;LONGLONG
-InterlockedXor64_Inline proto WINAPI \
-	   Destination: ptr LONGLONG,
-		 Value: LONGLONG
+InterlockedXor64	equ <_InterlockedXor64>
 endif
-
 ifndef InterlockedBitTestAndSet
-
-InterlockedBitTestAndSet equ <InterlockedBitTestAndSet_Inline>
-
-;BOOLEAN
-InterlockedBitTestAndSet_Inline proto WINAPI \
-		  Base: ptr LONG,
-		   Bit: LONG
+InterlockedBitTestAndSet equ <_InterlockedBitTestAndSet>
 endif
-
 ifndef InterlockedBitTestAndReset
-
-InterlockedBitTestAndReset equ <InterlockedBitTestAndReset_Inline>
-
-;BOOLEAN
-InterlockedBitTestAndReset_Inline proto WINAPI \
-		  Base: ptr LONG,
-		   Bit: LONG
+InterlockedBitTestAndReset equ <_InterlockedBitTestAndReset>
 endif
-
 ifndef InterlockedBitTestAndSet64
-
-InterlockedBitTestAndSet64 equ <InterlockedBitTestAndSet64_Inline>
-
-;BOOLEAN
-InterlockedBitTestAndSet64_Inline proto WINAPI \
-		  Base: ptr LONG64,
-		   Bit: LONG64
+InterlockedBitTestAndSet64 equ <_InterlockedBitTestAndSet64>
 endif
-
 ifndef InterlockedBitTestAndReset64
-
-InterlockedBitTestAndReset64 equ <InterlockedBitTestAndReset64_Inline>
-
-;BOOLEAN
-InterlockedBitTestAndReset64_Inline proto WINAPI \
-		  Base: ptr LONG64,
-		   Bit: LONG64
+InterlockedBitTestAndReset64 equ <_InterlockedBitTestAndReset64>
 endif
-
 ifndef InterlockedBitTestAndComplement
-
-InterlockedBitTestAndComplement equ <InterlockedBitTestAndComplement_Inline>
-
-;BOOLEAN
-InterlockedBitTestAndComplement_Inline proto WINAPI \
-		  Base: ptr LONG,
-		   Bit: LONG
-
+InterlockedBitTestAndComplement equ <_InterlockedBitTestAndComplement>
 endif
-
 ifndef InterlockedBitTestAndComplement64
-
-InterlockedBitTestAndComplement64 equ <InterlockedBitTestAndComplement64_Inline>
-
-;BOOLEAN
-InterlockedBitTestAndComplement64_Inline proto WINAPI \
-		  Base: ptr LONG64,
-		   Bit: LONG64
+InterlockedBitTestAndComplement64 equ <_InterlockedBitTestAndComplement64>
 endif
 
 endif
-
+endif
 
 if NOT defined(__midl) AND NOT defined(GENUTIL) AND NOT defined(_GENIA64_) AND defined(_IA64_)
-
-;void *
-_rdteb proto WINAPI
-
-;void *
-_rdtebex proto WINAPI
 
 ifdef _M_IA64
 
 NtCurrentTeb macro
 	exitm<_rdtebex()>
 	endm
-
 
 GetCurrentFiber macro
 	exitm<[NtCurrentTeb()].FiberData>
@@ -3662,10 +2790,7 @@ if (_MSC_VER GE 1400)
 UnsignedMultiply128	equ <_umul128>
 
 ;DWORD64
-_umul128 proto WINAPI \
-	    Multiplier: qword,
-	  Multiplicand: qword,
-	   HighProduct: ptr qword
+;_umul128 proto Multiplier: qword, Multiplicand: qword, HighProduct: ptr qword
 
 endif
 
@@ -3680,11 +2805,9 @@ endif
 
 ifdef _IA64_
 
-
 EXCEPTION_READ_FAULT	equ 0
 EXCEPTION_WRITE_FAULT	equ 1
 EXCEPTION_EXECUTE_FAULT equ 2
-
 
 ;ifndef RC_INVOKED
 
@@ -3713,12 +2836,8 @@ CONTEXT_EXCEPTION_REPORTING equ 0x80000000
 
 
 CONTEXT			STRUC
-
-
 ContextFlags		dd ?
 Fill1			dd 3 dup(?)
-
-
 DbI0			ULONGLONG ?
 DbI1			ULONGLONG ?
 DbI2			ULONGLONG ?
@@ -3727,7 +2846,6 @@ DbI4			ULONGLONG ?
 DbI5			ULONGLONG ?
 DbI6			ULONGLONG ?
 DbI7			ULONGLONG ?
-
 DbD0			ULONGLONG ?
 DbD1			ULONGLONG ?
 DbD2			ULONGLONG ?
@@ -3736,8 +2854,6 @@ DbD4			ULONGLONG ?
 DbD5			ULONGLONG ?
 DbD6			ULONGLONG ?
 DbD7			ULONGLONG ?
-
-
 FltS0			FLOAT128 <>
 FltS1			FLOAT128 <>
 FltS2			FLOAT128 <>
@@ -3752,8 +2868,6 @@ FltT6			FLOAT128 <>
 FltT7			FLOAT128 <>
 FltT8			FLOAT128 <>
 FltT9			FLOAT128 <>
-
-
 FltS4			FLOAT128 <>
 FltS5			FLOAT128 <>
 FltS6			FLOAT128 <>
@@ -3770,7 +2884,6 @@ FltS16			FLOAT128 <>
 FltS17			FLOAT128 <>
 FltS18			FLOAT128 <>
 FltS19			FLOAT128 <>
-
 FltF32			FLOAT128 <>
 FltF33			FLOAT128 <>
 FltF34			FLOAT128 <>
@@ -3779,7 +2892,6 @@ FltF36			FLOAT128 <>
 FltF37			FLOAT128 <>
 FltF38			FLOAT128 <>
 FltF39			FLOAT128 <>
-
 FltF40			FLOAT128 <>
 FltF41			FLOAT128 <>
 FltF42			FLOAT128 <>
@@ -3790,7 +2902,6 @@ FltF46			FLOAT128 <>
 FltF47			FLOAT128 <>
 FltF48			FLOAT128 <>
 FltF49			FLOAT128 <>
-
 FltF50			FLOAT128 <>
 FltF51			FLOAT128 <>
 FltF52			FLOAT128 <>
@@ -3801,7 +2912,6 @@ FltF56			FLOAT128 <>
 FltF57			FLOAT128 <>
 FltF58			FLOAT128 <>
 FltF59			FLOAT128 <>
-
 FltF60			FLOAT128 <>
 FltF61			FLOAT128 <>
 FltF62			FLOAT128 <>
@@ -3812,7 +2922,6 @@ FltF66			FLOAT128 <>
 FltF67			FLOAT128 <>
 FltF68			FLOAT128 <>
 FltF69			FLOAT128 <>
-
 FltF70			FLOAT128 <>
 FltF71			FLOAT128 <>
 FltF72			FLOAT128 <>
@@ -3823,7 +2932,6 @@ FltF76			FLOAT128 <>
 FltF77			FLOAT128 <>
 FltF78			FLOAT128 <>
 FltF79			FLOAT128 <>
-
 FltF80			FLOAT128 <>
 FltF81			FLOAT128 <>
 FltF82			FLOAT128 <>
@@ -3834,7 +2942,6 @@ FltF86			FLOAT128 <>
 FltF87			FLOAT128 <>
 FltF88			FLOAT128 <>
 FltF89			FLOAT128 <>
-
 FltF90			FLOAT128 <>
 FltF91			FLOAT128 <>
 FltF92			FLOAT128 <>
@@ -3845,7 +2952,6 @@ FltF96			FLOAT128 <>
 FltF97			FLOAT128 <>
 FltF98			FLOAT128 <>
 FltF99			FLOAT128 <>
-
 FltF100			FLOAT128 <>
 FltF101			FLOAT128 <>
 FltF102			FLOAT128 <>
@@ -3856,7 +2962,6 @@ FltF106			FLOAT128 <>
 FltF107			FLOAT128 <>
 FltF108			FLOAT128 <>
 FltF109			FLOAT128 <>
-
 FltF110			FLOAT128 <>
 FltF111			FLOAT128 <>
 FltF112			FLOAT128 <>
@@ -3867,7 +2972,6 @@ FltF116			FLOAT128 <>
 FltF117			FLOAT128 <>
 FltF118			FLOAT128 <>
 FltF119			FLOAT128 <>
-
 FltF120			FLOAT128 <>
 FltF121			FLOAT128 <>
 FltF122			FLOAT128 <>
@@ -3876,11 +2980,7 @@ FltF124			FLOAT128 <>
 FltF125			FLOAT128 <>
 FltF126			FLOAT128 <>
 FltF127			FLOAT128 <>
-
-
 StFPSR			ULONGLONG ?
-
-
 IntGp			ULONGLONG ?
 IntT0			ULONGLONG ?
 IntT1			ULONGLONG ?
@@ -3912,10 +3012,8 @@ IntT19			ULONGLONG ?
 IntT20			ULONGLONG ?
 IntT21			ULONGLONG ?
 IntT22			ULONGLONG ?
-
 IntNats			ULONGLONG ?
 Preds			ULONGLONG ?
-
 BrRp			ULONGLONG ?
 BrS0			ULONGLONG ?
 BrS1			ULONGLONG ?
@@ -3924,24 +3022,19 @@ BrS3			ULONGLONG ?
 BrS4			ULONGLONG ?
 BrT0			ULONGLONG ?
 BrT1			ULONGLONG ?
-
-
 ApUNAT			ULONGLONG ?
 ApLC			ULONGLONG ?
 ApEC			ULONGLONG ?
 ApCCV			ULONGLONG ?
 ApDCR			ULONGLONG ?
-
 RsPFS			ULONGLONG ?
 RsBSP			ULONGLONG ?
 RsBSPSTORE		ULONGLONG ?
 RsRSC			ULONGLONG ?
 RsRNAT			ULONGLONG ?
-
 StIPSR			ULONGLONG ?
 StIIP			ULONGLONG ?
 StIFS			ULONGLONG ?
-
 StFCR			ULONGLONG ?
 Eflag			ULONGLONG ?
 SegCSD			ULONGLONG ?
@@ -3950,12 +3043,9 @@ Cflag			ULONGLONG ?
 StFSR			ULONGLONG ?
 StFIR			ULONGLONG ?
 StFDR			ULONGLONG ?
-
 UNUSEDPACK		ULONGLONG ?
-
 CONTEXT			ENDS
 PCONTEXT		typedef ptr CONTEXT
-
 
 PLABEL_DESCRIPTOR	STRUC
 EntryPoint		ULONGLONG ?
@@ -3963,14 +3053,12 @@ GlobalPointer		ULONGLONG ?
 PLABEL_DESCRIPTOR	ENDS
 PPLABEL_DESCRIPTOR	typedef ptr PLABEL_DESCRIPTOR
 
-
 RUNTIME_FUNCTION	STRUC
 BeginAddress		dd ?
 EndAddress		dd ?
 UnwindInfoAddress	dd ?
 RUNTIME_FUNCTION	ENDS
 PRUNTIME_FUNCTION	typedef ptr RUNTIME_FUNCTION
-
 
 UNWIND_HISTORY_TABLE_SIZE equ 12
 
@@ -4056,7 +3144,6 @@ FltS16			PFLOAT128 ?
 FltS17			PFLOAT128 ?
 FltS18			PFLOAT128 ?
 FltS19			PFLOAT128 ?
-
 IntS0			PULONGLONG ?
 IntS1			PULONGLONG ?
 IntS2			PULONGLONG ?
@@ -4067,28 +3154,22 @@ IntS1Nat		PULONGLONG ?
 IntS2Nat		PULONGLONG ?
 IntS3Nat		PULONGLONG ?
 IntSpNat		PULONGLONG ?
-
 Preds			PULONGLONG ?
-
 BrRp			PULONGLONG ?
 BrS0			PULONGLONG ?
 BrS1			PULONGLONG ?
 BrS2			PULONGLONG ?
 BrS3			PULONGLONG ?
 BrS4			PULONGLONG ?
-
 ApUNAT			PULONGLONG ?
 ApLC			PULONGLONG ?
 ApEC			PULONGLONG ?
 RsPFS			PULONGLONG ?
-
 StFSR			PULONGLONG ?
 StFIR			PULONGLONG ?
 StFDR			PULONGLONG ?
 Cflag			PULONGLONG ?
-
 StFPSR			PULONGLONG ?
-
 KNONVOLATILE_CONTEXT_POINTERS ENDS
 PKNONVOLATILE_CONTEXT_POINTERS typedef ptr KNONVOLATILE_CONTEXT_POINTERS
 
@@ -4163,46 +3244,31 @@ PWOW64_FLOATING_SAVE_AREA typedef ptr WOW64_FLOATING_SAVE_AREA
 
 ;include "pshpack4.h"
 
-
 WOW64_CONTEXT		STRUC
-
-
 ContextFlags		dd ?
-
-
 _Dr0			dd ?
 _Dr1			dd ?
 _Dr2			dd ?
 _Dr3			dd ?
 _Dr6			dd ?
 _Dr7			dd ?
-
-
 FloatSave		WOW64_FLOATING_SAVE_AREA <>
-
-
 SegGs			dd ?
 SegFs			dd ?
 SegEs			dd ?
 SegDs			dd ?
-
-
 _Edi			dd ?
 _Esi			dd ?
 _Ebx			dd ?
 _Edx			dd ?
 _Ecx			dd ?
 _Eax			dd ?
-
-
 _Ebp			dd ?
 _Eip			dd ?
 SegCs			dd ?
 EFlags			dd ?
 _Esp			dd ?
 SegSs			dd ?
-
-
 ExtendedRegisters	db WOW64_MAXIMUM_SUPPORTED_EXTENSION dup(?)
 WOW64_CONTEXT		ENDS
 PWOW64_CONTEXT		typedef ptr WOW64_CONTEXT
@@ -4320,12 +3386,8 @@ PACCESS_TOKEN		typedef PVOID
 PSECURITY_DESCRIPTOR	typedef PVOID
 PSID			typedef PVOID
 
-
-
 ACCESS_MASK	typedef DWORD
 PACCESS_MASK	typedef PTR ACCESS_MASK
-
-
 
 DELETE		equ 0x00010000
 READ_CONTROL	equ 0x00020000
@@ -4342,18 +3404,14 @@ STANDARD_RIGHTS_EXECUTE equ READ_CONTROL
 STANDARD_RIGHTS_ALL	equ 0x001F0000
 SPECIFIC_RIGHTS_ALL	equ 0x0000FFFF
 
-
 ACCESS_SYSTEM_SECURITY	equ 0x01000000
 
-
 MAXIMUM_ALLOWED equ 0x02000000
-
 
 GENERIC_READ	equ 0x80000000
 GENERIC_WRITE	equ 0x40000000
 GENERIC_EXECUTE equ 0x20000000
 GENERIC_ALL	equ 0x10000000
-
 
 GENERIC_MAPPING STRUC
 GenericRead	ACCESS_MASK ?
@@ -4363,7 +3421,6 @@ GenericAll	ACCESS_MASK ?
 GENERIC_MAPPING ENDS
 
 PGENERIC_MAPPING typedef PTR GENERIC_MAPPING
-
 
 ;include <pshpack4.h>
 
@@ -4377,7 +3434,6 @@ PLUID_AND_ATTRIBUTES_ARRAY typedef ptr LUID_AND_ATTRIBUTES_ARRAY
 
 ;include <poppack.h>
 
-
 ifndef SID_IDENTIFIER_AUTHORITY_DEFINED
 SID_IDENTIFIER_AUTHORITY_DEFINED equ 1
 SID_IDENTIFIER_AUTHORITY STRUC
@@ -4385,7 +3441,6 @@ Value		db 6 dup(?)
 SID_IDENTIFIER_AUTHORITY ENDS
 PSID_IDENTIFIER_AUTHORITY typedef ptr SID_IDENTIFIER_AUTHORITY
 endif
-
 
 ifndef SID_DEFINED
 SID_DEFINED		equ 1
@@ -4472,8 +3527,6 @@ SECURITY_CREATOR_OWNER_SERVER_RID equ 0x00000002
 SECURITY_CREATOR_GROUP_SERVER_RID equ 0x00000003
 SECURITY_CREATOR_OWNER_RIGHTS_RID equ 0x00000004
 
-
-
 SECURITY_NT_AUTHORITY		equ <{0,0,0,0,0,5}>
 
 SECURITY_DIALUP_RID		equ 0x00000001
@@ -4539,14 +3592,10 @@ SECURITY_TASK_ID_BASE_RID	equ 0x00000057
 SECURITY_NFS_ID_BASE_RID	equ 0x00000058
 SECURITY_COM_ID_BASE_RID	equ 0x00000059
 
-
-
-
 DOMAIN_USER_RID_ADMIN	       equ 0x000001F4
 DOMAIN_USER_RID_GUEST	       equ 0x000001F5
 DOMAIN_USER_RID_KRBTGT	       equ 0x000001F6
 DOMAIN_USER_RID_MAX	       equ 0x000003E7
-
 
 DOMAIN_GROUP_RID_ADMINS	       equ 0x00000200
 DOMAIN_GROUP_RID_USERS	       equ 0x00000201
@@ -4558,7 +3607,6 @@ DOMAIN_GROUP_RID_SCHEMA_ADMINS equ 0x00000206
 DOMAIN_GROUP_RID_ENTERPRISE_ADMINS equ 0x00000207
 DOMAIN_GROUP_RID_POLICY_ADMINS equ 0x00000208
 DOMAIN_GROUP_RID_READONLY_CONTROLLERS equ 0x00000209
-
 
 DOMAIN_ALIAS_RID_ADMINS	       equ 0x00000220
 DOMAIN_ALIAS_RID_USERS	       equ 0x00000221
@@ -4597,13 +3645,11 @@ SECURITY_MANDATORY_HIGH_RID		    equ 0x00003000
 SECURITY_MANDATORY_SYSTEM_RID		    equ 0x00004000
 SECURITY_MANDATORY_PROTECTED_PROCESS_RID    equ 0x00005000
 
-
 SECURITY_MANDATORY_MAXIMUM_USER_RID equ SECURITY_MANDATORY_SYSTEM_RID
 
 MANDATORY_LEVEL_TO_MANDATORY_RID macro IL
 	exitm<(IL * 0x1000)>
 	endm
-
 
 WELL_KNOWN_SID_TYPE typedef sdword ; enum {
 
@@ -4692,14 +3738,11 @@ WELL_KNOWN_SID_TYPE typedef sdword ; enum {
     WinThisOrganizationCertificateSid		equ 82
 
 
-
 SYSTEM_LUID			equ <{ 0x3E7, 0x0 }>
 ANONYMOUS_LOGON_LUID		equ <{ 0x3e6, 0x0 }>
 LOCALSERVICE_LUID		equ <{ 0x3e5, 0x0 }>
 NETWORKSERVICE_LUID		equ <{ 0x3e4, 0x0 }>
 IUSER_LUID			equ <{ 0x3e3, 0x0 }>
-
-
 
 SE_GROUP_MANDATORY		equ 0x00000001
 SE_GROUP_ENABLED_BY_DEFAULT	equ 0x00000002
@@ -4723,13 +3766,8 @@ SE_GROUP_VALID_ATTRIBUTES	equ SE_GROUP_MANDATORY		OR \
 				    SE_GROUP_INTEGRITY_ENABLED
 
 
-
-
-
-
 ACL_REVISION	 equ 2
 ACL_REVISION_DS	 equ 4
-
 
 ACL_REVISION1		equ 1
 MIN_ACL_REVISION	equ ACL_REVISION2
@@ -4747,14 +3785,12 @@ Sbz2		dw ?
 ACL		ENDS
 PACL		typedef PTR ACL
 
-
 ACE_HEADER	STRUC
 AceType		db ?
 AceFlags	db ?
 AceSize		dw ?
 ACE_HEADER	ENDS
 PACE_HEADER	typedef PTR ACE_HEADER
-
 
 ACCESS_MIN_MS_ACE_TYPE			equ 0x0
 ACCESS_ALLOWED_ACE_TYPE			equ 0x0
@@ -4788,7 +3824,6 @@ SYSTEM_ALARM_CALLBACK_OBJECT_ACE_TYPE	equ 0x10
 SYSTEM_MANDATORY_LABEL_ACE_TYPE		equ 0x11
 ACCESS_MAX_MS_V5_ACE_TYPE		equ 0x11
 
-
 OBJECT_INHERIT_ACE		  equ 0x1
 CONTAINER_INHERIT_ACE		  equ 0x2
 NO_PROPAGATE_INHERIT_ACE	  equ 0x4
@@ -4796,16 +3831,8 @@ INHERIT_ONLY_ACE		  equ 0x8
 INHERITED_ACE			  equ 0x10
 VALID_INHERIT_FLAGS		  equ 0x1F
 
-
-
-
 SUCCESSFUL_ACCESS_ACE_FLAG	 equ 0x40
 FAILED_ACCESS_ACE_FLAG		 equ 0x80
-
-
-
-
-
 
 ACCESS_ALLOWED_ACE	STRUC
 Header			ACE_HEADER <>
@@ -4959,22 +3986,18 @@ SidStart		dd ?
 SYSTEM_ALARM_CALLBACK_OBJECT_ACE ENDS
 PSYSTEM_ALARM_CALLBACK_OBJECT_ACE typedef ptr SYSTEM_ALARM_CALLBACK_OBJECT_ACE
 
-
 ACE_OBJECT_TYPE_PRESENT		  equ 0x1
 ACE_INHERITED_OBJECT_TYPE_PRESENT equ 0x2
-
 
 ACL_INFORMATION_CLASS	typedef SDWORD
 
 AclRevisionInformation	equ 1
 AclSizeInformation	equ 2
 
-
 ACL_REVISION_INFORMATION STRUC
 AclRevision		dd ?
 ACL_REVISION_INFORMATION ENDS
 PACL_REVISION_INFORMATION typedef ptr ACL_REVISION_INFORMATION
-
 
 ACL_SIZE_INFORMATION	STRUC
 AceCount		dd ?
@@ -4982,8 +4005,6 @@ AclBytesInUse		dd ?
 AclBytesFree		dd ?
 ACL_SIZE_INFORMATION	ENDS
 PACL_SIZE_INFORMATION	typedef ptr ACL_SIZE_INFORMATION
-
-
 
 SECURITY_DESCRIPTOR_REVISION	 equ 1
 SECURITY_DESCRIPTOR_REVISION1	 equ 1
@@ -5008,7 +4029,6 @@ SE_SACL_PROTECTED		 equ 0x2000
 SE_RM_CONTROL_VALID		 equ 0x4000
 SE_SELF_RELATIVE		 equ 0x8000
 
-
 SECURITY_DESCRIPTOR_RELATIVE STRUC
 Revision		db ?
 Sbz1			db ?
@@ -5031,11 +4051,6 @@ Dacl			dd ?
 SECURITY_DESCRIPTOR	ENDS
 PISECURITY_DESCRIPTOR	typedef ptr SECURITY_DESCRIPTOR
 
-
-
-
-
-
 LPGUID			typedef ptr GUID
 OBJECT_TYPE_LIST	STRUC
 Level			dw ?
@@ -5044,13 +4059,11 @@ ObjectType		LPGUID ?
 OBJECT_TYPE_LIST	ENDS
 POBJECT_TYPE_LIST	typedef ptr OBJECT_TYPE_LIST
 
-
 ACCESS_OBJECT_GUID	 equ 0
 ACCESS_PROPERTY_SET_GUID equ 1
 ACCESS_PROPERTY_GUID	 equ 2
 
 ACCESS_MAX_LEVEL	 equ 4
-
 
 AuditEventObjectAccess			equ 0
 AuditEventDirectoryServiceAccess	equ 1
@@ -5063,9 +4076,6 @@ AUDIT_EVENT_TYPE			typedef sdword
 ;ACCESS_DS_OBJECT_TYPE_NAME_A	equ <"Directory Service Object">
 ;ACCESS_DS_OBJECT_TYPE_NAME_W	equ <"Directory Service Object">
 
-
-
-
 SE_PRIVILEGE_ENABLED_BY_DEFAULT equ 0x00000001
 SE_PRIVILEGE_ENABLED		equ 0x00000002
 SE_PRIVILEGE_REMOVED		equ 0X00000004
@@ -5075,9 +4085,7 @@ SE_PRIVILEGE_VALID_ATTRIBUTES	equ SE_PRIVILEGE_ENABLED_BY_DEFAULT OR \
 				    SE_PRIVILEGE_REMOVED	    OR \
 				    SE_PRIVILEGE_USED_FOR_ACCESS
 
-
 PRIVILEGE_SET_ALL_NECESSARY    equ 1
-
 
 PRIVILEGE_SET	STRUC
 PrivilegeCount	dd ?
@@ -5145,7 +4153,6 @@ Privileges		PPRIVILEGE_SET ?
 SE_ACCESS_REPLY		ENDS
 PSE_ACCESS_REPLY	typedef ptr SE_ACCESS_REPLY
 
-
 SE_CREATE_TOKEN_NAME		equ <TEXT("SeCreateTokenPrivilege")>
 SE_ASSIGNPRIMARYTOKEN_NAME	equ <TEXT("SeAssignPrimaryTokenPrivilege")>
 SE_LOCK_MEMORY_NAME		equ <TEXT("SeLockMemoryPrivilege")>
@@ -5182,8 +4189,6 @@ SE_INC_WORKING_SET_NAME		equ <TEXT("SeIncreaseWorkingSetPrivilege")>
 SE_TIME_ZONE_NAME		equ <TEXT("SeTimeZonePrivilege")>
 SE_CREATE_SYMBOLIC_LINK_NAME	equ <TEXT("SeCreateSymbolicLinkPrivilege")>
 
-
-
 SecurityAnonymous	equ 0
 SecurityIdentification	equ 1
 SecurityImpersonation	equ 2
@@ -5198,9 +4203,6 @@ DEFAULT_IMPERSONATION_LEVEL	 equ SecurityImpersonation
 VALID_IMPERSONATION_LEVEL macro L
 	exitm<((L GE SECURITY_MIN_IMPERSONATION_LEVEL) AND (L LE SECURITY_MAX_IMPERSONATION_LEVEL))>
 	endm
-
-
-
 
 TOKEN_ASSIGN_PRIMARY	equ 0x0001
 TOKEN_DUPLICATE		equ 0x0002
@@ -5281,8 +4283,6 @@ TOKEN_TYPE	typedef DWORD
     TokenLogonSid		equ 28
     MaxTokenInfoClass		equ 29
 
-
-
 TOKEN_USER		STRUC
 User			SID_AND_ATTRIBUTES <>
 TOKEN_USER		ENDS
@@ -5294,26 +4294,22 @@ Groups			SID_AND_ATTRIBUTES ANYSIZE_ARRAY dup(<>)
 TOKEN_GROUPS		ENDS
 PTOKEN_GROUPS		typedef ptr TOKEN_GROUPS
 
-
 TOKEN_PRIVILEGES	STRUC
 PrivilegeCount		dd ?
 Privileges		LUID_AND_ATTRIBUTES ANYSIZE_ARRAY dup(<>)
 TOKEN_PRIVILEGES	ENDS
 PTOKEN_PRIVILEGES	typedef ptr TOKEN_PRIVILEGES
 
-
 TOKEN_OWNER		STRUC
 Owner			PSID ?
 TOKEN_OWNER		ENDS
 PTOKEN_OWNER		typedef ptr TOKEN_OWNER
-
 
 TOKEN_PRIMARY_GROUP	STRUC
 PrimaryGroup		PSID ?
 TOKEN_PRIMARY_GROUP	ENDS
 
 PTOKEN_PRIMARY_GROUP	typedef ptr TOKEN_PRIMARY_GROUP
-
 
 TOKEN_DEFAULT_DACL	STRUC
 DefaultDacl		PACL ?
@@ -5370,7 +4366,6 @@ MandatoryPolicy		TOKEN_MANDATORY_POLICY <>
 Flags			dd ?
 TOKEN_ACCESS_INFORMATION ENDS
 PTOKEN_ACCESS_INFORMATION typedef ptr TOKEN_ACCESS_INFORMATION
-
 
 POLICY_AUDIT_SUBCATEGORY_COUNT equ 53
 
@@ -5459,7 +4454,6 @@ WRITE_RESTRICTED		equ 0x8
 
 SECURITY_INFORMATION		typedef DWORD
 PSECURITY_INFORMATION		typedef ptr DWORD
-
 
 PROTECTED_DACL_SECURITY_INFORMATION   equ 0x80000000
 PROTECTED_SACL_SECURITY_INFORMATION   equ 0x40000000
@@ -5753,7 +4747,6 @@ JOB_OBJECT_MSG_ABNORMAL_EXIT_PROCESS	equ 8
 JOB_OBJECT_MSG_PROCESS_MEMORY_LIMIT	equ 9
 JOB_OBJECT_MSG_JOB_MEMORY_LIMIT		equ 10
 
-
 JOB_OBJECT_LIMIT_WORKINGSET		equ 0x00000001
 JOB_OBJECT_LIMIT_PROCESS_TIME		equ 0x00000002
 JOB_OBJECT_LIMIT_JOB_TIME		equ 0x00000004
@@ -5775,12 +4768,10 @@ JOB_OBJECT_LIMIT_RESERVED4		    equ 0x00010000
 JOB_OBJECT_LIMIT_RESERVED5		    equ 0x00020000
 JOB_OBJECT_LIMIT_RESERVED6		    equ 0x00040000
 
-
 JOB_OBJECT_LIMIT_VALID_FLAGS		equ 0x0007ffff
 JOB_OBJECT_BASIC_LIMIT_VALID_FLAGS	equ 0x000000ff
 JOB_OBJECT_EXTENDED_LIMIT_VALID_FLAGS	equ 0x00007fff
 JOB_OBJECT_RESERVED_LIMIT_VALID_FLAGS	equ 0x0007ffff
-
 
 JOB_OBJECT_UILIMIT_NONE			equ 0x00000000
 
@@ -5832,7 +4823,6 @@ TIMER_QUERY_STATE	equ 0x0001
 TIMER_MODIFY_STATE	equ 0x0002
 TIMER_ALL_ACCESS	equ STANDARD_RIGHTS_REQUIRED or SYNCHRONIZE or \
 			    TIMER_QUERY_STATE or TIMER_MODIFY_STATE
-
 
 TIME_ZONE_ID_UNKNOWN	equ 0
 TIME_ZONE_ID_STANDARD	equ 1
@@ -5999,7 +4989,6 @@ PF_COMPARE64_EXCHANGE128		equ 15
 PF_CHANNELS_ENABLED			equ 16
 PF_XSAVE_ENABLED			equ 17
 
-
 XSTATE_LEGACY_FLOATING_POINT		equ 0
 XSTATE_LEGACY_SSE			equ 1
 XSTATE_GSSE				equ 2
@@ -6010,7 +4999,6 @@ XSTATE_MASK_LEGACY			equ XSTATE_MASK_LEGACY_FLOATING_POINT or XSTATE_MASK_LEGACY
 XSTATE_MASK_GSSE			equ (1 shl (XSTATE_GSSE))
 
 MAXIMUM_XSTATE_FEATURES			equ 64
-
 
 XSTATE_FEATURE		STRUC
 _Offset			dd ?
@@ -6137,8 +5125,6 @@ SEC_LARGE_PAGES		equ 0x80000000
 MEM_IMAGE		equ SEC_IMAGE
 WRITE_WATCH_FLAG_RESET	equ 0x01
 
-
-
 FILE_READ_DATA			equ 0x0001
 FILE_LIST_DIRECTORY		equ 0x0001
 
@@ -6235,14 +5221,11 @@ FileName		WCHAR ?
 FILE_NOTIFY_INFORMATION ENDS
 PFILE_NOTIFY_INFORMATION typedef ptr FILE_NOTIFY_INFORMATION
 
-
 FILE_SEGMENT_ELEMENT	UNION
 Buffer			PVOID64 ?
 Alignment		ULONGLONG ?
 FILE_SEGMENT_ELEMENT	ENDS
 PFILE_SEGMENT_ELEMENT	typedef ptr FILE_SEGMENT_ELEMENT
-
-
 
 REPARSE_DATA_BUFFER	STRUC
 ReparseTag		dd ?
@@ -6286,24 +5269,17 @@ PREPARSE_GUID_DATA_BUFFER typedef ptr REPARSE_GUID_DATA_BUFFER
 
 REPARSE_GUID_DATA_BUFFER_HEADER_SIZE   equ FIELD_OFFSET(REPARSE_GUID_DATA_BUFFER, GenericReparseBuffer)
 
-
-
 REPARSE_POINT_INFORMATION	STRUC
 ReparseDataLength		dw ?
 UnparsedNameLength		dw ?
 REPARSE_POINT_INFORMATION	ENDS
 PREPARSE_POINT_INFORMATION	typedef ptr REPARSE_POINT_INFORMATION
 
-
 MAXIMUM_REPARSE_DATA_BUFFER_SIZE	equ 16 * 1024
-
 
 IO_REPARSE_TAG_RESERVED_ZERO		equ 0
 IO_REPARSE_TAG_RESERVED_ONE		equ 1
-
-
 IO_REPARSE_TAG_RESERVED_RANGE		equ IO_REPARSE_TAG_RESERVED_ONE
-
 
 IsReparseTagMicrosoft macro _tag
 	exitm<_tag and 0x80000000>
@@ -6326,14 +5302,11 @@ IO_REPARSE_TAG_DFS		equ 0x8000000A
 IO_REPARSE_TAG_SYMLINK		equ 0xA000000C
 IO_REPARSE_TAG_DFSR		equ 0x80000012
 
-
 IO_COMPLETION_MODIFY_STATE	equ 0x0002
 IO_COMPLETION_ALL_ACCESS	equ STANDARD_RIGHTS_REQUIRED OR SYNCHRONIZE OR 0x3
 
-
 DUPLICATE_CLOSE_SOURCE		equ 0x00000001
 DUPLICATE_SAME_ACCESS		equ 0x00000002
-
 
 PROCESSOR_PERF_BOOST_POLICY_DISABLED	equ 0
 PROCESSOR_PERF_BOOST_POLICY_MAX		equ 100
@@ -6401,11 +5374,9 @@ LATENCY_TIME			typedef sdword ; enum {
 LT_DONT_CARE			equ 0
 LT_LOWEST_LATENCY		equ 1
 
-
 if (_WIN32_WINNT GE _WIN32_WINNT_WIN7)
 
 DIAGNOSTIC_REASON_VERSION	equ 0
-
 DIAGNOSTIC_REASON_SIMPLE_STRING		equ 0x00000001
 DIAGNOSTIC_REASON_DETAILED_STRING	equ 0x00000002
 DIAGNOSTIC_REASON_NOT_SPECIFIED		equ 0x80000000
@@ -6417,7 +5388,6 @@ POWER_REQUEST_CONTEXT_VERSION		equ 0
 
 POWER_REQUEST_CONTEXT_SIMPLE_STRING	equ 0x00000001
 POWER_REQUEST_CONTEXT_DETAILED_STRING	equ 0x00000002
-
 
 POWER_REQUEST_TYPE		typedef sdword ; enum _
 PPOWER_REQUEST_TYPE		typedef ptr POWER_REQUEST_TYPE
@@ -6614,7 +5584,6 @@ State			PPM_WMI_PERF_STATE ANYSIZE_ARRAY dup(<>)
 PPM_WMI_PERF_STATES_EX	ENDS
 PPPM_WMI_PERF_STATES_EX typedef ptr PPM_WMI_PERF_STATES_EX
 
-
 PROC_IDLE_BUCKET_COUNT	equ 6
 
 PPM_IDLE_STATE_ACCOUNTING STRUC
@@ -6634,7 +5603,6 @@ StartTime		dd ?
 State			PPM_IDLE_STATE_ACCOUNTING ANYSIZE_ARRAY dup(<>)
 PPM_IDLE_ACCOUNTING	ENDS
 PPPM_IDLE_ACCOUNTING	typedef ptr PPM_IDLE_ACCOUNTING
-
 
 PROC_IDLE_BUCKET_COUNT_EX equ 16
 
@@ -6769,7 +5737,6 @@ NUM_DISCHARGE_POLICIES	equ 4
 DISCHARGE_POLICY_CRITICAL equ 0
 DISCHARGE_POLICY_LOW	equ 1
 
-
 SYSTEM_POWER_POLICY	STRUC
 Revision		dd ?
 PowerButton		POWER_ACTION_POLICY <>
@@ -6802,8 +5769,6 @@ OverThrottled		POWER_ACTION_POLICY <>
 SYSTEM_POWER_POLICY	ENDS
 PSYSTEM_POWER_POLICY	typedef ptr SYSTEM_POWER_POLICY
 
-
-
 PROCESSOR_IDLESTATE_POLICY_COUNT equ 0x3
 
 PROCESSOR_IDLESTATE_INFO STRUC
@@ -6831,13 +5796,11 @@ Policy			PROCESSOR_IDLESTATE_INFO PROCESSOR_IDLESTATE_POLICY_COUNT dup(<>)
 PROCESSOR_IDLESTATE_POLICY ENDS
 PPROCESSOR_IDLESTATE_POLICY typedef ptr PROCESSOR_IDLESTATE_POLICY
 
-
 PO_THROTTLE_NONE	equ 0
 PO_THROTTLE_CONSTANT	equ 1
 PO_THROTTLE_DEGRADE	equ 2
 PO_THROTTLE_ADAPTIVE	equ 3
 PO_THROTTLE_MAXIMUM	equ 4
-
 
 PROCESSOR_POWER_POLICY_INFO  STRUC
 TimeCheck		dd ?
@@ -6864,7 +5827,6 @@ PolicyCount		dd ?
 Policy			PROCESSOR_POWER_POLICY_INFO 3 dup(<>)
 PROCESSOR_POWER_POLICY	ENDS
 PPROCESSOR_POWER_POLICY typedef ptr PROCESSOR_POWER_POLICY
-
 
 PROCESSOR_PERFSTATE_POLICY STRUC
 Revision		dd ?
@@ -7040,7 +6002,6 @@ PIMAGE_VXD_HEADER	typedef ptr IMAGE_VXD_HEADER
 
 ;include "poppack.h"
 
-
 IMAGE_FILE_HEADER	STRUC
 Machine			dw ?
 NumberOfSections	dw ?
@@ -7054,7 +6015,6 @@ PIMAGE_FILE_HEADER	typedef ptr IMAGE_FILE_HEADER
 
 
 IMAGE_SIZEOF_FILE_HEADER	equ 20
-
 
 IMAGE_FILE_RELOCS_STRIPPED	     equ 0x0001
 IMAGE_FILE_EXECUTABLE_IMAGE	     equ 0x0002
@@ -7071,7 +6031,6 @@ IMAGE_FILE_SYSTEM		     equ 0x1000
 IMAGE_FILE_DLL			     equ 0x2000
 IMAGE_FILE_UP_SYSTEM_ONLY	     equ 0x4000
 IMAGE_FILE_BYTES_REVERSED_HI	     equ 0x8000
-
 
 IMAGE_FILE_MACHINE_UNKNOWN	equ 0
 IMAGE_FILE_MACHINE_I386		equ 0x014c
@@ -7111,7 +6070,6 @@ IMAGE_DATA_DIRECTORY	ENDS
 PIMAGE_DATA_DIRECTORY	typedef ptr IMAGE_DATA_DIRECTORY
 
 IMAGE_NUMBEROF_DIRECTORY_ENTRIES equ 16
-
 
 IMAGE_OPTIONAL_HEADER32		STRUC
 Magic				dw ?
@@ -7247,7 +6205,6 @@ IMAGE_NT_HEADERS	typedef IMAGE_NT_HEADERS32
 PIMAGE_NT_HEADERS	typedef PIMAGE_NT_HEADERS32
 endif
 
-
 IMAGE_FIRST_SECTION macro ntheader
 	endm
 
@@ -7280,7 +6237,6 @@ IMAGE_DLLCHARACTERISTICS_NO_SEH		equ 0x0400
 IMAGE_DLLCHARACTERISTICS_NO_BIND	equ 0x0800
 IMAGE_DLLCHARACTERISTICS_WDM_DRIVER	equ 0x2000
 IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE equ 0x8000
-
 
 IMAGE_DIRECTORY_ENTRY_EXPORT		equ 0
 IMAGE_DIRECTORY_ENTRY_IMPORT		equ 1
@@ -7408,7 +6364,6 @@ IMAGE_SCN_MEM_WRITE		equ 0x80000000
 
 IMAGE_SCN_SCALE_INDEX	equ 0x00000001
 
-
 IMAGE_SYMBOL		STRUC WORD
 UNION
     ShortName		db 8 dup(?)
@@ -7445,13 +6400,11 @@ NumberOfAuxSymbols	db ?
 IMAGE_SYMBOL_EX		ENDS
 PIMAGE_SYMBOL_EX	typedef ptr IMAGE_SYMBOL_EX
 
-
 IMAGE_SYM_UNDEFINED		equ 0
 IMAGE_SYM_ABSOLUTE		equ -1
 IMAGE_SYM_DEBUG			equ -2
 IMAGE_SYM_SECTION_MAX		equ 0xFEFF
 IMAGE_SYM_SECTION_MAX_EX	equ MAXLONG
-
 
 IMAGE_SYM_TYPE_NULL		equ 0x0000
 IMAGE_SYM_TYPE_VOID		equ 0x0001
@@ -7471,13 +6424,10 @@ IMAGE_SYM_TYPE_UINT		equ 0x000E
 IMAGE_SYM_TYPE_DWORD		equ 0x000F
 IMAGE_SYM_TYPE_PCODE		equ 0x8000
 
-
 IMAGE_SYM_DTYPE_NULL		equ 0
 IMAGE_SYM_DTYPE_POINTER		equ 1
 IMAGE_SYM_DTYPE_FUNCTION	equ 2
 IMAGE_SYM_DTYPE_ARRAY		equ 3
-
-
 
 IMAGE_SYM_CLASS_END_OF_FUNCTION	    equ -1
 IMAGE_SYM_CLASS_NULL		    equ 0x0000
@@ -7510,14 +6460,12 @@ IMAGE_SYM_CLASS_SECTION		    equ 0x0068
 IMAGE_SYM_CLASS_WEAK_EXTERNAL	    equ 0x0069
 IMAGE_SYM_CLASS_CLR_TOKEN	    equ 0x006B
 
-
 N_BTMASK    equ 0x000F
 N_TMASK	    equ 0x0030
 N_TMASK1    equ 0x00C0
 N_TMASK2    equ 0x00F0
 N_BTSHFT    equ 4
 N_TSHIFT    equ 2
-
 
 BTYPE	macro x
 	exitm<((x) and N_BTMASK)>
@@ -7564,7 +6512,6 @@ IMAGE_AUX_SYMBOL_TOKEN_DEF ENDS
 PIMAGE_AUX_SYMBOL_TOKEN_DEF typedef ptr IMAGE_AUX_SYMBOL_TOKEN_DEF
 
 ;include <poppack.h>
-
 
 IMAGE_AUX_SYMBOL	UNION
 STRUC
@@ -7635,8 +6582,6 @@ IMAGE_AUX_SYMBOL_TYPE_TOKEN_DEF equ 1
 
 IMAGE_SIZEOF_AUX_SYMBOL equ 18
 
-
-
 IMAGE_COMDAT_SELECT_NODUPLICATES    equ 1
 IMAGE_COMDAT_SELECT_ANY		    equ 2
 IMAGE_COMDAT_SELECT_SAME_SIZE	    equ 3
@@ -7645,11 +6590,9 @@ IMAGE_COMDAT_SELECT_ASSOCIATIVE	    equ 5
 IMAGE_COMDAT_SELECT_LARGEST	    equ 6
 IMAGE_COMDAT_SELECT_NEWEST	    equ 7
 
-
 IMAGE_WEAK_EXTERN_SEARCH_NOLIBRARY  equ 1
 IMAGE_WEAK_EXTERN_SEARCH_LIBRARY    equ 2
 IMAGE_WEAK_EXTERN_SEARCH_ALIAS	    equ 3
-
 
 IMAGE_RELOCATION	STRUC
 UNION
@@ -7662,7 +6605,6 @@ IMAGE_RELOCATION	ENDS
 PIMAGE_RELOCATION	typedef ptr IMAGE_RELOCATION
 
 IMAGE_SIZEOF_RELOCATION equ 10
-
 
 IMAGE_REL_I386_ABSOLUTE		equ 0x0000
 IMAGE_REL_I386_DIR16		equ 0x0001
@@ -7693,7 +6635,6 @@ IMAGE_REL_MIPS_JMPADDR16	equ 0x0010
 IMAGE_REL_MIPS_REFWORDNB	equ 0x0022
 IMAGE_REL_MIPS_PAIR		equ 0x0025
 
-
 IMAGE_REL_ALPHA_ABSOLUTE	equ 0x0000
 IMAGE_REL_ALPHA_REFLONG		equ 0x0001
 IMAGE_REL_ALPHA_REFQUAD		equ 0x0002
@@ -7718,8 +6659,6 @@ IMAGE_REL_ALPHA_REFQ2		equ 0x0014
 IMAGE_REL_ALPHA_REFQ1		equ 0x0015
 IMAGE_REL_ALPHA_GPRELLO		equ 0x0016
 IMAGE_REL_ALPHA_GPRELHI		equ 0x0017
-
-
 
 IMAGE_REL_PPC_ABSOLUTE		equ 0x0000
 IMAGE_REL_PPC_ADDR64		equ 0x0001
@@ -7747,7 +6686,6 @@ IMAGE_REL_PPC_GPREL		equ 0x0015
 IMAGE_REL_PPC_TOKEN		equ 0x0016
 
 IMAGE_REL_PPC_TYPEMASK		equ 0x00FF
-
 
 IMAGE_REL_PPC_NEG		equ 0x0100
 IMAGE_REL_PPC_BRTAKEN		equ 0x0200
@@ -7806,7 +6744,6 @@ IMAGE_REL_AM_SECREL		equ 0x0007
 IMAGE_REL_AM_SECTION		equ 0x0008
 IMAGE_REL_AM_TOKEN		equ 0x0009
 
-
 IMAGE_REL_AMD64_ABSOLUTE	equ 0x0000 ; Reference is absolute, no relocation is necessary
 IMAGE_REL_AMD64_ADDR64		equ 0x0001 ; 64-bit address (VA)
 IMAGE_REL_AMD64_ADDR32		equ 0x0002 ; 32-bit address (VA)
@@ -7824,7 +6761,6 @@ IMAGE_REL_AMD64_TOKEN		equ 0x000D ; 32 bit metadata token
 IMAGE_REL_AMD64_SREL32		equ 0x000E
 IMAGE_REL_AMD64_PAIR		equ 0x000F
 IMAGE_REL_AMD64_SSPAN32		equ 0x0010
-
 
 IMAGE_REL_IA64_ABSOLUTE		equ 0x0000
 IMAGE_REL_IA64_IMM14		equ 0x0001
@@ -8348,7 +7284,6 @@ IMAGE_DEBUG_TYPE_OMAP_FROM_SRC	equ 8
 IMAGE_DEBUG_TYPE_BORLAND	equ 9
 IMAGE_DEBUG_TYPE_RESERVED10	equ 10
 IMAGE_DEBUG_TYPE_CLSID		equ 11
-
 
 IMAGE_COFF_SYMBOLS_HEADER	STRUC
 NumberOfSymbols			dd ?
@@ -9012,7 +7947,6 @@ VER_PLATFORM_WIN32_NT	equ 2
 VER_SET_CONDITION macro _m_,_t_,_c_
 	exitm<mov _m_,VerSetConditionMask(_m_,_t_,_c_)>
 	endm
-
 
 if (NTDDI_VERSION GE NTDDI_WIN2K)
 ;NTSYSAPI

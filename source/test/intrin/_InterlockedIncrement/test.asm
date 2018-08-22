@@ -1,0 +1,90 @@
+;; https://docs.microsoft.com/en-us/cpp/intrinsics/interlockeddecrement-intrinsic-functions
+;; compiler_intrinsics_interlocked.cpp
+;; compile with: /Oi
+_CRT_RAND_S equ <>
+
+include stdlib.inc
+include limits.inc
+include stdio.inc
+include process.inc
+include windows.inc
+include directxmath.inc
+
+;; To declare an interlocked function for use as an intrinsic,
+;; include intrin.h and put the function in a #pragma intrinsic
+;; statement.
+include intrin.inc
+
+.data
+;; Data to protect with the interlocked functions.
+pdata LONG 1
+
+.code
+SimpleThread proto pParam:PVOID
+
+THREAD_COUNT equ 6
+
+main proc
+
+  local num:DWORD
+  local threads[THREAD_COUNT]:HANDLE
+  local ThreadId[THREAD_COUNT]:SINT
+  local param[THREAD_COUNT]:SINT
+  local i:SINT
+
+    .for (ebx = 0: ebx < THREAD_COUNT: ebx++)
+
+        lea rax,[rbx+1]
+        lea rdi,ThreadId[rbx*4]
+        lea r9,param[rbx*4]
+        mov [rdi],eax
+        mov [r9],eax
+
+        CreateThread(NULL, NULL, &SimpleThread, r9, NORMAL_PRIORITY_CLASS, rdi)
+        mov threads[rbx*sizeof(HANDLE)],rax
+        .break .if !rax ;; error creating threads
+    .endf
+
+    WaitForMultipleObjects(ebx, &threads, 1, INFINITE)
+    ret
+
+main endp
+
+;; Code for our simple thread
+SimpleThread proc pParam:PVOID
+
+  local threadNum:SINT
+  local counter:SINT
+  local randomValue:UINT
+  local time:UINT
+  local err:SINT
+
+    mov eax,[rcx]
+    mov threadNum,eax
+
+    .if rand_s(&randomValue)
+
+        mov      rax,UINT_MAX * 500
+        mov      ecx,randomValue
+        cvtsi2sd xmm1,rax
+        cvtsi2sd xmm0,rcx
+        divsd    xmm0,xmm1
+        cvtsd2si rax,xmm0
+        mov      time,eax
+
+        .while (pdata < 100)
+            .if (pdata < 100)
+
+                _InterlockedIncrement(&pdata)
+                printf("Thread %d: %d\n", threadNum, pdata)
+            .endif
+            Sleep(time) ;; wait up to half of a second
+        .endw
+    .endif
+
+    printf("Thread %d complete: %d\n", threadNum, pdata)
+    ret
+
+SimpleThread endp
+
+    end

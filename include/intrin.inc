@@ -1,5 +1,10 @@
 ifndef __INTRIN_H_
 __INTRIN_H_ equ <>
+.pragma list(push, 0)
+ifndef __LIBC_INC
+ include libc.inc
+endif
+
 include intrin0.inc
 include vcruntime.inc
 if (defined(_M_IX86) OR defined(_M_X64)) AND NOT defined(_CHPE_ONLY_)
@@ -9,94 +14,840 @@ endif
 if defined (_M_IX86) AND NOT defined(_CHPE_ONLY_)
 include mm3dnow.inc
 endif
+
+;
+; Note: This assumes a standard stack frame.
+;
+_AddressOfReturnAddress macro
+    lea rax,[rbp+size_t]
+    retm<rax>
+    endm
+
+_ReturnAddress macro
+    mov rax,[rbp+size_t]
+    retm<rax>
+    endm
+
+__nop macro
+    nop
+    retm<>
+    endm
+
+__debugbreak macro
+    int 3
+    retm<>
+    endm
+
+_mm_loadreg macro reg, arg
+    ifidn @SubStr(arg,1,1),<&>
+        lea reg,@SubStr(arg,2)
+    elseifdif <arg>,<reg>
+        mov reg,arg
+    endif
+    retm<reg>
+    endm
+
+_mm_storereg macro lp, reg, tmp:=<rcx>
+    ifidn @SubStr(lp,1,1),<&>
+        mov @SubStr(lp,2),reg
+    elseif (opattr lp) eq 48
+        mov [lp],reg
+    else
+        mov tmp,lp
+        mov [tmp],reg
+    endif
+    retm<>
+    endm
+
+_BitScanForward macro lpIndex, dwMask
+    bsf eax,_mm_loadreg(eax, dwMask)
+    _mm_storereg(lpIndex, eax)
+    retm<al>
+    endm
+
+_BitScanReverse macro lpIndex, dwMask
+    bsr eax,_mm_loadreg(eax, dwMask)
+    _mm_storereg(lpIndex, eax)
+    retm<al>
+    endm
+
+ifdef __MACHINEX64
+_BitScanForward64 macro lpIndex, dwMask
+    bsf rax,_mm_loadreg(rax, dwMask)
+    _mm_storereg(lpIndex, eax)
+    retm<al>
+    endm
+_BitScanReverse64 macro lpIndex, dwMask
+    bsr rax,_mm_loadreg(rax, dwMask)
+    _mm_storereg(lpIndex, eax)
+    retm<al>
+    endm
+endif
+
+_InterlockedCompareExchange macro Destination, Exchange, Comparand
+    _mm_loadreg(rcx, Destination)
+    _mm_loadreg(edx, Exchange)
+    _mm_loadreg(eax, Comparand)
+    push [rcx]
+    lock cmpxchg dword ptr [rcx],edx
+    pop rax
+    retm<eax>
+    endm
+
+_InterlockedCompareExchange8 macro Destination, Exchange, Comparand
+    _mm_loadreg(rcx, Destination)
+    _mm_loadreg(dl, Exchange)
+    _mm_loadreg(al, Comparand)
+    push [rcx]
+    lock cmpxchg byte ptr [rcx],dl
+    pop rax
+    retm<al>
+    endm
+
+_InterlockedCompareExchange16 macro Destination, Exchange, Comparand
+    _mm_loadreg(rcx, Destination)
+    _mm_loadreg(dx, Exchange)
+    _mm_loadreg(ax, Comparand)
+    push [rcx]
+    lock cmpxchg word ptr [rcx],dl
+    pop rax
+    retm<ax>
+    endm
+
+_InterlockedCompareExchange64 macro Destination, Exchange, Comparand
+    _mm_loadreg(rcx, Destination)
+    _mm_loadreg(rdx, Exchange)
+    _mm_loadreg(rax, Comparand)
+    push [rcx]
+    lock cmpxchg size_t ptr [rcx],rdx
+    pop rax
+    retm<rax>
+    endm
+
+_InterlockedCompareExchangePointer equ <_InterlockedCompareExchange64>
+
+_InterlockedDecrement16 macro lpAddend
+    _mm_loadreg(rcx, lpAddend)
+    lock dec word ptr [rcx]
+    mov ax,[rcx]
+    retm<ax>
+    endm
+
+_InterlockedDecrement macro lpAddend
+    _mm_loadreg(rcx, lpAddend)
+    lock dec dword ptr [rcx]
+    mov eax,[rcx]
+    retm<eax>
+    endm
+
+ifdef __MACHINEX64
+_InterlockedDecrement64 macro lpAddend
+    _mm_loadreg(rcx, lpAddend)
+    lock dec qword ptr [rcx]
+    mov rax,[rcx]
+    retm<rax>
+    endm
+endif
+
+_InterlockedIncrement16 macro lpAddend
+    _mm_loadreg(rcx, lpAddend)
+    lock inc word ptr [rcx]
+    mov ax,[rcx]
+    retm<ax>
+    endm
+
+_InterlockedIncrement macro lpAddend
+    _mm_loadreg(rcx, lpAddend)
+    lock inc dword ptr [rcx]
+    mov eax,[rcx]
+    retm<eax>
+    endm
+
+ifdef __MACHINEX64
+_InterlockedIncrement64 macro lpAddend
+    _mm_loadreg(rcx, lpAddend)
+    lock inc qword ptr [rcx]
+    mov rax,[rcx]
+    retm<rax>
+    endm
+endif
+
+_InterlockedExchangePointer macro Target, Value
+    _mm_loadreg(rcx, Target)
+    _mm_loadreg(rdx, Value)
+    mov rax,[rcx]
+    xchg [rcx],rdx
+    retm<rax>
+    endm
+
+__fastfail macro code
+    mov ecx,code
+    int 0x29
+    retm<>
+    endm
+
+_bittest macro lp, imm
+    if (opattr lp) eq 48
+        bt dword ptr [lp],imm
+    else
+        mov rcx,lp
+        bt dword ptr [rcx],imm
+    endif
+    setb al
+    retm<al>
+    endm
+
+_bittestandcomplement macro lp, imm
+    if (opattr lp) eq 48
+        btc dword ptr [lp],imm
+    else
+        mov rcx,lp
+        btc dword ptr [rcx],imm
+    endif
+    setb al
+    retm<al>
+    endm
+
+_bittestandreset macro lp, imm
+    if (opattr lp) eq 48
+        btr dword ptr [lp],imm
+    else
+        mov rcx,lp
+        btr dword ptr [rcx],imm
+    endif
+    setb al
+    retm<al>
+    endm
+
+_bittestandset macro lp, imm
+    if (opattr lp) eq 48
+        bts dword ptr [lp],imm
+    else
+        mov rcx,lp
+        bts dword ptr [rcx],imm
+    endif
+    setb al
+    retm<al>
+    endm
+
+_interlockedbittestandreset macro lp, imm
+    if (opattr lp) eq 48
+        lock btr dword ptr [lp],imm
+    else
+        mov rcx,lp
+        lock btr dword ptr [rcx],imm
+    endif
+    setb al
+    retm<al>
+    endm
+
+_byteswap_ulong macro val
+    _mm_loadreg(eax, val)
+    bswap eax
+    retm<eax>
+    endm
+
+_byteswap_uint64 macro val
+    _mm_loadreg(rax, val)
+    bswap rax
+    retm<rax>
+    endm
+
+_byteswap_ushort macro val
+    _mm_loadreg(ax, val)
+    ror ax,8
+    retm<ax>
+    endm
+
+_disable macro
+    cli
+    retm<>
+    endm
+
+_enable macro
+    sti
+    retm<>
+    endm
+
+_mm_rotl macro reg, val, cnt
+    _mm_loadreg(reg, val)
+    rol reg,cnt
+    retm<reg>
+    endm
+
+_mm_rotr macro reg, val, cnt
+    _mm_loadreg(reg, val)
+    ror reg,cnt
+    retm<reg>
+    endm
+
+_rotl macro val, cnt
+    exitm<_mm_rotl(eax, val, cnt)>
+    endm
+_rotr macro val, cnt
+    exitm<_mm_rotr(eax, val, cnt)>
+    endm
+_lrotl  equ <_rotl>
+_lrotr  equ <_rotr>
+_rotl16 macro val, cnt
+    exitm<_mm_rotl(ax, val, cnt)>
+    endm
+_rotl64 macro val, cnt
+    exitm<_mm_rotl(rax, val, cnt)>
+    endm
+_rotl8 macro val, cnt
+    exitm<_mm_rotl(al, val, cnt)>
+    endm
+_rotr16 macro val, cnt
+    exitm<_mm_rotr(ax, val, cnt)>
+    endm
+_rotr64 macro val, cnt
+    exitm<_mm_rotr(rax, val, cnt)>
+    endm
+_rotr8 macro val, cnt
+    exitm<_mm_rotr(al, val, cnt)>
+    endm
+
+ifdef __MACHINEX86
+_InterlockedAddLargeStatistic macro lpAddend, dwValue
+    _mm_loadreg(ecx, lpAddend)
+    _mm_loadreg(eax, dwValue)
+    lock add [ecx],eax
+    .ifc
+        lock add [ecx+4],0
+    .endif
+    retm<eax>
+    endm
+endif
+
+ifdef __MACHINEX64
+
+_InterlockedAnd macro lpValue, dwMask
+    _mm_loadreg(rcx, lpValue)
+    _mm_loadreg(edx, dwMask)
+    mov eax,[rcx]
+    lock and [rcx],edx
+    retm<eax>
+    endm
+
+_InterlockedAnd8 macro lpValue, dwMask
+    _mm_loadreg(rcx, lpValue)
+    _mm_loadreg(dl, dwMask)
+    movzx eax,byte ptr [rcx]
+    lock and [rcx],dl
+    retm<eax>
+    endm
+
+_InterlockedAnd16 macro lpValue, dwMask
+    _mm_loadreg(rcx, lpValue)
+    _mm_loadreg(dx, dwMask)
+    movzx eax,word ptr [rcx]
+    lock and [rcx],dx
+    retm<eax>
+    endm
+
+_InterlockedAnd64 macro lpValue, dwMask
+    _mm_loadreg(rcx, lpValue)
+    _mm_loadreg(rdx, dwMask)
+    mov rax,[rcx]
+    lock and [rcx],rdx
+    retm<rax>
+    endm
+
+_InterlockedOr macro lpValue, dwMask
+    _mm_loadreg(rcx, lpValue)
+    _mm_loadreg(edx, dwMask)
+    mov eax,[rcx]
+    lock or [rcx],edx
+    retm<eax>
+    endm
+
+_InterlockedOr8 macro lpValue, dwMask
+    _mm_loadreg(rcx, lpValue)
+    _mm_loadreg(dl, dwMask)
+    movzx eax,byte ptr [rcx]
+    lock or [rcx],dl
+    retm<eax>
+    endm
+
+_InterlockedOr16 macro lpValue, dwMask
+    _mm_loadreg(rcx, lpValue)
+    _mm_loadreg(dx, dwMask)
+    movzx eax,word ptr [rcx]
+    lock or [rcx],dx
+    retm<eax>
+    endm
+
+_InterlockedOr64 macro lpValue, dwMask
+    _mm_loadreg(rcx, lpValue)
+    _mm_loadreg(rdx, dwMask)
+    mov rax,[rcx]
+    lock or [rcx],rdx
+    retm<rax>
+    endm
+
+_InterlockedXor macro lpValue, dwMask
+    _mm_loadreg(rcx, lpValue)
+    _mm_loadreg(edx, dwMask)
+    mov eax,[rcx]
+    lock or [rcx],edx
+    retm<eax>
+    endm
+
+_InterlockedXor8 macro lpValue, dwMask
+    _mm_loadreg(rcx, lpValue)
+    _mm_loadreg(dl, dwMask)
+    movzx eax,byte ptr [rcx]
+    lock xor [rcx],dl
+    retm<eax>
+    endm
+
+_InterlockedXor16 macro lpValue, dwMask
+    _mm_loadreg(rcx, lpValue)
+    _mm_loadreg(dx, dwMask)
+    movzx eax,word ptr [rcx]
+    lock xor [rcx],dx
+    retm<eax>
+    endm
+
+_InterlockedXor64 macro lpValue, dwMask
+    _mm_loadreg(rcx, lpValue)
+    _mm_loadreg(rdx, dwMask)
+    mov rax,[rcx]
+    lock xor [rcx],rdx
+    retm<rax>
+    endm
+
+_InterlockedAnd_np      equ <_InterlockedAnd>
+_InterlockedAnd8_np     equ <_InterlockedAnd8>
+_InterlockedAnd16_np    equ <_InterlockedAnd16>
+_InterlockedAnd64_np    equ <_InterlockedAnd64>
+
+_InterlockedOr_np       equ <_InterlockedOr>
+_InterlockedOr8_np      equ <_InterlockedOr8>
+_InterlockedOr16_np     equ <_InterlockedOr16>
+_InterlockedOr64_np     equ <_InterlockedOr64>
+
+_InterlockedXor_np      equ <_InterlockedXor>
+_InterlockedXor8_np     equ <_InterlockedXor8>
+_InterlockedXor16_np    equ <_InterlockedXor16>
+_InterlockedXor64_np    equ <_InterlockedXor64>
+
+_InterlockedCompareExchange128_np       equ <_InterlockedCompareExchange128>
+_InterlockedCompareExchange16_np        equ <_InterlockedCompareExchange16>
+_InterlockedCompareExchange64_np        equ <_InterlockedCompareExchange64>
+_InterlockedCompareExchangePointer_np   equ <_InterlockedCompareExchangePointer>
+_InterlockedCompareExchange_np          equ <_InterlockedCompareExchange>
+
+endif ;; __MACHINEX64
+
+ifdef __MACHINEX86
+__addfsbyte macro offs, b
+    assume fs:nothing
+    add byte ptr fs:[offs],b
+    assume fs:error
+    retm<>
+    endm
+__addfsdword macro offs, w
+    assume fs:nothing
+    add word ptr fs:[offs],w
+    assume fs:error
+    retm<>
+    endm
+__addfsword macro offs, l
+    assume fs:nothing
+    add dword ptr fs:[offs],l
+    assume fs:error
+    retm<>
+    endm
+endif
+
+ifdef __MACHINEX64
+__addgsbyte macro offs, v
+    add byte ptr gs:[offs],v
+    retm<>
+    endm
+__addgsword macro offs, v
+    add word ptr gs:[offs],v
+    retm<>
+    endm
+__addgsdword macro offs, v
+    add dword ptr gs:[offs],v
+    retm<>
+    endm
+__addgsqword macro offs, v
+    add qword ptr gs:[offs],v
+    retm<>
+    endm
+__incgsbyte macro offs
+    inc byte ptr gs:[offs]
+    retm<>
+    endm
+__incgsdword macro offs
+    inc dword ptr gs:[offs]
+    retm<>
+    endm
+__incgsqword macro offs
+    inc qword ptr gs:[offs]
+    retm<>
+    endm
+__incgsword macro offs
+    inc word ptr gs:[offs]
+    retm<>
+    endm
+endif
+
+ifdef __MACHINEX86
+__incfsbyte macro offs
+    assume fs:nothing
+    inc byte ptr fs:[offs]
+    assume fs:error
+    retm<>
+    endm
+__incfsdword macro offs
+    assume fs:nothing
+    inc dword ptr fs:[offs]
+    assume fs:error
+    retm<>
+    endm
+__incfsword macro offs
+    assume fs:nothing
+    inc word ptr fs:[offs]
+    assume fs:error
+    retm<>
+    endm
+endif
+
+ifdef __MACHINEX86_X64
+
+__clts macro
+    exitm<clts>
+    endm
+
+__cpuid macro cpuInfo, function_id
+    push rsi
+    push rbx
+    _mm_loadreg(rsi, cpuInfo)
+    _mm_loadreg(eax, function_id)
+    xor ecx,ecx
+    cpuid
+    mov [rsi],eax
+    mov [rsi+4],ebx
+    mov [rsi+8],ecx
+    mov [rsi+12],edx
+    pop rbx
+    pop rsi
+    retm<eax>
+    endm
+
+__cpuidex macro cpuInfo, function_id, subfunction_id
+    push rsi
+    push rbx
+    _mm_loadreg(rsi, cpuInfo)
+    _mm_loadreg(eax, function_id)
+    _mm_loadreg(ecx, subfunction_id)
+    cpuid
+    mov [rsi],eax
+    mov [rsi+4],ebx
+    mov [rsi+8],ecx
+    mov [rsi+12],edx
+    pop rbx
+    pop rsi
+    retm<eax>
+    endm
+
+__emul macro a, b
+    _mm_loadreg(ecx, a)
+    _mm_loadreg(edx, b)
+    movsxd r8,ecx
+    movsxd rax,edx
+    imul r8
+    retm<rax>
+    endm
+
+__emulu macro a, b
+    _mm_loadreg(ecx, a)
+    _mm_loadreg(eax, b)
+    mul rcx
+    retm<rax>
+    endm
+
+endif
+
+ifdef __MACHINEX64
+_mul128 macro Multiplier, Multiplicand, HighProduct
+    _mm_loadreg(rcx, Multiplier)
+    _mm_loadreg(rdx, Multiplicand)
+    mov rax,rdx
+    imul rcx
+    _mm_storereg(HighProduct, rdx)
+    retm<rax>
+    endm
+
+_umul128 macro Multiplier, Multiplicand, HighProduct
+    _mm_loadreg(rcx, Multiplier)
+    _mm_loadreg(rdx, Multiplicand)
+    mov rax,rdx
+    mul rcx
+    _mm_storereg(HighProduct, rdx)
+    retm<rax>
+    endm
+endif
+
+ifdef __MACHINEX86_X64
+__ll_lshift macro __mask, nBit
+    _mm_loadreg(rax, __mask)
+    _mm_loadreg(ecx, nBit)
+    shl rax,cl
+    retm<rax>
+    endm
+
+__ll_rshift macro __mask, nBit
+    _mm_loadreg(rax, __mask)
+    _mm_loadreg(ecx, nBit)
+    sar rax,cl
+    retm<rax>
+    endm
+
+__ull_rshift macro __mask, nBit
+    _mm_loadreg(rax, __mask)
+    _mm_loadreg(ecx, nBit)
+    shr rax,cl
+    retm<rax>
+    endm
+endif
+
+ifdef __MACHINEX64
+__faststorefence macro
+    lock or dword ptr [rsp],0
+    retm<>
+    endm
+endif
+
+ifdef __MACHINEX86_X64
+__getcallerseflags macro
+    pushfq
+    pop rax
+    retm<eax>
+    endm
+
+__halt macro
+    hlt
+    retm<>
+    endm
+
+__inbyte macro Port
+    _mm_loadreg(edx, Port)
+    in al,dx
+    retm<al>
+    endm
+
+__inword macro Port
+    _mm_loadreg(edx, Port)
+    in ax,dx
+    retm<ax>
+    endm
+
+__indword macro Port
+    _mm_loadreg(edx, Port)
+    in eax,dx
+    retm<eax>
+    endm
+
+__inbytestring macro Port, Buffer, Count
+    push rdi
+    _mm_loadreg(rdi, Buffer)
+    _mm_loadreg(edx, Port)
+    _mm_loadreg(ecx, Count)
+    rep insb
+    pop rdi
+    retm<>
+    endm
+
+__indwordstring macro Port, Buffer, Count
+    push rdi
+    _mm_loadreg(rdi, Buffer)
+    _mm_loadreg(edx, Port)
+    _mm_loadreg(ecx, Count)
+    rep insw
+    pop rdi
+    retm<>
+    endm
+
+__int2c macro
+    int 0x2c
+    retm<>
+    endm
+
+__invlpg macro Address
+    _mm_loadreg(rcx, Address)
+    invlpg byte ptr [rcx]
+    retm<>
+    endm
+
+__lidt macro Address
+    _mm_loadreg(rcx, Address)
+    lidt byte ptr [rcx]
+    retm<>
+    endm
 if 0
-__MACHINE(_AddressOfReturnAddress proto)
-__MACHINE(_BitScanForward proto :ptr dword, :dword)
-__MACHINEX64(_BitScanForward64 proto :ptr dword, :qword)
-__MACHINE(_BitScanReverse proto :ptr dword, :dword)
-__MACHINEX64(_BitScanReverse64 proto :ptr dword, :qword)
-__MACHINEX86(_InterlockedAddLargeStatistic proto :ptr, :sdword)
-__MACHINEX64(_InterlockedAnd16_np proto :ptr, :sword)
-__MACHINEX64(_InterlockedAnd64_np proto :ptr, :qword)
-__MACHINEX64(_InterlockedAnd8_np proto :ptr, :sbyte)
-__MACHINEX64(_InterlockedAnd_np proto :ptr, :sdword)
-__MACHINEX64(_InterlockedCompareExchange128_np proto :ptr, :qword, :qword, :ptr)
-__MACHINEX64(_InterlockedCompareExchange16_np proto :ptr sword, :sword, :sword)
-__MACHINEX64(_InterlockedCompareExchange64_np proto :ptr, :qword, :qword)
-__MACHINE(_InterlockedCompareExchangePointer proto :ptr, :ptr, :ptr)
-__MACHINEX64(_InterlockedCompareExchangePointer_np proto :ptr, :ptr, :ptr)
-__MACHINEX64(_InterlockedCompareExchange_np proto :ptr, :sdword, :sdword)
-__MACHINE(_InterlockedDecrement16 proto :ptr)
-__MACHINE(_InterlockedExchangePointer proto :ptr, :ptr)
-__MACHINE(_InterlockedIncrement16 proto :ptr)
-__MACHINEX64(_InterlockedOr16_np proto :ptr, :sword)
-__MACHINEX64(_InterlockedOr64_np proto :ptr, :qword)
-__MACHINEX64(_InterlockedOr8_np proto :ptr, :sbyte)
-__MACHINEX64(_InterlockedOr_np proto :ptr, :sdword)
-__MACHINEX64(_InterlockedXor16_np proto :ptr, :sword)
-__MACHINEX64(_InterlockedXor64_np proto :ptr, :qword)
-__MACHINEX64(_InterlockedXor8_np proto :ptr, :sbyte)
-__MACHINEX64(_InterlockedXor_np proto :ptr, :sdword)
-__MACHINE(_ReadBarrier proto)
-__MACHINE(_ReturnAddress proto)
-__MACHINE(_WriteBarrier proto)
-__MACHINEX86(__addfsbyte proto :dword, :byte)
-__MACHINEX86(__addfsdword proto :dword, :dword)
-__MACHINEX86(__addfsword proto :dword, :word)
-__MACHINEX64(__addgsbyte proto :dword, :byte)
-__MACHINEX64(__addgsdword proto :dword, :dword)
-__MACHINEX64(__addgsqword proto :dword, :qword)
-__MACHINEX64(__addgsword proto :dword, :word)
-__MACHINEX86_X64(__clts proto)
-__MACHINE(__code_seg proto :ptr)
-__MACHINEX86_X64(__cpuid proto :ptr, :sdword)
-__MACHINEX86_X64(__cpuidex proto :ptr, :sdword, :sdword)
-__MACHINE(__debugbreak proto __cdecl)
-__MACHINEX86_X64(__emul proto :sdword, :sdword)
-__MACHINEX86_X64(__emulu proto :dword, :dword)
-__MACHINE(__fastfail proto :dword)
-__MACHINEX64(__faststorefence proto)
-__MACHINEX86_X64(__getcallerseflags proto)
-__MACHINEX86_X64(__halt proto)
-__MACHINEX86_X64(__inbyte proto :word)
-__MACHINEX86_X64(__inbytestring proto :word, LPSTR, :dword)
-__MACHINEX86(__incfsbyte proto :dword)
-__MACHINEX86(__incfsdword proto :dword)
-__MACHINEX86(__incfsword proto :dword)
-__MACHINEX64(__incgsbyte proto :dword)
-__MACHINEX64(__incgsdword proto :dword)
-__MACHINEX64(__incgsqword proto :dword)
-__MACHINEX64(__incgsword proto :dword)
-__MACHINEX86_X64(__indword proto :word)
-__MACHINEX86_X64(__indwordstring proto :word, :ptr, :dword)
-__MACHINEX86_X64(__int2c proto)
-__MACHINEX86_X64(__invlpg proto :ptr)
-__MACHINEX86_X64(__inword proto :word)
-__MACHINEX86_X64(__inwordstring proto :word, :ptr, :dword)
-__MACHINEX86_X64(__lidt proto :ptr)
-__MACHINEX86_X64(__ll_lshift proto :qword, :sdword)
-__MACHINEX86_X64(__ll_rshift proto :qword, :sdword)
-__MACHINEX86_X64(__lzcnt proto :dword)
-__MACHINEX86_X64(__lzcnt16 proto :word)
-__MACHINEX64(__lzcnt64 proto :qword)
-__MACHINEX86_X64(__movsb proto :LPSTR, :LPSTR, :size_t)
-__MACHINEX86_X64(__movsd proto :ptr, :ptr, :size_t)
-__MACHINEX64(__movsq proto :ptr, :ptr, :size_t)
-__MACHINEX86_X64(__movsw proto :ptr, :ptr, :size_t)
-__MACHINE(__nop proto)
-__MACHINEX86_X64(__nvreg_restore_fence proto)
-__MACHINEX86_X64(__nvreg_save_fence proto)
-__MACHINEX86_X64(__outbyte proto :word, :byte)
-__MACHINEX86_X64(__outbytestring proto :word, LPSTR, :dword)
-__MACHINEX86_X64(__outdword proto :word, :dword)
-__MACHINEX86_X64(__outdwordstring proto :word, :ptr, :dword)
-__MACHINEX86_X64(__outword proto :word, :word)
-__MACHINEX86_X64(__outwordstring proto :word, :ptr, :dword)
-__MACHINEX86_X64(__popcnt proto :dword)
-__MACHINEX86_X64(__popcnt16 proto :word)
-__MACHINEX64(__popcnt64 proto :qword)
-__MACHINEX86_X64(__rdtsc proto)
-__MACHINEX86_X64(__rdtscp proto :ptr)
+__lzcnt macro value
+    lzcnt eax,value
+    retm<eax>
+    endm
+
+__lzcnt16 macro value
+    lzcnt eax,value
+    retm<eax>
+    endm
+endif
+endif
+
+ifdef __MACHINEX64
+if 0
+__lzcnt64 macro value
+    lzcnt eax,value
+    retm<eax>
+    endm
+
+endif
+endif
+
+ifdef __MACHINEX86_X64
+
+__movs macro x, Destination, Source, Count
+    push rsi
+    push rdi
+    _mm_loadreg(rdi, Destination)
+    _mm_loadreg(rsi, Source)
+    _mm_loadreg(ecx, Count)
+    rep movs&x&
+    pop rdi
+    pop rsi
+    retm<>
+    endm
+
+__movsb macro Destination, Source, Count
+    exitm<__movs(b, Destination, Source, Count)>
+    endm
+
+__movsd macro Destination, Source, Count
+    exitm<__movs(d, Destination, Source, Count)>
+    endm
+
+__movsw macro Destination, Source, Count
+    exitm<__movs(w, Destination, Source, Count)>
+    endm
+
+endif
+
+ifdef __MACHINEX64
+__movsq macro Destination, Source, Count
+    exitm<__movs(q, Destination, Source, Count)>
+    endm
+endif
+
+ifdef __MACHINEX86_X64
+__nvreg_restore_fence macro
+    endm
+__nvreg_save_fence macro
+    endm
+endif
+
+ifdef __MACHINEX86_X64
+__outbyte macro Port, val
+    _mm_loadreg(edx, Port)
+    _mm_loadreg(al, val)
+    out dx,al
+    retm<>
+    endm
+__outword macro Port, val
+    _mm_loadreg(edx, Port)
+    _mm_loadreg(ax, val)
+    out dx,ax
+    retm<>
+    endm
+__outdword macro Port, val
+    _mm_loadreg(edx, Port)
+    _mm_loadreg(eax, val)
+    out dx,eax
+    retm<>
+    endm
+
+__outbytestring macro Port, Buffer, Count
+    push rdi
+    _mm_loadreg(rdi, Buffer)
+    _mm_loadreg(edx, Port)
+    _mm_loadreg(ecx, Count)
+    rep outsb
+    pop rdi
+    retm<>
+    endm
+__outdwordstring macro Port, Buffer, Count
+    push rdi
+    _mm_loadreg(rdi, Buffer)
+    _mm_loadreg(edx, Port)
+    _mm_loadreg(ecx, Count)
+    rep outsd
+    pop rdi
+    retm<>
+    endm
+__outwordstring macro Port, Buffer, Count
+    push rdi
+    _mm_loadreg(rdi, Buffer)
+    _mm_loadreg(edx, Port)
+    _mm_loadreg(ecx, Count)
+    rep outsw
+    pop rdi
+    retm<>
+    endm
+endif
+
+ifdef __MACHINEX86_X64
+__popcnt macro value
+    popcnt eax,value
+    retm<eax>
+    endm
+
+__popcnt16 macro value
+    popcnt ax,value
+    retm<ax>
+    endm
+endif
+
+ifdef __MACHINEX64
+__popcnt64 macro value
+    popcnt rax,value
+    retm<rax>
+    endm
+endif
+
+ifdef __MACHINEX86_X64
+__rdtsc macro
+    rdtsc
+ifdef _WIN64
+    shl rdx,32
+    or rax,rdx
+endif
+    retm<rax>
+    endm
+
+__rdtscp macro Aux
+    push rdi
+    _mm_loadreg(rdi, Aux)
+    rdtscp
+ifdef _WIN64
+    shl rdx,32
+    or rax,rdx
+endif
+    mov [rdi],ecx
+    pop rdi
+    retm<rax>
+    endm
+endif
+
+if 0
+
 __MACHINEX64(__readcr0 proto)
 __MACHINEX86(__readcr0 proto)
 __MACHINEX64(__readcr2 proto)
@@ -137,7 +888,6 @@ __MACHINEX86_X64(__svm_vmload proto :size_t)
 __MACHINEX86_X64(__svm_vmrun proto :size_t)
 __MACHINEX86_X64(__svm_vmsave proto :size_t)
 __MACHINEX86_X64(__ud2 proto)
-__MACHINEX86_X64(__ull_rshift proto :qword, :sdword)
 __MACHINEX86_X64(__vmx_off proto)
 __MACHINEX64(__vmx_on proto :ptr)
 __MACHINEX64(__vmx_vmclear proto :ptr)
@@ -171,575 +921,7 @@ __MACHINEX64(__writegsdword proto :dword, :dword)
 __MACHINEX64(__writegsqword proto :dword, :qword)
 __MACHINEX64(__writegsword proto :dword, :word)
 __MACHINEX86_X64(__writemsr proto :dword, :qword)
-__MACHINE(_bittest proto :ptr LONG, :sdword)
-__MACHINE(_bittestandcomplement proto :ptr sdword, :sdword)
-__MACHINE(_bittestandreset proto :ptr LONG, :sdword)
-__MACHINE(_bittestandset proto :ptr LONG, :sdword)
-__MACHINE(_byteswap_uint64 proto __cdecl :qword)
-__MACHINE(_byteswap_ulong proto __cdecl :dword)
-__MACHINE(_byteswap_ushort proto __cdecl :word)
-__MACHINE(_disable proto __cdecl)
-__MACHINE(_enable proto __cdecl)
-__MACHINE(_interlockedbittestandreset proto :ptr, :sdword)
-__MACHINE(_lrotl proto __cdecl :dword, :sdword)
-__MACHINE(_lrotr proto __cdecl :dword, :sdword)
-__MACHINEX86(_m_empty proto)
-__MACHINEX86(_m_femms proto)
-__MACHINEX86(_m_from_float proto :REAL4)
-__MACHINEX86(_m_from_int proto :sdword)
-__MACHINEX86(_m_maskmovq proto sqword, :sqword, :ptr)
-__MACHINEX86(_m_packssdw proto sqword, :sqword)
-__MACHINEX86(_m_packsswb proto sqword, :sqword)
-__MACHINEX86(_m_packuswb proto sqword, :sqword)
-__MACHINEX86(_m_paddb proto sqword, :sqword)
-__MACHINEX86(_m_paddd proto sqword, :sqword)
-__MACHINEX86(_m_paddsb proto sqword, :sqword)
-__MACHINEX86(_m_paddsw proto sqword, :sqword)
-__MACHINEX86(_m_paddusb proto sqword, :sqword)
-__MACHINEX86(_m_paddusw proto sqword, :sqword)
-__MACHINEX86(_m_paddw proto sqword, :sqword)
-__MACHINEX86(_m_pand proto sqword, :sqword)
-__MACHINEX86(_m_pandn proto sqword, :sqword)
-__MACHINEX86(_m_pavgb proto sqword, :sqword)
-__MACHINEX86(_m_pavgusb proto sqword, :sqword)
-__MACHINEX86(_m_pavgw proto sqword, :sqword)
-__MACHINEX86(_m_pcmpeqb proto sqword, :sqword)
-__MACHINEX86(_m_pcmpeqd proto sqword, :sqword)
-__MACHINEX86(_m_pcmpeqw proto sqword, :sqword)
-__MACHINEX86(_m_pcmpgtb proto sqword, :sqword)
-__MACHINEX86(_m_pcmpgtd proto sqword, :sqword)
-__MACHINEX86(_m_pcmpgtw proto sqword, :sqword)
-__MACHINEX86(_m_pextrw proto sqword, :sdword)
-__MACHINEX86(_m_pf2id proto sqword)
-__MACHINEX86(_m_pf2iw proto sqword)
-__MACHINEX86(_m_pfacc proto sqword, :sqword)
-__MACHINEX86(_m_pfadd proto sqword, :sqword)
-__MACHINEX86(_m_pfcmpeq proto sqword, :sqword)
-__MACHINEX86(_m_pfcmpge proto sqword, :sqword)
-__MACHINEX86(_m_pfcmpgt proto sqword, :sqword)
-__MACHINEX86(_m_pfmax proto sqword, :sqword)
-__MACHINEX86(_m_pfmin proto sqword, :sqword)
-__MACHINEX86(_m_pfmul proto sqword, :sqword)
-__MACHINEX86(_m_pfnacc proto sqword, :sqword)
-__MACHINEX86(_m_pfpnacc proto sqword, :sqword)
-__MACHINEX86(_m_pfrcp proto sqword)
-__MACHINEX86(_m_pfrcpit1 proto sqword, :sqword)
-__MACHINEX86(_m_pfrcpit2 proto sqword, :sqword)
-__MACHINEX86(_m_pfrsqit1 proto sqword, :sqword)
-__MACHINEX86(_m_pfrsqrt proto sqword)
-__MACHINEX86(_m_pfsub proto sqword, :sqword)
-__MACHINEX86(_m_pfsubr proto sqword, :sqword)
-__MACHINEX86(_m_pi2fd proto sqword)
-__MACHINEX86(_m_pi2fw proto sqword)
-__MACHINEX86(_m_pinsrw proto sqword, :sdword, :sdword)
-__MACHINEX86(_m_pmaddwd proto sqword, :sqword)
-__MACHINEX86(_m_pmaxsw proto sqword, :sqword)
-__MACHINEX86(_m_pmaxub proto sqword, :sqword)
-__MACHINEX86(_m_pminsw proto sqword, :sqword)
-__MACHINEX86(_m_pminub proto sqword, :sqword)
-__MACHINEX86(_m_pmovmskb proto sqword)
-__MACHINEX86(_m_pmulhrw proto sqword, :sqword)
-__MACHINEX86(_m_pmulhuw proto sqword, :sqword)
-__MACHINEX86(_m_pmulhw proto sqword, :sqword)
-__MACHINEX86(_m_pmullw proto sqword, :sqword)
-__MACHINEX86(_m_por proto sqword, :sqword)
-__MACHINEX86_X64(_m_prefetch proto :ptr)
-__MACHINEX86_X64(_m_prefetchw proto :ptr)
-__MACHINEX86(_m_psadbw proto sqword, :sqword)
-__MACHINEX86(_m_pshufw proto sqword, :sdword)
-__MACHINEX86(_m_pslld proto sqword, :sqword)
-__MACHINEX86(_m_pslldi proto sqword, :sdword)
-__MACHINEX86(_m_psllq proto sqword, :sqword)
-__MACHINEX86(_m_psllqi proto sqword, :sdword)
-__MACHINEX86(_m_psllw proto sqword, :sqword)
-__MACHINEX86(_m_psllwi proto sqword, :sdword)
-__MACHINEX86(_m_psrad proto sqword, :sqword)
-__MACHINEX86(_m_psradi proto sqword, :sdword)
-__MACHINEX86(_m_psraw proto sqword, :sqword)
-__MACHINEX86(_m_psrawi proto sqword, :sdword)
-__MACHINEX86(_m_psrld proto sqword, :sqword)
-__MACHINEX86(_m_psrldi proto sqword, :sdword)
-__MACHINEX86(_m_psrlq proto sqword, :sqword)
-__MACHINEX86(_m_psrlqi proto sqword, :sdword)
-__MACHINEX86(_m_psrlw proto sqword, :sqword)
-__MACHINEX86(_m_psrlwi proto sqword, :sdword)
-__MACHINEX86(_m_psubb proto sqword, :sqword)
-__MACHINEX86(_m_psubd proto sqword, :sqword)
-__MACHINEX86(_m_psubsb proto sqword, :sqword)
-__MACHINEX86(_m_psubsw proto sqword, :sqword)
-__MACHINEX86(_m_psubusb proto sqword, :sqword)
-__MACHINEX86(_m_psubusw proto sqword, :sqword)
-__MACHINEX86(_m_psubw proto sqword, :sqword)
-__MACHINEX86(_m_pswapd proto sqword)
-__MACHINEX86(_m_punpckhbw proto sqword, :sqword)
-__MACHINEX86(_m_punpckhdq proto sqword, :sqword)
-__MACHINEX86(_m_punpckhwd proto sqword, :sqword)
-__MACHINEX86(_m_punpcklbw proto sqword, :sqword)
-__MACHINEX86(_m_punpckldq proto sqword, :sqword)
-__MACHINEX86(_m_punpcklwd proto sqword, :sqword)
-__MACHINEX86(_m_pxor proto sqword, :sqword)
-__MACHINEX86(_m_to_float proto sqword)
-__MACHINEX86(_m_to_int proto sqword)
-__MACHINEX86_X64(_mm_abs_epi16 proto :oword)
-__MACHINEX86_X64(_mm_abs_epi32 proto :oword)
-__MACHINEX86_X64(_mm_abs_epi8 proto :oword)
-__MACHINEX86(_mm_abs_pi16 proto sqword)
-__MACHINEX86(_mm_abs_pi32 proto sqword)
-__MACHINEX86(_mm_abs_pi8 proto sqword)
-__MACHINEX86_X64(_mm_add_epi16 proto :oword, :oword)
-__MACHINEX86_X64(_mm_add_epi32 proto :oword, :oword)
-__MACHINEX86_X64(_mm_add_epi64 proto :oword, :oword)
-__MACHINEX86_X64(_mm_add_epi8 proto :oword, :oword)
-__MACHINEX86_X64(_mm_add_pd proto :oword, :oword)
-__MACHINEX86_X64(_mm_add_ps proto :oword, :oword)
-__MACHINEX86_X64(_mm_add_sd proto :oword, :oword)
-__MACHINEX86(_mm_add_si64 proto sqword, :sqword)
-__MACHINEX86_X64(_mm_add_ss proto :oword, :oword)
-__MACHINEX86_X64(_mm_adds_epi16 proto :oword, :oword)
-__MACHINEX86_X64(_mm_adds_epi8 proto :oword, :oword)
-__MACHINEX86_X64(_mm_adds_epu16 proto :oword, :oword)
-__MACHINEX86_X64(_mm_adds_epu8 proto :oword, :oword)
-__MACHINEX86_X64(_mm_addsub_pd proto :oword, :oword)
-__MACHINEX86_X64(_mm_addsub_ps proto :oword, :oword)
-__MACHINEX86_X64(_mm_alignr_epi8 proto :oword, :oword, :sdword)
-__MACHINEX86(_mm_alignr_pi8 proto sqword, :sqword, :sdword)
-__MACHINEX86_X64(_mm_and_pd proto :oword, :oword)
-__MACHINEX86_X64(_mm_and_ps proto :oword, :oword)
-__MACHINEX86_X64(_mm_and_si128 proto :oword, :oword)
-__MACHINEX86_X64(_mm_andnot_pd proto :oword, :oword)
-__MACHINEX86_X64(_mm_andnot_ps proto :oword, :oword)
-__MACHINEX86_X64(_mm_andnot_si128 proto :oword, :oword)
-__MACHINEX86_X64(_mm_avg_epu16 proto :oword, :oword)
-__MACHINEX86_X64(_mm_avg_epu8 proto :oword, :oword)
-__MACHINEX86_X64(_mm_blend_epi16 proto :oword, :oword, :sdword)
-__MACHINEX86_X64(_mm_blend_pd proto :oword, :oword, :sdword)
-__MACHINEX86_X64(_mm_blend_ps proto :oword, :oword, :sdword)
-__MACHINEX86_X64(_mm_blendv_epi8 proto :oword, :oword, :oword)
-__MACHINEX86_X64(_mm_blendv_pd proto :oword, :oword, :oword)
-__MACHINEX86_X64(_mm_blendv_ps proto :oword, :oword, :oword)
-__MACHINEX86_X64(_mm_clflush proto :ptr)
-__MACHINEX86_X64(_mm_clflushopt proto :ptr)
-__MACHINEX86_X64(_mm_clwb proto :ptr)
-__MACHINEX86_X64(_mm_clzero proto :ptr)
-__MACHINEX86_X64(_mm_cmpeq_epi16 proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpeq_epi32 proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpeq_epi64 proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpeq_epi8 proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpeq_pd proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpeq_ps proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpeq_sd proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpeq_ss proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpestra proto :oword, :sdword, :oword, :sdword, :sdword)
-__MACHINEX86_X64(_mm_cmpestrc proto :oword, :sdword, :oword, :sdword, :sdword)
-__MACHINEX86_X64(_mm_cmpestri proto :oword, :sdword, :oword, :sdword, :sdword)
-__MACHINEX86_X64(_mm_cmpestrm proto :oword, :sdword, :oword, :sdword, :sdword)
-__MACHINEX86_X64(_mm_cmpestro proto :oword, :sdword, :oword, :sdword, :sdword)
-__MACHINEX86_X64(_mm_cmpestrs proto :oword, :sdword, :oword, :sdword, :sdword)
-__MACHINEX86_X64(_mm_cmpestrz proto :oword, :sdword, :oword, :sdword, :sdword)
-__MACHINEX86_X64(_mm_cmpge_pd proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpge_ps proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpge_sd proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpge_ss proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpgt_epi16 proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpgt_epi32 proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpgt_epi64 proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpgt_epi8 proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpgt_pd proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpgt_ps proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpgt_sd proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpgt_ss proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpistra proto :oword, :oword, :sdword)
-__MACHINEX86_X64(_mm_cmpistrc proto :oword, :oword, :sdword)
-__MACHINEX86_X64(_mm_cmpistri proto :oword, :oword, :sdword)
-__MACHINEX86_X64(_mm_cmpistrm proto :oword, :oword, :sdword)
-__MACHINEX86_X64(_mm_cmpistro proto :oword, :oword, :sdword)
-__MACHINEX86_X64(_mm_cmpistrs proto :oword, :oword, :sdword)
-__MACHINEX86_X64(_mm_cmpistrz proto :oword, :oword, :sdword)
-__MACHINEX86_X64(_mm_cmple_pd proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmple_ps proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmple_sd proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmple_ss proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmplt_epi16 proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmplt_epi32 proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmplt_epi8 proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmplt_pd proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmplt_ps proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmplt_sd proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmplt_ss proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpneq_pd proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpneq_ps proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpneq_sd proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpneq_ss proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpnge_pd proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpnge_ps proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpnge_sd proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpnge_ss proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpngt_pd proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpngt_ps proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpngt_sd proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpngt_ss proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpnle_pd proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpnle_ps proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpnle_sd proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpnle_ss proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpnlt_pd proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpnlt_ps proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpnlt_sd proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpnlt_ss proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpord_pd proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpord_ps proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpord_sd proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpord_ss proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpunord_pd proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpunord_ps proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpunord_sd proto :oword, :oword)
-__MACHINEX86_X64(_mm_cmpunord_ss proto :oword, :oword)
-__MACHINEX86_X64(_mm_comieq_sd proto :oword, :oword)
-__MACHINEX86_X64(_mm_comieq_ss proto :oword, :oword)
-__MACHINEX86_X64(_mm_comige_sd proto :oword, :oword)
-__MACHINEX86_X64(_mm_comige_ss proto :oword, :oword)
-__MACHINEX86_X64(_mm_comigt_sd proto :oword, :oword)
-__MACHINEX86_X64(_mm_comigt_ss proto :oword, :oword)
-__MACHINEX86_X64(_mm_comile_sd proto :oword, :oword)
-__MACHINEX86_X64(_mm_comile_ss proto :oword, :oword)
-__MACHINEX86_X64(_mm_comilt_sd proto :oword, :oword)
-__MACHINEX86_X64(_mm_comilt_ss proto :oword, :oword)
-__MACHINEX86_X64(_mm_comineq_sd proto :oword, :oword)
-__MACHINEX86_X64(_mm_comineq_ss proto :oword, :oword)
-__MACHINEX86_X64(_mm_crc32_u16 proto :dword, :word)
-__MACHINEX86_X64(_mm_crc32_u32 proto :dword, :dword)
-__MACHINEX64(_mm_crc32_u64 proto :qword, :qword)
-__MACHINEX86_X64(_mm_crc32_u8 proto :dword, :byte)
-__MACHINEX86(_mm_cvt_pi2ps proto :oword, :sqword)
-__MACHINEX86(_mm_cvt_ps2pi proto :oword)
-__MACHINEX86_X64(_mm_cvt_si2ss proto :oword, :sdword)
-__MACHINEX86_X64(_mm_cvt_ss2si proto :oword)
-__MACHINEX86_X64(_mm_cvtepi16_epi32 proto :oword)
-__MACHINEX86_X64(_mm_cvtepi16_epi64 proto :oword)
-__MACHINEX86_X64(_mm_cvtepi32_epi64 proto :oword)
-__MACHINEX86_X64(_mm_cvtepi32_pd proto :oword)
-__MACHINEX86_X64(_mm_cvtepi32_ps proto :oword)
-__MACHINEX86_X64(_mm_cvtepi8_epi16 proto :oword)
-__MACHINEX86_X64(_mm_cvtepi8_epi32 proto :oword)
-__MACHINEX86_X64(_mm_cvtepi8_epi64 proto :oword)
-__MACHINEX86_X64(_mm_cvtepu16_epi32 proto :oword)
-__MACHINEX86_X64(_mm_cvtepu16_epi64 proto :oword)
-__MACHINEX86_X64(_mm_cvtepu32_epi64 proto :oword)
-__MACHINEX86_X64(_mm_cvtepu8_epi16 proto :oword)
-__MACHINEX86_X64(_mm_cvtepu8_epi32 proto :oword)
-__MACHINEX86_X64(_mm_cvtepu8_epi64 proto :oword)
-__MACHINEX86_X64(_mm_cvtpd_epi32 proto :oword)
-__MACHINEX86(_mm_cvtpd_pi32 proto :oword)
-__MACHINEX86_X64(_mm_cvtpd_ps proto :oword)
-__MACHINEX86(_mm_cvtpi32_pd proto sqword)
-__MACHINEX86_X64(_mm_cvtps_epi32 proto :oword)
-__MACHINEX86_X64(_mm_cvtps_pd proto :oword)
-__MACHINEX86_X64(_mm_cvtsd_si32 proto :oword)
-__MACHINEX64(_mm_cvtsd_si64x proto :oword)
-__MACHINEX86_X64(_mm_cvtsd_ss proto :oword, :oword)
-__MACHINEX86_X64(_mm_cvtsi128_si32 proto :oword)
-__MACHINEX64(_mm_cvtsi128_si64x proto :oword)
-__MACHINEX86_X64(_mm_cvtsi32_sd proto :oword, :sdword)
-__MACHINEX86_X64(_mm_cvtsi32_si128 proto :sdword)
-__MACHINEX64(_mm_cvtsi64x_sd proto :oword, :qword)
-__MACHINEX64(_mm_cvtsi64x_si128 proto :qword)
-__MACHINEX64(_mm_cvtsi64x_ss proto :oword, :qword)
-__MACHINEX86_X64(_mm_cvtss_sd proto :oword, :oword)
-__MACHINEX64(_mm_cvtss_si64x proto :oword)
-__MACHINEX86(_mm_cvtt_ps2pi proto :oword)
-__MACHINEX86_X64(_mm_cvtt_ss2si proto :oword)
-__MACHINEX86_X64(_mm_cvttpd_epi32 proto :oword)
-__MACHINEX86(_mm_cvttpd_pi32 proto :oword)
-__MACHINEX86_X64(_mm_cvttps_epi32 proto :oword)
-__MACHINEX86_X64(_mm_cvttsd_si32 proto :oword)
-__MACHINEX64(_mm_cvttsd_si64x proto :oword)
-__MACHINEX64(_mm_cvttss_si64x proto :oword)
-__MACHINEX86_X64(_mm_div_pd proto :oword, :oword)
-__MACHINEX86_X64(_mm_div_ps proto :oword, :oword)
-__MACHINEX86_X64(_mm_div_sd proto :oword, :oword)
-__MACHINEX86_X64(_mm_div_ss proto :oword, :oword)
-__MACHINEX86_X64(_mm_dp_pd proto :oword, :oword, :sdword)
-__MACHINEX86_X64(_mm_dp_ps proto :oword, :oword, :sdword)
-__MACHINEX86_X64(_mm_extract_epi16 proto :oword, :sdword)
-__MACHINEX86_X64(_mm_extract_epi32 proto :oword, :sdword)
-__MACHINEX64(_mm_extract_epi64 proto :oword, :sdword)
 
-__MACHINEX86_X64(_mm_extract_epi8 proto :oword, :sdword)
-__MACHINEX86_X64(_mm_extract_ps proto :oword, :sdword)
-__MACHINEX86_X64(_mm_extract_si64 proto :oword, :oword)
-__MACHINEX86_X64(_mm_extracti_si64 proto :oword, :sdword, :sdword)
-__MACHINEX86_X64(_mm_getcsr proto)
-__MACHINEX86_X64(_mm_hadd_epi16 proto :oword, :oword)
-__MACHINEX86_X64(_mm_hadd_epi32 proto :oword, :oword)
-__MACHINEX86_X64(_mm_hadd_pd proto :oword, :oword)
-__MACHINEX86(_mm_hadd_pi16 proto sqword, :sqword)
-__MACHINEX86(_mm_hadd_pi32 proto sqword, :sqword)
-__MACHINEX86_X64(_mm_hadd_ps proto :oword, :oword)
-__MACHINEX86_X64(_mm_hadds_epi16 proto :oword, :oword)
-__MACHINEX86(_mm_hadds_pi16 proto sqword, :sqword)
-__MACHINEX86_X64(_mm_hsub_epi16 proto :oword, :oword)
-__MACHINEX86_X64(_mm_hsub_epi32 proto :oword, :oword)
-__MACHINEX86_X64(_mm_hsub_pd proto :oword, :oword)
-__MACHINEX86(_mm_hsub_pi16 proto sqword, :sqword)
-__MACHINEX86(_mm_hsub_pi32 proto sqword, :sqword)
-__MACHINEX86_X64(_mm_hsub_ps proto :oword, :oword)
-__MACHINEX86_X64(_mm_hsubs_epi16 proto :oword, :oword)
-__MACHINEX86(_mm_hsubs_pi16 proto sqword, :sqword)
-__MACHINEX86_X64(_mm_insert_epi16 proto :oword, :sdword, :sdword)
-__MACHINEX86_X64(_mm_insert_epi32 proto :oword, :sdword, :sdword)
-__MACHINEX64(_mm_insert_epi64 proto :oword, :qword, :sdword)
-__MACHINEX86_X64(_mm_insert_epi8 proto :oword, :sdword, :sdword)
-__MACHINEX86_X64(_mm_insert_ps proto :oword, :oword, :sdword)
-__MACHINEX86_X64(_mm_insert_si64 proto :oword, :oword)
-__MACHINEX86_X64(_mm_inserti_si64 proto :oword, :oword, :sdword, :sdword)
-__MACHINEX86_X64(_mm_lddqu_si128 proto :ptr)
-__MACHINEX86_X64(_mm_lfence proto)
-__MACHINEX86_X64(_mm_load1_pd proto :ptr)
-__MACHINEX86_X64(_mm_load_pd proto :ptr)
-__MACHINEX86_X64(_mm_load_ps proto :ptr)
-__MACHINEX86_X64(_mm_load_ps1 proto :ptr)
-__MACHINEX86_X64(_mm_load_sd proto :ptr)
-__MACHINEX86_X64(_mm_load_si128 proto :ptr)
-__MACHINEX86_X64(_mm_load_ss proto :ptr)
-__MACHINEX86_X64(_mm_loaddup_pd proto :ptr)
-__MACHINEX86_X64(_mm_loadh_pd proto :oword, :ptr)
-__MACHINEX86_X64(_mm_loadh_pi proto :oword, :ptr)
-__MACHINEX86_X64(_mm_loadl_epi64 proto :ptr)
-__MACHINEX86_X64(_mm_loadl_pd proto :oword, :ptr)
-__MACHINEX86_X64(_mm_loadl_pi proto :oword, :ptr)
-__MACHINEX86_X64(_mm_loadr_pd proto :ptr)
-__MACHINEX86_X64(_mm_loadr_ps proto :ptr)
-__MACHINEX86_X64(_mm_loadu_pd proto :ptr)
-__MACHINEX86_X64(_mm_loadu_ps proto :ptr)
-__MACHINEX86_X64(_mm_loadu_si128 proto :ptr)
-__MACHINEX86_X64(_mm_madd_epi16 proto :oword, :oword)
-__MACHINEX86_X64(_mm_maddubs_epi16 proto :oword, :oword)
-__MACHINEX86(_mm_maddubs_pi16 proto sqword, :sqword)
-__MACHINEX86_X64(_mm_maskmoveu_si128 proto :oword, :oword, :ptr)
-__MACHINEX86_X64(_mm_max_epi16 proto :oword, :oword)
-__MACHINEX86_X64(_mm_max_epi32 proto :oword, :oword)
-__MACHINEX86_X64(_mm_max_epi8 proto :oword, :oword)
-__MACHINEX86_X64(_mm_max_epu16 proto :oword, :oword)
-__MACHINEX86_X64(_mm_max_epu32 proto :oword, :oword)
-__MACHINEX86_X64(_mm_max_epu8 proto :oword, :oword)
-__MACHINEX86_X64(_mm_max_pd proto :oword, :oword)
-__MACHINEX86_X64(_mm_max_ps proto :oword, :oword)
-__MACHINEX86_X64(_mm_max_sd proto :oword, :oword)
-__MACHINEX86_X64(_mm_max_ss proto :oword, :oword)
-__MACHINEX86_X64(_mm_mfence proto)
-__MACHINEX86_X64(_mm_min_epi16 proto :oword, :oword)
-__MACHINEX86_X64(_mm_min_epi32 proto :oword, :oword)
-__MACHINEX86_X64(_mm_min_epi8 proto :oword, :oword)
-__MACHINEX86_X64(_mm_min_epu16 proto :oword, :oword)
-__MACHINEX86_X64(_mm_min_epu32 proto :oword, :oword)
-__MACHINEX86_X64(_mm_min_epu8 proto :oword, :oword)
-__MACHINEX86_X64(_mm_min_pd proto :oword, :oword)
-__MACHINEX86_X64(_mm_min_ps proto :oword, :oword)
-__MACHINEX86_X64(_mm_min_sd proto :oword, :oword)
-__MACHINEX86_X64(_mm_min_ss proto :oword, :oword)
-__MACHINEX86_X64(_mm_minpos_epu16 proto :oword)
-__MACHINEX86_X64(_mm_monitor proto :ptr, :dword, :dword)
-__MACHINEX86_X64(_mm_move_epi64 proto :oword)
-__MACHINEX86_X64(_mm_move_sd proto :oword, :oword)
-__MACHINEX86_X64(_mm_move_ss proto :oword, :oword)
-__MACHINEX86_X64(_mm_movedup_pd proto :oword)
-__MACHINEX86_X64(_mm_movehdup_ps proto :oword)
-__MACHINEX86_X64(_mm_movehl_ps proto :oword, :oword)
-__MACHINEX86_X64(_mm_moveldup_ps proto :oword)
-__MACHINEX86_X64(_mm_movelh_ps proto :oword, :oword)
-__MACHINEX86_X64(_mm_movemask_epi8 proto :oword)
-__MACHINEX86_X64(_mm_movemask_pd proto :oword)
-__MACHINEX86_X64(_mm_movemask_ps proto :oword)
-__MACHINEX86(_mm_movepi64_pi64 proto :oword)
-__MACHINEX86(_mm_movpi64_epi64 proto sqword)
-__MACHINEX86_X64(_mm_mpsadbw_epu8 proto :oword, :oword, :sdword)
-__MACHINEX86_X64(_mm_mul_epi32 proto :oword, :oword)
-__MACHINEX86_X64(_mm_mul_epu32 proto :oword, :oword)
-__MACHINEX86_X64(_mm_mul_pd proto :oword, :oword)
-__MACHINEX86_X64(_mm_mul_ps proto :oword, :oword)
-__MACHINEX86_X64(_mm_mul_sd proto :oword, :oword)
-__MACHINEX86_X64(_mm_mul_ss proto :oword, :oword)
-__MACHINEX86(_mm_mul_su32 proto sqword, :sqword)
-__MACHINEX86_X64(_mm_mulhi_epi16 proto :oword, :oword)
-__MACHINEX86_X64(_mm_mulhi_epu16 proto :oword, :oword)
-__MACHINEX86_X64(_mm_mulhrs_epi16 proto :oword, :oword)
-__MACHINEX86(_mm_mulhrs_pi16 proto sqword, :sqword)
-__MACHINEX86_X64(_mm_mullo_epi16 proto :oword, :oword)
-__MACHINEX86_X64(_mm_mullo_epi32 proto :oword, :oword)
-__MACHINEX86_X64(_mm_mwait proto :dword, :dword)
-__MACHINEX86_X64(_mm_or_pd proto :oword, :oword)
-__MACHINEX86_X64(_mm_or_ps proto :oword, :oword)
-__MACHINEX86_X64(_mm_or_si128 proto :oword, :oword)
-__MACHINEX86_X64(_mm_packs_epi16 proto :oword, :oword)
-__MACHINEX86_X64(_mm_packs_epi32 proto :oword, :oword)
-__MACHINEX86_X64(_mm_packus_epi16 proto :oword, :oword)
-__MACHINEX86_X64(_mm_packus_epi32 proto :oword, :oword)
-__MACHINEX86_X64(_mm_pause proto)
-__MACHINEX86_X64(_mm_popcnt_u32 proto :dword)
-__MACHINEX64(_mm_popcnt_u64 proto :qword)
-__MACHINEX86_X64(_mm_prefetch proto :ptr, :sdword)
-__MACHINEX86_X64(_mm_rcp_ps proto :oword)
-__MACHINEX86_X64(_mm_rcp_ss proto :oword)
-__MACHINEX86_X64(_mm_round_pd proto :oword, :sdword)
-__MACHINEX86_X64(_mm_round_ps proto :oword, :sdword)
-__MACHINEX86_X64(_mm_round_sd proto :oword, :oword, :sdword)
-__MACHINEX86_X64(_mm_round_ss proto :oword, :oword, :sdword)
-__MACHINEX86_X64(_mm_rsqrt_ps proto :oword)
-__MACHINEX86_X64(_mm_rsqrt_ss proto :oword)
-__MACHINEX86_X64(_mm_sad_epu8 proto :oword, :oword)
-__MACHINEX86_X64(_mm_set1_epi16 proto :sword)
-__MACHINEX86_X64(_mm_set1_epi32 proto :sdword)
-__MACHINEX86(_mm_set1_epi64 proto sqword)
-__MACHINEX86_X64(_mm_set1_epi64x proto :qword)
-__MACHINEX86_X64(_mm_set1_epi8 proto :sbyte)
-__MACHINEX86_X64(_mm_set1_pd proto :REAL8)
-__MACHINEX86(_mm_set1_pi16 proto :sword)
-__MACHINEX86(_mm_set1_pi32 proto :sdword)
-__MACHINEX86(_mm_set1_pi8 proto :sbyte)
-__MACHINEX86_X64(_mm_set_epi16 proto :sword, :sword, :sword, :sword, :sword, :sword, :sword, :sword)
-__MACHINEX86_X64(_mm_set_epi32 proto :sdword, :sdword, :sdword, :sdword)
-__MACHINEX86(_mm_set_epi64 proto sqword, :sqword)
-__MACHINEX86_X64(_mm_set_epi64x proto :qword, :qword)
-__MACHINEX86_X64(_mm_set_epi8 proto :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte)
-__MACHINEX86_X64(_mm_set_pd proto :REAL8, :REAL8)
-__MACHINEX86(_mm_set_pi16 proto :sword, :sword, :sword, :sword)
-__MACHINEX86(_mm_set_pi32 proto :sdword, :sdword)
-__MACHINEX86(_mm_set_pi8 proto :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte)
-__MACHINEX86_X64(_mm_set_ps proto :REAL4, :REAL4, :REAL4, :REAL4)
-__MACHINEX86_X64(_mm_set_ps1 proto :REAL4)
-__MACHINEX86_X64(_mm_set_sd proto :REAL8)
-__MACHINEX86_X64(_mm_set_ss proto :REAL4)
-__MACHINEX86_X64(_mm_setcsr proto :dword)
-__MACHINEX86_X64(_mm_setl_epi64 proto :oword)
-__MACHINEX86_X64(_mm_setr_epi16 proto :sword, :sword, :sword, :sword, :sword, :sword, :sword, :sword)
-__MACHINEX86_X64(_mm_setr_epi32 proto :sdword, :sdword, :sdword, :sdword)
-__MACHINEX86(_mm_setr_epi64 proto sqword, :sqword)
-__MACHINEX86_X64(_mm_setr_epi64x proto :qword, :qword)
-__MACHINEX86_X64(_mm_setr_epi8 proto :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte)
-__MACHINEX86_X64(_mm_setr_pd proto :REAL8, :REAL8)
-__MACHINEX86(_mm_setr_pi16 proto :sword, :sword, :sword, :sword)
-__MACHINEX86(_mm_setr_pi32 proto :sdword, :sdword)
-__MACHINEX86(_mm_setr_pi8 proto :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte)
-__MACHINEX86_X64(_mm_setr_ps proto :REAL4, :REAL4, :REAL4, :REAL4)
-__MACHINEX86_X64(_mm_setzero_pd proto)
-__MACHINEX86_X64(_mm_setzero_ps proto)
-__MACHINEX86_X64(_mm_setzero_si128 proto)
-__MACHINEX86(_mm_setzero_si64 proto)
-__MACHINEX86_X64(_mm_sfence proto)
-__MACHINEX86_X64(_mm_shuffle_epi32 proto :oword, :sdword)
-__MACHINEX86_X64(_mm_shuffle_epi8 proto :oword, :oword)
-__MACHINEX86_X64(_mm_shuffle_pd proto :oword, :oword, :sdword)
-__MACHINEX86(_mm_shuffle_pi8 proto sqword, :sqword)
-__MACHINEX86_X64(_mm_shuffle_ps proto :oword, :oword, :dword)
-__MACHINEX86_X64(_mm_shufflehi_epi16 proto :oword, :sdword)
-__MACHINEX86_X64(_mm_shufflelo_epi16 proto :oword, :sdword)
-__MACHINEX86_X64(_mm_sign_epi16 proto :oword, :oword)
-__MACHINEX86_X64(_mm_sign_epi32 proto :oword, :oword)
-__MACHINEX86_X64(_mm_sign_epi8 proto :oword, :oword)
-__MACHINEX86(_mm_sign_pi16 proto sqword, :sqword)
-__MACHINEX86(_mm_sign_pi32 proto sqword, :sqword)
-__MACHINEX86(_mm_sign_pi8 proto sqword, :sqword)
-__MACHINEX86_X64(_mm_sll_epi16 proto :oword, :oword)
-__MACHINEX86_X64(_mm_sll_epi32 proto :oword, :oword)
-__MACHINEX86_X64(_mm_sll_epi64 proto :oword, :oword)
-__MACHINEX86_X64(_mm_slli_epi16 proto :oword, :sdword)
-__MACHINEX86_X64(_mm_slli_epi32 proto :oword, :sdword)
-__MACHINEX86_X64(_mm_slli_epi64 proto :oword, :sdword)
-__MACHINEX86_X64(_mm_slli_si128 proto :oword, :sdword)
-__MACHINEX86_X64(_mm_sqrt_pd proto :oword)
-__MACHINEX86_X64(_mm_sqrt_ps proto :oword)
-__MACHINEX86_X64(_mm_sqrt_sd proto :oword, :oword)
-__MACHINEX86_X64(_mm_sqrt_ss proto :oword)
-__MACHINEX86_X64(_mm_sra_epi16 proto :oword, :oword)
-__MACHINEX86_X64(_mm_sra_epi32 proto :oword, :oword)
-__MACHINEX86_X64(_mm_srai_epi16 proto :oword, :sdword)
-__MACHINEX86_X64(_mm_srai_epi32 proto :oword, :sdword)
-__MACHINEX86_X64(_mm_srl_epi16 proto :oword, :oword)
-__MACHINEX86_X64(_mm_srl_epi32 proto :oword, :oword)
-__MACHINEX86_X64(_mm_srl_epi64 proto :oword, :oword)
-__MACHINEX86_X64(_mm_srli_epi16 proto :oword, :sdword)
-__MACHINEX86_X64(_mm_srli_epi32 proto :oword, :sdword)
-__MACHINEX86_X64(_mm_srli_epi64 proto :oword, :sdword)
-__MACHINEX86_X64(_mm_srli_si128 proto :oword, :sdword)
-__MACHINEX86_X64(_mm_store1_pd proto :ptr, :oword)
-__MACHINEX86_X64(_mm_store_pd proto :ptr, :oword)
-__MACHINEX86_X64(_mm_store_ps proto :ptr, :oword)
-__MACHINEX86_X64(_mm_store_ps1 proto :ptr, :oword)
-__MACHINEX86_X64(_mm_store_sd proto :ptr, :oword)
-__MACHINEX86_X64(_mm_store_si128 proto :ptr, :oword)
-__MACHINEX86_X64(_mm_store_ss proto :ptr, :oword)
-__MACHINEX86_X64(_mm_storeh_pd proto :ptr, :oword)
-__MACHINEX86_X64(_mm_storeh_pi proto :ptr, :oword)
-__MACHINEX86_X64(_mm_storel_epi64 proto :ptr, :oword)
-__MACHINEX86_X64(_mm_storel_pd proto :ptr, :oword)
-__MACHINEX86_X64(_mm_storel_pi proto :ptr, :oword)
-__MACHINEX86_X64(_mm_storer_pd proto :ptr, :oword)
-__MACHINEX86_X64(_mm_storer_ps proto :ptr, :oword)
-__MACHINEX86_X64(_mm_storeu_pd proto :ptr, :oword)
-__MACHINEX86_X64(_mm_storeu_ps proto :ptr, :oword)
-__MACHINEX86_X64(_mm_storeu_si128 proto :ptr, :oword)
-__MACHINEX86_X64(_mm_stream_load_si128 proto :ptr)
-__MACHINEX86_X64(_mm_stream_pd proto :ptr, :oword)
-__MACHINEX86(_mm_stream_pi proto :ptr, :sqword)
-__MACHINEX86_X64(_mm_stream_ps proto :ptr, :oword)
-__MACHINEX86_X64(_mm_stream_sd proto :ptr, :oword)
-__MACHINEX86_X64(_mm_stream_si128 proto :ptr, :oword)
-__MACHINEX86_X64(_mm_stream_si32 proto :ptr, :sdword)
-__MACHINEX64(_mm_stream_si64x proto :ptr, :qword)
-__MACHINEX86_X64(_mm_stream_ss proto :ptr, :oword)
-__MACHINEX86_X64(_mm_sub_epi16 proto :oword, :oword)
-__MACHINEX86_X64(_mm_sub_epi32 proto :oword, :oword)
-__MACHINEX86_X64(_mm_sub_epi64 proto :oword, :oword)
-__MACHINEX86_X64(_mm_sub_epi8 proto :oword, :oword)
-__MACHINEX86_X64(_mm_sub_pd proto :oword, :oword)
-__MACHINEX86_X64(_mm_sub_ps proto :oword, :oword)
-__MACHINEX86_X64(_mm_sub_sd proto :oword, :oword)
-__MACHINEX86(_mm_sub_si64 proto sqword, :sqword)
-__MACHINEX86_X64(_mm_sub_ss proto :oword, :oword)
-__MACHINEX86_X64(_mm_subs_epi16 proto :oword, :oword)
-__MACHINEX86_X64(_mm_subs_epi8 proto :oword, :oword)
-__MACHINEX86_X64(_mm_subs_epu16 proto :oword, :oword)
-__MACHINEX86_X64(_mm_subs_epu8 proto :oword, :oword)
-__MACHINEX86_X64(_mm_testc_si128 proto :oword, :oword)
-__MACHINEX86_X64(_mm_testnzc_si128 proto :oword, :oword)
-__MACHINEX86_X64(_mm_testz_si128 proto :oword, :oword)
-__MACHINEX86_X64(_mm_ucomieq_sd proto :oword, :oword)
-__MACHINEX86_X64(_mm_ucomieq_ss proto :oword, :oword)
-__MACHINEX86_X64(_mm_ucomige_sd proto :oword, :oword)
-__MACHINEX86_X64(_mm_ucomige_ss proto :oword, :oword)
-__MACHINEX86_X64(_mm_ucomigt_sd proto :oword, :oword)
-__MACHINEX86_X64(_mm_ucomigt_ss proto :oword, :oword)
-__MACHINEX86_X64(_mm_ucomile_sd proto :oword, :oword)
-__MACHINEX86_X64(_mm_ucomile_ss proto :oword, :oword)
-__MACHINEX86_X64(_mm_ucomilt_sd proto :oword, :oword)
-__MACHINEX86_X64(_mm_ucomilt_ss proto :oword, :oword)
-__MACHINEX86_X64(_mm_ucomineq_sd proto :oword, :oword)
-__MACHINEX86_X64(_mm_ucomineq_ss proto :oword, :oword)
-__MACHINEX86_X64(_mm_unpackhi_epi16 proto :oword, :oword)
-__MACHINEX86_X64(_mm_unpackhi_epi32 proto :oword, :oword)
-__MACHINEX86_X64(_mm_unpackhi_epi64 proto :oword, :oword)
-__MACHINEX86_X64(_mm_unpackhi_epi8 proto :oword, :oword)
-__MACHINEX86_X64(_mm_unpackhi_pd proto :oword, :oword)
-__MACHINEX86_X64(_mm_unpackhi_ps proto :oword, :oword)
-__MACHINEX86_X64(_mm_unpacklo_epi16 proto :oword, :oword)
-__MACHINEX86_X64(_mm_unpacklo_epi32 proto :oword, :oword)
-__MACHINEX86_X64(_mm_unpacklo_epi64 proto :oword, :oword)
-__MACHINEX86_X64(_mm_unpacklo_epi8 proto :oword, :oword)
-__MACHINEX86_X64(_mm_unpacklo_pd proto :oword, :oword)
-__MACHINEX86_X64(_mm_unpacklo_ps proto :oword, :oword)
-__MACHINEX86_X64(_mm_xor_pd proto :oword, :oword)
-__MACHINEX86_X64(_mm_xor_ps proto :oword, :oword)
-__MACHINEX86_X64(_mm_xor_si128 proto :oword, :oword)
-__MACHINEX64(_mul128 proto :qword, :qword, :ptr)
-__MACHINE(_rotl proto __cdecl :UINT, :SINT)
-__MACHINE(_rotl16 proto __cdecl :word, :byte)
-__MACHINE(_rotl64 proto __cdecl :qword, :sdword)
-__MACHINE(_rotl8 proto __cdecl :byte, :byte)
-__MACHINE(_rotr proto __cdecl :dword, :sdword)
-__MACHINE(_rotr16 proto __cdecl :word, :byte)
-__MACHINE(_rotr64 proto __cdecl :qword, :sdword)
-__MACHINE(_rotr8 proto __cdecl :byte, :byte)
-__MACHINEX64(_umul128 proto :qword, :qword, :ptr)
 __MACHINEX86_X64(_rsm proto)
 __MACHINEX86_X64(_lgdt proto :ptr)
 __MACHINEX86_X64(_sgdt proto :ptr)
@@ -753,16 +935,8 @@ __MACHINEX86_X64(_addcarry_u32 proto __cdecl :byte, :dword, :dword, :ptr)
 __MACHINEX86_X64(_subborrow_u32 proto __cdecl :byte, :dword, :dword, :ptr)
 __MACHINEX64(_addcarry_u64 proto __cdecl :byte, :qword, :qword, :ptr)
 __MACHINEX64(_subborrow_u64 proto __cdecl :byte, :qword, :qword, :ptr)
-__MACHINEX86_X64(_mm_monitorx proto :ptr, :dword, :dword)
-__MACHINEX86_X64(_mm_mwaitx proto :dword, :dword, :dword)
 
-__MACHINEX64(_mm_cvtsd_si64 proto :oword)
-__MACHINEX64(_mm_cvtsi128_si64 proto :oword)
-__MACHINEX64(_mm_cvtsi64_sd proto :oword, :qword)
-__MACHINEX64(_mm_cvtsi64_si128 proto :qword)
-__MACHINEX64(_mm_cvtsi64_ss proto :oword, :qword)
-__MACHINEX64(_mm_cvtss_si64 proto :oword)
-__MACHINEX64(_mm_cvttsd_si64 proto :oword)
-__MACHINEX64(_mm_cvttss_si64 proto :oword)
 endif
+
+.pragma list(pop)
 endif

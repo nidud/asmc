@@ -1,5 +1,9 @@
 ifndef _INCLUDED_SMM
 _INCLUDED_SMM equ <>
+.pragma list(push, 0)
+ifndef __LIBC_INC
+ include libc.inc
+endif
 ifndef _M_IX86
 ifndef _M_X64
 .err <This header is specific to X86 and X64 targets>
@@ -355,4 +359,5 @@ _mm_stream_load_si128 macro p
 	retm<xmm0>
 	endm
 
+.pragma list(pop)
 endif

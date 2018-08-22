@@ -1,6 +1,9 @@
 ifndef _INCLUDED_EMM
 _INCLUDED_EMM equ <>
 .pragma list(push, 0)
+ifndef __LIBC_INC
+ include libc.inc
+endif
 
 ifndef _M_IX86
 ifndef _M_X64

@@ -21,7 +21,7 @@ Install:
 dummy:	xor	eax,eax
 	ret
 
-pragma_init Install,6
+.pragma(init(Install, 6))
 
 endif
 	END

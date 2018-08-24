@@ -10,6 +10,6 @@ install:
     __wsetenvp(&_wenviron)
     ret
 
-pragma_init install, 5
+.pragma(init(install, 5))
 
     END

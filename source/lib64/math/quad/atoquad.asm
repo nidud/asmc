@@ -327,6 +327,8 @@ atoquad proc uses rsi rdi rbx number:ptr, string:LPSTR, endptr:ptr LPSTR
     .elseif exponent
         quadnormalize(rax, exponent)
     .endif
+    mov ecx,exponent
+    mov edx,edi
     ret
 
 atoquad endp

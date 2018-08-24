@@ -1276,6 +1276,6 @@ Install:
     mov tgetevent,eax
     ret
 
-pragma_init Install,32
+.pragma(init(Install, 32))
 
     END

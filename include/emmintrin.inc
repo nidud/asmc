@@ -762,112 +762,118 @@ _mm_loadu_si128 macro x, p
     else
 	movdqu xmm0,_MM_MREG(x)
     endif
-	retm<xmm0>
-	endm
+    retm<xmm0>
+    endm
 _mm_loadl_epi64 macro x, p
     ifnb <p>
 	movq x,_MM_MREG(p)
     else
 	movq xmm0,_MM_MREG(x)
     endif
-	retm<xmm0>
-	endm
+    retm<xmm0>
+    endm
 
 _mm_set_epix macro x, op, args:vararg
-	local v
-	.data
-	align 16
-	v label xmmword
-	op &args
-	.code
-	movdqa x,v
-	retm<x>
-	endm
+    local v
+.data
+    align 16
+    v label xmmword
+    op &args
+.code
+    movdqa x,v
+    retm<x>
+    endm
+
 _mm_set_epi64x macro x, a, b
     ifnb <b>
-	_mm_set_epix(x, dq, a, b)
+	_mm_set_epix(x, dq, b, a)
 	retm<x>
     else
-	_mm_set_epix(xmm0, dq, a, b)
+	_mm_set_epix(xmm0, dq, a, x)
 	retm<xmm0>
     endif
-	endm
+    endm
 
-_mm_set_epi32 macro x, a, b, q, d
-    ifnb <d>
-	_mm_set_epix(x, dd, a, b, q, d)
+_mm_set_epi32 macro x, _1, _2, _3, _4
+    ifnb <_4>
+	_mm_set_epix(x, dd, _4, _3, _2, _1)
 	retm<x>
     else
-	_mm_set_epix(xmm0, dd, x, a, b, q)
+	_mm_set_epix(xmm0, dd, _3, _2, _1, x)
 	retm<xmm0>
     endif
-	endm
-_mm_get_epi32 macro a, b, q, d
-	local x
-	.data
-	align 16
-	x label oword
-	dd a, b, q, d
-	.code
-	exitm<x>
-	endm
-_mm_set_epi16 macro a, b, q, d, e, f, g, h
-	_mm_set_epix(xmm0, dw, a, b, q, d, e, f, g, h)
-	retm<xmm0>
-	endm
-_mm_set_epi8 macro a, b, q, d, e, f, g, h, i, j, k, l, m, n, o, p
-	_mm_set_epix(xmm0, db, a, b, q, d, e, f, g, h, i, j, k, l, m, n, o, p)
-	retm<xmm0>
-	endm
+    endm
+
+_mm_get_epi32 macro args:vararg
+    local v
+.data
+    align 16
+    v label oword
+    dd &args
+.code
+    exitm<v>
+    endm
+
+_mm_set_epi16 macro _1, _2, _3, _4, _5, _6, _7, _8
+    _mm_set_epix(xmm0, dw, _8,_7,_6,_5,_4,_3,_2,_1)
+    retm<xmm0>
+    endm
+_mm_set_epi8 macro _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16
+    _mm_set_epix(xmm0, db, _16,_15,_14,_13,_12,_11,_10,_9,_8,_7,_6,_5,_4,_3,_2,_1)
+    retm<xmm0>
+    endm
 _mm_set1_epi64x macro a
-	_mm_set_epix(xmm0, dq, a, a)
-	retm<xmm0>
-	endm
+    _mm_set_epix(xmm0, dq, a, a)
+    retm<xmm0>
+    endm
 _mm_set1_epi32 macro a
-	_mm_set_epix(xmm0, dd, a, a, a, a)
-	retm<xmm0>
-	endm
+    _mm_set_epix(xmm0, dd, a, a, a, a)
+    retm<xmm0>
+    endm
 _mm_set1_epi16 macro a
-	_mm_set1_epi32(xmm0, a or (a shl 16))
-	retm<xmm0>
-	endm
+    _mm_set1_epi32((a or (a shl 16)))
+    retm<xmm0>
+    endm
 _mm_set1_epi8 macro a
-	_mm_set1_epi16(xmm0, a or (a shl 8))
-	retm<xmm0>
-	endm
+    _mm_set1_epi16((a or (a shl 8)))
+    retm<xmm0>
+    endm
 ifdef _M_X64
 _mm_set1_epi64 macro a:=<xmm0>
-	exitm<_MM_OPCSX2(punpcklq, dq, a, b)>
-	endm
+    punpcklqdq a,a
+    retm<a>
+    endm
 endif
 
-_mm_setr_epi32 macro a, b, q, d
-	exitm<_mm_set_epi64x(a or (b shl 32), q or (d shl 32))>
-	endm
-_mm_setr_epi16 macro a, b, q, d, e, f, g, h
-	exitm<_mm_setr_epi32(a or (b shl 16), q or (d shl 16), e or (f shl 16), g or (h shl 16))>
-	endm
-_mm_setr_epi8 macro a, b, q, d, e, f, g, h, i, j, k, l, m, n, o, p
-	exitm<_mm_setr_epi16(a or (b shl 8), q or (d shl 8), e or (f shl 8), g or (h shl 8) \
-		i or (j shl 8), k or (l shl 8), m or (n shl 8), o or (p shl 8))>
-	endm
+_mm_setr_epi32 macro args:vararg
+    _mm_set_epix(xmm0, dd, args)
+    retm<xmm0>
+    endm
+_mm_setr_epi16 macro args:vararg
+    _mm_set_epix(xmm0, dw, args)
+    retm<xmm0>
+    endm
+_mm_setr_epi8 macro args:vararg
+    _mm_set_epix(xmm0, db, args)
+    retm<xmm0>
+    endm
 _mm_setzero_si128 macro x:=<xmm0>
-	xorps x, x
-	retm<x>
-	endm
+    xorps x, x
+    retm<x>
+    endm
 
 _mm_store_si128 macro p, x:=<xmm0>
-	exitm<movaps _MM_MREG(p), x>
-	endm
+    exitm<movaps _MM_MREG(p), x>
+    endm
 _mm_storeu_si128 macro p, x:=<xmm0>
-	exitm<movups _MM_MREG(p), x>
-	endm
+    exitm<movups _MM_MREG(p), x>
+    endm
 _mm_storel_epi64 macro p, x:=<xmm0>
-	exitm<movq _MM_MREG(p), x>
-	endm
+    exitm<movq _MM_MREG(p), x>
+    endm
 _mm_maskmoveu_si128 macro a:=<xmm0>, b:=<xmm1>, reg
-	exitm<maskmovdqu a,b>
-	endm
+    exitm<maskmovdqu a,b>
+    endm
 
 _mm_move_epi64 macro x:=<xmm0>, r:=<rax>
 	movq x,r
@@ -964,10 +970,16 @@ _mm_cvtsi128_si64 macro x:=<xmm0>
 
 endif
 
-ifdef _M_IX86
-_mm_movpi64_epi64	proto :qword
-_mm_movepi64_pi64	proto :oword
-endif
+;ifdef _M_IX86
+_mm_movpi64_epi64 macro m:=<mm0>
+    movq2dq xmm0,m
+    retm<xmm0>
+    endm
+_mm_movepi64_pi64 macro x:=<xmm0>
+    movdq2q mm0,x
+    retm<mm0>
+    endm
+;endif
 
 ;; Alternate intrinsic name definitions
 
@@ -975,16 +987,44 @@ ifdef _M_X64
 _mm_stream_si64		equ <_mm_stream_si64x>
 endif
 
-ifdef _M_IX86
-_mm_cvtpd_pi32		proto :oword
-_mm_cvttpd_pi32		proto :oword
-_mm_cvtpi32_pd		proto :qword
-_mm_add_si64		proto :qword, :qword
-_mm_mul_su32		proto :qword, :qword
-_mm_sub_si64		proto :qword, :qword
-_mm_set_epi64		proto :qword, :qword
-_mm_setr_epi64		proto :sqword, :sqword
-endif
+;ifdef _M_IX86
+_mm_cvtpd_pi32 macro x:=<xmm0>
+	cvtpd2pi mm0,x
+	retm<mm0>
+	endm
+_mm_cvttpd_pi32 macro x:=<xmm0>
+	cvttpd2pi mm0,x
+	retm<mm0>
+	endm
+_mm_cvtpi32_pd macro m:=<mm0>
+	cvtpi2pd xmm0,x
+	retm<xmm0>
+	endm
+_mm_add_si64 macro m1, m2
+	paddq m1,m2
+	retm<m1>
+	endm
+_mm_mul_su32 macro m1, m2
+	pmuludq m1,m2
+	retm<m1>
+	endm
+_mm_sub_si64 macro m1, m2
+	psubq m1,m2
+	retm<m1>
+	endm
+_mm_set_epi64 macro m1, m2
+	movq2dq xmm0,m1
+	movq2dq xmm1,m2
+	punpcklqdq xmm0,xmm1
+	retm<xmm0>
+	endm
+_mm_setr_epi64 macro m1, m2
+	movq2dq xmm0,m2
+	movq2dq xmm1,m1
+	punpcklqdq xmm0,xmm1
+	retm<xmm0>
+	endm
+;endif
 
 .pragma list(pop)
 endif

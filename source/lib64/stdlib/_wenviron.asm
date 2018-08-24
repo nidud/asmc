@@ -11,6 +11,6 @@ Install proc private
 	ret
 Install endp
 
-pragma_init Install, 5
+.pragma(init(Install, 5))
 
 	END

@@ -21,58 +21,57 @@ fd_set			ENDS
 
 __WSAFDIsSet		proto :SOCKET, :ptr fd_set
 
-FD_CLR macro fd,
-	pushad
-	lea	ebx,set
-	mov	eax,fd
-	mov	ecx,[ebx].fd_set.fd_count
-	lea	esi,[ebx].fd_set.fd_array
-	mov	edi,esi
-	.while (ecx)
-		.if (eax == [esi])
-			dec [ebx].fd_set.fd_count
-			add esi, 4
-		.endif
-		movsd
-		dec	ecx
-	.endw
-	popad
-	endm
+FD_CLR macro fd, set
+    pushad
+    lea ebx,set
+    mov eax,fd
+    mov ecx,[ebx].fd_set.fd_count
+    lea esi,[ebx].fd_set.fd_array
+    mov edi,esi
+    .while (ecx)
+	.if (eax == [esi])
+	    dec [ebx].fd_set.fd_count
+	    add esi,4
+	.endif
+	movsd
+	dec ecx
+    .endw
+    popad
+    endm
 
 FD_SET macro fd, set
-	endm
-	lea	edx,set
-	mov	eax,fd
-	mov	ecx,[edx].fd_set.fd_count
-	.if	ecx < FD_SETSIZE
-		mov [edx].fd_set.fd_array[ecx*4],eax
-		inc [edx].fd_set.fd_count
-	.endif
-	endm
+    lea edx,set
+    mov eax,fd
+    mov ecx,[edx].fd_set.fd_count
+    .if ecx < FD_SETSIZE
+	mov [edx].fd_set.fd_array[ecx*4],eax
+	inc [edx].fd_set.fd_count
+    .endif
+    endm
 
 FD_ZERO macro set
-	lea	eax,set
-	mov	[eax].fd_set.fd_count, 0
-	endm
+    lea eax,set
+    mov [eax].fd_set.fd_count, 0
+    endm
 
 FD_ISSET macro fd, set
-	exitm<__WSAFDIsSet(fd, set)>
-	endm
+    exitm<__WSAFDIsSet(fd, set)>
+    endm
 
-timeval			STRUC
-tv_sec			LONG ?
-tv_usec			LONG ?
-timeval			ENDS
+timeval STRUC
+tv_sec	LONG ?
+tv_usec LONG ?
+timeval ENDS
 
 timerisset macro tvp
-	exitm<0>
-	endm
+    exitm<0>
+    endm
 timercmp macro tvp,uvp,cmp
-	exitm<0>
-	endm
+    exitm<0>
+    endm
 timerclear macro tvp
-	exitm<0>
-	endm
+    exitm<0>
+    endm
 
 IOCPARM_MASK		equ 0x7f
 IOC_VOID		equ 0x20000000
@@ -80,16 +79,16 @@ IOC_OUT			equ 0x40000000
 IOC_IN			equ 0x80000000
 IOC_INOUT		equ (IOC_IN OR IOC_OUT)
 _IO macro x,y
-	exitm<(IOC_VOID OR ((x) SHL 8) OR (y))>
-	endm
+    exitm<(IOC_VOID OR ((x) SHL 8) OR (y))>
+    endm
 
 _IOR macro x,y,t
-	exitm<(IOC_OUT OR ((sizeof(t) AND IOCPARM_MASK) SHL 16) OR ((x) SHL 8) OR (y))>
-	endm
+    exitm<(IOC_OUT OR ((sizeof(t) AND IOCPARM_MASK) SHL 16) OR ((x) SHL 8) OR (y))>
+    endm
 
 _IOW macro x,y,t
-	exitm<(IOC_IN OR ((sizeof(t) AND IOCPARM_MASK) SHL 16) OR ((x) SHL 8) OR (y))>
-	endm
+    exitm<(IOC_IN OR ((sizeof(t) AND IOCPARM_MASK) SHL 16) OR ((x) SHL 8) OR (y))>
+    endm
 
 FIONREAD		equ _IOR('f', 127, ULONG)
 FIONBIO			equ _IOW('f', 126, ULONG)
@@ -201,24 +200,24 @@ s_lh			equ <S_un.S_un_b.s_b3>
 in_addr			ENDS
 
 IN_CLASSA macro i
-	exitm<(((i) AND 0x80000000) EQ 0)>
-	endm
+    exitm<(((i) AND 0x80000000) EQ 0)>
+    endm
 IN_CLASSA_NET		equ 0xff000000
 IN_CLASSA_NSHIFT	equ 24
 IN_CLASSA_HOST		equ 0x00ffffff
 IN_CLASSA_MAX		equ 128
 
 IN_CLASSB macro i
-	exitm<(((i) AND 0xc0000000) EQ 0x80000000)>
-	endm
+    exitm<(((i) AND 0xc0000000) EQ 0x80000000)>
+    endm
 IN_CLASSB_NET		equ 0xffff0000
 IN_CLASSB_NSHIFT	equ 16
 IN_CLASSB_HOST		equ 0x0000ffff
 IN_CLASSB_MAX		equ 65536
 
 IN_CLASSC macro i
-	exitm<(((i) AND 0xe0000000) EQ 0xc0000000)>
-	endm
+    exitm<(((i) AND 0xe0000000) EQ 0xc0000000)>
+    endm
 IN_CLASSC_NET		equ 0xffffff00
 IN_CLASSC_NSHIFT	equ 8
 IN_CLASSC_HOST		equ 0x000000ff
@@ -865,22 +864,22 @@ PTIMEVAL		typedef PVOID
 LPTIMEVAL		typedef PVOID
 
 WSAMAKEASYNCREPLY macro buflen,error
-	exitm<MAKEONG(buflen,error)>
-	endm
+    exitm<MAKEONG(buflen,error)>
+    endm
 WSAMAKESELECTREPLY macro event,error
-	exitm<MAKEONG(event,error)>
-	endm
+    exitm<MAKEONG(event,error)>
+    endm
 WSAGETASYNCBUFLEN macro lParam
-	exitm<LOWORD(lParam)>
-	endm
+    exitm<LOWORD(lParam)>
+    endm
 WSAGETASYNCERROR macro lParam
-	exitm<HIWORD(lParam)>
-	endm
+    exitm<HIWORD(lParam)>
+    endm
 WSAGETSELECTEVENT macro lParam
-	exitm<LOWORD(lParam)>
-	endm
+    exitm<LOWORD(lParam)>
+    endm
 WSAGETSELECTERROR macro lParam
-	exitm<HIWORD(lParam)>
-	endm
+    exitm<HIWORD(lParam)>
+    endm
 
 endif

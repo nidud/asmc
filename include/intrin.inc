@@ -38,27 +38,6 @@ __debugbreak macro
     retm<>
     endm
 
-_mm_loadreg macro reg, arg
-    ifidn @SubStr(arg,1,1),<&>
-        lea reg,@SubStr(arg,2)
-    elseifdif <arg>,<reg>
-        mov reg,arg
-    endif
-    retm<reg>
-    endm
-
-_mm_storereg macro lp, reg, tmp:=<rcx>
-    ifidn @SubStr(lp,1,1),<&>
-        mov @SubStr(lp,2),reg
-    elseif (opattr lp) eq 48
-        mov [lp],reg
-    else
-        mov tmp,lp
-        mov [tmp],reg
-    endif
-    retm<>
-    endm
-
 _BitScanForward macro lpIndex, dwMask
     bsf eax,_mm_loadreg(eax, dwMask)
     _mm_storereg(lpIndex, eax)
@@ -72,16 +51,19 @@ _BitScanReverse macro lpIndex, dwMask
     endm
 
 ifdef __MACHINEX64
+
 _BitScanForward64 macro lpIndex, dwMask
     bsf rax,_mm_loadreg(rax, dwMask)
     _mm_storereg(lpIndex, eax)
     retm<al>
     endm
+
 _BitScanReverse64 macro lpIndex, dwMask
     bsr rax,_mm_loadreg(rax, dwMask)
     _mm_storereg(lpIndex, eax)
     retm<al>
     endm
+
 endif
 
 _InterlockedCompareExchange macro Destination, Exchange, Comparand
@@ -460,6 +442,31 @@ __addfsword macro offs, l
     assume fs:error
     retm<>
     endm
+__readfsbyte macro offs
+    assume fs:nothing
+    mov al,fs:[offs]
+    assume fs:error
+    retm<al>
+    endm
+__readfsdword macro offs
+    assume fs:nothing
+    mov eax,fs:[offs]
+    assume fs:error
+    retm<eax>
+    endm
+__readfsqword macro offs
+    assume fs:nothing
+    mov eax,fs:[offs]
+    mov edx,fs:[offs+4]
+    assume fs:error
+    retm<eax>
+    endm
+__readfsword macro offs
+    assume fs:nothing
+    mov ax,fs:[offs]
+    assume fs:error
+    retm<ax>
+    endm
 endif
 
 ifdef __MACHINEX64
@@ -494,6 +501,22 @@ __incgsqword macro offs
 __incgsword macro offs
     inc word ptr gs:[offs]
     retm<>
+    endm
+__readgsbyte macro offs
+    mov al,gs:[offs]
+    retm<al>
+    endm
+__readgsdword macro offs
+    mov eax,gs:[offs]
+    retm<eax>
+    endm
+__readgsqword macro offs
+    mov rax,gs:[offs]
+    retm<rax>
+    endm
+__readgsword macro offs
+    mov ax,gs:[offs]
+    retm<ax>
     endm
 endif
 
@@ -727,24 +750,46 @@ __movs macro x, Destination, Source, Count
     retm<>
     endm
 
+__stos macro reg, x, Destination, Val, Count
+    push rdi
+    _mm_loadreg(rdi, Destination)
+    _mm_loadreg(reg, Val)
+    _mm_loadreg(ecx, Count)
+    rep stos&x&
+    pop rdi
+    retm<>
+    endm
+
 __movsb macro Destination, Source, Count
     exitm<__movs(b, Destination, Source, Count)>
     endm
-
 __movsd macro Destination, Source, Count
     exitm<__movs(d, Destination, Source, Count)>
     endm
-
 __movsw macro Destination, Source, Count
     exitm<__movs(w, Destination, Source, Count)>
+    endm
+__stosb macro Destination, Val, Count
+    exitm<__stos(al, b, Destination, Val, Count)>
+    endm
+__stosd macro Destination, Val, Count
+    exitm<__stos(eax, d, Destination, Val, Count)>
+    endm
+__stosw macro Destination, Val, Count
+    exitm<__stos(ax, w, Destination, Val, Count)>
     endm
 
 endif
 
 ifdef __MACHINEX64
+
 __movsq macro Destination, Source, Count
     exitm<__movs(q, Destination, Source, Count)>
     endm
+__stosq macro Destination, Val, Count
+    exitm<__stos(rax, q, Destination, Val, Count)>
+    endm
+
 endif
 
 ifdef __MACHINEX86_X64
@@ -823,6 +868,7 @@ __popcnt64 macro value
 endif
 
 ifdef __MACHINEX86_X64
+
 __rdtsc macro
     rdtsc
 ifdef _WIN64
@@ -844,97 +890,441 @@ endif
     pop rdi
     retm<rax>
     endm
+
+__readcr0 macro
+    mov rax,cr0
+    retm<rax>
+    endm
+__readcr2 macro
+    mov rax,cr2
+    retm<rax>
+    endm
+__readcr3 macro
+    mov rax,cr3
+    retm<rax>
+    endm
+__readcr4 macro
+    mov rax,cr4
+    retm<rax>
+    endm
+__readcr8 macro
+    mov rax,cr8
+    retm<rax>
+    endm
+
+__writecr0 macro val
+    mov cr0,val
+    retm<>
+    endm
+__writecr2 macro val
+    mov cr2,val
+    retm<>
+    endm
+__writecr3 macro val
+    mov cr3,val
+    retm<>
+    endm
+__writecr4 macro val
+    mov cr4,val
+    retm<>
+    endm
+__writecr8 macro val
+    mov cr8,val
+    retm<>
+    endm
+
+__readdr macro imm
+    mov rax,dr&imm&
+    retm<rax>
+    endm
+
+__writedr macro imm, val
+    mov dr&imm&,val
+    retm<>
+    endm
+
+__readeflags macro
+ifdef _WIN64
+    pushfq
+else
+    pushfd
+endif
+    pop rax
+    retm<rax>
+    endm
+
+__writeeflags macro val
+    push val
+ifdef _WIN64
+    popfq
+else
+    popfd
+endif
+    retm<>
+    endm
+
 endif
 
-if 0
+ifdef __MACHINEX64
+__shiftleft128 macro LowPart, HighPart, Count
+    _mm_loadreg(rax, LowPart)
+    _mm_loadreg(rdx, HighPart)
+    shld rdx,rax,Count
+    sal rax,Count
+    .if cl & 0xC0
+        .if cl & 0x80
+            xor eax,eax
+            xor edx,edx
+        .else
+            mov rdx,rax
+            xor rax,rax
+        .endif
+    .endif
+    retm<rax>
+    endm
 
-__MACHINEX64(__readcr0 proto)
-__MACHINEX86(__readcr0 proto)
-__MACHINEX64(__readcr2 proto)
-__MACHINEX86(__readcr2 proto)
-__MACHINEX64(__readcr3 proto)
-__MACHINEX86(__readcr3 proto)
-__MACHINEX64(__readcr4 proto)
-__MACHINEX86(__readcr4 proto)
-__MACHINEX64(__readcr8 proto)
-__MACHINEX86(__readcr8 proto)
-__MACHINEX64(__readdr proto :dword)
-__MACHINEX86(__readdr proto :dword)
-__MACHINEX64(__readeflags proto)
-__MACHINEX86(__readeflags proto)
-__MACHINEX86(__readfsbyte proto :dword)
-__MACHINEX86(__readfsdword proto :dword)
-__MACHINEX86(__readfsqword proto :dword)
-__MACHINEX86(__readfsword proto :dword)
-__MACHINEX64(__readgsbyte proto :dword)
-__MACHINEX64(__readgsdword proto :dword)
-__MACHINEX64(__readgsqword proto :dword)
-__MACHINEX64(__readgsword proto :dword)
-__MACHINEX86_X64(__readmsr proto :dword)
-__MACHINEX86_X64(__readpmc proto :dword)
-__MACHINEX86_X64(__segmentlimit proto :dword)
-__MACHINEX64(__shiftleft128 proto :qword, :qword, :byte)
-__MACHINEX64(__shiftright128 proto :qword, :qword, :byte)
-__MACHINEX86_X64(__sidt proto :ptr)
-__MACHINEX86_X64(__stosb proto :LPSTR, :byte, :size_t)
-__MACHINEX86_X64(__stosd proto :ptr, :dword, :size_t)
-__MACHINEX64(__stosq proto :ptr, :qword, :size_t)
-__MACHINEX86_X64(__stosw proto :ptr, :word, :size_t)
-__MACHINEX86_X64(__svm_clgi proto)
-__MACHINEX86_X64(__svm_invlpga proto :ptr, :sdword)
-__MACHINEX86_X64(__svm_skinit proto :sdword)
-__MACHINEX86_X64(__svm_stgi proto)
-__MACHINEX86_X64(__svm_vmload proto :size_t)
-__MACHINEX86_X64(__svm_vmrun proto :size_t)
-__MACHINEX86_X64(__svm_vmsave proto :size_t)
-__MACHINEX86_X64(__ud2 proto)
-__MACHINEX86_X64(__vmx_off proto)
-__MACHINEX64(__vmx_on proto :ptr)
-__MACHINEX64(__vmx_vmclear proto :ptr)
-__MACHINEX64(__vmx_vmlaunch proto)
-__MACHINEX64(__vmx_vmptrld proto :ptr)
-__MACHINEX86_X64(__vmx_vmptrst proto :ptr)
-__MACHINEX64(__vmx_vmread proto :size_t, :ptr)
-__MACHINEX64(__vmx_vmresume proto)
-__MACHINEX64(__vmx_vmwrite proto :size_t, :size_t)
-__MACHINEX86_X64(__wbinvd proto)
-__MACHINEX64(__writecr0 proto :qword)
-__MACHINEX86(__writecr0 proto :dword)
-__MACHINEX64(__writecr2 proto :qword)
-__MACHINEX86(__writecr2 proto :dword)
-__MACHINEX64(__writecr3 proto :qword)
-__MACHINEX86(__writecr3 proto :dword)
-__MACHINEX64(__writecr4 proto :qword)
-__MACHINEX86(__writecr4 proto :dword)
-__MACHINEX64(__writecr8 proto :qword)
-__MACHINEX86(__writecr8 proto :dword)
-__MACHINEX64(__writedr proto :dword, :qword)
-__MACHINEX86(__writedr proto :dword, :dword)
-__MACHINEX64(__writeeflags proto :qword)
-__MACHINEX86(__writeeflags proto :dword)
-__MACHINEX86(__writefsbyte proto :dword, :byte)
-__MACHINEX86(__writefsdword proto :dword, :dword)
-__MACHINEX86(__writefsqword proto :dword, :qword)
-__MACHINEX86(__writefsword proto :dword, :word)
-__MACHINEX64(__writegsbyte proto :dword, :byte)
-__MACHINEX64(__writegsdword proto :dword, :dword)
-__MACHINEX64(__writegsqword proto :dword, :qword)
-__MACHINEX64(__writegsword proto :dword, :word)
-__MACHINEX86_X64(__writemsr proto :dword, :qword)
+__shiftright128 macro LowPart, HighPart, Count
+    _mm_loadreg(rax, LowPart)
+    _mm_loadreg(rdx, HighPart)
+    shrd rax,rdx,Count
+    sar rdx,Count
+    .if cl & 0xC0
+        .if cl & 0x80
+            xor eax,eax
+            xor edx,edx
+        .else
+            mov rax,rdx
+            xor rdx,rdx
+        .endif
+    .endif
+    retm<rax>
+    endm
 
-__MACHINEX86_X64(_rsm proto)
-__MACHINEX86_X64(_lgdt proto :ptr)
-__MACHINEX86_X64(_sgdt proto :ptr)
-__MACHINEX86_X64(_clac proto)
-__MACHINEX86_X64(_stac proto)
-__MACHINEX86_X64(_addcarry_u8 proto __cdecl :byte, :byte, :byte, :ptr)
-__MACHINEX86_X64(_subborrow_u8 proto __cdecl :byte, :byte, :byte, :ptr)
-__MACHINEX86_X64(_addcarry_u16 proto __cdecl :byte, :word, :word, :ptr)
-__MACHINEX86_X64(_subborrow_u16 proto __cdecl :byte, :word, :word, :ptr)
-__MACHINEX86_X64(_addcarry_u32 proto __cdecl :byte, :dword, :dword, :ptr)
-__MACHINEX86_X64(_subborrow_u32 proto __cdecl :byte, :dword, :dword, :ptr)
-__MACHINEX64(_addcarry_u64 proto __cdecl :byte, :qword, :qword, :ptr)
-__MACHINEX64(_subborrow_u64 proto __cdecl :byte, :qword, :qword, :ptr)
+endif
+
+ifdef __MACHINEX86_X64
+
+__readmsr macro register
+    _mm_loadreg(ecx, register)
+    rdmsr
+ifdef _WIN64
+    shl rdx,32
+    or rax,rdx
+endif
+    retm<rax>
+    endm
+
+__readpmc macro counter
+    _mm_loadreg(ecx, counter)
+    rdpmc
+ifdef _WIN64
+    shl rdx,32
+    or rax,rdx
+endif
+    retm<rax>
+    endm
+
+__segmentlimit macro a
+    _mm_loadreg(eax, a)
+    lsl eax,eax
+    retm<eax>
+    endm
+
+__sidt macro Destination
+    _mm_loadreg(rcx, Destination)
+    sidt qword ptr [rcx]
+    retm<>
+    endm
+
+__svm_clgi macro
+    clgi
+    endm
+
+__svm_invlpga macro Va, ASID
+    _mm_loadreg(rax, Va)
+    _mm_loadreg(ecx, ASID)
+    invlpga rax,ecx
+    retm<>
+    endm
+
+__svm_skinit macro SLB
+    _mm_loadreg(eax, SLB)
+    skinit eax
+    retm<>
+    endm
+
+__svm_stgi macro
+    stgi
+    retm<>
+    endm
+
+__svm_vmload macro VmcbPhysicalAddress
+    _mm_loadreg(eax, VmcbPhysicalAddress)
+    vmload rax
+    retm<>
+    endm
+
+__svm_vmrun macro VmcbPhysicalAddress
+    _mm_loadreg(eax, VmcbPhysicalAddress)
+    vmrun rax
+    retm<>
+    endm
+
+__svm_vmsave macro VmcbPhysicalAddress
+    _mm_loadreg(eax, VmcbPhysicalAddress)
+    vmsave rax
+    retm<>
+    endm
+
+__ud2 macro
+    ud2
+    retm<>
+    endm
+
+__vmx_off macro
+    vmxoff
+    retm<>
+    endm
+
+endif
+
+ifdef __MACHINEX64
+
+__vmx_on macro VmsSupportPhysicalAddress
+    _mm_loadreg(rcx, VmsSupportPhysicalAddress)
+    vmxon qword ptr [rcx]
+    retm<>
+    endm
+
+__vmx_vmclear macro VmcsPhysicalAddress
+    _mm_loadreg(rcx, VmcsPhysicalAddress)
+    vmclear qword ptr [rcx]
+    retm<>
+    endm
+
+__vmx_vmlaunch macro
+    vmlaunch
+    retm<>
+    endm
+
+__vmx_vmptrld macro VmcsPhysicalAddress
+    vmptrld qword ptr [rcx]
+    retm<>
+    endm
+
+__vmx_vmread macro Field, FieldValue
+    _mm_loadreg(rax, Field)
+    _mm_loadreg(rcx, FieldValue)
+    vwread [rcx],rax
+    retm<>
+    endm
+
+__vmx_vmresume macro
+    vmresume
+    retm<>
+    endm
+
+__vmx_vmwrite macro Field, FieldValue
+    _mm_loadreg(eax, Field)
+    _mm_loadreg(ecx, FieldValue)
+    vmwrite rax,rcx
+    retm<>
+    endm
+
+endif
+
+ifdef __MACHINEX86_X64
+
+__vmx_vmptrst macro VmcsPhysicalAddress
+    _mm_loadreg(rcx, VmcsPhysicalAddress)
+    vmptrst qword ptr [rcx]
+    retm<>
+    endm
+
+endif
+
+ifdef __MACHINEX86_X64
+
+__wbinvd macro
+    wbinvd
+    endm
+
+endif
+
+ifdef __MACHINEX86
+
+__writefsbyte macro offs, val
+    assume fs:nothing
+    mov byte ptr fs:[offs],val
+    assume fs:error
+    retm<>
+    endm
+__writefsdword macro offs, val
+    assume fs:nothing
+    mov dword ptr fs:[offs],val
+    assume fs:error
+    retm<>
+    endm
+__writefsqword macro offs, val
+    assume fs:nothing
+    mov eax,dword ptr val
+    mov edx,dword ptr val[4]
+    mov fs:[offs],eax
+    mov fs:[offs+4],edx
+    assume fs:error
+    retm<>
+    endm
+__writefsword macro offs, val
+    assume fs:nothing
+    mov word ptr fs:[offs],val
+    assume fs:error
+    retm<>
+    endm
+
+endif
+
+ifdef __MACHINEX64
+
+__writegsbyte macro offs, val
+    mov byte ptr gs:[offs],val
+    retm<>
+    endm
+__writegsdword macro offs, val
+    mov dword ptr gs:[offs],val
+    retm<>
+    endm
+__writegsqword macro offs, val
+    mov qword ptr gs:[offs],val
+    retm<>
+    endm
+__writegsword macro offs, val
+    mov word ptr gs:[offs],val
+    retm<>
+    endm
+
+endif
+
+ifdef __MACHINEX86_X64
+
+__writemsr macro Register, Value
+    _mm_loadreg(ecx, Register)
+    _mm_loadreg(rdx, Value)
+    mov rax,rdx
+    shr rdx,32
+    wrmsr
+    retm<>
+    endm
+
+_rsm macro
+    rsm
+    retm<>
+    endm
+
+_lgdt macro p
+    _mm_loadreg(rcx, p)
+    lgdt qword ptr [rcx]
+    retm<>
+    endm
+
+_sgdt macro p
+    _mm_loadreg(rcx, p)
+    sgdt qword ptr [rcx]
+    retm<>
+    endm
+
+_clac macro
+    clac
+    retm<>
+    endm
+
+_stac macro
+    stac
+    retm<>
+    endm
+
+_addcarry_u8 macro carry, a, b, p
+    _mm_loadreg(rcx, p)
+    xor eax,eax
+    cmp al,carry
+    mov al,a
+    adc al,b
+    mov [rcx],al
+    retm<al>
+    endm
+
+_subborrow_u8 macro carry, a, b, p
+    _mm_loadreg(rcx, p)
+    xor eax,eax
+    cmp al,carry
+    mov al,a
+    sbb al,b
+    mov [rcx],al
+    retm<al>
+    endm
+
+_addcarry_u16 macro carry, a, b, p
+    _mm_loadreg(rcx, p)
+    xor eax,eax
+    cmp al,carry
+    mov ax,a
+    adc ax,b
+    mov [rcx],ax
+    retm<ax>
+    endm
+
+_subborrow_u16 macro carry, a, b, p
+    _mm_loadreg(rcx, p)
+    xor eax,eax
+    cmp ax,carry
+    mov ax,a
+    sbb ax,b
+    mov [rcx],ax
+    retm<ax>
+    endm
+
+_addcarry_u32 macro carry, a, b, p
+    _mm_loadreg(rcx, p)
+    xor eax,eax
+    cmp al,carry
+    mov eax,a
+    adc eax,b
+    mov [rcx],eax
+    retm<eax>
+    endm
+
+_subborrow_u32 macro carry, a, b, p
+    _mm_loadreg(rcx, p)
+    xor eax,eax
+    cmp al,carry
+    mov eax,a
+    sbb eax,b
+    mov [rcx],eax
+    retm<eax>
+    endm
+
+endif
+
+ifdef __MACHINEX64
+
+_addcarry_u64 macro carry, a, b, p
+    _mm_loadreg(rcx, p)
+    xor eax,eax
+    cmp al,carry
+    mov rax,a
+    adc rax,b
+    mov [rcx],rax
+    retm<rax>
+    endm
+
+_subborrow_u64 macro carry, a, b, p
+    _mm_loadreg(rcx, p)
+    xor eax,eax
+    cmp al,carry
+    mov rax,a
+    sbb rax,b
+    mov [rcx],rax
+    retm<rax>
+    endm
 
 endif
 

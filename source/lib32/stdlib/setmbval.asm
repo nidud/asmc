@@ -27,7 +27,7 @@ local astring:word
 
 __set_invalid_mb_chars endp
 
-pragma_init 40,__set_invalid_mb_chars
+.pragma(init(__set_invalid_mb_chars, 40))
 
     end
 

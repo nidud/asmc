@@ -32,8 +32,7 @@ main proc
    .endw
 
    mov dwMask,edi
-   lea rbx,index
-   mov isNonzero,_BitScanForward(rbx, dwMask)
+   mov isNonzero,_BitScanForward(&index, dwMask)
    .if (isNonzero)
       _cprintf( "\r\nMask: %d Index: %d\r\n", dwMask, index )
    .else

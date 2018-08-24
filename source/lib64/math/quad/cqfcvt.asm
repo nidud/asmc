@@ -5,20 +5,6 @@ include quadmath.inc
 include ltype.inc
 include string.inc
 
-; Parsing flags
-
-_ST_SIGN        equ 0x0001
-_ST_NEGNUM      equ 0x0002
-_ST_NEGEXP      equ 0x0004
-_ST_ISZERO      equ 0x0008
-_ST_ISHEX       equ 0x0010
-_ST_ISNAN       equ 0x0020
-_ST_ISINF       equ 0x0040
-_ST_INVALID     equ 0x0080
-_ST_UNDERFLOW   equ 0x0100
-_ST_OVERFLOW    equ 0x0200
-_ST_DIGITS      equ 0x0400
-_ST_DOT         equ 0x0800
 _ST_E           equ 0x1000  ; 'E' format
 _ST_F           equ 0x2000  ; 'F' format
 _ST_G           equ 0x4000  ; 'G' format
@@ -698,7 +684,8 @@ __fconv proc private uses rsi rdi rbx fp:ptr, cvt:ptr, buf:LPSTR, flags:dword
 __fconv endp
 
 _qcvt proc q:ptr, buffer:LPSTR, ch_type:SINT, precision:SINT, flags:SINT
-local cvt:CVT_INFO
+
+  local cvt:CVT_INFO
 
     mov edx,flags
     mov eax,'e'
@@ -735,20 +722,27 @@ local cvt:CVT_INFO
         strcpy(buffer, rax)
     .endif
     ret
+
 _qcvt endp
 
 _ldcvt proc ld:ptr, buffer:LPSTR, ch_type:SINT, precision:SINT, flags:SINT
-local q:REAL16
+
+  local q:REAL16
+
     ldtoquad(&q, ld)
     _qcvt(&q, buffer, ch_type, precision, flags)
     ret
+
 _ldcvt endp
 
 _dcvt proc d:ptr, buffer:LPSTR, ch_type:SINT, precision:SINT, flags:SINT
-local q:REAL16
+
+  local q:REAL16
+
     dtoquad(&q, d)
     _qcvt(&q, buffer, ch_type, precision, flags)
     ret
+
 _dcvt endp
 
     end

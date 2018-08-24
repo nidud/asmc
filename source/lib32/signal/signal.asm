@@ -142,7 +142,7 @@ ExcRemove:
     assume  FS:ERROR
     ret
 
-pragma_init ExcInstall, 1
-pragma_exit ExcRemove, 200
+.pragma(init(ExcInstall, 1))
+.pragma(exit(ExcRemove, 200))
 
     END

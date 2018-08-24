@@ -127,4 +127,37 @@ _MM_SHUFXX macro sx, a, b, imm
     retm<retval>
     endm
 
+_mm_loadreg macro reg, arg
+    ifidn @SubStr(arg,1,1),<&>
+        lea reg,@SubStr(arg,2)
+    elseifdif <arg>,<reg>
+        mov reg,arg
+    endif
+    retm<reg>
+    endm
+
+_mm_storereg macro lp, reg, tmp:=<rcx>
+    ifidn @SubStr(lp,1,1),<&>
+        mov @SubStr(lp,2),reg
+    elseif (opattr lp) eq 48
+        mov [lp],reg
+    else
+        mov tmp,lp
+        mov [tmp],reg
+    endif
+    retm<>
+    endm
+
+_mm_getptr macro arg, reg:=<rax>
+    ifidn @SubStr(arg,1,1),<&>
+        lea reg,@SubStr(arg,2)
+        exitm<[reg]>
+    elseifidn @SubStr(arg,1,1),<[>
+        exitm<arg>
+    elseif (opattr lp) eq 48
+        exitm<[arg]>
+    endif
+    exitm<arg>
+    endm
+
 endif

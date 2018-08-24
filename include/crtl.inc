@@ -68,17 +68,6 @@ _I4LD		proto __cdecl ; SDWORD [eax] to long double[edx]
 _U8LD		proto __cdecl ; QWORD [eax] to long double[edx]
 _I8LD		proto __cdecl ; SQWORD [eax] to long double[edx]
 
-pragma_init macro pp, priority, name:=<INIT>
-_&name& SEGMENT PARA FLAT PUBLIC '&name&'
-	SIZE_T pp
-	SIZE_T priority
-_&name& ends
-	endm
-
-pragma_exit macro pp, priority
-pragma_init pp, priority, EXIT
-	endm
-
 endif
 
 .pragma list(pop)

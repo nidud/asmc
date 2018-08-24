@@ -31,314 +31,756 @@ m256i_u32	dd 8 dup(?)
 m256i_u64	dq 4 dup(?)
 __m256i		ends
 
-_CMP_EQ_OQ		equ 0x00
-_CMP_LT_OS		equ 0x01
-_CMP_LE_OS		equ 0x02
-_CMP_UNORD_Q		equ 0x03
-_CMP_NEQ_UQ		equ 0x04
-_CMP_NLT_US		equ 0x05
-_CMP_NLE_US		equ 0x06
-_CMP_ORD_Q		equ 0x07
-_CMP_EQ_UQ		equ 0x08
-_CMP_NGE_US		equ 0x09
-_CMP_NGT_US		equ 0x0A
-_CMP_FALSE_OQ		equ 0x0B
-_CMP_NEQ_OQ		equ 0x0C
-_CMP_GE_OS		equ 0x0D
-_CMP_GT_OS		equ 0x0E
-_CMP_TRUE_UQ		equ 0x0F
-_CMP_EQ_OS		equ 0x10
-_CMP_LT_OQ		equ 0x11
-_CMP_LE_OQ		equ 0x12
-_CMP_UNORD_S		equ 0x13
-_CMP_NEQ_US		equ 0x14
-_CMP_NLT_UQ		equ 0x15
-_CMP_NLE_UQ		equ 0x16
-_CMP_ORD_S		equ 0x17
-_CMP_EQ_US		equ 0x18
-_CMP_NGE_UQ		equ 0x19
-_CMP_NGT_UQ		equ 0x1A
-_CMP_FALSE_OS		equ 0x1B
-_CMP_NEQ_OS		equ 0x1C
-_CMP_GE_OQ		equ 0x1D
-_CMP_GT_OQ		equ 0x1E
-_CMP_TRUE_US		equ 0x1F
+_CMP_EQ_OQ	equ 0x00
+_CMP_LT_OS	equ 0x01
+_CMP_LE_OS	equ 0x02
+_CMP_UNORD_Q	equ 0x03
+_CMP_NEQ_UQ	equ 0x04
+_CMP_NLT_US	equ 0x05
+_CMP_NLE_US	equ 0x06
+_CMP_ORD_Q	equ 0x07
+_CMP_EQ_UQ	equ 0x08
+_CMP_NGE_US	equ 0x09
+_CMP_NGT_US	equ 0x0A
+_CMP_FALSE_OQ	equ 0x0B
+_CMP_NEQ_OQ	equ 0x0C
+_CMP_GE_OS	equ 0x0D
+_CMP_GT_OS	equ 0x0E
+_CMP_TRUE_UQ	equ 0x0F
+_CMP_EQ_OS	equ 0x10
+_CMP_LT_OQ	equ 0x11
+_CMP_LE_OQ	equ 0x12
+_CMP_UNORD_S	equ 0x13
+_CMP_NEQ_US	equ 0x14
+_CMP_NLT_UQ	equ 0x15
+_CMP_NLE_UQ	equ 0x16
+_CMP_ORD_S	equ 0x17
+_CMP_EQ_US	equ 0x18
+_CMP_NGE_UQ	equ 0x19
+_CMP_NGT_UQ	equ 0x1A
+_CMP_FALSE_OS	equ 0x1B
+_CMP_NEQ_OS	equ 0x1C
+_CMP_GE_OQ	equ 0x1D
+_CMP_GT_OQ	equ 0x1E
+_CMP_TRUE_US	equ 0x1F
 
-_mm256_add_pd		proto __cdecl :yword, :yword
-_mm256_add_ps		proto __cdecl :yword, :yword
-_mm256_addsub_pd	proto __cdecl :yword, :yword
-_mm256_addsub_ps	proto __cdecl :yword, :yword
-_mm256_and_pd		proto __cdecl :yword, :yword
-_mm256_and_ps		proto __cdecl :yword, :yword
-_mm256_andnot_pd	proto __cdecl :yword, :yword
-_mm256_andnot_ps	proto __cdecl :yword, :yword
-_mm256_blend_pd		proto __cdecl :yword, :yword, :sdword
-_mm256_blend_ps		proto __cdecl :yword, :yword, :sdword
-_mm256_blendv_pd	proto __cdecl :yword, :yword, :yword
-_mm256_blendv_ps	proto __cdecl :yword, :yword, :yword
-_mm256_div_pd		proto __cdecl :yword, :yword
-_mm256_div_ps		proto __cdecl :yword, :yword
-_mm256_dp_ps		proto __cdecl :yword, :yword, :sdword
-_mm256_hadd_pd		proto __cdecl :yword, :yword
-_mm256_hadd_ps		proto __cdecl :yword, :yword
-_mm256_hsub_pd		proto __cdecl :yword, :yword
-_mm256_hsub_ps		proto __cdecl :yword, :yword
-_mm256_max_pd		proto __cdecl :yword, :yword
-_mm256_max_ps		proto __cdecl :yword, :yword
-_mm256_min_pd		proto __cdecl :yword, :yword
-_mm256_min_ps		proto __cdecl :yword, :yword
-_mm256_mul_pd		proto __cdecl :yword, :yword
-_mm256_mul_ps		proto __cdecl :yword, :yword
-_mm256_or_pd		proto __cdecl :yword, :yword
-_mm256_or_ps		proto __cdecl :yword, :yword
-_mm256_shuffle_pd	proto __cdecl :yword, :yword, :sdword
-_mm256_shuffle_ps	proto __cdecl :yword, :yword, :sdword
-_mm256_sub_pd		proto __cdecl :yword, :yword
-_mm256_sub_ps		proto __cdecl :yword, :yword
-_mm256_xor_pd		proto __cdecl :yword, :yword
-_mm256_xor_ps		proto __cdecl :yword, :yword
+_mm256_add_pd macro a, b
+    vaddpd a,a,b
+    retm<a>
+    endm
+_mm256_add_ps macro a, b
+    vaddps a,a,b
+    retm<a>
+    endm
+_mm256_addsub_pd macro a, b
+    vaddsubpd a,a,b
+    retm<a>
+    endm
+_mm256_addsub_ps macro a, b
+    vaddsubps a,a,b
+    retm<a>
+    endm
+_mm256_and_pd macro a, b
+    vandpd a,a,b
+    retm<a>
+    endm
+_mm256_and_ps macro a, b
+    vandps a,a,b
+    retm<a>
+    endm
+_mm256_andnot_pd macro a, b
+    vandnpd a,a,b
+    retm<a>
+    endm
+_mm256_andnot_ps macro a, b
+    vandnps a,a,b
+    retm<a>
+    endm
+
+_mm256_blend_pd macro a, b, i
+    vblendpd a,a,b,i
+    retm<a>
+    endm
+_mm256_blend_ps macro a, b, i
+    vblendps a,a,b,i
+    retm<a>
+    endm
+_mm256_blendv_pd macro a, b, i
+    vblendvpd a,a,b,i
+    retm<a>
+    endm
+_mm256_blendv_ps macro a, b, i
+    vblendvps a,a,b,i
+    retm<a>
+    endm
+
+_mm256_div_pd macro a, b
+    vdivpd a,a,b
+    retm<a>
+    endm
+_mm256_div_ps macro a, b
+    vdivps a,a,b
+    retm<a>
+    endm
+_mm256_dp_ps macro a, b, i
+    vdpps a,a,b,i
+    retm<a>
+    endm
+_mm256_hadd_pd macro a, b
+    vhaddpd a,a,b
+    retm<a>
+    endm
+_mm256_hadd_ps macro a, b
+    vhaddps a,a,b
+    retm<a>
+    endm
+_mm256_hsub_pd macro a, b
+    vhsubpd a,a,b
+    retm<a>
+    endm
+_mm256_hsub_ps macro a, b
+    vhsubps a,a,b
+    retm<a>
+    endm
+_mm256_max_pd macro a, b
+    vmaxpd a,a,b
+    retm<a>
+    endm
+_mm256_max_ps macro a, b
+    vmaxps a,a,b
+    retm<a>
+    endm
+_mm256_min_pd macro a, b
+    vminpd a,a,b
+    retm<a>
+    endm
+_mm256_min_ps macro a, b
+    vminps a,a,b
+    retm<a>
+    endm
+_mm256_mul_pd macro a, b
+    vmulpd a,a,b
+    retm<a>
+    endm
+_mm256_mul_ps macro a, b
+    vmulps a,a,b
+    retm<a>
+    endm
+_mm256_or_pd macro a, b
+    vorpd a,a,b
+    retm<a>
+    endm
+_mm256_or_ps macro a, b
+    vorps a,a,b
+    retm<a>
+    endm
+_mm256_shuffle_pd macro a, b, i
+    vshufpd a,a,b,i
+    retm<a>
+    endm
+_mm256_shuffle_ps macro a, b, i
+    vshufps a,a,b,i
+    retm<a>
+    endm
+_mm256_sub_pd macro a, b
+    vsubpd a,a,b
+    retm<a>
+    endm
+_mm256_sub_ps macro a, b
+    vsubps a,a,b
+    retm<a>
+    endm
+_mm256_xor_pd macro a, b
+    vxorpd a,a,b
+    retm<a>
+    endm
+_mm256_xor_ps macro a, b
+    vxorps a,a,b
+    retm<a>
+    endm
 
 _mm_cmp_pd macro a, b, imm
-	cmppd a,b,imm
-	retm<a>
-	endm
+    cmppd a,b,imm
+    retm<a>
+    endm
 _mm256_cmp_pd macro a, b, imm
-	vcmppd a,b,imm
-	retm<a>
-	endm
+    vcmppd a,b,imm
+    retm<a>
+    endm
 _mm_cmp_ps macro a, b, imm
-	cmpps a,b,imm
-	retm<a>
-	endm
+    cmpps a,b,imm
+    retm<a>
+    endm
 _mm256_cmp_ps macro a, b, imm
-	vcmpps a,b,imm
-	retm<a>
-	endm
+    vcmpps a,b,imm
+    retm<a>
+    endm
 _mm_cmp_sd macro a, b, imm
-	cmpsd a,b,imm
-	retm<a>
-	endm
+    cmpsd a,b,imm
+    retm<a>
+    endm
 _mm_cmp_ss macro a, b, imm
-	cmpss a,b,imm
-	retm<a>
-	endm
+    cmpss a,b,imm
+    retm<a>
+    endm
 
-_mm_comi_sd		proto __cdecl :yword, :yword, :sdword
-_mm_comi_ss		proto __cdecl :yword, :yword, :sdword
-_mm256_cvtepi32_pd	proto __cdecl :yword
-_mm256_cvtepi32_ps	proto __cdecl :yword
-_mm256_cvtpd_ps		proto __cdecl :yword
-_mm256_cvtps_epi32	proto __cdecl :yword
-_mm256_cvtps_pd		proto __cdecl :yword
-_mm256_cvttpd_epi32	proto __cdecl :yword
-_mm256_cvtpd_epi32	proto __cdecl :yword
-_mm256_cvttps_epi32	proto __cdecl :yword
-_mm256_extractf128_ps	proto __cdecl :yword, :sdword
-_mm256_extractf128_pd	proto __cdecl :yword, :sdword
-_mm256_extractf128_si256 proto __cdecl :yword, :sdword
-_mm256_zeroall		proto __cdecl
-_mm256_zeroupper	proto __cdecl
-_mm256_permutevar_ps	proto __cdecl :yword, :yword
-_mm_permutevar_ps	proto __cdecl :yword, :yword
-_mm256_permute_ps	proto __cdecl :yword, :sdword
+_mm_comi_sd macro a, b, imm
+    cmpsd a,b,imm
+    retm<a>
+    endm
+_mm_comi_ss macro a, b, imm
+    cmpss a,b,imm
+    retm<a>
+    endm
 
+_mm256_cvtepi32_pd macro x:=<xmm0>
+    vcvtdq2pd ymm0,x
+    retm<ymm0>
+    endm
+_mm256_cvtepi32_ps macro x:=<xmm0>
+    vcvtdq2ps ymm0,x
+    retm<ymm0>
+    endm
+_mm256_cvtpd_ps macro y:=<ymm0>
+    vcvtpd2ps xmm0,y
+    retm<xmm0>
+    endm
+_mm256_cvtps_epi32 macro y:=<ymm0>
+    vcvtps2dq y,y
+    retm<y>
+    endm
+_mm256_cvtps_pd macro x:=<xmm0>
+    vcvtps2pd ymm0,x
+    retm<ymm0>
+    endm
+_mm256_cvttpd_epi32 macro y:=<ymm0>
+    vcvttpd2dq xmm0,y
+    retm<xmm0>
+    endm
+_mm256_cvtpd_epi32 macro y:=<ymm0>
+    vcvtpd2dq xmm0,y
+    retm<xmm0>
+    endm
+_mm256_cvttps_epi32 macro y:=<ymm0>
+    vcvttps2dq y,y
+    retm<y>
+    endm
+_mm256_extractf128_ps macro y:=<ymm0>, imm:=<0>
+    vextractf128 xmm0,y,imm
+    retm<xmm0>
+    endm
+_mm256_extractf128_pd macro y:=<ymm0>, imm:=<0>
+    vextractf128 xmm0,y,imm
+    retm<xmm0>
+    endm
+_mm256_extractf128_si256 macro y:=<ymm0>, imm:=<0>
+    vextractf128 xmm0,y,imm
+    retm<xmm0>
+    endm
+_mm256_zeroall macro
+    vzeroall
+    retm<>
+    endm
+_mm256_zeroupper macro
+    vzeroupper
+    retm<>
+    endm
+_mm256_permutevar_ps macro y:=<ymm0>, yi:=<ymm1>
+    vpermilps y,y,yi
+    retm<y>
+    endm
+_mm_permutevar_ps macro x:=<xmm0>, xi:=<xmm1>
+    vpermilps x,x,xi
+    retm<y>
+    endm
+_mm256_permute_ps macro y:=<ymm0>, imm:=<0>
+    vpermilps y,y,imm
+    retm<y>
+    endm
 ifdef _XM_NO_INTRINSICS_
 _mm_permute_ps		proto __cdecl :oword, :sdword
 else
 _mm_permute_ps macro x:=<xmm0>, imm:req
-	vpermilps x, x, imm
-	retm<x>
-	endm
+    vpermilps x,x,imm
+    retm<x>
+    endm
 endif
 
-_mm256_permutevar_pd	proto __cdecl :yword, :yword
-_mm_permutevar_pd	proto __cdecl :yword, :yword
-_mm256_permute_pd	proto __cdecl :yword, :sdword
-_mm_permute_pd		proto __cdecl :yword, :sdword
-_mm256_permute2f128_ps	proto __cdecl :yword, :yword, :sdword
-_mm256_permute2f128_pd	proto __cdecl :yword, :yword, :sdword
-_mm256_permute2f128_si256 proto __cdecl :yword, :yword, :sdword
-_mm256_broadcast_ss	proto __cdecl :ptr real4
-_mm_broadcast_ss	proto __cdecl :ptr real4
-_mm256_broadcast_sd	proto __cdecl :ptr real8
-_mm256_broadcast_ps	proto __cdecl :ptr yword
-_mm256_broadcast_pd	proto __cdecl :ptr yword
-_mm256_insertf128_ps	proto __cdecl :yword, :yword, :sdword
-_mm256_insertf128_pd	proto __cdecl :yword, :yword, :sdword
-_mm256_insertf128_si256 proto __cdecl :yword, :yword, :sdword
-_mm256_load_pd		proto __cdecl :ptr real8
-_mm256_store_pd		proto __cdecl :ptr real8, :yword
-_mm256_load_ps		proto __cdecl :ptr real4
-_mm256_store_ps		proto __cdecl :ptr real4, :yword
-_mm256_loadu_pd		proto __cdecl :ptr real8
-_mm256_storeu_pd	proto __cdecl :ptr real8, :yword
-_mm256_loadu_ps		proto __cdecl :ptr real4
-_mm256_storeu_ps	proto __cdecl :ptr real4, :yword
-_mm256_load_si256	proto __cdecl :ptr yword
-_mm256_store_si256	proto __cdecl :ptr yword, :yword
-_mm256_loadu_si256	proto __cdecl :ptr yword
-_mm256_storeu_si256	proto __cdecl :ptr yword, :yword
-_mm256_loadu2_m128 macro
-	exitm<_mm256_set_m128(_mm_loadu_ps(hiaddr), _mm_loadu_ps(loaddr))>
-	endm
-_mm256_loadu2_m128d macro
-	exitm<_mm256_set_m128d(_mm_loadu_pd(hiaddr), _mm_loadu_pd(loaddr))>
-	endm
-_mm256_loadu2_m128i macro
-	exitm<_mm256_set_m128i(_mm_loadu_si128(hiaddr), _mm_loadu_si128(loaddr))>
-	endm
+_mm256_permutevar_pd macro y:=<ymm0>, yi:=<ymm1>
+    vpermilpd y,y,yi
+    retm<y>
+    endm
+_mm_permutevar_pd macro x:=<xmm0>, xi:=<xmm1>, xr:=<xmm0>
+    vpermilpd xr,x,xi
+    retm<xr>
+    endm
+_mm256_permute_pd macro y:=<ymm0>, imm:=<0>
+    vpermilpd y,y,imm
+    retm<y>
+    endm
+_mm_permute_pd macro x:=<xmm0>, imm:=<0>
+    vpermilpd x,x,imm
+    retm<x>
+    endm
+_mm256_permute2f128_ps macro y:=<ymm0>, yi:=<ymm1>, imm:=<0>
+    vperm2f128 y,y,yi,imm
+    retm<y>
+    endm
+_mm256_permute2f128_pd macro y:=<ymm0>, yi:=<ymm1>, imm:=<0>
+    vperm2f128 y,y,yi,imm
+    retm<y>
+    endm
+_mm256_permute2f128_si256 macro y:=<ymm0>, yi:=<ymm1>, imm:=<0>
+    vperm2f128 y,y,yi,imm
+    retm<y>
+    endm
 
-_mm256_storeu2_m128 macro
-	exitm<>
-	endm
-_mm256_storeu2_m128d macro
-	exitm<>
-	endm
-_mm256_storeu2_m128i macro
-	exitm<>
-	endm
+_mm256_broadcast_ss macro ptr_real4, yr:=<ymm0>
+    vbroadcastss yr,_mm_getptr(ptr_real4)
+    retm<yr>
+    endm
+_mm_broadcast_ss macro ptr_real4, xr:=<xmm0>
+    vbroadcastss xr,_mm_getptr(ptr_real4)
+    retm<xr>
+    endm
+_mm256_broadcast_sd macro ptr_real8, yr:=<ymm0>
+    vbroadcastsd yr,_mm_getptr(ptr_real8)
+    retm<yr>
+    endm
+_mm256_broadcast_ps macro ptr_m128, yr:=<ymm0>
+    vbroadcastf128 yr,_mm_getptr(ptr_m128)
+    retm<yr>
+    endm
+_mm256_broadcast_pd macro ptr_m128, yr:=<ymm0>
+    vbroadcastf128 yr,_mm_getptr(ptr_m128)
+    retm<yr>
+    endm
+_mm256_insertf128_ps macro y:=<ymm0>, x:=<xmm1>, imm:=<0>
+    vinsertf128 y,y,x,imm
+    retm<y>
+    endm
+_mm256_insertf128_pd macro y:=<ymm0>, x:=<xmm1>, imm:=<0>
+    vinsertf128 y,y,x,imm
+    retm<y>
+    endm
+_mm256_insertf128_si256 macro y:=<ymm0>, x:=<xmm1>, imm:=<0>
+    vinsertf128 y,y,x,imm
+    retm<y>
+    endm
+_mm256_load_pd macro ptr_real8, yr:=<ymm0>
+    vmovupd yr,_mm_getptr(ptr_real8)
+    retm<yr>
+    endm
+_mm256_store_pd macro ptr_real8, yr:=<ymm0>
+    vmovupd _mm_getptr(ptr_real8),yr
+    retm<>
+    endm
+_mm256_load_ps macro ptr_real4, yr:=<ymm0>
+    vmovups yr,_mm_getptr(ptr_real4)
+    retm<yr>
+    endm
+_mm256_store_ps macro ptr_real4, yr:=<ymm0>
+    vmovups _mm_getptr(ptr_real4),yr
+    retm<>
+    endm
+_mm256_loadu_pd macro ptr_real8, yr:=<ymm0>
+    vmovupd yr,_mm_getptr(ptr_real8)
+    retm<yr>
+    endm
+_mm256_storeu_pd macro ptr_real8, yr:=<ymm0>
+    vmovupd _mm_getptr(ptr_real8),yr
+    retm<>
+    endm
+_mm256_loadu_ps macro ptr_real4, yr:=<ymm0>
+    vmovups yr,_mm_getptr(ptr_real4)
+    retm<yr>
+    endm
+_mm256_storeu_ps macro ptr_real4, yr:=<ymm0>
+    vmovups _mm_getptr(ptr_real4),yr
+    retm<>
+    endm
+_mm256_load_si256 macro ptr_yword, yr:=<ymm0>
+    vmovupd yr,_mm_getptr(ptr_yword)
+    retm<yr>
+    endm
+_mm256_store_si256 macro ptr_yword, yr:=<ymm0>
+    vmovdqu _mm_getptr(ptr_yword),yr
+    retm<>
+    endm
+_mm256_loadu_si256 macro ptr_yword, yr:=<ymm0>
+    vmovupd yr,_mm_getptr(ptr_yword)
+    retm<yr>
+    endm
+_mm256_storeu_si256 macro ptr_yword, yr:=<ymm0>
+    vmovdqu _mm_getptr(ptr_yword),yr
+    retm<>
+    endm
 
-_mm256_maskload_pd	proto __cdecl :ptr, :yword
-_mm256_maskstore_pd	proto __cdecl :ptr, :yword, :yword
-_mm_maskload_pd		proto __cdecl :ptr, :yword
-_mm_maskstore_pd	proto __cdecl :ptr, :yword, :yword
+_mm256_loadu2_m128 macro hiaddr, loaddr
+    exitm<_mm256_set_m128(_mm_loadu_ps(hiaddr), _mm_loadu_ps(loaddr))>
+    endm
+_mm256_loadu2_m128d macro hiaddr, loaddr
+    exitm<_mm256_set_m128d(_mm_loadu_pd(hiaddr), _mm_loadu_pd(loaddr))>
+    endm
+_mm256_loadu2_m128i macro hiaddr, loaddr
+    exitm<_mm256_set_m128i(_mm_loadu_si128(hiaddr), _mm_loadu_si128(loaddr))>
+    endm
 
-_mm256_maskload_ps	proto __cdecl :ptr, :yword
-_mm256_maskstore_ps	proto __cdecl :ptr, :yword, :yword
-_mm_maskload_ps		proto __cdecl :ptr, :yword
-_mm_maskstore_ps	proto __cdecl :ptr, :yword, :yword
+_mm256_storeu2_m128 macro hiaddr, loaddr, y
+    _mm_loadreg(rcx, hiaddr)
+    _mm_loadreg(rdx, loaddr)
+    ifdif <y>,<ymm0>
+	vmovaps ymm0,y
+    endif
+    vextractf128 xmm1,ymm0,1
+    vmovups [rdx],xmm0
+    vmovups [rcx],xmm1
+    exitm<>
+    endm
+_mm256_storeu2_m128d equ <_mm256_storeu2_m128>
+_mm256_storeu2_m128i equ <_mm256_storeu2_m128>
 
-_mm256_moveldup_ps	proto __cdecl :yword
-_mm256_movedup_pd	proto __cdecl :yword
-_mm256_lddqu_si256	proto __cdecl :ptr
-_mm256_stream_si256	proto __cdecl :ptr, :yword
-_mm256_stream_pd	proto __cdecl :ptr, :yword
-_mm256_stream_ps	proto __cdecl :ptr, :yword
-_mm256_rcp_ps		proto __cdecl :yword
-_mm256_rsqrt_ps		proto __cdecl :yword
-_mm256_sqrt_pd		proto __cdecl :yword
-_mm256_sqrt_ps		proto __cdecl :yword
-_mm256_round_pd		proto __cdecl :yword, :sdword
+_mm256_maskload_pd macro ptr_real8, y:=<ymm0>
+    _mm_loadreg(rcx, ptr_real8)
+    vmaskmovpd ymm0,y,[rcx]
+    retm<ymm0>
+    endm
+_mm256_maskstore_pd macro ptr_real8, y:=<ymm0>, yi:=<ymm1>
+    _mm_loadreg(rcx, ptr_real8)
+    vmaskmovpd [rcx],y,yi
+    retm<>
+    endm
+
+_mm_maskload_pd macro ptr_real8, x:=<xmm0>
+    _mm_loadreg(rcx, ptr_real8)
+    vmaskmovpd x,x,[rcx]
+    retm<x>
+    endm
+_mm_maskstore_pd macro ptr_real8, x:=<xmm0>, xi:=<xmm1>
+    _mm_loadreg(rcx, ptr_real8)
+    vmaskmovpd [rcx],x,xi
+    retm<>
+    endm
+
+_mm256_maskload_ps macro ptr_real4, y:=<ymm0>
+    _mm_loadreg(rcx, ptr_real4)
+    vmaskmovps y,y,[rcx]
+    retm<y>
+    endm
+_mm256_maskstore_ps macro ptr_real4, y:=<ymm0>, yi:=<ymm1>
+    _mm_loadreg(rcx, ptr_real4)
+    vmaskmovps [rcx],y,yi
+    retm<>
+    endm
+_mm_maskload_ps macro ptr_real4, x:=<xmm0>
+    _mm_loadreg(rcx, ptr_real4)
+    vmaskmovps x,x,[rcx]
+    retm<x>
+    endm
+_mm_maskstore_ps macro ptr_real4, x:=<xmm0>, xi:=<xmm1>
+    _mm_loadreg(rcx, ptr_real4)
+    vmaskmovps [rcx],x,xi
+    retm<>
+    endm
+
+_mm256_moveldup_ps macro y:=<ymm0>
+    vmovsldup y,y
+    retm<y>
+    endm
+_mm256_movedup_pd macro y:=<ymm0>
+    vunpcklpd y,y,y
+    retm<y>
+    endm
+_mm256_lddqu_si256 macro ptr_real8, yr:=<ymm0>
+    vlddqu yr,_mm_getptr(ptr_real8)
+    retm<yr>
+    endm
+_mm256_stream_si256 macro ptr_yword, y:=<ymm0>
+    vmovntdq _mm_getptr(ptr_yword),y
+    retm<>
+    endm
+_mm256_stream_pd macro ptr_real8, y:=<ymm0>
+    vmovntpd _mm_getptr(ptr_real8),y
+    retm<>
+    endm
+_mm256_stream_ps macro ptr_real4, y:=<ymm0>
+    vmovntps _mm_getptr(ptr_real4),y
+    retm<>
+    endm
+_mm256_rcp_ps macro y:=<ymm0>
+    vrcpps y,y
+    retm<y>
+    endm
+_mm256_rsqrt_ps macro y:=<ymm0>
+    vrsqrtps y,y
+    retm<y>
+    endm
+_mm256_sqrt_pd macro y:=<ymm0>
+    vsqrtpd y,y
+    retm<y>
+    endm
+_mm256_sqrt_ps macro y:=<ymm0>
+    vsqrtps y,y
+    retm<y>
+    endm
+_mm256_round_pd macro y, imm
+    vroundpd y,y,imm
+    retm<y>
+    endm
+
 _mm256_ceil_pd macro val
-	exitm<_mm256_round_pd((val), _MM_FROUND_CEIL)>
-	endm
+    exitm<_mm256_round_pd((val), _MM_FROUND_CEIL)>
+    endm
 _mm256_floor_pd macro val
-	exitm<_mm256_round_pd((val), _MM_FROUND_FLOOR)>
-	endm
+    exitm<_mm256_round_pd((val), _MM_FROUND_FLOOR)>
+    endm
 
-_mm256_round_ps		proto :oword, :sdword
+_mm256_round_ps macro y, imm
+    vroundps y,y,imm
+    retm<y>
+    endm
 _mm256_ceil_ps macro val
-	exitm<_mm256_round_ps((val), _MM_FROUND_CEIL)>
-	endm
+    exitm<_mm256_round_ps((val), _MM_FROUND_CEIL)>
+    endm
 _mm256_floor_ps macro val
-	exitm<_mm256_round_ps((val), _MM_FROUND_FLOOR)>
-	endm
+    exitm<_mm256_round_ps((val), _MM_FROUND_FLOOR)>
+    endm
 
-_mm256_unpackhi_pd	proto __cdecl :yword, :yword
-_mm256_unpackhi_ps	proto __cdecl :yword, :yword
-_mm256_unpacklo_pd	proto __cdecl :yword, :yword
-_mm256_unpacklo_ps	proto __cdecl :yword, :yword
-_mm256_testz_si256	proto __cdecl :yword, :yword
+_mm256_unpackhi_pd macro y:=<ymm0>, yi:=<ymm1>
+    vunpckhpd y,y,yi
+    retm<y>
+    endm
+_mm256_unpackhi_ps macro y:=<ymm0>, yi:=<ymm1>
+    vunpckhps y,y,yi
+    retm<y>
+    endm
+_mm256_unpacklo_pd macro y:=<ymm0>, yi:=<ymm1>
+    vunpcklpd y,y,yi
+    retm<y>
+    endm
+_mm256_unpacklo_ps macro y:=<ymm0>, yi:=<ymm1>
+    vunpcklps y,y,yi
+    retm<y>
+    endm
+_mm256_testz_si256 macro y, yi
+    vptest y,yi
+    retm<ZERO?>
+    endm
 
 _mm256_test_all_zeros macro m, val
-	exitm<_mm256_testz_si256((m), (val))>
-	endm
+    exitm<_mm256_testz_si256((m), (val))>
+    endm
 
-_mm256_testc_si256	proto __cdecl :yword, :yword
+_mm256_testc_si256 macro y, yi
+    vptest y,yi
+    retm<CARRY?>
+    endm
 _mm256_test_all_ones macro val
-	exitm<_mm256_testc_si256((val), _mm256_cmpeq_epi32((val),(val)))>
-	endm
+    exitm<_mm256_testc_si256((val), _mm256_cmpeq_epi32((val),(val)))>
+    endm
 
-_mm256_testnzc_si256	proto __cdecl :yword, :yword
+_mm256_testnzc_si256 macro y, yi
+    vptest y,yi
+    retm<!CARRY? && !ZERO?>
+    endm
 _mm256_test_mix_ones_zeros macro m, val
-	exitm<_mm256_testnzc_si256((m), (val))>
-	endm
+    exitm<_mm256_testnzc_si256((m), (val))>
+    endm
 
-_mm256_testz_pd		proto __cdecl :yword, :yword
-_mm256_testc_pd		proto __cdecl :yword, :yword
-_mm256_testnzc_pd	proto __cdecl :yword, :yword
-_mm_testz_pd		proto __cdecl :yword, :yword
-_mm_testc_pd		proto __cdecl :yword, :yword
-_mm_testnzc_pd		proto __cdecl :yword, :yword
+_mm256_testz_pd macro y, yi
+    vtestpd y,yi
+    retm<ZERO?>
+    endm
+_mm256_testc_pd macro y, yi
+    vtestpd y,yi
+    retm<CARRY?>
+    endm
+_mm256_testnzc_pd macro y, yi
+    vtestpd y,yi
+    retm<!CARRY? && !ZERO?>
+    endm
+_mm_testz_pd macro x, xi
+    vtestpd x,xi
+    retm<ZERO?>
+    endm
+_mm_testc_pd macro x, xi
+    vtestpd x,xi
+    retm<CARRY?>
+    endm
+_mm_testnzc_pd macro x, xi
+    vtestpd x,xi
+    retm<!CARRY? && !ZERO?>
+    endm
 
-_mm256_testz_ps		proto __cdecl :yword, :yword
-_mm256_testc_ps		proto __cdecl :yword, :yword
-_mm256_testnzc_ps	proto __cdecl :yword, :yword
-_mm_testz_ps		proto __cdecl :yword, :yword
-_mm_testc_ps		proto __cdecl :yword, :yword
-_mm_testnzc_ps		proto __cdecl :yword, :yword
+_mm256_testz_ps macro y, yi
+    vtestps y,yi
+    retm<ZERO?>
+    endm
+_mm256_testc_ps macro y, yi
+    vtestps y,yi
+    retm<CARRY?>
+    endm
+_mm256_testnzc_ps macro y, yi
+    vtestps y,yi
+    retm<!CARRY? && !ZERO?>
+    endm
+_mm_testz_ps macro x, yi
+    vtestps x,xi
+    retm<ZERO?>
+    endm
+_mm_testc_ps macro x, yi
+    vtestps x,xi
+    retm<CARRY?>
+    endm
+_mm_testnzc_ps macro x, xi
+    vtestps x,xi
+    retm<!CARRY? && !ZERO?>
+    endm
 
-_mm256_movemask_pd	proto __cdecl :yword
+_mm256_movemask_pd macro y:=<ymm0>
+    vmovmskpd eax,y
+    retm<eax>
+    endm
+_mm256_movemask_ps macro y:=<ymm0>
+    vmovmskps eax,y
+    retm<eax>
+    endm
 
-_mm256_movemask_ps	proto __cdecl :yword
+_mm256_setzero_pd macro
+    vxorpd xmm0,xmm0,xmm0
+    retm<ymm0>
+    endm
+_mm256_setzero_ps macro
+    vxorps xmm0,xmm0,xmm0
+    retm<ymm0>
+    endm
+_mm256_setzero_si256 macro
+    vpxor xmm0,xmm0,xmm0
+    retm<ymm0>
+    endm
 
-_mm256_setzero_pd	proto __cdecl
-_mm256_setzero_ps	proto __cdecl
-_mm256_setzero_si256	proto __cdecl
+_mm256_set_epix macro ymm, op, args:vararg
+    local vm
+.data
+    align 16
+    vm label ymmword
+    op &args
+.code
+    vmovupd ymm,vm
+    retm<ymm>
+    endm
 
-_mm256_set_pd		proto __cdecl :real8, :real8, :real8, :real8
-_mm256_set_ps		proto __cdecl :real4, :real4, :real4, :real4, :real4, :real4, :real4, :real4
-_mm256_set_epi8		proto __cdecl :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte,
-				      :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte,
-				      :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte,
-				      :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte
-_mm256_set_epi16	proto __cdecl :sword, :sword, :sword, :sword, :sword, :sword, :sword, :sword,
-				      :sword, :sword, :sword, :sword, :sword, :sword, :sword, :sword
-_mm256_set_epi32	proto __cdecl :sdword, :sdword, :sdword, :sdword, :sdword, :sdword, :sdword, :sdword
-_mm256_set_epi64x	proto __cdecl :sqword, :sqword, :sqword, :sqword
+_mm256_set_epi64x macro _1, _2, _3, _4
+    _mm256_set_epix(ymm0,dq,_4,_3,_2,_1)
+    retm<ymm0>
+    endm
+_mm256_set_epi32 macro _1,_2,_3,_4,_5,_6,_7,_8
+    _mm256_set_epix(ymm0,dd,_8,_7,_6,_5,_4,_3,_2,_1)
+    retm<ymm0>
+    endm
+_mm256_set_epi16 macro _1,_2,_3,_4,_5,_6,_7,_8,_9,_10,_11,_12,_13,_14,_15,_16
+    _mm256_set_epix(ymm0,dw,_16,_15,_14,_13,_12,_11,_10,_9,_8,_7,_6,_5,_4,_3,_2,_1)
+    retm<ymm0>
+    endm
+_mm256_set_epi8 macro _1,_2,_3,_4,_5,_6,_7,_8,_9,_10,_11,_12,_13,_14,_15,_16,_17,_18,_19,_20,_21,_22,_23,_24,_25,_26,_27,_28,_29,_30,_31,_32
+    _mm256_set_epix(ymm0,db,_32,_31,_30,_29,_28,_27,_26,_25,_24,_23,_22,_21,_20,_19,_18,_17,_16,_15,_14,_13,_12,_11,_10,_9,_8,_7,_6,_5,_4,_3,_2,_1)
+    retm<ymm0>
+    endm
 
-_mm256_set_m128 macro
-	exitm<_mm256_insertf128_ps(_mm256_castps128_ps256(lo), (hi), 0x1)>
-	endm
+_mm256_set_ps equ <_mm256_set_epi32>
+_mm256_set_pd equ <_mm256_set_epi64x>
 
-_mm256_set_m128d macro
-	exitm<_mm256_insertf128_pd(_mm256_castpd128_pd256(lo), (hi), 0x1)>
-	endm
+_mm256_set_m128 macro lo, hi
+    exitm<_mm256_insertf128_ps(_mm256_castps128_ps256(lo), (hi), 0x1)>
+    endm
+_mm256_set_m128d macro lo, hi
+    exitm<_mm256_insertf128_pd(_mm256_castpd128_pd256(lo), (hi), 0x1)>
+    endm
+_mm256_set_m128i macro lo, hi
+    exitm<_mm256_insertf128_si256(_mm256_castsi128_si256(lo), (hi), 0x1)>
+    endm
 
-_mm256_set_m128i macro
-	exitm<_mm256_insertf128_si256(_mm256_castsi128_si256(lo), (hi), 0x1)>
-	endm
-
-_mm256_setr_pd		proto __cdecl :real8, :real8, :real8, :real8
-_mm256_setr_ps		proto __cdecl :real4, :real4, :real4, :real4, :real4, :real4, :real4, :real4
-_mm256_setr_epi8	proto __cdecl :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte,
-				      :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte,
-				      :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte,
-				      :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte
-_mm256_setr_epi16	proto __cdecl :sword, :sword, :sword, :sword, :sword, :sword, :sword, :sword,
-				      :sword, :sword, :sword, :sword, :sword, :sword, :sword, :sword
-_mm256_setr_epi32	proto __cdecl :sdword, :sdword, :sdword, :sdword, :sdword, :sdword, :sdword, :sdword
-_mm256_setr_epi64x	proto __cdecl :sqword, :sqword, :sqword, :sqword
+_mm256_setr_epi64x macro args:vararg
+    _mm256_set_epix(ymm0,dq,args)
+    retm<ymm0>
+    endm
+_mm256_setr_epi32 macro args:vararg
+    _mm256_set_epix(ymm0,dd,args)
+    retm<ymm0>
+    endm
+_mm256_setr_epi8 macro args:vararg
+    _mm256_set_epix(ymm0,db,args)
+    retm<ymm0>
+    endm
+_mm256_setr_epi16 macro args:vararg
+    _mm256_set_epix(ymm0,dw,args)
+    retm<ymm0>
+    endm
+_mm256_setr_ps equ <_mm256_setr_epi32>
+_mm256_setr_pd equ <_mm256_setr_epi64x>
 
 _mm256_setr_m128 macro lo, hi
-	exitm<_mm256_set_m128((hi), (lo))>
-	endm
+    exitm<_mm256_set_m128((hi), (lo))>
+    endm
 _mm256_setr_m128d macro lo, hi
-	exitm<_mm256_set_m128d((hi), (lo))>
-	endm
+    exitm<_mm256_set_m128d((hi), (lo))>
+    endm
 _mm256_setr_m128i macro lo, hi
-	exitm<_mm256_set_m128i((hi), (lo))>
-	endm
+    exitm<_mm256_set_m128i((hi), (lo))>
+    endm
 
-_mm256_set1_pd		proto __cdecl :real8
-_mm256_set1_ps		proto __cdecl :real4
-_mm256_set1_epi8	proto __cdecl :sbyte
-_mm256_set1_epi16	proto __cdecl :sword
-_mm256_set1_epi32	proto __cdecl :sdword
-_mm256_set1_epi64x	proto __cdecl :sqword
+_mm256_set1_epi64x macro q
+    exitm<_mm256_set_epi64x(q,q,q,q)>
+    endm
+_mm256_set1_epi32 macro q
+    exitm<_mm256_set_epi32(q,q,q,q,q,q,q,q)>
+    endm
+_mm256_set1_epi16 macro q
+    exitm<_mm256_set_epi16(q,q,q,q,q,q,q,q,q,q,q,q,q,q,q,q)>
+    endm
+_mm256_set1_epi8 macro q
+    exitm<_mm256_set_epi8(q,q,q,q,q,q,q,q,q,q,q,q,q,q,q,q,q,q,q,q,q,q,q,q,q,q,q,q,q,q,q,q)>
+    endm
 
-_mm256_castpd_ps	proto __cdecl :yword
-_mm256_castps_pd	proto __cdecl :yword
-_mm256_castps_si256	proto __cdecl :yword
-_mm256_castpd_si256	proto __cdecl :yword
-_mm256_castsi256_ps	proto __cdecl :yword
-_mm256_castsi256_pd	proto __cdecl :yword
-_mm256_castps256_ps128	proto __cdecl :yword
-_mm256_castpd256_pd128	proto __cdecl :yword
-_mm256_castsi256_si128	proto __cdecl :yword
-_mm256_castps128_ps256	proto __cdecl :yword
-_mm256_castpd128_pd256	proto __cdecl :yword
-_mm256_castsi128_si256	proto __cdecl :yword
+_mm256_set1_ps equ <_mm256_set1_epi32>
+_mm256_set1_pd equ <_mm256_set1_epi64x>
+
+_mm256_castpd_ps macro
+    exitm<>
+    endm
+_mm256_castps_pd macro
+    exitm<>
+    endm
+_mm256_castps_si256 macro
+    exitm<>
+    endm
+_mm256_castpd_si256 macro
+    exitm<>
+    endm
+_mm256_castsi256_ps macro
+    exitm<>
+    endm
+_mm256_castsi256_pd macro
+    exitm<>
+    endm
+_mm256_castps256_ps128 macro
+    exitm<>
+    endm
+_mm256_castpd256_pd128 macro
+    exitm<>
+    endm
+_mm256_castsi256_si128 macro
+    exitm<>
+    endm
+_mm256_castps128_ps256 macro
+    exitm<>
+    endm
+_mm256_castpd128_pd256 macro
+    exitm<>
+    endm
+_mm256_castsi128_si256 macro
+    exitm<>
+    endm
 
 _mm_cvtph_ps		proto __cdecl :yword
 _mm256_cvtph_ps		proto __cdecl :yword

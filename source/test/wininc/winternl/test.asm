@@ -5,9 +5,8 @@ include winternl.inc
 .code
 
 main proc
-
-  local SBI:SYSTEM_BASIC_INFORMATION
-  local retlen:qword
+    local SBI:SYSTEM_BASIC_INFORMATION
+    local retlen:qword
 
     xor r10,r10
     mov retlen,r10

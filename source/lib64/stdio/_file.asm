@@ -27,6 +27,6 @@ _stdioexit proc uses rsi
     ret
 _stdioexit endp
 
-pragma_exit _stdioexit, 1
+.pragma(exit(_stdioexit, 1))
 
     END

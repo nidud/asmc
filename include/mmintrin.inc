@@ -43,19 +43,55 @@ m64_u32		dd 2 dup(?)
 __m64		ends
 
 ;ifdef _M_IX86
-_m_empty	proto
-_m_from_int	proto :sdword
-_m_to_int	proto :qword
+_m_empty macro
+    emms
+    retm<>
+    endm
+_m_from_int macro i
+    movd mm0,i
+    retm<mm0>
+    endm
+_m_to_int macro m
+    movd eax,m
+    retm<eax>
+    endm
 
-_m_packsswb	proto :qword, :qword
-_m_packssdw	proto :qword, :qword
-_m_packuswb	proto :qword, :qword
-_m_punpckhbw	proto :qword, :qword
-_m_punpckhwd	proto :qword, :qword
-_m_punpckhdq	proto :qword, :qword
-_m_punpcklbw	proto :qword, :qword
-_m_punpcklwd	proto :qword, :qword
-_m_punpckldq	proto :qword, :qword
+_m_packsswb macro a, b
+    packsswb a,b
+    retm<a>
+    endm
+_m_packssdw macro a, b
+    packssdw a,b
+    retm<a>
+    endm
+_m_packuswb macro a, b
+    packuswb a,b
+    retm<a>
+    endm
+_m_punpckhbw macro a, b
+    punpckhbw a,b
+    retm<a>
+    endm
+_m_punpckhwd macro a, b
+    punpckhwd a,b
+    retm<a>
+    endm
+_m_punpckhdq macro a, b
+    punpckhdq a,b
+    retm<a>
+    endm
+_m_punpcklbw macro a, b
+    punpcklbw a,b
+    retm<a>
+    endm
+_m_punpcklwd macro a, b
+    punpcklwd a,b
+    retm<a>
+    endm
+_m_punpckldq macro a, b
+    punpckldq a,b
+    retm<a>
+    endm
 
 ;; Packed arithmetic intrinsics
 
@@ -130,22 +166,70 @@ _m_pmullw macro a, b
 
 ;; Shift intrinsics
 
-_m_psllw	proto :qword, :qword
-_m_psllwi	proto :qword, :sdword
-_m_pslld	proto :qword, :qword
-_m_pslldi	proto :qword, :sdword
-_m_psllq	proto :qword, :qword
-_m_psllqi	proto :qword, :sdword
-_m_psraw	proto :qword, :qword
-_m_psrawi	proto :qword, :sdword
-_m_psrad	proto :qword, :qword
-_m_psradi	proto :qword, :sdword
-_m_psrlw	proto :qword, :qword
-_m_psrlwi	proto :qword, :sdword
-_m_psrld	proto :qword, :qword
-_m_psrldi	proto :qword, :sdword
-_m_psrlq	proto :qword, :qword
-_m_psrlqi	proto :qword, :sdword
+_m_psllw macro a, b
+    psllw a,b
+    retm<a>
+    endm
+_m_psllwi macro m, imm
+    psllw m,imm
+    retm<m>
+    endm
+_m_pslld macro a, b
+    pslld a,b
+    retm<a>
+    endm
+_m_pslldi macro m, imm
+    pslld m,imm
+    retm<m>
+    endm
+_m_psllq macro a, b
+    psllq a,b
+    retm<a>
+    endm
+_m_psllqi macro m, imm
+    psllq m,imm
+    retm<m>
+    endm
+_m_psraw macro a, b
+    psraw a,b
+    retm<a>
+    endm
+_m_psrawi macro m, imm
+    psraw m,imm
+    retm<m>
+    endm
+_m_psrad macro a, b
+    psrad a,b
+    retm<a>
+    endm
+_m_psradi macro m, imm
+    psrad m,imm
+    retm<m>
+    endm
+_m_psrlw macro a, b
+    psrlw a,b
+    retm<a>
+    endm
+_m_psrlwi macro m, imm
+    psrlw m,imm
+    retm<m>
+    endm
+_m_psrld macro a, b
+    psrld a,b
+    retm<a>
+    endm
+_m_psrldi macro m, imm
+    psrld m,imm
+    retm<m>
+    endm
+_m_psrlq macro a, b
+    psrlq a,b
+    retm<a>
+    endm
+_m_psrlqi macro m, imm
+    psrlq m,imm
+    retm<m>
+    endm
 
 ;; Logical intrinsics
 _m_pand macro a, b
@@ -192,16 +276,55 @@ _m_pcmpgtd macro a, b
     endm
 
 ;; Utility intrinsics
-_mm_setzero_si64 proto
-_mm_set_pi32	proto :sdword, :sdword
-_mm_set_pi16	proto :sword, :sword, :sword, :sword
-_mm_set_pi8	proto :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte
-_mm_set1_pi32	proto :sdword
-_mm_set1_pi16	proto :sword
-_mm_set1_pi8	proto :sbyte
-_mm_setr_pi32	proto :sdword, :sdword
-_mm_setr_pi16	proto :sword, :sword, :sword, :sword
-_mm_setr_pi8	proto :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte, :sbyte
+_mm_setzero_si64 macro m:=<mm0>
+    pxor m,m
+    retm<m>
+    endm
+_mm_set_pi32 macro d1, d2
+    mov rax,(d1 shl 32) or d2
+    movd mm0,rax
+    retm<mm0>
+    endm
+_mm_set_pi16 macro w1, w2, w3, w4
+    mov rax,(w1 shl 48) or (w2 shl 32) or (w3 shl 16) or w4
+    movd mm0,rax
+    retm<mm0>
+    endm
+_mm_set_pi8 macro b1, b2, b3, b4, b5, b6, b7, b8
+    mov rax,(b1 shl 56) or (b2 shl 48) or (b3 shl 40) or (b4 shl 32) or (b5 shl 24) or (b6 shl 16) or (b7 shl 8) or b8
+    movd mm0,rax
+    retm<mm0>
+    endm
+_mm_set1_pi32 macro d
+    mov rax,(d shl 32) or d
+    movd mm0,rax
+    retm<mm0>
+    endm
+_mm_set1_pi16 macro w
+    mov rax,(w shl 48) or (w shl 32) or (w shl 16) or w
+    movd mm0,rax
+    retm<mm0>
+    endm
+_mm_set1_pi8 macro b
+    mov rax,(b shl 56) or (b shl 48) or (b shl 40) or (b shl 32) or (b shl 24) or (b shl 16) or (b shl 8) or b
+    movd mm0,rax
+    retm<mm0>
+    endm
+_mm_setr_pi32 macro d1, d2
+    mov rax,(d2 shl 32) or d1
+    movd mm0,rax
+    retm<mm0>
+    endm
+_mm_setr_pi16 macro w1, w2, w3, w4
+    mov rax,(w4 shl 48) or (w3 shl 32) or (w2 shl 16) or w1
+    movd mm0,rax
+    retm<mm0>
+    endm
+_mm_setr_pi8 macro b1, b2, b3, b4, b5, b6, b7, b8
+    mov rax,(b8 shl 56) or (b7 shl 48) or (b6 shl 40) or (b5 shl 32) or (b4 shl 24) or (b3 shl 16) or (b2 shl 8) or b1
+    movd mm0,rax
+    retm<mm0>
+    endm
 
 ;; Alternate intrinsic name definitions
 _mm_empty		equ <_m_empty>

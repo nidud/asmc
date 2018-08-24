@@ -38,6 +38,6 @@ local	pgname[260]:SBYTE
 
 Install ENDP
 
-pragma_init Install, 4
+.pragma(init(Install, 4))
 
     end

@@ -27,6 +27,6 @@ local	path[256]
 
 Install endp
 
-pragma_init Install, 30
+.pragma(init(Install, 30))
 
 	END

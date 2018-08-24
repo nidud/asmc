@@ -25,7 +25,7 @@ Install:
 	.endif
 	ret
 
-pragma_init Install,6
+.pragma(init(Install, 6))
 
 endif
 	END

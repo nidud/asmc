@@ -25,7 +25,7 @@ dummy	proc WINAPI private
 	ret
 dummy	endp
 
-pragma_init Install,6
+.pragma(init(Install, 6))
 
 endif
 	END

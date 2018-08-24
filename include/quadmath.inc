@@ -13,6 +13,8 @@ includelib quadmath.lib
 endif
 endif
 
+; Parsing flags
+
 _ST_SIGN	equ 0x0001
 _ST_NEGNUM	equ 0x0002
 _ST_NEGEXP	equ 0x0004

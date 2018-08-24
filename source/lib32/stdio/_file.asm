@@ -27,6 +27,6 @@ _stdioexit:
     pop esi
     ret
 
-pragma_exit _stdioexit, 1
+.pragma(exit(_stdioexit, 1))
 
     END

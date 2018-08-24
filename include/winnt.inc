@@ -2297,27 +2297,24 @@ endif
 if (_MSC_FULL_VER GE 13012035) OR defined(_PREFIX_) OR defined(_PREFAST_)
 
 
-;BYTE
-__readfsbyte proto WINAPI \
-	       _Offset: DWORD
-;WORD
-__readfsword proto WINAPI \
-	       _Offset: DWORD
-;DWORD
-__readfsdword proto WINAPI \
-	       _Offset: DWORD
-;VOID
-__writefsbyte proto WINAPI \
-	       _Offset: DWORD,
-		  Data: BYTE
-;VOID
-__writefsword proto WINAPI \
-	       _Offset: DWORD,
-		  Data: WORD
-;VOID
-__writefsdword proto WINAPI \
-	       _Offset: DWORD,
-		  Data: DWORD
+__writefsbyte macro offs, val
+    assume fs:nothing
+    mov byte ptr fs:[offs],val
+    assume fs:error
+    retm<>
+    endm
+__writefsdword macro offs, val
+    assume fs:nothing
+    mov dword ptr fs:[offs],val
+    assume fs:error
+    retm<>
+    endm
+__writefsword macro offs, val
+    assume fs:nothing
+    mov word ptr fs:[offs],val
+    assume fs:error
+    retm<>
+    endm
 
 endif
 
@@ -2407,25 +2404,9 @@ ReadForWriteAccess macro p
 PF_TEMPORAL_LEVEL_1 equ 1
 PF_NON_TEMPORAL_LEVEL_ALL equ 1
 
-
 if _MSC_FULL_VER GE 140050727
-
 ReadPMC equ <__readpmc>
-
-;DWORD64
-__readpmc proto WINAPI \
-	       Counter: DWORD
-
-
-else
-;FORCEINLINE
-;DWORD64
-__readpmc macro Counter
-	mov ecx,Counter
-	rdpmc
-	endm
 endif
-
 
 if _MSC_FULL_VER GE 140040310
 

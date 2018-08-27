@@ -5,7 +5,7 @@ include winperf.inc
 .pragma list(push, 0)
 
 ifdef __PE__
-option importlib:<pdh>
+option dllimport:<pdh>
 else
 includelib pdh.lib
 endif

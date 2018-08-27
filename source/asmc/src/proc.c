@@ -114,7 +114,7 @@ static void watc_return( struct dsym *, char * );
 #endif
 static	int ms64_pcheck( struct dsym *, struct dsym *, int * );
 static void ms64_return( struct dsym *, char * );
-static	int elf64_pcheck( struct dsym *, struct dsym *, int * );
+int elf64_pcheck( struct dsym *, struct dsym *, int * );
 
 /* table of fastcall types.
  * must match order of enum fastcall_type!
@@ -382,39 +382,7 @@ static void ms64_return( struct dsym *proc, char *buffer )
 }
 
 #ifdef FCT_ELF64
-
 extern unsigned char elf64_regs[];
-
-static int elf64_pcheck( struct dsym *proc, struct dsym *paranode, int *used )
-{
-    char regname[32];
-    int reg;
-    int size = SizeFromMemtype( paranode->sym.mem_type, paranode->sym.Ofssize, paranode->sym.type );
-
-    if ( size > CurrWordSize || *used >= 6 || paranode->sym.is_vararg ) {
-	paranode->sym.string_ptr = NULL;
-	return(0);
-    }
-    if ( paranode->sym.mem_type == MT_REAL4 ||
-	 paranode->sym.mem_type == MT_REAL8 ||
-	 paranode->sym.mem_type == MT_OWORD )
-	 reg = T_XMM0 + *used;
-    else
-	switch ( size ) {
-	case 1:	 reg = elf64_regs[*used];    break;
-	case 2:	 reg = elf64_regs[*used+6];  break;
-	case 4:	 reg = elf64_regs[*used+12]; break;
-	default: reg = elf64_regs[*used+18]; break;
-	}
-    paranode->sym.state = SYM_TMACRO;
-    paranode->sym.regist[0] = reg;
-    GetResWName( reg, regname );
-    paranode->sym.string_ptr = (char *)LclAlloc( strlen( regname ) + 1 );
-    strcpy( paranode->sym.string_ptr, regname );
-    (*used)++;
-    return( 1 );
-}
-
 #endif
 
 static void pushitem( void *stk, void *elmt )
@@ -682,7 +650,7 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 #ifndef __ASMC64__
     if ( proc->sym.langtype == LANG_C || proc->sym.langtype == LANG_STDCALL ||
 	fastcall_id == FCT_VEC32 + 1 || fastcall_id == FCT_MSC + 1 ||
-	( !fastcall_id && proc->sym.langtype == LANG_SYSCALL ) )
+	( proc->sym.langtype == LANG_SYSCALL ) )
 
 	for ( paracurr = proc->e.procinfo->paralist; paracurr && paracurr->nextparam;
 	      paracurr = paracurr->nextparam );
@@ -769,14 +737,18 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 	    struct asym *tn;
 	    char oo;
 	    char on;
+	    char fast_type = 0;
 	    for( tn = ti.symtype; tn && tn->type; tn = tn->type );
 	    /* v2.12: don't assume pointer type if mem_type is != MT_TYPE!
 	     * regression test proc9.asm.
 	     * v2.23: proto fastcall :type - fast32.asm
 	     */
 	    if ( fastcall_id == FCT_ELF64 + 1 || fastcall_id == FCT_VEC32 + 1 ||
-		 fastcall_id == FCT_MSC + 1 )
+		 fastcall_id == FCT_MSC + 1 ) {
 		paracurr->sym.target_type = NULL;
+		if ( !Options.strict_masm_compat )
+		    fast_type = 1; /* v2.27 added */
+	    }
 	    if ( paracurr->sym.mem_type == MT_TYPE )
 		to = paracurr->sym.type;
 	    else
@@ -787,11 +759,8 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 	    on = ( ti.Ofssize != USE_EMPTY ) ? ti.Ofssize : ModuleInfo.Ofssize;
 	    if ( ti.mem_type != paracurr->sym.mem_type ||
 		( ti.mem_type == MT_TYPE && tn != to ) ||
-		( ti.mem_type == MT_PTR &&
-		 ( ti.is_far != paracurr->sym.isfar ||
-		  on != oo ||
-		  ti.ptr_memtype != paracurr->sym.ptr_memtype ||
-		  tn != to ))) {
+		( ti.mem_type == MT_PTR && ( ti.is_far != paracurr->sym.isfar || on != oo ||
+		 ( !fast_type && ( ti.ptr_memtype != paracurr->sym.ptr_memtype || tn != to ))))) {
 		asmerr( 2111, name );
 	    }
 	    if ( IsPROC ) {
@@ -802,7 +771,7 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 #ifndef __ASMC64__
 	    if ( proc->sym.langtype == LANG_C || proc->sym.langtype == LANG_STDCALL ||
 		 fastcall_id == FCT_VEC32 + 1 || fastcall_id == FCT_MSC + 1 ||
-		 ( !fastcall_id && proc->sym.langtype == LANG_SYSCALL ) ) {
+		 ( proc->sym.langtype == LANG_SYSCALL ) ) {
 
 		struct dsym *l;
 		for (l = proc->e.procinfo->paralist;
@@ -879,11 +848,11 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 		    paracurr = NULL;
 		}
 		break;
-	    case LANG_SYSCALL:
 	    case LANG_FASTCALL:
 	    case LANG_VECTORCALL:
 		if ( ti.Ofssize == USE64 )
 		    goto left_to_right;
+	    case LANG_SYSCALL:
 		/* v2.07: MS fastcall 16-bit is PASCAL! */
 		if ( ti.Ofssize == USE16 && ModuleInfo.fctype == FCT_MSC )
 		    goto left_to_right;
@@ -1628,7 +1597,9 @@ static void ProcFini( struct dsym *proc )
     }
     /* save stack space reserved for INVOKE if OPTION WIN64:2 is set */
     if ( Parse_Pass == PASS_1 &&
-	( ModuleInfo.fctype == FCT_WIN64 || ModuleInfo.fctype == FCT_VEC64 ) &&
+	( ModuleInfo.fctype == FCT_WIN64 ||
+	ModuleInfo.fctype == FCT_VEC64 ||
+	ModuleInfo.fctype == FCT_ELF64 ) && /* v2.28: added */
 	( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) ) {
 	proc->e.procinfo->ReservedStack = sym_ReservedStack->value;
 	if ( proc->e.procinfo->fpo ) {
@@ -2164,23 +2135,25 @@ static int write_default_prologue( void )
 	return( NOT_ERROR );
     }
     if ( ModuleInfo.Ofssize == USE64 && ( ModuleInfo.fctype == FCT_WIN64 ||
-	 ModuleInfo.fctype == FCT_VEC64 ) && ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) )
+	 ModuleInfo.fctype == FCT_VEC64 || ModuleInfo.fctype == FCT_ELF64 ) &&
+	 ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) ) {
+
+	if ( ModuleInfo.fctype == FCT_ELF64 && info->has_vararg ) {
+	    sym_ReservedStack->value = 208;
+	}
 	resstack = sym_ReservedStack->value;
+    }
+
     /* default processing. if no params/locals are defined, continue */
-    if( info->forceframe == FALSE &&
-       info->localsize == 0 &&
-       info->stackparam == FALSE &&
-       info->has_vararg == FALSE &&
-       resstack == 0 &&
-       info->regslist == NULL )
+    if( info->forceframe == FALSE && info->localsize == 0 && info->stackparam == FALSE &&
+       info->has_vararg == FALSE && resstack == 0 && info->regslist == NULL )
 	return( NOT_ERROR );
 
     regist = info->regslist;
 
     /* initialize shadow space for register params */
-    if ( ModuleInfo.Ofssize == USE64 &&
-	( ( CurrProc->sym.langtype == LANG_FASTCALL && ModuleInfo.fctype == FCT_WIN64 ) ||
-	  ( CurrProc->sym.langtype == LANG_VECTORCALL && ModuleInfo.fctype == FCT_VEC64 ) ) ) {
+    if ( ModuleInfo.Ofssize == USE64 && ( CurrProc->sym.langtype == LANG_FASTCALL ||
+	  CurrProc->sym.langtype == LANG_VECTORCALL ) ) {
 
 	if ( ModuleInfo.win64_flags & W64F_SAVEREGPARAMS )
 	    win64_SaveRegParams( info );
@@ -2281,6 +2254,26 @@ static int write_default_prologue( void )
 
 runqueue:
 
+    if ( ModuleInfo.Ofssize == USE64 && ModuleInfo.fctype == FCT_ELF64 &&
+	 info->has_vararg && ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) ) {
+
+	for ( offset = 0, p = info->paralist; p; p = p->nextparam, offset++ )
+	    if ( !p->nextparam ) break;
+	AddLineQueueX( " mov DWORD PTR [%r+8], %d", T_RSP, offset * 8 );
+	AddLineQueueX( " mov DWORD PTR [%r+12], 48", T_RSP );
+	for( cnt = offset; cnt < 6; cnt++ )
+	    AddLineQueueX( " mov [%r+%d], %r", T_RSP, 32 + (cnt * 8), elf64_regs[cnt+18] );
+	AddLineQueue( ".if al" );
+	for( cnt = 0, cstack = 80; cnt < 8; cnt++, cstack += 16 )
+	    AddLineQueueX( " movaps [%r+%d], %r", T_RSP, cstack, T_XMM0 + cnt );
+	AddLineQueue( ".endif" );
+	AddLineQueueX( " lea %r, [%r+224]", T_RAX, T_RSP );
+	AddLineQueueX( " mov [%r+16], %r", T_RSP, T_RAX );
+	AddLineQueueX( " lea %r, [%r+32]", T_RAX, T_RSP );
+	AddLineQueueX( " mov [%r+24], %r", T_RSP, T_RAX );
+	AddLineQueueX( " lea %r, [%r+8]", T_RAX, T_RSP );
+    }
+
     /* special case: generated code runs BEFORE the line.*/
     if ( ModuleInfo.list && UseSavedState )
 	if ( Parse_Pass == PASS_1 )
@@ -2327,9 +2320,9 @@ static void SetLocalOffsets( struct proc_info *info )
     if ( ModuleInfo.fctype == FCT_VEC64 )
 	wsize = 16;
 
-    if ( info->isframe || ( ( ModuleInfo.fctype == FCT_WIN64 || ModuleInfo.fctype == FCT_VEC64 ) &&
-	( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) ) ) {
-
+    if ( info->isframe || ( ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) &&
+	( ModuleInfo.fctype == FCT_WIN64 || ModuleInfo.fctype == FCT_VEC64 ||
+	  ModuleInfo.fctype == FCT_ELF64 ) ) ) {
 	rspalign = TRUE;
 	if ( ModuleInfo.win64_flags & W64F_STACKALIGN16 || ModuleInfo.fctype == FCT_VEC64 )
 	    align = 16;
@@ -2339,7 +2332,7 @@ static void SetLocalOffsets( struct proc_info *info )
      * v2.09: if stack space is to be reserved for INVOKE ( option WIN64:2 ),
      * the registers are also saved ABOVE the local variables.
      */
-    if (info->fpo || rspalign) {
+    if ( info->fpo || rspalign ) {
 	/* count registers to be saved ABOVE local variables.
 	 * v2.06: the list may contain xmm registers, which have size 16!
 	 */
@@ -2425,18 +2418,21 @@ void write_prologue( struct asm_tok tokenarray[] )
     /* reset @ProcStatus flag */
     ProcStatus &= ~PRST_PROLOGUE_NOT_DONE;
 
-    if ( ( ModuleInfo.fctype == FCT_WIN64 || ModuleInfo.fctype == FCT_VEC64 ) &&
+    if ( ( ModuleInfo.fctype == FCT_WIN64 ||
+	   ModuleInfo.fctype == FCT_VEC64 ||
+	   ModuleInfo.fctype == FCT_ELF64 ) &&
 	( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) ) {
 	/* in pass one init reserved stack with 4*8 to force stack frame creation */
 	if ( Parse_Pass == PASS_1 ) {
 	    sym_ReservedStack->value = 4 * sizeof( uint_64 );
-	    if ( CurrProc->sym.langtype == LANG_VECTORCALL )
+	    if ( CurrProc->sym.langtype == LANG_SYSCALL )
+		sym_ReservedStack->value = 0;
+	    else if ( CurrProc->sym.langtype == LANG_VECTORCALL )
 		sym_ReservedStack->value = 6 * 16;
 	} else {
 	    sym_ReservedStack->value = CurrProc->e.procinfo->ReservedStack;
 	}
-    } //else if ( ModuleInfo.fctype == FCT_VEC64 )
-      // sym_ReservedStack->value = 6 * 16;
+    }
 
     if ( Parse_Pass == PASS_1 ) {
 	/* v2.12: calculation of offsets of local variables is done delayed now */
@@ -2607,7 +2603,9 @@ static void write_default_epilogue( void )
 	return;
     }
     if ( ModuleInfo.Ofssize == USE64 &&
-	 ( ModuleInfo.fctype == FCT_WIN64 || ModuleInfo.fctype == FCT_VEC64 ) &&
+	 ( ModuleInfo.fctype == FCT_WIN64 ||
+	   ModuleInfo.fctype == FCT_VEC64 ||
+	   ModuleInfo.fctype == FCT_ELF64 ) &&
        ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) ) {
 
 	resstack  = sym_ReservedStack->value;
@@ -2621,7 +2619,7 @@ static void write_default_epilogue( void )
 		  info->has_vararg || info->forceframe ) && info->pe_type &&
 		  !CurrProc->e.procinfo->regslist && info->basereg == T_RBP )
 	    ; /* v2.27: leave will follow.. */
-	else {
+	else if ( resstack || info->localsize ) {
 	    if ( ModuleInfo.epilogueflags )
 		AddLineQueueX( "lea %r, [%r + %d + %s]",
 			stackreg[ModuleInfo.Ofssize], stackreg[ModuleInfo.Ofssize],

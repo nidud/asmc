@@ -202,7 +202,9 @@ static void SetModel( void )
     sym_Interface = AddPredefinedConstant( "@Interface", ModuleInfo.langtype );
 
     if ( ModuleInfo.defOfssize == USE64 &&
-	( ModuleInfo.fctype == FCT_WIN64 || ModuleInfo.fctype == FCT_VEC64 ) ) {
+	( ModuleInfo.fctype == FCT_WIN64 ||
+	  ModuleInfo.fctype == FCT_VEC64 ||
+	  ModuleInfo.fctype == FCT_ELF64 ) ) { /* v2.28: added */
 	sym_ReservedStack = AddPredefinedConstant( "@ReservedStack", 0 );
     }
     if ( ModuleInfo.sub_format == SFORMAT_PE ||
@@ -533,7 +535,6 @@ int SetCPU( enum cpu_info newcpu )
 
     if ( ModuleInfo.list )
 	LstWriteSrcLine();
-    //debug_break();
 
     if ( Parse_Pass != PASS_1 )
 	return( NOT_ERROR );
@@ -550,7 +551,9 @@ int SetCPU( enum cpu_info newcpu )
     AddPredefinedConstant( "@Model", ModuleInfo.model );
     sym_Interface = AddPredefinedConstant( "@Interface", ModuleInfo.langtype );
 
-    if ( ( ModuleInfo.fctype == FCT_WIN64 || ModuleInfo.fctype == FCT_VEC64 ) )
+    if ( ( ModuleInfo.fctype == FCT_WIN64 ||
+	   ModuleInfo.fctype == FCT_VEC64 ||
+	   ModuleInfo.fctype == FCT_ELF64 ) ) /* v2.28: added */
 	sym_ReservedStack = AddPredefinedConstant( "@ReservedStack", 0 );
 
     if ( ModuleInfo.sub_format == SFORMAT_PE ||

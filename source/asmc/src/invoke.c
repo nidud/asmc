@@ -906,11 +906,9 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
      * This if() must match the one in proc.c, ParseParams().
      */
 
-    if ( sym->langtype == LANG_STDCALL ||
-	sym->langtype == LANG_C ||
-	fastcall_id == FCT_VEC32 + 1 ||
-	( sym->langtype == LANG_FASTCALL && porder ) ||
-	( sym->langtype == LANG_SYSCALL && !fastcall_id ) ) {
+    if ( sym->langtype == LANG_STDCALL || sym->langtype == LANG_C ||
+	fastcall_id == FCT_VEC32 + 1 || ( sym->langtype == LANG_FASTCALL && porder ) ||
+	( sym->langtype == LANG_SYSCALL ) ) {
 
 	/* v2.23 if stack base is ESP */
 
@@ -963,8 +961,12 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 	}
     }
 
-    if ( info->has_vararg && proc->sym.langtype == LANG_SYSCALL && ModuleInfo.Ofssize == USE64 )
-	 AddLineQueueX( " xor %r, %r", T_EAX, T_EAX );
+    if ( info->has_vararg && proc->sym.langtype == LANG_SYSCALL && ModuleInfo.Ofssize == USE64 ) {
+	 if ( porder )
+	    AddLineQueueX( " mov %r, 1", T_EAX );
+	 else
+	    AddLineQueueX( " xor %r, %r", T_EAX, T_EAX );
+    }
 
     /* v2.05 added. A warning only, because Masm accepts this. */
     if ( opnd.base_reg != NULL && Parse_Pass == PASS_1 &&
@@ -1016,8 +1018,7 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 
     AddLineQueue( StringBufferEnd );
 
-    if ( ( sym->langtype == LANG_C || ( sym->langtype == LANG_SYSCALL &&
-	!fastcall_id/*ModuleInfo.fctype != FCT_ELF64*/ ) ) &&
+    if ( ( sym->langtype == LANG_C || ( sym->langtype == LANG_SYSCALL && !fastcall_id ) ) &&
 	( info->parasize || ( info->has_vararg && size_vararg ) )) {
 	if ( info->has_vararg ) {
 	    if ( ModuleInfo.epilogueflags )

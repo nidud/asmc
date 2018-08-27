@@ -3,7 +3,7 @@ _LM_ equ <>
 .pragma list(push, 0)
 
 ifdef __PE__
-option importlib:<netapi32>
+option dllimport:<netapi32>
 else
 includelib netapi32.lib
 endif

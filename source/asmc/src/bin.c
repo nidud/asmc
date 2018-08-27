@@ -188,15 +188,24 @@ static void CalcOffset( struct dsym *curr, struct calc_param *cp )
     if ( grp == NULL ) {
 	offset = cp->fileoffset - cp->sizehdr;	// + alignbytes;
     } else {
-	if ( ModuleInfo.sub_format == SFORMAT_PE
-	  || ModuleInfo.sub_format == SFORMAT_64BIT ) /* v2.24 */
+	if ( ModuleInfo.sub_format == SFORMAT_PE || ModuleInfo.sub_format == SFORMAT_64BIT ) {
+	    /* v2.24 */
 	    offset = cp->rva;
-	else
+	} else {
 	    if ( grp->sym.total_size == 0 ) {
 		grp->sym.offset = cp->fileoffset - cp->sizehdr;
 		offset = 0;
-	    } else
+	    } else {
+		/* v2.12: the old way wasn't correct. if there's a segment between the
+		 * segments of a group, it affects the offset as well ( if it
+		 * occupies space in the file )! the value stored in grp->sym.total_size
+		 * is no longer used (or, more exactly, used as a flag only).
+		 *
+		 * offset = ( cp->fileoffset - cp->sizehdr ) - grp->sym.offset;
+		 */
 		offset = grp->sym.total_size + alignbytes;
+	    }
+	}
     }
 
     /* v2.04: added */

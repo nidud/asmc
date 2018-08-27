@@ -395,9 +395,14 @@ static void ProcessOption( char **cmdline, char *buffer )
 	return;
     case '6fle':	// -elf64
 	Options.output_format = OFORMAT_ELF;
-	Options.sub_format = SFORMAT_64BIT;
 	define_name( "_LINUX", "2" );
+#ifndef __ASMC64__
+	Options.sub_format = SFORMAT_64BIT;
 	define_name( "_WIN64", "1" );
+#else
+	Options.langtype = LANG_SYSCALL;
+	Options.fctype = FCT_ELF64;
+#endif
 	return;
 #ifndef __ASMC64__
     case 'fle':		// -elf

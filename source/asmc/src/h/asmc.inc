@@ -833,31 +833,6 @@ seg_info		STRUC
 seg_info		ENDS
 LPSEGINFO		typedef ptr seg_info
 
-proc_info		STRUC
- regslist		PVOID ?
- paralist		PVOID ?
- locallist		PVOID ?
- labellist		PVOID ?
- parasize		dd ?
- localsize		dd ?
- prologuearg		LPSTR ?
- exc_handler		PVOID ?
- ReservedStack		dd ?
- prolog_list_pos	dd ?
- flags			db ?
- PINF_HAS_VARARG	equ 01h
- PINF_PE_TYPE		equ 01h
- PINF_ISEXPORT		equ 02h
- PINF_FORCEFRAME	equ 04h
- PINF_LOADDS		equ 08h
- PINF_STACKPARAM	equ 10h
- PINF_ISFRAME		equ 20h
- PINF_FPO		equ 40h
- size_prolog		db ?
- basereg		dw ?
-proc_info		ENDS
-LPPROCINFO		typedef ptr proc_info
-
 mparm_list		STRUC
  deflt			LPSTR ?
  required		db ?
@@ -898,6 +873,31 @@ struct_info		STRUC
  STINF_ORGINSIDE	equ 4
 struct_info		ENDS
 LPSTRUCINFO		typedef ptr struct_info
+
+proc_info		STRUC
+ regslist		PVOID ?
+ paralist		PVOID ?
+ locallist		PVOID ?
+ labellist		PVOID ?
+ parasize		dd ?
+ localsize		dd ?
+ prologuearg		LPSTR ?
+ exc_handler		PVOID ?
+ ReservedStack		dd ?
+ prolog_list_pos	dd ?
+ flags			db ?
+ PINF_HAS_VARARG	equ 01h
+ PINF_PE_TYPE		equ 01h
+ PINF_ISEXPORT		equ 02h
+ PINF_FORCEFRAME	equ 04h
+ PINF_LOADDS		equ 08h
+ PINF_STACKPARAM	equ 10h
+ PINF_ISFRAME		equ 20h
+ PINF_FPO		equ 40h
+ size_prolog		db ?
+ basereg		dw ?
+proc_info		ENDS
+LPPROCINFO		typedef ptr proc_info
 
 nsym			STRUC
  sym			asym <>
@@ -1437,6 +1437,8 @@ GetSymOfssize		proto :ptr asym
 SizeFromRegister	proto :SINT
 
 SearchNameInStruct	proto :ptr asym, :LPSTR, :ptr SINT, :SINT
+GetResWName		proto :UINT, :LPSTR
+CurrWordSize		equ <ModuleInfo.wordsize>
 
 ;-------------------------------------------------------------------------------
 ; Text macros

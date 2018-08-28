@@ -11,6 +11,7 @@ externdef CurrStruct:LPDSYM
 com_item    STRUC
 cmd         dd ?
 class       LPSTR ?
+langtype    dd ?
 com_item    ENDS
 LPCLASS     typedef ptr com_item
 
@@ -38,7 +39,11 @@ AddVirtualTable proc private uses esi
         sprintf( &l_t, "T$%04X", ModuleInfo.class_label )
         sprintf( &l_p, "P$%04X", ModuleInfo.class_label )
 
-        AddLineQueueX( "%s typedef proto :ptr %s", &l_t, [esi].com_item.class )
+        .if ( [esi].com_item.langtype )
+            AddLineQueueX( "%s typedef proto %r :ptr %s", &l_t, [esi].com_item.langtype, [esi].com_item.class )
+        .else
+            AddLineQueueX( "%s typedef proto :ptr %s", &l_t, [esi].com_item.class )
+        .endif
         AddLineQueueX( "%s typedef ptr %s", &l_p, &l_t )
         AddLineQueueX( "Release %s ?", &l_p )
     .else
@@ -51,6 +56,7 @@ AddVirtualTable endp
 ProcType proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok, buffer:LPSTR
 
   local rc:SINT, l_p[16]:SBYTE, l_t[16]:SBYTE, id:LPSTR, IsCom:BYTE
+  local language[32]:SBYTE
 
     mov ebx,i
     shl ebx,4
@@ -106,14 +112,28 @@ ProcType proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok, buffer:LPSTR
 
             .if IsCom
 
-                .if ( [ebx+16].token == T_FINAL || \
-                    ( [ebx].tokval >= T_C && [ebx].tokval <= T_VECTORCALL ) || \
+                .if ( [ebx].tokval >= T_C && [ebx].tokval <= T_VECTORCALL )
+
+                    inc esi
+                .endif
+
+                .if ( [ebx+16].token == T_FINAL || esi || \
                     ( [ebx].token != T_COLON && [ebx+16].token != T_COLON ) )
 
                     strcat(edi, " ")
                     strcat(edi, [ebx].string_ptr)
                     add ebx,16
+                .elseif !esi && ModuleInfo.ComStack
+                    mov ecx,ModuleInfo.ComStack
+                    mov edx,[ecx].com_item.langtype
+                    .if edx
+
+                        GetResWName(edx, &language)
+                        strcat(edi, " ")
+                        strcat(edi, &language)
+                    .endif
                 .endif
+                xor esi,esi
             .endif
 
             .for ( eax = ebx : [eax].asm_tok.token != T_FINAL : eax += 16 )
@@ -124,6 +144,17 @@ ProcType proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok, buffer:LPSTR
                     .break
                 .endif
             .endf
+
+        .elseif IsCom && ModuleInfo.ComStack
+
+            mov ecx,ModuleInfo.ComStack
+            mov edx,[ecx].com_item.langtype
+            .if edx
+
+                GetResWName(edx, &language)
+                strcat(edi, " ")
+                strcat(edi, &language)
+            .endif
         .endif
 
         .if IsCom
@@ -172,7 +203,7 @@ ProcType endp
 
 ClassDirective proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok
 
-  local rc:SINT, cmd:UINT, buffer[MAX_LINE_LEN]:SBYTE
+  local rc:SINT, args:SINT, cmd:UINT, buffer[MAX_LINE_LEN]:SBYTE
 
     mov rc,NOT_ERROR
     mov ebx,tokenarray
@@ -226,6 +257,7 @@ ClassDirective proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok
             mov ModuleInfo.ComStack,LclAlloc( sizeof( com_item ) )
             mov ecx,cmd
             mov [eax].com_item.cmd,ecx
+            mov [eax].com_item.langtype,0
 
             lea ebx,[ebx+edx+16]
             mov esi,[ebx].string_ptr
@@ -242,12 +274,22 @@ ClassDirective proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok
                 _strupr( eax )
             .endif
 
+            lea eax,[ebx+16]
+            .if ( [ebx+16].tokval >= T_C && [ebx+16].tokval <= T_VECTORCALL )
+
+                mov edx,[ebx+16].tokval
+                mov ecx,ModuleInfo.ComStack
+                mov [ecx].com_item.langtype,edx
+                add eax,16
+            .endif
+            mov args,eax
+
             .if ( cmd == T_DOT_CLASSDEF )
 
                 AddLineQueueX( "%s typedef ptr %s", edi, esi )
                 AddLineQueueX( "%sVtbl typedef ptr %sVtbl", edi, esi )
 
-                .for edx=0, eax=ebx : !edx && [eax].asm_tok.token != T_FINAL : eax += 16
+                .for edx=0, eax=args : !edx && [eax].asm_tok.token != T_FINAL : eax += 16
 
                     .if [eax].asm_tok.token == T_COLON
 
@@ -255,11 +297,21 @@ ClassDirective proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok
                     .endif
                 .endf
 
-                .if edx
+                mov ebx,args
 
-                    AddLineQueueX( "%s::%s proto %s", esi, esi, [ebx+16].tokpos )
+                mov ecx,ModuleInfo.ComStack
+                .if [ecx].com_item.langtype
+                    .if edx
+                        AddLineQueueX( "%s::%s proto %s %s", esi, esi, [ebx-16].string_ptr, [ebx].tokpos )
+                    .else
+                        AddLineQueueX( "%s::%s proto %s", esi, esi, [ebx-16].string_ptr )
+                    .endif
                 .else
-                    AddLineQueueX( "%s::%s proto", esi, esi )
+                    .if edx
+                        AddLineQueueX( "%s::%s proto %s", esi, esi, [ebx].tokpos )
+                    .else
+                        AddLineQueueX( "%s::%s proto", esi, esi )
+                    .endif
                 .endif
             .endif
 

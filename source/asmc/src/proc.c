@@ -2117,6 +2117,7 @@ static int write_default_prologue( void )
     int cnt;
     int offset;
     struct dsym *p;
+    int sysstack;
     int resstack = 0;
     int cstack = ( ( ModuleInfo.aflag & _AF_CSTACK ) &&
 	( ( ( CurrProc->sym.langtype == LANG_STDCALL || CurrProc->sym.langtype == LANG_C ) &&
@@ -2125,6 +2126,10 @@ static int write_default_prologue( void )
 	    ModuleInfo.Ofssize == USE64 ) ) );
 
     info = CurrProc->e.procinfo;
+    sysstack = ( ( ModuleInfo.fctype == FCT_WIN64 || ModuleInfo.fctype == FCT_VEC64 ) &&
+	   info->paralist && CurrProc->sym.langtype == LANG_SYSCALL &&
+	   ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) );
+
 
     if ( info->isframe ) {
 	if ( ModuleInfo.frame_auto ) {
@@ -2146,7 +2151,7 @@ static int write_default_prologue( void )
 
     /* default processing. if no params/locals are defined, continue */
     if( info->forceframe == FALSE && info->localsize == 0 && info->stackparam == FALSE &&
-       info->has_vararg == FALSE && resstack == 0 && info->regslist == NULL )
+       !sysstack && info->has_vararg == FALSE && resstack == 0 && info->regslist == NULL )
 	return( NOT_ERROR );
 
     regist = info->regslist;
@@ -2200,7 +2205,7 @@ static int write_default_prologue( void )
 
     }
 
-    if( info->locallist || info->stackparam || info->has_vararg || info->forceframe ) {
+    if( sysstack || info->locallist || info->stackparam || info->has_vararg || info->forceframe ) {
 
 	/* write 80386 prolog code
 	 * PUSH [E|R]BP
@@ -2587,7 +2592,9 @@ static void write_win64_default_epilogue( struct proc_info *info )
 
 static void write_default_epilogue( void )
 {
-    struct proc_info   *info;
+    struct proc_info *info;
+    int sysstack;
+    int leave;
     int resstack = 0;
     int cstack = ( ( ModuleInfo.aflag & _AF_CSTACK ) &&
 	( ( ( CurrProc->sym.langtype == LANG_STDCALL || CurrProc->sym.langtype == LANG_C ) &&
@@ -2596,6 +2603,11 @@ static void write_default_epilogue( void )
 	      ModuleInfo.Ofssize == USE64 ) ) );
 
     info = CurrProc->e.procinfo;
+    sysstack = ( ( ModuleInfo.fctype == FCT_WIN64 || ModuleInfo.fctype == FCT_VEC64 ) &&
+	   info->paralist && CurrProc->sym.langtype == LANG_SYSCALL &&
+	   ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) );
+
+    leave = ( info->locallist || info->stackparam || info->has_vararg || info->forceframe || sysstack );
 
     if ( info->isframe ) {
 	if ( ModuleInfo.frame_auto )
@@ -2612,11 +2624,9 @@ static void write_default_epilogue( void )
 	/* if no framepointer was pushed, add 8 to align stack on OWORD
 	 * v2.12: obsolete; localsize contains correct value.
 	 */
-	if ( cstack && (info->locallist	 || info->stackparam ||
-			info->has_vararg || info->forceframe ) && info->pe_type )
+	if ( cstack && leave && info->pe_type )
 	    ; /* v2.21: leave will follow.. */
-	else if ( !cstack && (info->locallist || info->stackparam ||
-		  info->has_vararg || info->forceframe ) && info->pe_type &&
+	else if ( !cstack && leave && info->pe_type &&
 		  !CurrProc->e.procinfo->regslist && info->basereg == T_RBP )
 	    ; /* v2.27: leave will follow.. */
 	else if ( resstack || info->localsize ) {
@@ -2639,7 +2649,7 @@ static void write_default_epilogue( void )
 	}
     }
 
-    if( ( info->locallist == NULL ) &&
+    if( ( !sysstack && info->locallist == NULL ) &&
        info->stackparam == FALSE &&
        info->has_vararg == FALSE &&
        resstack == 0 &&
@@ -2658,8 +2668,7 @@ static void write_default_epilogue( void )
     /* restore registers e/sp and e/bp.
      * emit either "leave" or "mov e/sp,e/bp, pop e/bp".
      */
-    if ( !(info->locallist || info->stackparam || info->has_vararg || info->forceframe )) {
-
+    if ( !leave ) {
 	;
     } else if( info->pe_type ) {
 

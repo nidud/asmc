@@ -8,6 +8,7 @@
 struct com_item {
     int     cmd;
     char   *class;
+    int     langtype;
 };
 
 static void AddVirtualTable(void)
@@ -31,7 +32,10 @@ static void AddVirtualTable(void)
         sprintf( l_t, "T$%04X", ModuleInfo.class_label );
         sprintf( l_p, "P$%04X", ModuleInfo.class_label );
 
-        AddLineQueueX( "%s typedef proto :ptr %s", l_t, p->class );
+        if ( p->langtype )
+            AddLineQueueX( "%s typedef proto %r :ptr %s", l_t, p->langtype, p->class );
+        else
+            AddLineQueueX( "%s typedef proto :ptr %s", l_t, p->class );
         AddLineQueueX( "%s typedef ptr %s", l_p, l_t );
         AddLineQueueX( "Release %s ?", l_p );
     } else {
@@ -44,6 +48,7 @@ int ProcType(int i, struct asm_tok tokenarray[], char *buffer)
     int     rc = NOT_ERROR;
     char    l_p[16];
     char    l_t[16];
+    char    language[32];
     char    *p, *id = tokenarray[i-1].string_ptr;
     int     x, q, IsCom = 0;
     struct  com_item *o = ModuleInfo.g.ComStack;
@@ -86,14 +91,19 @@ int ProcType(int i, struct asm_tok tokenarray[], char *buffer)
 
         if ( IsCom ) {
 
-            if ( tokenarray[i+1].token == T_FINAL ||
-               ( tokenarray[i].tokval >= T_C && tokenarray[i].tokval <= T_VECTORCALL ) ||
+            if ( tokenarray[i].tokval >= T_C && tokenarray[i].tokval <= T_VECTORCALL )
+                q = 1;
+            if ( tokenarray[i+1].token == T_FINAL || q ||
                ( tokenarray[i].token != T_COLON && tokenarray[i+1].token != T_COLON ) ) {
-
                 strcat(buffer, " ");
                 strcat(buffer, tokenarray[i].string_ptr);
                 i++;
+            } else if ( !q && o && o->langtype ) {
+                GetResWName( o->langtype, language );
+                strcat( buffer, " " );
+                strcat( buffer, language );
             }
+            q = 0;
         }
 
         for ( x = i; tokenarray[x].token != T_FINAL; x++ ) {
@@ -104,6 +114,11 @@ int ProcType(int i, struct asm_tok tokenarray[], char *buffer)
                 break;
             }
         }
+    } else if ( IsCom && o && o->langtype ) {
+
+        GetResWName( o->langtype, language );
+        strcat( buffer, " " );
+        strcat( buffer, language );
     }
 
     if ( IsCom ) {
@@ -142,7 +157,7 @@ int ProcType(int i, struct asm_tok tokenarray[], char *buffer)
 int ClassDirective( int i, struct asm_tok tokenarray[] )
 {
     int     rc = NOT_ERROR;
-    int     x,q,cmd;
+    int     x,q,cmd,args;
     char    buffer[MAX_LINE_LEN];
     char *  p;
     struct  com_item *o = ModuleInfo.g.ComStack;
@@ -177,6 +192,7 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
         o = LclAlloc( sizeof( struct com_item ) );
         ModuleInfo.g.ComStack = o;
         o->cmd = cmd;
+        o->langtype = 0;
         p = tokenarray[i].string_ptr;
         o->class = LclAlloc( strlen(p) + 1 );
         strcpy(o->class, p);
@@ -185,12 +201,18 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
         if ( cmd == T_DOT_CLASSDEF )
             _strupr( buffer );
 
+        args = i + 1;
+        if ( tokenarray[args].tokval >= T_C && tokenarray[args].tokval <= T_VECTORCALL ) {
+            o->langtype = tokenarray[args].tokval;
+            args++;
+        }
+
         if ( cmd == T_DOT_CLASSDEF ) {
 
             AddLineQueueX( "%s typedef ptr %s", buffer, p );
             AddLineQueueX( "%sVtbl typedef ptr %sVtbl", buffer, p );
 
-            for ( x = 0, q = i; tokenarray[q].token != T_FINAL; q++ ) {
+            for ( x = 0, q = args; tokenarray[q].token != T_FINAL; q++ ) {
 
                 if ( tokenarray[q].token == T_COLON ) {
                     x++;
@@ -198,10 +220,17 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
                 }
             }
 
-            if ( x )
-                AddLineQueueX( "%s::%s proto %s", p, p, tokenarray[i+1].tokpos );
-            else
-                AddLineQueueX( "%s::%s proto", p, p );
+            if ( o->langtype ) {
+                if ( x )
+                    AddLineQueueX( "%s::%s proto %s %s", p, p, tokenarray[args-1].string_ptr, tokenarray[args].tokpos );
+                else
+                    AddLineQueueX( "%s::%s proto %s", p, p, tokenarray[args-1].string_ptr );
+            } else {
+                if ( x )
+                    AddLineQueueX( "%s::%s proto %s", p, p, tokenarray[args].tokpos );
+                else
+                    AddLineQueueX( "%s::%s proto", p, p );
+            }
         }
 
         x = 4;

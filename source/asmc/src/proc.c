@@ -852,10 +852,10 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 	    case LANG_VECTORCALL:
 		if ( ti.Ofssize == USE64 )
 		    goto left_to_right;
-	    case LANG_SYSCALL:
 		/* v2.07: MS fastcall 16-bit is PASCAL! */
 		if ( ti.Ofssize == USE16 && ModuleInfo.fctype == FCT_MSC )
 		    goto left_to_right;
+	    case LANG_SYSCALL:
 	    default:
 		paranode->nextparam = proc->e.procinfo->paralist;
 		proc->e.procinfo->paralist = paranode;
@@ -2126,8 +2126,7 @@ static int write_default_prologue( void )
 	    ModuleInfo.Ofssize == USE64 ) ) );
 
     info = CurrProc->e.procinfo;
-    sysstack = ( ( ModuleInfo.fctype == FCT_WIN64 || ModuleInfo.fctype == FCT_VEC64 ) &&
-	   info->paralist && CurrProc->sym.langtype == LANG_SYSCALL &&
+    sysstack = ( ModuleInfo.Ofssize == USE64 && info->paralist && CurrProc->sym.langtype == LANG_SYSCALL &&
 	   ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) );
 
 
@@ -2603,8 +2602,7 @@ static void write_default_epilogue( void )
 	      ModuleInfo.Ofssize == USE64 ) ) );
 
     info = CurrProc->e.procinfo;
-    sysstack = ( ( ModuleInfo.fctype == FCT_WIN64 || ModuleInfo.fctype == FCT_VEC64 ) &&
-	   info->paralist && CurrProc->sym.langtype == LANG_SYSCALL &&
+    sysstack = ( ModuleInfo.Ofssize == USE64 && info->paralist && CurrProc->sym.langtype == LANG_SYSCALL &&
 	   ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) );
 
     leave = ( info->locallist || info->stackparam || info->has_vararg || info->forceframe || sysstack );

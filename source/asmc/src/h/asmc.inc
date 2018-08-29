@@ -718,8 +718,8 @@ asym			STRUC
     first_length	dword ?
     max_mbr_size	dword ?
     target_type		PVOID ?
-    regist		dw 2 dup(?)
  ENDS
+    regist		dw 2 dup(?)
  UNION
     total_size		dword ?
     value3264		sdword ?

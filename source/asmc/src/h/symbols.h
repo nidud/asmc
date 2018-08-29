@@ -189,9 +189,9 @@ struct asym {
 	uint_32		max_mbr_size; /* max size members */
 	/* SYM_STACK, SYM_TYPE (TYPEKIND_TYPEDEF), SYM_EXTERNAL, SYM_INTERNAL (code labels) */
 	struct asym	*target_type; /* set if ptr_memtype is MT_TYPE */
-	/* SYM_TMACRO (if it's a register variable for FASTCALL) */
-	uint_16		regist[2];
     };
+    /* SYM_TMACRO (if it's a register variable for FASTCALL) */
+    uint_16	     regist[2];
     union {
 	/* for SYM_INTERNAL, SYM_STRUCT_FIELD,
 	 * SYM_TYPE, SYM_STACK,

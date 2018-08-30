@@ -961,7 +961,7 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 	}
     }
 
-    if ( info->has_vararg && proc->sym.langtype == LANG_SYSCALL && ModuleInfo.Ofssize == USE64 ) {
+    if ( proc->sym.langtype == LANG_SYSCALL && info->has_vararg && ModuleInfo.Ofssize == USE64 ) {
 	 if ( porder )
 	    AddLineQueueX( " mov %r, 1", T_EAX );
 	 else
@@ -999,7 +999,7 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 	if ( ModuleInfo.Ofssize == USE64 ) {
 
 	    if ( sym->langtype == LANG_SYSCALL )
-		AddLineQueueX( " mov %r, [%r]", T_RAX, T_RDI );
+		AddLineQueueX( " mov %r, [%r]", T_R10, T_RDI );
 	    else
 		AddLineQueueX( " mov %r, [%r]", T_RAX, T_RCX );
 

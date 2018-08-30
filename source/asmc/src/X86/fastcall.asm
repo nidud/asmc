@@ -1400,6 +1400,16 @@ elf64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:S
         .endif
 
         movzx eax,[edx].asym.mem_type
+        .if  eax == MT_EMPTY && [edx].asym.sint_flag & SINT_ISVARARG && \
+            [edi].expr.kind == EXPR_ADDR && [edi].expr.mem_type & MT_FLOAT
+            .if SymFind( paramvalue )
+                mov edx,eax
+            .else
+                mov edx,param
+            .endif
+            movzx eax,[edx].asym.mem_type
+        .endif
+
         .if eax == MT_REAL4 || eax == MT_REAL8 || eax == MT_REAL16
 
             mov eax,[edi].expr.base_reg
@@ -1419,10 +1429,12 @@ elf64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:S
             mov i32,ecx
 
             .if adr
-                .if eax >= 2*6
+                .if SizeFromRegister( ebx ) == 8
                     AddLineQueueX(" lea %r, %s", ebx, paramvalue)
                 .else
-                    asmerr(2114, index)
+                    mov eax,index
+                    inc eax
+                    asmerr(2114, eax)
                 .endif
                 lea ecx,[esi+ELF64_START]
                 mov eax,1
@@ -1472,7 +1484,10 @@ elf64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:S
 
             mov edx,param
             .if eax > psize || (eax < psize && [edx].asym.mem_type == MT_PTR)
-                asmerr( 2114, index )
+
+                mov eax,index
+                inc eax
+                asmerr( 2114, eax )
             .endif
 
             ;

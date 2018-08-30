@@ -2120,9 +2120,7 @@ static int write_default_prologue( void )
     int sysstack;
     int resstack = 0;
     int cstack = ( ( ModuleInfo.aflag & _AF_CSTACK ) && ( ( ( CurrProc->sym.langtype == LANG_STDCALL ||
-	CurrProc->sym.langtype == LANG_C ) && ModuleInfo.Ofssize == USE32 ) ||
-	( ModuleInfo.Ofssize == USE64 && ( ModuleInfo.fctype == FCT_WIN64 ||
-	  ModuleInfo.fctype == FCT_VEC64 || ModuleInfo.fctype == FCT_ELF64 ) ) ) );
+	CurrProc->sym.langtype == LANG_C ) && ModuleInfo.Ofssize == USE32 ) || ModuleInfo.Ofssize == USE64 ) );
 
     info = CurrProc->e.procinfo;
     sysstack = ( ModuleInfo.Ofssize == USE64 && info->paralist && CurrProc->sym.langtype == LANG_SYSCALL &&
@@ -2595,9 +2593,7 @@ static void write_default_epilogue( void )
     int leave;
     int resstack = 0;
     int cstack = ( ( ModuleInfo.aflag & _AF_CSTACK ) && ( ( ( CurrProc->sym.langtype == LANG_STDCALL ||
-	CurrProc->sym.langtype == LANG_C ) && ModuleInfo.Ofssize == USE32 ) ||
-	( ModuleInfo.Ofssize == USE64 && ( ModuleInfo.fctype == FCT_WIN64 ||
-	  ModuleInfo.fctype == FCT_VEC64 || ModuleInfo.fctype == FCT_ELF64 ) ) ) );
+	CurrProc->sym.langtype == LANG_C ) && ModuleInfo.Ofssize == USE32 ) || ModuleInfo.Ofssize == USE64 ) );
 
     info = CurrProc->e.procinfo;
     sysstack = ( ModuleInfo.Ofssize == USE64 && info->paralist && CurrProc->sym.langtype == LANG_SYSCALL &&

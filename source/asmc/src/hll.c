@@ -919,6 +919,7 @@ static int LKRenderHllProc( char *dst, int i, struct asm_tok tokenarray[] )
     char ClassVtbl[128];
     int br_count;
     int j, k, x;
+    struct asym *tmp;
     struct asym *sym = NULL;
     struct asym *target = NULL;
     int static_struct = 0;
@@ -1045,9 +1046,18 @@ static int LKRenderHllProc( char *dst, int i, struct asm_tok tokenarray[] )
 		}
 	    }
 
-	    if ( ModuleInfo.Ofssize == USE64 )
-		strcat(b, "[rax]." );
-	    else
+	    if ( ModuleInfo.Ofssize == USE64 ) {
+		tmp = target;
+		if ( tmp->mem_type == MT_TYPE && tmp->type ) {
+		    tmp = tmp->type;
+		    if ( tmp->typekind == TYPE_TYPEDEF )
+			tmp = tmp->target_type;
+		}
+		if ( tmp->langtype == LANG_SYSCALL )
+		    strcat(b, "[r10]." ); /* v2.28: Added for :vararg */
+		else
+		    strcat(b, "[rax]." );
+	    } else
 		strcat(b, "[eax]." );
 
 	    comptr = strcat(b, comptr );

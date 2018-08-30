@@ -1,12 +1,16 @@
-; _LINUX and _WIN64 defined by Asmc if switch -elf[64] or -win64 is used
-
 include stdio.inc
 
     .code
 
-main proc argc:SINT, argv:ptr
+main proc uses rbx r12 argc:SINT, argv:ptr
 
-    printf("[%d]: %p\n", argc, argv)
+  local arg_count:SINT
+
+    .for (arg_count = argc, ebx = 0,
+        r12 = argv: ebx < arg_count: ebx++, r12 += size_t)
+
+        printf("[%d]: %s\n", ebx, [r12])
+    .endf
     xor eax,eax
     ret
 

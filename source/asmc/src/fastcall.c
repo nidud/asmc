@@ -803,11 +803,17 @@ static int elf64_param( struct dsym const *proc, int index, struct dsym *param,
 	index = param->sym.regist[1];
     }
 
-    if ( param->sym.mem_type == MT_REAL4 || param->sym.mem_type == MT_REAL8 || param->sym.mem_type == MT_REAL16 ) {
+    sym = (struct asym *)param;
+    if ( sym->mem_type == MT_EMPTY && sym->is_vararg &&
+	 opnd->kind == EXPR_ADDR && ( opnd->mem_type & MT_FLOAT ) ) {
+	 if ( !( sym = SymFind( paramvalue ) ) )
+	    sym = (struct asym *)param;
+    }
+    if ( sym->mem_type == MT_REAL4 || sym->mem_type == MT_REAL8 || sym->mem_type == MT_REAL16 ) {
 
 	if ( opnd->base_reg )
 	    i = opnd->base_reg->tokval;
-	CheckXMM( i, index, param, opnd, paramvalue, regs_used );
+	CheckXMM( i, index, (struct dsym *)sym, opnd, paramvalue, regs_used );
 
     } else {
 

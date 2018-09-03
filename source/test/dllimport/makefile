@@ -1,6 +1,6 @@
 test.exe:
-    asmc -pe -win64 $*.asm
-    asmc -pe -win64 -Fo extern.dll extern.asm
+    asmc64 -pe $*.asm
+    asmc64 -pe -Fo extern.dll extern.asm
     $@
     pause
 

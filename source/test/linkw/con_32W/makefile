@@ -1,5 +1,5 @@
 test.exe:
-    asmc -q -ws -D_UNICODE $*.asm
+    asmc -q -ws $*.asm
     linkw system con_32W file $*
     $@
     pause

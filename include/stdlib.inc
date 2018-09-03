@@ -33,6 +33,7 @@ abort		proto __cdecl
 exit		proto __cdecl :DWORD
 atol		proto __cdecl :LPSTR
 _atoi64		proto __cdecl :LPSTR
+_atoi128	proto __cdecl :LPSTR
 mbtowc		proto __cdecl :LPWSTR, :LPSTR, :SIZE_T
 mbstowcs	proto __cdecl :LPWSTR, :LPSTR, :SIZE_T
 wctomb		proto __cdecl :LPSTR, :wchar_t

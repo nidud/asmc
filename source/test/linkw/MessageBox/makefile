@@ -14,16 +14,16 @@ WIN32A.exe:
     $@
 WIN32W.exe:
     echo $@
-    asmc -q -ws -D_UNICODE test.asm
+    asmc -q -ws test.asm
     linkw system gui_32W name $@ file test
     $@
 WIN64A.exe:
     echo $@
-    asmc -q -D_WIN64 test.asm
-    linkw system gui_64 name $@ file test
+    asmc64 -q test.asm
+    linkw sys gui_64 name $@ file test
     $@
 WIN64W.exe:
     echo $@
-    asmc -q -ws -D_WIN64 -D_UNICODE test.asm
-    linkw system gui_64W name $@ file test
+    asmc64 -q -ws test.asm
+    linkw sys gui_64W name $@ file test
     $@

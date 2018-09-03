@@ -42,8 +42,8 @@ _atoi64 proc uses esi edi ebx string:LPSTR
     pop ecx
     .if cl == '-'
 
-        neg eax
         neg edx
+        neg eax
         sbb edx,0
     .endif
     ret

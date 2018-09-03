@@ -45,13 +45,17 @@ _cscanf		proto _CDecl :LPSTR, :VARARG
 _getch		proto __cdecl
 _getche		proto __cdecl
 _gotoxy		proto __cdecl :UINT, :UINT
+ifdef _M_IX86
 _inp		proto __cdecl :UINT
 _inpw		proto __cdecl :UINT
 _inpd		proto __cdecl :UINT
+endif
 _kbhit		proto __cdecl
+ifdef _M_IX86
 _outp		proto __cdecl :UINT, :UINT
 _outpw		proto __cdecl :UINT, :UINT
 _outpd		proto __cdecl :UINT, :ULONG
+endif
 _putch		proto __cdecl :UINT
 _textbackground proto __cdecl :UINT
 _textcolor	proto __cdecl :UINT

@@ -59,11 +59,10 @@ Blur proc
     lea     rax,[rax+rax*2]
     mov     r10,rax
     imul    maxy
-    mov     ecx,eax
+    lea     rcx,[rax+r9]
     lea     rdx,[r10-3]
     add     r10,3
     neg     rdx
-    xor     eax,eax
     sub     r8,3
 
     .repeat
@@ -112,15 +111,15 @@ Blur proc
         psubusw     xmm1,xmm6
         psubusw     xmm2,xmm6
         packuswb    xmm0,xmm7
-        add         r8,12
         packuswb    xmm1,xmm7
         packuswb    xmm2,xmm7
-        movd        [r9+rax],xmm0
-        movd        [r9+rax+8],xmm1
-        movd        [r9+rax+16],xmm2
-        add         eax,12
+        movd        [r9],xmm0
+        movd        [r9+8],xmm1
+        movd        [r9+16],xmm2
+        add         r8,12
+        add         r9,12
 
-    .until eax > ecx
+    .until r9 > rcx
     ret
 
 Blur endp
@@ -358,7 +357,7 @@ ThrdProc proc uses rsi rdi rbx
                         movd     xmm1,eax
                         mulss    xmm0,xmm1
                         cvtss2si ebx,xmm0
-                        mov      rax,0x0001010101010101
+                        mov      rax,0x0000010101010101
                         imul     rbx,rax
                     .endif
 

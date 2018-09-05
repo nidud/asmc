@@ -146,7 +146,8 @@ static struct IMAGE_PE_HEADER32 pe32def = {
 static struct IMAGE_PE_HEADER64 pe64def = {
     'P'+ ('E' << 8 ),
     { IMAGE_FILE_MACHINE_AMD64, 0, 0, 0, 0, sizeof( struct IMAGE_OPTIONAL_HEADER64 ),
-    IMAGE_FILE_RELOCS_STRIPPED | IMAGE_FILE_EXECUTABLE_IMAGE | IMAGE_FILE_LINE_NUMS_STRIPPED | IMAGE_FILE_LOCAL_SYMS_STRIPPED | IMAGE_FILE_LARGE_ADDRESS_AWARE | IMAGE_FILE_32BIT_MACHINE
+      IMAGE_FILE_RELOCS_STRIPPED | IMAGE_FILE_EXECUTABLE_IMAGE | IMAGE_FILE_LINE_NUMS_STRIPPED |
+      IMAGE_FILE_LOCAL_SYMS_STRIPPED | IMAGE_FILE_LARGE_ADDRESS_AWARE | IMAGE_FILE_32BIT_MACHINE
     },
     { IMAGE_NT_OPTIONAL_HDR64_MAGIC,
     5,1,0,0,0,0,0,   /* linkervers maj/min, sizeof code/init data/uninit data, entrypoint, base code RVA */
@@ -203,7 +204,7 @@ static void CalcOffset( struct dsym *curr, struct calc_param *cp )
 		 *
 		 * offset = ( cp->fileoffset - cp->sizehdr ) - grp->sym.offset;
 		 */
-		offset = grp->sym.total_size + alignbytes;
+		 offset = grp->sym.total_size + alignbytes;
 	    }
 	}
     }

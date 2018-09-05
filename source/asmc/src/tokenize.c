@@ -1128,6 +1128,9 @@ int Tokenize( char *line, unsigned int start, struct asm_tok tokenarray[],
 	    p.index = start; /* skip this line */
 	    break;
 	}
+	if ( tokenarray[p.index].token == T_DBL_COLON )
+	    tokenarray[0].hll_flags |= T_HLL_DBLCOLON;
+
 	/* v2.04: this has been moved here from condasm.c to
 	 * avoid problems with (conditional) listings. It also
 	 * avoids having to search for the first token twice.

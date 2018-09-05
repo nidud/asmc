@@ -2300,7 +2300,7 @@ int ParseLine( struct asm_tok tokenarray[] )
 	if ( tokenarray[2].token != T_FINAL )
 	    j++;
 
-    } else if ( Token_Count > 3 ) {
+    } else if ( Token_Count > 3 && tokenarray[0].hll_flags & T_HLL_DBLCOLON ) {
 
 	for ( q = 1; tokenarray[q+2].token != T_FINAL; q++ ) {
 

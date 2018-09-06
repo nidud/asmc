@@ -4,6 +4,7 @@ Change Log File for ASMC
 
 Changes in 2.28.05 - 6 Sep 2018
 - fixed bug andpd, andnpd, xorpd, orpd -- m64 not accepted (HSE)
+- added operator HIGH64 and LOW64
 
 Changes in 2.28.04 - 30 Aug 2018
 - fixed bug in System V :vararg

@@ -41,11 +41,6 @@ OpCls	macro op1, op2, op3
 
 	echo TITLE TOKEN.INC -- Auto made from mktok.asm
 	echo .xlist
-	echo
-	echo TOK_DEFAULT		equ 0
-	echo TOK_RESCAN		equ 1
-	echo TOK_NOCURLBRACES	equ 2
-	echo TOK_LINE		equ 4
 	echo ;
 	echo T_NULL	equ 0
 	echo ;

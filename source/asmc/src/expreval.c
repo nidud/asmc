@@ -765,6 +765,10 @@ static int type_op( int oper, struct expr *opnd1, struct expr *opnd2, struct asy
 	    case T_HIGH32:
 		opnd1->value = 4;
 		break;
+	    case T_LOW64:
+	    case T_HIGH64:
+		opnd1->value = 8;
+		break;
 	    case T_OFFSET:
 	    case T_LROFFSET:
 	    case T_SECTIONREL:
@@ -1040,6 +1044,47 @@ static int high32_op( int oper, struct expr *opnd1, struct expr *opnd2, struct a
 	opnd1->mem_type = MT_EMPTY;
     }
     opnd1->llvalue = opnd1->llvalue >> 32;
+    return( NOT_ERROR );
+}
+
+static int low64_op( int oper, struct expr *opnd1, struct expr *opnd2, struct asym *sym, char *name )
+{
+    if ( opnd2->kind == EXPR_FLOAT ) {
+	if ( Options.strict_masm_compat )
+	    return( ConstError( opnd1, opnd2 ) );
+	atofloat( &opnd2->llvalue, opnd2->float_tok->string_ptr,
+		16, opnd2->negative, opnd2->float_tok->floattype );
+	opnd2->kind = EXPR_CONST;
+	opnd2->float_tok = NULL;
+    }
+    TokenAssign( opnd1, opnd2 );
+    if ( opnd2->kind == EXPR_ADDR && opnd2->instr != T_SEG ) {
+	opnd1->instr = T_LOW64;
+	opnd1->mem_type = MT_EMPTY;
+    }
+    opnd1->hlvalue = 0;
+    return( NOT_ERROR );
+}
+
+static int high64_op( int oper, struct expr *opnd1, struct expr *opnd2, struct asym *sym, char *name )
+{
+    if ( opnd2->kind == EXPR_FLOAT ) {
+	if ( Options.strict_masm_compat )
+	    return( ConstError( opnd1, opnd2 ) );
+	atofloat( &opnd2->llvalue, opnd2->float_tok->string_ptr,
+		16, opnd2->negative, opnd2->float_tok->floattype );
+	opnd2->kind = EXPR_CONST;
+	opnd2->float_tok = NULL;
+    } else if ( opnd2->negative && opnd2->hlvalue == 0 )
+	opnd2->hlvalue = -1;
+
+    TokenAssign( opnd1, opnd2 );
+    if ( opnd2->kind == EXPR_ADDR && opnd2->instr != T_SEG ) {
+	opnd1->instr = T_HIGH64;
+	opnd1->mem_type = MT_EMPTY;
+    }
+    opnd1->llvalue = opnd1->hlvalue;
+    opnd1->hlvalue = 0;
     return( NOT_ERROR );
 }
 
@@ -1474,8 +1519,11 @@ static int negative_op( struct expr *opnd1, struct expr *opnd2 )
     if( opnd2->kind == EXPR_CONST ) {
 	opnd1->kind = EXPR_CONST;
 	opnd1->llvalue = -opnd2->llvalue;
-	if ( opnd2->hlvalue )
-	    opnd1->hlvalue = -opnd2->hlvalue - 1;
+	if ( opnd2->hlvalue ) {
+	    opnd1->hlvalue = -opnd2->hlvalue;
+	    if ( opnd1->chararray[7] & 0x80 )
+		opnd1->hlvalue--;
+	}
 	opnd1->negative = 1 - opnd2->negative;
     } else if( opnd2->kind == EXPR_FLOAT ) {
 	opnd1->kind = EXPR_FLOAT;
@@ -1560,8 +1608,11 @@ static int calculate( struct expr *opnd1, struct expr *opnd2, const struct asm_t
 
     opnd1->quoted_string = NULL;
     if ( opnd2->hlvalue && opnd2->mem_type != MT_REAL16 ) {
-	if ( !(opnd2->is_opattr || ((oper->token == '+' || oper->token == '-') && oper->specval == 0)) )
-	    return( fnasmerr( 2084, opnd2->hlvalue, opnd2->value64 ) );
+	if ( !( oper->token == T_UNARY_OPERATOR && opnd2->kind == EXPR_CONST &&
+		ModuleInfo.Ofssize == USE64 ) ) {
+	    if ( !(opnd2->is_opattr || ((oper->token == '+' || oper->token == '-') && oper->specval == 0)) )
+		return( fnasmerr( 2084, opnd2->hlvalue, opnd2->value64 ) );
+	}
     }
     switch( oper->token ) {
     case T_OP_SQ_BRACKET:

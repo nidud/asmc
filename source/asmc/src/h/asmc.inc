@@ -3,6 +3,7 @@
 
 include version.inc
 include ltype.inc
+include asmtok.inc
 
 	.xlist
 
@@ -44,14 +45,6 @@ _AF_REGAX		equ 0x40 ; use [R|E]AX to render jump-code
 
 _XF_ASSERT		equ 0x01 ; Generate .assert code
 _XF_PUSHF		equ 0x02 ; Push/Pop flags
-
-;-------------------------------------------------------------------------------
-; HLL flags
-;-------------------------------------------------------------------------------
-T_HLL_DELAY		equ 01h ; tokenarray[0]: ELSEIF/WHILE/CASE
-T_HLL_MACRO		equ 02h ; macro()
-T_HLL_PROC		equ 04h ; proc()
-T_HLL_DELAYED		equ 08h ; tokenarray[0]: delayed
 
 ;-------------------------------------------------------------------------------
 ; enumerations
@@ -382,30 +375,6 @@ TYPE_STRUCT		equ 1
 TYPE_UNION		equ 2
 TYPE_TYPEDEF		equ 3
 TYPE_RECORD		equ 4
-
-T_FINAL			equ 0
-T_INSTRUCTION		equ 1
-T_REG			equ 2
-T_DIRECTIVE		equ 3
-T_UNARY_OPERATOR	equ 4
-T_BINARY_OPERATOR	equ 5
-T_STYPE			equ 6
-T_RES_ID		equ 7
-T_ID			equ 8
-T_STRING		equ 9
-T_NUM			equ 10
-T_FLOAT			equ 11
-T_BAD_NUM		equ 12
-T_DBL_COLON		equ 13
-T_OP_BRACKET		equ '('
-T_OP_SQ_BRACKET		equ '['
-T_CL_BRACKET		equ ')'
-T_CL_SQ_BRACKET		equ ']'
-T_COMMA			equ ','
-T_COLON			equ ':'
-T_DOT			equ '.'
-T_QUESTION_MARK		equ '?'
-T_PERCENT		equ '%'
 
 TAB_UNDEF		equ 0
 TAB_EXT			equ 1
@@ -924,50 +893,6 @@ symbol_queue		STRUC
  tail			PVOID ?
 symbol_queue		ENDS
 
-asm_tok			STRUC
- token			db ?
- UNION
-    dirtype		db ?
-    bytval		db ?
-    precedence		db ?
-    string_delim	db ?
-    floattype		db ?
-    numbase		db ?
-    specval		db ?
- ENDS
- hll_flags		db ?
- hll_index		db ?
- UNION
-    tokval		dd ?
-    stringlen		dd ?
-    idarg		dd ?
-    itemlen		dd ?
-    lastidx		dd ?
- ENDS
- string_ptr		LPSTR ?
- tokpos			LPSTR ?
-asm_tok			ENDS
-LPTOKEN			TYPEDEF PTR asm_tok
-
-_tok_token macro reg:=<ebx>, id:=<0>
-    exitm<[reg+(id)*16].asm_tok.token>
-    endm
-_tok_dirtype macro reg:=<ebx>, id:=<0>
-    exitm<[reg+(id)*16].asm_tok.dirtype>
-    endm
-_tok_flags macro reg:=<ebx>, id:=<0>
-    exitm<[reg+(id)*16].asm_tok.hll_flags>
-    endm
-_tok_tokval macro reg:=<ebx>, id:=<0>
-    exitm<[reg+(id)*16].asm_tok.tokval>
-    endm
-_tok_string macro reg:=<ebx>, id:=<0>
-    exitm<[reg+(id)*16].asm_tok.string_ptr>
-    endm
-_tok_tokpos macro reg:=<ebx>, id:=<0>
-    exitm<[reg+(id)*16].asm_tok.tokpos>
-    endm
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 EXPR_EMPTY	equ EMPTY
@@ -1353,7 +1278,6 @@ ParseLine		PROTO :DWORD
 SearchFile		PROTO :DWORD, :DWORD
 ProcessFile		PROTO :DWORD
 ClearSrcStack		PROTO
-Tokenize		PROTO :DWORD, :DWORD, :ptr asm_tok, :DWORD
 PreprocessLine		PROTO :LPSTR, :ptr asm_tok
 
 SymPassInit		PROTO :DWORD

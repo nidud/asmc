@@ -872,8 +872,8 @@ int idata_fixup( struct code_info *CodeInfo, unsigned CurrOpnd, struct expr *opn
 	    break;
 	case 8:
 	    if ( Ofssize == USE64 ) {
-		if ( CodeInfo->token == T_MOV &&
-		    ( CodeInfo->opnd[OPND1].type & OP_R64 ) )
+		if ( opndx->instr == T_LOW64 || opndx->instr == T_HIGH64 ||
+		     ( CodeInfo->token == T_MOV && ( CodeInfo->opnd[OPND1].type & OP_R64 ) ) )
 		    CodeInfo->mem_type = MT_QWORD;
 		else if ( opndx->instr == T_LOW32 || opndx->instr == T_HIGH32 )
 		    /* v2.10:added; LOW32/HIGH32 in expreval.c won't set mem_type anymore. */

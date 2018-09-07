@@ -273,8 +273,8 @@ __n128 union
      n128_i8	sbyte 16 dup(?)
      n128_f32	real4 4 dup(?)
      struc
-	low64	__n64 <>
-	high64	__n64 <>
+	l64	__n64 <>
+	h64	__n64 <>
      ends
 __n128 ends
 

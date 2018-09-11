@@ -9,9 +9,7 @@ option win64:rsp nosave noauto
 .code
 
 quadtoi32 proc q:ptr
-ifdef _LINUX
-    mov rcx,rdi
-endif
+
     mov dx,[rcx+14]
     mov eax,edx
     and eax,Q_EXPMASK

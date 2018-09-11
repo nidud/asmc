@@ -156,6 +156,7 @@ __fconv proc private uses rsi rdi rbx fp:ptr, cvt:ptr, buf:LPSTR, flags:dword
             mov xexp,eax
 
             .if eax
+
                 .ifs
                     ;
                     ; scale up

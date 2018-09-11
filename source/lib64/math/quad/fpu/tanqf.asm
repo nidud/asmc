@@ -9,8 +9,9 @@ tanqf proc vectorcall Q:XQFLOAT
 
     XQFLOATTOLD(x)
 
-    fld x
+    fld  x
     fptan
+    fstp st
     fstp x
 
     LDTOXQFLOAT(x)

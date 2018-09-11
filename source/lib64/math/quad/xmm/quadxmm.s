@@ -15,16 +15,24 @@ else
 endif
     movq    rax,xmm0
     movhlps xmm0,xmm0
-    movq    rdx,xmm0
-    mov     rcx,qword ptr r
-    mov     r8,qword ptr r[8]
-    .assert( rax == rcx && rdx == r8 )
+    movq    rcx,xmm0
+    mov     rbx,qword ptr r
+    mov     rdx,qword ptr r[8]
+    .assert( rax == rbx && rcx == rdx )
     exitm<>
     endm
 
 .code
 
 main proc
+
+    compare(atanq, 0.0, 0.0)
+    compare(atanq, 1.5, 0.9827937232473290679857106110146660710)
+    compare(atan2q, 0.0, 0.0, 0.0)
+    compare(atan2q, 0.5, 1.5, 0.3217505543966421934014046143586613)
+    compare(sqrtq, 0.0, 0.0)
+    compare(sqrtq, 1.0, 1.0)
+    compare(sqrtq, 2.0, 1.4142135623730950488016887242097016)
 
     compare(addq, 0.0, 0.0, 0.0)
     compare(addq, 1.0, 0.0, 1.0)

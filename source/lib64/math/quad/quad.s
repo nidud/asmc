@@ -81,6 +81,7 @@ main proc
     comp32(100000000000000000000.0, INT_MAX)
     .assert( qerrno == ERANGE )
     comp32(-100000000000000000000.0, INT_MIN)
+
     mov qerrno,0
     comp64(0.0, 0)
     comp64(0.10, 0)

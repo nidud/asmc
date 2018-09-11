@@ -8,12 +8,7 @@ include quadmath.inc
     option win64:rsp nosave noauto
 
 ldtoquad proc p:ptr, ld:ptr
-ifdef _LINUX
-    mov rax,rdi
-    mov rdx,rsi
-else
     mov rax,rcx
-endif
     mov cx,[rdx+8]
     mov [rax+14],cx
     mov rcx,[rdx]

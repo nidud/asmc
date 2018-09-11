@@ -324,10 +324,7 @@ XQFLOATTOLD macro d, x:=<xmm0>
 LDTOXQFLOAT macro d, x:=<xmm0>, tmp:=<xmm1>
     xor	    eax,eax
     mov	    rdx,qword ptr d
-    mov	    cx,word ptr d[8]
-    and	    ecx,Q_EXPMASK
-    neg	    cx
-    rcl	    rdx,1
+    shl	    rdx,1
     mov	    cx,word ptr d[8]
     shrd    rax,rdx,16
     shrd    rdx,rcx,16

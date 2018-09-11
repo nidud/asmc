@@ -2,21 +2,17 @@ include quadmath.inc
 
     .code
 
-ifdef _LINUX
-quadmul proc uses rbx r12 a:ptr, b:ptr
-    mov r12,rdi
-    mov rdx,rsi
-else
-option win64:rsp nosave noauto
+    option win64:rsp nosave noauto
+
 quadmul proc uses rsi rdi rbx r12 a:ptr, b:ptr
+
     mov r12,rcx
-endif
     mov rbx,[rdx]
     shl rbx,16
     mov rcx,[rdx+6]
-    mov si,[rdx+14]      ; shift out bits 0..112
-    and esi,Q_EXPMASK   ; if not zero
-    neg esi             ; - set high bit
+    mov si,[rdx+14]         ; shift out bits 0..112
+    and esi,Q_EXPMASK       ; if not zero
+    neg esi                 ; - set high bit
     mov si,[rdx+14]
     rcr rcx,1
     rcr rbx,1
@@ -77,31 +73,26 @@ endif
         mov r9,rcx
         mov rcx,rdx
 
-        .if !rdx && !r11
-            mul     r10
-            xor     r10,r10
-        .else
-            mul     r10
-            mov     rbx,rdx
-            mov     rdi,rax
-            mov     rax,rcx
-            mul     r11
-            mov     r11,rdx
-            xchg    r10,rax
-            mov     rdx,rcx
-            mul     rdx
-            add     rbx,rax
-            adc     r10,rdx
-            adc     r11,0
-            mov     rax,r8
-            mov     rdx,r9
-            mul     rdx
-            add     rbx,rax
-            adc     r10,rdx
-            adc     r11,0
-            mov     rdx,rbx
-            mov     rax,rdi
-        .endif
+        mul r10
+        mov rbx,rdx
+        mov rdi,rax
+        mov rax,rcx
+        mul r11
+        mov r11,rdx
+        xchg r10,rax
+        mov rdx,rcx
+        mul rdx
+        add rbx,rax
+        adc r10,rdx
+        adc r11,0
+        mov rax,r8
+        mov rdx,r9
+        mul rdx
+        add rbx,rax
+        adc r10,rdx
+        adc r11,0
+        mov rdx,rbx
+        mov rax,rdi
 
         mov rdi,rdx
         mov rax,r10

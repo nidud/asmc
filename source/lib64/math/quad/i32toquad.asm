@@ -8,13 +8,8 @@ include quadmath.inc
     option win64:rsp nosave noauto
 
 i32toquad proc q:ptr, l:sdword
-ifdef _LINUX
-    mov r8,rdi
-    mov eax,esi
-else
     mov  r8,rcx
     mov  eax,edx
-endif
     mov  edx,0x3FFF
     test eax,eax        ; if number is negative
     .ifs

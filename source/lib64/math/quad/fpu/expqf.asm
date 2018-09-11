@@ -14,9 +14,10 @@ expqf proc vectorcall Q:XQFLOAT
     fstsw ax
     fwait
     sahf
-
     .if PARITY? && CARRY?
+
         .if ah & 2
+
             fstp st
             fldz
         .endif
@@ -33,7 +34,7 @@ expqf proc vectorcall Q:XQFLOAT
         fscale
         fstp    st(1)
     .endif
-
+    fstp x
     LDTOXQFLOAT(x)
     ret
 

@@ -1,34 +1,36 @@
 ;
-; Convert float to quad float
+; Convert half to quad float
 ;
 include quadmath.inc
 
     .code
 
-ftoquad proc p:ptr, f:ptr
+htoquad proc p:ptr, h:ptr
 
-    mov ecx,f               ; get float value
-    mov eax,[ecx]
+    mov ecx,h               ; get half value
+    movsx eax,word ptr [ecx]
     mov ecx,eax             ; get exponent and sign
-    shl eax,F_EXPBITS       ; shift fraction into place
-    sar ecx,31-H_EXPBITS    ; shift to bottom
-    xor ch,ch               ; isolate exponent
+    shl eax,H_EXPBITS+16    ; shift fraction into place
+    sar ecx,15-H_EXPBITS    ; shift to bottom
+    and cx,H_EXPMASK        ; isolate exponent
     .if cl
-        .if cl != 0xFF
-            add cx,Q_EXPBIAS-F_EXPBIAS
+        .if cl != H_EXPMASK
+            add cx,Q_EXPBIAS-H_EXPBIAS
         .else
-            or ch,0x7F
-            .if !(eax & 0x7FFFFFFF)
+            or cx,0x7FE0
+            .if (eax & 0x7FFFFFFF)
                 ;
                 ; Invalid exception
                 ;
-                or eax,0x40000000 ; QNaN
+                mov ecx,Q_EXPMASK
+                mov eax,0x40000000 ; QNaN
                 mov qerrno,EDOM
+            .else
+                xor eax,eax
             .endif
         .endif
-        or eax,0x80000000
     .elseif eax
-        or cx,Q_EXPBIAS-F_EXPBIAS+1 ; set exponent
+        or cx,Q_EXPBIAS-H_EXPBIAS+1 ; set exponent
         .while 1
             ;
             ; normalize number
@@ -52,6 +54,6 @@ ftoquad proc p:ptr, f:ptr
     mov [eax+14],cx
     ret
 
-ftoquad endp
+htoquad endp
 
     end

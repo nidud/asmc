@@ -794,16 +794,16 @@ FIELD_OFFSET macro x, field
 	exitm<x.field>
 	endm
 
-RTL_FIELD_SIZE macro type, field
-	exitm<sizeof(type.field)>
+RTL_FIELD_SIZE macro x, field
+	exitm<sizeof(x.field)>
 	endm
 
-RTL_SIZEOF_THROUGH_FIELD macro type, field
-	exitm<FIELD_OFFSET(type, field) + RTL_FIELD_SIZE(type, field)>
+RTL_SIZEOF_THROUGH_FIELD macro x, field
+	exitm<FIELD_OFFSET(x, field) + RTL_FIELD_SIZE(x, field)>
 	endm
 
-RTL_CONTAINS_FIELD macro Struct, Size, Field
-	exitm<Struct.Field + sizeof(Struct.Field) LE Struct+Size>
+RTL_CONTAINS_FIELD macro x, z, Field
+	exitm<x.Field + sizeof(x.Field) LE x+z>
 	endm
 
 RTL_NUMBER_OF_V1 macro A
@@ -831,12 +831,12 @@ _ARRAYSIZE macro A
 	exitm<RTL_NUMBER_OF_V1(A)>
 	endm
 
-RTL_FIELD_TYPE macro type, field
-	exitm<type.field>
+RTL_FIELD_TYPE macro x, field
+	exitm<x.field>
 	endm
 
-RTL_NUMBER_OF_FIELD macro type, field
-	exitm<RTL_NUMBER_OF(RTL_FIED_TYPE(type, field))>
+RTL_NUMBER_OF_FIELD macro x, field
+	exitm<RTL_NUMBER_OF(RTL_FIED_TYPE(x, field))>
 	endm
 
 RTL_PADDING_BETWEEN_FIELDS macro T, F1, F2
@@ -851,8 +851,8 @@ RTL_BITS_OF macro sizeOfArg
 	exitm<(sizeof(sizeOfArg) * 8)>
 	endm
 
-RTL_BITS_OF_FIELD macro type, field
-	exitm<(RTL_BITS_OF(RTL_FIED_TYPE(type, field)))>
+RTL_BITS_OF_FIELD macro x, field
+	exitm<(RTL_BITS_OF(RTL_FIED_TYPE(x, field)))>
 	endm
 
 
@@ -6811,11 +6811,11 @@ IMAGE_REL_EBC_REL32	equ 0x0002
 IMAGE_REL_EBC_SECTION	equ 0x0003
 IMAGE_REL_EBC_SECREL	equ 0x0004
 
-EXT_IMM64 macro Value,Address,Size,InstPos,ValPos
-	exitm <Value  or  = ( ( ( ( * ( Address )  shr	InstPos )  and	( ( 1  shl  Size ) - 1 ) ) )  shl  ValPos ) >
+EXT_IMM64 macro Value, Address, z, InstPos, ValPos
+	exitm <.err>;<Value  or	 = ( ( ( ( * ( Address )  shr	InstPos )  and	( ( 1  shl  z ) - 1 ) ) )  shl	ValPos ) >
 	endm
-INS_IMM64 macro Value,Address,Size,InstPos,ValPos
-	exitm <* Address = ( * Address	and   not  ( ( ( 1  shl	 Size ) - 1 )  shl  InstPos ) )	 or  ( ( ( ( Value  shr	 ValPos )  and	( ( 1  shl  Size ) - 1 ) ) )  shl  InstPos ) >
+INS_IMM64 macro Value, Address, z, InstPos, ValPos
+	exitm <.err>;<* Address = ( * Address	and   not  ( ( ( 1  shl	 z ) - 1 )  shl	 InstPos ) )	 or  ( ( ( ( Value  shr	 ValPos )  and	( ( 1  shl  z ) - 1 ) ) )  shl	InstPos ) >
 	endm
 
 EMARCH_ENC_I17_IMM7B_INST_WORD_X	equ 3

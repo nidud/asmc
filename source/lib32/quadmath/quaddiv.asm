@@ -80,9 +80,9 @@ quaddiv proc uses esi edi ebx a:ptr, b:ptr
                     .endif
                 .endif
                 ;
-                ; zero divide - return signed infinity
+                ; zero divide - return infinity
                 ;
-                mov esi,0xFFFF
+                or esi,0x7FFF
                 jmp return_m0
             .endif
         .endif

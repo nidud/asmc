@@ -943,8 +943,14 @@ ms64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:SI
                         asmerr(2114, &[esi+1])
                     .endif
                     mov eax,psize
-                    shr eax,1
-                    lea ecx,[eax*2+T_BYTE]
+                    .switch ( eax )
+                    .case 1: mov ecx,T_BYTE : .endc
+                    .case 2: mov ecx,T_WORD : .endc
+                    .case 4: mov ecx,T_DWORD: .endc
+                    .default
+                        mov ecx,T_QWORD
+                        .endc
+                    .endsw
                     AddLineQueueX(" mov %r ptr [%r+%u], %s", ecx, T_RSP, arg_offset, paramvalue)
                 .endif
             .elseif [edi].expr.kind == EXPR_FLOAT

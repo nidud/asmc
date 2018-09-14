@@ -66,6 +66,7 @@ enum memtype {
     MT_SBYTE = MT_BYTE | MT_SIGNED,
     MT_WORD  = 2 - 1,
     MT_SWORD = MT_WORD | MT_SIGNED,
+    MT_REAL2 = MT_WORD | MT_FLOAT,
     MT_DWORD = 4 - 1,
     MT_SDWORD= MT_DWORD | MT_SIGNED,
     MT_REAL4 = MT_DWORD | MT_FLOAT,

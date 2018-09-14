@@ -20,7 +20,11 @@ i32toquad proc fp:ptr, l:sdword
         mov ch,cl
         mov cl,32
         sub cl,ch
-        shl eax,cl      ; shift bits into position
+        .if cl == 32
+            xor eax,eax
+        .else
+            shl eax,cl  ; shift bits into position
+        .endif
         shr ecx,8       ; get shift count
         add ecx,edx     ; calculate exponent
         mov edx,eax     ; get the bits

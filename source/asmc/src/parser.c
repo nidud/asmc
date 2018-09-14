@@ -667,11 +667,15 @@ static int idata_nofixup( struct code_info *CodeInfo, unsigned CurrOpnd, struct 
 
     if ( opndx->mem_type == MT_REAL16 ) {
 
-	if ( CodeInfo->token == T_MOV && CodeInfo->Ofssize == USE64
-	    && CurrOpnd == OPND2 && ( CodeInfo->opnd[OPND1].type & OP_R64 ))
-	    quad_resize( opndx, 8 );
-	else
-	    quad_resize( opndx, 4 );
+	size = 4;
+	if ( CodeInfo->token == T_MOV && CurrOpnd == OPND2 ) {
+
+	    if ( CodeInfo->Ofssize == USE64 && ( CodeInfo->opnd[OPND1].type & OP_R64 ) )
+		size = 8;
+	    else if ( CodeInfo->opnd[OPND1].type & OP_R16 )
+		size = 2;
+	}
+	quad_resize( opndx, size );
     }
     value = opndx->value;
     CodeInfo->opnd[CurrOpnd].data32l = value;
@@ -2757,6 +2761,7 @@ int ParseLine( struct asm_tok tokenarray[] )
 		    if ( opndx[j].float_tok ) {
 			int m;
 			switch ( opndx[j].mem_type ) {
+			case MT_REAL2:	m = 2;	break;
 			case MT_REAL4:	m = 4;	break;
 			case MT_REAL8:	m = 8;	break;
 			case MT_REAL10: m = 10; break;

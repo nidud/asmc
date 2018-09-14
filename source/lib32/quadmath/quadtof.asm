@@ -5,7 +5,7 @@ DDFLT_MIN equ 0x00800000
 
     .code
 
-quadtof proc uses esi edi ebx d:ptr, q:ptr
+quadtof proc uses ebx d:ptr, q:ptr
 
     mov ebx,q
     mov edx,0xFFFFFF00  ; get mask of bits to keep
@@ -15,7 +15,7 @@ quadtof proc uses esi edi ebx d:ptr, q:ptr
     neg ecx
     rcr eax,1
     mov ecx,eax         ; duplicate it
-    shl ecx,25          ; get rounding bit
+    shl ecx,F_SIGBITS+1 ; get rounding bit
     mov cx,[ebx+14]     ; get exponent and sign
     .ifc                ; if have to round
         .ifz            ; - if half way between
@@ -23,7 +23,7 @@ quadtof proc uses esi edi ebx d:ptr, q:ptr
                 shl edx,1
             .endif
         .endif
-        add eax,0x0100
+        add eax,0x80000000 shr (F_SIGBITS-1)
         .ifc            ; - if exponent needs adjusting
             mov eax,0x80000000
             inc cx

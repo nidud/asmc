@@ -28,6 +28,14 @@ _ST_OVERFLOW	equ 0x0200
 _ST_DIGITS	equ 0x0400
 _ST_DOT		equ 0x0800
 
+; Half precision - binary16 -- REAL2 (half)
+
+H_SIGBITS	equ 11
+H_EXPBITS	equ 5
+H_EXPMASK	equ (1 shl H_EXPBITS) - 1
+H_EXPBIAS	equ H_EXPMASK shr 1
+H_EXPMAX	equ H_EXPMASK - H_EXPBIAS
+
 ; Single precision - binary32 -- REAL4 (float)
 
 F_SIGBITS	equ 24
@@ -108,9 +116,11 @@ quadadd		proto __cdecl :ptr, :ptr
 quadsub		proto __cdecl :ptr, :ptr
 quadisinf	proto __cdecl :ptr
 quadisnan	proto __cdecl :ptr
+quadtoh		proto __cdecl :ptr, :ptr
 quadtof		proto __cdecl :ptr, :ptr
 quadtod		proto __cdecl :ptr, :ptr
 quadtold	proto __cdecl :ptr, :ptr
+htoquad		proto __cdecl :ptr, :ptr
 ftoquad		proto __cdecl :ptr, :ptr
 dtoquad		proto __cdecl :ptr, :ptr
 ldtoquad	proto __cdecl :ptr, :ptr

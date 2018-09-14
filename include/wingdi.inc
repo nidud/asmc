@@ -476,8 +476,8 @@ GetCValue macro cmyk
 	exitm<(((cmyk) SHR 24))>
 	endm
 
-CMYK macro c,m,y,k
-	exitm<(((((k) OR (((y)) SHL 8)) OR (((m)) SHL 16)) OR (((c)) SHL 24)))>
+CMYK macro _c,m,y,k
+	exitm<(((((k) OR (((y)) SHL 8)) OR (((m)) SHL 16)) OR (((_c)) SHL 24)))>
 	endm
 
 FXPT16DOT16	typedef LONG

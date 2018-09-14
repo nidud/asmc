@@ -2,6 +2,9 @@ HISTORY.TXT--
 Change Log File for ASMC
 ========================
 
+Changes in 2.28.06 - 9 Sep 2018
+- added REAL2 - binary16 (half)
+
 Changes in 2.28.05 - 6 Sep 2018
 - fixed bug andpd, andnpd, xorpd, orpd -- m64 not accepted (HSE)
 - added operator HIGH64 and LOW64

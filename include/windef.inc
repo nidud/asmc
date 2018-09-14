@@ -97,9 +97,9 @@ APIPRIVATE	equ <>
 ;PASCAL		equ <pascal>
 endif
 
-CALLBACK macro name, arguments:VARARG
-	?&name& typedef proto WINAPI &arguments
-	exitm <name typedef ptr ?&name&>
+CALLBACK macro id, arguments:VARARG
+	?&id& typedef proto WINAPI &arguments
+	exitm <id typedef ptr ?&id&>
 	endm
 
 ifdef _M_CEE_PURE

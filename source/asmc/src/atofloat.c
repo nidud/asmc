@@ -34,6 +34,11 @@ void atofloat( void *out, const char *inp, unsigned size, int negative, uint_8 f
         }
 
         switch ( size ) {
+        case 2:
+            quadtoh(out, out);
+            if ( qerrno )
+                asmerr( 2071 );
+            break;
         case 4:
             quadtof(out, out);
             if ( qerrno )

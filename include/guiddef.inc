@@ -10,20 +10,20 @@ GUID	ENDS
 endif
 
 ifndef DEFINE_GUID
-DEFINE_GUID macro name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8
+DEFINE_GUID macro id, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8
 ifdef __PE__
-_&name& equ <{l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}}>
+_&id& equ <{l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}}>
 elseifdef INITGUID
-echo name GUID {l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}}
+echo id GUID {l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}}
 else
-externdef name:GUID
+externdef id:GUID
 endif
     exitm<>
     endm
 endif
 
-DEFINE_OLEGUID macro name, l, w1, w2
-    exitm<DEFINE_GUID(name, l, w1, w2, 0xC0,0,0,0,0,0,0,0x46)>
+DEFINE_OLEGUID macro id, l, w1, w2
+    exitm<DEFINE_GUID(id, l, w1, w2, 0xC0,0,0,0,0,0,0,0x46)>
     endm
 
 ifndef _GUIDDEF_H_

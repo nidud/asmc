@@ -353,7 +353,10 @@ static int CheckXMM( int reg, int index, struct dsym *param, struct expr *opnd,
 
     if ( opnd->kind == EXPR_FLOAT ) {
 	*regs_used |= R0_USED;
-	if ( param->sym.mem_type == MT_REAL4 ) {
+	if ( param->sym.mem_type == MT_REAL2 ) {
+	    AddLineQueueX( " mov %r, %s", T_AX, paramvalue );
+	    AddLineQueueX( " movd %r, %r", T_XMM0 + index, T_EAX );
+	} else if ( param->sym.mem_type == MT_REAL4 ) {
 	    AddLineQueueX( " mov %r, %s", T_EAX, paramvalue );
 	    AddLineQueueX( " movd %r, %r", T_XMM0 + index, T_EAX );
 	} else if ( param->sym.mem_type == MT_REAL8 ) {
@@ -388,7 +391,11 @@ static int CheckXMM( int reg, int index, struct dsym *param, struct expr *opnd,
 	    AddLineQueueX( " movaps %r, [rsp]", T_XMM0 + index );
 	}
     } else {
-	if ( param->sym.mem_type == MT_REAL4 )
+	if ( param->sym.mem_type == MT_REAL2 ) {
+	    *regs_used |= R0_USED;
+	    AddLineQueueX( " movzx %r, %s", T_EAX, paramvalue );
+	    AddLineQueueX( " movd %r, %r", T_XMM0 + index, T_EAX );
+	} else if ( param->sym.mem_type == MT_REAL4 )
 	    AddLineQueueX( " movd %r, %s", T_XMM0 + index, paramvalue );
 	else if ( param->sym.mem_type == MT_REAL8 )
 	    AddLineQueueX( " movq %r, %s", T_XMM0 + index, paramvalue );
@@ -416,6 +423,7 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
     int base;
     int offset;
     bool destroyed = FALSE;
+    bool vector_call = ( proc->sym.langtype == LANG_VECTORCALL );
 
     /* v2.11: default size is 32-bit, not 64-bit */
     /* v2.24: 64-bit if [reg].. */
@@ -468,11 +476,10 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
     }
 
     offset = index*8;
-    if ( proc->sym.langtype == LANG_VECTORCALL && index < 6 )
+    if ( vector_call && index < 6 )
 	offset += offset;
 
-    if ( index >= 4 && !( proc->sym.langtype == LANG_VECTORCALL &&
-	 index < 6 && param->sym.mem_type == MT_REAL16 ) ) {
+    if ( index >= 4 && !( vector_call && index < 6 && param->sym.mem_type == MT_REAL16 ) ) {
 
 	if ( addr || psize > 8 ) {
 	    if ( psize == 4 )
@@ -525,9 +532,8 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
 
 	    if ( opnd->kind == EXPR_REG && opnd->indirect == FALSE ) {
 
-		if ( proc->sym.langtype == LANG_VECTORCALL && index < 6 &&
-		     param->sym.mem_type & MT_FLOAT )
-			return CheckXMM( reg, index, param, opnd, paramvalue, regs_used );
+		if ( vector_call && index < 6 && param->sym.mem_type & MT_FLOAT )
+		    return CheckXMM( reg, index, param, opnd, paramvalue, regs_used );
 
 		size = SizeFromRegister( reg );
 		if ( size == psize )
@@ -581,8 +587,7 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
 	    AddLineQueueX( " mov [%r+%u], %r", T_RSP, NUMQUAL offset, i );
 	}
 
-    } else if ( param->sym.mem_type == MT_REAL4 || param->sym.mem_type == MT_REAL8 ||
-	       param->sym.mem_type == MT_REAL16 ) {
+    } else if ( param->sym.mem_type & MT_FLOAT || ( param->sym.mem_type == MT_OWORD && vector_call ) ) {
 
 	return CheckXMM( reg, index, param, opnd, paramvalue, regs_used );
 

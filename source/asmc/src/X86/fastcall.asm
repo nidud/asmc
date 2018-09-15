@@ -785,17 +785,21 @@ CheckXMM proc uses ebx reg:SINT, paramvalue:LPSTR, regs_used:ptr byte, param:ptr
             .endif
         .endif
 
+        lea ebx,[esi+T_XMM0]
         .if [edi].expr.kind == EXPR_FLOAT
 
             mov eax,regs_used
             or  byte ptr [eax],R0_USED
             mov edx,param
-            .if [edx].asym.mem_type == MT_REAL4
+            .if [edx].asym.mem_type == MT_REAL2
+                AddLineQueueX(" mov %r, %s", T_AX, paramvalue)
+                AddLineQueueX(" movd %r, %r", ebx, T_EAX)
+            .elseif [edx].asym.mem_type == MT_REAL4
                 AddLineQueueX(" mov %r, %s", T_EAX, paramvalue)
-                AddLineQueueX(" movd %r, %r", &[esi+T_XMM0], T_EAX)
+                AddLineQueueX(" movd %r, %r", ebx, T_EAX)
             .elseif [edx].asym.mem_type == MT_REAL8
                 AddLineQueueX(" mov %r, %r ptr %s", T_RAX, T_REAL8, paramvalue)
-                AddLineQueueX(" movq %r, %r", &[esi+T_XMM0], T_RAX)
+                AddLineQueueX(" movq %r, %r", ebx, T_RAX)
             .else
                 xor ebx,ebx
                 mov edx,paramvalue
@@ -825,14 +829,18 @@ CheckXMM proc uses ebx reg:SINT, paramvalue:LPSTR, regs_used:ptr byte, param:ptr
                 AddLineQueueX( " movaps %r, [rsp]", &[esi+T_XMM0] )
             .endif
         .else
-            .if [edx].asym.mem_type == MT_REAL4
-                AddLineQueueX( " movd %r, %s", &[esi+T_XMM0], paramvalue )
+            .if [edx].asym.mem_type == MT_REAL2
+                mov eax,regs_used
+                or  byte ptr [eax],R0_USED
+                AddLineQueueX(" movzx %r, %s", T_EAX, paramvalue)
+                AddLineQueueX(" movd %r, %r", ebx, T_EAX)
+            .elseif [edx].asym.mem_type == MT_REAL4
+                AddLineQueueX( " movd %r, %s", ebx, paramvalue )
             .elseif [edx].asym.mem_type == MT_REAL8
-                AddLineQueueX( " movq %r, %s", &[esi+T_XMM0], paramvalue )
+                AddLineQueueX( " movq %r, %s", ebx, paramvalue )
             .else
-                AddLineQueueX( " movaps %r, %s", &[esi+T_XMM0], paramvalue )
+                AddLineQueueX( " movaps %r, %s", ebx, paramvalue )
             .endif
-
         .endif
     .until 1
     ret
@@ -1064,10 +1072,7 @@ ms64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:SI
                 .endif
                 AddLineQueueX(" mov [%r+%u], %r", T_RSP, arg_offset, i)
             .endif
-
-        .elseif [edx].asym.mem_type == MT_REAL4 || \
-                [edx].asym.mem_type == MT_REAL8 || \
-                [edx].asym.mem_type == MT_REAL16 || \
+        .elseif [edx].asym.mem_type & MT_FLOAT || \
                 ( [edx].asym.mem_type == MT_OWORD && vector_call )
 
             vector_0_5:
@@ -1416,7 +1421,7 @@ elf64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:S
             movzx eax,[edx].asym.mem_type
         .endif
 
-        .if eax == MT_REAL4 || eax == MT_REAL8 || eax == MT_REAL16
+        .if eax == MT_REAL2 || eax == MT_REAL4 || eax == MT_REAL8 || eax == MT_REAL16
 
             mov eax,[edi].expr.base_reg
             .if eax

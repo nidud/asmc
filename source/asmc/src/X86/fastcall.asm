@@ -832,7 +832,7 @@ CheckXMM proc uses ebx reg:SINT, paramvalue:LPSTR, regs_used:ptr byte, param:ptr
             .if [edx].asym.mem_type == MT_REAL2
                 mov eax,regs_used
                 or  byte ptr [eax],R0_USED
-                AddLineQueueX(" movzx %r, %s", T_EAX, paramvalue)
+                AddLineQueueX(" movzx %r, word ptr %s", T_EAX, paramvalue)
                 AddLineQueueX(" movd %r, %r", ebx, T_EAX)
             .elseif [edx].asym.mem_type == MT_REAL4
                 AddLineQueueX( " movd %r, %s", ebx, paramvalue )

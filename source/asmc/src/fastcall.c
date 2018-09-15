@@ -393,7 +393,7 @@ static int CheckXMM( int reg, int index, struct dsym *param, struct expr *opnd,
     } else {
 	if ( param->sym.mem_type == MT_REAL2 ) {
 	    *regs_used |= R0_USED;
-	    AddLineQueueX( " movzx %r, %s", T_EAX, paramvalue );
+	    AddLineQueueX( " movzx %r, word ptr %s", T_EAX, paramvalue );
 	    AddLineQueueX( " movd %r, %r", T_XMM0 + index, T_EAX );
 	} else if ( param->sym.mem_type == MT_REAL4 )
 	    AddLineQueueX( " movd %r, %s", T_XMM0 + index, paramvalue );

@@ -8,8 +8,8 @@ include libc.inc
 DIRECTX_MATH_VERSION	equ 312
 
 ifndef __PE__
-;includelib directxmath.lib
-includelib libc.lib
+includelib directxmath.lib
+;includelib libc.lib
 endif
 
 if defined(_MSC_VER) and  _MSC_VER LT 1200 ; 1800

@@ -202,7 +202,8 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
             _strupr( buffer );
 
         args = i + 1;
-        if ( tokenarray[args].tokval >= T_C && tokenarray[args].tokval <= T_VECTORCALL ) {
+        if ( tokenarray[args].token != T_FINAL && tokenarray[args].tokval >= T_C
+            && tokenarray[args].tokval <= T_VECTORCALL ) {
             o->langtype = tokenarray[args].tokval;
             args++;
         }

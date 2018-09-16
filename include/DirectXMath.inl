@@ -975,17 +975,25 @@ elseifdef _XM_SSE_INTRINSICS_
 endif
     endm
 
-inl_XMVectorSet macro x, y, z, w
+inl_XMVectorSet macro reg, x, y, z, w
 ifdef _XM_NO_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
-    exitm<_mm_set_ps( w, z, y, x )>
+    ifnb <w>
+	exitm<_mm_set_epi32( reg, w, z, y, x )>
+    else
+	exitm<_mm_set_epi32( z, y, x, reg )>
+    endif
 endif
     endm
 
-inl_XMVectorSetInt macro x, y, z, w
+inl_XMVectorSetInt macro reg, x, y, z, w
 ifdef _XM_NO_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
-    exitm<_mm_set_epi32( w, z, y, x )>
+    ifnb <w>
+	exitm<_mm_set_epi32( reg, w, z, y, x )>
+    else
+	exitm<_mm_set_epi32( z, y, x, reg )>
+    endif
 endif
     endm
 
@@ -2897,7 +2905,7 @@ elseif defined(_XM_SSE_INTRINSICS_) or defined(_XM_ARM_NEON_INTRINSICS_)
     _mm_store_ps(xmm0, g_XMIdentityR0.v)
     _mm_store_ps(xmm1, g_XMIdentityR1.v)
     _mm_store_ps(xmm2, g_XMIdentityR2.v)
-    _mm_set_epi32(xmm3, OffsetX, OffsetY, OffsetZ, 1.0 )
+    inl_XMVectorSet(xmm3, OffsetX, OffsetY, OffsetZ, 1.0 )
  ifnb <result>
     _mm_store_ps(xmmword ptr result[0x00], xmm0)
     _mm_store_ps(xmmword ptr result[0x10], xmm1)
@@ -2909,9 +2917,9 @@ endif
     endm
 
 inl_XMMatrixScaling macro ScaleX, ScaleY, ScaleZ, result
-    _mm_set_epi32(xmm0, ScaleX, 0, 0, 0)
-    _mm_set_epi32(xmm1, 0, ScaleY, 0, 0)
-    _mm_set_epi32(xmm2, 0, 0, ScaleZ, 0)
+    _mm_set_epi32(xmm0, 0, 0, 0, ScaleX)
+    _mm_set_epi32(xmm1, 0, 0, ScaleY, 0)
+    _mm_set_epi32(xmm2, 0, ScaleZ, 0, 0)
     _mm_store_ps(xmm3, g_XMIdentityR3.v)
  ifnb <result>
     _mm_store_ps(xmmword ptr result[0x00], xmm0)

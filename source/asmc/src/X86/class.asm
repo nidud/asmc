@@ -275,7 +275,7 @@ ClassDirective proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok
             .endif
 
             lea eax,[ebx+16]
-            .if ( [ebx+16].tokval >= T_C && [ebx+16].tokval <= T_VECTORCALL )
+            .if ( [ebx+16].token != T_FINAL && [ebx+16].tokval >= T_C && [ebx+16].tokval <= T_VECTORCALL )
 
                 mov edx,[ebx+16].tokval
                 mov ecx,ModuleInfo.ComStack

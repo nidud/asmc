@@ -5,7 +5,8 @@ include wsub.inc
 fbffirst proc fcb:PVOID, count
 
     xor edx,edx
-    .while  edx < count
+    xor eax,eax
+    .while edx < count
 
         mov eax,fcb
         mov eax,[eax+edx*4]

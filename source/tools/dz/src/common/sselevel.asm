@@ -81,6 +81,6 @@ GetSSELevel proc
 
 GetSSELevel endp
 
-pragma_init GetSSELevel,3
+.pragma init(GetSSELevel, 3)
 
     END

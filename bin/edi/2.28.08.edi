@@ -1,0 +1,4 @@
+
+[.]
+0=100,15,0,2F,4,13E0,%AsmcDir%\source\asmc\src\X86\class.asm
+1=BF,D,0,D,4,13E0,%AsmcDir%\source\asmc\src\class.c

@@ -41,6 +41,6 @@ __initcomspec PROC
 
 __initcomspec ENDP
 
-pragma_init __initcomspec, 60
+.pragma init(__initcomspec, 60)
 
 	END

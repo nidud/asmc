@@ -126,6 +126,6 @@ Install:
     mov scan_curpath,eax
     ret
 
-pragma_init Install,40
+.pragma init(Install, 40)
 
     END

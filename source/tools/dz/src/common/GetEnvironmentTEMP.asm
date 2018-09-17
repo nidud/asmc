@@ -30,6 +30,6 @@ GetEnvironmentTEMP proc
     ret
 GetEnvironmentTEMP endp
 
-pragma_init GetEnvironmentTEMP, 102
+.pragma init(GetEnvironmentTEMP, 102)
 
     END

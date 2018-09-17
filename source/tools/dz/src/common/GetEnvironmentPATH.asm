@@ -23,6 +23,6 @@ GetEnvironmentPATH proc
     ret
 GetEnvironmentPATH endp
 
-pragma_init GetEnvironmentPATH, 101
+.pragma init(GetEnvironmentPATH, 101)
 
     END

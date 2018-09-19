@@ -1909,12 +1909,14 @@ __shiftright128 proto WINAPI \
 Multiply128	equ <_mul128>
 
 ;LONG64
-;_mul128 proto Multiplier: LONG64, Multiplicand: LONG64, HighProduct: ptr LONG64
+ifndef _M_X64
+_mul128 proto Multiplier: qword, Multiplicand: qword, HighProduct: ptr qword
+endif
 
 
 ifndef UnsignedMultiply128
 
-UnsignedMultiply128	equ <_umul128>
+UnsignedMultiply128	equ <_mul128>
 
 ;DWORD64
 ;_umul128 proto Multiplier: DWORD64, Multiplicand: DWORD64, HighProduct: ptr DWORD64
@@ -2771,8 +2773,9 @@ if (_MSC_VER GE 1400)
 UnsignedMultiply128	equ <_umul128>
 
 ;DWORD64
-;_umul128 proto Multiplier: qword, Multiplicand: qword, HighProduct: ptr qword
-
+ifndef _M_X64
+_umul128 proto Multiplier: DWORD64, Multiplicand: DWORD64, HighProduct: ptr DWORD64
+endif
 endif
 
 else

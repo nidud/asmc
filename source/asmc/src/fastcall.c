@@ -702,10 +702,14 @@ int elf64_pcheck( struct dsym *proc, struct dsym *paranode, int *used )
     }
     if ( paranode->sym.mem_type == MT_REAL4 ||
 	 paranode->sym.mem_type == MT_REAL8 ||
-	 paranode->sym.mem_type == MT_OWORD ) {
+	 paranode->sym.mem_type == MT_REAL16 ) {
 	 x = (*used) >> 8;
 	 reg = T_XMM0 + x;
 	 *used += 0x100;
+    } else if ( size == 16 || paranode->sym.mem_type == MT_OWORD ) {
+	 x = *used & 0xFF;
+	 reg = elf64_regs[x+18];
+	 *used += 2;
     } else {
 	x = *used & 0xFF;
 	(*used)++;
@@ -756,6 +760,32 @@ static int elf64_fcstart( struct dsym const *proc, int numparams, int start,
     }
     *value = 0;
     return( fcscratch );
+}
+
+static int elf64_32( int reg )
+{
+    if ( reg >= T_RAX && reg <= T_RDI )
+	reg -= ( T_RAX - T_EAX );
+    else if ( reg >= T_R8 && reg <= T_R15 )
+	reg -= ( T_R8 - T_R8D );
+    return reg;
+}
+
+static void elf64_const( int reg, int pos, uint_64 val, char *paramvalue, int negative )
+{
+    int i;
+
+    if ( val <= 0xFFFFFFFF ) {
+	i = elf64_32( reg );
+	if ( (int)val == 0 ) {
+	    if ( negative )
+		AddLineQueueX( " mov %r, -1", reg );
+	    else
+		AddLineQueueX( " xor %r, %r", i, i );
+	} else
+	    AddLineQueueX( " mov %r, %s", i, paramvalue );
+    } else
+	AddLineQueueX( " mov %r, %r %s", reg, pos, paramvalue );
 }
 
 static int elf64_param( struct dsym const *proc, int index, struct dsym *param,
@@ -898,16 +928,38 @@ static int elf64_param( struct dsym const *proc, int index, struct dsym *param,
 	    }
 	else {
 	    if ( ( paramvalue[0] == '0' && paramvalue[1] == 0 ) ||
-		 ( opnd->kind == EXPR_CONST && opnd->value == 0 ) )
+		 ( opnd->kind == EXPR_CONST && opnd->value == 0 ) ) {
 		AddLineQueueX( " xor %r, %r", i32, i32 );
-	    else if ( opnd->kind == EXPR_CONST && opnd->hvalue == 0 ) {
+		if ( size == 16 ) {
+		    i = elf64_regs[index + 3 * 6 + 1];
+		    if ( opnd->hlvalue == 0 ) {
+			i = elf64_regs[index + 2 * 6 + 1];
+			AddLineQueueX( " xor %r, %r", i, i );
+		    } else
+			elf64_const( i, T_HIGH64, opnd->hlvalue, paramvalue, opnd->negative );
+		}
+	    } else if ( opnd->kind == EXPR_CONST && opnd->hvalue == 0 ) {
 		if ( i32 >= T_AX && i32 <= T_DI )
 		    i32 += (T_EAX - T_AX);
 		else if ( i32 >= T_R8W && i32 <= T_R15W )
 		    i32 += (T_R8D - T_R8W);
 		AddLineQueueX( " mov %r, %s", i32, paramvalue );
-	    } else
+		if ( size == 16 ) {
+		    i = elf64_regs[index + 3 * 6 + 1];
+		    elf64_const( i, T_HIGH64, opnd->hlvalue, paramvalue, opnd->negative );
+		}
+	    } else if ( size == 16 ) {
+		reg = elf64_regs[index + 3 * 6 + 1];
+		if ( opnd->kind == EXPR_CONST ) {
+		    elf64_const( i, T_LOW64, opnd->llvalue, paramvalue, 0 );
+		    elf64_const( reg, T_HIGH64, opnd->hlvalue, paramvalue, opnd->negative );
+		} else {
+		    AddLineQueueX( " mov %r, qword ptr %s", i, paramvalue );
+		    AddLineQueueX( " mov %r, qword ptr %s[8]", reg, paramvalue );
+		}
+	    } else {
 		AddLineQueueX( " mov %r, %s", i, paramvalue );
+	    }
 	}
 	*regs_used |= ( 1 << ( index + ELF64_START ) );
     }

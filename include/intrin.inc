@@ -602,20 +602,14 @@ _mul128 macro Multiplier, Multiplicand, HighProduct
     _mm_loadreg(rcx, Multiplier)
     _mm_loadreg(rdx, Multiplicand)
     mov rax,rdx
-    imul rcx
-    _mm_storereg(HighProduct, rdx)
-    retm<rax>
-    endm
-
-_umul128 macro Multiplier, Multiplicand, HighProduct
-    _mm_loadreg(rcx, Multiplier)
-    _mm_loadreg(rdx, Multiplicand)
-    mov rax,rdx
     mul rcx
     _mm_storereg(HighProduct, rdx)
     retm<rax>
     endm
+else
+_mul128 proto :qword, :qword, :ptr qword
 endif
+_umul128 equ <_mul128>
 
 ifdef __MACHINEX86_X64
 __ll_lshift macro __mask, nBit

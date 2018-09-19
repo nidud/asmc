@@ -1287,10 +1287,15 @@ elf64_pcheck proc public uses esi edi ebx pProc:LPDSYM, paranode:LPDSYM, used:pt
         .endif
 
         mov dl,[esi].asym.mem_type
-        .if ( al == 16 || dl == MT_REAL4 || dl == MT_REAL8 || dl == MT_REAL16 || dl == MT_OWORD )
+        .if ( dl == MT_REAL4 || dl == MT_REAL8 || dl == MT_REAL16 )
             movzx ecx,ch
             inc byte ptr [ebx+1]
             lea eax,[ecx+T_XMM0]
+
+        .elseif ( al == 16 || dl == MT_OWORD )
+            movzx ecx,cl
+            movzx eax,elf64_regs[ecx+3*6]
+            add byte ptr [ebx],2
         .else
             movzx ecx,cl
             shr eax,1
@@ -1371,6 +1376,38 @@ elf64_fcstart proc uses ebx pp:ptr nsym, numparams:SINT, start:SINT,
 
 elf64_fcstart endp
 
+elf64_32 proc reg:UINT
+
+    mov eax,reg
+    .if eax >= T_RAX && eax <= T_RDI
+        sub eax,T_RAX - T_EAX
+    .elseif eax >= T_R8 && eax <= T_R15
+        sub eax,T_R8 - T_R8D
+    .endif
+    ret
+
+elf64_32 endp
+
+elf64_const proc reg:UINT, pos:UINT, val:qword, paramvalue:LPSTR, negative:UINT
+
+    .if dword ptr val[4] == 0
+        mov eax,elf64_32(reg)
+        .if dword ptr val == 0
+            .if negative
+                AddLineQueueX(" mov %r, -1", reg)
+            .else
+                AddLineQueueX(" xor %r, %r", eax, eax)
+            .endif
+        .else
+            AddLineQueueX(" mov %r, %s", eax, paramvalue)
+        .endif
+    .else
+        AddLineQueueX(" mov %r, %r %s", reg, pos, paramvalue)
+    .endif
+    ret
+
+elf64_const endp
+
 elf64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:SINT,
     opnd:ptr expr, paramvalue:LPSTR, regs_used:ptr byte
 
@@ -1431,13 +1468,7 @@ elf64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:S
 
         .else
 
-            mov ecx,ebx
-            .if ecx >= T_RAX && ecx <= T_RDI
-                sub ecx,T_RAX - T_EAX
-            .elseif ecx >= T_R8 && ecx <= T_R15
-                sub ecx,T_R8 - T_R8D
-            .endif
-            mov i32,ecx
+            mov i32,elf64_32(ebx)
 
             .if adr
                 .if SizeFromRegister( ebx ) == 8
@@ -1573,20 +1604,52 @@ elf64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:S
                     AddLineQueueX(" %s %r, %s", eax, ebx, paramvalue)
                 .endif
             .else
-                mov eax,paramvalue
-                .if ( word ptr [eax] == "0" || \
+                mov ecx,paramvalue
+                .if ( word ptr [ecx] == "0" || \
                     ( [edi].expr.kind == EXPR_CONST && [edi].expr.value == 0 ) )
                     AddLineQueueX(" xor %r, %r", i32, i32)
-                .elseif [edi].expr.kind == EXPR_CONST && [edi].expr.hvalue == 0
-                    mov ecx,i32
-                    .if ecx >= T_AX && ecx <= T_DI
-                        add ecx,T_EAX - T_AX
-                    .elseif ecx >= T_R8W && ecx <= T_R15W
-                        add ecx,T_R8D - T_R8W
+                    .if z == 16
+                        mov ecx,dword ptr [edi].expr.hlvalue
+                        or  ecx,dword ptr [edi].expr.hlvalue[4]
+                        .ifz
+                            ; -0
+                            movzx ebx,elf64_regs[esi+2*6+1]
+                            AddLineQueueX(" xor %r, %r", ebx, ebx)
+                        .else
+                            movzx ebx,elf64_regs[esi+3*6+1]
+                            movzx eax,[edi].expr.flags
+                            and eax,EXF_NEGATIVE
+                            elf64_const(ebx, T_HIGH64, [edi].expr.hlvalue, paramvalue, eax)
+                        .endif
                     .endif
-                    AddLineQueueX(" mov %r, %s", ecx, eax)
+                .elseif [edi].expr.kind == EXPR_CONST && [edi].expr.hvalue == 0
+                    mov edx,i32
+                    .if edx >= T_AX && edx <= T_DI
+                        add edx,T_EAX - T_AX
+                    .elseif edx >= T_R8W && edx <= T_R15W
+                        add edx,T_R8D - T_R8W
+                    .endif
+                    AddLineQueueX(" mov %r, %s", edx, ecx)
+                    .if z == 16
+                        movzx ebx,elf64_regs[esi+3*6+1]
+                        movzx eax,[edi].expr.flags
+                        and eax,EXF_NEGATIVE
+                        elf64_const(ebx, T_HIGH64, [edi].expr.hlvalue, paramvalue, eax)
+                    .endif
+                .elseif eax == 16
+                    mov eax,ebx
+                    movzx ebx,elf64_regs[esi+3*6+1]
+                    .if [edi].expr.kind == EXPR_CONST
+                        elf64_const(eax, T_LOW64, [edi].expr.llvalue, paramvalue, 0)
+                        movzx eax,[edi].expr.flags
+                        and eax,EXF_NEGATIVE
+                        elf64_const(ebx, T_HIGH64, [edi].expr.hlvalue, paramvalue, eax)
+                    .else
+                        AddLineQueueX(" mov %r, qword ptr %s", eax, ecx)
+                        AddLineQueueX(" mov %r, qword ptr %s[8]", ebx, paramvalue)
+                    .endif
                 .else
-                    AddLineQueueX(" mov %r, %s", ebx, eax)
+                    AddLineQueueX(" mov %r, %s", ebx, ecx)
                 .endif
             .endif
             lea ecx,[esi+ELF64_START]

@@ -254,11 +254,11 @@ static void output_opc( struct code_info *CodeInfo )
     }
 
     if( ins->opnd_dir ) {
+	tmp = CodeInfo->prefix.rex;
+	CodeInfo->prefix.rex = ( tmp & 0xFA ) | (( tmp & REX_R ) >> 2 ) | (( tmp & REX_B ) << 2 );
 	/* The reg and r/m fields are backwards */
 	tmp = CodeInfo->rm_byte;
 	CodeInfo->rm_byte = ( tmp & 0xc0 ) | ((tmp >> 3) & 0x7) | ((tmp << 3) & 0x38);
-	tmp = CodeInfo->prefix.rex;
-	CodeInfo->prefix.rex = ( tmp & 0xFA ) | (( tmp & REX_R ) >> 2 ) | (( tmp & REX_B ) << 2 );
     }
 
     if ( rflags & RWF_VEX ) {
@@ -269,6 +269,9 @@ static void output_opc( struct code_info *CodeInfo )
 	uint_8 byte3 = CodeInfo->evexP3;
 
 	switch ( ins->byte1_info ) {
+	case F_0F38:
+	    byte1 = VX1_R;
+	    break;
 	case F_C5L:
 	case F_C4M0L:
 	    byte2 |= VX2_1;
@@ -360,6 +363,11 @@ static void output_opc( struct code_info *CodeInfo )
 	    byte1 |= ( ( CodeInfo->prefix.rex & REX_X ) ? 0 : VX1_X );
 	    byte1 |= ( ( CodeInfo->prefix.rex & REX_R ) ? 0 : VX1_R );
 	    byte2 |= ( ( CodeInfo->prefix.rex & REX_W ) ? VX2_W : 0 );
+
+	    if ( CodeInfo->token == T_RORX ) {
+		byte1 |= 0x3;
+		byte2 |= 0x3;
+	    }
 
 	    if ( evex ) {
 
@@ -699,10 +707,21 @@ static void output_opc( struct code_info *CodeInfo )
 	    OutputByte( byte3 );
 	} else {
 	    if ( CodeInfo->pinstr->evex & VX_XMMI ) {
-
-		byte2 = ( ( byte2 &= 0xC7 ) | ( ~( CodeInfo->opc_or << 3 ) & 0x38 ) |
+		if ( CodeInfo->pinstr->evex == 0x09 ) { /* VEX-Encoded GPR Instructions */
+		    byte2 = ( ( byte2 & 0xC7 ) | ( ( ~tmp << 3 ) & 0x38 ) );
+		    if ( CodeInfo->prefix.rex & 0x04 )
+			byte2 &= 0xBF;
+		    if ( CodeInfo->token == T_BLSMSK )
+			CodeInfo->rm_byte &= 0xF7;
+		    else if ( CodeInfo->token == T_BLSMSK )
+			CodeInfo->rm_byte = tmp & 0xC8;
+		    else
+			CodeInfo->rm_byte &= 0xCF;
+		} else {
+		    byte2 = ( ( byte2 &= 0xC7 ) | ( ~( CodeInfo->opc_or << 3 ) & 0x38 ) |
 			( CodeInfo->opc_or >> 4 ) );
-		CodeInfo->opc_or = 0;
+		    CodeInfo->opc_or = 0;
+		}
 	    }
 	    OutputByte( byte2 );
 	}
@@ -778,16 +797,30 @@ static void output_data( const struct code_info *CodeInfo, enum operand_type det
 {
     int size = 0;
 
-    /* skip the memory operand for XLAT/XLATB and string instructions! */
-    if ( CodeInfo->token == T_XLAT || CodeInfo->token == T_XLATB ||
-	CodeInfo->pinstr->allowed_prefix == AP_REP ||
-	CodeInfo->pinstr->allowed_prefix == AP_REPxx ) {
-	/* v2.06: no need anymore to modify the fixup field, it's
-	 * used inside OutputBytes() only.
-	 */
-	//CodeInfo->InsFixup[index] = NULL;
+    switch ( CodeInfo->token ) {
+    case T_ANDN:
+    case T_MULX:
+    case T_PDEP:
+    case T_PEXT:
+	if ( !CodeInfo->opnd[OPND2].data32l || index == 2 )
+	  return;
+	break;
+    case T_BEXTR:
+    case T_SARX:
+    case T_SHLX:
+    case T_SHRX:
+    case T_BZHI:
+	if ( !CodeInfo->opnd[OPND2].data32l || !index || index == 2 )
+	  return;
+	break;
+    case T_XLAT:
+    case T_XLATB:
 	return;
     }
+
+    /* skip the memory operand for XLAT/XLATB and string instructions! */
+    if ( CodeInfo->pinstr->allowed_prefix == AP_REP || CodeInfo->pinstr->allowed_prefix == AP_REPxx )
+	return;
 
     /* determine size */
 
@@ -895,9 +928,20 @@ static int check_3rd_operand( struct code_info *CodeInfo )
 	if ( CodeInfo->token >= VEX_START ) {
 	    if ( CodeInfo->opnd[OPND3].type & ( OP_XMM | OP_YMM | OP_ZMM | OP_K ) )
 		return( NOT_ERROR );
-	} else
-	if ( CodeInfo->opnd[OPND3].type == OP_XMM &&
-	    CodeInfo->opnd[OPND3].data32l == 0 )
+	    switch ( CodeInfo->token ) {
+	    case T_ANDN:
+	    case T_MULX:
+	    case T_PDEP:
+	    case T_PEXT:
+	    case T_BEXTR:
+	    case T_SARX:
+	    case T_SHLX:
+	    case T_SHRX:
+	    case T_BZHI:
+	    case T_RORX:
+		return( NOT_ERROR );
+	    }
+	} else if ( CodeInfo->opnd[OPND3].type == OP_XMM && CodeInfo->opnd[OPND3].data32l == 0 )
 	    return( NOT_ERROR );
 	break;
     }
@@ -1077,6 +1121,30 @@ static int match_phase_3( struct code_info *CodeInfo, enum operand_type opnd1 )
 	       }
 	    }
 	    break;
+	case OP_RGT16:
+	    switch ( CodeInfo->token ) {
+	    case T_ANDN:
+	    case T_MULX:
+	    case T_PDEP:
+	    case T_PEXT:
+		if ( !( opnd2 & ( OP_R32 | OP_R64 ) ) )
+		    opnd2 |= OP_RGT16;
+		break;
+	    case T_BEXTR:
+	    case T_SARX:
+	    case T_SHLX:
+	    case T_SHRX:
+	    case T_BZHI:
+		//if ( CodeInfo->opnd[OPND3].type & ( OP_R32 | OP_R64 ) )
+		//    return( NOT_ERROR );
+		//opnd2 |= OP_RGT16;
+		break;
+	    case T_RORX:
+		output_opc( CodeInfo );
+		output_data( CodeInfo, OP_I8_U, OPND3 );
+		return( NOT_ERROR );
+	    }
+	    /* drop */
 	default:
 	    if( opnd2 & tbl_op2 ) {
 		if( check_3rd_operand( CodeInfo ) == ERROR )

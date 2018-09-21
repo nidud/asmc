@@ -2807,19 +2807,21 @@ int ParseLine( struct asm_tok tokenarray[] )
 	 * the second argument may be stored in the vexregop field.
 	 */
 	if ( CodeInfo.token >= VEX_START && CurrOpnd == OPND2 &&
-	    ( CodeInfo.opnd[OPND1].type & ( OP_XMM | OP_YMM | OP_ZMM | OP_M | OP_K | OP_M256 | OP_M512 ) ) ) {
+	    ( CodeInfo.opnd[OPND1].type & ( OP_XMM | OP_YMM | OP_ZMM | OP_M |
+		OP_K | OP_M256 | OP_M512 | OP_R32 | OP_R64 ) ) ) {
 
-	    if ( vex_flags[CodeInfo.token - VEX_START] & VX_NND )
+	    if ( ( CodeInfo.token < T_ANDN || CodeInfo.token > T_PEXT ) &&//T_RORX ) &&
+		( CodeInfo.opnd[OPND1].type & ( OP_R32 | OP_R64 ) ) )
+		;
+	    else if ( vex_flags[CodeInfo.token - VEX_START] & VX_NND )
 		;
 	    else if ( ( vex_flags[CodeInfo.token - VEX_START] & VX_IMM ) &&
 		     ( opndx[OPND3].kind == EXPR_CONST ) && ( j > 2 ) )
 		;
 	    else if ( ( vex_flags[CodeInfo.token - VEX_START] & VX_HALF ) &&
 		      ( ( CodeInfo.opnd[OPND1].type & ( OP_XMM | OP_YMM | OP_ZMM ) ) &&
-		      ( opndx[CurrOpnd].indirect ) ) /*||
-		      ( ( opndx[CurrOpnd].kind == EXPR_REG ) && ( opndx[OPND1].indirect ) )*/
-		    ) {
-		//if ( opndx[CurrOpnd].indirect )
+		      ( opndx[CurrOpnd].indirect ) ) ) {
+
 		    CodeInfo.rm_byte = 0;
 	    } else if ( ( vex_flags[CodeInfo.token - VEX_START] & VX_NMEM ) &&
 		     ( ( CodeInfo.opnd[OPND1].type & OP_M ) ||
@@ -2829,7 +2831,8 @@ int ParseLine( struct asm_tok tokenarray[] )
 
 	    } else {
 		if ( opndx[OPND2].kind != EXPR_REG ||
-		    ( ! ( GetValueSp( opndx[CurrOpnd].base_reg->tokval ) & ( OP_XMM | OP_YMM | OP_ZMM | OP_K ) ) ) ) {
+		    ( ! ( GetValueSp( opndx[CurrOpnd].base_reg->tokval ) &
+			( OP_R32 | OP_R64 | OP_XMM | OP_YMM | OP_ZMM | OP_K ) ) ) ) {
 		    return( asmerr( 2070 ) );
 		}
 		/* fixme: check if there's an operand behind OPND2 at all!
@@ -2868,8 +2871,8 @@ int ParseLine( struct asm_tok tokenarray[] )
 		     * note that OP_M includes OP_M128, but not OP_M256 (to be fixed?)
 		     */
 		    if ( CodeInfo.opnd[OPND1].type == OP_M )
-			; else
-		    if ( ( flags & ( OP_XMM | OP_M128 ) ) &&
+			;
+		    else if ( ( flags & ( OP_XMM | OP_M128 ) ) &&
 			( CodeInfo.opnd[OPND1].type & (OP_YMM | OP_M256 ) ) ||
 			( flags & ( OP_YMM | OP_M256 ) ) &&
 			( CodeInfo.opnd[OPND1].type & (OP_XMM | OP_M128 ) ) ) {

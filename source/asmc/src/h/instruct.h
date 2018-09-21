@@ -1690,6 +1690,22 @@ insn(VPBROADCASTW, 1,           OpCls( XMM,   XMM_M16,    NONE ), F_660F38, 1, n
 insv(VPBROADCASTB, vpbroadcastb, OpCls( XMM,  R8,         NONE ), F_660F38, 1, no_WDS, 0x7A, 0x00, P_686|P_AVX, 0,0, RWF_VEX, VX_L | VX_NND | VX_HALF )
 insn(VPBROADCASTB, 1,       OpCls( XMM,       XMM_M08,    NONE ), F_660F38, 1, no_WDS, 0x78, 0x00, P_686|P_AVX, 0,0)
 
+COMMENT /*****  GPR instructions v2.28 **************************************/
+
+insv(ANDN,      andn,        OpCls( RGT16,    RGT16,      R_MS ), F_0F38,   1, no_WDS, 0xF2, 0x00, P_686|P_AVX, 0,0, RWF_VEX, VX_L )
+insv(MULX,      mulx,        OpCls( RGT16,    RGT16,      R_MS ), F_F20F38, 1, no_WDS, 0xF6, 0x00, P_686|P_AVX, 0,0, RWF_VEX, VX_L )
+insv(BEXTR,     bextr,       OpCls( RGT16,    R_MS,       RGT16), F_0F38,   1, 0,      0xF7, 0x00, P_686|P_AVX, 0,0x08, RWF_VEX, VX_L | VX_NND )
+insv(SARX,      sarx,        OpCls( RGT16,    R_MS,       RGT16), F_F30F38, 1, 0,      0xF7, 0x00, P_686|P_AVX, 0,0x08, RWF_VEX, VX_L | VX_NND )
+insv(SHLX,      shlx,        OpCls( RGT16,    R_MS,       RGT16), F_660F38, 1, 0,      0xF7, 0x00, P_686|P_AVX, 0,0x08, RWF_VEX, VX_L | VX_NND )
+insv(SHRX,      shrx,        OpCls( RGT16,    R_MS,       RGT16), F_F20F38, 1, 0,      0xF7, 0x00, P_686|P_AVX, 0,0x08, RWF_VEX, VX_L | VX_NND )
+insv(BZHI,      bzhi,        OpCls( RGT16,    R_MS,       RGT16), F_0F38,   1, 0,      0xF5, 0x00, P_686|P_AVX, 0,0x08, RWF_VEX, VX_L | VX_NND )
+insv(PDEP,      pdep,        OpCls( RGT16,    RGT16,      R_MS ), F_F20F38, 1, no_WDS, 0xF5, 0x00, P_686|P_AVX, 0,0, RWF_VEX, VX_L )
+insv(PEXT,      pext,        OpCls( RGT16,    RGT16,      R_MS ), F_F30F38, 1, no_WDS, 0xF5, 0x00, P_686|P_AVX, 0,0, RWF_VEX, VX_L )
+insv(RORX,      rorx,        OpCls( RGT16,    RGT16,      I8_U ), F_F20F3A, 1, no_WDS, 0xF0, 0x00, P_686|P_AVX, 0,0, RWF_VEX, VX_L )
+insv(BLSI,      blsi,        OpCls( RGT8,     RGT8_MS,    NONE ), F_0F38,   1, no_WDS, 0xF3, 0x18, P_686|P_AVX, 0,0x09, RWF_VEX, VX_L )
+insv(BLSMSK,    blsmsk,      OpCls( RGT8,     RGT8_MS,    NONE ), F_0F38,   1, no_WDS, 0xF3, 0x10, P_686|P_AVX, 0,0x09, RWF_VEX, VX_L )
+insv(BLSR,      blsr,        OpCls( RGT8,     RGT8_MS,    NONE ), F_0F38,   1, no_WDS, 0xF3, 0x08, P_686|P_AVX, 0,0x09, RWF_VEX, VX_L )
+
 COMMENT /*****  AVX-512 - v2.26 *********************************************/
 
 insv(VPERMW,  vpermw,        OpCls( XMM, XMM_M128,        NONE ), F_660F38, 1, no_WDS, 0x8D, 0x00, P_686|P_AVX, 0,0xF0, RWF_VEX | RWF_EVEX, VX_L | VX_RW1 )

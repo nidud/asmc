@@ -122,6 +122,8 @@ enum operand3_type {
     OP3_YMM = OP3_XMM0, /* for VEX encoding only */
     OP3_ZMM = OP3_XMM0, /* for VEX encoding only */
     OP3_K   = OP3_XMM0, /* for VEX encoding only */
+    OP3_RGT16 = OP3_XMM0,
+    OP3_R_MS = OP3_XMM0,
 };
 
 #endif

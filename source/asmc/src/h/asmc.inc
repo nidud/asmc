@@ -614,7 +614,7 @@ next_proc		dd ?
 next_file		dd ?
 debug_info		ENDS
 
-func_ptr_t		typedef proto :ptr macro_instance, :LPSTR, :ptr asm_tok
+func_ptr_t		typedef proto :ptr macro_instance, :LPSTR, :ptr asmtok
 func_ptr_p		typedef ptr func_ptr_t
 internal_func_t		typedef proto :ptr asym, :PVOID
 internal_func		typedef ptr internal_func_t
@@ -926,17 +926,17 @@ expr			STRUC
     chararray		db 16 dup(?)
  ENDS
  UNION
-    quoted_string	LPTOKEN ?	; for EXPR_CONST + quoted strings only
-    float_tok		LPTOKEN ?	; for EXPR_FLOAT only
+    quoted_string	PTOKEN ?	; for EXPR_CONST + quoted strings only
+    float_tok		PTOKEN ?	; for EXPR_FLOAT only
  ENDS
- base_reg		LPTOKEN ?	; EXPR_ADDR: base register token
+ base_reg		PTOKEN ?	; EXPR_ADDR: base register token
 					; EXPR_REG: register token
- idx_reg		LPTOKEN ?	; EXPR_ADDR: index register token
+ idx_reg		PTOKEN ?	; EXPR_ADDR: index register token
  UNION
-    label_tok		LPTOKEN ?	; token holding the label (EXPR_ADDR, used for overrides, inside expreval only)
-    type_tok		LPTOKEN ?	; v2.10: token if target type of a label (SYM_STACK, MT_PTR) is to be stored
+    label_tok		PTOKEN ?	; token holding the label (EXPR_ADDR, used for overrides, inside expreval only)
+    type_tok		PTOKEN ?	; v2.10: token if target type of a label (SYM_STACK, MT_PTR) is to be stored
  ENDS
- override		LPTOKEN ?	; EXPR_ADDR: token holding the override label or segment register
+ override		PTOKEN ?	; EXPR_ADDR: token holding the override label or segment register
  _instr			sdword ?	; operator token
  kind			sdword ?	; Type of expression
  mem_type		db ?		;
@@ -1226,7 +1226,7 @@ externdef		LastCodeBufSize : DWORD
 externdef		banner_printed	: DWORD
 
 asmerr			PROTO :DWORD, :VARARG
-DelayExpand		PROTO FASTCALL :DWORD ; :PTR asm_tok
+DelayExpand		PROTO FASTCALL :DWORD ; :PTR asmtok
 
 write_logo		PROTO
 WriteError		PROTO
@@ -1279,7 +1279,7 @@ ParseLine		PROTO :DWORD
 SearchFile		PROTO :DWORD, :DWORD
 ProcessFile		PROTO :DWORD
 ClearSrcStack		PROTO
-PreprocessLine		PROTO :LPSTR, :ptr asm_tok
+PreprocessLine		PROTO :LPSTR, :ptr asmtok
 
 SymPassInit		PROTO :DWORD
 SegmentInit		PROTO :DWORD

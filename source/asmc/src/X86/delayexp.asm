@@ -3,7 +3,7 @@ include asmc.inc
 
 	.code
 
-	ASSUME	ecx:PTR asm_tok
+	ASSUME	ecx:PTR asmtok
 B	equ <SBYTE PTR>
 
 DelayExpand PROC FASTCALL tokenarray

@@ -120,7 +120,7 @@ main proc c
   local rc, numArgs, numFiles, ff:WIN32_FIND_DATA, h
 
 ifndef DEBUG
-    signal(SIGSEGV, GeneralFailure)
+;    signal(SIGSEGV, GeneralFailure)
 endif
 if CATCHBREAK
     signal(SIGBREAK, GeneralFailure)

@@ -17,7 +17,7 @@ LPCLASS     typedef ptr com_item
 
     .code
 
-    assume ebx:ptr asm_tok
+    assume ebx:ptr asmtok
 
 AddVirtualTable proc private uses esi
 
@@ -53,7 +53,7 @@ AddVirtualTable proc private uses esi
 
 AddVirtualTable endp
 
-ProcType proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok, buffer:LPSTR
+ProcType proc uses esi edi ebx i:SINT, tokenarray:ptr asmtok, buffer:LPSTR
 
   local rc:SINT, l_p[16]:SBYTE, l_t[16]:SBYTE, id:LPSTR, IsCom:BYTE
   local language[32]:SBYTE
@@ -136,9 +136,9 @@ ProcType proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok, buffer:LPSTR
                 xor esi,esi
             .endif
 
-            .for ( eax = ebx : [eax].asm_tok.token != T_FINAL : eax += 16 )
+            .for ( eax = ebx : [eax].asmtok.token != T_FINAL : eax += 16 )
 
-                .if [eax].asm_tok.token == T_COLON
+                .if [eax].asmtok.token == T_COLON
 
                     inc esi
                     .break
@@ -201,7 +201,7 @@ ProcType proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok, buffer:LPSTR
 
 ProcType endp
 
-ClassDirective proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok
+ClassDirective proc uses esi edi ebx i:SINT, tokenarray:ptr asmtok
 
   local rc:SINT, args:SINT, cmd:UINT, buffer[MAX_LINE_LEN]:SBYTE
 
@@ -289,9 +289,9 @@ ClassDirective proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok
                 AddLineQueueX( "%s typedef ptr %s", edi, esi )
                 AddLineQueueX( "%sVtbl typedef ptr %sVtbl", edi, esi )
 
-                .for edx=0, eax=args : !edx && [eax].asm_tok.token != T_FINAL : eax += 16
+                .for edx=0, eax=args : !edx && [eax].asmtok.token != T_FINAL : eax += 16
 
-                    .if [eax].asm_tok.token == T_COLON
+                    .if [eax].asmtok.token == T_COLON
 
                         inc edx
                     .endif

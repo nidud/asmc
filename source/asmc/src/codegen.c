@@ -344,6 +344,12 @@ static void output_opc( struct code_info *CodeInfo )
 		OutputByte( 0xC4 );
 
 	    switch ( ins->byte1_info ) {
+	    case F_F20F3A:
+		if ( CodeInfo->token == T_RORX ) {
+		    byte1 |= 0x3;
+		    byte2 |= 0x3;
+		}
+		break;
 	    case F_0F38:
 	    case F_660F38:
 	    case F_F20F38:
@@ -363,11 +369,6 @@ static void output_opc( struct code_info *CodeInfo )
 	    byte1 |= ( ( CodeInfo->prefix.rex & REX_X ) ? 0 : VX1_X );
 	    byte1 |= ( ( CodeInfo->prefix.rex & REX_R ) ? 0 : VX1_R );
 	    byte2 |= ( ( CodeInfo->prefix.rex & REX_W ) ? VX2_W : 0 );
-
-	    if ( CodeInfo->token == T_RORX ) {
-		byte1 |= 0x3;
-		byte2 |= 0x3;
-	    }
 
 	    if ( evex ) {
 
@@ -1129,15 +1130,6 @@ static int match_phase_3( struct code_info *CodeInfo, enum operand_type opnd1 )
 	    case T_PEXT:
 		if ( !( opnd2 & ( OP_R32 | OP_R64 ) ) )
 		    opnd2 |= OP_RGT16;
-		break;
-	    case T_BEXTR:
-	    case T_SARX:
-	    case T_SHLX:
-	    case T_SHRX:
-	    case T_BZHI:
-		//if ( CodeInfo->opnd[OPND3].type & ( OP_R32 | OP_R64 ) )
-		//    return( NOT_ERROR );
-		//opnd2 |= OP_RGT16;
 		break;
 	    case T_RORX:
 		output_opc( CodeInfo );

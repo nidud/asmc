@@ -53,7 +53,7 @@ flags2              db ?        ; v2.08: was global var g_flags
 flags3              db ?        ; v2.08: added
 line_status         ends
 
-asm_tok             struc
+asmtok              struc
 token               db ?
 union
  dirtype            db ?        ; T_DIRECTIVE: type
@@ -67,43 +67,42 @@ ends
 hll_flags           db ?        ; xx( if xx == macro/proc/label()
 hll_index           db ?
 union
-    tokval          dd ?        ; index if token is a reserved word
-    stringlen       dd ?        ; T_STRING: size
-    idarg           dd ?        ; T_ID: currently not used
-    itemlen         dd ?        ; T_NUM: size
-    lastidx         dd ?        ; T_FINAL: last index (used in RunMacro())
+    tokval          SINT ?      ; index if token is a reserved word
+    stringlen       SINT ?      ; T_STRING: size
+    idarg           SINT ?      ; T_ID: currently not used
+    itemlen         SINT ?      ; T_NUM: size
+    lastidx         SINT ?      ; T_FINAL: last index (used in RunMacro())
 ends
 string_ptr          LPSTR ?
 tokpos              LPSTR ?     ; points to item in CurrSource
-asm_tok             ends
-LPTOKEN             typedef ptr asm_tok
+asmtok              ends
+PTOKEN              typedef ptr asmtok
+
+GetToken proto fastcall :ptr asmtok, :ptr line_status
+Tokenize proto :LPSTR, :UINT, :ptr asmtok, :UINT
 
 _tok_token macro reg:=<ebx>, id:=<0>
-    exitm<[reg+(id)*16].asm_tok.token>
+    exitm<[reg+(id)*16].asmtok.token>
     endm
 
 _tok_dirtype macro reg:=<ebx>, id:=<0>
-    exitm<[reg+(id)*16].asm_tok.dirtype>
+    exitm<[reg+(id)*16].asmtok.dirtype>
     endm
 
 _tok_flags macro reg:=<ebx>, id:=<0>
-    exitm<[reg+(id)*16].asm_tok.hll_flags>
+    exitm<[reg+(id)*16].asmtok.hll_flags>
     endm
 
 _tok_tokval macro reg:=<ebx>, id:=<0>
-    exitm<[reg+(id)*16].asm_tok.tokval>
+    exitm<[reg+(id)*16].asmtok.tokval>
     endm
 
 _tok_string macro reg:=<ebx>, id:=<0>
-    exitm<[reg+(id)*16].asm_tok.string_ptr>
+    exitm<[reg+(id)*16].asmtok.string_ptr>
     endm
 
 _tok_tokpos macro reg:=<ebx>, id:=<0>
-    exitm<[reg+(id)*16].asm_tok.tokpos>
+    exitm<[reg+(id)*16].asmtok.tokpos>
     endm
-
-
-GetToken proto fastcall :LPTOKEN, :ptr line_status
-Tokenize proto :LPSTR, :UINT, :LPTOKEN, :UINT
 
 endif

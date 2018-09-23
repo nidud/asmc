@@ -60,13 +60,13 @@ CHARS_OR    equ '|' + ( '|' shl 8 )
 
     .code
 
-GetCOp proc fastcall private item;:PTR asm_tok
+GetCOp proc fastcall private item;:PTR asmtok
 
-    mov edx,[ecx].asm_tok.string_ptr
+    mov edx,[ecx].asmtok.string_ptr
     xor eax,eax
-    .if [ecx].asm_tok.token == T_STRING
+    .if [ecx].asmtok.token == T_STRING
 
-        mov eax,[ecx].asm_tok.stringlen
+        mov eax,[ecx].asmtok.stringlen
     .endif
     .repeat
         .switch
@@ -90,7 +90,7 @@ GetCOp proc fastcall private item;:PTR asm_tok
               .case '!': mov eax,COP_NEG:  .break
             .endsw
             .endc
-          .case [ecx].asm_tok.token != T_ID
+          .case [ecx].asmtok.token != T_ID
             .endc
             ;
             ; a valid "flag" string must end with a question mark
@@ -160,7 +160,7 @@ RenderInstr proc private uses esi edi ebx,
     end1:       UINT,
     start2:     UINT,
     end2:       UINT,
-    tokenarray: PTR asm_tok
+    tokenarray: PTR asmtok
 
     ;
     ; copy the instruction
@@ -181,8 +181,8 @@ RenderInstr proc private uses esi edi ebx,
     mov eax,start1
     shl ecx,4
     shl eax,4
-    mov ecx,[ebx+ecx].asm_tok.tokpos
-    mov esi,[ebx+eax].asm_tok.tokpos
+    mov ecx,[ebx+ecx].asmtok.tokpos
+    mov esi,[ebx+eax].asmtok.tokpos
     sub ecx,esi
     rep movsb
 
@@ -198,8 +198,8 @@ RenderInstr proc private uses esi edi ebx,
         ;
         shl ecx,4
         shl eax,4
-        mov ecx,[ebx+ecx].asm_tok.tokpos
-        mov esi,[ebx+eax].asm_tok.tokpos
+        mov ecx,[ebx+ecx].asmtok.tokpos
+        mov esi,[ebx+eax].asmtok.tokpos
         sub ecx,esi
         rep movsb
     .elseif ecx != EMPTY
@@ -310,7 +310,7 @@ GetLabel endp
 GetSimpleExpression proc private uses esi edi ebx,
     hll:        PTR hll_item,
     i:          PTR SINT,
-    tokenarray: PTR asm_tok,
+    tokenarray: PTR asmtok,
     ilabel:     SINT,
     is_true:    UINT,
     buffer:     LPSTR,
@@ -325,7 +325,7 @@ local   op:         SINT,
         op2:        expr,
         _label
 
-    assume ebx: PTR asm_tok
+    assume ebx: PTR asmtok
 
     mov esi,i
     mov edi,[esi]
@@ -761,7 +761,7 @@ ReplaceLabel endp
 
 ; operator &&, which has the second lowest precedence, is handled here
 
-GetAndExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr SINT, tokenarray:ptr asm_tok,
+GetAndExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr SINT, tokenarray:ptr asmtok,
     ilabel:UINT, is_true:UINT, buffer:LPSTR, hllop:ptr hll_opnd
 
   local truelabel:SINT, nlabel:SINT, olabel:SINT, buff[16]:SBYTE
@@ -837,7 +837,7 @@ GetAndExpression endp
 
 ; operator ||, which has the lowest precedence, is handled here
 
-GetExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr SINT, tokenarray:ptr asm_tok,
+GetExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr SINT, tokenarray:ptr asmtok,
     ilabel:SINT, is_true:UINT, buffer:LPSTR, hllop:ptr hll_opnd
 
   local truelabel:SINT, nlabel:SINT, olabel:SINT, buff[16]:SBYTE
@@ -952,9 +952,9 @@ GetExpression endp
 ;   .CONT .IF: TRUE
 ;
 
-    assume ebx:ptr asm_tok
+    assume ebx:ptr asmtok
 
-ExpandCStrings proc uses ebx tokenarray:PTR asm_tok
+ExpandCStrings proc uses ebx tokenarray:PTR asmtok
 
     xor eax,eax
 
@@ -1101,10 +1101,10 @@ GetProc proc private token:LPSTR
 
 GetProc endp
 
-StripSource proc private uses esi edi ebx i:UINT, e:UINT, tokenarray:ptr asm_tok
+StripSource proc private uses esi edi ebx i:UINT, e:UINT, tokenarray:ptr asmtok
 
   local sym:ptr asym, info:ptr proc_info, curr:ptr asym
-  local proc_id:ptr asm_tok, parg_id:SINT, b[MAX_LINE_LEN]:SBYTE
+  local proc_id:ptr asmtok, parg_id:SINT, b[MAX_LINE_LEN]:SBYTE
 
     xor eax,eax
     mov b,al
@@ -1148,9 +1148,9 @@ StripSource proc private uses esi edi ebx i:UINT, e:UINT, tokenarray:ptr asm_tok
 
     xor esi,esi
     mov eax,proc_id
-    .if eax && [eax].asm_tok.token != T_OP_SQ_BRACKET
+    .if eax && [eax].asmtok.token != T_OP_SQ_BRACKET
 
-        .if GetProc([eax].asm_tok.string_ptr)
+        .if GetProc([eax].asmtok.string_ptr)
 
             mov sym,eax
             mov edx,[eax].nsym.procinfo
@@ -1217,6 +1217,8 @@ StripSource proc private uses esi edi ebx i:UINT, e:UINT, tokenarray:ptr asm_tok
                   .case 16:
                     .if [ecx].asym.mem_type & MT_FLOAT
                         mov esi,@CStr(" xmm0")
+                    .elseif ModuleInfo.Ofssize == USE64
+                        mov esi,@CStr(" rdx::rax")
                     .endif
                     .endc
                 .endsw
@@ -1294,11 +1296,11 @@ endif
     ret
 StripSource endp
 
-LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:ptr asm_tok
+LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:ptr asmtok
 
   local br_count:SINT
   local static_struct:SINT
-  local sqbrend:ptr asm_tok
+  local sqbrend:ptr asmtok
   local sym:ptr asym
   local method:ptr asym
   local comptr:LPSTR
@@ -1665,7 +1667,7 @@ LKRenderHllProc endp
 
     assume ebx: NOTHING
 
-RenderHllProc proc private uses esi edi dst:LPSTR,i:UINT,tokenarray:ptr asm_tok
+RenderHllProc proc private uses esi edi dst:LPSTR,i:UINT,tokenarray:ptr asmtok
 
   local oldstat:input_status
 
@@ -1731,7 +1733,7 @@ endif
 
 QueueTestLines endp
 
-ExpandHllProc proc uses esi edi dst:LPSTR, i:SINT, tokenarray:PTR asm_tok
+ExpandHllProc proc uses esi edi dst:LPSTR, i:SINT, tokenarray:PTR asmtok
 
   local rc:SINT
 
@@ -1748,7 +1750,7 @@ ExpandHllProc proc uses esi edi dst:LPSTR, i:SINT, tokenarray:PTR asm_tok
 
         .while esi < ModuleInfo.token_count
 
-            .if [edi].asm_tok.hll_flags & T_HLL_PROC
+            .if [edi].asmtok.hll_flags & T_HLL_PROC
 
                 ExpandCStrings( tokenarray )
                 mov rc,RenderHllProc( dst, esi, tokenarray )
@@ -1763,7 +1765,7 @@ ExpandHllProc proc uses esi edi dst:LPSTR, i:SINT, tokenarray:PTR asm_tok
 
 ExpandHllProc endp
 
-ExpandHllProcEx proc uses esi edi buffer:LPSTR, i:SINT, tokenarray:PTR asm_tok
+ExpandHllProcEx proc uses esi edi buffer:LPSTR, i:SINT, tokenarray:PTR asmtok
 
   local rc:SINT
 
@@ -1778,7 +1780,7 @@ ExpandHllProcEx proc uses esi edi buffer:LPSTR, i:SINT, tokenarray:PTR asm_tok
 
         strcat(esi, "\n")
         mov ebx,tokenarray
-        strcat(esi, [ebx].asm_tok.tokpos)
+        strcat(esi, [ebx].asmtok.tokpos)
         QueueTestLines(esi)
         mov rc,STRING_EXPANDED
 
@@ -1801,7 +1803,7 @@ ExpandHllProcEx endp
 EvaluateHllExpression proc uses esi edi ebx,
         hll:        ptr hll_item,
         i:          ptr SINT,
-        tokenarray: ptr asm_tok,
+        tokenarray: ptr asmtok,
         ilabel:     SDWORD,
         is_true:    SINT,
         buffer:     LPSTR
@@ -1819,20 +1821,20 @@ local   hllop:      hll_opnd,
     mov eax,[edx].hll_item.flags
     and eax,HLLF_EXPRESSION
 
-    .if ModuleInfo.aflag & _AF_ON && !eax && [ebx].asm_tok.hll_flags & T_HLL_DELAY
+    .if ModuleInfo.aflag & _AF_ON && !eax && [ebx].asmtok.hll_flags & T_HLL_DELAY
 
         mov edi,[esi]
         .while edi < ModuleInfo.token_count
 
             mov eax,edi
             shl eax,4
-            .if [ebx+eax].asm_tok.hll_flags & T_HLL_MACRO
+            .if [ebx+eax].asmtok.hll_flags & T_HLL_MACRO
 
-                strcpy( buffer, [ebx].asm_tok.tokpos )
+                strcpy( buffer, [ebx].asmtok.tokpos )
                 mov eax,hll
                 or  [eax].hll_item.flags,HLLF_EXPRESSION
 
-                .if [ebx].asm_tok.hll_flags & T_HLL_DELAYED
+                .if [ebx].asmtok.hll_flags & T_HLL_DELAYED
 
                     or [eax].hll_item.flags,HLLF_DELAYED
                 .endif
@@ -1857,7 +1859,7 @@ local   hllop:      hll_opnd,
             shl eax,4
             add ebx,eax
 
-            .if [ebx].asm_tok.token != T_FINAL
+            .if [ebx].asmtok.token != T_FINAL
 
                 asmerr( 2154 )
                 jmp toend
@@ -2004,7 +2006,7 @@ EvaluateHllExpression endp
 ExpandHllExpression proc uses esi edi ebx,
         hll:        PTR hll_item,
         i:          PTR SINT,
-        tokenarray: PTR asm_tok,
+        tokenarray: PTR asmtok,
         ilabel:     SINT,
         is_true:    SINT,
         buffer:     LPSTR
@@ -2292,12 +2294,12 @@ GetJumpString proc private uses edx ecx cmd
 
 GetJumpString endp
 
-    assume  ebx: ptr asm_tok
+    assume  ebx: ptr asmtok
     assume  esi: ptr hll_item
 
 ; .IF, .WHILE, .SWITCH or .REPEAT directive
 
-HllStartDir proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok
+HllStartDir proc uses esi edi ebx i:SINT, tokenarray:ptr asmtok
 
 local   rc:         SINT,
         cmd:        UINT,
@@ -2413,7 +2415,7 @@ local   rc:         SINT,
             mov eax,i
             shl eax,4
 
-            .if [ebx+eax].asm_tok.token != T_FINAL
+            .if [ebx+eax].asmtok.token != T_FINAL
 
                 mov ecx,[esi].flags
                 mov eax,cmd
@@ -2539,9 +2541,9 @@ local   rc:         SINT,
     mov eax,i
     shl eax,4
 
-    .if ![esi].flags && ([ebx+eax].asm_tok.token != T_FINAL && rc == NOT_ERROR)
+    .if ![esi].flags && ([ebx+eax].asmtok.token != T_FINAL && rc == NOT_ERROR)
 
-        asmerr( 2008, [ebx+eax].asm_tok.tokpos )
+        asmerr( 2008, [ebx+eax].asmtok.tokpos )
         mov rc,eax
     .endif
     ;
@@ -2576,7 +2578,7 @@ HllStartDir endp
 ; .ENDIF, .ENDW, .UNTIL and .UNTILCXZ directives.
 ; These directives end a .IF, .WHILE or .REPEAT block.
 ;
-HllEndDir proc uses esi edi ebx i:SINT, tokenarray:PTR asm_tok
+HllEndDir proc uses esi edi ebx i:SINT, tokenarray:PTR asmtok
 
   local rc:SINT, cmd:SINT, buffer[MAX_LINE_LEN]:SBYTE
 
@@ -2827,7 +2829,7 @@ toend:
     ret
 HllEndDir endp
 
-_lk_HllContinueIf proc i:ptr sdword, tokenarray:ptr asm_tok
+_lk_HllContinueIf proc i:ptr sdword, tokenarray:ptr asmtok
 
   local rc:SINT, buff[16]:SBYTE
 
@@ -2937,7 +2939,7 @@ _lk_HllContinueIf endp
 ; .CONTINUE, .BREAK:
 ;    - jump to test / exit label of innermost .WHILE/.REPEAT block
 ;
-HllExitDir proc USES esi edi ebx i, tokenarray:ptr asm_tok
+HllExitDir proc USES esi edi ebx i, tokenarray:ptr asmtok
 
 local   rc: SINT,
         cont0:  SINT,

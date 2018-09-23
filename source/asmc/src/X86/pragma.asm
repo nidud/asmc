@@ -29,9 +29,9 @@ MAXSTACK equ 16
 
     .code
 
-    assume ebx:ptr asm_tok
+    assume ebx:ptr asmtok
 
-PragmaDirective proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok
+PragmaDirective proc uses esi edi ebx i:SINT, tokenarray:ptr asmtok
 
   local rc:SINT, list_directive:SINT
   local opndx:expr

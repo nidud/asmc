@@ -299,7 +299,7 @@ ParseCString ENDP
 
 option cstack:on
 
-GenerateCString PROC USES esi edi ebx i, tokenarray:PTR asm_tok
+GenerateCString PROC USES esi edi ebx i, tokenarray:PTR asmtok
 
 local   rc:                     SINT,
         q:                      LPSTR,
@@ -342,9 +342,9 @@ local   rc:                     SINT,
         ;
         ; proc( "", ( ... ), "" )
         ;
-        .while [ebx].asm_tok.token != T_FINAL
+        .while [ebx].asmtok.token != T_FINAL
 
-            mov ecx,[ebx].asm_tok.string_ptr
+            mov ecx,[ebx].asmtok.string_ptr
             movzx ecx,WORD PTR [ecx]
 
             .switch cl
@@ -380,13 +380,13 @@ local   rc:                     SINT,
         add edi,line_item.line
         strcpy(b_line, edi)
         mov BYTE PTR [edi],';'
-        mov equal,strcmp(eax, [esi].asm_tok.tokpos)
+        mov equal,strcmp(eax, [esi].asmtok.tokpos)
         mov al,ModuleInfo.line_flags
         mov lineflags,al
 
-        .while [ebx].asm_tok.token != T_FINAL
+        .while [ebx].asmtok.token != T_FINAL
 
-            mov ecx,[ebx].asm_tok.tokpos
+            mov ecx,[ebx].asmtok.tokpos
             mov ax,[ecx]
             .if al == '"' || ax == '"L'
 
@@ -461,10 +461,10 @@ local   rc:                     SINT,
                 .endif
 
                 mov eax,q
-                mov eax,[eax].asm_tok.tokpos
+                mov eax,[eax].asmtok.tokpos
                 mov BYTE PTR [eax],0
                 mov eax,tokenarray
-                mov ecx,[eax].asm_tok.tokpos
+                mov ecx,[eax].asmtok.tokpos
                 strcat( strcpy( buffer, ecx ), "addr " )
                 strcat( eax, b_label )
                 M_SKIP_SPACE ecx, esi
@@ -523,7 +523,7 @@ GenerateCString ENDP
 
 ifdef MACRO_CSTRING
 
-CString PROC USES esi edi ebx buffer:LPSTR, tokenarray:PTR asm_tok
+CString PROC USES esi edi ebx buffer:LPSTR, tokenarray:PTR asmtok
 
   local string:         LPSTR,
         cursrc:         LPSTR,
@@ -538,12 +538,12 @@ CString PROC USES esi edi ebx buffer:LPSTR, tokenarray:PTR asm_tok
     mov dlabel,eax
 
     mov ebx,tokenarray
-    mov edi,_stricmp([ebx].asm_tok.string_ptr, "@CStr")
+    mov edi,_stricmp([ebx].asmtok.string_ptr, "@CStr")
     xor eax,eax
 
-    .while  [ebx].asm_tok.token != T_FINAL
+    .while  [ebx].asmtok.token != T_FINAL
 
-        mov esi,[ebx].asm_tok.tokpos
+        mov esi,[ebx].asmtok.tokpos
         .if BYTE PTR [esi] == '"' || \
             WORD PTR [esi] == '"L'
 

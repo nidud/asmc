@@ -849,6 +849,8 @@ static int StripSource( int i, int e, struct asm_tok tokenarray[] )
 		case 16:
 		    if ( curr->sym.mem_type & MT_FLOAT )
 			p = " xmm0";
+		    else if ( ModuleInfo.Ofssize == USE64 )
+			p = " rdx::rax";
 		    break;
 	       }
 	    }

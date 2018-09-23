@@ -361,9 +361,9 @@ RenderCaseExit proc fastcall private hll
     ret
 RenderCaseExit endp
 
-    assume esi:ptr asm_tok
+    assume esi:ptr asmtok
 
-IsCaseColon proc uses esi edi ebx tokenarray:ptr asm_tok
+IsCaseColon proc uses esi edi ebx tokenarray:ptr asmtok
 
     mov esi,tokenarray
     xor edi,edi
@@ -393,9 +393,9 @@ IsCaseColon proc uses esi edi ebx tokenarray:ptr asm_tok
     ret
 IsCaseColon endp
 
-    assume  ebx: ptr asm_tok
+    assume  ebx: ptr asmtok
 
-RenderMultiCase proc uses esi edi ebx hll:ptr hll_item, i:ptr SDWORD, buffer:ptr SBYTE, tokenarray:ptr asm_tok
+RenderMultiCase proc uses esi edi ebx hll:ptr hll_item, i:ptr SDWORD, buffer:ptr SBYTE, tokenarray:ptr asmtok
 
   local result, colon
 
@@ -586,7 +586,7 @@ GetSwitchArg endp
 
     assume ebx:ptr hll_item
 
-RenderSwitch proc uses esi edi ebx hll:ptr hll_item, tokenarray:ptr asm_tok,
+RenderSwitch proc uses esi edi ebx hll:ptr hll_item, tokenarray:ptr asmtok,
     buffer:     LPSTR,  ; *switch.labels[LSTART]
     l_exit:     LPSTR   ; *switch.labels[LEXIT]
 
@@ -1196,9 +1196,9 @@ endif
 
 RenderJTable endp
 
-    assume  ebx: ptr asm_tok
+    assume  ebx: ptr asmtok
 
-SwitchStart proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok
+SwitchStart proc uses esi edi ebx i:SINT, tokenarray:ptr asmtok
 
   local rc:SINT, cmd:UINT, buffer[MAX_LINE_LEN]:SBYTE
 
@@ -1326,7 +1326,7 @@ endif
 
                   .default
                     or  [esi].flags,HLLF_ARGMEM
-                    mov eax,[ebx+ecx].asm_tok.string_ptr
+                    mov eax,[ebx+ecx].asmtok.string_ptr
                     .switch
                     .case SymFind( eax )
                         mov eax,[eax].asym.total_size
@@ -1354,7 +1354,7 @@ endif
 
             mov edx,i
             shl edx,4
-            strlen( strcpy( edi, [ebx+edx].asm_tok.tokpos ) )
+            strlen( strcpy( edi, [ebx+edx].asmtok.tokpos ) )
             inc eax
             push eax
             LclAlloc(eax)
@@ -1365,9 +1365,9 @@ endif
 
         mov eax,i
         shl eax,4
-        .if ![esi].flags && ([ebx+eax].asm_tok.token != T_FINAL && rc == NOT_ERROR)
+        .if ![esi].flags && ([ebx+eax].asmtok.token != T_FINAL && rc == NOT_ERROR)
 
-            mov rc,asmerr(2008, [ebx+eax].asm_tok.tokpos)
+            mov rc,asmerr(2008, [ebx+eax].asmtok.tokpos)
         .endif
 
         .if esi == ModuleInfo.HllFree
@@ -1383,7 +1383,7 @@ endif
 
 SwitchStart endp
 
-SwitchEnd proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok
+SwitchEnd proc uses esi edi ebx i:SINT, tokenarray:ptr asmtok
 
   local rc:SINT, cmd:SINT, buffer[MAX_LINE_LEN]:SBYTE,
         l_exit[16]:SBYTE ; exit or default label
@@ -1459,7 +1459,7 @@ SwitchEnd proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok
                 RenderSwitch(esi, tokenarray, edi, &l_exit)
             .endif
 
-            assume ebx:ptr asm_tok
+            assume ebx:ptr asmtok
         .until 1
 
         mov eax,[esi].labels[LEXIT*4]
@@ -1472,9 +1472,9 @@ SwitchEnd proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok
 
 SwitchEnd endp
 
-_lk_HllContinueIf proto :ptr sdword, :ptr asm_tok
+_lk_HllContinueIf proto :ptr sdword, :ptr asmtok
 
-SwitchExit proc uses esi edi ebx i, tokenarray:ptr asm_tok
+SwitchExit proc uses esi edi ebx i, tokenarray:ptr asmtok
 
   local rc:     SINT,
         cont0:  SINT,
@@ -1729,7 +1729,7 @@ SwitchExit proc uses esi edi ebx i, tokenarray:ptr asm_tok
                 mov eax,ModuleInfo.token_count
                 shl eax,4
                 add eax,tokenarray
-                mov eax,[eax].asm_tok.tokpos
+                mov eax,[eax].asmtok.tokpos
                 sub eax,[ebx].tokpos
                 mov WORD PTR [edi+eax],0
                 memcpy(edi, [ebx].tokpos, eax)
@@ -1847,13 +1847,13 @@ SwitchExit endp
 
     option proc: public
 
-SwitchDirective proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok
+SwitchDirective proc uses esi edi ebx i:SINT, tokenarray:ptr asmtok
 
     mov ecx,i
     mov edx,tokenarray
     mov eax,ecx
     shl eax,4
-    mov eax,[edx+eax].asm_tok.tokval
+    mov eax,[edx+eax].asmtok.tokval
     xor ebx,ebx
 
     .switch eax

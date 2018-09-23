@@ -3,7 +3,7 @@ include asmc.inc
 
     .code
 
-    assume rcx:ptr asm_tok
+    assume rcx:ptr asmtok
 B   equ <SBYTE PTR>
 
 DelayExpand proc tokenarray

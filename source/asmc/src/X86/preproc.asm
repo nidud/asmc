@@ -23,17 +23,17 @@ StoreLine               PROTO :DWORD, :DWORD, :DWORD
     .code
 
     OPTION  PROCALIGN:4
-    ASSUME  ebx: PTR asm_tok
+    ASSUME  ebx: PTR asmtok
 
 ; preprocessor directive or macro procedure is preceded
 ; by a code label.
 
-WriteCodeLabel PROC USES esi edi ebx line, tokenarray:PTR asm_tok
+WriteCodeLabel PROC USES esi edi ebx line, tokenarray:PTR asmtok
 
     mov ebx,tokenarray
 
-    .if [ebx].asm_tok.token != T_ID
-        asmerr( 2008, [ebx].asm_tok.string_ptr )
+    .if [ebx].asmtok.token != T_ID
+        asmerr( 2008, [ebx].asmtok.string_ptr )
         jmp toend
     .endif
     ;
@@ -45,9 +45,9 @@ WriteCodeLabel PROC USES esi edi ebx line, tokenarray:PTR asm_tok
     ;
     ; v2.04: call ParseLine() to parse the "label" part of the line
     ;
-    movzx esi,[ebx+32].asm_tok.token
-    mov [ebx+32].asm_tok.token,T_FINAL
-    mov edi,[ebx+32].asm_tok.tokpos
+    movzx esi,[ebx+32].asmtok.token
+    mov [ebx+32].asmtok.token,T_FINAL
+    mov edi,[ebx+32].asmtok.tokpos
     mov al,[edi]
     mov BYTE PTR [edi],0
     push ModuleInfo.token_count
@@ -61,7 +61,7 @@ WriteCodeLabel PROC USES esi edi ebx line, tokenarray:PTR asm_tok
     mov [edi],al
     pop ModuleInfo.token_count
     mov eax,esi
-    mov [ebx+32].asm_tok.token,al
+    mov [ebx+32].asmtok.token,al
     mov eax,NOT_ERROR
 
 toend:
@@ -74,7 +74,7 @@ WriteCodeLabel ENDP
 ; 2. (text) macros are expanded by ExpandLine()
 ; 3. "preprocessor" directives are executed
 
-PreprocessLine PROC USES esi ebx line:LPSTR, tokenarray:PTR asm_tok
+PreprocessLine PROC USES esi ebx line:LPSTR, tokenarray:PTR asmtok
 
     mov ebx,tokenarray
     xor eax,eax
@@ -131,7 +131,7 @@ endif
 
     xor esi,esi
     .if ModuleInfo.token_count > 2 && \
-        ( [ebx+16].asm_tok.token == T_COLON || [ebx+16].asm_tok.token == T_DBL_COLON )
+        ( [ebx+16].asmtok.token == T_COLON || [ebx+16].asmtok.token == T_DBL_COLON )
         mov esi,32
     .endif
 

@@ -418,6 +418,7 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
     uint_32 size;
     uint_32 psize;
     int reg;
+    int reg_64;
     int reg2;
     int i, i32;
     int base;
@@ -457,7 +458,7 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
 	    }
 	}
     }
-    if ( opnd->idx_reg != NULL ) {
+    if ( opnd->kind == EXPR_ADDR &&  opnd->idx_reg != NULL ) {
 	reg2 = opnd->idx_reg->tokval;
 	if ( GetValueSp( reg2 ) & OP_R ) {
 	    i = GetRegNo( reg2 );
@@ -475,6 +476,7 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
 	*regs_used = 0;
     }
 
+    index += fcscratch;
     offset = index*8;
     if ( vector_call && index < 6 )
 	offset += offset;
@@ -593,7 +595,19 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
 
     } else {
 
-	if ( addr || psize > 8 ) { /* psize > 8 shouldn't happen! */
+	reg_64 = 0;
+	if ( opnd->kind == EXPR_REG && !opnd->indirect ) {
+
+	    if ( opnd->base_reg[1].token == T_DBL_COLON ) {
+
+		/* case <reg>::<reg> */
+
+		reg_64 = opnd->base_reg[2].tokval;
+		fcscratch++;
+	    }
+	}
+
+	if ( addr || ( !reg_64 && psize > 8 ) ) { /* psize > 8 shouldn't happen! */
 	    if ( psize >= 4 )
 		AddLineQueueX( " lea %r, %s", ms64_regs[index+2*4+(psize > 4 ? 4 : 0)], paramvalue );
 	    else
@@ -628,7 +642,8 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
 	case 1: base =	0*4; break;
 	case 2: base =	1*4; break;
 	case 4: base =	2*4; break;
-	default:base =	3*4; break;
+	default:
+	    base = 3*4; break;
 	}
 	i = ms64_regs[index+base];
 	i32 = i;
@@ -638,6 +653,16 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
 	/* optimization if the register holds the value already */
 	if ( opnd->kind == EXPR_REG && opnd->indirect == FALSE ) {
 	    if ( GetValueSp( reg ) & OP_R ) {
+
+		if ( reg_64 ) {
+		    if ( i != reg_64 )
+			AddLineQueueX( " mov %r, %r", i, reg_64 );
+		    i = ms64_regs[index+3*4+1];
+		    if ( i != reg )
+			AddLineQueueX( " mov %r, %r", i, reg );
+		    return( 1 );
+		}
+
 		if ( i == reg ) {
 		    return( 1 );
 		}
@@ -898,6 +923,19 @@ static int elf64_param( struct dsym const *proc, int index, struct dsym *param,
 		CheckXMM( opnd->base_reg->tokval, index, param, opnd, paramvalue, regs_used );
 		return 1;
 	    } else if ( GetValueSp( reg ) & OP_R ) {
+
+		/* case <reg>::<reg> */
+
+		if ( psize == 16 && size == 8 && opnd->base_reg[1].token == T_DBL_COLON ) {
+
+		    if ( i != opnd->base_reg[2].tokval )
+			AddLineQueueX( " mov %r, %r", i, opnd->base_reg[2].tokval );
+		    i = elf64_regs[index+3*6+1];
+		    if ( i != reg )
+			AddLineQueueX( " mov %r, %r", i, reg );
+		    return( 1 );
+		}
+
 		if ( i == reg ) {
 		    return( 1 );
 		}

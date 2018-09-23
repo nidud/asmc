@@ -52,9 +52,9 @@ _brachets   db 0    ; proc ( ... )
     .code
 
     option  proc:private
-    assume  ecx:ptr asm_tok
+    assume  ecx:ptr asmtok
 
-IsMultiLine proc fastcall tokenarray:LPTOKEN
+IsMultiLine proc fastcall tokenarray:ptr asmtok
     ;
     ; test line concatenation if last token is a comma.
     ; dont concat EQU, macro invocations or
@@ -174,9 +174,9 @@ ConcatLine proc uses esi edi edx ecx src, cnt, o, ls
 ConcatLine endp
 
     assume ecx:nothing
-    assume ebx:ptr asm_tok
+    assume ebx:ptr asmtok
 
-get_string proc uses esi edi ebx buf:LPTOKEN, p:ptr line_status
+get_string proc uses esi edi ebx buf:ptr asmtok, p:ptr line_status
 
     local   symbol_c:   SBYTE,
             symbol_o:   SBYTE,
@@ -474,7 +474,7 @@ get_string endp
     assume edx:nothing
     assume esi:ptr line_status
 
-get_special_symbol proc fastcall uses esi edi ebx buf:ptr asm_tok , p:ptr line_status
+get_special_symbol proc fastcall uses esi edi ebx buf:ptr asmtok , p:ptr line_status
 
     mov ebx,buf
     mov esi,p
@@ -568,12 +568,12 @@ get_special_symbol proc fastcall uses esi edi ebx buf:ptr asm_tok , p:ptr line_s
                 ; [...][.type].x(...)
                 ;
                 lea edi,[ebx-16*3]
-                .if [edi].asm_tok.token == T_CL_SQ_BRACKET
+                .if [edi].asmtok.token == T_CL_SQ_BRACKET
                     add edi,32
                     inc eax
                     mov edx,SYM_TYPE
                 .else
-                    SymFind( [edi].asm_tok.string_ptr )
+                    SymFind( [edi].asmtok.string_ptr )
                     xor edx,edx
                 .endif
             .endif
@@ -628,22 +628,22 @@ get_special_symbol proc fastcall uses esi edi ebx buf:ptr asm_tok , p:ptr line_s
                     ;
                     mov eax,[esi].index
                     .endc .if eax < 5
-                    .endc .if [edi-16].asm_tok.token != T_DOT
-                    .endc .if [edi-32].asm_tok.token != T_CL_SQ_BRACKET
+                    .endc .if [edi-16].asmtok.token != T_DOT
+                    .endc .if [edi-32].asmtok.token != T_CL_SQ_BRACKET
                     sub edi,48
                     sub eax,3
                     mov edx,1 ; v2.27 - added: [foo(&[..])+rcx].class.method()
                     .repeat
-                        .if [edi].asm_tok.token == T_OP_SQ_BRACKET
+                        .if [edi].asmtok.token == T_OP_SQ_BRACKET
                             dec edx
                             .break .ifz
-                        .elseif [edi].asm_tok.token == T_CL_SQ_BRACKET
+                        .elseif [edi].asmtok.token == T_CL_SQ_BRACKET
                             inc edx
                         .endif
                         sub edi,16
                         dec eax
                     .untilz
-                    .endc .if [edi].asm_tok.token != T_OP_SQ_BRACKET
+                    .endc .if [edi].asmtok.token != T_OP_SQ_BRACKET
 
                   .case edx == SYM_STACK
                   .case edx == SYM_INTERNAL
@@ -661,7 +661,7 @@ get_special_symbol proc fastcall uses esi edi ebx buf:ptr asm_tok , p:ptr line_s
                     .endc
                 .endsw
 
-                or [edi].asm_tok.hll_flags,cl
+                or [edi].asmtok.hll_flags,cl
 
             .else
                 mov edi,[esi].input
@@ -814,7 +814,7 @@ toend:
     ret
 get_special_symbol endp
 
-get_number proc fastcall uses esi edi ebx buf:LPTOKEN, p:ptr line_status
+get_number proc fastcall uses esi edi ebx buf:ptr asmtok, p:ptr line_status
 
     mov ebx,buf
     mov esi,p
@@ -1030,7 +1030,7 @@ get_number ENDP
 
     assume edx:ptr line_status
 
-get_id_in_backquotes proc fastcall uses esi edi ebx buf:LPTOKEN, p:ptr line_status
+get_id_in_backquotes proc fastcall uses esi edi ebx buf:ptr asmtok, p:ptr line_status
 
     mov ebx,buf
     inc [edx].input
@@ -1065,7 +1065,7 @@ get_id_in_backquotes proc fastcall uses esi edi ebx buf:LPTOKEN, p:ptr line_stat
 
 get_id_in_backquotes endp
 
-get_id proc fastcall uses esi edi ebx buf:LPTOKEN, p:ptr line_status
+get_id proc fastcall uses esi edi ebx buf:ptr asmtok, p:ptr line_status
 
     mov ebx,buf
     mov esi,[edx].input
@@ -1251,7 +1251,7 @@ StartComment endp
     option proc:public
     assume esi:nothing
 
-GetToken proc fastcall tokenarray:LPTOKEN, p:ptr line_status
+GetToken proc fastcall tokenarray:ptr asmtok, p:ptr line_status
     ;
     ; get one token.
     ; possible return values: NOT_ERROR, ERROR, EMPTY.
@@ -1267,7 +1267,7 @@ GetToken proc fastcall tokenarray:LPTOKEN, p:ptr line_status
     ; [bx].abc    -> . is an operator
     ; varname.abc -> . is an operator
     ;
-    mov [ecx].asm_tok.hll_flags,0
+    mov [ecx].asmtok.hll_flags,0
     mov eax,[edx].input
     movzx eax,BYTE PTR [eax]
 
@@ -1283,7 +1283,7 @@ GetToken proc fastcall tokenarray:LPTOKEN, p:ptr line_status
         mov eax,[edx].input
         movzx eax,BYTE PTR [eax+1]
         .endc .if !( _ltype[eax+1] & _LABEL or _DIGIT )
-        movzx eax,[ecx-16].asm_tok.token
+        movzx eax,[ecx-16].asmtok.token
         .if ![edx].index || \
             (eax != T_REG && eax != T_CL_BRACKET && eax != T_CL_SQ_BRACKET && eax != T_ID)
 
@@ -1295,7 +1295,7 @@ toend:
     ret
 GetToken ENDP
 
-Tokenize PROC USES esi edi ebx line:LPSTR, start:UINT, tokenarray:ptr asm_tok, flags:UINT
+Tokenize PROC USES esi edi ebx line:LPSTR, start:UINT, tokenarray:ptr asmtok, flags:UINT
 
   local rc, p:line_status
 ;
@@ -1418,7 +1418,7 @@ Tokenize PROC USES esi edi ebx line:LPSTR, start:UINT, tokenarray:ptr asm_tok, f
 
           .case [ebx].token == T_DBL_COLON
             mov eax,tokenarray
-            or [eax].asm_tok.hll_flags,T_HLL_DBLCOLON
+            or [eax].asmtok.hll_flags,T_HLL_DBLCOLON
             .endc
         .endsw
 
@@ -1434,7 +1434,7 @@ Tokenize PROC USES esi edi ebx line:LPSTR, start:UINT, tokenarray:ptr asm_tok, f
         .if !(flags & TOK_RESCAN)
 
             mov eax,tokenarray
-            movzx ecx,[eax+16].asm_tok.token
+            movzx ecx,[eax+16].asmtok.token
             mov eax,p.index
 
             .if !eax || (eax == 2 && (ecx == T_COLON || ecx == T_DBL_COLON))

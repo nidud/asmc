@@ -246,7 +246,8 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 	    } else
 		asize2 = SizeFromRegister( tokenarray[j].tokval );
 	    asize = SizeFromRegister( tokenarray[j+2].tokval );
-	    AddLineQueueX( " push %r", tokenarray[j].tokval );
+	    if ( asize2 != 8 )
+		AddLineQueueX( " push %r", tokenarray[j].tokval );
 	    /* v2.04: changed */
 	    if (( curr->sym.is_vararg ) && (asize + asize2) != CurrWordSize )
 		size_vararg += asize2;
@@ -257,7 +258,10 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 	    opnd.kind = EXPR_REG;
 	    opnd.indirect = FALSE;
 	    opnd.sym = NULL;
-	    opnd.base_reg = &tokenarray[j+2]; /* for error msg 'eax overwritten...' */
+	    if ( asize2 != 8 )
+		opnd.base_reg = &tokenarray[j+2]; /* for error msg 'eax overwritten...' */
+	    else
+		opnd.base_reg = &tokenarray[j];
 	} else {
 	    /* v2.06: don't handle forward refs if -Zne is set */
 	    //if ( EvalOperand( &j, Token_Count, &opnd, 0 ) == ERROR ) {

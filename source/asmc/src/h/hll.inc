@@ -99,12 +99,12 @@ GetHllLabel	MACRO
 	exitm	<eax>
 	ENDM
 
-ExpandLine	proto :LPSTR, :PTR asm_tok
-ExpandCStrings	proto :ptr asm_tok
-ExpandHllProc	proto :LPSTR, :SINT, :ptr asm_tok
+ExpandLine	proto :LPSTR, :PTR asmtok
+ExpandCStrings	proto :ptr asmtok
+ExpandHllProc	proto :LPSTR, :SINT, :ptr asmtok
 
-GenerateCString proto :SINT, :PTR asm_tok
-EvalOperand	proto :SINT, :PTR asm_tok, :SINT, :PTR expr, :SINT
+GenerateCString proto :SINT, :PTR asmtok
+EvalOperand	proto :SINT, :PTR asmtok, :SINT, :PTR expr, :SINT
 
 GetCurrOffset	proto
 QueueTestLines	proto :LPSTR
@@ -117,7 +117,7 @@ GetResWName	proto :UINT, :LPSTR
 EvaluateHllExpression proto \
 		   hll: ptr hll_item,
 		     i: ptr SINT,
-	    tokenarray: ptr asm_tok,
+	    tokenarray: ptr asmtok,
 		ilabel: SINT,
 	       is_true: SINT,
 		buffer: LPSTR
@@ -125,7 +125,7 @@ EvaluateHllExpression proto \
 ExpandHllExpression proto \
 		   hll: ptr hll_item,
 		     i: ptr SINT,
-	    tokenarray: ptr asm_tok,
+	    tokenarray: ptr asmtok,
 		ilabel: SINT,
 	       is_true: SINT,
 		buffer: LPSTR
@@ -133,12 +133,12 @@ ExpandHllExpression proto \
 GetExpression	proto \
 		      : ptr hll_item,
 		      : ptr SINT,
-		      : ptr asm_tok,
+		      : ptr asmtok,
 		      : SINT,
 		      : UINT,
 		      : LPSTR,
 		      : ptr hll_opnd
 
-ForDirective	proto :SINT, :ptr asm_tok
+ForDirective	proto :SINT, :ptr asmtok
 
 endif ; __HLL_INC

@@ -108,13 +108,13 @@ Assignopc proc private uses edi buffer:LPSTR, opc1:LPSTR, opc2:LPSTR, string:LPS
 
 Assignopc endp
 
-ParseAssignment proc private uses esi edi ebx buffer:ptr sbyte, tokenarray:ptr asm_tok
+ParseAssignment proc private uses esi edi ebx buffer:ptr sbyte, tokenarray:ptr asmtok
 
     mov edi,buffer
     mov ebx,tokenarray
 
-    assume ebx:ptr asm_tok
-    assume esi:ptr asm_tok
+    assume ebx:ptr asmtok
+    assume esi:ptr asmtok
 
     mov edx,[ebx].string_ptr
     mov cl,[ebx].token
@@ -275,7 +275,7 @@ ParseAssignment proc private uses esi edi ebx buffer:ptr sbyte, tokenarray:ptr a
 ParseAssignment endp
 
 RenderAssignment proc private uses esi edi ebx dest:ptr sbyte,
-    source:ptr sbyte, tokenarray:ptr asm_tok
+    source:ptr sbyte, tokenarray:ptr asmtok
 
   local buffer[MAX_LINE_LEN]:SBYTE
   local tokbuf[MAX_LINE_LEN]:SBYTE
@@ -310,10 +310,10 @@ RenderAssignment proc private uses esi edi ebx dest:ptr sbyte,
 
 RenderAssignment endp
 
-    assume  ebx:ptr asm_tok
+    assume  ebx:ptr asmtok
     assume  esi:ptr hll_item
 
-ForDirective proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok
+ForDirective proc uses esi edi ebx i:SINT, tokenarray:ptr asmtok
 
 local   rc:SINT,
         cmd:UINT,

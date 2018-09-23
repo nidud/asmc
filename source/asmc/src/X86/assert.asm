@@ -17,10 +17,10 @@ MAXSAVESTACK equ 124
 
     .code
 
-    assume ebx: ptr asm_tok
+    assume ebx: ptr asmtok
     assume esi: ptr hll_item
 
-AssertDirective proc uses esi edi ebx i:SINT, tokenarray:ptr asm_tok
+AssertDirective proc uses esi edi ebx i:SINT, tokenarray:ptr asmtok
 
 local rc:SINT,cmd:UINT,
       buff[16]:SBYTE,
@@ -52,12 +52,12 @@ local rc:SINT,cmd:UINT,
 
         mov edx,i
         shl edx,4
-        mov al,[ebx+edx].asm_tok.token
+        mov al,[ebx+edx].asmtok.token
         .if al == T_COLON
 
             add i,2
-            mov edi,[ebx+edx+16].asm_tok.string_ptr
-            mov al,[ebx+edx+16].asm_tok.token
+            mov edi,[ebx+edx+16].asmtok.string_ptr
+            mov al,[ebx+edx+16].asmtok.token
 
             .if al == T_ID
 

@@ -1,0 +1,777 @@
+ifndef _WS2DEF_
+_WS2DEF_ equ <>
+
+include winapifamily.inc
+
+if NOT defined(_WINSOCK_DEPRECATED_BY)
+if ((defined(_WINSOCK_DEPRECATED_NO_WARNINGS) OR defined(BUILD_WINDOWS)) AND NOT defined(_WINSOCK_DEPRECATE_WARNINGS)) OR defined(MIDL_PASS)
+_WINSOCK_DEPRECATED_BY macro replacement
+	exitm<1>
+	endm
+else
+_WINSOCK_DEPRECATED_BY macro replacement
+	exitm<__declspec(deprecated("Use " ## replacement ## " instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings"))>
+	endm
+endif
+endif
+
+if NOT defined(_WINSOCK2API_) AND defined(_WINSOCKAPI_)
+.err<Do not include winsock.inc and ws2def.inc in the same module. Instead include only winsock2.inc>
+endif
+
+if defined(_PREFAST_) AND defined(IPV6_PREFAST_SAFE)
+include ipv6prefast.inc
+endif
+
+include inaddr.inc
+
+ADDRESS_FAMILY		typedef WORD
+
+AF_UNSPEC		equ 0
+AF_UNIX			equ 1
+AF_INET			equ 2
+AF_IMPLINK		equ 3
+AF_PUP			equ 4
+AF_CHAOS		equ 5
+AF_NS			equ 6
+AF_IPX			equ AF_NS
+AF_ISO			equ 7
+AF_OSI			equ AF_ISO
+AF_ECMA			equ 8
+AF_DATAKIT		equ 9
+AF_CCITT		equ 10
+AF_SNA			equ 11
+AF_DECnet		equ 12
+AF_DLI			equ 13
+AF_LAT			equ 14
+AF_HYLINK		equ 15
+AF_APPLETALK		equ 16
+AF_NETBIOS		equ 17
+AF_VOICEVIEW		equ 18
+AF_FIREFOX		equ 19
+AF_UNKNOWN1		equ 20
+AF_BAN			equ 21
+AF_ATM			equ 22
+AF_INET6		equ 23
+AF_CLUSTER		equ 24
+AF_12844		equ 25
+AF_IRDA			equ 26
+AF_NETDES		equ 28
+
+if(_WIN32_WINNT LT 0x0501)
+AF_MAX			equ 29
+else
+
+AF_TCNPROCESS		equ 29
+AF_TCNMESSAGE		equ 30
+AF_ICLFXBM		equ 31
+
+if(_WIN32_WINNT LT 0x0600)
+AF_MAX			equ 32
+else
+AF_BTH			equ 32
+if(_WIN32_WINNT LT 0x0601)
+AF_MAX			equ 33
+else
+AF_LINK			equ 33
+AF_MAX			equ 34
+endif
+endif
+
+endif
+
+SOCK_STREAM		equ 1
+SOCK_DGRAM		equ 2
+SOCK_RAW		equ 3
+SOCK_RDM		equ 4
+SOCK_SEQPACKET		equ 5
+
+SOL_SOCKET		equ 0xffff
+
+SO_DEBUG		equ 0x0001
+SO_ACCEPTCONN		equ 0x0002
+SO_REUSEADDR		equ 0x0004
+SO_KEEPALIVE		equ 0x0008
+SO_DONTROUTE		equ 0x0010
+SO_BROADCAST		equ 0x0020
+SO_USELOOPBACK		equ 0x0040
+SO_LINGER		equ 0x0080
+SO_OOBINLINE		equ 0x0100
+
+SO_DONTLINGER		equ (not SO_LINGER)
+SO_EXCLUSIVEADDRUSE	equ (not SO_REUSEADDR)
+
+SO_SNDBUF		equ 0x1001
+SO_RCVBUF		equ 0x1002
+SO_SNDLOWAT		equ 0x1003
+SO_RCVLOWAT		equ 0x1004
+SO_SNDTIMEO		equ 0x1005
+SO_RCVTIMEO		equ 0x1006
+SO_ERROR		equ 0x1007
+SO_TYPE			equ 0x1008
+SO_BSP_STATE		equ 0x1009
+
+SO_GROUP_ID		equ 0x2001
+SO_GROUP_PRIORITY	equ 0x2002
+SO_MAX_MSG_SIZE		equ 0x2003
+
+SO_CONDITIONAL_ACCEPT	equ 0x3002
+
+SO_PAUSE_ACCEPT		equ 0x3003
+SO_COMPARTMENT_ID	equ 0x3004
+if (_WIN32_WINNT GE 0x0600)
+SO_RANDOMIZE_PORT	equ 0x3005
+SO_PORT_SCALABILITY	equ 0x3006
+endif
+
+WSK_SO_BASE		equ 0x4000
+TCP_NODELAY		equ 0x0001
+
+SOCKADDR		STRUC
+if (_WIN32_WINNT LT 0x0600)
+sa_family		dw ?
+else
+sa_family		ADDRESS_FAMILY ?
+endif
+sa_data			db 14 dup(?)
+SOCKADDR		ENDS
+PSOCKADDR		typedef ptr SOCKADDR
+LPSOCKADDR		typedef ptr SOCKADDR
+
+ifndef __CSADDR_DEFINED__
+__CSADDR_DEFINED__ equ 1
+
+
+SOCKET_ADDRESS		STRUC
+lpSockaddr		LPSOCKADDR ?
+iSockaddrLength		SINT ?
+SOCKET_ADDRESS		ENDS
+PSOCKET_ADDRESS		typedef ptr SOCKET_ADDRESS
+LPSOCKET_ADDRESS	typedef ptr SOCKET_ADDRESS
+
+SOCKET_ADDRESS_LIST	STRUC
+iAddressCount		SINT ?
+Address			SOCKET_ADDRESS 1 dup(<>)
+SOCKET_ADDRESS_LIST	ENDS
+PSOCKET_ADDRESS_LIST	typedef ptr SOCKET_ADDRESS_LIST
+LPSOCKET_ADDRESS_LIST	typedef ptr SOCKET_ADDRESS_LIST
+
+if (_WIN32_WINNT GE 0x0600)
+
+SIZEOF_SOCKET_ADDRESS_LIST macro AddressCount
+	exitm<>
+	endm
+endif
+
+CSADDR_INFO		STRUC
+LocalAddr		SOCKET_ADDRESS <>
+RemoteAddr		SOCKET_ADDRESS <>
+iSocketType		SINT ?
+iProtocol		SINT ?
+CSADDR_INFO		ENDS
+PCSADDR_INFO		typedef ptr CSADDR_INFO
+LPCSADDR_INFO		typedef ptr CSADDR_INFO
+endif
+
+_SS_MAXSIZE		equ 128
+_SS_ALIGNSIZE		equ (sizeof(qword))
+
+if(_WIN32_WINNT GE 0x0600)
+_SS_PAD1SIZE		equ (_SS_ALIGNSIZE - sizeof(WORD))
+_SS_PAD2SIZE		equ (_SS_MAXSIZE - (sizeof(WORD) + _SS_PAD1SIZE + _SS_ALIGNSIZE))
+else
+_SS_PAD1SIZE		equ (_SS_ALIGNSIZE - sizeof (SWORD))
+_SS_PAD2SIZE		equ (_SS_MAXSIZE - (sizeof (SWORD) + _SS_PAD1SIZE + _SS_ALIGNSIZE))
+endif
+
+SOCKADDR_STORAGE_LH	STRUC
+ss_family		ADDRESS_FAMILY ?
+__ss_pad1		db _SS_PAD1SIZE dup(?)
+__ss_align		dq ?
+__ss_pad2		db _SS_PAD2SIZE dup(?)
+SOCKADDR_STORAGE_LH	ENDS
+PSOCKADDR_STORAGE_LH	typedef ptr SOCKADDR_STORAGE_LH
+LPSOCKADDR_STORAGE_LH	typedef ptr SOCKADDR_STORAGE_LH
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+SOCKADDR_STORAGE_XP	STRUC
+ss_family		sword ?
+__ss_pad1		sbyte _SS_PAD1SIZE dup(?)
+__ss_align		sqword ?
+__ss_pad2		sbyte _SS_PAD2SIZE dup(?)
+SOCKADDR_STORAGE_XP	ENDS
+PSOCKADDR_STORAGE_XP	typedef ptr SOCKADDR_STORAGE_XP
+LPSOCKADDR_STORAGE_XP	typedef ptr SOCKADDR_STORAGE_XP
+endif
+
+if(_WIN32_WINNT GE 0x0600)
+;SOCKADDR_STORAGE	typedef SOCKADDR_STORAGE_LH
+SOCKADDR_STORAGE	equ <SOCKADDR_STORAGE_LH>
+LPSOCKADDR_STORAGE	typedef ptr SOCKADDR_STORAGE
+elseif (_WIN32_WINNT GE 0x0501)
+;SOCKADDR_STORAGE	typedef SOCKADDR_STORAGE_XP
+SOCKADDR_STORAGE	equ <SOCKADDR_STORAGE_XP>
+LPSOCKADDR_STORAGE	typedef ptr SOCKADDR_STORAGE
+else
+SOCKADDR_STORAGE	equ <SOCKADDR_STORAGE_LH>
+endif
+
+if(_WIN32_WINNT GE 0x0602)
+SOCKET_PROCESSOR_AFFINITY  STRUC
+Processor		PROCESSOR_NUMBER ?
+NumaNodeId		dw ?
+Reserved		dw ?
+SOCKET_PROCESSOR_AFFINITY ENDS
+PSOCKET_PROCESSOR_AFFINITY typedef ptr SOCKET_PROCESSOR_AFFINITY
+endif
+
+IOC_UNIX		equ 0x00000000
+IOC_WS2			equ 0x08000000
+IOC_PROTOCOL		equ 0x10000000
+IOC_VENDOR		equ 0x18000000
+
+if (_WIN32_WINNT GE 0x0600)
+IOC_WSK			equ (IOC_WS2 OR 0x07000000)
+endif ;;(_WIN32_WINNT GE 0x0600)
+
+_WSAIO macro x,y
+	exitm<(IOC_VOID OR (x) OR (y))>
+	endm
+_WSAIOR macro x,y
+	exitm<(IOC_OUT OR (x) OR (y))>
+	endm
+_WSAIOW macro x,y
+	exitm<(IOC_IN OR (x) OR (y))>
+	endm
+_WSAIORW macro x,y
+	exitm<(IOC_INOUT OR (x) OR (y))>
+	endm
+
+SIO_ASSOCIATE_HANDLE	equ _WSAIOW(IOC_WS2,1)
+SIO_ENABLE_CIRCULAR_QUEUEING equ _WSAIO(IOC_WS2,2)
+SIO_FIND_ROUTE		equ _WSAIOR(IOC_WS2,3)
+SIO_FLUSH		equ _WSAIO(IOC_WS2,4)
+SIO_GET_BROADCAST_ADDRESS equ _WSAIOR(IOC_WS2,5)
+SIO_GET_EXTENSION_FUNCTION_POINTER equ _WSAIORW(IOC_WS2,6)
+SIO_GET_QOS		equ _WSAIORW(IOC_WS2,7)
+SIO_GET_GROUP_QOS	equ _WSAIORW(IOC_WS2,8)
+SIO_MULTIPOINT_LOOPBACK equ _WSAIOW(IOC_WS2,9)
+SIO_MULTICAST_SCOPE	equ _WSAIOW(IOC_WS2,10)
+SIO_SET_QOS		equ _WSAIOW(IOC_WS2,11)
+SIO_SET_GROUP_QOS	equ _WSAIOW(IOC_WS2,12)
+SIO_TRANSLATE_HANDLE	equ _WSAIORW(IOC_WS2,13)
+SIO_ROUTING_INTERFACE_QUERY equ _WSAIORW(IOC_WS2,20)
+SIO_ROUTING_INTERFACE_CHANGE equ _WSAIOW(IOC_WS2,21)
+SIO_ADDRESS_LIST_QUERY	equ _WSAIOR(IOC_WS2,22)
+SIO_ADDRESS_LIST_CHANGE equ _WSAIO(IOC_WS2,23)
+SIO_QUERY_TARGET_PNP_HANDLE equ _WSAIOR(IOC_WS2,24)
+SIO_QUERY_RSS_PROCESSOR_INFO equ _WSAIOR(IOC_WS2,37)
+
+if(_WIN32_WINNT GE 0x0501)
+SIO_ADDRESS_LIST_SORT	equ _WSAIORW(IOC_WS2,25)
+endif
+
+if (_WIN32_WINNT GE 0x0600)
+SIO_RESERVED_1		equ _WSAIOW(IOC_WS2,26)
+SIO_RESERVED_2		equ _WSAIOW(IOC_WS2,33)
+endif
+
+SIO_GET_MULTIPLE_EXTENSION_FUNCTION_POINTER equ _WSAIORW(IOC_WS2,36)
+
+IPPROTO_IP		equ 0
+
+if(_WIN32_WINNT GE 0x0501)
+IPPROTO_HOPOPTS		equ 0
+endif
+IPPROTO_ICMP		equ 1
+IPPROTO_IGMP		equ 2
+IPPROTO_GGP		equ 3
+if(_WIN32_WINNT GE 0x0501)
+IPPROTO_IPV4		equ 4
+endif
+if(_WIN32_WINNT GE 0x0600)
+IPPROTO_ST		equ 5
+endif
+IPPROTO_TCP		equ 6
+if(_WIN32_WINNT GE 0x0600)
+IPPROTO_CBT		equ 7
+IPPROTO_EGP		equ 8
+IPPROTO_IGP		equ 9
+endif
+IPPROTO_PUP		equ 12
+IPPROTO_UDP		equ 17
+IPPROTO_IDP		equ 22
+if(_WIN32_WINNT GE 0x0600)
+IPPROTO_RDP		equ 27
+endif
+if(_WIN32_WINNT GE 0x0501)
+IPPROTO_IPV6		equ 41
+IPPROTO_ROUTING		equ 43
+IPPROTO_FRAGMENT	equ 44
+IPPROTO_ESP		equ 50
+IPPROTO_AH		equ 51
+IPPROTO_ICMPV6		equ 58
+IPPROTO_NONE		equ 59
+IPPROTO_DSTOPTS		equ 60
+endif
+IPPROTO_ND		equ 77
+if(_WIN32_WINNT GE 0x0501)
+IPPROTO_ICLFXBM		equ 78
+endif
+if(_WIN32_WINNT GE 0x0600)
+IPPROTO_PIM		equ 103
+IPPROTO_PGM		equ 113
+IPPROTO_L2TP		equ 115
+IPPROTO_SCTP		equ 132
+endif
+IPPROTO_RAW		equ 255
+IPPROTO_MAX		equ 256
+IPPROTO_RESERVED_RAW	equ 257
+IPPROTO_RESERVED_IPSEC	equ 258
+IPPROTO_RESERVED_IPSECOFFLOAD equ 259
+IPPROTO_RESERVED_WNV	equ 260
+IPPROTO_RESERVED_MAX	equ 261
+
+IPPORT_TCPMUX		equ 1
+IPPORT_ECHO		equ 7
+IPPORT_DISCARD		equ 9
+IPPORT_SYSTAT		equ 11
+IPPORT_DAYTIME		equ 13
+IPPORT_NETSTAT		equ 15
+IPPORT_QOTD		equ 17
+IPPORT_MSP		equ 18
+IPPORT_CHARGEN		equ 19
+IPPORT_FTP_DATA		equ 20
+IPPORT_FTP		equ 21
+IPPORT_TELNET		equ 23
+IPPORT_SMTP		equ 25
+IPPORT_TIMESERVER	equ 37
+IPPORT_NAMESERVER	equ 42
+IPPORT_WHOIS		equ 43
+IPPORT_MTP		equ 57
+
+IPPORT_TFTP		equ 69
+IPPORT_RJE		equ 77
+IPPORT_FINGER		equ 79
+IPPORT_TTYLINK		equ 87
+IPPORT_SUPDUP		equ 95
+
+IPPORT_POP3		equ 110
+IPPORT_NTP		equ 123
+IPPORT_EPMAP		equ 135
+IPPORT_NETBIOS_NS	equ 137
+IPPORT_NETBIOS_DGM	equ 138
+IPPORT_NETBIOS_SSN	equ 139
+IPPORT_IMAP		equ 143
+IPPORT_SNMP		equ 161
+IPPORT_SNMP_TRAP	equ 162
+IPPORT_IMAP3		equ 220
+IPPORT_LDAP		equ 389
+IPPORT_HTTPS		equ 443
+IPPORT_MICROSOFT_DS	equ 445
+IPPORT_EXECSERVER	equ 512
+IPPORT_LOGINSERVER	equ 513
+IPPORT_CMDSERVER	equ 514
+IPPORT_EFSSERVER	equ 520
+
+IPPORT_BIFFUDP		equ 512
+IPPORT_WHOSERVER	equ 513
+IPPORT_ROUTESERVER	equ 520
+
+IPPORT_RESERVED		equ 1024
+if (_WIN32_WINNT GE 0x0600)
+IPPORT_REGISTERED_MIN	equ IPPORT_RESERVED
+IPPORT_REGISTERED_MAX	equ 0xbfff
+IPPORT_DYNAMIC_MIN	equ 0xc000
+IPPORT_DYNAMIC_MAX	equ 0xffff
+endif
+
+IN_CLASSA macro i
+	exitm<(((i) AND 0x80000000) EQ 0)>
+	endm
+IN_CLASSA_NET		equ 0xff000000
+IN_CLASSA_NSHIFT	equ 24
+IN_CLASSA_HOST		equ 0x00ffffff
+IN_CLASSA_MAX		equ 128
+
+IN_CLASSB macro i
+	exitm<(((i) AND 0xc0000000) EQ 0x80000000)>
+	endm
+IN_CLASSB_NET		equ 0xffff0000
+IN_CLASSB_NSHIFT	equ 16
+IN_CLASSB_HOST		equ 0x0000ffff
+IN_CLASSB_MAX		equ 65536
+
+IN_CLASSC macro i
+	exitm<(((i) AND 0xe0000000) EQ 0xc0000000)>
+	endm
+IN_CLASSC_NET		equ 0xffffff00
+IN_CLASSC_NSHIFT	equ 8
+IN_CLASSC_HOST		equ 0x000000ff
+
+IN_CLASSD macro i
+	exitm<(((i) AND 0xf0000000) EQ 0xe0000000)>
+	endm
+IN_CLASSD_NET		equ 0xf0000000
+IN_CLASSD_NSHIFT	equ 28
+IN_CLASSD_HOST		equ 0x0fffffff
+IN_MULTICAST macro i
+	exitm<IN_CLASSD(i)>
+	endm
+
+INADDR_ANY		equ 0x00000000
+INADDR_LOOPBACK		equ 0x7f000001
+INADDR_BROADCAST	equ 0xffffffff
+INADDR_NONE		equ 0xffffffff
+
+ScopeLevelInterface	equ 1
+ScopeLevelLink		equ 2
+ScopeLevelSubnet	equ 3
+ScopeLevelAdmin		equ 4
+ScopeLevelSite		equ 5
+ScopeLevelOrganization	equ 8
+ScopeLevelGlobal	equ 14
+ScopeLevelCount		equ 16
+
+SCOPE_ID		STRUC
+Value			ULONG ?
+SCOPE_ID		ENDS
+PSCOPE_ID		typedef ptr SCOPE_ID
+
+SCOPEID_UNSPECIFIED_INIT equ <{ 0 }>
+
+SOCKADDR_IN		STRUC
+if(_WIN32_WINNT LT 0x0600)
+sin_family		sword ?
+else
+sin_family		ADDRESS_FAMILY ?
+endif
+sin_port		dw ?
+sin_addr		IN_ADDR <>
+sin_zero		db 8 dup(?)
+SOCKADDR_IN		ENDS
+PSOCKADDR_IN		typedef ptr SOCKADDR_IN
+
+if(_WIN32_WINNT GE 0x0601)
+
+SOCKADDR_DL		STRUC
+sdl_family		ADDRESS_FAMILY ?
+sdl_data		db 8 dup(?)
+sdl_zero		db 4 dup(?)
+SOCKADDR_DL		ENDS
+PSOCKADDR_DL		typedef ptr SOCKADDR_DL
+
+endif
+
+IOCPARM_MASK		equ 0x7f
+IOC_VOID		equ 0x20000000
+IOC_OUT			equ 0x40000000
+IOC_IN			equ 0x80000000
+IOC_INOUT		equ (IOC_IN OR IOC_OUT)
+
+_IO macro x,y
+	exitm<(IOC_VOID OR ((x) SHL 8) OR (y))>
+	endm
+
+_IOR macro x,y,t
+	exitm<(IOC_OUT OR (((long)sizeof(t) AND IOCPARM_MASK) SHL 16) OR ((x) SHL 8) OR (y))>
+	endm
+
+_IOW macro x,y,t
+	exitm<(IOC_IN OR (((long)sizeof(t) AND IOCPARM_MASK) SHL 16) OR ((x) SHL 8) OR (y))>
+	endm
+
+WSABUF			STRUC
+len			ULONG ?
+buf			LPSTR ?
+WSABUF			ENDS
+LPWSABUF		typedef ptr WSABUF
+
+WSAMSG			STRUC
+_name			LPSOCKADDR ?
+namelen			SINT ?
+lpBuffers		LPWSABUF ?
+if(_WIN32_WINNT GE 0x0600)
+dwBufferCount		ULONG ?
+else
+dwBufferCount		dd ?
+endif
+Control			WSABUF <>
+if(_WIN32_WINNT GE 0x0600)
+dwFlags			ULONG ?
+else
+dwFlags			dd ?
+endif
+WSAMSG			ENDS
+PWSAMSG			typedef ptr WSAMSG
+LPWSAMSG		typedef ptr WSAMSG
+
+if(_WIN32_WINNT GE 0x0600)
+_WSACMSGHDR		equ cmsghdr
+endif
+
+WSACMSGHDR		STRUC
+cmsg_len		SIZE_T ?
+cmsg_level		SINT ?
+cmsg_type		SINT ?
+WSACMSGHDR		ENDS
+PWSACMSGHDR		typedef ptr WSACMSGHDR
+LPWSACMSGHDR		typedef ptr WSACMSGHDR
+
+if(_WIN32_WINNT GE 0x0600)
+CMSGHDR			typedef WSACMSGHDR
+PCMSGHDR		typedef ptr WSACMSGHDR
+endif
+
+WSA_CMSGHDR_ALIGN macro len
+	exitm<((len) + TYPE_ALIGNMENT(WSACMSGHDR)-1) & (not (TYPE_ALIGNMENT(WSACMSGHDR)-1))>
+	endm
+
+WSA_CMSGDATA_ALIGN macro len
+	exitm<((len) + MAX_NATURAL_ALIGNMENT-1) & (not (MAX_NATURAL_ALIGNMENT-1))>
+	endm
+
+
+if(_WIN32_WINNT GE 0x0600)
+CMSGHDR_ALIGN		equ WSA_CMSGHDR_ALIGN
+CMSGDATA_ALIGN		equ WSA_CMSGDATA_ALIGN
+endif
+
+WSA_CMSG_FIRSTHDR macro msg
+	exitm<>
+	endm
+
+if(_WIN32_WINNT GE 0x0600)
+CMSG_FIRSTHDR		equ WSA_CMSG_FIRSTHDR
+endif
+
+WSA_CMSG_NXTHDR macro msg, cmsg
+	exitm<>
+	endm
+
+if(_WIN32_WINNT GE 0x0600)
+CMSG_NXTHDR		equ WSA_CMSG_NXTHDR
+endif
+
+WSA_CMSG_DATA macro cmsg
+	exitm<>
+	endm
+
+WSA_CMSG_SPACE macro length
+	exitm<>
+	endm
+
+if(_WIN32_WINNT GE 0x0600)
+CMSG_SPACE		equ WSA_CMSG_SPACE
+endif
+
+WSA_CMSG_LEN macro length
+	exitm<>
+	endm
+
+if(_WIN32_WINNT GE 0x0600)
+CMSG_LEN		equ WSA_CMSG_LEN
+endif
+
+MSG_TRUNC		equ 0x0100
+MSG_CTRUNC		equ 0x0200
+MSG_BCAST		equ 0x0400
+MSG_MCAST		equ 0x0800
+
+AI_PASSIVE		equ 0x00000001
+AI_CANONNAME		equ 0x00000002
+AI_NUMERICHOST		equ 0x00000004
+AI_NUMERICSERV		equ 0x00000008
+
+AI_ALL			equ 0x00000100
+AI_ADDRCONFIG		equ 0x00000400
+AI_V4MAPPED		equ 0x00000800
+
+AI_NON_AUTHORITATIVE	equ 0x00004000
+AI_SECURE		equ 0x00008000
+AI_RETURN_PREFERRED_NAMES equ 0x00010000
+
+AI_FQDN			equ 0x00020000
+AI_FILESERVER		equ 0x00040000
+AI_DISABLE_IDN_ENCODING equ 0x00080000
+AI_EXTENDED		equ 0x80000000
+
+ADDRINFOA		STRUC
+ai_flags		SINT ?
+ai_family		SINT ?
+ai_socktype		SINT ?
+ai_protocol		SINT ?
+ai_addrlen		size_t ?
+ai_canonname		LPSTR ?
+ai_addr			LPSTR ?
+ai_next			PVOID ?
+ADDRINFOA		ENDS
+PADDRINFOA		typedef ptr ADDRINFOA
+
+ADDRINFOW		STRUC
+ai_flags		SINT ?
+ai_family		SINT ?
+ai_socktype		SINT ?
+ai_protocol		SINT ?
+ai_addrlen		size_t ?
+ai_canonname		LPWSTR ?
+ai_addr			PVOID ?
+ai_next			PVOID ?
+ADDRINFOW		ENDS
+PADDRINFOW		typedef ptr ADDRINFOW
+
+if (_WIN32_WINNT GE 0x0600)
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+ADDRINFOEXA		STRUC
+ai_flags		SINT ?
+ai_family		SINT ?
+ai_socktype		SINT ?
+ai_protocol		SINT ?
+ai_addrlen		size_t ?
+ai_canonname		LPSTR ?
+ai_addr			PVOID ?
+ai_blob			PVOID ?
+ai_bloblen		size_t ?
+ai_provider		PVOID ?;LPGUID ?
+ai_next			PVOID ?
+ADDRINFOEXA		ENDS
+PADDRINFOEXA		typedef ptr ADDRINFOEXA
+LPADDRINFOEXA		typedef ptr ADDRINFOEXA
+endif
+
+ADDRINFOEXW		STRUC
+ai_flags		SINT ?
+ai_family		SINT ?
+ai_socktype		SINT ?
+ai_protocol		SINT ?
+ai_addrlen		size_t ?
+ai_canonname		LPWSTR ?
+ai_addr			PVOID ?
+ai_blob			PVOID ?
+ai_bloblen		size_t ?
+ai_provider		PVOID ?;LPGUID ?
+ai_next			PVOID ?
+ADDRINFOEXW		ENDS
+PADDRINFOEXW		typedef ptr ADDRINFOEXW
+LPADDRINFOEXW		typedef ptr ADDRINFOEXW
+
+endif
+
+if (_WIN32_WINNT GE 0x0602)
+
+ADDRINFOEX_VERSION_2	equ 2
+ADDRINFOEX_VERSION_3	equ 3
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+ADDRINFOEX2A		STRUC
+ai_flags		SINT ?
+ai_family		SINT ?
+ai_socktype		SINT ?
+ai_protocol		SINT ?
+ai_addrlen		size_t ?
+ai_canonname		LPSTR ?
+ai_addr			PVOID ?
+ai_blob			PVOID ?
+ai_bloblen		size_t ?
+ai_provider		LPGUID ?
+ai_next			PVOID ?
+ai_version		SINT ?
+ai_fqdn			LPSTR ?
+ADDRINFOEX2A		ENDS
+PADDRINFOEX2A		typedef ptr ADDRINFOEX2A
+LPADDRINFOEX2A		typedef ptr ADDRINFOEX2A
+endif
+
+ADDRINFOEX2W		STRUC
+ai_flags		SINT ?
+ai_family		SINT ?
+ai_socktype		SINT ?
+ai_protocol		SINT ?
+ai_addrlen		size_t ?
+ai_canonname		PWSTR ?
+ai_addr			PVOID ?
+ai_blob			PVOID ?
+ai_bloblen		size_t ?
+ai_provider		LPGUID ?
+ai_next			PVOID ?
+ai_version		SINT ?
+ai_fqdn			PWSTR ?
+ADDRINFOEX2W		ENDS
+PADDRINFOEX2W		typedef ptr ADDRINFOEX2W
+LPADDRINFOEX2W		typedef ptr ADDRINFOEX2W
+
+ADDRINFOEX3		STRUC
+ai_flags		SINT ?
+ai_family		SINT ?
+ai_socktype		SINT ?
+ai_protocol		SINT ?
+ai_addrlen		size_t ?
+ai_canonname		PWSTR ?
+ai_addr			PVOID ?
+ai_blob			PVOID ?
+ai_bloblen		size_t ?
+ai_provider		LPGUID ?
+ai_next			PVOID ?
+ai_version		SINT ?
+ai_fqdn			PWSTR ?
+ai_interfaceindex	SINT ?
+ADDRINFOEX3		ENDS
+PADDRINFOEX3		typedef ptr ADDRINFOEX3
+LPADDRINFOEX3		typedef ptr ADDRINFOEX3
+
+endif
+
+NS_ALL			equ (0)
+
+NS_SAP			equ (1)
+NS_NDS			equ (2)
+NS_PEER_BROWSE		equ (3)
+NS_SLP			equ (5)
+NS_DHCP			equ (6)
+
+NS_TCPIP_LOCAL		equ (10)
+NS_TCPIP_HOSTS		equ (11)
+NS_DNS			equ (12)
+NS_NETBT		equ (13)
+NS_WINS			equ (14)
+
+if(_WIN32_WINNT GE 0x0501)
+NS_NLA			equ (15)
+endif
+
+if(_WIN32_WINNT GE 0x0600)
+NS_BTH			equ (16)
+endif
+
+NS_NBP			equ (20)
+
+NS_MS			equ (30)
+NS_STDA			equ (31)
+NS_NTDS			equ (32)
+
+if(_WIN32_WINNT GE 0x0600)
+NS_EMAIL		equ (37)
+NS_PNRPNAME		equ (38)
+NS_PNRPCLOUD		equ (39)
+endif
+
+NS_X500			equ (40)
+NS_NIS			equ (41)
+NS_NISPLUS		equ (42)
+
+NS_WRQ			equ (50)
+
+NS_NETDES		equ (60)
+
+NI_NOFQDN		equ 0x01
+NI_NUMERICHOST		equ 0x02
+NI_NAMEREQD		equ 0x04
+NI_NUMERICSERV		equ 0x08
+NI_DGRAM		equ 0x10
+
+NI_MAXHOST		equ 1025
+NI_MAXSERV		equ 32
+
+endif

@@ -51,7 +51,11 @@ endif
 
 ifndef _TIME_T_DEFINED
 _TIME_T_DEFINED equ <>
+ifdef _WIN64
+time_t		typedef sqword
+else
 time_t		typedef sdword
+endif
 endif
 
 _finddata_t	STRUC
@@ -67,9 +71,9 @@ ifndef _WFINDDATA_T_DEFINED
 _WFINDDATA_T_DEFINED equ <>
 _wfinddata_t	STRUC
 attrib		dd ?
-time_create	size_t ?	;; -1 for FAT file systems
-time_access	size_t ?	;; -1 for FAT file systems
-time_write	size_t ?
+time_create	time_t ?	;; -1 for FAT file systems
+time_access	time_t ?	;; -1 for FAT file systems
+time_write	time_t ?
 _size		size_t ?
 _name		wchar_t 260 dup(?)
 _wfinddata_t	ENDS

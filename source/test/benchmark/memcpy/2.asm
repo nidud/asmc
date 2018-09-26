@@ -4,9 +4,7 @@
 
     .if r8 <= 32
 
-        option switch:notest
-
-        .switch r8
+        .switch notest r8
 
           .case 0
             ret

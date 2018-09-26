@@ -22,7 +22,8 @@ __initconout endp
 
 __termconout proc
 
-    .if _confh != -1 && _confh != -2
+    xor eax,eax
+    .if _confh > rax
 
 	CloseHandle(_confh)
     .endif
@@ -30,4 +31,4 @@ __termconout proc
 
 __termconout endp
 
-	END
+	end

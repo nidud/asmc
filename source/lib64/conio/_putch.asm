@@ -1,11 +1,13 @@
 include conio.inc
 include io.inc
 
-.code
+    .code
 
-_putch proc char
-    _write(2, &char, 1)
+_putch proc char:UINT
+
+    _write( 2, &char, 1 )
     ret
+
 _putch endp
 
     end

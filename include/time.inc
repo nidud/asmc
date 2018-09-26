@@ -60,8 +60,11 @@ tm_isdst	SINT ?	;; daylight savings time flag
 tm		ENDS
 _TM_DEFINED	equ 1
 endif
-
+ifdef _WIN64
+time_t		typedef sqword
+else
 time_t		typedef sdword
+endif
 LPTIME		typedef ptr time_t
 
 asctime		proto __cdecl :ptr tm

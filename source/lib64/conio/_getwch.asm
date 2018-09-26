@@ -3,8 +3,9 @@ include conio.inc
     .code
 
 _getwch proc uses rbx rdi rsi
-local Count:QWORD
-local Event[MAXINPUTRECORDS]:INPUT_RECORD
+
+  local Count:QWORD
+  local Event[MAXINPUTRECORDS]:INPUT_RECORD
 
     xor edi,edi
     .while !edi
@@ -27,13 +28,14 @@ local Event[MAXINPUTRECORDS]:INPUT_RECORD
                     movzx edi,[rbx].INPUT_RECORD.KeyEvent.UnicodeChar
                     .break .if edi
                 .endif
-                add rbx,SIZE INPUT_RECORD
+                add rbx,sizeof(INPUT_RECORD)
                 dec esi
             .endw
         .endif
     .endw
     mov eax,edi
     ret
+
 _getwch endp
 
     end

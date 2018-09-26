@@ -2,14 +2,15 @@ include conio.inc
 
     .code
 
-    option win64:rsp nosave
+    option win64:nosave
 
-_gotoxy PROC x, y
-    mov eax,edx
-    shl eax,16
-    mov ax,cx
-    SetConsoleCursorPosition(hStdOutput, eax)
+_gotoxy proc x:UINT, y:UINT
+
+    shl edx,16
+    or  edx,ecx
+    SetConsoleCursorPosition(hStdOutput, edx)
     ret
-_gotoxy ENDP
 
-    END
+_gotoxy endp
+
+    end

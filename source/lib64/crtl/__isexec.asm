@@ -5,20 +5,23 @@ include strlib.inc
 
     option win64:rsp nosave
 
-__isexec PROC filename:LPSTR
+__isexec proc filename:LPSTR
+
     .if strext(rcx)
-        mov eax,[rax+1]
-        or  eax,'   '
-        .switch eax
-          .case 'dmc':  mov eax,_EXEC_CMD: .endc
-          .case 'exe':  mov eax,_EXEC_EXE: .endc
-          .case 'moc':  mov eax,_EXEC_COM: .endc
-          .case 'tab':  mov eax,_EXEC_BAT: .endc
-          .default
-            xor eax,eax
+
+        mov ecx,[rax+1]
+        or  ecx,'   '
+        xor eax,eax
+
+        .switch ecx
+          .case 'dmc': mov eax,_EXEC_CMD: .endc
+          .case 'exe': mov eax,_EXEC_EXE: .endc
+          .case 'moc': mov eax,_EXEC_COM: .endc
+          .case 'tab': mov eax,_EXEC_BAT: .endc
         .endsw
     .endif
     ret
-__isexec ENDP
 
-    END
+__isexec endp
+
+    end

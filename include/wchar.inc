@@ -17,7 +17,11 @@ endif
 
 ifndef _TIME_T_DEFINED
 _TIME_T_DEFINED equ <>
-time_t	typedef SDWORD
+ifdef _WIN64
+time_t		typedef sqword
+else
+time_t		typedef sdword
+endif
 endif
 
 ifndef _WCHAR_T_DEFINED
@@ -88,7 +92,7 @@ attrib		dd ?
 time_create	time_t ?
 time_access	time_t ?
 time_write	time_t ?
-_size		dq ?
+_size		_fsize_t ?
 _name		wchar_t 260 dup(?)
 _wfinddata_t	ENDS
 if _INTEGRAL_MAX_BITS GE 64
@@ -97,7 +101,7 @@ attrib		dd ?
 time_create	time_t ?
 time_access	time_t ?
 time_write	time_t ?
-_size		dq ?
+_size		_fsize_t ?
 _name		wchar_t 260 dup(?)
 _wfinddatai64_t ENDS
 endif

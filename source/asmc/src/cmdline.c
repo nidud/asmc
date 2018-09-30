@@ -546,6 +546,7 @@ static void ProcessOption( char **cmdline, char *buffer )
 	Options.warning_error = 1;
 	return;
     case '6niw':	// -win64
+#ifndef __ASMC64__
 	if ( Options.output_format != OFORMAT_BIN ) {
 	    Options.output_format = OFORMAT_COFF;
 	} else {
@@ -556,6 +557,7 @@ static void ProcessOption( char **cmdline, char *buffer )
 	Options.sub_format = SFORMAT_64BIT;
 	define_name( "_WIN64", "1" );
 	Options.aflag |= _AF_REGAX;
+#endif
 	return;
     case 'X':		// -X
 	Options.ignore_include = 1;

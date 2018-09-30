@@ -38,6 +38,8 @@ shift128 macro p, val, count, r
 
 main proc
 
+  local h_128:oword
+
     compare(_allmul, 1, 1, 1)
     compare(_allmul, 1, 2, 2)
     compare(_allmul, 10, 100000000000000000, 1000000000000000000)
@@ -91,6 +93,12 @@ main proc
     shift128(_aullshr, 0x80000000000000000000000000000000, 127, 0x00000000000000000000000000000001)
     shift128(_aullshr, 0x80000000000000000000000000000000, 128, 0x00000000000000000000000000000000)
     shift128(_aullshr, 0x80000000000000000000000000000000,   1, 0x40000000000000000000000000000000)
+
+    umul256(0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,&h_128)
+    .assert(rax == 1 && rdx == 0)
+    mov rax,qword ptr h_128
+    mov rdx,qword ptr h_128[8]
+    .assert ( rax == 0xFFFFFFFFFFFFFFFE && rdx == 0xFFFFFFFFFFFFFFFF )
 
     xor eax,eax
     ret

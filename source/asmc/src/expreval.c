@@ -456,7 +456,6 @@ static ret_code get_operand( struct expr *opnd, int *idx, struct asm_tok tokenar
 		opnd->kind = EXPR_CONST;
 		opnd->uvalue = sym->uvalue;
 		opnd->hvalue = sym->value3264;
-		 ;
 		opnd->mem_type = sym->mem_type;
 	    } else if( sym->state == SYM_EXTERNAL &&
 		      sym->mem_type == MT_EMPTY &&
@@ -471,7 +470,7 @@ static ret_code get_operand( struct expr *opnd, int *idx, struct asm_tok tokenar
 		    opnd->mem_type = sym->mem_type;
 		}
 		if ( sym->state == SYM_STACK ) {
-		    opnd->llvalue = sym->offset + StackAdj;
+		    opnd->value64 = (int_64)(sym->offset + (int)StackAdj);
 		    opnd->indirect = 1;
 		    opnd->base_reg = &tokenarray[i];
 		    tokenarray[i].tokval = CurrProc->e.procinfo->basereg;
@@ -1219,7 +1218,7 @@ static int plus_op( struct expr *opnd1, struct expr *opnd2 )
 		opnd1->type = opnd2->type;
 	    TokenAssign( opnd1, opnd2 );
 	} else {
-	     ;
+
 	    opnd1->llvalue += opnd2->llvalue;
 	    if ( opnd2->mbr ) {
 		opnd1->mbr = opnd2->mbr;

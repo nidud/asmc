@@ -424,7 +424,8 @@ static int DoFixup( struct dsym *curr, struct calc_param *cp )
 	    case FIX_RELOFF16:
 	    case FIX_RELOFF32:
 		/* v1.96: special handling for "relative" fixups */
-		value = seg->e.seginfo->start_offset + fixup->offset + offset;
+		/* v2.28: removed fixup->offset.. */
+		value = seg->e.seginfo->start_offset /*+ fixup->offset*/ + offset;
 		break;
 	    default:
 		if ( seg->e.seginfo->group && fixup->frame_type != FRAME_SEG ) {

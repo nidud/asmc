@@ -598,6 +598,7 @@ __emulu macro a, b
 endif
 
 ifdef __MACHINEX64
+
 _mul128 macro Multiplier, Multiplicand, HighProduct
     _mm_loadreg(rcx, Multiplier)
     _mm_loadreg(rdx, Multiplicand)
@@ -606,9 +607,58 @@ _mul128 macro Multiplier, Multiplicand, HighProduct
     _mm_storereg(HighProduct, rdx)
     retm<rax>
     endm
+
+_mul256 macro Multiplier, Multiplicand, HighProduct
+    _mm_loadreg(rcx, Multiplier)
+    _mm_loadreg(rdx, Multiplicand)
+    _mm_loadreg(r8,  HighProduct)
+    mov rax,[rcx]
+    mov r10,[rcx+8]
+    mov r9, [rdx+8]
+    .if !r10 && !r9
+        .if r8
+            mov [r8],r9
+            mov [r8+8],r9
+        .endif
+        mul qword ptr [rdx]
+    .else
+        mov     r11,[rdx]
+        mul     r11         ; a * b
+        push    rax
+        xchg    rdx,r11
+        mov     rax,r10
+        mul     rdx         ; a[8] * b
+        add     r11,rax
+        xchg    rcx,rdx
+        mov     rax,[rdx]
+        mul     r9          ; a * b[8]
+        add     r11,rax
+        adc     rcx,rdx
+        mov     edx,0
+        adc     edx,0
+        .if r8
+            xchg    rdx,r9
+            mov     rax,r10
+            mul     rdx     ; a[8] * b[8]
+            add     rax,rcx
+            adc     rdx,r9
+            mov     [r8],rax
+            mov     [r8+8],rdx
+        .endif
+        pop     rax
+        mov     rdx,r11
+    .endif
+    exitm<>
+    endm
+
+umul256 proto syscall Multiplier:oword, Multiplicand:oword, HighProduct:ptr
+
 else
+
 _mul128 proto :qword, :qword, :ptr qword
+
 endif
+
 _umul128 equ <_mul128>
 
 ifdef __MACHINEX86_X64

@@ -39,6 +39,20 @@ comp32 macro r, i
     exitm<.assert( eax == ebx && edx == ecx )>
     endm
 
+compf macro r, h
+    local b, q, d
+    .data
+    q real16 r
+    b real16 0.0
+    d dd h
+    .code
+    ftoquad(addr b, addr d)
+    mov eax,dword ptr b[12]
+    mov ebx,dword ptr q[12]
+    exitm<.assert( eax == ebx )>
+    endm
+
+
 comph macro r, h
     local b, q, w
     .data
@@ -88,6 +102,15 @@ main proc
     comp64(-9223372036854775808.0, _I64_MIN)
     comp64(-1.0, _UI64_MAX)
     .assert( qerrno == 0 )
+
+    compf(0.0, 0)
+    compf(1.0, 0x3F800000)
+    compf(-2.0, 0xC0000000)
+    compf(3.402823466e38, 3.402823466e38)
+    compf(1.175494351e-38, 1.175494351e-38)
+    compf(-0.0, 0x80000000)
+    compf(0.0/0.0, 0x7F800000)
+    .assert( qerrno == EDOM )
 
     comph(0.0, 0)
     comph(1.0, 0x3C00)

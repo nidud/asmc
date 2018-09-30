@@ -11,7 +11,7 @@ ftoquad proc p:ptr, f:ptr
     mov eax,[ecx]
     mov ecx,eax             ; get exponent and sign
     shl eax,F_EXPBITS       ; shift fraction into place
-    sar ecx,31-H_EXPBITS    ; shift to bottom
+    sar ecx,F_SIGBITS-1     ; shift to bottom
     xor ch,ch               ; isolate exponent
     .if cl
         .if cl != 0xFF

@@ -647,7 +647,6 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
     /*
      * find "first" parameter ( that is, the first to be pushed in INVOKE ).
      */
-#ifndef __ASMC64__
     if ( proc->sym.langtype == LANG_C || proc->sym.langtype == LANG_STDCALL ||
 	fastcall_id == FCT_VEC32 + 1 || fastcall_id == FCT_MSC + 1 ||
 	( proc->sym.langtype == LANG_SYSCALL ) )
@@ -655,7 +654,6 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 	for ( paracurr = proc->e.procinfo->paralist; paracurr && paracurr->nextparam;
 	      paracurr = paracurr->nextparam );
     else
-#endif
 	paracurr = proc->e.procinfo->paralist;
 
     /* v2.11: proc_info.init_done has been removed, sym.isproc flag is used instead */
@@ -768,7 +766,6 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 		SymAddLocal( &paracurr->sym, name );
 	    }
 	    /* set paracurr to next parameter */
-#ifndef __ASMC64__
 	    if ( proc->sym.langtype == LANG_C || proc->sym.langtype == LANG_STDCALL ||
 		 fastcall_id == FCT_VEC32 + 1 || fastcall_id == FCT_MSC + 1 ||
 		 ( proc->sym.langtype == LANG_SYSCALL ) ) {
@@ -779,7 +776,6 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 		     l = l->nextparam );
 		paracurr = l;
 	    } else
-#endif
 		paracurr = paracurr->nextparam;
 
 	} else if ( init_done == TRUE ) {

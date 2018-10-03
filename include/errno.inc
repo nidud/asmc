@@ -57,8 +57,13 @@ ENOTEMPTY	equ 41
 EILSEQ		equ 42
 
 if defined(__PE__) or defined(_LINUX)
-_get_errno proto __cdecl
-errno equ <_get_errno()>
+_get_errno proto __cdecl :ptr
+ifndef _errno
+    .data
+    _errno dd 0
+    .code
+endif
+errno equ <_get_errno(addr _errno)>
 else
 externdef	errno:dword
 externdef	oserrno:dword

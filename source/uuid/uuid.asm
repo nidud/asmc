@@ -14,4 +14,5 @@ include dsound.inc
 include shlguid.inc
 include shobjidl.inc
 include lmaccess.inc
+include AppxPackaging.inc
 end

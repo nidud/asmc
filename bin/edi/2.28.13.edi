@@ -1,0 +1,6 @@
+
+[.]
+0=47E,17,0,B,8,17E0,%AsmcDir%\source\asmc\src\codegen.c
+1=321,18,0,13,8,17E0,%AsmcDir%\source\asmc\src\coff.c
+2=3D9,1A,0,B,8,17E0,%AsmcDir%\source\asmc\src\elf.c
+3=193,17,0,13,8,17E0,%AsmcDir%\source\asmc\src\bin.c

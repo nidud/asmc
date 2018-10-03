@@ -1161,8 +1161,6 @@ static int match_phase_3( struct code_info *CodeInfo, enum operand_type opnd1 )
     return( ERROR );
 }
 
-/* v2.25 - added ->offset to ->addbytes */
-
 static void add_bytes( struct code_info *CodeInfo, int index )
 {
 
@@ -1172,8 +1170,11 @@ static void add_bytes( struct code_info *CodeInfo, int index )
 
 	bytes = GetCurrOffset() - CodeInfo->opnd[index].InsFixup->locofs;
 
-	if ( CodeInfo->opnd[index].InsFixup->sym && CodeInfo->opnd[index].InsFixup->sym->isarray )
-	    bytes += CodeInfo->opnd[index].InsFixup->offset;
+	/* v2.25 - added ->offset to ->addbytes
+	 * v2.28 - removed
+	 * if ( CodeInfo->opnd[index].InsFixup->sym && CodeInfo->opnd[index].InsFixup->sym->isarray )
+	 *	bytes += CodeInfo->opnd[index].InsFixup->offset;
+	 */
 
 	CodeInfo->opnd[index].InsFixup->addbytes = bytes;
     }

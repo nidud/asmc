@@ -915,11 +915,19 @@ MAKE_SCODE macro sev,fac,code
 FACILITY_NT_BIT equ 0x10000000
 
 HRESULT_FROM_WIN32 macro x
-if x
-	exitm<((x and 0x0000FFFF) or (FACILITY_WIN32 shl 16) or 0x80000000)>
-else
-	exitm<0>
-endif
+    if (type(x))
+	.if x
+	    and x,0x0000FFFF
+	    or	x,(FACILITY_WIN32 shl 16) or 0x80000000
+	.endif
+	exitm<x>
+    else
+	if x
+	    exitm<((x and 0x0000FFFF) or (FACILITY_WIN32 shl 16) or 0x80000000)>
+	else
+	    exitm<0>
+	endif
+    endif
 	endm
 HRESULT_FROM_NT macro x
 	exitm <( ( ( x )  or  FACILITY_NT_BIT ) ) >

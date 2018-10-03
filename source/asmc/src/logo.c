@@ -10,8 +10,9 @@
 #endif
 
 char cp_logo[] =
- "Asmc Macro Assembler" X64 " Version " ASMC_VERSSTR ".12\n"
- "Copyright (C) The Asmc Contributors. All Rights Reserved.\n\n";
+ "Asmc Macro Assembler" X64 " Version " ASMC_VERSSTR ".13\n"
+ "Copyright (C) The Asmc Contributors. All Rights Reserved.\n"
+ "Portions Copyright (C) 1984-2002 Sybase, Inc. All Rights Reserved.\n\n";
 
 static char cp_usage[] =
  "USAGE: " ASMC64 " [ options ] filelist\n"

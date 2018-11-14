@@ -1,3 +1,8 @@
+; _SHLND.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 ; _shlnd() - Shift Left
 ;
 ; Shifts the destination left by "count" bits with zeroes shifted

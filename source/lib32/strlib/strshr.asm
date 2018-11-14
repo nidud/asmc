@@ -1,3 +1,8 @@
+; STRSHR.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 ; char *strshr(char *string, char ch);
 ;
 ; shift string to the right and insert char in front of string

@@ -1,3 +1,9 @@
+; STRSPACE.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 ; char *strspace(char *) - search a string for the character SPACE and TAB
 ;
 ; If found the char is returned in CL and the pointer in EAX

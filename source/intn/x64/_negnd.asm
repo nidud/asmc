@@ -1,3 +1,8 @@
+; _NEGND.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 ; _negnd() - Negation
 ;
 include intn.inc

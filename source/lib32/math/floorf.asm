@@ -1,5 +1,7 @@
-; FLOOR.ASM--
-; Copyright (C) 2017 Asmc Developers
+; FLOORF.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
 ;
 include math.inc
 

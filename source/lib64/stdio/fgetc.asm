@@ -1,3 +1,9 @@
+; FGETC.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include stdio.inc
 
     .code
@@ -5,6 +11,7 @@ include stdio.inc
     option win64:rsp nosave noauto
 
 fgetc proc fp:LPFILE
+
     dec [rcx]._iobuf._cnt
     .ifl
         _filbuf(rcx)
@@ -14,6 +21,7 @@ fgetc proc fp:LPFILE
         movzx eax,byte ptr [rax-1]
     .endif
     ret
+
 fgetc endp
 
     END

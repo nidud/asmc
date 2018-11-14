@@ -1,3 +1,7 @@
+; QUADTOD.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
 ;
 ; quadtod() - Quad to double
 ;
@@ -8,13 +12,9 @@ include quadmath.inc
 option win64:rsp nosave noauto
 
 quadtod proc d:ptr, q:ptr
-ifdef _LINUX
-    push rdi
-    mov r10,rsi
-else
+
     push rcx
     mov r10,rdx
-endif
     movzx ecx,word ptr [r10+14]
     mov r8d,ecx
     and r8d,Q_EXPMASK

@@ -1,3 +1,9 @@
+; _FILELENGTH.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include io.inc
 include errno.inc
 include winbase.inc
@@ -9,7 +15,7 @@ filelength endp
 
 _filelength proc handle:SINT
 
-local lpFileSize:qword
+  local lpFileSize:qword
 
     mov eax,handle
     mov edx,_osfhnd[eax*4]

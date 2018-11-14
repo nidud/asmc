@@ -1,5 +1,8 @@
 ; SETARGV.ASM--
 ;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 ; char **setargv( int *argc, char *command_line );
 ;
 ; Note: The main array (__argv) is allocated in __argv.asm

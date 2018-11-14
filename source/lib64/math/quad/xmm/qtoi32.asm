@@ -1,3 +1,7 @@
+; QTOI32.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
 ;
 ; qtoi32() - Quadruple float to long
 ;

@@ -1,6 +1,13 @@
+; KEYB.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include consx.inc
 
-	.data
+.data
+
 _shift		dd 0
 keyshift	dd offset _shift
 keybchar	db 0
@@ -12,4 +19,4 @@ keybcount	dd 0
 keybmouse_x	dd 0
 keybmouse_y	dd 0
 
-	END
+    END

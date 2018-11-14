@@ -1,3 +1,9 @@
+; PERROR.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include stdio.inc
 include io.inc
 include errno.inc
@@ -8,6 +14,7 @@ include string.inc
     option win64:rsp nosave
 
 perror proc uses rdi string:LPSTR
+
     mov rax,rcx
     .if rax
 	mov rdi,rax
@@ -29,6 +36,7 @@ perror proc uses rdi string:LPSTR
 	.endif
     .endif
     ret
+
 perror endp
 
     END

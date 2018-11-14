@@ -1,6 +1,7 @@
 include string.inc
 include stdio.inc
 include crtl.inc
+include intrin.inc
 
 compare macro p, a, b, r
   local x,y,z

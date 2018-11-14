@@ -1,13 +1,21 @@
+; _INPW.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include libc.inc
 
-	.code
+    .code
 
-	option stackbase:esp
+    option stackbase:esp
 
-_inpw	PROC port
-	mov	dx,WORD PTR [esp+4]
-	in	ax,dx
-	ret
-_inpw	ENDP
+_inpw proc port
 
-	END
+    mov dx,word ptr [esp+4]
+    in  ax,dx
+    ret
+
+_inpw endp
+
+    END

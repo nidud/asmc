@@ -870,14 +870,20 @@ SEVERITY_SUCCESS	equ 0
 SEVERITY_ERROR	equ 1
 
 
-if 0
-SUCCEEDED macro Status
-	exitm<Status GE 0>
+SUCCEEDED macro hr
+    if (type(hr))
+	exitm<(hr !>= 0)>
+    else
+	exitm<(hr GE 0)>
+    endif
 	endm
-FAILED macro Status
-	exitm <( ( Status ) LT 0 ) >
+FAILED macro hr
+    if (type(hr))
+	exitm<((hr) !< 0)>
+    else
+	exitm<((hr) LT 0)>
+    endif
 	endm
-endif
 
 IS_ERROR macro Status
 	exitm <( ( Status ) shr 31 == SEVERITY_ERROR ) >

@@ -1,3 +1,9 @@
+; QUADNORMALIZE.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include quadmath.inc
 
 .code
@@ -5,13 +11,9 @@ include quadmath.inc
 quadnormalize proc uses rbx r12 r13 r14 q:ptr, exponent:SINT
 
   local factor:U128
-ifdef _LINUX
-    mov r12d,esi ; exponent
-    mov r14,rdi  ; quad
-else
+
     mov r12d,edx
     mov r14,rcx
-endif
     xor r13d,r13d
     .ifs r12d > 4096
         inc r13d

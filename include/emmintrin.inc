@@ -700,7 +700,7 @@ _mm_packus_epi16 macro a:=<xmm0>, b:=<xmm1>
 	endm
 _mm_extract_epi16 macro a:=<xmm0>, imm
 	pextrw eax, a, imm
-	retm<eax>
+	retm<ax>
 	endm
 _mm_insert_epi16 macro a:=<xmm0>, reg, imm
 	pinsrw a, reg, imm

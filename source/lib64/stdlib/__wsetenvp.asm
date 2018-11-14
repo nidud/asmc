@@ -1,3 +1,9 @@
+; __WSETENVP.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include stdlib.inc
 include string.inc
 include malloc.inc
@@ -6,6 +12,7 @@ include winbase.inc
 	.code
 
 __wsetenvp PROC USES rsi rdi rbx envp:LPWSTR
+
 	mov rdi,GetEnvironmentStringsW()
 	mov rsi,rax			; save start of block in ESI
 	xor rax,rax
@@ -48,6 +55,7 @@ __wsetenvp PROC USES rsi rdi rbx envp:LPWSTR
 	    mov rax,[rax]
 	.endif
 	ret
+
 __wsetenvp ENDP
 
 	END

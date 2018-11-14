@@ -1,3 +1,9 @@
+; _FILE.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include stdio.inc
 include crtl.inc
 
@@ -16,6 +22,7 @@ _last	_iobuf <0,0,0,0,-1,0,0>
     .code
 
 _stdioexit proc uses rsi
+
     lea rsi,_first
     .repeat
 	.if [rsi]._iobuf._file != -1
@@ -25,6 +32,7 @@ _stdioexit proc uses rsi
 	lea rax,_last
     .until rsi > rax
     ret
+
 _stdioexit endp
 
 .pragma(exit(_stdioexit, 1))

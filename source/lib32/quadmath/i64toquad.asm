@@ -1,3 +1,7 @@
+; I64TOQUAD.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
 ;
 ; i64toquad() - long long to Quadruple float
 ;

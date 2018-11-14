@@ -1,24 +1,30 @@
+; _CROPZEROS.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include string.inc
 include fltintrn.inc
 
-	.code
-
-    OPTION PROLOGUE:NONE, EPILOGUE:NONE
+    .code
 
 _cropzeros proc buffer:LPSTR
 
-	mov r10,rcx
-	add r10,strlen(r10)
-	mov eax,'0'
-	.while	[r10-1] == al
-	    mov byte ptr [r10-1],0
-	    dec r10
-	.endw
-	.if byte ptr [r10-1] == '.'
-	    mov byte ptr [r10-1],0
-	.endif
-	ret
+    add strlen(rcx),buffer
+
+    .while byte ptr [rax-1] == '0'
+
+        dec rax
+        mov byte ptr [rax],0
+    .endw
+
+    .if byte ptr [rax-1] == '.'
+
+        mov byte ptr [rax-1],0
+    .endif
+    ret
 
 _cropzeros endp
 
-	END
+    END

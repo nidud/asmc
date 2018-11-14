@@ -1,3 +1,9 @@
+; _STAT.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include io.inc
 include time.inc
 include direct.inc
@@ -14,8 +20,10 @@ A_D equ 10h
 .code
 
 _lk_getltime proc private ft
-local SystemTime:SYSTEMTIME
-local LocalFTime:FILETIME
+
+  local SystemTime:SYSTEMTIME
+  local LocalFTime:FILETIME
+
     .if FileTimeToLocalFileTime(ft, &LocalFTime)
         .if FileTimeToSystemTime(&LocalFTime, &SystemTime)
             _loctotime_t(

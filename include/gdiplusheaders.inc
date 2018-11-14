@@ -1,0 +1,5 @@
+ifndef _GDIPLUSHEADERS_H
+_GDIPLUSHEADERS_H equ <>
+
+endif
+

@@ -1,3 +1,9 @@
+; ASCIISYM.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include consx.inc
 
 	.data
@@ -17,6 +23,7 @@ ttf		db 0CFh,'<','>',0CFh,9Eh,0CFh,'*',0
 	.code
 
 setasymbol PROC
+
 	lea ecx,ttf
 	.if console & CON_ASCII
 		lea ecx,ascii
@@ -26,6 +33,7 @@ setasymbol PROC
 	mov eax,[ecx+4]
 	mov DWORD PTR asciisymbol[4],eax
 	ret
+
 setasymbol ENDP
 
 	END

@@ -1,3 +1,9 @@
+; NLSDATA1.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 ifndef DLL_FOR_WIN32S
 
 include stdlib.inc

@@ -864,10 +864,10 @@ PTIMEVAL		typedef PVOID
 LPTIMEVAL		typedef PVOID
 
 WSAMAKEASYNCREPLY macro buflen,error
-    exitm<MAKEONG(buflen,error)>
+    exitm<MAKELONG(buflen,error)>
     endm
 WSAMAKESELECTREPLY macro event,error
-    exitm<MAKEONG(event,error)>
+    exitm<MAKELONG(event,error)>
     endm
 WSAGETASYNCBUFLEN macro lParam
     exitm<LOWORD(lParam)>

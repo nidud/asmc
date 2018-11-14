@@ -24,7 +24,8 @@ FLT4 macro value
 %   ifndef string
         .data
         align 4
-        string REAL4 value
+        string label REAL4
+            dd value
         .code
     endif
     exitm<string>
@@ -154,7 +155,7 @@ _mm_getptr macro arg, reg:=<rax>
         exitm<[reg]>
     elseifidn @SubStr(arg,1,1),<[>
         exitm<arg>
-    elseif (opattr lp) eq 48
+    elseif (opattr arg) eq 48
         exitm<[arg]>
     endif
     exitm<arg>

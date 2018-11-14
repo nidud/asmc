@@ -1,3 +1,9 @@
+; QUADADD.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include quadmath.inc
 
     .code
@@ -19,14 +25,9 @@ quadadd endp
 
 entry:
 
-ifdef _LINUX
-    mov r10,rdi
-    mov rdx,rsi
-else
     mov r10,rcx
     push rsi
     push rdi
-endif
     push rbx
 
     mov rbx,[rdx]           ; rdi:rbx - 128 bit value (b) of 112 bit mantissa

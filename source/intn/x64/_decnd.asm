@@ -1,3 +1,8 @@
+; _DECND.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 ; _decnd() - Decrement
 ;
 ; Unsigned binary subtraction of one from the destination.

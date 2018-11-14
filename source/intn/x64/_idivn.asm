@@ -1,3 +1,8 @@
+; _IDIVN.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 ; _idivn() - Signed Divide
 ;
 ; Signed binary division of dividend by source.

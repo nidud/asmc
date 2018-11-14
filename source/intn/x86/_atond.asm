@@ -1,3 +1,8 @@
+; _ATOND.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 ; _atond() - Converts a string to integer
 ;
 include intn.inc

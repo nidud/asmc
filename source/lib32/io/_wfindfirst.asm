@@ -1,3 +1,9 @@
+; _WFINDFIRST.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include crtl.inc
 include io.inc
 include time.inc
@@ -25,7 +31,7 @@ _wfindnext endp
 
 _wfindfirst proc uses esi edi ebx lpFileName:LPWSTR, ff:ptr _wfinddata_t
 
-local FindFileData:WIN32_FIND_DATAW, result:DWORD
+  local FindFileData:WIN32_FIND_DATAW, result:DWORD
 
     mov edi,ff
     lea esi,FindFileData

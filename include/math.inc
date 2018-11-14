@@ -116,6 +116,8 @@ _y0     proto __cdecl _X:double
 _y1     proto __cdecl _X:double
 _yn     proto __cdecl _X:SINT, _Y:double
 
+round   proto __cdecl _X:double
+
 ifndef float
 float  typedef real4
 endif
@@ -158,6 +160,8 @@ _hypotf proto __cdecl _X:float, _Y:float
 ldexpf  proto __cdecl _X:float, _Y:SINT
 
 endif
+
+roundf  proto __cdecl _X:float
 
 ifdef _M_AMD64
 

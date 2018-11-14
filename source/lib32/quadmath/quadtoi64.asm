@@ -1,3 +1,9 @@
+; QUADTOI64.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 ;
 ; quadtoi64() - Quadruple float to long long
 ;

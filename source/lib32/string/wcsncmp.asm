@@ -1,32 +1,44 @@
+; WCSNCMP.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include string.inc
 
-	.code
+    .code
 
-wcsncmp PROC USES esi edi edx s1:LPWSTR, s2:LPWSTR, count:SIZE_T
-	mov	ecx,count
-	test	ecx,ecx
-	jz	toend
-	mov	edx,ecx
-	mov	edi,s1
-	mov	esi,edi
-	sub	eax,eax
-	repne	scasw
-	neg	ecx
-	add	ecx,edx
-	mov	edi,esi
-	mov	esi,s2
-	repe	cmpsw
-	mov	ax,[esi-2]
-	sub	ecx,ecx
-	cmp	ax,[edi-2]
-	ja	@F
-	je	toend
-	sub	ecx,2
-@@:
-	not	ecx
-toend:
-	mov	eax,ecx
-	ret
-wcsncmp ENDP
+wcsncmp proc uses esi edi edx s1:LPWSTR, s2:LPWSTR, count:SIZE_T
 
-	END
+    mov ecx,count
+    .if ecx
+
+        mov edx,ecx
+        mov edi,s1
+        mov esi,edi
+        sub eax,eax
+        repne scasw
+
+        neg ecx
+        add ecx,edx
+        mov edi,esi
+        mov esi,s2
+        repe cmpsw
+
+        mov ax,[esi-2]
+        sub ecx,ecx
+        .if ax > [edi-2]
+
+            not ecx
+        .elseif !ZERO?
+
+            sub ecx,2
+            not ecx
+        .endif
+    .endif
+    mov eax,ecx
+    ret
+
+wcsncmp endp
+
+    end

@@ -1,13 +1,21 @@
+; _INPD.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include libc.inc
 
-	.code
+    .code
 
-	option stackbase:esp
+    option stackbase:esp
 
-_inpd	PROC port
-	mov	dx,WORD PTR [esp+4]
-	in	eax,dx
-	ret
-_inpd	ENDP
+_inpd proc port
 
-	END
+    mov dx,word ptr [esp+4]
+    in  eax,dx
+    ret
+
+_inpd endp
+
+    end

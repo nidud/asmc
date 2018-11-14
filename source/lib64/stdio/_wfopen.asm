@@ -1,4 +1,8 @@
 ; _WFOPEN.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 ; FILE *_wfopen(file, mode) - open a file
 ;
 ; mode:

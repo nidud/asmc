@@ -228,72 +228,72 @@ NMCUSTOMTEXT		ENDS
 LPNMCUSTOMTEXT		typedef ptr NMCUSTOMTEXT
 endif
 
-NM_FIRST		equ (0U-  0U)
-NM_LAST			equ (0U- 99U)
+NM_FIRST		equ (0-	 0)
+NM_LAST			equ (0- 99)
 
-LVN_FIRST		equ (0U-100U)
-LVN_LAST		equ (0U-199U)
+LVN_FIRST		equ (0-100)
+LVN_LAST		equ (0-199)
 
-HDN_FIRST		equ (0U-300U)
-HDN_LAST		equ (0U-399U)
+HDN_FIRST		equ (0-300)
+HDN_LAST		equ (0-399)
 
-TVN_FIRST		equ (0U-400U)
-TVN_LAST		equ (0U-499U)
+TVN_FIRST		equ (0-400)
+TVN_LAST		equ (0-499)
 
-TTN_FIRST		equ (0U-520U)
-TTN_LAST		equ (0U-549U)
+TTN_FIRST		equ (0-520)
+TTN_LAST		equ (0-549)
 
-TCN_FIRST		equ (0U-550U)
-TCN_LAST		equ (0U-580U)
+TCN_FIRST		equ (0-550)
+TCN_LAST		equ (0-580)
 
 
-CDN_FIRST		equ (0U-601U)
-CDN_LAST		equ (0U-699U)
+CDN_FIRST		equ (0-601)
+CDN_LAST		equ (0-699)
 
-TBN_FIRST		equ (0U-700U)
-TBN_LAST		equ (0U-720U)
+TBN_FIRST		equ (0-700)
+TBN_LAST		equ (0-720)
 
-UDN_FIRST		equ (0U-721)
-UDN_LAST		equ (0U-740)
+UDN_FIRST		equ (0-721)
+UDN_LAST		equ (0-740)
 if (_WIN32_IE GE 0x0300)
-MCN_FIRST		equ (0U-750U)
-MCN_LAST		equ (0U-759U)
+MCN_FIRST		equ (0-750)
+MCN_LAST		equ (0-759)
 
-DTN_FIRST		equ (0U-760U)
-DTN_LAST		equ (0U-799U)
+DTN_FIRST		equ (0-760)
+DTN_LAST		equ (0-799)
 
-CBEN_FIRST		equ (0U-800U)
-CBEN_LAST		equ (0U-830U)
+CBEN_FIRST		equ (0-800)
+CBEN_LAST		equ (0-830)
 
-RBN_FIRST		equ (0U-831U)
-RBN_LAST		equ (0U-859U)
+RBN_FIRST		equ (0-831)
+RBN_LAST		equ (0-859)
 endif
 
 if (_WIN32_IE GE 0x0400)
-IPN_FIRST		equ (0U-860U)
-IPN_LAST		equ (0U-879U)
+IPN_FIRST		equ (0-860)
+IPN_LAST		equ (0-879)
 
-SBN_FIRST		equ (0U-880U)
-SBN_LAST		equ (0U-899U)
+SBN_FIRST		equ (0-880)
+SBN_LAST		equ (0-899)
 
-PGN_FIRST		equ (0U-900U)
-PGN_LAST		equ (0U-950U)
+PGN_FIRST		equ (0-900)
+PGN_LAST		equ (0-950)
 
 endif
 
 if (_WIN32_IE GE 0x0500)
 ifndef WMN_FIRST
-WMN_FIRST		equ (0U-1000U)
-WMN_LAST		equ (0U-1200U)
+WMN_FIRST		equ (0-1000)
+WMN_LAST		equ (0-1200)
 endif
 endif
 if (_WIN32_WINNT GE 0x0501)
-BCN_FIRST		equ (0U-1250U)
-BCN_LAST		equ (0U-1350U)
+BCN_FIRST		equ (0-1250)
+BCN_LAST		equ (0-1350)
 endif
 if (_WIN32_WINNT GE 0x0600)
-TRBN_FIRST		equ (0U-1501U)
-TRBN_LAST		equ (0U-1519U)
+TRBN_FIRST		equ (0-1501)
+TRBN_LAST		equ (0-1519)
 endif
 
 MSGF_COMMCTRL_BEGINDRAG equ 0x4200
@@ -1381,7 +1381,7 @@ nID			UINT ?
 TBADDBITMAP		ENDS
 LPTBADDBITMAP		typedef ptr TBADDBITMAP
 
-HINST_COMMCTRL		equ ((HINSTANCE)-1)
+HINST_COMMCTRL		equ (-1)
 IDB_STD_SMALL_COLOR	equ 0
 IDB_STD_LARGE_COLOR	equ 1
 IDB_VIEW_SMALL_COLOR	equ 4
@@ -2719,10 +2719,19 @@ endif
 ifndef NOTRACKBAR
 
 ifdef _WIN32
-TRACKBAR_CLASS		equ <"msctls_trackbar32">
+
+TRACKBAR_CLASSA		equ <"msctls_trackbar32">
+TRACKBAR_CLASSW		equ <L"msctls_trackbar32">
+
+ifdef _UNICODE
+TRACKBAR_CLASS	       equ <TRACKBAR_CLASSW>
+else
+TRACKBAR_CLASS	       equ <TRACKBAR_CLASSA>
+endif
 else
 TRACKBAR_CLASS		equ <"msctls_trackbar">
 endif
+
 
 TBS_AUTOTICKS		equ 0x0001
 TBS_VERT		equ 0x0002
@@ -3849,7 +3858,7 @@ ListView_GetISearchString macro hwndLV, lpsz
 if (_WIN32_IE GE 0x0300)
 LVM_SETICONSPACING	equ (LVM_FIRST + 53)
 ListView_SetIconSpacing macro hwndLV, _cx, _cy
-	exitm<SNDMSG((hwndLV), LVM_SETICONSPACING, 0, MAKEONG(_cx,_cy))>
+	exitm<SNDMSG((hwndLV), LVM_SETICONSPACING, 0, MAKELONG(_cx,_cy))>
 	endm
 
 LVM_SETEXTENDEDLISTVIEWSTYLE equ (LVM_FIRST + 54)
@@ -5024,10 +5033,10 @@ TVITEM			equ <TVITEMA>
 LPTVITEM		equ <LPTVITEMA>
 endif
 
-TVI_ROOT		equ ((HTREEITEM)0xFFFF0000)
-TVI_FIRST		equ ((HTREEITEM)0xFFFF0001)
-TVI_LAST		equ ((HTREEITEM)0xFFFF0002)
-TVI_SORT		equ ((HTREEITEM)0xFFFF0003)
+TVI_ROOT		equ 0xFFFF0000
+TVI_FIRST		equ 0xFFFF0001
+TVI_LAST		equ 0xFFFF0002
+TVI_SORT		equ 0xFFFF0003
 
 if (_WIN32_IE GE 0x0300)
 LPTV_INSERTSTRUCTA	equ <LPTVINSERTSTRUCTA>
@@ -6263,7 +6272,7 @@ if (_WIN32_IE GE 0x0400)
 
 TCM_HIGHLIGHTITEM	equ (TCM_FIRST + 51)
 TabCtrl_HighlightItem macro hwnd, i, fHighlight
-	exitm<SNDMSG(hwnd, TCM_HIGHLIGHTITEM, i, MAKEONG(fHighlight, 0))>
+	exitm<SNDMSG(hwnd, TCM_HIGHLIGHTITEM, i, MAKELONG(fHighlight, 0))>
 	endm
 
 TCM_SETEXTENDEDSTYLE	equ (TCM_FIRST + 52)
@@ -6357,7 +6366,7 @@ Animate_OpenEx macro hwnd, hInst, szName
 	exitm<SNDMSG(hwnd, ACM_OPEN, hInst,szName)>
 	endm
 Animate_Play macro hwnd, from, to, _rep
-	exitm<SNDMSG(hwnd, ACM_PLAY, _rep, MAKEONG(from, to))>
+	exitm<SNDMSG(hwnd, ACM_PLAY, _rep, MAKELONG(from, to))>
 	endm
 Animate_Stop macro hwnd
 	exitm<SNDMSG(hwnd, ACM_STOP, 0, 0)>

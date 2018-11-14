@@ -1,3 +1,9 @@
+; WCTOMB.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include stdlib.inc
 include winnls.inc
 include errno.inc

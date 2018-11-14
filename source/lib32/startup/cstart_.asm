@@ -1,5 +1,8 @@
 ; CSTART_.ASM--
 ;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 ; Startup module for Open Watcom (Win32)
 ;
 include stdlib.inc

@@ -1,3 +1,9 @@
+; _STRTOFLT.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include fltintrn.inc
 include quadmath.inc
 

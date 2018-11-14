@@ -1,3 +1,9 @@
+; _LSEEKI64.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include io.inc
 include winbase.inc
 
@@ -5,7 +11,7 @@ include winbase.inc
 
 _lseeki64 proc handle:SINT, offs:QWORD, pos:DWORD
 
-local lpNewFilePointer:QWORD
+  local lpNewFilePointer:QWORD
 
     .if getosfhnd(handle) != -1
 

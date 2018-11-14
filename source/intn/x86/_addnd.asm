@@ -1,3 +1,8 @@
+; _ADDND.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 ; _addnd() - Arithmetic Addition
 ;
 ; Sums two dword*n sized numbers placing the

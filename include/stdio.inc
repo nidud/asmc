@@ -80,6 +80,7 @@ fopen		proto __cdecl :LPSTR, :LPSTR
 fclose		proto __cdecl :LPFILE
 fgetc		proto __cdecl :LPFILE
 vsprintf	proto __cdecl :LPSTR, :LPSTR, :PVOID
+_vsnprintf	proto __cdecl :LPSTR, :size_t, :LPSTR, :PVOID
 vfprintf	proto __cdecl :LPFILE,:LPSTR, :PVOID
 fread		proto __cdecl :LPSTR, :SINT, :SINT, :LPFILE
 fwrite		proto __cdecl :LPSTR, :SINT, :SINT, :LPFILE

@@ -1,3 +1,9 @@
+; FREAD.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include stdio.inc
 include io.inc
 
@@ -7,9 +13,9 @@ include io.inc
 
 fread proc uses rsi rdi rbx buffer:LPSTR, rsize:SINT, num:SINT, fp:LPFILE
 
-    local total:UINT        ; total bytes to read
-    local count:UINT        ; num bytes left to read
-    local bufsize:UINT      ; size of stream buffer
+  local total:UINT          ; total bytes to read
+  local count:UINT          ; num bytes left to read
+  local bufsize:UINT        ; size of stream buffer
 
     mov rdi,rcx             ; buffer
     mov rbx,r9              ; fp

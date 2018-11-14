@@ -1,3 +1,9 @@
+; _CPUTS.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include conio.inc
 include string.inc
 
@@ -5,7 +11,7 @@ include string.inc
 
 _cputs proc uses ebx string:LPSTR
 
-local num_written:ULONG
+  local num_written:ULONG
     ;
     ; write string to console file handle
     ;

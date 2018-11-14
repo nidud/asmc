@@ -1,3 +1,11 @@
+; OSMAPERR.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+; Change history:
+; 2018-10-17 - fixed bug in osmaperr()
+
 include errno.inc
 include winbase.inc
 
@@ -99,41 +107,37 @@ syserrtable label word
 
     .code
 
-    OPTION  PROLOGUE:NONE, EPILOGUE:NONE
+osmaperr proc
 
-osmaperr PROC
-
-    mov rdx,GetLastError()
+    mov edx,GetLastError()
     mov oserrno,eax
-    xor rcx,rcx
-    mov rax,-1
-    lea r8,syserrtable
-    lea r9,errnotable
 
     .repeat
 
-        .whiles ecx < 45
-            .if dx == [r8+rcx*2]
-                movzx ecx,BYTE PTR [r9+rcx]
-                mov errno,ecx
-                .break
-            .endif
-            inc ecx
-        .endw
+        .for ( r8=&syserrtable, r9=&errnotable, ecx=0 : ecx < syserrtable - errnotable : ecx++ )
 
+            .if dx == [r8+rcx*2]
+
+                mov cl,[r9+rcx]
+                .break(1)
+            .endif
+        .endf
+
+        mov ecx,EINVAL
         .if edx >= ERROR_WRITE_PROTECT && \
             edx <= ERROR_SHARING_BUFFER_EXCEEDED
-            mov errno,EACCES
+            mov ecx,EACCES
         .elseif edx >= ERROR_INVALID_STARTING_CODESEG && \
                 edx <= ERROR_INFLOOP_IN_RELOC_CHAIN
-            mov errno,ENOEXEC
-        .else
-            mov errno,EINVAL
+            mov ecx,ENOEXEC
         .endif
 
     .until 1
+    mov errno,ecx
+    xor eax,eax
+    dec rax
     ret
 
-osmaperr ENDP
+osmaperr endp
 
-    END
+    end

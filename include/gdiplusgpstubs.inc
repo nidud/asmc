@@ -1,0 +1,6 @@
+ifndef _GDIPLUSGPSTUBS_H
+_GDIPLUSGPSTUBS_H equ <>
+
+endif  ;; NOT _GDIPLUSGPSTUBS.HPP
+
+

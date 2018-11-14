@@ -1,3 +1,8 @@
+; _NDTOA.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 ; _ndtoa() - Converts an unsigned integer to a string
 ;
 include intn.inc

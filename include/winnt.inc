@@ -807,7 +807,7 @@ RTL_CONTAINS_FIELD macro x, z, Field
 	endm
 
 RTL_NUMBER_OF_V1 macro A
-	exitm<(sizeof(A)/sizeof((A)[0]))>
+	exitm<lengthof(A)>
 	endm
 
 RTL_NUMBER_OF_V2 macro A

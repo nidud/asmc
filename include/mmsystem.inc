@@ -4222,7 +4222,7 @@ endif
 
 SELECTDIB		equ 41
 DIBINDEX macro n
-	exitm<MAKEONG(n,0x10FF)>
+	exitm<MAKELONG(n,0x10FF)>
 	endm
 
 ifndef SC_SCREENSAVE

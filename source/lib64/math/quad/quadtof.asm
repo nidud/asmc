@@ -1,3 +1,9 @@
+; QUADTOF.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include quadmath.inc
 
 DDFLT_MAX equ 0x7F7FFFFF

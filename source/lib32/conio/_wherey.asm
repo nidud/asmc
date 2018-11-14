@@ -1,9 +1,16 @@
+; _WHEREY.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include conio.inc
 
     .code
 
 _wherey proc
-local ci:CONSOLE_SCREEN_BUFFER_INFO
+
+  local ci:CONSOLE_SCREEN_BUFFER_INFO
 
     .if GetConsoleScreenBufferInfo(hStdOutput, addr ci)
 

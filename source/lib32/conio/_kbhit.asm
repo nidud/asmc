@@ -1,9 +1,15 @@
+; _KBHIT.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include conio.inc
 
 externdef char_avail:dword
 externdef ungot_char:dword
 
-.code
+    .code
 
     assume ebx:ptr INPUT_RECORD
 

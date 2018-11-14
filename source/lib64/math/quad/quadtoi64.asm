@@ -1,3 +1,7 @@
+; QUADTOI64.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
 ;
 ; quadtoi64() - Quadruple float to long long
 ;
@@ -9,9 +13,7 @@ include limits.inc
 option win64:rsp nosave noauto
 
 quadtoi64 proc q:ptr
-ifdef _LINUX
-    mov rcx,rdi
-endif
+
     mov dx,[rcx+14]
     mov eax,edx
     and eax,Q_EXPMASK

@@ -1,3 +1,9 @@
+; EROPEN.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include errno.inc
 
 errnomsg proto :LPSTR, :LPSTR, :LPSTR

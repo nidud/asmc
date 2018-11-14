@@ -70,7 +70,7 @@ _WIN32_FUSION	equ 0
 endif
 
 ifndef _WIN32_WCE
-_WIN32_WCE	equ 0
+;_WIN32_WCE	equ 0
 endif
 
 ifndef ISOLATION_AWARE_ENABLED
@@ -86,18 +86,10 @@ endif
 endif
 
 ifndef SNDMSG
-ifdef __cplusplus
-ifndef _MAC
-SNDMSG equ <::SendMessage>
-else
-SNDMSG equ <::AfxSendMessage>
-endif
-else
 ifndef _MAC
 SNDMSG equ <SendMessage>
 else
 SNDMSG equ <AfxSendMessage>
-endif
 endif
 endif
 
@@ -522,7 +514,7 @@ endif ; WINVER >= 0x0400
 
 endif ; _INC_WINDOWS
 
-.pragma list(pop)
 .pragma cref(pop)
+.pragma list(pop)
 endif
 

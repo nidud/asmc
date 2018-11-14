@@ -1,3 +1,8 @@
+; _MULND.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 ; _mulnd() - Multiply
 ;
 ; Multiplication of multiplier by multiplicand with result placed

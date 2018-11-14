@@ -1,22 +1,21 @@
+; QUADISINF.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 
     .code
-
-ifdef _LINUX
-quad equ <rdi>
-else
-quad equ <rcx>
-endif
 
 quadisinf::
 
     xor eax,eax
     .repeat
 
-        mov r10,[quad]
-        or  r10,[quad+6]
+        mov r10,[rcx]
+        or  r10,[rcx+6]
         .break .ifnz
 
-        movzx r10d,word ptr [quad+14]
+        movzx r10d,word ptr [rcx+14]
         and r10d,0x7FFF
         .break .if r10d != 0x7FFF
 

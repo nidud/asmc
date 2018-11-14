@@ -1,3 +1,9 @@
+; __ARGV.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include stdlib.inc
 include crtl.inc
 include winbase.inc
@@ -9,7 +15,8 @@ _pgmptr dd 0
 .code
 
 Install PROC PRIVATE USES edi
-local	pgname[260]:SBYTE
+
+  local pgname[260]:SBYTE
 
     mov __argv,setargv(&__argc, GetCommandLineA())
     mov eax,[eax]

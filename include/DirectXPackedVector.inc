@@ -89,6 +89,9 @@ XMUBYTE2 ends
 
 XMU565 union
 struct
+ XMU565_X equ 5 ; 0 to 31
+ XMU565_Y equ 6 ; 0 to 63
+ XMU565_Z equ 5 ; 0 to 31
  b  uint16_t ?
 ends
 v   uint16_t ?
@@ -96,6 +99,12 @@ XMU565 ends
 
 XMFLOAT3PK union
 struct
+ XMFLOAT3PK_XM  equ 6 ; x-mantissa
+ XMFLOAT3PK_XE  equ 5 ; x-exponent
+ XMFLOAT3PK_YM  equ 6 ; y-mantissa
+ XMFLOAT3PK_YE  equ 5 ; y-exponent
+ XMFLOAT3PK_ZM  equ 5 ; z-mantissa
+ XMFLOAT3PK_ZE  equ 5 ; z-exponent
  b  uint32_t ?
 ends
 v   uint32_t ?
@@ -103,6 +112,10 @@ XMFLOAT3PK ends
 
 XMFLOAT3SE union
 struct
+ XMFLOAT3SE_XM equ 9 ; x-mantissa
+ XMFLOAT3SE_YM equ 9 ; y-mantissa
+ XMFLOAT3SE_ZM equ 9 ; z-mantissa
+ XMFLOAT3SE_E  equ 5 ; shared exponent
  b  uint32_t ?
 ends
 v   uint32_t ?
@@ -188,6 +201,10 @@ XMDEC4 ends
 
 XMUDECN4 union
 struct
+ ; uint32_t x  : 10;    // 0/1023 to 1023/1023
+ ; uint32_t y  : 10;    // 0/1023 to 1023/1023
+ ; uint32_t z  : 10;    // 0/1023 to 1023/1023
+ ; uint32_t w  : 2;     //    0/3 to       3/3
  x  uint32_t ?
 ends
 v   uint32_t ?

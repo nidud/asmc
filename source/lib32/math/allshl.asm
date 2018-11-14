@@ -1,4 +1,9 @@
-; __llshl.asm - long shift left
+; ALLSHL.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+; long shift left
 ;
 ; signed and unsigned are same
 ;

@@ -1,3 +1,9 @@
+; MSGBOX.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include consx.inc
 include stdio.inc
 include string.inc

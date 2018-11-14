@@ -1,21 +1,29 @@
+; WCSCHR.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include string.inc
 
-	.code
+    .code
 
-wcschr	PROC USES edi s1:ptr wchar_t, w:wchar_t
-	xor	eax,eax
-	mov	edi,s1
-@@:
-	mov	ax,[edi]
-	test	ax,ax
-	jz	@F
-	add	edi,2
-	cmp	ax,word ptr w
-	jne	@B
-	mov	eax,edi
-	sub	eax,2
-@@:
-	ret
-wcschr	ENDP
+wcschr proc s1:ptr wchar_t, w:wchar_t
 
-	END
+    xor eax,eax
+    mov ecx,s1
+    .repeat
+
+        mov ax,[ecx]
+        .break .if !eax
+
+        add ecx,2
+        .continue(0) .if ax != w
+
+        lea eax,[ecx-2]
+    .until 1
+    ret
+
+wcschr endp
+
+    end

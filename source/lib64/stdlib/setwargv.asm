@@ -1,5 +1,8 @@
 ; SETWARGV.ASM--
 ;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 ; wchar_t **setwargv( int *argc, wchar_t *command_line );
 ;
 ; Note: The main array (__argv) is allocated in __wargv.asm

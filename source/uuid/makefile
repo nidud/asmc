@@ -1,5 +1,4 @@
 ..\..\lib\uuid.lib:
-    md src
     asmc -q uuid.asm > list.txt
     asmc -pe src.asm
     src.exe
@@ -11,8 +10,7 @@
     del *.obj
     del src.exe
     del list.txt
-    dir /W src\*.asm
+    dir /W src\*.*
     del src\*.asm
-    rd src
     pause
 

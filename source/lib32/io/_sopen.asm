@@ -1,3 +1,9 @@
+; _SOPEN.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include io.inc
 include share.inc
 include fcntl.inc
@@ -13,7 +19,7 @@ extrn _umaskval:DWORD
 
 _sopen proc c uses esi edi ebx path:LPSTR, oflag, shflag, args:VARARG
 
-local sa:SECURITY_ATTRIBUTES, fileflags:BYTE
+  local sa:SECURITY_ATTRIBUTES, fileflags:BYTE
 
     xor eax,eax
     mov sa.bInheritHandle,eax

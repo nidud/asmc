@@ -1,25 +1,33 @@
+; WCSCMP.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include string.inc
 
-	.code
+    .code
 
-wcscmp	PROC USES esi edi s1:LPWSTR, s2:LPWSTR
-	mov	esi,s2
-	mov	edi,s1
-	mov	al,-1
-@@:
-	test	ax,ax
-	jz	@F
-	mov	ax,[esi]
-	add	esi,2
-	mov	cx,[edi]
-	add	edi,2
-	cmp	cx,ax
-	je	@B
-	sbb	ax,ax
-	sbb	ax,-1
-@@:
-	movsx	eax,ax
-	ret
-wcscmp ENDP
+wcscmp proc uses esi edi s1:LPWSTR, s2:LPWSTR
 
-	END
+    mov esi,s2
+    mov edi,s1
+    mov eax,1
+
+    .repeat
+
+        .break .if !eax
+
+        mov cx,[esi]
+        mov ax,[edi]
+        add esi,2
+        add edi,2
+        .continue(0) .if ax == cx
+        sbb eax,eax
+        sbb eax,-1
+    .until 1
+    ret
+
+wcscmp endp
+
+    end

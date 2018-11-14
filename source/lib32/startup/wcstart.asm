@@ -1,4 +1,7 @@
-; wcstart.asm--
+; WCSTART.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
 ;
 ; Startup module for LIBC
 ;

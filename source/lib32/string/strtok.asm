@@ -1,3 +1,9 @@
+; STRTOK.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include string.inc
 
     .data
@@ -6,12 +12,16 @@ include string.inc
     .code
 
 strtok proc uses edx ebx s1:LPSTR, s2:LPSTR
+
     mov eax,s1
     .if eax
+
         mov s0,eax
     .endif
+
     mov ebx,s0
     .while byte ptr [ebx]
+
         mov ecx,s2
         mov al,[ecx]
         .while  al
@@ -22,29 +32,36 @@ strtok proc uses edx ebx s1:LPSTR, s2:LPSTR
         .break .if !al
         inc ebx
     .endw
-    xor eax,eax
-    cmp [ebx],al
-    je  toend
-    mov edx,ebx
-    .while  byte ptr [ebx]
-        mov ecx,s2
-        mov al,[ecx]
-        .while  al
-            .if al == [ebx]
-                mov [ebx],ah
-                inc ebx
-                jmp retok
-            .endif
-            inc ecx
+
+    .repeat
+
+        xor eax,eax
+        .break .if al == [ebx]
+
+        mov edx,ebx
+        .while byte ptr [ebx]
+
+            mov ecx,s2
             mov al,[ecx]
+
+            .while al
+
+                .if al == [ebx]
+                    mov [ebx],ah
+                    inc ebx
+                    .break(1)
+                .endif
+
+                inc ecx
+                mov al,[ecx]
+            .endw
+            inc ebx
         .endw
-        inc ebx
-    .endw
-retok:
-    mov eax,edx
-toend:
+        mov eax,edx
+    .until 1
     mov s0,ebx
     ret
-strtok  endp
+
+strtok endp
 
     END

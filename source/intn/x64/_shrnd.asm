@@ -1,3 +1,8 @@
+; _SHRND.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 ; _shrnd() - Shift Right
 ;
 ; Shifts the destination right by "count" bits with zeroes shifted

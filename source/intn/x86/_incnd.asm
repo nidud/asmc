@@ -1,3 +1,8 @@
+; _INCND.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 ; _incnd() - Increment
 ;
 ; Adds one to destination unsigned binary operand.

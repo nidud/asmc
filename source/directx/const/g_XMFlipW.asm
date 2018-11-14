@@ -1,3 +1,9 @@
+; G_XMFLIPW.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include DirectXMath.inc
 
 .data

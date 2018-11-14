@@ -16,14 +16,14 @@ endif
 
 SUCCEEDED macro hr
     if (type(hr))
-	exitm<((hr) !>= 0)>
+	exitm<(hr !>= 0)>
     else
 	exitm<((hr) GE 0)>
     endif
 	endm
 FAILED macro hr
     if (type(hr))
-	exitm<((hr) !< 0)>
+	exitm<(hr !< 0)>
     else
 	exitm<((hr) LT 0)>
     endif
@@ -739,6 +739,7 @@ endif
 ifndef _M_CEE_PURE
 
 ifndef STRSAFE_NO_CCH_FUNCTIONS
+
 ifdef _UNICODE
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 StringCchPrintf		equ <StringCchPrintfW>
@@ -748,10 +749,14 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 StringCchPrintf		equ <StringCchPrintfA>
 endif
 endif
+
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+StringCchPrintfA proto pszDest:STRSAFE_LPSTR, cchDest:size_t, pszFormat:STRSAFE_LPCSTR, :vararg
 endif
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+StringCchPrintfW proto pszDest:STRSAFE_LPWSTR, cchDest:size_t, pszFormat:STRSAFE_LPCWSTR, :vararg
 endif
+
 endif
 
 if defined(STRSAFE_LOCALE_FUNCTIONS) AND NOT defined(STRSAFE_NO_CCH_FUNCTIONS)

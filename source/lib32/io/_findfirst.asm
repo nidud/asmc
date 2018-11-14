@@ -1,3 +1,9 @@
+; _FINDFIRST.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include crtl.inc
 include io.inc
 include time.inc
@@ -6,7 +12,8 @@ include winbase.inc
     .code
 
 _findnext proc uses esi edi handle:HANDLE, ff:ptr _finddata_t
-local FindFileData:WIN32_FIND_DATAA
+
+  local FindFileData:WIN32_FIND_DATAA
 
     mov edi,ff
     lea esi,FindFileData
@@ -20,7 +27,8 @@ local FindFileData:WIN32_FIND_DATAA
 _findnext endp
 
 _findfirst proc uses esi edi ebx lpFileName:LPSTR, ff:ptr _finddata_t
-local FindFileData:WIN32_FIND_DATAA
+
+  local FindFileData:WIN32_FIND_DATAA
 
     mov edi,ff
     lea esi,FindFileData

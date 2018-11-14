@@ -1,12 +1,18 @@
+; SETCONSOLESIZE.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include consx.inc
 
 .code
 
 SetConsoleSize proc cols, rows
 
-local bz:COORD
-local rc:SMALL_RECT
-local ci:CONSOLE_SCREEN_BUFFER_INFO
+  local bz:COORD
+  local rc:SMALL_RECT
+  local ci:CONSOLE_SCREEN_BUFFER_INFO
 
     .if GetConsoleScreenBufferInfo(hStdOutput, &ci)
 

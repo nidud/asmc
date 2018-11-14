@@ -1,3 +1,9 @@
+; __CORELEFT.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include malloc.inc
 
 _FREE   equ 0

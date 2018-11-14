@@ -1,4 +1,8 @@
 ; FOPEN.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 ; FILE *fopen(file, mode) - open a file
 ;
 ; mode:

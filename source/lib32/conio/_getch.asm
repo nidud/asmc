@@ -1,3 +1,9 @@
+; _GETCH.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include conio.inc
 include stdio.inc
 
@@ -8,8 +14,8 @@ externdef ungot_char:dword
 
 _getch proc uses ebx edi esi
 
-local Count:dword
-local Event[MAXINPUTRECORDS]:INPUT_RECORD
+  local Count:dword
+  local Event[MAXINPUTRECORDS]:INPUT_RECORD
 
     xor edi,edi
 

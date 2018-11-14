@@ -1,3 +1,9 @@
+; QSORT.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include stdlib.inc
 include strlib.inc
 
@@ -5,7 +11,7 @@ include strlib.inc
 
 qsort proc uses rsi rdi rbx p:PVOID, n:SIZE_T, w:SIZE_T, compare:LPQSORTCMD
 
-local stack_level
+  local stack_level
 
     mov rax,n
     .if rax > 1

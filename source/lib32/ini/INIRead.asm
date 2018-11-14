@@ -1,3 +1,9 @@
+; INIREAD.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include stdio.inc
 include string.inc
 include strlib.inc
@@ -6,7 +12,8 @@ include ini.inc
     .code
 
 INIRead proc uses esi edi ebx ini:LPINI, file:LPSTR
-local fp, buffer[256]:sbyte
+
+  local fp, buffer[256]:sbyte
 
     .if fopen(file, "rt")
 

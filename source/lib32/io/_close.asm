@@ -1,3 +1,9 @@
+; _CLOSE.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include io.inc
 include errno.inc
 include winbase.inc

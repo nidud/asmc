@@ -1,4 +1,8 @@
 ; STRSTR.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 ; char *strstr(s1, s2) - search for s2 in s1
 ;
 ; returns:

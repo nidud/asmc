@@ -1,3 +1,9 @@
+; FWRITE.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include stdio.inc
 include io.inc
 include errno.inc
@@ -9,7 +15,7 @@ include string.inc
 
 fwrite proc uses esi edi ebx buf:LPSTR, rsize:SINT, num:SINT, fp:LPFILE
 
-local total:SINT, bufsize:SINT, nbytes:SINT
+  local total:SINT, bufsize:SINT, nbytes:SINT
 
     mov esi,buf
     mov ebx,fp

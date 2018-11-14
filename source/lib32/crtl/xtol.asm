@@ -1,5 +1,8 @@
 ; XTOL.ASM--
 ;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 ; long xtol(const char *);
 ;
 ; Change history:

@@ -1,3 +1,9 @@
+; ALLREM.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
     .486
     .model flat, c
     .code

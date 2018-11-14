@@ -1,28 +1,26 @@
+; WCSNCPY.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include string.inc
 
-	.code
+    .code
 
-wcsncpy PROC USES esi edi s1:LPWSTR, s2:LPWSTR, count:SIZE_T
-	mov	esi,s2
-	mov	edi,s1
-	sub	eax,eax
-	mov	ecx,count
-	test	ecx,ecx
-	jz	toend
-@@:
-	mov	ax,[esi]
-	mov	[edi],ax
-	add	edi,2
-	add	esi,2
-	dec	ecx
-	jz	toend
-	test	ax,ax
-	jnz	@B
-	sub	edi,2
-toend:
-	mov	word ptr [edi],0
-	mov	eax,s1
-	ret
-wcsncpy ENDP
+wcsncpy proc uses esi edi s1:LPWSTR, s2:LPWSTR, count:SIZE_T
 
-	END
+    .for ( edi=s1, esi=s2, eax=0, ecx=count: ecx: edi+=2, esi+=2, ecx-- )
+
+        mov ax,[esi]
+        mov [edi],ax
+        .break .if !eax
+    .endf
+
+    mov word ptr [edi-2],0
+    mov eax,s1
+    ret
+
+wcsncpy endp
+
+    END

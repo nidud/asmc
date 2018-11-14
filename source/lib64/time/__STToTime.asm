@@ -1,3 +1,8 @@
+; __STTOTIME.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 ; unsigned SystemTimeToTime(SYSTEMTIME *lpSystemTime);
 ;
 ; Return:

@@ -1,6 +1,11 @@
-;; Return an integer value via an index. This is not a recommended
-;; function to use due to performance loss.
-
+; XMVECTORGETINTBYINDEX.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+; Return an integer value via an index. This is not a recommended
+; function to use due to performance loss.
+;
 include DirectXMath.inc
 
     .code

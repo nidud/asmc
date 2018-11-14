@@ -1,3 +1,9 @@
+; _CPRINTF.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include conio.inc
 include stdio.inc
 
@@ -12,7 +18,7 @@ _cprintf proc format:LPSTR, argptr:VARARG
     lea rax,_bufin
     mov o._ptr,rax
     mov o._base,rax
-    _output(addr o, format, addr argptr)
+    _output(&o, format, &argptr)
     mov rax,o._ptr
     mov byte ptr [rax],0
     _cputs(&_bufin)

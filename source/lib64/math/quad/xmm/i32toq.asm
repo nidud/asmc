@@ -1,3 +1,7 @@
+; I32TOQ.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
 ;
 ; i32toq() - long to Quadruple float
 ;

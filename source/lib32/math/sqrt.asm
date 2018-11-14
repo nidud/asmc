@@ -1,5 +1,7 @@
 ; SQRT.ASM--
-; Copyright (C) 2017 Asmc Developers
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
 ;
 include math.inc
 

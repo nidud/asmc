@@ -1,3 +1,8 @@
+; _BSFND.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 ; _bsfnd() - Bit Scan Forward
 ;
 ; Scans source operand for first bit set. If a bit is found

@@ -1,3 +1,8 @@
+; _DIVND.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 ; _divnd() - Divide
 ;
 ; Unsigned binary division of dividend by source.
@@ -84,6 +89,7 @@ _divnd proc uses rsi rdi rbx r12 dividend:ptr, divisor:ptr, reminder:ptr, n:dwor
         xor r12,r12
 
         .while 1
+
             mov rsi,rbx
             mov ecx,r9d
             xor edx,edx
@@ -94,30 +100,17 @@ _divnd proc uses rsi rdi rbx r12 dividend:ptr, divisor:ptr, reminder:ptr, n:dwor
                 sbb edx,edx
                 add rsi,8
             .untilcxz
-            shr edx,1
-            jc  @F
+            .break .if edx
             mov rcx,rbx
             mov rdx,r11
             mov r8d,r9d
             call _cmpnd
-            ja  @F
+            .break .ifa
             inc r12
         .endw
 
         .while 1
-            mov rdi,r10
-            mov ecx,r9d
-            sbb edx,edx
-            .repeat
-                mov rax,[rdi]
-                shr edx,1
-                adc [rdi],rax
-                sbb edx,edx
-                add rdi,8
-            .untilcxz
-            dec r12
-            .break .ifs
-         @@:
+
             mov rsi,rbx
             mov ecx,r9d
             sbb edx,edx
@@ -141,24 +134,44 @@ _divnd proc uses rsi rdi rbx r12 dividend:ptr, divisor:ptr, reminder:ptr, n:dwor
             .untilcxz
             shr edx,1
             cmc
-            .continue .if CARRY?
-            .repeat
-                mov rdi,r10
-                mov ecx,r9d
-                xor edx,edx
+            .ifnc
                 .repeat
-                    mov rax,[rdi]
-                    shr edx,1
-                    adc [rdi],rax
-                    sbb edx,edx
-                    add rdi,8
-                .untilcxz
-                dec r12
-                mov rdi,r11
-                mov rsi,rbx
-                mov ecx,r9d
-                .ifs
+                    mov rdi,r10
+                    mov ecx,r9d
                     xor edx,edx
+                    .repeat
+                        mov rax,[rdi]
+                        shr edx,1
+                        adc [rdi],rax
+                        sbb edx,edx
+                        add rdi,8
+                    .untilcxz
+                    dec r12
+                    mov rdi,r11
+                    mov rsi,rbx
+                    mov ecx,r9d
+                    .ifs
+                        xor edx,edx
+                        .repeat
+                            mov rax,[rsi]
+                            shr edx,1
+                            adc [rdi],rax
+                            sbb edx,edx
+                            add rsi,8
+                            add rdi,8
+                        .untilcxz
+                        .break(1)
+                    .endif
+                    xor edx,edx
+                    .repeat
+                        mov rax,[rsi+rcx*8-8]
+                        shr edx,1
+                        rcr rax,1
+                        sbb edx,edx
+                        mov [rsi+rcx*8-8],rax
+                    .untilcxz
+                    xor edx,edx
+                    mov ecx,r9d
                     .repeat
                         mov rax,[rsi]
                         shr edx,1
@@ -167,28 +180,21 @@ _divnd proc uses rsi rdi rbx r12 dividend:ptr, divisor:ptr, reminder:ptr, n:dwor
                         add rsi,8
                         add rdi,8
                     .untilcxz
-                    .break(1)
-                .endif
-                xor edx,edx
-                .repeat
-                    mov rax,[rsi+rcx*8-8]
                     shr edx,1
-                    rcr rax,1
-                    sbb edx,edx
-                    mov [rsi+rcx*8-8],rax
-                .untilcxz
-                xor edx,edx
-                mov ecx,r9d
-                .repeat
-                    mov rax,[rsi]
-                    shr edx,1
-                    adc [rdi],rax
-                    sbb edx,edx
-                    add rsi,8
-                    add rdi,8
-                .untilcxz
+                .untilb
+            .endif
+            mov rdi,r10
+            mov ecx,r9d
+            sbb edx,edx
+            .repeat
+                mov rax,[rdi]
                 shr edx,1
-            .until CARRY?
+                adc [rdi],rax
+                sbb edx,edx
+                add rdi,8
+            .untilcxz
+            dec r12
+            .break .ifs
         .endw
     .until 1
     ret

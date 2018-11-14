@@ -1,3 +1,9 @@
+; UPDATEKEYEVENT.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include consx.inc
 
 SCROLLLOCK_ON       equ 40h
@@ -16,11 +22,11 @@ UpdateKeyEvent proc uses esi ebx pInput:ptr INPUT_RECORD
 
     xor esi,esi
     mov ebx,pInput
-    movzx   eax,[ebx].KeyEvent.wVirtualKeyCode
+    movzx eax,[ebx].KeyEvent.wVirtualKeyCode
     mov keybcode,al
     mov al,byte ptr [ebx].KeyEvent.wVirtualScanCode
     mov keybscan,al
-    movzx   ecx,al
+    movzx ecx,al
     mov al,byte ptr [ebx].KeyEvent.AsciiChar
     mov keybchar,al
     mov eax,keyshift

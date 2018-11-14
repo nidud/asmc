@@ -1,3 +1,9 @@
+; CREATECONSOLE.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include process.inc
 include string.inc
 include consx.inc

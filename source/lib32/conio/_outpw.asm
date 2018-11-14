@@ -1,14 +1,22 @@
+; _OUTPW.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include libc.inc
 
-	.code
+    .code
 
-	option stackbase:esp
+    option stackbase:esp
 
-_outpw	PROC port, w
-	mov	dx,WORD PTR port
-	mov	ax,WORD PTR w
-	out	dx,ax
-	ret
-_outpw	ENDP
+_outpw proc port, w
 
-	END
+    mov dx,WORD PTR port
+    mov ax,WORD PTR w
+    out dx,ax
+    ret
+
+_outpw endp
+
+    end

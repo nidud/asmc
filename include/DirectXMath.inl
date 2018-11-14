@@ -733,7 +733,7 @@ inl_XMStoreFloat3A macro pDestination, V
 ifdef _XM_NO_INTRINSICS_
 elseifdef _XM_SSE_INTRINSICS_
     _mm_store_ps(xmm0, V)
-    _mm_storel_epi64(pDestination[0], xmm0)
+    _mm_storel_epi64(qword ptr pDestination[0], xmm0)
     XM_PERMUTE_PS(xmm0, _MM_SHUFFLE(2, 2, 2, 2))
     _mm_store_ss(pDestination[8], xmm0)
     exitm<>

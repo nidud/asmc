@@ -1,3 +1,9 @@
+; __ALLOCWPATH.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include direct.inc
 include malloc.inc
 include errno.inc

@@ -1,15 +1,23 @@
+; _OUTP.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include libc.inc
 
-	.code
+    .code
 
-	option stackbase:esp
+    option stackbase:esp
 
-_outp	PROC port, b
-	xor	eax,eax
-	mov	dx,WORD PTR port
-	mov	al,BYTE PTR b
-	out	dx,al
-	ret
-_outp	ENDP
+_outp proc port, b
 
-	END
+    xor eax,eax
+    mov dx,WORD PTR port
+    mov al,BYTE PTR b
+    out dx,al
+    ret
+
+_outp endp
+
+    END

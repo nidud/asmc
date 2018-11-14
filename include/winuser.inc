@@ -1288,16 +1288,16 @@ POINTSTOPOINT macro pt, pts
 	movsx pt.POINT.y, HIWORD(pts)
 	endm
 POINTTOPOINTS macro pt
-	exitm<(MAKEONG((pt.POINT.x), (pt.POINT.y)))>
+	exitm<(MAKELONG((pt.POINT.x), (pt.POINT.y)))>
 	endm
 MAKEWPARAM macro l,h
-	exitm<MAKEONG(l, h)>
+	exitm<MAKELONG(l, h)>
 	endm
 MAKELPARAM macro l,h
-	exitm<MAKEONG(l, h)>
+	exitm<MAKELONG(l, h)>
 	endm
 MAKELRESULT macro l,h
-	exitm<MAKEONG(l, h)>
+	exitm<MAKELONG(l, h)>
 	endm
 
 

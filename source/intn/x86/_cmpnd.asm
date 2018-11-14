@@ -1,3 +1,8 @@
+; _CMPND.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 ; _cmpnd() - Unsigned Compare
 ;
 ; Subtracts destination value from source without saving results.

@@ -1,3 +1,9 @@
+; _READ.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include io.inc
 include errno.inc
 include winbase.inc
@@ -16,7 +22,7 @@ read endp
 
 _read proc uses ebx esi edi h:SINT, b:PVOID, count:SIZE_T
 
-local NumberOfBytesRead:dword
+  local NumberOfBytesRead:dword
 
     xor esi,esi         ; nothing read yet
     mov edi,b

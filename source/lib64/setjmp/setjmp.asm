@@ -1,3 +1,7 @@
+; SETJMP.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
 ;
 ; int	__cdecl setjmp(jmp_buf);
 ; void	__cdecl longjmp(jmp_buf, int);

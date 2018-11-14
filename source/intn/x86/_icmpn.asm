@@ -1,3 +1,8 @@
+; _ICMPN.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 ; _icmpn() - Signed Compare
 ;
 ; Subtracts destination value from source without saving results.

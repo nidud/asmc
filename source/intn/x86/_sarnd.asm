@@ -1,3 +1,8 @@
+; _SARND.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
 ; _sarnd() - Shift Arithmetic Right
 ;
 ; Shifts the destination right by "count" bits with

@@ -439,10 +439,10 @@ static int get_special_symbol( struct asm_tok *buf, struct line_status *p )
 
 	    char flag = 0;
 	    int state = 0;
-	    struct asym *sym = SymFind( (buf-1)->string_ptr );
+	    struct asym *sym;
 	    struct asm_tok *tok = (buf-1);
 
-	    if ( !sym && p->index >= 3 && (buf-2)->token == T_DOT ) {
+	    if ( p->index >= 3 && (buf-2)->token == T_DOT ) {
 
 		/* p.x(...) | [...][.type].x(...) */
 
@@ -454,7 +454,10 @@ static int get_special_symbol( struct asm_tok *buf, struct line_status *p )
 
 		} else
 		    sym = SymFind( tok->string_ptr );
-	    }
+
+	    } else
+		sym = SymFind( tok->string_ptr );
+
 
 	    if ( sym ) {
 

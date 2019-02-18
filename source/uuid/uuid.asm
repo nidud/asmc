@@ -5,6 +5,7 @@
 ;
 
 INITGUID equ 1
+
 include aclui.inc
 include activaut.inc
 include activscp.inc
@@ -21,6 +22,8 @@ include shlguid.inc
 include shobjidl.inc
 include lmaccess.inc
 include AppxPackaging.inc
+
+include gdiplus.inc
 
 include src/ahadmin_i.inc
 include src/CDOSys_I.inc

@@ -100,19 +100,19 @@ includelib uuid.lib
 endif
 
 DEFINE_IIDX macro name, x
-	_IID_&name& equ <@CatStr( \
-	<{0x>, @SubStr(x, 2,8), \
-	<,0x>, @SubStr(x,11,4), \
-	<,0x>, @SubStr(x,16,4), \
-	<,{0x>,@SubStr(x,21,2), \
-	<,0x>, @SubStr(x,23,2), \
-	<,0x>, @SubStr(x,26,2), \
-	<,0x>, @SubStr(x,28,2), \
-	<,0x>, @SubStr(x,30,2), \
-	<,0x>, @SubStr(x,32,2), \
-	<,0x>, @SubStr(x,34,2), \
-	<,0x>, @SubStr(x,36,2),<}}>)>
-	exitm<externdef IID_&name&:IID>
+    DEFINE_GUID(IID_&name&, \
+	@CatStr(<0x>, @SubStr(x, 2,8)), \
+	@CatStr(<0x>, @SubStr(x,11,4)), \
+	@CatStr(<0x>, @SubStr(x,16,4)), \
+	@CatStr(<0x>, @SubStr(x,21,2)), \
+	@CatStr(<0x>, @SubStr(x,23,2)), \
+	@CatStr(<0x>, @SubStr(x,26,2)), \
+	@CatStr(<0x>, @SubStr(x,28,2)), \
+	@CatStr(<0x>, @SubStr(x,30,2)), \
+	@CatStr(<0x>, @SubStr(x,32,2)), \
+	@CatStr(<0x>, @SubStr(x,34,2)), \
+	@CatStr(<0x>, @SubStr(x,36,2)))
+	exitm<>
 	endm
 
 externdef GUID_NULL:GUID

@@ -11,10 +11,15 @@ endif
 ;WIN32 equ 100
 ;endif
 
-
 include winerror.inc
 include objbase.inc
 include oleauto.inc
+
+ifdef __PE__
+option	dllimport:<ole32>
+else
+includelib ole32.lib
+endif
 
 E_DRAW			equ VIEW_E_DRAW
 

@@ -559,23 +559,33 @@ get_special_symbol proc fastcall uses esi edi ebx buf:ptr asmtok , p:ptr line_st
 
         .elseif [esi].index && [ebx-16].token == T_ID
 
-            lea edi,[ebx-16]
-            SymFind( [ebx-16].string_ptr )
-            xor edx,edx
-            .if !eax && [esi].index >= 3 && [ebx-32].token == T_DOT
+            xor eax,eax
+
+            .if [esi].index >= 3 && [ebx-32].token == T_DOT
                 ;
                 ; p.x(...)
                 ; [...][.type].x(...)
                 ;
                 lea edi,[ebx-16*3]
                 .if [edi].asmtok.token == T_CL_SQ_BRACKET
+
                     add edi,32
                     inc eax
                     mov edx,SYM_TYPE
+
                 .else
+
                     SymFind( [edi].asmtok.string_ptr )
                     xor edx,edx
+
                 .endif
+
+            .else
+
+                lea edi,[ebx-16]
+                SymFind( [ebx-16].string_ptr )
+                xor edx,edx
+
             .endif
 
             .if eax

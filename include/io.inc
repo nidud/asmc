@@ -107,21 +107,24 @@ M_RDONLY	equ 0x80000000
 M_WRONLY	equ 0x40000000
 M_RDWR		equ M_RDONLY or M_WRONLY
 
-_open		proto _CDecl :LPSTR, :SINT, :VARARG
+if 0
 open		proto _CDecl :LPSTR, :SINT, :VARARG
+read		proto __cdecl :SINT, :PVOID, :SIZE_T
+close		proto __cdecl :SINT
+filelength	proto __cdecl :SINT
+endif
+
+_open		proto _CDecl :LPSTR, :SINT, :VARARG
 _sopen		proto _CDecl :LPSTR, :UINT, :UINT, :VARARG
 _read		proto __cdecl :SINT, :PVOID, :SIZE_T
-read		proto __cdecl :SINT, :PVOID, :SIZE_T
 _creat		proto __cdecl :LPSTR, :UINT
 _close		proto __cdecl :SINT
-close		proto __cdecl :SINT
 _lseek		proto __cdecl :SINT, :SIZE_T, :UINT
 _write		proto __cdecl :SINT, :PVOID, :UINT
 _access		proto __cdecl :LPSTR, :UINT
 _isatty		proto __cdecl :SINT
 _eof		proto __cdecl :SINT
 _chsize		proto __cdecl :SINT, :SIZE_T
-filelength	proto __cdecl :SINT
 _filelength	proto __cdecl :SINT
 _findfirst	proto __cdecl :LPSTR, :PTR _finddata_t
 _findnext	proto __cdecl :HANDLE, :PTR _finddata_t

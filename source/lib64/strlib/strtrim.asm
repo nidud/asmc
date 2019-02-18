@@ -11,17 +11,14 @@ include string.inc
 
 strtrim proc string:LPSTR
 
-    .if strlen(rcx)
+    .for ( rcx = strlen(rcx), rcx += string : rax : rax-- )
 
-        mov rcx,rax
-        add rcx,string
-        .repeat
-            dec rcx
-            .break .if byte ptr [rcx] > ' '
-            mov byte ptr [rcx],0
-            dec eax
-        .untilz
-    .endif
+        dec rcx
+        .break .if byte ptr [rcx] > ' '
+
+        mov byte ptr [rcx],0
+
+    .endf
     ret
 
 strtrim endp

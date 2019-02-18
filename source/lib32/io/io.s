@@ -15,17 +15,17 @@ main	proc c
 	.assert _open("test.fil",O_RDWR) == 3
 	mov	esi,eax
 	.assert !_chsize(esi,0)
-	.assert !filelength(esi)
+	.assert !_filelength(esi)
 	mov	ebx,8192
 	.assert !_chsize(esi,ebx)
-	.assert filelength(esi) == 8192
+	.assert _filelength(esi) == 8192
 	.repeat
 		.assert _read(esi,addr buf,1) == 1
 		.assert buf == 0
 		dec	ebx
 	.until	!ebx
 	.assert _eof(esi) == 1
-	.assert filelength(esi) == 8192
+	.assert _filelength(esi) == 8192
 	.assert _lseek(esi,16384,SEEK_SET) == 16384
 	.assert _tell(esi) == 16384
 	.assert _write(esi,"!",1) == 1

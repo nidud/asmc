@@ -110,6 +110,8 @@ Assignopc endp
 
 ParseAssignment proc private uses esi edi ebx buffer:ptr sbyte, tokenarray:ptr asmtok
 
+  local bracket:byte ; assign value: [rdx+8]=rax - @v2.28.15
+
     mov edi,buffer
     mov ebx,tokenarray
 
@@ -120,6 +122,11 @@ ParseAssignment proc private uses esi edi ebx buffer:ptr sbyte, tokenarray:ptr a
     mov cl,[ebx].token
     mov ch,[ebx+16].token
     mov eax,[edx]
+
+    mov bracket,0
+    .if ( cl == T_OP_SQ_BRACKET )
+        inc bracket
+    .endif
 
     .repeat
 
@@ -142,8 +149,20 @@ ParseAssignment proc private uses esi edi ebx buffer:ptr sbyte, tokenarray:ptr a
             mov edx,[esi].string_ptr
             mov edx,[edx]
 
-            .if ( [esi].tokval == T_EQU && [esi].dirtype == DRT_EQUALSGN ) || \
-                [esi].token == '+' || [esi].token == '-' || [esi].token == '&'
+            .switch
+
+            .case [esi].token == T_OP_SQ_BRACKET
+                inc bracket
+                .endc
+            .case [esi].token == T_CL_SQ_BRACKET
+                dec bracket
+            .case bracket
+                .endc
+
+            .case [esi].token == '+'
+            .case [esi].token == '-'
+            .case [esi].token == '&'
+            .case [esi].tokval == T_EQU && [esi].dirtype == DRT_EQUALSGN
 
                 mov eax,[esi].tokpos
                 mov dl,[eax]
@@ -151,9 +170,12 @@ ParseAssignment proc private uses esi edi ebx buffer:ptr sbyte, tokenarray:ptr a
                 mov ecx,[esi+16].tokpos
                 .break
 
-            .elseif [esi].token == T_STRING
+            .case [esi].token == T_STRING
 
-                .if dl == '>' || dl == '<'
+                .switch dl
+
+                .case '>'
+                .case '<'
 
                     mov eax,[esi].tokpos
                     lea ecx,[eax+3]
@@ -162,7 +184,9 @@ ParseAssignment proc private uses esi edi ebx buffer:ptr sbyte, tokenarray:ptr a
                     .endif
                     .break
 
-                .elseif dl == '|' || dl == '~' || dl == '^'
+                .case '|'
+                .case '~'
+                .case '^'
 
                     mov eax,[esi].tokpos
                     lea ecx,[eax+2]
@@ -170,8 +194,8 @@ ParseAssignment proc private uses esi edi ebx buffer:ptr sbyte, tokenarray:ptr a
                         mov ecx,[esi+16].tokpos
                     .endif
                     .break
-                .endif
-            .endif
+                .endsw
+            .endsw
         .endf
 
         .if !eax
@@ -479,13 +503,11 @@ local   rc:SINT,
                 mov edi,edx
 
                 lea edx,tokbuf
-                Tokenize( strcat( strcpy( edx, ".if " ), edi ),
-                    0, tokenarray, TOK_DEFAULT )
+                Tokenize( strcat( strcpy( edx, ".if " ), edi ), 0, tokenarray, TOK_DEFAULT )
                 mov ModuleInfo.token_count,eax
 
                 mov i,1
-                EvaluateHllExpression( esi, &i, tokenarray,
-                    LEXIT, 0, ebx )
+                EvaluateHllExpression( esi, &i, tokenarray, LEXIT, 0, ebx )
                 mov rc,eax
 
                 .if eax == NOT_ERROR

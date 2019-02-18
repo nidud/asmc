@@ -25,6 +25,16 @@ system begin con_32
     runtime console=4.0
 end
 
+# Win32 console debug application
+system begin con_32D
+    option  quiet, cvp
+    libpath %ASMCDIR%\lib
+    library libc,kernel32,user32
+    symt    _cstart
+    format  windows pe ru con debug c ^
+    runtime console=4.0
+end
+
 # Win32 console application Open Watcom
 system begin watcom_c
     option  quiet

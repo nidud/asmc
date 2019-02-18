@@ -1,182 +1,86 @@
+; TCONSOLE.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
 include malloc.inc
 include stdio.inc
-include tdialog.inc
-
-    .data
-    Console LPTCONSOLE 0
-    virtual_table label qword
-        dq TConsole_Release
-        dq TConsole_Update
-        dq TConsole_Hide
-        dq TConsole_Read
-        dq TConsole_Write
-        dq TConsole_Getchar
-        dq TConsole_Putchar
-        dq TConsole_Putattrib
-        dq TConsole_Getattrib
-        dq TConsole_Setattrib
-        dq TConsole_Clrconsole
-        dq TConsole_CPrintf
-        dq TConsole_CPuta
-        dq TConsole_Getrectptr
-        dq TConsole_Insidex
-        dq TConsole_Insidey
-        dq TConsole_Inside
-        dq TConsole_Maxconsole
-        dq TConsole_Setconsole
-        dq TConsole_Moveconsole
-        dq TConsole_Readevent
-        dq TConsole_Getevent
-        dq TConsole_Getch
-        dq TConsole_Shiftstate
-        dq TConsole_Mousepress
-        dq TConsole_Getmousex
-        dq TConsole_Getmousey
-        dq TConsole_Pushevent
-        dq TConsole_Popevent
-        dq TConsole_Setkeystate
-        dq TConsole_ClipFree
-        dq TConsole_ClipCopy
-        dq TConsole_ClipPaste
-        dq TConsole_CursorOn
-        dq TConsole_CursorOff
-        dq TConsole_CursorGet
-        dq TConsole_CursorSet
+include conio.inc
+include tconsole.inc
 
     .code
 
-    assume rcx: ptr TConsole
+    assume rcx: ptr tconsole
 
-TConsole::Release proc
+tconsole::Release proc
 
-    [rcx].ClipFree()
+    [rcx].clipfree()
     free( [rcx].window )
     free( _this )
     ret
 
-TConsole::Release endp
+tconsole::Release endp
 
-TConsole::TConsole proc uses rsi rdi
-
-  local ci: CONSOLE_SCREEN_BUFFER_INFO
-
-    assume rsi:ptr TConsole
-
-    .if malloc( sizeof(TConsole) )
-
-        mov rsi,rax
-        mov rdi,rax
-        xor eax,eax
-        mov ecx,sizeof(TConsole)
-        rep stosb
-        lea rax,virtual_table
-        mov [rsi],rax
-        lea rdi,[rsi].foreground
-        mov rax,0x07000008070F0F00
-        stosq
-        mov rax,0x0F0F0F000B0A0008
-        stosq
-        mov rax,0x7030304070701000
-        stosq
-        mov rax,0x0707000000303030
-        stosq
-        mov edi,0x00190050
-        .if GetConsoleScreenBufferInfo( hStdOutput, &ci )
-
-            mov edi,ci.dwSize
-        .endif
-        movzx eax,di
-        shr edi,16
-        mov [rsi].rc.col,al
-        mov edx,edi
-        mov [rsi].rc.row,dl
-        mul edi
-        lea rdi,[rax*4]
-        lea rcx,[rdi*2]
-
-        .if malloc( rcx )
-
-            mov [rsi].window,rax
-            add rax,rdi
-            mov [rsi].backgr,rax
-            mov [rsi].flags,_TW_ISOPEN
-            [rsi].Read()
-            mov rax,rsi
-            mov rdi,[rsi].window
-            mov rsi,[rsi].backgr
-            mov rcx,rsi
-            sub rcx,rdi
-            rep movsb
-            mov rcx,rax
-        .endif
-    .endif
-    assume rsi:nothing
-
-    mov r8,_this
-    .if r8
-        mov [r8],rax
-    .endif
-    ret
-
-TConsole::TConsole endp
-
-TConsole::Read proc uses rsi rdi rbx
+tconsole::read proc uses rsi rdi rbx buffer:PCHAR_INFO
 
   local co:COORD, rc:SMALL_RECT
 
     xor eax,eax
-    mov rc,rax
     mov al,[rcx].rc.col
     mov co.x,ax
     dec al
+    add al,[rcx].rc.x
     mov rc.Right,ax
     mov al,[rcx].rc.row
     mov co.y,ax
     dec al
     mov rc.Bottom,ax
+    mov al,[rcx].rc.x
+    mov rc.Left,ax
+    mov al,[rcx].rc.y
+    mov rc.Top,ax
+    mov rsi,rdx
 
-    mov rsi,[rcx].backgr
-
-    .if !ReadConsoleOutput(hStdOutput, rsi, co, 0, &rc)
+    .ifd !ReadConsoleOutput(hStdOutput, rsi, co, 0, &rc)
 
         movzx ebx,co.y
         movzx edi,co.x
-        shl   edi,2
-        mov   ax,rc.Top
-        mov   rc.Bottom,ax
-        mov   co.y,1
 
-        .repeat
-            .break .if !ReadConsoleOutput(hStdOutput, rsi, co, 0, &rc)
-            inc rc.Bottom
-            inc rc.Top
-            add rsi,rdi
-            dec ebx
-        .until !ebx
+        .for ( edi <<= 2, ax = rc.Top, rc.Bottom = ax, co.y = 1,
+               : ebx && ReadConsoleOutput(hStdOutput, rsi, co, 0, &rc),
+               : ebx--, rc.Bottom++, rc.Top++, rsi += rdi )
+        .endf
 
         xor eax,eax
         cmp ebx,1
         adc eax,0
+
     .endif
+
     mov rcx,_this
     ret
 
-TConsole::Read endp
+tconsole::read endp
 
-TConsole::Write proc uses rsi rdi rbx buffer:PCHAR_INFO
+tconsole::write proc uses rsi rdi rbx buffer:PCHAR_INFO
 
   local co:COORD, rc:SMALL_RECT
 
     xor eax,eax
-    mov rc,rax
     mov al,[rcx].rc.col
     mov co.x,ax
     dec al
+    add al,[rcx].rc.x
     mov rc.Right,ax
     mov al,[rcx].rc.row
     mov co.y,ax
     dec al
     mov rc.Bottom,ax
+    mov al,[rcx].rc.x
+    mov rc.Left,ax
+    mov al,[rcx].rc.y
+    mov rc.Top,ax
     mov rsi,rdx
 
     .ifd !WriteConsoleOutput(hStdOutput, rdx, co, 0, &rc)
@@ -184,45 +88,57 @@ TConsole::Write proc uses rsi rdi rbx buffer:PCHAR_INFO
         movzx edi,co.x
         movzx ebx,co.y
         shl edi,2
-        mov rc.Bottom,0
+        mov ax,rc.Top
+        mov rc.Bottom,ax
         mov co.y,1
-        .for : ebx, WriteConsoleOutput(hStdOutput, rsi, co, 0, &rc) : ebx--,
-            rc.Bottom++, rc.Top++, rsi+=rdi
+
+        .for ( : ebx,
+                 WriteConsoleOutput(hStdOutput, rsi, co, 0, &rc),
+               : ebx--,
+                 rc.Bottom++,
+                 rc.Top++,
+                 rsi += rdi )
         .endf
+
     .endif
+
     xor eax,eax
     cmp ebx,1
     adc eax,0
     mov rcx,_this
     ret
 
-TConsole::Write endp
+tconsole::write endp
 
-TConsole::Update proc
+tconsole::show proc
 
-    .if [rcx].flags & _TW_ISOPEN
+    .if ( [rcx].flags & _TW_ISOPEN )
 
         or [rcx].flags,_TW_VISIBLE
-        [rcx].Write( [rcx].window )
+
+        [rcx].write( [rcx].window )
+
     .endif
     ret
 
-TConsole::Update endp
+tconsole::show endp
 
-TConsole::Hide proc
+tconsole::hide proc
 
-    .if [rcx].flags & _TW_ISOPEN
+    .if ( [rcx].flags & _TW_ISOPEN )
 
         and [rcx].flags,not _TW_VISIBLE
-        [rcx].Write( [rcx].backgr )
+
+        [rcx].write( [rcx].backgr )
+
     .endif
     ret
 
-TConsole::Hide endp
+tconsole::hide endp
 
     option win64:rsp nosave noauto
 
-TConsole::Insidex proc x:SINT
+tconsole::inside_x proc x:int_t
 
     xor eax,eax
     .if dl < [rcx].rc.col
@@ -231,9 +147,9 @@ TConsole::Insidex proc x:SINT
     .endif
     ret
 
-TConsole::Insidex endp
+tconsole::inside_x endp
 
-TConsole::Insidey proc y:SINT
+tconsole::inside_y proc y:int_t
 
     xor eax,eax
     .if dl < [rcx].rc.row
@@ -242,112 +158,136 @@ TConsole::Insidey proc y:SINT
     .endif
     ret
 
-TConsole::Insidey endp
+tconsole::inside_y endp
 
     option win64:rbp nosave auto
 
-TConsole::Inside proc x:SINT, y:SINT
+tconsole::insidexy proc x:int_t, y:int_t
 
-    .if [rcx].Insidex(edx)
-        [rcx].Insidey(r8d)
+    .ifd [rcx].inside_x(edx)
+
+        [rcx].inside_y(r8d)
+
     .endif
     ret
 
-TConsole::Inside endp
+tconsole::insidexy endp
 
-TConsole::Getchar proc x:SINT, y:SINT
+tconsole::getat proc f_id:uint_t, b_id:uint_t
 
-    .if [rcx].Insidex(edx)
-
-        lea r9,[rax-1]
-
-        .if [rcx].Insidey(r8d)
-
-            dec eax
-
-            movzx edx,[rcx].rc.col
-            mul edx
-            add eax,r9d
-            shl eax,2
-            add rax,[rcx].window
-            mov eax,[rax]
-        .endif
-    .endif
+    movzx eax,[rcx].foreground[rdx]
+    or    al,[rcx].background[r8]
     ret
 
-TConsole::Getchar endp
-
-TConsole::Getrectptr proc rc:TRECT
-
-    movzx r8d,rc.y
-    movzx edx,rc.x
-
-    .if [rcx].Insidex(edx)
-
-        lea r9,[rax-1]
-
-        .if [rcx].Insidey(r8d)
-
-            dec eax
-
-            movzx edx,[rcx].rc.col
-            mul edx
-            add eax,r9d
-            shl eax,2
-            add rax,[rcx].window
-        .endif
-    .endif
-    ret
-
-TConsole::Getrectptr endp
-
-TConsole::Putchar proc x:SINT, y:SINT, w:UINT
-
-    .if [rcx].Insidex(edx)
-
-        lea r10,[rax-1]
-
-        .if [rcx].Insidey(r8d)
-
-            dec eax
-
-            movzx edx,[rcx].rc.col
-            mul edx
-            add eax,r10d
-            shl eax,2
-            add rax,[rcx].window
-            mov [rax],r9w
-        .endif
-    .endif
-    ret
-
-TConsole::Putchar endp
-
-TConsole::Putattrib proc x:SINT, y:SINT, w:UINT
-
-    .if [rcx].Insidex(edx)
-
-        lea r10,[rax-1]
-
-        .if [rcx].Insidey(r8d)
-
-            dec eax
-
-            movzx edx,[rcx].rc.col
-            mul edx
-            add eax,r10d
-            shl eax,2
-            add rax,[rcx].window
-            mov [rax+2],r9w
-        .endif
-    .endif
-    ret
-
-TConsole::Putattrib endp
+tconsole::getat endp
 
     option win64:rsp nosave noauto
 
-TConsole::Setattrib proc attrib:BYTE
+tconsole::getrcp proc rc:TRECT
+
+    movzx eax,dh ; rc.y
+    movzx edx,dl ; rc.x
+
+    mov r8d,eax
+
+tconsole::getrcp endp
+
+    option win64:auto
+
+tconsole::getxyp proc uses r9 x:int_t, y:int_t
+
+    .ifd [rcx].inside_x(edx)
+
+        lea r9,[rax-1]
+
+        .ifd [rcx].inside_y(r8d)
+
+            dec eax
+
+            movzx edx,[rcx].rc.col
+            mul edx
+            add eax,r9d
+            shl eax,2
+            add rax,[rcx].window
+
+        .endif
+    .endif
+    ret
+
+tconsole::getxyp endp
+
+tconsole::getxyw proc x:int_t, y:int_t
+
+    .if [rcx].getxyp(edx, r8d)
+
+        mov eax,[rax]
+    .endif
+    ret
+
+tconsole::getxyw endp
+
+tconsole::getxyc proc x:int_t, y:int_t
+
+    .if [rcx].getxyp(edx, r8d)
+
+        movzx eax,word ptr [rax]
+    .endif
+    ret
+
+tconsole::getxyc endp
+
+tconsole::getxya proc x:int_t, y:int_t
+
+    .if [rcx].getxyp(edx, r8d)
+
+        movzx eax,byte ptr [rax+2]
+    .endif
+    ret
+
+tconsole::getxya endp
+
+tconsole::putxyw proc x:int_t, y:int_t, l:int_t, w:uint_t
+
+    .if [rcx].getxyp(edx, r8d)
+
+        .for ( edx = w : r9d : r9d--, rax += 4 )
+
+            mov [rax],edx
+        .endf
+    .endif
+    ret
+
+tconsole::putxyw endp
+
+tconsole::putxyc proc x:int_t, y:int_t, l:int_t, w:wchar_t
+
+    .if [rcx].getxyp(edx, r8d)
+
+        .for ( dx = w : r9d : r9d--, rax += 4 )
+
+            mov [rax],dx
+        .endf
+    .endif
+    ret
+
+tconsole::putxyc endp
+
+tconsole::putxya proc x:int_t, y:int_t, l:int_t, a:uchar_t
+
+    .if [rcx].getxyp(edx, r8d)
+
+        .for ( dl = a : r9d : r9d--, rax += 4 )
+
+            mov [rax+2],dl
+        .endf
+    .endif
+    ret
+
+tconsole::putxya endp
+
+    option win64:noauto
+
+tconsole::SetConsoleAttrib proc attrib:uchar_t
 
     mov al,dl
     and al,0x0F
@@ -356,17 +296,9 @@ TConsole::Setattrib proc attrib:BYTE
     mov [rcx].background[B_Desktop],dl
     ret
 
-TConsole::Setattrib endp
+tconsole::SetConsoleAttrib endp
 
-TConsole::Getattrib proc f_id:UINT, b_id:UINT
-
-    movzx eax,[rcx].foreground[rdx]
-    or    al,[rcx].background[r8]
-    ret
-
-TConsole::Getattrib endp
-
-TConsole::Clrconsole proc uses rdi rcx
+tconsole::ClearConsole proc uses rdi rcx
 
     movzx   eax,[rcx].foreground[F_Desktop]
     or      al,[rcx].background[B_Desktop]
@@ -379,11 +311,11 @@ TConsole::Clrconsole proc uses rdi rcx
     rep     stosd
     ret
 
-TConsole::Clrconsole endp
+tconsole::ClearConsole endp
 
     option win64:rbp save auto
 
-TConsole::CPrintf proc uses rsi rdi rbx x:SINT, y:SINT, format:LPSTR, argptr:VARARG
+tconsole::putxyf proc uses rsi rdi rbx x:int_t, y:int_t, format:string_t, argptr:VARARG
 
   local o:_iobuf
 
@@ -394,33 +326,38 @@ TConsole::CPrintf proc uses rsi rdi rbx x:SINT, y:SINT, format:LPSTR, argptr:VAR
     mov o._ptr,rax
     mov o._base,rax
     _output(&o, format, &argptr)
+
     mov rdx,o._ptr
     mov byte ptr [rdx],0
-    .for rsi=&_bufin, ebx=eax, edi=x, rcx=_this: ebx: ebx--, edi++
+
+    .for ( rsi = &_bufin,
+           ebx = eax,
+           edi = x,
+           rcx = _this : ebx : ebx--, edi++ )
+
         lodsb
-        .if al == 10
+
+        .if ( al == 10 )
+
             mov edi,x
             dec edi
             inc y
+
         .else
-            movzx r9d,al
-            [rcx].Putchar(edi, y, r9d)
+
+            movzx eax,al
+            [rcx].putxyc(edi, y, 1, ax)
+
         .endif
+
     .endf
     ret
 
-TConsole::CPrintf endp
+tconsole::putxyf endp
 
-TConsole::CPuta proc uses rsi rdi x:SINT, y:SINT, l:SINT, a:BYTE
+    assume rsi:ptr tconsole
 
-    .for edi=edx, esi=r9d, r9b=a : esi: esi--, edi++
-        [rcx].Putattrib(edi, r8d, r9d)
-    .endf
-    ret
-
-TConsole::CPuta endp
-
-TConsole::Setconsole proc uses rsi rdi rcx cols:UINT, rows:UINT
+tconsole::SetConsoleSize proc uses rsi rdi rcx cols:uint_t, rows:uint_t
 
   local bz:COORD
   local rc:SMALL_RECT
@@ -445,8 +382,6 @@ TConsole::Setconsole proc uses rsi rdi rcx cols:UINT, rows:UINT
 
         .if GetConsoleScreenBufferInfo(hStdOutput, &ci)
 
-            assume rsi:ptr TConsole
-
             mov rsi,_this
             mov eax,ci.dwSize
 
@@ -469,7 +404,7 @@ TConsole::Setconsole proc uses rsi rdi rcx cols:UINT, rows:UINT
                 add rax,rdi
                 mov [rsi].backgr,rax
                 mov [rsi].flags,_TW_ISOPEN
-                [rsi].Read()
+                [rsi].read(rax)
 
                 mov rax,rsi
                 mov rdi,[rsi].window
@@ -478,47 +413,63 @@ TConsole::Setconsole proc uses rsi rdi rcx cols:UINT, rows:UINT
                 sub rcx,rdi
                 rep movsb
                 mov rcx,rax
+
             .endif
-            assume rsi:nothing
         .endif
     .endif
     ret
 
-TConsole::Setconsole endp
+tconsole::SetConsoleSize endp
 
-TConsole::Maxconsole proc
+    assume rsi:nothing
 
-    [rcx].Moveconsole(0, 0)
-    mov edx,GetLargestConsoleWindowSize(hStdOutput)
+tconsole::SetMaxConsoleSize proc
+
+    [rcx].MoveConsole(0, 0)
+
+    GetLargestConsoleWindowSize(hStdOutput)
+
+    mov edx,eax
     shr eax,16
-    movzx edx,dx
-    .if ecx < 80 || eax < 16
+    and edx,0xFFFF
+
+    .if ( edx < 80 || eax < 16 )
+
         mov edx,80
         mov eax,25
-    .elseif edx > 255 || eax > 255
-        .if edx > 255
+
+    .elseif ( edx > 255 || eax > 255 )
+
+        .if ( edx > 255 )
+
             mov edx,240
+
         .endif
-        .if eax > 255
+
+        .if ( eax > 255 )
+
             mov eax,240
+
         .endif
+
     .endif
-    _this.Setconsole(edx, eax)
+
+    _this.SetConsoleSize(edx, eax)
     ret
 
-TConsole::Maxconsole endp
+tconsole::SetMaxConsoleSize endp
 
-TConsole::Moveconsole proc uses rcx x:UINT, y:UINT
+tconsole::MoveConsole proc uses rcx x:uint_t, y:uint_t
 
     SetWindowPos( GetConsoleWindow(), 0, x, y, 0, 0, SWP_NOSIZE or SWP_NOACTIVATE or SWP_NOZORDER )
     ret
 
-TConsole::Moveconsole endp
+tconsole::MoveConsole endp
 
 
     assume rbx:ptr INPUT_RECORD
 
-TConsole::Readevent proc uses rsi rdi rbx
+tconsole::readevent proc uses rsi rdi rbx
 
   local Count:dword, Event:INPUT_RECORD
 
@@ -528,45 +479,59 @@ TConsole::Readevent proc uses rsi rdi rbx
     .if GetNumberOfConsoleInputEvents(hStdInput, &Count)
 
         mov esi,Count
+
         .while esi
 
             ReadConsoleInput(hStdInput, rbx, 1, &Count)
+
             .break .if !Count
 
             mov rcx,_this
             movzx eax,[rbx].EventType
+
             .if eax == KEY_EVENT
 
-                xor r8d,r8d
-                movzx eax,[rbx].KeyEvent.wVirtualKeyCode
-                mov [rcx].keybcode,al
-                mov al,byte ptr [rbx].KeyEvent.wVirtualScanCode
-                mov [rcx].keybscan,al
-                movzx r9d,al
-                mov al,byte ptr [rbx].KeyEvent.AsciiChar
-                mov [rcx].keybchar,al
-                mov edx,[rcx].keyshift
-                mov eax,[rbx].KeyEvent.dwControlKeyState
-                and edx,not (SHIFT_SCROLL or SHIFT_NUMLOCK or SHIFT_CAPSLOCK \
-                        or SHIFT_ENHANCED or SHIFT_KEYSPRESSED)
+                xor     r8d,r8d
+                movzx   eax,[rbx].KeyEvent.wVirtualKeyCode
+                mov     [rcx].keybcode,al
+                mov     al,byte ptr [rbx].KeyEvent.wVirtualScanCode
+                mov     [rcx].keybscan,al
+                movzx   r9d,al
+                mov     al,byte ptr [rbx].KeyEvent.AsciiChar
+                mov     [rcx].keybchar,al
+                mov     edx,[rcx].keyshift
+                mov     eax,[rbx].KeyEvent.dwControlKeyState
+                and     edx,not ( SHIFT_SCROLL or SHIFT_NUMLOCK or SHIFT_CAPSLOCK \
+                            or SHIFT_ENHANCED or SHIFT_KEYSPRESSED )
 
                 .if eax & SHIFT_PRESSED
+
                     or edx,SHIFT_KEYSPRESSED
                 .else
+
                     and edx,not (SHIFT_LEFT or SHIFT_RIGHT)
                 .endif
+
                 .if eax & SCROLLLOCK_ON
+
                     or edx,SHIFT_SCROLL
                 .endif
+
                 .if eax & NUMLOCK_ON
+
                     or edx,SHIFT_NUMLOCK
                 .endif
+
                 .if eax & CAPSLOCK_ON
+
                     or edx,SHIFT_CAPSLOCK
                 .endif
+
                 .if eax & ENHANCED_KEY
+
                     or edx,SHIFT_ENHANCED
                 .endif
+
                 xchg edx,eax
 
                 .if [rbx].KeyEvent.bKeyDown
@@ -574,91 +539,76 @@ TConsole::Readevent proc uses rsi rdi rbx
                     mov [rcx].keybstate,1
                     or  eax,SHIFT_RELEASEKEY
 
+
+                    option switch:pascal
                     .switch r9d
-                      .case 2Ah
+                      .case 0x2A
                         .if eax & SHIFT_KEYSPRESSED
                             or eax,SHIFT_LEFT
                         .endif
-                        .endc
-                      .case 36h
+                      .case 0x36
                         .if eax & SHIFT_KEYSPRESSED
                             or eax,SHIFT_RIGHT
                         .endif
-                        .endc
-                      .case 38h
+                      .case 0x38
                         .if edx & RIGHT_ALT_PRESSED
                             or eax,SHIFT_ALT
                         .else
                             or eax,SHIFT_ALTLEFT or SHIFT_ALT
                         .endif
-                        .endc
-                      .case 1Dh
+                      .case 0x1D
                         .if edx & RIGHT_CTRL_PRESSED
                             or eax,SHIFT_CTRL
                         .else
                             or eax,SHIFT_CTRLLEFT or SHIFT_CTRL
                         .endif
-                        .endc
-                      .case 46h
-                        or eax,SHIFT_SCROLLKEY
-                        .endc
-                      .case 3Ah
-                        or eax,SHIFT_CAPSLOCKKEY
-                        .endc
-                      .case 45h
-                        or eax,SHIFT_NUMLOCKKEY
-                        .endc
-                      .case 57h
-                        mov r8d,8500h   ; F11
-                        .endc
-                      .case 58h
-                        mov r8d,8600h   ; F12
-                        .endc
+                      .case 0x46: or eax,SHIFT_SCROLLKEY
+                      .case 0x3A: or eax,SHIFT_CAPSLOCKKEY
+                      .case 0x45: or eax,SHIFT_NUMLOCKKEY
+                      .case 0x57: mov r8d,0x8500 ; F11
+                      .case 0x58: mov r8d,0x8600 ; F12
+
                       .default
-                        .if r9b == 52h && [rcx].keybcode == 2Dh
+
+                        .if ( r9b == 0x52 && [rcx].keybcode == 0x2D )
+
                             or  eax,SHIFT_INSERTKEY
                             xor eax,SHIFT_INSERTSTATE
                             mov r8d,5200h
+
                         .else
+
                             mov dl,r9b
                             mov dh,dl
                             mov dl,[rcx].keybchar
                             and edx,0xFFFF
                             mov r8d,edx
+
                         .endif
                     .endsw
+
                 .else
+
                     mov [rcx].keybstate,0
                     and eax,not SHIFT_RELEASEKEY
+
                     .switch r9d
-                      .case 2Ah
+                      .case 0x2A
                         .if eax & SHIFT_KEYSPRESSED
                             and eax,not SHIFT_LEFT
                         .endif
-                        .endc
-                      .case 36h
+                      .case 0x36
                         .if eax & SHIFT_KEYSPRESSED
                             and eax,not SHIFT_RIGHT
                         .endif
-                        .endc
-                      .case 38h
-                        and eax,not (SHIFT_ALT or SHIFT_ALTLEFT)
-                        .endc
-                      .case 1Dh
-                        and eax,not (SHIFT_CTRL or SHIFT_CTRLLEFT)
-                        .endc
-                      .case 46h
-                        and eax,not SHIFT_SCROLLKEY
-                        .endc
-                      .case 3Ah
-                        and eax,not SHIFT_CAPSLOCKKEY
-                        .endc
-                      .case 45h
-                        and eax,not SHIFT_NUMLOCKKEY
-                        .endc
-                      .case 52h
-                        and eax,not SHIFT_INSERTKEY
+                      .case 0x38: and eax,not (SHIFT_ALT or SHIFT_ALTLEFT)
+                      .case 0x1D: and eax,not (SHIFT_CTRL or SHIFT_CTRLLEFT)
+                      .case 0x46: and eax,not SHIFT_SCROLLKEY
+                      .case 0x3A: and eax,not SHIFT_CAPSLOCKKEY
+                      .case 0x45: and eax,not SHIFT_NUMLOCKKEY
+                      .case 0x52: and eax,not SHIFT_INSERTKEY
                     .endsw
+
                 .endif
 
                 mov [rcx].keyshift,eax
@@ -669,18 +619,18 @@ TConsole::Readevent proc uses rsi rdi rbx
 
             .elseif eax == MOUSE_EVENT
 
-                movzx eax,[rbx].MouseEvent.dwMousePosition.x
-                mov [rcx].keybmouse_x,eax
-                mov ax,[rbx].MouseEvent.dwMousePosition.y
-                mov [rcx].keybmouse_y,eax
-                mov r8d,[rcx].keyshift
-                and r8d,not SHIFT_MOUSEFLAGS
-                mov eax,[rbx].MouseEvent.dwButtonState
-                mov r9d,eax
-                and eax,3h
-                shl eax,16
-                or  eax,r8d
-                mov [rcx].keyshift,eax
+                movzx   eax,[rbx].MouseEvent.dwMousePosition.x
+                mov     [rcx].keybmouse_x,eax
+                mov     ax,[rbx].MouseEvent.dwMousePosition.y
+                mov     [rcx].keybmouse_y,eax
+                mov     r8d,[rcx].keyshift
+                and     r8d,not SHIFT_MOUSEFLAGS
+                mov     eax,[rbx].MouseEvent.dwButtonState
+                mov     r9d,eax
+                and     eax,0x03
+                shl     eax,16
+                or      eax,r8d
+                mov     [rcx].keyshift,eax
 
                 .if [rbx].MouseEvent.dwEventFlags == MOUSE_WHEELED
 
@@ -689,9 +639,12 @@ TConsole::Readevent proc uses rsi rdi rbx
 
                         mov eax,KEY_MOUSEDN
                     .endif
-                    [rcx].Pushevent(eax)
+                    [rcx].pushevent(eax)
+
                 .endif
+
             .endif
+
             dec esi
         .endw
     .endif
@@ -700,6 +653,7 @@ TConsole::Readevent proc uses rsi rdi rbx
     mov edx,[rcx].keyshift
     mov eax,edi
     .if edx & SHIFT_ALTLEFT
+
         mov al,0
     .endif
 
@@ -724,105 +678,125 @@ TConsole::Readevent proc uses rsi rdi rbx
         .endif
 
         .if rdi
+
             lea rsi,@CStr("\x02\x03\x04\x05\x06\x07\x08\x09\x0A\x0B"
                           "\x3B\x3C\x3D\x3E\x3F\x40\x41\x42\x43\x44"
                           "\x47\x48\x49\x4B\x4D\x4F\x50\x51\x52\x53"
                           "\x0F\x85\x86")
             mov r8,rsi
+
             .while 1
 
                 lodsb
                 .break .if !al
 
                 .if ah == al
+
                     sub rsi,r8
                     mov ah,[rsi+rdi-1]
                     mov al,0
                     .break
+
                 .endif
+
             .endw
+
         .endif
+
     .elseif ah
+
         .if edx & SHIFT_ALT or SHIFT_ALTLEFT
+
             mov ah,0
         .endif
     .endif
+
     .if eax
-        [rcx].Pushevent(eax)
+
+        [rcx].pushevent(eax)
     .endif
     ret
 
-TConsole::Readevent endp
+tconsole::readevent endp
 
     assume rbx:nothing
 
-TConsole::Setkeystate proc uses rsi rdi
+tconsole::setkeystate proc uses rsi rdi
 
     mov rdi,rcx
     mov esi,[rcx].keyshift
     and esi,not 0x01FF030F
+
     .ifd ( GetKeyState(VK_LSHIFT) ) & 0x80
+
         or esi,SHIFT_LEFT or SHIFT_KEYSPRESSED
     .endif
+
     .if ( GetKeyState(VK_RSHIFT) & 0x80 )
+
         or esi,SHIFT_RIGHT or SHIFT_KEYSPRESSED
     .endif
+
     .ifd ( GetKeyState(VK_LCONTROL) & 0x80 )
+
         or esi,SHIFT_CTRLLEFT
     .endif
+
     .ifd ( GetKeyState(VK_RCONTROL) & 0x80 )
+
         or esi,SHIFT_CTRL
     .endif
-    mov [rdi].TConsole.keyshift,esi
+
+    mov [rdi].tconsole.keyshift,esi
     mov rcx,rdi
     ret
 
-TConsole::Setkeystate endp
+tconsole::setkeystate endp
 
-TConsole::Getevent proc
+tconsole::getevent proc
 
-    [rcx].Readevent()
-    [rcx].Popevent()
+    [rcx].readevent()
+    [rcx].popevent()
     ret
 
-TConsole::Getevent endp
+tconsole::getevent endp
 
-TConsole::Getch proc
+tconsole::getch proc
 
-    .whiled ![rcx].Getevent()
+    .whiled ![rcx].getevent()
     .endw
     ret
 
-TConsole::Getch endp
+tconsole::getch endp
 
-TConsole::Mousepress proc
+tconsole::mousepress proc
 
-    [rcx].Readevent()
+    [rcx].readevent()
 
     mov eax,edx
     shr eax,16
     and eax,3
     ret
 
-TConsole::Mousepress endp
+tconsole::mousepress endp
 
     option win64:rsp nosave noauto
 
-TConsole::Getmousex proc
+tconsole::getmousex proc
 
     mov eax,[rcx].keybmouse_x
     ret
 
-TConsole::Getmousex endp
+tconsole::getmousex endp
 
-TConsole::Getmousey proc
+tconsole::getmousey proc
 
     mov eax,[rcx].keybmouse_y
     ret
 
-TConsole::Getmousey endp
+tconsole::getmousey endp
 
-TConsole::Pushevent proc event:UINT
+tconsole::pushevent proc event:uint_t
 
     mov eax,[rcx].keybcount
     .if eax < MAXKEYSTACK-1
@@ -832,9 +806,9 @@ TConsole::Pushevent proc event:UINT
     .endif
     ret
 
-TConsole::Pushevent endp
+tconsole::pushevent endp
 
-TConsole::Popevent proc
+tconsole::popevent proc
 
     mov edx,[rcx].keyshift
     xor eax,eax
@@ -846,35 +820,39 @@ TConsole::Popevent proc
     .endif
     ret
 
-TConsole::Popevent endp
+tconsole::popevent endp
 
-TConsole::Shiftstate proc
+tconsole::shiftstate proc
 
     mov eax,[rcx].keyshift
     and eax,SHIFT_KEYSPRESSED or SHIFT_LEFT or SHIFT_RIGHT
     ret
 
-TConsole::Shiftstate endp
+tconsole::shiftstate endp
 
     option win64:rbp nosave auto
 
-TConsole::ClipFree proc uses rcx
+tconsole::clipfree proc uses rcx
+
     xor eax,eax
     mov rdx,[rcx].clipboard
     mov [rcx].clipboard,rax
     mov [rcx].clipbsize,eax
+
     free(rdx)
     ret
-TConsole::ClipFree endp
+
+tconsole::clipfree endp
 
     option win64:save
 
-TConsole::ClipCopy proc uses rsi rdi rbx string:LPSTR, l:UINT
+tconsole::clipcopy proc uses rsi rdi rbx string:string_t, l:uint_t
 
     mov edi,r8d
     mov rbx,rdx
 
-    [rcx].ClipFree()
+    [rcx].clipfree()
+
     .ifd OpenClipboard(0)
 
         EmptyClipboard()
@@ -889,19 +867,23 @@ TConsole::ClipCopy proc uses rsi rdi rbx string:LPSTR, l:UINT
             GlobalUnlock( rsi )
             SetClipboardData( CF_TEXT, rbx )
             mov rax,rdi
+
         .endif
+
         mov rdi,rax
         CloseClipboard()
         mov rax,rdi
+
     .endif
+
     mov rcx,_this
     ret
 
-TConsole::ClipCopy endp
+tconsole::clipcopy endp
 
-TConsole::ClipPaste proc uses rsi rbx
+tconsole::clippaste proc uses rsi rbx
 
-    assume rbx:ptr TConsole
+    assume rbx:ptr tconsole
 
     mov rbx,rcx
 
@@ -913,30 +895,40 @@ TConsole::ClipPaste proc uses rsi rbx
             .if GetClipboardData(CF_TEXT)
 
                 mov rsi,rax
+
                 .if strlen(rax)
 
                     mov [rbx].clipbsize,eax
                     inc eax
+
                     .if malloc(rax)
 
                         strcpy(rax, rsi)
                         mov [rbx].clipboard,rax
+
                     .endif
+
                 .endif
+
                 mov rsi,rax
+
             .endif
+
             CloseClipboard()
             mov rax,rsi
+
         .endif
+
     .endif
+
     mov rcx,rbx
     ret
 
-TConsole::ClipPaste endp
+tconsole::clippaste endp
 
     assume rbx:nothing
 
-TConsole::CursorOn proc uses rcx
+tconsole::cursoron proc uses rcx
 
   local cu:CONSOLE_CURSOR_INFO
 
@@ -945,9 +937,9 @@ TConsole::CursorOn proc uses rcx
     SetConsoleCursorInfo(hStdOutput, &cu)
     ret
 
-TConsole::CursorOn endp
+tconsole::cursoron endp
 
-TConsole::CursorOff proc uses rcx
+tconsole::cursoroff proc uses rcx
 
   local cu:CONSOLE_CURSOR_INFO
 
@@ -956,9 +948,9 @@ TConsole::CursorOff proc uses rcx
     SetConsoleCursorInfo(hStdOutput, &cu)
     ret
 
-TConsole::CursorOff endp
+tconsole::cursoroff endp
 
-TConsole::CursorGet proc uses rbx rcx cursor:PCURSOR
+tconsole::cursorget proc uses rbx rcx cursor:PCURSOR
 
   local ci:CONSOLE_SCREEN_BUFFER_INFO
 
@@ -974,22 +966,127 @@ TConsole::CursorGet proc uses rbx rcx cursor:PCURSOR
     mov eax,[rbx].CURSOR.bVisible
     ret
 
-TConsole::CursorGet endp
+tconsole::cursorget endp
 
-TConsole::CursorSet proc uses rax rcx cursor:PCURSOR
+tconsole::cursorset proc uses rax rcx cursor:PCURSOR
 
     mov eax,dword ptr [rdx].CURSOR.x
     SetConsoleCursorPosition(hStdOutput, eax)
     SetConsoleCursorInfo(hStdOutput, cursor)
     ret
 
-TConsole::CursorSet endp
+tconsole::cursorset endp
 
-Install proc private
-    TConsole::TConsole( &Console )
+    assume rsi:ptr tconsole
+
+tconsole::tconsole proc uses rsi rdi
+
+  local ci: CONSOLE_SCREEN_BUFFER_INFO
+
+    .if malloc( sizeof(tconsole) + sizeof(tconsoleVtbl) )
+
+        mov rsi,rax
+        mov rdi,rax
+        xor eax,eax
+        mov ecx,sizeof(tconsole)
+        rep stosb
+
+        lea rdi,[rsi].foreground
+        mov rax,0x07000008070F0F00
+        stosq
+        mov rax,0x0F0F0F000B0A0008
+        stosq
+        mov rax,0x7030304070701000
+        stosq
+        mov rax,0x0707000000303030
+        stosq
+
+        lea rdi,[rsi+sizeof(tconsole)]
+        mov [rsi],rdi
+        _method macro entry
+            lea rax,tconsole_&entry
+            exitm<stosq>
+            endm
+            _method(Release)
+            _method(show)
+            _method(hide)
+            _method(read)
+            _method(write)
+            _method(getat)
+            _method(getrcp)
+            _method(getxyp)
+            _method(getxyw)
+            _method(getxyc)
+            _method(getxya)
+            _method(putxyw)
+            _method(putxyc)
+            _method(putxya)
+            _method(putxyf)
+            _method(inside_x)
+            _method(inside_y)
+            _method(insidexy)
+            _method(readevent)
+            _method(getevent)
+            _method(getch)
+            _method(shiftstate)
+            _method(mousepress)
+            _method(getmousex)
+            _method(getmousey)
+            _method(pushevent)
+            _method(popevent)
+            _method(setkeystate)
+            _method(clipfree)
+            _method(clipcopy)
+            _method(clippaste)
+            _method(cursoron)
+            _method(cursoroff)
+            _method(cursorget)
+            _method(cursorset)
+            _method(ClearConsole)
+            _method(SetConsoleAttrib)
+            _method(SetMaxConsoleSize)
+            _method(SetConsoleSize)
+            _method(MoveConsole)
+
+        mov edi,0x00190050
+        .if GetConsoleScreenBufferInfo( hStdOutput, &ci )
+
+            mov edi,ci.dwSize
+        .endif
+        movzx eax,di
+        shr edi,16
+        mov [rsi].rc.col,al
+        mov edx,edi
+        mov [rsi].rc.row,dl
+        mul edi
+        lea rdi,[rax*4]
+        lea rcx,[rdi*2]
+
+        .if malloc( rcx )
+
+            mov [rsi].window,rax
+            add rax,rdi
+            mov [rsi].backgr,rax
+            mov [rsi].flags,_TW_ISOPEN
+            [rsi].read(rax)
+            mov rax,rsi
+            mov rdi,[rsi].window
+            mov rsi,[rsi].backgr
+            mov rcx,rsi
+            sub rcx,rdi
+            rep movsb
+            mov rcx,rax
+        .endif
+    .endif
+
+    mov r8,_this
+    .if r8
+        mov [r8],rax
+    .endif
     ret
-Install endp
 
-.pragma(init(Install, 50))
+tconsole::tconsole endp
+
+    assume rsi:nothing
 
     end

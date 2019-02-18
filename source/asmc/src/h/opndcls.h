@@ -245,4 +245,5 @@ OpCls( YMM,     YMM_M256_M64, NONE )
 OpCls( RGT16,   RGT16,        R_MS )
 OpCls( RGT16,   RGT16,        I8_U )
 OpCls( RGT16,   R_MS,         RGT16 )
+OpCls( RGT8,    MGT8,         NONE  )
 

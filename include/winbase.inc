@@ -52,6 +52,8 @@ Yield	macro
 
 INVALID_HANDLE_VALUE	equ -1
 INVALID_FILE_SIZE	equ 0xFFFFFFFF
+INVALID_SET_FILE_POINTER equ -1
+INVALID_FILE_ATTRIBUTES equ -1
 
 FILE_BEGIN		equ 0
 FILE_CURRENT		equ 1
@@ -578,10 +580,11 @@ FreeModule macro hLibModule
 	FreeLibrary(hLibModule)
 	endm
 MakeProcInstance macro lpProc, hInstance
-	exitm<(lpProc)>
+	mov rax,lpProc
+	exitm<rax>
 	endm
 FreeProcInstance macro lpProc
-	exitm<(lpProc)>
+	exitm<>;(lpProc)
 	endm
 
 GMEM_FIXED		equ 0x0000

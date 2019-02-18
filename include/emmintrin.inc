@@ -949,7 +949,16 @@ _mm_cvttsd_si64 macro x:=<xmm0>
 	retm<rax>
 	endm
 _mm_cvtsi64_sd macro x:=<xmm0>, reg:=<rax>
+    if (opattr(reg)) eq 48
 	cvtsi2sd x,reg
+    else
+	if (type reg) eq 4 and not ((opattr(reg)) eq 48)
+	    mov eax,reg
+	else
+	    mov rax,reg
+	endif
+	cvtsi2sd x,rax
+    endif
 	retm<x>
 	endm
 _mm_cvtsi64_si128 macro x, q

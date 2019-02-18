@@ -2197,6 +2197,7 @@ static int check_size( struct code_info *CodeInfo, const struct expr opndx[] )
 			if ( ( CodeInfo->opnd[OPND1].InsFixup == NULL && Parse_Pass == PASS_1 && CodeInfo->undef_sym == FALSE ) ||
 			    ( CodeInfo->opnd[OPND1].InsFixup && Parse_Pass == PASS_2 ) )
 				asmerr( 8019, p );
+
 		    }
 		} else if( ( op1 & OP_M_ANY ) && ( op2 & ( OP_R | OP_SR ) ) ) {
 		} else if( ( op1 & ( OP_MMX | OP_XMM ) ) && ( op2 & OP_I ) ) {
@@ -2605,7 +2606,7 @@ int ParseLine( struct asm_tok tokenarray[] )
 	if ( i && tokenarray[i-1].token == T_ID )
 	    i--;
 
-	if ( i == 0 && tokenarray[0].hll_flags & T_HLL_PROC && ( ModuleInfo.aflag & _AF_ON ) ) {
+	if ( i == 0 && ( ModuleInfo.aflag & _AF_ON ) && ( tokenarray[0].hll_flags & T_HLL_PROC ) ) {
 	    /*
 	     * invoke handle import, call do not..
 	     */
@@ -2616,6 +2617,7 @@ int ParseLine( struct asm_tok tokenarray[] )
 	    return ParseLine( tokenarray );
 
 	} else if ( i != 0 || tokenarray[0].dirtype != '{' ) {
+
 	    return( asmerr(2008, tokenarray[i].string_ptr ) );
 	}
     }

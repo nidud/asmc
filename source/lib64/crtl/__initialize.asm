@@ -10,35 +10,37 @@ include crtl.inc
 
     option win64:rsp nosave
 
-__initialize proc uses rsi rdi rbx offset_start:PVOID, offset_end:PVOID
+__initialize proc uses rsi rdi rbx offset_start:ptr, offset_end:ptr
 
     mov rax,rdx
-    mov rdx,rcx
-    sub rax,rdx
+    sub rax,rcx
 
     .ifnz
 
-        mov rsi,rdx ; start of segment
-        mov rdi,rdx
-        add rdi,rax
-        .while  1
-            xor rax,rax
-            mov rcx,256
-            mov rbx,rsi
-            mov rdx,rdi
-            .while rdi != rbx
-                .if [rbx] != rax && rcx >= [rbx+8]
+        .for ( rsi = rcx, rdi = &[rcx+rax] :: )
+
+            .for ( eax = 0,
+                   ecx = 256,
+                   rbx = rsi,
+                   rdx = rdi : rbx != rdi : rbx += 16 )
+
+                .if ( rax != [rbx] && rcx >= [rbx+8] )
 
                     mov rcx,[rbx+8]
                     mov rdx,rbx
+
                 .endif
-                add rbx,16
-            .endw
+
+            .endf
+
             .break .if rdx == rdi
-            mov rbx,[rdx]
-            mov [rdx],rax
-            rbx()
-        .endw
+
+            mov  rbx,[rdx]
+            mov  [rdx],rax
+            call rbx
+
+        .endf
+
     .endif
     ret
 

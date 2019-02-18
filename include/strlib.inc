@@ -6,37 +6,39 @@ ifndef __LIBC_INC
 endif
 ifndef __PE__
 
-memxchg		proto __cdecl :LPSTR, :LPSTR, :SIZE_T
-memstri		proto __cdecl :LPSTR, :SIZE_T, :LPSTR, :SIZE_T
-memrchr		proto __cdecl :LPSTR, :SIZE_T, :SIZE_T
-memquote	proto __cdecl :LPSTR, :SIZE_T
+memxchg		proto __cdecl :string_t, :string_t, :size_t
+memstri		proto __cdecl :string_t, :size_t, :string_t, :size_t
+memrchr		proto __cdecl :string_t, :size_t, :size_t
+memquote	proto __cdecl :string_t, :size_t
 
-strfn		proto __cdecl :LPSTR
-strext		proto __cdecl :LPSTR
-setfext		proto __cdecl :LPSTR, :LPSTR
-strfcat		proto __cdecl :LPSTR, :LPSTR, :LPSTR
-strxchg		proto __cdecl :LPSTR, :LPSTR, :LPSTR
-strpath		proto __cdecl :LPSTR
-strnzcpy	proto __cdecl :LPSTR, :LPSTR, :SIZE_T
-strstart	proto __cdecl :LPSTR
-strspace	proto __cdecl :LPSTR
-strtrim		proto __cdecl :LPSTR
-strtoken	proto __cdecl :LPSTR
-strstri		proto __cdecl :LPSTR, :LPSTR
-strins		proto __cdecl :LPSTR, :LPSTR
-strtolx		proto __cdecl :LPSTR
-strmove		proto __cdecl :LPSTR, :LPSTR
-strchri		proto __cdecl :LPSTR, :SIZE_T
-streol		proto __cdecl :LPSTR
+strfn		proto __cdecl :string_t
+strext		proto __cdecl :string_t
+setfext		proto __cdecl :string_t, :string_t
+strfcat		proto __cdecl :string_t, :string_t, :string_t
+strxchg		proto __cdecl :string_t, :string_t, :string_t
+strpath		proto __cdecl :string_t
+strnzcpy	proto __cdecl :string_t, :string_t, :size_t
+strstart	proto __cdecl :string_t
+strspace	proto __cdecl :string_t
+strtrim		proto __cdecl :string_t
+strtoken	proto __cdecl :string_t
+strstri		proto __cdecl :string_t, :string_t
+strins		proto __cdecl :string_t, :string_t
+strtolx		proto __cdecl :string_t
+strmove		proto __cdecl :string_t, :string_t
+strchri		proto __cdecl :string_t, :size_t
+streol		proto __cdecl :string_t
 
-cmpwarg		proto __cdecl :LPSTR, :LPSTR
-cmpwargs	proto __cdecl :LPSTR, :LPSTR
-dostounix	proto __cdecl :LPSTR
-unixtodos	proto __cdecl :LPSTR
+cmpwarg		proto __cdecl :string_t, :string_t
+cmpwargs	proto __cdecl :string_t, :string_t
+dostounix	proto __cdecl :string_t
+unixtodos	proto __cdecl :string_t
 
-btohex		proto __cdecl :LPSTR, :SINT
-hextob		proto __cdecl :LPSTR
+btohex		proto __cdecl :string_t, :int_t
+hextob		proto __cdecl :string_t
 
+xtol		proto __cdecl :string_t
+_xtoi64		proto __cdecl :string_t
 endif ;; __PE__
 .pragma list(pop)
 endif

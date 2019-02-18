@@ -1313,6 +1313,7 @@ elf64_regs label byte
     db T_DI,  T_SI,  T_DX,  T_CX,  T_R8W, T_R9W
     db T_EDI, T_ESI, T_EDX, T_ECX, T_R8D, T_R9D
     db T_RDI, T_RSI, T_RDX, T_RCX, T_R8,  T_R9
+
 elf64_param_index label byte
     ; AX CX DX BX SP BP SI DI R8 R9
     db 0, 3, 2, 0, 0, 0, 1, 0, 4, 5, 0, 0, 0, 0, 0, 0

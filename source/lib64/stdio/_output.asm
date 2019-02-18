@@ -74,15 +74,25 @@ write_char endp
 
 write_string proc private uses rsi rdi rbx r12 string:LPSTR, len:UINT, fp:LPFILE, pNumwritten:LPWORD
 
-    .fors rsi = rcx, edi = edx, r12 = r8, rbx = r9: edi > 0: edi--
-        movzx ecx,BYTE PTR [rsi]
+    .fors ( rsi = rcx,
+            edi = edx,
+            r12 = r8,
+            rbx = r9 : edi > 0 : edi-- )
+
+        movzx ecx,byte ptr [rsi]
         inc rsi
-        .if fputc(ecx, r12) == -1
+
+        .ifd fputc(ecx, r12) == -1
+
             mov [rbx],eax
             .break
+
         .else
-            inc DWORD PTR [rbx]
+
+            inc dword ptr [rbx]
+
         .endif
+
     .endf
     ret
 
@@ -90,13 +100,20 @@ write_string endp
 
 write_multi_char proc private uses rsi rdi rbx r12 char:SINT, num:UINT, fp:LPFILE, pNumWritten:PVOID
 
-    .fors esi = ecx, edi = edx, r12 = r8, rbx = r9: edi > 0: edi--
-    .if fputc(esi, r12) == -1
-        mov [rbx],eax
-        .break
-    .else
-        inc DWORD PTR [rbx]
-    .endif
+    .fors ( esi = ecx,
+            edi = edx,
+            r12 = r8,
+            rbx = r9 : edi > 0 : edi-- )
+
+        .ifd fputc(esi, r12) == -1
+
+            mov [rbx],eax
+            .break
+
+        .endif
+
+        inc dword ptr [rbx]
+
     .endf
     ret
 
@@ -106,23 +123,23 @@ write_multi_char endp
 
 _output PROC PUBLIC USES rsi rdi rbx fp:LPFILE, format:LPSTR, arglist:PVOID
 
-local   charsout:   sdword
-local   hexoff:     dword
-local   state:      dword
-local   curadix:    dword
-local   prefix[2]:  byte
-local   textlen:    dword
-local   prefixlen:  dword
-local   no_output:  dword
-local   fldwidth:   dword
-local   bufferiswide:dword
-local   padding:    dword
-local   text:       LPSTR
-local   number:     qword
-local   wchar:      wint_t
-local   mbuf[MB_LEN_MAX+1]:wint_t
-local   buffer[BUFFERSIZE]:byte
-local   tmp:REAL16
+  local charsout:   sdword,
+        hexoff:     dword,
+        state:      dword,
+        curadix:    dword,
+        prefix[2]:  byte,
+        textlen:    dword,
+        prefixlen:  dword,
+        no_output:  dword,
+        fldwidth:   dword,
+        bufferiswide:dword,
+        padding:    dword,
+        text:       LPSTR,
+        number:     qword,
+        wchar:      wint_t,
+        mbuf[MB_LEN_MAX+1]:wint_t,
+        buffer[BUFFERSIZE]:byte,
+        tmp:REAL16
 
     xor eax,eax
     mov textlen,eax
@@ -130,12 +147,14 @@ local   tmp:REAL16
     mov state,eax
     mov bufferiswide,eax
 
-    .while  1
+    .while 1
+
         lea     rbx,__lookuptable
         mov     rax,format
         inc     format
         movzx   eax,BYTE PTR [rax]
         mov     edx,eax
+
         .break .if !eax || charsout > INT_MAX
 
         .if eax >= ' ' && eax <= 'x'

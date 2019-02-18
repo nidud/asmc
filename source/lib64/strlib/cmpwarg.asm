@@ -19,6 +19,7 @@ cmpwarg proc path:LPSTR, wild:LPSTR
 
         mov al,[rcx]
         mov ah,[rdx]
+
         inc rcx
         inc rdx
 
@@ -32,19 +33,19 @@ cmpwarg proc path:LPSTR, wild:LPSTR
                     mov eax,1
                     .break(1)
                 .endif
+
                 inc rdx
                 .continue .if ah != '.'
 
-                xor r8d,r8d
-                .while al
+                .for ( r8d = 0 : al : al = [rcx], rcx++ )
 
                     .if al == ah
 
                         mov r8,rcx
+
                     .endif
-                    mov al,[rcx]
-                    inc rcx
-                .endw
+
+                .endf
 
                 mov rcx,r8
                 .continue(1) .if r8
@@ -80,6 +81,7 @@ cmpwarg proc path:LPSTR, wild:LPSTR
 
             .continue .if r8b == '.'
             .break
+
         .endif
 
         .break .if r8b == '.'
@@ -87,30 +89,32 @@ cmpwarg proc path:LPSTR, wild:LPSTR
         or r8b,0x20
         or r9b,0x20
         .break .if r8b != r9b
-    .endw
+
+    .endf
     ret
 
 cmpwarg endp
 
 cmpwargs proc uses rsi rdi path:LPSTR, wild:LPSTR
 
-    mov rsi,rcx
-    mov rdi,rdx
+    .for ( rsi = rcx, rdi = rdx :: )
 
-    .repeat
+        .if !strchr( rdi, ' ' )
 
-        .if strchr(rdi, ' ')
-
-            mov rdi,rax
-            mov byte ptr [rdi],0
-            cmpwarg(rsi, rax)
-            mov byte ptr [rdi],' '
-            inc rdi
-        .else
-            cmpwarg(rsi, rdi)
+            cmpwarg( rsi, rdi )
             .break
+
         .endif
-    .until eax
+
+        mov rdi,rax
+        mov byte ptr [rdi],0
+        cmpwarg(rsi, rax)
+        mov byte ptr [rdi],' '
+        inc rdi
+
+        .break .if eax
+
+    .endf
     ret
 
 cmpwargs endp

@@ -140,6 +140,7 @@ LRESULT		typedef LONG_PTR
 
 ifndef NOMINMAX
 NOMINMAX equ <>
+if 0
 ifndef	max
 max	macro a, b
 	if a GT b
@@ -155,6 +156,7 @@ min	macro a, b
 	endif
 	exitm <b>
 	endm
+endif
 endif
 endif
 

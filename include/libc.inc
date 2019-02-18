@@ -131,7 +131,7 @@ endif
 
 ifndef _WCHAR_T_DEFINED
 _WCHAR_T_DEFINED equ <>
-wchar_t		typedef WORD
+wchar_t		typedef word
 endif
 
 ifndef _WCTYPE_T_DEFINED
@@ -154,6 +154,18 @@ LPTSTR		typedef ptr sbyte
 PTBYTE		typedef ptr byte
 endif
 endif
+
+ptr_t		typedef ptr
+char_t		typedef sbyte
+short_t		typedef sword
+int_t		typedef sdword
+int64_t		typedef sqword
+uchar_t		typedef byte
+ushort_t	typedef word
+uint_t		typedef dword
+uint64_t	typedef qword
+string_t	typedef ptr sbyte
+array_t		typedef ptr ptr sbyte
 
 SINT		typedef sdword
 UINT		typedef dword

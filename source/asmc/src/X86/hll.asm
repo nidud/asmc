@@ -1467,16 +1467,33 @@ LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:ptr 
             .endif
 
             .if ( ModuleInfo.Ofssize == USE64 )
+
                 mov eax,method
-                .if _asym_mem_type() == MT_TYPE && _asym_type()
-                    mov eax,[eax].asym._type
-                    .if _asym_typekind() == TYPE_TYPEDEF
-                        mov eax,_asym_target_type()
+
+                .if eax ; v2.28: Added for undefined symbol error..
+
+                    .if [eax].asym.mem_type == MT_TYPE && [eax].asym._type
+
+                        mov eax,[eax].asym._type
+
+                        .if [eax].asym.typekind == TYPE_TYPEDEF
+
+                            mov eax,[eax].asym.target_type
+
+                        .endif
+
                     .endif
-                .endif
-                .if [eax].asym.langtype == LANG_SYSCALL
-                    strcat(esi, "[r10]." ) ; v2.28: Added for :vararg
+
+                    .if [eax].asym.langtype == LANG_SYSCALL
+
+                        strcat(esi, "[r10]." ) ; v2.28: Added for :vararg
+
+                    .else
+
+                        strcat(esi, "[rax]." )
+                    .endif
                 .else
+
                     strcat(esi, "[rax]." )
                 .endif
             .else

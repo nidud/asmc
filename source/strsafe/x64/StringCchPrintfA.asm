@@ -10,13 +10,11 @@ include strsafe.inc
 
 StringCchPrintfA proc pszDest:STRSAFE_LPSTR, cchDest:size_t, pszFormat:STRSAFE_LPCSTR, argptr:vararg
 
-  local hr:HRESULT
+    StringValidateDestA(rcx, rdx, STRSAFE_MAX_CCH)
 
-    mov hr,StringValidateDestA(pszDest, cchDest, STRSAFE_MAX_CCH)
+    .if (SUCCEEDED(eax))
 
-    .if (SUCCEEDED(hr))
-
-        mov hr,StringVPrintfWorkerA(pszDest,
+        StringVPrintfWorkerA(pszDest,
                 cchDest,
                 NULL,
                 pszFormat,
@@ -24,11 +22,9 @@ StringCchPrintfA proc pszDest:STRSAFE_LPSTR, cchDest:size_t, pszFormat:STRSAFE_L
 
     .elseif (cchDest)
 
-        mov rax,pszDest
-        mov byte ptr [rax],0
+        mov rcx,pszDest
+        mov byte ptr [rcx],0
     .endif
-
-    mov eax,hr
     ret
 
 StringCchPrintfA endp

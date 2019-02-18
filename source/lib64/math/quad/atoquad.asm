@@ -220,6 +220,7 @@ atoquad proc uses rsi rdi rbx number:ptr, string:LPSTR, endptr:ptr LPSTR
             .untilcxz
             inc rdx
         .endw
+
         mov rax,[r10]
         mov rdx,[r10+8]
         .if bl == '-'

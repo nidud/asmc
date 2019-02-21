@@ -35,6 +35,7 @@ strstr		proto __cdecl :LPSTR, :LPSTR
 _mbspbrk	proto __cdecl :LPSTR, :LPSTR
 _strset		proto __cdecl :LPSTR, :SINT
 _strnset	proto __cdecl :LPSTR, :SINT, :SIZE_T
+strtok		proto __cdecl :LPSTR, :LPSTR
 
 ifndef _WSTRING_DEFINED
 

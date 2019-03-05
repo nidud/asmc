@@ -24,6 +24,8 @@ include lmaccess.inc
 include AppxPackaging.inc
 
 include gdiplus.inc
+include wdmguid.inc
+include pnrpns.inc
 
 include src/ahadmin_i.inc
 include src/CDOSys_I.inc

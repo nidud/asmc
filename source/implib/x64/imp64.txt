@@ -456,6 +456,7 @@ oledlg
 opengl32
 ;osuninst
 p2p
+p2pgraph
 ;panmap
 ;pautoenr
 pdh

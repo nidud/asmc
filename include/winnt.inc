@@ -9038,7 +9038,7 @@ Pool			PTP_POOL ?
 CleanupGroup		PTP_CLEANUP_GROUP ?
 CleanupGroupCancelCallback PTP_CLEANUP_GROUP_CANCEL_CALLBACK ?
 RaceDll			PVOID ?
-ActivationContext	PACTIVATION_CONTEXT ?
+ActivationContext	ACTIVATION_CONTEXT ?
 FinalizationCallback	PTP_SIMPLE_CALLBACK ?
 UNION u
  Flags			dd ?

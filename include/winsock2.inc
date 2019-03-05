@@ -2,10 +2,32 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 ifndef _WINSOCK2API_
-_WINSOCK2API_ equ 1
-_WINSOCKAPI_  equ 1
+_WINSOCK2API_ equ <>
+_WINSOCKAPI_  equ <>
 
-;include <pshpack4.h>
+include winapifamily.inc
+
+ifndef _WINSOCK_DEPRECATED_BY
+if ((defined(_WINSOCK_DEPRECATED_NO_WARNINGS) or defined(BUILD_WINDOWS)) and not defined(_WINSOCK_DEPRECATE_WARNINGS)) or defined(MIDL_PASS)
+_WINSOCK_DEPRECATED_BY macro replacement
+	endm
+else
+_WINSOCK_DEPRECATED_BY macro replacement
+	exitm<"Use &replacement& instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings">
+	endm
+endif
+endif
+
+ifndef _WINSOCK_DEPRECATED
+if ((defined(_WINSOCK_DEPRECATED_NO_WARNINGS) or defined(BUILD_WINDOWS)) and not defined(_WINSOCK_DEPRECATE_WARNINGS)) or defined(MIDL_PASS)
+_WINSOCK_DEPRECATED macro
+	endm
+else
+_WINSOCK_DEPRECATED macro
+	.out <"Define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings">
+	endm
+endif
+endif
 
 ifndef INCL_WINSOCK_API_PROTOTYPES
 INCL_WINSOCK_API_PROTOTYPES equ 1
@@ -17,6 +39,11 @@ endif
 
 ifndef _INC_WINDOWS
 include windows.inc
+endif
+
+if (not defined(_WIN64) and not defined(WIN32))
+.pragma pack(push, 4)
+_NEED_POPPACK equ 1
 endif
 
 
@@ -39,12 +66,17 @@ WINSOCK_API_LINKAGE	equ 1
 endif
 endif
 
-;u_char			 typedef unsigned char
-;u_short		 typedef WORD
-;UINT			 typedef unsigned int
-;u_long			 typedef DWORD
+u_char			typedef byte
+u_short			typedef word
+u_int			typedef sdword
+u_long			typedef dword
+if(_WIN32_WINNT GE 0x0501)
+u_int64			typedef sqword
+endif
 
-SOCKET			typedef UINT
+include ws2def.inc
+
+SOCKET			typedef UINT_PTR
 
 ifndef FD_SETSIZE
 FD_SETSIZE		equ 64
@@ -58,36 +90,58 @@ fd_set			ENDS
 __WSAFDIsSet		proto :SOCKET, :ptr fd_set
 
 FD_CLR macro fd, set
-	pushad
-	lea	ebx,set
-	mov	eax,fd
-	mov	ecx,[ebx].fd_set.fd_count
-	lea	esi,[ebx].fd_set.fd_array
-	mov	edi,esi
-	.while	ecx
-		.if eax == [esi]
-			dec [ebx].fd_set.fd_count
-			add esi, 4
-		.endif
-		movsd
-		dec ecx
-	.endw
-	popad
-	endm
+  local __i
+ifdef _WIN64
+    __i equ <rbx>
+else
+    __i equ <ebx>
+endif
+    push __i
+    .for ( __i = 0 : __i < set.fd_set.fd_count : __i++ )
+
+	.if ( set.fd_set.fd_array[__i*4] == fd )
+
+	    .while 1
+
+		mov eax,set.fd_set.fd_count
+		dec eax
+		.break .if eax < __i
+
+		mov eax,set.fd_set.fd_array[__i*4+4]
+		mov set.fd_set.fd_array[__i*4],eax
+		inc __i
+
+	    .endw
+
+	    dec set.fd_set.fd_count
+	    .break
+
+	.endif
+    .endf
+    pop __i
+    endm
 
 FD_SET macro fd, set
-	lea	edx,set
-	mov	eax,fd
-	mov	ecx,[edx].fd_set.fd_count
-	.if	ecx < FD_SETSIZE
-		mov [edx].fd_set.fd_array[ecx*4],eax
-		inc [edx].fd_set.fd_count
+  local __i
+ifdef _WIN64
+    __i equ <rax>
+else
+    __i equ <eax>
+endif
+    .for ( __i = 0 : __i < set.fd_set.fd_count : __i++ )
+	.break .if ( set.fd_set.fd_array[__i*4] == fd )
+    .endf
+    .if ( __i == set.fd_set.fd_count )
+	.if ( set.fd_set.fd_count < FD_SETSIZE )
+	    mov set.fd_set.fd_array[__i*4],fd
+	    inc set.fd_set.fd_count
 	.endif
-	endm
+    .endif
+    endm
 
 FD_ZERO macro set
-	lea	eax, set
-	mov	[eax].fd_set.fd_count,0
+	lea eax, set
+	mov [eax].fd_set.fd_count,0
 	endm
 
 FD_ISSET macro fd, set
@@ -114,16 +168,17 @@ IOC_VOID		equ 0x20000000
 IOC_OUT			equ 0x40000000
 IOC_IN			equ 0x80000000
 IOC_INOUT		equ (IOC_IN OR IOC_OUT)
+
 _IO macro x,y
 	exitm<(IOC_VOID OR ((x) SHL 8) OR (y))>
 	endm
 
 _IOR macro x,y,t
-	exitm<(IOC_OUT OR (((long)sizeof(t) AND IOCPARM_MASK) SHL 16) OR ((x) SHL 8) OR (y))>
+	exitm<(IOC_OUT OR ((sizeof(t) AND IOCPARM_MASK) SHL 16) OR ((x) SHL 8) OR (y))>
 	endm
 
 _IOW macro x,y,t
-	exitm<(IOC_IN OR (((long)sizeof(t) AND IOCPARM_MASK) SHL 16) OR ((x) SHL 8) OR (y))>
+	exitm<(IOC_IN OR ((sizeof(t) AND IOCPARM_MASK) SHL 16) OR ((x) SHL 8) OR (y))>
 	endm
 
 FIONREAD		equ _IOR('f', 127, DWORD)
@@ -143,7 +198,7 @@ h_aliases		LPSTR ?
 h_addrtype		dw ?
 h_length		dw ?
 h_addr_list		LPSTR ?
-h_addr			equ h_addr_list[0]
+;h_addr			equ <h_addr_list[0]> ; address, for backward compat
 hostent			ENDS
 
 netent			STRUC
@@ -156,8 +211,13 @@ netent			ENDS
 servent			STRUC
 s_name			LPSTR ?
 s_aliases		LPSTR ?
+ifdef _WIN64
+s_proto			LPSTR ?
+s_port			dw ?
+else
 s_port			dw ?
 s_proto			LPSTR ?
+endif
 servent			ENDS
 
 protoent		STRUC
@@ -228,12 +288,12 @@ UNION S_un
     ENDS
     S_addr		dd ?
 ENDS
-s_addr			equ <S_un.S_addr>
-s_host			equ <S_un.S_un_b.s_b2>
-s_net			equ <S_un.S_un_b.s_b1>
-s_imp			equ <S_un.S_un_w.s_w2>
-s_impno			equ <S_un.S_un_b.s_b4>
-s_lh			equ <S_un.S_un_b.s_b3>
+;s_addr			equ <S_un.S_addr>
+;s_host			equ <S_un.S_un_b.s_b2>
+;s_net			equ <S_un.S_un_b.s_b1>
+;s_imp			equ <S_un.S_un_w.s_w2>
+;s_impno			equ <S_un.S_un_b.s_b4>
+;s_lh			equ <S_un.S_un_b.s_b3>
 in_addr			ENDS
 
 IN_CLASSA macro i
@@ -289,14 +349,21 @@ WSASYS_STATUS_LEN	equ 128
 WSADATA			STRUC
 wVersion		dw ?
 wHighVersion		dw ?
+ifdef _WIN64
+iMaxSockets		dw ?
+iMaxUdpDg		dw ?
+lpVendorInfo		LPSTR ?
+szDescription		db WSADESCRIPTION_LEN+1 dup(?)
+szSystemStatus		db WSASYS_STATUS_LEN+1 dup(?)
+else
 szDescription		db WSADESCRIPTION_LEN+1 dup(?)
 szSystemStatus		db WSASYS_STATUS_LEN+1 dup(?)
 iMaxSockets		dw ?
 iMaxUdpDg		dw ?
 lpVendorInfo		LPSTR ?
+endif
 WSADATA			ENDS
 LPWSADATA		typedef ptr WSADATA
-
 
 INVALID_SOCKET		equ <NOT 0>
 SOCKET_ERROR		equ (-1)
@@ -319,7 +386,7 @@ SO_USELOOPBACK		equ 0x0040
 SO_LINGER		equ 0x0080
 SO_OOBINLINE		equ 0x0100
 
-SO_DONTLINGER		equ <NOT SO_LINGER>
+SO_DONTLINGER		equ <not SO_LINGER>
 
 SO_SNDBUF		equ 0x1001
 SO_RCVBUF		equ 0x1002
@@ -341,45 +408,7 @@ else
 SO_PROTOCOL_INFO	equ SO_PROTOCOL_INFOA
 endif
 PVD_CONFIG		equ 0x3001
-
-TCP_NODELAY		equ 0x0001
-
-AF_UNSPEC		equ 0
-AF_UNIX			equ 1
-AF_INET			equ 2
-AF_IMPLINK		equ 3
-AF_PUP			equ 4
-AF_CHAOS		equ 5
-AF_NS			equ 6
-AF_IPX			equ AF_NS
-AF_ISO			equ 7
-AF_OSI			equ AF_ISO
-AF_ECMA			equ 8
-AF_DATAKIT		equ 9
-AF_CCITT		equ 10
-AF_SNA			equ 11
-AF_DECnet		equ 12
-AF_DLI			equ 13
-AF_LAT			equ 14
-AF_HYLINK		equ 15
-AF_APPLETALK		equ 16
-AF_NETBIOS		equ 17
-AF_VOICEVIEW		equ 18
-AF_FIREFOX		equ 19
-AF_UNKNOWN1		equ 20
-AF_BAN			equ 21
-AF_ATM			equ 22
-AF_INET6		equ 23
-AF_CLUSTER		equ 24
-AF_12844		equ 25
-
-
-AF_MAX			equ 26
-
-sockaddr		STRUC
-sa_family		dw ?
-sa_data			db 14 dup(?)
-sockaddr		ENDS
+SO_CONDITIONAL_ACCEPT	equ 0x3002
 
 sockproto		STRUC
 sp_family		dw ?
@@ -411,7 +440,9 @@ PF_UNKNOWN1		equ AF_UNKNOWN1
 PF_BAN			equ AF_BAN
 PF_ATM			equ AF_ATM
 PF_INET6		equ AF_INET6
-
+if(_WIN32_WINNT GE 0x0600)
+PF_BTH			equ AF_BTH
+endif
 PF_MAX			equ AF_MAX
 
 linger			STRUC
@@ -426,11 +457,15 @@ SOMAXCONN		equ 0x7fffffff
 MSG_OOB			equ 0x1
 MSG_PEEK		equ 0x2
 MSG_DONTROUTE		equ 0x4
+if(_WIN32_WINNT GE 0x0502)
+MSG_WAITALL		equ 0x8
+endif
+if(_WIN32_WINNT GE 0x0603)
+MSG_PUSH_IMMEDIATE	equ 0x20
+endif
 
 MSG_PARTIAL		equ 0x8000
-
 MSG_INTERRUPT		equ 0x10
-
 MSG_MAXIOVLEN		equ 16
 
 MAXGETHOSTSTRUCT	equ 1024
@@ -458,6 +493,7 @@ FD_ADDRESS_LIST_CHANGE	equ (1 SHL FD_ADDRESS_LIST_CHANGE_BIT)
 FD_MAX_EVENTS		equ 10
 FD_ALL_EVENTS		equ ((1 SHL FD_MAX_EVENTS) - 1)
 
+ifndef WSABASEERR
 
 WSABASEERR		equ 10000
 WSAEINTR		equ (WSABASEERR+4)
@@ -551,6 +587,25 @@ WSA_QOS_BAD_OBJECT	equ (WSABASEERR + 1013)
 WSA_QOS_TRAFFIC_CTRL_ERROR equ (WSABASEERR + 1014)
 WSA_QOS_GENERIC_ERROR	equ (WSABASEERR + 1015)
 
+WSA_QOS_ESERVICETYPE	equ (WSABASEERR + 1016)
+WSA_QOS_EFLOWSPEC	equ (WSABASEERR + 1017)
+WSA_QOS_EPROVSPECBUF	equ (WSABASEERR + 1018)
+WSA_QOS_EFILTERSTYLE	equ (WSABASEERR + 1019)
+WSA_QOS_EFILTERTYPE	equ (WSABASEERR + 1020)
+WSA_QOS_EFILTERCOUNT	equ (WSABASEERR + 1021)
+WSA_QOS_EOBJLENGTH	equ (WSABASEERR + 1022)
+WSA_QOS_EFLOWCOUNT	equ (WSABASEERR + 1023)
+WSA_QOS_EUNKOWNPSOBJ	equ (WSABASEERR + 1024)
+WSA_QOS_EPOLICYOBJ	equ (WSABASEERR + 1025)
+WSA_QOS_EFLOWDESC	equ (WSABASEERR + 1026)
+WSA_QOS_EPSFLOWSPEC	equ (WSABASEERR + 1027)
+WSA_QOS_EPSFILTERSPEC	equ (WSABASEERR + 1028)
+WSA_QOS_ESDMODEOBJ	equ (WSABASEERR + 1029)
+WSA_QOS_ESHAPERATEOBJ	equ (WSABASEERR + 1030)
+WSA_QOS_RESERVED_PETYPE equ (WSABASEERR + 1031)
+
+endif
+
 if 0
 EWOULDBLOCK		equ WSAEWOULDBOCK
 EINPROGRESS		equ WSAEINPROGRESS
@@ -623,14 +678,17 @@ buf			LPSTR ?
 WSABUF			ENDS
 LPWSABUF		typedef ptr WSABUF
 
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 include qos.inc
-
 QOS			STRUC
 SendingFlowspec		FLOWSPEC <>
 ReceivingFlowspec	FLOWSPEC <>
 ProviderSpecific	WSABUF <>
 QOS			ENDS
 LPQOS			typedef ptr QOS
+else
+LPQOS			typedef ptr
+endif
 
 CF_ACCEPT		equ 0x0000
 CF_REJECT		equ 0x0001
@@ -653,18 +711,7 @@ LPWSANETWORKEVENTS	typedef ptr WSANETWORKEVENTS
 
 
 ifndef GUID_DEFINED
-GUID_DEFINED		equ 1
-GUID			STRUC
-Data1			dd ?
-Data2			dw ?
-Data3			dw ?
-Data4			db 8 dup(?)
-GUID			ENDS
-endif
-
-ifndef __LPGUID_DEFINED__
-__LPGUID_DEFINED__	equ 1
-LPGUID			typedef ptr GUID
+include guiddef.inc
 endif
 
 MAX_PROTOCOL_CHAIN	equ 7
@@ -680,6 +727,7 @@ LPWSAPROTOCOLCHAIN	typedef ptr WSAPROTOCOLCHAIN
 
 WSAPROTOCOL_LEN		equ 255
 
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 WSAPROTOCOL_INFOA	STRUC
 dwServiceFlags1		dd ?
 dwServiceFlags2		dd ?
@@ -702,7 +750,9 @@ dwMessageSize		dd ?
 dwProviderReserved	dd ?
 szProtocol		db WSAPROTOCOL_LEN+1 dup(?)
 WSAPROTOCOL_INFOA	ENDS
- LPWSAPROTOCOL_INFOA	typedef ptr WSAPROTOCOL_INFOA
+LPWSAPROTOCOL_INFOA	typedef ptr WSAPROTOCOL_INFOA
+endif
+
 WSAPROTOCOL_INFOW	STRUC
 dwServiceFlags1		dd ?
 dwServiceFlags2		dd ?
@@ -725,13 +775,16 @@ dwMessageSize		dd ?
 dwProviderReserved	dd ?
 szProtocol		dw WSAPROTOCOL_LEN+1 dup(?)
 WSAPROTOCOL_INFOW	ENDS
- LPWSAPROTOCOL_INFOW	typedef ptr WSAPROTOCOL_INFOW
+LPWSAPROTOCOL_INFOW	typedef ptr WSAPROTOCOL_INFOW
+
 ifdef _UNICODE
 WSAPROTOCOL_INFO	typedef WSAPROTOCOL_INFOW
 LPWSAPROTOCOL_INFO	typedef LPWSAPROTOCOL_INFOW
 else
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 WSAPROTOCOL_INFO	typedef WSAPROTOCOL_INFOA
 LPWSAPROTOCOL_INFO	typedef LPWSAPROTOCOL_INFOA
+endif
 endif
 
 PFL_MULTIPLE_PROTO_ENTRIES	equ 0x00000001
@@ -758,6 +811,7 @@ XP1_UNI_SEND		equ 0x00008000
 XP1_UNI_RECV		equ 0x00010000
 XP1_IFS_HANDLES		equ 0x00020000
 XP1_PARTIAL_MESSAGE	equ 0x00040000
+XP1_SAN_SUPPORT_SDP	equ 0x00080000
 
 BIGENDIAN		equ 0x0000
 LITTLEENDIAN		equ 0x0001
@@ -773,6 +827,26 @@ WSA_FLAG_MULTIPOINT_C_ROOT equ 0x02
 WSA_FLAG_MULTIPOINT_C_LEAF equ 0x04
 WSA_FLAG_MULTIPOINT_D_ROOT equ 0x08
 WSA_FLAG_MULTIPOINT_D_LEAF equ 0x10
+
+WSA_FLAG_ACCESS_SYSTEM_SECURITY equ 0x40
+WSA_FLAG_NO_HANDLE_INHERIT equ 0x80
+WSA_FLAG_REGISTERED_IO	   equ 0x100
+
+CALLBACK(LPCONDITIONPROC, \
+	    lpCallerId: LPWSABUF, \
+	  lpCallerData: LPWSABUF, \
+		lpSQOS: LPQOS, \
+		lpGQOS: LPQOS, \
+	    lpCalleeId: LPWSABUF, \
+	  lpCalleeData: LPWSABUF, \
+		     g: ptr, \ ;GROUP,
+	dwCallbackData: DWORD_PTR)
+
+CALLBACK(LPWSAOVERLAPPED_COMPLETION_ROUTINE, \
+	       dwError: DWORD, \
+	 cbTransferred: DWORD, \
+	  lpOverlapped: LPWSAOVERLAPPED, \
+	       dwFlags: DWORD)
 
 IOC_UNIX		equ 0x00000000
 IOC_WS2			equ 0x08000000
@@ -811,13 +885,53 @@ SIO_ADDRESS_LIST_QUERY	equ _WSAIOR(IOC_WS2,22)
 SIO_ADDRESS_LIST_CHANGE equ _WSAIO(IOC_WS2,23)
 SIO_QUERY_TARGET_PNP_HANDLE equ _WSAIOR(IOC_W32,24)
 
+if(_WIN32_WINNT GE 0x0501)
+
+SIO_NSP_NOTIFY_CHANGE	equ _WSAIOW(IOC_WS2,25)
+
+WSACOMPLETIONTYPE	typedef sdword
+NSP_NOTIFY_IMMEDIATELY	equ 0
+NSP_NOTIFY_HWND		equ 1
+NSP_NOTIFY_EVENT	equ 2
+NSP_NOTIFY_PORT		equ 3
+NSP_NOTIFY_APC		equ 4
+PWSACOMPLETIONTYPE	typedef ptr WSACOMPLETIONTYPE
+LPWSACOMPLETIONTYPE	typedef ptr WSACOMPLETIONTYPE
+
+WSACOMPLETION		STRUC
+_Type			WSACOMPLETIONTYPE ?
+union Parameters
+  struct WindowMessage
+   hWnd			HWND ?
+   uMsg			UINT ?
+   context		WPARAM ?
+  ends
+  struct Event
+   lpOverlapped		LPWSAOVERLAPPED ?
+  ends
+  struct Apc
+   lpOverlapped		LPWSAOVERLAPPED ?
+   lpfnCompletionProc	LPWSAOVERLAPPED_COMPLETION_ROUTINE ?
+  ends
+  struct Port
+   lpOverlapped		LPWSAOVERLAPPED ?
+   hPort		HANDLE ?
+   Key			ULONG_PTR ?
+  ends
+ends
+WSACOMPLETION		ENDS
+PWSACOMPLETION		typedef ptr WSACOMPLETION
+LPWSACOMPLETION		typedef ptr WSACOMPLETION
+
+endif ;; (_WIN32_WINNT GE 0x0501)
+
 TH_NETDEV		equ 0x00000001
 TH_TAPI			equ 0x00000002
 
 
 ;sockaddr SOCKADDR;	STRUC
-PSOCKADDR		typedef ptr ; STRUC
-LPSOCKADDR		typedef ptr ;	STRUC
+;PSOCKADDR		typedef ptr ; STRUC
+;LPSOCKADDR		typedef ptr ;	STRUC
 
 ifndef _tagBLOB_DEFINED
 _tagBLOB_DEFINED	equ 1
@@ -825,11 +939,7 @@ _BLOB_DEFINED		equ 1
 _LPBLOB_DEFINED		equ 1
 BLOB			STRUC
 cbSize			ULONG ?
-ifdef MIDL_PASS
-pBlobData		LPBYTE size_is(cbSize) dup(?)
-else
 pBlobData		LPSTR ?
-endif
 BLOB			ENDS
 LPBLOB			typedef ptr BLOB
 endif
@@ -840,19 +950,36 @@ NS_ALL			equ (0)
 NS_SAP			equ (1)
 NS_NDS			equ (2)
 NS_PEER_BROWSE		equ (3)
+NS_SLP			equ (5)
+NS_DHCP			equ (6)
 NS_TCPIP_LOCAL		equ (10)
 NS_TCPIP_HOSTS		equ (11)
 NS_DNS			equ (12)
 NS_NETBT		equ (13)
 NS_WINS			equ (14)
+if(_WIN32_WINNT GE 0x0501)
+NS_NLA			equ (15)
+endif
+if(_WIN32_WINNT GE 0x0600)
+NS_BTH			equ (16)
+endif
+NS_LOCALNAME		equ (19)
 NS_NBP			equ (20)
 NS_MS			equ (30)
 NS_STDA			equ (31)
 NS_NTDS			equ (32)
+if(_WIN32_WINNT GE 0x0600)
+NS_EMAIL		equ (37)
+NS_PNRPNAME		equ (38)
+NS_PNRPCLOUD		equ (39)
+endif
 NS_X500			equ (40)
 NS_NIS			equ (41)
 NS_NISPLUS		equ (42)
 NS_WRQ			equ (50)
+NS_NETDES		equ (60)
+
+
 RES_UNUSED_1		equ (0x00000001)
 RES_FLUSH_CACHE		equ (0x00000002)
 ifndef RES_SERVICE
@@ -860,15 +987,15 @@ RES_SERVICE		equ (0x00000004)
 endif
 
 SERVICE_TYPE_VALUE_IPXPORTA equ <"IpxSocket">
-SERVICE_TYPE_VALUE_IPXPORTW equ <"IpxSocket">
+SERVICE_TYPE_VALUE_IPXPORTW equ <L"IpxSocket">
 SERVICE_TYPE_VALUE_SAPIDA   equ <"SapId">
-SERVICE_TYPE_VALUE_SAPIDW   equ <"SapId">
+SERVICE_TYPE_VALUE_SAPIDW   equ <L"SapId">
 SERVICE_TYPE_VALUE_TCPPORTA equ <"TcpPort">
-SERVICE_TYPE_VALUE_TCPPORTW equ <"TcpPort">
+SERVICE_TYPE_VALUE_TCPPORTW equ <L"TcpPort">
 SERVICE_TYPE_VALUE_UDPPORTA equ <"UdpPort">
-SERVICE_TYPE_VALUE_UDPPORTW equ <"UdpPort">
+SERVICE_TYPE_VALUE_UDPPORTW equ <L"UdpPort">
 SERVICE_TYPE_VALUE_OBJECTIDA equ <"ObjectId">
-SERVICE_TYPE_VALUE_OBJECTIDW equ <"ObjectId">
+SERVICE_TYPE_VALUE_OBJECTIDW equ <L"ObjectId">
 
 ifdef _UNICODE
 SERVICE_TYPE_VALUE_SAPID equ SERVICE_TYPE_VAUE_SAPIDW
@@ -915,7 +1042,6 @@ AFPROTOCOLS		ENDS
 PAFPROTOCOLS		typedef ptr AFPROTOCOLS
 LPAFPROTOCOLS		typedef ptr AFPROTOCOLS
 
-;typedef enum _WSAEcomparator
 COMP_EQUAL		equ 0
 COMP_NOTLESS		equ 1
 WSAECOMPARATOR		typedef LONG
@@ -978,6 +1104,64 @@ PWSAQUERYSET		typedef PWSAQUERYSETA
 LPWSAQUERYSET		typedef LPWSAQUERYSETA
 endif
 
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
+WSAQUERYSET2A		STRUC
+dwSize			DWORD ?
+lpszServiceInstanceName LPSTR ?
+lpVersion		LPWSAVERSION ?
+lpszComment		LPSTR ?
+dwNameSpace		DWORD ?
+lpNSProviderId		LPGUID ?
+lpszContext		LPSTR ?
+dwNumberOfProtocols	DWORD ?
+lpafpProtocols		LPAFPROTOCOLS ?
+lpszQueryString		LPSTR ?
+dwNumberOfCsAddrs	DWORD ?
+lpcsaBuffer		LPCSADDR_INFO ?
+dwOutputFlags		DWORD ?
+lpBlob			LPBLOB ?
+WSAQUERYSET2A		ENDS
+PWSAQUERYSET2A		typedef ptr WSAQUERYSET2A
+LPWSAQUERYSET2A		typedef ptr WSAQUERYSET2A
+
+WSAQUERYSET2W		STRUC
+dwSize			DWORD ?
+lpszServiceInstanceName LPWSTR ?
+lpVersion		LPWSAVERSION ?
+lpszComment		LPWSTR ?
+dwNameSpace		DWORD ?
+lpNSProviderId		LPGUID ?
+lpszContext		LPWSTR ?
+dwNumberOfProtocols	DWORD ?
+lpafpProtocols		LPAFPROTOCOLS ?
+lpszQueryString		LPWSTR ?
+dwNumberOfCsAddrs	DWORD ?
+lpcsaBuffer		LPCSADDR_INFO ?
+dwOutputFlags		DWORD ?
+lpBlob			LPBLOB ?
+WSAQUERYSET2W		ENDS
+PWSAQUERYSET2W		typedef ptr WSAQUERYSET2W
+LPWSAQUERYSET2W		typedef ptr WSAQUERYSET2W
+
+ifdef _UNICODE
+WSAQUERYSET		typedef WSAQUERYSETW
+PWSAQUERYSET		typedef PWSAQUERYSETW
+LPWSAQUERYSET		typedef LPWSAQUERYSETW
+WSAQUERYSET2		typedef WSAQUERYSET2W
+PWSAQUERYSET2		typedef PWSAQUERYSET2W
+LPWSAQUERYSET2		typedef LPWSAQUERYSET2W
+else
+WSAQUERYSET		typedef WSAQUERYSETA
+PWSAQUERYSET		typedef PWSAQUERYSETA
+LPWSAQUERYSET		typedef LPWSAQUERYSETA
+WSAQUERYSET2		typedef WSAQUERYSET2A
+PWSAQUERYSET2		typedef PWSAQUERYSET2A
+LPWSAQUERYSET2		typedef LPWSAQUERYSET2A
+endif
+
+endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+
 LUP_DEEP		equ 0x0001
 LUP_CONTAINERS		equ 0x0002
 LUP_NOCONTAINERS	equ 0x0004
@@ -995,9 +1179,22 @@ LUP_RES_SERVICE		equ 0x8000
 LUP_FLUSHCACHE		equ 0x1000
 LUP_FLUSHPREVIOUS	equ 0x2000
 
-RESULT_IS_ALIAS		equ 0x0001
+LUP_NON_AUTHORITATIVE	equ 0x4000
+LUP_SECURE		equ 0x8000
+LUP_RETURN_PREFERRED_NAMES equ 0x10000
 
-;typedef enum _WSAESETSERVICEOP
+LUP_ADDRCONFIG		equ 0x00100000
+LUP_DUAL_ADDR		equ 0x00200000
+LUP_FILESERVER		equ 0x00400000
+LUP_DISABLE_IDN_ENCODING equ 0x00800000
+LUP_API_ANSI		equ 0x01000000
+
+RESULT_IS_ALIAS		equ 0x0001
+if(_WIN32_WINNT GE 0x0501)
+RESULT_IS_ADDED		equ 0x0010
+RESULT_IS_CHANGED	equ 0x0020
+RESULT_IS_DELETED	equ 0x0040
+endif
 
 RNRSERVICE_REGISTER	equ 0
 RNRSERVICE_DEREGISTER	equ 1
@@ -1006,6 +1203,7 @@ WSAESETSERVICEOP	typedef LONG
 PWSAESETSERVICEOP	typedef ptr WSAESETSERVICEOP
 LPWSAESETSERVICEOP	typedef ptr WSAESETSERVICEOP
 
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 WSANSCLASSINFOA		STRUC
 lpszName		LPSTR ?
 dwNameSpace		dd ?
@@ -1015,6 +1213,8 @@ lpValue			LPVOID ?
 WSANSCLASSINFOA		ENDS
 PWSANSCLASSINFOA	typedef ptr WSANSCLASSINFOA
 LPWSANSCLASSINFOA	typedef ptr WSANSCLASSINFOA
+endif
+
 WSANSCLASSINFOW		STRUC
 lpszName		LPWSTR ?
 dwNameSpace		dd ?
@@ -1029,11 +1229,14 @@ WSANSCLASSINFO		typedef WSANSCLASSINFOW
 PWSANSCLASSINFO		typedef PWSANSCLASSINFOW
 LPWSANSCLASSINFO	typedef LPWSANSCLASSINFOW
 else
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 WSANSCLASSINFO		typedef WSANSCLASSINFOA
 PWSANSCLASSINFO		typedef PWSANSCLASSINFOA
 LPWSANSCLASSINFO	typedef LPWSANSCLASSINFOA
 endif
+endif
 
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 WSASERVICECLASSINFOA	STRUC
 lpServiceClassId	LPGUID ?
 lpszServiceClassName	LPSTR ?
@@ -1042,6 +1245,7 @@ lpClassInfos		LPWSANSCLASSINFOA ?
 WSASERVICECLASSINFOA	ENDS
 PWSASERVICECLASSINFOA	typedef ptr WSASERVICECLASSINFOA
 LPWSASERVICECLASSINFOA	typedef ptr WSASERVICECLASSINFOA
+endif
 WSASERVICECLASSINFOW	STRUC
 lpServiceClassId	LPGUID ?
 lpszServiceClassName	LPWSTR ?
@@ -1055,11 +1259,14 @@ WSASERVICECLASSINFO	typedef WSASERVICECLASSINFOW
 PWSASERVICECLASSINFO	typedef PWSASERVICECLASSINFOW
 LPWSASERVICECLASSINFO	typedef LPWSASERVICECLASSINFOW
 else
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 WSASERVICECLASSINFO	typedef WSASERVICECLASSINFOA
 PWSASERVICECLASSINFO	typedef PWSASERVICECLASSINFOA
 LPWSASERVICECLASSINFO	typedef LPWSASERVICECLASSINFOA
 endif
+endif
 
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 WSANAMESPACE_INFOA	STRUC
 NSProviderId		GUID <>
 dwNameSpace		dd ?
@@ -1069,6 +1276,8 @@ lpszIdentifier		LPSTR ?
 WSANAMESPACE_INFOA	ENDS
 PWSANAMESPACE_INFOA	typedef ptr WSANAMESPACE_INFOA
 LPWSANAMESPACE_INFOA	typedef ptr WSANAMESPACE_INFOA
+endif
+
 WSANAMESPACE_INFOW	STRUC
 NSProviderId		GUID <>
 dwNameSpace		dd ?
@@ -1078,22 +1287,77 @@ lpszIdentifier		LPWSTR ?
 WSANAMESPACE_INFOW	ENDS
 PWSANAMESPACE_INFOW	typedef ptr WSANAMESPACE_INFOW
 LPWSANAMESPACE_INFOW	typedef ptr WSANAMESPACE_INFOW
+
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+WSANAMESPACE_INFOEXA	STRUC
+NSProviderId		GUID <>
+dwNameSpace		dd ?
+fActive			BOOL ?
+dwVersion		dd ?
+lpszIdentifier		LPSTR ?
+ProviderSpecific	BLOB <>
+WSANAMESPACE_INFOEXA	ENDS
+PWSANAMESPACE_INFOEXA	typedef ptr WSANAMESPACE_INFOEXA
+LPWSANAMESPACE_INFOEXA	typedef ptr WSANAMESPACE_INFOEXA
+endif
+
+WSANAMESPACE_INFOEXW	STRUC
+NSProviderId		GUID <>
+dwNameSpace		dd ?
+fActive			BOOL ?
+dwVersion		dd ?
+lpszIdentifier		LPWSTR ?
+ProviderSpecific	BLOB <>
+WSANAMESPACE_INFOEXW	ENDS
+PWSANAMESPACE_INFOEXW	typedef ptr WSANAMESPACE_INFOEXW
+LPWSANAMESPACE_INFOEXW	typedef ptr WSANAMESPACE_INFOEXW
+
 ifdef _UNICODE
 WSANAMESPACE_INFO	typedef WSANAMESPACE_INFOW
 PWSANAMESPACE_INFO	typedef PWSANAMESPACE_INFOW
 LPWSANAMESPACE_INFO	typedef LPWSANAMESPACE_INFOW
+WSANAMESPACE_INFOEX	typedef WSANAMESPACE_INFOEXW
+PWSANAMESPACE_INFOEX	typedef PWSANAMESPACE_INFOEXW
+LPWSANAMESPACE_INFOEX	typedef LPWSANAMESPACE_INFOEXW
 else
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 WSANAMESPACE_INFO	typedef WSANAMESPACE_INFOA
 PWSANAMESPACE_INFO	typedef PWSANAMESPACE_INFOA
 LPWSANAMESPACE_INFO	typedef LPWSANAMESPACE_INFOA
+WSANAMESPACE_INFOEX	typedef WSANAMESPACE_INFOEXA
+PWSANAMESPACE_INFOEX	typedef PWSANAMESPACE_INFOEXA
+LPWSANAMESPACE_INFOEX	typedef LPWSANAMESPACE_INFOEXA
+endif
+endif
+
+if(_WIN32_WINNT GE 0x0600)
+
+POLLRDNORM		equ 0x0100
+POLLRDBAND		equ 0x0200
+POLLIN			equ (POLLRDNORM or POLLRDBAND)
+POLLPRI			equ 0x0400
+
+POLLWRNORM		equ 0x0010
+POLLOUT			equ (POLLWRNORM)
+POLLWRBAND		equ 0x0020
+
+POLLERR			equ 0x0001
+POLLHUP			equ 0x0002
+POLLNVAL		equ 0x0004
+
+WSAPOLLFD		STRUC
+fd			SOCKET ?
+events			sword ?
+revents			sword ?
+WSAPOLLFD		ENDS
+PWSAPOLLFD		typedef ptr WSAPOLLFD
+LPWSAPOLLFD		typedef ptr WSAPOLLFD
+
 endif
 
 if INCL_WINSOCK_API_PROTOTYPES
 ;SOCKET
-accept proto WINAPI \
-		     s: SOCKET,
-		 _addr: PVOID,
-	       addrlen: ptr SINT
+accept proto WINAPI s:SOCKET, _addr:PVOID, addrlen:ptr SINT
 endif
 
 if INCL_WINSOCK_API_TYPEDEFS
@@ -1102,10 +1366,7 @@ endif
 
 if INCL_WINSOCK_API_PROTOTYPES
 ;int
-bind proto WINAPI \
-		     s: SOCKET,
-		 _name: PVOID,
-	       namelen: SINT
+bind proto WINAPI s:SOCKET, _name:PVOID, namelen:SINT
 endif
 
 if INCL_WINSOCK_API_TYPEDEFS
@@ -1114,8 +1375,7 @@ endif
 
 if INCL_WINSOCK_API_PROTOTYPES
 ;int
-closesocket proto WINAPI \
-		     s: SOCKET
+closesocket proto WINAPI s:SOCKET
 endif
 
 if INCL_WINSOCK_API_TYPEDEFS
@@ -1124,22 +1384,16 @@ endif
 
 if INCL_WINSOCK_API_PROTOTYPES
 ;int
-connect proto WINAPI \
-		     s: SOCKET,
-		 _name: PVOID,
-	       namelen: SINT
+connect proto WINAPI s:SOCKET, _name:ptr, namelen:SINT
 endif
 
 if INCL_WINSOCK_API_TYPEDEFS
-CALLBACK(LPFN_CONNECT, s:SOCKET, _name:PVOID, namelen:SINT)
+CALLBACK(LPFN_CONNECT, s:SOCKET, _name:ptr, namelen:SINT)
 endif
 
 if INCL_WINSOCK_API_PROTOTYPES
 ;int
-ioctlsocket proto WINAPI \
-		     s: SOCKET,
-		   cmd: LONG,
-		  argp: LPDWORD
+ioctlsocket proto WINAPI s:SOCKET, cmd:LONG, argp:LPDWORD
 endif
 
 if INCL_WINSOCK_API_TYPEDEFS
@@ -1626,7 +1880,6 @@ if INCL_WINSOCK_API_TYPEDEFS
 CALLBACK(LPFN_WSAASYNCSELECT, s:SOCKET, hWnd:HWND, wMsg:UINT, lEvent:LONG)
 endif
 
-CALLBACK(LPCONDITIONPROC, :LPWSABUF, :LPWSABUF, :LPQOS, :LPQOS, :LPWSABUF, :LPWSABUF, :ptr UINT, :DWORD)
 CALLBACK(LPWSAOVERLAPPED_COMPLETION_ROUTINE, :DWORD, :DWORD, :LPWSAOVERLAPPED, :DWORD)
 
 if INCL_WINSOCK_API_PROTOTYPES
@@ -2322,21 +2575,27 @@ if INCL_WINSOCK_API_TYPEDEFS
 CALLBACK(LPFN_WSAPROVIDERCONFIGCHANGE, :LPHANDLE, :LPWSAOVERLAPPED, :LPWSAOVERLAPPED_COMPLETION_ROUTINE)
 endif
 
+if(_WIN32_WINNT GE 0x0600)
+if INCL_WINSOCK_API_PROTOTYPES
+WSAPoll proto WINAPI fdArray:LPWSAPOLLFD, fds:ULONG, timeout:SINT
+endif
+endif
+
 ;sockaddr_in SOCKADDR_IN; STRUC
-PSOCKADDR_IN		typedef PVOID
-LPSOCKADDR_IN		typedef PVOID
+;PSOCKADDR_IN		typedef PVOID
+;LPSOCKADDR_IN		typedef PVOID
 
 ;linger LINGER;		STRUC
 PLINGER			typedef PVOID
 LPLINGER		typedef PVOID
 
 ;in_addr IN_ADDR;	STRUC
-PIN_ADDR		typedef PVOID
-LPIN_ADDR		typedef PVOID
+;PIN_ADDR		typedef PVOID
+;LPIN_ADDR		typedef PVOID
 
 ;fd_set FD_SET;		STRUC
-PFD_SET			typedef PVOID
-LPFD_SET		typedef PVOID
+;PFD_SET			typedef PVOID
+;LPFD_SET		typedef PVOID
 
 ;hostent HOSTENT;	STRUC
 PHOSTENT		typedef PVOID
@@ -2373,6 +2632,15 @@ WSAGETSELECTERROR macro lParam
 	exitm<HIWORD(lParam)>
 	endm
 
-;include <poppack.h>
+
+ifdef _NEED_POPPACK
+.pragma pack(pop)
+endif
+
+if(_WIN32_WINNT GE 0x0501)
+ifdef IPV6STRICT
+include wsipv6ok.inc
+endif
+endif
 
 endif

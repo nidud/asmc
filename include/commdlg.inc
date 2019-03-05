@@ -1,13 +1,26 @@
 ifndef _INC_COMMDLG
 _INC_COMMDLG equ <>
 
+if (WINVER GE 0x0500)
+ifdef DEFINE_GUID
+DEFINE_GUID(IID_IPrintDialogCallback, 0x5852a2c3, 0x6530, 0x11d1, 0xb6, 0xa3, 0x0, 0x0, 0xf8, 0x75, 0x7b, 0xf9)
+DEFINE_GUID(IID_IPrintDialogServices, 0x509aaeda, 0x5639, 0x11d1, 0xb6, 0xa1, 0x0, 0x0, 0xf8, 0x75, 0x7b, 0xf9)
+endif
+endif
+
+ifndef GUID_DEFS_ONLY
+
+include prsht.inc
+
 ifdef __PE__
 option dllimport:<comdlg32>
 else
 includelib comdlg32.lib
 endif
 
-;#include <pshpack1.h>
+ifndef _WIN64
+.pragma pack(push, 1)
+endif
 
 if(WINVER GE 0x0400)
 ifndef SNDMSG
@@ -16,6 +29,68 @@ endif
 endif
 
 CALLBACK(LPOFNHOOKPROC, :HWND, :UINT, :WPARAM, :LPARAM)
+
+ifndef CDSIZEOF_STRUCT
+CDSIZEOF_STRUCT macro structname, member
+    exitm<structname.member + sizeof(structname.member)>
+    endm
+endif
+
+OPENFILENAME_NT4A	STRUC
+lStructSize		dd ?
+hwndOwner		HWND ?
+hInstance		HINSTANCE ?
+lpstrFilter		LPCSTR ?
+lpstrCustomFilter	LPSTR ?
+nMaxCustFilter		dd ?
+nFilterIndex		dd ?
+lpstrFile		LPSTR ?
+nMaxFile		dd ?
+lpstrFileTitle		LPSTR ?
+nMaxFileTitle		dd ?
+lpstrInitialDir		LPCSTR ?
+lpstrTitle		LPCSTR ?
+Flags			dd ?
+nFileOffset		dw ?
+nFileExtension		dw ?
+lpstrDefExt		LPCSTR ?
+lCustData		LPARAM ?
+lpfnHook		LPOFNHOOKPROC ?
+lpTemplateName		LPCSTR ?
+OPENFILENAME_NT4A	ENDS
+LPOPENFILENAME_NT4A	typedef ptr OPENFILENAME_NT4A
+
+OPENFILENAME_NT4W	STRUC
+lStructSize		dd ?
+hwndOwner		HWND ?
+hInstance		HINSTANCE ?
+lpstrFilter		LPCWSTR ?
+lpstrCustomFilter	LPWSTR ?
+nMaxCustFilter		dd ?
+nFilterIndex		dd ?
+lpstrFile		LPWSTR ?
+nMaxFile		dd ?
+lpstrFileTitle		LPWSTR ?
+nMaxFileTitle		dd ?
+lpstrInitialDir		LPCWSTR ?
+lpstrTitle		LPCWSTR ?
+Flags			dd ?
+nFileOffset		dw ?
+nFileExtension		dw ?
+lpstrDefExt		LPCWSTR ?
+lCustData		LPARAM ?
+lpfnHook		LPOFNHOOKPROC ?
+lpTemplateName		LPCWSTR ?
+OPENFILENAME_NT4W	ENDS
+LPOPENFILENAME_NT4W	typedef ptr OPENFILENAME_NT4W
+
+ifdef _UNICODE
+OPENFILENAME_NT4	typedef OPENFILENAME_NT4W
+LPOPENFILENAME_NT4	typedef LPOPENFILENAME_NT4W
+else
+OPENFILENAME_NT4	typedef OPENFILENAME_NT4A
+LPOPENFILENAME_NT4	typedef LPOPENFILENAME_NT4A
+endif
 
 OPENFILENAMEA		STRUC SIZE_T
 lStructSize		dd ?
@@ -38,6 +113,15 @@ lpstrDefExt		LPCSTR ?
 lCustData		LPARAM ?
 lpfnHook		LPOFNHOOKPROC ?
 lpTemplateName		LPCSTR ?
+ifdef _MAC
+lpEditInfo		LPEDITMENU ?
+lpstrPrompt		LPCSTR ?
+endif
+if (_WIN32_WINNT GE 0x0500)
+pvReserved		PVOID ?
+dwReserved		dd ?
+FlagsEx			dd ?
+endif
 OPENFILENAMEA		ENDS
 LPOPENFILENAMEA		typedef ptr OPENFILENAMEA
 
@@ -62,9 +146,18 @@ lpstrDefExt		LPCWSTR ?
 lCustData		LPARAM ?
 lpfnHook		LPOFNHOOKPROC ?
 lpTemplateName		LPCWSTR ?
+ifdef _MAC
+lpEditInfo		LPEDITMENU ?
+lpstrPrompt		LPCSTR ?
+endif
+if (_WIN32_WINNT GE 0x0500)
+pvReserved		PVOID ?
+dwReserved		dd ?
+FlagsEx			dd ?
+endif
 OPENFILENAMEW		ENDS
-
 LPOPENFILENAMEW		typedef ptr OPENFILENAMEW
+
 ifdef _UNICODE
 OPENFILENAME		typedef OPENFILENAMEW
 LPOPENFILENAME		typedef LPOPENFILENAMEW
@@ -132,7 +225,14 @@ OFN_LONGNAMES		equ 0x00200000
 OFN_ENABLEINCLUDENOTIFY equ 0x00400000
 OFN_ENABLESIZING	equ 0x00800000
 endif
+if (_WIN32_WINNT GE 0x0500)
+OFN_DONTADDTORECENT	equ 0x02000000
+OFN_FORCESHOWHIDDEN	equ 0x10000000
+endif
 
+if (_WIN32_WINNT GE 0x0500)
+OFN_EX_NOPLACESBAR	equ 0x00000001
+endif
 
 OFN_SHAREFALLTHROUGH	equ 2
 OFN_SHARENOWARN		equ 1
@@ -148,12 +248,14 @@ lpOFN			LPOPENFILENAMEA ?
 pszFile			LPSTR ?
 OFNOTIFYA		ENDS
 LPOFNOTIFYA		typedef ptr OFNOTIFYA
+
 OFNOTIFYW		STRUC
 hdr			NMHDR <>
 lpOFN			LPOPENFILENAMEW ?
 pszFile			LPWSTR ?
 OFNOTIFYW		ENDS
 LPOFNOTIFYW		typedef ptr OFNOTIFYW
+
 ifdef _UNICODE
 OFNOTIFY		typedef OFNOTIFYW
 LPOFNOTIFY		typedef LPOFNOTIFYW
@@ -169,6 +271,7 @@ psf			LPVOID ?
 pidl			LPVOID ?
 OFNOTIFYEXA		ENDS
 LPOFNOTIFYEXA		typedef ptr OFNOTIFYEXA
+
 OFNOTIFYEXW		STRUC
 hdr			NMHDR <>
 lpOFN			LPOPENFILENAMEW ?
@@ -176,6 +279,7 @@ psf			LPVOID ?
 pidl			LPVOID ?
 OFNOTIFYEXW		ENDS
 LPOFNOTIFYEXW		typedef ptr OFNOTIFYEXW
+
 ifdef _UNICODE
 OFNOTIFYEX		typedef OFNOTIFYEXW
 LPOFNOTIFYEX		typedef LPOFNOTIFYEXW
@@ -195,6 +299,9 @@ CDN_HELP		equ (CDN_FIRST - 0x0004)
 CDN_FILEOK		equ (CDN_FIRST - 0x0005)
 CDN_TYPECHANGE		equ (CDN_FIRST - 0x0006)
 CDN_INCLUDEITEM		equ (CDN_FIRST - 0x0007)
+if (NTDDI_VERSION GE NTDDI_WIN2K)
+CDN_INCLUDEITEM		equ (CDN_FIRST - 0x0007)
+endif
 
 CDM_FIRST		equ (WM_USER + 100)
 CDM_LAST		equ (WM_USER + 200)
@@ -412,6 +519,12 @@ FR_ENABLETEMPLATEHANDLE equ 0x00002000
 FR_HIDEUPDOWN		equ 0x00004000
 FR_HIDEMATCHCASE	equ 0x00008000
 FR_HIDEWHOLEWORD	equ 0x00010000
+if (NTDDI_VERSION GE NTDDI_WIN2K)
+FR_RAW			equ 0x00020000
+FR_MATCHDIAC		equ 0x20000000
+FR_MATCHKASHIDA		equ 0x40000000
+FR_MATCHALEFHAMZA	equ 0x80000000
+endif
 
 ;HWND
 FindTextA proto WINAPI :LPFINDREPLACEA
@@ -536,6 +649,9 @@ CF_SELECTSCRIPT		equ 0x00400000
 CF_NOSCRIPTSEL		equ 0x00800000
 CF_NOVERTFONTS		equ 0x01000000
 endif
+if(WINVER GE 0x0601)
+CF_INACTIVEFONTS	equ 0x02000000
+endif
 
 SIMULATED_FONTTYPE	equ 0x8000
 PRINTER_FONTTYPE	equ 0x4000
@@ -546,8 +662,18 @@ REGULAR_FONTTYPE	equ 0x0400
 
 ifdef WINNT
 OPENTYPE_FONTTYPE	equ 0x10000
-TYPE1_FONTTYPE		equ 0x20000
+;TYPE1_FONTTYPE		equ 0x20000
 DSIG_FONTTYPE		equ 0x40000
+endif
+
+if (NTDDI_VERSION GE NTDDI_WIN2K)
+PS_OPENTYPE_FONTTYPE	equ 0x10000
+TT_OPENTYPE_FONTTYPE	equ 0x20000
+TYPE1_FONTTYPE		equ 0x40000
+endif
+
+if(WINVER GE 0x0601)
+SYMBOL_FONTTYPE		equ 0x80000
 endif
 
 WM_CHOOSEFONT_GETLOGFONT equ (WM_USER + 1)
@@ -657,6 +783,113 @@ else
 PrintDlg		equ <PrintDlgA>
 endif
 
+if(WINVER GE 0x0500)
+
+;ifdef STDMETHOD
+
+.comdef IPrintDialogCallback
+
+    QueryInterface	proc riid:REFIID, ppvObj:ptr
+    AddRef		proc
+    Release		proc
+
+    InitDone		proc
+    SelectionChange	proc
+    HandleMessage	proc hDlg:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM, pResult:ptr LRESULT
+
+    .ends
+
+
+.comdef IPrintDialogServices
+
+    QueryInterface	proc riid:REFIID, ppvObj:ptr
+    AddRef		proc
+    Release		proc
+
+    GetCurrentDevMode	proc pDevMode:LPDEVMODE, pcbSize:ptr UINT
+    GetCurrentPrinterName proc pPrinterName:LPWSTR, pcchSize:ptr UINT
+    GetCurrentPortName	proc pPortName:LPWSTR, pcchSize:ptr UINT
+
+    .ends
+
+
+PRINTPAGERANGE		STRUC
+nFromPage		dd ?
+nToPage			dd ?
+PRINTPAGERANGE		ENDS
+LPPRINTPAGERANGE	typedef ptr PRINTPAGERANGE
+PCPRINTPAGERANGE	typedef ptr PRINTPAGERANGE
+
+
+PRINTDLGEXA		STRUC
+lStructSize		dd ?
+hwndOwner		HWND ?
+hDevMode		HGLOBAL ?
+hDevNames		HGLOBAL ?
+hDC			HDC ?
+Flags			dd ?
+Flags2			dd ?
+ExclusionFlags		dd ?
+nPageRanges		dd ?
+nMaxPageRanges		dd ?
+lpPageRanges		LPPRINTPAGERANGE ?
+nMinPage		dd ?
+nMaxPage		dd ?
+nCopies			dd ?
+hInstance		HINSTANCE ?
+lpPrintTemplateName	LPCSTR ?
+lpCallback		PVOID ?
+nPropertyPages		dd ?
+lphPropertyPages	HPROPSHEETPAGE ?
+nStartPage		dd ?
+dwResultAction		dd ?
+PRINTDLGEXA		ENDS
+LPPRINTDLGEXA		typedef ptr PRINTDLGEXA
+
+PRINTDLGEXW		STRUC
+lStructSize		dd ?
+hwndOwner		HWND ?
+hDevMode		HGLOBAL ?
+hDevNames		HGLOBAL ?
+hDC			HDC ?
+Flags			dd ?
+Flags2			dd ?
+ExclusionFlags		dd ?
+nPageRanges		dd ?
+nMaxPageRanges		dd ?
+lpPageRanges		LPPRINTPAGERANGE ?
+nMinPage		dd ?
+nMaxPage		dd ?
+nCopies			dd ?
+hInstance		HINSTANCE ?
+lpPrintTemplateName	LPCWSTR ?
+lpCallback		PVOID ?
+nPropertyPages		dd ?
+lphPropertyPages	HPROPSHEETPAGE ?
+nStartPage		dd ?
+dwResultAction		dd ?
+PRINTDLGEXW		ENDS
+LPPRINTDLGEXW		typedef ptr PRINTDLGEXW
+
+ifdef _UNICODE
+PRINTDLGEX		typedef PRINTDLGEXW
+LPPRINTDLGEX		typedef LPPRINTDLGEXW
+else
+PRINTDLGEX		typedef PRINTDLGEXA
+LPPRINTDLGEX		typedef LPPRINTDLGEXA
+endif
+
+PrintDlgExA proto WINAPI :LPPRINTDLGEXA
+PrintDlgExW proto WINAPI :LPPRINTDLGEXW
+ifdef _UNICODE
+PrintDlgEx		equ <PrintDlgExW>
+else
+PrintDlgEx		equ <PrintDlgExA>
+endif
+
+;endif
+endif ;; (WINVER GE 0x0500)
+
 PD_ALLPAGES		equ 0x00000000
 PD_SELECTION		equ 0x00000001
 PD_PAGENUMS		equ 0x00000002
@@ -681,6 +914,20 @@ PD_USEDEVMODECOPIESANDCOLLATE equ 0x00040000
 PD_DISABLEPRINTTOFILE	equ 0x00080000
 PD_HIDEPRINTTOFILE	equ 0x00100000
 PD_NONETWORKBUTTON	equ 0x00200000
+if(WINVER GE 0x0500)
+PD_CURRENTPAGE		equ 0x00400000
+PD_NOCURRENTPAGE	equ 0x00800000
+PD_EXCLUSIONFLAGS	equ 0x01000000
+PD_USELARGETEMPLATE	equ 0x10000000
+endif
+
+if(WINVER GE 0x0500)
+PD_EXCL_COPIESANDCOLLATE equ (DM_COPIES or DM_COLLATE)
+START_PAGE_GENERAL	equ 0xffffffff
+PD_RESULT_CANCEL	equ 0
+PD_RESULT_PRINT		equ 1
+PD_RESULT_APPLY		equ 2
+endif
 
 DEVNAMES		STRUC
 wDriverOffset		dw ?
@@ -749,11 +996,8 @@ LPPAGESETUPDLG		typedef LPPAGESETUPDLGA
 endif
 
 ;BOOL
-PageSetupDlgA proto WINAPI \
-		      : LPPAGESETUPDLGA
-;BOOL
-PageSetupDlgW proto WINAPI \
-		      : LPPAGESETUPDLGW
+PageSetupDlgA proto WINAPI :LPPAGESETUPDLGA
+PageSetupDlgW proto WINAPI :LPPAGESETUPDLGW
 ifdef _UNICODE
 PageSetupDlg		equ <PageSetupDlgW>
 else
@@ -782,6 +1026,14 @@ PSD_DISABLEPAGEPAINTING equ 0x00080000
 PSD_NONETWORKBUTTON	equ 0x00200000
 endif
 
-;#include <poppack.h>
+if defined(ISOLATION_AWARE_ENABLED) and (ISOLATION_AWARE_ENABLED NE 0)
+include commdlg.inl
 endif
+
+ifndef _WIN64
+.pragma pack(pop)
+endif
+
+endif ;; GUID_DEFS_ONLY
+endif ;; _INC_COMMDLG
 

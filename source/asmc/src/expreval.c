@@ -353,18 +353,20 @@ static ret_code get_operand( struct expr *opnd, int *idx, struct asm_tok tokenar
 
 			i += 2;
 			opnd->kind = EXPR_CONST;
-			opnd->value = 0;
+			opnd->llvalue = 0;
+
+			/* added v2.28.17: defined(...) returns -1 */
 
 			if ( tokenarray[i].token == T_CL_BRACKET ) {
 
 			    *idx = i;
-			    opnd->value++; /* <> -- defined() */
+			    opnd->llvalue--; /* <> -- defined() */
 			    break;
 			}
 
 			if ( tokenarray[i].token == T_NUM && tokenarray[i+1].token == T_CL_BRACKET ) {
 
-			    opnd->value++;
+			    opnd->llvalue--;
 			    *idx = i + 1;
 			    break;
 			}
@@ -376,7 +378,7 @@ static ret_code get_operand( struct expr *opnd, int *idx, struct asm_tok tokenar
 			    sym = SymFind( tokenarray[i].string_ptr );
 			    if ( sym && sym->state != SYM_UNDEFINED ) {
 
-				opnd->value++; /* symbol defined */
+				opnd->llvalue--; /* symbol defined */
 				break;
 			    }
 

@@ -68,7 +68,6 @@ endif
 ifndef _WIN32_FUSION
 _WIN32_FUSION	equ 0
 endif
-
 ifndef _WIN32_WCE
 ;_WIN32_WCE	equ 0
 endif

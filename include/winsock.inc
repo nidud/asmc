@@ -8,7 +8,7 @@ ifndef _INC_WINDOWS
 include windows.inc
 endif
 
-SOCKET			typedef UINT
+SOCKET			typedef UINT_PTR
 
 ifndef FD_SETSIZE
 FD_SETSIZE		equ 64
@@ -119,8 +119,13 @@ netent			ENDS
 servent			STRUC
 s_name			LPSTR ?
 s_aliases		LPSTR ?
+ifdef _WIN64
+s_proto			LPSTR ?
+s_port			dw ?
+else
 s_port			dw ?
 s_proto			LPSTR ?
+endif
 servent			ENDS
 
 protoent		STRUC
@@ -191,12 +196,12 @@ UNION S_un
  ENDS
  S_addr			dd ?
 ENDS
-s_addr			equ <S_un.S_addr>
-s_host			equ <S_un.S_un_b.s_b2>
-s_net			equ <S_un.S_un_b.s_b1>
-s_imp			equ <S_un.S_un_w.s_w2>
-s_impno			equ <S_un.S_un_b.s_b4>
-s_lh			equ <S_un.S_un_b.s_b3>
+;s_addr			equ <S_un.S_addr>
+;s_host			equ <S_un.S_un_b.s_b2>
+;s_net			equ <S_un.S_un_b.s_b1>
+;s_imp			equ <S_un.S_un_w.s_w2>
+;s_impno		equ <S_un.S_un_b.s_b4>
+;s_lh			equ <S_un.S_un_b.s_b3>
 in_addr			ENDS
 
 IN_CLASSA macro i
@@ -222,9 +227,9 @@ IN_CLASSC_NET		equ 0xffffff00
 IN_CLASSC_NSHIFT	equ 8
 IN_CLASSC_HOST		equ 0x000000ff
 
-INADDR_ANY		equ (ULONG)0x00000000
+INADDR_ANY		equ 0x00000000
 INADDR_LOOPBACK		equ 0x7f000001
-INADDR_BROADCAST	equ (ULONG)0xffffffff
+INADDR_BROADCAST	equ 0xffffffff
 INADDR_NONE		equ 0xffffffff
 
 sockaddr_in		STRUC
@@ -237,7 +242,7 @@ sockaddr_in		ENDS
 WSADESCRIPTION_LEN	equ 256
 WSASYS_STATUS_LEN	equ 128
 
-WSAData			STRUC
+WSADATA			STRUC
 wVersion		dw ?
 wHighVersion		dw ?
 szDescription		db WSADESCRIPTION_LEN+1 dup(?)
@@ -289,7 +294,7 @@ SO_USELOOPBACK		equ 0x0040
 SO_LINGER		equ 0x0080
 SO_OOBINLINE		equ 0x0100
 
-SO_DONTLINGER		equ <( NOT SO_LINGER)>
+SO_DONTLINGER		equ <not SO_LINGER>
 
 SO_SNDBUF		equ 0x1001
 SO_RCVBUF		equ 0x1002

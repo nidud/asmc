@@ -10,7 +10,9 @@ include intrin.inc
 
     option win64:0
 
-umul256 proc syscall Multiplier:oword, Multiplicand:oword, HighProduct:ptr
+umul256 proc syscall Multiplier     :oword, ; RSI:RDI
+                     Multiplicand   :oword, ; RCX:RDX
+                     HighProduct    :ptr    ; R8
 
     mov rax,Multiplier
 
@@ -20,7 +22,9 @@ umul256 proc syscall Multiplier:oword, Multiplicand:oword, HighProduct:ptr
 
             mov [HighProduct],rcx
             mov [HighProduct+8],rcx
+
         .endif
+
         mul Multiplicand
         ret
 

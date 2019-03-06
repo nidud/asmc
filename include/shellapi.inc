@@ -9,7 +9,9 @@ ifndef _WINDEF_
 endif
 
 ifdef __PE__
-option	dllimport:<shell32>
+option dllimport:<shell32>
+else
+includelib shell32.lib
 endif
 
 ifdef _WIN64

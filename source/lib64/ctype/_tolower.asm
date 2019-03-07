@@ -3,7 +3,6 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-
 include ctype.inc
 
     .code
@@ -13,10 +12,10 @@ include ctype.inc
 _tolower proc char:SINT
 
     movzx eax,cl
-    sub al,'A'+'a'
+    sub al,'A'
+    add al,'a'
     ret
 
 _tolower ENDP
 
     END
-

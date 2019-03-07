@@ -52,6 +52,16 @@ main proc
     .assert tolower('A') == 'a'
     .assert tolower('Z') == 'z'
     .assert tolower('9') == '9'
+    .assert _tolower('A') == 'a'
+    .assert _tolower('Z') == 'z'
+    .assert towupper('A') == 'A'
+    .assert towupper('a') == 'A'
+    .assert towupper('z') == 'Z'
+    .assert towupper('9') == '9'
+    .assert towlower('a') == 'a'
+    .assert towlower('A') == 'a'
+    .assert towlower('Z') == 'z'
+    .assert towlower('9') == '9'
 
     xor rax,rax
     ret

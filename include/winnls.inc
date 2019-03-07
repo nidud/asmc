@@ -25,124 +25,162 @@ LPSYSTEMTIME	TYPEDEF PTR SYSTEMTIME
 endif
 
 
-MAX_LEADBYTES		  equ 12	; 5 ranges, 2 bytes ea., 0 term.
-MAX_DEFAULTCHAR		  equ 2		; single or double byte
+MAX_LEADBYTES		equ 12		; 5 ranges, 2 bytes ea., 0 term.
+MAX_DEFAULTCHAR		equ 2		; single or double byte
 
-MB_PRECOMPOSED		  equ 0x00000001  ; use precomposed chars
-MB_COMPOSITE		  equ 0x00000002  ; use composite chars
-MB_USEGLYPHCHARS	  equ 0x00000004  ; use glyph chars, not ctrl chars
-MB_ERR_INVALID_CHARS	  equ 0x00000008  ; error for invalid chars
-
-WC_COMPOSITECHECK	  equ 0x00000200  ; convert composite to precomposed
-WC_DISCARDNS		  equ 0x00000010  ; discard non-spacing chars
-WC_SEPCHARS		  equ 0x00000020  ; generate separate chars
-WC_DEFAULTCHAR		  equ 0x00000040  ; replace w/ default char
-WC_NO_BEST_FIT_CHARS	  equ 0x00000400  ; do not use best fit chars
-
-CT_CTYPE1		  equ 0x00000001  ; ctype 1 information
-CT_CTYPE2		  equ 0x00000002  ; ctype 2 information
-CT_CTYPE3		  equ 0x00000004  ; ctype 3 information
-
-C1_UPPER		  equ 0x0001	  ; upper case
-C1_LOWER		  equ 0x0002	  ; lower case
-C1_DIGIT		  equ 0x0004	  ; decimal digits
-C1_SPACE		  equ 0x0008	  ; spacing characters
-C1_PUNCT		  equ 0x0010	  ; punctuation characters
-C1_CNTRL		  equ 0x0020	  ; control characters
-C1_BLANK		  equ 0x0040	  ; blank characters
-C1_XDIGIT		  equ 0x0080	  ; other digits
-C1_ALPHA		  equ 0x0100	  ; any linguistic character
-
-C2_LEFTTORIGHT		  equ 0x0001	  ; left to right
-C2_RIGHTTOLEFT		  equ 0x0002	  ; right to left
-
-C2_EUROPENUMBER		  equ 0x0003	  ; European number, digit
-C2_EUROPESEPARATOR	  equ 0x0004	  ; European numeric separator
-C2_EUROPETERMINATOR	  equ 0x0005	  ; European numeric terminator
-C2_ARABICNUMBER		  equ 0x0006	  ; Arabic number
-C2_COMMONSEPARATOR	  equ 0x0007	  ; common numeric separator
-
-C2_BLOCKSEPARATOR	  equ 0x0008	  ; block separator
-C2_SEGMENTSEPARATOR	  equ 0x0009	  ; segment separator
-C2_WHITESPACE		  equ 0x000A	  ; white space
-C2_OTHERNEUTRAL		  equ 0x000B	  ; other neutrals
-
-C2_NOTAPPLICABLE	  equ 0x0000	  ; no implicit directionality
-
-C3_NONSPACING		  equ 0x0001	  ; nonspacing character
-C3_DIACRITIC		  equ 0x0002	  ; diacritic mark
-C3_VOWELMARK		  equ 0x0004	  ; vowel mark
-C3_SYMBOL		  equ 0x0008	  ; symbols
-
-C3_KATAKANA		  equ 0x0010	  ; katakana character
-C3_HIRAGANA		  equ 0x0020	  ; hiragana character
-C3_HALFWIDTH		  equ 0x0040	  ; half width character
-C3_FULLWIDTH		  equ 0x0080	  ; full width character
-C3_IDEOGRAPH		  equ 0x0100	  ; ideographic character
-C3_KASHIDA		  equ 0x0200	  ; Arabic kashida character
-C3_LEXICAL		  equ 0x0400	  ; lexical character
-
-C3_ALPHA		  equ 0x8000	  ; any linguistic char (C1_ALPHA)
-
-C3_NOTAPPLICABLE	  equ 0x0000	  ; ctype 3 is not applicable
-
-NORM_IGNORECASE		  equ 0x00000001  ; ignore case
-NORM_IGNORENONSPACE	  equ 0x00000002  ; ignore nonspacing chars
-NORM_IGNORESYMBOLS	  equ 0x00000004  ; ignore symbols
-
-NORM_IGNOREKANATYPE	  equ 0x00010000  ; ignore kanatype
-NORM_IGNOREWIDTH	  equ 0x00020000  ; ignore width
+HIGH_SURROGATE_START	equ 0xd800
+HIGH_SURROGATE_END	equ 0xdbff
+LOW_SURROGATE_START	equ 0xdc00
+LOW_SURROGATE_END	equ 0xdfff
 
 
-MAP_FOLDCZONE		  equ 0x00000010  ; fold compatibility zone chars
-MAP_PRECOMPOSED		  equ 0x00000020  ; convert to precomposed chars
-MAP_COMPOSITE		  equ 0x00000040  ; convert to composite chars
-MAP_FOLDDIGITS		  equ 0x00000080  ; all digits to ASCII 0-9
+MB_PRECOMPOSED		equ 0x00000001	; use precomposed chars
+MB_COMPOSITE		equ 0x00000002	; use composite chars
+MB_USEGLYPHCHARS	equ 0x00000004	; use glyph chars, not ctrl chars
+MB_ERR_INVALID_CHARS	equ 0x00000008	; error for invalid chars
 
-MAP_EXPAND_LIGATURES	  equ 0x00002000  ; expand all ligatures
+WC_COMPOSITECHECK	equ 0x00000200	; convert composite to precomposed
+WC_DISCARDNS		equ 0x00000010	; discard non-spacing chars
+WC_SEPCHARS		equ 0x00000020	; generate separate chars
+WC_DEFAULTCHAR		equ 0x00000040	; replace w/ default char
+if WINVER GE 0x0600
+WC_ERR_INVALID_CHARS	equ 0x00000080
+endif
+WC_NO_BEST_FIT_CHARS	equ 0x00000400	; do not use best fit chars
 
-LCMAP_LOWERCASE		  equ 0x00000100  ; lower case letters
-LCMAP_UPPERCASE		  equ 0x00000200  ; upper case letters
-LCMAP_SORTKEY		  equ 0x00000400  ; WC sort key (normalize)
-LCMAP_BYTEREV		  equ 0x00000800  ; byte reversal
+CT_CTYPE1		equ 0x00000001	; ctype 1 information
+CT_CTYPE2		equ 0x00000002	; ctype 2 information
+CT_CTYPE3		equ 0x00000004	; ctype 3 information
 
-LCMAP_HIRAGANA		  equ 0x00100000  ; map katakana to hiragana
-LCMAP_KATAKANA		  equ 0x00200000  ; map hiragana to katakana
-LCMAP_HALFWIDTH		  equ 0x00400000  ; map double byte to single byte
-LCMAP_FULLWIDTH		  equ 0x00800000  ; map single byte to double byte
+C1_UPPER		equ 0x0001	  ; upper case
+C1_LOWER		equ 0x0002	  ; lower case
+C1_DIGIT		equ 0x0004	  ; decimal digits
+C1_SPACE		equ 0x0008	  ; spacing characters
+C1_PUNCT		equ 0x0010	  ; punctuation characters
+C1_CNTRL		equ 0x0020	  ; control characters
+C1_BLANK		equ 0x0040	  ; blank characters
+C1_XDIGIT		equ 0x0080	  ; other digits
+C1_ALPHA		equ 0x0100	  ; any linguistic character
 
-LCMAP_LINGUISTIC_CASING	  equ 0x01000000  ; use linguistic rules for casing
+C2_LEFTTORIGHT		equ 0x0001	  ; left to right
+C2_RIGHTTOLEFT		equ 0x0002	  ; right to left
+
+C2_EUROPENUMBER		equ 0x0003	  ; European number, digit
+C2_EUROPESEPARATOR	equ 0x0004	  ; European numeric separator
+C2_EUROPETERMINATOR	equ 0x0005	  ; European numeric terminator
+C2_ARABICNUMBER		equ 0x0006	  ; Arabic number
+C2_COMMONSEPARATOR	equ 0x0007	  ; common numeric separator
+
+C2_BLOCKSEPARATOR	equ 0x0008	  ; block separator
+C2_SEGMENTSEPARATOR	equ 0x0009	  ; segment separator
+C2_WHITESPACE		equ 0x000A	  ; white space
+C2_OTHERNEUTRAL		equ 0x000B	  ; other neutrals
+
+C2_NOTAPPLICABLE	equ 0x0000	  ; no implicit directionality
+
+C3_NONSPACING		equ 0x0001	  ; nonspacing character
+C3_DIACRITIC		equ 0x0002	  ; diacritic mark
+C3_VOWELMARK		equ 0x0004	  ; vowel mark
+C3_SYMBOL		equ 0x0008	  ; symbols
+
+C3_KATAKANA		equ 0x0010	  ; katakana character
+C3_HIRAGANA		equ 0x0020	  ; hiragana character
+C3_HALFWIDTH		equ 0x0040	  ; half width character
+C3_FULLWIDTH		equ 0x0080	  ; full width character
+C3_IDEOGRAPH		equ 0x0100	  ; ideographic character
+C3_KASHIDA		equ 0x0200	  ; Arabic kashida character
+C3_LEXICAL		equ 0x0400	  ; lexical character
+
+C3_ALPHA		equ 0x8000	  ; any linguistic char (C1_ALPHA)
+
+C3_NOTAPPLICABLE	equ 0x0000	  ; ctype 3 is not applicable
+
+NORM_IGNORECASE		equ 0x00000001	; ignore case
+NORM_IGNORENONSPACE	equ 0x00000002	; ignore nonspacing chars
+NORM_IGNORESYMBOLS	equ 0x00000004	; ignore symbols
+
+LINGUISTIC_IGNORECASE	equ 0x00000010
+LINGUISTIC_IGNOREDIACRITIC equ 0x00000020
+
+NORM_IGNOREKANATYPE	equ 0x00010000	; ignore kanatype
+NORM_IGNOREWIDTH	equ 0x00020000	; ignore width
+NORM_LINGUISTIC_CASING	equ 0x08000000
+
+
+MAP_FOLDCZONE		equ 0x00000010	; fold compatibility zone chars
+MAP_PRECOMPOSED		equ 0x00000020	; convert to precomposed chars
+MAP_COMPOSITE		equ 0x00000040	; convert to composite chars
+MAP_FOLDDIGITS		equ 0x00000080	; all digits to ASCII 0-9
+
+MAP_EXPAND_LIGATURES	equ 0x00002000	; expand all ligatures
+
+
+LCMAP_LOWERCASE		equ 0x00000100	; lower case letters
+LCMAP_UPPERCASE		equ 0x00000200	; upper case letters
+if WINVER GE 0x0601
+LCMAP_TITLECASE		equ 0x00000300
+endif
+LCMAP_SORTKEY		equ 0x00000400	; WC sort key (normalize)
+LCMAP_BYTEREV		equ 0x00000800	; byte reversal
+
+LCMAP_HIRAGANA		equ 0x00100000	; map katakana to hiragana
+LCMAP_KATAKANA		equ 0x00200000	; map hiragana to katakana
+LCMAP_HALFWIDTH		equ 0x00400000	; map double byte to single byte
+LCMAP_FULLWIDTH		equ 0x00800000	; map single byte to double byte
+
+LCMAP_LINGUISTIC_CASING equ 0x01000000	; use linguistic rules for casing
 
 LCMAP_SIMPLIFIED_CHINESE  equ 0x02000000  ; map traditional chinese to simplified chinese
 LCMAP_TRADITIONAL_CHINESE equ 0x04000000  ; map simplified chinese to traditional chinese
 
+if WINVER GE 0x0602
+LCMAP_SORTHANDLE	equ 0x20000000
+LCMAP_HASH		equ 0x00040000
+endif
 
-LCID_INSTALLED		  equ 0x00000001  ; installed locale ids
-LCID_SUPPORTED		  equ 0x00000002  ; supported locale ids
-LCID_ALTERNATE_SORTS	  equ 0x00000004  ; alternate sort locale ids
+FIND_STARTSWITH		equ 0x00100000
+FIND_ENDSWITH		equ 0x00200000
+FIND_FROMSTART		equ 0x00400000
+FIND_FROMEND		equ 0x00800000
 
+LGRPID_INSTALLED	equ 0x00000001
+LGRPID_SUPPORTED	equ 0x00000002
 
-CP_INSTALLED		  equ 0x00000001  ; installed code page ids
-CP_SUPPORTED		  equ 0x00000002  ; supported code page ids
+LCID_INSTALLED		equ 0x00000001	; installed locale ids
+LCID_SUPPORTED		equ 0x00000002	; supported locale ids
+LCID_ALTERNATE_SORTS	equ 0x00000004	; alternate sort locale ids
 
+if WINVER GE 0x0600
+LOCALE_ALL		equ 0
+LOCALE_WINDOWS		equ 0x00000001
+LOCALE_SUPPLEMENTAL	equ 0x00000002
+LOCALE_ALTERNATE_SORTS	equ 0x00000004
+LOCALE_REPLACEMENT	equ 0x00000008
+endif
+if WINVER GE 0x0601
+LOCALE_NEUTRALDATA	equ 0x00000010
+LOCALE_SPECIFICDATA	equ 0x00000020
+endif
 
-SORT_STRINGSORT		  equ 0x00001000  ; use string sort method
+CP_INSTALLED		equ 0x00000001	; installed code page ids
+CP_SUPPORTED		equ 0x00000002	; supported code page ids
 
+SORT_STRINGSORT		equ 0x00001000	; use string sort method
+if WINVER GE 0x0601
+SORT_DIGITSASNUMBERS	equ 0x00000008
+endif
 
 CSTR_LESS_THAN		  equ 1		  ; string 1 less than string 2
 CSTR_EQUAL		  equ 2		  ; string 1 equal to string 2
 CSTR_GREATER_THAN	  equ 3		  ; string 1 greater than string 2
-
 
 CP_ACP			  equ 0		  ; default to ANSI code page
 CP_OEMCP		  equ 1		  ; default to OEM  code page
 CP_MACCP		  equ 2		  ; default to MAC  code page
 CP_THREAD_ACP		  equ 3		  ; current thread's ANSI code page
 CP_SYMBOL		  equ 42	  ; SYMBOL translations
-
 CP_UTF7			  equ 65000	  ; UTF-7 translation
 CP_UTF8			  equ 65001	  ; UTF-8 translation
-
 
 CTRY_DEFAULT		  equ 0
 
@@ -250,6 +288,11 @@ CTRY_YEMEN		  equ 967	  ; Yemen
 CTRY_ZIMBABWE		  equ 263	  ; Zimbabwe
 
 
+LOCALE_SLOCALIZEDDISPLAYNAME  equ 0x00000002
+if WINVER GE 0x0601
+LOCALE_ALLOW_NEUTRAL_NAMES    equ 0x08000000
+LOCALE_RETURN_GENITIVE_NAMES  equ 0x10000000
+endif
 
 LOCALE_NOUSEROVERRIDE	      equ 0x80000000   ; do not use user overrides
 LOCALE_USE_CP_ACP	      equ 0x40000000   ; use the system ACP
@@ -379,19 +422,67 @@ LOCALE_SYEARMONTH	      equ 0x00001006	  ; year month format string
 LOCALE_SSORTNAME	      equ 0x00001013	  ; sort name
 LOCALE_IDIGITSUBSTITUTION     equ 0x00001014	  ; 0 = none, 1 = context, 2 = native digit
 
-TIME_NOMINUTESORSECONDS	  equ 0x00000001 ; do not use minutes or seconds
-TIME_NOSECONDS		  equ 0x00000002 ; do not use seconds
-TIME_NOTIMEMARKER	  equ 0x00000004 ; do not use time marker
-TIME_FORCE24HOURFORMAT	  equ 0x00000008 ; always use 24 hour format
+if WINVER GE 0x0600
+LOCALE_SNAME			equ 0x0000005c
+LOCALE_SDURATION		equ 0x0000005d
+LOCALE_SKEYBOARDSTOINSTALL	equ 0x0000005e
+LOCALE_SSHORTESTDAYNAME1	equ 0x00000060
+LOCALE_SSHORTESTDAYNAME2	equ 0x00000061
+LOCALE_SSHORTESTDAYNAME3	equ 0x00000062
+LOCALE_SSHORTESTDAYNAME4	equ 0x00000063
+LOCALE_SSHORTESTDAYNAME5	equ 0x00000064
+LOCALE_SSHORTESTDAYNAME6	equ 0x00000065
+LOCALE_SSHORTESTDAYNAME7	equ 0x00000066
+LOCALE_SISO639LANGNAME2		equ 0x00000067
+LOCALE_SISO3166CTRYNAME2	equ 0x00000068
+LOCALE_SNAN			equ 0x00000069
+LOCALE_SPOSINFINITY		equ 0x0000006a
+LOCALE_SNEGINFINITY		equ 0x0000006b
+LOCALE_SSCRIPTS			equ 0x0000006c
+LOCALE_SPARENT			equ 0x0000006d
+LOCALE_SCONSOLEFALLBACKNAME	equ 0x0000006e
+LOCALE_SLANGDISPLAYNAME		equ 0x0000006f
+LOCALE_SLOCALIZEDLANGUAGENAME	equ 0x0000006f
+endif
+
+if WINVER GE 0x0601
+LOCALE_IREADINGLAYOUT		equ 0x00000070
+LOCALE_INEUTRAL			equ 0x00000071
+LOCALE_SENGLISHDISPLAYNAME	equ 0x00000072
+LOCALE_SNATIVEDISPLAYNAME	equ 0x00000073
+LOCALE_INEGATIVEPERCENT		equ 0x00000074
+LOCALE_IPOSITIVEPERCENT		equ 0x00000075
+LOCALE_SPERCENT			equ 0x00000076
+LOCALE_SPERMILLE		equ 0x00000077
+LOCALE_SMONTHDAY		equ 0x00000078
+LOCALE_SSHORTTIME		equ 0x00000079
+LOCALE_SOPENTYPELANGUAGETAG	equ 0x0000007a
+LOCALE_SSORTLOCALE		equ 0x0000007b
+endif
+
+TIME_NOMINUTESORSECONDS equ 0x00000001 ; do not use minutes or seconds
+TIME_NOSECONDS		equ 0x00000002 ; do not use seconds
+TIME_NOTIMEMARKER	equ 0x00000004 ; do not use time marker
+TIME_FORCE24HOURFORMAT	equ 0x00000008 ; always use 24 hour format
 
 
-DATE_SHORTDATE		  equ 0x00000001 ; use short date picture
-DATE_LONGDATE		  equ 0x00000002 ; use long date picture
-DATE_USE_ALT_CALENDAR	  equ 0x00000004 ; use alternate calendar (if any)
+DATE_SHORTDATE		equ 0x00000001 ; use short date picture
+DATE_LONGDATE		equ 0x00000002 ; use long date picture
+DATE_USE_ALT_CALENDAR	equ 0x00000004 ; use alternate calendar (if any)
 
-DATE_YEARMONTH		  equ 0x00000008 ; use year month picture
-DATE_LTRREADING		  equ 0x00000010 ; add marks for left to right reading order layout
-DATE_RTLREADING		  equ 0x00000020 ; add marks for right to left reading order layout
+DATE_YEARMONTH		equ 0x00000008 ; use year month picture
+DATE_LTRREADING		equ 0x00000010 ; add marks for left to right reading order layout
+DATE_RTLREADING		equ 0x00000020 ; add marks for right to left reading order layout
+if WINVER GE 0x0601
+DATE_AUTOLAYOUT		equ 0x00000040
+endif
+
+CAL_NOUSEROVERRIDE	equ LOCALE_NOUSEROVERRIDE
+CAL_USE_CP_ACP		equ LOCALE_USE_CP_ACP
+CAL_RETURN_NUMBER	equ LOCALE_RETURN_NUMBER
+if WINVER GE 0x0601
+CAL_RETURN_GENITIVE_NAMES equ LOCALE_RETURN_GENITIVE_NAMES
+endif
 
 CAL_ICALINTVALUE	  equ 0x00000001 ; calendar type
 CAL_SCALNAME		  equ 0x00000002 ; native name of calendar
@@ -440,9 +531,23 @@ CAL_SABBREVMONTHNAME11	  equ 0x0000002c ; abbreviated name for November
 CAL_SABBREVMONTHNAME12	  equ 0x0000002d ; abbreviated name for December
 CAL_SABBREVMONTHNAME13	  equ 0x0000002e ; abbreviated name for 13th month (if any)
 
-CAL_SYEARMONTH		  equ 0x0000002f ; year month format string
+CAL_SYEARMONTH		equ 0x0000002f ; year month format string
+CAL_ITWODIGITYEARMAX	equ 0x00000030
+if WINVER GE 0x0600
+CAL_SSHORTESTDAYNAME1	equ 0x00000031
+CAL_SSHORTESTDAYNAME2	equ 0x00000032
+CAL_SSHORTESTDAYNAME3	equ 0x00000033
+CAL_SSHORTESTDAYNAME4	equ 0x00000034
+CAL_SSHORTESTDAYNAME5	equ 0x00000035
+CAL_SSHORTESTDAYNAME6	equ 0x00000036
+CAL_SSHORTESTDAYNAME7	equ 0x00000037
+endif
+if WINVER GE 0x0601
+CAL_SMONTHDAY		equ 0x00000038
+CAL_SABBREVERASTRING	equ 0x00000039
+endif
 
-ENUM_ALL_CALENDARS	  equ 0xffffffff ; enumerate all calendars
+ENUM_ALL_CALENDARS	equ 0xffffffff ; enumerate all calendars
 
 
 CAL_GREGORIAN		       equ 1	; Gregorian (localized) calendar
@@ -459,14 +564,11 @@ CAL_GREGORIAN_XLIT_ENGLISH     equ 11	; Gregorian Transliterated English calenda
 CAL_GREGORIAN_XLIT_FRENCH      equ 12	; Gregorian Transliterated French calendar
 
 
-LCTYPE	typedef DWORD
-
-CALTYPE typedef DWORD
-
-CALID	typedef DWORD
-
-
-WCHAR	typedef WORD
+LGRPID			typedef DWORD
+LCTYPE			typedef DWORD
+CALTYPE			typedef DWORD
+CALID			typedef DWORD
+WCHAR			typedef WORD
 
 CPINFO			STRUC
 MaxCharSize		UINT ?				; max length (in bytes) of a char
@@ -711,6 +813,7 @@ LCMapString  equ <LCMapStringW>
 else
 LCMapString  equ <LCMapStringA>
 endif
+
 ;int
 GetLocaleInfoA proto WINAPI \
 	Locale:		LCID,
@@ -1011,5 +1114,153 @@ EnumSystemCodePages equ <EnumSystemCodePagesW>
 else
 EnumSystemCodePages equ <EnumSystemCodePagesA>
 endif
+
+if WINVER GE 0x0600
+
+MUI_LANGUAGE_ID			equ 0x4
+MUI_LANGUAGE_NAME		equ 0x8
+MUI_MERGE_SYSTEM_FALLBACK	equ 0x10
+MUI_MERGE_USER_FALLBACK		equ 0x20
+MUI_UI_FALLBACK			equ MUI_MERGE_SYSTEM_FALLBACK or MUI_MERGE_USER_FALLBACK
+MUI_THREAD_LANGUAGES		equ 0x40
+MUI_CONSOLE_FILTER		equ 0x100
+MUI_COMPLEX_SCRIPT_FILTER	equ 0x200
+MUI_RESET_FILTERS		equ 0x001
+MUI_USER_PREFERRED_UI_LANGUAGES equ 0x10
+MUI_USE_INSTALLED_LANGUAGES	equ 0x20
+MUI_USE_SEARCH_ALL_LANGUAGES	equ 0x40
+MUI_LANG_NEUTRAL_PE_FILE	equ 0x100
+MUI_NON_LANG_NEUTRAL_FILE	equ 0x200
+MUI_MACHINE_LANGUAGE_SETTINGS	equ 0x400
+MUI_FILETYPE_NOT_LANGUAGE_NEUTRAL equ 0x001
+MUI_FILETYPE_LANGUAGE_NEUTRAL_MAIN equ 0x002
+MUI_FILETYPE_LANGUAGE_NEUTRAL_MUI equ 0x004
+MUI_QUERY_TYPE			equ 0x001
+MUI_QUERY_CHECKSUM		equ 0x002
+MUI_QUERY_LANGUAGE_NAME		equ 0x004
+MUI_QUERY_RESOURCE_TYPES	equ 0x008
+MUI_FILEINFO_VERSION		equ 0x001
+
+MUI_FULL_LANGUAGE		equ 0x01
+MUI_PARTIAL_LANGUAGE		equ 0x02
+MUI_LIP_LANGUAGE		equ 0x04
+MUI_LANGUAGE_INSTALLED		equ 0x20
+MUI_LANGUAGE_LICENSED		equ 0x40
+
+MUI_CALLBACK_ALL_FLAGS		equ MUI_CALLBACK_FLAG_UPGRADED_INSTALLATION
+endif
+
+SYSNLS_FUNCTION		typedef SDWORD
+COMPARE_STRING		equ 0x1
+
+NLS_FUNCTION		typedef DWORD
+
+NLSVERSIONINFO		STRUC
+dwNLSVersionInfoSize	DWORD ?
+dwNLSVersion		DWORD ?
+dwDefinedVersion	DWORD ?
+if WINVER GE 0x0602
+dwEffectiveId		DWORD ?
+guidCustomVersion	GUID <>
+endif
+NLSVERSIONINFO		ENDS
+LPNLSVERSIONINFO	typedef ptr NLSVERSIONINFO
+
+NLSVERSIONINFOEX	STRUC
+dwNLSVersionInfoSize	DWORD ?
+dwNLSVersion		DWORD ?
+dwDefinedVersion	DWORD ?
+dwEffectiveId		DWORD ?
+guidCustomVersion	GUID <>
+NLSVERSIONINFOEX	ENDS
+LPNLSVERSIONINFOEX	typedef ptr NLSVERSIONINFOEX
+
+GEOID			typedef LONG
+GEOTYPE			typedef DWORD
+GEOCLASS		typedef DWORD
+
+GEOID_NOT_AVAILABLE	equ -1
+
+SYSGEOTYPE		typedef SDWORD
+GEO_NATION		equ 0x0001
+GEO_LATITUDE		equ 0x0002
+GEO_LONGITUDE		equ 0x0003
+GEO_ISO2		equ 0x0004
+GEO_ISO3		equ 0x0005
+GEO_RFC1766		equ 0x0006
+GEO_LCID		equ 0x0007
+GEO_FRIENDLYNAME	equ 0x0008
+GEO_OFFICIALNAME	equ 0x0009
+GEO_TIMEZONES		equ 0x000a
+GEO_OFFICIALLANGUAGES	equ 0x000b
+GEO_ISO_UN_NUMBER	equ 0x000c
+GEO_PARENT		equ 0x000d
+
+SYSGEOCLASS		typedef SDWORD
+GEOCLASS_NATION		equ 16
+GEOCLASS_REGION		equ 14
+GEOCLASS_ALL		equ 0
+
+
+if WINVER GE 0x0600
+NORM_FORM		typedef SDWORD
+NormalizationOther	equ 0
+NormalizationC		equ 0x1
+NormalizationD		equ 0x2
+NormalizationKC		equ 0x5
+NormalizationKD		equ 0x6
+
+IDN_ALLOW_UNASSIGNED	equ 0x01
+IDN_USE_STD3_ASCII_RULES equ 0x02
+IDN_EMAIL_ADDRESS	equ 0x04
+IDN_RAW_PUNYCODE	equ 0x08
+
+VS_ALLOW_LATIN		equ 0x0001
+
+GSS_ALLOW_INHERITED_COMMON equ 0x0001
+endif
+
+if WINVER GE 0x0600
+
+LOCALE_NAME_USER_DEFAULT	equ <NULL>
+LOCALE_NAME_INVARIANT		equ <L"">
+LOCALE_NAME_SYSTEM_DEFAULT	equ <L"!x-sys-default-locale">
+
+CALLBACK(CALINFO_ENUMPROCEXEX, :LPWSTR, :CALID, :LPWSTR, :LPARAM)
+CALLBACK(DATEFMT_ENUMPROCEXEX, :LPWSTR, :CALID, :LPARAM)
+CALLBACK(TIMEFMT_ENUMPROCEX, :LPWSTR, :LPARAM)
+CALLBACK(LOCALE_ENUMPROCEX, :LPWSTR, :DWORD, :LPARAM)
+
+NormalizeString proto WINAPI :NORM_FORM, :LPCWSTR, :int_t, :LPWSTR, :int_t
+IsNormalizedString proto WINAPI :NORM_FORM, :LPCWSTR, :int_t
+IdnToAscii proto WINAPI :DWORD, :LPCWSTR, :int_t, :LPWSTR, :int_t
+IdnToNameprepUnicode proto WINAPI :DWORD, :LPCWSTR, :int_t, :LPWSTR, :int_t
+IdnToUnicode proto WINAPI :DWORD, :LPCWSTR, :int_t, :LPWSTR, :int_t
+
+VerifyScripts proto WINAPI :DWORD, :LPCWSTR, :int_t, :LPCWSTR, :int_t
+GetStringScripts proto WINAPI :DWORD, :LPCWSTR, :int_t, :LPWSTR, :int_t
+GetLocaleInfoEx proto WINAPI :LPCWSTR, :LCTYPE, :LPWSTR, :int_t
+GetCalendarInfoEx proto WINAPI :LPCWSTR, :CALID, :LPCWSTR, :CALTYPE, :LPWSTR, :int_t, :LPDWORD
+GetDurationFormatEx proto WINAPI :LPCWSTR, :DWORD, :ptr SYSTEMTIME, :ULONGLONG, :LPCWSTR, :LPWSTR, :int_t
+GetNumberFormatEx proto WINAPI :LPCWSTR, :DWORD, :LPCWSTR, :ptr NUMBERFMTW, :LPWSTR, :int_t
+GetCurrencyFormatEx proto WINAPI :LPCWSTR, :DWORD, :LPCWSTR, :ptr CURRENCYFMTW, :LPWSTR, :int_t
+GetUserDefaultLocaleName proto WINAPI :LPWSTR, :int_t
+GetSystemDefaultLocaleName proto WINAPI :LPWSTR, :int_t
+GetNLSVersionEx proto WINAPI :NLS_FUNCTION, :LPCWSTR, :LPNLSVERSIONINFOEX
+FindNLSStringEx proto WINAPI :LPCWSTR, :DWORD, :LPCWSTR, :int_t, :LPCWSTR, :int_t, :LPINT, :LPNLSVERSIONINFO, :LPVOID, :LPARAM
+LCMapStringEx proto WINAPI :LPCWSTR, :DWORD, :LPCWSTR, :int_t, :LPWSTR, :int_t, :LPNLSVERSIONINFO, :LPVOID, :LPARAM
+IsValidLocaleName proto WINAPI :LPCWSTR
+EnumCalendarInfoExEx proto WINAPI :CALINFO_ENUMPROCEXEX, :LPCWSTR, :CALID, :LPCWSTR, :CALTYPE, :LPARAM
+EnumDateFormatsExEx proto WINAPI :DATEFMT_ENUMPROCEXEX, :LPCWSTR, :DWORD, :LPARAM
+EnumTimeFormatsEx proto WINAPI :TIMEFMT_ENUMPROCEX, :LPCWSTR, :DWORD, :LPARAM
+EnumSystemLocalesEx proto WINAPI :LOCALE_ENUMPROCEX, :DWORD, :LPARAM, :LPVOID
+endif
+if WINVER GE 0x0601
+ResolveLocaleName proto WINAPI lpNameToResolve:LPCWSTR, lpLocaleName:LPWSTR, cchLocaleName:int_t
+endif
+if WINVER GE 0x0602
+IsValidNLSVersion proto WINAPI function:NLS_FUNCTION, lpLocaleName:LPCWSTR, lpVersionInformation:LPNLSVERSIONINFOEX
+endif
+
 .pragma list(pop)
 

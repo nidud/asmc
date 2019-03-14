@@ -6189,7 +6189,13 @@ IMAGE_NT_HEADERS	typedef IMAGE_NT_HEADERS32
 PIMAGE_NT_HEADERS	typedef PIMAGE_NT_HEADERS32
 endif
 
+;; IMAGE_FIRST_SECTION doesn't need 32/64 versions since the file header is the same either way.
+
 IMAGE_FIRST_SECTION macro ntheader
+	movzx eax,[ntheader].FileHeader.SizeOfOptionalHeader
+	add eax,FIELD_OFFSET( IMAGE_NT_HEADERS, OptionalHeader )
+	add rax,ntheader
+	retm<rax>
 	endm
 
 IMAGE_SUBSYSTEM_UNKNOWN		equ 0
@@ -6284,7 +6290,7 @@ IMAGE_SIZEOF_SHORT_NAME equ 8
 
 IMAGE_SECTION_HEADER	STRUC
 _Name			db IMAGE_SIZEOF_SHORT_NAME dup(?)
-UNION
+UNION Misc
     PhysicalAddress	dd ?
     VirtualSize		dd ?
 ENDS
@@ -8041,6 +8047,8 @@ RTL_CRITICAL_SECTION_FLAG_RESERVED	equ (RTL_CRITICAL_SECTION_ALL_FLAG_BITS AND \
 
 RTL_CRITICAL_SECTION_DEBUG_FLAG_STATIC_INIT equ 0x00000001
 
+.pragma pack(push, 8)
+
 RTL_CRITICAL_SECTION	STRUC
 DebugInfo		PRTL_CRITICAL_SECTION_DEBUG ?
 LockCount		LONG ?
@@ -8050,6 +8058,8 @@ LockSemaphore		HANDLE ?
 SpinCount		ULONG_PTR ?
 RTL_CRITICAL_SECTION	ENDS
 PRTL_CRITICAL_SECTION	typedef ptr RTL_CRITICAL_SECTION
+
+.pragma pack(pop)
 
 RTL_SRWLOCK		STRUC
 _Ptr			PVOID ?

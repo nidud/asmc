@@ -1,6 +1,6 @@
+.pragma list(push, 0)
 ifndef __INC_CONIO
 __INC_CONIO equ <>
-.pragma list(push, 0)
 ifndef __LIBC_INC
  include libc.inc
 endif
@@ -57,6 +57,7 @@ _outpw		proto __cdecl :UINT, :UINT
 _outpd		proto __cdecl :UINT, :ULONG
 endif
 _putch		proto __cdecl :UINT
+_putch_nolock	proto __cdecl :UINT
 _textbackground proto __cdecl :UINT
 _textcolor	proto __cdecl :UINT
 _ungetch	proto __cdecl :UINT
@@ -95,7 +96,20 @@ __initconout proto
 __termconout proto
 externdef _confh:intptr_t
 
+_getxya	  proto __cdecl :int_t, :int_t
+_getxyc	  proto __cdecl :int_t, :int_t
+_getxyw	  proto __cdecl :int_t, :int_t
+_scputa	  proto __cdecl :int_t, :int_t, :int_t, :uchar_t
+_scputfg  proto __cdecl :int_t, :int_t, :int_t, :uchar_t
+_scputbg  proto __cdecl :int_t, :int_t, :int_t, :uchar_t
+_scputc	  proto __cdecl :int_t, :int_t, :int_t, :char_t
+_scputw	  proto __cdecl :int_t, :int_t, :int_t, :ushort_t
+_scputs	  proto __cdecl :int_t, :int_t, :string_t
+_scputf	  proto _CDecl	:int_t, :int_t, :string_t, :vararg
+_scpath	  proto __cdecl :int_t, :int_t, :int_t, :string_t
+_scenter  proto __cdecl :int_t, :int_t, :int_t, :string_t
+
 endif
 
-.pragma list(pop)
 endif
+.pragma list(pop)

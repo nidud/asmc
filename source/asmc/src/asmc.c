@@ -33,9 +33,9 @@ char *strfcat( char *buffer, const char *path, const char *file )
     char *p = buffer;
 
     if ( path ) {
-	do {
+	while( *path )
 	    *p++ = *path++;
-	} while( *path );
+	*p++ = '\0';
     } else {
 	while( *p ) p++;
     }
@@ -91,11 +91,13 @@ static int AssembleSubdir( char *directory, char *wild )
     return rc;
 }
 
+#if 0
 typedef struct {
  void  *ExceptionRecord;
  void  *ContextRecord;
 } EXCEPTION_POINTERS, *PEXCEPTION_POINTERS;
 extern EXCEPTION_POINTERS *pCurrentException;
+#endif
 
 void PrintContext(void *, void *);
 

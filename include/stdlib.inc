@@ -22,6 +22,11 @@ _MAX_DIR	equ 256
 _MAX_FNAME	equ 256
 _MAX_EXT	equ 256
 
+_OUT_TO_DEFAULT equ 0
+_OUT_TO_STDERR	equ 1
+_OUT_TO_MSGBOX	equ 2
+_REPORT_ERRMODE equ 3
+
 ifndef __PE__
 externdef	__argc:dword
 externdef	__argv:SIZE_T
@@ -30,7 +35,7 @@ externdef	_pgmptr:SIZE_T
 endif
 
 abort		proto __cdecl
-exit		proto __cdecl :DWORD
+exit		proto __cdecl :int_t
 atol		proto __cdecl :LPSTR
 _atoi64		proto __cdecl :LPSTR
 _atoi128	proto __cdecl :LPSTR
@@ -46,6 +51,8 @@ qsort4		proto :PVOID, :SIZE_T, :LPQSORTCMD
 rand		proto __cdecl
 rand_s		proto __cdecl :ptr UINT
 srand		proto __cdecl :UINT
+
+_set_error_mode proto __cdecl :int_t
 
 getenv		proto __cdecl :LPSTR
 strtod		proto __cdecl :LPSTR, :LPSTR
@@ -109,6 +116,10 @@ ifdef _MSVCRT
 __getmainargs	proto __cdecl :ptr, :ptr, :ptr, :ptr, :ptr
 __wgetmainargs	proto __cdecl :ptr, :ptr, :ptr, :ptr, :ptr
 __iob_func	proto __cdecl
+endif
+
+ifndef _countof
+_countof	equ <lengthof>
 endif
 
 .pragma list(pop)

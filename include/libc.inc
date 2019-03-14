@@ -115,6 +115,7 @@ if not (@cpu eq 0x0D5F) ; case -pe -win64
 endif
 endif
 option	win64:3
+option	frame:auto
 SIZE_T	typedef QWORD
 else
 	.486
@@ -159,12 +160,16 @@ ptr_t		typedef ptr
 char_t		typedef sbyte
 short_t		typedef sword
 int_t		typedef sdword
+long_t		typedef sdword
 int64_t		typedef sqword
 uchar_t		typedef byte
 ushort_t	typedef word
 uint_t		typedef dword
+ulong_t		typedef dword
 uint64_t	typedef qword
 string_t	typedef ptr sbyte
+ustring_t	typedef ptr byte
+wstring_t	typedef ptr word
 array_t		typedef ptr ptr sbyte
 
 SINT		typedef sdword

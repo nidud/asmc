@@ -11,6 +11,23 @@ _MSVCRT equ <>
 endif
 endif
 
+include crtdefs.inc
+
+ifdef _CRTBLD
+ifndef _CTYPE_DISABLE_MACROS
+externdef __newclmap:uchar_t
+externdef __newcumap:uchar_t
+endif
+externdef __ptlocinfo:pthreadlocinfo
+externdef __ptmbcinfo:pthreadmbcinfo
+externdef __globallocalestatus:int_t
+externdef __locale_changed:int_t
+externdef __initiallocinfo:threadlocinfo
+externdef __initiallocalestructinfo:_locale_tstruct
+__updatetlocinfo proto __cdecl
+__updatetmbcinfo proto __cdecl
+endif
+
 _UPPER		equ 01h		; upper case letter
 _LOWER		equ 02h		; lower case letter
 _DIGIT		equ 04h		; digit[0-9]
@@ -74,6 +91,12 @@ isleadbyte	proto __cdecl :SINT
 towupper	proto __cdecl :wchar_t
 towlower	proto __cdecl :wchar_t
 iswctype	proto __cdecl :wint_t, :wctype_t
+
+ifdef _CRT_USE_WINAPI_FAMILY_DESKTOP_APP
+isleadbyte	proto __cdecl :int_t
+_isleadbyte_l	proto __cdecl :int_t, :_locale_t
+is_wctype	proto __cdecl :wint_t, :wctype_t
+endif
 endif
 
 endif

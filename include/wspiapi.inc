@@ -37,7 +37,7 @@ _WSPIAPI_SPRINTF_S_1 macro _Dst, _Size, _Format, _Arg1
 
 endif
 
-if NOT defined(_WSPIAPI_COUNTOF)
+ifndef _WSPIAPI_COUNTOF
 _WSPIAPI_COUNTOF macro _Array
 	exitm<lengthof(_Array)>
 	endm

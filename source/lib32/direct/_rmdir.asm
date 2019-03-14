@@ -15,6 +15,7 @@ _rmdir proc directory:LPSTR
     .if !RemoveDirectoryA(directory)
 
         RemoveDirectoryW(__allocwpath(directory))
+        mov esp,ebp
     .endif
 
     .if !eax

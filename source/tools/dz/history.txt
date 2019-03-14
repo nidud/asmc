@@ -2,10 +2,12 @@ HISTORY.TXT--
 Change Log File for DOSZIP - Win32
 ==================================
 
-Changes in 3.55 - xx xxx 2018
+Changes in 3.55 - 9 Mar 2019
+- fixed bug in delete - stack fault in _rmdir()
 - fixed bug %edit% command - failed if panel not visible.
 - fixed bug in Text-View. Long lines in large files error.
 - fixed mouse-lock in dialogs when check box active..
+- fixed zip error: compression method
 
 Changes in 3.54 - 20 Oct 2017
 - fixed bug in compression engine. Compression level was

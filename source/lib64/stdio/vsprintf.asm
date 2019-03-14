@@ -11,7 +11,7 @@ include limits.inc
 
     option win64:rsp nosave
 
-vsprintf proc uses rcx string:LPSTR, format:LPSTR, vargs:PVOID
+vsprintf proc string:string_t, format:string_t, argptr:ptr
 
   local o:_iobuf
 
@@ -22,8 +22,8 @@ vsprintf proc uses rcx string:LPSTR, format:LPSTR, vargs:PVOID
     _output(addr o, rdx, r8)
     mov rcx,o._ptr
     mov byte ptr [rcx],0
-
     ret
+
 vsprintf endp
 
     END

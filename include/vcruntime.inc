@@ -106,7 +106,7 @@ else
 endif
 
 __crt_countof macro _Array
-    exitm<(sizeof(_Array) / sizeof(_Array[0]))>
+    exitm<(lengthof(_Array))>
     endm
 
 _CRT_DEPRECATE_TEXT macro __Text

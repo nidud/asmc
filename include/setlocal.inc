@@ -7,6 +7,9 @@ ERR_BUFFER_TOO_SMALL	equ 1	; should be in windef.h
 _CLOCALEHANDLE		equ 0	; "C" locale handle
 _CLOCALECP		equ CP_ACP ; "C" locale Code page
 
+_PER_THREAD_LOCALE_BIT	equ 0x2
+_GLOBAL_LOCALE_BIT	equ 0x1
+
 
 _MAX_WDAY_ABBR		equ 4
 _MAX_WDAY		equ 10
@@ -18,6 +21,8 @@ _DATE_LENGTH		equ 8	; mm/dd/yy (null not included)
 _TIME_LENGTH		equ 8	; hh:mm:ss (null not included)
 
 
+ifndef __LC_TIME_DATA
+__LC_TIME_DATA equ <>
 __lc_time_data		STRUC
 wday_abbr		LPSTR  7 dup(?)
 wday			LPSTR  7 dup(?)
@@ -27,52 +32,167 @@ ampm			LPSTR  2 dup(?)
 ww_sdatefmt		LPSTR ?
 ww_ldatefmt		LPSTR ?
 ww_timefmt		LPSTR ?
+ww_caltype		SINT ?
+refcount		SINT ?
+_W_wday_abbr		LPWSTR	7 dup(?)
+_W_wday			LPWSTR	7 dup(?)
+_W_month_abbr		LPWSTR 12 dup(?)
+_W_month		LPWSTR 12 dup(?)
+_W_ampm			LPWSTR	2 dup(?)
+_W_ww_sdatefmt		LPWSTR ?
+_W_ww_ldatefmt		LPWSTR ?
+_W_ww_timefmt		LPWSTR ?
+_W_ww_locale_name	LPWSTR ?
 __lc_time_data		ENDS
+endif
 
-
-MAX_LANG_LEN		equ 64	; max language name length
-MAX_CTRY_LEN		equ 64	; max country name length
-MAX_MODIFIER_LEN	equ 0	; max modifier name length - n/a
+MAX_LANG_LEN		equ 64
+MAX_CTRY_LEN		equ 64
+MAX_MODIFIER_LEN	equ 0
 MAX_LC_LEN		equ MAX_LANG_LEN + MAX_CTRY_LEN + MAX_MODIFIER_LEN + 3
-MAX_CP_LEN		equ 8	; max code page name length
-CATNAMES_LEN		equ 57	; "LC_COLLATE=;LC_CTYPE=;..." length
+MAX_CP_LEN		equ 16
+CATNAMES_LEN		equ 57
 
 LC_INT_TYPE		equ 0
 LC_STR_TYPE		equ 1
+LC_WSTR_TYPE		equ 2
 
-LC_ID			STRUCT
-wLanguage		dw ?
-wCountry		dw ?
-wCodePage		dw ?
-LC_ID			ENDS
-LPLC_ID			TYPEDEF PTR LC_ID
+ifndef _SETLOC_STRUCT_DEFINED
+_SETLOC_STRUCT_DEFINED equ <>
+is_ctype_compatible	STRUC
+id			dd ?
+is_clike		SINT ?
+is_ctype_compatible	ENDS
 
-LC_STRINGS		STRUC
-szLanguage		db MAX_LANG_LEN dup(?)
-szCountry		db MAX_CTRY_LEN dup(?)
-szCodePage		db MAX_CP_LEN dup(?)
+setloc_struct		STRUC
+pchLanguage		LPWSTR ?
+pchCountry		LPWSTR ?
+iLocState		SINT ?
+iPrimaryLen		SINT ?
+bAbbrevLanguage		BOOL ?
+bAbbrevCountry		BOOL ?
+_cachecp		UINT ?
+_cachein		wchar_t MAX_LC_LEN dup(?)
+_cacheout		wchar_t MAX_LC_LEN dup(?)
+_Loc_c			is_ctype_compatible 5 dup(<>)
+_cacheLocaleName	wchar_t LOCALE_NAME_MAX_LENGTH dup(?)
+setloc_struct		ENDS
+psetloc_struct		typedef ptr setloc_struct
+
+setloc_downlevel_struct	 STRUC
+iLcidState		SINT ?
+lcidLanguage		LCID ?
+lcidCountry		LCID ?
+setloc_downlevel_struct ENDS
+psetloc_downlevel_struct typedef ptr setloc_downlevel_struct
+endif
+
+ifndef _THREADLOCALEINFO
+_THREADLOCALEINFO equ <>
+
+ifndef LPSHORT
+LPINT			typedef ptr sdword
+LPSHORT			typedef ptr sword
+endif
+locrefcount		STRUC
+locale			LPSTR ?
+wlocale			LPWSTR ?
+refcount		LPINT ?
+wrefcount		LPINT ?
+locrefcount		ENDS
+
+threadlocinfo		STRUC
+refcount		SINT ?
+lc_codepage		dd ?
+lc_collate_cp		dd ?
+lc_time_cp		dd ?
+lc_category		locrefcount 6 dup(<>)
+lc_clike		SINT ?
+mb_cur_max		SINT ?
+lconv_intl_refcount	LPINT ?
+lconv_num_refcount	LPINT ?
+lconv_mon_refcount	LPINT ?
+ctype1_refcount		LPINT ?
+ctype1			LPSHORT ?
+pctype			LPSHORT ?
+pclmap			LPSTR ?
+pcumap			LPSTR ?
+lc_time_curr		ptr_t ?
+locale_name		LPWSTR 6 dup(?)
+threadlocinfo		ENDS
+pthreadlocinfo		typedef ptr threadlocinfo
+endif
+
+ifndef _THREADMBCINFO
+_THREADMBCINFO equ <>
+
+threadmbcinfo		STRUC
+refcount		int_t ?
+mbcodepage		int_t ?
+ismbcodepage		int_t ?
+mbulinfo		dw 6 dup(?)
+mbctype			db 257 dup(?)
+mbcasemap		db 256 dup(?)
+mblocalename		wstring_t ?
+threadmbcinfo		ENDS
+pthreadmbcinfo		typedef ptr threadmbcinfo
+endif
+
+LC_STRINGS		STRUCT
+szLanguage		wchar_t MAX_LANG_LEN dup(?)
+szCountry		wchar_t MAX_CTRY_LEN dup(?)
+szCodePage		wchar_t MAX_CP_LEN dup(?)
+szLocaleName		wchar_t LOCALE_NAME_MAX_LENGTH dup(?)
 LC_STRINGS		ENDS
-LPLC_STRINGS		TYPEDEF PTR LC_STRINGS
+LPLC_STRINGS		typedef ptr LC_STRINGS
 
-externdef		__lc_id:LC_ID		; complete info from GetQualifiedLocale
-externdef		__lc_handle:UINT	; LCID- locale "handles" -- ignores country info
-externdef		__lc_codepage:UINT	; code page
-externdef		__lc_collate_cp:UINT	; code page for LC_COLLATE
+;;  local structure definitions
+LOCALETAB		STRUC
+szName			LPWSTR ?
+chAbbrev		wchar_t 4 dup(?)
+LOCALETAB		ENDS
 
-__get_qualified_locale	PROTO :LPLC_STRINGS, :LPLC_ID, :LPLC_STRINGS
-;__getlocaleinfo		PROTO :SINT, :LCID, :LCTYPE, :PVOID
+externdef		__ptlocinfo:pthreadlocinfo
+__updatetlocinfo	proto __cdecl
+_setptlocale		proto __cdecl :int_t
 
-externdef		__lconv_c:lconv
-externdef		__lconv: ptr lconv
-externdef		__lconv_static_decimal:SBYTE
-externdef		__lconv_static_null:SBYTE
+ifndef _M_CEE_PURE
+externdef		__lconv:ptr lconv ;; pointer to current lconv structure
+endif
 
+;; These functions are for enabling STATIC_CPPLIB functionality
+___lc_locale_name_func	proto __cdecl
+___lc_codepage_func	proto __cdecl
+___lc_collate_cp_func	proto __cdecl
 
-__init_collate		PROTO
-__init_ctype		PROTO
-__init_monetary		PROTO
-__init_numeric		PROTO
-__init_time		PROTO
-__init_dummy		PROTO
+ifndef LCTYPE
+LCTYPE			typedef DWORD
+endif
+
+__get_qualified_locale	proto __cdecl :LPLC_STRINGS, :ptr UINT, :LPLC_STRINGS
+__get_qualified_locale_downlevel proto __cdecl :LPLC_STRINGS, :ptr UINT, :LPLC_STRINGS
+__getlocaleinfo		proto __cdecl :_locale_t, :int_t, :LPCWSTR, :LCTYPE, :ptr
+
+;; lconv structure for the "C" locale
+externdef __lconv_c:lconv
+
+;; Initialization functions for locale categories
+
+__init_collate		proto __cdecl :ptr threadlocinfo
+__init_ctype		proto __cdecl :ptr threadlocinfo
+__init_monetary		proto __cdecl :ptr threadlocinfo
+__init_numeric		proto __cdecl :ptr threadlocinfo
+__init_time		proto __cdecl :ptr threadlocinfo
+__init_dummy		proto __cdecl :ptr threadlocinfo
+
+.classdef _LocaleUpdate :_locale_t
+
+    localeinfo	_locale_tstruct <>
+    ptd		_ptiddata ?
+    updated	BOOL ?
+
+    GetLocaleT	proc
+
+    .ends
 
 .pragma list(pop)

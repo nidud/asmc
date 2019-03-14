@@ -49,7 +49,7 @@ _bufsiz		SINT ?
 _tmpfname	LPSTR ?
 _iobuf		ENDS
 FILE		typedef _iobuf
-LPFILE		TYPEDEF PTR _iobuf
+LPFILE		typedef ptr _iobuf
 endif
 
 ifndef __PE__
@@ -99,7 +99,7 @@ _flushall	proto __cdecl
 _freebuf	proto __cdecl :LPFILE
 _filbuf		proto __cdecl :LPFILE
 _getst		proto __cdecl
-_ftbuf		proto __cdecl :ULONG, :LPFILE
+_ftbuf		proto __cdecl :SINT, :LPFILE
 _stbuf		proto __cdecl :LPFILE
 _getbuf		proto __cdecl :LPFILE
 setvbuf		proto __cdecl :LPFILE, :LPSTR, :SIZE_T, :SIZE_T

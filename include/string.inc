@@ -5,36 +5,36 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 ifdef __PE__
-option	dllimport:<msvcrt>
+option dllimport:<msvcrt>
 else
 includelib libc.lib
 endif
 
-memchr		proto __cdecl :LPSTR, :SIZE_T,:SIZE_T
-memcpy		proto __cdecl :LPSTR, :LPSTR, :SIZE_T
-memmove		proto __cdecl :LPSTR, :LPSTR, :SIZE_T
-memcmp		proto __cdecl :LPSTR, :LPSTR, :SIZE_T
-memset		proto __cdecl :LPSTR, :SINT,:SIZE_T
-_memicmp	proto __cdecl :LPSTR, :LPSTR, :SIZE_T
+memchr		proto __cdecl :ptr, :int_t, :size_t
+memcpy		proto __cdecl :ptr, :ptr, :size_t
+memmove		proto __cdecl :ptr, :ptr, :size_t
+memcmp		proto __cdecl :ptr, :ptr, :size_t
+memset		proto __cdecl :ptr, :int_t, :size_t
+_memicmp	proto __cdecl :ptr, :ptr, :size_t
 
 strlen		proto __cdecl :LPSTR
-strchr		proto __cdecl :LPSTR, :SIZE_T
+strchr		proto __cdecl :LPSTR, :size_t
 strcmp		proto __cdecl :LPSTR, :LPSTR
-strncmp		proto __cdecl :LPSTR, :LPSTR, :SIZE_T
+strncmp		proto __cdecl :LPSTR, :LPSTR, :size_t
 strcpy		proto __cdecl :LPSTR, :LPSTR
-strncpy		proto __cdecl :LPSTR, :LPSTR, :SIZE_T
+strncpy		proto __cdecl :LPSTR, :LPSTR, :size_t
 strcat		proto __cdecl :LPSTR, :LPSTR
 _stricmp	proto __cdecl :LPSTR, :LPSTR
-_strnicmp	proto __cdecl :LPSTR, :LPSTR, :SIZE_T
+_strnicmp	proto __cdecl :LPSTR, :LPSTR, :size_t
 _strupr		proto __cdecl :LPSTR
 _strdup		proto __cdecl :LPSTR
 _strrev		proto __cdecl :LPSTR
 _strlwr		proto __cdecl :LPSTR
-strrchr		proto __cdecl :LPSTR, :SIZE_T
+strrchr		proto __cdecl :LPSTR, :size_t
 strstr		proto __cdecl :LPSTR, :LPSTR
 _mbspbrk	proto __cdecl :LPSTR, :LPSTR
 _strset		proto __cdecl :LPSTR, :SINT
-_strnset	proto __cdecl :LPSTR, :SINT, :SIZE_T
+_strnset	proto __cdecl :LPSTR, :SINT, :size_t
 strtok		proto __cdecl :LPSTR, :LPSTR
 
 ifndef _WSTRING_DEFINED
@@ -66,6 +66,10 @@ wcscoll		proto __cdecl :ptr wchar_t, :ptr wchar_t
 _wcsicoll	proto __cdecl :ptr wchar_t, :ptr wchar_t
 _wcsncoll	proto __cdecl :ptr wchar_t, :ptr wchar_t, :size_t
 _wcsnicoll	proto __cdecl :ptr wchar_t, :ptr wchar_t, :size_t
+
+wcscpy_s	proto __cdecl :ptr wchar_t, :size_t, :ptr wchar_t
+wcsncpy_s	proto __cdecl :ptr wchar_t, :size_t, :ptr wchar_t, :size_t
+wcscat_s	proto __cdecl :ptr wchar_t, :size_t, :ptr wchar_t
 
 ;; Old names
 wcswcs		equ <wcsstr>

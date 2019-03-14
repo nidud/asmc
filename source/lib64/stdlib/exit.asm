@@ -15,13 +15,13 @@ _EEND	segment para flat PUBLIC 'EXIT'
 ExitEnd LABEL BYTE
 _EEND	ENDS
 
-	.code
+.code
 
-exit	PROC erlevel
-	lea	rcx,ExitStart
-	lea	rdx,ExitEnd
-	__initialize( rcx, rdx )
-	ExitProcess( erlevel )
-exit	ENDP
+exit proc erlevel:int_t
+    lea rcx,ExitStart
+    lea rdx,ExitEnd
+    __initialize(rcx, rdx)
+    ExitProcess(erlevel)
+exit endp
 
-	END
+    end

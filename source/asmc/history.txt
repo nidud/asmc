@@ -3,6 +3,7 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.29 - xx xxx 2019
+- changed the @CStr() macro - use .const if in .data seg.
 - fixed bug in define(...) macro
 - added local names for calls to COM/CLASS members
 - added MOVBE

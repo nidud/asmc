@@ -393,6 +393,17 @@ local   rc:                     SINT,
                 mov edi,ecx
                 mov esi,ecx
                 mov q,ebx
+                ;
+                ; v2.28 -- token behind may be 'L'
+                ;
+                .if [ebx-16].asmtok.token == T_ID
+                    mov eax,[ebx-16].asmtok.string_ptr
+                    mov eax,[eax]
+                    .if ax == 'L'
+                        sub q,16
+                        dec esi
+                    .endif
+                .endif
                 lea eax,[ebx+16]
                 mov e,eax
                 ParseCString( b_label, buffer, esi, &StringOffset, &Unicode )
@@ -539,11 +550,42 @@ CString PROC USES esi edi ebx buffer:LPSTR, tokenarray:PTR asmtok
 
     mov ebx,tokenarray
     mov edi,_stricmp([ebx].asmtok.string_ptr, "@CStr")
+    .if edi
+        .while [ebx].asmtok.token != T_FINAL
+            .break .if !_stricmp([ebx].asmtok.string_ptr, "@CStr")
+            add ebx,16
+        .endw
+        .if [ebx].asmtok.token == T_FINAL && [ebx+16].asmtok.token == T_OP_BRACKET
+            add ebx,16
+        .elseif [ebx].asmtok.token != T_FINAL
+            add ebx,16
+        .else
+            mov ebx,tokenarray
+        .endif
+    .endif
+
     xor eax,eax
 
-    .while  [ebx].asmtok.token != T_FINAL
+    .while [ebx].asmtok.token != T_FINAL
 
         mov esi,[ebx].asmtok.tokpos
+        ;
+        ; v2.28 - .data --> .const
+        ;
+        ; - dq @CStr(L"CONST")
+        ; - dq @CStr(ID)
+        ;
+        .if [ebx].asmtok.token == T_ID && [ebx-16].asmtok.token == T_OP_BRACKET
+
+            .if SymFind( [ebx].asmtok.string_ptr )
+
+                mov eax,[eax].asym.string_ptr
+                .if BYTE PTR [eax] == '"' || WORD PTR [eax] == '"L'
+                    mov esi,eax
+                .endif
+            .endif
+        .endif
+
         .if BYTE PTR [esi] == '"' || \
             WORD PTR [esi] == '"L'
 
@@ -588,16 +630,24 @@ CString PROC USES esi edi ebx buffer:LPSTR, tokenarray:PTR asmtok
                 ; v2.24 skip .data/.code if already in .data segment
 
                 xor esi,esi
-                mov eax,ModuleInfo.currseg
-                .if _stricmp( [eax].asym._name, "_DATA" )
+                mov ebx,ModuleInfo.currseg
+                .if _stricmp( [ebx].asym._name, "_DATA" )
 
                     inc esi
                     InsertLine(".data")
+                .elseif edi
+                    mov esi,2
+                    InsertLine(".const")
                 .endif
                 InsertLine(cursrc)
                 .if esi
-
-                    InsertLine(".code")
+                    .if !_stricmp( [ebx].asym._name, "CONST" )
+                        InsertLine(".const")
+                    .elseif esi == 2
+                        InsertLine(".data")
+                    .else
+                        InsertLine(".code")
+                    .endif
                 .endif
             .endif
             mov eax,1

@@ -8,7 +8,7 @@ include stdio.inc
 
     .code
 
-_ftbuf proc uses rsi rdi flag:UINT, fp:LPFILE
+_ftbuf proc uses rsi rdi flag:SINT, fp:LPFILE
 
     mov rsi,rdx
     mov edi,[rsi]._iobuf._flag

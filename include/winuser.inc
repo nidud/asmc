@@ -3312,10 +3312,10 @@ SWP_ASYNCWINDOWPOS	equ 0x4000
 endif
 
 
-HWND_TOP		equ ((HWND)0)
-HWND_BOTTOM		equ ((HWND)1)
-HWND_TOPMOST		equ ((HWND)-1)
-HWND_NOTOPMOST		equ ((HWND)-2)
+HWND_TOP		equ (0)
+HWND_BOTTOM		equ (1)
+HWND_TOPMOST		equ (-1)
+HWND_NOTOPMOST		equ (-2)
 
 ifndef NOCTLMGR
 
@@ -9476,9 +9476,7 @@ cbSize			dd ?
 rcBar			RECT <>
 hMenu			HMENU ?
 hwndMenu		HWND ?
-MENUBARINFO_R0		RECORD \
- fBarFocused:	1,
- fFocused:	1
+MENUBARINFO_R0		RECORD fBarFocused:1, fFocused:1
 r0			MENUBARINFO_R0 <>
 MENUBARINFO		ENDS
 PMENUBARINFO		typedef ptr MENUBARINFO

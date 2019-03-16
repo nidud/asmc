@@ -2050,19 +2050,36 @@ static int write_default_prologue( void )
 
 	    /* Push the registers */
 	    if ( cstack == 1 ) {
+
 		cntxmm = 0;
+		offset = 0;
+
 		if( info->regslist ) {
 		    regist = info->regslist;
 		    for( cnt = *regist++; cnt; cnt--, regist++ ) {
 			if ( GetValueSp( *regist ) & OP_XMM ) {
 			    cntxmm += 1;
 			} else {
+			    offset += 8;
 			    AddLineQueueX( "push %r", *regist );
 			    if ( ( 1 << GetRegNo( *regist ) ) & win64_nvgpr ) {
 				AddLineQueueX( "%r %r", T_DOT_PUSHREG, *regist );
 			    }
 			}
 		    } /* end for */
+
+		    for ( p = info->paralist; p; p = p->nextparam )
+			if ( !p->nextparam ) break;
+
+		    if ( p ) {
+			/* v2.23 - skip adding if stackbase is not EBP */
+			if ( ( ModuleInfo.basereg[ModuleInfo.Ofssize] == T_EBP ) ||
+			   ( Parse_Pass == PASS_1 && info->pe_type ) )
+
+			    for ( p = info->paralist; p; p = p->nextparam )
+				if ( p->sym.state != SYM_TMACRO ) /* register param? */
+				    p->sym.offset += offset;
+		    }
 		}
 	    }
 

@@ -11,7 +11,7 @@ include string.inc
 
     .code
 
-strtok proc s1:LPSTR, s2:LPSTR
+strtok proc frame s1:LPSTR, s2:LPSTR
 
     .if rcx
 

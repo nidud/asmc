@@ -11,7 +11,7 @@ include string.inc
 
     option win64:rsp
 
-strmove proc dst:LPSTR, src:LPSTR
+strmove proc frame dst:LPSTR, src:LPSTR
 
     memmove(dst, src, &[strlen(rdx)+1])
     ret

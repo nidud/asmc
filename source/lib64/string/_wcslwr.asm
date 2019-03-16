@@ -10,7 +10,7 @@ include winnls.inc
 
 if WINVER GE 0x0600
 
-_wcslwr proc string:ptr wchar_t
+_wcslwr proc frame string:ptr wchar_t
 
     mov r10,wcslen(rcx)
     LCMapStringEx(LOCALE_NAME_USER_DEFAULT,

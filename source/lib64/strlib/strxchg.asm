@@ -9,7 +9,7 @@ include strlib.inc
 
     .code
 
-strxchg proc uses rsi rdi rbx dst:LPSTR, old:LPSTR, new:LPSTR
+strxchg proc frame uses rsi rdi rbx dst:LPSTR, old:LPSTR, new:LPSTR
 
     mov rdi,rcx
     mov rsi,strlen(r8)

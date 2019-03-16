@@ -7,13 +7,10 @@
 ;
 ; shift string to the right and insert char in front of string
 ;
-include strlib.inc
 
     .code
 
-    option win64:rsp nosave noauto
-
-strshr proc string:LPSTR, char:UINT
+strshr::
 
     mov rax,rcx
     mov r8d,[rcx]
@@ -34,7 +31,5 @@ strshr proc string:LPSTR, char:UINT
         add rcx,4
     .endw
     ret
-
-strshr endp
 
     END

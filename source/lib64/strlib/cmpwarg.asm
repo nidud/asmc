@@ -95,7 +95,7 @@ cmpwarg proc path:LPSTR, wild:LPSTR
 
 cmpwarg endp
 
-cmpwargs proc uses rsi rdi path:LPSTR, wild:LPSTR
+cmpwargs proc frame uses rsi rdi path:LPSTR, wild:LPSTR
 
     .for ( rsi = rcx, rdi = rdx :: )
 

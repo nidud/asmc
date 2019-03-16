@@ -9,11 +9,9 @@
 ; 2009-11-03 - created
 ;
 
-include strlib.inc
-
     .code
 
-xtol proc string:string_t
+xtol::
 
     xor eax,eax
     xor edx,edx
@@ -39,7 +37,5 @@ xtol proc string:string_t
 
     .endw
     ret
-
-xtol endp
 
     end

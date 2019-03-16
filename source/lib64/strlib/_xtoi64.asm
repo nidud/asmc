@@ -9,11 +9,9 @@
 ; 2017-10-18 - created
 ;
 
-include strlib.inc
-
     .code
 
-_xtoi64 proc string:string_t
+_xtoi64::
 
     xor eax,eax
     xor edx,edx
@@ -40,7 +38,5 @@ _xtoi64 proc string:string_t
 
     .endw
     ret
-
-_xtoi64 endp
 
     end

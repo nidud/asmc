@@ -9,7 +9,7 @@ include string.inc
 
     .code
 
-_strdup proc string:LPSTR
+_strdup proc frame string:LPSTR
 
     .if strlen(rcx)
 

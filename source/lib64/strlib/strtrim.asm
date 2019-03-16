@@ -9,7 +9,7 @@ include string.inc
 
     .code
 
-strtrim proc string:LPSTR
+strtrim proc frame string:LPSTR
 
     .for ( rcx = strlen(rcx), rcx += string : rax : rax-- )
 

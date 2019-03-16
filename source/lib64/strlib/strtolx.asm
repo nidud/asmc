@@ -9,7 +9,7 @@ include strlib.inc
 
     .code
 
-strtolx proc string:string_t
+strtolx proc frame string:string_t
 
     mov rdx,rcx ; string
 

@@ -11,7 +11,7 @@ include strlib.inc
 
     option win64:rsp nosave
 
-strext proc uses rsi string:LPSTR
+strext proc frame uses rsi string:LPSTR
 
     mov rsi,strfn(rcx)
 

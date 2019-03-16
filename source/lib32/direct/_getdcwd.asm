@@ -32,7 +32,7 @@ _getdcwd proc uses esi edi ebx drive:SINT, buffer:LPSTR, maxlen:SINT
             sbb eax,eax
             and eax,1
             .ifz
-                mov oserrno,ERROR_INVALID_DRIVE
+                mov _doserrno,ERROR_INVALID_DRIVE
                 mov errno,EACCES
                 .break
             .endif

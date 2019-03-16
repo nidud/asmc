@@ -36,7 +36,7 @@ _read proc uses rsi rdi rbx r12 r13 h:SINT, b:PVOID, count:SIZE_T
         mov cl,[r13]
         .break .if cl & FH_EOF
 
-        mov oserrno,eax
+        mov _doserrno,eax
 
         .if cl & FH_PIPE or FH_DEVICE
 
@@ -58,7 +58,7 @@ _read proc uses rsi rdi rbx r12 r13 h:SINT, b:PVOID, count:SIZE_T
             osmaperr()
 
             xor eax,eax
-            mov edx,oserrno
+            mov edx,_doserrno
             .break .if edx == ER_BROKEN_PIPE
 
             dec eax

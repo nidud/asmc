@@ -11,7 +11,7 @@ include string.inc
 	option cstack:off
 	option stackbase:esp
 
-memset	proc uses edi dst:LPSTR, char:SINT, count:SIZE_T
+memset	proc uses edi dst:ptr, char:SINT, count:SIZE_T
 
 	mov edi,dst
 	mov eax,char

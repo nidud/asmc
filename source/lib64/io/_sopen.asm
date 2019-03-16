@@ -61,7 +61,7 @@ _sopen proc uses rsi rdi rbx path:LPSTR, oflag:UINT, shflag:UINT, args:VARARG
 
                     mov errno,EINVAL
                     xor eax,eax
-                    mov oserrno,eax
+                    mov _doserrno,eax
                     dec rax
                     .break
                 .endif
@@ -87,7 +87,7 @@ _sopen proc uses rsi rdi rbx path:LPSTR, oflag:UINT, shflag:UINT, args:VARARG
 
                 mov errno,EINVAL
                 xor eax,eax
-                mov oserrno,eax
+                mov _doserrno,eax
                 dec rax
                 .break
             .endif
@@ -119,7 +119,7 @@ _sopen proc uses rsi rdi rbx path:LPSTR, oflag:UINT, shflag:UINT, args:VARARG
           .default
             mov errno,EINVAL
             xor eax,eax
-            mov oserrno,eax
+            mov _doserrno,eax
             dec rax
             .break
         .endsw
@@ -155,7 +155,7 @@ _sopen proc uses rsi rdi rbx path:LPSTR, oflag:UINT, shflag:UINT, args:VARARG
             .if esi == _nfile
 
                 xor eax,eax
-                mov oserrno,eax ; no OS error
+                mov _doserrno,eax ; no OS error
                 mov errno,EBADF
                 dec rax
                 .break(1)
@@ -200,7 +200,7 @@ _sopen proc uses rsi rdi rbx path:LPSTR, oflag:UINT, shflag:UINT, args:VARARG
                         .endif
                     .endif
                     .break .ifd _lseek(esi, 0, SEEK_SET) == -1
-                .elseif oserrno != ERROR_NEGATIVE_SEEK
+                .elseif _doserrno != ERROR_NEGATIVE_SEEK
                     .break
                 .endif
             .endif

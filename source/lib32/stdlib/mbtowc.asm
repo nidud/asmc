@@ -9,10 +9,13 @@ include ctype.inc
 include winnls.inc
 include errno.inc
 include locale.inc
+include mtdll.inc
 include setlocal.inc
 include crtl.inc
 
 extern __invalid_mb_chars:SINT
+extern __lc_handle:UINT
+extern __lc_codepage:UINT
 
     .code
 

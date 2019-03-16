@@ -3986,9 +3986,9 @@ SHUTDOWN_NORETRY	equ 0x00000001
 
 WIN32_FIND_DATAA	STRUC
 dwFileAttributes	dd ?
-ftCreationTime		dq ?
-ftLastAccessTime	dq ?
-ftLastWriteTime		dq ?
+ftCreationTime		FILETIME <>
+ftLastAccessTime	FILETIME <>
+ftLastWriteTime		FILETIME <>
 nFileSizeHigh		dd ?
 nFileSizeLow		dd ?
 dwReserved0		dd ?
@@ -3999,9 +3999,9 @@ WIN32_FIND_DATAA	ENDS
 
 WIN32_FIND_DATAW	STRUC
 dwFileAttributes	dd ?
-ftCreationTime		dq ?
-ftLastAccessTime	dq ?
-ftLastWriteTime		dq ?
+ftCreationTime		FILETIME <>
+ftLastAccessTime	FILETIME <>
+ftLastWriteTime		FILETIME <>
 nFileSizeHigh		dd ?
 nFileSizeLow		dd ?
 dwReserved0		dd ?

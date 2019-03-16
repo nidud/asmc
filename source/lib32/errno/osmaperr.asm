@@ -108,7 +108,7 @@ syserrtable label word
 osmaperr proc
 
     mov edx,GetLastError()
-    mov oserrno,eax
+    mov _doserrno,eax
     xor ecx,ecx
     mov eax,-1
 

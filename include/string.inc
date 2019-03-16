@@ -37,6 +37,8 @@ _strset		proto __cdecl :LPSTR, :SINT
 _strnset	proto __cdecl :LPSTR, :SINT, :size_t
 strtok		proto __cdecl :LPSTR, :LPSTR
 
+strncpy_s	proto __cdecl :LPSTR, :size_t, :LPSTR, :size_t
+
 ifndef _WSTRING_DEFINED
 
 wcscat		proto __cdecl :ptr wchar_t, :ptr wchar_t

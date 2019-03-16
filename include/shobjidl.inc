@@ -951,7 +951,7 @@ if (_WIN32_IE GE _WIN32_IE_IE40)
 CMIC_MASK_PTINVOKE	equ 0x20000000
 endif
 
-;include pshpack8.inc
+.pragma pack(push, 8)
 
 CMINVOKECOMMANDINFO	STRUC
 cbSize			dd ?
@@ -1008,7 +1008,7 @@ LPCMINVOKECOMMANDINFOEX typedef ptr CMINVOKECOMMANDINFOEX
 
 PCCMINVOKECOMMANDINFOEX typedef ptr CMINVOKECOMMANDINFOEX
 
-;include poppack.inc
+.pragma pack(pop)
 
 externdef		__MIDL_itf_shobjidl_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
 externdef		__MIDL_itf_shobjidl_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
@@ -1210,7 +1210,7 @@ endif ; (_WIN32_IE GE 0x0400)
 if (_WIN32_IE GE 0x0500)
 CSIDL_FLAG_PFTI_TRACKTARGET equ CSIDL_FAG_DONT_VERIFY
 
-;include pshpack8.inc
+.pragma pack(push, 8)
 
 PERSIST_FOLDER_TARGET_INFO STRUC
 pidlTargetFolder	PIDLIST_ABSOLUTE ?
@@ -1220,7 +1220,7 @@ dwAttributes		dd ?
 csidl			SINT ?
 PERSIST_FOLDER_TARGET_INFO ENDS
 
-;include poppack.inc
+.pragma pack(pop)
 
 
 externdef		__MIDL_itf_shobjidl_0000_0009_v0_0_c_ifspec:RPC_IF_HANDLE
@@ -1757,7 +1757,7 @@ LPIShellBrowser		typedef ptr IShellBrowser
 
 SV2GV_CURRENTVIEW	equ -1
 SV2GV_DEFAULTVIEW	equ -2
-;include pshpack8.inc
+.pragma pack(push, 8)
 SV2CVW2_PARAMS		STRUC
 cbSize			dd ?
 psvPrev			LPSHELLVIEW ?
@@ -1769,7 +1769,7 @@ hwndView		HWND ?
 SV2CVW2_PARAMS		ENDS
 LPSV2CVW2_PARAMS	typedef ptr SV2CVW2_PARAMS
 
-;include poppack.inc
+.pragma pack(pop)
 
 externdef		IID_IShellView2:IID
 .comdef IShellView2
@@ -3120,7 +3120,7 @@ endif
 
 endif
 if (NTDDI_VERSION GE NTDDI_WIN2K)
-;include pshpack8.inc
+.pragma pack(push, 8)
 SHDRAGIMAGE		STRUC
 sizeDragImage		SIZEL <>
 ptOffset		POINT <>
@@ -3130,7 +3130,7 @@ SHDRAGIMAGE		ENDS
 
 LPSHDRAGIMAGE		typedef ptr SHDRAGIMAGE
 
-;include poppack.inc
+.pragma pack(pop)
 DI_GETDRAGIMAGE		equ TEXT("ShellGetDragImage")
 
 externdef		__MIDL_itf_shobjidl_0000_0060_v0_0_c_ifspec:RPC_IF_HANDLE
@@ -3783,7 +3783,7 @@ DBIM_ACTUAL		equ 0x0008
 DBIM_TITLE		equ 0x0010
 DBIM_MODEFLAGS		equ 0x0020
 DBIM_BKCOLOR		equ 0x0040
-;include pshpack8.inc
+.pragma pack(push, 8)
 DESKBANDINFO		STRUC
 dwMask			dd ?
 ptMinSize		POINTL <>
@@ -3795,7 +3795,7 @@ dwModeFlags		dd ?
 crBkgnd			COLORREF ?
 DESKBANDINFO		ENDS
 
-;include poppack.inc
+.pragma pack(pop)
 DBIMF_NORMAL		equ 0x0000
 DBIMF_FIXED		equ 0x0001
 DBIMF_FIXEDBMP		equ 0x0004
@@ -3950,7 +3950,7 @@ THB_TOOLTIP		equ 0x4
 THB_FLAGS		equ 0x8
 
 DEFINE_ENUM_FLAG_OPERATORS(THUMBBUTTONMASK)
-;include pshpack8.inc
+.pragma pack(push, 8)
 THUMBBUTTON		STRUC
 dwMask			THUMBBUTTONMASK ?
 iId			UINT ?
@@ -3962,7 +3962,7 @@ THUMBBUTTON		ENDS
 
 LPTHUMBBUTTON		typedef ptr THUMBBUTTON
 
-;include poppack.inc
+.pragma pack(pop)
 THBN_CLICKED		equ 0x1800
 
 externdef		__MIDL_itf_shobjidl_0000_0093_v0_0_c_ifspec:RPC_IF_HANDLE
@@ -4573,14 +4573,14 @@ externdef		IID_IAutoCompleteDropDown:IID
 endif
 
 if (_WIN32_IE GE _WIN32_IE_IE40)
-;include pshpack8.inc
+.pragma pack(push, 8)
 BANDSITEINFO		STRUC
 dwMask			dd ?
 dwState			dd ?
 dwStyle			dd ?
 BANDSITEINFO		ENDS
 
-;include poppack.inc
+.pragma pack(pop)
 
 tagBANDSITECID		typedef SDWORD
 BSID_BANDADDED		equ 0
@@ -5270,15 +5270,15 @@ externdef		IID_IApplicationAssociationRegistrationUI:IID
 
 endif
 endif
-;include pshpack1.inc
+.pragma pack(push, 1)
 DELEGATEITEMID		STRUC
 cbSize			dw ?
 wOuter			dw ?
 cbInner			dw ?
 rgb			db  1  dup(?)
 DELEGATEITEMID		ENDS
+.pragma pack(pop)
 
-;include poppack.inc
 PCDELEGATEITEMID	typedef ptr DELEGATEITEMID
 PDELEGATEITEMID		typedef ptr DELEGATEITEMID
 
@@ -5413,7 +5413,7 @@ endif
 endif
 
 if (_WIN32_IE GE _WIN32_IE_IE60)
-;include pshpack8.inc
+.pragma pack(push, 8)
 SMDATA			STRUC
 dwMask			dd ?
 dwFlags			dd ?
@@ -5449,7 +5449,7 @@ SHCSCHANGENOTIFYSTRUCT	ENDS
 SMCSHCHANGENOTIFYSTRUCT	 typedef SHCSCHANGENOTIFYSTRUCT
 PSMCSHCHANGENOTIFYSTRUCT typedef ptr SHCSCHANGENOTIFYSTRUCT
 
-;include poppack.inc
+.pragma pack(pop)
 
 tagSMINFOMASK		typedef SDWORD
 SMIM_TYPE		equ 0x1

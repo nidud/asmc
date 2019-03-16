@@ -28,7 +28,7 @@ _wcreat proc path:LPWSTR, flag:SINT
                 .else
                     mov errno,EINVAL
                     xor eax,eax
-                    mov oserrno,eax
+                    mov _doserrno,eax
                     dec eax
                     .break
                 .endif

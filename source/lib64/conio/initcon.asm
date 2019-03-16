@@ -19,8 +19,8 @@ __initconout proc
 	NULL,
 	OPEN_EXISTING,
 	0,
-	NULL
-    )
+	NULL)
+
     mov _confh,rax
     ret
 
@@ -36,5 +36,8 @@ __termconout proc
     ret
 
 __termconout endp
+
+.pragma(init(__initconout, 1))
+.pragma(exit(__termconout, 2))
 
 	end

@@ -10,10 +10,10 @@ include string.inc
 
 	option stackbase:esp
 
-memmove PROC dst:LPSTR, src:LPSTR, count:SIZE_T
+memmove PROC dst:ptr, src:ptr, count:SIZE_T
 memmove ENDP
 
-memcpy	proc uses esi edi dst:LPSTR, src:LPSTR, count:SIZE_T
+memcpy proc uses esi edi dst:ptr, src:ptr, count:SIZE_T
 
 	mov	eax,dst ; -- return value
 	mov	esi,src

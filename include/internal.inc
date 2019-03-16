@@ -410,14 +410,14 @@ _wgetpath		proto :ptr wchar_t, :ptr wchar_t, :size_t
 externdef		_dowildcard:int_t
 
 ifndef _PNH_DEFINED
-_PNH typedef proto __cdecl :size_t
-_PNH_DEFINED equ 1
+_PNH_DEFINED equ <>
+CALLBACKC(_PNH, :size_t)
 endif
 
 ifdef _M_CEE
 ifndef __MPNH_DEFINED
-__MPNH typedef proto :size_t
-__MPNH_DEFINED equ 1
+__MPNH_DEFINED equ <>
+CALLBACKC(__MPNH, :size_t)
 endif
 endif
 
@@ -583,7 +583,7 @@ __get_sigabrt		proto _cdecl :_PHNDLR
 NTSTATUS		typedef LONG
 
 ifndef STATUS_INVALID_PARAMETER
-STATUS_INVALID_PARAMETER equ ((NTSTATUS)0xC000000DL)
+STATUS_INVALID_PARAMETER equ (0xC000000D)
 endif
 
 ifndef STATUS_FATAL_APP_EXIT

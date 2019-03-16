@@ -16,10 +16,10 @@ int UndefDirective( int i, struct asm_tok tokenarray[] )
 	    return( asmerr(2008, tokenarray[i].string_ptr ) );
 	}
 	sym = SymSearch( tokenarray[i].string_ptr );
-	if ( sym == NULL ) {
-	    return( asmerr( 2006, tokenarray[i].string_ptr ) );
+	if ( sym != NULL ) {
+	    sym->state = SYM_UNDEFINED;
+	    //return( asmerr( 2006, tokenarray[i].string_ptr ) );
 	}
-	sym->state = SYM_UNDEFINED;
 	i++;
 	if ( i < Token_Count ) {
 	    if ( tokenarray[i].token != T_COMMA || tokenarray[i+1].token == T_FINAL ) {

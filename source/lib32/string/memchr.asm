@@ -10,7 +10,7 @@ include string.inc
 
 	option stackbase:esp
 
-memchr	PROC uses esi edi ebx base:LPSTR, char:SIZE_T, bsize:SIZE_T
+memchr	PROC uses esi edi ebx base:ptr, char:SINT, bsize:SIZE_T
 
 	mov	edi,base
 	mov	eax,char

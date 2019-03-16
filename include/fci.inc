@@ -10,7 +10,7 @@ DIAMONDAPI equ <__cdecl>
 endif
 
 ifndef _WIN64
-;include pshpack4.inc
+.pragma pack(push, 4)
 endif
 
 ifndef _INC_WINDOWS
@@ -102,7 +102,7 @@ TCOMPfromLZXWindow macro w
 	endm
 
 ifndef _WIN64
-;include poppack.inc
+.pragma pack(pop)
 endif
 
 endif ;; NOT INCLUDED_TYPES_FCI_FDI
@@ -114,7 +114,7 @@ include specstrings.inc
 include basetsd.inc
 
 ifndef _WIN64
-;include pshpack4.inc
+.pragma pack(push, 4)
 endif
 
 FCIERR_NONE		equ 0
@@ -271,5 +271,8 @@ FCIFlushFolder proto WINAPI \
 ;BOOL
 FCIDestroy proto WINAPI hfci:HFCI
 
+ifndef _WIN64
+.pragma pack(pop)
+endif
 .pragma list(pop)
 endif

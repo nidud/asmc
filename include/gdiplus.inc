@@ -8,7 +8,7 @@ ifndef GDIPVER
 GDIPVER                 equ 0x0100
 endif
 
-;include pshpack8.inc   ;; set structure packing to 8
+.pragma pack(push, 8)
 
 include GdiplusMem.inc
 include GdiplusBase.inc
@@ -43,5 +43,6 @@ include GdiplusFont.inc
 include GdiplusBitmap.inc
 include GdiplusImageCodec.inc
 
-endif
+.pragma pack(pop)
 
+endif

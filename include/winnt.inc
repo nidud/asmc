@@ -2513,7 +2513,7 @@ C_ASSERT(sizeof(XSAVE_FORMAT) == MAXIMUM_SUPPORTED_EXTENSION)
 
 endif
 
-;include "pshpack4.h"
+.pragma pack(push, 4)
 
 CONTEXT		STRUC
 ContextFlags	dd ?
@@ -2541,7 +2541,7 @@ CONTEXT		ENDS
 
 PCONTEXT typedef ptr CONTEXT
 
-;include "poppack.h"
+.pragma pack(pop)
 
 endif
 
@@ -2818,216 +2818,81 @@ CONTEXT_EXCEPTION_REPORTING equ 0x80000000
 
 ;endif
 
+XMM_SAVE_AREA32		typedef XSAVE_FORMAT
+PXMM_SAVE_AREA32	typedef ptr XSAVE_FORMAT
 
 CONTEXT			STRUC
-ContextFlags		dd ?
-Fill1			dd 3 dup(?)
-DbI0			ULONGLONG ?
-DbI1			ULONGLONG ?
-DbI2			ULONGLONG ?
-DbI3			ULONGLONG ?
-DbI4			ULONGLONG ?
-DbI5			ULONGLONG ?
-DbI6			ULONGLONG ?
-DbI7			ULONGLONG ?
-DbD0			ULONGLONG ?
-DbD1			ULONGLONG ?
-DbD2			ULONGLONG ?
-DbD3			ULONGLONG ?
-DbD4			ULONGLONG ?
-DbD5			ULONGLONG ?
-DbD6			ULONGLONG ?
-DbD7			ULONGLONG ?
-FltS0			FLOAT128 <>
-FltS1			FLOAT128 <>
-FltS2			FLOAT128 <>
-FltS3			FLOAT128 <>
-FltT0			FLOAT128 <>
-FltT1			FLOAT128 <>
-FltT2			FLOAT128 <>
-FltT3			FLOAT128 <>
-FltT4			FLOAT128 <>
-FltT5			FLOAT128 <>
-FltT6			FLOAT128 <>
-FltT7			FLOAT128 <>
-FltT8			FLOAT128 <>
-FltT9			FLOAT128 <>
-FltS4			FLOAT128 <>
-FltS5			FLOAT128 <>
-FltS6			FLOAT128 <>
-FltS7			FLOAT128 <>
-FltS8			FLOAT128 <>
-FltS9			FLOAT128 <>
-FltS10			FLOAT128 <>
-FltS11			FLOAT128 <>
-FltS12			FLOAT128 <>
-FltS13			FLOAT128 <>
-FltS14			FLOAT128 <>
-FltS15			FLOAT128 <>
-FltS16			FLOAT128 <>
-FltS17			FLOAT128 <>
-FltS18			FLOAT128 <>
-FltS19			FLOAT128 <>
-FltF32			FLOAT128 <>
-FltF33			FLOAT128 <>
-FltF34			FLOAT128 <>
-FltF35			FLOAT128 <>
-FltF36			FLOAT128 <>
-FltF37			FLOAT128 <>
-FltF38			FLOAT128 <>
-FltF39			FLOAT128 <>
-FltF40			FLOAT128 <>
-FltF41			FLOAT128 <>
-FltF42			FLOAT128 <>
-FltF43			FLOAT128 <>
-FltF44			FLOAT128 <>
-FltF45			FLOAT128 <>
-FltF46			FLOAT128 <>
-FltF47			FLOAT128 <>
-FltF48			FLOAT128 <>
-FltF49			FLOAT128 <>
-FltF50			FLOAT128 <>
-FltF51			FLOAT128 <>
-FltF52			FLOAT128 <>
-FltF53			FLOAT128 <>
-FltF54			FLOAT128 <>
-FltF55			FLOAT128 <>
-FltF56			FLOAT128 <>
-FltF57			FLOAT128 <>
-FltF58			FLOAT128 <>
-FltF59			FLOAT128 <>
-FltF60			FLOAT128 <>
-FltF61			FLOAT128 <>
-FltF62			FLOAT128 <>
-FltF63			FLOAT128 <>
-FltF64			FLOAT128 <>
-FltF65			FLOAT128 <>
-FltF66			FLOAT128 <>
-FltF67			FLOAT128 <>
-FltF68			FLOAT128 <>
-FltF69			FLOAT128 <>
-FltF70			FLOAT128 <>
-FltF71			FLOAT128 <>
-FltF72			FLOAT128 <>
-FltF73			FLOAT128 <>
-FltF74			FLOAT128 <>
-FltF75			FLOAT128 <>
-FltF76			FLOAT128 <>
-FltF77			FLOAT128 <>
-FltF78			FLOAT128 <>
-FltF79			FLOAT128 <>
-FltF80			FLOAT128 <>
-FltF81			FLOAT128 <>
-FltF82			FLOAT128 <>
-FltF83			FLOAT128 <>
-FltF84			FLOAT128 <>
-FltF85			FLOAT128 <>
-FltF86			FLOAT128 <>
-FltF87			FLOAT128 <>
-FltF88			FLOAT128 <>
-FltF89			FLOAT128 <>
-FltF90			FLOAT128 <>
-FltF91			FLOAT128 <>
-FltF92			FLOAT128 <>
-FltF93			FLOAT128 <>
-FltF94			FLOAT128 <>
-FltF95			FLOAT128 <>
-FltF96			FLOAT128 <>
-FltF97			FLOAT128 <>
-FltF98			FLOAT128 <>
-FltF99			FLOAT128 <>
-FltF100			FLOAT128 <>
-FltF101			FLOAT128 <>
-FltF102			FLOAT128 <>
-FltF103			FLOAT128 <>
-FltF104			FLOAT128 <>
-FltF105			FLOAT128 <>
-FltF106			FLOAT128 <>
-FltF107			FLOAT128 <>
-FltF108			FLOAT128 <>
-FltF109			FLOAT128 <>
-FltF110			FLOAT128 <>
-FltF111			FLOAT128 <>
-FltF112			FLOAT128 <>
-FltF113			FLOAT128 <>
-FltF114			FLOAT128 <>
-FltF115			FLOAT128 <>
-FltF116			FLOAT128 <>
-FltF117			FLOAT128 <>
-FltF118			FLOAT128 <>
-FltF119			FLOAT128 <>
-FltF120			FLOAT128 <>
-FltF121			FLOAT128 <>
-FltF122			FLOAT128 <>
-FltF123			FLOAT128 <>
-FltF124			FLOAT128 <>
-FltF125			FLOAT128 <>
-FltF126			FLOAT128 <>
-FltF127			FLOAT128 <>
-StFPSR			ULONGLONG ?
-IntGp			ULONGLONG ?
-IntT0			ULONGLONG ?
-IntT1			ULONGLONG ?
-IntS0			ULONGLONG ?
-IntS1			ULONGLONG ?
-IntS2			ULONGLONG ?
-IntS3			ULONGLONG ?
-IntV0			ULONGLONG ?
-IntT2			ULONGLONG ?
-IntT3			ULONGLONG ?
-IntT4			ULONGLONG ?
-IntSp			ULONGLONG ?
-IntTeb			ULONGLONG ?
-IntT5			ULONGLONG ?
-IntT6			ULONGLONG ?
-IntT7			ULONGLONG ?
-IntT8			ULONGLONG ?
-IntT9			ULONGLONG ?
-IntT10			ULONGLONG ?
-IntT11			ULONGLONG ?
-IntT12			ULONGLONG ?
-IntT13			ULONGLONG ?
-IntT14			ULONGLONG ?
-IntT15			ULONGLONG ?
-IntT16			ULONGLONG ?
-IntT17			ULONGLONG ?
-IntT18			ULONGLONG ?
-IntT19			ULONGLONG ?
-IntT20			ULONGLONG ?
-IntT21			ULONGLONG ?
-IntT22			ULONGLONG ?
-IntNats			ULONGLONG ?
-Preds			ULONGLONG ?
-BrRp			ULONGLONG ?
-BrS0			ULONGLONG ?
-BrS1			ULONGLONG ?
-BrS2			ULONGLONG ?
-BrS3			ULONGLONG ?
-BrS4			ULONGLONG ?
-BrT0			ULONGLONG ?
-BrT1			ULONGLONG ?
-ApUNAT			ULONGLONG ?
-ApLC			ULONGLONG ?
-ApEC			ULONGLONG ?
-ApCCV			ULONGLONG ?
-ApDCR			ULONGLONG ?
-RsPFS			ULONGLONG ?
-RsBSP			ULONGLONG ?
-RsBSPSTORE		ULONGLONG ?
-RsRSC			ULONGLONG ?
-RsRNAT			ULONGLONG ?
-StIPSR			ULONGLONG ?
-StIIP			ULONGLONG ?
-StIFS			ULONGLONG ?
-StFCR			ULONGLONG ?
-Eflag			ULONGLONG ?
-SegCSD			ULONGLONG ?
-SegSSD			ULONGLONG ?
-Cflag			ULONGLONG ?
-StFSR			ULONGLONG ?
-StFIR			ULONGLONG ?
-StFDR			ULONGLONG ?
-UNUSEDPACK		ULONGLONG ?
+ P1Home			dq ?
+ P2Home			dq ?
+ P3Home			dq ?
+ P4Home			dq ?
+ P5Home			dq ?
+ P6Home			dq ?
+ ContextFlags		dd ?
+ MxCsr			dd ?
+ SegCs			dw ?
+ SegDs			dw ?
+ SegEs			dw ?
+ SegFs			dw ?
+ SegGs			dw ?
+ SegSs			dw ?
+ EFlags			dd ?
+ _Dr0			dq ?
+ _Dr1			dq ?
+ _Dr2			dq ?
+ _Dr3			dq ?
+ _Dr6			dq ?
+ _Dr7			dq ?
+ _Rax			dq ?
+ _Rcx			dq ?
+ _Rdx			dq ?
+ _Rbx			dq ?
+ _Rsp			dq ?
+ _Rbp			dq ?
+ _Rsi			dq ?
+ _Rdi			dq ?
+ _R8			dq ?
+ _R9			dq ?
+ _R10			dq ?
+ _R11			dq ?
+ _R12			dq ?
+ _R13			dq ?
+ _R14			dq ?
+ _R15			dq ?
+ _Rip			dq ?
+ union
+  FltSave		XMM_SAVE_AREA32 <>
+  Q			oword 16 dup(?)
+  D			dq 32 dup(?)
+  struct
+   Header		M128A 2 dup(<>)
+   Legacy		M128A 8 dup(<>)
+   _Xmm0		M128A <>
+   _Xmm1		M128A <>
+   _Xmm2		M128A <>
+   _Xmm3		M128A <>
+   _Xmm4		M128A <>
+   _Xmm5		M128A <>
+   _Xmm6		M128A <>
+   _Xmm7		M128A <>
+   _Xmm8		M128A <>
+   _Xmm9		M128A <>
+   _Xmm10		M128A <>
+   _Xmm11		M128A <>
+   _Xmm12		M128A <>
+   _Xmm13		M128A <>
+   _Xmm14		M128A <>
+   _Xmm15		M128A <>
+  ends
+  S			dd 32 dup(?)
+ ends
+ VectorRegister		oword 26 dup(?) ; M128A
+ VectorControl		dq ?
+ DebugControl		dq ?
+ LastBranchToRip	dq ?
+ LastBranchFromRip	dq ?
+ LastExceptionToRip	dq ?
+ LastExceptionFromRip	dq ?
 CONTEXT			ENDS
 PCONTEXT		typedef ptr CONTEXT
 
@@ -3226,7 +3091,7 @@ Cr0NpxState		dd ?
 WOW64_FLOATING_SAVE_AREA ENDS
 PWOW64_FLOATING_SAVE_AREA typedef ptr WOW64_FLOATING_SAVE_AREA
 
-;include "pshpack4.h"
+.pragma pack(push, 4)
 
 WOW64_CONTEXT		STRUC
 ContextFlags		dd ?
@@ -3257,7 +3122,7 @@ ExtendedRegisters	db WOW64_MAXIMUM_SUPPORTED_EXTENSION dup(?)
 WOW64_CONTEXT		ENDS
 PWOW64_CONTEXT		typedef ptr WOW64_CONTEXT
 
-;include "poppack.h"
+.pragma pack(pop)
 
 LDT_ENTRY_R0 RECORD \
 	    ldt_BaseHi:		8,
@@ -3328,6 +3193,7 @@ EXCEPTION_REGISTRATION	STRUC SIZE_T
 prev			SIZE_T ?
 handler			SIZE_T ?
 EXCEPTION_REGISTRATION	ENDS
+PEXCEPTION_REGISTRATION typedef ptr EXCEPTION_REGISTRATION
 
 ;VOID
 RtlUnwind proto WINAPI \
@@ -3406,9 +3272,9 @@ GENERIC_MAPPING ENDS
 
 PGENERIC_MAPPING typedef PTR GENERIC_MAPPING
 
-;include <pshpack4.h>
+.pragma pack(push, 4)
 
-LUID_AND_ATTRIBUTES STRUC 4
+LUID_AND_ATTRIBUTES STRUC
 Luid		LUID <>
 Attributes	dd ?
 LUID_AND_ATTRIBUTES ENDS
@@ -3416,7 +3282,7 @@ PLUID_AND_ATTRIBUTES typedef ptr LUID_AND_ATTRIBUTES
 LUID_AND_ATTRIBUTES_ARRAY typedef LUID_AND_ATTRIBUTES
 PLUID_AND_ATTRIBUTES_ARRAY typedef ptr LUID_AND_ATTRIBUTES_ARRAY
 
-;include <poppack.h>
+.pragma pack(pop)
 
 ifndef SID_IDENTIFIER_AUTHORITY_DEFINED
 SID_IDENTIFIER_AUTHORITY_DEFINED equ 1
@@ -5864,7 +5730,7 @@ DefaultAlert2		dd ?
 SYSTEM_BATTERY_STATE	ENDS
 PSYSTEM_BATTERY_STATE	typedef ptr SYSTEM_BATTERY_STATE
 
-;include "pshpack2.h"
+.pragma pack(push, 2)
 
 IMAGE_DOS_SIGNATURE	equ 0x5A4D
 IMAGE_OS2_SIGNATURE	equ 0x454E
@@ -5872,7 +5738,7 @@ IMAGE_OS2_SIGNATURE_LE	equ 0x454C
 IMAGE_VXD_SIGNATURE	equ 0x454C
 IMAGE_NT_SIGNATURE	equ 0x00004550
 
-IMAGE_DOS_HEADER	STRUC WORD
+IMAGE_DOS_HEADER	STRUC
 e_magic			dw ?
 e_cblp			dw ?
 e_cp			dw ?
@@ -5984,7 +5850,7 @@ e32_ddkver		dw ?
 IMAGE_VXD_HEADER	ENDS
 PIMAGE_VXD_HEADER	typedef ptr IMAGE_VXD_HEADER
 
-;include "poppack.h"
+.pragma pack(pop)
 
 IMAGE_FILE_HEADER	STRUC
 Machine			dw ?
@@ -6491,7 +6357,7 @@ DECREF	macro x
 	endm
 endif
 
-;include <pshpack2.h>
+.pragma pack(push, 2)
 
 IMAGE_AUX_SYMBOL_TOKEN_DEF STRUC WORD
 bAuxType		db ?
@@ -6501,7 +6367,7 @@ rgbReserved		db 12 dup(?)
 IMAGE_AUX_SYMBOL_TOKEN_DEF ENDS
 PIMAGE_AUX_SYMBOL_TOKEN_DEF typedef ptr IMAGE_AUX_SYMBOL_TOKEN_DEF
 
-;include <poppack.h>
+.pragma pack(pop)
 
 IMAGE_AUX_SYMBOL	UNION
 STRUC

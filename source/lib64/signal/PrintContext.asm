@@ -15,9 +15,9 @@ include signal.inc
 
     option win64:nosave
 
-    assume r11: ptr EXCEPTION_CONTEXT
+    assume r11:PCONTEXT
 
-PrintContext proc ExcContext:ptr EXCEPTION_CONTEXT, ExcRecord:ptr EXCEPTION_RECORD
+PrintContext proc ExcContext:PCONTEXT, ExcRecord:ptr EXCEPTION_RECORD
 
   local flags[17]:sbyte
 

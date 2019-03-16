@@ -66,7 +66,7 @@ endif
 errno equ <_get_errno(addr _errno)>
 else
 externdef	errno:dword
-externdef	oserrno:dword
+externdef	_doserrno:dword
 externdef	sys_errlist:size_t
 endif
 

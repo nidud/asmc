@@ -8,6 +8,7 @@ include stdio.inc
 include stdlib.inc
 include signal.inc
 include crtl.inc
+include winbase.inc
 
 EH_STACK_INVALID    equ 08h
 EH_NONCONTINUABLE   equ 01h
@@ -26,10 +27,10 @@ sig_table           dd NSIG dup(0)
 ExceptionHandler proc C private,
     ExceptionRecord:    ptr EXCEPTION_RECORD,
     EstablisherFrame:   ptr dword,
-    ContextRecord:      ptr EXCEPTION_CONTEXT,
+    ContextRecord:      ptr CONTEXT,
     DispatcherContext:  ptr dword
 
-local CurrentException: EXCEPTION_POINTERS
+  local CurrentException: EXCEPTION_POINTERS
 
     mov ecx,ExceptionRecord
     mov edx,ContextRecord
@@ -98,7 +99,7 @@ local CurrentException: EXCEPTION_POINTERS
 
 ExceptionHandler endp
 
-signal proc index:dword, func:PVOID
+signal proc index:int_t, func:PVOID
     mov edx,index
     mov ecx,func
     mov eax,sig_table[edx*4]
@@ -106,7 +107,7 @@ signal proc index:dword, func:PVOID
     ret
 signal endp
 
-raise proc index:dword
+raise proc index:int_t
     mov ecx,index
     mov eax,sig_table[ecx*4]
     .if eax

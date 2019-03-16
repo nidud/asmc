@@ -141,7 +141,7 @@ toend:
     ret
 error_1:
     mov errno,ENOENT
-    mov oserrno,ERROR_PATH_NOT_FOUND
+    mov _doserrno,ERROR_PATH_NOT_FOUND
     mov eax,-1
     jmp toend
 error_2:

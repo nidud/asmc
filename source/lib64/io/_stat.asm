@@ -151,7 +151,7 @@ _stat proc uses rsi rdi rbx fname:LPSTR, buf:PVOID
             .break(1)
         .until 1
         mov errno,ENOENT
-        mov oserrno,ERROR_PATH_NOT_FOUND
+        mov _doserrno,ERROR_PATH_NOT_FOUND
         mov eax,-1
     .until 1
     ret

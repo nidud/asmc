@@ -6,6 +6,7 @@
 
 include stdlib.inc
 include signal.inc
+include winbase.inc
 
 EH_STACK_INVALID    equ 08h
 EH_NONCONTINUABLE   equ 01h
@@ -21,11 +22,8 @@ EH_NESTED_CALL	    equ 10h
     option  win64:0
     option  stackbase:rsp
 
-ExceptionHandler proc,
-    ExceptionRecord:  ptr EXCEPTION_RECORD,
-    EstablisherFrame: ptr dword,
-    ContextRecord:    ptr EXCEPTION_CONTEXT,
-    DispatcherContext:ptr dword
+ExceptionHandler proc ExceptionRecord:PEXCEPTION_RECORD, EstablisherFrame:ptr dword,
+    ContextRecord:PCONTEXT, DispatcherContext:LPDWORD
 
   local CurrentException:EXCEPTION_POINTERS
 

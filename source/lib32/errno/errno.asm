@@ -7,10 +7,10 @@
 include errno.inc
 
 PUBLIC	errno
-PUBLIC	oserrno
+PUBLIC	_doserrno
 
 	.data
-	errno	dd 0
-	oserrno dd 0
+	errno	  dd 0
+	_doserrno dd 0
 
 	END

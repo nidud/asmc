@@ -23,7 +23,7 @@ _write proc uses rdi rsi rbx r12 h:SINT, b:PVOID, l:UINT
         .if ecx >= _NFILE_
 
             xor eax,eax
-            mov oserrno,eax
+            mov _doserrno,eax
             mov errno,EBADF
             dec rax
             .break
@@ -86,7 +86,7 @@ _write proc uses rdi rsi rbx r12 h:SINT, b:PVOID, l:UINT
         mov eax,count
         .if !eax
             .if eax == result
-                .if oserrno == 5 ; access denied
+                .if _doserrno == 5 ; access denied
                     mov errno,EBADF
                 .endif
             .else
@@ -95,7 +95,7 @@ _write proc uses rdi rsi rbx r12 h:SINT, b:PVOID, l:UINT
                     .break .if byte ptr [rbx] == 26
                 .endif
                 mov errno,ENOSPC
-                mov oserrno,eax
+                mov _doserrno,eax
             .endif
             dec rax
         .endif

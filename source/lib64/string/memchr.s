@@ -64,7 +64,7 @@ regress proc uses rsi rdi rbx
         mov rcx,[rsi+16]
         mov rdx,[rsi+8]
         mov r8,[rsi]
-        memchr(rcx, rdx, r8)
+        memchr(rcx, edx, r8)
         mov rdx,rax
         mov rcx,[rsi]
         mov rbx,[rsi+16]

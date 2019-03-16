@@ -11,6 +11,10 @@ else
 includelib libc.lib
 endif
 
+include crtdefs.inc
+
+.pragma pack(push, _CRT_PACKING)
+
 _NFILE_		equ 20
 
 _A_RDONLY	equ 01h
@@ -170,5 +174,6 @@ getfattr	proto __cdecl :LPSTR
 _wgetfattr	proto __cdecl :LPWSTR
 endif ; __PE__
 
-.pragma list(pop)
+.pragma pack(pop)
 endif
+.pragma list(pop)

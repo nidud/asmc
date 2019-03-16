@@ -9,8 +9,8 @@ include crtl.inc
 include winbase.inc
 
 .data
-__wargv	 dq 0
-_wpgmptr dq 0
+__wargv	 warray_t 0
+_wpgmptr wstring_t 0
 
 .code
 

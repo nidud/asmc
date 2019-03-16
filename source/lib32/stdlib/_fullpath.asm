@@ -114,7 +114,7 @@ _fullpath proc uses esi edi ebx buf:LPSTR, path:LPSTR, maxlen:UINT
 
                 .ifz
                     mov errno,EACCES
-                    mov oserrno,ERROR_INVALID_DRIVE
+                    mov _doserrno,ERROR_INVALID_DRIVE
                     .break
                 .endif
             .endif

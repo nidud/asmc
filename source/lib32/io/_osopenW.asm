@@ -22,7 +22,7 @@ _osopenW proc uses ebx lpFileName:LPWSTR, dwAccess:SIZE_T, dwShareMode:SIZE_T,
             .if eax == _nfile
 
                 xor eax,eax
-                mov oserrno,eax ; no OS error
+                mov _doserrno,eax ; no OS error
                 mov errno,EBADF
                 dec eax
                 .break(1)

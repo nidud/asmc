@@ -6,6 +6,10 @@
 
 ifndef DLL_FOR_WIN32S
 
+public __lc_handle
+public __lc_codepage
+
+include mtdll.inc
 include setlocal.inc
 include winnls.inc
 

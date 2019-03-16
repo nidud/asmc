@@ -8,7 +8,7 @@ include stdio.inc
 
     .code
 
-_ftbuf proc flag:ULONG, fp:LPFILE
+_ftbuf proc flag:SINT, fp:LPFILE
 
     mov edx,fp
     assume edx:ptr _iobuf

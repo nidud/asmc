@@ -26,7 +26,7 @@ _osopenA proc USES esi edi ebx lpFileName:LPSTR, dwAccess:SIZE_T, dwShareMode:SI
         inc eax
         .if eax == _nfile
             xor eax,eax
-            mov oserrno,eax ; no OS error
+            mov _doserrno,eax ; no OS error
             mov errno,EBADF
             dec eax
             jmp toend

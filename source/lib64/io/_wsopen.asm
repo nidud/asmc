@@ -57,7 +57,7 @@ _wsopen proc uses rsi rdi rbx path:LPWSTR, oflag:SINT, shflag:SINT, args:VARARG
                 .if eax != O_RDWR
                     mov errno,EINVAL
                     xor eax,eax
-                    mov oserrno,eax
+                    mov _doserrno,eax
                     dec rax
                     .break
                 .endif
@@ -82,7 +82,7 @@ _wsopen proc uses rsi rdi rbx path:LPWSTR, oflag:SINT, shflag:SINT, args:VARARG
             .if eax != SH_DENYRW
                 mov errno,EINVAL
                 xor eax,eax
-                mov oserrno,eax
+                mov _doserrno,eax
                 dec rax
                 .break
             .endif
@@ -114,7 +114,7 @@ _wsopen proc uses rsi rdi rbx path:LPWSTR, oflag:SINT, shflag:SINT, args:VARARG
           .default
             mov errno,EINVAL
             xor eax,eax
-            mov oserrno,eax
+            mov _doserrno,eax
             dec rax
             .break
         .endsw
@@ -191,7 +191,7 @@ _wsopen proc uses rsi rdi rbx path:LPWSTR, oflag:SINT, shflag:SINT, args:VARARG
                         mov eax,-1
                         .break
                     .endif
-                .elseif oserrno != ERROR_NEGATIVE_SEEK
+                .elseif _doserrno != ERROR_NEGATIVE_SEEK
                     _close(esi)
                     mov eax,-1
                     .break

@@ -171,6 +171,7 @@ string_t	typedef ptr sbyte
 ustring_t	typedef ptr byte
 wstring_t	typedef ptr word
 array_t		typedef ptr ptr sbyte
+warray_t	typedef ptr ptr word
 
 SINT		typedef sdword
 UINT		typedef dword

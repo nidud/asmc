@@ -9,6 +9,7 @@ main proc
   local buf[4096]:sbyte
 
     lea rdi,buf
+    ;int 3
     .assert fopen("test.fil","w")
     mov rsi,rax
     .assert fwrite("abcdefghijklmnopqr",2,9,rsi) == 9

@@ -21,7 +21,7 @@ endif
 endif
 
 ifdef _WIN32
-;include pshpack8.inc
+.pragma pack(push, 8)
 endif
 
 ifndef __IBindCtx_FWD_DEFINED__
@@ -3542,7 +3542,7 @@ IsInternetESCEnabled proto WINAPI
 endif
 
 ifdef _WIN32
-;include poppack.inc
+.pragma pack(pop)
 endif
 
 endif

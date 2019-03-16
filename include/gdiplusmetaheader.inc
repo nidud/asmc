@@ -19,16 +19,16 @@ szlDevice		SIZEL <>
 szlMillimeters		SIZEL <>
 ENHMETAHEADER3		ENDS
 
-;include pshpack2.inc	;; set structure packing to 2
+.pragma pack(push, 2)
 
-PWMFRect16		STRUC 2
+PWMFRect16		STRUC
 Left			dw ?
 Top			dw ?
 Right			dw ?
 Bottom			dw ?
 PWMFRect16		ENDS
 
-WmfPlaceableFileHeader	STRUC 2
+WmfPlaceableFileHeader	STRUC
 Key			dd ?
 Hmf			dw ?
 BoundingBox		PWMFRect16 <>
@@ -37,7 +37,7 @@ Reserved		dd ?
 Checksum		dw ?
 WmfPlaceableFileHeader	ENDS
 
-;include poppack.inc
+.pragma pack(pop)
 
 GDIP_EMFPLUSFLAGS_DISPLAY equ 0x00000001
 

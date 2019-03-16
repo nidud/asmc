@@ -26,7 +26,7 @@ _chdrive proc drive:SINT
         .endif
     .else
         mov errno,EACCES
-        mov oserrno,ERROR_INVALID_DRIVE
+        mov _doserrno,ERROR_INVALID_DRIVE
         or  eax,-1
     .endif
     ret

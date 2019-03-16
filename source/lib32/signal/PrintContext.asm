@@ -29,7 +29,7 @@ bits label byte
 
     .code
 
-PrintContext proc ExcContext:ptr EXCEPTION_CONTEXT, ExcRecord:ptr EXCEPTION_RECORD
+PrintContext proc ExcContext:PCONTEXT, ExcRecord:ptr EXCEPTION_RECORD
 
     mov eax,30303030h
     lea edx,bits
@@ -39,7 +39,7 @@ PrintContext proc ExcContext:ptr EXCEPTION_CONTEXT, ExcRecord:ptr EXCEPTION_RECO
     mov [edx+12],eax
 
     mov eax,ExcContext
-    assume eax:ptr EXCEPTION_CONTEXT
+    assume eax:PCONTEXT
 
     mov eax,[eax].EFlags
     mov ecx,16

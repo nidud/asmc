@@ -15,17 +15,17 @@ __shtypes_h__ equ <>
 
 include wtypes.inc
 
-;include pshpack1.inc
+.pragma pack(push, 1)
 SHITEMID		STRUC
 cb			USHORT ?
 abID			db  1  dup(?)
 SHITEMID		ENDS
 
-;include poppack.inc
+.pragma pack(pop)
 LPSHITEMID		typedef ptr SHITEMID
 LPCSHITEMID		typedef ptr SHITEMID
 
-;include pshpack1.inc
+.pragma pack(push, 1)
 ITEMIDLIST		STRUC
 mkid			SHITEMID <>
 ITEMIDLIST		ENDS
@@ -33,7 +33,7 @@ ITEMIDLIST		ENDS
 ITEMIDLIST_RELATIVE	typedef ITEMIDLIST
 ITEMID_CHILD		typedef ITEMIDLIST
 ITEMIDLIST_ABSOLUTE	typedef ITEMIDLIST
-;include poppack.inc
+.pragma pack(pop)
 
 wirePIDL		typedef ptr BYTE_BLOB
 LPITEMIDLIST		typedef ptr ITEMIDLIST
@@ -115,7 +115,8 @@ STRRET_WSTR		equ 0
 STRRET_OFFSET		equ 0x1
 STRRET_CSTR		equ 0x2
 
-;include pshpack8.inc
+.pragma pack(push, 8)
+
 STRRET			STRUC
 uType			UINT ?
 UNION
@@ -125,10 +126,10 @@ UNION
 ENDS
 STRRET			ENDS
 
-;include poppack.inc
+.pragma pack(pop)
 LPSTRRET		typedef ptr STRRET
 
-;include pshpack1.inc
+.pragma pack(push, 1)
 SHELLDETAILS		STRUC
 fmt			SINT ?
 cxChar			SINT ?
@@ -136,7 +137,7 @@ _str			STRRET <>
 SHELLDETAILS		ENDS
 LPSHELLDETAILS		typedef ptr SHELLDETAILS
 
-;include poppack.inc
+.pragma pack(pop)
 
 if (_WIN32_IE GE _WIN32_IE_IE60SP2)
 PERCEIVED		typedef SDWORD

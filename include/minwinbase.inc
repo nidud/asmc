@@ -68,7 +68,7 @@ nFileSizeHigh		dd ?
 nFileSizeLow		dd ?
 dwReserved0		dd ?
 dwReserved1		dd ?
-cFileName		db MAX_PATH dup(?)
+cFileName		db 260 dup(?)
 cAlternateFileName	db 14 dup(?)
 ifdef _MAC
 dwFileType		dd ?

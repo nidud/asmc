@@ -10,7 +10,7 @@ WT_DEFINE_ALL_APIS equ 1
 ;WT_DEFINE_ALL_APIS equ <>
 endif
 
-;include pshpack8.inc
+.pragma pack(push, 8)
 
 WINTRUST_CONFIG_REGPATH			    equ <L"Software\\Microsoft\\Cryptography\\Wintrust\\Config">
 
@@ -135,7 +135,7 @@ dwUIContext		dd ?
 WINTRUST_DATA		ENDS
 PWINTRUST_DATA		typedef ptr WINTRUST_DATA
 
-;include <poppack.h>
+.pragma pack(pop)
 
 WinVerifyTrust proto WINAPI \
 		  hwnd: HWND,
@@ -240,7 +240,7 @@ WVT_IS_CBSTRUCT_GT_MEMBEROFFSET macro structtypedef, structpassedsize, member
 	exitm<WVT_ISINSTRUCT(structtypedef, structpassedsize, member)>
 	endm
 
-;include <pshpack8.h>
+.pragma pack(push, 8)
 
 CPD_CHOICE_SIP				equ 1
 CPD_USE_NT5_CHAIN_FLAG			equ 0x80000000
@@ -445,7 +445,7 @@ pDefSIPClientData	LPVOID ?
 CRYPT_PROVIDER_DEFUSAGE ENDS
 PCRYPT_PROVIDER_DEFUSAGE typedef ptr CRYPT_PROVIDER_DEFUSAGE
 
-;include <poppack.h>
+.pragma pack(pop)
 
 WT_PROVIDER_DLL_NAME	equ <L"WINTRUST.DLL">
 WT_PROVIDER_CERTTRUST_FUNCTION equ <L"WintrustCertificateTrust">
@@ -512,7 +512,7 @@ WTHelperCertIsSelfSigned proto WINAPI \
 WTHelperCertCheckValidSignature proto WINAPI \
 	     pProvData: ptr CRYPT_PROVIDER_DATA
 
-;include <pshpack8.h>
+.pragma pack(push, 8)
 
 szOID_TRUSTED_CODESIGNING_CA_LIST equ <"1.3.6.1.4.1.311.2.2.1">
 szOID_TRUSTED_CLIENT_AUTH_CA_LIST equ <"1.3.6.1.4.1.311.2.2.2">
@@ -656,7 +656,7 @@ dwCertVersion		dd ?
 CAT_MEMBERINFO		ENDS
 PCAT_MEMBERINFO		typedef ptr CAT_MEMBERINFO
 
-;include <poppack.h>
+.pragma pack(pop)
 
 ifdef WT_DEFINE_ALL_APIS
 

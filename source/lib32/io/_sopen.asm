@@ -172,7 +172,7 @@ _sopen proc c uses esi edi ebx path:LPSTR, oflag, shflag, args:VARARG
                 .if _lseek(esi,0,SEEK_SET) == -1
                     jmp error
                 .endif
-            .elseif oserrno != ERROR_NEGATIVE_SEEK
+            .elseif _doserrno != ERROR_NEGATIVE_SEEK
                 jmp error
             .endif
         .endif
@@ -190,7 +190,7 @@ error:
 error_inval:
     mov errno,EINVAL
     xor eax,eax
-    mov oserrno,eax
+    mov _doserrno,eax
     dec eax
     jmp toend
 _sopen endp

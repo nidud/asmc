@@ -13,7 +13,7 @@ include signal.inc
 
     option win64:nosave
 
-raise proc index:UINT
+raise proc index:SINT
 
     lea r8,sig_table
     mov rax,[r8+rcx*8]
@@ -26,7 +26,7 @@ raise endp
 
     option win64:rsp noauto
 
-signal proc index:UINT, func:ptr proc
+signal proc index:SINT, func:ptr proc
 
     lea r8,sig_table
     mov rax,[r8+rcx*8]

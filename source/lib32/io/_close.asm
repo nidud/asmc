@@ -19,7 +19,7 @@ _close proc handle:SINT
     .if eax < 3 || eax >= _nfile || !(_osfile[eax] & FH_OPEN)
 
         mov errno,EBADF
-        mov oserrno,0
+        mov _doserrno,0
         xor eax,eax
     .else
 

@@ -28,14 +28,19 @@ _OUT_TO_MSGBOX	equ 2
 _REPORT_ERRMODE equ 3
 
 ifndef __PE__
-externdef	__argc:dword
-externdef	__argv:SIZE_T
-externdef	_environ:SIZE_T
-externdef	_pgmptr:SIZE_T
+externdef	__argc:int_t
+externdef	__argv:array_t
+externdef	_environ:array_t
+externdef	_pgmptr:string_t
 endif
 
-abort		proto __cdecl
+ifndef _CRT_TERMINATE_DEFINED
+_CRT_TERMINATE_DEFINED equ <>
 exit		proto __cdecl :int_t
+_exit		proto __cdecl :int_t
+abort		proto __cdecl
+endif
+
 atol		proto __cdecl :LPSTR
 _atoi64		proto __cdecl :LPSTR
 _atoi128	proto __cdecl :LPSTR
@@ -86,9 +91,9 @@ wctype_t	typedef wchar_t
 endif
 
 ifndef __PE__
-externdef	__wargv:SIZE_T
-externdef	_wenviron:SIZE_T
-externdef	_wpgmptr:SIZE_T
+externdef	__wargv:warray_t
+externdef	_wenviron:warray_t
+externdef	_wpgmptr:wstring_t
 endif
 
 _itow		proto __cdecl :SINT, :ptr wchar_t, :SINT
@@ -118,8 +123,19 @@ __wgetmainargs	proto __cdecl :ptr, :ptr, :ptr, :ptr, :ptr
 __iob_func	proto __cdecl
 endif
 
+ifndef _M_CEE_PURE
+__purecall_handler typedef proto __cdecl
+__invalid_parameter_handler typedef proto :wstring_t, :wstring_t, :wstring_t, :uint_t, :ptr uint_t
+_purecall_handler typedef ptr __purecall_handler
+_invalid_parameter_handler typedef ptr __invalid_parameter_handler
+_set_invalid_parameter_handler proto __cdecl :_invalid_parameter_handler
+_get_invalid_parameter_handler proto __cdecl
+_set_purecall_handler proto __cdecl :_purecall_handler
+_get_purecall_handler proto __cdecl
+endif
+
 ifndef _countof
-_countof	equ <lengthof>
+_countof equ <lengthof>
 endif
 
 .pragma list(pop)

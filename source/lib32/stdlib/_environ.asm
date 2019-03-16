@@ -8,7 +8,7 @@ include stdlib.inc
 include crtl.inc
 
 	.data
-	_environ dd 0
+	_environ array_t 0
 
 	.code
 

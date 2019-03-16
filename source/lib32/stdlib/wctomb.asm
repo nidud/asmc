@@ -7,13 +7,17 @@
 include stdlib.inc
 include winnls.inc
 include errno.inc
+include mtdll.inc
 include setlocal.inc
+
+extern __lc_handle:UINT
+extern __lc_codepage:UINT
 
     .code
 
 wctomb proc s:LPSTR, wchar:wchar_t
 
-local defused
+  local defused
 
     mov ecx,s
     movzx edx,wchar

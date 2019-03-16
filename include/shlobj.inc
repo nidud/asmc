@@ -2139,7 +2139,7 @@ if (NTDDI_VERSION GE NTDDI_VISTA)
 SHDID_MOBILE_DEVICE	equ 21
 endif
 
-;include pshpack8.inc
+.pragma pack(push, 8)
 
 SHDESCRIPTIONID		STRUC
 dwDescriptionId		dd ?
@@ -2147,7 +2147,7 @@ clsid			CLSID <>
 SHDESCRIPTIONID		ENDS
 LPSHDESCRIPTIONID	typedef ptr SHDESCRIPTIONID
 
-;include poppack.inc
+.pragma pack(pop)
 
 
 ;SHSTDAPI
@@ -2799,16 +2799,16 @@ OAIF_URL_PROTOCOL	equ 0x00000040
 endif
 OPEN_AS_INFO_FLAGS	typedef SINT
 
-;include pshpack8.inc
+.pragma pack(push, 8)
 
-OPENASINFO		STRUC 8
+OPENASINFO		STRUC
 pcszFile		LPCWSTR ?
 pcszClass		LPCWSTR ?
 oaifInFlags		OPEN_AS_INFO_FLAGS ?
 OPENASINFO		ENDS
 POPENASINFO		typedef ptr OPENASINFO
 
-;include poppack.inc
+.pragma pack(pop)
 
 if (NTDDI_VERSION GE NTDDI_VISTA)
 ;SHSTDAPI

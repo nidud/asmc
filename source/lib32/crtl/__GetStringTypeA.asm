@@ -6,9 +6,13 @@
 
 include ctype.inc
 include stdlib.inc
-include setlocal.inc
 include malloc.inc
 include winnls.inc
+include mtdll.inc
+include setlocal.inc
+
+externdef __lc_handle:UINT
+externdef __lc_codepage:UINT
 
     .code
 

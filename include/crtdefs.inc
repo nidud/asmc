@@ -42,10 +42,8 @@ endif
 
 include sal.inc
 
-ifdef _CRT_PACKING
 undef _CRT_PACKING
-endif
-_CRT_PACKING		equ 8
+_CRT_PACKING equ 8
 
 .pragma pack(push, _CRT_PACKING)
 
@@ -158,6 +156,11 @@ endif
 endif
 endif
 
+ifndef _USE_32BIT_TIME_T
+ifndef _WIN64
+_USE_32BIT_TIME_T equ <>
+endif
+endif
 
 ifndef __CLR_OR_THIS_CALL
 if defined (MRTDLL) OR defined (_M_CEE_PURE)
@@ -453,7 +456,7 @@ ifndef _SIZE_T_DEFINED
 ifdef _WIN64
 size_t typedef qword
 else
-size_t typedef _W64 dword
+size_t typedef dword
 endif
 _SIZE_T_DEFINED equ 1
 endif
@@ -469,7 +472,7 @@ ifndef _INTPTR_T_DEFINED
 ifdef _WIN64
 intptr_t typedef sqword
 else
-intptr_t typedef _W64 sdword
+intptr_t typedef sdword
 endif
 _INTPTR_T_DEFINED equ 1
 endif
@@ -478,7 +481,7 @@ ifndef _UINTPTR_T_DEFINED
 ifdef _WIN64
 uintptr_t typedef qword
 else
-uintptr_t typedef _W64 dword
+uintptr_t typedef dword
 endif
 _UINTPTR_T_DEFINED equ 1
 endif
@@ -487,7 +490,7 @@ ifndef _PTRDIFF_T_DEFINED
 ifdef _WIN64
 ptrdiff_t typedef sqword
 else
-ptrdiff_t typedef _W64 sdword
+ptrdiff_t typedef sdword
 endif
 _PTRDIFF_T_DEFINED equ 1
 endif
@@ -524,7 +527,7 @@ errno_t typedef sdword
 endif
 
 ifndef _TIME32_T_DEFINED
-__time32_t typedef _W64 sdword
+__time32_t typedef sdword
 _TIME32_T_DEFINED equ 1
 endif
 
@@ -534,12 +537,12 @@ _TIME64_T_DEFINED equ 1
 endif
 
 ifndef _TIME_T_DEFINED
-ifdef _USE_32BIT_TIME_T
-time_t typedef __time32_t
+_TIME_T_DEFINED equ <>
+ifdef _WIN64
+time_t		typedef sqword
 else
-time_t typedef __time64_t
+time_t		typedef sdword
 endif
-_TIME_T_DEFINED equ 1
 endif
 
 ifndef _CONST_RETURN

@@ -22,7 +22,7 @@ _write proc uses edi esi ebx h:SINT, b:PVOID, l:SIZE_T
         .if ebx >= _NFILE_
 
             xor eax,eax
-            mov oserrno,eax
+            mov _doserrno,eax
             mov errno,EBADF
             dec eax
             .break
@@ -88,7 +88,7 @@ _write proc uses edi esi ebx h:SINT, b:PVOID, l:SIZE_T
         mov eax,count
         .if !eax
             .if eax == result
-                .if oserrno == 5 ; access denied
+                .if _doserrno == 5 ; access denied
 
                     mov errno,EBADF
                 .endif
@@ -99,7 +99,7 @@ _write proc uses edi esi ebx h:SINT, b:PVOID, l:SIZE_T
                     .break .if byte ptr [ebx] == 26
                 .endif
                 mov errno,ENOSPC
-                mov oserrno,0
+                mov _doserrno,0
             .endif
             dec eax
         .endif

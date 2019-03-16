@@ -9,8 +9,8 @@ include crtl.inc
 include winbase.inc
 
 .data
-__argv	dd 0
-_pgmptr dd 0
+__argv	array_t 0
+_pgmptr string_t 0
 
 .code
 

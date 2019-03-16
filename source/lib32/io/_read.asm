@@ -36,7 +36,7 @@ _read proc uses ebx esi edi h:SINT, b:PVOID, count:SIZE_T
         movzx ecx,_osfile[ebx]
         .break .if ecx & FH_EOF
 
-        mov oserrno,eax
+        mov _doserrno,eax
         .if ecx & FH_PIPE or FH_DEVICE
             mov al,pipech[ebx]
             .if al != 10
@@ -54,7 +54,7 @@ _read proc uses ebx esi edi h:SINT, b:PVOID, count:SIZE_T
             osmaperr()
 
             xor eax,eax
-            mov edx,oserrno
+            mov edx,_doserrno
             .break .if edx == ER_BROKEN_PIPE
 
             dec eax

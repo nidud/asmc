@@ -34,7 +34,7 @@ _getdcwd proc uses rdi drive:SINT, buffer:LPSTR, maxlen:SINT
             shr eax,cl
             .ifnc
 
-                mov oserrno,ERROR_INVALID_DRIVE
+                mov _doserrno,ERROR_INVALID_DRIVE
                 mov errno,EACCES
                 xor eax,eax
                 .break

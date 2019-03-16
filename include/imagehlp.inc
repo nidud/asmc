@@ -8,7 +8,7 @@ _IMAGEHLP64 equ <>
 endif
 endif
 
-;include pshpack8.inc
+.pragma pack(push, 8)
 
 ifndef WINTRUST_H
 include wintrust.inc
@@ -2923,8 +2923,8 @@ IMAGEHLP_SYMBOL_VIRTUAL equ SYMF_VIRTUA
 IMAGEHLP_SYMBOL_THUNK	equ SYMF_THUNK
 IMAGEHLP_SYMBOL_INFO_TLSRELATIVE equ SYMF_TLSRE
 
-;include poppack.inc
-;include pshpack4.inc
+.pragma pack(pop)
+.pragma pack(push, 4)
 
 MINIDUMP_SIGNATURE	equ ('PMDM')
 MINIDUMP_VERSION	equ (42899)
@@ -3587,5 +3587,6 @@ MiniDumpReadDumpStream proto WINAPI \
 	 StreamPointer: ptr PVOID,
 	    StreamSize: ptr ULONG
 
+.pragma pack(pop)
 .pragma list(pop)
 endif

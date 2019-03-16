@@ -10,7 +10,7 @@ include string.inc
 
 	option stackbase:esp
 
-_memicmp proc uses esi edi s1:LPSTR, s2:LPSTR, l:SIZE_T
+_memicmp proc uses esi edi s1:ptr, s2:ptr, l:SIZE_T
 
 	mov	esi,s1
 	mov	edi,s2

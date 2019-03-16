@@ -19,7 +19,7 @@ _close proc handle:SINT
 
         xor eax,eax
         mov errno,EBADF
-        mov oserrno,eax
+        mov _doserrno,eax
     .else
 
         mov byte ptr [rax+rcx],0

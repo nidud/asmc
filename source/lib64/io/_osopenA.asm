@@ -22,7 +22,7 @@ _osopenA PROC USES rsi rdi rbx lpFileName:LPSTR, dwAccess:DWORD, dwShareMode:DWO
             inc eax
             .if eax == _nfile
                 xor eax,eax
-                mov oserrno,eax ; no OS error
+                mov _doserrno,eax ; no OS error
                 mov errno,EBADF
                 dec rax
                 .break

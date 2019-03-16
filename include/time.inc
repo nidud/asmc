@@ -4,8 +4,13 @@ ifndef __LIBC_INC
 endif
 
 ifdef __PE__
-option	dllimport:<msvcrt>
+option dllimport:<msvcrt>
 endif
+
+include crtdefs.inc
+
+.pragma pack(push, _CRT_PACKING)
+
 ;
 ; ISO 8601:	YYYY-MM-DD hh:mm:ss
 ; Short form:	YY-MM-DD hh:mm
@@ -47,6 +52,7 @@ LPSYSTEMTIME	typedef ptr SYSTEMTIME
 endif
 
 ifndef _TM_DEFINED
+_TM_DEFINED equ <>
 tm		STRUC
 tm_sec		SINT ?	;; seconds after the minute - [0,59]
 tm_min		SINT ?	;; minutes after the hour - [0,59]
@@ -58,12 +64,15 @@ tm_wday		SINT ?	;; days since Sunday - [0,6]
 tm_yday		SINT ?	;; days since January 1 - [0,365]
 tm_isdst	SINT ?	;; daylight savings time flag
 tm		ENDS
-_TM_DEFINED	equ 1
 endif
+
+ifndef _TIME_T_DEFINED
+_TIME_T_DEFINED equ <>
 ifdef _WIN64
 time_t		typedef sqword
 else
 time_t		typedef sdword
+endif
 endif
 LPTIME		typedef ptr time_t
 
@@ -130,5 +139,6 @@ TDateToString	proto __cdecl :ptr sbyte, :time_t
 SystemTimeToString proto __cdecl :ptr sbyte, :LPSYSTEMTIME
 SystemDateToString proto __cdecl :ptr sbyte, :LPSYSTEMTIME
 
+.pragma pack(pop)
 endif
 .pragma list(pop)

@@ -15,7 +15,7 @@ _EEND   ENDS
 
     .code
 
-exit proc erlevel:SIZE_T
+exit proc erlevel:SINT
     mov edx,offset _EXIT
     mov eax,offset _EEND
     __initialize(edx, eax)

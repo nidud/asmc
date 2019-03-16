@@ -6,11 +6,11 @@
 
 include stdlib.inc
 IFDEF	_UNICODE
-extern	__wargv:qword
+extern	__wargv:warray_t
 ELSE
-extern	__argv:qword
+extern	__argv:array_t
 ENDIF
 	.data
-	__argc dd 0
+	__argc int_t 0
 
 	END

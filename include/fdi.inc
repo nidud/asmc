@@ -10,7 +10,7 @@ DIAMONDAPI equ <__cdecl>
 endif
 
 ifndef _WIN64
-;include pshpack4.inc
+.pragma pack(push, 4)
 endif
 
 ifndef _INC_WINDOWS
@@ -102,7 +102,7 @@ TCOMPfromLZXWindow macro w
 	endm
 
 ifndef _WIN64
-;include poppack.inc
+.pragma pack(pop)
 endif
 
 endif ;; NOT INCLUDED_TYPES_FCI_FDI
@@ -115,7 +115,7 @@ INCLUDED_FDI equ <>
 include specstrings.inc
 
 ifndef _WIN64
-;include pshpack4.inc
+.pragma pack(push, 4)
 endif
 
 FDIERROR		typedef SDWORD
@@ -310,7 +310,7 @@ FDITruncateCabinet proto WINAPI \
        iFolderToDelete: USHORT
 
 ifndef _WIN64
-;include poppack.inc
+.pragma pack(pop)
 endif
 
 endif

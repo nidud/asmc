@@ -6,11 +6,7 @@ ifdef _MAC
 include macwin32.inc
 endif
 
-ifdef __PE__
-option dllimport:<advapi32>
-else
-includelib advapi32.lib
-endif
+.pragma comment(lib, advapi32)
 
 ifndef WINVER
 WINVER equ 0x0500

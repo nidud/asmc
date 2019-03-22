@@ -18,11 +18,7 @@ endif
 ifndef __d3d11_h__
 __d3d11_h__ equ <>
 
-ifdef __PE__
-option	dllimport:<d3d11>
-else
-includelib d3d11.lib
-endif
+.pragma comment(lib, d3d11)
 
 ifndef __ID3D11DeviceChild_FWD_DEFINED__
 __ID3D11DeviceChild_FWD_DEFINED__ equ 1

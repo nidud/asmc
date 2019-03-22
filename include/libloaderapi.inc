@@ -1,3 +1,4 @@
+.pragma list(push, 0)
 ifndef _APISETLIBLOADER_
 _APISETLIBLOADER_ equ <>
 
@@ -375,4 +376,4 @@ endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 endif ;; NOT defined(_CONTRACT_GEN) OR (_APISET_LIBLOADER_VER GE 0x0100)
 
 endif ;; _APISETLIBLOADER_
-
+.pragma list(pop)

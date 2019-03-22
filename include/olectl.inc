@@ -13,11 +13,7 @@ endif
 include ocidl.inc
 endif
 
-ifdef __PE__
-option	dllimport:<oleaut32>
-else
-includelib oleaut32.lib
-endif
+.pragma comment(lib, oleaut32)
 
 ifdef _OLEAUT32_
 WINOLECTLAPI  equ STDAPI

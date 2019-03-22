@@ -4,13 +4,6 @@ _WINGDI_ equ <>
 ifndef _WINDEF_
  include windef.inc
 endif
-ifdef __PE__
-WINGDIAPI	equ <option dllimport:<gdi32>>
-WINSPOOLAPI	equ <option dllimport:<winspool>>
-else
-WINGDIAPI	equ <>
-WINSPOOLAPI	equ <>
-endif
 
 ifndef WINVER
 WINVER	equ 0x0500
@@ -2490,7 +2483,8 @@ GOBJENUMPROC	typedef FARPROC
 LINEDDAPROC	typedef FARPROC
 endif
 
-WINGDIAPI
+.pragma comment(lib, gdi32)
+
 AddFontResourceA proto WINAPI :LPCSTR
 AddFontResourceW proto WINAPI :LPCWSTR
 ifdef _UNICODE
@@ -2660,7 +2654,8 @@ DCBA_FACEDOWNLEFT	equ 0x0102
 DCBA_FACEDOWNRIGHT	equ 0x0103
 endif
 
-WINSPOOLAPI
+if 0
+.pragma comment(lib, winspool)
 
 DeviceCapabilitiesA proto WINAPI :LPCSTR, :LPCSTR, :WORD, :LPSTR, :LPDEVMODEA
 DeviceCapabilitiesW proto WINAPI :LPCWSTR, :LPCWSTR, :WORD, :LPWSTR, :LPDEVMODEW
@@ -2669,8 +2664,9 @@ DeviceCapabilities equ <DeviceCapabilitiesW>
 else
 DeviceCapabilities equ <DeviceCapabilitiesA>
 endif
+endif
 
-WINGDIAPI
+.pragma comment(lib, gdi32)
 
 DrawEscape proto WINAPI :HDC, :SINT, :SINT, :LPCSTR
 Ellipse proto WINAPI :HDC, :SINT, :SINT, :SINT, :SINT

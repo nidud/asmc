@@ -25,7 +25,7 @@ _getdrive proc
             xor eax,eax
         .endif
     .else
-        osmaperr()
+        _dosmaperr(GetLastError())
     .endif
     ret
 

@@ -5,14 +5,6 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 
-if 0
-ifdef __PE__
-option dllimport:<quadmath>
-else
-includelib quadmath.lib
-endif
-endif
-
 ; Parsing flags
 
 _ST_SIGN	equ 0x0001

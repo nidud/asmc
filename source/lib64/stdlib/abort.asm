@@ -8,25 +8,28 @@ include stdlib.inc
 include crtl.inc
 include setjmp.inc
 
-	.data
-	jmp_exit S_JMPBUF <>
+    .data
+    jmp_exit S_JMPBUF <>
 
-	.code
+    .code
 
-	OPTION	WIN64:2, STACKBASE:rsp
+abort proc
 
-abort	PROC
-	longjmp(addr jmp_exit, 1)
-	ret
-abort	ENDP
+    longjmp(addr jmp_exit, 1)
+    ret
+
+abort endp
 
 Install proc private
-	.if _setjmp(addr jmp_exit)
-	    exit(eax)
-	.endif
-	ret
+
+    .if _setjmp(addr jmp_exit)
+
+        exit(eax)
+    .endif
+    ret
+
 Install endp
 
 .pragma(init(Install, 1))
 
-	END
+    end

@@ -1,3 +1,4 @@
+.pragma list(push, 0)
 ifndef _INC_INTERNAL
 _INC_INTERNAL equ <>
 
@@ -514,8 +515,8 @@ __initmbctable	proto WINAPI
 endif
 
 ifndef _MANAGED_MAIN
-main		proto WINAPI :SINT, :ptr, :ptr
-wmain		proto WINAPI :SINT, :ptr, :ptr wchar_t
+;main		proto WINAPI :SINT, :ptr, :ptr
+;wmain		proto WINAPI :SINT, :ptr, :ptr wchar_t
 endif
 
 __mbtow_environ proto WINAPI
@@ -566,7 +567,7 @@ endif
 _cenvarg		proto __cdecl :ptr char_t, :ptr char_t, :ptr char_t, :ptr char_t, :ptr char_t
 _wcenvarg		proto __cdecl :ptr wchar_t, :ptr wchar_t, :ptr wchar_t, :ptr wchar_t, :ptr wchar_t
 
-_dosmaperr		proto __cdecl :DWORD
+_dosmaperr		proto __cdecl :ulong_t
 _get_errno_from_oserr	proto __cdecl :DWORD
 
 _dospawn		proto __cdecl :int_t, :ptr char_t, :ptr char_t, :ptr char_t
@@ -593,18 +594,7 @@ endif
 include crtdbg.inc
 include errno.inc
 
-__STR2WSTR macro s
-	exitm<L"&s&">
-	endm
-
-_STR2WSTR macro s
-	exitm<__STR2WSTR(s)>
-	endm
-
-__FILEW__		equ <_STR2WSTR(__FILE__)>
-__FUNCTIONW__		equ <_STR2WSTR(__FUNCTION__)>
-
-if NOT defined (_SECURECRT_FILL_BUFFER)
+ifndef _SECURECRT_FILL_BUFFER
 ifdef _DEBUG
 _SECURECRT_FILL_BUFFER	equ 1
 else
@@ -636,13 +626,13 @@ _invoke_watson_if_oneof proto WINAPI \
 
 ifdef _DEBUG
 _CALL_INVALID_PARAMETER macro expr
-	exitm<_invalid_parameter(expr, __FUNCTIONW__, __FILEW__, __LINE__, 0)>
+	exitm<_invalid_parameter(expr, __FUNCTIONW__, __FILEW__, @Line, 0)>
 	endm
 _INVOKE_WATSON_IF_ERROR macro expr
-	exitm<_invoke_watson_if_error((expr), __STR2WSTR(#expr), __FUNCTIONW__, __FILEW__, __LINE__, 0)>
+	exitm<_invoke_watson_if_error((expr), __STR2WSTR(#expr), __FUNCTIONW__, __FILEW__, @Line, 0)>
 	endm
 _INVOKE_WATSON_IF_ONEOF macro expr, errvalue1, errvalue2
-	exitm<_invoke_watson_if_oneof(expr, (errvalue1), (errvalue2), __STR2WSTR(#expr), __FUNCTIONW__, __FILEW__, __LINE__, 0)>
+	exitm<_invoke_watson_if_oneof(expr, (errvalue1), (errvalue2), __STR2WSTR(#expr), __FUNCTIONW__, __FILEW__, @Line, 0)>
 	endm
 else
 _CALL_INVALID_PARAMETER macro expr
@@ -666,26 +656,26 @@ _VALIDATE_RETURN_VOID macro expr, errorcode
 
 ifndef _VALIDATE_RETURN
 _VALIDATE_RETURN macro expr, errorcode, retexpr
-    local x, s1, val
-	for z,<expr>
-	    x SubStr <z>,1,1
-	    ifidn x,<!">
-		s1 equ <z>
-	    else
-		val equ <z>
-	    endif
-	    endm
-	if (val eq 0)
+
+	.ASSERT( expr )
+	.if !( expr )
+
 	    mov errno,errorcode
-	    _INVALID_PARAMETER(_CRT_WIDE(s1))
+	    _INVALID_PARAMETER(_CRT_WIDE(expr) )
 	    mov eax,retexpr
-	endif
-	retm<eax>
+	    .break
+	.endif
+	exitm<>
 	endm
 endif
 
 ifndef _VALIDATE_RETURN_NOEXC
 _VALIDATE_RETURN_NOEXC macro expr, errorcode, retexpr
+	.if ( !(expr) )
+	    mov errno,errorcode
+	    mov eax,retexpr
+	    .break
+	.endif
 	exitm<>
 	endm
 endif
@@ -735,10 +725,10 @@ _CHECK_FH_CLEAR_OSSERR_RETURN_ERRCODE macro handle, retexpr
 	endm
 
 ifdef _DEBUG
-externdef		__crtDebugFillThreshold:size_t
+externdef __crtDebugFillThreshold:size_t
 endif
 
-if NOT defined (_SECURECRT_FILL_BUFFER_THRESHOLD)
+ifndef _SECURECRT_FILL_BUFFER_THRESHOLD
 ifdef _DEBUG
 _SECURECRT_FILL_BUFFER_THRESHOLD equ <__crtDebugFillThreshold>
 else
@@ -748,8 +738,26 @@ endif
 
 if _SECURECRT_FILL_BUFFER
 _SECURECRT__FILL_STRING macro _String, _Size, _Offset
-	exitm<>
-	endm
+ifnb _SECURECRT_FILL_BUFFER_THRESHOLD
+    .ifs (_Size != -1 && _Size != INT_MAX && _Size >= _Offset)
+	mov r10,rdi
+	mov r11,rcx
+	mov rdi,_String
+	add rdi,_Offset
+	mov rax,_Size
+	sub rax,_Offset
+	mov rcx,_SECURECRT_FILL_BUFFER_THRESHOLD
+	.if ( rcx >= rax )
+	    mov rcx,rax
+	.endif
+	mov eax,_SECURECRT_FILL_BUFFER_PATTERN
+	rep stosb
+	mov rdi,r10
+	mov rcx,r11
+    .endif
+endif
+    exitm<>
+    endm
 else  ;; _SECURECRT_FILL_BUFFER
 _SECURECRT__FILL_STRING macro _String, _Size, _Offset
 	exitm<>
@@ -758,8 +766,11 @@ endif
 
 if _SECURECRT_FILL_BUFFER
 _SECURECRT__FILL_BYTE macro _Position
-	exitm<>
-	endm
+    ifnb _SECURECRT_FILL_BUFFER_THRESHOLD
+	mov _Position,_SECURECRT_FILL_BUFFER_PATTERN
+    endif
+    exitm<>
+    endm
 else
 _SECURECRT__FILL_BYTE macro _Position
 	exitm<>
@@ -845,11 +856,12 @@ __copy_to_char proto WINAPI \
 
 
 CRT_WARNING_DISABLE_PUSH macro x,y
-	__pragma(warning(push))
-	exitm<__pragma(warning(disable: x))>
+	.pragma(warning(push))
+	exitm<.pragma(warning(disable: x))>
 	endm
-CRT_WARNING_POP		equ <__pragma(warning(pop))>
+CRT_WARNING_POP		equ <.pragma(warning(pop))>
 
 .pragma pack(pop)
 
 endif  ;; _INC_INTERNAL
+.pragma list(pop)

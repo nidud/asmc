@@ -2208,15 +2208,13 @@ int HllExitDir( int i, struct asm_tok tokenarray[] )
 		    count = 1;
 	    }
 	    level = atol( tokenarray[i+2].string_ptr );
-	    strcpy( buffer, tokenarray[i].string_ptr );
-	    strcat( buffer, " " );
-	    strcat( buffer, tokenarray[i+4].tokpos );
-	    Token_Count = Tokenize( buffer, 0, tokenarray, TOK_DEFAULT );
-	    i = 0;
+	    i += 3;
 	}
 
 	n = hll;
-	for ( ; hll && ( hll->cmd == HLL_IF || hll->cmd == HLL_SWITCH ); hll = hll->next );
+	for ( ; hll && ( hll->cmd == HLL_IF || hll->cmd == HLL_SWITCH ); hll = hll->next )
+	    ;
+
 	while ( hll && level ) {
 	    for ( hll = hll->next; hll &&
 		( hll->cmd == HLL_IF || hll->cmd == HLL_SWITCH); hll = hll->next );

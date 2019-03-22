@@ -5,9 +5,7 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 
-ifdef __PE__
-option	dllimport:<version>
-endif
+.pragma comment(lib, version)
 
 VS_FILE_INFO		equ RT_VERSION
 VS_VERSION_INFO		equ 1

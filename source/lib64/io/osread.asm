@@ -10,9 +10,9 @@ include winbase.inc
 
     .code
 
-    option win64:rsp nosave
+    option win64:nosave
 
-osread proc h:SINT, b:PVOID, z:SIZE_T
+osread proc frame h:SINT, b:PVOID, z:SIZE_T
 
   local count:UINT
 
@@ -21,7 +21,7 @@ osread proc h:SINT, b:PVOID, z:SIZE_T
 
     .ifd !ReadFile(rcx, rdx, r8d, &count, 0)
 
-        osmaperr()
+        _dosmaperr(GetLastError())
         xor eax,eax
     .else
 

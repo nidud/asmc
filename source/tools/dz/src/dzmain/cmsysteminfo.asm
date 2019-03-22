@@ -163,17 +163,17 @@ cmsysteminfo proc uses esi edi ebx
             mov     MinorVersion,edx
             mov     dh,cl
             .switch edx
-              .case _WIN32_WINNT_NT4:     mov eax,@CStr("NT4"):   .endc
-              .case _WIN32_WINNT_WIN2K:   mov eax,@CStr("2K"):    .endc
-              .case _WIN32_WINNT_WINXP:   mov eax,@CStr("XP"):    .endc
-              .case _WIN32_WINNT_WS03:    mov eax,@CStr("WS03"):  .endc
-              .case _WIN32_WINNT_VISTA:   mov eax,@CStr("VISTA"): .endc
-              .case _WIN32_WINNT_WIN7:    mov eax,@CStr("7"):     .endc
-              .case _WIN32_WINNT_WIN8:    mov eax,@CStr("8"):     .endc
-              .case _WIN32_WINNT_WINBLUE: mov eax,@CStr("BLUE"):  .endc
-              .case _WIN32_WINNT_WIN10:   mov eax,@CStr("10"):    .endc
+              .case _WIN32_WINNT_NT4:     lea eax,@CStr("NT4"):   .endc
+              .case _WIN32_WINNT_WIN2K:   lea eax,@CStr("2K"):    .endc
+              .case _WIN32_WINNT_WINXP:   lea eax,@CStr("XP"):    .endc
+              .case _WIN32_WINNT_WS03:    lea eax,@CStr("WS03"):  .endc
+              .case _WIN32_WINNT_VISTA:   lea eax,@CStr("VISTA"): .endc
+              .case _WIN32_WINNT_WIN7:    lea eax,@CStr("7"):     .endc
+              .case _WIN32_WINNT_WIN8:    lea eax,@CStr("8"):     .endc
+              .case _WIN32_WINNT_WINBLUE: lea eax,@CStr("BLUE"):  .endc
+              .case _WIN32_WINNT_WIN10:   lea eax,@CStr("10"):    .endc
               .default
-                mov eax,@CStr("10+")
+                lea eax,@CStr("10+")
             .endsw
             movzx   ecx,[esi].S_DOBJ.dl_rect.rc_x
             movzx   edx,[esi].S_DOBJ.dl_rect.rc_y

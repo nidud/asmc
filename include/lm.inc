@@ -1,12 +1,7 @@
+.pragma list(push, 0)
 ifndef _LM_
 _LM_ equ <>
-.pragma list(push, 0)
-
-ifdef __PE__
-option dllimport:<netapi32>
-else
-includelib netapi32.lib
-endif
+.pragma comment(lib, netapi32)
 
 include lmcons.inc
 include lmerr.inc
@@ -28,6 +23,6 @@ include lmstats.inc
 include lmaudit.inc
 include lmjoin.inc
 
-.pragma list(pop)
 endif
+.pragma list(pop)
 

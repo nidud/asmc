@@ -48,9 +48,7 @@ __RPC_USER		equ <>
 __RPC_STUB		equ <>
 endif
 
-if defined(_RPCRT4_) or defined(__PE__)
-option dllimport:<rpcrt4>
-endif
+.pragma comment(lib, rpcrt4)
 
 include rpcdce.inc
 include rpcnsi.inc

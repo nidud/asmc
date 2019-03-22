@@ -859,11 +859,7 @@ include propsys.inc ;
 include ObjectArray.inc
 include sherrors.inc
 
-ifdef __PE__
-option	dllimport:<shell32>
-else
-includelib shell32.lib
-endif
+.pragma comment(lib, shell32)
 
 CMF_NORMAL		equ 0x00000000
 CMF_DEFAULTONLY		equ 0x00000001

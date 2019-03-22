@@ -10,60 +10,67 @@ include conio.inc
 
         .code
 
-_osopenA PROC USES rsi rdi rbx lpFileName:LPSTR, dwAccess:DWORD, dwShareMode:DWORD,
-        lpSecurity:PVOID, dwCreation:DWORD, dwAttributes:DWORD
+_osopenA proc frame lpFileName:LPSTR, dwAccess:DWORD, dwShareMode:DWORD,
+        lpSecurity:ptr, dwCreation:DWORD, dwAttributes:DWORD
 
-  local NameW[2048]:SBYTE
+  local handle:int_t
+  local NameW[2048]:char_t
 
     .repeat
+
         xor eax,eax
-        lea rsi,_osfile
-        .while BYTE PTR [rsi+rax] & FH_OPEN
+        lea r10,_osfile
+
+        .while byte ptr [r10+rax] & FH_OPEN
+
             inc eax
             .if eax == _nfile
-                xor eax,eax
-                mov _doserrno,eax ; no OS error
+
+                mov _doserrno,0 ; no OS error
                 mov errno,EBADF
-                dec rax
+                mov rax,-1
+
                 .break
             .endif
         .endw
-        mov rbx,rax
-        CreateFileA(lpFileName, dwAccess, dwShareMode, lpSecurity, dwCreation, dwAttributes, 0)
-        mov rdx,rax
-        inc rax
-        .ifz
-            osmaperr()
+
+        mov handle,eax
+        .if CreateFileA(rcx, edx, r8d, r9, dwCreation, dwAttributes, 0) == INVALID_HANDLE_VALUE
+
+            _dosmaperr(GetLastError())
             .break .if edx != ERROR_FILENAME_EXCED_RANGE
-            lea rdx,NameW
-            mov rdi,rdx
-            mov rsi,lpFileName
-            mov ax,'\'
-            stosw
-            stosw
-            mov al,'?'
-            stosw
-            mov al,'\'
-            stosw
+
+            lea rcx,NameW
+            mov rdx,rcx
+            mov r8,lpFileName
+            mov dword ptr [rdx],'\'+('\' shl 16)
+            mov dword ptr [rdx+4],'?'+('\' shl 16)
+            add rdx,8
             .repeat
-                lodsb
-                stosw
+                mov al,[r8]
+                mov [rdx],al
+                add rdx,1
+                add r8,1
             .until !al
-            CreateFileW(rdx, dwAccess, dwShareMode, lpSecurity, dwCreation, dwAttributes, 0)
-            mov rdx,rax
-            inc rax
-            .ifz
-                osmaperr()
+
+            .if CreateFileW(rcx, dwAccess, dwShareMode, lpSecurity, dwCreation,
+                            dwAttributes, 0) == INVALID_HANDLE_VALUE
+
+                _dosmaperr(GetLastError())
                 .break
             .endif
         .endif
-        mov rax,rbx
-        lea rsi,_osfile
-        or  BYTE PTR [rsi+rax],FH_OPEN
-        lea rsi,_osfhnd
-        mov [rsi+rax*8],rdx
+
+        mov rdx,rax
+        mov eax,handle
+        lea rcx,_osfile
+        or  byte ptr [rcx+rax],FH_OPEN
+        lea rcx,_osfhnd
+        mov [rcx+rax*8],rdx
+
     .until 1
     ret
+
 _osopenA endp
 
     end

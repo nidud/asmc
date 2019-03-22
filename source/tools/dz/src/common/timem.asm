@@ -58,7 +58,7 @@ tialloc proc uses esi ti:PTINFO
         mov eax,1
     .else
 
-        ermsg(0, addr CP_ENOMEM)
+        ermsg(0, _sys_errlist[ENOMEM*4])
         xor eax,eax
     .endif
     ret

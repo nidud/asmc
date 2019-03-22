@@ -1,3 +1,4 @@
+.pragma list(push, 0)
 ifndef _INC_MTDLL
 _INC_MTDLL equ <>
 
@@ -65,12 +66,14 @@ LC_STR_TYPE		equ 1
 LC_WSTR_TYPE		equ 2
 
 ifndef _SETLOC_STRUCT_DEFINED
-is_ctype_compatible	STRUC
+_SETLOC_STRUCT_DEFINED equ <>
+
+_is_ctype_compatible	STRUC
 id			dd ?
 is_clike		SINT ?
-is_ctype_compatible	ENDS
+_is_ctype_compatible	ENDS
 
-setloc_struct		STRUC
+_setloc_struct		STRUC
 pchLanguage		LPWSTR ?
 pchCountry		LPWSTR ?
 iLocState		SINT ?
@@ -80,19 +83,17 @@ bAbbrevCountry		BOOL ?
 _cachecp		UINT ?
 _cachein		wchar_t MAX_LC_LEN dup(?)
 _cacheout		wchar_t MAX_LC_LEN dup(?)
-_Loc_c			is_ctype_compatible 5 dup(<>)
+_Loc_c			_is_ctype_compatible 5 dup(<>)
 _cacheLocaleName	wchar_t LOCALE_NAME_MAX_LENGTH dup(?)
-setloc_struct		ENDS
-psetloc_struct		typedef ptr setloc_struct
+_setloc_struct		ENDS
+_psetloc_struct		typedef ptr _setloc_struct
 
-setloc_downlevel_struct	 STRUC
+_setloc_downlevel_struct STRUC
 iLcidState		SINT ?
 lcidLanguage		LCID ?
 lcidCountry		LCID ?
-setloc_downlevel_struct ENDS
-psetloc_downlevel_struct typedef ptr setloc_downlevel_struct
-
-_SETLOC_STRUCT_DEFINED equ 1
+_setloc_downlevel_struct ENDS
+_psetloc_downlevel_struct typedef ptr _setloc_downlevel_struct
 endif
 
 __threadid		proto __cdecl
@@ -154,7 +155,7 @@ _pForeignException	ptr_t ?
 elseifdef _M_IX86
 _pFrameInfoChain	ptr_t ?
 endif
-_setloc_data		setloc_struct <>
+_setloc_data		_setloc_struct <>
 _reserved1		ptr_t ?
 _reserved2		ptr_t ?
 _reserved3		ptr_t ?
@@ -169,7 +170,7 @@ _winRTThreadHandle	HANDLE ?
 else
 _initapartment		int_t ?
 endif
-_setloc_downlevel_data	psetloc_downlevel_struct ?
+_setloc_downlevel_data	_psetloc_downlevel_struct ?
 _tiddata		ENDS
 _ptiddata		typedef ptr _tiddata
 
@@ -241,3 +242,4 @@ endif ;; __assembler
 .pragma pack(pop)
 
 endif ;; _INC_MTDLL
+.pragma list(pop)

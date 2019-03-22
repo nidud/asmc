@@ -1018,6 +1018,11 @@ int FASTCALL GetToken( struct asm_tok token[], struct line_status *p )
 	      ( p->index == 0 || ( token[-1].token != T_REG && token[-1].token != T_CL_BRACKET &&
 		token[-1].token != T_CL_SQ_BRACKET && token[-1].token != T_ID ) ) ) {
 	return( get_id( token, p ) );
+    /* added v2.29 for .break(n) and .continue(n) */
+    } else if( *p->input == '.' && p->index > 3 &&
+	token[-1].token == T_CL_BRACKET && token[-3].token == T_OP_BRACKET &&
+	( token[-4].tokval == T_DOT_BREAK || token[-4].tokval == T_DOT_CONTINUE ) ) {
+	return( get_id( token, p ) );
 #if BACKQUOTES
     } else if( *p->input == '`' && Options.strict_masm_compat == FALSE ) {
 	return( get_id_in_backquotes( token, p ) );

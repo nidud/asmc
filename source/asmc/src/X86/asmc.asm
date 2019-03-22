@@ -136,7 +136,7 @@ endif
     mov numArgs,eax
     mov numFiles,eax
     .if !getenv("ASMC")     ; v2.21 -- getenv() error..
-        mov eax,@CStr("")
+        lea eax,@CStr("")
     .endif
     mov ecx,__argv
     mov [ecx],eax

@@ -5,6 +5,7 @@
 ;
 
 include io.inc
+include errno.inc
 include direct.inc
 include winbase.inc
 
@@ -12,12 +13,12 @@ include winbase.inc
 
     option win64:nosave
 
-_wmkdir proc directory:LPWSTR
+_wmkdir proc frame directory:LPWSTR
 
     .if CreateDirectoryW(rcx, 0)
         xor eax,eax
     .else
-        osmaperr()
+        _dosmaperr(GetLastError())
     .endif
     ret
 

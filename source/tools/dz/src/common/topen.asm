@@ -41,7 +41,7 @@ topen proc uses esi edi file:LPSTR, tflag:UINT
 
                 tiread(esi)
             .else
-                ermsg (0, addr CP_ENOMEM)
+                ermsg (0, _sys_errlist[ENOMEM*4])
 
                 ticlose(esi)
                 xor esi,esi

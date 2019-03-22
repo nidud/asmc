@@ -5,19 +5,20 @@
 ;
 
 include io.inc
+include errno.inc
 include direct.inc
 include winbase.inc
 
     .code
 
-    option win64:nosave rsp
+    option win64:nosave
 
-_rmdir proc directory:LPSTR
+_rmdir proc frame directory:LPSTR
 
     .if RemoveDirectoryA(rcx)
         xor eax,eax
     .else
-        osmaperr()
+        _dosmaperr(GetLastError())
     .endif
     ret
 

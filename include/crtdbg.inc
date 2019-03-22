@@ -459,7 +459,7 @@ endif
 
 _CrtSetReportMode	proto __cdecl :int_t, :int_t
 _CrtSetReportFile	proto __cdecl :int_t, :_HFILE
-_CrtDbgReport		proto __cdecl :int_t, :string_t, :int_t, :string_t, :string_t,
+_CrtDbgReport		proto __cdecl :int_t, :string_t, :int_t, :string_t, :string_t, :vararg
 _CrtSetDebugFillThreshold proto __cdecl :size_t
 
 if NOT defined (_NATIVE_WCHAR_T_DEFINED) AND defined (_M_CEE_PURE)
@@ -544,51 +544,51 @@ _RPTW5 macro rptno, msg, arg1, arg2, arg3, arg4, arg5
 	endm
 
 _RPTF0 macro rptno, msg
-	exitm<_RPT_BASE((rptno, __FILE__, __LINE__, NULL, "%s", msg))>
+	exitm<_RPT_BASE((rptno, @FileCur, @Line, NULL, "%s", msg))>
 	endm
 
 _RPTFW0 macro rptno, msg
-	exitm<_RPT_BASE_W((rptno, _CRT_WIDE(__FILE__), __LINE__, NULL, L"%s", msg))>
+	exitm<_RPT_BASE_W((rptno, _CRT_WIDE(@FileCur), @Line, NULL, L"%s", msg))>
 	endm
 
 _RPTF1 macro rptno, msg, arg1
-	exitm<_RPT_BASE((rptno, __FILE__, __LINE__, NULL, msg, arg1))>
+	exitm<_RPT_BASE((rptno, @FileCur, @Line, NULL, msg, arg1))>
 	endm
 
 _RPTFW1 macro rptno, msg, arg1
-	exitm<_RPT_BASE_W((rptno, _CRT_WIDE(__FILE__), __LINE__, NULL, msg, arg1))>
+	exitm<_RPT_BASE_W((rptno, _CRT_WIDE(@FileCur), @Line, NULL, msg, arg1))>
 	endm
 
 _RPTF2 macro rptno, msg, arg1, arg2
-	exitm<_RPT_BASE((rptno, __FILE__, __LINE__, NULL, msg, arg1, arg2))>
+	exitm<_RPT_BASE((rptno, @FileCur, @Line, NULL, msg, arg1, arg2))>
 	endm
 
 _RPTFW2 macro rptno, msg, arg1, arg2
-	exitm<_RPT_BASE_W((rptno, _CRT_WIDE(__FILE__), __LINE__, NULL, msg, arg1, arg2))>
+	exitm<_RPT_BASE_W((rptno, _CRT_WIDE(@FileCur), @Line, NULL, msg, arg1, arg2))>
 	endm
 
 _RPTF3 macro rptno, msg, arg1, arg2, arg3
-	exitm<_RPT_BASE((rptno, __FILE__, __LINE__, NULL, msg, arg1, arg2, arg3))>
+	exitm<_RPT_BASE((rptno, @FileCur, @Line, NULL, msg, arg1, arg2, arg3))>
 	endm
 
 _RPTFW3 macro rptno, msg, arg1, arg2, arg3
-	exitm<_RPT_BASE_W((rptno, _CRT_WIDE(__FILE__), __LINE__, NULL, msg, arg1, arg2, arg3))>
+	exitm<_RPT_BASE_W((rptno, _CRT_WIDE(@FileCur), @Line, NULL, msg, arg1, arg2, arg3))>
 	endm
 
 _RPTF4 macro rptno, msg, arg1, arg2, arg3, arg4
-	exitm<_RPT_BASE((rptno,__FILE__, __LINE__, NULL, msg, arg1, arg2, arg3, arg4))>
+	exitm<_RPT_BASE((rptno,@FileCur, @Line, NULL, msg, arg1, arg2, arg3, arg4))>
 	endm
 
 _RPTFW4 macro rptno, msg, arg1, arg2, arg3, arg4
-	exitm<_RPT_BASE_W((rptno, _CRT_WIDE(__FILE__), __LINE__, NULL, msg, arg1, arg2, arg3, arg4))>
+	exitm<_RPT_BASE_W((rptno, _CRT_WIDE(@FileCur), @Line, NULL, msg, arg1, arg2, arg3, arg4))>
 	endm
 
 _RPTF5 macro rptno, msg, arg1, arg2, arg3, arg4, arg5
-	exitm<_RPT_BASE((rptno, __FILE__, __LINE__, NULL, msg, arg1, arg2, arg3, arg4, arg5))>
+	exitm<_RPT_BASE((rptno, @FileCur, @Line, NULL, msg, arg1, arg2, arg3, arg4, arg5))>
 	endm
 
 _RPTFW5 macro rptno, msg, arg1, arg2, arg3, arg4, arg5
-	exitm<_RPT_BASE_W((rptno, _CRT_WIDE(__FILE__), __LINE__, NULL, msg, arg1, arg2, arg3, arg4, arg5))>
+	exitm<_RPT_BASE_W((rptno, _CRT_WIDE(@FileCur), @Line, NULL, msg, arg1, arg2, arg3, arg4, arg5))>
 	endm
 
 ifndef _CRT_PORTABLE
@@ -602,19 +602,19 @@ endif
 ifdef _CRTDBG_MAP_ALLOC
 
 malloc macro s
-	exitm<_malloc_dbg(s, _NORMAL_BLOCK, __FILE__, __LINE__)>
+	exitm<_malloc_dbg(s, _NORMAL_BLOCK, @FileCur, @Line)>
 	endm
 calloc macro c, s
-	exitm<_calloc_dbg(c, s, _NORMAL_BLOCK, __FILE__, __LINE__)>
+	exitm<_calloc_dbg(c, s, _NORMAL_BLOCK, @FileCur, @Line)>
 	endm
 realloc macro p, s
-	exitm<_realloc_dbg(p, s, _NORMAL_BLOCK, __FILE__, __LINE__)>
+	exitm<_realloc_dbg(p, s, _NORMAL_BLOCK, @FileCur, @Line)>
 	endm
 _recalloc macro p, c, s
-	exitm<_recalloc_dbg(p, c, s, _NORMAL_BLOCK, __FILE__, __LINE__)>
+	exitm<_recalloc_dbg(p, c, s, _NORMAL_BLOCK, @FileCur, @Line)>
 	endm
 _expand macro p, s
-	exitm<_expand_dbg(p, s, _NORMAL_BLOCK, __FILE__, __LINE__)>
+	exitm<_expand_dbg(p, s, _NORMAL_BLOCK, @FileCur, @Line)>
 	endm
 free macro p
 	exitm<_free_dbg(p, _NORMAL_BLOCK)>
@@ -626,86 +626,86 @@ _aligned_msize macro p, a, o
 	exitm<_aligned_msize_dbg(p, a, o)>
 	endm
 _aligned_malloc macro s, a
-	exitm<_aligned_malloc_dbg(s, a, __FILE__, __LINE__)>
+	exitm<_aligned_malloc_dbg(s, a, @FileCur, @Line)>
 	endm
 _aligned_realloc macro p, s, a
-	exitm<_aligned_realloc_dbg(p, s, a, __FILE__, __LINE__)>
+	exitm<_aligned_realloc_dbg(p, s, a, @FileCur, @Line)>
 	endm
 _aligned_recalloc macro p, c, s, a
-	exitm<_aligned_recalloc_dbg(p, c, s, a, __FILE__, __LINE__)>
+	exitm<_aligned_recalloc_dbg(p, c, s, a, @FileCur, @Line)>
 	endm
 _aligned_offset_malloc macro s, a, o
-	exitm<_aligned_offset_malloc_dbg(s, a, o, __FILE__, __LINE__)>
+	exitm<_aligned_offset_malloc_dbg(s, a, o, @FileCur, @Line)>
 	endm
 _aligned_offset_realloc macro p, s, a, o
-	exitm<_aligned_offset_realloc_dbg(p, s, a, o, __FILE__, __LINE__)>
+	exitm<_aligned_offset_realloc_dbg(p, s, a, o, @FileCur, @Line)>
 	endm
 _aligned_offset_recalloc macro p, c, s, a, o
-	exitm<_aligned_offset_recalloc_dbg(p, c, s, a, o, __FILE__, __LINE__)>
+	exitm<_aligned_offset_recalloc_dbg(p, c, s, a, o, @FileCur, @Line)>
 	endm
 _aligned_free macro p
 	exitm<_aligned_free_dbg(p)>
 	endm
 
 _malloca macro s
-	exitm<_malloca_dbg(s, _NORMAL_BLOCK, __FILE__, __LINE__)>
+	exitm<_malloca_dbg(s, _NORMAL_BLOCK, @FileCur, @Line)>
 	endm
 _freea macro p
 	exitm<_freea_dbg(p, _NORMAL_BLOCK)>
 	endm
 
 _strdup macro s
-	exitm<_strdup_dbg(s, _NORMAL_BLOCK, __FILE__, __LINE__)>
+	exitm<_strdup_dbg(s, _NORMAL_BLOCK, @FileCur, @Line)>
 	endm
 _wcsdup macro s
-	exitm<_wcsdup_dbg(s, _NORMAL_BLOCK, __FILE__, __LINE__)>
+	exitm<_wcsdup_dbg(s, _NORMAL_BLOCK, @FileCur, @Line)>
 	endm
 _mbsdup macro s
-	exitm<_strdup_dbg(s, _NORMAL_BLOCK, __FILE__, __LINE__)>
+	exitm<_strdup_dbg(s, _NORMAL_BLOCK, @FileCur, @Line)>
 	endm
 _tempnam macro s1, s2
-	exitm<_tempnam_dbg(s1, s2, _NORMAL_BLOCK, __FILE__, __LINE__)>
+	exitm<_tempnam_dbg(s1, s2, _NORMAL_BLOCK, @FileCur, @Line)>
 	endm
 _wtempnam macro s1, s2
-	exitm<_wtempnam_dbg(s1, s2, _NORMAL_BLOCK, __FILE__, __LINE__)>
+	exitm<_wtempnam_dbg(s1, s2, _NORMAL_BLOCK, @FileCur, @Line)>
 	endm
 _fullpath macro s1, s2, le
-	exitm<_fullpath_dbg(s1, s2, le, _NORMAL_BLOCK, __FILE__, __LINE__)>
+	exitm<_fullpath_dbg(s1, s2, le, _NORMAL_BLOCK, @FileCur, @Line)>
 	endm
 _wfullpath macro s1, s2, le
-	exitm<_wfullpath_dbg(s1, s2, le, _NORMAL_BLOCK, __FILE__, __LINE__)>
+	exitm<_wfullpath_dbg(s1, s2, le, _NORMAL_BLOCK, @FileCur, @Line)>
 	endm
 _getcwd macro s, le
-	exitm<_getcwd_dbg(s, le, _NORMAL_BLOCK, __FILE__, __LINE__)>
+	exitm<_getcwd_dbg(s, le, _NORMAL_BLOCK, @FileCur, @Line)>
 	endm
 _wgetcwd macro s, le
-	exitm<_wgetcwd_dbg(s, le, _NORMAL_BLOCK, __FILE__, __LINE__)>
+	exitm<_wgetcwd_dbg(s, le, _NORMAL_BLOCK, @FileCur, @Line)>
 	endm
 _getdcwd macro d, s, le
-	exitm<_getdcwd_dbg(d, s, le, _NORMAL_BLOCK, __FILE__, __LINE__)>
+	exitm<_getdcwd_dbg(d, s, le, _NORMAL_BLOCK, @FileCur, @Line)>
 	endm
 _wgetdcwd macro d, s, le
-	exitm<_wgetdcwd_dbg(d, s, le, _NORMAL_BLOCK, __FILE__, __LINE__)>
+	exitm<_wgetdcwd_dbg(d, s, le, _NORMAL_BLOCK, @FileCur, @Line)>
 	endm
 _dupenv_s macro ps1, size, s2
-	exitm<_dupenv_s_dbg(ps1, size, s2, _NORMAL_BLOCK, __FILE__, __LINE__)>
+	exitm<_dupenv_s_dbg(ps1, size, s2, _NORMAL_BLOCK, @FileCur, @Line)>
 	endm
 _wdupenv_s macro ps1, size, s2
-	exitm<_wdupenv_s_dbg(ps1, size, s2, _NORMAL_BLOCK, __FILE__, __LINE__)>
+	exitm<_wdupenv_s_dbg(ps1, size, s2, _NORMAL_BLOCK, @FileCur, @Line)>
 	endm
 
 if (__STDC__ eq 0)
 strdup macro s
-	exitm<_strdup_dbg(s, _NORMAL_BLOCK, __FILE__, __LINE__)>
+	exitm<_strdup_dbg(s, _NORMAL_BLOCK, @FileCur, @Line)>
 	endm
 wcsdup macro s
-	exitm<_wcsdup_dbg(s, _NORMAL_BLOCK, __FILE__, __LINE__)>
+	exitm<_wcsdup_dbg(s, _NORMAL_BLOCK, @FileCur, @Line)>
 	endm
 tempnam macro s1, s2
-	exitm<_tempnam_dbg(s1, s2, _NORMAL_BLOCK, __FILE__, __LINE__)>
+	exitm<_tempnam_dbg(s1, s2, _NORMAL_BLOCK, @FileCur, @Line)>
 	endm
 getcwd macro s, le
-	exitm<_getcwd_dbg(s, le, _NORMAL_BLOCK, __FILE__, __LINE__)>
+	exitm<_getcwd_dbg(s, le, _NORMAL_BLOCK, @FileCur, @Line)>
 	endm
 endif
 

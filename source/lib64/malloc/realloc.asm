@@ -13,9 +13,7 @@ _GLOBAL equ 2
 
     .code
 
-    OPTION PROLOGUE:NONE, EPILOGUE:NONE
-
-realloc PROC pblck:ptr, newsize:size_t
+realloc proc frame uses rsi rdi pblck:ptr, newsize:size_t
 
     .repeat
         ;
@@ -100,8 +98,6 @@ realloc PROC pblck:ptr, newsize:size_t
             .endif
         .endif
 
-        push rsi
-        push rdi
         mov rsi,r8  ; block
         mov rdi,rax ; new size
         .if malloc(rax)
@@ -114,8 +110,6 @@ realloc PROC pblck:ptr, newsize:size_t
             rep movsb
             free(rdx)
         .endif
-        pop rdi
-        pop rsi
 
     .until 1
     ret

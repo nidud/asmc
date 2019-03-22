@@ -2,9 +2,7 @@ include d3dx9.inc
 ifndef __D3DX9MATH_H__
 __D3DX9MATH_H__ equ <>
 include math.inc
-ifdef __PE__
-option dllimport:<d3dx9_40>
-endif
+.pragma comment(lib, d3dx9_40)
 
 D3DX_PI			equ 3.141592654
 D3DX_1BYPI		equ 0.318309886

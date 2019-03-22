@@ -63,11 +63,8 @@ endif
 
 include d3d9types.inc
 include d3d9caps.inc
-ifdef __PE__
-option	dllimport:<d3d9>
-else
-includelib d3d9.lib
-endif
+
+.pragma comment(lib, d3d9)
 
 ;IDirect3D9 *
 Direct3DCreate9 proto WINAPI SDKVersion:UINT

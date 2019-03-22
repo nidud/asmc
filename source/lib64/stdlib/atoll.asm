@@ -1,4 +1,4 @@
-; _ATOI64.ASM--
+; ATOLL.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
@@ -6,6 +6,7 @@
 
     .code
 
+atoll::
 _atoi64::
 
     xor rax,rax

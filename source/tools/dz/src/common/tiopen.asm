@@ -58,7 +58,7 @@ tiopen proc uses esi ti:PTINFO, tabsize:UINT, flags:UINT
 toend:
     ret
 nomem:
-    ermsg(0, &CP_ENOMEM)
+    ermsg(0, _sys_errlist[ENOMEM*4])
     xor eax,eax
     jmp toend
 tiopen	endp

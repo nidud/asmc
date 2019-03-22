@@ -12,7 +12,7 @@ include consx.inc
 errnomsg proc etitle:LPSTR, format:LPSTR, file:LPSTR
 
     mov eax,errno
-    ermsg(etitle, format, file, sys_errlist[eax*4])
+    ermsg(etitle, format, file, _sys_errlist[eax*4])
     mov eax,-1
     ret
 

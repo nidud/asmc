@@ -15,7 +15,7 @@ include stdlib.inc
 CreateBatch proc uses ebx cmd, CallBatch, UpdateEnviron
 local batch[_MAX_PATH]:sbyte, argv0[_MAX_PATH]:sbyte, temp:ptr byte
 
-    mov temp,@CStr(".")
+    mov temp,offset @CStr(".")
     .if getenv("TEMP")
         mov temp,eax
     .endif

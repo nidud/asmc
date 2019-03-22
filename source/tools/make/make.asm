@@ -169,7 +169,7 @@ ltoken proc uses esi edi ebx string:ptr sbyte
             .endif
             dec esi
             mov byte ptr [esi],0
-            salloc(token)
+            _strdup(token)
             mov byte ptr [esi],'='
             mov token,esi
             .break
@@ -245,7 +245,7 @@ alloc_string proc uses edi value:sdword
   local base
     mov edi,alloca(MAXTARGET)
     ExpandEnvironmentStrings(value, edi, MAXTARGET-1)
-    salloc(edi)
+    _strdup(edi)
     ret
 alloc_string endp
 
@@ -263,7 +263,7 @@ addsymbol proc uses edi symbol:ptr sbyte, value:sdword
                 lea edi,[edi+eax*4]
                 inc eax
                 mov symbol_count,eax
-                .break .if !salloc(symbol)
+                .break .if !_strdup(symbol)
                 mov [edi],eax
                 mov eax,value
                 .break(1) .if !eax
@@ -329,7 +329,7 @@ expandsymbol proc uses esi edi ebx string:ptr sbyte
         perror(string)
         exit(1)
     .until 1
-    salloc(esi)
+    _strdup(esi)
     ret
 expandsymbol endp
 
@@ -737,7 +737,7 @@ CASE_SUFFIXES:  ; the suffixes list for selecting implicit rules
     mov eax,edx
     .while eax
         .break .if byte ptr [eax] != '.'
-        mov [esi-4],salloc(eax)
+        mov [esi-4],_strdup(eax)
         add esi,4
         strtoken(0)
     .endw
@@ -752,7 +752,7 @@ CASE_EXTENSIONS:; add extensions to the suffixes list
     .endw
     .while strtoken(0)
         .break .if byte ptr [eax] != '.'
-        mov [esi-4],salloc(eax)
+        mov [esi-4],_strdup(eax)
         add esi,4
     .endw
     jmp lineloop
@@ -830,7 +830,7 @@ addtarget proc uses esi edi ebx target:ptr sbyte
 
     .repeat
 
-        .if !salloc(strstart(edi))
+        .if !_strdup(strstart(edi))
 
             perror("To many targets..")
             exit(1)
@@ -863,7 +863,7 @@ addtarget proc uses esi edi ebx target:ptr sbyte
                 mov byte ptr [eax],0
                 lea edx,[eax+1]
                 push edx
-                .if !salloc(addr [ebx+1])
+                .if !_strdup(addr [ebx+1])
 
                     perror("To many targets..")
                     exit(1)
@@ -887,7 +887,7 @@ addtarget proc uses esi edi ebx target:ptr sbyte
 
         .if byte ptr [edi]
 
-            .if !salloc(edi)
+            .if !_strdup(edi)
 
                 perror("To many targets..")
                 exit(1)
@@ -1124,9 +1124,9 @@ build_target proc uses esi edi ebx target:ptr S_TARGET
 
     mov byte ptr [edi],0
     mov edi,base
-    salloc(edi)
+    _strdup(edi)
     mov target_path,eax
-    salloc(eax)
+    _strdup(eax)
     mov target_name,eax
     mov ebx,eax
     .if strrchr(eax, ':')
@@ -1134,7 +1134,7 @@ build_target proc uses esi edi ebx target:ptr S_TARGET
     .endif
 
     strtrim(ebx)
-    salloc(strfn(ebx))
+    _strdup(strfn(ebx))
     mov target_file,eax
     .if strext(eax)
         mov byte ptr [eax],0

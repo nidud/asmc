@@ -5,11 +5,7 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 
-ifdef __PE__
-option  dllimport:<msvcrt>
-else
-includelib libc.lib
-endif
+.pragma comment(lib, libc, msvcrt)
 
 ifndef double
 double typedef REAL8

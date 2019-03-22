@@ -3,12 +3,7 @@ _PDH_H_ equ <>
 include windows.inc
 include winperf.inc
 .pragma list(push, 0)
-
-ifdef __PE__
-option dllimport:<pdh>
-else
-includelib pdh.lib
-endif
+.pragma comment(lib, pdh)
 
 PDH_STATUS		typedef LONG
 PDH_FUNCTION		equ PDH_STATUS ;__stdcall

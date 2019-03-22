@@ -6,6 +6,7 @@
 
 include crtl.inc
 include io.inc
+include errno.inc
 include time.inc
 include winbase.inc
 
@@ -22,7 +23,7 @@ _findnext PROC USES rsi rdi handle: HANDLE, ff: ptr _finddata_t
     .if FindNextFileA(rcx, rsi)
         copyblock()
     .else
-        osmaperr()
+        _dosmaperr(GetLastError())
     .endif
     ret
 
@@ -39,7 +40,7 @@ _findfirst PROC USES rsi rdi rbx lpFileName:LPSTR, ff:PTR _finddata_t
         copyblock()
         mov rax,rbx
     .else
-        osmaperr()
+        _dosmaperr(GetLastError())
     .endif
     ret
 
@@ -48,7 +49,7 @@ _findfirst ENDP
 _findclose PROC h:HANDLE
 
     .if !FindClose(rcx)
-        osmaperr()
+        _dosmaperr(GetLastError())
     .else
         xor eax,eax
     .endif

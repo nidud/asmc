@@ -7,22 +7,27 @@ include winbase.inc
     .code
 
 main proc argc:dword, argv:ptr
-local cmd[_MAX_PATH]:byte
-local com[_MAX_PATH]:byte
+
+  local cmd[_MAX_PATH]:byte
+  local com[_MAX_PATH]:byte
+
     mov edi,argc
     mov esi,argv
+
     .if edi > 1
+
         lea ebx,cmd
         lodsd
         lodsd
         strcpy(ebx, eax)
-        sub edi,2
-        .while edi
+
+        .for ( edi -= 2: edi: edi-- )
+
             strcat(ebx, " ")
             lodsd
             strcat(ebx, eax)
-            dec edi
-        .endw
+        .endf
+
         mov edi,GetTickCount()
         system(ebx)
         sub GetTickCount(),edi
@@ -33,6 +38,7 @@ local com[_MAX_PATH]:byte
                "USAGE: TI <command> <args>\n\n")
     .endif
     ret
+
 main endp
 
     end

@@ -238,9 +238,9 @@ ms32_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:SI
                 and eax,P_CPU_MASK
                 .if eax >= P_386
 
-                    mov eax,@CStr("movzx")
+                    lea eax,@CStr("movzx")
                     .if [esi].asym.mem_type & MT_SIGNED
-                        mov eax,@CStr("movsx")
+                        lea eax,@CStr("movsx")
                     .endif
                     AddLineQueueX(" %s %r, %s", eax, ebx, paramvalue)
                 .else
@@ -344,9 +344,9 @@ vc32_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:SI
                     .break
                 .endif
 
-                mov eax,@CStr("movzx")
+                lea eax,@CStr("movzx")
                 .if [esi].asym.mem_type & MT_SIGNED
-                    mov eax,@CStr("movsx")
+                    lea eax,@CStr("movsx")
                 .endif
                 AddLineQueueX(" %s %r, %s", eax, ebx, paramvalue)
             .else
@@ -1074,9 +1074,9 @@ ms64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:SI
                             .endif
                         .else
                             .if IS_SIGNED([edi].expr.mem_type)
-                                mov eax,@CStr("movsx")
+                                lea eax,@CStr("movsx")
                             .else
-                                mov eax,@CStr("movzx")
+                                lea eax,@CStr("movzx")
                             .endif
                             AddLineQueueX(" %s %r, %s", eax, i, paramvalue)
                         .endif
@@ -1250,9 +1250,9 @@ ms64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:SI
                     .endif
                 .else
                     .if IS_SIGNED([edi].expr.mem_type)
-                        mov eax,@CStr("movsx")
+                        lea eax,@CStr("movsx")
                     .else
-                        mov eax,@CStr("movzx")
+                        lea eax,@CStr("movzx")
                     .endif
                     AddLineQueueX(" %s %r, %s", eax, ebx, paramvalue)
                 .endif
@@ -1666,9 +1666,9 @@ elf64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:S
                         movzx ebx,elf64_regs[esi+2*6]
                     .endif
                     .if IS_SIGNED([edi].expr.mem_type)
-                        mov eax,@CStr("movsx")
+                        lea eax,@CStr("movsx")
                     .else
-                        mov eax,@CStr("movzx")
+                        lea eax,@CStr("movzx")
                     .endif
                     AddLineQueueX(" %s %r, %s", eax, ebx, paramvalue)
                 .endif

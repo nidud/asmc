@@ -21,7 +21,7 @@ _disk_retry proc private uses edi disk
         sub edx,22
         add ecx,2
         mov eax,errno
-        scputs(edx, ecx, 0, 29, sys_errlist[eax*4])
+        scputs(edx, ecx, 0, 29, _sys_errlist[eax*4])
         dlmodal(edi)
         test   eax,eax
     .endif

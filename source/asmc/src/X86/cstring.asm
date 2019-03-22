@@ -452,16 +452,16 @@ local   rc:                     SINT,
                     and eax,0x00FFFFFF
                     .if eax != '""'
                         .if Unicode
-                            mov ecx,@CStr(" %s dw %s,0")
+                            lea ecx,@CStr(" %s dw %s,0")
                         .else
-                            mov ecx,@CStr(" %s sbyte %s,0")
+                            lea ecx,@CStr(" %s sbyte %s,0")
                         .endif
                         sprintf(b_data, ecx, b_label, buffer)
                     .else
                         .if Unicode
-                            mov ecx,@CStr(" %s dw 0")
+                            lea ecx,@CStr(" %s dw 0")
                         .else
-                            mov ecx,@CStr(" %s sbyte 0")
+                            lea ecx,@CStr(" %s sbyte 0")
                         .endif
                         sprintf(b_data, ecx, b_label)
                     .endif
@@ -550,11 +550,15 @@ CString PROC USES esi edi ebx buffer:LPSTR, tokenarray:PTR asmtok
 
     mov ebx,tokenarray
     mov edi,_stricmp([ebx].asmtok.string_ptr, "@CStr")
+
     .if edi
+
         .while [ebx].asmtok.token != T_FINAL
+
             .break .if !_stricmp([ebx].asmtok.string_ptr, "@CStr")
             add ebx,16
         .endw
+
         .if [ebx].asmtok.token == T_FINAL && [ebx+16].asmtok.token == T_OP_BRACKET
             add ebx,16
         .elseif [ebx].asmtok.token != T_FINAL
@@ -593,7 +597,9 @@ CString PROC USES esi edi ebx buffer:LPSTR, tokenarray:PTR asmtok
 
             mov esi,eax
             .if edi
-                strcpy( buffer, "offset " )
+                ;.if ( ModuleInfo.Ofssize != USE64 )
+                ;    strcpy( buffer, "offset " )
+                ;.endif
                 strcat( buffer, dlabel )
             .else
                 ;
@@ -612,17 +618,17 @@ CString PROC USES esi edi ebx buffer:LPSTR, tokenarray:PTR asmtok
 
                     .if Unicode
 
-                        mov ecx,@CStr(" %s dw %s,0")
+                        lea ecx,@CStr(" %s dw %s,0")
                     .else
-                        mov ecx,@CStr(" %s sbyte %s,0")
+                        lea ecx,@CStr(" %s sbyte %s,0")
                     .endif
                     sprintf(cursrc, ecx, dlabel, string)
                 .else
                     .if Unicode
 
-                        mov ecx,@CStr(" %s dw 0")
+                        lea ecx,@CStr(" %s dw 0")
                     .else
-                        mov ecx,@CStr(" %s sbyte 0")
+                        lea ecx,@CStr(" %s sbyte 0")
                     .endif
                     sprintf(cursrc, ecx, dlabel)
                 .endif
@@ -632,7 +638,6 @@ CString PROC USES esi edi ebx buffer:LPSTR, tokenarray:PTR asmtok
                 xor esi,esi
                 mov ebx,ModuleInfo.currseg
                 .if _stricmp( [ebx].asym._name, "_DATA" )
-
                     inc esi
                     InsertLine(".data")
                 .elseif edi

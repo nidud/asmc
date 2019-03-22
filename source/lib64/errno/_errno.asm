@@ -1,4 +1,4 @@
-; ERRNO.ASM--
+; _ERRNO.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
@@ -6,11 +6,16 @@
 
 include errno.inc
 
-PUBLIC	errno
-PUBLIC	_doserrno
+    .data
+    ErrnoNoMem int_t ENOMEM
 
-	.data
-	errno	dd 0
-	_doserrno dd 0
+    .code
 
-	END
+_errno proc
+
+    lea rax,ErrnoNoMem
+    ret
+
+_errno endp
+
+    end

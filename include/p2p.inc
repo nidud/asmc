@@ -240,11 +240,7 @@ pfnAuthFailed		PFNPEER_ON_PASSWORD_AUTH_FAILED ?
 PEER_SECURITY_INTERFACE ENDS
 PPEER_SECURITY_INTERFACE typedef ptr PEER_SECURITY_INTERFACE
 
-ifdef __PE__
-option dllimport:<p2pgraph>
-else
-includelib p2pgraph.lib
-endif
+.pragma comment(lib, p2pgraph)
 
 PeerGraphStartup proto WINAPI \
      wVersionRequested: WORD,
@@ -441,11 +437,7 @@ PeerGraphUniversalTimeToPeerTime proto WINAPI \
 endif ;;   MIDL_PASS
 endif ;; NO_P2P_GRAPH
 
-ifdef __PE__
-option dllimport:<p2p>
-else
-includelib p2p.lib
-endif
+.pragma comment(lib, p2p)
 
 if ( NOT (defined (NO_P2P_GROUP)) OR ( NOT defined (NO_P2P_IDENTITY)))
 ifndef MIDL_PASS

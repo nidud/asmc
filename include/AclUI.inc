@@ -4,12 +4,7 @@ include objbase.inc
 include commctrl.inc
 include accctrl.inc
 .pragma list(push, 0)
-
-ifdef __PE__
-dllimport:<aclui>
-else
-includelib aclui.lib
-endif
+.pragma comment(lib, aclui)
 
 SI_OBJECT_INFO		STRUC
 dwFlags			dd ?

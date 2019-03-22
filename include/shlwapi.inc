@@ -12,11 +12,7 @@ include shtypes.inc
 
 ifndef WINSHLWAPI
 ifndef _SHLWAPI_
-ifdef __PE__
-option	dllimport:<shlwapi>
-else
-includelib shlwapi.lib
-endif
+.pragma comment(lib, shlwapi)
 endif
 endif
 

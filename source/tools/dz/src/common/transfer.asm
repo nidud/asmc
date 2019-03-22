@@ -268,7 +268,7 @@ cmspawnini proc uses ebx IniSection
             .if !CreateConsole(ebx, _P_WAIT)
 
                 mov eax,errno
-                mov eax,sys_errlist[eax*4]
+                mov eax,_sys_errlist[eax*4]
                 ermsg(0, "Unable to execute command:\n\n%s\n\n'%s'", __srcfile, eax)
                 xor eax,eax
             .endif

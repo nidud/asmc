@@ -5,10 +5,7 @@ ifndef _WINNETWK_
 _WINNETWK_ equ <>
 .pragma list(push, 0)
 
-ifdef __PE__
-option dllimport:<mpr>
-endif
-
+.pragma comment(lib, mpr)
 
 WNNC_NET_MSNET		equ 0x00010000
 WNNC_NET_LANMAN		equ 0x00020000

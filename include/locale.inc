@@ -34,9 +34,45 @@ n_sep_by_space	BYTE ?
 p_sign_posn	BYTE ?
 n_sign_posn	BYTE ?
 lconv		ENDS
+LPLCONV		typedef ptr lconv
 
-setlocale	PROTO :SINT, :LPSTR
-localeconv	PROTO
-_wsetlocale	PROTO :SINT, :LPWSTR
+ifndef _CONFIG_LOCALE_SWT
+_CONFIG_LOCALE_SWT equ <>
+_ENABLE_PER_THREAD_LOCALE	    equ 0x1
+_DISABLE_PER_THREAD_LOCALE	    equ 0x2
+_ENABLE_PER_THREAD_LOCALE_GLOBAL    equ 0x10
+_DISABLE_PER_THREAD_LOCALE_GLOBAL   equ 0x20
+_ENABLE_PER_THREAD_LOCALE_NEW	    equ 0x100
+_DISABLE_PER_THREAD_LOCALE_NEW	    equ 0x200
+endif
+
+_configthreadlocale	proto __cdecl :int_t
+setlocale		proto __cdecl :int_t, :string_t
+localeconv		proto __cdecl
+_get_current_locale	proto __cdecl
+_create_locale		proto __cdecl :int_t, :string_t
+
+ifndef _locale_t
+pthreadlocinfo		typedef ptr threadlocinfo
+pthreadmbcinfo		typedef ptr threadmbcinfo
+_locale_tstruct		STRUC
+locinfo			pthreadlocinfo ?
+mbcinfo			pthreadmbcinfo ?
+_locale_tstruct		ENDS
+_locale_t		typedef ptr _locale_tstruct
+endif
+_free_locale		proto __cdecl :_locale_t
+
+ifdef _CRT_USE_WINAPI_FAMILY_DESKTOP_APP
+__get_current_locale	proto __cdecl
+__create_locale		proto __cdecl :int_t, :string_t
+__free_locale		proto __cdecl :_locale_t
+endif
+
+ifndef _WLOCALE_DEFINED
+_WLOCALE_DEFINED equ <>
+_wsetlocale		proto __cdecl :int_t, :wstring_t
+_wcreate_locale		proto __cdecl :int_t, :wstring_t
+endif
 
 .pragma list(pop)

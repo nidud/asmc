@@ -5,11 +5,7 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 
-ifdef __PE__
-option	dllimport:<msvcrt>
-else
-includelib libc.lib
-endif
+.pragma comment(lib, libc, msvcrt)
 
 include crtdefs.inc
 
@@ -157,6 +153,33 @@ _wfindnexti64	proto __cdecl :LONG, :ptr _wfinddatai64_t
 endif
 endif
 endif ; _WIO_DEFINED
+
+__lock_fhandle	proto __cdecl :int_t
+_unlock_fhandle proto __cdecl :int_t
+
+ifdef _CRTBLD
+ifndef _NOT_CRTL_BUILD_
+_chsize_nolock	proto __cdecl :int_t, :int64_t
+_close_nolock	proto __cdecl :int_t
+_lseek_nolock	proto __cdecl :int_t, :long_t, :int_t
+_setmode_nolock proto __cdecl :int_t, :int_t
+_read_nolock	proto __cdecl :int_t, :ptr, :uint_t
+_write_nolock	proto __cdecl :int_t, :ptr, :uint_t
+_lseeki64_nolock proto __cdecl :int_t, :int64_t, :int_t
+if defined (_CRT_DISABLE_PERFCRIT_LOCKS) and not defined (_DLL)
+_chsize		equ <_chsize_nolock>
+_close		equ <_close_nolock>
+_lseek		equ <_lseek_nolock>
+_setmode	equ <_setmode_nolock>
+_read		equ <_read_nolock>
+_write		equ <_write_nolock>
+_lseeki64	equ <_lseeki64_nolock>
+endif
+endif ;; _NOT_CRTL_BUILD_
+endif ;; _CRTBLD
+
+_get_osfhandle	proto __cdecl :int_t
+_open_osfhandle proto __cdecl :intptr_t, :int_t
 
 ifndef __PE__
 _osopenA	proto __cdecl :LPSTR, :UINT, :UINT, :PVOID, :UINT, :UINT

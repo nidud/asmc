@@ -1,14 +1,10 @@
+.pragma list(push, 0)
 ifndef __STRING_INC
 __STRING_INC equ <>
-.pragma list(push, 0)
 ifndef __LIBC_INC
  include libc.inc
 endif
-ifdef __PE__
-option dllimport:<msvcrt>
-else
-includelib libc.lib
-endif
+.pragma comment(lib, libc, msvcrt)
 
 memchr		proto __cdecl :ptr, :int_t, :size_t
 memcpy		proto __cdecl :ptr, :ptr, :size_t
@@ -47,6 +43,7 @@ wcscmp		proto __cdecl :ptr wchar_t, :ptr wchar_t
 wcscpy		proto __cdecl :ptr wchar_t, :ptr wchar_t
 wcscspn		proto __cdecl :ptr wchar_t, :ptr wchar_t
 wcslen		proto __cdecl :ptr wchar_t
+wcsnlen		proto __cdecl :ptr wchar_t, :size_t
 wcsncat		proto __cdecl :ptr wchar_t, :ptr wchar_t, :size_t
 wcsncmp		proto __cdecl :ptr wchar_t, :ptr wchar_t, :size_t
 wcsncpy		proto __cdecl :ptr wchar_t, :ptr wchar_t, :size_t
@@ -93,5 +90,5 @@ endif  ;; NOT __STDC__
 
 _WSTRING_DEFINED equ 1
 endif
-.pragma list(pop)
 endif
+.pragma list(pop)

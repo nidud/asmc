@@ -165,7 +165,7 @@ _sopen proc uses rsi rdi rbx path:LPSTR, oflag:UINT, shflag:UINT, args:VARARG
         xchg edi,edx
         .ifd CreateFileA(rcx, edx, r8d, &SecurityAttributes, eax, r10d, NULL) == -1
 
-            osmaperr()
+            _dosmaperr(GetLastError())
             .break
         .endif
 

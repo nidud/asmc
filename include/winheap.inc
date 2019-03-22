@@ -24,21 +24,28 @@ externdef               _crtheap:HANDLE
 
 _nh_malloc              proto __cdecl :size_t, :int_t
 _heap_alloc             proto __cdecl :size_t
-
 _heap_init              proto __cdecl
 _heap_term              proto __cdecl
 
+ifdef _DEBUG
 _malloc_base            proto __cdecl :size_t
-
 _free_base              proto __cdecl :ptr
 _realloc_base           proto __cdecl :ptr, :size_t
 _recalloc_base          proto __cdecl :ptr, :size_t, :size_t
-
 _expand_base            proto __cdecl :ptr, :size_t
 _calloc_base            proto __cdecl :size_t, :size_t
-
 _msize_base             proto __cdecl :ptr
 _aligned_msize_base     proto __cdecl :ptr, :size_t, :size_t
+else
+_malloc_base            equ <malloc>
+_free_base              equ <free>
+_realloc_base           equ <realloc>
+_recalloc_base          equ <_recalloc>
+_expand_base            equ <_expand>
+_calloc_base            equ <calloc>
+_msize_base             equ <_msize>
+_aligned_msize_base     equ <_aligned_msize>
+endif
 
 .pragma pack(pop)
 

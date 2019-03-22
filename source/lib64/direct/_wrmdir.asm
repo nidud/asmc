@@ -12,12 +12,12 @@ include winbase.inc
 
     option win64:nosave
 
-_wrmdir proc directory:LPWSTR
+_wrmdir proc frame directory:LPWSTR
 
     .if RemoveDirectoryW(rcx)
         xor eax,eax
     .else
-        osmaperr()
+        _dosmaperr(GetLastError())
     .endif
     ret
 

@@ -5,11 +5,7 @@ ifndef _WINDEF_
  include windef.inc
 endif
 
-ifdef __PE__
-option	dllimport:<kernel32>
-else
-includelib kernel32.lib
-endif
+.pragma comment(lib, kernel32)
 
 COORD			STRUC
 x			SWORD ?

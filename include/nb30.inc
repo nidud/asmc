@@ -4,9 +4,7 @@ endif
 ifndef NCB_INCLUDED
 NCB_INCLUDED equ <>
 
-IFDEF __PE__
-option	dllimport:<netapi32>
-ENDIF
+.pragma comment(lib, netapi32)
 
 NCBNAMSZ		equ 16
 MAX_LANA		equ 254

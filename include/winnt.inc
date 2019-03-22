@@ -1,6 +1,6 @@
+.pragma list(push, 0)
 ifndef _WINNT_
 _WINNT_ equ <>
-.pragma list(push, 0)
 
 include ctype.inc
 include string.inc
@@ -14,34 +14,12 @@ __declspec macro x:vararg
 	endm
 endif
 
-ANYSIZE_ARRAY		equ 1
+ANYSIZE_ARRAY equ 1
 
-ifdef __PE__
-option dllimport:<ntdll>
-endif
+.pragma comment(lib, ntdll)
 
 ;include specstrings.inc
 ;include kernelspecs.inc
-
-if defined(_M_MRX000) AND NOT defined(MIDL_PASS)
-RESTRICTED_POINTER	equ <__restrict>
-else
-RESTRICTED_POINTER	equ <>
-endif
-
-if defined(_M_MRX000) OR defined(_M_ALPHA) OR defined(_M_PPC) OR defined(_M_IA64) OR defined(_M_AMD64)
-ALIGNMENT_MACHINE	equ <>
-UNALIGNED		equ <__unaligned>
-ifdef _WIN64
-UNALIGNED64		equ <__unaligned>
-else
-UNALIGNED64		equ <>
-endif
-else
-;undef ALIGNMENT_MACHINE
-UNALIGNED		equ <>
-UNALIGNED64		equ <>
-endif
 
 if defined(_WIN64) or defined(_M_ALPHA)
 MAX_NATURAL_ALIGNMENT		equ sizeof(QWORD)
@@ -293,7 +271,7 @@ PCNZWCH			typedef ptr WCHAR
 PUNZWCH			typedef ptr WCHAR ;UNALIGNED
 PCUNZWCH		typedef ptr WCHAR ;UNALIGNED
 
-if _WIN32_WINNT GE 0x0600 OR (defined(__cplusplus) AND defined(WINDOWS_ENABLE_CPLUSPLUS))
+if _WIN32_WINNT GE 0x0600
 
 PCWCHAR			typedef ptr WCHAR
 PCUWCHAR		typedef ptr WCHAR ;UNALIGNED
@@ -2119,7 +2097,7 @@ PRUNTIME_FUNCTION	typedef ptr RUNTIME_FUNCTION
 
 UNWIND_HISTORY_TABLE_SIZE equ 12
 
-UNWIND_HISTORY_TABLE_ENTRY  STRUC
+UNWIND_HISTORY_TABLE_ENTRY STRUC
 ImageBase		dd ?
 FunctionEntry		PRUNTIME_FUNCTION ?
 UNWIND_HISTORY_TABLE_ENTRY ENDS
@@ -3031,6 +3009,7 @@ PFRAME_POINTERS		typedef ptr FRAME_POINTERS
 ;NTSYSAPI
 ;ULONGLONG
 RtlVirtualUnwind proto WINAPI \
+	   HandlerType: DWORD,	 ;; <-- ifdef _WIN64
 	     ImageBase: ULONGLONG,
 	     ControlPc: ULONGLONG,
 	 FunctionEntry: PRUNTIME_FUNCTION,
@@ -3123,7 +3102,7 @@ WOW64_CONTEXT		ENDS
 PWOW64_CONTEXT		typedef ptr WOW64_CONTEXT
 
 .pragma pack(pop)
-
+if 0
 LDT_ENTRY_R0 RECORD \
 	    ldt_BaseHi:		8,
 	    ldt_Granularity:	1,
@@ -3135,7 +3114,7 @@ LDT_ENTRY_R0 RECORD \
 	    ldt_Dpl:		2,
 	    ldt_Type:		5,
 	    ldt_BaseMid:	8
-
+endif
 WOW64_LDT_ENTRY		STRUC
 LimitLow		dw ?
 BaseLow			dw ?
@@ -3147,7 +3126,7 @@ UNION ;HighWord
     BaseHi		db ?
   ENDS
   STRUC ;Bits
-    Bits		LDT_ENTRY_R0 <>
+    Bits		dd ? ;LDT_ENTRY_R0 <>
   ENDS
 ENDS
 WOW64_LDT_ENTRY		ENDS
@@ -9062,6 +9041,6 @@ ACTIVATION_CONTEXT_SECTION_APPLICATION_SETTINGS		equ 10
 ACTIVATION_CONTEXT_SECTION_COMPATIBILITY_INFO		equ 11
 endif
 
-.pragma list(pop)
 endif
+.pragma list(pop)
 

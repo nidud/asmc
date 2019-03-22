@@ -106,23 +106,23 @@ _free_dbg_nolock macro p, t
 
 else  ;; _DEBUG
 
-_THISFILE		equ <__FILE__>
+_THISFILE		equ <@FileCur>
 
 ifdef __cplusplus
-_new_crt		equ <new(_CRT_BLOCK, _THISFILE, __LINE__)>
+_new_crt		equ <new(_CRT_BLOCK, _THISFILE, @Line)>
 endif
 
 _malloc_crt macro s
-	exitm<_malloc_dbg(s, _CRT_BLOCK, _THISFILE, __LINE__)>
+	exitm<_malloc_dbg(s, _CRT_BLOCK, _THISFILE, @Line)>
 	endm
 _calloc_crt macro c, s
-	exitm<_calloc_dbg(c, s, _CRT_BLOCK, _THISFILE, __LINE__)>
+	exitm<_calloc_dbg(c, s, _CRT_BLOCK, _THISFILE, @Line)>
 	endm
 _realloc_crt macro p, s
-	exitm<_realloc_dbg(p, s, _CRT_BLOCK, _THISFILE, __LINE__)>
+	exitm<_realloc_dbg(p, s, _CRT_BLOCK, _THISFILE, @Line)>
 	endm
 _recalloc_crt macro p, c, s
-	exitm<_recalloc_dbg(p, c, s, _CRT_BLOCK, _THISFILE, __LINE__)>
+	exitm<_recalloc_dbg(p, c, s, _CRT_BLOCK, _THISFILE, @Line)>
 	endm
 _expand_crt macro p, s
 	exitm<_expand_dbg(p, s, _CRT_BLOCK)>
@@ -134,10 +134,10 @@ _msize_crt macro p
 	exitm<_msize_dbg(p, _CRT_BLOCK)>
 	endm
 _dupenv_s_crt macro ps1, size, s2
-	exitm<_dupenv_s_dbg(ps1, size, s2, _CRT_BLOCK, _THISFILE, __LINE__)>
+	exitm<_dupenv_s_dbg(ps1, size, s2, _CRT_BLOCK, _THISFILE, @Line)>
 	endm
 _wdupenv_s_crt macro ps1, size, s2
-	exitm<_wdupenv_s_dbg(ps1, size, s2, _CRT_BLOCK, _THISFILE, __LINE__)>
+	exitm<_wdupenv_s_dbg(ps1, size, s2, _CRT_BLOCK, _THISFILE, @Line)>
 	endm
 
 _malloc_base		proto __cdecl :size_t

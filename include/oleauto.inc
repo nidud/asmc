@@ -1,11 +1,7 @@
 ifndef _OLEAUTO_H_
 _OLEAUTO_H_ equ <>
 
-ifdef __PE__
-option	dllimport:<oleaut32>
-else
-includelib oleaut32.lib
-endif
+.pragma comment(lib, oleaut32)
 
 externdef		IID_StdOle:IID
 

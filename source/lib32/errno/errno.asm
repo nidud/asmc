@@ -10,7 +10,7 @@ PUBLIC	errno
 PUBLIC	_doserrno
 
 	.data
-	errno	  dd 0
-	_doserrno dd 0
+	errno	  errno_t 0
+	_doserrno errno_t 0
 
 	END

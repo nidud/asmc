@@ -5,18 +5,19 @@
 ;
 
 include io.inc
+include errno.inc
 include winbase.inc
 
     .code
 
-    option win64:rsp nosave
+    option win64:nosave
 
-rename proc Oldname:LPSTR, Newname:LPSTR
+rename proc frame Oldname:LPSTR, Newname:LPSTR
 
     .if MoveFile(rcx, rdx)
         xor eax,eax
     .else
-        osmaperr()
+        _dosmaperr(GetLastError())
     .endif
     ret
 

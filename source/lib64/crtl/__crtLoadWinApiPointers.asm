@@ -1,0 +1,58 @@
+; __CRTLOADWINAPIPOINTERS.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+
+include internal.inc
+include awint.inc
+
+    .data
+    encodedKERNEL32Functions ptr_t eMaxKernel32Function dup(0)
+
+    .code
+
+__crtLoadWinApiPointers proc frame
+
+  local hKernel32:HINSTANCE
+
+    mov hKernel32,GetModuleHandleW(L"kernel32.dll")
+
+    STOREENCODEDFUNCTIONPOINTER(hKernel32, KERNEL32, FlsAlloc)
+    STOREENCODEDFUNCTIONPOINTER(hKernel32, KERNEL32, FlsFree)
+    STOREENCODEDFUNCTIONPOINTER(hKernel32, KERNEL32, FlsGetValue)
+    STOREENCODEDFUNCTIONPOINTER(hKernel32, KERNEL32, FlsSetValue)
+    STOREENCODEDFUNCTIONPOINTER(hKernel32, KERNEL32, InitializeCriticalSectionEx)
+    STOREENCODEDFUNCTIONPOINTER(hKernel32, KERNEL32, CreateEventExW)
+    STOREENCODEDFUNCTIONPOINTER(hKernel32, KERNEL32, CreateSemaphoreExW)
+    STOREENCODEDFUNCTIONPOINTER(hKernel32, KERNEL32, SetThreadStackGuarantee)
+    STOREENCODEDFUNCTIONPOINTER(hKernel32, KERNEL32, CreateThreadpoolTimer)
+    STOREENCODEDFUNCTIONPOINTER(hKernel32, KERNEL32, SetThreadpoolTimer)
+    STOREENCODEDFUNCTIONPOINTER(hKernel32, KERNEL32, WaitForThreadpoolTimerCallbacks)
+    STOREENCODEDFUNCTIONPOINTER(hKernel32, KERNEL32, CloseThreadpoolTimer)
+    STOREENCODEDFUNCTIONPOINTER(hKernel32, KERNEL32, CreateThreadpoolWait)
+    STOREENCODEDFUNCTIONPOINTER(hKernel32, KERNEL32, SetThreadpoolWait)
+    STOREENCODEDFUNCTIONPOINTER(hKernel32, KERNEL32, CloseThreadpoolWait)
+    STOREENCODEDFUNCTIONPOINTER(hKernel32, KERNEL32, FlushProcessWriteBuffers)
+    STOREENCODEDFUNCTIONPOINTER(hKernel32, KERNEL32, FreeLibraryWhenCallbackReturns)
+    STOREENCODEDFUNCTIONPOINTER(hKernel32, KERNEL32, GetCurrentProcessorNumber)
+    STOREENCODEDFUNCTIONPOINTER(hKernel32, KERNEL32, GetLogicalProcessorInformation)
+    STOREENCODEDFUNCTIONPOINTER(hKernel32, KERNEL32, CreateSymbolicLinkW)
+    STOREENCODEDFUNCTIONPOINTER(hKernel32, KERNEL32, SetDefaultDllDirectories)
+    STOREENCODEDFUNCTIONPOINTER(hKernel32, KERNEL32, EnumSystemLocalesEx)
+    STOREENCODEDFUNCTIONPOINTER(hKernel32, KERNEL32, CompareStringEx)
+    STOREENCODEDFUNCTIONPOINTER(hKernel32, KERNEL32, GetDateFormatEx)
+    STOREENCODEDFUNCTIONPOINTER(hKernel32, KERNEL32, GetLocaleInfoEx)
+    STOREENCODEDFUNCTIONPOINTER(hKernel32, KERNEL32, GetTimeFormatEx)
+    STOREENCODEDFUNCTIONPOINTER(hKernel32, KERNEL32, GetUserDefaultLocaleName)
+    STOREENCODEDFUNCTIONPOINTER(hKernel32, KERNEL32, IsValidLocaleName)
+    STOREENCODEDFUNCTIONPOINTER(hKernel32, KERNEL32, LCMapStringEx)
+    STOREENCODEDFUNCTIONPOINTER(hKernel32, KERNEL32, GetCurrentPackageId)
+    STOREENCODEDFUNCTIONPOINTER(hKernel32, KERNEL32, GetTickCount64)
+    STOREENCODEDFUNCTIONPOINTER(hKernel32, KERNEL32, GetFileInformationByHandleExW)
+    STOREENCODEDFUNCTIONPOINTER(hKernel32, KERNEL32, SetFileInformationByHandleW)
+    ret
+
+__crtLoadWinApiPointers endp
+
+    end

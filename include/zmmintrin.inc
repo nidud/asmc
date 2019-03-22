@@ -29,7 +29,6 @@ m512i_u32		dd 16 dup(?)
 m512i_u64		dq 8 dup(?)
 __m512i			ENDS
 
-
 _mm512_castps512_ps256	proto :zword
 _mm512_castpd_ps	proto :zword
 _mm512_castps256_ps512	proto :yword

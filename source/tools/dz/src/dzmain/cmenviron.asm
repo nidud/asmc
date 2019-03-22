@@ -8,7 +8,6 @@ include string.inc
 include stdio.inc
 include errno.inc
 include stdlib.inc
-include syserrls.inc
 include winbase.inc
 
 MAXHIT      equ 128
@@ -430,7 +429,7 @@ local   ll:S_LOBJ
         free([ebx].S_LOBJ.ll_list)
     .endif
     .else
-    ermsg(0, addr CP_ENOMEM)
+    ermsg(0, _sys_errlist[ENOMEM*4])
     .endif
 
     GetEnvironmentTEMP()

@@ -14,11 +14,8 @@ HRESULT typedef sdword
 endif
 
 ifndef NOUSER
-ifdef __PE__
-option	dllimport:<comctl32>
-else
-includelib comctl32.lib
-endif
+
+.pragma comment(lib, comctl32)
 
 include prsht.inc
 

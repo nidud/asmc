@@ -470,7 +470,7 @@ local file[_MAX_PATH]:sbyte, entry[_MAX_PATH]:sbyte, section, index
             .endsw
 
             mov esi,eax
-            mov edi,@CStr(".")
+            lea edi,@CStr(".")
 
             .if strchr(expenviron(eax), '#')
 

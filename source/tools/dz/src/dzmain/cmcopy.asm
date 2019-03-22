@@ -8,7 +8,6 @@ include errno.inc
 include time.inc
 include string.inc
 include malloc.inc
-include syserrls.inc
 
 PUBLIC  copy_jump
 PUBLIC  copy_flag
@@ -49,7 +48,7 @@ error_copy:
     ret
 
 error_diskfull:
-    ermsg(0, "%s\n%s\n\n%s", addr cp_ercopy, __outfile, sys_errlist[ENOSPC*4])
+    ermsg(0, "%s\n%s\n\n%s", addr cp_ercopy, __outfile, _sys_errlist[ENOSPC*4])
     ret
 
 getcopycount proc private uses edi ebx
@@ -311,10 +310,10 @@ copyfile proc uses esi edi file_size:qword, t:dword, attrib:dword
         mov eax,STDO.ios_crc
         .if eax != STDI.ios_crc
             ioclose(&STDO)
-            lea eax,CP_EIO
+            mov eax,_sys_errlist[EIO*4]
             mov edx,errno
             .if edx
-                mov eax,sys_errlist[edx*4]
+                mov eax,_sys_errlist[edx*4]
             .endif
             ermsg(0, &format_sL_s_, &cp_ercopy, eax)
         .elseif !esi

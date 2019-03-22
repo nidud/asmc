@@ -97,7 +97,9 @@ _FPE_UNEMULATED equ 0x87
 _FPE_SQRTNEG	equ 0x88
 _FPE_STACKOVERFLOW equ 0x8a
 _FPE_STACKUNDERFLOW equ 0x8b
-_FPE_EXPLICITGEN equ 0x8c ; raise( SIGFPE )
+_FPE_EXPLICITGEN equ 0x8c	; raise( SIGFPE )
+_FPE_MULTIPLE_TRAPS equ 0x8d	; on x86 with arch:SSE2 OS returns these exceptions
+_FPE_MULTIPLE_FAULTS equ 0x8e
 
 ;; Set the FPU control word as cw = (cw & ~unMask) | (unNew & unMask),
 ;; i.e. change the bits in unMask to have the values they have in unNew,

@@ -3,11 +3,8 @@ _GDIPLUSMEM_H equ <>
 
 ifndef WINGDIPAPI
 WINGDIPAPI equ <>
-ifdef __PE__
-option dllimport:<gdiplus>
-else
-includelib gdiplus.lib
-endif
+
+.pragma comment(lib, gdiplus)
 endif
 
 ;void*

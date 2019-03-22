@@ -6,15 +6,17 @@
 
 include malloc.inc
 
-	.code
+    .code
 
-	OPTION PROLOGUE:NONE, EPILOGUE:NONE
+    option win64:nosave
 
-calloc	PROC n, nsize
-	mov	eax,ecx
-	mul	edx
-	malloc( eax )
-	ret
-calloc	ENDP
+calloc proc n:size_t, nsize:size_t
 
-	END
+    mov rax,rcx
+    mul rdx
+    malloc( eax )
+    ret
+
+calloc endp
+
+    end

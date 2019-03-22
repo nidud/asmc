@@ -10,11 +10,7 @@ endif
 ifndef _WINUSER_
  include winuser.inc
 endif
-ifdef __PE__
-option	dllimport:<msvcrt>
-else
-includelib libc.lib
-endif
+.pragma comment(lib, libc, msvcrt)
 
 ifdef _CONIO_RETRO_COLORS
 BLACK		equ 0

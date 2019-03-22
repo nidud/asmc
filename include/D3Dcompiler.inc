@@ -3,14 +3,10 @@ __D3DCOMPILER_H__ equ <>
 .pragma list(push, 0)
 include d3d11shader.inc
 
-ifdef __PE__
-option dllimport:<D3DCompiler_47>
-else
-includelib D3DCompiler_47.lib
-endif
+.pragma comment(lib, d3dcompiler_47)
 
-D3DCOMPILER_DLL_W       equ <L"d3dcompiler_43.dll">
-D3DCOMPILER_DLL_A       equ <"d3dcompiler_43.dll">
+D3DCOMPILER_DLL_W       equ <L"d3dcompiler_47.dll">
+D3DCOMPILER_DLL_A       equ <"d3dcompiler_47.dll">
 
 D3DCOMPILE_DEBUG        equ 0x00000001
 D3DCOMPILE_SKIP_VALIDATION equ 0x00000002

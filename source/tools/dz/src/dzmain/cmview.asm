@@ -23,13 +23,13 @@ loadiniproc proc uses esi edi section, filename, itype
 
     mov edi,filename
     mov eax,itype
-    mov esi,@CStr("F3")
+    lea esi,@CStr("F3")
 
     .switch al
-      .case 4 : mov esi,@CStr("F4")    : .endc
-      .case 3 : mov esi,@CStr("Alt")   : .endc
-      .case 2 : mov esi,@CStr("Ctrl")  : .endc
-      .case 1 : mov esi,@CStr("Shift") : .endc
+      .case 4 : lea esi,@CStr("F4")    : .endc
+      .case 3 : lea esi,@CStr("Alt")   : .endc
+      .case 2 : lea esi,@CStr("Ctrl")  : .endc
+      .case 1 : lea esi,@CStr("Shift") : .endc
     .endsw
 
     .if CFGetSection(section)

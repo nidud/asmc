@@ -10,6 +10,8 @@ WINAPI equ <stdcall>
 endif
 endif
 
+.pragma cref(push, 0)
+
 _INTEGRAL_MAX_BITS	equ 64
 _WIN32_WINNT_NT4	equ 0x0400
 _WIN32_WINNT_WIN2K	equ 0x0500
@@ -143,6 +145,8 @@ DECLSPEC_DEPRECATED_DDK_LONGHORN equ DECSPEC_DEPRECATED_DDK_WIN6
 
 endif
 
+.pragma cref(pop)
+
 if NOT defined(_WIN32_WINNT) AND NOT defined(NTDDI_VERSION)
 ifndef PSAPI_VERSION
 PSAPI_VERSION	equ <>
@@ -204,7 +208,9 @@ _WIN32_IE	equ 0x0A00
 endif
 endif
 
+
 if defined(_WIN32_WINNT) AND NOT defined(MIDL_PASS)
+
 if ((WINVER LT 0x0400) AND (_WIN32_WINNT GT 0x0400))
 .err <WINVER setting conflicts with _WIN32_WINNT setting>
 endif

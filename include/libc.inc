@@ -1,13 +1,15 @@
+.pragma list(push, 0)
 ifndef __LIBC_INC
 ;
 ; Master include file for the Asmc RTL library.
 ;
-.pragma list(push, 0)
 
 __LIBC_INC	equ 1
-
 __STDC__	equ 1
-__LIBC__	equ 227 ; Asmc Version
+__LIBC__	equ 228
+if ( __ASMC__ LT __LIBC__ )
+  .err <incorrect version. Use the header that matches with the Asmc Assembler.>
+endif
 
 ;;
 ;; Architecture kinds:
@@ -193,5 +195,28 @@ option		casemap:none
 size_t		typedef SIZE_T
 assert_exit	proto
 
-.pragma list(pop)
+ifndef _CALLBACK_DEFINED
+_CALLBACK_DEFINED equ <>
+CALLBACKC macro id, arguments:VARARG
+    ?&id& typedef proto __cdecl &arguments
+    exitm <id typedef ptr ?&id&>
+    endm
+CALLBACK macro id, arguments:VARARG
+    ?&id& typedef proto WINAPI &arguments
+    exitm <id typedef ptr ?&id&>
+    endm
 endif
+
+m2m macro dest, source
+ifdef _M_X64
+    mov rax,source
+    mov dest,rax
+else
+    mov eax,source
+    mov dest,eax
+endif
+    endm
+
+endif
+.pragma list(pop)
+

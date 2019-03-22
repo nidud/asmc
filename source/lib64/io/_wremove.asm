@@ -5,6 +5,7 @@
 ;
 
 include io.inc
+include errno.inc
 include winbase.inc
 
 .code
@@ -15,7 +16,7 @@ _wremove proc file:LPWSTR
 
         xor eax,eax
     .else
-        osmaperr()
+        _dosmaperr(GetLastError())
     .endif
     ret
 

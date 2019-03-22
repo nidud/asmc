@@ -10,12 +10,249 @@ include limits.inc
 
 include asmc.inc
 
-extern  jmpenv:S_JMPBUF
+warning_disable proto id:int_t
+
+extern jmpenv:S_JMPBUF
 
 print_source_nesting_structure proto
 GetCurrOffset proto
 
-.data
+    .data
+if 0
+    T equ <@CStr>
+
+    Internal equ <"Internal Assembler Error">
+
+    FatalErrors string_t \
+        T("cannot open file : %s"),
+        T("I/O error closing file : %s"),
+        T("I/O error writing file : %s"),
+        NULL,
+        T("assembler limit : macro parameter name table full"),
+        T("invalid command-line option: %s"),
+        T("nesting level too deep"),
+        T("unmatched macro nesting"),
+        T("line too long"),
+        T("unmatched block nesting : %s"),
+        T("directive must be in control block"),
+        T("error count exceeds 100; stopping assembly"),
+        NULL,
+        NULL,
+        NULL,
+        T("missing source filename")
+
+    NonfatalErrors string_t \
+        NULL,
+        NULL,
+        T("cannot have more than one .ELSE clause per .IF block"),
+        NULL,
+        T("symbol type conflict : %s"),
+        T("symbol redefinition : %s"),
+        T("undefined symbol : %s"),
+        T("non-benign record redefinition %s : %s"),
+        T("syntax error : %s"),
+        T("syntax error in expression"),
+        T("invalid type expression"),
+        T("distance invalid for word size of current segment"),
+        T("PROC, MACRO, or macro repeat directive must precede LOCAL"),
+        T(".MODEL must precede this directive"),
+        T("cannot define as public or external : %s"),
+        T("segment attributes cannot change : %s"),
+        T("expression expected"),
+        NULL,
+        T("invalid use of external symbol : %s"),
+        T("operand must be RECORD type or field"),
+        NULL,
+        NULL,
+        T("instruction operands must be the same size : %d - %d"),
+        T("instruction operand must have size"),
+        T("invalid operand size for instruction"),
+        T("operands must be in same segment"),
+        T("constant expected"),
+        NULL,
+        T("expression must be a code address"),
+        T("multiple base registers not allowed"),
+        T("multiple index registers not allowed"),
+        T("must be index or base register"),
+        T("invalid use of register"),
+        T("invalid INVOKE argument : %d"),
+        T("must be in segment block"),
+        NULL,
+        T("too many initial values for structure: %s"),
+        T("statement not allowed inside structure definition"),
+        NULL,
+        T("line too long"),
+        NULL,
+        T("string or text literal too long"),
+        NULL,
+        T("identifier too long"),
+        NULL,
+        T("missing angle bracket or brace in literal"),
+        T("missing single or double quotation mark in string"),
+        T("empty (null) string"),
+        T("nondigit in number : %s"),
+        NULL
+
+    string_t \
+        T("real or BCD number not allowed"),
+        T("text item required"),
+        T("forced error : %s"),
+        T("forced error : value equal to 0 : %d: %s"),
+        T("forced error : value not equal to 0 : %d: %s"),
+        T("forced error : symbol not defined : %s"),
+        T("forced error : symbol defined : %s"),
+        T("forced error : string blank : %s: %s"),
+        T("forced error : string not blank : <%s>: %s"),
+        T("forced error : strings equal : <%s>: <%s>: %s"),
+        T("forced error : strings not equal : <%s>: <%s>: %s"),
+        T("[[[ELSE]]]IF2/.ERR2 not allowed : single-pass assembler"),
+        T("expression too complex for .UNTILCXZ"),
+        T("can ALIGN only to power of 2 : %u"),
+        T("struct alignment must be 1, 2, 4, 8, 16 or 32"),
+        T("expected : %s"),
+        T("incompatible CPU mode and segment size"),
+        NULL,
+        T("instruction prefix not allowed"),
+        NULL,
+        T("invalid instruction operands"),
+        T("initializer too large for specified size"),
+        T("cannot access symbol in given segment or group: %s"),
+        NULL,
+        T("cannot access label through segment registers : %s"),
+        T("jump destination too far : by %d bytes"),
+        T("jump destination must specify a label"),
+        T("instruction does not allow NEAR indirect addressing"),
+        NULL,
+        T("instruction does not allow FAR direct addressing"),
+        T("jump distance not possible in current CPU mode"),
+        T("missing operand after unary operator"),
+        T("cannot mix 16- and 32-bit registers"),
+        T("invalid scale value"),
+        T("constant value too large"),
+        T("instruction or register not accepted in current CPU mode"),
+        T("reserved word expected"),
+        T("instruction form requires 80386/486"),
+        T("END directive required at end of file"),
+        T("too many bits in RECORD : %s"),
+        T("positive value expected"),
+        T("index value past end of string"),
+        T("count must be positive or zero"),
+        T("count value too large"),
+        T("operand must be relocatable"),
+        T("constant or relocatable label expected"),
+        T("segment, group, or segment register expected"),
+        T("segment expected : %s"),
+        T("invalid operand for OFFSET"),
+        NULL
+    string_t \
+        T("segment or group not allowed"),
+        T("cannot add two relocatable labels"),
+        NULL,
+        T("segment exceeds 64K limit: %s"),
+        T("invalid type for data declaration : %s"),
+        T("HIGH and LOW require immediate operands"),
+        T("cannot have implicit far jump or call to near label"),
+        T("use of register assumed to ERROR"),
+        NULL,
+        T("COMMENT delimiter expected"),
+        T("conflicting parameter definition : %s"),
+        T("PROC and prototype calling conventions conflict"),
+        T("invalid radix tag"),
+        T("INVOKE argument type mismatch : %d"),
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        T("language type must be specified"),
+        T("PROLOGUE must be macro function"),
+        T("EPILOGUE must be macro procedure : %s"),
+        NULL,
+        T("text macro nesting level too deep"),
+        T("missing macro argument"),
+        NULL,
+        NULL,
+        T("VARARG parameter must be last parameter"),
+        NULL,
+        T("VARARG parameter requires C calling convention"),
+        T("ORG needs a constant or local offset"),
+        T("register value overwritten by INVOKE"),
+        NULL,
+        T("too many arguments to INVOKE"),
+        NULL,
+        NULL,
+        NULL,
+        T("too many operands to instruction"),
+        T("cannot have more than one .ELSE clause per .IF block"),
+        T("expected data label"),
+        T("cannot nest procedures : %s"),
+        T("EXPORT must be FAR : %s"),
+        NULL,
+        T("macro label not defined : %s"),
+        T("invalid symbol type in expression : %s"),
+        NULL,
+        NULL,
+        T("special register cannot be first operand"),
+        NULL,
+        NULL,
+        T("syntax error in control-flow directive"),
+        NULL,
+        T("constant value out of range"),
+        T("missing right parenthesis"),
+        NULL,
+        T("structure cannot be instanced"),
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        T("structure field expected"),
+        T("unexpected literal found in expression : %s"),
+        T("divide by zero in expression"),
+        T("directive must appear inside a macro"),
+        NULL,
+        T("too few bits in RECORD : %s"),
+        NULL,
+        T("invalid qualified type"),
+        NULL,
+        NULL,
+        T("invalid use of FLAT"),
+        T("structure improperly initialized"),
+        NULL,
+        T("initializer must be a string or single item"),
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        T("must use floating point initializer"),
+        NULL,
+        T("invalid combination with segment alignment : %d"),
+        T("INVOKE requires prototype for procedure"),
+        NULL,
+        T("symbol language attribute conflict : %s"),
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        T(".STARTUP does not work with 32-bit segments"),
+        T("ORG directive not allowed in unions"),
+        NULL,
+        T("illegal use of segment register"),
+        NULL,
+        NULL,
+        NULL,
+        T("missing operator in expression"),
+        NULL,
+        NULL,
+        NULL,
+        T("GROUP directive not allowed with /coff option"),
+        T("must be public or external : %s"),
+        NULL
+endif
+
 ;
 ; Internal error
 ;
@@ -453,130 +690,168 @@ print_err proc private uses esi edi ebx erbuf, format, args
     ret
 print_err endp
 
+errexit proc private
 
-asmerr proc uses esi edi ebx edx ecx value, args:VARARG
-local format[512]:byte,erbuf[512]:byte
-
-    lea edi,format
-    mov ebx,value
-    cmp ebx,MIN_ID
-    jb  error
-    cmp ebx,MAX_ID
-    ja  error
-
-    .if ebx >= 4000 && !Options.warning_error && !Options.warning_level
-        jmp toend
-    .endif
-    .if ebx >= 5000 && ebx < 8000 && Options.warning_level < 3
-        jmp toend
-    .endif
-
-    strcpy(edi, "ASMC : ")
-    mov edx,ModuleInfo.src_stack
-    .while edx
-        movzx eax,[edx].src_item.srcfile
-        mov ecx,ModuleInfo.FNames
-        mov ecx,[ecx+eax*4]
-        mov eax,[edx].src_item.line_num
-        cmp [edx].src_item._type,SIT_FILE
-        mov edx,[edx].src_item.next
-        .ifz
-            .if ModuleInfo.EndDirFound
-                sprintf(edi, "%s : ", ecx)
-            .else
-                sprintf(edi, "%s(%u) : ", ecx, eax)
-            .endif
-            .break
-        .endif
-    .endw
-
-    .if ebx < 2000
-        strcat(edi, "fatal error")
-    .elseif ebx < 4000
-        strcat(edi,"error")
-    .else
-        strcat(edi, "warning")
-    .endif
-
-    add edi,strlen(edi)
-    sprintf(edi, " A%04u: ", ebx)
-    xor ecx,ecx
-    lea eax,[ebx-1000]
-    .while eax > 1000
-        add ecx,1
-        sub eax,1000
-    .endw
-    .if eax == 910
-        mov eax,14
-    .endif
-    cmp eax,maxid[ecx*4]
-    jnb error
-    mov esi,table[ecx*4]
-    mov esi,[esi+eax*4]
-    cmp esi,offset INTER
-    je  error
-
-    lea edi,format
-    strcat(edi, esi)
-    print_err(&erbuf, edi, &args)
-    lea esi,erbuf
-
-    mov ebx,value
-    cmp ebx,1012
-    je  quit
-
-    .if ebx >= 4000
-        .if !Options.warning_error
-            inc ModuleInfo.warning_count
-        .else
-            inc ModuleInfo.error_count
-        .endif
-    .else
-        inc ModuleInfo.error_count
-    .endif
-    mov eax,Options.error_limit
-    .if eax != -1
-        inc eax
-        .if ModuleInfo.error_count >= eax
-            asmerr(1012)
-        .endif
-    .endif
-    .if ebx >= 2000
-        print_source_nesting_structure()
-    .else
-        jmp quit
-    .endif
-toend:
-    mov eax,-1
-    ret
-error:
-    printf("ASMC : fatal error A1901: %s\n", &INTER)
-quit:
     .if ModuleInfo.curr_fname[ASM*4]
+
         longjmp(&jmpenv, 3)
     .endif
+
     mov eax,ModuleInfo.curr_file[OBJ*4]
     .if eax
+
         fclose(eax)
         remove(ModuleInfo.curr_fname[OBJ*4])
     .endif
-
     exit(1)
+
+errexit endp
+
+
+asmerr proc uses esi edi ebx edx ecx value, args:VARARG
+
+  local format[512]:byte, erbuf[512]:byte
+
+    lea edi,format
+    mov ebx,value
+
+    .repeat
+
+        .repeat
+
+            .break .if ebx < MIN_ID
+            .break .if ebx > MAX_ID
+
+            .if ( ebx >= 4000 )
+
+                .break(1) .if !Options.warning_error && !Options.warning_level
+                .break(1) .if ebx >= 5000 && ebx < 8000 && Options.warning_level < 3
+                .break(1) .if warning_disable(ebx)
+
+            .endif
+
+            strcpy(edi, "ASMC : ")
+            mov edx,ModuleInfo.src_stack
+
+            .while edx
+
+                movzx   eax,[edx].src_item.srcfile
+                mov     ecx,ModuleInfo.FNames
+                mov     ecx,[ecx+eax*4]
+                mov     eax,[edx].src_item.line_num
+                cmp     [edx].src_item._type,SIT_FILE
+                mov     edx,[edx].src_item.next
+
+                .ifz
+
+                    .if ModuleInfo.EndDirFound
+
+                        sprintf(edi, "%s : ", ecx)
+                    .else
+                        sprintf(edi, "%s(%u) : ", ecx, eax)
+                    .endif
+                    .break
+                .endif
+            .endw
+
+            .if ebx < 2000
+                lea eax,@CStr("fatal error")
+            .elseif ebx < 4000
+                lea eax,@CStr("error")
+            .else
+                lea eax,@CStr("warning")
+            .endif
+            strcat(edi, eax)
+
+            add edi,strlen(edi)
+            sprintf(edi, " A%04u: ", ebx)
+
+            xor ecx,ecx
+            lea eax,[ebx-1000]
+            .while eax > 1000
+
+                add ecx,1
+                sub eax,1000
+            .endw
+            .if eax == 910
+
+                mov eax,14
+            .endif
+
+            .break .if eax >= maxid[ecx*4]
+
+            mov esi,table[ecx*4]
+            mov esi,[esi+eax*4]
+
+            .break .if esi == offset INTER
+
+            lea edi,format
+            strcat(edi, esi)
+            print_err(&erbuf, edi, &args)
+
+            lea esi,erbuf
+
+            mov ebx,value
+
+            .if ( ebx == 1012 )
+
+                errexit()
+            .endif
+
+            .if ebx >= 4000
+
+                .if !Options.warning_error
+                    inc ModuleInfo.warning_count
+                .else
+                    inc ModuleInfo.error_count
+                .endif
+            .else
+                inc ModuleInfo.error_count
+            .endif
+
+            mov eax,Options.error_limit
+            .if eax != -1
+                inc eax
+                .if ModuleInfo.error_count >= eax
+                    asmerr(1012)
+                .endif
+            .endif
+            .if ebx >= 2000
+                print_source_nesting_structure()
+            .else
+                errexit()
+            .endif
+            .break(1)
+
+        .until 1
+
+        printf("ASMC : fatal error A1901: %s\n", &INTER)
+        errexit()
+
+    .until 1
+    mov eax,-1
+    ret
 
 asmerr endp
 
+
 WriteError proc
+
     asmerr(1002, ModuleInfo.curr_fname[OBJ*4])
     ret
+
 WriteError endp
 
+
 PrintNote proc value, args:VARARG
-local erbuf[512]:byte
+
+  local erbuf[512]:byte
 
     mov eax,value
     mov edx,NOTE[eax*4]
     print_err(&erbuf, edx, &args)
     ret
+
 PrintNote endp
 
     END

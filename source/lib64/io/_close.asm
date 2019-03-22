@@ -6,29 +6,28 @@
 
 include io.inc
 include errno.inc
+include stdlib.inc
 include winbase.inc
 
-option win64:rsp nosave
+    .code
 
-.code
-
-_close proc handle:SINT
+_close proc frame handle:int_t
 
     lea rax,_osfile
     .if ecx < 3 || ecx >= _nfile || !(byte ptr [rax+rcx] & FH_OPEN)
 
-        xor eax,eax
         mov errno,EBADF
-        mov _doserrno,eax
+        mov _doserrno,0
+        xor eax,eax
     .else
 
         mov byte ptr [rax+rcx],0
         lea rax,_osfhnd
         mov rcx,[rax+rcx*8]
 
-        .if !CloseHandle(rcx)
+        .ifd !CloseHandle(rcx)
 
-            osmaperr()
+            _dosmaperr(GetLastError())
         .else
             xor eax,eax
         .endif

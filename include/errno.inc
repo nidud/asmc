@@ -1,16 +1,40 @@
 .pragma list(push, 0)
 
-ifndef __LIBC_INC
- include libc.inc
-endif
-ifndef _WINERROR_
- include winerror.inc
-endif
-ifdef __PE__
-option	dllimport:<msvcrt>
+include crtdefs.inc
+include winerror.inc
+
+.pragma comment(lib, libc, msvcrt)
+
+;; Declare reference to errno
+
+ifndef _CRT_ERRNO_DEFINED
+_CRT_ERRNO_DEFINED equ <>
+_errno		proto __cdecl
+_set_errno	proto __cdecl :int_t
+_get_errno	proto __cdecl :ptr int_t
+if defined(_WIN64) or defined(_MSVCRT)
+errno		equ <errno_t ptr [_errno()]>
 else
-includelib libc.lib
+externdef	errno:errno_t
 endif
+endif
+
+__doserrno	proto __cdecl
+_set_doserrno	proto __cdecl :ulong_t
+_get_doserrno	proto __cdecl :ptr ulong_t
+__sys_errlist	proto __cdecl
+if defined(_WIN64) or defined(_MSVCRT)
+_doserrno	equ <errno_t ptr [__doserrno()]>
+_sys_errlist	equ <__sys_errlist()>
+_sys_nerr	equ <[__sys_nerr()]>
+else
+externdef	_doserrno:errno_t
+externdef	_sys_errlist:array_t
+externdef	_sys_nerr:int_t
+osmaperr	proto __cdecl
+endif
+__sys_nerr	proto __cdecl
+_dosmaperr	proto __cdecl :ulong_t
 
 ENOERR		equ 0
 EPERM		equ 1
@@ -34,11 +58,9 @@ EXDEV		equ 18
 ENODEV		equ 19
 ENOTDIR		equ 20
 EISDIR		equ 21
-EINVAL		equ 22
 ENFILE		equ 23
 EMFILE		equ 24
 ENOTTY		equ 25
-ETXTBSY		equ 26
 EFBIG		equ 27
 ENOSPC		equ 28
 ESPIPE		equ 29
@@ -46,7 +68,6 @@ EROFS		equ 30
 EMLINK		equ 31
 EPIPE		equ 32
 EDOM		equ 33
-ERANGE		equ 34
 EUCLEAN		equ 35
 EDEADLK		equ 36
 EUNKNOWN	equ 37
@@ -54,22 +75,63 @@ ENAMETOOLONG	equ 38
 ENOLCK		equ 39
 ENOSYS		equ 40
 ENOTEMPTY	equ 41
+
+;; Error codes used in the Secure CRT functions
+
+ifndef RC_INVOKED
+ifndef _SECURECRT_ERRCODE_VALUES_DEFINED
+_SECURECRT_ERRCODE_VALUES_DEFINED equ <>
+EINVAL		equ 22
+ERANGE		equ 34
 EILSEQ		equ 42
-
-if defined(__PE__) or defined(_LINUX)
-_get_errno proto __cdecl :ptr
-ifndef _errno
-    .data
-    _errno dd 0
-    .code
+STRUNCATE	equ 80
 endif
-errno equ <_get_errno(addr _errno)>
-else
-externdef	errno:dword
-externdef	_doserrno:dword
-externdef	sys_errlist:size_t
 endif
 
-osmaperr	proto __cdecl
+;; Support EDEADLOCK for compatibility with older MS-C versions
+EDEADLOCK	equ EDEADLK
+
+;; POSIX SUPPLEMENT
+EADDRINUSE	equ 100
+EADDRNOTAVAIL	equ 101
+EAFNOSUPPORT	equ 102
+EALREADY	equ 103
+EBADMSG		equ 104
+ECANCELED	equ 105
+ECONNABORTED	equ 106
+ECONNREFUSED	equ 107
+ECONNRESET	equ 108
+EDESTADDRREQ	equ 109
+EHOSTUNREACH	equ 110
+EIDRM		equ 111
+EINPROGRESS	equ 112
+EISCONN		equ 113
+ELOOP		equ 114
+EMSGSIZE	equ 115
+ENETDOWN	equ 116
+ENETRESET	equ 117
+ENETUNREACH	equ 118
+ENOBUFS		equ 119
+ENODATA		equ 120
+ENOLINK		equ 121
+ENOMSG		equ 122
+ENOPROTOOPT	equ 123
+ENOSR		equ 124
+ENOSTR		equ 125
+ENOTCONN	equ 126
+ENOTRECOVERABLE equ 127
+ENOTSOCK	equ 128
+ENOTSUP		equ 129
+EOPNOTSUPP	equ 130
+EOTHER		equ 131
+EOVERFLOW	equ 132
+EOWNERDEAD	equ 133
+EPROTO		equ 134
+EPROTONOSUPPORT equ 135
+EPROTOTYPE	equ 136
+ETIME		equ 137
+ETIMEDOUT	equ 138
+ETXTBSY		equ 139
+EWOULDBLOCK	equ 140
 
 .pragma list(pop)

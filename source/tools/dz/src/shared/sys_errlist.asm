@@ -1,1 +1,1 @@
-include ..\..\lib32\errno\sys_errlist.asm
+include ..\..\lib32\errno\_sys_errlist.asm

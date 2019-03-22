@@ -5,7 +5,7 @@ include doszip.inc
 include malloc.inc
 include io.inc
 include string.inc
-include syserrls.inc
+include errno.inc
 include time.inc
 include cfini.inc
 include stdlib.inc
@@ -290,7 +290,7 @@ local path[_MAX_PATH*2]:sbyte, result:dword, found[4]:byte
         .if !ff_alloc(&path, edx)
 
             clear_table()
-            ermsg(0, &CP_ENOMEM)
+            ermsg(0, _sys_errlist[ENOMEM*4])
             mov result,-1
         .endif
 
@@ -357,7 +357,7 @@ local fsize:qword
                 progress_update(ecx::eax)
             .else
                 clear_table()
-                ermsg(0, &CP_ENOMEM)
+                ermsg(0, _sys_errlist[ENOMEM*4])
                 mov eax,1
             .endif
         .else
@@ -685,7 +685,7 @@ cmcompsub proc PUBLIC uses esi edi ebx
             clear_list()
             clear_table()
         .else
-            ermsg(0, &CP_ENOMEM)
+            ermsg(0, _sys_errlist[ENOMEM*4])
         .endif
         free(ll.ll_list)
     .endif

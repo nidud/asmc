@@ -1,6 +1,7 @@
+.pragma list(push, 0)
+.pragma cref(push, 0)
 ifndef __INTRIN_H_
 __INTRIN_H_ equ <>
-.pragma list(push, 0)
 ifndef __LIBC_INC
  include libc.inc
 endif
@@ -1372,5 +1373,6 @@ _subborrow_u64 macro carry, a, b, p
 
 endif
 
-.pragma list(pop)
 endif
+.pragma cref(pop)
+.pragma list(pop)

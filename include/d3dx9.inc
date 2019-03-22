@@ -10,9 +10,8 @@ D3DX_FROM_FILE		equ (-3)
 D3DFMT_FROM_FILE	equ (-3)
 
 include d3d9.inc
-ifdef __PE__
-option dllimport:<d3dx9_40>
-endif
+.pragma comment(lib, d3dx9_40)
+
 include d3dx9math.inc
 include d3dx9core.inc
 include d3dx9xof.inc

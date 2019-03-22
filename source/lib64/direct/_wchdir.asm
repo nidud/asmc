@@ -12,7 +12,7 @@ include winbase.inc
 
     option win64:nosave
 
-_wchdir proc directory:LPWSTR
+_wchdir proc frame directory:LPWSTR
 
   local abspath[_MAX_PATH]:wchar_t, result[4]:wchar_t
 
@@ -41,7 +41,7 @@ _wchdir proc directory:LPWSTR
                 .endif
             .endif
         .endif
-        osmaperr()
+        _dosmaperr(GetLastError())
     .until 1
     ret
 

@@ -160,7 +160,7 @@ ermsg proc c wtitle:LPSTR, format:LPSTR, argptr:VARARG
     ftobufin(format, &argptr)
     mov eax,wtitle
     .if !eax
-        mov eax,@CStr("Error")
+        lea eax,@CStr("Error")
     .endif
     msgbox(eax, _D_STDERR, &_bufin)
     xor eax,eax

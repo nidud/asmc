@@ -168,14 +168,10 @@ endif
 include basetsd.inc
 include oaidl.inc
 
-ifdef __PE__
-option	dllimport:<Comctl32>
-else
-includelib Comctl32.lib
-endif
+.pragma comment(lib, comctl32)
 
 ifndef MMC_VER
-MMC_VER			equ 0x0210
+MMC_VER equ 0x0210
 endif
 
 if (MMC_VER GE 0x0110)

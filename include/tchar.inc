@@ -1040,9 +1040,14 @@ include stdlib.inc
 endif
 
 	.data
-	__argc	  dd 0,0
-	__targv	  SIZE_T 0
-	_tenviron SIZE_T 0
+	__argc	  int_t 0,0
+  ifdef _UNICODE
+	__targv	  warray_t 0
+	_tenviron warray_t 0
+  else
+	__targv	  array_t 0
+	_tenviron array_t 0
+  endif
 	_startup  db 100 dup(0)
 
 	.code

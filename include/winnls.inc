@@ -6,9 +6,7 @@ ifndef _WINDEF_
  include windef.inc
 endif
 
-if defined(_KERNEL32_) or defined(__PE__)
-option dllimport:<kernel32>
-endif
+.pragma comment(lib, kernel32)
 
 ifndef LPSYSTEMTIME
 SYSTEMTIME	STRUC

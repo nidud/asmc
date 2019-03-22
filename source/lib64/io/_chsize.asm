@@ -9,67 +9,66 @@ include errno.inc
 
     .code
 
-    option win64:rsp nosave
+_chsize proc frame uses rdi rsi handle:int_t, new_size:qword
 
-_chsize PROC USES rdi rsi rbx r12 r13 handle:SINT, new_size:QWORD
+  local buffer[512]:char_t
+  local current_offset:qword
 
-  local buf[512]:SBYTE
+    .repeat
 
-    mov r12,rdx ; new_size
-    mov r13d,ecx ; handle
-    lea rsi,buf
-    xor rdx,rdx
+        .break .if _lseek(ecx, 0, SEEK_CUR) == -1
 
-    .if _lseek(ecx, rdx, SEEK_CUR) != -1
+        mov current_offset,rax
 
-        mov rbx,rax ; save current offset
+        .repeat
 
-        .if _lseek(r13d, 0, SEEK_END) != -1
-            .if rax > r12
-                .if _lseek(r13d, r12, SEEK_SET) != -1
-                    ;
-                    ; Write zero byte at current file position
-                    ;
-                    oswrite(r13d, rsi, 0)
-                    jmp seekback
-                .endif
-                jmp toend
-            .elseif ZERO?
-                jmp seekback    ; All done..
-            .else
-                mov r8,rax
-                mov rdi,rsi
-                xor rax,rax
-                mov rcx,512/4
-                rep stosd
-                mov rdi,r12
-                sub rdi,r8
-                .repeat
-                    mov r12,512
-                    .if rdi < r12
+            .break(1) .if _lseek(handle, 0, SEEK_END) == -1
 
-                        mov r12,rdi
-                        test rdi,rdi
-                        jz seekback
-                    .endif
-                    sub rdi,r12
-                    oswrite(r13d, rsi, r12)
-                .until rax != r12
+            .if rax > new_size
 
-                mov errno,ERROR_DISK_FULL
-                mov rax,-1
+                .break(1) .if _lseek(handle, new_size, SEEK_SET) == -1
+
+                ;
+                ; Write zero byte at current file position
+                ;
+                oswrite(handle, &buffer, 0)
+                .break
             .endif
-        .endif
-    .endif
-toend:
+
+            .break .ifz ; All done..
+
+            mov r8,rax
+            lea rdi,buffer
+            xor rax,rax
+            mov rcx,512/8
+            rep stosq
+
+            mov rdi,new_size
+            sub rdi,r8
+
+            .repeat
+                mov rsi,512
+                .if rdi < rsi
+
+                    mov rsi,rdi
+                    .break(1) .if !rdi
+                .endif
+                sub rdi,rsi
+                oswrite(handle, &buffer, rsi)
+            .until rax != rsi
+
+            mov errno,ERROR_DISK_FULL
+            mov rax,-1
+            .break(1)
+
+        .until 1
+
+        .break .if _lseek(handle, current_offset, SEEK_SET) == -1
+        xor eax,eax
+
+    .until 1
     ret
 
-seekback:
-    _lseek(r13d, rbx, SEEK_SET)
-    cmp rax,-1
-    je  toend
-    xor rax,rax
-    jmp toend
-_chsize ENDP
+_chsize endp
 
-    END
+    end

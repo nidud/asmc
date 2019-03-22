@@ -38,11 +38,11 @@ ifndef _INTERNAL_IFSTRIP_
 
 CALLBACK(_PHNDLR, :SINT)
 
-_XCPT_ACTION STRUC
-    XcptNum dd ?
-    SigNum dd ?
-    XcptAction _PHNDLR ?
-_XCPT_ACTION ENDS
+_XCPT_ACTION	STRUC
+XcptNum		dd ?
+SigNum		dd ?
+XcptAction	_PHNDLR ?
+_XCPT_ACTION	ENDS
 
 externdef _XcptActTab:_XCPT_ACTION
 externdef _XcptActTabCount:SINT
@@ -50,7 +50,7 @@ externdef _XcptActTabSize:SINT
 externdef _First_FPE_Indx:SINT
 externdef _Num_FPE:SINT
 
-_XcptFilter proto WINAPI :ULONG, :PVOID
+_XcptFilter proto WINAPI :ULONG, :ptr ; PEXCEPTION_POINTERS
 
 endif
 

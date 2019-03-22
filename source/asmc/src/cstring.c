@@ -415,24 +415,57 @@ int CString( char *buffer, struct asm_tok tokenarray[] )
 	int equal;
 	int i = 0;
 	int rc = 0;
-	int d;
+	int d, x;
+	struct asym *sym;
 
-	equal = _stricmp( tokenarray[i].string_ptr, "@CStr" );
+	equal = _stricmp( tokenarray[0].string_ptr, "@CStr" );
+
+	if ( equal ) {
+
+	    while ( tokenarray[i].token != T_FINAL ) {
+		if ( !_stricmp(tokenarray[i].string_ptr, "@CStr") )
+		    break;
+		i++;
+	    }
+	    if ( tokenarray[i].token == T_FINAL && tokenarray[i+1].token == T_OP_BRACKET )
+		i++;
+	    else if ( tokenarray[i].token != T_FINAL )
+		i++;
+	    else
+		i = 0;
+	}
 
 	while ( tokenarray[i].token != T_FINAL ) {
 
 	    p = tokenarray[i].tokpos;
-	    if ( *p == '"' || p[0] == 'L' && p[1] == '"' ) {
+	    /*
+	     * v2.28 - .data --> .const
+	     *
+	     * - dq @CStr(L"CONST")
+	     * - dq @CStr(ID)
+	     */
+	    if ( tokenarray[i].token == T_ID && tokenarray[i-1].token == T_OP_BRACKET ) {
+
+		if ( ( sym = SymFind( tokenarray[i].string_ptr ) ) != NULL ) {
+
+		    if ( sym->string_ptr[0] == '"' ||
+			( sym->string_ptr[0] == 'L' && sym->string_ptr[1] == '"' ) )
+			p = sym->string_ptr;
+		}
+	    }
+
+	    if ( *p == '"' || ( p[0] == 'L' && p[1] == '"' ) ) {
 
 		rc = ParseCString( dlabel, string, p, &StringOffset, &Unicode );
 
 		if ( equal ) {
-		    strcpy( buffer, "offset " );
+		    if ( ModuleInfo.Ofssize != USE64 )
+			strcpy( buffer, "offset " );
 		    strcat( buffer, dlabel );
 		} else {
-		    //
-		    // v2.24 skip return value if @CStr is first token
-		    //
+
+		    /* v2.24 skip return value if @CStr is first token */
+
 		    dlabel[0] = ' ';
 		    dlabel[1] = NULLC;
 		}
@@ -445,25 +478,34 @@ int CString( char *buffer, struct asm_tok tokenarray[] )
 			    p = " %s dw 0";
 			else
 			    p = " %s sbyte 0";
-
 			sprintf( cursrc, p, dlabel );
 		    } else {
 			if ( Unicode )
 			    p = " %s dw %s,0";
 			else
 			    p = " %s sbyte %s,0";
-
 			sprintf( cursrc, p, dlabel, string );
 		    }
-		    //
-		    // v2.24 skip .data/.code if already in .data segment
-		    //
-		    ;
-		    if ( (d = _stricmp( ModuleInfo.currseg->sym.name, "_DATA" )) )
+
+		    /* v2.24 skip .data/.code if already in .data segment */
+		    x = 0;
+		    p = ModuleInfo.currseg->sym.name;
+		    if ( _stricmp( p, "_DATA" ) ) {
+			x++;
 			InsertLine( ".data" );
+		    } else if ( equal ) {
+			x = 2;
+			InsertLine(".const");
+		    }
 		    InsertLine( cursrc );
-		    if ( d )
-			InsertLine( ".code" );
+		    if ( x ) {
+			if ( !_stricmp( p, "CONST" ) )
+			    InsertLine(".const");
+			else if ( x == 2 )
+			    InsertLine(".data");
+			else
+			    InsertLine(".code");
+		    }
 		}
 		rc = 1;
 		break;

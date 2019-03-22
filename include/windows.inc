@@ -1,7 +1,7 @@
+.pragma list(push, 0)
 ifndef _WINDOWS_
 _WINDOWS_ equ <>
 
-.pragma list(push, 0)
 .pragma cref(push, 0)
 
 ifndef __LIBC_INC
@@ -514,6 +514,6 @@ endif ; WINVER >= 0x0400
 endif ; _INC_WINDOWS
 
 .pragma cref(pop)
-.pragma list(pop)
 endif
+.pragma list(pop)
 

@@ -5,13 +5,15 @@
 ;
 
 include consx.inc
-include syserrls.inc
+include errno.inc
 
     .code
 
 notsup proc
-    ermsg(0, addr CP_ENOSYS)
+
+    ermsg(0, _sys_errlist[ENOSYS*4])
     ret
+
 notsup endp
 
     END

@@ -1,3 +1,5 @@
+.pragma list(push, 0)
+
 include libc.inc
 
 ifndef _CRTIMP
@@ -60,7 +62,7 @@ endif
 
 ifndef _CRT_WIDE
 __CRT_WIDE macro _String
-	exitm<L&_String&>
+	exitm<L"&_String&">
 	endm
 _CRT_WIDE macro _String
 	exitm<__CRT_WIDE(_String)>
@@ -595,8 +597,21 @@ _STR2WSTR macro string
 	exitm<__STR2WSTR(string)>
 	endm
 
-__FILEW__     equ <_STR2WSTR(__FILE__)>
-__FUNCTIONW__ equ <_STR2WSTR(__FUNCTION__)>
+@FILECUR2W macro
+	local file
+	file textequ <L">
+%	forc x,<@FileCur>
+	    file CatStr file,<x>
+	    ifidn <x>,<\>
+		file CatStr file,<\>
+	    endif
+	    endm
+	file CatStr file,<">
+%	exitm<file>
+	endm
+
+__FILEW__	equ <@FILECUR2W()>
+__FUNCTIONW__	equ <_STR2WSTR(__FUNCTION__)>
 
 ifdef _DEBUG
 _invalid_parameter proto _CRTIMP :ptr wchar_t, :ptr wchar_t, :ptr wchar_t, :dword, :uintptr_t
@@ -618,7 +633,7 @@ _invoke_watson proto WINAPI \
 ifdef _DEBUG
 ifndef _CRT_SECURE_INVALID_PARAMETER
 _CRT_SECURE_INVALID_PARAMETER macro expr
-	exitm<::_invalid_parameter(__STR2WSTR(expr), __FUNCTIONW__, __FILEW__, __LINE__, 0)>
+	exitm<::_invalid_parameter(__STR2WSTR(expr), __FUNCTIONW__, __FILEW__, @Line, 0)>
 	endm
 endif
 else
@@ -649,6 +664,10 @@ __UPDATE_MBCP macro ptd, ptmbci
 	endm
 ifndef _DEFINE_SET_FUNCTION
 _DEFINE_SET_FUNCTION macro _FuncName, _Type, _VarName
+	_FuncName macro _Value
+	    mov _VarName,_Value
+	    exitm<>
+	    endm
 	exitm<>
 	endm
 endif
@@ -1151,15 +1170,6 @@ __DEFINE_CPP_OVERLOAD_INLINE_NFUNC_0_3_EX macro _ReturnType, _ReturnPolicy, _Fun
 endif ;; defined (__cplusplus) AND _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES
 endif ;; NOT defined (RC_INVOKED)
 
-pthreadlocinfo		typedef ptr threadlocinfo
-pthreadmbcinfo		typedef ptr threadmbcinfo
-
-_locale_tstruct		STRUC
-locinfo			pthreadlocinfo ?
-mbcinfo			pthreadmbcinfo ?
-_locale_tstruct		ENDS
-_locale_t		typedef ptr _locale_tstruct
-
 ifndef _THREADLOCALEINFO
 _THREADLOCALEINFO equ <>
 
@@ -1185,16 +1195,25 @@ mb_cur_max		SINT ?
 lconv_intl_refcount	LPINT ?
 lconv_num_refcount	LPINT ?
 lconv_mon_refcount	LPINT ?
+lconvp			PVOID ?
 ctype1_refcount		LPINT ?
 ctype1			LPSHORT ?
 pctype			LPSHORT ?
 pclmap			LPSTR ?
 pcumap			LPSTR ?
-lc_time_curr		ptr_t ?
+lc_time_curr		ptr_t ? ; __lc_time_data *
 locale_name		LPWSTR 6 dup(?)
 threadlocinfo		ENDS
 pthreadlocinfo		typedef ptr threadlocinfo
 endif
+
+pthreadmbcinfo		typedef ptr threadmbcinfo
+
+_locale_tstruct		STRUC
+locinfo			pthreadlocinfo ?
+mbcinfo			pthreadmbcinfo ?
+_locale_tstruct		ENDS
+_locale_t		typedef ptr _locale_tstruct
 
 if defined (_PREFAST_) AND defined (_CA_SHOULD_CHECK_RETURN)
 _Check_return_opt_ equ <_Check_return_>
@@ -1218,18 +1237,12 @@ __crt_typefix macro ctype
 	endm
 endif
 
-ifdef __midl
-ifndef _NO_INLINING
-_NO_INLINING equ 1
-endif
-endif
-
 ifndef _CRT_UNUSED
-_CRT_UNUSED macro x
-	exitm<(void)x>
+_CRT_UNUSED macro x:vararg
 	endm
 endif
 
 .pragma pack(pop)
 
 endif ;; _INC_CRTDEFS
+.pragma list(pop)

@@ -17,7 +17,7 @@ public	__decimal_point_length
 ;
 ;  Value of MB_CUR_MAX macro.
 ;
-__mb_cur_max dd 1
+__mb_cur_max int_t 1
 
 ;
 ;  Localized decimal point string.

@@ -4,11 +4,7 @@ ifndef _WINDEF_
  include windef.inc
 endif
 
-ifdef __PE__
-option dllimport:<advapi32>
-else
-includelib advapi32.lib
-endif
+.pragma comment(lib, advapi32)
 
 SERVICES_ACTIVE_DATABASE equ <"ServicesActive">
 SERVICES_FAILED_DATABASE equ <"ServicesFailed">

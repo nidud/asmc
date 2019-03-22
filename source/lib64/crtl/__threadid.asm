@@ -1,18 +1,18 @@
-; ATOI.ASM--
+; __THREADID.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include stdlib.inc
+include winbase.inc
 
-	.code
+    .code
 
-	OPTION	WIN64:2, STACKBASE:rsp
+__threadid proc frame
 
-atoi	PROC string:LPSTR
-	atol( rcx )
-	ret
-atoi	ENDP
+    GetCurrentThreadId()
+    ret
 
-	END
+__threadid endp
+
+    end

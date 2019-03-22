@@ -8,11 +8,7 @@ ifndef _WINDEF_
  include windef.inc
 endif
 
-ifdef __PE__
-option dllimport:<shell32>
-else
-includelib shell32.lib
-endif
+.pragma comment(lib, shell32)
 
 ifdef _WIN64
 SHELL_ALIGN	equ <QWORD>

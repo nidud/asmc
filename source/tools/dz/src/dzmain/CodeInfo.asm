@@ -767,7 +767,7 @@ CIPopUp proc uses esi edi ebx
             mov CIFileID,0
             .if !CFGetSectionID("CodeInfo", 0)
 
-                mov eax,@CStr("%DZ%\\default.ci")
+                lea eax,@CStr("%DZ%\\default.ci")
             .endif
         .endif
         mov ebx,eax

@@ -50,6 +50,7 @@ mb_cur_max		SINT ?
 lconv_intl_refcount	LPINT ?
 lconv_num_refcount	LPINT ?
 lconv_mon_refcount	LPINT ?
+lconvp			PVOID ?
 ctype1_refcount		LPINT ?
 ctype1			LPSHORT ?
 pctype			LPSHORT ?

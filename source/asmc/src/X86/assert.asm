@@ -198,7 +198,7 @@ local rc:SINT,cmd:UINT,
         mov eax,ModuleInfo.assert_proc
         .if !eax
 
-            mov eax,@CStr("assert_exit")
+            lea eax,@CStr("assert_exit")
             mov ModuleInfo.assert_proc,eax
         .endif
 

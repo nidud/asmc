@@ -6,6 +6,7 @@
 
     .code
 
+atoi::
 atol::
 
     xor eax,eax

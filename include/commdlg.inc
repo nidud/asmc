@@ -12,12 +12,7 @@ ifndef GUID_DEFS_ONLY
 
 include prsht.inc
 
-ifdef __PE__
-option dllimport:<comdlg32>
-else
-includelib comdlg32.lib
-endif
-
+.pragma comment(lib, comdlg32)
 ifndef _WIN64
 .pragma pack(push, 1)
 endif

@@ -5,19 +5,20 @@
 ;
 
 include io.inc
+include errno.inc
 include winbase.inc
 
     .code
 
-    option win64:rsp nosave
+    option win64:nosave
 
-remove proc file:LPSTR
+remove proc frame file:LPSTR
 
     .if DeleteFileA(rcx)
 
         xor eax,eax
     .else
-        osmaperr()
+        _dosmaperr(GetLastError())
     .endif
     ret
 

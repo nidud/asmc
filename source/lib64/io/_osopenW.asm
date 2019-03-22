@@ -10,39 +10,47 @@ include conio.inc
 
     .code
 
-_osopenW PROC USES rsi rdi rbx lpFileName:LPWSTR, dwAccess:DWORD, dwShareMode:DWORD,
-    lpSecurity:PVOID, dwCreation:DWORD, dwAttributes:DWORD
+_osopenW proc frame lpFileName:LPWSTR, dwAccess:DWORD, dwShareMode:DWORD,
+        lpSecurity:ptr, dwCreation:DWORD, dwAttributes:DWORD
 
-  local NameW[2048]:SBYTE
+  local NameW[1024]:wchar_t
+  local handle:int_t
 
     .repeat
+
         xor eax,eax
-        lea rsi,_osfile
-        .while BYTE PTR [rsi+rax] & FH_OPEN
+        lea r10,_osfile
+
+        .while byte ptr [r10+rax] & FH_OPEN
+
             inc eax
             .if eax == _nfile
-                xor eax,eax
-                mov _doserrno,eax ; no OS error
+
+                mov _doserrno,0 ; no OS error
                 mov errno,EBADF
-                dec rax
+                mov rax,-1
+
                 .break
             .endif
         .endw
-        mov rbx,rax
-        CreateFileW( lpFileName, dwAccess, dwShareMode, lpSecurity, dwCreation, dwAttributes, 0 )
-        mov rdx,rax
-        inc rax
-        .ifz
-            osmaperr()
-        .else
-            mov rax,rbx
-            lea rsi,_osfile
-            or  BYTE PTR [rsi+rax],FH_OPEN
-            lea rsi,_osfhnd
-            mov [rsi+rax*8],rdx
+
+        mov handle,eax
+        .if CreateFileW(rcx, edx, r8d, r9, dwCreation, dwAttributes, 0) == INVALID_HANDLE_VALUE
+
+            _dosmaperr(GetLastError())
+            .break
         .endif
+
+        mov rdx,rax
+        mov eax,handle
+        lea rcx,_osfile
+        or  byte ptr [rcx+rax],FH_OPEN
+        lea rcx,_osfhnd
+        mov [rcx+rax*8],rdx
+
     .until 1
     ret
+
 _osopenW endp
 
     end

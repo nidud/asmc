@@ -1,10 +1,11 @@
+.pragma list(push, 0)
 ifndef __STRLIB_INC
 __STRLIB_INC equ <>
-.pragma list(push, 0)
 ifndef __LIBC_INC
  include libc.inc
 endif
 ifndef __PE__
+.pragma comment(lib, libc)
 
 memxchg		proto __cdecl :string_t, :string_t, :size_t
 memstri		proto __cdecl :string_t, :size_t, :string_t, :size_t
@@ -40,5 +41,5 @@ hextob		proto __cdecl :string_t
 xtol		proto __cdecl :string_t
 _xtoi64		proto __cdecl :string_t
 endif ;; __PE__
-.pragma list(pop)
 endif
+.pragma list(pop)

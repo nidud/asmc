@@ -59,7 +59,7 @@ fseek proc uses rsi rdi rbx fp:LPFILE, off:SIZE_T, whence:SIZE_T
         mov rcx,[r8+rax*8]
         .ifd SetFilePointer(rcx, esi, 0, edi) == -1
 
-            osmaperr()
+            _dosmaperr(GetLastError())
             .break
         .endif
         xor eax,eax

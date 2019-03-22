@@ -7,16 +7,17 @@
 include io.inc
 include direct.inc
 include winbase.inc
+include errno.inc
 
     .code
 
-    option win64:nosave rsp
+    option win64:nosave
 
-_mkdir proc directory:LPSTR
+_mkdir proc frame directory:LPSTR
 
     .if !CreateDirectoryA(rcx, 0)
 
-        osmaperr()
+        _dosmaperr(GetLastError())
     .else
         xor eax,eax
     .endif

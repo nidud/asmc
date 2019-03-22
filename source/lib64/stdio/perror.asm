@@ -3,40 +3,41 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-
+include cruntime.inc
 include stdio.inc
-include io.inc
-include errno.inc
+include stdlib.inc
 include string.inc
+include syserr.inc
+include mtdll.inc
+include io.inc
+include internal.inc
 
     .code
 
-    option win64:rsp nosave
+perror proc frame message:string_t
 
-perror proc uses rdi string:LPSTR
+  local fh:int_t
 
-    mov rax,rcx
-    .if rax
-	mov rdi,rax
-	mov al,[rdi]
-	.if al
+    mov fh,2
+    _lock_fh( fh )  ; acquire file handle lock
 
-	    _write(2, rdi, strlen(rdi))
-	    _write(2, ": ", 2)
+    mov rcx,message
+    .if rcx
 
-	    lea rax,sys_errlist
-	    mov edi,errno
-	    shl edi,3
-	    add rdi,rax
-	    mov rdi,[rdi]
+        .if byte ptr [rcx]
 
-	    strlen(rdi)
-	    _write(2, rdi, eax)
-	    _write(2, "\n", 1)
-	.endif
+            _write_nolock(fh, message, strlen(rcx))
+            _write_nolock(fh, ": ", 2)
+        .endif
+
+        mov ecx,_errno()
+        mov message,_get_sys_err_msg(ecx)
+        _write_nolock(fh, message, strlen(rax))
+        _write_nolock(fh, "\n", 1)
     .endif
+    _unlock_fh( fh ) ; release file handle lock
     ret
 
 perror endp
 
-    END
+    end

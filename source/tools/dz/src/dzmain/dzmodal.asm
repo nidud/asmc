@@ -110,9 +110,9 @@ statusline_xy endp
 history_event_list  proto
 DirectoryToCurrentPanel proto :dword
 
-SetPathFromHistory proc private uses esi edi ebx panel
+GetPathFromHistory proc uses esi edi ebx panel
 
-local	ll:S_LOBJ, rc
+  local ll:S_LOBJ, rc, old_list
 
     mov ebx,IDD_DZHistory
     mov eax,[ebx+6]
@@ -170,6 +170,8 @@ local	ll:S_LOBJ, rc
 	    .endif
 	    mov ll.ll_numcel,edx
 
+	    mov eax,tdllist
+	    mov old_list,eax
 	    lea edx,ll
 	    mov tdllist,edx
 	    mov eax,ebx
@@ -177,6 +179,9 @@ local	ll:S_LOBJ, rc
 	    history_event_list()
 	    dlevent(ebx)
 	    dlclose(ebx)
+
+	    mov eax,old_list
+	    mov tdllist,eax
 
 	    mov eax,edx
 	    .if eax
@@ -191,13 +196,19 @@ local	ll:S_LOBJ, rc
     mov ecx,rc
     mov ebx,IDD_DZHistory
     mov [ebx+6],cx
+    ret
 
-    .if eax
+GetPathFromHistory endp
+
+SetPathFromHistory proc private uses ebx panel
+
+    .if GetPathFromHistory(panel)
 	mov ebx,eax
 	panel_setactive(panel)
 	DirectoryToCurrentPanel(ebx)
     .endif
     ret
+
 SetPathFromHistory endp
 
 cmahistory proc

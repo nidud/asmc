@@ -4,14 +4,39 @@ __CTYPE_INC equ <>
 ifndef __LIBC_INC
  include libc.inc
 endif
-ifdef __PE__
-option	dllimport:<msvcrt>
-ifndef _MSVCRT
-_MSVCRT equ <>
-endif
-endif
+.pragma comment(lib, libc, msvcrt)
 
 include crtdefs.inc
+
+ifndef WEOF
+WEOF	equ 0xFFFF
+endif
+
+ifndef _CRT_CTYPEDATA_DEFINED
+_CRT_CTYPEDATA_DEFINED equ <>
+ifndef _CTYPE_DISABLE_MACROS
+ifdef _CRTBLD
+externdef	__newctype:ushort_t
+if defined (_DLL) and defined (_M_IX86)
+;; Retained for compatibility with VC++ 5.0 and earlier versions
+__p__pctype	proto __cdecl
+endif
+endif
+ifndef __PCTYPE_FUNC
+if defined (_CRT_DISABLE_PERFCRIT_LOCKS) and not defined (_DLL)
+__PCTYPE_FUNC	equ <_pctype>
+else
+__PCTYPE_FUNC	equ <__pctype_func()>
+endif
+endif
+__pctype_func	proto __cdecl
+ifndef _M_CEE_PURE
+externdef	_pctype:ptr ushort_t
+else
+_pctype		equ <__pctype_func()>
+endif
+endif ;; _CTYPE_DISABLE_MACROS
+endif ;; _CRT_CTYPEDATA_DEFINED
 
 ifdef _CRTBLD
 ifndef _CTYPE_DISABLE_MACROS

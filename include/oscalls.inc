@@ -1,3 +1,4 @@
+.pragma list(push, 0)
 ifndef _INC_OSCALLS
 _INC_OSCALLS equ <>
 
@@ -47,3 +48,4 @@ else
 .err <ERROR - ONLY WIN32 OR POSIX TARGETS SUPPORTED>
 endif
 endif
+.pragma list(pop)

@@ -198,7 +198,7 @@ zip_unzip proc uses esi
                     mov esi,eax
                 .else
                     ermsg(&cp_warning, "%s\n'%02X'",
-                        zip_local.lz_method, sys_errlist[ENOSYS*4])
+                        _sys_errlist[ENOSYS*4], zip_local.lz_method)
                     mov esi,ERROR_INVALID_FUNCTION
                     .break(2)
                 .endif

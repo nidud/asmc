@@ -17,7 +17,7 @@ ER_BROKEN_PIPE   equ 109
 
     .code
 
-_read proc uses rsi rdi rbx r12 r13 h:SINT, b:PVOID, count:SIZE_T
+_read proc frame uses rsi rdi rbx r12 r13 h:SINT, b:PVOID, count:SIZE_T
 
   local NumberOfBytesRead:qword
 
@@ -53,12 +53,12 @@ _read proc uses rsi rdi rbx r12 r13 h:SINT, b:PVOID, count:SIZE_T
 
         lea rcx,_osfhnd
         mov rcx,[rcx+rbx*8]
+
         .if !ReadFile(rcx, rdi, r8d, &NumberOfBytesRead, 0)
 
-            osmaperr()
+            _dosmaperr(GetLastError())
 
             xor eax,eax
-            mov edx,_doserrno
             .break .if edx == ER_BROKEN_PIPE
 
             dec eax

@@ -1,3 +1,4 @@
+.pragma list(push, 0)
 ifndef _CRTBLD
 ;;
 ;; This is an internal C runtime header file. It is used when building
@@ -19,3 +20,4 @@ _UNALIGNED equ <>
 else
 .err <Unknown target architecture.>
 endif
+.pragma list(pop)

@@ -1282,24 +1282,41 @@ GetToken proc fastcall tokenarray:ptr asmtok, p:ptr line_status
     movzx eax,BYTE PTR [eax]
 
     .switch
+
       .case BYTE PTR _ltype[eax+1] & _DIGIT
         jmp get_number
+
       .case _ltype[eax+1] & _LABEL
         jmp get_id
+
       .case al == '`'
         .endc .if Options.strict_masm_compat
         jmp get_id_in_backquotes
+
       .case al == '.'
+
         mov eax,[edx].input
         movzx eax,BYTE PTR [eax+1]
         .endc .if !( _ltype[eax+1] & _LABEL or _DIGIT )
+
         movzx eax,[ecx-16].asmtok.token
         .if ![edx].index || \
             (eax != T_REG && eax != T_CL_BRACKET && eax != T_CL_SQ_BRACKET && eax != T_ID)
 
             jmp get_id
         .endif
+        ;
+        ; added v2.29 for .break(n) and .continue(n)
+        ;
+        .if (eax == T_CL_BRACKET && [ecx-48].asmtok.token == T_OP_BRACKET)
+
+            .if ( [ecx-64].asmtok.tokval == T_DOT_BREAK || \
+                  [ecx-64].asmtok.tokval == T_DOT_CONTINUE )
+                jmp get_id
+            .endif
+        .endif
     .endsw
+
     jmp get_special_symbol
 toend:
     ret

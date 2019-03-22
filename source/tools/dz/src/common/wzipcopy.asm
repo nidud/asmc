@@ -9,7 +9,6 @@ include filter.inc
 include consx.inc
 include progress.inc
 include errno.inc
-include syserrls.inc
 
 setftime	PROTO :SINT, :DWORD
 externdef	cp_emarchive:BYTE
@@ -117,7 +116,7 @@ wzipcopyfile PROC USES esi edi ebx wsub, fblk, out_path
 	cmp	eax,ERROR_INVALID_FUNCTION
 	je	toend
 	mov	esi,eax
-	mov	edx,offset CP_ENOMEM
+	mov	edx,_sys_errlist[ENOMEM*4]
 	cmp	eax,ER_MEM
 	jne	@F
 	mov	eax,edx
@@ -125,15 +124,15 @@ wzipcopyfile PROC USES esi edi ebx wsub, fblk, out_path
 @@:
 	cmp	eax,ER_DISK
 	jne	@F
-	mov	eax,offset CP_ENOSPC
+	mov	eax,_sys_errlist[ENOMEM*4]
 	jmp	error
 @@:
-	mov	edx,offset CP_EIO
+	mov	edx,_sys_errlist[EIO*4]
 	mov	eax,offset cp_emarchive
 	mov	ecx,errno
 	test	ecx,ecx
 	jz	error
-	mov	edx,sys_errlist[ecx*4]
+	mov	edx,_sys_errlist[ecx*4]
 error:
 	ermsg ( eax, "%s\n\n%s", edi, edx )
 	mov	eax,esi
@@ -144,7 +143,7 @@ ernozip:
 	jmp	toend
 erfind:
 	add	ebx,S_FBLK.fb_name
-	ermsg ( addr CP_ENOENT, ebx )
+	ermsg ( _sys_errlist[ENOENT*4], ebx )
 	mov	eax,ER_FIND
 eruser:
 	push	eax

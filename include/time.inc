@@ -1,11 +1,10 @@
 .pragma list(push, 0)
+
 ifndef __LIBC_INC
  include libc.inc
 endif
 
-ifdef __PE__
-option dllimport:<msvcrt>
-endif
+.pragma comment(lib, libc, msvcrt)
 
 include crtdefs.inc
 
@@ -139,6 +138,6 @@ TDateToString	proto __cdecl :ptr sbyte, :time_t
 SystemTimeToString proto __cdecl :ptr sbyte, :LPSYSTEMTIME
 SystemDateToString proto __cdecl :ptr sbyte, :LPSYSTEMTIME
 
-.pragma pack(pop)
 endif
+.pragma pack(pop)
 .pragma list(pop)

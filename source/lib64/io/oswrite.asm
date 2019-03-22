@@ -12,7 +12,7 @@ include winbase.inc
 
     option win64:nosave
 
-oswrite proc uses rbx h:SINT, b:PVOID, z:SIZE_T
+oswrite proc frame uses rbx h:SINT, b:PVOID, z:SIZE_T
 
   local NumberOfBytesWritten:dword
 
@@ -27,7 +27,7 @@ oswrite proc uses rbx h:SINT, b:PVOID, z:SIZE_T
             xor eax,eax
         .endif
     .else
-        osmaperr()
+        _dosmaperr(GetLastError())
         xor eax,eax
     .endif
     ret

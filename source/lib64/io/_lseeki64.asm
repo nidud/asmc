@@ -12,16 +12,16 @@ include winbase.inc
 
     .code
 
-_lseeki64 PROC handle:SINT, offs:QWORD, pos:UINT
+_lseeki64 PROC frame handle:SINT, offs:QWORD, pos:UINT
 
-    local lpNewFilePointer:QWORD
+  local lpNewFilePointer:QWORD
 
     mov r9,r8
     .ifd getosfhnd(ecx) != -1
 
         .ifd !SetFilePointerEx(rax, rdx, &lpNewFilePointer, r9d)
 
-            osmaperr()
+            _dosmaperr(GetLastError())
         .else
             mov rax,lpNewFilePointer
         .endif

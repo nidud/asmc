@@ -24,9 +24,8 @@ externdef __MIDL_itf_unknwn_0000_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IUnknown_INTERFACE_DEFINED__
 __IUnknown_INTERFACE_DEFINED__ equ 1
-ifdef __PE__
-option	dllimport:<rpcrt4>
-endif
+
+.pragma comment(lib, rpcrt4)
 
 LPUNKNOWN  typedef ptr IUnknown
 

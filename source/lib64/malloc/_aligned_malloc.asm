@@ -10,15 +10,15 @@ include malloc.inc
 
     option win64:2
 
-_aligned_malloc proc uses rdi dwSize:size_t, Alignment:UINT
+_aligned_malloc proc uses rdi dwSize:size_t, Alignment:size_t
 
-    mov edi,edx
+    mov rdi,rdx
     lea rcx,[rcx+rdx+sizeof(S_HEAP)]
 
     .if malloc(rcx)
 
-        dec edi
-        .if eax & edi
+        dec rdi
+        .if rax & rdi
 
             lea rdx,[rax-sizeof(S_HEAP)]
             lea rax,[rax+rdi+sizeof(S_HEAP)]

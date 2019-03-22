@@ -93,7 +93,7 @@ _stat proc uses rsi rdi rbx fname:LPSTR, buf:PVOID
 
                 FindClose(rax)
                 .ifd !_lk_getltime(&ff.ftLastWriteTime)
-                    osmaperr()
+                    _dosmaperr(GetLastError())
                     .break(1)
                 .endif
                 mov [rdi].S_STAT.st_mtime,eax

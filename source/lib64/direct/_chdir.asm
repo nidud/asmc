@@ -38,8 +38,9 @@ _chdir proc directory:LPSTR
                     .break
                 .endif
             .endif
-        .endif
-        osmaperr()
+       .endif
+        _dosmaperr(GetLastError())
+
     .until 1
     ret
 

@@ -19,16 +19,31 @@ ifndef _WIN32_WINNT
 _WIN32_WINNT equ _WIN32_WINDOWS
 endif
 
-ifdef __PE__
-WINADVAPI equ <option dllimport:<advapi32>>
-else
-WINADVAPI equ <includelib advapi32.lib>
-endif
+WINADVAPI	equ <.pragma(comment(lib, advapi32))>
+WINBASEAPI	equ <.pragma(comment(lib, kernel32))>
 
-ifdef __PE__
-WINBASEAPI equ <option dllimport:<kernel32>>
+GetImageBase macro
+ifdef _WIN64
+    mov rax,gs:[0x60]
+    mov rax,[rax+0x10]
+    retm<rax>
 else
-WINBASEAPI equ <includelib kernel32.lib>
+    assume fs:nothing
+    mov eax,fs:[0x30]
+    assume fs:error
+    mov eax,[eax+0x08]
+    retm<eax>
+endif
+    endm
+
+ifdef _WIN64
+DeclImageBase macro
+public __ImageBase
+    .code
+    org -0x1000
+    __ImageBase label IMAGE_DOS_HEADER
+    org 0
+    endm
 endif
 
 DefineHandleTable macro w

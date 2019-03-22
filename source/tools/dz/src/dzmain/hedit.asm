@@ -17,11 +17,11 @@ include cfini.inc
 include dzlib.inc
 include helpid.inc
 include wsub.inc
+include errno.inc
 
 externdef   IDD_TVSeek:dword
 externdef   IDD_HELine:dword
 externdef   IDD_HEFormat:dword
-externdef   CP_ENOMEM:byte
 externdef   fsflag:byte
 
 cmsearchidd     proto :dword
@@ -146,45 +146,45 @@ LToString proc uses esi edi lp:ptr S_LINE, source:LPSTR, dest:LPSTR
 
     .case T_BYTE
         movzx edx,byte ptr [edi]
-        mov eax,@CStr("%u")
+        lea eax,@CStr("%u")
         .if cl & T_SIGNED
-            mov eax,@CStr("%i")
+            lea eax,@CStr("%i")
             movsx edx,dl
         .elseif cl & T_HEX
-            mov eax,@CStr("%02X")
+            lea eax,@CStr("%02X")
         .endif
         sprintf(esi, eax, edx)
         .endc
 
     .case T_WORD
         movzx edx,word ptr [edi]
-        mov eax,@CStr("%u")
+        lea eax,@CStr("%u")
         .if cl & T_SIGNED
-            mov eax,@CStr("%i")
+            lea eax,@CStr("%i")
             movsx ecx,cx
         .elseif cl & T_HEX
-            mov eax,@CStr("%04X")
+            lea eax,@CStr("%04X")
         .endif
         sprintf(esi, eax, edx)
         .endc
 
     .case T_DWORD
-        mov eax,@CStr("%u")
+        lea eax,@CStr("%u")
         .if cl & T_SIGNED
-            mov eax,@CStr("%i")
+            lea eax,@CStr("%i")
         .elseif cl & T_HEX
-            mov eax,@CStr("%08X")
+            lea eax,@CStr("%08X")
         .endif
         mov ecx,[edi]
         sprintf(esi, eax, ecx)
         .endc
 
     .case T_QWORD
-        mov eax,@CStr("%llu")
+        lea eax,@CStr("%llu")
         .if cl & T_SIGNED
-            mov eax,@CStr("%lld")
+            lea eax,@CStr("%lld")
         .elseif cl & T_HEX
-            mov eax,@CStr("%016llX")
+            lea eax,@CStr("%016llX")
         .endif
         mov ecx,[edi]
         mov edx,[edi+4]
@@ -314,7 +314,7 @@ hedit proc uses esi edi ebx file:LPSTR, loffs:DWORD
         _filelength(ebx)
         .if (!eax && !edx) || edx
             .if edx
-                ermsg(0, &CP_ENOMEM)
+                ermsg(0, _sys_errlist[ENOMEM*4])
             .endif
             _close(ebx)
             xor eax,eax
@@ -327,7 +327,7 @@ hedit proc uses esi edi ebx file:LPSTR, loffs:DWORD
 
         add eax,esi
         .if !malloc(eax)
-            ermsg(0, &CP_ENOMEM)
+            ermsg(0, _sys_errlist[ENOMEM*4])
             _close(ebx)
             xor eax,eax
             .break
@@ -412,9 +412,9 @@ hedit proc uses esi edi ebx file:LPSTR, loffs:DWORD
                     .for esi=screen, ebx=0: ebx < lcount: ebx++, esi += _scrcol
 
                         .if flags & _HEXOFFSET
-                            mov eax,@CStr("%p    ")
+                            lea eax,@CStr("%p    ")
                         .else
-                            mov eax,@CStr("%010u  ")
+                            lea eax,@CStr("%010u  ")
                         .endif
                         mov edx,lptr
                         movzx edi,[edx+ebx*4].S_LINE.boffs
@@ -491,19 +491,19 @@ hedit proc uses esi edi ebx file:LPSTR, loffs:DWORD
                             pop edx
                             pop eax
                             movzx edx,[edx].S_LINE.flags
-                            mov ecx,@CStr("unsigned")
+                            lea ecx,@CStr("unsigned")
                             .if edx & T_SIGNED
-                                mov ecx,@CStr("signed")
+                                lea ecx,@CStr("signed")
                             .elseif edx & T_HEX
-                                mov ecx,@CStr("hexadecimal")
+                                lea ecx,@CStr("hexadecimal")
                             .endif
-                            mov edx,@CStr("BYTE")
+                            lea edx,@CStr("BYTE")
                             .if eax == T_DWORD
-                                mov edx,@CStr("DWORD")
+                                lea edx,@CStr("DWORD")
                             .elseif eax == T_WORD
-                                mov edx,@CStr("WORD")
+                                lea edx,@CStr("WORD")
                             .elseif eax == T_QWORD
-                                mov edx,@CStr("QWORD")
+                                lea edx,@CStr("QWORD")
                             .endif
                             lea eax,[esi+51+12]
                             sprintf(eax, "%s(%s)", edx, ecx)
@@ -580,9 +580,9 @@ hedit proc uses esi edi ebx file:LPSTR, loffs:DWORD
                             mov edx,statusline
                             movzx edx,[edx].S_DOBJ.dl_rect.rc_y
                             .if flags & _CLASSMODE
-                                mov eax,@CStr("Hex  ")
+                                lea eax,@CStr("Hex  ")
                             .else
-                                mov eax,@CStr("Class")
+                                lea eax,@CStr("Class")
                             .endif
                             scputs(42, edx, 0, 5, eax)
                         .endif

@@ -3,8 +3,6 @@ include io.inc
 include errno.inc
 include consx.inc
 
-extrn CP_ENOMEM:byte
-
     .code
 
 ioopen proc uses esi iost:ptr S_IOST, file:LPSTR, mode, bsize
@@ -23,7 +21,7 @@ ioopen proc uses esi iost:ptr S_IOST, file:LPSTR, mode, bsize
 	.if !ioinit(esi, bsize)
 
 	    _close([esi].S_IOST.ios_file)
-	    ermsg(0, addr CP_ENOMEM)
+	    ermsg(0, _sys_errlist[ENOMEM*4])
 	    xor eax,eax
 	.else
 	    mov eax,[esi].S_IOST.ios_file

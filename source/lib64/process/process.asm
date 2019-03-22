@@ -48,7 +48,7 @@ local	PI:PROCESS_INFORMATION,
 	CreateProcess( program, command, rax, rax, eax, r10d, rax, rax, rdi, rsi )
 	mov	rdi,rax
 	mov	rsi,PI.hProcess
-	call	osmaperr
+	_dosmaperr(GetLastError())
 	test	rdi,rdi
 	jz	error
 	test	CreationFlags,_P_NOWAIT

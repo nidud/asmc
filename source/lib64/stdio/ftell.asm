@@ -14,7 +14,7 @@ include winbase.inc
     option win64:nosave
     assume rbx:ptr _iobuf
 
-ftell proc uses rdi rbx fp:LPFILE
+ftell proc frame uses rdi rbx fp:LPFILE
 
   local filepos:SINT
   local fd:HANDLE
@@ -38,7 +38,7 @@ ftell proc uses rdi rbx fp:LPFILE
 
         .ifsd SetFilePointer(rcx, 0, 0, SEEK_CUR) < 0
 
-            osmaperr()
+            _dosmaperr(GetLastError())
             .break
         .endif
 

@@ -4,12 +4,13 @@ include locale.inc
 
 ERR_BUFFER_TOO_SMALL	equ 1	; should be in windef.h
 
+CP_ACP			equ 0	; default to ANSI code page
 _CLOCALEHANDLE		equ 0	; "C" locale handle
 _CLOCALECP		equ CP_ACP ; "C" locale Code page
+_COFFSET		equ 127
 
 _PER_THREAD_LOCALE_BIT	equ 0x2
 _GLOBAL_LOCALE_BIT	equ 0x1
-
 
 _MAX_WDAY_ABBR		equ 4
 _MAX_WDAY		equ 10
@@ -59,12 +60,13 @@ LC_WSTR_TYPE		equ 2
 
 ifndef _SETLOC_STRUCT_DEFINED
 _SETLOC_STRUCT_DEFINED equ <>
-is_ctype_compatible	STRUC
+
+_is_ctype_compatible	STRUC
 id			dd ?
 is_clike		SINT ?
-is_ctype_compatible	ENDS
+_is_ctype_compatible	ENDS
 
-setloc_struct		STRUC
+_setloc_struct		STRUC
 pchLanguage		LPWSTR ?
 pchCountry		LPWSTR ?
 iLocState		SINT ?
@@ -74,17 +76,17 @@ bAbbrevCountry		BOOL ?
 _cachecp		UINT ?
 _cachein		wchar_t MAX_LC_LEN dup(?)
 _cacheout		wchar_t MAX_LC_LEN dup(?)
-_Loc_c			is_ctype_compatible 5 dup(<>)
+_Loc_c			_is_ctype_compatible 5 dup(<>)
 _cacheLocaleName	wchar_t LOCALE_NAME_MAX_LENGTH dup(?)
-setloc_struct		ENDS
-psetloc_struct		typedef ptr setloc_struct
+_setloc_struct		ENDS
+_psetloc_struct		typedef ptr _setloc_struct
 
-setloc_downlevel_struct	 STRUC
+_setloc_downlevel_struct STRUC
 iLcidState		SINT ?
 lcidLanguage		LCID ?
 lcidCountry		LCID ?
-setloc_downlevel_struct ENDS
-psetloc_downlevel_struct typedef ptr setloc_downlevel_struct
+_setloc_downlevel_struct ENDS
+_psetloc_downlevel_struct typedef ptr _setloc_downlevel_struct
 endif
 
 ifndef _THREADLOCALEINFO
@@ -112,6 +114,7 @@ mb_cur_max		SINT ?
 lconv_intl_refcount	LPINT ?
 lconv_num_refcount	LPINT ?
 lconv_mon_refcount	LPINT ?
+lconvp			PVOID ?
 ctype1_refcount		LPINT ?
 ctype1			LPSHORT ?
 pctype			LPSHORT ?

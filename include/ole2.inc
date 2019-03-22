@@ -15,11 +15,7 @@ include winerror.inc
 include objbase.inc
 include oleauto.inc
 
-ifdef __PE__
-option	dllimport:<ole32>
-else
-includelib ole32.lib
-endif
+.pragma comment(lib, ole32)
 
 E_DRAW			equ VIEW_E_DRAW
 

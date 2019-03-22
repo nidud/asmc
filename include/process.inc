@@ -4,9 +4,7 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 
-IFDEF __PE__
-option		dllimport:<msvcrt>
-ENDIF
+.pragma comment(lib, libc, msvcrt)
 
 _P_WAIT		equ 0
 _P_NOWAIT	equ 1

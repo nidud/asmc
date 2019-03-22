@@ -2,8 +2,12 @@ HISTORY.TXT--
 Change Log File for ASMC
 ========================
 
-Changes in 2.29 - xx xxx 2019
-- changed undef directive - no error if symbol not defined
+Changes in 2.29 - 23 Mar 2019
+- added .pragma warning(push)
+- added .pragma warning(pop)
+- added .pragma(warning(disable: <num>))
+- added .pragma comment(lib, "name.lib"[, "name2.lib"])
+- removed error "symbol not defined" from undef directive
 - changed the @CStr() macro - use .const if in .data seg.
 - fixed bug in define(...) macro
 - added local names for calls to COM/CLASS members

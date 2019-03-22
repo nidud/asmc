@@ -155,11 +155,7 @@ COINIT_DISABLE_OLE1DDE		equ 0x4
 COINIT_SPEED_OVER_MEMORY	equ 0x8
 endif
 
-ifdef __PE__
-option	dllimport:<ole32>
-else
-includelib ole32.lib
-endif
+.pragma comment(lib, ole32)
 
 CoBuildVersion proto WINAPI
 

@@ -11,9 +11,7 @@ ifndef _WIN64
 endif
 endif
 
-ifdef __PE__
-option	dllimport:<msvcrt>
-endif
+.pragma comment(lib, libc, msvcrt)
 
 ifndef _TIME_T_DEFINED
 _TIME_T_DEFINED equ <>
@@ -415,6 +413,7 @@ _WSTDIO_DEFINED equ 1
 endif
 
 ifndef _WSTDLIB_DEFINED
+_WSTDLIB_DEFINED equ <>
 
 _itow		proto __cdecl :SINT, :ptr wchar_t, :SINT
 _ltow		proto __cdecl :LONG, :ptr wchar_t, :SINT
@@ -426,14 +425,11 @@ _wgetenv	proto __cdecl :ptr wchar_t
 _wsystem	proto __cdecl :ptr wchar_t
 _wtoi		proto __cdecl :ptr wchar_t
 _wtol		proto __cdecl :ptr wchar_t
-
-if     _INTEGRAL_MAX_BITS GE 64
+if _INTEGRAL_MAX_BITS GE 64
 _i64tow		proto __cdecl :qword, :ptr wchar_t, :SINT
 _ui64tow	proto __cdecl :sqword, :ptr wchar_t, :SINT
 _wtoi64		proto __cdecl :ptr wchar_t
 endif
-
-_WSTDLIB_DEFINED equ 1
 endif
 
 ifndef _POSIX_

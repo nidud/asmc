@@ -2,9 +2,7 @@
 ifndef __LIBC_INC
  include libc.inc
 endif
-IFDEF __PE__
-option		dllimport:<msvcrt>
-ENDIF
+.pragma comment(lib, libc, msvcrt)
 
 _MAX_PATH	equ 260
 _MAX_DRIVE	equ 3

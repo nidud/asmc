@@ -6,7 +6,6 @@ include errno.inc
 include progress.inc
 include zip.inc
 include consx.inc
-include syserrls.inc
 include strlib.inc
 
 PUBLIC	ocentral
@@ -47,19 +46,19 @@ zip_setprogress PROC
 zip_setprogress ENDP
 
 zip_displayerror PROC
-	mov	eax,offset CP_ENOSPC
-	mov	edx,offset CP_ENOMEM
+	mov	eax,_sys_errlist[ENOSPC*4]
+	mov	edx,_sys_errlist[ENOMEM*4]
 	test	STDO.ios_flag,IO_ERROR
 	jnz	@F
 	mov	ecx,errno
-	mov	eax,offset CP_ENOMEM
+	mov	eax,edx
 	cmp	ecx,ENOMEM
 	je	@F
 	mov	eax,offset cp_emarchive
-	mov	edx,offset CP_EIO
+	mov	edx,_sys_errlist[EIO*4]
 	test	ecx,ecx
 	jz	@F
-	mov	edx,sys_errlist[ecx*4]
+	mov	edx,_sys_errlist[ecx*4]
 @@:
 	ermsg ( edx, eax )
 	ret

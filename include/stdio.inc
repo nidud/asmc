@@ -4,11 +4,7 @@ __STDIO_INC equ <>
 ifndef __LIBC_INC
  include libc.inc
 endif
-ifdef __PE__
-option	dllimport:<msvcrt>
-else
-includelib libc.lib
-endif
+.pragma comment(lib, libc, msvcrt)
 
 SEEK_CUR	equ 1
 SEEK_END	equ 2

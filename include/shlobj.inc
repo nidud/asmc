@@ -1,15 +1,10 @@
 ifndef _SHLOBJ_H_
 _SHLOBJ_H_ equ <>
 .pragma list(push, 0)
+.pragma comment(lib, shell32)
 
 ifndef SNDMSG
 SNDMSG	equ <SendMessage>
-endif
-
-ifdef __PE__
-option	dllimport:<shell32>
-else
-includelib shell32.lib
 endif
 
 include ole2.inc

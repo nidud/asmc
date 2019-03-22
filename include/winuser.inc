@@ -5,14 +5,12 @@ ifndef _WINBASE_
  include winbase.inc
 endif
 
+.pragma pack(push, 8)
+
 ifndef _WINUSER_
 _WINUSER_ equ <>
 
-ifdef __PE__
-option dllimport:<user32>
-else
-includelib user32.lib
-endif
+.pragma comment(lib, user32)
 
 ifndef WINVER
 WINVER	equ 0x0500
@@ -9476,8 +9474,9 @@ cbSize			dd ?
 rcBar			RECT <>
 hMenu			HMENU ?
 hwndMenu		HWND ?
-MENUBARINFO_R0		RECORD fBarFocused:1, fFocused:1
-r0			MENUBARINFO_R0 <>
+;MENUBARINFO_R0		RECORD fBarFocused:1, fFocused:1
+;r0			MENUBARINFO_R0 <>
+flags			UINT ?
 MENUBARINFO		ENDS
 PMENUBARINFO		typedef ptr MENUBARINFO
 LPMENUBARINFO		typedef ptr MENUBARINFO
@@ -10090,4 +10089,5 @@ endif
 
 endif
 
+.pragma pack(pop)
 .pragma list(pop)

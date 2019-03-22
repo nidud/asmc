@@ -4,9 +4,7 @@ endif
 ifndef _INC_MMSYSTEM
 _INC_MMSYSTEM equ <>
 
-if defined(_WINMM_) or defined(__PE__)
-option dllimport:<winmm>
-endif
+.pragma comment(lib, winmm)
 
 ifdef _WIN32_VXD
 

@@ -6,10 +6,12 @@
 STRICT equ 1
 include windows.inc
 include windowsx.inc
+include ole2.inc
 include commctrl.inc
+include shlwapi.inc
 
 .data
-g_hinst HINSTANCE 0     ;; This application's HINSTANCE
+g_hinst     HINSTANCE 0 ;; This application's HINSTANCE
 g_hwndChild HWND 0      ;; Optional child window
 
 .code
@@ -61,9 +63,7 @@ OnDestroy endp
 ;;
 
 PaintContent proc hwnd:HWND, pps:ptr PAINTSTRUCT
-
     ret
-
 PaintContent endp
 
 ;;
@@ -91,8 +91,7 @@ OnPrintClient proc hwnd:HWND, hdc:HDC
 
   local ps:PAINTSTRUCT
 
-    mov eax,hdc
-    mov ps.hdc,eax
+    mov ps.hdc,rdx; hdc;
     GetClientRect(hwnd, &ps.rcPaint)
     PaintContent(hwnd, &ps)
     ret
@@ -103,7 +102,7 @@ OnPrintClient endp
 ;;  Window procedure
 ;;
 
-WndProc proc WINAPI hwnd:HWND, uiMsg:UINT, wParam:WPARAM, lParam:LPARAM
+WndProc proc hwnd:HWND, uiMsg:UINT, wParam:WPARAM, lParam:LPARAM
 
     .repeat
 
@@ -130,18 +129,20 @@ InitApp proc
   local wc:WNDCLASSEX
 
     mov wc.cbSize,SIZEOF WNDCLASSEX
-    mov wc.lpfnWndProc,WndProc
-    mov eax,g_hinst
-    mov wc.hInstance,eax
+    lea rax,WndProc
+    mov wc.lpfnWndProc,rax
+    mov rax,g_hinst
+    mov wc.hInstance,rax
     xor eax,eax
     mov wc.style,eax
     mov wc.cbClsExtra,eax
     mov wc.cbWndExtra,eax
-    mov wc.hIcon,eax
-    mov wc.lpszMenuName,eax
+    mov wc.hIcon,rax
+    mov wc.lpszMenuName,rax
     mov wc.hCursor,LoadCursor(NULL, IDC_ARROW)
     mov wc.hbrBackground,(COLOR_WINDOW + 1)
-    mov wc.lpszClassName,@CStr("Scratch")
+    lea rax,@CStr("Scratch")
+    mov wc.lpszClassName,rax
 
     .if RegisterClassEx(&wc)
 
@@ -152,18 +153,18 @@ InitApp proc
 
 InitApp endp
 
-WinMain proc WINAPI hinst:HINSTANCE, hinstPrev:HINSTANCE, lpCmdLine:LPSTR, nShowCmd:SINT
+WinMain proc hinst:HINSTANCE, hinstPrev:HINSTANCE,
+                   lpCmdLine:LPSTR, nShowCmd:SINT
 
   local msg:MSG
   local hwnd:HWND
 
-    mov eax,hinst
-    mov g_hinst,eax
+    mov g_hinst,rcx ; hinst
 
     .repeat
 
         .break .if !InitApp()
-        .break .ifs !SUCCEEDED(CoInitialize(NULL)) ;; In case we use COM
+        .break .ifsd !SUCCEEDED(CoInitialize(NULL)) ;; In case we use COM
 
         CreateWindowEx(
             0,
@@ -177,7 +178,7 @@ WinMain proc WINAPI hinst:HINSTANCE, hinstPrev:HINSTANCE, lpCmdLine:LPSTR, nShow
             hinst,                          ;; Instance
             0)                              ;; No special parameters
 
-        mov hwnd,eax
+        mov hwnd,rax
         ShowWindow(hwnd, nShowCmd)
 
         .while GetMessage(&msg, NULL, 0, 0)

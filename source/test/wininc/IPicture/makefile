@@ -1,6 +1,6 @@
 SaveIcon.exe:
-    asmc $*.asm
-    linkw sys gui_32 file $*
+    asmc64 $*.asm
+    linkw sys gui_64 file $*
     $@
     del $*.obj
     dir | find ".ico"

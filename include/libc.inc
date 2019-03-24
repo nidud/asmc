@@ -6,7 +6,7 @@ ifndef __LIBC_INC
 
 __LIBC_INC	equ 1
 __STDC__	equ 1
-__LIBC__	equ 228
+__LIBC__	equ 229
 if ( __ASMC__ LT __LIBC__ )
   .err <incorrect version. Use the header that matches with the Asmc Assembler.>
 endif

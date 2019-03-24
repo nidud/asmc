@@ -64,6 +64,8 @@ LPSHORT			typedef ptr sword
 LPUSHORT		typedef ptr word
 LPULONG			typedef ptr dword
 
+.pragma pack(push, 8)
+
 CAC			STRUC
 cElems			ULONG ?
 pElems			LPCHAR ?
@@ -595,6 +597,8 @@ dwType			dd ?
 rgb			db 1 dup(?)
 SERIALIZEDPROPERTYVALUE ENDS
 endif
+
+.pragma pack(pop)
 
 ;DWORD
 StgConvertVariantToProperty proto WINAPI \

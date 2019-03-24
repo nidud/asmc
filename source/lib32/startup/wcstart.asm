@@ -6,21 +6,12 @@
 ; Startup module for LIBC
 ;
 include stdlib.inc
-include crtl.inc
 
-includelib kernel32.lib
-includelib user32.lib
-includelib libc.lib
+wmain	  proto __cdecl :dword, :ptr, :ptr
+_initterm proto __cdecl :ptr, :ptr
 
-public wcstart
-public wmainCRTStartup
-
-_INIT	SEGMENT PARA FLAT PUBLIC 'INIT'
-_INIT	ENDS
-_IEND	SEGMENT PARA FLAT PUBLIC 'INIT'
-_IEND	ENDS
-
-wmain	proto :dword, :ptr, :ptr
+externdef __xi_a:ptr
+externdef __xi_z:ptr
 
 	.code
 
@@ -28,18 +19,15 @@ wmain	proto :dword, :ptr, :ptr
 	dd 564A4A50h
 	db __LIBC__ / 100 + '0','.',__LIBC__ mod 100 / 10 + '0',__LIBC__ mod 10 + '0'
 
-wmainCRTStartup:
-	mov eax,offset _INIT
-	and eax,-4096	; LINK - to start of page
-	jmp @F
-wcstart:
-	mov eax,offset _INIT
-@@:
-	mov edx,offset _IEND
-	__initialize( eax, edx )
-	mov ecx,__argc
-	mov edx,__wargv
-	mov ebx,_wenviron
-	exit( wmain( ecx, edx, ebx ) )
+wcstart::
 
-	end	wcstart
+wmainCRTStartup proc
+
+  local _exception_registration[2]:dword
+
+	_initterm( &__xi_a, &__xi_z )
+	exit( wmain( __argc, __wargv, _wenviron ) )
+
+wmainCRTStartup endp
+
+	end wcstart

@@ -1,11 +1,11 @@
 
 test.exe:
-    asmc -win64 *.asm
+    asmc64 *.asm
     linkw sys con_64 file $*, IConfig
     $@
     type $*.ini
     pause
-    asmc -pe -win64 $*.asm
+    asmc64 -pe $*.asm
     $@
     type $*.ini
     pause

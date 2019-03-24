@@ -5,7 +5,7 @@
 ifndef _WIN64
 _CType equ <stdcall>
 endif
-include lang/en.txt
+include lang/ru.txt
 include windows.inc
 include richedit.inc
 include winres.inc

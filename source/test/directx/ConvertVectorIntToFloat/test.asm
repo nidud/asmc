@@ -15,9 +15,7 @@ main proc
     mov x.w,5
 
     XMConvertVectorIntToFloat(x, Value)
-    _mm_store_sd(result, _mm_cvtss_sd(xmm0))
-
-    printf("result: %f\n", result)
+    printf("result: %f\n", _mm_store_sd(result, _mm_cvtss_sd(xmm0)))
 
     xor eax,eax
     ret

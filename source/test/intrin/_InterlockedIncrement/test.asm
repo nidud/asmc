@@ -26,11 +26,9 @@ THREAD_COUNT equ 6
 
 main proc
 
-  local num:DWORD
   local threads[THREAD_COUNT]:HANDLE
   local ThreadId[THREAD_COUNT]:SINT
   local param[THREAD_COUNT]:SINT
-  local i:SINT
 
     .for (ebx = 0: ebx < THREAD_COUNT: ebx++)
 
@@ -54,32 +52,33 @@ main endp
 SimpleThread proc pParam:PVOID
 
   local threadNum:SINT
-  local counter:SINT
   local randomValue:UINT
   local time:UINT
-  local err:SINT
 
     mov eax,[rcx]
     mov threadNum,eax
 
     .if rand_s(&randomValue)
 
-        mov      rax,UINT_MAX * 500
-        mov      ecx,randomValue
-        cvtsi2sd xmm1,rax
-        cvtsi2sd xmm0,rcx
-        divsd    xmm0,xmm1
-        cvtsd2si rax,xmm0
-        mov      time,eax
+        _mm_cvtsi64_sd(xmm0, randomValue)
+        _mm_cvtsi64_sd(xmm1, UINT_MAX * 500)
+        _mm_div_sd()
+        _mm_cvtsd_si64()
+
+        mov time,eax
 
         .while (pdata < 100)
+
             .if (pdata < 100)
 
                 _InterlockedIncrement(&pdata)
                 printf("Thread %d: %d\n", threadNum, pdata)
             .endif
+
             Sleep(time) ;; wait up to half of a second
+
         .endw
+
     .endif
 
     printf("Thread %d complete: %d\n", threadNum, pdata)

@@ -1,5 +1,5 @@
 test.exe:
-    asmc $*.asm
-    linkw system gui_32 file $*
+    asmc64 $*.asm
+    linkw system gui_64 file $*
     $@
 

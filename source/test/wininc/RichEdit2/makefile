@@ -3,22 +3,17 @@ test.exe:
     make -h -s WIN32WPE.exe
     make -h -s WIN64APE.exe
     make -h -s WIN64WPE.exe
-    del *.exe
     pause
 WIN32APE.exe:
     echo $@
-    asmc -q -pe -gui test.asm
-    test.exe
+    asmc -q -pe -gui -Fo $@ test.asm
 WIN32WPE.exe:
     echo $@
-    asmc -q -pe -gui -ws test.asm
-    test.exe
+    asmc -q -pe -gui -ws -Fo $@ test.asm
 WIN64APE.exe:
     echo $@
-    asmc -q -pe -gui -D_WIN64 test.asm
-    test.exe
+    asmc64 -q -pe -gui -Fo $@ test.asm
 WIN64WPE.exe:
     echo $@
-    asmc -q -pe -gui -ws -D_WIN64 test.asm
-    test.exe
+    asmc64 -q -pe -gui -ws -Fo $@ test.asm
 

@@ -319,27 +319,29 @@ PragmaDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asmtok
             ; .pragma(init(<proc>, <priority>))
             ; .pragma(exit(<proc>, <priority>))
 
-            lea edi,@CStr("dw")
-            .if ModuleInfo.Ofssize == USE32
-                lea edi,@CStr("dd")
+            mov edi,eax
+            .if !ModuleInfo.dotname
+                AddLineQueueX( " %r dotname", T_OPTION )
             .endif
-            .if ModuleInfo.Ofssize == USE64
-                lea edi,@CStr("dq")
+            lea esi,@CStr(".CRT$XTA")
+            .if edi == "init"
+                lea esi,@CStr(".CRT$XIA")
             .endif
-            lea edx,@CStr("EXIT")
-            .if eax == "init"
-                lea edx,@CStr("INIT")
-            .endif
-            push edx
-            AddLineQueueX( "_%s segment PARA FLAT PUBLIC '%s'", edx, edx )
-            AddLineQueueX( " %s %s", edi, [ebx].string_ptr )
+            mov eax,2
+            mov cl,ModuleInfo.Ofssize
+            shl eax,cl
+            AddLineQueueX( " %s %r %r(%d) 'CONST'", esi, T_SEGMENT, T_ALIGN, eax )
+            mov edx,[ebx].string_ptr
             add ebx,16
             .if [ebx].token == T_COMMA
                 add ebx,16
             .endif
-            AddLineQueueX( " %s %s", edi, [ebx].string_ptr )
-            pop edx
-            AddLineQueueX( "_%s ends", edx )
+            .if ModuleInfo.Ofssize == USE64
+                AddLineQueueX( " dd %r %s, %s", T_IMAGEREL, edx, [ebx].string_ptr )
+            .else
+                AddLineQueueX( " dd %s, %s", edx, [ebx].string_ptr )
+            .endif
+            AddLineQueueX( " %s %r", esi, T_ENDS )
             add ebx,16
             .if [ebx].token == T_CL_BRACKET
                 add ebx,16

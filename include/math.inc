@@ -90,7 +90,7 @@ sqrt    proto __cdecl _X:double
 ifndef _CRT_ATOF_DEFINED
 _CRT_ATOF_DEFINED equ <>
 atof    proto __cdecl _String:LPSTR
-_atof_l proto __cdecl _String:LPSTR, _Locale:SINT;_locale_t
+;_atof_l proto __cdecl _String:LPSTR, _Locale:SINT;_locale_t
 endif
 
 _cabs   proto __cdecl _Complex_value:_complex

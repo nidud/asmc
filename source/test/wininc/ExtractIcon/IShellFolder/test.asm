@@ -32,11 +32,13 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
         mov hDC,BeginPaint(hWnd, &ps)
         .ifd !SHGetDesktopFolder(&pDesktop)
 
-            .ifd !pDesktop.ParseDisplayName(NULL, NULL, L"C:\\Windows", NULL, &pIDL, NULL)
+;            .ifd !pDesktop.ParseDisplayName(NULL, NULL, L"C:\\Windows", NULL, &pIDL, NULL)
+            .ifd !pDesktop.ParseDisplayName(NULL, NULL, L"D:\\Asmc\\bin", NULL, &pIDL, NULL)
 
                 .ifd !pDesktop.BindToObject(pIDL, NULL, &IID_IShellFolder, &pSubfolder)
 
-                    .ifd !pSubfolder.ParseDisplayName(NULL, NULL, L"regedit.exe", NULL, &pIDL, NULL)
+;                    .ifd !pSubfolder.ParseDisplayName(NULL, NULL, L"regedit.exe", NULL, &pIDL, NULL)
+                    .ifd !pSubfolder.ParseDisplayName(NULL, NULL, L"asmc.exe", NULL, &pIDL, NULL)
 
                         .ifd !pSubfolder.GetUIObjectOf(hWnd, 1, &pIDL, &IID_IExtractIcon, 0, &pExtractor)
 

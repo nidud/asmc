@@ -6,23 +6,17 @@
 ; Startup module for LIBC
 ;
 include stdlib.inc
-include crtl.inc
 
-includelib kernel32.lib
-includelib user32.lib
-includelib libc.lib
+main	  proto __cdecl :dword, :ptr, :ptr
+_initterm proto __cdecl :ptr, :ptr
 
-public cstart
-public mainCRTStartup
-
-_INIT	SEGMENT PARA FLAT PUBLIC 'INIT'
-IStart	label byte
-_INIT	ENDS
-_IEND	SEGMENT PARA FLAT PUBLIC 'INIT'
-IEnd	label byte
-_IEND	ENDS
-
-main	proto :dword, :ptr, :ptr
+;;
+;; pointers to initialization sections
+;;
+externdef __xi_a:ptr
+externdef __xi_z:ptr
+externdef __xt_a:ptr
+externdef __xt_z:ptr
 
 	.code
 
@@ -30,23 +24,13 @@ main	proto :dword, :ptr, :ptr
 	dd 564A4A50h
 	db __LIBC__ / 100 + '0','.',__LIBC__ mod 100 / 10 + '0',__LIBC__ mod 10 + '0'
 
-mainCRTStartup::
-
-	lea rcx,IStart
-	and rcx,-4096	; LINK - to start of page
-	jmp @F
-
 cstart::
 
-	lea rcx,IStart
-@@:
-	lea rdx,IEnd
-	__initialize( rcx, rdx )
+mainCRTStartup proc frame
 
-	mov ecx,__argc
-	mov rdx,__argv
-	mov r8,_environ
-	sub rsp,0x28
-	exit( main( ecx, rdx, r8 ) )
+	_initterm( &__xi_a, &__xi_z )
+	exit( main( __argc, __argv, _environ ) )
+
+mainCRTStartup endp
 
 	end cstart

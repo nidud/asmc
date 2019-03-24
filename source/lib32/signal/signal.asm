@@ -120,24 +120,17 @@ raise endp
 
 
 ExcInstall:
-;
-; allocate 8 bytes on the stack for EXCEPTION_REGISTRATION
-;
-    sub     esp,8
-    mov     edx,edi
-    mov     eax,esi
-    mov     edi,esp
-    lea     esi,[edi+8]
-    mov     ecx,7
-    rep     movsd
-    mov     pExceptionReg,edi
-    xchg    esi,eax
-    xchg    edi,edx
+
+; 8 bytes on the stack for EXCEPTION_REGISTRATION
+; is allocate in mainCRTStartup
+
+    lea     eax,[ebp+7*4]
+    mov     pExceptionReg,eax
     assume  FS:nothing
-    mov     eax,FS:[0]
-    mov     [edx].EXCEPTION_REGISTRATION.prev,eax
-    mov     [edx].EXCEPTION_REGISTRATION.handler,ExceptionHandler
-    mov     FS:[0],edx
+    mov     ecx,FS:[0]
+    mov     [eax].EXCEPTION_REGISTRATION.prev,ecx
+    mov     [eax].EXCEPTION_REGISTRATION.handler,ExceptionHandler
+    mov     FS:[0],eax
     assume  FS:ERROR
     ret
 

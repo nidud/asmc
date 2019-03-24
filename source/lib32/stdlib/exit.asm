@@ -4,22 +4,17 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include crtl.inc
 include stdlib.inc
-include winbase.inc
 
-_EXIT   SEGMENT PARA flat PUBLIC 'EXIT'
-_EXIT   ENDS
-_EEND   SEGMENT PARA flat PUBLIC 'EXIT'
-_EEND   ENDS
+;; worker routine prototype
+doexit proto :int_t, :int_t, :int_t
 
     .code
 
-exit proc erlevel:SINT
-    mov edx,offset _EXIT
-    mov eax,offset _EEND
-    __initialize(edx, eax)
-    ExitProcess(erlevel)
+exit proc retval:int_t
+
+    doexit(retval, 0, 0) ; full term, kill process
+
 exit endp
 
-    END
+    end

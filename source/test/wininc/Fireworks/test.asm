@@ -7,6 +7,7 @@
 ;  - http://www.ronybc.com/firecode.php
 ;
 include windows.inc
+include tchar.inc
 
 EXX         equ 4
 EXY         equ 8
@@ -572,4 +573,4 @@ WinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPSTR, nSho
 
 WinMain endp
 
-    end
+    end _tstart

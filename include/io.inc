@@ -9,8 +9,6 @@ endif
 
 include crtdefs.inc
 
-.pragma pack(push, _CRT_PACKING)
-
 _NFILE_		equ 20
 
 _A_RDONLY	equ 01h
@@ -58,6 +56,8 @@ time_t		typedef sdword
 endif
 endif
 
+.pragma pack(push, 4)
+
 _finddata_t	STRUC
 attrib		dd ?
 time_create	time_t ?	; File creation time
@@ -88,6 +88,8 @@ _name		wchar_t 260 dup(?)
 _wfinddatai64_t ENDS
 endif
 endif
+
+.pragma pack(pop)
 
 externdef	_nfile:DWORD
 externdef	_osfile:BYTE
@@ -197,6 +199,5 @@ getfattr	proto __cdecl :LPSTR
 _wgetfattr	proto __cdecl :LPWSTR
 endif ; __PE__
 
-.pragma pack(pop)
 endif
 .pragma list(pop)

@@ -238,7 +238,8 @@ InitApp proc
     mov wc.lpszMenuName,eax
     mov wc.hCursor,LoadCursor(NULL, IDC_ARROW)
     mov wc.hbrBackground,(COLOR_WINDOW + 1)
-    mov wc.lpszClassName,@CStr("Scratch")
+    lea eax,@CStr("Scratch")
+    mov wc.lpszClassName,eax
 
     .if RegisterClassEx(&wc)
 

@@ -19,7 +19,7 @@ WinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPST
 
         mov pd.cbSizeofstruct,sizeof(PICTDESC)
         mov pd.picType,PICTYPE_ICON
-        mov pd.icon.hicon,LoadIcon(eax, MAKEINTRESOURCE(100))
+        mov pd.icon.hicon,LoadIcon(rax, MAKEINTRESOURCE(100))
 
         ;; create the OLE image
 

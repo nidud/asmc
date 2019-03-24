@@ -1,4 +1,4 @@
-; EXIT.ASM--
+; _EXIT_APP.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
@@ -6,17 +6,14 @@
 
 include stdlib.inc
 
-;; worker routine prototype
 doexit proto :int_t, :int_t, :int_t
 
     .code
 
-    option win64:rsp nosave
+_exit_app proc frame
 
-exit proc frame retval:int_t
+    doexit(0, 0, 0) ; full term, return to caller
 
-    doexit(ecx, 0, 0) ; full term, kill process
-
-exit endp
+_exit_app endp
 
     end

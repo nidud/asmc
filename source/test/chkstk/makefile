@@ -1,8 +1,8 @@
 test.exe:
-	asmc -chkstk $*.asm
+	asmc /Ge $*.asm
 	linkw system con_32 file $*
 	$@
-	asmc64 -chkstk $*.asm
+	asmc64 /Ge $*.asm
 	linkw system con_64 file $*
 	$@
 	pause

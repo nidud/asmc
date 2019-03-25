@@ -183,7 +183,7 @@ endif ;; _CRTBLD
 _get_osfhandle	proto __cdecl :int_t
 _open_osfhandle proto __cdecl :intptr_t, :int_t
 
-ifndef __PE__
+ifndef _MSVCRT
 _osopenA	proto __cdecl :LPSTR, :UINT, :UINT, :PVOID, :UINT, :UINT
 _osopenW	proto __cdecl :LPWSTR, :UINT, :UINT, :PVOID, :UINT, :UINT
 ifdef _UNICODE
@@ -197,7 +197,7 @@ getosfhnd	proto __cdecl :SINT
 osmaperr	proto __cdecl
 getfattr	proto __cdecl :LPSTR
 _wgetfattr	proto __cdecl :LPWSTR
-endif ; __PE__
+endif ; _MSVCRT
 
 endif
 .pragma list(pop)

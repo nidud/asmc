@@ -20,8 +20,8 @@ endif
 ifndef __comcat_h__
 __comcat_h__ equ <>
 include unknwn.inc
-ifdef __PE__
-option	dllimport:<uuid>
+ifndef __PE__
+.pragma comment(lib, uuid)
 endif
 
 externdef CLSID_StdComponentCategoriesMgr:CLSID

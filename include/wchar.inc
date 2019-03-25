@@ -71,7 +71,7 @@ endif
 
 
 ifndef _STDIO_DEFINED
-ifdef __PE__
+ifdef _MSVCRT
 _iob		equ <[__iob_func()]>
 else
 externdef	_iob:_iobuf

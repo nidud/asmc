@@ -38,7 +38,7 @@
  * if OPTION FRAME:AUTO is set and the procedure has the FRAME attribute.
  * it's not active by default because, in a few cases, the listing might get messed.
  */
-#define STACKPROBE 0
+#define STACKPROBE 1
 
 extern const char szDgroup[];
 extern uint_32 list_pos;  /* current LST file position */
@@ -2121,13 +2121,13 @@ static int write_default_prologue( void )
 		 * SUB	RSP, localsize
 		 * .ALLOCSTACK localsize
 		 */
-		ppfmt = ( resstack ? fmtstk1 : fmtstk0 );
+		 ppfmt = ( resstack ? fmtstk1 : fmtstk0 );
 #if STACKPROBE
-		if ( info->localsize + resstack > 0x1000 ) {
+		if ( Options.chkstack && info->localsize + resstack > 0x1000 ) {
 		    AddLineQueueX( *(ppfmt+2), T_RAX, NUMQUAL info->localsize, sym_ReservedStack->name );
-		    AddLineQueue(  "externdef __chkstk:PROC" );
-		    AddLineQueue(  "call __chkstk" );
-		    AddLineQueueX( "mov %r, %r", T_RSP, T_RAX );
+		    AddLineQueue(  "externdef _chkstk:PROC" );
+		    AddLineQueue(  "call _chkstk" );
+		    AddLineQueueX( "sub %r, %r", T_RSP, T_RAX);
 		} else
 #endif
 		    AddLineQueueX( *(ppfmt+0), T_RSP, NUMQUAL info->localsize, sym_ReservedStack->name );
@@ -2251,6 +2251,15 @@ static int write_default_prologue( void )
 		AddLineQueueX( "push %r", *regist );
 	    regist = NULL;
 	}
+#if STACKPROBE
+	ppfmt = ( resstack ? fmtstk1 : fmtstk0 );
+	if ( Options.chkstack && info->localsize + resstack > 0x1000 ) {
+	    AddLineQueueX( *(ppfmt+2), T_RAX, NUMQUAL info->localsize, sym_ReservedStack->name );
+	    AddLineQueue( "externdef _chkstk:PROC" );
+	    AddLineQueue( "call _chkstk" );
+	    AddLineQueueX( "sub %r, %r", T_RSP, T_RAX);
+	} else
+#endif
 	if ( ModuleInfo.epilogueflags )
 	    AddLineQueueX( "lea %r,[%r-(%d + %s)]", stackreg[ModuleInfo.Ofssize],
 		stackreg[ModuleInfo.Ofssize], NUMQUAL info->localsize, sym_ReservedStack->name );
@@ -2262,6 +2271,18 @@ static int write_default_prologue( void )
 	 * it will generate short instructions up to a size of 128.
 	 * with SUB, short instructions work up to 127 only.
 	 */
+#if STACKPROBE
+	if ( Options.chkstack && info->localsize > 0x1000 ) {
+	    AddLineQueue(  "externdef _chkstk:PROC" );
+	    if ( ModuleInfo.Ofssize == USE64 )
+		AddLineQueueX( "mov %r, %d", T_RAX, info->localsize );
+	    else
+		AddLineQueueX( "mov %r, %d", T_EAX, info->localsize );
+	    AddLineQueue( "call _chkstk" );
+	    if ( ModuleInfo.Ofssize == USE64 )
+		AddLineQueueX( "sub %r, %r", stackreg[ModuleInfo.Ofssize], T_RAX);
+	} else
+#endif
 	if ( ModuleInfo.epilogueflags )
 	    AddLineQueueX( "lea %r, [%r-%d]", stackreg[ModuleInfo.Ofssize], stackreg[ModuleInfo.Ofssize], NUMQUAL - info->localsize );
 	else if ( Options.masm_compat_gencode || info->localsize == 128 )

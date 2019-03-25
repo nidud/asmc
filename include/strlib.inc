@@ -4,7 +4,7 @@ __STRLIB_INC equ <>
 ifndef __LIBC_INC
  include libc.inc
 endif
-ifndef __PE__
+ifndef _MSVCRT
 .pragma comment(lib, libc)
 
 memxchg		proto __cdecl :string_t, :string_t, :size_t
@@ -40,6 +40,6 @@ hextob		proto __cdecl :string_t
 
 xtol		proto __cdecl :string_t
 _xtoi64		proto __cdecl :string_t
-endif ;; __PE__
+endif ;; _MSVCRT
 endif
 .pragma list(pop)

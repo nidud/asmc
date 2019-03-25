@@ -83,7 +83,7 @@ intptr_t typedef sdword
 endif
 endif
 
-ifndef __PE__
+ifndef _MSVCRT
 externdef hStdInput:  HANDLE
 externdef hStdOutput: HANDLE
 externdef hStdError:  HANDLE

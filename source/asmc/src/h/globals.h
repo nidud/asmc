@@ -461,6 +461,7 @@ unsigned char	epilogueflags;		/* OPTION EPILOGUE: FLAGS */
 unsigned char	segmentalign;		/* -Sp[n] Set segment alignment */
 unsigned char	pe_subsystem;		/* -cui, -gui */
 unsigned char	win64_flags;		/* -homeparams, -autostack, -alignstack16 */
+unsigned char	chkstack;		/* _chkstk() */
 };
 
 /* if the structure changes, option.c, SetMZ() might need adjustment! */

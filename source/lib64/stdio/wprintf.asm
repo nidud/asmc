@@ -8,7 +8,7 @@ include stdio.inc
 
     .code
 
-wprintf proc uses rsi format:LPWSTR, argptr:VARARG
+wprintf proc frame uses rsi format:LPWSTR, argptr:VARARG
 
     mov  rsi,_stbuf(&stdout)
     xchg rsi,_woutput(&stdout, format, &argptr)

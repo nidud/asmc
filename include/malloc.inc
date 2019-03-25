@@ -67,8 +67,7 @@ _aligned_msize	proto __cdecl :ptr, :size_t, :size_t
 endif
 _msize		proto __cdecl :ptr
 
-ifndef __PE__
-
+ifndef _MSVCRT
 _alloca64	proto __cdecl :dword, :dword
 ifdef _WIN64
 alloca	macro dwSize:req, ReservedStack:=<@ReservedStack>
@@ -80,9 +79,10 @@ endif
 __coreleft	proto __cdecl
 else
 alloca		proto __cdecl :dword
-option		dllimport:<kernel32>
 endif
 ;;;;;;;;;;;;;;; kernel32
+
+.pragma comment(lib, kernel32)
 
 GMEM_MOVEABLE	equ 0x0002
 GMEM_DDESHARE	equ 0x2000

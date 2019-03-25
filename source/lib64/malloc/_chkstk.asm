@@ -7,9 +7,9 @@
 
     .code
 
-__chkstk::
-___chkstk_ms::
-__alloca_probe::
+_chkstk::
+__chkstk_ms::
+_alloca_probe::
 
     lea r11,[rsp+8]
     mov r10,rax

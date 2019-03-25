@@ -10,6 +10,44 @@ include crtdefs.inc
 
 .pragma pack(push, _CRT_PACKING)
 
+ifndef _WCHAR_T_DEFINED
+_WCHAR_T_DEFINED equ <>
+wchar_t typedef ushort_t
+endif
+
+ifndef _TIME32_T_DEFINED
+_TIME32_T_DEFINED equ <>
+__time32_t typedef long_t	;; 32-bit time value
+endif
+
+ifndef _TIME64_T_DEFINED
+_TIME64_T_DEFINED equ <>
+__time64_t typedef int64_t	;; 64-bit time value
+endif
+
+ifndef _TIME_T_DEFINED
+_TIME_T_DEFINED	 equ <>		;; avoid multiple def's of time_t
+ifdef _USE_32BIT_TIME_T
+time_t typedef __time32_t	;; time value
+else
+time_t typedef __time64_t	;; time value
+endif
+endif
+
+ifndef _CLOCK_T_DEFINED
+_CLOCK_T_DEFINED equ <>
+clock_t typedef long_t
+endif
+
+ifndef _SIZE_T_DEFINED
+_SIZE_T_DEFINED equ <>
+ifdef _WIN64
+size_t typedef uint64_t
+else
+size_t typedef uint_t
+endif
+endif
+
 ;
 ; ISO 8601:	YYYY-MM-DD hh:mm:ss
 ; Short form:	YY-MM-DD hh:mm
@@ -109,7 +147,7 @@ _wstrtime	proto __cdecl :ptr wchar_t
 _WTIME_DEFINED	equ 1
 endif
 
-ifndef __PE__
+ifndef _MSVCRT
 
 externdef	_days:DWORD
 externdef	_lpdays:DWORD

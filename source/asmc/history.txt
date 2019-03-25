@@ -2,6 +2,9 @@ HISTORY.TXT--
 Change Log File for ASMC
 ========================
 
+Changes in 2.30 - xx xxx 2019
+- added switch /Ge - force stack checking for all funcs
+
 Changes in 2.29 - 23 Mar 2019
 - added .pragma warning(push)
 - added .pragma warning(pop)

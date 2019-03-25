@@ -1045,6 +1045,7 @@ epilogueflags		db ?	; OPTION EPILOGUE: FLAGS
 segmentalign		db ?	; -Sp[n] Set segment alignment
 pe_subsystem		db ?	; -cui, -gui
 win64_flags		db ?	; -homeparams, -autostack, -stackalign
+chkstack		db ?	; _chkstk()
 global_options		ENDS
 
 PLPSTR			typedef PTR LPSTR

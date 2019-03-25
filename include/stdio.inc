@@ -48,7 +48,7 @@ FILE		typedef _iobuf
 LPFILE		typedef ptr _iobuf
 endif
 
-ifndef __PE__
+ifndef _MSVCRT
 ifndef _LINUX
 externdef	_bufin:BYTE
 externdef	_iob:_iobuf

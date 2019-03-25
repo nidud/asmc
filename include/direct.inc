@@ -10,23 +10,23 @@ _MAX_DIR	equ 256
 _MAX_FNAME	equ 256
 _MAX_EXT	equ 256
 
-_getdrive	PROTO __cdecl
-_chdrive	PROTO __cdecl :SINT
-_chdir		PROTO __cdecl :LPSTR
-_mkdir		PROTO __cdecl :LPSTR
-_rmdir		PROTO __cdecl :LPSTR
-_getcwd		PROTO __cdecl :LPSTR, :SINT
-_getdcwd	PROTO __cdecl :SINT, :LPSTR, :SINT
-_wchdir		PROTO __cdecl :LPWSTR
-_wmkdir		PROTO __cdecl :LPWSTR
-_wrmdir		PROTO __cdecl :LPWSTR
-_wgetcwd	PROTO __cdecl :LPWSTR, :SINT
-_wgetdcwd	PROTO __cdecl :SINT, :LPWSTR, :SINT
+_getdrive	proto __cdecl
+_chdrive	proto __cdecl :SINT
+_chdir		proto __cdecl :LPSTR
+_mkdir		proto __cdecl :LPSTR
+_rmdir		proto __cdecl :LPSTR
+_getcwd		proto __cdecl :LPSTR, :SINT
+_getdcwd	proto __cdecl :SINT, :LPSTR, :SINT
+_wchdir		proto __cdecl :LPWSTR
+_wmkdir		proto __cdecl :LPWSTR
+_wrmdir		proto __cdecl :LPWSTR
+_wgetcwd	proto __cdecl :LPWSTR, :SINT
+_wgetdcwd	proto __cdecl :SINT, :LPWSTR, :SINT
 
-IFNDEF __PE__
-__allocwpath	PROTO __cdecl :LPSTR
+ifndef _MSVCRT
+__allocwpath	proto __cdecl :LPSTR
 ifdef __DZ__
 externdef	_diskflag:DWORD
 endif
-ENDIF
+endif
 .pragma list(pop)

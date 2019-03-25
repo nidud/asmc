@@ -80,7 +80,8 @@ struct global_options Options = {
 	0,			// .epilogueflags
 	4,			// .segmentalign
 	0,			// .pe_subsystem
-	0			// .win64_flags
+	0,			// .win64_flags
+	0			// .chkstack
 
 };
 
@@ -435,6 +436,9 @@ static void ProcessOption( char **cmdline, char *buffer )
 	Options.langtype = LANG_C;
 	return;
 #endif
+    case 'eG':		// -Ge
+	Options.chkstack = 1;
+	return;
     case 'rG':		// -Gr
 	Options.langtype = LANG_FASTCALL;
 	return;

@@ -11,6 +11,7 @@
 *.cmd text eol=crlf
 *.bat text eol=crlf
 *.mak text eol=crlf
+
 makefile text eol=crlf
 srcpath text eol=crlf
 

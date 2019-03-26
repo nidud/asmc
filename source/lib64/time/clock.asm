@@ -17,10 +17,7 @@ clock proc frame
   local ct:FILETIME
 
     GetSystemTimeAsFileTime( &ct )
-    mov eax,ct.dwLowDateTime
-    mov ecx,ct.dwHighDateTime
-    shl rcx,32
-    or  rax,rcx
+    mov rax,qword ptr ct.dwLowDateTime
     sub rax,start_tics
     mov ecx,10000
     xor edx,edx
@@ -34,10 +31,7 @@ __inittime proc frame
   local ct:FILETIME
 
     GetSystemTimeAsFileTime( &ct )
-    mov eax,ct.dwLowDateTime
-    mov ecx,ct.dwHighDateTime
-    shl rcx,32
-    or  rax,rcx
+    mov rax,qword ptr ct.dwLowDateTime
     mov start_tics,rax
     xor eax,eax
     ret

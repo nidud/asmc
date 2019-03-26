@@ -1182,13 +1182,15 @@ ms64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:SI
             .endif
 
             mov eax,psize
-            cmp eax,16
-            sbb ecx,ecx
-            add ecx,2
-            shr eax,cl
-            cmp eax,4
-            cmc
-            sbb eax,0
+            .switch eax
+            .case 1: xor eax,eax : .endc
+            .case 2: mov eax,1   : .endc
+            .case 3
+            .case 4: mov eax,2   : .endc
+            .default
+                mov eax,3
+                .endc
+            .endsw
             movzx ebx,ms64_regs[esi+eax*4]
 
             mov eax,ebx

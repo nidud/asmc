@@ -443,7 +443,15 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 			}
 			break;
 		    default:
-			AddLineQueueX( " push %s", fullparam );
+			if ( asize == 3 ) { /* added v2.29 */
+			    if ( pushsize == 4 ) {
+				AddLineQueueX( " push dword ptr %s", fullparam );
+			    } else {
+				AddLineQueueX( " push word ptr %s[2]", fullparam );
+				AddLineQueueX( " push word ptr %s", fullparam );
+			    }
+			} else
+			    AddLineQueueX( " push %s", fullparam );
 		    }
 		}
 	    } else { /* asize == pushsize */

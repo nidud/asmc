@@ -641,6 +641,7 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
 	switch ( psize ) {
 	case 1: base =	0*4; break;
 	case 2: base =	1*4; break;
+	case 3:
 	case 4: base =	2*4; break;
 	default:
 	    base = 3*4; break;

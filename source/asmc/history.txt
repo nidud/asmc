@@ -3,6 +3,7 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.30 - xx xxx 2019
+- changed invoke arguments for 3,5,6,7 byte types
 - fixed bug in invoke for 3 byte struct argument
 - added switch /Ge - force stack checking for all funcs
 

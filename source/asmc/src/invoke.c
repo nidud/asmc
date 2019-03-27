@@ -445,7 +445,10 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 		    default:
 			if ( asize == 3 ) { /* added v2.29 */
 			    if ( pushsize == 4 ) {
-				AddLineQueueX( " push dword ptr %s", fullparam );
+				AddLineQueueX( " mov al, byte ptr %s[2]", fullparam );
+				AddLineQueue(  " shl eax,16" );
+				AddLineQueueX( " mov ax, word ptr %s", fullparam );
+				AddLineQueue(  " push eax" );
 			    } else {
 				AddLineQueueX( " push word ptr %s[2]", fullparam );
 				AddLineQueueX( " push word ptr %s", fullparam );

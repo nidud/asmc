@@ -1171,7 +1171,9 @@ ms64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:SI
             mov z,eax
 
             mov edx,param
-            .if eax > psize || ( eax < psize && [edx].asym.mem_type == MT_PTR )
+            mov ecx,paramvalue
+            .if ( eax > psize && byte ptr [ecx] != '[' ) || \
+                ( eax < psize && [edx].asym.mem_type == MT_PTR )
 
                 asmerr( 2114, &[esi+1] )
             .endif

@@ -1,4 +1,4 @@
-; STRINGVPRINTFWORKERA.ASM--
+; STRINGVPRINTFWORKERW.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
@@ -9,8 +9,8 @@ include strsafe.inc
 
 .code
 
-StringVPrintfWorkerA proc frame pszDest:STRSAFE_LPSTR, cchDest:size_t, pcchNewDestLength:ptr size_t,
-         pszFormat:STRSAFE_LPCSTR, argList:va_list
+StringVPrintfWorkerW proc pszDest:STRSAFE_LPWSTR, cchDest:size_t, pcchNewDestLength:ptr size_t,
+         pszFormat:STRSAFE_LPCWSTR, argList:va_list
 
   local hr:HRESULT
   local retval:SINT
@@ -21,13 +21,13 @@ StringVPrintfWorkerA proc frame pszDest:STRSAFE_LPSTR, cchDest:size_t, pcchNewDe
     mov cchNewDestLength,0
 
     ;; leave the last space for the null terminator
-    lea rax,[rdx-1]
+    lea rax,[rdx-2]
     mov cchMax,rax
 
 if (STRSAFE_USE_SECURE_CRT eq 1) and not defined(STRSAFE_LIB_IMPL)
-    mov retval,_vsnprintf_s(pszDest, cchDest, cchMax, pszFormat, argList)
+    mov retval,_vsnwprintf_s(pszDest, cchDest, cchMax, pszFormat, argList)
 else
-    mov retval,_vsnprintf(pszDest, cchMax, pszFormat, argList)
+    mov retval,_vsnwprintf(pszDest, cchMax, pszFormat, argList)
 endif
     ;; ASSERT((iRet < 0) || (((size_t)iRet) <= cchMax));
 
@@ -36,7 +36,7 @@ endif
         ;; need to null terminate the string
         mov rcx,pszDest
         mov rax,cchMax
-        mov byte ptr [rcx+rax],0
+        mov word ptr [rcx+rax*2],0
 
         mov cchNewDestLength,rax
 
@@ -48,7 +48,7 @@ endif
         ;; need to null terminate the string
         mov rcx,pszDest
         mov rax,cchMax
-        mov byte ptr [rcx+rax],0
+        mov word ptr [rcx+rax*2],0
 
         mov cchNewDestLength,rax
 
@@ -67,6 +67,6 @@ endif
     mov eax,hr
     ret
 
-StringVPrintfWorkerA endp
+StringVPrintfWorkerW endp
 
     end

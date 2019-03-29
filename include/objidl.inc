@@ -3284,8 +3284,24 @@ rpcFlags		ULONG ?
 RPCOLEMESSAGE		ENDS
 
 PRPCOLEMESSAGE		typedef ptr RPCOLEMESSAGE
-
-externdef		IID_IRpcChannelBuffer:IID
+ifndef DEFINE_IIDX
+DEFINE_IIDX macro name, x
+    DEFINE_GUID(IID_&name&, \
+	@CatStr(<0x>, @SubStr(x, 2,8)), \
+	@CatStr(<0x>, @SubStr(x,11,4)), \
+	@CatStr(<0x>, @SubStr(x,16,4)), \
+	@CatStr(<0x>, @SubStr(x,21,2)), \
+	@CatStr(<0x>, @SubStr(x,23,2)), \
+	@CatStr(<0x>, @SubStr(x,26,2)), \
+	@CatStr(<0x>, @SubStr(x,28,2)), \
+	@CatStr(<0x>, @SubStr(x,30,2)), \
+	@CatStr(<0x>, @SubStr(x,32,2)), \
+	@CatStr(<0x>, @SubStr(x,34,2)), \
+	@CatStr(<0x>, @SubStr(x,36,2)))
+	exitm<>
+	endm
+endif
+DEFINE_IIDX(IRpcChannelBuffer, "D5F56B60-593B-101A-B569-08002B2DBF7A")
 
 .comdef IRpcChannelBuffer
     QueryInterface	proc :REFIID, :ptr
@@ -3365,7 +3381,7 @@ endif
 ifndef __IRpcChannelBuffer2_INTERFACE_DEFINED__
 __IRpcChannelBuffer2_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IRpcChannelBuffer2:IID
+DEFINE_IIDX(IRpcChannelBuffer2, "594f31d0-7f19-11d0-b194-00a0c90dc8bf")
 
 .comdef IRpcChannelBuffer2
     QueryInterface	proc :REFIID, :ptr
@@ -3396,7 +3412,7 @@ endif
 ifndef __IRpcChannelBuffer3_INTERFACE_DEFINED__
 __IRpcChannelBuffer3_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IRpcChannelBuffer3:IID
+DEFINE_IIDX(IRpcChannelBuffer3, "25B15600-0115-11d0-BF0D-00AA00B8DFD2")
 
 .comdef IRpcChannelBuffer3
     QueryInterface	proc :REFIID, :ptr
@@ -3515,7 +3531,7 @@ endif
 ifndef __IRpcProxyBuffer_INTERFACE_DEFINED__
 __IRpcProxyBuffer_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IRpcProxyBuffer:IID
+DEFINE_IIDX(IRpcProxyBuffer, "D5F56A34-593B-101A-B569-08002B2DBF7A")
 
 .comdef IRpcProxyBuffer
     QueryInterface	proc :REFIID, :ptr
@@ -3553,7 +3569,7 @@ endif
 ifndef __IRpcStubBuffer_INTERFACE_DEFINED__
 __IRpcStubBuffer_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IRpcStubBuffer:IID
+DEFINE_IIDX(IRpcStubBuffer, "D5F56AFC-593B-101A-B569-08002B2DBF7A")
 
 .comdef IRpcStubBuffer
     QueryInterface	proc :REFIID, :ptr
@@ -3655,7 +3671,7 @@ endif
 ifndef __IPSFactoryBuffer_INTERFACE_DEFINED__
 __IPSFactoryBuffer_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IPSFactoryBuffer:IID
+DEFINE_IIDX(IPSFactoryBuffer, "D5F569D0-593B-101A-B569-08002B2DBF7A")
 
 .comdef IPSFactoryBuffer
     QueryInterface	proc :REFIID, :ptr
@@ -3712,7 +3728,7 @@ externdef		__MIDL_itf_objidl_0043_v0_0_s_ifspec:RPC_IF_HANDLE
 ifndef __IChannelHook_INTERFACE_DEFINED__
 __IChannelHook_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IChannelHook:IID
+DEFINE_IIDX(IChannelHook, "1008c4a0-7613-11cf-9af1-0020af6e72f4")
 
 .comdef IChannelHook
     QueryInterface	proc :REFIID, :ptr
@@ -4530,7 +4546,7 @@ EOAC_SECURE_REFS	equ 0x2
 EOAC_ACCESS_CONTROL	equ 0x4
 EOAC_APPID		equ 0x8
 
-externdef		IID_IClientSecurity:IID
+DEFINE_IIDX(IClientSecurity, "0000013D-0000-0000-C000-000000000046")
 
 .comdef IClientSecurity
     QueryInterface	proc :REFIID, :ptr
@@ -4597,7 +4613,7 @@ endif
 ifndef __IServerSecurity_INTERFACE_DEFINED__
 __IServerSecurity_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IServerSecurity:IID
+DEFINE_IIDX(IServerSecurity, "0000013E-0000-0000-C000-000000000046")
 
 .comdef IServerSecurity
     QueryInterface	proc :REFIID, :ptr
@@ -4665,7 +4681,7 @@ endif
 ifndef __IClassActivator_INTERFACE_DEFINED__
 __IClassActivator_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IClassActivator:IID
+DEFINE_IIDX(IClassActivator, "00000140-0000-0000-C000-000000000046")
 
 .comdef IClassActivator
     QueryInterface	proc :REFIID, :ptr
@@ -4695,7 +4711,7 @@ endif
 ifndef __IRpcOptions_INTERFACE_DEFINED__
 __IRpcOptions_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IRpcOptions:IID
+DEFINE_IIDX(IRpcOptions, "00000144-0000-0000-C000-000000000046")
 
 .comdef IRpcOptions
     QueryInterface	proc :REFIID, :ptr
@@ -4807,7 +4823,7 @@ externdef		__MIDL_itf_objidl_0053_v0_0_s_ifspec:RPC_IF_HANDLE
 ifndef __IFillLockBytes_INTERFACE_DEFINED__
 __IFillLockBytes_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IFillLockBytes:IID
+DEFINE_IIDX(IFillLockBytes, "99caf010-415e-11cf-8814-00aa00b569f5")
 
 .comdef IFillLockBytes
     QueryInterface	proc :REFIID, :ptr
@@ -4877,7 +4893,7 @@ endif
 ifndef __IProgressNotify_INTERFACE_DEFINED__
 __IProgressNotify_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IProgressNotify:IID
+DEFINE_IIDX(IProgressNotify, "a9d758a0-4617-11cf-95fc-00aa00680db4")
 
 .comdef IProgressNotify
     QueryInterface	proc :REFIID, :ptr
@@ -4913,7 +4929,7 @@ cOffset			LARGE_INTEGER <>
 cBytes			LARGE_INTEGER <>
 StorageLayout		ENDS
 
-externdef		IID_ILayoutStorage:IID
+DEFINE_IIDX(ILayoutStorage, "0e6d4d90-6738-11cf-9608-00aa00680db4")
 
 .comdef ILayoutStorage
     QueryInterface	proc :REFIID, :ptr
@@ -5002,7 +5018,8 @@ ISurrogate		STRUC
 	lpVtbl		PVOID ?
 ISurrogate		ENDS
 LPSURROGATE		typedef ptr ISurrogate
-externdef		IID_ISurrogate:IID
+
+DEFINE_IIDX(ISurrogate, "00000022-0000-0000-C000-000000000046")
 
 ;HRESULT
 ISurrogate_LoadDllServer_Proxy proto WINAPI \
@@ -5041,7 +5058,7 @@ __IGlobalInterfaceTable_INTERFACE_DEFINED__ equ 1
     GetInterfaceFromGlobal proc :DWORD, :REFIID, :ptr
     .ends
 LPGLOBALINTERFACETABLE	typedef ptr IGlobalInterfaceTable
-externdef		IID_IGlobalInterfaceTable:IID
+DEFINE_IIDX(IGlobalInterfaceTable, "00000146-0000-0000-C000-000000000046")
 
 ;HRESULT
 IGlobalInterfaceTable_RegisterInterfaceInGlobal_Proxy proto WINAPI \
@@ -5088,7 +5105,7 @@ endif
 ifndef __IDirectWriterLock_INTERFACE_DEFINED__
 __IDirectWriterLock_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDirectWriterLock:IID
+DEFINE_IIDX(IDirectWriterLock, "0e6d4d92-6738-11cf-9608-00aa00680db4")
 
 .comdef IDirectWriterLock
     QueryInterface	proc :REFIID, :ptr
@@ -5138,7 +5155,7 @@ endif
 ifndef __ISynchronize_INTERFACE_DEFINED__
 __ISynchronize_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_ISynchronize:IID
+DEFINE_IIDX(ISynchronize, "00000030-0000-0000-C000-000000000046")
 
 .comdef ISynchronize
     QueryInterface	proc :REFIID, :ptr
@@ -5188,7 +5205,7 @@ endif
 ifndef __ISynchronizeMutex_INTERFACE_DEFINED__
 __ISynchronizeMutex_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_ISynchronizeMutex:IID
+DEFINE_IIDX(ISynchronizeMutex, "00000025-0000-0000-C000-000000000046")
 
 .comdef ISynchronizeMutex
     QueryInterface	proc :REFIID, :ptr
@@ -5257,7 +5274,7 @@ ICancelMethodCalls struct
 	lpVtbl		PVOID ?
 ICancelMethodCalls ends
 LPCANCELMETHODCALLS	typedef ptr ICancelMethodCalls
-externdef		IID_ICancelMethodCalls:IID
+DEFINE_IIDX(ICancelMethodCalls, "00000029-0000-0000-C000-000000000046")
 
 ;HRESULT
 ICancelMethodCalls_Cancel_Proxy proto WINAPI \
@@ -5302,7 +5319,7 @@ DCOM_NONE		equ 0
 DCOM_CALL_COMPLETE	equ 0x1
 DCOM_CALL_CANCELED	equ 0x2
 
-externdef		IID_IAsyncManager:IID
+DEFINE_IIDX(IAsyncManager, "0000002A-0000-0000-C000-000000000046")
 
 .comdef IAsyncManager
     QueryInterface	proc :REFIID, :ptr
@@ -5355,7 +5372,7 @@ endif
 ifndef __IWaitMultiple_INTERFACE_DEFINED__
 __IWaitMultiple_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IWaitMultiple:IID
+DEFINE_IIDX(IWaitMultiple, "0000002B-0000-0000-C000-000000000046")
 
 IWaitMultipleVtbl	STRUC
     QueryInterface	proc :REFIID, :ptr
@@ -5423,7 +5440,7 @@ endif
 ifndef __IUrlMon_INTERFACE_DEFINED__
 __IUrlMon_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IUrlMon:IID
+DEFINE_IIDX(IUrlMon, "00000026-0000-0000-C000-000000000046")
 
 .comdef IUrlMon
     QueryInterface	proc :REFIID, :ptr

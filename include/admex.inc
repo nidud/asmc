@@ -40,8 +40,6 @@ externdef		__MIDL_itf_admex_0000_v0_0_s_ifspec:RPC_IF_HANDLE
 ifndef __IMSAdminReplication_INTERFACE_DEFINED__
 __IMSAdminReplication_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IMSAdminReplication:IID
-
 .comdef IMSAdminReplication
 
     QueryInterface	proc :REFIID, :ptr
@@ -131,8 +129,6 @@ externdef		__MIDL_itf_admex_0255_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IMSAdminCryptoCapabilities_INTERFACE_DEFINED__
 __IMSAdminCryptoCapabilities_INTERFACE_DEFINED__ equ 1
-
-externdef		IID_IMSAdminCryptoCapabilities:IID
 
 .comdef IMSAdminCryptoCapabilities
 

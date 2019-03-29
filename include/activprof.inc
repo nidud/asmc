@@ -50,7 +50,7 @@ externdef __MIDL_itf_activprof_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
 ifndef __IActiveScriptProfilerControl_INTERFACE_DEFINED__
 __IActiveScriptProfilerControl_INTERFACE_DEFINED__ equ <>
 
-externdef IID_IActiveScriptProfilerControl:IID
+DEFINE_IIDX(IActiveScriptProfilerControl, "784b5ff0-69b0-47d1-a7dc-2518f4230e90")
 
 .comdef IActiveScriptProfilerControl
 
@@ -67,7 +67,7 @@ endif
 ifndef __IActiveScriptProfilerCallback_INTERFACE_DEFINED__
 __IActiveScriptProfilerCallback_INTERFACE_DEFINED__ equ 1
 
-externdef IID_IActiveScriptProfilerCallback:IID
+DEFINE_IIDX(IActiveScriptProfilerCallback, "740eca23-7d9d-42e5-ba9d-f8b24b1c7a9b")
 
 .comdef IActiveScriptProfilerCallback
 

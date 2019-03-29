@@ -226,7 +226,7 @@ externdef		LIBID_ADOX:IID
 ifndef ___ADOCollection_INTERFACE_DEFINED__
 ___ADOCollection_INTERFACE_DEFINED__ equ 1
 
-externdef		IID__ADOCollection:IID
+DEFINE_IIDX(_ADOCollection, "00000512-0000-0010-8000-00AA006D2EA4")
 
 .comdef ADOCollection
 
@@ -246,7 +246,7 @@ endif
 ifndef ___ADODynaCollection_INTERFACE_DEFINED__
 ___ADODynaCollection_INTERFACE_DEFINED__ equ 1
 
-externdef		IID__ADODynaCollection:IID
+DEFINE_IIDX(_ADODynaCollection, "00000513-0000-0010-8000-00AA006D2EA4")
 
 .comdef ADODynaCollection
 
@@ -268,7 +268,7 @@ endif
 ifndef ___Catalog_INTERFACE_DEFINED__
 ___Catalog_INTERFACE_DEFINED__ equ 1
 
-externdef		IID__Catalog:IID
+DEFINE_IIDX(_Catalog, "00000603-0000-0010-8000-00AA006D2EA4")
 
 .comdef Catalog
 
@@ -296,7 +296,7 @@ endif
 ifndef ___Table_INTERFACE_DEFINED__
 ___Table_INTERFACE_DEFINED__ equ 1
 
-externdef		IID__Table:IID
+DEFINE_IIDX(_Table, "00000610-0000-0010-8000-00AA006D2EA4")
 
 .comdef Table
 
@@ -325,7 +325,7 @@ endif
 ifndef ___Group25_INTERFACE_DEFINED__
 ___Group25_INTERFACE_DEFINED__ equ 1
 
-externdef		IID__Group25:IID
+DEFINE_IIDX(_Group25, "00000616-0000-0010-8000-00AA006D2EA4")
 
 .comdef Group25
 
@@ -347,7 +347,7 @@ endif
 ifndef ___Group_INTERFACE_DEFINED__
 ___Group_INTERFACE_DEFINED__ equ 1
 
-externdef		IID__Group:IID
+DEFINE_IIDX(_Group, "00000628-0000-0010-8000-00AA006D2EA4")
 
 .comdef _Group
 
@@ -373,7 +373,7 @@ endif
 ifndef ___User25_INTERFACE_DEFINED__
 ___User25_INTERFACE_DEFINED__ equ 1
 
-externdef		IID__User25:IID
+DEFINE_IIDX(_User25, "00000619-0000-0010-8000-00AA006D2EA4")
 
 .comdef User25
 
@@ -396,7 +396,7 @@ endif
 ifndef ___User_INTERFACE_DEFINED__
 ___User_INTERFACE_DEFINED__ equ 1
 
-externdef		IID__User:IID
+DEFINE_IIDX(_User, "00000627-0000-0010-8000-00AA006D2EA4")
 
 .comdef User
 
@@ -423,7 +423,7 @@ endif
 ifndef ___Column_INTERFACE_DEFINED__
 ___Column_INTERFACE_DEFINED__ equ 1
 
-externdef		IID__Column:IID
+DEFINE_IIDX(_Column, "0000061C-0000-0010-8000-00AA006D2EA4")
 
 .comdef Column
 
@@ -460,7 +460,7 @@ endif
 ifndef ___Index_INTERFACE_DEFINED__
 ___Index_INTERFACE_DEFINED__ equ 1
 
-externdef		IID__Index:IID
+DEFINE_IIDX(_Index, "0000061F-0000-0010-8000-00AA006D2EA4")
 
 .comdef Index
 
@@ -489,7 +489,7 @@ endif
 ifndef ___Key_INTERFACE_DEFINED__
 ___Key_INTERFACE_DEFINED__ equ 1
 
-externdef		IID__Key:IID
+DEFINE_IIDX(_Key, "00000622-0000-0010-8000-00AA006D2EA4")
 
 .comdef Key
 
@@ -517,7 +517,7 @@ endif
 ifndef __View_INTERFACE_DEFINED__
 __View_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_View:IID
+DEFINE_IIDX(View, "00000613-0000-0010-8000-00AA006D2EA4")
 
 .comdef View
 
@@ -540,7 +540,7 @@ endif
 ifndef __Procedure_INTERFACE_DEFINED__
 __Procedure_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_Procedure:IID
+DEFINE_IIDX(Procedure, "00000625-0000-0010-8000-00AA006D2EA4")
 
 .comdef Procedure
 
@@ -565,7 +565,7 @@ externdef		CLSID_Table:CLSID
 ifndef __Property_INTERFACE_DEFINED__
 __Property_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_Property:IID
+DEFINE_IIDX(Property, "00000503-0000-0010-8000-00AA006D2EA4")
 
 .comdef Property
 
@@ -593,7 +593,7 @@ externdef		CLSID_Key:CLSID
 ifndef __Tables_INTERFACE_DEFINED__
 __Tables_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_Tables:IID
+DEFINE_IIDX(Tables, "00000611-0000-0010-8000-00AA006D2EA4")
 
 .comdef Tables
 
@@ -616,7 +616,7 @@ endif
 ifndef __Columns_INTERFACE_DEFINED__
 __Columns_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_Columns:IID
+DEFINE_IIDX(Columns, "0000061D-0000-0010-8000-00AA006D2EA4")
 
 .comdef Columns
 
@@ -639,7 +639,7 @@ endif
 ifndef __Procedures_INTERFACE_DEFINED__
 __Procedures_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_Procedures:IID
+DEFINE_IIDX(Procedures, "00000626-0000-0010-8000-00AA006D2EA4")
 
 .comdef Procedures
 
@@ -662,7 +662,7 @@ endif
 ifndef __Views_INTERFACE_DEFINED__
 __Views_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_Views:IID
+DEFINE_IIDX(Views, "00000614-0000-0010-8000-00AA006D2EA4")
 
 .comdef Views
 
@@ -685,7 +685,7 @@ endif
 ifndef __Indexes_INTERFACE_DEFINED__
 __Indexes_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_Indexes:IID
+DEFINE_IIDX(Indexes, "00000620-0000-0010-8000-00AA006D2EA4")
 
 .comdef Indexes
 
@@ -708,7 +708,7 @@ endif
 ifndef __Keys_INTERFACE_DEFINED__
 __Keys_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_Keys:IID
+DEFINE_IIDX(Keys, "00000623-0000-0010-8000-00AA006D2EA4")
 
 .comdef Keys
 
@@ -731,7 +731,7 @@ endif
 ifndef __Users_INTERFACE_DEFINED__
 __Users_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_Users:IID
+DEFINE_IIDX(Users, "0000061A-0000-0010-8000-00AA006D2EA4")
 
 .comdef Users
 
@@ -754,7 +754,7 @@ endif
 ifndef __Groups_INTERFACE_DEFINED__
 __Groups_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_Groups:IID
+DEFINE_IIDX(Groups, "00000617-0000-0010-8000-00AA006D2EA4")
 
 .comdef Groups
 
@@ -777,7 +777,7 @@ endif
 ifndef __Properties_INTERFACE_DEFINED__
 __Properties_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_Properties:IID
+DEFINE_IIDX(Properties, "00000504-0000-0010-8000-00AA006D2EA4")
 
 .comdef Properties
 

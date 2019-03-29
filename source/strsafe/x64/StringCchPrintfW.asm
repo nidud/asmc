@@ -1,4 +1,4 @@
-; STRINGCCHPRINTFA.ASM--
+; STRINGCCHPRINTFW.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
@@ -8,13 +8,13 @@ include strsafe.inc
 
 .code
 
-StringCchPrintfA proc frame pszDest:STRSAFE_LPSTR, cchDest:size_t, pszFormat:STRSAFE_LPCSTR, argptr:vararg
+StringCchPrintfW proc pszDest:STRSAFE_LPWSTR, cchDest:size_t, pszFormat:STRSAFE_LPCWSTR, argptr:vararg
 
-    StringValidateDestA(rcx, rdx, STRSAFE_MAX_CCH)
+    StringValidateDestW(rcx, rdx, STRSAFE_MAX_CCH)
 
-    .ifs (SUCCEEDED(eax))
+    .if (SUCCEEDED(eax))
 
-        StringVPrintfWorkerA(pszDest,
+        StringVPrintfWorkerW(pszDest,
                 cchDest,
                 NULL,
                 pszFormat,
@@ -23,10 +23,10 @@ StringCchPrintfA proc frame pszDest:STRSAFE_LPSTR, cchDest:size_t, pszFormat:STR
     .elseif (cchDest)
 
         mov rcx,pszDest
-        mov byte ptr [rcx],0
+        mov word ptr [rcx],0
     .endif
     ret
 
-StringCchPrintfA endp
+StringCchPrintfW endp
 
     end

@@ -85,7 +85,7 @@ externdef		__MIDL_itf_adhoc_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
 ifndef __IDot11AdHocManager_INTERFACE_DEFINED__
 __IDot11AdHocManager_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDot11AdHocManager:IID
+DEFINE_IIDX(IDot11AdHocManager, "8F10CC26-CF0D-42a0-ACBE-E2DE7007384D")
 
 .comdef IDot11AdHocManager
 
@@ -104,7 +104,7 @@ endif
 ifndef __IDot11AdHocManagerNotificationSink_INTERFACE_DEFINED__
 __IDot11AdHocManagerNotificationSink_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDot11AdHocManagerNotificationSink:IID
+DEFINE_IIDX(IDot11AdHocManagerNotificationSink, "8F10CC27-CF0D-42a0-ACBE-E2DE7007384D")
 
 .comdef IDot11AdHocManagerNotificationSink
 
@@ -122,7 +122,7 @@ endif
 ifndef __IEnumDot11AdHocNetworks_INTERFACE_DEFINED__
 __IEnumDot11AdHocNetworks_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IEnumDot11AdHocNetworks:IID
+DEFINE_IIDX(IEnumDot11AdHocNetworks, "8F10CC28-CF0D-42a0-ACBE-E2DE7007384D")
 
 .comdef IEnumDot11AdHocNetworks
 
@@ -140,7 +140,7 @@ endif
 ifndef __IDot11AdHocNetwork_INTERFACE_DEFINED__
 __IDot11AdHocNetwork_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDot11AdHocNetwork:IID
+DEFINE_IIDX(IDot11AdHocNetwork, "8F10CC29-CF0D-42a0-ACBE-E2DE7007384D")
 
 .comdef IDot11AdHocNetwork
 
@@ -166,7 +166,7 @@ endif
 ifndef __IDot11AdHocNetworkNotificationSink_INTERFACE_DEFINED__
 __IDot11AdHocNetworkNotificationSink_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDot11AdHocNetworkNotificationSink:IID
+DEFINE_IIDX(IDot11AdHocNetworkNotificationSink, "8F10CC2A-CF0D-42a0-ACBE-E2DE7007384D")
 
 .comdef IDot11AdHocNetworkNotificationSink
 
@@ -182,7 +182,7 @@ endif
 ifndef __IDot11AdHocInterface_INTERFACE_DEFINED__
 __IDot11AdHocInterface_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDot11AdHocInterface:IID
+DEFINE_IIDX(IDot11AdHocInterface, "8F10CC2B-CF0D-42a0-ACBE-E2DE7007384D")
 
 .comdef IDot11AdHocInterface
 
@@ -205,7 +205,7 @@ endif
 ifndef __IEnumDot11AdHocInterfaces_INTERFACE_DEFINED__
 __IEnumDot11AdHocInterfaces_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IEnumDot11AdHocInterfaces:IID
+DEFINE_IIDX(IEnumDot11AdHocInterfaces, "8F10CC2C-CF0D-42a0-ACBE-E2DE7007384D")
 
 .comdef IEnumDot11AdHocInterfaces
 
@@ -223,7 +223,7 @@ endif
 ifndef __IEnumDot11AdHocSecuritySettings_INTERFACE_DEFINED__
 __IEnumDot11AdHocSecuritySettings_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IEnumDot11AdHocSecuritySettings:IID
+DEFINE_IIDX(IEnumDot11AdHocSecuritySettings, "8F10CC2D-CF0D-42a0-ACBE-E2DE7007384D")
 
 .comdef IEnumDot11AdHocSecuritySettings
 
@@ -241,7 +241,7 @@ endif
 ifndef __IDot11AdHocSecuritySettings_INTERFACE_DEFINED__
 __IDot11AdHocSecuritySettings_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDot11AdHocSecuritySettings:IID
+DEFINE_IIDX(IDot11AdHocSecuritySettings, "8F10CC2E-CF0D-42a0-ACBE-E2DE7007384D")
 
 .comdef IDot11AdHocSecuritySettings
 
@@ -257,7 +257,7 @@ endif
 ifndef __IDot11AdHocInterfaceNotificationSink_INTERFACE_DEFINED__
 __IDot11AdHocInterfaceNotificationSink_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDot11AdHocInterfaceNotificationSink:IID
+DEFINE_IIDX(IDot11AdHocInterfaceNotificationSink, "8F10CC2F-CF0D-42a0-ACBE-E2DE7007384D")
 
 .comdef IDot11AdHocInterfaceNotificationSink
 
@@ -272,12 +272,9 @@ endif
 ifndef __ADHOCLib_LIBRARY_DEFINED__
 __ADHOCLib_LIBRARY_DEFINED__ equ 1
 
-externdef		LIBID_ADHOCLib:IID
-externdef		CLSID_Dot11AdHocManager:CLSID
+DEFINE_GUID(LIBID_ADHOCLib,		0xDD06A84F,0x83BD,0x4d01,0x8A,0xB9,0x23,0x89,0xFE,0xA0,0x86,0x9E)
+DEFINE_GUID(CLSID_Dot11AdHocManager,	0xDD06A84F,0x83BD,0x4d01,0x8A,0xB9,0x23,0x89,0xFE,0xA0,0x86,0x9E)
 
-ifdef __cplusplus
-DECLSPEC_UUID("DD06A84F-83BD-4d01-8AB9-2389FEA0869E")
-endif
 endif
 
 endif

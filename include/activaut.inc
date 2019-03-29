@@ -78,8 +78,6 @@ externdef		__MIDL_itf_activaut_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
 ifndef __IScriptNode_INTERFACE_DEFINED__
 __IScriptNode_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IScriptNode:IID
-
 .comdef IScriptNode
 
     QueryInterface	proc :REFIID, :ptr
@@ -101,8 +99,6 @@ endif
 
 ifndef __IScriptEntry_INTERFACE_DEFINED__
 __IScriptEntry_INTERFACE_DEFINED__ equ 1
-
-externdef		IID_IScriptEntry:IID
 
 .comdef IScriptEntry
 
@@ -136,8 +132,6 @@ endif
 
 ifndef __IScriptScriptlet_INTERFACE_DEFINED__
 __IScriptScriptlet_INTERFACE_DEFINED__ equ 1
-
-externdef		IID_IScriptScriptlet:IID
 
 .comdef IScriptScriptlet
 
@@ -178,8 +172,6 @@ endif
 ifndef __IActiveScriptAuthor_INTERFACE_DEFINED__
 __IActiveScriptAuthor_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IActiveScriptAuthor:IID
-
 .comdef IActiveScriptAuthor
 
     QueryInterface	proc :REFIID, :ptr
@@ -205,8 +197,6 @@ endif
 
 ifndef __IActiveScriptAuthorProcedure_INTERFACE_DEFINED__
 __IActiveScriptAuthorProcedure_INTERFACE_DEFINED__ equ 1
-
-externdef		IID_IActiveScriptAuthorProcedure:IID
 
 .comdef IActiveScriptAuthorProcedure
 

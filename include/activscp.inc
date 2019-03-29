@@ -266,8 +266,6 @@ externdef		__MIDL_itf_activscp_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
 ifndef __IActiveScriptSite_INTERFACE_DEFINED__
 __IActiveScriptSite_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IActiveScriptSite:IID
-
 .comdef IActiveScriptSite
 
     QueryInterface	proc :REFIID, :ptr
@@ -287,8 +285,6 @@ endif
 
 ifndef __IActiveScriptError_INTERFACE_DEFINED__
 __IActiveScriptError_INTERFACE_DEFINED__ equ 1
-
-externdef		IID_IActiveScriptError:IID
 
 .comdef IActiveScriptError
 
@@ -312,8 +308,6 @@ endif
 ifndef __IActiveScriptError64_INTERFACE_DEFINED__
 __IActiveScriptError64_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IActiveScriptError64:IID
-
 .comdef IActiveScriptError64
 
     QueryInterface	proc :REFIID, :ptr
@@ -330,8 +324,6 @@ endif
 ifndef __IActiveScriptSiteWindow_INTERFACE_DEFINED__
 __IActiveScriptSiteWindow_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IActiveScriptSiteWindow:IID
-
 .comdef IActiveScriptSiteWindow
 
     QueryInterface	proc :REFIID, :ptr
@@ -346,8 +338,6 @@ endif
 ifndef __IActiveScriptSiteUIControl_INTERFACE_DEFINED__
 __IActiveScriptSiteUIControl_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IActiveScriptSiteUIControl:IID
-
 .comdef IActiveScriptSiteUIControl
 
     QueryInterface	proc :REFIID, :ptr
@@ -361,8 +351,6 @@ endif
 ifndef __IActiveScriptSiteInterruptPoll_INTERFACE_DEFINED__
 __IActiveScriptSiteInterruptPoll_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IActiveScriptSiteInterruptPoll:IID
-
 .comdef IActiveScriptSiteInterruptPoll
 
     QueryInterface	proc :REFIID, :ptr
@@ -375,8 +363,6 @@ endif
 
 ifndef __IActiveScript_INTERFACE_DEFINED__
 __IActiveScript_INTERFACE_DEFINED__ equ 1
-
-externdef		IID_IActiveScript:IID
 
 .comdef IActiveScript
 
@@ -403,8 +389,6 @@ endif
 ifndef __IActiveScriptParse32_INTERFACE_DEFINED__
 __IActiveScriptParse32_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IActiveScriptParse32:IID
-
 .comdef IActiveScriptParse32
 
     QueryInterface	proc :REFIID, :ptr
@@ -419,8 +403,6 @@ endif
 
 ifndef __IActiveScriptParse64_INTERFACE_DEFINED__
 __IActiveScriptParse64_INTERFACE_DEFINED__ equ 1
-
-externdef		IID_IActiveScriptParse64:IID
 
 .comdef IActiveScriptParse64
 
@@ -449,8 +431,6 @@ externdef		__MIDL_itf_activscp_0000_0009_v0_0_s_ifspec:RPC_IF_HANDLE
 ifndef __IActiveScriptParseProcedureOld32_INTERFACE_DEFINED__
 __IActiveScriptParseProcedureOld32_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IActiveScriptParseProcedureOld32:IID
-
 .comdef IActiveScriptParseProcedureOld32
 
     QueryInterface	proc :REFIID, :ptr
@@ -463,8 +443,6 @@ endif
 
 ifndef __IActiveScriptParseProcedureOld64_INTERFACE_DEFINED__
 __IActiveScriptParseProcedureOld64_INTERFACE_DEFINED__ equ 1
-
-externdef		IID_IActiveScriptParseProcedureOld64:IID
 
 .comdef IActiveScriptParseProcedureOld64
 
@@ -491,8 +469,6 @@ externdef		__MIDL_itf_activscp_0000_0011_v0_0_s_ifspec:RPC_IF_HANDLE
 ifndef __IActiveScriptParseProcedure32_INTERFACE_DEFINED__
 __IActiveScriptParseProcedure32_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IActiveScriptParseProcedure32:IID
-
 .comdef IActiveScriptParseProcedure32
 
     QueryInterface	proc :REFIID, :ptr
@@ -505,8 +481,6 @@ endif
 
 ifndef __IActiveScriptParseProcedure64_INTERFACE_DEFINED__
 __IActiveScriptParseProcedure64_INTERFACE_DEFINED__ equ 1
-
-externdef		IID_IActiveScriptParseProcedure64:IID
 
 .comdef IActiveScriptParseProcedure64
 
@@ -533,8 +507,6 @@ externdef		__MIDL_itf_activscp_0000_0013_v0_0_s_ifspec:RPC_IF_HANDLE
 ifndef __IActiveScriptParseProcedure2_32_INTERFACE_DEFINED__
 __IActiveScriptParseProcedure2_32_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IActiveScriptParseProcedure2_32:IID
-
 .comdef IActiveScriptParseProcedure2_32
 
     QueryInterface	proc :REFIID, :ptr
@@ -547,8 +519,6 @@ endif
 
 ifndef __IActiveScriptParseProcedure2_64_INTERFACE_DEFINED__
 __IActiveScriptParseProcedure2_64_INTERFACE_DEFINED__ equ 1
-
-externdef		IID_IActiveScriptParseProcedure2_64:IID
 
 .comdef IActiveScriptParseProcedure2_64
 
@@ -575,8 +545,6 @@ externdef		__MIDL_itf_activscp_0000_0015_v0_0_s_ifspec:RPC_IF_HANDLE
 ifndef __IActiveScriptEncode_INTERFACE_DEFINED__
 __IActiveScriptEncode_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IActiveScriptEncode:IID
-
 .comdef IActiveScriptEncode
 
     QueryInterface	proc :REFIID, :ptr
@@ -592,8 +560,6 @@ endif
 ifndef __IActiveScriptHostEncode_INTERFACE_DEFINED__
 __IActiveScriptHostEncode_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IActiveScriptHostEncode:IID
-
 .comdef IActiveScriptHostEncode
 
     QueryInterface	proc :REFIID, :ptr
@@ -607,8 +573,6 @@ endif
 ifndef __IBindEventHandler_INTERFACE_DEFINED__
 __IBindEventHandler_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IBindEventHandler:IID
-
 .comdef IBindEventHandler
 
     QueryInterface	proc :REFIID, :ptr
@@ -621,8 +585,6 @@ endif
 
 ifndef __IActiveScriptStats_INTERFACE_DEFINED__
 __IActiveScriptStats_INTERFACE_DEFINED__ equ 1
-
-externdef		IID_IActiveScriptStats:IID
 
 .comdef IActiveScriptStats
 
@@ -639,8 +601,6 @@ endif
 ifndef __IActiveScriptProperty_INTERFACE_DEFINED__
 __IActiveScriptProperty_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IActiveScriptProperty:IID
-
 .comdef IActiveScriptProperty
 
     QueryInterface	proc :REFIID, :ptr
@@ -655,8 +615,6 @@ endif
 ifndef __ITridentEventSink_INTERFACE_DEFINED__
 __ITridentEventSink_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_ITridentEventSink:IID
-
 .comdef ITridentEventSink
 
     QueryInterface	proc :REFIID, :ptr
@@ -669,8 +627,6 @@ endif
 
 ifndef __IActiveScriptGarbageCollector_INTERFACE_DEFINED__
 __IActiveScriptGarbageCollector_INTERFACE_DEFINED__ equ 1
-
-externdef		IID_IActiveScriptGarbageCollector:IID
 
 .comdef IActiveScriptGarbageCollector
 
@@ -685,8 +641,6 @@ endif
 ifndef __IActiveScriptSIPInfo_INTERFACE_DEFINED__
 __IActiveScriptSIPInfo_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IActiveScriptSIPInfo:IID
-
 .comdef IActiveScriptSIPInfo
 
     QueryInterface	proc :REFIID, :ptr
@@ -699,8 +653,6 @@ endif
 
 ifndef __IActiveScriptSiteTraceInfo_INTERFACE_DEFINED__
 __IActiveScriptSiteTraceInfo_INTERFACE_DEFINED__ equ 1
-
-externdef		IID_IActiveScriptSiteTraceInfo:IID
 
 .comdef IActiveScriptSiteTraceInfo
 
@@ -715,8 +667,6 @@ endif
 ifndef __IActiveScriptTraceInfo_INTERFACE_DEFINED__
 __IActiveScriptTraceInfo_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IActiveScriptTraceInfo:IID
-
 .comdef IActiveScriptTraceInfo
 
     QueryInterface	proc :REFIID, :ptr
@@ -730,8 +680,6 @@ endif
 
 ifndef __IActiveScriptStringCompare_INTERFACE_DEFINED__
 __IActiveScriptStringCompare_INTERFACE_DEFINED__ equ 1
-
-externdef		IID_IActiveScriptStringCompare:IID
 
 .comdef IActiveScriptStringCompare
 

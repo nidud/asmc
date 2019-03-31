@@ -23,7 +23,7 @@ StringCchPrintfW proc pszDest:STRSAFE_LPWSTR, cchDest:size_t, pszFormat:STRSAFE_
     .elseif (cchDest)
 
         mov rcx,pszDest
-        mov word ptr [rcx],0
+        mov byte ptr [rcx],0
     .endif
     ret
 

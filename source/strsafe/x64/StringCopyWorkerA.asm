@@ -15,7 +15,8 @@ StringCopyWorkerA proc pszDest:STRSAFE_LPSTR, cchDest:size_t, pcchNewDestLength:
     xor r10d,r10d
     mov r11,cchToCopy
 
-    .while (rdx && r11 && (byte ptr [r9] != 0))
+    mov al,[r9]
+    .while (rdx && r11 && al != 0)
 
         mov al,[r9+r10]
         mov [rcx+r10],al

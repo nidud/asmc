@@ -16,7 +16,8 @@ StringCopyWorkerA proc WINAPI uses esi edi ebx pszDest:STRSAFE_LPSTR, cchDest:si
     mov edx,cchDest
     xor ebx,ebx
 
-    .while (edx && ecx && (byte ptr [esi] != 0))
+    mov al,[esi]
+    .while (edx && ecx && al != 0)
 
         mov al,[esi+ebx]
         mov [edi+ebx],al

@@ -429,7 +429,7 @@ netapi32
 ;nlhtml
 normaliz
 ;nshipsec
-ntdll
+;ntdll
 ntdsapi
 ;ntlanman
 ;ntlanui2
@@ -621,6 +621,7 @@ virtdisk
 ;webcheck
 ;webclnt
 webservices
+wer
 ;wiadefui
 ;wiadss
 ;wiarpc

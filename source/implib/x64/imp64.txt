@@ -429,7 +429,7 @@ netapi32
 ;nlhtml
 normaliz
 ;nshipsec
-;ntdll
+ntdll
 ntdsapi
 ;ntlanman
 ;ntlanui2

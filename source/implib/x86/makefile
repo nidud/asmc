@@ -58,6 +58,7 @@ targets = \
 	ncrypt.lib	\
 	netapi32.lib	\
 	normaliz.lib	\
+	ntdll.lib	\
 	ntdsapi.lib	\
 	odbc32.lib	\
 	odbccp32.lib	\

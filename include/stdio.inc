@@ -145,6 +145,7 @@ fwprintf	proto _CDecl :ptr FILE, :ptr wchar_t, :VARARG
 wprintf		proto _CDecl :ptr wchar_t, :VARARG
 _snwprintf	proto _CDecl :ptr wchar_t, :size_t, :ptr wchar_t, :VARARG
 swprintf	proto _CDecl :ptr wchar_t, :ptr wchar_t, :VARARG
+swprintf_s	proto _CDecl :ptr wchar_t, :size_t, :ptr wchar_t, :VARARG
 vfwprintf	proto __cdecl :ptr FILE, :ptr wchar_t, :PVOID
 vwprintf	proto __cdecl :ptr wchar_t, :PVOID
 _vsnwprintf	proto __cdecl :ptr wchar_t, :size_t, :ptr wchar_t, :PVOID

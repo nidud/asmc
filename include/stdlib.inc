@@ -283,10 +283,11 @@ _atoll_l	proto __cdecl :string_t, :_locale_t
 ifndef _CRT_ALGO_DEFINED
 _CRT_ALGO_DEFINED equ <>
 CALLBACKC(LPQSORTCMD, :ptr, :ptr)
+CALLBACKC(_PtFuncCompare, :ptr, :ptr)
 if __STDC_WANT_SECURE_LIB__
-bsearch_s	proto __cdecl :ptr, :ptr, :size_t, :size_t, :ptr, :ptr
+bsearch_s	proto __cdecl :ptr, :ptr, :size_t, :size_t, :_PtFuncCompare, :ptr
 endif
-bsearch		proto __cdecl :ptr, :ptr, :size_t, :size_t, :ptr
+bsearch		proto __cdecl :ptr, :ptr, :size_t, :size_t, :_PtFuncCompare
 if __STDC_WANT_SECURE_LIB__
 qsort_s		proto __cdecl :ptr, :size_t, :size_t, :LPQSORTCMD, :ptr
 endif

@@ -4,16 +4,9 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include cruntime.inc
 include malloc.inc
-include stdlib.inc
-include string.inc
 include winheap.inc
-include windows.inc
 include internal.inc
-include mtdll.inc
-include dbgint.inc
-include rtcsup.inc
 
 _FREE   equ 0
 _LOCAL  equ 1

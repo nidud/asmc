@@ -420,7 +420,7 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
     int reg;
     int reg_64;
     int reg2;
-    int i, i32;
+    int m3, i, i32;
     int base;
     int offset;
     bool destroyed = FALSE;
@@ -638,11 +638,15 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
 	if ( size > psize || ( size < psize && param->sym.mem_type == MT_PTR ) ) {
 	    asmerr( 2114, index+1 );
 	}
+	m3 = 0; /* added 2.29 */
 	switch ( psize ) {
 	case 1: base =	0*4; break;
 	case 2: base =	1*4; break;
-	case 3:
+	case 3: m3++;
 	case 4: base =	2*4; break;
+	case 5:
+	case 6:
+	case 7: m3++;
 	default:
 	    base = 3*4; break;
 	}
@@ -694,6 +698,35 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
 		else if ( i32 >= T_R8W && i32 <= T_R15W )
 		    i32 += (T_R8D - T_R8W);
 		AddLineQueueX( " mov %r, %s", i32, paramvalue );
+	    } else if ( m3 && opnd->kind == EXPR_ADDR ) { /* added v2.29 */
+
+		*regs_used |= R0_USED;
+		if ( size == 3 ) {
+		    if ( i32 >= T_EAX && i32 <= T_EDI )
+			i = i32 - (T_EAX - T_AL);
+		    else
+			i = i32 - (T_R8D - T_R8B);
+		    AddLineQueueX( " mov %r, byte ptr %s[2]", i, paramvalue );
+		    AddLineQueueX( " shl %r, 16", i32 );
+		    if ( i32 >= T_EAX && i32 <= T_EDI )
+			i32 -= (T_EAX - T_AX);
+		    else
+			i32 -= (T_R8D - T_R8W);
+		    AddLineQueueX( " mov %r, word ptr %s", i32, paramvalue );
+		} else {
+		    AddLineQueueX(" mov %r, dword ptr %s", i32, paramvalue );
+		    if ( size == 5 )
+			AddLineQueueX( " mov al, byte ptr %s[4]", paramvalue );
+		    else if ( size == 6 )
+			AddLineQueueX( " mov ax, word ptr %s[4]", paramvalue );
+		    else {
+			AddLineQueueX( " mov al, byte ptr %s[6]", paramvalue );
+			AddLineQueueX( " shl eax,16" );
+			AddLineQueueX( " mov ax, word ptr %s[4]", paramvalue );
+		    }
+		    AddLineQueueX( " shl rax,32" );
+		    AddLineQueueX( " or  %r,rax", i32 );
+		}
 	    } else
 		AddLineQueueX( " mov %r, %s", i, paramvalue );
 	}

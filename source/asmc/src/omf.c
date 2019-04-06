@@ -289,8 +289,8 @@ void omf_OutSelect( bool is_data )
 	    } else {
 		Put8( &obj, DDIR_SCAN_TABLE );
 		PutIndex( &obj, sel_idx );
-		Put16( &obj, sel_start );
-		Put16( &obj, currofs );
+		Put16( &obj, (uint_16)sel_start );
+		Put16( &obj, (uint_16)currofs );
 	    }
 	    TruncRec( &obj );
 	    omf_write_record( &obj );

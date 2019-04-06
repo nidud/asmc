@@ -7,19 +7,13 @@ include winbase.inc
 
 __crtCorExitProcess proto status:int_t
 
-.code
+    .code
 
 __crtExitProcess proc status:int_t
-
-if defined (_CRT_APP) and ( defined(_KERNELX) EQ 0)
-
+if defined (_CRT_APP) and not defined(_KERNELX)
     __crtExitProcessWinRT()
-else
-
-if not defined(_KERNELX)
+elseifndef _KERNELX
     __crtCorExitProcess(ecx)
-endif
-
     ;;
     ;; Either mscoree.dll isn't loaded,
     ;; or CorExitProcess isn't exported from mscoree.dll,

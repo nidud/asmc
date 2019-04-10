@@ -168,7 +168,7 @@ endif
 include basetsd.inc
 include oaidl.inc
 
-.pragma comment(lib, comctl32)
+.pragma comment(lib, mmcndmgr)
 
 ifndef MMC_VER
 MMC_VER equ 0x0210
@@ -642,12 +642,10 @@ IS_SPECIAL_COOKIE macro c
 	endm
 
 
-externdef		__MIDL_itf_mmc_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_mmc_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IComponentData_INTERFACE_DEFINED__
 __IComponentData_INTERFACE_DEFINED__ equ 1
-externdef		IID_IComponentData:IID
+
+DEFINE_IIDX(IComponentData, "955AB28A-5218-11D0-A985-00C04FD8D565")
 
 .comdef IComponentData
 
@@ -666,7 +664,8 @@ endif
 
 ifndef __IComponent_INTERFACE_DEFINED__
 __IComponent_INTERFACE_DEFINED__ equ 1
-externdef		IID_IComponent:IID
+
+DEFINE_IIDX(IComponent, "43136EB2-D36C-11CF-ADBC-00AA00A80033")
 
 .comdef IComponent
 
@@ -685,7 +684,8 @@ endif
 
 ifndef __IResultDataCompare_INTERFACE_DEFINED__
 __IResultDataCompare_INTERFACE_DEFINED__ equ 1
-externdef		IID_IResultDataCompare:IID
+
+DEFINE_IIDX(IResultDataCompare, "E8315A52-7A1A-11D0-A2D2-00C04FD909DD")
 
 .comdef IResultDataCompare
 
@@ -698,7 +698,8 @@ endif
 
 ifndef __IResultOwnerData_INTERFACE_DEFINED__
 __IResultOwnerData_INTERFACE_DEFINED__ equ 1
-externdef		IID_IResultOwnerData:IID
+
+DEFINE_IIDX(IResultOwnerData, "9CB396D8-EA83-11d0-AEF1-00C04FB6DD2C")
 
 .comdef IResultOwnerData
 
@@ -713,7 +714,8 @@ endif
 
 ifndef __IConsole_INTERFACE_DEFINED__
 __IConsole_INTERFACE_DEFINED__ equ 1
-externdef		IID_IConsole:IID
+
+DEFINE_IIDX(IConsole, "43136EB1-D36C-11CF-ADBC-00AA00A80033")
 
 .comdef IConsole
 
@@ -732,6 +734,7 @@ externdef		IID_IConsole:IID
     GetMainWindow	proc :ptr
     NewWindow		proc :HSCOPEITEM, :SDWORD
     .ends
+
 endif
 
 ifndef __IHeaderCtrl_INTERFACE_DEFINED__
@@ -740,7 +743,7 @@ AUTO_WIDTH		equ ( -1 )
 if (MMC_VER GE 0x0120)
 HIDE_COLUMN		equ ( -4 )
 endif
-externdef		IID_IHeaderCtrl:IID
+DEFINE_IIDX(IHeaderCtrl, "43136EB3-D36C-11CF-ADBC-00AA00A80033")
 
 .comdef IHeaderCtrl
 
@@ -789,12 +792,10 @@ CCM_SPECIAL_DEFAULT_ITEM equ 0x4
 CCM_SPECIAL_INSERTION_POINT equ 0x8
 CCM_SPECIAL_TESTONLY	equ 0x10
 
-externdef		__MIDL_itf_mmc_0000_0006_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_mmc_0000_0006_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IContextMenuCallback_INTERFACE_DEFINED__
 __IContextMenuCallback_INTERFACE_DEFINED__ equ 1
-externdef		IID_IContextMenuCallback:IID
+
+DEFINE_IIDX(IContextMenuCallback, "43136EB7-D36C-11CF-ADBC-00AA00A80033")
 
 .comdef IContextMenuCallback
 
@@ -803,11 +804,13 @@ externdef		IID_IContextMenuCallback:IID
     Release		proc
     AddItem		proc :ptr
     .ends
+
 endif
 
 ifndef __IContextMenuProvider_INTERFACE_DEFINED__
 __IContextMenuProvider_INTERFACE_DEFINED__ equ 1
-externdef		IID_IContextMenuProvider:IID
+
+DEFINE_IIDX(IContextMenuProvider, "43136EB6-D36C-11CF-ADBC-00AA00A80033")
 
 .comdef IContextMenuProvider
 
@@ -820,11 +823,13 @@ externdef		IID_IContextMenuProvider:IID
     AddThirdPartyExtensionItems proc :LPDATAOBJECT
     ShowContextMenu	proc :HWND, :SDWORD, :SDWORD, :ptr
     .ends
+
 endif
 
 ifndef __IExtendContextMenu_INTERFACE_DEFINED__
 __IExtendContextMenu_INTERFACE_DEFINED__ equ 1
-externdef		IID_IExtendContextMenu:IID
+
+DEFINE_IIDX(IExtendContextMenu, "4F3B7A4F-CFAC-11CF-B8E3-00C04FD8D5B0")
 
 .comdef IExtendContextMenu
 
@@ -834,6 +839,7 @@ externdef		IID_IExtendContextMenu:IID
     AddMenuItems	proc :LPDATAOBJECT, :LPCONTEXTMENUCALLBACK, :ptr
     Command		proc :SDWORD, :LPDATAOBJECT
     .ends
+
 endif
 
 if (MMC_VER GE 0x0120)
@@ -848,12 +854,10 @@ ILSI_SMALL_ICON macro nLoc
 	endm
 endif
 
-externdef		__MIDL_itf_mmc_0000_0009_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_mmc_0000_0009_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IImageList_INTERFACE_DEFINED__
 __IImageList_INTERFACE_DEFINED__ equ 1
-externdef		IID_IImageList:IID
+
+DEFINE_IIDX(IImageList, "43136EB8-D36C-11CF-ADBC-00AA00A80033")
 
 .comdef IImageList
 
@@ -863,11 +867,13 @@ externdef		IID_IImageList:IID
     ImageListSetIcon	proc :ptr, :SDWORD
     ImageListSetStrip	proc :ptr, :ptr, :SDWORD, :COLORREF
     .ends
+
 endif
 
 ifndef __IResultData_INTERFACE_DEFINED__
 __IResultData_INTERFACE_DEFINED__ equ 1
-externdef		IID_IResultData:IID
+
+DEFINE_IIDX(IResultData, "31DA5FA0-E0EB-11cf-9F21-00AA003CA9F6")
 
 .comdef IResultData
 
@@ -890,11 +896,13 @@ externdef		IID_IResultData:IID
     SetDescBarText	proc :LPOLESTR
     SetItemCount	proc :SINT, :DWORD
     .ends
+
 endif
 
 ifndef __IConsoleNameSpace_INTERFACE_DEFINED__
 __IConsoleNameSpace_INTERFACE_DEFINED__ equ 1
-externdef		IID_IConsoleNameSpace:IID
+
+DEFINE_IIDX(IConsoleNameSpace, "BEDEB620-F24D-11cf-8AFC-00AA003CA9F6")
 
 .comdef IConsoleNameSpace
 
@@ -909,11 +917,13 @@ externdef		IID_IConsoleNameSpace:IID
     GetNextItem		proc :HSCOPEITEM, :ptr, :ptr
     GetParentItem	proc :HSCOPEITEM, :ptr, :ptr
     .ends
+
 endif
 
 ifndef __IConsoleNameSpace2_INTERFACE_DEFINED__
 __IConsoleNameSpace2_INTERFACE_DEFINED__ equ 1
-externdef		IID_IConsoleNameSpace2:IID
+
+DEFINE_IIDX(IConsoleNameSpace2, "255F18CC-65DB-11D1-A7DC-00C04FD8D565")
 
 .comdef IConsoleNameSpace2
 
@@ -930,15 +940,15 @@ externdef		IID_IConsoleNameSpace2:IID
     Expand		proc :HSCOPEITEM
     AddExtension	proc :HSCOPEITEM, :LPCLSID
     .ends
-endif
-HPROPSHEETPAGE		typedef ptr ;_PSP
 
-externdef		__MIDL_itf_mmc_0000_0013_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_mmc_0000_0013_v0_0_s_ifspec:RPC_IF_HANDLE
+endif
+
+HPROPSHEETPAGE		typedef ptr ;_PSP
 
 ifndef __IPropertySheetCallback_INTERFACE_DEFINED__
 __IPropertySheetCallback_INTERFACE_DEFINED__ equ 1
-externdef		IID_IPropertySheetCallback:IID
+
+DEFINE_IIDX(IPropertySheetCallback, "85DE64DD-EF21-11cf-A285-00C04FD8DBE6")
 
 .comdef IPropertySheetCallback
 
@@ -948,11 +958,13 @@ externdef		IID_IPropertySheetCallback:IID
     AddPage		proc :HPROPSHEETPAGE
     RemovePage		proc :HPROPSHEETPAGE
     .ends
+
 endif
 
 ifndef __IPropertySheetProvider_INTERFACE_DEFINED__
 __IPropertySheetProvider_INTERFACE_DEFINED__ equ 1
-externdef		IID_IPropertySheetProvider:IID
+
+DEFINE_IIDX(IPropertySheetProvider, "85DE64DE-EF21-11cf-A285-00C04FD8DBE6")
 
 .comdef IPropertySheetProvider
 
@@ -965,11 +977,13 @@ externdef		IID_IPropertySheetProvider:IID
     AddExtensionPages	proc
     Show		proc :LONG_PTR, :SINT
     .ends
+
 endif
 
 ifndef __IExtendPropertySheet_INTERFACE_DEFINED__
 __IExtendPropertySheet_INTERFACE_DEFINED__ equ 1
-externdef		IID_IExtendPropertySheet:IID
+
+DEFINE_IIDX(IExtendPropertySheet, "85DE64DC-EF21-11cf-A285-00C04FD8DBE6")
 
 .comdef IExtendPropertySheet
 
@@ -983,7 +997,8 @@ endif
 
 ifndef __IControlbar_INTERFACE_DEFINED__
 __IControlbar_INTERFACE_DEFINED__ equ 1
-externdef		IID_IControlbar:IID
+
+DEFINE_IIDX(IControlbar, "69FB811E-6C1C-11D0-A2CB-00C04FD909DD")
 
 .comdef IControlbar
 
@@ -994,11 +1009,13 @@ externdef		IID_IControlbar:IID
     Attach		proc :MMC_CONTROL_TYPE, :LPUNKNOWN
     Detach		proc :LPUNKNOWN
     .ends
+
 endif
 
 ifndef __IExtendControlbar_INTERFACE_DEFINED__
 __IExtendControlbar_INTERFACE_DEFINED__ equ 1
-externdef		IID_IExtendControlbar:IID
+
+DEFINE_IIDX(IExtendControlbar, "49506520-6F40-11D0-A98B-00C04FD8D565")
 
 .comdef IExtendControlbar
 
@@ -1012,7 +1029,8 @@ endif
 
 ifndef __IToolbar_INTERFACE_DEFINED__
 __IToolbar_INTERFACE_DEFINED__ equ 1
-externdef		IID_IToolbar:IID
+
+DEFINE_IIDX(IToolbar, "43136EB9-D36C-11CF-ADBC-00AA00A80033")
 
 .comdef IToolbar
 
@@ -1026,11 +1044,13 @@ externdef		IID_IToolbar:IID
     GetButtonState	proc :SINT, :MMC_BUTTON_STATE, :ptr
     SetButtonState	proc :SINT, :MMC_BUTTON_STATE, :BOOL
     .ends
+
 endif
 
 ifndef __IConsoleVerb_INTERFACE_DEFINED__
 __IConsoleVerb_INTERFACE_DEFINED__ equ 1
-externdef		IID_IConsoleVerb:IID
+
+DEFINE_IIDX(IConsoleVerb, "E49F7A60-74AF-11D0-A286-00C04FD8FE93")
 
 .comdef IConsoleVerb
 
@@ -1046,7 +1066,8 @@ endif
 
 ifndef __ISnapinAbout_INTERFACE_DEFINED__
 __ISnapinAbout_INTERFACE_DEFINED__ equ 1
-externdef		IID_ISnapinAbout:IID
+
+DEFINE_IIDX(ISnapinAbout, "1245208C-A151-11D0-A7D7-00C04FD909DD")
 
 .comdef ISnapinAbout
 
@@ -1059,11 +1080,13 @@ externdef		IID_ISnapinAbout:IID
     GetSnapinImage	proc :ptr
     GetStaticFolderImage proc :ptr, :ptr, :ptr, :ptr
     .ends
+
 endif
 
 ifndef __IMenuButton_INTERFACE_DEFINED__
 __IMenuButton_INTERFACE_DEFINED__ equ 1
-externdef		IID_IMenuButton:IID
+
+DEFINE_IIDX(IMenuButton, "951ED750-D080-11d0-B197-000000000000")
 
 .comdef IMenuButton
 
@@ -1074,11 +1097,13 @@ externdef		IID_IMenuButton:IID
     SetButton		proc :SINT, :LPOLESTR, :LPOLESTR
     SetButtonState	proc :SINT, :MMC_BUTTON_STATE, :BOOL
     .ends
+
 endif
 
 ifndef __ISnapinHelp_INTERFACE_DEFINED__
 __ISnapinHelp_INTERFACE_DEFINED__ equ 1
-externdef		IID_ISnapinHelp:IID
+
+DEFINE_IIDX(ISnapinHelp, "A6B15ACE-DF59-11D0-A7DD-00C04FD909DD")
 
 .comdef ISnapinHelp
 
@@ -1087,15 +1112,15 @@ externdef		IID_ISnapinHelp:IID
     Release		proc
     GetHelpTopic	proc :ptr
     .ends
-endif	;; __ISnapinHelp_INTERFACE_DEFINED__
+
+endif
 
 if (MMC_VER GE 0x0110)
-externdef		__MIDL_itf_mmc_0000_0023_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_mmc_0000_0023_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IExtendPropertySheet2_INTERFACE_DEFINED__
 __IExtendPropertySheet2_INTERFACE_DEFINED__ equ 1
-externdef		IID_IExtendPropertySheet2:IID
+
+DEFINE_IIDX(IExtendPropertySheet2, "B7A87232-4A51-11D1-A7EA-00C04FD909DD")
 
 .comdef IExtendPropertySheet2
 
@@ -1106,12 +1131,13 @@ externdef		IID_IExtendPropertySheet2:IID
     QueryPagesFor	proc :LPDATAOBJECT
     GetWatermarks	proc :LPDATAOBJECT, :ptr, :ptr, :ptr, :ptr
     .ends
+
 endif
 
 ifndef __IHeaderCtrl2_INTERFACE_DEFINED__
 __IHeaderCtrl2_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IHeaderCtrl2:IID
+DEFINE_IIDX(IHeaderCtrl2, "9757abb8-1b32-11d1-a7ce-00c04fd8d565")
 
 .comdef IHeaderCtrl2
 
@@ -1128,11 +1154,13 @@ externdef		IID_IHeaderCtrl2:IID
     SetColumnFilter	proc :UINT, :DWORD, :ptr
     GetColumnFilter	proc :UINT, :LPDWORD, :ptr
     .ends
+
 endif
 
 ifndef __ISnapinHelp2_INTERFACE_DEFINED__
 __ISnapinHelp2_INTERFACE_DEFINED__ equ 1
-externdef		IID_ISnapinHelp2:IID
+
+DEFINE_IIDX(ISnapinHelp2, "4861A010-20F9-11d2-A510-00C04FB6DD2C")
 
 .comdef ISnapinHelp2
 
@@ -1142,6 +1170,7 @@ externdef		IID_ISnapinHelp2:IID
     GetHelpTopic	proc :ptr
     GetLinkedTopics	proc :ptr
     .ends
+
 endif
 
 MMC_TASK_DISPLAY_TYPE	typedef SDWORD
@@ -1196,12 +1225,10 @@ MMC_LISTPAD_INFO	ENDS
 
 MMC_STRING_ID		typedef DWORD
 
-externdef		__MIDL_itf_mmc_0000_0026_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_mmc_0000_0026_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IEnumTASK_INTERFACE_DEFINED__
 __IEnumTASK_INTERFACE_DEFINED__ equ 1
-externdef		IID_IEnumTASK:IID
+
+DEFINE_IIDX(IEnumTASK, "338698b1-5a02-11d1-9fec-00600832db4a")
 
 .comdef IEnumTASK
 
@@ -1213,11 +1240,13 @@ externdef		IID_IEnumTASK:IID
     Reset		proc
     Clone		proc :ptr
     .ends
+
 endif
 
 ifndef __IExtendTaskPad_INTERFACE_DEFINED__
 __IExtendTaskPad_INTERFACE_DEFINED__ equ 1
-externdef		IID_IExtendTaskPad:IID
+
+DEFINE_IIDX(IExtendTaskPad, "8dee6511-554d-11d1-9fea-00600832db4a")
 
 .comdef IExtendTaskPad
 
@@ -1231,11 +1260,13 @@ externdef		IID_IExtendTaskPad:IID
     GetBackground	proc :LPOLESTR, :ptr
     GetListPadInfo	proc :LPOLESTR, :ptr
     .ends
+
 endif
 
 ifndef __IConsole2_INTERFACE_DEFINED__
 __IConsole2_INTERFACE_DEFINED__ equ 1
-externdef		IID_IConsole2:IID
+
+DEFINE_IIDX(IConsole2, "103D842A-AA63-11D1-A7E1-00C04FD8D565")
 
 .comdef IConsole2
 
@@ -1257,11 +1288,13 @@ externdef		IID_IConsole2:IID
     IsTaskpadViewPreferred proc
     SetStatusText	proc :LPOLESTR
     .ends
+
 endif
 
 ifndef __IDisplayHelp_INTERFACE_DEFINED__
 __IDisplayHelp_INTERFACE_DEFINED__ equ 1
-externdef		IID_IDisplayHelp:IID
+
+DEFINE_IIDX(IDisplayHelp, "cc593830-b926-11d1-8063-0000f875a9ce")
 
 .comdef IDisplayHelp
 
@@ -1270,11 +1303,13 @@ externdef		IID_IDisplayHelp:IID
     Release		proc
     ShowTopic		proc :LPOLESTR
     .ends
+
 endif
 
 ifndef __IRequiredExtensions_INTERFACE_DEFINED__
 __IRequiredExtensions_INTERFACE_DEFINED__ equ 1
-externdef		IID_IRequiredExtensions:IID
+
+DEFINE_IIDX(IRequiredExtensions, "72782D7A-A4A0-11d1-AF0F-00C04FB6DD2C")
 
 .comdef IRequiredExtensions
 
@@ -1285,11 +1320,13 @@ externdef		IID_IRequiredExtensions:IID
     GetFirstExtension	proc :LPCLSID
     GetNextExtension	proc :LPCLSID
     .ends
+
 endif
 
 ifndef __IStringTable_INTERFACE_DEFINED__
 __IStringTable_INTERFACE_DEFINED__ equ 1
-externdef		IID_IStringTable:IID
+
+DEFINE_IIDX(IStringTable, "DE40B7A4-0F65-11d2-8E25-00C04F8ECD78")
 
 .comdef IStringTable
 
@@ -1337,12 +1374,10 @@ nNumItems		SINT ?
 pSortData		LPMMC_SORT_DATA ?
 MMC_SORT_SET_DATA	ENDS
 
-externdef		__MIDL_itf_mmc_0000_0032_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_mmc_0000_0032_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IColumnData_INTERFACE_DEFINED__
 __IColumnData_INTERFACE_DEFINED__ equ 1
-externdef		IID_IColumnData:IID
+
+DEFINE_IIDX(IColumnData, "547C1354-024D-11d3-A707-00C04F8EF4CB")
 
 .comdef IColumnData
 
@@ -1354,6 +1389,7 @@ externdef		IID_IColumnData:IID
     SetColumnSortData	proc :ptr, :ptr
     GetColumnSortData	proc :ptr, :ptr
     .ends
+
 endif
 
 ifndef __IMessageView_INTERFACE_DEFINED__
@@ -1368,7 +1404,7 @@ Icon_Information	equ 32516
 Icon_First		equ Icon_Error
 Icon_Last		equ Icon_Information
 
-externdef		IID_IMessageView:IID
+DEFINE_IIDX(IMessageView, "80F94174-FCCC-11d2-B991-00C04F8ECD78")
 
 .comdef IMessageView
 
@@ -1380,6 +1416,7 @@ externdef		IID_IMessageView:IID
     SetIcon		proc :IconIdentifier
     Clear		proc
     .ends
+
 endif
 
 RDITEMHDR		STRUC
@@ -1400,12 +1437,10 @@ prdch1			LPRDITEMHDR ?
 prdch2			LPRDITEMHDR ?
 RDCOMPARE		ENDS
 
-externdef		__MIDL_itf_mmc_0000_0034_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_mmc_0000_0034_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IResultDataCompareEx_INTERFACE_DEFINED__
 __IResultDataCompareEx_INTERFACE_DEFINED__ equ 1
-externdef		IID_IResultDataCompareEx:IID
+
+DEFINE_IIDX(IResultDataCompareEx, "96933476-0251-11d3-AEB0-00C04F8ECD78")
 
 .comdef IResultDataCompareEx
 
@@ -1414,6 +1449,7 @@ externdef		IID_IResultDataCompareEx:IID
     Release		proc
     Compare		proc :ptr, :ptr
     .ends
+
 endif
 endif
 
@@ -1456,8 +1492,8 @@ ENDS
 RESULT_VIEW_TYPE_INFO	ENDS
 PRESULT_VIEW_TYPE_INFO	typedef ptr RESULT_VIEW_TYPE_INFO
 
-CCF_DESCRIPTION		equ ( L"CCF_DESCRIPTION" )
-CCF_HTML_DETAILS	equ ( L"CCF_HTML_DETAILS" )
+CCF_DESCRIPTION		equ <L"CCF_DESCRIPTION">
+CCF_HTML_DETAILS	equ <L"CCF_HTML_DETAILS">
 
 CONTEXTMENUITEM2	STRUC
 strName			LPWSTR ?
@@ -1481,12 +1517,10 @@ PMMC_EXT_VIEW_DATA	typedef ptr MMC_EXT_VIEW_DATA
 
 MMC_DEFAULT_OPERATION_COPY equ ( 0x1 )
 
-externdef		__MIDL_itf_mmc_0000_0035_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_mmc_0000_0035_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IComponentData2_INTERFACE_DEFINED__
 __IComponentData2_INTERFACE_DEFINED__ equ 1
-externdef		IID_IComponentData2:IID
+
+DEFINE_IIDX(IComponentData2, "CCA0F2D2-82DE-41B5-BF47-3B2076273D5C")
 
 .comdef IComponentData2
 
@@ -1506,7 +1540,8 @@ endif
 
 ifndef __IComponent2_INTERFACE_DEFINED__
 __IComponent2_INTERFACE_DEFINED__ equ 1
-externdef		IID_IComponent2:IID
+
+DEFINE_IIDX(IComponent2, "79A2D615-4A10-4ED4-8C65-8633F9335095")
 
 .comdef IComponent2
 
@@ -1524,11 +1559,13 @@ externdef		IID_IComponent2:IID
     GetResultViewType2	proc :MMC_COOKIE, :PRESULT_VIEW_TYPE_INFO
     RestoreResultView	proc :MMC_COOKIE, :PRESULT_VIEW_TYPE_INFO
     .ends
+
 endif
 
 ifndef __IContextMenuCallback2_INTERFACE_DEFINED__
 __IContextMenuCallback2_INTERFACE_DEFINED__ equ 1
-externdef		IID_IContextMenuCallback2:IID
+
+DEFINE_IIDX(IContextMenuCallback2, "E178BC0E-2ED0-4b5e-8097-42C9087E8B33")
 
 .comdef IContextMenuCallback2
 
@@ -1537,11 +1574,13 @@ externdef		IID_IContextMenuCallback2:IID
     Release		proc
     AddItem		proc :ptr
     .ends
+
 endif
 
 ifndef __IMMCVersionInfo_INTERFACE_DEFINED__
 __IMMCVersionInfo_INTERFACE_DEFINED__ equ 1
-externdef		IID_IMMCVersionInfo:IID
+
+DEFINE_IIDX(IMMCVersionInfo, "A8D2C5FE-CDCB-4b9d-BDE5-A27343FF54BC")
 
 .comdef IMMCVersionInfo
 
@@ -1550,18 +1589,20 @@ externdef		IID_IMMCVersionInfo:IID
     Release		proc
     GetMMCVersion	proc :ptr, :ptr
     .ends
+
 endif
 
 ifndef __MMCVersionLib_LIBRARY_DEFINED__
 __MMCVersionLib_LIBRARY_DEFINED__ equ 1
 externdef		LIBID_MMCVersionLib:IID
-externdef		CLSID_MMCVersionInfo:CLSID
-externdef		CLSID_ConsolePower:CLSID
+DEFINE_GUIDS(CLSID_MMCVersionInfo, "D6FEDB1D-CF21-4bd9-AF3B-C5468E9C6684")
+DEFINE_GUIDS(CLSID_ConsolePower,   "f0285374-dff1-11d3-b433-00c04f8ecd78")
 endif
 
 ifndef __IExtendView_INTERFACE_DEFINED__
 __IExtendView_INTERFACE_DEFINED__ equ 1
-externdef		IID_IExtendView:IID
+
+DEFINE_IIDX(IExtendView, "89995CEE-D2ED-4c0e-AE5E-DF7E76F3FA53")
 
 .comdef IExtendView
 
@@ -1570,11 +1611,13 @@ externdef		IID_IExtendView:IID
     Release		proc
     GetViews		proc :LPDATAOBJECT, :LPVIEWEXTENSIONCALLBACK
     .ends
+
 endif
 
 ifndef __IViewExtensionCallback_INTERFACE_DEFINED__
 __IViewExtensionCallback_INTERFACE_DEFINED__ equ 1
-externdef		IID_IViewExtensionCallback:IID
+
+DEFINE_IIDX(IViewExtensionCallback, "34DD928A-7599-41E5-9F5E-D6BC3062C2DA")
 
 .comdef IViewExtensionCallback
 
@@ -1583,11 +1626,13 @@ externdef		IID_IViewExtensionCallback:IID
     Release		proc
     AddView		proc :PMMC_EXT_VIEW_DATA
     .ends
+
 endif
 
 ifndef __IConsolePower_INTERFACE_DEFINED__
 __IConsolePower_INTERFACE_DEFINED__ equ 1
-externdef		IID_IConsolePower:IID
+
+DEFINE_IIDX(IConsolePower, "1cfbdd0e-62ca-49ce-a3af-dbb2de61b068")
 
 .comdef IConsolePower
 
@@ -1597,11 +1642,13 @@ externdef		IID_IConsolePower:IID
     SetExecutionState	proc :DWORD, :DWORD
     ResetIdleTimer	proc :DWORD
     .ends
+
 endif
 
 ifndef __IConsolePowerSink_INTERFACE_DEFINED__
 __IConsolePowerSink_INTERFACE_DEFINED__ equ 1
-externdef		IID_IConsolePowerSink:IID
+
+DEFINE_IIDX(IConsolePowerSink, "3333759f-fe4f-4975-b143-fec0a5dd6d65")
 
 .comdef IConsolePowerSink
 
@@ -1610,11 +1657,13 @@ externdef		IID_IConsolePowerSink:IID
     Release		proc
     OnPowerBroadcast	proc :UINT, :LPARAM, :ptr
     .ends
+
 endif
 
 ifndef __INodeProperties_INTERFACE_DEFINED__
 __INodeProperties_INTERFACE_DEFINED__ equ 1
-externdef		IID_INodeProperties:IID
+
+DEFINE_IIDX(INodeProperties, "15BC4D24-A522-4406-AA55-0749537A6865")
 
 .comdef INodeProperties
 
@@ -1623,11 +1672,13 @@ externdef		IID_INodeProperties:IID
     Release		proc
     GetProperty		proc :LPDATAOBJECT, :BSTR, :PBSTR
     .ends
+
 endif
 
 ifndef __IConsole3_INTERFACE_DEFINED__
 __IConsole3_INTERFACE_DEFINED__ equ 1
-externdef		IID_IConsole3:IID
+
+DEFINE_IIDX(IConsole3, "4F85EFDB-D0E1-498c-8D4A-D010DFDD404F")
 
 .comdef IConsole3
 
@@ -1654,7 +1705,8 @@ endif
 
 ifndef __IResultData2_INTERFACE_DEFINED__
 __IResultData2_INTERFACE_DEFINED__ equ 1
-externdef		IID_IResultData2:IID
+
+DEFINE_IIDX(IResultData2, "0F36E0EB-A7F1-4a81-BE5A-9247F7DE4B1B")
 
 .comdef IResultData2
 
@@ -1704,9 +1756,6 @@ MMC_OVERLAY_ITEM_INDEX_FROM_ITEM_STATE macro state
 	endm
 MMC_ITEM_STATE_MASK	equ ( 0xff )
 endif
-
-externdef		__MIDL_itf_mmc_0000_0046_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_mmc_0000_0046_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ;DWORD
 BSTR_UserSize proto WINAPI \

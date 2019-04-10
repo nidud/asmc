@@ -155,13 +155,10 @@ usRemotePort		USHORT ?
 eDirection		ALG_DIRECTION ?
 ALG_PERSISTENT_DATA_CHANNEL_PROPERTIES ENDS
 
-externdef		__MIDL_itf_alg_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_alg_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IAdapterInfo_INTERFACE_DEFINED__
 __IAdapterInfo_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAdapterInfo:IID
+DEFINE_IIDX(IAdapterInfo, "480BF94A-09FD-4F8A-A3E0-B0700282D84D")
 
 .comdef IAdapterInfo
 
@@ -178,7 +175,7 @@ endif
 ifndef __IPendingProxyConnection_INTERFACE_DEFINED__
 __IPendingProxyConnection_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IPendingProxyConnection:IID
+DEFINE_IIDX(IPendingProxyConnection, "B68E5043-3E3D-4CC2-B9C1-5F8F88FEE81C")
 
 .comdef IPendingProxyConnection
 
@@ -193,7 +190,7 @@ endif
 ifndef __IDataChannel_INTERFACE_DEFINED__
 __IDataChannel_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDataChannel:IID
+DEFINE_IIDX(IDataChannel, "AD42D12A-4AD0-4856-919E-E854C91D1856")
 
 .comdef IDataChannel
 
@@ -211,7 +208,7 @@ endif
 ifndef __IPersistentDataChannel_INTERFACE_DEFINED__
 __IPersistentDataChannel_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IPersistentDataChannel:IID
+DEFINE_IIDX(IPersistentDataChannel, "A180E934-D92A-415D-9144-759F8054E8F6")
 
 .comdef IPersistentDataChannel
 
@@ -227,7 +224,7 @@ endif
 ifndef __IPrimaryControlChannel_INTERFACE_DEFINED__
 __IPrimaryControlChannel_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IPrimaryControlChannel:IID
+DEFINE_IIDX(IPrimaryControlChannel, "1A2E8B62-9012-4BE6-84AE-32BD66BA657A")
 
 .comdef IPrimaryControlChannel
 
@@ -244,7 +241,7 @@ endif
 ifndef __ISecondaryControlChannel_INTERFACE_DEFINED__
 __ISecondaryControlChannel_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_ISecondaryControlChannel:IID
+DEFINE_IIDX(ISecondaryControlChannel, "A23F9D10-714C-41FE-8471-FFB19BC28454")
 
 .comdef ISecondaryControlChannel
 
@@ -261,7 +258,7 @@ endif
 ifndef __IEnumAdapterInfo_INTERFACE_DEFINED__
 __IEnumAdapterInfo_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IEnumAdapterInfo:IID
+DEFINE_IIDX(IEnumAdapterInfo, "A23F9D11-714C-41FE-8471-FFB19BC28454")
 
 .comdef IEnumAdapterInfo
 
@@ -279,7 +276,7 @@ endif
 ifndef __IAdapterNotificationSink_INTERFACE_DEFINED__
 __IAdapterNotificationSink_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAdapterNotificationSink:IID
+DEFINE_IIDX(IAdapterNotificationSink, "44AB2DC3-23B2-47DE-8228-2E1CCEEB9911")
 
 .comdef IAdapterNotificationSink
 
@@ -297,7 +294,7 @@ endif
 ifndef __IApplicationGatewayServices_INTERFACE_DEFINED__
 __IApplicationGatewayServices_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IApplicationGatewayServices:IID
+DEFINE_IIDX(IApplicationGatewayServices, "5134842A-FDCE-485D-93CD-DE1640643BBE")
 
 .comdef IApplicationGatewayServices
 
@@ -324,7 +321,7 @@ endif
 ifndef __IApplicationGateway_INTERFACE_DEFINED__
 __IApplicationGateway_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IApplicationGateway:IID
+DEFINE_IIDX(IApplicationGateway, "5134842B-FDCE-485D-93CD-DE1640643BBE")
 
 .comdef IApplicationGateway
 
@@ -341,20 +338,17 @@ ifndef __ALGLib_LIBRARY_DEFINED__
 __ALGLib_LIBRARY_DEFINED__ equ 1
 
 externdef		LIBID_ALGLib:IID
-externdef		CLSID_ApplicationGatewayServices:CLSID
-externdef		CLSID_PrimaryControlChannel:CLSID
-externdef		CLSID_SecondaryControlChannel:CLSID
-externdef		CLSID_AdapterInfo:CLSID
-externdef		CLSID_EnumAdapterInfo:CLSID
-externdef		CLSID_PendingProxyConnection:CLSID
-externdef		CLSID_DataChannel:CLSID
-externdef		CLSID_PersistentDataChannel:CLSID
+DEFINE_GUIDS(CLSID_ApplicationGatewayServices, "F8ADE1D3-49DF-4B75-9005-EF9508E6A337")
+DEFINE_GUIDS(CLSID_PrimaryControlChannel, "3CEB5509-C1CD-432F-9D8F-65D1E286AA80")
+DEFINE_GUIDS(CLSID_SecondaryControlChannel, "7B3181A0-C92F-4567-B0FA-CD9A10ECD7D1")
+DEFINE_GUIDS(CLSID_AdapterInfo, "6F9942C9-C1B1-4AB5-93DA-6058991DC8F3")
+DEFINE_GUIDS(CLSID_EnumAdapterInfo, "6F9942CA-C1B1-4AB5-93DA-6058991DC8F3")
+DEFINE_GUIDS(CLSID_PendingProxyConnection, "D8A68E5E-2B37-426C-A329-C117C14C429E")
+DEFINE_GUIDS(CLSID_DataChannel, "BBB36F15-408D-4056-8C27-920843D40BE5")
+DEFINE_GUIDS(CLSID_PersistentDataChannel, "BC9B54AB-7883-4C13-909F-033D03267990")
 
 endif
 
 endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-externdef		__MIDL_itf_alg_0000_0011_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_alg_0000_0011_v0_0_s_ifspec:RPC_IF_HANDLE
 
 endif

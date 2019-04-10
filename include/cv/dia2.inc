@@ -146,6 +146,8 @@ include oaidl.inc
 include propidl.inc
 include cvconst.inc
 
+.pragma comment(lib, diaguid.lib, msdia80.dll)
+
 NameSearchOptions	typedef SDWORD
 nsNone			equ 0
 nsfCaseSensitive	equ 0x1
@@ -160,7 +162,7 @@ nsRegularExpression	equ ( nsfRegularExpression or nsfCaseSensitive )
 nsCaseInRegularExpression equ ( nsfRegularExpression or nsfCaseInsensitive )
 
 _MIDL___MIDL_itf_dia2_0000_0000_0001 typedef SDWORD
-E_PDB_OK		equ (((( 1 << 31 ) or ( 0x6d << 16 )) or 1 ))
+E_PDB_OK		equ (((( 1 shl 31 ) or ( 0x6d shl 16 )) or 1 ))
 E_PDB_USAGE		equ ( E_PDB_OK + 1 )
 E_PDB_OUT_OF_MEMORY	equ ( E_PDB_USAGE + 1 )
 E_PDB_FILE_SYSTEM	equ ( E_PDB_OUT_OF_MEMORY + 1 )
@@ -188,10 +190,7 @@ E_PDB_SYMSRV_CACHE_FULL equ ( E_PDB_SYMSRV_BAD_CACHE_PATH + 1 )
 E_PDB_OBJECT_DISPOSED	equ ( E_PDB_SYMSRV_CACHE_FULL + 1 )
 E_PDB_MAX		equ ( E_PDB_OBJECT_DISPOSED + 1 )
 
-CALLBCKC(PfnPDBDebugDirV, :BOOL, :ptr)
-
-externdef		__MIDL_itf_dia2_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_dia2_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
+CALLBACKC(PfnPDBDebugDirV, :BOOL, :ptr)
 
 ifndef __IDiaLoadCallback_INTERFACE_DEFINED__
 __IDiaLoadCallback_INTERFACE_DEFINED__ equ 1
@@ -525,9 +524,6 @@ DiaAddressMapEntry	STRUC
 rva			dd ?
 rvaTo			dd ?
 DiaAddressMapEntry	ENDS
-
-externdef		__MIDL_itf_dia2_0000_0016_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_dia2_0000_0016_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IDiaAddressMap_INTERFACE_DEFINED__
 __IDiaAddressMap_INTERFACE_DEFINED__ equ 1
@@ -1028,9 +1024,6 @@ E_DIA_SYNTAX		equ ( E_DIA_INPROLOG + 1 )
 E_DIA_FRAME_ACCESS	equ ( E_DIA_SYNTAX + 1 )
 E_DIA_VALUE		equ ( E_DIA_FRAME_ACCESS + 1 )
 
-externdef		__MIDL_itf_dia2_0000_0025_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_dia2_0000_0025_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IDiaStackWalkFrame_INTERFACE_DEFINED__
 __IDiaStackWalkFrame_INTERFACE_DEFINED__ equ 1
 
@@ -1161,9 +1154,6 @@ DiaTable_InjSrc		equ <L"InjectedSource">
 DiaTable_FrameData	equ <L"FrameData">
 DiaTable_InputAssemblyFiles equ <L"InputAssemblyFiles">
 
-externdef		__MIDL_itf_dia2_0000_0031_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_dia2_0000_0031_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IDiaPropertyStorage_INTERFACE_DEFINED__
 __IDiaPropertyStorage_INTERFACE_DEFINED__ equ 1
 
@@ -1238,9 +1228,6 @@ cdwLocals		dd ?
 cdwParams		dw ?
 cdwFlags		dw ?
 FPODATA			ENDS
-
-externdef		__MIDL_itf_dia2_0000_0034_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_dia2_0000_0034_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IDiaStackWalkHelper_INTERFACE_DEFINED__
 __IDiaStackWalkHelper_INTERFACE_DEFINED__ equ 1

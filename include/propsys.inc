@@ -25,13 +25,11 @@ include shtypes.inc
 include StructuredQueryCondition.inc
 include propkeydef.inc
 
-externdef		__MIDL_itf_propsys_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_propsys_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IInitializeWithFile_INTERFACE_DEFINED__
 __IInitializeWithFile_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IInitializeWithFile:IID
+DEFINE_IIDX(IInitializeWithFile, "b7d14566-0509-4cce-a71f-0a554233bd9b")
+
 .comdef IInitializeWithFile
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -44,7 +42,8 @@ endif
 ifndef __IInitializeWithStream_INTERFACE_DEFINED__
 __IInitializeWithStream_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IInitializeWithStream:IID
+DEFINE_IIDX(IInitializeWithStream, "b824b49d-22ac-4161-ac8a-9916e8fa3f7f")
+
 .comdef IInitializeWithStream
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -52,25 +51,13 @@ externdef		IID_IInitializeWithStream:IID
     Initialize		proc :ptr, :DWORD
     .ends
 
-;HRESULT
-IInitializeWithStream_RemoteInitialize_Proxy proto WINAPI \
-		 _This: ptr IInitializeWithStream,
-	       pstream: ptr IStream,
-	       grfMode: DWORD
-
-;void
-IInitializeWithStream_RemoteInitialize_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
 endif
 
 ifndef __IPropertyStore_INTERFACE_DEFINED__
 __IPropertyStore_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IPropertyStore:IID
+DEFINE_IIDX(IPropertyStore, "886d8eeb-8cf2-4446-8d02-cdba1dbdcf99")
+
 .comdef IPropertyStore
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -81,17 +68,16 @@ externdef		IID_IPropertyStore:IID
     SetValue		proc :REFPROPERTYKEY, :REFPROPVARIANT
     Commit		proc
     .ends
+
 LPPROPERTYSTORE		typedef ptr IPropertyStore
 
 endif
 
-externdef		__MIDL_itf_propsys_0000_0003_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_propsys_0000_0003_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __INamedPropertyStore_INTERFACE_DEFINED__
 __INamedPropertyStore_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_INamedPropertyStore:IID
+DEFINE_IIDX(INamedPropertyStore, "71604b0f-97b0-4764-8577-2f13e98a1422")
+
 .comdef INamedPropertyStore
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -118,13 +104,11 @@ GPS_MASK_VALID		equ 0xff
 
 DEFINE_ENUM_FLAG_OPERATORS(GETPROPERTYSTOREFLAGS)
 
-externdef		__MIDL_itf_propsys_0000_0004_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_propsys_0000_0004_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IObjectWithPropertyKey_INTERFACE_DEFINED__
 __IObjectWithPropertyKey_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IObjectWithPropertyKey:IID
+DEFINE_IIDX(IObjectWithPropertyKey, "fc0ca0a7-c316-4fd2-9031-3e628e6d4f23")
+
 .comdef IObjectWithPropertyKey
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -140,13 +124,11 @@ PKA_SET			equ 0
 PKA_APPEND		equ ( PKA_SET + 1 )
 PKA_DELETE		equ ( PKA_APPEND + 1 )
 
-externdef		__MIDL_itf_propsys_0000_0005_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_propsys_0000_0005_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IPropertyChange_INTERFACE_DEFINED__
 __IPropertyChange_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IPropertyChange:IID
+DEFINE_IIDX(IPropertyChange, "f917bc8a-1bba-4478-a245-1bde03eb9431")
+
 .comdef IPropertyChange
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -161,7 +143,8 @@ endif
 ifndef __IPropertyChangeArray_INTERFACE_DEFINED__
 __IPropertyChangeArray_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IPropertyChangeArray:IID
+DEFINE_IIDX(IPropertyChangeArray, "380f5cad-1b5e-42f2-805d-637fd392d31e")
+
 .comdef IPropertyChangeArray
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -180,7 +163,8 @@ endif
 ifndef __IPropertyStoreCapabilities_INTERFACE_DEFINED__
 __IPropertyStoreCapabilities_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IPropertyStoreCapabilities:IID
+DEFINE_IIDX(IPropertyStoreCapabilities, "c8e2d566-186e-4d49-bf41-6909ead56acc")
+
 .comdef IPropertyStoreCapabilities
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -199,7 +183,8 @@ PSC_NOTINSOURCE		equ 1
 PSC_DIRTY		equ 2
 PSC_READONLY		equ 3
 
-externdef		IID_IPropertyStoreCache:IID
+DEFINE_IIDX(IPropertyStoreCache, "3017056d-9a91-4e90-937d-746c72abbf4f")
+
 .comdef IPropertyStoreCache
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -226,7 +211,8 @@ PET_RANGEDVALUE		equ 1
 PET_DEFAULTVALUE	equ 2
 PET_ENDRANGE		equ 3
 
-externdef		IID_IPropertyEnumType:IID
+DEFINE_IIDX(IPropertyEnumType, "11e1fbf9-2d56-4a6b-8db3-7cd193a471f2")
+
 .comdef IPropertyEnumType
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -243,7 +229,8 @@ endif
 ifndef __IPropertyEnumType2_INTERFACE_DEFINED__
 __IPropertyEnumType2_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IPropertyEnumType2:IID
+DEFINE_IIDX(IPropertyEnumType2, "9b6e051c-5ddd-4321-9070-fe2acb55e794")
+
 .comdef IPropertyEnumType2
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -261,7 +248,7 @@ endif
 ifndef __IPropertyEnumTypeList_INTERFACE_DEFINED__
 __IPropertyEnumTypeList_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IPropertyEnumTypeList:IID
+DEFINE_IIDX(IPropertyEnumTypeList, "a99400f4-3d84-4557-94ba-1242fb2cc9a6")
 
 .comdef IPropertyEnumTypeList
     QueryInterface	proc :REFIID, :ptr
@@ -386,8 +373,8 @@ PDCOT_DATETIME		equ 3
 PDCOT_BOOLEAN		equ 4
 PDCOT_NUMBER		equ 5
 
+DEFINE_IIDX(IPropertyDescription, "6f79d558-3e96-4549-a1d1-7d75d2288814")
 
-externdef		IID_IPropertyDescription:IID
 .comdef IPropertyDescription
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -415,25 +402,13 @@ externdef		IID_IPropertyDescription:IID
     IsValueCanonical	proc :REFPROPVARIANT
     .ends
 
-;HRESULT
-IPropertyDescription_RemoteCoerceToCanonicalValue_Proxy proto WINAPI \
-		 _This: ptr IPropertyDescription,
-	       propvar: REFPROPVARIANT,
-	      ppropvar: ptr PROPVARIANT
-
-;void
-IPropertyDescription_RemoteCoerceToCanonicalValue_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
 endif
 
 ifndef __IPropertyDescription2_INTERFACE_DEFINED__
 __IPropertyDescription2_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IPropertyDescription2:IID
+DEFINE_IIDX(IPropertyDescription2, "57d2eded-5062-400e-b107-5dae79fe57a6")
+
 .comdef IPropertyDescription2
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -467,7 +442,8 @@ endif
 ifndef __IPropertyDescriptionAliasInfo_INTERFACE_DEFINED__
 __IPropertyDescriptionAliasInfo_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IPropertyDescriptionAliasInfo:IID
+DEFINE_IIDX(IPropertyDescriptionAliasInfo, "f67104fc-2af9-46fd-b32d-243c1404f3d1")
+
 .comdef IPropertyDescriptionAliasInfo
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -518,7 +494,8 @@ PDCIT_ONDEMAND		equ 3
 PDCIT_ONDISKALL		equ 4
 PDCIT_ONDISKVECTOR	equ 5
 
-externdef		IID_IPropertyDescriptionSearchInfo:IID
+DEFINE_IIDX(IPropertyDescriptionSearchInfo, "078f91bd-29a2-440f-924e-46a291524520")
+
 .comdef IPropertyDescriptionSearchInfo
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -555,7 +532,8 @@ endif
 ifndef __IPropertyDescriptionRelatedPropertyInfo_INTERFACE_DEFINED__
 __IPropertyDescriptionRelatedPropertyInfo_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IPropertyDescriptionRelatedPropertyInfo:IID
+DEFINE_IIDX(IPropertyDescriptionRelatedPropertyInfo, "507393f4-2a3d-4a60-b59e-d9c75716c2dd")
+
 .comdef IPropertyDescriptionRelatedPropertyInfo
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -596,13 +574,11 @@ PDEF_QUERYABLE		equ 4
 PDEF_INFULLTEXTQUERY	equ 5
 PDEF_COLUMN		equ 6
 
-externdef		__MIDL_itf_propsys_0000_0017_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_propsys_0000_0017_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IPropertySystem_INTERFACE_DEFINED__
 __IPropertySystem_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IPropertySystem:IID
+DEFINE_IIDX(IPropertySystem, "ca724e8a-c3e6-442b-88a4-6fb0db8035a3")
+
 .comdef IPropertySystem
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -623,7 +599,8 @@ endif
 ifndef __IPropertyDescriptionList_INTERFACE_DEFINED__
 __IPropertyDescriptionList_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IPropertyDescriptionList:IID
+DEFINE_IIDX(IPropertyDescriptionList, "1f9fc1d0-c39b-4b26-817f-011967d3440e")
+
 .comdef IPropertyDescriptionList
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -637,7 +614,8 @@ endif
 ifndef __IPropertyStoreFactory_INTERFACE_DEFINED__
 __IPropertyStoreFactory_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IPropertyStoreFactory:IID
+DEFINE_IIDX(IPropertyStoreFactory, "bc110b6d-57e8-4148-a9c6-91015ab2f3a5")
+
 .comdef IPropertyStoreFactory
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -651,7 +629,8 @@ endif
 ifndef __IDelayedPropertyStoreFactory_INTERFACE_DEFINED__
 __IDelayedPropertyStoreFactory_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDelayedPropertyStoreFactory:IID
+DEFINE_IIDX(IDelayedPropertyStoreFactory, "40d4577f-e237-4bdb-bd69-58f089431b6a")
+
 .comdef IDelayedPropertyStoreFactory
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -672,13 +651,11 @@ SERIALIZEDPROPSTORAGE	typedef SERIALIZEDPROPSTORAGE
 PUSERIALIZEDPROPSTORAGE typedef ptr SERIALIZEDPROPSTORAGE
 PCUSERIALIZEDPROPSTORAGE typedef ptr SERIALIZEDPROPSTORAGE
 
-externdef		__MIDL_itf_propsys_0000_0021_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_propsys_0000_0021_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IPersistSerializedPropStorage_INTERFACE_DEFINED__
 __IPersistSerializedPropStorage_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IPersistSerializedPropStorage:IID
+DEFINE_IIDX(IPersistSerializedPropStorage, "e318ad57-0aa0-450f-aca5-6fab7103d917")
+
 .comdef IPersistSerializedPropStorage
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -693,7 +670,8 @@ endif
 ifndef __IPersistSerializedPropStorage2_INTERFACE_DEFINED__
 __IPersistSerializedPropStorage2_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IPersistSerializedPropStorage2:IID
+DEFINE_IIDX(IPersistSerializedPropStorage2, "77effa68-4f98-4366-ba72-573b3d880571")
+
 .comdef IPersistSerializedPropStorage2
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -710,7 +688,8 @@ endif
 ifndef __IPropertySystemChangeNotify_INTERFACE_DEFINED__
 __IPropertySystemChangeNotify_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IPropertySystemChangeNotify:IID
+DEFINE_IIDX(IPropertySystemChangeNotify, "fa955fd9-38be-4879-a6ce-824cf52d609f")
+
 .comdef IPropertySystemChangeNotify
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -723,7 +702,8 @@ endif
 ifndef __ICreateObject_INTERFACE_DEFINED__
 __ICreateObject_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_ICreateObject:IID
+DEFINE_IIDX(ICreateObject, "75121952-e0d0-43e5-9380-1d80483acf72")
+
 .comdef ICreateObject
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1139,14 +1119,11 @@ PSPropertyBag_WritePropertyKey proto WINAPI \
 		 value: REFPROPERTYKEY
 
 
-externdef		__MIDL_itf_propsys_0000_0025_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_propsys_0000_0025_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __PropSysObjects_LIBRARY_DEFINED__
 __PropSysObjects_LIBRARY_DEFINED__ equ 1
 externdef		LIBID_PropSysObjects:IID
-externdef		CLSID_InMemoryPropertyStore:CLSID
-externdef		CLSID_PropertySystem:CLSID
+DEFINE_GUIDS(CLSID_InMemoryPropertyStore, "9a02e012-6303-4e1e-b9a1-630f802592c5")
+DEFINE_GUIDS(CLSID_PropertySystem,	  "b8967f85-58ae-4f46-9fb2-5d7904798f4b")
 endif
 
 ;DWORD
@@ -1242,29 +1219,6 @@ LPSAFEARRAY_UserUnmarshal64 proto WINAPI \
 LPSAFEARRAY_UserFree64 proto WINAPI \
 		      : ptr DWORD,
 		      : ptr LPSAFEARRAY
-
-;HRESULT
-IInitializeWithStream_Initialize_Proxy proto WINAPI \
-		 _This: ptr IInitializeWithStream,
-	       pstream: ptr IStream,
-	       grfMode: DWORD
-
-;HRESULT
-IInitializeWithStream_Initialize_Stub proto WINAPI \
-		 _This: ptr IInitializeWithStream,
-	       pstream: ptr IStream,
-	       grfMode: DWORD
-
-;HRESULT
-IPropertyDescription_CoerceToCanonicalValue_Proxy proto WINAPI \
-		 _This: ptr IPropertyDescription,
-	      ppropvar: ptr PROPVARIANT
-
-;HRESULT
-IPropertyDescription_CoerceToCanonicalValue_Stub proto WINAPI \
-		 _This: ptr IPropertyDescription,
-	       propvar: REFPROPVARIANT,
-	      ppropvar: ptr PROPVARIANT
 
 .pragma list(pop)
 endif

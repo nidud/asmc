@@ -30,9 +30,6 @@ MIDL_user_allocate proto WINAPI :size_t
 ;void
 MIDL_user_free proto WINAPI :PVOID
 
-externdef		__MIDL_itf_msxml_0000_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_msxml_0000_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __MSXML_LIBRARY_DEFINED__
 __MSXML_LIBRARY_DEFINED__ equ 1
 
@@ -62,7 +59,8 @@ externdef		LIBID_MSXML:IID
 ifndef __IXMLElementCollection_INTERFACE_DEFINED__
 __IXMLElementCollection_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IXMLElementCollection:IID
+DEFINE_IIDX(IXMLElementCollection, "65725580-9B5D-11d0-9BFE-00C04FC99C8E")
+
 .comdef IXMLElementCollection
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -77,63 +75,13 @@ externdef		IID_IXMLElementCollection:IID
     item		proc :ptr, :ptr, :ptr
     .ends
 
-
-;HRESULT
-IXMLElementCollection_put_length_Proxy proto WINAPI \
-		 pThis: ptr IXMLElementCollection,
-		     v: LONG
-
-;void
-IXMLElementCollection_put_length_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-;HRESULT
-IXMLElementCollection_get_length_Proxy proto WINAPI \
-		 pThis: ptr IXMLElementCollection,
-		     p: ptr LONG
-
-;void
-IXMLElementCollection_get_length_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-;HRESULT
-IXMLElementCollection_get__newEnum_Proxy proto WINAPI \
-		 pThis: ptr IXMLElementCollection,
-		 ppUnk: ptr IUnknown
-
-;void
-IXMLElementCollection_get__newEnum_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-;HRESULT
-IXMLElementCollection_item_Proxy proto WINAPI \
-		 pThis: ptr IXMLElementCollection,
-		  var1: VARIANT,
-		  var2: VARIANT,
-		ppDisp: ptr IDispatch
-
-;void
-IXMLElementCollection_item_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
 endif
 
 ifndef __IXMLDocument_INTERFACE_DEFINED__
 __IXMLDocument_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IXMLDocument:IID
+DEFINE_IIDX(IXMLDocument, "F52E2B61-18A1-11d1-B105-00805F49916B")
+
 .comdef IXMLDocument
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -158,182 +106,13 @@ externdef		IID_IXMLDocument:IID
     createElement	proc :VARIANT, :VARIANT, :ptr
     .ends
 
-;HRESULT
-IXMLDocument_get_root_Proxy proto WINAPI \
-		 pThis: ptr IXMLDocument,
-		     p: ptr IXMLElement
-
-;void
-IXMLDocument_get_root_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-;HRESULT
-IXMLDocument_get_fileSize_Proxy proto WINAPI \
-		 pThis: ptr IXMLDocument,
-		     p: ptr BSTR
-
-;void
-IXMLDocument_get_fileSize_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-;HRESULT
-IXMLDocument_get_fileModifiedDate_Proxy proto WINAPI \
-		 pThis: ptr IXMLDocument,
-		     p: ptr BSTR
-
-;void
-IXMLDocument_get_fileModifiedDate_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-;HRESULT
-IXMLDocument_get_fileUpdatedDate_Proxy proto WINAPI \
-		 pThis: ptr IXMLDocument,
-		     p: ptr BSTR
-
-;void
-IXMLDocument_get_fileUpdatedDate_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-;HRESULT
-IXMLDocument_get_URL_Proxy proto WINAPI \
-		 pThis: ptr IXMLDocument,
-		     p: ptr BSTR
-
-;void
-IXMLDocument_get_URL_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-;HRESULT
-IXMLDocument_put_URL_Proxy proto WINAPI \
-		 pThis: ptr IXMLDocument,
-		     p: BSTR
-
-;void
-IXMLDocument_put_URL_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-;HRESULT
-IXMLDocument_get_mimeType_Proxy proto WINAPI \
-		 pThis: ptr IXMLDocument,
-		     p: ptr BSTR
-
-;void
-IXMLDocument_get_mimeType_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-;HRESULT
-IXMLDocument_get_readyState_Proxy proto WINAPI \
-		 pThis: ptr IXMLDocument,
-		    pl: ptr LONG
-
-;void
-IXMLDocument_get_readyState_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-;HRESULT
-IXMLDocument_get_charset_Proxy proto WINAPI \
-		 pThis: ptr IXMLDocument,
-		     p: ptr BSTR
-
-;void
-IXMLDocument_get_charset_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-;HRESULT
-IXMLDocument_put_charset_Proxy proto WINAPI \
-		 pThis: ptr IXMLDocument,
-		     p: BSTR
-
-;void
-IXMLDocument_put_charset_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-;HRESULT
-IXMLDocument_get_version_Proxy proto WINAPI \
-		 pThis: ptr IXMLDocument,
-		     p: ptr BSTR
-
-;void
-IXMLDocument_get_version_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-;HRESULT
-IXMLDocument_get_doctype_Proxy proto WINAPI \
-		 pThis: ptr IXMLDocument,
-		     p: ptr BSTR
-
-;void
-IXMLDocument_get_doctype_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-;HRESULT
-IXMLDocument_get_dtdURL_Proxy proto WINAPI \
-		 pThis: ptr IXMLDocument,
-		     p: ptr BSTR
-
-;void
-IXMLDocument_get_dtdURL_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-;HRESULT
-IXMLDocument_createElement_Proxy proto WINAPI \
-		 pThis: ptr IXMLDocument,
-		 vType: VARIANT,
-		  var1: VARIANT,
-		ppElem: ptr IXMLElement
-
-;void
-IXMLDocument_createElement_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
 endif
 
 ifndef __IXMLElement_INTERFACE_DEFINED__
 __IXMLElement_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IXMLElement:IID
+DEFINE_IIDX(IXMLElement, "3F7F31AC-E15F-11d0-9C25-00C04FC99C8E")
+
 .comdef IXMLElement
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -356,158 +135,13 @@ externdef		IID_IXMLElement:IID
     removeChild		proc :ptr, :LONG, :LONG
     .ends
 
-;HRESULT
-IXMLElement_get_tagName_Proxy proto WINAPI \
-		 pThis: ptr IXMLElement,
-		     p: ptr BSTR
-
-;void
-IXMLElement_get_tagName_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-;HRESULT
-IXMLElement_put_tagName_Proxy proto WINAPI \
-		 pThis: ptr IXMLElement,
-		     p: BSTR
-
-;void
-IXMLElement_put_tagName_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-;HRESULT
-IXMLElement_get_parent_Proxy proto WINAPI \
-		 pThis: ptr IXMLElement,
-	      ppParent: ptr IXMLElement
-
-;void
-IXMLElement_get_parent_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-;HRESULT
-IXMLElement_setAttribute_Proxy proto WINAPI \
-		 pThis: ptr IXMLElement,
-       strPropertyName: BSTR,
-	 PropertyValue: VARIANT
-
-;void
-IXMLElement_setAttribute_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-;HRESULT
-IXMLElement_getAttribute_Proxy proto WINAPI \
-		 pThis: ptr IXMLElement,
-       strPropertyName: BSTR,
-	 PropertyValue: ptr VARIANT
-
-;void
-IXMLElement_getAttribute_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-;HRESULT
-IXMLElement_removeAttribute_Proxy proto WINAPI \
-		 pThis: ptr IXMLElement,
-       strPropertyName: BSTR
-
-;void
-IXMLElement_removeAttribute_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-;HRESULT
-IXMLElement_get_children_Proxy proto WINAPI \
-		 pThis: ptr IXMLElement,
-		    pp: ptr IXMLElementCollection
-;void
-IXMLElement_get_children_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-;HRESULT
-IXMLElement_get_type_Proxy proto WINAPI \
-		 pThis: ptr IXMLElement,
-		plType: ptr LONG
-
-;void
-IXMLElement_get_type_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-;HRESULT
-IXMLElement_get_text_Proxy proto WINAPI \
-		 pThis: ptr IXMLElement,
-		     p: ptr BSTR
-
-;void
-IXMLElement_get_text_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-;HRESULT
-IXMLElement_put_text_Proxy proto WINAPI \
-		 pThis: ptr IXMLElement,
-		     p: BSTR
-;void
-IXMLElement_put_text_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-;HRESULT
-IXMLElement_addChild_Proxy proto WINAPI \
-		 pThis: ptr IXMLElement,
-	    pChildElem: ptr IXMLElement,
-		lIndex: LONG,
-	     lReserved: LONG
-
-;void
-IXMLElement_addChild_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-;HRESULT
-IXMLElement_removeChild_Proxy proto WINAPI \
-		 pThis: ptr IXMLElement,
-	    pChildElem: ptr IXMLElement
-
-;void
-IXMLElement_removeChild_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
 endif
 
 ifndef __IXMLError_INTERFACE_DEFINED__
 __IXMLError_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IXMLError:IID
+DEFINE_IIDX(IXMLError, "948C5AD3-C58D-11d0-9C0B-00C04FC99C8E")
+
 .comdef IXMLError
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -515,25 +149,14 @@ externdef		IID_IXMLError:IID
     GetErrorInfo	proc :ptr
     .ends
 
-;HRESULT
-IXMLError_GetErrorInfo_Proxy proto WINAPI \
-		 pThis: ptr IXMLError,
-	  pErrorReturn: ptr XML_ERROR
-
-;void
-IXMLError_GetErrorInfo_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
 endif
 
 
 ifndef __IXMLElementNotificationSink_INTERFACE_DEFINED__
 __IXMLElementNotificationSink_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IXMLElementNotificationSink:IID
+externdef IID_IXMLElementNotificationSink:IID
+
 .comdef IXMLElementNotificationSink
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -545,20 +168,8 @@ externdef		IID_IXMLElementNotificationSink:IID
     ChildAdded		proc :ptr
     .ends
 
-;HRESULT
-IXMLElementNotificationSink_ChildAdded_Proxy proto WINAPI \
-		 pThis: ptr IXMLElementNotificationSink,
-	    pChildElem: ptr IDispatch
-
-;void
-IXMLElementNotificationSink_ChildAdded_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
 endif
-externdef		CLSID_XMLDocument:CLSID
+DEFINE_GUIDS(CLSID_XMLDocument, "CFC399AF-D876-11d0-9C10-00C04FC99C8E")
 endif
 
 endif

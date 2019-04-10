@@ -37,12 +37,8 @@ D3D11_RLDO_FLAGS	typedef SDWORD
 D3D11_RLDO_SUMMARY	equ 0x1
 D3D11_RLDO_DETAIL	equ 0x2
 
-externdef		__MIDL_itf_d3d11sdklayers_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d11sdklayers_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D11Debug_INTERFACE_DEFINED__
 __ID3D11Debug_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D11Debug:IID
 
 .comdef ID3D11Debug
 
@@ -63,7 +59,6 @@ endif
 
 ifndef __ID3D11SwitchToRef_INTERFACE_DEFINED__
 __ID3D11SwitchToRef_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D11SwitchToRef:IID
 
 .comdef ID3D11SwitchToRef
 
@@ -865,12 +860,8 @@ D3D11_INFO_QUEUE_FILTER ENDS
 
 D3D11_INFO_QUEUE_DEFAULT_MESSAGE_COUNT_LIMIT equ 1024
 
-externdef		__MIDL_itf_d3d11sdklayers_0000_0002_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d11sdklayers_0000_0002_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D11InfoQueue_INTERFACE_DEFINED__
 __ID3D11InfoQueue_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D11InfoQueue:IID
 
 .comdef ID3D11InfoQueue
 
@@ -933,8 +924,5 @@ D3D11_APPNAME_STRING	equ __TEXT("Name")
 DEFINE_GUID(IID_ID3D11Debug,0x79cf2233,0x7536,0x4948,0x9d,0x36,0x1e,0x46,0x92,0xdc,0x57,0x60);
 DEFINE_GUID(IID_ID3D11SwitchToRef,0x1ef337e3,0x58e7,0x4f83,0xa6,0x92,0xdb,0x22,0x1f,0x5e,0xd4,0x7e);
 DEFINE_GUID(IID_ID3D11InfoQueue,0x6543dbb6,0x1b48,0x42f5,0xab,0x82,0xe9,0x7e,0xc7,0x43,0x26,0xf6);
-
-externdef __MIDL_itf_d3d11sdklayers_0000_0003_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef __MIDL_itf_d3d11sdklayers_0000_0003_v0_0_s_ifspec:RPC_IF_HANDLE
 
 endif

@@ -80,9 +80,6 @@ endif
 
 TARGET_IS_NT40_OR_LATER equ 1
 
-externdef		__MIDL_itf_adomd_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_adomd_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ADOMD_LIBRARY_DEFINED__
 __ADOMD_LIBRARY_DEFINED__ equ 1
 
@@ -108,7 +105,7 @@ externdef		LIBID_ADOMD:IID
 ifndef __ICatalog_INTERFACE_DEFINED__
 __ICatalog_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_ICatalog:IID
+DEFINE_IIDX(ICatalog, "228136B1-8BD3-11D0-B4EF-00A0C9138CA4")
 
 .comdef ICatalog
 
@@ -131,7 +128,7 @@ endif
 ifndef __ICellset_INTERFACE_DEFINED__
 __ICellset_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_ICellset:IID
+DEFINE_IIDX(ICellset, "2281372A-8BD3-11D0-B4EF-00A0C9138CA4")
 
 .comdef ICellset
 
@@ -162,7 +159,7 @@ endif
 ifndef __Cell_INTERFACE_DEFINED__
 __Cell_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_Cell:IID
+DEFINE_IIDX(Cell, "2281372E-8BD3-11D0-B4EF-00A0C9138CA4")
 
 .comdef Cell
 
@@ -187,7 +184,7 @@ endif
 ifndef __Axis_INTERFACE_DEFINED__
 __Axis_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_Axis:IID
+DEFINE_IIDX(Axis, "22813732-8BD3-11D0-B4EF-00A0C9138CA4")
 
 .comdef Axis
 
@@ -209,7 +206,7 @@ endif
 ifndef __Position_INTERFACE_DEFINED__
 __Position_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_Position:IID
+DEFINE_IIDX(Position, "22813734-8BD3-11D0-B4EF-00A0C9138CA4")
 
 .comdef Position
 
@@ -229,7 +226,7 @@ endif
 ifndef __Member_INTERFACE_DEFINED__
 __Member_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_Member:IID
+DEFINE_IIDX(Member, "22813736-8BD3-11D0-B4EF-00A0C9138CA4")
 
 .comdef Member
 
@@ -260,7 +257,7 @@ endif
 ifndef __Level_INTERFACE_DEFINED__
 __Level_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_Level:IID
+DEFINE_IIDX(Level, "2281373A-8BD3-11D0-B4EF-00A0C9138CA4")
 
 .comdef Level
 
@@ -285,7 +282,7 @@ endif
 ifndef __CubeDef25_INTERFACE_DEFINED__
 __CubeDef25_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_CubeDef25:IID
+DEFINE_IIDX(CubeDef25, "2281373E-8BD3-11D0-B4EF-00A0C9138CA4")
 
 .comdef CubeDef25
 
@@ -307,7 +304,7 @@ endif
 ifndef __CubeDef_INTERFACE_DEFINED__
 __CubeDef_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_CubeDef:IID
+DEFINE_IIDX(CubeDef, "DA16A34A-7B7A-46fd-AD9D-66DF1E699FA1")
 
 .comdef CubeDef
 
@@ -330,7 +327,7 @@ endif
 ifndef __Dimension_INTERFACE_DEFINED__
 __Dimension_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_Dimension:IID
+DEFINE_IIDX(Dimension, "22813742-8BD3-11D0-B4EF-00A0C9138CA4")
 
 .comdef Dimension
 
@@ -353,7 +350,7 @@ endif
 ifndef __Hierarchy_INTERFACE_DEFINED__
 __Hierarchy_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_Hierarchy:IID
+DEFINE_IIDX(Hierarchy, "22813746-8BD3-11D0-B4EF-00A0C9138CA4")
 
 .comdef Hierarchy
 
@@ -376,7 +373,7 @@ endif
 ifndef __MD_Collection_INTERFACE_DEFINED__
 __MD_Collection_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_MD_Collection:IID
+DEFINE_IIDX(MD_Collection, "22813751-8BD3-11D0-B4EF-00A0C9138CA4")
 
 .comdef MD_Collection
 
@@ -397,7 +394,7 @@ endif
 ifndef __Members_INTERFACE_DEFINED__
 __Members_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_Members:IID
+DEFINE_IIDX(Members, "22813757-8BD3-11D0-B4EF-00A0C9138CA4")
 
 .comdef Members
 
@@ -419,7 +416,7 @@ endif
 ifndef __Levels_INTERFACE_DEFINED__
 __Levels_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_Levels:IID
+DEFINE_IIDX(Levels, "22813758-8BD3-11D0-B4EF-00A0C9138CA4")
 
 .comdef Levels
 
@@ -441,7 +438,7 @@ endif
 ifndef __Axes_INTERFACE_DEFINED__
 __Axes_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_Axes:IID
+DEFINE_IIDX(Axes, "22813759-8BD3-11D0-B4EF-00A0C9138CA4")
 
 .comdef Axes
 
@@ -463,7 +460,7 @@ endif
 ifndef __Positions_INTERFACE_DEFINED__
 __Positions_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_Positions:IID
+DEFINE_IIDX(Positions, "2281375A-8BD3-11D0-B4EF-00A0C9138CA4")
 
 .comdef Positions
 
@@ -485,7 +482,7 @@ endif
 ifndef __Hierarchies_INTERFACE_DEFINED__
 __Hierarchies_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_Hierarchies:IID
+DEFINE_IIDX(Hierarchies, "2281375B-8BD3-11D0-B4EF-00A0C9138CA4")
 
 .comdef Hierarchies
 
@@ -507,7 +504,7 @@ endif
 ifndef __Dimensions_INTERFACE_DEFINED__
 __Dimensions_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_Dimensions:IID
+DEFINE_IIDX(Dimensions, "2281375C-8BD3-11D0-B4EF-00A0C9138CA4")
 
 .comdef Dimensions
 
@@ -529,7 +526,7 @@ endif
 ifndef __CubeDefs_INTERFACE_DEFINED__
 __CubeDefs_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_CubeDefs:IID
+DEFINE_IIDX(CubeDefs, "2281375D-8BD3-11D0-B4EF-00A0C9138CA4")
 
 .comdef CubeDefs
 
@@ -548,15 +545,9 @@ externdef		IID_CubeDefs:IID
 
 endif
 
-externdef		CLSID_Catalog:CLSID
+DEFINE_GUIDS(CLSID_Catalog, "228136B0-8BD3-11D0-B4EF-00A0C9138CA4")
+DEFINE_GUIDS(CLSID_Cellset, "228136B8-8BD3-11D0-B4EF-00A0C9138CA4")
 
-ifdef __cplusplus
-DECLSPEC_UUID("228136B0-8BD3-11D0-B4EF-00A0C9138CA4")
-endif
-externdef		CLSID_Cellset:CLSID
-ifdef __cplusplus
-DECLSPEC_UUID("228136B8-8BD3-11D0-B4EF-00A0C9138CA4")
-endif
 endif
 
 endif

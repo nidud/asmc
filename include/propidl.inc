@@ -411,13 +411,11 @@ atime			FILETIME <>
 dwOSVersion		dd ?
 STATPROPSETSTG		ENDS
 
-externdef		__MIDL_itf_propidl_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_propidl_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IPropertyStorage_INTERFACE_DEFINED__
 __IPropertyStorage_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IPropertyStorage:IID
+DEFINE_IIDX(IPropertyStorage, "00000138-0000-0000-C000-000000000046")
+
 .comdef IPropertyStorage
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -441,8 +439,8 @@ endif
 ifndef __IPropertySetStorage_INTERFACE_DEFINED__
 __IPropertySetStorage_INTERFACE_DEFINED__ equ 1
 
+DEFINE_IIDX(IPropertySetStorage, "0000013A-0000-0000-C000-000000000046")
 
-externdef		IID_IPropertySetStorage:IID
 .comdef IPropertySetStorage
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -452,6 +450,7 @@ externdef		IID_IPropertySetStorage:IID
     Delete		proc :REFFMTID
     Enum		proc :ptr
     .ends
+
 LPPROPERTYSETSTORAGE	typedef ptr IPropertySetStorage
 
 endif
@@ -459,8 +458,8 @@ endif
 ifndef __IEnumSTATPROPSTG_INTERFACE_DEFINED__
 __IEnumSTATPROPSTG_INTERFACE_DEFINED__ equ 1
 
+DEFINE_IIDX(IEnumSTATPROPSTG, "00000139-0000-0000-C000-000000000046")
 
-externdef		IID_IEnumSTATPROPSTG:IID
 .comdef IEnumSTATPROPSTG
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -470,30 +469,16 @@ externdef		IID_IEnumSTATPROPSTG:IID
     Reset		proc
     Clone		proc :ptr
     .ends
+
 LPENUMSTATPROPSTG	typedef ptr IEnumSTATPROPSTG
-
-;HRESULT
-IEnumSTATPROPSTG_RemoteNext_Proxy proto WINAPI \
-		 _This: ptr IEnumSTATPROPSTG,
-		  celt: ULONG,
-		 rgelt: ptr STATPROPSTG,
-	  pceltFetched: ptr ULONG
-
-;void
-IEnumSTATPROPSTG_RemoteNext_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
 
 endif
 
 ifndef __IEnumSTATPROPSETSTG_INTERFACE_DEFINED__
 __IEnumSTATPROPSETSTG_INTERFACE_DEFINED__ equ 1
 
+DEFINE_IIDX(IEnumSTATPROPSETSTG, "0000013B-0000-0000-C000-000000000046")
 
-externdef		IID_IEnumSTATPROPSETSTG:IID
 .comdef IEnumSTATPROPSETSTG
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -503,27 +488,10 @@ externdef		IID_IEnumSTATPROPSETSTG:IID
     Reset		proc
     Clone		proc :ptr
     .ends
+
 LPENUMSTATPROPSETSTG	typedef ptr IEnumSTATPROPSETSTG
 
-;HRESULT
-IEnumSTATPROPSETSTG_RemoteNext_Proxy proto WINAPI \
-		 _This: ptr IEnumSTATPROPSETSTG,
-		  celt: ULONG,
-		 rgelt: ptr STATPROPSETSTG,
-	  pceltFetched: ptr ULONG
-
-;void
-IEnumSTATPROPSETSTG_RemoteNext_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-
 endif
-
-
-
 
 LPPROPERTYSTORAGE	typedef ptr IPropertyStorage
 
@@ -609,10 +577,6 @@ StgConvertVariantToProperty proto WINAPI \
 		   pid: PROPID,
 	     fReserved: BOOLEAN,
 	    pcIndirect: ptr ULONG
-
-
-externdef		__MIDL_itf_propidl_0000_0004_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_propidl_0000_0004_v0_0_s_ifspec:RPC_IF_HANDLE
 
 
 ;DWORD
@@ -709,40 +673,6 @@ LPSAFEARRAY_UserUnmarshal64 proto WINAPI \
 LPSAFEARRAY_UserFree64 proto WINAPI \
 		      : ptr DWORD,
 		      : ptr LPSAFEARRAY
-
-
-;HRESULT
-IEnumSTATPROPSTG_Next_Proxy proto WINAPI \
-		 _This: ptr IEnumSTATPROPSTG,
-		  celt: ULONG,
-		 rgelt: ptr STATPROPSTG,
-	  pceltFetched: ptr ULONG
-
-
-
-;HRESULT
-IEnumSTATPROPSTG_Next_Stub proto WINAPI \
-		 _This: ptr IEnumSTATPROPSTG,
-		  celt: ULONG,
-		 rgelt: ptr STATPROPSTG,
-	  pceltFetched: ptr ULONG
-
-
-;HRESULT
-IEnumSTATPROPSETSTG_Next_Proxy proto WINAPI \
-		 _This: ptr IEnumSTATPROPSETSTG,
-		  celt: ULONG,
-		 rgelt: ptr STATPROPSETSTG,
-	  pceltFetched: ptr ULONG
-
-
-
-;HRESULT
-IEnumSTATPROPSETSTG_Next_Stub proto WINAPI \
-		 _This: ptr IEnumSTATPROPSETSTG,
-		  celt: ULONG,
-		 rgelt: ptr STATPROPSETSTG,
-	  pceltFetched: ptr ULONG
 
 endif
 

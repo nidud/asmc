@@ -752,12 +752,8 @@ bottom			UINT ?
 back			UINT ?
 D3D11_BOX		ENDS
 
-externdef		__MIDL_itf_d3d11_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d11_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D11DeviceChild_INTERFACE_DEFINED__
 __ID3D11DeviceChild_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D11DeviceChild:IID
 
 .comdef ID3D11DeviceChild
 
@@ -813,12 +809,8 @@ FrontFace		D3D11_DEPTH_STENCILOP_DESC <>
 BackFace		D3D11_DEPTH_STENCILOP_DESC <>
 D3D11_DEPTH_STENCIL_DESC ENDS
 
-externdef		__MIDL_itf_d3d11_0000_0001_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d11_0000_0001_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D11DepthStencilState_INTERFACE_DEFINED__
 __ID3D11DepthStencilState_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D11DepthStencilState:IID
 
 .comdef ID3D11DepthStencilState
 
@@ -883,12 +875,8 @@ IndependentBlendEnable	BOOL ?
 RenderTarget		D3D11_RENDER_TARGET_BLEND_DESC 8 dup(<>)
 D3D11_BLEND_DESC	ENDS
 
-externdef		__MIDL_itf_d3d11_0000_0002_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d11_0000_0002_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D11BlendState_INTERFACE_DEFINED__
 __ID3D11BlendState_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D11BlendState:IID
 
 .comdef ID3D11BlendState
 
@@ -916,12 +904,8 @@ MultisampleEnable	BOOL ?
 AntialiasedLineEnable	BOOL ?
 D3D11_RASTERIZER_DESC	ENDS
 
-externdef		__MIDL_itf_d3d11_0000_0003_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d11_0000_0003_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D11RasterizerState_INTERFACE_DEFINED__
 __ID3D11RasterizerState_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D11RasterizerState:IID
 
 .comdef ID3D11RasterizerState
 
@@ -948,12 +932,8 @@ RowPitch		UINT ?
 DepthPitch		UINT ?
 D3D11_MAPPED_SUBRESOURCE ENDS
 
-externdef		__MIDL_itf_d3d11_0000_0004_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d11_0000_0004_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D11Resource_INTERFACE_DEFINED__
 __ID3D11Resource_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D11Resource:IID
 
 .comdef ID3D11Resource
 
@@ -979,12 +959,8 @@ MiscFlags		UINT ?
 StructureByteStride	UINT ?
 D3D11_BUFFER_DESC	ENDS
 
-externdef		__MIDL_itf_d3d11_0000_0005_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d11_0000_0005_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D11Buffer_INTERFACE_DEFINED__
 __ID3D11Buffer_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D11Buffer:IID
 
 .comdef ID3D11Buffer
 
@@ -1015,12 +991,8 @@ CPUAccessFlags		UINT ?
 MiscFlags		UINT ?
 D3D11_TEXTURE1D_DESC	ENDS
 
-externdef		__MIDL_itf_d3d11_0000_0006_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d11_0000_0006_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D11Texture1D_INTERFACE_DEFINED__
 __ID3D11Texture1D_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D11Texture1D:IID
 
 .comdef ID3D11Texture1D
 
@@ -1051,12 +1023,8 @@ CPUAccessFlags		UINT ?
 MiscFlags		UINT ?
 D3D11_TEXTURE2D_DESC	ENDS
 
-externdef		__MIDL_itf_d3d11_0000_0007_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d11_0000_0007_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D11Texture2D_INTERFACE_DEFINED__
 __ID3D11Texture2D_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D11Texture2D:IID
 
 .comdef ID3D11Texture2D
 
@@ -1088,12 +1056,8 @@ CPUAccessFlags		UINT ?
 MiscFlags		UINT ?
 D3D11_TEXTURE3D_DESC	ENDS
 
-externdef		__MIDL_itf_d3d11_0000_0008_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d11_0000_0008_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D11Texture3D_INTERFACE_DEFINED__
 __ID3D11Texture3D_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D11Texture3D:IID
 
 .comdef ID3D11Texture3D
 
@@ -1119,12 +1083,8 @@ D3D11_TEXTURECUBE_FACE_NEGATIVE_Y equ 3
 D3D11_TEXTURECUBE_FACE_POSITIVE_Z equ 4
 D3D11_TEXTURECUBE_FACE_NEGATIVE_Z equ 5
 
-externdef		__MIDL_itf_d3d11_0000_0009_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d11_0000_0009_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D11View_INTERFACE_DEFINED__
 __ID3D11View_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D11View:IID
 
 .comdef ID3D11View
 
@@ -1227,12 +1187,8 @@ UNION
 ENDS
 D3D11_SHADER_RESOURCE_VIEW_DESC ENDS
 
-externdef		__MIDL_itf_d3d11_0000_0010_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d11_0000_0010_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D11ShaderResourceView_INTERFACE_DEFINED__
 __ID3D11ShaderResourceView_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D11ShaderResourceView:IID
 
 .comdef ID3D11ShaderResourceView
 
@@ -1309,12 +1265,8 @@ Buffer			D3D11_BUFFER_RTV <>
 ENDS
 D3D11_RENDER_TARGET_VIEW_DESC ENDS
 
-externdef		__MIDL_itf_d3d11_0000_0011_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d11_0000_0011_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D11RenderTargetView_INTERFACE_DEFINED__
 __ID3D11RenderTargetView_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D11RenderTargetView:IID
 
 .comdef ID3D11RenderTargetView
 
@@ -1379,12 +1331,8 @@ UNION
 ENDS
 D3D11_DEPTH_STENCIL_VIEW_DESC ENDS
 
-externdef		__MIDL_itf_d3d11_0000_0012_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d11_0000_0012_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D11DepthStencilView_INTERFACE_DEFINED__
 __ID3D11DepthStencilView_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D11DepthStencilView:IID
 
 .comdef ID3D11DepthStencilView
 
@@ -1452,12 +1400,8 @@ UNION
 ENDS
 D3D11_UNORDERED_ACCESS_VIEW_DESC ENDS
 
-externdef		__MIDL_itf_d3d11_0000_0013_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d11_0000_0013_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D11UnorderedAccessView_INTERFACE_DEFINED__
 __ID3D11UnorderedAccessView_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D11UnorderedAccessView:IID
 
 .comdef ID3D11UnorderedAccessView
 
@@ -1475,7 +1419,6 @@ endif
 
 ifndef __ID3D11VertexShader_INTERFACE_DEFINED__
 __ID3D11VertexShader_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D11VertexShader:IID
 
 .comdef ID3D11VertexShader
 
@@ -1493,7 +1436,6 @@ endif
 
 ifndef __ID3D11HullShader_INTERFACE_DEFINED__
 __ID3D11HullShader_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D11HullShader:IID
 
 .comdef ID3D11HullShader
 
@@ -1509,7 +1451,6 @@ endif
 
 ifndef __ID3D11DomainShader_INTERFACE_DEFINED__
 __ID3D11DomainShader_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D11DomainShader:IID
 
 .comdef ID3D11DomainShader
 
@@ -1525,7 +1466,6 @@ endif
 
 ifndef __ID3D11GeometryShader_INTERFACE_DEFINED__
 __ID3D11GeometryShader_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D11GeometryShader:IID
 
 .comdef ID3D11GeometryShader
 
@@ -1541,7 +1481,6 @@ endif
 
 ifndef __ID3D11PixelShader_INTERFACE_DEFINED__
 __ID3D11PixelShader_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D11PixelShader:IID
 
 .comdef ID3D11PixelShader
 
@@ -1559,7 +1498,6 @@ endif
 
 ifndef __ID3D11ComputeShader_INTERFACE_DEFINED__
 __ID3D11ComputeShader_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D11ComputeShader:IID
 
 .comdef ID3D11ComputeShader
 
@@ -1575,7 +1513,6 @@ endif
 
 ifndef __ID3D11InputLayout_INTERFACE_DEFINED__
 __ID3D11InputLayout_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D11InputLayout:IID
 
 .comdef ID3D11InputLayout
 
@@ -1663,12 +1600,8 @@ MinLOD			FLOAT ?
 MaxLOD			FLOAT ?
 D3D11_SAMPLER_DESC	ENDS
 
-externdef		__MIDL_itf_d3d11_0000_0021_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d11_0000_0021_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D11SamplerState_INTERFACE_DEFINED__
 __ID3D11SamplerState_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D11SamplerState:IID
 
 .comdef ID3D11SamplerState
 
@@ -1722,12 +1655,8 @@ D3D11_FORMAT_SUPPORT2_UAV_ATOMIC_UNSIGNED_MIN_OR_MAX equ 0x20
 D3D11_FORMAT_SUPPORT2_UAV_TYPED_LOAD equ 0x40
 D3D11_FORMAT_SUPPORT2_UAV_TYPED_STORE equ 0x80
 
-externdef		__MIDL_itf_d3d11_0000_0022_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d11_0000_0022_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D11Asynchronous_INTERFACE_DEFINED__
 __ID3D11Asynchronous_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D11Asynchronous:IID
 
 .comdef ID3D11Asynchronous
 
@@ -1771,12 +1700,8 @@ Query			D3D11_QUERY ?
 MiscFlags		UINT ?
 D3D11_QUERY_DESC	ENDS
 
-externdef		__MIDL_itf_d3d11_0000_0023_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d11_0000_0023_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D11Query_INTERFACE_DEFINED__
 __ID3D11Query_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D11Query:IID
 
 .comdef ID3D11Query
 
@@ -1794,7 +1719,6 @@ endif
 
 ifndef __ID3D11Predicate_INTERFACE_DEFINED__
 __ID3D11Predicate_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D11Predicate:IID
 
 .comdef ID3D11Predicate
 
@@ -1854,12 +1778,8 @@ NumSimultaneousCounters UINT ?
 NumDetectableParallelUnits UINT8 ?
 D3D11_COUNTER_INFO	ENDS
 
-externdef		__MIDL_itf_d3d11_0000_0025_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d11_0000_0025_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D11Counter_INTERFACE_DEFINED__
 __ID3D11Counter_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D11Counter:IID
 
 .comdef ID3D11Counter
 
@@ -1894,12 +1814,8 @@ BaseSampler		UINT ?
 Created			BOOL ?
 D3D11_CLASS_INSTANCE_DESC ENDS
 
-externdef		__MIDL_itf_d3d11_0000_0026_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d11_0000_0026_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D11ClassInstance_INTERFACE_DEFINED__
 __ID3D11ClassInstance_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D11ClassInstance:IID
 
 .comdef ID3D11ClassInstance
 
@@ -1919,7 +1835,6 @@ endif
 
 ifndef __ID3D11ClassLinkage_INTERFACE_DEFINED__
 __ID3D11ClassLinkage_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D11ClassLinkage:IID
 
 .comdef ID3D11ClassLinkage
 
@@ -1937,7 +1852,6 @@ endif
 
 ifndef __ID3D11CommandList_INTERFACE_DEFINED__
 __ID3D11CommandList_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D11CommandList:IID
 
 .comdef ID3D11CommandList
 
@@ -1982,12 +1896,8 @@ D3D11_FEATURE_DATA_D3D10_X_HARDWARE_OPTIONS STRUC
 ComputeShaders_Plus_RawAndStructuredBuffers_Via_Shader_4_x BOOL ?
 D3D11_FEATURE_DATA_D3D10_X_HARDWARE_OPTIONS ENDS
 
-externdef		__MIDL_itf_d3d11_0000_0029_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d11_0000_0029_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D11DeviceContext_INTERFACE_DEFINED__
 __ID3D11DeviceContext_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D11DeviceContext:IID
 
 .comdef ID3D11DeviceContext
 
@@ -2112,7 +2022,6 @@ endif
 
 ifndef __ID3D11Device_INTERFACE_DEFINED__
 __ID3D11Device_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D11Device:IID
 
 .comdef ID3D11Device
 
@@ -2268,10 +2177,6 @@ DEFINE_GUID(IID_ID3D11ClassLinkage,0xddf57cba,0x9543,0x46e4,0xa1,0x2b,0xf2,0x07,
 DEFINE_GUID(IID_ID3D11CommandList,0xa24bc4d1,0x769e,0x43f7,0x80,0x13,0x98,0xff,0x56,0x6c,0x18,0xe2)
 DEFINE_GUID(IID_ID3D11DeviceContext,0xc0bfa96c,0xe089,0x44fb,0x8e,0xaf,0x26,0xf8,0x79,0x61,0x90,0xda)
 DEFINE_GUID(IID_ID3D11Device,0xdb6f6ddb,0xac77,0x4e88,0x82,0x53,0x81,0x9d,0xf9,0xbb,0xf1,0x40)
-
-
-externdef __MIDL_itf_d3d11_0000_0031_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef __MIDL_itf_d3d11_0000_0031_v0_0_s_ifspec:RPC_IF_HANDLE
 
 endif
 .pragma list(pop)

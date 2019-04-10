@@ -13,9 +13,6 @@ MIDL_user_allocate proto WINAPI :size_t
 ;void
 MIDL_user_free proto WINAPI :PVOID
 
-externdef __MIDL_itf_wtypes_0000_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef __MIDL_itf_wtypes_0000_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IWinTypes_INTERFACE_DEFINED__
 __IWinTypes_INTERFACE_DEFINED__ equ <>
 
@@ -840,9 +837,6 @@ pTreatAsClsid		LPCLSID ?
 cPackages		dd ?
 pPackageDetail		LPPACKAGEDETAIL ?
 PACKAGEINFO		ENDS
-
-externdef __MIDL_itf_wtypes_0001_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef __MIDL_itf_wtypes_0001_v0_0_s_ifspec:RPC_IF_HANDLE
 
 endif
 .pragma list(pop)

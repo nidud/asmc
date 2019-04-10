@@ -44,9 +44,6 @@ PROFILER_EVENT_MASK_TRACE_ALL equ ( PROFILER_EVENT_MASK_TRACE_SCRIPT_FUNCTION_CA
 
 PROFILER_TOKEN typedef LONG
 
-externdef __MIDL_itf_activprof_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef __MIDL_itf_activprof_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IActiveScriptProfilerControl_INTERFACE_DEFINED__
 __IActiveScriptProfilerControl_INTERFACE_DEFINED__ equ <>
 
@@ -84,9 +81,6 @@ DEFINE_IIDX(IActiveScriptProfilerCallback, "740eca23-7d9d-42e5-ba9d-f8b24b1c7a9b
 
 endif
 endif
-
-externdef __MIDL_itf_activprof_0000_0002_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef __MIDL_itf_activprof_0000_0002_v0_0_s_ifspec:RPC_IF_HANDLE
 
 .pragma list(pop)
 endif

@@ -260,9 +260,6 @@ SCRIPTTHREADID_CURRENT	equ (-1)
 SCRIPTTHREADID_BASE	equ (-2)
 SCRIPTTHREADID_ALL	equ (-3)
 
-externdef		__MIDL_itf_activscp_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_activscp_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IActiveScriptSite_INTERFACE_DEFINED__
 __IActiveScriptSite_INTERFACE_DEFINED__ equ 1
 
@@ -295,13 +292,6 @@ __IActiveScriptError_INTERFACE_DEFINED__ equ 1
     GetSourcePosition	proc :ptr, :ptr, :ptr
     GetSourceLineText	proc :ptr
     .ends
-
-;void
-IActiveScriptError_RemoteGetExceptionInfo_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
 
 endif
 
@@ -425,9 +415,6 @@ IID_IActiveScriptParse	equ <IID_IActiveScriptParse32>
 endif
 PIActiveScriptParse	typedef ptr IActiveScriptParse
 
-externdef		__MIDL_itf_activscp_0000_0009_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_activscp_0000_0009_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IActiveScriptParseProcedureOld32_INTERFACE_DEFINED__
 __IActiveScriptParseProcedureOld32_INTERFACE_DEFINED__ equ 1
 
@@ -462,9 +449,6 @@ IActiveScriptParseProcedureOld equ <IActiveScriptParseProcedureOld32>
 IID_IActiveScriptParseProcedureOld equ <IID_IActiveScriptParseProcedureOld32>
 endif
 PIActiveScriptParseProcedureOld typedef ptr IActiveScriptParseProcedureOld
-
-externdef		__MIDL_itf_activscp_0000_0011_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_activscp_0000_0011_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IActiveScriptParseProcedure32_INTERFACE_DEFINED__
 __IActiveScriptParseProcedure32_INTERFACE_DEFINED__ equ 1
@@ -501,9 +485,6 @@ IID_IActiveScriptParseProcedure equ <IID_IActiveScriptParseProcedure32>
 endif
 PIActiveScriptParseProcedure typedef ptr IActiveScriptParseProcedure
 
-externdef		__MIDL_itf_activscp_0000_0013_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_activscp_0000_0013_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IActiveScriptParseProcedure2_32_INTERFACE_DEFINED__
 __IActiveScriptParseProcedure2_32_INTERFACE_DEFINED__ equ 1
 
@@ -538,9 +519,6 @@ IActiveScriptParseProcedure2 equ <IActiveScriptParseProcedure2_32>
 IID_IActiveScriptParseProcedure2 equ <IID_IActiveScriptParseProcedure2_32>
 endif
 PIActiveScriptParseProcedure2 typedef ptr IActiveScriptParseProcedure2
-
-externdef		__MIDL_itf_activscp_0000_0015_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_activscp_0000_0015_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IActiveScriptEncode_INTERFACE_DEFINED__
 __IActiveScriptEncode_INTERFACE_DEFINED__ equ 1
@@ -692,9 +670,6 @@ __IActiveScriptStringCompare_INTERFACE_DEFINED__ equ 1
 endif
 
 endif  ;; __ActivScp_h
-
-externdef		__MIDL_itf_activscp_0000_0026_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_activscp_0000_0026_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ;DWORD
 BSTR_UserSize proto WINAPI \

@@ -516,15 +516,8 @@ bottom			UINT ?
 back			UINT ?
 D3D10_BOX		ENDS
 
-
-
-
-externdef		__MIDL_itf_d3d10_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d10_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D10DeviceChild_INTERFACE_DEFINED__
 __ID3D10DeviceChild_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D10DeviceChild:IID
 
 .comdef ID3D10DeviceChild
 
@@ -580,12 +573,8 @@ FrontFace		D3D10_DEPTH_STENCILOP_DESC <>
 BackFace		D3D10_DEPTH_STENCILOP_DESC <>
 D3D10_DEPTH_STENCIL_DESC ENDS
 
-externdef		__MIDL_itf_d3d10_0000_0001_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d10_0000_0001_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D10DepthStencilState_INTERFACE_DEFINED__
 __ID3D10DepthStencilState_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D10DepthStencilState:IID
 
 .comdef ID3D10DepthStencilState
 
@@ -645,12 +634,8 @@ BlendOpAlpha		D3D10_BLEND_OP ?
 RenderTargetWriteMask	UINT8 8 dup(?)
 D3D10_BLEND_DESC	ENDS
 
-externdef		__MIDL_itf_d3d10_0000_0002_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d10_0000_0002_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D10BlendState_INTERFACE_DEFINED__
 __ID3D10BlendState_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D10BlendState:IID
 
 .comdef ID3D10BlendState
 
@@ -678,12 +663,8 @@ MultisampleEnable	BOOL ?
 AntialiasedLineEnable	BOOL ?
 D3D10_RASTERIZER_DESC	ENDS
 
-externdef		__MIDL_itf_d3d10_0000_0003_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d10_0000_0003_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D10RasterizerState_INTERFACE_DEFINED__
 __ID3D10RasterizerState_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D10RasterizerState:IID
 
 .comdef ID3D10RasterizerState
 
@@ -704,12 +685,8 @@ SysMemPitch		UINT ?
 SysMemSlicePitch	UINT ?
 D3D10_SUBRESOURCE_DATA	ENDS
 
-externdef		__MIDL_itf_d3d10_0000_0004_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d10_0000_0004_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D10Resource_INTERFACE_DEFINED__
 __ID3D10Resource_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D10Resource:IID
 
 .comdef ID3D10Resource
 
@@ -734,12 +711,8 @@ CPUAccessFlags		UINT ?
 MiscFlags		UINT ?
 D3D10_BUFFER_DESC	ENDS
 
-externdef		__MIDL_itf_d3d10_0000_0005_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d10_0000_0005_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D10Buffer_INTERFACE_DEFINED__
 __ID3D10Buffer_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D10Buffer:IID
 
 .comdef ID3D10Buffer
 
@@ -770,12 +743,8 @@ CPUAccessFlags		UINT ?
 MiscFlags		UINT ?
 D3D10_TEXTURE1D_DESC	ENDS
 
-externdef		__MIDL_itf_d3d10_0000_0006_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d10_0000_0006_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D10Texture1D_INTERFACE_DEFINED__
 __ID3D10Texture1D_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D10Texture1D:IID
 
 .comdef ID3D10Texture1D
 
@@ -813,12 +782,8 @@ pData			PVOID ?
 RowPitch		UINT ?
 D3D10_MAPPED_TEXTURE2D	ENDS
 
-externdef		__MIDL_itf_d3d10_0000_0007_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d10_0000_0007_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D10Texture2D_INTERFACE_DEFINED__
 __ID3D10Texture2D_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D10Texture2D:IID
 
 .comdef ID3D10Texture2D
 
@@ -856,12 +821,8 @@ RowPitch		UINT ?
 DepthPitch		UINT ?
 D3D10_MAPPED_TEXTURE3D	ENDS
 
-externdef		__MIDL_itf_d3d10_0000_0008_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d10_0000_0008_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D10Texture3D_INTERFACE_DEFINED__
 __ID3D10Texture3D_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D10Texture3D:IID
 
 .comdef ID3D10Texture3D
 
@@ -889,12 +850,8 @@ D3D10_TEXTURECUBE_FACE_NEGATIVE_Y equ 3
 D3D10_TEXTURECUBE_FACE_POSITIVE_Z equ 4
 D3D10_TEXTURECUBE_FACE_NEGATIVE_Z equ 5
 
-externdef		__MIDL_itf_d3d10_0000_0009_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d10_0000_0009_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D10View_INTERFACE_DEFINED__
 __ID3D10View_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D10View:IID
 
 .comdef ID3D10View
 
@@ -979,12 +936,8 @@ UNION
 ENDS
 D3D10_SHADER_RESOURCE_VIEW_DESC ENDS
 
-externdef		__MIDL_itf_d3d10_0000_0010_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d10_0000_0010_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D10ShaderResourceView_INTERFACE_DEFINED__
 __ID3D10ShaderResourceView_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D10ShaderResourceView:IID
 
 .comdef ID3D10ShaderResourceView
 
@@ -1061,12 +1014,8 @@ UNION
 ENDS
 D3D10_RENDER_TARGET_VIEW_DESC ENDS
 
-externdef		__MIDL_itf_d3d10_0000_0011_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d10_0000_0011_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D10RenderTargetView_INTERFACE_DEFINED__
 __ID3D10RenderTargetView_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D10RenderTargetView:IID
 
 .comdef ID3D10RenderTargetView
 
@@ -1124,12 +1073,8 @@ UNION
 ENDS
 D3D10_DEPTH_STENCIL_VIEW_DESC ENDS
 
-externdef		__MIDL_itf_d3d10_0000_0012_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d10_0000_0012_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D10DepthStencilView_INTERFACE_DEFINED__
 __ID3D10DepthStencilView_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D10DepthStencilView:IID
 
 .comdef ID3D10DepthStencilView
 
@@ -1147,7 +1092,6 @@ endif
 
 ifndef __ID3D10VertexShader_INTERFACE_DEFINED__
 __ID3D10VertexShader_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D10VertexShader:IID
 
 .comdef ID3D10VertexShader
 
@@ -1163,7 +1107,6 @@ endif
 
 ifndef __ID3D10GeometryShader_INTERFACE_DEFINED__
 __ID3D10GeometryShader_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D10GeometryShader:IID
 
 .comdef ID3D10GeometryShader
 
@@ -1179,7 +1122,6 @@ endif
 
 ifndef __ID3D10PixelShader_INTERFACE_DEFINED__
 __ID3D10PixelShader_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D10PixelShader:IID
 
 .comdef ID3D10PixelShader
 
@@ -1195,7 +1137,6 @@ endif
 
 ifndef __ID3D10InputLayout_INTERFACE_DEFINED__
 __ID3D10InputLayout_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D10InputLayout:IID
 
 .comdef ID3D10InputLayout
 
@@ -1285,12 +1226,8 @@ MinLOD			FLOAT ?
 MaxLOD			FLOAT ?
 D3D10_SAMPLER_DESC	ENDS
 
-externdef		__MIDL_itf_d3d10_0000_0017_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d10_0000_0017_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D10SamplerState_INTERFACE_DEFINED__
 __ID3D10SamplerState_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D10SamplerState:IID
 
 .comdef ID3D10SamplerState
 
@@ -1332,12 +1269,8 @@ D3D10_FORMAT_SUPPORT_MULTISAMPLE_LOAD equ 0x400000
 D3D10_FORMAT_SUPPORT_SHADER_GATHER equ 0x800000
 D3D10_FORMAT_SUPPORT_BACK_BUFFER_CAST equ 0x1000000
 
-externdef		__MIDL_itf_d3d10_0000_0018_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d10_0000_0018_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D10Asynchronous_INTERFACE_DEFINED__
 __ID3D10Asynchronous_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D10Asynchronous:IID
 
 .comdef ID3D10Asynchronous
 
@@ -1376,12 +1309,8 @@ Query			D3D10_QUERY ?
 MiscFlags		UINT ?
 D3D10_QUERY_DESC	ENDS
 
-externdef		__MIDL_itf_d3d10_0000_0019_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d10_0000_0019_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D10Query_INTERFACE_DEFINED__
 __ID3D10Query_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D10Query:IID
 
 .comdef ID3D10Query
 
@@ -1402,7 +1331,6 @@ endif
 
 ifndef __ID3D10Predicate_INTERFACE_DEFINED__
 __ID3D10Predicate_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D10Predicate:IID
 
 .comdef ID3D10Predicate
 
@@ -1480,12 +1408,8 @@ NumSimultaneousCounters UINT ?
 NumDetectableParallelUnits UINT8 ?
 D3D10_COUNTER_INFO	ENDS
 
-externdef		__MIDL_itf_d3d10_0000_0021_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d10_0000_0021_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D10Counter_INTERFACE_DEFINED__
 __ID3D10Counter_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D10Counter:IID
 
 .comdef ID3D10Counter
 
@@ -1506,7 +1430,6 @@ endif
 
 ifndef __ID3D10Device_INTERFACE_DEFINED__
 __ID3D10Device_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D10Device:IID
 
 .comdef ID3D10Device
 
@@ -1613,7 +1536,6 @@ endif
 
 ifndef __ID3D10Multithread_INTERFACE_DEFINED__
 __ID3D10Multithread_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D10Multithread:IID
 
 .comdef ID3D10Multithread
 
@@ -1670,9 +1592,6 @@ DEFINE_GUID(IID_ID3D10Predicate,0x9B7E4C10,0x342C,0x4106,0xA1,0x9F,0x4F,0x27,0x0
 DEFINE_GUID(IID_ID3D10Counter,0x9B7E4C11,0x342C,0x4106,0xA1,0x9F,0x4F,0x27,0x04,0xF6,0x89,0xF0);
 DEFINE_GUID(IID_ID3D10Device,0x9B7E4C0F,0x342C,0x4106,0xA1,0x9F,0x4F,0x27,0x04,0xF6,0x89,0xF0);
 DEFINE_GUID(IID_ID3D10Multithread,0x9B7E4E00,0x342C,0x4106,0xA1,0x9F,0x4F,0x27,0x04,0xF6,0x89,0xF0);
-
-externdef __MIDL_itf_d3d10_0000_0024_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef __MIDL_itf_d3d10_0000_0024_v0_0_s_ifspec:RPC_IF_HANDLE
 
 endif
 .pragma list(pop)

@@ -53,9 +53,6 @@ COP_WORD_EQUAL		equ ( COP_DOSWILDCARDS + 1 )
 COP_WORD_STARTSWITH	equ ( COP_WORD_EQUAL + 1 )
 COP_APPLICATION_SPECIFIC equ ( COP_WORD_STARTSWITH + 1 )
 
-externdef		__MIDL_itf_structuredquerycondition_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_structuredquerycondition_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IRichChunk_INTERFACE_DEFINED__
 __IRichChunk_INTERFACE_DEFINED__ equ 1
 
@@ -67,22 +64,7 @@ externdef		IID_IRichChunk:IID
     GetData		proc :ptr, :ptr, :ptr, :ptr
     .ends
 
-;HRESULT
-IRichChunk_RemoteGetData_Proxy proto WINAPI \
-		 _This: ptr IRichChunk,
-	     pFirstPos: ptr ULONG,
-	       pLength: ptr ULONG,
-		  ppsz: ptr LPWSTR,
-		pValue: ptr PROPVARIANT
-;void
-IRichChunk_RemoteGetData_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-
-endif	;; __IRichChunk_INTERFACE_DEFINED__
+endif
 
 ifndef __ICondition_INTERFACE_DEFINED__
 __ICondition_INTERFACE_DEFINED__ equ 1
@@ -106,35 +88,7 @@ externdef		IID_ICondition:IID
     Clone		proc :ptr
     .ends
 
-;HRESULT
-ICondition_RemoteGetComparisonInfo_Proxy proto WINAPI \
-		 _This: ptr ICondition,
-      ppszPropertyName: ptr LPWSTR,
-		  pcop: ptr CONDITION_OPERATION,
-	      ppropvar: ptr PROPVARIANT
-
-;void
-ICondition_RemoteGetComparisonInfo_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-;HRESULT
-ICondition_RemoteGetInputTerms_Proxy proto WINAPI \
-		 _This: ptr ICondition,
-	ppPropertyTerm: ptr IRichChunk,
-       ppOperationTerm: ptr IRichChunk,
-	   ppValueTerm: ptr IRichChunk
-
-;void
-ICondition_RemoteGetInputTerms_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-endif	;; __ICondition_INTERFACE_DEFINED__
+endif
 
 ifndef __ICondition2_INTERFACE_DEFINED__
 __ICondition2_INTERFACE_DEFINED__ equ 1
@@ -160,21 +114,7 @@ externdef		IID_ICondition2:IID
     GetLeafConditionInfo proc :ptr, :ptr, :ptr
     .ends
 
-;HRESULT
-ICondition2_RemoteGetLeafConditionInfo_Proxy proto WINAPI \
-		 _This: ptr ICondition2,
-	      ppropkey: ptr PROPERTYKEY,
-		  pcop: ptr CONDITION_OPERATION,
-	      ppropvar: ptr PROPVARIANT
-
-;void
-ICondition2_RemoteGetLeafConditionInfo_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-endif	;; __ICondition2_INTERFACE_DEFINED__
+endif
 
 ;; Additional Prototypes for ALL interfaces
 
@@ -216,55 +156,4 @@ LPSAFEARRAY_UserUnmarshal proto WINAPI \
 LPSAFEARRAY_UserFree proto WINAPI \
 		      : ptr DWORD,
 		      : ptr LPSAFEARRAY
-;HRESULT
-IRichChunk_GetData_Proxy proto WINAPI \
-		 _This: ptr IRichChunk,
-	     pFirstPos: ptr ULONG,
-	       pLength: ptr ULONG,
-		  ppsz: ptr LPWSTR,
-		pValue: ptr PROPVARIANT
-;HRESULT
-IRichChunk_GetData_Stub proto WINAPI \
-		 _This: ptr IRichChunk,
-	     pFirstPos: ptr ULONG,
-	       pLength: ptr ULONG,
-		  ppsz: ptr LPWSTR,
-		pValue: ptr PROPVARIANT
-;HRESULT
-ICondition_GetComparisonInfo_Proxy proto WINAPI \
-		 _This: ptr ICondition,
-      ppszPropertyName: ptr LPWSTR,
-		  pcop: ptr CONDITION_OPERATION,
-	      ppropvar: ptr PROPVARIANT
-;HRESULT
-ICondition_GetComparisonInfo_Stub proto WINAPI \
-		 _This: ptr ICondition,
-      ppszPropertyName: ptr LPWSTR,
-		  pcop: ptr CONDITION_OPERATION,
-	      ppropvar: ptr PROPVARIANT
-;HRESULT
-ICondition_GetInputTerms_Proxy proto WINAPI \
-		 _This: ptr ICondition,
-	ppPropertyTerm: ptr IRichChunk,
-       ppOperationTerm: ptr IRichChunk,
-	   ppValueTerm: ptr IRichChunk
-;HRESULT
-ICondition_GetInputTerms_Stub proto WINAPI \
-		 _This: ptr ICondition,
-	ppPropertyTerm: ptr IRichChunk,
-       ppOperationTerm: ptr IRichChunk,
-	   ppValueTerm: ptr IRichChunk
-;HRESULT
-ICondition2_GetLeafConditionInfo_Proxy proto WINAPI \
-		 _This: ptr ICondition2,
-	      ppropkey: ptr PROPERTYKEY,
-		  pcop: ptr CONDITION_OPERATION,
-	      ppropvar: ptr PROPVARIANT
-;HRESULT
-ICondition2_GetLeafConditionInfo_Stub proto WINAPI \
-		 _This: ptr ICondition2,
-	      ppropkey: ptr PROPERTYKEY,
-		  pcop: ptr CONDITION_OPERATION,
-	      ppropvar: ptr PROPVARIANT
-
 endif

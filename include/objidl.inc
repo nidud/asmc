@@ -10,269 +10,205 @@ ifndef COM_NO_WINDOWS_H
 include windows.inc
 include ole2.inc
 endif
+
 ifndef __objidl_h__
 __objidl_h__ equ <>
 
 ifndef __IMarshal_FWD_DEFINED__
 __IMarshal_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IMalloc_FWD_DEFINED__
 __IMalloc_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IMallocSpy_FWD_DEFINED__
 __IMallocSpy_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IStdMarshalInfo_FWD_DEFINED__
 __IStdMarshalInfo_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IExternalConnection_FWD_DEFINED__
 __IExternalConnection_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IMultiQI_FWD_DEFINED__
 __IMultiQI_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IEnumUnknown_FWD_DEFINED__
 __IEnumUnknown_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IBindCtx_FWD_DEFINED__
 __IBindCtx_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IEnumMoniker_FWD_DEFINED__
 __IEnumMoniker_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IRunnableObject_FWD_DEFINED__
 __IRunnableObject_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IRunningObjectTable_FWD_DEFINED__
 __IRunningObjectTable_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IPersist_FWD_DEFINED__
 __IPersist_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IPersistStream_FWD_DEFINED__
 __IPersistStream_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IMoniker_FWD_DEFINED__
 __IMoniker_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IROTData_FWD_DEFINED__
 __IROTData_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IEnumString_FWD_DEFINED__
 __IEnumString_FWD_DEFINED__ equ 1
 endif
-
 ifndef __ISequentialStream_FWD_DEFINED__
 __ISequentialStream_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IStream_FWD_DEFINED__
 __IStream_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IEnumSTATSTG_FWD_DEFINED__
 __IEnumSTATSTG_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IStorage_FWD_DEFINED__
 __IStorage_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IPersistFile_FWD_DEFINED__
 __IPersistFile_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IPersistStorage_FWD_DEFINED__
 __IPersistStorage_FWD_DEFINED__ equ 1
 endif
-
 ifndef __ILockBytes_FWD_DEFINED__
 __ILockBytes_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IEnumFORMATETC_FWD_DEFINED__
 __IEnumFORMATETC_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IEnumSTATDATA_FWD_DEFINED__
 __IEnumSTATDATA_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IRootStorage_FWD_DEFINED__
 __IRootStorage_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IAdviseSink_FWD_DEFINED__
 __IAdviseSink_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IAdviseSink2_FWD_DEFINED__
 __IAdviseSink2_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IDataObject_FWD_DEFINED__
 __IDataObject_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IDataAdviseHolder_FWD_DEFINED__
 __IDataAdviseHolder_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IMessageFilter_FWD_DEFINED__
 __IMessageFilter_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IRpcChannelBuffer_FWD_DEFINED__
 __IRpcChannelBuffer_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IRpcChannelBuffer2_FWD_DEFINED__
 __IRpcChannelBuffer2_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IRpcChannelBuffer3_FWD_DEFINED__
 __IRpcChannelBuffer3_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IRpcProxyBuffer_FWD_DEFINED__
 __IRpcProxyBuffer_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IRpcStubBuffer_FWD_DEFINED__
 __IRpcStubBuffer_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IPSFactoryBuffer_FWD_DEFINED__
 __IPSFactoryBuffer_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IChannelHook_FWD_DEFINED__
 __IChannelHook_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IPropertyStorage_FWD_DEFINED__
 __IPropertyStorage_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IPropertySetStorage_FWD_DEFINED__
 __IPropertySetStorage_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IEnumSTATPROPSTG_FWD_DEFINED__
 __IEnumSTATPROPSTG_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IEnumSTATPROPSETSTG_FWD_DEFINED__
 __IEnumSTATPROPSETSTG_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IClientSecurity_FWD_DEFINED__
 __IClientSecurity_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IServerSecurity_FWD_DEFINED__
 __IServerSecurity_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IClassActivator_FWD_DEFINED__
 __IClassActivator_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IRpcOptions_FWD_DEFINED__
 __IRpcOptions_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IComBinding_FWD_DEFINED__
 __IComBinding_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IFillLockBytes_FWD_DEFINED__
 __IFillLockBytes_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IProgressNotify_FWD_DEFINED__
 __IProgressNotify_FWD_DEFINED__ equ 1
 endif
-
 ifndef __ILayoutStorage_FWD_DEFINED__
 __ILayoutStorage_FWD_DEFINED__ equ 1
 endif
-
 ifndef __ISurrogate_FWD_DEFINED__
 __ISurrogate_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IGlobalInterfaceTable_FWD_DEFINED__
 __IGlobalInterfaceTable_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IDirectWriterLock_FWD_DEFINED__
 __IDirectWriterLock_FWD_DEFINED__ equ 1
 endif
-
 ifndef __ISynchronize_FWD_DEFINED__
 __ISynchronize_FWD_DEFINED__ equ 1
 endif
-
 ifndef __ISynchronizeMutex_FWD_DEFINED__
 __ISynchronizeMutex_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IAsyncSetup_FWD_DEFINED__
 __IAsyncSetup_FWD_DEFINED__ equ 1
 endif
-
 ifndef __ICancelMethodCalls_FWD_DEFINED__
 __ICancelMethodCalls_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IAsyncManager_FWD_DEFINED__
 __IAsyncManager_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IWaitMultiple_FWD_DEFINED__
 __IWaitMultiple_FWD_DEFINED__ equ 1
 endif
-
 ifndef __ISynchronizeEvent_FWD_DEFINED__
 __ISynchronizeEvent_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IUrlMon_FWD_DEFINED__
 __IUrlMon_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IClassAccess_FWD_DEFINED__
 __IClassAccess_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IClassRefresh_FWD_DEFINED__
 __IClassRefresh_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IEnumPackage_FWD_DEFINED__
 __IEnumPackage_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IEnumClass_FWD_DEFINED__
 __IEnumClass_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IClassAdmin_FWD_DEFINED__
 __IClassAdmin_FWD_DEFINED__ equ 1
 endif
@@ -309,11 +245,28 @@ dwFileVersionLS		dd ?
 pwszContentType		LPWSTR ?
 COSERVERINFO2		ENDS
 
-externdef		__MIDL_itf_objidl_0000_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_objidl_0000_v0_0_s_ifspec:RPC_IF_HANDLE
+ifndef DEFINE_IIDX
+DEFINE_IIDX macro name, x
+    DEFINE_GUID(IID_&name&, \
+	@CatStr(<0x>, @SubStr(x, 2,8)), \
+	@CatStr(<0x>, @SubStr(x,11,4)), \
+	@CatStr(<0x>, @SubStr(x,16,4)), \
+	@CatStr(<0x>, @SubStr(x,21,2)), \
+	@CatStr(<0x>, @SubStr(x,23,2)), \
+	@CatStr(<0x>, @SubStr(x,26,2)), \
+	@CatStr(<0x>, @SubStr(x,28,2)), \
+	@CatStr(<0x>, @SubStr(x,30,2)), \
+	@CatStr(<0x>, @SubStr(x,32,2)), \
+	@CatStr(<0x>, @SubStr(x,34,2)), \
+	@CatStr(<0x>, @SubStr(x,36,2)))
+	exitm<>
+	endm
+endif
 
 ifndef __IMarshal_INTERFACE_DEFINED__
 __IMarshal_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IMarshal, "00000003-0000-0000-C000-000000000046")
 
 .comdef IMarshal
     QueryInterface	proc :REFIID, :ptr
@@ -326,102 +279,30 @@ __IMarshal_INTERFACE_DEFINED__ equ 1
     ReleaseMarshalData	proc :ptr
     DisconnectObject	proc :DWORD
     .ends
+
 LPMARSHAL		typedef ptr IMarshal
-externdef		IID_IMarshal:IID
-
-;HRESULT
-IMarshal_GetUnmarshalClass_Proxy proto WINAPI \
-		 pThis: ptr IMarshal,
-		  riid: REFIID,
-		    pv: PVOID,
-	 dwDestContext: DWORD,
-	 pvDestContext: PVOID,
-	     mshlflags: DWORD,
-		  pCid: ptr CLSID
-
-;void
-IMarshal_GetUnmarshalClass_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IMarshal_GetMarshalSizeMax_Proxy proto WINAPI \
-		 pThis: ptr IMarshal,
-		  riid: REFIID,
-		    pv: PVOID,
-	 dwDestContext: DWORD,
-	 pvDestContext: PVOID,
-	     mshlflags: DWORD,
-		 pSize: LPDWORD
-
-;void
-IMarshal_GetMarshalSizeMax_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IMarshal_MarshalInterface_Proxy proto WINAPI \
-		 pThis: ptr IMarshal,
-		  pStm: ptr IStream,
-		  riid: REFIID,
-		    pv: PVOID,
-	 dwDestContext: DWORD,
-	 pvDestContext: PVOID,
-	     mshlflags: DWORD
-
-;void
-IMarshal_MarshalInterface_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IMarshal_UnmarshalInterface_Proxy proto WINAPI \
-		 pThis: ptr IMarshal,
-		  pStm: ptr IStream,
-		  riid: REFIID,
-		   ppv: PVOID
-
-;void
-IMarshal_UnmarshalInterface_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IMarshal_ReleaseMarshalData_Proxy proto WINAPI \
-		 pThis: ptr IMarshal,
-		  pStm: ptr IStream
-
-;void
-IMarshal_ReleaseMarshalData_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IMarshal_DisconnectObject_Proxy proto WINAPI \
-		 pThis: ptr IMarshal,
-	    dwReserved: DWORD
-
-;void
-IMarshal_DisconnectObject_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 
 endif
 
+DEFINE_IIDX(IMarshal2, "000001cf-0000-0000-C000-000000000046")
+
+.comdef IMarshal2
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetUnmarshalClass	proc :REFIID, :ptr ,:DWORD, :ptr, :DWORD, :ptr
+    GetMarshalSizeMax	proc :REFIID, :ptr ,:DWORD, :ptr, :DWORD, :ptr
+    MarshalInterface	proc :ptr, :REFIID, :ptr, :DWORD, :ptr, :DWORD
+    UnmarshalInterface	proc :ptr, :REFIID, :ptr
+    ReleaseMarshalData	proc :ptr
+    DisconnectObject	proc :DWORD
+    .ends
+LPMARSHAL2		typedef ptr IMarshal2
+
 ifndef __IMalloc_INTERFACE_DEFINED__
 __IMalloc_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IMalloc, "00000002-0000-0000-C000-000000000046")
 
 .comdef IMalloc
     QueryInterface	proc :REFIID, :ptr
@@ -434,87 +315,16 @@ __IMalloc_INTERFACE_DEFINED__ equ 1
     DidAlloc		proc :ptr
     HeapMinimize	proc
     .ends
+
 LPMALLOC		typedef ptr IMalloc
-externdef		IID_IMalloc:IID
-
-;PVOID
-IMalloc_Alloc_Proxy proto WINAPI \
-		 pThis: ptr IMalloc,
-		    cb: ULONG
-
-;void
-IMalloc_Alloc_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;PVOID
-IMalloc_Realloc_Proxy proto WINAPI \
-		 pThis: ptr IMalloc,
-		    pv: PVOID,
-		    cb: ULONG
-
-;void
-IMalloc_Realloc_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;void
-IMalloc_Free_Proxy proto WINAPI \
-		 pThis: ptr IMalloc,
-		    pv: PVOID
-
-;void
-IMalloc_Free_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-
-;ULONG
-IMalloc_GetSize_Proxy proto WINAPI \
-		 pThis: ptr IMalloc,
-		    pv: PVOID
-
-;void
-IMalloc_GetSize_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;int
-IMalloc_DidAlloc_Proxy proto WINAPI \
-		 pThis: ptr IMalloc,
-		    pv: PVOID
-
-;void
-IMalloc_DidAlloc_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;void
-IMalloc_HeapMinimize_Proxy proto WINAPI \
-		 pThis: ptr IMalloc
-
-;void
-IMalloc_HeapMinimize_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 
 endif
 
 
 ifndef __IMallocSpy_INTERFACE_DEFINED__
 __IMallocSpy_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IMallocSpy, "0000001d-0000-0000-C000-000000000046")
 
 .comdef IMallocSpy
     QueryInterface	proc :REFIID, :ptr
@@ -533,165 +343,15 @@ __IMallocSpy_INTERFACE_DEFINED__ equ 1
     PreHeapMinimize	proc
     PostHeapMinimize	proc
     .ends
+
 LPMALLOCSPY		typedef ptr IMallocSpy
-externdef		IID_IMallocSpy:IID
-
-;ULONG
-IMallocSpy_PreAlloc_Proxy proto WINAPI \
-		 pThis: ptr IMallocSpy,
-	     cbRequest: ULONG
-
-;void
-IMallocSpy_PreAlloc_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;PVOID
-IMallocSpy_PostAlloc_Proxy proto WINAPI \
-		 pThis: ptr IMallocSpy,
-	       pActual: PVOID
-
-;void
-IMallocSpy_PostAlloc_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;PVOID
-IMallocSpy_PreFree_Proxy proto WINAPI \
-		 pThis: ptr IMallocSpy,
-	      pRequest: PVOID,
-		fSpyed: BOOL
-
-;void
-IMallocSpy_PreFree_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;void
-IMallocSpy_PostFree_Proxy proto WINAPI \
-		 pThis: ptr IMallocSpy,
-		fSpyed: BOOL
-
-;void
-IMallocSpy_PostFree_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;ULONG
-IMallocSpy_PreRealloc_Proxy proto WINAPI \
-		 pThis: ptr IMallocSpy,
-	      pRequest: PVOID,
-	     cbRequest: ULONG,
-	  ppNewRequest: PVOID,
-		fSpyed: BOOL
-
-;void
-IMallocSpy_PreRealloc_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;PVOID
-IMallocSpy_PostRealloc_Proxy proto WINAPI \
-		 pThis: ptr IMallocSpy,
-	       pActual: PVOID,
-		fSpyed: BOOL
-
-;void
-IMallocSpy_PostRealloc_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;PVOID
-IMallocSpy_PreGetSize_Proxy proto WINAPI \
-		 pThis: ptr IMallocSpy,
-	      pRequest: PVOID,
-		fSpyed: BOOL
-
-;void
-IMallocSpy_PreGetSize_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;ULONG
-IMallocSpy_PostGetSize_Proxy proto WINAPI \
-		 pThis: ptr IMallocSpy,
-	      cbActual: ULONG,
-		fSpyed: BOOL
-
-;void
-IMallocSpy_PostGetSize_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;PVOID
-IMallocSpy_PreDidAlloc_Proxy proto WINAPI \
-		 pThis: ptr IMallocSpy,
-	      pRequest: PVOID,
-		fSpyed: BOOL
-
-;void
-IMallocSpy_PreDidAlloc_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;int
-IMallocSpy_PostDidAlloc_Proxy proto WINAPI \
-		 pThis: ptr IMallocSpy,
-	      pRequest: PVOID,
-		fSpyed: BOOL,
-	       fActual: SINT
-
-;void
-IMallocSpy_PostDidAlloc_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;void
-IMallocSpy_PreHeapMinimize_Proxy proto WINAPI \
-		 pThis: ptr IMallocSpy
-
-;void
-IMallocSpy_PreHeapMinimize_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;void
-IMallocSpy_PostHeapMinimize_Proxy proto WINAPI \
-		 pThis: ptr IMallocSpy
-
-;void
-IMallocSpy_PostHeapMinimize_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 
 endif
 
 ifndef __IStdMarshalInfo_INTERFACE_DEFINED__
 __IStdMarshalInfo_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IStdMarshalInfo, "00000018-0000-0000-C000-000000000046")
 
 .comdef IStdMarshalInfo
     QueryInterface	proc :REFIID, :ptr
@@ -700,21 +360,6 @@ __IStdMarshalInfo_INTERFACE_DEFINED__ equ 1
     GetClassForHandler	proc :DWORD, :ptr, :ptr
     .ends
 LPSTDMARSHALINFO	typedef ptr IStdMarshalInfo
-externdef		IID_IStdMarshalInfo:IID
-
-;HRESULT
-IStdMarshalInfo_GetClassForHandler_Proxy proto WINAPI \
-		 pThis: ptr IStdMarshalInfo,
-	 dwDestContext: DWORD,
-	 pvDestContext: PVOID,
-		pClsid: ptr CLSID
-
-;void
-IStdMarshalInfo_GetClassForHandler_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 
 endif
 
@@ -726,6 +371,8 @@ EXTCONN_STRONG		equ 0x1
 EXTCONN_WEAK		equ 0x2
 EXTCONN_CALLABLE	equ 0x4
 
+DEFINE_IIDX(IExternalConnection, "00000019-0000-0000-C000-000000000046")
+
 .comdef IExternalConnection
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -733,37 +380,9 @@ EXTCONN_CALLABLE	equ 0x4
     AddConnection	proc :DWORD, :DWORD
     ReleaseConnection	proc :DWORD, :DWORD, :BOOL
     .ends
+
 LPEXTERNALCONNECTION	typedef ptr IExternalConnection
-externdef		IID_IExternalConnection:IID
 
-;DWORD
-IExternalConnection_AddConnection_Proxy proto WINAPI \
-		 pThis: ptr IExternalConnection,
-	       extconn: DWORD,
-	      reserved: DWORD
-
-;void
-IExternalConnection_AddConnection_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-
-;DWORD
-IExternalConnection_ReleaseConnection_Proxy proto WINAPI \
-		 pThis: ptr IExternalConnection,
-	       extconn: DWORD,
-	      reserved: DWORD,
-    fLastReleaseCloses: BOOL
-
-
-;void
-IExternalConnection_ReleaseConnection_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 endif
 
 ifndef __IMultiQI_INTERFACE_DEFINED__
@@ -775,32 +394,42 @@ pItf			LPIUnknown ?
 hr			HRESULT ?
 MULTI_QI		ENDS
 
+DEFINE_IIDX(IMultiQI, "00000020-0000-0000-C000-000000000046")
+
 .comdef IMultiQI
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
     Release		proc
     QueryMultipleInterfaces proc :DWORD, :ptr
     .ends
+
 LPMULTIQI		typedef ptr IMultiQI
-externdef		IID_IMultiQI:IID
-
-;HRESULT
-IMultiQI_QueryMultipleInterfaces_Proxy proto WINAPI \
-		 pThis: ptr IMultiQI,
-		 cMQIs: ULONG,
-		 pMQIs: ptr MULTI_QI
-
-;void
-IMultiQI_QueryMultipleInterfaces_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 
 endif
 
+DEFINE_IIDX(AsyncIMultiQI, "000e0020-0000-0000-C000-000000000046")
+
+.comdef AsyncIMultiQI
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Begin_QueryMultipleInterfaces proc :ULONG, :ptr MULTI_QI
+    Finish_QueryMultipleInterfaces proc :ptr MULTI_QI
+    .ends
+
+DEFINE_IIDX(IInternalUnknown, "00000021-0000-0000-C000-000000000046")
+
+.comdef IInternalUnknown
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    QueryInternalInterface proc :REFIID, :ptr
+    .ends
+
 ifndef __IEnumUnknown_INTERFACE_DEFINED__
 __IEnumUnknown_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IEnumUnknown, "00000100-0000-0000-C000-000000000046")
 
 .comdef IEnumUnknown
     QueryInterface	proc :REFIID, :ptr
@@ -811,64 +440,8 @@ __IEnumUnknown_INTERFACE_DEFINED__ equ 1
     Reset		proc
     Clone		proc :ptr
     .ends
+
 LPENUMUNKNOWN		typedef ptr IEnumUnknown
-externdef		IID_IEnumUnknown:IID
-
-;HRESULT
-IEnumUnknown_RemoteNext_Proxy proto WINAPI \
-		 pThis: ptr IEnumUnknown,
-		  celt: ULONG,
-		 rgelt: ptr IUnknown,
-	  pceltFetched: LPDWORD
-
-
-;void
-IEnumUnknown_RemoteNext_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-
-;HRESULT
-IEnumUnknown_Skip_Proxy proto WINAPI \
-		 pThis: ptr IEnumUnknown,
-		  celt: ULONG
-
-
-;void
-IEnumUnknown_Skip_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-
-;HRESULT
-IEnumUnknown_Reset_Proxy proto WINAPI \
-		 pThis: ptr IEnumUnknown
-
-
-;void
-IEnumUnknown_Reset_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-
-;HRESULT
-IEnumUnknown_Clone_Proxy proto WINAPI \
-		 pThis: ptr IEnumUnknown,
-		ppenum: ptr IEnumUnknown
-
-
-;void
-IEnumUnknown_Clone_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 
 endif
 
@@ -901,6 +474,8 @@ tagBIND_FLAGS		typedef SDWORD
 BIND_MAYBOTHERUSER	equ 1
 BIND_JUSTTESTEXISTENCE	equ 2
 
+DEFINE_IIDX(IBindCtx, "0000000e-0000-0000-C000-000000000046")
+
 .comdef IBindCtx
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -918,133 +493,13 @@ BIND_JUSTTESTEXISTENCE	equ 2
     .ends
 LPBC			typedef ptr IBindCtx
 LPBINDCTX		typedef ptr IBindCtx
-externdef		IID_IBindCtx:IID
-
-;HRESULT
-IBindCtx_RegisterObjectBound_Proxy proto WINAPI \
-		 pThis: ptr IBindCtx,
-		  punk: ptr IUnknown
-
-;void
-IBindCtx_RegisterObjectBound_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IBindCtx_RevokeObjectBound_Proxy proto WINAPI \
-		 pThis: ptr IBindCtx,
-		  punk: ptr IUnknown
-
-;void
-IBindCtx_RevokeObjectBound_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IBindCtx_ReleaseBoundObjects_Proxy proto WINAPI \
-		 pThis: ptr IBindCtx
-
-;void
-IBindCtx_ReleaseBoundObjects_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IBindCtx_RemoteSetBindOptions_Proxy proto WINAPI \
-		 pThis: ptr IBindCtx,
-	     pbindopts: ptr BIND_OPTS2
-
-;void
-IBindCtx_RemoteSetBindOptions_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IBindCtx_RemoteGetBindOptions_Proxy proto WINAPI \
-		 pThis: ptr IBindCtx,
-	     pbindopts: ptr BIND_OPTS2
-
-;void
-IBindCtx_RemoteGetBindOptions_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IBindCtx_GetRunningObjectTable_Proxy proto WINAPI \
-		 pThis: ptr IBindCtx,
-		 pprot: ptr IRunningObjectTable
-
-;void
-IBindCtx_GetRunningObjectTable_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IBindCtx_RegisterObjectParam_Proxy proto WINAPI \
-		 pThis: ptr IBindCtx,
-		pszKey: LPOLESTR,
-		  punk: ptr IUnknown
-
-;void
-IBindCtx_RegisterObjectParam_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IBindCtx_GetObjectParam_Proxy proto WINAPI \
-		 pThis: ptr IBindCtx,
-		pszKey: LPOLESTR,
-		 ppunk: ptr IUnknown
-
-;void
-IBindCtx_GetObjectParam_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IBindCtx_EnumObjectParam_Proxy proto WINAPI \
-		 pThis: ptr IBindCtx,
-		ppenum: ptr IEnumString
-
-;void
-IBindCtx_EnumObjectParam_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IBindCtx_RevokeObjectParam_Proxy proto WINAPI \
-		 pThis: ptr IBindCtx,
-		pszKey: LPOLESTR
-
-;void
-IBindCtx_RevokeObjectParam_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 
 endif
 
 ifndef __IEnumMoniker_INTERFACE_DEFINED__
 __IEnumMoniker_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IEnumMoniker, "00000102-0000-0000-C000-000000000046")
 
 .comdef IEnumMoniker
     QueryInterface	proc :REFIID, :ptr
@@ -1055,62 +510,15 @@ __IEnumMoniker_INTERFACE_DEFINED__ equ 1
     Reset		proc
     Clone		proc :ptr
     .ends
+
 LPENUMMONIKER		typedef ptr IEnumMoniker
-externdef		IID_IEnumMoniker:IID
-
-;HRESULT
-IEnumMoniker_RemoteNext_Proxy proto WINAPI \
-		 pThis: ptr IEnumMoniker,
-		  celt: ULONG,
-		 rgelt: ptr IMoniker,
-	  pceltFetched: LPDWORD
-
-;void
-IEnumMoniker_RemoteNext_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IEnumMoniker_Skip_Proxy proto WINAPI \
-		 pThis: ptr IEnumMoniker,
-		  celt: ULONG
-
-;void
-IEnumMoniker_Skip_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IEnumMoniker_Reset_Proxy proto WINAPI \
-		 pThis: ptr IEnumMoniker
-
-;void
-IEnumMoniker_Reset_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IEnumMoniker_Clone_Proxy proto WINAPI \
-		 pThis: ptr IEnumMoniker,
-		ppenum: ptr IEnumMoniker
-
-;void
-IEnumMoniker_Clone_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 
 endif
 
 ifndef __IRunnableObject_INTERFACE_DEFINED__
 __IRunnableObject_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IRunnableObject, "00000126-0000-0000-C000-000000000046")
 
 .comdef IRunnableObject
     QueryInterface	proc :REFIID, :ptr
@@ -1122,73 +530,15 @@ __IRunnableObject_INTERFACE_DEFINED__ equ 1
     LockRunning		proc :BOOL, :BOOL
     SetContainedObject	proc :BOOL
     .ends
+
 LPRUNNABLEOBJECT	typedef ptr IRunnableObject
-externdef		IID_IRunnableObject:IID
-
-;HRESULT
-IRunnableObject_GetRunningClass_Proxy proto WINAPI \
-		 pThis: ptr IRunnableObject,
-	       lpClsid: LPCLSID
-
-;void
-IRunnableObject_GetRunningClass_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IRunnableObject_Run_Proxy proto WINAPI \
-		 pThis: ptr IRunnableObject,
-		   pbc: LPBINDCTX
-
-;void
-IRunnableObject_Run_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IRunnableObject_RemoteIsRunning_Proxy proto WINAPI \
-		 pThis: ptr IRunnableObject
-
-;void
-IRunnableObject_RemoteIsRunning_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IRunnableObject_LockRunning_Proxy proto WINAPI \
-		 pThis: ptr IRunnableObject,
-		 fLock: BOOL,
-     fLastUnlockCloses: BOOL
-
-;void
-IRunnableObject_LockRunning_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IRunnableObject_SetContainedObject_Proxy proto WINAPI \
-		 pThis: ptr IRunnableObject,
-	    fContained: BOOL
-
-;void
-IRunnableObject_SetContainedObject_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 
 endif
 
 ifndef __IRunningObjectTable_INTERFACE_DEFINED__
 __IRunningObjectTable_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IRunningObjectTable, "00000010-0000-0000-C000-000000000046")
 
 .comdef IRunningObjectTable
     QueryInterface	proc :REFIID, :ptr
@@ -1202,103 +552,15 @@ __IRunningObjectTable_INTERFACE_DEFINED__ equ 1
     GetTimeOfLastChange proc :ptr, :ptr
     EnumRunning		proc :ptr
     .ends
+
 LPRUNNINGOBJECTTABLE	typedef ptr IRunningObjectTable
-externdef		IID_IRunningObjectTable:IID
-
-;HRESULT
-IRunningObjectTable_Register_Proxy proto WINAPI \
-		 pThis: ptr IRunningObjectTable,
-	      grfFlags: DWORD,
-	    punkObject: ptr IUnknown,
-	 pmkObjectName: ptr IMoniker,
-	   pdwRegister: LPDWORD
-
-;void
-IRunningObjectTable_Register_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IRunningObjectTable_Revoke_Proxy proto WINAPI \
-		 pThis: ptr IRunningObjectTable,
-	    dwRegister: DWORD
-
-;void
-IRunningObjectTable_Revoke_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IRunningObjectTable_IsRunning_Proxy proto WINAPI \
-		 pThis: ptr IRunningObjectTable,
-	 pmkObjectName: ptr IMoniker
-
-;void
-IRunningObjectTable_IsRunning_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IRunningObjectTable_GetObject_Proxy proto WINAPI \
-		 pThis: ptr IRunningObjectTable,
-	 pmkObjectName: ptr IMoniker,
-	   ppunkObject: ptr IUnknown
-
-;void
-IRunningObjectTable_GetObject_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IRunningObjectTable_NoteChangeTime_Proxy proto WINAPI \
-		 pThis: ptr IRunningObjectTable,
-	    dwRegister: DWORD,
-	     pfiletime: LPFILETIME
-
-;void
-IRunningObjectTable_NoteChangeTime_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IRunningObjectTable_GetTimeOfLastChange_Proxy proto WINAPI \
-		 pThis: ptr IRunningObjectTable,
-	 pmkObjectName: ptr IMoniker,
-	     pfiletime: LPFILETIME
-
-;void
-IRunningObjectTable_GetTimeOfLastChange_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IRunningObjectTable_EnumRunning_Proxy proto WINAPI \
-		 pThis: ptr IRunningObjectTable,
-	 ppenumMoniker: ptr IEnumMoniker
-
-;void
-IRunningObjectTable_EnumRunning_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 
 endif
 
 ifndef __IPersist_INTERFACE_DEFINED__
 __IPersist_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IPersist, "0000010c-0000-0000-C000-000000000046")
 
 .comdef IPersist
     QueryInterface	proc :REFIID, :ptr
@@ -1306,25 +568,15 @@ __IPersist_INTERFACE_DEFINED__ equ 1
     Release		proc
     GetClassID		proc :ptr
     .ends
+
 LPPERSIST		typedef ptr IPersist
-externdef		IID_IPersist:IID
-
-;HRESULT
-IPersist_GetClassID_Proxy proto WINAPI \
-		 pThis: ptr IPersist,
-	      pClassID: ptr CLSID
-
-;void
-IPersist_GetClassID_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 
 endif
 
 ifndef __IPersistStream_INTERFACE_DEFINED__
 __IPersistStream_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IPersistStream, "00000109-0000-0000-C000-000000000046")
 
 .comdef IPersistStream
     QueryInterface	proc :REFIID, :ptr
@@ -1336,56 +588,8 @@ __IPersistStream_INTERFACE_DEFINED__ equ 1
     Save		proc :ptr, :BOOL
     GetSizeMax		proc :ptr
     .ends
+
 LPPERSISTSTREAM		typedef ptr IPersistStream
-externdef		IID_IPersistStream:IID
-
-;HRESULT
-IPersistStream_IsDirty_Proxy proto WINAPI \
-		 pThis: ptr IPersistStream
-
-;void
-IPersistStream_IsDirty_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IPersistStream_Load_Proxy proto WINAPI \
-		 pThis: ptr IPersistStream,
-		  pStm: ptr IStream
-
-;void
-IPersistStream_Load_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IPersistStream_Save_Proxy proto WINAPI \
-		 pThis: ptr IPersistStream,
-		  pStm: ptr IStream,
-	   fClearDirty: BOOL
-
-;void
-IPersistStream_Save_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IPersistStream_GetSizeMax_Proxy proto WINAPI \
-		 pThis: ptr IPersistStream,
-	       pcbSize: ptr ULARGE_INTEGER
-
-;void
-IPersistStream_GetSizeMax_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 
 endif
 
@@ -1406,6 +610,8 @@ MKRREDUCE_ONE		equ 3 SHL 16
 MKRREDUCE_TOUSER	equ 2 SHL 16
 MKRREDUCE_THROUGHUSER	equ 1 SHL 16
 MKRREDUCE_ALL		equ 0
+
+DEFINE_IIDX(IMoniker, "0000000f-0000-0000-C000-000000000046")
 
 .comdef IMoniker
     QueryInterface	proc :REFIID, :ptr
@@ -1432,219 +638,15 @@ MKRREDUCE_ALL		equ 0
     ParseDisplayName	proc :ptr, :ptr, :LPOLESTR, :ptr, :ptr
     IsSystemMoniker	proc :ptr
     .ends
+
 LPMONIKER		typedef ptr IMoniker
-externdef		IID_IMoniker:IID
-
-;HRESULT
-IMoniker_RemoteBindToObject_Proxy proto WINAPI \
-		 pThis: ptr IMoniker,
-		   pbc: ptr IBindCtx,
-	     pmkToLeft: ptr IMoniker,
-	    riidResult: REFIID,
-	     ppvResult: ptr IUnknown
-
-;void
-IMoniker_RemoteBindToObject_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IMoniker_RemoteBindToStorage_Proxy proto WINAPI \
-		 pThis: ptr IMoniker,
-		   pbc: ptr IBindCtx,
-	     pmkToLeft: ptr IMoniker,
-		  riid: REFIID,
-		ppvObj: ptr IUnknown
-
-;void
-IMoniker_RemoteBindToStorage_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IMoniker_Reduce_Proxy proto WINAPI \
-		 pThis: ptr IMoniker,
-		   pbc: ptr IBindCtx,
-	dwReduceHowFar: DWORD,
-	    ppmkToLeft: ptr IMoniker,
-	   ppmkReduced: ptr IMoniker
-
-;void
-IMoniker_Reduce_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IMoniker_ComposeWith_Proxy proto WINAPI \
-		 pThis: ptr IMoniker,
-	      pmkRight: ptr IMoniker,
-     fOnlyIfNotGeneric: BOOL,
-	 ppmkComposite: ptr IMoniker
-
-;void
-IMoniker_ComposeWith_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IMoniker_Enum_Proxy proto WINAPI \
-		 pThis: ptr IMoniker,
-	      fForward: BOOL,
-	 ppenumMoniker: ptr IEnumMoniker
-
-;void
-IMoniker_Enum_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IMoniker_IsEqual_Proxy proto WINAPI \
-		 pThis: ptr IMoniker,
-       pmkOtherMoniker: ptr IMoniker
-
-;void
-IMoniker_IsEqual_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IMoniker_Hash_Proxy proto WINAPI \
-		 pThis: ptr IMoniker,
-	       pdwHash: LPDWORD
-
-;void
-IMoniker_Hash_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IMoniker_IsRunning_Proxy proto WINAPI \
-		 pThis: ptr IMoniker,
-		   pbc: ptr IBindCtx,
-	     pmkToLeft: ptr IMoniker,
-       pmkNewlyRunning: ptr IMoniker
-
-;void
-IMoniker_IsRunning_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IMoniker_GetTimeOfLastChange_Proxy proto WINAPI \
-		 pThis: ptr IMoniker,
-		   pbc: ptr IBindCtx,
-	     pmkToLeft: ptr IMoniker,
-	     pFileTime: LPFILETIME
-
-;void
-IMoniker_GetTimeOfLastChange_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IMoniker_Inverse_Proxy proto WINAPI \
-		 pThis: ptr IMoniker,
-		  ppmk: ptr IMoniker
-
-;void
-IMoniker_Inverse_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IMoniker_CommonPrefixWith_Proxy proto WINAPI \
-		 pThis: ptr IMoniker,
-	      pmkOther: ptr IMoniker,
-	    ppmkPrefix: ptr IMoniker
-
-;void
-IMoniker_CommonPrefixWith_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IMoniker_RelativePathTo_Proxy proto WINAPI \
-		 pThis: ptr IMoniker,
-	      pmkOther: ptr IMoniker,
-	   ppmkRelPath: ptr IMoniker
-
-;void
-IMoniker_RelativePathTo_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IMoniker_GetDisplayName_Proxy proto WINAPI \
-		 pThis: ptr IMoniker,
-		   pbc: ptr IBindCtx,
-	     pmkToLeft: ptr IMoniker,
-       ppszDisplayName: ptr LPOLESTR
-
-;void
-IMoniker_GetDisplayName_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IMoniker_ParseDisplayName_Proxy proto WINAPI \
-		 pThis: ptr IMoniker,
-		   pbc: ptr IBindCtx,
-	     pmkToLeft: ptr IMoniker,
-	pszDisplayName: LPOLESTR,
-	      pchEaten: LPDWORD,
-	       ppmkOut: ptr IMoniker
-
-;void
-IMoniker_ParseDisplayName_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IMoniker_IsSystemMoniker_Proxy proto WINAPI \
-		 pThis: ptr IMoniker,
-	      pdwMksys: LPDWORD
-
-;void
-IMoniker_IsSystemMoniker_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 
 endif
 
 ifndef __IROTData_INTERFACE_DEFINED__
 __IROTData_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IROTData:IID
+DEFINE_IIDX(IROTData, "f29f6bc0-5021-11ce-aa15-00006901293f")
 
 .comdef IROTData
     QueryInterface	proc :REFIID, :ptr
@@ -1653,24 +655,12 @@ externdef		IID_IROTData:IID
     GetComparisonData	proc :ptr, :DWORD, :ptr
     .ends
 
-;HRESULT
-IROTData_GetComparisonData_Proxy proto WINAPI \
-		 pThis: ptr IROTData,
-		pbData: LPBYTE,
-		 cbMax: ULONG,
-	       pcbData: LPDWORD
-
-;void
-IROTData_GetComparisonData_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
 endif
 
 ifndef __IEnumString_INTERFACE_DEFINED__
 __IEnumString_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IEnumString, "00000101-0000-0000-C000-000000000046")
 
 .comdef IEnumString
     QueryInterface	proc :REFIID, :ptr
@@ -1682,63 +672,13 @@ __IEnumString_INTERFACE_DEFINED__ equ 1
     Clone		proc :ptr
     .ends
 LPENUMSTRING		typedef ptr IEnumString
-externdef		IID_IEnumString:IID
-
-;HRESULT
-IEnumString_RemoteNext_Proxy proto WINAPI \
-		 pThis: ptr IEnumString,
-		  celt: ULONG,
-		 rgelt: ptr LPOLESTR,
-	  pceltFetched: LPDWORD
-
-;void
-IEnumString_RemoteNext_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IEnumString_Skip_Proxy proto WINAPI \
-		 pThis: ptr IEnumString,
-		  celt: ULONG
-
-;void
-IEnumString_Skip_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IEnumString_Reset_Proxy proto WINAPI \
-		 pThis: ptr IEnumString
-
-;void
-IEnumString_Reset_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IEnumString_Clone_Proxy proto WINAPI \
-		 pThis: ptr IEnumString,
-		ppenum: ptr IEnumString
-
-;void
-IEnumString_Clone_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 
 endif
 
 ifndef __ISequentialStream_INTERFACE_DEFINED__
 __ISequentialStream_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_ISequentialStream:IID
+DEFINE_IIDX(ISequentialStream, "0c733a30-2a1c-11ce-ade5-00aa0044773d")
 
 .comdef ISequentialStream
     QueryInterface	proc :REFIID, :ptr
@@ -1748,33 +688,6 @@ externdef		IID_ISequentialStream:IID
     Write		proc :ptr, :DWORD, :ptr
     .ends
 
-;HRESULT
-ISequentialStream_RemoteRead_Proxy proto WINAPI \
-		 pThis: ptr ISequentialStream,
-		    pv: LPBYTE,
-		    cb: ULONG,
-	       pcbRead: LPDWORD
-
-;void
-ISequentialStream_RemoteRead_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-ISequentialStream_RemoteWrite_Proxy proto WINAPI \
-		 pThis: ptr ISequentialStream,
-		    pv: LPBYTE,
-		    cb: ULONG,
-	    pcbWritten: LPDWORD
-
-;void
-ISequentialStream_RemoteWrite_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 endif
 
 ifndef __IStream_INTERFACE_DEFINED__
@@ -1810,6 +723,8 @@ LOCK_WRITE		equ 1
 LOCK_EXCLUSIVE		equ 2
 LOCK_ONLYONCE		equ 4
 
+DEFINE_IIDX(IStream, "0000000c-0000-0000-C000-000000000046")
+
 .comdef IStream
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1826,130 +741,15 @@ LOCK_ONLYONCE		equ 4
     Stat		proc :ptr, :DWORD
     Clone		proc :ptr
     .ends
+
 LPSTREAM		typedef ptr IStream
-externdef		IID_IStream:IID
-
-;HRESULT
-IStream_RemoteSeek_Proxy proto WINAPI \
-		 pThis: ptr IStream,
-	      dlibMove: LARGE_INTEGER,
-	      dwOrigin: DWORD,
-       plibNewPosition: ptr ULARGE_INTEGER
-
-;void
-IStream_RemoteSeek_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IStream_SetSize_Proxy proto WINAPI \
-		 pThis: ptr IStream,
-	    libNewSize: ULARGE_INTEGER
-
-;void
-IStream_SetSize_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IStream_RemoteCopyTo_Proxy proto WINAPI \
-		 pThis: ptr IStream,
-		  pstm: ptr IStream,
-		    cb: ULARGE_INTEGER,
-	       pcbRead: ptr ULARGE_INTEGER,
-	    pcbWritten: ptr ULARGE_INTEGER
-
-;void
-IStream_RemoteCopyTo_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IStream_Commit_Proxy proto WINAPI \
-		 pThis: ptr IStream,
-	grfCommitFlags: DWORD
-
-;void
-IStream_Commit_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IStream_Revert_Proxy proto WINAPI \
-		 pThis: ptr IStream
-
-;void
-IStream_Revert_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IStream_LockRegion_Proxy proto WINAPI \
-		 pThis: ptr IStream,
-	     libOffset: ULARGE_INTEGER,
-		    cb: ULARGE_INTEGER,
-	    dwLockType: DWORD
-
-;void
-IStream_LockRegion_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IStream_UnlockRegion_Proxy proto WINAPI \
-		 pThis: ptr IStream,
-	     libOffset: ULARGE_INTEGER,
-		    cb: ULARGE_INTEGER,
-	    dwLockType: DWORD
-
-;void
-IStream_UnlockRegion_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IStream_Stat_Proxy proto WINAPI \
-		 pThis: ptr IStream,
-	      pstatstg: ptr STATSTG,
-	   grfStatFlag: DWORD
-
-;void
-IStream_Stat_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IStream_Clone_Proxy proto WINAPI \
-		 pThis: ptr IStream,
-		 ppstm: ptr IStream
-
-;void
-IStream_Clone_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 
 endif
 
 ifndef __IEnumSTATSTG_INTERFACE_DEFINED__
 __IEnumSTATSTG_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IEnumSTATSTG, "0000000d-0000-0000-C000-000000000046")
 
 .comdef IEnumSTATSTG
     QueryInterface	proc :REFIID, :ptr
@@ -1960,57 +760,8 @@ __IEnumSTATSTG_INTERFACE_DEFINED__ equ 1
     Reset		proc
     Clone		proc :ptr
     .ends
+
 LPENUMSTATSTG		typedef ptr IEnumSTATSTG
-externdef		IID_IEnumSTATSTG:IID
-
-;HRESULT
-IEnumSTATSTG_RemoteNext_Proxy proto WINAPI \
-		 pThis: ptr IEnumSTATSTG,
-		  celt: ULONG,
-		 rgelt: ptr STATSTG,
-	  pceltFetched: LPDWORD
-
-;void
-IEnumSTATSTG_RemoteNext_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IEnumSTATSTG_Skip_Proxy proto WINAPI \
-		 pThis: ptr IEnumSTATSTG,
-		  celt: ULONG
-
-;void
-IEnumSTATSTG_Skip_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IEnumSTATSTG_Reset_Proxy proto WINAPI \
-		 pThis: ptr IEnumSTATSTG
-
-;void
-IEnumSTATSTG_Reset_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IEnumSTATSTG_Clone_Proxy proto WINAPI \
-		 pThis: ptr IEnumSTATSTG,
-		ppenum: ptr IEnumSTATSTG
-
-;void
-IEnumSTATSTG_Clone_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 
 endif
 
@@ -2025,6 +776,8 @@ RemSNB			ENDS
 
 wireSNB			typedef ptr RemSNB
 SNB			typedef ptr OLECHAR
+
+DEFINE_IIDX(IStorage, "0000000b-0000-0000-C000-000000000046")
 
 .comdef IStorage
     QueryInterface	proc :REFIID, :ptr
@@ -2046,221 +799,8 @@ SNB			typedef ptr OLECHAR
     SetStateBits	proc :DWORD, :DWORD
     Stat		proc :ptr, :DWORD
     .ends
+
 LPSTORAGE		typedef ptr IStorage
-externdef		IID_IStorage:IID
-
-;HRESULT
-IStorage_CreateStream_Proxy proto WINAPI \
-		 pThis: ptr IStorage,
-	      pwcsName: ptr OLECHAR,
-	       grfMode: DWORD,
-	     reserved1: DWORD,
-	     reserved2: DWORD,
-		 ppstm: ptr IStream
-
-;void
-IStorage_CreateStream_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IStorage_RemoteOpenStream_Proxy proto WINAPI \
-		 pThis: ptr IStorage,
-	      pwcsName: ptr OLECHAR,
-	   cbReserved1: DWORD,
-	     reserved1: LPBYTE,
-	       grfMode: DWORD,
-	     reserved2: DWORD,
-		 ppstm: ptr IStream
-
-;void
-IStorage_RemoteOpenStream_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IStorage_CreateStorage_Proxy proto WINAPI \
-		 pThis: ptr IStorage,
-	      pwcsName: ptr OLECHAR,
-	       grfMode: DWORD,
-	     reserved1: DWORD,
-	     reserved2: DWORD,
-		 ppstg: ptr IStorage
-
-;void
-IStorage_CreateStorage_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IStorage_OpenStorage_Proxy proto WINAPI \
-		 pThis: ptr IStorage,
-	      pwcsName: ptr OLECHAR,
-	  pstgPriority: ptr IStorage,
-	       grfMode: DWORD,
-	    snbExclude: SNB,
-	      reserved: DWORD,
-		 ppstg: ptr IStorage
-
-;void
-IStorage_OpenStorage_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IStorage_CopyTo_Proxy proto WINAPI \
-		 pThis: ptr IStorage,
-	   ciidExclude: DWORD,
-	  rgiidExclude: ptr IID,
-	    snbExclude: SNB,
-	      pstgDest: ptr IStorage
-
-;void
-IStorage_CopyTo_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IStorage_MoveElementTo_Proxy proto WINAPI \
-		 pThis: ptr IStorage,
-	      pwcsName: ptr OLECHAR,
-	      pstgDest: ptr IStorage,
-	   pwcsNewName: ptr OLECHAR,
-	      grfFlags: DWORD
-
-;void
-IStorage_MoveElementTo_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IStorage_Commit_Proxy proto WINAPI \
-		 pThis: ptr IStorage,
-	grfCommitFlags: DWORD
-
-;void
-IStorage_Commit_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IStorage_Revert_Proxy proto WINAPI \
-		 pThis: ptr IStorage
-
-;void
-IStorage_Revert_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IStorage_RemoteEnumElements_Proxy proto WINAPI \
-		 pThis: ptr IStorage,
-	     reserved1: DWORD,
-	   cbReserved2: DWORD,
-	     reserved2: LPBYTE,
-	     reserved3: DWORD,
-		ppenum: ptr IEnumSTATSTG
-
-;void
-IStorage_RemoteEnumElements_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IStorage_DestroyElement_Proxy proto WINAPI \
-		 pThis: ptr IStorage,
-	      pwcsName: ptr OLECHAR
-
-;void
-IStorage_DestroyElement_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IStorage_RenameElement_Proxy proto WINAPI \
-		 pThis: ptr IStorage,
-	   pwcsOldName: ptr OLECHAR,
-	   pwcsNewName: ptr OLECHAR
-
-;void
-IStorage_RenameElement_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IStorage_SetElementTimes_Proxy proto WINAPI \
-		 pThis: ptr IStorage,
-	      pwcsName: ptr OLECHAR,
-		pctime: LPFILETIME,
-		patime: LPFILETIME,
-		pmtime: LPFILETIME
-
-;void
-IStorage_SetElementTimes_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IStorage_SetClass_Proxy proto WINAPI \
-		 pThis: ptr IStorage,
-		 clsid: REFCLSID
-
-;void
-IStorage_SetClass_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IStorage_SetStateBits_Proxy proto WINAPI \
-		 pThis: ptr IStorage,
-	  grfStateBits: DWORD,
-	       grfMask: DWORD
-
-;void
-IStorage_SetStateBits_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IStorage_Stat_Proxy proto WINAPI \
-		 pThis: ptr IStorage,
-	      pstatstg: ptr STATSTG,
-	   grfStatFlag: DWORD
-
-;void
-IStorage_Stat_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 
 endif
 
@@ -2282,73 +822,13 @@ DEFINE_GUID(IID_IPersistFile,	0x0000010b,0,0,0xC0,0,0,0,0,0,0,0x46)
     .ends
 
 LPPERSISTFILE		typedef ptr IPersistFile
-externdef		IID_IPersistFile:IID
-
-;HRESULT
-IPersistFile_IsDirty_Proxy proto WINAPI \
-		 pThis: ptr IPersistFile
-
-;void
-IPersistFile_IsDirty_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IPersistFile_Load_Proxy proto WINAPI \
-		 pThis: ptr IPersistFile,
-	   pszFileName: LPCOLESTR,
-		dwMode: DWORD
-
-;void
-IPersistFile_Load_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IPersistFile_Save_Proxy proto WINAPI \
-		 pThis: ptr IPersistFile,
-	   pszFileName: LPCOLESTR,
-	     fRemember: BOOL
-
-;void
-IPersistFile_Save_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IPersistFile_SaveCompleted_Proxy proto WINAPI \
-		 pThis: ptr IPersistFile,
-	   pszFileName: LPCOLESTR
-
-;void
-IPersistFile_SaveCompleted_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IPersistFile_GetCurFile_Proxy proto WINAPI \
-		 pThis: ptr IPersistFile,
-	  ppszFileName: ptr LPOLESTR
-
-;void
-IPersistFile_GetCurFile_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 
 endif
 
 ifndef __IPersistStorage_INTERFACE_DEFINED__
 __IPersistStorage_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IPersistStorage, "0000010a-0000-0000-C000-000000000046")
 
 .comdef IPersistStorage
     QueryInterface	proc :REFIID, :ptr
@@ -2362,84 +842,15 @@ __IPersistStorage_INTERFACE_DEFINED__ equ 1
     SaveCompleted	proc :ptr
     HandsOffStorage	proc
     .ends
+
 LPPERSISTSTORAGE	typedef ptr IPersistStorage
-externdef		IID_IPersistStorage:IID
-
-;HRESULT
-IPersistStorage_IsDirty_Proxy proto WINAPI \
-		 pThis: ptr IPersistStorage
-
-;void
-IPersistStorage_IsDirty_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IPersistStorage_InitNew_Proxy proto WINAPI \
-		 pThis: ptr IPersistStorage,
-		  pStg: ptr IStorage
-
-;void
-IPersistStorage_InitNew_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IPersistStorage_Load_Proxy proto WINAPI \
-		 pThis: ptr IPersistStorage,
-		  pStg: ptr IStorage
-
-;void
-IPersistStorage_Load_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IPersistStorage_Save_Proxy proto WINAPI \
-		 pThis: ptr IPersistStorage,
-	      pStgSave: ptr IStorage,
-	   fSameAsLoad: BOOL
-
-;void
-IPersistStorage_Save_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IPersistStorage_SaveCompleted_Proxy proto WINAPI \
-		 pThis: ptr IPersistStorage,
-	       pStgNew: ptr IStorage
-
-;void
-IPersistStorage_SaveCompleted_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IPersistStorage_HandsOffStorage_Proxy proto WINAPI \
-		 pThis: ptr IPersistStorage
-
-;void
-IPersistStorage_HandsOffStorage_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 
 endif
 
 ifndef __ILockBytes_INTERFACE_DEFINED__
 __ILockBytes_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(ILockBytes, "0000000a-0000-0000-C000-000000000046")
 
 .comdef ILockBytes
     QueryInterface	proc :REFIID, :ptr
@@ -2453,102 +864,8 @@ __ILockBytes_INTERFACE_DEFINED__ equ 1
     UnlockRegion	proc :ULARGE_INTEGER, :ULARGE_INTEGER, :DWORD
     Stat		proc :ptr, :DWORD
     .ends
+
 LPLOCKBYTES		typedef ptr ILockBytes
-externdef		IID_ILockBytes:IID
-
-;HRESULT
-ILockBytes_RemoteReadAt_Proxy proto WINAPI \
-		 pThis: ptr ILockBytes,
-	      ulOffset: ULARGE_INTEGER,
-		    pv: LPBYTE,
-		    cb: ULONG,
-	       pcbRead: LPDWORD
-
-;void
-ILockBytes_RemoteReadAt_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-ILockBytes_RemoteWriteAt_Proxy proto WINAPI \
-		 pThis: ptr ILockBytes,
-	      ulOffset: ULARGE_INTEGER,
-		    pv: LPBYTE,
-		    cb: ULONG,
-	    pcbWritten: LPDWORD
-
-;void
-ILockBytes_RemoteWriteAt_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-ILockBytes_Flush_Proxy proto WINAPI \
-		 pThis: ptr ILockBytes
-
-;void
-ILockBytes_Flush_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-ILockBytes_SetSize_Proxy proto WINAPI \
-		 pThis: ptr ILockBytes,
-		    cb: ULARGE_INTEGER
-
-;void
-ILockBytes_SetSize_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-ILockBytes_LockRegion_Proxy proto WINAPI \
-		 pThis: ptr ILockBytes,
-	     libOffset: ULARGE_INTEGER,
-		    cb: ULARGE_INTEGER,
-	    dwLockType: DWORD
-
-;void
-ILockBytes_LockRegion_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-ILockBytes_UnlockRegion_Proxy proto WINAPI \
-		 pThis: ptr ILockBytes,
-	     libOffset: ULARGE_INTEGER,
-		    cb: ULARGE_INTEGER,
-	    dwLockType: DWORD
-
-;void
-ILockBytes_UnlockRegion_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-ILockBytes_Stat_Proxy proto WINAPI \
-		 pThis: ptr ILockBytes,
-	      pstatstg: ptr STATSTG,
-	   grfStatFlag: DWORD
-
-;void
-ILockBytes_Stat_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 
 endif
 
@@ -2576,6 +893,8 @@ tymed			dd ?
 FORMATETC		ENDS
 LPFORMATETC		typedef ptr FORMATETC
 
+DEFINE_IIDX(IEnumFORMATETC, "00000103-0000-0000-C000-000000000046")
+
 .comdef IEnumFORMATETC
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -2586,56 +905,6 @@ LPFORMATETC		typedef ptr FORMATETC
     Clone		proc :ptr
     .ends
 LPENUMFORMATETC		typedef ptr IEnumFORMATETC
-externdef		IID_IEnumFORMATETC:IID
-
-;HRESULT
-IEnumFORMATETC_RemoteNext_Proxy proto WINAPI \
-		 pThis: ptr IEnumFORMATETC,
-		  celt: ULONG,
-		 rgelt: ptr FORMATETC,
-	  pceltFetched: LPDWORD
-
-;void
-IEnumFORMATETC_RemoteNext_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IEnumFORMATETC_Skip_Proxy proto WINAPI \
-		 pThis: ptr IEnumFORMATETC,
-		  celt: ULONG
-
-;void
-IEnumFORMATETC_Skip_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IEnumFORMATETC_Reset_Proxy proto WINAPI \
-		 pThis: ptr IEnumFORMATETC
-
-;void
-IEnumFORMATETC_Reset_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IEnumFORMATETC_Clone_Proxy proto WINAPI \
-		 pThis: ptr IEnumFORMATETC,
-		ppenum: ptr IEnumFORMATETC
-
-;void
-IEnumFORMATETC_Clone_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 
 endif
 
@@ -2661,6 +930,8 @@ dwConnection		dd ?
 STATDATA		ENDS
 LPSTATDATA		typedef ptr STATDATA
 
+DEFINE_IIDX(IEnumSTATDATA, "00000105-0000-0000-C000-000000000046")
+
 .comdef IEnumSTATDATA
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -2670,57 +941,8 @@ LPSTATDATA		typedef ptr STATDATA
     Reset		proc
     Clone		proc :ptr
     .ends
+
 LPENUMSTATDATA		typedef ptr IEnumSTATDATA
-externdef		IID_IEnumSTATDATA:IID
-
-;HRESULT
-IEnumSTATDATA_RemoteNext_Proxy proto WINAPI \
-		 pThis: ptr IEnumSTATDATA,
-		  celt: ULONG,
-		 rgelt: ptr STATDATA,
-	  pceltFetched: LPDWORD
-
-;void
-IEnumSTATDATA_RemoteNext_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IEnumSTATDATA_Skip_Proxy proto WINAPI \
-		 pThis: ptr IEnumSTATDATA,
-		  celt: ULONG
-
-;void
-IEnumSTATDATA_Skip_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IEnumSTATDATA_Reset_Proxy proto WINAPI \
-		 pThis: ptr IEnumSTATDATA
-
-;void
-IEnumSTATDATA_Reset_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IEnumSTATDATA_Clone_Proxy proto WINAPI \
-		 pThis: ptr IEnumSTATDATA,
-		ppenum: ptr IEnumSTATDATA
-
-;void
-IEnumSTATDATA_Clone_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 
 endif
 
@@ -2734,19 +956,8 @@ __IRootStorage_INTERFACE_DEFINED__ equ 1
     SwitchToFile	proc :LPOLESTR
     .ends
 LPROOTSTORAGE		typedef ptr IRootStorage
-externdef		IID_IRootStorage:IID
 
-;HRESULT
-IRootStorage_SwitchToFile_Proxy proto WINAPI \
-		 pThis: ptr IRootStorage,
-	       pszFile: LPOLESTR
-
-;void
-IRootStorage_SwitchToFile_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
+DEFINE_IIDX(IRootStorage, "00000012-0000-0000-C000-000000000046")
 
 endif
 
@@ -2849,6 +1060,8 @@ fPassOwnership		LONG ?
 Stgmed			STGMEDIUM <>
 FLAG_STGMEDIUM		ENDS
 
+DEFINE_IIDX(IAdviseSink, "0000010f-0000-0000-C000-000000000046")
+
 .comdef IAdviseSink
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -2859,74 +1072,28 @@ FLAG_STGMEDIUM		ENDS
     OnSave		proc
     OnClose		proc
     .ends
+
 LPADVISESINK		typedef ptr IAdviseSink
-externdef		IID_IAdviseSink:IID
-
-;HRESULT
-IAdviseSink_RemoteOnDataChange_Proxy proto WINAPI \
-		 pThis: ptr IAdviseSink,
-		 ppIAM: ptr IAsyncManager,
-	    pFormatetc: ptr FORMATETC,
-	       pStgmed: ptr ASYNC_STGMEDIUM
-
-;void
-IAdviseSink_RemoteOnDataChange_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IAdviseSink_RemoteOnViewChange_Proxy proto WINAPI \
-		 pThis: ptr IAdviseSink,
-		 ppIAM: ptr IAsyncManager,
-	      dwAspect: DWORD,
-		lindex: LONG
-
-;void
-IAdviseSink_RemoteOnViewChange_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IAdviseSink_RemoteOnRename_Proxy proto WINAPI \
-		 pThis: ptr IAdviseSink,
-		 ppIAM: ptr IAsyncManager,
-		   pmk: ptr IMoniker
-
-;void
-IAdviseSink_RemoteOnRename_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IAdviseSink_RemoteOnSave_Proxy proto WINAPI \
-		 pThis: ptr IAdviseSink,
-		 ppIAM: ptr IAsyncManager
-
-;void
-IAdviseSink_RemoteOnSave_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IAdviseSink_RemoteOnClose_Proxy proto WINAPI \
-		 pThis: ptr IAdviseSink
-
-;void
-IAdviseSink_RemoteOnClose_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 
 endif
+
+DEFINE_IIDX(AsyncIAdviseSink, "00000150-0000-0000-C000-000000000046")
+
+.comdef AsyncIAdviseSink
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Begin_OnDataChange	proc :ptr FORMATETC, :ptr STGMEDIUM
+    Finish_OnDataChange proc
+    Begin_OnViewChange	proc :DWORD, :LONG
+    Finish_OnViewChange proc
+    Begin_OnRename	proc :ptr IMoniker
+    Finish_OnRename	proc
+    Begin_OnSave	proc
+    Finish_OnSave	proc
+    Begin_OnClose	proc
+    Finish_OnClose	proc
+    .ends
 
 ifndef __IAdviseSink2_INTERFACE_DEFINED__
 __IAdviseSink2_INTERFACE_DEFINED__ equ 1
@@ -2942,23 +1109,32 @@ __IAdviseSink2_INTERFACE_DEFINED__ equ 1
     OnClose		proc
     OnLinkSrcChange	proc :ptr
     .ends
+
 LPADVISESINK2		typedef ptr IAdviseSink2
-externdef		IID_IAdviseSink2:IID
 
-;HRESULT
-IAdviseSink2_RemoteOnLinkSrcChange_Proxy proto WINAPI \
-		 pThis: ptr IAdviseSink2,
-		 ppIAM: ptr IAsyncManager,
-		   pmk: ptr IMoniker
-
-;void
-IAdviseSink2_RemoteOnLinkSrcChange_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
+DEFINE_IIDX(IAdviseSink2, "00000125-0000-0000-C000-000000000046")
 
 endif
+
+DEFINE_IIDX(AsyncIAdviseSink2, "00000151-0000-0000-C000-000000000046")
+
+.comdef AsyncIAdviseSink2
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Begin_OnDataChange	proc :ptr FORMATETC, :ptr STGMEDIUM
+    Finish_OnDataChange proc
+    Begin_OnViewChange	proc :DWORD, :LONG
+    Finish_OnViewChange proc
+    Begin_OnRename	proc :ptr IMoniker
+    Finish_OnRename	proc
+    Begin_OnSave	proc
+    Finish_OnSave	proc
+    Begin_OnClose	proc
+    Finish_OnClose	proc
+    Begin_OnLinkSrcChange proc :ptr IMoniker
+    Finish_OnLinkSrcChange proc
+    .ends
 
 ifndef __IDataObject_INTERFACE_DEFINED__
 __IDataObject_INTERFACE_DEFINED__ equ 1
@@ -2985,200 +1161,28 @@ DATADIR_SET		equ 2
     Finish_OnLinkSrcChange proc
     .ends
 LPDATAOBJECT		typedef ptr IDataObject
-externdef		IID_IDataObject:IID
 
-;HRESULT
-IDataObject_RemoteGetData_Proxy proto WINAPI \
-		 pThis: ptr IDataObject,
-	  pformatetcIn: ptr FORMATETC,
-	 pRemoteMedium: ptr STGMEDIUM
-
-;void
-IDataObject_RemoteGetData_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IDataObject_RemoteGetDataHere_Proxy proto WINAPI \
-		 pThis: ptr IDataObject,
-	    pformatetc: ptr FORMATETC,
-	 pRemoteMedium: ptr STGMEDIUM
-
-;void
-IDataObject_RemoteGetDataHere_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IDataObject_QueryGetData_Proxy proto WINAPI \
-		 pThis: ptr IDataObject,
-	    pformatetc: ptr FORMATETC
-
-;void
-IDataObject_QueryGetData_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IDataObject_GetCanonicalFormatEtc_Proxy proto WINAPI \
-		 pThis: ptr IDataObject,
-	  pformatectIn: ptr FORMATETC,
-	 pformatetcOut: ptr FORMATETC
-
-;void
-IDataObject_GetCanonicalFormatEtc_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IDataObject_RemoteSetData_Proxy proto WINAPI \
-		 pThis: ptr IDataObject,
-	    pformatetc: ptr FORMATETC,
-	       pmedium: ptr FLAG_STGMEDIUM,
-	      fRelease: BOOL
-
-;void
-IDataObject_RemoteSetData_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IDataObject_EnumFormatEtc_Proxy proto WINAPI \
-		 pThis: ptr IDataObject,
-	   dwDirection: DWORD,
-       ppenumFormatEtc: ptr IEnumFORMATETC
-
-;void
-IDataObject_EnumFormatEtc_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IDataObject_DAdvise_Proxy proto WINAPI \
-		 pThis: ptr IDataObject,
-	    pformatetc: ptr FORMATETC,
-		  advf: DWORD,
-	      pAdvSink: ptr IAdviseSink,
-	 pdwConnection: LPDWORD
-
-;void
-IDataObject_DAdvise_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IDataObject_DUnadvise_Proxy proto WINAPI \
-		 pThis: ptr IDataObject,
-	  dwConnection: DWORD
-
-;void
-IDataObject_DUnadvise_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IDataObject_EnumDAdvise_Proxy proto WINAPI \
-		 pThis: ptr IDataObject,
-	  ppenumAdvise: ptr IEnumSTATDATA
-
-;void
-IDataObject_EnumDAdvise_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
+DEFINE_IIDX(IDataObject, "0000010e-0000-0000-C000-000000000046")
 
 endif
 
 ifndef __IDataAdviseHolder_INTERFACE_DEFINED__
 __IDataAdviseHolder_INTERFACE_DEFINED__ equ 1
 
+DEFINE_IIDX(IDataAdviseHolder, "00000110-0000-0000-C000-000000000046")
+
 .comdef IDataAdviseHolder
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
     Release		proc
-    GetData		proc :ptr, :ptr
-    GetDataHere		proc :ptr, :ptr
-    QueryGetData	proc :ptr
-    GetCanonicalFormatEtc proc :ptr, :ptr
-    SetData		proc :ptr, :ptr, :BOOL
-    EnumFormatEtc	proc :DWORD, :ptr
-    DAdvise		proc :ptr, :DWORD, :ptr, :ptr
-    DUnadvise		proc :DWORD
-    EnumDAdvise		proc :ptr
+    Advise		proc :ptr IDataObject, :ptr FORMATETC, :DWORD, :ptr IAdviseSink, :ptr DWORD
+    Unadvise		proc :DWORD
+    EnumAdvise		proc :ptr ptr IEnumSTATDATA
+    SendOnDataChange	proc :ptr IDataObject, :DWORD, :DWORD
     .ends
+
 LPDATAADVISEHOLDER	typedef ptr IDataAdviseHolder
-externdef		IID_IDataAdviseHolder:IID
 
-;HRESULT
-IDataAdviseHolder_Advise_Proxy proto WINAPI \
-		 pThis: ptr IDataAdviseHolder,
-	   pDataObject: ptr IDataObject,
-		 pFetc: ptr FORMATETC,
-		  advf: DWORD,
-	       pAdvise: ptr IAdviseSink,
-	 pdwConnection: LPDWORD
-
-;void
-IDataAdviseHolder_Advise_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IDataAdviseHolder_Unadvise_Proxy proto WINAPI \
-		 pThis: ptr IDataAdviseHolder,
-	  dwConnection: DWORD
-
-;void
-IDataAdviseHolder_Unadvise_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IDataAdviseHolder_EnumAdvise_Proxy proto WINAPI \
-		 pThis: ptr IDataAdviseHolder,
-	  ppenumAdvise: ptr IEnumSTATDATA
-
-;void
-IDataAdviseHolder_EnumAdvise_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IDataAdviseHolder_SendOnDataChange_Proxy proto WINAPI \
-		 pThis: ptr IDataAdviseHolder,
-	   pDataObject: ptr IDataObject,
-	    dwReserved: DWORD,
-		  advf: DWORD
-
-;void
-IDataAdviseHolder_SendOnDataChange_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 endif
 
 ifndef __IMessageFilter_INTERFACE_DEFINED__
@@ -3212,6 +1216,8 @@ wMethod			dw ?
 INTERFACEINFO		ENDS
 LPINTERFACEINFO		typedef ptr INTERFACEINFO
 
+DEFINE_IIDX(IMessageFilter, "00000016-0000-0000-C000-000000000046")
+
 .comdef IMessageFilter
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -3220,51 +1226,8 @@ LPINTERFACEINFO		typedef ptr INTERFACEINFO
     RetryRejectedCall	proc :HTASK, :DWORD, :DWORD
     MessagePending	proc :HTASK, :DWORD, :DWORD
     .ends
+
 LPMESSAGEFILTER		typedef ptr IMessageFilter
-externdef		IID_IMessageFilter:IID
-
-;DWORD
-IMessageFilter_HandleInComingCall_Proxy proto WINAPI \
-		 pThis: ptr IMessageFilter,
-	    dwCallType: DWORD,
-	   htaskCaller: HTASK,
-	   dwTickCount: DWORD,
-       lpInterfaceInfo: LPINTERFACEINFO
-
-;void
-IMessageFilter_HandleInComingCall_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;DWORD
-IMessageFilter_RetryRejectedCall_Proxy proto WINAPI \
-		 pThis: ptr IMessageFilter,
-	   htaskCallee: HTASK,
-	   dwTickCount: DWORD,
-	  dwRejectType: DWORD
-
-;void
-IMessageFilter_RetryRejectedCall_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;DWORD
-IMessageFilter_MessagePending_Proxy proto WINAPI \
-		 pThis: ptr IMessageFilter,
-	   htaskCallee: HTASK,
-	   dwTickCount: DWORD,
-	 dwPendingType: DWORD
-
-;void
-IMessageFilter_MessagePending_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 
 endif
 
@@ -3284,23 +1247,7 @@ rpcFlags		ULONG ?
 RPCOLEMESSAGE		ENDS
 
 PRPCOLEMESSAGE		typedef ptr RPCOLEMESSAGE
-ifndef DEFINE_IIDX
-DEFINE_IIDX macro name, x
-    DEFINE_GUID(IID_&name&, \
-	@CatStr(<0x>, @SubStr(x, 2,8)), \
-	@CatStr(<0x>, @SubStr(x,11,4)), \
-	@CatStr(<0x>, @SubStr(x,16,4)), \
-	@CatStr(<0x>, @SubStr(x,21,2)), \
-	@CatStr(<0x>, @SubStr(x,23,2)), \
-	@CatStr(<0x>, @SubStr(x,26,2)), \
-	@CatStr(<0x>, @SubStr(x,28,2)), \
-	@CatStr(<0x>, @SubStr(x,30,2)), \
-	@CatStr(<0x>, @SubStr(x,32,2)), \
-	@CatStr(<0x>, @SubStr(x,34,2)), \
-	@CatStr(<0x>, @SubStr(x,36,2)))
-	exitm<>
-	endm
-endif
+
 DEFINE_IIDX(IRpcChannelBuffer, "D5F56B60-593B-101A-B569-08002B2DBF7A")
 
 .comdef IRpcChannelBuffer
@@ -3313,68 +1260,6 @@ DEFINE_IIDX(IRpcChannelBuffer, "D5F56B60-593B-101A-B569-08002B2DBF7A")
     GetDestCtx		proc :ptr, :ptr
     IsConnected		proc
     .ends
-
-;HRESULT
-IRpcChannelBuffer_GetBuffer_Proxy proto WINAPI \
-		 pThis: ptr IRpcChannelBuffer,
-	      pMessage: ptr RPCOLEMESSAGE,
-		  riid: REFIID
-
-;void
-IRpcChannelBuffer_GetBuffer_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IRpcChannelBuffer_SendReceive_Proxy proto WINAPI \
-		 pThis: ptr IRpcChannelBuffer,
-	      pMessage: ptr RPCOLEMESSAGE,
-	       pStatus: LPDWORD
-
-;void
-IRpcChannelBuffer_SendReceive_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IRpcChannelBuffer_FreeBuffer_Proxy proto WINAPI \
-		 pThis: ptr IRpcChannelBuffer,
-	      pMessage: ptr RPCOLEMESSAGE
-
-;void
-IRpcChannelBuffer_FreeBuffer_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IRpcChannelBuffer_GetDestCtx_Proxy proto WINAPI \
-		 pThis: ptr IRpcChannelBuffer,
-	pdwDestContext: LPDWORD,
-	ppvDestContext: PVOID
-
-;void
-IRpcChannelBuffer_GetDestCtx_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IRpcChannelBuffer_IsConnected_Proxy proto WINAPI \
-		 pThis: ptr IRpcChannelBuffer
-
-;void
-IRpcChannelBuffer_IsConnected_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 
 endif
 
@@ -3395,19 +1280,24 @@ DEFINE_IIDX(IRpcChannelBuffer2, "594f31d0-7f19-11d0-b194-00a0c90dc8bf")
     GetProtocolVersion	proc :ptr
     .ends
 
-;HRESULT
-IRpcChannelBuffer2_GetProtocolVersion_Proxy proto WINAPI \
-		 pThis: ptr IRpcChannelBuffer2,
-	    pdwVersion: LPDWORD
-
-;void
-IRpcChannelBuffer2_GetProtocolVersion_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
 endif
+
+DEFINE_IIDX(IAsyncRpcChannelBuffer, "a5029fb6-3c34-11d1-9c99-00c04fb998aa")
+
+.comdef IAsyncRpcChannelBuffer
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetBuffer		proc :ptr, :REFIID
+    SendReceive		proc :ptr, :ptr
+    FreeBuffer		proc :ptr
+    GetDestCtx		proc :ptr, :ptr
+    IsConnected		proc
+    GetProtocolVersion	proc :ptr
+    Send		proc :ptr RPCOLEMESSAGE, :ptr ISynchronize, :ptr ULONG
+    Receive		proc :ptr RPCOLEMESSAGE, :ptr ULONG
+    GetDestCtxEx	proc :ptr RPCOLEMESSAGE, :ptr DWORD, :ptr
+    .ends
 
 ifndef __IRpcChannelBuffer3_INTERFACE_DEFINED__
 __IRpcChannelBuffer3_INTERFACE_DEFINED__ equ 1
@@ -3433,100 +1323,16 @@ DEFINE_IIDX(IRpcChannelBuffer3, "25B15600-0115-11d0-BF0D-00AA00B8DFD2")
     RegisterAsync	proc :ptr, :ptr
     .ends
 
-;HRESULT
-IRpcChannelBuffer3_Send_Proxy proto WINAPI \
-		 pThis: ptr IRpcChannelBuffer3,
-		  pMsg: ptr RPCOLEMESSAGE,
-	     pulStatus: LPDWORD
-
-;void
-IRpcChannelBuffer3_Send_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IRpcChannelBuffer3_Receive_Proxy proto WINAPI \
-		 pThis: ptr IRpcChannelBuffer3,
-		  pMsg: ptr RPCOLEMESSAGE,
-		ulSize: ULONG,
-	     pulStatus: LPDWORD
-
-;void
-IRpcChannelBuffer3_Receive_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IRpcChannelBuffer3_Cancel_Proxy proto WINAPI \
-		 pThis: ptr IRpcChannelBuffer3,
-		  pMsg: ptr RPCOLEMESSAGE
-
-;void
-IRpcChannelBuffer3_Cancel_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IRpcChannelBuffer3_GetCallContext_Proxy proto WINAPI \
-		 pThis: ptr IRpcChannelBuffer3,
-		  pMsg: ptr RPCOLEMESSAGE,
-		  riid: REFIID,
-	    pInterface: PVOID
-
-;void
-IRpcChannelBuffer3_GetCallContext_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IRpcChannelBuffer3_GetDestCtxEx_Proxy proto WINAPI \
-		 pThis: ptr IRpcChannelBuffer3,
-		  pMsg: ptr RPCOLEMESSAGE,
-	pdwDestContext: LPDWORD,
-	ppvDestContext: PVOID
-
-;void
-IRpcChannelBuffer3_GetDestCtxEx_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IRpcChannelBuffer3_GetState_Proxy proto WINAPI \
-		 pThis: ptr IRpcChannelBuffer3,
-		  pMsg: ptr RPCOLEMESSAGE,
-		pState: LPDWORD
-
-;void
-IRpcChannelBuffer3_GetState_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IRpcChannelBuffer3_RegisterAsync_Proxy proto WINAPI \
-		 pThis: ptr IRpcChannelBuffer3,
-		  pMsg: ptr RPCOLEMESSAGE,
-	     pAsyncMgr: ptr IAsyncManager
-
-;void
-IRpcChannelBuffer3_RegisterAsync_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
 endif
+
+DEFINE_IIDX(IRpcSyntaxNegotiate, "58a08519-24c8-4935-b482-3fd823333a4f")
+
+.comdef IRpcSyntaxNegotiate
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    NegotiateSyntax	proc :ptr RPCOLEMESSAGE
+    .ends
 
 ifndef __IRpcProxyBuffer_INTERFACE_DEFINED__
 __IRpcProxyBuffer_INTERFACE_DEFINED__ equ 1
@@ -3540,29 +1346,6 @@ DEFINE_IIDX(IRpcProxyBuffer, "D5F56A34-593B-101A-B569-08002B2DBF7A")
     Connect		proc :ptr
     Disconnect		proc
     .ends
-
-;HRESULT
-IRpcProxyBuffer_Connect_Proxy proto WINAPI \
-		 pThis: ptr IRpcProxyBuffer,
-     pRpcChannelBuffer: ptr IRpcChannelBuffer
-
-;void
-IRpcProxyBuffer_Connect_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;void
-IRpcProxyBuffer_Disconnect_Proxy proto WINAPI \
-		 pThis: ptr IRpcProxyBuffer
-
-;void
-IRpcProxyBuffer_Disconnect_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 
 endif
 
@@ -3584,87 +1367,7 @@ DEFINE_IIDX(IRpcStubBuffer, "D5F56AFC-593B-101A-B569-08002B2DBF7A")
     DebugServerRelease	proc :ptr
     .ends
 
-;HRESULT
-IRpcStubBuffer_Connect_Proxy proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-	    pUnkServer: ptr IUnknown
-
-;void
-IRpcStubBuffer_Connect_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;void
-IRpcStubBuffer_Disconnect_Proxy proto WINAPI \
-		 pThis: ptr IRpcStubBuffer
-
-;void
-IRpcStubBuffer_Disconnect_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IRpcStubBuffer_Invoke_Proxy proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-	      _prpcmsg: ptr RPCOLEMESSAGE,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer
-
-;void
-IRpcStubBuffer_Invoke_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;IRpcStubBuffer *
-;STDMETHODCALLTYPE
 CALLBACK(IRpcStubBuffer_IsIIDSupported_Proxy, :ptr IRpcStubBuffer, :REFIID)
-
-;void
-IRpcStubBuffer_IsIIDSupported_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;ULONG
-IRpcStubBuffer_CountRefs_Proxy proto WINAPI \
-		 pThis: ptr IRpcStubBuffer
-
-;void
-IRpcStubBuffer_CountRefs_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IRpcStubBuffer_DebugServerQueryInterface_Proxy proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-		   ppv: PVOID
-
-;void
-IRpcStubBuffer_DebugServerQueryInterface_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;void
-IRpcStubBuffer_DebugServerRelease_Proxy proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-		    pv: PVOID
-
-;void
-IRpcStubBuffer_DebugServerRelease_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 
 endif
 
@@ -3681,35 +1384,6 @@ DEFINE_IIDX(IPSFactoryBuffer, "D5F569D0-593B-101A-B569-08002B2DBF7A")
     CreateStub		proc :REFIID, :ptr, :ptr
     .ends
 
-;HRESULT
-IPSFactoryBuffer_CreateProxy_Proxy proto WINAPI \
-		 pThis: ptr IPSFactoryBuffer,
-	     pUnkOuter: ptr IUnknown,
-		  riid: REFIID,
-	       ppProxy: ptr IRpcProxyBuffer,
-		   ppv: PVOID
-
-;void
-IPSFactoryBuffer_CreateProxy_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IPSFactoryBuffer_CreateStub_Proxy proto WINAPI \
-		 pThis: ptr IPSFactoryBuffer,
-		  riid: REFIID,
-	    pUnkServer: ptr IUnknown,
-		ppStub: ptr IRpcStubBuffer
-
-;void
-IPSFactoryBuffer_CreateStub_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
 endif
 
 if  (_WIN32_WINNT GE 0x0400 ) OR defined(_WIN32_DCOM)
@@ -3721,9 +1395,6 @@ dwServerPid		dd ?
 iMethod			dd ?
 pObject			PVOID ?
 SChannelHookCallInfo	ENDS
-
-externdef		__MIDL_itf_objidl_0043_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_objidl_0043_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IChannelHook_INTERFACE_DEFINED__
 __IChannelHook_INTERFACE_DEFINED__ equ 1
@@ -3742,104 +1413,8 @@ DEFINE_IIDX(IChannelHook, "1008c4a0-7613-11cf-9af1-0020af6e72f4")
     ServerFillBuffer	proc :REFGUID, :REFIID, :ptr, :ptr, :HRESULT
     .ends
 
-;void
-IChannelHook_ClientGetSize_Proxy proto WINAPI \
-		 pThis: ptr IChannelHook,
-	       uExtent: REFGUID,
-		  riid: REFIID,
-	     pDataSize: LPDWORD
-
-;void
-IChannelHook_ClientGetSize_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;void
-IChannelHook_ClientFillBuffer_Proxy proto WINAPI \
-		 pThis: ptr IChannelHook,
-	       uExtent: REFGUID,
-		  riid: REFIID,
-	     pDataSize: LPDWORD,
-	   pDataBuffer: PVOID
-
-;void
-IChannelHook_ClientFillBuffer_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;void
-IChannelHook_ClientNotify_Proxy proto WINAPI \
-		 pThis: ptr IChannelHook,
-	       uExtent: REFGUID,
-		  riid: REFIID,
-	    cbDataSize: ULONG,
-	   pDataBuffer: PVOID,
-	      lDataRep: DWORD,
-	       hrFault: HRESULT
-
-;void
-IChannelHook_ClientNotify_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;void
-IChannelHook_ServerNotify_Proxy proto WINAPI \
-		 pThis: ptr IChannelHook,
-	       uExtent: REFGUID,
-		  riid: REFIID,
-	    cbDataSize: ULONG,
-	   pDataBuffer: PVOID,
-	      lDataRep: DWORD
-
-;void
-IChannelHook_ServerNotify_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;void
-IChannelHook_ServerGetSize_Proxy proto WINAPI \
-		 pThis: ptr IChannelHook,
-	       uExtent: REFGUID,
-		  riid: REFIID,
-	       hrFault: HRESULT,
-	     pDataSize: LPDWORD
-
-;void
-IChannelHook_ServerGetSize_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;void
-IChannelHook_ServerFillBuffer_Proxy proto WINAPI \
-		 pThis: ptr IChannelHook,
-	       uExtent: REFGUID,
-		  riid: REFIID,
-	     pDataSize: LPDWORD,
-	   pDataBuffer: PVOID,
-	       hrFault: HRESULT
-
-;void
-IChannelHook_ServerFillBuffer_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
 endif
 endif
-
-externdef		__MIDL_itf_objidl_0044_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_objidl_0044_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IPropertyStorage_INTERFACE_DEFINED__
 __IPropertyStorage_INTERFACE_DEFINED__ equ 1
@@ -4059,7 +1634,6 @@ PIDSI_DOC_SECURITY	equ 0x00000013
 PRSPEC_INVALID		equ 0xffffffff
 
 PRSPEC_LPWSTR		equ 0
-
 PRSPEC_PROPID		equ 1
 
 PROPSPEC		STRUC
@@ -4096,7 +1670,6 @@ atime			FILETIME <>
 dwOSVersion		dd ?
 STATPROPSETSTG		ENDS
 
-
 .comdef IPropertyStorage
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -4114,164 +1687,9 @@ STATPROPSETSTG		ENDS
     SetClass		proc :REFCLSID
     Stat		proc :ptr
     .ends
+
 LPPROPERTYSTORAGE	typedef ptr IPropertyStorage
 externdef		IID_IPropertyStorage:IID
-
-;HRESULT
-IPropertyStorage_ReadMultiple_Proxy proto WINAPI \
-		 pThis: ptr IPropertyStorage,
-		cpspec: ULONG,
-	       rgpspec: PROPSPEC,
-	     rgpropvar: PROPVARIANT
-
-;void
-IPropertyStorage_ReadMultiple_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IPropertyStorage_WriteMultiple_Proxy proto WINAPI \
-		 pThis: ptr IPropertyStorage,
-		cpspec: ULONG,
-	       rgpspec: PROPSPEC,
-	     rgpropvar: PROPVARIANT,
-       propidNameFirst: PROPID
-
-;void
-IPropertyStorage_WriteMultiple_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IPropertyStorage_DeleteMultiple_Proxy proto WINAPI \
-		 pThis: ptr IPropertyStorage,
-		cpspec: ULONG,
-	       rgpspec: PROPSPEC
-
-;void
-IPropertyStorage_DeleteMultiple_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IPropertyStorage_ReadPropertyNames_Proxy proto WINAPI \
-		 pThis: ptr IPropertyStorage,
-	       cpropid: ULONG,
-	      rgpropid: PROPID,
-	  rglpwstrName: LPOLESTR
-
-;void
-IPropertyStorage_ReadPropertyNames_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IPropertyStorage_WritePropertyNames_Proxy proto WINAPI \
-		 pThis: ptr IPropertyStorage,
-	       cpropid: ULONG,
-	      rgpropid: PROPID,
-	  rglpwstrName: LPOLESTR
-
-;void
-IPropertyStorage_WritePropertyNames_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IPropertyStorage_DeletePropertyNames_Proxy proto WINAPI \
-		 pThis: ptr IPropertyStorage,
-	       cpropid: ULONG,
-	      rgpropid: PROPID
-
-;void
-IPropertyStorage_DeletePropertyNames_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IPropertyStorage_Commit_Proxy proto WINAPI \
-		 pThis: ptr IPropertyStorage,
-	grfCommitFlags: DWORD
-
-;void
-IPropertyStorage_Commit_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IPropertyStorage_Revert_Proxy proto WINAPI \
-		 pThis: ptr IPropertyStorage
-
-;void
-IPropertyStorage_Revert_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IPropertyStorage_Enum_Proxy proto WINAPI \
-		 pThis: ptr IPropertyStorage,
-		ppenum: ptr IEnumSTATPROPSTG
-
-;void
-IPropertyStorage_Enum_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IPropertyStorage_SetTimes_Proxy proto WINAPI \
-		 pThis: ptr IPropertyStorage,
-		pctime: LPFILETIME,
-		patime: LPFILETIME,
-		pmtime: LPFILETIME
-
-;void
-IPropertyStorage_SetTimes_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IPropertyStorage_SetClass_Proxy proto WINAPI \
-		 pThis: ptr IPropertyStorage,
-		 clsid: REFCLSID
-
-;void
-IPropertyStorage_SetClass_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IPropertyStorage_Stat_Proxy proto WINAPI \
-		 pThis: ptr IPropertyStorage,
-	    pstatpsstg: ptr STATPROPSETSTG
-
-;void
-IPropertyStorage_Stat_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 
 endif
 
@@ -4283,62 +1701,9 @@ __IPropertySetStorage_INTERFACE_DEFINED__ equ 1
     AddRef		proc
     Release		proc
     .ends
+
 LPPROPERTYSETSTORAGE	typedef ptr IPropertySetStorage
 externdef		IID_IPropertySetStorage:IID
-
-;HRESULT
-IPropertySetStorage_Create_Proxy proto WINAPI \
-		 pThis: ptr IPropertySetStorage,
-		rfmtid: REFFMTID,
-		pclsid: ptr CLSID,
-	      grfFlags: DWORD,
-	       grfMode: DWORD,
-	       ppprstg: ptr IPropertyStorage
-
-;void
-IPropertySetStorage_Create_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IPropertySetStorage_Open_Proxy proto WINAPI \
-		 pThis: ptr IPropertySetStorage,
-		rfmtid: REFFMTID,
-	       grfMode: DWORD,
-	       ppprstg: ptr IPropertyStorage
-
-;void
-IPropertySetStorage_Open_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IPropertySetStorage_Delete_Proxy proto WINAPI \
-		 pThis: ptr IPropertySetStorage,
-		rfmtid: REFFMTID
-
-;void
-IPropertySetStorage_Delete_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IPropertySetStorage_Enum_Proxy proto WINAPI \
-		 pThis: ptr IPropertySetStorage,
-		ppenum: ptr IEnumSTATPROPSETSTG
-
-;void
-IPropertySetStorage_Enum_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 
 endif
 
@@ -4350,57 +1715,9 @@ __IEnumSTATPROPSTG_INTERFACE_DEFINED__ equ 1
     AddRef		proc
     Release		proc
     .ends
+
 LPENUMSTATPROPSTG	typedef ptr IEnumSTATPROPSTG
 externdef		IID_IEnumSTATPROPSTG:IID
-
-;HRESULT
-IEnumSTATPROPSTG_RemoteNext_Proxy proto WINAPI \
-		 pThis: ptr IEnumSTATPROPSTG,
-		  celt: ULONG,
-		 rgelt: ptr STATPROPSTG,
-	  pceltFetched: LPDWORD
-
-;void
-IEnumSTATPROPSTG_RemoteNext_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IEnumSTATPROPSTG_Skip_Proxy proto WINAPI \
-		 pThis: ptr IEnumSTATPROPSTG,
-		  celt: ULONG
-
-;void
-IEnumSTATPROPSTG_Skip_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IEnumSTATPROPSTG_Reset_Proxy proto WINAPI \
-		 pThis: ptr IEnumSTATPROPSTG
-
-;void
-IEnumSTATPROPSTG_Reset_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IEnumSTATPROPSTG_Clone_Proxy proto WINAPI \
-		 pThis: ptr IEnumSTATPROPSTG,
-		ppenum: ptr IEnumSTATPROPSTG
-
-;void
-IEnumSTATPROPSTG_Clone_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 
 endif
 
@@ -4412,58 +1729,9 @@ __IEnumSTATPROPSETSTG_INTERFACE_DEFINED__ equ 1
     AddRef		proc
     Release		proc
     .ends
+
 LPENUMSTATPROPSETSTG	typedef ptr IEnumSTATPROPSETSTG
 externdef		IID_IEnumSTATPROPSETSTG:IID
-
-;HRESULT
-IEnumSTATPROPSETSTG_RemoteNext_Proxy proto WINAPI \
-		 pThis: ptr IEnumSTATPROPSETSTG,
-		  celt: ULONG,
-		 rgelt: ptr STATPROPSETSTG,
-	  pceltFetched: LPDWORD
-
-
-;void
-IEnumSTATPROPSETSTG_RemoteNext_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IEnumSTATPROPSETSTG_Skip_Proxy proto WINAPI \
-		 pThis: ptr IEnumSTATPROPSETSTG,
-		  celt: ULONG
-
-;void
-IEnumSTATPROPSETSTG_Skip_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IEnumSTATPROPSETSTG_Reset_Proxy proto WINAPI \
-		 pThis: ptr IEnumSTATPROPSETSTG
-
-;void
-IEnumSTATPROPSETSTG_Reset_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IEnumSTATPROPSETSTG_Clone_Proxy proto WINAPI \
-		 pThis: ptr IEnumSTATPROPSETSTG,
-		ppenum: ptr IEnumSTATPROPSETSTG
-
-;void
-IEnumSTATPROPSETSTG_Clone_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 
 endif
 
@@ -4518,11 +1786,8 @@ PropStgNameToFmtId proto WINAPI \
 		pfmtid: ptr FMTID
 
 endif
+
 if  (_WIN32_WINNT GE 0x0400 ) OR defined(_WIN32_DCOM)
-
-
-externdef		__MIDL_itf_objidl_0048_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_objidl_0048_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IClientSecurity_INTERFACE_DEFINED__
 __IClientSecurity_INTERFACE_DEFINED__ equ 1
@@ -4552,61 +1817,10 @@ DEFINE_IIDX(IClientSecurity, "0000013D-0000-0000-C000-000000000046")
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
     Release		proc
-    QueryBlanket	proc :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
-    SetBlanket		proc :ptr, :DWORD, :DWORD, :ptr, :DWORD, :DWORD, :ptr ,:DWORD
-    CopyProxy		proc :ptr, :ptr
+    QueryBlanket	proc  :ptr IUnknown, :ptr DWORD, :ptr DWORD, :ptr ptr OLECHAR, :ptr DWORD, :ptr DWORD, :ptr ptr, :ptr DWORD
+    SetBlanket		proc  :ptr IUnknown, :DWORD, :DWORD, :ptr OLECHAR, :DWORD, :DWORD, :ptr, :DWORD
+    CopyProxy		proc  :ptr IUnknown, :ptr ptr IUnknown
     .ends
-
-;HRESULT
-IClientSecurity_QueryBlanket_Proxy proto WINAPI \
-		 pThis: ptr IClientSecurity,
-		pProxy: ptr IUnknown,
-	     pAuthnSvc: LPDWORD,
-	     pAuthzSvc: LPDWORD,
-      pServerPrincName: ptr OLECHAR,
-	   pAuthnLevel: LPDWORD,
-	     pImpLevel: LPDWORD,
-	     pAuthInfo: PVOID,
-	  pCapabilites: LPDWORD
-
-;void
-IClientSecurity_QueryBlanket_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IClientSecurity_SetBlanket_Proxy proto WINAPI \
-		 pThis: ptr IClientSecurity,
-		pProxy: ptr IUnknown,
-	      AuthnSvc: DWORD,
-	      AuthzSvc: DWORD,
-      pServerPrincName: ptr OLECHAR,
-	    AuthnLevel: DWORD,
-	      ImpLevel: DWORD,
-	     pAuthInfo: PVOID,
-	  Capabilities: DWORD
-
-;void
-IClientSecurity_SetBlanket_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IClientSecurity_CopyProxy_Proxy proto WINAPI \
-		 pThis: ptr IClientSecurity,
-		pProxy: ptr IUnknown,
-		ppCopy: ptr IUnknown
-
-;void
-IClientSecurity_CopyProxy_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 
 endif
 
@@ -4619,62 +1833,11 @@ DEFINE_IIDX(IServerSecurity, "0000013E-0000-0000-C000-000000000046")
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
     Release		proc
-    QueryBlanket	proc :ptr, :ptr, :ptr, :ptr, :ptr, :ptr, :ptr
+    QueryBlanket	proc :ptr DWORD, :ptr DWORD, :ptr ptr OLECHAR, :ptr DWORD, :ptr DWORD, :ptr ptr, :ptr DWORD
     ImpersonateClient	proc
-    _RevertToSelf	proc
+    RevertToSelf	proc
     IsImpersonating	proc
     .ends
-
-;HRESULT
-IServerSecurity_QueryBlanket_Proxy proto WINAPI \
-		 pThis: ptr IServerSecurity,
-	     pAuthnSvc: LPDWORD,
-	     pAuthzSvc: LPDWORD,
-      pServerPrincName: ptr OLECHAR,
-	   pAuthnLevel: LPDWORD,
-	     pImpLevel: LPDWORD,
-		pPrivs: PVOID,
-	 pCapabilities: LPDWORD
-
-;void
-IServerSecurity_QueryBlanket_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IServerSecurity_ImpersonateClient_Proxy proto WINAPI \
-		 pThis: ptr IServerSecurity
-
-;void
-IServerSecurity_ImpersonateClient_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IServerSecurity_RevertToSelf_Proxy proto WINAPI \
-		 pThis: ptr IServerSecurity
-
-;void
-IServerSecurity_RevertToSelf_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;BOOL
-IServerSecurity_IsImpersonating_Proxy proto WINAPI \
-		 pThis: ptr IServerSecurity
-
-;void
-IServerSecurity_IsImpersonating_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 
 endif
 
@@ -4687,26 +1850,19 @@ DEFINE_IIDX(IClassActivator, "00000140-0000-0000-C000-000000000046")
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
     Release		proc
-    GetClassObject	proc :REFCLSID, :DWORD, :LCID, :REFIID, :ptr
+    GetClassObject	proc :REFCLSID, :DWORD, :LCID, :REFIID, :ptr ptr
     .ends
 
-;HRESULT
-IClassActivator_GetClassObject_Proxy proto WINAPI \
-		 pThis: ptr IClassActivator,
-		rclsid: REFCLSID,
-	dwClassContext: DWORD,
-		locale: LCID,
-		  riid: REFIID,
-		   ppv: PVOID
-
-;void
-IClassActivator_GetClassObject_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
 endif
+
+RPCOPT_PROPERTIES	typedef sdword
+COMBND_RPCTIMEOUT	equ 0x1
+COMBND_SERVER_LOCALITY	equ 0x2
+
+RPCOPT_SERVER_LOCALITY_VALUES typedef sdword
+SERVER_LOCALITY_PROCESS_LOCAL equ 0
+SERVER_LOCALITY_MACHINE_LOCAL equ 1
+SERVER_LOCALITY_REMOTE	equ 2
 
 ifndef __IRpcOptions_INTERFACE_DEFINED__
 __IRpcOptions_INTERFACE_DEFINED__ equ 1
@@ -4717,57 +1873,38 @@ DEFINE_IIDX(IRpcOptions, "00000144-0000-0000-C000-000000000046")
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
     Release		proc
-    Set			proc :ptr, :DWORD, :DWORD
-    Query		proc :ptr, :DWORD, :ptr
+    Set			proc :ptr IUnknown, :RPCOPT_PROPERTIES, :ULONG_PTR
+    Query		proc :ptr IUnknown, :RPCOPT_PROPERTIES, :ptr ULONG_PTR
     .ends
-
-;HRESULT
-IRpcOptions_Set_Proxy proto WINAPI \
-		 pThis: ptr IRpcOptions,
-		  pPrx: ptr IUnknown,
-	    dwProperty: DWORD,
-	       dwValue: DWORD
-
-;void
-IRpcOptions_Set_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IRpcOptions_Query_Proxy proto WINAPI \
-		 pThis: ptr IRpcOptions,
-		  pPrx: ptr IUnknown,
-	    dwProperty: DWORD,
-	      pdwValue: LPDWORD
-
-;void
-IRpcOptions_Query_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IRpcOptions_CopyProxy_Proxy proto WINAPI \
-		 pThis: ptr IRpcOptions,
-	     punkProxy: ptr IUnknown,
-	     ppunkCopy: ptr IUnknown
-
-;void
-IRpcOptions_CopyProxy_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 
 endif
 
 COMBND_RPCSTRINGS	equ 0x1
 
-externdef		__MIDL_itf_objidl_0052_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_objidl_0052_v0_0_s_ifspec:RPC_IF_HANDLE
+GLOBALOPT_PROPERTIES	typedef SDWORD
+COMGLB_EXCEPTION_HANDLING equ 1
+COMGLB_APPID		equ 2
+COMGLB_RPC_THREADPOOL_SETTING equ 3
+
+GLOBALOPT_EH_VALUES	typedef SDWORD
+COMGLB_EXCEPTION_HANDLE equ 0
+COMGLB_EXCEPTION_DONOT_HANDLE_FATAL equ 1
+COMGLB_EXCEPTION_DONOT_HANDLE equ COMGLB_EXCEPTION_DONOT_HANDLE_FATAL
+COMGLB_EXCEPTION_DONOT_HANDLE_ANY equ 2
+
+GLOBALOPT_RPCTP_VALUES	typedef SDWORD
+COMGLB_RPC_THREADPOOL_SETTING_DEFAULT_POOL equ 0
+COMGLB_RPC_THREADPOOL_SETTING_PRIVATE_POOL equ 1
+
+DEFINE_IIDX(IGlobalOptions, "0000015B-0000-0000-C000-000000000046")
+
+.comdef IGlobalOptions
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Set			proc :GLOBALOPT_PROPERTIES, :ULONG_PTR
+    Query		proc :GLOBALOPT_PROPERTIES, :ptr ULONG_PTR
+    .ends
 
 ifndef __IComBinding_INTERFACE_DEFINED__
 __IComBinding_INTERFACE_DEFINED__ equ 1
@@ -4782,43 +1919,8 @@ externdef		IID_IComBinding:IID
     QueryBinding	proc :ptr, :ptr, :ptr, :ptr, :ptr
     .ends
 
-;HRESULT
-IComBinding_InitBinding_Proxy proto WINAPI \
-		 pThis: ptr IComBinding,
-       dwEndpointFlags: DWORD,
-	    dwNICFlags: DWORD,
-	  mbzReserved1: DWORD,
-	  mbzReserved2: DWORD,
-	    pszBinding: LPOLESTR
-
-;void
-IComBinding_InitBinding_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IComBinding_QueryBinding_Proxy proto WINAPI \
-		 pThis: ptr IComBinding,
-      pdwEndpointFlags: LPDWORD,
-	   pdwNICFlags: LPDWORD,
-	  mbzReserved1: LPDWORD,
-	  mbzReserved2: LPDWORD,
-	   ppszBinding: ptr LPOLESTR
-
-;void
-IComBinding_QueryBinding_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
 endif
 endif
-
-externdef		__MIDL_itf_objidl_0053_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_objidl_0053_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IFillLockBytes_INTERFACE_DEFINED__
 __IFillLockBytes_INTERFACE_DEFINED__ equ 1
@@ -4829,64 +1931,11 @@ DEFINE_IIDX(IFillLockBytes, "99caf010-415e-11cf-8814-00aa00b569f5")
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
     Release		proc
-    FillAppend		proc :ptr, :DWORD, :ptr
-    FillAt		proc :ULARGE_INTEGER, :ptr, :DWORD, :ptr
+    FillAppend		proc :ptr, :ULONG, :ptr ULONG
+    FillAt		proc :ULARGE_INTEGER, :ptr, :ULONG, :ptr ULONG
     SetFillSize		proc :ULARGE_INTEGER
     Terminate		proc :BOOL
     .ends
-
-;HRESULT
-IFillLockBytes_RemoteFillAppend_Proxy proto WINAPI \
-		 pThis: ptr IFillLockBytes,
-		    pv: LPBYTE,
-		    cb: ULONG,
-	    pcbWritten: LPDWORD
-
-;void
-IFillLockBytes_RemoteFillAppend_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IFillLockBytes_RemoteFillAt_Proxy proto WINAPI \
-		 pThis: ptr IFillLockBytes,
-	      ulOffset: ULARGE_INTEGER,
-		    pv: LPBYTE,
-		    cb: ULONG,
-	    pcbWritten: LPDWORD
-
-;void
-IFillLockBytes_RemoteFillAt_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IFillLockBytes_SetFillSize_Proxy proto WINAPI \
-		 pThis: ptr IFillLockBytes,
-		ulSize: ULARGE_INTEGER
-
-;void
-IFillLockBytes_SetFillSize_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IFillLockBytes_Terminate_Proxy proto WINAPI \
-		 pThis: ptr IFillLockBytes,
-	     bCanceled: BOOL
-
-;void
-IFillLockBytes_Terminate_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 
 endif
 
@@ -4901,21 +1950,6 @@ DEFINE_IIDX(IProgressNotify, "a9d758a0-4617-11cf-95fc-00aa00680db4")
     Release		proc
     OnProgress		proc :DWORD, :DWORD, :BOOL, :BOOL
     .ends
-
-;HRESULT
-IProgressNotify_OnProgress_Proxy proto WINAPI \
-		 pThis: ptr IProgressNotify,
-     dwProgressCurrent: DWORD,
-     dwProgressMaximum: DWORD,
-	     fAccurate: BOOL,
-		fOwner: BOOL
-
-;void
-IProgressNotify_OnProgress_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 
 endif
 
@@ -4942,163 +1976,84 @@ DEFINE_IIDX(ILayoutStorage, "0e6d4d90-6738-11cf-9608-00aa00680db4")
     ReLayoutDocfileOnILockBytes proc :ptr
     .ends
 
-;HRESULT
-ILayoutStorage_LayoutScript_Proxy proto WINAPI \
-		 pThis: ptr ILayoutStorage,
-	pStorageLayout: ptr StorageLayout,
-	      nEntries: DWORD,
-    glfInterleavedFlag: DWORD
+endif
 
-;void
-ILayoutStorage_LayoutScript_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
+ifndef __IBlockingLock_INTERFACE_DEFINED__
+__IBlockingLock_INTERFACE_DEFINED__ equ 1
 
-;HRESULT
-ILayoutStorage_BeginMonitor_Proxy proto WINAPI \
-		 pThis: ptr ILayoutStorage
+DEFINE_IIDX(IBlockingLock, "30f3d47a-6447-11d1-8e3c-00c04fb9386d")
 
-;void
-ILayoutStorage_BeginMonitor_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
+.comdef IBlockingLock
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    _Lock		proc :DWORD
+    Unlock		proc
+    .ends
 
-;HRESULT
-ILayoutStorage_EndMonitor_Proxy proto WINAPI \
-		 pThis: ptr ILayoutStorage
+endif
 
-;void
-ILayoutStorage_EndMonitor_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
+ifndef __ITimeAndNoticeControl_INTERFACE_DEFINED__
+__ITimeAndNoticeControl_INTERFACE_DEFINED__ equ 1
 
-;HRESULT
-ILayoutStorage_ReLayoutDocfile_Proxy proto WINAPI \
-		 pThis: ptr ILayoutStorage,
-	 pwcsNewDfName: ptr OLECHAR
+DEFINE_IIDX(ITimeAndNoticeControl, "bc0bf6ae-8878-11d1-83e9-00c04fc2c6d4")
 
-;void
-ILayoutStorage_ReLayoutDocfile_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
+.comdef ITimeAndNoticeControl
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SuppressChanges	proc :DWORD, :DWORD
+    .ends
 
-;HRESULT
-ILayoutStorage_ReLayoutDocfileOnILockBytes_Proxy proto WINAPI \
-		 pThis: ptr ILayoutStorage,
-	   pILockBytes: ptr ILockBytes
+endif
 
-;void
-ILayoutStorage_ReLayoutDocfileOnILockBytes_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
+ifndef __IOplockStorage_INTERFACE_DEFINED__
+__IOplockStorage_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IOplockStorage, "8d19c834-8879-11d1-83e9-00c04fc2c6d4")
+
+.comdef IOplockStorage
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    CreateStorageEx	proc :LPCWSTR, :DWORD, :DWORD, :DWORD, :REFIID, :ptr ptr
+    OpenStorageEx	proc :LPCWSTR, :DWORD, :DWORD, :DWORD, :REFIID, :ptr ptr
+    .ends
 
 endif
 
 ifndef __ISurrogate_INTERFACE_DEFINED__
 __ISurrogate_INTERFACE_DEFINED__ equ 1
 
-ISurrogateVtbl		STRUC
+DEFINE_IIDX(ISurrogate, "00000022-0000-0000-C000-000000000046")
+
+.comdef ISurrogate
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
     Release		proc
     LoadDllServer	proc :REFCLSID
     FreeSurrogate	proc
-ISurrogateVtbl		ENDS
-ISurrogate		STRUC
-	lpVtbl		PVOID ?
-ISurrogate		ENDS
+    .ends
+
 LPSURROGATE		typedef ptr ISurrogate
-
-DEFINE_IIDX(ISurrogate, "00000022-0000-0000-C000-000000000046")
-
-;HRESULT
-ISurrogate_LoadDllServer_Proxy proto WINAPI \
-		 pThis: ptr ISurrogate,
-		 Clsid: REFCLSID
-
-;void
-ISurrogate_LoadDllServer_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-ISurrogate_FreeSurrogate_Proxy proto WINAPI \
-		 pThis: ptr ISurrogate
-
-;void
-ISurrogate_FreeSurrogate_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 
 endif
 
 ifndef __IGlobalInterfaceTable_INTERFACE_DEFINED__
 __IGlobalInterfaceTable_INTERFACE_DEFINED__ equ 1
 
+DEFINE_IIDX(IGlobalInterfaceTable, "00000146-0000-0000-C000-000000000046")
+
 .comdef IGlobalInterfaceTable
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
     Release		proc
-    RegisterInterfaceInGlobal proc :ptr, :REFIID, :ptr
+    RegisterInterfaceInGlobal proc :ptr, :REFIID, :ptr DWORD
     RevokeInterfaceFromGlobal proc :DWORD
-    GetInterfaceFromGlobal proc :DWORD, :REFIID, :ptr
+    GetInterfaceFromGlobal proc :DWORD, :REFIID, :ptr ptr
     .ends
+
 LPGLOBALINTERFACETABLE	typedef ptr IGlobalInterfaceTable
-DEFINE_IIDX(IGlobalInterfaceTable, "00000146-0000-0000-C000-000000000046")
-
-;HRESULT
-IGlobalInterfaceTable_RegisterInterfaceInGlobal_Proxy proto WINAPI \
-		 pThis: ptr IGlobalInterfaceTable,
-		  pUnk: ptr IUnknown,
-		  riid: REFIID,
-	     pdwCookie: LPDWORD
-
-;void
-IGlobalInterfaceTable_RegisterInterfaceInGlobal_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IGlobalInterfaceTable_RevokeInterfaceFromGlobal_Proxy proto WINAPI \
-		 pThis: ptr IGlobalInterfaceTable,
-	      dwCookie: DWORD
-
-;void
-IGlobalInterfaceTable_RevokeInterfaceFromGlobal_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IGlobalInterfaceTable_GetInterfaceFromGlobal_Proxy proto WINAPI \
-		 pThis: ptr IGlobalInterfaceTable,
-	      dwCookie: DWORD,
-		  riid: REFIID,
-		   ppv: PVOID
-
-;void
-IGlobalInterfaceTable_GetInterfaceFromGlobal_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 
 endif
 
@@ -5116,40 +2071,6 @@ DEFINE_IIDX(IDirectWriterLock, "0e6d4d92-6738-11cf-9608-00aa00680db4")
     HaveWriteAccess	proc
     .ends
 
-;HRESULT
-IDirectWriterLock_WaitForWriteAccess_Proxy proto WINAPI \
-		 pThis: ptr IDirectWriterLock,
-	     dwTimeout: DWORD
-
-;void
-IDirectWriterLock_WaitForWriteAccess_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IDirectWriterLock_ReleaseWriteAccess_Proxy proto WINAPI \
-		 pThis: ptr IDirectWriterLock
-
-;void
-IDirectWriterLock_ReleaseWriteAccess_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IDirectWriterLock_HaveWriteAccess_Proxy proto WINAPI \
-		 pThis: ptr IDirectWriterLock
-
-;void
-IDirectWriterLock_HaveWriteAccess_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
 endif
 
 ifndef __ISynchronize_INTERFACE_DEFINED__
@@ -5166,39 +2087,19 @@ DEFINE_IIDX(ISynchronize, "00000030-0000-0000-C000-000000000046")
     Reset		proc
     .ends
 
-;HRESULT
-ISynchronize_Wait_Proxy proto WINAPI \
-		 pThis: ptr ISynchronize,
-	dwMilliseconds: DWORD
+endif
 
-;void
-ISynchronize_Wait_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
+ifndef __ISynchronizeHandle_INTERFACE_DEFINED__
+__ISynchronizeHandle_INTERFACE_DEFINED__ equ 1
 
-;HRESULT
-ISynchronize_Signal_Proxy proto WINAPI \
-		 pThis: ptr ISynchronize
+DEFINE_IIDX(ISynchronizeHandle, "00000031-0000-0000-C000-000000000046")
 
-;void
-ISynchronize_Signal_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-ISynchronize_Reset_Proxy proto WINAPI \
-		 pThis: ptr ISynchronize
-
-;void
-ISynchronize_Reset_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
+.comdef ISynchronizeHandle
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetHandle		proc :ptr HANDLE
+    .ends
 
 endif
 
@@ -5214,19 +2115,8 @@ DEFINE_IIDX(ISynchronizeMutex, "00000025-0000-0000-C000-000000000046")
     _Wait		proc :DWORD, :DWORD
     Signal		proc
     Reset		proc
-    _ReleaseMutex	proc
+    ReleaseMutex	proc
     .ends
-
-;HRESULT
-ISynchronizeMutex_ReleaseMutex_Proxy proto WINAPI \
-		 pThis: ptr ISynchronizeMutex
-
-;void
-ISynchronizeMutex_ReleaseMutex_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 
 endif
 
@@ -5242,73 +2132,22 @@ externdef		IID_IAsyncSetup:IID
     GetAsyncManager	proc :REFIID, :ptr, :DWORD, :ptr, :ptr
     .ends
 
-;HRESULT
-IAsyncSetup_GetAsyncManager_Proxy proto WINAPI \
-		 pThis: ptr IAsyncSetup,
-		  riid: REFIID,
-		pOuter: ptr IUnknown,
-	       dwFlags: DWORD,
-	       ppInner: ptr IUnknown,
-	    ppAsyncMgr: ptr IAsyncManager
-
-;void
-IAsyncSetup_GetAsyncManager_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
 endif
 
 ifndef __ICancelMethodCalls_INTERFACE_DEFINED__
 __ICancelMethodCalls_INTERFACE_DEFINED__ equ 1
 
-ICancelMethodCallsVtbl	STRUC
+DEFINE_IIDX(ICancelMethodCalls, "00000029-0000-0000-C000-000000000046")
+
+.comdef ICancelMethodCalls
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
     Release		proc
-    Cancel		proc :DWORD
+    Cancel		proc :ULONG
     TestCancel		proc
-ICancelMethodCallsVtbl	ENDS
-ICancelMethodCalls struct
-	lpVtbl		PVOID ?
-ICancelMethodCalls ends
+    .ends
+
 LPCANCELMETHODCALLS	typedef ptr ICancelMethodCalls
-DEFINE_IIDX(ICancelMethodCalls, "00000029-0000-0000-C000-000000000046")
-
-;HRESULT
-ICancelMethodCalls_Cancel_Proxy proto WINAPI \
-		 pThis: ptr ICancelMethodCalls
-
-;void
-ICancelMethodCalls_Cancel_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-ICancelMethodCalls_TestCancel_Proxy proto WINAPI \
-		 pThis: ptr ICancelMethodCalls
-
-;void
-ICancelMethodCalls_TestCancel_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-ICancelMethodCalls_SetCancelTimeout_Proxy proto WINAPI \
-		 pThis: ptr ICancelMethodCalls,
-	     ulSeconds: ULONG
-
-;void
-ICancelMethodCalls_SetCancelTimeout_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 
 endif
 
@@ -5330,42 +2169,47 @@ DEFINE_IIDX(IAsyncManager, "0000002A-0000-0000-C000-000000000046")
     GetState		proc :ptr
     .ends
 
-;HRESULT
-IAsyncManager_CompleteCall_Proxy proto WINAPI \
-		 pThis: ptr IAsyncManager,
-		Result: HRESULT
+endif
 
-;void
-IAsyncManager_CompleteCall_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
+ifndef __ICallFactory_INTERFACE_DEFINED__
+__ICallFactory_INTERFACE_DEFINED__ equ 1
 
-;HRESULT
-IAsyncManager_GetCallContext_Proxy proto WINAPI \
-		 pThis: ptr IAsyncManager,
-		  riid: REFIID,
-	    pInterface: PVOID
+DEFINE_IIDX(ICallFactory, "1c733a30-2a1c-11ce-ade5-00aa0044773d")
 
-;void
-IAsyncManager_GetCallContext_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
+.comdef ICallFactory
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    CreateCall		proc :REFIID, :ptr IUnknown, :REFIID, :ptr ptr IUnknown
+    .ends
 
-;HRESULT
-IAsyncManager_GetState_Proxy proto WINAPI \
-		 pThis: ptr IAsyncManager,
-	 pulStateFlags: LPDWORD
+endif
 
-;void
-IAsyncManager_GetState_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
+ifndef __IRpcHelper_INTERFACE_DEFINED__
+__IRpcHelper_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IRpcHelper, "00000149-0000-0000-C000-000000000046")
+
+.comdef IRpcHelper
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetDCOMProtocolVersion proc :ptr DWORD
+    GetIIDFromOBJREF	proc :ptr, :ptr ptr IID
+    .ends
+endif
+
+ifndef __IReleaseMarshalBuffers_INTERFACE_DEFINED__
+__IReleaseMarshalBuffers_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IReleaseMarshalBuffers, "eb0cb9e8-7996-11d2-872e-0000f8080859")
+
+.comdef IReleaseMarshalBuffers
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    ReleaseMarshalBuffer proc :ptr RPCOLEMESSAGE, :DWORD, :ptr IUnknown
+    .ends
 
 endif
 
@@ -5374,67 +2218,14 @@ __IWaitMultiple_INTERFACE_DEFINED__ equ 1
 
 DEFINE_IIDX(IWaitMultiple, "0000002B-0000-0000-C000-000000000046")
 
-IWaitMultipleVtbl	STRUC
+.comdef IWaitMultiple
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
     Release		proc
     WaitMultiple	proc :DWORD, :ptr
     AddSynchronize	proc :ptr
-IWaitMultipleVtbl	ENDS
-IWaitMultiple		STRUC
-	lpVtbl		PVOID ?
-IWaitMultiple		ENDS
-
-;HRESULT
-IWaitMultiple_WaitMultiple_Proxy proto WINAPI \
-		 pThis: ptr IWaitMultiple,
-	       timeout: DWORD,
-		 pSync: ptr ISynchronize
-
-;void
-IWaitMultiple_WaitMultiple_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IWaitMultiple_AddSynchronize_Proxy proto WINAPI \
-		 pThis: ptr IWaitMultiple,
-		 pSync: ptr ISynchronize
-
-;void
-IWaitMultiple_AddSynchronize_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-endif
-
-ifndef __ISynchronizeEvent_INTERFACE_DEFINED__
-__ISynchronizeEvent_INTERFACE_DEFINED__ equ 1
-
-externdef		IID_ISynchronizeEvent:IID
-
-.comdef ISynchronizeEvent
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    GetHandle		proc :ptr
-    SetEventHandle	proc :ptr
     .ends
 
-;HRESULT
-ISynchronizeEvent_GetEvent_Proxy proto WINAPI \
-		 pThis: ptr ISynchronizeEvent,
-		pEvent: ptr HANDLE
-
-;void
-ISynchronizeEvent_GetEvent_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 endif
 
 ifndef __IUrlMon_INTERFACE_DEFINED__
@@ -5449,26 +2240,399 @@ DEFINE_IIDX(IUrlMon, "00000026-0000-0000-C000-000000000046")
     AsyncGetClassBits	proc :REFCLSID, :LPWSTR, :LPWSTR, :DWORD, :DWORD, :LPWSTR, :ptr, :DWORD, :REFIID, :DWORD
     .ends
 
-;HRESULT
-IUrlMon_AsyncGetClassBits_Proxy proto WINAPI \
-		 pThis: ptr IUrlMon,
-		rclsid: REFCLSID,
-	       pszTYPE: LPCWSTR,
-		pszExt: LPCWSTR,
-       dwFileVersionMS: DWORD,
-       dwFileVersionLS: DWORD,
-	   pszCodeBase: LPCWSTR,
-		   pbc: ptr IBindCtx,
-	dwClassContext: DWORD,
-		  riid: REFIID,
-		 flags: DWORD
+endif
 
-;void
-IUrlMon_AsyncGetClassBits_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
+ifndef __IForegroundTransfer_INTERFACE_DEFINED__
+__IForegroundTransfer_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IForegroundTransfer, "00000145-0000-0000-C000-000000000046")
+
+.comdef IForegroundTransfer
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    AllowForegroundTransfer proc :ptr
+    .ends
+
+endif
+
+ifndef __IAddrTrackingControl_INTERFACE_DEFINED__
+__IAddrTrackingControl_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IAddrTrackingControl, "00000147-0000-0000-C000-000000000046")
+
+.comdef IAddrTrackingControl
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    EnableCOMDynamicAddrTracking proc
+    DisableCOMDynamicAddrTracking proc
+    .ends
+
+LPADDRTRACKINGCONTROL	typedef ptr IAddrTrackingControl
+
+endif
+
+ifndef __IAddrExclusionControl_INTERFACE_DEFINED__
+__IAddrExclusionControl_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IAddrExclusionControl, "00000148-0000-0000-C000-000000000046")
+
+.comdef IAddrExclusionControl
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetCurrentAddrExclusionList proc :REFIID, :ptr ptr
+    UpdateAddrExclusionList proc :ptr IUnknown
+    .ends
+
+LPADDREXCLUSIONCONTROL	typedef ptr IAddrExclusionControl
+
+endif
+
+ifndef __IPipeByte_INTERFACE_DEFINED__
+__IPipeByte_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IPipeByte, "DB2F3ACA-2F86-11d1-8E04-00C04FB9989A")
+
+.comdef IPipeByte
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Pull		proc :ptr BYTE, :ULONG, :ptr ULONG
+    _Push		proc :ptr BYTE, :ULONG
+    .ends
+
+endif
+
+ifndef __AsyncIPipeByte_INTERFACE_DEFINED__
+__AsyncIPipeByte_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(AsyncIPipeByte, "DB2F3ACB-2F86-11d1-8E04-00C04FB9989A")
+
+.comdef AsyncIPipeByte
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Begin_Pull		proc :ULONG
+    Finish_Pull		proc :ptr BYTE, :ptr ULONG
+    Begin_Push		proc :ptr BYTE, :ULONG
+    Finish_Push		proc
+    .ends
+
+endif
+
+ifndef __IPipeLong_INTERFACE_DEFINED__
+__IPipeLong_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IPipeLong, "DB2F3ACC-2F86-11d1-8E04-00C04FB9989A")
+
+.comdef IPipeLong
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Pull		proc :ptr LONG, :ULONG, :ptr ULONG
+    _Push		proc :ptr LONG, :ULONG
+    .ends
+
+endif
+
+ifndef __AsyncIPipeLong_INTERFACE_DEFINED__
+__AsyncIPipeLong_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(AsyncIPipeLong, "DB2F3ACD-2F86-11d1-8E04-00C04FB9989A")
+
+.comdef AsyncIPipeLong
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Begin_Pull		proc :ULONG
+    Finish_Pull		proc :ptr LONG, :ptr ULONG
+    Begin_Push		proc :ptr LONG, :ULONG
+    Finish_Push		proc
+    .ends
+
+endif
+
+ifndef __IPipeDouble_INTERFACE_DEFINED__
+__IPipeDouble_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IPipeDouble, "DB2F3ACE-2F86-11d1-8E04-00C04FB9989A")
+
+.comdef IPipeDouble
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Pull		proc :ptr real8, :ULONG, :ptr ULONG
+    _Push		proc :ptr real8, :ULONG
+    .ends
+
+endif
+
+ifndef __AsyncIPipeDouble_INTERFACE_DEFINED__
+__AsyncIPipeDouble_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(AsyncIPipeDouble, "DB2F3ACF-2F86-11d1-8E04-00C04FB9989A")
+
+.comdef AsyncIPipeDouble
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Begin_Pull		proc :ULONG
+    Finish_Pull		proc :ptr real8, :ptr ULONG
+    Begin_Push		proc :ptr real8, :ptr ULONG
+    Finish_Push		proc
+    .ends
+
+endif
+
+ifndef __IThumbnailExtractor_INTERFACE_DEFINED__
+__IThumbnailExtractor_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IThumbnailExtractor, "969dc708-5c76-11d1-8d86-0000f804b057")
+
+.comdef IThumbnailExtractor
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    ExtractThumbnail	proc :ptr IStorage, :ULONG, :ULONG, :ptr ULONG, :ptr ULONG, :ptr HBITMAP
+    OnFileUpdated	proc :ptr IStorage
+    .ends
+
+endif
+
+ifndef __IDummyHICONIncluder_INTERFACE_DEFINED__
+__IDummyHICONIncluder_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IDummyHICONIncluder, "947990de-cc28-11d2-a0f7-00805f858fb1")
+
+.comdef IDummyHICONIncluder
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Dummy		proc :HICON, :HDC
+    .ends
+
+endif
+
+if defined(USE_COM_CONTEXT_DEF) or defined(BUILDTYPE_COMSVCS) or defined(_OLE32_)
+
+CPFLAGS			typedef DWORD
+
+ContextProperty		STRUC
+policyId		GUID <>
+flags			CPFLAGS ?
+pUnk			LPIUnknown ?
+ContextProperty		ENDS
+
+ifndef __IEnumContextProps_INTERFACE_DEFINED__
+__IEnumContextProps_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IEnumContextProps, "000001c1-0000-0000-C000-000000000046")
+
+.comdef IEnumContextProps
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Next		proc :ULONG, :ptr, :ptr ULONG
+    Skip		proc :ULONG
+    Reset		proc
+    Clone		proc :ptr ptr IEnumContextProps
+    Count		proc :ptr ULONG
+    .ends
+
+LPENUMCONTEXTPROPS	typedef ptr IEnumContextProps
+
+endif
+
+ifndef __IContext_INTERFACE_DEFINED__
+__IContext_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IContext, "000001c0-0000-0000-C000-000000000046")
+
+.comdef IContext
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetProperty		proc :REFGUID, :CPFLAGS, :ptr IUnknown
+    RemoveProperty	proc :REFGUID
+    GetProperty		proc :REFGUID, :ptr CPFLAGS, :ptr ptr IUnknown
+    EnumContextProps	proc :ptr ptr IEnumContextProps
+    .ends
+
+endif
+
+if not defined(BUILDTYPE_COMSVCS) and not defined(_OLE32_)
+
+ifndef __IObjContext_INTERFACE_DEFINED__
+__IObjContext_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IObjContext, "000001c6-0000-0000-C000-000000000046")
+
+.comdef IObjContext
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetProperty		proc :REFGUID, :CPFLAGS, :ptr IUnknown
+    RemoveProperty	proc :REFGUID
+    GetProperty		proc :REFGUID, :ptr CPFLAGS, :ptr ptr IUnknown
+    EnumContextProps	proc :ptr ptr IEnumContextProps
+    Reserved1		proc
+    Reserved2		proc
+    Reserved3		proc
+    Reserved4		proc
+    Reserved5		proc
+    Reserved6		proc
+    Reserved7		proc
+    .ends
+
+endif
+
+endif
+endif
+
+ApplicationType		typedef sdword
+ServerApplication	equ 0
+LibraryApplication	equ ( ServerApplication + 1 )
+
+ShutdownType		typedef sdword
+IdleShutdown		equ 0
+ForcedShutdown		equ ( IdleShutdown + 1 )
+
+ifndef __IProcessLock_INTERFACE_DEFINED__
+__IProcessLock_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IProcessLock, "000001d5-0000-0000-C000-000000000046")
+
+.comdef IProcessLock
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    AddRefOnProcess	proc
+    ReleaseRefOnProcess proc
+    .ends
+
+endif
+
+ifndef __ISurrogateService_INTERFACE_DEFINED__
+__ISurrogateService_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(ISurrogateService, "000001d4-0000-0000-C000-000000000046")
+
+.comdef ISurrogateService
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Init		proc :REFGUID, :ptr IProcessLock, :ptr BOOL
+    ApplicationLaunch	proc :REFGUID, :ptr
+    ApplicationFree	proc :REFGUID
+    CatalogRefresh	proc :ULONG
+    ProcessShutdown	proc :ptr
+    .ends
+
+endif
+
+APTTYPEQUALIFIER	typedef SDWORD
+APTTYPEQUALIFIER_NONE	equ 0
+APTTYPEQUALIFIER_IMPLICIT_MTA equ 1
+APTTYPEQUALIFIER_NA_ON_MTA equ 2
+APTTYPEQUALIFIER_NA_ON_STA equ 3
+APTTYPEQUALIFIER_NA_ON_IMPLICIT_MTA equ 4
+APTTYPEQUALIFIER_NA_ON_MAINSTA	equ 5
+
+APTTYPE			typedef SDWORD
+APTTYPE_CURRENT		equ -1
+APTTYPE_STA		equ 0
+APTTYPE_MTA		equ 1
+APTTYPE_NA		equ 2
+APTTYPE_MAINSTA		equ 3
+
+THDTYPE			typedef SDWORD
+THDTYPE_BLOCKMESSAGES	equ 0
+THDTYPE_PROCESSMESSAGES equ 1
+
+APARTMENTID		typedef DWORD
+
+ifndef __IComThreadingInfo_INTERFACE_DEFINED__
+__IComThreadingInfo_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IComThreadingInfo, "000001ce-0000-0000-C000-000000000046")
+
+.comdef IComThreadingInfo
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetCurrentApartmentType proc :ptr APTTYPE
+    GetCurrentThreadType proc :ptr THDTYPE
+    GetCurrentLogicalThreadId proc :ptr GUID
+    SetCurrentLogicalThreadId proc :REFGUID
+    .ends
+
+endif
+
+ifndef __IProcessInitControl_INTERFACE_DEFINED__
+__IProcessInitControl_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IProcessInitControl, "72380d55-8d2b-43a3-8513-2b6ef31434e9")
+
+.comdef IProcessInitControl
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    ResetInitializerTimeout proc :DWORD
+    .ends
+
+endif
+
+if ( _WIN32_WINNT GE 0x0501 )
+ifndef __IInitializeSpy_INTERFACE_DEFINED__
+__IInitializeSpy_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IInitializeSpy, "00000034-0000-0000-C000-000000000046")
+
+.comdef IInitializeSpy
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    PreInitialize	proc :DWORD, :DWORD
+    PostInitialize	proc :HRESULT, :DWORD, :DWORD
+    PreUninitialize	proc :DWORD
+    PostUninitialize	proc :DWORD
+    .ends
+
+LPINITIALIZESPY		typedef ptr IInitializeSpy
+
+endif
+endif
+
+ifndef __ISynchronizeEvent_INTERFACE_DEFINED__
+__ISynchronizeEvent_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(ISynchronizeEvent, "00000032-0000-0000-C000-000000000046")
+
+.comdef ISynchronizeEvent
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetHandle		proc :ptr
+    SetEventHandle	proc :ptr HANDLE
+    .ends
+
+endif
+
+ifndef __ISynchronizeContainer_INTERFACE_DEFINED__
+__ISynchronizeContainer_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(ISynchronizeContainer, "00000033-0000-0000-C000-000000000046")
+
+.comdef ISynchronizeContainer
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    AddSynchronize	proc :ptr ISynchronize
+    WaitMultiple	proc :DWORD, :DWORD, :ptr ptr ISynchronize
+    .ends
+
 endif
 
 ifndef __IClassAccess_INTERFACE_DEFINED__
@@ -5492,47 +2656,6 @@ externdef		IID_IClassAccess:IID
     GetInstallablePackages proc :DWORD, :ptr
     .ends
 
-;HRESULT
-IClassAccess_GetClassInfo_Proxy proto WINAPI \
-		 pThis: ptr IClassAccess,
-		 clsid: REFCLSID,
-	    QryContext: QUERYCONTEXT,
-	  pPackageInfo: ptr PACKAGEINFO
-
-;void
-IClassAccess_GetClassInfo_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IClassAccess_GetClassSpecInfo_Proxy proto WINAPI \
-		 pThis: ptr IClassAccess,
-	    pClassSpec: ptr uCLSSPEC,
-	    QryContext: QUERYCONTEXT,
-	  pPackageInfo: ptr PACKAGEINFO
-
-;void
-IClassAccess_GetClassSpecInfo_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IClassAccess_GetInstallablePackages_Proxy proto WINAPI \
-		 pThis: ptr IClassAccess,
-		 Count: DWORD,
-	     pInfoList: ptr PUBLISHEDINFOLIST
-
-;void
-IClassAccess_GetInstallablePackages_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
 endif
 
 ifndef __IClassRefresh_INTERFACE_DEFINED__
@@ -5555,33 +2678,6 @@ externdef		IID_IClassRefresh:IID
     CommitUpgrades	proc
     .ends
 
-;HRESULT
-IClassRefresh_GetUpgrades_Proxy proto WINAPI \
-		 pThis: ptr IClassRefresh,
-	      cClasses: ULONG,
-	    pClassList: ptr CLSID,
-	      Platform: CSPLATFORM,
-		Locale: LCID,
-      pPackageInfoList: ptr PACKAGEINFOLIST
-
-;void
-IClassRefresh_GetUpgrades_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IClassRefresh_CommitUpgrades_Proxy proto WINAPI \
-		 pThis: ptr IClassRefresh
-
-;void
-IClassRefresh_CommitUpgrades_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
 endif
 
 CLASSDETAIL		STRUC
@@ -5601,9 +2697,6 @@ CLASSDETAIL		ENDS
 ifndef _LPCSADMNENUM_DEFINED
 _LPCSADMNENUM_DEFINED equ 1
 
-externdef		__MIDL_itf_objidl_0069_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_objidl_0069_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IEnumPackage_INTERFACE_DEFINED__
 __IEnumPackage_INTERFACE_DEFINED__ equ 1
 
@@ -5619,54 +2712,6 @@ externdef		IID_IEnumPackage:IID
     Clone		proc :ptr
     .ends
 
-;HRESULT
-IEnumPackage_Next_Proxy proto WINAPI \
-		 pThis: ptr IEnumPackage,
-		  celt: ULONG,
-		 rgelt: ptr PACKAGEDETAIL,
-	  pceltFetched: LPDWORD
-
-;void
-IEnumPackage_Next_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IEnumPackage_Skip_Proxy proto WINAPI \
-		 pThis: ptr IEnumPackage,
-		  celt: ULONG
-
-;void
-IEnumPackage_Skip_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IEnumPackage_Reset_Proxy proto WINAPI \
-		 pThis: ptr IEnumPackage
-
-;void
-IEnumPackage_Reset_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IEnumPackage_Clone_Proxy proto WINAPI \
-		 pThis: ptr IEnumPackage,
-		ppenum: ptr IEnumPackage
-
-;void
-IEnumPackage_Clone_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 endif
 
 ifndef __IEnumClass_INTERFACE_DEFINED__
@@ -5684,60 +2729,8 @@ externdef		IID_IEnumClass:IID
     Clone		proc :ptr
     .ends
 
-;HRESULT
-IEnumClass_Next_Proxy proto WINAPI \
-		 pThis: ptr IEnumClass,
-		  celt: ULONG,
-		 rgelt: ptr CLASSDETAIL,
-	  pceltFetched: LPDWORD
-
-;void
-IEnumClass_Next_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IEnumClass_Skip_Proxy proto WINAPI \
-		 pThis: ptr IEnumClass,
-		  celt: ULONG
-
-;void
-IEnumClass_Skip_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IEnumClass_Reset_Proxy proto WINAPI \
-		 pThis: ptr IEnumClass
-
-;void
-IEnumClass_Reset_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IEnumClass_Clone_Proxy proto WINAPI \
-		 pThis: ptr IEnumClass,
-		ppenum: ptr IEnumClass
-
-;void
-IEnumClass_Clone_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
 endif
 endif
-
-externdef		__MIDL_itf_objidl_0071_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_objidl_0071_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IClassAdmin_INTERFACE_DEFINED__
 __IClassAdmin_INTERFACE_DEFINED__ equ 1
@@ -5761,155 +2754,7 @@ externdef		IID_IClassAdmin:IID
     GetPackageDetails	proc :LPOLESTR, :ptr
     .ends
 
-;HRESULT
-IClassAdmin_NewClass_Proxy proto WINAPI \
-		 pThis: ptr IClassAdmin,
-	  pClassDetail: ptr CLASSDETAIL
-
-;void
-IClassAdmin_NewClass_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IClassAdmin_DeleteClass_Proxy proto WINAPI \
-		 pThis: ptr IClassAdmin,
-	     guidClsId: REFCLSID
-
-;void
-IClassAdmin_DeleteClass_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IClassAdmin_NewInterface_Proxy proto WINAPI \
-		 pThis: ptr IClassAdmin,
-		   iid: REFIID,
-	       pszDesc: LPOLESTR,
-	       psclsid: REFCLSID,
-	     typelibid: REFCLSID
-
-;void
-IClassAdmin_NewInterface_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IClassAdmin_DeleteInterface_Proxy proto WINAPI \
-		 pThis: ptr IClassAdmin,
-		   iid: REFIID
-
-;void
-IClassAdmin_DeleteInterface_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IClassAdmin_NewPackage_Proxy proto WINAPI \
-		 pThis: ptr IClassAdmin,
-	pPackageDetail: ptr PACKAGEDETAIL
-
-;void
-IClassAdmin_NewPackage_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IClassAdmin_DeletePackage_Proxy proto WINAPI \
-		 pThis: ptr IClassAdmin,
-	pszPackageName: LPOLESTR
-
-;void
-IClassAdmin_DeletePackage_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IClassAdmin_GetClassesEnum_Proxy proto WINAPI \
-		 pThis: ptr IClassAdmin,
-	  ppIEnumClass: ptr IEnumClass
-
-;void
-IClassAdmin_GetClassesEnum_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IClassAdmin_GetPackagesEnum_Proxy proto WINAPI \
-		 pThis: ptr IClassAdmin,
-	     guidClsid: REFCLSID,
-	     pszVendor: LPOLESTR,
-	      Platform: CSPLATFORM,
-	     dwContext: DWORD,
-		Locale: LCID,
-	ppIEnumPackage: ptr IEnumPackage
-
-;void
-IClassAdmin_GetPackagesEnum_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IClassAdmin_GetClassDetails_Proxy proto WINAPI \
-		 pThis: ptr IClassAdmin,
-	     guidClsId: REFCLSID,
-	  pClassDetail: ptr CLASSDETAIL
-
-;void
-IClassAdmin_GetClassDetails_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IClassAdmin_GetIidDetails_Proxy proto WINAPI \
-		 pThis: ptr IClassAdmin,
-		   iid: REFIID,
-	      ppszDesc: ptr LPOLESTR,
-	       psClsid: ptr CLSID,
-	    pTypeLibId: ptr CLSID
-
-;void
-IClassAdmin_GetIidDetails_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IClassAdmin_GetPackageDetails_Proxy proto WINAPI \
-		 pThis: ptr IClassAdmin,
-	pszPackageName: LPOLESTR,
-	pPackageDetail: ptr PACKAGEDETAIL
-
-;void
-IClassAdmin_GetPackageDetails_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
 endif
-
-externdef		__MIDL_itf_objidl_0072_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_objidl_0072_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ;DWORD
 ASYNC_STGMEDIUM_UserSize proto WINAPI \
@@ -6030,468 +2875,5 @@ STGMEDIUM_UserUnmarshal proto WINAPI \
 STGMEDIUM_UserFree proto WINAPI \
 		      : LPDWORD,
 		      : ptr STGMEDIUM
-
-;HRESULT
-IEnumUnknown_Next_Proxy proto WINAPI \
-		 pThis: ptr IEnumUnknown,
-		  celt: ULONG,
-		 rgelt: ptr IUnknown,
-	  pceltFetched: LPDWORD
-
-
-;HRESULT
-IEnumUnknown_Next_Stub proto WINAPI \
-		 pThis: ptr IEnumUnknown,
-		  celt: ULONG,
-		 rgelt: ptr IUnknown,
-	  pceltFetched: LPDWORD
-
-;HRESULT
-IBindCtx_SetBindOptions_Proxy proto WINAPI \
-		 pThis: ptr IBindCtx,
-	     pbindopts: ptr BIND_OPTS
-
-
-;HRESULT
-IBindCtx_SetBindOptions_Stub proto WINAPI \
-		 pThis: ptr IBindCtx,
-	     pbindopts: ptr BIND_OPTS2
-
-;HRESULT
-IBindCtx_GetBindOptions_Proxy proto WINAPI \
-		 pThis: ptr IBindCtx,
-	     pbindopts: ptr BIND_OPTS
-
-
-;HRESULT
-IBindCtx_GetBindOptions_Stub proto WINAPI \
-		 pThis: ptr IBindCtx,
-	     pbindopts: ptr BIND_OPTS2
-
-;HRESULT
-IEnumMoniker_Next_Proxy proto WINAPI \
-		 pThis: ptr IEnumMoniker,
-		  celt: ULONG,
-		 rgelt: ptr IMoniker,
-	  pceltFetched: LPDWORD
-
-
-;HRESULT
-IEnumMoniker_Next_Stub proto WINAPI \
-		 pThis: ptr IEnumMoniker,
-		  celt: ULONG,
-		 rgelt: ptr IMoniker,
-	  pceltFetched: LPDWORD
-
-;BOOL
-IRunnableObject_IsRunning_Proxy proto WINAPI \
-		 pThis: ptr IRunnableObject
-
-
-;HRESULT
-IRunnableObject_IsRunning_Stub proto WINAPI \
-		 pThis: ptr IRunnableObject
-
-;HRESULT
-IMoniker_BindToObject_Proxy proto WINAPI \
-		 pThis: ptr IMoniker,
-		   pbc: ptr IBindCtx,
-	     pmkToLeft: ptr IMoniker,
-	    riidResult: REFIID,
-	     ppvResult: PVOID
-
-
-;HRESULT
-IMoniker_BindToObject_Stub proto WINAPI \
-		 pThis: ptr IMoniker,
-		   pbc: ptr IBindCtx,
-	     pmkToLeft: ptr IMoniker,
-	    riidResult: REFIID,
-	     ppvResult: ptr IUnknown
-
-;HRESULT
-IMoniker_BindToStorage_Proxy proto WINAPI \
-		 pThis: ptr IMoniker,
-		   pbc: ptr IBindCtx,
-	     pmkToLeft: ptr IMoniker,
-		  riid: REFIID,
-		ppvObj: PVOID
-
-
-;HRESULT
-IMoniker_BindToStorage_Stub proto WINAPI \
-		 pThis: ptr IMoniker,
-		   pbc: ptr IBindCtx,
-	     pmkToLeft: ptr IMoniker,
-		  riid: REFIID,
-		ppvObj: ptr IUnknown
-
-;HRESULT
-IEnumString_Next_Proxy proto WINAPI \
-		 pThis: ptr IEnumString,
-		  celt: ULONG,
-		 rgelt: ptr LPOLESTR,
-	  pceltFetched: LPDWORD
-
-
-;HRESULT
-IEnumString_Next_Stub proto WINAPI \
-		 pThis: ptr IEnumString,
-		  celt: ULONG,
-		 rgelt: ptr LPOLESTR,
-	  pceltFetched: LPDWORD
-
-;HRESULT
-ISequentialStream_Read_Proxy proto WINAPI \
-		 pThis: ptr ISequentialStream,
-		    pv: PVOID,
-		    cb: ULONG,
-	       pcbRead: LPDWORD
-
-
-;HRESULT
-ISequentialStream_Read_Stub proto WINAPI \
-		 pThis: ptr ISequentialStream,
-		    pv: LPBYTE,
-		    cb: ULONG,
-	       pcbRead: LPDWORD
-
-;HRESULT
-ISequentialStream_Write_Proxy proto WINAPI \
-		 pThis: ptr ISequentialStream,
-		    pv: PVOID,
-		    cb: ULONG,
-	    pcbWritten: LPDWORD
-
-
-;HRESULT
-ISequentialStream_Write_Stub proto WINAPI \
-		 pThis: ptr ISequentialStream,
-		    pv: LPBYTE,
-		    cb: ULONG,
-	    pcbWritten: LPDWORD
-
-;HRESULT
-IStream_Seek_Proxy proto WINAPI \
-		 pThis: ptr IStream,
-	      dlibMove: LARGE_INTEGER,
-	      dwOrigin: DWORD,
-       plibNewPosition: ptr ULARGE_INTEGER
-
-
-;HRESULT
-IStream_Seek_Stub proto WINAPI \
-		 pThis: ptr IStream,
-	      dlibMove: LARGE_INTEGER,
-	      dwOrigin: DWORD,
-       plibNewPosition: ptr ULARGE_INTEGER
-
-;HRESULT
-IStream_CopyTo_Proxy proto WINAPI \
-		 pThis: ptr IStream,
-		  pstm: ptr IStream,
-		    cb: ULARGE_INTEGER,
-	       pcbRead: ptr ULARGE_INTEGER,
-	    pcbWritten: ptr ULARGE_INTEGER
-
-
-;HRESULT
-IStream_CopyTo_Stub proto WINAPI \
-		 pThis: ptr IStream,
-		  pstm: ptr IStream,
-		    cb: ULARGE_INTEGER,
-	       pcbRead: ptr ULARGE_INTEGER,
-	    pcbWritten: ptr ULARGE_INTEGER
-
-;HRESULT
-IEnumSTATSTG_Next_Proxy proto WINAPI \
-		 pThis: ptr IEnumSTATSTG,
-		  celt: ULONG,
-		 rgelt: ptr STATSTG,
-	  pceltFetched: LPDWORD
-
-
-;HRESULT
-IEnumSTATSTG_Next_Stub proto WINAPI \
-		 pThis: ptr IEnumSTATSTG,
-		  celt: ULONG,
-		 rgelt: ptr STATSTG,
-	  pceltFetched: LPDWORD
-
-;HRESULT
-IStorage_OpenStream_Proxy proto WINAPI \
-		 pThis: ptr IStorage,
-	      pwcsName: ptr OLECHAR,
-	     reserved1: PVOID,
-	       grfMode: DWORD,
-	     reserved2: DWORD,
-		 ppstm: ptr IStream
-
-
-;HRESULT
-IStorage_OpenStream_Stub proto WINAPI \
-		 pThis: ptr IStorage,
-	      pwcsName: ptr OLECHAR,
-	   cbReserved1: DWORD,
-	     reserved1: LPBYTE,
-	       grfMode: DWORD,
-	     reserved2: DWORD,
-		 ppstm: ptr IStream
-
-;HRESULT
-IStorage_EnumElements_Proxy proto WINAPI \
-		 pThis: ptr IStorage,
-	     reserved1: DWORD,
-	     reserved2: PVOID,
-	     reserved3: DWORD,
-		ppenum: ptr IEnumSTATSTG
-
-
-;HRESULT
-IStorage_EnumElements_Stub proto WINAPI \
-		 pThis: ptr IStorage,
-	     reserved1: DWORD,
-	   cbReserved2: DWORD,
-	     reserved2: LPBYTE,
-	     reserved3: DWORD,
-		ppenum: ptr IEnumSTATSTG
-
-;HRESULT
-ILockBytes_ReadAt_Proxy proto WINAPI \
-		 pThis: ptr ILockBytes,
-	      ulOffset: ULARGE_INTEGER,
-		    pv: PVOID,
-		    cb: ULONG,
-	       pcbRead: LPDWORD
-
-
-;HRESULT
-ILockBytes_ReadAt_Stub proto WINAPI \
-		 pThis: ptr ILockBytes,
-	      ulOffset: ULARGE_INTEGER,
-		    pv: LPBYTE,
-		    cb: ULONG,
-	       pcbRead: LPDWORD
-
-;HRESULT
-ILockBytes_WriteAt_Proxy proto WINAPI \
-		 pThis: ptr ILockBytes,
-	      ulOffset: ULARGE_INTEGER,
-		    pv: PVOID,
-		    cb: ULONG,
-	    pcbWritten: LPDWORD
-
-
-;HRESULT
-ILockBytes_WriteAt_Stub proto WINAPI \
-		 pThis: ptr ILockBytes,
-	      ulOffset: ULARGE_INTEGER,
-		    pv: LPBYTE,
-		    cb: ULONG,
-	    pcbWritten: LPDWORD
-
-;HRESULT
-IEnumFORMATETC_Next_Proxy proto WINAPI \
-		 pThis: ptr IEnumFORMATETC,
-		  celt: ULONG,
-		 rgelt: ptr FORMATETC,
-	  pceltFetched: LPDWORD
-
-
-;HRESULT
-IEnumFORMATETC_Next_Stub proto WINAPI \
-		 pThis: ptr IEnumFORMATETC,
-		  celt: ULONG,
-		 rgelt: ptr FORMATETC,
-	  pceltFetched: LPDWORD
-
-;HRESULT
-IEnumSTATDATA_Next_Proxy proto WINAPI \
-		 pThis: ptr IEnumSTATDATA,
-		  celt: ULONG,
-		 rgelt: ptr STATDATA,
-	  pceltFetched: LPDWORD
-
-
-;HRESULT
-IEnumSTATDATA_Next_Stub proto WINAPI \
-		 pThis: ptr IEnumSTATDATA,
-		  celt: ULONG,
-		 rgelt: ptr STATDATA,
-	  pceltFetched: LPDWORD
-
-;void
-IAdviseSink_OnDataChange_Proxy proto WINAPI \
-		 pThis: ptr IAdviseSink,
-	    pFormatetc: ptr FORMATETC,
-	       pStgmed: ptr STGMEDIUM
-
-
-;HRESULT
-IAdviseSink_OnDataChange_Stub proto WINAPI \
-		 pThis: ptr IAdviseSink,
-		 ppIAM: ptr IAsyncManager,
-	    pFormatetc: ptr FORMATETC,
-	       pStgmed: ptr ASYNC_STGMEDIUM
-
-;void
-IAdviseSink_OnViewChange_Proxy proto WINAPI \
-		 pThis: ptr IAdviseSink,
-	      dwAspect: DWORD,
-		lindex: LONG
-
-
-;HRESULT
-IAdviseSink_OnViewChange_Stub proto WINAPI \
-		 pThis: ptr IAdviseSink,
-		 ppIAM: ptr IAsyncManager,
-	      dwAspect: DWORD,
-		lindex: LONG
-
-;void
-IAdviseSink_OnRename_Proxy proto WINAPI \
-		 pThis: ptr IAdviseSink,
-		   pmk: ptr IMoniker
-
-
-;HRESULT
-IAdviseSink_OnRename_Stub proto WINAPI \
-		 pThis: ptr IAdviseSink,
-		 ppIAM: ptr IAsyncManager,
-		   pmk: ptr IMoniker
-
-;void
-IAdviseSink_OnSave_Proxy proto WINAPI \
-		 pThis: ptr IAdviseSink
-
-
-;HRESULT
-IAdviseSink_OnSave_Stub proto WINAPI \
-		 pThis: ptr IAdviseSink,
-		 ppIAM: ptr IAsyncManager
-
-;void
-IAdviseSink_OnClose_Proxy proto WINAPI \
-		 pThis: ptr IAdviseSink
-
-
-;HRESULT
-IAdviseSink_OnClose_Stub proto WINAPI \
-		 pThis: ptr IAdviseSink
-
-;void
-IAdviseSink2_OnLinkSrcChange_Proxy proto WINAPI \
-		 pThis: ptr IAdviseSink2,
-		   pmk: ptr IMoniker
-
-
-;HRESULT
-IAdviseSink2_OnLinkSrcChange_Stub proto WINAPI \
-		 pThis: ptr IAdviseSink2,
-		 ppIAM: ptr IAsyncManager,
-		   pmk: ptr IMoniker
-
-;HRESULT
-IDataObject_GetData_Proxy proto WINAPI \
-		 pThis: ptr IDataObject,
-	  pformatetcIn: ptr FORMATETC,
-	       pmedium: ptr STGMEDIUM
-
-
-;HRESULT
-IDataObject_GetData_Stub proto WINAPI \
-		 pThis: ptr IDataObject,
-	  pformatetcIn: ptr FORMATETC,
-	 pRemoteMedium: ptr STGMEDIUM
-
-;HRESULT
-IDataObject_GetDataHere_Proxy proto WINAPI \
-		 pThis: ptr IDataObject,
-	    pformatetc: ptr FORMATETC,
-	       pmedium: ptr STGMEDIUM
-
-
-;HRESULT
-IDataObject_GetDataHere_Stub proto WINAPI \
-		 pThis: ptr IDataObject,
-	    pformatetc: ptr FORMATETC,
-	 pRemoteMedium: ptr STGMEDIUM
-
-;HRESULT
-IDataObject_SetData_Proxy proto WINAPI \
-		 pThis: ptr IDataObject,
-	    pformatetc: ptr FORMATETC,
-	       pmedium: ptr STGMEDIUM,
-	      fRelease: BOOL
-
-
-;HRESULT
-IDataObject_SetData_Stub proto WINAPI \
-		 pThis: ptr IDataObject,
-	    pformatetc: ptr FORMATETC,
-	       pmedium: ptr FLAG_STGMEDIUM,
-	      fRelease: BOOL
-
-;HRESULT
-IEnumSTATPROPSTG_Next_Proxy proto WINAPI \
-		 pThis: ptr IEnumSTATPROPSTG,
-		  celt: ULONG,
-		 rgelt: ptr STATPROPSTG,
-	  pceltFetched: LPDWORD
-
-
-;HRESULT
-IEnumSTATPROPSTG_Next_Stub proto WINAPI \
-		 pThis: ptr IEnumSTATPROPSTG,
-		  celt: ULONG,
-		 rgelt: ptr STATPROPSTG,
-	  pceltFetched: LPDWORD
-
-;HRESULT
-IEnumSTATPROPSETSTG_Next_Proxy proto WINAPI \
-		 pThis: ptr IEnumSTATPROPSETSTG,
-		  celt: ULONG,
-		 rgelt: ptr STATPROPSETSTG,
-	  pceltFetched: LPDWORD
-
-
-;HRESULT
-IEnumSTATPROPSETSTG_Next_Stub proto WINAPI \
-		 pThis: ptr IEnumSTATPROPSETSTG,
-		  celt: ULONG,
-		 rgelt: ptr STATPROPSETSTG,
-	  pceltFetched: LPDWORD
-
-;HRESULT
-IFillLockBytes_FillAppend_Proxy proto WINAPI \
-		 pThis: ptr IFillLockBytes,
-		    pv: PVOID,
-		    cb: ULONG,
-	    pcbWritten: LPDWORD
-
-
-;HRESULT
-IFillLockBytes_FillAppend_Stub proto WINAPI \
-		 pThis: ptr IFillLockBytes,
-		    pv: LPBYTE,
-		    cb: ULONG,
-	    pcbWritten: LPDWORD
-
-;HRESULT
-IFillLockBytes_FillAt_Proxy proto WINAPI \
-		 pThis: ptr IFillLockBytes,
-	      ulOffset: ULARGE_INTEGER,
-		    pv: PVOID,
-		    cb: ULONG,
-	    pcbWritten: LPDWORD
-
-
-;HRESULT
-IFillLockBytes_FillAt_Stub proto WINAPI \
-		 pThis: ptr IFillLockBytes,
-	      ulOffset: ULARGE_INTEGER,
-		    pv: LPBYTE,
-		    cb: ULONG,
-	    pcbWritten: LPDWORD
 
 endif

@@ -99,6 +99,8 @@ ifndef __PE__
 includelib uuid.lib
 endif
 
+ifndef DEFINE_GUIDS
+
 DEFINE_GUIDS macro id, x
     DEFINE_GUID(id, \
 	@CatStr(<0x>, @SubStr(x, 2,8)), \
@@ -130,6 +132,8 @@ DEFINE_IIDX macro name, x
 	@CatStr(<0x>, @SubStr(x,36,2)))
 	exitm<>
 	endm
+
+endif
 
 externdef GUID_NULL:GUID
 

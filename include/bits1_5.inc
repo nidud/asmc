@@ -127,7 +127,4 @@ endif
 
 include bits2_0.inc
 
-externdef __MIDL_itf_bits1_5_0000_0001_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef __MIDL_itf_bits1_5_0000_0001_v0_0_s_ifspec:RPC_IF_HANDLE
-
 endif

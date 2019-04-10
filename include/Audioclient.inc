@@ -76,12 +76,9 @@ AUDCLNT_BUFFERFLAGS_SILENT equ 0x2
 AUDCLNT_BUFFERFLAGS_TIMESTAMP_ERROR equ 0x4
 
 
-externdef		__MIDL_itf_audioclient_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_audioclient_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IAudioClient_INTERFACE_DEFINED__
 __IAudioClient_INTERFACE_DEFINED__ equ 1
-externdef		IID_IAudioClient:IID
+DEFINE_IIDX(IAudioClient, "1CB9AD4C-DBFA-4c32-B178-C2F568A703B2")
 
 .comdef IAudioClient
 
@@ -105,7 +102,7 @@ endif
 
 ifndef __IAudioRenderClient_INTERFACE_DEFINED__
 __IAudioRenderClient_INTERFACE_DEFINED__ equ 1
-externdef		IID_IAudioRenderClient:IID
+DEFINE_IIDX(IAudioRenderClient, "F294ACFC-3146-4483-A7BF-ADDCA7C260E2")
 
 .comdef IAudioRenderClient
 
@@ -119,7 +116,7 @@ endif	;; __IAudioRenderClient_INTERFACE_DEFINED__
 
 ifndef __IAudioCaptureClient_INTERFACE_DEFINED__
 __IAudioCaptureClient_INTERFACE_DEFINED__ equ 1
-externdef		IID_IAudioCaptureClient:IID
+DEFINE_IIDX(IAudioCaptureClient, "C8ADBD64-E71E-48a0-A4DE-185C395CD317")
 
 .comdef IAudioCaptureClient
 
@@ -134,12 +131,9 @@ endif
 
 AUDIOCLOCK_CHARACTERISTIC_FIXED_FREQ equ 0x00000001
 
-externdef		__MIDL_itf_audioclient_0000_0003_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_audioclient_0000_0003_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IAudioClock_INTERFACE_DEFINED__
 __IAudioClock_INTERFACE_DEFINED__ equ 1
-externdef		IID_IAudioClock:IID
+DEFINE_IIDX(IAudioClock, "CD63314F-3FBA-4a1b-812C-EF96358728E7")
 
 .comdef IAudioClock
 
@@ -154,7 +148,7 @@ endif
 
 ifndef __IAudioClock2_INTERFACE_DEFINED__
 __IAudioClock2_INTERFACE_DEFINED__ equ 1
-externdef		IID_IAudioClock2:IID
+DEFINE_IIDX(IAudioClock2, "6f49ff73-6727-49ac-a008-d98cf5e70048")
 
 .comdef IAudioClock2
 
@@ -167,7 +161,7 @@ endif
 
 ifndef __IAudioClockAdjustment_INTERFACE_DEFINED__
 __IAudioClockAdjustment_INTERFACE_DEFINED__ equ 1
-externdef		IID_IAudioClockAdjustment:IID
+DEFINE_IIDX(IAudioClockAdjustment, "f6e4c0a0-46d9-4fb8-be21-57a3ef2b626c")
 
 .comdef IAudioClockAdjustment
 
@@ -180,7 +174,7 @@ endif
 
 ifndef __ISimpleAudioVolume_INTERFACE_DEFINED__
 __ISimpleAudioVolume_INTERFACE_DEFINED__ equ 1
-externdef		IID_ISimpleAudioVolume:IID
+DEFINE_IIDX(ISimpleAudioVolume, "87CE5498-68D6-44E5-9215-6DA47EF883D8")
 
 .comdef ISimpleAudioVolume
 
@@ -196,7 +190,7 @@ endif
 
 ifndef __IAudioStreamVolume_INTERFACE_DEFINED__
 __IAudioStreamVolume_INTERFACE_DEFINED__ equ 1
-externdef		IID_IAudioStreamVolume:IID
+DEFINE_IIDX(IAudioStreamVolume, "93014887-242D-4068-8A15-CF5E93B90FE3")
 
 .comdef IAudioStreamVolume
 
@@ -213,7 +207,7 @@ endif
 
 ifndef __IChannelAudioVolume_INTERFACE_DEFINED__
 __IChannelAudioVolume_INTERFACE_DEFINED__ equ 1
-externdef		IID_IChannelAudioVolume:IID
+DEFINE_IIDX(IChannelAudioVolume, "1C158861-B533-4B30-B1CF-E853E51C59B8")
 
 .comdef IChannelAudioVolume
 
@@ -263,9 +257,6 @@ AUDCLNT_E_INVALID_DEVICE_PERIOD equ AUDCLNT_ERR(0x020)
 AUDCLNT_S_BUFFER_EMPTY	equ AUDCLNT_SUCCESS(0x001)
 AUDCLNT_S_THREAD_ALREADY_REGISTERED equ AUDCLNT_SUCCESS(0x002)
 AUDCLNT_S_POSITION_STALLED equ AUDCLNT_SUCCESS(0x003)
-
-externdef __MIDL_itf_audioclient_0000_0009_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef __MIDL_itf_audioclient_0000_0009_v0_0_s_ifspec:RPC_IF_HANDLE
 
 endif
 .pragma list(pop)

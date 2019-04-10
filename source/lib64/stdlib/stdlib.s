@@ -61,6 +61,9 @@ UINT128_MAX equ ((2 * INT128_MAX) + 1)
     .assert( _atoi128("340282366920938463463374607431768211455") == -1 && rdx == -1 )
 
     qsort (&A, 10, 4, &compare)
+    .assert( A == 0 )
+    lea rbx,A
+    .assert( bsearch(&B, rbx, 10, 4, &compare) == rbx )
 
     xor eax,eax
     lea rsi,A

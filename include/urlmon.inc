@@ -10,111 +10,84 @@ __urlmon_h__ equ <>
 ifndef __IPersistMoniker_FWD_DEFINED__
 __IPersistMoniker_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IBindProtocol_FWD_DEFINED__
 __IBindProtocol_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IBinding_FWD_DEFINED__
 __IBinding_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IBindStatusCallback_FWD_DEFINED__
 __IBindStatusCallback_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IAuthenticate_FWD_DEFINED__
 __IAuthenticate_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IHttpNegotiate_FWD_DEFINED__
 __IHttpNegotiate_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IWindowForBindingUI_FWD_DEFINED__
 __IWindowForBindingUI_FWD_DEFINED__ equ 1
 endif
-
 ifndef __ICodeInstall_FWD_DEFINED__
 __ICodeInstall_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IWinInetInfo_FWD_DEFINED__
 __IWinInetInfo_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IHttpSecurity_FWD_DEFINED__
 __IHttpSecurity_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IWinInetHttpInfo_FWD_DEFINED__
 __IWinInetHttpInfo_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IBindHost_FWD_DEFINED__
 __IBindHost_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IInternet_FWD_DEFINED__
 __IInternet_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IInternetBindInfo_FWD_DEFINED__
 __IInternetBindInfo_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IInternetProtocolRoot_FWD_DEFINED__
 __IInternetProtocolRoot_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IInternetProtocol_FWD_DEFINED__
 __IInternetProtocol_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IInternetProtocolSink_FWD_DEFINED__
 __IInternetProtocolSink_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IInternetSession_FWD_DEFINED__
 __IInternetSession_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IInternetThreadSwitch_FWD_DEFINED__
 __IInternetThreadSwitch_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IInternetPriority_FWD_DEFINED__
 __IInternetPriority_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IInternetProtocolInfo_FWD_DEFINED__
 __IInternetProtocolInfo_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IInternetSecurityMgrSite_FWD_DEFINED__
 __IInternetSecurityMgrSite_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IInternetSecurityManager_FWD_DEFINED__
 __IInternetSecurityManager_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IInternetHostSecurityManager_FWD_DEFINED__
 __IInternetHostSecurityManager_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IInternetZoneManager_FWD_DEFINED__
 __IInternetZoneManager_FWD_DEFINED__ equ 1
 endif
-
 ifndef __ISoftDistExt_FWD_DEFINED__
 __ISoftDistExt_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IDataFilter_FWD_DEFINED__
 __IDataFilter_FWD_DEFINED__ equ 1
 endif
-
 ifndef __IEncodingFilterFactory_FWD_DEFINED__
 __IEncodingFilterFactory_FWD_DEFINED__ equ 1
 endif
@@ -124,12 +97,8 @@ include oleidl.inc
 include servprov.inc
 include msxml.inc
 
-;void *
-MIDL_user_allocate proto WINAPI :size_t
-;void
-MIDL_user_free proto WINAPI :PVOID
-
-
+MIDL_user_allocate	proto WINAPI :size_t
+MIDL_user_free		proto WINAPI :PVOID
 
 BINDF_DONTUSECACHE	equ <BINDF_GETNEWESTVERSION>
 BINDF_DONTPUTINCACHE	equ <BINDF_NOWRITECACHE>
@@ -386,11 +355,10 @@ INET_E_ERROR_LAST	equ INET_E_REDIRECT_TO_DIR
 ifndef _LPPERSISTMONIKER_DEFINED
 _LPPERSISTMONIKER_DEFINED equ 1
 
-externdef		__MIDL_itf_urlmon_0000_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_urlmon_0000_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IPersistMoniker_INTERFACE_DEFINED__
 __IPersistMoniker_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IPersistMoniker, "79eac9c9-baf9-11ce-8c82-00aa004ba90b")
 
 .comdef IPersistMoniker
     QueryInterface	proc :REFIID, :ptr
@@ -403,97 +371,19 @@ __IPersistMoniker_INTERFACE_DEFINED__ equ 1
     SaveCompleted	proc :ptr, :LPBC
     GetCurMoniker	proc :ptr
     .ends
+
 LPPERSISTMONIKER	typedef ptr IPersistMoniker
-externdef		IID_IPersistMoniker:IID
 
-;HRESULT
-IPersistMoniker_GetClassID_Proxy proto WINAPI \
-		 pThis: ptr IPersistMoniker,
-	      pClassID: ptr CLSID
-
-;void
-IPersistMoniker_GetClassID_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IPersistMoniker_IsDirty_Proxy proto WINAPI \
-		 pThis: ptr IPersistMoniker
-
-;void
-IPersistMoniker_IsDirty_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IPersistMoniker_Load_Proxy proto WINAPI \
-		 pThis: ptr IPersistMoniker,
-       fFullyAvailable: BOOL,
-	      pimkName: ptr IMoniker,
-		  pibc: LPBC,
-	       grfMode: DWORD
-
-;void
-IPersistMoniker_Load_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IPersistMoniker_Save_Proxy proto WINAPI \
-		 pThis: ptr IPersistMoniker,
-	      pimkName: ptr IMoniker,
-		   pbc: LPBC,
-	     fRemember: BOOL
-
-;void
-IPersistMoniker_Save_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IPersistMoniker_SaveCompleted_Proxy proto WINAPI \
-		 pThis: ptr IPersistMoniker,
-	      pimkName: ptr IMoniker,
-		  pibc: LPBC
-
-;void
-IPersistMoniker_SaveCompleted_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IPersistMoniker_GetCurMoniker_Proxy proto WINAPI \
-		 pThis: ptr IPersistMoniker,
-	     ppimkName: ptr ptr IMoniker
-
-;void
-IPersistMoniker_GetCurMoniker_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 endif
 
 endif
 ifndef _LPBINDPROTOCOL_DEFINED
 _LPBINDPROTOCOL_DEFINED equ 1
 
-
-externdef		__MIDL_itf_urlmon_0111_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_urlmon_0111_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IBindProtocol_INTERFACE_DEFINED__
 __IBindProtocol_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IBindProtocol, "79eac9cd-baf9-11ce-8c82-00aa004ba90b")
 
 .comdef IBindProtocol
     QueryInterface	proc :REFIID, :ptr
@@ -501,33 +391,18 @@ __IBindProtocol_INTERFACE_DEFINED__ equ 1
     Release		proc
     CreateBinding	proc :LPCWSTR, :ptr, :ptr
     .ends
+
 LPBINDPROTOCOL		typedef ptr IBindProtocol
-externdef		IID_IBindProtocol:IID
 
-;HRESULT
-IBindProtocol_CreateBinding_Proxy proto WINAPI \
-		 pThis: ptr IBindProtocol,
-		 szUrl: LPCWSTR,
-		   pbc: ptr IBindCtx,
-		   ppb: ptr IBinding
-
-;void
-IBindProtocol_CreateBinding_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 endif
 endif
 ifndef _LPBINDING_DEFINED
 _LPBINDING_DEFINED equ 1
 
-
-externdef		__MIDL_itf_urlmon_0112_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_urlmon_0112_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IBinding_INTERFACE_DEFINED__
 __IBinding_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IBinding, "79eac9c0-baf9-11ce-8c82-00aa004ba90b")
 
 .comdef IBinding
     QueryInterface	proc :REFIID, :ptr
@@ -540,93 +415,16 @@ __IBinding_INTERFACE_DEFINED__ equ 1
     GetPriority		proc :ptr
     GetBindResult	proc :ptr, :ptr, :ptr, :DWORD
     .ends
+
 LPBINDING		typedef ptr IBinding
-externdef		IID_IBinding:IID
 
-;HRESULT
-IBinding_Abort_Proxy proto WINAPI \
-		 pThis: ptr IBinding
-
-;void
-IBinding_Abort_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IBinding_Suspend_Proxy proto WINAPI \
-		 pThis: ptr IBinding
-
-;void
-IBinding_Suspend_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IBinding_Resume_Proxy proto WINAPI \
-		 pThis: ptr IBinding
-
-;void
-IBinding_Resume_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IBinding_SetPriority_Proxy proto WINAPI \
-		 pThis: ptr IBinding,
-	     nPriority: LONG
-
-;void
-IBinding_SetPriority_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IBinding_GetPriority_Proxy proto WINAPI \
-		 pThis: ptr IBinding,
-	    pnPriority: ptr LONG
-
-;void
-IBinding_GetPriority_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IBinding_RemoteGetBindResult_Proxy proto WINAPI \
-		 pThis: ptr IBinding,
-	pclsidProtocol: ptr CLSID,
-	     pdwResult: LPDWORD,
-	     pszResult: ptr LPOLESTR,
-	    dwReserved: DWORD
-
-;void
-IBinding_RemoteGetBindResult_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 endif
 endif
 ifndef _LPBINDSTATUSCALLBACK_DEFINED
 _LPBINDSTATUSCALLBACK_DEFINED equ 1
 
-
-externdef		__MIDL_itf_urlmon_0113_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_urlmon_0113_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IBindStatusCallback_INTERFACE_DEFINED__
 __IBindStatusCallback_INTERFACE_DEFINED__ equ 1
-
-LPBINDSTATUSCALLBACK	typedef ptr IBindStatusCallback
 
 ;typedef enum __MIDL_IBindStatusCallback_0001
 
@@ -747,7 +545,7 @@ BINDSTATUS_CLASSINSTALLLOCATION equ BINDSTATUS_VERIFIEDMIMETYPEAVAILABLE + 1
 BINDSTATUS_DECODING	equ BINDSTATUS_CLASSINSTALLLOCATION + 1
 BINDSTATUS_LOADINGMIMEHANDLER equ BINDSTATUS_DECODING + 1
 
-externdef		IID_IBindStatusCallback:IID
+DEFINE_IIDX(IBindStatusCallback, "79eac9c1-baf9-11ce-8c82-00aa004ba90b")
 
 .comdef IBindStatusCallback
     QueryInterface	proc :REFIID, :ptr
@@ -763,122 +561,17 @@ externdef		IID_IBindStatusCallback:IID
     OnObjectAvailable	proc :REFIID, :ptr
     .ends
 
-;HRESULT
-IBindStatusCallback_OnStartBinding_Proxy proto WINAPI \
-		 pThis: ptr IBindStatusCallback,
-	    dwReserved: DWORD,
-		   pib: ptr IBinding
+LPBINDSTATUSCALLBACK	typedef ptr IBindStatusCallback
 
-;void
-IBindStatusCallback_OnStartBinding_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IBindStatusCallback_GetPriority_Proxy proto WINAPI \
-		 pThis: ptr IBindStatusCallback,
-	    pnPriority: ptr LONG
-
-;void
-IBindStatusCallback_GetPriority_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IBindStatusCallback_OnLowResource_Proxy proto WINAPI \
-		 pThis: ptr IBindStatusCallback,
-	      reserved: DWORD
-
-;void
-IBindStatusCallback_OnLowResource_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IBindStatusCallback_OnProgress_Proxy proto WINAPI \
-		 pThis: ptr IBindStatusCallback,
-	    ulProgress: ULONG,
-	 ulProgressMax: ULONG,
-	  ulStatusCode: ULONG,
-	  szStatusText: LPCWSTR
-
-;void
-IBindStatusCallback_OnProgress_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IBindStatusCallback_OnStopBinding_Proxy proto WINAPI \
-		 pThis: ptr IBindStatusCallback,
-	       hresult: HRESULT,
-	       szError: LPCWSTR
-
-;void
-IBindStatusCallback_OnStopBinding_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IBindStatusCallback_RemoteGetBindInfo_Proxy proto WINAPI \
-		 pThis: ptr IBindStatusCallback,
-	      grfBINDF: LPDWORD,
-	     pbindinfo: ptr RemBINDINFO,
-	       pstgmed: ptr RemSTGMEDIUM
-
-;void
-IBindStatusCallback_RemoteGetBindInfo_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IBindStatusCallback_RemoteOnDataAvailable_Proxy proto WINAPI \
-		 pThis: ptr IBindStatusCallback,
-	       grfBSCF: DWORD,
-		dwSize: DWORD,
-	    pformatetc: ptr RemFORMATETC,
-	       pstgmed: ptr RemSTGMEDIUM
-
-;void
-IBindStatusCallback_RemoteOnDataAvailable_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IBindStatusCallback_OnObjectAvailable_Proxy proto WINAPI \
-		 pThis: ptr IBindStatusCallback,
-		  riid: REFIID,
-		  punk: ptr IUnknown
-
-;void
-IBindStatusCallback_OnObjectAvailable_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 endif
 endif
 ifndef _LPAUTHENTICATION_DEFINED
 _LPAUTHENTICATION_DEFINED equ 1
 
-externdef		__MIDL_itf_urlmon_0114_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_urlmon_0114_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IAuthenticate_INTERFACE_DEFINED__
 __IAuthenticate_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IAuthenticate, "79eac9d0-baf9-11ce-8c82-00aa004ba90b")
 
 .comdef IAuthenticate
     QueryInterface	proc :REFIID, :ptr
@@ -886,32 +579,18 @@ __IAuthenticate_INTERFACE_DEFINED__ equ 1
     Release		proc
     Authenticate	proc :ptr, :ptr, :ptr
     .ends
+
 LPAUTHENTICATION	typedef ptr IAuthenticate
-externdef		IID_IAuthenticate:IID
 
-;HRESULT
-IAuthenticate_Authenticate_Proxy proto WINAPI \
-		 pThis: ptr IAuthenticate,
-		 phwnd: ptr HWND,
-	   pszUsername: ptr LPWSTR,
-	   pszPassword: ptr LPWSTR
-
-;void
-IAuthenticate_Authenticate_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 endif
 endif
 ifndef _LPHTTPNEGOTIATE_DEFINED
 _LPHTTPNEGOTIATE_DEFINED equ 1
 
-externdef		__MIDL_itf_urlmon_0115_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_urlmon_0115_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IHttpNegotiate_INTERFACE_DEFINED__
 __IHttpNegotiate_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IHttpNegotiate, "79eac9d2-baf9-11ce-8c82-00aa004ba90b")
 
 .comdef IHttpNegotiate
     QueryInterface	proc :REFIID, :ptr
@@ -920,48 +599,18 @@ __IHttpNegotiate_INTERFACE_DEFINED__ equ 1
     BeginningTransaction proc :LPCWSTR, :LPCWSTR, :DWORD, :ptr
     OnResponse		proc :DWORD, :LPCWSTR, :LPCWSTR, :ptr
     .ends
+
 LPHTTPNEGOTIATE		typedef ptr IHttpNegotiate
-externdef		IID_IHttpNegotiate:IID
 
-;HRESULT
-IHttpNegotiate_BeginningTransaction_Proxy proto WINAPI \
-		 pThis: ptr IHttpNegotiate,
-		 szURL: LPCWSTR,
-	     szHeaders: LPCWSTR,
-	    dwReserved: DWORD,
-  pszAdditionalHeaders: ptr LPWSTR
-
-;void
-IHttpNegotiate_BeginningTransaction_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IHttpNegotiate_OnResponse_Proxy proto WINAPI \
-		 pThis: ptr IHttpNegotiate,
-	dwResponseCode: DWORD,
-     szResponseHeaders: LPCWSTR,
-      szRequestHeaders: LPCWSTR,
-pszAdditionalRequestHeaders: ptr LPWSTR
-
-;void
-IHttpNegotiate_OnResponse_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 endif
 endif
 ifndef _LPWINDOWFORBINDINGUI_DEFINED
 _LPWINDOWFORBINDINGUI_DEFINED equ 1
 
-externdef		__MIDL_itf_urlmon_0116_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_urlmon_0116_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IWindowForBindingUI_INTERFACE_DEFINED__
 __IWindowForBindingUI_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IWindowForBindingUI, "79eac9d5-bafa-11ce-8c82-00aa004ba90b")
 
 .comdef IWindowForBindingUI
     QueryInterface	proc :REFIID, :ptr
@@ -969,33 +618,16 @@ __IWindowForBindingUI_INTERFACE_DEFINED__ equ 1
     Release		proc
     GetWindow		proc :REFGUID, :ptr
     .ends
+
 LPWINDOWFORBINDINGUI	typedef ptr IWindowForBindingUI
-externdef		IID_IWindowForBindingUI:IID
 
-;HRESULT
-IWindowForBindingUI_GetWindow_Proxy proto WINAPI \
-		 pThis: ptr IWindowForBindingUI,
-	   rguidReason: REFGUID,
-		 phwnd: ptr HWND
-
-;void
-IWindowForBindingUI_GetWindow_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 endif
 endif
 ifndef _LPCODEINSTALL_DEFINED
 _LPCODEINSTALL_DEFINED equ 1
 
-externdef		__MIDL_itf_urlmon_0117_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_urlmon_0117_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ICodeInstall_INTERFACE_DEFINED__
 __ICodeInstall_INTERFACE_DEFINED__ equ 1
-
-LPCODEINSTALL		typedef ptr ICodeInstall
 
 ;typedef enum __MIDL_ICodeInstall_0001
 
@@ -1009,7 +641,7 @@ CIP_EXE_SELF_REGISTERATION_TIMEOUT equ CIP_TRUST_VERIFICATION_COMPONENT_MISSING 
 CIP_UNSAFE_TO_ABORT	equ CIP_EXE_SELF_REGISTERATION_TIMEOUT + 1
 CIP_NEED_REBOOT		equ CIP_UNSAFE_TO_ABORT + 1
 
-externdef		IID_ICodeInstall:IID
+DEFINE_IIDX(ICodeInstall, "79eac9d1-baf9-11ce-8c82-00aa004ba90b")
 
 .comdef ICodeInstall
     QueryInterface	proc :REFIID, :ptr
@@ -1019,30 +651,17 @@ externdef		IID_ICodeInstall:IID
     OnCodeInstallProblem proc :ULONG, :LPCWSTR, :LPCWSTR, :DWORD
     .ends
 
-;HRESULT
-ICodeInstall_OnCodeInstallProblem_Proxy proto WINAPI \
-		 pThis: ptr ICodeInstall,
-	  ulStatusCode: ULONG,
-	 szDestination: LPCWSTR,
-	      szSource: LPCWSTR,
-	    dwReserved: DWORD
+LPCODEINSTALL		typedef ptr ICodeInstall
 
-;void
-ICodeInstall_OnCodeInstallProblem_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 endif
 endif
 ifndef _LPWININETINFO_DEFINED
 _LPWININETINFO_DEFINED equ 1
 
-externdef		__MIDL_itf_urlmon_0118_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_urlmon_0118_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IWinInetInfo_INTERFACE_DEFINED__
 __IWinInetInfo_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IWinInetInfo, "79eac9d6-bafa-11ce-8c82-00aa004ba90b")
 
 .comdef IWinInetInfo
     QueryInterface	proc :REFIID, :ptr
@@ -1050,33 +669,19 @@ __IWinInetInfo_INTERFACE_DEFINED__ equ 1
     Release		proc
     QueryOption		proc :DWORD, :ptr, :ptr
     .ends
+
 LPWININETINFO		typedef ptr IWinInetInfo
-externdef		IID_IWinInetInfo:IID
 
-;HRESULT
-IWinInetInfo_RemoteQueryOption_Proxy proto WINAPI \
-		 pThis: ptr IWinInetInfo,
-	      dwOption: DWORD,
-	       pBuffer: LPBYTE,
-		pcbBuf: LPDWORD
-
-;void
-IWinInetInfo_RemoteQueryOption_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 endif
 endif
 WININETINFO_OPTION_LOCK_HANDLE equ 65534
 ifndef _LPHTTPSECURITY_DEFINED
 _LPHTTPSECURITY_DEFINED equ 1
 
-externdef		__MIDL_itf_urlmon_0119_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_urlmon_0119_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IHttpSecurity_INTERFACE_DEFINED__
 __IHttpSecurity_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IHttpSecurity, "79eac9d7-bafa-11ce-8c82-00aa004ba90b")
 
 .comdef IHttpSecurity
     QueryInterface	proc :REFIID, :ptr
@@ -1085,30 +690,18 @@ __IHttpSecurity_INTERFACE_DEFINED__ equ 1
     GetWindow		proc :REFGUID, :ptr
     OnSecurityProblem	proc :DWORD
     .ends
+
 LPHTTPSECURITY		typedef ptr IHttpSecurity
-externdef		IID_IHttpSecurity:IID
 
-;HRESULT
-IHttpSecurity_OnSecurityProblem_Proxy proto WINAPI \
-		 pThis: ptr IHttpSecurity,
-	     dwProblem: DWORD
-
-;void
-IHttpSecurity_OnSecurityProblem_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 endif
 endif
 ifndef _LPWININETHTTPINFO_DEFINED
 _LPWININETHTTPINFO_DEFINED equ 1
 
-externdef		__MIDL_itf_urlmon_0120_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_urlmon_0120_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IWinInetHttpInfo_INTERFACE_DEFINED__
 __IWinInetHttpInfo_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IWinInetHttpInfo, "79eac9d8-bafa-11ce-8c82-00aa004ba90b")
 
 .comdef IWinInetHttpInfo
     QueryInterface	proc :REFIID, :ptr
@@ -1117,37 +710,21 @@ __IWinInetHttpInfo_INTERFACE_DEFINED__ equ 1
     QueryOption		proc :DWORD, :PVOID, :ptr
     QueryInfo		proc :DWORD, :PVOID, :ptr, :ptr, :ptr
     .ends
+
 LPWININETHTTPINFO	typedef ptr IWinInetHttpInfo
-externdef		IID_IWinInetHttpInfo:IID
 
-;HRESULT
-IWinInetHttpInfo_RemoteQueryInfo_Proxy proto WINAPI \
-		 pThis: ptr IWinInetHttpInfo,
-	      dwOption: DWORD,
-	       pBuffer: LPBYTE,
-		pcbBuf: LPDWORD,
-	      pdwFlags: LPDWORD,
-	   pdwReserved: LPDWORD
-
-;void
-IWinInetHttpInfo_RemoteQueryInfo_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 endif
 endif
-SID_IBindHost		equ IID_IBindHost
-SID_SBindHost		equ IID_IBindHost
+SID_IBindHost		equ <IID_IBindHost>
+SID_SBindHost		equ <IID_IBindHost>
 ifndef _LPBINDHOST_DEFINED
 _LPBINDHOST_DEFINED equ 1
 externdef		SID_BindHost:GUID
 
-externdef		__MIDL_itf_urlmon_0121_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_urlmon_0121_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IBindHost_INTERFACE_DEFINED__
 __IBindHost_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IBindHost, "fc4801a1-2ba9-11cf-a229-00aa003d7352")
 
 .comdef IBindHost
     QueryInterface	proc :REFIID, :ptr
@@ -1157,55 +734,9 @@ __IBindHost_INTERFACE_DEFINED__ equ 1
     MonikerBindToStorage proc :ptr, :ptr, :ptr, :REFIID, :ptr
     MonikerBindToObject proc :ptr, :ptr, :ptr, :REFIID, :ptr
     .ends
+
 LPBINDHOST		typedef ptr IBindHost
-externdef		IID_IBindHost:IID
 
-;HRESULT
-IBindHost_CreateMoniker_Proxy proto WINAPI \
-		 pThis: ptr IBindHost,
-		szName: LPOLESTR,
-		   pBC: ptr IBindCtx,
-		  ppmk: ptr ptr IMoniker,
-	    dwReserved: DWORD
-
-;void
-IBindHost_CreateMoniker_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IBindHost_RemoteMonikerBindToStorage_Proxy proto WINAPI \
-		 pThis: ptr IBindHost,
-		   pMk: ptr IMoniker,
-		   pBC: ptr IBindCtx,
-		  pBSC: ptr IBindStatusCallback,
-		  riid: REFIID,
-		ppvObj: ptr IUnknown
-
-;void
-IBindHost_RemoteMonikerBindToStorage_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IBindHost_RemoteMonikerBindToObject_Proxy proto WINAPI \
-		 pThis: ptr IBindHost,
-		   pMk: ptr IMoniker,
-		   pBC: ptr IBindCtx,
-		  pBSC: ptr IBindStatusCallback,
-		  riid: REFIID,
-		ppvObj: ptr IUnknown
-
-;void
-IBindHost_RemoteMonikerBindToObject_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 endif
 endif
 
@@ -1213,7 +744,6 @@ URLOSTRM_USECACHEDCOPY_ONLY equ 0x1
 URLOSTRM_USECACHEDCOPY	equ 0x2
 URLOSTRM_GETNEWESTVERSION equ 0x3
 
-;IBindStatusCallback	typedef STRUC
 ;STDAPI
 HlinkSimpleNavigateToString proto WINAPI \
 	      szTarget: LPCWSTR,
@@ -1225,7 +755,6 @@ HlinkSimpleNavigateToString proto WINAPI \
 	       grfHLNF: DWORD,
 	    dwReserved: DWORD
 
-;STDAPI
 HlinkSimpleNavigateToMoniker proto WINAPI \
 	     pmkTarget: ptr IMoniker,
 	    szLocation: LPCWSTR,
@@ -1236,19 +765,18 @@ HlinkSimpleNavigateToMoniker proto WINAPI \
 	       grfHLNF: DWORD,
 	    dwReserved: DWORD
 
-;STDAPI
 URLOpenStreamA proto WINAPI \
 		      : LPUNKNOWN,
 		      : LPCSTR,
 		      : DWORD,
 		      : LPBINDSTATUSCALLBACK
-;STDAPI
+
 URLOpenStreamW proto WINAPI \
 		      : LPUNKNOWN,
 		      : LPCWSTR,
 		      : DWORD,
 		      : LPBINDSTATUSCALLBACK
-;STDAPI
+
 URLOpenPullStreamA proto WINAPI \
 		      : LPUNKNOWN,
 		      : LPCSTR,
@@ -1342,27 +870,23 @@ ifndef	 _URLMON_NO_ASYNC_PLUGABLE_PROTOCOLS_
 ifndef _LPIINTERNET
 _LPIINTERNET equ 1
 
-externdef		__MIDL_itf_urlmon_0122_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_urlmon_0122_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IInternet_INTERFACE_DEFINED__
 __IInternet_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IInternet, "79eac9e0-baf9-11ce-8c82-00aa004ba90b")
 
 .comdef IInternet
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
     Release		proc
     .ends
+
 LPIINTERNET		typedef ptr IInternet
-externdef		IID_IInternet:IID
 endif
 endif
 
 ifndef _LPIINTERNETBINDINFO
 _LPIINTERNETBINDINFO equ 1
-
-externdef		__MIDL_itf_urlmon_0123_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_urlmon_0123_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IInternetBindInfo_INTERFACE_DEFINED__
 __IInternetBindInfo_INTERFACE_DEFINED__ equ 1
@@ -1386,7 +910,7 @@ BINDSTRING_POST_COOKIE	equ BINDSTRING_ACCEPT_ENCODINGS + 1
 BINDSTRING_POST_DATA_MIME equ BINDSTRING_POST_COOKIE + 1
 BINDSTRING_URL		equ BINDSTRING_POST_DATA_MIME + 1
 
-externdef		IID_IInternetBindInfo:IID
+DEFINE_IIDX(IInternetBindInfo, "79eac9e1-baf9-11ce-8c82-00aa004ba90b")
 
 .comdef IInternetBindInfo
     QueryInterface	proc :REFIID, :ptr
@@ -1396,40 +920,10 @@ externdef		IID_IInternetBindInfo:IID
     GetBindString	proc :DWORD, :ptr, :DWORD, :ptr
     .ends
 
-;HRESULT
-IInternetBindInfo_GetBindInfo_Proxy proto WINAPI \
-		 pThis: ptr IInternetBindInfo,
-	      grfBINDF: LPDWORD,
-	     pbindinfo: ptr BINDINFO
-
-;void
-IInternetBindInfo_GetBindInfo_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetBindInfo_GetBindString_Proxy proto WINAPI \
-		 pThis: ptr IInternetBindInfo,
-	  ulStringType: ULONG,
-	       ppwzStr: ptr LPOLESTR,
-		   cEl: ULONG,
-	   pcElFetched: ptr ULONG
-
-;void
-IInternetBindInfo_GetBindString_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 endif
 endif
 ifndef _LPIINTERNETPROTOCOLROOT_DEFINED
 _LPIINTERNETPROTOCOLROOT_DEFINED equ 1
-
-externdef		__MIDL_itf_urlmon_0124_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_urlmon_0124_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IInternetProtocolRoot_INTERFACE_DEFINED__
 __IInternetProtocolRoot_INTERFACE_DEFINED__ equ 1
@@ -1457,7 +951,7 @@ pData			LPVOID ?
 cbData			ULONG ?
 PROTOCOLDATA		ENDS
 
-externdef		IID_IInternetProtocolRoot:IID
+DEFINE_IIDX(IInternetProtocolRoot, "79eac9e3-baf9-11ce-8c82-00aa004ba90b")
 
 .comdef IInternetProtocolRoot
     QueryInterface	proc :REFIID, :ptr
@@ -1471,90 +965,15 @@ externdef		IID_IInternetProtocolRoot:IID
     Resume		proc
     .ends
 
-;HRESULT
-IInternetProtocolRoot_Start_Proxy proto WINAPI \
-		 pThis: ptr IInternetProtocolRoot,
-		 szUrl: LPCWSTR,
-	   pOIProtSink: ptr IInternetProtocolSink,
-	   pOIBindInfo: ptr IInternetBindInfo,
-		 grfPI: DWORD,
-	    dwReserved: DWORD
-
-;void
-IInternetProtocolRoot_Start_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetProtocolRoot_Continue_Proxy proto WINAPI \
-		 pThis: ptr IInternetProtocolRoot,
-	 pProtocolData: ptr PROTOCOLDATA
-
-;void
-IInternetProtocolRoot_Continue_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetProtocolRoot_Abort_Proxy proto WINAPI \
-		 pThis: ptr IInternetProtocolRoot,
-	      hrReason: HRESULT,
-	     dwOptions: DWORD
-
-;void
-IInternetProtocolRoot_Abort_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetProtocolRoot_Terminate_Proxy proto WINAPI \
-		 pThis: ptr IInternetProtocolRoot,
-	     dwOptions: DWORD
-
-;void
-IInternetProtocolRoot_Terminate_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetProtocolRoot_Suspend_Proxy proto WINAPI \
-		 pThis: ptr IInternetProtocolRoot
-
-;void
-IInternetProtocolRoot_Suspend_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetProtocolRoot_Resume_Proxy proto WINAPI \
-		 pThis: ptr IInternetProtocolRoot
-
-;void
-IInternetProtocolRoot_Resume_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 endif
 endif
 ifndef _LPIINTERNETPROTOCOL_DEFINED
 _LPIINTERNETPROTOCOL_DEFINED equ 1
 
-externdef		__MIDL_itf_urlmon_0125_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_urlmon_0125_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IInternetProtocol_INTERFACE_DEFINED__
 __IInternetProtocol_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IInternetProtocol, "79eac9e4-baf9-11ce-8c82-00aa004ba90b")
 
 .comdef IInternetProtocol
     QueryInterface	proc :REFIID, :ptr
@@ -1571,72 +990,18 @@ __IInternetProtocol_INTERFACE_DEFINED__ equ 1
     LockRequest		proc :DWORD
     UnlockRequest	proc
     .ends
+
 LPIINTERNETPROTOCOL	typedef ptr IInternetProtocol
-externdef		IID_IInternetProtocol:IID
 
-;HRESULT
-IInternetProtocol_Read_Proxy proto WINAPI \
-		 pThis: ptr IInternetProtocol,
-		    pv: PVOID,
-		    cb: ULONG,
-	       pcbRead: ptr ULONG
-
-;void
-IInternetProtocol_Read_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetProtocol_Seek_Proxy proto WINAPI \
-		 pThis: ptr IInternetProtocol,
-	      dlibMove: LARGE_INTEGER,
-	      dwOrigin: DWORD,
-       plibNewPosition: ptr ULARGE_INTEGER
-
-;void
-IInternetProtocol_Seek_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetProtocol_LockRequest_Proxy proto WINAPI \
-		 pThis: ptr IInternetProtocol,
-	     dwOptions: DWORD
-
-;void
-IInternetProtocol_LockRequest_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetProtocol_UnlockRequest_Proxy proto WINAPI \
-		 pThis: ptr IInternetProtocol
-
-;void
-IInternetProtocol_UnlockRequest_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 endif
 endif
 ifndef _LPIINTERNETPROTOCOLSINK_DEFINED
 _LPIINTERNETPROTOCOLSINK_DEFINED equ 1
 
-externdef		__MIDL_itf_urlmon_0126_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_urlmon_0126_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IInternetProtocolSink_INTERFACE_DEFINED__
 __IInternetProtocolSink_INTERFACE_DEFINED__ equ 1
 
-LPIINTERNETPROTOCOLSINK typedef ptr IInternetProtocolSink
-externdef		IID_IInternetProtocolSink:IID
+DEFINE_IIDX(IInternetProtocolSink, "79eac9e5-baf9-11ce-8c82-00aa004ba90b")
 
 .comdef IInternetProtocolSink
     QueryInterface	proc :REFIID, :ptr
@@ -1648,65 +1013,12 @@ externdef		IID_IInternetProtocolSink:IID
     ReportResult	proc :HRESULT, :DWORD, :LPWSTR
     .ends
 
-;HRESULT
-IInternetProtocolSink_Switch_Proxy proto WINAPI \
-		 pThis: ptr IInternetProtocolSink,
-	 pProtocolData: ptr PROTOCOLDATA
+LPIINTERNETPROTOCOLSINK typedef ptr IInternetProtocolSink
 
-;void
-IInternetProtocolSink_Switch_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetProtocolSink_ReportProgress_Proxy proto WINAPI \
-		 pThis: ptr IInternetProtocolSink,
-	  ulStatusCode: ULONG,
-	  szStatusText: LPCWSTR
-
-;void
-IInternetProtocolSink_ReportProgress_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetProtocolSink_ReportData_Proxy proto WINAPI \
-		 pThis: ptr IInternetProtocolSink,
-	       grfBSCF: DWORD,
-	    ulProgress: ULONG,
-	 ulProgressMax: ULONG
-
-;void
-IInternetProtocolSink_ReportData_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetProtocolSink_ReportResult_Proxy proto WINAPI \
-		 pThis: ptr IInternetProtocolSink,
-	      hrResult: HRESULT,
-	       dwError: DWORD,
-	      szResult: LPCWSTR
-
-;void
-IInternetProtocolSink_ReportResult_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 endif
 endif
 ifndef _LPIINTERNETSESSION_DEFINED
 _LPIINTERNETSESSION_DEFINED equ 1
-
-externdef		__MIDL_itf_urlmon_0127_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_urlmon_0127_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IInternetSession_INTERFACE_DEFINED__
 __IInternetSession_INTERFACE_DEFINED__ equ 1
@@ -1714,6 +1026,8 @@ __IInternetSession_INTERFACE_DEFINED__ equ 1
 ;typedef enum _tagOIBDG_FLAGS
 
 OIBDG_APARTMENTTHREADED equ 0x100
+
+DEFINE_IIDX(IInternetSession, "79eac9e7-baf9-11ce-8c82-00aa004ba90b")
 
 .comdef IInternetSession
     QueryInterface	proc :REFIID, :ptr
@@ -1727,122 +1041,18 @@ OIBDG_APARTMENTTHREADED equ 0x100
     SetSessionOption	proc :DWORD, :PVOID, :DWORD, :DWORD
     GetSessionOption	proc :DWORD, :PVOID, :ptr, :DWORD
     .ends
+
 LPIINTERNETSESSION	typedef ptr IInternetSession
-externdef		IID_IInternetSession:IID
 
-;HRESULT
-IInternetSession_RegisterNameSpace_Proxy proto WINAPI \
-		 pThis: ptr IInternetSession,
-		   pCF: ptr IClassFactory,
-		rclsid: REFCLSID,
-	   pwzProtocol: LPCWSTR,
-	     cPatterns: ULONG,
-	  ppwzPatterns: ptr LPCWSTR,
-	    dwReserved: DWORD
-
-;void
-IInternetSession_RegisterNameSpace_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetSession_UnregisterNameSpace_Proxy proto WINAPI \
-		 pThis: ptr IInternetSession,
-		   pCF: ptr IClassFactory,
-	   pszProtocol: LPCWSTR
-
-;void
-IInternetSession_UnregisterNameSpace_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetSession_RegisterMimeFilter_Proxy proto WINAPI \
-		 pThis: ptr IInternetSession,
-		   pCF: ptr IClassFactory,
-		rclsid: REFCLSID,
-	       pwzType: LPCWSTR
-
-;void
-IInternetSession_RegisterMimeFilter_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetSession_UnregisterMimeFilter_Proxy proto WINAPI \
-		 pThis: ptr IInternetSession,
-		   pCF: ptr IClassFactory,
-	       pwzType: LPCWSTR
-
-;void
-IInternetSession_UnregisterMimeFilter_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetSession_CreateBinding_Proxy proto WINAPI \
-		 pThis: ptr IInternetSession,
-		   pBC: LPBC,
-		 szUrl: LPCWSTR,
-	     pUnkOuter: ptr IUnknown,
-		 ppUnk: ptr IUnknown,
-	   ppOInetProt: ptr IInternetProtocol,
-	      dwOption: DWORD
-
-;void
-IInternetSession_CreateBinding_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetSession_SetSessionOption_Proxy proto WINAPI \
-		 pThis: ptr IInternetSession,
-	      dwOption: DWORD,
-	       pBuffer: LPVOID,
-	dwBufferLength: DWORD,
-	    dwReserved: DWORD
-
-;void
-IInternetSession_SetSessionOption_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetSession_GetSessionOption_Proxy proto WINAPI \
-		 pThis: ptr IInternetSession,
-	      dwOption: DWORD,
-	       pBuffer: LPVOID,
-       pdwBufferLength: LPDWORD,
-	    dwReserved: DWORD
-
-;void
-IInternetSession_GetSessionOption_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 endif
 endif
 ifndef _LPIINTERNETTHREADSWITCH_DEFINED
 _LPIINTERNETTHREADSWITCH_DEFINED equ 1
 
-externdef		__MIDL_itf_urlmon_0128_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_urlmon_0128_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IInternetThreadSwitch_INTERFACE_DEFINED__
 __IInternetThreadSwitch_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IInternetThreadSwitch, "79eac9e8-baf9-11ce-8c82-00aa004ba90b")
 
 .comdef IInternetThreadSwitch
     QueryInterface	proc :REFIID, :ptr
@@ -1851,40 +1061,18 @@ __IInternetThreadSwitch_INTERFACE_DEFINED__ equ 1
     Prepare		proc
     Continue		proc :ptr, :PRPC_MESSAGE, :ptr
     .ends
+
 LPIINTERNETTHREADSWITCH typedef ptr IInternetThreadSwitch
-externdef		IID_IInternetThreadSwitch:IID
 
-;HRESULT
-IInternetThreadSwitch_Prepare_Proxy proto WINAPI \
-		 pThis: ptr IInternetThreadSwitch
-
-;void
-IInternetThreadSwitch_Prepare_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetThreadSwitch_Continue_Proxy proto WINAPI \
-		 pThis: ptr IInternetThreadSwitch
-
-;void
-IInternetThreadSwitch_Continue_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 endif
 endif
 ifndef _LPIINTERNETPRIORITY_DEFINED
 _LPIINTERNETPRIORITY_DEFINED equ 1
 
-externdef		__MIDL_itf_urlmon_0129_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_urlmon_0129_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IInternetPriority_INTERFACE_DEFINED__
 __IInternetPriority_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IInternetPriority, "79eac9eb-baf9-11ce-8c82-00aa004ba90b")
 
 .comdef IInternetPriority
     QueryInterface	proc :REFIID, :ptr
@@ -1893,39 +1081,13 @@ __IInternetPriority_INTERFACE_DEFINED__ equ 1
     SetPriority		proc :LONG
     GetPriority		proc :ptr
     .ends
+
 LPIINTERNETPRIORITY	typedef ptr IInternetPriority
-externdef		IID_IInternetPriority:IID
 
-;HRESULT
-IInternetPriority_SetPriority_Proxy proto WINAPI \
-		 pThis: ptr IInternetPriority,
-	     nPriority: LONG
-
-;void
-IInternetPriority_SetPriority_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetPriority_GetPriority_Proxy proto WINAPI \
-		 pThis: ptr IInternetPriority,
-	    pnPriority: ptr LONG
-
-;void
-IInternetPriority_GetPriority_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 endif
 endif
 ifndef _LPIINTERNETPROTOCOLINFO_DEFINED
 _LPIINTERNETPROTOCOLINFO_DEFINED equ 1
-
-externdef		__MIDL_itf_urlmon_0130_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_urlmon_0130_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IInternetProtocolInfo_INTERFACE_DEFINED__
 __IInternetProtocolInfo_INTERFACE_DEFINED__ equ 1
@@ -1969,7 +1131,7 @@ QUERY_IS_INSTALLEDENTRY equ QUERY_IS_CACHED + 1
 QUERY_IS_CACHED_OR_MAPPED equ QUERY_IS_INSTALLEDENTRY + 1
 QUERY_USES_CACHE	equ QUERY_IS_CACHED_OR_MAPPED + 1
 
-externdef		IID_IInternetProtocolInfo:IID
+DEFINE_IIDX(IInternetProtocolInfo, "79eac9ec-baf9-11ce-8c82-00aa004ba90b")
 
 .comdef IInternetProtocolInfo
     QueryInterface	proc :REFIID, :ptr
@@ -1981,73 +1143,6 @@ externdef		IID_IInternetProtocolInfo:IID
     QueryInfo		proc :LPWSTR, :QUERYOPTION, :DWORD, :PVOID, :DWORD, :ptr, :DWORD
     .ends
 
-;HRESULT
-IInternetProtocolInfo_ParseUrl_Proxy proto WINAPI \
-		 pThis: ptr IInternetProtocolInfo,
-		pwzUrl: LPCWSTR,
-	   ParseAction: PARSEACTION,
-	  dwParseFlags: DWORD,
-	     pwzResult: LPWSTR,
-	     cchResult: DWORD,
-	    pcchResult: LPDWORD,
-	    dwReserved: DWORD
-
-;void
-IInternetProtocolInfo_ParseUrl_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetProtocolInfo_CombineUrl_Proxy proto WINAPI \
-		 pThis: ptr IInternetProtocolInfo,
-	    pwzBaseUrl: LPCWSTR,
-	pwzRelativeUrl: LPCWSTR,
-	dwCombineFlags: DWORD,
-	     pwzResult: LPWSTR,
-	     cchResult: DWORD,
-	    pcchResult: LPDWORD,
-	    dwReserved: DWORD
-
-;void
-IInternetProtocolInfo_CombineUrl_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetProtocolInfo_CompareUrl_Proxy proto WINAPI \
-		 pThis: ptr IInternetProtocolInfo,
-	       pwzUrl1: LPCWSTR,
-	       pwzUrl2: LPCWSTR,
-	dwCompareFlags: DWORD
-
-;void
-IInternetProtocolInfo_CompareUrl_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetProtocolInfo_QueryInfo_Proxy proto WINAPI \
-		 pThis: ptr IInternetProtocolInfo,
-		pwzUrl: LPCWSTR,
-	   OueryOption: QUERYOPTION,
-	  dwQueryFlags: DWORD,
-	       pBuffer: LPVOID,
-	      cbBuffer: DWORD,
-		pcbBuf: LPDWORD,
-	    dwReserved: DWORD
-
-;void
-IInternetProtocolInfo_QueryInfo_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 endif
 endif
 
@@ -2185,14 +1280,10 @@ SID_SInternetHostSecurityManager equ IID_IInternetHostSecurityManager
 ifndef _LPINTERNETSECURITYMGRSITE_DEFINED
 _LPINTERNETSECURITYMGRSITE_DEFINED equ 1
 
-
-externdef		__MIDL_itf_urlmon_0131_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_urlmon_0131_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IInternetSecurityMgrSite_INTERFACE_DEFINED__
 __IInternetSecurityMgrSite_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IInternetSecurityMgrSite:IID
+DEFINE_IIDX(IInternetSecurityMgrSite, "79eac9ed-baf9-11ce-8c82-00aa004ba90b")
 
 .comdef IInternetSecurityMgrSite
     QueryInterface	proc :REFIID, :ptr
@@ -2202,36 +1293,10 @@ externdef		IID_IInternetSecurityMgrSite:IID
     EnableModeless	proc :BOOL
     .ends
 
-;HRESULT
-IInternetSecurityMgrSite_GetWindow_Proxy proto WINAPI \
-		 pThis: ptr IInternetSecurityMgrSite,
-		 phwnd: ptr HWND
-
-;void
-IInternetSecurityMgrSite_GetWindow_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetSecurityMgrSite_EnableModeless_Proxy proto WINAPI \
-		 pThis: ptr IInternetSecurityMgrSite,
-	       fEnable: BOOL
-
-;void
-IInternetSecurityMgrSite_EnableModeless_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 endif
 endif
 ifndef _LPINTERNETSECURITYMANANGER_DEFINED
 _LPINTERNETSECURITYMANANGER_DEFINED equ 1
-
-externdef		__MIDL_itf_urlmon_0132_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_urlmon_0132_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IInternetSecurityManager_INTERFACE_DEFINED__
 __IInternetSecurityManager_INTERFACE_DEFINED__ equ 1
@@ -2251,7 +1316,7 @@ PUAF_CHECK_TIFS		equ 0x10
 SZM_CREATE		equ 0
 SZM_DELETE		equ 0x1
 
-externdef		IID_IInternetSecurityManager:IID
+DEFINE_IIDX(IInternetSecurityManager, "79eac9ee-baf9-11ce-8c82-00aa004ba90b")
 
 .comdef IInternetSecurityManager
     QueryInterface	proc :REFIID, :ptr
@@ -2267,135 +1332,15 @@ externdef		IID_IInternetSecurityManager:IID
     GetZoneMappings	proc :DWORD, :ptr, :DWORD
     .ends
 
-;HRESULT
-IInternetSecurityManager_SetSecuritySite_Proxy proto WINAPI \
-		 pThis: ptr IInternetSecurityManager,
-		 pSite: ptr IInternetSecurityMgrSite
-
-;void
-IInternetSecurityManager_SetSecuritySite_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetSecurityManager_GetSecuritySite_Proxy proto WINAPI \
-		 pThis: ptr IInternetSecurityManager,
-		ppSite: ptr IInternetSecurityMgrSite
-
-;void
-IInternetSecurityManager_GetSecuritySite_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetSecurityManager_MapUrlToZone_Proxy proto WINAPI \
-		 pThis: ptr IInternetSecurityManager,
-	       pwszUrl: LPCWSTR,
-	       pdwZone: LPDWORD,
-	       dwFlags: DWORD
-
-;void
-IInternetSecurityManager_MapUrlToZone_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetSecurityManager_GetSecurityId_Proxy proto WINAPI \
-		 pThis: ptr IInternetSecurityManager,
-	       pwszUrl: LPCWSTR,
-	  pbSecurityId: LPBYTE,
-	 pcbSecurityId: LPDWORD,
-	    dwReserved: DWORD
-
-;void
-IInternetSecurityManager_GetSecurityId_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetSecurityManager_ProcessUrlAction_Proxy proto WINAPI \
-		 pThis: ptr IInternetSecurityManager,
-	       pwszUrl: LPCWSTR,
-	      dwAction: DWORD,
-	       pPolicy: LPBYTE,
-	      cbPolicy: DWORD,
-	      pContext: LPBYTE,
-	     cbContext: DWORD,
-	       dwFlags: DWORD,
-	    dwReserved: DWORD
-
-;void
-IInternetSecurityManager_ProcessUrlAction_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetSecurityManager_QueryCustomPolicy_Proxy proto WINAPI \
-		 pThis: ptr IInternetSecurityManager,
-	       pwszUrl: LPCWSTR,
-	       guidKey: REFGUID,
-	      ppPolicy: LPBYTE,
-	     pcbPolicy: LPDWORD,
-	      pContext: LPBYTE,
-	     cbContext: DWORD,
-	    dwReserved: DWORD
-
-;void
-IInternetSecurityManager_QueryCustomPolicy_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetSecurityManager_SetZoneMapping_Proxy proto WINAPI \
-		 pThis: ptr IInternetSecurityManager,
-		dwZone: DWORD,
-	   lpszPattern: LPCWSTR,
-	       dwFlags: DWORD
-
-;void
-IInternetSecurityManager_SetZoneMapping_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetSecurityManager_GetZoneMappings_Proxy proto WINAPI \
-		 pThis: ptr IInternetSecurityManager,
-		dwZone: DWORD,
-	  ppenumString: ptr IEnumString,
-	       dwFlags: DWORD
-
-;void
-IInternetSecurityManager_GetZoneMappings_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 endif
 endif
 ifndef _LPINTERNETHOSTSECURITYMANANGER_DEFINED
 _LPINTERNETHOSTSECURITYMANANGER_DEFINED equ 1
 
-externdef		__MIDL_itf_urlmon_0133_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_urlmon_0133_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IInternetHostSecurityManager_INTERFACE_DEFINED__
 __IInternetHostSecurityManager_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IInternetHostSecurityManager:IID
+DEFINE_IIDX(IInternetHostSecurityManager, "3af280b6-cb3f-11d0-891e-00c04fb6bfc4")
 
 .comdef IInternetHostSecurityManager
     QueryInterface	proc :REFIID, :ptr
@@ -2406,54 +1351,6 @@ externdef		IID_IInternetHostSecurityManager:IID
     QueryCustomPolicy	proc :REFGUID, :ptr, :ptr, :ptr, :DWORD, :DWORD
     .ends
 
-;HRESULT
-IInternetHostSecurityManager_GetSecurityId_Proxy proto WINAPI \
-		 pThis: ptr IInternetHostSecurityManager,
-	  pbSecurityId: LPBYTE,
-	 pcbSecurityId: LPDWORD,
-	    dwReserved: DWORD
-
-;void
-IInternetHostSecurityManager_GetSecurityId_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetHostSecurityManager_ProcessUrlAction_Proxy proto WINAPI \
-		 pThis: ptr IInternetHostSecurityManager,
-	      dwAction: DWORD,
-	       pPolicy: LPBYTE,
-	      cbPolicy: DWORD,
-	      pContext: LPBYTE,
-	     cbContext: DWORD,
-	       dwFlags: DWORD,
-	    dwReserved: DWORD
-
-;void
-IInternetHostSecurityManager_ProcessUrlAction_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetHostSecurityManager_QueryCustomPolicy_Proxy proto WINAPI \
-		 pThis: ptr IInternetHostSecurityManager,
-	       guidKey: REFGUID,
-	      ppPolicy: LPBYTE,
-	     pcbPolicy: LPDWORD,
-	      pContext: LPBYTE,
-	     cbContext: DWORD,
-	    dwReserved: DWORD
-
-;void
-IInternetHostSecurityManager_QueryCustomPolicy_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 endif
 endif
 
@@ -2566,9 +1463,6 @@ SetUrlPolicyPermissions macro d,d2
 ifndef _LPINTERNETZONEMANAGER_DEFINED
 _LPINTERNETZONEMANAGER_DEFINED equ 1
 
-externdef		__MIDL_itf_urlmon_0134_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_urlmon_0134_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IInternetZoneManager_INTERFACE_DEFINED__
 __IInternetZoneManager_INTERFACE_DEFINED__ equ 1
 
@@ -2625,6 +1519,8 @@ URLZONEREG_DEFAULT	equ 0
 URLZONEREG_HKLM		equ URLZONEREG_DEFAULT + 1
 URLZONEREG_HKCU		equ URLZONEREG_HKLM + 1
 
+DEFINE_IIDX(IInternetZoneManager, "79eac9ef-baf9-11ce-8c82-00aa004ba90b")
+
 .comdef IInternetZoneManager
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -2642,186 +1538,12 @@ URLZONEREG_HKCU		equ URLZONEREG_HKLM + 1
     DestroyZoneEnumerator proc :DWORD
     CopyTemplatePoliciesToZone proc :DWORD, :DWORD, :DWORD
     .ends
+
 LPURLZONEMANAGER	typedef ptr IInternetZoneManager
-externdef		IID_IInternetZoneManager:IID
 
-;HRESULT
-IInternetZoneManager_GetZoneAttributes_Proxy proto WINAPI \
-		 pThis: ptr IInternetZoneManager,
-		dwZone: DWORD,
-       pZoneAttributes: ptr ZONEATTRIBUTES
-
-;void
-IInternetZoneManager_GetZoneAttributes_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetZoneManager_SetZoneAttributes_Proxy proto WINAPI \
-		 pThis: ptr IInternetZoneManager,
-		dwZone: DWORD,
-       pZoneAttributes: ptr ZONEATTRIBUTES
-
-;void
-IInternetZoneManager_SetZoneAttributes_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetZoneManager_GetZoneCustomPolicy_Proxy proto WINAPI \
-		 pThis: ptr IInternetZoneManager,
-		dwZone: DWORD,
-	       guidKey: REFGUID,
-	      ppPolicy: LPBYTE,
-	     pcbPolicy: LPDWORD,
-	    urlZoneReg: URLZONEREG
-
-;void
-IInternetZoneManager_GetZoneCustomPolicy_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetZoneManager_SetZoneCustomPolicy_Proxy proto WINAPI \
-		 pThis: ptr IInternetZoneManager,
-		dwZone: DWORD,
-	       guidKey: REFGUID,
-	       pPolicy: LPBYTE,
-	      cbPolicy: DWORD,
-	    urlZoneReg: URLZONEREG
-
-;void
-IInternetZoneManager_SetZoneCustomPolicy_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetZoneManager_GetZoneActionPolicy_Proxy proto WINAPI \
-		 pThis: ptr IInternetZoneManager,
-		dwZone: DWORD,
-	      dwAction: DWORD,
-	       pPolicy: LPBYTE,
-	      cbPolicy: DWORD,
-	    urlZoneReg: URLZONEREG
-
-;void
-IInternetZoneManager_GetZoneActionPolicy_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetZoneManager_SetZoneActionPolicy_Proxy proto WINAPI \
-		 pThis: ptr IInternetZoneManager,
-		dwZone: DWORD,
-	      dwAction: DWORD,
-	       pPolicy: LPBYTE,
-	      cbPolicy: DWORD,
-	    urlZoneReg: URLZONEREG
-
-;void
-IInternetZoneManager_SetZoneActionPolicy_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetZoneManager_PromptAction_Proxy proto WINAPI \
-		 pThis: ptr IInternetZoneManager,
-	      dwAction: DWORD,
-	    hwndParent: HWND,
-	       pwszUrl: LPCWSTR,
-	      pwszText: LPCWSTR,
-	 dwPromptFlags: DWORD
-
-;void
-IInternetZoneManager_PromptAction_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetZoneManager_LogAction_Proxy proto WINAPI \
-		 pThis: ptr IInternetZoneManager,
-	      dwAction: DWORD,
-	       pwszUrl: LPCWSTR,
-	      pwszText: LPCWSTR,
-	    dwLogFlags: DWORD
-
-;void
-IInternetZoneManager_LogAction_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetZoneManager_CreateZoneEnumerator_Proxy proto WINAPI \
-		 pThis: ptr IInternetZoneManager,
-	       pdwEnum: LPDWORD,
-	      pdwCount: LPDWORD,
-	       dwFlags: DWORD
-
-;void
-IInternetZoneManager_CreateZoneEnumerator_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetZoneManager_GetZoneAt_Proxy proto WINAPI \
-		 pThis: ptr IInternetZoneManager,
-		dwEnum: DWORD,
-	       dwIndex: DWORD,
-	       pdwZone: LPDWORD
-
-;void
-IInternetZoneManager_GetZoneAt_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetZoneManager_DestroyZoneEnumerator_Proxy proto WINAPI \
-		 pThis: ptr IInternetZoneManager,
-		dwEnum: DWORD
-
-;void
-IInternetZoneManager_DestroyZoneEnumerator_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IInternetZoneManager_CopyTemplatePoliciesToZone_Proxy proto WINAPI \
-		 pThis: ptr IInternetZoneManager,
-	    dwTemplate: DWORD,
-		dwZone: DWORD,
-	    dwReserved: DWORD
-
-;void
-IInternetZoneManager_CopyTemplatePoliciesToZone_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 endif
 endif
-externdef		CLSID_SoftDistExt:IID
+externdef CLSID_SoftDistExt:IID
 ifndef _LPSOFTDISTEXT_DEFINED
 _LPSOFTDISTEXT_DEFINED equ 1
 
@@ -2863,13 +1585,10 @@ dwReserved		dd ?
 SOFTDISTINFO		ENDS
 LPSOFTDISTINFO		typedef ptr SOFTDISTINFO
 
-externdef		__MIDL_itf_urlmon_0135_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_urlmon_0135_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ISoftDistExt_INTERFACE_DEFINED__
 __ISoftDistExt_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_ISoftDistExt:IID
+DEFINE_IIDX(ISoftDistExt, "B15B8DC1-C7E1-11d0-8680-00AA00BDCB71")
 
 .comdef ISoftDistExt
     QueryInterface	proc :REFIID, :ptr
@@ -2881,60 +1600,6 @@ externdef		IID_ISoftDistExt:IID
     AsyncInstallDistributionUnit proc :ptr, :LPVOID, :DWORD, :LPCODEBASEHOLD
     .ends
 
-;HRESULT
-ISoftDistExt_ProcessSoftDist_Proxy proto WINAPI \
-		 pThis: ptr ISoftDistExt,
-	      szCDFURL: LPCWSTR,
-      pSoftDistElement: ptr IXMLElement,
-		 lpsdi: LPSOFTDISTINFO
-
-;void
-ISoftDistExt_ProcessSoftDist_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-ISoftDistExt_GetFirstCodeBase_Proxy proto WINAPI \
-		 pThis: ptr ISoftDistExt,
-	    szCodeBase: ptr LPWSTR,
-	     dwMaxSize: LPDWORD
-
-;void
-ISoftDistExt_GetFirstCodeBase_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-ISoftDistExt_GetNextCodeBase_Proxy proto WINAPI \
-		 pThis: ptr ISoftDistExt,
-	    szCodeBase: ptr LPWSTR,
-	     dwMaxSize: LPDWORD
-
-;void
-ISoftDistExt_GetNextCodeBase_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-ISoftDistExt_AsyncInstallDistributionUnit_Proxy proto WINAPI \
-		 pThis: ptr ISoftDistExt,
-		   pbc: ptr IBindCtx,
-	    pvReserved: LPVOID,
-		 flags: DWORD,
-		 lpcbh: LPCODEBASEHOLD
-
-;void
-ISoftDistExt_AsyncInstallDistributionUnit_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 endif
 
 ;STDAPI
@@ -2953,12 +1618,10 @@ endif
 ifndef _LPDATAFILTER_DEFINED
 _LPDATAFILTER_DEFINED equ 1
 
-
-externdef		__MIDL_itf_urlmon_0136_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_urlmon_0136_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IDataFilter_INTERFACE_DEFINED__
 __IDataFilter_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IDataFilter, "69d14c80-c18e-11d0-a9ce-006097942311")
 
 .comdef IDataFilter
     QueryInterface	proc :REFIID, :ptr
@@ -2968,60 +1631,9 @@ __IDataFilter_INTERFACE_DEFINED__ equ 1
     DoDecode		proc :DWORD, :SDWORD, :ptr, :SDWORD, :ptr, :SDWORD, :ptr, :ptr, :DWORD
     SetEncodingLevel	proc :DWORD
     .ends
+
 LPDATAFILTER		typedef ptr IDataFilter
-externdef		IID_IDataFilter:IID
 
-;HRESULT
-IDataFilter_DoEncode_Proxy proto WINAPI \
-		 pThis: ptr IDataFilter,
-	       dwFlags: DWORD,
-	 lInBufferSize: LONG,
-	    pbInBuffer: LPBYTE,
-	lOutBufferSize: LONG,
-	   pbOutBuffer: LPBYTE,
-     lInBytesAvailable: LONG,
-	 plInBytesRead: ptr LONG,
-     plOutBytesWritten: ptr LONG,
-	    dwReserved: DWORD
-
-;void
-IDataFilter_DoEncode_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IDataFilter_DoDecode_Proxy proto WINAPI \
-		 pThis: ptr IDataFilter,
-	       dwFlags: DWORD,
-	 lInBufferSize: LONG,
-	    pbInBuffer: LPBYTE,
-	lOutBufferSize: LONG,
-	   pbOutBuffer: LPBYTE,
-     lInBytesAvailable: LONG,
-	 plInBytesRead: LPLONG,
-     plOutBytesWritten: LPLONG,
-	    dwReserved: DWORD
-
-;void
-IDataFilter_DoDecode_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IDataFilter_SetEncodingLevel_Proxy proto WINAPI \
-		 pThis: ptr IDataFilter,
-	    dwEncLevel: DWORD
-
-;void
-IDataFilter_SetEncodingLevel_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 endif
 endif
 
@@ -3035,9 +1647,6 @@ pUnk			LPIUnknown ?
 dwFilterFlags		dd ?
 PROTOCOLFILTERDATA	ENDS
 
-externdef		__MIDL_itf_urlmon_0137_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_urlmon_0137_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IEncodingFilterFactory_INTERFACE_DEFINED__
 __IEncodingFilterFactory_INTERFACE_DEFINED__ equ 1
 
@@ -3048,6 +1657,8 @@ ulConnectSpeed		dd ?
 ulProcessorSpeed	dd ?
 DATAINFO		ENDS
 
+DEFINE_IIDX(IEncodingFilterFactory, "70bdde00-c18e-11d0-a9ce-006097942311")
+
 .comdef IEncodingFilterFactory
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -3055,37 +1666,9 @@ DATAINFO		ENDS
     FindBestFilter	proc :LPWSTR, :LPWSTR, :DATAINFO, :ptr
     GetDefaultFilter	proc :LPWSTR, :LPWSTR, :ptr
     .ends
+
 LPENCODINGFILTERFACTORY typedef ptr IEncodingFilterFactory
-externdef		IID_IEncodingFilterFactory:IID
 
-;HRESULT
-IEncodingFilterFactory_FindBestFilter_Proxy proto WINAPI \
-		 pThis: ptr IEncodingFilterFactory,
-	     pwzCodeIn: LPCWSTR,
-	    pwzCodeOut: LPCWSTR,
-		  info: DATAINFO,
-		  ppDF: ptr IDataFilter
-
-;void
-IEncodingFilterFactory_FindBestFilter_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;HRESULT
-IEncodingFilterFactory_GetDefaultFilter_Proxy proto WINAPI \
-		 pThis: ptr IEncodingFilterFactory,
-	     pwzCodeIn: LPCWSTR,
-	    pwzCodeOut: LPCWSTR,
-		  ppDF: ptr IDataFilter
-
-;void
-IEncodingFilterFactory_GetDefaultFilter_Stub proto WINAPI \
-		 pThis: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
 endif
 endif
 ifndef _HITLOGGING_DEFINED
@@ -3114,122 +1697,5 @@ WriteHitLogging proto WINAPI \
 	 lpLogginginfo: LPHIT_LOGGING_INFO
 
 endif
-
-
-externdef		__MIDL_itf_urlmon_0138_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_urlmon_0138_v0_0_s_ifspec:RPC_IF_HANDLE
-
-;HRESULT
-IBinding_GetBindResult_Proxy proto WINAPI \
-		 pThis: ptr IBinding,
-	pclsidProtocol: ptr CLSID,
-	     pdwResult: LPDWORD,
-	     pszResult: ptr LPOLESTR,
-	   pdwReserved: LPDWORD
-
-;HRESULT
-IBinding_GetBindResult_Stub proto WINAPI \
-		 pThis: ptr IBinding,
-	pclsidProtocol: ptr CLSID,
-	     pdwResult: LPDWORD,
-	     pszResult: ptr LPOLESTR,
-	    dwReserved: DWORD
-
-;HRESULT
-IBindStatusCallback_GetBindInfo_Proxy proto WINAPI \
-		 pThis: ptr IBindStatusCallback,
-	      grfBINDF: LPDWORD,
-	     pbindinfo: ptr BINDINFO
-
-;HRESULT
-IBindStatusCallback_GetBindInfo_Stub proto WINAPI \
-		 pThis: ptr IBindStatusCallback,
-	      grfBINDF: LPDWORD,
-	     pbindinfo: ptr RemBINDINFO,
-	       pstgmed: ptr RemSTGMEDIUM
-
-;HRESULT
-IBindStatusCallback_OnDataAvailable_Proxy proto WINAPI \
-		 pThis: ptr IBindStatusCallback,
-	       grfBSCF: DWORD,
-		dwSize: DWORD,
-	    pformatetc: ptr FORMATETC,
-	       pstgmed: ptr STGMEDIUM
-
-;HRESULT
-IBindStatusCallback_OnDataAvailable_Stub proto WINAPI \
-		 pThis: ptr IBindStatusCallback,
-	       grfBSCF: DWORD,
-		dwSize: DWORD,
-	    pformatetc: ptr RemFORMATETC,
-	       pstgmed: ptr RemSTGMEDIUM
-
-;HRESULT
-IWinInetInfo_QueryOption_Proxy proto WINAPI \
-		 pThis: ptr IWinInetInfo,
-	      dwOption: DWORD,
-	       pBuffer: LPVOID,
-		pcbBuf: LPDWORD
-
-;HRESULT
-IWinInetInfo_QueryOption_Stub proto WINAPI \
-		 pThis: ptr IWinInetInfo,
-	      dwOption: DWORD,
-	       pBuffer: LPBYTE,
-		pcbBuf: LPDWORD
-
-;HRESULT
-IWinInetHttpInfo_QueryInfo_Proxy proto WINAPI \
-		 pThis: ptr IWinInetHttpInfo,
-	      dwOption: DWORD,
-	       pBuffer: LPVOID,
-		pcbBuf: LPDWORD,
-	      pdwFlags: LPDWORD,
-	   pdwReserved: LPDWORD
-
-;HRESULT
-IWinInetHttpInfo_QueryInfo_Stub proto WINAPI \
-		 pThis: ptr IWinInetHttpInfo,
-	      dwOption: DWORD,
-	       pBuffer: LPBYTE,
-		pcbBuf: LPDWORD,
-	      pdwFlags: LPDWORD,
-	   pdwReserved: LPDWORD
-
-;HRESULT
-IBindHost_MonikerBindToStorage_Proxy proto WINAPI \
-		 pThis: ptr IBindHost,
-		   pMk: ptr IMoniker,
-		   pBC: ptr IBindCtx,
-		  pBSC: ptr IBindStatusCallback,
-		  riid: REFIID,
-		ppvObj: PVOID
-
-;HRESULT
-IBindHost_MonikerBindToStorage_Stub proto WINAPI \
-		 pThis: ptr IBindHost,
-		   pMk: ptr IMoniker,
-		   pBC: ptr IBindCtx,
-		  pBSC: ptr IBindStatusCallback,
-		  riid: REFIID,
-		ppvObj: ptr IUnknown
-
-;HRESULT
-IBindHost_MonikerBindToObject_Proxy proto WINAPI \
-		 pThis: ptr IBindHost,
-		   pMk: ptr IMoniker,
-		   pBC: ptr IBindCtx,
-		  pBSC: ptr IBindStatusCallback,
-		  riid: REFIID,
-		ppvObj: PVOID
-
-;HRESULT
-IBindHost_MonikerBindToObject_Stub proto WINAPI \
-		 pThis: ptr IBindHost,
-		   pMk: ptr IMoniker,
-		   pBC: ptr IBindCtx,
-		  pBSC: ptr IBindStatusCallback,
-		  riid: REFIID,
-		ppvObj: ptr IUnknown
 
 endif

@@ -21,7 +21,7 @@ __IBackgroundCopyJobHttpOptions_FWD_DEFINED__ equ 1
 endif
 ifndef __BackgroundCopyManager2_5_FWD_DEFINED__
 __BackgroundCopyManager2_5_FWD_DEFINED__ equ 1
-BackgroundCopyManager2_5 typedef BackgroundCopyManager2_5
+;BackgroundCopyManager2_5 typedef BackgroundCopyManager2_5
 endif
 ifndef __IBackgroundCopyJobHttpOptions_FWD_DEFINED__
 __IBackgroundCopyJobHttpOptions_FWD_DEFINED__ equ 1
@@ -44,7 +44,7 @@ BG_CERT_STORE_LOCATION_CURRENT_USER_GROUP_POLICY equ ( BG_CERT_STORE_LOCATION_US
 BG_CERT_STORE_LOCATION_LOCAL_MACHINE_GROUP_POLICY equ ( BG_CERT_STORE_LOCATION_CURRENT_USER_GROUP_POLICY + 1 )
 BG_CERT_STORE_LOCATION_LOCAL_MACHINE_ENTERPRISE equ ( BG_CERT_STORE_LOCATION_LOCAL_MACHINE_GROUP_POLICY + 1 )
 
-externdef		IID_IBackgroundCopyJobHttpOptions:IID
+DEFINE_IIDX(IBackgroundCopyJobHttpOptions, "f1bd1079-9f01-4bdc-8036-f09b70095066")
 
 .comdef IBackgroundCopyJobHttpOptions
 
@@ -66,10 +66,8 @@ endif
 ifndef __BackgroundCopyManager2_5_LIBRARY_DEFINED__
 __BackgroundCopyManager2_5_LIBRARY_DEFINED__ equ 1
 
-externdef LIBID_BackgroundCopyManager2_5:IID
-externdef CLSID_BackgroundCopyManager2_5:CLSID
-ifdef __cplusplus
-class DECLSPEC_UUID("03ca98d6-ff5d-49b8-abc6-03dd84127020")
+DEFINE_GUIDS(LIBID_BackgroundCopyManager2_5, "03ca98d6-ff5d-49b8-abc6-03dd84127020")
+DEFINE_GUIDS(CLSID_BackgroundCopyManager2_5, "03ca98d6-ff5d-49b8-abc6-03dd84127020")
 endif
 endif
 
@@ -84,8 +82,5 @@ BG_HTTP_REDIRECT_POLICY_ALLOW_REPORT equ 0x0100
 BG_HTTP_REDIRECT_POLICY_DISALLOW equ 0x0200
 BG_HTTP_REDIRECT_POLICY_ALLOW_HTTPS_TO_HTTP equ 0x0800
 include bits3_0.inc
-
-externdef __MIDL_itf_bits2_5_0000_0001_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef __MIDL_itf_bits2_5_0000_0001_v0_0_s_ifspec:RPC_IF_HANDLE
 
 endif

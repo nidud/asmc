@@ -38,7 +38,7 @@ __IBitsTokenOptions_INTERFACE_DEFINED__ equ 1
 BG_TOKEN_LOCAL_FILE	equ 0x0001
 BG_TOKEN_NETWORK	equ 0x0002
 
-externdef		IID_IBitsTokenOptions:IID
+DEFINE_IIDX(IBitsTokenOptions, "9a2584c3-f7d2-457a-9a5e-22b67bffc7d2")
 
 .comdef IBitsTokenOptions
 
@@ -57,7 +57,7 @@ endif
 ifndef __IBackgroundCopyFile4_INTERFACE_DEFINED__
 __IBackgroundCopyFile4_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IBackgroundCopyFile4:IID
+DEFINE_IIDX(IBackgroundCopyFile4, "ef7e0655-7888-4960-b0e5-730846e03492")
 
 .comdef IBackgroundCopyFile4
 
@@ -80,11 +80,8 @@ endif
 
 ifndef __BackgroundCopyManager4_0_LIBRARY_DEFINED__
 __BackgroundCopyManager4_0_LIBRARY_DEFINED__ equ 1
-
-externdef		LIBID_BackgroundCopyManager4_0:IID
-externdef		CLSID_BackgroundCopyManager4_0:CLSID
-ifdef __cplusplus
-class DECLSPEC_UUID("bb6df56b-cace-11dc-9992-0019b93a3a84")
+DEFINE_GUIDS(LIBID_BackgroundCopyManager4_0, "bb6df56b-cace-11dc-9992-0019b93a3a84")
+DEFINE_GUIDS(CLSID_BackgroundCopyManager4_0, "bb6df56b-cace-11dc-9992-0019b93a3a84")
 endif
 endif
 

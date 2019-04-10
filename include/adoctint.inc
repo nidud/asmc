@@ -218,8 +218,6 @@ adInheritObjects	equ 1
 adInheritContainers	equ 2
 adInheritBoth		equ 3
 adInheritNoPropogate	equ 4
-externdef		__MIDL_itf_adocat_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_adocat_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
 ifndef __ADOX_LIBRARY_DEFINED__
 __ADOX_LIBRARY_DEFINED__ equ 1
 externdef		LIBID_ADOX:IID

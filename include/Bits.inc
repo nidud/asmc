@@ -54,9 +54,6 @@ include bitsmsg.inc
 
 BG_SIZE_UNKNOWN		equ (-1)
 
-externdef		__MIDL_itf_bits_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_bits_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IBackgroundCopyFile_INTERFACE_DEFINED__
 __IBackgroundCopyFile_INTERFACE_DEFINED__ equ 1
 
@@ -66,7 +63,7 @@ BytesTransferred	UINT64 ?
 Completed		BOOL ?
 BG_FILE_PROGRESS	ENDS
 
-externdef		IID_IBackgroundCopyFile:IID
+DEFINE_IIDX(IBackgroundCopyFile, "01b7bd23-fb88-4a77-8490-5891d3e4653a")
 
 .comdef IBackgroundCopyFile
 
@@ -83,7 +80,7 @@ endif
 ifndef __IEnumBackgroundCopyFiles_INTERFACE_DEFINED__
 __IEnumBackgroundCopyFiles_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IEnumBackgroundCopyFiles:IID
+DEFINE_IIDX(IEnumBackgroundCopyFiles, "ca51e165-c365-424c-8d41-24aaa4ff3c40")
 
 .comdef IEnumBackgroundCopyFiles
 
@@ -112,7 +109,7 @@ BG_ERROR_CONTEXT_REMOTE_FILE equ 5
 BG_ERROR_CONTEXT_GENERAL_TRANSPORT equ 6
 BG_ERROR_CONTEXT_REMOTE_APPLICATION equ 7
 
-externdef		IID_IBackgroundCopyError:IID
+DEFINE_IIDX(IBackgroundCopyError, "19c613a0-fcb8-4f28-81ae-897c3d078f81")
 
 .comdef IBackgroundCopyError
 
@@ -176,7 +173,7 @@ BG_JOB_PROXY_USAGE_NO_PROXY equ ( BG_JOB_PROXY_USAGE_PRECONFIG + 1 )
 BG_JOB_PROXY_USAGE_OVERRIDE equ ( BG_JOB_PROXY_USAGE_NO_PROXY + 1 )
 BG_JOB_PROXY_USAGE_AUTODETECT equ ( BG_JOB_PROXY_USAGE_OVERRIDE + 1 )
 
-externdef		IID_IBackgroundCopyJob:IID
+DEFINE_IIDX(IBackgroundCopyJob, "37668d37-507e-4160-9316-26306d150b12")
 
 .comdef IBackgroundCopyJob
 
@@ -222,7 +219,7 @@ endif
 ifndef __IEnumBackgroundCopyJobs_INTERFACE_DEFINED__
 __IEnumBackgroundCopyJobs_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IEnumBackgroundCopyJobs:IID
+DEFINE_IIDX(IEnumBackgroundCopyJobs, "1af4f612-3b71-466f-8f58-7b6f73ac57ad")
 
 .comdef IEnumBackgroundCopyJobs
 
@@ -244,13 +241,10 @@ BG_NOTIFY_DISABLE	equ 0x0004
 BG_NOTIFY_JOB_MODIFICATION equ 0x0008
 BG_NOTIFY_FILE_TRANSFERRED equ 0x0010
 
-externdef __MIDL_itf_bits_0000_0005_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef __MIDL_itf_bits_0000_0005_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IBackgroundCopyCallback_INTERFACE_DEFINED__
 __IBackgroundCopyCallback_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IBackgroundCopyCallback:IID
+DEFINE_IIDX(IBackgroundCopyCallback, "97ea99c7-0186-4ad4-8df9-c5b4e0ed6b22")
 
 .comdef IBackgroundCopyCallback
 
@@ -267,7 +261,7 @@ endif
 ifndef __AsyncIBackgroundCopyCallback_INTERFACE_DEFINED__
 __AsyncIBackgroundCopyCallback_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_AsyncIBackgroundCopyCallback:IID
+DEFINE_IIDX(AsyncIBackgroundCopyCallback, "ca29d251-b4bb-4679-a3d9-ae8006119d54")
 
 .comdef AsyncIBackgroundCopyCallback
 
@@ -289,7 +283,7 @@ __IBackgroundCopyManager_INTERFACE_DEFINED__ equ 1
 
 BG_JOB_ENUM_ALL_USERS	equ 0x0001
 
-externdef		IID_IBackgroundCopyManager:IID
+DEFINE_IIDX(IBackgroundCopyManager, "5ce34c0d-0dc9-4c1f-897c-daa1b78cee7c")
 
 .comdef IBackgroundCopyManager
 
@@ -307,17 +301,12 @@ endif
 ifndef __BackgroundCopyManager_LIBRARY_DEFINED__
 __BackgroundCopyManager_LIBRARY_DEFINED__ equ 1
 
-externdef		LIBID_BackgroundCopyManager:IID
-externdef		CLSID_BackgroundCopyManager:CLSID
-ifdef __cplusplus
-DECLSPEC_UUID("4991d34b-80a1-4291-83b6-3328366b9097")
-endif
+DEFINE_GUIDS(LIBID_BackgroundCopyManager, "4991d34b-80a1-4291-83b6-3328366b9097")
+DEFINE_GUIDS(CLSID_BackgroundCopyManager, "4991d34b-80a1-4291-83b6-3328366b9097")
+
 endif
 
 include bits1_5.inc
-
-externdef __MIDL_itf_bits_0000_0007_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef __MIDL_itf_bits_0000_0007_v0_0_s_ifspec:RPC_IF_HANDLE
 
 endif
 .pragma list(pop)

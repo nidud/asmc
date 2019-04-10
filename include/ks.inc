@@ -13,19 +13,19 @@ DEFINE_GUIDEX macro name
 endif
 ifndef STATICGUIDOF
 STATICGUIDOF macro guid
-	exitm<STATIC_##guid>
+	exitm<_&guid&>
 	endm
 endif
 endif
 
 ifndef SIZEOF_ARRAY
 SIZEOF_ARRAY macro ar
-	exitm<(sizeof(ar)/sizeof((ar)[0]))>
+	exitm<lengthof(ar)>
 	endm
 endif
 
 DEFINE_GUIDSTRUCT macro g, n
-	exitm<DEFINE_GUIDEX(n)>
+	exitm<DEFINE_GUIDS(n, g)>
 	endm
 DEFINE_GUIDNAMED macro n
 	exitm<n>
@@ -548,7 +548,7 @@ ifdef _NTDDK_
 STATIC_KSPROPSETID_GM	equ <{0xAF627536,0xE719,0x11D2,{0x8A,0x1D,0x00,0x60,0x97,0xD2,0xDF,0x5D}}>
 DEFINE_GUIDSTRUCT("AF627536-E719-11D2-8A1D-006097D2DF5D", KSPROPSETID_GM)
 
-CALLBACK(PFNKSGRAPHMANAGER_NOTIFY,GraphManager:PFILE_OBJECT,
+CALLBACK(PFNKSGRAPHMANAGER_NOTIFY,GraphManager:PFILE_OBJECT,\
 	  EventId:ULONG, Filter:PVOID, Pin:PVOID, Frame:PVOID, Duration:ULONG)
 
 
@@ -1455,13 +1455,13 @@ CALLBACK(PFNKSFASTHANDLER, :PFILE_OBJECT, :PKSIDENTIFIER, :ULONG, :PVOID, :ULONG
 CALLBACK(PFNKSALLOCATOR, :PIRP, :ULONG, :BOOLEAN)
 
 KSPROPERTY_MEMBERSLIST	STRUC
-MembersHeader		KSPROPERTY_MEMBERSHEADER ?
+MembersHeader		KSPROPERTY_MEMBERSHEADER <>
 Members			PVOID ?
 KSPROPERTY_MEMBERSLIST	ENDS
 PKSPROPERTY_MEMBERSLIST typedef ptr KSPROPERTY_MEMBERSLIST
 
 KSPROPERTY_VALUES	STRUC
-PropTypeSet		KSIDENTIFIER ?
+PropTypeSet		KSIDENTIFIER <>
 MembersListCount	ULONG ?
 MembersList		PKSPROPERTY_MEMBERSLIST ?
 KSPROPERTY_VALUES	ENDS
@@ -1486,7 +1486,7 @@ UNION
  SetSupported		BOOLEAN ?
 ENDS
 RelationsCount		ULONG ?
-Relations		KSPROPERTY* ?
+Relations		LPKSPROPERTY ?
 SupportHandler		PFNKSHANDLER ?
 SerializedSize		ULONG ?
 KSPROPERTY_ITEM		ENDS
@@ -1618,8 +1618,8 @@ KSDPC_ITEM		ENDS
 PKSDPC_ITEM		typedef ptr KSDPC_ITEM
 
 KSBUFFER_ITEM		STRUC
-DpcItem			KSDPC_ITEM ?
-BufferList		LIST_ENTRY ?
+DpcItem			KSDPC_ITEM <>
+BufferList		LIST_ENTRY <>
 KSBUFFER_ITEM		ENDS
 PKSBUFFER_ITEM		typedef ptr KSBUFFER_ITEM
 
@@ -1628,7 +1628,7 @@ KSEVENT_ENTRY_ONESHOT	equ 2
 KSEVENT_ENTRY_BUFFERED	equ 4
 
 KSEVENT_ENTRY		STRUC
-ListEntry		LIST_ENTRY ?
+ListEntry		LIST_ENTRY <>
 Object			PVOID ?
 UNION
  DpcItem		PKSDPC_ITEM ?
@@ -1922,22 +1922,21 @@ CALLBACK(PFNKSPININITIALIZEALLOCATOR, :PKSPIN, :PKSALLOCATOR_FRAMING, :PVOID)
 ;void
 CALLBACK(PFNKSSTREAMPOINTER, :PKSSTREAM_POINTER)
 
-KSAUTOMATION_TABLE_	STRUC
-KSAUTOMATION_TABLE, *PKSAUTOMATION_TABLE;
-KSAUTOMATION_TABLE_	STRUC
+KSAUTOMATION_TABLE	STRUC
 PropertySetsCount	ULONG ?
 PropertyItemSize	ULONG ?
- PropertyItemSize) KSPROPERTY_SET* PropertySets LP__field_bcount(PropertySetsCount ?
+PropertySets		PVOID ?
 MethodSetsCount		ULONG ?
 MethodItemSize		ULONG ?
- MethodItemSize) KSMETHOD_SET* MethodSets LP__field_bcount(MethodSetsCount ?
+MethodSets		ULONG ?
 EventSetsCount		ULONG ?
 EventItemSize		ULONG ?
- EventItemSize) KSEVENT_SET* EventSets LP__field_bcount(EventSetsCount ?
+EventSets		ULONG ?
 ifndef _WIN64
 Alignment		PVOID ?
 endif
-			ENDS
+KSAUTOMATION_TABLE	ENDS
+PKSAUTOMATION_TABLE	typedef ptr KSAUTOMATION_TABLE
 
 DEFINE_KSAUTOMATION_TABLE macro table
 	endm
@@ -1987,7 +1986,7 @@ SetDataFormat		PFNKSPINSETDATAFORMAT ?
 SetDeviceState		PFNKSPINSETDEVICESTATE ?
 Connect			PFNKSPIN ?
 Disconnect		PFNKSPINVOID ?
-Clock			KSCLOCK_DISPATCH* ?
+Clock			LPKSCLOCK_DISPATCH ?
 Allocator		KSALLOCATOR_DISPATCH* ?
 KSPIN_DISPATCH		ENDS
 
@@ -2787,7 +2786,7 @@ KsAddIrpToCancelableQueue proto WINAPI \
 ;NTAPI
 KsAcquireResetValue proto WINAPI \
 		   Irp: PIRP,
-	    ResetValue: KSRESET*
+	    ResetValue: ptr KSRESET
 
 
 ;NTAPI
@@ -2795,7 +2794,7 @@ KsTopologyPropertyHandler proto WINAPI \
 		   Irp: PIRP,
 	      Property: PKSPROPERTY,
 		  Data: PVOID,
-  KSTOPOLOGY* Topology: const
+	      Topology: ptr KSTOPOLOGY
 
 
 ;VOID
@@ -3637,3 +3636,4 @@ endif
 endif ;; !defined(_NTDDK_)
 
 endif
+

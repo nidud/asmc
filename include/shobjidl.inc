@@ -615,227 +615,171 @@ __IShellLibrary_FWD_DEFINED__ equ 1
 endif
 ifndef __ShellDesktop_FWD_DEFINED__
 __ShellDesktop_FWD_DEFINED__ equ 1
-ShellDesktop		typedef ShellDesktop
 endif
 ifndef __ShellFSFolder_FWD_DEFINED__
 __ShellFSFolder_FWD_DEFINED__ equ 1
-ShellFSFolder		typedef ShellFSFolder
 endif
 ifndef __NetworkPlaces_FWD_DEFINED__
 __NetworkPlaces_FWD_DEFINED__ equ 1
-NetworkPlaces		typedef NetworkPlaces
 endif
 ifndef __ShellLink_FWD_DEFINED__
 __ShellLink_FWD_DEFINED__ equ 1
-ShellLink		typedef ShellLink
 endif
 ifndef __QueryCancelAutoPlay_FWD_DEFINED__
 __QueryCancelAutoPlay_FWD_DEFINED__ equ 1
-QueryCancelAutoPlay	typedef QueryCancelAutoPlay
 endif
 ifndef __DriveSizeCategorizer_FWD_DEFINED__
 __DriveSizeCategorizer_FWD_DEFINED__ equ 1
-DriveSizeCategorizer	typedef DriveSizeCategorizer
 endif
 ifndef __DriveTypeCategorizer_FWD_DEFINED__
 __DriveTypeCategorizer_FWD_DEFINED__ equ 1
-DriveTypeCategorizer	typedef DriveTypeCategorizer
 endif
 ifndef __FreeSpaceCategorizer_FWD_DEFINED__
 __FreeSpaceCategorizer_FWD_DEFINED__ equ 1
-FreeSpaceCategorizer	typedef FreeSpaceCategorizer
 endif
 ifndef __TimeCategorizer_FWD_DEFINED__
 __TimeCategorizer_FWD_DEFINED__ equ 1
-TimeCategorizer		typedef TimeCategorizer
 endif
 ifndef __SizeCategorizer_FWD_DEFINED__
 __SizeCategorizer_FWD_DEFINED__ equ 1
-SizeCategorizer		typedef SizeCategorizer
 endif
 ifndef __AlphabeticalCategorizer_FWD_DEFINED__
 __AlphabeticalCategorizer_FWD_DEFINED__ equ 1
-AlphabeticalCategorizer typedef AlphabeticalCategorizer
 endif
 ifndef __MergedCategorizer_FWD_DEFINED__
 __MergedCategorizer_FWD_DEFINED__ equ 1
-MergedCategorizer	typedef MergedCategorizer
 endif
 ifndef __ImageProperties_FWD_DEFINED__
 __ImageProperties_FWD_DEFINED__ equ 1
-ImageProperties		typedef ImageProperties
 endif
 ifndef __PropertiesUI_FWD_DEFINED__
 __PropertiesUI_FWD_DEFINED__ equ 1
-PropertiesUI		typedef PropertiesUI
 endif
 ifndef __UserNotification_FWD_DEFINED__
 __UserNotification_FWD_DEFINED__ equ 1
-UserNotification	typedef UserNotification
 endif
 ifndef __CDBurn_FWD_DEFINED__
 __CDBurn_FWD_DEFINED__ equ 1
-CDBurn			typedef CDBurn
 endif
 ifndef __TaskbarList_FWD_DEFINED__
 __TaskbarList_FWD_DEFINED__ equ 1
-TaskbarList		typedef TaskbarList
 endif
 ifndef __StartMenuPin_FWD_DEFINED__
 __StartMenuPin_FWD_DEFINED__ equ 1
-StartMenuPin		typedef StartMenuPin
 endif
 ifndef __WebWizardHost_FWD_DEFINED__
 __WebWizardHost_FWD_DEFINED__ equ 1
-WebWizardHost		typedef WebWizardHost
 endif
 ifndef __PublishDropTarget_FWD_DEFINED__
 __PublishDropTarget_FWD_DEFINED__ equ 1
-PublishDropTarget	typedef PublishDropTarget
 endif
 ifndef __PublishingWizard_FWD_DEFINED__
 __PublishingWizard_FWD_DEFINED__ equ 1
-PublishingWizard	typedef PublishingWizard
 endif
 ifndef __InternetPrintOrdering_FWD_DEFINED__
 __InternetPrintOrdering_FWD_DEFINED__ equ 1
-InternetPrintOrdering	typedef InternetPrintOrdering
 endif
 ifndef __FolderViewHost_FWD_DEFINED__
 __FolderViewHost_FWD_DEFINED__ equ 1
-FolderViewHost		typedef FolderViewHost
 endif
 ifndef __ExplorerBrowser_FWD_DEFINED__
 __ExplorerBrowser_FWD_DEFINED__ equ 1
-ExplorerBrowser		typedef ExplorerBrowser
 endif
 ifndef __ImageRecompress_FWD_DEFINED__
 __ImageRecompress_FWD_DEFINED__ equ 1
-ImageRecompress		typedef ImageRecompress
 endif
 ifndef __TrayBandSiteService_FWD_DEFINED__
 __TrayBandSiteService_FWD_DEFINED__ equ 1
-TrayBandSiteService	typedef TrayBandSiteService
 endif
 ifndef __TrayDeskBand_FWD_DEFINED__
 __TrayDeskBand_FWD_DEFINED__ equ 1
-TrayDeskBand		typedef TrayDeskBand
 endif
 ifndef __AttachmentServices_FWD_DEFINED__
 __AttachmentServices_FWD_DEFINED__ equ 1
-AttachmentServices	typedef AttachmentServices
 endif
 ifndef __DocPropShellExtension_FWD_DEFINED__
 __DocPropShellExtension_FWD_DEFINED__ equ 1
-DocPropShellExtension	typedef DocPropShellExtension
 endif
 ifndef __ShellItem_FWD_DEFINED__
 __ShellItem_FWD_DEFINED__ equ 1
-ShellItem		typedef ShellItem
 endif
 ifndef __NamespaceWalker_FWD_DEFINED__
 __NamespaceWalker_FWD_DEFINED__ equ 1
-NamespaceWalker		typedef NamespaceWalker
 endif
 ifndef __FileOperation_FWD_DEFINED__
 __FileOperation_FWD_DEFINED__ equ 1
-FileOperation		typedef FileOperation
 endif
 ifndef __FileOpenDialog_FWD_DEFINED__
 __FileOpenDialog_FWD_DEFINED__ equ 1
-FileOpenDialog		typedef FileOpenDialog
 endif
 ifndef __FileSaveDialog_FWD_DEFINED__
 __FileSaveDialog_FWD_DEFINED__ equ 1
-FileSaveDialog		typedef FileSaveDialog
 endif
 ifndef __KnownFolderManager_FWD_DEFINED__
 __KnownFolderManager_FWD_DEFINED__ equ 1
-KnownFolderManager	typedef KnownFolderManager
 endif
 ifndef __FSCopyHandler_FWD_DEFINED__
 __FSCopyHandler_FWD_DEFINED__ equ 1
-FSCopyHandler		typedef FSCopyHandler
 endif
 ifndef __SharingConfigurationManager_FWD_DEFINED__
 __SharingConfigurationManager_FWD_DEFINED__ equ 1
-SharingConfigurationManager typedef SharingConfigurationManager
 endif
 ifndef __PreviousVersions_FWD_DEFINED__
 __PreviousVersions_FWD_DEFINED__ equ 1
-PreviousVersions	typedef PreviousVersions
 endif
 ifndef __NetworkConnections_FWD_DEFINED__
 __NetworkConnections_FWD_DEFINED__ equ 1
-NetworkConnections	typedef NetworkConnections
 endif
 ifndef __NamespaceTreeControl_FWD_DEFINED__
 __NamespaceTreeControl_FWD_DEFINED__ equ 1
-NamespaceTreeControl	typedef NamespaceTreeControl
 endif
 ifndef __IENamespaceTreeControl_FWD_DEFINED__
 __IENamespaceTreeControl_FWD_DEFINED__ equ 1
-IENamespaceTreeControl	typedef IENamespaceTreeControl
 endif
 ifndef __ScheduledTasks_FWD_DEFINED__
 __ScheduledTasks_FWD_DEFINED__ equ 1
-ScheduledTasks		typedef ScheduledTasks
 endif
 ifndef __ApplicationAssociationRegistration_FWD_DEFINED__
 __ApplicationAssociationRegistration_FWD_DEFINED__ equ 1
-ApplicationAssociationRegistration typedef ApplicationAssociationRegistration
 endif
 ifndef __ApplicationAssociationRegistrationUI_FWD_DEFINED__
 __ApplicationAssociationRegistrationUI_FWD_DEFINED__ equ 1
-ApplicationAssociationRegistrationUI typedef ApplicationAssociationRegistrationUI
 endif
 ifndef __SearchFolderItemFactory_FWD_DEFINED__
 __SearchFolderItemFactory_FWD_DEFINED__ equ 1
-SearchFolderItemFactory typedef SearchFolderItemFactory
 endif
 ifndef __OpenControlPanel_FWD_DEFINED__
 __OpenControlPanel_FWD_DEFINED__ equ 1
-OpenControlPanel	typedef OpenControlPanel
 endif
 ifndef __MailRecipient_FWD_DEFINED__
 __MailRecipient_FWD_DEFINED__ equ 1
-MailRecipient		typedef MailRecipient
 endif
 ifndef __NetworkExplorerFolder_FWD_DEFINED__
 __NetworkExplorerFolder_FWD_DEFINED__ equ 1
-NetworkExplorerFolder	typedef NetworkExplorerFolder
 endif
 ifndef __DestinationList_FWD_DEFINED__
 __DestinationList_FWD_DEFINED__ equ 1
-DestinationList		typedef DestinationList
 endif
 ifndef __ApplicationDestinations_FWD_DEFINED__
 __ApplicationDestinations_FWD_DEFINED__ equ 1
-ApplicationDestinations typedef ApplicationDestinations
 endif
 ifndef __ApplicationDocumentLists_FWD_DEFINED__
 __ApplicationDocumentLists_FWD_DEFINED__ equ 1
-ApplicationDocumentLists typedef ApplicationDocumentLists
 endif
 ifndef __HomeGroup_FWD_DEFINED__
 __HomeGroup_FWD_DEFINED__ equ 1
-HomeGroup		typedef HomeGroup
 endif
 ifndef __ShellLibrary_FWD_DEFINED__
 __ShellLibrary_FWD_DEFINED__ equ 1
-ShellLibrary		typedef ShellLibrary
 endif
 ifndef __AppStartupLink_FWD_DEFINED__
 __AppStartupLink_FWD_DEFINED__ equ 1
-AppStartupLink		typedef AppStartupLink
 endif
 ifndef __EnumerableObjectCollection_FWD_DEFINED__
 __EnumerableObjectCollection_FWD_DEFINED__ equ 1
-EnumerableObjectCollection typedef EnumerableObjectCollection
 endif
 ifndef __DesktopGadget_FWD_DEFINED__
 __DesktopGadget_FWD_DEFINED__ equ 1
-DesktopGadget		typedef DesktopGadget
 endif
 ifndef __IAssocHandlerInvoker_FWD_DEFINED__
 __IAssocHandlerInvoker_FWD_DEFINED__ equ 1
@@ -1006,13 +950,11 @@ PCCMINVOKECOMMANDINFOEX typedef ptr CMINVOKECOMMANDINFOEX
 
 .pragma pack(pop)
 
-externdef		__MIDL_itf_shobjidl_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IContextMenu_INTERFACE_DEFINED__
 __IContextMenu_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IContextMenu:IID
+DEFINE_IIDX(IContextMenu, "000214e4-0000-0000-c000-000000000046")
+
 .comdef IContextMenu
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1022,17 +964,14 @@ externdef		IID_IContextMenu:IID
     GetCommandString	proc :UINT_PTR, :UINT, :ptr, :LPSTR, :UINT
     .ends
 
-endif
-
 LPCONTEXTMENU		typedef ptr IContextMenu
-
-externdef		__MIDL_itf_shobjidl_0000_0001_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0001_v0_0_s_ifspec:RPC_IF_HANDLE
+endif
 
 ifndef __IContextMenu2_INTERFACE_DEFINED__
 __IContextMenu2_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IContextMenu2:IID
+DEFINE_IIDX(IContextMenu2, "000214f4-0000-0000-c000-000000000046")
+
 .comdef IContextMenu2
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1043,17 +982,14 @@ externdef		IID_IContextMenu2:IID
     HandleMenuMsg	proc :UINT, :WPARAM, :LPARAM
     .ends
 
-endif
-
 LPCONTEXTMENU2		typedef ptr IContextMenu2
-
-externdef		__MIDL_itf_shobjidl_0000_0002_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0002_v0_0_s_ifspec:RPC_IF_HANDLE
+endif
 
 ifndef __IContextMenu3_INTERFACE_DEFINED__
 __IContextMenu3_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IContextMenu3:IID
+DEFINE_IIDX(IContextMenu3, "BCFCE0A0-EC17-11d0-8D10-00A0C90F2719")
+
 .comdef IContextMenu3
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1065,17 +1001,15 @@ externdef		IID_IContextMenu3:IID
     HandleMenuMsg2	proc :UINT, :WPARAM, :LPARAM, :ptr
     .ends
 
-endif
-
 LPCONTEXTMENU3		typedef ptr IContextMenu3
 
-externdef		__MIDL_itf_shobjidl_0000_0003_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0003_v0_0_s_ifspec:RPC_IF_HANDLE
+endif
 
 ifndef __IExecuteCommand_INTERFACE_DEFINED__
 __IExecuteCommand_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IExecuteCommand:IID
+DEFINE_IIDX(IExecuteCommand, "7F9185B0-CB92-43c5-80A9-92277A4F7B54")
+
 .comdef IExecuteCommand
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1094,7 +1028,8 @@ endif
 ifndef __IPersistFolder_INTERFACE_DEFINED__
 __IPersistFolder_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IPersistFolder:IID
+DEFINE_IIDX(IPersistFolder, "000214EA-0000-0000-C000-000000000046")
+
 .comdef IPersistFolder
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1103,9 +1038,9 @@ externdef		IID_IPersistFolder:IID
     Initialize		proc :PCIDLIST_ABSOLUTE
     .ends
 
-endif
-
 LPPERSISTFOLDER		typedef ptr IPersistFolder
+
+endif
 
 if (_WIN32_IE GE 0x0400)
 IRTIR_TASK_NOT_RUNNING	equ 0
@@ -1114,13 +1049,11 @@ IRTIR_TASK_SUSPENDED	equ 2
 IRTIR_TASK_PENDING	equ 3
 IRTIR_TASK_FINISHED	equ 4
 
-externdef		__MIDL_itf_shobjidl_0000_0005_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0005_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IRunnableTask_INTERFACE_DEFINED__
 __IRunnableTask_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IRunnableTask:IID
+DEFINE_IIDX(IRunnableTask, "85788d00-6807-11d0-b810-00c04fd706ec")
+
 .comdef IRunnableTask
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1147,15 +1080,11 @@ ITSS_THREAD_TERMINATE_TIMEOUT equ (INFINITE)
 ITSS_THREAD_TIMEOUT_NO_CHANGE equ (INFINITE - 1)
 
 
-externdef		__MIDL_itf_shobjidl_0000_0006_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0006_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IShellTaskScheduler_INTERFACE_DEFINED__
 __IShellTaskScheduler_INTERFACE_DEFINED__ equ 1
 
-DEFINE_GUID(IID_IShellTaskScheduler, 0x6ccb7be0, 0x6807, 0x11d0, 0xb8,0x10, 0x00,0xc0,0x4f,0xd7,0x06,0xec)
+DEFINE_IIDX(IShellTaskScheduler, "6CCB7BE0-6807-11d0-B810-00C04FD706EC")
 
-externdef		IID_IShellTaskScheduler:IID
 .comdef IShellTaskScheduler
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1170,13 +1099,11 @@ endif
 
 SID_ShellTaskScheduler	equ <IID_IShellTaskScheduler>
 
-externdef		__MIDL_itf_shobjidl_0000_0007_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0007_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IQueryCodePage_INTERFACE_DEFINED__
 __IQueryCodePage_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IQueryCodePage:IID
+DEFINE_IIDX(IQueryCodePage, "C7B236CE-EE80-11D0-985F-006008059382")
+
 .comdef IQueryCodePage
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1190,7 +1117,8 @@ endif
 ifndef __IPersistFolder2_INTERFACE_DEFINED__
 __IPersistFolder2_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IPersistFolder2:IID
+DEFINE_IIDX(IPersistFolder2, "1AC3D9F0-175C-11d1-95BE-00609797EA4F")
+
 .comdef IPersistFolder2
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1219,13 +1147,11 @@ PERSIST_FOLDER_TARGET_INFO ENDS
 .pragma pack(pop)
 
 
-externdef		__MIDL_itf_shobjidl_0000_0009_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0009_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IPersistFolder3_INTERFACE_DEFINED__
 __IPersistFolder3_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IPersistFolder3:IID
+DEFINE_IIDX(IPersistFolder3, "CEF04FDF-FE72-11d2-87A5-00C04F6837CF")
+
 .comdef IPersistFolder3
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1242,13 +1168,11 @@ endif
 
 if (NTDDI_VERSION GE NTDDI_WINXP) OR (_WIN32_IE GE _WIN32_IE_IE70)
 
-externdef		__MIDL_itf_shobjidl_0000_0010_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0010_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IPersistIDList_INTERFACE_DEFINED__
 __IPersistIDList_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IPersistIDList:IID
+DEFINE_IIDX(IPersistIDList, "1079acfc-29bd-11d3-8e0d-00c04f6837d5")
+
 .comdef IPersistIDList
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1261,13 +1185,11 @@ externdef		IID_IPersistIDList:IID
 endif
 endif
 
-externdef		__MIDL_itf_shobjidl_0000_0011_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0011_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IEnumIDList_INTERFACE_DEFINED__
 __IEnumIDList_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IEnumIDList:IID
+DEFINE_IIDX(IEnumIDList, "000214F2-0000-0000-C000-000000000046")
+
 .comdef IEnumIDList
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1278,30 +1200,14 @@ externdef		IID_IEnumIDList:IID
     Clone		proc :ptr
     .ends
 
-IEnumIDList_RemoteNext_Proxy proto WINAPI \
-		 _This: ptr IEnumIDList,
-		  celt: ULONG,
-		 rgelt: ptr PITEMID_CHILD,
-	  pceltFetched: LPULONG
-
-;void
-IEnumIDList_RemoteNext_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-endif
-
 LPENUMIDLIST		typedef ptr IEnumIDList
-
-externdef		__MIDL_itf_shobjidl_0000_0012_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0012_v0_0_s_ifspec:RPC_IF_HANDLE
+endif
 
 ifndef __IEnumFullIDList_INTERFACE_DEFINED__
 __IEnumFullIDList_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IEnumFullIDList:IID
+DEFINE_IIDX(IEnumFullIDList, "d0191542-7954-4908-bc06-b2360bbe45ba")
+
 .comdef IEnumFullIDList
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1312,18 +1218,20 @@ externdef		IID_IEnumFullIDList:IID
     Clone		proc :ptr
     .ends
 
-IEnumFullIDList_RemoteNext_Proxy proto WINAPI \
-		 _This: ptr IEnumFullIDList,
-		  celt: ULONG,
-		 rgelt: ptr PIDLIST_ABSOLUTE,
-	  pceltFetched: LPULONG
+endif
 
-;void
-IEnumFullIDList_RemoteNext_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
+ifndef __IFileSyncMergeHandler_INTERFACE_DEFINED__
+__IFileSyncMergeHandler_INTERFACE_DEFINED__ equ <>
+
+DEFINE_IIDX(IFileSyncMergeHandler, "d97b5aac-c792-433c-975d-35c4eadc7a9d")
+
+.comdef IFileSyncMergeHandler
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Merge		proc :LPCWSTR, :LPCWSTR, :ptr MERGE_UPDATE_STATUS
+    ShowResolveConflictUIAsync proc :LPCWSTR, :HMONITOR
+    .ends
 
 endif
 
@@ -1420,13 +1328,11 @@ FOLDER_ENUM_MODE	typedef SDWORD
 FEM_VIEWRESULT		equ 0
 FEM_NAVIGATION		equ 1
 
-externdef		__MIDL_itf_shobjidl_0000_0013_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0013_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IObjectWithFolderEnumMode_INTERFACE_DEFINED__
 __IObjectWithFolderEnumMode_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IObjectWithFolderEnumMode:IID
+DEFINE_IIDX(IObjectWithFolderEnumMode, "6a9d9026-0e6e-464c-b000-42ecc07de673")
+
 .comdef IObjectWithFolderEnumMode
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1443,13 +1349,11 @@ STR_PARSE_WITH_EXPLICIT_ASSOCAPP equ <L"ExplicitAssociationApp">
 STR_PARSE_EXPLICIT_ASSOCIATION_SUCCESSFUL equ <L"ExplicitAssociationSuccessful">
 STR_PARSE_AND_CREATE_ITEM equ <L"ParseAndCreateItem">
 
-externdef		__MIDL_itf_shobjidl_0000_0014_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0014_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IParseAndCreateItem_INTERFACE_DEFINED__
 __IParseAndCreateItem_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IParseAndCreateItem:IID
+DEFINE_IIDX(IParseAndCreateItem, "67efed0e-e827-4408-b493-78f3982b685c")
+
 .comdef IParseAndCreateItem
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1463,13 +1367,11 @@ endif
 STR_ITEM_CACHE_CONTEXT	equ <L"ItemCacheContext">
 endif ; (NTDDI_VERSION GE NTDDI_WIN7)
 
-externdef		__MIDL_itf_shobjidl_0000_0015_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0015_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IShellFolder_INTERFACE_DEFINED__
 __IShellFolder_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IShellFolder:IID
+DEFINE_IIDX(IShellFolder, "000214E6-0000-0000-C000-000000000046")
+
 .comdef IShellFolder
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1485,27 +1387,11 @@ externdef		IID_IShellFolder:IID
     GetDisplayNameOf	proc :PCUITEMID_CHILD, :SHGDNF, :ptr
     SetNameOf		proc :HWND, :PCUITEMID_CHILD, :LPCWSTR, :SHGDNF, :ptr
     .ends
+
 LPIShellFolder		typedef ptr IShellFolder
-
-IShellFolder_RemoteSetNameOf_Proxy proto WINAPI \
-		 _This: ptr IShellFolder,
-		  hwnd: HWND,
-		  pidl: PCUITEMID_CHILD,
-	       pszName: LPCWSTR,
-		uFlags: SHGDNF,
-	      ppidlOut: ptr PITEMID_CHILD
-
-;void
-IShellFolder_RemoteSetNameOf_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
+LPSHELLFOLDER		typedef ptr IShellFolder
 
 endif
-
-LPSHELLFOLDER		typedef ptr IShellFolder
 
 EXTRASEARCH		STRUC
 guidSearch		GUID <>
@@ -1515,13 +1401,11 @@ EXTRASEARCH		ENDS
 
 LPEXTRASEARCH		typedef ptr EXTRASEARCH
 
-externdef		__MIDL_itf_shobjidl_0000_0016_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0016_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IEnumExtraSearch_INTERFACE_DEFINED__
 __IEnumExtraSearch_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IEnumExtraSearch:IID
+DEFINE_IIDX(IEnumExtraSearch, "0E700BE1-9DB6-11d1-A1CE-00C04FD75D13")
+
 .comdef IEnumExtraSearch
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1532,17 +1416,15 @@ externdef		IID_IEnumExtraSearch:IID
     Clone		proc :ptr
     .ends
 
-endif
-
 LPENUMEXTRASEARCH	typedef ptr IEnumExtraSearch
 
-externdef		__MIDL_itf_shobjidl_0000_0017_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0017_v0_0_s_ifspec:RPC_IF_HANDLE
+endif
 
 ifndef __IShellFolder2_INTERFACE_DEFINED__
 __IShellFolder2_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IShellFolder2:IID
+DEFINE_IIDX(IShellFolder2, "93F2F68C-1D1B-11d3-A30E-00C04F79ABD1")
+
 .comdef IShellFolder2
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1640,9 +1522,6 @@ LPFOLDERSETTINGS	typedef ptr FOLDERSETTINGS
 LPCFOLDERSETTINGS	typedef ptr FOLDERSETTINGS
 PFOLDERSETTINGS		typedef ptr FOLDERSETTINGS
 
-externdef		__MIDL_itf_shobjidl_0000_0018_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0018_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IFolderViewOptions_INTERFACE_DEFINED__
 __IFolderViewOptions_INTERFACE_DEFINED__ equ 1
 
@@ -1657,7 +1536,8 @@ FVO_NOSCROLLTIPS	equ 0x20
 
 DEFINE_ENUM_FLAG_OPERATORS(FOLDERVIEWOPTIONS)
 
-externdef		IID_IFolderViewOptions:IID
+DEFINE_IIDX(IFolderViewOptions, "3cc974d2-b302-4d36-ad3e-06d93f695d3f")
+
 .comdef IFolderViewOptions
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1715,13 +1595,11 @@ include prsht.inc
 LPFNSVADDPROPSHEETPAGE	typedef LPFNADDPROPSHEETPAGE
 endif
 
-externdef		__MIDL_itf_shobjidl_0000_0019_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0019_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IShellView_INTERFACE_DEFINED__
 __IShellView_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IShellView:IID
+DEFINE_IIDX(IShellView, "000214E3-0000-0000-C000-000000000046")
+
 .comdef IShellView
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1740,6 +1618,7 @@ externdef		IID_IShellView:IID
     SelectItem		proc :PCUITEMID_CHILD, :SVSIF
     GetItemObject	proc :UINT, :REFIID, :ptr
     .ends
+
 LPSHELLVIEW		typedef ptr IShellView
 
 endif
@@ -1753,7 +1632,9 @@ LPIShellBrowser		typedef ptr IShellBrowser
 
 SV2GV_CURRENTVIEW	equ -1
 SV2GV_DEFAULTVIEW	equ -2
+
 .pragma pack(push, 8)
+
 SV2CVW2_PARAMS		STRUC
 cbSize			dd ?
 psvPrev			LPSHELLVIEW ?
@@ -1767,7 +1648,8 @@ LPSV2CVW2_PARAMS	typedef ptr SV2CVW2_PARAMS
 
 .pragma pack(pop)
 
-externdef		IID_IShellView2:IID
+DEFINE_IIDX(IShellView2, "88E39E80-3578-11CF-AE69-08002B2E1262")
+
 .comdef IShellView2
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1795,9 +1677,6 @@ endif
 
 if (NTDDI_VERSION GE NTDDI_VISTA)
 
-externdef		__MIDL_itf_shobjidl_0000_0021_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0021_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IShellView3_INTERFACE_DEFINED__
 __IShellView3_INTERFACE_DEFINED__ equ 1
 
@@ -1807,7 +1686,8 @@ SV3CVW3_FORCEVIEWMODE	equ 0x2
 SV3CVW3_FORCEFOLDERFLAGS equ 0x4
 SV3CVW3_FLAGS		typedef DWORD
 
-externdef		IID_IShellView3:IID
+DEFINE_IIDX(IShellView3, "ec39fa88-f8af-41c5-8421-38bed28f4673")
+
 .comdef IShellView3
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1836,18 +1716,14 @@ endif
 endif
 
 ifdef _FIX_ENABLEMODELESS_CONFLICT
-;undef	  EnableModeless
+undef	  EnableModeless
 endif
-
-externdef		__MIDL_itf_shobjidl_0000_0022_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0022_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IFolderView_INTERFACE_DEFINED__
 __IFolderView_INTERFACE_DEFINED__ equ 1
 
-DEFINE_GUID(IID_IFolderView, 0xcde725b0, 0xccc9, 0x4519, 0x91,0x7e, 0x32,0x5d,0x72,0xfa,0xb4,0xce)
+DEFINE_IIDX(IFolderView, "cde725b0-ccc9-4519-917e-325d72fab4ce")
 
-externdef		IID_IFolderView:IID
 .comdef IFolderView
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1873,13 +1749,11 @@ endif
 SID_SFolderView		equ <IID_IFolderView>
 if (NTDDI_VERSION GE NTDDI_WIN7)
 
-externdef		__MIDL_itf_shobjidl_0000_0023_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0023_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ISearchBoxInfo_INTERFACE_DEFINED__
 __ISearchBoxInfo_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_ISearchBoxInfo:IID
+DEFINE_IIDX(ISearchBoxInfo, "6af6e03f-d664-4ef4-9626-f7e0ed36755e")
+
 .comdef ISearchBoxInfo
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1910,6 +1784,8 @@ FVTEXTTYPE		typedef SDWORD
 FVST_EMPTYTEXT		equ 0
 
 DEPRECATED_HRESULT	typedef HRESULT
+
+DEFINE_IIDX(IFolderView2, "1af3a467-214f-4298-908e-06b03e0b39f9")
 
 .comdef IFolderView2
     QueryInterface	proc :REFIID, :ptr
@@ -1956,29 +1832,15 @@ DEPRECATED_HRESULT	typedef HRESULT
     DoRename		proc
     .ends
 
-;CALLTYPE
-IFolderView2_RemoteGetGroupBy_Proxy proto WINAPI \
-		 _This: ptr IFolderView2,
-		  pkey: ptr PROPERTYKEY,
-	   pfAscending: LPBOOL
-;void
-IFolderView2_RemoteGetGroupBy_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
 endif
 
 if (NTDDI_VERSION GE NTDDI_VISTA)
 
-externdef		__MIDL_itf_shobjidl_0000_0025_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0025_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IFolderViewSettings_INTERFACE_DEFINED__
 __IFolderViewSettings_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IFolderViewSettings:IID
+DEFINE_IIDX(IFolderViewSettings, "ae8c987d-8797-4ed3-be72-2a47dd938db0")
+
 .comdef IFolderViewSettings
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1997,13 +1859,11 @@ endif ; (NTDDI_VERSION GE NTDDI_VISTA)
 
 if (_WIN32_IE GE _WIN32_IE_IE70)
 
-externdef		__MIDL_itf_shobjidl_0000_0026_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0026_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IPreviewHandlerVisuals_INTERFACE_DEFINED__
 __IPreviewHandlerVisuals_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IPreviewHandlerVisuals:IID
+DEFINE_IIDX(IPreviewHandlerVisuals, "196bf9a5-b346-4ef0-aa1e-5dcdb76768b1")
+
 .comdef IPreviewHandlerVisuals
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -2030,7 +1890,8 @@ VPCF_SORTCOLUMN		equ 3
 VPCF_SUBTEXT		equ 4
 VPCF_TEXTBACKGROUND	equ 5
 
-externdef		IID_IVisualProperties:IID
+DEFINE_IIDX(IVisualProperties, "e693cf68-d967-4112-8763-99172aee5e5a")
+
 .comdef IVisualProperties
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -2055,15 +1916,11 @@ CDBOSC_SELCHANGE	equ 0x00000002
 CDBOSC_RENAME		equ 0x00000003
 CDBOSC_STATECHANGE	equ 0x00000004
 
-externdef		__MIDL_itf_shobjidl_0000_0028_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0028_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ICommDlgBrowser_INTERFACE_DEFINED__
 __ICommDlgBrowser_INTERFACE_DEFINED__ equ 1
 
-DEFINE_GUID(IID_ICommDlgBrowser, 0x000214f1, 0x0000, 0x0000, 0xc0,0x00, 0x00,0x00,0x00,0x00,0x00,0x46)
+DEFINE_IIDX(ICommDlgBrowser, "000214F1-0000-0000-C000-000000000046")
 
-externdef		IID_ICommDlgBrowser:IID
 .comdef ICommDlgBrowser
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -2091,13 +1948,11 @@ CDB2GVF_ISFOLDERPICKER	equ 0x00000020
 CDB2GVF_ADDSHIELD	equ 0x00000040
 endif
 
-externdef		__MIDL_itf_shobjidl_0000_0029_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0029_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ICommDlgBrowser2_INTERFACE_DEFINED__
 __ICommDlgBrowser2_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_ICommDlgBrowser2:IID
+DEFINE_IIDX(ICommDlgBrowser2, "10339516-2894-11d2-9039-00C04F8EEB3E")
+
 .comdef ICommDlgBrowser2
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -2110,20 +1965,18 @@ externdef		IID_ICommDlgBrowser2:IID
     GetViewFlags	proc :ptr
     .ends
 
-endif
-
 LPCOMMDLGBROWSER2	typedef ptr ICommDlgBrowser2
+
+endif
 
 endif
 if (_WIN32_IE GE _WIN32_IE_IE70)
 
-externdef		__MIDL_itf_shobjidl_0000_0030_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0030_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ICommDlgBrowser3_INTERFACE_DEFINED__
 __ICommDlgBrowser3_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_ICommDlgBrowser3:IID
+DEFINE_IIDX(ICommDlgBrowser3, "c8ad25a1-3294-41ee-8165-71174bd01c57")
+
 .comdef ICommDlgBrowser3
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -2176,13 +2029,11 @@ uIdealWidth		UINT ?
 wszName			WCHAR  80  dup(?)
 CM_COLUMNINFO		ENDS
 
-externdef		__MIDL_itf_shobjidl_0000_0031_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0031_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IColumnManager_INTERFACE_DEFINED__
 __IColumnManager_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IColumnManager:IID
+DEFINE_IIDX(IColumnManager, "d8ec27bb-3f3b-4042-b10a-4acfd924d453")
+
 .comdef IColumnManager
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -2197,13 +2048,11 @@ externdef		IID_IColumnManager:IID
 endif
 endif
 
-externdef		__MIDL_itf_shobjidl_0000_0032_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0032_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IFolderFilterSite_INTERFACE_DEFINED__
 __IFolderFilterSite_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IFolderFilterSite:IID
+DEFINE_IIDX(IFolderFilterSite, "C0A651F5-B48B-11d2-B5ED-006097C686F6")
+
 .comdef IFolderFilterSite
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -2216,7 +2065,8 @@ endif
 ifndef __IFolderFilter_INTERFACE_DEFINED__
 __IFolderFilter_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IFolderFilter:IID
+DEFINE_IIDX(IFolderFilter, "9CC22886-DC8E-11d2-B1D0-00C04F8EEB3E")
+
 .comdef IFolderFilter
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -2230,7 +2080,8 @@ endif
 ifndef __IInputObjectSite_INTERFACE_DEFINED__
 __IInputObjectSite_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IInputObjectSite:IID
+DEFINE_IIDX(IInputObjectSite, "F1DB8392-7331-11D0-8C99-00A0C92DBFE8")
+
 .comdef IInputObjectSite
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -2243,7 +2094,8 @@ endif
 ifndef __IInputObject_INTERFACE_DEFINED__
 __IInputObject_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IInputObject:IID
+DEFINE_IIDX(IInputObject, "68284fAA-6A48-11D0-8c78-00C04fd918b4")
+
 .comdef IInputObject
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -2258,7 +2110,8 @@ endif
 ifndef __IInputObject2_INTERFACE_DEFINED__
 __IInputObject2_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IInputObject2:IID
+DEFINE_IIDX(IInputObject2, "6915C085-510B-44cd-94AF-28DFA56CF92B")
+
 .comdef IInputObject2
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -2274,7 +2127,8 @@ endif
 ifndef __IShellIcon_INTERFACE_DEFINED__
 __IShellIcon_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IShellIcon:IID
+DEFINE_IIDX(IShellIcon, "000214E5-0000-0000-C000-000000000046")
+
 .comdef IShellIcon
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -2339,13 +2193,11 @@ LPTBBUTTONSB		typedef LPTBBUTTON
 endif
 
 
-externdef		__MIDL_itf_shobjidl_0000_0038_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0038_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IShellBrowser_INTERFACE_DEFINED__
 __IShellBrowser_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IShellBrowser:IID
+DEFINE_IIDX(IShellBrowser, "000214E2-0000-0000-C000-000000000046")
+
 .comdef IShellBrowser
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -2371,15 +2223,11 @@ endif
 
 LPSHELLBROWSER		typedef ptr IShellBrowser
 
-externdef		__MIDL_itf_shobjidl_0000_0039_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0039_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IProfferService_INTERFACE_DEFINED__
 __IProfferService_INTERFACE_DEFINED__ equ 1
 
-DEFINE_GUID(IID_IProfferService, 0xcb728b20, 0xf786, 0x11ce, 0x92,0xad, 0x00,0xaa,0x00,0xa7,0x4c,0xd0)
+DEFINE_IIDX(IProfferService, "cb728b20-f786-11ce-92ad-00aa00a74cd0")
 
-externdef		IID_IProfferService:IID
 .comdef IProfferService
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -2393,9 +2241,6 @@ endif
 SID_SProfferService	equ <IID_IProfferService>
 STR_DONT_RESOLVE_LINK	equ <L"Don't Resolve Link">
 STR_GET_ASYNC_HANDLER	equ <L"GetAsyncHandler">
-
-externdef		__MIDL_itf_shobjidl_0000_0040_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0040_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IShellItem_INTERFACE_DEFINED__
 __IShellItem_INTERFACE_DEFINED__ equ 1
@@ -2534,13 +2379,11 @@ STR_GPS_DELAYCREATION	equ <L"GPS_DEAYCREATION">
 STR_GPS_BESTEFFORT	equ <L"GPS_BESTEFFORT">
 STR_GPS_NO_OPLOCK	equ <L"GPS_NO_OPLOCK">
 
-externdef		__MIDL_itf_shobjidl_0000_0041_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0041_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IShellItem2_INTERFACE_DEFINED__
 __IShellItem2_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IShellItem2:IID
+DEFINE_IIDX(IShellItem2, "7e9fb0d3-919f-4307-ab2e-9b1860310c93")
+
 .comdef IShellItem2
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -2575,13 +2418,11 @@ SIIGBF_THUMBNAILONLY	equ 0x8
 SIIGBF_INCACHEONLY	equ 0x10
 SIIGBF			typedef SINT
 
-externdef		__MIDL_itf_shobjidl_0000_0042_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0042_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IShellItemImageFactory_INTERFACE_DEFINED__
 __IShellItemImageFactory_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IShellItemImageFactory:IID
+DEFINE_IIDX(IShellItemImageFactory, "bcc18b79-ba16-442f-80c4-8a59c30c463b")
+
 .comdef IShellItemImageFactory
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -2594,7 +2435,8 @@ endif
 ifndef __IUserAccountChangeCallback_INTERFACE_DEFINED__
 __IUserAccountChangeCallback_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IUserAccountChangeCallback:IID
+DEFINE_IIDX(IUserAccountChangeCallback, "a561e69a-b4b8-4113-91a5-64c6bcca3430")
+
 .comdef IUserAccountChangeCallback
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -2606,13 +2448,11 @@ endif
 
 if (NTDDI_VERSION GE NTDDI_WINXP)
 
-externdef		__MIDL_itf_shobjidl_0000_0044_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0044_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IEnumShellItems_INTERFACE_DEFINED__
 __IEnumShellItems_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IEnumShellItems:IID
+DEFINE_IIDX(IEnumShellItems, "70629033-e363-4a28-a567-0db78006e6d7")
+
 .comdef IEnumShellItems
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -2623,20 +2463,6 @@ externdef		IID_IEnumShellItems:IID
     Clone		proc :ptr
     .ends
 LPIEnumShellItems	typedef ptr IEnumShellItems
-
-;CALLTYPE
-IEnumShellItems_RemoteNext_Proxy proto WINAPI \
-		 _This: ptr IEnumShellItems,
-		  celt: ULONG,
-		 rgelt: ptr IShellItem,
-	  pceltFetched: LPULONG
-
-;void
-IEnumShellItems_RemoteNext_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
 
 endif
 
@@ -2671,9 +2497,6 @@ TRANSFER_SOURCE_FLAGS	typedef DWORD
 
 if (_WIN32_IE GE _WIN32_IE_IE70)
 
-externdef		__MIDL_itf_shobjidl_0000_0045_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0045_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ITransferAdviseSink_INTERFACE_DEFINED__
 __ITransferAdviseSink_INTERFACE_DEFINED__ equ 1
 
@@ -2683,7 +2506,8 @@ TS_PREPARING		equ 0x2
 TS_INDETERMINATE	equ 0x4
 TRANSFER_ADVISE_STATE	typedef DWORD
 
-externdef		IID_ITransferAdviseSink:IID
+DEFINE_IIDX(ITransferAdviseSink, "d594d0d8-8da7-457b-b3b4-ce5dbaac0b88")
+
 .comdef ITransferAdviseSink
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -2703,13 +2527,11 @@ endif
 
 if (NTDDI_VERSION GE NTDDI_VISTA)
 
-externdef		__MIDL_itf_shobjidl_0000_0046_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0046_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ITransferSource_INTERFACE_DEFINED__
 __ITransferSource_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_ITransferSource:IID
+DEFINE_IIDX(ITransferSource, "00adb003-bde9-45c6-8e29-d09f9353e108")
+
 .comdef ITransferSource
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -2737,13 +2559,11 @@ guidType		GUID <>
 szName			WCHAR  260  dup(?)
 SHELL_ITEM_RESOURCE	ENDS
 
-externdef		__MIDL_itf_shobjidl_0000_0047_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0047_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IEnumResources_INTERFACE_DEFINED__
 __IEnumResources_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IEnumResources:IID
+DEFINE_IIDX(IEnumResources, "2dd81fe3-a83c-4da9-a330-47249d345ba1")
+
 .comdef IEnumResources
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -2759,7 +2579,8 @@ endif
 ifndef __IShellItemResources_INTERFACE_DEFINED__
 __IShellItemResources_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IShellItemResources:IID
+DEFINE_IIDX(IShellItemResources, "ff5693be-2ce0-4d48-b5c5-40817d1acdb9")
+
 .comdef IShellItemResources
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -2781,7 +2602,8 @@ endif
 ifndef __ITransferDestination_INTERFACE_DEFINED__
 __ITransferDestination_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_ITransferDestination:IID
+DEFINE_IIDX(ITransferDestination, "48addd32-3ca5-4124-abe3-b5a72531b207")
+
 .comdef ITransferDestination
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -2810,13 +2632,11 @@ LPOVERLAPPED		typedef ptr OVERLAPPED
 
 endif
 
-externdef		__MIDL_itf_shobjidl_0000_0050_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0050_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IStreamAsync_INTERFACE_DEFINED__
 __IStreamAsync_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IStreamAsync:IID
+DEFINE_IIDX(IStreamAsync, "fe0b6665-e0ca-49b9-a178-2b5cb48d92a5")
+
 .comdef IStreamAsync
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -2843,7 +2663,8 @@ endif
 ifndef __IStreamUnbufferedInfo_INTERFACE_DEFINED__
 __IStreamUnbufferedInfo_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IStreamUnbufferedInfo:IID
+DEFINE_IIDX(IStreamUnbufferedInfo, "8a68fdda-1fdc-4c20-8ceb-416643b5a625")
+
 .comdef IStreamUnbufferedInfo
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -2855,13 +2676,11 @@ endif
 
 if (_WIN32_IE GE _WIN32_IE_IE70)
 
-externdef		__MIDL_itf_shobjidl_0000_0052_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0052_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IFileOperationProgressSink_INTERFACE_DEFINED__
 __IFileOperationProgressSink_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IFileOperationProgressSink:IID
+DEFINE_IIDX(IFileOperationProgressSink, "04b0f1a7-9490-44bc-96e1-4296a31252e2")
+
 .comdef IFileOperationProgressSink
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -2886,9 +2705,6 @@ externdef		IID_IFileOperationProgressSink:IID
 
 endif
 endif
-
-externdef		__MIDL_itf_shobjidl_0000_0053_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0053_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IShellItemArray_INTERFACE_DEFINED__
 __IShellItemArray_INTERFACE_DEFINED__ equ 1
@@ -2948,13 +2764,11 @@ SHCreateShellItemArrayFromShellItem proto WINAPI \
 endif
 
 
-externdef		__MIDL_itf_shobjidl_0000_0054_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0054_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IInitializeWithItem_INTERFACE_DEFINED__
 __IInitializeWithItem_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IInitializeWithItem:IID
+DEFINE_IIDX(IInitializeWithItem, "7f73be3f-fb79-493c-a6c7-7ee14e245841")
+
 .comdef IInitializeWithItem
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -2967,7 +2781,8 @@ endif
 ifndef __IObjectWithSelection_INTERFACE_DEFINED__
 __IObjectWithSelection_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IObjectWithSelection:IID
+DEFINE_IIDX(IObjectWithSelection, "1c9cd5bb-98e9-4491-a60f-31aacc72b83c")
+
 .comdef IObjectWithSelection
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -2981,7 +2796,8 @@ endif
 ifndef __IObjectWithBackReferences_INTERFACE_DEFINED__
 __IObjectWithBackReferences_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IObjectWithBackReferences:IID
+DEFINE_IIDX(IObjectWithBackReferences, "321a6a6a-d61f-4bf3-97ae-14be2986bb36")
+
 .comdef IObjectWithBackReferences
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -3007,13 +2823,11 @@ PUIFFDF_NOTIME		equ 0x4
 PUIFFDF_FRIENDLYDATE	equ 0x8
 PROPERTYUI_FORMAT_FLAGS typedef DWORD
 
-externdef		__MIDL_itf_shobjidl_0000_0057_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0057_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IPropertyUI_INTERFACE_DEFINED__
 __IPropertyUI_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IPropertyUI:IID
+DEFINE_IIDX(IPropertyUI, "757a7d9f-919a-4118-99d7-dbb208c8cc66")
+
 .comdef IPropertyUI
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -3055,13 +2869,11 @@ SHSetDefaultProperties proto WINAPI \
 endif
 if (_WIN32_IE GE 0x0500)
 
-externdef		__MIDL_itf_shobjidl_0000_0058_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0058_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ICategoryProvider_INTERFACE_DEFINED__
 __ICategoryProvider_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_ICategoryProvider:IID
+DEFINE_IIDX(ICategoryProvider, "9af64809-5864-4c26-a720-c1f78c086ee3")
+
 .comdef ICategoryProvider
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -3097,13 +2909,11 @@ cif			CATEGORYINFO_FLAGS ?
 wszName			WCHAR  260  dup(?)
 CATEGORY_INFO		ENDS
 
-externdef		__MIDL_itf_shobjidl_0000_0059_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0059_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ICategorizer_INTERFACE_DEFINED__
 __ICategorizer_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_ICategorizer:IID
+DEFINE_IIDX(ICategorizer, "a3b14589-9174-49a8-89a3-06a1ae2b9ba7")
+
 .comdef ICategorizer
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -3131,13 +2941,11 @@ LPSHDRAGIMAGE		typedef ptr SHDRAGIMAGE
 .pragma pack(pop)
 DI_GETDRAGIMAGE		equ TEXT("ShellGetDragImage")
 
-externdef		__MIDL_itf_shobjidl_0000_0060_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0060_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IDropTargetHelper_INTERFACE_DEFINED__
 __IDropTargetHelper_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDropTargetHelper:IID
+DEFINE_IIDX(IDropTargetHelper, "4657278B-411B-11D2-839A-00C04FD918D0")
+
 .comdef IDropTargetHelper
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -3154,7 +2962,8 @@ endif
 ifndef __IDragSourceHelper_INTERFACE_DEFINED__
 __IDragSourceHelper_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDragSourceHelper:IID
+DEFINE_IIDX(IDragSourceHelper, "DE5BF786-477A-11D2-839D-00C04FD918D0")
+
 .comdef IDragSourceHelper
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -3171,13 +2980,11 @@ DSH_ALLOWDROPDESCRIPTIONTEXT	equ 0x1
 
 DEFINE_ENUM_FLAG_OPERATORS(DSH_FLAGS)
 
-externdef		__MIDL_itf_shobjidl_0000_0062_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0062_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IDragSourceHelper2_INTERFACE_DEFINED__
 __IDragSourceHelper2_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDragSourceHelper2:IID
+DEFINE_IIDX(IDragSourceHelper2, "83E07D0D-0C5F-4163-BF1A-60B274051E40")
+
 .comdef IDragSourceHelper2
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -3220,13 +3027,11 @@ SLGP_RELATIVEPRIORITY	equ 0x8
 
 DEFINE_ENUM_FLAG_OPERATORS(SLGP_FLAGS)
 
-externdef		__MIDL_itf_shobjidl_0000_0063_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0063_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IShellLinkA_INTERFACE_DEFINED__
 __IShellLinkA_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IShellLinkA:IID
+DEFINE_IIDX(IShellLinkA, "000214EE-0000-0000-C000-000000000046")
+
 .comdef IShellLinkA
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -3256,7 +3061,8 @@ endif
 ifndef __IShellLinkW_INTERFACE_DEFINED__
 __IShellLinkW_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IShellLinkW:IID
+DEFINE_IIDX(IShellLinkW, "000214F9-0000-0000-C000-000000000046")
+
 .comdef IShellLinkW
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -3286,7 +3092,8 @@ endif
 ifndef __IShellLinkDataList_INTERFACE_DEFINED__
 __IShellLinkDataList_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IShellLinkDataList:IID
+DEFINE_IIDX(IShellLinkDataList, "45e2b4ae-b1c3-11d0-b92f-00a0c90312e1")
+
 .comdef IShellLinkDataList
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -3302,13 +3109,11 @@ endif
 
 if (NTDDI_VERSION GE NTDDI_WIN2K)
 
-externdef		__MIDL_itf_shobjidl_0000_0066_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0066_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IResolveShellLink_INTERFACE_DEFINED__
 __IResolveShellLink_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IResolveShellLink:IID
+DEFINE_IIDX(IResolveShellLink, "5cd52983-9449-11d2-963a-00c04f79adf0")
+
 .comdef IResolveShellLink
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -3319,9 +3124,6 @@ externdef		IID_IResolveShellLink:IID
 endif
 endif
 
-externdef		__MIDL_itf_shobjidl_0000_0067_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0067_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IActionProgressDialog_INTERFACE_DEFINED__
 __IActionProgressDialog_INTERFACE_DEFINED__ equ 1
 
@@ -3330,7 +3132,8 @@ SPINITF_MODAL		equ 0x1
 SPINITF_NOMINIMIZE	equ 0x8
 SPINITF			typedef DWORD
 
-externdef		IID_IActionProgressDialog:IID
+DEFINE_IIDX(IActionProgressDialog, "49ff1172-eadc-446d-9285-156453a6431c")
+
 .comdef IActionProgressDialog
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -3344,7 +3147,8 @@ endif
 ifndef __IHWEventHandler_INTERFACE_DEFINED__
 __IHWEventHandler_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IHWEventHandler:IID
+DEFINE_IIDX(IHWEventHandler, "C1FB73D0-EC3A-4ba2-B512-8CDB9187B6D1")
+
 .comdef IHWEventHandler
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -3359,7 +3163,8 @@ endif
 ifndef __IHWEventHandler2_INTERFACE_DEFINED__
 __IHWEventHandler2_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IHWEventHandler2:IID
+DEFINE_IIDX(IHWEventHandler2, "CFCC809F-295D-42e8-9FFC-424B33C487E6")
+
 .comdef IHWEventHandler2
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -3396,13 +3201,11 @@ ARCONTENT_PHASE_FINAL	equ 0x40000000
 ARCONTENT_PHASE_MASK	equ 0x70000000
 endif
 
-externdef		__MIDL_itf_shobjidl_0000_0070_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0070_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IQueryCancelAutoPlay_INTERFACE_DEFINED__
 __IQueryCancelAutoPlay_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IQueryCancelAutoPlay:IID
+DEFINE_IIDX(IQueryCancelAutoPlay, "DDEFE873-6997-4e68-BE26-39B633ADBE12")
+
 .comdef IQueryCancelAutoPlay
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -3414,13 +3217,11 @@ endif
 
 if (NTDDI_VERSION GE NTDDI_VISTA)
 
-externdef		__MIDL_itf_shobjidl_0000_0071_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0071_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IDynamicHWHandler_INTERFACE_DEFINED__
 __IDynamicHWHandler_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDynamicHWHandler:IID
+DEFINE_IIDX(IDynamicHWHandler, "DC2601D7-059E-42fc-A09D-2AFD21B6D5F7")
+
 .comdef IDynamicHWHandler
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -3430,9 +3231,6 @@ externdef		IID_IDynamicHWHandler:IID
 
 endif
 endif
-
-externdef		__MIDL_itf_shobjidl_0000_0072_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0072_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IActionProgress_INTERFACE_DEFINED__
 __IActionProgress_INTERFACE_DEFINED__ equ 1
@@ -3464,7 +3262,8 @@ SPTEXT			typedef SDWORD
 SPTEXT_ACTIONDESCRIPTION equ 1
 SPTEXT_ACTIONDETAIL	equ ( SPTEXT_ACTIONDESCRIPTION + 1 )
 
-externdef		IID_IActionProgress:IID
+DEFINE_IIDX(IActionProgress, "49ff1173-eadc-446d-9285-156453a6431c")
+
 .comdef IActionProgress
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -3482,7 +3281,8 @@ endif
 ifndef __IShellExtInit_INTERFACE_DEFINED__
 __IShellExtInit_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IShellExtInit:IID
+DEFINE_IIDX(IShellExtInit, "000214E8-0000-0000-C000-000000000046")
+
 .comdef IShellExtInit
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -3490,12 +3290,9 @@ externdef		IID_IShellExtInit:IID
     Initialize		proc :PCIDLIST_ABSOLUTE, :ptr, :HKEY
     .ends
 
-endif
-
 LPSHELLEXTINIT		typedef ptr IShellExtInit
 
-externdef		__MIDL_itf_shobjidl_0000_0074_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0074_v0_0_s_ifspec:RPC_IF_HANDLE
+endif
 
 ifndef __IShellPropSheetExt_INTERFACE_DEFINED__
 __IShellPropSheetExt_INTERFACE_DEFINED__ equ 1
@@ -3503,7 +3300,8 @@ __IShellPropSheetExt_INTERFACE_DEFINED__ equ 1
 EXPPS_FILETYPES		equ 0x1
 EXPPS			typedef UINT
 
-externdef		IID_IShellPropSheetExt:IID
+DEFINE_IIDX(IShellPropSheetExt, "000214E9-0000-0000-C000-000000000046")
+
 .comdef IShellPropSheetExt
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -3516,13 +3314,11 @@ endif
 
 LPSHELLPROPSHEETEXT	typedef ptr IShellPropSheetExt
 
-externdef		__MIDL_itf_shobjidl_0000_0075_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0075_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IRemoteComputer_INTERFACE_DEFINED__
 __IRemoteComputer_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IRemoteComputer:IID
+DEFINE_IIDX(IRemoteComputer, "000214FE-0000-0000-C000-000000000046")
+
 .comdef IRemoteComputer
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -3535,7 +3331,8 @@ endif
 ifndef __IQueryContinue_INTERFACE_DEFINED__
 __IQueryContinue_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IQueryContinue:IID
+DEFINE_IIDX(IQueryContinue, "7307055c-b24a-486b-9f25-163e597a28a9")
+
 .comdef IQueryContinue
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -3548,7 +3345,8 @@ endif
 ifndef __IObjectWithCancelEvent_INTERFACE_DEFINED__
 __IObjectWithCancelEvent_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IObjectWithCancelEvent:IID
+DEFINE_IIDX(IObjectWithCancelEvent, "F279B885-0AE9-4b85-AC06-DDECF9408941")
+
 .comdef IObjectWithCancelEvent
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -3561,7 +3359,8 @@ endif
 ifndef __IUserNotification_INTERFACE_DEFINED__
 __IUserNotification_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IUserNotification:IID
+DEFINE_IIDX(IUserNotification, "ba9711ba-5893-4787-a7e1-41277151550b")
+
 .comdef IUserNotification
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -3578,7 +3377,8 @@ endif
 ifndef __IUserNotificationCallback_INTERFACE_DEFINED__
 __IUserNotificationCallback_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IUserNotificationCallback:IID
+DEFINE_IIDX(IUserNotificationCallback, "19108294-0441-4AFF-8013-FA0A730B0BEA")
+
 .comdef IUserNotificationCallback
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -3593,7 +3393,8 @@ endif
 ifndef __IUserNotification2_INTERFACE_DEFINED__
 __IUserNotification2_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IUserNotification2:IID
+DEFINE_IIDX(IUserNotification2, "215913CC-57EB-4FAB-AB5A-E5FA7BEA2A6C")
+
 .comdef IUserNotification2
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -3610,7 +3411,8 @@ endif
 ifndef __IItemNameLimits_INTERFACE_DEFINED__
 __IItemNameLimits_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IItemNameLimits:IID
+DEFINE_IIDX(IItemNameLimits, "1df0d7f1-b267-4d28-8b10-12e23202a5c4")
+
 .comdef IItemNameLimits
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -3623,13 +3425,11 @@ endif
 
 if (NTDDI_VERSION GE NTDDI_VISTA)
 
-externdef		__MIDL_itf_shobjidl_0000_0082_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0082_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ISearchFolderItemFactory_INTERFACE_DEFINED__
 __ISearchFolderItemFactory_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_ISearchFolderItemFactory:IID
+DEFINE_IIDX(ISearchFolderItemFactory, "a0ffbc28-5482-4366-be27-3e81e78e06c2")
+
 .comdef ISearchFolderItemFactory
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -3667,13 +3467,11 @@ IEIFLAG_NOBORDER	equ 0x0100
 IEIFLAG_QUALITY		equ 0x0200
 IEIFLAG_REFRESH		equ 0x0400
 
-externdef		__MIDL_itf_shobjidl_0000_0083_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0083_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IExtractImage_INTERFACE_DEFINED__
 __IExtractImage_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IExtractImage:IID
+DEFINE_IIDX(IExtractImage, "BB2E617C-0920-11d1-9A0B-00C04FC2D6C1")
+
 .comdef IExtractImage
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -3682,20 +3480,18 @@ externdef		IID_IExtractImage:IID
     Extract		proc :ptr
     .ends
 
-endif
-
 LPEXTRACTIMAGE		typedef ptr IExtractImage
+
+endif
 
 endif
 if (_WIN32_IE GE 0x0500)
 
-externdef		__MIDL_itf_shobjidl_0000_0084_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0084_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IExtractImage2_INTERFACE_DEFINED__
 __IExtractImage2_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IExtractImage2:IID
+DEFINE_IIDX(IExtractImage2, "953BB1EE-93B4-11d1-98A3-00C04FB687DA")
+
 .comdef IExtractImage2
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -3705,17 +3501,15 @@ externdef		IID_IExtractImage2:IID
     GetDateStamp	proc :ptr
     .ends
 
-endif
-
 LPEXTRACTIMAGE2		typedef ptr IExtractImage2
 
-externdef		__MIDL_itf_shobjidl_0000_0085_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0085_v0_0_s_ifspec:RPC_IF_HANDLE
+endif
 
 ifndef __IThumbnailHandlerFactory_INTERFACE_DEFINED__
 __IThumbnailHandlerFactory_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IThumbnailHandlerFactory:IID
+DEFINE_IIDX(IThumbnailHandlerFactory, "e35b4b2e-00da-4bc1-9f13-38bc11f5d417")
+
 .comdef IThumbnailHandlerFactory
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -3728,7 +3522,8 @@ endif
 ifndef __IParentAndItem_INTERFACE_DEFINED__
 __IParentAndItem_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IParentAndItem:IID
+DEFINE_IIDX(IParentAndItem, "b3a4b685-b685-4805-99d9-5dead2873236")
+
 .comdef IParentAndItem
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -3737,30 +3532,14 @@ externdef		IID_IParentAndItem:IID
     GetParentAndItem	proc :ptr, :ptr, :ptr
     .ends
 
-;CALLTYPE
-IParentAndItem_RemoteGetParentAndItem_Proxy proto WINAPI \
-		 _This: ptr IParentAndItem,
-	   ppidlParent: ptr PIDLIST_ABSOLUTE,
-		  ppsf: ptr IShellFolder,
-	    ppidlChild: ptr PITEMID_CHILD
-
-;void
-IParentAndItem_RemoteGetParentAndItem_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
 endif
 endif
-
-externdef		__MIDL_itf_shobjidl_0000_0087_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0087_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IDockingWindow_INTERFACE_DEFINED__
 __IDockingWindow_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDockingWindow:IID
+DEFINE_IIDX(IDockingWindow, "012dd920-7b26-11d0-8ca9-00a0c92dbfe8")
+
 .comdef IDockingWindow
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -3781,7 +3560,9 @@ DBIM_ACTUAL		equ 0x0008
 DBIM_TITLE		equ 0x0010
 DBIM_MODEFLAGS		equ 0x0020
 DBIM_BKCOLOR		equ 0x0040
+
 .pragma pack(push, 8)
+
 DESKBANDINFO		STRUC
 dwMask			dd ?
 ptMinSize		POINTL <>
@@ -3794,6 +3575,7 @@ crBkgnd			COLORREF ?
 DESKBANDINFO		ENDS
 
 .pragma pack(pop)
+
 DBIMF_NORMAL		equ 0x0000
 DBIMF_FIXED		equ 0x0001
 DBIMF_FIXEDBMP		equ 0x0004
@@ -3829,13 +3611,11 @@ DBPC_SELECTLAST		equ -2
 CGID_DeskBand		equ IID_IDeskBand
 
 
-externdef		__MIDL_itf_shobjidl_0000_0088_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0088_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IDeskBand_INTERFACE_DEFINED__
 __IDeskBand_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDeskBand:IID
+DEFINE_IIDX(IDeskBand, "EB0FE172-1A3A-11D0-89B3-00A0C90A90AC")
+
 .comdef IDeskBand
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -3852,13 +3632,11 @@ endif
 
 if (NTDDI_VERSION GE NTDDI_VISTA)
 
-externdef		__MIDL_itf_shobjidl_0000_0089_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0089_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IDeskBandInfo_INTERFACE_DEFINED__
 __IDeskBandInfo_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDeskBandInfo:IID
+DEFINE_IIDX(IDeskBandInfo, "77E425FC-CBF9-4307-BA6A-BB5727745661")
+
 .comdef IDeskBandInfo
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -3871,7 +3649,8 @@ endif
 ifndef __IDeskBand2_INTERFACE_DEFINED__
 __IDeskBand2_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDeskBand2:IID
+DEFINE_IIDX(IDeskBand2, "79D16DE4-ABEE-4021-8D9D-9169B261D657")
+
 .comdef IDeskBand2
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -3890,13 +3669,11 @@ externdef		IID_IDeskBand2:IID
 endif
 endif
 
-externdef		__MIDL_itf_shobjidl_0000_0091_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0091_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ITaskbarList_INTERFACE_DEFINED__
 __ITaskbarList_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_ITaskbarList:IID
+DEFINE_IIDX(ITaskbarList, "56FDF342-FD6D-11d0-958A-006097C9A090")
+
 .comdef ITaskbarList
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -3913,7 +3690,8 @@ endif
 ifndef __ITaskbarList2_INTERFACE_DEFINED__
 __ITaskbarList2_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_ITaskbarList2:IID
+DEFINE_IIDX(ITaskbarList2, "602D4995-B13A-429b-A66E-1935E44F4317")
+
 .comdef ITaskbarList2
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -3949,6 +3727,7 @@ THB_FLAGS		equ 0x8
 
 DEFINE_ENUM_FLAG_OPERATORS(THUMBBUTTONMASK)
 .pragma pack(push, 8)
+
 THUMBBUTTON		STRUC
 dwMask			THUMBBUTTONMASK ?
 iId			UINT ?
@@ -3957,14 +3736,10 @@ hIcon			HICON ?
 szTip			WCHAR  260  dup(?)
 dwFlags			THUMBBUTTONFLAGS ?
 THUMBBUTTON		ENDS
-
 LPTHUMBBUTTON		typedef ptr THUMBBUTTON
 
 .pragma pack(pop)
 THBN_CLICKED		equ 0x1800
-
-externdef		__MIDL_itf_shobjidl_0000_0093_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0093_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __ITaskbarList3_INTERFACE_DEFINED__
 __ITaskbarList3_INTERFACE_DEFINED__ equ 1
@@ -3978,7 +3753,8 @@ TBPF_PAUSED		equ 0x8
 
 DEFINE_ENUM_FLAG_OPERATORS(TBPFLAG)
 
-externdef		IID_ITaskbarList3:IID
+DEFINE_IIDX(ITaskbarList3, "ea1afb91-9e28-4b86-90e9-9e9f8a5eefaf")
+
 .comdef ITaskbarList3
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -4017,7 +3793,8 @@ STPF_USEAPPPEEKWHENACTIVE equ 0x8
 
 DEFINE_ENUM_FLAG_OPERATORS(STPFLAG)
 
-externdef		IID_ITaskbarList4:IID
+DEFINE_IIDX(ITaskbarList4, "c43dc798-95d1-4bea-9030-bb99e2983a1a")
+
 .comdef ITaskbarList4
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -4048,7 +3825,8 @@ endif
 ifndef __IStartMenuPinnedList_INTERFACE_DEFINED__
 __IStartMenuPinnedList_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IStartMenuPinnedList:IID
+DEFINE_IIDX(IStartMenuPinnedList, "4CD19ADA-25A5-4A32-B3B7-347BEE5BE36B")
+
 .comdef IStartMenuPinnedList
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -4061,7 +3839,8 @@ endif
 ifndef __ICDBurn_INTERFACE_DEFINED__
 __ICDBurn_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_ICDBurn:IID
+DEFINE_IIDX(ICDBurn, "3d73a659-e5d0-4d42-afc0-5121ba425c8d")
+
 .comdef ICDBurn
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -4076,15 +3855,11 @@ endif
 IDD_WIZEXTN_FIRST	equ 0x5000
 IDD_WIZEXTN_LAST	equ 0x5100
 
-externdef		__MIDL_itf_shobjidl_0000_0097_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0097_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IWizardSite_INTERFACE_DEFINED__
 __IWizardSite_INTERFACE_DEFINED__ equ 1
 
-DEFINE_GUID(IID_IWizardSite, 0x88960f5b, 0x422f, 0x4e7b, 0x80,0x13, 0x73,0x41,0x53,0x81,0xc3,0xc3)
+DEFINE_IIDX(IWizardSite, "88960f5b-422f-4e7b-8013-73415381c3c3")
 
-externdef		IID_IWizardSite:IID
 .comdef IWizardSite
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -4098,13 +3873,11 @@ endif
 
 SID_WizardSite		equ <IID_IWizardSite>
 
-externdef		__MIDL_itf_shobjidl_0000_0098_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0098_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IWizardExtension_INTERFACE_DEFINED__
 __IWizardExtension_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IWizardExtension:IID
+DEFINE_IIDX(IWizardExtension, "c02ea696-86cc-491e-9b23-74394a0444a8")
+
 .comdef IWizardExtension
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -4120,9 +3893,8 @@ endif
 ifndef __IWebWizardExtension_INTERFACE_DEFINED__
 __IWebWizardExtension_INTERFACE_DEFINED__ equ 1
 
-DEFINE_GUID(IID_IWebWizardExtension, 0x0e6b3f66, 0x98d1, 0x48c0, 0xa2,0x22, 0xfb,0xde,0x74,0xe2,0xfb,0xc5)
+DEFINE_IIDX(IWebWizardExtension, "0e6b3f66-98d1-48c0-a222-fbde74e2fbc5")
 
-externdef		IID_IWebWizardExtension:IID
 .comdef IWebWizardExtension
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -4146,13 +3918,11 @@ SHPWHF_ANYLOCATION	equ 0x00000100
 endif
 SHPWHF_VALIDATEVIAWEBFOLDERS equ 0x00010000
 
-externdef		__MIDL_itf_shobjidl_0000_0100_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0100_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IPublishingWizard_INTERFACE_DEFINED__
 __IPublishingWizard_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IPublishingWizard:IID
+DEFINE_IIDX(IPublishingWizard, "aa9198bb-ccec-472d-beed-19a4f6733f7a")
+
 .comdef IPublishingWizard
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -4169,15 +3939,11 @@ endif
 
 if (NTDDI_VERSION GE NTDDI_WINXP) OR (_WIN32_IE GE _WIN32_IE_IE70)
 
-externdef		__MIDL_itf_shobjidl_0000_0101_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0101_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IFolderViewHost_INTERFACE_DEFINED__
 __IFolderViewHost_INTERFACE_DEFINED__ equ 1
 
-DEFINE_GUID(IID_IFolderViewHost, 0x1ea58f02, 0xd55a, 0x411d, 0xb0,0x9e, 0x9e,0x65,0xac,0x21,0x60,0x5b)
+DEFINE_IIDX(IFolderViewHost, "1ea58f02-d55a-411d-b09e-9e65ac21605b")
 
-externdef		IID_IFolderViewHost:IID
 .comdef IFolderViewHost
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -4189,13 +3955,11 @@ endif
 
 if (_WIN32_IE GE _WIN32_IE_IE70)
 
-externdef		__MIDL_itf_shobjidl_0000_0102_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0102_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IExplorerBrowserEvents_INTERFACE_DEFINED__
 __IExplorerBrowserEvents_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IExplorerBrowserEvents:IID
+DEFINE_IIDX(IExplorerBrowserEvents, "361bbdc7-e6ee-4e13-be58-58e2240c810f")
+
 .comdef IExplorerBrowserEvents
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -4225,13 +3989,11 @@ EBF_NODROPTARGET	equ 0x200
 
 DEFINE_ENUM_FLAG_OPERATORS(EXPLORER_BROWSER_FILL_FLAGS)
 
-externdef		__MIDL_itf_shobjidl_0000_0103_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0103_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IExplorerBrowser_INTERFACE_DEFINED__
 __IExplorerBrowser_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IExplorerBrowser:IID
+DEFINE_IIDX(IExplorerBrowser, "dfd3b6b5-c10c-4be9-85f6-a66969f402f6")
+
 .comdef IExplorerBrowser
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -4258,7 +4020,8 @@ endif
 ifndef __IAccessibleObject_INTERFACE_DEFINED__
 __IAccessibleObject_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAccessibleObject:IID
+DEFINE_IIDX(IAccessibleObject, "95A391C5-9ED4-4c28-8401-AB9E06719E11")
+
 .comdef IAccessibleObject
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -4269,13 +4032,11 @@ externdef		IID_IAccessibleObject:IID
 endif
 endif
 
-externdef		__MIDL_itf_shobjidl_0000_0105_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0105_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IResultsFolder_INTERFACE_DEFINED__
 __IResultsFolder_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IResultsFolder:IID
+DEFINE_IIDX(IResultsFolder, "96E5AE6D-6AE1-4b1c-900C-C6480EAA8828")
+
 .comdef IResultsFolder
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -4287,30 +4048,15 @@ externdef		IID_IResultsFolder:IID
     RemoveAll		proc
     .ends
 
-;CALLTYPE
-IResultsFolder_RemoteAddIDList_Proxy proto WINAPI \
-		 _This: ptr IResultsFolder,
-		  pidl: PCIDLIST_ABSOLUTE,
-	    ppidlAdded: ptr PITEMID_CHILD
-
-;void
-IResultsFolder_RemoteAddIDList_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
 endif
 
 if (_WIN32_IE GE _WIN32_IE_IE70)
 
-externdef		__MIDL_itf_shobjidl_0000_0106_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0106_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IEnumObjects_INTERFACE_DEFINED__
 __IEnumObjects_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IEnumObjects:IID
+DEFINE_IIDX(IEnumObjects, "2c1c7e2e-2d0e-4059-831e-1e6f82335c2e")
+
 .comdef IEnumObjects
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -4320,21 +4066,6 @@ externdef		IID_IEnumObjects:IID
     Reset		proc
     Clone		proc :ptr
     .ends
-
-;CALLTYPE
-IEnumObjects_RemoteNext_Proxy proto WINAPI \
-		 _This: ptr IEnumObjects,
-		  celt: ULONG,
-		  riid: REFIID,
-		 rgelt: PVOID,
-	  pceltFetched: LPULONG
-
-;void
-IEnumObjects_RemoteNext_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
 
 endif
 
@@ -4346,9 +4077,6 @@ OPPROGDLG_DONTDISPLAYDESTPATH equ 0x400
 OPPROGDLG_NOMULTIDAYESTIMATES equ 0x800
 OPPROGDLG_DONTDISPLAYLOCATIONS equ 0x1000
 OPPROGDLGF		typedef DWORD
-
-externdef		__MIDL_itf_shobjidl_0000_0107_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0107_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IOperationsProgressDialog_INTERFACE_DEFINED__
 __IOperationsProgressDialog_INTERFACE_DEFINED__ equ 1
@@ -4368,7 +4096,8 @@ PDOPS_CANCELLED		equ 3
 PDOPS_STOPPED		equ 4
 PDOPS_ERRORS		equ 5
 
-externdef		IID_IOperationsProgressDialog:IID
+DEFINE_IIDX(IOperationsProgressDialog, "0C9FB851-E5C9-43EB-A370-F0677B13874C")
+
 .comdef IOperationsProgressDialog
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -4391,7 +4120,8 @@ endif
 ifndef __IIOCancelInformation_INTERFACE_DEFINED__
 __IIOCancelInformation_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IIOCancelInformation:IID
+DEFINE_IIDX(IIOCancelInformation, "f5b0bf81-8cb5-4b1b-9449-1a159e0c733c")
+
 .comdef IIOCancelInformation
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -4416,9 +4146,6 @@ FOFX_DONTDISPLAYDESTPATH equ 0x08000000
 FOFX_REQUIREELEVATION	equ 0x10000000
 FOFX_COPYASDOWNLOAD	equ 0x40000000
 FOFX_DONTDISPLAYLOCATIONS equ 0x80000000
-
-externdef		__MIDL_itf_shobjidl_0000_0109_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0109_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IFileOperation_INTERFACE_DEFINED__
 __IFileOperation_INTERFACE_DEFINED__ equ 1
@@ -4456,7 +4183,8 @@ endif
 ifndef __IObjectProvider_INTERFACE_DEFINED__
 __IObjectProvider_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IObjectProvider:IID
+DEFINE_IIDX(IObjectProvider, "a6087428-3be3-4d73-b308-7c04a540bf1a")
+
 .comdef IObjectProvider
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -4467,13 +4195,11 @@ externdef		IID_IObjectProvider:IID
 endif
 endif
 
-externdef		__MIDL_itf_shobjidl_0000_0111_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0111_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __INamespaceWalkCB_INTERFACE_DEFINED__
 __INamespaceWalkCB_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_INamespaceWalkCB:IID
+DEFINE_IIDX(INamespaceWalkCB, "d92995f8-cf5e-4a76-bf59-ead39ea2b97e")
+
 .comdef INamespaceWalkCB
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -4488,13 +4214,11 @@ endif
 
 if (_WIN32_IE GE _WIN32_IE_IE70)
 
-externdef		__MIDL_itf_shobjidl_0000_0112_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0112_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __INamespaceWalkCB2_INTERFACE_DEFINED__
 __INamespaceWalkCB2_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_INamespaceWalkCB2:IID
+DEFINE_IIDX(INamespaceWalkCB2, "7ac7492b-c38e-438a-87db-68737844ff70")
+
 .comdef INamespaceWalkCB2
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -4508,9 +4232,6 @@ externdef		IID_INamespaceWalkCB2:IID
 
 endif
 endif
-
-externdef		__MIDL_itf_shobjidl_0000_0113_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0113_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __INamespaceWalk_INTERFACE_DEFINED__
 __INamespaceWalk_INTERFACE_DEFINED__ equ 1
@@ -4536,8 +4257,7 @@ NSWF_DONT_TRAVERSE_STREAM_JUNCTIONS equ 0x4000
 
 DEFINE_ENUM_FLAG_OPERATORS(NAMESPACEWALKFLAG)
 
-externdef		IID_INamespaceWalk:IID
-
+DEFINE_IIDX(INamespaceWalk, "57ced8a7-3f4a-432c-9350-30f24483f74f")
 
 .comdef INamespaceWalk
     QueryInterface	proc :REFIID, :ptr
@@ -4554,13 +4274,11 @@ FreeIDListArrayFull	equ FreeIDistArray
 FreeIDListArrayChild	equ FreeIDistArray
 ACDD_VISIBLE		equ 0x0001
 
-externdef		__MIDL_itf_shobjidl_0000_0114_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0114_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IAutoCompleteDropDown_INTERFACE_DEFINED__
 __IAutoCompleteDropDown_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAutoCompleteDropDown:IID
+DEFINE_IIDX(IAutoCompleteDropDown, "3CD141F4-3C6A-11d2-BCAA-00C04FD929DB")
+
 .comdef IAutoCompleteDropDown
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -4606,13 +4324,11 @@ endif
 SID_SBandSite		equ IID_IBandSite
 CGID_BandSite		equ IID_IBandSite
 
-externdef		__MIDL_itf_shobjidl_0000_0115_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0115_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IBandSite_INTERFACE_DEFINED__
 __IBandSite_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IBandSite:IID
+DEFINE_IIDX(IBandSite, "4CF504B0-DE96-11D0-8B3F-00A0C911E8E5")
+
 .comdef IBandSite
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -4627,52 +4343,22 @@ externdef		IID_IBandSite:IID
     GetBandSiteInfo	proc :ptr
     .ends
 
-;CALLTYPE
-IBandSite_RemoteQueryBand_Proxy proto WINAPI \
-		 _This: ptr IBandSite,
-	      dwBandID: DWORD,
-		 ppstb: ptr IDeskBand,
-	      pdwState: LPDWORD,
-	       pszName: LPWSTR,
-	       cchName: SINT
-
-;void
-IBandSite_RemoteQueryBand_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
 endif
 endif
 
 if (NTDDI_VERSION GE NTDDI_WINXP)
 
-externdef		__MIDL_itf_shobjidl_0000_0116_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0116_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IModalWindow_INTERFACE_DEFINED__
 __IModalWindow_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IModalWindow:IID
+DEFINE_IIDX(IModalWindow, "b4db1657-70d7-485e-8e3e-6fcb5a5c1802")
+
 .comdef IModalWindow
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
     Release		proc
     Show		proc :HWND
     .ends
-
-;CALLTYPE
-IModalWindow_RemoteShow_Proxy proto WINAPI \
-		 _This: ptr IModalWindow,
-	     hwndOwner: HWND
-
-;void
-IModalWindow_RemoteShow_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
 
 endif
 
@@ -4689,13 +4375,11 @@ CDBE_TYPE_DATA		equ 0x2
 CDBE_TYPE_ALL		equ ( SINT  )0xffffffff
 CDBE_ACTIONS		typedef DWORD
 
-externdef		__MIDL_itf_shobjidl_0000_0117_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0117_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ICDBurnExt_INTERFACE_DEFINED__
 __ICDBurnExt_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_ICDBurnExt:IID
+DEFINE_IIDX(ICDBurnExt, "2271dcca-74fc-4414-8fb7-c56b05ace2d7")
+
 .comdef ICDBurnExt
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -4706,13 +4390,11 @@ externdef		IID_ICDBurnExt:IID
 endif
 endif
 
-externdef		__MIDL_itf_shobjidl_0000_0118_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0118_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IContextMenuSite_INTERFACE_DEFINED__
 __IContextMenuSite_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IContextMenuSite:IID
+DEFINE_IIDX(IContextMenuSite, "0811AEBE-0B87-4C54-9E72-548CF649016B")
+
 .comdef IContextMenuSite
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -4724,7 +4406,8 @@ endif
 ifndef __IEnumReadyCallback_INTERFACE_DEFINED__
 __IEnumReadyCallback_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IEnumReadyCallback:IID
+DEFINE_IIDX(IEnumReadyCallback, "61E00D45-8FFF-4e60-924E-6537B61612DD")
+
 .comdef IEnumReadyCallback
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -4737,9 +4420,8 @@ endif
 ifndef __IEnumerableView_INTERFACE_DEFINED__
 __IEnumerableView_INTERFACE_DEFINED__ equ 1
 
-DEFINE_GUID(IID_IEnumerableView, 0x8c8bf236, 0x1aec, 0x495f, 0x98,0x94, 0x91,0xd5,0x7c,0x3c,0x68,0x6f)
+DEFINE_IIDX(IEnumerableView, "8C8BF236-1AEC-495f-9894-91D57C3C686F")
 
-externdef		IID_IEnumerableView:IID
 .comdef IEnumerableView
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -4753,13 +4435,11 @@ endif
 SID_EnumerableView	equ <IID_IEnumerableView>
 if (NTDDI_VERSION GE NTDDI_WINXP) OR (_WIN32_IE GE _WIN32_IE_IE70)
 
-externdef		__MIDL_itf_shobjidl_0000_0121_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0121_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IInsertItem_INTERFACE_DEFINED__
 __IInsertItem_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IInsertItem:IID
+DEFINE_IIDX(IInsertItem, "D2B57227-3D23-4b95-93C0-492BD454C356")
+
 .comdef IInsertItem
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -4771,16 +4451,14 @@ endif
 
 if (NTDDI_VERSION GE NTDDI_WINXP)
 
-externdef		__MIDL_itf_shobjidl_0000_0122_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0122_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IMenuBand_INTERFACE_DEFINED__
 __IMenuBand_INTERFACE_DEFINED__ equ 1
 
-tagMENUBANDHANDLERCID	typedef SDWORD
+MENUBANDHANDLERCID	typedef SDWORD
 MBHANDCID_PIDLSELECT	equ 0
 
-externdef		IID_IMenuBand:IID
+DEFINE_IIDX(IMenuBand, "568804CD-CBD7-11d0-9816-00C04FD91972")
+
 .comdef IMenuBand
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -4794,7 +4472,8 @@ endif
 ifndef __IFolderBandPriv_INTERFACE_DEFINED__
 __IFolderBandPriv_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IFolderBandPriv:IID
+DEFINE_IIDX(IFolderBandPriv, "47c01f95-e185-412c-b5c5-4f27df965aea")
+
 .comdef IFolderBandPriv
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -4810,7 +4489,8 @@ endif
 ifndef __IRegTreeItem_INTERFACE_DEFINED__
 __IRegTreeItem_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IRegTreeItem:IID
+DEFINE_IIDX(IRegTreeItem, "A9521922-0812-4d44-9EC3-7FD38C726F3D")
+
 .comdef IRegTreeItem
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -4824,7 +4504,8 @@ endif
 ifndef __IImageRecompress_INTERFACE_DEFINED__
 __IImageRecompress_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IImageRecompress:IID
+DEFINE_IIDX(IImageRecompress, "505f1513-6b3e-4892-a272-59f8889a4d3e")
+
 .comdef IImageRecompress
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -4838,13 +4519,11 @@ endif
 
 if (_WIN32_IE GE _WIN32_IE_IE60)
 
-externdef		__MIDL_itf_shobjidl_0000_0126_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0126_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IDeskBar_INTERFACE_DEFINED__
 __IDeskBar_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDeskBar:IID
+DEFINE_IIDX(IDeskBar, "EB0FE173-1A3A-11D0-89B3-00A0C90A90AC")
+
 .comdef IDeskBar
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -4886,7 +4565,8 @@ MPPF_ALIGN_LEFT		equ 0x2000000
 MPPF_ALIGN_RIGHT	equ 0x4000000
 MP_POPUPFLAGS		typedef SINT
 
-externdef		IID_IMenuPopup:IID
+DEFINE_IIDX(IMenuPopup, "D1E7AFEB-6A2E-11d0-8C78-00C04FD918B4")
+
 .comdef IMenuPopup
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -4914,13 +4594,11 @@ OF_CAP_CANSWITCHTO	equ 0x0001
 OF_CAP_CANCLOSE		equ 0x0002
 
 
-externdef		__MIDL_itf_shobjidl_0000_0128_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0128_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IFileIsInUse_INTERFACE_DEFINED__
 __IFileIsInUse_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IFileIsInUse:IID
+DEFINE_IIDX(IFileIsInUse, "64a1cbf0-3a1a-4461-9158-376969693950")
+
 .comdef IFileIsInUse
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -4948,13 +4626,11 @@ FDAP			typedef SDWORD
 FDAP_BOTTOM		equ 0
 FDAP_TOP		equ 1
 
-externdef		__MIDL_itf_shobjidl_0000_0129_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0129_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IFileDialogEvents_INTERFACE_DEFINED__
 __IFileDialogEvents_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IFileDialogEvents:IID
+DEFINE_IIDX(IFileDialogEvents, "973510db-7d7f-452b-8975-74a85828d354")
+
 .comdef IFileDialogEvents
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -4969,9 +4645,6 @@ externdef		IID_IFileDialogEvents:IID
     .ends
 
 endif
-
-externdef		__MIDL_itf_shobjidl_0000_0130_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0130_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IFileDialog_INTERFACE_DEFINED__
 __IFileDialog_INTERFACE_DEFINED__ equ 1
@@ -5000,7 +4673,8 @@ FOS_FORCEPREVIEWPANEON	equ 0x40000000
 FILEOPENDIALOGOPTIONS	typedef DWORD
 
 
-externdef		IID_IFileDialog:IID
+DEFINE_IIDX(IFileDialog, "42f85136-db7e-439c-85f1-e4075d135fc8")
+
 .comdef IFileDialog
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -5036,7 +4710,8 @@ endif
 ifndef __IFileSaveDialog_INTERFACE_DEFINED__
 __IFileSaveDialog_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IFileSaveDialog:IID
+DEFINE_IIDX(IFileSaveDialog, "84bccd23-5fde-4cdb-aea4-af64b83d78ab")
+
 .comdef IFileSaveDialog
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -5077,7 +4752,8 @@ endif
 ifndef __IFileOpenDialog_INTERFACE_DEFINED__
 __IFileOpenDialog_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IFileOpenDialog:IID
+DEFINE_IIDX(IFileOpenDialog, "d57c7288-d4ad-4768-be02-9d969532d960")
+
 .comdef IFileOpenDialog
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -5120,13 +4796,11 @@ CDCS_ENABLEDVISIBLE	equ 0x3
 
 DEFINE_ENUM_FLAG_OPERATORS(CDCONTROLSTATEF)
 
-externdef		__MIDL_itf_shobjidl_0000_0133_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0133_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IFileDialogCustomize_INTERFACE_DEFINED__
 __IFileDialogCustomize_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IFileDialogCustomize:IID
+DEFINE_IIDX(IFileDialogCustomize, "e6fdd21a-163f-4975-9c8c-a69f1ba37034")
+
 .comdef IFileDialogCustomize
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -5165,7 +4839,8 @@ endif
 ifndef __IFileDialogControlEvents_INTERFACE_DEFINED__
 __IFileDialogControlEvents_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IFileDialogControlEvents:IID
+DEFINE_IIDX(IFileDialogControlEvents, "36116642-D713-4b97-9B83-7484A9D00433")
+
 .comdef IFileDialogControlEvents
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -5181,7 +4856,8 @@ endif
 ifndef __IFileDialog2_INTERFACE_DEFINED__
 __IFileDialog2_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IFileDialog2:IID
+DEFINE_IIDX(IFileDialog2, "61744fc7-85b5-4791-a9b0-272276309b13")
+
 .comdef IFileDialog2
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -5227,13 +4903,11 @@ AT_URLPROTOCOL		equ ( AT_FILEEXTENSION + 1 )
 AT_STARTMENUCLIENT	equ ( AT_URLPROTOCOL + 1 )
 AT_MIMETYPE		equ ( AT_STARTMENUCLIENT + 1 )
 
-externdef		__MIDL_itf_shobjidl_0000_0136_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0136_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IApplicationAssociationRegistration_INTERFACE_DEFINED__
 __IApplicationAssociationRegistration_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IApplicationAssociationRegistration:IID
+DEFINE_IIDX(IApplicationAssociationRegistration, "4e530b0a-e611-4c77-a3ac-9031d022281b")
+
 .comdef IApplicationAssociationRegistration
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -5253,13 +4927,11 @@ SHCreateAssociationRegistration proto WINAPI \
 		  riid: REFIID,
 		   ppv: PVOID
 
-externdef		__MIDL_itf_shobjidl_0000_0137_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0137_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IApplicationAssociationRegistrationUI_INTERFACE_DEFINED__
 __IApplicationAssociationRegistrationUI_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IApplicationAssociationRegistrationUI:IID
+DEFINE_IIDX(IApplicationAssociationRegistrationUI, "1f76a169-f994-40ac-8fc8-0959e8874710")
+
 .comdef IApplicationAssociationRegistrationUI
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -5269,25 +4941,26 @@ externdef		IID_IApplicationAssociationRegistrationUI:IID
 
 endif
 endif
+
 .pragma pack(push, 1)
+
 DELEGATEITEMID		STRUC
 cbSize			dw ?
 wOuter			dw ?
 cbInner			dw ?
 rgb			db  1  dup(?)
 DELEGATEITEMID		ENDS
+
 .pragma pack(pop)
 
 PCDELEGATEITEMID	typedef ptr DELEGATEITEMID
 PDELEGATEITEMID		typedef ptr DELEGATEITEMID
 
-externdef		__MIDL_itf_shobjidl_0000_0138_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0138_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IDelegateFolder_INTERFACE_DEFINED__
 __IDelegateFolder_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDelegateFolder:IID
+DEFINE_IIDX(IDelegateFolder, "ADD8BA80-002B-11D0-8F0F-00C04FD7D062")
+
 .comdef IDelegateFolder
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -5298,9 +4971,6 @@ externdef		IID_IDelegateFolder:IID
 endif
 
 if (_WIN32_IE GE _WIN32_IE_IE60)
-
-externdef		__MIDL_itf_shobjidl_0000_0139_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0139_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IBrowserFrameOptions_INTERFACE_DEFINED__
 __IBrowserFrameOptions_INTERFACE_DEFINED__ equ 1
@@ -5327,13 +4997,15 @@ BFO_USE_IE_STATUSBAR	equ 0x20000
 BFO_QUERY_ALL		equ ( SINT  )0xffffffff
 BROWSERFRAMEOPTIONS	typedef DWORD
 
-externdef		IID_IBrowserFrameOptions:IID
+DEFINE_IIDX(IBrowserFrameOptions, "10DF43C8-1DBE-11d3-8B34-006097DF5BD4")
+
 .comdef IBrowserFrameOptions
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
     Release		proc
     GetFrameOptions	proc :BROWSERFRAMEOPTIONS, :ptr
     .ends
+
 LPBROWSERFRAMEOPTIONS	typedef ptr IBrowserFrameOptions
 
 endif
@@ -5357,15 +5029,13 @@ NWMF_SUGGESTTAB		equ 0x80000
 NWMF_INACTIVETAB	equ 0x100000
 
 DEFINE_ENUM_FLAG_OPERATORS(NWMF)
-SID_SNewWindowManager	equ IID_INewWindowManager
-
-externdef		__MIDL_itf_shobjidl_0000_0140_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0140_v0_0_s_ifspec:RPC_IF_HANDLE
+SID_SNewWindowManager	equ <IID_INewWindowManager>
 
 ifndef __INewWindowManager_INTERFACE_DEFINED__
 __INewWindowManager_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_INewWindowManager:IID
+DEFINE_IIDX(INewWindowManager, "D2BC4C84-3F72-4a52-A604-7BCBF3982CBB")
+
 .comdef INewWindowManager
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -5389,7 +5059,8 @@ ATTACHMENT_ACTION_CANCEL	equ 0
 ATTACHMENT_ACTION_SAVE	equ 0x1
 ATTACHMENT_ACTION_EXEC	equ 0x2
 
-externdef		IID_IAttachmentExecute:IID
+DEFINE_IIDX(IAttachmentExecute, "73db1241-1e85-4581-8e4f-a81e1d0f8c57")
+
 .comdef IAttachmentExecute
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -5412,7 +5083,9 @@ endif
 endif
 
 if (_WIN32_IE GE _WIN32_IE_IE60)
+
 .pragma pack(push, 8)
+
 SMDATA			STRUC
 dwMask			dd ?
 dwFlags			dd ?
@@ -5507,13 +5180,11 @@ SMAE_VALID		equ 0x00000007
 endif
 
 
-externdef		__MIDL_itf_shobjidl_0000_0142_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0142_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IShellMenuCallback_INTERFACE_DEFINED__
 __IShellMenuCallback_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IShellMenuCallback:IID
+DEFINE_IIDX(IShellMenuCallback, "4CA300A1-9B8D-11d1-8B22-00C04FD918D0")
+
 .comdef IShellMenuCallback
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -5541,13 +5212,11 @@ SMSET_DONTOWN		equ 0x00000001
 SMINV_REFRESH		equ 0x00000001
 SMINV_ID		equ 0x00000008
 
-externdef		__MIDL_itf_shobjidl_0000_0143_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0143_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IShellMenu_INTERFACE_DEFINED__
 __IShellMenu_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IShellMenu:IID
+DEFINE_IIDX(IShellMenu, "EE1F7637-E138-11d1-8379-00C04FD918D0")
+
 .comdef IShellMenu
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -5566,13 +5235,11 @@ externdef		IID_IShellMenu:IID
 endif
 endif
 
-externdef		__MIDL_itf_shobjidl_0000_0144_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0144_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IShellRunDll_INTERFACE_DEFINED__
 __IShellRunDll_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IShellRunDll:IID
+DEFINE_IIDX(IShellRunDll, "fce4bde0-4b68-4b80-8e9c-7426315a7388")
+
 .comdef IShellRunDll
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -5633,13 +5300,11 @@ kfdFlags		KF_DEFINITION_FLAGS ?
 ftidType		FOLDERTYPEID <>
 KNOWNFOLDER_DEFINITION	ENDS
 
-externdef		__MIDL_itf_shobjidl_0000_0145_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0145_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IKnownFolder_INTERFACE_DEFINED__
 __IKnownFolder_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IKnownFolder:IID
+DEFINE_IIDX(IKnownFolder, "3AA7AF7E-9B36-420c-A8E3-F77D4674A488")
+
 .comdef IKnownFolder
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -5664,7 +5329,8 @@ FFFP_MODE		typedef SDWORD
 FFFP_EXACTMATCH		equ 0
 FFFP_NEARESTPARENTMATCH equ ( FFFP_EXACTMATCH + 1 )
 
-externdef		IID_IKnownFolderManager:IID
+DEFINE_IIDX(IKnownFolderManager, "8BE2D872-86AA-4d47-B776-32CCA40C7018")
+
 .comdef IKnownFolderManager
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -5681,24 +5347,6 @@ externdef		IID_IKnownFolderManager:IID
     Redirect		proc :REFKNOWNFOLDERID, :HWND, :KF_REDIRECT_FLAGS, :LPCWSTR, :UINT, :ptr, :ptr
     .ends
 
-;HRESULT
-IKnownFolderManager_RemoteRedirect_Proxy proto WINAPI \
-		 _This: ptr IKnownFolderManager,
-		  rfid: REFKNOWNFOLDERID,
-		  hwnd: HWND,
-		 flags: KF_REDIRECT_FLAGS,
-	 pszTargetPath: LPCWSTR,
-	      cFolders: UINT,
-	    pExclusion: ptr GUID,
-	     ppszError: ptr LPWSTR
-
-;void
-IKnownFolderManager_RemoteRedirect_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
 endif
 
 SHARE_ROLE		typedef SDWORD
@@ -5714,13 +5362,11 @@ DEF_SHARE_ID		typedef SDWORD
 DEFSHAREID_USERS	equ 1
 DEFSHAREID_PUBLIC	equ 2
 
-externdef		__MIDL_itf_shobjidl_0000_0147_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0147_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ISharingConfigurationManager_INTERFACE_DEFINED__
 __ISharingConfigurationManager_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_ISharingConfigurationManager:IID
+DEFINE_IIDX(ISharingConfigurationManager, "B4CD448A-9C86-4466-9201-2E62105B87AE")
+
 .comdef ISharingConfigurationManager
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -5737,13 +5383,11 @@ externdef		IID_ISharingConfigurationManager:IID
 endif
 endif
 
-externdef		__MIDL_itf_shobjidl_0000_0148_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0148_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IPreviousVersionsInfo_INTERFACE_DEFINED__
 __IPreviousVersionsInfo_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IPreviousVersionsInfo:IID
+DEFINE_IIDX(IPreviousVersionsInfo, "76e54780-ad74-48e3-a695-3ba9a0aff10d")
+
 .comdef IPreviousVersionsInfo
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -5755,13 +5399,11 @@ endif
 
 if (NTDDI_VERSION GE NTDDI_VISTA)
 
-externdef		__MIDL_itf_shobjidl_0000_0149_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0149_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IRelatedItem_INTERFACE_DEFINED__
 __IRelatedItem_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IRelatedItem:IID
+DEFINE_IIDX(IRelatedItem, "a73ce67a-8ab1-44f1-8d43-d2fcbf6b1cd0")
+
 .comdef IRelatedItem
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -5775,7 +5417,8 @@ endif
 ifndef __IIdentityName_INTERFACE_DEFINED__
 __IIdentityName_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IIdentityName:IID
+DEFINE_IIDX(IIdentityName, "7d903fca-d6f9-4810-8332-946c0177e247")
+
 .comdef IIdentityName
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -5789,7 +5432,8 @@ endif
 ifndef __IDelegateItem_INTERFACE_DEFINED__
 __IDelegateItem_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDelegateItem:IID
+DEFINE_IIDX(IDelegateItem, "3c5a1c94-c951-4cb7-bb6d-3b93f30cce93")
+
 .comdef IDelegateItem
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -5803,7 +5447,8 @@ endif
 ifndef __ICurrentItem_INTERFACE_DEFINED__
 __ICurrentItem_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_ICurrentItem:IID
+DEFINE_IIDX(ICurrentItem, "240a7174-d653-4a1d-a6d3-d4943cfbfe3d")
+
 .comdef ICurrentItem
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -5817,7 +5462,8 @@ endif
 ifndef __ITransferMediumItem_INTERFACE_DEFINED__
 __ITransferMediumItem_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_ITransferMediumItem:IID
+DEFINE_IIDX(ITransferMediumItem, "77f295d5-2d6f-4e19-b8ae-322f3e721ab5")
+
 .comdef ITransferMediumItem
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -5831,7 +5477,8 @@ endif
 ifndef __IUseToBrowseItem_INTERFACE_DEFINED__
 __IUseToBrowseItem_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IUseToBrowseItem:IID
+DEFINE_IIDX(IUseToBrowseItem, "05edda5c-98a3-4717-8adb-c5e7da991eb1")
+
 .comdef IUseToBrowseItem
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -5845,7 +5492,8 @@ endif
 ifndef __IDisplayItem_INTERFACE_DEFINED__
 __IDisplayItem_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDisplayItem:IID
+DEFINE_IIDX(IDisplayItem, "c6fd5997-9f6b-4888-8703-94e80e8cde3f")
+
 .comdef IDisplayItem
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -5859,7 +5507,8 @@ endif
 ifndef __IViewStateIdentityItem_INTERFACE_DEFINED__
 __IViewStateIdentityItem_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IViewStateIdentityItem:IID
+DEFINE_IIDX(IViewStateIdentityItem, "9D264146-A94F-4195-9F9F-3BB12CE0C955")
+
 .comdef IViewStateIdentityItem
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -5873,7 +5522,8 @@ endif
 ifndef __IPreviewItem_INTERFACE_DEFINED__
 __IPreviewItem_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IPreviewItem:IID
+DEFINE_IIDX(IPreviewItem, "36149969-0A8F-49c8-8B00-4AECB20222FB")
+
 .comdef IPreviewItem
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -5885,13 +5535,11 @@ externdef		IID_IPreviewItem:IID
 endif
 endif
 
-externdef		__MIDL_itf_shobjidl_0000_0158_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0158_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IDestinationStreamFactory_INTERFACE_DEFINED__
 __IDestinationStreamFactory_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDestinationStreamFactory:IID
+DEFINE_IIDX(IDestinationStreamFactory, "8a87781b-39a7-4a1f-aab3-a39b9c34a7d9")
+
 .comdef IDestinationStreamFactory
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -5911,13 +5559,11 @@ NMCSAEI_SELECT		equ 0
 NMCSAEI_EDIT		equ 0x1
 NMCSAEI_FLAGS		typedef SINT
 
-externdef		__MIDL_itf_shobjidl_0000_0159_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0159_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __INewMenuClient_INTERFACE_DEFINED__
 __INewMenuClient_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_INewMenuClient:IID
+DEFINE_IIDX(INewMenuClient, "dcb07fdc-3bb5-451c-90be-966644fed7b0")
+
 .comdef INewMenuClient
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -5930,17 +5576,14 @@ endif
 
 SID_SNewMenuClient	equ <IID_INewMenuClient>
 DEFINE_GUID(SID_SCommandBarState, 0xB99EAA5C, 0x3850, 0x4400, 0xBC, 0x33, 0x2C, 0xE5, 0x34, 0x04, 0x8B, 0xF8);
-DEFINE_GUID(IID_INewMenuClient, 0xdcb07fdc, 0x3bb5, 0x451c, 0x90,0xbe, 0x96,0x66,0x44,0xfe,0xd7,0xb0)
 
 if (_WIN32_IE GE _WIN32_IE_IE70)
-
-externdef		__MIDL_itf_shobjidl_0000_0160_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0160_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IInitializeWithBindCtx_INTERFACE_DEFINED__
 __IInitializeWithBindCtx_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IInitializeWithBindCtx:IID
+DEFINE_IIDX(IInitializeWithBindCtx, "71c0d2bc-726d-45cc-a6c0-2e31c1db2159")
+
 .comdef IInitializeWithBindCtx
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -5953,7 +5596,8 @@ endif
 ifndef __IShellItemFilter_INTERFACE_DEFINED__
 __IShellItemFilter_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IShellItemFilter:IID
+DEFINE_IIDX(IShellItemFilter, "2659B475-EEB8-48b7-8F07-B378810F48CF")
+
 .comdef IShellItemFilter
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -5964,9 +5608,6 @@ externdef		IID_IShellItemFilter:IID
 
 endif
 endif
-
-externdef		__MIDL_itf_shobjidl_0000_0162_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0162_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __INameSpaceTreeControl_INTERFACE_DEFINED__
 __INameSpaceTreeControl_INTERFACE_DEFINED__ equ 1
@@ -6026,9 +5667,8 @@ NSTCGNI_CHILD		equ 5
 NSTCGNI_FIRSTVISIBLE	equ 6
 NSTCGNI_LASTVISIBLE	equ 7
 
-DEFINE_GUID(IID_INameSpaceTreeControl, 0x028212a3, 0xb627, 0x47e9, 0x88,0x56, 0xc1,0x42,0x65,0x55,0x4e,0x4f)
+DEFINE_IIDX(INameSpaceTreeControl, "028212A3-B627-47e9-8856-C14265554E4F")
 
-externdef		IID_INameSpaceTreeControl:IID
 .comdef INameSpaceTreeControl
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -6070,7 +5710,8 @@ NTSCS2_NEVERINSERTNONENUMERATED equ 0x20
 
 DEFINE_ENUM_FLAG_OPERATORS(NSTCSTYLE2)
 
-externdef		IID_INameSpaceTreeControl2:IID
+DEFINE_IIDX(INameSpaceTreeControl2, "7cc7aed8-290e-49bc-8945-c1401cc9306c")
+
 .comdef INameSpaceTreeControl2
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -6118,9 +5759,6 @@ ISDBLCLICK macro x
 	endm
 
 
-externdef		__MIDL_itf_shobjidl_0000_0164_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0164_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __INameSpaceTreeControlEvents_INTERFACE_DEFINED__
 __INameSpaceTreeControlEvents_INTERFACE_DEFINED__ equ 1
 
@@ -6142,7 +5780,8 @@ NSTCECT_BUTTON		equ 0x3
 NSTCECT_DBLCLICK	equ 0x4
 NSTCECLICKTYPE		typedef DWORD
 
-externdef		IID_INameSpaceTreeControlEvents:IID
+DEFINE_IIDX(INameSpaceTreeControlEvents, "93D77985-B3D8-4484-8318-672CDDA002CE")
+
 .comdef INameSpaceTreeControlEvents
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -6172,13 +5811,11 @@ endif
 
 NSTCDHPOS_ONTOP		equ -1
 
-externdef		__MIDL_itf_shobjidl_0000_0165_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0165_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __INameSpaceTreeControlDropHandler_INTERFACE_DEFINED__
 __INameSpaceTreeControlDropHandler_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_INameSpaceTreeControlDropHandler:IID
+DEFINE_IIDX(INameSpaceTreeControlDropHandler, "F9C665D6-C2F2-4c19-BF33-8322D7352F51")
+
 .comdef INameSpaceTreeControlDropHandler
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -6196,7 +5833,8 @@ endif
 ifndef __INameSpaceTreeAccessible_INTERFACE_DEFINED__
 __INameSpaceTreeAccessible_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_INameSpaceTreeAccessible:IID
+DEFINE_IIDX(INameSpaceTreeAccessible, "71f312de-43ed-4190-8477-e9536b82350b")
+
 .comdef INameSpaceTreeAccessible
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -6222,7 +5860,8 @@ iLevel			SINT ?
 iIndent			SINT ?
 NSTCCUSTOMDRAW		ENDS
 
-externdef		IID_INameSpaceTreeControlCustomDraw:IID
+DEFINE_IIDX(INameSpaceTreeControlCustomDraw, "2D3BA758-33EE-42d5-BB7B-5F3431D86C78")
+
 .comdef INameSpaceTreeControlCustomDraw
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -6237,9 +5876,6 @@ endif
 
 if (NTDDI_VERSION GE NTDDI_VISTA)
 
-externdef		__MIDL_itf_shobjidl_0000_0168_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0168_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __INameSpaceTreeControlFolderCapabilities_INTERFACE_DEFINED__
 __INameSpaceTreeControlFolderCapabilities_INTERFACE_DEFINED__ equ 1
 
@@ -6250,7 +5886,8 @@ NSTCFC_DELAY_REGISTER_NOTIFY equ 0x2
 
 DEFINE_ENUM_FLAG_OPERATORS(NSTCFOLDERCAPABILITIES)
 
-externdef		IID_INameSpaceTreeControlFolderCapabilities:IID
+DEFINE_IIDX(INameSpaceTreeControlFolderCapabilities, "e9701183-e6b3-4ff2-8568-813615fec7be")
+
 .comdef INameSpaceTreeControlFolderCapabilities
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -6266,13 +5903,11 @@ E_PREVIEWHANDLER_NOAUTH equ _HRESULT_TYPEDEF_(0x86420002)
 E_PREVIEWHANDLER_NOTFOUND equ _HRESULT_TYPEDEF_(0x86420003)
 E_PREVIEWHANDLER_CORRUPT equ _HRESULT_TYPEDEF_(0x86420004)
 
-externdef		__MIDL_itf_shobjidl_0000_0169_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0169_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IPreviewHandler_INTERFACE_DEFINED__
 __IPreviewHandler_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IPreviewHandler:IID
+DEFINE_IIDX(IPreviewHandler, "8895b1c6-b41f-4c1c-a562-0d564250836f")
+
 .comdef IPreviewHandler
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -6296,7 +5931,8 @@ haccel			HACCEL ?
 cAccelEntries		UINT ?
 PREVIEWHANDLERFRAMEINFO ENDS
 
-externdef		IID_IPreviewHandlerFrame:IID
+DEFINE_IIDX(IPreviewHandlerFrame, "fec87aaf-35f9-447a-adb7-20234491401a")
+
 .comdef IPreviewHandlerFrame
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -6309,13 +5945,11 @@ endif
 
 if (NTDDI_VERSION GE NTDDI_VISTA)
 
-externdef		__MIDL_itf_shobjidl_0000_0171_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0171_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ITrayDeskBand_INTERFACE_DEFINED__
 __ITrayDeskBand_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_ITrayDeskBand:IID
+DEFINE_IIDX(ITrayDeskBand, "6D67E846-5B9C-4db8-9CBC-DDE12F4254F1")
+
 .comdef ITrayDeskBand
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -6331,9 +5965,8 @@ endif
 ifndef __IBandHost_INTERFACE_DEFINED__
 __IBandHost_INTERFACE_DEFINED__ equ 1
 
-DEFINE_GUID(IID_IBandHost, 0xb9075c7c, 0xd48e, 0x403f, 0xab,0x99, 0xd6,0xc7,0x7a,0x10,0x84,0xac)
+DEFINE_IIDX(IBandHost, "B9075C7C-D48E-403f-AB99-D6C77A1084AC")
 
-externdef		IID_IBandHost:IID
 .comdef IBandHost
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -6349,9 +5982,6 @@ SID_SBandHost		equ <IID_IBandHost>
 EXPLORERPANE		typedef GUID
 REFEXPLORERPANE		typedef ptr EXPLORERPANE
 
-externdef		__MIDL_itf_shobjidl_0000_0173_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0173_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IExplorerPaneVisibility_INTERFACE_DEFINED__
 __IExplorerPaneVisibility_INTERFACE_DEFINED__ equ 1
 
@@ -6363,9 +5993,8 @@ EPS_INITIALSTATE	equ 0x10000
 EPS_FORCE		equ 0x20000
 EXPLORERPANESTATE	typedef DWORD
 
-DEFINE_GUID(IID_IExplorerPaneVisibility, 0xe07010ec, 0xbc17, 0x44c0, 0x97,0xb0, 0x46,0xc7,0xc9,0x5b,0x9e,0xdc)
+DEFINE_IIDX(IExplorerPaneVisibility, "e07010ec-bc17-44c0-97b0-46c7c95b9edc")
 
-externdef		IID_IExplorerPaneVisibility:IID
 .comdef IExplorerPaneVisibility
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -6377,31 +6006,28 @@ endif
 
 SID_ExplorerPaneVisibility equ <IID_IExplorerPaneVisibility>
 
-externdef		__MIDL_itf_shobjidl_0000_0174_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0174_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IContextMenuCB_INTERFACE_DEFINED__
 __IContextMenuCB_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IContextMenuCB:IID
+DEFINE_IIDX(IContextMenuCB, "3409E930-5A39-11d1-83FA-00A0C90DC849")
+
 .comdef IContextMenuCB
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
     Release		proc
     CallBack		proc :ptr, :HWND, :ptr, :UINT, :WPARAM, :LPARAM
     .ends
+
 LPIContextMenuCB	typedef ptr IContextMenuCB
 
 endif
 endif
 
-externdef		__MIDL_itf_shobjidl_0000_0175_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0175_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IDefaultExtractIconInit_INTERFACE_DEFINED__
 __IDefaultExtractIconInit_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDefaultExtractIconInit:IID
+DEFINE_IIDX(IDefaultExtractIconInit, "41ded17d-d6b3-4261-997d-88c60e4b1d58")
+
 .comdef IDefaultExtractIconInit
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -6420,9 +6046,6 @@ endif
 SHCreateDefaultExtractIcon proto WINAPI \
 		  riid: REFIID,
 		   ppv: PVOID
-
-externdef		__MIDL_itf_shobjidl_0000_0176_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0176_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IExplorerCommand_INTERFACE_DEFINED__
 __IExplorerCommand_INTERFACE_DEFINED__ equ 1
@@ -6446,7 +6069,8 @@ ECF_SEPARATORAFTER	equ 0x40
 ECF_ISDROPDOWN		equ 0x80
 EXPCMDFLAGS		typedef DWORD
 
-externdef		IID_IExplorerCommand:IID
+DEFINE_IIDX(IExplorerCommand, "a08ce4d0-fa25-44ab-b57c-c7b1c323e0b9")
+
 .comdef IExplorerCommand
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -6466,7 +6090,8 @@ endif
 ifndef __IExplorerCommandState_INTERFACE_DEFINED__
 __IExplorerCommandState_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IExplorerCommandState:IID
+DEFINE_IIDX(IExplorerCommandState, "bddacb60-7657-47ae-8445-d23e1acf82ae")
+
 .comdef IExplorerCommandState
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -6479,7 +6104,8 @@ endif
 ifndef __IInitializeCommand_INTERFACE_DEFINED__
 __IInitializeCommand_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IInitializeCommand:IID
+DEFINE_IIDX(IInitializeCommand, "85075acf-231f-40ea-9610-d26b7b58f638")
+
 .comdef IInitializeCommand
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -6492,7 +6118,8 @@ endif
 ifndef __IEnumExplorerCommand_INTERFACE_DEFINED__
 __IEnumExplorerCommand_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IEnumExplorerCommand:IID
+DEFINE_IIDX(IEnumExplorerCommand, "a88826f8-186f-4987-aade-ea0cef8fbfe8")
+
 .comdef IEnumExplorerCommand
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -6503,26 +6130,13 @@ externdef		IID_IEnumExplorerCommand:IID
     Clone		proc :ptr
     .ends
 
-;CALLTYPE
-IEnumExplorerCommand_RemoteNext_Proxy proto WINAPI \
-		 _This: ptr IEnumExplorerCommand,
-		  celt: ULONG,
-	    pUICommand: ptr IExplorerCommand,
-	  pceltFetched: LPULONG
-
-;void
-IEnumExplorerCommand_RemoteNext_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
 endif
 
 ifndef __IExplorerCommandProvider_INTERFACE_DEFINED__
 __IExplorerCommandProvider_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IExplorerCommandProvider:IID
+DEFINE_IIDX(IExplorerCommandProvider, "64961751-0835-43c0-8ffe-d57686530e64")
+
 .comdef IExplorerCommandProvider
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -6536,7 +6150,8 @@ endif
 ifndef __IMarkupCallback_INTERFACE_DEFINED__
 __IMarkupCallback_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IMarkupCallback:IID
+DEFINE_IIDX(IMarkupCallback, "4440306e-d79a-48d0-88e6-a42692279bfb")
+
 .comdef IMarkupCallback
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -6551,9 +6166,6 @@ externdef		IID_IMarkupCallback:IID
 endif
 
 HTHEME			typedef HANDLE
-
-externdef		__MIDL_itf_shobjidl_0000_0182_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0182_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IControlMarkup_INTERFACE_DEFINED__
 __IControlMarkup_INTERFACE_DEFINED__ equ 1
@@ -6580,7 +6192,8 @@ MARKUPMESSAGE_KEYEXECUTE  equ 0
 MARKUPMESSAGE_CLICKEXECUTE equ ( MARKUPMESSAGE_KEYEXECUTE + 1 )
 MARKUPMESSAGE_WANTFOCUS equ ( MARKUPMESSAGE_CLICKEXECUTE + 1 )
 
-externdef		IID_IControlMarkup:IID
+DEFINE_IIDX(IControlMarkup, "D6D2FBAE-F116-458c-8C34-03569877A2D2")
+
 .comdef IControlMarkup
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -6620,7 +6233,8 @@ endif
 ifndef __IInitializeNetworkFolder_INTERFACE_DEFINED__
 __IInitializeNetworkFolder_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IInitializeNetworkFolder:IID
+DEFINE_IIDX(IInitializeNetworkFolder, "6e0f9881-42a8-4f2a-97f8-8af4e026d92d")
+
 .comdef IInitializeNetworkFolder
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -6636,13 +6250,11 @@ CPVIEW_ALLITEMS		equ CPVIEW_CLASSIC
 CPVIEW_CATEGORY		equ 1
 CPVIEW_HOME		equ CPVIEW_CATEGORY
 
-externdef		__MIDL_itf_shobjidl_0000_0184_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0184_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IOpenControlPanel_INTERFACE_DEFINED__
 __IOpenControlPanel_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IOpenControlPanel:IID
+DEFINE_IIDX(IOpenControlPanel, "D11AD862-66DE-4DF4-BF6C-1F5621996AF1")
+
 .comdef IOpenControlPanel
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -6657,7 +6269,8 @@ endif
 ifndef __IComputerInfoChangeNotify_INTERFACE_DEFINED__
 __IComputerInfoChangeNotify_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IComputerInfoChangeNotify:IID
+DEFINE_IIDX(IComputerInfoChangeNotify, "0DF60D92-6818-46d6-B358-D66170DDE466")
+
 .comdef IComputerInfoChangeNotify
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -6669,13 +6282,11 @@ endif
 
 STR_FILE_SYS_BIND_DATA	equ <L"File System Bind Data">
 
-externdef		__MIDL_itf_shobjidl_0000_0186_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0186_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IFileSystemBindData_INTERFACE_DEFINED__
 __IFileSystemBindData_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IFileSystemBindData:IID
+DEFINE_IIDX(IFileSystemBindData, "01E18D10-4D8B-11d2-855D-006008059367")
+
 .comdef IFileSystemBindData
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -6689,7 +6300,8 @@ endif
 ifndef __IFileSystemBindData2_INTERFACE_DEFINED__
 __IFileSystemBindData2_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IFileSystemBindData2:IID
+DEFINE_IIDX(IFileSystemBindData2, "3acf075f-71db-4afa-81f0-3fc4fdf2a5b8")
+
 .comdef IFileSystemBindData2
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -6706,9 +6318,6 @@ endif
 
 if (NTDDI_VERSION GE NTDDI_WIN7)
 
-externdef		__MIDL_itf_shobjidl_0000_0188_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0188_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ICustomDestinationList_INTERFACE_DEFINED__
 __ICustomDestinationList_INTERFACE_DEFINED__ equ 1
 
@@ -6716,7 +6325,8 @@ KNOWNDESTCATEGORY	typedef SDWORD
 KDC_FREQUENT		equ 1
 KDC_RECENT		equ ( KDC_FREQUENT + 1 )
 
-externdef		IID_ICustomDestinationList:IID
+DEFINE_IIDX(ICustomDestinationList, "6332debf-87b5-4670-90c0-5e57b408a49e")
+
 .comdef ICustomDestinationList
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -6737,7 +6347,8 @@ endif
 ifndef __IApplicationDestinations_INTERFACE_DEFINED__
 __IApplicationDestinations_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IApplicationDestinations:IID
+DEFINE_IIDX(IApplicationDestinations, "12337d35-94c6-48a0-bce7-6a9c69d4d600")
+
 .comdef IApplicationDestinations
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -6756,7 +6367,8 @@ APPDOCLISTTYPE		typedef SDWORD
 ADLT_RECENT		equ 0
 ADLT_FREQUENT		equ ( ADLT_RECENT + 1 )
 
-externdef		IID_IApplicationDocumentLists:IID
+DEFINE_IIDX(IApplicationDocumentLists, "3c594f9f-9f30-47a1-979a-c9e83d3d0a06")
+
 .comdef IApplicationDocumentLists
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -6770,7 +6382,8 @@ endif
 ifndef __IObjectWithAppUserModelID_INTERFACE_DEFINED__
 __IObjectWithAppUserModelID_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IObjectWithAppUserModelID:IID
+DEFINE_IIDX(IObjectWithAppUserModelID, "36db0196-9665-46d1-9ba7-d3709eecf9ed")
+
 .comdef IObjectWithAppUserModelID
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -6784,7 +6397,8 @@ endif
 ifndef __IObjectWithProgID_INTERFACE_DEFINED__
 __IObjectWithProgID_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IObjectWithProgID:IID
+DEFINE_IIDX(IObjectWithProgID, "71e806fb-8dee-46fc-bf8c-7748a8a1ae13")
+
 .comdef IObjectWithProgID
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -6798,7 +6412,8 @@ endif
 ifndef __IUpdateIDList_INTERFACE_DEFINED__
 __IUpdateIDList_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IUpdateIDList:IID
+DEFINE_IIDX(IUpdateIDList, "6589b6d2-5f8d-4b9e-b7e0-23cdd9717d8c")
+
 .comdef IUpdateIDList
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -6819,13 +6434,11 @@ GetCurrentProcessExplicitAppUserModelID proto WINAPI \
 endif
 
 
-externdef		__MIDL_itf_shobjidl_0000_0194_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0194_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IDesktopGadget_INTERFACE_DEFINED__
 __IDesktopGadget_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDesktopGadget:IID
+DEFINE_IIDX(IDesktopGadget, "c1646bc4-f298-4f91-a204-eb2dd1709d1a")
+
 .comdef IDesktopGadget
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -6835,10 +6448,63 @@ externdef		IID_IDesktopGadget:IID
 
 endif
 
-HOMEGROUP_SECURITY_GROUP equ <L"HomeUsers">
+if (NTDDI_VERSION GE NTDDI_WIN8)
 
-externdef		__MIDL_itf_shobjidl_0000_0195_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0195_v0_0_s_ifspec:RPC_IF_HANDLE
+ifndef __IDesktopWallpaper_INTERFACE_DEFINED__
+__IDesktopWallpaper_INTERFACE_DEFINED__ equ <>
+
+DESKTOP_SLIDESHOW_OPTIONS typedef sdword
+DSO_SHUFFLEIMAGES	equ 0x1
+
+DEFINE_ENUM_FLAG_OPERATORS(DESKTOP_SLIDESHOW_OPTIONS)
+
+DESKTOP_SLIDESHOW_STATE typedef sdword
+DSS_ENABLED		equ 0x1
+DSS_SLIDESHOW		equ 0x2
+DSS_DISABLED_BY_REMOTE_SESSION equ 0x4
+
+DEFINE_ENUM_FLAG_OPERATORS(DESKTOP_SLIDESHOW_STATE)
+
+DESKTOP_SLIDESHOW_DIRECTION typedef sdword
+DSD_FORWARD		equ 0
+DSD_BACKWARD		equ 1
+
+DESKTOP_WALLPAPER_POSITION typedef sdword
+DWPOS_CENTER		equ 0
+DWPOS_TILE		equ 1
+DWPOS_STRETCH		equ 2
+DWPOS_FIT		equ 3
+DWPOS_FILL		equ 4
+DWPOS_SPAN		equ 5
+
+DEFINE_IIDX(IDesktopWallpaper, "B92B56A9-8B55-4E14-9A89-0199BBB6F93B")
+
+.comdef IDesktopWallpaper
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetWallpaper	proc :LPCWSTR, :LPCWSTR
+    GetWallpaper	proc :LPCWSTR, :ptr LPWSTR
+    GetMonitorDevicePathAt proc :UINT, :ptr LPWSTR
+    GetMonitorDevicePathCount proc :ptr UINT
+    GetMonitorRECT	proc :LPCWSTR, :ptr RECT
+    SetBackgroundColor	proc :COLORREF
+    GetBackgroundColor	proc :ptr COLORREF
+    SetPosition		proc :DESKTOP_WALLPAPER_POSITION
+    GetPosition		proc :proc DESKTOP_WALLPAPER_POSITION
+    SetSlideshow	proc :ptr IShellItemArray
+    GetSlideshow	proc :ptr ptr IShellItemArray
+    SetSlideshowOptions proc :DESKTOP_SLIDESHOW_OPTIONS, :UINT
+    GetSlideshowOptions proc :ptr DESKTOP_SLIDESHOW_OPTIONS, :ptr UINT
+    AdvanceSlideshow	proc :LPCWSTR, :DESKTOP_SLIDESHOW_DIRECTION
+    GetStatus		proc :ptr DESKTOP_SLIDESHOW_STATE
+    Enable		proc :BOOL
+    .ends
+
+endif
+endif
+
+HOMEGROUP_SECURITY_GROUP equ <L"HomeUsers">
 
 ifndef __IHomeGroup_INTERFACE_DEFINED__
 __IHomeGroup_INTERFACE_DEFINED__ equ 1
@@ -6853,7 +6519,8 @@ HGSC_PRINTERS		equ 0x10
 
 DEFINE_ENUM_FLAG_OPERATORS(HOMEGROUPSHARINGCHOICES)
 
-externdef		IID_IHomeGroup:IID
+DEFINE_IIDX(IHomeGroup, "7a3bd1d9-35a9-4fb3-a467-f48cac35e2d0")
+
 .comdef IHomeGroup
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -6867,7 +6534,8 @@ endif
 ifndef __IInitializeWithPropertyStore_INTERFACE_DEFINED__
 __IInitializeWithPropertyStore_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IInitializeWithPropertyStore:IID
+DEFINE_IIDX(IInitializeWithPropertyStore, "C3E12EB5-7D8D-44f8-B6DD-0E77B34D6DE4")
+
 .comdef IInitializeWithPropertyStore
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -6880,7 +6548,8 @@ endif
 ifndef __IOpenSearchSource_INTERFACE_DEFINED__
 __IOpenSearchSource_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IOpenSearchSource:IID
+DEFINE_IIDX(IOpenSearchSource, "F0EE7333-E6FC-479b-9F25-A860C234A38E")
+
 .comdef IOpenSearchSource
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -6917,7 +6586,8 @@ LSF_MAKEUNIQUENAME	equ 0x2
 
 DEFINE_ENUM_FLAG_OPERATORS(LIBRARYSAVEFLAGS)
 
-externdef		IID_IShellLibrary:IID
+DEFINE_IIDX(IShellLibrary, "11a66efa-382e-451a-9234-1e0e12ef3085")
+
 .comdef IShellLibrary
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -6943,14 +6613,70 @@ externdef		IID_IShellLibrary:IID
 
 endif
 
+DEFAULT_FOLDER_MENU_RESTRICTIONS typedef sdword
+DFMR_DEFAULT		equ 0
+DFMR_NO_STATIC_VERBS	equ 0x8
+DFMR_STATIC_VERBS_ONLY	equ 0x10
+DFMR_NO_RESOURCE_VERBS	equ 0x20
+DFMR_OPTIN_HANDLERS_ONLY equ 0x40
+DFMR_RESOURCE_AND_FOLDER_VERBS_ONLY equ 0x80
+DFMR_USE_SPECIFIED_HANDLERS equ 0x100
+DFMR_USE_SPECIFIED_VERBS equ 0x200
+DFMR_NO_ASYNC_VERBS	equ 0x400
+
+DEFINE_ENUM_FLAG_OPERATORS(DEFAULT_FOLDER_MENU_RESTRICTIONS)
+
+ifndef __IDefaultFolderMenuInitialize_INTERFACE_DEFINED__
+__IDefaultFolderMenuInitialize_INTERFACE_DEFINED__ equ <>
+
+DEFINE_IIDX(IDefaultFolderMenuInitialize, "7690aa79-f8fc-4615-a327-36f7d18f5d91")
+
+.comdef IDefaultFolderMenuInitialize
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Initialize		proc :HWND, :ptr, :ptr, :ptr, :UINT, :ptr, :ptr, :UINT, :ptr
+    SetMenuRestrictions proc :DEFAULT_FOLDER_MENU_RESTRICTIONS
+    GetMenuRestrictions proc :DEFAULT_FOLDER_MENU_RESTRICTIONS, :ptr DEFAULT_FOLDER_MENU_RESTRICTIONS
+    SetHandlerClsid	proc :REFCLSID
+    .ends
+
+endif
+
+if (NTDDI_VERSION GE NTDDI_WIN8)
+
+ACTIVATEOPTIONS		typedef sdword
+AO_NONE			equ 0
+AO_DESIGNMODE		equ 0x1
+AO_NOERRORUI		equ 0x2
+AO_NOSPLASHSCREEN	equ 0x4
+
+DEFINE_ENUM_FLAG_OPERATORS(ACTIVATEOPTIONS)
+
+ifndef __IApplicationActivationManager_INTERFACE_DEFINED__
+__IApplicationActivationManager_INTERFACE_DEFINED__ equ <>
+
+DEFINE_IIDX(IApplicationActivationManager, "2e941141-7f97-4756-ba1d-9decde894a3d")
+
+.comdef IApplicationActivationManager
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    ActivateApplication proc :LPCWSTR, :LPCWSTR, :ACTIVATEOPTIONS, :ptr DWORD
+    ActivateForFile	proc :LPCWSTR, :ptr IShellItemArray, :LPCWSTR, :ptr DWORD
+    ActivateForProtocol proc :LPCWSTR, :ptr IShellItemArray, :ptr DWORD
+    .ends
+
+endif
+endif
+
 ifndef __ShellObjects_LIBRARY_DEFINED__
 __ShellObjects_LIBRARY_DEFINED__ equ 1
 
-SID_PublishingWizard	equ <CSID_PublishingWizard>
+SID_PublishingWizard equ <CSID_PublishingWizard>
+DEFINE_GUID(CLSID_ShellLink, 0x00021401,0,0,0xC0,0,0,0,0,0,0,0x46)
 
-DEFINE_GUID(CLSID_ShellLink,	0x00021401,0,0,0xC0,0,0,0,0,0,0,0x46)
-
-externdef		LIBID_ShellObjects:IID
+externdef LIBID_ShellObjects:IID
 DEFINE_GUID(CLSID_ShellDesktop,			0x00021400,0x0000,0x0000,0xC0,0x00,0x00,0x00,0x00,0x00,0x00,0x46)
 DEFINE_GUID(CLSID_ShellFSFolder,		0xF3364BA0,0x65B9,0x11CE,0xA9,0xBA,0x00,0xAA,0x00,0x4A,0xE8,0x37)
 DEFINE_GUID(CLSID_NetworkPlaces,		0x208D2C60,0x3AEA,0x1069,0xA2,0xD7,0x08,0x00,0x2B,0x30,0x30,0x9D)
@@ -7010,8 +6736,6 @@ DEFINE_GUID(CLSID_DesktopGadget,		0x924ccc1b,0x6562,0x4c85,0x86,0x57,0xd1,0x77,0
 
 endif
 
-
-
 if (NTDDI_VERSION GE NTDDI_VISTA)
 ;SHSTDAPI
 SHGetTemporaryPropertyForItem proto WINAPI \
@@ -7019,13 +6743,13 @@ SHGetTemporaryPropertyForItem proto WINAPI \
 	       propkey: REFPROPERTYKEY,
 	      ppropvar: ptr PROPVARIANT
 
-;SHSTDAPI
 SHSetTemporaryPropertyForItem proto WINAPI \
 		   psi: ptr IShellItem,
 	       propkey: REFPROPERTYKEY,
 	       propvar: REFPROPVARIANT
 
 endif
+
 if (NTDDI_VERSION GE NTDDI_WIN7)
 if (_WIN32_IE GE _WIN32_IE_IE70)
 LIBRARYMANAGEDIALOGOPTIONS typedef sdword
@@ -7033,7 +6757,7 @@ LMD_DEFAULT		equ 0
 LMD_ALLOWUNINDEXABLENETWORKLOCATIONS equ 0x1
 
 DEFINE_ENUM_FLAG_OPERATORS(LIBRARYMANAGEDIALOGOPTIONS)
-;SHSTDAPI
+
 SHShowManageLibraryUI proto WINAPI \
 	    psiLibrary: ptr IShellItem,
 	     hwndOwner: HWND,
@@ -7041,25 +6765,24 @@ SHShowManageLibraryUI proto WINAPI \
 	pszInstruction: LPCWSTR,
 	    lmdOptions: LIBRARYMANAGEDIALOGOPTIONS
 
-;SHSTDAPI
 SHResolveLibrary proto WINAPI \
 	    psiLibrary: ptr IShellItem
 
-endif
-endif
+SHCreateLibrary macro riid, ppv
+    exitm<CoCreateInstance(addr CLSID_ShellLibrary, NULL, CLSCTX_INPROC_SERVER, riid, ppv)>
+    endm
+
+endif ; if (_WIN32_IE GE _WIN32_IE_IE70)
+endif ; if (NTDDI_VERSION GE NTDDI_WIN7)
+
+
+
 if (NTDDI_VERSION GE NTDDI_VISTA)
-
-
-externdef		__MIDL_itf_shobjidl_0000_0199_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0199_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IAssocHandlerInvoker_INTERFACE_DEFINED__
 __IAssocHandlerInvoker_INTERFACE_DEFINED__ equ 1
 
-
-
-externdef		IID_IAssocHandlerInvoker:IID
-
+DEFINE_IIDX(IAssocHandlerInvoker, "92218CAB-ECAA-4335-8133-807FD234C2EE")
 
 .comdef IAssocHandlerInvoker
     QueryInterface	proc :REFIID, :ptr
@@ -7074,7 +6797,8 @@ endif
 ifndef __IAssocHandler_INTERFACE_DEFINED__
 __IAssocHandler_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAssocHandler:IID
+DEFINE_IIDX(IAssocHandler, "F04061AC-1659-4a3f-A954-775AA57FC083")
+
 .comdef IAssocHandler
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -7093,7 +6817,8 @@ endif
 ifndef __IEnumAssocHandlers_INTERFACE_DEFINED__
 __IEnumAssocHandlers_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IEnumAssocHandlers:IID
+DEFINE_IIDX(IEnumAssocHandlers, "973810ae-9599-4b88-9e4d-6ee98c9552da")
+
 .comdef IEnumAssocHandlers
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -7114,7 +6839,8 @@ SHAssocEnumHandlers proto WINAPI \
 	      afFilter: ASSOC_FILTER,
 	 ppEnumHandler: ptr IEnumAssocHandlers
 
-endif
+endif ;; NTDDI_VISTA
+
 if (NTDDI_VERSION GE NTDDI_WIN7)
 ;SHSTDAPI
 SHAssocEnumHandlersForProtocolByApplication proto WINAPI \
@@ -7124,920 +6850,637 @@ SHAssocEnumHandlersForProtocolByApplication proto WINAPI \
 
 endif
 
-externdef		__MIDL_itf_shobjidl_0000_0202_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shobjidl_0000_0202_v0_0_s_ifspec:RPC_IF_HANDLE
-
-
-;DWORD
-BSTR_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr BSTR
-
-;LPSTR
-BSTR_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr BSTR
-
-;LPSTR
-BSTR_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr BSTR
-
-;void
-BSTR_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr BSTR
-
-
-;DWORD
-HACCEL_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr HACCEL
-
-;LPSTR
-HACCEL_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HACCEL
-
-;LPSTR
-HACCEL_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HACCEL
-
-;void
-HACCEL_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr HACCEL
-
-
-;DWORD
-HBITMAP_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr HBITMAP
-
-;LPSTR
-HBITMAP_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HBITMAP
-
-;LPSTR
-HBITMAP_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HBITMAP
-
-;void
-HBITMAP_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr HBITMAP
-
-
-;DWORD
-HGLOBAL_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr HGLOBAL
-
-;LPSTR
-HGLOBAL_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HGLOBAL
-
-;LPSTR
-HGLOBAL_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HGLOBAL
-
-;void
-HGLOBAL_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr HGLOBAL
-
-
-;DWORD
-HICON_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr HICON
-
-;LPSTR
-HICON_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HICON
-
-;LPSTR
-HICON_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HICON
-
-;void
-HICON_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr HICON
-
-
-;DWORD
-HMENU_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr HMENU
-
-;LPSTR
-HMENU_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HMENU
-
-;LPSTR
-HMENU_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HMENU
-
-;void
-HMENU_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr HMENU
-
-
-;DWORD
-HWND_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr HWND
-
-;LPSTR
-HWND_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HWND
-
-;LPSTR
-HWND_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HWND
-
-;void
-HWND_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr HWND
-
-
-;DWORD
-LPSAFEARRAY_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr LPSAFEARRAY
-
-;LPSTR
-LPSAFEARRAY_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr LPSAFEARRAY
-
-;LPSTR
-LPSAFEARRAY_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr LPSAFEARRAY
-
-;void
-LPSAFEARRAY_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr LPSAFEARRAY
-
-
-;DWORD
-PCIDLIST_ABSOLUTE_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr PCIDLIST_ABSOLUTE
-
-;LPSTR
-PCIDLIST_ABSOLUTE_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr PCIDLIST_ABSOLUTE
-
-;LPSTR
-PCIDLIST_ABSOLUTE_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr PCIDLIST_ABSOLUTE
-
-;void
-PCIDLIST_ABSOLUTE_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr PCIDLIST_ABSOLUTE
-
-
-;DWORD
-PCUIDLIST_RELATIVE_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr PCUIDLIST_RELATIVE
-
-;LPSTR
-PCUIDLIST_RELATIVE_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr PCUIDLIST_RELATIVE
-
-;LPSTR
-PCUIDLIST_RELATIVE_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr PCUIDLIST_RELATIVE
-
-;void
-PCUIDLIST_RELATIVE_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr PCUIDLIST_RELATIVE
-
-
-;DWORD
-PCUITEMID_CHILD_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr PCUITEMID_CHILD
-
-;LPSTR
-PCUITEMID_CHILD_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr PCUITEMID_CHILD
-
-;LPSTR
-PCUITEMID_CHILD_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr PCUITEMID_CHILD
-
-;void
-PCUITEMID_CHILD_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr PCUITEMID_CHILD
-
-
-;DWORD
-PIDLIST_ABSOLUTE_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr PIDLIST_ABSOLUTE
-
-;LPSTR
-PIDLIST_ABSOLUTE_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr PIDLIST_ABSOLUTE
-
-;LPSTR
-PIDLIST_ABSOLUTE_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr PIDLIST_ABSOLUTE
-
-;void
-PIDLIST_ABSOLUTE_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr PIDLIST_ABSOLUTE
-
-
-;DWORD
-PIDLIST_RELATIVE_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr PIDLIST_RELATIVE
-
-;LPSTR
-PIDLIST_RELATIVE_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr PIDLIST_RELATIVE
-
-;LPSTR
-PIDLIST_RELATIVE_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr PIDLIST_RELATIVE
-
-;void
-PIDLIST_RELATIVE_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr PIDLIST_RELATIVE
-
-
-;DWORD
-PITEMID_CHILD_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr PITEMID_CHILD
-
-;LPSTR
-PITEMID_CHILD_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr PITEMID_CHILD
-
-;LPSTR
-PITEMID_CHILD_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr PITEMID_CHILD
-
-;void
-PITEMID_CHILD_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr PITEMID_CHILD
-
-
-;DWORD
-VARIANT_UserSize proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr VARIANT
-
-;LPSTR
-VARIANT_UserMarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr VARIANT
-
-;LPSTR
-VARIANT_UserUnmarshal proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr VARIANT
-
-;void
-VARIANT_UserFree proto WINAPI \
-		      : ptr DWORD,
-		      : ptr VARIANT
-
-
-;DWORD
-BSTR_UserSize64 proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr BSTR
-
-;LPSTR
-BSTR_UserMarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr BSTR
-
-;LPSTR
-BSTR_UserUnmarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr BSTR
-
-;void
-BSTR_UserFree64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr BSTR
-
-
-;DWORD
-HACCEL_UserSize64 proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr HACCEL
-
-;LPSTR
-HACCEL_UserMarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HACCEL
-
-;LPSTR
-HACCEL_UserUnmarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HACCEL
-
-;void
-HACCEL_UserFree64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr HACCEL
-
-
-;DWORD
-HBITMAP_UserSize64 proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr HBITMAP
-
-;LPSTR
-HBITMAP_UserMarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HBITMAP
-
-;LPSTR
-HBITMAP_UserUnmarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HBITMAP
-
-;void
-HBITMAP_UserFree64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr HBITMAP
-
-
-;DWORD
-HGLOBAL_UserSize64 proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr HGLOBAL
-
-;LPSTR
-HGLOBAL_UserMarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HGLOBAL
-
-;LPSTR
-HGLOBAL_UserUnmarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HGLOBAL
-
-;void
-HGLOBAL_UserFree64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr HGLOBAL
-
-
-;DWORD
-HICON_UserSize64 proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr HICON
-
-;LPSTR
-HICON_UserMarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HICON
-
-;LPSTR
-HICON_UserUnmarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HICON
-
-;void
-HICON_UserFree64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr HICON
-
-
-;DWORD
-HMENU_UserSize64 proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr HMENU
-
-;LPSTR
-HMENU_UserMarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HMENU
-
-;LPSTR
-HMENU_UserUnmarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HMENU
-
-;void
-HMENU_UserFree64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr HMENU
-
-
-;DWORD
-HWND_UserSize64 proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr HWND
-
-;LPSTR
-HWND_UserMarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HWND
-
-;LPSTR
-HWND_UserUnmarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr HWND
-
-;void
-HWND_UserFree64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr HWND
-
-
-;DWORD
-LPSAFEARRAY_UserSize64 proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr LPSAFEARRAY
-
-;LPSTR
-LPSAFEARRAY_UserMarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr LPSAFEARRAY
-
-;LPSTR
-LPSAFEARRAY_UserUnmarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr LPSAFEARRAY
-
-;void
-LPSAFEARRAY_UserFree64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr LPSAFEARRAY
-
-
-;DWORD
-PCIDLIST_ABSOLUTE_UserSize64 proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr PCIDLIST_ABSOLUTE
-
-;LPSTR
-PCIDLIST_ABSOLUTE_UserMarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr PCIDLIST_ABSOLUTE
-
-;LPSTR
-PCIDLIST_ABSOLUTE_UserUnmarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr PCIDLIST_ABSOLUTE
-
-;void
-PCIDLIST_ABSOLUTE_UserFree64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr PCIDLIST_ABSOLUTE
-
-
-;DWORD
-PCUIDLIST_RELATIVE_UserSize64 proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr PCUIDLIST_RELATIVE
-
-;LPSTR
-PCUIDLIST_RELATIVE_UserMarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr PCUIDLIST_RELATIVE
-
-;LPSTR
-PCUIDLIST_RELATIVE_UserUnmarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr PCUIDLIST_RELATIVE
-
-;void
-PCUIDLIST_RELATIVE_UserFree64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr PCUIDLIST_RELATIVE
-
-
-;DWORD
-PCUITEMID_CHILD_UserSize64 proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr PCUITEMID_CHILD
-
-;LPSTR
-PCUITEMID_CHILD_UserMarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr PCUITEMID_CHILD
-
-;LPSTR
-PCUITEMID_CHILD_UserUnmarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr PCUITEMID_CHILD
-
-;void
-PCUITEMID_CHILD_UserFree64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr PCUITEMID_CHILD
-
-
-;DWORD
-PIDLIST_ABSOLUTE_UserSize64 proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr PIDLIST_ABSOLUTE
-
-;LPSTR
-PIDLIST_ABSOLUTE_UserMarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr PIDLIST_ABSOLUTE
-
-;LPSTR
-PIDLIST_ABSOLUTE_UserUnmarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr PIDLIST_ABSOLUTE
-
-;void
-PIDLIST_ABSOLUTE_UserFree64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr PIDLIST_ABSOLUTE
-
-
-;DWORD
-PIDLIST_RELATIVE_UserSize64 proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr PIDLIST_RELATIVE
-
-;LPSTR
-PIDLIST_RELATIVE_UserMarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr PIDLIST_RELATIVE
-
-;LPSTR
-PIDLIST_RELATIVE_UserUnmarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr PIDLIST_RELATIVE
-
-;void
-PIDLIST_RELATIVE_UserFree64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr PIDLIST_RELATIVE
-
-
-;DWORD
-PITEMID_CHILD_UserSize64 proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr PITEMID_CHILD
-
-;LPSTR
-PITEMID_CHILD_UserMarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr PITEMID_CHILD
-
-;LPSTR
-PITEMID_CHILD_UserUnmarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr PITEMID_CHILD
-
-;void
-PITEMID_CHILD_UserFree64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr PITEMID_CHILD
-
-
-;DWORD
-VARIANT_UserSize64 proto WINAPI \
-		      : ptr DWORD,
-		      : DWORD,
-		      : ptr VARIANT
-
-;LPSTR
-VARIANT_UserMarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr VARIANT
-
-;LPSTR
-VARIANT_UserUnmarshal64 proto WINAPI \
-		      : ptr DWORD,
-		      : LPSTR,
-		      : ptr VARIANT
-
-;void
-VARIANT_UserFree64 proto WINAPI \
-		      : ptr DWORD,
-		      : ptr VARIANT
-
-
-;HRESULT
-IEnumIDList_Next_Proxy proto WINAPI \
-		 _This: ptr IEnumIDList,
-		  celt: ULONG,
-		 rgelt: ptr PITEMID_CHILD,
-	  pceltFetched: ptr ULONG
-
-
-
-;HRESULT
-IEnumIDList_Next_Stub proto WINAPI \
-		 _This: ptr IEnumIDList,
-		  celt: ULONG,
-		 rgelt: ptr PITEMID_CHILD,
-	  pceltFetched: ptr ULONG
-
-
-;HRESULT
-IEnumFullIDList_Next_Proxy proto WINAPI \
-		 _This: ptr IEnumFullIDList,
-		  celt: ULONG,
-		 rgelt: ptr PIDLIST_ABSOLUTE,
-	  pceltFetched: ptr ULONG
-
-
-
-;HRESULT
-IEnumFullIDList_Next_Stub proto WINAPI \
-		 _This: ptr IEnumFullIDList,
-		  celt: ULONG,
-		 rgelt: ptr PIDLIST_ABSOLUTE,
-	  pceltFetched: ptr ULONG
-
-
-;HRESULT
-IShellFolder_SetNameOf_Proxy proto WINAPI \
-		 _This: ptr IShellFolder,
-		  hwnd: HWND,
-		  pidl: PCUITEMID_CHILD,
-	       pszName: LPCWSTR,
-		uFlags: SHGDNF,
-	      ppidlOut: ptr PITEMID_CHILD
-
-
-
-;HRESULT
-IShellFolder_SetNameOf_Stub proto WINAPI \
-		 _This: ptr IShellFolder,
-		  hwnd: HWND,
-		  pidl: PCUITEMID_CHILD,
-	       pszName: LPCWSTR,
-		uFlags: SHGDNF,
-	      ppidlOut: ptr PITEMID_CHILD
-
-
-;HRESULT
-IFolderView2_GetGroupBy_Proxy proto WINAPI \
-		 _This: ptr IFolderView2,
-		  pkey: ptr PROPERTYKEY,
-	   pfAscending: ptr BOOL
-
-
-
-;HRESULT
-IFolderView2_GetGroupBy_Stub proto WINAPI \
-		 _This: ptr IFolderView2,
-		  pkey: ptr PROPERTYKEY,
-	   pfAscending: ptr BOOL
-
-;HRESULT
-IEnumShellItems_Next_Proxy proto WINAPI \
-		 _This: ptr IEnumShellItems,
-		  celt: ULONG,
-		 rgelt: ptr IShellItem,
-	  pceltFetched: ptr ULONG
-
-;HRESULT
-IEnumShellItems_Next_Stub proto WINAPI \
-		 _This: ptr IEnumShellItems,
-		  celt: ULONG,
-		 rgelt: ptr IShellItem,
-	  pceltFetched: ptr ULONG
-
-;HRESULT
-IParentAndItem_GetParentAndItem_Proxy proto WINAPI \
-		 _This: ptr IParentAndItem,
-	   ppidlParent: ptr PIDLIST_ABSOLUTE,
-		  ppsf: ptr IShellFolder,
-	    ppidlChild: ptr PITEMID_CHILD
-
-;HRESULT
-IParentAndItem_GetParentAndItem_Stub proto WINAPI \
-		 _This: ptr IParentAndItem,
-	   ppidlParent: ptr PIDLIST_ABSOLUTE,
-		  ppsf: ptr IShellFolder,
-	    ppidlChild: ptr PITEMID_CHILD
-
-
-;HRESULT
-IResultsFolder_AddIDList_Proxy proto WINAPI \
-		 _This: ptr IResultsFolder,
-		  pidl: PCIDLIST_ABSOLUTE,
-	    ppidlAdded: ptr PITEMID_CHILD
-
-
-
-;HRESULT
-IResultsFolder_AddIDList_Stub proto WINAPI \
-		 _This: ptr IResultsFolder,
-		  pidl: PCIDLIST_ABSOLUTE,
-	    ppidlAdded: ptr PITEMID_CHILD
-
-
-;HRESULT
-IEnumObjects_Next_Proxy proto WINAPI \
-		 _This: ptr IEnumObjects,
-		  celt: ULONG,
-		  riid: REFIID,
-		 rgelt: ptr void,
-	  pceltFetched: ptr ULONG
-
-;HRESULT
-IEnumObjects_Next_Stub proto WINAPI \
-		 _This: ptr IEnumObjects,
-		  celt: ULONG,
-		  riid: REFIID,
-		 rgelt: ptr void,
-	  pceltFetched: ptr ULONG
-;HRESULT
-IBandSite_QueryBand_Proxy proto WINAPI \
-		 _This: ptr IBandSite,
-	      dwBandID: DWORD,
-		 ppstb: ptr IDeskBand,
-	      pdwState: ptr DWORD,
-	       pszName: LPWSTR,
-	       cchName: SINT
-
-;HRESULT
-IBandSite_QueryBand_Stub proto WINAPI \
-		 _This: ptr IBandSite,
-	      dwBandID: DWORD,
-		 ppstb: ptr IDeskBand,
-	      pdwState: ptr DWORD,
-	       pszName: LPWSTR,
-	       cchName: SINT
-
-;HRESULT
-IModalWindow_Show_Proxy proto WINAPI \
-		 _This: ptr IModalWindow,
-	     hwndOwner: HWND
-
-;HRESULT
-IModalWindow_Show_Stub proto WINAPI \
-		 _This: ptr IModalWindow,
-	     hwndOwner: HWND
-
-;HRESULT
-IKnownFolderManager_Redirect_Proxy proto WINAPI \
-		 _This: ptr IKnownFolderManager,
-		  rfid: REFKNOWNFOLDERID,
-		  hwnd: HWND,
-		 flags: KF_REDIRECT_FLAGS,
-	 pszTargetPath: LPCWSTR,
-	      cFolders: UINT,
-	    pExclusion: ptr KNOWNFOLDERID,
-	     ppszError: ptr LPWSTR
-
-;HRESULT
-IKnownFolderManager_Redirect_Stub proto WINAPI \
-		 _This: ptr IKnownFolderManager,
-		  rfid: REFKNOWNFOLDERID,
-		  hwnd: HWND,
-		 flags: KF_REDIRECT_FLAGS,
-	 pszTargetPath: LPCWSTR,
-	      cFolders: UINT,
-	    pExclusion: ptr GUID,
-	     ppszError: ptr LPWSTR
-
-;HRESULT
-IEnumExplorerCommand_Next_Proxy proto WINAPI \
-		 _This: ptr IEnumExplorerCommand,
-		  celt: ULONG,
-	    pUICommand: ptr IExplorerCommand,
-	  pceltFetched: ptr ULONG
-
-;HRESULT
-IEnumExplorerCommand_Next_Stub proto WINAPI \
-		 _This: ptr IEnumExplorerCommand,
-		  celt: ULONG,
-	    pUICommand: ptr IExplorerCommand,
-	  pceltFetched: ptr ULONG
+if (NTDDI_VERSION GE NTDDI_WIN8)
+
+ifndef __IDataObjectProvider_INTERFACE_DEFINED__
+__IDataObjectProvider_INTERFACE_DEFINED__ equ <>
+
+DEFINE_IIDX(IDataObjectProvider, "3D25F6D6-4B2A-433c-9184-7C33AD35D001")
+
+.comdef IDataObjectProvider
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetDataObject	proc :ptr ptr IDataObject
+    SetDataObject	proc :ptr IDataObject
+    .ends
+
+endif
+
+ifndef __IDataTransferManagerInterop_INTERFACE_DEFINED__
+__IDataTransferManagerInterop_INTERFACE_DEFINED__ equ <>
+
+DEFINE_IIDX(IDataTransferManagerInterop, "3A3DCD6C-3EAB-43DC-BCDE-45671CE800C8")
+
+.comdef IDataTransferManagerInterop
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetForWindow	proc :HWND, :REFIID, :ptr ptr
+    ShowShareUIForWindow proc :HWND
+    .ends
+
+endif
+
+endif ;; NTDDI_WIN8
+
+if (NTDDI_VERSION GE NTDDI_WIN8)
+
+ifndef __IFrameworkInputPaneHandler_INTERFACE_DEFINED__
+__IFrameworkInputPaneHandler_INTERFACE_DEFINED__ equ <>
+
+DEFINE_IIDX(IFrameworkInputPaneHandler, "226C537B-1E76-4D9E-A760-33DB29922F18")
+
+.comdef IFrameworkInputPaneHandler
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Showing		proc :ptr RECT, :BOOL
+    Hiding		proc :BOOL
+    .ends
+
+endif
+
+ifndef __IFrameworkInputPane_INTERFACE_DEFINED__
+__IFrameworkInputPane_INTERFACE_DEFINED__ equ <>
+
+DEFINE_IIDX(IFrameworkInputPane, "5752238B-24F0-495A-82F1-2FD593056796")
+
+.comdef IFrameworkInputPane
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Advise		proc :ptr IUnknown, :ptr IFrameworkInputPaneHandler, :ptr DWORD
+    AdviseWithHWND	proc :HWND, :ptr IFrameworkInputPaneHandler, :ptr DWORD
+    Unadvise		proc :DWORD
+    Location		proc :ptr RECT
+    .ends
+
+endif
+
+ifndef PROP_CONTRACT_DELEGATE
+PROP_CONTRACT_DELEGATE	equ <L"ContractDelegate">
+endif
+
+;; For applications that use modern APIs and use a child or owned window
+;; that run on different threads this API must be used to indicate which
+;; window is the current main window. Call this API when those windows change their state.
+
+SetContractDelegateWindow macro hwndSource, hwndDelegate
+    .if (hwndDelegate != NULL)
+	SetPropW(hwndSource, PROP_CONTRACT_DELEGATE, hwndDelegate)
+    .else
+	RemovePropW(hwndSource, PROP_CONTRACT_DELEGATE)
+    .endif
+    retm<>
+    endm
+
+endif ;; NTDDI_WIN8
+
+if (NTDDI_VERSION GE NTDDI_WIN8)
+
+UNDOCK_REASON		typedef sdword
+UR_RESOLUTION_CHANGE	equ 0
+UR_MONITOR_DISCONNECT	equ 1
+
+ifndef __IAccessibilityDockingServiceCallback_INTERFACE_DEFINED__
+__IAccessibilityDockingServiceCallback_INTERFACE_DEFINED__ equ <>
+
+DEFINE_IIDX(IAccessibilityDockingServiceCallback, "157733FD-A592-42E5-B594-248468C5A81B")
+
+.comdef IAccessibilityDockingServiceCallback
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Undocked		proc :UNDOCK_REASON
+    .ends
+
+endif
+
+ifndef __IAccessibilityDockingService_INTERFACE_DEFINED__
+__IAccessibilityDockingService_INTERFACE_DEFINED__ equ <>
+
+DEFINE_IIDX(IAccessibilityDockingService, "8849DC22-CEDF-4C95-998D-051419DD3F76")
+
+.comdef IAccessibilityDockingService
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetAvailableSize	proc :HMONITOR, :ptr UINT, :ptr UINT
+    DockWindow		proc :HWND, :HMONITOR, :UINT, :ptr IAccessibilityDockingServiceCallback
+    UndockWindow	proc :HWND
+    .ends
+
+endif
+
+MONITOR_APP_VISIBILITY	typedef sdword
+MAV_UNKNOWN		equ 0
+MAV_NO_APP_VISIBLE	equ 1
+MAV_APP_VISIBLE		equ 2
+
+ifndef __IAppVisibilityEvents_INTERFACE_DEFINED__
+__IAppVisibilityEvents_INTERFACE_DEFINED__ equ <>
+
+DEFINE_IIDX(IAppVisibilityEvents, "6584CE6B-7D82-49C2-89C9-C6BC02BA8C38")
+
+.comdef IAppVisibilityEvents
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    AppVisibilityOnMonitorChanged proc :HMONITOR, :MONITOR_APP_VISIBILITY, :MONITOR_APP_VISIBILITY
+    LauncherVisibilityChange proc :BOOL
+    .ends
+
+endif
+
+ifndef __IAppVisibility_INTERFACE_DEFINED__
+__IAppVisibility_INTERFACE_DEFINED__ equ <>
+
+DEFINE_IIDX(IAppVisibility, "2246EA2D-CAEA-4444-A3C4-6DE827E44313")
+
+.comdef IAppVisibility
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetAppVisibilityOnMonitor proc :HMONITOR, :ptr MONITOR_APP_VISIBILITY
+    IsLauncherVisible	proc :ptr BOOL
+    Advise		proc :ptr IAppVisibilityEvents, :ptr DWORD
+    Unadvise		proc :DWORD
+    .ends
+
+endif
+
+PACKAGE_EXECUTION_STATE typedef sdword
+PES_UNKNOWN		equ 0
+PES_RUNNING		equ 1
+PES_SUSPENDING		equ 2
+PES_SUSPENDED		equ 3
+PES_TERMINATED		equ 4
+
+ifndef __IPackageExecutionStateChangeNotification_INTERFACE_DEFINED__
+__IPackageExecutionStateChangeNotification_INTERFACE_DEFINED__ equ <>
+
+DEFINE_IIDX(IPackageExecutionStateChangeNotification, "1BB12A62-2AD8-432B-8CCF-0C2C52AFCD5B")
+
+.comdef IPackageExecutionStateChangeNotification
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    OnStateChanged	proc :LPCWSTR, :PACKAGE_EXECUTION_STATE
+    .ends
+
+endif
+
+ifndef __IPackageDebugSettings_INTERFACE_DEFINED__
+__IPackageDebugSettings_INTERFACE_DEFINED__ equ <>
+
+DEFINE_IIDX(IPackageDebugSettings, "F27C3930-8029-4AD1-94E3-3DBA417810C1")
+
+.comdef IPackageDebugSettings
+
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    EnableDebugging	proc :LPCWSTR, :LPCWSTR, :PZZWSTR
+    DisableDebugging	proc :LPCWSTR
+    Suspend		proc :LPCWSTR
+    Resume		proc :LPCWSTR
+    TerminateAllProcesses proc :LPCWSTR
+    SetTargetSessionId	proc :ULONG
+    EnumerateBackgroundTasks proc :LPCWSTR, :ptr, :ptr
+    ActivateBackgroundTask proc :LPCGUID
+    StartServicing	proc :LPCWSTR
+    StopServicing	proc :LPCWSTR
+    StartSessionRedirection proc :LPCWSTR, :ULONG
+    StopSessionRedirection proc :LPCWSTR
+    GetPackageExecutionState proc :LPCWSTR, :ptr
+    RegisterForPackageStateChanges proc :LPCWSTR, :ptr, :ptr
+    UnregisterForPackageStateChanges proc :DWORD
+    .ends
+
+endif
+
+ifndef __ISuspensionDependencyManager_INTERFACE_DEFINED__
+__ISuspensionDependencyManager_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(ISuspensionDependencyManager, "52B83A42-2543-416A-81D9-C0DE7969C8B3")
+
+.comdef ISuspensionDependencyManager
+
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    RegisterAsChild	proc :HANDLE
+    GroupChildWithParent proc :HANDLE
+    UngroupChildFromParent proc :HANDLE
+    .ends
+
+endif
+
+AHE_TYPE		typedef SDWORD
+AHE_DESKTOP		equ 0
+AHE_IMMERSIVE		equ 1
+
+ifndef __IExecuteCommandApplicationHostEnvironment_INTERFACE_DEFINED__
+__IExecuteCommandApplicationHostEnvironment_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IExecuteCommandApplicationHostEnvironment, "18B21AA9-E184-4FF0-9F5E-F882D03771B3")
+
+.comdef IExecuteCommandApplicationHostEnvironment
+
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetValue		proc :ptr
+    .ends
+
+endif
+
+EC_HOST_UI_MODE		typedef SDWORD
+ECHUIM_DESKTOP		equ 0
+ECHUIM_IMMERSIVE	equ ( ECHUIM_DESKTOP + 1 )
+ECHUIM_SYSTEM_LAUNCHER	equ ( ECHUIM_IMMERSIVE + 1 )
+
+ifndef __IExecuteCommandHost_INTERFACE_DEFINED__
+__IExecuteCommandHost_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IExecuteCommandHost, "4b6832a2-5f04-4c9d-b89d-727a15d103e7")
+
+.comdef IExecuteCommandHost
+
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetUIMode		proc :ptr
+    .ends
+
+endif
+
+SID_ExecuteCommandHost	equ IID_IExecuteCommandHost
+APPLICATION_VIEW_STATE	typedef SDWORD
+AVS_FULLSCREEN_LANDSCAPE equ 0
+AVS_FILLED		equ ( AVS_FULLSCREEN_LANDSCAPE + 1 )
+AVS_SNAPPED		equ ( AVS_FILLED + 1 )
+AVS_FULLSCREEN_PORTRAIT equ ( AVS_SNAPPED + 1 )
+
+EDGE_GESTURE_KIND	typedef SDWORD
+EGK_TOUCH		equ 0
+EGK_KEYBOARD		equ ( EGK_TOUCH + 1 )
+EGK_MOUSE		equ ( EGK_KEYBOARD + 1 )
+
+ifndef __IApplicationDesignModeSettings_INTERFACE_DEFINED__
+__IApplicationDesignModeSettings_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IApplicationDesignModeSettings, "2A3DEE9A-E31D-46D6-8508-BCC597DB3557")
+
+.comdef IApplicationDesignModeSettings
+
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetNativeDisplaySize proc :SIZE
+    SetScaleFactor	proc :DEVICE_SCALE_FACTOR
+    SetApplicationViewState proc :APPLICATION_VIEW_STATE
+    ComputeApplicationSize proc :ptr
+    IsApplicationViewStateSupported proc :APPLICATION_VIEW_STATE, :SIZE, :DEVICE_SCALE_FACTOR, :ptr
+    TriggerEdgeGesture	proc :EDGE_GESTURE_KIND
+    .ends
+
+endif
+
+NATIVE_DISPLAY_ORIENTATION typedef SDWORD
+NDO_LANDSCAPE		equ 0
+NDO_PORTRAIT		equ ( NDO_LANDSCAPE + 1 )
+
+APPLICATION_VIEW_ORIENTATION typedef SDWORD
+AVO_LANDSCAPE		equ 0
+AVO_PORTRAIT		equ ( AVO_LANDSCAPE + 1 )
+
+ADJACENT_DISPLAY_EDGES	typedef SDWORD
+ADE_NONE		equ 0
+ADE_LEFT		equ 0x1
+ADE_RIGHT		equ 0x2
+
+DEFINE_ENUM_FLAG_OPERATORS(ADJACENT_DISPLAY_EDGES)
+
+if (NTDDI_VERSION GE NTDDI_WINBLUE)
+
+APPLICATION_VIEW_MIN_WIDTH typedef SDWORD
+AVMW_DEFAULT		equ 0
+AVMW_320		equ 1
+AVMW_500		equ 2
+
+ifndef __IApplicationDesignModeSettings2_INTERFACE_DEFINED__
+__IApplicationDesignModeSettings2_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IApplicationDesignModeSettings2, "490514E1-675A-4D6E-A58D-E54901B4CA2F")
+
+.comdef IApplicationDesignModeSettings2
+
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    SetNativeDisplaySize proc :SIZE
+    SetScaleFactor	proc :DEVICE_SCALE_FACTOR
+    SetApplicationViewState proc :APPLICATION_VIEW_STATE
+    ComputeApplicationSize proc :ptr
+    IsApplicationViewStateSupported proc :APPLICATION_VIEW_STATE, :SIZE, :DEVICE_SCALE_FACTOR, :ptr
+    TriggerEdgeGesture	proc :EDGE_GESTURE_KIND
+    SetNativeDisplayOrientation proc :NATIVE_DISPLAY_ORIENTATION
+    SetApplicationViewOrientation proc :APPLICATION_VIEW_ORIENTATION
+    SetAdjacentDisplayEdges proc :ADJACENT_DISPLAY_EDGES
+    SetIsOnLockScreen	proc :BOOL
+    SetApplicationViewMinWidth proc :APPLICATION_VIEW_MIN_WIDTH
+    GetApplicationSizeBounds proc :ptr, :ptr
+    GetApplicationViewOrientation proc :SIZE, :ptr
+    .ends
+
+endif
+
+DEFINE_GUID(SID_URLExecutionContext, 0xFB5F8EBC, 0xBBB6, 0x4D10, 0xA4, 0x61, 0x77, 0x72, 0x91, 0xA0, 0x90, 0x30)
+STR_TAB_REUSE_IDENTIFIER equ <L"Tab Reuse Identifier">
+STR_REFERRER_IDENTIFIER equ <L"Referrer Identifier">
+
+ifndef __ILaunchTargetMonitor_INTERFACE_DEFINED__
+__ILaunchTargetMonitor_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(ILaunchTargetMonitor,"266FBC7E-490D-46ED-A96B-2274DB252003")
+
+.comdef ILaunchTargetMonitor
+
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetMonitor		proc :ptr
+    .ends
+
+endif
+
+DEFINE_GUID(SID_LaunchTargetMonitor, 0x8d547fa1, 0xcc45, 0x40c8, 0xb7, 0xc1, 0xd4, 0x8c, 0x18, 0x3f, 0x13, 0xf3);
+APPLICATION_VIEW_SIZE_PREFERENCE typedef SDWORD
+AVSP_DEFAULT		equ 0
+AVSP_USE_LESS		equ 1
+AVSP_USE_HALF		equ 2
+AVSP_USE_MORE		equ 3
+AVSP_USE_MINIMUM	equ 4
+AVSP_USE_NONE		equ 5
+
+ifndef __ILaunchSourceViewSizePreference_INTERFACE_DEFINED__
+__ILaunchSourceViewSizePreference_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(ILaunchSourceViewSizePreference, "E5AA01F7-1FB8-4830-8720-4E6734CBD5F3")
+
+.comdef ILaunchSourceViewSizePreference
+
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetSourceViewToPosition proc :ptr
+    GetSourceViewSizePreference proc :ptr
+    .ends
+
+endif
+
+DEFINE_GUID(SID_LaunchSourceViewSizePreference, 0x80605492, 0x67d9, 0x414f, 0xaf, 0x89, 0xa1, 0xcd, 0xf1, 0x24, 0x2b, 0xc1);
+
+ifndef __ILaunchTargetViewSizePreference_INTERFACE_DEFINED__
+__ILaunchTargetViewSizePreference_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(ILaunchTargetViewSizePreference, "2F0666C6-12F7-4360-B511-A394A0553725")
+
+.comdef ILaunchTargetViewSizePreference
+
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetTargetViewSizePreference proc :ptr
+    .ends
+
+endif
+
+DEFINE_GUID(SID_LaunchTargetViewSizePreference, 0x26db2472, 0xb7b7, 0x406b, 0x97, 0x2, 0x73, 0xa, 0x4e, 0x20, 0xd3, 0xbf);
+
+ifndef __ILaunchSourceAppUserModelId_INTERFACE_DEFINED__
+__ILaunchSourceAppUserModelId_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(ILaunchSourceAppUserModelId, "989191AC-28FF-4CF0-9584-E0D078BC2396")
+
+.comdef ILaunchSourceAppUserModelId
+
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetAppUserModelId	proc :ptr
+    .ends
+
+endif
+
+DEFINE_GUID(SID_LaunchSourceAppUserModelId, 0x2ce78010, 0x74db, 0x48bc, 0x9c, 0x6a, 0x10, 0xf3, 0x72, 0x49, 0x57, 0x23);
+
+endif ;; NTDDI_WINBLUE
+
+
+ifndef __IInitializeWithWindow_INTERFACE_DEFINED__
+__IInitializeWithWindow_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IInitializeWithWindow, "3E68D4BD-7135-4D10-8018-9FB6D9F33FA1")
+
+.comdef IInitializeWithWindow
+
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Initialize		proc :HWND
+    .ends
+
+endif
+
+ifndef __IHandlerInfo_INTERFACE_DEFINED__
+__IHandlerInfo_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IHandlerInfo, "997706ef-f880-453b-8118-39e1a2d2655a")
+
+.comdef IHandlerInfo
+
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetApplicationDisplayName proc :ptr
+    GetApplicationPublisher proc :ptr
+    GetApplicationIconReference proc :ptr
+    .ends
+
+endif
+
+ifndef __IHandlerActivationHost_INTERFACE_DEFINED__
+__IHandlerActivationHost_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IHandlerActivationHost, "35094a87-8bb1-4237-96c6-c417eebdb078")
+
+.comdef IHandlerActivationHost
+
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    BeforeCoCreateInstance proc :REFCLSID, :ptr, :ptr
+    BeforeCreateProcess proc :LPCWSTR, :LPCWSTR, :ptr
+    .ends
+
+endif
+
+SID_SHandlerActivationHost equ <IID_IHandlerActivationHost>
+DEFINE_GUID(SID_ShellExecuteNamedPropertyStore, 0xeb84ada2, 0x00ff, 0x4992, 0x83, 0x24, 0xed, 0x5c, 0xe0, 0x61, 0xcb, 0x29);
+
+endif ;; NTDDI_WIN8
+
+if (NTDDI_VERSION GE NTDDI_WINBLUE)
+
+FLYOUT_PLACEMENT	typedef SDWORD
+FP_DEFAULT		equ 0
+FP_ABOVE		equ ( FP_DEFAULT + 1 )
+FP_BELOW		equ ( FP_ABOVE + 1 )
+FP_LEFT			equ ( FP_BELOW + 1 )
+FP_RIGHT		equ ( FP_LEFT + 1 )
+
+ifndef __IContactManagerInterop_INTERFACE_DEFINED__
+__IContactManagerInterop_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IContactManagerInterop, "99eacba7-e073-43b6-a896-55afe48a0833")
+
+.comdef IContactManagerInterop
+
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    ShowContactCardForWindow proc :HWND, :ptr, :const, :FLYOUT_PLACEMENT
+    .ends
+
+endif
+
+endif ;; NTDDI_WINBLUE
+
+;; Additional Prototypes for ALL interfaces
+
+BSTR_UserSize		proto WINAPI :ptr DWORD, :DWORD, :ptr BSTR
+BSTR_UserMarshal	proto WINAPI :ptr DWORD, :LPSTR, :ptr BSTR
+BSTR_UserUnmarshal	proto WINAPI :ptr DWORD, :LPSTR, :ptr BSTR
+BSTR_UserFree		proto WINAPI :ptr DWORD, :ptr BSTR
+HACCEL_UserSize		proto WINAPI :ptr DWORD, :DWORD, :ptr HACCEL
+HACCEL_UserMarshal	proto WINAPI :ptr DWORD, :LPSTR, :ptr HACCEL
+HACCEL_UserUnmarshal	proto WINAPI :ptr DWORD, :LPSTR, :ptr HACCEL
+HACCEL_UserFree		proto WINAPI :ptr DWORD, :ptr HACCEL
+HBITMAP_UserSize	proto WINAPI :ptr DWORD, :DWORD, :ptr HBITMAP
+HBITMAP_UserMarshal	proto WINAPI :ptr DWORD, :LPSTR, :ptr HBITMAP
+HBITMAP_UserUnmarshal	proto WINAPI :ptr DWORD, :LPSTR, :ptr HBITMAP
+HBITMAP_UserFree	proto WINAPI :ptr DWORD, :ptr HBITMAP
+HGLOBAL_UserSize	proto WINAPI :ptr DWORD, :DWORD, :ptr HGLOBAL
+HGLOBAL_UserMarshal	proto WINAPI :ptr DWORD, :LPSTR, :ptr HGLOBAL
+HGLOBAL_UserUnmarshal	proto WINAPI :ptr DWORD, :LPSTR, :ptr HGLOBAL
+HGLOBAL_UserFree	proto WINAPI :ptr DWORD, :ptr HGLOBAL
+HICON_UserSize		proto WINAPI :ptr DWORD, :DWORD, :ptr HICON
+HICON_UserMarshal	proto WINAPI :ptr DWORD, :LPSTR, :ptr HICON
+HICON_UserUnmarshal	proto WINAPI :ptr DWORD, :LPSTR, :ptr HICON
+HICON_UserFree		proto WINAPI :ptr DWORD, :ptr HICON
+HMENU_UserSize		proto WINAPI :ptr DWORD, :DWORD, :ptr HMENU
+HMENU_UserMarshal	proto WINAPI :ptr DWORD, :LPSTR, :ptr HMENU
+HMENU_UserUnmarshal	proto WINAPI :ptr DWORD, :LPSTR, :ptr HMENU
+HMENU_UserFree		proto WINAPI :ptr DWORD, :ptr HMENU
+HWND_UserSize		proto WINAPI :ptr DWORD, :DWORD, :ptr HWND
+HWND_UserMarshal	proto WINAPI :ptr DWORD, :LPSTR, :ptr HWND
+HWND_UserUnmarshal	proto WINAPI :ptr DWORD, :LPSTR, :ptr HWND
+HWND_UserFree		proto WINAPI :ptr DWORD, :ptr HWND
+LPSAFEARRAY_UserSize	proto WINAPI :ptr DWORD, :DWORD, :ptr LPSAFEARRAY
+LPSAFEARRAY_UserMarshal proto WINAPI :ptr DWORD, :LPSTR, :ptr LPSAFEARRAY
+LPSAFEARRAY_UserUnmarshal proto WINAPI :ptr DWORD, :LPSTR, :ptr LPSAFEARRAY
+LPSAFEARRAY_UserFree	proto WINAPI :ptr DWORD, :ptr LPSAFEARRAY
+PCIDLIST_ABSOLUTE_UserSize proto WINAPI :ptr DWORD, :DWORD, :ptr PCIDLIST_ABSOLUTE
+PCIDLIST_ABSOLUTE_UserMarshal proto WINAPI :ptr DWORD, :LPSTR, :ptr PCIDLIST_ABSOLUTE
+PCIDLIST_ABSOLUTE_UserUnmarshal proto WINAPI :ptr DWORD, :LPSTR, :ptr PCIDLIST_ABSOLUTE
+PCIDLIST_ABSOLUTE_UserFree proto WINAPI :ptr DWORD, :ptr PCIDLIST_ABSOLUTE
+PCUIDLIST_RELATIVE_UserSize proto WINAPI :ptr DWORD, :DWORD, :ptr PCUIDLIST_RELATIVE
+PCUIDLIST_RELATIVE_UserMarshal proto WINAPI :ptr DWORD, :LPSTR, :ptr PCUIDLIST_RELATIVE
+PCUIDLIST_RELATIVE_UserUnmarshal proto WINAPI :ptr DWORD, :LPSTR, :ptr PCUIDLIST_RELATIVE
+PCUIDLIST_RELATIVE_UserFree proto WINAPI :ptr DWORD, :ptr PCUIDLIST_RELATIVE
+PCUITEMID_CHILD_UserSize proto WINAPI :ptr DWORD, :DWORD, :ptr PCUITEMID_CHILD
+PCUITEMID_CHILD_UserMarshal proto WINAPI :ptr DWORD, :LPSTR, :ptr PCUITEMID_CHILD
+PCUITEMID_CHILD_UserUnmarshal proto WINAPI :ptr DWORD, :LPSTR, :ptr PCUITEMID_CHILD
+PCUITEMID_CHILD_UserFree proto WINAPI :ptr DWORD, :ptr PCUITEMID_CHILD
+PIDLIST_ABSOLUTE_UserSize proto WINAPI :ptr DWORD, :DWORD, :ptr PIDLIST_ABSOLUTE
+PIDLIST_ABSOLUTE_UserMarshal proto WINAPI :ptr DWORD, :LPSTR, :ptr PIDLIST_ABSOLUTE
+PIDLIST_ABSOLUTE_UserUnmarshal proto WINAPI :ptr DWORD, :LPSTR, :ptr PIDLIST_ABSOLUTE
+PIDLIST_ABSOLUTE_UserFree proto WINAPI :ptr DWORD, :ptr PIDLIST_ABSOLUTE
+PIDLIST_RELATIVE_UserSize proto WINAPI :ptr DWORD, :DWORD, :ptr PIDLIST_RELATIVE
+PIDLIST_RELATIVE_UserMarshal proto WINAPI :ptr DWORD, :LPSTR, :ptr PIDLIST_RELATIVE
+PIDLIST_RELATIVE_UserUnmarshal proto WINAPI :ptr DWORD, :LPSTR, :ptr PIDLIST_RELATIVE
+PIDLIST_RELATIVE_UserFree proto WINAPI :ptr DWORD, :ptr PIDLIST_RELATIVE
+PITEMID_CHILD_UserSize	proto WINAPI :ptr DWORD, :DWORD, :ptr PITEMID_CHILD
+PITEMID_CHILD_UserMarshal proto WINAPI :ptr DWORD, :LPSTR, :ptr PITEMID_CHILD
+PITEMID_CHILD_UserUnmarshal proto WINAPI :ptr DWORD, :LPSTR, :ptr PITEMID_CHILD
+PITEMID_CHILD_UserFree	proto WINAPI :ptr DWORD, :ptr PITEMID_CHILD
+VARIANT_UserSize	proto WINAPI :ptr DWORD, :DWORD, :ptr VARIANT
+VARIANT_UserMarshal	proto WINAPI :ptr DWORD, :LPSTR, :ptr VARIANT
+VARIANT_UserUnmarshal	proto WINAPI :ptr DWORD, :LPSTR, :ptr VARIANT
+VARIANT_UserFree	proto WINAPI :ptr DWORD, :ptr VARIANT
+BSTR_UserSize64		proto WINAPI :ptr DWORD, :DWORD, :ptr BSTR
+BSTR_UserMarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr BSTR
+BSTR_UserUnmarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr BSTR
+BSTR_UserFree64		proto WINAPI :ptr DWORD, :ptr BSTR
+HACCEL_UserSize64	proto WINAPI :ptr DWORD, :DWORD, :ptr HACCEL
+HACCEL_UserMarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr HACCEL
+HACCEL_UserUnmarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr HACCEL
+HACCEL_UserFree64	proto WINAPI :ptr DWORD, :ptr HACCEL
+HBITMAP_UserSize64	proto WINAPI :ptr DWORD, :DWORD, :ptr HBITMAP
+HBITMAP_UserMarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr HBITMAP
+HBITMAP_UserUnmarshal64 proto WINAPI :ptr DWORD, :LPSTR, :ptr HBITMAP
+HBITMAP_UserFree64	proto WINAPI :ptr DWORD, :ptr HBITMAP
+HGLOBAL_UserSize64	proto WINAPI :ptr DWORD, :DWORD, :ptr HGLOBAL
+HGLOBAL_UserMarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr HGLOBAL
+HGLOBAL_UserUnmarshal64 proto WINAPI :ptr DWORD, :LPSTR, :ptr HGLOBAL
+HGLOBAL_UserFree64	proto WINAPI :ptr DWORD, :ptr HGLOBAL
+HICON_UserSize64	proto WINAPI :ptr DWORD, :DWORD, :ptr HICON
+HICON_UserMarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr HICON
+HICON_UserUnmarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr HICON
+HICON_UserFree64	proto WINAPI :ptr DWORD, :ptr HICON
+HMENU_UserSize64	proto WINAPI :ptr DWORD, :DWORD, :ptr HMENU
+HMENU_UserMarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr HMENU
+HMENU_UserUnmarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr HMENU
+HMENU_UserFree64	proto WINAPI :ptr DWORD, :ptr HMENU
+HWND_UserSize64		proto WINAPI :ptr DWORD, :DWORD, :ptr HWND
+HWND_UserMarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr HWND
+HWND_UserUnmarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr HWND
+HWND_UserFree64		proto WINAPI :ptr DWORD, :ptr HWND
+
+LPSAFEARRAY_UserSize64		proto WINAPI :ptr DWORD, :DWORD, :ptr LPSAFEARRAY
+LPSAFEARRAY_UserMarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr LPSAFEARRAY
+LPSAFEARRAY_UserUnmarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr LPSAFEARRAY
+LPSAFEARRAY_UserFree64		proto WINAPI :ptr DWORD, :ptr LPSAFEARRAY
+PCIDLIST_ABSOLUTE_UserSize64	proto WINAPI :ptr DWORD, :DWORD, :ptr PCIDLIST_ABSOLUTE
+PCIDLIST_ABSOLUTE_UserMarshal64 proto WINAPI :ptr DWORD, :LPSTR, :ptr PCIDLIST_ABSOLUTE
+PCIDLIST_ABSOLUTE_UserUnmarshal64 proto WINAPI :ptr DWORD, :LPSTR, :ptr PCIDLIST_ABSOLUTE
+PCIDLIST_ABSOLUTE_UserFree64	proto WINAPI :ptr DWORD, :ptr PCIDLIST_ABSOLUTE
+PCUIDLIST_RELATIVE_UserSize64	proto WINAPI :ptr DWORD, :DWORD, :ptr PCUIDLIST_RELATIVE
+PCUIDLIST_RELATIVE_UserMarshal64 proto WINAPI :ptr DWORD, :LPSTR, :ptr PCUIDLIST_RELATIVE
+PCUIDLIST_RELATIVE_UserUnmarshal64 proto WINAPI :ptr DWORD, :LPSTR, :ptr PCUIDLIST_RELATIVE
+PCUIDLIST_RELATIVE_UserFree64	proto WINAPI :ptr DWORD, :ptr PCUIDLIST_RELATIVE
+PCUITEMID_CHILD_UserSize64	proto WINAPI :ptr DWORD, :DWORD, :ptr PCUITEMID_CHILD
+PCUITEMID_CHILD_UserMarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr PCUITEMID_CHILD
+PCUITEMID_CHILD_UserUnmarshal64 proto WINAPI :ptr DWORD, :LPSTR, :ptr PCUITEMID_CHILD
+PCUITEMID_CHILD_UserFree64	proto WINAPI :ptr DWORD, :ptr PCUITEMID_CHILD
+PIDLIST_ABSOLUTE_UserSize64	proto WINAPI :ptr DWORD, :DWORD, :ptr PIDLIST_ABSOLUTE
+PIDLIST_ABSOLUTE_UserMarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr PIDLIST_ABSOLUTE
+PIDLIST_ABSOLUTE_UserUnmarshal64 proto WINAPI :ptr DWORD, :LPSTR, :ptr PIDLIST_ABSOLUTE
+PIDLIST_ABSOLUTE_UserFree64	proto WINAPI :ptr DWORD, :ptr PIDLIST_ABSOLUTE
+PIDLIST_RELATIVE_UserSize64	proto WINAPI :ptr DWORD, :DWORD, :ptr PIDLIST_RELATIVE
+PIDLIST_RELATIVE_UserMarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr PIDLIST_RELATIVE
+PIDLIST_RELATIVE_UserUnmarshal64 proto WINAPI :ptr DWORD, :LPSTR, :ptr PIDLIST_RELATIVE
+PIDLIST_RELATIVE_UserFree64	proto WINAPI :ptr DWORD, :ptr PIDLIST_RELATIVE
+PITEMID_CHILD_UserSize64	proto WINAPI :ptr DWORD, :DWORD, :ptr PITEMID_CHILD
+PITEMID_CHILD_UserMarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr PITEMID_CHILD
+PITEMID_CHILD_UserUnmarshal64	proto WINAPI :ptr DWORD, :LPSTR, :ptr PITEMID_CHILD
+PITEMID_CHILD_UserFree64	proto WINAPI :ptr DWORD, :ptr PITEMID_CHILD
+VARIANT_UserSize64		proto WINAPI :ptr DWORD, :DWORD, :ptr VARIANT
+VARIANT_UserMarshal64		proto WINAPI :ptr DWORD, :LPSTR, :ptr VARIANT
+VARIANT_UserUnmarshal64		proto WINAPI :ptr DWORD, :LPSTR, :ptr VARIANT
+VARIANT_UserFree64		proto WINAPI :ptr DWORD, :ptr VARIANT
 
 endif

@@ -652,13 +652,10 @@ bPrimaryPath		BOOL ?
 ulWeight		ULONG ?
 VDS_PATH_POLICY		ENDS
 
-externdef		__MIDL_itf_vdshwprv_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_vdshwprv_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IEnumVdsObject_INTERFACE_DEFINED__
 __IEnumVdsObject_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IEnumVdsObject:IID
+DEFINE_IIDX(IEnumVdsObject, "118610b7-8d94-4030-b5b8-500889788e4e")
 
 .comdef IEnumVdsObject
 
@@ -676,7 +673,7 @@ endif
 ifndef __IVdsAsync_INTERFACE_DEFINED__
 __IVdsAsync_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVdsAsync:IID
+DEFINE_IIDX(IVdsAsync, "d5d23b6d-5a55-4492-9889-397a3c2d2dbc")
 
 .comdef IVdsAsync
 
@@ -693,7 +690,7 @@ endif
 ifndef __IVdsAdviseSink_INTERFACE_DEFINED__
 __IVdsAdviseSink_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVdsAdviseSink:IID
+DEFINE_IIDX(IVdsAdviseSink, "8326cd1d-cf59-4936-b786-5efc08798e25")
 
 .comdef IVdsAdviseSink
 
@@ -708,7 +705,7 @@ endif
 ifndef __IVdsProvider_INTERFACE_DEFINED__
 __IVdsProvider_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVdsProvider:IID
+DEFINE_IIDX(IVdsProvider, "10c5e575-7984-4e81-a56b-431f5f92ae42")
 
 .comdef IVdsProvider
 
@@ -723,7 +720,7 @@ endif
 ifndef __IVdsProviderSupport_INTERFACE_DEFINED__
 __IVdsProviderSupport_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVdsProviderSupport:IID
+DEFINE_IIDX(IVdsProviderSupport, "1732be13-e8f9-4a03-bfbc-5f616aa66ce1")
 
 .comdef IVdsProviderSupport
 
@@ -741,13 +738,10 @@ include winapifamily.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-externdef		__MIDL_itf_vdshwprv_0000_0005_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_vdshwprv_0000_0005_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IVdsProviderPrivate_INTERFACE_DEFINED__
 __IVdsProviderPrivate_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVdsProviderPrivate:IID
+DEFINE_IIDX(IVdsProviderPrivate, "11f3cd41-b7e8-48ff-9472-9dff018aa292")
 
 .comdef IVdsProviderPrivate
 
@@ -1313,13 +1307,10 @@ bUsed			BOOL ?
 VDS_STORAGE_POOL_DRIVE_EXTENT ENDS
 PVDS_STORAGE_POOL_DRIVE_EXTENT typedef ptr VDS_STORAGE_POOL_DRIVE_EXTENT
 
-externdef		__MIDL_itf_vdshwprv_0000_0006_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_vdshwprv_0000_0006_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IVdsHwProvider_INTERFACE_DEFINED__
 __IVdsHwProvider_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVdsHwProvider:IID
+DEFINE_IIDX(IVdsHwProvider, "d99bdaae-b13a-4178-9fdb-e27f16b4603e")
 
 .comdef IVdsHwProvider
 
@@ -1336,7 +1327,7 @@ endif
 ifndef __IVdsHwProviderType_INTERFACE_DEFINED__
 __IVdsHwProviderType_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVdsHwProviderType:IID
+DEFINE_IIDX(IVdsHwProviderType, "3e0f5166-542d-4fc6-947a-012174240b7e")
 
 .comdef IVdsHwProviderType
 
@@ -1351,7 +1342,7 @@ endif
 ifndef __IVdsHwProviderType2_INTERFACE_DEFINED__
 __IVdsHwProviderType2_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVdsHwProviderType2:IID
+DEFINE_IIDX(IVdsHwProviderType2, "8190236f-c4d0-4e81-8011-d69512fcc984")
 
 .comdef IVdsHwProviderType2
 
@@ -1366,7 +1357,7 @@ endif
 ifndef __IVdsHwProviderStoragePools_INTERFACE_DEFINED__
 __IVdsHwProviderStoragePools_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVdsHwProviderStoragePools:IID
+DEFINE_IIDX(IVdsHwProviderStoragePools, "d5b5937a-f188-4c79-b86c-11c920ad11b8")
 
 .comdef IVdsHwProviderStoragePools
 
@@ -1383,7 +1374,7 @@ endif
 ifndef __IVdsSubSystem_INTERFACE_DEFINED__
 __IVdsSubSystem_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVdsSubSystem:IID
+DEFINE_IIDX(IVdsSubSystem, "6fcee2d3-6d90-4f91-80e2-a5c7caaca9d8")
 
 .comdef IVdsSubSystem
 
@@ -1409,7 +1400,7 @@ endif
 ifndef __IVdsSubSystem2_INTERFACE_DEFINED__
 __IVdsSubSystem2_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVdsSubSystem2:IID
+DEFINE_IIDX(IVdsSubSystem2, "be666735-7800-4a77-9d9c-40f85b87e292")
 
 .comdef IVdsSubSystem2
 
@@ -1427,7 +1418,7 @@ endif
 ifndef __IVdsSubSystemNaming_INTERFACE_DEFINED__
 __IVdsSubSystemNaming_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVdsSubSystemNaming:IID
+DEFINE_IIDX(IVdsSubSystemNaming, "0d70faa3-9cd4-4900-aa20-6981b6aafc75")
 
 .comdef IVdsSubSystemNaming
 
@@ -1442,7 +1433,7 @@ endif
 ifndef __IVdsSubSystemIscsi_INTERFACE_DEFINED__
 __IVdsSubSystemIscsi_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVdsSubSystemIscsi:IID
+DEFINE_IIDX(IVdsSubSystemIscsi, "0027346f-40d0-4b45-8cec-5906dc0380c8")
 
 .comdef IVdsSubSystemIscsi
 
@@ -1460,7 +1451,7 @@ endif
 ifndef __IVdsSubSystemInterconnect_INTERFACE_DEFINED__
 __IVdsSubSystemInterconnect_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVdsSubSystemInterconnect:IID
+DEFINE_IIDX(IVdsSubSystemInterconnect, "9e6fa560-c141-477b-83ba-0b6c38f7febf")
 
 .comdef IVdsSubSystemInterconnect
 
@@ -1475,7 +1466,7 @@ endif
 ifndef __IVdsControllerPort_INTERFACE_DEFINED__
 __IVdsControllerPort_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVdsControllerPort:IID
+DEFINE_IIDX(IVdsControllerPort, "18691d0d-4e7f-43e8-92e4-cf44beeed11c")
 
 .comdef IVdsControllerPort
 
@@ -1494,7 +1485,7 @@ endif
 ifndef __IVdsController_INTERFACE_DEFINED__
 __IVdsController_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVdsController:IID
+DEFINE_IIDX(IVdsController, "cb53d96e-dffb-474a-a078-790d1e2bc082")
 
 .comdef IVdsController
 
@@ -1516,7 +1507,7 @@ endif
 ifndef __IVdsControllerControllerPort_INTERFACE_DEFINED__
 __IVdsControllerControllerPort_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVdsControllerControllerPort:IID
+DEFINE_IIDX(IVdsControllerControllerPort, "ca5d735f-6bae-42c0-b30e-f2666045ce71")
 
 .comdef IVdsControllerControllerPort
 
@@ -1531,7 +1522,7 @@ endif
 ifndef __IVdsDrive_INTERFACE_DEFINED__
 __IVdsDrive_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVdsDrive:IID
+DEFINE_IIDX(IVdsDrive, "ff24efa4-aade-4b6b-898b-eaa6a20887c7")
 
 .comdef IVdsDrive
 
@@ -1551,7 +1542,7 @@ endif
 ifndef __IVdsDrive2_INTERFACE_DEFINED__
 __IVdsDrive2_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVdsDrive2:IID
+DEFINE_IIDX(IVdsDrive2, "60b5a730-addf-4436-8ca7-5769e2d1ffa4")
 
 .comdef IVdsDrive2
 
@@ -1566,7 +1557,7 @@ endif
 ifndef __IVdsLun_INTERFACE_DEFINED__
 __IVdsLun_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVdsLun:IID
+DEFINE_IIDX(IVdsLun, "3540a9c7-e60f-4111-a840-8bba6c2c83d8")
 
 .comdef IVdsLun
 
@@ -1597,7 +1588,7 @@ endif
 ifndef __IVdsLun2_INTERFACE_DEFINED__
 __IVdsLun2_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVdsLun2:IID
+DEFINE_IIDX(IVdsLun2, "e5b3a735-9efb-499a-8071-4394d9ee6fcb")
 
 .comdef IVdsLun2
 
@@ -1613,7 +1604,7 @@ endif
 ifndef __IVdsLunNaming_INTERFACE_DEFINED__
 __IVdsLunNaming_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVdsLunNaming:IID
+DEFINE_IIDX(IVdsLunNaming, "907504cb-6b4e-4d88-a34d-17ba661fbb06")
 
 .comdef IVdsLunNaming
 
@@ -1628,7 +1619,7 @@ endif
 ifndef __IVdsLunNumber_INTERFACE_DEFINED__
 __IVdsLunNumber_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVdsLunNumber:IID
+DEFINE_IIDX(IVdsLunNumber, "d3f95e46-54b3-41f9-b678-0f1871443a08")
 
 .comdef IVdsLunNumber
 
@@ -1643,7 +1634,7 @@ endif
 ifndef __IVdsLunControllerPorts_INTERFACE_DEFINED__
 __IVdsLunControllerPorts_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVdsLunControllerPorts:IID
+DEFINE_IIDX(IVdsLunControllerPorts, "451fe266-da6d-406a-bb60-82e534f85aeb")
 
 .comdef IVdsLunControllerPorts
 
@@ -1659,7 +1650,7 @@ endif
 ifndef __IVdsLunMpio_INTERFACE_DEFINED__
 __IVdsLunMpio_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVdsLunMpio:IID
+DEFINE_IIDX(IVdsLunMpio, "7c5fbae3-333a-48a1-a982-33c15788cde3")
 
 .comdef IVdsLunMpio
 
@@ -1677,7 +1668,7 @@ endif
 ifndef __IVdsLunIscsi_INTERFACE_DEFINED__
 __IVdsLunIscsi_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVdsLunIscsi:IID
+DEFINE_IIDX(IVdsLunIscsi, "0d7c1e64-b59b-45ae-b86a-2c2cc6a42067")
 
 .comdef IVdsLunIscsi
 
@@ -1693,7 +1684,7 @@ endif
 ifndef __IVdsLunPlex_INTERFACE_DEFINED__
 __IVdsLunPlex_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVdsLunPlex:IID
+DEFINE_IIDX(IVdsLunPlex, "0ee1a790-5d2e-4abb-8c99-c481e8be2138")
 
 .comdef IVdsLunPlex
 
@@ -1712,7 +1703,7 @@ endif
 ifndef __IVdsIscsiPortal_INTERFACE_DEFINED__
 __IVdsIscsiPortal_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVdsIscsiPortal:IID
+DEFINE_IIDX(IVdsIscsiPortal, "7fa1499d-ec85-4a8a-a47b-ff69201fcd34")
 
 .comdef IVdsIscsiPortal
 
@@ -1733,7 +1724,7 @@ endif
 ifndef __IVdsIscsiTarget_INTERFACE_DEFINED__
 __IVdsIscsiTarget_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVdsIscsiTarget:IID
+DEFINE_IIDX(IVdsIscsiTarget, "aa8f5055-83e5-4bcc-aa73-19851a36a849")
 
 .comdef IVdsIscsiTarget
 
@@ -1757,7 +1748,7 @@ endif
 ifndef __IVdsIscsiPortalGroup_INTERFACE_DEFINED__
 __IVdsIscsiPortalGroup_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVdsIscsiPortalGroup:IID
+DEFINE_IIDX(IVdsIscsiPortalGroup, "fef5f89d-a3dd-4b36-bf28-e7dde045c593")
 
 .comdef IVdsIscsiPortalGroup
 
@@ -1777,7 +1768,7 @@ endif
 ifndef __IVdsStoragePool_INTERFACE_DEFINED__
 __IVdsStoragePool_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVdsStoragePool:IID
+DEFINE_IIDX(IVdsStoragePool, "932ca8cf-0eb3-4ba8-9620-22665d7f8450")
 
 .comdef IVdsStoragePool
 
@@ -1797,7 +1788,7 @@ endif
 ifndef __IVdsMaintenance_INTERFACE_DEFINED__
 __IVdsMaintenance_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVdsMaintenance:IID
+DEFINE_IIDX(IVdsMaintenance, "daebeef3-8523-47ed-a2b9-05cecce2a1ae")
 
 .comdef IVdsMaintenance
 
@@ -1817,13 +1808,10 @@ include winapifamily.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-externdef		__MIDL_itf_vdshwprv_0000_0033_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_vdshwprv_0000_0033_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IVdsHwProviderPrivate_INTERFACE_DEFINED__
 __IVdsHwProviderPrivate_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVdsHwProviderPrivate:IID
+DEFINE_IIDX(IVdsHwProviderPrivate, "98f17bf3-9f33-4f12-8714-8b4075092c2e")
 
 .comdef IVdsHwProviderPrivate
 
@@ -1838,7 +1826,7 @@ endif
 ifndef __IVdsHwProviderPrivateMpio_INTERFACE_DEFINED__
 __IVdsHwProviderPrivateMpio_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVdsHwProviderPrivateMpio:IID
+DEFINE_IIDX(IVdsHwProviderPrivateMpio, "310a7715-ac2b-4c6f-9827-3d742f351676")
 
 .comdef IVdsHwProviderPrivateMpio
 
@@ -1856,13 +1844,10 @@ include winapifamily.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-externdef		__MIDL_itf_vdshwprv_0000_0035_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_vdshwprv_0000_0035_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IVdsAdmin_INTERFACE_DEFINED__
 __IVdsAdmin_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVdsAdmin:IID
+DEFINE_IIDX(IVdsAdmin, "d188e97d-85aa-4d33-abc6-26299a10ffc1")
 
 .comdef IVdsAdmin
 
@@ -1878,8 +1863,5 @@ endif
 endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
 endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-externdef		__MIDL_itf_vdshwprv_0000_0036_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_vdshwprv_0000_0036_v0_0_s_ifspec:RPC_IF_HANDLE
 
 endif

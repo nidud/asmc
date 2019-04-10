@@ -549,7 +549,4 @@ endif ;;defined(VDS_MIDL_PASS)
 endif ;; _WIN32_WINNT_WIN7
 endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-externdef		__MIDL_itf_vdssys_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_vdssys_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
-
 endif

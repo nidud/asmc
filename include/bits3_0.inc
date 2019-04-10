@@ -55,7 +55,7 @@ include bits2_5.inc
 ifndef __IBitsPeerCacheRecord_INTERFACE_DEFINED__
 __IBitsPeerCacheRecord_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IBitsPeerCacheRecord:IID
+DEFINE_IIDX(IBitsPeerCacheRecord, "659cdeaf-489e-11d9-a9cd-000d56965251")
 
 .comdef IBitsPeerCacheRecord
 
@@ -76,7 +76,7 @@ endif
 ifndef __IEnumBitsPeerCacheRecords_INTERFACE_DEFINED__
 __IEnumBitsPeerCacheRecords_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IEnumBitsPeerCacheRecords:IID
+DEFINE_IIDX(IEnumBitsPeerCacheRecords, "659cdea4-489e-11d9-a9cd-000d56965251")
 
 .comdef IEnumBitsPeerCacheRecords
 
@@ -95,7 +95,7 @@ endif
 ifndef __IBitsPeer_INTERFACE_DEFINED__
 __IBitsPeer_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IBitsPeer:IID
+DEFINE_IIDX(IBitsPeer, "659cdea2-489e-11d9-a9cd-000d56965251")
 
 .comdef IBitsPeer
 
@@ -112,7 +112,7 @@ endif
 ifndef __IEnumBitsPeers_INTERFACE_DEFINED__
 __IEnumBitsPeers_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IEnumBitsPeers:IID
+DEFINE_IIDX(IEnumBitsPeers, "659cdea5-489e-11d9-a9cd-000d56965251")
 
 .comdef IEnumBitsPeers
 
@@ -135,7 +135,7 @@ BG_ENABLE_PEERCACHING_CLIENT equ 0x0001
 BG_ENABLE_PEERCACHING_SERVER equ 0x0002
 BG_DISABLE_BRANCH_CACHE equ 0x0004
 
-externdef		IID_IBitsPeerCacheAdministration:IID
+DEFINE_IIDX(IBitsPeerCacheAdministration, "659cdead-489e-11d9-a9cd-000d56965251")
 
 .comdef IBitsPeerCacheAdministration
 
@@ -167,7 +167,7 @@ BG_JOB_ENABLE_PEERCACHING_CLIENT equ 0x0001
 BG_JOB_ENABLE_PEERCACHING_SERVER equ 0x0002
 BG_JOB_DISABLE_BRANCH_CACHE equ 0x0004
 
-externdef		IID_IBackgroundCopyJob4:IID
+DEFINE_IIDX(IBackgroundCopyJob4, "659cdeae-489e-11d9-a9cd-000d56965251")
 
 .comdef IBackgroundCopyJob4
 
@@ -231,7 +231,7 @@ endif
 ifndef __IBackgroundCopyFile3_INTERFACE_DEFINED__
 __IBackgroundCopyFile3_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IBackgroundCopyFile3:IID
+DEFINE_IIDX(IBackgroundCopyFile3, "659cdeaa-489e-11d9-a9cd-000d56965251")
 
 .comdef IBackgroundCopyFile3
 
@@ -254,7 +254,7 @@ endif
 ifndef __IBackgroundCopyCallback2_INTERFACE_DEFINED__
 __IBackgroundCopyCallback2_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IBackgroundCopyCallback2:IID
+DEFINE_IIDX(IBackgroundCopyCallback2, "659cdeac-489e-11d9-a9cd-000d56965251")
 
 .comdef IBackgroundCopyCallback2
 
@@ -271,17 +271,11 @@ endif
 
 ifndef __BackgroundCopyManager3_0_LIBRARY_DEFINED__
 __BackgroundCopyManager3_0_LIBRARY_DEFINED__ equ 1
-
-externdef		LIBID_BackgroundCopyManager3_0:IID
-externdef		CLSID_BackgroundCopyManager3_0:CLSID
-ifdef __cplusplus
-class DECLSPEC_UUID("659cdea7-489e-11d9-a9cd-000d56965251")
+DEFINE_GUIDS(LIBID_BackgroundCopyManager3_0, "659cdea7-489e-11d9-a9cd-000d56965251")
+DEFINE_GUIDS(CLSID_BackgroundCopyManager3_0, "659cdea7-489e-11d9-a9cd-000d56965251")
 endif
 endif
 
 include bits4_0.inc
-
-externdef __MIDL_itf_bits3_0_0000_0008_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef __MIDL_itf_bits3_0_0000_0008_v0_0_s_ifspec:RPC_IF_HANDLE
 
 endif

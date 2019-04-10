@@ -170,8 +170,6 @@ ADO_LONGPTR		typedef LONGLONG
 else
 ADO_LONGPTR		typedef LONG
 endif
-externdef		__MIDL_itf_ado10_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_ado10_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
 ifndef __ADODB_LIBRARY_DEFINED__
 __ADODB_LIBRARY_DEFINED__ equ 1
 DECLSPEC_UUID("0000051B-0000-0010-8000-00AA006D2EA4")
@@ -710,7 +708,7 @@ adStructDoc		equ 2
 externdef		LIBID_ADODB:IID
 ifndef ___ADOCollection_INTERFACE_DEFINED__
 ___ADOCollection_INTERFACE_DEFINED__ equ 1
-externdef		IID__ADOCollection:IID
+DEFINE_IIDX(_ADOCollection, "00000512-0000-0010-8000-00AA006D2EA4")
 .comdef _ADOCollection
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -727,7 +725,7 @@ endif
 
 ifndef ___ADODynaCollection_INTERFACE_DEFINED__
 ___ADODynaCollection_INTERFACE_DEFINED__ equ 1
-externdef		IID__ADODynaCollection:IID
+DEFINE_IIDX(_ADODynaCollection, "00000513-0000-0010-8000-00AA006D2EA4")
 .comdef _ADODynaCollection
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -746,7 +744,7 @@ externdef		IID__ADODynaCollection:IID
 endif
 ifndef ___ADO_INTERFACE_DEFINED__
 ___ADO_INTERFACE_DEFINED__ equ 1
-externdef		IID__ADO:IID
+DEFINE_IIDX(_ADO, "00000534-0000-0010-8000-00AA006D2EA4")
 .comdef _ADO
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -761,7 +759,7 @@ externdef		IID__ADO:IID
 endif
 ifndef __Error_INTERFACE_DEFINED__
 __Error_INTERFACE_DEFINED__ equ 1
-externdef		IID_Error:IID
+DEFINE_IIDX(Error, "00000500-0000-0010-8000-00AA006D2EA4")
 .comdef Error
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -782,7 +780,7 @@ externdef		IID_Error:IID
 endif
 ifndef __Errors_INTERFACE_DEFINED__
 __Errors_INTERFACE_DEFINED__ equ 1
-externdef		IID_Errors:IID
+DEFINE_IIDX(Errors, "00000501-0000-0010-8000-00AA006D2EA4")
 .comdef Errors
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -801,7 +799,7 @@ externdef		IID_Errors:IID
 endif
 ifndef __Command15_INTERFACE_DEFINED__
 __Command15_INTERFACE_DEFINED__ equ 1
-externdef		IID_Command15:IID
+DEFINE_IIDX(Command15, "00000508-0000-0010-8000-00AA006D2EA4")
 .comdef Command15
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -832,7 +830,7 @@ externdef		IID_Command15:IID
 endif
 ifndef __Command25_INTERFACE_DEFINED__
 __Command25_INTERFACE_DEFINED__ equ 1
-externdef		IID_Command25:IID
+DEFINE_IIDX(Command25, "0000054E-0000-0010-8000-00AA006D2EA4")
 .comdef Command25
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -865,7 +863,7 @@ externdef		IID_Command25:IID
 endif
 ifndef ___Command_INTERFACE_DEFINED__
 ___Command_INTERFACE_DEFINED__ equ 1
-externdef		IID__Command:IID
+DEFINE_IIDX(_Command, "B08400BD-F9D1-4D02-B856-71D5DBA123E9")
 .comdef _Command
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -904,7 +902,7 @@ externdef		IID__Command:IID
 endif
 ifndef __ConnectionEventsVt_INTERFACE_DEFINED__
 __ConnectionEventsVt_INTERFACE_DEFINED__ equ 1
-externdef		IID_ConnectionEventsVt:IID
+DEFINE_IIDX(ConnectionEventsVt, "00000402-0000-0010-8000-00AA006D2EA4")
 .comdef ConnectionEventsVt
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -923,7 +921,7 @@ externdef		IID_ConnectionEventsVt:IID
 endif
 ifndef __RecordsetEventsVt_INTERFACE_DEFINED__
 __RecordsetEventsVt_INTERFACE_DEFINED__ equ 1
-externdef		IID_RecordsetEventsVt:IID
+DEFINE_IIDX(RecordsetEventsVt, "00000403-0000-0010-8000-00AA006D2EA4")
 .comdef RecordsetEventsVt
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -944,7 +942,7 @@ externdef		IID_RecordsetEventsVt:IID
 endif
 ifndef __ConnectionEvents_DISPINTERFACE_DEFINED__
 __ConnectionEvents_DISPINTERFACE_DEFINED__ equ 1
-externdef		DIID_ConnectionEvents:IID
+DEFINE_IIDX(ConnectionEvents, "00000400-0000-0010-8000-00AA006D2EA4")
 .comdef ConnectionEvents
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -958,7 +956,7 @@ externdef		DIID_ConnectionEvents:IID
 endif
 ifndef __RecordsetEvents_DISPINTERFACE_DEFINED__
 __RecordsetEvents_DISPINTERFACE_DEFINED__ equ 1
-externdef		DIID_RecordsetEvents:IID
+DEFINE_IIDX(RecordsetEvents, "00000266-0000-0010-8000-00AA006D2EA4")
 .comdef RecordsetEvents
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -972,7 +970,7 @@ externdef		DIID_RecordsetEvents:IID
 endif
 ifndef __Connection15_INTERFACE_DEFINED__
 __Connection15_INTERFACE_DEFINED__ equ 1
-externdef		IID_Connection15:IID
+DEFINE_IIDX(Connection15, "00000515-0000-0010-8000-00AA006D2EA4")
 .comdef Connection15
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1015,7 +1013,7 @@ externdef		IID_Connection15:IID
 endif
 ifndef ___Connection_INTERFACE_DEFINED__
 ___Connection_INTERFACE_DEFINED__ equ 1
-externdef		IID__Connection:IID
+DEFINE_IIDX(_Connection, "00000550-0000-0010-8000-00AA006D2EA4")
 .comdef _Connection
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1059,7 +1057,7 @@ externdef		IID__Connection:IID
 endif
 ifndef __ADOConnectionConstruction15_INTERFACE_DEFINED__
 __ADOConnectionConstruction15_INTERFACE_DEFINED__ equ 1
-externdef		IID_ADOConnectionConstruction15:IID
+DEFINE_IIDX(ADOConnectionConstruction15, "00000516-0000-0010-8000-00AA006D2EA4")
 .comdef ADOConnectionConstruction15
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1072,7 +1070,7 @@ externdef		IID_ADOConnectionConstruction15:IID
 endif
 ifndef __ADOConnectionConstruction_INTERFACE_DEFINED__
 __ADOConnectionConstruction_INTERFACE_DEFINED__ equ 1
-externdef		IID_ADOConnectionConstruction:IID
+DEFINE_IIDX(ADOConnectionConstruction, "00000551-0000-0010-8000-00AA006D2EA4")
 .comdef ADOConnectionConstruction
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1086,7 +1084,7 @@ endif
 externdef		CLSID_Connection:CLSID
 ifndef ___Record_INTERFACE_DEFINED__
 ___Record_INTERFACE_DEFINED__ equ 1
-externdef		IID__Record:IID
+DEFINE_IIDX(_Record, "00000562-0000-0010-8000-00AA006D2EA4")
 .comdef _Record
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1121,7 +1119,7 @@ endif
 externdef		CLSID_Record:CLSID
 ifndef ___Stream_INTERFACE_DEFINED__
 ___Stream_INTERFACE_DEFINED__ equ 1
-externdef		IID__Stream:IID
+DEFINE_IIDX(_Stream, "00000565-0000-0010-8000-00AA006D2EA4")
 .comdef _Stream
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1162,7 +1160,7 @@ endif
 externdef		CLSID_Stream:CLSID
 ifndef __ADORecordConstruction_INTERFACE_DEFINED__
 __ADORecordConstruction_INTERFACE_DEFINED__ equ 1
-externdef		IID_ADORecordConstruction:IID
+DEFINE_IIDX(ADORecordConstruction, "00000567-0000-0010-8000-00AA006D2EA4")
 .comdef ADORecordConstruction
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1179,7 +1177,7 @@ externdef		IID_ADORecordConstruction:IID
 endif
 ifndef __ADOStreamConstruction_INTERFACE_DEFINED__
 __ADOStreamConstruction_INTERFACE_DEFINED__ equ 1
-externdef		IID_ADOStreamConstruction:IID
+DEFINE_IIDX(ADOStreamConstruction, "00000568-0000-0010-8000-00AA006D2EA4")
 .comdef ADOStreamConstruction
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1195,7 +1193,7 @@ externdef		IID_ADOStreamConstruction:IID
 endif
 ifndef __ADOCommandConstruction_INTERFACE_DEFINED__
 __ADOCommandConstruction_INTERFACE_DEFINED__ equ 1
-externdef		IID_ADOCommandConstruction:IID
+DEFINE_IIDX(ADOCommandConstruction, "00000517-0000-0010-8000-00AA006D2EA4")
 .comdef ADOCommandConstruction
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1210,7 +1208,7 @@ externdef		CLSID_Recordset:CLSID
 
 ifndef __Recordset15_INTERFACE_DEFINED__
 __Recordset15_INTERFACE_DEFINED__ equ 1
-externdef		IID_Recordset15:IID
+DEFINE_IIDX(Recordset15, "0000050E-0000-0010-8000-00AA006D2EA4")
 .comdef Recordset15
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1285,7 +1283,7 @@ externdef		IID_Recordset15:IID
 endif
 ifndef __Recordset20_INTERFACE_DEFINED__
 __Recordset20_INTERFACE_DEFINED__ equ 1
-externdef		IID_Recordset20:IID
+DEFINE_IIDX(Recordset20, "0000054F-0000-0010-8000-00AA006D2EA4")
 .comdef Recordset20
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1373,7 +1371,7 @@ externdef		IID_Recordset20:IID
 endif
 ifndef __Recordset21_INTERFACE_DEFINED__
 __Recordset21_INTERFACE_DEFINED__ equ 1
-externdef		IID_Recordset21:IID
+DEFINE_IIDX(Recordset21, "00000555-0000-0010-8000-00AA006D2EA4")
 .comdef Recordset21
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1464,7 +1462,7 @@ externdef		IID_Recordset21:IID
 endif
 ifndef ___Recordset_INTERFACE_DEFINED__
 ___Recordset_INTERFACE_DEFINED__ equ 1
-externdef		IID__Recordset:IID
+DEFINE_IIDX(_Recordset, "00000556-0000-0010-8000-00AA006D2EA4")
 .comdef _Recordset
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1556,7 +1554,7 @@ externdef		IID__Recordset:IID
 endif
 ifndef __ADORecordsetConstruction_INTERFACE_DEFINED__
 __ADORecordsetConstruction_INTERFACE_DEFINED__ equ 1
-externdef		IID_ADORecordsetConstruction:IID
+DEFINE_IIDX(ADORecordsetConstruction, "00000283-0000-0010-8000-00AA006D2EA4")
 .comdef ADORecordsetConstruction
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1576,7 +1574,7 @@ externdef		IID_ADORecordsetConstruction:IID
 endif
 ifndef __Field15_INTERFACE_DEFINED__
 __Field15_INTERFACE_DEFINED__ equ 1
-externdef		IID_Field15:IID
+DEFINE_IIDX(Field15, "00000505-0000-0010-8000-00AA006D2EA4")
 .comdef Field15
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1604,7 +1602,7 @@ externdef		IID_Field15:IID
 endif
 ifndef __Field20_INTERFACE_DEFINED__
 __Field20_INTERFACE_DEFINED__ equ 1
-externdef		IID_Field20:IID
+DEFINE_IIDX(Field20, "0000054C-0000-0010-8000-00AA006D2EA4")
 .comdef Field20
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1639,7 +1637,7 @@ externdef		IID_Field20:IID
 endif
 ifndef __Field_INTERFACE_DEFINED__
 __Field_INTERFACE_DEFINED__ equ 1
-externdef		IID_Field:IID
+DEFINE_IIDX(Field, "00000569-0000-0010-8000-00AA006D2EA4")
 .comdef Field
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1675,7 +1673,7 @@ externdef		IID_Field:IID
 endif
 ifndef __Fields15_INTERFACE_DEFINED__
 __Fields15_INTERFACE_DEFINED__ equ 1
-externdef		IID_Fields15:IID
+DEFINE_IIDX(Fields15, "00000506-0000-0010-8000-00AA006D2EA4")
 .comdef Fields15
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1693,7 +1691,7 @@ externdef		IID_Fields15:IID
 endif
 ifndef __Fields20_INTERFACE_DEFINED__
 __Fields20_INTERFACE_DEFINED__ equ 1
-externdef		IID_Fields20:IID
+DEFINE_IIDX(Fields20, "0000054D-0000-0010-8000-00AA006D2EA4")
 .comdef Fields20
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1713,7 +1711,7 @@ externdef		IID_Fields20:IID
 endif
 ifndef __Fields_INTERFACE_DEFINED__
 __Fields_INTERFACE_DEFINED__ equ 1
-externdef		IID_Fields:IID
+DEFINE_IIDX(Fields, "00000564-0000-0010-8000-00AA006D2EA4")
 .comdef Fields
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1737,7 +1735,7 @@ externdef		IID_Fields:IID
 endif
 ifndef ___Parameter_INTERFACE_DEFINED__
 ___Parameter_INTERFACE_DEFINED__ equ 1
-externdef		IID__Parameter:IID
+DEFINE_IIDX(_Parameter, "0000050C-0000-0010-8000-00AA006D2EA4")
 .comdef _Parameter
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1773,7 +1771,7 @@ Parameter;
 endif
 ifndef __Parameters_INTERFACE_DEFINED__
 __Parameters_INTERFACE_DEFINED__ equ 1
-externdef		IID_Parameters:IID
+DEFINE_IIDX(Parameters, "0000050D-0000-0010-8000-00AA006D2EA4")
 .comdef Parameters
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1793,7 +1791,7 @@ externdef		IID_Parameters:IID
 endif
 ifndef __Property_INTERFACE_DEFINED__
 __Property_INTERFACE_DEFINED__ equ 1
-externdef		IID_Property:IID
+DEFINE_IIDX(Property, "00000503-0000-0010-8000-00AA006D2EA4")
 .comdef Property
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1813,7 +1811,7 @@ externdef		IID_Property:IID
 endif
 ifndef __Properties_INTERFACE_DEFINED__
 __Properties_INTERFACE_DEFINED__ equ 1
-externdef		IID_Properties:IID
+DEFINE_IIDX(Properties, "00000504-0000-0010-8000-00AA006D2EA4")
 .comdef Properties
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1830,8 +1828,6 @@ externdef		IID_Properties:IID
 
 endif
 endif
-externdef		__MIDL_itf_ado10_0001_0035_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_ado10_0001_0035_v0_0_s_ifspec:RPC_IF_HANDLE
 
 endif
 if 0

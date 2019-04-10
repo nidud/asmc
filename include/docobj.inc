@@ -64,9 +64,6 @@ include ocidl.inc
 ifndef _LPOLEDOCUMENT_DEFINED
 _LPOLEDOCUMENT_DEFINED equ 1
 
-externdef		__MIDL_itf_docobj_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_docobj_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IOleDocument_INTERFACE_DEFINED__
 __IOleDocument_INTERFACE_DEFINED__ equ 1
 
@@ -78,7 +75,6 @@ DOCMISC_CANTOPENEDIT	equ 4
 DOCMISC_NOFILESUPPORT	equ 8
 
 DEFINE_GUID(IID_IOleDocument, 0xb722bcc5, 0x4e68, 0x101b, 0xa2,0xbc, 0x00,0xaa,0x00,0x40,0x47,0x70)
-externdef		IID_IOleDocument:IID
 
 .comdef IOleDocument
     QueryInterface	proc :REFIID, :ptr
@@ -96,9 +92,6 @@ endif
 ifndef _LPOLEDOCUMENTSITE_DEFINED
 _LPOLEDOCUMENTSITE_DEFINED equ 1
 
-externdef		__MIDL_itf_docobj_0000_0001_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_docobj_0000_0001_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IOleDocumentSite_INTERFACE_DEFINED__
 __IOleDocumentSite_INTERFACE_DEFINED__ equ 1
 
@@ -110,7 +103,7 @@ DEFINE_GUID(IID_IOleDocumentSite, 0xb722bcc7, 0x4e68, 0x101b, 0xa2,0xbc, 0x00,0x
     Release		proc
     ActivateMe		proc :ptr
     .ends
-externdef		IID_IOleDocumentSite:IID
+
 LPOLEDOCUMENTSITE	typedef ptr IOleDocumentSite
 
 endif
@@ -118,9 +111,6 @@ endif
 
 ifndef _LPOLEDOCUMENTVIEW_DEFINED
 _LPOLEDOCUMENTVIEW_DEFINED equ 1
-
-externdef		__MIDL_itf_docobj_0000_0002_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_docobj_0000_0002_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IOleDocumentView_INTERFACE_DEFINED__
 __IOleDocumentView_INTERFACE_DEFINED__ equ 1
@@ -145,17 +135,14 @@ DEFINE_GUID(IID_IOleDocumentView, 0xb722bcc6, 0x4e68, 0x101b, 0xa2,0xbc, 0x00,0x
     ApplyViewState	proc :ptr
     Clone		proc :ptr, :ptr
     .ends
+
 LPOLEDOCUMENTVIEW	typedef ptr IOleDocumentView
-externdef		IID_IOleDocumentView:IID
 
 endif
 endif
 
 ifndef _LPENUMOLEDOCUMENTVIEWS_DEFINED
 _LPENUMOLEDOCUMENTVIEWS_DEFINED equ 1
-
-externdef		__MIDL_itf_docobj_0000_0003_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_docobj_0000_0003_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IEnumOleDocumentViews_INTERFACE_DEFINED__
 __IEnumOleDocumentViews_INTERFACE_DEFINED__ equ 1
@@ -171,21 +158,8 @@ DEFINE_GUID(IID_IEnumOleDocumentViews, 0xb722bcc8, 0x4e68, 0x101b, 0xa2,0xbc, 0x
     Reset		proc
     Clone		proc :ptr
     .ends
+
 LPENUMOLEDOCUMENTVIEWS	typedef ptr IEnumOleDocumentViews
-externdef		IID_IEnumOleDocumentViews:IID
-
-IEnumOleDocumentViews_RemoteNext_Proxy proto WINAPI \
-		 _This: ptr IEnumOleDocumentViews,
-		cViews: ULONG,
-	       rgpView: LPOLEDOCUMENTVIEW,
-	     pcFetched: PULONG
-
-;void
-IEnumOleDocumentViews_RemoteNext_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
 
 endif
 endif
@@ -193,11 +167,10 @@ endif
 ifndef _LPCONTINUECALLBACK_DEFINED
 _LPCONTINUECALLBACK_DEFINED equ 1
 
-externdef		__MIDL_itf_docobj_0000_0004_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_docobj_0000_0004_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IContinueCallback_INTERFACE_DEFINED__
 __IContinueCallback_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IContinueCallback, "b722bcca-4e68-101b-a2bc-00aa00404770")
 
 .comdef IContinueCallback
     QueryInterface	proc :REFIID, :ptr
@@ -206,17 +179,14 @@ __IContinueCallback_INTERFACE_DEFINED__ equ 1
     FContinue		proc
     FContinuePrinting	proc :LONG, :LONG, :ptr
     .ends
+
 LPCONTINUECALLBACK	typedef ptr IContinueCallback
-externdef		IID_IContinueCallback:IID
 
 endif ; __IContinueCallback_INTERFACE_DEFINED__
 endif ; _LPCONTINUECALLBACK_DEFINED
 
 ifndef _LPPRINT_DEFINED
 _LPPRINT_DEFINED equ 1
-
-externdef		__MIDL_itf_docobj_0000_0005_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_docobj_0000_0005_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IPrint_INTERFACE_DEFINED__
 __IPrint_INTERFACE_DEFINED__ equ 1
@@ -244,7 +214,9 @@ cPageRange		ULONG ?
 rgPages			PAGERANGE  1  dup(<>)
 PAGESET			ENDS
 
-PAGESET_TOLASTPAGE	equ ((-1))
+PAGESET_TOLASTPAGE	equ (-1)
+
+DEFINE_IIDX(IPrint, "b722bcc9-4e68-101b-a2bc-00aa00404770")
 
 .comdef IPrint
     QueryInterface	proc :REFIID, :ptr
@@ -254,36 +226,14 @@ PAGESET_TOLASTPAGE	equ ((-1))
     GetPageInfo		proc :ptr, :ptr
     Print		proc :DWORD, :ptr, :ptr, :ptr, :ptr, :LONG, :ptr, :ptr
     .ends
+
 LPPRINT			typedef ptr IPrint
-externdef		IID_IPrint:IID
-
-IPrint_RemotePrint_Proxy proto WINAPI \
-		 _This: LPPRINT,
-	      grfFlags: DWORD,
-		  pptd: LPDVTARGETDEVICE,
-	     pppageset: ptr PAGESET,
-	  pstgmOptions: ptr RemSTGMEDIUM,
-	     pcallback: ptr IContinueCallback,
-	    nFirstPage: LONG,
-	pcPagesPrinted: LPLONG,
-	    pnLastPage: LPLONG
-
-
-;void
-IPrint_RemotePrint_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
 
 endif  ; __IPrint_INTERFACE_DEFINED__
 endif  ; _LPPRINT_DEFINED
 
 ifndef _LPOLECOMMANDTARGET_DEFINED
 _LPOLECOMMANDTARGET_DEFINED equ 1
-
-externdef		__MIDL_itf_docobj_0000_0006_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_docobj_0000_0006_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IOleCommandTarget_INTERFACE_DEFINED__
 __IOleCommandTarget_INTERFACE_DEFINED__ equ 1
@@ -428,8 +378,8 @@ DEFINE_GUID(IID_IOleCommandTarget, 0xb722bccb, 0x4e68, 0x101b, 0xa2,0xbc, 0x00,0
     QueryStatus		proc :ptr, :ULONG, :OLECMD, :ptr
     Exec		proc :ptr, :DWORD, :DWORD, :ptr, :ptr
     .ends
+
 LPOLECOMMANDTARGET	typedef ptr IOleCommandTarget
-externdef		IID_IOleCommandTarget:IID
 
 endif ; __IOleCommandTarget_INTERFACE_DEFINED__
 endif ; _LPOLECOMMANDTARGET_DEFINED
@@ -565,13 +515,11 @@ MSOCMDID_ZOOM		equ <OLECMDID_ZOOM>
 MSOCMDID_GETZOOMRANGE	equ <OLECMDID_GETZOOMRANGE>
 externdef		SID_SContainerDispatch:GUID
 
-externdef		__MIDL_itf_docobj_0000_0007_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_docobj_0000_0007_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IZoomEvents_INTERFACE_DEFINED__
 __IZoomEvents_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IZoomEvents:IID
+DEFINE_IIDX(IZoomEvents, "41B68150-904C-4e17-A0BA-A438182E359D")
+
 .comdef IZoomEvents
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -592,7 +540,6 @@ DEFINE_GUID(IID_IProtectFocus, 0xd81f90a3, 0x8156, 0x44f7, 0xad,0x28, 0x5a,0xbb,
     Release		proc
     AllowFocusChange	proc :ptr
     .ends
-externdef		IID_IProtectFocus:IID
 
 endif
 
@@ -600,12 +547,10 @@ SID_SProtectFocus	equ <IID_IProtectFocus>
 ifndef _LPPROTECTEDMODEMENUSERVICES_DEFINED
 _LPPROTECTEDMODEMENUSERVICES_DEFINED equ 1
 
-externdef		__MIDL_itf_docobj_0000_0009_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_docobj_0000_0009_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IProtectedModeMenuServices_INTERFACE_DEFINED__
 __IProtectedModeMenuServices_INTERFACE_DEFINED__ equ 1
 
+DEFINE_IIDX(IProtectedModeMenuServices, "73c105ee-9dff-4a07-b83c-7eff290c266e")
 
 .comdef IProtectedModeMenuServices
     QueryInterface	proc :REFIID, :ptr
@@ -615,13 +560,9 @@ __IProtectedModeMenuServices_INTERFACE_DEFINED__ equ 1
     LoadMenu		proc :LPCWSTR, :LPCWSTR, :ptr
     LoadMenuID		proc :LPCWSTR, :WORD, :ptr
     .ends
-externdef		IID_IProtectedModeMenuServices:IID
 
 endif
 endif
-
-externdef		__MIDL_itf_docobj_0000_0010_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_docobj_0000_0010_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ;DWORD
 HMENU_UserSize proto WINAPI \
@@ -717,44 +658,6 @@ VARIANT_UserUnmarshal64 proto WINAPI \
 VARIANT_UserFree64 proto WINAPI \
 		      : ptr DWORD,
 		      : ptr VARIANT
-
-;HRESULT
-IEnumOleDocumentViews_Next_Proxy proto WINAPI \
-		 _This: ptr IEnumOleDocumentViews,
-		cViews: ULONG,
-	       rgpView: ptr IOleDocumentView,
-	     pcFetched: ptr ULONG
-
-;HRESULT
-IEnumOleDocumentViews_Next_Stub proto WINAPI \
-		 _This: ptr IEnumOleDocumentViews,
-		cViews: ULONG,
-	       rgpView: ptr IOleDocumentView,
-	     pcFetched: ptr ULONG
-
-;HRESULT
-IPrint_Print_Proxy proto WINAPI \
-		 _This: ptr IPrint,
-	      grfFlags: DWORD,
-		  pptd: ptr DVTARGETDEVICE,
-	     ppPageSet: ptr PAGESET,
-	  pstgmOptions: ptr STGMEDIUM,
-	     pcallback: ptr IContinueCallback,
-	    nFirstPage: LONG,
-	pcPagesPrinted: ptr LONG,
-	    pnLastPage: ptr LONG
-
-;HRESULT
-IPrint_Print_Stub proto WINAPI \
-		 _This: ptr IPrint,
-	      grfFlags: DWORD,
-		  pptd: ptr DVTARGETDEVICE,
-	     pppageset: ptr PAGESET,
-	  pstgmOptions: ptr RemSTGMEDIUM,
-	     pcallback: ptr IContinueCallback,
-	    nFirstPage: LONG,
-	pcPagesPrinted: ptr LONG,
-	    pnLastPage: ptr LONG
 
 endif
 .pragma list(pop)

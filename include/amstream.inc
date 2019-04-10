@@ -67,13 +67,10 @@ Disabled		equ 0
 ReadData		equ 1
 RenderData		equ 2
 
-externdef		__MIDL_itf_amstream_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_amstream_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IAMMultiMediaStream_INTERFACE_DEFINED__
 __IAMMultiMediaStream_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMMultiMediaStream:IID
+DEFINE_IIDX(IAMMultiMediaStream, "BEBE595C-9A6F-11d0-8FDE-00C04FD9189D")
 
 .comdef IAMMultiMediaStream
 
@@ -103,7 +100,7 @@ endif
 ifndef __IAMMediaStream_INTERFACE_DEFINED__
 __IAMMediaStream_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMMediaStream:IID
+DEFINE_IIDX(IAMMediaStream, "BEBE595D-9A6F-11d0-8FDE-00C04FD9189D")
 
 .comdef IAMMediaStream
 
@@ -128,7 +125,7 @@ endif
 ifndef __IMediaStreamFilter_INTERFACE_DEFINED__
 __IMediaStreamFilter_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IMediaStreamFilter:IID
+DEFINE_IIDX(IMediaStreamFilter, "BEBE595E-9A6F-11d0-8FDE-00C04FD9189D")
 
 .comdef IMediaStreamFilter
 
@@ -163,7 +160,7 @@ endif
 ifndef __IDirectDrawMediaSampleAllocator_INTERFACE_DEFINED__
 __IDirectDrawMediaSampleAllocator_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDirectDrawMediaSampleAllocator:IID
+DEFINE_IIDX(IDirectDrawMediaSampleAllocator, "AB6B4AFC-F6E4-11d0-900D-00C04FD9189D")
 
 .comdef IDirectDrawMediaSampleAllocator
 
@@ -178,7 +175,7 @@ endif
 ifndef __IDirectDrawMediaSample_INTERFACE_DEFINED__
 __IDirectDrawMediaSample_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDirectDrawMediaSample:IID
+DEFINE_IIDX(IDirectDrawMediaSample, "AB6B4AFE-F6E4-11d0-900D-00C04FD9189D")
 
 .comdef IDirectDrawMediaSample
 
@@ -194,7 +191,7 @@ endif
 ifndef __IAMMediaTypeStream_INTERFACE_DEFINED__
 __IAMMediaTypeStream_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMMediaTypeStream:IID
+DEFINE_IIDX(IAMMediaTypeStream, "AB6B4AFA-F6E4-11d0-900D-00C04FD9189D")
 
 .comdef IAMMediaTypeStream
 
@@ -219,7 +216,7 @@ endif
 ifndef __IAMMediaTypeSample_INTERFACE_DEFINED__
 __IAMMediaTypeSample_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMMediaTypeSample:IID
+DEFINE_IIDX(IAMMediaTypeSample, "AB6B4AFB-F6E4-11d0-900D-00C04FD9189D")
 
 .comdef IAMMediaTypeSample
 
@@ -257,9 +254,6 @@ DEFINE_GUID(CLSID_AMDirectDrawStream, 0x49c47ce4, 0x9ba4, 0x11d0, 0x82, 0x12, 0x
 DEFINE_GUID(CLSID_AMAudioStream, 0x8496e040, 0xaf4c, 0x11d0, 0x82, 0x12, 0x00, 0xc0, 0x4f, 0xc3, 0x2c, 0x45)
 DEFINE_GUID(CLSID_AMAudioData, 0xf2468580, 0xaf8a, 0x11d0, 0x82, 0x12, 0x00, 0xc0, 0x4f, 0xc3, 0x2c, 0x45)
 DEFINE_GUID(CLSID_AMMediaTypeStream, 0xcf0f2f7c, 0xf7bf, 0x11d0, 0x90, 0xd, 0x0, 0xc0, 0x4f, 0xd9, 0x18, 0x9d)
-
-externdef __MIDL_itf_amstream_0000_0007_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef __MIDL_itf_amstream_0000_0007_v0_0_s_ifspec:RPC_IF_HANDLE
 
 endif
 

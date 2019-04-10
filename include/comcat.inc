@@ -60,19 +60,15 @@ externdef CATID_PersistsToPropertyBag:CATID
 externdef CATID_InternetAware:CATID
 externdef CATID_DesignTimeUIActivatableControl:CATID
 
-;;  Interface Definitions
 ifndef _LPENUMGUID_DEFINED
 _LPENUMGUID_DEFINED equ <>
-
-externdef __MIDL_itf_comcat_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef __MIDL_itf_comcat_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IEnumGUID_INTERFACE_DEFINED__
 __IEnumGUID_INTERFACE_DEFINED__ equ <>
 
 LPENUMGUID typedef ptr IEnumGUID
 
-externdef IID_IEnumGUID:IID
+DEFINE_IIDX(IEnumGUID, "0002E000-0000-0000-C000-000000000046")
 
 .comdef IEnumGUID
     QueryInterface	proc :REFIID, :ptr
@@ -84,30 +80,11 @@ externdef IID_IEnumGUID:IID
     Clone		proc
     .ends
 
-
-;HRESULT STDMETHODCALLTYPE
-IEnumGUID_RemoteNext_Proxy proto WINAPI \
-		 _This: ptr IEnumGUID,
-		  celt: ULONG,
-		 rgelt: ptr GUID,
-	  pceltFetched: ptr ULONG
-
-;void __RPC_STUB
-IEnumGUID_RemoteNext_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-endif ;; __IEnumGUID_INTERFACE_DEFINED__
-endif ;; _LPENUMGUID_DEFINED
+endif
+endif
 
 ifndef _LPENUMCATEGORYINFO_DEFINED
 _LPENUMCATEGORYINFO_DEFINED equ <>
-
-
-externdef __MIDL_itf_comcat_0000_0001_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef __MIDL_itf_comcat_0000_0001_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IEnumCATEGORYINFO_INTERFACE_DEFINED__
 __IEnumCATEGORYINFO_INTERFACE_DEFINED__ equ <>
@@ -121,8 +98,7 @@ szDescription	OLECHAR 128 dup(?)
 CATEGORYINFO	ENDS
 LPCATEGORYINFO	typedef ptr CATEGORYINFO
 
-
-externdef IID_IEnumCATEGORYINFO:IID
+DEFINE_IIDX(IEnumCATEGORYINFO, "0002E011-0000-0000-C000-000000000046")
 
 .comdef IEnumCATEGORYINFO
     QueryInterface	proc :REFIID, :ptr
@@ -133,21 +109,16 @@ externdef IID_IEnumCATEGORYINFO:IID
     Reset		proc
     Clone		proc
     .ends
-endif ;; __IEnumCATEGORYINFO_INTERFACE_DEFINED__
+endif
 endif
 
 ifndef _LPCATREGISTER_DEFINED
 _LPCATREGISTER_DEFINED equ <>
 
-externdef __MIDL_itf_comcat_0000_0002_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef __MIDL_itf_comcat_0000_0002_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ICatRegister_INTERFACE_DEFINED__
 __ICatRegister_INTERFACE_DEFINED__ equ <>
 
-LPCATREGISTER typedef ptr ICatRegister
-
-externdef IID_ICatRegister:IID
+DEFINE_IIDX(ICatRegister, "0002E012-0000-0000-C000-000000000046")
 
 .comdef ICatRegister
     QueryInterface	proc :REFIID, :ptr
@@ -160,21 +131,19 @@ externdef IID_ICatRegister:IID
     RegisterClassReqCategories proc
     UnRegisterClassReqCategories proc
     .ends
-endif ;; __ICatRegister_INTERFACE_DEFINED__
+
+LPCATREGISTER typedef ptr ICatRegister
+
+endif
 endif
 
 ifndef _LPCATINFORMATION_DEFINED
 _LPCATINFORMATION_DEFINED equ <>
 
-externdef __MIDL_itf_comcat_0000_0003_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef __MIDL_itf_comcat_0000_0003_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ICatInformation_INTERFACE_DEFINED__
 __ICatInformation_INTERFACE_DEFINED__ equ <>
 
-LPCATINFORMATION typedef ptr ICatInformation
-
-externdef IID_ICatInformation:IID
+DEFINE_IIDX(ICatInformation, "0002E013-0000-0000-C000-000000000046")
 
 .comdef ICatInformation
     QueryInterface	proc :REFIID, :ptr
@@ -188,86 +157,10 @@ externdef IID_ICatInformation:IID
     EnumReqCategoriesOfClass proc
     .ends
 
+LPCATINFORMATION typedef ptr ICatInformation
 
-;HRESULT STDMETHODCALLTYPE
-ICatInformation_RemoteEnumClassesOfCategories_Proxy proto WINAPI \
-		 _This: ptr ICatInformation,
-	  cImplemented: ULONG,
-	   rgcatidImpl: ptr CATID,
-	     cRequired: ULONG,
-	    rgcatidReq: ptr CATID,
-	   ppenumClsid: ptr IEnumGUID
-
-ICatInformation_RemoteEnumClassesOfCategories_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-ICatInformation_RemoteIsClassOfCategories_Proxy proto WINAPI \
-		 _This: ptr ICatInformation,
-		rclsid: REFCLSID,
-	  cImplemented: ULONG,
-	   rgcatidImpl: ptr CATID,
-	     cRequired: ULONG,
-	    rgcatidReq: ptr CATID
-
-ICatInformation_RemoteIsClassOfCategories_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-endif ;; __ICatInformation_INTERFACE_DEFINED__
 endif
-
-
-externdef __MIDL_itf_comcat_0000_0004_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef __MIDL_itf_comcat_0000_0004_v0_0_s_ifspec:RPC_IF_HANDLE
-
-IEnumGUID_Next_Proxy proto WINAPI \
-		 _This: ptr IEnumGUID,
-		  celt: ULONG,
-		 rgelt: ptr GUID,
-	  pceltFetched: ptr ULONG
-
-IEnumGUID_Next_Stub proto WINAPI \
-		 _This: ptr IEnumGUID,
-		  celt: ULONG,
-		 rgelt: ptr GUID,
-	  pceltFetched: ptr ULONG
-
-ICatInformation_EnumClassesOfCategories_Proxy proto WINAPI \
-		 _This: ptr ICatInformation,
-	  cImplemented: ULONG,
-	   rgcatidImpl: ptr CATID,
-	     cRequired: ULONG,
-	    rgcatidReq: ptr CATID,
-	   ppenumClsid: ptr IEnumGUID
-
-ICatInformation_EnumClassesOfCategories_Stub proto WINAPI \
-		 _This: ptr ICatInformation,
-	  cImplemented: ULONG,
-	   rgcatidImpl: ptr CATID,
-	     cRequired: ULONG,
-	    rgcatidReq: ptr CATID,
-	   ppenumClsid: ptr IEnumGUID
-
-ICatInformation_IsClassOfCategories_Proxy proto WINAPI \
-		 _This: ptr ICatInformation,
-		rclsid: REFCLSID,
-	  cImplemented: ULONG,
-	   rgcatidImpl: ptr CATID,
-	     cRequired: ULONG,
-	    rgcatidReq: ptr CATID
-
-ICatInformation_IsClassOfCategories_Stub proto WINAPI \
-		 _This: ptr ICatInformation,
-		rclsid: REFCLSID,
-	  cImplemented: ULONG,
-	   rgcatidImpl: ptr CATID,
-	     cRequired: ULONG,
-	    rgcatidReq: ptr CATID
+endif
 
 endif
 .pragma list(pop)

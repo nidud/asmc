@@ -72,9 +72,6 @@ SOURCETEXT_ATTR_THIS		equ 0x0400
 
 SOURCE_TEXT_ATTR	typedef WORD
 
-externdef		__MIDL_itf_activaut_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_activaut_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IScriptNode_INTERFACE_DEFINED__
 __IScriptNode_INTERFACE_DEFINED__ equ 1
 
@@ -209,9 +206,6 @@ __IActiveScriptAuthorProcedure_INTERFACE_DEFINED__ equ 1
 endif
 
 endif  ;; __ActivAut_h
-
-externdef		__MIDL_itf_activaut_0000_0005_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_activaut_0000_0005_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ;DWORD
 BSTR_UserSize proto WINAPI \

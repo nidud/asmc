@@ -454,13 +454,10 @@ CDEF_DEVMON_FILTER	equ 0x0080
 CDEF_DEVMON_SELECTIVE_MASK equ 0x00f0
 
 
-externdef		__MIDL_itf_strmif_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ICreateDevEnum_INTERFACE_DEFINED__
 __ICreateDevEnum_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_ICreateDevEnum:IID
+DEFINE_IIDX(ICreateDevEnum,"29840822-5B84-11D0-BD3B-00A0C911CE86")
 
 .comdef ICreateDevEnum
 
@@ -505,9 +502,6 @@ cbAlign			LONG ?
 cbPrefix		LONG ?
 ALLOCATOR_PROPERTIES	ENDS
 
-externdef		__MIDL_itf_strmif_0000_0001_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0001_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IPin_INTERFACE_DEFINED__
 __IPin_INTERFACE_DEFINED__ equ 1
 
@@ -517,7 +511,7 @@ dir			PIN_DIRECTION ?
 achName			WCHAR  128  dup(?)
 PIN_INFO		ENDS
 
-externdef		IID_IPin:IID
+DEFINE_IIDX(IPin, "56a86891-0ad4-11ce-b03a-0020af0ba770")
 
 .comdef IPin
 
@@ -545,13 +539,10 @@ endif
 
 PPIN			typedef ptr IPin
 
-externdef		__MIDL_itf_strmif_0000_0002_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0002_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IEnumPins_INTERFACE_DEFINED__
 __IEnumPins_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IEnumPins:IID
+DEFINE_IIDX(IEnumPins, "56a86892-0ad4-11ce-b03a-0020af0ba770")
 
 .comdef IEnumPins
 
@@ -568,13 +559,10 @@ endif
 
 PENUMPINS		typedef ptr IEnumPins
 
-externdef		__MIDL_itf_strmif_0000_0003_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0003_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IEnumMediaTypes_INTERFACE_DEFINED__
 __IEnumMediaTypes_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IEnumMediaTypes:IID
+DEFINE_IIDX(IEnumMediaTypes, "89c31040-846b-11ce-97d3-00aa0055595a")
 
 .comdef IEnumMediaTypes
 
@@ -591,13 +579,10 @@ endif
 
 PENUMMEDIATYPES		typedef ptr IEnumMediaTypes
 
-externdef		__MIDL_itf_strmif_0000_0004_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0004_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IFilterGraph_INTERFACE_DEFINED__
 __IFilterGraph_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IFilterGraph:IID
+DEFINE_IIDX(IFilterGraph, "56a8689f-0ad4-11ce-b03a-0020af0ba770")
 
 .comdef IFilterGraph
 
@@ -614,17 +599,14 @@ externdef		IID_IFilterGraph:IID
     SetDefaultSyncSource proc
     .ends
 
-endif
-
 PFILTERGRAPH		typedef ptr IFilterGraph
 
-externdef		__MIDL_itf_strmif_0000_0005_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0005_v0_0_s_ifspec:RPC_IF_HANDLE
+endif
 
 ifndef __IEnumFilters_INTERFACE_DEFINED__
 __IEnumFilters_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IEnumFilters:IID
+DEFINE_IIDX(IEnumFilters, "56a86893-0ad4-11ce-b03a-0020af0ba770")
 
 .comdef IEnumFilters
 
@@ -637,12 +619,9 @@ externdef		IID_IEnumFilters:IID
     Clone		proc :ptr
     .ends
 
-endif
-
 PENUMFILTERS		typedef ptr IEnumFilters
 
-externdef		__MIDL_itf_strmif_0000_0006_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0006_v0_0_s_ifspec:RPC_IF_HANDLE
+endif
 
 ifndef __IMediaFilter_INTERFACE_DEFINED__
 __IMediaFilter_INTERFACE_DEFINED__ equ 1
@@ -652,8 +631,7 @@ State_Stopped		equ 0
 State_Paused		equ ( State_Stopped + 1 )
 State_Running		equ ( State_Paused + 1 )
 
-externdef		IID_IMediaFilter:IID
-
+DEFINE_IIDX(IMediaFilter, "56a86899-0ad4-11ce-b03a-0020af0ba770")
 
 .comdef IMediaFilter
 
@@ -669,12 +647,9 @@ externdef		IID_IMediaFilter:IID
     GetSyncSource	proc :ptr
     .ends
 
-endif
-
 PMEDIAFILTER		typedef ptr IMediaFilter
 
-externdef		__MIDL_itf_strmif_0000_0007_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0007_v0_0_s_ifspec:RPC_IF_HANDLE
+endif
 
 ifndef __IBaseFilter_INTERFACE_DEFINED__
 __IBaseFilter_INTERFACE_DEFINED__ equ 1
@@ -684,7 +659,7 @@ achName			WCHAR  128  dup(?)
 pGraph			PFILTERGRAPH ?
 FILTER_INFO		ENDS
 
-externdef		IID_IBaseFilter:IID
+DEFINE_IIDX(IBaseFilter, "56a86895-0ad4-11ce-b03a-0020af0ba770")
 
 .comdef IBaseFilter
 
@@ -705,17 +680,14 @@ externdef		IID_IBaseFilter:IID
     QueryVendorInfo	proc :ptr
     .ends
 
-endif
-
 PFILTER			typedef ptr IBaseFilter
 
-externdef		__MIDL_itf_strmif_0000_0008_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0008_v0_0_s_ifspec:RPC_IF_HANDLE
+endif
 
 ifndef __IReferenceClock_INTERFACE_DEFINED__
 __IReferenceClock_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IReferenceClock:IID
+DEFINE_IIDX(IReferenceClock, "56a86897-0ad4-11ce-b03a-0020af0ba770")
 
 .comdef IReferenceClock
 
@@ -728,17 +700,14 @@ externdef		IID_IReferenceClock:IID
     Unadvise		proc :DWORD_PTR
     .ends
 
-endif
-
 PREFERENCECLOCK		typedef ptr IReferenceClock
 
-externdef		__MIDL_itf_strmif_0000_0009_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0009_v0_0_s_ifspec:RPC_IF_HANDLE
+endif
 
 ifndef __IReferenceClockTimerControl_INTERFACE_DEFINED__
 __IReferenceClockTimerControl_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IReferenceClockTimerControl:IID
+DEFINE_IIDX(IReferenceClockTimerControl, "ebec459c-2eca-4d42-a8af-30df557614b8")
 
 .comdef IReferenceClockTimerControl
 
@@ -754,7 +723,7 @@ endif
 ifndef __IReferenceClock2_INTERFACE_DEFINED__
 __IReferenceClock2_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IReferenceClock2:IID
+DEFINE_IIDX(IReferenceClock2, "36b73885-c2c8-11cf-8b46-00805f6cef60")
 
 .comdef IReferenceClock2
 
@@ -767,17 +736,14 @@ externdef		IID_IReferenceClock2:IID
     Unadvise		proc :DWORD_PTR
     .ends
 
-endif
-
 PREFERENCECLOCK2	typedef ptr IReferenceClock2
 
-externdef		__MIDL_itf_strmif_0000_0011_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0011_v0_0_s_ifspec:RPC_IF_HANDLE
+endif
 
 ifndef __IMediaSample_INTERFACE_DEFINED__
 __IMediaSample_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IMediaSample:IID
+DEFINE_IIDX(IMediaSample, "56a8689a-0ad4-11ce-b03a-0020af0ba770")
 
 .comdef IMediaSample
 
@@ -802,9 +768,9 @@ externdef		IID_IMediaSample:IID
     SetMediaTime	proc :ptr, :ptr
     .ends
 
-endif
-
 PMEDIASAMPLE		typedef ptr IMediaSample
+
+endif
 
 AM_SAMPLE_PROPERTY_FLAGS typedef SDWORD
 AM_SAMPLE_SPLICEPOINT	equ 0x1
@@ -831,13 +797,10 @@ pbBuffer		LPBYTE ?
 cbBuffer		LONG ?
 AM_SAMPLE2_PROPERTIES	ENDS
 
-externdef		__MIDL_itf_strmif_0000_0012_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0012_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IMediaSample2_INTERFACE_DEFINED__
 __IMediaSample2_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IMediaSample2:IID
+DEFINE_IIDX(IMediaSample2, "36b73884-c2c8-11cf-8b46-00805f6cef60")
 
 .comdef IMediaSample2
 
@@ -864,17 +827,14 @@ externdef		IID_IMediaSample2:IID
     SetProperties	proc :DWORD, :ptr
     .ends
 
-endif
-
 PMEDIASAMPLE2		typedef ptr IMediaSample2
 
-externdef		__MIDL_itf_strmif_0000_0013_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0013_v0_0_s_ifspec:RPC_IF_HANDLE
+endif
 
 ifndef __IMediaSample2Config_INTERFACE_DEFINED__
 __IMediaSample2Config_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IMediaSample2Config:IID
+DEFINE_IIDX(IMediaSample2Config, "68961E68-832B-41ea-BC91-63593F3E70E3")
 
 .comdef IMediaSample2Config
 
@@ -891,13 +851,10 @@ AM_GBF_NOTASYNCPOINT	equ 2
 AM_GBF_NOWAIT		equ 4
 AM_GBF_NODDSURFACELOCK	equ 8
 
-externdef		__MIDL_itf_strmif_0000_0014_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0014_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IMemAllocator_INTERFACE_DEFINED__
 __IMemAllocator_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IMemAllocator:IID
+DEFINE_IIDX(IMemAllocator, "56a8689c-0ad4-11ce-b03a-0020af0ba770")
 
 .comdef IMemAllocator
 
@@ -912,17 +869,14 @@ externdef		IID_IMemAllocator:IID
     ReleaseBuffer	proc :ptr
     .ends
 
-endif
-
 PMEMALLOCATOR		typedef ptr IMemAllocator
 
-externdef		__MIDL_itf_strmif_0000_0015_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0015_v0_0_s_ifspec:RPC_IF_HANDLE
+endif
 
 ifndef __IMemAllocatorCallbackTemp_INTERFACE_DEFINED__
 __IMemAllocatorCallbackTemp_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IMemAllocatorCallbackTemp:IID
+DEFINE_IIDX(IMemAllocatorCallbackTemp, "379a0cf0-c1de-11d2-abf5-00a0c905f375")
 
 .comdef IMemAllocatorCallbackTemp
 
@@ -944,7 +898,7 @@ endif
 ifndef __IMemAllocatorNotifyCallbackTemp_INTERFACE_DEFINED__
 __IMemAllocatorNotifyCallbackTemp_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IMemAllocatorNotifyCallbackTemp:IID
+DEFINE_IIDX(IMemAllocatorNotifyCallbackTemp, "92980b30-c1de-11d2-abf5-00a0c905f375")
 
 .comdef IMemAllocatorNotifyCallbackTemp
 
@@ -959,7 +913,7 @@ endif
 ifndef __IMemInputPin_INTERFACE_DEFINED__
 __IMemInputPin_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IMemInputPin:IID
+DEFINE_IIDX(IMemInputPin, "56a8689d-0ad4-11ce-b03a-0020af0ba770")
 
 .comdef IMemInputPin
 
@@ -974,17 +928,14 @@ externdef		IID_IMemInputPin:IID
     ReceiveCanBlock	proc
     .ends
 
-endif
-
 PMEMINPUTPIN		typedef ptr IMemInputPin
 
-externdef		__MIDL_itf_strmif_0000_0018_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0018_v0_0_s_ifspec:RPC_IF_HANDLE
+endif
 
 ifndef __IAMovieSetup_INTERFACE_DEFINED__
 __IAMovieSetup_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMovieSetup:IID
+DEFINE_IIDX(IAMovieSetup, "a3d8cec0-7e5a-11cf-bbc5-00805f6cef20")
 
 .comdef IAMovieSetup
 
@@ -995,9 +946,9 @@ externdef		IID_IAMovieSetup:IID
     Unregister		proc
     .ends
 
-endif
-
 PAMOVIESETUP		typedef ptr IAMovieSetup
+
+endif
 
 AM_SEEKING_SeekingFlags typedef SDWORD
 AM_SEEKING_NoPositioning equ 0
@@ -1021,13 +972,10 @@ AM_SEEKING_CanPlayBackwards equ 0x40
 AM_SEEKING_CanDoSegments equ 0x80
 AM_SEEKING_Source	equ 0x100
 
-externdef		__MIDL_itf_strmif_0000_0019_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0019_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IMediaSeeking_INTERFACE_DEFINED__
 __IMediaSeeking_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IMediaSeeking:IID
+DEFINE_IIDX(IMediaSeeking, "36b73880-c2c8-11cf-8b46-00805f6cef60")
 
 .comdef IMediaSeeking
 
@@ -1053,9 +1001,9 @@ externdef		IID_IMediaSeeking:IID
     GetPreroll		proc :ptr
     .ends
 
-endif
-
 PMEDIASEEKING		typedef ptr IMediaSeeking
+
+endif
 
 AM_MEDIAEVENT_FLAGS	typedef SDWORD
 AM_MEDIAEVENT_NONOTIFY	equ 0x01
@@ -1065,13 +1013,10 @@ Clsid			CLSID <>
 _Name			LPWSTR ?
 REGFILTER		ENDS
 
-externdef		__MIDL_itf_strmif_0000_0020_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0020_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IEnumRegFilters_INTERFACE_DEFINED__
 __IEnumRegFilters_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IEnumRegFilters:IID
+DEFINE_IIDX(IEnumRegFilters, "901db4c7-31ce-41a2-85dc-8fa0bf41b8da")
 
 .comdef IEnumRegFilters
 
@@ -1084,12 +1029,9 @@ externdef		IID_IEnumRegFilters:IID
     Clone		proc :ptr
     .ends
 
-endif
-
 PENUMREGFILTERS		typedef ptr IEnumRegFilters
 
-externdef		__MIDL_itf_strmif_0000_0021_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0021_v0_0_s_ifspec:RPC_IF_HANDLE
+endif
 
 ifndef __IFilterMapper_INTERFACE_DEFINED__
 __IFilterMapper_INTERFACE_DEFINED__ equ 1
@@ -1102,7 +1044,7 @@ MERIT_DO_NOT_USE	equ 0x200000
 MERIT_SW_COMPRESSOR	equ 0x100000
 MERIT_HW_COMPRESSOR	equ 0x100050
 
-externdef		IID_IFilterMapper:IID
+DEFINE_IIDX(IFilterMapper, "56a868a4-0ad4-11ce-b03a-0020af0ba770")
 
 .comdef IFilterMapper
 
@@ -1179,13 +1121,10 @@ UNION
 ENDS
 REGFILTER2		ENDS
 
-externdef		__MIDL_itf_strmif_0000_0022_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0022_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IFilterMapper2_INTERFACE_DEFINED__
 __IFilterMapper2_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IFilterMapper2:IID
+DEFINE_IIDX(IFilterMapper2, "56a868a3-0ad4-11ce-b03a-0020af0ba770")
 
 .comdef IFilterMapper2
 
@@ -1203,7 +1142,7 @@ endif
 ifndef __IFilterMapper3_INTERFACE_DEFINED__
 __IFilterMapper3_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IFilterMapper3:IID
+DEFINE_IIDX(IFilterMapper3, "b79bb0b0-33c1-11d1-abe1-00a0c905f375")
 
 .comdef IFilterMapper3
 
@@ -1230,15 +1169,10 @@ Late			REFERENCE_TIME ?
 TimeStamp		REFERENCE_TIME ?
 Quality			ENDS
 
-PQUALITYCONTROL		typedef ptr IQualityControl
-
-externdef		__MIDL_itf_strmif_0000_0024_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0024_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IQualityControl_INTERFACE_DEFINED__
 __IQualityControl_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IQualityControl:IID
+DEFINE_IIDX(IQualityControl, "56a868a5-0ad4-11ce-b03a-0020af0ba770")
 
 .comdef IQualityControl
 
@@ -1248,6 +1182,8 @@ externdef		IID_IQualityControl:IID
     Notify		proc :ptr, :Quality
     SetSink		proc :ptr
     .ends
+
+PQUALITYCONTROL		typedef ptr IQualityControl
 
 endif
 
@@ -1278,23 +1214,20 @@ dwSize			dd ?
 iType			dd ?
 nCount			dd ?
 nRgnSize		dd ?
-rcBound			RECT ?
+rcBound			RECT <>
 RGNDATAHEADER		ENDS
 
 RGNDATA			STRUC
-rdh			RGNDATAHEADER ?
-Buffer			char  1	 dup(?)
+rdh			RGNDATAHEADER <>
+Buffer			sbyte 1 dup(?)
 RGNDATA			ENDS
 
 endif
 
-externdef		__MIDL_itf_strmif_0000_0025_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0025_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IOverlayNotify_INTERFACE_DEFINED__
 __IOverlayNotify_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IOverlayNotify:IID
+DEFINE_IIDX(IOverlayNotify, "56a868a0-0ad4-11ce-b03a-0020af0ba770")
 
 .comdef IOverlayNotify
 
@@ -1307,25 +1240,22 @@ externdef		IID_IOverlayNotify:IID
     OnPositionChange	proc :ptr, :ptr
     .ends
 
-endif
-
 POVERLAYNOTIFY		typedef ptr IOverlayNotify
+
+endif
 
 if NOT defined(HMONITOR_DECLARED) AND NOT defined(HMONITOR) AND (WINVER LT 0x0500)
 HMONITOR_DECLARED equ 1
 if 0
-HMONITOR		typedef HANDLE
+HMONITOR typedef HANDLE
 endif
-DECLARE_HANDLE(HMONITOR);
+DECLARE_HANDLE(HMONITOR)
 endif
-
-externdef		__MIDL_itf_strmif_0000_0026_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0026_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IOverlayNotify2_INTERFACE_DEFINED__
 __IOverlayNotify2_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IOverlayNotify2:IID
+DEFINE_IIDX(IOverlayNotify2, "680EFA10-D535-11D1-87C8-00A0C9223196")
 
 .comdef IOverlayNotify2
 
@@ -1339,17 +1269,14 @@ externdef		IID_IOverlayNotify2:IID
     OnDisplayChange	proc :HMONITOR
     .ends
 
-endif
-
 POVERLAYNOTIFY2		typedef ptr IOverlayNotify2
 
-externdef		__MIDL_itf_strmif_0000_0027_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0027_v0_0_s_ifspec:RPC_IF_HANDLE
+endif
 
 ifndef __IOverlay_INTERFACE_DEFINED__
 __IOverlay_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IOverlay:IID
+DEFINE_IIDX(IOverlay, "56a868a1-0ad4-11ce-b03a-0020af0ba770")
 
 .comdef IOverlay
 
@@ -1368,17 +1295,14 @@ externdef		IID_IOverlay:IID
     Unadvise		proc
     .ends
 
-endif
-
 POVERLAY		typedef ptr IOverlay
 
-externdef		__MIDL_itf_strmif_0000_0028_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0028_v0_0_s_ifspec:RPC_IF_HANDLE
+endif
 
 ifndef __IMediaEventSink_INTERFACE_DEFINED__
 __IMediaEventSink_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IMediaEventSink:IID
+DEFINE_IIDX(IMediaEventSink, "56a868a2-0ad4-11ce-b03a-0020af0ba770")
 
 .comdef IMediaEventSink
 
@@ -1388,17 +1312,14 @@ externdef		IID_IMediaEventSink:IID
     Notify		proc :LONG, :LONG_PTR, :LONG_PTR
     .ends
 
-endif
-
 PMEDIAEVENTSINK		typedef ptr IMediaEventSink
 
-externdef		__MIDL_itf_strmif_0000_0029_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0029_v0_0_s_ifspec:RPC_IF_HANDLE
+endif
 
 ifndef __IFileSourceFilter_INTERFACE_DEFINED__
 __IFileSourceFilter_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IFileSourceFilter:IID
+DEFINE_IIDX(IFileSourceFilter, "56a868a6-0ad4-11ce-b03a-0020af0ba770")
 
 .comdef IFileSourceFilter
 
@@ -1409,17 +1330,14 @@ externdef		IID_IFileSourceFilter:IID
     GetCurFile		proc :ptr, :ptr
     .ends
 
-endif
-
 PFILTERFILESOURCE	typedef ptr IFileSourceFilter
 
-externdef		__MIDL_itf_strmif_0000_0030_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0030_v0_0_s_ifspec:RPC_IF_HANDLE
+endif
 
 ifndef __IFileSinkFilter_INTERFACE_DEFINED__
 __IFileSinkFilter_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IFileSinkFilter:IID
+DEFINE_IIDX(IFileSinkFilter, "a2104830-7c70-11cf-8bce-00aa00a3f1a6")
 
 .comdef IFileSinkFilter
 
@@ -1430,17 +1348,14 @@ externdef		IID_IFileSinkFilter:IID
     GetCurFile		proc :ptr, :ptr
     .ends
 
-endif
-
 PFILTERFILESINK		typedef ptr IFileSinkFilter
 
-externdef		__MIDL_itf_strmif_0000_0031_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0031_v0_0_s_ifspec:RPC_IF_HANDLE
+endif
 
 ifndef __IFileSinkFilter2_INTERFACE_DEFINED__
 __IFileSinkFilter2_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IFileSinkFilter2:IID
+DEFINE_IIDX(IFileSinkFilter2, "00855B90-CE1B-11d0-BD4F-00A0C911CE86")
 
 .comdef IFileSinkFilter2
 
@@ -1453,20 +1368,17 @@ externdef		IID_IFileSinkFilter2:IID
     GetMode		proc :ptr
     .ends
 
-endif
-
 PFILESINKFILTER2	typedef ptr IFileSinkFilter2
+
+endif
 
 AM_FILESINK_FLAGS	typedef SDWORD
 AM_FILE_OVERWRITE	equ 0x1
 
-externdef		__MIDL_itf_strmif_0000_0032_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0032_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IGraphBuilder_INTERFACE_DEFINED__
 __IGraphBuilder_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IGraphBuilder:IID
+DEFINE_IIDX(IGraphBuilder, "56a868a9-0ad4-11ce-b03a-0020af0ba770")
 
 .comdef IGraphBuilder
 
@@ -1495,7 +1407,7 @@ endif
 ifndef __ICaptureGraphBuilder_INTERFACE_DEFINED__
 __ICaptureGraphBuilder_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_ICaptureGraphBuilder:IID
+DEFINE_IIDX(ICaptureGraphBuilder, "bf87b6e0-8c27-11d0-b3f0-00aa003761c5")
 
 .comdef ICaptureGraphBuilder
 
@@ -1512,20 +1424,12 @@ externdef		IID_ICaptureGraphBuilder:IID
     CopyCaptureFile	proc :LPOLESTR, :LPOLESTR, :SINT, :ptr
     .ends
 
-;void
-ICaptureGraphBuilder_RemoteFindInterface_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-
 endif
 
 ifndef __IAMCopyCaptureFileProgress_INTERFACE_DEFINED__
 __IAMCopyCaptureFileProgress_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMCopyCaptureFileProgress:IID
+DEFINE_IIDX(IAMCopyCaptureFileProgress, "670d1d20-a068-11d0-b3f0-00aa003761c5")
 
 .comdef IAMCopyCaptureFileProgress
 
@@ -1540,7 +1444,7 @@ endif
 ifndef __ICaptureGraphBuilder2_INTERFACE_DEFINED__
 __ICaptureGraphBuilder2_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_ICaptureGraphBuilder2:IID
+DEFINE_IIDX(ICaptureGraphBuilder2, "93E5A4E0-2D50-11d2-ABFA-00A0C9C6E38D")
 
 .comdef ICaptureGraphBuilder2
 
@@ -1558,25 +1462,15 @@ externdef		IID_ICaptureGraphBuilder2:IID
     FindPin		proc :ptr, :PIN_DIRECTION, :ptr, :ptr, :BOOL, :SINT, :ptr
     .ends
 
-;void
-ICaptureGraphBuilder2_RemoteFindInterface_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
 endif
 
 AM_RENSDEREXFLAGS	typedef SDWORD
 AM_RENDEREX_RENDERTOEXISTINGRENDERERS equ 0x1
 
-externdef		__MIDL_itf_strmif_0000_0036_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0036_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IFilterGraph2_INTERFACE_DEFINED__
 __IFilterGraph2_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IFilterGraph2:IID
+DEFINE_IIDX(IFilterGraph2, "36b73882-c2c8-11cf-8b46-00805f6cef60")
 
 .comdef IFilterGraph2
 
@@ -1608,7 +1502,7 @@ endif
 ifndef __IFilterGraph3_INTERFACE_DEFINED__
 __IFilterGraph3_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IFilterGraph3:IID
+DEFINE_IIDX(IFilterGraph3, "aaf38154-b80b-422f-91e6-b66467509a07")
 
 .comdef IFilterGraph3
 
@@ -1641,7 +1535,7 @@ endif
 ifndef __IStreamBuilder_INTERFACE_DEFINED__
 __IStreamBuilder_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IStreamBuilder:IID
+DEFINE_IIDX(IStreamBuilder, "56a868bf-0ad4-11ce-b03a-0020af0ba770")
 
 .comdef IStreamBuilder
 
@@ -1657,7 +1551,7 @@ endif
 ifndef __IAsyncReader_INTERFACE_DEFINED__
 __IAsyncReader_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAsyncReader:IID
+DEFINE_IIDX(IAsyncReader, "56a868aa-0ad4-11ce-b03a-0020af0ba770")
 
 .comdef IAsyncReader
 
@@ -1679,7 +1573,7 @@ endif
 ifndef __IGraphVersion_INTERFACE_DEFINED__
 __IGraphVersion_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IGraphVersion:IID
+DEFINE_IIDX(IGraphVersion, "56a868ab-0ad4-11ce-b03a-0020af0ba770")
 
 .comdef IGraphVersion
 
@@ -1694,7 +1588,7 @@ endif
 ifndef __IResourceConsumer_INTERFACE_DEFINED__
 __IResourceConsumer_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IResourceConsumer:IID
+DEFINE_IIDX(IResourceConsumer, "56a868ad-0ad4-11ce-b03a-0020af0ba770")
 
 .comdef IResourceConsumer
 
@@ -1710,7 +1604,7 @@ endif
 ifndef __IResourceManager_INTERFACE_DEFINED__
 __IResourceManager_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IResourceManager:IID
+DEFINE_IIDX(IResourceManager, "56a868ac-0ad4-11ce-b03a-0020af0ba770")
 
 .comdef IResourceManager
 
@@ -1732,7 +1626,7 @@ endif
 ifndef __IDistributorNotify_INTERFACE_DEFINED__
 __IDistributorNotify_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDistributorNotify:IID
+DEFINE_IIDX(IDistributorNotify, "56a868af-0ad4-11ce-b03a-0020af0ba770")
 
 .comdef IDistributorNotify
 
@@ -1762,13 +1656,10 @@ dwStopCookie		dd ?
 dwFlags			dd ?
 AM_STREAM_INFO		ENDS
 
-externdef		__MIDL_itf_strmif_0000_0044_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0044_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IAMStreamControl_INTERFACE_DEFINED__
 __IAMStreamControl_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMStreamControl:IID
+DEFINE_IIDX(IAMStreamControl, "36b73881-c2c8-11cf-8b46-00805f6cef60")
 
 .comdef IAMStreamControl
 
@@ -1785,7 +1676,7 @@ endif
 ifndef __ISeekingPassThru_INTERFACE_DEFINED__
 __ISeekingPassThru_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_ISeekingPassThru:IID
+DEFINE_IIDX(ISeekingPassThru, "36b73883-c2c8-11cf-8b46-00805f6cef60")
 
 .comdef ISeekingPassThru
 
@@ -1837,7 +1728,7 @@ MaximumSampleFrequency	ULONG ?
 SampleFrequencyGranularity ULONG ?
 AUDIO_STREAM_CONFIG_CAPS ENDS
 
-externdef		IID_IAMStreamConfig:IID
+DEFINE_IIDX(IAMStreamConfig, "C6E13340-30AC-11d0-A18C-00A0C9118956")
 
 .comdef IAMStreamConfig
 
@@ -1861,7 +1752,7 @@ INTERLEAVE_CAPTURE	equ ( INTERLEAVE_NONE + 1 )
 INTERLEAVE_FULL		equ ( INTERLEAVE_CAPTURE + 1 )
 INTERLEAVE_NONE_BUFFERED equ ( INTERLEAVE_FULL + 1 )
 
-externdef		IID_IConfigInterleaving:IID
+DEFINE_IIDX(IConfigInterleaving, "BEE3D220-157B-11d0-BD23-00A0C911CE86")
 
 .comdef IConfigInterleaving
 
@@ -1879,7 +1770,7 @@ endif
 ifndef __IConfigAviMux_INTERFACE_DEFINED__
 __IConfigAviMux_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IConfigAviMux:IID
+DEFINE_IIDX(IConfigAviMux, "5ACD6AA0-F482-11ce-8B67-00AA00A3F1A6")
 
 .comdef IConfigAviMux
 
@@ -1901,13 +1792,10 @@ CompressionCaps_CanKeyFrame equ 0x4
 CompressionCaps_CanBFrame equ 0x8
 CompressionCaps_CanWindow equ 0x10
 
-externdef		__MIDL_itf_strmif_0000_0049_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0049_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IAMVideoCompression_INTERFACE_DEFINED__
 __IAMVideoCompression_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMVideoCompression:IID
+DEFINE_IIDX(IAMVideoCompression, "C6E13343-30AC-11d0-A18C-00A0C9118956")
 
 .comdef IAMVideoCompression
 
@@ -1940,13 +1828,10 @@ VfwCompressDialog_About equ 0x2
 VfwCompressDialog_QueryConfig equ 0x4
 VfwCompressDialog_QueryAbout equ 0x8
 
-externdef		__MIDL_itf_strmif_0000_0050_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0050_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IAMVfwCaptureDialogs_INTERFACE_DEFINED__
 __IAMVfwCaptureDialogs_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMVfwCaptureDialogs:IID
+DEFINE_IIDX(IAMVfwCaptureDialogs, "D8D715A0-6E5E-11D0-B3F0-00AA003761C5")
 
 .comdef IAMVfwCaptureDialogs
 
@@ -1963,7 +1848,7 @@ endif
 ifndef __IAMVfwCompressDialogs_INTERFACE_DEFINED__
 __IAMVfwCompressDialogs_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMVfwCompressDialogs:IID
+DEFINE_IIDX(IAMVfwCompressDialogs, "D8D715A3-6E5E-11D0-B3F0-00AA003761C5")
 
 .comdef IAMVfwCompressDialogs
 
@@ -1981,7 +1866,7 @@ endif
 ifndef __IAMDroppedFrames_INTERFACE_DEFINED__
 __IAMDroppedFrames_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMDroppedFrames:IID
+DEFINE_IIDX(IAMDroppedFrames, "C6E13344-30AC-11d0-A18C-00A0C9118956")
 
 .comdef IAMDroppedFrames
 
@@ -1998,13 +1883,10 @@ endif
 
 AMF_AUTOMATICGAIN	equ -1.0
 
-externdef		__MIDL_itf_strmif_0000_0053_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0053_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IAMAudioInputMixer_INTERFACE_DEFINED__
 __IAMAudioInputMixer_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMAudioInputMixer:IID
+DEFINE_IIDX(IAMAudioInputMixer, "54C39221-8380-11d0-B3F0-00AA003761C5")
 
 .comdef IAMAudioInputMixer
 
@@ -2034,7 +1916,7 @@ endif
 ifndef __IAMBufferNegotiation_INTERFACE_DEFINED__
 __IAMBufferNegotiation_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMBufferNegotiation:IID
+DEFINE_IIDX(IAMBufferNegotiation, "56ED71A0-AF5F-11D0-B3F0-00AA003761C5")
 
 .comdef IAMBufferNegotiation
 
@@ -2111,13 +1993,10 @@ PhysConn_Audio_1394	equ ( PhysConn_Audio_AUX + 1 )
 PhysConn_Audio_USB	equ ( PhysConn_Audio_1394 + 1 )
 PhysConn_Audio_AudioDecoder equ ( PhysConn_Audio_USB + 1 )
 
-externdef		__MIDL_itf_strmif_0000_0055_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0055_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IAMAnalogVideoDecoder_INTERFACE_DEFINED__
 __IAMAnalogVideoDecoder_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMAnalogVideoDecoder:IID
+DEFINE_IIDX(IAMAnalogVideoDecoder, "C6E13350-30AC-11d0-A18C-00A0C9118956")
 
 .comdef IAMAnalogVideoDecoder
 
@@ -2153,13 +2032,10 @@ tagVideoProcAmpFlags	typedef SDWORD
 VideoProcAmp_Flags_Auto equ 0x1
 VideoProcAmp_Flags_Manual equ 0x2
 
-externdef		__MIDL_itf_strmif_0000_0056_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0056_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IAMVideoProcAmp_INTERFACE_DEFINED__
 __IAMVideoProcAmp_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMVideoProcAmp:IID
+DEFINE_IIDX(IAMVideoProcAmp, "C6E13360-30AC-11d0-A18C-00A0C9118956")
 
 .comdef IAMVideoProcAmp
 
@@ -2186,13 +2062,10 @@ tagCameraControlFlags	typedef SDWORD
 CameraControl_Flags_Auto equ 0x1
 CameraControl_Flags_Manual equ 0x2
 
-externdef		__MIDL_itf_strmif_0000_0057_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0057_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IAMCameraControl_INTERFACE_DEFINED__
 __IAMCameraControl_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMCameraControl:IID
+DEFINE_IIDX(IAMCameraControl, "C6E13370-30AC-11d0-A18C-00A0C9118956")
 
 .comdef IAMCameraControl
 
@@ -2212,13 +2085,10 @@ VideoControlFlag_FlipVertical equ 0x2
 VideoControlFlag_ExternalTriggerEnable equ 0x4
 VideoControlFlag_Trigger equ 0x8
 
-externdef		__MIDL_itf_strmif_0000_0058_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0058_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IAMVideoControl_INTERFACE_DEFINED__
 __IAMVideoControl_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMVideoControl:IID
+DEFINE_IIDX(IAMVideoControl, "6a2e0670-28e4-11d0-a18c-00a0c9118956")
 
 .comdef IAMVideoControl
 
@@ -2238,7 +2108,7 @@ endif
 ifndef __IAMCrossbar_INTERFACE_DEFINED__
 __IAMCrossbar_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMCrossbar:IID
+DEFINE_IIDX(IAMCrossbar, "C6E13380-30AC-11d0-A18C-00A0C9118956")
 
 .comdef IAMCrossbar
 
@@ -2273,13 +2143,10 @@ AMTUNER_MODE_DSS	equ 0x8
 AMTunerEventType	typedef SDWORD
 AMTUNER_EVENT_CHANGED	equ 0x1
 
-externdef		__MIDL_itf_strmif_0000_0060_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0060_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IAMTuner_INTERFACE_DEFINED__
 __IAMTuner_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMTuner:IID
+DEFINE_IIDX(IAMTuner, "211A8761-03AC-11d1-8D13-00AA00BD8339")
 
 .comdef IAMTuner
 
@@ -2308,7 +2175,7 @@ endif
 ifndef __IAMTunerNotification_INTERFACE_DEFINED__
 __IAMTunerNotification_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMTunerNotification:IID
+DEFINE_IIDX(IAMTunerNotification, "211A8760-03AC-11d1-8D13-00AA00BD8339")
 
 .comdef IAMTunerNotification
 
@@ -2323,7 +2190,7 @@ endif
 ifndef __IAMTVTuner_INTERFACE_DEFINED__
 __IAMTVTuner_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMTVTuner:IID
+DEFINE_IIDX(IAMTVTuner, "211A8766-03AC-11d1-8D13-00AA00BD8339")
 
 .comdef IAMTVTuner
 
@@ -2363,7 +2230,7 @@ endif
 ifndef __IBPCSatelliteTuner_INTERFACE_DEFINED__
 __IBPCSatelliteTuner_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IBPCSatelliteTuner:IID
+DEFINE_IIDX(IBPCSatelliteTuner, "211A8765-03AC-11d1-8D13-00AA00BD8339")
 
 .comdef IBPCSatelliteTuner
 
@@ -2406,13 +2273,10 @@ AMTVAUDIO_PRESET_LANG_C equ 0x4000
 AMTVAudioEventType	typedef SDWORD
 AMTVAUDIO_EVENT_CHANGED equ 0x1
 
-externdef		__MIDL_itf_strmif_0000_0064_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0064_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IAMTVAudio_INTERFACE_DEFINED__
 __IAMTVAudio_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMTVAudio:IID
+DEFINE_IIDX(IAMTVAudio, "83EC1C30-23D1-11d1-99E6-00A0C9560266")
 
 .comdef IAMTVAudio
 
@@ -2432,7 +2296,7 @@ endif
 ifndef __IAMTVAudioNotification_INTERFACE_DEFINED__
 __IAMTVAudioNotification_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMTVAudioNotification:IID
+DEFINE_IIDX(IAMTVAudioNotification, "83EC1C33-23D1-11d1-99E6-00A0C9560266")
 
 .comdef IAMTVAudioNotification
 
@@ -2447,7 +2311,7 @@ endif
 ifndef __IAMAnalogVideoEncoder_INTERFACE_DEFINED__
 __IAMAnalogVideoEncoder_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMAnalogVideoEncoder:IID
+DEFINE_IIDX(IAMAnalogVideoEncoder, "C6E133B0-30AC-11d0-A18C-00A0C9118956")
 
 .comdef IAMAnalogVideoEncoder
 
@@ -2474,13 +2338,10 @@ _IKsPropertySet_ equ 1
 KSPROPERTY_SUPPORT_GET	equ 1
 KSPROPERTY_SUPPORT_SET	equ 2
 
-externdef		__MIDL_itf_strmif_0000_0067_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0067_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IKsPropertySet_INTERFACE_DEFINED__
 __IKsPropertySet_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IKsPropertySet:IID
+DEFINE_IIDX(IKsPropertySet, "31EFAC30-515C-11d0-A9AA-00AA0061BE93")
 
 .comdef IKsPropertySet
 
@@ -2494,31 +2355,12 @@ externdef		IID_IKsPropertySet:IID
 
 endif
 
-;void
-IKsPropertySet_RemoteSet_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-
-;void
-IKsPropertySet_RemoteGet_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
 endif
-
-externdef		__MIDL_itf_strmif_0000_0068_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0068_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IMediaPropertyBag_INTERFACE_DEFINED__
 __IMediaPropertyBag_INTERFACE_DEFINED__ equ 1
 
-LPMEDIAPROPERTYBAG	typedef ptr IMediaPropertyBag
-externdef		IID_IMediaPropertyBag:IID
+DEFINE_IIDX(IMediaPropertyBag, "6025A880-C0D5-11d0-BD4E-00A0C911CE86")
 
 .comdef IMediaPropertyBag
 
@@ -2530,14 +2372,14 @@ externdef		IID_IMediaPropertyBag:IID
     EnumProperty	proc :ULONG, :ptr, :ptr
     .ends
 
+LPMEDIAPROPERTYBAG	typedef ptr IMediaPropertyBag
+
 endif
 
 ifndef __IPersistMediaPropertyBag_INTERFACE_DEFINED__
 __IPersistMediaPropertyBag_INTERFACE_DEFINED__ equ 1
 
-LPPERSISTMEDIAPROPERTYBAG typedef ptr IPersistMediaPropertyBag
-
-externdef		IID_IPersistMediaPropertyBag:IID
+DEFINE_IIDX(IPersistMediaPropertyBag, "5738E040-B67F-11d0-BD4D-00A0C911CE86")
 
 .comdef IPersistMediaPropertyBag
 
@@ -2550,12 +2392,14 @@ externdef		IID_IPersistMediaPropertyBag:IID
     Save		proc :ptr, :BOOL, :BOOL
     .ends
 
+LPPERSISTMEDIAPROPERTYBAG typedef ptr IPersistMediaPropertyBag
+
 endif
 
 ifndef __IAMPhysicalPinInfo_INTERFACE_DEFINED__
 __IAMPhysicalPinInfo_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMPhysicalPinInfo:IID
+DEFINE_IIDX(IAMPhysicalPinInfo, "F938C991-3029-11cf-8C44-00AA006B6814")
 
 .comdef IAMPhysicalPinInfo
 
@@ -2569,13 +2413,10 @@ endif
 
 PAMPHYSICALPININFO	typedef ptr IAMPhysicalPinInfo
 
-externdef		__MIDL_itf_strmif_0000_0071_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0071_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IAMExtDevice_INTERFACE_DEFINED__
 __IAMExtDevice_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMExtDevice:IID
+DEFINE_IIDX(IAMExtDevice, "B5730A90-1A2C-11cf-8C23-00AA006B6814")
 
 .comdef IAMExtDevice
 
@@ -2592,17 +2433,14 @@ externdef		IID_IAMExtDevice:IID
     get_DevicePort	proc :ptr
     .ends
 
-endif
-
 PEXTDEVICE		typedef ptr IAMExtDevice
 
-externdef		__MIDL_itf_strmif_0000_0072_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0072_v0_0_s_ifspec:RPC_IF_HANDLE
+endif
 
 ifndef __IAMExtTransport_INTERFACE_DEFINED__
 __IAMExtTransport_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMExtTransport:IID
+DEFINE_IIDX(IAMExtTransport, "A03CD5F0-3045-11cf-8C44-00AA006B6814")
 
 .comdef IAMExtTransport
 
@@ -2643,13 +2481,6 @@ endif
 
 PIAMEXTTRANSPORT	typedef ptr IAMExtTransport
 
-if 0
-TIMECODE		STRUC
-wFrameRate		dw ?
-wFrameFract		dw ?
-dwFrames		dd ?
-TIMECODE		ENDS
-else
 ifndef TIMECODE_DEFINED
 TIMECODE_DEFINED equ 1
 TIMECODE		UNION
@@ -2660,9 +2491,8 @@ STRUC
 ENDS
 qw			dd ?
 TIMECODE		ENDS
-endif
-endif
 PTIMECODE		typedef ptr TIMECODE
+endif
 
 TIMECODE_SAMPLE		STRUC
 qwTick			LONGLONG ?
@@ -2670,16 +2500,12 @@ timecode		TIMECODE <>
 dwUser			dd ?
 dwFlags			dd ?
 TIMECODE_SAMPLE		ENDS
-
 PTIMECODE_SAMPLE	typedef ptr TIMECODE_SAMPLE
-
-externdef		__MIDL_itf_strmif_0000_0073_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0073_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IAMTimecodeReader_INTERFACE_DEFINED__
 __IAMTimecodeReader_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMTimecodeReader:IID
+DEFINE_IIDX(IAMTimecodeReader, "9B496CE1-811B-11cf-8C77-00AA006B6814")
 
 .comdef IAMTimecodeReader
 
@@ -2693,17 +2519,14 @@ externdef		IID_IAMTimecodeReader:IID
     GetTimecode		proc :PTIMECODE_SAMPLE
     .ends
 
-endif
-
 PIAMTIMECODEREADER	typedef ptr IAMTimecodeReader
 
-externdef		__MIDL_itf_strmif_0000_0074_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0074_v0_0_s_ifspec:RPC_IF_HANDLE
+endif
 
 ifndef __IAMTimecodeGenerator_INTERFACE_DEFINED__
 __IAMTimecodeGenerator_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMTimecodeGenerator:IID
+DEFINE_IIDX(IAMTimecodeGenerator, "9B496CE0-811B-11cf-8C77-00AA006B6814")
 
 .comdef IAMTimecodeGenerator
 
@@ -2718,17 +2541,14 @@ externdef		IID_IAMTimecodeGenerator:IID
     GetTimecode		proc :PTIMECODE_SAMPLE
     .ends
 
-endif
-
 PIAMTIMECODEGENERATOR	typedef ptr IAMTimecodeGenerator
 
-externdef		__MIDL_itf_strmif_0000_0075_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0075_v0_0_s_ifspec:RPC_IF_HANDLE
+endif
 
 ifndef __IAMTimecodeDisplay_INTERFACE_DEFINED__
 __IAMTimecodeDisplay_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMTimecodeDisplay:IID
+DEFINE_IIDX(IAMTimecodeDisplay, "9B496CE2-811B-11cf-8C77-00AA006B6814")
 
 .comdef IAMTimecodeDisplay
 
@@ -2741,17 +2561,14 @@ externdef		IID_IAMTimecodeDisplay:IID
     SetTCDisplay	proc :LONG, :LONG
     .ends
 
-endif
-
 PIAMTIMECODEDISPLAY	typedef ptr IAMTimecodeDisplay
 
-externdef		__MIDL_itf_strmif_0000_0076_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0076_v0_0_s_ifspec:RPC_IF_HANDLE
+endif
 
 ifndef __IAMDevMemoryAllocator_INTERFACE_DEFINED__
 __IAMDevMemoryAllocator_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMDevMemoryAllocator:IID
+DEFINE_IIDX(IAMDevMemoryAllocator, "c6545bf0-e76b-11d0-bd52-00a0c911ce86")
 
 .comdef IAMDevMemoryAllocator
 
@@ -2765,17 +2582,14 @@ externdef		IID_IAMDevMemoryAllocator:IID
     GetDevMemoryObject	proc :ptr, :ptr
     .ends
 
-endif
-
 PAMDEVMEMORYALLOCATOR	typedef ptr IAMDevMemoryAllocator
 
-externdef		__MIDL_itf_strmif_0000_0077_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0077_v0_0_s_ifspec:RPC_IF_HANDLE
+endif
 
 ifndef __IAMDevMemoryControl_INTERFACE_DEFINED__
 __IAMDevMemoryControl_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMDevMemoryControl:IID
+DEFINE_IIDX(IAMDevMemoryControl, "c6545bf1-e76b-11d0-bd52-00a0c911ce86")
 
 .comdef IAMDevMemoryControl
 
@@ -2787,9 +2601,9 @@ externdef		IID_IAMDevMemoryControl:IID
     GetDevId		proc :ptr
     .ends
 
-endif
-
 PAMDEVMEMORYCONTROL	typedef ptr IAMDevMemoryControl
+
+endif
 
 AMSTREAMSELECTINFOFLAGS typedef SDWORD
 AMSTREAMSELECTINFO_ENABLED equ 0x1
@@ -2799,13 +2613,10 @@ AMSTREAMSELECTENABLEFLAGS typedef SDWORD
 AMSTREAMSELECTENABLE_ENABLE equ 0x1
 AMSTREAMSELECTENABLE_ENABLEALL equ 0x2
 
-externdef		__MIDL_itf_strmif_0000_0078_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0078_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IAMStreamSelect_INTERFACE_DEFINED__
 __IAMStreamSelect_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMStreamSelect:IID
+DEFINE_IIDX(IAMStreamSelect, "c1960960-17f5-11d1-abe1-00a0c905f375")
 
 .comdef IAMStreamSelect
 
@@ -2817,21 +2628,18 @@ externdef		IID_IAMStreamSelect:IID
     Enable		proc :LONG, :DWORD
     .ends
 
-endif
-
 PAMSTREAMSELECT		typedef ptr IAMStreamSelect
+
+endif
 
 AMRESCTL_RESERVEFLAGS	typedef SDWORD
 AMRESCTL_RESERVEFLAGS_RESERVE equ 0
 AMRESCTL_RESERVEFLAGS_UNRESERVE equ 0x1
 
-externdef		__MIDL_itf_strmif_0000_0079_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0079_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IAMResourceControl_INTERFACE_DEFINED__
 __IAMResourceControl_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMResourceControl:IID
+DEFINE_IIDX(IAMResourceControl, "8389d2d0-77d7-11d1-abe6-00a0c905f375")
 
 .comdef IAMResourceControl
 
@@ -2846,7 +2654,7 @@ endif
 ifndef __IAMClockAdjust_INTERFACE_DEFINED__
 __IAMClockAdjust_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMClockAdjust:IID
+DEFINE_IIDX(IAMClockAdjust, "4d5466b0-a49c-11d1-abe8-00a0c905f375")
 
 .comdef IAMClockAdjust
 
@@ -2862,13 +2670,10 @@ AM_FILTER_MISC_FLAGS	typedef SDWORD
 AM_FILTER_MISC_FLAGS_IS_RENDERER equ 0x1
 AM_FILTER_MISC_FLAGS_IS_SOURCE equ 0x2
 
-externdef		__MIDL_itf_strmif_0000_0081_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0081_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IAMFilterMiscFlags_INTERFACE_DEFINED__
 __IAMFilterMiscFlags_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMFilterMiscFlags:IID
+DEFINE_IIDX(IAMFilterMiscFlags, "2dd74950-a890-11d1-abe8-00a0c905f375")
 
 .comdef IAMFilterMiscFlags
 
@@ -2883,7 +2688,7 @@ endif
 ifndef __IDrawVideoImage_INTERFACE_DEFINED__
 __IDrawVideoImage_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDrawVideoImage:IID
+DEFINE_IIDX(IDrawVideoImage, "48efb120-ab49-11d2-aed2-00a0c995e8d5")
 
 .comdef IDrawVideoImage
 
@@ -2900,7 +2705,7 @@ endif
 ifndef __IDecimateVideoImage_INTERFACE_DEFINED__
 __IDecimateVideoImage_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDecimateVideoImage:IID
+DEFINE_IIDX(IDecimateVideoImage, "2e5ea3e0-e924-11d2-b6da-00a0c995e8df")
 
 .comdef IDecimateVideoImage
 
@@ -2920,13 +2725,10 @@ DECIMATION_USE_VIDEOPORT_ONLY equ ( DECIMATION_USE_DECODER_ONLY + 1 )
 DECIMATION_USE_OVERLAY_ONLY equ ( DECIMATION_USE_VIDEOPORT_ONLY + 1 )
 DECIMATION_DEFAULT	equ ( DECIMATION_USE_OVERLAY_ONLY + 1 )
 
-externdef		__MIDL_itf_strmif_0000_0084_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0084_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IAMVideoDecimationProperties_INTERFACE_DEFINED__
 __IAMVideoDecimationProperties_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMVideoDecimationProperties:IID
+DEFINE_IIDX(IAMVideoDecimationProperties, "60d32930-13da-11d3-9ec6-c4fcaef5c7be")
 
 .comdef IAMVideoDecimationProperties
 
@@ -2942,7 +2744,7 @@ endif
 ifndef __IVideoFrameStep_INTERFACE_DEFINED__
 __IVideoFrameStep_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVideoFrameStep:IID
+DEFINE_IIDX(IVideoFrameStep, "e46a9787-2b71-444d-a4b5-1fab7b708d6a")
 
 .comdef IVideoFrameStep
 
@@ -2963,13 +2765,10 @@ AM_PUSHSOURCECAPS_PRIVATE_CLOCK equ 0x4
 AM_PUSHSOURCEREQS_USE_STREAM_CLOCK equ 0x10000
 AM_PUSHSOURCEREQS_USE_CLOCK_CHAIN equ 0x20000
 
-externdef		__MIDL_itf_strmif_0000_0086_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0086_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IAMLatency_INTERFACE_DEFINED__
 __IAMLatency_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMLatency:IID
+DEFINE_IIDX(IAMLatency, "62EA93BA-EC62-11d2-B770-00C04FB6BD3D")
 
 .comdef IAMLatency
 
@@ -2984,7 +2783,7 @@ endif
 ifndef __IAMPushSource_INTERFACE_DEFINED__
 __IAMPushSource_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMPushSource:IID
+DEFINE_IIDX(IAMPushSource, "F185FE76-E64E-11d2-B76E-00C04FB6BD3D")
 
 .comdef IAMPushSource
 
@@ -3005,7 +2804,7 @@ endif
 ifndef __IAMDeviceRemoval_INTERFACE_DEFINED__
 __IAMDeviceRemoval_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMDeviceRemoval:IID
+DEFINE_IIDX(IAMDeviceRemoval, "f90a6130-b658-11d2-ae49-0000f8754b99")
 
 .comdef IAMDeviceRemoval
 
@@ -3046,13 +2845,10 @@ DVENCODERFORMAT_DVSD	equ 2007
 DVENCODERFORMAT_DVHD	equ 2008
 DVENCODERFORMAT_DVSL	equ 2009
 
-externdef		__MIDL_itf_strmif_0000_0088_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0088_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IDVEnc_INTERFACE_DEFINED__
 __IDVEnc_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDVEnc:IID
+DEFINE_IIDX(IDVEnc, "d18e17a0-aacb-11d0-afb0-00aa00b67a42")
 
 .comdef IDVEnc
 
@@ -3077,13 +2873,10 @@ DVRESOLUTION_HALF	equ 1001
 DVRESOLUTION_QUARTER	equ 1002
 DVRESOLUTION_DC		equ 1003
 
-externdef		__MIDL_itf_strmif_0000_0089_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0089_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IIPDVDec_INTERFACE_DEFINED__
 __IIPDVDec_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IIPDVDec:IID
+DEFINE_IIDX(IIPDVDec, "b8e8bd60-0bfe-11d0-af91-00aa00b67a42")
 
 .comdef IIPDVDec
 
@@ -3099,7 +2892,7 @@ endif
 ifndef __IDVRGB219_INTERFACE_DEFINED__
 __IDVRGB219_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDVRGB219:IID
+DEFINE_IIDX(IDVRGB219, "58473A19-2BC8-4663-8012-25F81BABDDD1")
 
 .comdef IDVRGB219
 
@@ -3114,7 +2907,7 @@ endif
 ifndef __IDVSplitter_INTERFACE_DEFINED__
 __IDVSplitter_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDVSplitter:IID
+DEFINE_IIDX(IDVSplitter, "92a3a302-da7c-4a1f-ba7e-1802bb5d2d02")
 
 .comdef IDVSplitter
 
@@ -3140,13 +2933,10 @@ AM_AUDREND_STAT_PARAM_SLAVE_ACCUMERROR equ ( AM_AUDREND_STAT_PARAM_SLAVE_LASTHIG
 AM_AUDREND_STAT_PARAM_BUFFERFULLNESS equ ( AM_AUDREND_STAT_PARAM_SLAVE_ACCUMERROR + 1 )
 AM_AUDREND_STAT_PARAM_JITTER equ ( AM_AUDREND_STAT_PARAM_BUFFERFULLNESS + 1 )
 
-externdef		__MIDL_itf_strmif_0000_0092_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0092_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IAMAudioRendererStats_INTERFACE_DEFINED__
 __IAMAudioRendererStats_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMAudioRendererStats:IID
+DEFINE_IIDX(IAMAudioRendererStats, "22320CB2-D41A-11d2-BF7C-D7CB9DF0BF93")
 
 .comdef IAMAudioRendererStats
 
@@ -3163,13 +2953,10 @@ AM_INTF_SEARCH_INPUT_PIN equ 0x1
 AM_INTF_SEARCH_OUTPUT_PIN equ 0x2
 AM_INTF_SEARCH_FILTER	equ 0x4
 
-externdef		__MIDL_itf_strmif_0000_0094_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0094_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IAMGraphStreams_INTERFACE_DEFINED__
 __IAMGraphStreams_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMGraphStreams:IID
+DEFINE_IIDX(IAMGraphStreams, "632105FA-072E-11d3-8AF9-00C04FB6BD3D")
 
 .comdef IAMGraphStreams
 
@@ -3189,13 +2976,10 @@ AMOVERFX_MIRRORLEFTRIGHT equ 0x2
 AMOVERFX_MIRRORUPDOWN	equ 0x4
 AMOVERFX_DEINTERLACE	equ 0x8
 
-externdef		__MIDL_itf_strmif_0000_0095_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0095_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IAMOverlayFX_INTERFACE_DEFINED__
 __IAMOverlayFX_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMOverlayFX:IID
+DEFINE_IIDX(IAMOverlayFX, "62fae250-7e65-4460-bfc9-6398b322073c")
 
 .comdef IAMOverlayFX
 
@@ -3212,7 +2996,7 @@ endif
 ifndef __IAMOpenProgress_INTERFACE_DEFINED__
 __IAMOpenProgress_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMOpenProgress:IID
+DEFINE_IIDX(IAMOpenProgress, "8E1C39A1-DE53-11cf-AA63-0080C744528D")
 
 .comdef IAMOpenProgress
 
@@ -3228,7 +3012,7 @@ endif
 ifndef __IMpeg2Demultiplexer_INTERFACE_DEFINED__
 __IMpeg2Demultiplexer_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IMpeg2Demultiplexer:IID
+DEFINE_IIDX(IMpeg2Demultiplexer, "436eee9c-264f-4242-90e1-4e330c107512")
 
 .comdef IMpeg2Demultiplexer
 
@@ -3256,13 +3040,10 @@ ulSubstreamFilterValue	ULONG ?
 iDataOffset		SINT ?
 STREAM_ID_MAP		ENDS
 
-externdef		__MIDL_itf_strmif_0000_0098_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0098_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IEnumStreamIdMap_INTERFACE_DEFINED__
 __IEnumStreamIdMap_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IEnumStreamIdMap:IID
+DEFINE_IIDX(IEnumStreamIdMap, "945C1566-6202-46fc-96C7-D87F289C6534")
 
 .comdef IEnumStreamIdMap
 
@@ -3280,7 +3061,7 @@ endif
 ifndef __IMPEG2StreamIdMap_INTERFACE_DEFINED__
 __IMPEG2StreamIdMap_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IMPEG2StreamIdMap:IID
+DEFINE_IIDX(IMPEG2StreamIdMap, "D0E04C47-25B8-4369-925A-362A01D95444")
 
 .comdef IMPEG2StreamIdMap
 
@@ -3297,7 +3078,7 @@ endif
 ifndef __IRegisterServiceProvider_INTERFACE_DEFINED__
 __IRegisterServiceProvider_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IRegisterServiceProvider:IID
+DEFINE_IIDX(IRegisterServiceProvider, "7B3A2F01-0751-48DD-B556-004785171C54")
 
 .comdef IRegisterServiceProvider
 
@@ -3312,7 +3093,7 @@ endif
 ifndef __IAMClockSlave_INTERFACE_DEFINED__
 __IAMClockSlave_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMClockSlave:IID
+DEFINE_IIDX(IAMClockSlave, "9FD52741-176D-4b36-8F51-CA8F933223BE")
 
 .comdef IAMClockSlave
 
@@ -3328,7 +3109,7 @@ endif
 ifndef __IAMGraphBuilderCallback_INTERFACE_DEFINED__
 __IAMGraphBuilderCallback_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMGraphBuilderCallback:IID
+DEFINE_IIDX(IAMGraphBuilderCallback, "4995f511-9ddb-4f12-bd3b-f04611807b79")
 
 .comdef IAMGraphBuilderCallback
 
@@ -3342,7 +3123,7 @@ externdef		IID_IAMGraphBuilderCallback:IID
 endif
 
 AMCOPPSignature		STRUC
-Signature		db  256	 dup(?)
+Signature		db 256 dup(?)
 AMCOPPSignature		ENDS
 
 AMCOPPCommand		STRUC
@@ -3350,7 +3131,7 @@ macKDI			GUID <>
 guidCommandID		GUID <>
 dwSequence		dd ?
 cbSizeData		dd ?
-CommandData		db  4056  dup(?)
+CommandData		db 4056 dup(?)
 AMCOPPCommand		ENDS
 
 LPAMCOPPCommand		typedef ptr AMCOPPCommand
@@ -3360,7 +3141,7 @@ rApp			GUID <>
 guidStatusRequestID	GUID <>
 dwSequence		dd ?
 cbSizeData		dd ?
-StatusData		db  4056  dup(?)
+StatusData		db 4056 dup(?)
 AMCOPPStatusInput	ENDS
 
 LPAMCOPPStatusInput	typedef ptr AMCOPPStatusInput
@@ -3368,18 +3149,15 @@ LPAMCOPPStatusInput	typedef ptr AMCOPPStatusInput
 AMCOPPStatusOutput	STRUC
 macKDI			GUID <>
 cbSizeData		dd ?
-COPPStatus		db  4076  dup(?)
+COPPStatus		db 4076 dup(?)
 AMCOPPStatusOutput	ENDS
 
 LPAMCOPPStatusOutput	typedef ptr AMCOPPStatusOutput
 
-externdef		__MIDL_itf_strmif_0000_0108_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0108_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IAMCertifiedOutputProtection_INTERFACE_DEFINED__
 __IAMCertifiedOutputProtection_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMCertifiedOutputProtection:IID
+DEFINE_IIDX(IAMCertifiedOutputProtection, "6feded3e-0ff1-4901-a2f1-43f7012c8515")
 
 .comdef IAMCertifiedOutputProtection
 
@@ -3397,7 +3175,7 @@ endif
 ifndef __IAMAsyncReaderTimestampScaling_INTERFACE_DEFINED__
 __IAMAsyncReaderTimestampScaling_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMAsyncReaderTimestampScaling:IID
+DEFINE_IIDX(IAMAsyncReaderTimestampScaling, "cf7b26fc-9a00-485b-8147-3e789d5e8f67")
 
 .comdef IAMAsyncReaderTimestampScaling
 
@@ -3413,7 +3191,7 @@ endif
 ifndef __IAMPluginControl_INTERFACE_DEFINED__
 __IAMPluginControl_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAMPluginControl:IID
+DEFINE_IIDX(IAMPluginControl, "0e26a181-f40c-4635-8786-976284b52981")
 
 .comdef IAMPluginControl
 
@@ -3651,7 +3429,7 @@ fHasMultichannelInfo	BOOL ?
 dwFrequency		dd ?
 bQuantization		db ?
 bNumberOfChannels	db ?
-dwReserved		dd  2  dup(?)
+dwReserved		dd 2 dup(?)
 DVD_AudioAttributes	ENDS
 
 DVD_MUA_MixingInfo	STRUC
@@ -3668,8 +3446,8 @@ log2_beta		REAL8 ?
 DVD_MUA_Coeff		ENDS
 
 DVD_MultichannelAudioAttributes STRUC
-Info			DVD_MUA_MixingInfo  8  dup(<>)
-Coeff			DVD_MUA_Coeff  8  dup(<>)
+Info			DVD_MUA_MixingInfo 8 dup(<>)
+Coeff			DVD_MUA_Coeff 8 dup(<>)
 DVD_MultichannelAudioAttributes ENDS
 
 DVD_KARAOKE_CONTENTS typedef SDWORD
@@ -3765,13 +3543,10 @@ fSubpicturePresent	BOOL ?
 SubpictureAttributes	DVD_SubpictureAttributes <>
 DVD_MenuAttributes	ENDS
 
-externdef		__MIDL_itf_strmif_0000_0111_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0111_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IDvdControl_INTERFACE_DEFINED__
 __IDvdControl_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDvdControl:IID
+DEFINE_IIDX(IDvdControl, "A70EFE61-E2A3-11d0-A9BE-00AA0061BE93")
 
 .comdef IDvdControl
 
@@ -3820,7 +3595,7 @@ endif
 ifndef __IDvdInfo_INTERFACE_DEFINED__
 __IDvdInfo_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDvdInfo:IID
+DEFINE_IIDX(IDvdInfo, "A70EFE60-E2A3-11d0-A9BE-00AA0061BE93")
 
 .comdef IDvdInfo
 
@@ -3857,7 +3632,7 @@ endif
 ifndef __IDvdCmd_INTERFACE_DEFINED__
 __IDvdCmd_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDvdCmd:IID
+DEFINE_IIDX(IDvdCmd, "5a4a97e4-94ee-4a55-9751-74b5643aa27d")
 
 .comdef IDvdCmd
 
@@ -3873,7 +3648,7 @@ endif
 ifndef __IDvdState_INTERFACE_DEFINED__
 __IDvdState_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDvdState:IID
+DEFINE_IIDX(IDvdState, "86303d6d-1c4a-4087-ab42-f711167048ef")
 
 .comdef IDvdState
 
@@ -3889,7 +3664,7 @@ endif
 ifndef __IDvdControl2_INTERFACE_DEFINED__
 __IDvdControl2_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDvdControl2:IID
+DEFINE_IIDX(IDvdControl2, "33BC7430-EEC0-11D2-8201-00A0C9D74842")
 
 .comdef IDvdControl2
 
@@ -4006,13 +3781,10 @@ DVD_AUDIO_CAPS_LPCM	equ 0x00000004
 DVD_AUDIO_CAPS_DTS	equ 0x00000008
 DVD_AUDIO_CAPS_SDDS	equ 0x00000010
 
-externdef		__MIDL_itf_strmif_0000_0116_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0116_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IDvdInfo2_INTERFACE_DEFINED__
 __IDvdInfo2_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDvdInfo2:IID
+DEFINE_IIDX(IDvdInfo2, "34151510-EEC0-11D2-8201-00A0C9D74842")
 
 .comdef IDvdInfo2
 
@@ -4091,13 +3863,10 @@ iNumStreamsFailed	SINT ?
 dwFailedStreamsFlag	dd ?
 AM_DVD_RENDERSTATUS	ENDS
 
-externdef		__MIDL_itf_strmif_0000_0117_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0117_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IDvdGraphBuilder_INTERFACE_DEFINED__
 __IDvdGraphBuilder_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDvdGraphBuilder:IID
+DEFINE_IIDX(IDvdGraphBuilder, "FCC152B6-F372-11d0-8E00-00C04FD7C08B")
 
 .comdef IDvdGraphBuilder
 
@@ -4114,7 +3883,7 @@ endif
 ifndef __IDDrawExclModeVideo_INTERFACE_DEFINED__
 __IDDrawExclModeVideo_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDDrawExclModeVideo:IID
+DEFINE_IIDX(IDDrawExclModeVideo, "153ACC21-D83B-11d1-82BF-00A0C9696C8F")
 
 .comdef IDDrawExclModeVideo
 
@@ -4137,13 +3906,10 @@ AM_OVERLAY_NOTIFY_VISIBLE_CHANGE equ 0x1
 AM_OVERLAY_NOTIFY_SOURCE_CHANGE equ 0x2
 AM_OVERLAY_NOTIFY_DEST_CHANGE equ 0x4
 
-externdef		__MIDL_itf_strmif_0000_0119_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0119_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IDDrawExclModeVideoCallback_INTERFACE_DEFINED__
 __IDDrawExclModeVideoCallback_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IDDrawExclModeVideoCallback:IID
+DEFINE_IIDX(IDDrawExclModeVideoCallback, "913c24a0-20ab-11d2-9038-00a0c9697298")
 
 .comdef IDDrawExclModeVideoCallback
 
@@ -4157,13 +3923,10 @@ externdef		IID_IDDrawExclModeVideoCallback:IID
 
 endif
 
-externdef		__MIDL_itf_strmif_0000_0120_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0120_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IPinConnection_INTERFACE_DEFINED__
 __IPinConnection_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IPinConnection:IID
+DEFINE_IIDX(IPinConnection, "4a9a62d3-27d4-403d-91e9-89f540e55534")
 
 .comdef IPinConnection
 
@@ -4181,7 +3944,7 @@ endif
 ifndef __IPinFlowControl_INTERFACE_DEFINED__
 __IPinFlowControl_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IPinFlowControl:IID
+DEFINE_IIDX(IPinFlowControl, "c56e9858-dbf3-4f6b-8119-384af2060deb")
 
 .comdef IPinFlowControl
 
@@ -4205,13 +3968,10 @@ REMFILTERF_LEAVECONNECTED equ 0x1
 AM_FILTER_FLAGS		typedef SDWORD
 AM_FILTER_FLAGS_REMOVABLE equ 0x1
 
-externdef		__MIDL_itf_strmif_0000_0122_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0122_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IGraphConfig_INTERFACE_DEFINED__
 __IGraphConfig_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IGraphConfig:IID
+DEFINE_IIDX(IGraphConfig, "03A1EB8E-32BF-4245-8502-114D08A9CB88")
 
 .comdef IGraphConfig
 
@@ -4235,7 +3995,7 @@ endif
 ifndef __IGraphConfigCallback_INTERFACE_DEFINED__
 __IGraphConfigCallback_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IGraphConfigCallback:IID
+DEFINE_IIDX(IGraphConfigCallback, "ade0fd60-d19d-11d2-abf6-00a0c905f375")
 
 .comdef IGraphConfigCallback
 
@@ -4250,7 +4010,7 @@ endif
 ifndef __IFilterChain_INTERFACE_DEFINED__
 __IFilterChain_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IFilterChain:IID
+DEFINE_IIDX(IFilterChain, "DCFBDCF6-0DC2-45f5-9AB2-7C330EA09C29")
 
 .comdef IFilterChain
 
@@ -4299,13 +4059,10 @@ dwTypeSpecificFlags	dd ?
 dwInterlaceFlags	dd ?
 VMRPRESENTATIONINFO	ENDS
 
-externdef		__MIDL_itf_strmif_0000_0125_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0125_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IVMRImagePresenter_INTERFACE_DEFINED__
 __IVMRImagePresenter_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVMRImagePresenter:IID
+DEFINE_IIDX(IVMRImagePresenter, "CE704FE7-E71E-41fb-BAA2-C4403E1182F5")
 
 .comdef IVMRImagePresenter
 
@@ -4338,13 +4095,10 @@ dwInterlaceFlags	dd ?
 szNativeSize		SIZEL <>
 VMRALLOCATIONINFO	ENDS
 
-externdef		__MIDL_itf_strmif_0000_0126_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0126_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IVMRSurfaceAllocator_INTERFACE_DEFINED__
 __IVMRSurfaceAllocator_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVMRSurfaceAllocator:IID
+DEFINE_IIDX(IVMRSurfaceAllocator, "31ce832e-4484-458b-8cca-f4d7e3db0b52")
 
 .comdef IVMRSurfaceAllocator
 
@@ -4363,7 +4117,7 @@ endif
 ifndef __IVMRSurfaceAllocatorNotify_INTERFACE_DEFINED__
 __IVMRSurfaceAllocatorNotify_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVMRSurfaceAllocatorNotify:IID
+DEFINE_IIDX(IVMRSurfaceAllocatorNotify, "aada05a8-5a4e-4729-af0b-cea27aed51e2")
 
 .comdef IVMRSurfaceAllocatorNotify
 
@@ -4384,13 +4138,10 @@ VMR_ASPECT_RATIO_MODE	typedef SDWORD
 VMR_ARMODE_NONE		equ 0
 VMR_ARMODE_LETTER_BOX	equ ( VMR_ARMODE_NONE + 1 )
 
-externdef		__MIDL_itf_strmif_0000_0128_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0128_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IVMRWindowlessControl_INTERFACE_DEFINED__
 __IVMRWindowlessControl_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVMRWindowlessControl:IID
+DEFINE_IIDX(IVMRWindowlessControl, "0eb1088c-4dcd-46f0-878f-39dae86a51b7")
 
 .comdef IVMRWindowlessControl
 
@@ -4446,13 +4197,10 @@ NORMALIZEDRECT		ENDS
 
 PNORMALIZEDRECT		typedef ptr NORMALIZEDRECT
 
-externdef		__MIDL_itf_strmif_0000_0129_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0129_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IVMRMixerControl_INTERFACE_DEFINED__
 __IVMRMixerControl_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVMRMixerControl:IID
+DEFINE_IIDX(IVMRMixerControl, "1c1a17b0-bed0-415d-974b-dc6696131599")
 
 .comdef IVMRMixerControl
 
@@ -4492,13 +4240,10 @@ dwSubSysId		dd ?
 dwRevision		dd ?
 VMRMONITORINFO		ENDS
 
-externdef		__MIDL_itf_strmif_0000_0130_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0130_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IVMRMonitorConfig_INTERFACE_DEFINED__
 __IVMRMonitorConfig_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVMRMonitorConfig:IID
+DEFINE_IIDX(IVMRMonitorConfig, "9cf0b1b6-fbaa-4b7f-88cf-cf1f130a0dce")
 
 .comdef IVMRMonitorConfig
 
@@ -4534,13 +4279,10 @@ VMRMode_Mask		equ 0x7
 _MIDL___MIDL_itf_strmif_0000_0131_0001 typedef SDWORD
 MAX_NUMBER_OF_STREAMS	equ 16
 
-externdef		__MIDL_itf_strmif_0000_0131_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0131_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IVMRFilterConfig_INTERFACE_DEFINED__
 __IVMRFilterConfig_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVMRFilterConfig:IID
+DEFINE_IIDX(IVMRFilterConfig, "9e5530c5-7034-48b4-bb46-0b8a6efc8e36")
 
 .comdef IVMRFilterConfig
 
@@ -4561,7 +4303,7 @@ endif
 ifndef __IVMRAspectRatioControl_INTERFACE_DEFINED__
 __IVMRAspectRatioControl_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVMRAspectRatioControl:IID
+DEFINE_IIDX(IVMRAspectRatioControl, "ede80b5c-bad6-4623-b537-65586c9f8dfd")
 
 .comdef IVMRAspectRatioControl
 
@@ -4613,13 +4355,10 @@ dwNumBackwardRefSamples dd ?
 DeinterlaceTechnology	VMRDeinterlaceTech ?
 VMRDeinterlaceCaps	ENDS
 
-externdef		__MIDL_itf_strmif_0000_0133_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0133_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IVMRDeinterlaceControl_INTERFACE_DEFINED__
 __IVMRDeinterlaceControl_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVMRDeinterlaceControl:IID
+DEFINE_IIDX(IVMRDeinterlaceControl, "bb057577-0db8-4e6a-87a7-1a8c9a505a0f")
 
 .comdef IVMRDeinterlaceControl
 
@@ -4655,13 +4394,10 @@ VMRBITMAP_ENTIREDDS	equ 0x00000004
 VMRBITMAP_SRCCOLORKEY	equ 0x00000008
 VMRBITMAP_SRCRECT	equ 0x00000010
 
-externdef		__MIDL_itf_strmif_0000_0134_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0134_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IVMRMixerBitmap_INTERFACE_DEFINED__
 __IVMRMixerBitmap_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVMRMixerBitmap:IID
+DEFINE_IIDX(IVMRMixerBitmap, "1E673275-0257-40aa-AF20-7C608D4A0428")
 
 .comdef IVMRMixerBitmap
 
@@ -4685,13 +4421,10 @@ ddClrKey		DDCOLORKEY <>
 rNormal			NORMALIZEDRECT <>
 VMRVIDEOSTREAMINFO	ENDS
 
-externdef		__MIDL_itf_strmif_0000_0135_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0135_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IVMRImageCompositor_INTERFACE_DEFINED__
 __IVMRImageCompositor_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVMRImageCompositor:IID
+DEFINE_IIDX(IVMRImageCompositor, "7a4fb5af-479f-4074-bb40-ce6722e43c82")
 
 .comdef IVMRImageCompositor
 
@@ -4709,7 +4442,7 @@ endif
 ifndef __IVMRVideoStreamControl_INTERFACE_DEFINED__
 __IVMRVideoStreamControl_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVMRVideoStreamControl:IID
+DEFINE_IIDX(IVMRVideoStreamControl, "058d1f11-2a54-4bef-bd54-df706626b727")
 
 .comdef IVMRVideoStreamControl
 
@@ -4728,7 +4461,7 @@ endif
 ifndef __IVMRSurface_INTERFACE_DEFINED__
 __IVMRSurface_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVMRSurface:IID
+DEFINE_IIDX(IVMRSurface, "a9849bbe-9ec8-4263-b764-62730f0d15d0")
 
 .comdef IVMRSurface
 
@@ -4746,7 +4479,7 @@ endif
 ifndef __IVMRImagePresenterConfig_INTERFACE_DEFINED__
 __IVMRImagePresenterConfig_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVMRImagePresenterConfig:IID
+DEFINE_IIDX(IVMRImagePresenterConfig, "9f3a1c85-8555-49ba-935f-be5b5b29d178")
 
 .comdef IVMRImagePresenterConfig
 
@@ -4762,7 +4495,7 @@ endif
 ifndef __IVMRImagePresenterExclModeConfig_INTERFACE_DEFINED__
 __IVMRImagePresenterExclModeConfig_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVMRImagePresenterExclModeConfig:IID
+DEFINE_IIDX(IVMRImagePresenterExclModeConfig, "e6f7ce40-4673-44f1-8f77-5499d68cb4ea")
 
 .comdef IVMRImagePresenterExclModeConfig
 
@@ -4781,7 +4514,7 @@ endif
 ifndef __IVPManager_INTERFACE_DEFINED__
 __IVPManager_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IVPManager:IID
+DEFINE_IIDX(IVPManager, "aac18c18-e186-46d2-825d-a1f8dc8e395a")
 
 .comdef IVPManager
 
@@ -4793,8 +4526,5 @@ externdef		IID_IVPManager:IID
     .ends
 
 endif
-
-externdef		__MIDL_itf_strmif_0000_0141_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_strmif_0000_0141_v0_0_s_ifspec:RPC_IF_HANDLE
 
 endif

@@ -78,13 +78,10 @@ MMSSF_ASYNCHRONOUS	equ 0x4
 SSUPDATE_ASYNC		equ 0x1
 SSUPDATE_CONTINUOUS	equ 0x2
 
-externdef		__MIDL_itf_mmstream_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_mmstream_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IMultiMediaStream_INTERFACE_DEFINED__
 __IMultiMediaStream_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IMultiMediaStream:IID
+DEFINE_IIDX(IMultiMediaStream, "B502D1BC-9A57-11d0-8FDE-00C04FD9189D")
 
 .comdef IMultiMediaStream
 
@@ -107,7 +104,7 @@ endif
 ifndef __IMediaStream_INTERFACE_DEFINED__
 __IMediaStream_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IMediaStream:IID
+DEFINE_IIDX(IMediaStream, "B502D1BD-9A57-11d0-8FDE-00C04FD9189D")
 
 .comdef IMediaStream
 
@@ -127,7 +124,7 @@ endif
 ifndef __IStreamSample_INTERFACE_DEFINED__
 __IStreamSample_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IStreamSample:IID
+DEFINE_IIDX(IStreamSample, "B502D1BE-9A57-11d0-8FDE-00C04FD9189D")
 
 .comdef IStreamSample
 

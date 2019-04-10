@@ -49,7 +49,7 @@ CHKSUM_TYPE_MD5         equ 1
 CHKSUM_TYPE_SHA1        equ 2
 CHKSUM_TYPE_SHA_256     equ 3
 
-_SymTagEnum             typedef SDWORD
+SymTagEnum              typedef SDWORD
 SymTagNull              equ 0
 SymTagExe               equ 1
 SymTagCompiland         equ 2
@@ -62,7 +62,7 @@ SymTagAnnotation        equ 8
 SymTagLabel             equ 9
 SymTagPublicSymbol      equ 10
 SymTagUDT               equ 11
-SymTagEnum              equ 12
+_SymTagEnum             equ 12
 SymTagFunctionType      equ 13
 SymTagPointerType       equ 14
 SymTagArrayType         equ 15

@@ -114,9 +114,6 @@ include winapifamily.inc
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 if (NTDDI_VERSION GE NTDDI_WIN7)
 
-externdef		__MIDL_itf_appxpackaging_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_appxpackaging_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __APPXPACKAGING_LIBRARY_DEFINED__
 __APPXPACKAGING_LIBRARY_DEFINED__ equ 1
 
@@ -697,9 +694,6 @@ endif ;; __APPXPACKAGING_LIBRARY_DEFINED__
 
 endif ;; (NTDDI GE NTDDI_WIN7)
 endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-externdef		__MIDL_itf_appxpackaging_0000_0001_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_appxpackaging_0000_0001_v0_0_s_ifspec:RPC_IF_HANDLE
 
 endif
 .pragma list(pop)

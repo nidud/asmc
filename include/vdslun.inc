@@ -111,7 +111,4 @@ VER_VDS_LUN_INFORMATION equ ( 1 )
 
 endif
 
-externdef		__MIDL_itf_vdslun_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_vdslun_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
-
 endif

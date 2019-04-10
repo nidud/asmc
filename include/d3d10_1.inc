@@ -86,12 +86,8 @@ IndependentBlendEnable	BOOL ?
 RenderTarget		D3D10_RENDER_TARGET_BLEND_DESC1 8 dup(<>)
 D3D10_BLEND_DESC1	ENDS
 
-externdef		__MIDL_itf_d3d10_1_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d10_1_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D10BlendState1_INTERFACE_DEFINED__
 __ID3D10BlendState1_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D10BlendState1:IID
 
 .comdef ID3D10BlendState1
 
@@ -144,12 +140,8 @@ UNION
 ENDS
 D3D10_SHADER_RESOURCE_VIEW_DESC1 ENDS
 
-externdef		__MIDL_itf_d3d10_1_0000_0001_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d10_1_0000_0001_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D10ShaderResourceView1_INTERFACE_DEFINED__
 __ID3D10ShaderResourceView1_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D10ShaderResourceView1:IID
 
 .comdef ID3D10ShaderResourceView1
 
@@ -170,12 +162,8 @@ D3D10_STANDARD_MULTISAMPLE_QUALITY_LEVELS typedef SDWORD
 D3D10_STANDARD_MULTISAMPLE_PATTERN equ 0xffffffff
 D3D10_CENTER_MULTISAMPLE_PATTERN equ 0xfffffffe
 
-externdef		__MIDL_itf_d3d10_1_0000_0002_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d10_1_0000_0002_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D10Device1_INTERFACE_DEFINED__
 __ID3D10Device1_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D10Device1:IID
 
 .comdef ID3D10Device1
 
@@ -332,10 +320,6 @@ D3D10CreateDeviceAndSwapChain1 proto WINAPI \
 DEFINE_GUID(IID_ID3D10BlendState1,0xEDAD8D99,0x8A35,0x4d6d,0x85,0x66,0x2E,0xA2,0x76,0xCD,0xE1,0x61)
 DEFINE_GUID(IID_ID3D10ShaderResourceView1,0x9B7E4C87,0x342C,0x4106,0xA1,0x9F,0x4F,0x27,0x04,0xF6,0x89,0xF0)
 DEFINE_GUID(IID_ID3D10Device1,0x9B7E4C8F,0x342C,0x4106,0xA1,0x9F,0x4F,0x27,0x04,0xF6,0x89,0xF0)
-
-
-externdef		__MIDL_itf_d3d10_1_0000_0003_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d10_1_0000_0003_v0_0_s_ifspec:RPC_IF_HANDLE
 
 endif
 .pragma list(pop)

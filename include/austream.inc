@@ -39,13 +39,10 @@ include winapifamily.inc
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 
-externdef		__MIDL_itf_austream_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_austream_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IAudioMediaStream_INTERFACE_DEFINED__
 __IAudioMediaStream_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAudioMediaStream:IID
+DEFINE_IIDX(IAudioMediaStream, "f7537560-a3be-11d0-8212-00c04fc32c45")
 
 .comdef IAudioMediaStream
 
@@ -68,7 +65,7 @@ endif
 ifndef __IAudioStreamSample_INTERFACE_DEFINED__
 __IAudioStreamSample_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAudioStreamSample:IID
+DEFINE_IIDX(IAudioStreamSample, "345fee00-aba5-11d0-8212-00c04fc32c45")
 
 .comdef IAudioStreamSample
 
@@ -88,7 +85,7 @@ endif
 ifndef __IMemoryData_INTERFACE_DEFINED__
 __IMemoryData_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IMemoryData:IID
+DEFINE_IIDX(IMemoryData, "327fc560-af60-11d0-8212-00c04fc32c45")
 
 .comdef IMemoryData
 
@@ -105,7 +102,7 @@ endif
 ifndef __IAudioData_INTERFACE_DEFINED__
 __IAudioData_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IAudioData:IID
+DEFINE_IIDX(IAudioData, "54c719c0-af60-11d0-8212-00c04fc32c45")
 
 .comdef IAudioData
 
@@ -122,8 +119,5 @@ externdef		IID_IAudioData:IID
 endif
 
 endif ;; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-
-externdef		__MIDL_itf_austream_0000_0004_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_austream_0000_0004_v0_0_s_ifspec:RPC_IF_HANDLE
 
 endif

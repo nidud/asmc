@@ -48,13 +48,10 @@ BG_COPY_FILE_SACL	equ 8
 BG_COPY_FILE_ALL	equ 15
 
 
-externdef		__MIDL_itf_bits2_0_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_bits2_0_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IBackgroundCopyJob3_INTERFACE_DEFINED__
 __IBackgroundCopyJob3_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IBackgroundCopyJob3:IID
+DEFINE_IIDX(IBackgroundCopyJob3, "443c8934-90ff-48ed-bcde-26f5c7450042")
 
 .comdef IBackgroundCopyJob3
 
@@ -112,7 +109,7 @@ endif
 ifndef __IBackgroundCopyFile2_INTERFACE_DEFINED__
 __IBackgroundCopyFile2_INTERFACE_DEFINED__ equ 1
 
-externdef		IID_IBackgroundCopyFile2:IID
+DEFINE_IIDX(IBackgroundCopyFile2, "83e81b93-0873-474d-8a8c-f2018b1a939c")
 
 .comdef IBackgroundCopyFile2
 
@@ -131,16 +128,11 @@ endif
 ifndef __BackgroundCopyManager2_0_LIBRARY_DEFINED__
 __BackgroundCopyManager2_0_LIBRARY_DEFINED__ equ 1
 
-externdef		LIBID_BackgroundCopyManager2_0:IID
-externdef		CLSID_BackgroundCopyManager2_0:CLSID
-ifdef __cplusplus
-class DECLSPEC_UUID("6d18ad12-bde3-4393-b311-099c346e6df9")
-endif
+DEFINE_GUIDS(LIBID_BackgroundCopyManager2_0, "6d18ad12-bde3-4393-b311-099c346e6df9")
+DEFINE_GUIDS(CLSID_BackgroundCopyManager2_0, "6d18ad12-bde3-4393-b311-099c346e6df9")
+
 endif
 
 include bits2_5.inc
-
-externdef __MIDL_itf_bits2_0_0000_0002_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef __MIDL_itf_bits2_0_0000_0002_v0_0_s_ifspec:RPC_IF_HANDLE
 
 endif

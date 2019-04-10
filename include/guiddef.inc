@@ -26,6 +26,42 @@ DEFINE_OLEGUID macro id, l, w1, w2
     exitm<DEFINE_GUID(id, l, w1, w2, 0xC0,0,0,0,0,0,0,0x46)>
     endm
 
+ifndef DEFINE_GUIDS
+
+DEFINE_GUIDS macro id, x
+    DEFINE_GUID(id, \
+	@CatStr(<0x>, @SubStr(x, 2,8)), \
+	@CatStr(<0x>, @SubStr(x,11,4)), \
+	@CatStr(<0x>, @SubStr(x,16,4)), \
+	@CatStr(<0x>, @SubStr(x,21,2)), \
+	@CatStr(<0x>, @SubStr(x,23,2)), \
+	@CatStr(<0x>, @SubStr(x,26,2)), \
+	@CatStr(<0x>, @SubStr(x,28,2)), \
+	@CatStr(<0x>, @SubStr(x,30,2)), \
+	@CatStr(<0x>, @SubStr(x,32,2)), \
+	@CatStr(<0x>, @SubStr(x,34,2)), \
+	@CatStr(<0x>, @SubStr(x,36,2)))
+	exitm<>
+	endm
+
+DEFINE_IIDX macro name, x
+    DEFINE_GUID(IID_&name&, \
+	@CatStr(<0x>, @SubStr(x, 2,8)), \
+	@CatStr(<0x>, @SubStr(x,11,4)), \
+	@CatStr(<0x>, @SubStr(x,16,4)), \
+	@CatStr(<0x>, @SubStr(x,21,2)), \
+	@CatStr(<0x>, @SubStr(x,23,2)), \
+	@CatStr(<0x>, @SubStr(x,26,2)), \
+	@CatStr(<0x>, @SubStr(x,28,2)), \
+	@CatStr(<0x>, @SubStr(x,30,2)), \
+	@CatStr(<0x>, @SubStr(x,32,2)), \
+	@CatStr(<0x>, @SubStr(x,34,2)), \
+	@CatStr(<0x>, @SubStr(x,36,2)))
+	exitm<>
+	endm
+
+endif
+
 ifndef _GUIDDEF_H_
 _GUIDDEF_H_ equ <>
 ifndef __PE__

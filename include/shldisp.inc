@@ -242,8 +242,6 @@ ssfSYSTEMx86		equ 0x29
 ssfPROGRAMFILESx86	equ 0x30
 
 externdef		LIBID_Shell32:IID
-externdef		__MIDL_itf_shldisp_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shldisp_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __Shell32_LIBRARY_DEFINED__
 __Shell32_LIBRARY_DEFINED__ equ 1
@@ -253,7 +251,7 @@ ifndef __IFolderViewOC_INTERFACE_DEFINED__
 __IFolderViewOC_INTERFACE_DEFINED__ equ 1
 
 
-externdef		IID_IFolderViewOC:IID
+DEFINE_IIDX(IFolderViewOC, "9BA05970-F6A8-11CF-A442-00A0C90A8F39")
 
 .comdef IFolderViewOC
     QueryInterface	proc :REFIID, :ptr
@@ -272,7 +270,7 @@ ifndef __DShellFolderViewEvents_DISPINTERFACE_DEFINED__
 __DShellFolderViewEvents_DISPINTERFACE_DEFINED__ equ 1
 
 
-externdef		DIID_DShellFolderViewEvents:IID
+DEFINE_GUIDS(DIID_DShellFolderViewEvents, "62112AA2-EBE4-11cf-A5FB-0020AFE7292D")
 
 .comdef DShellFolderViewEvents
     QueryInterface	proc :REFIID, :ptr
@@ -291,8 +289,8 @@ externdef		CLSID_ShellFolderViewOC:CLSID
 ifndef __DFConstraint_INTERFACE_DEFINED__
 __DFConstraint_INTERFACE_DEFINED__ equ 1
 
+DEFINE_IIDX(DFConstraint, "4a3df050-23bd-11d2-939f-00a0c91eedba")
 
-externdef		IID_DFConstraint:IID
 .comdef DFConstraint
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -310,6 +308,7 @@ endif
 ifndef __FolderItem_INTERFACE_DEFINED__
 __FolderItem_INTERFACE_DEFINED__ equ 1
 
+DEFINE_IIDX(FolderItem, "FAC32C80-CBE4-11CE-8350-444553540000")
 
 .comdef FolderItem
     QueryInterface	proc :REFIID, :ptr
@@ -337,8 +336,8 @@ __FolderItem_INTERFACE_DEFINED__ equ 1
     Verbs		proc :ptr
     InvokeVerb		proc :VARIANT
     .ends
+
 LPFOLDERITEM		typedef ptr FolderItem
-externdef		IID_FolderItem:IID
 
 endif
 
@@ -346,8 +345,8 @@ endif
 ifndef __FolderItems_INTERFACE_DEFINED__
 __FolderItems_INTERFACE_DEFINED__ equ 1
 
+DEFINE_IIDX(FolderItems, "744129E0-CBE5-11CE-8350-444553540000")
 
-externdef		IID_FolderItems:IID
 .comdef FolderItems
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -368,8 +367,8 @@ endif
 ifndef __FolderItemVerb_INTERFACE_DEFINED__
 __FolderItemVerb_INTERFACE_DEFINED__ equ 1
 
+DEFINE_IIDX(FolderItemVerb, "08EC3E00-50B0-11CF-960C-0080C7F4EE85")
 
-externdef		IID_FolderItemVerb:IID
 .comdef FolderItemVerb
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -389,8 +388,8 @@ endif
 ifndef __FolderItemVerbs_INTERFACE_DEFINED__
 __FolderItemVerbs_INTERFACE_DEFINED__ equ 1
 
+DEFINE_IIDX(FolderItemVerbs, "1F8352C0-50B0-11CF-960C-0080C7F4EE85")
 
-externdef		IID_FolderItemVerbs:IID
 .comdef FolderItemVerbs
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -411,8 +410,8 @@ endif
 ifndef __Folder_INTERFACE_DEFINED__
 __Folder_INTERFACE_DEFINED__ equ 1
 
+DEFINE_IIDX(Folder, "BBCBDE60-C3FF-11CE-8350-444553540000")
 
-externdef		IID_Folder:IID
 .comdef Folder
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -438,8 +437,8 @@ endif
 ifndef __Folder2_INTERFACE_DEFINED__
 __Folder2_INTERFACE_DEFINED__ equ 1
 
+DEFINE_IIDX(Folder2, "f0d2d8ef-3890-11d2-bf8b-00c04fb93661")
 
-externdef		IID_Folder2:IID
 .comdef Folder2
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -471,8 +470,8 @@ endif
 ifndef __Folder3_INTERFACE_DEFINED__
 __Folder3_INTERFACE_DEFINED__ equ 1
 
+DEFINE_IIDX(Folder3,"A7AE5F64-C4D7-4d7f-9307-4D24EE54B841")
 
-externdef		IID_Folder3:IID
 .comdef Folder3
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -506,8 +505,8 @@ endif
 ifndef __FolderItem2_INTERFACE_DEFINED__
 __FolderItem2_INTERFACE_DEFINED__ equ 1
 
+DEFINE_IIDX(FolderItem2, "edc817aa-92b8-11d1-b075-00c04fc33aa5")
 
-externdef		IID_FolderItem2:IID
 .comdef FolderItem2
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -539,13 +538,13 @@ externdef		IID_FolderItem2:IID
 
 endif
 
-externdef		CLSID_ShellFolderItem:CLSID
+DEFINE_GUIDS(CLSID_ShellFolderItem, "2fe352ea-fd1f-11d2-b1f4-00c04f8eeb3e")
 
 ifndef __FolderItems2_INTERFACE_DEFINED__
 __FolderItems2_INTERFACE_DEFINED__ equ 1
 
+DEFINE_IIDX(FolderItems2, "C94F0AD0-F363-11d2-A327-00C04F8EEC7F")
 
-externdef		IID_FolderItems2:IID
 .comdef FolderItems2
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -567,8 +566,8 @@ endif
 ifndef __FolderItems3_INTERFACE_DEFINED__
 __FolderItems3_INTERFACE_DEFINED__ equ 1
 
+DEFINE_IIDX(FolderItems3, "eaa7c309-bbec-49d5-821d-64d966cb667f")
 
-externdef		IID_FolderItems3:IID
 .comdef FolderItems3
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -592,8 +591,8 @@ endif
 ifndef __IShellLinkDual_INTERFACE_DEFINED__
 __IShellLinkDual_INTERFACE_DEFINED__ equ 1
 
+DEFINE_IIDX(IShellLinkDual, "88A05C00-F000-11CE-8350-444553540000")
 
-externdef		IID_IShellLinkDual:IID
 .comdef IShellLinkDual
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -626,9 +625,8 @@ endif
 ifndef __IShellLinkDual2_INTERFACE_DEFINED__
 __IShellLinkDual2_INTERFACE_DEFINED__ equ 1
 
+DEFINE_IIDX(IShellLinkDual2, "317EE249-F12E-11d2-B1E4-00C04F8EEB3E")
 
-
-externdef		IID_IShellLinkDual2:IID
 .comdef IShellLinkDual2
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -663,8 +661,8 @@ externdef		CLSID_ShellLinkObject:CLSID
 ifndef __IShellFolderViewDual_INTERFACE_DEFINED__
 __IShellFolderViewDual_INTERFACE_DEFINED__ equ 1
 
+DEFINE_IIDX(IShellFolderViewDual, "E7A1AF80-4D96-11CF-960C-0080C7F4EE85")
 
-externdef		IID_IShellFolderViewDual:IID
 .comdef IShellFolderViewDual
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -689,8 +687,8 @@ endif
 ifndef __IShellFolderViewDual2_INTERFACE_DEFINED__
 __IShellFolderViewDual2_INTERFACE_DEFINED__ equ 1
 
+DEFINE_IIDX(IShellFolderViewDual2, "31C147b6-0ADE-4A3C-B514-DDF932EF6D17")
 
-externdef		IID_IShellFolderViewDual2:IID
 .comdef IShellFolderViewDual2
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -718,8 +716,7 @@ endif
 ifndef __IShellFolderViewDual3_INTERFACE_DEFINED__
 __IShellFolderViewDual3_INTERFACE_DEFINED__ equ 1
 
-
-externdef		IID_IShellFolderViewDual3:IID
+DEFINE_IIDX(IShellFolderViewDual3, "29EC8E6C-46D3-411f-BAAA-611A6C9CAC66")
 
 .comdef IShellFolderViewDual3
     QueryInterface	proc :REFIID, :ptr
@@ -754,13 +751,13 @@ externdef		IID_IShellFolderViewDual3:IID
 
 endif
 
-externdef		CLSID_ShellFolderView:CLSID
+DEFINE_GUIDS(CLSID_ShellFolderView, "62112AA1-EBE4-11cf-A5FB-0020AFE7292D")
 
 ifndef __IShellDispatch_INTERFACE_DEFINED__
 __IShellDispatch_INTERFACE_DEFINED__ equ 1
 
+DEFINE_IIDX(IShellDispatch, "D8F015C0-C278-11CE-A49E-444553540000")
 
-externdef		IID_IShellDispatch:IID
 .comdef IShellDispatch
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -799,8 +796,8 @@ endif
 ifndef __IShellDispatch2_INTERFACE_DEFINED__
 __IShellDispatch2_INTERFACE_DEFINED__ equ 1
 
+DEFINE_IIDX(IShellDispatch2, "A4C6892C-3BA9-11d2-9DEA-00C04FB16162")
 
-externdef		IID_IShellDispatch2:IID
 .comdef IShellDispatch2
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -848,8 +845,8 @@ endif
 ifndef __IShellDispatch3_INTERFACE_DEFINED__
 __IShellDispatch3_INTERFACE_DEFINED__ equ 1
 
+DEFINE_IIDX(IShellDispatch3, "177160ca-bb5a-411c-841d-bd38facdeaa0")
 
-externdef		IID_IShellDispatch3:IID
 .comdef IShellDispatch3
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -899,8 +896,8 @@ endif
 ifndef __IShellDispatch4_INTERFACE_DEFINED__
 __IShellDispatch4_INTERFACE_DEFINED__ equ 1
 
+DEFINE_IIDX(IShellDispatch4, "efd84b2d-4bcf-4298-be25-eb542a59fbda")
 
-externdef		IID_IShellDispatch4:IID
 .comdef IShellDispatch4
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -953,8 +950,8 @@ endif
 ifndef __IShellDispatch5_INTERFACE_DEFINED__
 __IShellDispatch5_INTERFACE_DEFINED__ equ 1
 
+DEFINE_IIDX(IShellDispatch5, "866738b9-6cf2-4de8-8767-f794ebe74f4e")
 
-externdef		IID_IShellDispatch5:IID
 .comdef IShellDispatch5
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1005,14 +1002,14 @@ externdef		IID_IShellDispatch5:IID
 
 endif
 
-externdef		CLSID_Shell:CLSID
-externdef		CLSID_ShellDispatchInproc:CLSID
+DEFINE_GUIDS(CLSID_Shell,		"13709620-C279-11CE-A49E-444553540000")
+DEFINE_GUIDS(CLSID_ShellDispatchInproc, "0A89A860-D7B1-11CE-8350-444553540000")
 
 ifndef __IFileSearchBand_INTERFACE_DEFINED__
 __IFileSearchBand_INTERFACE_DEFINED__ equ 1
 
+DEFINE_IIDX(IFileSearchBand, "2D91EEA1-9932-11d2-BE86-00A0C9A83DA1")
 
-externdef		IID_IFileSearchBand:IID
 .comdef IFileSearchBand
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1030,13 +1027,13 @@ externdef		IID_IFileSearchBand:IID
 
 endif
 
-externdef		CLSID_FileSearchBand:CLSID
+DEFINE_GUIDS(CLSID_FileSearchBand, "C4EE31F3-4768-11D2-BE5C-00A0C9A83DA1")
 
 ifndef __IWebWizardHost_INTERFACE_DEFINED__
 __IWebWizardHost_INTERFACE_DEFINED__ equ 1
 
+DEFINE_IIDX(IWebWizardHost, "18bcc359-4990-4bfb-b951-3c83702be5f9")
 
-externdef		IID_IWebWizardHost:IID
 .comdef IWebWizardHost
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1061,8 +1058,8 @@ endif
 ifndef __INewWDEvents_INTERFACE_DEFINED__
 __INewWDEvents_INTERFACE_DEFINED__ equ 1
 
+DEFINE_IIDX(INewWDEvents, "0751c551-7568-41c9-8e5b-e22e38919236")
 
-externdef		IID_INewWDEvents:IID
 .comdef INewWDEvents
     AddRef		proc
     Release		proc
@@ -1086,12 +1083,10 @@ endif
 endif
 
 
-externdef		__MIDL_itf_shldisp_0001_0067_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shldisp_0001_0067_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IAutoComplete_INTERFACE_DEFINED__
 __IAutoComplete_INTERFACE_DEFINED__ equ 1
 
+DEFINE_IIDX(IAutoComplete, "00bb2762-6a77-11d0-a535-00c04fd7d062")
 
 .comdef IAutoComplete
     QueryInterface	proc :REFIID, :ptr
@@ -1100,8 +1095,8 @@ __IAutoComplete_INTERFACE_DEFINED__ equ 1
     Init		proc :HWND, :ptr, :LPCWSTR, :LPCWSTR
     Enable		proc :BOOL
     .ends
+
 LPAUTOCOMPLETE		typedef ptr IAutoComplete
-externdef		IID_IAutoComplete:IID
 
 endif
 
@@ -1121,6 +1116,8 @@ ACO_RTLREADING		equ 0x40
 ACO_WORD_FILTER		equ 0x80
 ACO_NOPREFIXFILTERING	equ 0x100
 
+DEFINE_IIDX(IAutoComplete2, "EAC04BC0-3791-11d2-BB95-0060977B464C")
+
 .comdef IAutoComplete2
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1130,26 +1127,22 @@ ACO_NOPREFIXFILTERING	equ 0x100
     SetOptions		proc :DWORD
     GetOptions		proc :ptr
     .ends
+
 LPAUTOCOMPLETE2		typedef ptr IAutoComplete2
-externdef		IID_IAutoComplete2:IID
 
 endif
 
 
-externdef		__MIDL_itf_shldisp_0000_0002_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shldisp_0000_0002_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IEnumACString_INTERFACE_DEFINED__
 __IEnumACString_INTERFACE_DEFINED__ equ 1
 
-
-tagACENUMOPTION		typedef SDWORD
+ACENUMOPTION		typedef SDWORD
 ACEO_NONE		equ 0
 ACEO_MOSTRECENTFIRST	equ 0x1
 ACEO_FIRSTUNUSED	equ 0x10000
 
+DEFINE_IIDX(IEnumACString, "8E74C210-CF9D-4eaf-A403-7356428F0A5A")
 
-externdef		IID_IEnumACString:IID
 .comdef IEnumACString
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
@@ -1167,11 +1160,10 @@ LPENUMACSTRING		typedef ptr IEnumACString
 
 endif
 
-externdef		__MIDL_itf_shldisp_0000_0003_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_shldisp_0000_0003_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IAsyncOperation_INTERFACE_DEFINED__
 __IAsyncOperation_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IAsyncOperation, "3D8B0590-F691-11d2-8EA9-006097DF5BD4")
 
 .comdef IAsyncOperation
     QueryInterface	proc :REFIID, :ptr
@@ -1183,8 +1175,8 @@ __IAsyncOperation_INTERFACE_DEFINED__ equ 1
     InOperation		proc :ptr
     EndOperation	proc :HRESULT, :ptr, :DWORD
     .ends
+
 LPASYNCOPERATION	typedef ptr IAsyncOperation
-externdef		IID_IAsyncOperation:IID
 
 endif
 endif

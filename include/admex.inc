@@ -34,9 +34,6 @@ DEFINE_GUID(IID_IMSAdminReplication, 0xc804d980, 0xebec, 0x11d0, 0xa6, 0xa0, 0x0
 DEFINE_GUID(IID_IMSAdminCryptoCapabilities, 0x78b64540, 0xf26d, 0x11d0, 0xa6, 0xa3, 0x0,0xa0, 0xc9, 0x22, 0xe7, 0x52)
 DEFINE_GUID(CLSID_MSCryptoAdmEx, 0x9f0bd3a0, 0xec01, 0x11d0, 0xa6, 0xa0, 0x0,0xa0, 0xc9, 0x22, 0xe7, 0x52)
 
-externdef		__MIDL_itf_admex_0000_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_admex_0000_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __IMSAdminReplication_INTERFACE_DEFINED__
 __IMSAdminReplication_INTERFACE_DEFINED__ equ 1
 
@@ -52,80 +49,7 @@ __IMSAdminReplication_INTERFACE_DEFINED__ equ 1
     DeSerialize		proc :DWORD, :ptr
     .ends
 
-;HRESULT
-IMSAdminReplication_GetSignature_Proxy proto WINAPI \
-		 _This: ptr,
-	  dwBufferSize: DWORD,
-	      pbBuffer: ptr char,
-pdwMDRequiredBufferSize: ptr DWORD
-
-;void
-IMSAdminReplication_GetSignature_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-;HRESULT
-IMSAdminReplication_Propagate_Proxy proto WINAPI \
-		 _This: ptr,
-	  dwBufferSize: DWORD,
-	     pszBuffer: ptr char
-
-
-;void
-IMSAdminReplication_Propagate_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-
-;HRESULT
-IMSAdminReplication_Propagate2_Proxy proto WINAPI \
-		 _This: ptr,
-	  dwBufferSize: DWORD,
-	     pszBuffer: ptr char,
-   dwSignatureMismatch: DWORD
-
-;void
-IMSAdminReplication_Propagate2_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-;HRESULT
-IMSAdminReplication_Serialize_Proxy proto WINAPI \
-		 _This: ptr,
-	  dwBufferSize: DWORD,
-	      pbBuffer: ptr char,
-pdwMDRequiredBufferSize: ptr DWORD
-
-;void
-IMSAdminReplication_Serialize_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-;HRESULT
-IMSAdminReplication_DeSerialize_Proxy proto WINAPI \
-		 _This: ptr,
-	  dwBufferSize: DWORD,
-	      pbBuffer: ptr char
-
-;void
-IMSAdminReplication_DeSerialize_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
 endif
-
-externdef		__MIDL_itf_admex_0255_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_admex_0255_v0_0_s_ifspec:RPC_IF_HANDLE
 
 ifndef __IMSAdminCryptoCapabilities_INTERFACE_DEFINED__
 __IMSAdminCryptoCapabilities_INTERFACE_DEFINED__ equ 1
@@ -142,78 +66,8 @@ __IMSAdminCryptoCapabilities_INTERFACE_DEFINED__ equ 1
     SetCAList		proc :DWORD, :ptr
     .ends
 
-;HRESULT
-IMSAdminCryptoCapabilities_GetProtocols_Proxy proto WINAPI \
-		 _This: ptr,
-	  dwBufferSize: DWORD,
-	      pbBuffer: ptr char,
-pdwMDRequiredBufferSize: ptr DWORD
-
-;void
-IMSAdminCryptoCapabilities_GetProtocols_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-;HRESULT
-IMSAdminCryptoCapabilities_GetMaximumCipherStrength_Proxy proto WINAPI \
-		 _This: ptr,
-pdwMaximumCipherStrength: LPDWORD
-
-;void
-IMSAdminCryptoCapabilities_GetMaximumCipherStrength_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-;HRESULT
-IMSAdminCryptoCapabilities_GetRootCertificates_Proxy proto WINAPI \
-		 _This: ptr,
-	  dwBufferSize: DWORD,
-	      pbBuffer: ptr char,
-pdwMDRequiredBufferSize: ptr DWORD
-
-;void
-IMSAdminCryptoCapabilities_GetRootCertificates_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-;HRESULT
-IMSAdminCryptoCapabilities_GetSupportedAlgs_Proxy proto WINAPI \
-		 _This: ptr,
-	  dwBufferSize: DWORD,
-	      pbBuffer: ptr DWORD,
-pdwMDRequiredBufferSize: ptr DWORD
-
-;void
-IMSAdminCryptoCapabilities_GetSupportedAlgs_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-;HRESULT
-IMSAdminCryptoCapabilities_SetCAList_Proxy proto WINAPI \
-		 _This: ptr,
-	  dwBufferSize: DWORD,
-	      pbBuffer: ptr
-
-;void
-IMSAdminCryptoCapabilities_SetCAList_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
 endif
 endif
-
-externdef __MIDL_itf_admex_0256_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef __MIDL_itf_admex_0256_v0_0_s_ifspec:RPC_IF_HANDLE
 
 .pragma list(pop)
 endif

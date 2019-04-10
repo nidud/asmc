@@ -19,57 +19,27 @@ endif
 
 include wtypes.inc
 
-externdef __MIDL_itf_unknwn_0000_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef __MIDL_itf_unknwn_0000_v0_0_s_ifspec:RPC_IF_HANDLE
+.pragma comment(lib, rpcrt4)
 
 ifndef __IUnknown_INTERFACE_DEFINED__
 __IUnknown_INTERFACE_DEFINED__ equ 1
 
-.pragma comment(lib, rpcrt4)
+DEFINE_IIDX(IUnknown, "00000000-0000-0000-C000-000000000046")
 
-LPUNKNOWN  typedef ptr IUnknown
+.comdef IUnknown
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    .ends
 
-;HRESULT
-IUnknown_QueryInterface_Proxy proto WINAPI \
-		 _This: LPUNKNOWN,
-		  riid: REFIID,
-	     ppvObject: PVOID
-;void
-IUnknown_QueryInterface_Stub proto WINAPI \
-		 _This: LPUNKNOWN,
-    _pRpcChannelBuffer: ptr,;IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-;ULONG
-IUnknown_AddRef_Proxy proto WINAPI \
-		 _This: ptr IUnknown
-
-
-;void
-IUnknown_AddRef_Stub proto WINAPI \
-		 _This: ptr,;IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr,;IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
-
-
-;ULONG
-IUnknown_Release_Proxy proto WINAPI \
-		 _This: ptr ;IUnknown
-
-
-;void
-IUnknown_Release_Stub proto WINAPI \
-		 _This: ptr,;IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr,;IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: LPDWORD
+LPUNKNOWN		typedef ptr IUnknown
 
 endif
 
 ifndef __IClassFactory_INTERFACE_DEFINED__
 __IClassFactory_INTERFACE_DEFINED__ equ 1
+
+DEFINE_IIDX(IClassFactory, "00000001-0000-0000-C000-000000000046")
 
 .comdef IClassFactory
     QueryInterface	proc :REFIID, :ptr
@@ -78,59 +48,9 @@ __IClassFactory_INTERFACE_DEFINED__ equ 1
     CreateInstance	proc :ptr, :REFIID, :ptr
     LockServer		proc :BOOL
     .ends
+
 LPCLASSFACTORY		typedef ptr IClassFactory
-externdef		IID_IClassFactory:IID
-
-;HRESULT
-IClassFactory_RemoteCreateInstance_Proxy proto WINAPI \
-		 _This: ptr IClassFactory,
-		  riid: REFIID,
-	     ppvObject: ptr IUnknown
-
-
-;void
-IClassFactory_RemoteCreateInstance_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
-
-
-;HRESULT
-IClassFactory_RemoteLockServer_Proxy proto WINAPI \
-		 _This: ptr IClassFactory,
-		 fLock: BOOL
-
-
-;void
-IClassFactory_RemoteLockServer_Stub proto WINAPI \
-		 _This: ptr IRpcStubBuffer,
-    _pRpcChannelBuffer: ptr IRpcChannelBuffer,
-	  _pRpcMessage: PRPC_MESSAGE,
-	 _pdwStubPhase: ptr DWORD
 
 endif
-
-;HRESULT
-IClassFactory_CreateInstance_Proxy proto WINAPI \
-		 _This: ptr IClassFactory,
-	     pUnkOuter: ptr IUnknown,
-		  riid: REFIID
-
-;HRESULT
-IClassFactory_CreateInstance_Stub proto WINAPI \
-		 _This: ptr IClassFactory,
-		  riid: REFIID,
-	     ppvObject: ptr IUnknown
-
-;HRESULT
-IClassFactory_LockServer_Proxy proto WINAPI \
-		 _This: ptr IClassFactory,
-		 fLock: BOOL
-
-;HRESULT
-IClassFactory_LockServer_Stub proto WINAPI \
-		 _This: ptr IClassFactory,
-		 fLock: BOOL
 
 endif

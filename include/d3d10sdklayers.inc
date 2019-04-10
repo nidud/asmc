@@ -33,12 +33,8 @@ D3D10_DEBUG_FEATURE_FLUSH_PER_RENDER_OP equ ( 0x1 )
 D3D10_DEBUG_FEATURE_FINISH_PER_RENDER_OP equ ( 0x2 )
 D3D10_DEBUG_FEATURE_PRESENT_PER_RENDER_OP equ ( 0x4 )
 
-externdef		__MIDL_itf_d3d10sdklayers_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d10sdklayers_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D10Debug_INTERFACE_DEFINED__
 __ID3D10Debug_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D10Debug:IID
 
 .comdef ID3D10Debug
 
@@ -57,7 +53,6 @@ endif
 
 ifndef __ID3D10SwitchToRef_INTERFACE_DEFINED__
 __ID3D10SwitchToRef_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D10SwitchToRef:IID
 
 .comdef ID3D10SwitchToRef
 
@@ -602,12 +597,8 @@ D3D10_INFO_QUEUE_FILTER ENDS
 
 D3D10_INFO_QUEUE_DEFAULT_MESSAGE_COUNT_LIMIT equ 1024
 
-externdef		__MIDL_itf_d3d10sdklayers_0000_0002_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d10sdklayers_0000_0002_v0_0_s_ifspec:RPC_IF_HANDLE
-
 ifndef __ID3D10InfoQueue_INTERFACE_DEFINED__
 __ID3D10InfoQueue_INTERFACE_DEFINED__ equ 1
-externdef		IID_ID3D10InfoQueue:IID
 
 .comdef ID3D10InfoQueue
 
@@ -670,8 +661,5 @@ D3D10_APPNAME_STRING	equ __TEXT("Name")
 DEFINE_GUID(IID_ID3D10Debug,0x9B7E4E01,0x342C,0x4106,0xA1,0x9F,0x4F,0x27,0x04,0xF6,0x89,0xF0);
 DEFINE_GUID(IID_ID3D10SwitchToRef,0x9B7E4E02,0x342C,0x4106,0xA1,0x9F,0x4F,0x27,0x04,0xF6,0x89,0xF0);
 DEFINE_GUID(IID_ID3D10InfoQueue,0x1b940b17,0x2642,0x4d1f,0xab,0x1f,0xb9,0x9b,0xad,0x0c,0x39,0x5f);
-
-externdef		__MIDL_itf_d3d10sdklayers_0000_0003_v0_0_c_ifspec:RPC_IF_HANDLE
-externdef		__MIDL_itf_d3d10sdklayers_0000_0003_v0_0_s_ifspec:RPC_IF_HANDLE
 
 endif

@@ -3,11 +3,13 @@
 ifndef __REQUIRED_RPCNDR_H_VERSION__
 __REQUIRED_RPCNDR_H_VERSION__ equ 475
 endif
+
 include rpc.inc
 include rpcndr.inc
 ifndef __RPCNDR_H_VERSION__
 .err <this stub requires an updated version of rpcndr.h>
 endif
+
 ifndef __iads_h__
 __iads_h__ equ <>
 
@@ -3009,8 +3011,9 @@ DEFINE_IIDX(IADsSecurityUtility, "a63251b2-5f21-474b-ab52-4a8efad10895")
 endif
 
 DEFINE_GUIDS(CLSID_ADsSecurityUtility, "f270c64a-ffb8-4ae4-85fe-3a75e5347966")
-endif
-endif
 
-endif
+endif ;; __ActiveDs_LIBRARY_DEFINED__
+
+endif ;; __iads_h__
+
 .pragma list(pop)

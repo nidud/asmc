@@ -129,7 +129,6 @@ ifndef __IVdsAdmin_FWD_DEFINED__
 __IVdsAdmin_FWD_DEFINED__ equ 1
 endif
 
-
 include oaidl.inc
 include vdserr.inc
 include vdslun.inc
@@ -571,7 +570,7 @@ ullPathId		ULONGLONG ?
 VDS_PATH_ID		ENDS
 
 VDS_WWN			STRUC
-rguchWwn		UCHAR  8  dup(?)
+rguchWwn		db 8 dup(?)
 VDS_WWN			ENDS
 
 VDS_IPADDRESS		STRUC
@@ -1060,7 +1059,6 @@ sMaxNumberOfSlotsEachBus SWORD ?
 sMaxNumberOfControllers SWORD ?
 sRebuildPriority	SWORD ?
 VDS_SUB_SYSTEM_PROP	ENDS
-
 PVDS_SUB_SYSTEM_PROP	typedef ptr VDS_SUB_SYSTEM_PROP
 
 VDS_SUB_SYSTEM_PROP2	STRUC
@@ -1117,7 +1115,6 @@ ulEnclosureNumber	ULONG ?
 busType			VDS_STORAGE_BUS_TYPE ?
 ulSpindleSpeed		ULONG ?
 VDS_DRIVE_PROP2		ENDS
-
 PVDS_DRIVE_PROP2	typedef ptr VDS_DRIVE_PROP2
 
 VDS_DRIVE_EXTENT	STRUC

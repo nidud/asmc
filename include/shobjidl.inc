@@ -7352,7 +7352,7 @@ DEFINE_IIDX(IContactManagerInterop, "99eacba7-e073-43b6-a896-55afe48a0833")
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
     Release		proc
-    ShowContactCardForWindow proc :HWND, :ptr, :const, :FLYOUT_PLACEMENT
+    ShowContactCardForWindow proc :HWND, :ptr, :ptr, :FLYOUT_PLACEMENT
     .ends
 
 endif

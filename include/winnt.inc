@@ -5039,7 +5039,13 @@ FILE_SUPPORTS_HARD_LINKS	equ 0x00400000
 FILE_SUPPORTS_EXTENDED_ATTRIBUTES equ 0x00800000
 FILE_SUPPORTS_OPEN_BY_FILE_ID	equ 0x01000000
 FILE_SUPPORTS_USN_JOURNAL	equ 0x02000000
+FILE_SUPPORTS_INTEGRITY_STREAMS equ 0x04000000
+FILE_INVALID_FILE_ID		equ -1
 
+FILE_ID_128		STRUC
+Identifier		db 16 dup(?)
+FILE_ID_128		ENDS
+PFILE_ID_128		typedef ptr FILE_ID_128
 
 FILE_NOTIFY_INFORMATION STRUC
 NextEntryOffset		dd ?
@@ -7613,7 +7619,7 @@ RtlEqualMemory macro Destination, Source, L
 	exitm<eax>
 	endm
 RtlMoveMemory equ <memmove>
-RtlCopyMemor  equ <memcpy>
+RtlCopyMemory equ <memcpy>
 RtlFillMemory macro Destination, L, Fill
 	exitm<memset(Destination,Fill,L)>
 	endm
@@ -7621,8 +7627,6 @@ RtlZeroMemory macro Destination, L
 	exitm<memset(Destination,0,L)>
 	endm
 
-;FORCEINLINE
-;PVOID
 RtlSecureZeroMemory macro vptr, cnt
 ifdef _M_AMD64
     __stosb(vptr, 0, cnt)

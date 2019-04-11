@@ -1,10 +1,10 @@
 ifndef _MINWINBASE_
 _MINWINBASE_ equ <>
 
-MoveMemory		equ RtlMoveMemory
-CopyMemory		equ RtlCopyMemory
-FillMemory		equ RtlFillMemory
-ZeroMemory		equ RtlZeroMemory
+MoveMemory		equ <RtlMoveMemory>
+CopyMemory		equ <RtlCopyMemory>
+FillMemory		equ <RtlFillMemory>
+ZeroMemory		equ <RtlZeroMemory>
 
 SECURITY_ATTRIBUTES	STRUC
 nLength			dd ?

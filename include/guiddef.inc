@@ -99,14 +99,6 @@ IsEqualFMTID macro rfmtid1, rfmtid2
 	exitm<IsEqualGUID(rfmtid1, rfmtid2)>
 	endm
 
-if 0
-ifdef __midl_proxy
-__MIDL_CONST		equ <>
-else
-__MIDL_CONST		equ <>
-endif
-endif
-
 ifndef _REFGUID_DEFINED
 _REFGUID_DEFINED	equ <>
 REFGUID			equ <LPGUID>

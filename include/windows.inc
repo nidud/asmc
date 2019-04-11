@@ -304,7 +304,7 @@ GetWindowFont macro hwnd
 if (WINVER GE 0x030a)
 ifdef UNIX
 MapWindowRect MwMapWindowRect
-LONG MwMapWindowRect(HWND, HWND, RECT *);
+MwMapWindowRect proto :HWND, :HWND, :ptr RECT
 else
 MapWindowRect macro hwndFrom, hwndTo, lprc
 	exitm<MapWindowPoints(hwndFrom, hwndTo, lprc, 2)>

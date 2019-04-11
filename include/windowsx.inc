@@ -1596,11 +1596,13 @@ Edit_GetLineCount macro hwndCtl
 	endm
 ifndef _MAC
 Edit_GetLine macro hwndCtl, line, lpch, cchMax
-	exitm<((*((int *)(lpch)) = (cchMax)), (SNDMSG((hwndCtl), EM_GETLINE, (line), (lpch))))>
+	mov dword ptr lpch,cchMax
+	exitm<SNDMSG((hwndCtl), EM_GETLINE, (line), (lpch))>
 	endm
 else
 Edit_GetLine macro hwndCtl, line, lpch, cchMax
-	exitm<((*((WORD *)(lpch)) = (cchMax)), (SNDMSG((hwndCtl), EM_GETLINE, (line), (lpch))))>
+	mov word ptr lpch,cchMax
+	exitm<SNDMSG((hwndCtl), EM_GETLINE, (line), (lpch))>
 	endm
 endif
 
@@ -1960,7 +1962,7 @@ ComboBox_GetDroppedState macro hwndCtl
 	exitm<(SNDMSG((hwndCtl), CB_GETDROPPEDSTATE, 0, 0))>
 	endm
 ComboBox_GetDroppedControlRect macro hwndCtl, lprc
-	exitm<(SNDMSG((hwndCtl), CB_GETDROPPEDCONTROLRECT, 0, (RECT *)(lprc)))>
+	exitm<(SNDMSG((hwndCtl), CB_GETDROPPEDCONTROLRECT, 0, (lprc)))>
 	endm
 
 ComboBox_GetItemHeight macro hwndCtl

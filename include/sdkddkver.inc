@@ -115,6 +115,18 @@ OSVERSION_MASK		equ 0xFFFF0000
 SPVERSION_MASK		equ 0x0000FF00
 SUBVERSION_MASK		equ 0x000000FF
 
+OSVER macro Version
+    exitm<((Version) and OSVERSION_MASK)>
+    endm
+
+SPVER macro Version
+    exitm<(((Version) and SPVERSION_MASK) shr 8)>
+    endm
+
+SUBVER macro Version
+    exitm<(((Version) and SUBVERSION_MASK) )>
+    endm
+
 ifdef DECLSPEC_DEPRECATED_DDK
 
 if (NTDDI_VERSION GE NTDDI_WIN2K)

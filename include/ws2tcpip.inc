@@ -527,7 +527,7 @@ WSAQuerySocketSecurity proto WINAPI \
 		Socket: SOCKET,
  SecurityQueryTemplate: ptr SOCKET_SECURITY_QUERY_TEMPLATE,
 SecurityQueryTemplateLen: ULONG,
-     SecurityQueryInfo: SOCKET_SECURITY_QUERY_INFO*,
+     SecurityQueryInfo: ptr SOCKET_SECURITY_QUERY_INFO,
   SecurityQueryInfoLen: ptr ULONG,
 	    Overlapped: LPWSAOVERLAPPED,
      CompletionRoutine: LPWSAOVERLAPPED_COMPLETION_ROUTINE

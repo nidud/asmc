@@ -4,15 +4,18 @@ endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
 __REQUIRED_RPCSAL_H_VERSION__ equ 100
 endif
+
 include rpc.inc
 include rpcndr.inc
 ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr.h>
+.err <this stub requires an updated version of rpcndr.inc>
 endif
+
 ifndef COM_NO_WINDOWS_H
 include windows.inc
 include ole2.inc
 endif
+
 ifndef __bits2_5_h__
 __bits2_5_h__ equ <>
 
@@ -21,7 +24,6 @@ __IBackgroundCopyJobHttpOptions_FWD_DEFINED__ equ 1
 endif
 ifndef __BackgroundCopyManager2_5_FWD_DEFINED__
 __BackgroundCopyManager2_5_FWD_DEFINED__ equ 1
-;BackgroundCopyManager2_5 typedef BackgroundCopyManager2_5
 endif
 ifndef __IBackgroundCopyJobHttpOptions_FWD_DEFINED__
 __IBackgroundCopyJobHttpOptions_FWD_DEFINED__ equ 1
@@ -69,7 +71,6 @@ __BackgroundCopyManager2_5_LIBRARY_DEFINED__ equ 1
 DEFINE_GUIDS(LIBID_BackgroundCopyManager2_5, "03ca98d6-ff5d-49b8-abc6-03dd84127020")
 DEFINE_GUIDS(CLSID_BackgroundCopyManager2_5, "03ca98d6-ff5d-49b8-abc6-03dd84127020")
 endif
-endif
 
 BG_SSL_ENABLE_CRL_CHECK equ 0x0001
 BG_SSL_IGNORE_CERT_CN_INVALID equ 0x0002
@@ -81,6 +82,7 @@ BG_HTTP_REDIRECT_POLICY_ALLOW_SILENT equ 0x0000
 BG_HTTP_REDIRECT_POLICY_ALLOW_REPORT equ 0x0100
 BG_HTTP_REDIRECT_POLICY_DISALLOW equ 0x0200
 BG_HTTP_REDIRECT_POLICY_ALLOW_HTTPS_TO_HTTP equ 0x0800
+
 include bits3_0.inc
 
-endif
+endif ;; __bits2_5_h__

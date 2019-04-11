@@ -4,15 +4,18 @@ endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
 __REQUIRED_RPCSAL_H_VERSION__ equ 100
 endif
+
 include rpc.inc
 include rpcndr.inc
 ifndef __RPCNDR_H_VERSION__
 .err <this stub requires an updated version of rpcndr.h>
 endif
+
 ifndef COM_NO_WINDOWS_H
 include windows.inc
 include ole2.inc
 endif
+
 ifndef __bits3_0_h__
 __bits3_0_h__ equ <>
 
@@ -42,11 +45,11 @@ __IBackgroundCopyCallback2_FWD_DEFINED__ equ 1
 endif
 ifndef __BackgroundCopyManager3_0_FWD_DEFINED__
 __BackgroundCopyManager3_0_FWD_DEFINED__ equ 1
-BackgroundCopyManager3_0 typedef BackgroundCopyManager3_0
 endif
 ifndef __IBackgroundCopyJob4_FWD_DEFINED__
 __IBackgroundCopyJob4_FWD_DEFINED__ equ 1
 endif
+
 include bits.inc
 include bits1_5.inc
 include bits2_0.inc
@@ -273,7 +276,6 @@ ifndef __BackgroundCopyManager3_0_LIBRARY_DEFINED__
 __BackgroundCopyManager3_0_LIBRARY_DEFINED__ equ 1
 DEFINE_GUIDS(LIBID_BackgroundCopyManager3_0, "659cdea7-489e-11d9-a9cd-000d56965251")
 DEFINE_GUIDS(CLSID_BackgroundCopyManager3_0, "659cdea7-489e-11d9-a9cd-000d56965251")
-endif
 endif
 
 include bits4_0.inc

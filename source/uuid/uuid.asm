@@ -22,7 +22,23 @@ include shlguid.inc
 include shobjidl.inc
 include lmaccess.inc
 include AppxPackaging.inc
-
+include mmc.inc
+include activprof.inc
+include adhoc.inc
+include adoctint.inc
+include adoint.inc
+include adojet.inc
+include adomd.inc
+include alg.inc
+include audioclient.inc
+include austream.inc
+include bits.inc
+include directmanipulation.inc
+include iads.inc
+include netcon.inc
+include shlwapi.inc
+include vds.inc
+include vdshwprv.inc
 include gdiplus.inc
 include wdmguid.inc
 include pnrpns.inc
@@ -57,6 +73,5 @@ include src/WdsTptMgmt_i.inc
 include src/wkspbkax_i.inc
 include src/wmdmlog_i.inc
 include src/wsmandisp_i.inc
-
 
 end

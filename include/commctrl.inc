@@ -12,6 +12,9 @@ ifndef _HRESULT_DEFINED
 _HRESULT_DEFINED equ 1
 HRESULT typedef sdword
 endif
+ifndef HKEY
+HKEY	typedef HANDLE
+endif
 
 ifndef NOUSER
 

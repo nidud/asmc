@@ -1002,7 +1002,7 @@ LPIStream		typedef ptr IStream
 LPIStorage		typedef ptr IStorage
 uSTGMEDIUM		STRUC
 tymed			dd ?
-UNION u
+UNION ;u
  hBitmap		HBITMAP ?
  hMetaFilePict		HMETAFILEPICT ?
  hEnhMetaFile		HENHMETAFILE ?
@@ -1143,26 +1143,24 @@ DATADIR			typedef SDWORD
 DATADIR_GET		equ 1
 DATADIR_SET		equ 2
 
+DEFINE_IIDX(IDataObject, "0000010e-0000-0000-C000-000000000046")
+
 .comdef IDataObject
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
     Release		proc
-    Begin_OnDataChange	proc :ptr, :ptr
-    Finish_OnDataChange proc
-    Begin_OnViewChange	proc :DWORD, :SDWORD
-    Finish_OnViewChange proc
-    Begin_OnRename	proc :ptr
-    Finish_OnRename	proc
-    Begin_OnSave	proc
-    Finish_OnSave	proc
-    Begin_OnClose	proc
-    Finish_OnClose	proc
-    Begin_OnLinkSrcChange proc :ptr
-    Finish_OnLinkSrcChange proc
+    GetData		proc :ptr, :ptr
+    GetDataHere		proc :ptr, :ptr
+    QueryGetData	proc :ptr
+    GetCanonicalFormatEtc proc :ptr, :ptr
+    SetData		proc :ptr, :ptr, :BOOL
+    EnumFormatEtc	proc :dword, :ptr ptr
+    DAdvise		proc :ptr, :dword, :ptr, :ptr
+    DUnadvise		proc :DWORD
+    EnumDAdvise		proc :ptr ptr
     .ends
-LPDATAOBJECT		typedef ptr IDataObject
 
-DEFINE_IIDX(IDataObject, "0000010e-0000-0000-C000-000000000046")
+LPDATAOBJECT		typedef ptr IDataObject
 
 endif
 

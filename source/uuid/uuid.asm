@@ -42,6 +42,7 @@ include vdshwprv.inc
 include gdiplus.inc
 include wdmguid.inc
 include pnrpns.inc
+include richole.inc
 
 include src/ahadmin_i.inc
 include src/CDOSys_I.inc

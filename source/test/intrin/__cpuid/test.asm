@@ -9,6 +9,7 @@ include string.inc
 include intrin.inc
 include malloc.inc
 include stdio.inc
+include tchar.inc
 
 .classdef InstructionSet_Internal
 
@@ -457,4 +458,4 @@ main proc
 
 main endp
 
-    end main
+    end _tstart

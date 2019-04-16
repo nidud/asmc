@@ -33,7 +33,7 @@ local astring:word
 
 __set_invalid_mb_chars endp
 
-.pragma(init(__set_invalid_mb_chars, 40))
+.pragma init(__set_invalid_mb_chars, 40)
 
     end
 

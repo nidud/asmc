@@ -780,12 +780,12 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
         .endc
 
       .case WM_SIZE
-        mov rax,lParam
-        mov edx,eax
-        and eax,0xFFFF
+        mov rcx,lParam
+        mov edx,ecx
+        and ecx,0xFFFF
         shr edx,16
         mov x,edx
-        MoveWindow(hEdit, 0, 0, eax, x, TRUE)
+        MoveWindow(hEdit, 0, 0, ecx, x, TRUE)
         .endc
 
       .case WM_DESTROY
@@ -831,9 +831,9 @@ _tWinMain proc WINAPI hInst: HINSTANCE,
 
     RegisterClassEx(&wc)
 
-    mov eax,CW_USEDEFAULT
+    mov ecx,CW_USEDEFAULT
     mov hwnd,CreateWindowEx(0, "WndClass", "Testpad", WS_OVERLAPPEDWINDOW,
-        eax, eax, eax, eax, 0, 0, hInstance, 0)
+        ecx, ecx, ecx, ecx, 0, 0, hInstance, 0)
 
     ShowWindow(hwnd, SW_SHOWNORMAL)
     UpdateWindow(hwnd)

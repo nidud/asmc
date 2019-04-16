@@ -1,19 +1,41 @@
+win64   = 0
+static  = 0
+unicode = 0
 test.exe:
-    make -h -s WIN32APE.exe
-    make -h -s WIN32WPE.exe
-    make -h -s WIN64APE.exe
-    make -h -s WIN64WPE.exe
+!if $(win64)
+ !if $(static)
+  !if $(unicode)
+    asmc64 -q -ws $*.asm
+    linkw sys gui_64W file $*
+  !else
+    asmc64 -q $*.asm
+    linkw sys gui_64 file $*
+  !endif
+ !else
+  !if $(unicode)
+    asmc64 -q -pe -gui -ws $*.asm
+  !else
+    asmc64 -q -pe -gui $*.asm
+  !endif
+ !endif
+!else
+ !if $(static)
+  !if $(unicode)
+    asmc -q -ws $*.asm
+    linkw sys gui_32W file $*
+  !else
+    asmc -q $*.asm
+    linkw sys gui_32 file $*
+  !endif
+ !else
+  !if $(unicode)
+    asmc -q -pe -gui -ws $*.asm
+  !else
+    asmc -q -pe -gui $*.asm
+  !endif
+ !endif
+!endif
+    $@
     pause
-WIN32APE.exe:
-    echo $@
-    asmc -q -pe -gui -Fo $@ test.asm
-WIN32WPE.exe:
-    echo $@
-    asmc -q -pe -gui -ws -Fo $@ test.asm
-WIN64APE.exe:
-    echo $@
-    asmc64 -q -pe -gui -Fo $@ test.asm
-WIN64WPE.exe:
-    echo $@
-    asmc64 -q -pe -gui -ws -Fo $@ test.asm
-
+    del *.obj
+    del *.exe

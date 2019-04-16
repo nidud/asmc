@@ -3,6 +3,7 @@
 ;; processor: x86, x64
 include stdio.inc
 include intrin.inc
+include tchar.inc
 .code
 
 g proc
@@ -30,4 +31,4 @@ main proc
     ret
 main endp
 
-    end main
+    end _tstart

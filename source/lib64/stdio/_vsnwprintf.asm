@@ -19,7 +19,8 @@ _vsnwprintf proc string:LPWSTR, count:size_t, format:LPWSTR, vargs:PVOID
     mov o._cnt,edx
     mov o._ptr,rcx
     mov o._base,rcx
-    _woutput(addr o, r8, r9)
+    mov rdx,r8
+    _woutput(addr o, rdx, r9)
     mov rcx,o._ptr
     mov word ptr [rcx],0
     ret

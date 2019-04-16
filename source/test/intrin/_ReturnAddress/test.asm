@@ -3,6 +3,7 @@
 ;; processor: x86, x64
 include stdio.inc
 include intrin.inc
+include tchar.inc
 .code
 ;; This function will print three values:
 ;;   (1) The address retrieved from _AddressOfReturnAdress
@@ -27,4 +28,4 @@ main proc
    ret
 main endp
 
-    end
+    end _tstart

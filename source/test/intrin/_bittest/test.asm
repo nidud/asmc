@@ -4,6 +4,7 @@
 
 include stdio.inc
 include intrin.inc
+include tchar.inc
 .data
 num sdword 78002
 .code
@@ -32,4 +33,4 @@ main proc
     ret
 main endp
 
-    end
+    end _tstart

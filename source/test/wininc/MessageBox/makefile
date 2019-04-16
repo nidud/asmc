@@ -1,24 +1,42 @@
-test.exe:
-    make -h -s WIN32PEA.exe
-    make -h -s WIN32PEW.exe
-    make -h -s WIN64PEA.exe
-    make -h -s WIN64PEW.exe
-    del *.exe
-    pause
+win64   = 0
+static  = 0
+unicode = 0
 
-WIN32PEA.exe:
-    echo $@
-    asmc -q -pe -Fo $@ test.asm
+test.exe:
+!if $(win64)
+ !if $(static)
+  !if $(unicode)
+    asmc64 -q -ws $*.asm
+    linkw sys con_64W file $*
+  !else
+    asmc64 -q $*.asm
+    linkw sys con_64 file $*
+  !endif
+ !else
+  !if $(unicode)
+    asmc64 -q -pe -ws $*.asm
+  !else
+    asmc64 -q -pe $*.asm
+  !endif
+ !endif
+!else
+ !if $(static)
+  !if $(unicode)
+    asmc -q -ws $*.asm
+    linkw sys con_32W file $*
+  !else
+    asmc -q $*.asm
+    linkw sys con_32 file $*
+  !endif
+ !else
+  !if $(unicode)
+    asmc -q -pe -ws $*.asm
+  !else
+    asmc -q -pe $*.asm
+  !endif
+ !endif
+!endif
     $@
-WIN32PEW.exe:
-    echo $@
-    asmc -q -pe -ws -D_UNICODE -Fo $@ test.asm
-    $@
-WIN64PEA.exe:
-    echo $@
-    asmc -q -pe -D_WIN64 -Fo $@ test.asm
-    $@
-WIN64PEW.exe:
-    echo $@
-    asmc -q -pe -ws -D_WIN64 -D_UNICODE -Fo $@ test.asm
-    $@
+    pause
+    del *.obj
+    del *.exe

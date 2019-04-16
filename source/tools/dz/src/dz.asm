@@ -16,11 +16,6 @@ includelib user32.lib
 public cstart
 public mainCRTStartup
 
-_INIT	SEGMENT PARA FLAT PUBLIC 'INIT'
-_INIT	ENDS
-_IEND	SEGMENT PARA FLAT PUBLIC 'INIT'
-_IEND	ENDS
-
 doszip_init	PROTO :DWORD
 doszip_open	PROTO
 doszip_modal	PROTO
@@ -182,15 +177,20 @@ toend:
 	ret
 main	ENDP
 
-mainCRTStartup:
-	mov eax,offset _INIT
-	and eax,-4096	; LINK - to start of page
-	jmp @F
-cstart:
-	mov eax,offset _INIT
-@@:
-	mov edx,offset _IEND
-	__initialize( eax, edx )
-	exit( main( __argc, __argv, _environ ) )
+_initterm proto __cdecl :ptr, :ptr
+
+externdef __xi_a:ptr	;; pointers to initialization sections
+externdef __xi_z:ptr
+
+cstart::
+
+mainCRTStartup proc
+
+  local _exception_registration[2]:dword
+
+    _initterm( &__xi_a, &__xi_z )
+    exit( main( __argc, __argv, _environ ) )
+
+mainCRTStartup endp
 
 	end	cstart

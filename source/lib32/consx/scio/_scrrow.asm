@@ -47,7 +47,7 @@ UnInstall:
     SetConsoleMode(hStdInput, OldConsoleMode)
     ret
 
-.pragma(init(Install, 7))
-.pragma(exit(UnInstall, 3))
+.pragma init(Install, 7)
+.pragma exit(UnInstall, 3)
 
     END

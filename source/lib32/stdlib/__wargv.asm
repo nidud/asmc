@@ -20,6 +20,6 @@ Install:
     mov _wpgmptr,eax
     ret
 
-.pragma(init(Install, 4))
+.pragma init(Install, 4)
 
     end

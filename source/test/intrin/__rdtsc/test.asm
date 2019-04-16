@@ -1,6 +1,7 @@
 ;; https://docs.microsoft.com/nb-no/cpp/intrinsics/rdtsc
 include stdio.inc
 include intrin.inc
+include tchar.inc
 
 .code
 
@@ -14,4 +15,4 @@ main proc
 
 main endp
 
-    end main
+    end _tstart

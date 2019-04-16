@@ -1,6 +1,7 @@
+.pragma list(push, 0)
 ifndef _RICHEDIT_
 _RICHEDIT_ equ <>
-.pragma list(push, 0)
+.pragma pack(push, 4)
 
 ifndef _RICHEDIT_VER
 _RICHEDIT_VER       equ 0x0800
@@ -694,7 +695,7 @@ else
 TEXTRANGE   equ <TEXTRANGEA>
 endif ;; UNICODE
 else
-TEXTRANGE   TEXTRANGEA
+TEXTRANGE   equ <TEXTRANGEA>
 endif ;; _RICHEDIT_VER >= 0x0200
 
 CALLBACK(EDITSTREAMCALLBACK, :DWORD_PTR, :LPBYTE, :LONG, :ptr LONG)
@@ -1188,5 +1189,6 @@ dxHyphenateZone SWORD ?     ;; If a space character is closer to the margin
 pfnHyphenate    PVOID ?     ;; (WCHAR*, LANGID, long, HYPHRESULT*);
 HYPHENATEINFO   ENDS
 
-.pragma list(pop)
+.pragma pack(pop)
 endif
+.pragma list(pop)

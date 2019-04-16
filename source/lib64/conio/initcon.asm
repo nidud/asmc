@@ -11,7 +11,7 @@ include conio.inc
 
     .code
 
-__initconout proc
+__initconout proc frame
 
     CreateFileW(L"CONOUT$",
 	GENERIC_WRITE,
@@ -26,7 +26,7 @@ __initconout proc
 
 __initconout endp
 
-__termconout proc
+__termconout proc frame
 
     xor eax,eax
     .if _confh > rax

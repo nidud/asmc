@@ -12,9 +12,7 @@ include direct.inc
 
 _getcwd proc buffer:LPSTR, maxlen:SINT
 
-    mov r8d,edx
-    mov rdx,rcx
-    _getdcwd(0, rdx, r8d)
+    _getdcwd(0, rcx, edx)
     ret
 
 _getcwd endp

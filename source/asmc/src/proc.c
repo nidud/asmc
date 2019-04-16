@@ -642,15 +642,18 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
     struct dsym	    *paranode;
     struct dsym	    *paracurr;
     int		    curr;
+    int		    ParamReverse = 0; /* Reverse direction */
     int		    fastcall_id = GetFastcallId( proc->sym.langtype );
 
     /*
      * find "first" parameter ( that is, the first to be pushed in INVOKE ).
      */
-    if ( proc->sym.langtype == LANG_C || proc->sym.langtype == LANG_STDCALL ||
-	fastcall_id == FCT_VEC32 + 1 || fastcall_id == FCT_MSC + 1 ||
-	( proc->sym.langtype == LANG_SYSCALL ) )
+    if ( proc->sym.langtype == LANG_STDCALL || proc->sym.langtype == LANG_C ||
+	 proc->sym.langtype == LANG_SYSCALL || proc->sym.langtype == LANG_VECTORCALL ||
+	 ( proc->sym.langtype == LANG_FASTCALL && ModuleInfo.Ofssize != USE16 ) )
+	ParamReverse = 1;
 
+    if ( ParamReverse )
 	for ( paracurr = proc->e.procinfo->paralist; paracurr && paracurr->nextparam;
 	      paracurr = paracurr->nextparam );
     else
@@ -766,13 +769,10 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 		SymAddLocal( &paracurr->sym, name );
 	    }
 	    /* set paracurr to next parameter */
-	    if ( proc->sym.langtype == LANG_C || proc->sym.langtype == LANG_STDCALL ||
-		 fastcall_id == FCT_VEC32 + 1 || fastcall_id == FCT_MSC + 1 ||
-		 ( proc->sym.langtype == LANG_SYSCALL ) ) {
+	    if ( ParamReverse ) {
 
 		struct dsym *l;
-		for (l = proc->e.procinfo->paralist;
-		     l && ( l->nextparam != paracurr );
+		for (l = proc->e.procinfo->paralist; l && ( l->nextparam != paracurr );
 		     l = l->nextparam );
 		paracurr = l;
 	    } else
@@ -807,9 +807,8 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 
 	    if ( fastcall_id &&
 		fastcall_tab[fastcall_id - 1].paramcheck( proc, paranode, &fcint ) ) {
-	    } else {
+	    } else
 		paranode->sym.state = SYM_STACK;
-	    }
 
 	    paranode->sym.total_length = 1; /* v2.04: added */
 	    paranode->sym.total_size = ti.size;
@@ -845,13 +844,9 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 		}
 		break;
 	    case LANG_FASTCALL:
-	    case LANG_VECTORCALL:
-		if ( ti.Ofssize == USE64 )
-		    goto left_to_right;
 		/* v2.07: MS fastcall 16-bit is PASCAL! */
 		if ( ti.Ofssize == USE16 && ModuleInfo.fctype == FCT_MSC )
 		    goto left_to_right;
-	    case LANG_SYSCALL:
 	    default:
 		paranode->nextparam = proc->e.procinfo->paralist;
 		proc->e.procinfo->paralist = paranode;
@@ -890,21 +885,6 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 	offset = ( ( 2 + ( proc->sym.mem_type == MT_FAR ? 1 : 0 ) ) * CurrWordSize );
 
 	/* now calculate the [E|R]BP offsets */
-
-#ifndef __ASMC64__
-	if ( fastcall_id == FCT_VEC64 + 1 || fastcall_id == FCT_WIN64 + 1 ||
-	     fastcall_id == FCT_ELF64 + 1 ) {
-#endif
-	    for ( paranode = proc->e.procinfo->paralist; paranode ;paranode = paranode->nextparam )
-		if ( paranode->sym.state == SYM_TMACRO ) /* register param */
-		    ;
-		else {
-		    paranode->sym.offset = offset;
-		    proc->e.procinfo->stackparam = TRUE;
-		    offset += ROUND_UP( paranode->sym.total_size, CurrWordSize );
-		}
-#ifndef __ASMC64__
-	} else
 	for ( ; cntParam; cntParam-- ) {
 	    for ( curr = 1, paranode = proc->e.procinfo->paralist; curr < cntParam;paranode = paranode->nextparam, curr++ )
 		;
@@ -916,7 +896,6 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 		offset += ROUND_UP( paranode->sym.total_size, CurrWordSize );
 	    }
 	}
-#endif
     }
     return ( NOT_ERROR );
 }
@@ -1955,16 +1934,31 @@ static ret_code write_userdef_prologue( struct asm_tok tokenarray[] )
 
 static void win64_SaveRegParams( struct proc_info *info )
 {
-    int x, i;
     struct dsym *param;
-    int count = 4;
+    struct dsym *curr;
+    int maxregs = 4;
     int size = 8;
+    int params = 0;
+    int i;
 
     if ( CurrProc->sym.langtype == LANG_VECTORCALL ) {
-	count = 6;
+
+	maxregs = 6;
 	size = 16;
     }
-    for ( i = 0, param = info->paralist; param && ( i < count ); i++ ) {
+
+    param = info->paralist;
+    while ( param && param->nextparam && params < maxregs ) {
+
+	params++;
+	param = param->nextparam;
+    }
+    curr = info->paralist;
+    if ( curr && curr->sym.is_vararg == TRUE )
+	params = 3;
+
+    for ( i = 0; param && i <= params; i++ ) {
+
 	/* v2.05: save XMMx if type is float/double */
 	if ( param->sym.is_vararg == FALSE ) {
 	    if ( param->sym.mem_type & MT_FLOAT ) {
@@ -1974,10 +1968,11 @@ static void win64_SaveRegParams( struct proc_info *info )
 		    AddLineQueueX( "movq [%r+%u], %r", T_RSP, 8 + i * size, T_XMM0 + i );
 		else
 		    AddLineQueueX( "movaps [%r+%u], %r", T_RSP, 8 + i * size, T_XMM0 + i );
-	    } else if ( i < 4 ) {
+	    } else if ( i < 4 )
 		AddLineQueueX( "mov [%r+%u], %r", T_RSP, 8 + i * size, ms64_regs[i] );
-	    }
-	    param = param->nextparam;
+	    for ( curr = info->paralist;
+		curr && curr->nextparam != param; curr = curr->nextparam );
+	    param = curr;
 	} else if ( i < 4 ) { /* v2.09: else branch added */
 	    AddLineQueueX( "mov [%r+%u], %r", T_RSP, 8 + i * size, ms64_regs[i] );
 	}
@@ -2024,8 +2019,9 @@ static int write_default_prologue( void )
     int resstack = 0;
     int cstack;
 
-    cstack = ( ( ModuleInfo.aflag & _AF_CSTACK ) && ( ( ( CurrProc->sym.langtype == LANG_STDCALL ||
-	CurrProc->sym.langtype == LANG_C ) && ModuleInfo.Ofssize == USE32 ) || ModuleInfo.Ofssize == USE64 ) );
+    cstack = ( ( ModuleInfo.aflag & _AF_CSTACK ) && ( ModuleInfo.Ofssize == USE64 ||
+	       ( ModuleInfo.Ofssize == USE32 &&
+		 ( CurrProc->sym.langtype == LANG_STDCALL || CurrProc->sym.langtype == LANG_C ) ) ) );
     info = CurrProc->e.procinfo;
     sysstack = ( ModuleInfo.Ofssize == USE64 && info->paralist && CurrProc->sym.langtype == LANG_SYSCALL &&
 	   ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP ) );
@@ -2190,17 +2186,14 @@ static int write_default_prologue( void )
 	if ( ModuleInfo.win64_flags & W64F_SAVEREGPARAMS )
 	    win64_SaveRegParams( info );
 
-	if ( ModuleInfo.fctype == FCT_VEC64 ) {
+	if ( ModuleInfo.fctype == FCT_VEC64 && Parse_Pass == PASS_1 ) {
 
 	    /* set param offset to 16 */
-	    for ( p = info->paralist; p; p = p->nextparam )
+	    for ( cnt = 0, offset = 16, p = info->paralist; p; p = p->nextparam, offset += 16, cnt++ )
 		if ( !p->nextparam ) break;
 
-	    if ( p && Parse_Pass == PASS_1 ) {
-		for ( cnt = 0, offset = 16, p = info->paralist; p && cnt < 6;
-			p = p->nextparam, offset += 16, cnt++ )
-		    p->sym.offset = offset;
-	    }
+	    for ( p = info->paralist; p && cnt; offset -= 16, cnt--, p = p->nextparam )
+		p->sym.offset = offset;
 	}
     }
 

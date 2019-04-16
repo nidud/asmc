@@ -2,6 +2,7 @@
 ;; crt_byteswap.c
 include stdio.inc
 include intrin.inc
+include tchar.inc
 .code
 main proc
 
@@ -17,4 +18,4 @@ main proc
     ret
 main endp
 
-    end
+    end _tstart

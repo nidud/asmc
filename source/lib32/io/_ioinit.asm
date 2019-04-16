@@ -51,7 +51,7 @@ _ioexit:
 	pop	esi
 	ret
 
-.pragma(init(_ioinit, 1))
+.pragma init(_ioinit, 1)
 .pragma(exit(_ioexit, 2))
 
 	END

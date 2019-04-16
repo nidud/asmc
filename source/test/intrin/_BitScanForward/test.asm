@@ -2,8 +2,9 @@
 ;; _BitScanForward.asm
 include conio.inc
 include intrin.inc
+include tchar.inc
 
-.code
+    .code
 
 main proc
 
@@ -42,4 +43,4 @@ main proc
 
 main endp
 
-    end
+    end _tstart

@@ -738,10 +738,11 @@ static void log_proc( const struct asym *sym )
     if ( sym->state == SYM_INTERNAL ) {
 
 	/* print the procedure's parameters */
-	if (sym->langtype == LANG_C ||
-	    sym->langtype == LANG_SYSCALL ||
-	    sym->langtype == LANG_STDCALL ||
-	    sym->langtype == LANG_FASTCALL ) {
+
+	if ( sym->langtype == LANG_STDCALL || sym->langtype == LANG_C ||
+	     sym->langtype == LANG_SYSCALL || sym->langtype == LANG_VECTORCALL ||
+	     ( sym->langtype == LANG_FASTCALL && ModuleInfo.Ofssize != USE16 ) ) {
+
 	    int cnt;
 	    /* position f2 to last param */
 	    for ( cnt = 0, f = dir->e.procinfo->paralist; f; f = f->nextparam )

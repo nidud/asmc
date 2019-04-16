@@ -11,12 +11,12 @@ __crtCorExitProcess proto WINAPI status:int_t
 
 __crtExitProcess proc WINAPI status:int_t
 
-if defined (_CRT_APP) and ( defined(_KERNELX) EQ 0)
+if defined (_CRT_APP) and not defined(_KERNELX)
 
     __crtExitProcessWinRT()
 else
 
-if not defined(_KERNELX)
+ifndef _KERNELX
     __crtCorExitProcess(status)
 endif
 

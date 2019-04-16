@@ -1282,6 +1282,6 @@ Install:
     mov tgetevent,eax
     ret
 
-.pragma(init(Install, 32))
+.pragma init(Install, 32)
 
     END

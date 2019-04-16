@@ -9,6 +9,7 @@ include stdio.inc
 include process.inc
 include windows.inc
 include directxmath.inc
+include tchar.inc
 
 ;; To declare an interlocked function for use as an intrinsic,
 ;; include intrin.h and put the function in a #pragma intrinsic
@@ -86,4 +87,4 @@ SimpleThread proc pParam:PVOID
 
 SimpleThread endp
 
-    end
+    end _tstart

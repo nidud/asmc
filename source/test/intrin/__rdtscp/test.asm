@@ -1,8 +1,9 @@
 ;; https://docs.microsoft.com/nb-no/cpp/intrinsics/rdtscp
 include stdio.inc
 include intrin.inc
+include tchar.inc
 
-.code
+    .code
 
 main proc
 
@@ -16,4 +17,4 @@ main proc
 
 main endp
 
-    end main
+    end _tstart

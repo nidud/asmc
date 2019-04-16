@@ -1,40 +1,41 @@
+win64   = 0
+static  = 0
+unicode = 0
 test.exe:
-    make -h -s WIN32A.exe
-    make -h -s WIN32W.exe
-    make -h -s WIN64A.exe
-    make -h -s WIN64W.exe
-    make -h -s WIN32APE.exe
-    make -h -s WIN32WPE.exe
-    make -h -s WIN64APE.exe
-    make -h -s WIN64WPE.exe
-    del *.obj
+!if $(win64)
+ !if $(static)
+  !if $(unicode)
+    asmc64 -q -ws $*.asm
+    linkw sys gui_64W file $*
+  !else
+    asmc64 -q $*.asm
+    linkw sys gui_64 file $*
+  !endif
+ !else
+  !if $(unicode)
+    asmc64 -q -pe -gui -ws $*.asm
+  !else
+    asmc64 -q -pe -gui $*.asm
+  !endif
+ !endif
+!else
+ !if $(static)
+  !if $(unicode)
+    asmc -q -ws $*.asm
+    linkw sys gui_32W file $*
+  !else
+    asmc -q $*.asm
+    linkw sys gui_32 file $*
+  !endif
+ !else
+  !if $(unicode)
+    asmc -q -pe -gui -ws $*.asm
+  !else
+    asmc -q -pe -gui $*.asm
+  !endif
+ !endif
+!endif
+    $@
     pause
-
-WIN32A.exe:
-    echo $@
-    asmc -q test.asm
-    linkw system gui_32 name $@ file test
-WIN32W.exe:
-    echo $@
-    asmc -q -ws test.asm
-    linkw system gui_32W name $@ file test
-WIN64A.exe:
-    echo $@
-    asmc -q -win64 test.asm
-    linkw system gui_64 name $@ file test
-WIN64W.exe:
-    echo $@
-    asmc -q -win64 -ws test.asm
-    linkw system gui_64W name $@ file test
-WIN32APE.exe:
-    echo $@
-    asmc -q -pe -gui -Fo $@ test.asm
-WIN32WPE.exe:
-    echo $@
-    asmc -q -pe -gui -ws -Fo $@ test.asm
-WIN64APE.exe:
-    echo $@
-    asmc64 -q -pe -gui -Fo $@ test.asm
-WIN64WPE.exe:
-    echo $@
-    asmc64 -q -pe -gui -ws -Fo $@ test.asm
+    del *.obj
+    del *.exe

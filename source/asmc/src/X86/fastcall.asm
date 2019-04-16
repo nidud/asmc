@@ -78,8 +78,8 @@ ms64_regs label byte
 
 ; segment register names, order must match ASSUME_ enum
 
-stackreg label byte
-    db T_SP, T_ESP, T_RSP
+;stackreg label byte
+;    db T_SP, T_ESP, T_RSP
 
 fcscratch dd 0  ; exclusively to be used by FASTCALL helper functions
 
@@ -555,7 +555,7 @@ watc_fcend proc pp, numparams, value
         sub eax,fcscratch
     .endif
     movzx edx,ModuleInfo.Ofssize
-    movzx ecx,stackreg[edx]
+    mov ecx,stackreg[edx*4]
     AddLineQueueX(" add %r, %u", ecx, eax)
     ret
 
@@ -568,6 +568,27 @@ endif
 
 ms64_fcstart proc uses esi edi pp:ptr nsym, numparams:SINT, start:SINT,
     tokenarray:ptr asmtok, value:ptr SINT
+
+    ; v2.29: reg::reg id to fcscratch
+
+    mov edx,start
+    shl edx,4
+    add edx,tokenarray
+
+    .for ( eax = 0 : [edx].asmtok.token != T_FINAL : edx += 16 )
+
+        .if ( [edx].asmtok.token == T_REG && [edx+16].asmtok.token == T_DBL_COLON )
+
+            add edx,32
+            inc eax
+        .endif
+    .endf
+
+    .if eax
+
+        dec eax
+        mov fcscratch,eax
+    .endif
 
     mov edx,pp
     mov eax,numparams
@@ -582,13 +603,14 @@ ms64_fcstart proc uses esi edi pp:ptr nsym, numparams:SINT, start:SINT,
     ; v2.04: VARARG didn't work
 
     mov edx,[edx].nsym.procinfo
-    .if [edx].proc_info.flags & PINF_HAS_VARARG
+    .if ( [edx].proc_info.flags & PINF_HAS_VARARG )
 
-        mov ecx,start
-        shl ecx,4
-        add ecx,tokenarray
-        .for eax=0: [ecx].asmtok.token != T_FINAL: ecx+=16
-            .if [ecx].asmtok.token == T_COMMA
+        .for ( ecx = start,
+               ecx <<= 4,
+               ecx += tokenarray,
+               eax = 0 : [ecx].asmtok.token != T_FINAL : ecx += 16 )
+
+            .if ( [ecx].asmtok.token == T_COMMA )
 
                 inc eax
             .endif
@@ -608,7 +630,7 @@ ms64_fcstart proc uses esi edi pp:ptr nsym, numparams:SINT, start:SINT,
     mov edx,value
     mov [edx],eax
 
-    .if ModuleInfo.win64_flags & W64F_AUTOSTACKSP
+    .if ( ModuleInfo.win64_flags & W64F_AUTOSTACKSP )
 
         mov edx,sym_ReservedStack
         .if eax > [edx].asym.value
@@ -622,7 +644,10 @@ ms64_fcstart proc uses esi edi pp:ptr nsym, numparams:SINT, start:SINT,
     ; since Win64 fastcall doesn't push, it's a better/faster strategy to
     ; handle the arguments from left to right.
     ;
+    ; v2.29 -- right to left
+    ;
     xor eax,eax
+    ;mov eax,1
     ret
 ms64_fcstart endp
 
@@ -1109,7 +1134,9 @@ ms64_param proc uses esi edi ebx pp:ptr nsym, index:SINT, param:ptr nsym, adr:SI
                     ; case <reg>::<reg>
                     ;
                     mov ebx,[eax+32].asmtok.tokval
-                    inc fcscratch
+                    .if fcscratch
+                        dec fcscratch
+                    .endif
                 .endif
             .endif
             mov reg_64,ebx

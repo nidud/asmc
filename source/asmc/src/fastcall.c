@@ -268,6 +268,7 @@ static int vc32_param( struct dsym const *proc, int index, struct dsym *param,
 
 static int ms64_fcstart( struct dsym const *proc, int numparams, int start, struct asm_tok tokenarray[], int *value )
 {
+    int i;
     int size = 8;
     int args = 4;
 
@@ -275,6 +276,19 @@ static int ms64_fcstart( struct dsym const *proc, int numparams, int start, stru
 	size = 16;
 	args = 6;
     }
+
+    /* v2.29: reg::reg id to fcscratch */
+
+    for ( i = start; tokenarray[i].token != T_FINAL; i++ ) {
+	if ( tokenarray[i].token == T_REG && tokenarray[i+1].token == T_DBL_COLON ) {
+
+	    i += 2;
+	    fcscratch++;
+	}
+    }
+    if ( fcscratch )
+	fcscratch--;
+
     /* v2.04: VARARG didn't work */
     if ( proc->e.procinfo->has_vararg ) {
 	for ( numparams = 0; tokenarray[start].token != T_FINAL; start++ )
@@ -603,7 +617,8 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
 		/* case <reg>::<reg> */
 
 		reg_64 = opnd->base_reg[2].tokval;
-		fcscratch++;
+		if ( fcscratch )
+		    fcscratch--;
 	    }
 	}
 

@@ -1,6 +1,7 @@
 ;; https://msdn.microsoft.com/en-us/library/a0w705h5.aspx
 include stdio.inc
 include intrin.inc
+include tchar.inc
 .code
 main proc
 
@@ -15,4 +16,4 @@ main proc
     ret
 main endp
 
-    end
+    end _tstart

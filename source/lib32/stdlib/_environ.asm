@@ -16,6 +16,6 @@ install:
 	__setenvp( addr _environ )
 	ret
 
-.pragma(init(install, 5))
+.pragma init(install, 5)
 
 	END

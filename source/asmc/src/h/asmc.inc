@@ -348,7 +348,10 @@ MT_TBYTE		equ 10 - 1
 MT_REAL10		equ MT_TBYTE or MT_FLOAT
 MT_OWORD		equ 16 - 1
 MT_REAL16		equ MT_OWORD or MT_FLOAT
+MT_YWORD		equ 32 - 1
+MT_ZWORD		equ 64 - 1
 MT_YMMWORD		equ 32 - 1
+MT_ZMMWORD		equ 64 - 1
 MT_PROC			equ 080h
 MT_NEAR			equ 081h
 MT_FAR			equ 082h
@@ -1225,6 +1228,9 @@ externdef		LinnumQueue	: qdesc
 externdef		ModelToken	: LPSTR
 externdef		LastCodeBufSize : DWORD
 externdef		banner_printed	: DWORD
+externdef		sym_ReservedStack:LPASYM
+externdef		stackreg	: dword
+externdef		regax		: dword
 
 asmerr			PROTO :DWORD, :VARARG
 DelayExpand		PROTO FASTCALL :DWORD ; :PTR asmtok

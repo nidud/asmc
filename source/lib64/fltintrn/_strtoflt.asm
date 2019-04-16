@@ -19,8 +19,7 @@ _strtoflt proc string:LPSTR
 
   local q:REAL16
 
-    mov rdx,rcx
-    atoquad(&q, rdx, &flt.string)
+    atoquad(&q, rcx, &flt.string)
     mov flt.flags,edx
     mov flt.exponent,ecx
     quadtold(&_real, &q)

@@ -178,13 +178,14 @@ _output PROC PUBLIC USES rsi rdi rbx fp:LPFILE, format:LPSTR, arglist:PVOID
 
               .case ST_NORMAL
                 mov bufferiswide,0
-                .if isleadbyte(edx)
-                    write_char(edx, fp, &charsout)
+                mov ecx,edx
+                .if isleadbyte(ecx)
+                    write_char(ecx, fp, &charsout)
                     mov rax,format
                     inc format
-                    movzx edx,BYTE PTR [rax]
+                    movzx ecx,BYTE PTR [rax]
                 .endif
-                write_char(edx, fp, &charsout)
+                write_char(ecx, fp, &charsout)
                 .endc
 
               .case ST_PERCENT

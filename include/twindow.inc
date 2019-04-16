@@ -48,6 +48,8 @@ _TW_USECOLOR    equ 0x10
 
     .ends
 
+window_t        typedef ptr twindow
+
 .pragma list(pop)
 
 endif

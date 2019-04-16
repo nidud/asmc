@@ -766,7 +766,7 @@ static int StripSource( int i, int e, struct asm_tok tokenarray[] )
     int parg_id = 0;
     char b[MAX_LINE_LEN];
     char *p;
-    int	 k, j,lang;
+    int k, j,lang;
 
     b[0] = NULLC;
     for ( j = 0; j < i; j++ ) {
@@ -800,8 +800,8 @@ static int StripSource( int i, int e, struct asm_tok tokenarray[] )
 	    curr = info->paralist;
 	    lang = sym->sym.langtype;
 
-	    k = ( lang == LANG_C || lang == LANG_SYSCALL || lang == LANG_STDCALL ||
-		(lang == LANG_FASTCALL && ModuleInfo.Ofssize != USE64 ) );
+	    k = ( lang == LANG_STDCALL || lang == LANG_C || lang == LANG_SYSCALL ||
+		  lang == LANG_VECTORCALL || ( lang == LANG_FASTCALL && ModuleInfo.Ofssize != USE16 ) );
 
 	    if ( k ) {
 		while ( curr && curr->nextparam )

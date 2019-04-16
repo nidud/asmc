@@ -31,7 +31,7 @@ Install:
 	.endif
 	ret
 
-.pragma(init(Install, 6))
+.pragma init(Install, 6)
 
 endif
 	END

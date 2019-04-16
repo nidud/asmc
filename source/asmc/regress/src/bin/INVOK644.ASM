@@ -14,7 +14,7 @@ v2	dw 0
 p2 proc a1:qword,a2:dword,a3:ptr,a4:word,a5:dword,a6:qword,a7:ptr
 p2 endp
 
-	invoke p2, addr v1, addr [r8d], addr v2, 0, addr v2, addr [r10+r11], 0
+	invoke p2, addr v1, addr [ecx], addr v2, 0, addr v2, addr [r10+r11], 0
 	ret
 
 	end

@@ -1,6 +1,7 @@
 ;; https://msdn.microsoft.com/en-us/library/twk0b398.aspx
 include stdio.inc
 include intrin.inc
+include tchar.inc
 
 ifdef _M_IX86
 READETYPE typedef DWORD
@@ -51,4 +52,4 @@ main proc
 
 main endp
 
-    end main
+    end _tstart

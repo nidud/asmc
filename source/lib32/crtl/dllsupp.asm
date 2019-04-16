@@ -34,6 +34,6 @@ _fltinit:
 	fldcw	_8087cw
 	ret
 
-.pragma(init(_fltinit, 20))
+.pragma init(_fltinit, 20)
 
 	END

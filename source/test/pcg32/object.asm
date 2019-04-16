@@ -4,15 +4,7 @@ include graph.inc
 include pcg_basic.inc
 
     .data
-
-    virtual_table label qword
-
-        dq free
-        dq Object_Hide
-        dq Object_Show
-        dq Object_Move
-        dq Object_Init
-        dq Object_Draw
+    vtable ObjectVtbl { free, Object_Hide, Object_Show, Object_Move, Object_Init, Object_Draw }
 
     .code
 
@@ -32,8 +24,9 @@ Object::Object proc uses rdi rbx
         mov ecx,sizeof(Object)/8
         xor eax,eax
         rep stosq
+
         mov rcx,rdx
-        lea rax,virtual_table
+        lea rax,vtable
         mov [rcx].lpVtbl,rax
         lea rax,pcg32_boundedrand
         mov [rcx].random,rax
@@ -154,36 +147,36 @@ Object::Draw proc uses rsi rdi rbx color:UINT
             add edx,[rbx].pos.x
             mov r9d,[rbx].pos.x
             sub r9d,edi
-            mov eax,[rbx].pos.y
-            add eax,y
-            g.Line(edx, eax, r9d, eax, color)
+            mov r8d,[rbx].pos.y
+            add r8d,y
+            g.Line(edx, r8d, r9d, r8d, color)
 
             mov edx,[rbx].pos.x
             sub edx,edi
             mov r9d,edi
             add r9d,[rbx].pos.x
-            mov eax,[rbx].pos.y
-            sub eax,y
-            g.Line(edx, eax, r9d, eax, color)
+            mov r8d,[rbx].pos.y
+            sub r8d,y
+            g.Line(edx, r8d, r9d, r8d, color)
         .endw
 
         mov edx,[rbx].pos.x
         sub edx,edi
         mov r9d,edi
         add r9d,[rbx].pos.x
-        mov eax,[rbx].pos.y
-        sub eax,y
-        inc eax
-        g.Line(edx, eax, r9d, eax, color)
+        mov r8d,[rbx].pos.y
+        sub r8d,y
+        inc r8d
+        g.Line(edx, r8d, r9d, r8d, color)
 
         mov edx,edi
         add edx,[rbx].pos.x
         mov r9d,[rbx].pos.x
         sub r9d,edi
-        mov eax,[rbx].pos.y
-        add eax,y
-        dec eax
-        g.Line(edx, eax, r9d, eax, color)
+        mov r8d,[rbx].pos.y
+        add r8d,y
+        dec r8d
+        g.Line(edx, r8d, r9d, r8d, color)
 
         mov edi,y_start
 
@@ -196,9 +189,9 @@ Object::Draw proc uses rsi rdi rbx color:UINT
             add r8d,[rbx].pos.y
             mov r9d,[rbx].pos.x
             sub r9d,edi
-            mov eax,[rbx].pos.y
-            add eax,x
-            g.Line(edx, r8d, r9d, eax, color)
+            mov ecx,[rbx].pos.y
+            add ecx,x
+            g.Line(edx, r8d, r9d, ecx, color)
 
             mov edx,[rbx].pos.x
             sub edx,edi
@@ -206,9 +199,9 @@ Object::Draw proc uses rsi rdi rbx color:UINT
             sub r8d,x
             mov r9d,edi
             add r9d,[rbx].pos.x
-            mov eax,[rbx].pos.y
-            sub eax,x
-            g.Line(edx, r8d, r9d, eax, color)
+            mov ecx,[rbx].pos.y
+            sub ecx,x
+            g.Line(edx, r8d, r9d, ecx, color)
 
         .endw
 

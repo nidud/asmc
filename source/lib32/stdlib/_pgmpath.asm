@@ -33,6 +33,6 @@ local	path[256]
 
 Install endp
 
-.pragma(init(Install, 30))
+.pragma init(Install, 30)
 
 	END

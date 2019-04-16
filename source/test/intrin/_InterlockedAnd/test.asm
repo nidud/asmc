@@ -1,6 +1,7 @@
 ;; https://docs.microsoft.com/en-us/cpp/intrinsics/interlockedand-intrinsic-functions
 include stdio.inc
 include intrin.inc
+include tchar.inc
 .code
 main proc
 
@@ -17,4 +18,4 @@ main proc
 
 main endp
 
-    end
+    end _tstart

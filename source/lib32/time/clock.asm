@@ -41,6 +41,6 @@ __inittime proc
 
 __inittime endp
 
-.pragma init(__inittime, 20)
+.pragma init(__inittime, 8)
 
     END

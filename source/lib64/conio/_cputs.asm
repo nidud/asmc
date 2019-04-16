@@ -9,22 +9,16 @@ include string.inc
 
     .code
 
-_cputs proc uses rbx string:LPSTR
+_cputs proc frame string:string_t
 
-    local num_written:ULONG
+  local num_written:ulong_t
     ;
     ; write string to console file handle
     ;
-    mov rbx,-1
-    .if hStdOutput != rbx
+    .if WriteConsoleA(_confh, string, strlen(rcx), &num_written, NULL)
 
-        mov r9,strlen(string)
-        .if !WriteConsoleA(hStdOutput, string, r9d, &num_written, NULL)
-
-            xor rbx,rbx
-        .endif
+        mov rax,-1
     .endif
-    mov rax,rbx
     ret
 
 _cputs  ENDP

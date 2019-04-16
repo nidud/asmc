@@ -1,4 +1,3 @@
-
 test.exe:
 	asmc /Ge $*.asm
 	linkw system con_32 file $*

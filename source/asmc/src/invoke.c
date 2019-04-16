@@ -52,7 +52,7 @@ struct fastcall_conv {
     int	 (* handleparam)( struct dsym const *, int, struct dsym *, bool, struct expr *, char *, uint_8 * );
 };
 
-static const enum special_token regax[] = { T_AX, T_EAX, T_RAX };
+const enum special_token regax[] = { T_AX, T_EAX, T_RAX };
 
 extern struct fastcall_conv fastcall_tab[];
 extern short GetSegmentPart(struct expr *, char *, const char *);
@@ -922,8 +922,8 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
      */
 
     if ( sym->langtype == LANG_STDCALL || sym->langtype == LANG_C ||
-	fastcall_id == FCT_VEC32 + 1 || ( sym->langtype == LANG_FASTCALL && porder ) ||
-	( sym->langtype == LANG_SYSCALL ) ) {
+	 sym->langtype == LANG_SYSCALL || sym->langtype == LANG_VECTORCALL ||
+	 ( sym->langtype == LANG_FASTCALL && porder ) || ( fastcall_id == FCT_WIN64 + 1 ) ) {
 
 	/* v2.23 if stack base is ESP */
 

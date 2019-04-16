@@ -45,6 +45,6 @@ Install PROC PRIVATE USES edi
 
 Install ENDP
 
-.pragma(init(Install, 4))
+.pragma init(Install, 4)
 
     end

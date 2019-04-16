@@ -100,5 +100,4 @@ ifndef MAC
 DEFINE_GUID(IID_IRichEditOle,	      0x00020D00, 0, 0, 0xC0,0,0,0,0,0,0,0x46)
 DEFINE_GUID(IID_IRichEditOleCallback, 0x00020D03, 0, 0, 0xC0,0,0,0,0,0,0,0x46)
 endif
-
 endif ;; _RICHOLE_

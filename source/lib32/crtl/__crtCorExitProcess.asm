@@ -10,7 +10,7 @@ include winbase.inc
 CALLBACK(PFN_EXIT_PROCESS, :UINT)
 
 __crtCorExitProcess proc WINAPI status:int_t
-
+if 0
   local hmod:HMODULE
   local pfn:PFN_EXIT_PROCESS
 
@@ -29,6 +29,9 @@ __crtCorExitProcess proc WINAPI status:int_t
         ;; Just call return.
         ;;
     .endif
+else
+    ExitProcess(status)
+endif
     ret
 
 __crtCorExitProcess endp

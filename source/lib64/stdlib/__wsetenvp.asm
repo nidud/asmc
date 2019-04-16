@@ -13,45 +13,46 @@ include winbase.inc
 
 __wsetenvp PROC USES rsi rdi rbx envp:LPWSTR
 
-	mov rdi,GetEnvironmentStringsW()
-	mov rsi,rax			; save start of block in ESI
-	xor rax,rax
-	xor rbx,rbx
-	mov rcx,-1
-	.while	WORD PTR [rdi]		; size up the environment
-	    .if WORD PTR [rdi] != '='
-		mov  rdx,rdi		; save offset of string
+	.for ( rdi = GetEnvironmentStringsW(),
+	       rsi = rax, rax = 0, rbx = 0,
+	       rcx = -1 : word ptr [rdi] : )
+
+	    .if ( word ptr [rdi] != '=' )
+
+		mov  rdx,rdi
 		sub  rdx,rsi
 		push rdx
-		inc  rbx		; increase count
+		inc  rbx
 	    .endif
-	    repnz scasw			; next string..
-	.endw
-	inc rbx				; count strings plus NULL
-	sub rdi,rsi			; EDI to size
-	lea rax,[rdi+rbx*8]		; pointers plus size of environment
+	    repnz scasw
+	.endf
+	inc rbx
+
+	sub rdi,rsi
+	lea rax,[rdi+rbx*8]
 	malloc(rax)
-	mov rcx,envp			; return result
+	mov rcx,envp
 	mov [rcx],rax
+
 	.if rax
-	    lea rax,[rax+rbx*8]		; new adderss of block
-	    memcpy(rax,rsi,rdi)
-	    xchg rax,rsi		; ESI to block
+
+	    memcpy(&[rax+rbx*8], rsi, rdi)
+	    xchg rax,rsi
 	    FreeEnvironmentStringsW(rax)
-	    lea rdi,[rsi-8]		; EDI to end of pointers array
-	    std				; move backwards
-	    xor rax,rax			; set last pointer to NULL
+	    lea rdi,[rsi-8]
+	    std
+	    xor rax,rax
 	    stosq
 	    dec rbx
 	    .while rbx
-		pop rax			; pop offset in reverse
-		add rax,rsi		; add address of block
+		pop rax
+		add rax,rsi
 		stosq
 		dec rbx
 	    .endw
 	    cld
-	    inc rbx			; remove ZERO flag
-	    mov rax,envp		; return address of new _environ
+	    inc rbx
+	    mov rax,envp
 	    mov rax,[rax]
 	.endif
 	ret

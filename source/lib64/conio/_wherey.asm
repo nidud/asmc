@@ -8,10 +8,11 @@ include conio.inc
 
     .code
 
-_wherey proc
-local ci:CONSOLE_SCREEN_BUFFER_INFO
+_wherey proc frame
 
-    .if GetConsoleScreenBufferInfo(hStdOutput, &ci)
+  local ci:CONSOLE_SCREEN_BUFFER_INFO
+
+    .if GetConsoleScreenBufferInfo(_confh, &ci)
 
         movzx eax,ci.dwCursorPosition.y
     .endif

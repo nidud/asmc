@@ -54,6 +54,6 @@ InitDisk:
     _disk_read()
     ret
 
-.pragma init(InitDisk, 11)
+.pragma init(InitDisk, 70)
 
     END

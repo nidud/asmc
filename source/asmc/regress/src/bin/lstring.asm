@@ -46,11 +46,11 @@ bar	endp
 		A T U N
 	)
 
-	mov eax,@CStr( "" )		; 3 -- DS0003[26]
-	mov eax,@CStr( "Auto" )		; 0
-	mov eax,@CStr( "Unicode" )	; 1
-	mov eax,@CStr( L"Unicode" )	; 2
-	mov eax,@CStr(
+	lea eax,@CStr( "" )		; 3 -- DS0003[26]
+	lea eax,@CStr( "Auto" )		; 0
+	lea eax,@CStr( "Unicode" )	; 1
+	lea eax,@CStr( L"Unicode" )	; 2
+	lea eax,@CStr(
 	    "Unicode" "\t" "Auto" "\n"	; 3
 	    "Auto" "\t" "Unicode" "\n"
 	)

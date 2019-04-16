@@ -22,7 +22,7 @@ qsort proc uses rsi rdi rbx p:PVOID, n:SIZE_T, w:SIZE_T, compare:LPQSORTCMD
         lea rdi,[rsi+rax]
         mov stack_level,0
 
-        .while  1
+        .while 1
 
             mov rcx,w
             lea rax,[rdi+rcx]   ; middle from (hi - lo) / 2
@@ -49,7 +49,7 @@ qsort proc uses rsi rdi rbx p:PVOID, n:SIZE_T, w:SIZE_T, compare:LPQSORTCMD
             mov p,rsi
             mov n,rdi
 
-            .while  1
+            .while 1
 
                 mov rax,w
                 add p,rax
@@ -58,7 +58,7 @@ qsort proc uses rsi rdi rbx p:PVOID, n:SIZE_T, w:SIZE_T, compare:LPQSORTCMD
                     .continue .ifsd compare(p, rbx) <= 0
                 .endif
 
-                .while  1
+                .while 1
 
                     mov rax,w
                     sub n,rax
@@ -67,10 +67,10 @@ qsort proc uses rsi rdi rbx p:PVOID, n:SIZE_T, w:SIZE_T, compare:LPQSORTCMD
                     .break .ifsd compare(n, rbx) <= 0
                 .endw
 
-                mov rdx,n
+                mov rcx,n
                 mov rax,p
-                .break .if rdx < rax
-                memxchg(rdx, rax, w)
+                .break .if rcx < rax
+                memxchg(rcx, rax, w)
 
                 .if rbx == n
 
@@ -81,7 +81,7 @@ qsort proc uses rsi rdi rbx p:PVOID, n:SIZE_T, w:SIZE_T, compare:LPQSORTCMD
             mov rax,w
             add n,rax
 
-            .while  1
+            .while 1
 
                 mov rax,w
                 sub n,rax

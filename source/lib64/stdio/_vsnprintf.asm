@@ -19,7 +19,8 @@ _vsnprintf proc string:LPSTR, count:size_t, format:LPSTR, vargs:PVOID
     mov o._cnt,edx
     mov o._ptr,rcx
     mov o._base,rcx
-    _output(addr o, r8, r9)
+    mov rdx,r8
+    _output(&o, rdx, r9)
     mov rcx,o._ptr
     mov byte ptr [rcx],0
     ret

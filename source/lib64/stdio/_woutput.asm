@@ -177,7 +177,8 @@ endif
 
               .case ST_NORMAL
                 mov bufferiswide,1
-                write_char(edx, fp, &charsout)
+                mov ecx,edx
+                write_char(ecx, fp, &charsout)
                 .endc
 
               .case ST_PERCENT

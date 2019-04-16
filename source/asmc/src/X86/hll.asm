@@ -1116,6 +1116,7 @@ StripSource proc private uses esi edi ebx i:UINT, e:UINT, tokenarray:ptr asmtok
 
   local sym:ptr asym, info:ptr proc_info, curr:ptr asym
   local proc_id:ptr asmtok, parg_id:SINT, b[MAX_LINE_LEN]:SBYTE
+  local opnd:expr
 
     xor eax,eax
     mov b,al
@@ -1167,13 +1168,11 @@ StripSource proc private uses esi edi ebx i:UINT, e:UINT, tokenarray:ptr asmtok
             mov edx,[eax].nsym.procinfo
             mov info,edx
             mov ecx,[edx].proc_info.paralist
-
             movzx eax,[eax].asym.langtype
-            .if eax == LANG_C || eax == LANG_SYSCALL || eax == LANG_STDCALL || \
-               (eax == LANG_FASTCALL && ModuleInfo.Ofssize != USE64)
 
+            .if ( eax == LANG_STDCALL || eax == LANG_C || eax == LANG_SYSCALL || \
+                  eax == LANG_VECTORCALL || ( eax == LANG_FASTCALL && ModuleInfo.Ofssize != USE16 ) )
                 .while ecx && [ecx].nsym.nextparam
-
                     mov ecx,[ecx].nsym.nextparam
                 .endw
             .endif
@@ -1185,11 +1184,10 @@ StripSource proc private uses esi edi ebx i:UINT, e:UINT, tokenarray:ptr asmtok
                 ;
                 mov eax,sym
                 movzx eax,[eax].asym.langtype
-                .if eax == LANG_C || eax == LANG_SYSCALL || eax == LANG_STDCALL || \
-                    (eax == LANG_FASTCALL && ModuleInfo.Ofssize != USE64)
-
-                    .for eax=curr, ecx=[edx].proc_info.paralist: ecx,
-                         [ecx].nsym.nextparam != eax: ecx=[ecx].nsym.nextparam
+                .if ( eax == LANG_STDCALL || eax == LANG_C || eax == LANG_SYSCALL || \
+                      eax == LANG_VECTORCALL || ( eax == LANG_FASTCALL && ModuleInfo.Ofssize != USE16 ) )
+                    .for ( ecx = [edx].proc_info.paralist,
+                           eax = curr : ecx && [ecx].nsym.nextparam != eax : ecx = [ecx].nsym.nextparam )
                     .endf
                     mov curr,ecx
                 .else
@@ -1255,15 +1253,57 @@ endif
             shl eax,4
             lea ebx,[edi+eax-32]
             .if [ebx+16].token == T_COMMA && [ebx].token != T_CL_SQ_BRACKET
+
                 ;
                 ; <op> <reg|id> <,> <proc>
                 ;
                 xor eax,eax
                 .if [ebx].token == T_REG
+
                     SizeFromRegister( [ebx].tokval )
+
                 .elseif SymFind( [ebx].string_ptr )
+
                     mov eax,[eax].asym.total_size
+
+                .elseif [ebx-16].token == T_DOT
+
+                    ; <op> <struct>.id, rax
+
+                    mov edx,i
+                    sub i,4
+                    sub ebx,32
+                    .if [ebx].token == T_CL_SQ_BRACKET
+
+                        .while i && [ebx].token != T_OP_SQ_BRACKET
+                            dec i
+                            sub ebx,16
+                        .endw
+                    .endif
+
+                    sub edx,i
+                    .if EvalOperand( &i, tokenarray, edx, &opnd, 0 ) != ERROR
+
+                        xor eax,eax
+                        .if opnd.kind == EXPR_ADDR
+                            .switch opnd.mem_type
+                            .case MT_BYTE
+                            .case MT_SBYTE  : mov eax,1 : .endc
+                            .case MT_WORD
+                            .case MT_SWORD  : mov eax,2 : .endc
+                            .case MT_DWORD
+                            .case MT_SDWORD : mov eax,4 : .endc
+                            .case MT_OWORD
+                            .case MT_REAL2
+                            .case MT_REAL4
+                            .case MT_REAL8
+                            .case MT_REAL10
+                            .case MT_REAL16 : mov eax,16 : .endc
+                            .endsw
+                        .endif
+                    .endif
                 .endif
+
                 .if eax
                     .switch eax
                       .case 1: lea esi,@CStr(" al"):  .endc

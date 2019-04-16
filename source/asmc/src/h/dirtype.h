@@ -60,7 +60,7 @@ res( EQU,	EquDirective )
 res( EQUALSGN,	EqualSgnDirective ) /* '=' directive */
 res( INCBIN,	IncBinDirective )
 res( INCLIB,	IncludeLibDirective )
-res( NAME,	NameDirective )
+res( DOT_NAME,	NameDirective )
 res( OPTION,	OptionDirective )
 res( CONTEXT,	ContextDirective )
 res( HLLFOR,	ForDirective )

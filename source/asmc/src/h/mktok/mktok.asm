@@ -39,7 +39,7 @@ OpCls	macro op1, op2, op3
 	exitm<OPC_&op1&&op2&&op3&>
 	endm
 
-	echo TITLE TOKEN.INC -- Auto made from mktok.asm
+	echo .TITLE TOKEN.INC -- Auto made from mktok.asm
 	echo .xlist
 	echo ;
 	echo T_NULL	equ 0

@@ -1059,7 +1059,7 @@ int ListingDirective( int i, struct asm_tok tokenarray[] )
     case T_DOT_TFCOND: /* .TFCOND toggles .LFCOND, .SFCOND */
 	ModuleInfo.listif = !ModuleInfo.listif;
 	break;
-    case T_PAGE:
+    case T_DOT_PAGE:
     default: /* TITLE, SUBTITLE, SUBTTL */
 	/* tiny checks to ensure that these directives
 	 aren't used as code labels or struct fields */

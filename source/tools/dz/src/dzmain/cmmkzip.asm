@@ -46,7 +46,7 @@ local	path[_MAX_PATH]:byte
 		    mov ecx,5
 		    rep stosd
 
-		    oswrite(esi, edx, SIZE S_ZEND)
+		    oswrite(esi, edx, sizeof(S_ZEND))
 		    _close(esi)
 		.endif
 	    .endif

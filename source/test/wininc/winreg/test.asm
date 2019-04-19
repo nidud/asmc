@@ -62,13 +62,13 @@ disp:
 	    ADDR subKey,0,KEY_WRITE,ADDR key
 
     invoke  RegSetValueEx,key,ADDR valName1,0,\
-	    REG_DWORD,ADDR data1,SIZE(DWORD)
+	    REG_DWORD,ADDR data1,sizeof(DWORD)
 
     invoke  RegSetValueEx,key,ADDR valName2,0,\
-	    REG_DWORD,ADDR data2,SIZE(DWORD)
+	    REG_DWORD,ADDR data2,sizeof(DWORD)
 
     invoke  RegSetValueEx,key,ADDR valName3,0,\
-	    REG_DWORD,ADDR data3,SIZE(DWORD)
+	    REG_DWORD,ADDR data3,sizeof(DWORD)
 
     invoke  RegCloseKey,key
 

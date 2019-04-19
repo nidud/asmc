@@ -10,7 +10,7 @@
 	.code
 
 TestProto typedef PROTO STDCALL :DWORD,:DWORD
-TestProcPtr equ <(type TestProto) PTR edx>
+TestProcPtr equ <(typeof TestProto) PTR edx>
 
 p1 proc hInst:dword
 

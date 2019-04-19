@@ -1259,7 +1259,19 @@ SwitchStart proc uses esi edi ebx i:SINT, tokenarray:ptr asmtok
 
     mov edx,i
     shl edx,4
-    .if [ebx+edx].tokval == T_C
+
+    .if ( [ebx+edx].token == T_ID )
+        mov ecx,[ebx+edx].string_ptr
+        mov ecx,[ecx]
+        or  cl,0x20
+        .if ( cx == 'c' )
+            mov [ebx+edx].tokval,T_CCALL
+            mov [ebx+edx].token,T_RES_ID
+            mov [ebx+edx].bytval,1
+        .endif
+    .endif
+
+    .if [ebx+edx].tokval == T_CCALL
 
         inc i
         add edx,16

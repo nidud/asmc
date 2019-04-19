@@ -11,8 +11,8 @@ DelayExpand PROC FASTCALL tokenarray
 	xor	eax,eax
 	test	[tokenarray].hll_flags,T_HLL_DELAY
 	jz	toend
-	test	ModuleInfo.aflag,_AF_ON
-	jz	toend
+	cmp	ModuleInfo.strict_masm_compat,1
+	je	toend
 	cmp	Parse_Pass,PASS_1
 	jne	toend
 	cmp	eax,NoLineStore

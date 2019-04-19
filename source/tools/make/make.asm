@@ -895,7 +895,7 @@ addtarget proc uses esi edi ebx target:ptr sbyte
             mov target_command,eax
         .endif
 
-        .if !malloc(SIZE S_TARGET)
+        .if !malloc(sizeof(S_TARGET))
 
             perror("To many targets..")
             exit(1)
@@ -1277,10 +1277,10 @@ build_target endp
 addtargetarg proc target:ptr sbyte
     .if strlen(target)
 
-        lea eax,[eax+1+SIZE S_ARGS]
+        lea eax,[eax+1+sizeof(S_ARGS)]
         .if malloc(eax)
             mov edx,eax
-            strcpy(addr [edx+SIZE S_ARGS], target)
+            strcpy(addr [edx+sizeof(S_ARGS)], target)
             mov [edx].S_ARGS.a_name,eax
             xor eax,eax
             mov [edx].S_ARGS.a_next,eax
@@ -1365,10 +1365,10 @@ make endp
 
 addmakefile proc file:ptr sbyte
     .if strlen(file)
-        lea eax,[eax+1+SIZE S_ARGS]
+        lea eax,[eax+1+sizeof(S_ARGS)]
         .if malloc(eax)
             mov edx,eax
-            strcpy(addr [edx+SIZE S_ARGS], file)
+            strcpy(addr [edx+sizeof(S_ARGS)], file)
             mov [edx].S_ARGS.a_name,eax
             xor eax,eax
             mov [edx].S_ARGS.a_next,eax

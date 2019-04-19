@@ -178,12 +178,12 @@ config_read proc uses esi edi ebx
 ifdef _WIN95
     push console
 endif
-    mov history,malloc(SIZE S_HISTORY)
+    mov history,malloc(sizeof(S_HISTORY))
     .if eax
 
         mov edi,eax
         xor eax,eax
-        mov ecx,SIZE S_HISTORY
+        mov ecx,sizeof(S_HISTORY)
         rep stosb
     .endif
 
@@ -256,7 +256,7 @@ endif
                 mov [edi].S_DIRECTORY.fcb_index,eax
                 mov eax,boff
                 mov [edi].S_DIRECTORY.cel_index,eax
-                add edi,SIZE S_DIRECTORY
+                add edi,sizeof(S_DIRECTORY)
             .endw
         .endif
     .endif
@@ -369,7 +369,7 @@ config_save proc uses esi edi ebx
                         [edi].S_DIRECTORY.cel_index,
                         [edi].S_DIRECTORY.path)
 
-                    add edi,SIZE S_DIRECTORY
+                    add edi,sizeof(S_DIRECTORY)
                     inc esi
                     .break .if esi == MAXHISTORY
                 .endw

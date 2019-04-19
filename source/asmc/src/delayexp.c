@@ -1,12 +1,12 @@
 #include <globals.h>
 #include <hllext.h>
 
-int DelayExpand( struct asm_tok tokenarray[] )
+int FASTCALL DelayExpand( struct asm_tok tokenarray[] )
 {
     int i;
     int bracket;
 
-    if ( !( ModuleInfo.aflag & _AF_ON ) )
+    if ( ModuleInfo.strict_masm_compat == 1 )
 	return 0;
     if ( !( tokenarray[0].hll_flags & T_HLL_DELAY ) )
 	return 0;

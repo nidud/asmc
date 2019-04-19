@@ -37,9 +37,6 @@ bar3	macro const:req
 	exitm	<string>
 	endm
 
-
-	option asmc:on
-
 	.while	eax == bar("abc")
 		nop
 	.endw

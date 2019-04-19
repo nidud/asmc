@@ -102,7 +102,7 @@ NextItem proc private uses esi
             .endif
 
             inc ecx
-            add edx,SIZE S_TOBJ
+            add edx,sizeof(S_TOBJ)
         .endw
 
         mov     edx,[esi].S_DOBJ.dl_object
@@ -120,7 +120,7 @@ NextItem proc private uses esi
             .endif
 
             inc ecx
-            add edx,SIZE S_TOBJ
+            add edx,sizeof(S_TOBJ)
         .endw
         xor eax,eax
     .until 1
@@ -397,7 +397,7 @@ test_event proc private uses esi edi ebx cmd, extended
                     .endif
                     .break
                 .endif
-                add edx,SIZE S_TOBJ
+                add edx,sizeof(S_TOBJ)
                 dec ebx
             .endw
 
@@ -800,7 +800,7 @@ test_event proc private uses esi edi ebx cmd, extended
                         call [edx].S_GLCMD.gl_proc
                         .break(1)
                     .endif
-                    add edx,SIZE S_GLCMD
+                    add edx,sizeof(S_GLCMD)
                 .endw
             .endif
             xor eax,eax

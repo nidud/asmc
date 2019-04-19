@@ -261,9 +261,9 @@ static ret_code get_operand( struct expr *opnd, int *idx, struct asm_tok tokenar
 		return( fnasmerr( 2085 ) );
 	}
 
-	if ( (i > 0 && tokenarray[i - 1].tokval == T_TYPE) ||
+	if ( (i > 0 && tokenarray[i - 1].tokval == T_TYPEOF) ||
 	     (i > 1 && tokenarray[i - 1].token == T_OP_BRACKET
-		    && tokenarray[i - 2].tokval == T_TYPE) )
+		    && tokenarray[i - 2].tokval == T_TYPEOF) )
 
 	     ; /* v2.24 [reg + type reg] | [reg + type(reg)] */
 
@@ -273,7 +273,7 @@ static ret_code get_operand( struct expr *opnd, int *idx, struct asm_tok tokenar
 		opnd->assumecheck = 1;
 	    } else if ( SpecialTable[j].value & OP_SR ) {
 		if( tokenarray[i+1].token != T_COLON ||
-		   ( Options.strict_masm_compat && tokenarray[i+2].token == T_REG ) ) {
+		   ( ModuleInfo.strict_masm_compat && tokenarray[i+2].token == T_REG ) ) {
 		    return( fnasmerr( 2032 ) );
 		}
 	    } else {
@@ -692,14 +692,14 @@ static int sizlen_op( int oper, struct expr *opnd1, struct expr *opnd2, struct a
 	    ;
 	else if ( sym->state == SYM_GRP || sym->state == SYM_SEG ) {
 	    return( fnasmerr( 2143 ) );
-	} else if ( oper == T_SIZE || oper == T_LENGTH )
+	} else if ( oper == T_DOT_SIZE || oper == T_DOT_LENGTH )
 	;
 	else {
 	    return( fnasmerr( 2143 ) );
 	}
     }
     switch( oper ) {
-    case T_LENGTH:
+    case T_DOT_LENGTH:
 	opnd1->value = sym->isdata ? sym->first_length : 1;
 	break;
     case T_LENGTHOF:
@@ -711,7 +711,7 @@ static int sizlen_op( int oper, struct expr *opnd1, struct expr *opnd2, struct a
 	    opnd1->value = sym->total_length;
 	}
 	break;
-    case T_SIZE:
+    case T_DOT_SIZE:
 	if( sym == NULL ) {
 	    if ( ( opnd2->mem_type & MT_SPECIAL_MASK ) == MT_ADDRESS )
 		opnd1->value = 0xFF00 | opnd2->value;
@@ -754,8 +754,8 @@ static int type_op( int oper, struct expr *opnd1, struct expr *opnd2, struct asy
     if( opnd2->instr != EMPTY ) {
 	if ( opnd2->sym ) {
 	    switch ( opnd2->instr ) {
-	    case T_LOW:
-	    case T_HIGH:
+	    case T_DOT_LOW:
+	    case T_DOT_HIGH:
 		opnd1->value = 1;
 		break;
 	    case T_LOWWORD:
@@ -993,7 +993,7 @@ static int low_op( int oper, struct expr *opnd1, struct expr *opnd2, struct asym
 {
     TokenAssign( opnd1, opnd2 );
     if ( opnd2->kind == EXPR_ADDR && opnd2->instr != T_SEG ) {
-	opnd1->instr = T_LOW;
+	opnd1->instr = T_DOT_LOW;
 	opnd1->mem_type = MT_EMPTY;
     }
     opnd1->llvalue &= 0xff;
@@ -1004,7 +1004,7 @@ static int high_op( int oper, struct expr *opnd1, struct expr *opnd2, struct asy
 {
     TokenAssign( opnd1, opnd2 );
     if ( opnd2->kind == EXPR_ADDR && opnd2->instr != T_SEG ) {
-	opnd1->instr = T_HIGH;
+	opnd1->instr = T_DOT_HIGH;
 	opnd1->mem_type = MT_EMPTY;
     }
     opnd1->value = opnd1->value >> 8;
@@ -1015,7 +1015,7 @@ static int high_op( int oper, struct expr *opnd1, struct expr *opnd2, struct asy
 static int low32_op( int oper, struct expr *opnd1, struct expr *opnd2, struct asym *sym, char *name )
 {
     if ( opnd2->kind == EXPR_FLOAT ) {
-	if ( Options.strict_masm_compat )
+	if ( ModuleInfo.strict_masm_compat )
 	    return( ConstError( opnd1, opnd2 ) );
 	atofloat( &opnd2->llvalue, opnd2->float_tok->string_ptr, sizeof( opnd2->llvalue), opnd2->negative, opnd2->float_tok->floattype );
 	opnd2->kind = EXPR_CONST;
@@ -1033,7 +1033,7 @@ static int low32_op( int oper, struct expr *opnd1, struct expr *opnd2, struct as
 static int high32_op( int oper, struct expr *opnd1, struct expr *opnd2, struct asym *sym, char *name )
 {
     if ( opnd2->kind == EXPR_FLOAT ) {
-	if ( Options.strict_masm_compat )
+	if ( ModuleInfo.strict_masm_compat )
 	    return( ConstError( opnd1, opnd2 ) );
 	atofloat( &opnd2->llvalue, opnd2->float_tok->string_ptr, sizeof( opnd2->llvalue), opnd2->negative, opnd2->float_tok->floattype );
 	opnd2->kind = EXPR_CONST;
@@ -1051,7 +1051,7 @@ static int high32_op( int oper, struct expr *opnd1, struct expr *opnd2, struct a
 static int low64_op( int oper, struct expr *opnd1, struct expr *opnd2, struct asym *sym, char *name )
 {
     if ( opnd2->kind == EXPR_FLOAT ) {
-	if ( Options.strict_masm_compat )
+	if ( ModuleInfo.strict_masm_compat )
 	    return( ConstError( opnd1, opnd2 ) );
 	atofloat( &opnd2->llvalue, opnd2->float_tok->string_ptr,
 		16, opnd2->negative, opnd2->float_tok->floattype );
@@ -1070,7 +1070,7 @@ static int low64_op( int oper, struct expr *opnd1, struct expr *opnd2, struct as
 static int high64_op( int oper, struct expr *opnd1, struct expr *opnd2, struct asym *sym, char *name )
 {
     if ( opnd2->kind == EXPR_FLOAT ) {
-	if ( Options.strict_masm_compat )
+	if ( ModuleInfo.strict_masm_compat )
 	    return( ConstError( opnd1, opnd2 ) );
 	atofloat( &opnd2->llvalue, opnd2->float_tok->string_ptr,
 		16, opnd2->negative, opnd2->float_tok->floattype );
@@ -1129,7 +1129,7 @@ static int wimask_op( int oper, struct expr *opnd1, struct expr *opnd2, struct a
     } else {
 	sym = opnd2->sym;
     }
-    if ( oper == T_MASK ) {
+    if ( oper == T_DOT_MASK ) {
 	int i;
 	opnd1->value = 0;
 	if ( opnd2->is_type ) {

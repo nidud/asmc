@@ -153,8 +153,17 @@ void sym_ext2int( struct asym *sym )
 
 int GetLangType( int *i, struct asm_tok tokenarray[], unsigned char *plang )
 {
+    if( tokenarray[*i].token == T_ID && (tokenarray[*i].string_ptr[0] | 0x20) == 'c'
+	&& tokenarray[*i].string_ptr[1] == '\0') {
+	/* proto c :word or proc c:word */
+	if ( !(tokenarray[*i-1].tokval == T_PROC && tokenarray[*i+1].token == T_COLON ) ) {
+	    tokenarray[*i].token = T_RES_ID;
+	    tokenarray[*i].tokval = T_CCALL;
+	    tokenarray[*i].bytval = 1;
+	}
+    }
     if( tokenarray[*i].token == T_RES_ID ) {
-	if ( tokenarray[(*i)].tokval >= T_C &&
+	if ( tokenarray[(*i)].tokval >= T_CCALL &&
 	    tokenarray[(*i)].tokval <= T_VECTORCALL ) {
 	    *plang = tokenarray[(*i)].bytval;
 	    (*i)++;
@@ -861,7 +870,7 @@ int idata_fixup( struct code_info *CodeInfo, unsigned CurrOpnd, struct expr *opn
 	}
 	switch ( size ) {
 	case 1:
-	    if ( opndx->is_abs || opndx->instr == T_LOW || opndx->instr == T_HIGH )
+	    if ( opndx->is_abs || opndx->instr == T_DOT_LOW || opndx->instr == T_DOT_HIGH )
 		CodeInfo->mem_type = MT_BYTE;
 	    break;
 	case 2:
@@ -903,8 +912,8 @@ int idata_fixup( struct code_info *CodeInfo, unsigned CurrOpnd, struct expr *opn
 		if ( opndx->mem_type == MT_EMPTY  ) {
 		    switch( opndx->instr ) {
 		    case EMPTY:
-		    case T_LOW:
-		    case T_HIGH:
+		    case T_DOT_LOW:
+		    case T_DOT_HIGH:
 			opndx->mem_type = MT_BYTE;
 			break;
 		    case T_LOW32: /* v2.10: added - low32_op() doesn't set mem_type anymore. */
@@ -973,7 +982,7 @@ int idata_fixup( struct code_info *CodeInfo, unsigned CurrOpnd, struct expr *opn
     if( opndx->instr == T_SEG ) {
 	fixup_type = FIX_SEG;
     } else if( CodeInfo->mem_type == MT_BYTE ) {
-	if ( opndx->instr == T_HIGH ) {
+	if ( opndx->instr == T_DOT_HIGH ) {
 	    fixup_type = FIX_HIBYTE;
 	} else {
 	    fixup_type = FIX_OFF8;
@@ -2606,7 +2615,7 @@ int ParseLine( struct asm_tok tokenarray[] )
 	if ( i && tokenarray[i-1].token == T_ID )
 	    i--;
 
-	if ( i == 0 && ( ModuleInfo.aflag & _AF_ON ) && ( tokenarray[0].hll_flags & T_HLL_PROC ) ) {
+	if ( i == 0 && ( ModuleInfo.strict_masm_compat == 0 ) && ( tokenarray[0].hll_flags & T_HLL_PROC ) ) {
 	    /*
 	     * invoke handle import, call do not..
 	     */
@@ -2693,7 +2702,7 @@ int ParseLine( struct asm_tok tokenarray[] )
 	}
     }
 
-    if ( ( ModuleInfo.aflag & _AF_ON ) /*&& Parse_Pass == PASS_1*/ ) {
+    if ( ( ModuleInfo.strict_masm_compat == 0 ) /*&& Parse_Pass == PASS_1*/ ) {
 
 	for ( q = 1; tokenarray[q].token != T_FINAL; q++ ) {
 
@@ -2758,7 +2767,7 @@ int ParseLine( struct asm_tok tokenarray[] )
 	case EXPR_FLOAT:
 	    /* v2.06: accept float constants for PUSH */
 	    if ( j == OPND2 || CodeInfo.token == T_PUSH || CodeInfo.token == T_PUSHD ) {
-		if ( Options.strict_masm_compat == FALSE ) {
+		if ( ModuleInfo.strict_masm_compat == FALSE ) {
 		    /* v2.27: convert to REAL */
 		    if ( opndx[j].float_tok ) {
 			int m;

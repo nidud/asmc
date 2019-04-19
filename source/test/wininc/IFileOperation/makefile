@@ -3,4 +3,6 @@ test.exe:
     linkw sys con_64W file $*
     $@
     pause
+    del *.obj
+    del *.exe
 

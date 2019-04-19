@@ -15,17 +15,17 @@ _tmain proc argc:int_t, argv:ptr PTSTR
 
     .if ( ecx == 2 )
 
-        .ifd CreateFile("C:\\", 0,
+        .ifd CreateFile("D:\\", 0,
                 FILE_SHARE_READ or FILE_SHARE_WRITE or FILE_SHARE_DELETE,
                 NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS,
                 NULL) != INVALID_HANDLE_VALUE
 
             mov hRoot,rax
-            mov rdx,argv
+            mov rcx,argv
             mov desc.dwSize,sizeof(desc)
             mov desc._Type,ObjectIdType
 
-            .ifd (CLSIDFromString([rdx+8], &desc.ObjectId)) == S_OK
+            .ifd (CLSIDFromString([rcx+8], &desc.ObjectId)) == S_OK
 
                 .ifd OpenFileById(hRoot, &desc, GENERIC_READ,
                         FILE_SHARE_READ or FILE_SHARE_WRITE or FILE_SHARE_DELETE,

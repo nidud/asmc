@@ -871,14 +871,14 @@ SEVERITY_ERROR	equ 1
 
 
 SUCCEEDED macro hr
-    if (type(hr))
+    if (typeof(hr))
 	exitm<(hr !>= 0)>
     else
 	exitm<(hr GE 0)>
     endif
 	endm
 FAILED macro hr
-    if (type(hr))
+    if (typeof(hr))
 	exitm<((hr) !< 0)>
     else
 	exitm<((hr) LT 0)>
@@ -921,7 +921,7 @@ MAKE_SCODE macro sev,fac,code
 FACILITY_NT_BIT equ 0x10000000
 
 HRESULT_FROM_WIN32 macro x
-    if (type(x))
+    if (typeof(x))
 	.if x
 	    and x,0x0000FFFF
 	    or	x,(FACILITY_WIN32 shl 16) or 0x80000000

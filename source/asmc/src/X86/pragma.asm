@@ -2,6 +2,8 @@
 ; Copyright (C) 2018 Asmc Developers
 ;
 ; Change history:
+; 2019-04-18 - .pragma(asmc(push, <0|1>))
+;              .pragma(asmc(pop))
 ; 2019-03-19 - .pragma(warning(disable: <num>))
 ;              .pragma(warning(push))
 ;              .pragma(warning(pop))
@@ -79,11 +81,13 @@ MAXSTACK equ 16
     PackCount dd 0
     CrefCount dd 0
     WarnCount dd 0
+    AsmcCount dd 0
 
     PackStack db MAXSTACK dup(0)
     ListStack db MAXSTACK dup(0)
     CrefStack db MAXSTACK dup(0)
     WarnStack dd MAXSTACK dup(0)
+    AsmcStack db MAXSTACK dup(0)
 
     .code
 
@@ -122,6 +126,59 @@ PragmaDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asmtok
 
         bswap   eax
         .switch eax
+
+        .case "asmc"
+
+            .if [ebx].tokval == T_POP
+                add ebx,16
+                .if [ebx].token == T_CL_BRACKET
+                    add ebx,16
+                .endif
+                .endc .if !AsmcCount
+                dec AsmcCount
+                mov eax,AsmcCount
+                mov al,AsmcStack[eax]
+                .if al != ModuleInfo.strict_masm_compat
+                    mov ModuleInfo.strict_masm_compat,al
+                    xor eax,1
+                    AsmcKeywords(eax)
+                .endif
+                .endc
+            .endif
+            .endc .if [ebx].tokval != T_PUSH
+            .endc .if AsmcCount >= MAXSTACK
+            mov edx,AsmcCount
+            inc AsmcCount
+            mov al,ModuleInfo.strict_masm_compat
+            mov AsmcStack[edx],al
+            inc i
+            .if [ebx+16].token == T_OP_BRACKET || [ebx+16].token == T_COMMA
+                inc i
+            .endif
+            .endc .if EvalOperand(&i, tokenarray, ModuleInfo.token_count, &opndx, EXPF_NOUNDEF ) == ERROR
+            mov ebx,i
+            shl ebx,4
+            add ebx,tokenarray
+            .if opndx.kind != EXPR_CONST
+                asmerr( 2026 )
+                .endc
+            .endif
+            mov eax,opndx.uvalue
+            .if ( eax > 1 )
+                asmerr( 2064 )
+                .endc
+            .endif
+            xor eax,1
+            .if al != ModuleInfo.strict_masm_compat
+                mov ModuleInfo.strict_masm_compat,al
+                xor eax,1
+                AsmcKeywords(eax)
+            .endif
+            add ebx,16
+            .if [ebx].token == T_CL_BRACKET
+                add ebx,16
+            .endif
+            .endc
 
         .case "warn"
 

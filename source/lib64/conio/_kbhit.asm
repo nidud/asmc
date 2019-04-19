@@ -38,7 +38,7 @@ _kbhit PROC USES rbx rdi rsi
             .endif
 
             ReadConsoleInput(hStdInput, rbx, 1, &Count)
-            add rbx,SIZE INPUT_RECORD
+            add rbx,sizeof(INPUT_RECORD)
             dec esi
         .endw
     .endif

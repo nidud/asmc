@@ -2,7 +2,7 @@
 ;--- AVX, 64-bit
 
 ifdef __JWASM__
-if type near eq 0ff02h
+if typeof near eq 0ff02h
 	.x64
 	.model flat, fastcall
 endif

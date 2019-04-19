@@ -17,7 +17,7 @@ zip_copylocal PROC USES esi edi ebx exact_match
 	dec	eax
 	mov	offset_local,eax
 lupe:
-	mov	eax,SIZE S_ZEND
+	mov	eax,sizeof(S_ZEND)
 	call	oread
 	mov	ebx,eax
 	jz	error
@@ -26,12 +26,12 @@ lupe:
 	mov	eax,esi
 	cmp	WORD PTR [ebx+2],ZIPLOCALID
 	jne	toend
-	lea	eax,[edi+SIZE S_LZIP]
+	lea	eax,[edi+sizeof(S_LZIP)]
 @@:
 	call	oread
 	mov	ebx,eax
 	jz	error
-	mov	eax,SIZE S_LZIP
+	mov	eax,sizeof(S_LZIP)
 	add	ax,[ebx].S_LZIP.lz_fnsize
 	cmp	ecx,eax
 	jb	@B
@@ -55,14 +55,14 @@ subdir:
 	cmp	eax,edi
 	jbe	copy
 compare:
-	_strnicmp( __outpath, addr [ebx+SIZE S_LZIP], edi )
+	_strnicmp( __outpath, addr [ebx+sizeof(S_LZIP)], edi )
 	jnz	copy
 	inc	esi
 	movzx	eax,[ebx].S_LZIP.lz_extsize
 	mov	extsize_local,eax
 	mov	ax,[ebx].S_LZIP.lz_fnsize
 	push	eax
-	add	ebx,SIZE S_LZIP
+	add	ebx,sizeof(S_LZIP)
 	and	eax,01FFh
 	memcpy( entryname, ebx, eax )
 	pop	ebx
@@ -90,7 +90,7 @@ zip_copycentral PROC USES esi edi ebx loffset, lsize, exact_match
 	mov	edi,eax
 	xor	esi,esi
 lupe:
-	mov	eax,SIZE S_ZEND
+	mov	eax,sizeof(S_ZEND)
 	call	oread
 	mov	ebx,eax
 	jz	error
@@ -98,16 +98,16 @@ lupe:
 	jne	error
 	cmp	[ebx].S_CZIP.cz_zipid,ZIPCENTRALID	; 1,2	0201h
 	jne	toend
-	mov	eax,SIZE S_CZIP
+	mov	eax,sizeof(S_CZIP)
 	call	oread
 	mov	ebx,eax
 	jz	error
-	mov	eax,SIZE S_CZIP
+	mov	eax,sizeof(S_CZIP)
 	add	ax,[ebx].S_CZIP.cz_fnsize
 	call	oread
 	mov	ebx,eax
 	jz	error
-	mov	eax,SIZE S_CZIP			; Central directory
+	mov	eax,sizeof(S_CZIP)		; Central directory
 	add	ax,[ebx].S_CZIP.cz_fnsize	; file name length (*this)
 	add	ax,[ebx].S_CZIP.cz_extsize
 	add	ax,[ebx].S_CZIP.cz_cmtsize
@@ -128,7 +128,7 @@ lupe:
 @@:
 	cmp	edi,eax
 	ja	copy
-	add	ebx,SIZE S_CZIP
+	add	ebx,sizeof(S_CZIP)
 	_strnicmp( __outpath, ebx, edi )
 	test	eax,eax
 	jz	delete
@@ -157,13 +157,13 @@ zip_copyendcentral PROC USES esi edi
 	add	eax,STDO.ios_i
 	sub	eax,zip_endcent.ze_off_cent
 	mov	zip_endcent.ze_size_cent,eax
-	mov	eax,SIZE S_ZEND
+	mov	eax,sizeof(S_ZEND)
 	call	oread
 	jz	error
-	memcpy( eax, addr zip_endcent, SIZE S_ZEND )
+	memcpy( eax, addr zip_endcent, sizeof(S_ZEND) )
 	xor	edx,edx
 	movzx	eax,zip_endcent.ze_comment_size
-	add	eax,SIZE S_ZEND
+	add	eax,sizeof(S_ZEND)
 	iocopy( addr STDO, addr STDI, edx::eax )
 	jz	error
 	ioflush( addr STDO )

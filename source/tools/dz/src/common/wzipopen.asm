@@ -21,8 +21,8 @@ cp_emarchive	db "Error in archive",0
 	.code
 
 zip_clearentry PROC
-	memset( addr zip_local, 0, SIZE S_LZIP )
-	memset( addr zip_central, 0, SIZE S_CZIP )
+	memset( addr zip_local, 0, sizeof(S_LZIP) )
+	memset( addr zip_central, 0, sizeof(S_CZIP) )
 	mov	zip_local.lz_pkzip,ZIPHEADERID
 	mov	zip_local.lz_zipid,ZIPLOCALID
 	mov	BYTE PTR zip_local.lz_version,20
@@ -153,7 +153,7 @@ copyc:
 	xor	edx,edx
 	iocopy( addr STDO, addr ocentral, edx::eax )
 	jz	error_2
-	iowrite( addr STDO, addr zip_endcent, SIZE S_ZEND )
+	iowrite( addr STDO, addr zip_endcent, sizeof(S_ZEND) )
 	jz	error_2
 	movzx	esi,zip_endcent.ze_comment_size
 	test	esi,esi

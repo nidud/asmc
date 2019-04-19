@@ -47,7 +47,7 @@ _kbhit proc uses ebx edi esi
 
             ReadConsoleInput(hStdInput, ebx, 1, &Count)
 
-            add ebx,SIZE INPUT_RECORD
+            add ebx,sizeof(INPUT_RECORD)
             dec esi
         .endw
     .endif

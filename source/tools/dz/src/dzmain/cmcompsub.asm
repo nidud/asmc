@@ -618,7 +618,7 @@ cmcompsub proc PUBLIC uses esi edi ebx
     lea edx,ll
     mov tdllist,edx
     mov edi,edx
-    mov ecx,SIZE S_LOBJ
+    mov ecx,sizeof(S_LOBJ)
     xor eax,eax
     rep stosb
     mov [edx].S_LOBJ.ll_dcount,ID_FILE
@@ -663,7 +663,7 @@ cmcompsub proc PUBLIC uses esi edi ebx
                 or fsflag,IO_SEARCHSUB
             .endif
 
-            lea edx,[ebx].S_TOBJ.to_proc[SIZE S_TOBJ]
+            lea edx,[ebx].S_TOBJ.to_proc[sizeof(S_TOBJ)]
             mov ecx,ID_FILE
             mov eax,ff_event_xcell
 

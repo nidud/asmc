@@ -22,7 +22,7 @@ S1	ends
 
 	.code
 
-	mov rax, mask rf1
+	mov rax, .mask rf1
 	mov rax, [ebx].S1.f2
 	nop
 

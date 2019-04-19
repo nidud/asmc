@@ -15,16 +15,15 @@ _tmain proc argc:int_t, argv:ptr PTSTR
   local guid:GUID, szGuid[39]:WCHAR
 
     .if ( ecx == 2 )
-        mov h,CreateFile([rdx+8], 0,
-                 FILE_SHARE_READ or FILE_SHARE_WRITE or FILE_SHARE_DELETE,
-                 NULL,
-                 OPEN_EXISTING, 0, NULL)
 
-        .if (eax != INVALID_HANDLE_VALUE)
+        mov rcx,[rdx+8]
+        .ifs CreateFile(rcx, 0,
+                FILE_SHARE_READ or FILE_SHARE_WRITE or FILE_SHARE_DELETE,
+                NULL, OPEN_EXISTING, 0, NULL) > 0
 
-            .if (DeviceIoControl(h, FSCTL_CREATE_OR_GET_OBJECT_ID,
-                 NULL, 0, &buf, sizeof(buf),
-                 &cbOut, NULL))
+            mov h,rax
+            .if DeviceIoControl(h, FSCTL_CREATE_OR_GET_OBJECT_ID,
+                    NULL, 0, &buf, sizeof(buf), &cbOut, NULL)
 
                 CopyMemory(&guid, &buf.ObjectId, sizeof(GUID))
                 StringFromGUID2(&guid, &szGuid, 39)

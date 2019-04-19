@@ -3,14 +3,14 @@ ifndef __LIBC_INC
 ;
 ; Master include file for the Asmc RTL library.
 ;
-
 __LIBC_INC	equ 1
 __STDC__	equ 1
-__LIBC__	equ 229
+__LIBC__	equ 230
+ifdef __ASMC__
 if ( __ASMC__ LT __LIBC__ )
   .err <incorrect version. Use the header that matches with the Asmc Assembler.>
 endif
-
+endif
 ;;
 ;; Architecture kinds:
 ;;     _WIN64 (#define symbols)

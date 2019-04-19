@@ -150,7 +150,7 @@ init_list:
 	    inc [edx].S_LOBJ.ll_numcel
 	.endif
 	mov [edi].S_TOBJ.to_data,eax
-	add edi,SIZE S_TOBJ
+	add edi,sizeof(S_TOBJ)
     .untilcxz
 
     pop ebx

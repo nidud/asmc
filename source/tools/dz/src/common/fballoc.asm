@@ -7,7 +7,7 @@ include wsub.inc
 fballoc proc uses ebx fname:LPSTR, ftime:dword, fsize:qword, flag:dword
 
 
-    add strlen(fname),SIZE S_FBLK
+    add strlen(fname),sizeof(S_FBLK)
     .if malloc(eax)
 
         mov ebx,eax

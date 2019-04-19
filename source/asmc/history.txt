@@ -2,7 +2,14 @@ HISTORY.TXT--
 Change Log File for ASMC
 ========================
 
-Changes in 2.30 - xx xxx 2019
+Changes in 2.30 - 19 Apr 2019
+- added .pragma asmc(push/pop)
+- removed switch /Xc
+- removed option asmc
+- renamed C to CCALL
+- renamed TYPE to TYPEOF
+- renamed SIZE, LENGTH, HIGH, LOW, THIS, and WIDTH to dot names
+- renamed directive NAME, TITLE, PAGE, SUBTITLE, and SUBTTL to dot names
 - changed invoke for 64-bit fastcall and vectorcall - args loaded right to left
 - removed invoke error for mem-arg - foo([rsi])
 - changed invoke arguments for 3,5,6,7 byte types

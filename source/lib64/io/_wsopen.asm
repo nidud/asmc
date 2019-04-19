@@ -26,7 +26,7 @@ _wsopen proc uses rsi rdi rbx path:LPWSTR, oflag:SINT, shflag:SINT, args:VARARG
     mov sa.lpSecurityDescriptor,rax
     mov fileflags,al
     mov eax,oflag
-    mov sa.nLength,SIZE SECURITY_ATTRIBUTES
+    mov sa.nLength,sizeof(SECURITY_ATTRIBUTES)
 
     .if eax & O_NOINHERIT
         mov fileflags,FH_NOINHERIT

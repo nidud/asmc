@@ -125,7 +125,7 @@ ret_code ContextDirective( int i, struct asm_tok tokenarray[] )
 	    break;
 
 	/* reject ALIGNMENT if strict masm compat is on */
-	if ( Options.strict_masm_compat ) {
+	if ( ModuleInfo.strict_masm_compat ) {
 	    if ( type == CONT_ALIGNMENT )
 		break;
 	    else

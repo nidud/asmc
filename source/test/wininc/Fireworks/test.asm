@@ -416,7 +416,7 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
 
     .repeat
 
-        .switch rdx
+        .switch edx
 
         .case WM_MOUSEMOVE
             .endc .if r8d != MK_CONTROL

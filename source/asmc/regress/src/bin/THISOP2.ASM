@@ -10,8 +10,8 @@ T1 typedef WORD
 _TEXT segment 'CODE'
 	assume ds:_TEXT
 
-S1tab equ this S1
-T1tab equ this T1
+S1tab equ .this S1
+T1tab equ .this T1
 btab  db 8 dup (0)
 
 	mov al,btab[2]

@@ -46,7 +46,7 @@ ltext(COMM,	"COMM"	 )
 ltext(VARARG,	"VARARG" )
 /* language order must match enum lang_type in globals.h */
 ltext(VOID,	""	 )
-ltext(C,	"C"	 )
+ltext(CCALL,	"C"	 )
 ltext(SYSCALL,	"SYSCALL")
 ltext(STDCALL,	"STDCALL")
 ltext(PASCAL,	"PASCAL" )

@@ -91,7 +91,7 @@ int ProcType(int i, struct asm_tok tokenarray[], char *buffer)
 
         if ( IsCom ) {
 
-            if ( tokenarray[i].tokval >= T_C && tokenarray[i].tokval <= T_VECTORCALL )
+            if ( tokenarray[i].tokval >= T_CCALL && tokenarray[i].tokval <= T_VECTORCALL )
                 q = 1;
             if ( tokenarray[i+1].token == T_FINAL || q ||
                ( tokenarray[i].token != T_COLON && tokenarray[i+1].token != T_COLON ) ) {
@@ -202,7 +202,14 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
             _strupr( buffer );
 
         args = i + 1;
-        if ( tokenarray[args].token != T_FINAL && tokenarray[args].tokval >= T_C
+        if( tokenarray[args].token == T_ID && (tokenarray[args].string_ptr[0] | 0x20) == 'c'
+            && tokenarray[args].string_ptr[1] == '\0') {
+            tokenarray[args].token = T_RES_ID;
+            tokenarray[args].tokval = T_CCALL;
+            tokenarray[args].bytval = 1;
+        }
+
+        if ( tokenarray[args].token != T_FINAL && tokenarray[args].tokval >= T_CCALL
             && tokenarray[args].tokval <= T_VECTORCALL ) {
             o->langtype = tokenarray[args].tokval;
             args++;

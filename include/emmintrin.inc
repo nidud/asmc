@@ -671,7 +671,7 @@ _mm_cmplt_epi32 macro x:req, a:req, b:req
 	endm
 _mm_cvtsi32_si128 macro x, d
     ifnb <d>
-	if (type d) eq 4 and (opattr d) eq 48
+	if (typeof d) eq 4 and (opattr d) eq 48
 	    movd x,d
 	else
 	    mov eax,d
@@ -952,7 +952,7 @@ _mm_cvtsi64_sd macro x:=<xmm0>, reg:=<rax>
     if (opattr(reg)) eq 48
 	cvtsi2sd x,reg
     else
-	if (type reg) eq 4 and not ((opattr(reg)) eq 48)
+	if (typeof reg) eq 4 and not ((opattr(reg)) eq 48)
 	    mov eax,reg
 	else
 	    mov rax,reg

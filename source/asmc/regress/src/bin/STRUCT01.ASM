@@ -35,18 +35,18 @@ mac1 macro value
 
 DISKIORM struct
 startsec dd ?
-sectors  dw ?
-buffofs  dw ?
-buffseg  dw ?
+sectors	 dw ?
+buffofs	 dw ?
+buffseg	 dw ?
 DISKIORM ends
 
 _DATA segment word public 'DATA'
 var1	s1 {}
 var2	s1 {1,2,{3,4}}
 var3	s1 {1,2,{}}
-var4    s2 {<55,66,<>>}
-var5    s2 {<0AAh,0BBh,<0CCh,0DDh>>,0FFh}
-var6    s2 {<0AAh,mac1(44),<mac1(66),mac1(77)>>,0FFh}
+var4	s2 {<55,66,<>>}
+var5	s2 {<0AAh,0BBh,<0CCh,0DDh>>,0FFh}
+var6	s2 {<0AAh,mac1(44),<mac1(66),mac1(77)>>,0FFh}
 var7	s3 {<1>,<2>}
 _DATA ends
 
@@ -63,9 +63,9 @@ main:
 	mov si,sizeof s1
 	mov di,sizeof var1
 	mov bp,sizeof var1.v3
-	mov si,type s1
-	mov si,type s2
-	mov si,type s1.v4
+	mov si,typeof s1
+	mov si,typeof s2
+	mov si,typeof s1.v4
 	mov al,[bx].s1.v2
 	mov al,s1.v1[bx]
 	mov al, [bx].s4.m1.v1

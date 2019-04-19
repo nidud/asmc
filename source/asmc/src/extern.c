@@ -92,8 +92,8 @@ static struct asym *CreateComm( struct asym *sym, const char *name )
  * used by PROTO, EXTERNDEF and EXT[E]RN directives.
  */
 
-static struct asym *CreateProto( int i, struct asm_tok tokenarray[], const char *name, unsigned char langtype )
-/**************************************************************************************************************/
+static struct asym *CreateProto( int i, struct asm_tok tokenarray[],
+	const char *name, unsigned char langtype )
 {
     struct asym	     *sym;
     struct dsym	     *dir;
@@ -116,6 +116,13 @@ static struct asym *CreateProto( int i, struct asm_tok tokenarray[], const char 
 	return( NULL );
     }
     dir = (struct dsym *)sym;
+
+    if( tokenarray[i].token == T_ID && (tokenarray[i].string_ptr[0] | 0x20) == 'c'
+	&& tokenarray[i].string_ptr[1] == '\0') {
+	tokenarray[i].token = T_RES_ID;
+	tokenarray[i].tokval = T_CCALL;
+	tokenarray[i].bytval = 1;
+    }
 
     /* a PROTO typedef may be used */
     if ( tokenarray[i].token == T_ID ) {

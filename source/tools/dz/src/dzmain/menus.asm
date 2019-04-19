@@ -693,7 +693,7 @@ menus_modalidd proc uses esi edi ebx id
 
                 mov eax,[edx]
                 mov [ebx],eax
-                add ebx,SIZE S_TOBJ
+                add ebx,sizeof(S_TOBJ)
                 add edx,8
                 dec ecx
             .endw
@@ -727,7 +727,7 @@ menus_modalidd proc uses esi edi ebx id
 
                         or [ebx].S_TOBJ.to_flag,ax
                     .endif
-                    add ebx,SIZE S_TOBJ
+                    add ebx,sizeof(S_TOBJ)
                     pop ecx
                 .endw
 

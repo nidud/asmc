@@ -242,7 +242,7 @@ tiputs proc uses esi edi ebx ti:ptr S_TINFO
         mov ax,[edx]
         mov [edi],al
         mov [edi+2],ah
-        add edi,4       ; SIZE CHAR_INFO
+        add edi,4       ; sizeof(CHAR_INFO)
         add edx,2
     .untilcxz
 

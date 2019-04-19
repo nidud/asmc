@@ -1,5 +1,5 @@
 
-;--- forward references in argument of TYPE/SIZEOF/LENGTHOF/SIZE/LENGTH
+;--- forward references in argument of TYPEOF/SIZEOF/LENGTHOF/.SIZE/.LENGTH
 ;--- was a problem if the operator's result was used as divisor
 ;--- fixed in v2.10
 
@@ -8,11 +8,11 @@
 
     .DATA
 
-E1 = size_xarray / type xarray
+E1 = size_xarray / typeof xarray
 E1 = size_xarray / sizeof xarray
 E1 = size_xarray / lengthof xarray
-E1 = size_xarray / size xarray
-E1 = size_xarray / length xarray   ;actually, LENGTH operator was ok
+E1 = size_xarray / .size xarray
+E1 = size_xarray / .length xarray   ;actually, LENGTH operator was ok
 
 xarray label word
     dw 1,2

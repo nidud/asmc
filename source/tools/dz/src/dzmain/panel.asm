@@ -1371,7 +1371,7 @@ cpanel_deselect proc uses esi edi fp:LPFBLK
             mov eax,fp
             add eax,S_FBLK.fb_name
             strlen(eax)
-            add eax,SIZE S_FBLK
+            add eax,sizeof(S_FBLK)
             push eax
             malloc(eax)
             pop edx

@@ -1,5 +1,5 @@
 
-if type near eq 0ff02h
+if typeof near eq 0ff02h
 	.x64
 	.model flat
 endif

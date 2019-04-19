@@ -30,13 +30,13 @@ update_local PROC
 	jb	@F
 	sub	eax,DWORD PTR STDO.ios_total
 	add	eax,STDO.ios_bp
-	memcpy( eax, addr zip_local, SIZE S_LZIP )
+	memcpy( eax, addr zip_local, sizeof(S_LZIP) )
 	ret
 @@:
 	ioflush( addr STDO )
 	jz	@F
 	_lseek( STDO.ios_file, zip_central.cz_off_local, SEEK_SET )
-	oswrite( STDO.ios_file, addr zip_local, SIZE S_LZIP )
+	oswrite( STDO.ios_file, addr zip_local, sizeof(S_LZIP) )
 	_lseek( STDO.ios_file, 0, SEEK_END )
 @@:
 	ret
@@ -106,7 +106,7 @@ initcrc ENDP
 
 popstdi PROC
 	lea	eax,STDI
-	memcpy( eax, esi, SIZE S_IOST )
+	memcpy( eax, esi, sizeof(S_IOST) )
 	sub	eax,eax
 	ret
 popstdi ENDP
@@ -163,7 +163,7 @@ wzipadd PROC USES esi edi ebx fsize:QWORD, ftime:DWORD, fattrib:DWORD
 	;
 	jmp	toend
 @@:
-	iowrite( addr STDO, addr zip_local, SIZE S_LZIP )
+	iowrite( addr STDO, addr zip_local, sizeof(S_LZIP) )
 	jz	error_2
 	movzx	ecx,zip_local.lz_fnsize
 	iowrite( addr STDO, addr zpath, ecx )
@@ -187,7 +187,7 @@ subdir:
 	mov	zip_central.cz_csize,eax
 	call	update_local
 @@:
-	iowrite( addr ocentral, addr zip_central, SIZE S_CZIP )
+	iowrite( addr ocentral, addr zip_central, sizeof(S_CZIP) )
 	jz	error_1
 	iowrite( addr ocentral, addr zpath, zip_central.cz_fnsize )
 	jz	error_1
@@ -242,7 +242,7 @@ slow:
 	sub	ecx,eax
 	mov	local_size,ecx
 @@:
-	memcpy( addr ios, addr STDI, SIZE S_IOST )
+	memcpy( addr ios, addr STDI, sizeof(S_IOST) )
 	test	esi,_A_SUBDIR
 	lea	esi,ios
 	jnz	@F;wzipslow_subdir
@@ -261,7 +261,7 @@ slow:
 	;
 	jmp	skip
 @@:
-	iowrite( addr STDO, addr zip_local, SIZE S_LZIP )
+	iowrite( addr STDO, addr zip_local, sizeof(S_LZIP) )
 	jz	ersource
 	movzx	ecx,zip_local.lz_fnsize
 	iowrite( addr STDO, __outpath, ecx )
@@ -317,7 +317,7 @@ subd:
 	cmp	result_copyl,eax
 	jne	error_4			; found local, not central == error
 czip:
-	iowrite( addr STDO, addr zip_central, SIZE S_CZIP )
+	iowrite( addr STDO, addr zip_central, sizeof(S_CZIP) )
 	jz	error_4
 	movzx	ecx,zip_central.cz_fnsize
 	iowrite( addr STDO, __outpath, ecx )

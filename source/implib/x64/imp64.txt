@@ -349,7 +349,7 @@ mgmtapi
 ;mimefilt
 ;mlang
 ;mmcbase
-;mmcndmgr
+mmcndmgr
 ;mmcshext
 ;modemui
 mpr

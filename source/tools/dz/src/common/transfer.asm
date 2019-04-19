@@ -58,7 +58,7 @@ clear_error endp
 
 ParseLine proc uses ecx edi esi ebx
 
-    mov eax,SIZE ERFILE
+    mov eax,sizeof(ERFILE)
     mul error_count
     add eax,err_file
     mov ebx,eax
@@ -137,10 +137,10 @@ local pBuffer, bSize, FName[_MAX_PATH]:byte
             mov byte ptr [edi+ebx],0
             _close(esi)
 
-            .if malloc(MAXERROR*SIZE ERFILE)
+            .if malloc(MAXERROR*sizeof(ERFILE))
 
                 mov err_file,eax
-                memset(eax, 0, MAXERROR*SIZE ERFILE)
+                memset(eax, 0, MAXERROR*sizeof(ERFILE))
                 mov esi,edi
                 mov ecx,bSize
 
@@ -169,7 +169,7 @@ GetMessageId proc id
 
     mov eax,err_file
     .if eax
-        mov eax,SIZE ERFILE
+        mov eax,sizeof(ERFILE)
         mul id
         add eax,err_file
     .endif

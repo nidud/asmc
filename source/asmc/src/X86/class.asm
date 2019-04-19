@@ -112,7 +112,7 @@ ProcType proc uses esi edi ebx i:SINT, tokenarray:ptr asmtok, buffer:LPSTR
 
             .if IsCom
 
-                .if ( [ebx].tokval >= T_C && [ebx].tokval <= T_VECTORCALL )
+                .if ( [ebx].tokval >= T_CCALL && [ebx].tokval <= T_VECTORCALL )
 
                     inc esi
                 .endif
@@ -274,8 +274,19 @@ ClassDirective proc uses esi edi ebx i:SINT, tokenarray:ptr asmtok
                 _strupr( eax )
             .endif
 
+            .if ( [ebx+16].token == T_ID )
+                mov eax,[ebx+16].string_ptr
+                mov eax,[eax]
+                or  al,0x20
+                .if ( ax == 'c' )
+                    mov [ebx+16].token,T_RES_ID
+                    mov [ebx+16].tokval,T_CCALL
+                    mov [ebx+16].bytval,1
+                .endif
+            .endif
+
             lea eax,[ebx+16]
-            .if ( [ebx+16].token != T_FINAL && [ebx+16].tokval >= T_C && [ebx+16].tokval <= T_VECTORCALL )
+            .if ( [ebx+16].token != T_FINAL && [ebx+16].tokval >= T_CCALL && [ebx+16].tokval <= T_VECTORCALL )
 
                 mov edx,[ebx+16].tokval
                 mov ecx,ModuleInfo.ComStack

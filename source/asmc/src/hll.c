@@ -635,7 +635,7 @@ int ExpandCStrings( struct asm_tok tokenarray[] )
 {
     int i,j,k;
 
-    if ( !( ModuleInfo.aflag & _AF_ON ) )
+    if ( ModuleInfo.strict_masm_compat == 1 )
 	return 0;
 
     for ( i = 0, k = 0; tokenarray[i].token != T_FINAL; i++, k++ ) {
@@ -1243,7 +1243,7 @@ int ExpandHllProc( char *dst, int i, struct asm_tok tokenarray[] )
     int q;
 
     *dst = 0;
-    if ( ModuleInfo.aflag & _AF_ON ) {
+    if ( ModuleInfo.strict_masm_compat == 0 ) {
 	for ( q = i; q < Token_Count; q++ ) {
 	    if ( tokenarray[q].hll_flags == T_HLL_PROC ) {
 		ExpandCStrings( tokenarray );
@@ -1284,7 +1284,7 @@ int EvaluateHllExpression( struct hll_item *hll, int *i, struct asm_tok tokenarr
     char b[MAX_LINE_LEN];
     char *p, *cp, a, d;
 
-    if ( ModuleInfo.aflag & _AF_ON && ( hll->flags & HLLF_EXPRESSION ) == 0
+    if ( ModuleInfo.strict_masm_compat == 0 && ( hll->flags & HLLF_EXPRESSION ) == 0
 	&& tokenarray[0].hll_flags & T_HLL_DELAY ) {
 
 	for ( q = *i; q < Token_Count; q++ ) {
@@ -1917,7 +1917,7 @@ int HllEndDir( int i, struct asm_tok tokenarray[] )
 	if ( tokenarray[i].token != T_FINAL ) {
 
 	    x = LSTART;
-	    if ( !Options.masm_compat_gencode && ModuleInfo.aflag & _AF_ON ) {
+	    if ( !Options.masm_compat_gencode && !ModuleInfo.strict_masm_compat ) {
 
 		/* <expression> ? .BREAK */
 		if ( !hll->labels[LEXIT] )
@@ -1928,20 +1928,20 @@ int HllEndDir( int i, struct asm_tok tokenarray[] )
 	    rc = EvaluateHllExpression( hll, &i, tokenarray, x, FALSE, buffer );
 	    if ( rc == NOT_ERROR ) {
 
-		if ( !( ModuleInfo.aflag & _AF_ON ) ||
+		if ( ModuleInfo.strict_masm_compat ||
 		     ( Options.masm_compat_gencode && cmd == T_DOT_UNTILCXZ ) )
 		    rc = CheckCXZLines( buffer );
 
 		if ( rc == NOT_ERROR ) {
 		    QueueTestLines( buffer ); /* write condition lines */
-		    if ( !Options.masm_compat_gencode && ModuleInfo.aflag & _AF_ON )
+		    if ( !Options.masm_compat_gencode && !ModuleInfo.strict_masm_compat )
 			RenderUntilXX( hll, cmd );
 		} else {
 		    asmerr( 2062 );
 		}
 	    }
 	} else {
-	    if ( Options.masm_compat_gencode || !( ModuleInfo.aflag & _AF_ON ) )
+	    if ( ModuleInfo.strict_masm_compat || Options.masm_compat_gencode )
 		AddLineQueueX( JMPPREFIX "loop %s", GetLabelStr( hll->labels[LSTART], buff ) );
 	    else
 		RenderUntilXX( hll, cmd );

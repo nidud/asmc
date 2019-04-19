@@ -87,6 +87,10 @@ static int ParseAssignment( char *buffer, struct asm_tok tokenarray[] )
 {
     int k, n, i;
     char *p;
+    int bracket = 0; /* assign value: [rdx+8]=rax - @v2.28.15 */
+
+    if ( tokenarray[0].token == T_OP_SQ_BRACKET )
+	bracket++;
 
     if ( tokenarray[0].string_ptr[0] == '~' )
 	return Assignopc( buffer, "not", &tokenarray[0].string_ptr[1], NULL );
@@ -97,7 +101,13 @@ static int ParseAssignment( char *buffer, struct asm_tok tokenarray[] )
 
     for ( k = 0, i = 1; i < Token_Count; i++ ) {
 
-	if ( ( tokenarray[i].tokval == T_EQU && tokenarray[i].dirtype == DRT_EQUALSGN ) ||
+	if ( tokenarray[i].token == T_OP_SQ_BRACKET )
+	    bracket++;
+	else if ( tokenarray[i].token == T_CL_SQ_BRACKET )
+	    bracket--;
+	else if ( bracket )
+	    ;
+	else if ( ( tokenarray[i].tokval == T_EQU && tokenarray[i].dirtype == DRT_EQUALSGN ) ||
 	    tokenarray[i].token == '+' || tokenarray[i].token == '-' ||
 	    tokenarray[i].token == '&' ) {
 

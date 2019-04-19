@@ -161,7 +161,7 @@ event_clear:
     mov edx,[esi].S_TOBJ.to_data[ID_MAX_SIZE]
     mov [edx],al
     mov esi,ecx
-    memset(filter, 0, SIZE S_FILT)
+    memset(filter, 0, sizeof(S_FILT))
     mov edx,filter
     strcpy(&[edx].S_FILT.of_include, &cp_stdmask)
     mov [edx].S_FILT.of_flag,-1

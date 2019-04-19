@@ -1,4 +1,6 @@
+include string.inc
 include asmc.inc
+include token.inc
 
 HASH_TABITEMS   equ 1024
 
@@ -14,7 +16,7 @@ externdef resw_table:word
 
     .code
 
-FindResWord proc fastcall w_name, w_size
+FindResWord proc fastcall w_name:string_t, w_size:int_t
 
     movzx eax,BYTE PTR [ecx]
     or al,0x20
@@ -281,7 +283,6 @@ FindResWord proc fastcall w_name, w_size
             mov ax,ResWordTable[eax*8].next
         .until !eax
     .endif
-
     pop ebx
     pop edi
     pop esi

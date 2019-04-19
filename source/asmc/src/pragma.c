@@ -3,6 +3,8 @@
 #include <hllext.h>
 #include <types.h>
 
+void AsmcKeywords( unsigned );
+
 #define MAXSTACK 16
 
 typedef struct {
@@ -59,11 +61,13 @@ static int ListCount = 0;
 static int PackCount = 0;
 static int CrefCount = 0;
 static int WarnCount = 0;
+static int AsmcCount = 0;
 
 static char PackStack[MAXSTACK];
 static char ListStack[MAXSTACK];
 static char CrefStack[MAXSTACK];
 static char *WarnStack[MAXSTACK];
+static char AsmcStack[MAXSTACK];
 
 int PragmaDirective( int i, struct asm_tok tokenarray[] )
 {
@@ -81,7 +85,51 @@ int PragmaDirective( int i, struct asm_tok tokenarray[] )
     if ( tokenarray[i].token == T_OP_BRACKET )
         i++;
 
-    if ( _stricmp(p, "pack" ) == 0 ) {
+    if ( _stricmp(p, "asmc" ) == 0 ) {
+
+        if ( tokenarray[i].tokval == T_POP ) {
+
+            i++;
+            if ( tokenarray[i].token == T_CL_BRACKET )
+                i++;
+
+            if ( AsmcCount ) {
+
+                AsmcCount--;
+                x = ModuleInfo.strict_masm_compat;
+                if ( x != AsmcStack[AsmcCount] ) {
+                    ModuleInfo.strict_masm_compat = AsmcStack[AsmcCount];
+                    AsmcKeywords( x );
+                }
+            }
+
+        } else if ( tokenarray[i].tokval == T_PUSH && AsmcCount < MAXSTACK ) {
+
+            i++;
+            AsmcStack[AsmcCount++] = ModuleInfo.strict_masm_compat;
+            if ( tokenarray[i].token == T_OP_BRACKET || tokenarray[i].token == T_COMMA )
+                i++;
+
+            if ( EvalOperand( &i, tokenarray, Token_Count, &opndx, EXPF_NOUNDEF ) != ERROR ) {
+
+                if ( opndx.kind != EXPR_CONST )
+                    asmerr( 2026 );
+                else if ( opndx.uvalue > 1 )
+                    asmerr( 2084 );
+                else {
+                    x = 1;
+                    if ( opndx.uvalue )
+                        x = 0;
+                    if ( ModuleInfo.strict_masm_compat != x ) {
+                        AsmcKeywords( ModuleInfo.strict_masm_compat );
+                        ModuleInfo.strict_masm_compat = x;
+                    }
+                    if ( tokenarray[i].token == T_CL_BRACKET )
+                        i++;
+                }
+            }
+        }
+    } else if ( _stricmp(p, "pack" ) == 0 ) {
 
         if ( tokenarray[i].tokval == T_POP ) {
 

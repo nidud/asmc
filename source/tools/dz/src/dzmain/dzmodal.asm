@@ -146,7 +146,7 @@ GetPathFromHistory proc uses esi edi ebx panel
 
 	    lea edi,ll
 	    xor eax,eax
-	    mov ecx,SIZE S_LOBJ
+	    mov ecx,sizeof(S_LOBJ)
 	    rep stosb
 
 	    mov ll.ll_proc,history_event_list
@@ -160,7 +160,7 @@ GetPathFromHistory proc uses esi edi ebx panel
 		mov eax,[esi].S_DIRECTORY.path
 		.break .if !eax
 		stosd
-		add esi,SIZE S_DIRECTORY
+		add esi,sizeof(S_DIRECTORY)
 		inc edx
 	    .untilcxz
 	    mov ll.ll_count,edx

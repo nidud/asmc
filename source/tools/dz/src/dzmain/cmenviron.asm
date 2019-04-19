@@ -359,7 +359,7 @@ local   ll:S_LOBJ
     mov FCB_Environ,edx
     mov edi,edx
     xor eax,eax
-    mov ecx,SIZE S_LOBJ
+    mov ecx,sizeof(S_LOBJ)
     rep stosb
 
     mov [edx].S_LOBJ.ll_dcount,CELLCOUNT
@@ -383,7 +383,7 @@ local   ll:S_LOBJ
         mov eax,event_xcell
         .repeat
         mov [edx],eax
-        add edx,SIZE S_TOBJ
+        add edx,sizeof(S_TOBJ)
         .untilcxz
 
         dlshow(ebx)

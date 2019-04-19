@@ -13,7 +13,7 @@ S1 ENDS
 
 v1 S1 <>
 
-	if (type v1.f1[ecx]) eq BYTE
+	if (typeof v1.f1[ecx]) eq BYTE
 		dw -1
 	else
 		dw 0

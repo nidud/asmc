@@ -64,7 +64,7 @@ FLT8 macro value
     endm
 
 _MM_ISXMM macro op
-    if (type op) eq 16 and (opattr op) eq 48
+    if (typeof op) eq 16 and (opattr op) eq 48
         exitm<1>
     else
         exitm<0>
@@ -72,7 +72,7 @@ _MM_ISXMM macro op
     endm
 
 _MM_MREG macro op
-    if (opattr op) eq 48 and (type op) ne 16
+    if (opattr op) eq 48 and (typeof op) ne 16
         exitm<[op]>
     else
         exitm<op>

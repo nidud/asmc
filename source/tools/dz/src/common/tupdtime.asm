@@ -19,7 +19,7 @@ local buf[64]:byte
     .if ebx & CON_UTIME or CON_UDATE
 
         mov buf,al
-        mov ecx,SIZE SYSTEMTIME/4
+        mov ecx,sizeof(SYSTEMTIME)/4
         lea edi,ts
         rep stosd
         mov edi,ebx

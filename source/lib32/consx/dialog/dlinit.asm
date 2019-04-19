@@ -168,7 +168,7 @@ local object, wp, window
             pop esi
 
             mov eax,edi
-            add object,SIZE S_TOBJ
+            add object,sizeof(S_TOBJ)
             dec esi
         .endw
 

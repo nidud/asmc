@@ -26,6 +26,6 @@ TM1 macro
 	.data
 
 E1 = 0
-	S1 300 dup (<LOW (TM1()+002+003)>)
+	S1 300 dup (<.LOW (TM1()+002+003)>)
 
 	end

@@ -137,7 +137,7 @@ huft_free proc huft
 @@:
 	test	eax,eax
 	jz	@F
-	lea	ecx,[eax-SIZE HUFT]
+	lea	ecx,[eax-sizeof(HUFT)]
 	mov	eax,[ecx].HUFT.t
 	free  ( ecx )
 	jmp	@B
@@ -392,10 +392,10 @@ link:
 	; link to list for huft_free()
 	;--------------------------------------------------------------------
 	mov	ebx,t
-	add	eax,SIZE HUFT
+	add	eax,sizeof(HUFT)
 	mov	q,eax
 	mov	[ebx],eax
-	sub	eax,SIZE HUFT - 2
+	sub	eax,sizeof(HUFT) - 2
 	mov	t,eax
 	xor	ebx,ebx
 	mov	[eax],ebx

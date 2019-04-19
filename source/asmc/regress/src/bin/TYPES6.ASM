@@ -25,8 +25,8 @@ S2x ends
 v1 S1 <>
 v2 S2 <>
 
-	db TYPE(v1) eq S1	;is -1
-	db TYPE(v2) eq S2	;is -1
-	db TYPE(v2) eq S2x	;is 0
+	db TYPEOF(v1) eq S1	;is -1
+	db TYPEOF(v2) eq S2	;is -1
+	db TYPEOF(v2) eq S2x	;is 0
 
 	end

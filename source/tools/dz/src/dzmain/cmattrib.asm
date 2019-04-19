@@ -175,7 +175,7 @@ cmzipattrib proc uses esi edi ebx   ; wsub, fblk
 	    ; CRC, compressed size and local offset stored at end of FBLK
 	    ;
 	    strlen(addr [edi].S_FBLK.fb_name)
-	    add eax,SIZE S_FBLK
+	    add eax,sizeof(S_FBLK)
 	    add edi,eax
 	    mov eax,[edi+4]
 	    mov zip_central.cz_crc,eax
@@ -187,10 +187,10 @@ cmzipattrib proc uses esi edi ebx   ; wsub, fblk
 	    ; seek to and read local offset
 	    ;
 	    _lseek(esi, eax, SEEK_SET)
-	    osread(esi, addr zip_local, SIZE S_LZIP)
+	    osread(esi, addr zip_local, sizeof(S_LZIP))
 	    mov edi,ebx ; FBLK.flag
 
-	    .if eax == SIZE S_LZIP && \
+	    .if eax == sizeof(S_LZIP) && \
 		word ptr zip_local.lz_zipid == ZIPLOCALID && \
 		word ptr zip_local.lz_pkzip == ZIPHEADERID
 

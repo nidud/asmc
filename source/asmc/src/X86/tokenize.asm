@@ -4,7 +4,7 @@ include asmc.inc
 include token.inc
 
 GetTextLine proto :dword
-FindResWord proto fastcall :dword, :dword
+FindResWord proto fastcall :string_t, :int_t
 conditional_assembly_prepare proto :dword
 
 INST_ALLOWED_PREFIX equ 007h
@@ -596,7 +596,7 @@ get_special_symbol proc fastcall uses esi edi ebx buf:ptr asmtok , p:ptr line_st
                 .endif
                 .switch
 
-                  .case !(ModuleInfo.aflag & _AF_ON)
+                  .case ( ModuleInfo.strict_masm_compat == 1 )
                     .endc .if edx != SYM_MACRO
                     .endc .if !([eax].asym.mac_flag & SMAC_ISFUNC)
                     and [esi].flags2,not DF_CEXPR
@@ -1290,7 +1290,7 @@ GetToken proc fastcall tokenarray:ptr asmtok, p:ptr line_status
         jmp get_id
 
       .case al == '`'
-        .endc .if Options.strict_masm_compat
+        .endc .if ModuleInfo.strict_masm_compat
         jmp get_id_in_backquotes
 
       .case al == '.'

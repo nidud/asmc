@@ -747,7 +747,7 @@ static ret_code ParseParams( struct dsym *proc, int i, struct asm_tok tokenarray
 	    if ( fastcall_id == FCT_ELF64 + 1 || fastcall_id == FCT_VEC32 + 1 ||
 		 fastcall_id == FCT_MSC + 1 ) {
 		paracurr->sym.target_type = NULL;
-		if ( !Options.strict_masm_compat )
+		if ( !ModuleInfo.strict_masm_compat )
 		    fast_type = 1; /* v2.27 added */
 	    }
 	    if ( paracurr->sym.mem_type == MT_TYPE )
@@ -2926,7 +2926,7 @@ void ProcInit( void )
     ModuleInfo.prologuemode = PEM_DEFAULT;
     ModuleInfo.epiloguemode = PEM_DEFAULT;
     /* v2.06: no forward references in INVOKE if -Zne is set */
-    ModuleInfo.invoke_exprparm = ( Options.strict_masm_compat ? EXPF_NOUNDEF : 0 );
+    ModuleInfo.invoke_exprparm = ( ModuleInfo.strict_masm_compat ? EXPF_NOUNDEF : 0 );
     ModuleInfo.basereg[USE16] = T_BP;
     ModuleInfo.basereg[USE32] = T_EBP;
     ModuleInfo.basereg[USE64] = T_RBP;

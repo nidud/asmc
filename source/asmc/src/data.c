@@ -618,7 +618,7 @@ next_item:  /* <--- continue scan if a comma has been detected */
 		    /* v2.22 - unicode */
 		    /* v2.23 - use L"Unicode" */
 		    if ( inside_struct ||
-		      !( ( ModuleInfo.aflag & _AF_ON ) &&
+		      !( ( ModuleInfo.strict_masm_compat == 0 ) &&
 			 ( ModuleInfo.aflag & ( _AF_WSTRING | _AF_LSTRING ) ) &&
 			 no_of_bytes == 2) )
 			return( asmerr( 2071 ) );
@@ -636,7 +636,7 @@ next_item:  /* <--- continue scan if a comma has been detected */
 			first = FALSE; /* avoid to touch first_xxx fields below */
 		    }
 		}
-		else if ( ModuleInfo.aflag & _AF_ON
+		else if ( ( ModuleInfo.strict_masm_compat == 0 )
 			&& (ModuleInfo.aflag & ( _AF_WSTRING | _AF_LSTRING ))
 			&& no_of_bytes == 2 && string_len > 1 ) {
 		    total += ( string_len - 1 );
@@ -654,7 +654,7 @@ next_item:  /* <--- continue scan if a comma has been detected */
 		 * format -- LSB first */
 		/* v2.22 - unicode */
 		/* v2.23 - use L"Unicode" */
-		if ( ( ModuleInfo.aflag & _AF_ON ) &&
+		if ( ( ModuleInfo.strict_masm_compat == 0 ) &&
 		     ( ModuleInfo.aflag & ( _AF_WSTRING | _AF_LSTRING ) ) &&
 		     string_len > 1 &&
 		     no_of_bytes == 2 ) {
@@ -808,10 +808,10 @@ next_item:  /* <--- continue scan if a comma has been detected */
 	    }
 	    fixup_type = FIX_OFF32_SECREL;
 	    break;
-	case T_LOW:
+	case T_DOT_LOW:
 	    fixup_type = FIX_OFF8; /* OMF, BIN + GNU-ELF only */
 	    break;
-	case T_HIGH:
+	case T_DOT_HIGH:
 	    fixup_type = FIX_HIBYTE; /* OMF only */
 	    break;
 	case T_LOWWORD:

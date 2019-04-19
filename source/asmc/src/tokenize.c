@@ -466,7 +466,7 @@ static int get_special_symbol( struct asm_tok *buf, struct line_status *p )
 
 		while ( 1 ) {
 
-		    if ( !( ModuleInfo.aflag & _AF_ON ) ) {
+		    if ( ModuleInfo.strict_masm_compat == 1 ) {
 
 			if ( ( state == SYM_MACRO ) && sym->isfunc )
 			    p->flags2 &= ~DF_CEXPR;
@@ -1024,7 +1024,7 @@ int FASTCALL GetToken( struct asm_tok token[], struct line_status *p )
 	( token[-4].tokval == T_DOT_BREAK || token[-4].tokval == T_DOT_CONTINUE ) ) {
 	return( get_id( token, p ) );
 #if BACKQUOTES
-    } else if( *p->input == '`' && Options.strict_masm_compat == FALSE ) {
+    } else if( *p->input == '`' && ModuleInfo.strict_masm_compat == FALSE ) {
 	return( get_id_in_backquotes( token, p ) );
 #endif
     }

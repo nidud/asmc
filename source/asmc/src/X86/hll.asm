@@ -971,7 +971,7 @@ ExpandCStrings proc uses ebx tokenarray:PTR asmtok
 
     .repeat
 
-        .break .if !( ModuleInfo.aflag & _AF_ON )
+        .break .if ( ModuleInfo.strict_masm_compat == 1 )
 
         .for edx = 0, ebx = tokenarray: [ebx].token != T_FINAL: ebx += 16, edx++
 
@@ -1809,7 +1809,7 @@ ExpandHllProc proc uses esi edi dst:LPSTR, i:SINT, tokenarray:PTR asmtok
     mov eax,dst
     mov BYTE PTR [eax],0
 
-    .if ModuleInfo.aflag & _AF_ON
+    .if ( ModuleInfo.strict_masm_compat == 0 )
 
         mov esi,i
         mov edi,esi
@@ -1889,7 +1889,7 @@ local   hllop:      hll_opnd,
     mov eax,[edx].hll_item.flags
     and eax,HLLF_EXPRESSION
 
-    .if ModuleInfo.aflag & _AF_ON && !eax && [ebx].asmtok.hll_flags & T_HLL_DELAY
+    .if ( ModuleInfo.strict_masm_compat == 0 ) && !eax && [ebx].asmtok.hll_flags & T_HLL_DELAY
 
         mov edi,[esi]
         .while edi < ModuleInfo.token_count
@@ -2746,8 +2746,7 @@ HllEndDir proc uses esi edi ebx i:SINT, tokenarray:PTR asmtok
         .if [ebx].token != T_FINAL
 
             mov ecx,LSTART
-            .if !Options.masm_compat_gencode && \
-                ModuleInfo.aflag & _AF_ON
+            .if Options.masm_compat_gencode == 0 && ModuleInfo.strict_masm_compat == 0
 
                 ;
                 ; <expression> ? .BREAK
@@ -2764,9 +2763,8 @@ HllEndDir proc uses esi edi ebx i:SINT, tokenarray:PTR asmtok
 
             .if eax == NOT_ERROR
 
-                .if !(ModuleInfo.aflag & _AF_ON) || \
-                    (Options.masm_compat_gencode && \
-                    cmd == T_DOT_UNTILCXZ)
+                .if ( ModuleInfo.strict_masm_compat == 1 || \
+                      ( Options.masm_compat_gencode == 1 && cmd == T_DOT_UNTILCXZ ) )
 
                     mov rc,CheckCXZLines(edi)
                 .endif
@@ -2776,8 +2774,7 @@ HllEndDir proc uses esi edi ebx i:SINT, tokenarray:PTR asmtok
                     ; write condition lines
                     ;
                     QueueTestLines( edi )
-                    .if !Options.masm_compat_gencode && \
-                        ModuleInfo.aflag & _AF_ON
+                    .if Options.masm_compat_gencode == 0 && ModuleInfo.strict_masm_compat == 0
 
                         RenderUntilXX( esi, cmd )
                     .endif
@@ -2786,8 +2783,7 @@ HllEndDir proc uses esi edi ebx i:SINT, tokenarray:PTR asmtok
                 .endif
             .endif
         .else
-            .if !(ModuleInfo.aflag & _AF_ON) || \
-                Options.masm_compat_gencode ;&& cmd == T_DOT_UNTILCXZ
+            .if ( ModuleInfo.strict_masm_compat == 1 || Options.masm_compat_gencode == 1 )
 
                 AddLineQueueX( "loop %s",
                     GetLabelStr( [esi].labels[LSTART*4], edi ) )

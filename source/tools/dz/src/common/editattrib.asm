@@ -27,7 +27,7 @@ editattrib proc
         mov ecx,16+16
         .repeat
             mov [edx],eax
-            add edx,SIZE S_TOBJ
+            add edx,sizeof(S_TOBJ)
         .untilcxz
         rsevent(IDD_EditColor, dialog)
         dlclose(dialog)

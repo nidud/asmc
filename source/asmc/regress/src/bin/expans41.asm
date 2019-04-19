@@ -7,24 +7,17 @@
 	.model flat
 	.code
 
-ifdef __ASMC__
-	option asmc:on
-endif
 	.if @SubStr(<ebx==1 && edi==2, xxx>, 1, 16)
 	.elseif @SubStr(<ebx==2 && edi==1, xxx>, 1, 16)
 	.endif
 
-ifdef __ASMC__
-	option asmc:off
-endif
+	.pragma asmc(push, 0)
 
 	.if @SubStr(<ebx==1 && edi==2, xxx>, 1, 16)
 	.elseif @SubStr(<ebx==2 && edi==1, xxx>, 1, 16)
 	.endif
 
-ifdef __ASMC__
-	option asmc:on
-endif
+	.pragma asmc(pop)
 
 ;--- this was accepted prior to v2.11, but result of @InStr() was wrong
 	.if @InStr(,<abc>,<c>)

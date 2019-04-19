@@ -46,9 +46,9 @@ scrcol          dd 0
 scrrow          dd 0
 
 Bitmap          db 'BM'
-bfz             dd 1F400h + SIZE S_BMP  ; file size
+bfz             dd 1F400h + sizeof(S_BMP)  ; file size
                 dd 0                    ;
-                dd SIZE S_BMP           ; offset bit
+                dd sizeof(S_BMP)           ; offset bit
                 dd 40                   ;
 bcol            dd 80*8
 brow            dd 25*16
@@ -4628,10 +4628,10 @@ cmsavebmp proc uses esi edi ebx
     shr ebx,1
     mul ebx
     mov bmz,eax
-    add eax,SIZE S_BMP
+    add eax,sizeof(S_BMP)
     mov bfz,eax
     .ifs ioopen(&STDO, &bmpfile, M_WRONLY, 10000h) > 0
-        .if iowrite(&STDO, &Bitmap, SIZE S_BMP)
+        .if iowrite(&STDO, &Bitmap, sizeof(S_BMP))
             mov esi,scrrow  ; line [24..0]
             .repeat
                 mov eax,esi

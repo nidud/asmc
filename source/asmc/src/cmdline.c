@@ -70,9 +70,9 @@ struct global_options Options = {
 	0,			// .fieldalign
 	0,			// .syntax_check_only
 #ifdef __ASMC64__
-	_AF_REGAX | _AF_ON,	// .aflag
+	_AF_REGAX,		// .aflag
 #else
-	_AF_ON,			// .aflag
+	0,			// .aflag
 #endif
 	0,			// .xflag
 	0,			// .loopalign
@@ -567,9 +567,6 @@ static void ProcessOption( char **cmdline, char *buffer )
 	Options.ignore_include = 1;
 	return;
 #ifndef __ASMC64__
-    case 'cX':		// -Xc
-	Options.aflag &= ~_AF_ON;
-	return;
     case 'mcz':		// -zcm
 	Options.no_cdecl_decoration = 0;
 	return;
@@ -615,7 +612,6 @@ static void ProcessOption( char **cmdline, char *buffer )
 #endif
     case 'enZ':		// -Zne
 	Options.strict_masm_compat = 1;
-	Options.aflag = 0;
 	return;
     case 'sZ':		// -Zs
 	Options.syntax_check_only = 1;

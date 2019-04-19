@@ -29,7 +29,7 @@ tosetbitflag proc uses esi ebx tobj:ptr S_TOBJ, count, flag, bitflag
         .ifc
             or [ebx].S_TOBJ.to_flag,si
         .endif
-        add ebx,SIZE S_TOBJ
+        add ebx,sizeof(S_TOBJ)
         dec ecx
     .endw
     ret

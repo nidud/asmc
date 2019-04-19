@@ -122,7 +122,7 @@ history_event_list proc uses esi
     mov ecx,[edx].S_LOBJ.ll_dcount
     .repeat
 	or  [eax].S_TOBJ.to_flag,_O_STATE
-	lea eax,[eax+SIZE S_TOBJ]
+	lea eax,[eax+sizeof(S_TOBJ)]
     .untilcxz
     mov ecx,[edx].S_LOBJ.ll_numcel
     mov eax,[edx].S_LOBJ.ll_index
@@ -135,7 +135,7 @@ history_event_list proc uses esi
 	mov [esi].S_TOBJ.to_data,eax
 	and [esi].S_TOBJ.to_flag,not _O_STATE
 	lea edx,[edx+4]
-	lea esi,[esi+SIZE S_TOBJ]
+	lea esi,[esi+sizeof(S_TOBJ)]
 	dec ecx
     .endw
     dlinit()
@@ -155,7 +155,7 @@ cmhistory proc uses edi ebx
 	    mov ebx,eax
 	    lea edi,ll
 	    xor eax,eax
-	    mov ecx,SIZE S_LOBJ
+	    mov ecx,sizeof(S_LOBJ)
 	    rep stosb
 	    mov ll.ll_proc,history_event_list
 	    mov ll.ll_dcount,16

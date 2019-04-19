@@ -15,14 +15,14 @@ HRESULT typedef SDWORD
 endif
 
 SUCCEEDED macro hr
-    if (type(hr))
+    if (typeof(hr))
 	exitm<(hr !>= 0)>
     else
 	exitm<((hr) GE 0)>
     endif
 	endm
 FAILED macro hr
-    if (type(hr))
+    if (typeof(hr))
 	exitm<(hr !< 0)>
     else
 	exitm<((hr) LT 0)>

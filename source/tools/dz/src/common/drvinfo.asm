@@ -33,7 +33,7 @@ _disk_read proc uses esi edi ebx
             .endif
             mov [ebx].S_DISK.di_time,esi
         .endif
-        add ebx,SIZE S_DISK
+        add ebx,sizeof(S_DISK)
         inc ecx
     .until ecx == MAXDRIVES+1
     ret
@@ -48,7 +48,7 @@ InitDisk:
         mov dword ptr [edx].S_DISK.di_name,eax
         mov dword ptr [edx].S_DISK.di_size,ecx
         inc eax
-        add edx,SIZE S_DISK
+        add edx,sizeof(S_DISK)
         inc ecx
     .until ecx == MAXDRIVES+1
     _disk_read()

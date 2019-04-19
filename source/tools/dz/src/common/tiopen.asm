@@ -10,13 +10,13 @@ include errno.inc
 
 tiopen proc uses esi ti:PTINFO, tabsize:UINT, flags:UINT
 
-    malloc(SIZE S_TINFO)
+    malloc(sizeof(S_TINFO))
     jz	nomem
 
     mov edx,edi
     mov esi,eax
     mov edi,eax
-    mov ecx,SIZE S_TINFO
+    mov ecx,sizeof(S_TINFO)
     xor eax,eax
     rep stosb
     mov edi,edx

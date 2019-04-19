@@ -403,7 +403,8 @@ static void AddResWord( int token )
 
     /* sort the items of a line by length! */
 
-    for( curr = resw_table[i], old = 0; curr != 0 && ResWordTable[curr].len <= ResWordTable[token].len; old = curr, curr = ResWordTable[curr].next );
+    for( curr = resw_table[i], old = 0; curr != 0 && ResWordTable[curr].len <= ResWordTable[token].len;
+	old = curr, curr = ResWordTable[curr].next );
 
     if ( old == 0 ) {
 	ResWordTable[token].next = resw_table[i];
@@ -569,6 +570,31 @@ void DisableKeyword( unsigned token )
 	    ResWordTable[Removed.Tail].next = token;
 	    Removed.Tail = token;
 	}
+    }
+}
+
+void EnableKeyword( unsigned token )
+{
+    int i;
+    int next;
+
+    if ( ( ResWordTable[token].flags & RWF_DISABLED ) ) {
+
+	if ( Removed.Head == token )
+	    Removed.Head = ResWordTable[token].next;
+	else {
+	    for( i = Removed.Head; i != 0; i = next ) {
+		next = ResWordTable[i].next;
+		if ( next == token ) {
+		    ResWordTable[i].next = ResWordTable[token].next;
+		    break;
+		}
+	    }
+	}
+	if ( Removed.Tail == token )
+	    Removed.Tail = Removed.Head;
+	ResWordTable[token].flags &= ~RWF_DISABLED;
+	AddResWord( token );
     }
 }
 

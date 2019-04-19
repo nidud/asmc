@@ -20,8 +20,8 @@ historymove proc private uses esi edi ; AL direction
 	lea edi,tmpPath
 	mov esi,eax
 	test cl,cl
-	mov ecx,SIZE S_DIRECTORY
-	mov edx,SIZE S_DIRECTORY * (MAXHISTORY-1)
+	mov ecx,sizeof(S_DIRECTORY)
+	mov edx,sizeof(S_DIRECTORY) * (MAXHISTORY-1)
 
 	.ifz
 
@@ -29,7 +29,7 @@ historymove proc private uses esi edi ; AL direction
 	    rep movsb
 	    mov edi,eax
 	    mov esi,eax
-	    add esi,SIZE S_DIRECTORY
+	    add esi,sizeof(S_DIRECTORY)
 	    mov ecx,edx
 	    xchg esi,edi
 	    dec edx
@@ -40,17 +40,17 @@ historymove proc private uses esi edi ; AL direction
 	    rep movsb
 	    lea esi,tmpPath
 	    mov edi,eax
-	    mov ecx,SIZE S_DIRECTORY
+	    mov ecx,sizeof(S_DIRECTORY)
 	    cld
 	.else
 	    rep movsb
 	    mov edi,eax
-	    lea esi,[eax+SIZE S_DIRECTORY]
+	    lea esi,[eax+sizeof(S_DIRECTORY)]
 	    mov ecx,edx
 	    rep movsb
 	    lea esi,tmpPath
 	    mov edi,eax
-	    mov ecx,SIZE S_DIRECTORY
+	    mov ecx,sizeof(S_DIRECTORY)
 	    add edi,edx
 	.endif
 	rep movsb

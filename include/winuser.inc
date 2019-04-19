@@ -9983,7 +9983,7 @@ GESTURENOTIFYSTRUCT	ENDS
 PGESTURENOTIFYSTRUCT	typedef ptr GESTURENOTIFYSTRUCT
 
 GID_ROTATE_ANGLE_TO_ARGUMENT macro _arg_
-    if (type(_arg_))
+    if (typeof(_arg_))
 	ifdif <_arg_>,<xmm0>
 	    movsd xmm0,_arg_
 	endif
@@ -10002,7 +10002,7 @@ GID_ROTATE_ANGLE_TO_ARGUMENT macro _arg_
     endif
 	endm
 GID_ROTATE_ANGLE_FROM_ARGUMENT macro _arg_
-    if (type(_arg_))
+    if (typeof(_arg_))
 	ifdif <_arg_>,<xmm0>
 	    movsd xmm0,_arg_
 	endif

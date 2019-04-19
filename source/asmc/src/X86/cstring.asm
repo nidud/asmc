@@ -329,7 +329,7 @@ local   rc:                     SINT,
     xor eax,eax
     mov rc,eax
 
-    .if ModuleInfo.aflag & _AF_ON && Parse_Pass == PASS_1
+    .if ModuleInfo.strict_masm_compat == 0 && Parse_Pass == PASS_1
         ;
         ; need "quote"
         ;

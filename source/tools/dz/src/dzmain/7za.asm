@@ -379,7 +379,7 @@ local	fblk, fattrib, ename
 					mov fattrib,eax
 					.if al & _A_SUBDIR || cmpwarg( ename, [esi].S_WSUB.ws_mask)
 						strlen( ename )
-						add	eax,SIZE S_FBLK
+						add	eax,sizeof(S_FBLK)
 						.break .if !malloc( eax )
 						mov	ecx,fattrib
 						mov	fblk,eax

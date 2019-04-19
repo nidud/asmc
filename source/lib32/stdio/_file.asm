@@ -28,7 +28,7 @@ _stdioexit:
         .if [esi]._iobuf._file != -1
             fclose( esi )
         .endif
-        add esi,SIZE _iobuf
+        add esi,sizeof(_iobuf)
     .until esi > offset _last
     pop esi
     ret

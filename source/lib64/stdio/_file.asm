@@ -28,7 +28,7 @@ _stdioexit proc uses rsi
 	.if [rsi]._iobuf._file != -1
 	    fclose(rsi)
 	.endif
-	add rsi,SIZE _iobuf
+	add rsi,sizeof(_iobuf)
 	lea rax,_last
     .until rsi > rax
     ret

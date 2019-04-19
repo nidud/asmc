@@ -2,7 +2,7 @@
 ;--- arithmetic op with signed op and forward memory reference
 
 ifdef __JWASM__
-if type near eq 0ff02h
+if typeof near eq 0ff02h
 	.x64
 	.model flat
 endif

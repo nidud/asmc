@@ -4,23 +4,23 @@ include direct.inc
 include stdio.inc
 include string.inc
 include winbase.inc
-include tchar.inc
 include stdlib.inc
 include strlib.inc
+include tchar.inc
 
 BUFSIZE     equ 4096    ; Size of read buffer
 
-token struct
-count int_t ?
-tname string_t ?
-token ends
+token       struct
+count       int_t ?
+tname       string_t ?
+token       ends
 
 .data
-buffer      db BUFSIZE dup(0)
-            dd 0
-file_count  dd 0
-line_count  dd 0
-do_subdir   dd 0
+
+buffer      char_t BUFSIZE+4 dup(0)
+file_count  int_t 0
+line_count  int_t 0
+do_subdir   int_t 0
 
 P macro id
   local a
@@ -57,17 +57,18 @@ OpCls macro op1, op2, op3
 table label token
 include ../../asmc/src/h/mktok/directve.inc
 include ../../asmc/src/h/instruct.h
-z label byte
 
-WCOUNT equ (z - table) / sizeof(token)
+TOKENCOUNT equ ($ - table) / sizeof(token)
 
 .code
 
 print_usage proc
 
     printf(
-        "USAGE: WCOUNT [-option] [file]\n\n"
-        "/r Recurse subdirectories\n\n"
+        "USAGE: strtok [-option] [file]\n"
+        "\n"
+        " -r Recurse subdirectories\n"
+        "\n"
     )
     xor eax,eax
     ret
@@ -78,7 +79,7 @@ ifdef __PE__
 ;
 ; get filename part of path
 ;
-strfn proc path:LPSTR
+strfn proc path:string_t
 
     mov rax,rcx
 
@@ -114,7 +115,7 @@ strfn endp
 ;
 ; add file to path
 ;
-strfcat proc b:LPSTR, path:LPSTR, file:LPSTR
+strfcat proc b:string_t, path:string_t, file:string_t
 
     strcat(strcat(strcpy(rcx, rdx), "\\"), file)
     ret
@@ -123,7 +124,7 @@ strfcat endp
 
 endif
 
-compare proc private a:ptr, b:ptr
+compare proc a:ptr, b:ptr
 
     xor eax,eax
 
@@ -132,11 +133,11 @@ compare proc private a:ptr, b:ptr
 
     .if edx > ecx
 
-        inc rax
+        inc eax
 
     .elseif !ZERO?
 
-        dec rax
+        dec eax
     .endif
     ret
 
@@ -152,7 +153,7 @@ tally proc uses rsi rdi rbx string:string_t
 
             .for ( rdi = rax,
                    rsi = &table,
-                   ebx = 0 : ebx < WCOUNT : ebx++, rsi += sizeof(token) )
+                   ebx = 0 : ebx < TOKENCOUNT : ebx++, rsi += sizeof(token) )
 
                 .if !strcmp([rsi].tname, rdi)
 
@@ -170,7 +171,7 @@ tally proc uses rsi rdi rbx string:string_t
 
 tally endp
 
-scanfiles proc uses rsi rdi rbx directory:LPSTR, fmask:LPSTR
+scanfiles proc uses rsi rdi rbx directory:string_t, fmask:string_t
 
   local path[_MAX_PATH]:sbyte, ff:_finddata_t
 
@@ -194,6 +195,7 @@ scanfiles proc uses rsi rdi rbx directory:LPSTR, fmask:LPSTR
                         lea rdi,buffer
                         mov ecx,eax
                         mov eax,10
+                        mov byte ptr [rdi+rcx],0
 
                         .while 1
 
@@ -347,8 +349,8 @@ main proc argc:SINT, argv:ptr
         printf("Total %d file(s), %d line(s)\n\n", file_count, line_count)
 
         lea rsi,table
-        qsort(rsi, WCOUNT, sizeof(token), compare)
-        .for ( ebx = 0 : ebx < WCOUNT && [rsi].count : ebx++, rsi += sizeof(token) )
+        qsort(rsi, TOKENCOUNT, sizeof(token), compare)
+        .for ( ebx = 0 : ebx < TOKENCOUNT && [rsi].count : ebx++, rsi += sizeof(token) )
 
             printf("%6d %s\n", [rsi].count, [rsi].tname)
         .endf

@@ -35,7 +35,7 @@ _getch proc uses rbx rdi rsi
                     movzx edi,[rbx].INPUT_RECORD.KeyEvent.AsciiChar
                     .break .if edi
                 .endif
-                add rbx,SIZE INPUT_RECORD
+                add rbx,sizeof(INPUT_RECORD)
                 dec esi
             .endw
         .endif

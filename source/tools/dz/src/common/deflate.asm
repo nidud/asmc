@@ -473,7 +473,7 @@ lupe:
 	shr	eax,1
 	mov	[esi].CT_DATA.ct_code,ax
 next:
-	add	esi,SIZE CT_DATA
+	add	esi,sizeof(CT_DATA)
 	dec	ecx
 	jnz	lupe
 	ret
@@ -506,7 +506,7 @@ lupe:
 	mov	[ebp+edi*4].heap,ecx
 	mov	edx,ecx
 next:
-	add	ebx,SIZE CT_DATA
+	add	ebx,sizeof(CT_DATA)
 	inc	ecx
 start:
 	cmp	ecx,[esi].TREE_DESC.td_elems
@@ -1041,7 +1041,7 @@ dist_end_02:
 @@:
 	inc	bl_count[ebx*4]
 	mov	[edi].CT_DATA.ct_len,ax
-	add	edi,SIZE CT_DATA
+	add	edi,sizeof(CT_DATA)
 	dec	ecx
 	jnz	@B
 	ret
@@ -1064,7 +1064,7 @@ cloop:
 	jnz	@B
 	shr	eax,1
 	mov	[edi].CT_DATA.ct_code,ax
-	add	edi,SIZE CT_DATA
+	add	edi,sizeof(CT_DATA)
 	inc	esi
 	cmp	esi,D_CODES
 	jb	cloop
@@ -1078,21 +1078,21 @@ init_block PROC
 	mov	ecx,L_CODES
 @@:
 	mov	[ebx].CT_DATA.ct_freq,ax
-	add	ebx,SIZE CT_DATA
+	add	ebx,sizeof(CT_DATA)
 	dec	ecx
 	jnz	@B
 	lea	ebx,[ebp].dyn_dtree
 	mov	ecx,D_CODES
 @@:
 	mov	[ebx].CT_DATA.ct_freq,ax
-	add	ebx,SIZE CT_DATA
+	add	ebx,sizeof(CT_DATA)
 	dec	ecx
 	jnz	@B
 	lea	ebx,[ebp].bl_tree
 	mov	ecx,BL_CODES
 @@:
 	mov	[ebx].CT_DATA.ct_freq,ax
-	add	ebx,SIZE CT_DATA
+	add	ebx,sizeof(CT_DATA)
 	dec	ecx
 	jnz	@B
 	mov	[ebp].dyn_ltree[END_BLOCK*4].CT_DATA.ct_freq,1
@@ -1951,12 +1951,12 @@ lm_init endp
 zip_deflate PROC USES esi edi ebx level
 	push	ebp
 	xor	esi,esi
-	malloc( SIZE S_DEFLATE )
+	malloc( sizeof(S_DEFLATE) )
 	jz	toend
 	mov	ebx,level
 	mov	ebp,eax
 	mov	edi,eax
-	mov	ecx,SIZE S_DEFLATE
+	mov	ecx,sizeof(S_DEFLATE)
 	xor	eax,eax
 	rep	stosb
 	mov	edi,ebx

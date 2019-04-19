@@ -29,8 +29,8 @@ for %%f in (..\src\ifdef\*.asm) do call :ifdef %%f
 for %%f in (..\src\elf\*.asm) do call :elf %%f
 for %%f in (..\src\omf2\*.asm) do call :omf2 %%f
 for %%f in (..\src\omfcu\*.asm) do call :omfcu %%f
-for %%f in (..\src\Xc\*.asm) do call :Xc %%f
 for %%f in (..\src\elf64\*.asm) do call :elf64 %%f
+for %%f in (..\src\math\*.asm) do call :math %%f
 for %%f in (..\src\vec64\*.asm) do call :vec64 %%f
 
 call :safeseh
@@ -174,6 +174,20 @@ if errorlevel 1 goto end
 del %~n1.OBJ
 goto end
 
+:math
+%ASMX% -q /DARCH=.686 -I..\src\math %1 > %~n1_686.txt
+if errorlevel 1 goto end
+fcmp %~n1_686.txt ..\exp\%~n1_686.txt
+if errorlevel 1 goto end
+del %~n1_686.txt
+%ASMX% -q /DARCH=.x64 -I..\src\math %1 > %~n1_x64.txt
+if errorlevel 1 goto end
+fcmp %~n1_x64.txt ..\exp\%~n1_686.txt
+if errorlevel 1 goto end
+del %~n1_x64.txt
+del %~n1.obj
+goto end
+
 :omfcu
 %ASMX% -q -Cu %1
 if errorlevel 1 goto end
@@ -198,10 +212,18 @@ del %~n1.EXE
 goto end
 
 :zne
+if exist ..\exp\%~n1.err (
 %ASMX% -q -eq -Zne %1
 fcmp %~n1.ERR ..\exp\%~n1.err
 if errorlevel 1 goto end
 del %~n1.ERR
+)
+if exist ..\exp\%~n1.obj (
+%ASMX% -q -Zne %1
+fcmp %~n1.obj ..\exp\%~n1.obj
+if errorlevel 1 goto end
+del %~n1.obj
+)
 goto end
 
 :zg
@@ -224,12 +246,6 @@ fcmp %~n1.ERR ..\exp\%~n1.err
 if errorlevel 1 goto end
 del %~n1.ERR
 goto end
-
-:Xc
-%ASMX% -q -Xc -bin %1
-fcmp %~n1.bin ..\exp\%~n1.bin
-if errorlevel 1 goto end
-del %~n1.bin
 
 :end
 

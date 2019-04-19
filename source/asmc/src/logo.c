@@ -10,7 +10,7 @@
 #endif
 
 char cp_logo[] =
- "Asmc Macro Assembler" X64 " Version " ASMC_VERSSTR ".06\n"
+ "Asmc Macro Assembler" X64 " Version " ASMC_VERSSTR "\n"
  "Copyright (C) The Asmc Contributors. All Rights Reserved.\n"
  "Portions Copyright (C) 1984-2002 Sybase, Inc. All Rights Reserved.\n\n";
 
@@ -26,7 +26,7 @@ static char cp_options[] =
  "/assert Generate .assert() code            /Sa Maximize source listing\n"
  "/autostack Auto stack space for arguments  /safeseh Assert exception handlers\n"
  "/bin Generate plain binary file            /Sf Generate first pass listing\n"
- "/Cs C stack: push USER regs first          /Sg Display generated code in listing\n"
+ "/Cs Push USER registers before prolouge    /Sg Display generated code in listing\n"
  "/coff Generate COFF format object file     /Sn Suppress symbol-table listing\n"
  "/C<p|u|x> Set OPTION CASEMAP               /Sp[n] Set segment alignment\n"
  "/D<name>[=text] Define text macro          /stackalign Align locals to 16-byte\n"
@@ -59,7 +59,7 @@ static char cp_options[] =
  "/assert Generate .assert() code            /safeseh Assert exception handlers\n"
  "/autostack Auto stack space for arguments  /Sf Generate first pass listing\n"
  "/bin Generate plain binary file            /Sg Display generated code in listing\n"
- "/Cs C stack: push USER regs first          /Sn Suppress symbol-table listing\n"
+ "/Cs Push USER registers before prolouge    /Sn Suppress symbol-table listing\n"
  "/coff Generate COFF format object file     /Sp[n] Set segment alignment\n"
  "/C<p|u|x> Set OPTION CASEMAP               /stackalign Align locals to 16-byte\n"
  "/D<name>[=text] Define text macro          /swc C .SWITCH (default)\n"
@@ -74,25 +74,25 @@ static char cp_options[] =
  "/Fo<file> Name object file                 /ws Store quoted strings as unicode\n"
  "/Fw<file> Set errors file name             /WX Treat all warnings as errors\n"
  "/FPi Generate 80x87 emulator encoding      /X Ignore INCLUDE environment path\n"
- "/FPi87 80x87 instructions (default)        /Xc Disable ASMC extensions\n"
- "/fpc Disallow floating-point instructions  /zcw No decoration for C symbols\n"
- "/fp<n> Set FPU: 0=8087, 2=80287, 3=80387   /Zd Add line number debug info\n"
- "/Ge force stack checking for all funcs     /Zf Make all symbols public\n"
- "/G<cdzv> Pascal, C, Stdcall or Vectorcall  /zf<0|1> Set FASTCALL type: MS/OW\n"
- "/homeparams Copy Reg. parameters to Stack  /Zg Generate code to match Masm\n"
- "/I<name> Add include path                  /Zi[0|1|2|3] Add symbolic debug info\n"
- "/m<t|s|c|m|l|h|f> Set memory model         /zlc No OMF records of data in code\n"
- "/mz Generate DOS MZ binary file            /zld No OMF records of far call\n"
- "/nc<name> Set class name of code segment   /zl<f|p|s> Suppress items in COFF\n"
- "/nd<name> Set name of data segment         /Zm Enable MASM 5.10 compatibility\n"
- "/nm<name> Set name of module               /Zne Disable non Masm extensions\n"
- "/nt<name> Set name of text segment         /Zp[n] Set structure alignment\n"
- "/pe Generate PE binary file, 32/64-bit     /Zs Perform syntax check only\n"
- " /cui - subsystem:console (default)        /zt<0|1|2> Set STDCALL decoration\n"
- " /gui - subsystem:windows                  /Zv8 Enable Masm v8+ PROC visibility\n"
- "/pf Preserve Flags (Epilogue/Invoke)       /zze No export symbol decoration\n"
- "/q, /nologo Suppress copyright message     /zzs Store name of start address\n"
- "/r Recurse subdirectories                  /Sa Maximize source listing\n";
+ "/FPi87 80x87 instructions (default)        /zcw No decoration for C symbols\n"
+ "/fpc Disallow floating-point instructions  /Zd Add line number debug info\n"
+ "/fp<n> Set FPU: 0=8087, 2=80287, 3=80387   /Zf Make all symbols public\n"
+ "/Ge force stack checking for all funcs     /zf<0|1> Set FASTCALL type: MS/OW\n"
+ "/G<cdzv> Pascal, C, Stdcall or Vectorcall  /Zg Generate code to match Masm\n"
+ "/homeparams Copy Reg. parameters to Stack  /Zi[0|1|2|3] Add symbolic debug info\n"
+ "/I<name> Add include path                  /zlc No OMF records of data in code\n"
+ "/m<t|s|c|m|l|h|f> Set memory model         /zld No OMF records of far call\n"
+ "/mz Generate DOS MZ binary file            /zl<f|p|s> Suppress items in COFF\n"
+ "/nc<name> Set class name of code segment   /Zm Enable MASM 5.10 compatibility\n"
+ "/nd<name> Set name of data segment         /Zne Disable non Masm extensions\n"
+ "/nm<name> Set name of module               /Zp[n] Set structure alignment\n"
+ "/nt<name> Set name of text segment         /Zs Perform syntax check only\n"
+ "/pe Generate PE binary file, 32/64-bit     /zt<0|1|2> Set STDCALL decoration\n"
+ " /cui - subsystem:console (default)        /Zv8 Enable Masm v8+ PROC visibility\n"
+ " /gui - subsystem:windows                  /zze No export symbol decoration\n"
+ "/pf Preserve Flags (Epilogue/Invoke)       /zzs Store name of start address\n"
+ "/q, /nologo Suppress copyright message     /Sa Maximize source listing\n"
+ "/r Recurse subdirectories\n";
 #endif
 
 int banner_printed = 0;

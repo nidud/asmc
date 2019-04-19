@@ -8,7 +8,7 @@ extern struct ReservedWord ResWordTable[];
 
 unsigned FASTCALL get_hash( const char *s, unsigned char size );
 
-unsigned FindResWord( char *name, unsigned size )
+unsigned FASTCALL FindResWord( char *name, unsigned size )
 /* search reserved word in hash table */
 {
     struct ReservedWord *inst;

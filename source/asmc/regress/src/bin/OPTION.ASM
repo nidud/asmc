@@ -13,7 +13,7 @@ TE2	textequ <dotname>
 	option prologue:none
 	option epilogue:none
 
-	option nokeyword:<title>
+	option nokeyword:<.title>
 	option nokeyword:<esi, add>
 
 	option offset:segment
@@ -45,16 +45,16 @@ esi proc
 	ret
 esi endp
 
-title proc
+.title proc
 	ret
-title endp
+.title endp
 
 main proc c
 
 	mov ax,var1
 ;	mov cx,VAR1
 	mov ax,offset esi
-	mov ax,offset title
+	mov ax,offset .title
 	mov ax,F2
 	ret
 

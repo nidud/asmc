@@ -40,7 +40,9 @@ IDR_BITMAP1     equ 101
     hInstance       HINSTANCE 0
     OldWndProc      LONG_PTR 0
     hBitmap1        HBITMAP 0
+ifdef __PE__
     IID_IOleObject  IID _IID_IOleObject
+endif
 
     .code
 
@@ -255,8 +257,7 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
         mov edx,eax
         and eax,0xFFFF
         shr edx,16
-        mov message,edx
-        MoveWindow(hEdit, 0, 0, eax, message, TRUE)
+        MoveWindow(hEdit, 0, 0, eax, edx, TRUE)
         .endc
       .case WM_DESTROY
         PostQuitMessage(0)
@@ -292,9 +293,9 @@ _tWinMain proc WINAPI hInst:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPTSTR
     mov wc.hCursor,LoadCursor(0, IDC_ARROW)
     RegisterClassEx(&wc)
 
-    mov eax,CW_USEDEFAULT
+    mov ecx,CW_USEDEFAULT
     mov hwnd,CreateWindowEx(0, "WndClass", "Window", WS_OVERLAPPEDWINDOW,
-                            eax, eax, eax, eax, 0, 0, hInstance, 0)
+                            ecx, ecx, ecx, ecx, 0, 0, hInstance, 0)
     ShowWindow(hwnd, SW_SHOWNORMAL)
     UpdateWindow(hwnd)
     InsertBitmap(hEdit, hBitmap1, REO_CP_SELECTION)

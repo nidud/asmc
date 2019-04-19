@@ -18,11 +18,11 @@ event_list proc private uses esi edi ebx
     mov esi,eax
     mov edi,edx
     dlinit(esi)
-    lea eax,[esi+SIZE S_TOBJ]
+    lea eax,[esi+sizeof(S_TOBJ)]
     mov ecx,MAXDLGOBJECT
     .repeat
         or [eax].S_TOBJ.to_flag,_O_STATE
-        lea eax,[eax+SIZE S_TOBJ]
+        lea eax,[eax+sizeof(S_TOBJ)]
     .untilcxz
     mov bx,[esi+4]      ;.S_DOBJ.dl_rect.rc_x
     add bx,0204h
@@ -41,7 +41,7 @@ event_list proc private uses esi edi ebx
         mov al,bh
         scpath(ebx, eax, MAXOBJECTLEN, [edi].S_TINFO.ti_file)
         lea edx,[edx+4]
-        lea esi,[esi+SIZE S_TOBJ]
+        lea esi,[esi+sizeof(S_TOBJ)]
         and [esi].S_TOBJ.to_flag,not _O_STATE
         inc bh
         dec ecx
@@ -56,7 +56,7 @@ tdlgopen proc uses esi edi ebx
 
     lea edi,ll
     xor eax,eax
-    mov ecx,SIZE S_LOBJ
+    mov ecx,sizeof(S_LOBJ)
     rep stosb
     lea edi,ti
     mov ll.ll_list,edi

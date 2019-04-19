@@ -435,7 +435,7 @@ event_find proc private uses esi edi ebx
 
         free(STDI.ios_bp)
     .endif
-    memset(&STDI, 0, SIZE S_IOST)
+    memset(&STDI, 0, sizeof(S_IOST))
     ret
 event_find endp
 
@@ -790,7 +790,7 @@ ff_rsevent proc idd, find
 
     .repeat
         mov [edx],eax
-        add edx,SIZE S_TOBJ
+        add edx,sizeof(S_TOBJ)
     .untilcxz
     dlshow(ebx)
     dlinit(ebx)
@@ -824,7 +824,7 @@ FindFile proc uses esi edi ebx wspath
     lea     ebx,ll
     mov     tdllist,ebx
     mov     edi,ebx
-    mov     ecx,SIZE S_LOBJ
+    mov     ecx,sizeof(S_LOBJ)
     xor     eax,eax
     rep     stosb
 
@@ -888,7 +888,7 @@ FindFile proc uses esi edi ebx wspath
             or [ebx+OF_SUBD],al
         .endif
 
-        lea edx,[ebx].S_TOBJ.to_proc[SIZE S_TOBJ]
+        lea edx,[ebx].S_TOBJ.to_proc[sizeof(S_TOBJ)]
         mov ecx,ID_FILE
         mov eax,ff_event_xcell
 

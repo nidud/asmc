@@ -200,7 +200,7 @@ ret_code SimplifiedSegDir( int i, struct asm_tok tokenarray[] )
 	 */
 	if( tokenarray[i].token == T_ID &&
 	   ( type == SIM_CODE || type == SIM_FARDATA || type == SIM_FARDATA_UN
-	    || ( Options.strict_masm_compat == FALSE &&
+	    || ( ModuleInfo.strict_masm_compat == FALSE &&
 		( type == SIM_DATA || type == SIM_DATA_UN || type == SIM_CONST )))) {
 	    name = tokenarray[i].string_ptr;
 	    i++;

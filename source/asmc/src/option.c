@@ -259,6 +259,12 @@ OPTFUNC( SetLanguage )
 {
     int i = *pi;
 
+    if( tokenarray[i].token == T_ID && (tokenarray[i].string_ptr[0] | 0x20) == 'c'
+	&& tokenarray[i].string_ptr[1] == '\0') {
+	tokenarray[i].token = T_RES_ID;
+	tokenarray[i].tokval = T_CCALL;
+	tokenarray[i].bytval = 1;
+    }
     if ( tokenarray[i].token == T_RES_ID ) {
 	if ( GetLangType( &i, tokenarray, &ModuleInfo.langtype ) == NOT_ERROR ) {
 	    /* update @Interface assembly time variable */
@@ -638,40 +644,6 @@ OPTFUNC( SetFrame )
     return( NOT_ERROR );
 }
 
-/* OPTION ASMC: ON|OFF|0|1|2|4|8|..128
- */
-OPTFUNC( SetASMC )
-/*****************/
-{
-    int i = *pi;
-    int temp;
-    struct expr opndx;
-
-    if ( 0 == _stricmp( tokenarray[i].string_ptr, "ON" ) ) {
-	ModuleInfo.aflag |= _AF_ON;
-	*pi = i + 1;
-    } else if ( 0 == _stricmp( tokenarray[i].string_ptr, "OFF" ) ) {
-	ModuleInfo.aflag &= ~_AF_ON;
-	*pi = i + 1;
-    } else {
-	if ( EvalOperand( &i, tokenarray, Token_Count, &opndx, EXPF_NOUNDEF ) == ERROR )
-		return( ERROR );
-	if ( opndx.kind != EXPR_CONST )
-		return( asmerr( 2026 ) );
-	if( opndx.uvalue > 0xff )
-		return( asmerr( 2064 ) );
-	temp = 0;
-	if ( opndx.uvalue ) {
-		for( temp = 1; temp < opndx.uvalue; temp <<= 1 );
-		if( temp != opndx.uvalue )
-			return( asmerr( 2063, opndx.value ) );
-	}
-	ModuleInfo.aflag = temp;
-	*pi = i;
-    }
-    return NOT_ERROR;
-}
-
 /* OPTION CSTACK: ON | OFF
  */
 OPTFUNC( SetCStack )
@@ -1025,7 +997,6 @@ static const struct asm_option optiontab[] = {
     { "DLLIMPORT",    SetDllImport   }, /* DLLIMPORT: <NONE|library> */
     { "CODEVIEW",     SetCodeView    }, /* CODEVIEW: <value> */
     { "STACKBASE",    SetStackBase   }, /* STACKBASE: <reg> */
-    { "ASMC",	      SetASMC	     },
     { "CSTACK",	      SetCStack	     },
     { "SWITCH",	      SetSwitch	     },
     { "LOOPALIGN",    SetLoopAlign   }, /* LOOPALIGN: <value> */
@@ -1067,7 +1038,7 @@ int OptionDirective( int i, struct asm_tok tokenarray[] )
 		break;
 	    }
 	    /* reject option if -Zne is set */
-	    if ( idx >= MASMOPTS && Options.strict_masm_compat ) {
+	    if ( idx >= MASMOPTS && ModuleInfo.strict_masm_compat ) {
 		i -= 2;
 		break;
 	    }

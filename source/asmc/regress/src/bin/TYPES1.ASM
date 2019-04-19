@@ -7,16 +7,16 @@
     option casemap:none
 
 TrueType MACRO arg
-	if (type (arg) eq BYTE)
+	if (typeof(arg) eq BYTE)
 		exitm <1>
 	endif
-	if (type (arg) eq DWORD)
+	if (typeof(arg) eq DWORD)
 		exitm <2>
 	endif
-	if (type (arg) eq SDWORD)
+	if (typeof(arg) eq SDWORD)
 		exitm <3>
 	endif
-	if (type (arg) eq REAL4)
+	if (typeof(arg) eq REAL4)
 		exitm <4>
 	endif
 	ENDM
@@ -32,13 +32,13 @@ sd1	SDWORD 0
 f1	real4 1.0
 f2	FLOAT 2.0
 
-	db TrueType( b1  )
-	db TrueType( b2  )
-	db TrueType( d1  )
+	db TrueType( b1	 )
+	db TrueType( b2	 )
+	db TrueType( d1	 )
 	db TrueType( sd1 )
-	db TrueType( f1  )
-	db TrueType( f2  )
-	db TrueType( al  )
+	db TrueType( f1	 )
+	db TrueType( f2	 )
+	db TrueType( al	 )
 	db TrueType( eax )
 
     end

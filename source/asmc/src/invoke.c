@@ -709,7 +709,7 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 			    break;
 			    /* v2.25: added support for REAL10 and REAL16 */
 			case 10:
-			    if ( Ofssize == USE16 || Options.strict_masm_compat == TRUE || opnd.kind != EXPR_FLOAT )
+			    if ( Ofssize == USE16 || ModuleInfo.strict_masm_compat == TRUE || opnd.kind != EXPR_FLOAT )
 				break;
 			    atofloat( &opnd.fvalue, fullparam, 10, opnd.negative, opnd.float_tok->floattype );
 			    sprintf(fullparam, "0x%04X", (int_32)opnd.hlvalue & 0xFFFF);
@@ -729,7 +729,7 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 			    break;
 
 			case 16:
-			    if ( Ofssize == USE16 || Options.strict_masm_compat == TRUE )
+			    if ( Ofssize == USE16 || ModuleInfo.strict_masm_compat == TRUE )
 				break;
 			    if ( opnd.kind == EXPR_FLOAT )
 				atofloat( &opnd.fvalue, fullparam, 16, opnd.negative, opnd.float_tok->floattype );
@@ -808,7 +808,7 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
     i++; /* skip INVOKE directive */
     namepos = i;
 
-    if ( ModuleInfo.aflag & _AF_ON ) {
+    if ( ModuleInfo.strict_masm_compat == 0 ) {
 	if ( ExpandHllProc( buffer, i, tokenarray ) == ERROR )
 	    return ERROR;
 	if ( buffer[0] != 0 ) {
@@ -1002,7 +1002,7 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
 	    sym->iat_used = TRUE;
 	    sym->dll->cnt++;
 	    if ( sym->langtype != LANG_NONE && sym->langtype != ModuleInfo.langtype )
-		AddLineQueueX( " externdef %r %s: %r %r", sym->langtype + T_C - 1, iatname, T_PTR, T_PROC );
+		AddLineQueueX( " externdef %r %s: %r %r", sym->langtype + T_CCALL - 1, iatname, T_PTR, T_PROC );
 	    else
 		AddLineQueueX( " externdef %s: %r %r", iatname, T_PTR, T_PROC );
 	}

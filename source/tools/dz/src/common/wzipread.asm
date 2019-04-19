@@ -23,24 +23,24 @@ getendcentral PROC wsub, zend
 	ioseek( addr STDI, 0, SEEK_END )
 	jz	error
 	mov	zip_flength,eax
-	cmp	eax,SIZE S_ZEND
+	cmp	eax,sizeof(S_ZEND)
 	jb	error
 	call	oungetc
 	jz	error
-	cmp	STDI.ios_i,SIZE S_ZEND-1
+	cmp	STDI.ios_i,sizeof(S_ZEND)-1
 	jb	toend
-	sub	STDI.ios_i,SIZE S_ZEND-2
+	sub	STDI.ios_i,sizeof(S_ZEND)-2
 @@:
 	call	oungetc
 	jz	toend
 	cmp	al,'P'
 	jne	@B
-	mov	eax,SIZE S_ZEND
+	mov	eax,sizeof(S_ZEND)
 	call	oread
 	jz	toend
 	cmp	DWORD PTR [eax],ZIP_ENDSENTRID
 	jne	@B
-	memcpy( zend, eax, SIZE S_ZEND )
+	memcpy( zend, eax, sizeof(S_ZEND) )
 	mov	eax,1
 toend:
 	test	eax,eax
@@ -55,7 +55,7 @@ zip_allocfblk PROC USES esi edi ebx
 	mov	edi,eax
 	mov	esi,entryname
 	strlen( esi )
-	add	eax,SIZE S_FBLK
+	add	eax,sizeof(S_FBLK)
 	push	eax
 	add	eax,12
 	malloc( eax )
@@ -106,14 +106,14 @@ toend:
 zip_allocfblk ENDP
 
 zip_readcentral PROC USES esi edi
-	mov	eax,SIZE S_CZIP
+	mov	eax,sizeof(S_CZIP)
 	call	oread
 	mov	ebx,eax
 	jz	toend
 	xor	eax,eax
 	cmp	DWORD PTR [ebx],ZIP_CENTRALID
 	jne	toend
-	add	STDI.ios_i,SIZE S_CZIP
+	add	STDI.ios_i,sizeof(S_CZIP)
 	dec	eax
 	mov	edx,arc_pathz
 	cmp	[ebx].S_CZIP.cz_fnsize,dx
@@ -121,12 +121,12 @@ zip_readcentral PROC USES esi edi
 	mov	edi,offset zip_central
 	mov	eax,ecx
 	mov	esi,ebx
-	mov	ecx,SIZE S_CZIP / 4
+	mov	ecx,sizeof(S_CZIP) / 4
 	rep	movsd
 	movsw
 	movzx	ecx,[ebx].S_CZIP.cz_fnsize
-	add	ebx,SIZE S_CZIP
-	sub	eax,SIZE S_CZIP
+	add	ebx,sizeof(S_CZIP)
+	sub	eax,sizeof(S_CZIP)
 	cmp	eax,ecx
 	jae	@F
 	mov	eax,ecx

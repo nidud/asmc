@@ -172,12 +172,12 @@ local path[_MAX_PATH]:byte
     .if wgetfile(addr path, "*.pal", _WOPEN)
 
         mov esi,eax
-        osread(esi, addr at_foreground, SIZE S_COLOR)
+        osread(esi, addr at_foreground, sizeof(S_COLOR))
         xchg eax,esi
         _close(eax)
         mov eax,_C_NORMAL
 
-        .if esi == SIZE S_COLOR
+        .if esi == sizeof(S_COLOR)
 
             event_reload()
         .endif
@@ -193,7 +193,7 @@ event_savecolor proc
     .if wgetfile(addr path, "*.pal", _WSAVE)
 
         push eax
-        oswrite(eax, addr at_foreground, SIZE S_COLOR)
+        oswrite(eax, addr at_foreground, sizeof(S_COLOR))
         _close()
     .endif
 
@@ -369,7 +369,7 @@ cmpanel proc uses ebx
         rsevent(IDD_DZPanelOptions, ebx)
         push eax
         mov eax,ebx
-        add eax,SIZE S_DOBJ
+        add eax,sizeof(S_DOBJ)
         togetbitflag(eax, 4, _O_FLAGB)
         dlclose(ebx)
         pop eax
@@ -485,7 +485,7 @@ cmcompression proc uses ebx
             mov edx,ebx
 
             .repeat
-                add edx,SIZE S_TOBJ
+                add edx,sizeof(S_TOBJ)
                 .break .if [edx].S_DOBJ.dl_flag & _O_RADIO
                 inc eax
             .until eax == 10

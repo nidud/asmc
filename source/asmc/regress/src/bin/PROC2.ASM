@@ -23,18 +23,18 @@ void ends
 
 @OPS macro prefix
 	for chr,<prefix>
-	dw sizeof chr&1, lengthof chr&1, size chr&1, length chr&1
-	dw sizeof chr&2, lengthof chr&2, size chr&2, length chr&2
-	dw sizeof chr&3, lengthof chr&3, size chr&3, length chr&3
-	dw sizeof chr&4, lengthof chr&4, size chr&4, length chr&4
-	dw type chr&1, type chr&2, type chr&3, type chr&4
+	dw sizeof chr&1, lengthof chr&1, .size chr&1, .length chr&1
+	dw sizeof chr&2, lengthof chr&2, .size chr&2, .length chr&2
+	dw sizeof chr&3, lengthof chr&3, .size chr&3, .length chr&3
+	dw sizeof chr&4, lengthof chr&4, .size chr&4, .length chr&4
+	dw typeof chr&1, typeof chr&2, typeof chr&3, typeof chr&4
 	endm
 	endm
 
-pr proc a1:near16,          a2:near32,          a3:far16,          a4:far32,
-        b1:ptr near16,      b2:ptr near32,      b3:ptr far16,      b4:ptr far32,
-        c1:near16 ptr,      c2:near32 ptr,      c3:far16 ptr,      c4:far32 ptr,
-        d1:near16 ptr WORD, d2:near32 ptr WORD, d3:far16 ptr WORD, d4:far32 ptr WORD
+pr proc a1:near16,	    a2:near32,		a3:far16,	   a4:far32,
+	b1:ptr near16,	    b2:ptr near32,	b3:ptr far16,	   b4:ptr far32,
+	c1:near16 ptr,	    c2:near32 ptr,	c3:far16 ptr,	   c4:far32 ptr,
+	d1:near16 ptr WORD, d2:near32 ptr WORD, d3:far16 ptr WORD, d4:far32 ptr WORD
 local l1:near16
 local l2:near32
 local l3:far16

@@ -14,22 +14,22 @@ v2	T2 0
 v11	T11 0
 v21	T21 0
 
-	db (type T1) EQ (type T2)
-	db T1        EQ T2			; the simpler variant ( no TYPE operator needed to compare types )
-	db (type v1) EQ (type v2)
+	db (typeof T1) EQ (typeof T2)
+	db T1	     EQ T2	; the simpler variant ( no TYPEOF operator needed to compare types )
+	db (typeof v1) EQ (typeof v2)
 
 ;--- increase level of indirection
 
-	db (type T11) EQ (type T21)
-	db T11        EQ T21
-	db (type v11) EQ (type v21)
+	db (typeof T11) EQ (typeof T21)
+	db T11	      EQ T21
+	db (typeof v11) EQ (typeof v21)
 
 
 ;--- target is equal, but different level of indirection
 
-	db (type T11) EQ (type T1)
-	db T11        EQ T1
-	db (type v11) EQ (type v1)
+	db (typeof T11) EQ (typeof T1)
+	db T11	      EQ T1
+	db (typeof v11) EQ (typeof v1)
 
 ;--- compare types that ARE equal
 
@@ -43,13 +43,13 @@ v4	T4 0
 v31	T31 0
 v41	T41 0
 
-	db (type T3) EQ (type T4)
-	db T3        EQ T4
-	db (type v3) EQ (type v4)
+	db (typeof T3) EQ (typeof T4)
+	db T3	     EQ T4
+	db (typeof v3) EQ (typeof v4)
 
-	db (type T31) EQ (type T41)
-	db T31        EQ T41
-	db (type v31) EQ (type v41)
+	db (typeof T31) EQ (typeof T41)
+	db T31	      EQ T41
+	db (typeof v31) EQ (typeof v41)
 
 _DATA ends
 

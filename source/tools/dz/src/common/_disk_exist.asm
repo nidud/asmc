@@ -4,7 +4,7 @@ include dzlib.inc
     .code
 
 _disk_exist proc uses edx disk
-    mov eax,SIZE S_DISK
+    mov eax,sizeof(S_DISK)
     mov edx,disk
     dec edx
     mul edx

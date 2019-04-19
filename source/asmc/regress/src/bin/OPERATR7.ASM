@@ -8,9 +8,9 @@
 	.CODE
 start:
 
-	dw TYPE QWORD PTR offset start
-	dw TYPE QWORD PTR low32 start
-	dw TYPE QWORD PTR lowword start
-	dw TYPE QWORD PTR low start
+	dw TYPEOF QWORD PTR offset start
+	dw TYPEOF QWORD PTR low32 start
+	dw TYPEOF QWORD PTR lowword start
+	dw TYPEOF QWORD PTR .low start
 
 END

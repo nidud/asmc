@@ -1,7 +1,7 @@
 #ifndef _GLOBALS_H_INCLUDED
 #define _GLOBALS_H_INCLUDED
 
-#define ASMC_VERSSTR "2.29"
+#define ASMC_VERSSTR "2.30"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -49,6 +49,7 @@ char *strupr( char * ); /* defined in apiemu.c */
 #define FASTCALL
 #endif
 
+#define OLDKEYWORDS 1
 #define CHEXPREFIX 1
 
 #define MAX_LINE_LEN		2048 /* no restriction for this number */
@@ -391,7 +392,6 @@ enum seg_type {
     SEGTYPE_ERROR, /* must be last - an "impossible" segment type */
 };
 
-#define _AF_ON		0x01
 #define _AF_CSTACK	0x02
 #define _AF_WSTRING	0x04 /* convert "string" to unicode */
 #define _AF_LSTRING	0x08 /* L"Unicode" used --> allow dw "string" */
@@ -615,6 +615,7 @@ struct module_info {
     char *		assert_proc;		/* .assert:<handler> */
     unsigned		codepage;		/* Unicode code page */
     unsigned		class_label;
+    unsigned char	strict_masm_compat;	/* -Zne option	 */
 };
 
 #define CurrSource	ModuleInfo.currsource

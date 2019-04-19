@@ -499,6 +499,7 @@ static void ModulePassInit( void )
     ModuleInfo.codepage = Options.codepage;
     ModuleInfo.epilogueflags = Options.epilogueflags;
     ModuleInfo.win64_flags = Options.win64_flags;
+    ModuleInfo.strict_masm_compat = Options.strict_masm_compat;
 
     /* if OPTION DLLIMPORT was used, reset all iat_used flags */
     if ( ModuleInfo.g.DllQueue )
@@ -768,6 +769,44 @@ static void ModuleInit( void )
     ModuleInfo.fmtopt->init( &ModuleInfo );
 }
 
+#ifdef OLDKEYWORDS
+typedef struct {
+    unsigned short token;
+    unsigned char  oldlen;
+    unsigned char  newlen;
+    const char *   oldname;
+    const char *   newname;
+} MASMKEYW;
+#define res(token, oldlen, newlen, oldname, newname) { token, oldlen, newlen, # oldname, # newname },
+MASMKEYW oldkeyw[] = {
+#include <oldkeyw.h>
+};
+#endif
+
+void EnableKeyword( unsigned );
+
+void AsmcKeywords( int enable )
+{
+    int i;
+
+    if (enable == 0) {
+
+	for ( i = T_DOT_IFA; i <= T_DOT_ENDSW; i++ )
+	    DisableKeyword(i);
+#ifdef OLDKEYWORDS
+	for( i = 0; i < sizeof(oldkeyw)/sizeof(oldkeyw[0]); i++ )
+	    RenameKeyword( oldkeyw[i].token, oldkeyw[i].oldname, oldkeyw[i].oldlen );
+#endif
+    } else {
+#ifdef OLDKEYWORDS
+	for( i = 0; i < sizeof(oldkeyw)/sizeof(oldkeyw[0]); i++ )
+	    RenameKeyword( oldkeyw[i].token, oldkeyw[i].newname, oldkeyw[i].newlen );
+#endif
+	for ( i = T_DOT_IFA; i <= T_DOT_ENDSW; i++ )
+	    EnableKeyword(i);
+    }
+}
+
 static void ReswTableInit( void )
 {
     int i;
@@ -782,11 +821,7 @@ static void ReswTableInit( void )
     if ( Options.strict_masm_compat == TRUE ) {
 	DisableKeyword( T_INCBIN );
 	DisableKeyword( T_FASTCALL );
-    }
-    if ( !( Options.aflag & _AF_ON ) ) {
-	/* added v2.22 - HSE */
-	for( i = T_DOT_IFA; i <= T_DOT_ENDSW; i++ )
-	    DisableKeyword( i );
+	AsmcKeywords(0);
     }
 }
 

@@ -10,7 +10,7 @@ ioinit proc uses edi io:ptr S_IOST, bsize
 
     mov edi,io
     mov edx,[edi].S_IOST.ios_file
-    mov ecx,SIZE S_IOST
+    mov ecx,sizeof(S_IOST)
     xor eax,eax
     rep stosb
     mov edi,io

@@ -16,7 +16,7 @@ _tmain proc argc:int_t, argv:ptr PTSTR
 
     .if ( ecx == 2 )
 
-        mov hRoot,CreateFile("C:\\", 0,
+        mov hRoot,CreateFile("D:\\", 0,
                  FILE_SHARE_READ or FILE_SHARE_WRITE or FILE_SHARE_DELETE,
                  NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, NULL)
 
@@ -25,8 +25,8 @@ _tmain proc argc:int_t, argv:ptr PTSTR
             mov desc.dwSize,sizeof(desc)
             mov desc._Type,ObjectIdType
 
-            mov rdx,argv
-            .ifd (CLSIDFromString([rdx+8], &desc.ObjectId)) == S_OK
+            mov rcx,argv
+            .ifd (CLSIDFromString([rcx+8], &desc.ObjectId)) == S_OK
 
                 mov h,OpenFileById(hRoot, &desc, GENERIC_READ,
                     FILE_SHARE_READ or FILE_SHARE_WRITE or FILE_SHARE_DELETE, NULL, 0)

@@ -23,8 +23,8 @@
 push macro x:vararg
     @@push x
   if (@ProcStatus and 7) eq 4  ;outside prologue/epilogue and fpo?
-    if type (x)
-        @StackBase = @StackBase + type (x)
+    if typeof(x)
+        @StackBase = @StackBase + typeof(x)
     else
         @StackBase = @StackBase + @WordSize
     endif
@@ -48,7 +48,7 @@ endm
 pop macro x:vararg
   if (@ProcStatus and 7) eq 4 ;outside prologue/epilogue and fpo?
     if type (x)
-        @StackBase = @StackBase - type (x)
+        @StackBase = @StackBase - typeof(x)
     else
         @StackBase = @StackBase - @WordSize
     endif
@@ -72,7 +72,7 @@ sub macro dst:req, opnd:req
     @@sub dst, opnd
   if (@ProcStatus and 7) eq 4 ;outside prologue/epilogue and fpo?
     ifidni <dst>,<esp>
-      if ( opattr opnd ) and 4 
+      if ( opattr opnd ) and 4
         @StackBase = @StackBase + (opnd)
       endif
     endif
@@ -83,7 +83,7 @@ add macro dst:req, opnd:req
     @@add dst, opnd
   if (@ProcStatus and 7) eq 4 ;outside prologue/epilogue and fpo?
     ifidni <dst>,<esp>
-      if ( opattr opnd ) and 4 
+      if ( opattr opnd ) and 4
         @StackBase = @StackBase - (opnd)
       endif
     endif

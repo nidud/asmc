@@ -990,7 +990,15 @@ int SwitchStart( int i, struct asm_tok tokenarray[] )
 	hll->flags |= HLLF_NOTEST;
     }
 
-    if ( tokenarray[i].tokval == T_C ) {
+    if ( tokenarray[i].token == T_ID &&
+       ( tokenarray[i].string_ptr[0] | 0x20 ) == 'c' &&
+	 tokenarray[i].string_ptr[1] == 0 ) {
+	tokenarray[i].tokval = T_CCALL;
+	tokenarray[i].token = T_RES_ID;
+	tokenarray[i].bytval = 1;
+    }
+
+    if ( tokenarray[i].tokval == T_CCALL ) {
 	i++;
     } else if ( tokenarray[i].tokval == T_PASCAL ) {
 	i++;

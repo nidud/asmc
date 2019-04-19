@@ -6,7 +6,7 @@
 
 include stdio.inc
 
-lastiob equ (offset _iob + (_NSTREAM_ * (SIZE _iobuf)))
+lastiob equ (offset _iob + (_NSTREAM_ * (sizeof(_iobuf))))
 
     .code
 
@@ -24,7 +24,7 @@ _getst proc
             mov eax,edx
             .break
         .endif
-        add edx,SIZE _iobuf
+        add edx,sizeof(_iobuf)
     .until  edx == lastiob
     ret
 _getst endp

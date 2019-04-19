@@ -30,11 +30,11 @@ wzipfindentry PROC USES esi edi fblk, ziph
 	mov	esi,ziph
 	mov	edi,fblk
 	strlen( addr [edi].S_FBLK.fb_name )
-	add	eax,SIZE S_FBLK
+	add	eax,sizeof(S_FBLK)
 	add	edi,eax
 	_lseek( esi,[edi],SEEK_SET )
-	osread( esi, addr zip_local, SIZE S_LZIP )
-	cmp	eax,SIZE S_LZIP
+	osread( esi, addr zip_local, sizeof(S_LZIP) )
+	cmp	eax,sizeof(S_LZIP)
 	jne	error
 	cmp	zip_local.lz_pkzip,ZIPHEADERID
 	jne	error

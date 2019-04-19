@@ -325,7 +325,7 @@ ret_code StoreMacro( struct dsym *macro, int i, struct asm_tok tokenarray[], boo
 		    i++;
 		} else if( tokenarray[i].token == T_DIRECTIVE &&
 			  tokenarray[i].tokval == T_LABEL &&
-			  Options.strict_masm_compat == FALSE ) { /* parm:LABEL? */
+			  ModuleInfo.strict_masm_compat == FALSE ) { /* parm:LABEL? */
 		    /* LABEL attribute for first param only! */
 		    if ( paranode != info->parmlist ) {
 			asmerr( 2143 );

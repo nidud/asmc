@@ -567,6 +567,8 @@ endif
     mov ModuleInfo.epilogueflags,al
     mov al,Options.win64_flags
     mov ModuleInfo.win64_flags,al
+    mov al,Options.strict_masm_compat
+    mov ModuleInfo.strict_masm_compat,al
     ;
     ; if OPTION DLLIMPORT was used, reset all iat_used flags
     ;
@@ -923,29 +925,69 @@ ModuleInit proc private
     ret
 ModuleInit endp
 
-ReswTableInit proc private
-    ResWordsInit()
-    .if Options.output_format == OFORMAT_OMF
+ifdef OLDKEYWORDS
 
+MASMKEYW	STRUC
+token		dw ?
+oldlen		db ?
+newlen		db ?
+oldname		dd ?
+newname		dd ?
+MASMKEYW	ENDS
+
+res macro token, oldlen, newlen, oldname, newname
+    exitm<MASMKEYW { token, oldlen, newlen, @CStr("&oldname"), @CStr("&newname") }>
+    endm
+.data
+masmkeyw label MASMKEYW
+include oldkeyw.h
+OLDKCOUNT equ ($ - masmkeyw) / sizeof(MASMKEYW)
+.code
+
+RenameKeyword proto :dword, :string_t, :dword
+
+endif
+
+EnableKeyword proto :uint_t
+
+AsmcKeywords proc uses ebx enable:int_t
+
+    .if ( enable == 0 )
+	.for ( ebx = T_DOT_IFA : ebx <= T_DOT_ENDSW : ebx++ )
+	    DisableKeyword(ebx)
+	.endf
+ifdef OLDKEYWORDS
+	.for( ebx = 0: ebx < OLDKCOUNT: ebx++ )
+	    imul ecx,ebx,sizeof(MASMKEYW)
+	    RenameKeyword( masmkeyw[ecx].token, masmkeyw[ecx].oldname, masmkeyw[ecx].oldlen )
+	.endf
+endif
+    .else
+ifdef OLDKEYWORDS
+	.for( ebx = 0: ebx < OLDKCOUNT: ebx++ )
+	    imul ecx,ebx,sizeof(MASMKEYW)
+	    RenameKeyword( masmkeyw[ecx].token, masmkeyw[ecx].newname, masmkeyw[ecx].newlen )
+	.endf
+endif
+	.for ( ebx = T_DOT_IFA : ebx <= T_DOT_ENDSW : ebx++ )
+	    EnableKeyword(ebx)
+	.endf
+    .endif
+    ret
+
+AsmcKeywords endp
+
+ReswTableInit proc private uses ebx
+
+    ResWordsInit()
+    .if ( Options.output_format == OFORMAT_OMF )
 	DisableKeyword(T_IMAGEREL)
 	DisableKeyword(T_SECTIONREL)
     .endif
-    .if Options.strict_masm_compat == 1
-
+    .if ( Options.strict_masm_compat == 1 )
 	DisableKeyword(T_INCBIN)
 	DisableKeyword(T_FASTCALL)
-    .endif
-    .if !(Options.aflag & _AF_ON)
-	;
-	; added v2.22 - HSE
-	;
-	push ebx
-	mov  ebx,T_DOT_IFA
-	.repeat
-	    DisableKeyword(ebx)
-	    add ebx,1
-	.until ebx > T_DOT_ENDSW
-	pop ebx
+	AsmcKeywords(0)
     .endif
     ret
 

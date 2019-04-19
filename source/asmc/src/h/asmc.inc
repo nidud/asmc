@@ -9,6 +9,7 @@ include asmtok.inc
 
 	option fieldalign: size_t
 
+OLDKEYWORDS		equ 1			; NAME, SIZE, ..
 CHEXPREFIX		equ 1			; 0x prefix
 
 MAX_LINE_LEN		equ 2048		; no restriction for this number
@@ -32,7 +33,6 @@ PASS_2			equ 1
 
 ;.aflag
 
-_AF_ON			equ 0x01
 _AF_CSTACK		equ 0x02
 _AF_WSTRING		equ 0x04 ; convert "string" to unicode
 _AF_LSTRING		equ 0x08 ; L"Unicode" used --> allow dw "string"
@@ -1180,6 +1180,7 @@ epilogueflags		db ?	; OPTION EPILOGUE: FLAGS
 assert_proc		PVOID ? ; .assert:<proc/macro name>
 codepage		dd ?	;
 class_label		dd ?	;
+strict_masm_compat	db ?	; -Zne option
 module_info		ENDS
 
 Token_Count		equ <ModuleInfo.token_count>
@@ -1234,6 +1235,7 @@ externdef		regax		: dword
 
 asmerr			PROTO :DWORD, :VARARG
 DelayExpand		PROTO FASTCALL :DWORD ; :PTR asmtok
+AsmcKeywords		proto :int_t
 
 write_logo		PROTO
 WriteError		PROTO
@@ -1277,9 +1279,9 @@ SymSetCmpFunc		PROTO
 SetCPU			PROTO :DWORD
 AddLineQueueX		PROTO :DWORD, :VARARG
 AddStringToIncludePath	PROTO :DWORD
-SymFind			PROTO FASTCALL :LPSTR
+SymFind			PROTO fastcall :LPSTR
 SymCreate		PROTO :LPSTR
-
+FindResWord		PROTO fastcall :string_t, :int_t
 
 DisableKeyword		PROTO :DWORD
 ParseLine		PROTO :DWORD

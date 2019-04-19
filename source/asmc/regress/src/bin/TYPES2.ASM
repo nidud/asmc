@@ -1,5 +1,5 @@
 
-;--- test TYPE with type coercions
+;--- test TYPEOF with type coercions
 
 	.286
 	.model tiny
@@ -27,32 +27,32 @@ vd4 U1 <>
 vd5 R1 <>
 	.code
 
-	mov ax,type vd1
-	mov ax,type (WORD ptr vd1)
-	mov ax,type vd2
-	mov ax,type (WORD ptr vd2)
-	mov ax,type vd3
-	mov ax,type (WORD ptr vd3)
-	mov ax,type vd4
-	mov ax,type (WORD ptr vd4)
-	mov ax,type vd5
-	mov ax,type (WORD ptr vd5)
-	mov ax,type DWORD
-	mov ax,type (WORD ptr DWORD)
-	mov ax,type UINT
-	mov ax,type (WORD ptr UINT)
-	mov ax,type S1
-	mov ax,type (WORD ptr S1)
-	mov ax,type U1
-	mov ax,type (WORD ptr U1)
-	mov ax,type R1
-	mov ax,type (WORD ptr R1)
+	mov ax,typeof vd1
+	mov ax,typeof (WORD ptr vd1)
+	mov ax,typeof vd2
+	mov ax,typeof (WORD ptr vd2)
+	mov ax,typeof vd3
+	mov ax,typeof (WORD ptr vd3)
+	mov ax,typeof vd4
+	mov ax,typeof (WORD ptr vd4)
+	mov ax,typeof vd5
+	mov ax,typeof (WORD ptr vd5)
+	mov ax,typeof DWORD
+	mov ax,typeof (WORD ptr DWORD)
+	mov ax,typeof UINT
+	mov ax,typeof (WORD ptr UINT)
+	mov ax,typeof S1
+	mov ax,typeof (WORD ptr S1)
+	mov ax,typeof U1
+	mov ax,typeof (WORD ptr U1)
+	mov ax,typeof R1
+	mov ax,typeof (WORD ptr R1)
 
 	assume bx:ptr WORD
-	mov ax,type [bx]
+	mov ax,typeof [bx]
 	assume bx:ptr UINT
-	mov ax,type [bx]
+	mov ax,typeof [bx]
 	assume bx:ptr S1
-	mov ax,type [bx]
+	mov ax,typeof [bx]
 
 	end

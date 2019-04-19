@@ -329,7 +329,7 @@ ret_code CondAsmDirective( int i, struct asm_tok tokenarray[] )
 	} else if ( tokenarray[i].token == T_ID	 ) {
 	    /* v2.07: handle structs + members (if -Zne is NOT set) */
 	    struct asym *sym;
-	    if ( Options.strict_masm_compat == FALSE &&
+	    if ( ModuleInfo.strict_masm_compat == FALSE &&
 		tokenarray[i+1].token == T_DOT &&
 		( sym = SymSearch( tokenarray[i].string_ptr ) ) &&
 		( ( sym->state == SYM_TYPE ) || sym->type ) ) {
@@ -351,7 +351,7 @@ ret_code CondAsmDirective( int i, struct asm_tok tokenarray[] )
 	    /* v2.09: special treatment of FLAT added */
 	    NextIfState = (( ModuleInfo.flat_grp && ModuleInfo.flat_grp->sym.isdefined ) ? BLOCK_ACTIVE : BLOCK_INACTIVE );
 	    i++;
-	} else if ( Options.strict_masm_compat == FALSE && (
+	} else if ( ModuleInfo.strict_masm_compat == FALSE && (
 		    tokenarray[i].token == T_RES_ID ||
 		    tokenarray[i].token == T_STYPE ||
 		    tokenarray[i].token == T_INSTRUCTION ||
@@ -483,7 +483,7 @@ ret_code ErrorDirective( int i, struct asm_tok tokenarray[] )
 
 	/* don't use check_defd()! */
 	/* v2.07: check for structured variables */
-	if ( Options.strict_masm_compat == FALSE &&
+	if ( ModuleInfo.strict_masm_compat == FALSE &&
 	    tokenarray[idloc+1].token == T_DOT &&
 	    ( sym = SymSearch( tokenarray[idloc].string_ptr ) ) &&
 	    ( ( sym->state == SYM_TYPE ) || sym->type ) ) {

@@ -207,7 +207,8 @@ ret_code LabelDirective( int i, struct asm_tok tokenarray[] )
 	}
     }
 #if LABELARRAY
-    else if ( tokenarray[i].token == T_COLON && tokenarray[i+1].token != T_FINAL && Options.strict_masm_compat == FALSE ) {
+    else if ( tokenarray[i].token == T_COLON && tokenarray[i+1].token != T_FINAL &&
+	ModuleInfo.strict_masm_compat == FALSE ) {
 	struct expr opnd;
 	i++;
 	if ( EvalOperand( &i, tokenarray, Token_Count, &opnd, 0 ) == ERROR )

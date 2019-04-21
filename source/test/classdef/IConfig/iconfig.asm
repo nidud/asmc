@@ -124,7 +124,8 @@ IConfig::Read proc uses rsi rdi rbx r12 file:LPSTR
 
     mov r12,rcx
     mov rbx,rcx
-    .if fopen(rdx, "rt")
+    mov rcx,rdx
+    .if fopen(rcx, "rt")
 
         .for ( rdi=rax, rsi=&buffer : fgets(rsi, 256, rdi) : )
 
@@ -152,7 +153,8 @@ IConfig::Read endp
 IConfig::Write proc uses rsi rdi rbx file:LPSTR
 
     mov rbx,rcx
-    .if fopen(rdx, "wt")
+    mov rcx,rdx
+    .if fopen(rcx, "wt")
 
         .for ( rdi=rax : rbx : rbx=[rbx]._next )
 

@@ -84,6 +84,9 @@ __IStringList_INTERFACE_DEFINED__ equ 1
 DEFINE_GUID(IID_IStringList,0xD97A6DA0,0xA85D,0x11cf,0x83,0xAE,0x00,0xA0,0xC9,0x0C,0x2B,0xD8)
 
 .comdef IStringList
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
     GetTypeInfoCount	proc :ptr
     GetTypeInfo		proc :UINT, :LCID, :ptr
     GetIDsOfNames	proc :REFIID, :ptr, :UINT, :LCID, :ptr

@@ -137,6 +137,17 @@ endif
 
 externdef GUID_NULL:GUID
 
+ifndef _mm_loadreg
+_mm_loadreg macro reg, arg
+    ifidn @SubStr(arg,1,1),<&>
+	lea reg,@SubStr(arg,2)
+    elseifdif <arg>,<reg>
+	mov reg,arg
+    endif
+    retm<reg>
+    endm
+endif
+
 ifdef _OLE32_
 
 ifdef _OLE32PRIV_
@@ -147,12 +158,24 @@ IsEqualGUID macro rguid1, rguid2
 	endm
 else
 IsEqualGUID macro rguid1, rguid2
+ifdef _WIN64
+	_mm_loadreg(rcx, rguid1)
+	_mm_loadreg(rdx, rguid2)
+	mov rax,[rcx]
+	sub rax,[rdx]
+	.ifz
+	    mov rax,[rcx+8]
+	    sub rax,[rdx+8]
+	.endif
+	.if rax
+else
 	.if memcmp(rguid1, rguid2, sizeof(GUID))
+endif
 	    xor eax,eax
 	.else
 	    inc eax
 	.endif
-	exitm<eax>
+	retm<eax>
 	endm
 endif
 endif

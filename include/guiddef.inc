@@ -11,7 +11,7 @@ endif
 
 ifndef DEFINE_GUID
 DEFINE_GUID macro id, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8
-ifdef __PE__
+if defined(__PE__) or defined(__GUID__)
 _&id& equ <{l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}}>
 elseifdef INITGUID
 echo id GUID {l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}}
@@ -101,22 +101,22 @@ IsEqualFMTID macro rfmtid1, rfmtid2
 
 ifndef _REFGUID_DEFINED
 _REFGUID_DEFINED	equ <>
-REFGUID			equ <LPGUID>
+REFGUID			typedef ptr IIDGUID
 endif
 
 ifndef _REFIID_DEFINED
 _REFIID_DEFINED		equ <>
-REFIID			equ <LPIID>
+REFIID			typedef ptr IID
 endif
 
 ifndef _REFCLSID_DEFINED
 _REFCLSID_DEFINED	equ <>
-REFCLSID		equ <LPIID>
+REFCLSID		typedef ptr IID
 endif
 
 ifndef _REFFMTID_DEFINED
 _REFFMTID_DEFINED	equ <>
-REFFMTID		equ <LPIID>
+REFFMTID		typedef ptr IID
 endif
 
 endif
@@ -127,12 +127,24 @@ _SYS_GUID_OPERATORS_	equ <>
 include string.inc
 
 InlineIsEqualGUID macro rguid1, rguid2
-	.if !memcmp(rguid1, rguid2, sizeof(GUID))
-	    inc eax
-	.else
-	    xor eax,eax
+ifdef _WIN64
+	_mm_loadreg(rcx, rguid1)
+	_mm_loadreg(rdx, rguid2)
+	mov rax,[rcx]
+	sub rax,[rdx]
+	.ifz
+	    mov rax,[rcx+8]
+	    sub rax,[rdx+8]
 	.endif
-	exitm<eax>
+	.if rax
+else
+	.if memcmp(rguid1, rguid2, sizeof(GUID))
+endif
+	    xor eax,eax
+	.else
+	    inc eax
+	.endif
+	retm<eax>
 	endm
 IsEqualGUID macro rguid1, rguid2
 	exitm<InlineIsEqualGUID(rguid1, rguid2)>

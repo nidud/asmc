@@ -9,7 +9,7 @@ include rpc.inc
 include rpcndr.inc
 
 ifndef __RPCNDR_H_VERSION__
-.err <this stub requires an updated version of rpcndr.inc >
+.err <this stub requires an updated version of rpcndr.inc>
 endif
 
 ifndef COM_NO_WINDOWS_H
@@ -27,6 +27,7 @@ __IUnknown_INTERFACE_DEFINED__ equ 1
 DEFINE_IIDX(IUnknown, "00000000-0000-0000-C000-000000000046")
 
 .comdef IUnknown
+
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
     Release		proc
@@ -42,6 +43,7 @@ __IClassFactory_INTERFACE_DEFINED__ equ 1
 DEFINE_IIDX(IClassFactory, "00000001-0000-0000-C000-000000000046")
 
 .comdef IClassFactory
+
     QueryInterface	proc :REFIID, :ptr
     AddRef		proc
     Release		proc

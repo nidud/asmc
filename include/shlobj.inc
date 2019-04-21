@@ -305,6 +305,10 @@ endif
     .ends
 
 .comdef IURLSearchHook2
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    Translate		proc :LPWSTR, :DWORD
     TranslateWithSearchContext proc :LPWSTR, :DWORD, :ptr
     .ends
 
@@ -1173,6 +1177,9 @@ ACLO_VIRTUALNAMESPACE	equ 64	; enumereate on the virual namespace
 endif
 
 .comdef IACList2
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
     SetOptions		proc :DWORD
     GetOptions		proc :ptr
     .ends
@@ -1225,8 +1232,6 @@ endif
 
 DWFRF_NORMAL		equ 0x0000
 DWFRF_DELETECONFIGDATA	equ 0x0001
-
-
 DWFAF_HIDDEN		equ 0x0001
 DWFAF_GROUP1		equ 0x0002
 DWFAF_GROUP2		equ 0x0004
@@ -1245,14 +1250,16 @@ DWFAF_AUTOHIDE		equ 0x0010
 
 if (_WIN32_IE GE 0x0400)
 
-
 .comdef IThumbnailCapture
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
     CaptureThumbnail	proc :ptr, :ptr, :ptr
     .ends
+
 LPTHUMBNAILCAPTURE	typedef ptr IThumbnailCapture
 
 endif
-
 
 if (NTDDI_VERSION GE NTDDI_WIN2K AND NTDDI_VERSION LT NTDDI_VISTA)
 

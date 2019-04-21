@@ -939,6 +939,9 @@ CALLBACK(pDraw_pfnContinue, :DWORD)
 DEFINE_IIDX(IViewObjectEx, "3AF24292-0C96-11CE-A0CF-00AA00600AB8")
 
 .comdef IViewObjectEx
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
     Draw		proc :DWORD, :SDWORD, :ptr, :ptr, :HDC, :HDC, :LPCRECTL, :LPCRECTL, :pDraw_pfnContinue, :DWORD
     GetColorSet		proc :DWORD, :SDWORD, :ptr, :ptr, :HDC, :ptr
     Freeze		proc :DWORD, :SDWORD, :ptr, :ptr

@@ -2239,18 +2239,11 @@ if defined(_UNKNOWN_H_) OR defined(__IUnknown_INTERFACE_DEFINED__)
 ifndef _IKsControl_
 _IKsControl_ equ 1
 
-ifndef DEFINE_ABSTRACT_UNKNOWN
-DEFINE_ABSTRACT_UNKNOWN macro
-    QueryInterface	proc :REFIID, :ptr
-    AddRef		proc
-    Release		proc
-    endm
-endif
-
 .comdef IKsControl
 
-	DEFINE_ABSTRACT_UNKNOWN
-
+	QueryInterface	proc :REFIID, :ptr
+	AddRef		proc
+	Release		proc
 	KsProperty	proc :ULONG, :PVOID, :ULONG, :ptr ULONG
 	KsMethod	proc :ULONG, :PVOID, :ULONG, :ptr ULONG
 	KsEvent		proc :ULONG, :PVOID, :ULONG, :ptr ULONG
@@ -2259,8 +2252,9 @@ endif
 
 .comdef IKsReferenceClock
 
-	DEFINE_ABSTRACT_UNKNOWN
-
+	QueryInterface	proc :REFIID, :ptr
+	AddRef		proc
+	Release		proc
 	GetTime		proc
 	GetPhysicalTime proc
 	GetCorrelatedTime proc :PLONGLONG
@@ -2273,8 +2267,9 @@ if (NTDDI_VERSION GE NTDDI_WS03SP1)
 
 .comdef IKsDeviceFunctions
 
-	DEFINE_ABSTRACT_UNKNOWN
-
+	QueryInterface	proc :REFIID, :ptr
+	AddRef		proc
+	Release		proc
 	RegisterAdapterObjectEx proc :PADAPTER_OBJECT, :PDEVICE_DESCRIPTION, :ULONG, :ULONG, :ULONG
 	.ends
 endif

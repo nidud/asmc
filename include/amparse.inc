@@ -6,10 +6,13 @@ DEFINE_GUID(IID_IAMParse, 0xc47a3420, 0x005c, 0x11d2, 0x90, 0x38, 0x00, 0xa0, 0x
 
 .comdef IAMParse
 
-	GetParseTime	proc :ptr REFERENCE_TIME
-	SetParseTime	proc :REFERENCE_TIME
-	Flush		proc
-	.ends
+    QueryInterface	proc :REFIID, :ptr
+    AddRef		proc
+    Release		proc
+    GetParseTime	proc :ptr REFERENCE_TIME
+    SetParseTime	proc :REFERENCE_TIME
+    Flush		proc
+    .ends
 
 .pragma list(pop)
 endif

@@ -1061,6 +1061,7 @@ __INewWDEvents_INTERFACE_DEFINED__ equ 1
 DEFINE_IIDX(INewWDEvents, "0751c551-7568-41c9-8e5b-e22e38919236")
 
 .comdef INewWDEvents
+    QueryInterface	proc :REFIID, :ptr
     AddRef		proc
     Release		proc
     GetTypeInfoCount	proc :ptr

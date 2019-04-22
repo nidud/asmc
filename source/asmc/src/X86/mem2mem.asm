@@ -6,6 +6,7 @@
 
 include asmc.inc
 include token.inc
+include hll.inc
 
     .code
 
@@ -23,7 +24,7 @@ mem2mem proc uses esi edi ebx op1:dword, op2:dword, tokenarray:ptr asmtok
     .repeat
         .repeat
 
-            .break .if !eax || eax != edx
+            .break .if ( !eax || eax != edx )
             .break .if ( ModuleInfo.strict_masm_compat == 1 )
             mov esi,T_RAX
             .switch
@@ -62,6 +63,10 @@ mem2mem proc uses esi edi ebx op1:dword, op2:dword, tokenarray:ptr asmtok
             AddLineQueueX( " %r %s,%r", op, [edx].asmtok.tokpos, esi )
             pop eax
             mov [ebx],al
+            .if ModuleInfo.list
+                LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
+            .endif
+            RunLineQueue()
             mov eax,NOT_ERROR
             .break(1)
         .until 1

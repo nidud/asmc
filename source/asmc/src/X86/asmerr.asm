@@ -739,7 +739,7 @@ asmerr proc uses esi edi ebx edx ecx value, args:VARARG
                 mov     ecx,ModuleInfo.FNames
                 mov     ecx,[ecx+eax*4]
                 mov     eax,[edx].src_item.line_num
-                cmp     [edx].src_item._type,SIT_FILE
+                cmp     [edx].src_item.type,SIT_FILE
                 mov     edx,[edx].src_item.next
 
                 .ifz

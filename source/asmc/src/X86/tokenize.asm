@@ -608,7 +608,7 @@ get_special_symbol proc fastcall uses esi edi ebx buf:ptr asmtok , p:ptr line_st
                         and [esi].flags2,not DF_CEXPR
                         .if [eax].asym.flag & SFL_PREDEFINED
 
-                            mov edx,[eax].asym._name
+                            mov edx,[eax].asym.name
                             mov edx,[edx]
                             .if edx == "tSC@"
 
@@ -1203,7 +1203,7 @@ get_id proc fastcall uses esi edi ebx buf:ptr asmtok, p:ptr line_status
         mov esi,eax
         mov al,SpecialTable[esi].bytval
         mov [ebx].bytval,al
-        movzx eax,SpecialTable[esi]._type
+        movzx eax,SpecialTable[esi].type
 
         .switch eax
           .case RWT_REG

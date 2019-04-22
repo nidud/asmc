@@ -224,7 +224,7 @@ ret_code EndDirective( int i, struct asm_tok tokenarray[] )
 
     /* check type of start label. Must be a symbolic code label, internal or external */
     if ( opndx.kind == EXPR_ADDR && opndx.indirect == FALSE &&
-	( opndx.mem_type == MT_NEAR || opndx.mem_type == MT_FAR || ( opndx.mem_type == MT_EMPTY && opndx.instr == T_OFFSET ) ) &&
+	( opndx.mem_type == MT_NEAR || opndx.mem_type == MT_FAR || ( opndx.mem_type == MT_EMPTY && opndx.inst == T_OFFSET ) ) &&
 	opndx.sym && (	opndx.sym->state == SYM_INTERNAL || opndx.sym->state == SYM_EXTERNAL ) ) {
 
 	if ( Options.output_format == OFORMAT_OMF ) {

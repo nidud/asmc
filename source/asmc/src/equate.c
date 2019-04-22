@@ -326,7 +326,7 @@ struct asym *CreateConstant( struct asm_tok tokenarray[] )
 	 */
 	_atoow( &opnd.llvalue, tokenarray[2].string_ptr, tokenarray[2].numbase, tokenarray[2].itemlen );
     check_single_number:
-	opnd.instr = EMPTY;
+	opnd.inst = EMPTY;
 	opnd.kind = EXPR_CONST;
 	opnd.mem_type = MT_EMPTY; /* v2.07: added */
 	opnd.flags1 = 0;
@@ -385,7 +385,7 @@ struct asym *CreateConstant( struct asm_tok tokenarray[] )
 	  opnd.sym != NULL &&
 	  //opnd.sym->state != SYM_EXTERNAL ) ) && /* SYM_SEG, SYM_GROUP are also not ok */
 	  opnd.sym->state == SYM_INTERNAL ) ) &&
-	( opnd.instr == EMPTY ) ) {
+	( opnd.inst == EMPTY ) ) {
 
 	if ( !sym ) {
 	    sym = SymCreate( name );

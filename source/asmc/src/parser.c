@@ -823,7 +823,7 @@ int idata_fixup( struct code_info *CodeInfo, unsigned CurrOpnd, struct expr *opn
 	Ofssize = opndx->Ofssize;
     } else if( ( opndx->sym->state == SYM_SEG )
 	|| ( opndx->sym->state == SYM_GRP )
-	|| ( opndx->instr == T_SEG ) ) {
+	|| ( opndx->inst == T_SEG ) ) {
 	Ofssize = USE16;
     } else if( opndx->is_abs ) {  /* an (external) absolute symbol? */
 	Ofssize = USE16;
@@ -831,7 +831,7 @@ int idata_fixup( struct code_info *CodeInfo, unsigned CurrOpnd, struct expr *opn
 	Ofssize = GetSymOfssize( opndx->sym );
     }
 
-    if( opndx->instr == T_SHORT ) {
+    if( opndx->inst == T_SHORT ) {
 	/* short works for branch instructions only */
 	return( asmerr( 2070 ) );
     }
@@ -852,8 +852,8 @@ int idata_fixup( struct code_info *CodeInfo, unsigned CurrOpnd, struct expr *opn
     if ( CodeInfo->mem_type == MT_EMPTY && CurrOpnd > OPND1 && opndx->Ofssize == USE_EMPTY ) {
 	size = OperandSize( CodeInfo->opnd[OPND1].type, CodeInfo );
 	/* may be a forward reference, so wait till pass 2 */
-	if( Parse_Pass > PASS_1 && opndx->instr != EMPTY ) {
-	    switch ( opndx->instr ) {
+	if( Parse_Pass > PASS_1 && opndx->inst != EMPTY ) {
+	    switch ( opndx->inst ) {
 	    case T_SEG: /* v2.04a: added */
 		if( size && (size < 2 ) ) {
 		    return( asmerr( 2022, size, 2 ) );
@@ -870,14 +870,14 @@ int idata_fixup( struct code_info *CodeInfo, unsigned CurrOpnd, struct expr *opn
 	}
 	switch ( size ) {
 	case 1:
-	    if ( opndx->is_abs || opndx->instr == T_DOT_LOW || opndx->instr == T_DOT_HIGH )
+	    if ( opndx->is_abs || opndx->inst == T_DOT_LOW || opndx->inst == T_DOT_HIGH )
 		CodeInfo->mem_type = MT_BYTE;
 	    break;
 	case 2:
 	    if ( opndx->is_abs ||
 		CodeInfo->Ofssize == USE16 ||
-		opndx->instr == T_LOWWORD ||
-		opndx->instr == T_HIGHWORD )
+		opndx->inst == T_LOWWORD ||
+		opndx->inst == T_HIGHWORD )
 		CodeInfo->mem_type = MT_WORD;
 	    break;
 	case 4:
@@ -885,10 +885,10 @@ int idata_fixup( struct code_info *CodeInfo, unsigned CurrOpnd, struct expr *opn
 	    break;
 	case 8:
 	    if ( Ofssize == USE64 ) {
-		if ( opndx->instr == T_LOW64 || opndx->instr == T_HIGH64 ||
+		if ( opndx->inst == T_LOW64 || opndx->inst == T_HIGH64 ||
 		     ( CodeInfo->token == T_MOV && ( CodeInfo->opnd[OPND1].type & OP_R64 ) ) )
 		    CodeInfo->mem_type = MT_QWORD;
-		else if ( opndx->instr == T_LOW32 || opndx->instr == T_HIGH32 )
+		else if ( opndx->inst == T_LOW32 || opndx->inst == T_HIGH32 )
 		    /* v2.10:added; LOW32/HIGH32 in expreval.c won't set mem_type anymore. */
 		    CodeInfo->mem_type = MT_DWORD;
 	    }
@@ -910,7 +910,7 @@ int idata_fixup( struct code_info *CodeInfo, unsigned CurrOpnd, struct expr *opn
 	    case T_PUSHD:
 	    case T_PUSH:
 		if ( opndx->mem_type == MT_EMPTY  ) {
-		    switch( opndx->instr ) {
+		    switch( opndx->inst ) {
 		    case EMPTY:
 		    case T_DOT_LOW:
 		    case T_DOT_HIGH:
@@ -964,7 +964,7 @@ int idata_fixup( struct code_info *CodeInfo, unsigned CurrOpnd, struct expr *opn
 	    (opndx->explicit && ( opndx->mem_type & MT_SIZE_MASK ) == 7 ) ) {
 	    CodeInfo->opnd[CurrOpnd].type = OP_I64;
 	    CodeInfo->opnd[CurrOpnd].data32h = opndx->hvalue;
-	} else if ( Ofssize == USE64 && ( opndx->instr == T_OFFSET || ( CodeInfo->token == T_MOV && ( CodeInfo->opnd[OPND1].type & OP_R64 ) ) ) ) {
+	} else if ( Ofssize == USE64 && ( opndx->inst == T_OFFSET || ( CodeInfo->token == T_MOV && ( CodeInfo->opnd[OPND1].type & OP_R64 ) ) ) ) {
 	    /* v2.06d: in 64-bit, ALWAYS set OP_I64, so "mov m64, ofs" will fail,
 	     * This was accepted in v2.05-v2.06c)
 	     */
@@ -979,19 +979,19 @@ int idata_fixup( struct code_info *CodeInfo, unsigned CurrOpnd, struct expr *opn
 
     /* set fixup_type */
 
-    if( opndx->instr == T_SEG ) {
+    if( opndx->inst == T_SEG ) {
 	fixup_type = FIX_SEG;
     } else if( CodeInfo->mem_type == MT_BYTE ) {
-	if ( opndx->instr == T_DOT_HIGH ) {
+	if ( opndx->inst == T_DOT_HIGH ) {
 	    fixup_type = FIX_HIBYTE;
 	} else {
 	    fixup_type = FIX_OFF8;
 	}
     } else if( IS_OPER_32( CodeInfo ) ) {
-	if ( CodeInfo->opnd[CurrOpnd].type == OP_I64 && ( opndx->instr == EMPTY || opndx->instr == T_OFFSET ) )
+	if ( CodeInfo->opnd[CurrOpnd].type == OP_I64 && ( opndx->inst == EMPTY || opndx->inst == T_OFFSET ) )
 	    fixup_type = FIX_OFF64;
 	else
-	    if ( size >= 4 && opndx->instr != T_LOWWORD ) {
+	    if ( size >= 4 && opndx->inst != T_LOWWORD ) {
 		/* v2.06: added branch for PTR16 fixup.
 		 * it's only done if type coercion is FAR (Masm-compat)
 		 */
@@ -1018,19 +1018,19 @@ int idata_fixup( struct code_info *CodeInfo, unsigned CurrOpnd, struct expr *opn
 
     /* set frame type in variables Frame_Type and Frame_Datum for fixup creation */
     if ( ModuleInfo.offsettype == OT_SEGMENT &&
-	( opndx->instr == T_OFFSET || opndx->instr == T_SEG ))
+	( opndx->inst == T_OFFSET || opndx->inst == T_SEG ))
 	set_frame2( opndx->sym );
     else
 	set_frame( opndx->sym );
 
     CodeInfo->opnd[CurrOpnd].InsFixup = CreateFixup( opndx->sym, fixup_type, fixup_option );
 
-    if ( opndx->instr == T_LROFFSET )
+    if ( opndx->inst == T_LROFFSET )
 	CodeInfo->opnd[CurrOpnd].InsFixup->loader_resolved = TRUE;
 
-    if ( opndx->instr == T_IMAGEREL && fixup_type == FIX_OFF32 )
+    if ( opndx->inst == T_IMAGEREL && fixup_type == FIX_OFF32 )
 	CodeInfo->opnd[CurrOpnd].InsFixup->type = FIX_OFF32_IMGREL;
-    if ( opndx->instr == T_SECTIONREL && fixup_type == FIX_OFF32 )
+    if ( opndx->inst == T_SECTIONREL && fixup_type == FIX_OFF32 )
 	CodeInfo->opnd[CurrOpnd].InsFixup->type = FIX_OFF32_SECREL;
     return( NOT_ERROR );
 }
@@ -1440,9 +1440,9 @@ static int memory_operand( struct code_info *CodeInfo, unsigned CurrOpnd, struct
 	}
 
 	if ( fixup_type == FIX_OFF32 )
-	    if ( opndx->instr == T_IMAGEREL )
+	    if ( opndx->inst == T_IMAGEREL )
 		fixup_type = FIX_OFF32_IMGREL;
-	    else if ( opndx->instr == T_SECTIONREL )
+	    else if ( opndx->inst == T_SECTIONREL )
 		fixup_type = FIX_OFF32_SECREL;
 	/* no fixups are needed for memory operands of string instructions and XLAT/XLATB.
 	 * However, CMPSD and MOVSD are also SSE2 opcodes, so the fixups must be generated
@@ -1492,13 +1492,13 @@ static int process_address( struct code_info *CodeInfo, unsigned CurrOpnd, struc
 	}
 	/* do default processing */
 
-    } else if( opndx->instr != EMPTY ) {
+    } else if( opndx->inst != EMPTY ) {
 	/* instr is OFFSET | LROFFSET | SEG | LOW | LOWWORD, ... */
 	if( opndx->sym == NULL ) { /* better to check opndx->type? */
 	    return( idata_nofixup( CodeInfo, CurrOpnd, opndx ) );
 	} else {
 	    /* allow "lea <reg>, [offset <sym>]" */
-	    if( CodeInfo->token == T_LEA && opndx->instr == T_OFFSET )
+	    if( CodeInfo->token == T_LEA && opndx->inst == T_OFFSET )
 		return( memory_operand( CodeInfo, CurrOpnd, opndx, TRUE ) );
 	    return( idata_fixup( CodeInfo, CurrOpnd, opndx ) );
 	}
@@ -1560,7 +1560,7 @@ static int process_address( struct code_info *CodeInfo, unsigned CurrOpnd, struc
 	       ( opndx->sym->state == SYM_GRP ) ) {
 	/* SEGMENT and GROUP symbol is converted to SEG symbol
 	 * for next processing */
-	opndx->instr = T_SEG;
+	opndx->inst = T_SEG;
 	return( idata_fixup( CodeInfo, CurrOpnd, opndx ) );
     } else {
 	/* symbol external, but absolute? */
@@ -2286,6 +2286,7 @@ int LabelMacro( struct asm_tok tokenarray[] )
  */
 int ProcType( int, struct asm_tok[], char * );
 int PublicDirective( int, struct asm_tok[] );
+int mem2mem( unsigned, unsigned, struct asm_tok tokenarray[] );
 
 int ParseLine( struct asm_tok tokenarray[] )
 {
@@ -3013,7 +3014,19 @@ int ParseLine( struct asm_tok tokenarray[] )
 		 */
 		CodeInfo.prefix.rex &= 0x7;
 		break;
+	    case T_ADD:
+	    case T_SUB:
+	    case T_AND:
+	    case T_OR:
+	    case T_XOR:
+	    case T_CMP:
+	    case T_TEST:
+		if ( !( CodeInfo.opnd[OPND1].type & OP_MS && CodeInfo.opnd[OPND2].type & OP_MS ) )
+		    break;
 	    case T_MOV:
+		/* v2.30 mov mem,mem */
+		if ( CodeInfo.opnd[OPND1].type & OP_MS && CodeInfo.opnd[OPND2].type & OP_MS )
+		    return mem2mem( CodeInfo.opnd[OPND1].type, CodeInfo.opnd[OPND2].type, tokenarray );
 		/* don't use the Wide bit for moves to/from special regs */
 		if ( CodeInfo.opnd[OPND1].type & OP_RSPEC || CodeInfo.opnd[OPND2].type & OP_RSPEC )
 		    CodeInfo.prefix.rex &= 0x7;

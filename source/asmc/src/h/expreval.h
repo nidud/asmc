@@ -102,7 +102,7 @@ struct expr {
 				    /* or segment register */
 //    enum special_token instr;	    /* operator token */
 //    enum exprtype   kind;	    /* Type of expression */
-    int		    instr;	    /* operator token */
+    int		    inst;	    /* operator token */
     int		    kind;	    /* Type of expression */
     unsigned char   mem_type;
     unsigned char   scale;	    /* EXPR_ADDR: scaling factor 1, 2, 4, or 8 - 386 code only */

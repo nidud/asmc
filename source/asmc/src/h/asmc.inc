@@ -591,7 +591,7 @@ qdesc			ENDS
 
 src_item		STRUC
 next			PVOID ?
-_type			dw ?	; item type ( see enum src_item_type )
+type			dw ?	; item type ( see enum src_item_type )
 srcfile			dw ?	; index of file in ModuleInfo.FNames
 UNION
     content		PVOID ? ; generic
@@ -628,19 +628,19 @@ asym			STRUC
 ;;
 ;; v2.11: name changed from 'next' to 'nextitem'
 ;;
- nextitem		PVOID ?		; next symbol in hash line
- _name			LPSTR ?		; symbol name
+ nextitem		LPASYM ?	; next symbol in hash line
+ name			LPSTR ?		; symbol name
  UNION
     _offset		sdword ?	; used by SYM_INTERNAL (labels), SYM_TYPE,
 					; SYM_STACK, v2.11: SYM_SEG
     value		sdword ?	; used by SYM_INTERNAL (equates)
     uvalue		dword ?		; v2.01: equates (they are 33-bit!)
     string_ptr		LPSTR ?		; used by SYM_TMACRO
-    substitute		PVOID ?		; v2.04b: used by SYM_ALIAS
+    substitute		LPASYM ?	; v2.04b: used by SYM_ALIAS
     func_ptr		func_ptr_p ?	; used by SYM_MACRO if predefined==1
     class_lname_idx	sdword ?	; used by SYM_CLASS_LNAME
  ENDS
- _segment		PVOID ?
+ _segment		LPASYM ?
  state			db ?
  mem_type		db ?
  SFL_USED		equ 0x0001
@@ -690,7 +690,7 @@ asym			STRUC
  UNION
     first_length	dword ?
     max_mbr_size	dword ?
-    target_type		PVOID ?
+    target_type		LPASYM ?
  ENDS
     regist		dw 2 dup(?)
  UNION
@@ -701,7 +701,7 @@ asym			STRUC
  ENDS
  UNION
     total_length	dd ?
-    altname		PVOID ? ; SYM_EXTERNAL (comm==0): alternative name
+    altname		LPASYM ? ; SYM_EXTERNAL (comm==0): alternative name
     debuginfo		PVOID ?
     sfunc_ptr		internal_func ?
     STRUC
@@ -711,7 +711,7 @@ asym			STRUC
  ENDS
  name_size		dw ?
  langtype		dw ?
- _type			LPASYM ?
+ type			LPASYM ?
  UNION
     bp_fixup		PVOID ? ; fixup *
     ext_idx		dd ?
@@ -721,18 +721,19 @@ asym			STRUC
     ENDS
  ENDS
 asym			ENDS
+PASYM			typedef ptr asym
 
 _asym_state macro reg:=<eax>
     exitm<[reg].asym.state>
     endm
 _asym_name macro reg:=<eax>
-    exitm<[reg].asym._name>
+    exitm<[reg].asym.name>
     endm
 _asym_mem_type macro reg:=<eax>
     exitm<[reg].asym.mem_type>
     endm
 _asym_type macro reg:=<eax>
-    exitm<[reg].asym._type>
+    exitm<[reg].asym.type>
     endm
 _asym_target_type macro reg:=<eax>
     exitm<[reg].asym.target_type>
@@ -755,7 +756,7 @@ grp_info		ENDS
 LPGRPINFO		typedef ptr grp_info
 
 seg_info		STRUC
- sgroup			PVOID ?
+ sgroup			PASYM ?
  start_loc		dd ?
  UNION
     current_loc		dd ?
@@ -765,7 +766,7 @@ seg_info		STRUC
  CodeBuffer		PVOID ?
  bytes_written		dd ?
  UNION
-    label_list		PVOID ?
+    label_list		PASYM ?
     flushfunc		PVOID ?
  ENDS
  STRUC
@@ -781,7 +782,7 @@ seg_info		STRUC
  seg_idx		dd ?
  segtype		dd ?
  lname_idx		dd ?
- clsym			PVOID ?
+ clsym			PASYM ?
  UNION
     abs_frame		dd ?
     comdat_number	dd ?
@@ -847,32 +848,45 @@ struct_info		STRUC
 struct_info		ENDS
 LPSTRUCINFO		typedef ptr struct_info
 
+LPDSYM			typedef ptr dsym
+proc_info_r0		record	fpo:1,
+				isframe:1,
+				stackparam:1,
+				loadds:1,
+				forceframe:1,
+				isexport:1,
+				pe_type:1,
+				has_vararg:1
+
 proc_info		STRUC
- regslist		PVOID ?
- paralist		PVOID ?
- locallist		PVOID ?
- labellist		PVOID ?
+ regslist		LPWORD ?
+ paralist		LPDSYM ?
+ locallist		LPDSYM ?
+ labellist		LPDSYM ?
  parasize		dd ?
  localsize		dd ?
  prologuearg		LPSTR ?
- exc_handler		PVOID ?
- ReservedStack		dd ?
- prolog_list_pos	dd ?
- flags			db ?
- PINF_HAS_VARARG	equ 01h
- PINF_PE_TYPE		equ 01h
- PINF_ISEXPORT		equ 02h
- PINF_FORCEFRAME	equ 04h
- PINF_LOADDS		equ 08h
- PINF_STACKPARAM	equ 10h
- PINF_ISFRAME		equ 20h
- PINF_FPO		equ 40h
+ exc_handler		PASYM ?
+ ReservedStack		int_t ?
+ prolog_list_pos	uint_t ?
+ UNION
+  flags			db ?
+  PINF_HAS_VARARG	equ 01h
+  PINF_PE_TYPE		equ 01h
+  PINF_ISEXPORT		equ 02h
+  PINF_FORCEFRAME	equ 04h
+  PINF_LOADDS		equ 08h
+  PINF_STACKPARAM	equ 10h
+  PINF_ISFRAME		equ 20h
+  PINF_FPO		equ 40h
+  r0			proc_info_r0 <>
+ ENDS
  size_prolog		db ?
  basereg		dw ?
 proc_info		ENDS
 LPPROCINFO		typedef ptr proc_info
 
-nsym			STRUC
+dsym			STRUC
  sym			asym <>
  UNION
     seginfo		LPSEGINFO ?
@@ -880,17 +894,16 @@ nsym			STRUC
     procinfo		LPPROCINFO ?
     structinfo		LPSTRUCINFO ?
     macroinfo		LPMACROINFO ?
-    nextll		PVOID ?
+    nextll		LPDSYM ?
  ENDS
- next			PVOID ?
+ next			LPDSYM ?
  UNION
-    prev		PVOID ?
-    nextproc		PVOID ?
-    nextlocal		PVOID ?
-    nextparam		PVOID ?
+    prev		LPDSYM ?
+    nextproc		LPDSYM ?
+    nextlocal		LPDSYM ?
+    nextparam		LPDSYM ?
  ENDS
-nsym			ENDS
-LPDSYM			typedef ptr nsym
+dsym			ENDS
 
 symbol_queue		STRUC
  head			PVOID ?
@@ -910,6 +923,15 @@ EXPF_NOERRMSG	equ 1		; suppress error messages
 EXPF_NOUNDEF	equ 2		; don't accept or create undefined symbols
 EXPF_ONEOPND	equ 4		; private flag, used inside expreval.c only
 EXPF_IN_SQBR	equ 8		; private flag, used inside expreval.c only
+
+expr_r0 record	is_dot:1,	; v2.10: see regression test dotop5.asm
+		assumecheck:1,	; v2.07: for ASSUMEd std registers
+		negative:1,	; for EXPR_FLOAT only
+		is_opattr:1,	; current operator is OPATTR
+		is_type:1,	; constant is a type
+		is_abs:1,	; external ABS
+		explicit:1,	; Whether expression type explicitly given (to be removed!)
+		indirect:1	; indirect addressing used
 
 expr			STRUC
  UNION				; value of expression
@@ -940,23 +962,26 @@ expr			STRUC
     type_tok		PTOKEN ?	; v2.10: token if target type of a label (SYM_STACK, MT_PTR) is to be stored
  ENDS
  override		PTOKEN ?	; EXPR_ADDR: token holding the override label or segment register
- _instr			sdword ?	; operator token
+ inst			sdword ?	; operator token
  kind			sdword ?	; Type of expression
  mem_type		db ?		;
  scale			db ?		; EXPR_ADDR: scaling factor 1, 2, 4, or 8 - 386 code only
  Ofssize		db ?		; 16,32,64 bit if MT_NEAR, MT_FAR
- flags			db ?		; bit-flag
- EXF_INDIRECT		equ 01h ; indirect addressing used
- EXF_EXPLICIT		equ 02h ; Whether expression type explicitly given (to be removed!)
- EXF_IS_ABS		equ 04h ; external ABS
- EXF_IS_TYPE		equ 08h ; constant is a type
- EXF_IS_OPEATTR		equ 10h ; current operator is OPATTR
- EXF_NEGATIVE		equ 20h ; for EXPR_FLOAT only
- EXF_ASSUMECHECK	equ 40h ; v2.07: for ASSUMEd std registers
- EXF_IS_DOT		equ 80h ; v2.10: see regression test dotop5.asm
- sym			LPASYM ?; label used
- mbr			LPASYM ?; struct member
- _type			LPASYM ?; for DOT operator. Must be last (see TokenAssign)!
+ union
+  flags1		db ?		; bit-flag
+  EXF_INDIRECT		equ 01h ; indirect addressing used
+  EXF_EXPLICIT		equ 02h ; Whether expression type explicitly given (to be removed!)
+  EXF_IS_ABS		equ 04h ; external ABS
+  EXF_IS_TYPE		equ 08h ; constant is a type
+  EXF_IS_OPEATTR	equ 10h ; current operator is OPATTR
+  EXF_NEGATIVE		equ 20h ; for EXPR_FLOAT only
+  EXF_ASSUMECHECK	equ 40h ; v2.07: for ASSUMEd std registers
+  EXF_IS_DOT		equ 80h ; v2.10: see regression test dotop5.asm
+  r0			expr_r0 <>
+ ends
+ sym			PASYM ?; label used
+ mbr			PASYM ?; struct member
+ type			PASYM ?; for DOT operator. Must be last (see TokenAssign)!
 expr			ENDS
 
 ; special_item is the structure used to store directives and
@@ -967,7 +992,7 @@ value			dd ?
 sflags			dd ?
 cpu			dw ?
 bytval			db ?
-_type			db ?
+type			db ?
 special_item		ENDS
 externdef		SpecialTable:special_item
 
@@ -1172,7 +1197,7 @@ tokenarray		PVOID ? ; start token buffer
 stringbufferend		LPSTR ? ; start free space in string buffer
 token_count		dd ?	; number of tokens in curr line
 basereg			dd 3 dup(?)	; stack base register (16-, 32-, 64-bit
-_name			db 260 dup(?)	; name of module
+name			db 260 dup(?)	; name of module
 xflag			db ?	; extended option
 loopalign		db ?	; OPTION:LOOPALIGN setting
 casealign		db ?	; OPTION:CASEALIGN setting
@@ -1229,7 +1254,7 @@ externdef		LinnumQueue	: qdesc
 externdef		ModelToken	: LPSTR
 externdef		LastCodeBufSize : DWORD
 externdef		banner_printed	: DWORD
-externdef		sym_ReservedStack:LPASYM
+externdef		sym_ReservedStack:PASYM
 externdef		stackreg	: dword
 externdef		regax		: dword
 

@@ -72,7 +72,7 @@ ProcType proc uses esi edi ebx i:SINT, tokenarray:ptr asmtok, buffer:LPSTR
 
     mov IsCom,0
     mov eax,CurrStruct
-    mov esi,[eax].asym._name
+    mov esi,[eax].asym.name
     .if strlen(esi) > 4
         mov eax,[esi+eax-4]
     .else
@@ -229,7 +229,7 @@ ClassDirective proc uses esi edi ebx i:SINT, tokenarray:ptr asmtok
 
             mov esi,[esi].com_item.class
             mov eax,CurrStruct
-            mov edi,[eax].asym._name
+            mov edi,[eax].asym.name
             .if strlen(edi) > 4
                 mov eax,[edi+eax-4]
             .else

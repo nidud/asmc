@@ -499,7 +499,7 @@ local   op:         SINT,
 
         .switch eax
           .case EXPR_REG
-            .if !( op1.flags & EXF_INDIRECT )
+            .if !( op1.flags1 & EXF_INDIRECT )
 
                 lea eax,@CStr( "test" )
                 .if Options.masm_compat_gencode
@@ -597,7 +597,7 @@ local   op:         SINT,
         or  eax,DWORD PTR op2.value64[4]
 
         .if !eax && (ecx == COP_EQ || ecx == COP_NE) && op1.kind == EXPR_REG && \
-            !( op1.flags & EXF_INDIRECT ) && op2.kind == EXPR_CONST
+            !( op1.flags1 & EXF_INDIRECT ) && op2.kind == EXPR_CONST
             ;
             ; v2.22 - switch /Zg to OR
             ;
@@ -1074,7 +1074,7 @@ GetProc proc private token:LPSTR
             jmp isfnproto
         .endif
 
-        mov ecx,[eax].asym._type
+        mov ecx,[eax].asym.type
         .if dl == MT_TYPE && ( [ecx].asym.mem_type == MT_PTR || [ecx].asym.mem_type == MT_PROC )
             ;
             ; second case: symbol is a (function?) pointer
@@ -1114,7 +1114,7 @@ GetProc endp
 
 StripSource proc private uses esi edi ebx i:UINT, e:UINT, tokenarray:ptr asmtok
 
-  local sym:ptr asym, info:ptr proc_info, curr:ptr asym
+  local sym:ptr dsym, info:ptr proc_info, curr:ptr asym
   local proc_id:ptr asmtok, parg_id:SINT, b[MAX_LINE_LEN]:SBYTE
   local opnd:expr
 
@@ -1165,15 +1165,15 @@ StripSource proc private uses esi edi ebx i:UINT, e:UINT, tokenarray:ptr asmtok
         .if GetProc([eax].asmtok.string_ptr)
 
             mov sym,eax
-            mov edx,[eax].nsym.procinfo
+            mov edx,[eax].dsym.procinfo
             mov info,edx
             mov ecx,[edx].proc_info.paralist
             movzx eax,[eax].asym.langtype
 
             .if ( eax == LANG_STDCALL || eax == LANG_C || eax == LANG_SYSCALL || \
                   eax == LANG_VECTORCALL || ( eax == LANG_FASTCALL && ModuleInfo.Ofssize != USE16 ) )
-                .while ecx && [ecx].nsym.nextparam
-                    mov ecx,[ecx].nsym.nextparam
+                .while ecx && [ecx].dsym.nextparam
+                    mov ecx,[ecx].dsym.nextparam
                 .endw
             .endif
             mov curr,ecx
@@ -1187,11 +1187,11 @@ StripSource proc private uses esi edi ebx i:UINT, e:UINT, tokenarray:ptr asmtok
                 .if ( eax == LANG_STDCALL || eax == LANG_C || eax == LANG_SYSCALL || \
                       eax == LANG_VECTORCALL || ( eax == LANG_FASTCALL && ModuleInfo.Ofssize != USE16 ) )
                     .for ( ecx = [edx].proc_info.paralist,
-                           eax = curr : ecx && [ecx].nsym.nextparam != eax : ecx = [ecx].nsym.nextparam )
+                           eax = curr : ecx && [ecx].dsym.nextparam != eax : ecx = [ecx].dsym.nextparam )
                     .endf
                     mov curr,ecx
                 .else
-                    mov ecx,[ecx].nsym.nextparam
+                    mov ecx,[ecx].dsym.nextparam
                 .endif
                 dec parg_id
             .endw
@@ -1429,7 +1429,7 @@ LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:ptr 
                 mov br_count,eax
                 lea edx,[eax+3]
                 .if EvalOperand( &br_count, tokenarray, edx, &opnd, 0 ) != ERROR
-                    mov eax,opnd._type
+                    mov eax,opnd.type
                 .else
                     xor eax,eax
                 .endif
@@ -1523,9 +1523,9 @@ LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:ptr 
 
                 .if eax ; v2.28: Added for undefined symbol error..
 
-                    .if [eax].asym.mem_type == MT_TYPE && [eax].asym._type
+                    .if [eax].asym.mem_type == MT_TYPE && [eax].asym.type
 
-                        mov eax,[eax].asym._type
+                        mov eax,[eax].asym.type
 
                         .if [eax].asym.typekind == TYPE_TYPEDEF
 

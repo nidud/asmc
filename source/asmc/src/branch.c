@@ -137,7 +137,7 @@ int process_branch( struct code_info *CodeInfo, unsigned CurrOpnd, const struct 
     if ( CurrOpnd != OPND1 ) {
 	return( asmerr( 2070 ) );
     }
-    if ( opndx->explicit && opndx->instr != T_SHORT )
+    if ( opndx->explicit && opndx->inst != T_SHORT )
 	CodeInfo->mem_type = opndx->mem_type;
     /*
      * Masm checks overrides for branch instructions with immediate operand!
@@ -259,7 +259,7 @@ int process_branch( struct code_info *CodeInfo, unsigned CurrOpnd, const struct 
 		( addr >= SCHAR_MIN && addr <= SCHAR_MAX ) ) {
 		CodeInfo->opnd[OPND1].type = OP_I8;
 	    } else {
-		if ( opndx->instr == T_SHORT || ( IS_XCX_BRANCH( CodeInfo->token ) ) ) {
+		if ( opndx->inst == T_SHORT || ( IS_XCX_BRANCH( CodeInfo->token ) ) ) {
 		    /* v2.06: added */
 		    if( CodeInfo->token == T_CALL ) {
 			return( asmerr( 2008, "short" ) );
@@ -352,7 +352,7 @@ int process_branch( struct code_info *CodeInfo, unsigned CurrOpnd, const struct 
 	}
     }
     /* forward ref, or external symbol */
-    if( CodeInfo->mem_type == MT_EMPTY && mem_type != MT_EMPTY && opndx->instr != T_SHORT ) {
+    if( CodeInfo->mem_type == MT_EMPTY && mem_type != MT_EMPTY && opndx->inst != T_SHORT ) {
 	/* MT_PROC is most likely obsolete ( used by TYPEDEF only ) */
 	switch( mem_type ) {
 	case MT_FAR:
@@ -375,7 +375,7 @@ int process_branch( struct code_info *CodeInfo, unsigned CurrOpnd, const struct 
 	CodeInfo->isfar = TRUE; /* flag isn't set if explicit is true */
 	switch( CodeInfo->mem_type ) {
 	case MT_NEAR:
-	    if( opndx->explicit || opndx->instr == T_SHORT ) {
+	    if( opndx->explicit || opndx->inst == T_SHORT ) {
 		return( asmerr( 2077 ) );
 	    }
 	    /* fall through */
@@ -403,7 +403,7 @@ int process_branch( struct code_info *CodeInfo, unsigned CurrOpnd, const struct 
 
     switch( CodeInfo->token ) {
     case T_CALL:
-	if( opndx->instr == T_SHORT ) {
+	if( opndx->inst == T_SHORT ) {
 	    return( asmerr( 2077 ) );
 	}
 	if( CodeInfo->mem_type == MT_EMPTY ) {
@@ -426,7 +426,7 @@ int process_branch( struct code_info *CodeInfo, unsigned CurrOpnd, const struct 
 	     */
 	    CodeInfo->opnd[OPND1].type = OP_I8;
 	    fixup_type = FIX_RELOFF8;
-	    fixup_option = (opndx->instr == T_SHORT) ? OPTJ_EXPLICIT : OPTJ_NONE;
+	    fixup_option = (opndx->inst == T_SHORT) ? OPTJ_EXPLICIT : OPTJ_NONE;
 	    break;
 	case MT_NEAR:
 	    fixup_option = OPTJ_EXPLICIT;
@@ -456,7 +456,7 @@ int process_branch( struct code_info *CodeInfo, unsigned CurrOpnd, const struct 
     default: /* JxCXZ, LOOPxx, Jxx */
 	/* JxCXZ and LOOPxx always require SHORT label */
 	if ( IS_XCX_BRANCH( CodeInfo->token ) ) {
-	    if( CodeInfo->mem_type != MT_EMPTY && opndx->instr != T_SHORT ) {
+	    if( CodeInfo->mem_type != MT_EMPTY && opndx->inst != T_SHORT ) {
 		return( asmerr( 2080 ) );
 	    }
 	    CodeInfo->opnd[OPND1].type = OP_I8;
@@ -471,7 +471,7 @@ int process_branch( struct code_info *CodeInfo, unsigned CurrOpnd, const struct 
 	    switch( CodeInfo->mem_type ) {
 	    case MT_EMPTY:
 		/* forward reference */
-		fixup_option = ( opndx->instr == T_SHORT ) ? OPTJ_EXPLICIT : OPTJ_JXX;
+		fixup_option = ( opndx->inst == T_SHORT ) ? OPTJ_EXPLICIT : OPTJ_JXX;
 		fixup_type = FIX_RELOFF8;
 		CodeInfo->opnd[OPND1].type = OP_I8;
 		break;
@@ -518,7 +518,7 @@ int process_branch( struct code_info *CodeInfo, unsigned CurrOpnd, const struct 
 	     * Masm allows "Jxx near" if LJMP is on (default) */
 	    switch( CodeInfo->mem_type ) {
 	    case MT_EMPTY:
-		if ( opndx->instr == T_SHORT )
+		if ( opndx->inst == T_SHORT )
 		    fixup_option = OPTJ_EXPLICIT;
 		else
 		    fixup_option = OPTJ_EXTEND;

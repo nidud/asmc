@@ -444,7 +444,7 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
     /* v2.24: 64-bit if [reg].. */
     if ( param->sym.is_vararg ) {
 	psize = 0;
-	if ( addr || opnd->instr == T_OFFSET )
+	if ( addr || opnd->inst == T_OFFSET )
 	    psize = 8;
 	else if ( opnd->kind == EXPR_REG ) {
 	    if ( opnd->indirect == FALSE )
@@ -513,7 +513,7 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
 
 	if ( opnd->kind == EXPR_CONST ||
 	   ( opnd->kind == EXPR_ADDR && opnd->indirect == FALSE &&
-	     opnd->mem_type == MT_EMPTY && opnd->instr != T_OFFSET ) ) {
+	     opnd->mem_type == MT_EMPTY && opnd->inst != T_OFFSET ) ) {
 
 	    /* v2.06: support 64-bit constants for params > 4 */
 	    if ( psize == 8 &&
@@ -569,7 +569,7 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
 		}
 	    } else {
 		if ( opnd->mem_type == MT_EMPTY )
-		    size = ( opnd->instr == T_OFFSET ? 8 : 4 );
+		    size = ( opnd->inst == T_OFFSET ? 8 : 4 );
 		else
 		    size = SizeFromMemtype( opnd->mem_type, USE64, opnd->type );
 		switch ( psize ) {
@@ -648,7 +648,7 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
 	} else if ( opnd->kind == EXPR_ADDR && ( !opnd->sym || opnd->sym->state == SYM_UNDEFINED ) ) {
 	    size = psize;
 	} else
-	    size = ( opnd->instr == T_OFFSET ? 8 : 4 );
+	    size = ( opnd->inst == T_OFFSET ? 8 : 4 );
 
 	if ( size > psize || ( size < psize && param->sym.mem_type == MT_PTR ) ) {
 	    asmerr( 2114, index+1 );
@@ -880,7 +880,7 @@ static int elf64_param( struct dsym const *proc, int index, struct dsym *param,
     /* v2.11: default size is 32-bit, not 64-bit */
     if ( param->sym.is_vararg ) {
 	psize = 0;
-	if ( addr || opnd->instr == T_OFFSET )
+	if ( addr || opnd->inst == T_OFFSET )
 	    psize = 8;
 	else if ( opnd->kind == EXPR_REG ) {
 	    if ( opnd->indirect == FALSE )
@@ -959,7 +959,7 @@ static int elf64_param( struct dsym const *proc, int index, struct dsym *param,
 	} else if ( opnd->kind == EXPR_ADDR && opnd->sym->state == SYM_UNDEFINED ) {
 	    size = psize;
 	} else
-	    size = ( opnd->instr == T_OFFSET ? 8 : 4 );
+	    size = ( opnd->inst == T_OFFSET ? 8 : 4 );
 
 	if ( size > psize || ( size < psize && param->sym.mem_type == MT_PTR ) ) {
 	    asmerr( 2114, index+1 );

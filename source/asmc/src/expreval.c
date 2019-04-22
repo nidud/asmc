@@ -67,7 +67,7 @@ static void init_expr( struct expr *opnd )
     opnd->idx_reg  = NULL;
     opnd->label_tok = NULL;
     opnd->override = NULL;
-    opnd->instr	   = EMPTY;
+    opnd->inst	   = EMPTY;
     opnd->kind	   = EXPR_EMPTY;
     opnd->mem_type = MT_EMPTY;
     opnd->scale	   = 0;
@@ -582,7 +582,7 @@ static void MakeConst( struct expr *opnd )
     if( opnd->sym ) {
 	if ( Parse_Pass > PASS_1 )
 	    return;
-	if ( ( opnd->sym->state == SYM_UNDEFINED && opnd->instr == EMPTY ) ||
+	if ( ( opnd->sym->state == SYM_UNDEFINED && opnd->inst == EMPTY ) ||
 	    ( opnd->sym->state == SYM_EXTERNAL && opnd->sym->weak == 1 && opnd->is_abs == 1 ) )
 	    ;
 	else
@@ -598,7 +598,7 @@ static void MakeConst( struct expr *opnd )
     }
     if( opnd->override != NULL )
 	return;
-    opnd->instr = EMPTY;
+    opnd->inst = EMPTY;
     opnd->kind = EXPR_CONST;
     opnd->explicit = 0;
     opnd->mem_type = MT_EMPTY;
@@ -659,10 +659,10 @@ static unsigned GetSizeValue( struct asym *sym )
 static unsigned IsOffset( struct expr *opnd )
 {
     if ( opnd->mem_type == MT_EMPTY )
-	if ( opnd->instr == T_OFFSET ||
-	    opnd->instr == T_IMAGEREL ||
-	    opnd->instr == T_SECTIONREL ||
-	    opnd->instr == T_LROFFSET )
+	if ( opnd->inst == T_OFFSET ||
+	    opnd->inst == T_IMAGEREL ||
+	    opnd->inst == T_SECTIONREL ||
+	    opnd->inst == T_LROFFSET )
 	    return( 1 );
     return( 0 );
 }
@@ -747,13 +747,13 @@ static int sizlen_op( int oper, struct expr *opnd1, struct expr *opnd2, struct a
 static int type_op( int oper, struct expr *opnd1, struct expr *opnd2, struct asym *sym, char *name )
 {
     opnd1->kind = EXPR_CONST;
-    if( opnd2->instr != EMPTY && opnd2->mem_type != MT_EMPTY ) {
-	opnd2->instr = EMPTY;
+    if( opnd2->inst != EMPTY && opnd2->mem_type != MT_EMPTY ) {
+	opnd2->inst = EMPTY;
 	sym = NULL;
     }
-    if( opnd2->instr != EMPTY ) {
+    if( opnd2->inst != EMPTY ) {
 	if ( opnd2->sym ) {
-	    switch ( opnd2->instr ) {
+	    switch ( opnd2->inst ) {
 	    case T_DOT_LOW:
 	    case T_DOT_HIGH:
 		opnd1->value = 1;
@@ -895,7 +895,7 @@ static int opattr_op( int oper, struct expr *opnd1, struct expr *opnd2, struct a
 	opnd1->value |= OPATTR_IMMEDIATE;
     if ( opnd2->kind == EXPR_ADDR &&
 	opnd2->indirect == 0 &&
-	(( opnd2->mem_type == MT_EMPTY && opnd2->instr == EMPTY ) ||
+	(( opnd2->mem_type == MT_EMPTY && opnd2->inst == EMPTY ) ||
 	 ( opnd2->mem_type == MT_TYPE ) ||
 	 (( opnd2->mem_type & MT_SPECIAL ) == 0 ) ||
 	 opnd2->mem_type == MT_PTR ) &&
@@ -928,7 +928,7 @@ static int short_op( int oper, struct expr *opnd1, struct expr *opnd2, struct as
 	return( fnasmerr( 2028 ) );
     }
     TokenAssign( opnd1, opnd2 );
-    opnd1->instr = oper;
+    opnd1->inst = oper;
     return( NOT_ERROR );
 }
 
@@ -938,7 +938,7 @@ static int seg_op( int oper, struct expr *opnd1, struct expr *opnd2, struct asym
 	return( fnasmerr( 2094 ) );
     }
     TokenAssign( opnd1, opnd2 );
-    opnd1->instr = oper;
+    opnd1->inst = oper;
     if ( opnd1->mbr )
 	opnd1->value = 0;
     opnd1->mem_type = MT_EMPTY;
@@ -953,13 +953,13 @@ static int offset_op( int oper, struct expr *opnd1, struct expr *opnd2, struct a
 	    return( NOT_ERROR );
 	}
     }
-    if ( (sym && sym->state == SYM_GRP) || opnd2->instr == T_SEG ) {
+    if ( (sym && sym->state == SYM_GRP) || opnd2->inst == T_SEG ) {
 	return( invalid_operand( opnd2, GetResWName( oper, NULL ), name ) );
     }
     if ( opnd2->is_type )
 	opnd2->value = 0;
     TokenAssign( opnd1, opnd2 );
-    opnd1->instr = oper;
+    opnd1->inst = oper;
     if ( opnd2->indirect ) {
 	return( invalid_operand( opnd2, GetResWName( oper, NULL ), name ) );
     }
@@ -970,8 +970,8 @@ static int offset_op( int oper, struct expr *opnd1, struct expr *opnd2, struct a
 static int lowword_op( int oper, struct expr *opnd1, struct expr *opnd2, struct asym *sym, char *name )
 {
     TokenAssign( opnd1, opnd2 );
-    if ( opnd2->kind == EXPR_ADDR && opnd2->instr != T_SEG ) {
-	opnd1->instr = T_LOWWORD;
+    if ( opnd2->kind == EXPR_ADDR && opnd2->inst != T_SEG ) {
+	opnd1->inst = T_LOWWORD;
 	opnd1->mem_type = MT_EMPTY;
     }
     opnd1->llvalue &= 0xffff;
@@ -981,8 +981,8 @@ static int lowword_op( int oper, struct expr *opnd1, struct expr *opnd2, struct 
 static int highword_op( int oper, struct expr *opnd1, struct expr *opnd2, struct asym *sym, char *name )
 {
     TokenAssign( opnd1, opnd2 );
-    if ( opnd2->kind == EXPR_ADDR && opnd2->instr != T_SEG ) {
-	opnd1->instr = T_HIGHWORD;
+    if ( opnd2->kind == EXPR_ADDR && opnd2->inst != T_SEG ) {
+	opnd1->inst = T_HIGHWORD;
 	opnd1->mem_type = MT_EMPTY;
     }
     opnd1->llvalue = (opnd1->llvalue >> 16) & 0xFFFF;
@@ -992,8 +992,8 @@ static int highword_op( int oper, struct expr *opnd1, struct expr *opnd2, struct
 static int low_op( int oper, struct expr *opnd1, struct expr *opnd2, struct asym *sym, char *name )
 {
     TokenAssign( opnd1, opnd2 );
-    if ( opnd2->kind == EXPR_ADDR && opnd2->instr != T_SEG ) {
-	opnd1->instr = T_DOT_LOW;
+    if ( opnd2->kind == EXPR_ADDR && opnd2->inst != T_SEG ) {
+	opnd1->inst = T_DOT_LOW;
 	opnd1->mem_type = MT_EMPTY;
     }
     opnd1->llvalue &= 0xff;
@@ -1003,8 +1003,8 @@ static int low_op( int oper, struct expr *opnd1, struct expr *opnd2, struct asym
 static int high_op( int oper, struct expr *opnd1, struct expr *opnd2, struct asym *sym, char *name )
 {
     TokenAssign( opnd1, opnd2 );
-    if ( opnd2->kind == EXPR_ADDR && opnd2->instr != T_SEG ) {
-	opnd1->instr = T_DOT_HIGH;
+    if ( opnd2->kind == EXPR_ADDR && opnd2->inst != T_SEG ) {
+	opnd1->inst = T_DOT_HIGH;
 	opnd1->mem_type = MT_EMPTY;
     }
     opnd1->value = opnd1->value >> 8;
@@ -1022,8 +1022,8 @@ static int low32_op( int oper, struct expr *opnd1, struct expr *opnd2, struct as
 	opnd2->float_tok = NULL;
     }
     TokenAssign( opnd1, opnd2 );
-    if ( opnd2->kind == EXPR_ADDR && opnd2->instr != T_SEG ) {
-	opnd1->instr = T_LOW32;
+    if ( opnd2->kind == EXPR_ADDR && opnd2->inst != T_SEG ) {
+	opnd1->inst = T_LOW32;
 	opnd1->mem_type = MT_EMPTY;
     }
     opnd1->llvalue &= 0xffffffff;
@@ -1040,8 +1040,8 @@ static int high32_op( int oper, struct expr *opnd1, struct expr *opnd2, struct a
 	opnd2->float_tok = NULL;
     }
     TokenAssign( opnd1, opnd2 );
-    if ( opnd2->kind == EXPR_ADDR && opnd2->instr != T_SEG ) {
-	opnd1->instr = T_HIGH32;
+    if ( opnd2->kind == EXPR_ADDR && opnd2->inst != T_SEG ) {
+	opnd1->inst = T_HIGH32;
 	opnd1->mem_type = MT_EMPTY;
     }
     opnd1->llvalue = opnd1->llvalue >> 32;
@@ -1059,8 +1059,8 @@ static int low64_op( int oper, struct expr *opnd1, struct expr *opnd2, struct as
 	opnd2->float_tok = NULL;
     }
     TokenAssign( opnd1, opnd2 );
-    if ( opnd2->kind == EXPR_ADDR && opnd2->instr != T_SEG ) {
-	opnd1->instr = T_LOW64;
+    if ( opnd2->kind == EXPR_ADDR && opnd2->inst != T_SEG ) {
+	opnd1->inst = T_LOW64;
 	opnd1->mem_type = MT_EMPTY;
     }
     opnd1->hlvalue = 0;
@@ -1080,8 +1080,8 @@ static int high64_op( int oper, struct expr *opnd1, struct expr *opnd2, struct a
 	opnd2->hlvalue = -1;
 
     TokenAssign( opnd1, opnd2 );
-    if ( opnd2->kind == EXPR_ADDR && opnd2->instr != T_SEG ) {
-	opnd1->instr = T_HIGH64;
+    if ( opnd2->kind == EXPR_ADDR && opnd2->inst != T_SEG ) {
+	opnd1->inst = T_HIGH64;
 	opnd1->mem_type = MT_EMPTY;
     }
     opnd1->llvalue = opnd1->hlvalue;
@@ -1199,8 +1199,8 @@ static int plus_op( struct expr *opnd1, struct expr *opnd2 )
 	    opnd1->sym = opnd2->sym;
 	    if ( opnd1->mem_type == MT_EMPTY )
 		opnd1->mem_type = opnd2->mem_type;
-	    if ( opnd2->instr != EMPTY )
-		opnd1->instr = opnd2->instr;
+	    if ( opnd2->inst != EMPTY )
+		opnd1->inst = opnd2->inst;
 	}
 	opnd1->llvalue += opnd2->llvalue;
 	if ( opnd2->type )
@@ -1301,8 +1301,8 @@ static int minus_op( struct expr *opnd1, struct expr *opnd2 )
 		opnd1->sym = NULL;
 	    }
 	    if( opnd1->indirect == 0 ) {
-		if( opnd1->instr == T_OFFSET && opnd2->instr == T_OFFSET )
-		    opnd1->instr = EMPTY;
+		if( opnd1->inst == T_OFFSET && opnd2->inst == T_OFFSET )
+		    opnd1->inst = EMPTY;
 	    } else {
 		opnd1->kind = EXPR_ADDR;
 	    }
@@ -1471,7 +1471,7 @@ static int colon_op( struct expr *opnd1, struct expr *opnd2 )
 	    opnd1->type = opnd2->type;
     } else if( opnd1->kind == EXPR_ADDR &&
 	      opnd1->override == NULL &&
-	      opnd1->instr == EMPTY &&
+	      opnd1->inst == EMPTY &&
 	      opnd1->value == 0 &&
 	      opnd1->sym &&
 	      opnd1->base_reg == NULL &&
@@ -1849,7 +1849,7 @@ static int calculate( struct expr *opnd1, struct expr *opnd2, const struct asm_t
 	sym = opnd2->sym;
 	if( opnd2->mbr != NULL )
 	    sym = opnd2->mbr;
-	if ( opnd2->instr != EMPTY )
+	if ( opnd2->inst != EMPTY )
 	    name = oper->tokpos + strlen( oper->string_ptr ) + 1;
 	else if ( sym )
 	    name = sym->name;

@@ -358,9 +358,9 @@ int AssumeDirective( int i, struct asm_tok tokenarray[] )
 		     */
 		    FStoreLine( 0 );
 		    info->symbol = opnd.sym;
-		} else if ( ( opnd.sym->state == SYM_SEG || opnd.sym->state == SYM_GRP ) && opnd.instr == EMPTY ) {
+		} else if ( ( opnd.sym->state == SYM_SEG || opnd.sym->state == SYM_GRP ) && opnd.inst == EMPTY ) {
 		    info->symbol = opnd.sym;
-		} else if ( opnd.instr == T_SEG ) {
+		} else if ( opnd.inst == T_SEG ) {
 		    info->symbol = opnd.sym->segment;
 		} else {
 		    return( asmerr( 2096 ) );

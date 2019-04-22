@@ -762,7 +762,7 @@ next_item:  /* <--- continue scan if a comma has been detected */
 
 	/* determine what type of fixup is to be created */
 
-	switch ( opndx.instr ) {
+	switch ( opndx.inst ) {
 	case T_SEG:
 	    if ( no_of_bytes < 2 ) {
 		asmerr( 2071 );
@@ -963,7 +963,7 @@ next_item:  /* <--- continue scan if a comma has been detected */
 	    /* set global vars Frame and Frame_Datum */
 	    /* opndx.sym may be NULL, then SegOverride is set. */
 	    if ( ModuleInfo.offsettype == OT_SEGMENT &&
-		( opndx.instr == T_OFFSET || opndx.instr == T_SEG ))
+		( opndx.inst == T_OFFSET || opndx.inst == T_SEG ))
 		set_frame2( opndx.sym );
 	    else
 		set_frame( opndx.sym );

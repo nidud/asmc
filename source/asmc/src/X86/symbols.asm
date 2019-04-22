@@ -34,13 +34,13 @@ USEFIXSYMCMP    equ 0   ; 1=don't use a function pointer for string compare
 USESTRFTIME     equ 0   ; 1=use strftime()
 
 tmitem          STRUC
-_name           dd ?
+name            dd ?
 value           dd ?
 store           dd ?
 tmitem          ENDS
 
 eqitem          STRUC
-_name           dd ?
+name            dd ?
 value           dd ?
 sfunc_ptr       dd ?    ; ( struct asym *, void * );
 store           dd ?    ; asym **
@@ -95,7 +95,7 @@ tmtab   LABEL tmitem
     tmitem  <@@Version,  MLVersion, 0>
     tmitem  <@@Date,     szDate,    0>
     tmitem  <@@Time,     szTime,    0>
-    tmitem  <@@FileName, ModuleInfo._name, 0>
+    tmitem  <@@FileName, ModuleInfo.name, 0>
     tmitem  <@@FileCur,  0, FileCur>
     ;
     ; v2.09: @CurSeg value is never set if no segment is ever opened.
@@ -173,7 +173,7 @@ SymClearLocal ENDP
 SymGetLocal proc psym
 
     mov ecx,psym
-    mov edx,[ecx].nsym.procinfo
+    mov edx,[ecx].dsym.procinfo
     lea edx,[edx].proc_info.labellist
     xor ecx,ecx
     .while ecx < LHASH_TABLE_SIZE
@@ -183,7 +183,7 @@ SymGetLocal proc psym
         .continue .if !eax
 
         mov [edx],eax
-        lea edx,[eax].nsym.nextll
+        lea edx,[eax].dsym.nextll
     .endw
     xor eax,eax
     mov [edx],eax
@@ -201,10 +201,10 @@ SymSetLocal proc uses edi psym
     mov ecx,sizeof(lsym_table) / 4
     rep stosd
     mov ecx,psym
-    mov edi,[ecx].nsym.procinfo
+    mov edi,[ecx].dsym.procinfo
     mov edi,[edi].proc_info.labellist
     .while edi
-        mov ecx,[edi].asym._name
+        mov ecx,[edi].asym.name
         xor eax,eax
         movzx edx,BYTE PTR [ecx]
         .while edx
@@ -221,7 +221,7 @@ SymSetLocal proc uses edi psym
         .endw
         and eax,LHASH_TABLE_SIZE - 1
         mov lsym_table[eax*4],edi
-        mov edi,[edi].nsym.nextll
+        mov edi,[edi].dsym.nextll
     .endw
     ret
 SymSetLocal endp
@@ -229,11 +229,11 @@ SymSetLocal endp
 SymAlloc proc uses esi edi sname
     mov esi,sname
     mov edi,strlen(esi)
-    LclAlloc(&[edi+sizeof(nsym)+1])
+    LclAlloc(&[edi+sizeof(dsym)+1])
     mov [eax].asym.name_size,di
     mov [eax].asym.mem_type,MT_EMPTY
-    lea edx,[eax+sizeof(nsym)]
-    mov [eax].asym._name,edx
+    lea edx,[eax+sizeof(dsym)]
+    mov [eax].asym.name,edx
     .if ModuleInfo.cref
         or [eax].asym.flag,SFL_LIST
     .endif
@@ -293,7 +293,7 @@ SymFind proc fastcall uses esi edi ebx ebp sname:LPSTR
 
                         .if cx == [eax].asym.name_size
 
-                            mov edi,[eax].asym._name
+                            mov edi,[eax].asym.name
 
                             .repeat
                                 .if ecx >= 4
@@ -323,7 +323,7 @@ SymFind proc fastcall uses esi edi ebx ebp sname:LPSTR
 
                         .if cx == [eax].asym.name_size
 
-                            mov edi,[eax].asym._name
+                            mov edi,[eax].asym.name
 
                             .while 1
 
@@ -374,7 +374,7 @@ SymFind proc fastcall uses esi edi ebx ebp sname:LPSTR
                 .repeat
 
                     .if cx == [eax].asym.name_size
-                        mov edi,[eax].asym._name
+                        mov edi,[eax].asym.name
                         .while 1
                             .if ecx >= 4
                                 sub ecx,4
@@ -402,7 +402,7 @@ SymFind proc fastcall uses esi edi ebx ebp sname:LPSTR
                 .repeat
 
                     .if cx == [eax].asym.name_size
-                        mov edi,[eax].asym._name
+                        mov edi,[eax].asym.name
                         .while 1
                             .if ecx >= 4
                                 sub ecx,4
@@ -545,7 +545,7 @@ SymAddLocal proc uses esi edi ebx sym, sname
         mov [ebx].asym.name_size,ax
         lea edi,[eax+1]
         LclAlloc(edi)
-        mov [ebx].asym._name,eax
+        mov [ebx].asym.name,eax
         mov ecx,edi
         mov edi,eax
         rep movsb
@@ -564,9 +564,9 @@ SymAddLocal endp
 ;
 SymAddGlobal proc sym
     mov eax,sym
-    .if SymFind([eax].asym._name)
+    .if SymFind([eax].asym.name)
         mov eax,sym
-        asmerr(2005, [eax].asym._name)
+        asmerr(2005, [eax].asym.name)
         xor eax,eax
     .else
         mov eax,sym
@@ -634,7 +634,7 @@ SymMakeAllSymbolsPublic proc uses esi edi
 
             .if [edi].asym.state == SYM_INTERNAL
 
-                mov ecx,[edi].asym._name
+                mov ecx,[edi].asym.name
                 ;
                 ; no EQU or '=' constants
                 ; no predefined symbols ($)
@@ -692,8 +692,8 @@ else
     sprintf(&szTime, "%02u:%02u:%02u", [esi].tm.tm_hour, [esi].tm.tm_min, [esi].tm.tm_sec)
 endif
     lea esi,tmtab
-    .while [esi].tmitem._name
-        SymCreate([esi].tmitem._name)
+    .while [esi].tmitem.name
+        SymCreate([esi].tmitem.name)
         mov [eax].asym.state,SYM_TMACRO
         or  [eax].asym.flag,SFL_ISDEFINED or SFL_PREDEFINED
         mov ecx,[esi].tmitem.value
@@ -705,8 +705,8 @@ endif
     .endw
 
     lea esi,eqtab
-    .while [esi].eqitem._name
-        SymCreate([esi].eqitem._name)
+    .while [esi].eqitem.name
+        SymCreate([esi].eqitem.name)
         mov [eax].asym.state,SYM_INTERNAL
         or  [eax].asym.flag,SFL_ISDEFINED or SFL_PREDEFINED
         mov ecx,[esi].eqitem.value

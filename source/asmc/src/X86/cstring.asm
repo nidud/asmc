@@ -488,7 +488,7 @@ local   rc:                     SINT,
                 .if NewString
 
                     mov eax,ModuleInfo.currseg
-                    mov ecx,[eax].asym._name
+                    mov ecx,[eax].asym.name
 
                     strcat( strcpy( b_seg, ecx ), " segment" )
                     .break .if InsertLine( ".data" )
@@ -637,7 +637,7 @@ CString PROC USES esi edi ebx buffer:LPSTR, tokenarray:PTR asmtok
 
                 xor esi,esi
                 mov ebx,ModuleInfo.currseg
-                .if _stricmp( [ebx].asym._name, "_DATA" )
+                .if _stricmp( [ebx].asym.name, "_DATA" )
                     inc esi
                     InsertLine(".data")
                 .elseif edi
@@ -646,7 +646,7 @@ CString PROC USES esi edi ebx buffer:LPSTR, tokenarray:PTR asmtok
                 .endif
                 InsertLine(cursrc)
                 .if esi
-                    .if !_stricmp( [ebx].asym._name, "CONST" )
+                    .if !_stricmp( [ebx].asym.name, "CONST" )
                         InsertLine(".const")
                     .elseif esi == 2
                         InsertLine(".data")

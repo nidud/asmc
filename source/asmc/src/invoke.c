@@ -288,7 +288,7 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 		if ( opnd.kind == EXPR_ADDR &&
 		     opnd.indirect == FALSE &&
 		     opnd.sym &&
-		     opnd.instr == EMPTY &&
+		     opnd.inst == EMPTY &&
 		     ( opnd.mem_type == MT_NEAR || opnd.mem_type == MT_FAR ) )
 		    goto push_address;
 #endif
@@ -318,7 +318,7 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 	    return( NOT_ERROR );
 	}
 
-	if ( ( opnd.kind == EXPR_ADDR && opnd.instr != T_OFFSET ) ||
+	if ( ( opnd.kind == EXPR_ADDR && opnd.inst != T_OFFSET ) ||
 	    ( opnd.kind == EXPR_REG && opnd.indirect == TRUE ) ) {
 
 	    /* catch the case when EAX has been used for ADDR,

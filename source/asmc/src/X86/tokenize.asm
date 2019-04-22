@@ -471,6 +471,8 @@ toend:
     ret
 get_string endp
 
+GetStdAssume proto :int_t
+
     assume edx:nothing
     assume esi:ptr line_status
 
@@ -549,15 +551,26 @@ get_special_symbol proc fastcall uses esi edi ebx buf:ptr asmtok , p:ptr line_st
         ; v2.20: set _cstring to allow escape chars (\") in @CStr( string )
         ; v2.20: removed auto off switch for asmc_syntax in macros
         ; v2.20: added more test code for label() calls
+        ; v2.30: added invocation for reg(...) if typedef
         ;
-
         .if ah == ')' && [ebx-16].token == T_REG
             ;
             ; REG() expans as CALL REG
             ;
             or [ebx-16].hll_flags,T_HLL_PROC
 
-        .elseif [esi].index && [ebx-16].token == T_ID
+        .elseif [esi].index && [ebx-16].token == T_REG
+
+            mov ecx,[ebx-16].tokval
+            push eax
+            .if ( GetValueSp( ecx ) & OP_RGT8 )
+                .if GetStdAssume( GetRegNo( ecx ) )
+                    or [ebx-16].hll_flags,T_HLL_PROC
+                .endif
+            .endif
+            pop eax
+
+        .elseif [esi].index && ( [ebx-16].token == T_ID || [ebx-16].token == T_REG )
 
             xor eax,eax
 

@@ -38,6 +38,7 @@
 #include "listing.h"
 #include "tokenize.h"
 #include "fastpass.h"
+#include "assume.h"
 
 #define CONCATID 0 /* 0=most compatible (see backsl.asm) */
 #define MASMNUMBER 1 /* 1=Masm-compatible number scanning */
@@ -434,6 +435,13 @@ static int get_special_symbol( struct asm_tok *buf, struct line_status *p )
 	    /* REG() expans as CALL REG */
 
 	    (buf-1)->hll_flags |= T_HLL_PROC;
+
+	} else if ( p->index && (buf-1)->token == T_REG ) {
+
+	    if ( GetValueSp( (buf-1)->tokval ) & OP_RGT8 ) {
+		if ( GetStdAssume( GetRegNo( (buf-1)->tokval ) ) )
+		    (buf-1)->hll_flags |= T_HLL_PROC;
+	    }
 
 	} else if ( p->index && (buf-1)->token == T_ID ) {
 

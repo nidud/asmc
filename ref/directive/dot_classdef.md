@@ -11,7 +11,7 @@ Declares a structure type for a [COM interface](dot_comdef.md).
     .classdef Class
     * LPCLASS typedef ptr Class
     * LPCLASSVtbl typedef ptr ClassVtbl
-    * Class@Class proto :ptr Class
+    * Class::Class proto :ptr Class
     * Class struct 8
     * lpVtbl LPCLASSVtbl ?
 
@@ -58,4 +58,4 @@ Code produced:
 
 #### See Also
 
-[.ENDS](dot_ends.md) | [.COMDEF](dot_comdef.md)
+[.ENDS](dot_ends.md) | [.COMDEF](dot_comdef.md) | [.NEW](dot_new.md)

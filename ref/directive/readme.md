@@ -43,6 +43,7 @@ Asmc Macro Assembler Reference
 [.FOR](dot_for.md)
 [.GOTOSW](dot_gotosw.md)
 [.IF](dot_if.md)
+[.NEW](dot_new.md)
 [.REPEAT](dot_repeat.md)
 [.SWITCH](dot_switch.md)
 [.UNTIL](dot_until.md)
@@ -58,9 +59,9 @@ Asmc Macro Assembler Reference
 [.ERR2](dot_err2.md)
 [.ERRB](dot_errb.md)
 [.ERRDEF](dot_errdef.md)
-[.ERRDIF[[I]]]](dot_errdif.md)
+[.ERRDIF<I>](dot_errdif.md)
 [.ERRE](dot_erre.md)
-[.ERRIDN[[I]]](dot_erridn.md)
+[.ERRIDN<I>](dot_erridn.md)
 [.ERRNB](dot_errnb.md)
 [.ERRNDEF](dot_errndef.md)
 [.ERRNZ](dot_errnz.md)
@@ -115,8 +116,6 @@ Asmc Macro Assembler Reference
 [TITLE](title.md)
 
 #### Macros
-
-<table cellspacing="5">
 
 [ENDM](endm.md)
 [EXITM](exitm.md)

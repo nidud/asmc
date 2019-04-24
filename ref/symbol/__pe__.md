@@ -1,6 +1,6 @@
 Asmc Macro Assembler Reference
 
-## __PE__
+    __PE__
 
 Defined if command line switch -**pe** is used.
 

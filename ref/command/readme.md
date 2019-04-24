@@ -40,10 +40,10 @@ Link switch used with **/pe** -- subsystem:console (default).
 - **/Cx**
 Preserves case in public and extern symbols.
 
-- **/D_symbol_[[=_value_]]**
+- **/D**_symbol_[[=_value_]]
 Defines a text macro with the given name. If value is missing, it is blank. Multiple tokens separated by spaces must be enclosed in quotation marks.
 
-- **/e_number_**
+- **/e**_number_
 Set error limit number.
 
 - **/elf**
@@ -58,19 +58,19 @@ Generates a preprocessed source listing (sent to STDOUT). See /Sf.
 - **/eq**
 Don't display error messages.
 
-- **/Fd[_file_]**
+- **/Fd**[_file_]
 Write import definition file.
 
-- **/Fi_file_**
+- **/Fi**_file_
 Force _file_ to be included.
 
-- **/Fl[[_filename_]]**
+- **/Fl**[[_filename_]]
 Generates an assembled code listing. See /Sf.
 
-- **/Fo_filename_**
+- **/Fo**_filename_
 Names an object file.
 
-- **/Fw_filename_**
+- **/Fw**_filename_
 Set errors file name.
 
 - **/FPi**
@@ -82,7 +82,7 @@ Generates emulator fix-ups for floating-point arithmetic (mixed language only).
 - **/fpc**
 Disallow floating-point instructions.
 
-- **/fp_n_**
+- **/fp**_n_
 Set FPU: 0=8087, 2=80287, 3=80387.
 
 - **/Gc**
@@ -90,6 +90,9 @@ Specifies use of FORTRAN- or Pascal-style function calling and naming convention
 
 - **/Gd**
 Specifies use of C-style function calling and naming conventions. Same as **OPTION LANGUAGE:C**.
+
+- **/Ge**
+Emit a conditional _chkstk() inside the prologue.
 
 - **/gui**
 Link switch used with **/pe** -- subsystem:windows.
@@ -103,25 +106,25 @@ Specifies use of STDCALL-style function calling and naming conventions. Same as 
 - **/homeparams**
 Forces parameters passed in registers to be written to their locations on the stack upon function entry.
 
-- **/I_pathname_**
+- **/I**_pathname_
 Sets path for include file.
 
-- **/m[_t|s|c|m|l|h|f_]**
+- **/m**[_t|s|c|m|l|h|f_]
 Set memory model.
 
 - **/mz**
 Generate DOS MZ binary file.
 
-- **/nc_name_**
+- **/nc**_name_
 Set class name of code segment.
 
-- **/nd_name_**
+- **/nd**_name_
 Set name of data segment.
 
-- **/nm_name_**
+- **/nm**_name_
 Set name of module.
 
-- **/nt_name_**
+- **/nt**_name_
 Set name of text segment.
 
 - **/nologo**
@@ -199,9 +202,6 @@ Returns an error code if warnings are generated.
 - **/X**
 Ignore INCLUDE environment path.
 
-- **/Xc**
-Disable Asmc extensions.
-
 - **/zcw**
 No decoration for C symbols.
 
@@ -241,13 +241,13 @@ Enable MASM 5.10 compatibility.
 - **/Zne**
 Disable non Masm extensions.
 
-- **/Zp[[alignment]]**
+- **/Zp**[[_alignment_]]
 Packs structures on the specified byte boundary.
 
 - **/Zs**
 Perform syntax check only.
 
-- **/zt<0|1|2>**
+- **/zt**<0|1|2>
 Set STDCALL decoration.
 
 - **/Zv8**

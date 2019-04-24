@@ -3,7 +3,7 @@ Asmc Macro Assembler Reference
 ## .ASSERT
 
 **.ASSERT**[D|W|B] <assert_expression>
-**.ASSERT**:[<handler> | ON | OFF | PUSH | POP | PUSHF | POPF | CODE | ENDS]
+**.ASSERT**:[handler | ON | OFF | PUSH | POP | PUSHF | POPF | CODE | ENDS]
 
 
 #### Options

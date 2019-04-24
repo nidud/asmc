@@ -471,8 +471,6 @@ toend:
     ret
 get_string endp
 
-GetStdAssume proto :int_t
-
     assume edx:nothing
     assume esi:ptr line_status
 

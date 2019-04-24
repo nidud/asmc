@@ -1541,7 +1541,7 @@ static void WriteSEHData( struct dsym *proc )
     return;
 }
 
-static void SetLocalOffsets( struct proc_info *info );
+/*static*/ void SetLocalOffsets( struct proc_info *info );
 
 /* close a PROC
  */
@@ -2352,7 +2352,7 @@ runqueue:
  * will also work only in those cases!
  */
 
-static void SetLocalOffsets( struct proc_info *info )
+/*static*/ void SetLocalOffsets( struct proc_info *info )
 {
     struct dsym *curr;
     int cntxmm = 0;

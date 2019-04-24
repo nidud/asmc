@@ -809,16 +809,17 @@ int InvokeDirective( int i, struct asm_tok tokenarray[] )
     namepos = i;
 
     if ( ModuleInfo.strict_masm_compat == 0 ) {
-	if ( ExpandHllProc( buffer, i, tokenarray ) == ERROR )
-	    return ERROR;
-	if ( buffer[0] != 0 ) {
-	    QueueTestLines( buffer );
-	    RunLineQueue();
-	    if (Token_Count == 2 &&
-		tokenarray[0].tokval == T_INVOKE &&
-		tokenarray[1].token == T_REG)
-		return NOT_ERROR;
-	}
+	do {
+	    if ( ExpandHllProc( buffer, i, tokenarray ) == ERROR )
+		return ERROR;
+	    if ( buffer[0] != 0 ) {
+		QueueTestLines( buffer );
+		RunLineQueue();
+		if ( tokenarray[0].tokval == T_INVOKE &&
+		     tokenarray[1].token == T_REG && Token_Count == 2 )
+		    return NOT_ERROR;
+	    } else break;
+	} while ( 1 );
     }
 
     /* if there is more than just an ID item describing the invoke target,

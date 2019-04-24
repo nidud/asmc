@@ -1261,6 +1261,7 @@ externdef		regax		: dword
 asmerr			PROTO :DWORD, :VARARG
 DelayExpand		PROTO FASTCALL :DWORD ; :PTR asmtok
 AsmcKeywords		proto :int_t
+GetStdAssume		proto :int_t
 
 write_logo		PROTO
 WriteError		PROTO

@@ -1046,10 +1046,17 @@ ExpandCStrings endp
 ;SymFind proto fastcall :DWORD
 
 
-GetProc proc private token:LPSTR
+GetProc proc private token:ptr asmtok
 
     .repeat
-        .if !SymFind(token)
+        mov edx,token
+        .if [edx].asmtok.token == T_REG
+            GetStdAssume( GetRegNo( [edx].asmtok.tokval ) )
+        .else
+            SymFind( [edx].asmtok.string_ptr )
+        .endif
+
+        .if !eax
 
             asmerr( 2190 )
             xor eax,eax
@@ -1162,7 +1169,7 @@ StripSource proc private uses esi edi ebx i:UINT, e:UINT, tokenarray:ptr asmtok
     mov eax,proc_id
     .if eax && [eax].asmtok.token != T_OP_SQ_BRACKET
 
-        .if GetProc([eax].asmtok.string_ptr)
+        .if GetProc(eax)
 
             mov sym,eax
             mov edx,[eax].dsym.procinfo

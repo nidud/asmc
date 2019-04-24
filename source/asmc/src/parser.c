@@ -3014,22 +3014,26 @@ int ParseLine( struct asm_tok tokenarray[] )
 		 */
 		CodeInfo.prefix.rex &= 0x7;
 		break;
+	    case T_MOV:
+		/* don't use the Wide bit for moves to/from special regs */
+		if ( CodeInfo.opnd[OPND1].type & OP_RSPEC || CodeInfo.opnd[OPND2].type & OP_RSPEC )
+		    CodeInfo.prefix.rex &= 0x7;
+		break;
+	    }
+	}
+	if ( CodeInfo.Ofssize > USE16 &&
+	    ( CodeInfo.opnd[OPND1].type & OP_MS ) && ( CodeInfo.opnd[OPND2].type & OP_MS ) ) {
+	    /* v2.30 - Memory to memory operands. */
+	    switch ( CodeInfo.token ) {
+	    case T_MOV:
+	    case T_CMP:
+	    case T_TEST:
 	    case T_ADD:
 	    case T_SUB:
 	    case T_AND:
 	    case T_OR:
 	    case T_XOR:
-	    case T_CMP:
-	    case T_TEST:
-		if ( !( CodeInfo.opnd[OPND1].type & OP_MS && CodeInfo.opnd[OPND2].type & OP_MS ) )
-		    break;
-	    case T_MOV:
-		/* v2.30 mov mem,mem */
-		if ( CodeInfo.opnd[OPND1].type & OP_MS && CodeInfo.opnd[OPND2].type & OP_MS )
-		    return mem2mem( CodeInfo.opnd[OPND1].type, CodeInfo.opnd[OPND2].type, tokenarray );
-		/* don't use the Wide bit for moves to/from special regs */
-		if ( CodeInfo.opnd[OPND1].type & OP_RSPEC || CodeInfo.opnd[OPND2].type & OP_RSPEC )
-		    CodeInfo.prefix.rex &= 0x7;
+		return mem2mem( CodeInfo.opnd[OPND1].type, CodeInfo.opnd[OPND2].type, tokenarray );
 		break;
 	    }
 	}

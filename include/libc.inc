@@ -207,16 +207,6 @@ CALLBACK macro id, arguments:VARARG
     endm
 endif
 
-m2m macro dest, source
-ifdef _M_X64
-    mov rax,source
-    mov dest,rax
-else
-    mov eax,source
-    mov dest,eax
-endif
-    endm
-
 endif
 .pragma list(pop)
 

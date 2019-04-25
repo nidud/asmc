@@ -238,7 +238,7 @@ Suppress items in COFF: No section aux entry.
 - **/Zm**
 Enable MASM 5.10 compatibility.
 
-- **/Zne**
+- [**/Zne**](Zne.md)
 Disable non Masm extensions.
 
 - **/Zp**[[_alignment_]]

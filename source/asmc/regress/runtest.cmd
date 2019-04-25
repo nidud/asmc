@@ -30,7 +30,6 @@ for %%f in (..\src\elf\*.asm) do call :elf %%f
 for %%f in (..\src\omf2\*.asm) do call :omf2 %%f
 for %%f in (..\src\omfcu\*.asm) do call :omfcu %%f
 for %%f in (..\src\elf64\*.asm) do call :elf64 %%f
-for %%f in (..\src\math\*.asm) do call :math %%f
 for %%f in (..\src\vec64\*.asm) do call :vec64 %%f
 
 call :safeseh
@@ -172,20 +171,6 @@ if errorlevel 1 goto end
 fcmp %~n1.OBJ ..\exp\%~n1.obj
 if errorlevel 1 goto end
 del %~n1.OBJ
-goto end
-
-:math
-%ASMX% -q /DARCH=.686 -I..\src\math %1 > %~n1_686.txt
-if errorlevel 1 goto end
-fcmp %~n1_686.txt ..\exp\%~n1_686.txt
-if errorlevel 1 goto end
-del %~n1_686.txt
-%ASMX% -q /DARCH=.x64 -I..\src\math %1 > %~n1_x64.txt
-if errorlevel 1 goto end
-fcmp %~n1_x64.txt ..\exp\%~n1_686.txt
-if errorlevel 1 goto end
-del %~n1_x64.txt
-del %~n1.obj
 goto end
 
 :omfcu

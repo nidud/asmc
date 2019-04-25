@@ -5,7 +5,7 @@ Asmc Macro Assembler Reference
 **ZERO?**
 
 
-Status of zero flag. Used only within <a gref="../directive/dot_if.md">.IF</a>, <a gref="../directive/dot_while.md">.WHILE</a>, or <a gref="../directive/dot_repeat.md">.REPEAT</a> blocks and evaluated at run time, not at assembly time.
+Status of zero flag. Used only within [.IF](../directive/dot_if.md), [.WHILE](../directive/dot_while.md), or [.REPEAT](../directive/dot_repeat.md) blocks and evaluated at run time, not at assembly time.
 
 #### See Also
 

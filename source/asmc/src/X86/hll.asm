@@ -2240,11 +2240,6 @@ RenderUntilXX proc private uses edi hll:PTR hll_item, cmd:UINT
 
     mov eax,cmd
     mov ecx,T_CX - T_AX
-    .switch eax
-      .case T_DOT_UNTILAXZ : mov ecx,T_AX - T_AX : .endc
-      .case T_DOT_UNTILBXZ : mov ecx,T_BX - T_AX : .endc
-      .case T_DOT_UNTILDXZ : mov ecx,T_DX - T_AX : .endc
-    .endsw
 ifndef __ASMC64__
     .if ModuleInfo.Ofssize == USE16
         add ecx,T_AX
@@ -2726,10 +2721,7 @@ HllEndDir proc uses esi edi ebx i:SINT, tokenarray:PTR asmtok
         .endif
         .endc
 
-      .case T_DOT_UNTILAXZ
-      .case T_DOT_UNTILBXZ
       .case T_DOT_UNTILCXZ
-      .case T_DOT_UNTILDXZ
 
         .if ecx != HLL_REPEAT
 

@@ -3034,7 +3034,6 @@ int ParseLine( struct asm_tok tokenarray[] )
 	    case T_OR:
 	    case T_XOR:
 		return mem2mem( CodeInfo.opnd[OPND1].type, CodeInfo.opnd[OPND2].type, tokenarray );
-		break;
 	    }
 	}
     }

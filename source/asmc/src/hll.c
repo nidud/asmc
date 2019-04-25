@@ -1498,12 +1498,6 @@ static void RenderUntilXX( struct hll_item *hll, unsigned cmd )
     char buffer[32];
     int T = T_CX - T_AX;
 
-    switch ( cmd ) {
-      case T_DOT_UNTILAXZ: T = T_AX - T_AX; break;
-      case T_DOT_UNTILBXZ: T = T_BX - T_AX; break;
-      case T_DOT_UNTILDXZ: T = T_DX - T_AX; break;
-    }
-
 #ifndef __ASMC64__
     if ( ModuleInfo.Ofssize == USE16 )
 	T += T_AX;
@@ -1902,10 +1896,7 @@ int HllEndDir( int i, struct asm_tok tokenarray[] )
 	    QueueTestLines( hll->condlines );
 	break;
 
-    case T_DOT_UNTILAXZ:
-    case T_DOT_UNTILBXZ:
     case T_DOT_UNTILCXZ:
-    case T_DOT_UNTILDXZ:
 	if ( hll->cmd != HLL_REPEAT ) {
 	    return( asmerr( 1010, tokenarray[i].string_ptr ) );
 	}

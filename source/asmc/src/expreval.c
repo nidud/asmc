@@ -347,7 +347,8 @@ static ret_code get_operand( struct expr *opnd, int *idx, struct asm_tok tokenar
 		}
 	    } else {
 
-		if ( sym == NULL && _stricmp( tmp, "defined" ) == 0 ) {
+		if ( Options.strict_masm_compat == FALSE
+		     && sym == NULL && _stricmp( tmp, "defined" ) == 0 ) {
 
 		    if ( i && tokenarray[i+1].token == T_OP_BRACKET ) {
 

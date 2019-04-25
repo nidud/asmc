@@ -2,9 +2,9 @@ Asmc Macro Assembler Reference
 
 ## OPERATOR ::
 
-**edx::eax**
-
 **rdx::rax**
+
+**edx::eax**
 
 **label::**
 

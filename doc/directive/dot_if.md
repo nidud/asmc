@@ -2,12 +2,12 @@ Asmc Macro Assembler Reference
 
 ## .IF
 
-**.IF** _condition1_
-   _statements_
-   [[**.ELSEIF** _condition2_
-      _statements_]]
-   [[**.ELSE**
-      _statements_]]
+**.IF** _condition1_<br>
+   _statements_<br>
+   [[**.ELSEIF** _condition2_<br>
+      _statements_]]<br>
+   [[**.ELSE**<br>
+      _statements_]]<br>
    **.ENDIF**
 
 

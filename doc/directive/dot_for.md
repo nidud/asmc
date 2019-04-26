@@ -2,8 +2,8 @@ Asmc Macro Assembler Reference
 
 ## .FOR
 
-**.FOR[S]** [_initialization_] : [_condition_] : [_increment/decrements_]
-   _statements_
+**.FOR[S]** [_initialization_] : [_condition_] : [_increment/decrements_]<br>
+   _statements_<br>
    **.ENDF**
 
 Generates code that executes the block of _statements_ while _condition_ remains true.

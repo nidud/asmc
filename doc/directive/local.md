@@ -2,8 +2,7 @@ Asmc Macro Assembler Reference
 
 ### LOCAL
 
-**LOCAL** localname [[, localname]]...
-
+**LOCAL** localname [[, localname]]...<br>
 **LOCAL** label [[ [count ] ]] [[:type]] [[, label [[ [count] ]] [[type]]]]...
 
 In the first directive, within a macro, **LOCAL** defines labels that are unique to each instance of the macro.

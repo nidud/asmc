@@ -2,8 +2,8 @@ Asmc Macro Assembler Reference
 
 ### STRUCT
 
-name **STRUCT** [[alignment]] [[, NONUNIQUE]]
-   fielddeclarations
+name **STRUCT** [[alignment]] [[, NONUNIQUE]]<br>
+   fielddeclarations<br>
    name ENDS
 
 

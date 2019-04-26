@@ -2,7 +2,7 @@ Asmc Macro Assembler Reference
 
 ### EXTERN
 
-**EXTERN** [[langtype]] name [[(altid)]] :
+**EXTERN** [[langtype]] name [[(altid)]] :<br>
    type [[, [[langtype]] name [[(altid)]] :type]]...
 
 

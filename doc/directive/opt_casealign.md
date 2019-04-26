@@ -6,9 +6,6 @@ Asmc Macro Assembler Reference
 
 This controls the alignment for .CASE labels. The default value is 0.
 
-    * ALIGN <casealign> ; align label after jump
-	case:
-
 #### See Also
 
 [Directives Reference](readme.md)

@@ -2,8 +2,8 @@ Asmc Macro Assembler Reference
 
 ### REPEAT
 
-**REPEAT** expression
-   statements
+**REPEAT** expression<br>
+   statements<br>
    **ENDM**
 
 

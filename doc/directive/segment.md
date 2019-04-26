@@ -2,8 +2,8 @@ Asmc Macro Assembler Reference
 
 ### SEGMENT
 
-name **SEGMENT** [[READONLY]] [[align]] [[combine]] [[use]] [['class']]
-   statements
+name **SEGMENT** [[READONLY]] [[align]] [[combine]] [[use]] [['class']]<br>
+   statements<br>
    name ENDS
 
 

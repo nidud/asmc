@@ -2,12 +2,9 @@ Asmc Macro Assembler Reference
 
 ### ASSUME
 
-**ASSUME** segregister:name [[, segregister:name]]...
-
-**ASSUME** dataregister:type [[, dataregister:type]]...
-
-**ASSUME** register:ERROR [[, register:ERROR]]...
-
+**ASSUME** segregister:name [[, segregister:name]]...<br>
+**ASSUME** dataregister:type [[, dataregister:type]]...<br>
+**ASSUME** register:ERROR [[, register:ERROR]]...<br>
 **ASSUME** [[register:]] NOTHING [[, register:NOTHING]]...
 
 

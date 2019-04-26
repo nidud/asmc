@@ -9,17 +9,17 @@ Generates code to jump to the top of a [.WHILE](dot_while.md) or [.REPEAT](dot_r
 **.CONTINUE**[(1..n)] is optional nesting level to continue.
 
     .while 1
-        .continue               ; continue .while 1
+        .continue                   ; continue .while 1
         .while 2
-        .continue(1)            ; continue .while 1
-        .while 3
-            .continue(2)        ; continue .while 1
-            .while 4
-                .continue(3)    ; continue .while 1
-                .continue(2)    ; continue .while 2
-                .continue(1)    ; continue .while 3
+            .continue(1)            ; continue .while 1
+            .while 3
+                .continue(2)        ; continue .while 1
+                .while 4
+                    .continue(3)    ; continue .while 1
+                    .continue(2)    ; continue .while 2
+                    .continue(1)    ; continue .while 3
+                .endw
             .endw
-        .endw
         .endw
     .endw
 

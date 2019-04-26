@@ -2,8 +2,8 @@ Asmc Macro Assembler Reference
 
 ### MACRO
 
-name **MACRO** [[parameter [[:REQ | :=default | :VARARG]]]]...
-   statements
+name **MACRO** [[parameter [[:REQ | :=default | :VARARG]]]]...<br>
+   statements<br>
    **ENDM** [[value]]
 
 

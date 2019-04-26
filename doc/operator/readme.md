@@ -50,6 +50,7 @@ Asmc Macro Assembler Reference
 - [;;](semicolon2.md)
 - [;](semicolon.md)
 - [::](doublecolon.md)
+- [ADDR](addr.md)
 - [CARRY?](carry.md)
 - [DUP](dup.md)
 - [OVERFLOW?](overflow.md)

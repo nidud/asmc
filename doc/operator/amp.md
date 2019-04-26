@@ -2,11 +2,13 @@ Asmc Macro Assembler Reference
 
 ## operator &
 
-**_expression1_ & _expression2_**
+_expression1_ **&** _expression2_
 
+Bitwise AND. Used within [.IF](../directive/dot_if.md), [.WHILE](../directive/dot_while.md), or [.REPEAT](../directive/dot_repeat.md) blocks and evaluated at run time, not at assembly time.
 
-Bitwise AND. Used only within [.IF](../directive/dot_if.md), [.WHILE](../directive/dot_while.md), or [.REPEAT](../directive/dot_repeat.md) blocks and evaluated at run time, not at assembly time.
+_procedure_( **&**_address_ )
+.for ( reg = **&**_address_ :: )
 
 #### See Also
 
-[Operators Reference](readme.md)
+[Operators Reference](readme.md) | [ADDR](addr.md) | [.FOR](../directive/dot_for.md)

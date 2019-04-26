@@ -18,32 +18,15 @@ In Asmc a macro is handled at the same level as a procedure. The header file may
 
 This is achieved by simply excluding _invoke_ as appose to allow invocations of macros.
 
-	strlen( esi )
+    strlen( esi )
 
 Asmc sees the combination of a procedure followed by an open bracket as invoke. Empty brackets will be given special handling if the token in front is not a macro.
 
-    plabel proto
-    extern elabel:dword
-	.data
-    dlabel label dword
-	.code
-    clabel:
-	call	ax
-	call	eax
-	call	plabel
-	call	elabel
-	call	dlabel
-	call	clabel
-	call	xlabel
+    call eax
+    call label
 
-	ax()
-	eax()
-	plabel()
-	elabel()
-	dlabel()
-	clabel()
-	xlabel()
-    xlabel:
+    eax()
+    label()
 
 It is also possible to typedef a register to a proto type and call it directly using invoke:
 

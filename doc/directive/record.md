@@ -2,7 +2,7 @@ Asmc Macro Assembler Reference
 
 ### RECORD
 
-recordname **RECORD** fieldname:width [[= expression]]
+recordname **RECORD** fieldname:width [[= expression]]<br>
    [[, fieldname:width [[= expression]]]]...
 
 

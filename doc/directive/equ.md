@@ -2,8 +2,7 @@ Asmc Macro Assembler Reference
 
 ### EQU
 
-_name_ EQU _expression_
-
+_name_ EQU _expression_<br>
 _name_ EQU _<text>_
 
 The first directive assigns numeric value of _expression_ to _name_. The _name_ cannot be redefined later.

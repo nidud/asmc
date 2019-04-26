@@ -2,8 +2,8 @@ Asmc Macro Assembler Reference
 
 ## .WHILE
 
-**.WHILE** _condition_
-   _statements_
+**.WHILE** _condition_<br>
+   _statements_<br>
    **.ENDW**
 
 

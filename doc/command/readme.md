@@ -12,7 +12,7 @@ The options listed in the following table.
 
 | Option | Meaning |
 | ------ |:------- |
-| **/[0..10][p]** | Set CPU: 0=8086 (default), 1=80186, 2=80286, 3=80386, 4=80486, 5=Pentium,6=PPro,7=P2,8=P3,9=P4,10=x86-64\. [p] allows privileged instructions. |
+| **/[0..10]**[p] | Set CPU: 0=8086 (default), 1=80186, 2=80286, 3=80386, 4=80486, 5=Pentium,6=PPro,7=P2,8=P3,9=P4,10=x86-64\. [p] allows privileged instructions. |
 | **/assert** | Generate .assert(code). Same as .assert:on. |
 | **/autostack** | Calculate required stack space for arguments. |
 | **/bin** | Generate plain binary file. |
@@ -45,7 +45,7 @@ The options listed in the following table.
 | **/Gz** | Specifies use of STDCALL-style function calling and naming conventions. Same as **OPTION LANGUAGE:STDCALL**. |
 | **/homeparams** | Forces parameters passed in registers to be written to their locations on the stack upon function entry. |
 | **/I**_pathname_ | Sets path for include file. |
-| **/m**[_t|s|c|m|l|h|f_] | Set memory model. |
+| **/m**[_tscmlhf_] | Set memory model. |
 | **/mz** | Generate DOS MZ binary file. |
 | **/nc**_name_ | Set class name of code segment. |
 | **/nd**_name_ | Set name of data segment. |
@@ -62,7 +62,7 @@ The options listed in the following table.
 | **/Sf** | Adds first-pass listing to listing file. |
 | **/Sg** | Turns on listing of assembly-generated code. |
 | **/Sn** | Turns off symbol table when producing a listing. |
-| **/Sp[n]** | Set segment alignment. |
+| **/Sp**[n] | Set segment alignment. |
 | **/stackalign** | Align stack variables to 16-byte. |
 | **/swc** | Specifies use of [C-style](../directive/dot_switch.md) .SWITCH convention (default). |
 | **/swn** | No jump-table creation in [.SWITCH](../directive/dot_switch.md). |
@@ -73,15 +73,15 @@ The options listed in the following table.
 | **/w** | Same as /W0. |
 | **/W**_level_ | Sets the warning level, where _level_ = 0, 1, 2, or 3.|
 | **/win64** | Generate 64-bit COFF object. |
-| **/ws[_CodePage_]** | Store quoted strings as Unicode. See [OPTION WSTRING](../directive/opt_wstring.md). |
+| **/ws**[_CodePage_] | Store quoted strings as Unicode. See [OPTION WSTRING](../directive/opt_wstring.md). |
 | **/WX** | Returns an error code if warnings are generated. |
 | **/X** | Ignore INCLUDE environment path. |
 | **/zcw** | No decoration for C symbols. |
 | **/Zd** | Generates line-number information in object file. |
 | **/Zf** | Make all symbols public. |
-| **/zf[0|1]** | Set FASTCALL type: MS/OW. |
+| **/zf**[01] | Set FASTCALL type: MS/OW. |
 | **/Zg** | Generate code to match Masm. |
-| **/Zi[0|1|2|3]** | Add symbolic debug info. |
+| **/Zi**[0123] | Add symbolic debug info. |
 | **/zlc** | No OMF records of data in code. |
 | **/zld** | No OMF records of far call. |
 | **/zlf** | Suppress items in COFF: No file entry. |
@@ -91,7 +91,7 @@ The options listed in the following table.
 | [**/Zne**](Zne.md) | Disable non Masm extensions. |
 | **/Zp**[[_alignment_]] | Packs structures on the specified byte boundary. |
 | **/Zs** | Perform syntax check only. |
-| **/zt**<0|1|2> | Set STDCALL decoration. |
+| **/zt**[012] | Set STDCALL decoration. |
 | **/Zv8** | Enable Masm v8+ PROC visibility. |
 | **/zze** | No export symbol decoration. |
 | **/zzs** | Store name of start address. |

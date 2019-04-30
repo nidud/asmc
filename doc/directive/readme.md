@@ -29,7 +29,7 @@ Asmc Macro Assembler Reference
 - [.ASSERT](dot_assert.md)
 - [.BREAK](dot_break.md)
 - [.CASE](dot_case.md)
-- [.CLASSDEF](dot_classdef.md)
+- [.CLASS](dot_class.md)
 - [.CONTINUE](dot_continue.md)
 - [.COMDEF](dot_comdef.md)
 - [.DEFAULT](dot_default.md)

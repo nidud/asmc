@@ -14,7 +14,7 @@ GetQualifiedType proto :ptr int_t, :ptr asm_tok, :ptr qualified_type
 SetLocalOffsets proto :ptr proc_info
 
 qualified_type  struc
-size            int_t ?
+size            sdword ?
 symtype         LPASYM ?
 mem_type        db ?
 is_ptr          db ?
@@ -26,23 +26,33 @@ qualified_type  ends
     .code
 
     assume ebx:ptr asmtok
-
-AddLocalDir proc uses esi edi ebx i:int_t, tokenarray:ptr asmtok
-
-  local name:string_t
-  local _local:ptr dsym
-  local curr:ptr dsym
-  local info:ptr proc_info
-  local ti:qualified_type
-  local opndx:expr
-  local j:int_t
-
-    .repeat
-
-        inc i ;; go past .new
+    tokid macro operator
+      ifnb <operator>
+        inc i
+        add ebx,16
+      else
         mov ebx,i
         shl ebx,4
         add ebx,tokenarray
+      endif
+        retm<ebx>
+        endm
+
+AddLocalDir proc uses esi edi ebx i:sdword, tokenarray:ptr asmtok
+
+  local name                :ptr sbyte,
+        sym                 :ptr dsym,
+        curr                :ptr dsym,
+        info                :ptr proc_info,
+        ti                  :qualified_type,
+        opndx               :expr,
+        j                   :sdword,
+        constructor[128]    :sbyte ; class_class
+
+    .repeat
+
+        inc i  ; go past directive
+        tokid()
 
         .while 1
 
@@ -57,6 +67,7 @@ AddLocalDir proc uses esi edi ebx i:int_t, tokenarray:ptr asmtok
             mov ti.symtype,NULL
             mov ti.is_ptr,0
             mov ti.ptr_memtype,MT_EMPTY
+
             mov cl,ModuleInfo._model
             mov eax,1
             shl eax,cl
@@ -69,9 +80,10 @@ AddLocalDir proc uses esi edi ebx i:int_t, tokenarray:ptr asmtok
             mov ti.Ofssize,ModuleInfo.Ofssize
 
             .if !SymFind( name )
+
                 SymLCreate( name )
             .endif
-            mov _local,eax
+            mov sym,eax
 
             .if( !eax ) ; if it failed, an error msg has been written already
 
@@ -94,43 +106,44 @@ AddLocalDir proc uses esi edi ebx i:int_t, tokenarray:ptr asmtok
                 .endc
             .endsw
 
-            inc i ; go past name
-            add ebx,16
-
-            ;; get the optional index factor: local name[xx]:...
+            tokid(++) ; go past name
+            ;
+            ; .new name<[xx]>
+            ;
             .if( [ebx].token == T_OP_SQ_BRACKET )
 
-                inc i ; go past '['
-                add ebx,16
-                .for ( esi = ebx, edi = i: edi < Token_Count: edi++, ebx += 16 )
+                .for ( i++,         ; go past '['
+                       ebx += 16,
+                       esi = ebx,
+                       edi = i : edi < Token_Count: edi++, ebx += 16 )
+
                     .break .if ( [ebx].token == T_COMMA || [ebx].token == T_COLON )
                 .endf
                 .break(1) .if EvalOperand( &i, tokenarray, edi, &opndx, 0 ) == ERROR
+
                 .if ( opndx.kind != EXPR_CONST )
+
                     asmerr( 2026 )
                     mov opndx.value,1
                 .endif
 
-                mov ecx,_local
+                mov ecx,sym
                 mov [ecx].asym.total_length,opndx.value
                 or  [ecx].asym.flag,SFL_ISARRAY
 
-                mov ebx,i
-                shl ebx,4
-                add ebx,tokenarray
-                .if( [ebx].token == T_CL_SQ_BRACKET )
+                .if( [tokid()].token == T_CL_SQ_BRACKET )
 
-                    add ebx,16
-                    inc i ; go past ']'
+                    tokid(++) ; go past ']'
                 .else
                     asmerr( 2045 )
                 .endif
             .endif
 
-            mov esi,_local
+            mov esi,sym
             assume esi:ptr asym
-
-            ; get the optional type: local name[xx]:type
+            ;
+            ; .new name[xx]:<type>
+            ;
             .if( [ebx].token == T_COLON )
 
                 inc i
@@ -143,6 +156,7 @@ AddLocalDir proc uses esi edi ebx i:int_t, tokenarray:ptr asmtok
                     mov [esi].target_type,ti.symtype
                 .endif
             .endif
+
             mov [esi].is_ptr,ti.is_ptr
             .if ti.is_far
                 or [esi].sint_flag,SINT_ISFAR
@@ -161,32 +175,35 @@ AddLocalDir proc uses esi edi ebx i:int_t, tokenarray:ptr asmtok
                 mov edx,[eax].dsym.procinfo
 
                 .if( [edx].proc_info.locallist == NULL )
+
                     mov [edx].proc_info.locallist,esi
+
                 .else
-                    .for( ecx = [edx].proc_info.locallist: [ecx].dsym.nextlocal : ecx = [ecx].dsym.nextlocal )
+                    .for( ecx = [edx].proc_info.locallist : [ecx].dsym.nextlocal :,
+                          ecx = [ecx].dsym.nextlocal )
                     .endf
                     mov [ecx].dsym.nextlocal,esi
                 .endif
             .endif
 
-            mov ebx,i
-            shl ebx,4
-            add ebx,tokenarray
-            .if ( [ebx].token != T_FINAL )
+            .if ( [tokid()].token != T_FINAL )
+
                 .if ( [ebx].token == T_COMMA )
+
                     mov eax,i
                     inc eax
                     .if ( eax < Token_Count )
-                        inc i
-                        add ebx,16
+
+                        tokid(++)
                     .endif
+
                 .elseif ( [ebx].token == T_OP_BRACKET )
 
-                    inc i
                     lea edi,[ebx-16]
                     mov esi,[ebx-16].string_ptr
 
-                    .for ( eax = 1, ebx += 16 : [ebx].token != T_FINAL : ebx += 16, i++ )
+                    tokid(++) ; go past '('
+                    .for ( eax = 1 : [ebx].token != T_FINAL : ebx += 16, i++ )
                         .if ( [ebx].token == T_OP_BRACKET )
                             inc eax
                         .elseif ( [ebx].token == T_CL_BRACKET )
@@ -194,32 +211,58 @@ AddLocalDir proc uses esi edi ebx i:int_t, tokenarray:ptr asmtok
                             .break .ifz
                         .endif
                     .endf
-
                     .if( [ebx].token == T_CL_BRACKET )
-                        add ebx,16
-                        inc i ; go past ')'
+
+                        tokid(++) ; go past ')'
                     .else
                         asmerr( 2045 )
                         .break(1)
                     .endif
 
+                    mov esi,strcat(strcat(strcpy(&constructor, esi), "_"), esi)
+
+                    .if ( Parse_Pass > PASS_1 )
+
+                        .if SymFind( esi )
+
+                            .if ( [eax].asym.state == SYM_UNDEFINED )
+                                ;
+                                ; x::x proto
+                                ;
+                                ; undef x_x
+                                ; x_x macro this
+                                ;
+                                mov [eax].asym.state,SYM_MACRO
+                            .endif
+                        .endif
+                    .endif
+
                     .if ( [ebx-32].token == T_OP_BRACKET )
+
                         .if ( [edi-16].asmtok.token == T_COLON )
-                            AddLineQueueX( "%s::%s(&%s)", esi, esi, name )
+
+                            AddLineQueueX( "%s(&%s)", esi, name )
                         .else
-                            AddLineQueueX( "mov %s,%s::%s(0)", name, esi, esi )
+
+                            AddLineQueueX( "mov %s,%s(0)", name, esi )
                         .endif
                     .else
+
                         mov eax,[ebx-16].tokpos
                         mov byte ptr [eax],0
+
                         .if ( [edi-16].asmtok.token == T_COLON )
-                            AddLineQueueX( "%s::%s(&%s,%s)", esi, esi, name, [edi+32].asmtok.tokpos )
+
+                            AddLineQueueX( "%s(&%s, %s)", esi, name, [edi+32].asmtok.tokpos )
                         .else
-                            AddLineQueueX( "mov %s,%s::%s(0,%s)", name, esi, esi, [edi+32].asmtok.tokpos )
+
+                            AddLineQueueX( "mov %s,%s(0, %s)", name, esi, [edi+32].asmtok.tokpos )
                         .endif
+
                         mov eax,[ebx-16].tokpos
                         mov byte ptr [eax],')'
                     .endif
+
                 .else
                     asmerr( 2065, "," )
                     .break(1)
@@ -229,8 +272,10 @@ AddLocalDir proc uses esi edi ebx i:int_t, tokenarray:ptr asmtok
             .break .if !( eax < Token_Count )
         .endw
 
-        mov eax,CurrProc
-        SetLocalOffsets([eax].dsym.procinfo)
+        .if ( Parse_Pass == PASS_1 )
+            mov eax,CurrProc
+            SetLocalOffsets([eax].dsym.procinfo)
+        .endif
         mov eax,NOT_ERROR
     .until 1
     ret

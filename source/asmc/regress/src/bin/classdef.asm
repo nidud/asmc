@@ -1,5 +1,5 @@
 ;
-; v2.27 - added .CLASSDEF <Name> [args]
+; v2.27 - added .CLASS <Name> [args]
 ;
     .x64
     .model flat, fastcall
@@ -7,15 +7,16 @@
 
     option win64:2
 
-.classdef Class :byte, :ptr
+.class Class :byte, :ptr
 
 ; 00 lpVtbl LPCLASSVtbl ?
 
     base    db ?
     Method1 proc local
 
-; 00 Release proc -- lpVtbl[0]
+; 00  -- lpVtbl[0]
 
+    Release proc
     Method2 proc :ptr
 
     .ends

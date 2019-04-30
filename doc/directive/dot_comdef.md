@@ -61,4 +61,4 @@ The first method close the base class and open (in this case) the IShellFolderVt
 
 #### See Also
 
-[.ENDS](dot_ends.md) | [.CLASSDEF](dot_comdef.md)
+[.ENDS](dot_ends.md) | [.CLASS](dot_class.md)

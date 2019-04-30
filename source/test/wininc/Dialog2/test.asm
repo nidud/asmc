@@ -36,9 +36,9 @@ WinMain PROC hInstance: HINSTANCE,
 
     RegisterClassEx(&wc)
 
-    mov eax,CW_USEDEFAULT
+    mov ecx,CW_USEDEFAULT
     mov hwnd,CreateWindowEx(0,"WndClass","Window",WS_OVERLAPPEDWINDOW,
-		eax,eax,eax,eax,0,0,hInstance,0)
+		ecx,ecx,ecx,ecx,0,0,hInstance,0)
 
     ShowWindow(hwnd,SW_SHOWNORMAL)
     UpdateWindow(hwnd)

@@ -177,6 +177,7 @@ void ModelAssumeInit( void )
 	AddLineQueueX( "%r %r:%r,%r:%r,%r:%r,%r:%r,%r:%s,%r:%s",
 		  T_ASSUME, T_CS, T_FLAT, T_DS, T_FLAT, T_SS, T_FLAT, T_ES, T_FLAT, T_FS, pFSassume, T_GS, pGSassume );
 	break;
+#ifndef __ASMC64__
     case MODEL_TINY:
     case MODEL_SMALL:
     case MODEL_COMPACT:
@@ -199,6 +200,7 @@ void ModelAssumeInit( void )
 	    pFmt = "%r %r:%s,%r:%s";
 	AddLineQueueX( pFmt, T_ASSUME, T_CS, pCS, T_DS, szDgroup, T_SS, szDgroup );
 	break;
+#endif
     }
 }
 

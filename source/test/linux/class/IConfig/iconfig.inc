@@ -7,7 +7,7 @@ _I_SECTION  equ 0x02
 _I_ENTRY    equ 0x04
 _I_COMMENT  equ 0x08
 
-.classdef IConfig
+.class IConfig
 
     flags           UINT ?
     _name           LPSTR ?
@@ -18,6 +18,7 @@ _I_COMMENT  equ 0x08
     _next           LPICONFIG ?
     Compare         proc local :LPSTR, :LPSTR
 
+    Release         proc
     Read            proc :LPSTR
     Write           proc :LPSTR
     Find            proc :LPSTR

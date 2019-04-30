@@ -6,7 +6,7 @@ include hll.inc
 
 externdef CurrStruct:LPDSYM
 ;
-; item for .CLASSDEF, .ENDS, and .COMDEF
+; item for .CLASS, .ENDS, and .COMDEF
 ;
 com_item    STRUC
 cmd         dd ?
@@ -21,34 +21,9 @@ LPCLASS     typedef ptr com_item
 
 AddVirtualTable proc private uses esi
 
-  local l_p[16]:SBYTE, l_t[16]:SBYTE
-
     mov esi,ModuleInfo.ComStack
     AddLineQueueX( "%s ends", [esi].com_item.class )
-
-    .if [esi].com_item.cmd == T_DOT_CLASSDEF
-
-        mov eax,4
-        .if ModuleInfo.Ofssize == USE64
-
-            add eax,4
-        .endif
-        AddLineQueueX( "%sVtbl struct %d", [esi].com_item.class, eax )
-
-        inc ModuleInfo.class_label
-        sprintf( &l_t, "T$%04X", ModuleInfo.class_label )
-        sprintf( &l_p, "P$%04X", ModuleInfo.class_label )
-
-        .if ( [esi].com_item.langtype )
-            AddLineQueueX( "%s typedef proto %r :ptr %s", &l_t, [esi].com_item.langtype, [esi].com_item.class )
-        .else
-            AddLineQueueX( "%s typedef proto :ptr %s", &l_t, [esi].com_item.class )
-        .endif
-        AddLineQueueX( "%s typedef ptr %s", &l_p, &l_t )
-        AddLineQueueX( "Release %s ?", &l_p )
-    .else
-        AddLineQueueX( "%sVtbl struct", [esi].com_item.class )
-    .endif
+    AddLineQueueX( "%sVtbl struct", [esi].com_item.class )
     ret
 
 AddVirtualTable endp
@@ -91,7 +66,8 @@ ProcType proc uses esi edi ebx i:SINT, tokenarray:ptr asmtok, buffer:LPSTR
             add ebx,16
         .else
 
-            AddVirtualTable()
+            AddLineQueueX( "%s ends", [esi].com_item.class )
+            AddLineQueueX( "%sVtbl struct", [esi].com_item.class )
             inc IsCom
         .endif
     .endif
@@ -164,7 +140,7 @@ ProcType proc uses esi edi ebx i:SINT, tokenarray:ptr asmtok, buffer:LPSTR
             mov eax,ModuleInfo.ComStack
             .if eax
 
-                .if [eax].com_item.cmd == T_DOT_CLASSDEF
+                .if [eax].com_item.cmd == T_DOT_CLASS
 
                     strcat(edi, " ")
                     mov eax,ModuleInfo.ComStack
@@ -188,11 +164,9 @@ ProcType proc uses esi edi ebx i:SINT, tokenarray:ptr asmtok, buffer:LPSTR
         AddLineQueueX( "%s %s ?", id, &l_p )
 
         .if ModuleInfo.list
-
             LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
         .endif
         .if ModuleInfo.line_queue.head
-
             RunLineQueue()
         .endif
         mov eax,rc
@@ -227,7 +201,7 @@ ClassDirective proc uses esi edi ebx i:SINT, tokenarray:ptr asmtok
                 .break
             .endif
 
-            mov esi,[esi].com_item.class
+            mov ebx,[esi].com_item.class
             mov eax,CurrStruct
             mov edi,[eax].asym.name
             .if strlen(edi) > 4
@@ -237,8 +211,9 @@ ClassDirective proc uses esi edi ebx i:SINT, tokenarray:ptr asmtok
             .endif
             .if eax != "lbtV"
 
-                AddVirtualTable()
-                AddLineQueueX( "%sVtbl ends", esi )
+                AddLineQueueX( "%s ends", [esi].com_item.class )
+                AddLineQueueX( "%sVtbl struct", [esi].com_item.class )
+                AddLineQueueX( "%sVtbl ends", ebx )
             .else
                 AddLineQueueX( "%s ends", edi )
             .endif
@@ -246,7 +221,7 @@ ClassDirective proc uses esi edi ebx i:SINT, tokenarray:ptr asmtok
             .endc
 
         .case T_DOT_COMDEF
-        .case T_DOT_CLASSDEF
+        .case T_DOT_CLASS
 
             .if ModuleInfo.ComStack
 
@@ -269,7 +244,7 @@ ClassDirective proc uses esi edi ebx i:SINT, tokenarray:ptr asmtok
             .endif
 
             strcat( strcpy( edi, "LP" ), esi )
-            .if ( cmd == T_DOT_CLASSDEF )
+            .if ( cmd == T_DOT_CLASS )
 
                 _strupr( eax )
             .endif
@@ -295,7 +270,7 @@ ClassDirective proc uses esi edi ebx i:SINT, tokenarray:ptr asmtok
             .endif
             mov args,eax
 
-            .if ( cmd == T_DOT_CLASSDEF )
+            .if ( cmd == T_DOT_CLASS )
 
                 AddLineQueueX( "%s typedef ptr %s", edi, esi )
                 AddLineQueueX( "%sVtbl typedef ptr %sVtbl", edi, esi )
@@ -332,7 +307,7 @@ ClassDirective proc uses esi edi ebx i:SINT, tokenarray:ptr asmtok
                 add eax,4
             .endif
 
-            .if ( cmd == T_DOT_CLASSDEF )
+            .if ( cmd == T_DOT_CLASS )
 
                 AddLineQueueX( "%s struct %d", esi, eax )
                 AddLineQueueX( "lpVtbl %sVtbl ?", edi )
@@ -345,11 +320,9 @@ ClassDirective proc uses esi edi ebx i:SINT, tokenarray:ptr asmtok
         .endsw
 
         .if ModuleInfo.list
-
             LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
         .endif
         .if ModuleInfo.line_queue.head
-
             RunLineQueue()
         .endif
         mov eax,rc
@@ -360,7 +333,7 @@ ClassDirective endp
 
 ClassInit proc
 
-    mov ModuleInfo.class_label,0    ; init class label counter
+    mov ModuleInfo.class_label,0 ; init class label counter
     ret
 
 ClassInit endp

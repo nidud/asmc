@@ -188,7 +188,7 @@ __init_numeric		proto __cdecl :ptr threadlocinfo
 __init_time		proto __cdecl :ptr threadlocinfo
 __init_dummy		proto __cdecl :ptr threadlocinfo
 
-.classdef _LocaleUpdate :_locale_t
+.class _LocaleUpdate :_locale_t
 
     localeinfo	_locale_tstruct <>
     ptd		_ptiddata ?

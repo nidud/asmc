@@ -2,13 +2,14 @@ include windows.inc
 include math.inc
 include DrawingObject.inc
 
-.classdef CMyGestureEngine :ptr CDrawingObject
+.class CMyGestureEngine :ptr CDrawingObject
 
     _pcRect             LPCDRAWINGOBJECT ?
     _ptFirst            POINT <>
     _ptSecond           POINT <>
     _dwArguments        DWORD ?
 
+    Release             proc
     WndProc             proc :HWND, :WPARAM, :LPARAM
     ProcessPressAndTap  proc
     ProcessTwoFingerTap proc

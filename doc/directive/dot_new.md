@@ -12,4 +12,4 @@ containing count elements. If <type> is a class the default constructor is invok
 
 #### See Also
 
-[Directives Reference](readme.md) | [.CLASSDEF](dot_classdef.md)
+[Directives Reference](readme.md) | [.CLASS](dot_class.md)

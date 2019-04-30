@@ -10,7 +10,7 @@ FRONT                   equ 0
 INTERSECTING            equ 1
 BACK                    equ 2
 
-.classdef BoundingSphere XM_CALLCONV :ptr XMFLOAT3, :float
+.class BoundingSphere XM_CALLCONV :ptr XMFLOAT3, :float
 
     Center      XMFLOAT3 <> ;; Center of the sphere.
     Radius      float ?     ;; Radius of the sphere.
@@ -49,7 +49,7 @@ BACK                    equ 2
 
 CORNER_COUNT equ 8
 
-.classdef BoundingBox XM_CALLCONV :XMFLOAT3, :XMFLOAT3
+.class BoundingBox XM_CALLCONV :XMFLOAT3, :XMFLOAT3
 
     Center      XMFLOAT3 <> ;; Center of the box.
     Extents     XMFLOAT3 <> ;; Distance from the center to each side.
@@ -85,7 +85,7 @@ CORNER_COUNT equ 8
     .ends
 
 
-.classdef BoundingOrientedBox XM_CALLCONV :XMFLOAT3, :XMFLOAT3, :XMFLOAT4
+.class BoundingOrientedBox XM_CALLCONV :XMFLOAT3, :XMFLOAT3, :XMFLOAT4
 
     Center      XMFLOAT3 <>  ;; Center of the box.
     Extents     XMFLOAT3 <>  ;; Distance from the center to each side.
@@ -120,7 +120,7 @@ CORNER_COUNT equ 8
     .ends
 
 
-.classdef BoundingFrustum XM_CALLCONV :XMFLOAT3, :XMFLOAT4, :float, :float
+.class BoundingFrustum XM_CALLCONV :XMFLOAT3, :XMFLOAT4, :float, :float
 
     Origin          XMFLOAT3 <> ;; Origin of the frustum (and projection).
     Orientation     XMFLOAT4 <> ;; Quaternion representing rotation.

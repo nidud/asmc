@@ -7,21 +7,20 @@ include stdlib.inc
     .data
     g LPGRAPHICS 0
 
-    virtual_table label qword
-
-        dq Graphics_Release
-        dq Graphics_Setsize
-        dq Graphics_Update
-        dq Graphics_Getmaxx
-        dq Graphics_Getmaxy
-        dq Graphics_Setrgb
-        dq Graphics_Initpal
-        dq Graphics_Suspend
-        dq Graphics_Resume
-        dq Graphics_Line
-        dq Graphics_InitObjects
-        dq Graphics_MoveObjects
-        dq Graphics_HideObjects
+    virtual_table GraphicsVtbl { \
+        Graphics_Release,
+        Graphics_Setsize,
+        Graphics_Update,
+        Graphics_Getmaxx,
+        Graphics_Getmaxy,
+        Graphics_Setrgb,
+        Graphics_Initpal,
+        Graphics_Suspend,
+        Graphics_Resume,
+        Graphics_Line,
+        Graphics_InitObjects,
+        Graphics_MoveObjects,
+        Graphics_HideObjects }
 
     .code
 
@@ -31,7 +30,7 @@ include stdlib.inc
 
 Graphics::Update proc
 
-    or [rcx].flags,_G_UPDATE
+    lock or [rcx].flags,_G_UPDATE
     ret
 
 Graphics::Update endp
@@ -39,7 +38,7 @@ Graphics::Update endp
 
 Graphics::Suspend proc
 
-    or [rcx].flags,_G_SUSPENDED
+    lock or [rcx].flags,_G_SUSPENDED
     Sleep(8)
     ret
 
@@ -48,7 +47,7 @@ Graphics::Suspend endp
 
 Graphics::Resume proc
 
-    and [rcx].flags,not _G_SUSPENDED
+    lock and [rcx].flags,not _G_SUSPENDED
     ret
 
 Graphics::Resume endp

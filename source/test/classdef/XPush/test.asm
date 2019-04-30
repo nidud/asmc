@@ -2,11 +2,11 @@ include stdio.inc
 
     .code
 
-.classdef XPush :UINT
+.class XPush :UINT
 
     base    QWORD ?
     buffer  OWORD 8 dup(?)
-
+    Release proc
     .ends
 
     option win64:rsp nosave noauto

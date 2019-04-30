@@ -624,6 +624,38 @@ internal_func		typedef ptr internal_func_t
 
 LPASYM			typedef ptr asym
 
+asym_r0 record \
+    asym_method:1,	; v2.27: ptr is a class method
+    asym_included:1,	; COFF: static symbol added to public queue. ELF:symbol added to symbol table (SYM_INTERNAL)
+    asym_fwdref:1,	; symbol was forward referenced
+    asym_issaved:1,	; assembly-time variables only: symbol has been saved
+    asym_isproc:1,	; symbol is PROC or PROTO; has proc_info extension
+    asym_isdata:1,	; field first_size is valid
+    asym_isarray:1,	; symbol is an array (total_length is valid)
+    asym_list:1,	; symbol is to be listed
+    asym_ispublic:1,	; symbol has been added to the publics queue
+    asym_variable:1,	; symbol is variable (defined by '=' directive)
+    asym_predefined:1,	; symbol is predefined
+    asym_isequate:1,	; symbol has been defined with EQU
+    asym_iat_used:1,	; v2.07: IAT entry of symbol used (SYM_EXTERNAL + isproc==1 only)
+    asym_scoped:1,	; symbol is local label or SYM_STACK
+    asym_isdefined:1,	; symbol is "defined" in this pass
+    asym_used:1		; symbol has been referenced
+
+asym_r1 record \
+    asym_is_vararg:1,	; SYM_STACK, VARARG param
+    asym_isfar:1,	; SYM_EXTERNAL, SYM_TYPE, SYM_STACK
+    asym_weak:1,	; 1 if an unused "externdef"
+    asym_iscomm:1,	; is communal
+    asym_seg_ofssize:2	; SYM_EXTERNAL only
+
+asym_r2 record \
+    asym_purged:1,	; macro has been PURGEd
+    asym_mac_multiline:1,; v2.11: vararg arguments may be on multiple lines
+    asym_label:1,	; macro is "label-aware"
+    asym_isfunc:1,	; it's a macro function
+    asym_mac_vararg:1	; accept additional params
+
 asym			STRUC
 ;;
 ;; v2.11: name changed from 'next' to 'nextitem'
@@ -643,23 +675,26 @@ asym			STRUC
  _segment		LPASYM ?
  state			db ?
  mem_type		db ?
- SFL_USED		equ 0x0001
- SFL_ISDEFINED		equ 0x0002
- SFL_SCOPED		equ 0x0004
- SFL_IAT_USED		equ 0x0008
- SFL_ISEQUATE		equ 0x0010
- SFL_PREDEFINED		equ 0x0020
- SFL_VARIABLE		equ 0x0040
- SFL_ISPUBLIC		equ 0x0080
- SFL_LIST		equ 0x0100
- SFL_ISARRAY		equ 0x0200
- SFL_ISDATA		equ 0x0400
- SFL_ISPROC		equ 0x0800
- SFL_ISSAVED		equ 0x1000
- SFL_FWDREF		equ 0x2000
- SFL_INCLUDED		equ 0x4000
- SFL_METHOD		equ 0x8000
- flag			dw ?	; remove bitfield
+ union
+  r0			asym_r0 <>
+  SFL_USED		equ 0x0001
+  SFL_ISDEFINED		equ 0x0002
+  SFL_SCOPED		equ 0x0004
+  SFL_IAT_USED		equ 0x0008
+  SFL_ISEQUATE		equ 0x0010
+  SFL_PREDEFINED	equ 0x0020
+  SFL_VARIABLE		equ 0x0040
+  SFL_ISPUBLIC		equ 0x0080
+  SFL_LIST		equ 0x0100
+  SFL_ISARRAY		equ 0x0200
+  SFL_ISDATA		equ 0x0400
+  SFL_ISPROC		equ 0x0800
+  SFL_ISSAVED		equ 0x1000
+  SFL_FWDREF		equ 0x2000
+  SFL_INCLUDED		equ 0x4000
+  SFL_METHOD		equ 0x8000
+  flag			dw ?	; bitfield
+ ends
  UNION
     first_size		dd ?
     STRUC
@@ -669,23 +704,25 @@ asym			STRUC
 	    ptr_memtype db ?
 	    asmpass	db ?
 	ENDS
-
-	SINT_SEGOFSSIZE equ 03h
-	SINT_ISCOM	equ 04h
-	SINT_WEAK	equ 08h
-	SINT_ISFAR	equ 10h
-	SINT_ISVARARG	equ 20h
-
-	sint_flag	db ?
+	union
+	 r1		asym_r1 <>
+	 SINT_SEGOFSSIZE equ 03h
+	 SINT_ISCOM	equ 04h
+	 SINT_WEAK	equ 08h
+	 SINT_ISFAR	equ 10h
+	 SINT_ISVARARG	equ 20h
+	 sint_flag	db ?
+	ends
     ENDS
-
-	SMAC_ISVARARG	equ 01h
-	SMAC_ISFUNC	equ 02h
-	SMAC_ALABEL	equ 04h
-	SMAC_MULTILINE	equ 08h
-	SMAC_PURGED	equ 10h
-
-    mac_flag		dd ?	; --byte
+    union
+     r2			asym_r2 <>
+     SMAC_ISVARARG	equ 01h
+     SMAC_ISFUNC	equ 02h
+     SMAC_ALABEL	equ 04h
+     SMAC_MULTILINE	equ 08h
+     SMAC_PURGED	equ 10h
+     mac_flag		dd ?	; --byte
+    ends
  ENDS
  UNION
     first_length	dword ?

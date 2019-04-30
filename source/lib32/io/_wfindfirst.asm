@@ -59,12 +59,12 @@ copyblock:
     mov eax,[esi].dwFileAttributes
     mov [edi].attrib,eax
     mov eax,[esi].nFileSizeLow
-    mov [edi]._size,eax
+    mov [edi].size,eax
     mov [edi].time_create,__FTToTime(&[esi].ftCreationTime)
     mov [edi].time_access,__FTToTime(&[esi].ftLastAccessTime)
     mov [edi].time_write, __FTToTime(&[esi].ftLastWriteTime)
     lea esi,[esi].cFileName
-    lea edi,[edi]._name
+    lea edi,[edi].name
     mov ecx,260/2
     rep movsd
     ret

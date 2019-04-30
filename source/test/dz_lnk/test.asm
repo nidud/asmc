@@ -1,10 +1,10 @@
-include windows.inc
 include shlobj.inc
-include stdio.inc
 
-ROOT equ <"C:\\Asmc">
+    .data
+    root TCHAR @CatStr(<!">, @Environ(ASMCDIR),<!">),0
+    dz   TCHAR @CatStr(<!">, @Environ(ASMCDIR),<!">),"\bin\dz.exe",0
 
-.code
+    .code
 
 wmain proc
 
@@ -16,14 +16,13 @@ wmain proc
             CLSCTX_INPROC_SERVER, &IID_IShellLink, &link) == S_OK
 
         link.QueryInterface(&IID_IPersistFile, &file)
-
         link.SetDescription("Doszip Commander")
-        link.SetPath(ROOT "\\bin\\dz.exe")
-        link.SetWorkingDirectory(ROOT)
-        link.SetIconLocation(ROOT "\\bin\\dz.exe", 0)
-
+        link.SetPath(&dz)
+        link.SetWorkingDirectory(&root)
+        link.SetIconLocation(&dz, 0)
         file.Save("dz.lnk", TRUE)
     .endif
+    CoUninitialize()
     xor eax,eax
     ret
 

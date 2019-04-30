@@ -1,11 +1,9 @@
 
-include libc.inc ; LPSTR
+include libc.inc
 
-.classdef Class :LPSTR
-
-    string  LPSTR ?
-
+.class Class :string_t
+    string  string_t ?
+    Release proc
     Print   proc
-
     .ends
 

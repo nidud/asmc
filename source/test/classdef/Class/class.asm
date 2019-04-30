@@ -1,9 +1,7 @@
 include class.inc
 
     .data
-    virtual_table label qword
-        dq free
-        dq Class_Print
+    virtual_table ClassVtbl { free, Class_Print }
 
     .code
 

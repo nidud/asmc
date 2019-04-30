@@ -64,9 +64,9 @@ copyblock proc private
     mov eax,[rsi].dwFileAttributes
     mov [rdi].attrib,eax
     mov eax,[rsi].nFileSizeLow
-    mov dword ptr [rdi]._size,eax
+    mov dword ptr [rdi].size,eax
     mov eax,[rsi].nFileSizeHigh
-    mov dword ptr [rdi]._size[4],eax
+    mov dword ptr [rdi].size[4],eax
     __FTToTime( addr [rsi].ftCreationTime )
     mov [rdi].time_create,rax
     __FTToTime( addr [rsi].ftLastAccessTime )
@@ -74,7 +74,7 @@ copyblock proc private
     __FTToTime( addr [rsi].ftLastWriteTime )
     mov [rdi].time_write,rax
     lea rsi,[rsi].cFileName
-    lea rdi,[rdi]._name
+    lea rdi,[rdi].name
     mov rcx,260/4
     rep movsd
     xor eax,eax

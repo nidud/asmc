@@ -53,7 +53,8 @@ strstr proc uses esi edi ebx edx dst:LPSTR, src:LPSTR
                 .repeat
                     mov al,[esi+edx]
                     .continue(1) .if al != [edi+edx-1]
-                .untildxz
+                    dec edx
+                .untilz
             .endif
             mov eax,edi
             dec eax

@@ -1,4 +1,4 @@
-all: defw build clean
+all: import build clean
 
 .SUFFIXES: .lib
 .EXTENSIONS: .def .lbc .lib
@@ -115,15 +115,15 @@ targets = \
 	wtsapi32.lib
 
 {$(source_path)}.def.lib:
-	defw $<
-	libw /n /c /q /b /fac /ii ..\..\..\lib\$*.lib @$*.lbc
+	import $<
+	libw /n /c /q /b /fac /ii $*.lib @$*.lbc
 
 build: $(targets)
-	libw /n /c /q /b /fac /ii ..\..\..\lib\ntvdm.lib @def\ntvdm.lbc
+	libw /n /c /q /b /fac /ii ntvdm.lib @def\ntvdm.lbc
 
-defw:
-	asmc -pe defw.asm
+import:
+	asmc -pe import.asm
 
 clean:
-	del defw.exe
+	del import.exe
 	del *.lbc

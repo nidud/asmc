@@ -4,20 +4,14 @@ include class.inc
 
 main proc
 
-  local p:LPCLASS, s:Class
+  .new p:ptr Class( "String" )
 
-    .if Class::Class( NULL, "String" )
+    p.Print()
+    p.Release()
 
-        mov p,rax
+  .new s:Class( "String2" )
 
-        p.Print()
-        p.Release()
-    .endif
-
-    .if Class::Class( &s, "String2" )
-
-        s.Print()
-    .endif
+    s.Print()
     ret
 
 main endp

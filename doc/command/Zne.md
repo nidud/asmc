@@ -33,7 +33,7 @@ Asmc allows in addition to **C** the following keywords to be used as identifier
 - [.assert](../directive/dot_assert.md)
 - [.for](../directive/dot_for.md)
 - [.endf](../directive/dot_endf.md)
-- [.classdef](../directive/dot_classdef.md)
+- [.class](../directive/dot_class.md)
 - [.comdef](../directive/dot_comdef.md)
 - [.ends](../directive/dot_ends.md)
 - [.new](../directive/dot_new.md)

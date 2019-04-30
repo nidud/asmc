@@ -1,7 +1,11 @@
 include windows.inc
 include tchar.inc
 
-.code
+    .data
+    regedit TCHAR @CatStr(<!">, @Environ(SystemRoot),<!">),"\regedit.exe",0
+    dz      TCHAR @CatStr(<!">, @Environ(AsmcDir),<!">),"\bin\dz.exe",0
+
+    .code
 
 WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
 
@@ -12,14 +16,14 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
       .case WM_PAINT
         mov hDC,BeginPaint(hWnd, &ps)
 
-        .if ExtractIcon(hWnd, "C:\\Windows\\regedit.exe", 0)
+        .if ExtractIcon(hWnd, &regedit, 0)
 
             mov hIcon,rax
             DrawIcon(hDC, 100, 75, rax)
             DestroyIcon(hIcon)
         .endif
 
-        .if ExtractIcon(hWnd, "D:\\Asmc\\bin\\dz.exe", 0)
+        .if ExtractIcon(hWnd, &dz, 0)
 
             mov hIcon,rax
             DrawIcon(hDC, 200, 75, rax)
@@ -64,9 +68,9 @@ _tWinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LP
     mov wc.hCursor,LoadCursor(0, IDC_ARROW)
     RegisterClassEx(&wc)
 
-    mov eax,CW_USEDEFAULT
+    mov ecx,CW_USEDEFAULT
     mov hwnd,CreateWindowEx(0, "WndClass", "Window", WS_OVERLAPPEDWINDOW,
-        eax, eax, eax, eax, 0, 0, hInstance, 0)
+        ecx, ecx, ecx, ecx, 0, 0, hInstance, 0)
     ShowWindow(hwnd, SW_SHOWNORMAL)
     UpdateWindow(hwnd)
 

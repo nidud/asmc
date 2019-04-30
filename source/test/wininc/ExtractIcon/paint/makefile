@@ -4,13 +4,13 @@ win64   = 1
 test.exe:
 !if (dynamic)
  !if (win64)
-    asmc64 -pe -gui $*.asm
+    asmc -win64 -pe -gui $*.asm
  !else
     asmc -pe -gui $*.asm
  !endif
 !else
  !if (win64)
-    asmc64 $*.asm
+    asmc -win64 $*.asm
     linkw sys gui_64 file $*
  !else
     asmc $*.asm

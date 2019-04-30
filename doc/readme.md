@@ -1,10 +1,7 @@
-Asmc Macro Assembler Reference
+#### _Asmc Macro Assembler Reference (**Asmc.chm**)._
 
-## Asmc Macro Assembler Reference
-
-This document contains information on products in development so all information provided here is subject to change without notice.
-
-#### In This Section
+- [Build Environment for Asmc](build/readme.md)
+Describes the Asmc build environment.
 
 - [Asmc Command-Line Reference](command/readme.md)
 Describes the Asmc command-line option.
@@ -21,6 +18,5 @@ Provides links to topics discussing the use of symbols in Asmc.
 - [Operators Reference](operator/readme.md)
 Provides links to topics discussing the use of operators in Asmc.
 
-* * *
+## Asmc Macro Assembler Reference
 
-Copyright (C) The Asmc Contributors. All Rights Reserved.

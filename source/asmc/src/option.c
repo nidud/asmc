@@ -701,7 +701,7 @@ OPTFUNC( SetCodePage )
     return( NOT_ERROR );
 }
 
-/* OPTION SWITCH: C | PASCAL | TABLE | NOTABLE | REGAX | NOREGS | NOTEST
+/* OPTION SWITCH: C | PASCAL | TABLE | NOTABLE | REGAX | NOREGS
  */
 OPTFUNC( SetSwitch )
 /*****************/

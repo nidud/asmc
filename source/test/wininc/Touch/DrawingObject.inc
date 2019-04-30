@@ -3,7 +3,7 @@ include math.inc
 
 MAX_COLORS equ 5
 
-.classdef CDrawingObject
+.class CDrawingObject
 
     s_colors        COLORREF MAX_COLORS dup(?)
     _iCx            long_t ?
@@ -15,6 +15,7 @@ MAX_COLORS equ 5
     _bDrawDiagonals BOOL ?
     _iColorIndex    int_t ?
 
+    Release     proc
     ResetObject proc :int_t, :int_t
     Paint       proc :HDC
     Move        proc :long_t, :long_t

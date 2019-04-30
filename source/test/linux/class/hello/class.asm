@@ -17,7 +17,7 @@ Class::Print proc
     ret
 Class::Print endp
 
-Class::Class proc uses r12 s:LPSTR
+Class::Class proc uses r12 s:string_t
 
   local p:LPSTR
 

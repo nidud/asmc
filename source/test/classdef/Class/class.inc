@@ -1,11 +1,9 @@
 include stdio.inc
 include malloc.inc
 
-.classdef Class :LPSTR
-
-    string LPSTR ?
-
-    Print proc
-
+.class Class :string_t
+    string    string_t ?
+    Release   proc
+    Print     proc
     .ends
 

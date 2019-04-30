@@ -11,7 +11,7 @@ include malloc.inc
 include stdio.inc
 include tchar.inc
 
-.classdef InstructionSet_Internal
+.class InstructionSet_Internal
 
     nIds_       SINT ?
     nExIds_     SINT ?
@@ -26,11 +26,14 @@ include tchar.inc
     f_81_ECX_   dd ?
     f_81_EDX_   dd ?
 
+    Release     proc
     .ends
 
-.classdef InstructionSet
+.class InstructionSet
 
     CPU_Rep LPINSTRUCTIONSET_INTERNAL ?
+
+    Release        proc
     ;;
     ;; getters
     ;;
@@ -98,6 +101,64 @@ include tchar.inc
     .ends
 
 .data
+
+    InstructionSet_vtable InstructionSetVtbl { \
+        InstructionSet_Release,
+        InstructionSet_GetVendor,
+        InstructionSet_GetBrand,
+        InstructionSet_GetSSE3,
+        InstructionSet_GetPCLMULQDQ,
+        InstructionSet_GetMONITOR,
+        InstructionSet_GetSSSE3,
+        InstructionSet_GetFMA,
+        InstructionSet_GetCMPXCHG16B,
+        InstructionSet_GetSSE41,
+        InstructionSet_GetSSE42,
+        InstructionSet_GetMOVBE,
+        InstructionSet_GetPOPCNT,
+        InstructionSet_GetAES,
+        InstructionSet_GetXSAVE,
+        InstructionSet_GetOSXSAVE,
+        InstructionSet_GetAVX,
+        InstructionSet_GetF16C,
+        InstructionSet_GetRDRAND,
+        InstructionSet_GetMSR,
+        InstructionSet_GetCX8,
+        InstructionSet_GetSEP,
+        InstructionSet_GetCMOV,
+        InstructionSet_GetCLFSH,
+        InstructionSet_GetMMX,
+        InstructionSet_GetFXSR,
+        InstructionSet_GetSSE,
+        InstructionSet_GetSSE2,
+        InstructionSet_GetFSGSBASE,
+        InstructionSet_GetBMI1,
+        InstructionSet_GetHLE,
+        InstructionSet_GetAVX2,
+        InstructionSet_GetBMI2,
+        InstructionSet_GetERMS,
+        InstructionSet_GetINVPCID,
+        InstructionSet_GetRTM,
+        InstructionSet_GetAVX512F,
+        InstructionSet_GetRDSEED,
+        InstructionSet_GetADX,
+        InstructionSet_GetAVX512PF,
+        InstructionSet_GetAVX512ER,
+        InstructionSet_GetAVX512CD,
+        InstructionSet_GetSHA,
+        InstructionSet_GetPREFETCHWT1,
+        InstructionSet_GetLAHF,
+        InstructionSet_GetLZCNT,
+        InstructionSet_GetABM,
+        InstructionSet_GetSSE4a,
+        InstructionSet_GetXOP,
+        InstructionSet_GetTBM,
+        InstructionSet_GetSYSCALL,
+        InstructionSet_GetMMXEXT,
+        InstructionSet_GetRDTSCP,
+        InstructionSet_Get3DNOWEXT,
+        InstructionSet_Get3DNOW }
+
 ;;
 ;; Initialize static member data
 ;:
@@ -263,26 +324,17 @@ InstructionSet::Release endp
 
 InstructionSet::InstructionSet proc uses rsi rdi
 
-    .if malloc( sizeof(InstructionSet) + sizeof(InstructionSetVtbl) )
+    .if malloc( sizeof(InstructionSet) )
+
         mov rsi,rax
-        lea rdi,[rax+sizeof(InstructionSet)]
-        mov [rsi],rdi
-        lea rax,InstructionSet_Release
-        mov [rdi],rax
-        add rdi,size_t
-        for q,<Vendor,Brand,SSE3,PCLMULQDQ,MONITOR,SSSE3,FMA,CMPXCHG16B,SSE41,SSE42,MOVBE,POPCNT,\
-            AES,XSAVE,OSXSAVE,AVX,F16C,RDRAND,MSR,CX8,SEP,CMOV,CLFSH,MMX,FXSR,SSE,SSE2,FSGSBASE,BMI1,\
-            HLE,AVX2,BMI2,ERMS,INVPCID,RTM,AVX512F,RDSEED,ADX,AVX512PF,AVX512ER,AVX512CD,SHA,\
-            PREFETCHWT1,LAHF,LZCNT,ABM,SSE4a,XOP,TBM,SYSCALL,MMXEXT,RDTSCP,3DNOWEXT,3DNOW>
-            lea rax,InstructionSet_Get&q&
-            mov [rdi],rax
-            add rdi,size_t
-            endm
+        lea rax,InstructionSet_vtable
+        mov [rsi],rax
+
         InstructionSet_Internal::InstructionSet_Internal(&[rsi].InstructionSet.CPU_Rep)
         mov rax,rsi
-        mov rdi,_this
-        .if rdi
-            mov [rdi],rax
+        mov rdx,_this
+        .if rdx
+            mov [rdx],rax
         .endif
     .endif
     ret
@@ -390,11 +442,11 @@ main proc
 
     InstructionSet::InstructionSet(&cpu)
     support_message macro isa_feature, is_supported
-        printf( isa_feature )
+        printf( "%-15s", isa_feature )
         .if is_supported
-            printf( " supported\n" )
+            printf( " [x]\n" )
         .else
-            printf( " not supported\n" )
+            printf( " [ ]\n" )
         .endif
         retm<>
         endm

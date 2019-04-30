@@ -65,7 +65,7 @@ endif
 ifndef _GUIDDEF_H_
 _GUIDDEF_H_ equ <>
 ifndef __PE__
-includelib uuid.lib
+;includelib uuid.lib
 endif
 
 ifndef __LPGUID_DEFINED__

@@ -32,13 +32,11 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
         mov hDC,BeginPaint(hWnd, &ps)
         .ifd !SHGetDesktopFolder(&pDesktop)
 
-;            .ifd !pDesktop.ParseDisplayName(NULL, NULL, L"C:\\Windows", NULL, &pIDL, NULL)
-            .ifd !pDesktop.ParseDisplayName(NULL, NULL, L"D:\\Asmc\\bin", NULL, &pIDL, NULL)
+            .ifd !pDesktop.ParseDisplayName(NULL, NULL, L"C:\\Windows", NULL, &pIDL, NULL)
 
                 .ifd !pDesktop.BindToObject(pIDL, NULL, &IID_IShellFolder, &pSubfolder)
 
-;                    .ifd !pSubfolder.ParseDisplayName(NULL, NULL, L"regedit.exe", NULL, &pIDL, NULL)
-                    .ifd !pSubfolder.ParseDisplayName(NULL, NULL, L"asmc.exe", NULL, &pIDL, NULL)
+                    .ifd !pSubfolder.ParseDisplayName(NULL, NULL, L"regedit.exe", NULL, &pIDL, NULL)
 
                         .ifd !pSubfolder.GetUIObjectOf(hWnd, 1, &pIDL, &IID_IExtractIcon, 0, &pExtractor)
 
@@ -96,9 +94,9 @@ _tWinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LP
     mov wc.hCursor,LoadCursor(0, IDC_ARROW)
     RegisterClassEx(&wc)
 
-    mov eax,CW_USEDEFAULT
+    mov ecx,CW_USEDEFAULT
     mov hwnd,CreateWindowEx(0, "WndClass", "Window", WS_OVERLAPPEDWINDOW,
-        eax, eax, eax, eax, 0, 0, hInstance, 0)
+        ecx, ecx, ecx, ecx, 0, 0, hInstance, 0)
     ShowWindow(hwnd, SW_SHOWNORMAL)
     UpdateWindow(hwnd)
 

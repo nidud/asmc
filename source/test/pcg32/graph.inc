@@ -1,5 +1,5 @@
 
-.classdef Object
+.class Object
 
     rc          RECT <>
     pos         POINT <>
@@ -10,6 +10,7 @@
     speed       SINT ?
     random      proc local :UINT
 
+    Release     proc
     Hide        proc
     Show        proc
     Move        proc
@@ -24,7 +25,7 @@ _G_UPDATE       equ 0x01
 _G_SUSPENDED    equ 0x02
 
 
-.classdef Graphics
+.class Graphics
 
     flags       dd ?
     bcount      dd ?
@@ -33,6 +34,7 @@ _G_SUSPENDED    equ 0x02
     palett      RGBQUAD 256 dup(<>)
     object      LPOBJECT MAXOBJECTS dup(?)
 
+    Release     proc
     Setsize     proc :UINT, :UINT
     Update      proc
     Getmaxx     proc

@@ -3,7 +3,7 @@
 #include <hllext.h>
 #include <types.h>
 //
-// item for .CLASSDEF, .ENDS, and .COMDEF
+// item for .CLASS, .ENDS, and .COMDEF
 //
 struct com_item {
     int     cmd;
@@ -21,7 +21,7 @@ static void AddVirtualTable(void)
     p = ModuleInfo.g.ComStack;
     AddLineQueueX( "%s ends", p->class );
 
-    if ( p->cmd == T_DOT_CLASSDEF ) {
+    if ( p->cmd == T_DOT_CLASS ) {
 
         i = 4;
         if ( ModuleInfo.Ofssize == USE64 )
@@ -127,7 +127,7 @@ int ProcType(int i, struct asm_tok tokenarray[], char *buffer)
 
         if ( o ) {
 
-            if ( o->cmd == T_DOT_CLASSDEF ) {
+            if ( o->cmd == T_DOT_CLASS ) {
 
                 strcat(buffer, " ");
                 strcat(buffer, o->class);
@@ -184,7 +184,7 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
         break;
 
     case T_DOT_COMDEF:
-    case T_DOT_CLASSDEF:
+    case T_DOT_CLASS:
 
         if ( o )
             return asmerr(1011);
@@ -198,7 +198,7 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
         strcpy(o->class, p);
         strcat( strcpy( buffer, "LP" ), p );
 
-        if ( cmd == T_DOT_CLASSDEF )
+        if ( cmd == T_DOT_CLASS )
             _strupr( buffer );
 
         args = i + 1;
@@ -215,7 +215,7 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
             args++;
         }
 
-        if ( cmd == T_DOT_CLASSDEF ) {
+        if ( cmd == T_DOT_CLASS ) {
 
             AddLineQueueX( "%s typedef ptr %s", buffer, p );
             AddLineQueueX( "%sVtbl typedef ptr %sVtbl", buffer, p );
@@ -245,7 +245,7 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
         if ( ModuleInfo.Ofssize == USE64 )
             x = 8;
 
-        if ( cmd == T_DOT_CLASSDEF ) {
+        if ( cmd == T_DOT_CLASS ) {
 
             AddLineQueueX( "%s struct %d", p, x );
             AddLineQueueX( "lpVtbl %sVtbl ?", buffer );

@@ -532,43 +532,29 @@ else
     mov ModuleInfo.defOfssize,USE64
 endif
     mov ModuleInfo.ljmp,1
-    mov al,Options.write_listing
-    mov ModuleInfo.list,al
+    mov ModuleInfo.list,Options.write_listing
     mov ModuleInfo.cref,1
-    mov al,Options.listif
-    mov ModuleInfo.listif,al
-    mov al,Options.list_generated_code
-    mov ModuleInfo.list_generated_code,al
-    mov eax,Options.list_macro
-    mov ModuleInfo.list_macro,eax
-    mov al,Options.case_sensitive
-    mov ModuleInfo.case_sensitive,al
-    mov al,Options.convert_uppercase
-    mov ModuleInfo.convert_uppercase,al
+    mov ModuleInfo.listif,Options.listif
+    mov ModuleInfo.list_generated_code,Options.list_generated_code
+    mov ModuleInfo.list_macro,Options.list_macro
+    mov ModuleInfo.case_sensitive,Options.case_sensitive
+    mov ModuleInfo.convert_uppercase,Options.convert_uppercase
     SymSetCmpFunc()
     mov ModuleInfo.segorder,SEGORDER_SEQ;
     mov ModuleInfo.radix,10
-    mov al,Options.fieldalign
-    mov ModuleInfo.fieldalign,al
+    mov ModuleInfo.fieldalign,Options.fieldalign
     mov ModuleInfo.procalign,0
-    mov al,Options.xflag
-    mov ModuleInfo.xflag,al
+    mov ModuleInfo.xflag,Options.xflag
     mov al,ModuleInfo.aflag
     and al,_AF_LSTRING
     or	al,Options.aflag
     mov ModuleInfo.aflag,al
-    mov al,Options.loopalign
-    mov ModuleInfo.loopalign,al
-    mov al,Options.casealign
-    mov ModuleInfo.casealign,al
-    mov eax,Options.codepage
-    mov ModuleInfo.codepage,eax
-    mov al,Options.epilogueflags
-    mov ModuleInfo.epilogueflags,al
-    mov al,Options.win64_flags
-    mov ModuleInfo.win64_flags,al
-    mov al,Options.strict_masm_compat
-    mov ModuleInfo.strict_masm_compat,al
+    mov ModuleInfo.loopalign,Options.loopalign
+    mov ModuleInfo.casealign,Options.casealign
+    mov ModuleInfo.codepage,Options.codepage
+    mov ModuleInfo.epilogueflags,Options.epilogueflags
+    mov ModuleInfo.win64_flags,Options.win64_flags
+    mov ModuleInfo.strict_masm_compat,Options.strict_masm_compat
     ;
     ; if OPTION DLLIMPORT was used, reset all iat_used flags
     ;
@@ -805,8 +791,7 @@ OnePass proc uses esi edi
 	    set_curr_srcfile([esi].line_item.srcfile, [esi].line_item.lineno)
 
 	    mov ModuleInfo.line_flags,0
-	    mov eax,[esi].line_item.macro_level
-	    mov MacroLevel,eax
+	    mov MacroLevel,[esi].line_item.macro_level
 	    mov ModuleInfo.CurrComment,0
 	    Tokenize(&[esi].line_item.line, 0, ModuleInfo.tokenarray, TOK_DEFAULT)
 	    mov ModuleInfo.token_count,eax
@@ -865,7 +850,7 @@ get_module_name proc private uses esi edi
     lea esi,ModuleInfo.name
     _strupr(esi)
     .while 1
-	movzx	eax,byte ptr [esi]
+	movzx eax,byte ptr [esi]
 	add esi,1
 	.break	.if !eax
 	.continue .if _ltype[eax+1] & _DIGIT or _LABEL

@@ -9,7 +9,7 @@ main proc
 
     .assert _findfirst("makefile", &ff) != -1
     .assert !_findclose(rax)
-    .assert !strcmp(&ff._name, "makefile")
+    .assert !strcmp(&ff.name, "makefile")
     .assert _findfirst("?akefile", &ff) != -1
     .assert !_findclose(rax)
     .assert _findfirst("*.mak", &ff) != -1

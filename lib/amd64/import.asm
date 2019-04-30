@@ -1,4 +1,4 @@
-; IMPLIB.ASM--
+; IMPORT.ASM--
 ;
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
@@ -61,24 +61,6 @@ BuildImportLib proc uses rsi rdi rbx r12 r13 dll:LPSTR, path:LPSTR
 
 BuildImportLib endp
 
-
-ValidateString proc string:LPSTR
-    mov al,[rcx]
-    .if al == ' ' || al == 9 || al == ';'
-        xor eax,eax
-    .elseif strlen(rcx)
-        mov rcx,rax
-        add rcx,string
-        .repeat
-            dec rcx
-            .break .if byte ptr [rcx] > ' '
-            mov byte ptr [rcx],0
-            dec rax
-        .untilz
-    .endif
-    ret
-ValidateString endp
-
 main proc argc:SINT, argv:ptr
 
   local lbuf[256]:sbyte
@@ -90,6 +72,7 @@ main proc argc:SINT, argv:ptr
         .if ecx < 2
 
             printf("Usage: implib <list> [<out_path>]\n")
+
             mov eax,1
             .break
         .endif
@@ -111,7 +94,23 @@ main proc argc:SINT, argv:ptr
 
             .while fgets(rdi, 256, rsi)
 
-                .ifd ValidateString(rdi)
+                mov al,[rdi]
+                .if al == ' ' || al == 9 || al == ';'
+
+                    xor eax,eax
+
+                .elseif strlen(rdi)
+
+                    lea rcx,[rdi+rax]
+                    .repeat
+                        dec rcx
+                        .break .if byte ptr [rcx] > ' '
+                        mov byte ptr [rcx],0
+                        dec rax
+                    .untilz
+                .endif
+
+                .if eax
 
                     printf("  %s.lib\n", rdi)
                     BuildImportLib(rdi, path)

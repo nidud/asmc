@@ -630,7 +630,7 @@ wer
 ;wiavideo
 ;win32spl
 winbio
-winfax
+;winfax
 winhttp
 wininet
 ;winipsec

@@ -17,6 +17,3 @@ Provides links to topics discussing the use of symbols in Asmc.
 
 - [Operators Reference](operator/readme.md)
 Provides links to topics discussing the use of operators in Asmc.
-
-## Asmc Macro Assembler Reference
-

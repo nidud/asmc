@@ -17,21 +17,21 @@ Declares a structure type for a [COM interface](dot_comdef.md).
 - **LPCLASS** typedef ptr Class
 - **LPCLASSVtbl** typedef ptr ClassVtbl
 - **Class** struct
-    lpVtbl LPCLASSVtbl ?
-    foo    typedef() ?
+- **lpVtbl** LPCLASSVtbl ?
+- **foo** typedef() ?
 - **Class** ends
 - **ClassVtbl** struct
-    bar    typedef(:ptr Class, :ptr) ?
+- **bar** typedef(:ptr Class, :ptr) ?
 - **ClassVtbl** ends
 
 LOCAL means a pointer in the base class.
 
 - assume rcx:LPCLASS
 - [rcx].foo()
-        call [rcx+0x10]
+- _call [rcx+0x10]_
 - [rcx].bar(rdx)
-        mov  rax,[rcx]
-        call [rax]
+- _mov rax,[rcx]_
+- _call [rax]_
 
 #### See Also
 

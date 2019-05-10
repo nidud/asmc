@@ -7,3 +7,10 @@ $(lib_dir)\amd64\directxmath.lib:
     libw /q /b /n /c /fac $@ *.obj
     del *.obj
 
+directx.x64:
+    asmc -q -win64 $*.regress
+    linkw sys con_64 f $*
+    if not exist $*.exe exit
+    $*.exe
+    if errorlevel 1 exit
+    cmd /C del $*.obj $*.exe

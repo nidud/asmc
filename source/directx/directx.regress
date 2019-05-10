@@ -1,56 +1,55 @@
-
 include DirectXPackedVector.inc
 
-comph macro i
+.assert:on
+
+PackedVectorToHalf macro i
     local r
     .data
     r real2 i
     .code
     XMConvertFloatToHalf(i)
-    ;movd eax,xmm0
     mov bx,r
     exitm<.assert( ax == bx )>
     endm
 
-compf macro i
+PackedVectorToFloat macro i
     local r
     .data
     r real4 i
     .code
     XMConvertHalfToFloat(i)
-    ;movd eax,xmm0
     mov ebx,r
     exitm<.assert( eax == ebx )>
     endm
 
-.data
+    .data
     r2 real2 1.0,2.0,3.0,4.0
     r4 real4 1.0,2.0,3.0,4.0
     b2 real2 4 dup(?)
     b4 real4 4 dup(?)
-.code
+    .code
 
 main proc
 
-    comph(0.0)
-    comph(1.0)
-    comph(2.0)
-    comph(-2.0)
-    comph(65504.0)
-    comph(1.000976563)
-    comph(0.0009765625)
-    comph(0.33325196)
-    comph(6.103515625e-05)
+    PackedVectorToHalf(0.0)
+    PackedVectorToHalf(1.0)
+    PackedVectorToHalf(2.0)
+    PackedVectorToHalf(-2.0)
+    PackedVectorToHalf(65504.0)
+    PackedVectorToHalf(1.000976563)
+    PackedVectorToHalf(0.0009765625)
+    PackedVectorToHalf(0.33325196)
+    PackedVectorToHalf(6.103515625e-05)
 
-    compf(0.0)
-    compf(1.0)
-    compf(2.0)
-    compf(-2.0)
-    compf(65504.0)
-    compf(1.000976563)
-    compf(0.0009765625)
-    compf(0.33325196)
-    compf(6.103515625e-05)
+    PackedVectorToFloat(0.0)
+    PackedVectorToFloat(1.0)
+    PackedVectorToFloat(2.0)
+    PackedVectorToFloat(-2.0)
+    PackedVectorToFloat(65504.0)
+    PackedVectorToFloat(1.000976563)
+    PackedVectorToFloat(0.0009765625)
+    PackedVectorToFloat(0.33325196)
+    PackedVectorToFloat(6.103515625e-05)
 
     XMConvertHalfToFloatStream(&b4, 4, &r2, 2, 4)
     lea rsi,b4
@@ -72,5 +71,6 @@ main proc
     ret
 
 main endp
+
 
     end

@@ -1948,6 +1948,7 @@ static void win64_SaveRegParams( struct proc_info *info )
     int maxregs = 4;
     int size = 8;
     int params = 0;
+    int vararg = 0;
     int i;
 
     if ( CurrProc->sym.langtype == LANG_VECTORCALL )
@@ -1965,7 +1966,7 @@ static void win64_SaveRegParams( struct proc_info *info )
     if ( params && maxregs == 6 && param->sym.total_size == 16 )
 	size = 16;
 
-    if ( size == 16 ) {
+    if ( size == 16 ) { /* v2.30 - update param offset */
 
 	for ( curr = info->paralist;
 	    curr && curr->nextparam != param; curr = curr->nextparam );
@@ -1981,22 +1982,25 @@ static void win64_SaveRegParams( struct proc_info *info )
     }
 
     curr = info->paralist;
-    if ( curr && curr->sym.is_vararg == TRUE )
+    if ( curr && curr->sym.is_vararg == TRUE ) {
 	params = 3;
+	vararg++;
+    }
 
     for ( i = 0; param && i <= params; i++ ) {
-
 	/* v2.05: save XMMx if type is float/double */
 	if ( param->sym.is_vararg == FALSE ) {
-	    if ( param->sym.mem_type & MT_FLOAT ) {
-		if ( param->sym.mem_type == MT_REAL4 )
-		    AddLineQueueX( "movd [%r+%u], %r", T_RSP, 8 + i * size, T_XMM0 + i );
-		else if ( param->sym.mem_type == MT_REAL8 )
-		    AddLineQueueX( "movq [%r+%u], %r", T_RSP, 8 + i * size, T_XMM0 + i );
-		else
-		    AddLineQueueX( "movaps [%r+%u], %r", T_RSP, 8 + i * size, T_XMM0 + i );
-	    } else if ( i < 4 )
-		AddLineQueueX( "mov [%r+%u], %r", T_RSP, 8 + i * size, ms64_regs[i] );
+	    if ( param->sym.used || vararg || Parse_Pass == PASS_1 ) {
+		if ( param->sym.mem_type & MT_FLOAT ) {
+		    if ( param->sym.mem_type == MT_REAL4 )
+			AddLineQueueX( "movd [%r+%u], %r", T_RSP, 8 + i * size, T_XMM0 + i );
+		    else if ( param->sym.mem_type == MT_REAL8 )
+			AddLineQueueX( "movq [%r+%u], %r", T_RSP, 8 + i * size, T_XMM0 + i );
+		    else
+			AddLineQueueX( "movaps [%r+%u], %r", T_RSP, 8 + i * size, T_XMM0 + i );
+		} else if ( i < 4 )
+		    AddLineQueueX( "mov [%r+%u], %r", T_RSP, 8 + i * size, ms64_regs[i] );
+	    }
 	    for ( curr = info->paralist;
 		curr && curr->nextparam != param; curr = curr->nextparam );
 	    param = curr;

@@ -6,6 +6,8 @@ include quadmath.inc
 include asmc.inc
 include token.inc
 
+.pragma warning(disable: 6004)
+
 public  fastcall_tab
 
 GetGroup        proto :ptr asym
@@ -299,6 +301,7 @@ vc32_param proc uses esi edi ebx pp:ptr dsym, index:SINT, param:ptr dsym, adr:SI
     opnd:ptr expr, paramvalue:LPSTR, r0used:ptr byte
 
     local z
+    local value[64]:sbyte
 
     mov esi,param
     xor eax,eax
@@ -368,19 +371,46 @@ vc32_param proc uses esi edi ebx pp:ptr dsym, index:SINT, param:ptr dsym, adr:SI
                 .elseif [edi].expr.kind == EXPR_FLOAT
 
                     mov edx,param
-                    .if [edx].asym.mem_type == MT_REAL4
+                    mov al,[edx].asym.mem_type
+
+                    .switch al
+                      .case MT_REAL4
                         mov eax,r0used
                         or  byte ptr [eax],R0_USED
                         AddLineQueueX( " mov %r, %s", T_EAX, paramvalue )
                         AddLineQueueX( " movd %r, %r", ebx, T_EAX )
-                    .elseif [edx].asym.mem_type == MT_REAL8
+                        .endc
+                      .case MT_REAL8
                         AddLineQueueX( " pushd %r (%s)", T_HIGH32, paramvalue )
                         AddLineQueueX( " pushd %r (%s)", T_LOW32, paramvalue )
                         AddLineQueueX( " movq %r, [esp]", ebx )
                         AddLineQueueX( " add esp, 8" )
-                    .else
+                        .endc
+                      .case MT_REAL16
+                        xor eax,eax
+                        mov edx,paramvalue
+                        .if ( [edi].expr.flags1 & EXF_NEGATIVE )
+                            inc eax
+                        .endif
+                        mov ecx,[edi].expr.float_tok
+                        .if ecx
+                            mov edx,[ecx].asmtok.string_ptr
+                        .endif
+                        atofloat( edi, edx, 16, eax, 0 )
+                        lea esi,value
+                        sprintf( esi, "0x%016I64X", [edi].expr.hlvalue )
+                        AddLineQueueX( " pushd %r (%s)", T_HIGH32, esi )
+                        AddLineQueueX( " pushd %r (%s)", T_LOW32, esi )
+                        sprintf( esi, "0x%016I64X", [edi].expr.llvalue )
+                        AddLineQueueX( " pushd %r (%s)", T_HIGH32, esi )
+                        AddLineQueueX( " pushd %r (%s)", T_LOW32, esi )
+                        AddLineQueueX( " movups %r, [esp]", ebx )
+                        AddLineQueueX( " add esp, 16" )
+                        .endc
+                      .default
                         AddLineQueueX( " movaps %r, %s", ebx, paramvalue )
-                    .endif
+                        .endc
+                    .endsw
                 .else
                     mov edx,param
                     .if [edx].asym.mem_type == MT_REAL4
@@ -833,7 +863,7 @@ CheckXMM proc uses ebx reg:SINT, paramvalue:LPSTR, regs_used:ptr byte, param:ptr
                     inc edx
                     mov bl,0x80
                 .endif
-                atoquad(edi, edx, 0)
+                cvta_q(edi, edx, 0)
                 or byte ptr [edi+15],bl
                 .if dword ptr [edi].expr.llvalue[4]
                     sprintf( &buffer, "0x%llX", [edi].expr.llvalue )

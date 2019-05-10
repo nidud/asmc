@@ -50,9 +50,9 @@
 
 #ifndef _CRT_ERRNO_DEFINED
 #define _CRT_ERRNO_DEFINED
-#if defined(__MT__) || defined(_DLL) || defined(__GNUC__)
-extern int *__cdecl __errno(void);
-#define errno  (*__errno())
+#if defined(_WIN64) || defined(__MT__) || defined(_DLL) || defined(__GNUC__)
+extern int *__cdecl _errno(void);
+#define errno  (*_errno())
 #else
 extern int errno;
 #endif

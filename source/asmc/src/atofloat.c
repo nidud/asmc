@@ -23,9 +23,9 @@ void atofloat( void *out, const char *inp, unsigned size, int negative, uint_8 f
         }
     } else {
 
-        qerrno = 0;
-        atoquad(out, inp, NULL);
-        if ( qerrno )
+        errno = 0;
+        cvta_q(out, inp, NULL);
+        if ( errno )
             asmerr( 2104, inp );
 
         if( negative ) {
@@ -35,22 +35,22 @@ void atofloat( void *out, const char *inp, unsigned size, int negative, uint_8 f
 
         switch ( size ) {
         case 2:
-            quadtoh(out, out);
-            if ( qerrno )
+            cvtq_h(out, out);
+            if ( errno )
                 asmerr( 2071 );
             break;
         case 4:
-            quadtof(out, out);
-            if ( qerrno )
+            cvtq_ss(out, out);
+            if ( errno )
                 asmerr( 2071 );
             break;
         case 8:
-            quadtod(out, out);
-            if ( qerrno )
+            cvtq_sd(out, out);
+            if ( errno )
                 asmerr( 2071 );
             break;
         case 10:
-            quadtold(out, out);
+            cvtq_ld(out, out);
         case 16:
             break;
         default:

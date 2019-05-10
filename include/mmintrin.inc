@@ -15,8 +15,10 @@ ifdef _M_CEE_PURE
 endif
 
 ifndef _WIN64
+ifdef __SSE__
     .686
     .xmm
+endif
 ifndef _REGS6432
     rax equ <eax>
     rbx equ <ebx>

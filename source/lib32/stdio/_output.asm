@@ -9,6 +9,7 @@ include stdlib.inc
 include limits.inc
 include wchar.inc
 include fltintrn.inc
+include quadmath.inc
 
 ;
 ; the following should be set depending on the sizes of various types
@@ -462,7 +463,7 @@ ifndef __DZ__
                         ;
                         ; Note: assumes ch is in ASCII range
                         ;
-                        _ldcvt(addr tmp, text, edx, edi, esi)
+                        cldcvt(addr tmp, text, edx, edi, esi)
 
                     .elseif esi & FL_LONGLONG
 
@@ -474,12 +475,12 @@ ifndef __DZ__
                         ;
                         ; Note: assumes ch is in ASCII range
                         ;
-                        _qcvt(addr tmp, text, edx, edi, esi)
+                        cqfcvt(addr tmp, text, edx, edi, esi)
                     .else
                         ;
                         ; Note: assumes ch is in ASCII range
                         ;
-                        _dcvt(addr tmp, text, edx, edi, esi)
+                        cfltcvt(addr tmp, text, edx, edi, esi)
                     .endif
                     ;
                     ; '#' and precision == 0 means force a decimal point

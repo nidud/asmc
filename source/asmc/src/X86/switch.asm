@@ -13,6 +13,7 @@ include hll.inc
     option proc: private
     assume esi:  ptr hll_item
 
+.pragma warning(disable: 6004)
 
 LQAddLabelIdBuffer proc fastcall id, buffer
 

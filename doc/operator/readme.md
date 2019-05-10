@@ -82,10 +82,14 @@ Asmc Macro Assembler Reference
 #### Type
 
 - [.HIGH](dot_high.md)
+- [HIGH32](high32.md)
+- [HIGH64](high64.md)
 - [HIGHWORD](highword.md)
 - [.LENGTH](dot_length.md)
 - [LENGTHOF](lengthof.md)
 - [.LOW](dot_low.md)
+- [LOW32](low32.md)
+- [LOW64](low64.md)
 - [LOWWORD](lowword.md)
 - [OPATTR](opattr.md)
 - [PTR](ptr.md)

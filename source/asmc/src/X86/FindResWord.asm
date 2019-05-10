@@ -2,6 +2,8 @@ include string.inc
 include asmc.inc
 include token.inc
 
+.pragma warning(disable: 6004)
+
 HASH_TABITEMS   equ 1024
 
 ReservedWord    STRUC

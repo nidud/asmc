@@ -1,0 +1,338 @@
+include quadmath.inc
+include limits.inc
+include errno.inc
+
+.assert:on
+
+compare macro op, x, y, z
+    local a, b, r
+    .data
+    align 16
+    a oword x
+    b oword y
+    r oword z
+    .code
+    op(a, b)
+    mov rax,qword ptr a
+    mov rdx,qword ptr a[8]
+    mov rbx,qword ptr r
+    mov rcx,qword ptr r[8]
+    exitm<.assert( rax == rbx && rdx == rcx )>
+    endm
+
+comp64 macro r, i
+    local b
+    .data
+    align 16
+    b real16 r
+    .code
+    cvtq_i64(b)
+    mov rcx,i
+    exitm<.assert(rax == rcx)>
+    endm
+
+comp32 macro r, i
+    local b
+    .data
+    align 16
+    b real16 r
+    .code
+    cvtq_i32(b)
+    mov edx,i
+    exitm<.assert(eax == edx)>
+    endm
+
+compf macro r, h
+    local b, q, d
+    .data
+    align 16
+    q real16 r
+    b real16 0.0
+    d dd h
+    .code
+    movaps b,cvtss_q(d)
+    mov eax,dword ptr b[12]
+    mov edx,dword ptr q[12]
+    exitm<.assert( eax == edx )>
+    endm
+
+comph macro r, h
+    local b, q, w
+    .data
+    align 16
+    q real16 r
+    b real16 0.0
+    w dw h
+    .code
+    movups b,cvth_q(w)
+    mov al,byte ptr b[11]
+    mov edx,dword ptr b[12]
+    mov bl,byte ptr q[11]
+    mov ecx,dword ptr q[12]
+    exitm<.assert( edx == ecx && al == bl )>
+    endm
+
+compqh macro r, h
+    local q, w
+    .data
+    align 16
+    q real16 r
+    w dw h
+    .code
+    cvtq_h(q)
+    movd eax,xmm0
+    mov bx,h
+    exitm<.assert( ax == bx )>
+    endm
+
+comprr macro a, b
+    mov rax,qword ptr a
+    mov rdx,qword ptr a+8
+    mov rbx,qword ptr b
+    mov rcx,qword ptr b+8
+    exitm<.assert(rax == rbx && rdx == rcx)>
+    endm
+
+compval macro a, val
+    local b
+    .data
+    align 16
+    b real16 val
+    .code
+    exitm<comprr(a, b)>
+    endm
+
+comparea macro a, val, p, e
+    compval(a, val)
+    mov rdx,p
+    mov al,[rdx]
+    exitm<.assert(al == e)>
+    endm
+
+errval macro retval, type:vararg
+    mov edx,errno
+    mov errno,0
+    mov eax,edx
+    exitm<.assert( eax == retval )>
+    endm
+
+    .code
+
+main proc
+
+  local x:REAL16
+  local y:REAL16
+  local exponent:dword
+  local eptr:LPSTR
+
+    mov errno,0
+
+    .assertd( cmpq( 0.0,  1.0) == -1 )
+    .assertd( cmpq( 0.0,  0.0) == 0 )
+    .assertd( cmpq( 1.0,  0.0) == 1 )
+    .assertd( cmpq( 0.0,  1.0) == -1 )
+    .assertd( cmpq(-0.0,  0.0) == -1 )
+    .assertd( cmpq(-1.0, -2.0) == 1 )
+    .assertd( cmpq( 0.0, -1.0) == 1 )
+    .assertd( cmpq(-1.0, -1.0) == 0 )
+    .assertd( cmpq(-9.9, -9.9) == 0 )
+    .assertd( cmpq( 9223372036854775808.0, 9223372036854775808.0) == 0 )
+    .assertd( cmpq( 9223372036854775808.0, 9223372036854775807.0) == 1 )
+    .assertd( cmpq( 9223372036854775807.0, 9223372036854775808.0) == -1 )
+    .assertd( cmpq(-9223372036854775808.0, -9223372036854775808.0) == 0 )
+    .assertd( cmpq(-9223372036854775807.0, -9223372036854775808.0) == 1 )
+    .assertd( cmpq(-9223372036854775808.0, -9223372036854775807.0) == -1 )
+
+    errval( 0, comp32(0.0, 0))
+    errval( 0, comp32(0.10, 0))
+    errval( 0, comp32(1.0, 1))
+    errval( 0, comp32(2.0, 2))
+    errval( 0, comp32(0.99999999, 0))
+    errval( 0, comp32(7777777.0, 7777777))
+    errval( 0, comp32(2147483647.0, 2147483647))
+    errval( 0, comp32(2147483647.0, INT_MAX))
+    errval( 0, comp32(-2147483648.0, INT_MIN))
+    errval( 0, comp32(-1.0, UINT_MAX))
+    errval( ERANGE, comp32(-100000000000000000000.0, INT_MIN))
+    errval( ERANGE, comp32(100000000000000000000.0, INT_MAX))
+
+    errval( 0, comp64(0.0, 0))
+    errval( 0, comp64(0.10, 0))
+    errval( 0, comp64(1.0, 1))
+    errval( 0, comp64(2.0, 2))
+    errval( 0, comp64(0.99999999, 0))
+    errval( 0, comp64(7777777.0, 7777777))
+    errval( 0, comp64(9223372036854775807.0, 9223372036854775807))
+    errval( 0, comp64( 9223372036854775807.0, _I64_MAX))
+    errval( 0, comp64(-9223372036854775807.0, _I64_MIN))
+    errval( ERANGE, comp64( 9223372036854775808.0, _I64_MAX))
+    errval( ERANGE, comp64(-9223372036854775808.0, _I64_MIN))
+    errval( 0, comp64(-1.0, _UI64_MAX))
+
+    errval( 0, compf(0.0, 0))
+    errval( 0, compf(1.0, 0x3F800000))
+    errval( 0, compf(-2.0, 0xC0000000))
+    errval( 0, compf(3.402823466e38, 3.402823466e38))
+    errval( 0, compf(1.175494351e-38, 1.175494351e-38))
+    errval( 0, compf(-0.0, 0x80000000))
+    errval( EDOM, compf(0.0/0.0, 0x7F800000))
+
+    errval( 0, comph(0.0, 0))
+    errval( 0, comph(1.0, 0x3C00))
+    errval( 0, comph(1.000976563, 0x3C01))
+    errval( 0, comph(0.0009765625, 0x1400))
+    errval( 0, comph(-2.0, 0xC000))
+    errval( 0, comph(0.33325196, 0x3555))
+    errval( 0, comph(65504.0, 0x7BFF))
+    errval( 0, comph(6.103515625e-05, 0x0400))
+    errval( 0, comph(6.097555161e-05, 0x03FF))
+    errval( 0, comph(5.960464478e-08, 0x0001))
+    errval( 0, comph(1.0/0.0, 0x7C00))
+    errval( 0, comph(-1.0/0.0, 0xFC00))
+
+    errval( EDOM, comph(0.0/0.0, 0xFFFF))
+
+    errval( 0, compqh(0.0, 0))
+    errval( 0, compqh(1.0, 0x3C00))
+    errval( 0, compqh(1.000976563, 0x3C01))
+    errval( 0, compqh(0.0009765625, 0x1400))
+    errval( 0, compqh(-2.0, 0xC000))
+    errval( 0, compqh(0.33325196, 0x3555))
+    errval( 0, compqh(65504.0, 0x7BFF))
+    errval( 0, compqh(6.103515625e-05, 0x0400))
+    errval( 0, compqh(6.097555161e-05, 0x03FE))
+    errval( ERANGE, compqh(5.960464478e-08, 0x0001))
+    errval( 0, compqh(1.0/0.0, 0x7C00))
+    errval( 0, compqh(-1.0/0.0, 0xFC00))
+    errval( 0, compqh(0.0/0.0, 0xFFFF))
+
+    errval( 0, compare(addq, 0.0, 0.0, 0.0))
+    errval( 0, compare(addq, 1.0, 0.0, 1.0))
+    errval( 0, compare(addq, -1.0, 0.0, -1.0))
+    errval( 0, compare(addq, 1.0, 1.0, 2.0))
+    errval( 0, compare(addq, 1.1, 1.1, 2.2))
+    errval( 0, compare(addq, 999999.0001, 1.0001, 1000000.0002))
+    errval( 0, compare(addq, 0.09, 0.01, 0.1))
+
+    errval( 0, compare(subq, 0.0, 0.0, 0.0))
+    errval( 0, compare(subq, 1.0, 0.0, 1.0))
+    errval( 0, compare(subq, -1.0, 0.0, -1.0))
+    errval( 0, compare(subq, 1.0, 1.0, 0.0))
+    errval( 0, compare(subq, 1.1, 1.1, 0.0))
+    errval( 0, compare(subq, 10000000.0002, 999999.0001, 9000001.0001 ))
+
+    errval( 0, compare(divq, 0.0, 0.0, 0x7FFF8000000000000000000000000000))
+    errval( 0, compare(divq, 0.0, 1.0, 0.0))
+    errval( 0, compare(divq, 0.0, -1.0, 0.0))
+    errval( 0, compare(divq, 2.0, 1.0, 2.0))
+    errval( 0, compare(divq, 1.1, 2.2, 0.5))
+    errval( 0, compare(divq, 0.01, 0.1, 0.1))
+    errval( 0, compare(divq, 66666.6, 2.0, 33333.3))
+    ; 0x3FEB0C7659426EB346F3B91986814E5F
+    errval( 0, compare(divq, 1.0001, 1000000.0002, 0x3FEB0C7659426EB346F3B91986814E5E))
+
+    errval( 0, compare(mulq, 0.0, 0.0, 0.0))
+    errval( 0, compare(mulq, 0.0, 1.0, 0.0))
+    errval( 0, compare(mulq, 0.0, -1.0, 0.0))
+    errval( 0, compare(mulq, 2.0, 1.0, 2.0))
+
+    ; 0x400035C28F5C28F5C28F5C28F5C28F5C - 2.42
+    errval( 0, compare(mulq, 1.1, 2.2, 0x400035C28F5C28F5C28F5C28F5C28F5A))
+    ; 0x3FF50624DD2F1A9FBE76C8B439581062 - 1.e-03
+    errval( 0, compare(mulq, 0.01, 0.1, 0x3FF50624DD2F1A9FBE76C8B439581061))
+    ; 0x4012E8548001A378EB79354B10749756 - 1000100.0002
+    errval( 0, compare(mulq, 1.0001, 1000000.0002, 0x4012E8548001A378EB79354B10749755))
+
+    movups x,cvta_q( ".", &eptr )
+    errval( 0, comparea(x, 0.0, eptr, '.'))
+    movups x,cvta_q("-1.0e-0a", &eptr )
+    errval( 0, comparea(x, -1.0, eptr, 'a'))
+    movups x,cvta_q( "-1e-0a", &eptr )
+    errval( 0, comparea(x, -1.0, eptr, 'a'))
+    movups x,cvta_q( "123456789.0", &eptr )
+    errval( 0, comparea(x, 123456789.0, eptr, 0))
+
+cmpxmm macro op, x, y, z
+    local r
+    .data
+    align 16
+ifnb <z>
+    r oword z
+    .code
+    op(x, y)
+else
+    r oword y
+    .code
+    op(x)
+endif
+    movq    rax,xmm0
+    movhlps xmm0,xmm0
+    movq    rcx,xmm0
+    mov     rbx,qword ptr r
+    mov     rdx,qword ptr r[8]
+    .assert( rax == rbx && rcx == rdx )
+    exitm<>
+    endm
+
+    cmpxmm(atanq, 0.0, 0.0)
+    cmpxmm(atanq, 1.5, 0.9827937232473290679857106110146660710)
+    cmpxmm(atan2q, 0.0, 0.0, 0.0)
+    cmpxmm(atan2q, 0.5, 1.5, 0.3217505543966421934014046143586613)
+    cmpxmm(sqrtq, 0.0, 0.0)
+    cmpxmm(sqrtq, 1.0, 1.0)
+    cmpxmm(sqrtq, 2.0, 1.4142135623730950488016887242097015)
+
+cmpfpu macro op, x, y, z
+    local r
+    .data
+ifnb <z>
+    r real16 z
+    .code
+    op(x, y)
+else
+    r real16 y
+    .code
+    op(x)
+endif
+    movq    rcx,xmm0
+    movhlps xmm0,xmm0
+    movq    rax,xmm0
+    mov     rbx,qword ptr r[8]
+    mov     rdx,qword ptr r
+    rol     rcx,8
+    rol     rdx,8
+    .assert( rax == rbx && cl == dl )
+    exitm<>
+    endm
+
+    cmpfpu(acosqf,  0.0, 1.570796326794896619)
+    cmpfpu(acosqf,  0.5, 1.047197551196597721)
+    cmpfpu(atanqf,  0.0, 0.0)
+    cmpfpu(atanqf,  1.5, 0.9827937232473290680)
+    cmpfpu(atan2qf, 0.0, 0.0, 0.0)
+    cmpfpu(atan2qf, 0.5, 1.5, 0.3217505543966421934)
+    cmpfpu(ceilqf,  0.0, 0.0)
+    cmpfpu(ceilqf,  2.5, 3.0)
+    cmpfpu(cosqf,   0.0, 1.0)
+    cmpfpu(cosqf,   10.0, -0.8390715290764524523)
+    cmpfpu(expqf,   0.0, 1.0)
+    cmpfpu(expqf,   1.5, 4.481689070338065406)
+    cmpfpu(floorqf, 0.0, 0.0)
+    cmpfpu(floorqf, 2.57, 2.0)
+    cmpfpu(fmodqf,  1.0, 1.0, 0.0)
+    cmpfpu(fmodqf,  1.5, 1.2, 0.3)
+    cmpfpu(logqf,   1.5, 0.4054651081081643820)
+    cmpfpu(log10qf, 1.5, 0.1760912590556812421)
+    cmpfpu(sinqf,   0.0, 0.0)
+    cmpfpu(sinqf,   0.5, 0.4794255386042030003)
+    cmpfpu(sqrtqf,  0.0, 0.0)
+    cmpfpu(sqrtqf,  1.0, 1.0)
+    cmpfpu(sqrtqf,  2.0, 1.414213562373095148)
+    cmpfpu(tanqf,   0.0, 0.0)
+    cmpfpu(tanqf,   1.5, 14.10141994717171939)
+
+    ret
+
+main endp
+
+    end

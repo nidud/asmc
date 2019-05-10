@@ -1271,7 +1271,10 @@ ret_code ProcDir( int i, struct asm_tok tokenarray[] )
     }
     /* v2.04b: check was missing */
     if( CurrSeg == NULL ) {
-	return( asmerr( 2034 ) );
+	/* v2.30.06 - struct proto's ... */
+	if( Parse_Pass == PASS_1 )
+	    return( asmerr( 2034 ) );
+	return( NOT_ERROR );
     }
 
     name = tokenarray[0].string_ptr;
@@ -1373,6 +1376,10 @@ ret_code ProcDir( int i, struct asm_tok tokenarray[] )
 	CurrSeg->e.seginfo->label_list = sym;
 
     } else {
+
+	/* v2.30.06 - struct proto's ... */
+	if  ( sym == NULL )
+	    return( NOT_ERROR );
 
 	procidx++;
 	sym->isdefined = TRUE;
@@ -1931,28 +1938,48 @@ static ret_code write_userdef_prologue( struct asm_tok tokenarray[] )
 
 /* OPTION WIN64:1 - save up to 4 register parameters for WIN64 fastcall */
 /* v2.27 - save up to 6 register parameters for WIN64 vectorcall */
+/* v2.30 - reverse direction of args + vectorcall stack 8/16 */
 
 static void win64_SaveRegParams( struct proc_info *info )
 {
     struct dsym *param;
     struct dsym *curr;
+    struct dsym *p;
     int maxregs = 4;
     int size = 8;
     int params = 0;
     int i;
 
-    if ( CurrProc->sym.langtype == LANG_VECTORCALL ) {
-
+    if ( CurrProc->sym.langtype == LANG_VECTORCALL )
 	maxregs = 6;
-	size = 16;
-    }
 
     param = info->paralist;
-    while ( param && param->nextparam && params < maxregs ) {
+    while ( param && param->nextparam ) {
 
-	params++;
+	if ( params < maxregs )
+	    params++;
+	if ( maxregs == 6 && param->sym.total_size == 16 )
+	    size = 16;
 	param = param->nextparam;
     }
+    if ( params && maxregs == 6 && param->sym.total_size == 16 )
+	size = 16;
+
+    if ( size == 16 ) {
+
+	for ( curr = info->paralist;
+	    curr && curr->nextparam != param; curr = curr->nextparam );
+	p = curr;
+
+	for ( i = param->sym.offset + 16; p; i += 16 ) {
+
+	    p->sym.offset = i;
+	    for ( curr = info->paralist;
+		curr && curr->nextparam != p; curr = curr->nextparam );
+	    p = curr;
+	}
+    }
+
     curr = info->paralist;
     if ( curr && curr->sym.is_vararg == TRUE )
 	params = 3;

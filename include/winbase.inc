@@ -7651,8 +7651,8 @@ SetThreadpoolCallbackRunsLong macro pcbe
 	TpSetCallbackLongFunction(pcbe)
 	endm
 ;VOID
-SetThreadpoolCallbackLibrary macro pcbe, mod
-	TpSetCallbackRaceWithDll(pcbe, mod)
+SetThreadpoolCallbackLibrary macro pcbe, _mod
+	TpSetCallbackRaceWithDll(pcbe, _mod)
 	endm
 if (_WIN32_WINNT GE _WIN32_WINNT_WIN7)
 ;VOID

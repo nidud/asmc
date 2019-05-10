@@ -19,10 +19,10 @@ endif
 include xmmintrin.inc
 
 __m128i union
-m128i_i8	db 16 dup(?)
-m128i_i16	dw 8 dup(?)
-m128i_i32	dd 4 dup(?)
-m128i_i64	dq 2 dup(?)
+m128i_i8	sbyte 16 dup(?)
+m128i_i16	sword  8 dup(?)
+m128i_i32	sdword 4 dup(?)
+m128i_i64	sqword 2 dup(?)
 m128i_u8	db 16 dup(?)
 m128i_u16	dw 8 dup(?)
 m128i_u32	dd 4 dup(?)
@@ -972,9 +972,9 @@ _mm_cvtsi64_si128 macro x, q
 	retm<xmm0>
     endif
 	endm
-_mm_cvtsi128_si64 macro x:=<xmm0>
-	movq rax,x
-	retm<rax>
+_mm_cvtsi128_si64 macro x:=<xmm0>, r:=<rax>
+	movq r,x
+	retm<r>
 	endm
 
 endif

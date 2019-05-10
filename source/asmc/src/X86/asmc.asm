@@ -117,7 +117,7 @@ GeneralFailure endp
 
 main proc c
 
-  local rc, numArgs, numFiles, ff:WIN32_FIND_DATA, h
+  local rc, numArgs, numFiles, ff:WIN32_FIND_DATA
 
 ifndef DEBUG
     signal(SIGSEGV, GeneralFailure)

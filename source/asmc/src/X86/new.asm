@@ -42,11 +42,8 @@ AddLocalDir proc uses esi edi ebx i:sdword, tokenarray:ptr asmtok
 
   local name                :ptr sbyte,
         sym                 :ptr dsym,
-        curr                :ptr dsym,
-        info                :ptr proc_info,
         ti                  :qualified_type,
         opndx               :expr,
-        j                   :sdword,
         constructor[128]    :sbyte ; class_class
 
     .repeat

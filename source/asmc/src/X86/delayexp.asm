@@ -1,6 +1,8 @@
 include libc.inc
 include asmc.inc
 
+.pragma warning(disable: 6004)
+
 	.code
 
 	ASSUME	ecx:PTR asmtok

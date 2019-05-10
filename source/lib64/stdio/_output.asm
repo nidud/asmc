@@ -10,6 +10,7 @@ include limits.inc
 include wchar.inc
 include fltintrn.inc
 include winnls.inc
+include quadmath.inc
 
 ;
 ; the following should be set depending on the sizes of various types
@@ -446,31 +447,22 @@ if 1
                     mov rcx,arglist
                     add arglist,8
                     mov rax,[rcx]
-                    mov QWORD PTR tmp,rax
                     mov ebx,edx
                     ;
                     ; do the conversion
                     ;
                     mov r8d,edx
                     .if esi & FL_LONGDOUBLE
-
-                        mov rcx,[rax]
-                        mov QWORD PTR tmp,rcx
-                        mov cx,[rax+8]
-                        mov WORD PTR tmp[8],cx
                         ;
                         ; Note: assumes ch is in ASCII range
                         ;
-                        _ldcvt(&tmp, text, r8d, edi, esi)
+                        movups xmm0,[rax]
+                        cldcvt(xmm0, text, r8d, edi, esi)
                     .elseif esi & FL_LONGLONG
-
-                        mov rcx,[rax]
-                        mov QWORD PTR tmp,rcx
-                        mov rcx,[rax+8]
-                        mov QWORD PTR tmp[8],rcx
-                        _qcvt(&tmp, text, r8d, edi, esi)
+                        movups xmm0,[rax]
+                        cqfcvt(xmm0, text, r8d, edi, esi)
                     .else
-                        _dcvt(&tmp, text, r8d, edi, esi)
+                        cfltcvt(rax, text, r8d, edi, esi)
                     .endif
                     ;
                     ; '#' and precision == 0 means force a decimal point

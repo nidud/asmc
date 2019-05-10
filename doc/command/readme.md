@@ -51,6 +51,7 @@ The options listed in the following table.
 | **/nd**_name_ | Set name of data segment. |
 | **/nm**_name_ | Set name of module. |
 | **/nt**_name_ | Set name of text segment. |
+| **/nolib** | Ignore INCLUDELIB directive. |
 | **/nologo** | Suppresses messages for successful assembly. |
 | **/omf** | Generates object module file format (OMF) type of object module. |
 | **/pe** | Generate PE binary file, 32/64-bit. |

@@ -47,29 +47,65 @@ extern U128 _Q_1E2048;
 extern U128 _Q_1E4096;
 extern U128 _Q_INF;
 
-//#define ERANGE 34
+#ifdef _WIN64
 
-extern int qerrno;
+void *	__mulq(void *, void *);
+void *	__divq(void *, void *);
+void *	__addq(void *, void *);
+void *	__subq(void *, void *);
+void *	__cvtq_h(void *, void *);
+void *	__cvtq_ss(void *, void *);
+void *	__cvtq_sd(void *, void *);
+void *	__cvtq_ld(void *, void *);
+void *	__cvth_q(void *, void *);
+void *	__cvtss_q(void *, void *);
+void *	__cvtsd_q(void *, void *);
+void *	__cvtld_q(void *, void *);
+void *	__cvti32_q(void *, int);
+void *	__cvti64_q(void *, int_64);
+int	__cvtq_i32(void *);
+int_64	__cvtq_i64(void *);
+int	__cvta_q(void *, const char *, char **);
 
-void *	quadmul(void *, void *);
-void *	quaddiv(void *, void *);
-void *	quadadd(void *, void *);
-void *	quadsub(void *, void *);
-void *	quadtoh(void *, void *);
-void *	quadtof(void *, void *);
-void *	quadtod(void *, void *);
-void *	quadtold(void *, void *);
-void *	htoquad(void *, void *);
-void *	ftoquad(void *, void *);
-void *	dtoquad(void *, void *);
-void *	ldtoquad(void *, void *);
-void *	i32toquad(void *, int);
-void *	i64toquad(void *, int_64);
-int	quadtoi32(void *);
-int_64	quadtoi64(void *);
-int	atoquad(void *, const char *, char **);
-int	quadisinf(void *);
-int	quadisnan(void *);
+#define mulq	 __mulq
+#define divq	 __divq
+#define addq	 __addq
+#define subq	 __subq
+#define cvtq_h	 __cvtq_h
+#define cvtq_ss	 __cvtq_ss
+#define cvtq_sd	 __cvtq_sd
+#define cvtq_ld	 __cvtq_ld
+#define cvth_q	 __cvth_q
+#define cvtss_q	 __cvtss_q
+#define cvtsd_q	 __cvtsd_q
+#define cvtld_q	 __cvtld_q
+#define cvti32_q __cvti32_q
+#define cvti64_q __cvti64_q
+#define cvtq_i32 __cvtq_i32
+#define cvtq_i64 __cvtq_i64
+#define cvta_q	 __cvta_q
+
+#else
+
+void *	mulq(void *, void *);
+void *	divq(void *, void *);
+void *	addq(void *, void *);
+void *	subq(void *, void *);
+void *	cvtq_h(void *, void *);
+void *	cvtq_ss(void *, void *);
+void *	cvtq_sd(void *, void *);
+void *	cvtq_ld(void *, void *);
+void *	cvth_q(void *, void *);
+void *	cvtss_q(void *, void *);
+void *	cvtsd_q(void *, void *);
+void *	cvtld_q(void *, void *);
+void *	cvti32_q(void *, int);
+void *	cvti64_q(void *, int_64);
+int	cvtq_i32(void *);
+int_64	cvtq_i64(void *);
+int	cvta_q(void *, const char *, char **);
+
+#endif
 
 #ifdef __cplusplus
 }

@@ -608,8 +608,8 @@ endif
 endif ;; VIRTDISK_DEFINE_FLAGS
 
 
-SurfaceVirtualDisk	equ AttachVirtualDisk
-UnsurfaceVirtualDisk	equ DetachVirtualDisk
+SurfaceVirtualDisk	equ <AttachVirtualDisk>
+UnsurfaceVirtualDisk	equ <DetachVirtualDisk>
 VIRTUAL_DISK_ACCESS_SURFACE_RO equ VIRTUAL_DISK_ACCESS_ATTACH_RO
 VIRTUAL_DISK_ACCESS_SURFACE_RW equ <VIRTUAL_DISK_ACCESS_ATTACH_RW>
 VIRTUAL_DISK_ACCESS_UNSURFACE equ VIRTUAL_DISK_ACCESS_DETACH

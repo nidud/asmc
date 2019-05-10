@@ -7,6 +7,8 @@ include asmc.inc
 include token.inc
 include hll.inc
 
+.pragma warning(disable: 6004)
+
 ; c binary ops.
 ; Order of items COP_EQ - COP_LE  and COP_ZERO - COP_OVERFLOW
 ; must not be changed.

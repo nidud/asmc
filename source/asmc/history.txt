@@ -3,6 +3,7 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.31 - xx xxx 2019
+- added switch /nolib - skip includelib directive
 - renamed .CLASSDEF to .CLASS
 - removed directive .UNTILAXZ, .UNTILDXZ, .UNTILBXZ,
 - added .NEW directive

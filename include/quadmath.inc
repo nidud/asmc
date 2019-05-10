@@ -7,6 +7,10 @@ endif
 
 ; Parsing flags
 
+FL_LONGDOUBLE	equ 0x0400
+FL_LONGLONG	equ 0x1000
+FL_CAPEXP	equ 0x10000
+
 _ST_SIGN	equ 0x0001
 _ST_NEGNUM	equ 0x0002
 _ST_NEGEXP	equ 0x0004
@@ -19,6 +23,25 @@ _ST_UNDERFLOW	equ 0x0100
 _ST_OVERFLOW	equ 0x0200
 _ST_DIGITS	equ 0x0400
 _ST_DOT		equ 0x0800
+_ST_E		equ 0x1000  ; 'E' format
+_ST_F		equ 0x2000  ; 'F' format
+_ST_G		equ 0x4000  ; 'G' format
+_ST_CVT		equ 0x8000  ; cvt routine format rules
+_ST_CAPEXP	equ 0x10000
+
+CVT_INFO	STRUC
+ndigits		int_t ?
+scale		int_t ?
+flags		int_t ?
+expchar		int_t ?
+expwidth	int_t ?
+sign		int_t ?
+decimal_place	int_t ?
+n1		int_t ?
+nz1		int_t ?
+n2		int_t ?
+nz2		int_t ?
+CVT_INFO	ENDS
 
 ; Half precision - binary16 -- REAL2 (half)
 
@@ -60,108 +83,93 @@ Q_EXPMASK	equ (1 shl Q_EXPBITS) - 1
 Q_EXPBIAS	equ Q_EXPMASK shr 1
 Q_EXPMAX	equ Q_EXPMASK - Q_EXPBIAS
 
-.pragma pack(push,1)
-
-U128 UNION
-    f		real4 ?
-    d		real8 ?
-    ld		real10 ?
-    STRUC
-	ldm	dq ?
-	lde	dw ?
-    ENDS
-    STRUC
-	qmw	dw ?
-	qmd	dd ?
-	qmh	dq ?
-	e	dw ?
-    ENDS
-    m8		db 16 dup(?)
-    m16		dw 8 dup(?)
-    m32		dd 4 dup(?)
-    m64		dq 2 dup(?)
-U128 ENDS
-
-U256 UNION
-    m8		db 32 dup(?)
-    m16		dw 16 dup(?)
-    m32		dd 8 dup(?)
-    m64		dq 4 dup(?)
-U256 ENDS
-
-.pragma pack(pop)
-
-ifdef _LINUX
-PU128 typedef size_t
-PU256 typedef size_t
+if defined(_WIN64) and not defined(_XM_NO_INTRINSICS_)
+QFCALLCONV	equ <vectorcall>
+QCALLCONVR	equ <vectorcall>
+XQFLOAT		typedef REAL16
+XQREAL2		typedef REAL2
+XQREAL4		typedef REAL4
+XQREAL8		typedef REAL8
+XQREAL10	typedef REAL10
+PQFLOAT		typedef ptr REAL16
 else
-PU128 typedef ptr U128
-PU256 typedef ptr U256
+QFCALLCONV	equ <__cdecl>
+QCALLCONVR	equ <__cdecl x:ptr,>
+XQFLOAT		typedef ptr
+XQREAL2		typedef ptr
+XQREAL4		typedef ptr
+XQREAL8		typedef ptr
+XQREAL10	typedef ptr
+PQFLOAT		typedef ptr
 endif
 
-XQFLOAT		typedef REAL16
-PQFLOAT		typedef ptr REAL16
+addq		proto QFCALLCONV :XQFLOAT, :XQFLOAT
+subq		proto QFCALLCONV :XQFLOAT, :XQFLOAT
+divq		proto QFCALLCONV :XQFLOAT, :XQFLOAT
+mulq		proto QFCALLCONV :XQFLOAT, :XQFLOAT
+normq		proto QFCALLCONV :XQFLOAT, :int_t
+cvtq_h		proto QCALLCONVR :XQFLOAT
+cvtq_ss		proto QCALLCONVR :XQFLOAT
+cvtq_sd		proto QCALLCONVR :XQFLOAT
+cvtq_ld		proto QCALLCONVR :XQFLOAT
+cvtq_i32	proto QFCALLCONV :XQFLOAT
+cvtq_i64	proto QFCALLCONV :XQFLOAT
+cvtq_a		proto QFCALLCONV :XQFLOAT, :ptr, :string_t, :uint_t
+cvth_q		proto QCALLCONVR :XQREAL2
+cvtss_q		proto QCALLCONVR :XQREAL4
+cvtsd_q		proto QCALLCONVR :XQREAL8
+cvtld_q		proto QCALLCONVR :XQREAL10
+cvti32_q	proto QCALLCONVR :long_t
+cvti64_q	proto QCALLCONVR :int64_t
+cvta_q		proto QCALLCONVR :string_t, :ptr string_t
+cmpq		proto QFCALLCONV :XQFLOAT, :XQFLOAT
+cfltcvt		proto QFCALLCONV :XQREAL8, :string_t, :int_t, :int_t, :int_t
+cldcvt		proto QFCALLCONV :XQREAL10, :string_t, :int_t, :int_t, :int_t
+cqfcvt		proto QFCALLCONV :XQFLOAT, :string_t, :int_t, :int_t, :int_t
 
-quadmul		proto __cdecl :ptr, :ptr
-quaddiv		proto __cdecl :ptr, :ptr
-quadadd		proto __cdecl :ptr, :ptr
-quadsub		proto __cdecl :ptr, :ptr
+ifndef _WIN64
+_udiv256	proto __cdecl :ptr, :ptr, :ptr
+_mul256		proto __cdecl :ptr, :ptr, :ptr
+endif
+
 quadisinf	proto __cdecl :ptr
 quadisnan	proto __cdecl :ptr
-quadtoh		proto __cdecl :ptr, :ptr
-quadtof		proto __cdecl :ptr, :ptr
-quadtod		proto __cdecl :ptr, :ptr
-quadtold	proto __cdecl :ptr, :ptr
-htoquad		proto __cdecl :ptr, :ptr
-ftoquad		proto __cdecl :ptr, :ptr
-dtoquad		proto __cdecl :ptr, :ptr
-ldtoquad	proto __cdecl :ptr, :ptr
+strtoflt128	proto __cdecl :string_t, :ptr string_t
 
-quadtoi32	proto __cdecl :ptr
-quadtoi64	proto __cdecl :ptr
-i32toquad	proto __cdecl :ptr, :sdword
-i64toquad	proto __cdecl :ptr, :sqword
-
-atoquad		proto __cdecl :ptr, :LPSTR, :ptr LPSTR
-strtoflt128	proto __cdecl :LPSTR, :ptr LPSTR
-quadnormalize	proto __cdecl :ptr, :SINT
-
-_udiv256	proto __cdecl :PU256, :PU256, :PU256
-_mul256		proto __cdecl :PU128, :PU128, :PU128
 
 ; Quadruple precision constants
 
-externdef   _Q_E:	XQFLOAT ; e
-externdef   _Q_LOG2E:	XQFLOAT ; log2(e)
-externdef   _Q_LOG10E:	XQFLOAT ; log10(e)
-externdef   _Q_LN2:	XQFLOAT ; ln(2)
-externdef   _Q_LN10:	XQFLOAT ; ln(10)
-externdef   _Q_PI:	XQFLOAT ; pi
-externdef   _Q_PI_2:	XQFLOAT ; pi/2
-externdef   _Q_PI_4:	XQFLOAT ; pi/4
-externdef   _Q_1_PI:	XQFLOAT ; 1/pi
-externdef   _Q_2_PI:	XQFLOAT ; 2/pi
-externdef   _Q_2_SQRTPI:XQFLOAT ; 2/sqrt(pi)
-externdef   _Q_SQRT2:	XQFLOAT ; sqrt(2)
-externdef   _Q_SQRT1_2: XQFLOAT ; 1/sqrt(2)
-externdef   _Q_1E1:	XQFLOAT ; table..
-externdef   _Q_1E2:	XQFLOAT
-externdef   _Q_1E4:	XQFLOAT
-externdef   _Q_1E8:	XQFLOAT
-externdef   _Q_1E16:	XQFLOAT
-externdef   _Q_1E32:	XQFLOAT
-externdef   _Q_1E64:	XQFLOAT
-externdef   _Q_1E128:	XQFLOAT
-externdef   _Q_1E256:	XQFLOAT
-externdef   _Q_1E512:	XQFLOAT
-externdef   _Q_1E1024:	XQFLOAT
-externdef   _Q_1E2048:	XQFLOAT
-externdef   _Q_1E4096:	XQFLOAT
-externdef   _Q_INF:	XQFLOAT
-externdef   _Q_INF_M:	XQFLOAT
-externdef   _Q_ZERO:	XQFLOAT
-externdef   _Q_NAN:	XQFLOAT
-externdef   _Q_ONE:	XQFLOAT
+externdef   _Q_E:	REAL16 ; e
+externdef   _Q_LOG2E:	REAL16 ; log2(e)
+externdef   _Q_LOG10E:	REAL16 ; log10(e)
+externdef   _Q_LN2:	REAL16 ; ln(2)
+externdef   _Q_LN10:	REAL16 ; ln(10)
+externdef   _Q_PI:	REAL16 ; pi
+externdef   _Q_PI_2:	REAL16 ; pi/2
+externdef   _Q_PI_4:	REAL16 ; pi/4
+externdef   _Q_1_PI:	REAL16 ; 1/pi
+externdef   _Q_2_PI:	REAL16 ; 2/pi
+externdef   _Q_2_SQRTPI:REAL16 ; 2/sqrt(pi)
+externdef   _Q_SQRT2:	REAL16 ; sqrt(2)
+externdef   _Q_SQRT1_2: REAL16 ; 1/sqrt(2)
+externdef   _Q_1E1:	REAL16 ; table..
+externdef   _Q_1E2:	REAL16
+externdef   _Q_1E4:	REAL16
+externdef   _Q_1E8:	REAL16
+externdef   _Q_1E16:	REAL16
+externdef   _Q_1E32:	REAL16
+externdef   _Q_1E64:	REAL16
+externdef   _Q_1E128:	REAL16
+externdef   _Q_1E256:	REAL16
+externdef   _Q_1E512:	REAL16
+externdef   _Q_1E1024:	REAL16
+externdef   _Q_1E2048:	REAL16
+externdef   _Q_1E4096:	REAL16
+externdef   _Q_INF:	REAL16
+externdef   _Q_INF_M:	REAL16
+externdef   _Q_ZERO:	REAL16
+externdef   _Q_NAN:	REAL16
+externdef   _Q_ONE:	REAL16
 
 acosq	    proto vectorcall :XQFLOAT
 acoshq	    proto vectorcall :XQFLOAT
@@ -233,19 +241,6 @@ ynq	    proto vectorcall :SINT, :XQFLOAT
 
 quadmath_snprintf proto __cdecl :LPSTR, __size:size_t, __format:LPSTR, :vararg
 
-mulq	    proto vectorcall :XQFLOAT, :XQFLOAT
-divq	    proto vectorcall :XQFLOAT, :XQFLOAT
-addq	    proto vectorcall :XQFLOAT, :XQFLOAT
-subq	    proto vectorcall :XQFLOAT, :XQFLOAT
-cmpq	    proto vectorcall :XQFLOAT, :XQFLOAT
-qtof	    proto vectorcall :XQFLOAT
-qtod	    proto vectorcall :XQFLOAT
-ftoq	    proto vectorcall :real4
-dtoq	    proto vectorcall :real8
-normalizeq  proto vectorcall :XQFLOAT, :SINT
-qtoi32	    proto vectorcall :XQFLOAT
-i32toq	    proto vectorcall :SINT
-
 ifndef _INC_MATH
 _DOMAIN	    equ 1 ; argument domain error
 _SING	    equ 2 ; argument singularity
@@ -256,8 +251,6 @@ _PLOSS	    equ 6 ; partial loss of precision
 EDOM	    equ 33
 ERANGE	    equ 34
 endif
-
-externdef   qerrno:SINT
 
 ifdef _WIN64
 

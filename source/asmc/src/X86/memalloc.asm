@@ -73,7 +73,7 @@ hProcessHeap	dd 0
 endif
 	.code
 
-MemInit PROC
+MemInit proc
 ifndef _LINUX
 	GetProcessHeap()
 	mov hProcessHeap,eax
@@ -82,9 +82,9 @@ endif
 	mov pBase,eax
 	mov currfree,eax
 	ret
-MemInit ENDP
+MemInit endp
 
-MemFini PROC
+MemFini proc
 	push ebx
 	mov ebx,pBase
 	.while ebx
@@ -95,9 +95,11 @@ MemFini PROC
 	mov pBase,ebx
 	pop ebx
 	ret
-MemFini ENDP
+MemFini endp
 
-LclAlloc PROC FASTCALL len
+.pragma warning(disable: 6004)
+
+LclAlloc proc fastcall len
 	mov eax,pCurr
 	add ecx,ALIGNMENT-1
 	and ecx,-ALIGNMENT
@@ -132,14 +134,14 @@ endif
 	pop ecx
 	pop edx
 	jmp done
-LclAlloc ENDP
+LclAlloc endp
 
-MemAlloc PROC FASTCALL len
+MemAlloc proc fastcall len
 	malloc( len )
 	test eax,eax
 	jz mem_error
 	ret
-MemAlloc ENDP
+MemAlloc endp
 
 mem_error:
 	mov currfree,eax

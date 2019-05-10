@@ -1,4 +1,4 @@
-.TITLE TOKEN.INC -- Auto made from mktok.asm
+
 .xlist
 
 T_NULL	equ 0

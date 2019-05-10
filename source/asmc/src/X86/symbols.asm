@@ -245,6 +245,8 @@ SymAlloc proc uses esi edi sname
     ret
 SymAlloc ENDP
 
+.pragma warning(disable: 6004)
+
 SymFind proc fastcall uses esi edi ebx ebp sname:LPSTR
     ;
     ; find a symbol in the local/global symbol table,
@@ -599,20 +601,20 @@ SymCreate endp
 ; This function is called by LocalDir() and ParseParams()
 ; in proc.c ( for LOCAL directive and PROC parameters ).
 ;
-SymLCreate proc sname
+SymLCreate proc name
 
     .repeat
-        .if SymFind(sname)
+        .if SymFind(name)
             .if [eax].asym.state != SYM_UNDEFINED
                 ;
                 ; shouldn't happen
                 ;
-                asmerr(2005, sname)
+                asmerr(2005, name)
                 xor eax,eax
                 .break
             .endif
         .endif
-        SymAlloc(sname)
+        SymAlloc(name)
         mov ecx,lsym
         mov [ecx],eax
     .until 1

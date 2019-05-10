@@ -14,10 +14,7 @@ include quadmath.inc
 
 strtoflt128 proc string:LPSTR, endptr:ptr LPSTR
 
-  local q:REAL16
-
-    atoquad(&q, rcx, rdx)
-    movaps xmm0,q
+    cvta_q(rcx, rdx)
     ret
 
 strtoflt128 endp

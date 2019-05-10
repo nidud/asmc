@@ -12,7 +12,7 @@ include errno.inc
 
 _get_errno proc frame pValue:ptr int_t
 
-    _errno()
+    mov eax,[_errno()]
     mov [rcx],eax
     xor eax,eax
     ret

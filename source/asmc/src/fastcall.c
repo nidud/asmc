@@ -385,7 +385,7 @@ static int CheckXMM( int reg, int index, struct dsym *param, struct expr *opnd,
 		p++;
 		sign++;
 	    }
-	    atoquad(opnd->chararray, p, NULL);
+	    cvta_q(opnd->chararray, p, NULL);
 	    if ( sign )
 		opnd->chararray[15] |= 0x80;
 	    if ( opnd->llvalue > 0xFFFFFFFF ) {

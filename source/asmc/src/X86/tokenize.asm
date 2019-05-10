@@ -54,6 +54,8 @@ _brachets   db 0    ; proc ( ... )
     option  proc:private
     assume  ecx:ptr asmtok
 
+.pragma warning(disable: 6004)
+
 IsMultiLine proc fastcall tokenarray:ptr asmtok
     ;
     ; test line concatenation if last token is a comma.

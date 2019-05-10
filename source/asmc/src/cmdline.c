@@ -81,7 +81,8 @@ struct global_options Options = {
 	4,			// .segmentalign
 	0,			// .pe_subsystem
 	0,			// .win64_flags
-	0			// .chkstack
+	0,			// .chkstack
+	0			// .nolib
 
 };
 
@@ -486,6 +487,9 @@ static void ProcessOption( char **cmdline, char *buffer )
 	return;
     case 'tm':		// -mt
 	Options.model = MODEL_TINY;
+	return;
+    case 'ilon':	// -nolib
+	Options.nolib = TRUE;
 	return;
     case 'fmo':		// -omf
 	Options.output_format = OFORMAT_OMF;

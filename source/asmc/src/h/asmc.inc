@@ -5,6 +5,8 @@ include version.inc
 include ltype.inc
 include asmtok.inc
 
+.pragma warning(disable: 7007)
+
 	.xlist
 
 	option fieldalign: size_t
@@ -562,7 +564,7 @@ PopInputStatus		PROTO :LPINPUT
 endif
 qditem			STRUC
 next			PVOID ?
-_size			UINT ?
+size			UINT ?
 qditem			ends
 
 dll_desc		STRUC
@@ -885,7 +887,7 @@ struct_info		STRUC
 struct_info		ENDS
 LPSTRUCINFO		typedef ptr struct_info
 
-LPDSYM			typedef ptr dsym
+LPDSYM			typedef ptr nsym
 proc_info_r0		record	fpo:1,
 				isframe:1,
 				stackparam:1,
@@ -923,7 +925,7 @@ proc_info		STRUC
 proc_info		ENDS
 LPPROCINFO		typedef ptr proc_info
 
-dsym			STRUC
+nsym			STRUC
  sym			asym <>
  UNION
     seginfo		LPSEGINFO ?
@@ -940,7 +942,9 @@ dsym			STRUC
     nextlocal		LPDSYM ?
     nextparam		LPDSYM ?
  ENDS
-dsym			ENDS
+nsym			ENDS
+dsym			equ <nsym>
+LPDSYM			typedef ptr nsym
 
 symbol_queue		STRUC
  head			PVOID ?
@@ -1111,6 +1115,7 @@ segmentalign		db ?	; -Sp[n] Set segment alignment
 pe_subsystem		db ?	; -cui, -gui
 win64_flags		db ?	; -homeparams, -autostack, -stackalign
 chkstack		db ?	; _chkstk()
+nolib			db ?	; skip includelib directives
 global_options		ENDS
 
 PLPSTR			typedef PTR LPSTR
@@ -1299,6 +1304,7 @@ asmerr			PROTO :DWORD, :VARARG
 DelayExpand		PROTO FASTCALL :DWORD ; :PTR asmtok
 AsmcKeywords		proto :int_t
 GetStdAssume		proto :int_t
+atofloat		proto :ptr, :ptr, :uint_t, :int_t, :byte
 
 write_logo		PROTO
 WriteError		PROTO

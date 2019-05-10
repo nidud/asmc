@@ -11,38 +11,6 @@ struct com_item {
     int     langtype;
 };
 
-static void AddVirtualTable(void)
-{
-    int i;
-    char l_p[16];
-    char l_t[16];
-    struct com_item *p;
-
-    p = ModuleInfo.g.ComStack;
-    AddLineQueueX( "%s ends", p->class );
-
-    if ( p->cmd == T_DOT_CLASS ) {
-
-        i = 4;
-        if ( ModuleInfo.Ofssize == USE64 )
-            i = 8;
-        AddLineQueueX( "%sVtbl struct %d", p->class, i );
-
-        ModuleInfo.class_label++;
-        sprintf( l_t, "T$%04X", ModuleInfo.class_label );
-        sprintf( l_p, "P$%04X", ModuleInfo.class_label );
-
-        if ( p->langtype )
-            AddLineQueueX( "%s typedef proto %r :ptr %s", l_t, p->langtype, p->class );
-        else
-            AddLineQueueX( "%s typedef proto :ptr %s", l_t, p->class );
-        AddLineQueueX( "%s typedef ptr %s", l_p, l_t );
-        AddLineQueueX( "Release %s ?", l_p );
-    } else {
-        AddLineQueueX( "%sVtbl struct", p->class );
-    }
-}
-
 int ProcType(int i, struct asm_tok tokenarray[], char *buffer)
 {
     int     rc = NOT_ERROR;
@@ -61,28 +29,27 @@ int ProcType(int i, struct asm_tok tokenarray[], char *buffer)
     x = strlen(p);
 
     if ( x > 4 ) {
-
         p += x - 4;
         if ( _memicmp(p, "Vtbl", 4) == 0 )
             IsCom++;
     }
-
     if ( !IsCom && o ) {
-
         if ( Token_Count > 2 && tokenarray[i+1].tokval == T_LOCAL ) {
-
             i++;
         } else {
 
-            AddVirtualTable();
+            AddLineQueueX( "%s ends", o->class );
+            AddLineQueueX( "%sVtbl struct", o->class );
             IsCom++;
         }
     }
 
     strcpy(buffer, l_t);
     strcat(buffer, " typedef proto");
-    if ( o && o->cmd == T_DOT_COMDEF )
-        strcat(buffer, " WINAPI");
+    if ( o && o->cmd == T_DOT_COMDEF ) {
+        if ( ModuleInfo.Ofssize == USE32 && ModuleInfo.langtype != LANG_STDCALL )
+            strcat(buffer, " stdcall");
+    }
 
     i++;
     q = 0;
@@ -156,38 +123,31 @@ int ProcType(int i, struct asm_tok tokenarray[], char *buffer)
 
 int ClassDirective( int i, struct asm_tok tokenarray[] )
 {
-    int     rc = NOT_ERROR;
-    int     x,q,cmd,args;
-    char    buffer[MAX_LINE_LEN];
-    char *  p;
-    struct  com_item *o = ModuleInfo.g.ComStack;
+    int rc = NOT_ERROR;
+    int x,q,cmd,args;
+    char LPClass[64];
+    char LPClassVtbl[64];
+    char *p;
+    struct com_item *o = ModuleInfo.g.ComStack;
 
     cmd = tokenarray[i].tokval;
     i++;
 
     switch ( cmd ) {
     case T_DOT_ENDS:
-
-        if ( !o )
-            return asmerr(1011);
-
-        p = CurrStruct->sym.name;
-        x = strlen(p);
-        if ( x > 4 && _memicmp(p + x - 4, "Vtbl", 4) != 0 ) {
-
-            AddVirtualTable();
-            AddLineQueueX( "%sVtbl ends", o->class );
-        } else {
-            AddLineQueueX( "%s ends", p );
+        if ( ModuleInfo.g.ComStack == NULL ) {
+            if ( CurrStruct )
+                return ( asmerr( 1011 ) );
+            break;
         }
         ModuleInfo.g.ComStack = NULL;
+        AddLineQueueX( "%s ends", CurrStruct->sym.name );
         break;
 
     case T_DOT_COMDEF:
     case T_DOT_CLASS:
-
-        if ( o )
-            return asmerr(1011);
+        if ( ModuleInfo.g.ComStack != NULL )
+            return ( asmerr( 1011 ) );
 
         o = LclAlloc( sizeof( struct com_item ) );
         ModuleInfo.g.ComStack = o;
@@ -196,10 +156,8 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
         p = tokenarray[i].string_ptr;
         o->class = LclAlloc( strlen(p) + 1 );
         strcpy(o->class, p);
-        strcat( strcpy( buffer, "LP" ), p );
-
-        if ( cmd == T_DOT_CLASS )
-            _strupr( buffer );
+        strcat( strcpy( LPClass, "LP" ), p );
+        _strupr( LPClass );
 
         args = i + 1;
         if( tokenarray[args].token == T_ID && (tokenarray[args].string_ptr[0] | 0x20) == 'c'
@@ -215,11 +173,10 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
             args++;
         }
 
+        AddLineQueueX( "%sVtbl typedef ptr %sVtbl", LPClass, p );
+
         if ( cmd == T_DOT_CLASS ) {
-
-            AddLineQueueX( "%s typedef ptr %s", buffer, p );
-            AddLineQueueX( "%sVtbl typedef ptr %sVtbl", buffer, p );
-
+            AddLineQueueX( "%s typedef ptr %s", LPClass, p );
             for ( x = 0, q = args; tokenarray[q].token != T_FINAL; q++ ) {
 
                 if ( tokenarray[q].token == T_COLON ) {
@@ -227,7 +184,6 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
                     break;
                 }
             }
-
             if ( o->langtype ) {
                 if ( x )
                     AddLineQueueX( "%s::%s proto %s %s", p, p, tokenarray[args-1].string_ptr, tokenarray[args].tokpos );
@@ -239,20 +195,16 @@ int ClassDirective( int i, struct asm_tok tokenarray[] )
                 else
                     AddLineQueueX( "%s::%s proto", p, p );
             }
-        }
-
-        x = 4;
-        if ( ModuleInfo.Ofssize == USE64 )
-            x = 8;
-
-        if ( cmd == T_DOT_CLASS ) {
-
-            AddLineQueueX( "%s struct %d", p, x );
-            AddLineQueueX( "lpVtbl %sVtbl ?", buffer );
-        } else {
+            x = 4;
+            if ( ModuleInfo.Ofssize == USE64 )
+                x = 8;
+            if ( ( 1 << ModuleInfo.fieldalign ) < x )
+                AddLineQueueX( "%s struct %d", p, x );
+            else
+                AddLineQueueX( "%s struct", p );
+        } else
             AddLineQueueX( "%s struct", p );
-            AddLineQueue ( "lpVtbl PVOID ?" );
-        }
+        AddLineQueueX( "lpVtbl %sVtbl ?", LPClass );
         break;
     }
 

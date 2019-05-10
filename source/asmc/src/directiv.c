@@ -131,6 +131,8 @@ int IncludeLibDirective( int i, struct asm_tok tokenarray[] )
 {
     char *name;
 
+    if ( Options.nolib ) /* slip directive */
+	return( NOT_ERROR );
     if ( Parse_Pass != PASS_1 ) /* do all work in pass 1 */
 	return( NOT_ERROR );
     i++; /* skip the directive */

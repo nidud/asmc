@@ -13,6 +13,9 @@ Asmc Macro Assembler Reference
 - [@Environ](environ.md)
 - [@Interface](interface.md)
 - [@Version](version.md)
+- [**`__ASMC__`**](__asmc__.md)
+- [**`__ASMC64__`**](__asmc64__.md)
+- [**`__JWASM__`**](__jwasm__.md)
 
 #### File Information
 

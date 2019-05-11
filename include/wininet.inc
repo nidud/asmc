@@ -11,6 +11,7 @@ _WININET_ALIGN equ 8
 else
 _WININET_ALIGN equ 4
 endif
+.pragma comment(lib, wininet)
 
 ;BOOLAPI		equ INTERNETAPI_(BOOL)
 

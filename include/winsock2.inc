@@ -75,6 +75,7 @@ u_int64			typedef sqword
 endif
 
 include ws2def.inc
+.pragma comment(lib, Ws2_32)
 
 SOCKET			typedef UINT_PTR
 

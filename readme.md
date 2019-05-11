@@ -1,7 +1,5 @@
 # Asmc Macro Assembler
 
-This document contains information on products in development so all information provided here is subject to change without notice.
-
 ### Asmc Macro Assembler Reference
 - [Build Environment for Asmc](doc/build/readme.md)
 - [Asmc Command-Line Reference](doc/command/readme.md)

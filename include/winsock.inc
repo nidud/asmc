@@ -8,6 +8,8 @@ ifndef _INC_WINDOWS
 include windows.inc
 endif
 
+.pragma comment(lib, Ws2_32)
+
 SOCKET			typedef UINT_PTR
 
 ifndef FD_SETSIZE

@@ -1,15 +1,12 @@
 regress:
-    if exist *.exe del *.exe
     if exist *.obj del *.obj
-    asmc -q -assert -win64 -r *.s
-    for %%f in (*.obj) do call :test64 %%f
+    asmc -q -assert -win64 -r *.regress
+    for %%f in (*.obj) do call :make %%f
     exit
-    :test64
-    linkw op q system con_64 file %~n1.obj
+    :make
+    linkw op q sys con_64 f %~n1
     if not exist %~n1.exe exit
-    .\%~n1.exe
+    %~n1.exe
     if errorlevel 1 exit
-    dir > nul
-    del %~n1.obj
-    del %~n1.exe
+    cmd /C del %~n1.obj %~n1.exe
 

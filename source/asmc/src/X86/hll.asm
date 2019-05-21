@@ -1273,7 +1273,15 @@ endif
 
                 .elseif SymFind( [ebx].string_ptr )
 
-                    mov eax,[eax].asym.total_size
+                    ; movsd id,cos(..)
+
+                    .if ( ModuleInfo.Ofssize == USE64 && \
+                        ( [eax].asym.mem_type == MT_REAL4 || \
+                          [eax].asym.mem_type == MT_REAL8 ) )
+                        mov eax,16
+                    .else
+                        mov eax,[eax].asym.total_size
+                    .endif
 
                 .elseif [ebx-16].token == T_DOT
 
@@ -2516,18 +2524,6 @@ local   rc:         SINT,
                 EvaluateHllExpression( esi, &i, ebx, LSTART, 1, edi )
                 mov rc,eax
 
-                .if eax == NOT_ERROR
-
-                    alloc_cond:
-
-                    strlen( edi )
-                    inc eax
-                    push    eax
-                    LclAlloc( eax )
-                    pop ecx
-                    mov [esi].condlines,eax
-                    memcpy( eax, edi, ecx )
-                .endif
             .elseif cmd != T_DOT_WHILE
 
                 GetLabelStr( [esi].labels[LSTART*4], &[edi+20] )
@@ -2535,12 +2531,24 @@ local   rc:         SINT,
                 strcat( edi, " " )
                 strcat( edi, &[edi+20] )
                 InvertJump( edi )
-                jmp alloc_cond
+                mov eax,NOT_ERROR
             .else
                 ;
                 ; just ".while" without expression is accepted
                 ;
                 mov BYTE PTR [edi],NULLC
+                mov eax,ERROR
+            .endif
+
+            .if eax == NOT_ERROR
+
+                strlen(edi)
+                inc  eax
+                push eax
+                LclAlloc(eax)
+                pop ecx
+                mov [esi].condlines,eax
+                memcpy( eax, edi, ecx )
             .endif
 
             ; create a jump to test label
@@ -2641,9 +2649,8 @@ local   rc:         SINT,
     .endif
 
     mov eax,rc
-
-toend:
     ret
+
 HllStartDir endp
 
 ;
@@ -2894,11 +2901,18 @@ toend:
     ret
 HllEndDir endp
 
-_lk_HllContinueIf proc i:ptr sdword, tokenarray:ptr asmtok
+HllContinueIf proc uses esi edi ebx hll:ptr hll_item, i:ptr sdword, tokenarray:ptr asmtok,
+    labelid:int_t, hll1:ptr hll_item
 
-  local rc:SINT, buff[16]:SBYTE
+  local rc:int_t, buff[16]:char_t
 
     mov rc,NOT_ERROR
+    mov ecx,labelid
+    mov esi,hll
+    mov eax,i
+    mov ebx,[eax]
+    shl ebx,4
+    add ebx,tokenarray
 
     .if [ebx].token != T_FINAL
 
@@ -2906,6 +2920,7 @@ _lk_HllContinueIf proc i:ptr sdword, tokenarray:ptr asmtok
 
             xor edx,edx
             mov eax,[ebx].tokval
+
             .switch eax
               .case T_DOT_IFSD
                 or edx,HLLF_IFS
@@ -2920,7 +2935,7 @@ _lk_HllContinueIf proc i:ptr sdword, tokenarray:ptr asmtok
                 mov [esi].cmd,HLL_BREAK
                 mov eax,i
                 inc dword ptr [eax]
-                EvaluateHllExpression(esi, eax, tokenarray, ecx, 1, edi)
+                EvaluateHllExpression(esi, eax, tokenarray, labelid, 1, edi)
                 mov rc,eax
                 .if eax == NOT_ERROR
 
@@ -2966,11 +2981,12 @@ _lk_HllContinueIf proc i:ptr sdword, tokenarray:ptr asmtok
                 .endc
             .endsw
         .endif
+
     .else
-        push edx
+
         AddLineQueueX("jmp %s", GetLabelStr([esi].labels[ecx*4], edi))
 
-        pop edx
+        mov edx,hll1
         .if [edx].hll_item.cmd == HLL_SWITCH
             ;
             ; unconditional jump from .case
@@ -2993,7 +3009,7 @@ _lk_HllContinueIf proc i:ptr sdword, tokenarray:ptr asmtok
     mov eax,rc
     ret
 
-_lk_HllContinueIf endp
+HllContinueIf endp
 
 ;
 ; .ELSE, .ELSEIF, .CONTINUE and .BREAK directives.
@@ -3011,9 +3027,11 @@ HllExitDir proc USES esi edi ebx i:int_t, tokenarray:ptr asmtok
         cont0:  SINT,
         cmd:    SINT,
         buff    [16]:SBYTE,
-        buffer  [MAX_LINE_LEN]:SBYTE
+        buffer  [MAX_LINE_LEN]:SBYTE,
+        hll:    ptr hll_item
 
     mov esi,ModuleInfo.HllStack
+    mov hll,esi
 
     .repeat
 
@@ -3107,15 +3125,14 @@ HllExitDir proc USES esi edi ebx i:int_t, tokenarray:ptr asmtok
 
             .endif
 
-            .for edx = esi: esi,
-                ([esi].cmd == HLL_IF || [esi].cmd == HLL_SWITCH): esi=[esi].next
+            .for ( : esi && ( [esi].cmd == HLL_IF || [esi].cmd == HLL_SWITCH ) : esi = [esi].next )
             .endf
 
-            .while esi && ecx
-                .for esi = [esi].next: esi,
-                    ([esi].cmd == HLL_IF || [esi].cmd == HLL_SWITCH): esi=[esi].next
+            .while ( esi && ecx )
+                .for ( esi = [esi].next : esi && ( [esi].cmd == HLL_IF || [esi].cmd == HLL_SWITCH ),
+                     : esi = [esi].next )
                 .endf
-                dec  ecx
+                dec ecx
             .endw
 
             hllexit( esi == 0, 1011 )
@@ -3153,7 +3170,7 @@ HllExitDir proc USES esi edi ebx i:int_t, tokenarray:ptr asmtok
             ;
             inc i
             add ebx,16
-            mov rc,_lk_HllContinueIf(&i, tokenarray)
+            mov rc,HllContinueIf(esi, &i, tokenarray, ecx, hll)
             .endc
         .endsw
 

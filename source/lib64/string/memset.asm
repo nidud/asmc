@@ -28,7 +28,7 @@ elseifdef __AVX__
     pshufd  xmm0,xmm0,0
 
     .if r8 <= 64
-        .switch notest r8
+        .switch jmp r8
           .case 1
             mov [rax],dl
           .case 0
@@ -83,7 +83,7 @@ else
     pshufd  xmm0,xmm0,0
 
     .if r8 <= 32
-        .switch notest r8
+        .switch jmp r8
           .case 0
             ret
           .case 1

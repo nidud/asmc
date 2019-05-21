@@ -19,7 +19,7 @@ memmove::
 
     .if r8 <= CHUNK
 
-        .switch notest r8
+        .switch jmp r8
 
           .case 0
             ret

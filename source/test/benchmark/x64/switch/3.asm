@@ -1,7 +1,7 @@
 
     .code
 
-    .switch NOTEST rcx
+    .switch jmp rcx
     enum = 0
     repeat  COUNT
 %   .case @CatStr(%enum)

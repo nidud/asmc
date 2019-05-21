@@ -27,32 +27,33 @@ HLL_SWITCH	equ 4
 LTEST		equ 0 ; test (loop) condition
 LEXIT		equ 1 ; block exit
 LSTART		equ 2 ; loop start
+LSTARTSW	equ 3 ; start of switch
 
 ;
 ; values for struct hll_item.flags
 ;
-HLLF_ELSEOCCUR	equ 01h
-HLLF_ELSEIF	equ 02h
-HLLF_WHILE	equ 04h
-HLLF_EXPRESSION equ 08h
-HLLF_DEFAULT	equ 10h
-HLLF_DELAYED	equ 20h		; set by DelayExpand()
+HLLF_ELSEOCCUR	equ 0x01
+HLLF_ELSEIF	equ 0x02
+HLLF_WHILE	equ 0x04
+HLLF_EXPRESSION equ 0x08
+HLLF_DEFAULT	equ 0x10
+HLLF_DELAYED	equ 0x20	; set by DelayExpand()
 ;
 ; .SWITCH <arg_type>
 ;
-HLLF_NOTEST	equ 40h		; direct jump..
-HLLF_ARGREG	equ 80h		; register 16/32/64-bit size_t
-HLLF_ARGMEM	equ 0100h	; memory if set, else register
-HLLF_ARG16	equ 0200h	; size: 8/16/32/64
-HLLF_ARG32	equ 0400h
-HLLF_ARG64	equ 0800h
-HLLF_ARG3264	equ 1000h	; .switch exx in 64-bit extended to rxx
+HLLF_NOTEST	equ 0x40	; direct jump..
+HLLF_ARGREG	equ 0x80	; register 16/32/64-bit size_t
+HLLF_ARGMEM	equ 0x0100	; memory if set, else register
+HLLF_ARG16	equ 0x0200	; size: 8/16/32/64
+HLLF_ARG32	equ 0x0400
+HLLF_ARG64	equ 0x0800
+HLLF_ARG3264	equ 0x1000	; .switch exx in 64-bit extended to rxx
 ;
 ; .CASE flags
 ;
-HLLF_NUM	equ 2000h	; .case arg is const
-HLLF_TABLE	equ 4000h	; .case is in jump table
-HLLF_ENDCOCCUR	equ 8000h	; jmp exit in .case omitted
+HLLF_NUM	equ 0x2000	; .case arg is const
+HLLF_TABLE	equ 0x4000	; .case is in jump table
+HLLF_ENDCOCCUR	equ 0x8000	; jmp exit in .case omitted
 ;
 ; Return type
 ;
@@ -63,6 +64,7 @@ HLLF_IFS	equ 0x00080000	; Signed compare --> CMP REG,val
 
 HLLF_PASCAL	equ 0x00100000	; option switch:pascal | .switch pascal <args>
 HLLF_JTABLE	equ 0x00200000	; if HLLF_NOTEST direct .case jump
+HLLF_JTDATA	equ 0x00400000	; Jump table in data segment -- HLLF_NOTEST
 
 ;
 ; item for .IF, .WHILE, .REPEAT, ...
@@ -70,7 +72,7 @@ HLLF_JTABLE	equ 0x00200000	; if HLLF_NOTEST direct .case jump
 hll_item	STRUC
 next		dd ?		; hll_item *
 caselist	dd ?		; hll_item *
-labels		dd 3 dup(?)	; labels for LTEST, LEXIT, LSTART
+labels		dd 4 dup(?)	; labels for LTEST, LEXIT, LSTART
 condlines	LPSTR ?		; .WHILE/ELSEIF/CASE-blocks only: lines to add after 'test' label
 cmd		dd ?		; start cmd (IF, WHILE, REPEAT)
 flags		dd ?		; v2.08: added

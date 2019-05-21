@@ -271,19 +271,13 @@ endif
                     mov ecx,[eax]
                     .switch cx
                       .case '6'
-                        .if ecx != 0x00340036
-
-                            .gotosw2(ST_NORMAL)
-                        .endif
+                        .gotosw(2:ST_NORMAL) .if ecx != 0x00340036
                         or  esi,FL_I64
                         add eax,4
                         mov format,eax
                         .endc
                       .case '3'
-                        .if ecx != 0x00320033
-
-                            .gotosw2(ST_NORMAL)
-                        .endif
+                        .gotosw(2:ST_NORMAL) .if ecx != 0x00320033
                         and esi,not FL_I64
                         add eax,4
                         mov format,eax
@@ -296,7 +290,7 @@ endif
                       .case 'X'
                         .endc
                       .default
-                        .gotosw2(ST_NORMAL)
+                        .gotosw(2:ST_NORMAL)
                     .endsw
                     .endc
 

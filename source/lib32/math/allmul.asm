@@ -8,7 +8,23 @@
     .model flat, c
     .code
 
-_U8M proto
+_I8M::
+_U8M::
+    .if ( !edx && !ecx )
+        mul ebx
+        ret
+    .endif
+    push    eax
+    push    edx
+    mul     ecx
+    mov     ecx,eax
+    pop     eax
+    mul     ebx
+    add     ecx,eax
+    pop     eax
+    mul     ebx
+    add     edx,ecx
+    ret
 
 __llmul:: ; PellesC
 _allmul::

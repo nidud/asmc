@@ -1,36 +1,38 @@
 
-libdir = ..\..\lib
-lib_32 = $(libdir)\quadmath.lib
-lib_64 = $(libdir)\amd64\quadmath.lib
-flags  = -Cs -nolib
+win32 = ../../lib/quadmath.lib
+win64 = ../../lib/amd64/quadmath.lib
+elf32 = ../../lib/elf/quadmath.lib
 
-all: $(lib_64) $(lib_32)
+all: $(win32) $(win64) $(elf32)
 
-$(lib_32):
-    asmc $(flags) -coff -safeseh -Zi -r const\*.asm x86\*.asm
+base32 = \
+    ../lib32/quadmath/*.asm \
+    ../lib32/quadmath/const/*.asm \
+    ../lib32/fltintrn/_strtoflt.asm \
+    ../lib32/fltintrn/_fltsetflags.asm \
+    ../lib32/fltintrn/_destoflt.asm \
+    ../lib32/fltintrn/_fltscale.asm
+
+base64 = \
+    ../lib64/quadmath/*.asm \
+    ../lib64/quadmath/const/*.asm \
+    ../lib64/fltintrn/_strtoflt.asm \
+    ../lib64/fltintrn/_fltsetflags.asm \
+    ../lib64/fltintrn/_destoflt.asm \
+    ../lib64/fltintrn/_fltscale.asm
+
+$(win32):
+    asmc -Cs -nolib -coff -safeseh -Zi $(base32)
     libw -q -b -n -c -fac $@ *.obj
     del *.obj
 
-$(lib_64):
-    asmc $(flags) -win64 -r const\*.asm x64\*.asm
+$(win64):
+    asmc -Cs -nolib -win64 $(base64)
     libw -q -b -n -c -fac $@ *.obj
     del *.obj
 
-quad.x86:
-    asmc -q $*.regress
-    linkw sys con_32 f $*
-    if not exist $*.exe exit
-    $*.exe
-    if errorlevel 1 exit
-    dir *.obj > nul
-    cmd /C del $*.obj $*.exe
-
-quad.x64:
-    asmc -q -win64 $*.regress
-    linkw sys con_64 f $*
-    if not exist $*.exe exit
-    $*.exe
-    if errorlevel 1 exit
-    dir *.obj > nul
-    cmd /C del $*.obj $*.exe
-
+$(elf32):
+    if not exist ..\..\lib\elf md ..\..\lib\elf
+    asmc -nologo -elf -nolib $(base32)
+    libw -q -b -n -c -ie $@ *.obj
+    del *.obj

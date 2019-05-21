@@ -4,7 +4,7 @@
 
     .if r8 <= 64
 
-        .switch notest r8
+        .switch jmp r8
 
           .case 0
             ret

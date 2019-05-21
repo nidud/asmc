@@ -9,7 +9,6 @@ include stdlib.inc
 include limits.inc
 include wchar.inc
 include fltintrn.inc
-include quadmath.inc
 
 ;
 ; the following should be set depending on the sizes of various types
@@ -254,19 +253,13 @@ endif
                     mov cx,[eax]
                     .switch cl
                       .case '6'
-                        .if ch != '4'
-
-                            .gotosw2(ST_NORMAL)
-                        .endif
+                        .gotosw(2:ST_NORMAL) .if ch != '4'
                         or  esi,FL_I64
                         add eax,2
                         mov format,eax
                         .endc
                       .case '3'
-                        .if ch != '2'
-
-                            .gotosw2(ST_NORMAL)
-                        .endif
+                        .gotosw(2:ST_NORMAL) .if ch != '2'
                         and esi,not FL_I64
                         add eax,2
                         mov format,eax
@@ -279,7 +272,7 @@ endif
                       .case 'X'
                         .endc
                       .default
-                        .gotosw2(ST_NORMAL)
+                        .gotosw(2:ST_NORMAL)
                     .endsw
                     .endc
 
@@ -463,7 +456,7 @@ ifndef __DZ__
                         ;
                         ; Note: assumes ch is in ASCII range
                         ;
-                        cldcvt(addr tmp, text, edx, edi, esi)
+                        _cldcvt(addr tmp, text, edx, edi, esi)
 
                     .elseif esi & FL_LONGLONG
 
@@ -475,12 +468,12 @@ ifndef __DZ__
                         ;
                         ; Note: assumes ch is in ASCII range
                         ;
-                        cqfcvt(addr tmp, text, edx, edi, esi)
+                        _cqcvt(addr tmp, text, edx, edi, esi)
                     .else
                         ;
                         ; Note: assumes ch is in ASCII range
                         ;
-                        cfltcvt(addr tmp, text, edx, edi, esi)
+                        _cfltcvt(addr tmp, text, edx, edi, esi)
                     .endif
                     ;
                     ; '#' and precision == 0 means force a decimal point

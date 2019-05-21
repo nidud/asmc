@@ -3028,7 +3028,9 @@ int ParseLine( struct asm_tok tokenarray[] )
 	    case T_MOV:
 	    case T_CMP:
 	    case T_TEST:
+	    case T_ADC:
 	    case T_ADD:
+	    case T_SBB:
 	    case T_SUB:
 	    case T_AND:
 	    case T_OR:

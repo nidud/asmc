@@ -4,187 +4,243 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include ltype.inc
 include fltintrn.inc
-include crtl.inc
+include errno.inc
 
-.data
-_real dt 0
-flt S_STRFLT <0,0,0,_real>
+    .data
+    real real16 0.0
+    flt STRFLT <0,0,0,real>
 
-.code
+    .code
 
-_strtoflt proc public uses esi edi ebx string:LPSTR
+_strtoflt proc uses esi edi ebx string:string_t
 
-  local digits
-  local buffer[64]:BYTE
+  local buffer[128]:char_t
+  local digits:int_t
+  local sign:int_t
 
     .repeat
 
         _fltsetflags(&flt, string, 0)
         .break .if eax & _ST_ISZERO or _ST_ISNAN or _ST_ISINF or _ST_INVALID
-        .if eax & _ST_ISHEX
-            _hextoflt(&flt, &buffer)
-        .else
-            _destoflt(&flt, &buffer)
-        .endif
-        mov digits,eax
+
+        mov digits,_destoflt(&flt, &buffer)
         mov edx,flt.mantissa
-        .if !eax
+
+        .if ( eax == 0 )
+
             or flt.flags,_ST_ISZERO
-            mov [edx],eax
-            mov [edx+4],eax
-            mov [edx+8],ax
             .break
         .endif
         mov buffer[eax],0
 
-        .if flt.flags & _ST_ISHEX
-            lea ebx,buffer
-            mov esi,digits
-            xor edi,edi
-            xor edx,edx
-            .while edi <= 8 && esi
-                dec esi
-                movzx eax,byte ptr [ebx]
-                inc ebx
-                and eax,not 30h
-                bt  eax,6
-                sbb ecx,ecx
-                and ecx,55
-                sub eax,ecx
-                lea ecx,[edi*4-28]
-                neg ecx
-                shl eax,cl
-                or  edx,eax
-                add flt.exponent,4
-                inc edi
-            .endw
-            push edx
-            xor edi,edi
-            xor edx,edx
-            .while edi <= 8 && esi
-                dec esi
-                movzx eax,byte ptr [ebx]
-                inc ebx
-                and eax,not 30h
-                bt  eax,6
-                sbb ecx,ecx
-                and ecx,55
-                sub eax,ecx
-                lea ecx,[edi*4-28]
-                neg ecx
-                shl eax,cl
-                or  edx,eax
-                add flt.exponent,4
-                inc edi
-            .endw
-            pop eax
-            .while !(eax & 0x80000000)
-                shl eax,1
-                bt  edx,31
-                sbb ecx,ecx
-                and ecx,1
-                or  eax,ecx
-                shl edx,1
-                dec flt.exponent
-            .endw
-            dec flt.exponent
-            mov ecx,flt.exponent
-            add ecx,00003FFFh
-            mov edi,flt.mantissa
-            mov [edi],edx
-            mov [edi+4],eax
-            mov [edi+8],cx
-        .else
-            push ebp
-            lea esi,buffer
-            xor edx,edx
-            xor ecx,ecx
-            xor ebp,ebp
-            .while byte ptr [esi]
-                mov edi,edx ; val = val * 10 + c
-                mov ebx,ecx
-                mov eax,ebp
-                add ebp,ebp
-                adc ecx,ecx
-                adc edx,edx
-                add ebp,ebp
-                adc ecx,ecx
-                adc edx,edx
-                add ebp,eax
-                adc ecx,ebx
-                adc edx,edi
-                add ebp,ebp
-                adc ecx,ecx
-                adc edx,edx
-                mov al,[esi]
-                and eax,0x0F
-                add ebp,eax
-                adc ecx,0
-                adc edx,0
-                inc esi
-            .endw
-            mov eax,ecx
-            mov edi,16478
-            mov esi,eax
-            or  esi,edx
-            or  esi,ebp
-            .ifnz
-                .if !edx
-                    mov edx,eax
-                    mov eax,ebp
-                    xor ebp,ebp
-                    sub edi,32
-                    .if !edx
-                        mov edx,eax
-                        mov eax,ebp
-                        xor ebp,ebp
-                        sub edi,32
-                    .endif
+        ;
+        ; convert string to binary
+        ;
+        lea edx,buffer
+        xor eax,eax
+        mov al,[edx]
+        mov sign,eax
+
+        .if ( al == '+' || al == '-' )
+
+            inc edx
+        .endif
+
+        mov ebx,16
+        .if !( flt.flags & _ST_ISHEX )
+
+            mov ebx,10
+        .endif
+        mov esi,flt.mantissa
+
+        .while 1
+
+            mov al,[edx]
+            .break .if !al
+
+            and eax,not 0x30
+            bt  eax,6
+            sbb ecx,ecx
+            and ecx,55
+            sub eax,ecx
+            mov ecx,8
+            .repeat
+                movzx edi,word ptr [esi]
+                imul  edi,ebx
+                add   eax,edi
+                mov   [esi],ax
+                add   esi,2
+                shr   eax,16
+            .untilcxz
+            sub esi,16
+            inc edx
+        .endw
+
+        mov eax,[esi]
+        mov edx,[esi+4]
+        mov ecx,[esi+8]
+        mov esi,[esi+12]
+
+        .if ( sign == '-' )
+
+            neg esi
+            neg ecx
+            sbb esi,0
+            neg edx
+            sbb ecx,0
+            neg eax
+            sbb edx,0
+        .endif
+        ;
+        ; get bit-count of number
+        ;
+        xor ebx,ebx
+        bsr ebx,esi
+        .ifz
+            bsr ebx,ecx
+            .ifz
+                bsr ebx,edx
+                .ifz
+                    bsr ebx,eax
+                .else
+                    add ebx,32
                 .endif
-                .while !(edx & 0x80000000)
-                    dec edi
-                    add ebp,ebp
-                    adc eax,eax
-                    adc edx,edx
-                .endw
-                add ebp,ebp
-                adc eax,0
-                adc edx,0
-                .if CARRY?
-                    rcr edx,1
-                    inc edi
-                .endif
-                mov esi,edi
+            .else
+                add ebx,64
             .endif
-            pop ebp
+        .else
+            add ebx,96
+        .endif
+        .ifnz
+            inc ebx
+        .endif
+
+        .if ebx
+
+            xchg ebx,ecx
+            mov edi,Q_SIGBITS
+            sub edi,ecx
+            ;
+            ; shift number to bit-size
+            ;
+            ; - 0x0001 --> 0x8000
+            ;
+            .if ecx > Q_SIGBITS
+
+                sub ecx,Q_SIGBITS
+                ;
+                ; or 0x10000 --> 0x1000
+                ;
+                .while cl >= 32
+                    mov eax,edx
+                    mov edx,ebx
+                    mov ebx,esi
+                    xor esi,esi
+                    sub cl,32
+                .endw
+                shrd eax,edx,cl
+                shrd edx,ebx,cl
+                shrd ebx,esi,cl
+                shr esi,cl
+
+            .elseif edi
+
+                mov ecx,edi
+                .while cl >= 32
+                    mov esi,ebx
+                    mov ebx,edx
+                    mov edx,eax
+                    xor eax,eax
+                    sub cl,32
+                .endw
+                shld esi,ebx,cl
+                shld ebx,edx,cl
+                shld edx,eax,cl
+                shl eax,cl
+            .endif
             mov ecx,flt.mantissa
             mov [ecx],eax
             mov [ecx+4],edx
-            mov [ecx+8],si
-            .if flt.exponent != 0
-                _fltscale(&flt)
+            mov [ecx+8],ebx
+            mov [ecx+12],esi
+            ;
+            ; create exponent bias and mask
+            ;
+            mov ebx,Q_EXPBIAS+Q_SIGBITS-1
+            sub ebx,edi
+            and ebx,Q_EXPMASK ; remove sign bit
+            .if flt.flags & _ST_NEGNUM
+                or ebx,0x8000
             .endif
+            .if flt.flags & _ST_ISHEX
+                add ebx,flt.exponent
+            .endif
+            mov [ecx+14],bx
+        .else
+            or flt.flags,_ST_ISZERO
+        .endif
+
+        mov edi,flt.flags
+        mov ecx,flt.mantissa
+        mov ax,[ecx+14]
+        and eax,Q_EXPMASK
+        mov edx,1
+
+        .switch
+          .case edi & _ST_ISNAN or _ST_ISINF or _ST_INVALID
+            mov edx,0x7FFF0000
+            .if edi & _ST_ISNAN or _ST_INVALID
+                or edx,0x00004000
+            .endif
+            .endc
+          .case edi & _ST_OVERFLOW
+          .case eax >= Q_EXPMAX + Q_EXPBIAS
+            mov edx,0x7FFF0000
+            .if edi & _ST_NEGNUM
+                or edx,0x80000000
+            .endif
+            .endc
+          .case edi & _ST_UNDERFLOW
+            xor edx,edx
+            .endc
+        .endsw
+
+        .if edx != 1
+
+            xor eax,eax
+            mov [ecx+0x00],eax
+            mov [ecx+0x04],eax
+            mov [ecx+0x08],eax
+            mov [ecx+0x0C],edx
+            _set_errno(ERANGE)
+
+        .elseif flt.exponent && !( flt.flags & _ST_ISHEX )
+
+            _fltscale(&flt)
         .endif
 
         .if flt.flags & _ST_NEGNUM
+
             mov edx,flt.mantissa
-            or WORD PTR [edx+8],8000h
+            or byte ptr [edx+15],0x80
         .endif
+
         mov eax,flt.exponent
         add eax,digits
         dec eax
+
         .ifs eax > 4932
             or flt.flags,_ST_OVERFLOW
         .endif
         .ifs eax < -4932
             or flt.flags,_ST_UNDERFLOW
         .endif
+
     .until 1
     lea eax,flt
     ret
 
-_strtoflt ENDP
+_strtoflt endp
 
     END

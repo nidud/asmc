@@ -1314,17 +1314,36 @@ GetToken proc fastcall tokenarray:ptr asmtok, p:ptr line_status
 
         movzx eax,[ecx-16].asmtok.token
         .if ![edx].index || \
-            (eax != T_REG && eax != T_CL_BRACKET && eax != T_CL_SQ_BRACKET && eax != T_ID)
+            ( eax != T_REG && \
+              eax != T_CL_BRACKET && \
+              eax != T_CL_SQ_BRACKET && \
+              eax != T_ID )
 
             jmp get_id
         .endif
         ;
         ; added v2.29 for .break(n) and .continue(n)
         ;
-        .if (eax == T_CL_BRACKET && [ecx-48].asmtok.token == T_OP_BRACKET)
+        .if ( eax == T_CL_BRACKET )
 
-            .if ( [ecx-64].asmtok.tokval == T_DOT_BREAK || \
-                  [ecx-64].asmtok.tokval == T_DOT_CONTINUE )
+            push ecx
+            push ebx
+            lea ebx,[ecx-32]
+            mov eax,1
+            .for ( ecx = [edx].index : ecx > 1 : ecx--, ebx -= 16 )
+                .if ( [ebx].token == T_OP_BRACKET )
+                    dec eax
+                    .break .ifz
+                .elseif ( [ebx].token == T_CL_BRACKET )
+                    inc eax
+                .endif
+            .endf
+            mov eax,[ebx-16].tokval
+            pop ebx
+            pop ecx
+            .if ( eax == T_DOT_BREAK || \
+                  eax == T_DOT_GOTOSW || \
+                  eax == T_DOT_CONTINUE )
                 jmp get_id
             .endif
         .endif
@@ -1345,181 +1364,208 @@ Tokenize PROC USES esi edi ebx line:LPSTR, start:UINT, tokenarray:ptr asmtok, fl
 ;    then some variables are additionally initialized.
 ; flags: 1=if the line has been tokenized already.
 ;
-    mov eax,line
-    mov p.input,eax
+    mov p.input,line
     mov p.start,eax
     mov eax,flags
     mov p.flags,al
-    mov eax,start
-    mov p.index,eax
+    mov p.index,start
     mov p.flags2,0
     mov p.flags3,0
     mov _cstring,0
     mov _brachets,0
 
-    .if !eax
+    .repeat
 
-        mov eax,token_stringbuf
-        mov p.output,eax
-        .if ModuleInfo.inside_comment
+        .if !eax
 
-            .if strchr( line, ModuleInfo.inside_comment )
+            mov p.output,token_stringbuf
+            .if ModuleInfo.inside_comment
 
-                mov ModuleInfo.inside_comment,0
+                .if strchr( line, ModuleInfo.inside_comment )
+
+                    mov ModuleInfo.inside_comment,0
+                .endif
+                .break
             .endif
-            jmp skipline
+        .else
+
+            mov p.output,ModuleInfo.stringbufferend
         .endif
-    .else
-        mov eax,ModuleInfo.stringbufferend
-        mov p.output,eax
-    .endif
 
-    .while 1
+        .while 1
 
-        mov eax,p.input
-        M_SKIP_SPACE ecx, eax
-        mov edx,eax
-        mov p.input,eax
-
-        .if ecx == ';' && flags == TOK_DEFAULT
-
-            .while edx > line
-                movzx eax,BYTE PTR [edx-1]
-                .break .if !BYTE PTR _ltype[eax+1] & _SPACE
-                sub edx,1
+            mov edx,p.input
+            movzx eax,byte ptr [edx]
+            .while ( _ltype[eax+1] & _SPACE )
+                inc edx
+                mov al,[edx]
             .endw
-
             mov p.input,edx
-            strcpy( commentbuffer, edx )
-            mov ModuleInfo.CurrComment,eax
-            mov BYTE PTR [edx],0
-        .endif
 
-        mov ebx,p.index
-        shl ebx,4
-        add ebx,tokenarray
-        mov [ebx].tokpos,edx
+            .if ( al == ';' && flags == TOK_DEFAULT )
 
-        .if BYTE PTR [edx] == 0
-            ;
-            ; if a comma is last token, concat lines ... with some exceptions
-            ; v2.05: moved from PreprocessLine(). Moved because the
-            ; concatenation may be triggered by a comma AFTER expansion.
-            ;
-            .if p.index > 1 && \
-                ([ebx-16].token == T_COMMA || _brachets) && \
-                ( Parse_Pass == PASS_1 || !UseSavedState ) && !start
+                .while ( edx > line )
 
-                .if IsMultiLine( tokenarray ) || _brachets
+                    mov al,[edx-1]
 
-                    strlen( p.output )
-                    add eax,4
-                    and eax,-4
-                    add eax,p.output
-                    mov edi,eax
+                    .break .if !( _ltype[eax+1] & _SPACE )
+                    sub edx,1
+                .endw
 
-                    .if GetTextLine(eax)
+                mov p.input,edx
+                mov ebx,edx
+                strcpy( commentbuffer, edx )
+                mov ModuleInfo.CurrComment,eax
+                mov BYTE PTR [ebx],0
+                mov edx,ebx
+            .endif
 
-                        .if M_EAT_SPACE(eax, edi)
+            mov ebx,p.index
+            shl ebx,4
+            add ebx,tokenarray
+            mov [ebx].tokpos,edx
 
-                            strcpy( p.input, edi )
+            .if BYTE PTR [edx] == 0
+                ;
+                ; if a comma is last token, concat lines ... with some exceptions
+                ; v2.05: moved from PreprocessLine(). Moved because the
+                ; concatenation may be triggered by a comma AFTER expansion.
+                ;
+                .if p.index > 1 && \
+                    ([ebx-16].token == T_COMMA || _brachets) && \
+                    ( Parse_Pass == PASS_1 || !UseSavedState ) && !start
 
-                            .if strlen( p.start ) >= MAX_LINE_LEN
+                    .if IsMultiLine( tokenarray ) || _brachets
 
-                                asmerr( 2039 )
-                                mov eax,start
-                                mov p.index,eax
-                                .break
+                        strlen( p.output )
+                        add eax,4
+                        and eax,-4
+                        add eax,p.output
+                        mov edi,eax
+
+                        .if GetTextLine(eax)
+
+                            .if M_EAT_SPACE(eax, edi)
+
+                                strcpy( p.input, edi )
+
+                                .if strlen( p.start ) >= MAX_LINE_LEN
+
+                                    asmerr( 2039 )
+                                    mov p.index,start
+                                    .break
+                                .endif
+                                .continue
                             .endif
-                            .continue
                         .endif
                     .endif
                 .endif
+                .break
             .endif
-            .break
-        .endif
 
-        mov eax,p.output
-        mov [ebx].string_ptr,eax
-        GetToken( ebx, &p )
-        mov rc,eax
+            mov [ebx].string_ptr,p.output
+            mov rc,GetToken( ebx, &p )
 
-        .switch
-          .case eax == EMPTY
-            .continue
+            .switch
+              .case eax == EMPTY
+                .continue
 
-          .case eax == ERROR
+              .case eax == ERROR
+                ;
+                ; skip this line
+                ;
+                mov p.index,start
+                .break
+
+              .case [ebx].token == T_DBL_COLON
+                mov eax,tokenarray
+                or [eax].asmtok.hll_flags,T_HLL_DBLCOLON
+                .endc
+            .endsw
+
             ;
-            ; skip this line
+            ; v2.04: this has been moved here from condasm.c to
+            ; avoid problems with (conditional) listings. It also
+            ; avoids having to search for the first token twice.
+            ; Note: a conditional assembly directive within an
+            ;   inactive block and preceded by a label isn't detected!
+            ;   This is an exact copy of the Masm behavior, although
+            ;   it probably is just a bug!
             ;
-            mov eax,start
-            mov p.index,eax
-            .break
+            .if !( flags & TOK_RESCAN )
 
-          .case [ebx].token == T_DBL_COLON
-            mov eax,tokenarray
-            or [eax].asmtok.hll_flags,T_HLL_DBLCOLON
-            .endc
-        .endsw
+                mov eax,tokenarray
+                movzx ecx,[eax+16].asmtok.token
+                mov eax,p.index
 
-        ;
-        ; v2.04: this has been moved here from condasm.c to
-        ; avoid problems with (conditional) listings. It also
-        ; avoids having to search for the first token twice.
-        ; Note: a conditional assembly directive within an
-        ;   inactive block and preceded by a label isn't detected!
-        ;   This is an exact copy of the Masm behavior, although
-        ;   it probably is just a bug!
-        ;
-        .if !(flags & TOK_RESCAN)
+                .if !eax || ( eax == 2 && ( ecx == T_COLON || ecx == T_DBL_COLON ) )
 
-            mov eax,tokenarray
-            movzx ecx,[eax+16].asmtok.token
-            mov eax,p.index
+                    mov ecx,[ebx].tokval
+                    .if [ebx].token == T_DIRECTIVE && \
+                        ( [ebx].bytval == DRT_CONDDIR || ecx == T_DOT_ASSERT )
 
-            .if !eax || (eax == 2 && (ecx == T_COLON || ecx == T_DBL_COLON))
+                        .if ecx == T_COMMENT
+                            ;
+                            ; p.index is 0 or 2
+                            ;
+                            StartComment( p.input )
+                            .break
+                        .endif
 
-                mov ecx,[ebx].tokval
-                .if [ebx].token == T_DIRECTIVE && \
-                    ([ebx].bytval == DRT_CONDDIR || ecx == T_DOT_ASSERT)
+                        mov edx,1
+                        .if ecx == T_DOT_ASSERT
 
-                    .if ecx == T_COMMENT
-                        ;
-                        ; p.index is 0 or 2
-                        ;
-                        StartComment( p.input )
-                        .break
-                    .endif
+                            dec edx
+                            .if !( ModuleInfo.xflag & _XF_ASSERT )
 
-                    .if ecx == T_DOT_ASSERT
+                                mov eax,p.input
+                                mov cl,[eax]
 
-                        test ModuleInfo.xflag,_XF_ASSERT
-                        jnz @F
-                        mov eax,p.input
-                        M_SKIP_SPACE ecx, eax
-                        cmp cl,':'
-                        jne @F
-                        inc eax
-                        M_SKIP_SPACE ecx, eax
-                        mov eax,[eax]
-                        or  eax,20202020h
-                        cmp eax,'sdne'
-                        jne @F
-                        mov ecx,T_ENDIF
-                    .endif
+                                .while ( cl == ' ' || cl == 9 )
 
-                    conditional_assembly_prepare( ecx )
-                    .if CurrIfState != BLOCK_ACTIVE
-                        ;
-                        ; p.index is 1 or 3
-                        ;
-                        inc p.index
-                        .break
-                    .endif
+                                    inc eax
+                                    mov cl,[eax]
+                                .endw
 
-                .else
-                @@:
-                    .if CurrIfState != BLOCK_ACTIVE
+                                .if ( cl == ':' )
+
+                                    inc eax
+                                    mov cl,[eax]
+
+                                    .while ( cl == ' ' || cl == 9 )
+
+                                        inc eax
+                                        mov cl,[eax]
+                                    .endw
+                                    mov eax,[eax]
+                                    or  eax,0x20202020
+                                    .if eax == 'sdne'
+
+                                        mov ecx,T_ENDIF
+                                        inc edx
+                                    .endif
+                                .endif
+                            .endif
+                        .endif
+
+                        .if edx
+
+                            conditional_assembly_prepare( ecx )
+                            .if CurrIfState != BLOCK_ACTIVE
+                                ;
+                                ; p.index is 1 or 3
+                                ;
+                                inc p.index
+                                .break
+                            .endif
+                        .else
+                            .break .if CurrIfState != BLOCK_ACTIVE
+                            ;
+                            ; further processing skipped. p.index is 0
+                            ;
+                        .endif
+
+                    .elseif CurrIfState != BLOCK_ACTIVE
                         ;
                         ; further processing skipped. p.index is 0
                         ;
@@ -1527,16 +1573,24 @@ Tokenize PROC USES esi edi ebx line:LPSTR, start:UINT, tokenarray:ptr asmtok, fl
                     .endif
                 .endif
             .endif
-        .endif
 
-        inc p.index
-        .if p.index >= MAX_TOKEN
+            inc p.index
+            .if p.index >= MAX_TOKEN
 
-            asmerr( 2141 )
-            mov eax,start
-            mov p.index,eax
-            jmp skipline
-        .endif
+                asmerr( 2141 )
+                mov eax,start
+                mov p.index,eax
+                .break(1)
+            .endif
+
+            mov eax,p.output
+            sub eax,token_stringbuf
+            add eax,4
+            and eax,-4
+            add eax,token_stringbuf
+            mov p.output,eax
+
+        .endw
 
         mov eax,p.output
         sub eax,token_stringbuf
@@ -1544,18 +1598,10 @@ Tokenize PROC USES esi edi ebx line:LPSTR, start:UINT, tokenarray:ptr asmtok, fl
         and eax,-4
         add eax,token_stringbuf
         mov p.output,eax
+        mov ModuleInfo.stringbufferend,eax
 
-    .endw
+    .until 1
 
-    mov eax,p.output
-    sub eax,token_stringbuf
-    add eax,4
-    and eax,-4
-    add eax,token_stringbuf
-    mov p.output,eax
-    mov ModuleInfo.stringbufferend,eax
-
-skipline:
     mov ebx,tokenarray
     mov eax,p.index
     shl eax,4
@@ -1566,6 +1612,7 @@ skipline:
     mov [ebx].string_ptr,offset __null
     mov eax,p.index
     ret
+
 Tokenize ENDP
 
     END

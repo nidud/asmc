@@ -387,7 +387,7 @@ endif
 
 	OPTION SWITCH:REGAX
 
-	.switch notest eax
+	.switch jmp eax
 	  .case 'A','C','D','E','F','G','H','I'
 	  .default
 	.endsw
@@ -397,7 +397,7 @@ endif
 	  .default
 	.endsw
 
-	.switch notest al
+	.switch jmp al
 	  .case 'A','C','D','E','F','G','H','I'
 	  .default
 	.endsw

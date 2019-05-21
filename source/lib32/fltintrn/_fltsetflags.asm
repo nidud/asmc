@@ -4,123 +4,127 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include ltype.inc
 include fltintrn.inc
 
     .code
 
-    assume esi: ptr S_STRFLT
+    assume edi: ptr STRFLT
 
-_fltsetflags proc uses esi edi ebx fp:LPSTRFLT, string:LPSTR, flags:UINT
+_fltsetflags proc uses esi edi fp:ptr STRFLT, string:string_t, flags:uint_t
 
-    mov esi,fp
-    mov ebx,string
-    mov edi,flags
-
-    mov [esi].exponent,0
-    .repeat
-        movzx eax,byte ptr [ebx]
-        inc ebx
-        test al,al
-        jz case_zero
-    .until !(_ltype[eax+1] & _SPACE)
-    dec ebx
-
-    .if al == '+'
-        inc ebx
-        or  edi,_ST_SIGN
-    .endif
-    .if al == '-'
-        inc ebx
-        or  edi,_ST_SIGN or _ST_NEGNUM
-    .endif
-    mov ax,[ebx]
-    inc ebx
-    test al,al
-    jz case_zero
-    or  eax,2020h
-    cmp al,'n'
-    je  case_NaN
-    cmp al,'i'
-    je  case_INF
-    .if ax == 'x0'
-        or edi,_ST_ISHEX
-        add ebx,2
-    .endif
-    dec ebx
-toend:
-    mov [esi].flags,edi
-    mov [esi].string,ebx
-    mov eax,edi
-    ret
-
-case_NaN:
-
-    mov ax,[ebx]
-    inc ebx
-    test al,al
-    jz case_zero
-
-    or  ax,2020h
-    cmp ax,'na'
-    jne case_INVALID
-    or  edi,_ST_ISNAN
-    inc ebx
-    movzx eax,BYTE PTR [ebx]
-
-    .if al == '('
-        lea edx,[ebx+1]
-        movzx eax,BYTE PTR [edx]
-        .while al == '_' || _ltype[eax+1] & _DIGIT or _UPPER or _LOWER
-            inc edx
-            mov al,[edx]
-        .endw
-        .if al == ')'
-            lea ebx,[edx+1]
-        .endif
-    .endif
-
-return_NAN:
+    mov edi,fp
+    mov esi,string
     xor eax,eax
-    mov ecx,80000000h
-    jmp return_NANINF
-
-case_INF:
-    mov ax,[ebx]
-    inc ebx
-    or  ax,2020h
-    cmp ax,'fn'
-    jne case_INVALID
-    or  edi,_ST_ISINF
-    inc ebx
-    xor eax,eax
-    xor ecx,ecx
-
-return_NANINF:
-    mov edx,[esi].mantissa
-    mov [edx],eax
-    mov [edx+4],ecx
-    mov ecx,7FFFh
-    .if edi & _ST_NEGNUM
-        or ecx,8000h
-    .endif
-    mov [edx+8],cx
-    jmp toend
-
-case_INVALID:
-    dec ebx
-    or  edi,_ST_INVALID
-    jmp toend
-
-case_zero:
-    dec ebx
-    or  edi,_ST_ISZERO
-    xor eax,eax
-    mov edx,[esi].mantissa
+    mov edx,[edi].mantissa
     mov [edx],eax
     mov [edx+4],eax
-    mov [edx+8],ax
-    jmp toend
+    mov [edx+8],eax
+    mov [edx+12],eax
+    mov [edi].exponent,eax
+    mov ecx,flags
+    or  ecx,_ST_ISZERO
+
+    .repeat
+
+        lodsb
+        .break .if ( al == 0 )
+        .continue(0) .if ( al == ' ' || ( al >= 9 && al <= 13 ) )
+        dec esi
+
+        mov ecx,flags
+        .if ( al == '+' )
+
+            inc esi
+            or  ecx,_ST_SIGN
+        .endif
+
+        .if ( al == '-' )
+
+            inc esi
+            or  ecx,_ST_SIGN or _ST_NEGNUM
+        .endif
+
+        lodsb
+        .break .if !al
+
+        or al,0x20
+        .if ( al == 'n' )
+
+            mov ax,[esi]
+            or  ax,0x2020
+
+            .if ( ax == 'na' )
+
+                add esi,2
+                or  ecx,_ST_ISNAN
+                mov edx,[edi].mantissa
+                mov eax,0x7FFF
+                .if ecx & _ST_NEGNUM
+                    or eax,0x8000
+                .endif
+                mov [edx+14],ax
+                movzx eax,byte ptr [esi]
+
+                .if ( al == '(' )
+
+                    lea edx,[esi+1]
+                    mov al,[edx]
+                    .switch
+                      .case al == '_'
+                      .case al >= '0' && al <= '9'
+                      .case al >= 'a' && al <= 'z'
+                      .case al >= 'A' && al <= 'Z'
+                        inc edx
+                        mov al,[edx]
+                        .gotosw
+                    .endsw
+                    .if al == ')'
+
+                        lea esi,[edx+1]
+                    .endif
+                .endif
+            .else
+                dec esi
+                or ecx,_ST_INVALID
+            .endif
+            .break
+        .endif
+
+        .if ( al == 'i' )
+
+            mov ax,[esi]
+            or  ax,0x2020
+
+            .if ( ax == 'fn' )
+
+                add esi,2
+                or ecx,_ST_ISINF
+            .else
+                dec esi
+                or ecx,_ST_INVALID
+            .endif
+            .break
+        .endif
+
+        .if ( al == '0' )
+
+            mov al,[esi]
+            or  al,0x20
+            .if ( al == 'x' )
+
+                or  ecx,_ST_ISHEX
+                add esi,2
+            .endif
+        .endif
+        dec esi
+
+    .until 1
+
+    mov [edi].flags,ecx
+    mov [edi].string,esi
+    mov eax,ecx
+    ret
+
 _fltsetflags endp
 
-    END
+    end

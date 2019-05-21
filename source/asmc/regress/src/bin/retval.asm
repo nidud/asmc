@@ -14,6 +14,9 @@ id2  label word
 id4  label dword
 id8  label qword
 id16 label oword
+f4   label real4
+f8   label real8
+f16  label real16
 
 foo proc
     ret
@@ -30,6 +33,9 @@ foo endp
     mov     id4,  foo()
     mov     id8,  foo()
     movups  id16, foo()
+    movss   f4,   foo()
+    movsd   f8,   foo()
+    movups  f16,  foo()
 
 bar proc x:real4, y:real16
     ret

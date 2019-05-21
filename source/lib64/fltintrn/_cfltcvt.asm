@@ -3,22 +3,19 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-
+; _cfltcvt() - Converts double to string
+;
 include fltintrn.inc
 include quadmath.inc
 
-.code
+    .code
 
-_cldcvt proc fp:LPLONGDOUBLE, buffer:LPSTR, ch_type:SINT, precision:SINT, capexp:SINT
+_cfltcvt proc d:ptr real8, buffer:LPSTR, ch_type:SINT, precision:SINT, flags:SINT
 
-    cfltcvt(fp, buffer, ch_type, precision, capexp)
-    ret
+  local q:REAL16
 
-_cldcvt endp
-
-_cfltcvt proc fp:LPDOUBLE, buffer:LPSTR, ch_type:SINT, precision:SINT, capexp:SINT
-
-    cfltcvt(fp, buffer, ch_type, precision, capexp)
+    mov rcx,__cvtsd_q(&q, rcx)
+    _cqcvt(rcx, buffer, ch_type, precision, flags)
     ret
 
 _cfltcvt endp

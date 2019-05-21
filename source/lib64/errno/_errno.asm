@@ -11,11 +11,20 @@ include errno.inc
 
     .code
 
+    option win64:rsp nosave noauto
+
 _errno proc
 
     lea rax,ErrnoNoMem
     ret
 
 _errno endp
+
+_set_errno proc value:int_t
+
+    mov ErrnoNoMem,ecx
+    ret
+
+_set_errno endp
 
     end

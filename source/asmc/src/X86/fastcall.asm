@@ -863,7 +863,7 @@ CheckXMM proc uses ebx reg:SINT, paramvalue:LPSTR, regs_used:ptr byte, param:ptr
                     inc edx
                     mov bl,0x80
                 .endif
-                cvta_q(edi, edx, 0)
+                __cvta_q(edi, edx, 0)
                 or byte ptr [edi+15],bl
                 .if dword ptr [edi].expr.llvalue[4]
                     sprintf( &buffer, "0x%llX", [edi].expr.llvalue )

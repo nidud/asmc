@@ -11,9 +11,13 @@
 ### ChangeLog for Asmc
 
 #### Changes in 2.31 - xx xxx 2019
-- added switch /nolib - skip includelib directive
+- renamed .SWITCH NOTEST to [.SWITCH JMP](doc/directive/dot_switch.md)
+- added ADC and SBB to mem2mem
+- added [.gotosw](doc/directive/dot_gotosw.md)(_n_:_label_)
+- removed directive .GOTOSW1, .GOTOSW2, .GOTOSW1
+- added switch /nolib - ignore includelib directive
 - renamed .CLASSDEF to [.CLASS](doc/directive/dot_class.md)
-- removed directive .UNTILAXZ, .UNTILDXZ, .UNTILBXZ,
+- removed directive .UNTILAXZ, .UNTILDXZ, .UNTILBXZ
 - added [.NEW](doc/directive/dot_new.md) directive
 - added reg(...) invocation
 - added [MOV|ADD|SUB|OR|XOR|AND|CMP|TEST] mem,mem

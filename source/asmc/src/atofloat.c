@@ -24,7 +24,7 @@ void atofloat( void *out, const char *inp, unsigned size, int negative, uint_8 f
     } else {
 
         errno = 0;
-        cvta_q(out, inp, NULL);
+        __cvta_q(out, inp, NULL);
         if ( errno )
             asmerr( 2104, inp );
 
@@ -35,22 +35,22 @@ void atofloat( void *out, const char *inp, unsigned size, int negative, uint_8 f
 
         switch ( size ) {
         case 2:
-            cvtq_h(out, out);
+            __cvtq_h(out, out);
             if ( errno )
                 asmerr( 2071 );
             break;
         case 4:
-            cvtq_ss(out, out);
+            __cvtq_ss(out, out);
             if ( errno )
                 asmerr( 2071 );
             break;
         case 8:
-            cvtq_sd(out, out);
+            __cvtq_sd(out, out);
             if ( errno )
                 asmerr( 2071 );
             break;
         case 10:
-            cvtq_ld(out, out);
+            __cvtq_ld(out, out);
         case 16:
             break;
         default:

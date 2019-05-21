@@ -56,6 +56,7 @@ enum hll_label_index {
     LTEST,	/* test (loop) condition */
     LEXIT,	/* block exit		 */
     LSTART,	/* loop start		 */
+    LSTARTSW,	/* switch start		 */
 };
 
 /* values for struct hll_item.flags */
@@ -91,7 +92,7 @@ union {
     uint_32		index;		/* v2.24 added */
 };
     struct hll_item	*caselist;
-    uint_32		labels[3];	/* labels for LTEST, LEXIT, LSTART */
+    uint_32		labels[4];	/* labels for LTEST, LEXIT, LSTART */
     char		*condlines;	/* .WHILE-blocks only: lines to add after 'test' label */
     int			cmd;		/* start cmd (IF, WHILE, REPEAT) */
     int			flags;		/* v2.08: added */

@@ -263,7 +263,14 @@ static int GetMaxCaseValue( struct hll_item *hll,
 
     q = 1;
     *min_table = MIN_JTABLE;
-    if ( !( hll->flags & HLLF_ARGREG ) ) {
+
+    if ( hll->flags & HLLF_NOTEST ) {
+
+	/* v2.30 - allow small jump tables */
+
+	*min_table = 1;
+
+    } else if ( !( hll->flags & HLLF_ARGREG ) ) {
 
 	q++;
 	*min_table += 2;
@@ -487,8 +494,12 @@ static int RenderSwitch( struct hll_item *hll, struct asm_tok tokenarray[],
     /* get static case-count */
 
     GetCaseValue( hll, tokenarray, &dynamic, &nstatic );
+    x = nstatic;
 
-    if ( ModuleInfo.aflag & _AF_NOTABLE || nstatic < MIN_JTABLE ) {
+    if ( x && hll->flags & HLLF_NOTEST ) /* create a small table */
+	x += MIN_JTABLE;
+
+    if ( ModuleInfo.aflag & _AF_NOTABLE || x < MIN_JTABLE ) {
        /*
 	* Time NOTABLE/TABLE
 	*
@@ -902,6 +913,10 @@ static void RenderJTable( struct hll_item *hll	 )
 
     if ( hll->labels[LEXIT] == 0 )
 	hll->labels[LEXIT] = GetHllLabel();
+    if ( hll->labels[LSTARTSW] == 0 )
+	hll->labels[LSTARTSW] = GetHllLabel();
+
+    addlq_label( hll->labels[LSTARTSW] );
 
     GetLabelStr( hll->labels[LSTART], l_jtab );
     GetLabelStr( hll->labels[LEXIT], l_exit );
@@ -1206,6 +1221,8 @@ int SwitchExit( int i, struct asm_tok tokenarray[] )
     int t1,t2;
     int bracket;
     int size;
+    int gotosw;
+    int x;
     char buffer[MAX_LINE_LEN];
     char *token_str,*p;
     struct hll_item *hll;
@@ -1435,13 +1452,13 @@ int SwitchExit( int i, struct asm_tok tokenarray[] )
 	i = Token_Count;
 	break;
 
-    case T_DOT_GOTOSW3:
-	exit_level++;
-    case T_DOT_GOTOSW2:
-	exit_level++;
-    case T_DOT_GOTOSW1:
-	exit_level++;
     case T_DOT_GOTOSW:
+	if ( tokenarray[i+1].token == T_OP_BRACKET && tokenarray[i+3].token == T_COLON ) {
+	    if ( tokenarray[i+2].string_ptr[0] >= '0' &&
+		 tokenarray[i+2].string_ptr[0] <= '9' )
+		exit_level = (int)(tokenarray[i+2].string_ptr[0] - '0');
+	}
+
     case T_DOT_ENDC:
 
 	for ( hp = hll; hll && hll->cmd != HLL_SWITCH; hll = hll->next )
@@ -1460,32 +1477,72 @@ int SwitchExit( int i, struct asm_tok tokenarray[] )
 	    case_label = LSTART;
 
 	i++;
-	cmd = T_DOT_ENDC;
+	gotosw = 0;
 
 	if ( case_label == LSTART && tokenarray[i].token == T_OP_BRACKET ) {
-	    if ( ( p = strrchr( strcpy( buffer, tokenarray[i+1].tokpos ), ')' ) ) ) {
-		while ( p > buffer && (*(p-1) == ' ' || *(p-1) == 9) )
-		    p++;
-		*p = NULLC;
-		hp = hll->caselist;
-		while ( hp ) {
-		    if ( hp->condlines ) {
-			if ( !strcmp( buffer, hp->condlines ) ) {
-			    addlq_jxx_label( T_JMP, hp->labels[LSTART] );
+
+	    if ( tokenarray[i+1].token != T_FINAL && tokenarray[i+2].token == T_COLON )
+		i += 2;
+
+	    i++;
+	    p = tokenarray[i].tokpos;
+	    for ( x = 1; tokenarray[i].token != T_FINAL; i++ ) {
+		if ( tokenarray[i].token == T_OP_BRACKET )
+		    x++;
+		else if ( tokenarray[i].token == T_CL_BRACKET ) {
+		    x--;
+		    if ( x == 0 )
+			break;
+		}
+	    }
+	    if ( tokenarray[i].token != T_CL_BRACKET )
+		break;
+
+	    i++;
+	    x = (int)(tokenarray[i-1].tokpos - p);
+
+	    if ( x && tokenarray[i-2].token != T_OP_BRACKET && tokenarray[i-2].token != T_COLON ) {
+
+		memcpy(buffer, p, x);
+		buffer[x] = 0;
+		while ( x && buffer[x-1] <= ' ' ) {
+		    x--;
+		    buffer[x] = 0;
+		}
+
+		for ( caseitem = hll->caselist; caseitem; caseitem = caseitem->caselist ) {
+		    if ( caseitem->condlines ) {
+			if ( strcmp( buffer, caseitem->condlines ) == 0 ) {
+			    gotosw = caseitem->labels[LSTART];
 			    break;
 			}
 		    }
-		    hp = hp->caselist;
 		}
-		if ( !hp && hll->condlines ) {
+
+		if ( gotosw ) {
+
+		    x = hll->labels[LSTART];
+		    hll->labels[LSTART] = gotosw;
+		    gotosw = x;
+
+		} else if ( hll->condlines ) {
+
+		    /* -- this overwrites the switch argument -- */
+
 		    AddLineQueueX( "mov %s,%s", hll->condlines, buffer );
-		    addlq_jxx_label( T_JMP, hll->labels[LSTART] );
+
+		    if ( hll->labels[LSTARTSW] ) {
+
+			x = hll->labels[LSTART];
+			hll->labels[LSTART] = hll->labels[LSTARTSW];
+			gotosw = x;
+		    }
 		}
-		i = Token_Count;
 	    }
-	} else {
-	    HllContinueIf( hll, &i, buffer, tokenarray, case_label, hp );
 	}
+	HllContinueIf( hll, &i, buffer, tokenarray, case_label, hp );
+	if ( gotosw )
+	    hll->labels[LSTART] = gotosw;
 	break;
     }
 
@@ -1502,9 +1559,6 @@ int SwitchDirective( int i, struct asm_tok tokenarray[] )
     switch ( tokenarray[i].tokval ) {
     case T_DOT_CASE:
     case T_DOT_GOTOSW:
-    case T_DOT_GOTOSW1:
-    case T_DOT_GOTOSW2:
-    case T_DOT_GOTOSW3:
     case T_DOT_DEFAULT:
     case T_DOT_ENDC:
 	rc = SwitchExit( i, tokenarray );

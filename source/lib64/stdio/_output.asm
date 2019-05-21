@@ -10,7 +10,6 @@ include limits.inc
 include wchar.inc
 include fltintrn.inc
 include winnls.inc
-include quadmath.inc
 
 ;
 ; the following should be set depending on the sizes of various types
@@ -280,17 +279,13 @@ _output PROC PUBLIC USES rsi rdi rbx fp:LPFILE, format:LPSTR, arglist:PVOID
                     mov cx,[rax]
                     .switch cl
                       .case '6'
-                        .if ch != '4'
-                            .gotosw2(ST_NORMAL)
-                        .endif
+                        .gotosw(2:ST_NORMAL) .if ch != '4'
                         or  esi,FL_I64
                         add rax,2
                         mov format,rax
                         .endc
                       .case '3'
-                        .if ch != '2'
-                            .gotosw2(ST_NORMAL)
-                        .endif
+                        .gotosw(2:ST_NORMAL) .if ch != '2'
                         and esi,not FL_I64
                         add rax,2
                         mov format,rax
@@ -303,7 +298,7 @@ _output PROC PUBLIC USES rsi rdi rbx fp:LPFILE, format:LPSTR, arglist:PVOID
                       .case 'X'
                         .endc
                       .default
-                        .gotosw2(ST_NORMAL)
+                        .gotosw(2:ST_NORMAL)
                     .endsw
                     .endc
                   .case 'h'
@@ -453,16 +448,11 @@ if 1
                     ;
                     mov r8d,edx
                     .if esi & FL_LONGDOUBLE
-                        ;
-                        ; Note: assumes ch is in ASCII range
-                        ;
-                        movups xmm0,[rax]
-                        cldcvt(xmm0, text, r8d, edi, esi)
+                        _cldcvt(rax, text, r8d, edi, esi)
                     .elseif esi & FL_LONGLONG
-                        movups xmm0,[rax]
-                        cqfcvt(xmm0, text, r8d, edi, esi)
+                        _cqcvt(rax, text, r8d, edi, esi)
                     .else
-                        cfltcvt(rax, text, r8d, edi, esi)
+                        _cfltcvt(rcx, text, r8d, edi, esi)
                     .endif
                     ;
                     ; '#' and precision == 0 means force a decimal point

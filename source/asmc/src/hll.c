@@ -879,8 +879,16 @@ static int StripSource( int i, int e, struct asm_tok tokenarray[] )
 		k = 0;
 		if ( tokenarray[j].token == T_REG )
 		    k = SizeFromRegister( tokenarray[j].tokval );
-		else if ( ( a = SymFind( tokenarray[j].string_ptr ) ) != NULL )
-		    k = a->total_size;
+		else if ( ( a = SymFind( tokenarray[j].string_ptr ) ) != NULL ) {
+
+		    /* movsd id,cos(..) */
+
+		    if ( ModuleInfo.Ofssize == USE64 &&
+			( a->mem_type == MT_REAL4 || a->mem_type == MT_REAL8 ) )
+			k = 16;
+		    else
+			k = a->total_size;
+		}
 
 		if ( k ) {
 		    switch ( k ) {

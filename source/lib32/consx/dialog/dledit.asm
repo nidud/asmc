@@ -545,9 +545,9 @@ ClipEvent proc uses esi edi ebx
             .if eax & SHIFT_KEYSPRESSED
                 .switch esi
                   .case KEY_INS     ; Shift-Insert -- Paste()
-                    .gotosw1(KEY_CTRLV)
+                    .gotosw(1:KEY_CTRLV)
                   .case KEY_DEL     ; Shift-Del -- Cut()
-                    .gotosw1(KEY_CTRLDEL)
+                    .gotosw(1:KEY_CTRLDEL)
                   .case KEY_HOME
                   .case KEY_LEFT
                   .case KEY_RIGHT
@@ -619,7 +619,8 @@ ClipEvent proc uses esi edi ebx
 ClipEvent endp
 
 putline proc uses esi edi ebx
-local ci[256]:dword, bz:COORD, rc:SMALL_RECT
+
+  local ci[256]:dword, bz:COORD, rc:SMALL_RECT
 
     _setcursor()
 

@@ -381,7 +381,7 @@ $label:
 
 	OPTION SWITCH:REGAX
 
-	.switch notest rax
+	.switch jmp rax
 	  .case 'A','C','D','E','F','G','H','I'
 	  .default
 	.endsw
@@ -391,7 +391,7 @@ $label:
 	  .default
 	.endsw
 
-	.switch notest al
+	.switch jmp al
 	  .case 'A','C','D','E','F','G','H','I'
 	  .default
 	.endsw

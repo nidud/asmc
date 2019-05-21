@@ -30,13 +30,57 @@ info_9  db "9.asm",0
 
     .code
 
+validate_x proc uses rsi rdi rbx x:dword
+
+    mov x,ecx
+    lea rax,proc_p
+    mov rsi,[rax+rcx*8]
+
+    .if !rsi
+
+        .if ReadProc(ecx)
+
+            mov rsi,proc_x
+        .endif
+    .endif
+
+    .if rsi
+
+        .for ( ebx = 0 : ebx < 100 && nerror < 12 : ebx++ )
+
+            mov ecx,ebx
+            call rsi
+
+            .if ( eax != ebx )
+                printf("error: eax %d (%d) %d.asm\n", eax, ebx, x)
+                inc nerror
+            .endif
+        .endf
+    .else
+        printf("error load: %d.asm\n", x)
+        inc nerror
+    .endif
+    ret
+validate_x endp
+
 main proc
-    ;
-    ; A jump table is created if number of cases >= 8
-    ;
-    GetCycleCount(0, 4, 1, 1000)
-    GetCycleCount(5, 9, 1, 1000)
-    GetCycleCount(90, 92, 1, 1000)
+    .repeat
+
+        procs
+            validate_x(x)
+            .if nerror
+                printf("hit any key to continue...\n")
+                _getch()
+                .break
+            .endif
+        endm
+        ;
+        ; A jump table is created if number of cases >= 8
+        ;
+        GetCycleCount(0, 4, 1, 1000)
+        GetCycleCount(5, 9, 1, 1000)
+        GetCycleCount(90, 92, 1, 1000)
+    .until 1
     ret
 
 main endp

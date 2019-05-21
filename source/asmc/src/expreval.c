@@ -1184,7 +1184,7 @@ static int plus_op( struct expr *opnd1, struct expr *opnd2 )
     } else if ( opnd1->kind == EXPR_FLOAT && opnd2->kind == EXPR_FLOAT ) {
 	if ( opnd2->float_tok )
 	    atofloat( opnd2->chararray, opnd2->float_tok->string_ptr, 16, opnd2->negative, 0 );
-	addq( opnd1->chararray, opnd2->chararray );
+	__addq( opnd1->chararray, opnd2->chararray );
     } else if( ( opnd1->kind == EXPR_ADDR && opnd2->kind == EXPR_ADDR ) ) {
 	fix_struct_value( opnd1 );
 	fix_struct_value( opnd2 );
@@ -1254,7 +1254,7 @@ static int minus_op( struct expr *opnd1, struct expr *opnd2 )
     } else if ( opnd1->kind == EXPR_FLOAT && opnd2->kind == EXPR_FLOAT ) {
 	if ( opnd2->float_tok )
 	    atofloat( opnd2->chararray, opnd2->float_tok->string_ptr, 16, opnd2->negative, 0 );
-	subq( opnd1->chararray, opnd2->chararray );
+	__subq( opnd1->chararray, opnd2->chararray );
     } else if( opnd1->kind == EXPR_ADDR && opnd2->kind == EXPR_CONST ) {
 	opnd1->llvalue -= opnd2->llvalue;
 	fix_struct_value( opnd1 );
@@ -1688,7 +1688,7 @@ static int calculate( struct expr *opnd1, struct expr *opnd2, const struct asm_t
 	} else if ( ( opnd1->kind == EXPR_FLOAT && opnd2->kind == EXPR_FLOAT ) ) {
 	    if ( opnd2->float_tok )
 		atofloat( opnd2->chararray, opnd2->float_tok->string_ptr, 16, opnd2->negative, 0);
-	    mulq(opnd1->chararray, opnd2->chararray);
+	    __mulq(opnd1->chararray, opnd2->chararray);
 	} else {
 	    return( ConstError( opnd1, opnd2 ) );
 	}
@@ -1697,7 +1697,7 @@ static int calculate( struct expr *opnd1, struct expr *opnd2, const struct asm_t
 	if ( ( opnd1->kind == EXPR_FLOAT && opnd2->kind == EXPR_FLOAT ) ) {
 	    if ( opnd2->float_tok )
 		atofloat( opnd2->chararray, opnd2->float_tok->string_ptr, 16, opnd2->negative, 0);
-	    divq(opnd1->chararray, opnd2->chararray);
+	    __divq(opnd1->chararray, opnd2->chararray);
 	    break;
 	}
 	MakeConst( opnd1 );

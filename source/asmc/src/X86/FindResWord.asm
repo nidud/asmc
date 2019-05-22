@@ -25,9 +25,7 @@ FindResWord proc fastcall w_name:string_t, w_size:int_t
 
     .if edx < 8
 
-        option switch:table
-
-        .switch notest edx
+        .switch jmp edx
 
           .case 0
             xor eax,eax

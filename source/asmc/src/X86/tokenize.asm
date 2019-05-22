@@ -1341,9 +1341,7 @@ GetToken proc fastcall tokenarray:ptr asmtok, p:ptr line_status
             mov eax,[ebx-16].tokval
             pop ebx
             pop ecx
-            .if ( eax == T_DOT_BREAK || \
-                  eax == T_DOT_GOTOSW || \
-                  eax == T_DOT_CONTINUE )
+            .if ( eax == T_DOT_BREAK || eax == T_DOT_GOTOSW || eax == T_DOT_CONTINUE )
                 jmp get_id
             .endif
         .endif

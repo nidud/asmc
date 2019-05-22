@@ -12,10 +12,11 @@
 ### ChangeLog for Asmc
 
 #### Changes in 2.31 - xx xxx 2019
+- added .CASE [[`<label_name>`]] -- naming a case label
 - renamed .SWITCH NOTEST to [.SWITCH JMP](doc/directive/dot_switch.md)
 - added ADC and SBB to mem2mem
 - added [.gotosw](doc/directive/dot_gotosw.md)(_n_:_label_)
-- removed directive .GOTOSW1, .GOTOSW2, .GOTOSW1
+- removed directive .GOTOSW1, .GOTOSW2, .GOTOSW3
 - added switch /nolib - ignore includelib directive
 - renamed .CLASSDEF to [.CLASS](doc/directive/dot_class.md)
 - removed directive .UNTILAXZ, .UNTILDXZ, .UNTILBXZ

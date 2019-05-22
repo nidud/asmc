@@ -914,12 +914,9 @@ endif
                 .if ( ModuleInfo.aflag & _AF_REGAX )
 
                     .if !( [esi].flags & HLLF_ARGREG )
-
                         GetSwitchArg( T_R11, [esi].flags, ebx )
-
                     .else
                         .if _memicmp(ebx, "r11", 3)
-
                             AddLineQueueX("mov r11,%s", ebx)
                         .endif
                     .endif
@@ -946,14 +943,10 @@ endif
                 .else
 
                     .if !( [esi].flags & HLLF_ARGREG )
-
                         GetSwitchArg( T_RAX, [esi].flags, ebx )
-
                     .else
-
                         AddLineQueue("push rax")
                         .if _memicmp(ebx, "rax", 3)
-
                             AddLineQueueX("mov rax,%s", ebx)
                         .endif
                     .endif
@@ -1224,9 +1217,9 @@ ifndef __ASMC64__
     .elseif cl == USE32
 
         .if ( [esi].flags & HLLF_JTDATA )
-            AddLineQueueX("jmp [%s*4+DT%s-(MIN%s*4)]", ebx, edi, edi)
+            AddLineQueueX( "jmp [%s*4+DT%s-(MIN%s*4)]", ebx, edi, edi )
         .else
-            AddLineQueueX("jmp [%s*4+%s-(MIN%s*4)]", ebx, edi, edi)
+            AddLineQueueX( "jmp [%s*4+%s-(MIN%s*4)]", ebx, edi, edi )
         .endif
 
     .elseif ModuleInfo.aflag & _AF_REGAX
@@ -1297,22 +1290,13 @@ SwitchStart proc uses esi edi ebx i:SINT, tokenarray:ptr asmtok
 
     mov edx,i ; v2.27.38: .SWITCH [NOTEST] [C|PASCAL] ...
     shl edx,4 ; v2.30.07: .SWITCH [JMP] [C|PASCAL] ...
+    mov eax,HLLF_WHILE
 
     .if ( [ebx+edx].tokval == T_JMP )
 
         inc i
-        mov eax,HLLF_NOTEST or HLLF_WHILE
-
-    .elseif !_stricmp([ebx+edx].string_ptr, "NOTEST")
-
-        inc i
-        mov eax,HLLF_NOTEST or HLLF_WHILE
-    .else
-        mov eax,HLLF_WHILE
+        or eax,HLLF_NOTEST
     .endif
-
-    mov edx,i
-    shl edx,4
 
     .if ( [ebx+edx].token == T_ID )
         mov ecx,[ebx+edx].string_ptr
@@ -1585,7 +1569,8 @@ SwitchExit proc uses esi edi ebx i, tokenarray:ptr asmtok
         buff    [16]:SBYTE,
         buffer  [MAX_LINE_LEN]:SBYTE,
         gotosw: int_t,
-        hll:    ptr hll_item
+        hll:    ptr hll_item,
+        name:   string_t
 
     mov esi,ModuleInfo.HllStack
     mov hll,esi
@@ -1654,18 +1639,13 @@ SwitchExit proc uses esi edi ebx i, tokenarray:ptr asmtok
             .elseif [esi].flags & HLLF_PASCAL
 
                 .if [esi].labels[LEXIT*4] == 0
-
                     mov [esi].labels[LEXIT*4],GetHllLabel()
                 .endif
-
                 mov eax,esi
                 .while [eax].hll_item.caselist
-
                     mov eax,[eax].hll_item.caselist
                 .endw
-
                 .if ( eax != esi && !( [eax].hll_item.flags & HLLF_ENDCOCCUR ) )
-
                     LQJumpLabel( T_JMP, [esi].labels[LEXIT*4] )
                 .endif
 
@@ -1677,16 +1657,22 @@ SwitchExit proc uses esi edi ebx i, tokenarray:ptr asmtok
                 .while [eax].hll_item.caselist
                     mov eax,[eax].hll_item.caselist
                 .endw
-
                 .if ( eax != esi && !( [eax].hll_item.flags & HLLF_ENDCOCCUR ) )
-
                     asmerr( 7007 )
                 .endif
             .endif
 
-            ;
+            ; .case <case_a> a
+
+            mov name,0
+            .if ( [ebx+16].token == T_STRING && [ebx+32].token == T_ID && [ebx+48].token == T_STRING )
+                mov name,[ebx+32].string_ptr
+                add ebx,48
+                add i,3
+            .endif
+
             ; .case a, b, c, ...
-            ;
+
             .endc .if RenderMultiCase( esi, &i, edi, ebx )
 
             mov cl,ModuleInfo.casealign
@@ -1701,16 +1687,13 @@ SwitchExit proc uses esi edi ebx i, tokenarray:ptr asmtok
             mov ecx,GetHllLabel()
             push ecx
             LQAddLabelId(ecx)
-
             LclAlloc(sizeof(hll_item))
             pop ecx
             mov edx,esi
             mov esi,eax
             mov eax,[edx].hll_item.condlines
             mov [esi].labels[LSTART*4],ecx
-
-            .while  [edx].hll_item.caselist
-
+            .while [edx].hll_item.caselist
                 mov edx,[edx].hll_item.caselist
             .endw
             mov [edx].hll_item.caselist,esi
@@ -1721,6 +1704,12 @@ SwitchExit proc uses esi edi ebx i, tokenarray:ptr asmtok
             push eax ;
             push ebx ; handle .case <expression> : ...
             push esi ;
+
+            .if name
+
+                GetLabelStr(ecx, edi)
+                AddLineQueueX("%s equ <%s>", name, edi )
+            .endif
 
             .for esi = 0 : IsCaseColon(ebx) : ebx += 16, esi = [ebx].tokpos
 

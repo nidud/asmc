@@ -1254,6 +1254,7 @@ int SwitchExit( int i, struct asm_tok tokenarray[] )
     int x;
     char buffer[MAX_LINE_LEN];
     char *token_str,*p;
+    char *name;
     struct hll_item *hll;
     struct hll_item *caseitem;
     struct hll_item *hp;
@@ -1318,6 +1319,15 @@ int SwitchExit( int i, struct asm_tok tokenarray[] )
 		asmerr( 7007 );
 	}
 
+	name = NULL;
+	if ( tokenarray[i+1].token == T_STRING &&
+	     tokenarray[i+2].token == T_ID &&
+	     tokenarray[i+3].token == T_STRING ) {
+
+	     name = tokenarray[i+2].string_ptr;
+	     i += 3;
+	}
+
 	/* .case a, b, c, ... */
 
 	if ( RenderMultiCase( hll, &i, buffer, tokenarray ) )
@@ -1330,6 +1340,10 @@ int SwitchExit( int i, struct asm_tok tokenarray[] )
 
 	case_label = GetHllLabel();
 	addlq_label( case_label );
+	if ( name ) {
+	    GetLabelStr(case_label, buffer);
+	    AddLineQueueX("%s equ <%s>", name, buffer);
+	}
 
 	/* add new case item */
 

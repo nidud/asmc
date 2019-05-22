@@ -261,7 +261,7 @@ endif
                       .case '6'
                         .if ch != '4'
 
-                            .gotosw2(ST_NORMAL)
+                            .gotosw(2:ST_NORMAL)
                         .endif
                         or  esi,FL_I64
                         add eax,2
@@ -270,7 +270,7 @@ endif
                       .case '3'
                         .if ch != '2'
 
-                            .gotosw2(ST_NORMAL)
+                            .gotosw(2:ST_NORMAL)
                         .endif
                         and esi,not FL_I64
                         add eax,2
@@ -284,7 +284,7 @@ endif
                       .case 'X'
                         .endc
                       .default
-                        .gotosw2(ST_NORMAL)
+                        .gotosw(2:ST_NORMAL)
                     .endsw
                     .endc
 

@@ -1340,10 +1340,8 @@ int SwitchExit( int i, struct asm_tok tokenarray[] )
 
 	case_label = GetHllLabel();
 	addlq_label( case_label );
-	if ( name ) {
-	    GetLabelStr(case_label, buffer);
-	    AddLineQueueX("%s equ <%s>", name, buffer);
-	}
+	if ( name )
+	    AddLineQueueX("%s:", name);
 
 	/* add new case item */
 

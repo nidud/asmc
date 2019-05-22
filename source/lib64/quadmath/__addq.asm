@@ -33,7 +33,7 @@ _lk_addq proc private uses rsi rdi rbx A:ptr, B:ptr, negate:uint_t
     neg     r9d
     rcr     rdx,1
     rcr     rax,1
-    jmp     @C0011
+    jmp     entry
 
     .switch jmp rcx
 
@@ -103,7 +103,7 @@ _lk_addq proc private uses rsi rdi rbx A:ptr, B:ptr, negate:uint_t
         rcr si,1                ; put back the sign
         .gotosw(6)
 
-      .case 5
+      .case <entry> 5
 
         add si,1                ; add 1 to exponent
         .gotosw(2) .ifc         ; quit if NaN

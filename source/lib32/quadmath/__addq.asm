@@ -12,7 +12,7 @@ include intrin.inc
 _lk_addq proc private uses esi edi ebx A:ptr, B:ptr, negate:uint_t
 
   local b:__m128i
-  local r9d, reg
+  local x, reg
 
     mov     edx,B       ; A(si:ecx:ebx:edx:eax), B(highword(esi):stack)
     mov     ax,[edx]
@@ -47,7 +47,7 @@ _lk_addq proc private uses esi edi ebx A:ptr, B:ptr, negate:uint_t
     rcr     ebx,1
     rcr     edx,1
     rcr     eax,1
-    jmp     @C0013
+    jmp     entry
 
     .switch jmp ecx
 
@@ -137,7 +137,7 @@ _lk_addq proc private uses esi edi ebx A:ptr, B:ptr, negate:uint_t
         rcr si,1                ; put back the sign
         .gotosw(6)
 
-      .case 5
+      .case <entry> 5
 
         add si,1                ; add 1 to exponent
         .gotosw(2) .ifc         ; quit if NaN
@@ -170,7 +170,7 @@ _lk_addq proc private uses esi edi ebx A:ptr, B:ptr, negate:uint_t
         sar ecx,16              ; ...
         and esi,0x80007FFF      ; isolate signs and exponent
         and ecx,0x80007FFF      ; ...
-        mov r9d,ecx             ; assume A < B
+        mov x,ecx               ; assume A < B
         rol esi,16              ; rotate signs to bottom
         rol ecx,16              ; ...
         add cx,si               ; calc sign of result
@@ -181,7 +181,7 @@ _lk_addq proc private uses esi edi ebx A:ptr, B:ptr, negate:uint_t
         .ifnz                   ; if different
 
             .ifb                ; if B < A
-                mov  r9d,esi    ; get larger exponent for result
+                mov  x,esi      ; get larger exponent for result
                 neg  cx         ; negate the shift count
                 push ecx        ; flip operands
                 mov  ecx,b.m128i_u32[0]
@@ -200,7 +200,7 @@ _lk_addq proc private uses esi edi ebx A:ptr, B:ptr, negate:uint_t
             .endif
 
             .if cx > 128        ; if shift count too big
-                mov esi,r9d
+                mov esi,x
                 shl esi,1       ; get sign
                 rcr si,1        ; merge with exponent
                 mov eax,b.m128i_u32[0]
@@ -210,7 +210,7 @@ _lk_addq proc private uses esi edi ebx A:ptr, B:ptr, negate:uint_t
                 .endc
             .endif
         .endif
-        mov esi,r9d
+        mov esi,x
         mov ch,0                ; zero extend B
         or  ecx,ecx             ; get bit 0 of sign word - value is 0 if
                                 ; both operands have same sign, 1 if not

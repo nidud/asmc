@@ -33,7 +33,7 @@ __mulq proc uses rsi rdi rbx A:ptr, B:ptr
     neg     r8d
     rcr     rdx,1
     rcr     rax,1
-    jmp     @C0018
+    jmp     entry
 
     .switch jmp r8
 
@@ -103,7 +103,7 @@ __mulq proc uses rsi rdi rbx A:ptr, B:ptr
         .endif
         .gotosw(1)
 
-      .case 5                   ; A is 0
+      .case <entry> 5           ; A is 0
         add si,si               ; place sign in carry
         .endc .ifz              ; return 0
         rcr si,1                ; restore sign of A

@@ -1687,6 +1687,9 @@ SwitchExit proc uses esi edi ebx i, tokenarray:ptr asmtok
             mov ecx,GetHllLabel()
             push ecx
             LQAddLabelId(ecx)
+            .if name
+                AddLineQueueX("%s:", name )
+            .endif
             LclAlloc(sizeof(hll_item))
             pop ecx
             mov edx,esi
@@ -1704,12 +1707,6 @@ SwitchExit proc uses esi edi ebx i, tokenarray:ptr asmtok
             push eax ;
             push ebx ; handle .case <expression> : ...
             push esi ;
-
-            .if name
-
-                GetLabelStr(ecx, edi)
-                AddLineQueueX("%s equ <%s>", name, edi )
-            .endif
 
             .for esi = 0 : IsCaseColon(ebx) : ebx += 16, esi = [ebx].tokpos
 

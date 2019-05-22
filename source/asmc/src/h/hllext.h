@@ -82,7 +82,9 @@ enum hll_flags {
     HLLF_IFD		= 0x00040000,	// .ifd proc() --> eax
     HLLF_IFS		= 0x00080000,	// Signed compare --> CMP REG,val
     HLLF_PASCAL		= 0x00100000,	// .continue(0) [.if]
-    HLLF_JTABLE		= 0x00200000	// if HLLF_NOTEST direct .case jump
+    HLLF_JTABLE		= 0x00200000,	// if HLLF_NOTEST direct .case jump
+    HLLF_JTDATA		= 0x00400000	// Jump table in data segment -- HLLF_NOTEST
+
 };
 
 /* item for .IF, .WHILE, .REPEAT, ... */

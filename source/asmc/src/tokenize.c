@@ -1010,6 +1010,8 @@ continue_scan:
 
 int FASTCALL GetToken( struct asm_tok token[], struct line_status *p )
 {
+    int x, b, i;
+
     token[0].hll_flags = 0;
     token[0].tokval = 0;
     if( isldigit( *p->input ) ) {
@@ -1027,10 +1029,19 @@ int FASTCALL GetToken( struct asm_tok token[], struct line_status *p )
 		token[-1].token != T_CL_SQ_BRACKET && token[-1].token != T_ID ) ) ) {
 	return( get_id( token, p ) );
     /* added v2.29 for .break(n) and .continue(n) */
-    } else if( *p->input == '.' && p->index > 3 &&
-	token[-1].token == T_CL_BRACKET && token[-3].token == T_OP_BRACKET &&
-	( token[-4].tokval == T_DOT_BREAK || token[-4].tokval == T_DOT_CONTINUE ) ) {
-	return( get_id( token, p ) );
+    } else if( *p->input == '.' && p->index > 3 && token[-1].token == T_CL_BRACKET ) {
+	x = 1;
+	for ( i = -2, b = p->index; b > 1; b--, i-- ) {
+	    if ( token[i].token == T_OP_BRACKET ) {
+		if ( --x == 0 ) break;
+	    } else if ( token[i].token == T_CL_BRACKET )
+		x++;
+	}
+	if ( token[i].token == T_OP_BRACKET &&
+	     ( token[i-1].tokval == T_DOT_BREAK ||
+	       token[i-1].tokval == T_DOT_GOTOSW ||
+	       token[i-1].tokval == T_DOT_CONTINUE ) )
+	    return( get_id( token, p ) );
 #if BACKQUOTES
     } else if( *p->input == '`' && ModuleInfo.strict_masm_compat == FALSE ) {
 	return( get_id_in_backquotes( token, p ) );

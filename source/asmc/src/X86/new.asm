@@ -6,9 +6,6 @@ include hll.inc
 
 SIZE_DATAPTR    equ 0x68
 
-externdef       CurrStruct:LPDSYM
-externdef       CurrProc:DWORD
-
 SymLCreate      proto :string_t
 GetQualifiedType proto :ptr int_t, :ptr asm_tok, :ptr qualified_type
 SetLocalOffsets proto :ptr proc_info

@@ -20,6 +20,7 @@ HLL_WHILE	equ 1
 HLL_REPEAT	equ 2
 HLL_BREAK	equ 3	; .IF behind .BREAK or .CONTINUE
 HLL_SWITCH	equ 4
+HLL_RETURN	equ 5
 
 ;
 ; index values for struct hll_item.labels[]
@@ -110,7 +111,7 @@ EvalOperand	proto :SINT, :PTR asmtok, :SINT, :PTR expr, :SINT
 
 GetCurrOffset	proto
 QueueTestLines	proto :LPSTR
-GetLabelStr	proto fastcall :SINT, :LPSTR
+GetLabelStr	proto :SINT, :LPSTR
 AddLineQueue	proto :LPSTR
 InvertJump	proto fastcall :LPSTR
 EmitConstError	proto :ptr expr

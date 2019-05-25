@@ -29,6 +29,7 @@
 #include <posndir.h>
 #include <reswords.h>
 #include <win64seh.h>
+#include <hllext.h>
 
 #define NUMQUAL
 
@@ -2874,6 +2875,10 @@ ret_code RetInstr( int i, struct asm_tok tokenarray[], int count )
 
     if( tokenarray[i].tokval == T_IRET || tokenarray[i].tokval == T_IRETD || tokenarray[i].tokval == T_IRETQ )
 	is_iret = TRUE;
+    else if ( tokenarray[i].tokval == T_RET && ModuleInfo.g.RetStack ) {
+	AddLineQueueX( "%s%s", GetLabelStr( ModuleInfo.g.RetStack->labels[LEXIT], buffer ), LABELQUAL );
+	ModuleInfo.g.RetStack = NULL;
+    }
 
     if ( ModuleInfo.epiloguemode == PEM_MACRO ) {
 	/* don't run userdefined epilogue macro if pass > 1 */

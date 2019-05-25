@@ -222,9 +222,9 @@ RenderInstr proc private uses esi edi ebx,
     ret
 RenderInstr endp
 
-GetLabelStr proc fastcall l_id:SINT, buff:LPSTR
-    sprintf( edx, "@C%04X", ecx )
-    mov eax,edx
+GetLabelStr proc l_id:SINT, buff:LPSTR
+    sprintf( buff, "@C%04X", l_id )
+    mov eax,buff
     ret
 GetLabelStr endp
 
@@ -2901,11 +2901,13 @@ toend:
     ret
 HllEndDir endp
 
-HllContinueIf proc uses esi edi ebx hll:ptr hll_item, i:ptr sdword, tokenarray:ptr asmtok,
-    labelid:int_t, hll1:ptr hll_item
+HllContinueIf proc uses esi edi ebx hll:ptr hll_item, i:ptr int_t, tokenarray:ptr asmtok,
+    labelid:int_t, hll1:ptr hll_item, is_true:int_t
 
   local rc:int_t, buff[16]:char_t
+  local buffer[256]:char_t
 
+    lea edi,buffer
     mov rc,NOT_ERROR
     mov ecx,labelid
     mov esi,hll
@@ -2935,10 +2937,9 @@ HllContinueIf proc uses esi edi ebx hll:ptr hll_item, i:ptr sdword, tokenarray:p
                 mov [esi].cmd,HLL_BREAK
                 mov eax,i
                 inc dword ptr [eax]
-                EvaluateHllExpression(esi, eax, tokenarray, labelid, 1, edi)
+                EvaluateHllExpression(esi, eax, tokenarray, labelid, is_true, edi)
                 mov rc,eax
                 .if eax == NOT_ERROR
-
                     QueueTestLines( edi )
                 .endif
                 pop [esi].flags
@@ -2976,7 +2977,9 @@ HllContinueIf proc uses esi edi ebx hll:ptr hll_item, i:ptr sdword, tokenarray:p
                 strcpy(edi, GetJumpString( [ebx].tokval))
                 strcat(edi, " ")
                 strcat(edi, &buff)
-                InvertJump(edi)
+                .if is_true
+                    InvertJump(edi)
+                .endif
                 AddLineQueue(edi)
                 .endc
             .endsw
@@ -3170,7 +3173,7 @@ HllExitDir proc USES esi edi ebx i:int_t, tokenarray:ptr asmtok
             ;
             inc i
             add ebx,16
-            mov rc,HllContinueIf(esi, &i, tokenarray, ecx, hll)
+            mov rc,HllContinueIf(esi, &i, tokenarray, ecx, hll, 1)
             .endc
         .endsw
 

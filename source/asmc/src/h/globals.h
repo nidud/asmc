@@ -519,6 +519,7 @@ struct str_item *StrStack;	 /* v2.20 string stack */
 struct hll_item *HllStack;	 /* for .WHILE, .IF, .REPEAT */
 struct hll_item *HllFree;	 /* v2.06: stack of free <struct hll>-items */
 struct com_item *ComStack;	 /* for .CLASS, .COMDEF */
+struct hll_item *RetStack;	 /* v2.30: .return info */
 struct context *ContextStack;
 struct context *ContextFree;	 /* v2.10: "free items" heap implemented. */
 struct context *SavedContexts;

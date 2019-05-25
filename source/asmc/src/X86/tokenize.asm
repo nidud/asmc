@@ -1323,9 +1323,9 @@ GetToken proc fastcall tokenarray:ptr asmtok, p:ptr line_status
         .endif
         ;
         ; added v2.29 for .break(n) and .continue(n)
+        ; added v2.30 for .return and .new
         ;
         .if ( eax == T_CL_BRACKET )
-
             push ecx
             push ebx
             lea ebx,[ecx-32]
@@ -1341,9 +1341,15 @@ GetToken proc fastcall tokenarray:ptr asmtok, p:ptr line_status
             mov eax,[ebx-16].tokval
             pop ebx
             pop ecx
-            .if ( eax == T_DOT_BREAK || eax == T_DOT_GOTOSW || eax == T_DOT_CONTINUE )
-                jmp get_id
+        .else
+            xor eax,eax
+            .if ( [edx].index > 1 )
+                mov eax,[ecx-32].asmtok.tokval
             .endif
+        .endif
+        .if ( eax == T_DOT_BREAK || eax == T_DOT_GOTOSW || \
+              eax == T_DOT_CONTINUE || eax == T_DOT_RETURN )
+            jmp get_id
         .endif
     .endsw
 

@@ -162,8 +162,8 @@ local rc:SINT,cmd:UINT,
         mov [esi].cmd,HLL_IF
         mov [esi].labels[LSTART*4],0
         mov [esi].labels[LTEST*4],GetHllLabel()
-
-        GetLabelStr( GetHllLabel(), &buff )
+        lea ecx,buff
+        GetLabelStr( GetHllLabel(), ecx )
         mov rc,EvaluateHllExpression(esi, &i, ebx, LTEST, 0, edi)
         .endc .if eax != NOT_ERROR
 

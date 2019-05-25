@@ -45,6 +45,7 @@ Asmc Macro Assembler Reference
 - [.IF](dot_if.md)
 - [.NEW](dot_new.md)
 - [.REPEAT](dot_repeat.md)
+- [.RETURN](dot_return.md)
 - [.SWITCH](dot_switch.md)
 - [.UNTIL](dot_until.md)
 - [.UNTILCXZ](dot_untilcxz.md)

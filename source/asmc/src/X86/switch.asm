@@ -766,13 +766,14 @@ endif
             strcpy( &l_jtab, &l_start )
             AddLineQueueX( "MIN%s equ %d", eax, min )
         .else
-            GetLabelStr( GetHllLabel(), &l_jtab )
+            lea ecx,l_jtab
+            GetLabelStr( GetHllLabel(), ecx )
         .endif
 
         mov edi,l_exit
         .if ncases
-
-            mov edi,GetLabelStr( GetHllLabel(), &l_start )
+            lea ecx,l_start
+            mov edi,GetLabelStr( GetHllLabel(), ecx )
         .endif
         mov ebx,[esi].condlines
         .if !( [esi].flags & HLLF_NOTEST )
@@ -1560,8 +1561,6 @@ SwitchEnd proc uses esi edi ebx i:SINT, tokenarray:ptr asmtok
 
 SwitchEnd endp
 
-HllContinueIf proto :ptr hll_item, :ptr int_t, :ptr asmtok, :int_t, :ptr hll_item
-
 SwitchExit proc uses esi edi ebx i, tokenarray:ptr asmtok
 
   local rc:     int_t,
@@ -1983,7 +1982,7 @@ SwitchExit proc uses esi edi ebx i, tokenarray:ptr asmtok
                 mov gotosw,edx
             .endif
 
-            HllContinueIf(esi, &i, tokenarray, ecx, hll)
+            HllContinueIf(esi, &i, tokenarray, ecx, hll, 1)
             .if gotosw
                 mov [esi].labels[LSTART*4],gotosw
             .endif

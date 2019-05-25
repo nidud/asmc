@@ -49,7 +49,6 @@ eqitem          ENDS
 externdef       FileCur     : DWORD ; @FileCur symbol
 externdef       LineCur     : DWORD ; @Line symbol
 externdef       symCurSeg   : DWORD ; @CurSeg symbol
-externdef       CurrProc    : DWORD ;
 
 .data?
 

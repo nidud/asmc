@@ -168,6 +168,7 @@ res(DOT_ENDC,	    .endc,	 DF_CGEN,					DRT_SWITCH, 0, P_86, 0)
 res(DOT_GOTOSW,	    .gotosw,	 DF_CGEN,					DRT_SWITCH, 0, P_86, 0)
 res(DOT_DEFAULT,    .default,	 DF_CGEN|DF_CEXPR,				DRT_SWITCH, 0, P_86, 0)
 res(DOT_ENDSW,	    .endsw,	 DF_CGEN,					DRT_SWITCH, 0, P_86, 0)
+res(DOT_RETURN,	    .return,	 DF_CGEN|DF_CEXPR|DF_NOSTRUC|DF_STORE|DF_PROC,	DRT_RETURN, 0, P_86, 0)
 res(DOT_PRAGMA,	    .pragma,	 DF_CGEN|DF_CEXPR|DF_NOSTRUC|DF_STORE|DF_PROC,	DRT_PRAGMA, 0, P_86, 0)
 
 #ifndef __ASMC64__

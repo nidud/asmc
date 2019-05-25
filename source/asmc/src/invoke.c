@@ -52,7 +52,7 @@ struct fastcall_conv {
     int	 (* handleparam)( struct dsym const *, int, struct dsym *, bool, struct expr *, char *, uint_8 * );
 };
 
-const enum special_token regax[] = { T_AX, T_EAX, T_RAX };
+const unsigned int regax[] = { T_AX, T_EAX, T_RAX };
 
 extern struct fastcall_conv fastcall_tab[];
 extern short GetSegmentPart(struct expr *, char *, const char *);

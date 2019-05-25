@@ -12,6 +12,7 @@
 ### ChangeLog for Asmc
 
 #### Changes in 2.31 - xx xxx 2019
+- added [.RETURN](doc/directive/dot_return.md) [[_value_]] [[.IF ...]]
 - added .CASE [[`<label_name>`]] -- naming a case label
 - renamed .SWITCH NOTEST to [.SWITCH JMP](doc/directive/dot_switch.md)
 - added ADC and SBB to mem2mem

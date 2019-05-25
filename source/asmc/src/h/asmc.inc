@@ -1145,6 +1145,7 @@ StrStack		PVOID ?		; v2.20 String stack
 HllStack		PVOID ?		; for .WHILE, .IF, .REPEAT
 HllFree			PVOID ?		; v2.06: stack of free <struct hll>-items
 ComStack		PVOID ?		; v2.27: .CLASSDEF, .COMDEF, .ENDS
+RetStack		PVOID ?		; v2.30: .return info
 ContextStack		PVOID ?
 ContextFree		PVOID ?		; v2.10: "free items" heap implemented.
 SavedContexts		PVOID ?
@@ -1299,6 +1300,8 @@ externdef		banner_printed	: DWORD
 externdef		sym_ReservedStack:PASYM
 externdef		stackreg	: dword
 externdef		regax		: dword
+externdef		CurrProc	: ptr
+externdef		CurrStruct	: LPDSYM
 
 asmerr			PROTO :DWORD, :VARARG
 DelayExpand		PROTO FASTCALL :DWORD ; :PTR asmtok
@@ -1389,6 +1392,7 @@ pe_create_PE_header	PROTO
 
 coff_init		PROTO :DWORD	; module_info *
 GetLineNumber		PROTO
+HllContinueIf		proto :ptr hll_item, :ptr int_t, :ptr asmtok, :int_t, :ptr hll_item, :int_t
 
 ;-------------------------------------------------------------------------------
 ; list

@@ -1326,11 +1326,15 @@ GetToken proc fastcall tokenarray:ptr asmtok, p:ptr line_status
         ; added v2.30 for .return and .new
         ;
         .if ( eax == T_CL_BRACKET )
+
             push ecx
             push ebx
+
             lea ebx,[ecx-32]
             mov eax,1
-            .for ( ecx = [edx].index : ecx > 1 : ecx--, ebx -= 16 )
+            mov ecx,[edx].index
+
+            .fors ( ecx-=2 : ecx > 1 : ecx--, ebx-=16 )
                 .if ( [ebx].token == T_OP_BRACKET )
                     dec eax
                     .break .ifz
@@ -1338,6 +1342,27 @@ GetToken proc fastcall tokenarray:ptr asmtok, p:ptr line_status
                     inc eax
                 .endif
             .endf
+            .if ( ecx > 1 )
+
+                ; .return id(..)
+
+                sub ecx,1
+                sub ebx,16
+
+                .if ( [ebx-16].token == T_DOT )
+
+                    sub ecx,2
+                    sub ebx,32
+
+                    ; .return [..].id(..)
+
+                    .if ( [ebx].token == T_CL_SQ_BRACKET )
+                        .for ( ebx -= 16, ecx-- : ecx : ecx--, ebx -= 16 )
+                            .break .if ( [ebx].token == T_OP_SQ_BRACKET )
+                        .endf
+                    .endif
+                .endif
+            .endif
             mov eax,[ebx-16].tokval
             pop ebx
             pop ecx

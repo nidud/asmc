@@ -15,7 +15,7 @@ _getxya proc frame x:int_t, y:int_t
     shl   r9d,16
     mov   r9b,cl
 
-    .ifd ReadConsoleOutputAttribute(_confh, &x, 1, r9d, &y)
+    .ifd ReadConsoleOutputAttribute(hStdOutput, &x, 1, r9d, &y)
 
         mov eax,x
         and eax,0xFF

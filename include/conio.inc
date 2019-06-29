@@ -12,7 +12,7 @@ ifndef _WINUSER_
 endif
 .pragma comment(lib, libc, msvcrt)
 
-ifdef _CONIO_RETRO_COLORS
+if defined(_CONIO_RETRO_COLORS) or defined(__TWINDOW_INC)
 BLACK		equ 0
 BLUE		equ 1
 GREEN		equ 2
@@ -92,6 +92,23 @@ __initconout proto
 __termconout proto
 externdef _confh:intptr_t
 
+ifndef TRECT
+
+MAXSCRLINE  equ 256 ; max screen size
+
+TRECT	    STRUC
+x	    db ?
+y	    db ?
+col	    db ?
+row	    db ?
+TRECT	    ENDS
+
+MTRECT macro x, y, col, row
+    exitm<(x or (y shl 8) or (col shl 16) or (row shl 24 ))>
+    endm
+
+endif
+
 _getxya	  proto __cdecl :int_t, :int_t
 _getxyc	  proto __cdecl :int_t, :int_t
 _getxyw	  proto __cdecl :int_t, :int_t
@@ -104,6 +121,16 @@ _scputs	  proto __cdecl :int_t, :int_t, :string_t
 _scputf	  proto _CDecl	:int_t, :int_t, :string_t, :vararg
 _scpath	  proto __cdecl :int_t, :int_t, :int_t, :string_t
 _scenter  proto __cdecl :int_t, :int_t, :int_t, :string_t
+
+_scread	  proto __cdecl :TRECT, :PCHAR_INFO
+_scwrite  proto __cdecl :TRECT, :PCHAR_INFO
+_scxchg	  proto __cdecl :TRECT, :PCHAR_INFO
+_screadl  proto __cdecl :int_t, :int_t, :int_t
+_scwritel proto __cdecl :int_t, :int_t, :int_t, :PCHAR_INFO
+_scmovel  proto __cdecl :TRECT, :PCHAR_INFO
+_scmover  proto __cdecl :TRECT, :PCHAR_INFO
+_scmoveu  proto __cdecl :TRECT, :PCHAR_INFO
+_scmoved  proto __cdecl :TRECT, :PCHAR_INFO
 
 endif
 

@@ -20,7 +20,7 @@ _scputa proc frame x:int_t, y:int_t, l:int_t, a:uchar_t
     shl   r9d,16
     mov   r9b,cl
 
-    FillConsoleOutputAttribute(_confh, dx, r8d, r9d, &NumberOfAttrsWritten)
+    FillConsoleOutputAttribute(hStdOutput, dx, r8d, r9d, &NumberOfAttrsWritten)
     ret
 
 _scputa endp

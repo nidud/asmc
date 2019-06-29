@@ -9,7 +9,7 @@ end
 system begin 386
     option  osname='Windows NT character-mode'
     option  map
-    libpath %AsmCDir%/lib
+    libpath %AsmCDir%\lib
     library libc,kernel32,user32
     format  windows nt
     runtime console=4.0
@@ -61,6 +61,15 @@ system begin con_64
     libpath %ASMCDIR%\lib\amd64
     library libc,kernel32,user32
     symt    cstart
+    format  windows pe ^
+    runtime console=4.0
+end
+
+system begin tcon_64
+    option  quiet
+    libpath %ASMCDIR%\lib\amd64
+    library libc,kernel32,user32
+    symt    TWinStart
     format  windows pe ^
     runtime console=4.0
 end

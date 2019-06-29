@@ -1,9 +1,3 @@
 test.exe:
-    asmc -pe -gui $*.asm
+    asmc -pe -win64 -gui test.asm
     $@
-
-test64.exe:
-    asmc64 $*.asm
-    linkw sys gui_64 file $*
-    $@
-

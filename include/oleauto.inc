@@ -1862,7 +1862,7 @@ DispGetIDsOfNames proto WINAPI \
 
 ;WINOLEAUTAPI
 DispInvoke proto WINAPI \
-		 _this: ptr void,
+		 this: ptr void,
 		ptinfo: ptr ITypeInfo,
 	  dispidMember: DISPID,
 		wFlags: WORD,

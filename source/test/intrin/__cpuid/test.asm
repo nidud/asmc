@@ -168,7 +168,7 @@ cpu LPINSTRUCTIONSET 0
 
 __this32 macro
 ifndef _WIN64
-    mov ecx,_this
+    mov ecx,this
 endif
     retm<rcx>
     endm
@@ -299,7 +299,7 @@ InstructionSet_Internal::InstructionSet_Internal proc uses rsi rdi rbx
             mov [rsi].brand_,_strdup(&brand)
         .endif
         mov rax,rsi
-        mov rcx,_this
+        mov rcx,this
         .if rcx
             mov [rcx],rax
         .endif
@@ -317,7 +317,7 @@ InstructionSet::Release proc
     __this32()
     mov rdx,[rcx].CPU_Rep
     [rdx].Release()
-    free( _this )
+    free( this )
     ret
 
 InstructionSet::Release endp
@@ -332,7 +332,7 @@ InstructionSet::InstructionSet proc uses rsi rdi
 
         InstructionSet_Internal::InstructionSet_Internal(&[rsi].InstructionSet.CPU_Rep)
         mov rax,rsi
-        mov rdx,_this
+        mov rdx,this
         .if rdx
             mov [rdx],rax
         .endif

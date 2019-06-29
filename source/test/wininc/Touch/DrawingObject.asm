@@ -235,7 +235,7 @@ CDrawingObject::Rotate proc dAngle:double, iOx:long_t, iOy:long_t
     movsd  xmm4,cos(xmm1)
     movsd  xmm5,sin(xmm5)
 
-    mov    rcx,_this
+    mov    rcx,this
     mov    eax,[rcx]._iCx
     sub    eax,iOx
     cvtsi2sd xmm1,rax

@@ -58,7 +58,7 @@ CMyGestureEngine::Release proc
 
         [r10].Release()
     .endif
-    free(_this)
+    free(this)
     ret
 
 CMyGestureEngine::Release endp

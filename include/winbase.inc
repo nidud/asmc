@@ -19,9 +19,6 @@ ifndef _WIN32_WINNT
 _WIN32_WINNT equ _WIN32_WINDOWS
 endif
 
-WINADVAPI	equ <.pragma(comment(lib, advapi32))>
-WINBASEAPI	equ <.pragma(comment(lib, kernel32))>
-
 GetImageBase macro
 ifdef _WIN64
     mov rax,gs:[0x60]
@@ -1051,7 +1048,7 @@ LPOFSTRUCT		TYPEDEF PTR OFSTRUCT
 POFSTRUCT		TYPEDEF PTR OFSTRUCT
 
 
-WINBASEAPI
+.pragma(comment(lib, kernel32))
 
 if(_WIN32_WINNT GE 0x0500)
 GetConsoleWindow	proto WINAPI
@@ -1797,7 +1794,6 @@ endif ; ifdef _M_IA64
 
 if defined(_SLIST_HEADER_) AND NOT defined(_NTOSP_)
 
-;WINBASEAPI
 ;VOID
 InitializeSListHead proto WINAPI \
 	      ListHead: PSLIST_HEADER
@@ -1840,10 +1836,10 @@ MAKEINTATOM macro i
 	endm
 INVALID_ATOM	equ 0
 
-
 ifdef __PE__
 option dllimport:none
 endif
+
 ;int
 ;CALLBACK
 WinMain proto WINAPI \
@@ -1859,7 +1855,9 @@ wWinMain proto WINAPI \
 	     lpCmdLine: LPWSTR,
 	      nShowCmd: SINT
 
-WINBASEAPI
+ifdef __PE__
+option dllimport:<kernel32>
+endif
 
 ;BOOL
 FreeLibrary proto WINAPI \
@@ -3602,7 +3600,9 @@ UnmapViewOfFile proto WINAPI \
 UnmapViewOfFileVlm proto WINAPI \
 	 lpBaseAddress: PVOID64
 
-WINADVAPI
+
+.pragma(comment(lib, advapi32))
+
 EncryptFileA proto WINAPI \
 	    lpFileName: LPCSTR
 EncryptFileW proto WINAPI \
@@ -3703,7 +3703,10 @@ else
 QueryRecoveryAgents equ <QueryRecoveryAgentsA>
 endif
 
-WINBASEAPI
+ifdef __PE__
+option dllimport:<kernel32>
+endif
+
 lstrcatA	PROTO WINAPI :LPSTR, :LPSTR
 lstrcatW	PROTO WINAPI :LPWSTR, :LPWSTR
 lstrcmpA	PROTO WINAPI :LPSTR, :LPSTR
@@ -7495,7 +7498,10 @@ if (_WIN32_WINNT GE 0x0500)
 
 WAITORTIMERCALLBACK	typedef WAITORTIMERCALLBACKFUNC
 
-WINBASEAPI
+ifdef __PE__
+option dllimport:<kernel32>
+endif
+
 ;BOOL
 RegisterWaitForSingleObject proto WINAPI \
        phNewWaitObject: PHANDLE,

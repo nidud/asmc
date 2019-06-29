@@ -7,7 +7,7 @@ include class.inc
     assume rdi:LPCLASS
 
 Class::Release proc
-    free(_this)
+    free(this)
     ret
 Class::Release endp
 
@@ -22,7 +22,7 @@ Class::Class proc uses r12 s:string_t
   local p:LPSTR
 
     mov p,s
-    mov r12,_this
+    mov r12,this
 
     .if malloc( sizeof(Class) + sizeof(ClassVtbl) )
 

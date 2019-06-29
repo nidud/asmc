@@ -397,7 +397,7 @@ else
 FXMMATRIX	typedef ptr XMMATRIX
 AXMMATRIX	equ <M:FXMMATRIX>
 AXMMATRIX3	equ <M:FXMMATRIX>
-XMTHISPTR	equ <_this:ptr>
+XMTHISPTR	equ <this:ptr>
 endif
 
 XMFLOAT2	STRUC

@@ -20,7 +20,7 @@ _scputc proc frame x:int_t, y:int_t, l:int_t, char:char_t
     shl   r9d,16
     mov   r9b,cl
 
-    FillConsoleOutputCharacter(_confh, edx, r8d, r9d, &NumberOfCharsWritten)
+    FillConsoleOutputCharacter(hStdOutput, edx, r8d, r9d, &NumberOfCharsWritten)
     ret
 
 _scputc endp

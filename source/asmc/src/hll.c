@@ -1045,14 +1045,12 @@ static int LKRenderHllProc( char *dst, int i, struct asm_tok tokenarray[] )
 	     * Class ends
 	     */
 	    target = SearchNameInStruct( target, method, &u, 0 );
-	    if ( target == NULL ) {
-
-		target = SymFind( strcat( strcpy( ClassVtbl, comptr ), "Vtbl" ) );
-
-		if ( target ) {
-
+	    tmp = SymFind( strcat( strcpy( ClassVtbl, comptr ), "Vtbl" ) );
+	    if ( tmp ) {
+		tmp = SearchNameInStruct( tmp, method, &u, 0 );
+		if ( tmp ) {
+		    target = tmp;
 		    comptr = ClassVtbl;
-		    target = SearchNameInStruct( target, method, &u, 0 );
 		}
 	    }
 

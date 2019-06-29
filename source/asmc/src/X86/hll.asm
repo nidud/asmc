@@ -265,7 +265,7 @@ RenderJcc endp
 ;
 ; a "token" in a C expression actually is an assembly expression
 ;
-LGetToken proc private uses esi edi ebx hll:PTR hll_item, i, tokenarray, opnd:PTR expr
+LGetToken proc private uses esi edi ebx hll:PTR hll_item, i, tokenarray, opnd:ptr expr
     ;
     ; scan for the next C operator in the token array.
     ; because the ASM evaluator may report an error if such a thing
@@ -970,83 +970,70 @@ GetExpression endp
 ExpandCStrings proc uses ebx tokenarray:PTR asmtok
 
     xor eax,eax
+    .return .if ( ModuleInfo.strict_masm_compat == 1 )
 
-    .repeat
+    .for ( edx = 0, ebx = tokenarray: [ebx].token != T_FINAL: ebx += 16, edx++ )
 
-        .break .if ( ModuleInfo.strict_masm_compat == 1 )
+        .if [ebx].hll_flags & T_HLL_PROC
 
-        .for edx = 0, ebx = tokenarray: [ebx].token != T_FINAL: ebx += 16, edx++
+            .return GenerateCString(edx, tokenarray) .if ( Parse_Pass == PASS_1 )
 
-            .if [ebx].hll_flags & T_HLL_PROC
-
-                .if Parse_Pass == PASS_1
-
-                    GenerateCString( edx, tokenarray )
-                    .break
-                .endif
-
-                .if [ebx].token == T_OP_SQ_BRACKET
-                    ;
-                    ; invoke [...][.type].x(...)
-                    ;
-                    mov eax,1
-                    .repeat
-                        add ebx,16
-                        .if [ebx].token == T_CL_SQ_BRACKET
-                            dec eax
-                            .break .ifz
-                        .elseif [ebx].token == T_OP_SQ_BRACKET
-                            inc eax
-                        .endif
-                    .until [ebx].token == T_FINAL
+            .if [ebx].token == T_OP_SQ_BRACKET
+                ;
+                ; invoke [...][.type].x(...)
+                ;
+                mov eax,1
+                .repeat
                     add ebx,16
-                    .if [ebx].token == T_DOT
-                        add ebx,16
-                    .endif
-                .endif
-                .if [ebx+16].token == T_DOT
-                    add ebx,32
-                .endif
-                mov ecx,1
-                add ebx,32
-
-                .if [ebx-16].token != T_OP_BRACKET
-
-                    asmerr( 3018, [ebx-32].string_ptr, [ebx-16].string_ptr )
-                    .break
-                .endif
-
-                .for : [ebx].token != T_FINAL : ebx += 16
-
-                    mov edx,[ebx].string_ptr
-                    movzx eax,BYTE PTR [edx]
-
-                    .switch eax
-                      .case '"'
-                        asmerr(2004, [ebx].string_ptr)
-                        .break(1)
-                      .case ')'
-                        dec ecx
+                    .if [ebx].token == T_CL_SQ_BRACKET
+                        dec eax
                         .break .ifz
-                        .endc
-                      .case '('
-                        inc ecx
-                        .endc
-                    .endsw
-                .endf
-                xor eax,eax
+                    .elseif [ebx].token == T_OP_SQ_BRACKET
+                        inc eax
+                    .endif
+                .until [ebx].token == T_FINAL
+                add ebx,16
+                .if [ebx].token == T_DOT
+                    add ebx,16
+                .endif
+            .endif
+            .if [ebx+16].token == T_DOT
+                add ebx,32
+            .endif
+            mov ecx,1
+            add ebx,32
+
+            .if ( [ebx-16].token != T_OP_BRACKET )
+
+                asmerr( 3018, [ebx-32].string_ptr, [ebx-16].string_ptr )
                 .break
             .endif
-        .endf
-    .until  1
-toend:
+
+            .for : [ebx].token != T_FINAL : ebx += 16
+
+                mov edx,[ebx].string_ptr
+                movzx eax,BYTE PTR [edx]
+
+                .switch eax
+                  .case '"'
+                    asmerr(2004, [ebx].string_ptr)
+                    .break(1)
+                  .case ')'
+                    dec ecx
+                    .break .ifz
+                    .endc
+                  .case '('
+                    inc ecx
+                    .endc
+                .endsw
+            .endf
+            xor eax,eax
+            .break
+        .endif
+    .endf
     ret
 
 ExpandCStrings endp
-
-
-;SymFind proto fastcall :DWORD
-
 
 GetProc proc private token:ptr asmtok
 
@@ -1125,15 +1112,18 @@ StripSource proc private uses esi edi ebx i:UINT, e:UINT, tokenarray:ptr asmtok
 
   local sym:ptr dsym, info:ptr proc_info, curr:ptr asym
   local proc_id:ptr asmtok, parg_id:SINT, b[MAX_LINE_LEN]:SBYTE
-  local opnd:expr
+  local opnd:expr, bracket:int_t
 
     xor eax,eax
     mov b,al
     mov proc_id,eax ; foo( 1, bar(...), ...)
     mov parg_id,eax ; foo.paralist[1] = return type[al|ax|eax|[edx::eax|rax|xmm0]]
+    mov bracket,eax
 
-    .for eax = &b, ebx = tokenarray, edi = ebx,
-         esi = 0: esi < i: esi++, ebx += 16
+    .for ( eax = &b,
+           ebx = tokenarray,
+           edi = ebx,
+           esi = 0 : esi < i : esi++, ebx += 16 )
 
         .if esi
 
@@ -1147,6 +1137,15 @@ StripSource proc private uses esi edi ebx i:UINT, e:UINT, tokenarray:ptr asmtok
             movzx edx,[ebx].token
             .switch
               .case edx == T_CL_BRACKET
+                dec bracket
+                .endc
+              .case edx == T_OP_BRACKET
+                inc bracket
+                .endc
+              .case edx == T_COMMA
+                .if proc_id
+                    inc parg_id
+                .endif
               .case edx == T_CL_SQ_BRACKET
               .case edx == T_COLON
               .case edx == T_DOT
@@ -1155,10 +1154,6 @@ StripSource proc private uses esi edi ebx i:UINT, e:UINT, tokenarray:ptr asmtok
               .case ecx == T_COLON
               .case ecx == T_DOT
                 .endc
-              .case edx == T_COMMA
-                .if proc_id
-                    inc parg_id
-                .endif
               .default
                 strcat( eax, " " )
                 .endc
@@ -1168,6 +1163,10 @@ StripSource proc private uses esi edi ebx i:UINT, e:UINT, tokenarray:ptr asmtok
     .endf
 
     xor esi,esi
+    .if ( bracket == 0 )
+        mov proc_id,esi
+    .endif
+
     mov eax,proc_id
     .if eax && [eax].asmtok.token != T_OP_SQ_BRACKET
 
@@ -1299,7 +1298,7 @@ endif
                     .endif
 
                     sub edx,i
-                    .if EvalOperand( &i, tokenarray, edx, &opnd, 0 ) != ERROR
+                    .if EvalOperand( &i, tokenarray, edx, &opnd, EXPF_NOERRMSG ) != ERROR
 
                         xor eax,eax
                         .if opnd.kind == EXPR_ADDR
@@ -1318,6 +1317,8 @@ endif
                             .case MT_REAL16 : mov eax,16 : .endc
                             .endsw
                         .endif
+                    .else
+                        xor eax,eax
                     .endif
                 .endif
 
@@ -1497,13 +1498,18 @@ LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:ptr 
                     type_struct:
 
                     mov sym,eax
-                    .if SearchNameInStruct( sym, edi, &br_count, 0 )
-                        mov method,eax
-                        xor ecx,ecx
-                        mov sym,ecx
-                    .else
-                        mov ecx,sym
+                    mov ecx,_asym_name()
+                    .if SymFind( strcat( strcpy( &ClassVtbl, ecx ), "Vtbl" ) )
+                        mov ecx,eax
+                        SearchNameInStruct( ecx, edi, &br_count, 0 )
                     .endif
+                    .if !eax
+                        .if SearchNameInStruct( sym, edi, &br_count, 0 )
+                            mov method,eax
+                            mov sym,0
+                        .endif
+                    .endif
+                    mov ecx,sym
                 .endif
 
             .elseif _asym_mem_type() == MT_PTR && \
@@ -1524,14 +1530,17 @@ LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:ptr 
             .if SearchNameInStruct( ecx, edi, &br_count, 0 )
 
                 mov method,eax
+            .endif
 
-            .elseif SymFind( strcat( strcpy( &ClassVtbl, comptr ), "Vtbl" ) )
+            .if SymFind( strcat( strcpy( &ClassVtbl, comptr ), "Vtbl" ) )
 
                 mov ecx,eax
-                mov method,SearchNameInStruct( ecx, edi, &br_count, 0 )
+                .if SearchNameInStruct( ecx, edi, &br_count, 0 )
+                    mov method,eax
 
-                lea eax,ClassVtbl
-                mov comptr,eax
+                    lea eax,ClassVtbl
+                    mov comptr,eax
+                .endif
             .endif
 
             .if ( ModuleInfo.Ofssize == USE64 )

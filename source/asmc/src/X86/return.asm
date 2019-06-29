@@ -1,3 +1,11 @@
+; RETURN.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+; .return [val] [.if ...]
+;
+
 include stdio.inc
 include string.inc
 include asmc.inc
@@ -8,11 +16,73 @@ include hll.inc
 
     assume ebx:ptr asmtok
 
+GetValue proc private uses esi edi ebx i:int_t, tokenarray:ptr asmtok,
+    count:ptr int_t, directive:ptr int_t, retval:ptr int_t
+
+    mov ebx,i
+    shl ebx,4
+    add ebx,tokenarray
+    xor esi,esi
+    xor edi,edi
+    xor ecx,ecx
+    mov al,[ebx].token
+    .if ( al != T_FINAL )
+
+        .if ( al == T_DIRECTIVE )
+
+            mov esi,ebx
+        .else
+
+            mov edi,ebx
+            inc ecx
+            add ebx,16
+
+            .if ( al == T_OP_BRACKET )
+
+                .for ( edx = 1, al = [ebx].token : al != T_FINAL : ebx += 16, al = [ebx].token, ecx++ )
+
+                    .if ( al == T_OP_BRACKET )
+                            inc edx
+                    .elseif ( al == T_CL_BRACKET )
+                        dec edx
+                        .break .ifz
+                    .endif
+                .endf
+                .if ( al == T_CL_BRACKET )
+
+                    inc ecx
+                    add ebx,16
+                .endif
+            .else
+                .for ( al = [ebx].token : al != T_FINAL : ebx += 16, al = [ebx].token, ecx++ )
+
+                    .break .if ( al == T_DIRECTIVE )
+                .endf
+            .endif
+            mov al,[ebx].token
+            .if ( al == T_DIRECTIVE )
+                mov esi,ebx
+            .endif
+        .endif
+    .endif
+    mov eax,ebx
+    mov ebx,count
+    mov [ebx],ecx
+    mov ebx,directive
+    mov [ebx],esi
+    mov ebx,retval
+    mov [ebx],edi
+    ret
+
+GetValue endp
+
 AssignValue proc private uses esi edi ebx i:ptr int_t, tokenarray:ptr asmtok, count:int_t
 
   local opnd:expr
   local reg:int_t
-  local buffer[128]:char_t
+  local retval:int_t
+  local directive:int_t
+  local buffer[256]:char_t
 
     movzx ecx,ModuleInfo.Ofssize
     mov reg,regax[ecx*4]
@@ -22,6 +92,15 @@ AssignValue proc private uses esi edi ebx i:ptr int_t, tokenarray:ptr asmtok, co
     shl ebx,4
     add ebx,tokenarray
     lea edi,buffer
+
+    .if ExpandHllProc(edi, [esi], tokenarray) != ERROR
+
+        .if ( byte ptr [edi] )
+
+            AddLineQueue(edi)
+            GetValue([esi], tokenarray, &count, &directive, &retval)
+        .endif
+    .endif
 
     .if count
         mov eax,count
@@ -125,46 +204,8 @@ ReturnDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asmtok
 
         ; .return [[val]] [[.if ...]]
 
-        mov retval,0
-        mov directive,0
-        mov count,0
-
         inc i
-        mov ebx,i
-        shl ebx,4
-        add ebx,tokenarray
-        mov al,[ebx].token
-        .if ( al != T_FINAL )
-            .if ( al == T_DIRECTIVE )
-                mov directive,ebx
-            .else
-                mov retval,ebx
-                .if ( al == T_OP_BRACKET )
-                    .for ( count++, edx = 1, ebx += 16, al = [ebx].token,
-                         : al != T_FINAL : ebx += 16, al = [ebx].token, count++ )
-                        .if ( al == T_OP_BRACKET )
-                            inc edx
-                        .elseif ( al == T_CL_BRACKET )
-                            dec edx
-                            .break .ifz
-                        .endif
-                    .endf
-                    .break .if ( al != T_CL_BRACKET )
-                    inc count
-                    add ebx,16
-                .else
-                    .for ( count++, ebx += 16, al = [ebx].token,
-                         : al != T_FINAL : ebx += 16, al = [ebx].token, count++ )
-                        .break .if ( al == T_DIRECTIVE )
-                    .endf
-                .endif
-                mov al,[ebx].token
-                .if ( al == T_DIRECTIVE )
-                    mov directive,ebx
-                .endif
-            .endif
-        .endif
-
+        GetValue(i, tokenarray, &count, &directive, &retval)
         lea edi,buffer
         GetLabelStr( [esi].labels[LEXIT*4], edi )
 

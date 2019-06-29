@@ -9,9 +9,7 @@ include limits.inc
 
     .code
 
-    option win64:rsp nosave
-
-vsprintf proc string:string_t, format:string_t, argptr:ptr
+vsprintf proc frame string:string_t, format:string_t, argptr:ptr
 
   local o:_iobuf
 

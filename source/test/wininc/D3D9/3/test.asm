@@ -119,8 +119,9 @@ WinMain proc WINAPI uses rdi hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmd
     RegisterClassEx( &wc );
 
     ;; Create the application's window.
+    mov rcx,GetDesktopWindow()
     mov hWnd,CreateWindowEx(0, "Direct3D Window", "DirectXers - D3D9 Tutorial 3",
-        WS_OVERLAPPEDWINDOW, 100, 100, 400, 400, GetDesktopWindow(), NULL, wc.hInstance, NULL )
+        WS_OVERLAPPEDWINDOW, 100, 100, 400, 400, rcx, NULL, wc.hInstance, NULL )
 
     ShowWindow( hWnd, SW_SHOW )
 

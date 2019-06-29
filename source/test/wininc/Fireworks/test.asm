@@ -452,9 +452,9 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
                 mov flash,0
                 .endc
               .case VK_ESCAPE
-                .gotosw1(WM_CLOSE)
+                .gotosw(1:WM_CLOSE)
               .case VK_F1
-                .gotosw1(WM_RBUTTONDOWN)
+                .gotosw(1:WM_RBUTTONDOWN)
               .case VK_UP
                 .endc .if motion >= 64
                 inc motion

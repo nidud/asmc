@@ -614,7 +614,6 @@ RenderSwitch proc uses esi edi ebx hll:ptr hll_item, tokenarray:ptr asmtok,
         labelx[16]: SBYTE,  ; label symbol
         use_index:  BYTE
 
-
     mov esi,hll
     mov edi,buffer
     xor eax,eax
@@ -906,40 +905,49 @@ endif
                     asmerr( 2008, "register r11 overwritten by .SWITCH" )
                 .endif
                 AddLineQueueX( "lea r11,%s", l_exit )
-                AddLineQueueX( "mov r10d,[%s*4+r11-(%d*4)+(%s-%s)]", ebx, min, &l_jtab, l_exit )
-                AddLineQueue ( "sub r11,r10" )
+                AddLineQueue ( "push rax" )
+                AddLineQueueX( "mov eax,[%s*4+r11-(%d*4)+(%s-%s)]", ebx, min, &l_jtab, l_exit )
+                AddLineQueue ( "sub r11,rax" )
+                AddLineQueue ( "pop rax" )
                 AddLineQueue ( "jmp r11" )
 
             .else
 
                 .if ( ModuleInfo.aflag & _AF_REGAX )
 
+                    AddLineQueue( "push rax" )
+
                     .if !( [esi].flags & HLLF_ARGREG )
-                        GetSwitchArg( T_R11, [esi].flags, ebx )
+
+                        GetSwitchArg( T_RAX, [esi].flags, ebx )
                     .else
-                        .if _memicmp(ebx, "r11", 3)
-                            AddLineQueueX("mov r11,%s", ebx)
+                        mov eax,[ebx]
+                        or  eax,0x202020
+                        and eax,0xFFFFFF
+                        .if !( eax == 'xar' || eax == 'xae' )
+                            AddLineQueueX("mov rax,%s", ebx)
                         .endif
                     .endif
-                    AddLineQueueX( "lea r10,%s", l_exit )
+                    AddLineQueueX( "lea r11,%s", l_exit )
                     .if use_index
                         .if dist < 256
-                            AddLineQueueX( "movzx r11d,BYTE PTR [r10+r11-(%d)+(IT%s-%s)]", min, &l_jtab, l_exit )
+                            AddLineQueueX( "movzx eax,BYTE PTR [r11+rax-(%d)+(IT%s-%s)]", min, &l_jtab, l_exit )
                         .else
-                            AddLineQueueX( "movzx r11d,WORD PTR [r10+r11*2-(%d*2)+(IT%s-%s)]", min, &l_jtab, l_exit )
+                            AddLineQueueX( "movzx eax,WORD PTR [r11+rax*2-(%d*2)+(IT%s-%s)]", min, &l_jtab, l_exit )
                         .endif
-                        AddLineQueueX( "mov r11d,[r10+r11*4+(%s-%s)]", &l_jtab, l_exit )
+                        AddLineQueueX( "mov eax,[r11+rax*4+(%s-%s)]", &l_jtab, l_exit )
                     .else
                         mov eax,min
                         .if ( eax < ( UINT_MAX / 8 ) )
-                            AddLineQueueX( "mov r11d,[r10+r11*4-(%d*4)+(%s-%s)]", min, &l_jtab, l_exit )
+                            AddLineQueueX( "mov eax,[r11+rax*4-(%d*4)+(%s-%s)]", min, &l_jtab, l_exit )
                         .else
                             AddLineQueueX( "sub r11,%d", eax )
-                            AddLineQueueX( "mov r11d,[r10+r11*4+(%s-%s)]", &l_jtab, l_exit )
+                            AddLineQueueX( "mov eax,[r11+rax*4+(%s-%s)]", &l_jtab, l_exit )
                         .endif
                     .endif
-                    AddLineQueue( "sub r10,r11" )
-                    AddLineQueue( "jmp r10" )
+                    AddLineQueue( "sub r11,rax" )
+                    AddLineQueue( "pop rax" )
+                    AddLineQueue( "jmp r11" )
 
                 .else
 
@@ -1263,6 +1271,7 @@ RenderJTable endp
 SwitchStart proc uses esi edi ebx i:SINT, tokenarray:ptr asmtok
 
   local rc:SINT, cmd:UINT, buffer[MAX_LINE_LEN]:SBYTE
+  local opnd:expr
 
     mov rc,NOT_ERROR
     mov ebx,tokenarray
@@ -1403,11 +1412,25 @@ endif
                     .endc
 
                   .default
-                    or  [esi].flags,HLLF_ARGMEM
-                    mov eax,[ebx+ecx].asmtok.string_ptr
-                    .switch
-                    .case SymFind( eax )
-                        mov eax,[eax].asym.total_size
+                    or [esi].flags,HLLF_ARGMEM
+                    push i
+                    EvalOperand( &i, tokenarray, ModuleInfo.token_count, &opnd, EXPF_NOERRMSG )
+                    pop ecx
+                    mov i,ecx
+
+                    .if eax != ERROR
+                        mov eax,8
+ifndef __ASMC64__
+                        .if ModuleInfo.Ofssize == USE16
+                            mov eax,2
+                        .elseif ModuleInfo.Ofssize == USE32
+                            mov eax,4
+                        .endif
+endif
+                        .if ( opnd.kind == EXPR_ADDR && (opnd.flags1 & EXF_INDIRECT) && opnd.mbr )
+                            mov ecx,opnd.mbr
+                            mov eax,[ecx].asym.total_size
+                        .endif
                         .if eax == 2
                             or [esi].flags,HLLF_ARG16
                         .elseif eax == 4
@@ -1415,18 +1438,7 @@ endif
                         .elseif eax == 8
                             or [esi].flags,HLLF_ARG64
                         .endif
-                        .endc
-ifndef __ASMC64__
-                    .case ModuleInfo.Ofssize == USE16
-                        or [esi].flags,HLLF_ARG16
-                        .endc
-                    .case ModuleInfo.Ofssize == USE32
-                        or [esi].flags,HLLF_ARG32
-                        .endc
-endif
-                    .default
-                        or [esi].flags,HLLF_ARG64
-                    .endsw
+                    .endif
                 .endsw
             .endif
 

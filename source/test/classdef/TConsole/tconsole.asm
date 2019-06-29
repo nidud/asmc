@@ -17,7 +17,7 @@ tconsole::Release proc
 
     [rcx].clipfree()
     free( [rcx].window )
-    free( _this )
+    free( this )
     ret
 
 tconsole::Release endp
@@ -58,7 +58,7 @@ tconsole::read proc uses rsi rdi rbx buffer:PCHAR_INFO
 
     .endif
 
-    mov rcx,_this
+    mov rcx,this
     ret
 
 tconsole::read endp
@@ -105,7 +105,7 @@ tconsole::write proc uses rsi rdi rbx buffer:PCHAR_INFO
     xor eax,eax
     cmp ebx,1
     adc eax,0
-    mov rcx,_this
+    mov rcx,this
     ret
 
 tconsole::write endp
@@ -333,7 +333,7 @@ tconsole::putxyf proc uses rsi rdi rbx x:int_t, y:int_t, format:string_t, argptr
     .for ( rsi = &_bufin,
            ebx = eax,
            edi = x,
-           rcx = _this : ebx : ebx--, edi++ )
+           rcx = this : ebx : ebx--, edi++ )
 
         lodsb
 
@@ -382,7 +382,7 @@ tconsole::SetConsoleSize proc uses rsi rdi rcx cols:uint_t, rows:uint_t
 
         .if GetConsoleScreenBufferInfo(hStdOutput, &ci)
 
-            mov rsi,_this
+            mov rsi,this
             mov eax,ci.dwSize
 
             movzx edx,ax
@@ -454,7 +454,7 @@ tconsole::SetMaxConsoleSize proc
 
     .endif
 
-    _this.SetConsoleSize(edx, eax)
+    this.SetConsoleSize(edx, eax)
     ret
 
 tconsole::SetMaxConsoleSize endp
@@ -486,7 +486,7 @@ tconsole::readevent proc uses rsi rdi rbx
 
             .break .if !Count
 
-            mov rcx,_this
+            mov rcx,this
             movzx eax,[rbx].EventType
 
             .if eax == KEY_EVENT
@@ -649,7 +649,7 @@ tconsole::readevent proc uses rsi rdi rbx
         .endw
     .endif
 
-    mov rcx,_this
+    mov rcx,this
     mov edx,[rcx].keyshift
     mov eax,edi
     .if edx & SHIFT_ALTLEFT
@@ -876,7 +876,7 @@ tconsole::clipcopy proc uses rsi rdi rbx string:string_t, l:uint_t
 
     .endif
 
-    mov rcx,_this
+    mov rcx,this
     ret
 
 tconsole::clipcopy endp
@@ -1079,7 +1079,7 @@ tconsole::tconsole proc uses rsi rdi
         .endif
     .endif
 
-    mov r8,_this
+    mov r8,this
     .if r8
         mov [r8],rax
     .endif

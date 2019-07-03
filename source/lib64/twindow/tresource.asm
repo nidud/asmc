@@ -20,26 +20,10 @@ TWindow::Resource proc uses rsi rdi rbx r12 rcx p:idd_t
     mov     rbx,[rcx].Open([rsi].rc, r8d)
     .return .if !rax
 
-    movzx   eax,[rsi].count
-    inc     eax
-    shl     eax,3
-    mov     r11,rsi
-    add     rsi,rax
-    mov     r10,[rbx].Color
-    mov     rdi,[rbx].Window
-    add     rdi,2
-
-    .if ( [rbx].Flags & W_COLOR )
-        UnzipAttrib()
-    .else
-        UnzipChar()
-    .endif
-    mov rdi,[rbx].Window
-    UnzipChar()
-
-    lea     rsi,[r11+sizeof(ROBJECT)]
-    movzx   edi,[rsi-sizeof(ROBJECT)].count
-    movzx   eax,[rsi-sizeof(ROBJECT)].index
+    [rbx].Load(&[rsi-2])
+    movzx   edi,[rsi].count
+    movzx   eax,[rsi].index
+    lea     rsi,[rsi+sizeof(ROBJECT)]
     inc     eax
     mov     [rbx].Index,eax
 
@@ -58,6 +42,28 @@ TWindow::Resource proc uses rsi rdi rbx r12 rcx p:idd_t
     ret
 
 TWindow::Resource endp
+
+TWindow::Load proc uses rsi rdi rbx p:idd_t
+
+    xor eax,eax
+    mov rbx,rcx
+    lea rsi,[rdx].IDDOBJ.dialog
+    mov al,[rsi].count
+    lea rsi,[rsi+rax*8+8]
+    mov r10,[rbx].Color
+    mov rdi,[rbx].Window
+    add rdi,2
+    .if ( [rbx].Flags & W_COLOR )
+        UnzipAttrib()
+    .else
+        UnzipChar()
+    .endif
+    mov rdi,[rbx].Window
+    UnzipChar()
+    mov rcx,rbx
+    ret
+
+TWindow::Load endp
 
     assume rsi:nothing
     assume rcx:nothing

@@ -130,15 +130,15 @@ TWindow::PushBCreate proc uses rsi rdi rbx rcx rc:TRECT, id:uint_t, name:string_
     mov     rdi,[rbx].Window()
     movzx   ecx,[rbx].rc.col
     mov     rdx,[rbx].Color
-    movzx   eax,byte ptr [rdx+BGPUSHBUTTON]
-    or      al,[rdx+FGTITLE]
+    movzx   eax,byte ptr [rdx+BG_PUSHBUTTON]
+    or      al,[rdx+FG_TITLE]
     shl     eax,16
     mov     al,' '
     mov     r11,rdi
     rep     stosd
     mov     al,[rdi+2]
     and     eax,0xF0
-    or      al,[rdx+FGPBSHADE]
+    or      al,[rdx+FG_PBSHADE]
     shl     eax,16
     mov     al,'Ü'
     mov     [rdi],eax
@@ -147,10 +147,10 @@ TWindow::PushBCreate proc uses rsi rdi rbx rcx rc:TRECT, id:uint_t, name:string_
     mov     al,'ß'
     rep     stosd
     lea     rdi,[r11+8]
-    mov     al,byte ptr [rdx+BGPUSHBUTTON]
+    mov     al,byte ptr [rdx+BG_PUSHBUTTON]
     mov     cl,al
-    or      al,[rdx+FGTITLE]
-    or      cl,[rdx+FGTITLEKEY]
+    or      al,[rdx+FG_TITLE]
+    or      cl,[rdx+FG_TITLEKEY]
     shl     eax,16
     .while 1
         lodsb
@@ -332,7 +332,7 @@ TWindow::OnSetFocus proc uses rcx
         [rcx].Read()
         or [rcx].Flags,W_VISIBLE
         mov rdx,[rcx].Color
-        mov r9b,[rdx+BGINVERSE]
+        mov r9b,[rdx+BG_INVERSE]
         shr r9b,4
         movzx eax,[rcx].rc.x
         movzx edx,[rcx].rc.y
@@ -580,5 +580,17 @@ TWindow::PrevItem proc uses rbx rcx
     ret
 
 TWindow::PrevItem endp
+
+TWindow::GetItem proc uses rcx id:uint_t
+
+    test  [rcx].Flags,W_CHILD
+    cmovnz rcx,[rcx].PrevInst
+    .for ( rcx = [rcx].Child : rcx : rcx = [rcx].Child )
+        .return rcx .if ( edx == [rcx].Index )
+    .endf
+    xor eax,eax
+    ret
+
+TWindow::GetItem endp
 
     end

@@ -2,34 +2,39 @@ ifndef __TWINDOW_INC
 __TWINDOW_INC equ <>
 include conio.inc
 
-FGTITLE         equ 0       ; Foreground
-FGFRAME         equ 1
-FGFILES         equ 2
-FGSYSTEM        equ 3
-FGHIDDEN        equ 4
-FGPBSHADE       equ 5
-FGKEYBAR        equ 6
-FGDESKTOP       equ 7
-FGINACTIVE      equ 8
-FGDIALOG        equ 9
-FGPANEL         equ 10
-FGSUBDIR        equ 11
-FGMENUS         equ 12
-FGTITLEKEY      equ 13
-FGDIALOGKEY     equ 14
-FGMENUSKEY      equ 15
+FG_TITLE        equ 0       ; Foreground
+FG_FRAME        equ 1
+FG_FILES        equ 2
+FG_SYSTEM       equ 3
+FG_HIDDEN       equ 4
+FG_PBSHADE      equ 5
+FG_KEYBAR       equ 6
+FG_DESKTOP      equ 7
+FG_INACTIVE     equ 8
+FG_DIALOG       equ 9
+FG_PANEL        equ 10
+FG_SUBDIR       equ 11
+FG_MENUS        equ 12
+FG_TITLEKEY     equ 13
+FG_DIALOGKEY    equ 14
+FG_MENUSKEY     equ 15
 
-BGDESKTOP       equ 16      ; Background
-BGPANEL         equ 17
-BGDIALOG        equ 18
-BGMENUS         equ 19
-BGERROR         equ 20
-BGTITLE         equ 21
-BGINVERSE       equ 22
-BGGRAY          equ 23
-BGPUSHBUTTON    equ 24
-BGINVPANEL      equ 25
-BGINVMENUS      equ 26
+BG_DESKTOP      equ  0+16   ; Background
+BG_PANEL        equ  1+16
+BG_DIALOG       equ  2+16
+BG_MENUS        equ  3+16
+BG_ERROR        equ  4+16
+BG_TITLE        equ  5+16
+BG_INVERSE      equ  6+16
+BG_GRAY         equ  7+16
+BG_PUSHBUTTON   equ  8+16
+BG_INVPANEL     equ  9+16
+BG_INVMENUS     equ 10+16
+
+BG_TEXTVIEW     equ 12+16
+BG_TEXTEDIT     equ 13+16
+FG_TEXTVIEW     equ 14+16
+FG_TEXTEDIT     equ 15+16
 
 ; Window Type
 
@@ -148,6 +153,7 @@ class_t         typedef ptr APPINFO
     Context         intptr_t ?
 
     Open            proc :TRECT, :uint_t
+    Load            proc :idd_t
     Resource        proc :idd_t
     Release         proc
 
@@ -161,6 +167,7 @@ class_t         typedef ptr APPINFO
     ClrShade        proc
 
     Clear           proc :CHAR_INFO
+    PutFrame        proc :TRECT, :int_t, :uchar_t
     PutChar         proc :int_t, :int_t, :int_t, :CHAR_INFO
     PutString       proc :int_t, :int_t, :ushort_t, :int_t, :string_t, :vararg
     PutPath         proc :int_t, :int_t, :int_t, :string_t
@@ -188,6 +195,7 @@ class_t         typedef ptr APPINFO
     KillFocus       proc
     NextItem        proc
     PrevItem        proc
+    GetItem         proc :uint_t
 
     PushBCreate     proc :TRECT, :uint_t, :string_t
     PushBSet        proc
@@ -211,5 +219,7 @@ class_t         typedef ptr APPINFO
     ConsoleSize     proc
 
     .ends
+
+TEditColor          proto :window_t
 
 endif

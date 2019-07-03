@@ -47,10 +47,21 @@ TWindow::MessageBox proc uses rsi rdi rbx rcx flags:int_t, title:string_t, forma
   local line:int_t
   local size:COORD
   local rc:TRECT
+  local buffer[4096]:char_t
 
     mov rbx,rcx
     mov rdi,r8
-    lea rsi,_bufin
+    .if rdi == NULL
+        and edx,0x00000070
+        .if edx == MB_ICONERROR
+            lea rdi,@CStr("Error")
+        .elseif edx == MB_ICONWARNING
+            lea rdi,@CStr("Warning")
+        .else
+            lea rdi,@CStr("")
+        .endif
+    .endif
+    lea rsi,buffer
     mov line,0
 
     vsprintf(rsi, r9, &argptr)
@@ -95,31 +106,34 @@ TWindow::MessageBox proc uses rsi rdi rbx rcx flags:int_t, title:string_t, forma
     add cl,6
     mov rc.row,cl
     mov rc.col,dh
+    shr eax,16
     add al,7
     .if ax > size.y
         mov rc.y,1
     .endif
 
-    mov rbx,[rbx].Open(rc, W_MOVEABLE or W_SHADE or W_COLOR)
+    mov r8d,W_MOVEABLE or W_COLOR or W_TRANSPARENT
+    .if !( flags & MB_USERICON )
+        mov r8d,W_MOVEABLE or W_COLOR or W_SHADE
+    .endif
+    mov rbx,[rbx].Open(rc, r8d)
     .return .if !rax
 
-    mov edx,((BGDIALOG-16) shl 4) or FGDIALOG
+    mov rsi,[rbx].Color
+    xor edx,edx
+    mov dl,[rsi+BG_DIALOG]
+    or  dl,[rsi+FG_DIALOG]
     mov eax,flags
-    and eax,0x000000F0
-    .if eax == MB_ICONERROR
-        mov dl,((BGERROR-16) shl 4) or FGDESKTOP
-        .if ( rdi == NULL )
-            lea rdi,@CStr("Error")
-        .endif
-    .elseif eax == MB_ICONWARNING
-        mov dl,((BGERROR-16) shl 4) or FGDESKTOP
-        .if ( rdi == NULL )
-            lea rdi,@CStr("Warning")
-        .endif
+    and eax,0x00000070
+    .if ( eax == MB_ICONERROR || eax == MB_ICONWARNING )
+        mov dl,[rsi+BG_ERROR]
+        or  dl,[rsi+FG_DESKTOP]
     .endif
-    shl edx,16
-    mov dl,' '
-    [rbx].Clear(edx)
+    .if !( [rbx].Flags & W_TRANSPARENT )
+        shl edx,16
+        mov dl,' '
+        [rbx].Clear(edx)
+    .endif
     [rbx].PutTitle(rdi)
 
     mov eax,[rbx].rc
@@ -214,22 +228,29 @@ TWindow::MessageBox proc uses rsi rdi rbx rcx flags:int_t, title:string_t, forma
       .case MB_DEFBUTTON2 : mov rcx,[rcx].Child
     .endsw
     mov [rbx].Index,[rcx].Index
-    lea rsi,_bufin
+
+    lea rsi,buffer
     mov rdi,rsi
     mov line,2
+
     .repeat
+
         .break .if !byte ptr [rsi]
+
         mov rsi,strchr(rdi, 10)
         .if ( rax != NULL )
             mov byte ptr [rsi],0
             inc rsi
         .endif
+
         movzx r9d,[rbx].rc.col
         movzx edx,[rbx].rc.x
         [rbx].PutCenter(0, line, r9d, rdi)
         mov rdi,rsi
         inc line
+
     .until (rdi == NULL || line == 17+2)
+
     [rbx].Register(&WndProc)
     ret
 

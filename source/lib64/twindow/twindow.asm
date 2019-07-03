@@ -9,6 +9,7 @@ include stdio.inc
 include strlib.inc
 include twindow.inc
 
+TWindow::Load           proto :idd_t
 TWindow::Resource       proto :idd_t
 TWindow::Show           proto
 TWindow::Hide           proto
@@ -46,6 +47,7 @@ TWindow::SetFocus       proto :uint_t
 TWindow::KillFocus      proto
 TWindow::NextItem       proto
 TWindow::PrevItem       proto
+TWindow::GetItem        proto :uint_t
 
 TWindow::PushButton     proto :uint_t, :size_t, :ptr
 TWindow::PushBCreate    proto :TRECT, :uint_t, :string_t
@@ -315,6 +317,19 @@ TWindow::Move proc uses rsi rdi rbx r12 rcx x:int_t, y:int_t
             .endf
             .endc
         .endsw
+
+        .if ( [rbx].Flags & W_TRANSPARENT )
+            mov rdi,[rbx].Window
+            mov rsi,wp
+            mov eax,col
+            mul row
+            .for ( ecx = eax, edx = 0 : edx < ecx : edx++ )
+                .if ( byte ptr [rsi+rdx*4+2] == 0x08 )
+                    mov ax,[rdi+rdx*4]
+                    mov [rsi+rdx*4],ax
+                .endif
+            .endf
+        .endif
         _scwrite([rbx].rc, wp)
     .endf
     free(wp)
@@ -396,6 +411,7 @@ TWindow::ClrShade proc uses rsi rcx
     add     rc_b.y,ah
     mov     rc_b.row,1
     add     rc_b.x,2
+
     movzx   eax,[rcx].rc.col
     mul     [rcx].rc.row
     lea     rsi,[rax*4]
@@ -409,45 +425,6 @@ TWindow::ClrShade proc uses rsi rcx
 
 TWindow::ClrShade endp
 
-TWindow::Clear proc uses rdi rcx at:CHAR_INFO
-
-    mov eax,edx
-
-    .if [rcx].Flags & W_COLOR
-
-        shr eax,16
-        mov rdi,[rcx].Color
-        mov r8d,eax
-        and eax,0x0F
-        shr r8d,4
-        mov al,[rdi+rax]
-        or  al,[rdi+r8+16]
-        shl eax,16
-        mov ax,dx
-    .endif
-
-    mov   rdi,[rcx].Window
-    movzx edx,[rcx].rc.row
-    movzx ecx,[rcx].rc.col
-    imul  ecx,edx
-
-    .if ( ( eax & 0x00FF0000 ) && ( eax & 0x0000FFFF ) )
-
-        rep stosd
-    .else
-        .if ( eax & 0x00FF0000 )
-            add rdi,2
-            shr eax,16
-        .endif
-        .repeat
-            mov [rdi],ax
-            add rdi,4
-        .untilcxz
-    .endif
-    ret
-
-TWindow::Clear endp
-
 TWindow::PutChar proc uses rdi x:int_t, y:int_t, count:int_t, w:CHAR_INFO
 
     movzx edi,[rcx].rc.col
@@ -456,20 +433,8 @@ TWindow::PutChar proc uses rdi x:int_t, y:int_t, count:int_t, w:CHAR_INFO
     shl   edi,2
     add   rdi,[rcx].Window
     mov   eax,w
+    xchg  rcx,r9
 
-    .if ( ( eax & 0x00FF0000 ) && ( [rcx].Flags & W_COLOR ) )
-
-        mov rdx,[rcx].Color
-        mov r8d,eax
-        and eax,0x0F
-        shr r8d,4
-        mov al,[rdx+rax]
-        or  al,[rdx+r8+16]
-        mov w.Attributes,ax
-        mov eax,w
-    .endif
-
-    xchg rcx,r9
     .if ( ( eax & 0x00FF0000 ) && ( eax & 0x0000FFFF ) )
         rep stosd
     .else
@@ -483,19 +448,146 @@ TWindow::PutChar proc uses rdi x:int_t, y:int_t, count:int_t, w:CHAR_INFO
         .untilcxz
     .endif
     mov rcx,r9
+    xor eax,eax
     ret
 
 TWindow::PutChar endp
+
+TWindow::Clear proc at:CHAR_INFO
+
+    movzx eax,[rcx].rc.row
+    mul [rcx].rc.col
+    mov r9d,eax
+    [rcx].PutChar(0, 0, r9d, edx)
+    ret
+
+TWindow::Clear endp
+
+frame_type  struct 1
+BottomRight db ?
+BottomLeft  db ?
+Vertical    db ?
+TopRight    db ?
+Horizontal  db ?
+TopLeft     db ?
+Cols        db ?
+Rows        db ?
+frame_type  ends
+
+TWindow::PutFrame proc uses rsi rdi rcx rc:TRECT, type:int_t, Attrib:uchar_t
+
+  local ft:frame_type
+
+    .switch pascal r8
+      .case 0 : mov rax,'ÚÄ¿³ÀÙ'
+      .case 1 : mov rax,'ÉÍ»ºÈ¼'
+      .case 2 : mov rax,'ÂÄÂ³ÁÁ'
+      .case 3 : mov rax,'ÃÄ´³Ã´'
+      .default
+        .return 0
+    .endsw
+
+    mov     ft,rax
+    movzx   eax,[rcx].rc.col
+    mul     dh
+    mov     edi,eax
+    movzx   eax,dl
+    add     edi,eax
+    shl     edi,2
+    add     rdi,[rcx].Window
+    shr     edx,16
+    sub     edx,0x0202
+    mov     ft.Cols,dl
+    mov     ft.Rows,dh
+    movzx   eax,r9b
+    movzx   edx,[rcx].rc.col
+    shl     edx,2
+    lea     r8,[rdi+rdx]
+    shl     eax,16
+    mov     al,ft.TopLeft
+    movzx   r9d,ft.Cols
+
+    .ifnz
+
+        stosd
+        mov     al,ft.Horizontal
+        movzx   ecx,ft.Cols
+        rep     stosd
+        mov     al,ft.TopRight
+        stosd
+        mov     al,ft.Vertical
+
+        .for ( ecx = 0 : cl < ft.Rows : ecx++ )
+
+            mov     rdi,r8
+            add     r8,rdx
+            stosd
+            mov     [rdi+r9*4],eax
+        .endf
+
+        mov     rdi,r8
+        mov     al,ft.BottomLeft
+        stosd
+        mov     al,ft.Horizontal
+        movzx   ecx,ft.Cols
+        rep     stosd
+        mov     al,ft.BottomRight
+        stosd
+
+    .else
+
+        mov [rdi],al
+        mov al,ft.Horizontal
+        add rdi,4
+        .for ( ecx = 0 : ecx < r9d : ecx++, rdi += 4 )
+            mov [rdi],al
+        .endf
+        mov al,ft.TopRight
+        mov [rdi],al
+        mov al,ft.Vertical
+        .for ( ecx = 0 : cl < ft.Rows : ecx++ )
+            mov rdi,r8
+            add r8,rdx
+            mov [rdi],al
+            mov [rdi+r9*4+4],al
+        .endf
+        mov rdi,r8
+        mov al,ft.BottomLeft
+        mov [rdi],al
+        add rdi,4
+        mov al,ft.Horizontal
+        .for ( ecx = 0 : ecx < r9d : ecx++, rdi += 4 )
+            mov [rdi],al
+        .endf
+        mov al,ft.BottomRight
+        mov [rdi],al
+    .endif
+    ret
+
+TWindow::PutFrame endp
 
 TWindow::PutString proc x:int_t, y:int_t, at:ushort_t, max:int_t, format:string_t, argptr:vararg
 
   local w:ptr_t
   local highat:byte
   local attrib:byte
+  local buffer[4096]:char_t
+  local retval:int_t
 
     mov eax,r9d
     mov attrib,al
     mov highat,ah
+
+    .if ( eax == 0 && r8d && [rcx].Flags & W_TRANSPARENT )
+
+        mov r9,[rcx].Color
+        mov al,[r9+BG_DIALOG]
+        or  al,[r9+FG_DIALOG]
+        mov attrib,al
+        mov al,[r9+BG_DIALOG]
+        or  al,[r9+FG_DIALOGKEY]
+        mov highat,al
+    .endif
 
     movzx eax,[rcx].rc.col
     imul eax,r8d
@@ -503,32 +595,9 @@ TWindow::PutString proc x:int_t, y:int_t, at:ushort_t, max:int_t, format:string_
     lea rax,[rax*4]
     add rax,[rcx].Window
     mov w,rax
-
-    vsprintf(&_bufin, format, &argptr)
+    mov retval,vsprintf(&buffer, format, &argptr)
 
     mov rcx,this
-    movzx eax,attrib
-    .if eax && [rcx].Flags & W_COLOR
-        mov rdx,[rcx].Color
-        mov r8d,eax
-        and eax,0x0F
-        shr r8d,4
-        mov al,[rdx+rax]
-        or  al,[rdx+r8+16]
-    .endif
-    mov attrib,al
-
-    mov al,highat
-    .if eax && [rcx].Flags & W_COLOR
-        mov rdx,[rcx].Color
-        mov r8d,eax
-        and eax,0x0F
-        shr r8d,4
-        mov al,[rdx+rax]
-        or  al,[rdx+r8+16]
-    .endif
-    mov highat,al
-
     mov r11d,max
     .if !r11d
 
@@ -537,7 +606,7 @@ TWindow::PutString proc x:int_t, y:int_t, at:ushort_t, max:int_t, format:string_
     .endif
 
     .for ( rdx = w,
-           r8  = &_bufin,
+           r8  = &buffer,
            r9d = 0,
            r9b = [rcx].rc.col,
            r9d <<= 2,
@@ -562,139 +631,101 @@ TWindow::PutString proc x:int_t, y:int_t, at:ushort_t, max:int_t, format:string_
             add rdx,4
         .else
 
-            mov [rdx],al
-            .if ah
-
-                mov [rdx+2],ah
-            .endif
+            ;.if !( al == ' ' && [rcx].Flags & W_TRANSPARENT )
+                mov [rdx],al
+                .if ah
+                    mov [rdx+2],ah
+                .endif
+            ;.endif
             add rdx,4
         .endif
     .endf
+    mov eax,retval
     ret
 
 TWindow::PutString endp
 
 TWindow::PutPath proc uses rsi rdi rbx x:int_t, y:int_t, max:int_t, path:string_t
 
-    movzx   eax,[rcx].rc.col
-    imul    eax,r8d
-    add     eax,edx
-    lea     rdi,[rax*4]
-    add     rdi,[rcx].Window
-    mov     rsi,path
-    mov     rbx,r9
+  local pre[16]:char_t
+
+    mov rsi,path
+    mov ebx,r9d
 
     .ifd strlen(rsi) > ebx
-
+        lea rcx,pre
         mov edx,[rsi]
         add rsi,rax
-        mov eax,ebx
-        sub rsi,rax
-        add rsi,4
+        sub rsi,rbx
+        mov eax,4
         .if dh == ':'
-            mov [rdi],dl
-            mov [rdi+4],dh
+            mov [rcx],dx
             shr edx,8
             mov dl,'.'
-            add rdi,8
-            add rsi,2
-            sub eax,2
+            add rcx,2
+            add eax,2
         .else
             mov dx,'/.'
         .endif
-        mov [rdi],dh
-        mov [rdi+4],dl
-        mov [rdi+8],dl
-        mov [rdi+12],dh
-        add rdi,16
-        sub eax,4
+        add rsi,rax
+        sub ebx,eax
+        mov [rcx],dh
+        mov [rcx+1],dl
+        mov [rcx+2],dx
+        mov byte ptr [rcx+4],0
+        mov rcx,this
+        mov edx,x
+        add x,eax
+        [rcx].PutString(x, y, 0, 6, &pre)
     .endif
-    .while eax
-        movsb
-        add rdi,3
-        dec eax
-    .endw
     mov rcx,this
+    [rcx].PutString(x, y, 0, ebx, rsi)
     ret
 
 TWindow::PutPath endp
 
+    assume rbx:window_t
+
 TWindow::PutCenter proc uses rsi rdi rbx x:int_t, y:int_t, l:int_t, string:string_t
 
-    mov   rsi,string
-    mov   rbx,r9
-    movzx eax,[rcx].rc.col
-    imul  eax,r8d
-    add   edx,eax
-    lea   rdi,[rdx*4]
-    add   rdi,[rcx].Window
-
-    strlen(rsi)
-    mov r8,rdi
-    .if eax > ebx
-        mov edx,[rsi]
-        add rsi,rax
-        mov eax,ebx
-        sub rsi,rax
-        add rsi,4
-        .if dh == ':'
-            mov [rdi],dl
-            mov [rdi+4],dh
-            shr edx,8
-            mov dl,'.'
-            add rdi,8
-            add rsi,2
-            sub eax,2
-        .else
-            mov dx,'/.'
-        .endif
-        mov [rdi],dh
-        mov [rdi+4],dl
-        mov [rdi+8],dl
-        mov [rdi+12],dh
-        add rdi,16
-        sub eax,4
-    .endif
-    .if eax
-        .if rdi == r8
-            sub ebx,eax
-            shr ebx,2
-            lea rdi,[rdi+rbx*8]
-        .endif
-        .repeat
-            movsb
-            add rdi,3
-            dec eax
-        .untilz
-    .endif
-    mov rcx,this
+    mov rbx,rcx
+    mov rsi,string
+    mov edi,r9d
+    .return [rbx].PutPath(x, y, edi, rsi) .ifd strlen(rsi) > edi
+    sub edi,eax
+    shr edi,1
+    add x,edi
+    [rbx].PutString(x, y, 0, eax, rsi)
     ret
 
 TWindow::PutCenter endp
 
 TWindow::PutTitle proc string:string_t
 
-    mov     r8,[rcx].Color
-    movzx   eax,byte ptr [r8+FGTITLE]
-    or      al, byte ptr [r8+BGTITLE]
+    movzx   r9d,[rcx].rc.col
+    mov     rdx,[rcx].Color
+    movzx   eax,byte ptr [rdx+BG_TITLE]
+    or      al,[rdx+FG_TITLE]
     shl     eax,16
     mov     al,' '
-    mov     r8,rcx
-    mov     r9,[rcx].Window
-    xchg    rdi,r9
-    movzx   ecx,[rcx].rc.col
-    rep     stosd
-    mov     rcx,r8
-    mov     rdi,r9
-    movzx   r9d,[rcx].rc.col
-    mov     rax,rdx
 
-    [rcx].PutCenter(0, 0, r9d, rax)
+    [rcx].PutChar(0, 0, r9d, eax)
+    movzx r9d,[rcx].rc.col
+    [rcx].PutCenter(0, 0, r9d, string)
     ret
 
 TWindow::PutTitle endp
 
-    assume rbx:window_t
+    .data
+    AttributesDefault label byte
+        db 0x00,0x0F,0x0F,0x07,0x08,0x00,0x00,0x07,0x08,0x00,0x0A,0x0B,0x00,0x0F,0x0F,0x0F
+        db 0x00,0x10,0x70,0x70,0x40,0x30,0x30,0x70,0x30,0x30,0x30,0x00,0x00,0x00,0x07,0x07
+
+    AttributesTransparent label byte
+        db 0x07,0x07,0x0F,0x07,0x08,0x07,0x07,0x07,0x08,0x0F,0x0A,0x0B,0x0F,0x0B,0x0B,0x0B
+        db 0x00,0x00,0x00,0x10,0x30,0x10,0x10,0x00,0x10,0x10,0x00,0x00,0x00,0x00,0x07,0x07
+
+    .code
 
 TWindow::Open proc uses rsi rdi rbx rcx rc:TRECT, flags:uint_t
 
@@ -719,6 +750,12 @@ TWindow::Open proc uses rsi rdi rbx rcx rc:TRECT, flags:uint_t
     mov [rcx].Flags,esi
     mov [rcx].PrevInst,rbx
 
+    .if ( [rcx].Flags & W_TRANSPARENT )
+
+        lea rax,AttributesTransparent
+        mov [rcx].Color,rax
+    .endif
+
     .return rcx .if ( [rcx].Flags & W_CHILD )
 
     mov     rbx,rcx
@@ -729,14 +766,22 @@ TWindow::Open proc uses rsi rdi rbx rcx rc:TRECT, flags:uint_t
     lea     rax,[rax*4]
 
     .if [rcx].Flags & W_SHADE
+
         lea rdx,[r8+rdx*2-2]
         lea rax,[rax+rdx*4]
     .endif
+
     .if malloc(eax)
-        mov rcx,rbx
-        mov [rcx].Window,rax
-        or  [rcx].Flags,W_ISOPEN
-        mov rax,rcx
+
+        mov [rbx].Window,rax
+        or  [rbx].Flags,W_ISOPEN
+
+        .if ( [rbx].Flags & W_TRANSPARENT )
+
+            [rbx].Read()
+            [rbx].Clear(0x00080000)
+        .endif
+        mov rax,rbx
     .else
         free(rbx)
     .endif
@@ -764,6 +809,7 @@ TWindow::TWindow proc uses rsi rdi rbx
     mov [rbx].Class,rax
 
     for q,<TWindow_Open,
+           TWindow_Load,
            TWindow_Resource,
            TWindow_Release,
            TWindow_Show,
@@ -774,6 +820,7 @@ TWindow::TWindow proc uses rsi rdi rbx
            TWindow_SetShade,
            TWindow_ClrShade,
            TWindow_Clear,
+           TWindow_PutFrame,
            TWindow_PutChar,
            TWindow_PutString,
            TWindow_PutPath,
@@ -798,6 +845,7 @@ TWindow::TWindow proc uses rsi rdi rbx
            TWindow_KillFocus,
            TWindow_NextItem,
            TWindow_PrevItem,
+           TWindow_GetItem,
            TWindow_PushBCreate,
            TWindow_PushBSet,
            TWindow_PushBClear,
@@ -845,7 +893,7 @@ endif
         mov edi,ci.dwSize
     .endif
 
-    mov     [rbx].Flags,W_ISOPEN ;or _W__VISIBLE
+    mov     [rbx].Flags,W_ISOPEN or W_COLOR
     mov     [rbx].rc.x,0
     mov     [rbx].rc.y,0
     movzx   eax,di

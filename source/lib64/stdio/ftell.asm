@@ -34,108 +34,103 @@ ftell proc frame uses rdi rbx fp:LPFILE
     mov fd,rcx
     mov osfile,al
 
-    .repeat
+    .ifsd SetFilePointer(rcx, 0, 0, SEEK_CUR) < 0
 
-        .ifsd SetFilePointer(rcx, 0, 0, SEEK_CUR) < 0
+        .return _dosmaperr(GetLastError())
+    .endif
 
-            _dosmaperr(GetLastError())
-            .break
+    mov ecx,[rbx]._flag
+    .if !( ecx & _IOMYBUF or _IOYOURBUF )
+
+        sub eax,[rbx]._cnt
+        .return
+    .endif
+
+    mov filepos,eax
+    mov rdi,[rbx]._ptr
+    sub rdi,[rbx]._base
+
+    .if ecx & _IOWRT or _IOREAD
+
+        .if osfile & FH_TEXT
+
+            mov rax,[rbx]._base
+            .while rax < [rbx]._ptr
+
+                .if byte ptr [rax] == 10
+
+                    inc rdi
+                .endif
+                inc rax
+            .endw
         .endif
 
-        mov ecx,[rbx]._flag
-        .if !( ecx & _IOMYBUF or _IOYOURBUF )
+    .elseif !( ecx & _IORW )
 
-            sub eax,[rbx]._cnt
-            .break
-        .endif
+        mov errno,EINVAL
+        .return -1
+    .endif
 
-        mov filepos,eax
-        mov rdi,[rbx]._ptr
-        sub rdi,[rbx]._base
+    mov rax,rdi
+    .return .if !rax
 
-        .if ecx & _IOWRT or _IOREAD
+    .if ecx & _IOREAD
+
+        mov eax,[rbx]._cnt
+        .if !eax
+
+            mov rdi,rax
+        .else
+
+            add rax,[rbx]._ptr
+            sub rax,[rbx]._base
+            mov rdcnt,eax
 
             .if osfile & FH_TEXT
 
-                mov rax,[rbx]._base
-                .while rax < [rbx]._ptr
+                .ifd SetFilePointer(fd, 0, 0, SEEK_END) == filepos
 
-                    .if byte ptr [rax] == 10
+                    mov eax,rdcnt
+                    mov rcx,[rbx]._base
+                    add rax,rcx
 
-                        inc rdi
+                    .while rcx < rax
+
+                        .if byte ptr [rcx] == 10
+
+                            inc rdcnt
+                        .endif
+                        inc rcx
+                    .endw
+                    .if [rbx]._flag & _IOCTRLZ
+
+                        inc rdcnt
                     .endif
-                    inc rax
-                .endw
-            .endif
+                .else
 
-        .elseif !( ecx & _IORW )
+                    SetFilePointer(fd, filepos, 0, SEEK_SET)
+                    mov eax,[rbx]._flag
 
-            mov errno,EINVAL
-            mov eax,-1
-            .break
-        .endif
+                    .if rdcnt <= 512 && (eax & _IOMYBUF) && !(eax & _IOSETVBUF)
 
-        mov rax,rdi
-        .break .if !rax
-
-        .if ecx & _IOREAD
-
-            mov eax,[rbx]._cnt
-            .if !eax
-
-                mov rdi,rax
-            .else
-
-                add rax,[rbx]._ptr
-                sub rax,[rbx]._base
-                mov rdcnt,eax
-
-                .if osfile & FH_TEXT
-
-                    .ifd SetFilePointer(fd, 0, 0, SEEK_END) == filepos
-
-                        mov eax,rdcnt
-                        mov rcx,[rbx]._base
-                        add rax,rcx
-
-                        .while rcx < rax
-
-                            .if byte ptr [rcx] == 10
-
-                                inc rdcnt
-                            .endif
-                            inc rcx
-                        .endw
-                        .if [rbx]._flag & _IOCTRLZ
-
-                            inc rdcnt
-                        .endif
+                        mov rdcnt,512
                     .else
+                        mov eax,[rbx]._bufsiz
+                        mov rdcnt,eax
+                    .endif
 
-                        SetFilePointer(fd, filepos, 0, SEEK_SET)
-                        mov eax,[rbx]._flag
+                    .if osfile & FH_CRLF
 
-                        .if rdcnt <= 512 && (eax & _IOMYBUF) && !(eax & _IOSETVBUF)
-
-                            mov rdcnt,512
-                        .else
-                            mov eax,[rbx]._bufsiz
-                            mov rdcnt,eax
-                        .endif
-
-                        .if osfile & FH_CRLF
-
-                            inc rdcnt
-                        .endif
+                        inc rdcnt
                     .endif
                 .endif
-                mov eax,rdcnt
-                sub filepos,eax
             .endif
+            mov eax,rdcnt
+            sub filepos,eax
         .endif
-        add edi,filepos
-        mov eax,edi
-    .until 1
+    .endif
+    add edi,filepos
+    mov eax,edi
     ret
 
 ftell endp

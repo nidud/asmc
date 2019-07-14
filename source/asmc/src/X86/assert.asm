@@ -17,15 +17,15 @@ MAXSAVESTACK equ 124
 
     .code
 
-    assume ebx: ptr asmtok
-    assume esi: ptr hll_item
+    assume ebx: tok_t
+    assume esi: hll_t
 
-AssertDirective proc uses esi edi ebx i:SINT, tokenarray:ptr asmtok
+AssertDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
-local rc:SINT,cmd:UINT,
-      buff[16]:SBYTE,
-      buffer[MAX_LINE_LEN]:SBYTE,
-      cmdstr[MAX_LINE_LEN]:SBYTE
+  local rc:int_t,cmd:uint_t,
+        buff[16]:char_t,
+        buffer[MAX_LINE_LEN]:char_t,
+        cmdstr[MAX_LINE_LEN]:char_t
 
     mov rc,NOT_ERROR
     mov ebx,tokenarray

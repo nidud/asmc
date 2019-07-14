@@ -965,13 +965,32 @@ ret_code RecordDirective( int i, struct asm_tok tokenarray[] )
     int name_loc;
     int init_loc;
     struct expr opndx;
-
+    uint_32 offset;
+#if 1
     if ( i != 1 ) {
 	return( asmerr(2008, tokenarray[i].string_ptr ) );
     }
-
     name = tokenarray[0].string_ptr;
     sym = SymSearch( name );
+#else
+    if (( CurrStruct == NULL && i != 1 ) ||
+	( CurrStruct != NULL && i != 0 ) ) {
+	return( asmerr(2008, tokenarray[i].string_ptr ) );
+    }
+    if ( i == 0 )
+	name = "";
+    else
+	name = tokenarray[0].string_ptr;
+
+    if ( *name ) {
+	if ( CurrStruct == NULL )
+	    sym = SymSearch( name );
+	else
+	    sym = SearchNameInStruct( (struct asym *)CurrStruct, name, &offset, 0 );
+    } else {
+	sym = NULL;
+    }
+#endif
     if ( sym == NULL || sym->state == SYM_UNDEFINED ) {
 	sym = CreateTypeSymbol( sym, name, TRUE );
     } else if ( sym->state == SYM_TYPE &&

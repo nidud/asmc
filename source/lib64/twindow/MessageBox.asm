@@ -14,27 +14,14 @@ include twindow.inc
 WndProc proc private hwnd:window_t, uiMsg:uint_t, wParam:size_t, lParam:ptr
 
     .switch edx
-      .case WM_ENTERIDLE
-        Sleep(4)
-        .return 0
       .case WM_CREATE
         [rcx].Show()
         [rcx].SetFocus([rcx].Index)
         .return 0
       .case WM_CLOSE
         .return [rcx].Release()
-      .case WM_LBUTTONDOWN
-        .return [rcx].OnLButtonDown(edx, r8, r9)
-      .case WM_LBUTTONUP
-        .return [rcx].OnLButtonUp(edx, r8, r9)
-      .case WM_MOUSEMOVE
-        .return [rcx].OnMouseMove(edx, r8, r9)
-      .case WM_SYSCHAR
-        .return [rcx].OnSysChar(edx, r8, r9)
-      .case WM_CHAR
-        .return [rcx].OnChar(edx, r8, r9)
     .endsw
-    mov eax,1
+    [rcx].DefWindowProc(edx, r8, r9)
     ret
 
 WndProc endp
@@ -152,70 +139,70 @@ TWindow::MessageBox proc uses rsi rdi rbx rcx flags:int_t, title:string_t, forma
         sub al,4
         mov rc.x,al
         mov rc.col,6
-        [rbx].PushBCreate(rc, IDOK, "&Ok")
+        [rbx].PushButton(rc, IDOK, "&Ok")
         .endc
       .case MB_OKCANCEL
         sub al,10
         mov rc.x,al
         mov rc.col,6
-        [rbx].PushBCreate(rc, IDOK, "&Ok")
+        [rbx].PushButton(rc, IDOK, "&Ok")
         mov rc.col,10
         add rc.x,9
-        [rbx].PushBCreate(rc, IDCANCEL, "&Cancel")
+        [rbx].PushButton(rc, IDCANCEL, "&Cancel")
         .endc
       .case MB_ABORTRETRYIGNORE
         sub al,17
         mov rc.x,al
         mov rc.col,9
-        [rbx].PushBCreate(rc, IDABORT, "&Abort")
+        [rbx].PushButton(rc, IDABORT, "&Abort")
         mov rc.col,9
         add rc.x,12
-        [rbx].PushBCreate(rc, 0, "&Retry")
+        [rbx].PushButton(rc, 0, "&Retry")
         mov rc.col,10
         add rc.x,12
-        [rbx].PushBCreate(rc, IDIGNORE, "&Ignore")
+        [rbx].PushButton(rc, IDIGNORE, "&Ignore")
         .endc
       .case MB_YESNOCANCEL
         sub al,15
         mov rc.x,al
         mov rc.col,7
-        [rbx].PushBCreate(rc, IDYES, "&Yes")
+        [rbx].PushButton(rc, IDYES, "&Yes")
         mov rc.col,6
         add rc.x,10
-        [rbx].PushBCreate(rc, IDNO, "&No")
+        [rbx].PushButton(rc, IDNO, "&No")
         mov rc.col,10
         add rc.x,9
-        [rbx].PushBCreate(rc, IDCANCEL, "&Cancel")
+        [rbx].PushButton(rc, IDCANCEL, "&Cancel")
         .endc
       .case MB_YESNO
         sub al,10
         mov rc.x,al
         mov rc.col,7
-        [rbx].PushBCreate(rc, IDYES, "&Yes")
+        [rbx].PushButton(rc, IDYES, "&Yes")
         mov rc.col,6
         add rc.x,10
-        [rbx].PushBCreate(rc, IDNO, "&No")
+        [rbx].PushButton(rc, IDNO, "&No")
         .endc
       .case MB_RETRYCANCEL
         sub al,8
         mov rc.x,al
         mov rc.col,10
-        [rbx].PushBCreate(rc, IDRETRY, "&Retry")
+        [rbx].PushButton(rc, IDRETRY, "&Retry")
         mov rc.col,10
         add rc.x,13
-        [rbx].PushBCreate(rc, IDCANCEL, "&Cancel")
+        [rbx].PushButton(rc, IDCANCEL, "&Cancel")
         .endc
       .case MB_CANCELTRYCONTINUE
         sub al,21
         mov rc.x,al
         mov rc.col,10
-        [rbx].PushBCreate(rc, IDCANCEL, "&Cancel")
+        [rbx].PushButton(rc, IDCANCEL, "&Cancel")
         mov rc.col,13
         add rc.x,13
-        [rbx].PushBCreate(rc, IDTRYAGAIN, "&Try Again")
+        [rbx].PushButton(rc, IDTRYAGAIN, "&Try Again")
         mov rc.col,12
         add rc.x,16
-        [rbx].PushBCreate(rc, IDCONTINUE, "C&ontinue")
+        [rbx].PushButton(rc, IDCONTINUE, "C&ontinue")
         .endc
     .endsw
 

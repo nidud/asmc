@@ -70,11 +70,12 @@ HLLF_JTDATA	equ 0x00400000	; Jump table in data segment -- HLLF_NOTEST
 ;
 ; item for .IF, .WHILE, .REPEAT, ...
 ;
+hll_t		typedef ptr hll_item
 hll_item	STRUC
-next		dd ?		; hll_item *
-caselist	dd ?		; hll_item *
+next		hll_t ?
+caselist	hll_t ?
 labels		dd 4 dup(?)	; labels for LTEST, LEXIT, LSTART
-condlines	LPSTR ?		; .WHILE/ELSEIF/CASE-blocks only: lines to add after 'test' label
+condlines	string_t ?		; .WHILE/ELSEIF/CASE-blocks only: lines to add after 'test' label
 cmd		dd ?		; start cmd (IF, WHILE, REPEAT)
 flags		dd ?		; v2.08: added
 hll_item	ENDS
@@ -102,46 +103,48 @@ GetHllLabel	MACRO
 	exitm	<eax>
 	ENDM
 
-ExpandLine	proto :LPSTR, :PTR asmtok
-ExpandCStrings	proto :ptr asmtok
-ExpandHllProc	proto :LPSTR, :SINT, :ptr asmtok
+ExpandLine	proto :string_t, :tok_t
+ExpandCStrings	proto :tok_t
+ExpandHllProc	proto :string_t, :int_t, :tok_t
 
-GenerateCString proto :SINT, :PTR asmtok
-EvalOperand	proto :SINT, :PTR asmtok, :SINT, :PTR expr, :SINT
+GenerateCString proto :int_t, :tok_t
+EvalOperand	proto :int_t, :tok_t, :int_t, :ptr expr, :int_t
 
 GetCurrOffset	proto
-QueueTestLines	proto :LPSTR
-GetLabelStr	proto :SINT, :LPSTR
-AddLineQueue	proto :LPSTR
-InvertJump	proto fastcall :LPSTR
+QueueTestLines	proto :string_t
+GetLabelStr	proto :int_t, :string_t
+AddLineQueue	proto :string_t
+InvertJump	proto fastcall :string_t
 EmitConstError	proto :ptr expr
-GetResWName	proto :UINT, :LPSTR
+GetResWName	proto :uint_t, :string_t
 
 EvaluateHllExpression proto \
-		   hll: ptr hll_item,
-		     i: ptr SINT,
-	    tokenarray: ptr asmtok,
-		ilabel: SINT,
-	       is_true: SINT,
-		buffer: LPSTR
+		   hll: hll_t,
+		     i: ptr int_t,
+	    tokenarray: tok_t,
+		ilabel: int_t,
+	       is_true: int_t,
+		buffer: string_t
 
 ExpandHllExpression proto \
-		   hll: ptr hll_item,
-		     i: ptr SINT,
-	    tokenarray: ptr asmtok,
-		ilabel: SINT,
-	       is_true: SINT,
-		buffer: LPSTR
+		   hll: hll_t,
+		     i: ptr int_t,
+	    tokenarray: tok_t,
+		ilabel: int_t,
+	       is_true: int_t,
+		buffer: string_t
 
 GetExpression	proto \
-		      : ptr hll_item,
-		      : ptr SINT,
-		      : ptr asmtok,
-		      : SINT,
-		      : UINT,
-		      : LPSTR,
+		      : hll_t,
+		      : ptr int_t,
+		      : tok_t,
+		      : int_t,
+		      : uint_t,
+		      : string_t,
 		      : ptr hll_opnd
 
-ForDirective	proto :SINT, :ptr asmtok
+ForDirective	proto :int_t, :tok_t
+
+HllContinueIf	proto :hll_t, :ptr int_t, :tok_t, :int_t, :hll_t, :int_t
 
 endif ; __HLL_INC

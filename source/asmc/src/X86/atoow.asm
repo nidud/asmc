@@ -2,7 +2,7 @@ include asmc.inc
 
     .code
 
-_atoow proc uses esi edi ebx dst:LPSTR, src:LPSTR, radix:SINT, bsize:SINT
+_atoow proc uses esi edi ebx dst:string_t, src:string_t, radix:int_t, bsize:int_t
 
     mov esi,src
     mov edx,dst

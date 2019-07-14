@@ -44,9 +44,9 @@ TF3_ISCONCAT        equ 1       ; line was concatenated
 TF3_EXPANSION       equ 2       ; expansion operator % at pos 0
 
 line_status         struc
-input               LPSTR ?
-output              LPSTR ?     ; free space in token string buffer
-start               LPSTR ?     ; start of line
+input               string_t ?
+output              string_t ?     ; free space in token string buffer
+start               string_t ?     ; start of line
 index               dd ?        ; index token array
 flags               db ?        ; v2.08: added
 flags2              db ?        ; v2.08: was global var g_flags
@@ -67,19 +67,19 @@ ends
 hll_flags           db ?        ; xx( if xx == macro/proc/label()
 hll_index           db ?
 union
-    tokval          SINT ?      ; index if token is a reserved word
-    stringlen       SINT ?      ; T_STRING: size
-    idarg           SINT ?      ; T_ID: currently not used
-    itemlen         SINT ?      ; T_NUM: size
-    lastidx         SINT ?      ; T_FINAL: last index (used in RunMacro())
+    tokval          int_t ?      ; index if token is a reserved word
+    stringlen       int_t ?      ; T_STRING: size
+    idarg           int_t ?      ; T_ID: currently not used
+    itemlen         int_t ?      ; T_NUM: size
+    lastidx         int_t ?      ; T_FINAL: last index (used in RunMacro())
 ends
-string_ptr          LPSTR ?
-tokpos              LPSTR ?     ; points to item in CurrSource
+string_ptr          string_t ?
+tokpos              string_t ?     ; points to item in CurrSource
 asmtok              ends
-PTOKEN              typedef ptr asmtok
+tok_t               typedef ptr asmtok
 
-GetToken proto fastcall :ptr asmtok, :ptr line_status
-Tokenize proto :LPSTR, :UINT, :ptr asmtok, :UINT
+GetToken proto fastcall :tok_t, :ptr line_status
+Tokenize proto :string_t, :uint_t, :tok_t, :uint_t
 
 _tok_token macro reg:=<ebx>, id:=<0>
     exitm<[reg+(id)*16].asmtok.token>

@@ -12,35 +12,32 @@ TF3_EXPANSION   equ 2 ; expansion operator % at pos 0
 externdef CurrIfState: dword
 externdef directive_tab: dword
 
-WritePreprocessedLine   PROTO :DWORD
-ExpandText              PROTO :DWORD, :DWORD, :DWORD
-LabelMacro              PROTO :DWORD
-ExpandLine              PROTO :DWORD, :DWORD
-ExpandLineItems         PROTO :DWORD, :DWORD, :DWORD, :DWORD, :DWORD
-CreateConstant          PROTO :DWORD
-StoreLine               PROTO :DWORD, :DWORD, :DWORD
+WritePreprocessedLine   proto :DWORD
+ExpandText              proto :DWORD, :DWORD, :DWORD
+LabelMacro              proto :DWORD
+ExpandLine              proto :DWORD, :DWORD
+ExpandLineItems         proto :DWORD, :DWORD, :DWORD, :DWORD, :DWORD
+CreateConstant          proto :DWORD
+StoreLine               proto :DWORD, :DWORD, :DWORD
 
     .code
 
-    OPTION  PROCALIGN:4
-    ASSUME  ebx: PTR asmtok
+    assume ebx:tok_t
 
 ; preprocessor directive or macro procedure is preceded
 ; by a code label.
 
-WriteCodeLabel PROC USES esi edi ebx line, tokenarray:PTR asmtok
+WriteCodeLabel PROC USES esi edi ebx line, tokenarray:tok_t
 
     mov ebx,tokenarray
+    .return asmerr(2008, [ebx].string_ptr) .if ( [ebx].token != T_ID )
 
-    .if [ebx].asmtok.token != T_ID
-        asmerr( 2008, [ebx].asmtok.string_ptr )
-        jmp toend
-    .endif
     ;
     ; ensure the listing is written with the FULL source line
     ;
     .if ModuleInfo.curr_file[LST*4]
-        LstWrite( LSTTYPE_LABEL, 0, 0 )
+
+        LstWrite(LSTTYPE_LABEL, 0, 0)
     .endif
     ;
     ; v2.04: call ParseLine() to parse the "label" part of the line
@@ -53,9 +50,10 @@ WriteCodeLabel PROC USES esi edi ebx line, tokenarray:PTR asmtok
     push ModuleInfo.token_count
     mov ModuleInfo.token_count,2
     push eax
-    ParseLine( ebx )
+    ParseLine(ebx)
     .if Options.preprocessor_stdout
-        WritePreprocessedLine( line )
+
+        WritePreprocessedLine(line)
     .endif
     pop eax
     mov [edi],al
@@ -63,9 +61,8 @@ WriteCodeLabel PROC USES esi edi ebx line, tokenarray:PTR asmtok
     mov eax,esi
     mov [ebx+32].asmtok.token,al
     mov eax,NOT_ERROR
-
-toend:
     ret
+
 WriteCodeLabel ENDP
 
 
@@ -74,7 +71,7 @@ WriteCodeLabel ENDP
 ; 2. (text) macros are expanded by ExpandLine()
 ; 3. "preprocessor" directives are executed
 
-PreprocessLine PROC USES esi ebx line:LPSTR, tokenarray:PTR asmtok
+PreprocessLine PROC USES esi ebx line:string_t, tokenarray:tok_t
 
     mov ebx,tokenarray
     xor eax,eax
@@ -90,48 +87,52 @@ PreprocessLine PROC USES esi ebx line:LPSTR, tokenarray:PTR asmtok
     ;
     ; Token_Count is the number of tokens scanned
     ;
-    Tokenize( line, eax, ebx, eax )
-    mov ModuleInfo.token_count,eax
+    mov Token_Count,Tokenize(line, eax, ebx, eax)
 
 if REMOVECOMENT eq 0
-    .if !ModuleInfo.token_count && ( CurrIfState == BLOCK_ACTIVE || ModuleInfo.listif )
+    .if ( ( Token_Count == 0 ) && ( CurrIfState == BLOCK_ACTIVE || ModuleInfo.listif ) )
+
         LstWriteSrcLine()
     .endif
 endif
 
     mov  eax,ModuleInfo.token_count
-    test eax,eax
-    jz   toend
+    .return .if ( eax == 0 )
     ;
     ; CurrIfState != BLOCK_ACTIVE && Token_Count == 1 | 3 may happen
     ; if a conditional assembly directive has been detected by Tokenize().
     ; However, it's important NOT to expand then
     ;
-    .if CurrIfState == BLOCK_ACTIVE
+    .if ( CurrIfState == BLOCK_ACTIVE )
+
         shl eax,4
         .if [ebx+eax].bytval & TF3_EXPANSION
-            ExpandText( line, ebx, 1 )
-            mov esi,eax
+
+            mov esi,ExpandText(line, ebx, 1)
+
         .else
+
             xor esi,esi
-            .if !LabelMacro( ebx )
-                .if !DelayExpand( ebx )
-                    ExpandLine( line, ebx )
-                    mov esi,eax
-                .elseif Parse_Pass == PASS_1
-                    ExpandLineItems( line, 0, ebx, 0, 1 )
+
+            .if ( LabelMacro(ebx) == 0 )
+
+                .if ( DelayExpand(ebx) == 0 )
+
+                    mov esi,ExpandLine(line, ebx)
+
+                .elseif ( Parse_Pass == PASS_1 )
+
+                    ExpandLineItems(line, 0, ebx, 0, 1)
                 .endif
             .endif
         .endif
-        .if sdword ptr esi < NOT_ERROR
-            xor eax,eax
-            jmp toend
-        .endif
+        .return 0 .ifs ( esi < NOT_ERROR )
     .endif
 
     xor esi,esi
     .if ModuleInfo.token_count > 2 && \
         ( [ebx+16].asmtok.token == T_COLON || [ebx+16].asmtok.token == T_DBL_COLON )
+
         mov esi,32
     .endif
 
@@ -143,26 +144,22 @@ endif
     ; INCLUDE
     ; since v2.05, error directives are no longer handled here!
     ;
-    .if [ebx+esi].token == T_DIRECTIVE && [ebx+esi].dirtype <= DRT_INCLUDE
+    .if ( [ebx+esi].token == T_DIRECTIVE && [ebx+esi].dirtype <= DRT_INCLUDE )
 
         ;
         ; if i != 0, then a code label is located before the directive
         ;
         .if esi > 16
-            .if WriteCodeLabel( line, ebx ) == ERROR
-                xor eax,eax
-                jmp toend
-            .endif
-        .endif
 
+            .return 0 .if WriteCodeLabel(line, ebx) == ERROR
+        .endif
         movzx eax,[ebx+esi].dirtype
         shr  esi,4
         push ebx
         push esi
         call directive_tab[eax*4]
         add  esp,8
-        xor  eax,eax
-        jmp  toend
+        .return 0
     .endif
 
     ;
@@ -205,8 +202,7 @@ endif
                     LstWrite( eax, 0, esi )
                 .endif
             .endif
-            xor eax,eax
-            jmp toend
+            .return 0
           .case DRT_MACRO
           .case DRT_CATSTR ; CATSTR + TEXTEQU directives
           .case DRT_SUBSTR
@@ -215,13 +211,12 @@ endif
             push 1
             call directive_tab[eax*4]
             add esp,8
-            xor eax,eax
-            jmp toend
+            .return 0
         .endsw
     .endif
     mov eax,ModuleInfo.token_count
-toend:
     ret
+
 PreprocessLine ENDP
 
     END

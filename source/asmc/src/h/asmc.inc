@@ -5,10 +5,8 @@ include version.inc
 include ltype.inc
 include asmtok.inc
 
-.pragma warning(disable: 7007)
-
 	.xlist
-
+	.pragma warning(disable: 7007)
 	option fieldalign: size_t
 
 OLDKEYWORDS		equ 1			; NAME, SIZE, ..
@@ -551,60 +549,60 @@ SIT_FILE		equ 0
 SIT_MACRO		equ 1
 if 1
 input_status		STRUC
-token_stringbuf		LPSTR ?
-currsource		LPSTR ?
-CurrComment		LPSTR ?
-token_count		SINT ?
-line_flags		SBYTE ? ; v2.08: added
+token_stringbuf		string_t ?
+currsource		string_t ?
+CurrComment		string_t ?
+token_count		int_t ?
+line_flags		char_t ? ; v2.08: added
 input_status		ENDS
 LPINPUT			TYPEDEF PTR input_status
 
-PushInputStatus		PROTO :LPINPUT
-PopInputStatus		PROTO :LPINPUT
+PushInputStatus		proto :LPINPUT
+PopInputStatus		proto :LPINPUT
 endif
 qditem			STRUC
-next			PVOID ?
-size			UINT ?
+next			ptr_t ?
+size			uint_t ?
 qditem			ends
 
 dll_desc		STRUC
-next			PVOID ?
-cnt			SINT ?
+next			ptr_t ?
+cnt			int_t ?
 dname			db ?
 dll_desc		ENDS
 
 qnode			STRUC
-next			PVOID ?
-UNION
-    elmt		PVOID ?
-    sym			PVOID ?
-ENDS
+next			ptr_t ?
+union
+    elmt		ptr_t ?
+    sym			ptr_t ?
+ends
 qnode			ENDS
 
 qitem			STRUC
-next			PVOID ?
+next			ptr_t ?
 value			db ?
 qitem			ENDS
 
 qdesc			STRUC
-head			PVOID ?
-tail			PVOID ?
+head			ptr_t ?
+tail			ptr_t ?
 qdesc			ENDS
 
 src_item		STRUC
-next			PVOID ?
+next			ptr_t ?
 type			dw ?	; item type ( see enum src_item_type )
 srcfile			dw ?	; index of file in ModuleInfo.FNames
-UNION
-    content		PVOID ? ; generic
-    file		PVOID ? ; if item is a file
-    mi			PVOID ? ; if item is a macro
-ENDS
-line_num		UINT ?	; current line #
+union
+    content		ptr_t ? ; generic
+    file		ptr_t ? ; if item is a file
+    mi			ptr_t ? ; if item is a macro
+ends
+line_num		uint_t ? ; current line #
 src_item		ENDS
 
 format_options		STRUC
-init			PVOID ?
+init			ptr_t ?
 invalid_fixup_type	dw ?
 formatname		db 6 dup(?)
 format_options		ENDS
@@ -619,12 +617,11 @@ next_proc		dd ?
 next_file		dd ?
 debug_info		ENDS
 
-func_ptr_t		typedef proto :ptr macro_instance, :LPSTR, :ptr asmtok
+asym_t			typedef ptr asym
+func_ptr_t		typedef proto :ptr macro_instance, :string_t, :tok_t
 func_ptr_p		typedef ptr func_ptr_t
-internal_func_t		typedef proto :ptr asym, :PVOID
+internal_func_t		typedef proto :asym_t, :ptr_t
 internal_func		typedef ptr internal_func_t
-
-LPASYM			typedef ptr asym
 
 asym_r0 record \
     asym_method:1,	; v2.27: ptr is a class method
@@ -658,23 +655,23 @@ asym_r2 record \
     asym_isfunc:1,	; it's a macro function
     asym_mac_vararg:1	; accept additional params
 
-asym			STRUC
-;;
-;; v2.11: name changed from 'next' to 'nextitem'
-;;
- nextitem		LPASYM ?	; next symbol in hash line
- name			LPSTR ?		; symbol name
- UNION
-    _offset		sdword ?	; used by SYM_INTERNAL (labels), SYM_TYPE,
+asym struct
+
+ ;; v2.11: name changed from 'next' to 'nextitem'
+
+ nextitem		asym_t ?	; next symbol in hash line
+ name			string_t ?	; symbol name
+ union
+    _offset		int_t ?		; used by SYM_INTERNAL (labels), SYM_TYPE,
 					; SYM_STACK, v2.11: SYM_SEG
-    value		sdword ?	; used by SYM_INTERNAL (equates)
-    uvalue		dword ?		; v2.01: equates (they are 33-bit!)
-    string_ptr		LPSTR ?		; used by SYM_TMACRO
-    substitute		LPASYM ?	; v2.04b: used by SYM_ALIAS
+    value		int_t ?		; used by SYM_INTERNAL (equates)
+    uvalue		uint_t ?	; v2.01: equates (they are 33-bit!)
+    string_ptr		string_t ?	; used by SYM_TMACRO
+    substitute		asym_t ?	; v2.04b: used by SYM_ALIAS
     func_ptr		func_ptr_p ?	; used by SYM_MACRO if predefined==1
-    class_lname_idx	sdword ?	; used by SYM_CLASS_LNAME
- ENDS
- _segment		LPASYM ?
+    class_lname_idx	int_t ?		; used by SYM_CLASS_LNAME
+ ends
+ _segment		asym_t ?
  state			db ?
  mem_type		db ?
  union
@@ -697,15 +694,15 @@ asym			STRUC
   SFL_METHOD		equ 0x8000
   flag			dw ?	; bitfield
  ends
- UNION
+ union
     first_size		dd ?
-    STRUC
+    struct
 	Ofssize		db ?
 	is_ptr		db ?
-	UNION
+	union
 	    ptr_memtype db ?
 	    asmpass	db ?
-	ENDS
+	ends
 	union
 	 r1		asym_r1 <>
 	 SINT_SEGOFSSIZE equ 03h
@@ -715,7 +712,7 @@ asym			STRUC
 	 SINT_ISVARARG	equ 20h
 	 sint_flag	db ?
 	ends
-    ENDS
+    ends
     union
      r2			asym_r2 <>
      SMAC_ISVARARG	equ 01h
@@ -725,42 +722,41 @@ asym			STRUC
      SMAC_PURGED	equ 10h
      mac_flag		dd ?	; --byte
     ends
- ENDS
- UNION
+ ends
+ union
     first_length	dword ?
     max_mbr_size	dword ?
-    target_type		LPASYM ?
- ENDS
+    target_type		asym_t ?
+ ends
     regist		dw 2 dup(?)
- UNION
+ union
     total_size		dword ?
-    value3264		sdword ?
-    dll			PVOID ? ; struct dll_desc *
-    max_offset		sdword ?
- ENDS
- UNION
+    value3264		int_t ?
+    dll			ptr_t ? ; struct dll_desc *
+    max_offset		int_t ?
+ ends
+ union
     total_length	dd ?
-    altname		LPASYM ? ; SYM_EXTERNAL (comm==0): alternative name
-    debuginfo		PVOID ?
+    altname		asym_t ? ; SYM_EXTERNAL (comm==0): alternative name
+    debuginfo		ptr_t ?
     sfunc_ptr		internal_func ?
-    STRUC
+    struct
 	cvtyperef	dw ?
 	typekind	dw ?
-    ENDS
- ENDS
+    ends
+ ends
  name_size		dw ?
  langtype		dw ?
- type			LPASYM ?
- UNION
-    bp_fixup		PVOID ? ; fixup *
+ type			asym_t ?
+ union
+    bp_fixup		ptr_t ? ; fixup *
     ext_idx		dd ?
-    STRUC
+    struct
 	ext_idx1	dw ?
 	ext_idx2	dw ?
-    ENDS
- ENDS
+    ends
+ ends
 asym			ENDS
-PASYM			typedef ptr asym
 
 _asym_state macro reg:=<eax>
     exitm<[reg].asym.state>
@@ -782,55 +778,55 @@ _asym_typekind macro reg:=<eax>
     endm
 
 seg_item		STRUC
- next			PVOID ?
- iseg			PVOID ?
+ next			ptr_t ?
+ iseg			ptr_t ?
 seg_item		ENDS
 
 grp_info		STRUC
- seglist		PVOID ?
+ seglist		ptr_t ?
  grp_idx		dd ?
  lname_idx		dd ?
  numseg			dd ?
 grp_info		ENDS
-LPGRPINFO		typedef ptr grp_info
+grp_t			typedef ptr grp_info
 
 seg_info		STRUC
- sgroup			PASYM ?
+ sgroup			asym_t ?
  start_loc		dd ?
- UNION
+ union
     current_loc		dd ?
     reloc_offset	dd ?
     start_offset	dd ?
- ENDS
- CodeBuffer		PVOID ?
+ ends
+ CodeBuffer		ptr_t ?
  bytes_written		dd ?
- UNION
-    label_list		PASYM ?
-    flushfunc		PVOID ?
- ENDS
- STRUC
-    head		PVOID ?
-    tail		PVOID ?
- ENDS
- UNION
-    LinnumQueue		PVOID ?
+ union
+    label_list		asym_t ?
+    flushfunc		ptr_t ?
+ ends
+ struct
+    head		ptr_t ?
+    tail		ptr_t ?
+ ends
+ union
+    LinnumQueue		ptr_t ?
     fileoffset		dd ?
     num_linnums		dd ?
- ENDS
+ ends
  num_relocs		dd ?
  seg_idx		dd ?
  segtype		dd ?
  lname_idx		dd ?
- clsym			PASYM ?
- UNION
+ clsym			asym_t ?
+ union
     abs_frame		dd ?
     comdat_number	dd ?
     comdat_idx		dd ?
- ENDS
- UNION
+ ends
+ union
     abs_offset		dd ?
-    aliasname		LPSTR ?
- ENDS
+    aliasname		string_t ?
+ ends
  Ofssize		db ?
  characteristics	db ?
  alignment		db ?
@@ -844,34 +840,34 @@ seg_info		STRUC
  combine		db ?
  comdat_selection	db ?
 seg_info		ENDS
-LPSEGINFO		typedef ptr seg_info
+seg_t			typedef ptr seg_info
 
 mparm_list		STRUC
- deflt			LPSTR ?
+ deflt			string_t ?
  required		db ?
 mparm_list		ENDS
 
 srcline			STRUC
- next			PVOID ?
+ next			ptr_t ?
  ph_count		db ?
  line1			db ?
 srcline			ENDS
 
 macro_info		STRUC
  parmcnt		dw ?
- UNION
+ union
     localcnt		dw ?
     autoexp		dw ?
- ENDS
- parmlist		PVOID ?
- datap			PVOID ?
+ ends
+ parmlist		ptr_t ?
+ datap			ptr_t ?
  srcfile		dd ?
 macro_info		ENDS
-LPMACROINFO		typedef ptr macro_info
+macro_t			typedef ptr macro_info
 
 sfield			STRUC
  sym			asym <>
- next			PVOID ?
+ next			ptr_t ?
  ivalue			db ?
 sfield			ENDS
 LPSFIELD		typedef ptr sfield
@@ -885,9 +881,10 @@ struct_info		STRUC
  STINF_ISOPEN		equ 2
  STINF_ORGINSIDE	equ 4
 struct_info		ENDS
-LPSTRUCINFO		typedef ptr struct_info
+struct_t		typedef ptr struct_info
 
-LPDSYM			typedef ptr nsym
+dsym_t			typedef ptr dsym
+
 proc_info_r0		record	fpo:1,
 				isframe:1,
 				stackparam:1,
@@ -899,16 +896,16 @@ proc_info_r0		record	fpo:1,
 
 proc_info		STRUC
  regslist		LPWORD ?
- paralist		LPDSYM ?
- locallist		LPDSYM ?
- labellist		LPDSYM ?
+ paralist		dsym_t ?
+ locallist		dsym_t ?
+ labellist		dsym_t ?
  parasize		dd ?
  localsize		dd ?
- prologuearg		LPSTR ?
- exc_handler		PASYM ?
+ prologuearg		string_t ?
+ exc_handler		asym_t ?
  ReservedStack		int_t ?
  prolog_list_pos	uint_t ?
- UNION
+ union
   flags			db ?
   PINF_HAS_VARARG	equ 01h
   PINF_PE_TYPE		equ 01h
@@ -919,36 +916,34 @@ proc_info		STRUC
   PINF_ISFRAME		equ 20h
   PINF_FPO		equ 40h
   r0			proc_info_r0 <>
- ENDS
+ ends
  size_prolog		db ?
  basereg		dw ?
 proc_info		ENDS
-LPPROCINFO		typedef ptr proc_info
+proc_t			typedef ptr proc_info
 
-nsym			STRUC
+dsym			STRUC
  sym			asym <>
- UNION
-    seginfo		LPSEGINFO ?
-    grpinfo		LPGRPINFO ?
-    procinfo		LPPROCINFO ?
-    structinfo		LPSTRUCINFO ?
-    macroinfo		LPMACROINFO ?
-    nextll		LPDSYM ?
- ENDS
- next			LPDSYM ?
- UNION
-    prev		LPDSYM ?
-    nextproc		LPDSYM ?
-    nextlocal		LPDSYM ?
-    nextparam		LPDSYM ?
- ENDS
-nsym			ENDS
-dsym			equ <nsym>
-LPDSYM			typedef ptr nsym
+ union
+  seginfo		seg_t ?
+  grpinfo		grp_t ?
+  procinfo		proc_t ?
+  structinfo		struct_t ?
+  macroinfo		macro_t ?
+  nextll		dsym_t ?
+ ends
+ next			dsym_t ?
+ union
+  prev			dsym_t ?
+  nextproc		dsym_t ?
+  nextlocal		dsym_t ?
+  nextparam		dsym_t ?
+ ends
+dsym			ENDS
 
 symbol_queue		STRUC
- head			PVOID ?
- tail			PVOID ?
+ head			ptr_t ?
+ tail			ptr_t ?
 symbol_queue		ENDS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -975,41 +970,41 @@ expr_r0 record	is_dot:1,	; v2.10: see regression test dotop5.asm
 		indirect:1	; indirect addressing used
 
 expr			STRUC
- UNION				; value of expression
-    STRUC
-     value		sdword ?
-     hvalue		sdword ?
-    ENDS
-    STRUC
+ union				; value of expression
+    struct
+     value		int_t ?
+     hvalue		int_t ?
+    ends
+    struct
      llvalue		dq ?
      hlvalue		dq ?
-    ENDS
+    ends
     uvalue		dword ?
     value64		sqword ?
     dvalue		REAL8 ?
     fvalue		REAL4 ?
-    st_idx		sdword ?	; EXPR_REG: index if reg is ST
+    st_idx		int_t ? ; EXPR_REG: index if reg is ST
     chararray		db 16 dup(?)
- ENDS
- UNION
-    quoted_string	PTOKEN ?	; for EXPR_CONST + quoted strings only
-    float_tok		PTOKEN ?	; for EXPR_FLOAT only
- ENDS
- base_reg		PTOKEN ?	; EXPR_ADDR: base register token
-					; EXPR_REG: register token
- idx_reg		PTOKEN ?	; EXPR_ADDR: index register token
- UNION
-    label_tok		PTOKEN ?	; token holding the label (EXPR_ADDR, used for overrides, inside expreval only)
-    type_tok		PTOKEN ?	; v2.10: token if target type of a label (SYM_STACK, MT_PTR) is to be stored
- ENDS
- override		PTOKEN ?	; EXPR_ADDR: token holding the override label or segment register
- inst			sdword ?	; operator token
- kind			sdword ?	; Type of expression
- mem_type		db ?		;
- scale			db ?		; EXPR_ADDR: scaling factor 1, 2, 4, or 8 - 386 code only
- Ofssize		db ?		; 16,32,64 bit if MT_NEAR, MT_FAR
+ ends
  union
-  flags1		db ?		; bit-flag
+    quoted_string	tok_t ? ; for EXPR_CONST + quoted strings only
+    float_tok		tok_t ? ; for EXPR_FLOAT only
+ ends
+ base_reg		tok_t ? ; EXPR_ADDR: base register token
+				; EXPR_REG: register token
+ idx_reg		tok_t ? ; EXPR_ADDR: index register token
+ union
+    label_tok		tok_t ? ; token holding the label (EXPR_ADDR, used for overrides, inside expreval only)
+    type_tok		tok_t ? ; v2.10: token if target type of a label (SYM_STACK, MT_PTR) is to be stored
+ ends
+ override		tok_t ? ; EXPR_ADDR: token holding the override label or segment register
+ inst			int_t ? ; operator token
+ kind			int_t ? ; Type of expression
+ mem_type		db ?	;
+ scale			db ?	; EXPR_ADDR: scaling factor 1, 2, 4, or 8 - 386 code only
+ Ofssize		db ?	; 16,32,64 bit if MT_NEAR, MT_FAR
+ union
+  flags1		db ?	; bit-flag
   EXF_INDIRECT		equ 01h ; indirect addressing used
   EXF_EXPLICIT		equ 02h ; Whether expression type explicitly given (to be removed!)
   EXF_IS_ABS		equ 04h ; external ABS
@@ -1020,9 +1015,9 @@ expr			STRUC
   EXF_IS_DOT		equ 80h ; v2.10: see regression test dotop5.asm
   r0			expr_r0 <>
  ends
- sym			PASYM ?; label used
- mbr			PASYM ?; struct member
- type			PASYM ?; for DOT operator. Must be last (see TokenAssign)!
+ sym			asym_t ?; label used
+ mbr			asym_t ?; struct member
+ type			asym_t ?; for DOT operator. Must be last (see TokenAssign)!
 expr			ENDS
 
 ; special_item is the structure used to store directives and
@@ -1069,8 +1064,8 @@ no_error_disp		db ?	; -eq option
 warning_level		db ?	; -Wn option
 warning_error		db ?	; -WX option
 process_subdir		db ?	; -r option
-names			LPSTR OPTN_LAST dup(?)	; char *  4
-queues			PVOID OPTQ_LAST dup(?)	; qitem * 4
+names			string_t OPTN_LAST dup(?) ; char *  4
+queues			ptr_t OPTQ_LAST dup(?)	; qitem * 4
 no_comment_in_code_rec	db ?	; -zlc option
 no_opt_farcall		db ?	; -zld option
 no_file_entry		db ?	; -zlf option
@@ -1118,7 +1113,7 @@ chkstack		db ?	; _chkstk()
 nolib			db ?	; skip includelib directives
 global_options		ENDS
 
-PLPSTR			typedef PTR LPSTR
+PLPSTR			typedef PTR string_t
 M_MODULEVARS		MACRO
 error_count		dd ?		; total of errors so far
 warning_count		dd ?		; total of warnings so far
@@ -1127,35 +1122,35 @@ PubQueue		qdesc <>	; PUBLIC items
 Lnam			qdesc <>	; LNAME items (segments, groups and classes)
 SafeSEHQueue		qdesc <>	; list of safeseh handlers
 LibQueue		qdesc <>	; includelibs
-DllQueue		PVOID ?		; dlls of OPTION DLLIMPORT
-imp_prefix		LPSTR ?		;
-curr_file		PVOID NUM_FILE_TYPES dup(?) ; ASM, ERR, OBJ and LST
-curr_fname		LPSTR NUM_FILE_TYPES dup(?)
-FNames			PVOID ?		; array of input files
+DllQueue		ptr_t ?		; dlls of OPTION DLLIMPORT
+imp_prefix		string_t ?		;
+curr_file		ptr_t NUM_FILE_TYPES dup(?) ; ASM, ERR, OBJ and LST
+curr_fname		string_t NUM_FILE_TYPES dup(?)
+FNames			ptr_t ?		; array of input files
 cnt_fnames		dd ?		; items in FNames array
-IncludePath		LPSTR ?		;
+IncludePath		string_t ?		;
 line_queue		qdesc <>	; line queue
-src_stack		PVOID ?		; source item (files & macros) stack
-UNION
-    start_fixup		PVOID ?		; OMF only
-    start_label		PVOID ?		; non-OMF only: start label
-ENDS
+src_stack		ptr_t ?		; source item (files & macros) stack
+union
+ start_fixup		ptr_t ?		; OMF only
+ start_label		ptr_t ?		; non-OMF only: start label
+ends
 start_displ		dd ?		; OMF only, optional displ for start label
-StrStack		PVOID ?		; v2.20 String stack
-HllStack		PVOID ?		; for .WHILE, .IF, .REPEAT
-HllFree			PVOID ?		; v2.06: stack of free <struct hll>-items
-ComStack		PVOID ?		; v2.27: .CLASSDEF, .COMDEF, .ENDS
-RetStack		PVOID ?		; v2.30: .return info
-ContextStack		PVOID ?
-ContextFree		PVOID ?		; v2.10: "free items" heap implemented.
-SavedContexts		PVOID ?
+StrStack		ptr_t ?		; v2.20 String stack
+HllStack		ptr_t ?		; for .WHILE, .IF, .REPEAT
+HllFree			ptr_t ?		; v2.06: stack of free <struct hll>-items
+ComStack		ptr_t ?		; v2.27: .CLASSDEF, .COMDEF, .ENDS
+RetStack		ptr_t ?		; v2.30: .return info
+ContextStack		ptr_t ?
+ContextFree		ptr_t ?		; v2.10: "free items" heap implemented.
+SavedContexts		ptr_t ?
 cntSavedContexts	dd ?
 anonymous_label		dd ?		; "anonymous label" counter
-StackBase		PVOID ?
-ProcStatus		PVOID ?
-WriteModule		PVOID ?		; (*WriteModule)( struct module_info * );
-EndDirHook		PVOID ?		; (*EndDirHook) ( struct module_info * );
-Pass1Checks		PVOID ?		; (*Pass1Checks)( struct module_info * );
+StackBase		ptr_t ?
+ProcStatus		ptr_t ?
+WriteModule		ptr_t ?		; (*WriteModule)( struct module_info * );
+EndDirHook		ptr_t ?		; (*EndDirHook) ( struct module_info * );
+Pass1Checks		ptr_t ?		; (*Pass1Checks)( struct module_info * );
 pe_flags		dd ?		; for PE
 			ENDM
 
@@ -1165,10 +1160,10 @@ module_vars		ENDS
 
 module_info		STRUC SIZE_T
 M_MODULEVARS
-proc_prologue		LPSTR ? ; prologue macro if PEM_MACRO
-proc_epilogue		LPSTR ? ; epilogue macro if PEM_MACRO
-CurrDll			PVOID ? ; OPTION DLLIMPORT dll
-fmtopt			PVOID ? ; v2.07: added
+proc_prologue		string_t ? ; prologue macro if PEM_MACRO
+proc_epilogue		string_t ? ; epilogue macro if PEM_MACRO
+CurrDll			ptr_t ? ; OPTION DLLIMPORT dll
+fmtopt			ptr_t ? ; v2.07: added
 hll_label		dd ?	; hll directive label counter
 distance		db ?	; stack distance
 _model			db ?	; memory model
@@ -1209,18 +1204,18 @@ EndDirFound		db ?	;
 frame_auto		db ?	; win64 only
 NoSignExtend		db ?	; option nosignextend
 aflag			db ?	; asmc option
-UNION
-    STRUC
-    elf_osabi		db ?	; for ELF
-    win64_flags		db ?	; for WIN64 + PE(32+)
-    ENDS
-    STRUC
-    mz_ofs_fixups	dw ?	; for MZ
-    mz_alignment	dw ?
-    mz_heapmin		dw ?
-    mz_heapmax		dw ?
-    ENDS
-ENDS
+union
+ struct
+  elf_osabi		db ?	; for ELF
+  win64_flags		db ?	; for WIN64 + PE(32+)
+ ends
+ struct
+  mz_ofs_fixups		dw ?	; for MZ
+  mz_alignment		dw ?
+  mz_heapmin		dw ?
+  mz_heapmax		dw ?
+ ends
+ends
 simseg_init		db ?	; simplified segm dir flags
 simseg_defd		db ?	; v2.09: flag if seg was defined before simseg dir
 PhaseError		db ?	; phase error flag
@@ -1230,14 +1225,14 @@ epiloguemode		db ?	; current PEM_ enum value for OPTION EPILOGUE
 invoke_exprparm		db ?	; flag: forward refs for INVOKE params ok?
 cv_opt			db ?	; option codeview
 srcfile			dd ?	; main source file - is an index for FNames[]
-currseg			PVOID ? ; currently active segment - nsym *
-flat_grp		PVOID ? ; magic FLAT group - dsym *
-pCodeBuff		PVOID ? ;
+currseg			ptr_t ? ; currently active segment - dsym *
+flat_grp		ptr_t ? ; magic FLAT group - dsym *
+pCodeBuff		ptr_t ? ;
 GeneratedCode		dd ?	; nesting level generated code
-currsource		LPSTR ? ; current source line
-CurrComment		LPSTR ? ; current comment
-tokenarray		PVOID ? ; start token buffer
-stringbufferend		LPSTR ? ; start free space in string buffer
+currsource		string_t ? ; current source line
+CurrComment		string_t ? ; current comment
+tokenarray		ptr_t ? ; start token buffer
+stringbufferend		string_t ? ; start free space in string buffer
 token_count		dd ?	; number of tokens in curr line
 basereg			dd 3 dup(?)	; stack base register (16-, 32-, 64-bit
 name			db 260 dup(?)	; name of module
@@ -1245,7 +1240,7 @@ xflag			db ?	; extended option
 loopalign		db ?	; OPTION:LOOPALIGN setting
 casealign		db ?	; OPTION:CASEALIGN setting
 epilogueflags		db ?	; OPTION EPILOGUE: FLAGS
-assert_proc		PVOID ? ; .assert:<proc/macro name>
+assert_proc		ptr_t ? ; .assert:<proc/macro name>
 codepage		dd ?	;
 class_label		dd ?	;
 strict_masm_compat	db ?	; -Zne option
@@ -1254,145 +1249,143 @@ module_info		ENDS
 Token_Count		equ <ModuleInfo.token_count>
 
 equ_item		STRUC
-next			PVOID ?
-sym			PVOID ? ; asym *
+next			ptr_t ?
+sym			ptr_t ? ; asym *
 lvalue			dd ?
 hvalue			dd ?
 mem_type		db ?
 isdefined		db ?
 equ_item		ENDS
 
-LPLINE			TYPEDEF PTR line_item
-
+line_t			typedef ptr line_item
 line_item		STRUC
-next			LPLINE ?
-prev			LPLINE ?
-lineno			SDWORD ? ; 20:12 = srcfile
-srcfile			SDWORD ?
-macro_level		SDWORD ?
-list_pos		SDWORD ?
-line			SBYTE 1 dup(?)
+next			line_t ?
+prev			line_t ?
+lineno			int_t ? ; 20:12 = srcfile
+srcfile			int_t ?
+macro_level		int_t ?
+list_pos		int_t ?
+line			char_t 1 dup(?)
 line_item		ENDS
 
 mod_state		STRUC
 init			dd ?
-head			PVOID ? ; equ_item *
-tail			PVOID ?
+head			ptr_t ? ; equ_item *
+tail			ptr_t ?
 modinfo			db sizeof(module_info) - sizeof(module_vars) dup(?)
 mod_state		ENDS
 
 externdef		Parse_Pass	: DWORD
 externdef		StoreState	: DWORD
 externdef		UseSavedState	: DWORD
-externdef		LineStoreCurr	: ptr line_item
+externdef		LineStoreCurr	: line_t
 externdef		LineStore	: qdesc
 externdef		NoLineStore	: DWORD
 externdef		ModuleInfo	: module_info
 externdef		Options		: global_options
 externdef		write_to_file	: DWORD
 externdef		SymTables	: symbol_queue	; * TAB_LAST
-externdef		DefaultDir	: LPSTR		; * NUM_FILE_TYPES
+externdef		DefaultDir	: string_t		; * NUM_FILE_TYPES
 externdef		MacroLevel	: DWORD
 externdef		LinnumQueue	: qdesc
-externdef		ModelToken	: LPSTR
+externdef		ModelToken	: string_t
 externdef		LastCodeBufSize : DWORD
 externdef		banner_printed	: DWORD
-externdef		sym_ReservedStack:PASYM
+externdef		sym_ReservedStack:asym_t
 externdef		stackreg	: dword
 externdef		regax		: dword
 externdef		CurrProc	: ptr
-externdef		CurrStruct	: LPDSYM
+externdef		CurrStruct	: dsym_t
 
-asmerr			PROTO :DWORD, :VARARG
-DelayExpand		PROTO FASTCALL :DWORD ; :PTR asmtok
+asmerr			proto :DWORD, :VARARG
+DelayExpand		proto fastcall :DWORD ; :tok_t
 AsmcKeywords		proto :int_t
 GetStdAssume		proto :int_t
 atofloat		proto :ptr, :ptr, :uint_t, :int_t, :byte
 
-write_logo		PROTO
-WriteError		PROTO
+write_logo		proto
+WriteError		proto
 
-LclAlloc		PROTO FASTCALL :DWORD
-MemAlloc		PROTO FASTCALL :DWORD
+LclAlloc		proto fastcall :DWORD
+MemAlloc		proto fastcall :DWORD
 
-FastpassInit		PROTO
-SegmentSaveState	PROTO
-AssumeSaveState		PROTO
-ContextSaveState	PROTO
-StoreLine		PROTO :DWORD, :DWORD, :DWORD
-SkipSavedState		PROTO
-RestoreState		PROTO
-SaveVariableState	PROTO :DWORD
-FreeLineStore		PROTO
+FastpassInit		proto
+SegmentSaveState	proto
+AssumeSaveState		proto
+ContextSaveState	proto
+StoreLine		proto :DWORD, :DWORD, :DWORD
+SkipSavedState		proto
+RestoreState		proto
+SaveVariableState	proto :DWORD
+FreeLineStore		proto
 
-MemInit			PROTO
-SymInit			PROTO
-InputInit		PROTO
-CondInit		PROTO
-ExprEvalInit		PROTO
-LstInit			PROTO
-ResWordsInit		PROTO
-InputPassInit		PROTO
-LabelInit		PROTO
-ProcInit		PROTO
-TypesInit		PROTO
-LinnumInit		PROTO
+MemInit			proto
+SymInit			proto
+InputInit		proto
+CondInit		proto
+ExprEvalInit		proto
+LstInit			proto
+ResWordsInit		proto
+InputPassInit		proto
+LabelInit		proto
+ProcInit		proto
+TypesInit		proto
+LinnumInit		proto
 
-SegmentFini		PROTO
-ResWordsFini		PROTO
-InputFini		PROTO
-LinnumFini		PROTO
-MemFini			PROTO
+SegmentFini		proto
+ResWordsFini		proto
+InputFini		proto
+LinnumFini		proto
+MemFini			proto
 
-HllCheckOpen		PROTO
-CondCheckOpen		PROTO
-SymSetCmpFunc		PROTO
+HllCheckOpen		proto
+CondCheckOpen		proto
+SymSetCmpFunc		proto
 
-SetCPU			PROTO :DWORD
-AddLineQueueX		PROTO :DWORD, :VARARG
-AddStringToIncludePath	PROTO :DWORD
-SymFind			PROTO fastcall :LPSTR
-SymCreate		PROTO :LPSTR
-FindResWord		PROTO fastcall :string_t, :int_t
+SetCPU			proto :DWORD
+AddLineQueueX		proto :DWORD, :VARARG
+AddStringToIncludePath	proto :DWORD
+SymFind			proto fastcall :string_t
+SymCreate		proto :string_t
+FindResWord		proto fastcall :string_t, :int_t
 
-DisableKeyword		PROTO :DWORD
-ParseLine		PROTO :DWORD
-SearchFile		PROTO :DWORD, :DWORD
-ProcessFile		PROTO :DWORD
-ClearSrcStack		PROTO
-PreprocessLine		PROTO :LPSTR, :ptr asmtok
+DisableKeyword		proto :DWORD
+ParseLine		proto :DWORD
+SearchFile		proto :DWORD, :DWORD
+ProcessFile		proto :DWORD
+ClearSrcStack		proto
+PreprocessLine		proto :string_t, :tok_t
 
-SymPassInit		PROTO :DWORD
-SegmentInit		PROTO :DWORD
-ContextInit		PROTO :DWORD
-HllInit			PROTO :DWORD
-ClassInit		PROTO
-PragmaInit		PROTO
-ClassCheckOpen		PROTO
-PragmaCheckOpen		PROTO
-MacroInit		PROTO :DWORD
-AssumeInit		PROTO :DWORD
-RunLineQueue		PROTO
-set_curr_srcfile	PROTO :DWORD, :DWORD
-SymMakeAllSymbolsPublic PROTO
-sym_remove_table	PROTO :DWORD, :DWORD
+SymPassInit		proto :DWORD
+SegmentInit		proto :DWORD
+ContextInit		proto :DWORD
+HllInit			proto :DWORD
+ClassInit		proto
+PragmaInit		proto
+ClassCheckOpen		proto
+PragmaCheckOpen		proto
+MacroInit		proto :DWORD
+AssumeInit		proto :DWORD
+RunLineQueue		proto
+set_curr_srcfile	proto :DWORD, :DWORD
+SymMakeAllSymbolsPublic proto
+sym_remove_table	proto :DWORD, :DWORD
 
-store_fixup		PROTO :DWORD, :DWORD, :DWORD
-Mangle			PROTO :DWORD, :DWORD
-SetMangle		PROTO :DWORD, :DWORD, :DWORD
+store_fixup		proto :DWORD, :DWORD, :DWORD
+Mangle			proto :DWORD, :DWORD
+SetMangle		proto :DWORD, :DWORD, :DWORD
 
-omf_FlushCurrSeg	PROTO
-omf_OutSelect		PROTO :DWORD
-omf_init		PROTO :DWORD
-omf_set_filepos		PROTO
+omf_FlushCurrSeg	proto
+omf_OutSelect		proto :DWORD
+omf_init		proto :DWORD
+omf_set_filepos		proto
 
-elf_init		PROTO :DWORD	; module_info *
-bin_init		PROTO :DWORD	; module_info *
-pe_create_PE_header	PROTO
+elf_init		proto :ptr	; module_info *
+bin_init		proto :ptr	; module_info *
+pe_create_PE_header	proto
 
-coff_init		PROTO :DWORD	; module_info *
-GetLineNumber		PROTO
-HllContinueIf		proto :ptr hll_item, :ptr int_t, :ptr asmtok, :int_t, :ptr hll_item, :int_t
+coff_init		proto :ptr	; module_info *
+GetLineNumber		proto
 
 ;-------------------------------------------------------------------------------
 ; list
@@ -1408,52 +1401,52 @@ LSTTYPE_STRUCT		equ 6
 LSTTYPE_LABEL		equ 7
 LSTTYPE_MACROLINE	equ 8
 
-LstInit			PROTO
-LstWriteSrcLine		PROTO
-LstWriteCRef		PROTO
-LstPrintf		PROTO _CDecl :DWORD, :VARARG
-LstSetPosition		PROTO
-LstNL			PROTO
-LstWrite		PROTO :DWORD, :DWORD, :DWORD
+LstInit			proto
+LstWriteSrcLine		proto
+LstWriteCRef		proto
+LstPrintf		proto _CDecl :DWORD, :VARARG
+LstSetPosition		proto
+LstNL			proto
+LstWrite		proto :DWORD, :DWORD, :DWORD
 
 ;-------------------------------------------------------------------------------
 ; line_num
 ;-------------------------------------------------------------------------------
 
-line_num_info	STRUC
-next		DD ?	; line_num_info *
-number		DD ?	;
-UNION
-    _offset	DD ?
-    line_number DD ?	; :20, file:12;
-ENDS
-UNION
-    srcfile	DD ?
-    sym		DD ?	; asym *
-ENDS
-line_num_info	ENDS
+line_num_info		STRUC
+next			ptr_t ? ; line_num_info *
+number			dd ?	;
+union
+    _offset		dd ?
+    line_number		dd ?	; :20, file:12;
+ends
+union
+    srcfile		dd ?
+    sym			asym_t ?
+ends
+line_num_info		ENDS
 
-LinnumInit		PROTO
-LinnumFini		PROTO
-QueueDeleteLinnum	PROTO :DWORD	; qdesc *
+LinnumInit		proto
+LinnumFini		proto
+QueueDeleteLinnum	proto :DWORD	; qdesc *
 
-_atoow			PROTO :LPSTR, :LPSTR, :SINT, :SINT
+_atoow			proto :string_t, :string_t, :int_t, :int_t
 
-SizeFromMemtype		PROTO :BYTE, :SINT, :ptr asym
-GetSymOfssize		proto :ptr asym
-SizeFromRegister	proto :SINT
+SizeFromMemtype		proto :BYTE, :int_t, :asym_t
+GetSymOfssize		proto :asym_t
+SizeFromRegister	proto :int_t
 
-SearchNameInStruct	proto :ptr asym, :LPSTR, :ptr SINT, :SINT
-GetResWName		proto :UINT, :LPSTR
+SearchNameInStruct	proto :asym_t, :string_t, :ptr int_t, :int_t
+GetResWName		proto :uint_t, :string_t
 CurrWordSize		equ <ModuleInfo.wordsize>
 
 ;-------------------------------------------------------------------------------
 ; Text macros
 ;-------------------------------------------------------------------------------
 
-strlabel	PROTO :LPSTR, :UINT
-GetFNamePart	PROTO :LPSTR
-GetExtPart	PROTO :LPSTR
+strlabel	proto :string_t, :uint_t
+GetFNamePart	proto :string_t
+GetExtPart	proto :string_t
 
 M_SKIP_SPACE MACRO reg, base
 	movzx reg,BYTE PTR [base]

@@ -16,39 +16,32 @@ _osopenW proc frame lpFileName:LPWSTR, dwAccess:DWORD, dwShareMode:DWORD,
   local NameW[1024]:wchar_t
   local handle:int_t
 
-    .repeat
+    xor eax,eax
+    lea r10,_osfile
 
-        xor eax,eax
-        lea r10,_osfile
+    .while byte ptr [r10+rax] & FH_OPEN
 
-        .while byte ptr [r10+rax] & FH_OPEN
+        inc eax
+        .if eax == _nfile
 
-            inc eax
-            .if eax == _nfile
-
-                mov _doserrno,0 ; no OS error
-                mov errno,EBADF
-                mov rax,-1
-
-                .break
-            .endif
-        .endw
-
-        mov handle,eax
-        .if CreateFileW(rcx, edx, r8d, r9, dwCreation, dwAttributes, 0) == INVALID_HANDLE_VALUE
-
-            _dosmaperr(GetLastError())
-            .break
+            mov _doserrno,0 ; no OS error
+            mov errno,EBADF
+            .return -1
         .endif
+    .endw
 
-        mov rdx,rax
-        mov eax,handle
-        lea rcx,_osfile
-        or  byte ptr [rcx+rax],FH_OPEN
-        lea rcx,_osfhnd
-        mov [rcx+rax*8],rdx
+    mov handle,eax
+    .if CreateFileW(rcx, edx, r8d, r9, dwCreation, dwAttributes, 0) == INVALID_HANDLE_VALUE
 
-    .until 1
+        .return _dosmaperr(GetLastError())
+    .endif
+
+    mov rdx,rax
+    mov eax,handle
+    lea rcx,_osfile
+    or  byte ptr [rcx+rax],FH_OPEN
+    lea rcx,_osfhnd
+    mov [rcx+rax*8],rdx
     ret
 
 _osopenW endp

@@ -68,7 +68,7 @@ The options listed in the following table.
 | **/swc** | Specifies use of [C-style](../directive/dot_switch.md) .SWITCH convention (default). |
 | **/swn** | No jump-table creation in [.SWITCH](../directive/dot_switch.md). |
 | **/swp** | Specifies use of Pascal-style .SWITCH convention (auto break). |
-| **/swr** | Allows use of register [E]AX or r10/r11 in .SWITCH code. |
+| **/swr** | Allows use of register [E]AX or r11 in .SWITCH code. |
 | **/swt** | Allows use of jump-table creation in .SWITCH code (default). |
 | **/Sx** | Turns on false conditionals in listing. |
 | **/w** | Same as /W0. |

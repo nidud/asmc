@@ -7,12 +7,12 @@ include hll.inc
 SIZE_DATAPTR    equ 0x68
 
 SymLCreate      proto :string_t
-GetQualifiedType proto :ptr int_t, :ptr asm_tok, :ptr qualified_type
-SetLocalOffsets proto :ptr proc_info
+GetQualifiedType proto :ptr int_t, :tok_t, :ptr qualified_type
+SetLocalOffsets proto :proc_t
 
 qualified_type  struc
-size            sdword ?
-symtype         LPASYM ?
+size            int_t ?
+symtype         asym_t ?
 mem_type        db ?
 is_ptr          db ?
 is_far          db ?
@@ -22,7 +22,7 @@ qualified_type  ends
 
     .code
 
-    assume ebx:ptr asmtok
+    assume ebx:tok_t
     tokid macro operator
       ifnb <operator>
         inc i
@@ -35,11 +35,11 @@ qualified_type  ends
         retm<ebx>
         endm
 
-AddLocalDir proc uses esi edi ebx i:int_t, tokenarray:ptr asmtok
+AddLocalDir proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
   local name                :string_t,
         type                :string_t,
-        sym                 :ptr dsym,
+        sym                 :dsym_t,
         ti                  :qualified_type,
         opndx               :expr,
         constructor[128]    :sbyte ; class_class
@@ -119,7 +119,7 @@ AddLocalDir proc uses esi edi ebx i:int_t, tokenarray:ptr asmtok
         .endif
 
         mov esi,sym
-        assume esi:ptr asym
+        assume esi:asym_t
         ;
         ; .new name[xx]:<type>
         ;
@@ -244,7 +244,7 @@ AddLocalDir proc uses esi edi ebx i:int_t, tokenarray:ptr asmtok
 
 AddLocalDir endp
 
-NewDirective proc i:int_t, tokenarray:ptr asmtok
+NewDirective proc i:int_t, tokenarray:tok_t
 
   local rc:int_t
 

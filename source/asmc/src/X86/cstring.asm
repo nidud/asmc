@@ -7,10 +7,10 @@ MACRO_CSTRING   equ 1
 TOK_DEFAULT     equ 0
 
 externdef       list_pos:DWORD
-AddLineQueue    PROTO :LPSTR
+AddLineQueue    proto :string_t
 
 str_item    struc byte
-string      LPSTR ?
+string      string_t ?
 count       dd ?
 next        dd ?
 index       dw ?
@@ -21,7 +21,7 @@ LPSSTR      typedef ptr str_item
 
     .code
 
-InsertLine PROC PRIVATE USES esi ebx line:LPSTR
+InsertLine PROC PRIVATE USES esi ebx line:string_t
 
   local oldstat:input_status
 
@@ -40,15 +40,11 @@ InsertLine PROC PRIVATE USES esi ebx line:LPSTR
 
 InsertLine ENDP
 
-ParseCString PROC PRIVATE USES esi edi ebx,
-        lbuf:       LPSTR,
-        buffer:     LPSTR,
-        string:     LPSTR,
-        pStringOffset:LPSTR,
-        pUnicode:   ptr byte
+ParseCString PROC PRIVATE USES esi edi ebx lbuf:string_t, buffer:string_t, string:string_t,
+        pStringOffset:string_t, pUnicode:ptr byte
 
-local   sbuf[MAX_LINE_LEN]:SBYTE,   ; "binary" string
-        Unicode:    BYTE
+  local sbuf[MAX_LINE_LEN]:char_t,   ; "binary" string
+        Unicode:char_t
 
     mov esi,string
     mov edi,buffer
@@ -299,19 +295,19 @@ ParseCString ENDP
 
 option cstack:on
 
-GenerateCString PROC USES esi edi ebx i, tokenarray:PTR asmtok
+GenerateCString PROC USES esi edi ebx i, tokenarray:tok_t
 
-local   rc:                     SINT,
-        q:                      LPSTR,
-        e:                      SINT,
-        equal:                  SINT,
-        NewString:              SINT,
-        b_label:                LPSTR,
-        b_seg:                  LPSTR,
-        b_line:                 LPSTR,
-        b_data:                 LPSTR,
-        buffer:                 LPSTR,
-        StringOffset:           LPSTR,
+local   rc:                     int_t,
+        q:                      string_t,
+        e:                      int_t,
+        equal:                  int_t,
+        NewString:              int_t,
+        b_label:                string_t,
+        b_seg:                  string_t,
+        b_line:                 string_t,
+        b_data:                 string_t,
+        buffer:                 string_t,
+        StringOffset:           string_t,
         lineflags:              BYTE,
         brackets:               BYTE,
         Unicode:                BYTE
@@ -534,13 +530,13 @@ GenerateCString ENDP
 
 ifdef MACRO_CSTRING
 
-CString PROC USES esi edi ebx buffer:LPSTR, tokenarray:PTR asmtok
+CString PROC USES esi edi ebx buffer:string_t, tokenarray:tok_t
 
-  local string:         LPSTR,
-        cursrc:         LPSTR,
-        dlabel:         LPSTR,
-        StringOffset:   LPSTR,
-        Unicode:        BYTE
+  local string:         string_t,
+        cursrc:         string_t,
+        dlabel:         string_t,
+        StringOffset:   string_t,
+        Unicode:        byte
 
     mov cursrc,alloca(MAX_LINE_LEN*2+32)
     add eax,MAX_LINE_LEN

@@ -8,7 +8,7 @@ include hll.inc
 
     .code
 
-strtrim PROC string:LPSTR
+strtrim PROC string:string_t
 
     .if strlen( string )
 
@@ -79,7 +79,7 @@ GetCondition proc private string:ptr sbyte
 
 GetCondition ENDP
 
-Assignopc proc private uses edi buffer:LPSTR, opc1:LPSTR, opc2:LPSTR, string:LPSTR
+Assignopc proc private uses edi buffer:string_t, opc1:string_t, opc2:string_t, string:string_t
 
     mov edi,buffer
 
@@ -108,15 +108,15 @@ Assignopc proc private uses edi buffer:LPSTR, opc1:LPSTR, opc2:LPSTR, string:LPS
 
 Assignopc endp
 
-ParseAssignment proc private uses esi edi ebx buffer:ptr sbyte, tokenarray:ptr asmtok
+ParseAssignment proc private uses esi edi ebx buffer:ptr sbyte, tokenarray:tok_t
 
   local bracket:byte ; assign value: [rdx+8]=rax - @v2.28.15
 
     mov edi,buffer
     mov ebx,tokenarray
 
-    assume ebx:ptr asmtok
-    assume esi:ptr asmtok
+    assume ebx:tok_t
+    assume esi:tok_t
 
     mov edx,[ebx].string_ptr
     mov cl,[ebx].token
@@ -299,10 +299,10 @@ ParseAssignment proc private uses esi edi ebx buffer:ptr sbyte, tokenarray:ptr a
 ParseAssignment endp
 
 RenderAssignment proc private uses esi edi ebx dest:ptr sbyte,
-    source:ptr sbyte, tokenarray:ptr asmtok
+    source:ptr sbyte, tokenarray:tok_t
 
-  local buffer[MAX_LINE_LEN]:SBYTE
-  local tokbuf[MAX_LINE_LEN]:SBYTE
+  local buffer[MAX_LINE_LEN]:char_t
+  local tokbuf[MAX_LINE_LEN]:char_t
 
     mov edi,source
     lea esi,buffer
@@ -334,19 +334,19 @@ RenderAssignment proc private uses esi edi ebx dest:ptr sbyte,
 
 RenderAssignment endp
 
-    assume  ebx:ptr asmtok
-    assume  esi:ptr hll_item
+    assume  ebx:tok_t
+    assume  esi:hll_t
 
-ForDirective proc uses esi edi ebx i:SINT, tokenarray:ptr asmtok
+ForDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
-local   rc:SINT,
-        cmd:UINT,
-        p:LPSTR,
-        q:LPSTR,
-        buff[16]:SBYTE,
-        buffer[MAX_LINE_LEN]:SBYTE,
-        cmdstr[MAX_LINE_LEN]:SBYTE,
-        tokbuf[MAX_LINE_LEN]:SBYTE
+local   rc:int_t,
+        cmd:uint_t,
+        p:string_t,
+        q:string_t,
+        buff[16]:char_t,
+        buffer[MAX_LINE_LEN]:char_t,
+        cmdstr[MAX_LINE_LEN]:char_t,
+        tokbuf[MAX_LINE_LEN]:char_t
 
     mov rc,NOT_ERROR
     mov ebx,tokenarray

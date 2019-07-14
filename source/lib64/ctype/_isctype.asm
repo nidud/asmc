@@ -27,35 +27,34 @@ _isctype proc char:SINT, cmask:SINT
     movzx eax,WORD PTR char
     inc   eax
 
-    .repeat
-        .if eax <= 256
+    .if eax <= 256
 
-            mov rcx,_pctype
-            mov eax,[rcx+rax*2-2]
-            and eax,cmask
-            .break
-        .endif
+        mov rcx,_pctype
+        mov eax,[rcx+rax*2-2]
+        and eax,cmask
+        .return
+    .endif
 
-        dec eax
-        mov ecx,eax
-        shr eax,8
-        .if isleadbyte(eax)
-            mov buffer[0],ch    ; put lead-byte at start of str
-            mov buffer[1],cl
-            mov buffer[2],0
-            mov r8d,2
-        .else
-            mov buffer[0],cl
-            mov buffer[1],0
-            mov r8d,1
-        .endif
+    dec eax
+    mov ecx,eax
+    shr eax,8
+    .if isleadbyte(eax)
 
-        .if __GetStringTypeA(CT_CTYPE1, &buffer, r8d, &chartype, 0, 0, TRUE)
+        mov buffer[0],ch    ; put lead-byte at start of str
+        mov buffer[1],cl
+        mov buffer[2],0
+        mov r8d,2
+    .else
+        mov buffer[0],cl
+        mov buffer[1],0
+        mov r8d,1
+    .endif
 
-            movzx eax,chartype
-            and   eax,cmask
-        .endif
-    .until 1
+    .if __GetStringTypeA(CT_CTYPE1, &buffer, r8d, &chartype, 0, 0, TRUE)
+
+        movzx eax,chartype
+        and   eax,cmask
+    .endif
     ret
 
 _isctype ENDP

@@ -91,9 +91,9 @@ MAXSTACK equ 16
 
     .code
 
-    assume ebx:ptr asmtok
+    assume ebx:tok_t
 
-PragmaDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asmtok
+PragmaDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
   local rc:int_t, list_directive:int_t
   local opndx:expr
@@ -107,460 +107,466 @@ PragmaDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asmtok
     mov ebx,i
     shl ebx,4
     add ebx,tokenarray
-    .if [ebx].token == T_OP_BRACKET || [ebx].token == T_COMMA
+    .if ( [ebx].token == T_OP_BRACKET || [ebx].token == T_COMMA )
         inc i
         add ebx,16
     .endif
 
-    .repeat
-
-        mov esi,[ebx].string_ptr
-        mov eax,[esi]
-        or  eax,0x20202020
+    mov esi,[ebx].string_ptr
+    mov eax,[esi]
+    or  eax,0x20202020
+    inc i
+    add ebx,16
+    .if ( [ebx].token == T_OP_BRACKET || [ebx].token == T_COMMA )
         inc i
         add ebx,16
-        .if [ebx].token == T_OP_BRACKET || [ebx].token == T_COMMA
-            inc i
+    .endif
+
+    bswap   eax
+    .switch eax
+
+      .case "asmc"
+
+        .if [ebx].tokval == T_POP
+
             add ebx,16
-        .endif
-
-        bswap   eax
-        .switch eax
-
-        .case "asmc"
-
-            .if [ebx].tokval == T_POP
+            .if [ebx].token == T_CL_BRACKET
                 add ebx,16
-                .if [ebx].token == T_CL_BRACKET
-                    add ebx,16
-                .endif
-                .endc .if !AsmcCount
-                dec AsmcCount
-                mov eax,AsmcCount
-                mov al,AsmcStack[eax]
-                .if al != ModuleInfo.strict_masm_compat
-                    mov ModuleInfo.strict_masm_compat,al
-                    xor eax,1
-                    AsmcKeywords(eax)
-                .endif
-                .endc
             .endif
-            .endc .if [ebx].tokval != T_PUSH
-            .endc .if AsmcCount >= MAXSTACK
-            mov edx,AsmcCount
-            inc AsmcCount
-            mov al,ModuleInfo.strict_masm_compat
-            mov AsmcStack[edx],al
-            inc i
-            .if [ebx+16].token == T_OP_BRACKET || [ebx+16].token == T_COMMA
-                inc i
-            .endif
-            .endc .if EvalOperand(&i, tokenarray, ModuleInfo.token_count, &opndx, EXPF_NOUNDEF ) == ERROR
-            mov ebx,i
-            shl ebx,4
-            add ebx,tokenarray
-            .if opndx.kind != EXPR_CONST
-                asmerr( 2026 )
-                .endc
-            .endif
-            mov eax,opndx.uvalue
-            .if ( eax > 1 )
-                asmerr( 2064 )
-                .endc
-            .endif
-            xor eax,1
+            .endc .if !AsmcCount
+
+            dec AsmcCount
+            mov eax,AsmcCount
+            mov al,AsmcStack[eax]
             .if al != ModuleInfo.strict_masm_compat
                 mov ModuleInfo.strict_masm_compat,al
                 xor eax,1
                 AsmcKeywords(eax)
             .endif
+            .endc
+        .endif
+
+        .endc .if ( [ebx].tokval != T_PUSH )
+        .endc .if ( AsmcCount >= MAXSTACK )
+
+        mov edx,AsmcCount
+        inc AsmcCount
+        mov al,ModuleInfo.strict_masm_compat
+        mov AsmcStack[edx],al
+        inc i
+        .if ( [ebx+16].token == T_OP_BRACKET || [ebx+16].token == T_COMMA )
+
+            inc i
+        .endif
+        .endc .if EvalOperand(&i, tokenarray, Token_Count, &opndx, EXPF_NOUNDEF) == ERROR
+
+        mov ebx,i
+        shl ebx,4
+        add ebx,tokenarray
+        .if ( opndx.kind != EXPR_CONST )
+
+            asmerr( 2026 )
+            .endc
+        .endif
+
+        mov eax,opndx.uvalue
+        .if ( eax > 1 )
+            asmerr( 2064 )
+            .endc
+        .endif
+
+        xor eax,1
+        .if al != ModuleInfo.strict_masm_compat
+
+            mov ModuleInfo.strict_masm_compat,al
+            xor eax,1
+            AsmcKeywords(eax)
+        .endif
+
+        add ebx,16
+        .if [ebx].token == T_CL_BRACKET
+
+            add ebx,16
+        .endif
+        .endc
+
+      .case "warn"
+
+        ;
+        ; .pragma warning(pop)
+        ;
+        .if [ebx].tokval == T_POP
+
             add ebx,16
             .if [ebx].token == T_CL_BRACKET
                 add ebx,16
             .endif
-            .endc
 
-        .case "warn"
+            .endc .if !WarnCount
 
-            ;
-            ; .pragma warning(pop)
-            ;
-            .if [ebx].tokval == T_POP
-
-                add ebx,16
-                .if [ebx].token == T_CL_BRACKET
-                    add ebx,16
-                .endif
-
-                .endc .if !WarnCount
-
-                .for ( WarnCount--,
-                       eax = WarnCount,
-                       edx = WarnStack[eax*4],
-                       esi = &pragma_wtable,
-                       ecx = 0 : ecx < wtable_count : ecx++, esi += sizeof(warning) )
-
-                    mov al,[edx+ecx]
-                    mov [esi].warning.state,al
-                .endf
-
-                free(edx)
-                .endc
-
-            .endif
-
-            ;
-            ; .pragma warning(push)
-            ;
-            .if [ebx].tokval == T_PUSH
-
-                add ebx,16
-                .if [ebx].token == T_CL_BRACKET
-                    add ebx,16
-                .endif
-                mov edi,WarnCount
-                inc edi
-                .endc .if edi >= MAXSTACK
-                mov WarnCount,edi
-                .endc .if !malloc(wtable_count)
-                .for ( WarnStack[edi*4-4] = eax,
-                       esi = &pragma_wtable,
-                       ecx = 0 : ecx < wtable_count : ecx++, esi += sizeof(warning) )
-
-                    mov dl,[esi].warning.state
-                    mov [eax+ecx],dl
-                .endf
-                .endc
-
-            .endif
-
-            ; .pragma warning(disable: <num>)
-
-            mov esi,[ebx].string_ptr
-            mov eax,[esi]
-            or  eax,0x20202020
-
-            .endc .if eax != 'asid'
-            .endc .if [ebx+16].token != T_COLON
-
-            add i,2
-            .endc .if EvalOperand(&i, tokenarray, ModuleInfo.token_count,
-                        &opndx, EXPF_NOUNDEF ) == ERROR
-
-            mov ebx,i
-            shl ebx,4
-            add ebx,tokenarray
-            .if opndx.kind != EXPR_CONST
-                asmerr( 2026 )
-                .endc
-            .endif
-
-            .for ( eax = opndx.uvalue,
+            .for ( WarnCount--,
+                   eax = WarnCount,
+                   edx = WarnStack[eax*4],
                    esi = &pragma_wtable,
                    ecx = 0 : ecx < wtable_count : ecx++, esi += sizeof(warning) )
 
-                .if ( [esi].warning.id == ax )
-
-                    mov [esi].warning.state,1
-                    .break
-                .endif
+                mov al,[edx+ecx]
+                mov [esi].warning.state,al
             .endf
+
+            free(edx)
+            .endc
+
+        .endif
+
+        ;
+        ; .pragma warning(push)
+        ;
+        .if [ebx].tokval == T_PUSH
 
             add ebx,16
             .if [ebx].token == T_CL_BRACKET
                 add ebx,16
             .endif
+            mov edi,WarnCount
+            inc edi
+            .endc .if edi >= MAXSTACK
+            mov WarnCount,edi
+            .endc .if !malloc(wtable_count)
+            .for ( WarnStack[edi*4-4] = eax,
+                   esi = &pragma_wtable,
+                   ecx = 0 : ecx < wtable_count : ecx++, esi += sizeof(warning) )
+
+                mov dl,[esi].warning.state
+                mov [eax+ecx],dl
+            .endf
             .endc
 
-        .case "comm"
+        .endif
 
-            mov eax,[esi+4]
-            or  eax,0x202020
-            .endc .if eax != 'tne'
+        ; .pragma warning(disable: <num>)
 
-            mov esi,[ebx].string_ptr
-            mov eax,[esi]
-            or  eax,0x202020
-            and eax,0xFFFFFF
-            .endc .if eax != 'bil'
-            .endc .if [ebx+16].token != T_COMMA
+        mov esi,[ebx].string_ptr
+        mov eax,[esi]
+        or  eax,0x20202020
+
+        .endc .if eax != 'asid'
+        .endc .if [ebx+16].token != T_COLON
+
+        add i,2
+        .endc .if EvalOperand(&i, tokenarray, Token_Count, &opndx, EXPF_NOUNDEF) == ERROR
+
+        mov ebx,i
+        shl ebx,4
+        add ebx,tokenarray
+        .if opndx.kind != EXPR_CONST
+
+            asmerr(2026)
+            .endc
+        .endif
+
+        .for ( eax = opndx.uvalue,
+               esi = &pragma_wtable,
+               ecx = 0 : ecx < wtable_count : ecx++, esi += sizeof(warning) )
+
+            .if ( [esi].warning.id == ax )
+
+                mov [esi].warning.state,1
+                .break
+            .endif
+        .endf
+
+        add ebx,16
+        .if [ebx].token == T_CL_BRACKET
+            add ebx,16
+        .endif
+        .endc
+
+      .case "comm"
+
+        mov eax,[esi+4]
+        or  eax,0x202020
+        .endc .if eax != 'tne'
+
+        mov esi,[ebx].string_ptr
+        mov eax,[esi]
+        or  eax,0x202020
+        and eax,0xFFFFFF
+        .endc .if eax != 'bil'
+        .endc .if [ebx+16].token != T_COMMA
+
+        add i,2
+        add ebx,32
+        mov stdlib,0
+        mov dynlib,0
+
+        ;
+        ; .pragma comment(lib, "libc.lib", "msvcrt.lib")
+        ;
+        ;  if (/pe)
+        ;   option dllimport:<msvcrt>
+        ;  else
+        ;   ifdef _MSVCRT
+        ;    includelib msvcrt.lib
+        ;   else
+        ;    includelib libc.lib
+        ;   endif
+        ;  endif
+        ;
+
+        mov esi,[ebx].string_ptr
+        strcpy(&stdlib, esi)
+
+        .if ( byte ptr [esi] == '"' )
+
+            inc esi
+            .if strchr(strcpy(&stdlib, esi), '"')
+
+                mov byte ptr [eax],0
+            .endif
+        .endif
+
+        .if ( [ebx+16].token == T_COMMA )
 
             add i,2
             add ebx,32
-            mov stdlib,0
-            mov dynlib,0
-
-            ;
-            ; .pragma comment(lib, "libc.lib", "msvcrt.lib")
-            ;
-            ;  if (/pe)
-            ;   option dllimport:<msvcrt>
-            ;  else
-            ;   ifdef _MSVCRT
-            ;    includelib msvcrt.lib
-            ;   else
-            ;    includelib libc.lib
-            ;   endif
-            ;  endif
-            ;
 
             mov esi,[ebx].string_ptr
-            strcpy(&stdlib, esi)
+            strcpy(&dynlib, esi)
 
             .if ( byte ptr [esi] == '"' )
 
                 inc esi
-                .if strchr(strcpy(&stdlib, esi), '"')
+                .if strchr(strcpy(&dynlib, esi), '"')
 
                     mov byte ptr [eax],0
                 .endif
             .endif
+        .endif
 
-            .if ( [ebx+16].token == T_COMMA )
+        lea esi,dynlib
+        lea edi,stdlib
+        .if ( strchr(esi, '.') )
+            mov byte ptr [eax],0
+        .endif
+        .if ( strchr(edi, '.') )
+            mov byte ptr [eax],0
+        .endif
 
-                add i,2
-                add ebx,32
+        .if ( Options.output_format == OFORMAT_BIN )
 
-                mov esi,[ebx].string_ptr
-                strcpy(&dynlib, esi)
-
-                .if ( byte ptr [esi] == '"' )
-
-                    inc esi
-                    .if strchr(strcpy(&dynlib, esi), '"')
-
-                        mov byte ptr [eax],0
-                    .endif
-                .endif
+            .if !( dynlib )
+                mov esi,edi
             .endif
 
-            lea esi,dynlib
-            lea edi,stdlib
-            .if ( strchr(esi, '.') )
-                mov byte ptr [eax],0
-            .endif
-            .if ( strchr(edi, '.') )
-                mov byte ptr [eax],0
-            .endif
+            AddLineQueueX(" option dllimport:<%s>", esi)
 
-            .if ( Options.output_format == OFORMAT_BIN )
+        .elseif !( byte ptr [esi] )
 
-                .if !( dynlib )
-                    mov esi,edi
-                .endif
+            AddLineQueueX("includelib %s.lib", edi)
 
-                AddLineQueueX( " option dllimport:<%s>", esi )
+        .else
 
-            .elseif !( byte ptr [esi] )
+            AddLineQueueX("ifdef _%s", _strupr(esi))
+            AddLineQueueX("includelib %s.lib", _strlwr(esi))
+            AddLineQueue( "else" )
+            AddLineQueueX("includelib %s.lib", edi)
+            AddLineQueue( "endif" )
+        .endif
 
-                AddLineQueueX( "includelib %s.lib", edi )
-
-            .else
-
-                AddLineQueueX( "ifdef _%s", _strupr( esi ) )
-                AddLineQueueX( "includelib %s.lib", _strlwr(esi) )
-                AddLineQueue(  "else" )
-                AddLineQueueX( "includelib %s.lib", edi )
-                AddLineQueue(  "endif" )
-            .endif
-
+        add ebx,16
+        .if ( [ebx].token == T_CL_BRACKET )
             add ebx,16
-            .if ( [ebx].token == T_CL_BRACKET )
-                add ebx,16
-            .endif
-            .endc
+        .endif
+        .endc
 
-        .case "init"
-        .case "exit"
+      .case "init"
+      .case "exit"
 
-            ; .pragma(init(<proc>, <priority>))
-            ; .pragma(exit(<proc>, <priority>))
+        ; .pragma(init(<proc>, <priority>))
+        ; .pragma(exit(<proc>, <priority>))
 
-            mov edi,eax
-            .if !ModuleInfo.dotname
-                AddLineQueueX( " %r dotname", T_OPTION )
-            .endif
-            lea esi,@CStr(".CRT$XTA")
-            .if edi == "init"
-                lea esi,@CStr(".CRT$XIA")
-            .endif
-            mov eax,2
-            mov cl,ModuleInfo.Ofssize
-            shl eax,cl
-            AddLineQueueX( " %s %r %r(%d) 'CONST'", esi, T_SEGMENT, T_ALIGN, eax )
-            mov edx,[ebx].string_ptr
+        mov edi,eax
+        .if !ModuleInfo.dotname
+            AddLineQueueX(" %r dotname", T_OPTION)
+        .endif
+        lea esi,@CStr(".CRT$XTA")
+        .if edi == "init"
+            lea esi,@CStr(".CRT$XIA")
+        .endif
+
+        mov eax,2
+        mov cl,ModuleInfo.Ofssize
+        shl eax,cl
+        AddLineQueueX(" %s %r %r(%d) 'CONST'", esi, T_SEGMENT, T_ALIGN, eax)
+        mov edx,[ebx].string_ptr
+        add ebx,16
+        .if [ebx].token == T_COMMA
             add ebx,16
-            .if [ebx].token == T_COMMA
-                add ebx,16
-            .endif
-            .if ModuleInfo.Ofssize == USE64
-                AddLineQueueX( " dd %r %s, %s", T_IMAGEREL, edx, [ebx].string_ptr )
-            .else
-                AddLineQueueX( " dd %s, %s", edx, [ebx].string_ptr )
-            .endif
-            AddLineQueueX( " %s %r", esi, T_ENDS )
-            add ebx,16
-            .if [ebx].token == T_CL_BRACKET
-                add ebx,16
-            .endif
-            .endc
-
-        .case "pack"
-
-            ; .pragma(pack(push, <alignment>))
-            ; .pragma(pack(pop))
-
-            .if [ebx].tokval == T_POP
-
-                add ebx,16
-                .if [ebx].token == T_CL_BRACKET
-                    add ebx,16
-                .endif
-                .endc .if !PackCount
-
-                dec PackCount
-                mov eax,PackCount
-                mov al,PackStack[eax]
-                mov ModuleInfo.fieldalign,al
-                .endc
-            .endif
-
-            .endc .if [ebx].tokval != T_PUSH
-            .endc .if PackCount >= MAXSTACK
-
-            mov edx,PackCount
-            inc PackCount
-            mov al,ModuleInfo.fieldalign
-            mov PackStack[edx],al
-            add ebx,16
-            .if [ebx].token == T_OP_BRACKET || [ebx].token == T_COMMA
-                add ebx,16
-            .endif
-            AddLineQueueX( "OPTION FIELDALIGN: %s", [ebx].string_ptr )
-            add ebx,16
-            .if [ebx].token == T_CL_BRACKET
-                add ebx,16
-            .endif
-            .endc
-
-        .case "list"
-
-            ; .pragma(list(push, 0|1))
-            ; .pragma(list(pop))
-
-            inc list_directive
-
-            lea ecx,ListCount
-            lea edx,ListStack
-            lea edi,ModuleInfo.list
-
-            .if [ebx].tokval == T_POP
-
-                .gotosw(T_POP)
-            .endif
-            .gotosw(T_PUSH)
-
-        .case "cref"
-
-            ; .pragma(cref(push, 0|1))
-            ; .pragma(cref(pop))
-
-            inc list_directive
-
-            lea ecx,CrefCount
-            lea edx,CrefStack
-            lea edi,ModuleInfo.cref
-
-            .if [ebx].tokval == T_POP
-
-                .gotosw(T_POP)
-            .endif
-
-        .case T_PUSH
-
-            .endc .if [ebx].tokval != T_PUSH
-
-            mov eax,[ecx]
-            inc eax
-            .endc .if eax >= MAXSTACK
-
-            mov [ecx],eax
-            mov cl,[edi]
-            mov [edx+eax-1],cl
-
-            inc i
-            .if [ebx+16].token == T_COMMA
-
-                inc i
-            .endif
-            .endc .if EvalOperand(&i, tokenarray, ModuleInfo.token_count,
-                        &opndx, EXPF_NOUNDEF ) == ERROR
-
-            mov ebx,i
-            shl ebx,4
-            add ebx,tokenarray
-            .if opndx.kind != EXPR_CONST
-
-                asmerr( 2026 )
-                .endc
-            .endif
-
-            mov eax,opndx.uvalue
-            .if eax > 1
-
-                asmerr( 2084 )
-                .endc
-            .endif
-
-            mov [edi],al
-            .if al && list_directive
-
-                or ModuleInfo.line_flags,LOF_LISTED
-            .endif
-            add ebx,16
-            .if [ebx].token == T_CL_BRACKET
-                add ebx,16
-            .endif
-            .endc
-
-        .case T_POP
-
-            mov eax,[ecx]
-            .endc .if !eax ; gives an error if nothing pushed
-            dec eax
-            mov [ecx],eax
-            mov al,[edx+eax]
-            mov [edi],al
-
-            .if al && list_directive
-
-                or ModuleInfo.line_flags,LOF_LISTED
-            .endif
-            add ebx,16
-            .if [ebx].token == T_CL_BRACKET
-                add ebx,16
-            .endif
-            .endc
-
-        .endsw
-
+        .endif
+        .if ModuleInfo.Ofssize == USE64
+            AddLineQueueX(" dd %r %s, %s", T_IMAGEREL, edx, [ebx].string_ptr)
+        .else
+            AddLineQueueX(" dd %s, %s", edx, [ebx].string_ptr)
+        .endif
+        AddLineQueueX(" %s %r", esi, T_ENDS)
+        add ebx,16
         .if [ebx].token == T_CL_BRACKET
             add ebx,16
         .endif
-        .if [ebx].token != T_FINAL
-            mov rc,asmerr( 2008, [ebx].tokpos )
+        .endc
+
+      .case "pack"
+
+        ; .pragma(pack(push, <alignment>))
+        ; .pragma(pack(pop))
+
+        .if [ebx].tokval == T_POP
+
+            add ebx,16
+            .if [ebx].token == T_CL_BRACKET
+                add ebx,16
+            .endif
+            .endc .if !PackCount
+
+            dec PackCount
+            mov eax,PackCount
+            mov al,PackStack[eax]
+            mov ModuleInfo.fieldalign,al
+            .endc
         .endif
 
-        .if !list_directive
-            .if ModuleInfo.list
-                LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
-            .endif
-            .if ModuleInfo.line_queue.head
-                RunLineQueue()
-            .endif
+        .endc .if [ebx].tokval != T_PUSH
+        .endc .if PackCount >= MAXSTACK
+
+        mov edx,PackCount
+        inc PackCount
+        mov al,ModuleInfo.fieldalign
+        mov PackStack[edx],al
+        add ebx,16
+        .if [ebx].token == T_OP_BRACKET || [ebx].token == T_COMMA
+            add ebx,16
         .endif
-        mov eax,rc
-    .until 1
+        AddLineQueueX("OPTION FIELDALIGN: %s", [ebx].string_ptr)
+        add ebx,16
+        .if [ebx].token == T_CL_BRACKET
+            add ebx,16
+        .endif
+        .endc
+
+      .case "list"
+
+        ; .pragma(list(push, 0|1))
+        ; .pragma(list(pop))
+
+        inc list_directive
+
+        lea ecx,ListCount
+        lea edx,ListStack
+        lea edi,ModuleInfo.list
+
+        .if [ebx].tokval == T_POP
+
+            .gotosw(T_POP)
+        .endif
+        .gotosw(T_PUSH)
+
+      .case "cref"
+
+        ; .pragma(cref(push, 0|1))
+        ; .pragma(cref(pop))
+
+        inc list_directive
+
+        lea ecx,CrefCount
+        lea edx,CrefStack
+        lea edi,ModuleInfo.cref
+
+        .if [ebx].tokval == T_POP
+
+            .gotosw(T_POP)
+        .endif
+
+      .case T_PUSH
+
+        .endc .if [ebx].tokval != T_PUSH
+
+        mov eax,[ecx]
+        inc eax
+        .endc .if eax >= MAXSTACK
+
+        mov [ecx],eax
+        mov cl,[edi]
+        mov [edx+eax-1],cl
+
+        inc i
+        .if ( [ebx+16].token == T_COMMA )
+
+            inc i
+        .endif
+        .endc .if EvalOperand(&i, tokenarray, Token_Count, &opndx, EXPF_NOUNDEF) == ERROR
+
+        mov ebx,i
+        shl ebx,4
+        add ebx,tokenarray
+        .if opndx.kind != EXPR_CONST
+
+            asmerr(2026)
+            .endc
+        .endif
+
+        mov eax,opndx.uvalue
+        .if eax > 1
+
+            asmerr(2084)
+            .endc
+        .endif
+
+        mov [edi],al
+        .if al && list_directive
+
+            or ModuleInfo.line_flags,LOF_LISTED
+        .endif
+        add ebx,16
+        .if [ebx].token == T_CL_BRACKET
+            add ebx,16
+        .endif
+        .endc
+
+      .case T_POP
+
+        mov eax,[ecx]
+        .endc .if !eax ; gives an error if nothing pushed
+        dec eax
+        mov [ecx],eax
+        mov al,[edx+eax]
+        mov [edi],al
+        .if al && list_directive
+            or ModuleInfo.line_flags,LOF_LISTED
+        .endif
+        add ebx,16
+        .if [ebx].token == T_CL_BRACKET
+            add ebx,16
+        .endif
+        .endc
+    .endsw
+
+    .if [ebx].token == T_CL_BRACKET
+        add ebx,16
+    .endif
+    .if [ebx].token != T_FINAL
+        mov rc,asmerr(2008, [ebx].tokpos)
+    .endif
+
+    .if !list_directive
+        .if ModuleInfo.list
+            LstWrite(LSTTYPE_DIRECTIVE, GetCurrOffset(), 0)
+        .endif
+        .if ModuleInfo.line_queue.head
+            RunLineQueue()
+        .endif
+    .endif
+    mov eax,rc
     ret
 
 PragmaDirective endp
@@ -578,7 +584,7 @@ PragmaCheckOpen proc
 
     .if ListCount || PackCount || CrefCount
 
-        asmerr( 1010, ".pragma-push-pop" )
+        asmerr(1010, ".pragma-push-pop")
     .endif
     ret
 
@@ -586,21 +592,17 @@ PragmaCheckOpen endp
 
 warning_disable proc id:int_t
 
-    .repeat
+    .for ( eax = id,
+           edx = &pragma_wtable,
+           ecx = 0 : ecx < wtable_count : ecx++, edx += sizeof(warning) )
 
-        .for ( eax = id,
-               edx = &pragma_wtable,
-               ecx = 0 : ecx < wtable_count : ecx++, edx += sizeof(warning) )
+        .if ( ax == [edx].warning.id )
 
-            .if ( ax == [edx].warning.id )
-
-                movzx eax,[edx].warning.state
-                .break(1)
-            .endif
-        .endf
-
-        xor eax,eax
-    .until 1
+            movzx eax,[edx].warning.state
+            .return
+        .endif
+    .endf
+    xor eax,eax
     ret
 
 warning_disable endp

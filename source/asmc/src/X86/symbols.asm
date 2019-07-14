@@ -7,12 +7,12 @@ include token.inc
 
 public  SymCmpFunc
 
-DeleteProc          PROTO :DWORD
-ReleaseMacroData    PROTO :DWORD
-AddPublicData       PROTO FASTCALL :DWORD
-UpdateLineNumber    PROTO :DWORD, :DWORD
-UpdateWordSize      PROTO :DWORD, :DWORD
-UpdateCurPC         PROTO :DWORD, :DWORD
+DeleteProc          proto :DWORD
+ReleaseMacroData    proto :DWORD
+AddPublicData       proto FASTCALL :DWORD
+UpdateLineNumber    proto :DWORD, :DWORD
+UpdateWordSize      proto :DWORD, :DWORD
+UpdateCurPC         proto :DWORD, :DWORD
 
 HASH_MAGNITUDE      equ 15  ; is 15 since v1.94, previously 12
 HASH_MASK           equ 0x7FFF
@@ -135,7 +135,7 @@ dyneqvalue dd _MAX_DYNEQ dup(0)
 
     .code
 
-define_name proc string:LPSTR, value:LPSTR
+define_name proc string:string_t, value:string_t
 
     mov edx,dyneqcount
     mov eax,string
@@ -246,7 +246,7 @@ SymAlloc ENDP
 
 .pragma warning(disable: 6004)
 
-SymFind proc fastcall uses esi edi ebx ebp sname:LPSTR
+SymFind proc fastcall uses esi edi ebx ebp sname:string_t
     ;
     ; find a symbol in the local/global symbol table,
     ; return ptr to next free entry in global table if not found.
@@ -258,112 +258,28 @@ SymFind proc fastcall uses esi edi ebx ebp sname:LPSTR
     xor eax,eax
     movzx edx,byte ptr [ecx]
 
+    .return .if !edx
+
     .repeat
+        add ecx,1
+        or  edx,0x20
+        shl eax,5
+        add eax,edx
+        mov edx,eax
+        and edx,not HASH_MASK
+        xor eax,edx
+        shr edx,HASH_MAGNITUDE
+        xor eax,edx
+        movzx edx,BYTE PTR [ecx]
+    .until !edx
 
-        .break .if !edx
+    sub ecx,esi
+    mov ebp,eax
 
-        .repeat
-            add ecx,1
-            or  edx,20h
-            shl eax,5
-            add eax,edx
-            mov edx,eax
-            and edx,not HASH_MASK
-            xor eax,edx
-            shr edx,HASH_MAGNITUDE
-            xor eax,edx
-            movzx edx,BYTE PTR [ecx]
-        .until !edx
+    .if CurrProc
 
-        sub ecx,esi
-        mov ebp,eax
-
-        .if CurrProc
-
-            and eax,LHASH_TABLE_SIZE - 1
-            lea edx,lsym_table[eax*4]
-            mov eax,[edx]
-
-            .repeat
-
-                .break .if !eax
-
-                .if ModuleInfo.case_sensitive
-
-                    .repeat
-
-                        .if cx == [eax].asym.name_size
-
-                            mov edi,[eax].asym.name
-
-                            .repeat
-                                .if ecx >= 4
-                                    sub ecx,4
-                                    mov ebx,[esi+ecx]
-                                    .break .if ebx != [edi+ecx]
-                                    .continue(0)
-                                .endif
-                                .while ecx
-                                    sub ecx,1
-                                    mov bl,[esi+ecx]
-                                    .break(1) .if bl != [edi+ecx]
-                                .endw
-                                mov lsym,edx
-                                .break(3)
-                            .until 1
-                            movzx ecx,[eax].asym.name_size
-                        .endif
-
-                        lea edx,[eax].asym.nextitem
-                        mov eax,[edx]
-                    .until !eax
-
-                .else
-
-                    .repeat
-
-                        .if cx == [eax].asym.name_size
-
-                            mov edi,[eax].asym.name
-
-                            .while 1
-
-                                .if ecx >= 4
-
-                                    sub ecx,4
-                                    mov ebx,[esi+ecx]
-                                    .continue(0) .if ebx == [edi+ecx]
-                                    add ecx,4
-                                .endif
-
-                                .while ecx
-                                    sub ecx,1
-                                    mov bl,[esi+ecx]
-                                    .continue .if bl == [edi+ecx]
-                                    mov bh,[edi+ecx]
-                                    or ebx,0x2020
-                                    .break(1) .if bl != bh
-                                .endw
-
-                                mov lsym,edx
-                                .break(3)
-                            .endw
-                            movzx ecx,[eax].asym.name_size
-                        .endif
-
-                        lea edx,[eax].asym.nextitem
-                        mov eax,[edx]
-                    .until !eax
-                .endif
-
-            .until 1
-
-            mov lsym,edx
-            mov eax,ebp
-        .endif
-
-        and eax,GHASH_TABLE_SIZE - 1
-        lea edx,gsym_table[eax*4]
+        and eax,LHASH_TABLE_SIZE - 1
+        lea edx,lsym_table[eax*4]
         mov eax,[edx]
 
         .repeat
@@ -375,22 +291,28 @@ SymFind proc fastcall uses esi edi ebx ebp sname:LPSTR
                 .repeat
 
                     .if cx == [eax].asym.name_size
+
                         mov edi,[eax].asym.name
-                        .while 1
+
+                        .repeat
+
                             .if ecx >= 4
                                 sub ecx,4
                                 mov ebx,[esi+ecx]
                                 .break .if ebx != [edi+ecx]
                                 .continue(0)
                             .endif
+
                             .while ecx
+
                                 sub ecx,1
                                 mov bl,[esi+ecx]
                                 .break(1) .if bl != [edi+ecx]
                             .endw
-                            mov gsym,edx
-                            .break(3)
-                        .endw
+
+                            mov lsym,edx
+                            .return
+                        .until 1
                         movzx ecx,[eax].asym.name_size
                     .endif
 
@@ -403,15 +325,21 @@ SymFind proc fastcall uses esi edi ebx ebp sname:LPSTR
                 .repeat
 
                     .if cx == [eax].asym.name_size
+
                         mov edi,[eax].asym.name
+
                         .while 1
+
                             .if ecx >= 4
+
                                 sub ecx,4
                                 mov ebx,[esi+ecx]
                                 .continue(0) .if ebx == [edi+ecx]
                                 add ecx,4
                             .endif
+
                             .while ecx
+
                                 sub ecx,1
                                 mov bl,[esi+ecx]
                                 .continue .if bl == [edi+ecx]
@@ -419,8 +347,9 @@ SymFind proc fastcall uses esi edi ebx ebp sname:LPSTR
                                 or ebx,0x2020
                                 .break(1) .if bl != bh
                             .endw
-                            mov gsym,edx
-                            .break(3)
+
+                            mov lsym,edx
+                            .return
                         .endw
                         movzx ecx,[eax].asym.name_size
                     .endif
@@ -428,13 +357,97 @@ SymFind proc fastcall uses esi edi ebx ebp sname:LPSTR
                     lea edx,[eax].asym.nextitem
                     mov eax,[edx]
                 .until !eax
-
             .endif
 
         .until 1
-        mov gsym,edx
-        xor eax,eax
+
+        mov lsym,edx
+        mov eax,ebp
+    .endif
+
+    and eax,GHASH_TABLE_SIZE - 1
+    lea edx,gsym_table[eax*4]
+    mov eax,[edx]
+
+    .repeat
+
+        .break .if !eax
+
+        .if ModuleInfo.case_sensitive
+
+            .repeat
+
+                .if cx == [eax].asym.name_size
+
+                    mov edi,[eax].asym.name
+
+                    .while 1
+
+                        .if ecx >= 4
+
+                            sub ecx,4
+                            mov ebx,[esi+ecx]
+                            .break .if ebx != [edi+ecx]
+                            .continue(0)
+                        .endif
+
+                        .while ecx
+
+                            sub ecx,1
+                            mov bl,[esi+ecx]
+                            .break(1) .if bl != [edi+ecx]
+                        .endw
+
+                        mov gsym,edx
+                        .return
+                    .endw
+                    movzx ecx,[eax].asym.name_size
+                .endif
+
+                lea edx,[eax].asym.nextitem
+                mov eax,[edx]
+            .until !eax
+
+        .else
+
+            .repeat
+
+                .if cx == [eax].asym.name_size
+
+                    mov edi,[eax].asym.name
+
+                    .while 1
+
+                        .if ecx >= 4
+
+                            sub ecx,4
+                            mov ebx,[esi+ecx]
+                            .continue(0) .if ebx == [edi+ecx]
+                            add ecx,4
+                        .endif
+
+                        .while ecx
+
+                            sub ecx,1
+                            mov bl,[esi+ecx]
+                            .continue .if bl == [edi+ecx]
+                            mov bh,[edi+ecx]
+                            or ebx,0x2020
+                            .break(1) .if bl != bh
+                        .endw
+                        mov gsym,edx
+                        .return
+                    .endw
+                    movzx ecx,[eax].asym.name_size
+                .endif
+
+                lea edx,[eax].asym.nextitem
+                mov eax,[edx]
+            .until !eax
+        .endif
     .until 1
+    mov gsym,edx
+    xor eax,eax
     ret
 
 SymFind endp
@@ -529,33 +542,35 @@ SymFree endp
 ; - ParseParams() in proc.c for procedure parameters.
 ;
 SymAddLocal proc uses esi edi ebx sym, sname
+
     mov ebx,sym
     mov esi,sname
-    .repeat
-        .if SymFind(esi)
-            .if [eax].asym.state != SYM_UNDEFINED
-                ;
-                ; shouldn't happen
-                ;
-                asmerr(2005, esi)
-                xor eax,eax
-                .break
-            .endif
+
+    .if SymFind(esi)
+
+        .if [eax].asym.state != SYM_UNDEFINED
+
+            ;; shouldn't happen
+
+            asmerr(2005, esi)
+            .return 0
         .endif
-        strlen(esi)
-        mov [ebx].asym.name_size,ax
-        lea edi,[eax+1]
-        LclAlloc(edi)
-        mov [ebx].asym.name,eax
-        mov ecx,edi
-        mov edi,eax
-        rep movsb
-        mov ecx,lsym
-        mov [ecx],ebx
-        mov [ebx].asym.nextitem,0
-        mov eax,ebx
-    .until 1
+    .endif
+
+    strlen(esi)
+    mov [ebx].asym.name_size,ax
+    lea edi,[eax+1]
+    LclAlloc(edi)
+    mov [ebx].asym.name,eax
+    mov ecx,edi
+    mov edi,eax
+    rep movsb
+    mov ecx,lsym
+    mov [ecx],ebx
+    mov [ebx].asym.nextitem,0
+    mov eax,ebx
     ret
+
 SymAddLocal endp
 
 ;
@@ -582,7 +597,7 @@ SymAddGlobal endp
 ;
 ; Create symbol and optionally insert it into the symbol table
 ;
-SymCreate proc sname:LPSTR
+SymCreate proc sname:string_t
     .if SymFind(sname)
         asmerr(2005, sname)
         xor eax,eax
@@ -602,21 +617,20 @@ SymCreate endp
 ;
 SymLCreate proc name
 
-    .repeat
-        .if SymFind(name)
-            .if [eax].asym.state != SYM_UNDEFINED
-                ;
-                ; shouldn't happen
-                ;
-                asmerr(2005, name)
-                xor eax,eax
-                .break
-            .endif
+    .if SymFind(name)
+
+        .if [eax].asym.state != SYM_UNDEFINED
+            ;
+            ; shouldn't happen
+            ;
+            asmerr(2005, name)
+            .return 0
         .endif
-        SymAlloc(name)
-        mov ecx,lsym
-        mov [ecx],eax
-    .until 1
+    .endif
+
+    SymAlloc(name)
+    mov ecx,lsym
+    mov [ecx],eax
     ret
 
 SymLCreate endp
@@ -654,7 +668,7 @@ SymMakeAllSymbolsPublic proc uses esi edi
             mov edi,[edi].asym.nextitem
         .endw
         add esi,1
-    .until  esi == GHASH_TABLE_SIZE
+    .until esi == GHASH_TABLE_SIZE
     ret
 
 SymMakeAllSymbolsPublic endp
@@ -759,15 +773,14 @@ SymPassInit proc pass
         ; No need to reset the "defined" flag if FASTPASS is on.
         ; Because then the source lines will come from the line store,
         ; where inactive conditional lines are NOT contained.
-        ;
 
         .if !UseSavedState
-            ;
+
             ; mark as "undefined":
             ; - SYM_INTERNAL - internals
             ; - SYM_MACRO - macros
             ; - SYM_TMACRO - text macros
-            ;
+
             xor ecx,ecx
             .repeat
 
@@ -781,7 +794,6 @@ SymPassInit proc pass
 
                 add ecx,1
             .until  ecx == GHASH_TABLE_SIZE
-
         .endif
     .endif
     ret
@@ -806,7 +818,6 @@ SymGetAll proc syms
         .endw
         add ecx,1
     .until ecx == GHASH_TABLE_SIZE
-
     ret
 
 SymGetAll endp

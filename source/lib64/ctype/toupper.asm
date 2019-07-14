@@ -12,22 +12,19 @@ toupper proc char:int_t
 
     mov eax,ecx
 
-    .repeat
+    .return .if ( al <= 'Z' )
 
-        .break .if ( al <= 'Z' )
+    .if ( al >= 'a' && al <= 'z' )
 
-        .if ( al >= 'a' && al <= 'z' )
-
-            sub al,'a'-'A'
-            .break
-        .endif
+        sub al,'a'-'A'
+        .return
+    .endif
 
 if WINVER GE 0x0600
-        LCMapStringEx(LOCALE_NAME_USER_DEFAULT,
-            LCMAP_UPPERCASE, &char, 1, &char, 1, 0, 0, 0)
-        mov eax,char
+    LCMapStringEx(LOCALE_NAME_USER_DEFAULT,
+        LCMAP_UPPERCASE, &char, 1, &char, 1, 0, 0, 0)
+    mov eax,char
 endif
-    .until 1
     ret
 
 toupper endp

@@ -15,29 +15,25 @@ fclose proc frame uses rsi rbx fp:LPFILE
 
     mov eax,[rcx]._iobuf._flag
     and eax,_IOREAD or _IOWRT or _IORW
+    .ifz
+        dec rax
+        .return
+    .endif
 
-    .repeat
+    mov rbx,rcx
+    mov rsi,fflush(rcx)
+    _freebuf(rbx)
 
-        .ifz
-            dec rax
-            .break
-        .endif
+    xor eax,eax
+    mov [rbx]._iobuf._flag,eax
+    mov ecx,[rbx]._iobuf._file
+    dec eax
+    mov [rbx]._iobuf._file,eax
 
-        mov rbx,rcx
-        mov rsi,fflush(rcx)
-        _freebuf(rbx)
+    .if !_close(ecx)
 
-        xor eax,eax
-        mov [rbx]._iobuf._flag,eax
-        mov ecx,[rbx]._iobuf._file
-        dec eax
-        mov [rbx]._iobuf._file,eax
-
-        .if !_close(ecx)
-
-            mov rax,rsi
-        .endif
-    .until 1
+        mov rax,rsi
+    .endif
     ret
 
 fclose endp

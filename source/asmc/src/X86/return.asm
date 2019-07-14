@@ -14,9 +14,9 @@ include hll.inc
 
     .code
 
-    assume ebx:ptr asmtok
+    assume ebx:tok_t
 
-GetValue proc private uses esi edi ebx i:int_t, tokenarray:ptr asmtok,
+GetValue proc private uses esi edi ebx i:int_t, tokenarray:tok_t,
     count:ptr int_t, directive:ptr int_t, retval:ptr int_t
 
     mov ebx,i
@@ -76,7 +76,7 @@ GetValue proc private uses esi edi ebx i:int_t, tokenarray:ptr asmtok,
 
 GetValue endp
 
-AssignValue proc private uses esi edi ebx i:ptr int_t, tokenarray:ptr asmtok, count:int_t
+AssignValue proc private uses esi edi ebx i:ptr int_t, tokenarray:tok_t, count:int_t
 
   local opnd:expr
   local reg:int_t
@@ -97,7 +97,7 @@ AssignValue proc private uses esi edi ebx i:ptr int_t, tokenarray:ptr asmtok, co
 
         .if ( byte ptr [edi] )
 
-            AddLineQueue(edi)
+            QueueTestLines(edi)
             GetValue([esi], tokenarray, &count, &directive, &retval)
         .endif
     .endif
@@ -156,6 +156,24 @@ AssignValue proc private uses esi edi ebx i:ptr int_t, tokenarray:ptr asmtok, co
                   .case 8: mov reg,T_RAX
                 .endsw
             .endif
+
+        .elseif ( opnd.kind == EXPR_ADDR )
+            .switch opnd.mem_type
+              .case MT_BYTE
+              .case MT_SBYTE  : mov reg,T_AL : .endc
+              .case MT_WORD
+              .case MT_SWORD  : mov reg,T_AX : .endc
+              .case MT_DWORD
+              .case MT_SDWORD : mov reg,T_EAX : .endc
+if 0
+              .case MT_OWORD
+              .case MT_REAL2
+              .case MT_REAL4
+              .case MT_REAL8
+              .case MT_REAL10
+              .case MT_REAL16 : mov reg,T_XMM0 : .endc
+endif
+            .endsw
         .endif
 
         .if esi
@@ -167,84 +185,71 @@ AssignValue proc private uses esi edi ebx i:ptr int_t, tokenarray:ptr asmtok, co
 
 AssignValue endp
 
-    assume esi:ptr hll_item
+    assume esi:hll_t
 
-ReturnDirective proc uses esi edi ebx i:int_t, tokenarray:ptr asmtok
+ReturnDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
-  local rc:int_t
   local count:int_t
   local retval:int_t
   local directive:int_t
   local buffer[128]:char_t
 
-    mov rc,ERROR
+    .return asmerr(2012) .if ( CurrProc == NULL )
 
-    .repeat
+    mov esi,ModuleInfo.RetStack
+    .if !esi
+        mov esi,LclAlloc(sizeof(hll_item))
+        mov ModuleInfo.RetStack,eax
+        xor eax,eax
+        mov [esi].next,eax
+        mov [esi].labels[LSTART*4],eax
+        mov [esi].labels[LTEST*4],eax
+        mov [esi].condlines,eax
+        mov [esi].caselist,eax
+        mov [esi].cmd,HLL_RETURN
+        mov [esi].labels[LEXIT*4],GetHllLabel()
+    .endif
+    ExpandCStrings(tokenarray)
 
-        .if ( CurrProc == NULL )
+    ; .return [[val]] [[.if ...]]
 
-            asmerr( 2012 )
-            .break
-        .endif
+    inc i
+    lea edi,buffer
+    GetValue(i, tokenarray, &count, &directive, &retval)
+    GetLabelStr([esi].labels[LEXIT*4], edi)
 
-        mov esi,ModuleInfo.RetStack
-        .if !esi
-            mov esi,LclAlloc( sizeof( hll_item ) )
-            mov ModuleInfo.RetStack,eax
-            xor eax,eax
-            mov [esi].next,eax
-            mov [esi].labels[LSTART*4],eax
-            mov [esi].labels[LTEST*4],eax
-            mov [esi].condlines,eax
-            mov [esi].caselist,eax
-            mov [esi].cmd,HLL_RETURN
-            mov [esi].labels[LEXIT*4],GetHllLabel()
-        .endif
-        ExpandCStrings( tokenarray )
+    .if ( directive )
 
-        ; .return [[val]] [[.if ...]]
+        .if ( retval )
 
-        inc i
-        GetValue(i, tokenarray, &count, &directive, &retval)
-        lea edi,buffer
-        GetLabelStr( [esi].labels[LEXIT*4], edi )
-
-        .if ( directive )
-
-            .if ( retval )
-
-                mov ebx,i
-                add i,count
-                mov [esi].labels[LSTART*4],GetHllLabel()
-                HllContinueIf(esi, &i, tokenarray, LSTART, esi, 0)
-                mov i,ebx
-                AssignValue(&i, tokenarray, count)
-                AddLineQueueX( "jmp %s", edi )
-                AddLineQueueX( "%s:", GetLabelStr( [esi].labels[LSTART*4], edi ) )
-
-            .else
-                add i,count
-                HllContinueIf(esi, &i, tokenarray, LEXIT, esi, 1)
-            .endif
-
-
-        .elseif ( retval )
-
+            mov ebx,i
+            add i,count
+            mov [esi].labels[LSTART*4],GetHllLabel()
+            HllContinueIf(esi, &i, tokenarray, LSTART, esi, 0)
+            mov i,ebx
             AssignValue(&i, tokenarray, count)
             AddLineQueueX( "jmp %s", edi )
+            AddLineQueueX( "%s:", GetLabelStr( [esi].labels[LSTART*4], edi ) )
         .else
-            AddLineQueueX( "jmp %s", edi )
+            add i,count
+            HllContinueIf(esi, &i, tokenarray, LEXIT, esi, 1)
         .endif
 
-        .if ModuleInfo.list
-            LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
-        .endif
-        .if ModuleInfo.line_queue.head
-            RunLineQueue()
-        .endif
+    .elseif ( retval )
 
-    .until 1
-    mov eax,rc
+        AssignValue(&i, tokenarray, count)
+        AddLineQueueX("jmp %s", edi)
+    .else
+        AddLineQueueX("jmp %s", edi)
+    .endif
+
+    .if ModuleInfo.list
+        LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
+    .endif
+    .if ModuleInfo.line_queue.head
+        RunLineQueue()
+    .endif
+    mov eax,NOT_ERROR
     ret
 
 ReturnDirective endp

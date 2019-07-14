@@ -16,59 +16,53 @@ _osopenA proc frame lpFileName:LPSTR, dwAccess:DWORD, dwShareMode:DWORD,
   local handle:int_t
   local NameW[2048]:char_t
 
-    .repeat
+    xor eax,eax
+    lea r10,_osfile
 
-        xor eax,eax
-        lea r10,_osfile
+    .while byte ptr [r10+rax] & FH_OPEN
 
-        .while byte ptr [r10+rax] & FH_OPEN
+        inc eax
+        .if eax == _nfile
 
-            inc eax
-            .if eax == _nfile
-
-                mov _doserrno,0 ; no OS error
-                mov errno,EBADF
-                mov rax,-1
-
-                .break
-            .endif
-        .endw
-
-        mov handle,eax
-        .if CreateFileA(rcx, edx, r8d, r9, dwCreation, dwAttributes, 0) == INVALID_HANDLE_VALUE
-
-            _dosmaperr(GetLastError())
-            .break .if edx != ERROR_FILENAME_EXCED_RANGE
-
-            lea rcx,NameW
-            mov rdx,rcx
-            mov r8,lpFileName
-            mov dword ptr [rdx],'\'+('\' shl 16)
-            mov dword ptr [rdx+4],'?'+('\' shl 16)
-            add rdx,8
-            .repeat
-                mov al,[r8]
-                mov [rdx],al
-                add rdx,1
-                add r8,1
-            .until !al
-
-            .if CreateFileW(rcx, dwAccess, dwShareMode, lpSecurity, dwCreation,
-                            dwAttributes, 0) == INVALID_HANDLE_VALUE
-
-                _dosmaperr(GetLastError())
-                .break
-            .endif
+            mov _doserrno,0 ; no OS error
+            mov errno,EBADF
+            .return -1
         .endif
+    .endw
 
-        mov rdx,rax
-        mov eax,handle
-        lea rcx,_osfile
-        or  byte ptr [rcx+rax],FH_OPEN
-        lea rcx,_osfhnd
-        mov [rcx+rax*8],rdx
+    mov handle,eax
+    .if CreateFileA(rcx, edx, r8d, r9, dwCreation, dwAttributes, 0) == INVALID_HANDLE_VALUE
 
-    .until 1
+        _dosmaperr(GetLastError())
+        .return .if edx != ERROR_FILENAME_EXCED_RANGE
+
+        lea rcx,NameW
+        mov rdx,rcx
+        mov r8,lpFileName
+        mov dword ptr [rdx],'\'+('\' shl 16)
+        mov dword ptr [rdx+4],'?'+('\' shl 16)
+        add rdx,8
+        .repeat
+            mov al,[r8]
+            mov [rdx],al
+            add rdx,1
+            add r8,1
+        .until !al
+
+        .if CreateFileW(rcx, dwAccess, dwShareMode, lpSecurity, dwCreation,
+                dwAttributes, 0) == INVALID_HANDLE_VALUE
+
+
+            .return _dosmaperr(GetLastError())
+        .endif
+    .endif
+
+    mov rdx,rax
+    mov eax,handle
+    lea rcx,_osfile
+    or  byte ptr [rcx+rax],FH_OPEN
+    lea rcx,_osfhnd
+    mov [rcx+rax*8],rdx
     ret
 
 _osopenA endp

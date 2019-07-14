@@ -52,11 +52,11 @@ _brachets   db 0    ; proc ( ... )
     .code
 
     option  proc:private
-    assume  ecx:ptr asmtok
+    assume  ecx:tok_t
 
 .pragma warning(disable: 6004)
 
-IsMultiLine proc fastcall tokenarray:ptr asmtok
+IsMultiLine proc fastcall tokenarray:tok_t
     ;
     ; test line concatenation if last token is a comma.
     ; dont concat EQU, macro invocations or
@@ -127,66 +127,60 @@ ConcatLine proc uses esi edi edx ecx src, cnt, o, ls
     mov esi,eax
     add eax,1
 
-    .repeat
-        .if M_EAT_SPACE(ecx, eax)
+    .if M_EAT_SPACE(ecx, eax)
 
-            mov eax,EMPTY
-            .break .if ecx != ';'
-        .endif
+        mov eax,EMPTY
+        .return .if ecx != ';'
+    .endif
 
-        mov edi,o
-        .if !GetTextLine(edi)
+    mov edi,o
+    .return EMPTY .if !GetTextLine(edi)
 
-            mov eax,EMPTY
-            .break
-        .endif
+    M_SKIP_SPACE eax, edi
+    strlen(edi)
 
-        M_SKIP_SPACE eax, edi
-        strlen( edi )
+    .if !cnt
 
-        .if !cnt
+        mov byte ptr [esi],' '
+        inc esi
+    .endif
 
-            mov byte ptr [esi],' '
-            inc esi
-        .endif
+    mov edx,ls
+    mov ecx,esi
+    sub ecx,[edx].start
+    add ecx,eax
 
-        mov edx,ls
+    .if ecx >= MAX_LINE_LEN
+
+        asmerr(2039)
         mov ecx,esi
         sub ecx,[edx].start
-        add ecx,eax
+        inc ecx
+        mov eax,MAX_LINE_LEN
+        sub eax,ecx
+        mov byte ptr [edi+eax],0
+    .endif
 
-        .if ecx >= MAX_LINE_LEN
-
-            asmerr( 2039 )
-            mov ecx,esi
-            sub ecx,[edx].start
-            inc ecx
-            mov eax,MAX_LINE_LEN
-            sub eax,ecx
-            mov byte ptr [edi+eax],0
-        .endif
-
-        lea ecx,[eax+1]
-        xchg esi,edi
-        rep movsb
-        mov eax,NOT_ERROR
-
-    .until 1
+    lea ecx,[eax+1]
+    xchg esi,edi
+    rep movsb
+    mov eax,NOT_ERROR
     ret
+
 ConcatLine endp
 
     assume ecx:nothing
-    assume ebx:ptr asmtok
+    assume ebx:tok_t
 
-get_string proc uses esi edi ebx buf:ptr asmtok, p:ptr line_status
+get_string proc uses esi edi ebx buf:tok_t, p:ptr line_status
 
-    local   symbol_c:   SBYTE,
-            symbol_o:   SBYTE,
-            delim:      SBYTE,
-            level:      UINT,
-            tdst:       LPSTR,
-            tsrc:       LPSTR,
-            tcount:     UINT
+    local   symbol_c:   char_t,
+            symbol_o:   char_t,
+            delim:      char_t,
+            level:      uint_t,
+            tdst:       string_t,
+            tsrc:       string_t,
+            tcount:     uint_t
 
     mov edx,p
     mov ebx,buf
@@ -476,7 +470,7 @@ get_string endp
     assume edx:nothing
     assume esi:ptr line_status
 
-get_special_symbol proc fastcall uses esi edi ebx buf:ptr asmtok , p:ptr line_status
+get_special_symbol proc fastcall uses esi edi ebx buf:tok_t , p:ptr line_status
 
     mov ebx,buf
     mov esi,p
@@ -534,8 +528,7 @@ get_special_symbol proc fastcall uses esi edi ebx buf:ptr asmtok , p:ptr line_st
         .if [esi].flags == TOK_DEFAULT && [esi].index == 0
 
             or  [esi].flags3,TF3_EXPANSION
-            mov eax,EMPTY
-            jmp toend
+            .return EMPTY
         .endif
 
         lea eax,__percent
@@ -828,16 +821,14 @@ get_special_symbol proc fastcall uses esi edi ebx buf:ptr asmtok , p:ptr line_st
         ; anything we don't recognise we will consider a string,
         ; delimited by space characters, commas, newlines or nulls
         ;
-        get_string( ebx, esi )
-        jmp toend
+        .return get_string( ebx, esi )
     .endsw
-
     xor eax,eax
-toend:
     ret
+
 get_special_symbol endp
 
-get_number proc fastcall uses esi edi ebx buf:ptr asmtok, p:ptr line_status
+get_number proc fastcall uses esi edi ebx buf:tok_t, p:ptr line_status
 
     mov ebx,buf
     mov esi,p
@@ -1053,7 +1044,7 @@ get_number ENDP
 
     assume edx:ptr line_status
 
-get_id_in_backquotes proc fastcall uses esi edi ebx buf:ptr asmtok, p:ptr line_status
+get_id_in_backquotes proc fastcall uses esi edi ebx buf:tok_t, p:ptr line_status
 
     mov ebx,buf
     inc [edx].input
@@ -1062,33 +1053,29 @@ get_id_in_backquotes proc fastcall uses esi edi ebx buf:ptr asmtok, p:ptr line_s
     mov [ebx].token,T_ID
     mov [ebx].idarg,0
 
-    .repeat
+    mov al,[esi]
 
-        mov al,[esi]
+    .while al != '`'
 
-        .while al != '`'
+        .if !al || al == ';'
 
-            .if !al || al == ';'
-
-                mov byte ptr [edi],0
-                asmerr( 2046 )
-                .break(1)
-            .endif
-            lodsb
-            stosb
-            inc [edx].input
-        .endw
-
-        inc [edx].input
-        xor eax,eax
+            mov byte ptr [edi],0
+            .return asmerr(2046)
+        .endif
+        lodsb
         stosb
-        mov [edx].output,edi
-    .until 1
+        inc [edx].input
+    .endw
+
+    inc [edx].input
+    xor eax,eax
+    stosb
+    mov [edx].output,edi
     ret
 
 get_id_in_backquotes endp
 
-get_id proc fastcall uses esi edi ebx buf:ptr asmtok, p:ptr line_status
+get_id proc fastcall uses esi edi ebx buf:tok_t, p:ptr line_status
 
     mov ebx,buf
     mov esi,[edx].input
@@ -1097,155 +1084,151 @@ get_id proc fastcall uses esi edi ebx buf:ptr asmtok, p:ptr line_status
 
     mov eax,[esi]
 
+    .if ax == '"L' && _brachets
+
+        stosb
+        inc [edx].input
+        inc [edx].output
+        .return get_string(ebx, p)
+    .endif
+
+    movzx eax,al
     .repeat
-
-        .if ax == '"L' && _brachets
-
-            stosb
-            inc [edx].input
-            inc [edx].output
-            get_string( ebx, p )
-            .break
-        .endif
-
-        movzx eax,al
-        .repeat
-            mov [edi],al
-            add edi,1
-            add esi,1
-            mov al,[esi]
-        .until !(_ltype[eax+1] & _LABEL or _DIGIT)
-
-        mov ecx,edi
-        sub ecx,[edx].output
-
-        .if ecx > MAX_ID_LEN
-
-            asmerr( 2043 )
-            mov edi,[edx].output
-            add edi,MAX_ID_LEN
-        .endif
-
-        mov BYTE PTR [edi],0
+        mov [edi],al
         add edi,1
-        mov eax,[edx].output
-        mov al,[eax]
+        add esi,1
+        mov al,[esi]
+    .until !(_ltype[eax+1] & _LABEL or _DIGIT)
 
-        .if ecx == 1 && al == '?'
+    mov ecx,edi
+    sub ecx,[edx].output
 
-            mov [edx].input,esi
-            mov [ebx].token,T_QUESTION_MARK
-            mov [ebx].string_ptr,offset __quest
-            .break
-        .endif
+    .if ecx > MAX_ID_LEN
 
-        push edx
-        mov  edx,[edx].output
-        xchg edx,ecx
-        call FindResWord
-        pop  edx
+        asmerr( 2043 )
+        mov edi,[edx].output
+        add edi,MAX_ID_LEN
+    .endif
 
-        .if !eax
+    mov BYTE PTR [edi],0
+    add edi,1
+    mov eax,[edx].output
+    mov al,[eax]
 
-            mov eax,[edx].output
-            mov al,[eax]
-            .if al == '.' && !ModuleInfo.dotname
-
-                mov [ebx].token,T_DOT
-                lea eax,stokstr1[('.' - '(') * 2]
-                mov [ebx].string_ptr,eax
-                inc [edx].input
-                .break
-            .endif
-            mov [edx].input,esi
-            mov [edx].output,edi
-            mov [ebx].token,T_ID
-            mov [ebx].idarg,0
-            .break
-        .endif
+    .if ecx == 1 && al == '?'
 
         mov [edx].input,esi
-        mov [edx].output,edi
+        mov [ebx].token,T_QUESTION_MARK
+        mov [ebx].string_ptr,offset __quest
+        .return
+    .endif
 
-        .switch eax
-          .case T_SYSCALL       ; v2.24 hack for syscall..
-            .if ![edx].index
-                mov eax,T_SYSCALL_
-            .endif
-            .endc
-          .case T_DOT_ELSEIF
-          .case T_DOT_WHILE
-          .case T_DOT_CASE
-            mov [ebx].hll_flags,T_HLL_DELAY
-            .endc
-        .endsw
-        mov [ebx].tokval,eax
+    push edx
+    mov  edx,[edx].output
+    xchg edx,ecx
+    call FindResWord
+    pop  edx
 
-        .if eax >= SPECIAL_LAST
+    .if !eax
 
-            .if ModuleInfo.m510
+        mov eax,[edx].output
+        mov al,[eax]
+        .if al == '.' && !ModuleInfo.dotname
 
-                mov eax,[ebx].tokval
-                sub eax,SPECIAL_LAST
-                movzx eax,optable_idx[eax*2]
-                movzx ecx,InstrTable[eax*sizeof(instr_item)].cpu
-                mov eax,ecx
-                and eax,P_CPU_MASK
-                and ecx,P_EXT_MASK
-                mov edi,ModuleInfo.curr_cpu
-                mov esi,edi
-                and edi,P_CPU_MASK
-                and esi,P_EXT_MASK
-
-                .if eax > edi || ecx > esi
-
-                    mov [ebx].token,T_ID
-                    mov [ebx].idarg,0
-                    .break
-                .endif
-            .endif
-            mov [ebx].token,T_INSTRUCTION
-            .break
+            mov [ebx].token,T_DOT
+            lea eax,stokstr1[('.' - '(') * 2]
+            mov [ebx].string_ptr,eax
+            inc [edx].input
+            .return
         .endif
+        mov [edx].input,esi
+        mov [edx].output,edi
+        mov [ebx].token,T_ID
+        mov [ebx].idarg,0
+        .return
+    .endif
 
-        mov ecx,edx
-        mov edx,sizeof(special_item)
-        mov eax,[ebx].tokval
-        mul edx
-        mov edx,ecx
-        mov esi,eax
-        mov al,SpecialTable[esi].bytval
-        mov [ebx].bytval,al
-        movzx eax,SpecialTable[esi].type
+    mov [edx].input,esi
+    mov [edx].output,edi
 
-        .switch eax
-          .case RWT_REG
-            mov ecx,T_REG
-            .endc
-          .case RWT_DIRECTIVE
-            mov ecx,T_DIRECTIVE
-            .endc   .if [edx].flags2
-            mov eax,SpecialTable[esi].value
-            mov [edx].flags2,al
-            .endc
-          .case RWT_UNARY_OP
-            mov ecx,T_UNARY_OPERATOR
-            .endc
-          .case RWT_BINARY_OP
-            mov ecx,T_BINARY_OPERATOR
-            .endc
-          .case RWT_STYPE
-            mov ecx,T_STYPE
-            .endc
-          .case RWT_RES_ID
-            mov ecx,T_RES_ID
-            .endc
-          .default
-            mov ecx,T_ID
-            mov [ebx].idarg,0
-        .endsw
-        mov [ebx].token,cl
-    .until 1
+    .switch eax
+      .case T_SYSCALL       ; v2.24 hack for syscall..
+        .if ![edx].index
+            mov eax,T_SYSCALL_
+        .endif
+        .endc
+      .case T_DOT_ELSEIF
+      .case T_DOT_WHILE
+      .case T_DOT_CASE
+        mov [ebx].hll_flags,T_HLL_DELAY
+        .endc
+    .endsw
+    mov [ebx].tokval,eax
+
+    .if eax >= SPECIAL_LAST
+
+        .if ModuleInfo.m510
+
+            mov eax,[ebx].tokval
+            sub eax,SPECIAL_LAST
+            movzx eax,optable_idx[eax*2]
+            movzx ecx,InstrTable[eax*sizeof(instr_item)].cpu
+            mov eax,ecx
+            and eax,P_CPU_MASK
+            and ecx,P_EXT_MASK
+            mov edi,ModuleInfo.curr_cpu
+            mov esi,edi
+            and edi,P_CPU_MASK
+            and esi,P_EXT_MASK
+
+            .if eax > edi || ecx > esi
+
+                mov [ebx].token,T_ID
+                mov [ebx].idarg,0
+                .return
+            .endif
+        .endif
+        mov [ebx].token,T_INSTRUCTION
+        .return
+    .endif
+
+    mov ecx,edx
+    mov edx,sizeof(special_item)
+    mov eax,[ebx].tokval
+    mul edx
+    mov edx,ecx
+    mov esi,eax
+    mov al,SpecialTable[esi].bytval
+    mov [ebx].bytval,al
+    movzx eax,SpecialTable[esi].type
+
+    .switch eax
+      .case RWT_REG
+        mov ecx,T_REG
+        .endc
+      .case RWT_DIRECTIVE
+        mov ecx,T_DIRECTIVE
+        .endc .if [edx].flags2
+        mov eax,SpecialTable[esi].value
+        mov [edx].flags2,al
+        .endc
+      .case RWT_UNARY_OP
+        mov ecx,T_UNARY_OPERATOR
+        .endc
+      .case RWT_BINARY_OP
+        mov ecx,T_BINARY_OPERATOR
+        .endc
+      .case RWT_STYPE
+        mov ecx,T_STYPE
+        .endc
+      .case RWT_RES_ID
+        mov ecx,T_RES_ID
+        .endc
+      .default
+        mov ecx,T_ID
+        mov [ebx].idarg,0
+    .endsw
+    mov [ebx].token,cl
     xor eax,eax
     ret
 get_id endp
@@ -1253,7 +1236,7 @@ get_id endp
 ;
 ; save symbols in IFDEF's so they don't get expanded
 ;
-StartComment proc fastcall p:LPSTR
+StartComment proc fastcall p:string_t
 
     mov eax,p
     .if M_EAT_SPACE( ecx, eax )
@@ -1274,7 +1257,7 @@ StartComment endp
     option proc:public
     assume esi:nothing
 
-GetToken proc fastcall tokenarray:ptr asmtok, p:ptr line_status
+GetToken proc fastcall tokenarray:tok_t, p:ptr line_status
     ;
     ; get one token.
     ; possible return values: NOT_ERROR, ERROR, EMPTY.
@@ -1383,7 +1366,7 @@ toend:
     ret
 GetToken ENDP
 
-Tokenize PROC USES esi edi ebx line:LPSTR, start:UINT, tokenarray:ptr asmtok, flags:UINT
+Tokenize PROC USES esi edi ebx line:string_t, start:uint_t, tokenarray:tok_t, flags:uint_t
 
   local rc, p:line_status
 ;

@@ -20,25 +20,23 @@ include malloc.inc
 
 include asmc.inc
 
-GetLineNumber    PROTO
-get_curr_srcfile PROTO
-SetOfssize   PROTO
+GetLineNumber    proto
+get_curr_srcfile proto
+SetOfssize   proto
 ;
 ; current LST file position
 ;
 externdef list_pos:DWORD
 
     .data?
-
-LineStore   qdesc <>
-LineStoreCurr   LPLINE ?    ; must be global!
-StoreState  dd ?
-UseSavedState   dd ?
-modstate    mod_state <>    ; struct to store assembly status
+    LineStore       qdesc <>
+    LineStoreCurr   line_t ?        ; must be global!
+    StoreState      uint_t ?
+    UseSavedState   uint_t ?
+    modstate        mod_state <>    ; struct to store assembly status
 
     .data
-
-NoLineStore dd 0
+    NoLineStore     uint_t 0
 
     .code
 
@@ -58,7 +56,7 @@ SaveState PROC
     mov UseSavedState,eax
     mov modstate.init,eax
 
-    memcpy( &modstate.modinfo, &ModuleInfo.proc_prologue, sizeof( modstate.modinfo ))
+    memcpy(&modstate.modinfo, &ModuleInfo.proc_prologue, sizeof(modstate.modinfo))
     SegmentSaveState()
     AssumeSaveState()
     ContextSaveState()  ; save pushcontext/popcontext stack
@@ -68,8 +66,8 @@ SaveState ENDP
 StoreLine PROC USES esi edi ebx sline, flags, lst_position
 
     xor eax,eax
-    cmp eax,NoLineStore
-    jne toend
+    .return .if ( eax != NoLineStore )
+
     ;
     ; don't store generated lines!
     ;
@@ -138,8 +136,8 @@ StoreLine PROC USES esi edi ebx sline, flags, lst_position
         .endif
         mov LineStore.tail,esi
     .endif
-toend:
     ret
+
 StoreLine ENDP
 
 ; an error has been detected in pass one. it should be

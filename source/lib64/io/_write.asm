@@ -16,90 +16,87 @@ _write proc uses rdi rsi rbx r12 h:SINT, b:PVOID, l:UINT
     mov eax,r8d ; l
     mov ebx,ecx ; h
 
-    .repeat
+    .return .if !eax
 
-        .break .if !eax
-
-        .if ecx >= _NFILE_
-
-            xor eax,eax
-            mov _doserrno,eax
-            mov errno,EBADF
-            dec rax
-            .break
-        .endif
-
-        lea rax,_osfile
-        mov r12b,[rax+rcx]
-
-        .if r12b & FH_APPEND
-            _lseek( ecx, 0, SEEK_END )
-        .endif
+    .if ecx >= _NFILE_
 
         xor eax,eax
-        mov result,eax
-        mov count,eax
+        mov _doserrno,eax
+        mov errno,EBADF
+        dec rax
+        .return
+    .endif
 
-        .if r12b & FH_TEXT
+    lea rax,_osfile
+    mov r12b,[rax+rcx]
 
-            mov rsi,b
-            .repeat
+    .if r12b & FH_APPEND
+        _lseek( ecx, 0, SEEK_END )
+    .endif
 
+    xor eax,eax
+    mov result,eax
+    mov count,eax
+
+    .if r12b & FH_TEXT
+
+        mov rsi,b
+        .repeat
+
+            mov rax,rsi
+            sub rax,b
+            .break .if eax >= l
+
+            lea rdi,lb
+            .while 1
+                lea rdx,lb
+                mov rax,rdi
+                sub rax,rdx
+                .break .if eax >= 1024
                 mov rax,rsi
                 sub rax,b
                 .break .if eax >= l
-
-                lea rdi,lb
-                .while 1
-                    lea rdx,lb
-                    mov rax,rdi
-                    sub rax,rdx
-                    .break .if eax >= 1024
-                    mov rax,rsi
-                    sub rax,b
-                    .break .if eax >= l
-                    lodsb
-                    .if al == 10
-                        mov byte ptr [rdi],13
-                        inc rdi
-                    .endif
-                    stosb
-                    inc count
-                .endw
-
-                lea rdx,lb
-                mov r8,rdi
-                sub r8,rdx
-                .if !oswrite( ebx, rdx, r8 )
-                    inc result
-                    .break
+                lodsb
+                .if al == 10
+                    mov byte ptr [rdi],13
+                    inc rdi
                 .endif
-                lea rcx,lb
-                mov rdx,rdi
-                sub rdx,rcx
-            .until rax < rdx
-        .else
-            .break .if oswrite(ebx, b, l)
-            inc result
-        .endif
+                stosb
+                inc count
+            .endw
 
-        mov eax,count
-        .if !eax
-            .if eax == result
-                .if _doserrno == 5 ; access denied
-                    mov errno,EBADF
-                .endif
-            .else
-                .if r12b & FH_DEVICE
-                    mov rbx,b
-                    .break .if byte ptr [rbx] == 26
-                .endif
-                mov errno,ENOSPC
-                mov _doserrno,eax
+            lea rdx,lb
+            mov r8,rdi
+            sub r8,rdx
+            .if !oswrite( ebx, rdx, r8 )
+                inc result
+                .break
             .endif
-            dec rax
+            lea rcx,lb
+            mov rdx,rdi
+            sub rdx,rcx
+        .until rax < rdx
+    .else
+        .return .if oswrite(ebx, b, l)
+        inc result
+    .endif
+
+    mov eax,count
+    .if !eax
+        .if eax == result
+            .if _doserrno == 5 ; access denied
+                mov errno,EBADF
+            .endif
+        .else
+            .if r12b & FH_DEVICE
+                mov rbx,b
+                .return .if byte ptr [rbx] == 26
+            .endif
+            mov errno,ENOSPC
+            mov _doserrno,eax
         .endif
-    .until 1
+        dec rax
+    .endif
     ret
 
 _write endp

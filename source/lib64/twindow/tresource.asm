@@ -96,7 +96,7 @@ UnzipChar:
             add rdi,4
         .endif
     .untilcxz
-    retn
+    ret
 
 UnzipAttrib:
     movzx eax,[rbx].rc.col

@@ -16,32 +16,24 @@ _chdir proc directory:LPSTR
 
   local abspath[_MAX_PATH]:SBYTE, result:DWORD
 
-    .repeat
+    .ifd SetCurrentDirectory(rcx)
 
-        .ifd SetCurrentDirectory( rcx )
+        .ifd GetCurrentDirectory(_MAX_PATH, &abspath)
 
-            .ifd GetCurrentDirectory( _MAX_PATH, &abspath )
+            xor eax,eax
+            mov ecx,DWORD PTR abspath
+            .return .if ch != ':'
 
-                xor eax,eax
-                mov ecx,DWORD PTR abspath
-                .break .if ch != ':'
-
-                mov eax,0x003A003D
-                mov ah,cl
-                .if cl >= 'a' && cl <= 'z'
-                    sub ah,'a' - 'A'
-                .endif
-                mov result,eax
-                .ifd SetEnvironmentVariable( &result, &abspath )
-
-                    xor eax,eax
-                    .break
-                .endif
+            mov eax,0x003A003D
+            mov ah,cl
+            .if cl >= 'a' && cl <= 'z'
+                sub ah,'a' - 'A'
             .endif
-       .endif
-        _dosmaperr(GetLastError())
-
-    .until 1
+            mov result,eax
+            .return 0 .ifd SetEnvironmentVariable(&result, &abspath)
+        .endif
+    .endif
+    _dosmaperr(GetLastError())
     ret
 
 _chdir endp

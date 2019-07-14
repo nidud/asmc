@@ -72,24 +72,21 @@ MAX_EACCES_RANGE equ ERROR_SHARING_BUFFER_EXCEEDED
 
 _get_errno_from_oserr proc frame oserrno:ulong_t
 
-    .repeat
+    .for (rdx = &errtable, eax = 0: eax < ERRTABLESIZE: ++eax)
 
-        .for (rdx = &errtable, eax = 0: eax < ERRTABLESIZE: ++eax)
+        .if (ecx == [rdx+rax*sizeof(errentry)].errentry.oscode)
 
-            .if (ecx == [rdx+rax*sizeof(errentry)].errentry.oscode)
-                mov eax,[rdx+rax*sizeof(errentry)].errentry.errnocode
-                .break
-            .endif
-        .endf
-
-        .if (ecx >= MIN_EACCES_RANGE && ecx <= MAX_EACCES_RANGE)
-            mov eax,EACCES
-        .elseif (ecx >= MIN_EXEC_ERROR && ecx <= MAX_EXEC_ERROR)
-            mov eax,ENOEXEC
-        .else
-            mov eax,EINVAL
+            .return [rdx+rax*sizeof(errentry)].errentry.errnocode
         .endif
-    .until 1
+    .endf
+
+    .if (ecx >= MIN_EACCES_RANGE && ecx <= MAX_EACCES_RANGE)
+        mov eax,EACCES
+    .elseif (ecx >= MIN_EXEC_ERROR && ecx <= MAX_EXEC_ERROR)
+        mov eax,ENOEXEC
+    .else
+        mov eax,EINVAL
+    .endif
     ret
 
 _get_errno_from_oserr endp

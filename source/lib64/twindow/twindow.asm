@@ -11,65 +11,34 @@ include twindow.inc
 
 TWindow::Load           proto :idd_t
 TWindow::Resource       proto :idd_t
-TWindow::Show           proto
-TWindow::Hide           proto
-TWindow::Move           proto :int_t, :int_t
-TWindow::Read           proto
-TWindow::Write          proto
-TWindow::SetShade       proto
-TWindow::ClrShade       proto
-
-TWindow::Clear          proto :CHAR_INFO
-TWindow::PutChar        proto :int_t, :int_t, :int_t, :CHAR_INFO
-TWindow::PutString      proto :int_t, :int_t, :ushort_t, :int_t, :string_t, :vararg
-TWindow::PutPath        proto :int_t, :int_t, :int_t, :string_t
-TWindow::PutCenter      proto :int_t, :int_t, :int_t, :string_t
-TWindow::PutTitle       proto :string_t
 TWindow::MessageBox     proto :int_t, :string_t, :string_t, :vararg
-
 TWindow::CursorGet      proto
 TWindow::CursorSet      proto
 TWindow::CursorOn       proto
 TWindow::CursorOff      proto
 TWindow::CursorMove     proto :int_t, :int_t
-
 TWindow::Register       proto :tproc_t
 TWindow::Send           proto :uint_t, :size_t, :ptr
 TWindow::Post           proto :uint_t, :size_t, :ptr
 TWindow::PostQuit       proto :int_t
-TWindow::Dispatch       proto :msg_t
-TWindow::Translate      proto :msg_t
-
-TWindow::Child          proto :TRECT, :uint_t, :uint_t
-TWindow::Window         proto
-TWindow::Focus          proto
+TWindow::DefWindowProc  proto :uint_t, :size_t, :ptr
+TWindow::GetFocus       proto
 TWindow::SetFocus       proto :uint_t
-TWindow::KillFocus      proto
-TWindow::NextItem       proto
-TWindow::PrevItem       proto
 TWindow::GetItem        proto :uint_t
-
-TWindow::PushButton     proto :uint_t, :size_t, :ptr
-TWindow::PushBCreate    proto :TRECT, :uint_t, :string_t
-TWindow::PushBSet       proto
-TWindow::PushBClear     proto
-TWindow::PushBSetShade  proto
-TWindow::PushBClrShade  proto
-
-TWindow::Inside         proto :COORD
-
-TWindow::OnLButtonDown  proto :uint_t, :size_t, :ptr
-TWindow::OnMouseMove    proto :uint_t, :size_t, :ptr
-TWindow::OnLButtonUp    proto :uint_t, :size_t, :ptr
-TWindow::OnSetFocus     proto
-TWindow::OnKillFocus    proto
-TWindow::OnChar         proto :uint_t, :size_t, :ptr
-TWindow::OnSysChar      proto :uint_t, :size_t, :ptr
-
 TWindow::MoveConsole    proto :int_t, :int_t
 TWindow::SetConsole     proto :int_t, :int_t
 TWindow::SetMaxConsole  proto
 TWindow::ConsoleSize    proto
+
+
+    .data
+    AttributesDefault label byte
+        db 0x00,0x0F,0x0F,0x07,0x08,0x00,0x00,0x07,0x08,0x00,0x0A,0x0B,0x00,0x0F,0x0F,0x0F
+        db 0x00,0x10,0x70,0x70,0x40,0x30,0x30,0x70,0x30,0x30,0x30,0x00,0x00,0x00,0x07,0x07
+    AttributesTransparent label byte
+        db 0x07,0x07,0x0F,0x07,0x08,0x07,0x07,0x07,0x08,0x0F,0x0A,0x0B,0x0F,0x0B,0x0B,0x0B
+        db 0x00,0x00,0x00,0x10,0x30,0x10,0x10,0x00,0x10,0x10,0x00,0x00,0x00,0x00,0x07,0x07
+
 
     .code
 
@@ -684,6 +653,7 @@ TWindow::PutPath proc uses rsi rdi rbx x:int_t, y:int_t, max:int_t, path:string_
 
 TWindow::PutPath endp
 
+
     assume rbx:window_t
 
 TWindow::PutCenter proc uses rsi rdi rbx x:int_t, y:int_t, l:int_t, string:string_t
@@ -699,6 +669,7 @@ TWindow::PutCenter proc uses rsi rdi rbx x:int_t, y:int_t, l:int_t, string:strin
     ret
 
 TWindow::PutCenter endp
+
 
 TWindow::PutTitle proc string:string_t
 
@@ -716,16 +687,84 @@ TWindow::PutTitle proc string:string_t
 
 TWindow::PutTitle endp
 
-    .data
-    AttributesDefault label byte
-        db 0x00,0x0F,0x0F,0x07,0x08,0x00,0x00,0x07,0x08,0x00,0x0A,0x0B,0x00,0x0F,0x0F,0x0F
-        db 0x00,0x10,0x70,0x70,0x40,0x30,0x30,0x70,0x30,0x30,0x30,0x00,0x00,0x00,0x07,0x07
 
-    AttributesTransparent label byte
-        db 0x07,0x07,0x0F,0x07,0x08,0x07,0x07,0x07,0x08,0x0F,0x0A,0x0B,0x0F,0x0B,0x0B,0x0B
-        db 0x00,0x00,0x00,0x10,0x30,0x10,0x10,0x00,0x10,0x10,0x00,0x00,0x00,0x00,0x07,0x07
+TWindow::Window proc uses rbx rdx
 
-    .code
+    mov     rbx,rcx
+    test    [rcx].Flags,W_CHILD
+    cmovnz  rbx,[rcx].PrevInst
+    movzx   eax,[rcx].rc.y
+    movzx   r8d,[rbx].rc.col
+    mul     r8d
+    movzx   edx,[rcx].rc.x
+    add     eax,edx
+    shl     eax,2
+    add     rax,[rbx].Window
+    ret
+
+TWindow::Window endp
+
+
+TWindow::PushButton proc uses rsi rdi rbx rcx rc:TRECT, id:uint_t, title:string_t
+
+    mov     rsi,r9
+    mov     rbx,[rcx].Child(edx, r8d, T_PUSHBUTTON)
+    .return .if !rax
+
+    mov     rdi,[rbx].Window()
+    movzx   ecx,[rbx].rc.col
+    mov     rdx,[rbx].Color
+    movzx   eax,byte ptr [rdx+BG_PUSHBUTTON]
+    or      al,[rdx+FG_TITLE]
+    shl     eax,16
+    mov     al,' '
+    mov     r11,rdi
+    rep     stosd
+    mov     al,[rdi+2]
+    and     eax,0xF0
+    or      al,[rdx+FG_PBSHADE]
+    shl     eax,16
+    mov     al,'Ü'
+    mov     [rdi],eax
+    lea     rdi,[r11+r8*4+4]
+    movzx   ecx,[rbx].rc.col
+    mov     al,'ß'
+    rep     stosd
+    lea     rdi,[r11+8]
+    mov     al,byte ptr [rdx+BG_PUSHBUTTON]
+    mov     cl,al
+    or      al,[rdx+FG_TITLE]
+    or      cl,[rdx+FG_TITLEKEY]
+    shl     eax,16
+
+    .while 1
+
+        lodsb
+        .break .if !al
+
+        .if al != '&'
+
+            stosd
+            .continue(0)
+
+        .else
+
+            lodsb
+            .break .if !al
+
+            mov [rdi],ax
+            mov [rdi+2],cl
+            add rdi,4
+            and al,not 0x20
+            mov byte ptr [rbx].SysKey,al
+        .endif
+    .endw
+
+    mov eax,1
+    ret
+
+TWindow::PushButton endp
+
 
 TWindow::Open proc uses rsi rdi rbx rcx rc:TRECT, flags:uint_t
 
@@ -789,12 +828,36 @@ TWindow::Open proc uses rsi rdi rbx rcx rc:TRECT, flags:uint_t
 
 TWindow::Open endp
 
+
+TWindow::Child proc uses rdi rbx rcx rc:TRECT, id:uint_t, type:uint_t
+
+    mov edi,r9d
+    mov ebx,r8d
+
+    .return .if ( [rcx].Open(edx, W_CHILD or W_WNDPROC) == NULL )
+
+    mov [rax].TWindow.Index,ebx
+    mov [rax].TWindow.Type,edi
+    mov rbx,rax
+    lea rax,TWindow_DefWindowProc
+    mov [rbx].WndProc,rax
+
+    .for ( rcx = [rbx].PrevInst : [rcx].Child : rcx = [rcx].Child )
+
+    .endf
+    mov [rcx].Child,rbx
+    mov rax,rbx
+    ret
+
+TWindow::Child endp
+
+
 TWindow::TWindow proc uses rsi rdi rbx
 
   local ci: CONSOLE_SCREEN_BUFFER_INFO
 
     mov rdi,rcx
-    mov rbx,malloc( sizeof(TWindow) + sizeof(APPINFO) + sizeof(TWindowVtbl) + 32 )
+    mov rbx,malloc( sizeof(TWindow) + sizeof(APPINFO) + sizeof(TWindowVtbl) )
     .if rdi
         stosq
     .endif
@@ -836,29 +899,13 @@ TWindow::TWindow proc uses rsi rdi rbx
            TWindow_Send,
            TWindow_Post,
            TWindow_PostQuit,
-           TWindow_Dispatch,
-           TWindow_Translate,
+           TWindow_DefWindowProc,
            TWindow_Child,
            TWindow_Window,
-           TWindow_Focus,
+           TWindow_PushButton,
+           TWindow_GetFocus,
            TWindow_SetFocus,
-           TWindow_KillFocus,
-           TWindow_NextItem,
-           TWindow_PrevItem,
            TWindow_GetItem,
-           TWindow_PushBCreate,
-           TWindow_PushBSet,
-           TWindow_PushBClear,
-           TWindow_PushBSetShade,
-           TWindow_PushBClrShade,
-           TWindow_Inside,
-           TWindow_OnLButtonDown,
-           TWindow_OnMouseMove,
-           TWindow_OnLButtonUp,
-           TWindow_OnSetFocus,
-           TWindow_OnKillFocus,
-           TWindow_OnChar,
-           TWindow_OnSysChar,
            TWindow_MoveConsole,
            TWindow_SetConsole,
            TWindow_SetMaxConsole,
@@ -868,28 +915,10 @@ TWindow::TWindow proc uses rsi rdi rbx
         stosq
         endm
 
-    mov [rbx].Color,rdi
-if 0
-    for q,<0x07000008070F0F00,
-           0x0F0F0F000B0A0008,
-           0x7030304070701000,
-           0x0707000000303030>
-        mov rax,q
-        stosq
-        endm
-else
-    for q,<0x07000708070F0700,
-           0x080807000B0A0008,
-           0x70707040F0F01000,
-           0x0707000070703080>
-        mov rax,q
-        stosq
-        endm
-endif
-
+    lea rax,AttributesDefault
+    mov [rbx].Color,rax
     mov edi,0x00190050
     .if GetConsoleScreenBufferInfo(hStdOutput, &ci)
-
         mov edi,ci.dwSize
     .endif
 
@@ -911,7 +940,8 @@ endif
     .endif
 
     mov rdi,[rbx].Class
-  assume rdi:class_t
+    assume rdi:class_t
+
     mov [rdi].Console,rbx
     mov [rdi].Focus,1
     mov [rdi].StdIn,GetStdHandle(STD_INPUT_HANDLE)
@@ -928,6 +958,7 @@ endif
     ret
 
 TWindow::TWindow endp
+
 
 TWindow::Release proc uses rbx
 

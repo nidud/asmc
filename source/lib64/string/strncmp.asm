@@ -8,8 +8,9 @@
 
 strncmp::
 
-    xor eax,eax
     .repeat
+
+        xor eax,eax
         .break .if !r8
         .while 1
             mov al,[rcx]

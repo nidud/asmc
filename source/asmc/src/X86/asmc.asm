@@ -15,11 +15,11 @@ CmdlineFini     proto
 ParseCmdline    proto :ptr, :ptr
 write_usage     proto
 ifdef __ASMC64__
-define_name     proto :LPSTR, :LPSTR
+define_name     proto :string_t, :string_t
 endif
 .code
 
-strfcat proc uses esi edi ecx edx buffer:LPSTR, path:LPSTR, file:LPSTR
+strfcat proc uses esi edi ecx edx buffer:string_t, path:string_t, file:string_t
 
     mov edx,buffer
     mov esi,path
@@ -40,10 +40,8 @@ strfcat proc uses esi edi ecx edx buffer:LPSTR, path:LPSTR, file:LPSTR
 
     dec edi
     .if edi != edx      ; add slash if missing
-
         mov al,[edi-1]
         .if !( al == '\' || al == '/' )
-
             mov al,'\'
             stosb
         .endif
@@ -61,7 +59,7 @@ strfcat endp
 
 AssembleSubdir proc uses esi edi ebx directory, wild
 
-    local rc, path[_MAX_PATH]:byte, h, ff:WIN32_FIND_DATA
+  local rc, path[_MAX_PATH]:byte, h, ff:WIN32_FIND_DATA
 
     lea esi,path
     lea edi,ff

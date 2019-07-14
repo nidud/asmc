@@ -10,11 +10,11 @@ include token.inc
 
 public  fastcall_tab
 
-GetGroup        proto :ptr asym
+GetGroup        proto :asym_t
 ifndef __ASMC64__
-GetSegmentPart  proto :ptr expr, :LPSTR, :LPSTR
+GetSegmentPart  proto :ptr expr, :string_t, :string_t
 endif
-search_assume   proto :ptr asym, :SINT, :SINT
+search_assume   proto :asym_t, :int_t, :int_t
 
 invoke_conv     struc
 invokestart     dd ? ; dsym *, int, int, asmtok *, int *
@@ -43,8 +43,8 @@ ELF64_START     equ 1 ; elf64: RDI first param start at bit 6
 
     .data
 
-externdef       sym_ReservedStack:LPASYM    ; max stack space required by INVOKE
-externdef       size_vararg:SINT        ; size of :VARARG arguments
+externdef       sym_ReservedStack:asym_t    ; max stack space required by INVOKE
+externdef       size_vararg:int_t        ; size of :VARARG arguments
 
 REGPAR_WIN64    equ 0x0306 ; regs 1, 2, 8 and 9
 REGPAR_ELF64    equ 0x03C6 ; regs 1, 2, 6, 7, 8 and 9
@@ -101,7 +101,7 @@ GetSegm macro x
     endm
 
 ifndef __ASMC64__
-GetSegmentPart proc uses esi edi ebx opnd:ptr expr, buffer:LPSTR, fullparam:LPSTR
+GetSegmentPart proc uses esi edi ebx opnd:ptr expr, buffer:string_t, fullparam:string_t
 
     mov esi,T_NULL
     mov edi,opnd
@@ -176,8 +176,8 @@ GetParmIndex macro x
 ;-------------------------------------------------------------------------------
 ifndef __ASMC64__
 
-ms32_fcstart proc pp:ptr dsym, numparams:SINT, start:SINT,
-    tokenarray:ptr asmtok, value:ptr SINT
+ms32_fcstart proc pp:dsym_t, numparams:int_t, start:int_t,
+    tokenarray:tok_t, value:ptr int_t
 
     .repeat
         .if GetSymOfssize(pp) == USE16
@@ -200,8 +200,8 @@ ms32_fcstart proc pp:ptr dsym, numparams:SINT, start:SINT,
 
 ms32_fcstart endp
 
-ms32_param proc uses esi edi ebx pp:ptr dsym, index:SINT, param:ptr dsym, adr:SINT,
-    opnd:ptr expr, paramvalue:LPSTR, r0used:ptr byte
+ms32_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t,
+    opnd:ptr expr, paramvalue:string_t, r0used:ptr byte
 
     local z
 
@@ -278,8 +278,8 @@ ms32_fcend endp
 ; FCT_VEC32
 ;-------------------------------------------------------------------------------
 
-vc32_fcstart proc pp:ptr dsym, numparams:SINT, start:SINT,
-    tokenarray:ptr asmtok, value:ptr SINT
+vc32_fcstart proc pp:dsym_t, numparams:int_t, start:int_t,
+    tokenarray:tok_t, value:ptr int_t
 
     .repeat
         .for eax=pp, eax=[eax].dsym.procinfo,
@@ -297,8 +297,8 @@ vc32_fcstart proc pp:ptr dsym, numparams:SINT, start:SINT,
 
 vc32_fcstart endp
 
-vc32_param proc uses esi edi ebx pp:ptr dsym, index:SINT, param:ptr dsym, adr:SINT,
-    opnd:ptr expr, paramvalue:LPSTR, r0used:ptr byte
+vc32_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t,
+    opnd:ptr expr, paramvalue:string_t, r0used:ptr byte
 
     local z
     local value[64]:sbyte
@@ -449,8 +449,8 @@ vc32_param endp
 ;;   the third!
 ;;
 
-watc_fcstart proc pp: ptr dsym, numparams:SINT, start:SINT,
-        tokenarray: ptr asmtok, value: ptr SINT
+watc_fcstart proc pp: dsym_t, numparams:int_t, start:int_t,
+        tokenarray: tok_t, value: ptr int_t
     mov eax,1
     ret
 watc_fcstart endp
@@ -459,7 +459,7 @@ watc_param proc uses esi edi ebx pp, index, param, adr, opnd, paramvalue, r0used
 ;; get the register for parms 0 to 3,
 ;; using the watcom register parm passing conventions ( A D B C )
 ;;
-    local opc, qual, i, regs[64]:byte, reg[4]:LPSTR, p:LPSTR, psize
+    local opc, qual, i, regs[64]:byte, reg[4]:string_t, p:string_t, psize
     local buffer[128]:byte, sreg
 
     mov ebx,param
@@ -596,8 +596,8 @@ endif
 ; FCT_WIN64
 ;-------------------------------------------------------------------------------
 
-ms64_fcstart proc uses esi edi pp:ptr dsym, numparams:SINT, start:SINT,
-    tokenarray:ptr asmtok, value:ptr SINT
+ms64_fcstart proc uses esi edi pp:dsym_t, numparams:int_t, start:int_t,
+    tokenarray:tok_t, value:ptr int_t
 
     ; v2.29: reg::reg id to fcscratch
 
@@ -799,7 +799,7 @@ GetPSize proc adr
     ret
 GetPSize endp
 
-CheckXMM proc uses ebx reg:SINT, paramvalue:LPSTR, regs_used:ptr byte, param:ptr dsym
+CheckXMM proc uses ebx reg:int_t, paramvalue:string_t, regs_used:ptr byte, param:dsym_t
 
     local buffer[64]:sbyte, _sign:byte
     ;
@@ -899,7 +899,7 @@ CheckXMM proc uses ebx reg:SINT, paramvalue:LPSTR, regs_used:ptr byte, param:ptr
     ret
 CheckXMM endp
 
-GetAccumulator proc psize:UINT, regs:ptr
+GetAccumulator proc psize:uint_t, regs:ptr
 
     mov ecx,psize
     shr ecx,1
@@ -916,8 +916,8 @@ GetAccumulator proc psize:UINT, regs:ptr
 
 GetAccumulator endp
 
-ms64_param proc uses esi edi ebx pp:ptr dsym, index:SINT, param:ptr dsym, adr:SINT,
-    opnd:ptr expr, paramvalue:LPSTR, regs_used:ptr byte
+ms64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t,
+    opnd:ptr expr, paramvalue:string_t, regs_used:ptr byte
 
     local z, psize, reg, reg_64, i, i32, destroyed, arg_offset, vector_call:byte
 
@@ -1410,11 +1410,11 @@ elf64_param_index label byte
 
 .code
 
-elf64_pcheck proc public uses esi edi ebx pProc:LPDSYM, paranode:LPDSYM, used:ptr SINT
+elf64_pcheck proc public uses esi edi ebx pProc:dsym_t, paranode:dsym_t, used:ptr int_t
 
   local regname[32]:sbyte
-  local reg:SINT
-  local psize:SINT
+  local reg:int_t
+  local psize:int_t
 
     mov ebx,used
     mov esi,paranode
@@ -1465,8 +1465,8 @@ elf64_pcheck proc public uses esi edi ebx pProc:LPDSYM, paranode:LPDSYM, used:pt
 
 elf64_pcheck endp
 
-elf64_fcstart proc uses ebx pp:ptr dsym, numparams:SINT, start:SINT,
-    tokenarray:ptr asmtok, value:ptr SINT
+elf64_fcstart proc uses ebx pp:dsym_t, numparams:int_t, start:int_t,
+    tokenarray:tok_t, value:ptr int_t
 
     ; v2.28: xmm id to fcscratch
 
@@ -1520,7 +1520,7 @@ elf64_fcstart proc uses ebx pp:ptr dsym, numparams:SINT, start:SINT,
 
 elf64_fcstart endp
 
-elf64_32 proc reg:UINT
+elf64_32 proc reg:uint_t
 
     mov eax,reg
     .if eax >= T_RAX && eax <= T_RDI
@@ -1532,7 +1532,7 @@ elf64_32 proc reg:UINT
 
 elf64_32 endp
 
-elf64_const proc reg:UINT, pos:UINT, val:qword, paramvalue:LPSTR, _negative:UINT
+elf64_const proc reg:uint_t, pos:uint_t, val:qword, paramvalue:string_t, _negative:uint_t
 
     .if dword ptr val[4] == 0
         mov eax,elf64_32(reg)
@@ -1552,8 +1552,8 @@ elf64_const proc reg:UINT, pos:UINT, val:qword, paramvalue:LPSTR, _negative:UINT
 
 elf64_const endp
 
-elf64_param proc uses esi edi ebx pp:ptr dsym, index:SINT, param:ptr dsym, adr:SINT,
-    opnd:ptr expr, paramvalue:LPSTR, regs_used:ptr byte
+elf64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t,
+    opnd:ptr expr, paramvalue:string_t, regs_used:ptr byte
 
     local z, psize, reg, i, i32, destroyed
 

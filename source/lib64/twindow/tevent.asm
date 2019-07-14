@@ -11,7 +11,7 @@ include twindow.inc
 
     assume rdx:msg_t
 
-TWindow::Dispatch proc uses rcx msg:msg_t
+Dispatch proc private uses rcx hwnd:window_t, msg:msg_t
 
     mov rcx,[rcx].TWindow.Class
     mov r8,[rdx].Next
@@ -30,18 +30,18 @@ TWindow::Dispatch proc uses rcx msg:msg_t
     free(rdx)
     ret
 
-TWindow::Dispatch endp
+Dispatch endp
 
     assume rcx:window_t
 
-TWindow::Translate proc uses rdi rcx msg:msg_t
+Translate proc private uses rdi rcx hwnd:window_t, msg:msg_t
 
     mov edi,[rdx].Message
     mov [rdx].Message,WM_NULL
 
     [rcx].Send(edi, [rdx].wParam, [rdx].lParam)
 
-    mov rcx,this
+    mov rcx,hwnd
     .return .if ( edi != WM_KEYDOWN )
 
     mov rdx,msg
@@ -54,7 +54,7 @@ TWindow::Translate proc uses rdi rcx msg:msg_t
     [rcx].Send(edx, r8, r9)
     ret
 
-TWindow::Translate endp
+Translate endp
 
 TWindow::Send proc uses rcx uiMsg:uint_t, wParam:size_t, lParam:ptr
 
@@ -250,11 +250,11 @@ TWindow::Register proc uses rsi rdi rbx tproc:tproc_t
 
         .break .if ( [rdi].TMESSAGE.Message == WM_QUIT )
 
-        [rcx].Translate(rdi)
-        [rcx].Dispatch(rdi)
+        Translate(rcx, rdi)
+        Dispatch(rcx, rdi)
     .endw
     mov rbx,[rdi].TMESSAGE.wParam
-    [rcx].Dispatch(rdi)
+    Dispatch(rcx, rdi)
     [rcx].Send(WM_CLOSE, 0, 0)
     mov rcx,hPrev
     mov [rsi].Instance,rcx

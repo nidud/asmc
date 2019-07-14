@@ -16,33 +16,26 @@ _wchdir proc frame directory:LPWSTR
 
   local abspath[_MAX_PATH]:wchar_t, result[4]:wchar_t
 
-    .repeat
+    .ifd SetCurrentDirectoryW( rcx )
 
-        .ifd SetCurrentDirectoryW( rcx )
+        .ifd GetCurrentDirectoryW( _MAX_PATH, &abspath )
 
-            .ifd GetCurrentDirectoryW( _MAX_PATH, &abspath )
+            xor eax,eax
+            mov cx,abspath[2]
+            .return .if cx != ':'
 
-                xor eax,eax
-                mov cx,abspath[2]
-                .break .if cx != ':'
-
-                mov qword ptr result,rax
-                mov result[4],cx
-                mov result[0],'='
-                mov cx,abspath
-                .if cl >= 'a' && cl <= 'z'
-                    sub cl,'a' - 'A'
-                .endif
-                mov result[2],cx
-                .ifd SetEnvironmentVariableW( &result, &abspath )
-
-                    xor eax,eax
-                    .break
-                .endif
+            mov qword ptr result,rax
+            mov result[4],cx
+            mov result[0],'='
+            mov cx,abspath
+            .if cl >= 'a' && cl <= 'z'
+                sub cl,'a' - 'A'
             .endif
+            mov result[2],cx
+            .return 0 .ifd SetEnvironmentVariableW( &result, &abspath )
         .endif
-        _dosmaperr(GetLastError())
-    .until 1
+    .endif
+    _dosmaperr(GetLastError())
     ret
 
 _wchdir endp

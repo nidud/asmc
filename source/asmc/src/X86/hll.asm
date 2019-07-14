@@ -62,15 +62,7 @@ CHARS_OR    equ '|' + ( '|' shl 8 )
 
     .code
 
-hllexit macro expr, args:vararg
-    .if (expr)
-        asmerr(&args)
-        .break
-    .endif
-    exitm<>
-    endm
-
-GetCOp proc fastcall private item;:PTR asmtok
+GetCOp proc fastcall private item;:tok_t
 
     mov edx,[ecx].asmtok.string_ptr
     xor eax,eax
@@ -78,83 +70,65 @@ GetCOp proc fastcall private item;:PTR asmtok
 
         mov eax,[ecx].asmtok.stringlen
     .endif
-    .repeat
-        .switch
-          .case eax == 2
-            movzx   eax,WORD PTR [edx]
-            .switch eax
-              .case CHARS_EQ:  mov eax,COP_EQ:  .break
-              .case CHARS_NE:  mov eax,COP_NE:  .break
-              .case CHARS_GE:  mov eax,COP_GE:  .break
-              .case CHARS_LE:  mov eax,COP_LE:  .break
-              .case CHARS_AND: mov eax,COP_AND: .break
-              .case CHARS_OR:  mov eax,COP_OR:  .break
-            .endsw
-            .endc
-          .case eax == 1
-            mov al,[edx]
-            .switch eax
-              .case '>': mov eax,COP_GT:   .break
-              .case '<': mov eax,COP_LT:   .break
-              .case '&': mov eax,COP_ANDB: .break
-              .case '!': mov eax,COP_NEG:  .break
-            .endsw
-            .endc
-          .case [ecx].asmtok.token != T_ID
-            .endc
-            ;
-            ; a valid "flag" string must end with a question mark
-            ;
-          .case BYTE PTR [edx + strlen(edx) - 1] == '?'
 
-            mov ecx,[edx]
-            and ecx,not 20202020h
+    .switch
 
-            .switch eax
-              .case 5
-                .if ecx == "OREZ"
-
-                    mov eax,COP_ZERO
-                    .break
-                .endif
-                .if ecx == "NGIS"
-
-                    mov eax,COP_SIGN
-                    .break
-                .endif
-                .endc
-              .case 6
-                movzx eax,BYTE PTR [edx+4]
-                and eax,not 20h
-                .if eax == "Y" && ecx == "RRAC"
-
-                    mov eax,COP_CARRY
-                    .break
-                .endif
-                .endc
-              .case 7
-                movzx eax,WORD PTR [edx+4]
-                and eax,not 2020h
-                .if eax == "YT" && ecx == "IRAP"
-
-                    mov eax,COP_PARITY
-                    .break
-                .endif
-                .endc
-              .case 9
-                mov eax,[edx+4]
-                and eax,not 20202020h
-                .if eax == "WOLF" && ecx == "REVO"
-
-                    mov eax,COP_OVERFLOW
-                    .break
-                .endif
-                .endc
-            .endsw
-            .endc
+      .case eax == 2
+        mov ax,[edx]
+        .switch eax
+          .case CHARS_EQ:  .return COP_EQ
+          .case CHARS_NE:  .return COP_NE
+          .case CHARS_GE:  .return COP_GE
+          .case CHARS_LE:  .return COP_LE
+          .case CHARS_AND: .return COP_AND
+          .case CHARS_OR:  .return COP_OR
         .endsw
-        mov eax,COP_NONE
-    .until  1
+        .endc
+
+      .case eax == 1
+        mov al,[edx]
+        .switch eax
+          .case '>': .return COP_GT
+          .case '<': .return COP_LT
+          .case '&': .return COP_ANDB
+          .case '!': .return COP_NEG
+        .endsw
+        .endc
+
+      .case [ecx].asmtok.token != T_ID
+        .endc
+        ;
+        ; a valid "flag" string must end with a question mark
+        ;
+      .case BYTE PTR [edx + strlen(edx) - 1] == '?'
+
+        mov ecx,[edx]
+        and ecx,not 0x20202020
+
+        .switch eax
+          .case 5
+            .return COP_ZERO .if ecx == "OREZ"
+            .return COP_SIGN .if ecx == "NGIS"
+            .endc
+          .case 6
+            mov al,[edx+4]
+            and eax,not 0x20
+            .return COP_CARRY .if eax == "Y" && ecx == "RRAC"
+            .endc
+          .case 7
+            mov ax,[edx+4]
+            and eax,not 0x2020
+            .return COP_PARITY .if eax == "YT" && ecx == "IRAP"
+            .endc
+          .case 9
+            mov eax,[edx+4]
+            and eax,not 20202020h
+            .return COP_OVERFLOW .if eax == "WOLF" && ecx == "REVO"
+            .endc
+          .endsw
+          .endc
+    .endsw
+    mov eax,COP_NONE
     ret
 
 GetCOp  endp
@@ -163,14 +137,8 @@ GetCOp  endp
 ; render an instruction
 ;
 
-RenderInstr proc private uses esi edi ebx,
-    dst:        LPSTR,
-    inst:       LPSTR,
-    start1:     UINT,
-    end1:       UINT,
-    start2:     UINT,
-    end2:       UINT,
-    tokenarray: PTR asmtok
+RenderInstr proc private uses esi edi ebx dst:string_t, inst:string_t, start1:uint_t,
+        end1:uint_t, start2:uint_t, end2:uint_t, tokenarray:tok_t
 
     ;
     ; copy the instruction
@@ -222,7 +190,7 @@ RenderInstr proc private uses esi edi ebx,
     ret
 RenderInstr endp
 
-GetLabelStr proc l_id:SINT, buff:LPSTR
+GetLabelStr proc l_id:int_t, buff:string_t
     sprintf( buff, "@C%04X", l_id )
     mov eax,buff
     ret
@@ -265,7 +233,7 @@ RenderJcc endp
 ;
 ; a "token" in a C expression actually is an assembly expression
 ;
-LGetToken proc private uses esi edi ebx hll:PTR hll_item, i, tokenarray, opnd:ptr expr
+LGetToken proc private uses esi edi ebx hll:hll_t, i:int_t, tokenarray:tok_t, opnd:ptr expr
     ;
     ; scan for the next C operator in the token array.
     ; because the ASM evaluator may report an error if such a thing
@@ -278,8 +246,8 @@ LGetToken proc private uses esi edi ebx hll:PTR hll_item, i, tokenarray, opnd:pt
     shl ebx,4
     add ebx,tokenarray
 
-    .for : edi < ModuleInfo.token_count,
-           GetCOp(ebx) == COP_NONE : edi++, ebx += 16
+    .for ( : edi < ModuleInfo.token_count,
+           GetCOp(ebx) == COP_NONE : edi++, ebx += 16 )
     .endf
 
     .if edi == [esi]
@@ -299,7 +267,6 @@ LGetToken proc private uses esi edi ebx hll:PTR hll_item, i, tokenarray, opnd:pt
             asmerr(2154)
         .endif
     .endif
-toend:
     ret
 LGetToken endp
 
@@ -317,25 +284,19 @@ GetLabel endp
 ; 4. one token (short form for "<token> != 0")
 ;
 
-GetSimpleExpression proc private uses esi edi ebx,
-    hll:        PTR hll_item,
-    i:          PTR SINT,
-    tokenarray: PTR asmtok,
-    ilabel:     SINT,
-    is_true:    UINT,
-    buffer:     LPSTR,
-    hllop:      PTR hll_opnd
+GetSimpleExpression proc private uses esi edi ebx hll:hll_t, i:ptr int_t,
+        tokenarray:tok_t, ilabel:int_t, is_true:uint_t, buffer:string_t, hllop:ptr hll_opnd
 
-local   op:         SINT,
-        op1_pos:    SINT,
-        op1_end:    SINT,
-        op2_pos:    SINT,
-        op2_end:    SINT,
+local   op:         int_t,
+        op1_pos:    int_t,
+        op1_end:    int_t,
+        op2_pos:    int_t,
+        op2_end:    int_t,
         op1:        expr,
         op2:        expr,
         _label
 
-    assume ebx: PTR asmtok
+    assume ebx:tok_t
 
     mov esi,i
     mov edi,[esi]
@@ -366,16 +327,13 @@ local   op:         SINT,
         add ebx,16
         movzx eax,[ebx].token
         .while eax != T_FINAL
-
             .if eax == T_OP_BRACKET
-
                 add esi,1
             .elseif eax == T_CL_BRACKET
-
                 sub esi,1
-                .break .if ZERO?    ; a standard Masm expression?
+                .break .ifz ; a standard Masm expression?
             .else
-                .break .if GetCOp( ebx ) != COP_NONE
+                .break .if GetCOp(ebx) != COP_NONE
             .endif
             add ebx,16
             movzx eax,[ebx].token
@@ -387,24 +345,15 @@ local   op:         SINT,
         .if eax
 
             inc DWORD PTR [esi]
-
-            GetExpression( hll, esi, tokenarray, ilabel, is_true, buffer, hllop )
-
-            cmp eax,ERROR
-            je  toend
+            .return .if GetExpression(hll, esi, tokenarray, ilabel, is_true, buffer, hllop) == ERROR
 
             mov ebx,[esi]
             shl ebx,4
             add ebx,tokenarray
-            .if [ebx].token != T_CL_BRACKET
-
-                asmerr( 2154 )
-                jmp toend
-            .endif
+            .return asmerr(2154) .if ( [ebx].token != T_CL_BRACKET )
 
             inc DWORD PTR [esi]
-            mov eax,NOT_ERROR
-            jmp toend
+            .return NOT_ERROR
         .endif
     .endif
 
@@ -414,9 +363,7 @@ local   op:         SINT,
     ; get (first) operand
     ;
     mov op1_pos,edi
-    LGetToken( hll, esi, ebx, &op1 )
-    cmp eax,ERROR
-    je  toend
+    .return .if LGetToken(hll, esi, ebx, &op1) == ERROR
 
     mov edi,[esi]
     mov op1_end,edi
@@ -424,7 +371,7 @@ local   op:         SINT,
     mov eax,edi     ; get operator
     shl eax,4
     add eax,ebx
-    GetCOp( eax )
+    GetCOp(eax)
     ;
     ; lower precedence operator ( && or || ) detected?
     ;
@@ -438,7 +385,7 @@ local   op:         SINT,
     .endif
     mov op,eax
 
-    GetLabel( hll, ilabel )
+    GetLabel(hll, ilabel)
     mov _label,eax
     ;
     ; check for special operators with implicite operand:
@@ -447,11 +394,7 @@ local   op:         SINT,
     mov edx,op
     .if edx >= COP_ZERO
 
-        .if op1.kind != EXPR_EMPTY
-
-            asmerr( 2154 )
-            jmp toend
-        .endif
+        .return asmerr(2154) .if ( op1.kind != EXPR_EMPTY )
 
         mov ecx,hllop
         mov eax,buffer
@@ -483,18 +426,15 @@ local   op:         SINT,
         .endif
 
         RenderJcc( buffer, ecx, edx, _label )
-        mov eax,NOT_ERROR
-        jmp toend
+        .return NOT_ERROR
     .endif
 
     mov eax,op1.kind
     .switch eax
       .case EXPR_EMPTY
-        asmerr( 2154 )  ; v2.09: changed from NOT_ERROR to ERROR
-        jmp toend
+        .return asmerr(2154)  ; v2.09: changed from NOT_ERROR to ERROR
       .case EXPR_FLOAT
-        asmerr( 2050 )  ; v2.10: added
-        jmp toend
+        .return asmerr(2050)  ; v2.10: added
     .endsw
 
     .if op == COP_NONE
@@ -525,11 +465,7 @@ local   op:         SINT,
             RenderJcc( eax, 'z', is_true, _label )
             .endc
           .case EXPR_CONST
-            .if op1.hvalue != 0 && op1.hvalue != -1
-
-                EmitConstError( &op1 )
-                jmp toend
-            .endif
+            .return EmitConstError(&op1) .if ( op1.hvalue != 0 && op1.hvalue != -1 )
 
             mov ecx,hllop
             mov eax,buffer
@@ -546,8 +482,7 @@ local   op:         SINT,
             .endc
         .endsw
 
-        mov eax,NOT_ERROR
-        jmp toend
+        .return NOT_ERROR
     .endif
 
     ;
@@ -555,16 +490,11 @@ local   op:         SINT,
     ;
     mov edi,[esi]
     mov op2_pos,edi
-    LGetToken( hll, esi, ebx, &op2 )
-    cmp eax,ERROR
-    je  toend
+    .return .if LGetToken(hll, esi, ebx, &op2) == ERROR
 
     mov eax,op2.kind
-    .if eax != EXPR_CONST && eax != EXPR_ADDR && eax != EXPR_REG
+    .return asmerr(2154) .if eax != EXPR_CONST && eax != EXPR_ADDR && eax != EXPR_REG
 
-        asmerr( 2154 )
-        jmp toend
-    .endif
     mov edi,[esi]
     mov op2_end,edi
 
@@ -624,11 +554,7 @@ if 0 ; v2.23 removed..
             ;
             ; assume .ifx proc() --> .ifx reg
             ;
-            .if op1.kind != EXPR_REG
-
-                asmerr( 2154 )
-                jmp toend
-            .endif
+            .return asmerr(2154) .if ( op1.kind != EXPR_REG )
         .endif
 endif
 
@@ -660,13 +586,9 @@ endif
         RenderJcc( eax, edx, ebx, _label )
     .else
 
-        asmerr( 2154 )
-        jmp toend
+        .return asmerr(2154)
     .endif
-
     mov eax,NOT_ERROR
-
-toend:
     ret
 
 GetSimpleExpression endp
@@ -682,7 +604,7 @@ GetSimpleExpression endp
 ; - jmp -> 0
 ; - 0    -> jmp
 ;
-InvertJump proc fastcall p:LPSTR
+InvertJump proc fastcall p:string_t
 
     .if BYTE PTR [ecx] == NULLC ; v2.11: convert 0 to "jmp"
 
@@ -749,7 +671,7 @@ InvertJump endp
 ;
 ReplaceLabel proc private uses esi edi ebx p, olabel, nlabel
 
-local oldlbl[16]:SBYTE, newlbl[16]:SBYTE
+local oldlbl[16]:char_t, newlbl[16]:char_t
 
     mov ebx,p
     lea esi,oldlbl
@@ -771,89 +693,83 @@ ReplaceLabel endp
 
 ; operator &&, which has the second lowest precedence, is handled here
 
-GetAndExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr SINT, tokenarray:ptr asmtok,
-    ilabel:UINT, is_true:UINT, buffer:LPSTR, hllop:ptr hll_opnd
+GetAndExpression proc private uses esi edi ebx hll:hll_t, i:ptr int_t, tokenarray:tok_t,
+    ilabel:uint_t, is_true:uint_t, buffer:string_t, hllop:ptr hll_opnd
 
-  local truelabel:SINT, nlabel:SINT, olabel:SINT, buff[16]:SBYTE
+  local truelabel:int_t, nlabel:int_t, olabel:int_t, buff[16]:char_t
 
     mov edi,hllop
     mov esi,buffer
     mov truelabel,0
 
-    .repeat
+    .while 1
 
-        .while 1
+        .return .if GetSimpleExpression(hll, i, tokenarray, ilabel, is_true, esi, edi ) == ERROR
 
-            .break(1) .if GetSimpleExpression( hll, i,
-                            tokenarray, ilabel, is_true, esi, edi ) == ERROR
+        mov ebx,i
+        mov eax,[ebx]
+        shl eax,4
+        add eax,tokenarray
 
-            mov ebx,i
-            mov eax,[ebx]
-            shl eax,4
-            add eax,tokenarray
+        .break .if GetCOp(eax) != COP_AND
 
-            .break .if GetCOp( eax ) != COP_AND
+        inc DWORD PTR [ebx]
+        mov ebx,[edi].hll_opnd.lastjmp
+        .if ebx && is_true
 
-            inc DWORD PTR [ebx]
-            mov ebx,[edi].hll_opnd.lastjmp
-            .if ebx && is_true
+            InvertJump(ebx)
 
-                InvertJump(ebx)
+            .if truelabel == 0
 
-                .if truelabel == 0
-
-                    mov truelabel,GetHllLabel()
-                .endif
-                ;
-                ; v2.11: there might be a 0 at lastjmp
-                ;
-                .if BYTE PTR [ebx]
-
-                    strcat( GetLabelStr( truelabel, &[ebx+4] ), &EOLSTR )
-                .endif
-                ;
-                ; v2.22 .while  (eax || edx) && ecx -- failed
-                ;   .while !(eax || edx) && ecx -- failed
-                ;
-                mov ebx,esi
-                .if [edi].hll_opnd.lasttruelabel
-
-                    ReplaceLabel( ebx, [edi].hll_opnd.lasttruelabel, truelabel )
-                .endif
-                mov nlabel,GetHllLabel()
-                mov olabel,GetLabel( hll, ilabel )
-                strlen(ebx)
-                add ebx,eax
-                sprintf( ebx, "%s%s%s", GetLabelStr( olabel, &buff ), LABELQUAL, &EOLSTR )
-                ReplaceLabel( buffer, olabel, nlabel )
-                mov [edi].hll_opnd.lastjmp,0
+                mov truelabel,GetHllLabel()
             .endif
 
-            strlen(esi)
-            add esi,eax
-            mov [edi].hll_opnd.lasttruelabel,0
-        .endw
+            ;; v2.11: there might be a 0 at lastjmp
 
-        .if truelabel
+            .if BYTE PTR [ebx]
 
-            strlen(esi)
-            add esi,eax
-            strcat( strcat( GetLabelStr( truelabel, esi ), LABELQUAL ), &EOLSTR )
+                strcat(GetLabelStr(truelabel, &[ebx+4]), &EOLSTR)
+            .endif
+
+                ;; v2.22 .while  (eax || edx) && ecx -- failed
+                ;;   .while !(eax || edx) && ecx -- failed
+
+            mov ebx,esi
+            .if [edi].hll_opnd.lasttruelabel
+
+                ReplaceLabel(ebx, [edi].hll_opnd.lasttruelabel, truelabel)
+            .endif
+            mov nlabel,GetHllLabel()
+            mov olabel,GetLabel(hll, ilabel)
+            strlen(ebx)
+            add ebx,eax
+            sprintf(ebx, "%s%s%s", GetLabelStr(olabel, &buff), LABELQUAL, &EOLSTR)
+            ReplaceLabel(buffer, olabel, nlabel)
             mov [edi].hll_opnd.lastjmp,0
         .endif
 
-        mov eax,NOT_ERROR
-    .until 1
+        strlen(esi)
+        add esi,eax
+        mov [edi].hll_opnd.lasttruelabel,0
+    .endw
+
+    .if truelabel
+        strlen(esi)
+        add esi,eax
+        strcat(strcat(GetLabelStr(truelabel, esi), LABELQUAL), &EOLSTR)
+        mov [edi].hll_opnd.lastjmp,0
+    .endif
+    mov eax,NOT_ERROR
     ret
 
 GetAndExpression endp
 
 ; operator ||, which has the lowest precedence, is handled here
 
-GetExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr SINT, tokenarray:ptr asmtok,
-    ilabel:SINT, is_true:UINT, buffer:LPSTR, hllop:ptr hll_opnd
+GetExpression proc private uses esi edi ebx hll:hll_t, i:ptr int_t, tokenarray:tok_t,
+    ilabel:int_t, is_true:uint_t, buffer:string_t, hllop:ptr hll_opnd
 
-  local truelabel:SINT, nlabel:SINT, olabel:SINT, buff[16]:SBYTE
+  local truelabel:int_t, nlabel:int_t, olabel:int_t, buff[16]:char_t
 
     mov esi,buffer
     mov edi,hllop
@@ -861,15 +777,13 @@ GetExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr SINT, tokena
 
     .while 1
 
-        GetAndExpression( hll, i, tokenarray, ilabel, is_true, esi, edi )
-        cmp eax,ERROR
-        je  toend
+        .return .if GetAndExpression(hll, i, tokenarray, ilabel, is_true, esi, edi) == ERROR
 
         mov ebx,i
         mov eax,[ebx]
         shl eax,4
         add eax,tokenarray
-        .break .if GetCOp( eax ) != COP_OR
+        .break .if GetCOp(eax) != COP_OR
         ;
         ; the generated code of last simple expression has to be modified
         ; 1. the last jump must be inverted
@@ -930,22 +844,20 @@ GetExpression proc private uses esi edi ebx hll:ptr hll_item, i:ptr SINT, tokena
         mov ebx,[edi].hll_opnd.lastjmp
         .if ebx && [edi].hll_opnd.lasttruelabel
 
-            ReplaceLabel( esi, [edi].hll_opnd.lasttruelabel, truelabel )
-            strchr( ebx, EOLCHAR )
+            ReplaceLabel(esi, [edi].hll_opnd.lasttruelabel, truelabel)
+            strchr(ebx, EOLCHAR)
             mov BYTE PTR [eax+1],0
         .endif
 
-        strlen( esi )
+        strlen(esi)
         add esi,eax
-        strcat( strcat( GetLabelStr( truelabel, esi ), LABELQUAL ), &EOLSTR )
+        strcat( strcat(GetLabelStr( truelabel, esi), LABELQUAL), &EOLSTR)
         mov eax,truelabel
         mov [edi].hll_opnd.lasttruelabel,eax
     .endif
-
     mov eax,NOT_ERROR
-
-toend:
     ret
+
 GetExpression endp
 
 ;
@@ -965,9 +877,9 @@ GetExpression endp
 ;   .CONT .IF: TRUE
 ;
 
-    assume ebx:ptr asmtok
+    assume ebx:tok_t
 
-ExpandCStrings proc uses ebx tokenarray:PTR asmtok
+ExpandCStrings proc uses ebx tokenarray:tok_t
 
     xor eax,eax
     .return .if ( ModuleInfo.strict_masm_compat == 1 )
@@ -1035,83 +947,75 @@ ExpandCStrings proc uses ebx tokenarray:PTR asmtok
 
 ExpandCStrings endp
 
-GetProc proc private token:ptr asmtok
+GetProc proc private token:tok_t
 
-    .repeat
-        mov edx,token
-        .if [edx].asmtok.token == T_REG
-            GetStdAssume( GetRegNo( [edx].asmtok.tokval ) )
-        .else
-            SymFind( [edx].asmtok.string_ptr )
-        .endif
+    mov edx,token
+    .if [edx].asmtok.token == T_REG
+        GetStdAssume(GetRegNo([edx].asmtok.tokval))
+    .else
+        SymFind([edx].asmtok.string_ptr)
+    .endif
 
-        .if !eax
+    .if !eax
 
-            asmerr( 2190 )
-            xor eax,eax
-            .break
-        .endif
+        asmerr(2190)
+        .return 0
+    .endif
+
+    ;
+    ; the most simple case: symbol is a PROC
+    ;
+    .return .if [eax].asym.flag & SFL_ISPROC
+
+    mov ecx,[eax].asym.target_type
+    mov dl,[eax].asym.mem_type
+    .return ecx .if dl == MT_PTR && ecx && [ecx].asym.flag & SFL_ISPROC
+
+    .if dl == MT_PTR && ecx && [ecx].asym.mem_type == MT_PROC
+
+        mov eax,[eax].asym.target_type
+        jmp isfnproto
+    .endif
+
+    mov ecx,[eax].asym.type
+    .if dl == MT_TYPE && ( [ecx].asym.mem_type == MT_PTR || [ecx].asym.mem_type == MT_PROC )
         ;
-        ; the most simple case: symbol is a PROC
+        ; second case: symbol is a (function?) pointer
         ;
-        .break .if [eax].asym.flag & SFL_ISPROC
-
-        mov ecx,[eax].asym.target_type
-        mov dl,[eax].asym.mem_type
-        .if dl == MT_PTR && ecx && [ecx].asym.flag & SFL_ISPROC
-
-            mov eax,ecx
-            .break
+        mov eax,ecx
+        .if [eax].asym.mem_type != MT_PROC
+            jmp isfnptr
         .endif
+    .endif
 
-        .if dl == MT_PTR && ecx && [ecx].asym.mem_type == MT_PROC
-
-            mov eax,[eax].asym.target_type
-            jmp isfnproto
-        .endif
-
-        mov ecx,[eax].asym.type
-        .if dl == MT_TYPE && ( [ecx].asym.mem_type == MT_PTR || [ecx].asym.mem_type == MT_PROC )
-            ;
-            ; second case: symbol is a (function?) pointer
-            ;
-            mov eax,ecx
-            .if [eax].asym.mem_type != MT_PROC
-                jmp isfnptr
-            .endif
-        .endif
-
-        isfnproto:
+isfnproto:
         ;
         ; pointer target must be a PROTO typedef
         ;
-        .if [eax].asym.mem_type != MT_PROC
+    .if [eax].asym.mem_type != MT_PROC
 
-            asmerr( 2190 )
-            xor eax,eax
-            .break
-        .endif
+        asmerr(2190)
+        .return 0
+    .endif
 
-        isfnptr:
+isfnptr:
         ;
         ; get the pointer target
         ;
-        mov eax,[eax].asym.target_type
-        .if !eax
+    mov eax,[eax].asym.target_type
+    .if !eax
 
-            asmerr( 2190 )
-            xor eax,eax
-            .break
-        .endif
-    .until  1
+        asmerr(2190)
+        xor eax,eax
+    .endif
     ret
 
 GetProc endp
 
-StripSource proc private uses esi edi ebx i:UINT, e:UINT, tokenarray:ptr asmtok
+StripSource proc private uses esi edi ebx i:uint_t, e:uint_t, tokenarray:tok_t
 
-  local sym:ptr dsym, info:ptr proc_info, curr:ptr asym
-  local proc_id:ptr asmtok, parg_id:SINT, b[MAX_LINE_LEN]:SBYTE
+  local sym:dsym_t, info:proc_t, curr:asym_t
+  local proc_id:tok_t, parg_id:int_t, b[MAX_LINE_LEN]:char_t
   local opnd:expr, bracket:int_t
 
     xor eax,eax
@@ -1365,17 +1269,17 @@ endif
     ret
 StripSource endp
 
-LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:ptr asmtok
+LKRenderHllProc proc private uses esi edi ebx dst:string_t, i:uint_t, tokenarray:tok_t
 
-  local br_count:SINT
-  local static_struct:SINT
-  local sqbrend:ptr asmtok
-  local sym:ptr asym
-  local method:ptr asym
-  local comptr:LPSTR
+  local br_count:int_t
+  local static_struct:int_t
+  local sqbrend:tok_t
+  local sym:asym_t
+  local method:asym_t
+  local comptr:string_t
   local opnd:expr
-  local ClassVtbl[128]:SBYTE
-  local b[MAX_LINE_LEN]:SBYTE
+  local ClassVtbl[128]:char_t
+  local b[MAX_LINE_LEN]:char_t
 
     lea esi,b
     mov edi,i
@@ -1419,8 +1323,7 @@ LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:ptr 
                 LKRenderHllProc( dst, edi, tokenarray )
                 pop edx
                 pop ecx
-                cmp eax,ERROR
-                je  toend
+                .return .if eax == ERROR
                 mov eax,ecx
             .endif
         .endf
@@ -1603,7 +1506,7 @@ LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:ptr 
 
     mov edi,i
     .if ( !comptr )
-        strcat( esi, [ebx].string_ptr )
+        strcat(esi, [ebx].string_ptr)
     .endif
 
     inc edi
@@ -1615,21 +1518,21 @@ LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:ptr 
         ;
         .repeat
             .if ( !comptr )
-                strcat( esi, [ebx].string_ptr )
+                strcat(esi, [ebx].string_ptr)
             .endif
             add ebx,16
             inc edi
             lea eax,[ebx+16]
         .until eax >= sqbrend
         .if ( !comptr )
-            strcat( esi, [ebx].string_ptr )
+            strcat(esi, [ebx].string_ptr)
         .endif
         add ebx,16
         inc edi
         .if [ebx+32].token == T_DOT
             .if ( !comptr )
-                strcat( esi, [ebx].string_ptr )
-                strcat( esi, [ebx+16].string_ptr )
+                strcat(esi, [ebx].string_ptr)
+                strcat(esi, [ebx+16].string_ptr)
             .endif
             add ebx,32
             add edi,2
@@ -1640,8 +1543,8 @@ LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:ptr 
         ;
         ; invoke p.x(...)
         ;
-        strcat( esi, [ebx].string_ptr )
-        strcat( esi, [ebx+16].string_ptr )
+        strcat(esi, [ebx].string_ptr)
+        strcat(esi, [ebx+16].string_ptr)
         add ebx,32
         add edi,2
     .endif
@@ -1654,14 +1557,14 @@ LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:ptr 
 
         .if [ebx].token != T_CL_BRACKET
 
-            strcat( esi, ", " )
+            strcat(esi, ", ")
 
             .if comptr
                 .if static_struct
-                    strcat( esi, "addr " )
+                    strcat(esi, "addr ")
                 .endif
-                strcat( esi, comptr )
-                strcat( esi, "," )
+                strcat(esi, comptr)
+                strcat(esi, ",")
             .endif
 
             .while 1
@@ -1675,9 +1578,7 @@ LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:ptr 
 
                 .if [ebx].hll_flags & T_HLL_PROC
 
-                    LKRenderHllProc( dst, edi, tokenarray )
-                    cmp eax,ERROR
-                    je  toend
+                    .return .if LKRenderHllProc(dst, edi, tokenarray) == ERROR
                 .endif
                 movzx eax,[ebx].token
                 movzx ecx,[ebx-16].token
@@ -1714,11 +1615,7 @@ LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:ptr 
             strcat( esi, comptr )
         .endif
 
-        .if br_count || [ebx].token != T_CL_BRACKET
-
-            mov eax,ERROR
-            jmp toend
-        .endif
+        .return ERROR .if br_count || [ebx].token != T_CL_BRACKET
         add edi,1
     .endif
 
@@ -1750,18 +1647,17 @@ LKRenderHllProc proc private uses esi edi ebx dst:LPSTR, i:UINT, tokenarray:ptr 
 
     mov eax,dst
     .if BYTE PTR [eax] != 0
-
-        strcat( eax, &EOLSTR )
+        strcat(eax, &EOLSTR)
     .endif
-    strcat( eax, esi )
-    StripSource( i, edi, tokenarray )
-toend:
+    strcat(eax, esi)
+    StripSource(i, edi, tokenarray)
     ret
+
 LKRenderHllProc endp
 
     assume ebx: NOTHING
 
-RenderHllProc proc private uses esi edi dst:LPSTR,i:UINT,tokenarray:ptr asmtok
+RenderHllProc proc private uses esi edi dst:string_t, i:uint_t, tokenarray:tok_t
 
   local oldstat:input_status
 
@@ -1782,7 +1678,7 @@ RenderHllProc endp
 ; v2.11: local line buffer removed; src pointer has become a parameter.
 ;
 
-QueueTestLines proc uses esi edi src:LPSTR
+QueueTestLines proc uses esi edi src:string_t
 
     mov esi,src
 
@@ -1827,9 +1723,9 @@ endif
 
 QueueTestLines endp
 
-ExpandHllProc proc uses esi edi dst:LPSTR, i:SINT, tokenarray:PTR asmtok
+ExpandHllProc proc uses esi edi dst:string_t, i:int_t, tokenarray:tok_t
 
-  local rc:SINT
+  local rc:int_t
 
     mov rc,NOT_ERROR
     mov eax,dst
@@ -1859,9 +1755,9 @@ ExpandHllProc proc uses esi edi dst:LPSTR, i:SINT, tokenarray:PTR asmtok
 
 ExpandHllProc endp
 
-ExpandHllProcEx proc uses esi edi buffer:LPSTR, i:SINT, tokenarray:PTR asmtok
+ExpandHllProcEx proc uses esi edi buffer:string_t, i:int_t, tokenarray:tok_t
 
-  local rc:SINT
+  local rc:int_t
 
     mov rc,ExpandHllProc(buffer, i, tokenarray)
 
@@ -1894,15 +1790,10 @@ ExpandHllProcEx proc uses esi edi buffer:LPSTR, i:SINT, tokenarray:PTR asmtok
 
 ExpandHllProcEx endp
 
-EvaluateHllExpression proc uses esi edi ebx,
-        hll:        ptr hll_item,
-        i:          ptr SINT,
-        tokenarray: ptr asmtok,
-        ilabel:     SDWORD,
-        is_true:    SINT,
-        buffer:     LPSTR
-local   hllop:      hll_opnd,
-        b[MAX_LINE_LEN]:SBYTE
+EvaluateHllExpression proc uses esi edi ebx hll:hll_t, i:ptr int_t, tokenarray:tok_t,
+            ilabel:int_t, is_true:int_t, buffer:string_t
+
+  local hllop:hll_opnd, b[MAX_LINE_LEN]:char_t
 
     mov esi,i
     mov ebx,tokenarray
@@ -1933,8 +1824,7 @@ local   hllop:      hll_opnd,
                     or [eax].hll_item.flags,HLLF_DELAYED
                 .endif
 
-                mov eax,NOT_ERROR
-                jmp toend
+                .return NOT_ERROR
             .endif
             add edi,1
         .endw
@@ -1953,11 +1843,7 @@ local   hllop:      hll_opnd,
             shl eax,4
             add ebx,eax
 
-            .if [ebx].asmtok.token != T_FINAL
-
-                asmerr( 2154 )
-                jmp toend
-            .endif
+            .return asmerr(2154) .if [ebx].asmtok.token != T_FINAL
 
             mov eax,hll
             mov eax,[eax].hll_item.flags
@@ -2092,36 +1978,31 @@ endif
             mov eax,NOT_ERROR
         .endif
     .endif
-toend:
     ret
 
 EvaluateHllExpression endp
 
-ExpandHllExpression proc uses esi edi ebx,
-        hll:        PTR hll_item,
-        i:          PTR SINT,
-        tokenarray: PTR asmtok,
-        ilabel:     SINT,
-        is_true:    SINT,
-        buffer:     LPSTR
-local   rc:         DWORD,
-        oldstat:    input_status,
-        delayed:    BYTE
+ExpandHllExpression proc uses esi edi ebx hll:hll_t, i:ptr int_t, tokenarray:tok_t,
+        ilabel:int_t, is_true:int_t, buffer:string_t
+
+  local rc:DWORD,
+        oldstat:input_status,
+        delayed:BYTE
 
     mov rc,NOT_ERROR
     mov esi,hll
     mov ebx,tokenarray
     mov edi,buffer
 
-    PushInputStatus( &oldstat )
+    PushInputStatus(&oldstat)
 
     .if [esi].hll_item.flags & HLLF_WHILE
 
         mov edi,[esi].hll_item.condlines
     .endif
 
-    strcpy( ModuleInfo.currsource, edi )
-    Tokenize( ModuleInfo.currsource, 0, ebx, TOK_DEFAULT )
+    strcpy(ModuleInfo.currsource, edi)
+    Tokenize(ModuleInfo.currsource, 0, ebx, TOK_DEFAULT)
     mov ModuleInfo.token_count,eax
 
     .if Parse_Pass == PASS_1
@@ -2136,8 +2017,7 @@ local   rc:         DWORD,
             mov NoLineStore,1
             ExpandLine( ModuleInfo.currsource, ebx )
             mov NoLineStore,0
-            cmp eax,NOT_ERROR
-            jne toend
+            .return .if eax != NOT_ERROR
         .endif
         and [esi].hll_item.flags,not HLLF_WHILE
         EvaluateHllExpression( hll, i, ebx, ilabel, is_true, buffer )
@@ -2172,7 +2052,6 @@ local   rc:         DWORD,
     mov eax,hll
     and [eax].hll_item.flags,not HLLF_EXPRESSION
     mov eax,rc
-toend:
     ret
 ExpandHllExpression endp
 
@@ -2253,9 +2132,9 @@ CheckCXZLines proc private uses esi edi ebx p
 
 CheckCXZLines endp
 
-RenderUntilXX proc private uses edi hll:PTR hll_item, cmd:UINT
+RenderUntilXX proc private uses edi hll:hll_t, cmd:uint_t
 
-  local buffer[32]:SBYTE
+  local buffer[32]:char_t
 
     mov eax,cmd
     mov ecx,T_CX - T_AX
@@ -2280,7 +2159,7 @@ RenderUntilXX endp
 
 GetJumpString proc private uses edx ecx cmd
 
-  local buffer[32]:SBYTE
+  local buffer[32]:char_t
 
     option switch:table
 
@@ -2383,17 +2262,17 @@ GetJumpString proc private uses edx ecx cmd
 
 GetJumpString endp
 
-    assume  ebx: ptr asmtok
-    assume  esi: ptr hll_item
+    assume  ebx: tok_t
+    assume  esi: hll_t
 
 ; .IF, .WHILE, .SWITCH or .REPEAT directive
 
-HllStartDir proc uses esi edi ebx i:SINT, tokenarray:ptr asmtok
+HllStartDir proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
-local   rc:         SINT,
-        cmd:        UINT,
-        buff[16]:   SBYTE,
-        buffer[MAX_LINE_LEN]:SBYTE
+local   rc:         int_t,
+        cmd:        uint_t,
+        buff[16]:   char_t,
+        buffer[MAX_LINE_LEN]:char_t
 
     mov rc,NOT_ERROR
     mov ebx,tokenarray
@@ -2666,17 +2545,13 @@ HllStartDir endp
 ; .ENDIF, .ENDW, .UNTIL and .UNTILCXZ directives.
 ; These directives end a .IF, .WHILE or .REPEAT block.
 ;
-HllEndDir proc uses esi edi ebx i:SINT, tokenarray:PTR asmtok
+HllEndDir proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
-  local rc:SINT, cmd:SINT, buffer[MAX_LINE_LEN]:SBYTE
+  local rc:int_t, cmd:int_t, buffer[MAX_LINE_LEN]:char_t
 
     mov esi,ModuleInfo.HllStack
 
-    .if !esi
-
-        asmerr( 1011 )
-        jmp toend
-    .endif
+    .return asmerr(1011) .if !esi
 
     mov eax,[esi].next
     mov ecx,ModuleInfo.HllFree
@@ -2695,11 +2570,8 @@ HllEndDir proc uses esi edi ebx i:SINT, tokenarray:PTR asmtok
     .switch eax
 
       .case T_DOT_ENDIF
-        .if ecx != HLL_IF
 
-            asmerr( 1011 )
-            jmp toend
-        .endif
+        .return asmerr(1011) .if ecx != HLL_IF
         inc i
         ;
         ; if a test label isn't created yet, create it
@@ -2713,11 +2585,7 @@ HllEndDir proc uses esi edi ebx i:SINT, tokenarray:PTR asmtok
 
       .case T_DOT_ENDW
 
-        .if ecx != HLL_WHILE
-
-            asmerr( 1011 )
-            jmp toend
-        .endif
+        .return asmerr(1011) .if ecx != HLL_WHILE
         ;
         ; create test label
         ;
@@ -2729,23 +2597,16 @@ HllEndDir proc uses esi edi ebx i:SINT, tokenarray:PTR asmtok
         .endif
 
         inc i
-
         .if [esi].flags & HLLF_EXPRESSION
-
-            ExpandHllExpression(
-                esi, &i, tokenarray, LSTART, 1, edi )
+            ExpandHllExpression(esi, &i, tokenarray, LSTART, 1, edi)
         .else
-            QueueTestLines( [esi].condlines )
+            QueueTestLines([esi].condlines)
         .endif
         .endc
 
       .case T_DOT_UNTILCXZ
 
-        .if ecx != HLL_REPEAT
-
-            asmerr( 1010, [ebx+edx].string_ptr )
-            jmp toend
-        .endif
+        .return asmerr(1010, [ebx+edx].string_ptr) .if ecx != HLL_REPEAT
 
         inc i
         lea ebx,[ebx+edx+16]
@@ -2814,11 +2675,7 @@ HllEndDir proc uses esi edi ebx i:SINT, tokenarray:PTR asmtok
       .case T_DOT_UNTILA .. T_DOT_UNTILSD
       .case T_DOT_UNTIL
 
-        .if ecx != HLL_REPEAT
-
-            asmerr( 1010, [ebx+edx].string_ptr )
-            jmp toend
-        .endif
+        .return asmerr(1010, [ebx+edx].string_ptr) .if ecx != HLL_REPEAT
 
         inc i
         lea ebx,[ebx+edx+16]
@@ -2906,12 +2763,12 @@ HllEndDir proc uses esi edi ebx i:SINT, tokenarray:PTR asmtok
         RunLineQueue()
     .endif
     mov eax,rc
-toend:
     ret
+
 HllEndDir endp
 
-HllContinueIf proc uses esi edi ebx hll:ptr hll_item, i:ptr int_t, tokenarray:ptr asmtok,
-    labelid:int_t, hll1:ptr hll_item, is_true:int_t
+HllContinueIf proc uses esi edi ebx hll:hll_t, i:ptr int_t, tokenarray:tok_t,
+    labelid:int_t, hll1:hll_t, is_true:int_t
 
   local rc:int_t, buff[16]:char_t
   local buffer[256]:char_t
@@ -3033,183 +2890,179 @@ HllContinueIf endp
 ;    - jump to test / exit label of innermost .WHILE/.REPEAT block
 ;
 
-HllExitDir proc USES esi edi ebx i:int_t, tokenarray:ptr asmtok
+HllExitDir proc USES esi edi ebx i:int_t, tokenarray:tok_t
 
-  local rc: SINT,
-        cont0:  SINT,
-        cmd:    SINT,
-        buff    [16]:SBYTE,
-        buffer  [MAX_LINE_LEN]:SBYTE,
-        hll:    ptr hll_item
+  local rc:     int_t,
+        cont0:  int_t,
+        cmd:    int_t,
+        buff    [16]:char_t,
+        buffer  [MAX_LINE_LEN]:char_t,
+        hll:    hll_t
 
     mov esi,ModuleInfo.HllStack
     mov hll,esi
 
-    .repeat
+    .return asmerr(1011) .if (esi == 0)
+    ExpandCStrings(tokenarray)
 
-        hllexit( esi == 0, 1011 )
+    lea edi,buffer
+    mov rc,NOT_ERROR
+    mov ebx,i
+    shl ebx,4
+    add ebx,tokenarray
+    mov eax,[ebx].tokval
+    mov cmd,eax
+    xor ecx,ecx     ; exit level 0,1,2,3
+    mov cont0,ecx
 
-        ExpandCStrings( tokenarray )
+    .switch eax
 
-        lea edi,buffer
-        mov rc,NOT_ERROR
-        mov ebx,i
-        shl ebx,4
-        add ebx,tokenarray
-        mov eax,[ebx].tokval
-        mov cmd,eax
-        xor ecx,ecx     ; exit level 0,1,2,3
-        mov cont0,ecx
+      .case T_DOT_ELSEIF
+        or [esi].flags,HLLF_ELSEIF
+      .case T_DOT_ELSE
 
-        .switch eax
+        .return asmerr(1010, [ebx].string_ptr) .if ( [esi].cmd != HLL_IF )
+        ;
+        ; v2.08: check for multiple ELSE clauses
+        ;
+        .return asmerr(2142) .if ( [esi].flags & HLLF_ELSEOCCUR )
 
-          .case T_DOT_ELSEIF
-            or [esi].flags,HLLF_ELSEIF
-          .case T_DOT_ELSE
+        push eax
+        ;
+        ; the exit label is only needed if an .ELSE branch exists.
+        ; That's why it is created delayed.
+        ;
+        .if [esi].labels[LEXIT*4] == 0
 
-            hllexit( [esi].cmd !!= HLL_IF, 1010, [ebx].string_ptr )
+            mov [esi].labels[LEXIT*4],GetHllLabel()
+        .endif
+        AddLineQueueX("jmp %s", GetLabelStr([esi].labels[LEXIT*4], edi))
+
+        .if ( [esi].labels[LTEST*4] > 0 )
+
+            AddLineQueueX("%s%s", GetLabelStr([esi].labels[LTEST*4], edi), LABELQUAL)
+            mov [esi].labels[LTEST*4],0
+        .endif
+
+        inc i
+        pop eax
+        .if eax == T_DOT_ELSEIF
             ;
-            ; v2.08: check for multiple ELSE clauses
+            ; create new labels[LTEST] label
             ;
-            hllexit( [esi].flags & HLLF_ELSEOCCUR, 2142 )
+            mov [esi].labels[LTEST*4],GetHllLabel()
+            EvaluateHllExpression( esi, &i, tokenarray, LTEST, 0, edi )
+            mov rc,eax
 
-            push    eax
-            ;
-            ; the exit label is only needed if an .ELSE branch exists.
-            ; That's why it is created delayed.
-            ;
+            .if eax == NOT_ERROR
+
+                .if [esi].flags & HLLF_EXPRESSION
+
+                    ExpandHllExpression( esi, &i, tokenarray, LTEST, 0, edi )
+                    mov eax,ModuleInfo.token_count
+                    mov i,eax
+                .else
+                    QueueTestLines( edi )
+                .endif
+            .endif
+        .else
+            or [esi].flags,HLLF_ELSEOCCUR
+        .endif
+        .endc
+
+      .case T_DOT_BREAK
+      .case T_DOT_CONTINUE
+
+        .if [ebx+16].token == T_OP_BRACKET && [ebx+16*3].token == T_CL_BRACKET
+
+            .if cmd == T_DOT_CONTINUE
+
+                mov eax,[ebx+32].string_ptr
+                .if byte ptr [eax] == '0'
+
+                    mov cont0,1
+                .endif
+            .endif
+
+            mov ecx,atol([ebx+32].string_ptr)
+            add i,3
+            add ebx,16*3
+            mov eax,cmd
+
+        .endif
+
+        .for ( : esi && ( [esi].cmd == HLL_IF || [esi].cmd == HLL_SWITCH ) : esi = [esi].next )
+
+        .endf
+
+        .while ( esi && ecx )
+            .for ( esi = [esi].next : esi && ( [esi].cmd == HLL_IF || [esi].cmd == HLL_SWITCH ),
+                 : esi = [esi].next )
+            .endf
+            dec ecx
+        .endw
+
+        .return asmerr(1011) .if ( esi == 0 )
+        ;
+        ; v2.11: create 'exit' and 'test' labels delayed.
+        ;
+        .if eax == T_DOT_BREAK
+
             .if [esi].labels[LEXIT*4] == 0
 
                 mov [esi].labels[LEXIT*4],GetHllLabel()
             .endif
-            AddLineQueueX( "jmp %s", GetLabelStr( [esi].labels[LEXIT*4], edi ) )
+            mov ecx,LEXIT
+        .else
+            ;
+            ; 'test' is not created for .WHILE loops here; because
+            ; if it doesn't exist, there's no condition to test.
+            ;
+            .if [esi].cmd == HLL_REPEAT && [esi].labels[LTEST*4] == 0
 
-            .if [esi].labels[LTEST*4] > 0
-
-                AddLineQueueX( "%s%s", GetLabelStr( [esi].labels[LTEST*4], edi ), LABELQUAL )
-                mov [esi].labels[LTEST*4],0
-            .endif
-
-            inc i
-            pop eax
-            .if eax == T_DOT_ELSEIF
-                ;
-                ; create new labels[LTEST] label
-                ;
                 mov [esi].labels[LTEST*4],GetHllLabel()
-                EvaluateHllExpression( esi, &i, tokenarray, LTEST, 0, edi )
-                mov rc,eax
-
-                .if eax == NOT_ERROR
-
-                    .if [esi].flags & HLLF_EXPRESSION
-
-                        ExpandHllExpression( esi, &i, tokenarray, LTEST, 0, edi )
-                        mov eax,ModuleInfo.token_count
-                        mov i,eax
-                    .else
-                        QueueTestLines( edi )
-                    .endif
-                .endif
-            .else
-                or [esi].flags,HLLF_ELSEOCCUR
-            .endif
-            .endc
-
-          .case T_DOT_BREAK
-          .case T_DOT_CONTINUE
-
-            .if [ebx+16].token == T_OP_BRACKET && [ebx+16*3].token == T_CL_BRACKET
-
-                .if cmd == T_DOT_CONTINUE
-
-                    mov eax,[ebx+32].string_ptr
-                    .if byte ptr [eax] == '0'
-
-                        mov cont0,1
-                    .endif
-                .endif
-
-                mov ecx,atol([ebx+32].string_ptr)
-                add i,3
-                add ebx,16*3
-                mov eax,cmd
-
             .endif
 
-            .for ( : esi && ( [esi].cmd == HLL_IF || [esi].cmd == HLL_SWITCH ) : esi = [esi].next )
-            .endf
+            mov ecx,LTEST
+            .if cont0 == 1
 
-            .while ( esi && ecx )
-                .for ( esi = [esi].next : esi && ( [esi].cmd == HLL_IF || [esi].cmd == HLL_SWITCH ),
-                     : esi = [esi].next )
-                .endf
-                dec ecx
-            .endw
+                mov ecx,LSTART
+            .elseif [esi].labels[LTEST*4] == 0
 
-            hllexit( esi == 0, 1011 )
-            ;
-            ; v2.11: create 'exit' and 'test' labels delayed.
-            ;
-            .if eax == T_DOT_BREAK
-
-                .if [esi].labels[LEXIT*4] == 0
-
-                    mov [esi].labels[LEXIT*4],GetHllLabel()
-                .endif
-                mov ecx,LEXIT
-            .else
-                ;
-                ; 'test' is not created for .WHILE loops here; because
-                ; if it doesn't exist, there's no condition to test.
-                ;
-                .if [esi].cmd == HLL_REPEAT && [esi].labels[LTEST*4] == 0
-
-                    mov [esi].labels[LTEST*4],GetHllLabel()
-                .endif
-
-                mov ecx,LTEST
-                .if cont0 == 1
-
-                    mov ecx,LSTART
-                .elseif [esi].labels[LTEST*4] == 0
-
-                    mov ecx,LSTART
-                .endif
+                mov ecx,LSTART
             .endif
-            ;
-            ; .BREAK .IF ... or .CONTINUE .IF ?
-            ;
-            inc i
-            add ebx,16
-            mov rc,HllContinueIf(esi, &i, tokenarray, ecx, hll, 1)
-            .endc
-        .endsw
-
-        mov ebx,i
-        shl ebx,4
-        add ebx,tokenarray
-
-        .if [ebx].token != T_FINAL && rc == NOT_ERROR
-
-            asmerr( 2008, [ebx].tokpos )
-            mov rc,ERROR
-        .endif
-
-        .if ModuleInfo.list
-
-            LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
         .endif
         ;
-        ; v2.11: always run line-queue if it's not empty.
+        ; .BREAK .IF ... or .CONTINUE .IF ?
         ;
-        .if ModuleInfo.line_queue.head
+        inc i
+        add ebx,16
+        mov rc,HllContinueIf(esi, &i, tokenarray, ecx, hll, 1)
+        .endc
+    .endsw
 
-            RunLineQueue()
-        .endif
+    mov ebx,i
+    shl ebx,4
+    add ebx,tokenarray
 
-        mov eax,rc
-    .until 1
+    .if [ebx].token != T_FINAL && rc == NOT_ERROR
+
+        asmerr( 2008, [ebx].tokpos )
+        mov rc,ERROR
+    .endif
+
+    .if ModuleInfo.list
+
+        LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
+    .endif
+    ;
+    ; v2.11: always run line-queue if it's not empty.
+    ;
+    .if ModuleInfo.line_queue.head
+
+        RunLineQueue()
+    .endif
+    mov eax,rc
     ret
 HllExitDir endp
 

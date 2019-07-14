@@ -44,7 +44,7 @@ T_RADIOBUTTON   equ 2
 T_CHECKBOX      equ 3
 T_XCELL         equ 4
 T_EDIT          equ 5
-T_MENUS         equ 6
+T_MENU          equ 6
 T_XHTML         equ 7
 T_MOUSE         equ 8
 T_SCROLLUP      equ 9
@@ -185,33 +185,14 @@ class_t         typedef ptr APPINFO
     Send            proc :uint_t, :size_t, :ptr
     Post            proc :uint_t, :size_t, :ptr
     PostQuit        proc :int_t
-    Dispatch        proc :msg_t
-    Translate       proc :msg_t
+    DefWindowProc   proc :uint_t, :size_t, :ptr
 
     Child           proc :TRECT, :uint_t, :uint_t
     Window          proc
-    Focus           proc
+    PushButton      proc :TRECT, :uint_t, :string_t
+    GetFocus        proc
     SetFocus        proc :uint_t
-    KillFocus       proc
-    NextItem        proc
-    PrevItem        proc
     GetItem         proc :uint_t
-
-    PushBCreate     proc :TRECT, :uint_t, :string_t
-    PushBSet        proc
-    PushBClear      proc
-    PushBSetShade   proc
-    PushBClrShade   proc
-
-    Inside          proc :COORD
-
-    OnLButtonDown   proc :uint_t, :size_t, :ptr
-    OnMouseMove     proc :uint_t, :size_t, :ptr
-    OnLButtonUp     proc :uint_t, :size_t, :ptr
-    OnSetFocus      proc
-    OnKillFocus     proc
-    OnChar          proc :uint_t, :size_t, :ptr
-    OnSysChar       proc :uint_t, :size_t, :ptr
 
     MoveConsole     proc x:int_t, y:int_t
     SetConsole      proc x:int_t, y:int_t
@@ -219,7 +200,5 @@ class_t         typedef ptr APPINFO
     ConsoleSize     proc
 
     .ends
-
-TEditColor          proto :window_t
 
 endif

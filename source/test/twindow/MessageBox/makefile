@@ -7,3 +7,4 @@ test.exe:
 
 clean:
     del *.obj
+    del *.exe

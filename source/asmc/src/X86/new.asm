@@ -40,6 +40,7 @@ AddLocalDir proc uses esi edi ebx i:int_t, tokenarray:tok_t
   local name                :string_t,
         type                :string_t,
         sym                 :dsym_t,
+        creat               :int_t,
         ti                  :qualified_type,
         opndx               :expr,
         constructor[128]    :sbyte ; class_class
@@ -68,22 +69,30 @@ AddLocalDir proc uses esi edi ebx i:int_t, tokenarray:tok_t
         .endif
 
         mov ti.Ofssize,ModuleInfo.Ofssize
-
+        mov creat,0
         .if !SymFind(name)
+
             SymLCreate(name)
+            mov creat,1
         .endif
-        .return ERROR .if (eax == 0) ; if it failed, an error msg has been written already
+        .return ERROR .if !eax ; if it failed, an error msg has been written already
 
         mov sym,eax
-        mov [eax].asym.state,SYM_STACK
-        or  [eax].asym.flag,SFL_ISDEFINED
-        mov [eax].asym.total_length,1
+        .if creat
+            mov [eax].asym.state,SYM_STACK
+            or  [eax].asym.flag,SFL_ISDEFINED
+            mov [eax].asym.total_length,1
+        .endif
 
         .if (ti.Ofssize == USE16)
-            mov [eax].dsym.sym.mem_type,MT_WORD
+            .if creat
+                mov [eax].dsym.sym.mem_type,MT_WORD
+            .endif
             mov ti.size,sizeof(word)
         .else
-            mov [eax].dsym.sym.mem_type,MT_DWORD
+            .if creat
+                mov [eax].dsym.sym.mem_type,MT_DWORD
+            .endif
             mov ti.size,sizeof(dword)
         .endif
 
@@ -137,19 +146,21 @@ AddLocalDir proc uses esi edi ebx i:int_t, tokenarray:tok_t
             .endif
         .endif
 
-        mov [esi].is_ptr,ti.is_ptr
-        .if ti.is_far
-            or [esi].sint_flag,SINT_ISFAR
+        .if creat
+            mov [esi].is_ptr,ti.is_ptr
+            .if ti.is_far
+                or [esi].sint_flag,SINT_ISFAR
+            .endif
+            mov [esi].Ofssize,ti.Ofssize
+            mov [esi].ptr_memtype,ti.ptr_memtype
+            mov eax,ti.size
+            mul [esi].total_length
+            mov [esi].total_size,eax
         .endif
-        mov [esi].Ofssize,ti.Ofssize
-        mov [esi].ptr_memtype,ti.ptr_memtype
-        mov eax,ti.size
-        mul [esi].total_length
-        mov [esi].total_size,eax
 
         assume esi:nothing
 
-        .if (Parse_Pass == PASS_1)
+        .if (creat && Parse_Pass == PASS_1)
 
             mov eax,CurrProc
             mov edx,[eax].dsym.procinfo
@@ -235,7 +246,7 @@ AddLocalDir proc uses esi edi ebx i:int_t, tokenarray:tok_t
         .break .if (eax >= Token_Count)
     .endw
 
-    .if (Parse_Pass == PASS_1)
+    .if (creat && Parse_Pass == PASS_1)
         mov eax,CurrProc
         SetLocalOffsets([eax].dsym.procinfo)
     .endif

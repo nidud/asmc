@@ -1,4 +1,4 @@
-include tchar.inc
+
 include iconfig.inc
 
     .code
@@ -8,7 +8,7 @@ include iconfig.inc
 
 main proc
 
-    mov rbx, IConfig::IConfig( NULL )
+    mov rbx,.new IConfig()
 
     [rbx].Create( "Version" )
     [rcx].Create( "Base=%d.%d", 1, 0 )
@@ -21,7 +21,7 @@ main proc
     [rbx].Write ( "test.ini" )
     [rbx].Release()
 
-    mov rbx, IConfig::IConfig( NULL )
+    mov rbx,.new IConfig()
 
     [rbx].Read  ( "test.ini" )
     [rbx].Write ( "test.ini" )
@@ -32,4 +32,4 @@ main proc
 
 main endp
 
-    end _tstart
+    end

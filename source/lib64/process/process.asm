@@ -11,62 +11,63 @@ include string.inc
 include conio.inc
 include crtl.inc
 
-PUBLIC	errorlevel	; Exit Code from GetExitCodeProcess
+    public errorlevel  ; Exit Code from GetExitCodeProcess
 
-	.data
-	errorlevel dd 0
+    .data
+    errorlevel dd 0
 
-	.code
+    .code
 
-	OPTION	WIN64:3, STACKBASE:rsp
+process proc uses rsi rdi program:LPSTR, command:LPSTR, CreationFlags:DWORD
 
-process PROC USES rsi rdi program:LPSTR, command:LPSTR, CreationFlags:DWORD
+  local PI:PROCESS_INFORMATION, SINFO:STARTUPINFO, ConsoleMode:dword
 
-local	PI:PROCESS_INFORMATION,
-	SINFO:STARTUPINFO,
-	ConsoleMode:dword
+    _set_errno(0)
+    mov errorlevel,0
 
-	xor	eax,eax
-	mov	errno,eax
-	mov	errorlevel,eax
+    lea rdi,PI
+    mov rsi,rdi
+    mov ecx,sizeof(PROCESS_INFORMATION)
+    rep stosb
 
-	lea	rdi,PI
-	mov	rsi,rdi
-	mov	ecx,sizeof( PROCESS_INFORMATION )
-	rep	stosb
-	lea	rdi,SINFO
-	mov	ecx,sizeof( STARTUPINFO )
-	rep	stosb
-	lea	rdi,SINFO
-	mov	SINFO.cb,sizeof( STARTUPINFO )
+    lea rdi,SINFO
+    mov ecx,sizeof(STARTUPINFO)
+    rep stosb
 
-	SetErrorMode( OldErrorMode )
-	GetConsoleMode( hStdInput, addr ConsoleMode )
-	mov	r10d,CreationFlags
-	and	r10d,CREATE_NEW_CONSOLE or DETACHED_PROCESS
-	xor	eax,eax
-	CreateProcess( program, command, rax, rax, eax, r10d, rax, rax, rdi, rsi )
-	mov	rdi,rax
-	mov	rsi,PI.hProcess
-	_dosmaperr(GetLastError())
-	test	rdi,rdi
-	jz	error
-	test	CreationFlags,_P_NOWAIT
-	jnz	@F
-	WaitForSingleObject( rsi, INFINITE )
-	GetExitCodeProcess( rsi, addr errorlevel )
-@@:
-	CloseHandle( rsi )
-	CloseHandle( PI.hThread )
-error:
-	GetStdHandle( STD_OUTPUT_HANDLE )
-	mov	hStdOutput,rax
-	GetStdHandle( STD_INPUT_HANDLE )
-	mov	hStdInput,rax
-	SetConsoleMode( rax, ConsoleMode )
-	SetErrorMode( SEM_FAILCRITICALERRORS )
-	mov	eax,edi
-	ret
-process ENDP
+    lea rdi,SINFO
+    mov SINFO.cb,sizeof(STARTUPINFO)
 
-	END
+    SetErrorMode(OldErrorMode)
+    GetConsoleMode(hStdInput, &ConsoleMode)
+
+    mov r10d,CreationFlags
+    and r10d,CREATE_NEW_CONSOLE or DETACHED_PROCESS
+    xor eax,eax
+    mov rdi,CreateProcess(program, command, rax, rax, eax, r10d, rax, rax, rdi, rsi)
+    mov rsi,PI.hProcess
+    _dosmaperr(GetLastError())
+
+    .if rdi
+
+        .if !( CreationFlags & _P_NOWAIT )
+
+            WaitForSingleObject(rsi, INFINITE)
+            GetExitCodeProcess(rsi, &errorlevel)
+        .endif
+
+        CloseHandle(rsi)
+        CloseHandle(PI.hThread)
+    .endif
+
+
+    mov hStdOutput,GetStdHandle(STD_OUTPUT_HANDLE)
+    mov hStdInput,GetStdHandle(STD_INPUT_HANDLE)
+    SetConsoleMode(rax, ConsoleMode)
+    SetErrorMode(SEM_FAILCRITICALERRORS)
+
+    mov eax,edi
+    ret
+
+process endp
+
+    end

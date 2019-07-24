@@ -4,7 +4,7 @@ ifndef __LIBC_INC
  include libc.inc
 endif
 
-S_JMPBUF STRUC
+JMPBUF STRUC
 IFDEF _WIN64
  J_RBP	dq ?
  J_RBX	dq ?
@@ -26,9 +26,10 @@ ELSE
  J_EDX	dd ?
  J_ECX	dd ?
 ENDIF
-S_JMPBUF ENDS
+JMPBUF ENDS
+jmp_buf typedef ptr JMPBUF
 
-_setjmp PROTO __cdecl :PTR S_JMPBUF
-longjmp PROTO __cdecl :PTR S_JMPBUF, :SIZE_T
+_setjmp PROTO __cdecl :jmp_buf
+longjmp PROTO __cdecl :jmp_buf, :int_t
 
 .pragma list(pop)

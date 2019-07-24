@@ -2287,6 +2287,7 @@ int LabelMacro( struct asm_tok tokenarray[] )
 int ProcType( int, struct asm_tok[], char * );
 int PublicDirective( int, struct asm_tok[] );
 int mem2mem( unsigned, unsigned, struct asm_tok tokenarray[] );
+int NewDirective( int, struct asm_tok[] );
 
 int ParseLine( struct asm_tok tokenarray[] )
 {
@@ -2794,6 +2795,23 @@ int ParseLine( struct asm_tok tokenarray[] )
 	    }
 	    /* fall through */
 	case EXPR_EMPTY:
+	    /* added v2.30.11 - allow mov reg,.new Class() */
+	    if ( i > 1 && tokenarray[i].token == T_DIRECTIVE && tokenarray[i].tokval == T_DOT_NEW ) {
+
+		q = tokenarray[i].tokpos - tokenarray[0].tokpos;
+		buffer[q] = 0;
+		memcpy(buffer, tokenarray[0].tokpos, q);
+		if ( ModuleInfo.Ofssize == USE64 )
+		    strcat(buffer, "rax");
+		else
+		    strcat(buffer, "eax");
+		NewDirective(i, tokenarray);
+		if ( Parse_Pass > PASS_1 ) {
+		    Token_Count = Tokenize(strcpy(CurrSource, buffer), 0, tokenarray, TOK_DEFAULT);
+		    return ParseLine(tokenarray);
+		}
+		return NOT_ERROR;
+	    }
 	    if ( i == Token_Count )
 		i--;  /* v2.08: if there was a terminating comma, display it */
 	    /* fall through */

@@ -14,9 +14,9 @@ __FTToTime proc ft:LPFILETIME
   local ftime:FILETIME
   local stime:SYSTEMTIME
 
-    FileTimeToLocalFileTime( rcx, &ftime )
-    FileTimeToSystemTime( &ftime, &stime )
-    __STToTime( &stime )
+    FileTimeToLocalFileTime(rcx, &ftime)
+    FileTimeToSystemTime(&ftime, &stime)
+    __STToTime(&stime)
     ret
 
 __FTToTime endp

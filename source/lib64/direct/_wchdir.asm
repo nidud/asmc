@@ -10,8 +10,6 @@ include winbase.inc
 
     .code
 
-    option win64:nosave
-
 _wchdir proc frame directory:LPWSTR
 
   local abspath[_MAX_PATH]:wchar_t, result[4]:wchar_t

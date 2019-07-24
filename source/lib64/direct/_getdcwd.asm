@@ -12,8 +12,6 @@ include winbase.inc
 
     .code
 
-    option cstack:on
-
 _getdcwd proc uses rdi drive:SINT, buffer:LPSTR, maxlen:SINT
 
     mov rdi,alloca(r8d)
@@ -34,9 +32,8 @@ _getdcwd proc uses rdi drive:SINT, buffer:LPSTR, maxlen:SINT
         .ifnc
 
             mov _doserrno,ERROR_INVALID_DRIVE
-            mov errno,EACCES
-            xor eax,eax
-            .return
+            _set_errno(EACCES)
+            .return 0
         .endif
         ;
         ; Get the current directory string on that drive and its length
@@ -51,7 +48,7 @@ _getdcwd proc uses rdi drive:SINT, buffer:LPSTR, maxlen:SINT
     ;
     .if eax > maxlen
 
-        mov errno,ERANGE
+        _set_errno(ERANGE)
         .return 0
 
     .elseif eax
@@ -64,7 +61,6 @@ _getdcwd proc uses rdi drive:SINT, buffer:LPSTR, maxlen:SINT
             mov rcx,rax
 
         .endif
-
         strcpy(rcx, rdi)
     .endif
     ret

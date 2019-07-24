@@ -9,7 +9,7 @@ include asmc.inc
 
 warning_disable proto id:int_t
 
-extern jmpenv:S_JMPBUF
+extern jmpenv:JMPBUF
 
 print_source_nesting_structure proto
 GetCurrOffset proto

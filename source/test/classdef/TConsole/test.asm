@@ -1,34 +1,46 @@
-include tconsole.inc
+include twindow.inc
 
     .code
 
-    assume rcx: ptr tconsole
+    assume rcx:window_t
 
-main proc
+cmain proc hwnd:window_t
 
-  local cursor:CURSOR
+ local x, y
 
-    mov rcx,console
-    [rcx].cursorget(&cursor)
-    [rcx].SetMaxConsoleSize()
-    [rcx].getch()
+    movzx eax,[rcx].rc.col
+    mov x,eax
+    movzx eax,[rcx].rc.row
+    mov y,eax
+
+    [rcx].CursorGet()
+    [rcx].SetMaxConsole()
+    [rcx].MessageBox(MB_OK, "1", "SetMaxConsole()" )
+
     [rcx].MoveConsole(100, 100)
-    [rcx].SetConsoleSize(50, 8)
-    [rcx].SetConsoleAttrib(0x1B)
-    [rcx].ClearConsole()
-    [rcx].putxyf(10, 2, "tconsole::putxyf()\ntconsole::putxya()")
-    [rcx].putxya(10, 3, 18, 0x70)
-    [rcx].show()
-    [rcx].cursoroff()
-    [rcx].getch()
-    [rcx].SetConsoleAttrib(0x07)
-    [rcx].ClearConsole()
-    [rcx].show()
-    [rcx].cursorset(&cursor)
-    [rcx].SetConsoleSize(80, 25)
+
+    mov edx,x
+    mov r8d,y
+    sub edx,20
+    sub r8d,10
+    [rcx].SetConsole(edx, r8d)
+
+    [rcx].Hide()
+    [rcx].Clear(0x00F00020)
+    [rcx].PutString(10, 2, 0, 0, "tconsole::putxyf()\ntconsole::putxya()")
+    [rcx].PutChar(10, 2, 18, 0xF000)
+    [rcx].Show()
+    [rcx].CursorOff()
+    [rcx].MessageBox(MB_OK, "2", "MoveConsole(100, 100)" )
+
+    [rcx].Hide()
+    [rcx].Clear(0x00070020)
+    [rcx].Show()
+    [rcx].CursorSet()
+    [rcx].SetConsole(x, y)
     [rcx].Release()
     ret
 
-main endp
+cmain endp
 
     end

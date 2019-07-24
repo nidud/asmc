@@ -11,8 +11,6 @@ include errno.inc
 
     .code
 
-    option win64:nosave
-
 _mkdir proc frame directory:LPSTR
 
     .if !CreateDirectoryA(rcx, 0)

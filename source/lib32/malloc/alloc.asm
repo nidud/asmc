@@ -23,31 +23,31 @@ _ALIGN	equ 3
 malloc	PROC byte_count:UINT
 
 	mov	ecx,byte_count
-	add	ecx,sizeof(S_HEAP)+_GRANULARITY-1
+	add	ecx,sizeof(HEAP)+_GRANULARITY-1
 	and	ecx,-(_GRANULARITY)
 
 	mov	edx,_heap_free
 	test	edx,edx
 	jz	create_heap
 
-	cmp	[edx].S_HEAP.h_type,_FREE
-	mov	eax,[edx].S_HEAP.h_size
+	cmp	[edx].HEAP.type,_FREE
+	mov	eax,[edx].HEAP.size
 	jne	find_block
 	cmp	eax,ecx
 	jb	find_block
 
 block_found:
 
-	mov	[edx].S_HEAP.h_type,_USED
+	mov	[edx].HEAP.type,_USED
 	je	@F			; same size ?
 
-	mov	[edx].S_HEAP.h_size,ecx
+	mov	[edx].HEAP.size,ecx
 	sub	eax,ecx			; create new free block
-	mov	[edx+ecx].S_HEAP.h_size,eax
-	mov	[edx+ecx].S_HEAP.h_type,_FREE
+	mov	[edx+ecx].HEAP.size,eax
+	mov	[edx+ecx].HEAP.type,_FREE
 @@:
-	lea	eax,[edx+sizeof(S_HEAP)]; return address of memory block
-	add	edx,[edx].S_HEAP.h_size
+	lea	eax,[edx+sizeof(HEAP)]; return address of memory block
+	add	edx,[edx].HEAP.size
 	mov	_heap_free,edx
 toend:
 	ret
@@ -60,37 +60,37 @@ find_block:
 	xor	eax,eax
 lupe:
 	add	edx,eax
-	mov	eax,[edx].S_HEAP.h_size
+	mov	eax,[edx].HEAP.size
 	test	eax,eax
 	jz	last
-	cmp	[edx].S_HEAP.h_type,_FREE
+	cmp	[edx].HEAP.type,_FREE
 	jne	lupe
 	cmp	eax,ecx
 	jae	block_found
-	cmp	[edx+eax].S_HEAP.h_type,_FREE
+	cmp	[edx+eax].HEAP.type,_FREE
 	jne	lupe
 merge:
-	add	eax,[edx+eax].S_HEAP.h_size
-	mov	[edx].S_HEAP.h_size,eax
-	cmp	[edx+eax].S_HEAP.h_type,_FREE
+	add	eax,[edx+eax].HEAP.size
+	mov	[edx].HEAP.size,eax
+	cmp	[edx+eax].HEAP.type,_FREE
 	je	merge
 	cmp	eax,ecx
 	jb	lupe
 	jmp	block_found
 last:
-	mov	edx,[edx].S_HEAP.h_prev
-	mov	edx,[edx].S_HEAP.h_prev
+	mov	edx,[edx].HEAP.prev
+	mov	edx,[edx].HEAP.prev
 	test	edx,edx
 	jnz	lupe
 
 create_heap:
 	mov	eax,_amblksiz
-	add	eax,sizeof(S_HEAP)
+	add	eax,sizeof(HEAP)
 	cmp	eax,ecx
 	jae	@F
 	mov	eax,ecx
 @@:
-	add	eax,sizeof(S_HEAP)
+	add	eax,sizeof(HEAP)
 	push	eax
 	push	ecx
 	push	eax
@@ -102,27 +102,27 @@ create_heap:
 	pop	edx
 	test	eax,eax
 	jz	nomem
-	sub	edx,sizeof(S_HEAP)
-	mov	[eax].S_HEAP.h_size,edx
-	mov	[eax].S_HEAP.h_type,_FREE
-	mov	[eax].S_HEAP.h_next,0
-	mov	[eax+edx].S_HEAP.h_size,0
-	mov	[eax+edx].S_HEAP.h_type,_USED
-	mov	[eax+edx].S_HEAP.h_prev,eax
+	sub	edx,sizeof(HEAP)
+	mov	[eax].HEAP.size,edx
+	mov	[eax].HEAP.type,_FREE
+	mov	[eax].HEAP.next,0
+	mov	[eax+edx].HEAP.size,0
+	mov	[eax+edx].HEAP.type,_USED
+	mov	[eax+edx].HEAP.prev,eax
 	mov	edx,_heap_base
-	mov	[eax].S_HEAP.h_prev,edx
+	mov	[eax].HEAP.prev,edx
 	.if	edx
-		.while [edx].S_HEAP.h_next
-		    mov edx,[edx].S_HEAP.h_next
+		.while [edx].HEAP.next
+		    mov edx,[edx].HEAP.next
 		.endw
-		mov [edx].S_HEAP.h_next,eax
-		mov [eax].S_HEAP.h_prev,edx
+		mov [edx].HEAP.next,eax
+		mov [eax].HEAP.prev,edx
 	.else
 		mov _heap_base,eax
 	.endif
 	mov	_heap_free,eax
 	mov	edx,eax
-	mov	eax,[edx].S_HEAP.h_size
+	mov	eax,[edx].HEAP.size
 	cmp	eax,ecx
 	jae	block_found
 nomem:
@@ -131,52 +131,52 @@ nomem:
 	jmp	toend
 malloc	ENDP
 
-free	proc uses eax maddr:PVOID
+free	proc uses eax maddr:ptr
 	mov	eax,maddr
-	sub	eax,sizeof(S_HEAP)
+	sub	eax,sizeof(HEAP)
 	js	toend
-	cmp	[eax].S_HEAP.h_type,_ALIGN
+	cmp	[eax].HEAP.type,_ALIGN
 	jne	@F
-	mov	eax,[eax].S_HEAP.h_prev
+	mov	eax,[eax].HEAP.prev
 @@:
-	cmp	[eax].S_HEAP.h_type,_USED
+	cmp	[eax].HEAP.type,_USED
 	jne	toend
-	mov	[eax].S_HEAP.h_type,_FREE
-	mov	ecx,[eax].S_HEAP.h_size
+	mov	[eax].HEAP.type,_FREE
+	mov	ecx,[eax].HEAP.size
 @@:
-	cmp	[eax+ecx].S_HEAP.h_type,_FREE
+	cmp	[eax+ecx].HEAP.type,_FREE
 	jne	@F
-	add	ecx,[eax+ecx].S_HEAP.h_size
-	mov	[eax].S_HEAP.h_size,ecx
+	add	ecx,[eax+ecx].HEAP.size
+	mov	[eax].HEAP.size,ecx
 	jmp	@B
 @@:
 	mov	_heap_free,eax
-	cmp	[eax+ecx].S_HEAP.h_size,0
+	cmp	[eax+ecx].HEAP.size,0
 	jne	toend
-	mov	eax,[eax+ecx].S_HEAP.h_prev
-	cmp	[eax].S_HEAP.h_type,_FREE
+	mov	eax,[eax+ecx].HEAP.prev
+	cmp	[eax].HEAP.type,_FREE
 	jne	toend
-	mov	ecx,[eax].S_HEAP.h_size
+	mov	ecx,[eax].HEAP.size
 @@:
-	cmp	[eax+ecx].S_HEAP.h_type,_FREE
+	cmp	[eax+ecx].HEAP.type,_FREE
 	jne	@F
-	add	ecx,[eax+ecx].S_HEAP.h_size
-	mov	[eax].S_HEAP.h_size,ecx
+	add	ecx,[eax+ecx].HEAP.size
+	mov	[eax].HEAP.size,ecx
 	jmp	@B
 @@:
-	cmp	[eax+ecx].S_HEAP.h_size,0
+	cmp	[eax+ecx].HEAP.size,0
 	jne	toend
 	push	eax
 	;
 	; unlink the node
 	;
-	mov ecx,[eax].S_HEAP.h_prev
-	mov edx,[eax].S_HEAP.h_next
+	mov ecx,[eax].HEAP.prev
+	mov edx,[eax].HEAP.next
 	.if ecx
-	    mov [ecx].S_HEAP.h_next,edx
+	    mov [ecx].HEAP.next,edx
 	.endif
 	.if edx
-	    mov [edx].S_HEAP.h_prev,ecx
+	    mov [edx].HEAP.prev,ecx
 	.endif
 	mov edx,_heap_base
 	.if eax == edx

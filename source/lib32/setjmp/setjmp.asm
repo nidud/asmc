@@ -6,49 +6,50 @@
 
 include setjmp.inc
 
-	.code
+    .code
 
-	option stackbase:esp
+    option stackbase:esp
 
-	ASSUME	eax: PTR S_JMPBUF
+    assume eax:jmp_buf
 
-setjmp PROC C JMPBUF:PTR S_JMPBUF
-setjmp ENDP
+setjmp::
+_setjmp3::
 
-_setjmp3 PROC JMPBUF:PTR S_JMPBUF
-_setjmp3 ENDP
+_setjmp proc c buf:jmp_buf
 
-_setjmp PROC C JMPBUF:PTR S_JMPBUF
-	mov	eax,[esp+4]
-	mov	[eax].J_EBP,ebp
-	mov	[eax].J_EBX,ebx
-	mov	[eax].J_EDI,edi
-	mov	[eax].J_ESI,esi
-	mov	[eax].J_ESP,esp
-	mov	[eax].J_EDX,edx
-	mov	[eax].J_ECX,ecx
-	mov	ecx,[esp]
-	mov	[eax].J_EIP,ecx
-	mov	ecx,[eax].J_ECX
-	xor	eax,eax
-	ret
-_setjmp ENDP
+    mov eax,[esp+4]
+    mov [eax].J_EBP,ebp
+    mov [eax].J_EBX,ebx
+    mov [eax].J_EDI,edi
+    mov [eax].J_ESI,esi
+    mov [eax].J_ESP,esp
+    mov [eax].J_EDX,edx
+    mov [eax].J_ECX,ecx
+    mov ecx,[esp]
+    mov [eax].J_EIP,ecx
+    mov ecx,[eax].J_ECX
+    xor eax,eax
+    ret
 
-	ASSUME	edx: PTR S_JMPBUF
+_setjmp endp
 
-longjmp PROC C JMPBUF:PTR S_JMPBUF, retval:DWORD
-	mov	edx,[esp+4]
-	mov	eax,[esp+8]
-	mov	ebp,[edx].J_EBP
-	mov	ebx,[edx].J_EBX
-	mov	edi,[edx].J_EDI
-	mov	esi,[edx].J_ESI
-	mov	esp,[edx].J_ESP
-	mov	ecx,[edx].J_EIP
-	mov	[esp],ecx
-	mov	ecx,[edx].J_ECX
-	mov	edx,[edx].J_EDX
-	ret
-longjmp ENDP
+    assume edx:jmp_buf
 
-	END
+longjmp proc c buf:jmp_buf, retval:int_t
+
+    mov edx,[esp+4]
+    mov eax,[esp+8]
+    mov ebp,[edx].J_EBP
+    mov ebx,[edx].J_EBX
+    mov edi,[edx].J_EDI
+    mov esi,[edx].J_ESI
+    mov esp,[edx].J_ESP
+    mov ecx,[edx].J_EIP
+    mov [esp],ecx
+    mov ecx,[edx].J_ECX
+    mov edx,[edx].J_EDX
+    ret
+
+longjmp endp
+
+    end

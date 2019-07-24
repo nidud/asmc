@@ -10,8 +10,6 @@ include winbase.inc
 
     .code
 
-    option win64:nosave
-
 _wrmdir proc frame directory:LPWSTR
 
     .if RemoveDirectoryW(rcx)

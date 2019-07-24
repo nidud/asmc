@@ -14,14 +14,14 @@ __coreleft proc uses ebx
     mov ebx,_heap_base
     .while ebx
         mov edx,ebx
-        .while [edx].S_HEAP.h_size
-            add ecx,[edx].S_HEAP.h_size
-            .if [edx].S_HEAP.h_type == 0
-                add eax,[edx].S_HEAP.h_size
+        .while [edx].HEAP.size
+            add ecx,[edx].HEAP.size
+            .if [edx].HEAP.type == 0
+                add eax,[edx].HEAP.size
             .endif
-            add edx,[edx].S_HEAP.h_size
+            add edx,[edx].HEAP.size
         .endw
-        mov ebx,[ebx].S_HEAP.h_next
+        mov ebx,[ebx].HEAP.next
     .endw
     ret
 __coreleft endp

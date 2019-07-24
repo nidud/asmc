@@ -10,8 +10,6 @@ include winbase.inc
 
     .code
 
-    option win64:nosave
-
 _chdir proc directory:LPSTR
 
   local abspath[_MAX_PATH]:SBYTE, result:DWORD

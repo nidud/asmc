@@ -11,8 +11,6 @@ include winbase.inc
 
     .code
 
-    option win64:nosave
-
 _rmdir proc frame directory:LPSTR
 
     .if RemoveDirectoryA(rcx)

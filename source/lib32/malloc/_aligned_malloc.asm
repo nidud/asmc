@@ -12,7 +12,7 @@ _aligned_malloc proc dwSize:size_t, Alignment:UINT
 
     mov edx,Alignment
     mov eax,dwSize
-    lea eax,[eax+edx+sizeof(S_HEAP)]
+    lea eax,[eax+edx+sizeof(HEAP)]
 
     .if malloc(eax)
 
@@ -20,13 +20,13 @@ _aligned_malloc proc dwSize:size_t, Alignment:UINT
         dec ecx
         .if eax & ecx
 
-            lea edx,[eax-sizeof(S_HEAP)]
-            lea eax,[eax+ecx+sizeof(S_HEAP)]
+            lea edx,[eax-sizeof(HEAP)]
+            lea eax,[eax+ecx+sizeof(HEAP)]
             not ecx
             and eax,ecx
-            lea ecx,[eax-sizeof(S_HEAP)]
-            mov [ecx].S_HEAP.h_prev,edx
-            mov [ecx].S_HEAP.h_type,3
+            lea ecx,[eax-sizeof(HEAP)]
+            mov [ecx].HEAP.prev,edx
+            mov [ecx].HEAP.type,3
 
         .endif
     .endif

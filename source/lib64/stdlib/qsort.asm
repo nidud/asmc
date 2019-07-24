@@ -37,6 +37,7 @@ qsort proc uses rsi rdi rbx p:PVOID, n:SIZE_T, w:SIZE_T, compare:LPQSORTCMD
             sub rsp,0x20
 
             lea rbx,[rsi+rax]
+
             .ifsd compare(rsi, rbx) > 0
                 memxchg(rsi, rbx, w)
             .endif
@@ -46,13 +47,13 @@ qsort proc uses rsi rdi rbx p:PVOID, n:SIZE_T, w:SIZE_T, compare:LPQSORTCMD
             .ifsd compare(rbx, rdi) > 0
                 memxchg(rbx, rdi, w)
             .endif
+
             mov p,rsi
             mov n,rdi
 
             .while 1
 
-                mov rax,w
-                add p,rax
+                add p,w
                 .if p < rdi
 
                     .continue .ifsd compare(p, rbx) <= 0
@@ -60,8 +61,7 @@ qsort proc uses rsi rdi rbx p:PVOID, n:SIZE_T, w:SIZE_T, compare:LPQSORTCMD
 
                 .while 1
 
-                    mov rax,w
-                    sub n,rax
+                    sub n,w
 
                     .break .if n <= rbx
                     .break .ifsd compare(n, rbx) <= 0
@@ -78,13 +78,11 @@ qsort proc uses rsi rdi rbx p:PVOID, n:SIZE_T, w:SIZE_T, compare:LPQSORTCMD
                 .endif
             .endw
 
-            mov rax,w
-            add n,rax
+            add n,w
 
             .while 1
 
-                mov rax,w
-                sub n,rax
+                sub n,w
 
                 .break .if n <= rsi
                 .break .ifd compare(n, rbx)
@@ -142,4 +140,4 @@ qsort proc uses rsi rdi rbx p:PVOID, n:SIZE_T, w:SIZE_T, compare:LPQSORTCMD
 
 qsort endp
 
-    END
+    end

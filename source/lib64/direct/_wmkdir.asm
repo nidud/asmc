@@ -11,8 +11,6 @@ include winbase.inc
 
     .code
 
-    option win64:nosave
-
 _wmkdir proc frame directory:LPWSTR
 
     .if CreateDirectoryW(rcx, 0)

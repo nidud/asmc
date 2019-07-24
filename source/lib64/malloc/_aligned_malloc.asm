@@ -8,25 +8,23 @@ include malloc.inc
 
     .code
 
-    option win64:2
-
 _aligned_malloc proc uses rdi dwSize:size_t, Alignment:size_t
 
     mov rdi,rdx
-    lea rcx,[rcx+rdx+sizeof(S_HEAP)]
+    lea rcx,[rcx+rdx+sizeof(HEAP)]
 
     .if malloc(rcx)
 
         dec rdi
         .if rax & rdi
 
-            lea rdx,[rax-sizeof(S_HEAP)]
-            lea rax,[rax+rdi+sizeof(S_HEAP)]
+            lea rdx,[rax-sizeof(HEAP)]
+            lea rax,[rax+rdi+sizeof(HEAP)]
             not rdi
             and rax,rdi
-            lea rcx,[rax-sizeof(S_HEAP)]
-            mov [rcx].S_HEAP.h_prev,rdx
-            mov [rcx].S_HEAP.h_type,_HEAP_ALIGNED
+            lea rcx,[rax-sizeof(HEAP)]
+            mov [rcx].HEAP.prev,rdx
+            mov [rcx].HEAP.type,_HEAP_ALIGNED
 
         .endif
     .endif

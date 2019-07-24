@@ -9,8 +9,8 @@ include errno.inc
 
     .data
 
-    _heap_base LPHEAP 0     ; address of main memory block
-    _heap_free LPHEAP 0     ; address of free memory block
+    _heap_base heap_t 0     ; address of main memory block
+    _heap_free heap_t 0     ; address of free memory block
 
     .code
 
@@ -23,32 +23,32 @@ include errno.inc
 malloc proc byte_count:size_t
 
     mov rdx,_heap_free
-    add rcx,sizeof(S_HEAP)+_GRANULARITY-1
+    add rcx,sizeof(HEAP)+_GRANULARITY-1
     and cl,-(_GRANULARITY)
 
     .repeat
 
         .if rdx
 
-            .if [rdx].S_HEAP.h_type == _HEAP_FREE
+            .if [rdx].HEAP.type == _HEAP_FREE
                 ;
                 ; Use a free block.
                 ;
-                mov rax,[rdx].S_HEAP.h_size
+                mov rax,[rdx].HEAP.size
                 .if rax >= rcx
 
-                    mov [rdx].S_HEAP.h_type,_HEAP_LOCAL
+                    mov [rdx].HEAP.type,_HEAP_LOCAL
 
                     .ifnz
 
-                        mov [rdx].S_HEAP.h_size,rcx
+                        mov [rdx].HEAP.size,rcx
                         sub rax,rcx
-                        mov [rdx+rcx].S_HEAP.h_size,rax
-                        mov [rdx+rcx].S_HEAP.h_type,_HEAP_FREE
+                        mov [rdx+rcx].HEAP.size,rax
+                        mov [rdx+rcx].HEAP.type,_HEAP_FREE
                     .endif
 
-                    lea rax,[rdx+sizeof(S_HEAP)]
-                    add rdx,[rdx].S_HEAP.h_size
+                    lea rax,[rdx+sizeof(HEAP)]
+                    add rdx,[rdx].HEAP.size
                     mov _heap_free,rdx
                     ret
 
@@ -65,24 +65,24 @@ malloc proc byte_count:size_t
 
                 .while 1
                     add rdx,rax
-                    mov rax,[rdx].S_HEAP.h_size
+                    mov rax,[rdx].HEAP.size
                     .if !rax
                         ;
                         ; Last block is zero and points to first block.
                         ;
-                        mov rdx,[rdx].S_HEAP.h_prev
-                        mov rdx,[rdx].S_HEAP.h_prev
+                        mov rdx,[rdx].HEAP.prev
+                        mov rdx,[rdx].HEAP.prev
                         .continue(0) .if rdx
                         .break
                     .endif
 
-                    .continue(0) .if [rdx].S_HEAP.h_type != _HEAP_FREE
+                    .continue(0) .if [rdx].HEAP.type != _HEAP_FREE
                     .continue(01) .if rax >= rcx
-                    .continue(0) .if [rdx+rax].S_HEAP.h_type != _HEAP_FREE
+                    .continue(0) .if [rdx+rax].HEAP.type != _HEAP_FREE
                     .repeat
-                        add rax,[rdx+rax].S_HEAP.h_size
-                        mov [rdx].S_HEAP.h_size,rax
-                    .until [rdx+rax].S_HEAP.h_type != _HEAP_FREE
+                        add rax,[rdx+rax].HEAP.size
+                        mov [rdx].HEAP.size,rax
+                    .until [rdx+rax].HEAP.type != _HEAP_FREE
                     .continue(01) .if rax >= rcx
                 .endw
             .endif
@@ -94,11 +94,11 @@ malloc proc byte_count:size_t
         push rbx
         sub rsp,0x28
         mov ebx,_amblksiz
-        add ebx,sizeof(S_HEAP)
+        add ebx,sizeof(HEAP)
         .if rbx < rcx
             mov rbx,rcx
         .endif
-        add rbx,sizeof(S_HEAP)
+        add rbx,sizeof(HEAP)
         HeapAlloc(GetProcessHeap(), 0, rbx)
         add rsp,0x28
         mov rdx,rbx
@@ -111,32 +111,32 @@ malloc proc byte_count:size_t
         .endif
 
         xor r8,r8
-        sub rdx,sizeof(S_HEAP)
+        sub rdx,sizeof(HEAP)
 
-        mov [rax].S_HEAP.h_size,rdx
+        mov [rax].HEAP.size,rdx
         mov [rax+8],r8
-        mov [rax].S_HEAP.h_next,r8
-        mov [rax].S_HEAP.h_prev,r8
-        mov [rax+rdx].S_HEAP.h_size,r8
-        mov [rax+rdx].S_HEAP.h_type,_HEAP_LOCAL
-        mov [rax+rdx].S_HEAP.h_prev,rax
+        mov [rax].HEAP.next,r8
+        mov [rax].HEAP.prev,r8
+        mov [rax+rdx].HEAP.size,r8
+        mov [rax+rdx].HEAP.type,_HEAP_LOCAL
+        mov [rax+rdx].HEAP.prev,rax
 
         mov rdx,_heap_base
         .if rdx
 
-            .while [rdx].S_HEAP.h_next != r8
+            .while [rdx].HEAP.next != r8
 
-                mov rdx,[rdx].S_HEAP.h_next
+                mov rdx,[rdx].HEAP.next
             .endw
-            mov [rdx].S_HEAP.h_next,rax
-            mov [rax].S_HEAP.h_prev,rdx
+            mov [rdx].HEAP.next,rax
+            mov [rax].HEAP.prev,rdx
         .else
             mov _heap_base,rax
         .endif
         mov _heap_free,rax
 
         mov rdx,rax
-        mov rax,[rdx].S_HEAP.h_size
+        mov rax,[rdx].HEAP.size
         .continue(0) .if rax >= rcx
 
         mov errno,ENOMEM
@@ -150,44 +150,46 @@ malloc endp
 ;
 ; void free( void *memblock );
 ;
-free proc memblock:PVOID
+free proc memblock:ptr
 
-    sub rcx,sizeof(S_HEAP)
+    sub rcx,sizeof(HEAP)
     .ifns
         ;
         ; If memblock is NULL, the pointer is ignored. Attempting to free an
         ; invalid pointer not allocated by malloc() may cause errors.
         ;
-        .if [rcx].S_HEAP.h_type == _HEAP_ALIGNED
+        .if [rcx].HEAP.type == _HEAP_ALIGNED
 
-            mov rcx,[rcx].S_HEAP.h_prev
+            mov rcx,[rcx].HEAP.prev
         .endif
 
-        .if [rcx].S_HEAP.h_type == _HEAP_LOCAL
+        .if [rcx].HEAP.type == _HEAP_LOCAL
 
             xor edx,edx
             mov [rcx+8],rdx ; Delete this block.
 
-            .for(r8 = [rcx].S_HEAP.h_size: dl == [rcx+r8].S_HEAP.h_type:,
-                 r8 += [rcx+r8].S_HEAP.h_size, [rcx].S_HEAP.h_size = r8)
+            .for( r8 = [rcx].HEAP.size,
+                : dl == [rcx+r8].HEAP.type,
+                : r8 += [rcx+r8].HEAP.size, [rcx].HEAP.size = r8 )
                  ;
                  ; Extend size of block if next block is free.
                  ;
             .endf
             mov _heap_free,rcx
 
-            .if rdx == [rcx+r8].S_HEAP.h_size
+            .if rdx == [rcx+r8].HEAP.size
                 ;
                 ; This is the last bloc in this chain.
                 ;
-                mov rcx,[rcx+r8].S_HEAP.h_prev ; <= first bloc
-                .if dl == [rcx].S_HEAP.h_type
+                mov rcx,[rcx+r8].HEAP.prev ; <= first bloc
+                .if dl == [rcx].HEAP.type
 
-                    .for(r8 = [rcx].S_HEAP.h_size: dl == [rcx+r8].S_HEAP.h_type:,
-                         r8 += [rcx+r8].S_HEAP.h_size, [rcx].S_HEAP.h_size = r8)
+                    .for( r8 = [rcx].HEAP.size,
+                        : dl == [rcx+r8].HEAP.type,
+                        : r8 += [rcx+r8].HEAP.size, [rcx].HEAP.size = r8 )
                     .endf
 
-                    .if rdx == [rcx+r8].S_HEAP.h_size
+                    .if rdx == [rcx+r8].HEAP.size
 
                         push rax
                         push rbx
@@ -195,13 +197,13 @@ free proc memblock:PVOID
                         ;
                         ; unlink the node
                         ;
-                        mov rcx,[rbx].S_HEAP.h_prev
-                        mov rax,[rbx].S_HEAP.h_next
+                        mov rcx,[rbx].HEAP.prev
+                        mov rax,[rbx].HEAP.next
                         .if rcx
-                            mov [rcx].S_HEAP.h_next,rax
+                            mov [rcx].HEAP.next,rax
                         .endif
                         .if rax
-                            mov [rax].S_HEAP.h_prev,rcx
+                            mov [rax].HEAP.prev,rcx
                         .endif
                         mov rax,_heap_base
                         .if rax == rbx

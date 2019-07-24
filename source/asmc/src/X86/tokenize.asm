@@ -7,10 +7,10 @@ GetTextLine proto :dword
 FindResWord proto fastcall :string_t, :int_t
 conditional_assembly_prepare proto :dword
 
-INST_ALLOWED_PREFIX equ 007h
-INST_FIRST          equ 008h
-INST_RM_INFO        equ 010h
-INST_OPND_DIR       equ 0E0h
+INST_ALLOWED_PREFIX equ 0x07
+INST_FIRST          equ 0x08
+INST_RM_INFO        equ 0x10
+INST_OPND_DIR       equ 0xE0
 
 instr_item      STRUC
 opclsidx        db ?    ; v2.06: index for opnd_clstab
@@ -104,7 +104,7 @@ IsMultiLine proc fastcall tokenarray:tok_t
         ;
         ; don't concat macros
         ;
-        .if SymFind( [ecx].string_ptr )
+        .if SymFind([ecx].string_ptr)
 
             .if [eax].asym.state == SYM_MACRO && \
                 !([eax].asym.mac_flag & SMAC_MULTILINE)
@@ -115,8 +115,10 @@ IsMultiLine proc fastcall tokenarray:tok_t
         .endif
 
     .endsw
+
     mov eax,1
     ret
+
 IsMultiLine endp
 
     assume edx:ptr line_status
@@ -359,7 +361,7 @@ get_string proc uses esi edi ebx buf:tok_t, p:ptr line_status
 
                     .if M_EAT_SPACE_R(eax, edi) == ','
 
-                        strlen( [edx].output )
+                        strlen([edx].output)
                         add eax,4
                         and eax,-4
                         add eax,[edx].output
@@ -368,14 +370,14 @@ get_string proc uses esi edi ebx buf:tok_t, p:ptr line_status
                         .if GetTextLine(eax)
 
                             M_SKIP_SPACE eax, edi
-                            strlen( edi )
+                            strlen(edi)
                             add eax,tcount
                             .if eax >= MAX_LINE_LEN
 
-                                asmerr( 2039 )
+                                asmerr(2039)
                                 jmp toend
                             .endif
-                            strcpy( esi, edi )
+                            strcpy(esi, edi)
                             mov edi,tdst
                             mov ecx,tcount
                             mov edx,p
@@ -409,9 +411,9 @@ get_string proc uses esi edi ebx buf:tok_t, p:ptr line_status
         ;
         ; v2.05: also stop if a ')' is found - see literal2.asm regression test
         ;
-        .while  ecx < MAX_STRING_LEN
+        .while ecx < MAX_STRING_LEN
 
-            movzx   eax,BYTE PTR [esi]
+            movzx eax,BYTE PTR [esi]
 
             .break .if !eax
             .break .if BYTE PTR _ltype[eax+1] & _SPACE
@@ -452,7 +454,7 @@ get_string proc uses esi edi ebx buf:tok_t, p:ptr line_status
 
     .if ecx == MAX_STRING_LEN
 
-        asmerr( 2041 )
+        asmerr(2041)
     .else
         xor eax,eax
         mov [edi],al
@@ -501,7 +503,7 @@ get_special_symbol proc fastcall uses esi edi ebx buf:tok_t , p:ptr line_status
       .case '%' ; T_PERCENT (0x25)
 
         shr eax,8
-        or  eax,202020h
+        or  eax,0x202020
         .if eax == 'tuo'    ; %OUT directive?
 
             mov eax,[esi].input
@@ -556,8 +558,8 @@ get_special_symbol proc fastcall uses esi edi ebx buf:tok_t , p:ptr line_status
 
             mov ecx,[ebx-16].tokval
             push eax
-            .if ( GetValueSp( ecx ) & OP_RGT8 )
-                .if GetStdAssume( GetRegNo( ecx ) )
+            .if ( GetValueSp(ecx) & OP_RGT8 )
+                .if GetStdAssume(GetRegNo(ecx))
                     or [ebx-16].hll_flags,T_HLL_PROC
                 .endif
             .endif
@@ -581,7 +583,7 @@ get_special_symbol proc fastcall uses esi edi ebx buf:tok_t , p:ptr line_status
 
                 .else
 
-                    SymFind( [edi].asmtok.string_ptr )
+                    SymFind([edi].asmtok.string_ptr)
                     xor edx,edx
 
                 .endif
@@ -589,7 +591,7 @@ get_special_symbol proc fastcall uses esi edi ebx buf:tok_t , p:ptr line_status
             .else
 
                 lea edi,[ebx-16]
-                SymFind( [ebx-16].string_ptr )
+                SymFind([ebx-16].string_ptr)
                 xor edx,edx
 
             .endif
@@ -763,7 +765,7 @@ get_special_symbol proc fastcall uses esi edi ebx buf:tok_t , p:ptr line_status
         ; the tokens are stored as one- or two-byte sized "strings".
         ;
         mov edx,eax
-        strchr( "=!<>&|", eax )
+        strchr("=!<>&|", eax)
 
         .if eax && [esi].flags2 & DF_CEXPR
 
@@ -793,6 +795,7 @@ get_special_symbol proc fastcall uses esi edi ebx buf:tok_t , p:ptr line_status
                     mov [ebx].string_ptr,eax
                     .endc
                 .endif
+
             .elseif BYTE PTR [edx] == '='
 
                 add ecx,1
@@ -821,7 +824,7 @@ get_special_symbol proc fastcall uses esi edi ebx buf:tok_t , p:ptr line_status
         ; anything we don't recognise we will consider a string,
         ; delimited by space characters, commas, newlines or nulls
         ;
-        .return get_string( ebx, esi )
+        .return get_string(ebx, esi)
     .endsw
     xor eax,eax
     ret
@@ -1105,7 +1108,7 @@ get_id proc fastcall uses esi edi ebx buf:tok_t, p:ptr line_status
 
     .if ecx > MAX_ID_LEN
 
-        asmerr( 2043 )
+        asmerr(2043)
         mov edi,[edx].output
         add edi,MAX_ID_LEN
     .endif
@@ -1239,17 +1242,17 @@ get_id endp
 StartComment proc fastcall p:string_t
 
     mov eax,p
-    .if M_EAT_SPACE( ecx, eax )
+    .if M_EAT_SPACE(ecx, eax)
 
         mov ModuleInfo.inside_comment,cl
         add eax,1
-        .if strchr( eax, ecx )
+        .if strchr(eax, ecx)
 
             mov ModuleInfo.inside_comment,0
         .endif
         ret
     .else
-        asmerr( 2110 )
+        asmerr(2110)
     .endif
     ret
 StartComment endp
@@ -1393,7 +1396,7 @@ Tokenize PROC USES esi edi ebx line:string_t, start:uint_t, tokenarray:tok_t, fl
             mov p.output,token_stringbuf
             .if ModuleInfo.inside_comment
 
-                .if strchr( line, ModuleInfo.inside_comment )
+                .if strchr(line, ModuleInfo.inside_comment)
 
                     mov ModuleInfo.inside_comment,0
                 .endif
@@ -1426,7 +1429,7 @@ Tokenize PROC USES esi edi ebx line:string_t, start:uint_t, tokenarray:tok_t, fl
 
                 mov p.input,edx
                 mov ebx,edx
-                strcpy( commentbuffer, edx )
+                strcpy(commentbuffer, edx)
                 mov ModuleInfo.CurrComment,eax
                 mov BYTE PTR [ebx],0
                 mov edx,ebx
@@ -1447,9 +1450,9 @@ Tokenize PROC USES esi edi ebx line:string_t, start:uint_t, tokenarray:tok_t, fl
                     ([ebx-16].token == T_COMMA || _brachets) && \
                     ( Parse_Pass == PASS_1 || !UseSavedState ) && !start
 
-                    .if IsMultiLine( tokenarray ) || _brachets
+                    .if IsMultiLine(tokenarray) || _brachets
 
-                        strlen( p.output )
+                        strlen(p.output)
                         add eax,4
                         and eax,-4
                         add eax,p.output
@@ -1459,11 +1462,11 @@ Tokenize PROC USES esi edi ebx line:string_t, start:uint_t, tokenarray:tok_t, fl
 
                             .if M_EAT_SPACE(eax, edi)
 
-                                strcpy( p.input, edi )
+                                strcpy(p.input, edi)
 
-                                .if strlen( p.start ) >= MAX_LINE_LEN
+                                .if strlen(p.start) >= MAX_LINE_LEN
 
-                                    asmerr( 2039 )
+                                    asmerr(2039)
                                     mov p.index,start
                                     .break
                                 .endif
@@ -1476,7 +1479,7 @@ Tokenize PROC USES esi edi ebx line:string_t, start:uint_t, tokenarray:tok_t, fl
             .endif
 
             mov [ebx].string_ptr,p.output
-            mov rc,GetToken( ebx, &p )
+            mov rc,GetToken(ebx, &p)
 
             .switch
               .case eax == EMPTY
@@ -1520,7 +1523,7 @@ Tokenize PROC USES esi edi ebx line:string_t, start:uint_t, tokenarray:tok_t, fl
                             ;
                             ; p.index is 0 or 2
                             ;
-                            StartComment( p.input )
+                            StartComment(p.input)
                             .break
                         .endif
 
@@ -1562,7 +1565,7 @@ Tokenize PROC USES esi edi ebx line:string_t, start:uint_t, tokenarray:tok_t, fl
 
                         .if edx
 
-                            conditional_assembly_prepare( ecx )
+                            conditional_assembly_prepare(ecx)
                             .if CurrIfState != BLOCK_ACTIVE
                                 ;
                                 ; p.index is 1 or 3
@@ -1589,7 +1592,7 @@ Tokenize PROC USES esi edi ebx line:string_t, start:uint_t, tokenarray:tok_t, fl
             inc p.index
             .if p.index >= MAX_TOKEN
 
-                asmerr( 2141 )
+                asmerr(2141)
                 mov eax,start
                 mov p.index,eax
                 .break(1)

@@ -12,25 +12,30 @@ _ALIGN  equ 3
 
     .code
 
-    OPTION PROLOGUE:NONE, EPILOGUE:NONE
+    option win64:rsp noauto
 
-__coreleft PROC
+__coreleft proc
+
     xor rax,rax         ; RAX: free memory
     xor rcx,rcx         ; RCX: total allocated
     mov r9,_heap_base
+
     .while r9
-        mov rdx,r9
-        .while [rdx].S_HEAP.h_size
-            mov r8,[rdx].S_HEAP.h_size
+
+        .for ( rdx = r9 : [rdx].HEAP.size : rdx += r8 )
+
+            mov r8,[rdx].HEAP.size
             add rcx,r8
-            .if [rdx].S_HEAP.h_type == _FREE
+
+            .if [rdx].HEAP.type == _FREE
+
                 add rax,r8
             .endif
-            add rdx,r8
-        .endw
-        mov r9,[r9].S_HEAP.h_next
+        .endf
+        mov r9,[r9].HEAP.next
     .endw
     ret
-__coreleft ENDP
 
-    END
+__coreleft endp
+
+    end

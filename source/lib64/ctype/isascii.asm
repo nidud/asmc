@@ -4,18 +4,14 @@
 ; Consult your license regarding permissions and restrictions.
 ;
 
-include ctype.inc
-
     .code
 
-    OPTION PROLOGUE:NONE, EPILOGUE:NONE
+isascii::
 
-isascii proc char:SINT
-    mov eax,ecx
-    and eax,80h
-    setz al
+    mov     eax,ecx
+    and     eax,0x80
+    setz    al
     ret
-isascii endp
 
     end
 

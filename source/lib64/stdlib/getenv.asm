@@ -9,8 +9,6 @@ include string.inc
 
     .code
 
-    option win64:rsp nosave
-
 getenv proc uses rsi rdi rbx rcx enval:LPSTR
 
     mov rbx,rcx

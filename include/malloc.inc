@@ -37,17 +37,17 @@ _HEAP_LOCAL	equ 1
 _HEAP_GLOBAL	equ 2
 _HEAP_ALIGNED	equ 3
 
-S_HEAP		STRUC SIZE_T		; Memory Block Header: 16/32 byte
-h_size		SIZE_T ?
-h_type		BYTE ?
-h_prev		PVOID ?
-h_next		PVOID ?
-S_HEAP		ENDS
-LPHEAP		typedef ptr S_HEAP
+HEAP		struct size_t	; Memory Block Header: 16/32 byte
+size		size_t ?
+type		uchar_t ?
+prev		ptr_t ?
+next		ptr_t ?
+HEAP		ends
+heap_t		typedef ptr HEAP
 
 externdef	_amblksiz:dword
-externdef	_heap_base:LPHEAP
-externdef	_heap_free:LPHEAP
+externdef	_heap_base:heap_t
+externdef	_heap_free:heap_t
 
 ifndef _CRT_ALLOCATION_DEFINED
 _CRT_ALLOCATION_DEFINED equ <>

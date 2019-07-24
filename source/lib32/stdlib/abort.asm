@@ -9,7 +9,7 @@ include crtl.inc
 include setjmp.inc
 
     .data
-    jmp_exit S_JMPBUF <>
+    jmp_exit JMPBUF <>
 
     .code
 

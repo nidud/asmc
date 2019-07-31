@@ -62,7 +62,7 @@ NetShareDelSticky proto WINAPI \
 NetShareCheck proto WINAPI \
 	    servername: LMSTR,
 		device: LMSTR,
-		 _type: LPDWORD
+		  type: LPDWORD
 
 ;NET_API_STATUS
 NetShareDelEx proto WINAPI \

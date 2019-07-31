@@ -75,12 +75,12 @@ D3DXCONSTANTTABLE_DESC	ENDS
 LPD3DXCONSTANTTABLE_DESC typedef ptr D3DXCONSTANTTABLE_DESC
 
 D3DXCONSTANT_DESC	STRUC
-_Name			LPSTR ?
+Name			LPSTR ?
 RegisterSet		D3DXREGISTER_SET ?
 RegisterIndex		UINT ?
 RegisterCount		UINT ?
 Class			D3DXPARAMETER_CLASS ?
-_Type			D3DXPARAMETER_TYPE ?
+Type			D3DXPARAMETER_TYPE ?
 Rows			UINT ?
 Columns			UINT ?
 Elements		UINT ?
@@ -158,7 +158,7 @@ DEFINE_GUID(IID_ID3DXTextureShader, 0x3e3d67f8, 0xaa7a, 0x405d, 0xa8, 0x57, 0xba
     .ends
 
 D3DXMACRO		STRUC
-_Name			LPSTR ?
+Name			LPSTR ?
 Definition		LPSTR ?
 D3DXMACRO		ENDS
 LPD3DXMACRO		typedef ptr D3DXMACRO
@@ -182,7 +182,7 @@ ID3DXInclude		ENDS
 LPD3DXINCLUDE		typedef ptr ID3DXInclude
 
 D3DXFRAGMENT_DESC	STRUC
-_Name			LPSTR ?
+Name			LPSTR ?
 Target			dd ?
 D3DXFRAGMENT_DESC	ENDS
 LPD3DXFRAGMENT_DESC	typedef ptr D3DXFRAGMENT_DESC
@@ -228,8 +228,8 @@ D3DXGetVertexShaderProfile proto WINAPI \
 D3DXFindShaderComment proto WINAPI \
 	     byte_code: ptr DWORD,
 		fourcc: DWORD,
-		 _data: PVOID,
-		 _size: ptr UINT
+		  data: PVOID,
+		  size: ptr UINT
 
 ;HRESULT
 D3DXGetShaderSamplers proto WINAPI \
@@ -446,19 +446,19 @@ D3DXCreateTextureShader proto WINAPI \
 ;HRESULT
 D3DXCreateFragmentLinker proto WINAPI \
 		device: ptr IDirect3DDevice9,
-		 _size: UINT,
+		  size: UINT,
 		linker: ptr ID3DXFragmentLinker
 
 ;HRESULT
 D3DXCreateFragmentLinkerEx proto WINAPI \
 		device: ptr IDirect3DDevice9,
-		 _size: UINT,
+		  size: UINT,
 		 flags: DWORD,
 		linker: ptr ID3DXFragmentLinker
 
 
 D3DXSHADER_CONSTANTTABLE STRUC
-_Size			dd ?
+Size			dd ?
 Creator			dd ?
 Version			dd ?
 Constants		dd ?
@@ -469,7 +469,7 @@ D3DXSHADER_CONSTANTTABLE ENDS
 LPD3DXSHADER_CONSTANTTABLE typedef ptr D3DXSHADER_CONSTANTTABLE
 
 D3DXSHADER_CONSTANTINFO STRUC
-_Name			dd ?
+Name			dd ?
 RegisterSet		dw ?
 RegisterIndex		dw ?
 RegisterCount		dw ?
@@ -481,7 +481,7 @@ LPD3DXSHADER_CONSTANTINFO typedef ptr D3DXSHADER_CONSTANTINFO
 
 D3DXSHADER_TYPEINFO	STRUC
 Class			dw ?
-_Type			dw ?
+Type			dw ?
 Rows			dw ?
 Columns			dw ?
 Elements		dw ?
@@ -491,7 +491,7 @@ D3DXSHADER_TYPEINFO	ENDS
 LPD3DXSHADER_TYPEINFO	typedef ptr D3DXSHADER_TYPEINFO
 
 D3DXSHADER_STRUCTMEMBERINFO STRUC
-_Name			dd ?
+Name			dd ?
 TypeInfo		dd ?
 D3DXSHADER_STRUCTMEMBERINFO ENDS
 LPD3DXSHADER_STRUCTMEMBERINFO typedef ptr D3DXSHADER_STRUCTMEMBERINFO

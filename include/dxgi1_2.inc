@@ -68,7 +68,7 @@ DXGI_SCALING_STRETCH	equ 0
 DXGI_SCALING_NONE	equ 1
 
 DXGI_SWAP_CHAIN_DESC1	STRUC
-_Width			UINT ?
+Width			UINT ?
 Height			UINT ?
 Format			DXGI_FORMAT ?
 Stereo			BOOL ?

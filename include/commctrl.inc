@@ -823,7 +823,7 @@ endif
 HD_ITEM			equ <HDITEM>
 
 HD_ITEMA		STRUC
-_mask			UINT ?
+mask			UINT ?
 cxy			SINT ?
 pszText			LPSTR ?
 hbm			HBITMAP ?
@@ -835,7 +835,7 @@ iImage			SINT ?
 iOrder			SINT ?
 endif
 if (_WIN32_IE GE 0x0500)
-_type			UINT ?
+type			UINT ?
 pvFilter		PVOID ?
 endif
 if _WIN32_WINNT GE 0x0600
@@ -848,7 +848,7 @@ HDITEMA_V1_SIZE		equ CCSIZEOF_STRUCT(HDITEMA, lParam)
 HDITEMW_V1_SIZE		equ CCSIZEOF_STRUCT(HDITEMW, lParam)
 
 HD_ITEMW		STRUC
-_mask			UINT ?
+mask			UINT ?
 cxy			SINT ?
 pszText			LPWSTR ?
 hbm			HBITMAP ?
@@ -860,7 +860,7 @@ iImage			SINT ?
 iOrder			SINT ?
 endif
 if (_WIN32_IE GE 0x0500)
-_type			UINT ?
+type			UINT ?
 pvFilter		PVOID ?
 endif
 if _WIN32_WINNT GE 0x0600
@@ -1194,7 +1194,7 @@ endif
 NMHDDISPINFOW		STRUC
 hdr			NMHDR <>
 iItem			SINT ?
-_mask			UINT ?
+mask			UINT ?
 pszText			LPWSTR ?
 cchTextMax		SINT ?
 iImage			SINT ?
@@ -1205,7 +1205,7 @@ LPNMHDDISPINFOW		typedef ptr NMHDDISPINFOW
 NMHDDISPINFOA		STRUC
 hdr			NMHDR <>
 iItem			SINT ?
-_mask			UINT ?
+mask			UINT ?
 pszText			LPSTR ?
 cchTextMax		SINT ?
 iImage			SINT ?
@@ -3090,7 +3090,7 @@ LIS_DEFAULTCOLORS	equ 0x00000010
 endif
 
 LITEM			STRUC
-_mask			UINT ?
+mask			UINT ?
 iLink			SINT ?
 state			UINT ?
 stateMask		UINT ?
@@ -3247,7 +3247,7 @@ LVITEMA_V1_SIZE		equ CCSIZEOF_STRUCT(LVITEMA, lParam)
 LVITEMW_V1_SIZE		equ CCSIZEOF_STRUCT(LVITEMW, lParam)
 
 LVITEMA			STRUC
-_mask			UINT ?
+mask			UINT ?
 iItem			SINT ?
 iSubItem		SINT ?
 state			UINT ?
@@ -3272,7 +3272,7 @@ LVITEMA			ENDS
 LPLVITEMA		typedef ptr LVITEMA
 
 LVITEMW			STRUC
-_mask			UINT ?
+mask			UINT ?
 iItem			SINT ?
 iSubItem		SINT ?
 state			UINT ?
@@ -3366,8 +3366,8 @@ ListView_GetCallbackMask macro hwnd
 	endm
 
 LVM_SETCALLBACKMASK	equ (LVM_FIRST + 11)
-ListView_SetCallbackMask macro hwnd, _mask
-	exitm<SNDMSG(hwnd, LVM_SETCALLBACKMASK, _mask, 0)>
+ListView_SetCallbackMask macro hwnd, mask
+	exitm<SNDMSG(hwnd, LVM_SETCALLBACKMASK, mask, 0)>
 	endm
 
 LVNI_ALL		equ 0x0000
@@ -3570,7 +3570,7 @@ LVCOLUMNA_V1_SIZE	equ CCSIZEOF_STRUCT(LVCOLUMNA, iSubItem)
 LVCOLUMNW_V1_SIZE	equ CCSIZEOF_STRUCT(LVCOLUMNW, iSubItem)
 
 LVCOLUMNA		STRUC
-_mask			UINT ?
+mask			UINT ?
 fmt			SINT ?
 _cx			SINT ?
 pszText			LPSTR ?
@@ -3589,7 +3589,7 @@ LVCOLUMNA		ENDS
 LPLVCOLUMNA		typedef ptr LVCOLUMNA
 
 LVCOLUMNW		STRUC
-_mask			UINT ?
+mask			UINT ?
 fmt			SINT ?
 _cx			SINT ?
 pszText			LPWSTR ?
@@ -3764,12 +3764,12 @@ ListView_Update macro hwndLV, i
 	endm
 
 LVM_SETITEMSTATE	equ (LVM_FIRST + 43)
-ListView_SetItemState macro hwndV, i, data, _mask
+ListView_SetItemState macro hwndV, i, data, mask
 	endm
 
 LVM_GETITEMSTATE	equ (LVM_FIRST + 44)
-ListView_GetItemState macro hwndLV, i, _mask
-	exitm<SNDMSG((hwndLV), LVM_GETITEMSTATE, i, _mask)>
+ListView_GetItemState macro hwndLV, i, mask
+	exitm<SNDMSG((hwndLV), LVM_GETITEMSTATE, i, mask)>
 	endm
 
 if (_WIN32_IE GE 0x0300)
@@ -4108,7 +4108,7 @@ LVGA_FOOTER_RIGHT	equ 0x00000020
 
 LVGROUP			STRUC
 cbSize			UINT ?
-_mask			UINT ?
+mask			UINT ?
 pszHeader		LPWSTR ?
 cchHeader		SINT ?
 pszFooter		LPWSTR ?
@@ -4199,7 +4199,7 @@ LVGMF_TEXTCOLOR		equ 0x00000004
 
 LVGROUPMETRICS		STRUC
 cbSize			UINT ?
-_mask			UINT ?
+mask			UINT ?
 Left			UINT ?
 Top			UINT ?
 Right			UINT ?
@@ -4442,7 +4442,7 @@ ListView_GetFooterRect macro hwnd, prc
 LVFF_ITEMCOUNT		equ 0x00000001
 
 LVFOOTERINFO		STRUC
-_mask			UINT ?	; LVFIF_*
+mask			UINT ?	; LVFIF_*
 pszText			LPWSTR ?
 cchTextMax		SINT ?
 cItems			UINT ?
@@ -4464,7 +4464,7 @@ LVFIF_STATE		equ 0x00000002
 LVFIS_FOCUSED		equ 0x0001
 
 LVFOOTERITEM		STRUC
-_mask			UINT ?	; LVFIF_*
+mask			UINT ?	; LVFIF_*
 iItem			SINT ?
 pszText			LPWSTR ?
 cchTextMax		SINT ?	;
@@ -4489,7 +4489,7 @@ ListView_GetItemIndexRect macro hwnd, plvii, iSubItem, _code, prc
 	endm
 
 LVM_SETITEMINDEXSTATE	equ (LVM_FIRST + 210)
-ListView_SetItemIndexState macro hwndLV, plvii, _data, _mask
+ListView_SetItemIndexState macro hwndLV, plvii, _data, mask
 ;{ LV_ITEM _macro_lvi;\
 	endm
 
@@ -4941,7 +4941,7 @@ LPTV_ITEM		equ LPTVITEM
 TV_ITEM			equ TVITEM
 
 TVITEMA			STRUC
-_mask			UINT ?
+mask			UINT ?
 hItem			HTREEITEM ?
 state			UINT ?
 stateMask		UINT ?
@@ -4955,7 +4955,7 @@ TVITEMA			ENDS
 LPTVITEMA		typedef ptr TVITEMA
 
 TVITEMW			STRUC
-_mask			UINT ?
+mask			UINT ?
 hItem			HTREEITEM ?
 state			UINT ?
 stateMask		UINT ?
@@ -4971,7 +4971,7 @@ LPTVITEMW		typedef ptr TVITEMW
 if (_WIN32_IE GE 0x0400)
 
 TVITEMEXA		STRUC
-_mask			UINT ?
+mask			UINT ?
 hItem			HTREEITEM ?
 state			UINT ?
 stateMask		UINT ?
@@ -4994,7 +4994,7 @@ TVITEMEXA		ENDS
 LPTVITEMEXA		typedef ptr TVITEMEXA
 
 TVITEMEXW		STRUC
-_mask			UINT ?
+mask			UINT ?
 hItem			HTREEITEM ?
 state			UINT ?
 stateMask		UINT ?
@@ -5748,7 +5748,7 @@ CBEIF_LPARAM		equ 0x00000020
 CBEIF_DI_SETITEM	equ 0x10000000
 
 COMBOBOXEXITEMA		STRUC
-_mask			UINT ?
+mask			UINT ?
 iItem			SINT ?
 pszText			LPSTR ?
 cchTextMax		SINT ?
@@ -5762,7 +5762,7 @@ PCOMBOBOXEXITEMA	typedef ptr COMBOBOXEXITEMA
 PCCOMBOEXITEMA		typedef ptr COMBOBOXEXITEMA
 
 COMBOBOXEXITEMW		STRUC
-_mask			UINT ?
+mask			UINT ?
 iItem			SINT ?
 pszText			LPWSTR ?
 cchTextMax		SINT ?
@@ -6039,7 +6039,7 @@ endif
 TC_ITEMHEADER		equ TCITEMHEADER
 
 TCITEMHEADERA		STRUC
-_mask			UINT ?
+mask			UINT ?
 lpReserved1		UINT ?
 lpReserved2		UINT ?
 pszText			LPSTR ?
@@ -6049,7 +6049,7 @@ TCITEMHEADERA		ENDS
 LPTCITEMHEADERA		typedef ptr TCITEMHEADERA
 
 TCITEMHEADERW		STRUC
-_mask			UINT ?
+mask			UINT ?
 lpReserved1		UINT ?
 lpReserved2		UINT ?
 pszText			LPWSTR ?
@@ -6078,7 +6078,7 @@ endif
 TC_ITEM			equ TCITEM
 
 TCITEMA			STRUC
-_mask			UINT ?
+mask			UINT ?
 if (_WIN32_IE GE 0x0300)
 dwState			dd ?
 dwStateMask		dd ?
@@ -6094,7 +6094,7 @@ TCITEMA			ENDS
 LPTCITEMA		typedef ptr TCITEMA
 
 TCITEMW			STRUC
-_mask			UINT ?
+mask			UINT ?
 if (_WIN32_IE GE 0x0300)
 dwState			dd ?
 dwStateMask		dd ?
@@ -7198,10 +7198,10 @@ BCSS_ALIGNLEFT		equ 0x0004
 BCSS_IMAGE		equ 0x0008
 
 BUTTON_SPLITINFO	STRUC
-_mask			UINT ?
+mask			UINT ?
 himlGlyph		HIMAGELIST ?
 uSplitStyle		UINT ?
-_size			POINT <>
+size			POINT <>
 BUTTON_SPLITINFO	ENDS
 PBUTTON_SPLITINFO	typedef ptr BUTTON_SPLITINFO
 

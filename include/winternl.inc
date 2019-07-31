@@ -13,7 +13,7 @@ NTSTATUS	typedef sdword
 PCSZ		typedef ptr sbyte
 
 STRING		STRUC
-_Length		USHORT ?
+Length		USHORT ?
 MaximumLength	USHORT ?
 Buffer		PCHAR ?
 STRING		ENDS
@@ -28,7 +28,7 @@ POEM_STRING	typedef PSTRING
 PCOEM_STRING	typedef ptr STRING
 
 UNICODE_STRING	STRUC
-_Length		USHORT ?
+Length		USHORT ?
 MaximumLength	USHORT ?
 Buffer		PWSTR ?
 UNICODE_STRING	ENDS
@@ -99,7 +99,7 @@ TEB			ENDS
 PTEB			typedef ptr TEB
 
 OBJECT_ATTRIBUTES	STRUC
-_Length			ULONG ?
+Length			ULONG ?
 RootDirectory		HANDLE ?
 ObjectName		PUNICODE_STRING ?
 Attributes		ULONG ?
@@ -239,11 +239,11 @@ endif
 
 
 RtlMoveMemory equ <memmove>
-RtlFillMemory macro Destination, _Length, Fill
-	exitm<memset(Destination, Fill, _Length)>
+RtlFillMemory macro Destination, Length, Fill
+	exitm<memset(Destination, Fill, Length)>
 	endm
-RtlZeroMemory macro Destination, _Length
-	exitm<memset(Destination, 0, _Length)>
+RtlZeroMemory macro Destination, Length
+	exitm<memset(Destination, 0, Length)>
 	endm
 
 ;NTSTATUS NTAPI
@@ -453,7 +453,7 @@ endif
 
 ifndef InitializeObjectAttributes
 InitializeObjectAttributes macro p, n, a, r, s
-    mov p.OBJECT_ATTRIBUTES._Length,sizeof(OBJECT_ATTRIBUTES)
+    mov p.OBJECT_ATTRIBUTES.Length,sizeof(OBJECT_ATTRIBUTES)
     mov p.OBJECT_ATTRIBUTES.RootDirectory,r
     mov p.OBJECT_ATTRIBUTES.Attributes,a
     mov p.OBJECT_ATTRIBUTES.ObjectName,n

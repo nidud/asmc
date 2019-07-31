@@ -20,10 +20,10 @@ Functions		UINT ?
 D3DXEFFECT_DESC		ENDS
 
 D3DXPARAMETER_DESC	STRUC
-_Name			LPSTR ?
+Name			LPSTR ?
 Semantic		LPSTR ?
 Class			D3DXPARAMETER_CLASS ?
-_Type			D3DXPARAMETER_TYPE ?
+Type			D3DXPARAMETER_TYPE ?
 Rows			UINT ?
 Columns			UINT ?
 Elements		UINT ?
@@ -34,20 +34,20 @@ Bytes			UINT ?
 D3DXPARAMETER_DESC	ENDS
 
 D3DXTECHNIQUE_DESC	STRUC
-_Name			LPSTR ?
+Name			LPSTR ?
 Passes			UINT ?
 Annotations		UINT ?
 D3DXTECHNIQUE_DESC	ENDS
 
 D3DXPASS_DESC		STRUC
-_Name			LPSTR ?
+Name			LPSTR ?
 Annotations		UINT ?
 pVertexShaderFunction	LPDWORD ?
 pPixelShaderFunction	LPDWORD ?
 D3DXPASS_DESC		ENDS
 
 D3DXFUNCTION_DESC	STRUC
-_Name			LPSTR ?
+Name			LPSTR ?
 Annotations		UINT ?
 D3DXFUNCTION_DESC	ENDS
 

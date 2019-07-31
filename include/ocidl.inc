@@ -409,7 +409,7 @@ __IPropertyPage_INTERFACE_DEFINED__ equ 1
 PROPPAGEINFO		STRUC
 cb			ULONG ?
 pszTitle		LPOLESTR ?
-_size			tagSIZE <>
+size			tagSIZE <>
 pszDocString		LPOLESTR ?
 pszHelpFile		LPOLESTR ?
 dwHelpContext		dd ?

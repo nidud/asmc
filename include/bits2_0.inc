@@ -38,7 +38,7 @@ include bits1_5.inc
 BG_LENGTH_TO_EOF	equ (-1)
 BG_FILE_RANGE		STRUC
 InitialOffset		UINT64 ?
-_Length			UINT64 ?
+Length			UINT64 ?
 BG_FILE_RANGE		ENDS
 
 BG_COPY_FILE_OWNER	equ 1

@@ -398,14 +398,14 @@ BuildTrusteeWithObjectsAndNameA proto WINAPI \
             ObjectType: SE_OBJECT_TYPE,
         ObjectTypeName: LPSTR,
 InheritedObjectTypeName: LPSTR,
-                 _Name: LPSTR
+                  Name: LPSTR
 BuildTrusteeWithObjectsAndNameW proto WINAPI \
               pTrustee: PTRUSTEE_W,
               pObjName: POBJECTS_AND_NAME_W,
             ObjectType: SE_OBJECT_TYPE,
         ObjectTypeName: LPWSTR,
 InheritedObjectTypeName: LPWSTR,
-                 _Name: LPWSTR
+                  Name: LPWSTR
 ifdef _UNICODE
 BuildTrusteeWithObjectsAndName equ <BuildTrusteeWithObjectsAndNameW>
 else

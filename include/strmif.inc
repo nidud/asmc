@@ -1010,7 +1010,7 @@ AM_MEDIAEVENT_NONOTIFY	equ 0x01
 
 REGFILTER		STRUC
 Clsid			CLSID <>
-_Name			LPWSTR ?
+Name			LPWSTR ?
 REGFILTER		ENDS
 
 ifndef __IEnumRegFilters_INTERFACE_DEFINED__
@@ -1163,7 +1163,7 @@ Famine			equ 0
 Flood			equ ( Famine + 1 )
 
 Quality			STRUC
-_Type			QualityMessageType ?
+Type			QualityMessageType ?
 Proportion		LONG ?
 Late			REFERENCE_TIME ?
 TimeStamp		REFERENCE_TIME ?
@@ -1563,7 +1563,7 @@ DEFINE_IIDX(IAsyncReader, "56a868aa-0ad4-11ce-b03a-0020af0ba770")
     WaitForNext		proc :DWORD, :ptr, :ptr
     SyncReadAligned	proc :ptr
     SyncRead		proc :LONGLONG, :LONG, :ptr
-    _Length		proc :ptr, :ptr
+    Length		proc :ptr, :ptr
     BeginFlush		proc
     EndFlush		proc
     .ends
@@ -3510,7 +3510,7 @@ DVD_SPCoding_Extended	equ 1
 DVD_SPCoding_Other	equ 2
 
 DVD_SubpictureAttributes STRUC
-_Type			DVD_SUBPICTURE_TYPE ?
+Type			DVD_SUBPICTURE_TYPE ?
 CodingMode		DVD_SUBPICTURE_CODING ?
 Language		LCID ?
 LanguageExtension	DVD_SUBPICTURE_LANG_EXT ?

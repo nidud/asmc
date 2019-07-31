@@ -408,7 +408,7 @@ PPROCESSOR_NUMBER	typedef ptr PROCESSOR_NUMBER
 
 
 GROUP_AFFINITY		STRUC
-_Mask			KAFFINITY ?
+Mask			KAFFINITY ?
 _Group			dw ?
 Reserved		dw 3 dup(?)
 GROUP_AFFINITY		ENDS
@@ -1557,7 +1557,7 @@ PXSAVE_FORMAT		typedef ptr XSAVE_FORMAT
 
 DECLSPEC_ALIGN(8)
 XSAVE_AREA_HEADER	STRUC
-_Mask			dd ?
+Mask			dd ?
 Reserved		dd 7 dup(?)
 XSAVE_AREA_HEADER	ENDS
 PXSAVE_AREA_HEADER	typedef ptr XSAVE_AREA_HEADER
@@ -1570,8 +1570,8 @@ XSAVE_AREA		ENDS
 PXSAVE_AREA		typedef ptr XSAVE_AREA
 
 XSTATE_CONTEXT		STRUC
-_Mask			dd ?
-_Length			dd ?
+Mask			dd ?
+Length			dd ?
 Reserved1		dd ?
 Area			PXSAVE_AREA ? ; __field_bcount_opt(Length) ?
 ifdef _X86_
@@ -1591,7 +1591,7 @@ MINIMAL_XSTATE_AREA_LENGTH equ sizeof(XSAVE_AREA)
 
 CONTEXT_CHUNK		STRUC
 _Offset			LONG ?
-_Length			dd ?
+Length			dd ?
 CONTEXT_CHUNK		ENDS
 PCONTEXT_CHUNK		typedef ptr CONTEXT_CHUNK
 
@@ -2205,7 +2205,7 @@ RtlVirtualUnwind proto WINAPI \
 RtlInstallFunctionTableCallback proto WINAPI \
        TableIdentifier: DWORD64,
 	   BaseAddress: DWORD64,
-	       _Length: DWORD,
+		Length: DWORD,
 	      Callback: PGET_RUNTIME_FUNCTION_CALLBACK,
 	       Context: PVOID,
 OutOfProcessCallbackDll: PCWSTR
@@ -2932,7 +2932,7 @@ RtlAddFunctionTable proto WINAPI \
 RtlInstallFunctionTableCallback proto WINAPI \
        TableIdentifier: DWORD64,
 	   BaseAddress: DWORD64,
-	       _Length: DWORD,
+		Length: DWORD,
 	      TargetGp: DWORD64,
 	      Callback: PGET_RUNTIME_FUNCTION_CALLBACK,
 	       Context: PVOID,
@@ -3665,35 +3665,35 @@ FAILED_ACCESS_ACE_FLAG		 equ 0x80
 
 ACCESS_ALLOWED_ACE	STRUC
 Header			ACE_HEADER <>
-_Mask			ACCESS_MASK ?
+Mask			ACCESS_MASK ?
 SidStart		dd ?
 ACCESS_ALLOWED_ACE	ENDS
 PACCESS_ALLOWED_ACE	typedef PTR ACCESS_ALLOWED_ACE
 
 ACCESS_DENIED_ACE	STRUC
 Header			ACE_HEADER <>
-_Mask			ACCESS_MASK ?
+Mask			ACCESS_MASK ?
 SidStart		dd ?
 ACCESS_DENIED_ACE	ENDS
 PACCESS_DENIED_ACE	typedef PTR ACCESS_DENIED_ACE
 
 SYSTEM_AUDIT_ACE	STRUC
 Header			ACE_HEADER <>
-_Mask			ACCESS_MASK ?
+Mask			ACCESS_MASK ?
 SidStart		dd ?
 SYSTEM_AUDIT_ACE	ENDS
 PSYSTEM_AUDIT_ACE	typedef PTR SYSTEM_AUDIT_ACE
 
 SYSTEM_ALARM_ACE	STRUC
 Header			ACE_HEADER <>
-_Mask			ACCESS_MASK ?
+Mask			ACCESS_MASK ?
 SidStart		dd ?
 SYSTEM_ALARM_ACE	ENDS
 PSYSTEM_ALARM_ACE	typedef PTR SYSTEM_ALARM_ACE
 
 SYSTEM_MANDATORY_LABEL_ACE STRUC
 Header			ACE_HEADER <>
-_Mask			ACCESS_MASK ?
+Mask			ACCESS_MASK ?
 SidStart		dd ?
 SYSTEM_MANDATORY_LABEL_ACE ENDS
 PSYSTEM_MANDATORY_LABEL_ACE typedef ptr SYSTEM_MANDATORY_LABEL_ACE
@@ -3708,7 +3708,7 @@ SYSTEM_MANDATORY_LABEL_VALID_MASK equ SYSTEM_MANDATORY_LABEL_NO_WRITE_UP OR \
 
 ACCESS_ALLOWED_OBJECT_ACE STRUC
 Header			ACE_HEADER <>
-_Mask			ACCESS_MASK ?
+Mask			ACCESS_MASK ?
 Flags			dd ?
 ObjectType		GUID <>
 InheritedObjectType	GUID <>
@@ -3718,7 +3718,7 @@ PACCESS_ALLOWED_OBJECT_ACE TYPEDEF PTR ACCESS_ALLOWED_OBJECT_ACE
 
 ACCESS_DENIED_OBJECT_ACE STRUC
 Header			ACE_HEADER <>
-_Mask			ACCESS_MASK ?
+Mask			ACCESS_MASK ?
 Flags			dd ?
 ObjectType		GUID <>
 InheritedObjectType	GUID <>
@@ -3728,7 +3728,7 @@ PACCESS_DENIED_OBJECT_ACE TYPEDEF PTR ACCESS_DENIED_OBJECT_ACE
 
 SYSTEM_AUDIT_OBJECT_ACE STRUC
 Header			ACE_HEADER <>
-_Mask			ACCESS_MASK ?
+Mask			ACCESS_MASK ?
 Flags			dd ?
 ObjectType		GUID <>
 InheritedObjectType	GUID <>
@@ -3738,7 +3738,7 @@ PSYSTEM_AUDIT_OBJECT_ACE TYPEDEF PTR SYSTEM_AUDIT_OBJECT_ACE
 
 SYSTEM_ALARM_OBJECT_ACE STRUC
 Header			ACE_HEADER <>
-_Mask			ACCESS_MASK ?
+Mask			ACCESS_MASK ?
 Flags			dd ?
 ObjectType		GUID <>
 InheritedObjectType	GUID <>
@@ -3749,35 +3749,35 @@ PSYSTEM_ALARM_OBJECT_ACE TYPEDEF PTR SYSTEM_ALARM_OBJECT_ACE
 
 ACCESS_ALLOWED_CALLBACK_ACE STRUC
 Header			ACE_HEADER <>
-_Mask			ACCESS_MASK ?
+Mask			ACCESS_MASK ?
 SidStart		dd ?
 ACCESS_ALLOWED_CALLBACK_ACE ENDS
 PACCESS_ALLOWED_CALLBACK_ACE typedef ptr ACCESS_ALLOWED_CALLBACK_ACE
 
 ACCESS_DENIED_CALLBACK_ACE STRUC
 Header			ACE_HEADER <>
-_Mask			ACCESS_MASK ?
+Mask			ACCESS_MASK ?
 SidStart		dd ?
 ACCESS_DENIED_CALLBACK_ACE ENDS
 PACCESS_DENIED_CALLBACK_ACE typedef ptr ACCESS_DENIED_CALLBACK_ACE
 
 SYSTEM_AUDIT_CALLBACK_ACE STRUC
 Header			ACE_HEADER <>
-_Mask			ACCESS_MASK ?
+Mask			ACCESS_MASK ?
 SidStart		dd ?
 SYSTEM_AUDIT_CALLBACK_ACE ENDS
 PSYSTEM_AUDIT_CALLBACK_ACE typedef ptr SYSTEM_AUDIT_CALLBACK_ACE
 
 SYSTEM_ALARM_CALLBACK_ACE STRUC
 Header			ACE_HEADER <>
-_Mask			ACCESS_MASK ?
+Mask			ACCESS_MASK ?
 SidStart		dd ?
 SYSTEM_ALARM_CALLBACK_ACE ENDS
 PSYSTEM_ALARM_CALLBACK_ACE typedef ptr SYSTEM_ALARM_CALLBACK_ACE
 
 ACCESS_ALLOWED_CALLBACK_OBJECT_ACE STRUC
 Header			ACE_HEADER <>
-_Mask			ACCESS_MASK ?
+Mask			ACCESS_MASK ?
 Flags			dd ?
 ObjectType		GUID <>
 InheritedObjectType	GUID <>
@@ -3787,7 +3787,7 @@ PACCESS_ALLOWED_CALLBACK_OBJECT_ACE typedef ptr ACCESS_ALLOWED_CALLBACK_OBJECT_A
 
 ACCESS_DENIED_CALLBACK_OBJECT_ACE STRUC
 Header			ACE_HEADER <>
-_Mask			ACCESS_MASK ?
+Mask			ACCESS_MASK ?
 Flags			dd ?
 ObjectType		GUID <>
 InheritedObjectType	GUID <>
@@ -3797,7 +3797,7 @@ PACCESS_DENIED_CALLBACK_OBJECT_ACE typedef ptr ACCESS_DENIED_CALLBACK_OBJECT_ACE
 
 SYSTEM_AUDIT_CALLBACK_OBJECT_ACE STRUC
 Header			ACE_HEADER <>
-_Mask			ACCESS_MASK ?
+Mask			ACCESS_MASK ?
 Flags			dd ?
 ObjectType		GUID <>
 InheritedObjectType	GUID <>
@@ -3807,7 +3807,7 @@ PSYSTEM_AUDIT_CALLBACK_OBJECT_ACE typedef ptr SYSTEM_AUDIT_CALLBACK_OBJECT_ACE
 
 SYSTEM_ALARM_CALLBACK_OBJECT_ACE STRUC
 Header			ACE_HEADER <>
-_Mask			ACCESS_MASK ?
+Mask			ACCESS_MASK ?
 Flags			dd ?
 ObjectType		GUID <>
 InheritedObjectType	GUID <>
@@ -3953,14 +3953,14 @@ SE_SECURITY_DESCRIPTOR_FLAG_NO_LABEL_ACE    equ 0x00000002
 SE_SECURITY_DESCRIPTOR_VALID_FLAGS	    equ 0x00000003
 
 SE_SECURITY_DESCRIPTOR	STRUC
-_Size			dd ?
+Size			dd ?
 Flags			dd ?
 SecurityDescriptor	PSECURITY_DESCRIPTOR ?
 SE_SECURITY_DESCRIPTOR	ENDS
 PSE_SECURITY_DESCRIPTOR typedef ptr SE_SECURITY_DESCRIPTOR
 
 SE_ACCESS_REQUEST	STRUC
-_Size			dd ?
+Size			dd ?
 SecurityDescriptor	PSECURITY_DESCRIPTOR ?
 DesiredAccess		ACCESS_MASK ?
 PreviouslyGrantedAccess ACCESS_MASK ?
@@ -3972,7 +3972,7 @@ SE_ACCESS_REQUEST	ENDS
 PSE_ACCESS_REQUEST	typedef ptr SE_ACCESS_REQUEST
 
 SE_ACCESS_REPLY		STRUC
-_Size			dd ?
+Size			dd ?
 ResultListCount		dd ?	; Indicate the array size of GrantedAccess and
 GrantedAccess		PACCESS_MASK ?
 AccessStatus		PDWORD ?
@@ -4259,7 +4259,7 @@ PSECURITY_CONTEXT_TRACKING_MODE typedef ptr SECURITY_CONTEXT_TRACKING_MODE
 
 
 SECURITY_QUALITY_OF_SERVICE	STRUC
-_Length				dd ?
+Length				dd ?
 ImpersonationLevel		SECURITY_IMPERSONATION_LEVEL ?
 ContextTrackingMode		SECURITY_CONTEXT_TRACKING_MODE ?
 EffectiveOnly			BOOLEAN ?
@@ -4680,8 +4680,8 @@ CACHE_DESCRIPTOR	STRUC
 Level			db ?
 Associativity		db ?
 LineSize		dw ?
-_Size			dd ?
-_Type			PROCESSOR_CACHE_TYPE ?
+Size			dd ?
+Type			PROCESSOR_CACHE_TYPE ?
 CACHE_DESCRIPTOR	ENDS
 PCACHE_DESCRIPTOR	typedef ptr CACHE_DESCRIPTOR
 
@@ -4721,7 +4721,7 @@ Level			db ?
 Associativity		db ?
 LineSize		dw ?
 CacheSize		dd ?
-_Type			PROCESSOR_CACHE_TYPE ?
+Type			PROCESSOR_CACHE_TYPE ?
 Reserved		db 20 dup(?)
 GroupMask		GROUP_AFFINITY <>
 CACHE_RELATIONSHIP	ENDS
@@ -4745,7 +4745,7 @@ PGROUP_RELATIONSHIP	typedef ptr GROUP_RELATIONSHIP
 
 SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX STRUC
 Relationship		LOGICAL_PROCESSOR_RELATIONSHIP ?
-_Size			dd ?
+Size			dd ?
 UNION
 Processor		PROCESSOR_RELATIONSHIP <>
 NumaNode		NUMA_NODE_RELATIONSHIP <>
@@ -4830,13 +4830,13 @@ MAXIMUM_XSTATE_FEATURES			equ 64
 
 XSTATE_FEATURE		STRUC
 _Offset			dd ?
-_Size			dd ?
+Size			dd ?
 XSTATE_FEATURE		ENDS
 PXSTATE_FEATURE		typedef ptr XSTATE_FEATURE
 
 XSTATE_CONFIGURATION	STRUC
 EnabledFeatures		DWORD64 ?
-_Size			dd ?
+Size			dd ?
 OptimizedSave		dd ?	;: 1;
 Features		XSTATE_FEATURE MAXIMUM_XSTATE_FEATURES dup(<>)
 XSTATE_CONFIGURATION	ENDS
@@ -4852,7 +4852,7 @@ AllocationProtect		dd ?
 RegionSize			SIZE_T ?
 State				dd ?
 Protect				dd ?
-_Type				dd ?
+Type				dd ?
 MEMORY_BASIC_INFORMATION	ENDS
 PMEMORY_BASIC_INFORMATION	typedef ptr MEMORY_BASIC_INFORMATION
 
@@ -4863,7 +4863,7 @@ AllocationProtect		dd ?
 RegionSize			dd ?
 State				dd ?
 Protect				dd ?
-_Type				dd ?
+Type				dd ?
 MEMORY_BASIC_INFORMATION32	ENDS
 PMEMORY_BASIC_INFORMATION32	typedef ptr MEMORY_BASIC_INFORMATION32
 
@@ -4874,7 +4874,7 @@ AllocationProtect		dd ?
 RegionSize			ULONGLONG ?
 State				dd ?
 Protect				dd ?
-_Type				dd ?
+Type				dd ?
 MEMORY_BASIC_INFORMATION64	ENDS
 PMEMORY_BASIC_INFORMATION64	typedef ptr MEMORY_BASIC_INFORMATION64
 
@@ -4891,7 +4891,7 @@ RegionSize			ULONGLONG ?
 AllocationProtect		dd ?
 State				dd ?
 Protect				dd ?
-_Type				dd ?
+Type				dd ?
 MEMORY_BASIC_INFORMATION_VLM	ENDS
 PMEMORY_BASIC_INFORMATION_VLM	typedef ptr MEMORY_BASIC_INFORMATION_VLM
 
@@ -5331,7 +5331,7 @@ PPM_WMI_IDLE_STATE	ENDS
 PPPM_WMI_IDLE_STATE	typedef ptr PPM_WMI_IDLE_STATE
 
 PPM_WMI_IDLE_STATES	STRUC
-_Type			dd ?
+Type			dd ?
 Count			dd ?
 TargetState		dd ?
 OldState		dd ?
@@ -5341,7 +5341,7 @@ PPM_WMI_IDLE_STATES	ENDS
 PPPM_WMI_IDLE_STATES	typedef ptr PPM_WMI_IDLE_STATES
 
 PPM_WMI_IDLE_STATES_EX	STRUC
-_Type			dd ?
+Type			dd ?
 Count			dd ?
 TargetState		dd ?
 OldState		dd ?
@@ -5356,7 +5356,7 @@ Power			dd ?
 PercentFrequency	db ?
 IncreaseLevel		db ?
 DecreaseLevel		db ?
-_Type			db ?
+Type			db ?
 IncreaseTime		dd ?
 DecreaseTime		dd ?
 Control			dd ?
@@ -5378,7 +5378,7 @@ LowestPerfState		dd ?
 ThermalConstraint	dd ?
 BusyAdjThreshold	db ?
 PolicyType		db ?
-_Type			db ?
+Type			db ?
 Reserved		db ?
 TimerInterval		dd ?
 TargetProcessors	dd ?
@@ -5403,7 +5403,7 @@ LowestPerfState		dd ?
 ThermalConstraint	dd ?
 BusyAdjThreshold	db ?
 PolicyType		db ?
-_Type			db ?
+Type			db ?
 Reserved		db ?
 TimerInterval		dd ?
 TargetProcessors	PVOID ?
@@ -5899,7 +5899,7 @@ IMAGE_FILE_MACHINE_CEE		equ 0xC0EE
 
 IMAGE_DATA_DIRECTORY	STRUC
 VirtualAddress		dd ?
-_Size			dd ?
+Size			dd ?
 IMAGE_DATA_DIRECTORY	ENDS
 PIMAGE_DATA_DIRECTORY	typedef ptr IMAGE_DATA_DIRECTORY
 
@@ -6139,7 +6139,7 @@ ANON_OBJECT_HEADER_BIGOBJ ENDS
 IMAGE_SIZEOF_SHORT_NAME equ 8
 
 IMAGE_SECTION_HEADER	STRUC
-_Name			db IMAGE_SIZEOF_SHORT_NAME dup(?)
+Name			db IMAGE_SIZEOF_SHORT_NAME dup(?)
 UNION Misc
     PhysicalAddress	dd ?
     VirtualSize		dd ?
@@ -6215,7 +6215,7 @@ UNION
 ENDS
 Value			dd ?
 SectionNumber		dw ?
-_Type			dw ?
+Type			dw ?
 StorageClass		db ?
 NumberOfAuxSymbols	db ?
 IMAGE_SYMBOL		ENDS
@@ -6234,7 +6234,7 @@ UNION
 ENDS
 Value			dd ?
 SectionNumber		LONG ?
-_Type			dw ?
+Type			dw ?
 StorageClass		db ?
 NumberOfAuxSymbols	db ?
 IMAGE_SYMBOL_EX		ENDS
@@ -6359,7 +6359,7 @@ STRUC
  UNION
   STRUC
     Linenumber		dw ?
-    _Size		dw ?
+    Size		dw ?
   ENDS
   TotalSize		dd ?
  ENDS
@@ -6373,10 +6373,10 @@ STRUC
  TvIndex		dw ?
 ENDS
 STRUC
- _Name			db IMAGE_SIZEOF_SYMBOL dup(?)
+  Name			db IMAGE_SIZEOF_SYMBOL dup(?)
 ENDS
 STRUC
- _Length		dd ?
+ Length			dd ?
  NumberOfRelocations	dw ?
  NumberOfLinenumbers	dw ?
  CheckSum		dd ?
@@ -6393,10 +6393,10 @@ STRUC Sym
  rgbReserved		db 12 dup(?)
 ENDS
 STRUC File
- _Name			db sizeof(IMAGE_SYMBOL_EX) dup(?)
+ Name			db sizeof(IMAGE_SYMBOL_EX) dup(?)
 ENDS
 STRUC Section
- _Length		dd ?
+ Length			dd ?
  NumberOfRelocations	dw ?
  NumberOfLinenumbers	dw ?
  CheckSum		dd ?
@@ -6440,7 +6440,7 @@ UNION
     RelocCount		dd ?
 ENDS
 SymbolTableIndex	dd ?
-_Type			dw ?
+Type			dw ?
 IMAGE_RELOCATION	ENDS
 PIMAGE_RELOCATION	typedef ptr IMAGE_RELOCATION
 
@@ -6808,12 +6808,12 @@ IMAGE_ARCHIVE_LINKER_MEMBER	equ <"/               ">
 IMAGE_ARCHIVE_LONGNAMES_MEMBER	equ <"//              ">
 
 IMAGE_ARCHIVE_MEMBER_HEADER	STRUC
-_Name				db 16 dup(?)
+Name				db 16 dup(?)
 Date				db 12 dup(?)
 UserID				db  6 dup(?)
 GroupID				db  6 dup(?)
 Mode				db  8 dup(?)
-_Size				db 10 dup(?)
+Size				db 10 dup(?)
 EndHeader			db  2 dup(?)
 IMAGE_ARCHIVE_MEMBER_HEADER	ENDS
 PIMAGE_ARCHIVE_MEMBER_HEADER	typedef ptr IMAGE_ARCHIVE_MEMBER_HEADER
@@ -6825,7 +6825,7 @@ Characteristics			dd ?
 TimeDateStamp			dd ?
 MajorVersion			dw ?
 MinorVersion			dw ?
-_Name				dd ?
+Name				dd ?
 Base				dd ?
 NumberOfFunctions		dd ?
 NumberOfNames			dd ?
@@ -6837,7 +6837,7 @@ PIMAGE_EXPORT_DIRECTORY		typedef ptr IMAGE_EXPORT_DIRECTORY
 
 IMAGE_IMPORT_BY_NAME	STRUC
 Hint			dw ?
-_Name			db ?
+Name			db ?
 IMAGE_IMPORT_BY_NAME	ENDS
 PIMAGE_IMPORT_BY_NAME	typedef ptr IMAGE_IMPORT_BY_NAME
 
@@ -6941,7 +6941,7 @@ UNION
 ENDS
 TimeDateStamp		dd ?
 ForwarderChain		dd ?
-_Name			dd ?
+Name			dd ?
 FirstThunk		dd ?
 IMAGE_IMPORT_DESCRIPTOR ENDS
 
@@ -6998,7 +6998,7 @@ IMAGE_RESOURCE_DIRECTORY_ENTRY_R1 RECORD \
 IMAGE_RESOURCE_DIRECTORY_ENTRY STRUC
 UNION
   r0		dd ? ;IMAGE_RESOURCE_DIRECTORY_ENTRY_R0 <>
-  _Name		dd ?
+  Name		dd ?
   Id		dw ?
 ENDS
 UNION
@@ -7009,20 +7009,20 @@ IMAGE_RESOURCE_DIRECTORY_ENTRY	ENDS
 PIMAGE_RESOURCE_DIRECTORY_ENTRY typedef ptr IMAGE_RESOURCE_DIRECTORY_ENTRY
 
 IMAGE_RESOURCE_DIRECTORY_STRING STRUC
-_Length				dw ?
+Length				dw ?
 NameString			db ?
 IMAGE_RESOURCE_DIRECTORY_STRING ENDS
 PIMAGE_RESOURCE_DIRECTORY_STRING typedef ptr IMAGE_RESOURCE_DIRECTORY_STRING
 
 IMAGE_RESOURCE_DIR_STRING_U	STRUC
-_Length				dw ?
+Length				dw ?
 NameString			dw ?
 IMAGE_RESOURCE_DIR_STRING_U	ENDS
 PIMAGE_RESOURCE_DIR_STRING_U	typedef ptr IMAGE_RESOURCE_DIR_STRING_U
 
 IMAGE_RESOURCE_DATA_ENTRY	STRUC
 OffsetToData			dd ?
-_Size				dd ?
+Size				dd ?
 CodePage			dd ?
 Reserved			dd ?
 IMAGE_RESOURCE_DATA_ENTRY	ENDS
@@ -7105,7 +7105,7 @@ Characteristics			dd ?
 TimeDateStamp			dd ?
 MajorVersion			dw ?
 MinorVersion			dw ?
-_Type				dd ?
+Type				dd ?
 SizeOfData			dd ?
 AddressOfRawData		dd ?
 PointerToRawData		dd ?
@@ -7164,7 +7164,7 @@ IMAGE_DEBUG_MISC_EXENAME	equ 1
 
 IMAGE_DEBUG_MISC	STRUC
 DataType		dd ?
-_Length			dd ?
+Length			dd ?
 Unicode			BOOLEAN ?
 Reserved		db 3 dup(?)
 Data			db ?
@@ -7209,7 +7209,7 @@ PIMAGE_SEPARATE_DEBUG_HEADER	typedef ptr IMAGE_SEPARATE_DEBUG_HEADER
 NON_PAGED_DEBUG_INFO	STRUC
 Signature		dw ?
 Flags			dw ?
-_Size			dd ?
+Size			dd ?
 Machine			dw ?
 Characteristics		dw ?
 TimeDateStamp		dd ?
@@ -7639,7 +7639,7 @@ if (NTDDI_VERSION GE NTDDI_WIN2K)
 RtlCompareMemory proto WINAPI \
 	      Source1: PVOID,
 	      Source2: PVOID,
-	      _Length: SIZE_T
+	       Length: SIZE_T
 endif
 
 RtlEqualMemory macro Destination, Source, L
@@ -7687,7 +7687,7 @@ SEF_MACL_VALID_FLAGS	equ SEF_MACL_NO_WRITE_UP OR \
 			    SEF_MACL_NO_EXECUTE_UP
 
 MESSAGE_RESOURCE_ENTRY	STRUC
-_Length			dw ?
+Length			dw ?
 Flags			dw ?
 Text			db ?
 MESSAGE_RESOURCE_ENTRY	ENDS
@@ -7888,11 +7888,11 @@ RtlGetExtendedFeaturesMask proto WINAPI \
 RtlLocateExtendedFeature proto WINAPI \
 	     ContextEx: PCONTEXT_EX,
 	     FeatureId: DWORD,
-	       _Length: PDWORD
+		Length: PDWORD
 ;PCONTEXT
 RtlLocateLegacyContext proto WINAPI \
 	     ContextEx: PCONTEXT_EX,
-	       _Length: PDWORD
+		Length: PDWORD
 ;VOID
 RtlSetExtendedFeaturesMask proto WINAPI \
 	     ContextEx: PCONTEXT_EX,
@@ -7900,7 +7900,7 @@ RtlSetExtendedFeaturesMask proto WINAPI \
 endif
 
 RTL_CRITICAL_SECTION_DEBUG	STRUC
-_Type				dw ?
+Type				dw ?
 CreatorBackTraceIndex		dw ?
 CriticalSection			PVOID ?;PRTL_CRITICAL_SECTION ?
 ProcessLocksList		LIST_ENTRY <>
@@ -8080,7 +8080,7 @@ ACTCTX_COMPATIBILITY_ELEMENT_TYPE_MITIGATION equ 2
 
 COMPATIBILITY_CONTEXT_ELEMENT STRUC
 Id			GUID <>
-_Type			ACTCTX_COMPATIBILITY_ELEMENT_TYPE ?
+Type			ACTCTX_COMPATIBILITY_ELEMENT_TYPE ?
 COMPATIBILITY_CONTEXT_ELEMENT ENDS
 PCOMPATIBILITY_CONTEXT_ELEMENT typedef ptr COMPATIBILITY_CONTEXT_ELEMENT
 PCCOMPATIBILITY_CONTEXT_ELEMENT typedef ptr COMPATIBILITY_CONTEXT_ELEMENT
@@ -8121,7 +8121,7 @@ PACTIVATION_CONTEXT_DETAILED_INFORMATION typedef ptr ACTIVATION_CONTEXT_DETAILED
 PCACTIVATION_CONTEXT_DETAILED_INFORMATION typedef ptr ACTIVATION_CONTEXT_DETAILED_INFORMATION
 
 HARDWARE_COUNTER_DATA	STRUC
-_Type			HARDWARE_COUNTER_TYPE ?
+Type			HARDWARE_COUNTER_TYPE ?
 Reserved		dd ?
 Value			dd ?
 HARDWARE_COUNTER_DATA	ENDS
@@ -8130,7 +8130,7 @@ PHARDWARE_COUNTER_DATA	typedef ptr HARDWARE_COUNTER_DATA
 PERFORMANCE_DATA_VERSION equ 1
 
 PERFORMANCE_DATA	STRUC
-_Size			dw ?
+Size			dw ?
 Version			db ?
 HwCountersCount		db ?
 ContextSwitchCount	dd ?
@@ -8171,7 +8171,7 @@ EVENTLOG_PAIRED_EVENT_INACTIVE equ 0x0010
 
 
 EVENTLOGRECORD			STRUC
-_Length				dd ?
+Length				dd ?
 Reserved			dd ?
 RecordNumber			dd ?
 TimeGenerated			dd ?
@@ -8357,7 +8357,7 @@ TAPE_ERASE_SHORT		equ 0
 TAPE_ERASE_LONG			equ 1
 
 TAPE_ERASE			STRUC
-_Type				dd ?
+Type				dd ?
 Immediate			BOOLEAN ?
 TAPE_ERASE			ENDS
 PTAPE_ERASE			typedef ptr TAPE_ERASE
@@ -8383,7 +8383,7 @@ TAPE_SHORT_FILEMARKS		equ 2
 TAPE_LONG_FILEMARKS		equ 3
 
 TAPE_WRITE_MARKS		STRUC
-_Type				dd ?
+Type				dd ?
 Count				dd ?
 Immediate			BOOLEAN ?
 TAPE_WRITE_MARKS		ENDS
@@ -8395,7 +8395,7 @@ TAPE_LOGICAL_POSITION		equ 1
 TAPE_PSEUDO_LOGICAL_POSITION	equ 2
 
 TAPE_GET_POSITION		STRUC
-_Type				dd ?
+Type				dd ?
 Partition			dd ?
 _Offset				LARGE_INTEGER <>
 TAPE_GET_POSITION		ENDS
@@ -8545,7 +8545,7 @@ TAPE_INITIATOR_PARTITIONS	equ 2
 TAPE_CREATE_PARTITION		STRUC
 Method				dd ?
 Count				dd ?
-_Size				dd ?
+Size				dd ?
 TAPE_CREATE_PARTITION		ENDS
 PTAPE_CREATE_PARTITION		typedef ptr TAPE_CREATE_PARTITION
 
@@ -8914,7 +8914,7 @@ if 0
 endif
 ENDS
 CallbackPriority	TP_CALLBACK_PRIORITY ?
-_Size			dd ?
+Size			dd ?
 TP_CALLBACK_ENVIRON_V3	ENDS
 PTP_CALLBACK_ENVIRON	typedef ptr TP_CALLBACK_ENVIRON_V3
 
@@ -8964,7 +8964,7 @@ endif
 	mov CallbackEnviron.u.Flags,0
 if (_WIN32_WINNT GE _WIN32_WINNT_WIN7)
 	mov CallbackEnviron.CallbackPriority,TP_CALLBACK_PRIORITY_NORMAL
-	mov CallbackEnviron._Size,sizeof(TP_CALLBACK_ENVIRON)
+	mov CallbackEnviron.Size,sizeof(TP_CALLBACK_ENVIRON)
 endif
 	endm
 ;VOID

@@ -398,7 +398,7 @@ VDS_ASYNCOUT_MERGE_VDISK equ 203
 VDS_ASYNCOUT_EXPAND_VDISK equ 204
 
 VDS_ASYNC_OUTPUT	STRUC
-_type			VDS_ASYNC_OUTPUT_TYPE ?
+type			VDS_ASYNC_OUTPUT_TYPE ?
 union
  struct _cp
   ullOffset		ULONGLONG ?
@@ -574,7 +574,7 @@ rguchWwn		db 8 dup(?)
 VDS_WWN			ENDS
 
 VDS_IPADDRESS		STRUC
-_type			VDS_IPADDRESS_TYPE ?
+type			VDS_IPADDRESS_TYPE ?
 ipv4Address		ULONG ?
 ipv6Address		UCHAR  16  dup(?)
 ulIpv6FlowInfo		ULONG ?
@@ -598,7 +598,7 @@ VDS_HBAPORT_PROP	STRUC
 id			VDS_OBJECT_ID <>
 wwnNode			VDS_WWN <>
 wwnPort			VDS_WWN <>
-_type			VDS_HBAPORT_TYPE ?
+type			VDS_HBAPORT_TYPE ?
 status			VDS_HBAPORT_STATUS ?
 ulPortSpeed		ULONG ?
 ulSupportedPortSpeed	ULONG ?
@@ -621,7 +621,7 @@ id			VDS_OBJECT_ID <>
 pwszName		LPWSTR ?
 guidVersionId		GUID <>
 pwszVersion		LPWSTR ?
-_type			VDS_PROVIDER_TYPE ?
+type			VDS_PROVIDER_TYPE ?
 ulFlags			ULONG ?
 ulStripeSizeFlags	ULONG ?
 sRebuildPriority	SWORD ?
@@ -629,7 +629,7 @@ VDS_PROVIDER_PROP	ENDS
 
 VDS_PATH_INFO		STRUC
 pathId			VDS_PATH_ID <>
-_type			VDS_HWPROVIDER_TYPE ?
+type			VDS_HWPROVIDER_TYPE ?
 status			VDS_PATH_STATUS ?
 union
  controllerPortId	VDS_OBJECT_ID <>
@@ -1134,7 +1134,7 @@ pwszFriendlyName	LPWSTR ?
 pwszIdentification	LPWSTR ?
 pwszUnmaskingList	LPWSTR ?
 ulFlags			ULONG ?
-_type			VDS_LUN_TYPE ?
+type			VDS_LUN_TYPE ?
 status			VDS_LUN_STATUS ?
 health			VDS_HEALTH ?
 TransitionState		VDS_TRANSITION_STATE ?
@@ -1145,7 +1145,7 @@ PVDS_LUN_PROP		typedef ptr VDS_LUN_PROP
 VDS_LUN_PLEX_PROP	STRUC
 id			VDS_OBJECT_ID <>
 ullSize			ULONGLONG ?
-_type			VDS_LUN_PLEX_TYPE ?
+type			VDS_LUN_PLEX_TYPE ?
 status			VDS_LUN_PLEX_STATUS ?
 health			VDS_HEALTH ?
 TransitionState		VDS_TRANSITION_STATE ?
@@ -1288,7 +1288,7 @@ VDS_STORAGE_POOL_PROP	STRUC
 id			VDS_OBJECT_ID <>
 status			VDS_STORAGE_POOL_STATUS ?
 health			VDS_HEALTH ?
-_type			VDS_STORAGE_POOL_TYPE ?
+type			VDS_STORAGE_POOL_TYPE ?
 pwszName		LPWSTR ?
 pwszDescription		LPWSTR ?
 ullTotalConsumedSpace	ULONGLONG ?

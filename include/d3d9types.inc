@@ -94,7 +94,7 @@ endif
 D3DVIEWPORT9		STRUC
 X			dd ?
 Y			dd ?
-_Width			dd ?
+Width			dd ?
 Height			dd ?
 MinZ			REAL4 ?
 MaxZ			REAL4 ?
@@ -156,7 +156,7 @@ D3DLIGHT_FORCE_DWORD	equ 0x7fffffff
 
 
 D3DLIGHT9		STRUC
-_Type			D3DLIGHTTYPE ?
+Type			D3DLIGHTTYPE ?
 Diffuse			D3DCOLORVALUE <>
 Specular		D3DCOLORVALUE <>
 Ambient			D3DCOLORVALUE <>
@@ -631,7 +631,7 @@ MAXD3DDECLTYPE		equ D3DDECTYPE_UNUSED
 D3DVERTEXELEMENT9	STRUC
 Stream			dw ?
 _Offset			dw ?
-_Type			db ?
+Type			db ?
 Method			db ?
 Usage			db ?
 UsageIndex		db ?
@@ -1158,7 +1158,7 @@ D3DFMT_FORCE_DWORD	equ 0x7fffffff
 
 
 D3DDISPLAYMODE		STRUC
-_Width			UINT ?
+Width			UINT ?
 Height			UINT ?
 RefreshRate		UINT ?
 Format			D3DFORMAT ?
@@ -1300,38 +1300,38 @@ D3DLOCK_NO_DIRTY_UPDATE equ 0x00008000
 
 D3DVERTEXBUFFER_DESC	STRUC
 Format			D3DFORMAT ?
-_Type			D3DRESOURCETYPE ?
+Type			D3DRESOURCETYPE ?
 Usage			dd ?
 Pool			D3DPOOL ?
-_Size			UINT ?
+Size			UINT ?
 FVF			dd ?
 D3DVERTEXBUFFER_DESC	ENDS
 
 D3DINDEXBUFFER_DESC	STRUC
 Format			D3DFORMAT ?
-_Type			D3DRESOURCETYPE ?
+Type			D3DRESOURCETYPE ?
 Usage			dd ?
 Pool			D3DPOOL ?
-_Size			UINT ?
+Size			UINT ?
 D3DINDEXBUFFER_DESC	ENDS
 
 D3DSURFACE_DESC		STRUC
 Format			D3DFORMAT ?
-_Type			D3DRESOURCETYPE ?
+Type			D3DRESOURCETYPE ?
 Usage			dd ?
 Pool			D3DPOOL ?
 MultiSampleType		D3DMULTISAMPLE_TYPE ?
 MultiSampleQuality	dd ?
-_Width			UINT ?
+Width			UINT ?
 Height			UINT ?
 D3DSURFACE_DESC		ENDS
 
 D3DVOLUME_DESC		STRUC
 Format			D3DFORMAT ?
-_Type			D3DRESOURCETYPE ?
+Type			D3DRESOURCETYPE ?
 Usage			dd ?
 Pool			D3DPOOL ?
-_Width			UINT ?
+Width			UINT ?
 Height			UINT ?
 Depth			UINT ?
 D3DVOLUME_DESC		ENDS
@@ -1358,13 +1358,13 @@ D3DLOCKED_BOX		ENDS
 
 D3DRANGE		STRUC
 _Offset			UINT ?
-_Size			UINT ?
+Size			UINT ?
 D3DRANGE		ENDS
 
 D3DRECTPATCH_INFO	STRUC
 StartVertexOffsetWidth	UINT ?
 StartVertexOffsetHeight UINT ?
-_Width			UINT ?
+Width			UINT ?
 Height			UINT ?
 Stride			UINT ?
 Basis			D3DBASISTYPE ?
@@ -1525,7 +1525,7 @@ D3DCOMPOSERECTS_FORCE_DWORD equ 0x7fffffff
 D3DCOMPOSERECTDESC	STRUC
 X			USHORT ?
 Y			USHORT ?
-_Width			USHORT ?
+Width			USHORT ?
 Height			USHORT ?
 D3DCOMPOSERECTDESC	ENDS
 
@@ -1556,8 +1556,8 @@ D3DSCANLINEORDERING_PROGRESSIVE equ 1
 D3DSCANLINEORDERING_INTERLACED	equ 2
 
 D3DDISPLAYMODEEX	STRUC
-_Size			UINT ?
-_Width			UINT ?
+Size			UINT ?
+Width			UINT ?
 Height			UINT ?
 RefreshRate		UINT ?
 Format			D3DFORMAT ?
@@ -1565,7 +1565,7 @@ ScanLineOrdering	D3DSCANLINEORDERING ?
 D3DDISPLAYMODEEX	ENDS
 
 D3DDISPLAYMODEFILTER	STRUC
-_Size			UINT ?
+Size			UINT ?
 Format			D3DFORMAT ?
 ScanLineOrdering	D3DSCANLINEORDERING ?
 D3DDISPLAYMODEFILTER	ENDS

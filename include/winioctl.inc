@@ -225,7 +225,7 @@ IOCTL_STORAGE_POWER_IDLE equ CTL_CODE(IOCTL_STORAGE_BASE, 0x0723, METHOD_BUFFERE
 IOCTL_STORAGE_EVENT_NOTIFICATION equ CTL_CODE(IOCTL_STORAGE_BASE, 0x0724, METHOD_BUFFERED, FILE_ANY_ACCESS)
 
 STORAGE_HOTPLUG_INFO	STRUC
-_Size			dd ?
+Size			dd ?
 MediaRemovable		BOOLEAN ?
 MediaHotplug		BOOLEAN ?
 DeviceHotplug		BOOLEAN ?
@@ -246,8 +246,8 @@ STORAGE_BUS_RESET_REQUEST ENDS
 PSTORAGE_BUS_RESET_REQUEST typedef ptr STORAGE_BUS_RESET_REQUEST
 
 STORAGE_BREAK_RESERVATION_REQUEST  STRUC
-_Length			dd ?
-_unused			db ?
+Length			dd ?
+unused			db ?
 PathId			db ?
 TargetId		db ?
 Lun			db ?
@@ -455,7 +455,7 @@ PSTORAGE_PREDICT_FAILURE typedef ptr STORAGE_PREDICT_FAILURE
 
 STORAGE_FAILURE_PREDICTION_CONFIG  STRUC
 Version			dd ?
-_Size			dd ?
+Size			dd ?
 Set			BOOLEAN ?
 Enabled			BOOLEAN ?
 Reserved		dw ?
@@ -497,13 +497,13 @@ PSTORAGE_PROPERTY_QUERY typedef ptr STORAGE_PROPERTY_QUERY
 
 STORAGE_DESCRIPTOR_HEADER STRUC
 Version			dd ?
-_Size			dd ?
+Size			dd ?
 STORAGE_DESCRIPTOR_HEADER ENDS
 PSTORAGE_DESCRIPTOR_HEADER typedef ptr STORAGE_DESCRIPTOR_HEADER
 
 STORAGE_DEVICE_DESCRIPTOR STRUC
 Version			dd ?
-_Size			dd ?
+Size			dd ?
 DeviceType		db ?
 DeviceTypeModifier	db ?
 RemovableMedia		BOOLEAN ?
@@ -520,7 +520,7 @@ PSTORAGE_DEVICE_DESCRIPTOR typedef ptr STORAGE_DEVICE_DESCRIPTOR
 
 STORAGE_ADAPTER_DESCRIPTOR STRUC
 Version			dd ?
-_Size			dd ?
+Size			dd ?
 MaximumTransferLength	dd ?
 MaximumPhysicalPages	dd ?
 AlignmentMask		dd ?
@@ -563,7 +563,7 @@ endif
 
 STORAGE_ACCESS_ALIGNMENT_DESCRIPTOR STRUC
 Version			dd ?
-_Size			dd ?
+Size			dd ?
 BytesPerCacheLine	dd ?
 BytesOffsetForCacheAlignment dd ?
 BytesPerLogicalSector	dd ?
@@ -574,7 +574,7 @@ PSTORAGE_ACCESS_ALIGNMENT_DESCRIPTOR typedef ptr STORAGE_ACCESS_ALIGNMENT_DESCRI
 
 STORAGE_MEDIUM_PRODUCT_TYPE_DESCRIPTOR STRUC
 Version			dd ?
-_Size			dd ?
+Size			dd ?
 MediumProductType	dd ?
 STORAGE_MEDIUM_PRODUCT_TYPE_DESCRIPTOR ENDS
 PSTORAGE_MEDIUM_PRODUCT_TYPE_DESCRIPTOR typedef ptr STORAGE_MEDIUM_PRODUCT_TYPE_DESCRIPTOR
@@ -595,7 +595,7 @@ endif
 
 STORAGE_MINIPORT_DESCRIPTOR  STRUC
 Version			dd ?
-_Size			dd ?
+Size			dd ?
 Portdriver		STORAGE_PORT_CODE_SET ?
 LUNResetSupported	BOOLEAN ?
 TargetResetSupported	BOOLEAN ?
@@ -641,7 +641,7 @@ StorageIdAssocTarget	equ 2
 
 STORAGE_IDENTIFIER	STRUC
 CodeSet			STORAGE_IDENTIFIER_CODE_SET ?
-_Type			STORAGE_IDENTIFIER_TYPE ?
+Type			STORAGE_IDENTIFIER_TYPE ?
 IdentifierSize		dw ?
 NextOffset		dw ?
 Association		STORAGE_ASSOCIATION_TYPE ?
@@ -651,7 +651,7 @@ PSTORAGE_IDENTIFIER	typedef ptr STORAGE_IDENTIFIER
 
 STORAGE_DEVICE_ID_DESCRIPTOR STRUC
 Version			dd ?
-_Size			dd ?
+Size			dd ?
 NumberOfIdentifiers	dd ?
 Identifiers		db 1 dup(?)
 STORAGE_DEVICE_ID_DESCRIPTOR ENDS
@@ -659,28 +659,28 @@ PSTORAGE_DEVICE_ID_DESCRIPTOR typedef ptr STORAGE_DEVICE_ID_DESCRIPTOR
 
 DEVICE_SEEK_PENALTY_DESCRIPTOR	STRUC
 Version			dd ?
-_Size			dd ?
+Size			dd ?
 IncursSeekPenalty	BOOLEAN ?
 DEVICE_SEEK_PENALTY_DESCRIPTOR ENDS
 PDEVICE_SEEK_PENALTY_DESCRIPTOR typedef ptr DEVICE_SEEK_PENALTY_DESCRIPTOR
 
 DEVICE_WRITE_AGGREGATION_DESCRIPTOR  STRUC
 Version			dd ?
-_Size			dd ?
+Size			dd ?
 BenefitsFromWriteAggregation BOOLEAN ?
 DEVICE_WRITE_AGGREGATION_DESCRIPTOR ENDS
 PDEVICE_WRITE_AGGREGATION_DESCRIPTOR typedef ptr DEVICE_WRITE_AGGREGATION_DESCRIPTOR
 
 DEVICE_TRIM_DESCRIPTOR	STRUC
 Version			dd ?
-_Size			dd ?
+Size			dd ?
 TrimEnabled		BOOLEAN ?
 DEVICE_TRIM_DESCRIPTOR	ENDS
 PDEVICE_TRIM_DESCRIPTOR typedef ptr DEVICE_TRIM_DESCRIPTOR
 
 DEVICE_LB_PROVISIONING_DESCRIPTOR  STRUC
 Version			dd ?
-_Size			dd ?
+Size			dd ?
 flags			db ?
 ;ThinProvisioningEnabled : 1 db ?
 ;ThinProvisioningReadZeros : 1 db ?
@@ -700,7 +700,7 @@ PDEVICE_LB_PROVISIONING_DESCRIPTOR typedef ptr DEVICE_LB_PROVISIONING_DESCRIPTOR
 DEVICE_LB_PROVISIONING_DESCRIPTOR_V1_SIZE equ RTL_SIZEOF_THROUGH_FIELD(DEVICE_LB_PROVISIONING_DESCRIPTOR, UnmapGranularityAlignment)
 
 STORAGE_LB_PROVISIONING_MAP_RESOURCES  STRUC
-_Size			dd ?
+Size			dd ?
 Version			dd ?
 flags			db ?
 if 0
@@ -723,7 +723,7 @@ PSTORAGE_LB_PROVISIONING_MAP_RESOURCES typedef ptr STORAGE_LB_PROVISIONING_MAP_R
 
 DEVICE_POWER_DESCRIPTOR	 STRUC
 Version			dd ?
-_Size			dd ?
+Size			dd ?
 DeviceAttentionSupported BOOLEAN ?
 AsynchronousNotificationSupported BOOLEAN ?
 IdlePowerManagementEnabled BOOLEAN ?
@@ -737,7 +737,7 @@ PDEVICE_POWER_DESCRIPTOR typedef ptr DEVICE_POWER_DESCRIPTOR
 
 DEVICE_COPY_OFFLOAD_DESCRIPTOR	STRUC
 Version			dd ?
-_Size			dd ?
+Size			dd ?
 MaximumTokenLifetime	dd ?
 DefaultTokenLifetime	dd ?
 MaximumTransferSize	dd ?
@@ -752,7 +752,7 @@ PDEVICE_COPY_OFFLOAD_DESCRIPTOR typedef ptr DEVICE_COPY_OFFLOAD_DESCRIPTOR
 
 STORAGE_DEVICE_RESILIENCY_DESCRIPTOR STRUC
 Version			dd ?
-_Size			dd ?
+Size			dd ?
 NameOffset		dd ?
 NumberOfLogicalCopies	dd ?
 NumberOfPhysicalCopies	dd ?
@@ -801,7 +801,7 @@ DEVICE_DATA_SET_RANGE	ENDS
 PDEVICE_DATA_SET_RANGE	typedef ptr DEVICE_DATA_SET_RANGE
 
 DEVICE_MANAGE_DATA_SET_ATTRIBUTES  STRUC
-_Size			dd ?
+Size			dd ?
 Action			DEVICE_DATA_MANAGEMENT_SET_ACTION ?
 Flags			dd ?
 ParameterBlockOffset	dd ?
@@ -812,7 +812,7 @@ DEVICE_MANAGE_DATA_SET_ATTRIBUTES ENDS
 PDEVICE_MANAGE_DATA_SET_ATTRIBUTES typedef ptr DEVICE_MANAGE_DATA_SET_ATTRIBUTES
 
 DEVICE_DSM_NOTIFICATION_PARAMETERS  STRUC
-_Size			dd ?
+Size			dd ?
 Flags			dd ?
 NumFileTypeIDs		dd ?
 FileTypeID		GUID 1 dup(<>)
@@ -823,7 +823,7 @@ DEVICE_DSM_NOTIFY_FLAG_BEGIN equ 0x00000001
 DEVICE_DSM_NOTIFY_FLAG_END equ 0x00000002
 
 DEVICE_DSM_NVCACHE_CHANGE_PRIORITY_PARAMETERS  STRUC
-_Size			dd ?
+Size			dd ?
 TargetPriority		db ?
 Reserved		db 3 dup(?)
 DEVICE_DSM_NVCACHE_CHANGE_PRIORITY_PARAMETERS ENDS
@@ -880,7 +880,7 @@ if (NTDDI_VERSION GE NTDDI_WINBLUE)
 
 DEVICE_DATA_SET_LBP_STATE_PARAMETERS  STRUC
 Version			dd ?
-_Size			dd ?
+Size			dd ?
 Flags			dd ?
 OutputVersion		dd ?
 DEVICE_DATA_SET_LBP_STATE_PARAMETERS ENDS
@@ -891,7 +891,7 @@ DEVICE_DATA_SET_LBP_STATE_PARAMETERS_VERSION_V1 equ 1
 endif
 
 DEVICE_MANAGE_DATA_SET_ATTRIBUTES_OUTPUT  STRUC
-_Size			dd ?
+Size			dd ?
 Action			DEVICE_DATA_MANAGEMENT_SET_ACTION ?
 Flags			dd ?
 OperationStatus		dd ?
@@ -904,7 +904,7 @@ DEVICE_MANAGE_DATA_SET_ATTRIBUTES_OUTPUT ENDS
 PDEVICE_MANAGE_DATA_SET_ATTRIBUTES_OUTPUT typedef ptr DEVICE_MANAGE_DATA_SET_ATTRIBUTES_OUTPUT
 
 DEVICE_DATA_SET_LB_PROVISIONING_STATE  STRUC
-_Size			dd ?
+Size			dd ?
 Version			dd ?
 SlabSizeInBytes		dd ?
 SlabOffsetDeltaInBytes	dd ?
@@ -919,7 +919,7 @@ DEVICE_DATA_SET_LB_PROVISIONING_STATE_VERSION_V1 equ (sizeof(DEVICE_DATA_SET_LB_
 if (NTDDI_VERSION GE NTDDI_WINBLUE)
 
 DEVICE_DATA_SET_LB_PROVISIONING_STATE_V2 STRUC
-_Size			dd ?
+Size			dd ?
 Version			dd ?
 SlabSizeInBytes		dd ?
 SlabOffsetDeltaInBytes	dd ?
@@ -1024,7 +1024,7 @@ endif
 
 STORAGE_READ_CAPACITY	STRUC
 Version			dd ?
-_Size			dd ?
+Size			dd ?
 BlockLength		dd ?
 NumberOfBlocks		LARGE_INTEGER <>
 DiskLength		LARGE_INTEGER <>
@@ -1054,7 +1054,7 @@ WriteThroughSupported	equ 2
 
 STORAGE_WRITE_CACHE_PROPERTY STRUC
 Version			dd ?
-_Size			dd ?
+Size			dd ?
 WriteCacheType		WRITE_CACHE_TYPE ?
 WriteCacheEnabled	WRITE_CACHE_ENABLE ?
 WriteCacheChangeable	WRITE_CACHE_CHANGE ?
@@ -1069,7 +1069,7 @@ ifdef _MSC_EXTENSIONS
 
 PERSISTENT_RESERVE_COMMAND  STRUC
 Version			dd ?
-_Size			dd ?
+Size			dd ?
 UNION
  STRUC PR_IN
   ;ServiceAction : 5	db ?
@@ -1226,7 +1226,7 @@ DEVICEDUMP_CAP_RESTRICTED_SECTION equ 0x00000002
 
 STORAGE_IDLE_POWER	STRUC
 Version			dd ?
-_Size			dd ?
+Size			dd ?
 flags			dd ?
 ;WakeCapableHint : 1	 dd ?
 ;D3ColdSupported : 1	 dd ?
@@ -1242,7 +1242,7 @@ StoragePowerupDeviceAttention equ 2
 
 STORAGE_IDLE_POWERUP_REASON STRUC
 Version			dd ?
-_Size			dd ?
+Size			dd ?
 PowerupReason		STORAGE_POWERUP_REASON_TYPE ?
 STORAGE_IDLE_POWERUP_REASON ENDS
 PSTORAGE_IDLE_POWERUP_REASON typedef ptr STORAGE_IDLE_POWERUP_REASON
@@ -1251,7 +1251,7 @@ STORAGE_IDLE_POWERUP_REASON_VERSION_V1 equ 1
 
 STORAGE_EVENT_NOTIFICATION STRUC
 Version			dd ?
-_Size			dd ?
+Size			dd ?
 Events			dd ?
 STORAGE_EVENT_NOTIFICATION ENDS
 PSTORAGE_EVENT_NOTIFICATION typedef ptr STORAGE_EVENT_NOTIFICATION
@@ -1484,7 +1484,7 @@ PDRIVE_LAYOUT_INFORMATION typedef ptr DRIVE_LAYOUT_INFORMATION
 
 VERIFY_INFORMATION	STRUC
 StartingOffset		LARGE_INTEGER <>
-_Length			dd ?
+Length			dd ?
 VERIFY_INFORMATION	ENDS
 PVERIFY_INFORMATION	typedef ptr VERIFY_INFORMATION
 
@@ -1516,7 +1516,7 @@ PARTITION_INFORMATION_GPT STRUC
 PartitionType		GUID <>
 PartitionId		GUID <>
 Attributes		dd ?
-_Name			WCHAR 36 dup(?)
+Name			WCHAR 36 dup(?)
 PARTITION_INFORMATION_GPT ENDS
 PPARTITION_INFORMATION_GPT typedef ptr PARTITION_INFORMATION_GPT
 
@@ -1567,7 +1567,7 @@ CREATE_DISK		ENDS
 PCREATE_DISK		typedef ptr CREATE_DISK
 
 GET_LENGTH_INFORMATION	STRUC
-_Length			LARGE_INTEGER <>
+Length			LARGE_INTEGER <>
 GET_LENGTH_INFORMATION	ENDS
 PGET_LENGTH_INFORMATION typedef ptr GET_LENGTH_INFORMATION
 
@@ -1759,7 +1759,7 @@ Average			LARGE_INTEGER <>
 AverageRead		LARGE_INTEGER <>
 AverageWrite		LARGE_INTEGER <>
 Granularity		dd ?
-_Size			dd ?
+Size			dd ?
 ReadCount		dd ?
 WriteCount		dd ?
 Histogram		PHISTOGRAM_BUCKET ?
@@ -1813,7 +1813,7 @@ RequestLocation		equ 1
 
 BIN_RANGE		STRUC
 StartValue		LARGE_INTEGER <>
-_Length			LARGE_INTEGER <>
+Length			LARGE_INTEGER <>
 BIN_RANGE		ENDS
 PBIN_RANGE		typedef ptr BIN_RANGE
 
@@ -2089,7 +2089,7 @@ LOCK_UNLOCK_DOOR	equ 0x02
 LOCK_UNLOCK_KEYPAD	equ 0x04
 
 GET_CHANGER_PARAMETERS	STRUC
-_Size			dd ?
+Size			dd ?
 NumberTransportElements dw ?
 NumberStorageElements	dw ?
 NumberCleanerSlots	dw ?
@@ -2531,7 +2531,7 @@ IOCTL_AVIO_MODIFY_STREAM equ CTL_CODE(FILE_DEVICE_AVIO, 3, METHOD_BUFFERED, FILE
 
 PATHNAME_BUFFER		STRUC
 PathNameLength		dd ?
-_Name			WCHAR 1 dup(?)
+Name			WCHAR 1 dup(?)
 PATHNAME_BUFFER		ENDS
 PPATHNAME_BUFFER	typedef ptr PATHNAME_BUFFER
 
@@ -2820,7 +2820,7 @@ PUSN_RECORD_COMMON_HEADER typedef ptr USN_RECORD_COMMON_HEADER
 
 USN_RECORD_EXTENT	STRUC
 _Offset			LONGLONG ?
-_Length			LONGLONG ?
+Length			LONGLONG ?
 USN_RECORD_EXTENT	ENDS
 PUSN_RECORD_EXTENT	typedef ptr USN_RECORD_EXTENT
 
@@ -3007,14 +3007,14 @@ endif
 if (_WIN32_WINNT GE _WIN32_WINNT_WIN2K)
 
 FILE_PREFETCH		STRUC
-_Type			dd ?
+Type			dd ?
 Count			dd ?
 _Prefetch		dd 1 dup(?)
 FILE_PREFETCH		ENDS
 PFILE_PREFETCH		typedef ptr FILE_PREFETCH
 
 FILE_PREFETCH_EX	STRUC
-_Type			dd ?
+Type			dd ?
 Count			dd ?
 Context			PVOID ?
 _Prefetch		dd 1 dup(?)
@@ -3201,7 +3201,7 @@ endif
 if (_WIN32_WINNT GE _WIN32_WINNT_WIN2K)
 FILE_ALLOCATED_RANGE_BUFFER STRUC
 FileOffset		LARGE_INTEGER <>
-_Length			LARGE_INTEGER <>
+Length			LARGE_INTEGER <>
 FILE_ALLOCATED_RANGE_BUFFER ENDS
 PFILE_ALLOCATED_RANGE_BUFFER typedef ptr FILE_ALLOCATED_RANGE_BUFFER
 endif
@@ -3230,7 +3230,7 @@ ENCRYPTION_FORMAT_DEFAULT equ (0x01)
 
 REQUEST_RAW_ENCRYPTED_DATA  STRUC
 FileOffset		LONGLONG ?
-_Length			dd ?
+Length			dd ?
 REQUEST_RAW_ENCRYPTED_DATA ENDS
 PREQUEST_RAW_ENCRYPTED_DATA typedef ptr REQUEST_RAW_ENCRYPTED_DATA
 
@@ -3256,7 +3256,7 @@ ENCRYPTED_DATA_INFO_SPARSE_FILE equ 1
 
 EXTENDED_ENCRYPTED_DATA_INFO  STRUC
 ExtendedCode		dd ?
-_Length			dd ?
+Length			dd ?
 Flags			dd ?
 Reserved		dd ?
 EXTENDED_ENCRYPTED_DATA_INFO ENDS
@@ -3831,7 +3831,7 @@ SD_ENUM_SDS_ENTRY	STRUC
 Hash			dd ?
 SecurityId		dd ?
 _Offset			dd ?
-_Length			dd ?
+Length			dd ?
 Descriptor		db 1 dup(?)
 SD_ENUM_SDS_ENTRY	ENDS
 PSD_ENUM_SDS_ENTRY	typedef ptr SD_ENUM_SDS_ENTRY
@@ -4239,7 +4239,7 @@ DEDUP_FILE_RECALL	equ 0xc0000009
 DEDUP_FILE_OP_SET_REPARSE_POINT equ 0xc0000001
 
 REPAIR_COPIES_INPUT	STRUC
-_Size			dd ?
+Size			dd ?
 Flags			dd ?
 FileOffset		LARGE_INTEGER <>
 Length			dd ?
@@ -4250,7 +4250,7 @@ REPAIR_COPIES_INPUT	ENDS
 PREPAIR_COPIES_INPUT	typedef ptr REPAIR_COPIES_INPUT
 
 REPAIR_COPIES_OUTPUT	STRUC
-_Size			dd ?
+Size			dd ?
 Status			dd ?
 ResumeFileOffset	LARGE_INTEGER <>
 REPAIR_COPIES_OUTPUT	ENDS
@@ -4312,7 +4312,7 @@ FileStorageTierMediaTypeSsd equ 2
 
 FILE_STORAGE_TIER	STRUC
 Id			GUID<>
-_Name			WCHAR FILE_STORAGE_TIER_NAME_LENGTH dup(?)
+Name			WCHAR FILE_STORAGE_TIER_NAME_LENGTH dup(?)
 Description		WCHAR FILE_STORAGE_TIER_NAME_LENGTH dup(?)
 Flags			dd ?
 ProvisionedCapacity	dd ?
@@ -4325,7 +4325,7 @@ QUERY_STORAGE_CLASSES_FLAGS_MEASURE_READ equ 0x40000000
 
 FSCTL_QUERY_STORAGE_CLASSES_OUTPUT STRUC
 Version			dd ?
-_Size			dd ?
+Size			dd ?
 Flags			dd ?
 TotalNumberOfTiers	dd ?
 NumberOfTiersReturned	dd ?
@@ -4337,7 +4337,7 @@ FSCTL_QUERY_STORAGE_CLASSES_OUTPUT_VERSION equ sizeof(FSCTL_QUERY_STORAGE_CLASSE
 
 FSCTL_QUERY_REGION_INFO_INPUT STRUC
 Version			dd ?
-_Size			dd ?
+Size			dd ?
 Flags			dd ?
 NumberOfTierIds		dd ?
 TierIds			GUID ANYSIZE_ARRAY dup(<>)
@@ -4355,7 +4355,7 @@ PFILE_STORAGE_TIER_REGION typedef ptr FILE_STORAGE_TIER_REGION
 
 FSCTL_QUERY_REGION_INFO_OUTPUT	STRUC
 Version			dd ?
-_Size			dd ?
+Size			dd ?
 Flags			dd ?
 Reserved		dd ?
 Alignment		dd ?

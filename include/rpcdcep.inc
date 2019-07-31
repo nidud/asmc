@@ -84,7 +84,7 @@ NT351_INTERFACE_SIZE	equ 0x40
 RPC_INTERFACE_HAS_PIPES equ 0x0001
 
 RPC_SERVER_INTERFACE	STRUC
-_Length			UINT ?
+Length			UINT ?
 InterfaceId		RPC_SYNTAX_IDENTIFIER <>
 TransferSyntax		RPC_SYNTAX_IDENTIFIER <>
 DispatchTable		PRPC_DISPATCH_TABLE ?
@@ -97,7 +97,7 @@ RPC_SERVER_INTERFACE	ENDS
 PRPC_SERVER_INTERFACE	typedef ptr RPC_SERVER_INTERFACE
 
 RPC_CLIENT_INTERFACE	STRUC
-_Length			UINT ?
+Length			UINT ?
 InterfaceId		RPC_SYNTAX_IDENTIFIER <>
 TransferSyntax		RPC_SYNTAX_IDENTIFIER <>
 DispatchTable		PRPC_DISPATCH_TABLE ?
@@ -128,7 +128,7 @@ I_RpcSend proto WINAPI \
 ;RPC_STATUS
 I_RpcReceive proto WINAPI \
 	       Message: PRPC_MESSAGE,
-		 _Size: UINT
+		  Size: UINT
 
 ;RPC_STATUS
 I_RpcFreePipeBuffer proto WINAPI \
@@ -155,7 +155,7 @@ I_RpcDeleteMutex proto WINAPI \
 
 ;PVOID
 I_RpcAllocate proto WINAPI \
-		  _Size: UINT
+		   Size: UINT
 
 ;void
 I_RpcFree proto WINAPI \
@@ -259,7 +259,7 @@ TRANSPORT_TYPE_WMSG	equ 0x08
 ;RPC_STATUS
 I_RpcBindingInqTransportType proto WINAPI \
 	       Binding: RPC_BINDING_HANDLE,
-		 _Type: ptr UINT
+		  Type: ptr UINT
 
 RPC_TRANSFER_SYNTAX	STRUC
 Uuid			UUID <>
@@ -400,6 +400,6 @@ endif
 
 ;RPC_STATUS
 I_RpcServerInqTransportType proto WINAPI \
-		  _Type: LPDWORD
+		   Type: LPDWORD
 
 endif

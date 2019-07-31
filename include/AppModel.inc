@@ -49,7 +49,7 @@ PACKAGE_ID              STRUC
 reserved                UINT32 ?
 processorArchitecture   UINT32 ?
 version                 PACKAGE_VERSION <>
-_name                   PWSTR ?
+name                    PWSTR ?
 publisher               PWSTR ?
 resourceId              PWSTR ?
 publisherId             PWSTR ?

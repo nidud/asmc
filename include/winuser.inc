@@ -2292,7 +2292,7 @@ LPCREATESTRUCT		typedef LPCREATESTRUCTA
 endif
 
 WINDOWPLACEMENT		STRUC
-_length			UINT ?
+length			UINT ?
 flags			UINT ?
 showCmd			UINT ?
 ptMinPosition		POINT <>
@@ -4169,7 +4169,7 @@ INPUT_KEYBOARD		equ 1
 INPUT_HARDWARE		equ 2
 
 INPUT			STRUC
-_type			dd ?
+type			dd ?
 UNION
   mi			MOUSEINPUT <>
   ki			KEYBDINPUT <>

@@ -924,7 +924,7 @@ PSPropertyBag_ReadType proto WINAPI \
 	       propBag: ptr IPropertyBag,
 	      propName: LPCWSTR,
 		   var: ptr VARIANT,
-		 _type: VARTYPE
+		  type: VARTYPE
 
 ;PSSTDAPI
 PSPropertyBag_ReadStr proto WINAPI \

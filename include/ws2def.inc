@@ -488,7 +488,7 @@ WSABUF			ENDS
 LPWSABUF		typedef ptr WSABUF
 
 WSAMSG			STRUC
-_name			LPSOCKADDR ?
+name			LPSOCKADDR ?
 namelen			SINT ?
 lpBuffers		LPWSABUF ?
 if(_WIN32_WINNT GE 0x0600)

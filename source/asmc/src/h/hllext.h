@@ -20,7 +20,7 @@ extern int EvaluateHllExpression(struct hll_item *, int *, struct asm_tok[], int
 extern int ExpandHllProc(char *, int, struct asm_tok[]);
 extern int ExpandHllExpression(struct hll_item *, int *, struct asm_tok[], int, int, char *);
 extern int QueueTestLines(char *);
-extern int HllContinueIf(struct hll_item *, int *, char *, struct asm_tok[], int, struct hll_item *);
+extern int HllContinueIf(struct hll_item *, int *, struct asm_tok[], int, struct hll_item *, int);
 extern int GenerateCString( int, struct asm_tok[] );
 
 #define MIN_JTABLE 8
@@ -48,7 +48,8 @@ enum hll_cmd {
     HLL_WHILE,
     HLL_REPEAT,
     HLL_BREAK,	/* .IF behind .BREAK or .CONTINUE */
-    HLL_SWITCH
+    HLL_SWITCH,
+    HLL_RETURN
 };
 
 /* index values for struct hll_item.labels[] */

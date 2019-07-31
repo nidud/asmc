@@ -767,24 +767,32 @@ static int StripSource( int i, int e, struct asm_tok tokenarray[] )
     char b[MAX_LINE_LEN];
     char *p;
     int k, j,lang;
+    int bracket = 0;
 
     b[0] = NULLC;
     for ( j = 0; j < i; j++ ) {
 
-	if ( j && tokenarray[j].token != T_DOT ) {
+	if ( j ) {
 
-	    if ( tokenarray[j].token == T_COMMA ) {
+	    if ( tokenarray[j].hll_flags & T_HLL_PROC ) {
 
+		proc_id = j;
+		parg_id = 0;
+	    }
+	    if ( tokenarray[j].token == T_CL_BRACKET )
+		bracket--;
+	    else if ( tokenarray[j].token == T_OP_BRACKET )
+		bracket++;
+	    else if ( tokenarray[j].token == T_COMMA ) {
 		if ( proc_id )
 		    parg_id++;
-
-	    } else {
-
-		if ( tokenarray[j].hll_flags & T_HLL_PROC ) {
-
-		    proc_id = j;
-		    parg_id = 0;
-		}
+	    } else if ( !( tokenarray[j].token == T_CL_SQ_BRACKET ||
+			   tokenarray[j].token == T_COLON ||
+			   tokenarray[j].token == T_DOT ||
+			   tokenarray[j-1].token == T_OP_BRACKET ||
+			   tokenarray[j-1].token == T_OP_SQ_BRACKET ||
+			   tokenarray[j-1].token == T_COLON ||
+			   tokenarray[j-1].token == T_DOT ) ) {
 		strcat( b, " " );
 	    }
 	}
@@ -792,6 +800,9 @@ static int StripSource( int i, int e, struct asm_tok tokenarray[] )
     }
 
     p = NULL;
+    if ( bracket == 0 )
+	proc_id = 0;
+
     if ( proc_id && tokenarray[proc_id].token != T_OP_SQ_BRACKET ) {
 
 	if ( (sym = (struct dsym *)GetProc( tokenarray[proc_id].string_ptr )) ) {
@@ -925,19 +936,19 @@ static int StripSource( int i, int e, struct asm_tok tokenarray[] )
 
 static int LKRenderHllProc( char *dst, int i, struct asm_tok tokenarray[] )
 {
-    char b[MAX_LINE_LEN];
-    char ClassVtbl[128];
-    int br_count;
-    int j, k, x;
+    char	b[MAX_LINE_LEN];
+    char	ClassVtbl[128];
+    int		br_count;
+    int		j, k, x;
     struct asym *tmp;
     struct asym *sym = NULL;
     struct asym *target = NULL;
-    int static_struct = 0;
-    char *comptr = NULL;
-    char *method;
-    struct expr opnd;
-    int sqbrend = 0;
-    uint_32 u;
+    int		static_struct = 0;
+    char	*comptr = NULL;
+    char	*method;
+    struct	expr opnd;
+    int		sqbrend = 0;
+    uint_32	u;
 
     strcpy( b, "invoke " );
 
@@ -980,17 +991,12 @@ static int LKRenderHllProc( char *dst, int i, struct asm_tok tokenarray[] )
 
 	    if ( target ) {
 
-		if ( target->state == SYM_TYPE && target->typekind == TYPE_STRUCT ) {
+		if ( target->state == SYM_TYPE && target->typekind == TYPE_STRUCT )
 
 		    /* If Class.Method do not exist assume ClassVtbl.Method do. */
 
-		    u = 0;
-		    sym = target;
-		    if ( SearchNameInStruct( sym, method, &u, 0 ) ) {
-			sym = NULL;
-			target = NULL;
-		    }
-		} else
+		    goto type_struct;
+		else
 		    target = NULL;
 	    }
 	}
@@ -1014,11 +1020,21 @@ static int LKRenderHllProc( char *dst, int i, struct asm_tok tokenarray[] )
 		    if ( tokenarray[i+1].token == T_DOT && tokenarray[i+3].token == T_OP_BRACKET ) {
 
 			static_struct++;
+
+			type_struct:
+
 			sym = target;
-			if ( SearchNameInStruct( sym, method, &u, 0 ) ) {
-			    sym = NULL;
-			    target = NULL;
+			tmp = SymFind( strcat( strcpy( ClassVtbl, sym->name ), "Vtbl" ) );
+			if ( tmp )
+			    tmp = SearchNameInStruct( tmp, method, &u, 0 );
+			if ( tmp == NULL ) {
+			    tmp = SearchNameInStruct( sym, method, &u, 0 );
+			    if ( tmp ) {
+				sym = NULL;
+				method = (char *)tmp;
+			    }
 			}
+			target = sym;
 		    }
 		} else
 		    target = NULL;
@@ -2031,100 +2047,103 @@ int HllEndDir( int i, struct asm_tok tokenarray[] )
     return( rc );
 }
 
-int HllContinueIf( struct hll_item *hll, int *i, char *buffer,
-	struct asm_tok tokenarray[], int label, struct hll_item *hll_0 )
+int HllContinueIf( struct hll_item *hll, int *i, struct asm_tok tokenarray[],
+	int label, struct hll_item *hll_0, int is_true )
 {
-	int  rc = 0;
-	char buff[16];
-	char *condlines;
-	int  x, cmd, flags;
+    int rc = 0;
+    char buff[16];
+    char *condlines;
+    int	 x, cmd, flags;
+    char buffer[256];
 
-	if ( tokenarray[*i].token != T_FINAL ) {
+    if ( tokenarray[*i].token != T_FINAL ) {
 
-	    if ( tokenarray[*i].token == T_DIRECTIVE ) {
+	if ( tokenarray[*i].token == T_DIRECTIVE ) {
 
-		x = 0;
-		switch ( tokenarray[*i].tokval ) {
-		case T_DOT_IFSD:
+	    x = 0;
+	    switch ( tokenarray[*i].tokval ) {
+	    case T_DOT_IFSD:
+		x |= HLLF_IFS;
+	    case T_DOT_IFD:
+		x |= HLLF_IFD;
+	    DOT_IF:
+	    case T_DOT_IF:
+		cmd = hll->cmd;
+		condlines = hll->condlines;
+		flags = hll->flags;
+		hll->flags = x;
+		hll->cmd = HLL_BREAK;
+		(*i)++;
+		rc = EvaluateHllExpression( hll, i, tokenarray, label, is_true, buffer );
+		if ( rc == NOT_ERROR )
+		    QueueTestLines( buffer );
+		hll->flags = flags;
+		hll->condlines = condlines;
+		hll->cmd = cmd;
+		break;
+
+	    case T_DOT_IFSB:
+	       x |= (HLLF_IFS | HLLF_IFB);
+	       goto DOT_IF;
+	    case T_DOT_IFSW:
+		x |= HLLF_IFS;
+	    case T_DOT_IFW:
+		x |= HLLF_IFW;
+		goto DOT_IF;
+	    case T_DOT_IFS:
+		if ( tokenarray[*i+1].token != T_FINAL ) {
 		    x |= HLLF_IFS;
-		case T_DOT_IFD:
-		    x |= HLLF_IFD;
-		DOT_IF:
-		case T_DOT_IF:
-		    cmd = hll->cmd;
-		    condlines = hll->condlines;
-		    flags = hll->flags;
-		    hll->flags = x;
-		    hll->cmd = HLL_BREAK;
-		    (*i)++;
-		    rc = EvaluateHllExpression( hll, i, tokenarray, label, 1, buffer );
-		    if ( rc == NOT_ERROR )
-			QueueTestLines( buffer );
-		    hll->flags = flags;
-		    hll->condlines = condlines;
-		    hll->cmd = cmd;
-		    break;
-
-		case T_DOT_IFSB:
-		    x |= (HLLF_IFS | HLLF_IFB);
 		    goto DOT_IF;
-		case T_DOT_IFSW:
-		    x |= HLLF_IFS;
-		case T_DOT_IFW:
-		    x |= HLLF_IFW;
+		}
+	    case T_DOT_IFC:
+	    case T_DOT_IFB:
+		if ( tokenarray[*i+1].token != T_FINAL ) {
+		    x |= HLLF_IFB;
 		    goto DOT_IF;
-		case T_DOT_IFS:
-		    if ( tokenarray[*i+1].token != T_FINAL ) {
-			x |= HLLF_IFS;
-			goto DOT_IF;
-		    }
-		case T_DOT_IFC:
-		case T_DOT_IFB:
-		    if ( tokenarray[*i+1].token != T_FINAL ) {
-			x |= HLLF_IFB;
-			goto DOT_IF;
-		    }
-		case T_DOT_IFA:
-		case T_DOT_IFG:
-		case T_DOT_IFL:
-		case T_DOT_IFO:
-		case T_DOT_IFP:
-		case T_DOT_IFZ:
-		case T_DOT_IFNA:
-		case T_DOT_IFNB:
-		case T_DOT_IFNC:
-		case T_DOT_IFNG:
-		case T_DOT_IFNL:
-		case T_DOT_IFNO:
-		case T_DOT_IFNP:
-		case T_DOT_IFNS:
-		case T_DOT_IFNZ:
-		    (*i)++;
-		    GetLabelStr( hll->labels[label], buff );
-		    GetJumpString( tokenarray[*i-1].tokval, buffer );
-		    strcat( buffer, " " );
-		    strcat( buffer, buff );
+		}
+	    case T_DOT_IFA:
+	    case T_DOT_IFG:
+	    case T_DOT_IFL:
+	    case T_DOT_IFO:
+	    case T_DOT_IFP:
+	    case T_DOT_IFZ:
+	    case T_DOT_IFNA:
+	    case T_DOT_IFNB:
+	    case T_DOT_IFNC:
+	    case T_DOT_IFNG:
+	    case T_DOT_IFNL:
+	    case T_DOT_IFNO:
+	    case T_DOT_IFNP:
+	    case T_DOT_IFNS:
+	    case T_DOT_IFNZ:
+		(*i)++;
+		GetLabelStr( hll->labels[label], buff );
+		GetJumpString( tokenarray[*i-1].tokval, buffer );
+		strcat( buffer, " " );
+		strcat( buffer, buff );
+		if ( is_true )
 		    InvertJump( buffer );
-		    AddLineQueue( buffer );
-		    break;
-		}
+		AddLineQueue( buffer );
+		break;
 	    }
-	} else {
-		AddLineQueueX("jmp %s", GetLabelStr( hll->labels[label], buffer ) );
-
-		if ( hll_0->cmd == HLL_SWITCH ) {
-			//
-			// unconditional jump from .case
-			// - set flag to skip exit-jumps
-			//
-			hll = hll_0;
-			while ( hll_0->caselist )
-			    hll_0 = hll_0->caselist;
-			if ( hll != hll_0 )
-			    hll_0->flags |= HLLF_ENDCOCCUR;
-		}
 	}
-	return rc;
+    } else {
+
+	AddLineQueueX("jmp %s", GetLabelStr( hll->labels[label], buffer ) );
+
+	if ( hll_0->cmd == HLL_SWITCH ) {
+	    /*
+	     * unconditional jump from .case
+	     * - set flag to skip exit-jumps
+	     */
+	    hll = hll_0;
+	    while ( hll_0->caselist )
+		hll_0 = hll_0->caselist;
+	    if ( hll != hll_0 )
+		hll_0->flags |= HLLF_ENDCOCCUR;
+	}
+    }
+    return rc;
 }
 
 /*
@@ -2242,7 +2261,7 @@ int HllExitDir( int i, struct asm_tok tokenarray[] )
 
 	/* .BREAK .IF ... or .CONTINUE .IF ? */
 	i++;
-	rc = HllContinueIf( hll, &i, buffer, tokenarray, idx, n );
+	rc = HllContinueIf( hll, &i, tokenarray, idx, n, 1 );
 	break;
     }
     if ( tokenarray[i].token != T_FINAL && rc == NOT_ERROR ) {

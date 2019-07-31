@@ -104,7 +104,8 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
     struct expr opnd;
     char fullparam[MAX_LINE_LEN];
     char buffer[MAX_LINE_LEN];
-    int	 fastcall_id = GetFastcallId( proc->sym.langtype );
+    int fastcall_id = GetFastcallId( proc->sym.langtype );
+    int eax = T_EAX;
 
 
     for ( currParm = 0; currParm <= reqParam; ) {
@@ -318,6 +319,9 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 	    return( NOT_ERROR );
 	}
 
+	if ( pushsize == 8 )
+	    eax = T_RAX;
+
 	if ( ( opnd.kind == EXPR_ADDR && opnd.inst != T_OFFSET ) ||
 	    ( opnd.kind == EXPR_REG && opnd.indirect == TRUE ) ) {
 
@@ -383,10 +387,13 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 		if ( psize > 4 ) {
 		    asmerr( 2114, reqParam+1 );
 		}
+
 		/* v2.11: added, use MOVSX/MOVZX if cpu >= 80386 */
-		if ( asize < 4 && psize > 2 && IS_SIGNED( opnd.mem_type ) && ( ModuleInfo.curr_cpu & P_CPU_MASK ) >= P_386 ) {
+		if ( asize < 4 && psize > 2 && IS_SIGNED( opnd.mem_type )
+		     && ( ModuleInfo.curr_cpu & P_CPU_MASK ) >= P_386 ) {
+
 		    AddLineQueueX( " movsx %r, %s", T_EAX, fullparam );
-		    AddLineQueueX( " push %r", T_EAX );
+		    AddLineQueueX( " push %r", eax );
 		    *r0flags = R0_USED; /* reset R0_H_CLEARED  */
 		} else {
 		    switch ( opnd.mem_type ) {
@@ -423,32 +430,38 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 			    AddLineQueueX( " push %r", T_AX );
 			} else {
 			    AddLineQueueX( " mov%sx %r, %s", opnd.mem_type == MT_BYTE ? "z" : "s", T_EAX, fullparam );
-			    AddLineQueueX( " push %r", T_EAX );
+			    AddLineQueueX( " push %r", eax );
 			}
 			*r0flags |= R0_USED;
 			break;
 		    case MT_WORD:
 		    case MT_SWORD:
 			if ( opnd.mem_type == MT_WORD && ( Options.masm_compat_gencode || psize == 2 )) {
-			    if ( curr->sym.is_vararg || psize != 2 )
-				AddLineQueueX( " pushw 0" );
-			    else {
-				AddLineQueueX( " sub %r, 2", stackreg[ModuleInfo.Ofssize] );
+			    if ( pushsize == 8 ) {
+				AddLineQueueX(" mov ax, %s", fullparam);
+				AddLineQueueX(" push rax");
+				*r0flags = R0_USED; /* reset R0_H_CLEARED  */
+			    } else {
+				if ( curr->sym.is_vararg || psize != 2 )
+				    AddLineQueueX( " pushw 0" );
+				else {
+				    AddLineQueueX( " sub %r, 2", stackreg[ModuleInfo.Ofssize] );
+				}
+				AddLineQueueX( " push %s", fullparam );
 			    }
-			    AddLineQueueX( " push %s", fullparam );
 			} else {
 			    AddLineQueueX( " mov%sx %r, %s", opnd.mem_type == MT_WORD ? "z" : "s", T_EAX, fullparam );
-			    AddLineQueueX( " push %r", T_EAX );
+			    AddLineQueueX( " push %r", eax );
 			    *r0flags = R0_USED; /* reset R0_H_CLEARED  */
 			}
 			break;
 		    default:
 			if ( asize == 3 ) { /* added v2.29 */
-			    if ( pushsize == 4 ) {
+			    if ( pushsize > 2 ) {
 				AddLineQueueX( " mov al, byte ptr %s[2]", fullparam );
 				AddLineQueue(  " shl eax,16" );
 				AddLineQueueX( " mov ax, word ptr %s", fullparam );
-				AddLineQueue(  " push eax" );
+				AddLineQueueX( " push %r", eax );
 			    } else {
 				AddLineQueueX( " push word ptr %s[2]", fullparam );
 				AddLineQueueX( " push word ptr %s", fullparam );
@@ -461,7 +474,7 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 		if ( IS_SIGNED( opnd.mem_type ) && psize > asize ) {
 		    if ( psize > 2 && (( ModuleInfo.curr_cpu & P_CPU_MASK ) >= P_386 ) ) {
 			AddLineQueueX( " movsx %r, %s", T_EAX, fullparam );
-			AddLineQueueX( " push %r", T_EAX );
+			AddLineQueueX( " push %r", eax );
 			*r0flags = R0_USED; /* reset R0_H_CLEARED  */
 		    } else if ( pushsize == 2 && psize > 2 ) {
 			AddLineQueueX( " mov %r, %s", T_AX, fullparam );
@@ -579,6 +592,29 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 			    AddLineQueueX( " push %r", T_AX );
 			    *r0flags = R0_USED | R0_H_CLEARED | R0_X_CLEARED;
 			}
+
+		    } else if ( pushsize == 8 && asize == psize && psize < 8 ) {
+
+			switch ( SizeFromRegister(reg) ) {
+			case 1:
+			    if ( reg >= T_AL && reg <= T_BH )
+				reg += (T_RAX - T_AL);
+			    else if ( reg >= T_SPL && reg <= T_R15B )
+				reg += (T_R8 - T_R8B);
+			    break;
+			case 2:
+			    if ( reg >= T_AX && reg <= T_DI )
+				reg += (T_RAX - T_AX);
+			    else if ( reg >= T_R8W && reg <= T_R15W )
+				reg += (T_R8 - T_R8W);
+			    break;
+			case 4:
+			    if ( reg >= T_EAX && reg <= T_EDI )
+				reg += (T_RAX - T_EAX);
+			    else if ( reg >= T_R8D && reg <= T_R15D )
+				reg += (T_R8 - T_R8D);
+			    break;
+			}
 		    }
 
 		    if ( asize == 1 ) {
@@ -587,7 +623,7 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 				/* v2.10: consider signed type coercion! */
 				AddLineQueueX( " mov%sx %r, %s", IS_SIGNED( opnd.mem_type ) ? "s" : "z",
 					      regax[ModuleInfo.Ofssize], fullparam );
-				*r0flags =  ( IS_SIGNED( opnd.mem_type ) ? R0_USED : R0_USED | R0_H_CLEARED );
+				*r0flags = ( IS_SIGNED( opnd.mem_type ) ? R0_USED : R0_USED | R0_H_CLEARED );
 			    } else {
 				if ( reg != T_AL ) {
 				    AddLineQueueX( " mov %r, %s", T_AL, fullparam );

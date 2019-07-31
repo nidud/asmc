@@ -1840,7 +1840,7 @@ DROPIMAGE_WARNING	equ 7			; yellow exclamation, something is amiss with the oper
 DROPIMAGE_NOIMAGE	equ 8			; no image at all
 
 DROPDESCRIPTION		STRUC
-_type			DROPIMAGETYPE ?
+type			DROPIMAGETYPE ?
 szMessage		WCHAR MAX_PATH dup(?)
 szInsert		WCHAR MAX_PATH dup(?)
 DROPDESCRIPTION		ENDS

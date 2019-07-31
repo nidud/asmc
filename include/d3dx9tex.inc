@@ -52,7 +52,7 @@ D3DXIFF_PFM		equ 8
 D3DXIFF_FORCE_DWORD	equ 0x7fffffff
 
 D3DXIMAGE_INFO		STRUC
-_Width			UINT ?
+Width			UINT ?
 Height			UINT ?
 Depth			UINT ?
 MipLevels		UINT ?
@@ -312,7 +312,7 @@ D3DXSaveVolumeToFileW proto WINAPI \
 ;HRESULT
 D3DXCheckTextureRequirements proto WINAPI \
 		device: ptr IDirect3DDevice9,
-		_width: ptr UINT,
+		 width: ptr UINT,
 		height: ptr UINT,
 	     miplevels: ptr UINT,
 		 usage: DWORD,
@@ -331,7 +331,7 @@ D3DXCheckCubeTextureRequirements proto WINAPI \
 ;HRESULT
 D3DXCheckVolumeTextureRequirements proto WINAPI \
 		device: ptr IDirect3DDevice9,
-		_width: ptr UINT,
+		 width: ptr UINT,
 		height: ptr UINT,
 		 depth: ptr UINT,
 	     miplevels: ptr UINT,
@@ -342,7 +342,7 @@ D3DXCheckVolumeTextureRequirements proto WINAPI \
 ;HRESULT
 D3DXCreateTexture proto WINAPI \
 		device: ptr IDirect3DDevice9,
-		_width: UINT,
+		 width: UINT,
 		height: UINT,
 	     miplevels: UINT,
 		 usage: DWORD,
@@ -363,7 +363,7 @@ D3DXCreateCubeTexture proto WINAPI \
 ;HRESULT
 D3DXCreateVolumeTexture proto WINAPI \
 		device: ptr IDirect3DDevice9,
-		_width: UINT,
+		 width: UINT,
 		height: UINT,
 		 depth: UINT,
 	     miplevels: UINT,
@@ -455,7 +455,7 @@ D3DXCreateVolumeTextureFromResourceW proto WINAPI \
 D3DXCreateTextureFromFileExA proto WINAPI \
 		device: ptr IDirect3DDevice9,
 	       srcfile: LPSTR,
-		_width: UINT,
+		 width: UINT,
 		height: UINT,
 	     miplevels: UINT,
 		 usage: DWORD,
@@ -472,7 +472,7 @@ D3DXCreateTextureFromFileExA proto WINAPI \
 D3DXCreateTextureFromFileExW proto WINAPI \
 		device: ptr IDirect3DDevice9,
 	       srcfile: LPWSTR,
-		_width: UINT,
+		 width: UINT,
 		height: UINT,
 	     miplevels: UINT,
 		 usage: DWORD,
@@ -521,7 +521,7 @@ D3DXCreateCubeTextureFromFileExW proto WINAPI \
 D3DXCreateVolumeTextureFromFileExA proto WINAPI \
 		device: ptr IDirect3DDevice9,
 	      resource: LPSTR,
-		_width: UINT,
+		 width: UINT,
 		height: UINT,
 		 depth: UINT,
 	     miplevels: UINT,
@@ -539,7 +539,7 @@ D3DXCreateVolumeTextureFromFileExA proto WINAPI \
 D3DXCreateVolumeTextureFromFileExW proto WINAPI \
 		device: ptr IDirect3DDevice9,
 	      resource: LPWSTR,
-		_width: UINT,
+		 width: UINT,
 		height: UINT,
 		 depth: UINT,
 	     miplevels: UINT,
@@ -558,7 +558,7 @@ D3DXCreateTextureFromResourceExA proto WINAPI \
 		device: ptr IDirect3DDevice9,
 	     srcmodule: HMODULE,
 	      resource: LPSTR,
-		_width: UINT,
+		 width: UINT,
 		height: UINT,
 	     miplevels: UINT,
 		 usage: DWORD,
@@ -576,7 +576,7 @@ D3DXCreateTextureFromResourceExW proto WINAPI \
 		device: ptr IDirect3DDevice9,
 	     srcmodule: HMODULE,
 	      resource: LPWSTR,
-		_width: UINT,
+		 width: UINT,
 		height: UINT,
 	     miplevels: UINT,
 		 usage: DWORD,
@@ -628,7 +628,7 @@ D3DXCreateVolumeTextureFromResourceExA proto WINAPI \
 		device: ptr IDirect3DDevice9,
 	     srcmodule: HMODULE,
 	      resource: LPSTR,
-		_width: UINT,
+		 width: UINT,
 		height: UINT,
 		 depth: UINT,
 	     miplevels: UINT,
@@ -647,7 +647,7 @@ D3DXCreateVolumeTextureFromResourceExW proto WINAPI \
 		device: ptr IDirect3DDevice9,
 	     srcmodule: HMODULE,
 	      resource: LPWSTR,
-		_width: UINT,
+		 width: UINT,
 		height: UINT,
 		 depth: UINT,
 	     miplevels: UINT,
@@ -688,7 +688,7 @@ D3DXCreateTextureFromFileInMemoryEx proto WINAPI \
 		device: ptr IDirect3DDevice9,
 	       srcdata: PVOID,
 	   srcdatasize: UINT,
-		_width: UINT,
+		 width: UINT,
 		height: UINT,
 	     miplevels: UINT,
 		 usage: DWORD,
@@ -723,7 +723,7 @@ D3DXCreateVolumeTextureFromFileInMemoryEx proto WINAPI \
 		device: ptr IDirect3DDevice9,
 	       srcdata: PVOID,
 	   srcdatasize: UINT,
-		_width: UINT,
+		 width: UINT,
 		height: UINT,
 		 depth: UINT,
 	     miplevels: UINT,

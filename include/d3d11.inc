@@ -637,7 +637,7 @@ D3D11_SO_DECLARATION_ENTRY ENDS
 D3D11_VIEWPORT		STRUC
 TopLeftX		FLOAT ?
 TopLeftY		FLOAT ?
-_Width			FLOAT ?
+Width			FLOAT ?
 Height			FLOAT ?
 MinDepth		FLOAT ?
 MaxDepth		FLOAT ?
@@ -981,7 +981,7 @@ LPID3D11Buffer		typedef ptr ID3D11Buffer
 endif
 
 D3D11_TEXTURE1D_DESC	STRUC
-_Width			UINT ?
+Width			UINT ?
 MipLevels		UINT ?
 ArraySize		UINT ?
 Format			DXGI_FORMAT ?
@@ -1011,7 +1011,7 @@ __ID3D11Texture1D_INTERFACE_DEFINED__ equ 1
 endif
 
 D3D11_TEXTURE2D_DESC	STRUC
-_Width			UINT ?
+Width			UINT ?
 Height			UINT ?
 MipLevels		UINT ?
 ArraySize		UINT ?
@@ -1045,7 +1045,7 @@ LPID3D11Texture2D	typedef ptr ID3D11Texture2D
 endif
 
 D3D11_TEXTURE3D_DESC	STRUC
-_Width			UINT ?
+Width			UINT ?
 Height			UINT ?
 Depth			UINT ?
 MipLevels		UINT ?

@@ -546,7 +546,7 @@ closesocket proto WINAPI \
 ;int
 connect proto WINAPI \
 		     s: SOCKET,
-		 _name: ptr sockaddr,
+		  name: ptr sockaddr,
 	       namelen: SINT
 
 ;int
@@ -558,13 +558,13 @@ ioctlsocket proto WINAPI \
 ;int
 getpeername proto WINAPI \
 		     s: SOCKET,
-		 _name: ptr sockaddr,
+		  name: ptr sockaddr,
 	       namelen: ptr SINT
 
 ;int
 getsockname proto WINAPI \
 		     s: SOCKET,
-		 _name: ptr sockaddr,
+		  name: ptr sockaddr,
 	       namelen: ptr SINT
 
 ;int
@@ -658,7 +658,7 @@ shutdown proto WINAPI \
 ;SOCKET
 socket proto WINAPI \
 		    af: SINT,
-		 _type: SINT,
+		  type: SINT,
 	      protocol: SINT
 
 
@@ -666,15 +666,15 @@ socket proto WINAPI \
 gethostbyaddr proto WINAPI \
 		 _addr: LPSTR,
 		   len: SINT,
-		 _type: SINT
+		  type: SINT
 
 hostent *
 gethostbyname proto WINAPI \
-		 _name: LPSTR
+		  name: LPSTR
 
 ;int
 gethostname proto WINAPI \
-		 _name: LPSTR,
+		  name: LPSTR,
 	       namelen: SINT
 
 ;servent *
@@ -684,7 +684,7 @@ getservbyport proto WINAPI \
 
 ;servent *
 getservbyname proto WINAPI \
-		 _name: LPSTR,
+		  name: LPSTR,
 		_proto: LPSTR
 
 ;protoent *
@@ -693,7 +693,7 @@ getprotobynumber proto WINAPI \
 
 ;protoent *
 getprotobyname proto WINAPI \
-		 _name: LPSTR
+		  name: LPSTR
 
 
 ;int
@@ -723,7 +723,7 @@ WSASetBlockingHook proto WINAPI \
 WSAAsyncGetServByName proto WINAPI \
 		  hWnd: HWND,
 		  wMsg: UINT,
-		 _name: LPSTR,
+		  name: LPSTR,
 		_proto: LPSTR,
 		   buf: LPSTR,
 		buflen: SINT
@@ -767,7 +767,7 @@ WSAAsyncGetHostByAddr proto WINAPI \
 		  wMsg: UINT,
 		 _addr: LPSTR,
 		   len: SINT,
-		 _type: SINT,
+		  type: SINT,
 		   buf: LPSTR,
 		buflen: SINT
 

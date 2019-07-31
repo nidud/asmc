@@ -150,7 +150,7 @@ GdipAddPathArc proto WINAPI \
 		  path: ptr,
 		     x: REAL,
 		     y: REAL,
-		_width: REAL,
+		 width: REAL,
 		height: REAL,
 	    startAngle: REAL,
 	    sweepAngle: REAL
@@ -221,7 +221,7 @@ GdipAddPathRectangle proto WINAPI \
 		  path: ptr,
 		     x: REAL,
 		     y: REAL,
-		_width: REAL,
+		 width: REAL,
 		height: REAL
 
 
@@ -237,7 +237,7 @@ GdipAddPathEllipse proto WINAPI \
 		  path: ptr,
 		     x: REAL,
 		     y: REAL,
-		_width: REAL,
+		 width: REAL,
 		height: REAL
 
 
@@ -246,7 +246,7 @@ GdipAddPathPie proto WINAPI \
 		  path: ptr,
 		     x: REAL,
 		     y: REAL,
-		_width: REAL,
+		 width: REAL,
 		height: REAL,
 	    startAngle: REAL,
 	    sweepAngle: REAL
@@ -270,7 +270,7 @@ GdipAddPathPath proto WINAPI \
 GdipAddPathString proto WINAPI \
 		  path: ptr,
 		string: ptr WCHAR,
-	       _length: SINT,
+		length: SINT,
 		family: ptr GpFontFamily,
 		 style: SINT,
 		emSize: REAL,
@@ -282,7 +282,7 @@ GdipAddPathString proto WINAPI \
 GdipAddPathStringI proto WINAPI \
 		  path: ptr,
 		string: ptr WCHAR,
-	       _length: SINT,
+		length: SINT,
 		family: ptr GpFontFamily,
 		 style: SINT,
 		emSize: REAL,
@@ -311,7 +311,7 @@ GdipAddPathArcI proto WINAPI \
 		  path: ptr,
 		     x: SINT,
 		     y: SINT,
-		_width: SINT,
+		 width: SINT,
 		height: SINT,
 	    startAngle: REAL,
 	    sweepAngle: REAL
@@ -382,7 +382,7 @@ GdipAddPathRectangleI proto WINAPI \
 		  path: ptr,
 		     x: SINT,
 		     y: SINT,
-		_width: SINT,
+		 width: SINT,
 		height: SINT
 
 
@@ -398,7 +398,7 @@ GdipAddPathEllipseI proto WINAPI \
 		  path: ptr,
 		     x: SINT,
 		     y: SINT,
-		_width: SINT,
+		 width: SINT,
 		height: SINT
 
 
@@ -407,7 +407,7 @@ GdipAddPathPieI proto WINAPI \
 		  path: ptr,
 		     x: SINT,
 		     y: SINT,
-		_width: SINT,
+		 width: SINT,
 		height: SINT,
 	    startAngle: REAL,
 	    sweepAngle: REAL
@@ -798,7 +798,7 @@ GdipCreateRegionPath proto WINAPI \
 ;GpStatus
 GdipCreateRegionRgnData proto WINAPI \
 	    regionData: ptr BYTE,
-		 _size: SINT,
+		  size: SINT,
 		region: ptr GpRegion
 
 
@@ -957,7 +957,7 @@ GdipIsVisibleRegionRect proto WINAPI \
 		region: ptr GpRegion,
 		     x: REAL,
 		     y: REAL,
-		_width: REAL,
+		 width: REAL,
 		height: REAL,
 	      graphics: ptr GpGraphics,
 		result: ptr BOOL
@@ -968,7 +968,7 @@ GdipIsVisibleRegionRectI proto WINAPI \
 		region: ptr GpRegion,
 		     x: SINT,
 		     y: SINT,
-		_width: SINT,
+		 width: SINT,
 		height: SINT,
 	      graphics: ptr GpGraphics,
 		result: ptr BOOL
@@ -1015,7 +1015,7 @@ GdipDeleteBrush proto WINAPI \
 ;GpStatus
 GdipGetBrushType proto WINAPI \
 		 brush: ptr GpBrush,
-		 _type: ptr GpBrushType
+		  type: ptr GpBrushType
 
 
 ;;----------------------------------------------------------------------------
@@ -1065,7 +1065,7 @@ GdipCreateTexture2 proto WINAPI \
 	      wrapmode: ptr,
 		     x: REAL,
 		     y: REAL,
-		_width: REAL,
+		 width: REAL,
 		height: REAL,
 	       texture: ptr GpTexture
 
@@ -1076,7 +1076,7 @@ GdipCreateTextureIA proto WINAPI \
        imageAttributes: ptr GpImageAttributes,
 		     x: REAL,
 		     y: REAL,
-		_width: REAL,
+		 width: REAL,
 		height: REAL,
 	       texture: ptr GpTexture
 
@@ -1087,7 +1087,7 @@ GdipCreateTexture2I proto WINAPI \
 	      wrapmode: ptr,
 		     x: SINT,
 		     y: SINT,
-		_width: SINT,
+		 width: SINT,
 		height: SINT,
 	       texture: ptr GpTexture
 
@@ -1098,7 +1098,7 @@ GdipCreateTextureIAI proto WINAPI \
        imageAttributes: ptr GpImageAttributes,
 		     x: SINT,
 		     y: SINT,
-		_width: SINT,
+		 width: SINT,
 		height: SINT,
 	       texture: ptr GpTexture
 
@@ -1673,7 +1673,7 @@ GdipSetPathGradientFocusScales proto WINAPI \
 ;GpStatus
 GdipCreatePen1 proto WINAPI \
 		 color: ARGB,
-		_width: REAL,
+		 width: REAL,
 		  unit: ptr,
 		   pen: ptr GpPen
 
@@ -1681,7 +1681,7 @@ GdipCreatePen1 proto WINAPI \
 ;GpStatus
 GdipCreatePen2 proto WINAPI \
 		 brush: ptr GpBrush,
-		_width: REAL,
+		 width: REAL,
 		  unit: ptr,
 		   pen: ptr GpPen
 
@@ -1700,13 +1700,13 @@ GdipDeletePen proto WINAPI \
 ;GpStatus
 GdipSetPenWidth proto WINAPI \
 		   pen: ptr GpPen,
-		_width: REAL
+		 width: REAL
 
 
 ;GpStatus
 GdipGetPenWidth proto WINAPI \
 		   pen: ptr GpPen,
-		_width: ptr REAL
+		 width: ptr REAL
 
 
 ;GpStatus
@@ -1899,7 +1899,7 @@ GdipGetPenBrushFill proto WINAPI \
 ;GpStatus
 GdipGetPenFillType proto WINAPI \
 		   pen: ptr GpPen,
-		 _type: ptr
+		  type: ptr
 
 
 ;GpStatus
@@ -2065,7 +2065,7 @@ GdipGetCustomLineCapWidthScale proto WINAPI \
 ;GpStatus
 GdipCreateAdjustableArrowCap proto WINAPI \
 		height: REAL,
-		_width: REAL,
+		 width: REAL,
 	      isFilled: BOOL,
 		   cap: ptr GpAdjustableArrowCap
 
@@ -2085,13 +2085,13 @@ GdipGetAdjustableArrowCapHeight proto WINAPI \
 ;GpStatus
 GdipSetAdjustableArrowCapWidth proto WINAPI \
 		   cap: ptr,
-		_width: REAL
+		 width: REAL
 
 
 ;GpStatus
 GdipGetAdjustableArrowCapWidth proto WINAPI \
 		   cap: ptr,
-		_width: ptr
+		 width: ptr
 
 
 ;GpStatus
@@ -2202,20 +2202,20 @@ GdipGetImageBounds proto WINAPI \
 ;GpStatus
 GdipGetImageDimension proto WINAPI \
 		 image: ptr GpImage,
-		_width: ptr REAL,
+		 width: ptr REAL,
 		height: ptr REAL
 
 
 ;GpStatus
 GdipGetImageType proto WINAPI \
 		 image: ptr GpImage,
-		 _type: ptr ImageType
+		  type: ptr ImageType
 
 
 ;GpStatus
 GdipGetImageWidth proto WINAPI \
 		 image: ptr GpImage,
-		_width: ptr UINT
+		 width: ptr UINT
 
 
 ;GpStatus
@@ -2268,14 +2268,14 @@ GdipGetImageThumbnail proto WINAPI \
 GdipGetEncoderParameterListSize proto WINAPI \
 		 image: ptr GpImage,
 	  clsidEncoder: ptr,
-		 _size: ptr
+		  size: ptr
 
 
 ;GpStatus
 GdipGetEncoderParameterList proto WINAPI \
 		 image: ptr GpImage,
 	  clsidEncoder: ptr,
-		 _size: UINT,
+		  size: UINT,
 		buffer: ptr
 
 
@@ -2316,7 +2316,7 @@ GdipImageRotateFlip proto WINAPI \
 GdipGetImagePalette proto WINAPI \
 		 image: ptr GpImage,
 	       palette: ptr ColorPalette,
-		 _size: SINT
+		  size: SINT
 
 
 ;GpStatus
@@ -2328,7 +2328,7 @@ GdipSetImagePalette proto WINAPI \
 ;GpStatus
 GdipGetImagePaletteSize proto WINAPI \
 		 image: ptr GpImage,
-		 _size: ptr SINT
+		  size: ptr SINT
 
 
 ;GpStatus
@@ -2348,7 +2348,7 @@ GdipGetPropertyIdList proto WINAPI \
 GdipGetPropertyItemSize proto WINAPI \
 		 image: ptr GpImage,
 		propId: PROPID,
-		 _size: ptr
+		  size: ptr
 
 
 ;GpStatus
@@ -2441,7 +2441,7 @@ GdipCreateBitmapFromFileICM proto WINAPI \
 
 ;GpStatus
 GdipCreateBitmapFromScan0 proto WINAPI \
-		_width: SINT,
+		 width: SINT,
 		height: SINT,
 		stride: SINT,
 		format: PixelFormat,
@@ -2451,7 +2451,7 @@ GdipCreateBitmapFromScan0 proto WINAPI \
 
 ;GpStatus
 GdipCreateBitmapFromGraphics proto WINAPI \
-		_width: SINT,
+		 width: SINT,
 		height: SINT,
 		target: ptr,
 		bitmap: ptr
@@ -2507,7 +2507,7 @@ GdipCreateBitmapFromResource proto WINAPI \
 GdipCloneBitmapArea proto WINAPI \
 		     x: REAL,
 		     y: REAL,
-		_width: REAL,
+		 width: REAL,
 		height: REAL,
 		format: PixelFormat,
 	     srcBitmap: ptr GpBitmap,
@@ -2518,7 +2518,7 @@ GdipCloneBitmapArea proto WINAPI \
 GdipCloneBitmapAreaI proto WINAPI \
 		     x: SINT,
 		     y: SINT,
-		_width: SINT,
+		 width: SINT,
 		height: SINT,
 		format: PixelFormat,
 	     srcBitmap: ptr GpBitmap,
@@ -2658,18 +2658,18 @@ GdipDisposeImageAttributes proto WINAPI \
 ;GpStatus
 GdipSetImageAttributesToIdentity proto WINAPI \
 	     imageattr: ptr GpImageAttributes,
-		 _type: ColorAdjustType
+		  type: ColorAdjustType
 
 ;GpStatus
 GdipResetImageAttributes proto WINAPI \
 	     imageattr: ptr GpImageAttributes,
-		 _type: ColorAdjustType
+		  type: ColorAdjustType
 
 
 ;GpStatus
 GdipSetImageAttributesColorMatrix proto WINAPI \
 	     imageattr: ptr GpImageAttributes,
-		 _type: ColorAdjustType,
+		  type: ColorAdjustType,
 	    enableFlag: BOOL,
 	   colorMatrix: ptr,
 	    grayMatrix: ptr,
@@ -2679,7 +2679,7 @@ GdipSetImageAttributesColorMatrix proto WINAPI \
 ;GpStatus
 GdipSetImageAttributesThreshold proto WINAPI \
 	     imageattr: ptr GpImageAttributes,
-		 _type: ColorAdjustType,
+		  type: ColorAdjustType,
 	    enableFlag: BOOL,
 	     threshold: REAL
 
@@ -2687,7 +2687,7 @@ GdipSetImageAttributesThreshold proto WINAPI \
 ;GpStatus
 GdipSetImageAttributesGamma proto WINAPI \
 	     imageattr: ptr GpImageAttributes,
-		 _type: ColorAdjustType,
+		  type: ColorAdjustType,
 	    enableFlag: BOOL,
 		 gamma: REAL
 
@@ -2695,14 +2695,14 @@ GdipSetImageAttributesGamma proto WINAPI \
 ;GpStatus
 GdipSetImageAttributesNoOp proto WINAPI \
 	     imageattr: ptr GpImageAttributes,
-		 _type: ColorAdjustType,
+		  type: ColorAdjustType,
 	    enableFlag: BOOL
 
 
 ;GpStatus
 GdipSetImageAttributesColorKeys proto WINAPI \
 	     imageattr: ptr GpImageAttributes,
-		 _type: ColorAdjustType,
+		  type: ColorAdjustType,
 	    enableFlag: BOOL,
 	      colorLow: ARGB,
 	     colorHigh: ARGB
@@ -2711,7 +2711,7 @@ GdipSetImageAttributesColorKeys proto WINAPI \
 ;GpStatus
 GdipSetImageAttributesOutputChannel proto WINAPI \
 	     imageattr: ptr GpImageAttributes,
-		 _type: ColorAdjustType,
+		  type: ColorAdjustType,
 	    enableFlag: BOOL,
 	  channelFlags: ColorChannelFlags
 
@@ -2719,7 +2719,7 @@ GdipSetImageAttributesOutputChannel proto WINAPI \
 ;GpStatus
 GdipSetImageAttributesOutputChannelColorProfile proto WINAPI \
 	     imageattr: ptr GpImageAttributes,
-		 _type: ColorAdjustType,
+		  type: ColorAdjustType,
 	    enableFlag: BOOL,
   colorProfileFilename: ptr WCHAR
 
@@ -2727,7 +2727,7 @@ GdipSetImageAttributesOutputChannelColorProfile proto WINAPI \
 ;GpStatus
 GdipSetImageAttributesRemapTable proto WINAPI \
 	     imageattr: ptr GpImageAttributes,
-		 _type: ColorAdjustType,
+		  type: ColorAdjustType,
 	    enableFlag: BOOL,
 	       mapSize: UINT,
 		   map: ptr ColorMap
@@ -3061,7 +3061,7 @@ GdipDrawArc proto WINAPI \
 		   pen: ptr GpPen,
 		     x: REAL,
 		     y: REAL,
-		_width: REAL,
+		 width: REAL,
 		height: REAL,
 	    startAngle: REAL,
 	    sweepAngle: REAL
@@ -3073,7 +3073,7 @@ GdipDrawArcI proto WINAPI \
 		   pen: ptr GpPen,
 		     x: SINT,
 		     y: SINT,
-		_width: SINT,
+		 width: SINT,
 		height: SINT,
 	    startAngle: REAL,
 	    sweepAngle: REAL
@@ -3129,7 +3129,7 @@ GdipDrawRectangle proto WINAPI \
 		   pen: ptr GpPen,
 		     x: REAL,
 		     y: REAL,
-		_width: REAL,
+		 width: REAL,
 		height: REAL
 
 
@@ -3139,7 +3139,7 @@ GdipDrawRectangleI proto WINAPI \
 		   pen: ptr GpPen,
 		     x: SINT,
 		     y: SINT,
-		_width: SINT,
+		 width: SINT,
 		height: SINT
 
 
@@ -3165,7 +3165,7 @@ GdipDrawEllipse proto WINAPI \
 		   pen: ptr GpPen,
 		     x: REAL,
 		     y: REAL,
-		_width: REAL,
+		 width: REAL,
 		height: REAL
 
 
@@ -3175,7 +3175,7 @@ GdipDrawEllipseI proto WINAPI \
 		   pen: ptr GpPen,
 		     x: SINT,
 		     y: SINT,
-		_width: SINT,
+		 width: SINT,
 		height: SINT
 
 
@@ -3185,7 +3185,7 @@ GdipDrawPie proto WINAPI \
 		   pen: ptr GpPen,
 		     x: REAL,
 		     y: REAL,
-		_width: REAL,
+		 width: REAL,
 		height: REAL,
 	    startAngle: REAL,
 	    sweepAngle: REAL
@@ -3197,7 +3197,7 @@ GdipDrawPieI proto WINAPI \
 		   pen: ptr GpPen,
 		     x: SINT,
 		     y: SINT,
-		_width: SINT,
+		 width: SINT,
 		height: SINT,
 	    startAngle: REAL,
 	    sweepAngle: REAL
@@ -3328,7 +3328,7 @@ GdipFillRectangle proto WINAPI \
 		 brush: ptr GpBrush,
 		     x: REAL,
 		     y: REAL,
-		_width: REAL,
+		 width: REAL,
 		height: REAL
 
 
@@ -3338,7 +3338,7 @@ GdipFillRectangleI proto WINAPI \
 		 brush: ptr GpBrush,
 		     x: SINT,
 		     y: SINT,
-		_width: SINT,
+		 width: SINT,
 		height: SINT
 
 
@@ -3398,7 +3398,7 @@ GdipFillEllipse proto WINAPI \
 		 brush: ptr GpBrush,
 		     x: REAL,
 		     y: REAL,
-		_width: REAL,
+		 width: REAL,
 		height: REAL
 
 
@@ -3408,7 +3408,7 @@ GdipFillEllipseI proto WINAPI \
 		 brush: ptr GpBrush,
 		     x: SINT,
 		     y: SINT,
-		_width: SINT,
+		 width: SINT,
 		height: SINT
 
 
@@ -3418,7 +3418,7 @@ GdipFillPie proto WINAPI \
 		 brush: ptr GpBrush,
 		     x: REAL,
 		     y: REAL,
-		_width: REAL,
+		 width: REAL,
 		height: REAL,
 	    startAngle: REAL,
 	    sweepAngle: REAL
@@ -3430,7 +3430,7 @@ GdipFillPieI proto WINAPI \
 		 brush: ptr GpBrush,
 		     x: SINT,
 		     y: SINT,
-		_width: SINT,
+		 width: SINT,
 		height: SINT,
 	    startAngle: REAL,
 	    sweepAngle: REAL
@@ -3521,7 +3521,7 @@ GdipDrawImageRect proto WINAPI \
 		 image: ptr GpImage,
 		     x: REAL,
 		     y: REAL,
-		_width: REAL,
+		 width: REAL,
 		height: REAL
 
 
@@ -3531,7 +3531,7 @@ GdipDrawImageRectI proto WINAPI \
 		 image: ptr GpImage,
 		     x: SINT,
 		     y: SINT,
-		_width: SINT,
+		 width: SINT,
 		height: SINT
 
 
@@ -3802,7 +3802,7 @@ GdipSetClipRect proto WINAPI \
 	      graphics: ptr GpGraphics,
 		     x: REAL,
 		     y: REAL,
-		_width: REAL,
+		 width: REAL,
 		height: REAL,
 	   combineMode: CombineMode
 
@@ -3812,7 +3812,7 @@ GdipSetClipRectI proto WINAPI \
 	      graphics: ptr GpGraphics,
 		     x: SINT,
 		     y: SINT,
-		_width: SINT,
+		 width: SINT,
 		height: SINT,
 	   combineMode: CombineMode
 
@@ -3920,7 +3920,7 @@ GdipIsVisibleRect proto WINAPI \
 	      graphics: ptr GpGraphics,
 		     x: REAL,
 		     y: REAL,
-		_width: REAL,
+		 width: REAL,
 		height: REAL,
 		result: ptr BOOL
 
@@ -3930,7 +3930,7 @@ GdipIsVisibleRectI proto WINAPI \
 	      graphics: ptr GpGraphics,
 		     x: SINT,
 		     y: SINT,
-		_width: SINT,
+		 width: SINT,
 		height: SINT,
 		result: ptr BOOL
 
@@ -4059,7 +4059,7 @@ GdipCreateMetafileFromStream proto WINAPI \
 ;GpStatus
 GdipRecordMetafile proto WINAPI \
 	  referenceHdc: HDC,
-		 _type: EmfType,
+		  type: EmfType,
 	     frameRect: ptr GpRectF,
 	     frameUnit: MetafileFrameUnit,
 	   description: ptr WCHAR,
@@ -4069,7 +4069,7 @@ GdipRecordMetafile proto WINAPI \
 ;GpStatus
 GdipRecordMetafileI proto WINAPI \
 	  referenceHdc: HDC,
-		 _type: EmfType,
+		  type: EmfType,
 	     frameRect: ptr GpRect,
 	     frameUnit: MetafileFrameUnit,
 	   description: ptr WCHAR,
@@ -4080,7 +4080,7 @@ GdipRecordMetafileI proto WINAPI \
 GdipRecordMetafileFileName proto WINAPI \
 	      fileName: ptr,
 	  referenceHdc: HDC,
-		 _type: EmfType,
+		  type: EmfType,
 	     frameRect: ptr GpRectF,
 	     frameUnit: MetafileFrameUnit,
 	   description: ptr WCHAR,
@@ -4091,7 +4091,7 @@ GdipRecordMetafileFileName proto WINAPI \
 GdipRecordMetafileFileNameI proto WINAPI \
 	      fileName: ptr,
 	  referenceHdc: HDC,
-		 _type: EmfType,
+		  type: EmfType,
 	     frameRect: ptr GpRect,
 	     frameUnit: MetafileFrameUnit,
 	   description: ptr WCHAR,
@@ -4102,7 +4102,7 @@ GdipRecordMetafileFileNameI proto WINAPI \
 GdipRecordMetafileStream proto WINAPI \
 		stream: ptr,
 	  referenceHdc: HDC,
-		 _type: EmfType,
+		  type: EmfType,
 	     frameRect: ptr GpRectF,
 	     frameUnit: MetafileFrameUnit,
 	   description: ptr WCHAR,
@@ -4113,7 +4113,7 @@ GdipRecordMetafileStream proto WINAPI \
 GdipRecordMetafileStreamI proto WINAPI \
 		stream: ptr,
 	  referenceHdc: HDC,
-		 _type: EmfType,
+		  type: EmfType,
 	     frameRect: ptr GpRect,
 	     frameUnit: MetafileFrameUnit,
 	   description: ptr WCHAR,
@@ -4140,7 +4140,7 @@ GdipGetImageDecodersSize proto WINAPI \
 ;GpStatus
 GdipGetImageDecoders proto WINAPI \
 	   numDecoders: UINT,
-		 _size: UINT,
+		  size: UINT,
 		      : ptr
 
 ;GpStatus
@@ -4151,7 +4151,7 @@ GdipGetImageEncodersSize proto WINAPI \
 ;GpStatus
 GdipGetImageEncoders proto WINAPI \
 	   numEncoders: UINT,
-		 _size: UINT,
+		  size: UINT,
 		      : ptr
 
 ;GpStatus
@@ -4167,7 +4167,7 @@ GdipComment proto WINAPI \
 
 ;GpStatus
 GdipCreateFontFamilyFromName proto WINAPI \
-		 _name: ptr WCHAR,
+		  name: ptr WCHAR,
 	fontCollection: ptr GpFontCollection,
 	    fontFamily: ptr GpFontFamily
 
@@ -4202,7 +4202,7 @@ GdipGetGenericFontFamilyMonospace proto WINAPI \
 ;GpStatus
 GdipGetFamilyName proto WINAPI \
 		family: ptr GpFontFamily,
-		 _name: LPWSTR,
+		  name: LPWSTR,
 	      language: LANGID
 
 
@@ -4317,7 +4317,7 @@ GdipGetFontStyle proto WINAPI \
 ;GpStatus
 GdipGetFontSize proto WINAPI \
 		  font: ptr GpFont,
-		 _size: ptr REAL
+		  size: ptr REAL
 
 
 ;GpStatus
@@ -4393,7 +4393,7 @@ GdipPrivateAddFontFile proto WINAPI \
 GdipPrivateAddMemoryFont proto WINAPI \
 	fontCollection: ptr,
 		memory: ptr,
-	       _length: SINT
+		length: SINT
 
 
 ;;----------------------------------------------------------------------------
@@ -4404,7 +4404,7 @@ GdipPrivateAddMemoryFont proto WINAPI \
 GdipDrawString proto WINAPI \
 	      graphics: ptr GpGraphics,
 		string: ptr WCHAR,
-	       _length: SINT,
+		length: SINT,
 		  font: ptr GpFont,
 	    layoutRect: ptr RectF,
 	  stringFormat: ptr GpStringFormat,
@@ -4415,7 +4415,7 @@ GdipDrawString proto WINAPI \
 GdipMeasureString proto WINAPI \
 	      graphics: ptr GpGraphics,
 		string: ptr WCHAR,
-	       _length: SINT,
+		length: SINT,
 		  font: ptr GpFont,
 	    layoutRect: ptr RectF,
 	  stringFormat: ptr GpStringFormat,
@@ -4428,7 +4428,7 @@ GdipMeasureString proto WINAPI \
 GdipMeasureCharacterRanges proto WINAPI \
 	      graphics: ptr GpGraphics,
 		string: ptr WCHAR,
-	       _length: SINT,
+		length: SINT,
 		  font: ptr GpFont,
 	    layoutRect: ptr,
 	  stringFormat: ptr GpStringFormat,
@@ -4440,7 +4440,7 @@ GdipMeasureCharacterRanges proto WINAPI \
 GdipDrawDriverString proto WINAPI \
 	      graphics: ptr GpGraphics,
 		  text: ptr UINT16,
-	       _length: SINT,
+		length: SINT,
 		  font: ptr GpFont,
 		 brush: ptr GpBrush,
 	     positions: ptr PointF,
@@ -4452,7 +4452,7 @@ GdipDrawDriverString proto WINAPI \
 GdipMeasureDriverString proto WINAPI \
 	      graphics: ptr GpGraphics,
 		  text: ptr UINT16,
-	       _length: SINT,
+		length: SINT,
 		  font: ptr GpFont,
 	     positions: ptr PointF,
 		 flags: SINT,

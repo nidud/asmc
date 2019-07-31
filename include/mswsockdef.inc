@@ -56,7 +56,7 @@ PRIORESULT		typedef ptr RIORESULT
 RIO_BUF			STRUC
 BufferId		RIO_BUFFERID ?
 _Offset			ULONG ?
-_Length			ULONG ?
+Length			ULONG ?
 RIO_BUF			ENDS
 PRIO_BUF		typedef ptr RIO_BUF
 

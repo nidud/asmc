@@ -62,7 +62,7 @@ PCPEER_DATA		typedef ptr PEER_DATA
 
 PEER_RECORD		STRUC
 dwSize			dd ?
-_type			GUID <>
+type			GUID <>
 id			GUID <>
 dwVersion		dd ?
 dwFlags			dd ?
@@ -97,7 +97,7 @@ PEER_CONNECTION_INFO	ENDS
 PEER_EVENT_INCOMING_DATA STRUC
 dwSize			dd ?
 ullConnectionId		ULONGLONG ?
-_type			GUID <>
+type			GUID <>
 data			PEER_DATA <>
 PEER_EVENT_INCOMING_DATA ENDS
 PPEER_EVENT_INCOMING_DATA typedef ptr PEER_EVENT_INCOMING_DATA

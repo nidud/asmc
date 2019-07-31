@@ -5,7 +5,7 @@ __D3DX9SHAPE_H__ equ <>
 ;HRESULT
 D3DXCreateBox proto WINAPI \
                 device: ptr IDirect3DDevice9,
-                _width: float,
+                 width: float,
                 height: float,
                  depth: float,
                   mesh: ptr ID3DXMesh,
@@ -16,7 +16,7 @@ D3DXCreateCylinder proto WINAPI \
                 device: ptr IDirect3DDevice9,
                radius1: float,
                radius2: float,
-               _length: float,
+                length: float,
                 slices: UINT,
                 stacks: UINT,
                   mesh: ptr ID3DXMesh,
@@ -25,7 +25,7 @@ D3DXCreateCylinder proto WINAPI \
 ;HRESULT
 D3DXCreatePolygon proto WINAPI \
                 device: ptr IDirect3DDevice9,
-               _length: float,
+                length: float,
                  sides: UINT,
                   mesh: ptr ID3DXMesh,
              adjacency: ptr ID3DXBuffer

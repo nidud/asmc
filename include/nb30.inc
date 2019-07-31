@@ -60,7 +60,7 @@ ADAPTER_STATUS		ENDS
 PADAPTER_STATUS		typedef ptr ADAPTER_STATUS
 
 NAME_BUFFER		STRUC
-_name			UCHAR NCBNAMSZ dup(?)
+name			UCHAR NCBNAMSZ dup(?)
 name_num		UCHAR ?
 name_flags		UCHAR ?
 NAME_BUFFER		ENDS
@@ -103,7 +103,7 @@ HANGUP_COMPLETE		equ 0x05
 SESSION_ABORTED		equ 0x06
 
 LANA_ENUM		STRUC
-_length			UCHAR ?
+length			UCHAR ?
 lana			UCHAR MAX_LANA+1 dup(?)
 LANA_ENUM		ENDS
 PLANA_ENUM		typedef ptr LANA_ENUM
@@ -116,7 +116,7 @@ FIND_NAME_HEADER	ENDS
 PFIND_NAME_HEADER	typedef ptr FIND_NAME_HEADER
 
 FIND_NAME_BUFFER	STRUC
-_length			UCHAR ?
+length			UCHAR ?
 access_control		UCHAR ?
 frame_control		UCHAR ?
 destination_addr	UCHAR 6 dup(?)

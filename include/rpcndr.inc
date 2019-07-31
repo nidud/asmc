@@ -223,7 +223,7 @@ endif
 NDRcopy proto WINAPI \
 	       pTarget: PVOID,
 	       pSource: PVOID,
-		 _size: UINT
+		  size: UINT
 
 ;size_t
 MIDL_wchar_strlen proto WINAPI \
@@ -373,7 +373,7 @@ tree_peek_ndr proto WINAPI \
 
 ;PVOID
 midl_allocate proto WINAPI \
-		 _size: size_t
+		  size: size_t
 
 
 error_status_t		typedef DWORD
@@ -522,7 +522,7 @@ PGENERIC_BINDING_ROUTINE_PAIR typedef ptr GENERIC_BINDING_ROUTINE_PAIR
 
 GENERIC_BINDING_INFO	STRUC
 pObj			PVOID ?
-_Size			UINT ?
+Size			UINT ?
 pfnBind			GENERIC_BINDING_ROUTINE ?
 pfnUnbind		GENERIC_UNBIND_ROUTINE ?
 GENERIC_BINDING_INFO	ENDS
@@ -1653,13 +1653,13 @@ NdrSH_StringMarshall proto WINAPI \
 	      pMessage: PMIDL_STUB_MESSAGE,
 	       pMemory: LPBYTE,
 		 Count: DWORD,
-		__Size: SINT
+		  Size: SINT
 
 ;RPC_BUFPTR
 NdrSH_StringUnMarshall proto WINAPI \
 	      pMessage: PMIDL_STUB_MESSAGE,
 	       pMemory: LPBYTE,
-		 _Size: SINT
+		  Size: SINT
 
 
 RPC_SS_THREAD_HANDLE	typedef PVOID
@@ -1672,7 +1672,7 @@ CALLBACK(RPC_CLIENT_FREE, :PVOID)
 
 ;PVOID
 RpcSsAllocate proto WINAPI \
-		 _Size: size_t
+		  Size: size_t
 
 ;void
 RpcSsDisableAllocate proto WINAPI
@@ -1706,7 +1706,7 @@ RpcSsSwapClientAllocFree proto WINAPI \
 
 ;PVOID
 RpcSmAllocate proto WINAPI \
-		 _Size: size_t,
+		  Size: size_t,
 	       pStatus: ptr RPC_STATUS
 
 ;RPC_STATUS
@@ -1762,7 +1762,7 @@ NdrRpcSmSetClientToOsf proto WINAPI \
 
 ;PVOID
 NdrRpcSmClientAllocate proto WINAPI \
-		 _Size: size_t
+		  Size: size_t
 
 ;void
 NdrRpcSmClientFree proto WINAPI \
@@ -1770,7 +1770,7 @@ NdrRpcSmClientFree proto WINAPI \
 
 ;PVOID
 NdrRpcSsDefaultAllocate proto WINAPI \
-		 _Size: size_t
+		  Size: size_t
 
 ;void
 NdrRpcSsDefaultFree proto WINAPI \
@@ -1827,7 +1827,7 @@ NdrClearOutParameters proto WINAPI \
 
 ;PVOID
 NdrOleAllocate proto WINAPI \
-		 _Size: size_t
+		  Size: size_t
 
 ;void
 NdrOleFree proto WINAPI \

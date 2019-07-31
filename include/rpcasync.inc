@@ -23,7 +23,7 @@ CALLBACK(RPCNOTIFICATION_ROUTINE, pAsync:PVOID, Context:PVOID, Event:RPC_ASYNC_E
 PFN_RPCNOTIFICATION_ROUTINE typedef ptr RPCNOTIFICATION_ROUTINE
 
 RPC_ASYNC_STATE		STRUC
-_Size			UINT ?
+Size			UINT ?
 Signature		ULONG ?
 _Lock			LONG ?
 Flags			ULONG ?
@@ -64,7 +64,7 @@ RpcAsyncGetCallHandle macro pAsync
 ;RPC_STATUS
 RpcAsyncInitializeHandle proto WINAPI \
 		pAsync: PRPC_ASYNC_STATE,
-		 _Size: UINT
+		  Size: UINT
 
 ;RPC_STATUS
 RpcAsyncRegisterInfo proto WINAPI \

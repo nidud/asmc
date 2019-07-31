@@ -703,37 +703,45 @@ static int RenderSwitch( struct hll_item *hll, struct asm_tok tokenarray[],
 	    } else if ( ( min <= ( UINT_MAX / 8 ) ) && !use_index
 		   && ( hll->flags & HLLF_ARGREG ) && ModuleInfo.aflag & _AF_REGAX ) {
 
-		if ( !_memicmp( hll->condlines, "r10", 3 ) || !_memicmp( hll->condlines, "r11", 3 ) )
-		    asmerr( 2008, "register r10/r11 overwritten by SWITCH" );
+		if ( !_memicmp( hll->condlines, "r11", 3 ) )
+		    asmerr( 2008, "register r11 overwritten by SWITCH" );
 		AddLineQueueX( "lea r11,%s", l_exit );
-		AddLineQueueX( "mov r10d,[%s*4+r11-(%d*4)+(%s-%s)]", hll->condlines, min, l_jtab, l_exit );
-		AddLineQueue ( "sub r11,r10" );
+		AddLineQueue ( "push rax" );
+		AddLineQueueX( "mov eax,[%s*4+r11-(%d*4)+(%s-%s)]", hll->condlines, min, l_jtab, l_exit );
+		AddLineQueue ( "sub r11,rax" );
+		AddLineQueue ( "pop rax" );
 		AddLineQueue ( "jmp r11" );
 
 	    } else {
 
 		if ( ModuleInfo.aflag & _AF_REGAX ) {
+
+		    AddLineQueue( "push rax" );
 		    if ( !( hll->flags & HLLF_ARGREG ) )
-			GetSwitchArg(T_R11, hll->flags, hll->condlines);
-		    else if ( _memicmp(hll->condlines, "r11", 3) )
-			AddLineQueueX( "mov r11,%s", hll->condlines );
-		    AddLineQueueX( "lea r10,%s", l_exit );
+			GetSwitchArg(T_RAX, hll->flags, hll->condlines);
+		    else if ( _memicmp(hll->condlines, "rax", 3) ) {
+			if ( _memicmp(hll->condlines, "eax", 3) )
+			    AddLineQueueX( "mov rax,%s", hll->condlines );
+		    }
+		    AddLineQueueX( "lea r11,%s", l_exit );
+
 		    if ( use_index ) {
 			if ( dist < 256 )
-			    AddLineQueueX( "movzx r11d,BYTE PTR [r10+r11-(%d)+(IT%s-%s)]", min, l_jtab, l_exit );
+			    AddLineQueueX( "movzx eax,BYTE PTR [r11+rax-(%d)+(IT%s-%s)]", min, l_jtab, l_exit );
 			else
-			    AddLineQueueX( "movzx r11d,WORD PTR [r10+r11*2-(%d*2)+(IT%s-%s)]", min, l_jtab, l_exit );
-			AddLineQueueX( "mov r11d,[r10+r11*4+(%s-%s)]", l_jtab, l_exit );
+			    AddLineQueueX( "movzx eax,WORD PTR [r11+rax*2-(%d*2)+(IT%s-%s)]", min, l_jtab, l_exit );
+			AddLineQueueX( "mov eax,[r11+rax*4+(%s-%s)]", l_jtab, l_exit );
 		    } else {
 			if ( (unsigned int)min < ( UINT_MAX / 8 ) )
-			    AddLineQueueX( "mov r11d,[r10+r11*4-(%d*4)+(%s-%s)]", min, l_jtab, l_exit );
+			    AddLineQueueX( "mov eax,[r11+rax*4-(%d*4)+(%s-%s)]", min, l_jtab, l_exit );
 			else {
 			    AddLineQueueX( "sub r11,%d", min );
-			    AddLineQueueX( "mov r11d,[r10+r11*4+(%s-%s)]", l_jtab, l_exit );
+			    AddLineQueueX( "mov eax,[r10+rax*4+(%s-%s)]", l_jtab, l_exit );
 			}
 		    }
-		    AddLineQueue( "sub r10,r11" );
-		    AddLineQueue( "jmp r10" );
+		    AddLineQueue( "sub r11,rax" );
+		    AddLineQueue( "pop rax" );
+		    AddLineQueue( "jmp r11" );
 		} else {
 
 		    if ( !( hll->flags & HLLF_ARGREG ) ) {
@@ -1591,7 +1599,7 @@ int SwitchExit( int i, struct asm_tok tokenarray[] )
 	    gotosw = x;
 	}
 
-	HllContinueIf( hll, &i, buffer, tokenarray, case_label, hp );
+	HllContinueIf( hll, &i, tokenarray, case_label, hp, 1 );
 	if ( gotosw )
 	    hll->labels[LSTART] = gotosw;
 	break;

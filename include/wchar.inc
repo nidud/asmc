@@ -90,8 +90,8 @@ attrib		dd ?
 time_create	time_t ?
 time_access	time_t ?
 time_write	time_t ?
-_size		_fsize_t ?
-_name		wchar_t 260 dup(?)
+size		_fsize_t ?
+name		wchar_t 260 dup(?)
 _wfinddata_t	ENDS
 if _INTEGRAL_MAX_BITS GE 64
 _wfinddatai64_t STRUC
@@ -99,8 +99,8 @@ attrib		dd ?
 time_create	time_t ?
 time_access	time_t ?
 time_write	time_t ?
-_size		_fsize_t ?
-_name		wchar_t 260 dup(?)
+size		_fsize_t ?
+name		wchar_t 260 dup(?)
 _wfinddatai64_t ENDS
 endif
 endif

@@ -42,7 +42,7 @@ gluPerspective proto WINAPI \
 gluPickMatrix proto WINAPI \
 		     x: GLdouble,
 		     y: GLdouble,
-		_width: GLdouble,
+		 width: GLdouble,
 		height: GLdouble,
 	      viewport: ptr GLint
 
@@ -97,18 +97,18 @@ gluScaleImage proto WINAPI \
 gluBuild1DMipmaps proto WINAPI \
 		target: GLenum,
 	    components: GLint,
-		_width: GLint,
+		 width: GLint,
 		format: GLenum,
-		 _type: GLenum,
+		  type: GLenum,
 		 _data: ptr
 
 gluBuild2DMipmaps proto WINAPI \
 		target: GLenum,
 	    components: GLint,
-		_width: GLint,
+		 width: GLint,
 		height: GLint,
 		format: GLenum,
-		 _type: GLenum,
+		  type: GLenum,
 		 _data: ptr
 
 GLUnurbs		typedef GLUnurbs
@@ -250,7 +250,7 @@ gluPwlCurve proto WINAPI \
 		 count: GLint,
 		 array: ptr GLfloat,
 		stride: GLint,
-		 _type: GLenum
+		  type: GLenum
 
 gluNurbsCurve proto WINAPI \
 		  nobj: ptr GLUnurbs,
@@ -259,7 +259,7 @@ gluNurbsCurve proto WINAPI \
 		stride: GLint,
 	      ctlarray: ptr GLfloat,
 		 order: GLint,
-		 _type: GLenum
+		  type: GLenum
 
 gluNurbsSurface proto WINAPI \
 		  nobj: ptr GLUnurbs,
@@ -272,7 +272,7 @@ gluNurbsSurface proto WINAPI \
 	      ctlarray: ptr GLfloat,
 		sorder: GLint,
 		torder: GLint,
-		 _type: GLenum
+		  type: GLenum
 
 gluLoadSamplingMatrices proto WINAPI \
 		  nobj: ptr GLUnurbs,
@@ -444,7 +444,7 @@ gluBeginPolygon proto WINAPI \
 
 gluNextContour proto WINAPI \
 		  tess: ptr GLUtesselator,
-		 _type: GLenum
+		  type: GLenum
 
 gluEndPolygon proto WINAPI \
 		  tess: ptr GLUtesselator

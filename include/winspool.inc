@@ -300,7 +300,7 @@ Position		dd ?
 StartTime		dd ?
 UntilTime		dd ?
 TotalPages		dd ?
-_Size			dd ?
+Size			dd ?
 Submitted		SYSTEMTIME <>
 Time			dd ?
 PagesPrinted		dd ?
@@ -327,7 +327,7 @@ Position		dd ?
 StartTime		dd ?
 UntilTime		dd ?
 TotalPages		dd ?
-_Size			dd ?
+Size			dd ?
 Submitted		SYSTEMTIME <>
 Time			dd ?
 PagesPrinted		dd ?
@@ -521,7 +521,7 @@ endif
 FORM_INFO_1A		STRUC
 Flags			dd ?
 pName			LPSTR ?
-_Size			SIZEL <>
+Size			SIZEL <>
 ImageableArea		RECTL <>
 FORM_INFO_1A		ENDS
 PFORM_INFO_1A		typedef ptr FORM_INFO_1A
@@ -529,7 +529,7 @@ LPFORM_INFO_1A		typedef ptr FORM_INFO_1A
 FORM_INFO_1W		STRUC
 Flags			dd ?
 pName			LPWSTR ?
-_Size			SIZEL <>
+Size			SIZEL <>
 ImageableArea		RECTL <>
 FORM_INFO_1W		ENDS
 PFORM_INFO_1W		typedef ptr FORM_INFO_1W
@@ -820,7 +820,7 @@ endif
 ;BOOL
 EnumPrintersA proto WINAPI \
 		 Flags: DWORD,
-		 _Name: LPSTR,
+		  Name: LPSTR,
 		 Level: DWORD,
 	  pPrinterEnum: LPBYTE,
 		 cbBuf: DWORD,
@@ -829,7 +829,7 @@ EnumPrintersA proto WINAPI \
 ;BOOL
 EnumPrintersW proto WINAPI \
 		 Flags: DWORD,
-		 _Name: LPWSTR,
+		  Name: LPWSTR,
 		 Level: DWORD,
 	  pPrinterEnum: LPBYTE,
 		 cbBuf: DWORD,
@@ -1549,14 +1549,14 @@ endif
 SetPrinterDataA proto WINAPI \
 	      hPrinter: HANDLE,
 	    pValueName: LPSTR,
-		 _Type: DWORD,
+		  Type: DWORD,
 		 pData: LPBYTE,
 		cbData: DWORD
 ;DWORD
 SetPrinterDataW proto WINAPI \
 	      hPrinter: HANDLE,
 	    pValueName: LPWSTR,
-		 _Type: DWORD,
+		  Type: DWORD,
 		 pData: LPBYTE,
 		cbData: DWORD
 ifdef _UNICODE
@@ -1570,7 +1570,7 @@ SetPrinterDataExA proto WINAPI \
 	      hPrinter: HANDLE,
 	      pKeyName: LPCSTR,
 	    pValueName: LPCSTR,
-		 _Type: DWORD,
+		  Type: DWORD,
 		 pData: LPBYTE,
 		cbData: DWORD
 ;DWORD
@@ -1578,7 +1578,7 @@ SetPrinterDataExW proto WINAPI \
 	      hPrinter: HANDLE,
 	      pKeyName: LPCWSTR,
 	    pValueName: LPCWSTR,
-		 _Type: DWORD,
+		  Type: DWORD,
 		 pData: LPBYTE,
 		cbData: DWORD
 ifdef _UNICODE
@@ -1688,7 +1688,7 @@ JOB_NOTIFY_FIELD_TOTAL_BYTES equ 0x16
 JOB_NOTIFY_FIELD_BYTES_PRINTED equ 0x17
 
 PRINTER_NOTIFY_OPTIONS_TYPE  STRUC
-_Type			dw ?
+Type			dw ?
 Reserved0		dw ?
 Reserved1		dd ?
 Reserved2		dd ?
@@ -1712,7 +1712,7 @@ LPPRINTER_NOTIFY_OPTIONS typedef ptr PRINTER_NOTIFY_OPTIONS
 PRINTER_NOTIFY_INFO_DISCARDED equ 0x01
 
 PRINTER_NOTIFY_INFO_DATA  STRUC
-_Type			dw ?
+Type			dw ?
 Field			dw ?
 Reserved		dd ?
 Id			dd ?

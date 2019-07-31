@@ -696,7 +696,7 @@ glBindTexture proto WINAPI \
                texture: GLuint
 
 glBitmap proto WINAPI \
-                _width: GLsizei,
+                 width: GLsizei,
                 height: GLsizei,
                  xorig: GLfloat,
                  yorig: GLfloat,
@@ -713,11 +713,11 @@ glCallList proto WINAPI \
 
 glCallLists proto WINAPI \
                      n: GLsizei,
-                 _type: GLenum,
+                  type: GLenum,
                  lists: ptr GLvoid
 
 glClear proto WINAPI \
-                 _mask: GLbitfield
+                  mask: GLbitfield
 
 glClearAccum proto WINAPI \
                    red: GLfloat,
@@ -891,17 +891,17 @@ glColorMaterial proto WINAPI \
                   mode: GLenum
 
 glColorPointer proto WINAPI \
-                 _size: GLint,
-                 _type: GLenum,
+                  size: GLint,
+                  type: GLenum,
                 stride: GLsizei,
                pointer: ptr GLvoid
 
 glCopyPixels proto WINAPI \
                      x: GLint,
                      y: GLint,
-                _width: GLsizei,
+                 width: GLsizei,
                 height: GLsizei,
-                 _type: GLenum
+                  type: GLenum
 
 glCopyTexImage1D proto WINAPI \
                 target: GLenum,
@@ -909,7 +909,7 @@ glCopyTexImage1D proto WINAPI \
         internalFormat: GLenum,
                      x: GLint,
                      y: GLint,
-                _width: GLsizei,
+                 width: GLsizei,
                 border: GLint
 
 glCopyTexImage2D proto WINAPI \
@@ -918,7 +918,7 @@ glCopyTexImage2D proto WINAPI \
         internalFormat: GLenum,
                      x: GLint,
                      y: GLint,
-                _width: GLsizei,
+                 width: GLsizei,
                 height: GLsizei,
                 border: GLint
 
@@ -928,7 +928,7 @@ glCopyTexSubImage1D proto WINAPI \
                xoffset: GLint,
                      x: GLint,
                      y: GLint,
-                _width: GLsizei
+                 width: GLsizei
 
 glCopyTexSubImage2D proto WINAPI \
                 target: GLenum,
@@ -937,7 +937,7 @@ glCopyTexSubImage2D proto WINAPI \
                yoffset: GLint,
                      x: GLint,
                      y: GLint,
-                _width: GLsizei,
+                 width: GLsizei,
                 height: GLsizei
 
 glCullFace proto WINAPI \
@@ -978,14 +978,14 @@ glDrawBuffer proto WINAPI \
 glDrawElements proto WINAPI \
                   mode: GLenum,
                  count: GLsizei,
-                 _type: GLenum,
+                  type: GLenum,
                indices: ptr GLvoid
 
 glDrawPixels proto WINAPI \
-                _width: GLsizei,
+                 width: GLsizei,
                 height: GLsizei,
                 format: GLenum,
-                 _type: GLenum,
+                  type: GLenum,
                 pixels: ptr GLvoid
 
 glEdgeFlag proto WINAPI \
@@ -1052,8 +1052,8 @@ glEvalPoint2 proto WINAPI \
                      j: GLint
 
 glFeedbackBuffer proto WINAPI \
-                 _size: GLsizei,
-                 _type: GLenum,
+                  size: GLsizei,
+                  type: GLenum,
                 buffer: ptr GLfloat
 
 glFinish proto WINAPI
@@ -1165,10 +1165,10 @@ glGetPointerv proto WINAPI \
                 params: ptr GLvoid
 
 glGetPolygonStipple proto WINAPI \
-                 _mask: ptr GLubyte
+                  mask: ptr GLubyte
 
 glGetString proto WINAPI \
-                 _name: GLenum
+                  name: GLenum
 
 glGetTexEnvfv proto WINAPI \
                 target: GLenum,
@@ -1199,7 +1199,7 @@ glGetTexImage proto WINAPI \
                 target: GLenum,
                  level: GLint,
                 format: GLenum,
-                 _type: GLenum,
+                  type: GLenum,
                 pixels: ptr GLvoid
 
 glGetTexLevelParameterfv proto WINAPI \
@@ -1229,10 +1229,10 @@ glHint proto WINAPI \
                   mode: GLenum
 
 glIndexMask proto WINAPI \
-                 _mask: GLuint
+                  mask: GLuint
 
 glIndexPointer proto WINAPI \
-                 _type: GLenum,
+                  type: GLenum,
                 stride: GLsizei,
                pointer: ptr GLvoid
 
@@ -1323,7 +1323,7 @@ glLineStipple proto WINAPI \
                pattern: GLushort
 
 glLineWidth proto WINAPI \
-                _width: GLfloat
+                 width: GLfloat
 
 glListBase proto WINAPI \
                   base: GLuint
@@ -1336,7 +1336,7 @@ glLoadMatrixf proto WINAPI \
                      m: ptr GLfloat
 
 glLoadName proto WINAPI \
-                 _name: GLuint
+                  name: GLuint
 
 glLogicOp proto WINAPI \
                 opcode: GLenum
@@ -1481,7 +1481,7 @@ glNormal3sv proto WINAPI \
                      v: ptr GLshort
 
 glNormalPointer proto WINAPI \
-                 _type: GLenum,
+                  type: GLenum,
                 stride: GLsizei,
                pointer: ptr GLvoid
 
@@ -1532,7 +1532,7 @@ glPixelZoom proto WINAPI \
                yfactor: GLfloat
 
 glPointSize proto WINAPI \
-                 _size: GLfloat
+                  size: GLfloat
 
 glPolygonMode proto WINAPI \
                   face: GLenum,
@@ -1543,7 +1543,7 @@ glPolygonOffset proto WINAPI \
                  units: GLfloat
 
 glPolygonStipple proto WINAPI \
-                 _mask: ptr GLubyte
+                  mask: ptr GLubyte
 
 glPopAttrib proto WINAPI
 glPopClientAttrib proto WINAPI
@@ -1555,14 +1555,14 @@ glPrioritizeTextures proto WINAPI \
             priorities: ptr GLclampf
 
 glPushAttrib proto WINAPI \
-                 _mask: GLbitfield
+                  mask: GLbitfield
 
 glPushClientAttrib proto WINAPI \
-                 _mask: GLbitfield
+                  mask: GLbitfield
 
 glPushMatrix proto WINAPI
 glPushName proto WINAPI \
-                 _name: GLuint
+                  name: GLuint
 
 glRasterPos2d proto WINAPI \
                      x: GLdouble,
@@ -1666,10 +1666,10 @@ glReadBuffer proto WINAPI \
 glReadPixels proto WINAPI \
                      x: GLint,
                      y: GLint,
-                _width: GLsizei,
+                 width: GLsizei,
                 height: GLsizei,
                 format: GLenum,
-                 _type: GLenum,
+                  type: GLenum,
                 pixels: ptr GLvoid
 
 glRectd proto WINAPI \
@@ -1740,11 +1740,11 @@ glScalef proto WINAPI \
 glScissor proto WINAPI \
                      x: GLint,
                      y: GLint,
-                _width: GLsizei,
+                 width: GLsizei,
                 height: GLsizei
 
 glSelectBuffer proto WINAPI \
-                 _size: GLsizei,
+                  size: GLsizei,
                 buffer: ptr GLuint
 
 glShadeModel proto WINAPI \
@@ -1753,10 +1753,10 @@ glShadeModel proto WINAPI \
 glStencilFunc proto WINAPI \
                   func: GLenum,
                    ref: GLint,
-                 _mask: GLuint
+                  mask: GLuint
 
 glStencilMask proto WINAPI \
-                 _mask: GLuint
+                  mask: GLuint
 
 glStencilOp proto WINAPI \
                   fail: GLenum,
@@ -1884,8 +1884,8 @@ glTexCoord4sv proto WINAPI \
                      v: ptr GLshort
 
 glTexCoordPointer proto WINAPI \
-                 _size: GLint,
-                 _type: GLenum,
+                  size: GLint,
+                  type: GLenum,
                 stride: GLsizei,
                pointer: ptr GLvoid
 
@@ -1943,21 +1943,21 @@ glTexImage1D proto WINAPI \
                 target: GLenum,
                  level: GLint,
         internalformat: GLint,
-                _width: GLsizei,
+                 width: GLsizei,
                 border: GLint,
                 format: GLenum,
-                 _type: GLenum,
+                  type: GLenum,
                 pixels: ptr GLvoid
 
 glTexImage2D proto WINAPI \
                 target: GLenum,
                  level: GLint,
         internalformat: GLint,
-                _width: GLsizei,
+                 width: GLsizei,
                 height: GLsizei,
                 border: GLint,
                 format: GLenum,
-                 _type: GLenum,
+                  type: GLenum,
                 pixels: ptr GLvoid
 
 glTexParameterf proto WINAPI \
@@ -1984,9 +1984,9 @@ glTexSubImage1D proto WINAPI \
                 target: GLenum,
                  level: GLint,
                xoffset: GLint,
-                _width: GLsizei,
+                 width: GLsizei,
                 format: GLenum,
-                 _type: GLenum,
+                  type: GLenum,
                 pixels: ptr GLvoid
 
 glTexSubImage2D proto WINAPI \
@@ -1994,10 +1994,10 @@ glTexSubImage2D proto WINAPI \
                  level: GLint,
                xoffset: GLint,
                yoffset: GLint,
-                _width: GLsizei,
+                 width: GLsizei,
                 height: GLsizei,
                 format: GLenum,
-                 _type: GLenum,
+                  type: GLenum,
                 pixels: ptr GLvoid
 
 glTranslated proto WINAPI \
@@ -2107,15 +2107,15 @@ glVertex4sv proto WINAPI \
                      v: ptr GLshort
 
 glVertexPointer proto WINAPI \
-                 _size: GLint,
-                 _type: GLenum,
+                  size: GLint,
+                  type: GLenum,
                 stride: GLsizei,
                pointer: ptr GLvoid
 
 glViewport proto WINAPI \
                      x: GLint,
                      y: GLint,
-                _width: GLsizei,
+                 width: GLsizei,
                 height: GLsizei
 
 

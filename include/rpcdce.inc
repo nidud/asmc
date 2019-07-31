@@ -121,7 +121,7 @@ RPC_PROTSEQ_VECTOR	ENDS
 
 endif
 RPC_POLICY		STRUC
-_Length			UINT ?
+Length			UINT ?
 EndpointFlags		dd ?
 NICFlags		dd ?
 RPC_POLICY		ENDS

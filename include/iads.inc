@@ -372,13 +372,13 @@ PADS_CASEIGNORE_LIST	typedef ptr ADS_CASEIGNORE_LIST
 
 ADS_OCTET_LIST		STRUC
 Next			PVOID ?
-_Length			dd ?
+Length			dd ?
 Data			LPBYTE ?
 ADS_OCTET_LIST		ENDS
 PADS_OCTET_LIST		typedef ptr ADS_OCTET_LIST
 
 ADS_PATH		STRUC
-_Type			DWORD ?
+Type			DWORD ?
 VolumeName		LPWSTR ?
 Path			LPWSTR ?
 ADS_PATH		ENDS
@@ -439,7 +439,7 @@ PADS_FAXNUMBER		typedef ptr ADS_FAXNUMBER
 
 ADS_EMAIL		STRUC
 Address			LPWSTR ?
-_Type			dd ?
+Type			dd ?
 ADS_EMAIL		ENDS
 PADS_EMAIL		typedef ptr ADS_EMAIL
 

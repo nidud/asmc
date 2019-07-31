@@ -685,7 +685,7 @@ DEFINE_GUID(IID_ID3D10EffectSamplerVariable, 0x6530d5c7, 0x7e9, 0x4271, 0xa4, 0x
 LPID3D10EffectShaderVariable	typedef ptr ID3D10EffectShaderVariable
 
 D3D10_PASS_DESC		STRUC
-_Name			LPCSTR ?
+Name			LPCSTR ?
 Annotations		UINT ?
 pIAInputSignature	LPBYTE ?
 IAInputSignatureSize	SIZE_T ?
@@ -716,7 +716,7 @@ DEFINE_GUID(IID_ID3D10EffectPass,0x5cfbeb89, 0x1a06, 0x46e0, 0xb2, 0x82, 0xe3, 0
     .ends
 
 D3D10_TECHNIQUE_DESC	STRUC
-_Name			LPCSTR ?
+Name			LPCSTR ?
 Passes			UINT ?
 Annotations		UINT ?
 D3D10_TECHNIQUE_DESC	ENDS

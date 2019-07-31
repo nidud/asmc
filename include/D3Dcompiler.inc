@@ -162,7 +162,7 @@ D3DCreateBlob proto WINAPI \
 ;HRESULT
 D3DPreprocess proto WINAPI \
                  _data: PVOID,
-                 _size: SIZE_T,
+                  size: SIZE_T,
               filename: LPSTR,
                defines: ptr D3D_SHADER_MACRO,
               _include: ptr ID3DInclude,

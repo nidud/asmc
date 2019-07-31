@@ -1299,12 +1299,8 @@ GetToken proc fastcall tokenarray:tok_t, p:ptr line_status
         .endc .if !( _ltype[eax+1] & _LABEL or _DIGIT )
 
         movzx eax,[ecx-16].asmtok.token
-        .if ![edx].index || \
-            ( eax != T_REG && \
-              eax != T_CL_BRACKET && \
-              eax != T_CL_SQ_BRACKET && \
-              eax != T_ID )
-
+        .if ( [edx].index == 0 || ( eax != T_REG && eax != T_CL_BRACKET && \
+              eax != T_CL_SQ_BRACKET && eax != T_ID ) )
             jmp get_id
         .endif
         ;
@@ -1320,7 +1316,7 @@ GetToken proc fastcall tokenarray:tok_t, p:ptr line_status
             mov eax,1
             mov ecx,[edx].index
 
-            .fors ( ecx-=2 : ecx > 1 : ecx--, ebx-=16 )
+            .fors ( ecx -= 2 : ecx > 1 : ecx--, ebx-=16 )
                 .if ( [ebx].token == T_OP_BRACKET )
                     dec eax
                     .break .ifz

@@ -50,7 +50,7 @@ LPID3DXPMesh		typedef ptr ID3DXPMesh
 LPID3DXPatchMesh	typedef ptr ID3DXPatchMesh
 
 D3DXMESHDATA		STRUC
-_Type			D3DXMESHDATATYPE ?
+Type			D3DXMESHDATATYPE ?
 UNION
  pMesh			LPID3DXMesh ?
  pPMesh			LPID3DXPMesh ?
@@ -61,7 +61,7 @@ LPD3DXMESHDATA		typedef ptr D3DXMESHDATA
 
 LPID3DXSkinInfo		typedef ptr ID3DXSkinInfo
 D3DXMESHCONTAINER	STRUC
-_Name			LPSTR ?
+Name			LPSTR ?
 MeshData		D3DXMESHDATA <>
 pMaterials		LPD3DXMATERIAL ?
 pEffects		LPD3DXEFFECTINSTANCE ?
@@ -73,7 +73,7 @@ D3DXMESHCONTAINER	ENDS
 LPD3DXMESHCONTAINER	typedef ptr D3DXMESHCONTAINER
 
 D3DXFRAME		STRUC
-_Name			LPSTR ?
+Name			LPSTR ?
 TransformationMatrix	D3DXMATRIX <>
 pMeshContainer		LPD3DXMESHCONTAINER ?
 pFrameSibling		typedef ptr D3DXFRAME
@@ -109,7 +109,7 @@ D3DXTRACK_DESC		ENDS
 LPD3DXTRACK_DESC	typedef ptr D3DXTRACK_DESC
 
 D3DXEVENT_DESC		STRUC
-_Type			D3DXEVENT_TYPE ?
+Type			D3DXEVENT_TYPE ?
 Track			UINT ?
 StartTime		DOUBLE ?
 Duration		DOUBLE ?
@@ -329,7 +329,7 @@ D3DXFrameAppendChild proto WINAPI \
 ;D3DXFRAME *
 D3DXFrameFind proto WINAPI \
 		  root: ptr D3DXFRAME,
-		 _name: LPSTR
+		  name: LPSTR
 
 ;HRESULT
 D3DXFrameRegisterNamedMatrices proto WINAPI \
@@ -348,7 +348,7 @@ D3DXFrameCalculateBoundingSphere proto WINAPI \
 
 ;HRESULT
 D3DXCreateKeyframedAnimationSet proto WINAPI \
-		 _name: LPSTR,
+		  name: LPSTR,
       ticks_per_second: double,
 	 playback_type: D3DXPLAYBACK_TYPE,
        animation_count: UINT,
@@ -358,7 +358,7 @@ D3DXCreateKeyframedAnimationSet proto WINAPI \
 
 ;HRESULT
 D3DXCreateCompressedAnimationSet proto WINAPI \
-		 _name: LPSTR,
+		  name: LPSTR,
       ticks_per_second: double,
 	 playback_type: D3DXPLAYBACK_TYPE,
        compressed_data: ptr ID3DXBuffer,

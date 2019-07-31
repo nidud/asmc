@@ -22,7 +22,7 @@ include oaidl.inc
 include ocidl.inc
 
 D3D_SHADER_MACRO        STRUC
-_Name                   LPSTR ?
+Name                    LPSTR ?
 Definition              LPSTR ?
 D3D_SHADER_MACRO        ENDS
 LPD3D_SHADER_MACRO      typedef ptr D3D_SHADER_MACRO

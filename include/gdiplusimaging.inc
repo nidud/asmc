@@ -85,7 +85,7 @@ ImageLockModeWrite	equ 0x0002
 ImageLockModeUserInputBuf equ 0x0004
 
 BitmapData		STRUC
-_Width			UINT ?
+Width			UINT ?
 Height			UINT ?
 Stride			SINT ?
 PixelFormat		PixelFormat ?
@@ -130,7 +130,7 @@ Rotate270FlipXY		equ Rotate90FlipNone
 EncoderParameter	STRUC
 Guid			GUID <>
 NumberOfValues		ULONG ?
-_Type			ULONG ?
+Type			ULONG ?
 Value			PVOID ?
 EncoderParameter	ENDS
 
@@ -146,7 +146,7 @@ ItemDataPositionAfterPalette equ 0x1
 ItemDataPositionAfterBits equ 0x2
 
 ImageItemData		STRUC
-_Size			UINT ?
+Size			UINT ?
 Position		UINT ?
 Desc			PVOID ?
 DescSize		UINT ?
@@ -160,8 +160,8 @@ PROPID			typedef ULONG
 
 PropertyItem		STRUC
 id			PROPID ?
-_length			ULONG ?
-_type			dw ?
+length			ULONG ?
+type			dw ?
 value			PVOID ?
 PropertyItem		ENDS
 

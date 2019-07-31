@@ -43,7 +43,7 @@ NetAuditRead proto WINAPI \
 
 ;NET_API_STATUS
 NetAuditWrite proto WINAPI \
-		 _type: DWORD,
+		  type: DWORD,
 		   buf: LPBYTE,
 	      numbytes: DWORD,
 	       service: LPCWSTR,

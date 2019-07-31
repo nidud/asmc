@@ -92,32 +92,32 @@ LPSAFEARRAYBOUND	typedef ptr SAFEARRAYBOUND
 ;wireBRECORD		 typedef ptr wireBRECORD
 
 SAFEARR_BSTR		STRUC
-_Size			ULONG ?
+Size			ULONG ?
 aBstr			PVOID ?;LPwireBSTR ?
 SAFEARR_BSTR		ENDS
 
 SAFEARR_UNKNOWN		STRUC
-_Size			ULONG ?
+Size			ULONG ?
 apUnknown		LPIUnknown ?
 SAFEARR_UNKNOWN		ENDS
 
 SAFEARR_DISPATCH	STRUC
-_Size			ULONG ?
+Size			ULONG ?
 apDispatch		PVOID ?;LPIDispatch ?
 SAFEARR_DISPATCH	ENDS
 
 SAFEARR_VARIANT		STRUC
-_Size			ULONG ?
+Size			ULONG ?
 aVariant		PVOID ?;LPwireVARIANT ?
 SAFEARR_VARIANT		ENDS
 
 SAFEARR_BRECORD		STRUC
-_Size			ULONG ?
+Size			ULONG ?
 aRecord			PVOID ?;LPwireBRECORD ?
 SAFEARR_BRECORD		ENDS
 
 SAFEARR_HAVEIID		STRUC
-_Size			ULONG ?
+Size			ULONG ?
 apUnknown		LPIUnknown ?
 iid			IID <>
 SAFEARR_HAVEIID		ENDS
@@ -460,7 +460,7 @@ pvReserved		PVOID ?
 pfnDeferredFillIn	PVOID ?;HRESULT (__stdcall *pfnDeferredFillIn)(struct tagEXCEPINFO *)
 scode			SCODE ?
 EXCEPINFO		ENDS
- LPEXCEPINFO		typedef ptr EXCEPINFO
+LPEXCEPINFO		typedef ptr EXCEPINFO
 endif
 CALLCONV		typedef SDWORD
 CC_FASTCALL		equ 0

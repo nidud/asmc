@@ -8,7 +8,7 @@ WINGDIPAPI equ <>
 endif
 
 ;void*
-GdipAlloc proto WINAPI _size: size_t
+GdipAlloc proto WINAPI size: size_t
 ;void
 GdipFree proto WINAPI
 

@@ -428,7 +428,7 @@ ImageDirectoryEntryToDataEx proto WINAPI \
 		  Base: PVOID,
 	 MappedAsImage: BOOLEAN,
 	DirectoryEntry: USHORT,
-		 _Size: PULONG,
+		  Size: PULONG,
 	   FoundHeader: ptr PIMAGE_SECTION_HEADER
 
 
@@ -437,7 +437,7 @@ ImageDirectoryEntryToData proto WINAPI \
 		  Base: PVOID,
 	 MappedAsImage: BOOLEAN,
 	DirectoryEntry: USHORT,
-		 _Size: PULONG
+		  Size: PULONG
 
 
 ;PIMAGE_SECTION_HEADER
@@ -565,14 +565,14 @@ UNDNAME_NO_SPECIAL_SYMS equ (0x4000)
 
 ;DWORD
 UnDecorateSymbolName proto WINAPI \
-		 _name: PCSTR,
+		  name: PCSTR,
 	  outputString: PSTR,
        maxStringLength: DWORD,
 		 flags: DWORD
 
 ;DWORD
 UnDecorateSymbolNameW proto WINAPI \
-		 _name: PCWSTR,
+		  name: PCWSTR,
 	  outputString: PWSTR,
        maxStringLength: DWORD,
 		 flags: DWORD
@@ -584,7 +584,7 @@ MODLOAD_DATA		STRUC
 ssize			dd ?
 ssig			dd ?
 data			PVOID ?
-_size			dd ?
+size			dd ?
 flags			dd ?
 MODLOAD_DATA		ENDS
 PMODLOAD_DATA		typedef ptr MODLOAD_DATA
@@ -880,32 +880,32 @@ NumSymTypes		equ 9
 IMAGEHLP_SYMBOL64	STRUC
 SizeOfStruct		dd ?
 Address			dd ?
-_Size			dd ?
+Size			dd ?
 Flags			dd ?
 MaxNameLength		dd ?
-_Name			CHAR 1 dup(?)
+Name			CHAR 1 dup(?)
 IMAGEHLP_SYMBOL64	ENDS
 PIMAGEHLP_SYMBOL64	typedef ptr IMAGEHLP_SYMBOL64
 
 IMAGEHLP_SYMBOL64_PACKAGE STRUC
 sym			IMAGEHLP_SYMBOL64 <>
-_name			CHAR MAX_SYM_NAME + 1 dup(?)
+name			CHAR MAX_SYM_NAME + 1 dup(?)
 IMAGEHLP_SYMBOL64_PACKAGE ENDS
 PIMAGEHLP_SYMBOL64_PACKAGE typedef ptr IMAGEHLP_SYMBOL64_PACKAGE
 
 IMAGEHLP_SYMBOLW64	STRUC
 SizeOfStruct		dd ?
 Address			dd ?
-_Size			dd ?
+Size			dd ?
 Flags			dd ?
 MaxNameLength		dd ?
-_Name			WCHAR 1 dup(?)
+Name			WCHAR 1 dup(?)
 IMAGEHLP_SYMBOLW64	ENDS
 PIMAGEHLP_SYMBOLW64	typedef ptr IMAGEHLP_SYMBOLW64
 
 IMAGEHLP_SYMBOLW64_PACKAGE STRUC
 sym			IMAGEHLP_SYMBOLW64 <>
-_name			WCHAR MAX_SYM_NAME + 1 dup(?)
+name			WCHAR MAX_SYM_NAME + 1 dup(?)
 IMAGEHLP_SYMBOLW64_PACKAGE ENDS
 PIMAGEHLP_SYMBOLW64_PACKAGE typedef ptr IMAGEHLP_SYMBOLW64_PACKAGE
 
@@ -925,32 +925,32 @@ else
 IMAGEHLP_SYMBOL		STRUC
 SizeOfStruct		dd ?
 Address			dd ?
-_Size			dd ?
+Size			dd ?
 Flags			dd ?
 MaxNameLength		dd ?
-_Name			CHAR 1 dup(?)
+Name			CHAR 1 dup(?)
 IMAGEHLP_SYMBOL		ENDS
 PIMAGEHLP_SYMBOL	typedef ptr IMAGEHLP_SYMBOL
 
 IMAGEHLP_SYMBOL_PACKAGE	 STRUC
 sym			IMAGEHLP_SYMBOL <>
-_name			CHAR MAX_SYM_NAME + 1 dup(?)
+name			CHAR MAX_SYM_NAME + 1 dup(?)
 IMAGEHLP_SYMBOL_PACKAGE ENDS
 PIMAGEHLP_SYMBOL_PACKAGE typedef ptr IMAGEHLP_SYMBOL_PACKAGE
 
 IMAGEHLP_SYMBOLW	STRUC
 SizeOfStruct		dd ?
 Address			dd ?
-_Size			dd ?
+Size			dd ?
 Flags			dd ?
 MaxNameLength		dd ?
-_Name			WCHAR 1 dup(?)
+Name			WCHAR 1 dup(?)
 IMAGEHLP_SYMBOLW	ENDS
 PIMAGEHLP_SYMBOLW	typedef ptr IMAGEHLP_SYMBOLW
 
 IMAGEHLP_SYMBOLW_PACKAGE STRUC
 sym			IMAGEHLP_SYMBOLW <>
-_name			WCHAR MAX_SYM_NAME + 1 dup(?)
+name			WCHAR MAX_SYM_NAME + 1 dup(?)
 IMAGEHLP_SYMBOLW_PACKAGE ENDS
 PIMAGEHLP_SYMBOLW_PACKAGE typedef ptr IMAGEHLP_SYMBOLW_PACKAGE
 
@@ -1232,15 +1232,15 @@ SymSetHomeDirectoryW proto WINAPI \
 
 ;PCHAR
 SymGetHomeDirectory proto WINAPI \
-		 _type: DWORD,
+		  type: DWORD,
 		   dir: PSTR,
-		 _size: size_t
+		  size: size_t
 
 ;PWSTR
 SymGetHomeDirectoryW proto WINAPI \
-		 _type: DWORD,
+		  type: DWORD,
 		   dir: PWSTR,
-		 _size: size_t
+		  size: size_t
 
 hdBase			equ 0
 hdSym			equ 1
@@ -1332,7 +1332,7 @@ PSYM_ENUMSOURCFILES_CALLBACK equ PSYM_ENUMSOURCEFILES_CALLBACK
 SymEnumSourceFiles proto WINAPI \
 	      hProcess: HANDLE,
 	       ModBase: ULONG64,
-		 _Mask: PCSTR,
+		  Mask: PCSTR,
 	    cbSrcFiles: PSYM_ENUMSOURCEFILES_CALLBACK,
 	   UserContext: PVOID
 
@@ -1343,7 +1343,7 @@ CALLBACK(PSYM_ENUMSOURCEFILES_CALLBACKW, :PSOURCEFILEW, :PVOID)
 SymEnumSourceFilesW proto WINAPI \
 	      hProcess: HANDLE,
 	       ModBase: ULONG64,
-		 _Mask: PCWSTR,
+		  Mask: PCWSTR,
 	    cbSrcFiles: PSYM_ENUMSOURCEFILES_CALLBACKW,
 	   UserContext: PVOID
 
@@ -1432,7 +1432,7 @@ SymGetUnwindInfo proto WINAPI \
 	      hProcess: HANDLE,
 	       Address: DWORD64,
 		Buffer: PVOID,
-		 _Size: PULONG
+		  Size: PULONG
 
 ;BOOL
 SymGetModuleInfo64 proto WINAPI \
@@ -1697,7 +1697,7 @@ SymGetSourceFile proto WINAPI \
 		Params: PCSTR,
 	      FileSpec: PCSTR,
 	      FilePath: PSTR,
-		 _Size: DWORD
+		  Size: DWORD
 
 ;BOOL
 SymGetSourceFileW proto WINAPI \
@@ -1706,7 +1706,7 @@ SymGetSourceFileW proto WINAPI \
 		Params: PCWSTR,
 	      FileSpec: PCWSTR,
 	      FilePath: PWSTR,
-		 _Size: DWORD
+		  Size: DWORD
 
 ;BOOL
 SymGetSourceFileToken proto WINAPI \
@@ -1714,7 +1714,7 @@ SymGetSourceFileToken proto WINAPI \
 		  Base: ULONG64,
 	      FileSpec: PCSTR,
 		 Token: ptr PVOID,
-		 _Size: ptr DWORD
+		  Size: ptr DWORD
 
 ;BOOL
 SymGetSourceFileTokenW proto WINAPI \
@@ -1722,7 +1722,7 @@ SymGetSourceFileTokenW proto WINAPI \
 		  Base: ULONG64,
 	      FileSpec: PCWSTR,
 		 Token: ptr PVOID,
-		 _Size: ptr DWORD
+		  Size: ptr DWORD
 
 ;BOOL
 SymGetSourceFileFromToken proto WINAPI \
@@ -1730,7 +1730,7 @@ SymGetSourceFileFromToken proto WINAPI \
 		 Token: PVOID,
 		Params: PCSTR,
 	      FilePath: PSTR,
-		 _Size: DWORD
+		  Size: DWORD
 
 ;BOOL
 SymGetSourceFileFromTokenW proto WINAPI \
@@ -1738,7 +1738,7 @@ SymGetSourceFileFromTokenW proto WINAPI \
 		 Token: PVOID,
 		Params: PCWSTR,
 	      FilePath: PWSTR,
-		 _Size: DWORD
+		  Size: DWORD
 
 ;BOOL
 SymGetSourceVarFromToken proto WINAPI \
@@ -1747,7 +1747,7 @@ SymGetSourceVarFromToken proto WINAPI \
 		Params: PCSTR,
 	       VarName: PCSTR,
 		 Value: PSTR,
-		 _Size: DWORD
+		  Size: DWORD
 
 ;BOOL
 SymGetSourceVarFromTokenW proto WINAPI \
@@ -1756,7 +1756,7 @@ SymGetSourceVarFromTokenW proto WINAPI \
 		Params: PCWSTR,
 	       VarName: PCWSTR,
 		 Value: PWSTR,
-		 _Size: DWORD
+		  Size: DWORD
 
 CALLBACK(PENUMSOURCEFILETOKENSCALLBACK, :PVOID, :size_t)
 
@@ -1898,7 +1898,7 @@ endif
 
 IMAGEHLP_SYMBOL_SRC	STRUC
 sizeofstruct		dd ?
-_type			dd ?
+type			dd ?
 file			CHAR MAX_PATH dup(?)
 IMAGEHLP_SYMBOL_SRC	ENDS
 PIMAGEHLP_SYMBOL_SRC	typedef ptr IMAGEHLP_SYMBOL_SRC
@@ -1915,7 +1915,7 @@ SizeOfStruct		ULONG ?
 TypeIndex		ULONG ?
 Reserved		ULONG64 2 dup(?)
 Index			ULONG ?
-_Size			ULONG ?
+Size			ULONG ?
 ModBase			ULONG64 ?
 Flags			ULONG ?
 Value			ULONG64 ?
@@ -1925,13 +1925,13 @@ Scope			ULONG ?
 Tag			ULONG ?
 NameLen			ULONG ?
 MaxNameLen		ULONG ?
-_Name			CHAR 1 dup(?)
+Name			CHAR 1 dup(?)
 SYMBOL_INFO		ENDS
 PSYMBOL_INFO		typedef ptr SYMBOL_INFO
 
 SYMBOL_INFO_PACKAGE	STRUC
 _si			SYMBOL_INFO <>
-_name			CHAR MAX_SYM_NAME + 1 dup(?)
+name			CHAR MAX_SYM_NAME + 1 dup(?)
 SYMBOL_INFO_PACKAGE	ENDS
 PSYMBOL_INFO_PACKAGE	typedef ptr SYMBOL_INFO_PACKAGE
 
@@ -1940,7 +1940,7 @@ SizeOfStruct		ULONG ?
 TypeIndex		ULONG ?
 Reserved		ULONG64 2 dup(?)
 Index			ULONG ?
-_Size			ULONG ?
+Size			ULONG ?
 ModBase			ULONG64 ?
 Flags			ULONG ?
 Value			ULONG64 ?
@@ -1950,13 +1950,13 @@ Scope			ULONG ?
 Tag			ULONG ?
 NameLen			ULONG ?
 MaxNameLen		ULONG ?
-_Name			WCHAR 1 dup(?)
+Name			WCHAR 1 dup(?)
 SYMBOL_INFOW		ENDS
 PSYMBOL_INFOW		typedef ptr SYMBOL_INFOW
 
 SYMBOL_INFO_PACKAGEW	STRUC
 _si			SYMBOL_INFOW <>
-_name			WCHAR MAX_SYM_NAME + 1 dup(?)
+name			WCHAR MAX_SYM_NAME + 1 dup(?)
 SYMBOL_INFO_PACKAGEW	ENDS
 PSYMBOL_INFO_PACKAGEW	typedef ptr SYMBOL_INFO_PACKAGEW
 
@@ -2053,13 +2053,13 @@ SymPrevW proto WINAPI \
 ;BOOL
 SymFromName proto WINAPI \
 	      hProcess: HANDLE,
-		 _Name: PCSTR,
+		  Name: PCSTR,
 		Symbol: PSYMBOL_INFO
 
 ;BOOL
 SymFromNameW proto WINAPI \
 	      hProcess: HANDLE,
-		 _Name: PCWSTR,
+		  Name: PCWSTR,
 		Symbol: PSYMBOL_INFOW
 
 
@@ -2069,7 +2069,7 @@ CALLBACK(PSYM_ENUMERATESYMBOLS_CALLBACK, :PSYMBOL_INFO, :ULONG, :PVOID)
 SymEnumSymbols proto WINAPI \
 	      hProcess: HANDLE,
 	     BaseOfDll: ULONG64,
-		 _Mask: PCSTR,
+		  Mask: PCSTR,
    EnumSymbolsCallback: PSYM_ENUMERATESYMBOLS_CALLBACK,
 	   UserContext: PVOID
 
@@ -2080,7 +2080,7 @@ CALLBACK(PSYM_ENUMERATESYMBOLS_CALLBACKW, :PSYMBOL_INFOW, :ULONG, :PVOID)
 SymEnumSymbolsW proto WINAPI \
 	      hProcess: HANDLE,
 	     BaseOfDll: ULONG64,
-		 _Mask: PCWSTR,
+		  Mask: PCWSTR,
    EnumSymbolsCallback: PSYM_ENUMERATESYMBOLS_CALLBACKW,
 	   UserContext: PVOID
 
@@ -2110,7 +2110,7 @@ SymSearch proto WINAPI \
 	     BaseOfDll: ULONG64,
 		 Index: DWORD,
 		SymTag: DWORD,
-		 _Mask: PCSTR,
+		  Mask: PCSTR,
 	       Address: DWORD64,
    EnumSymbolsCallback: PSYM_ENUMERATESYMBOLS_CALLBACK,
 	   UserContext: PVOID,
@@ -2122,7 +2122,7 @@ SymSearchW proto WINAPI \
 	     BaseOfDll: ULONG64,
 		 Index: DWORD,
 		SymTag: DWORD,
-		 _Mask: PCWSTR,
+		  Mask: PCWSTR,
 	       Address: DWORD64,
    EnumSymbolsCallback: PSYM_ENUMERATESYMBOLS_CALLBACKW,
 	   UserContext: PVOID,
@@ -2258,7 +2258,7 @@ SymEnumTypesW proto WINAPI \
 SymEnumTypesByName proto WINAPI \
 	      hProcess: HANDLE,
 	     BaseOfDll: ULONG64,
-		 _mask: PCSTR,
+		  mask: PCSTR,
    EnumSymbolsCallback: PSYM_ENUMERATESYMBOLS_CALLBACK,
 	   UserContext: PVOID
 
@@ -2266,7 +2266,7 @@ SymEnumTypesByName proto WINAPI \
 SymEnumTypesByNameW proto WINAPI \
 	      hProcess: HANDLE,
 	     BaseOfDll: ULONG64,
-		 _mask: PCWSTR,
+		  mask: PCWSTR,
    EnumSymbolsCallback: PSYM_ENUMERATESYMBOLS_CALLBACKW,
 	   UserContext: PVOID
 
@@ -2274,39 +2274,39 @@ SymEnumTypesByNameW proto WINAPI \
 SymGetTypeFromName proto WINAPI \
 	      hProcess: HANDLE,
 	     BaseOfDll: ULONG64,
-		 _Name: PCSTR,
+		  Name: PCSTR,
 		Symbol: PSYMBOL_INFO
 
 ;BOOL
 SymGetTypeFromNameW proto WINAPI \
 	      hProcess: HANDLE,
 	     BaseOfDll: ULONG64,
-		 _Name: PCWSTR,
+		  Name: PCWSTR,
 		Symbol: PSYMBOL_INFOW
 
 ;BOOL
 SymAddSymbol proto WINAPI \
 	      hProcess: HANDLE,
 	     BaseOfDll: ULONG64,
-		 _Name: PCSTR,
+		  Name: PCSTR,
 	       Address: DWORD64,
-		 _Size: DWORD,
+		  Size: DWORD,
 		 Flags: DWORD
 
 ;BOOL
 SymAddSymbolW proto WINAPI \
 	      hProcess: HANDLE,
 	     BaseOfDll: ULONG64,
-		 _Name: PCWSTR,
+		  Name: PCWSTR,
 	       Address: DWORD64,
-		 _Size: DWORD,
+		  Size: DWORD,
 		 Flags: DWORD
 
 ;BOOL
 SymDeleteSymbol proto WINAPI \
 	      hProcess: HANDLE,
 	     BaseOfDll: ULONG64,
-		 _Name: PCSTR,
+		  Name: PCSTR,
 	       Address: DWORD64,
 		 Flags: DWORD
 
@@ -2314,7 +2314,7 @@ SymDeleteSymbol proto WINAPI \
 SymDeleteSymbolW proto WINAPI \
 	      hProcess: HANDLE,
 	     BaseOfDll: ULONG64,
-		 _Name: PCWSTR,
+		  Name: PCWSTR,
 	       Address: DWORD64,
 		 Flags: DWORD
 
@@ -2328,7 +2328,7 @@ SymAddSourceStream proto WINAPI \
 		  Base: ULONG64,
 	    StreamFile: PCSTR,
 		Buffer: PBYTE,
-		 _Size: size_t
+		  Size: size_t
 
 CALLBACK(SYMADDSOURCESTREAM, :HANDLE, :ULONG64, :PCSTR, :PBYTE, :size_t)
 
@@ -2338,7 +2338,7 @@ SymAddSourceStreamA proto WINAPI \
 		  Base: ULONG64,
 	    StreamFile: PCSTR,
 		Buffer: PBYTE,
-		 _Size: size_t
+		  Size: size_t
 
 CALLBACK(SYMADDSOURCESTREAMA, :HANDLE, :ULONG64, :PCSTR, :PBYTE, :size_t)
 
@@ -2348,7 +2348,7 @@ SymAddSourceStreamW proto WINAPI \
 		  Base: ULONG64,
 	      FileSpec: PCWSTR,
 		Buffer: PBYTE,
-		 _Size: size_t
+		  Size: size_t
 
 ;BOOL
 SymSrvIsStoreW proto WINAPI \
@@ -2364,7 +2364,7 @@ SymSrvIsStore proto WINAPI \
 SymSrvDeltaName proto WINAPI \
 	      hProcess: HANDLE,
 	       SymPath: PCSTR,
-		 _Type: PCSTR,
+		  Type: PCSTR,
 		 File1: PCSTR,
 		 File2: PCSTR
 
@@ -2372,7 +2372,7 @@ SymSrvDeltaName proto WINAPI \
 SymSrvDeltaNameW proto WINAPI \
 	      hProcess: HANDLE,
 	       SymPath: PCWSTR,
-		 _Type: PCWSTR,
+		  Type: PCWSTR,
 		 File1: PCWSTR,
 		 File2: PCWSTR
 
@@ -2412,7 +2412,7 @@ SymSrvGetFileIndexStringW proto WINAPI \
 	       SrvPath: PCWSTR,
 		  File: PCWSTR,
 		 Index: PWSTR,
-		 _Size: size_t,
+		  Size: size_t,
 		 Flags: DWORD
 
 ;BOOL
@@ -2421,7 +2421,7 @@ SymSrvGetFileIndexString proto WINAPI \
 	       SrvPath: PCSTR,
 		  File: PCSTR,
 		 Index: PSTR,
-		 _Size: size_t,
+		  Size: size_t,
 		 Flags: DWORD
 
 SYMSRV_INDEX_INFO	STRUC
@@ -2429,7 +2429,7 @@ sizeofstruct		dd ?
 file			CHAR MAX_PATH +1 dup(?)
 stripped		BOOL ?
 timestamp		dd ?
-_size			dd ?
+size			dd ?
 dbgfile			CHAR MAX_PATH +1 dup(?)
 pdbfile			CHAR MAX_PATH + 1 dup(?)
 guid			GUID <>
@@ -2443,7 +2443,7 @@ sizeofstruct		dd ?
 file			WCHAR MAX_PATH +1 dup(?)
 stripped		BOOL ?
 timestamp		dd ?
-_size			dd ?
+size			dd ?
 dbgfile			WCHAR MAX_PATH +1 dup(?)
 pdbfile			WCHAR MAX_PATH + 1 dup(?)
 guid			GUID <>
@@ -2506,7 +2506,7 @@ SymGetSymbolFile proto WINAPI \
 	      hProcess: HANDLE,
 	       SymPath: PCSTR,
 	     ImageFile: PCSTR,
-		 _Type: DWORD,
+		  Type: DWORD,
 	    SymbolFile: PSTR,
 	   cSymbolFile: size_t,
 	       DbgFile: PSTR,
@@ -2517,7 +2517,7 @@ SymGetSymbolFileW proto WINAPI \
 	      hProcess: HANDLE,
 	       SymPath: PCWSTR,
 	     ImageFile: PCWSTR,
-		 _Type: DWORD,
+		  Type: DWORD,
 	    SymbolFile: PWSTR,
 	   cSymbolFile: size_t,
 	       DbgFile: PWSTR,
@@ -2559,7 +2559,7 @@ endif
 ;BOOL
 SymGetSymFromName64 proto WINAPI \
 	      hProcess: HANDLE,
-		 _Name: PCSTR,
+		  Name: PCSTR,
 		Symbol: PIMAGEHLP_SYMBOL64
 
 if NOT defined(_IMAGEHLP_SOURCE_) AND defined(_IMAGEHLP64)
@@ -2568,7 +2568,7 @@ else
 ;BOOL
 SymGetSymFromName proto WINAPI \
 	      hProcess: HANDLE,
-		 _Name: PCSTR,
+		  Name: PCSTR,
 		Symbol: PIMAGEHLP_SYMBOL
 
 endif
@@ -2974,7 +2974,7 @@ MINIDUMP_DIRECTORY	ENDS
 PMINIDUMP_DIRECTORY	typedef ptr MINIDUMP_DIRECTORY
 
 MINIDUMP_STRING		STRUC
-_Length			ULONG32 ?
+Length			ULONG32 ?
 Buffer			WCHAR 0 dup(?)
 MINIDUMP_STRING		ENDS
 PMINIDUMP_STRING	typedef ptr MINIDUMP_STRING
@@ -3316,7 +3316,7 @@ __alignment1		ULONG32 ?
 RegionSize		ULONG64 ?
 State			ULONG32 ?
 Protect			ULONG32 ?
-_Type			ULONG32 ?
+Type			ULONG32 ?
 __alignment2		ULONG32 ?
 MINIDUMP_MEMORY_INFO	ENDS
 PMINIDUMP_MEMORY_INFO	typedef ptr MINIDUMP_MEMORY_INFO
@@ -3372,13 +3372,13 @@ MINIDUMP_TOKEN_INFO_LIST ENDS
 PMINIDUMP_TOKEN_INFO_LIST typedef ptr MINIDUMP_TOKEN_INFO_LIST
 
 MINIDUMP_USER_RECORD	STRUC
-_Type			ULONG32 ?
+Type			ULONG32 ?
 Memory			MINIDUMP_LOCATION_DESCRIPTOR <>
 MINIDUMP_USER_RECORD	ENDS
 PMINIDUMP_USER_RECORD	typedef ptr MINIDUMP_USER_RECORD
 
 MINIDUMP_USER_STREAM	STRUC
-_Type			ULONG32 ?
+Type			ULONG32 ?
 BufferSize		ULONG ?
 Buffer			PVOID ?
 

@@ -186,7 +186,7 @@ endif
 endif
 
 KSMULTIPLE_ITEM		STRUC
-_Size			ULONG ?
+Size			ULONG ?
 Count			ULONG ?
 KSMULTIPLE_ITEM		ENDS
 PKSMULTIPLE_ITEM	typedef ptr KSMULTIPLE_ITEM
@@ -363,7 +363,7 @@ KSQUERYBUFFER		ENDS
 PKSQUERYBUFFER		typedef ptr KSQUERYBUFFER
 
 KSRELATIVEEVENT		STRUC
-_Size			ULONG ?
+Size			ULONG ?
 Flags			ULONG ?
 UNION
  ObjectHandle		HANDLE ?
@@ -406,7 +406,7 @@ KSCOMPONENTID		STRUC
 Manufacturer		GUID <>
 Product			GUID <>
 Component		GUID <>
-_Name			GUID <>
+Name			GUID <>
 Version			ULONG ?
 Revision		ULONG ?
 KSCOMPONENTID		ENDS
@@ -792,7 +792,7 @@ endif
 KSATTRIBUTE_REQUIRED	equ 0x00000001
 
 KSATTRIBUTE		STRUC
-_Size			ULONG ?
+Size			ULONG ?
 Flags			ULONG ?
 Attribute		GUID <>
 KSATTRIBUTE		ENDS
@@ -825,7 +825,7 @@ KSPIN_CONNECT		ENDS
 PKSPIN_CONNECT		typedef ptr KSPIN_CONNECT
 
 KSPIN_PHYSICALCONNECTION STRUC
-_Size			ULONG ?
+Size			ULONG ?
 Pin			ULONG ?
 SymbolicLinkName	WCHAR 1 dup(?)
 KSPIN_PHYSICALCONNECTION ENDS
@@ -929,7 +929,7 @@ DataRanges		PKSDATARANGE ?
 DataFlow		KSPIN_DATAFLOW ?
 Communication		KSPIN_COMMUNICATION ?
 Category		LPGUID ?
-_Name			LPGUID ?
+Name			LPGUID ?
 UNION
  Reserved		LONGLONG ?
  STRUC
@@ -1214,7 +1214,7 @@ KSTIME			ENDS
 PKSTIME			typedef ptr KSTIME
 
 KSSTREAM_HEADER		STRUC
-_Size			ULONG ?
+Size			ULONG ?
 TypeSpecificFlags	ULONG ?
 PresentationTime	KSTIME <>
 Duration		LONGLONG ?
@@ -2116,8 +2116,8 @@ DEFINE_KSPIN_DEFAULT_MEDIUMS equ 1
 
 KSNODE_DESCRIPTOR	STRUC
 AutomationTable		PKSAUTOMATION_TABLE ?
-_Type			LPGUID ?
-_Name			LPGUID ?
+Type			LPGUID ?
+Name			LPGUID ?
 ifndef _WIN64
 Alignment		PVOID ?
 endif
@@ -3532,7 +3532,7 @@ KsPinSetPinClockTime proto WINAPI \
 KsPinSubmitFrame proto WINAPI \
 		   Pin: PKSPIN,
 		  Data: PVOID,
-		 _Size: ULONG,
+		  Size: ULONG,
 	  StreamHeader: PKSSTREAM_HEADER,
 	       Context: PVOID
 

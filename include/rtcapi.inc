@@ -47,8 +47,8 @@ endif
 
     _RTC_vardesc struct
         _addr int_t ?
-        _size int_t ?
-        _name string_t ?
+         size int_t ?
+         name string_t ?
     _RTC_vardesc ends
     LP_RTC_vardesc typedef ptr _RTC_vardesc
 

@@ -115,7 +115,7 @@ else
 hash			dd ?
 endif
 spare			LPVOID ?
-_name			db 1 dup(?)
+name			db 1 dup(?)
 TypeDescriptor		ENDS
 endif
 LPTypeDescriptor	typedef ptr TypeDescriptor

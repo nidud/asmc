@@ -900,7 +900,7 @@ PWSACOMPLETIONTYPE	typedef ptr WSACOMPLETIONTYPE
 LPWSACOMPLETIONTYPE	typedef ptr WSACOMPLETIONTYPE
 
 WSACOMPLETION		STRUC
-_Type			WSACOMPLETIONTYPE ?
+Type			WSACOMPLETIONTYPE ?
 union Parameters
   struct WindowMessage
    hWnd			HWND ?
@@ -1367,11 +1367,11 @@ endif
 
 if INCL_WINSOCK_API_PROTOTYPES
 ;int
-bind proto WINAPI s:SOCKET, _name:PVOID, namelen:SINT
+bind proto WINAPI s:SOCKET, name:PVOID, namelen:SINT
 endif
 
 if INCL_WINSOCK_API_TYPEDEFS
-CALLBACK(LPFN_BIND, s:SOCKET, _name:PVOID, namelen:SINT)
+CALLBACK(LPFN_BIND, s:SOCKET, name:PVOID, namelen:SINT)
 endif
 
 if INCL_WINSOCK_API_PROTOTYPES
@@ -1385,11 +1385,11 @@ endif
 
 if INCL_WINSOCK_API_PROTOTYPES
 ;int
-connect proto WINAPI s:SOCKET, _name:ptr, namelen:SINT
+connect proto WINAPI s:SOCKET, name:ptr, namelen:SINT
 endif
 
 if INCL_WINSOCK_API_TYPEDEFS
-CALLBACK(LPFN_CONNECT, s:SOCKET, _name:ptr, namelen:SINT)
+CALLBACK(LPFN_CONNECT, s:SOCKET, name:ptr, namelen:SINT)
 endif
 
 if INCL_WINSOCK_API_PROTOTYPES
@@ -1405,24 +1405,24 @@ if INCL_WINSOCK_API_PROTOTYPES
 ;int
 getpeername proto WINAPI \
 		     s: SOCKET,
-		 _name: PVOID,
+		  name: PVOID,
 	       namelen: ptr SINT
 endif
 
 if INCL_WINSOCK_API_TYPEDEFS
-CALLBACK(LPFN_GETPEERNAME, s:SOCKET, _name:PVOID, namelen:ptr SINT)
+CALLBACK(LPFN_GETPEERNAME, s:SOCKET, name:PVOID, namelen:ptr SINT)
 endif
 
 if INCL_WINSOCK_API_PROTOTYPES
 ;int
 getsockname proto WINAPI \
 		     s: SOCKET,
-		 _name: PVOID,
+		  name: PVOID,
 	       namelen: ptr SINT
 endif
 
 if INCL_WINSOCK_API_TYPEDEFS
-CALLBACK(LPFN_GETSOCKNAME, s:SOCKET, _name:PVOID, namelen:ptr SINT)
+CALLBACK(LPFN_GETSOCKNAME, s:SOCKET, name:PVOID, namelen:ptr SINT)
 endif
 
 if INCL_WINSOCK_API_PROTOTYPES
@@ -1609,12 +1609,12 @@ if INCL_WINSOCK_API_PROTOTYPES
 ;SOCKET
 socket proto WINAPI \
 		    af: SINT,
-		 _type: SINT,
+		  type: SINT,
 	      protocol: SINT
 endif
 
 if INCL_WINSOCK_API_TYPEDEFS
-CALLBACK(LPFN_SOCKET, af:SINT, _type:SINT, protocol:SINT)
+CALLBACK(LPFN_SOCKET, af:SINT, type:SINT, protocol:SINT)
 endif
 
 
@@ -1623,32 +1623,32 @@ if INCL_WINSOCK_API_PROTOTYPES
 gethostbyaddr proto WINAPI \
 		 _addr: LPSTR,
 		   len: SINT,
-		 _type: SINT
+		  type: SINT
 endif
 
 if INCL_WINSOCK_API_TYPEDEFS
-CALLBACK(LPFN_GETHOSTBYADDR, _addr:LPSTR, len:SINT, _type:SINT)
+CALLBACK(LPFN_GETHOSTBYADDR, _addr:LPSTR, len:SINT, type:SINT)
 endif
 
 if INCL_WINSOCK_API_PROTOTYPES
 ;PVOID
 gethostbyname proto WINAPI \
-		 _name: LPSTR
+		  name: LPSTR
 endif
 
 if INCL_WINSOCK_API_TYPEDEFS
-CALLBACK(LPFN_GETHOSTBYNAME, _name:LPSTR)
+CALLBACK(LPFN_GETHOSTBYNAME, name:LPSTR)
 endif
 
 if INCL_WINSOCK_API_PROTOTYPES
 ;int
 gethostname proto WINAPI \
-		 _name: LPSTR,
+		  name: LPSTR,
 	       namelen: SINT
 endif
 
 if INCL_WINSOCK_API_TYPEDEFS
-CALLBACK(LPFN_GETHOSTNAME, _name:LPSTR, namelen:SINT)
+CALLBACK(LPFN_GETHOSTNAME, name:LPSTR, namelen:SINT)
 endif
 
 if INCL_WINSOCK_API_PROTOTYPES
@@ -1665,12 +1665,12 @@ endif
 if INCL_WINSOCK_API_PROTOTYPES
 ;struct
 getservbyname proto WINAPI \
-		 _name: LPSTR,
+		  name: LPSTR,
 		_proto: LPSTR
 endif
 
 if INCL_WINSOCK_API_TYPEDEFS
-CALLBACK(LPFN_GETSERVBYNAME, _name:LPSTR, _proto:LPSTR)
+CALLBACK(LPFN_GETSERVBYNAME, name:LPSTR, _proto:LPSTR)
 endif
 
 if INCL_WINSOCK_API_PROTOTYPES
@@ -1686,11 +1686,11 @@ endif
 if INCL_WINSOCK_API_PROTOTYPES
 ;struct
 getprotobyname proto WINAPI \
-		 _name: LPSTR
+		  name: LPSTR
 endif
 
 if INCL_WINSOCK_API_TYPEDEFS
-CALLBACK(LPFN_GETPROTOBYNAME, _name:LPSTR)
+CALLBACK(LPFN_GETPROTOBYNAME, name:LPSTR)
 endif
 
 
@@ -1775,7 +1775,7 @@ if INCL_WINSOCK_API_PROTOTYPES
 WSAAsyncGetServByName proto WINAPI \
 		  hWnd: HWND,
 		  wMsg: UINT,
-		 _name: LPSTR,
+		  name: LPSTR,
 		_proto: LPSTR,
 		   buf: LPSTR,
 		buflen: SINT
@@ -1805,13 +1805,13 @@ if INCL_WINSOCK_API_PROTOTYPES
 WSAAsyncGetProtoByName proto WINAPI \
 		  hWnd: HWND,
 		  wMsg: UINT,
-		 _name: LPSTR,
+		  name: LPSTR,
 		   buf: LPSTR,
 		buflen: SINT
 endif
 
 if INCL_WINSOCK_API_TYPEDEFS
-CALLBACK(LPFN_WSAASYNCGETPROTOBYNAME, hWnd:HWND, wMsg:UINT, _name:LPSTR, buf:LPSTR, buflen:SINT)
+CALLBACK(LPFN_WSAASYNCGETPROTOBYNAME, hWnd:HWND, wMsg:UINT, name:LPSTR, buf:LPSTR, buflen:SINT)
 endif
 
 if INCL_WINSOCK_API_PROTOTYPES
@@ -1833,13 +1833,13 @@ if INCL_WINSOCK_API_PROTOTYPES
 WSAAsyncGetHostByName proto WINAPI \
 		  hWnd: HWND,
 		  wMsg: UINT,
-		 _name: LPSTR,
+		  name: LPSTR,
 		   buf: LPSTR,
 		buflen: SINT
 endif
 
 if INCL_WINSOCK_API_TYPEDEFS
-CALLBACK(LPFN_WSAASYNCGETHOSTBYNAME, hWnd:HWND, wMsg:UINT, _name:LPSTR, buf:LPSTR, buflen:SINT)
+CALLBACK(LPFN_WSAASYNCGETHOSTBYNAME, hWnd:HWND, wMsg:UINT, name:LPSTR, buf:LPSTR, buflen:SINT)
 endif
 
 if INCL_WINSOCK_API_PROTOTYPES
@@ -1849,13 +1849,13 @@ WSAAsyncGetHostByAddr proto WINAPI \
 		  wMsg: UINT,
 		 _addr: LPSTR,
 		   len: SINT,
-		 _type: SINT,
+		  type: SINT,
 		   buf: LPSTR,
 		buflen: SINT
 endif
 
 if INCL_WINSOCK_API_TYPEDEFS
-CALLBACK(LPFN_WSAASYNCGETHOSTBYADDR, hWnd:HWND, wMsg:UINT, addr:LPSTR, len:SINT, _type:SINT, buf:LPSTR, buflen:SINT)
+CALLBACK(LPFN_WSAASYNCGETHOSTBYADDR, hWnd:HWND, wMsg:UINT, addr:LPSTR, len:SINT, type:SINT, buf:LPSTR, buflen:SINT)
 endif
 
 if INCL_WINSOCK_API_PROTOTYPES
@@ -1917,7 +1917,7 @@ if INCL_WINSOCK_API_PROTOTYPES
 ;int
 WSAConnect proto WINAPI \
 		     s: SOCKET,
-		 _name: PVOID,
+		  name: PVOID,
 	       namelen: SINT,
 	  lpCallerData: LPWSABUF,
 	  lpCalleeData: LPWSABUF,
@@ -1926,7 +1926,7 @@ WSAConnect proto WINAPI \
 endif
 
 if INCL_WINSOCK_API_TYPEDEFS
-CALLBACK(LPFN_WSACONNECT, s:SOCKET, _name:PVOID, namelen:SINT, \
+CALLBACK(LPFN_WSACONNECT, s:SOCKET, name:PVOID, namelen:SINT, \
 	lpCallerData:LPWSABUF, lpCalleeData:LPWSABUF, lpSQOS:LPQOS, lpGQOS:LPQOS)
 endif
 
@@ -2091,7 +2091,7 @@ if INCL_WINSOCK_API_PROTOTYPES
 ;SOCKET
 WSAJoinLeaf proto WINAPI \
 		     s: SOCKET,
-		 _name: PVOID,
+		  name: PVOID,
 	       namelen: SINT,
 	  lpCallerData: LPWSABUF,
 	  lpCalleeData: LPWSABUF,
@@ -2242,7 +2242,7 @@ if INCL_WINSOCK_API_PROTOTYPES
 ;SOCKET
 WSASocketA proto WINAPI \
 		    af: SINT,
-		 _type: SINT,
+		  type: SINT,
 	      protocol: SINT,
 	lpProtocolInfo: LPWSAPROTOCOL_INFOA,
 		     g: UINT,
@@ -2250,7 +2250,7 @@ WSASocketA proto WINAPI \
 ;SOCKET
 WSASocketW proto WINAPI \
 		    af: SINT,
-		 _type: SINT,
+		  type: SINT,
 	      protocol: SINT,
 	lpProtocolInfo: LPWSAPROTOCOL_INFOW,
 		     g: UINT,

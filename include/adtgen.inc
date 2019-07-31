@@ -59,8 +59,8 @@ AUDIT_IP_ADDRESS	ENDS
 PAUDIT_IP_ADDRESS	typedef ptr AUDIT_IP_ADDRESS
 
 AUDIT_PARAM		STRUC
-_Type			AUDIT_PARAM_TYPE ?
-_Length			ULONG ?
+Type			AUDIT_PARAM_TYPE ?
+Length			ULONG ?
 Flags			dd ?
 UNION
  Data0			ULONG_PTR ?
@@ -85,7 +85,7 @@ APF_AuditSuccess	equ 0x00000001
 APF_ValidFlags		equ (APF_AuditSuccess)
 
 AUDIT_PARAMS		STRUC
-_Length			ULONG ?
+Length			ULONG ?
 Flags			dd ?
 Count			USHORT ?
 Parameters		PAUDIT_PARAM ?

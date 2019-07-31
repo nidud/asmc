@@ -417,7 +417,7 @@ D3D10_SO_DECLARATION_ENTRY ENDS
 D3D10_VIEWPORT		STRUC
 TopLeftX		SINT ?
 TopLeftY		SINT ?
-_Width			UINT ?
+Width			UINT ?
 Height			UINT ?
 MinDepth		FLOAT ?
 MaxDepth		FLOAT ?
@@ -733,7 +733,7 @@ __ID3D10Buffer_INTERFACE_DEFINED__ equ 1
 endif
 
 D3D10_TEXTURE1D_DESC	STRUC
-_Width			UINT ?
+Width			UINT ?
 MipLevels		UINT ?
 ArraySize		UINT ?
 Format			DXGI_FORMAT ?
@@ -765,7 +765,7 @@ __ID3D10Texture1D_INTERFACE_DEFINED__ equ 1
 endif
 
 D3D10_TEXTURE2D_DESC	STRUC
-_Width			UINT ?
+Width			UINT ?
 Height			UINT ?
 MipLevels		UINT ?
 ArraySize		UINT ?
@@ -804,7 +804,7 @@ __ID3D10Texture2D_INTERFACE_DEFINED__ equ 1
 endif
 
 D3D10_TEXTURE3D_DESC	STRUC
-_Width			UINT ?
+Width			UINT ?
 Height			UINT ?
 Depth			UINT ?
 MipLevels		UINT ?

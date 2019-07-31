@@ -52,9 +52,9 @@ cTextureStoreInstructions UINT ?
 D3D11_SHADER_DESC	ENDS
 
 D3D11_SHADER_VARIABLE_DESC STRUC
-_Name			LPSTR ?
+Name			LPSTR ?
 StartOffset		UINT ?
-_Size			UINT ?
+Size			UINT ?
 uFlags			UINT ?
 DefaultValue		PVOID ?
 StartTexture		UINT ?
@@ -65,26 +65,26 @@ D3D11_SHADER_VARIABLE_DESC ENDS
 
 D3D11_SHADER_TYPE_DESC	STRUC
 Class			D3D_SHADER_VARIABLE_CLASS ?
-_Type			D3D_SHADER_VARIABLE_TYPE ?
+Type			D3D_SHADER_VARIABLE_TYPE ?
 Rows			UINT ?
 Columns			UINT ?
 Elements		UINT ?
 Members			UINT ?
 _Offset			UINT ?
-_Name			LPSTR ?
+Name			LPSTR ?
 D3D11_SHADER_TYPE_DESC	ENDS
 
 D3D11_SHADER_BUFFER_DESC STRUC
-_Name			LPSTR ?
-_Type			D3D_CBUFFER_TYPE ?
+Name			LPSTR ?
+Type			D3D_CBUFFER_TYPE ?
 Variables		UINT ?
-_Size			UINT ?
+Size			UINT ?
 uFlags			UINT ?
 D3D11_SHADER_BUFFER_DESC ENDS
 
 D3D11_SHADER_INPUT_BIND_DESC STRUC
-_Name			LPSTR ?
-_Type			D3D_SHADER_INPUT_TYPE ?
+Name			LPSTR ?
+Type			D3D_SHADER_INPUT_TYPE ?
 BindPoint		UINT ?
 BindCount		UINT ?
 uFlags			UINT ?
@@ -99,7 +99,7 @@ SemanticIndex		UINT ?
 Register		UINT ?
 SystemValueType		D3D_NAME ?
 ComponentType		D3D_REGISTER_COMPONENT_TYPE ?
-_Mask			db ?
+Mask			db ?
 ReadWriteMask		db ?
 Stream			UINT ?
 D3D11_SIGNATURE_PARAMETER_DESC ENDS

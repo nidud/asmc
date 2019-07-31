@@ -553,7 +553,7 @@ D3DXCreateMeshFVF proto WINAPI \
 
 ;HRESULT
 D3DXCreateBuffer proto WINAPI \
-		 _size: DWORD,
+		  size: DWORD,
 		buffer: ptr ID3DXBuffer
 
 ;HRESULT
@@ -614,7 +614,7 @@ D3DXCreatePRTBuffer proto WINAPI \
 
 ;HRESULT
 D3DXCreatePRTBufferTex proto WINAPI \
-		_width: UINT,
+		 width: UINT,
 		height: UINT,
 	   coeff_count: UINT,
 	 channel_count: UINT,
@@ -632,7 +632,7 @@ D3DXCreatePRTCompBuffer proto WINAPI \
 
 ;HRESULT
 D3DXCreateTextureGutterHelper proto WINAPI \
-		_width: UINT,
+		 width: UINT,
 		height: UINT,
 		  mesh: ptr ID3DXMesh,
 	   gutter_size: FLOAT,
@@ -857,7 +857,7 @@ D3DXComputeIMTFromPerTexelSignal proto WINAPI \
 		  mesh: ptr ID3DXMesh,
 	   texture_idx: DWORD,
 	  texel_signal: ptr float,
-		_width: UINT,
+		 width: UINT,
 		height: UINT,
       signal_dimension: UINT,
        component_count: UINT,
@@ -1122,7 +1122,7 @@ D3DXUVAtlasCreate proto WINAPI \
 	       mesh_in: ptr ID3DXMesh,
        max_chart_count: UINT,
 	max_stretch_in: float,
-		_width: UINT,
+		 width: UINT,
 		height: UINT,
 		gutter: float,
 	   texture_idx: DWORD,
@@ -1142,7 +1142,7 @@ D3DXUVAtlasCreate proto WINAPI \
 ;HRESULT
 D3DXUVAtlasPack proto WINAPI \
 		  mesh: ptr ID3DXMesh,
-		_width: UINT,
+		 width: UINT,
 		height: UINT,
 		gutter: float,
 	   texture_idx: DWORD,

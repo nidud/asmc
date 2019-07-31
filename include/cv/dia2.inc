@@ -1019,7 +1019,7 @@ DEFINE_IIDX(IDiaInjectedSource, "AE605CDC-8105-4a23-B710-3259F1E26112")
 endif
 
 _MIDL___MIDL_itf_dia2_0000_0025_0001 typedef SDWORD
-E_DIA_INPROLOG		equ ( HRESULT  )(( ( ( ( unsigned long	)1 << 31 )  | ( ( unsigned long	 )( LONG  )0x6d << 16 )	 )  | ( unsigned long  )100 ) )
+E_DIA_INPROLOG		equ (( ( ( 1 shl 31 ) or ( 0x6d shl 16 ) ) or 100 ) )
 E_DIA_SYNTAX		equ ( E_DIA_INPROLOG + 1 )
 E_DIA_FRAME_ACCESS	equ ( E_DIA_SYNTAX + 1 )
 E_DIA_VALUE		equ ( E_DIA_FRAME_ACCESS + 1 )

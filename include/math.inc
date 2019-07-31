@@ -15,8 +15,8 @@ ifndef __assembler ; Protect from assembler
 
 ifndef _EXCEPTION_DEFINED
 _exception      struc
-_type           SINT ?      ; exception type - see below
-_name           LPSTR ?     ; name of function where error occured
+type            SINT ?      ; exception type - see below
+name            LPSTR ?     ; name of function where error occured
 arg1            double ?    ; first argument to function
 arg2            double ?    ; second argument (if any) to function
 retval          double ?    ; value to be returned by function

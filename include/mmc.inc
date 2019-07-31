@@ -353,7 +353,7 @@ INDETERMINATE		equ 0x8
 BUTTONPRESSED		equ 0x10
 
 RESULTDATAITEM		STRUC
-_mask			dd ?
+mask			dd ?
 bScopeItem		BOOL ?
 itemID			HRESULTITEM ?
 nIndex			SINT ?
@@ -392,7 +392,7 @@ SDI_NEXT		equ ( 0x20000000 )
 SDI_FIRST		equ ( 0x8000000 )
 
 SCOPEDATAITEM		STRUC
-_mask			dd ?
+mask			dd ?
 displayname		LPOLESTR ?
 nImage			SINT ?
 nOpenImage		SINT ?

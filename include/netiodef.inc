@@ -101,7 +101,7 @@ STRUC
  UNION
   Ei64			DL_EI64 <>
   STRUC
-   _Type		db ?
+    Type		db ?
    Tse			db ?
    Ei48			DL_EI48 <>
   ENDS
@@ -115,7 +115,7 @@ Dsap			UINT8 ?
 Ssap			UINT8 ?
 Control			UINT8 ?
 Oui			UINT8 3 dup(?)
-_Type			UINT16 ?
+Type			UINT16 ?
 SNAP_HEADER		ENDS
 PSNAP_HEADER		typedef ptr SNAP_HEADER
 
@@ -132,8 +132,8 @@ ETHERNET_HEADER		STRUC
 Destination		DL_EUI48 <>
 Source			DL_EUI48 <>
 UNION
- _Type			UINT16 ?
- _Length		UINT16 ?
+ Type			UINT16 ?
+ Length			UINT16 ?
 ENDS
 ETHERNET_HEADER		ENDS
 PETHERNET_HEADER	typedef ptr ETHERNET_HEADER
@@ -159,7 +159,7 @@ VLAN_TAG		STRUC
 UNION
  Tag			UINT16 ?
 ENDS
-_Type			UINT16 ?
+Type			UINT16 ?
 VLAN_TAG		ENDS
 
 if (ETH_LENGTH_OF_VLAN_HEADER NE sizeof(VLAN_TAG))
@@ -168,7 +168,7 @@ endif
 
 
 ICMP_HEADER		STRUC
-_Type			db ?
+Type			db ?
 Code			db ?
 Checksum		dw ?
 ICMP_HEADER		ENDS
@@ -307,7 +307,7 @@ ICMPV4_MESSAGE		typedef ICMP_MESSAGE
 PICMPV4_MESSAGE		typedef ptr ICMP_MESSAGE
 
 icmp4_hdr		equ <_ICMPV4_MESSAGE>
-icmp4_type		equ <Header._Type>
+icmp4_type		equ <Header.Type>
 icmp4_code		equ <Header._Code>
 icmp4_cksum		equ <Header.Checksum>
 icmp4_un_data32		equ <Data32>
@@ -435,7 +435,7 @@ IGMP_MAX_RESP_CODE_TYPE_NORMAL equ 0
 IGMP_MAX_RESP_CODE_TYPE_FLOAT equ 1
 
 IGMPV3_QUERY_HEADER	STRUC
-_Type			db ?
+Type			db ?
 UNION
  MaxRespCode		db ?
 ENDS
@@ -452,7 +452,7 @@ IGMPV3_QUERY_HEADER	ENDS
 PIGMPV3_QUERY_HEADER	typedef ptr IGMPV3_QUERY_HEADER
 
 IGMPV3_REPORT_RECORD_HEADER  STRUC
-_Type			db ?
+Type			db ?
 AuxillaryDataLength	db ?
 SourceCount		dw ?
 MulticastAddress	IN_ADDR <>
@@ -460,7 +460,7 @@ IGMPV3_REPORT_RECORD_HEADER ENDS
 PIGMPV3_REPORT_RECORD_HEADER typedef ptr IGMPV3_REPORT_RECORD_HEADER
 
 IGMPV3_REPORT_HEADER	STRUC
-_Type			UINT8 ?
+Type			UINT8 ?
 Reserved		UINT8 ?
 Checksum		UINT16 ?
 Reserved2		UINT16 ?
@@ -535,7 +535,7 @@ endif
 
 IPV6_EXTENSION_HEADER	STRUC
 NextHeader		db ?
-_Length			db ?
+Length			db ?
 IPV6_EXTENSION_HEADER	ENDS
 PIPV6_EXTENSION_HEADER	typedef ptr IPV6_EXTENSION_HEADER
 
@@ -559,13 +559,13 @@ IPV6_ROUTER_ALERT_LENGTH equ IPV6_EXTENSION_HEADER_LENGTH(0)
 
 ip6_hbh			equ <_IPV6_EXTENSION_HEADER>
 ip6h_nxt		equ <NextHeader>
-ip6h_len		equ <_Length>
+ip6h_len		equ <Length>
 ip6_dest		equ <_IPV6_EXTENSION_HEADER>
 ip6d_nxt		equ <NextHeader>
-ip6d_len		equ <_Length>
+ip6d_len		equ <Length>
 
 IPV6_OPTION_HEADER	STRUC
-_Type			db ?
+Type			db ?
 DataLength		db ?
 IPV6_OPTION_HEADER	ENDS
 PIPV6_OPTION_HEADER	typedef ptr IPV6_OPTION_HEADER
@@ -597,7 +597,7 @@ IPV6_OPTION_JUMBOGRAM	ENDS
 PIPV6_OPTION_JUMBOGRAM	typedef ptr IPV6_OPTION_JUMBOGRAM
 
 ip6_opt_jumbo		equ <_IPV6_OPTION_JUMBOGRAM>
-ip6oj_type		equ <Header._Type>
+ip6oj_type		equ <Header.Type>
 ip6oj_len		equ <Header.DataLength>
 ip6oj_jumbo_len		equ <JumbogramLength>
 
@@ -609,7 +609,7 @@ IPV6_OPTION_ROUTER_ALERT ENDS
 PIPV6_OPTION_ROUTER_ALERT typedef ptr IPV6_OPTION_ROUTER_ALERT
 
 ip6_opt_router		equ <_IPV6_OPTION_ROUTER_ALERT>
-ip6or_type		equ <Header._Type>
+ip6or_type		equ <Header.Type>
 ip6or_len		equ <Header.DataLength>
 ip6or_value		equ <Value>
 
@@ -617,7 +617,7 @@ SIZEOF_IPV6_ROUTERALERT equ IPV6_EXTENSION_HEADER_LENGTH(0)
 
 IPV6_ROUTING_HEADER	STRUC
 NextHeader		db ?
-_Length			db ?
+Length			db ?
 RoutingType		db ?
 SegmentsLeft		db ?
 Reserved		db 4 dup(?)
@@ -626,7 +626,7 @@ PIPV6_ROUTING_HEADER	typedef ptr IPV6_ROUTING_HEADER
 
 ip6_rthdr		equ <_IPV6_ROUTING_HEADER>
 ip6r_nxt		equ <NextHeader>
-ip6r_len		equ <_Length>
+ip6r_len		equ <Length>
 ip6r_type		equ <RoutingType>
 ip6r_segleft		equ <SegmentsLeft>
 
@@ -637,7 +637,7 @@ ICMPV6_MESSAGE		typedef ICMP_MESSAGE
 PICMPV6_MESSAGE		typedef ptr ICMP_MESSAGE
 
 icmp6_hdr		equ <_ICMPV6_MESSAGE>
-icmp6_type		equ <Header._Type>
+icmp6_type		equ <Header.Type>
 icmp6_code		equ <Header._Code>
 icmp6_cksum		equ <Header.Checksum>
 icmp6_un_data32		equ <Data32>
@@ -836,7 +836,7 @@ MulticastAddress	IN6_ADDR <>
 MLD_HEADER		ENDS
 PMLD_HEADER		typedef ptr MLD_HEADER
 
-mld_type		equ <IcmpHeader._Type>
+mld_type		equ <IcmpHeader.Type>
 mld_checksum		equ <IcmpHeader.Checksum>
 
 MLD_MAX_RESP_CODE_TYPE_NORMAL equ 0
@@ -860,7 +860,7 @@ MLDV2_QUERY_HEADER	ENDS
 PMLDV2_QUERY_HEADER	typedef ptr MLDV2_QUERY_HEADER
 
 MLDV2_REPORT_RECORD_HEADER  STRUC
-_Type			db ?
+Type			db ?
 AuxillaryDataLength	db ?
 SourceCount		UINT16 ?
 MulticastAddress	IN6_ADDR <>
@@ -927,24 +927,24 @@ TH_OPT_TS		equ 0x08
 
 TCP_OPT_MSS		STRUC
 Kind			UINT8 ?
-_Length			UINT8 ?
+Length			UINT8 ?
 Mss			UINT16 ?
 TCP_OPT_MSS		ENDS
 
 TCP_OPT_WS		STRUC
 Kind			UINT8 ?
-_Length			UINT8 ?
+Length			UINT8 ?
 ShiftCnt		UINT8 ?
 TCP_OPT_WS		ENDS
 
 TCP_OPT_SACK_PERMITTED	STRUC
 Kind			UINT8 ?
-_Length			UINT8 ?
+Length			UINT8 ?
 TCP_OPT_SACK_PERMITTED	ENDS
 
 TCP_OPT_SACK		STRUC
 Kind			UINT8 ?
-_Length			UINT8 ?
+Length			UINT8 ?
 STRUC Block
  Left			SEQ_NUM ?
  Right			SEQ_NUM ?
@@ -953,14 +953,14 @@ TCP_OPT_SACK		ENDS
 
 TCP_OPT_TS		STRUC
 Kind			UINT8 ?
-_Length			UINT8 ?
+Length			UINT8 ?
 Val			UINT32 ?
 EcR			UINT32 ?
 TCP_OPT_TS		ENDS
 
 TCP_OPT_UNKNOWN		STRUC
 Kind			UINT8 ?
-_Length			UINT8 ?
+Length			UINT8 ?
 TCP_OPT_UNKNOWN		ENDS
 
 .pragma pack(pop)
@@ -1044,8 +1044,8 @@ MIT_GUID		equ 1
 MIT_IF_LUID		equ 1
 
 NPI_MODULEID		STRUC
-_Length			USHORT ?
-_Type			NPI_MODULEID_TYPE ?
+Length			USHORT ?
+Type			NPI_MODULEID_TYPE ?
 UNION
  Guid			GUID <>
  IfLuid			LUID <>

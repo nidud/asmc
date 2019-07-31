@@ -1019,6 +1019,7 @@ expr			STRUC
  mbr			asym_t ?; struct member
  type			asym_t ?; for DOT operator. Must be last (see TokenAssign)!
 expr			ENDS
+expr_t			typedef ptr expr
 
 ; special_item is the structure used to store directives and
 ; other reserved words in SpecialTable (special.h).

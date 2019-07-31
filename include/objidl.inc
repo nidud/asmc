@@ -695,7 +695,7 @@ __IStream_INTERFACE_DEFINED__ equ 1
 
 STATSTG			STRUC
 pwcsName		LPOLESTR ?
-_type			dd ?
+type			dd ?
 cbSize			ULARGE_INTEGER <>
 mtime			FILETIME <>
 ctime			FILETIME <>

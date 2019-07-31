@@ -2758,7 +2758,7 @@ SetFileCompletionNotificationModes proto WINAPI \
 SetFileIoOverlappedRange proto WINAPI \
 	    FileHandle: HANDLE,
   OverlappedRangeStart: PUCHAR,
-	       _Length: ULONG
+		Length: ULONG
 endif
 
 SEM_FAILCRITICALERRORS	    equ 0x0001
@@ -3871,7 +3871,7 @@ lpNumberOfBytesWritten: LPDWORD,
 WIN32_STREAM_ID		STRUC
 dwStreamId		dd ?
 dwStreamAttributes	dd ?
-_Size			LARGE_INTEGER <>
+Size			LARGE_INTEGER <>
 dwStreamNameSize	dd ?
 cStreamName		dw ANYSIZE_ARRAY dup(?)
 WIN32_STREAM_ID		ENDS
@@ -7163,7 +7163,7 @@ endif
 LookupAccountSidA proto WINAPI \
 	  lpSystemName: LPCSTR,
 		   Sid: PSID,
-		 _Name: LPSTR,
+		  Name: LPSTR,
 		cbName: LPDWORD,
   ReferencedDomainName: LPSTR,
 cbReferencedDomainName: LPDWORD,
@@ -7172,7 +7172,7 @@ cbReferencedDomainName: LPDWORD,
 LookupAccountSidW proto WINAPI \
 	  lpSystemName: LPCWSTR,
 		   Sid: PSID,
-		 _Name: LPWSTR,
+		  Name: LPWSTR,
 		cbName: LPDWORD,
   ReferencedDomainName: LPWSTR,
 cbReferencedDomainName: LPDWORD,
@@ -7842,12 +7842,12 @@ ClosePrivateNamespace proto WINAPI \
 
 ;HANDLE
 CreateBoundaryDescriptorA proto WINAPI \
-		 _Name: LPCSTR,
+		  Name: LPCSTR,
 		 Flags: ULONG
 
 ;HANDLE
 CreateBoundaryDescriptorW proto WINAPI \
-		 _Name: LPCWSTR,
+		  Name: LPCWSTR,
 		 Flags: ULONG
 
 ifdef _UNICODE
@@ -8922,7 +8922,7 @@ PFILE_ID_TYPE		typedef ptr FILE_ID_TYPE
 
 FILE_ID_DESCRIPTOR	STRUC
 dwSize			dd ?
-_Type			FILE_ID_TYPE ?
+Type			FILE_ID_TYPE ?
 UNION ;DUMMYUNIONNAME
  FileId			LARGE_INTEGER <>
  ObjectId		GUID <>
@@ -9066,12 +9066,12 @@ GetExtendedFeaturesMask proto WINAPI \
 LocateExtendedFeature proto WINAPI \
 	     ContextEx: PCONTEXT_EX,
 	     FeatureId: DWORD,
-	       _Length: PDWORD
+		Length: PDWORD
 
 ;PCONTEXT
 LocateLegacyContext proto WINAPI \
 	     ContextEx: PCONTEXT_EX,
-	       _Length: PDWORD
+		Length: PDWORD
 
 ;VOID
 SetExtendedFeaturesMask proto WINAPI \

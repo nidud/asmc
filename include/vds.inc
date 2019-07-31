@@ -501,7 +501,7 @@ VDS_ASYNCOUT_MERGE_VDISK equ 203
 VDS_ASYNCOUT_EXPAND_VDISK equ 204
 
 VDS_ASYNC_OUTPUT	STRUC
-_type			VDS_ASYNC_OUTPUT_TYPE ?
+type			VDS_ASYNC_OUTPUT_TYPE ?
 UNION
  STRUCT _cp
   ullOffset		ULONGLONG ?
@@ -677,7 +677,7 @@ rguchWwn		UCHAR  8  dup(?)
 VDS_WWN			ENDS
 
 VDS_IPADDRESS		STRUC
-_type			VDS_IPADDRESS_TYPE ?
+type			VDS_IPADDRESS_TYPE ?
 ipv4Address		ULONG ?
 ipv6Address		UCHAR  16  dup(?)
 ulIpv6FlowInfo		ULONG ?
@@ -701,7 +701,7 @@ VDS_HBAPORT_PROP	STRUC
 id			VDS_OBJECT_ID <>
 wwnNode			VDS_WWN <>
 wwnPort			VDS_WWN <>
-_type			VDS_HBAPORT_TYPE ?
+type			VDS_HBAPORT_TYPE ?
 status			VDS_HBAPORT_STATUS ?
 ulPortSpeed		ULONG ?
 ulSupportedPortSpeed	ULONG ?
@@ -724,7 +724,7 @@ id			VDS_OBJECT_ID <>
 pwszName		LPWSTR ?
 guidVersionId		GUID <>
 pwszVersion		LPWSTR ?
-_type			VDS_PROVIDER_TYPE ?
+type			VDS_PROVIDER_TYPE ?
 ulFlags			ULONG ?
 ulStripeSizeFlags	ULONG ?
 sRebuildPriority	dw ?
@@ -732,7 +732,7 @@ VDS_PROVIDER_PROP	ENDS
 
 VDS_PATH_INFO		STRUC
 pathId			VDS_PATH_ID <>
-_type			VDS_HWPROVIDER_TYPE ?
+type			VDS_HWPROVIDER_TYPE ?
 status			VDS_PATH_STATUS ?
 union
  controllerPortId	VDS_OBJECT_ID <>
@@ -1069,7 +1069,7 @@ PVDS_ADVANCEDDISK_PROP	typedef ptr VDS_ADVANCEDDISK_PROP
 
 VDS_VOLUME_PROP		STRUC
 id			VDS_OBJECT_ID <>
-_type			VDS_VOLUME_TYPE ?
+type			VDS_VOLUME_TYPE ?
 status			VDS_VOLUME_STATUS ?
 health			VDS_HEALTH ?
 TransitionState		VDS_TRANSITION_STATE ?
@@ -1082,7 +1082,7 @@ PVDS_VOLUME_PROP	typedef ptr VDS_VOLUME_PROP
 
 VDS_VOLUME_PROP2	STRUC
 id			VDS_OBJECT_ID <>
-_type			VDS_VOLUME_TYPE ?
+type			VDS_VOLUME_TYPE ?
 status			VDS_VOLUME_STATUS ?
 health			VDS_HEALTH ?
 TransitionState		VDS_TRANSITION_STATE ?
@@ -1097,7 +1097,7 @@ PVDS_VOLUME_PROP2	typedef ptr VDS_VOLUME_PROP2
 
 VDS_VOLUME_PLEX_PROP	STRUC
 id			VDS_OBJECT_ID <>
-_type			VDS_VOLUME_PLEX_TYPE ?
+type			VDS_VOLUME_PLEX_TYPE ?
 status			VDS_VOLUME_PLEX_STATUS ?
 health			VDS_HEALTH ?
 TransitionState		VDS_TRANSITION_STATE ?
@@ -1109,7 +1109,7 @@ PVDS_VOLUME_PLEX_PROP	typedef ptr VDS_VOLUME_PLEX_PROP
 
 VDS_DISK_EXTENT		STRUC
 diskId			VDS_OBJECT_ID <>
-_type			VDS_DISK_EXTENT_TYPE ?
+type			VDS_DISK_EXTENT_TYPE ?
 ullOffset		ULONGLONG ?
 ullSize			ULONGLONG ?
 volumeId		VDS_OBJECT_ID <>
@@ -1137,7 +1137,7 @@ VDS_PARTITION_INFO_GPT	STRUC
 partitionType		GUID <>
 partitionId		GUID <>
 attributes		ULONGLONG ?
-_name			WCHAR 36 dup(?)
+name			WCHAR 36 dup(?)
 VDS_PARTITION_INFO_GPT	ENDS
 
 VDS_PARTITION_INFO_MBR	STRUC
@@ -1187,7 +1187,7 @@ union
   partitionType		GUID <>
   partitionId		GUID <>
   attributes		ULONGLONG ?
-  _name			WCHAR 36 dup(?)
+  name			WCHAR 36 dup(?)
  ends
 ends
 CREATE_PARTITION_PARAMETERS ENDS
@@ -1880,7 +1880,7 @@ pwszFriendlyName	LPWSTR ?
 pwszIdentification	LPWSTR ?
 pwszUnmaskingList	LPWSTR ?
 ulFlags			ULONG ?
-_type			VDS_LUN_TYPE ?
+type			VDS_LUN_TYPE ?
 status			VDS_LUN_STATUS ?
 health			VDS_HEALTH ?
 TransitionState		VDS_TRANSITION_STATE ?
@@ -1891,7 +1891,7 @@ PVDS_LUN_PROP		typedef ptr VDS_LUN_PROP
 VDS_LUN_PLEX_PROP	STRUC
 id			VDS_OBJECT_ID <>
 ullSize			ULONGLONG ?
-_type			VDS_LUN_PLEX_TYPE ?
+type			VDS_LUN_PLEX_TYPE ?
 status			VDS_LUN_PLEX_STATUS ?
 health			VDS_HEALTH ?
 TransitionState		VDS_TRANSITION_STATE ?
@@ -2034,7 +2034,7 @@ VDS_STORAGE_POOL_PROP	STRUC
 id			VDS_OBJECT_ID <>
 status			VDS_STORAGE_POOL_STATUS ?
 health			VDS_HEALTH ?
-_type			VDS_STORAGE_POOL_TYPE ?
+type			VDS_STORAGE_POOL_TYPE ?
 pwszName		LPWSTR ?
 pwszDescription		LPWSTR ?
 ullTotalConsumedSpace	ULONGLONG ?
@@ -2728,7 +2728,7 @@ VDS_FSF_ALLOCATION_UNIT_128K equ 0x1000000
 VDS_FSF_ALLOCATION_UNIT_256K equ 0x2000000
 
 VDS_FILE_SYSTEM_TYPE_PROP STRUC
-_type			VDS_FILE_SYSTEM_TYPE ?
+type			VDS_FILE_SYSTEM_TYPE ?
 wszName			WCHAR 8 dup(?)
 ulFlags			ULONG ?
 ulCompressionFlags	ULONG ?
@@ -2762,7 +2762,7 @@ VDS_FSOF_COMPRESSION	equ 0x4
 VDS_FSOF_DUPLICATE_METADATA equ 0x8
 
 VDS_FILE_SYSTEM_PROP	STRUC
-_type			VDS_FILE_SYSTEM_TYPE ?
+type			VDS_FILE_SYSTEM_TYPE ?
 volumeId		VDS_OBJECT_ID <>
 ulFlags			ULONG ?
 ullTotalAllocationUnits ULONGLONG ?

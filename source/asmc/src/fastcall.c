@@ -770,22 +770,35 @@ int elf64_pcheck( struct dsym *proc, struct dsym *paranode, int *used )
     int reg, x;
     int size = SizeFromMemtype( paranode->sym.mem_type, paranode->sym.Ofssize, paranode->sym.type );
 
-    if ( size > 16 || (char)(*used) > 6 || (*used >> 8) > 8 || paranode->sym.is_vararg ) {
+    if ( size > 16 || paranode->sym.is_vararg ) {
 	paranode->sym.string_ptr = NULL;
 	return(0);
     }
+
+    x = *used & 0xFF;
     if ( paranode->sym.mem_type == MT_REAL4 ||
 	 paranode->sym.mem_type == MT_REAL8 ||
 	 paranode->sym.mem_type == MT_REAL16 ) {
 	 x = (*used) >> 8;
-	 reg = T_XMM0 + x;
 	 *used += 0x100;
+	 if ( x > 7 ) {
+	    paranode->sym.regist[2] = x;
+	    paranode->sym.regist[0] = x + (T_XMM8 - T_XMM7 - 1);
+	    paranode->sym.string_ptr = NULL;
+	    return(0);
+	 }
+	 reg = T_XMM0 + x;
+
     } else if ( size == 16 || paranode->sym.mem_type == MT_OWORD ) {
-	 x = *used & 0xFF;
 	 reg = elf64_regs[x+18];
 	 *used += 2;
+    } else if ( (char)(*used) > 5 ) {
+	paranode->sym.regist[0] = T_RAX;
+	paranode->sym.regist[1] = x;
+	(*used)++;
+	paranode->sym.string_ptr = NULL;
+	return(0);
     } else {
-	x = *used & 0xFF;
 	(*used)++;
 	switch ( size ) {
 	case 1:	 reg = elf64_regs[x];	 break;
@@ -808,6 +821,8 @@ static int elf64_fcstart( struct dsym const *proc, int numparams, int start,
 {
     struct asym *sym;
     struct dsym *p;
+    int stack_params = 0;
+    int i;
 
     if ( proc->e.procinfo->has_vararg ) {
 	/* v2.28: xmm id to fcscratch */
@@ -823,16 +838,17 @@ static int elf64_fcstart( struct dsym const *proc, int numparams, int start,
 	}
     } else {
 
-	for ( p = proc->e.procinfo->paralist; p->prev; p = p->prev ) {
-
-	    if ( GetValueSp( p->sym.regist[0] ) & OP_XMM ) {
-
+	for ( p = proc->e.procinfo->paralist; p; p = p->prev ) {
+	    if ( GetValueSp( p->sym.regist[0] ) & OP_XMM )
 		fcscratch++;
-		break;
-	    }
+	    else
+		stack_params++;
 	}
     }
-    *value = 0;
+    if ( stack_params > 5 )
+	*value = stack_params - 6;
+    else
+	*value = 0;
     return( fcscratch );
 }
 
@@ -898,6 +914,8 @@ static int elf64_param( struct dsym const *proc, int index, struct dsym *param,
 	    i = index + T_XMM0;
 	} else {
 	    index = index - fcscratch;
+	    if ( index > 5 )
+		return 0;
 	    base = 3*6;
 	    switch ( psize ) {
 	    case 1: base = 0;	break;
@@ -918,6 +936,10 @@ static int elf64_param( struct dsym const *proc, int index, struct dsym *param,
 	 if ( !( sym = SymFind( paramvalue ) ) )
 	    sym = (struct asym *)param;
     }
+
+    if ( !( sym->mem_type & MT_FLOAT ) && index >= 6 )
+	return 0;
+
     if ( sym->mem_type == MT_REAL4 || sym->mem_type == MT_REAL8 || sym->mem_type == MT_REAL16 ) {
 
 	if ( opnd->base_reg )
@@ -1055,7 +1077,8 @@ static int elf64_param( struct dsym const *proc, int index, struct dsym *param,
 
 static void elf64_fcend( struct dsym const *proc, int numparams, int value )
 {
-    return;
+    if ( value )
+	AddLineQueueX( " sub rsp, %u*8", value );
 }
 
 /* get segment part of an argument

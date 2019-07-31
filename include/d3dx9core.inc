@@ -40,7 +40,7 @@ LPD3DXSPRITE		typedef ptr ID3DXSprite
 
 D3DXFONT_DESCA		STRUC
 Height			SINT ?
-_Width			UINT ?
+Width			UINT ?
 Weight			UINT ?
 MipLevels		UINT ?
 Italic			BOOL ?
@@ -54,7 +54,7 @@ LPD3DXFONT_DESCA	typedef ptr D3DXFONT_DESCA
 
 D3DXFONT_DESCW		STRUC
 Height			SINT ?
-_Width			UINT ?
+Width			UINT ?
 Weight			UINT ?
 MipLevels		UINT ?
 Italic			BOOL ?
@@ -111,7 +111,7 @@ LPD3DXFONT_DESCW	typedef ptr D3DXFONT_DESCW
     .ends
 
 D3DXRTE_DESC		STRUC
-_Size			UINT ?
+Size			UINT ?
 MipLevels		UINT ?
 Format			D3DFORMAT ?
 DepthStencil		BOOL ?
@@ -135,7 +135,7 @@ D3DXRTE_DESC		ENDS
     .ends
 
 D3DXRTS_DESC		STRUC
-_Width			UINT ?
+Width			UINT ?
 Height			UINT ?
 Format			D3DFORMAT ?
 DepthStencil		BOOL ?
@@ -181,7 +181,7 @@ D3DXCheckVersion proto WINAPI \
 D3DXCreateFontA proto WINAPI \
 		device: ptr IDirect3DDevice9,
 		height: SINT,
-		_width: UINT,
+		 width: UINT,
 		weight: UINT,
 	     miplevels: UINT,
 		italic: BOOL,
@@ -196,7 +196,7 @@ D3DXCreateFontA proto WINAPI \
 D3DXCreateFontW proto WINAPI \
 		device: ptr IDirect3DDevice9,
 		height: SINT,
-		_width: UINT,
+		 width: UINT,
 		weight: UINT,
 	     miplevels: UINT,
 		italic: BOOL,
@@ -227,7 +227,7 @@ D3DXCreateLine proto WINAPI \
 ;HRESULT
 D3DXCreateRenderToEnvMap proto WINAPI \
 		device: ptr IDirect3DDevice9,
-		 _size: UINT,
+		  size: UINT,
 	     miplevels: UINT,
 		format: D3DFORMAT,
 	       stencil: BOOL,
@@ -237,7 +237,7 @@ D3DXCreateRenderToEnvMap proto WINAPI \
 ;HRESULT
 D3DXCreateRenderToSurface proto WINAPI \
 		device: ptr IDirect3DDevice9,
-		_width: UINT,
+		 width: UINT,
 		height: UINT,
 		format: D3DFORMAT,
 	       stencil: BOOL,

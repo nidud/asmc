@@ -14,7 +14,7 @@ base32 = \
     ../lib32/fltintrn/_fltscale.asm
 
 base64 = \
-    ../lib64/quadmath/*.asm \
+    x64/*.asm \
     ../lib64/quadmath/const/*.asm \
     ../lib64/fltintrn/_strtoflt.asm \
     ../lib64/fltintrn/_fltsetflags.asm \

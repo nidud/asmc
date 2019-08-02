@@ -120,7 +120,7 @@ compval macro a, val
     local b
     .data
     align 16
-    b real16 val
+    b oword val
     .code
     exitm<comprr(a, b)>
     endm
@@ -275,6 +275,8 @@ endif
     errval( 0, comparea(x, -1.0, eptr, 'a'))
     __cvta_q(&x, "123456789.0", &eptr )
     errval( 0, comparea(x, 123456789.0, eptr, 0))
+    __cvta_q(&x, "1.e8192", &eptr )
+    errval( 0, comparea(x, 0x7FFF0000000000000000000000000000, eptr, 0))
     ret
 
 main endp

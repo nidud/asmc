@@ -605,6 +605,12 @@ static int ms64_param( struct dsym const *proc, int index, struct dsym *param,
 
     } else if ( param->sym.mem_type & MT_FLOAT || ( param->sym.mem_type == MT_OWORD && vector_call ) ) {
 
+	/* register argument? */
+
+	reg = 0;
+	if ( opnd->kind == EXPR_REG && opnd->indirect == FALSE )
+	    reg = opnd->base_reg->tokval;
+
 	return CheckXMM( reg, index, param, opnd, paramvalue, regs_used );
 
     } else {

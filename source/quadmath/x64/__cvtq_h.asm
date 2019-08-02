@@ -14,34 +14,34 @@ HFLT_MIN equ 0x0001
 
     .code
 
-__cvtq_h proc x:ptr, q:ptr
+__cvtq_h proc frame uses rbx x:ptr, q:ptr
 
-    mov r8,rcx
-    mov eax,[rdx+10]
+    cmp rdx,rcx
+    mov ebx,[rdx+10]
     mov cx,[rdx+14]
-    .if r8 == rdx
-        xor r9d,r9d
-        mov [rdx],r9
-        mov [rdx+8],r9
+    .ifz
+        xor eax,eax
+        mov [rdx],rax
+        mov [rdx+8],rax
     .endif
-    shr eax,1
+    shr ebx,1
     .if ecx & Q_EXPMASK
-        or eax,0x80000000
+        or ebx,0x80000000
     .endif
 
-    mov r9d,eax         ; duplicate it
-    shl r9d,H_SIGBITS+1 ; get rounding bit
-    mov r9d,0xFFE00000  ; get mask of bits to keep
+    mov eax,ebx         ; duplicate it
+    shl eax,H_SIGBITS+1 ; get rounding bit
+    mov eax,0xFFE00000  ; get mask of bits to keep
 
     .ifc                ; if have to round
         .ifz            ; - if half way between
             .if dword ptr [rdx+6] == 0
-                shl r9d,1
+                shl eax,1
             .endif
         .endif
-        add eax,0x80000000 shr (H_SIGBITS-1)
+        add ebx,0x80000000 shr (H_SIGBITS-1)
         .ifc            ; - if exponent needs adjusting
-            mov eax,0x80000000
+            mov ebx,0x80000000
             inc cx
             ;
             ;  check for overflow
@@ -56,14 +56,14 @@ __cvtq_h proc x:ptr, q:ptr
 
         .ifnz
             .if cx == Q_EXPMASK
-                .if ( eax & 0x7FFFFFFF )
+                .if ( ebx & 0x7FFFFFFF )
 
-                    mov eax,-1
+                    mov ebx,-1
                     .break
                 .endif
-                mov eax,0x7C000000 shl 1
+                mov ebx,0x7C000000 shl 1
                 shl dx,1
-                rcr eax,1
+                rcr ebx,1
                 .break
             .endif
             add cx,H_EXPBIAS-Q_EXPBIAS
@@ -71,40 +71,40 @@ __cvtq_h proc x:ptr, q:ptr
                 ;
                 ; underflow
                 ;
-                mov eax,0x00010000
+                mov ebx,0x00010000
                 _set_errno(ERANGE)
                 .break
             .endif
 
-            .if cx >= H_EXPMASK || ( cx == H_EXPMASK-1 && eax > r9d )
+            .if cx >= H_EXPMASK || ( cx == H_EXPMASK-1 && ebx > eax )
                 ;
                 ; overflow
                 ;
-                mov eax,0x7BFF0000 shl 1
+                mov ebx,0x7BFF0000 shl 1
                 shl dx,1
-                rcr eax,1
+                rcr ebx,1
                 _set_errno(ERANGE)
                 .break
 
             .endif
 
-            and  eax,r9d ; mask off bottom bits
-            shl  eax,1
-            shrd eax,ecx,H_EXPBITS
+            and  ebx,eax ; mask off bottom bits
+            shl  ebx,1
+            shrd ebx,ecx,H_EXPBITS
             shl  dx,1
-            rcr  eax,1
+            rcr  ebx,1
 
-            .break .ifs cx || eax >= HFLT_MIN
+            .break .ifs cx || ebx >= HFLT_MIN
 
             _set_errno(ERANGE)
             .break
 
         .endif
-        and eax,r9d
+        and ebx,eax
     .until 1
-    shr eax,16
-    mov [r8],ax
-    mov rax,r8
+    mov rax,x
+    shr ebx,16
+    mov [rax],bx
     ret
 
 __cvtq_h endp

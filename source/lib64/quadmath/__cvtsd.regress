@@ -1,0 +1,35 @@
+include quadmath.inc
+include limits.inc
+include errno.inc
+
+    .assert:on
+    .data
+    x oword 0x4000921FB54442D18469898CC516A159
+    .code
+
+main proc
+
+  local r:real16
+  local d:real8
+
+    __cvta_q(addr r, "3.14159265358979323846264338327", 0)
+
+    lea rcx,x
+    mov rax,[rcx]
+    mov rdx,[rcx+8]
+    lea rcx,r
+    mov rbx,[rcx]
+    mov rcx,[rcx+8]
+    .assert( rax == rbx && rdx == rcx )
+
+    __cvtq_sd(addr d, addr r)
+    mov rax,0x400921FB54442D18
+    mov rdx,d
+    .assert( rax == rdx )
+
+    xor eax,eax
+    ret
+
+main endp
+
+    end

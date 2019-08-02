@@ -33,6 +33,7 @@ main proc
     compare("-1.0e-0a", -1.0, 'a')
     compare("-1e-0a", -1.0, 'a')
     compare("123456789.0", 123456789.0, 0)
+    compare("1.e8192", 0x7FFF0000000000000000000000000000, 0)
     ret
 
 main endp

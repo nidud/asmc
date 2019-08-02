@@ -12,9 +12,7 @@ include limits.inc
 
     .code
 
-    option win64:rsp nosave noauto
-
-__cvtq_i32 proc q:ptr
+__cvtq_i32 proc frame uses rbx q:ptr
 
     mov  rdx,[rcx+8]
     shld rcx,rdx,16
@@ -25,11 +23,12 @@ __cvtq_i32 proc q:ptr
     .ifs eax < Q_EXPBIAS
         xor eax,eax
     .elseif eax > 32 + Q_EXPBIAS
+        mov ebx,ecx
+        _set_errno(ERANGE)
         mov eax,INT_MAX
-        .if cx & 0x8000
+        .if bx & 0x8000
             mov eax,INT_MIN
         .endif
-        _set_errno(ERANGE)
     .else
         mov r8,rcx
         mov ecx,eax

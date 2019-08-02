@@ -21,6 +21,11 @@ __cvtq_ss proc x:ptr, q:ptr
     mov r10,rcx
     mov rcx,[rdx]
     mov rax,[rdx+8]
+    .if rdx == r10
+        xor r8d,r8d
+        mov [rdx],r8
+        mov [rdx+8],r8
+    .endif
     shld rdx,rax,16
     shrd rcx,rax,16
     shr  rax,16
@@ -65,7 +70,7 @@ __cvtq_ss proc x:ptr, q:ptr
                 ; underflow
                 ;
                 xor eax,eax
-                mov errno,ERANGE
+                _set_errno(ERANGE)
             .else
                 .ifs r8w >= 0x00FF
                     ;
@@ -74,14 +79,14 @@ __cvtq_ss proc x:ptr, q:ptr
                     mov eax,0x7F800000 shl 1
                     shl r9w,1
                     rcr eax,1
-                    mov errno,ERANGE
+                    _set_errno(ERANGE)
                 .else
                     shl eax,1
                     shrd eax,r8d,8
                     shl r9w,1
                     rcr eax,1
                     .ifs !r8w && eax < DDFLT_MIN
-                        mov errno,ERANGE
+                        _set_errno(ERANGE)
                     .endif
                 .endif
             .endif

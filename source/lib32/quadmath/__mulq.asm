@@ -228,8 +228,8 @@ __mulq proc uses esi edi ebx A:ptr, B:ptr
         jmp     exponent_and_sign
 
     exponent_too_small:
-        dec     si
-        jmp     return_si0
+        mov     si,0x7FFF
+        jmp     return_m0
 
     er_NaN_A:   ; A is a NaN or infinity
 

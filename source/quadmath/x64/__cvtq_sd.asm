@@ -11,10 +11,10 @@ include errno.inc
 
     .code
 
-__cvtq_sd proc frame x:ptr, q:ptr
+__cvtq_sd proc frame uses rbx x:ptr, q:ptr
 
     cmp     rdx,rcx
-    mov     rax,[rdx+6]
+    mov     rbx,[rdx+6]
     movzx   ecx,word ptr [rdx+14]
 
     .ifz
@@ -22,22 +22,22 @@ __cvtq_sd proc frame x:ptr, q:ptr
         mov [rdx+8],r8
     .endif
 
-    mov     r10,rax
+    mov     rax,rbx
     mov     r8d,ecx
     and     r8d,Q_EXPMASK
     mov     r9d,r8d
     neg     r8d
-    rcr     rax,1
-    mov     rdx,rax
+    rcr     rbx,1
+    mov     rdx,rbx
     shr     rdx,32
-    mov     r8d,eax
+    mov     r8d,ebx
     shl     r8d,22
 
     .ifc
         .ifz
             add r8d,r8d
         .endif
-        add eax,0x0800
+        add ebx,0x0800
         adc edx,0
         .ifc
             mov edx,0x80000000
@@ -45,7 +45,7 @@ __cvtq_sd proc frame x:ptr, q:ptr
         .endif
     .endif
 
-    and eax,0xFFFFF800
+    and ebx,0xFFFFF800
     mov r8d,ecx
     and cx,0x7FFF
     add cx,0x03FF-0x3FFF
@@ -54,11 +54,11 @@ __cvtq_sd proc frame x:ptr, q:ptr
 
         .if !cx
 
-            shrd eax,edx,12
+            shrd ebx,edx,12
             shl  edx,1
             shr  edx,12
         .else
-            shrd eax,edx,11
+            shrd ebx,edx,11
             shl  edx,1
             shrd edx,ecx,11
         .endif
@@ -79,20 +79,20 @@ __cvtq_sd proc frame x:ptr, q:ptr
                 .if cl >= 32
 
                     sub cl,32
-                    mov r8d,eax
-                    mov eax,edx
+                    mov r8d,ebx
+                    mov ebx,edx
                     xor edx,edx
                 .endif
 
-                shrd r8d,eax,cl
-                shrd eax,edx,cl
+                shrd r8d,ebx,cl
+                shrd ebx,edx,cl
                 shr  edx,cl
                 add  r8d,r8d
-                adc  eax,0
+                adc  ebx,0
                 adc  edx,0
             .else
 
-                xor eax,eax
+                xor ebx,ebx
                 xor edx,edx
                 shl r8d,17
                 rcr edx,1
@@ -100,7 +100,7 @@ __cvtq_sd proc frame x:ptr, q:ptr
 
         .else
 
-            shrd eax,edx,11
+            shrd ebx,edx,11
             shl edx,1
             shr edx,11
             shl r8w,1
@@ -112,9 +112,9 @@ __cvtq_sd proc frame x:ptr, q:ptr
     xor ecx,ecx
     .if r9d < 0x3BCC
 
-        .if ( r10 || r9d )
+        .if ( rax || r9d )
 
-            xor eax,eax
+            xor ebx,ebx
             xor edx,edx
             mov ecx,ERANGE
         .endif
@@ -132,7 +132,7 @@ __cvtq_sd proc frame x:ptr, q:ptr
     .elseif r9d >= 0x3BCC
 
         mov r9d,edx
-        or  r9d,eax
+        or  r9d,ebx
         mov ecx,ERANGE
 
         .ifnz
@@ -145,13 +145,13 @@ __cvtq_sd proc frame x:ptr, q:ptr
     .endif
 
     shl rdx,32
-    or  rdx,rax
+    or  rbx,rdx
     .if ecx
 
         _set_errno(ecx)
     .endif
     mov rax,x
-    mov [rax],rdx
+    mov [rax],rbx
     ret
 
 __cvtq_sd endp

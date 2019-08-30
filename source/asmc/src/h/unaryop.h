@@ -1,4 +1,3 @@
-/* table of unary operators, used in expreval.c */
 res( DOT_LOW,	low_op	   )
 res( DOT_HIGH,	high_op	   )
 res( LOWWORD,	lowword_op )

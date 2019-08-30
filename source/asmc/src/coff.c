@@ -305,12 +305,12 @@ static short CoffGetClass( const struct asym *sym )
 static unsigned GetFileAuxEntries( uint_16 file, char * *fname )
 /**************************************************************/
 {
-    const struct fname_item *curr;
+    char *curr;
     unsigned len;
     curr = GetFName( file );
     if ( fname )
-	*fname = curr->fname;
-    len = strlen( curr->fname );
+	*fname = curr;
+    len = strlen( curr );
     return ( len / sizeof( IMAGE_AUX_SYMBOL ) + ( len % sizeof( IMAGE_AUX_SYMBOL ) ? 1 : 0 ) );
 }
 

@@ -1,18 +1,14 @@
-include string.inc
 include malloc.inc
 include asmc.inc
-include token.inc
+include condasm.inc
 include hll.inc
-
-conditional_assembly_prepare proto :dword
+include hllext.inc
 
 MAXSAVESTACK equ 124
 
     .data
 
-    externdef CurrIfState:DWORD
-
-    assert_stack dw MAXSAVESTACK dup(0)
+    assert_stack db MAXSAVESTACK dup(0)
     assert_stid  dd 0
 
     .code
@@ -52,12 +48,12 @@ AssertDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
         mov edx,i
         shl edx,4
-        mov al,[ebx+edx].asmtok.token
+        mov al,[ebx+edx].asm_tok.token
         .if al == T_COLON
 
             add i,2
-            mov edi,[ebx+edx+16].asmtok.string_ptr
-            mov al,[ebx+edx+16].asmtok.token
+            mov edi,[ebx+edx+16].asm_tok.string_ptr
+            mov al,[ebx+edx+16].asm_tok.token
 
             .if al == T_ID
 
@@ -72,9 +68,9 @@ AssertDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
             .if !_stricmp(edi, "CODE")
 
-                .if !(ModuleInfo.xflag & _XF_ASSERT)
+                .if !(ModuleInfo.xflag & OPT_ASSERT)
 
-                    conditional_assembly_prepare(T_IF)
+                    CondPrepare(T_IF)
                     mov CurrIfState,BLOCK_DONE
                 .endif
                 .endc
@@ -89,12 +85,11 @@ AssertDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
             .if !_stricmp(edi, "PUSH")
 
-                mov al,ModuleInfo.aflag
-                mov ah,ModuleInfo.xflag
+                mov al,ModuleInfo.xflag
                 mov ecx,assert_stid
                 .if ecx < MAXSAVESTACK
 
-                    mov assert_stack[ecx*2],ax
+                    mov assert_stack[ecx],al
                     inc assert_stid
                 .endif
                 .endc
@@ -103,9 +98,8 @@ AssertDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
             .if !_stricmp(edi, "POP")
 
                 mov ecx,assert_stid
-                mov ax,assert_stack[ecx*2]
-                mov ModuleInfo.aflag,al
-                mov ModuleInfo.xflag,ah
+                mov al,assert_stack[ecx]
+                mov ModuleInfo.xflag,al
                 .if ecx
 
                     dec assert_stid
@@ -115,29 +109,29 @@ AssertDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
             .if !_stricmp(edi, "ON")
 
-                or  ModuleInfo.xflag,_XF_ASSERT
+                or  ModuleInfo.xflag,OPT_ASSERT
                 .endc
             .endif
             .if !_stricmp(edi, "OFF")
 
-                and ModuleInfo.xflag,NOT _XF_ASSERT
+                and ModuleInfo.xflag,NOT OPT_ASSERT
                 .endc
             .endif
             .if !_stricmp(edi, "PUSHF")
 
-                or  ModuleInfo.xflag,_XF_PUSHF
+                or  ModuleInfo.xflag,OPT_PUSHF
                 .endc
             .endif
             .if !_stricmp(edi, "POPF")
 
-                and ModuleInfo.xflag,NOT _XF_PUSHF
+                and ModuleInfo.xflag,NOT OPT_PUSHF
                 .endc
             .endif
 
             asmerr(2008, edi)
             .endc
 
-        .elseif al == T_FINAL || !(ModuleInfo.xflag & _XF_ASSERT)
+        .elseif al == T_FINAL || !(ModuleInfo.xflag & OPT_ASSERT)
 
             ;.if !Options.quiet
             ;.endif
@@ -148,7 +142,7 @@ AssertDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
         shl edx,4
         strcpy( &cmdstr, [ebx+edx].tokpos )
 
-        .if ModuleInfo.xflag & _XF_PUSHF
+        .if ModuleInfo.xflag & OPT_PUSHF
 
             .if ModuleInfo.Ofssize == USE64
 
@@ -169,7 +163,7 @@ AssertDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
         QueueTestLines(edi)
 
-        .if ModuleInfo.xflag & _XF_PUSHF
+        .if ModuleInfo.xflag & OPT_PUSHF
 
             .if ModuleInfo.Ofssize == USE64
 
@@ -183,7 +177,7 @@ AssertDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
         AddLineQueueX("jmp %s", &buff)
         AddLineQueueX("%s%s", GetLabelStr([esi].labels[LTEST*4], edi), LABELQUAL)
 
-        .if ModuleInfo.xflag & _XF_PUSHF
+        .if ModuleInfo.xflag & OPT_PUSHF
 
             .if ModuleInfo.Ofssize == USE64
 

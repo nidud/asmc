@@ -54,12 +54,12 @@ static int ParseCString( char *lbuf, char *buffer, char *string,
 	sbp = sbuf;
 
 	Unicode = 0;
-	if ( ModuleInfo.aflag & _AF_WSTRING )
+	if ( ModuleInfo.xflag & OPT_WSTRING )
 	    Unicode = 1;
 
 	if ( *src == 'L' && *(src+1) == '"' ) {
 
-	    ModuleInfo.aflag |= _AF_LSTRING;
+	    ModuleInfo.xflag |= OPT_LSTRING;
 	    Unicode = 1;
 	    src++;
 	}

@@ -16,8 +16,8 @@ _close proc frame handle:int_t
     lea rax,_osfile
     .if ecx < 3 || ecx >= _nfile || !(byte ptr [rax+rcx] & FH_OPEN)
 
-        mov errno,EBADF
-        mov _doserrno,0
+        _set_errno(EBADF)
+        _set_doserrno(0)
         xor eax,eax
     .else
 

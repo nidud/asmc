@@ -62,9 +62,9 @@ int AssertDirective( int i, struct asm_tok tokenarray[] )
 
 		if ( !_stricmp( name, "CODE" ) ) {
 
-		    if ( !( ModuleInfo.xflag & _XF_ASSERT ) ) {
+		    if ( !( ModuleInfo.xflag & OPT_ASSERT ) ) {
 
-			conditional_assembly_prepare( T_IF );
+			CondPrepare( T_IF );
 			CurrIfState = BLOCK_DONE;
 		    }
 		    break;
@@ -81,8 +81,7 @@ int AssertDirective( int i, struct asm_tok tokenarray[] )
 
 		    if ( assert_stid < MAXSAVESTACK ) {
 
-			save_stacka[assert_stid] = ModuleInfo.aflag;
-			save_stackx[assert_stid] = ModuleInfo.xflag;
+			save_stacka[assert_stid] = ModuleInfo.xflag;
 			assert_stid++;
 		    }
 		    break;
@@ -90,7 +89,6 @@ int AssertDirective( int i, struct asm_tok tokenarray[] )
 
 		if ( !_stricmp( name, "POP" ) ) {
 
-		    ModuleInfo.aflag = save_stacka[assert_stid];
 		    ModuleInfo.xflag = save_stackx[assert_stid];
 		    if ( assert_stid )
 			assert_stid--;
@@ -99,39 +97,39 @@ int AssertDirective( int i, struct asm_tok tokenarray[] )
 
 		if ( !_stricmp( name, "ON" ) ) {
 
-		    ModuleInfo.xflag |= _XF_ASSERT;
+		    ModuleInfo.xflag |= OPT_ASSERT;
 		    break;
 		}
 
 		if ( !_stricmp( name, "OFF" ) ) {
 
-		    ModuleInfo.xflag &= ~_XF_ASSERT;
+		    ModuleInfo.xflag &= ~OPT_ASSERT;
 		    break;
 		}
 
 		if ( !_stricmp( name, "PUSHF" ) ) {
 
-		    ModuleInfo.xflag |= _XF_PUSHF;
+		    ModuleInfo.xflag |= OPT_PUSHF;
 		    break;
 		}
 
 		if ( !_stricmp( name, "POPF" ) ) {
 
-		    ModuleInfo.xflag &= ~_XF_PUSHF;
+		    ModuleInfo.xflag &= ~OPT_PUSHF;
 		    break;
 		}
 
 		asmerr( 2008, name );
 		break;
 
-	    } else if ( tokenarray[i].token == T_FINAL || !(ModuleInfo.xflag & _XF_ASSERT) ) {
+	    } else if ( tokenarray[i].token == T_FINAL || !(ModuleInfo.xflag & OPT_ASSERT) ) {
 
 		break;
 	    }
 
 	    strcpy( cmdstr, tokenarray[i].tokpos );
 
-	    if ( ModuleInfo.xflag & _XF_PUSHF ) {
+	    if ( ModuleInfo.xflag & OPT_PUSHF ) {
 
 		if ( ModuleInfo.Ofssize == USE64 ) {
 
@@ -153,7 +151,7 @@ int AssertDirective( int i, struct asm_tok tokenarray[] )
 
 	    QueueTestLines( buffer );
 
-	    if ( ModuleInfo.xflag & _XF_PUSHF ) {
+	    if ( ModuleInfo.xflag & OPT_PUSHF ) {
 
 		if ( ModuleInfo.Ofssize == USE64 ) {
 
@@ -167,7 +165,7 @@ int AssertDirective( int i, struct asm_tok tokenarray[] )
 	    AddLineQueueX( "jmp %s", buff );
 	    AddLineQueueX( "%s" LABELQUAL, GetLabelStr( hll->labels[LTEST], buffer ) );
 
-	    if ( ModuleInfo.xflag & _XF_PUSHF ) {
+	    if ( ModuleInfo.xflag & OPT_PUSHF ) {
 
 		if ( ModuleInfo.Ofssize == USE64 ) {
 

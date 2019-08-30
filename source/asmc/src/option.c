@@ -652,9 +652,9 @@ OPTFUNC( SetCStack )
     int i = *pi;
 
     if ( 0 == _stricmp( tokenarray[i].string_ptr, "ON" ) ) {
-	ModuleInfo.aflag |= _AF_CSTACK;
+	ModuleInfo.xflag |= OPT_CSTACK;
     } else if ( 0 == _stricmp( tokenarray[i].string_ptr, "OFF" ) ) {
-	ModuleInfo.aflag &= ~_AF_CSTACK;
+	ModuleInfo.xflag &= ~OPT_CSTACK;
     } else {
 	return( asmerr(2008, tokenarray[i].string_ptr ) );
     }
@@ -670,9 +670,9 @@ OPTFUNC( SetWString )
     int i = *pi;
 
     if ( 0 == _stricmp( tokenarray[i].string_ptr, "ON" ) ) {
-	ModuleInfo.aflag |= _AF_WSTRING;
+	ModuleInfo.xflag |= OPT_WSTRING;
     } else if ( 0 == _stricmp( tokenarray[i].string_ptr, "OFF" ) ) {
-	ModuleInfo.aflag &= ~_AF_WSTRING;
+	ModuleInfo.xflag &= ~OPT_WSTRING;
     } else {
 	return( asmerr(2008, tokenarray[i].string_ptr ) );
     }
@@ -709,17 +709,17 @@ OPTFUNC( SetSwitch )
     int i = *pi;
 
     if ( 0 == _stricmp( tokenarray[i].string_ptr, "C" ) ) {
-	ModuleInfo.aflag &= ~_AF_PASCAL;
+	ModuleInfo.xflag &= ~OPT_PASCAL;
     } else if ( 0 == _stricmp( tokenarray[i].string_ptr, "PASCAL" ) ) {
-	ModuleInfo.aflag |= _AF_PASCAL;
+	ModuleInfo.xflag |= OPT_PASCAL;
     } else if ( 0 == _stricmp( tokenarray[i].string_ptr, "TABLE" ) ) {
-	ModuleInfo.aflag &= ~_AF_NOTABLE;
+	ModuleInfo.xflag &= ~OPT_NOTABLE;
     } else if ( 0 == _stricmp( tokenarray[i].string_ptr, "NOTABLE" ) ) {
-	ModuleInfo.aflag |= _AF_NOTABLE;
+	ModuleInfo.xflag |= OPT_NOTABLE;
     } else if ( 0 == _stricmp( tokenarray[i].string_ptr, "REGAX" ) ) {
-	ModuleInfo.aflag |= _AF_REGAX;
+	ModuleInfo.xflag |= OPT_REGAX;
     } else if ( 0 == _stricmp( tokenarray[i].string_ptr, "NOREGS" ) ) {
-	ModuleInfo.aflag &= ~(_AF_REGAX);
+	ModuleInfo.xflag &= ~(OPT_REGAX);
     } else {
 	return( asmerr(2008, tokenarray[i].string_ptr ) );
     }

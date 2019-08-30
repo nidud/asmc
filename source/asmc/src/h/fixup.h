@@ -85,12 +85,12 @@ enum fixup_options {
 };
 
 struct fixup {
-    struct fixup	 *nextbp;	/* PASS 1: linked list backpatch */
-    struct fixup	 *nextrlc;	/* PASS >1: linked list relocs */
-    uint_32		 offset;	/* symbol's offset */
-    uint_32		 locofs;	/* location of fixup */
-    enum fixup_types	 type;
-    enum fixup_options	 option;
+    struct fixup	*nextbp;	/* PASS 1: linked list backpatch */
+    struct fixup	*nextrlc;	/* PASS >1: linked list relocs */
+    uint_32		offset;		/* symbol's offset */
+    uint_32		locofs;		/* location of fixup */
+    uint_8		type;
+    uint_8		option;
     union {
 	uint_16 flags;
 	struct {

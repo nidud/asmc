@@ -4,21 +4,19 @@ include stdlib.inc
 include string.inc
 
 include asmc.inc
+include parser.inc
+include listing.inc
+include tokenize.inc
+include fastpass.inc
+include equate.inc
+include condasm.inc
+include macro.inc
 
 REMOVECOMENT    equ 0 ; 1=remove comments from source
 TF3_ISCONCAT    equ 1 ; line was concatenated
 TF3_EXPANSION   equ 2 ; expansion operator % at pos 0
 
-externdef CurrIfState: dword
 externdef directive_tab: dword
-
-WritePreprocessedLine   proto :DWORD
-ExpandText              proto :DWORD, :DWORD, :DWORD
-LabelMacro              proto :DWORD
-ExpandLine              proto :DWORD, :DWORD
-ExpandLineItems         proto :DWORD, :DWORD, :DWORD, :DWORD, :DWORD
-CreateConstant          proto :DWORD
-StoreLine               proto :DWORD, :DWORD, :DWORD
 
     .code
 
@@ -42,9 +40,9 @@ WriteCodeLabel PROC USES esi edi ebx line, tokenarray:tok_t
     ;
     ; v2.04: call ParseLine() to parse the "label" part of the line
     ;
-    movzx esi,[ebx+32].asmtok.token
-    mov [ebx+32].asmtok.token,T_FINAL
-    mov edi,[ebx+32].asmtok.tokpos
+    movzx esi,[ebx+32].asm_tok.token
+    mov [ebx+32].asm_tok.token,T_FINAL
+    mov edi,[ebx+32].asm_tok.tokpos
     mov al,[edi]
     mov BYTE PTR [edi],0
     push ModuleInfo.token_count
@@ -59,7 +57,7 @@ WriteCodeLabel PROC USES esi edi ebx line, tokenarray:tok_t
     mov [edi],al
     pop ModuleInfo.token_count
     mov eax,esi
-    mov [ebx+32].asmtok.token,al
+    mov [ebx+32].asm_tok.token,al
     mov eax,NOT_ERROR
     ret
 
@@ -131,7 +129,7 @@ endif
 
     xor esi,esi
     .if ModuleInfo.token_count > 2 && \
-        ( [ebx+16].asmtok.token == T_COLON || [ebx+16].asmtok.token == T_DBL_COLON )
+        ( [ebx+16].asm_tok.token == T_COLON || [ebx+16].asm_tok.token == T_DBL_COLON )
 
         mov esi,32
     .endif

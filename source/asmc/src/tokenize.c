@@ -1210,7 +1210,7 @@ int Tokenize( char *line, unsigned int start, struct asm_tok tokenarray[],
 		    if ( rc == T_DOT_ASSERT ) {
 
 			char *cp;
-			if ( ModuleInfo.xflag & _XF_ASSERT )
+			if ( ModuleInfo.xflag & OPT_ASSERT )
 			    goto dot_assert;
 			cp = p.input;
 			while ( *cp == ' ' || *cp == 9 ) cp++;
@@ -1222,7 +1222,7 @@ int Tokenize( char *line, unsigned int start, struct asm_tok tokenarray[],
 			    goto dot_assert;
 			rc = T_ENDIF;
 		    }
-		    conditional_assembly_prepare( rc );
+		    CondPrepare( rc );
 		    if ( CurrIfState != BLOCK_ACTIVE ) {
 			p.index++;
 			break; /* p.index is 1 or 3 */

@@ -76,7 +76,7 @@ extern int  GetCurrSrcPos( char * );
 extern void ClearSrcStack( void );
 extern unsigned get_curr_srcfile( void );
 extern void set_curr_srcfile( unsigned, uint_32 );
-extern struct fname_item *GetFName( unsigned );
+extern char *GetFName( unsigned );
 
 #define GetAlignedPointer( x, size ) ( x + ( ( size + 1 + sizeof(void *) - 1 ) & ~( sizeof(void *) - 1 ) ) )
 

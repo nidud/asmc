@@ -17,7 +17,7 @@ bsearch proc frame uses rsi rdi rbx r12 r13 r14 key:ptr, base:ptr, num:size_t,
     mov rax,compare
     .if ( rax == NULL || ( rdx == NULL && r8 != 0 ) || r9 == 0 )
 
-        mov errno,EINVAL
+        _set_errno(EINVAL)
         .return 0
     .endif
 

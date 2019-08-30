@@ -2,15 +2,33 @@
 ; Copyright (C) 2017 Asmc Developers
 
 include malloc.inc
-include stdio.inc
-include stdlib.inc
-include string.inc
 include io.inc
-include errno.inc
 include setjmp.inc
-
 include asmc.inc
-include token.inc
+include parser.inc
+include segment.inc
+include reswords.inc
+include types.inc
+include omf.inc
+include mangle.inc
+include input.inc
+include lqueue.inc
+include context.inc
+include hll.inc
+include macro.inc
+include assume.inc
+include tokenize.inc
+include memalloc.inc
+include linnum.inc
+include bin.inc
+include coff.inc
+include elf.inc
+include fastpass.inc
+include condasm.inc
+include label.inc
+include proc.inc
+include expreval.inc
+include listing.inc
 
 public	jmpenv
 extern	MacroLocals:dword
@@ -62,13 +80,12 @@ remove_obj	dd 0
 
 .code
 
-;
 ; translate section names (COFF+PE):
 ; _TEXT -> .text
 ; _DATA -> .data
 ; CONST -> .rdata
 ; _BSS	 -> .bss
-;
+
 ConvertSectionName proc uses esi edi ebx sym, pst, buffer
 
     .repeat
@@ -120,7 +137,7 @@ ConvertSectionName endp
 
 MAX_LEDATA_THRESHOLD equ 1024 - 10
 
-OutputByte proc uses esi edi ebx char
+OutputByte proc uses esi edi ebx char:int_t
 
     mov esi,ModuleInfo.currseg
     mov edi,[esi].dsym.seginfo
@@ -175,7 +192,7 @@ FillDataBytes proc uses esi char, len
     ret
 FillDataBytes endp
 
-OutputBytes proc uses esi edi ebx pbytes, len, fixup
+OutputBytes proc uses esi edi ebx pbytes:ptr byte, len:int_t, fxptr:ptr fixup
 
     mov esi,ModuleInfo.currseg
     mov edi,[esi].dsym.seginfo
@@ -195,8 +212,8 @@ OutputBytes proc uses esi edi ebx pbytes, len, fixup
 	    sub ebx,[edi].seg_info.start_loc
 	.endif
 
-	.if fixup
-	    store_fixup(fixup, esi, pbytes)
+	.if fxptr
+	    store_fixup(fxptr, esi, pbytes)
 	.endif
 
 	mov edx,edi
@@ -229,7 +246,7 @@ OutputBytes endp
 ;
 ; set current offset in a segment (usually CurrSeg) without to write anything
 ;
-SetCurrOffset proc uses esi edi ebx dseg, value, relative, select_data
+SetCurrOffset proc uses esi edi ebx dseg:dsym_t, value:uint_t, relative:int_t, select_data:int_t
 
     mov ebx,value
     mov esi,dseg
@@ -276,7 +293,7 @@ SetCurrOffset endp
 ;
 WriteModule proc uses esi edi ebx modinfo
 
-    mov esi,SymTables[TAB_SEG*sizeof(symbol_queue)].head
+    mov esi,SymTables[TAB_SEG*symbol_queue].head
     .while  esi
 	mov eax,[esi].dsym.seginfo
 	.if [eax].seg_info.Ofssize == USE16 && [esi].dsym.sym.max_offset > 10000h
@@ -301,8 +318,8 @@ WriteModule proc uses esi edi ebx modinfo
 	    mov esi,SymTables[TAB_EXT*sizeof(symbol_queue)].head
 	    .while  esi
 		mov ebx,[esi].asym.dll
-		.if [esi].asym.flag & SFL_ISPROC && [esi].asym.dll && [ebx].dll_desc.dname \
-		    && ( !( [esi].asym.sint_flag & SINT_WEAK) || [esi].asym.flag & SFL_IAT_USED )
+		.if [esi].asym.flag & S_ISPROC && [esi].asym.dll && [ebx].dll_desc.dname \
+		    && ( !( [esi].asym.sint_flag & SINT_WEAK) || [esi].asym.flag & S_IAT_USED )
 
 		    Mangle(esi, ModuleInfo.stringbufferend)
 		    sprintf(ModuleInfo.currsource, "import '%s'  %s.%s\n",
@@ -370,7 +387,7 @@ add_cmdline_tmacros proc uses esi edi ebx
 	    asmerr(2005, esi)
 	    .break
 	.endif
-	or  [eax].asym.flag,SFL_ISDEFINED or SFL_PREDEFINED
+	or  [eax].asym.flag,S_ISDEFINED or S_PREDEFINED
 	mov [eax].asym.string_ptr,ebx
 	mov edi,[edi].qitem.next
     .endw
@@ -405,7 +422,7 @@ CmdlParamsInit proc pass
     ret
 CmdlParamsInit endp
 
-WritePreprocessedLine proc string
+WritePreprocessedLine proc string:string_t
     .data
     PrintEmptyLine db 1
     .code
@@ -544,11 +561,10 @@ endif
     mov ModuleInfo.radix,10
     mov ModuleInfo.fieldalign,Options.fieldalign
     mov ModuleInfo.procalign,0
-    mov ModuleInfo.xflag,Options.xflag
-    mov al,ModuleInfo.aflag
-    and al,_AF_LSTRING
-    or	al,Options.aflag
-    mov ModuleInfo.aflag,al
+    mov al,ModuleInfo.xflag
+    and al,OPT_LSTRING
+    or	al,Options.xflag
+    mov ModuleInfo.xflag,al
     mov ModuleInfo.loopalign,Options.loopalign
     mov ModuleInfo.casealign,Options.casealign
     mov ModuleInfo.codepage,Options.codepage
@@ -563,7 +579,7 @@ endif
 	mov eax,SymTables[TAB_EXT*sizeof(symbol_queue)].head
 	.while eax
 
-	    and [eax].asym.flag,not SFL_IAT_USED
+	    and [eax].asym.flag,not S_IAT_USED
 	    mov eax,[eax].dsym.next
 	.endw
     .endif
@@ -638,7 +654,7 @@ PassOneChecks proc uses esi edi
     ;
     mov eax,ModuleInfo.SafeSEHQueue.head
     .while eax
-	.if [eax].asym.state != SYM_INTERNAL || !([eax].asym.flag & SFL_ISPROC)
+	.if [eax].asym.state != SYM_INTERNAL || !([eax].asym.flag & S_ISPROC)
 
 	    mov UseSavedState,0
 	    jmp aliases
@@ -658,7 +674,7 @@ aliases:
 	    ; check if symbol is external or public
 	    ;
 	    .if !eax || [eax].asym.state != SYM_EXTERNAL \
-		&& ([eax].asym.state != SYM_INTERNAL || !([eax].asym.flag & SFL_ISPUBLIC))
+		&& ([eax].asym.state != SYM_INTERNAL || !([eax].asym.flag & S_ISPUBLIC))
 
 		mov UseSavedState,0
 		.break
@@ -668,7 +684,7 @@ aliases:
 	    ;
 	    .if [eax].asym.state == SYM_EXTERNAL
 
-		or [eax].asym.flag,SFL_USED
+		or [eax].asym.flag,S_USED
 	    .endif
 	    mov ecx,[ecx].dsym.next
 	.endw
@@ -680,11 +696,11 @@ aliases:
     .while edi
 	mov esi,edi
 	mov edi,[esi].dsym.next
-	.if [esi].asym.flag & SFL_USED
+	.if [esi].asym.flag & S_USED
 
 	    and [esi].asym.sint_flag,not SINT_WEAK
 	.endif
-	.if [esi].asym.sint_flag & SINT_WEAK && !([esi].asym.flag & SFL_IAT_USED)
+	.if [esi].asym.sint_flag & SINT_WEAK && !([esi].asym.flag & S_IAT_USED)
 	    ;
 	    ; remove unused EXTERNDEF/PROTO items from queue.
 	    ;
@@ -703,7 +719,7 @@ aliases:
 
 	    .if [eax].asym.state == SYM_INTERNAL
 
-		.if !( [eax].asym.flag & SFL_ISPUBLIC ) && \
+		.if !( [eax].asym.flag & S_ISPUBLIC ) && \
 		    ( Options.output_format == OFORMAT_COFF || \
 		      Options.output_format == OFORMAT_ELF)
 
@@ -928,8 +944,6 @@ masmkeyw label MASMKEYW
 include oldkeyw.h
 OLDKCOUNT equ ($ - masmkeyw) / sizeof(MASMKEYW)
 .code
-
-RenameKeyword proto :dword, :string_t, :dword
 
 endif
 

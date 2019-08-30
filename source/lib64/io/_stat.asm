@@ -146,8 +146,8 @@ _stat proc uses rsi rdi rbx fname:LPSTR, buf:PVOID
         mov [rdi].S_STAT.st_rdev,eax
         .return 0
     .until 1
-    mov errno,ENOENT
-    mov _doserrno,ERROR_PATH_NOT_FOUND
+    _set_errno(ENOENT)
+    _set_doserrno(ERROR_PATH_NOT_FOUND)
     mov eax,-1
     ret
 

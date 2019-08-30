@@ -1,13 +1,18 @@
 include stdio.inc
 include string.inc
 include asmc.inc
-include token.inc
+include symbols.inc
+include segment.inc
+include parser.inc
 include hll.inc
+include lqueue.inc
+include reswords.inc
+include listing.inc
+include memalloc.inc
+include types.inc
 
-externdef CurrStruct:dsym_t
-;
 ; item for .CLASS, .ENDS, and .COMDEF
-;
+
 com_item    STRUC
 cmd         dd ?
 class       string_t ?
@@ -110,9 +115,9 @@ ProcType proc uses esi edi ebx i:int_t, tokenarray:tok_t, buffer:string_t
             xor esi,esi
         .endif
 
-        .for ( eax = ebx : [eax].asmtok.token != T_FINAL : eax += 16 )
+        .for ( eax = ebx : [eax].asm_tok.token != T_FINAL : eax += 16 )
 
-            .if ( [eax].asmtok.token == T_COLON )
+            .if ( [eax].asm_tok.token == T_COLON )
 
                 inc esi
                 .break
@@ -249,9 +254,9 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
             AddLineQueueX( "%s typedef ptr %s", edi, esi )
 
-            .for ( edx = 0, eax = args : !edx && [eax].asmtok.token != T_FINAL : eax += 16 )
+            .for ( edx = 0, eax = args : !edx && [eax].asm_tok.token != T_FINAL : eax += 16 )
 
-                .if ( [eax].asmtok.token == T_COLON )
+                .if ( [eax].asm_tok.token == T_COLON )
 
                     inc edx
                 .endif

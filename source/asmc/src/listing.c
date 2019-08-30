@@ -1098,7 +1098,7 @@ int ListMacroDirective( int i, struct asm_tok tokenarray[] )
 
 void LstInit( void )
 {
-    const struct fname_item *fn;
+    const char *fn;
     const char *buffer;
 
     list_pos = 0;
@@ -1109,8 +1109,8 @@ void LstInit( void )
 	fwrite( buffer, 1, list_pos, CurrFile[LST] );
 	LstNL();
 	fn = GetFName( ModuleInfo.srcfile );
-	namelen = strlen( fn->fname );
-	fwrite( fn->fname, 1, namelen, CurrFile[LST] );
+	namelen = strlen( fn );
+	fwrite( fn, 1, namelen, CurrFile[LST] );
 	list_pos += namelen;
 	LstNL();
     }

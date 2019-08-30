@@ -50,15 +50,17 @@ _wsopen proc uses rsi rdi rbx path:LPWSTR, oflag:SINT, shflag:SINT, args:VARARG
     and eax,O_RDONLY or O_WRONLY or O_RDWR
     mov edi,GENERIC_READ        ; read access
     .if eax != O_RDONLY
+
         mov edi,GENERIC_WRITE   ; write access
         .if eax != O_WRONLY
+
             mov edi,GENERIC_READ or GENERIC_WRITE
+
             .if eax != O_RDWR
-                mov errno,EINVAL
-                xor eax,eax
-                mov _doserrno,eax
-                dec rax
-                .return
+
+                _set_errno(EINVAL)
+                _set_doserrno(0)
+                .return -1
             .endif
         .endif
     .endif
@@ -79,11 +81,10 @@ _wsopen proc uses rsi rdi rbx path:LPWSTR, oflag:SINT, shflag:SINT, args:VARARG
       .default
         xor ebx,ebx         ; exclusive access
         .if eax != SH_DENYRW
-            mov errno,EINVAL
-            xor eax,eax
-            mov _doserrno,eax
-            dec rax
-            .return
+
+            _set_errno(EINVAL)
+            _set_doserrno(0)
+            .return -1
         .endif
     .endsw
     ;
@@ -111,11 +112,9 @@ _wsopen proc uses rsi rdi rbx path:LPWSTR, oflag:SINT, shflag:SINT, args:VARARG
         mov ecx,TRUNCATE_EXISTING
         .endc
       .default
-        mov errno,EINVAL
-        xor eax,eax
-        mov _doserrno,eax
-        dec rax
-        .return
+        _set_errno(EINVAL)
+        _set_doserrno(0)
+        .return -1
     .endsw
 
     mov eax,ecx
@@ -159,8 +158,7 @@ _wsopen proc uses rsi rdi rbx path:LPWSTR, oflag:SINT, shflag:SINT, args:VARARG
         mov rcx,[r8+rsi*8]
         .if GetFileType(rcx) == FILE_TYPE_UNKNOWN
             _close(esi)
-            mov eax,-1
-            .return
+            .return -1
         .elseif eax == FILE_TYPE_CHAR
             or bl,FH_DEVICE
         .elseif eax == FILE_TYPE_PIPE
@@ -180,20 +178,17 @@ _wsopen proc uses rsi rdi rbx path:LPWSTR, oflag:SINT, shflag:SINT, args:VARARG
 
                     .if _chsize(esi, ebx) == -1
                         _close(esi)
-                        mov eax,-1
-                        .return
+                        .return -1
                     .endif
                 .endif
 
                 .if _lseek(esi, 0, SEEK_SET) == -1
                     _close(esi)
-                    mov eax,-1
-                    .return
+                    .return -1
                 .endif
             .elseif _doserrno != ERROR_NEGATIVE_SEEK
                 _close(esi)
-                mov eax,-1
-                .return
+                .return -1
             .endif
         .endif
         lea r8,_osfile

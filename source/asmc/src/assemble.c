@@ -492,8 +492,8 @@ static void ModulePassInit( void )
     ModuleInfo.fieldalign = Options.fieldalign;
     ModuleInfo.procalign = 0;
 
-    ModuleInfo.aflag &= _AF_LSTRING;
-    ModuleInfo.aflag |= Options.aflag;
+    ModuleInfo.xflag &= OPT_LSTRING;
+    ModuleInfo.xflag |= Options.xflag;
     ModuleInfo.loopalign = Options.loopalign;
     ModuleInfo.casealign = Options.casealign;
     ModuleInfo.codepage = Options.codepage;

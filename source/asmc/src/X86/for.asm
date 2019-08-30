@@ -3,8 +3,10 @@
 ;
 include string.inc
 include asmc.inc
-include token.inc
+include tokenize.inc
 include hll.inc
+include parser.inc
+include hllext.inc
 
     .code
 
@@ -446,7 +448,7 @@ local   rc:int_t,
 
             mov BYTE PTR [eax],0
             inc eax
-            M_SKIP_SPACE ecx, eax
+            SkipSpace(ecx, eax)
             mov p,eax
             .if !strchr(eax, ':')
 
@@ -456,10 +458,10 @@ local   rc:int_t,
 
             mov BYTE PTR [eax],0
             inc eax
-            M_SKIP_SPACE ecx, eax
+            SkipSpace(ecx, eax)
             mov q,eax
             strtrim(eax)
-            M_SKIP_SPACE ecx, edi
+            SkipSpace(ecx, edi)
             strtrim(edi)
             strtrim(p)
 

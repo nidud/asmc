@@ -6,7 +6,7 @@ include limits.inc
 
 include asmc.inc
 include token.inc
-include hll.inc
+include hllext.inc
 
     .code
 
@@ -343,7 +343,7 @@ GetMaxCaseValue proc uses esi edi ebx hll, min, max, min_table, max_table
         .if !( [esi].flags & HLLF_ARG16 or HLLF_ARG32 or HLLF_ARG64 )
 
             add eax,1
-            .if !( ModuleInfo.aflag & _AF_REGAX )
+            .if !( ModuleInfo.xflag & OPT_REGAX )
 
                 add eax,10
             .endif
@@ -500,7 +500,7 @@ GetSwitchArg proc uses ebx reg, flags, arg
 
   local buffer[64]:sbyte
 
-    .if !( ModuleInfo.aflag & _AF_REGAX )
+    .if !( ModuleInfo.xflag & OPT_REGAX )
 
         AddLineQueueX( "push %r", reg )
     .endif
@@ -632,7 +632,7 @@ RenderSwitch proc uses esi edi ebx hll:hll_t, tokenarray:tok_t,
         add eax,MIN_JTABLE
     .endif
 
-    .if ModuleInfo.aflag & _AF_NOTABLE || eax < MIN_JTABLE
+    .if ModuleInfo.xflag & OPT_NOTABLE || eax < MIN_JTABLE
         ;
         ; Time NOTABLE/TABLE
         ;
@@ -802,11 +802,11 @@ endif
 ifndef __ASMC64__
             .if cl == USE16
 
-                .if !( ModuleInfo.aflag & _AF_REGAX )
+                .if !( ModuleInfo.xflag & OPT_REGAX )
                     AddLineQueue("push ax")
                 .endif
                 .if [esi].flags & HLLF_ARGREG
-                    .if ModuleInfo.aflag & _AF_REGAX
+                    .if ModuleInfo.xflag & OPT_REGAX
                         .if _stricmp("ax", ebx)
                             AddLineQueueX( "mov ax,%s", ebx )
                         .endif
@@ -819,11 +819,11 @@ ifndef __ASMC64__
                         .endif
                     .endif
                 .else
-                    .if !( ModuleInfo.aflag & _AF_REGAX )
+                    .if !( ModuleInfo.xflag & OPT_REGAX )
                         AddLineQueue( "push bx" )
                     .endif
                     GetSwitchArg(T_AX, [esi].flags, ebx)
-                    .if ModuleInfo.aflag & _AF_REGAX
+                    .if ModuleInfo.xflag & OPT_REGAX
                         AddLineQueue("xchg ax,bx")
                     .else
                         AddLineQueue("mov bx,ax")
@@ -833,7 +833,7 @@ ifndef __ASMC64__
                     AddLineQueueX("sub bx,%d", min)
                 .endif
                 AddLineQueue("add bx,bx")
-                .if ModuleInfo.aflag & _AF_REGAX
+                .if ModuleInfo.xflag & OPT_REGAX
                     AddLineQueueX("mov bx,cs:[bx+%s]", &l_jtab)
                     AddLineQueue ("xchg ax,bx")
                     AddLineQueue ("jmp ax")
@@ -857,23 +857,23 @@ ifndef __ASMC64__
                         .else
                             AddLineQueueX("movzx eax,WORD PTR [eax*2+IT%s-(%d*2)]", &l_jtab, min)
                         .endif
-                        .if ModuleInfo.aflag & _AF_REGAX
+                        .if ModuleInfo.xflag & OPT_REGAX
                             AddLineQueueX("jmp [eax*4+%s]", &l_jtab)
                         .else
                             AddLineQueueX("mov eax,[eax*4+%s]", &l_jtab)
                         .endif
-                    .elseif ModuleInfo.aflag & _AF_REGAX
+                    .elseif ModuleInfo.xflag & OPT_REGAX
                         AddLineQueueX("jmp [eax*4+%s-(%d*4)]", &l_jtab, min)
                     .else
                         AddLineQueueX("mov eax,[eax*4+%s-(%d*4)]", &l_jtab, min)
                     .endif
-                    .if !( ModuleInfo.aflag & _AF_REGAX )
+                    .if !( ModuleInfo.xflag & OPT_REGAX )
                         AddLineQueue("xchg eax,[esp]")
                         AddLineQueue("retn")
                     .endif
                 .else
                     .if use_index
-                        .if !( ModuleInfo.aflag & _AF_REGAX )
+                        .if !( ModuleInfo.xflag & OPT_REGAX )
                             AddLineQueueX("push %s", ebx)
                         .endif
                         .if dist < 256
@@ -881,7 +881,7 @@ ifndef __ASMC64__
                         .else
                             AddLineQueueX("movzx %s,WORD PTR [%s*2+IT%s-(%d*2)]", ebx, ebx, &l_jtab, min)
                         .endif
-                        .if ModuleInfo.aflag & _AF_REGAX
+                        .if ModuleInfo.xflag & OPT_REGAX
                             AddLineQueueX("jmp [%s*4+%s]", ebx, &l_jtab)
                         .else
                             AddLineQueueX("mov %s,[%s*4+%s]", ebx, ebx, &l_jtab)
@@ -894,10 +894,10 @@ ifndef __ASMC64__
                 .endif
 
             .elseif ( edx <= ( UINT_MAX / 8 ) ) && !use_index && [esi].flags & HLLF_ARGREG && \
-                ModuleInfo.aflag & _AF_REGAX
+                ModuleInfo.xflag & OPT_REGAX
 else
             .if ( edx <= ( UINT_MAX / 8 ) ) && !use_index && [esi].flags & HLLF_ARGREG && \
-                ModuleInfo.aflag & _AF_REGAX
+                ModuleInfo.xflag & OPT_REGAX
 endif
 
                 .if !_memicmp( ebx, "r11", 3 )
@@ -913,7 +913,7 @@ endif
 
             .else
 
-                .if ( ModuleInfo.aflag & _AF_REGAX )
+                .if ( ModuleInfo.xflag & OPT_REGAX )
 
                     AddLineQueue( "push rax" )
 
@@ -1198,7 +1198,7 @@ ifndef __ASMC64__
 
     .if cl == USE16
 
-        .if ModuleInfo.aflag & _AF_REGAX
+        .if ModuleInfo.xflag & OPT_REGAX
             .if _stricmp( "ax", ebx )
                 AddLineQueueX( "mov ax,%s", ebx )
             .endif
@@ -1231,9 +1231,9 @@ ifndef __ASMC64__
             AddLineQueueX( "jmp [%s*4+%s-(MIN%s*4)]", ebx, edi, edi )
         .endif
 
-    .elseif ModuleInfo.aflag & _AF_REGAX
+    .elseif ModuleInfo.xflag & OPT_REGAX
 else
-    .if ModuleInfo.aflag & _AF_REGAX
+    .if ModuleInfo.xflag & OPT_REGAX
 endif
         .ifd !_memicmp( ebx, "r11", 3 )
 
@@ -1330,7 +1330,7 @@ SwitchStart proc uses esi edi ebx i:int_t, tokenarray:tok_t
         add edx,16
         or eax,HLLF_PASCAL
 
-    .elseif ModuleInfo.aflag & _AF_PASCAL
+    .elseif ModuleInfo.xflag & OPT_PASCAL
 
         or eax,HLLF_PASCAL
     .endif
@@ -1426,7 +1426,7 @@ ifndef __ASMC64__
                         mov eax,4
                     .endif
 endif
-                    .if ( opnd.kind == EXPR_ADDR && (opnd.flags1 & EXF_INDIRECT) && opnd.mbr )
+                    .if ( opnd.kind == EXPR_ADDR && (opnd.flags & E_INDIRECT) && opnd.mbr )
                         mov ecx,opnd.mbr
                         mov eax,[ecx].asym.total_size
                     .endif
@@ -1443,7 +1443,7 @@ endif
 
         mov edx,i
         shl edx,4
-        strlen(strcpy(edi, [ebx+edx].asmtok.tokpos))
+        strlen(strcpy(edi, [ebx+edx].asm_tok.tokpos))
         inc eax
         push eax
         LclAlloc(eax)
@@ -1454,9 +1454,9 @@ endif
 
     mov eax,i
     shl eax,4
-    .if ![esi].flags && ([ebx+eax].asmtok.token != T_FINAL && rc == NOT_ERROR)
+    .if ![esi].flags && ([ebx+eax].asm_tok.token != T_FINAL && rc == NOT_ERROR)
 
-        mov rc,asmerr(2008, [ebx+eax].asmtok.tokpos)
+        mov rc,asmerr(2008, [ebx+eax].asm_tok.tokpos)
     .endif
 
     .if esi == ModuleInfo.HllFree
@@ -1635,9 +1635,11 @@ SwitchExit proc uses esi edi ebx i, tokenarray:tok_t
                 .while [eax].hll_item.caselist
                     mov eax,[eax].hll_item.caselist
                 .endw
+if 1
                 .if ( eax != esi && !( [eax].hll_item.flags & HLLF_ENDCOCCUR ) )
                     asmerr( 7007 )
                 .endif
+endif
         .endif
 
         ; .case <case_a> a
@@ -1827,7 +1829,7 @@ SwitchExit proc uses esi edi ebx i, tokenarray:tok_t
                 mov eax,ModuleInfo.token_count
                 shl eax,4
                 add eax,tokenarray
-                mov eax,[eax].asmtok.tokpos
+                mov eax,[eax].asm_tok.tokpos
                 sub eax,[ebx].tokpos
                 mov WORD PTR [edi+eax],0
                 memcpy(edi, [ebx].tokpos, eax)
@@ -2013,7 +2015,7 @@ SwitchDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
     mov edx,tokenarray
     mov eax,ecx
     shl eax,4
-    mov eax,[edx+eax].asmtok.tokval
+    mov eax,[edx+eax].asm_tok.tokval
     xor ebx,ebx
 
     .switch eax

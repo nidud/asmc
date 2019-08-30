@@ -31,7 +31,7 @@ _getdcwd proc uses rdi drive:SINT, buffer:LPSTR, maxlen:SINT
         shr eax,cl
         .ifnc
 
-            mov _doserrno,ERROR_INVALID_DRIVE
+            _set_doserrno(ERROR_INVALID_DRIVE)
             _set_errno(EACCES)
             .return 0
         .endif

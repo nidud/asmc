@@ -392,18 +392,14 @@ enum seg_type {
     SEGTYPE_ERROR, /* must be last - an "impossible" segment type */
 };
 
-#define _AF_CSTACK	0x02
-#define _AF_WSTRING	0x04 /* convert "string" to unicode */
-#define _AF_LSTRING	0x08 /* L"Unicode" used --> allow dw "string" */
-
-/* .SWITCH options */
-
-#define _AF_PASCAL	0x10 /* auto insert break after .case */
-#define _AF_NOTABLE	0x20 /* no indexed jump table */
-#define _AF_REGAX	0x40 /* use [E]AX or R10+R11 to render jump-code */
-
-#define _XF_ASSERT	0x01 /* Generate .assert code */
-#define _XF_PUSHF	0x02 /* Push/Pop flags */
+#define OPT_CSTACK	0x01
+#define OPT_WSTRING	0x02 /* convert "string" to unicode */
+#define OPT_LSTRING	0x04 /* L"Unicode" used --> allow dw "string" */
+#define OPT_PASCAL	0x08 /* auto insert break after .case */
+#define OPT_NOTABLE	0x10 /* no indexed jump table */
+#define OPT_REGAX	0x20 /* use [E]AX or R10+R11 to render jump-code */
+#define OPT_ASSERT	0x40 /* Generate .assert code */
+#define OPT_PUSHF	0x80 /* Push/Pop flags */
 
 struct global_options {
 unsigned char	quiet;			/* -q option */
@@ -453,7 +449,6 @@ unsigned	codepage;		/* -ws[n] Unicode code page */
 unsigned char	ignore_include;		/* -X option */
 unsigned char	fieldalign;		/* -Zp option	*/
 unsigned char	syntax_check_only;	/* -Zs option */
-unsigned char	aflag;			/* asmc options */
 unsigned char	xflag;			/* extended options */
 unsigned char	loopalign;		/* OPTION:LOOPALIGN setting */
 unsigned char	casealign;		/* OPTION:CASEALIGN setting */
@@ -487,10 +482,6 @@ struct str_item;
 struct com_item;
 struct context;
 
-struct fname_item {
-    char    *fname;
-};
-
 struct module_info;
 
 struct module_vars {
@@ -505,7 +496,7 @@ struct dll_desc *DllQueue;	 /* dlls of OPTION DLLIMPORT */
 char *		imp_prefix;
 FILE *		curr_file[NUM_FILE_TYPES];  /* ASM, ERR, OBJ and LST */
 char *		curr_fname[NUM_FILE_TYPES];
-struct fname_item *FNames;	 /* array of input files */
+char *		*FNames;	 /* array of input files */
 unsigned	cnt_fnames;	 /* items in FNames array */
 char *		IncludePath;
 struct qdesc	line_queue;	 /* line queue */
@@ -581,7 +572,7 @@ struct module_info {
     unsigned char	EndDirFound;
     unsigned char	frame_auto;		/* win64 only */
     unsigned char	NoSignExtend;		/* option nosignextend */
-    unsigned char	aflag;			/* asmc options */
+    unsigned char	simseg_init;		/* simplified segm dir flags */
     union {
 	struct {
 	unsigned char	elf_osabi;		/* for ELF */
@@ -589,7 +580,6 @@ struct module_info {
 	};
 	struct MZDATA	mz_data;		/* for MZ */
     };
-    unsigned char	simseg_init;		/* simplified segm dir flags */
     unsigned char	simseg_defd;		/* v2.09: flag if seg was defined before simseg dir */
     unsigned char	PhaseError;		/* phase error flag */
     unsigned char	CommentDataInCode;	/* OMF: emit coment records about data in code segs */
@@ -597,6 +587,7 @@ struct module_info {
     unsigned char	epiloguemode;		/* current PEM_ enum value for OPTION EPILOGUE */
     unsigned char	invoke_exprparm;	/* flag: forward refs for INVOKE params ok? */
     unsigned char	cv_opt;			/* option codeview */
+    unsigned char	strict_masm_compat;	/* -Zne option	 */
     unsigned		srcfile;		/* main source file - is an index for FNames[] */
     struct dsym		*currseg;		/* currently active segment */
     struct dsym		*flat_grp;		/* magic FLAT group */
@@ -617,7 +608,6 @@ struct module_info {
     char *		assert_proc;		/* .assert:<handler> */
     unsigned		codepage;		/* Unicode code page */
     unsigned		class_label;
-    unsigned char	strict_masm_compat;	/* -Zne option	 */
 };
 
 #define CurrSource	ModuleInfo.currsource

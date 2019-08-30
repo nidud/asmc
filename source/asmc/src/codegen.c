@@ -88,7 +88,7 @@ static void output_opc( struct code_info *CodeInfo )
     uint_8 tuple = ( rflags & RWF_MASK );
 
     if ( rflags & RWF_EVEX )
-	CodeInfo->prefix.evex = 1;
+	CodeInfo->evex = 1;
 
     /*
      * Output debug info - line numbers
@@ -103,7 +103,7 @@ static void output_opc( struct code_info *CodeInfo )
 	/* there are 2 exceptions. how to avoid this ugly hack? */
 	if ( CodeInfo->token != T_CRC32 &&
 	    CodeInfo->token != T_POPCNT )
-	CodeInfo->prefix.opsiz = FALSE;
+	CodeInfo->opsiz = FALSE;
     }
 
     /*
@@ -140,7 +140,7 @@ static void output_opc( struct code_info *CodeInfo )
     /*
      * Output EVEX instruction prefix
      */
-    if ( CodeInfo->prefix.evex ) {
+    if ( CodeInfo->evex ) {
 
 	evex = CodeInfo->pinstr->evex;
 	OutputByte( 0x62 );
@@ -149,8 +149,8 @@ static void output_opc( struct code_info *CodeInfo )
     /*
      * Output instruction prefix LOCK, REP or REP[N]E|Z
      */
-    if( CodeInfo->prefix.ins != EMPTY ) {
-	tmp = InstrTable[ IndexFromToken( CodeInfo->prefix.ins )].allowed_prefix;
+    if( CodeInfo->ins != EMPTY ) {
+	tmp = InstrTable[ IndexFromToken( CodeInfo->ins )].allowed_prefix;
 	/* instruction prefix must be ok. However, with -Zm, the plain REP
 	 * is also ok for instructions which expect REPxx.
 	 */
@@ -162,7 +162,7 @@ static void output_opc( struct code_info *CodeInfo )
 	if( ins->allowed_prefix != tmp )
 	    asmerr( 2068 );
 	else
-	    OutputByte( InstrTable[ IndexFromToken( CodeInfo->prefix.ins )].opcode );
+	    OutputByte( InstrTable[ IndexFromToken( CodeInfo->ins )].opcode );
     }
     /*
      * Output FP FWAIT if required
@@ -190,25 +190,25 @@ static void output_opc( struct code_info *CodeInfo )
      */
     switch( ins->byte1_info ) {
     case F_16:
-	if( CodeInfo->Ofssize >= USE32 ) CodeInfo->prefix.opsiz = TRUE;
+	if( CodeInfo->Ofssize >= USE32 ) CodeInfo->opsiz = TRUE;
 	break;
     case F_32:
-	if( CodeInfo->Ofssize == USE16 ) CodeInfo->prefix.opsiz = TRUE;
+	if( CodeInfo->Ofssize == USE16 ) CodeInfo->opsiz = TRUE;
 	break;
     case F_16A: /* 16-bit JCXZ and LOOPcc */
 	/* doesnt exist for IA32+ */
-	if( CodeInfo->Ofssize == USE32 ) CodeInfo->prefix.adrsiz = TRUE;
+	if( CodeInfo->Ofssize == USE32 ) CodeInfo->adrsiz = TRUE;
 	break;
     case F_32A: /* 32-bit JECXZ and LOOPcc */
 	/* in IA32+, the 32bit version gets an 0x67 prefix */
-	if ( CodeInfo->Ofssize != USE32)  CodeInfo->prefix.adrsiz = TRUE;
+	if ( CodeInfo->Ofssize != USE32)  CodeInfo->adrsiz = TRUE;
 	break;
     case F_0FNO66:
-	CodeInfo->prefix.opsiz = FALSE;
+	CodeInfo->opsiz = FALSE;
 	break;
     case F_48:
     case F_480F:
-	CodeInfo->prefix.rex |= REX_W;
+	CodeInfo->rex |= REX_W;
 	break;
     }
 
@@ -217,7 +217,7 @@ static void output_opc( struct code_info *CodeInfo )
 	case F_660F:
 	case F_660F38:
 	case F_660F3A:
-	    CodeInfo->prefix.opsiz = TRUE;
+	    CodeInfo->opsiz = TRUE;
 	    break;
 	case F_F20F:
 	case F_F20F38: OutputByte( 0xF2 ); break;
@@ -232,13 +232,13 @@ static void output_opc( struct code_info *CodeInfo )
      * by either a segment prefix or the opcode byte.
      * Neither Masm nor JWasm emit a warning, though.
      */
-    if( CodeInfo->prefix.adrsiz == TRUE
+    if( CodeInfo->adrsiz == TRUE
 
 	/* @RIP */ && !CodeInfo->base_rip && !( CodeInfo->pinstr->evex & VX_XMMI ) ) {
 
 	OutputByte( ADRSIZ );
     }
-    if( CodeInfo->prefix.opsiz == TRUE ) {
+    if( CodeInfo->opsiz == TRUE ) {
 
 	if(( ModuleInfo.curr_cpu & P_CPU_MASK ) < P_386 ) {
 	    asmerr( 2087 );
@@ -249,13 +249,13 @@ static void output_opc( struct code_info *CodeInfo )
     /*
      * Output segment prefix
      */
-    if( CodeInfo->prefix.RegOverride != EMPTY ) {
-	OutputByte( sr_prefix[CodeInfo->prefix.RegOverride] );
+    if( CodeInfo->RegOverride != EMPTY ) {
+	OutputByte( sr_prefix[CodeInfo->RegOverride] );
     }
 
     if( ins->opnd_dir ) {
-	tmp = CodeInfo->prefix.rex;
-	CodeInfo->prefix.rex = ( tmp & 0xFA ) | (( tmp & REX_R ) >> 2 ) | (( tmp & REX_B ) << 2 );
+	tmp = CodeInfo->rex;
+	CodeInfo->rex = ( tmp & 0xFA ) | (( tmp & REX_R ) >> 2 ) | (( tmp & REX_B ) << 2 );
 	/* The reg and r/m fields are backwards */
 	tmp = CodeInfo->rm_byte;
 	CodeInfo->rm_byte = ( tmp & 0xc0 ) | ((tmp >> 3) & 0x7) | ((tmp << 3) & 0x38);
@@ -338,7 +338,7 @@ static void output_opc( struct code_info *CodeInfo )
 	}
 
 	/* emit 2 (0xC4) or 3 (0xC5) byte VEX prefix */
-	if ( ins->byte1_info >= F_0F38 || ( CodeInfo->prefix.rex & ( REX_B | REX_X | REX_W ) ) ) {
+	if ( ins->byte1_info >= F_0F38 || ( CodeInfo->rex & ( REX_B | REX_X | REX_W ) ) ) {
 
 	    if ( evex == 0 )
 		OutputByte( 0xC4 );
@@ -365,10 +365,10 @@ static void output_opc( struct code_info *CodeInfo )
 		    byte1 |= VX1_M2;
 	    }
 
-	    byte1 |= ( ( CodeInfo->prefix.rex & REX_B ) ? 0 : VX1_B );
-	    byte1 |= ( ( CodeInfo->prefix.rex & REX_X ) ? 0 : VX1_X );
-	    byte1 |= ( ( CodeInfo->prefix.rex & REX_R ) ? 0 : VX1_R );
-	    byte2 |= ( ( CodeInfo->prefix.rex & REX_W ) ? VX2_W : 0 );
+	    byte1 |= ( ( CodeInfo->rex & REX_B ) ? 0 : VX1_B );
+	    byte1 |= ( ( CodeInfo->rex & REX_X ) ? 0 : VX1_X );
+	    byte1 |= ( ( CodeInfo->rex & REX_R ) ? 0 : VX1_R );
+	    byte2 |= ( ( CodeInfo->rex & REX_W ) ? VX2_W : 0 );
 
 	    if ( evex ) {
 
@@ -472,7 +472,7 @@ static void output_opc( struct code_info *CodeInfo )
 	    }
 	} else {
 
-	    byte2 |= ( ( CodeInfo->prefix.rex & REX_R ) ? 0 : 0x80 );
+	    byte2 |= ( ( CodeInfo->rex & REX_R ) ? 0 : 0x80 );
 
 	    if ( evex == 0 ) {
 		byte1 = 0xC5;
@@ -511,7 +511,7 @@ static void output_opc( struct code_info *CodeInfo )
 		}
 
 		byte1 |= ( ( evex & 0xF0 ) | 0x01 );
-		if ( CodeInfo->prefix.rex & REX_R ) {
+		if ( CodeInfo->rex & REX_R ) {
 		    byte1 = 0x61;
 		    if ( CodeInfo->opnd[OPND1].type == OP_R32 )
 			byte1 |= 0x10;
@@ -709,8 +709,9 @@ static void output_opc( struct code_info *CodeInfo )
 	} else {
 	    if ( CodeInfo->pinstr->evex & VX_XMMI ) {
 		if ( CodeInfo->pinstr->evex == 0x09 ) { /* VEX-Encoded GPR Instructions */
+		    /* tmp is "old" .rm_byte from above ... */
 		    byte2 = ( ( byte2 & 0xC7 ) | ( ( ~tmp << 3 ) & 0x38 ) );
-		    if ( CodeInfo->prefix.rex & 0x04 )
+		    if ( CodeInfo->rex & 0x04 )
 			byte2 &= 0xBF;
 		    if ( CodeInfo->token == T_BLSMSK )
 			CodeInfo->rm_byte &= 0xF7;
@@ -729,11 +730,11 @@ static void output_opc( struct code_info *CodeInfo )
     } else {
 
 	/* the REX prefix must be located after the other prefixes */
-	if( CodeInfo->prefix.rex != 0 ) {
+	if( CodeInfo->rex != 0 ) {
 	    if ( CodeInfo->Ofssize != USE64 ) {
 		asmerr( 2024 );
 	    }
-	    OutputByte( (unsigned char)(CodeInfo->prefix.rex | 0x40) );
+	    OutputByte( (unsigned char)(CodeInfo->rex | 0x40) );
 	}
 
 	/*
@@ -775,8 +776,8 @@ static void output_opc( struct code_info *CodeInfo )
 	    tmp &= ~MOD_10;
 	OutputByte( (unsigned char)tmp );
 
-	if( ( CodeInfo->Ofssize == USE16 && CodeInfo->prefix.adrsiz == 0 ) ||
-	   ( CodeInfo->Ofssize == USE32 && CodeInfo->prefix.adrsiz == 1 ) )
+	if( ( CodeInfo->Ofssize == USE16 && CodeInfo->adrsiz == 0 ) ||
+	   ( CodeInfo->Ofssize == USE32 && CodeInfo->adrsiz == 1 ) )
 	    return; /* no SIB for 16bit */
 
 	switch ( tmp & NOT_BIT_345 ) {
@@ -842,8 +843,8 @@ static void output_data( const struct code_info *CodeInfo, enum operand_type det
 	    size = 1;
 	    break;
 	case MOD_00: /* direct; base and/or index with no disp */
-	    if( ( CodeInfo->Ofssize == USE16 && CodeInfo->prefix.adrsiz == 0 ) ||
-	       ( CodeInfo->Ofssize == USE32 && CodeInfo->prefix.adrsiz == 1 ) ) {
+	    if( ( CodeInfo->Ofssize == USE16 && CodeInfo->adrsiz == 0 ) ||
+	       ( CodeInfo->Ofssize == USE32 && CodeInfo->adrsiz == 1 ) ) {
 		if( ( CodeInfo->rm_byte & BIT_012 ) == RM_D16 ) {
 		     size = 2; /* = size of displacement */
 		}
@@ -867,8 +868,8 @@ static void output_data( const struct code_info *CodeInfo, enum operand_type det
 	    }
 	    break;
 	case MOD_10:  /* 16- or 32-bit displacement */
-	    if( ( CodeInfo->Ofssize == USE16 && CodeInfo->prefix.adrsiz == 0 ) ||
-	       ( CodeInfo->Ofssize == USE32 && CodeInfo->prefix.adrsiz == 1 ) ) {
+	    if( ( CodeInfo->Ofssize == USE16 && CodeInfo->adrsiz == 0 ) ||
+	       ( CodeInfo->Ofssize == USE32 && CodeInfo->adrsiz == 1 ) ) {
 		size = 2;
 	    } else {
 		size = 4;
@@ -1025,7 +1026,7 @@ static int match_phase_3( struct code_info *CodeInfo, enum operand_type opnd1 )
 		 */
 		if( opnd1 & OP_R8 ) {
 		    /* 8-bit register, so output 8-bit data */
-		    CodeInfo->prefix.opsiz = FALSE;
+		    CodeInfo->opsiz = FALSE;
 		    opnd2 = OP_I8;
 		    if( CodeInfo->opnd[OPND2].InsFixup != NULL ) {
 		    /* v1.96: make sure FIX_HIBYTE isn't overwritten! */
@@ -1037,18 +1038,18 @@ static int match_phase_3( struct code_info *CodeInfo, enum operand_type opnd1 )
 		    opnd2 = OP_I16;
 		} else if( opnd1 & (OP_R32 | OP_R64 ) ) {
 		    /* 32- or 64-bit register, so output 32-bit data */
-		    CodeInfo->prefix.opsiz = CodeInfo->Ofssize ? 0 : 1;/* 12-feb-92 */
+		    CodeInfo->opsiz = CodeInfo->Ofssize ? 0 : 1;/* 12-feb-92 */
 		    opnd2 = OP_I32;
 		} else if( opnd1 & OP_M ) {
 		    /* there is no reason this should be only for T_MOV */
 		    switch( OperandSize( opnd1, CodeInfo ) ) {
 		    case 1:
 			opnd2 = OP_I8;
-			CodeInfo->prefix.opsiz = FALSE;
+			CodeInfo->opsiz = FALSE;
 			break;
 		    case 2:
 			opnd2 = OP_I16;
-			CodeInfo->prefix.opsiz = CodeInfo->Ofssize ? 1 : 0;
+			CodeInfo->opsiz = CodeInfo->Ofssize ? 1 : 0;
 			break;
 			/* mov [mem], imm64 doesn't exist. It's ensured that
 			 * immediate data is 32bit only
@@ -1056,7 +1057,7 @@ static int match_phase_3( struct code_info *CodeInfo, enum operand_type opnd1 )
 		    case 8:
 		    case 4:
 			opnd2 = OP_I32;
-			CodeInfo->prefix.opsiz = CodeInfo->Ofssize ? 0 : 1;
+			CodeInfo->opsiz = CodeInfo->Ofssize ? 0 : 1;
 			break;
 		    default:
 			asmerr( 2070 );
@@ -1237,7 +1238,7 @@ int codegen( struct code_info *CodeInfo, uint_32 oldofs )
  */
 {
     int retcode = ERROR;
-    uint_8 evex = CodeInfo->prefix.evex;
+    uint_8 evex = CodeInfo->evex;
     enum operand_type opnd1;
     enum operand_type tbl_op1;
 

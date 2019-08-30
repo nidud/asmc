@@ -19,10 +19,12 @@ include string.inc
 include malloc.inc
 
 include asmc.inc
+include fastpass.inc
+include memalloc.inc
+include listing.inc
+include input.inc
+include segment.inc
 
-GetLineNumber    proto
-get_curr_srcfile proto
-SetOfssize   proto
 ;
 ; current LST file position
 ;
@@ -31,12 +33,12 @@ externdef list_pos:DWORD
     .data?
     LineStore       qdesc <>
     LineStoreCurr   line_t ?        ; must be global!
-    StoreState      uint_t ?
-    UseSavedState   uint_t ?
+    StoreState      int_t ?
+    UseSavedState   int_t ?
     modstate        mod_state <>    ; struct to store assembly status
 
     .data
-    NoLineStore     uint_t 0
+    NoLineStore     int_t 0
 
     .code
 
@@ -63,14 +65,13 @@ SaveState PROC
     ret
 SaveState ENDP
 
-StoreLine PROC USES esi edi ebx sline, flags, lst_position
+StoreLine PROC USES esi edi ebx sline:string_t, flags:int_t, lst_position:uint_t
 
     xor eax,eax
     .return .if ( eax != NoLineStore )
 
-    ;
     ; don't store generated lines!
-    ;
+
     .if ModuleInfo.GeneratedCode == eax
         .if StoreState == eax   ; line store already started?
             SaveState()
@@ -158,16 +159,16 @@ SkipSavedState ENDP
 ; - it is changed
 ; - it was defined when StoreState() is called
 ;
-SaveVariableState PROC USES esi edi sym
+SaveVariableState PROC USES esi edi sym:asym_t
 
     mov esi,sym
-    or  [esi].asym.flag,SFL_ISSAVED
+    or  [esi].asym.flag,S_ISSAVED
     LclAlloc( sizeof( equ_item ) )
     mov edi,eax
     mov [edi].equ_item.next,0
     mov [edi].equ_item.sym,esi
     mov [edi].equ_item.isdefined,0
-    .if [esi].asym.flag & SFL_ISDEFINED
+    .if [esi].asym.flag & S_ISDEFINED
 
         inc [edi].equ_item.isdefined
     .endif
@@ -205,10 +206,10 @@ RestoreState PROC
             mov eax,[edx].equ_item.hvalue
             mov [ecx].asym.value3264,eax
             mov al,[edx].equ_item.mem_type
-            and [ecx].asym.flag,not SFL_ISDEFINED
+            and [ecx].asym.flag,not S_ISDEFINED
             .if [edx].equ_item.isdefined
 
-                and [ecx].asym.flag,not SFL_ISDEFINED
+                and [ecx].asym.flag,not S_ISDEFINED
             .endif
             mov edx,[edx].equ_item.next
         .endw
@@ -218,14 +219,12 @@ RestoreState PROC
         ;
         ; v2.23: save L"Unicode" flag
         ;
-        mov al,ModuleInfo.aflag
+        mov al,ModuleInfo.xflag
         push eax
-        memcpy( &ModuleInfo.proc_prologue,
-            &modstate.modinfo,
-            sizeof( modstate.modinfo ) )
+        memcpy( &ModuleInfo.proc_prologue, &modstate.modinfo, sizeof(modstate.modinfo) )
         pop eax
-        and eax,_AF_LSTRING
-        or  ModuleInfo.aflag,al
+        and eax,OPT_LSTRING
+        or  ModuleInfo.xflag,al
         SetOfssize()
         SymSetCmpFunc()
     .endif

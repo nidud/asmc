@@ -1,80 +1,70 @@
-include libc.inc
 include asmc.inc
+include fastpass.inc
 
-.pragma warning(disable: 6004)
+    .code
 
-	.code
+    assume ecx:tok_t
 
-	ASSUME	ecx:tok_t
-B	equ <SBYTE PTR>
+DelayExpand proc fastcall tokenarray:tok_t
 
-DelayExpand PROC FASTCALL tokenarray
+    xor eax,eax
+    .return .if !( [ecx].hll_flags & T_HLL_DELAY )
+    .return .if ModuleInfo.strict_masm_compat
+    .return .if Parse_Pass != PASS_1
+    .return .if eax != NoLineStore
 
-	xor	eax,eax
-	test	[tokenarray].hll_flags,T_HLL_DELAY
-	jz	toend
-	cmp	ModuleInfo.strict_masm_compat,1
-	je	toend
-	cmp	Parse_Pass,PASS_1
-	jne	toend
-	cmp	eax,NoLineStore
-	jne	toend
+    .repeat
 
-	push	ebx
-	xor	edx,edx
+        .repeat
+            .ifs eax >= ModuleInfo.token_count
+                or [ecx].hll_flags,T_HLL_DELAYED
+                .return 1
+            .endif
+            lea edx,[eax*8]
+            test [ecx+edx*2].hll_flags,T_HLL_MACRO
+            lea eax,[eax+1]
+            .continue(0) .ifz
+        .until [ecx+edx*2].token == T_OP_BRACKET
 
-find_macro:
-	cmp	eax,ModuleInfo.token_count
-	jge	delayed
-	test	[tokenarray][edx].hll_flags,T_HLL_MACRO
-	lea	edx,[edx+16]
-	lea	eax,[eax+1]
-	jz	find_macro
-	cmp	[tokenarray][edx].token,T_OP_BRACKET
-	jne	find_macro
+        mov edx,1   ; one open bracket found
+        .while 1
 
-	mov	ebx,1	; one open bracket found
+            .ifs eax >= ModuleInfo.token_count
+                or [ecx].hll_flags,T_HLL_DELAYED
+                .return 1
+            .endif
 
-macro_loop:
+            shl eax,4
+            .switch [ecx+eax].token
+              .case T_OP_BRACKET
+                add edx,1
+                .endc
+              .case T_CL_BRACKET
+                sub edx,1
+                .endc .ifnz
+                shr eax,4
+                inc eax
+                .continue(01)
+              .case T_STRING
+                push edx
+                mov  edx,[ecx+eax].string_ptr
+                .if byte ptr [edx] != '<'
+                    mov edx,[ecx+eax].tokpos
+                    .if byte ptr [edx] == '<'
+                        pop eax
+                        asmerr(7008, edx)
+                        .break
+                    .endif
+                .endif
+                pop edx
+            .endsw
+            shr eax,4
+            inc eax
+        .endw
+    .until 1
+    xor eax,eax
+    ret
 
-	lea	edx,[edx+16]
-	lea	eax,[eax+1]
-	cmp	eax,ModuleInfo.token_count
-	jge	delayed
-
-	.switch [tokenarray][edx].token
-	  .case T_OP_BRACKET
-		add	ebx,1
-		jmp	macro_loop
-	  .case T_CL_BRACKET
-		sub	ebx,1
-		jz	find_macro
-		jmp	macro_loop
-	  .case T_STRING
-		mov eax,[tokenarray][edx].string_ptr
-		.if B[eax] != '<'
-			mov eax,[tokenarray][edx].tokpos
-			.if B[eax] == '<'
-				asmerr( 7008, eax )
-				jmp nodelay
-			.endif
-		.endif
-		mov	eax,edx
-		shr	eax,4
-		jmp	macro_loop
-	.endsw
-	jmp	macro_loop
-
-delayed:
-	pop	ebx
-	or	[tokenarray].hll_flags,T_HLL_DELAYED
-	mov	eax,1
-	ret
-nodelay:
-	pop	ebx
-	xor	eax,eax
-toend:
-	ret
 DelayExpand ENDP
 
-	END
+    END

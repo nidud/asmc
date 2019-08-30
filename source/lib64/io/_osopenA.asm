@@ -14,6 +14,7 @@ _osopenA proc frame lpFileName:LPSTR, dwAccess:DWORD, dwShareMode:DWORD,
         lpSecurity:ptr, dwCreation:DWORD, dwAttributes:DWORD
 
   local handle:int_t
+  local dosretval:ulong_t
   local NameW[2048]:char_t
 
     xor eax,eax
@@ -24,8 +25,8 @@ _osopenA proc frame lpFileName:LPSTR, dwAccess:DWORD, dwShareMode:DWORD,
         inc eax
         .if eax == _nfile
 
-            mov _doserrno,0 ; no OS error
-            mov errno,EBADF
+            _set_doserrno(0) ; no OS error
+            _set_errno(EBADF)
             .return -1
         .endif
     .endw
@@ -33,8 +34,9 @@ _osopenA proc frame lpFileName:LPSTR, dwAccess:DWORD, dwShareMode:DWORD,
     mov handle,eax
     .if CreateFileA(rcx, edx, r8d, r9, dwCreation, dwAttributes, 0) == INVALID_HANDLE_VALUE
 
-        _dosmaperr(GetLastError())
-        .return .if edx != ERROR_FILENAME_EXCED_RANGE
+        mov dosretval,GetLastError()
+        _dosmaperr(eax)
+        .return .if dosretval != ERROR_FILENAME_EXCED_RANGE
 
         lea rcx,NameW
         mov rdx,rcx

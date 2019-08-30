@@ -8,7 +8,7 @@
     .code
 
 _chkstk::
-__chkstk_ms::
+___chkstk_ms::
 _alloca_probe::
 
     lea r11,[rsp+8]

@@ -1,0 +1,374 @@
+
+;; Parser items
+
+ifndef __PARSER_INC
+__PARSER_INC equ <>
+
+include operands.inc
+include fixup.inc
+
+.pragma list(push, 0)
+
+;; define tokens for SpecialTable (registers, operators, ... )
+
+T_NULL	equ 0
+enumval = 1
+
+res macro tok, string, type, value, bytval, flags, cpu, sflags
+    @CatStr(@CatStr(@CatStr(<T_>,@SubStr(<tok>,2)),< equ >),%enumval)
+    enumval = enumval + 1
+    endm
+include special.inc
+undef res
+
+;; define tokens for SpecialTable (directives)
+res macro token, string, value, bytval, flags, cpu, sflags
+    @CatStr(@CatStr(@CatStr(<T_>,@SubStr(<token>,2)),< equ >),%enumval)
+    enumval = enumval + 1
+    endm
+include directve.inc
+undef res
+    @CatStr(<SPECIAL_LAST equ >,%enumval)
+
+insa macro tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex
+    @CatStr(@CatStr(@CatStr(<T_>,@SubStr(<tok>,2)),< equ >),%enumval)
+    enumval = enumval + 1
+    endm
+insx macro tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex, flgs
+    @CatStr(@CatStr(@CatStr(<T_>,@SubStr(<tok>,2)),< equ >),%enumval)
+    enumval = enumval + 1
+    endm
+insv macro tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex, flgs, rex
+    @CatStr(@CatStr(@CatStr(<T_>,@SubStr(<tok>,2)),< equ >),%enumval)
+    enumval = enumval + 1
+    endm
+insn macro tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex
+    endm
+insm macro tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex
+    endm
+avxins macro op, tok, string, cpu, flgs
+    @CatStr(@CatStr(@CatStr(<T_>,@SubStr(<tok>,1)),< equ >),%enumval)
+    enumval = enumval + 1
+    endm
+OpCls macro op1, op2, op3
+    exitm<OPC_&op1&&op2&&op3&>
+    endm
+include instruct.h
+undef insm
+undef insn
+undef insx
+undef insv
+undef insa
+undef avxins
+
+    VEX_START equ T_VBROADCASTSS ; first VEX encoded item
+
+
+;; queue of symbols
+
+symbol_queue	STRUC
+head		dsym_t ?
+tail		dsym_t ?
+symbol_queue	ENDS
+
+queue_type	typedef SDWORD
+TAB_UNDEF	equ 0
+TAB_EXT		equ 1 ;; externals (EXTERNDEF, EXTERN, COMM, PROTO )
+TAB_SEG		equ 2 ;; SEGMENT items
+TAB_GRP		equ 3 ;; GROUP items
+TAB_PROC	equ 4 ;; PROC items
+TAB_ALIAS	equ 5 ;; ALIAS items
+TAB_LAST	equ 6 ;;
+
+;; several lists, see enum queue_type above
+externdef	SymTables:symbol_queue
+
+;; values for <rm_info> (3 bits)
+;; 000		  -> has rm_byte with w-, d- and/or s-bit in opcode
+;; 001( no_RM	) -> no rm_byte - may have w-bit
+;; 010( no_WDS	) -> has rm_byte, but w-bit, d-bit, s-bit of opcode are absent
+;; 011( R_in_OP ) -> no rm_byte, reg field (if any) is included in opcode
+
+rm_info		typedef SDWORD
+no_RM		equ 0x1
+no_WDS		equ 0x2
+R_in_OP		equ 0x3
+
+;; values for <allowed_prefix> (3 bits)
+allowed_prefix	typedef SDWORD
+;AP_NO_PREFIX	equ 0x00 ;; value 0 means "normal"
+AP_LOCK		equ 0x01
+AP_REP		equ 0x02
+AP_REPxx	equ 0x03
+AP_FWAIT	equ 0x04
+AP_NO_FWAIT	equ 0x05
+
+;; values for field type in special_item.
+;; it should match order of T_REGISTER - T_RES_ID in token.h
+
+special_type	typedef SDWORD
+RWT_REG		equ 2 ;; same value as for T_REG
+RWT_DIRECTIVE	equ 3
+RWT_UNARY_OP	equ 4
+RWT_BINARY_OP	equ 5
+RWT_STYPE	equ 6
+RWT_RES_ID	equ 7
+
+;; values for sflags if register
+op1_flags	typedef SDWORD
+SFR_SIZMSK	equ 0x7F
+SFR_IREG	equ 0x80
+SFR_SSBASED	equ 0x100
+
+rex_bits	typedef SDWORD
+REX_B		equ 1 ;; regno 0-7 <-> 8-15 of ModR/M or SIB base
+REX_X		equ 2 ;; regno 0-7 <-> 8-15 of SIB index
+REX_R		equ 4 ;; regno 0-7 <-> 8-15 of ModR/M REG
+REX_W		equ 8 ;; wide 32 <-> 64
+
+;; operand classes. this table is defined in reswords.c.
+;; index into this array is member opclsidx in instr_item.
+;; v2.06: data removed from struct instr_item.
+
+opnd_class	STRUC
+opnd_type	dd 2 dup(?)
+opnd_type_3rd	db ?	;; operand 3
+opnd_class	ENDS
+
+;; instr_item is the structure used to store instructions
+;; in InstrTable (instruct.h).
+;; Most compilers will use unsigned type for enums, just OW
+;; allows to use the smallest size possible.
+
+II_ALLOWED_PREFIX equ 0x07 ;; 3 - allowed prefix
+II_FIRST	equ 0x08 ;; 1 - 1=opcode's first entry
+II_RM_INFO	equ 0x70 ;; 3 - info on r/m byte
+II_OPND_DIR	equ 0x80 ;; 1 - operand direction
+
+instr_item	STRUC
+opclsidx	db ?	;; v2.06: index for opnd_clstab
+byte1_info	db ?	;; flags for 1st byte
+flags		db ?
+evex		db ?	;; EVEX
+cpu		dw ?
+opcode		db ?	;; opcode byte
+rm_byte		db ?	;; mod_rm_byte
+instr_item	ENDS
+instr_t		typedef ptr instr_item
+
+
+;; special_item is the structure used to store directives and
+;; other reserved words in SpecialTable (special.h).
+
+special_item	STRUC
+value		dd ?
+sflags		dd ?
+cpu		dw ?	;; CPU type
+bytval		db ?
+type		db ?
+special_item	ENDS
+
+GetRegNo macro x
+	 imul eax,x,special_item
+	 exitm<SpecialTable[eax].bytval>
+	 endm
+GetSflagsSp macro x
+	 imul eax,x,special_item
+	 exitm<SpecialTable[eax].sflags>
+	 endm
+GetValueSp macro x
+	 imul eax,x,special_item
+	 exitm<SpecialTable[eax].value>
+	 endm
+GetMemtypeSp macro x
+	 imul eax,x,special_item
+	 exitm<SpecialTable[eax].bytval>
+	 endm
+GetCpuSp macro x
+	 imul eax,x,special_item
+	 exitm<SpecialTable[eax].cpu>
+	 endm
+
+;; values for <value> if type == RWT_DIRECTIVE
+directive_flags typedef SDWORD
+
+DF_CEXPR	equ 0x01  ;; avoid '<' being used as string delimiter (.IF, ...)
+DF_STRPARM	equ 0x02  ;; directive expects string param(s) (IFB, IFDIF, ...)
+			  ;; enclose strings in <> in macro expansion step
+DF_NOEXPAND	equ 0x04  ;; don't expand params for directive (PURGE, FOR, IFDEF, ...)
+DF_LABEL	equ 0x08  ;; directive requires a label
+DF_NOSTRUC	equ 0x10  ;; directive not allowed inside structs/unions
+DF_NOCONCAT	equ 0x20  ;; don't concat line
+DF_PROC		equ 0x40  ;; directive triggers prologue generation
+DF_STORE	equ 0x80  ;; directive triggers line store
+DF_CGEN		equ 0x100 ;; directive generates lines
+
+
+;; values for <bytval> if type == RWT_DIRECTIVE
+
+enumval = 0
+res macro token, function
+    DRT_&token& @CatStr(<equ >, %enumval)
+    enumval = enumval + 1
+    exitm<>
+    endm
+include dirtype.inc
+undef res
+
+MAX_OPND	equ 3
+
+opnd_item	STRUC
+type		uint_t ?
+InsFixup	fixup_t ?
+UNION
+ STRUC
+  data32l	int_t ?
+  data32h	int_t ? ;; needed for OP_I48 and OP_I64
+ ENDS
+ data64		uint64_t ?
+ENDS
+opnd_item	ENDS
+
+;; code_info describes the current instruction. It's the communication
+;; structure between parser and code generator.
+
+;; EVEX:
+;; P1: R.X.B.R1.0.0.m1.m2
+;; P2: W.v3.v2.v1.v0.1.p1.p0
+;; P3: z.L1.L0.b.V1.a2.a1.a0
+
+VX1_R		equ 0x80
+VX1_X		equ 0x40
+VX1_B		equ 0x20
+VX1_R1		equ 0x10
+VX1_M1		equ 0x02
+VX1_M2		equ 0x01
+
+VX2_W		equ 0x80
+VX2_V3		equ 0x40
+VX2_V2		equ 0x20
+VX2_V1		equ 0x10
+VX2_V0		equ 0x08
+VX2_1		equ 0x04
+VX2_P1		equ 0x02
+VX2_P0		equ 0x01
+
+VX3_Z		equ 0x80 ;; {z}
+VX3_L1		equ 0x40
+VX3_L0		equ 0x20
+VX3_B		equ 0x10 ;; {1to4} {1to8} {1to16}
+VX3_V		equ 0x08
+VX3_A2		equ 0x04 ;; {k1..k7}
+VX3_A1		equ 0x02
+VX3_A0		equ 0x01
+
+VX_OP1V		equ 0x01 ;; set if op1..3 is [z OR y OR x]mm16..31 register
+VX_OP2V		equ 0x02
+VX_OP3V		equ 0x04
+VX_OP3		equ 0x08 ;; more than 2 instruction args used
+VX_ZMM		equ 0x10 ;; ZMM used
+VX_SAE		equ 0x20 ;; {sae} used
+
+;; pinstr->evex
+
+VX_RXB		equ 0x0F ;; P1: R.X.B.R1
+VX_XMMI		equ 0x08 ;; XMM register used as index
+VX_NV0		equ 0x04 ;; P2: V0=0
+VX_W1		equ 0x02 ;; P2: W=1
+
+CI_ISWIDE	equ 0x01 ;; 0=byte, 1=word/dword/qword
+CI_ISDIRECT	equ 0x02 ;; 1=direct addressing mode
+CI_ISFAR	equ 0x04 ;; CALL/JMP far
+CI_CONST_SIZE_FIXED equ 0x08 ;; v2.01
+CI_X86HI_USED	equ 0x10 ;; AH,BH,CH,DH used
+CI_x64LO_USED	equ 0x20 ;; SPL,BPL,SIL,DIL used
+CI_UNDEF_SYM	equ 0x40 ;; v2.06b: struct member is forward ref
+CI_BASE_RIP	equ 0x80
+
+code_info	STRUC
+inst		int_t ?
+RegOverride	int_t ?
+rex		db ?
+adrsiz		db ?	;; address size prefix 0x67 is to be emitted
+opsiz		db ?	;; operand size prefix 0x66 is to be emitted
+evex		db ?	;; EVEX prefix 0x62 is to be emitted
+evexP3		db ?
+vflags		db ?
+token		dw ?
+opnd		opnd_item MAX_OPND dup(<>)
+pinstr		instr_t ?
+mem_type	db ?	;; byte / word / etc. NOT near/far
+rm_byte		db ?
+sib		db ?
+Ofssize		db ?
+opc_or		db ?
+vexregop	db ?	;; in based-1 format (0=empty)
+flags		db ?
+code_info	ENDS
+
+OPND1		equ 0
+OPND2		equ 1
+OPND3		equ 2
+OPNI2		equ OPND2 * sizeof(opnd_item)
+OPNI3		equ OPND3 * sizeof(opnd_item)
+
+;; branch instructions are still sorted:
+;; CALL, JMP, Jcc, J[e|r]CXZ, LOOP, LOOPcc
+
+IS_CALL macro inst
+    exitm<(inst == T_CALL)>
+    endm
+IS_JMPCALL macro inst
+    exitm<(inst == T_CALL || inst ==  T_JMP)>
+    endm
+IS_JMP macro inst
+    exitm<(inst >= T_JMP && inst < T_LOOP)>
+    endm
+IS_JCC macro inst
+    exitm<(inst > T_JMP && inst < T_JCXZ)>
+    endm
+IS_BRANCH macro inst
+    exitm<(inst >= T_CALL && inst < T_LOOP)>
+    endm
+IS_ANY_BRANCH macro inst
+    exitm<(inst !>= T_CALL && inst !<= T_LOOPNZW)>
+    endm
+IS_XCX_BRANCH macro inst
+    exitm<(inst >= T_JCXZ && inst < T_LOOPNZW)>
+    endm
+IS_OPER_32 macro s
+    xor eax,eax
+    cmp [s].Ofssize,al
+    setz al
+    exitm<[s].opsiz == al>
+    endm
+
+
+;; globals
+
+externdef InstrTable:instr_item		;; instruction table
+externdef SpecialTable:special_item	;; rest of res words
+externdef optable_idx:ushort_t		;; helper, access thru IndexFromToken() only
+
+IndexFromToken macro tok
+    sub tok,SPECIAL_LAST
+    exitm<optable_idx[tok*2]>
+    endm
+
+SizeFromMemtype		proto :uchar_t, :int_t, :asym_t
+MemtypeFromSize		proto :int_t, :ptr uchar_t
+SizeFromRegister	proto :int_t
+GetLangType		proto :ptr int_t, :ptr asm_tok, :ptr uchar_t
+sym_add_table		proto :ptr symbol_queue, :dsym_t
+sym_remove_table	proto :ptr symbol_queue, :dsym_t
+sym_ext2int		proto :asym_t
+OperandSize		proto :int_t, :ptr code_info
+set_frame		proto :asym_t
+set_frame2		proto :asym_t
+ParseLine		proto :tok_t
+ProcessFile		proto :tok_t
+WritePreprocessedLine	proto :string_t
+parsevex		proto :string_t, :ptr uchar_t
+
+.pragma list(pop)
+endif

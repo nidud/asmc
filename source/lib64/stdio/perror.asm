@@ -13,15 +13,12 @@ include io.inc
 perror proc frame message:string_t
 
     .if rcx
-
         .if byte ptr [rcx]
 
             _write(2, message, strlen(rcx))
             _write(2, ": ", 2)
         .endif
-
-        mov ecx,_errno()
-        mov message,_get_sys_err_msg(ecx)
+        mov message,_get_sys_err_msg(_get_errno(0))
         _write(2, message, strlen(rax))
         _write(2, "\n", 1)
     .endif

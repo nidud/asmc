@@ -1,7 +1,11 @@
 include malloc.inc
-include stdio.inc
-include string.inc
 include asmc.inc
+include symbols.inc
+include parser.inc
+include input.inc
+include tokenize.inc
+include memalloc.inc
+include fastpass.inc
 
 MACRO_CSTRING   equ 1
 TOK_DEFAULT     equ 0
@@ -53,13 +57,13 @@ ParseCString PROC PRIVATE USES esi edi ebx lbuf:string_t, buffer:string_t, strin
     mov [edx],ebx
 
     xor eax,eax
-    .if ModuleInfo.aflag & _AF_WSTRING
+    .if ModuleInfo.xflag & OPT_WSTRING
 
         mov eax,1
     .endif
     .if WORD PTR [esi] == '"L'
 
-        or  ModuleInfo.aflag,_AF_LSTRING
+        or  ModuleInfo.xflag,OPT_LSTRING
         mov eax,1
         add esi,1
     .endif
@@ -338,9 +342,9 @@ local   rc:                     int_t,
         ;
         ; proc( "", ( ... ), "" )
         ;
-        .while [ebx].asmtok.token != T_FINAL
+        .while [ebx].asm_tok.token != T_FINAL
 
-            mov ecx,[ebx].asmtok.string_ptr
+            mov ecx,[ebx].asm_tok.string_ptr
             movzx ecx,WORD PTR [ecx]
 
             .switch cl
@@ -376,13 +380,13 @@ local   rc:                     int_t,
         add edi,line_item.line
         strcpy(b_line, edi)
         mov BYTE PTR [edi],';'
-        mov equal,strcmp(eax, [esi].asmtok.tokpos)
+        mov equal,strcmp(eax, [esi].asm_tok.tokpos)
         mov al,ModuleInfo.line_flags
         mov lineflags,al
 
-        .while [ebx].asmtok.token != T_FINAL
+        .while [ebx].asm_tok.token != T_FINAL
 
-            mov ecx,[ebx].asmtok.tokpos
+            mov ecx,[ebx].asm_tok.tokpos
             mov ax,[ecx]
             .if al == '"' || ax == '"L'
 
@@ -392,8 +396,8 @@ local   rc:                     int_t,
                 ;
                 ; v2.28 -- token behind may be 'L'
                 ;
-                .if [ebx-16].asmtok.token == T_ID
-                    mov eax,[ebx-16].asmtok.string_ptr
+                .if [ebx-16].asm_tok.token == T_ID
+                    mov eax,[ebx-16].asm_tok.string_ptr
                     mov eax,[eax]
                     .if ax == 'L'
                         sub q,16
@@ -420,7 +424,7 @@ local   rc:                     int_t,
 
                         mov edi,eax
                         lea eax,[edi+esi]
-                        M_SKIP_SPACE ecx, eax
+                        SkipSpace(ecx, eax)
 
                         .if ecx != ',' && ecx != ')'
 
@@ -468,17 +472,17 @@ local   rc:                     int_t,
                 .endif
 
                 mov eax,q
-                mov eax,[eax].asmtok.tokpos
+                mov eax,[eax].asm_tok.tokpos
                 mov BYTE PTR [eax],0
                 mov eax,tokenarray
-                mov ecx,[eax].asmtok.tokpos
-                strcat( strcpy( buffer, ecx ), "addr " )
-                strcat( eax, b_label )
-                M_SKIP_SPACE ecx, esi
+                mov ecx,[eax].asm_tok.tokpos
+                strcat(strcpy( buffer, ecx), "addr ")
+                strcat(eax, b_label)
+                SkipSpace(ecx, esi)
 
                 .if ecx
 
-                    strcat( strcat( eax, " " ), esi )
+                    strcat(strcat(eax, " " ), esi)
                 .endif
 
                 .if NewString
@@ -545,19 +549,19 @@ CString PROC USES esi edi ebx buffer:string_t, tokenarray:tok_t
     mov dlabel,eax
 
     mov ebx,tokenarray
-    mov edi,_stricmp([ebx].asmtok.string_ptr, "@CStr")
+    mov edi,_stricmp([ebx].asm_tok.string_ptr, "@CStr")
 
     .if edi
 
-        .while [ebx].asmtok.token != T_FINAL
+        .while [ebx].asm_tok.token != T_FINAL
 
-            .break .if !_stricmp([ebx].asmtok.string_ptr, "@CStr")
+            .break .if !_stricmp([ebx].asm_tok.string_ptr, "@CStr")
             add ebx,16
         .endw
 
-        .if [ebx].asmtok.token == T_FINAL && [ebx+16].asmtok.token == T_OP_BRACKET
+        .if [ebx].asm_tok.token == T_FINAL && [ebx+16].asm_tok.token == T_OP_BRACKET
             add ebx,16
-        .elseif [ebx].asmtok.token != T_FINAL
+        .elseif [ebx].asm_tok.token != T_FINAL
             add ebx,16
         .else
             mov ebx,tokenarray
@@ -566,18 +570,18 @@ CString PROC USES esi edi ebx buffer:string_t, tokenarray:tok_t
 
     xor eax,eax
 
-    .while [ebx].asmtok.token != T_FINAL
+    .while [ebx].asm_tok.token != T_FINAL
 
-        mov esi,[ebx].asmtok.tokpos
+        mov esi,[ebx].asm_tok.tokpos
         ;
         ; v2.28 - .data --> .const
         ;
         ; - dq @CStr(L"CONST")
         ; - dq @CStr(ID)
         ;
-        .if [ebx].asmtok.token == T_ID && [ebx-16].asmtok.token == T_OP_BRACKET
+        .if [ebx].asm_tok.token == T_ID && [ebx-16].asm_tok.token == T_OP_BRACKET
 
-            .if SymFind( [ebx].asmtok.string_ptr )
+            .if SymFind( [ebx].asm_tok.string_ptr )
 
                 mov eax,[eax].asym.string_ptr
                 .if BYTE PTR [eax] == '"' || WORD PTR [eax] == '"L'

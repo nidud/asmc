@@ -144,7 +144,7 @@ struct line_item *RestoreState( void )
 {
     if ( modstate.init ) {
 	struct equ_item *curr;
-	unsigned char aflag = ( ModuleInfo.aflag & _AF_LSTRING );
+	unsigned char aflag = ( ModuleInfo.xflag & OPT_LSTRING );
 	/* restore values of assembly time variables */
 	for ( curr = modstate.Equ.head; curr; curr = curr->next ) {
 	    /* v2.07: MT_ABS is obsolete */
@@ -158,7 +158,7 @@ struct line_item *RestoreState( void )
 	 * v2.23: save L"Unicode" flag
 	 */
 	memcpy( (char *)&ModuleInfo + sizeof( struct module_vars ), &modstate.modinfo, sizeof( modstate.modinfo ) );
-	ModuleInfo.aflag |= aflag;
+	ModuleInfo.xflag |= aflag;
 	SetOfssize();
 	SymSetCmpFunc();
     }

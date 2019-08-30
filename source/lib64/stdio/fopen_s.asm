@@ -19,7 +19,7 @@ fopen_s proc uses rdi pFile:ptr ptr FILE, filename:ptr sbyte, mode:ptr sbyte
 
     .if !fopen(rcx, rdx)
 
-        mov eax,errno
+        _get_errno(0)
 
     .else
 

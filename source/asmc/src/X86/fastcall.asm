@@ -4,7 +4,15 @@ include malloc.inc
 include stdio.inc
 include quadmath.inc
 include asmc.inc
-include token.inc
+include lqueue.inc
+include parser.inc
+include reswords.inc
+include segment.inc
+include operands.inc
+include expreval.inc
+include atofloat.inc
+include memalloc.inc
+
 
 .pragma warning(disable: 6004)
 
@@ -110,10 +118,10 @@ GetSegmentPart proc uses esi edi ebx opnd:ptr expr, buffer:string_t, fullparam:s
 
     .if edx
 
-        .if [edx].asmtok.token == T_REG
-            mov esi,[edx].asmtok.tokval
+        .if [edx].asm_tok.token == T_REG
+            mov esi,[edx].asm_tok.tokval
         .else
-            strcpy( buffer, [edx].asmtok.string_ptr )
+            strcpy( buffer, [edx].asm_tok.string_ptr )
         .endif
 
     .elseif eax && [eax].asym._segment
@@ -252,8 +260,8 @@ ms32_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
                 .endif
             .else
                 mov eax,[edi].expr.base_reg
-                .if [edi].expr.kind == EXPR_REG && !([edi].expr.flags1 & EXF_INDIRECT) && eax
-                    .if [eax].asmtok.tokval == ebx
+                .if [edi].expr.kind == EXPR_REG && !([edi].expr.flags & E_INDIRECT) && eax
+                    .if [eax].asm_tok.tokval == ebx
                         mov eax,1
                         .break
                     .endif
@@ -333,9 +341,9 @@ vc32_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
             .if ebx < T_XMM0 && [edi].expr.kind != EXPR_CONST && eax < 4
 
                 mov ecx,[edi].expr.base_reg
-                .if !eax && [edi].expr.kind == EXPR_REG && !( [edi].expr.flags1 & EXF_INDIRECT ) && ecx
+                .if !eax && [edi].expr.kind == EXPR_REG && !( [edi].expr.flags & E_INDIRECT ) && ecx
 
-                    .if [ecx].asmtok.tokval == ebx
+                    .if [ecx].asm_tok.tokval == ebx
 
                         inc eax
                         .break
@@ -352,9 +360,9 @@ vc32_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
                 AddLineQueueX(" %r %r, %s", ecx, ebx, paramvalue)
             .else
                 mov ecx,[edi].expr.base_reg
-                .if [edi].expr.kind == EXPR_REG && !( [edi].expr.flags1 & EXF_INDIRECT ) && ecx
+                .if [edi].expr.kind == EXPR_REG && !( [edi].expr.flags & E_INDIRECT ) && ecx
 
-                    .if [ecx].asmtok.tokval == ebx
+                    .if [ecx].asm_tok.tokval == ebx
 
                         inc eax
                         .break
@@ -389,12 +397,12 @@ vc32_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
                       .case MT_REAL16
                         xor eax,eax
                         mov edx,paramvalue
-                        .if ( [edi].expr.flags1 & EXF_NEGATIVE )
+                        .if ( [edi].expr.flags & E_NEGATIVE )
                             inc eax
                         .endif
                         mov ecx,[edi].expr.float_tok
                         .if ecx
-                            mov edx,[ecx].asmtok.string_ptr
+                            mov edx,[ecx].asm_tok.string_ptr
                         .endif
                         atofloat( edi, edx, 16, eax, 0 )
                         lea esi,value
@@ -579,7 +587,7 @@ watc_fcend proc pp, numparams, value
     mov eax,pp
     mov edx,[eax].dsym.procinfo
     mov eax,[edx].proc_info.parasize
-    .if [edx].proc_info.flags & PINF_HAS_VARARG
+    .if [edx].proc_info.flags & PROC_HAS_VARARG
         add eax,size_vararg
     .elseif fcscratch < eax
         sub eax,fcscratch
@@ -605,9 +613,9 @@ ms64_fcstart proc uses esi edi pp:dsym_t, numparams:int_t, start:int_t,
     shl edx,4
     add edx,tokenarray
 
-    .for ( eax = 0 : [edx].asmtok.token != T_FINAL : edx += 16 )
+    .for ( eax = 0 : [edx].asm_tok.token != T_FINAL : edx += 16 )
 
-        .if ( [edx].asmtok.token == T_REG && [edx+16].asmtok.token == T_DBL_COLON )
+        .if ( [edx].asm_tok.token == T_REG && [edx+16].asm_tok.token == T_DBL_COLON )
 
             add edx,32
             inc eax
@@ -633,14 +641,14 @@ ms64_fcstart proc uses esi edi pp:dsym_t, numparams:int_t, start:int_t,
     ; v2.04: VARARG didn't work
 
     mov edx,[edx].dsym.procinfo
-    .if ( [edx].proc_info.flags & PINF_HAS_VARARG )
+    .if ( [edx].proc_info.flags & PROC_HAS_VARARG )
 
         .for ( ecx = start,
                ecx <<= 4,
                ecx += tokenarray,
-               eax = 0 : [ecx].asmtok.token != T_FINAL : ecx += 16 )
+               eax = 0 : [ecx].asm_tok.token != T_FINAL : ecx += 16 )
 
-            .if ( [ecx].asmtok.token == T_COMMA )
+            .if ( [ecx].asm_tok.token == T_COMMA )
 
                 inc eax
             .endif
@@ -697,7 +705,7 @@ check_register_overwrite proc uses esi edi ebx opnd:ptr expr,
     .if [edi].expr.base_reg
 
         mov ebx,[edi].expr.base_reg
-        mov ebx,[ebx].asmtok.tokval
+        mov ebx,[ebx].asm_tok.tokval
         mov eax,reg
         mov [eax],ebx
 
@@ -732,7 +740,7 @@ check_register_overwrite proc uses esi edi ebx opnd:ptr expr,
     .if [edi].expr.kind == EXPR_ADDR && [edi].expr.idx_reg
 
         mov ebx,[edi].expr.idx_reg
-        mov ebx,[ebx].asmtok.tokval
+        mov ebx,[ebx].asm_tok.tokval
 
         .if GetValueSp(ebx) & OP_R
 
@@ -781,9 +789,9 @@ GetPSize proc adr
         .if adr || [edi].expr.inst == T_OFFSET
             mov eax,8
         .elseif [edi].expr.kind == EXPR_REG
-            .if !( [edi].expr.flags1 & EXF_INDIRECT )
+            .if !( [edi].expr.flags & E_INDIRECT )
                 mov eax,[edi].expr.base_reg
-                SizeFromRegister([eax].asmtok.tokval)
+                SizeFromRegister([eax].asm_tok.tokval)
             .else
                 mov eax,8
             .endif
@@ -807,7 +815,7 @@ CheckXMM proc uses ebx reg:int_t, paramvalue:string_t, regs_used:ptr byte, param
     ;
     .repeat
 
-        .if [edi].expr.kind == EXPR_REG && !( [edi].expr.flags1 & EXF_INDIRECT )
+        .if [edi].expr.kind == EXPR_REG && !( [edi].expr.flags & E_INDIRECT )
 
             .if GetValueSp( reg ) & OP_XMM
 
@@ -996,7 +1004,7 @@ ms64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
                 mov eax,[edi].expr.kind
 
                 .if eax == EXPR_CONST || \
-                  ( eax == EXPR_ADDR && !( [edi].expr.flags1 & EXF_INDIRECT ) && \
+                  ( eax == EXPR_ADDR && !( [edi].expr.flags & E_INDIRECT ) && \
                     [edi].expr.mem_type == MT_EMPTY && [edi].expr.inst != T_OFFSET )
 
                     ;
@@ -1054,7 +1062,7 @@ ms64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
 
                 .else ; it's a register or variable
 
-                    .if [edi].expr.kind == EXPR_REG && !( [edi].expr.flags1 & EXF_INDIRECT )
+                    .if [edi].expr.kind == EXPR_REG && !( [edi].expr.flags & E_INDIRECT )
 
                         .if vector_call && esi < 6 && ( [edx].asym.mem_type & MT_FLOAT || \
                             [edx].asym.mem_type == MT_OWORD )
@@ -1130,7 +1138,7 @@ ms64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
                             .endif
                             AddLineQueueX(" %r %r, %s", ecx, i, paramvalue)
                         .endif
-                    .elseif [edi].expr.kind != EXPR_REG || [edi].expr.flags1 & EXF_INDIRECT
+                    .elseif [edi].expr.kind != EXPR_REG || [edi].expr.flags & E_INDIRECT
                         mov eax,paramvalue
                         .if ( word ptr [eax] == "0" || \
                             ( [edi].expr.kind == EXPR_CONST && [edi].expr.value == 0 ) )
@@ -1155,15 +1163,15 @@ ms64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
 
             mov ecx,[edi].expr.kind
             xor ebx,ebx
-            .if ecx == EXPR_REG && !( [edi].expr.flags1 & EXF_INDIRECT )
+            .if ecx == EXPR_REG && !( [edi].expr.flags & E_INDIRECT )
 
                 mov eax,[edi].expr.base_reg
 
-                .if [eax+16].asmtok.token == T_DBL_COLON
+                .if [eax+16].asm_tok.token == T_DBL_COLON
                     ;
                     ; case <reg>::<reg>
                     ;
-                    mov ebx,[eax+32].asmtok.tokval
+                    mov ebx,[eax+32].asm_tok.tokval
                     .if fcscratch
                         dec fcscratch
                     .endif
@@ -1200,9 +1208,9 @@ ms64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
                 ; register argument
                 ;
                 mov eax,8
-                .endc .if ( [edi].expr.flags1 & EXF_INDIRECT )
+                .endc .if ( [edi].expr.flags & E_INDIRECT )
                 mov eax,[edi].expr.base_reg
-                mov eax,[eax].asmtok.tokval
+                mov eax,[eax].asm_tok.tokval
                 mov reg,eax
                 SizeFromRegister(eax)
                 .endc
@@ -1262,7 +1270,7 @@ ms64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
             ;
             ; optimization if the register holds the value already
             ;
-            .if [edi].expr.kind == EXPR_REG && !([edi].expr.flags1 & EXF_INDIRECT)
+            .if [edi].expr.kind == EXPR_REG && !([edi].expr.flags & E_INDIRECT)
 
                 .if GetValueSp(reg) & OP_R
 
@@ -1497,7 +1505,7 @@ elf64_fcstart proc uses esi edi ebx pp:dsym_t, numparams:int_t, start:int_t,
     mov edx,[edx].dsym.procinfo
     xor esi,esi
 
-    .if [edx].proc_info.flags & PINF_HAS_VARARG
+    .if [edx].proc_info.flags & PROC_HAS_VARARG
 
         mov ebx,start
         shl ebx,4
@@ -1512,7 +1520,7 @@ elf64_fcstart proc uses esi edi ebx pp:dsym_t, numparams:int_t, start:int_t,
                     inc fcscratch
                 .endif
 
-            .elseif [ebx].asmtok.token == T_ID
+            .elseif [ebx].asm_tok.token == T_ID
 
                 .if SymFind([ebx].string_ptr)
 
@@ -1652,7 +1660,7 @@ elf64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_
 
             mov eax,[edi].base_reg
             .if eax
-                mov eax,[eax].asmtok.tokval
+                mov eax,[eax].asm_tok.tokval
             .endif
             CheckXMM(eax, paramvalue, regs_used, edx)
             .break
@@ -1683,10 +1691,10 @@ elf64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_
             ; register argument
 
             mov eax,8
-            .endc .if ( [edi].flags1 & EXF_INDIRECT )
+            .endc .if ( [edi].flags & E_INDIRECT )
 
             mov eax,[edi].base_reg
-            mov eax,[eax].asmtok.tokval
+            mov eax,[eax].asm_tok.tokval
             mov reg,eax
             SizeFromRegister(eax)
             .endc
@@ -1723,12 +1731,12 @@ elf64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_
 
         ; optimization if the register holds the value already
 
-        .if ( [edi].kind == EXPR_REG && !( [edi].flags1 & EXF_INDIRECT ) )
+        .if ( [edi].kind == EXPR_REG && !( [edi].flags & E_INDIRECT ) )
 
             .if GetValueSp(reg) & OP_XMM
 
                 mov eax,[edi].base_reg
-                mov eax,[eax].asmtok.tokval
+                mov eax,[eax].asm_tok.tokval
                 CheckXMM(eax, paramvalue, regs_used, param)
                 .return 1
             .endif
@@ -1739,9 +1747,9 @@ elf64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_
 
                 ; case <reg>::<reg>
 
-                .if psize == 16 && z == 8 && [eax+16].asmtok.token == T_DBL_COLON
+                .if psize == 16 && z == 8 && [eax+16].asm_tok.token == T_DBL_COLON
 
-                    mov ecx,[eax+32].asmtok.tokval
+                    mov ecx,[eax+32].asm_tok.tokval
                     .if ebx != ecx
                         AddLineQueueX(" mov %r, %r", ebx, ecx)
                     .endif
@@ -1832,8 +1840,8 @@ elf64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_
 
 
             movzx ebx,elf64_regs[esi+3*6+1]
-            movzx eax,[edi].flags1
-            and eax,EXF_NEGATIVE
+            movzx eax,[edi].flags
+            and eax,E_NEGATIVE
             elf64_const(ebx, T_HIGH64, [edi].hlvalue, paramvalue, eax)
             .break
 
@@ -1851,8 +1859,8 @@ elf64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_
             .break .if z != 16
 
             movzx ebx,elf64_regs[esi+3*6+1]
-            movzx eax,[edi].flags1
-            and eax,EXF_NEGATIVE
+            movzx eax,[edi].flags
+            and eax,E_NEGATIVE
             elf64_const(ebx, T_HIGH64, [edi].hlvalue, paramvalue, eax)
             .break
         .endif
@@ -1869,8 +1877,8 @@ elf64_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_
         .if [edi].kind == EXPR_CONST
 
             elf64_const(eax, T_LOW64, [edi].llvalue, paramvalue, 0)
-            movzx eax,[edi].flags1
-            and eax,EXF_NEGATIVE
+            movzx eax,[edi].flags
+            and eax,E_NEGATIVE
             elf64_const(ebx, T_HIGH64, [edi].hlvalue, paramvalue, eax)
             .break
         .endif

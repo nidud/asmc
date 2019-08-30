@@ -55,7 +55,7 @@ _chsize proc frame uses rdi rsi handle:int_t, new_size:qword
             oswrite(handle, &buffer, rsi)
         .until rax != rsi
 
-        mov errno,ERROR_DISK_FULL
+        _set_errno(ERROR_DISK_FULL)
         .return -1
 
     .until 1

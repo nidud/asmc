@@ -74,10 +74,10 @@ void AddFloatingPointEmulationFixup( struct code_info *CodeInfo )
 
     if( CodeInfo->token == T_FWAIT ) {
 	patch = FPP_WAIT;
-    } else if ( CodeInfo->prefix.RegOverride == EMPTY ) {
+    } else if ( CodeInfo->RegOverride == EMPTY ) {
 	patch = FPP_NORMAL;
     } else {
-	patch = CodeInfo->prefix.RegOverride + 2;
+	patch = CodeInfo->RegOverride + 2;
     }
 
     /* emit 1-2 externals for the patch if not done already */

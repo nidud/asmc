@@ -37,10 +37,10 @@ _sopen proc uses rsi rdi rbx path:LPSTR, oflag:UINT, shflag:UINT, args:VARARG
     ;
     ; figure out binary/text mode
     ;
-    .if !(eax & O_BINARY)
-        .if eax & O_TEXT
+    .if !( eax & O_BINARY )
+        .if ( eax & O_TEXT )
             or bl,FH_TEXT
-        .elseif _fmode != O_BINARY  ; check default mode
+        .elseif ( _fmode != O_BINARY ) ; check default mode
             or bl,FH_TEXT
         .endif
     .endif
@@ -50,19 +50,17 @@ _sopen proc uses rsi rdi rbx path:LPSTR, oflag:UINT, shflag:UINT, args:VARARG
     ;
     and eax,O_RDONLY or O_WRONLY or O_RDWR
     mov edi,GENERIC_READ        ; read access
-    .if eax != O_RDONLY
+    .if ( eax != O_RDONLY )
 
         mov edi,GENERIC_WRITE   ; write access
-        .if eax != O_WRONLY
+        .if ( eax != O_WRONLY )
 
             mov edi,GENERIC_READ or GENERIC_WRITE
-            .if eax != O_RDWR
+            .if ( eax != O_RDWR )
 
-                mov errno,EINVAL
-                xor eax,eax
-                mov _doserrno,eax
-                dec rax
-                .return
+                _set_errno(EINVAL)
+                _set_doserrno(0)
+                .return -1
             .endif
         .endif
     .endif
@@ -84,11 +82,9 @@ _sopen proc uses rsi rdi rbx path:LPSTR, oflag:UINT, shflag:UINT, args:VARARG
         xor r8d,r8d                 ; exclusive access
         .if eax != SH_DENYRW
 
-            mov errno,EINVAL
-            xor eax,eax
-            mov _doserrno,eax
-            dec rax
-            .return
+            _set_errno(EINVAL)
+            _set_doserrno(0)
+            .return -1
         .endif
     .endsw
     ;
@@ -116,48 +112,52 @@ _sopen proc uses rsi rdi rbx path:LPSTR, oflag:UINT, shflag:UINT, args:VARARG
         mov eax,TRUNCATE_EXISTING
         .endc
       .default
-        mov errno,EINVAL
-        xor eax,eax
-        mov _doserrno,eax
-        dec rax
-        .return
+        _set_errno(EINVAL)
+        _set_doserrno(0)
+        .return -1
     .endsw
 
     mov r10d,FILE_ATTRIBUTE_NORMAL
-    .if edx & O_CREAT
+    .if ( edx & O_CREAT )
+
         mov r11d,_umaskval
         not r11d
         and r9d,r11d
-        .if !(r9d & S_IWRITE)
+
+        .if !( r9d & S_IWRITE )
+
             mov r10d,FILE_ATTRIBUTE_READONLY
         .endif
     .endif
 
-    .if edx & O_TEMPORARY
+    .if ( edx & O_TEMPORARY )
+
         or r10d,FILE_FLAG_DELETE_ON_CLOSE
         or edi,M_DELETE
     .endif
-    .if edx & O_SHORT_LIVED
+
+    .if ( edx & O_SHORT_LIVED )
+
         or r10d,FILE_ATTRIBUTE_TEMPORARY
     .endif
-    .if edx & O_SEQUENTIAL
+    .if ( edx & O_SEQUENTIAL )
+
         or r10d,FILE_FLAG_SEQUENTIAL_SCAN
-    .elseif edx & O_RANDOM
+    .elseif ( edx & O_RANDOM )
+
         or r10d,FILE_FLAG_RANDOM_ACCESS
     .endif
 
     xor esi,esi
     lea r11,_osfile
-    .while byte ptr [r11+rsi] & FH_OPEN
+    .while ( byte ptr [r11+rsi] & FH_OPEN )
 
         inc esi
         .if esi == _nfile
 
-            xor eax,eax
-            mov _doserrno,eax ; no OS error
-            mov errno,EBADF
-            dec rax
-            .return
+            _set_doserrno(0) ; no OS error
+            _set_errno(EBADF)
+            .return -1
         .endif
     .endw
 
@@ -176,9 +176,9 @@ _sopen proc uses rsi rdi rbx path:LPSTR, oflag:UINT, shflag:UINT, args:VARARG
 
         .return .ifd GetFileType(rax) == FILE_TYPE_UNKNOWN
 
-        .if eax == FILE_TYPE_CHAR
+        .if ( eax == FILE_TYPE_CHAR )
             or bl,FH_DEVICE
-        .elseif eax == FILE_TYPE_PIPE
+        .elseif ( eax == FILE_TYPE_PIPE )
             or bl,FH_PIPE
         .endif
         lea rax,_osfile
@@ -198,8 +198,10 @@ _sopen proc uses rsi rdi rbx path:LPSTR, oflag:UINT, shflag:UINT, args:VARARG
                     .endif
                 .endif
                 .return .ifd _lseek(esi, 0, SEEK_SET) == -1
-            .elseif _doserrno != ERROR_NEGATIVE_SEEK
-                .return
+
+            .elseif _get_doserrno(0) != ERROR_NEGATIVE_SEEK
+
+                .return -1
             .endif
         .endif
 
@@ -209,12 +211,11 @@ _sopen proc uses rsi rdi rbx path:LPSTR, oflag:UINT, shflag:UINT, args:VARARG
 
             or byte ptr [rax],FH_APPEND
         .endif
-        mov eax,esi
-        .return
+        .return esi
     .endw
+
     _close(esi)
-    xor eax,eax
-    dec rax
+    mov eax,-1
     ret
 
 _sopen endp

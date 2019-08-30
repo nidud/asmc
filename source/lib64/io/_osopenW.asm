@@ -24,8 +24,8 @@ _osopenW proc frame lpFileName:LPWSTR, dwAccess:DWORD, dwShareMode:DWORD,
         inc eax
         .if eax == _nfile
 
-            mov _doserrno,0 ; no OS error
-            mov errno,EBADF
+            _set_doserrno(0) ; no OS error
+            _set_errno(EBADF)
             .return -1
         .endif
     .endw

@@ -67,7 +67,7 @@ ftell proc frame uses rdi rbx fp:LPFILE
 
     .elseif !( ecx & _IORW )
 
-        mov errno,EINVAL
+        _set_errno(EINVAL)
         .return -1
     .endif
 

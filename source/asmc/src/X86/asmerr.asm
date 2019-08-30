@@ -6,6 +6,9 @@ include setjmp.inc
 include limits.inc
 
 include asmc.inc
+include symbols.inc
+include input.inc
+include listing.inc
 
 warning_disable proto id:int_t
 
@@ -470,7 +473,7 @@ errexit proc private
 errexit endp
 
 
-asmerr proc uses esi edi ebx edx ecx value, args:VARARG
+asmerr proc uses esi edi ebx edx ecx value:int_t, args:vararg
 
   local format[512]:byte, erbuf[512]:byte
 
@@ -503,11 +506,8 @@ asmerr proc uses esi edi ebx edx ecx value, args:VARARG
                 mov     eax,[edx].src_item.line_num
                 cmp     [edx].src_item.type,SIT_FILE
                 mov     edx,[edx].src_item.next
-
                 .ifz
-
                     .if ModuleInfo.EndDirFound
-
                         sprintf(edi, "%s : ", ecx)
                     .else
                         sprintf(edi, "%s(%u) : ", ecx, eax)
@@ -605,7 +605,7 @@ WriteError proc
 WriteError endp
 
 
-PrintNote proc value, args:VARARG
+PrintNote proc value:int_t, args:vararg
 
   local erbuf[512]:byte
 

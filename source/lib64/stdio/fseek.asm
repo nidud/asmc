@@ -24,7 +24,7 @@ fseek proc uses rsi rdi rbx fp:LPFILE, off:SIZE_T, whence:SIZE_T
     .if r8b != SEEK_SET && r8b != SEEK_CUR && r8b != SEEK_END \
          && !( eax & _IOREAD or _IOWRT or _IORW )
 
-        mov errno,EINVAL
+        _set_errno(EINVAL)
         .return -1
     .endif
 

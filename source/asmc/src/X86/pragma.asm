@@ -21,8 +21,7 @@ include malloc.inc
 include string.inc
 
 include asmc.inc
-include hll.inc
-include token.inc
+include hllext.inc
 
 warning  struct
 id       short_t ?

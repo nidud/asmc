@@ -2051,7 +2051,7 @@ static int write_default_prologue( void )
     int resstack = 0;
     int cstack;
 
-    cstack = ( ( ModuleInfo.aflag & _AF_CSTACK ) && ( ModuleInfo.Ofssize == USE64 ||
+    cstack = ( ( ModuleInfo.xflag & OPT_CSTACK ) && ( ModuleInfo.Ofssize == USE64 ||
 	       ( ModuleInfo.Ofssize == USE32 &&
 		 ( CurrProc->sym.langtype == LANG_STDCALL || CurrProc->sym.langtype == LANG_C ) ) ) );
     info = CurrProc->e.procinfo;
@@ -2435,7 +2435,7 @@ runqueue:
 	}
     }
 
-    if ( ( ModuleInfo.aflag & _AF_CSTACK ) &&
+    if ( ( ModuleInfo.xflag & OPT_CSTACK ) &&
 	( ModuleInfo.basereg[ModuleInfo.Ofssize] == T_RBP ||
 	  ModuleInfo.basereg[ModuleInfo.Ofssize] == T_EBP ) ) {
 	regsize = wsize * cntstd + 16 * cntxmm;
@@ -2615,7 +2615,7 @@ static void write_default_epilogue( void )
     int sysstack;
     int leave;
     int resstack = 0;
-    int cstack = ( ( ModuleInfo.aflag & _AF_CSTACK ) && ( ( ( CurrProc->sym.langtype == LANG_STDCALL ||
+    int cstack = ( ( ModuleInfo.xflag & OPT_CSTACK ) && ( ( ( CurrProc->sym.langtype == LANG_STDCALL ||
 	CurrProc->sym.langtype == LANG_C ) && ModuleInfo.Ofssize == USE32 ) || ModuleInfo.Ofssize == USE64 ) );
 
     info = CurrProc->e.procinfo;

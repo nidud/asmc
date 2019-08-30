@@ -73,7 +73,7 @@ static uint_32 elseoccured; /* 2.06: bit field, magnitude must be >= MAX_IF_NEST
  * updates variables <blocknestlevel> and <falseblocknestlevel>.
 */
 
-void conditional_assembly_prepare( int directive )
+void CondPrepare( int directive )
 /************************************************/
 {
     switch( directive ) {

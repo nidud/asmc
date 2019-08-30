@@ -510,7 +510,7 @@ void omf_check_flush( const struct line_num_info *curr )
 	/* todo: for Borland, there's a COMENT ( CMT_SRCFILE ) that could be written
 	 * instead of THEADR.
 	 */
-	omf_write_theadr( GetFName( curr->srcfile )->fname );
+	omf_write_theadr( GetFName( curr->srcfile ) );
 	ln_srcfile = curr->srcfile;
 	return;
     }
@@ -1103,16 +1103,15 @@ static time_t GetFileTimeStamp( const char *filename )
 static ret_code omf_write_autodep( void )
 {
     struct omf_rec  obj;
-    struct fname_item *curr;
     char	    *q,*p = StringBufferEnd;
     unsigned int    len;
     unsigned	    idx;
 
-    for( idx = 0, curr = ModuleInfo.g.FNames; idx < ModuleInfo.g.cnt_fnames; idx++, curr++ ) {
+    for( idx = 0; idx < ModuleInfo.g.cnt_fnames; idx++ ) {
 	omf_InitRec( &obj, CMD_COMENT );
 	obj.d.coment.attr = CMT_TNP;
 	obj.d.coment.cmt_class = CMT_DEPENDENCY; /* 0xE9 */
-	q = curr->fname;
+	q = ModuleInfo.g.FNames[idx];
 	len = strlen( q );
 #if MAX_STRING_LEN > 255
 	if ( len > 255 )

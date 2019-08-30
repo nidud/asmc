@@ -18,7 +18,7 @@ externdef resw_table:word
 
     .code
 
-FindResWord proc fastcall w_name:string_t, w_size:int_t
+FindResWord proc fastcall w_name:string_t, w_size:uint_t
 
     movzx eax,BYTE PTR [ecx]
     or al,0x20

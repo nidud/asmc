@@ -155,13 +155,15 @@ tv_usec		LONG ?
 timeval		ENDS
 
 timerisset macro tvp
-	exitm<((tvp)->GT tv_sec OR (tvp)->GT tv_usec)>
+	exitm<(tvp.tv_sec || tvp.tv_usec)>
 	endm
-timercmp macro tvp, uvp, cmp
-	exitm<((tvp)- GT tv_sec cmp (uvp)- GT tv_sec OR (tvp)- GT tv_sec EQ (uvp)- GT tv_sec AND (tvp)- GT tv_usec cmp (uvp)- GT tv_usec)>
+timercmp macro tvp, uvp, op
+	exitm<(tvp.tv_sec op uvp.tv_sec || tvp.tv_sec == uvp.tv_sec && tvp.tv_usec cm uvp.tv_usec)>
 	endm
 timerclear macro tvp
-	exitm<tvp.GT tv_sec = tvp.GT tv_usec = 0>
+	mov tvp.tv_sec,0
+	mov tvp.tv_usec,0
+	exitm<>
 	endm
 
 IOCPARM_MASK		equ 0x7f

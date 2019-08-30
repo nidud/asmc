@@ -78,7 +78,7 @@ static void jumpExtend( struct code_info *CodeInfo, int far_flag )
 	asmerr( 6003 );
 
     if( far_flag ) {
-	if ( CodeInfo->prefix.opsiz ) {
+	if ( CodeInfo->opsiz ) {
 	    /* it's 66 EA OOOO SSSS or 66 EA OOOOOOOO SSSS */
 	    next_ins_size = CodeInfo->Ofssize ? 6 : 8;
 	} else {
@@ -283,8 +283,8 @@ int process_branch( struct code_info *CodeInfo, unsigned CurrOpnd, const struct 
 			CodeInfo->opnd[OPND1].type = OP_I32;
 			addr -= 3; /* 32 bit displacement */
 		    }
-		    CodeInfo->prefix.opsiz = OPSIZE( CodeInfo->Ofssize, opndx->Ofssize );
-		    if ( CodeInfo->prefix.opsiz )
+		    CodeInfo->opsiz = OPSIZE( CodeInfo->Ofssize, opndx->Ofssize );
+		    if ( CodeInfo->opsiz )
 			addr--;
 		} else if( CodeInfo->Ofssize > USE16 ) {
 		    CodeInfo->opnd[OPND1].type = OP_I32;
@@ -382,9 +382,9 @@ int process_branch( struct code_info *CodeInfo, unsigned CurrOpnd, const struct 
 	case MT_FAR:
 	case MT_EMPTY:
 	    if ( opndx->Ofssize != USE_EMPTY )
-		CodeInfo->prefix.opsiz = OPSIZE( CodeInfo->Ofssize, opndx->Ofssize );
+		CodeInfo->opsiz = OPSIZE( CodeInfo->Ofssize, opndx->Ofssize );
 	    else
-		CodeInfo->prefix.opsiz = OPSIZE( CodeInfo->Ofssize, GetSymOfssize( sym ) );
+		CodeInfo->opsiz = OPSIZE( CodeInfo->Ofssize, GetSymOfssize( sym ) );
 
 	    /* set fixup frame variables Frame + Frame_Datum */
 	    set_frame( sym );
@@ -439,7 +439,7 @@ int process_branch( struct code_info *CodeInfo, unsigned CurrOpnd, const struct 
 		    fixup_type = FIX_RELOFF32;
 		    CodeInfo->opnd[OPND1].type = OP_I32;
 		}
-		CodeInfo->prefix.opsiz = OPSIZE( CodeInfo->Ofssize, opndx->Ofssize );
+		CodeInfo->opsiz = OPSIZE( CodeInfo->Ofssize, opndx->Ofssize );
 	    } else
 #endif
 	    if( CodeInfo->Ofssize > USE16 ) {
@@ -480,7 +480,7 @@ int process_branch( struct code_info *CodeInfo, unsigned CurrOpnd, const struct 
 		/* v1.95: explicit flag to be removed! */
 		//if ( opndx->explicit && opndx->Ofssize != USE_EMPTY ) {
 		if ( opndx->Ofssize != USE_EMPTY ) {
-		    CodeInfo->prefix.opsiz = OPSIZE( CodeInfo->Ofssize, opndx->Ofssize );
+		    CodeInfo->opsiz = OPSIZE( CodeInfo->Ofssize, opndx->Ofssize );
 		    CodeInfo->opnd[OPND1].type = (opndx->Ofssize >= USE32) ? OP_I32 : OP_I16;
 		} else if( CodeInfo->Ofssize > USE16 ) {
 		    fixup_type = FIX_RELOFF32;
@@ -493,9 +493,9 @@ int process_branch( struct code_info *CodeInfo, unsigned CurrOpnd, const struct 
 	    case MT_FAR:
 		if ( ModuleInfo.ljmp ) { /* OPTION LJMP set? */
 		    if ( opndx->Ofssize != USE_EMPTY )
-			CodeInfo->prefix.opsiz = OPSIZE( CodeInfo->Ofssize, opndx->Ofssize );
+			CodeInfo->opsiz = OPSIZE( CodeInfo->Ofssize, opndx->Ofssize );
 		    else
-			CodeInfo->prefix.opsiz = OPSIZE( CodeInfo->Ofssize, GetSymOfssize( sym ));
+			CodeInfo->opsiz = OPSIZE( CodeInfo->Ofssize, GetSymOfssize( sym ));
 		    /* destination is FAR (externdef <dest>:far */
 		    jumpExtend( CodeInfo, TRUE );
 		    CodeInfo->isfar = TRUE;

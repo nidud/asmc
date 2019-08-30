@@ -276,7 +276,7 @@ static int GetMaxCaseValue( struct hll_item *hll,
 	*min_table += 2;
 	if ( !( hll->flags & ( HLLF_ARG16 | HLLF_ARG32 | HLLF_ARG64 ) ) ) {
 	    (*min_table)++;
-	    if ( !( ModuleInfo.aflag & _AF_REGAX ) )
+	    if ( !( ModuleInfo.xflag & OPT_REGAX ) )
 		*min_table += 10;
 	}
     }
@@ -382,7 +382,7 @@ static void GetSwitchArg( int reg, int flags, char *arg )
 {
     char buffer[64];
 
-    if ( !( ModuleInfo.aflag & _AF_REGAX ) )
+    if ( !( ModuleInfo.xflag & OPT_REGAX ) )
 	AddLineQueueX( "push %r", reg );
 
     GetResWName( reg, buffer );
@@ -479,7 +479,7 @@ static int RenderSwitch( struct hll_item *hll, struct asm_tok tokenarray[],
     if ( x && hll->flags & HLLF_NOTEST ) /* create a small table */
 	x += MIN_JTABLE;
 
-    if ( ModuleInfo.aflag & _AF_NOTABLE || x < MIN_JTABLE ) {
+    if ( ModuleInfo.xflag & OPT_NOTABLE || x < MIN_JTABLE ) {
        /*
 	* Time NOTABLE/TABLE
 	*
@@ -615,11 +615,11 @@ static int RenderSwitch( struct hll_item *hll, struct asm_tok tokenarray[],
 
 	    if ( ModuleInfo.Ofssize == USE16 ) {
 
-		if ( !( ModuleInfo.aflag & _AF_REGAX ) )
+		if ( !( ModuleInfo.xflag & OPT_REGAX ) )
 		    AddLineQueue( "push ax" );
 
 		if ( hll->flags & HLLF_ARGREG ) {
-		    if ( ModuleInfo.aflag & _AF_REGAX ) {
+		    if ( ModuleInfo.xflag & OPT_REGAX ) {
 			if ( _stricmp( "ax", hll->condlines ) )
 			    AddLineQueueX( "mov ax,%s", hll->condlines );
 			AddLineQueue( "xchg ax,bx" );
@@ -630,10 +630,10 @@ static int RenderSwitch( struct hll_item *hll, struct asm_tok tokenarray[],
 			    AddLineQueueX( "mov bx,%s", hll->condlines );
 		    }
 		} else {
-		    if ( !( ModuleInfo.aflag & _AF_REGAX ) )
+		    if ( !( ModuleInfo.xflag & OPT_REGAX ) )
 			AddLineQueue( "push bx" );
 		    GetSwitchArg( T_AX, hll->flags, hll->condlines );
-		    if ( ModuleInfo.aflag & _AF_REGAX )
+		    if ( ModuleInfo.xflag & OPT_REGAX )
 			AddLineQueue( "xchg ax,bx" );
 		    else
 			AddLineQueue( "mov bx,ax" );
@@ -641,7 +641,7 @@ static int RenderSwitch( struct hll_item *hll, struct asm_tok tokenarray[],
 		if ( min )
 		    AddLineQueueX( "sub bx,%d", min );
 		AddLineQueue ( "add bx,bx" );
-		if ( ModuleInfo.aflag & _AF_REGAX ) {
+		if ( ModuleInfo.xflag & OPT_REGAX ) {
 		    AddLineQueueX( "mov bx,cs:[bx+%s]", l_jtab );
 		    AddLineQueue ( "xchg ax,bx" );
 		    AddLineQueue ( "jmp ax" );
@@ -663,22 +663,22 @@ static int RenderSwitch( struct hll_item *hll, struct asm_tok tokenarray[],
 			    AddLineQueueX("movzx eax,BYTE PTR [eax+IT%s-(%d)]", l_jtab, min);
 			else
 			    AddLineQueueX("movzx eax,WORD PTR [eax*2+IT%s-(%d*2)]", l_jtab, min);
-			if ( ModuleInfo.aflag & _AF_REGAX )
+			if ( ModuleInfo.xflag & OPT_REGAX )
 			    AddLineQueueX("jmp [eax*4+%s]", l_jtab);
 			else
 			    AddLineQueueX("mov eax,[eax*4+%s]", l_jtab);
-		    } else if ( ModuleInfo.aflag & _AF_REGAX )
+		    } else if ( ModuleInfo.xflag & OPT_REGAX )
 			AddLineQueueX("jmp [eax*4+%s-(%d*4)]", l_jtab, min);
 		    else
 			AddLineQueueX("mov eax,[eax*4+%s-(%d*4)]", l_jtab, min);
 
-		    if ( !( ModuleInfo.aflag & _AF_REGAX ) ) {
+		    if ( !( ModuleInfo.xflag & OPT_REGAX ) ) {
 			AddLineQueue("xchg eax,[esp]");
 			AddLineQueue("retn");
 		    }
 		} else {
 		    if ( use_index ) {
-			if ( !( ModuleInfo.aflag & _AF_REGAX ) )
+			if ( !( ModuleInfo.xflag & OPT_REGAX ) )
 			    AddLineQueueX("push %s", hll->condlines);
 
 			if ( dist < 256 )
@@ -688,7 +688,7 @@ static int RenderSwitch( struct hll_item *hll, struct asm_tok tokenarray[],
 			    AddLineQueueX("movzx %s,WORD PTR [%s*2+IT%s-(%d*2)]",
 				hll->condlines, hll->condlines, &l_jtab, min);
 
-			if ( ModuleInfo.aflag & _AF_REGAX ) {
+			if ( ModuleInfo.xflag & OPT_REGAX ) {
 			    AddLineQueueX("jmp [%s*4+%s]", hll->condlines, l_jtab);
 			} else {
 			    AddLineQueueX("mov %s,[%s*4+%s]", hll->condlines,
@@ -701,7 +701,7 @@ static int RenderSwitch( struct hll_item *hll, struct asm_tok tokenarray[],
 		    }
 		}
 	    } else if ( ( min <= ( UINT_MAX / 8 ) ) && !use_index
-		   && ( hll->flags & HLLF_ARGREG ) && ModuleInfo.aflag & _AF_REGAX ) {
+		   && ( hll->flags & HLLF_ARGREG ) && ModuleInfo.xflag & OPT_REGAX ) {
 
 		if ( !_memicmp( hll->condlines, "r11", 3 ) )
 		    asmerr( 2008, "register r11 overwritten by SWITCH" );
@@ -714,7 +714,7 @@ static int RenderSwitch( struct hll_item *hll, struct asm_tok tokenarray[],
 
 	    } else {
 
-		if ( ModuleInfo.aflag & _AF_REGAX ) {
+		if ( ModuleInfo.xflag & OPT_REGAX ) {
 
 		    AddLineQueue( "push rax" );
 		    if ( !( hll->flags & HLLF_ARGREG ) )
@@ -942,7 +942,7 @@ static void RenderJTable( struct hll_item *hll	 )
 
     if ( ModuleInfo.Ofssize == USE16 ) {
 
-	if ( ModuleInfo.aflag & _AF_REGAX ) {
+	if ( ModuleInfo.xflag & OPT_REGAX ) {
 	    if ( _stricmp( "ax", hll->condlines ) )
 		AddLineQueueX( "mov ax,%s", hll->condlines );
 
@@ -973,7 +973,7 @@ static void RenderJTable( struct hll_item *hll	 )
 	else
 	    AddLineQueueX( "jmp [%s*4+%s-(MIN%s*4)]", hll->condlines, l_jtab, l_jtab );
 
-    } else if ( ModuleInfo.aflag & _AF_REGAX ) {
+    } else if ( ModuleInfo.xflag & OPT_REGAX ) {
 	if ( !_memicmp( hll->condlines, "r11", 3 ) )
 	    asmerr( 2008, "register r11 overwritten by .SWITCH" );
 	if ( hll->flags & HLLF_ARG3264 )
@@ -1042,7 +1042,7 @@ int SwitchStart( int i, struct asm_tok tokenarray[] )
     } else if ( tokenarray[i].tokval == T_PASCAL ) {
 	i++;
 	hll->flags |= HLLF_PASCAL;
-    } else if ( ModuleInfo.aflag & _AF_PASCAL )
+    } else if ( ModuleInfo.xflag & OPT_PASCAL )
 	hll->flags |= HLLF_PASCAL;
 
     if ( tokenarray[i].token != T_FINAL ) {

@@ -6,6 +6,8 @@ ifndef __LIBC_INC
 endif
 .pragma comment(lib, libc, msvcrt)
 
+FILENAME_MAX	equ 260
+
 SEEK_CUR	equ 1
 SEEK_END	equ 2
 SEEK_SET	equ 0

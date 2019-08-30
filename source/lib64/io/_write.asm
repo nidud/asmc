@@ -6,97 +6,153 @@
 
 include io.inc
 include errno.inc
+include winbase.inc
+
+LF          equ 10
+CR          equ 13
+CTRLZ       equ 26
+BUF_SIZE    equ 1025 ; size of LF translation buffer
 
 .code
 
-_write proc uses rdi rsi rbx r12 h:SINT, b:PVOID, l:UINT
+_write proc frame uses rdi rsi rbx fh:int_t, buf:ptr, cnt:uint_t
 
-  local result:UINT, count:UINT, lb[1026]:SBYTE
+  local lfcount:int_t           ; count of line feeds
+  local charcount:int_t         ; count of chars written so far
+  local lfbuf[BUF_SIZE]:char_t  ; lf translation buffer
+  local file:char_t
+  local dosretval:ulong_t       ; o.s. return value
+  local written:int_t           ; count of chars written on this write
 
-    mov eax,r8d ; l
-    mov ebx,ecx ; h
+    mov eax,r8d                 ; cnt
+    .return .if !eax            ; nothing to do
 
-    .return .if !eax
-
-    .if ecx >= _NFILE_
-
-        xor eax,eax
-        mov _doserrno,eax
-        mov errno,EBADF
-        dec rax
-        .return
+    .if ( ecx >= _NFILE_ )      ; validate handle
+                                ; out of range -- return error
+        _set_doserrno(0)        ; not o.s. error
+        _set_errno(EBADF)
+        .return -1
     .endif
 
-    lea rax,_osfile
-    mov r12b,[rax+rcx]
+    lea rdx,_osfhnd
+    mov rbx,[rdx+rcx*8]
+    lea rdx,_osfile
+    mov al,[rdx+rcx]
+    mov file,al
 
-    .if r12b & FH_APPEND
-        _lseek( ecx, 0, SEEK_END )
+    .if ( al & FH_APPEND )      ; appending - seek to end of file; ignore error, because maybe
+                                ; file doesn't allow seeking
+        _lseek(ecx, 0, SEEK_END)
     .endif
 
-    xor eax,eax
-    mov result,eax
-    mov count,eax
+    mov lfcount,0
+    mov charcount,0
 
-    .if r12b & FH_TEXT
+    ; check for text mode with LF's in the buffer
 
-        mov rsi,b
-        .repeat
+    .if ( file & FH_TEXT )
+
+        mov rsi,buf             ; start at beginning of buffer
+        mov dosretval,0         ; no OS error yet
+
+        .while 1
 
             mov rax,rsi
-            sub rax,b
-            .break .if eax >= l
+            sub rax,buf
+            .break .if eax >= cnt
 
-            lea rdi,lb
-            .while 1
-                lea rdx,lb
+            lea rdi,lfbuf       ; start at beginning of lfbuf
+
+            .while 1            ; fill the lf buf, except maybe last char
+
+                lea rdx,lfbuf
                 mov rax,rdi
                 sub rax,rdx
-                .break .if eax >= 1024
+                .break .if eax >= BUF_SIZE - 1
+
                 mov rax,rsi
-                sub rax,b
-                .break .if eax >= l
+                sub rax,buf
+                .break .if eax >= cnt
+
                 lodsb
-                .if al == 10
-                    mov byte ptr [rdi],13
-                    inc rdi
+                .if ( al == LF )
+
+                    inc lfcount
+                    mov al,CR
+                    stosb
                 .endif
                 stosb
-                inc count
             .endw
 
-            lea rdx,lb
+            lea rdx,lfbuf
             mov r8,rdi
             sub r8,rdx
-            .if !oswrite( ebx, rdx, r8 )
-                inc result
+
+            .if WriteFile(rbx, rdx, r8d, &written, NULL)
+
+                add charcount,written
+
+                lea rcx,lfbuf
+                mov rdx,rdi
+                sub rdx,rcx
+                .break .if ( eax < edx )
+
+            .else
+
+                mov dosretval,GetLastError()
                 .break
             .endif
-            lea rcx,lb
-            mov rdx,rdi
-            sub rdx,rcx
-        .until rax < rdx
+        .endw
+
     .else
-        .return .if oswrite(ebx, b, l)
-        inc result
+
+        ; binary mode, no translation
+
+        .if WriteFile(rbx, buf, cnt, &written, NULL)
+
+            mov dosretval,0
+            mov charcount,written
+        .else
+            mov dosretval,GetLastError()
+        .endif
     .endif
 
-    mov eax,count
-    .if !eax
-        .if eax == result
-            .if _doserrno == 5 ; access denied
-                mov errno,EBADF
+    .if ( charcount == 0 )
+
+        ; If nothing was written, first check if an o.s. error,
+        ; otherwise we return -1 and set errno to ENOSPC,
+        ; unless a device and first char was CTRL-Z
+
+        mov rdx,buf
+        .if (dosretval != 0)
+
+            ; o.s. error happened, map error
+
+            .if (dosretval == ERROR_ACCESS_DENIED)
+
+                ; wrong read/write mode should return EBADF, not EACCES
+
+                _set_errno(EBADF)
+                _set_doserrno(dosretval)
+            .else
+                _dosmaperr(dosretval)
             .endif
-        .else
-            .if r12b & FH_DEVICE
-                mov rbx,b
-                .return .if byte ptr [rbx] == 26
-            .endif
-            mov errno,ENOSPC
-            mov _doserrno,eax
+            .return -1
+
+        .elseif ( file & FH_DEVICE && byte ptr [rdx] == CTRLZ )
+
+            .return 0
         .endif
-        dec rax
+
+        _set_errno(ENOSPC)
+        _set_doserrno(0)
+        .return -1
     .endif
+
+    ; return adjusted bytes written
+
+    mov eax,charcount
+    sub eax,lfcount
     ret
 
 _write endp

@@ -70,11 +70,10 @@ struct global_options Options = {
 	0,			// .fieldalign
 	0,			// .syntax_check_only
 #ifdef __ASMC64__
-	_AF_REGAX,		// .aflag
+	OPT_REGAX,		// .xflag
 #else
-	0,			// .aflag
-#endif
 	0,			// .xflag
+#endif
 	0,			// .loopalign
 	0,			// .casealign
 	0,			// .epilogueflags
@@ -352,7 +351,7 @@ static void ProcessOption( char **cmdline, char *buffer )
 
     switch ( j ) {
     case 'essa':	// -assert
-	Options.xflag = _XF_ASSERT;
+	Options.xflag |= OPT_ASSERT;
 	return;
     case 'otua':	// -autostack
 	Options.win64_flags |= W64F_AUTOSTACKSP;
@@ -379,7 +378,7 @@ static void ProcessOption( char **cmdline, char *buffer )
 	Options.convert_uppercase = 0;
 	return;
     case 'sC':		// -Cs
-	Options.aflag |= _AF_CSTACK;
+	Options.xflag |= OPT_CSTACK;
 	return;
     case 'uC':		// -Cu
 	Options.case_sensitive = 0;
@@ -526,19 +525,19 @@ static void ProcessOption( char **cmdline, char *buffer )
 	Options.listif = 1;
 	return;
     case 'pws':		// -swp
-	Options.aflag |= _AF_PASCAL;
+	Options.xflag |= OPT_PASCAL;
 	return;
     case 'cws':		// -swc
-	Options.aflag &= ~_AF_PASCAL;
+	Options.xflag &= ~OPT_PASCAL;
 	return;
     case 'rws':		// -swr
-	Options.aflag |= _AF_REGAX;
+	Options.xflag |= OPT_REGAX;
 	return;
     case 'nws':		// -swn
-	Options.aflag |= _AF_NOTABLE;
+	Options.xflag |= OPT_NOTABLE;
 	return;
     case 'tws':		// -swt
-	Options.aflag &= ~_AF_NOTABLE;
+	Options.xflag &= ~OPT_NOTABLE;
 	return;
     case 'efas':	// -safeseh
 	Options.safeseh = 1;
@@ -547,7 +546,7 @@ static void ProcessOption( char **cmdline, char *buffer )
 	Options.warning_level = 0;
 	return;
     case 'sw':		// -ws
-	Options.aflag |= _AF_WSTRING;
+	Options.xflag |= OPT_WSTRING;
 	define_name( "_UNICODE", "1" );
 	return;
     case 'XW':		// -WX
@@ -564,7 +563,7 @@ static void ProcessOption( char **cmdline, char *buffer )
 	}
 	Options.sub_format = SFORMAT_64BIT;
 	define_name( "_WIN64", "1" );
-	Options.aflag |= _AF_REGAX;
+	Options.xflag |= OPT_REGAX;
 #endif
 	return;
     case 'X':		// -X
@@ -664,7 +663,7 @@ static void ProcessOption( char **cmdline, char *buffer )
     switch ( j ) {
     case 'sw':		// -ws<number>
 	Options.codepage = OptValue;
-	Options.aflag |= _AF_WSTRING;
+	Options.xflag |= OPT_WSTRING;
 	define_name( "_UNICODE", "1" );
 	return;
     case 'pS':		// -Zp<number>

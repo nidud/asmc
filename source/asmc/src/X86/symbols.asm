@@ -1,18 +1,19 @@
-include stdio.inc
 include time.inc
-include string.inc
-
 include asmc.inc
-include token.inc
+include memalloc.inc
+include proc.inc
+include macro.inc
+include extern.inc
+include fastpass.inc
 
-public  SymCmpFunc
+public              SymCmpFunc
+externdef           FileCur   :asym_t ; @FileCur symbol
+externdef           LineCur   :asym_t ; @Line symbol
+externdef           symCurSeg :asym_t ; @CurSeg symbol
 
-DeleteProc          proto :DWORD
-ReleaseMacroData    proto :DWORD
-AddPublicData       proto FASTCALL :DWORD
-UpdateLineNumber    proto :DWORD, :DWORD
-UpdateWordSize      proto :DWORD, :DWORD
-UpdateCurPC         proto :DWORD, :DWORD
+UpdateLineNumber    proto :asym_t, :ptr
+UpdateWordSize      proto :asym_t, :ptr
+UpdateCurPC         proto :asym_t, :ptr
 
 HASH_MAGNITUDE      equ 15  ; is 15 since v1.94, previously 12
 HASH_MASK           equ 0x7FFF
@@ -30,121 +31,88 @@ LHASH_TABLE_SIZE    equ 128
 ; this may speed-up things, but not with OW.
 ; MSVC is a bit faster then.
 ;
-USEFIXSYMCMP    equ 0   ; 1=don't use a function pointer for string compare
-USESTRFTIME     equ 0   ; 1=use strftime()
+USEFIXSYMCMP        equ 0   ; 1=don't use a function pointer for string compare
+USESTRFTIME         equ 0   ; 1=use strftime()
 
-tmitem          STRUC
-name            dd ?
-value           dd ?
-store           dd ?
-tmitem          ENDS
+symptr_t            typedef ptr asym_t
+tmitem              struct
+name                string_t ?
+value               string_t ?
+store               symptr_t ?
+tmitem              ends
 
-eqitem          STRUC
-name            dd ?
-value           dd ?
-sfunc_ptr       dd ?    ; ( struct asym *, void * );
-store           dd ?    ; asym **
-eqitem          ENDS
-
-externdef       FileCur     : DWORD ; @FileCur symbol
-externdef       LineCur     : DWORD ; @Line symbol
-externdef       symCurSeg   : DWORD ; @CurSeg symbol
+eqitem              struct
+name                string_t ?
+value               string_t ?
+sfunc_ptr           proc :asym_t, :ptr
+store               symptr_t ?
+eqitem              ends
 
 .data?
-
-SymCmpFunc  dd ?
-gsym        dd ?        ; asym ** pointer into global hash table
-lsym        dd ?        ; asym ** pointer into local hash table
-SymCount    dd ?        ; Number of symbols in global table
-szDate      db 16 dup(?)    ; value of @Date symbol
-szTime      db 16 dup(?)    ; value of @Time symbol
-
-ALIGN       16
-lsym_table  dd LHASH_TABLE_SIZE+1 dup(?)
-ALIGN       16
-gsym_table  dd GHASH_TABLE_SIZE dup(?)
+                    align 16
+SymCmpFunc          StrCmpFunc ?
+gsym                symptr_t ?          ; asym ** pointer into global hash table
+lsym                symptr_t ?          ; asym ** pointer into local hash table
+SymCount            uint_t ?            ; Number of symbols in global table
+szDate              char_t 16 dup(?)    ; value of @Date symbol
+szTime              char_t 16 dup(?)    ; value of @Time symbol
+lsym_table          asym_t LHASH_TABLE_SIZE+1 dup(?)
+                    align 16
+gsym_table          asym_t GHASH_TABLE_SIZE dup(?)
 
 .data
+align 4
+symPC asym_t 0  ; the $ symbol
 
-symPC       dd 0        ; the $ symbol -- asym *
-
-@@Version   db "@Version",0
-ifdef __ASMC64__
-MLVersion   db "1000",0
-else
-MLVersion   db "800",0
-endif
-@@Date      db "@Date",0
-@@Time      db "@Time",0
-@@FileName  db "@FileName",0
-@@FileCur   db "@FileCur",0
-@@CurSeg    db "@CurSeg"
-@@Null      db 0
-
-            ALIGN 4
-
-;
 ; table of predefined text macros
-;
-tmtab   LABEL tmitem
-    ;
+
+tmtab label tmitem
+
     ; @Version contains the Masm compatible version
     ; v2.06: value of @Version changed to 800
-    ;
-    tmitem  <@@Version,  MLVersion, 0>
-    tmitem  <@@Date,     szDate,    0>
-    tmitem  <@@Time,     szTime,    0>
-    tmitem  <@@FileName, ModuleInfo.name, 0>
-    tmitem  <@@FileCur,  0, FileCur>
-    ;
+
+ifdef __ASMC64__
+    tmitem  <@CStr("@Version"),  @CStr("1000"), 0>
+else
+    tmitem  <@CStr("@Version"),  @CStr("800"), 0>
+endif
+    tmitem  <@CStr("@Date"),     szDate,    0>
+    tmitem  <@CStr("@Time"),     szTime,    0>
+    tmitem  <@CStr("@FileName"), ModuleInfo.name, 0>
+    tmitem  <@CStr("@FileCur"),  0, FileCur>
+
     ; v2.09: @CurSeg value is never set if no segment is ever opened.
     ; this may have caused an access error if a listing was written.
-    ;
-    tmitem  <@@CurSeg,   @@Null, symCurSeg>
-    dd  0
 
-;
+    tmitem  <@CStr("@CurSeg"), @CStr(""), symCurSeg>
+    string_t NULL
+
 ; table of predefined numeric equates
-;
-ifdef __ASMC64__
-CP__ASMC64__ db "__ASMC64__",0
-endif
-CP__ASMC__  db "__ASMC__",0
-CP__JWASM__ db "__JWASM__",0
-CP_$        db "$",0
-@@Line      db "@Line",0
-@@WordSize  db "@WordSize",0
-
-    ALIGN   4
 
 eqtab LABEL eqitem
-    eqitem  < CP__ASMC__,  ASMC_VERSION, 0, 0 >
+    eqitem  < @CStr("__ASMC__"), ASMC_VERSION, 0, 0 >
 ifdef __ASMC64__
-    eqitem  < CP__ASMC64__,  ASMC_VERSION, 0, 0 >
+    eqitem  < @CStr("__ASMC64__"), ASMC_VERSION, 0, 0 >
 endif
-    eqitem  < CP__JWASM__, 212, 0, 0 >
-    eqitem  < CP_$,        0, UpdateCurPC, symPC >
-    eqitem  < @@Line,      0, UpdateLineNumber, LineCur >
-    eqitem  < @@WordSize,  0, UpdateWordSize, 0 > ; must be last (see SymInit())
-    dd  0
+    eqitem  < @CStr("__JWASM__"),  212, 0, 0 >
+    eqitem  < @CStr("$"),          0, UpdateCurPC, symPC >
+    eqitem  < @CStr("@Line"),      0, UpdateLineNumber, LineCur >
+    eqitem  < @CStr("@WordSize"),  0, UpdateWordSize, 0 > ; must be last (see SymInit())
+    string_t NULL
 
 _MAX_DYNEQ equ 10
-dyneqcount dd 0
-dyneqtable dd _MAX_DYNEQ dup(0)
-dyneqvalue dd _MAX_DYNEQ dup(0)
+dyneqcount int_t 0
+dyneqtable string_t _MAX_DYNEQ dup(0)
+dyneqvalue string_t _MAX_DYNEQ dup(0)
 
     .code
 
 define_name proc string:string_t, value:string_t
-
     mov edx,dyneqcount
-    mov eax,string
-    mov dyneqtable[edx*4],eax
-    mov eax,value
-    mov dyneqvalue[edx*4],eax
+    mov dyneqtable[edx*4],string
+    mov dyneqvalue[edx*4],value
     inc dyneqcount
     ret
-
 define_name endp
 
 SymSetCmpFunc proc
@@ -153,11 +121,11 @@ SymSetCmpFunc proc
         mov SymCmpFunc,memcmp
     .endif
     ret
-SymSetCmpFunc ENDP
+SymSetCmpFunc endp
 
 ; reset local hash table
 
-SymClearLocal PROC
+SymClearLocal proc
     xor  eax,eax
     lea  edx,lsym_table
     mov  ecx,sizeof(lsym_table) / 4
@@ -165,11 +133,11 @@ SymClearLocal PROC
     rep  stosd
     mov  edi,edx
     ret
-SymClearLocal ENDP
+SymClearLocal endp
 
 ; store local hash table in proc's list of local symbols
 
-SymGetLocal proc psym
+SymGetLocal proc psym:asym_t
 
     mov ecx,psym
     mov edx,[ecx].dsym.procinfo
@@ -194,7 +162,7 @@ SymGetLocal endp
 ; - proc: procedure which will become active.
 ; fixme: It might be necessary to reset the "defined" flag
 ; for local labels (not for params and locals!). Low priority!
-SymSetLocal proc uses edi psym
+SymSetLocal proc uses edi psym:asym_t
     xor eax,eax
     lea edi,lsym_table
     mov ecx,sizeof(lsym_table) / 4
@@ -225,8 +193,8 @@ SymSetLocal proc uses edi psym
     ret
 SymSetLocal endp
 
-SymAlloc proc uses esi edi sname
-    mov esi,sname
+SymAlloc proc uses esi edi name:string_t
+    mov esi,name
     mov edi,strlen(esi)
     LclAlloc(&[edi+sizeof(dsym)+1])
     mov [eax].asym.name_size,di
@@ -234,7 +202,7 @@ SymAlloc proc uses esi edi sname
     lea edx,[eax+sizeof(dsym)]
     mov [eax].asym.name,edx
     .if ModuleInfo.cref
-        or [eax].asym.flag,SFL_LIST
+        or [eax].asym.flag,S_LIST
     .endif
     .if edi
         mov ecx,edi
@@ -246,7 +214,7 @@ SymAlloc ENDP
 
 .pragma warning(disable: 6004)
 
-SymFind proc fastcall uses esi edi ebx ebp sname:string_t
+SymFind proc fastcall uses esi edi ebx ebp string:string_t
     ;
     ; find a symbol in the local/global symbol table,
     ; return ptr to next free entry in global table if not found.
@@ -455,11 +423,11 @@ SymFind endp
 ;
 ; SymLookup() creates a global label if it isn't defined yet
 ;
-SymLookup proc sname
+SymLookup proc name:string_t
 
-    .if !SymFind(sname)
+    .if !SymFind(name)
 
-        SymAlloc(sname)
+        SymAlloc(name)
         mov ecx,gsym
         mov [ecx],eax
         inc SymCount
@@ -471,18 +439,18 @@ SymLookup endp
 ; SymLookupLocal() creates a local label if it isn't defined yet.
 ; called by LabelCreate() [see labels.c]
 ;
-SymLookupLocal proc sname
+SymLookupLocal proc name:string_t
 
-    .if !SymFind(sname)
-        SymAlloc(sname)
-        or [eax].asym.flag,SFL_SCOPED
+    .if !SymFind(name)
+        SymAlloc(name)
+        or [eax].asym.flag,S_SCOPED
         ;
         ; add the label to the local hash table
         ;
         mov ecx,lsym
         mov [ecx],eax
 
-    .elseif [eax].asym.state == SYM_UNDEFINED && !([eax].asym.flag & SFL_SCOPED)
+    .elseif [eax].asym.state == SYM_UNDEFINED && !([eax].asym.flag & S_SCOPED)
         ;
         ; if the label was defined due to a FORWARD reference,
         ; its scope is to be changed from global to local.
@@ -493,7 +461,7 @@ SymLookupLocal proc sname
         mov ecx,gsym
         mov [ecx],edx
         dec SymCount
-        or  [eax].asym.flag,SFL_SCOPED
+        or  [eax].asym.flag,S_SCOPED
         mov [eax].asym.nextitem,0
         mov ecx,lsym
         mov [ecx],eax
@@ -508,17 +476,17 @@ SymLookupLocal endp
 ; hence it is assumed that this is either not needed
 ; or done by the caller.
 ;
-SymFree proc sym
+SymFree proc sym:asym_t
     mov ecx,sym
     movzx eax,[ecx].asym.state
     .switch eax
       .case SYM_INTERNAL
-        .if [ecx].asym.flag & SFL_ISPROC
+        .if [ecx].asym.flag & S_ISPROC
             DeleteProc( ecx )
         .endif
         .endc
       .case SYM_EXTERNAL
-        .if [ecx].asym.flag & SFL_ISPROC
+        .if [ecx].asym.flag & S_ISPROC
             DeleteProc( ecx )
         .endif
         mov ecx,sym
@@ -541,10 +509,10 @@ SymFree endp
 ; Called by:
 ; - ParseParams() in proc.c for procedure parameters.
 ;
-SymAddLocal proc uses esi edi ebx sym, sname
+SymAddLocal proc uses esi edi ebx sym:asym_t, name:string_t
 
     mov ebx,sym
-    mov esi,sname
+    mov esi,name
 
     .if SymFind(esi)
 
@@ -578,7 +546,7 @@ SymAddLocal endp
 ; Called by:
 ; - RecordDirective() in types.c to add bitfield fields (which have global scope).
 ;
-SymAddGlobal proc sym
+SymAddGlobal proc sym:asym_t
     mov eax,sym
     .if SymFind([eax].asym.name)
         mov eax,sym
@@ -597,12 +565,12 @@ SymAddGlobal endp
 ;
 ; Create symbol and optionally insert it into the symbol table
 ;
-SymCreate proc sname:string_t
-    .if SymFind(sname)
-        asmerr(2005, sname)
+SymCreate proc name:string_t
+    .if SymFind(name)
+        asmerr(2005, name)
         xor eax,eax
     .else
-        SymAlloc(sname)
+        SymAlloc(name)
         inc SymCount
         mov ecx,gsym
         mov [ecx],eax
@@ -615,7 +583,7 @@ SymCreate endp
 ; This function is called by LocalDir() and ParseParams()
 ; in proc.c ( for LOCAL directive and PROC parameters ).
 ;
-SymLCreate proc name
+SymLCreate proc name:string_t
 
     .if SymFind(name)
 
@@ -657,10 +625,10 @@ SymMakeAllSymbolsPublic proc uses esi edi
                 ; v2.10: no @@ code labels
                 ;
                 movzx eax,[edi].asym.flag
-                and eax,SFL_ISEQUATE or SFL_PREDEFINED or SFL_INCLUDED or SFL_ISPUBLIC
+                and eax,S_ISEQUATE or S_PREDEFINED or S_INCLUDED or S_ISPUBLIC
 
                 .if ZERO? && BYTE PTR [ecx+1] != '&'
-                    or [edi].asym.flag,SFL_ISPUBLIC
+                    or [edi].asym.flag,S_ISPUBLIC
                     AddPublicData(edi)
                 .endif
 
@@ -688,7 +656,6 @@ SymInit proc uses esi edi ebx
     lea edi,gsym_table
     mov ecx,sizeof(gsym_table)
     rep stosb
-
     time(&time_of_day)
     localtime(&time_of_day)
     mov esi,eax
@@ -710,7 +677,7 @@ endif
     .while [esi].tmitem.name
         SymCreate([esi].tmitem.name)
         mov [eax].asym.state,SYM_TMACRO
-        or  [eax].asym.flag,SFL_ISDEFINED or SFL_PREDEFINED
+        or  [eax].asym.flag,S_ISDEFINED or S_PREDEFINED
         mov ecx,[esi].tmitem.value
         mov [eax].asym.string_ptr,ecx
         mov ecx,[esi].tmitem.store
@@ -723,7 +690,7 @@ endif
     .while [esi].eqitem.name
         SymCreate([esi].eqitem.name)
         mov [eax].asym.state,SYM_INTERNAL
-        or  [eax].asym.flag,SFL_ISDEFINED or SFL_PREDEFINED
+        or  [eax].asym.flag,S_ISDEFINED or S_PREDEFINED
         mov ecx,[esi].eqitem.value
         mov [eax].asym._offset,ecx
         mov ecx,[esi].eqitem.sfunc_ptr
@@ -736,17 +703,17 @@ endif
     ;
     ; @WordSize should not be listed
     ;
-    and [eax].asym.flag,not SFL_LIST
+    and [eax].asym.flag,not S_LIST
 
     xor esi,esi
     .while esi < dyneqcount
         SymCreate(dyneqtable[esi*4])
 if 0
         mov [eax].asym.state,SYM_INTERNAL
-        or  [eax].asym.flag,SFL_ISDEFINED or SFL_ISEQUATE or SFL_VARIABLE
+        or  [eax].asym.flag,S_ISDEFINED or S_ISEQUATE or S_VARIABLE
 else
         mov [eax].asym.state,SYM_TMACRO
-        or  [eax].asym.flag,SFL_ISDEFINED or SFL_PREDEFINED
+        or  [eax].asym.flag,S_ISDEFINED or S_PREDEFINED
 endif
         mov ecx,dyneqvalue[esi*4]
         ;mov [eax].asym._offset,ecx
@@ -758,15 +725,15 @@ endif
     ; $ is an address (usually). Also, don't add it to the list
     ;
     mov eax,symPC
-    and [eax].asym.flag,not SFL_LIST
-    or  [eax].asym.flag,SFL_VARIABLE
+    and [eax].asym.flag,not S_LIST
+    or  [eax].asym.flag,S_VARIABLE
     mov eax,LineCur
-    and [eax].asym.flag,not SFL_LIST
+    and [eax].asym.flag,not S_LIST
     ret
 
 SymInit endp
 
-SymPassInit proc pass
+SymPassInit proc pass:int_t
 
     .if pass != PASS_1
 
@@ -786,8 +753,8 @@ SymPassInit proc pass
 
                 mov eax,gsym_table[ecx*4]
                 .while eax
-                    .if !([eax].asym.flag & SFL_PREDEFINED)
-                        and [eax].asym.flag,not SFL_ISDEFINED
+                    .if !([eax].asym.flag & S_PREDEFINED)
+                        and [eax].asym.flag,not S_ISDEFINED
                     .endif
                     mov eax,[eax].asym.nextitem
                 .endw
@@ -802,7 +769,7 @@ SymPassInit endp
 
 ; get all symbols in global hash table
 
-SymGetAll proc syms
+SymGetAll proc syms:asym_t
 
     xor ecx,ecx
     mov edx,syms
@@ -824,7 +791,7 @@ SymGetAll endp
 
 ; enum symbols in global hash table.
 ; used for codeview symbolic debug output.
-SymEnum proc sym, pi
+SymEnum proc sym:asym_t, pi:ptr int_t
     mov edx,pi
     mov eax,sym
     .if eax
@@ -846,14 +813,14 @@ SymEnum endp
 ;
 ; add a new node to a queue
 ;
-AddPublicData proc fastcall sym
+AddPublicData proc fastcall sym:asym_t
 
     mov edx,sym
     lea ecx,ModuleInfo.PubQueue
 
 AddPublicData endp
 
-QAddItem proc fastcall q, d
+QAddItem proc fastcall q:qdesc_t, d:ptr
 
     push ecx
     push edx
@@ -865,7 +832,7 @@ QAddItem proc fastcall q, d
 
 QAddItem endp
 
-QEnqueue proc fastcall q, item
+QEnqueue proc fastcall q:qdesc_t, item:ptr
 
     xor eax,eax
     .if eax == [ecx].qdesc.head

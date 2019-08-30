@@ -183,7 +183,7 @@ _strtoflt proc string:string_t
             xor eax,eax
             mov [r10+0x00],rax
             mov [r10+0x08],rdx
-            mov errno,ERANGE
+            _set_errno(ERANGE)
 
         .elseif flt.exponent && !( flt.flags & _ST_ISHEX )
 

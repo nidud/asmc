@@ -11,18 +11,30 @@ include errno.inc
 
     .code
 
+    option win64:rsp noauto
+
 __doserrno proc
-if 1
+
     lea rax,DoserrorNoMem
-else
-    .if !_getptd_noexit()
-        lea rax,DoserrorNoMem
-    .else
-        lea rax,[rax]._tiddata._tdoserrno
-    .endif
-endif
     ret
 
 __doserrno endp
+
+_set_doserrno proc value:ulong_t
+
+    mov DoserrorNoMem,ecx
+    ret
+
+_set_doserrno endp
+
+_get_doserrno proc pValue:ptr ulong_t
+
+    mov eax,DoserrorNoMem
+    .if rcx
+        mov [rcx],eax
+    .endif
+    ret
+
+_get_doserrno endp
 
     end

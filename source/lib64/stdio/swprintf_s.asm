@@ -16,7 +16,7 @@ swprintf_s proc string:wstring_t, sizeInWords:size_t, format:wstring_t, argptr:v
 
     .if ( !( rcx != NULL || rdx == 0 ) || r8 == NULL )
 
-        mov errno,EINVAL
+        _set_errno(EINVAL)
         .return -1
     .endif
 
@@ -39,4 +39,4 @@ swprintf_s proc string:wstring_t, sizeInWords:size_t, format:wstring_t, argptr:v
 
 swprintf_s endp
 
-    END
+    end

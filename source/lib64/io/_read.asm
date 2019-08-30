@@ -8,43 +8,50 @@ include io.inc
 include errno.inc
 include winbase.inc
 
-ER_ACCESS_DENIED equ 5
-ER_BROKEN_PIPE   equ 109
+    LF      equ 10
+    CR      equ 13
+    CTRLZ   equ 26
 
     .data
-    pipech  db _NFILE_ dup(10)
-    peekchr db 0
+    _pipech db _NFILE_ dup(10)
 
     .code
 
-_read proc frame uses rsi rdi rbx r12 r13 h:SINT, b:PVOID, count:SIZE_T
+_read proc frame uses rsi rdi rbx fh:int_t, buf:ptr, cnt:size_t
 
-  local NumberOfBytesRead:qword
+  local bytes_read:int_t        ; number of bytes read
+  local os_read:int_t           ; bytes read on OS call
+  local dosretval:ulong_t       ; o.s. return value
+  local peekchr:char_t          ; peek-ahead character
 
-    xor esi,esi         ; nothing read yet
+    mov eax,r8d                 ; cnt
+    .return .if !eax            ; nothing to read
+
+    .if ( ecx >= _NFILE_ )      ; validate handle
+                                ; out of range -- return error
+        _set_doserrno(0)        ; not o.s. error
+        _set_errno(EBADF)
+        .return -1
+    .endif
+
+    mov bytes_read,0            ; nothing read yet
     mov rdi,rdx
     mov rbx,rcx
 
-    xor eax,eax         ; nothing to read or at EOF
-    .return .if !r8
+    lea rdx,_osfile
+    mov dl,[rdx+rcx]
 
-    lea r13,_osfile
-    add r13,rcx
-    mov cl,[r13]
+    xor eax,eax
+    .return .if dl & FH_EOF     ; at EOF ?
 
-    .return .if cl & FH_EOF
+    .if ( dl & FH_PIPE or FH_DEVICE )
 
-    mov _doserrno,eax
-
-    .if cl & FH_PIPE or FH_DEVICE
-
-        lea rcx,pipech
+        lea rcx,_pipech
         mov al,[rcx+rbx]
-        .if al != 10
-
+        .if al != LF
             stosb
-            mov BYTE PTR [rcx+rbx],10
-            inc rsi
+            mov byte ptr [rcx+rbx],LF
+            inc bytes_read
             dec r8
         .endif
     .endif
@@ -52,109 +59,168 @@ _read proc frame uses rsi rdi rbx r12 r13 h:SINT, b:PVOID, count:SIZE_T
     lea rcx,_osfhnd
     mov rcx,[rcx+rbx*8]
 
-    .if !ReadFile(rcx, rdi, r8d, &NumberOfBytesRead, 0)
+    .ifd !ReadFile(rcx, rdi, r8d, &os_read, NULL)
 
-        _dosmaperr(GetLastError())
+        ;; ReadFile has reported an error. recognize two special cases.
+        ;;
+        ;;      1. map ERROR_ACCESS_DENIED to EBADF
+        ;;
+        ;;      2. just return 0 if ERROR_BROKEN_PIPE has occurred. it
+        ;;         means the handle is a read-handle on a pipe for which
+        ;;         all write-handles have been closed and all data has been
+        ;;         read.
 
-        xor eax,eax
-        .return .if edx == ER_BROKEN_PIPE
+        .if ( GetLastError() == ERROR_ACCESS_DENIED )
 
-        dec eax
-        .return .if edx != ER_ACCESS_DENIED
+            ;; wrong read/write mode should return EBADF, not EACCES
 
-        mov errno,EBADF
-        .return
+            _set_doserrno(eax)
+            _set_errno(EBADF)
+            .return -1
+
+        .elseif ( eax == ERROR_BROKEN_PIPE )
+            .return 0
+
+        .else
+            _dosmaperr(eax)
+            .return -1
+        .endif
     .endif
 
-    add rsi,NumberOfBytesRead
-    mov rdi,b
-    mov al,[r13]
+    add bytes_read,os_read     ; update bytes read
+    lea rdx,_osfile
+    mov al,[rdx+rbx]
 
-    .if al & FH_TEXT
+    .if ( al & FH_TEXT )
+
+        ; now must translate CR-LFs to LFs in the buffer
+
+        ; set CRLF flag to indicate LF at beginning of buffer
 
         and al,not FH_CRLF
-        .if byte ptr [rdi] == 10
-
+        .if byte ptr [rdi] == LF
             or al,FH_CRLF
         .endif
-        mov [r13],al
-        mov r12,rdi
+        mov [rdx+rbx],al
+
+        ; convert chars in the buffer: RSI is src, RDI is dest
+
+        mov rsi,rdi
 
         .while 1
 
-            mov rax,b
-            add rax,rsi
-            .break .if rdi >= rax
+            mov eax,bytes_read
+            add rax,buf
+            .break .if rsi >= rax
 
-            mov al,[rdi]
-            .if al == 26
+            mov al,[rsi]
+            .if al == CTRLZ
 
-                .break .if BYTE PTR[r13] & FH_DEVICE
-                or BYTE PTR [r13],FH_EOF
-                .break
+                ; if fh is not a device, set ctrl-z flag
+
+                lea rdx,_osfile
+                .break .if byte ptr [rbx+rdx] & FH_DEVICE
+
+                or byte ptr [rbx+rdx],FH_EOF
+                .break ; stop translating
+
+            .elseif ( al != CR )
+
+                stosb
+                inc rsi
+                .continue(0)
             .endif
 
-            .if al != 13
+            ; *[rsi] is CR, so must check next char for LF
 
-                mov [r12],al
-                inc rdi
-                inc r12
-                .continue
-            .endif
+            mov ecx,bytes_read
+            mov rax,buf
+            lea rax,[rax+rcx-1]
+            .if rsi < rax
 
-            mov rax,b
-            lea rax,[rax+rsi-1]
-            .if rdi < rax
+                .if byte ptr [rsi+1] == LF
 
-                .if byte ptr [rdi+1] == 10
-
-                    add rdi,2
-                    mov al,10
+                    add rsi,2
+                    mov al,LF   ; convert CR-LF to LF
                 .else
-
-                    mov al,[rdi]
-                    inc rdi
+                    lodsb       ; store char normally
                 .endif
-                mov [r12],al
-                inc r12
-                .continue
+                stosb
+                .continue(0)
             .endif
 
-            inc rdi
+            ; This is the hard part.  We found a CR at end of
+            ; buffer.  We must peek ahead to see if next char
+            ; is an LF.
+
+            inc rsi
             lea rcx,_osfhnd
             mov rcx,[rcx+rbx*8]
 
-            .if !ReadFile(rcx, &peekchr, 1, &NumberOfBytesRead, 0) || !NumberOfBytesRead
+            mov dosretval,0
+            .ifd !ReadFile(rcx, &peekchr, 1, &os_read, 0)
+                mov dosretval,GetLastError()
+            .endif
 
-                mov al,13
 
-            .elseif BYTE PTR [r13] & FH_DEVICE or FH_PIPE
+            .if (dosretval != 0 || os_read == 0)
 
-                mov al,10
-                .if peekchr != al
+                mov al,CR ; couldn't read ahead, store CR
 
-                    mov al,peekchr
-                    lea rcx,pipech
-                    mov [rcx+rbx],al
-                    mov al,13
-                .endif
             .else
 
-                mov al,10
-                .if b != r12 || peekchr != al
+                ; peekchr now has the extra character -- we now have
+                ; several possibilities:
+                ;   1. disk file and char is not LF; just seek back
+                ;      and copy CR
+                ;   2. disk file and char is LF; seek back and discard CR
+                ;   3. disk file, char is LF but this is a one-byte read:
+                ;      store LF, don't seek back
+                ;   4. pipe/device and char is LF; store LF.
+                ;   5. pipe/device and char isn't LF, store CR and put
+                ;     char in pipe lookahead buffer.
 
-                    _lseek(ebx, -1, SEEK_CUR)
-                    mov al,13
-                    .continue .if peekchr == 10
+                lea rdx,_osfile
+                .if ( byte ptr [rbx+rdx] & FH_DEVICE or FH_PIPE )
+
+                    ; non-seekable device
+
+                    mov al,LF
+                    .if peekchr != al
+
+                        mov al,peekchr
+                        lea rcx,_pipech
+                        mov [rcx+rbx],al
+                        mov al,CR
+                    .endif
+
+                .else
+
+                    ; disk file
+
+                    mov al,LF ; nothing read yet; must make some progress
+
+                    .if buf != rdi || peekchr != al
+
+                        ; seek back
+
+                        _lseek(ebx, -1, SEEK_CUR)
+                        .continue(0) .if peekchr == LF
+
+                        mov al,CR
+                    .endif
                 .endif
             .endif
-            mov [r12],al
-            inc r12
+            stosb
         .endw
-        mov rax,r12
-        sub rax,b
+
+        ; we now change bytes_read to reflect the true number of chars
+        ; in the buffer
+
+        mov rax,rdi
+        sub rax,buf
     .else
-        mov rax,rsi
+        mov eax,bytes_read
     .endif
     ret
 

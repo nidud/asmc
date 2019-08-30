@@ -10,8 +10,6 @@ include winbase.inc
 
     .code
 
-    option win64:nosave
-
 oswrite proc frame uses rbx h:SINT, b:PVOID, z:SIZE_T
 
   local NumberOfBytesWritten:dword
@@ -23,7 +21,7 @@ oswrite proc frame uses rbx h:SINT, b:PVOID, z:SIZE_T
 
         mov eax,NumberOfBytesWritten
         .if eax != ebx
-            mov errno,ERROR_DISK_FULL
+            _set_errno(ERROR_DISK_FULL)
             xor eax,eax
         .endif
     .else

@@ -8,6 +8,8 @@ include ctype.inc
 
     .code
 
+strupr::
+
 if WINVER GE 0x0600
 
 _strupr proc frame uses rsi string:string_t

@@ -27,4 +27,14 @@ _set_errno proc value:int_t
 
 _set_errno endp
 
+_get_errno proc frame pValue:ptr int_t
+
+    mov eax,ErrnoNoMem
+    .if rcx
+        mov [rcx],eax
+    .endif
+    ret
+
+_get_errno endp
+
     end

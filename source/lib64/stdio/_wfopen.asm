@@ -34,66 +34,61 @@ extrn _umaskval:dword
 _wfopen proc uses rsi rdi rbx file:LPWSTR, mode:LPWSTR
 
     mov rbx,rdx;mode
+    movzx eax,word ptr [rbx]
+    add rbx,2
 
-    .repeat
+    .switch eax
+      .case 'r': mov esi,_IOREAD : mov edi,O_RDONLY
+      .case 'w': mov esi,_IOWRT  : mov edi,O_WRONLY or O_CREAT or O_TRUNC
+      .case 'a': mov esi,_IOWRT  : mov edi,O_WRONLY or O_CREAT or O_APPEND
+      .default
+        _set_errno(EINVAL)
+        .return 0
+    .endsw
 
-        movzx eax,word ptr [rbx]
-        add rbx,2
+    mov ax,[rbx]
+    .while eax
+
         .switch eax
+          .case '+'
+            or  edi,O_RDWR
+            and edi,not (O_RDONLY or O_WRONLY)
+            or  esi,_IORW
+            and esi,not (_IOREAD or _IOWRT)
 
-          .case 'r': mov esi,_IOREAD : mov edi,O_RDONLY
-          .case 'w': mov esi,_IOWRT  : mov edi,O_WRONLY or O_CREAT or O_TRUNC
-          .case 'a': mov esi,_IOWRT  : mov edi,O_WRONLY or O_CREAT or O_APPEND
+          .case 't': or  edi,O_TEXT
+          .case 'b': or  edi,O_BINARY
+          .case 'c': or  esi,_IOCOMMIT
+          .case 'n': and esi,not _IOCOMMIT
+          .case 'S': or  edi,O_SEQUENTIAL
+          .case 'R': or  edi,O_RANDOM
+          .case 'T': or  edi,O_SHORT_LIVED
+          .case 'D': or  edi,O_TEMPORARY
           .default
-            xor eax,eax
-            mov errno,EINVAL
             .break
         .endsw
 
+        add rbx,2
         mov ax,[rbx]
-        .while eax
+    .endw
 
-            .switch eax
-              .case '+'
-                or  edi,O_RDWR
-                and edi,not (O_RDONLY or O_WRONLY)
-                or  esi,_IORW
-                and esi,not (_IOREAD or _IOWRT)
+    mov rbx,_getst()
+    .return .if !eax
 
-              .case 't': or  edi,O_TEXT
-              .case 'b': or  edi,O_BINARY
-              .case 'c': or  esi,_IOCOMMIT
-              .case 'n': and esi,not _IOCOMMIT
-              .case 'S': or  edi,O_SEQUENTIAL
-              .case 'R': or  edi,O_RANDOM
-              .case 'T': or  edi,O_SHORT_LIVED
-              .case 'D': or  edi,O_TEMPORARY
-              .default
-                .break
-            .endsw
+    .if _wsopen(file, edi, SH_DENYNO, 0284h) != -1
 
-            add rbx,2
-            mov ax,[rbx]
-        .endw
-
-        mov rbx,_getst()
-        .break .if !eax
-
-        .if _wsopen(file, edi, SH_DENYNO, 0284h) != -1
-
-            mov [rbx]._iobuf._file,eax
-            xor eax,eax
-            mov [rbx]._iobuf._cnt,eax
-            mov [rbx]._iobuf._ptr,rax
-            mov [rbx]._iobuf._base,rax
-            mov [rbx]._iobuf._flag,esi
-            or  rax,rbx
-        .else
-            xor eax,eax
-        .endif
-    .until  1
+        mov [rbx]._iobuf._file,eax
+        xor eax,eax
+        mov [rbx]._iobuf._cnt,eax
+        mov [rbx]._iobuf._ptr,rax
+        mov [rbx]._iobuf._base,rax
+        mov [rbx]._iobuf._flag,esi
+        or  rax,rbx
+    .else
+        xor eax,eax
+    .endif
     ret
 
 _wfopen endp
 
-    END
+    end

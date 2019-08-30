@@ -54,15 +54,15 @@ if defined(_WIN32) AND NOT defined(OLE2ANSI)
 OLECHAR		typedef WCHAR
 LPOLESTR	typedef ptr OLECHAR
 LPCOLESTR	typedef ptr OLECHAR
-OLESTR macro str
-    exitm<str>
+OLESTR macro s
+    exitm<s>
     endm
 else
 OLECHAR		typedef SBYTE
 LPOLESTR	typedef LPSTR
 LPCOLESTR	typedef LPCSTR
-OLESTR macro str
-    exitm<str>
+OLESTR macro s
+    exitm<s>
     endm
 endif
 ifndef _WINDEF_

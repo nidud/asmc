@@ -9,8 +9,9 @@
 include stdio.inc
 include string.inc
 include asmc.inc
-include token.inc
-include hll.inc
+include proc.inc
+include hllext.inc
+include parser.inc
 
     .code
 
@@ -80,12 +81,14 @@ AssignValue proc private uses esi edi ebx i:ptr int_t, tokenarray:tok_t, count:i
 
   local opnd:expr
   local reg:int_t
+  local op:int_t
   local retval:int_t
   local directive:int_t
   local buffer[256]:char_t
 
     movzx ecx,ModuleInfo.Ofssize
     mov reg,regax[ecx*4]
+    mov op,T_MOV
 
     mov esi,i
     mov ebx,[esi]
@@ -95,7 +98,7 @@ AssignValue proc private uses esi edi ebx i:ptr int_t, tokenarray:tok_t, count:i
 
     .if ExpandHllProc(edi, [esi], tokenarray) != ERROR
 
-        .if ( byte ptr [edi] )
+        .if byte ptr [edi]
 
             QueueTestLines(edi)
             GetValue([esi], tokenarray, &count, &directive, &retval)
@@ -122,8 +125,8 @@ AssignValue proc private uses esi edi ebx i:ptr int_t, tokenarray:tok_t, count:i
 
         .if ( opnd.kind == EXPR_CONST )
 
-            mov edx,dword ptr opnd.value64[4]
-            mov eax,dword ptr opnd.value64
+            mov edx,opnd.hvalue
+            mov eax,opnd.value
 
             .ifs ( !edx && eax > 0 )
 
@@ -133,6 +136,7 @@ AssignValue proc private uses esi edi ebx i:ptr int_t, tokenarray:tok_t, count:i
                 .endif
                 AddLineQueueX( "mov %r,%d", ecx, eax )
                 dec esi
+
             .elseif ( !eax && !edx )
 
                 mov eax,reg
@@ -143,7 +147,7 @@ AssignValue proc private uses esi edi ebx i:ptr int_t, tokenarray:tok_t, count:i
                 dec esi
             .endif
 
-        .elseif ( opnd.kind == EXPR_REG && !( opnd.flags1 & EXF_INDIRECT ) )
+        .elseif ( opnd.kind == EXPR_REG && !( opnd.flags & E_INDIRECT ) )
 
             mov ebx,opnd.base_reg
             mov eax,[ebx].tokval
@@ -158,27 +162,53 @@ AssignValue proc private uses esi edi ebx i:ptr int_t, tokenarray:tok_t, count:i
             .endif
 
         .elseif ( opnd.kind == EXPR_ADDR )
+
             .switch opnd.mem_type
               .case MT_BYTE
-              .case MT_SBYTE  : mov reg,T_AL : .endc
+              .case MT_SBYTE
               .case MT_WORD
-              .case MT_SWORD  : mov reg,T_AX : .endc
+                mov op,T_MOVZX
+                .if reg == T_RAX
+                    mov reg,T_EAX
+                .endif
+                .endc
+              .case MT_SWORD
+                .if reg != T_AX
+                    mov op,T_MOVSX
+                    mov reg,T_EAX
+                .endif
+                .endc
               .case MT_DWORD
-              .case MT_SDWORD : mov reg,T_EAX : .endc
-if 0
+              .case MT_SDWORD
+                mov reg,T_EAX
+                .endc
               .case MT_OWORD
+                .endc .if reg != T_RAX
+                AddLineQueueX( "mov rax,qword ptr %s", edi )
+                AddLineQueueX( "mov rdx,qword ptr %s[8]", edi )
+                .return
               .case MT_REAL2
+                mov reg,T_AX
+                .endc
               .case MT_REAL4
+                mov reg,T_XMM0
+                mov op,T_MOVSS
+                .endc
               .case MT_REAL8
-              .case MT_REAL10
-              .case MT_REAL16 : mov reg,T_XMM0 : .endc
-endif
+                mov reg,T_XMM0
+                mov op,T_MOVSD
+                .endc
+              ;.case MT_REAL10
+              .case MT_REAL16
+                mov reg,T_XMM0
+                mov op,T_MOVAPS
+                .endc
             .endsw
         .endif
 
         .if esi
 
-            AddLineQueueX( "mov %r,%s", reg, edi )
+            AddLineQueueX( "%r %r,%s", op, reg, edi )
         .endif
     .endif
     ret

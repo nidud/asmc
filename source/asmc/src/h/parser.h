@@ -212,6 +212,7 @@ enum directive_type {
 
 struct opnd_item {
     enum operand_type type;
+    struct fixup      *InsFixup;
     union {
 	struct {
 	    int_32    data32l;
@@ -219,7 +220,6 @@ struct opnd_item {
 	};
 	uint_64	      data64;
     };
-    struct fixup      *InsFixup;
 };
 
 /* code_info describes the current instruction. It's the communication
@@ -270,20 +270,18 @@ struct opnd_item {
 #define VX_W1	0x02 /* P2: W=1 */
 
 struct code_info {
-    struct {
-	enum instr_token ins;		/* prefix before instruction, e.g. lock, rep, repnz */
-	enum assume_segreg RegOverride; /* segment override (0=ES,1=CS,2=SS,3=DS,...) */
-	unsigned char	rex;
-	unsigned char	adrsiz:1;	/* address size prefix 0x67 is to be emitted */
-	unsigned char	opsiz:1;	/* operand size prefix 0x66 is to be emitted */
-	unsigned char	evex:1;		/* EVEX prefix 0x62 is to be emitted */
-    } prefix;
-    const struct instr_item *pinstr;	/* current pointer into InstrTable */
-    struct opnd_item opnd[MAX_OPND];
-    enum instr_token token;
-    unsigned char mem_type;		/* byte / word / etc. NOT near/far */
+    int ins;			/* prefix before instruction, e.g. lock, rep, repnz */
+    int RegOverride;		/* segment override (0=ES,1=CS,2=SS,3=DS,...) */
+    unsigned char rex;
+    unsigned char adrsiz;	/* address size prefix 0x67 is to be emitted */
+    unsigned char opsiz;	/* operand size prefix 0x66 is to be emitted */
+    unsigned char evex;		/* EVEX prefix 0x62 is to be emitted */
     unsigned char evexP3;
     unsigned char vflags;
+    unsigned short token;
+    struct opnd_item opnd[MAX_OPND];
+    const struct instr_item *pinstr;	/* current pointer into InstrTable */
+    unsigned char mem_type;		/* byte / word / etc. NOT near/far */
     unsigned char rm_byte;
     unsigned char sib;
     unsigned char Ofssize;
@@ -320,7 +318,7 @@ struct code_info {
 #define IS_ANY_BRANCH( inst ) ( inst >= T_CALL && inst <= T_LOOPNZW )
 #define IS_XCX_BRANCH( inst ) ( inst >= T_JCXZ && inst <= T_LOOPNZW )
 
-#define IS_OPER_32( s )	  ( s->Ofssize ? ( s->prefix.opsiz == FALSE ) : ( s->prefix.opsiz == TRUE ))
+#define IS_OPER_32( s )	  ( s->Ofssize ? ( s->opsiz == FALSE ) : ( s->opsiz == TRUE ))
 
 /* globals */
 extern const struct instr_item	 InstrTable[];	 /* instruction table */

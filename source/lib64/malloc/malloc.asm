@@ -64,6 +64,7 @@ malloc proc byte_count:size_t
                 xor eax,eax
 
                 .while 1
+
                     add rdx,rax
                     mov rax,[rdx].HEAP.size
                     .if !rax
@@ -106,7 +107,7 @@ malloc proc byte_count:size_t
         pop rcx
         .if !rax
 
-            mov errno,ENOMEM
+            _set_errno(ENOMEM)
             ret
         .endif
 
@@ -139,7 +140,7 @@ malloc proc byte_count:size_t
         mov rax,[rdx].HEAP.size
         .continue(0) .if rax >= rcx
 
-        mov errno,ENOMEM
+        _set_errno(ENOMEM)
         xor eax,eax
     .until 1
     ret

@@ -5,8 +5,12 @@
 ;
 
 include asmc.inc
-include token.inc
+include parser.inc
 include hll.inc
+include operands.inc
+include listing.inc
+include lqueue.inc
+include segment.inc
 
     .code
 
@@ -23,21 +27,26 @@ mem2mem proc uses esi edi ebx op1:dword, op2:dword, tokenarray:tok_t
 
     .repeat
 
-        .break .if ( !eax || eax != edx )
+        .break .if ( !eax || !edx )
         .break .if ( ModuleInfo.strict_masm_compat == 1 )
 
         mov esi,T_RAX
+        mov edi,T_RAX
         .switch
-          .case eax & OP_M08: mov esi,T_AL  : .endc
-          .case eax & OP_M16: mov esi,T_AX  : .endc
-          .case eax & OP_M32: mov esi,T_EAX : .endc
+          .case eax & OP_M08: mov edi,T_AL  : .endc
+          .case eax & OP_M16: mov edi,T_AX  : .endc
+          .case eax & OP_M32: mov edi,T_EAX : .endc
         .endsw
-
-        mov edi,T_EAX
+        .switch
+          .case edx & OP_M08: mov esi,T_AL  : .endc
+          .case edx & OP_M16: mov esi,T_AX  : .endc
+          .case edx & OP_M32: mov esi,T_EAX : .endc
+        .endsw
+        mov ecx,T_EAX
         .if ModuleInfo.Ofssize == USE64
-            mov edi,T_RAX
+            mov ecx,T_RAX
         .elseif ModuleInfo.Ofssize == USE16
-            mov edi,T_AX
+            mov ecx,T_AX
         .endif
 
         mov ebx,tokenarray
@@ -45,15 +54,22 @@ mem2mem proc uses esi edi ebx op1:dword, op2:dword, tokenarray:tok_t
         mov op,eax
         add ebx,16
 
-        .for ( edx = ebx : [edx].asmtok.token != T_FINAL : edx += 16 )
+        .for ( edx = ebx : [edx].asm_tok.token != T_FINAL : edx += 16 )
 
-            .break(1) .if ( [edx].asmtok.tokval == edi )
+            .break(1) .if ( [edx].asm_tok.tokval == ecx )
 
-            .if ( [edx].asmtok.token == T_COMMA )
+            .if ( [edx].asm_tok.token == T_COMMA )
 
-                mov edx,[edx].asmtok.tokpos
+                mov edx,[edx].asm_tok.tokpos
                 push edx
-                AddLineQueueX( " mov %r%s", esi, edx )
+                mov ecx,T_MOV
+                .if edi > esi
+                    .if esi < T_EAX
+                        mov ecx,T_MOVZX
+                        mov esi,T_EAX
+                    .endif
+                .endif
+                AddLineQueueX( " %r %r%s", ecx, esi, edx )
                 pop edx
                 .break
             .endif
@@ -63,7 +79,7 @@ mem2mem proc uses esi edi ebx op1:dword, op2:dword, tokenarray:tok_t
         mov al,[ebx]
         push eax
         mov byte ptr [ebx],0
-        AddLineQueueX( " %r %s,%r", op, [edx].asmtok.tokpos, esi )
+        AddLineQueueX( " %r %s,%r", op, [edx].asm_tok.tokpos, edi )
         pop eax
         mov [ebx],al
 

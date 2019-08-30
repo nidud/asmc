@@ -147,30 +147,30 @@ static unsigned AddFile( char const *fname )
     unsigned	index;
 
     for( index = 0; index < ModuleInfo.g.cnt_fnames; index++ ) {
-	if( filecmp( fname, ModuleInfo.g.FNames[index].fname ) == 0 ) {
+	if( filecmp( fname, ModuleInfo.g.FNames[index] ) == 0 ) {
 	    return( index );
 	}
     }
 
     if ( ( index % 64 ) == 0 ) {
-	struct fname_item *newfn;
-	newfn = (struct fname_item *)MemAlloc( ( index + 64 ) * sizeof( struct fname_item ) );
+	char **newfn;
+	newfn = (char **)MemAlloc( ( index + 64 ) * sizeof( char * ) );
 	if ( ModuleInfo.g.FNames ) {
-	    memcpy( newfn, ModuleInfo.g.FNames, index * sizeof( struct fname_item ) );
+	    memcpy( newfn, ModuleInfo.g.FNames, index * sizeof( char * ) );
 	    MemFree( ModuleInfo.g.FNames );
 	}
 	ModuleInfo.g.FNames = newfn;
     }
     ModuleInfo.g.cnt_fnames++;
 
-    ModuleInfo.g.FNames[index].fname = (char *)LclAlloc( strlen( fname ) + 1 );
-    strcpy( ModuleInfo.g.FNames[index].fname, fname );
+    ModuleInfo.g.FNames[index] = (char *)LclAlloc( strlen( fname ) + 1 );
+    strcpy( ModuleInfo.g.FNames[index], fname );
     return( index );
 }
 
-struct fname_item *GetFName( unsigned index )
+char *GetFName( unsigned index )
 {
-    return( ModuleInfo.g.FNames+index );
+    return( ModuleInfo.g.FNames[index] );
 }
 
 /* free the file array.
@@ -352,7 +352,7 @@ int GetCurrSrcPos( char *buffer )
     char *p;
 
     for( curr = src_stack; curr; curr = curr->next ) {
-	p = GetFName( curr->srcfile )->fname;
+	p = GetFName( curr->srcfile );
 
 	if ( curr->type == SIT_FILE ) {
 	    return( sprintf( buffer, ModuleInfo.EndDirFound == FALSE ? "%s(%" I32_SPEC "u) : " : "%s : ", p , curr->line_num ) );
@@ -377,18 +377,18 @@ void print_source_nesting_structure( void )
 
     for( curr = src_stack; curr->next ; curr = curr->next ) {
 	if( curr->type == SIT_FILE ) {
-	    PrintNote( NOTE_INCLUDED_BY, tab, "", GetFName( curr->srcfile )->fname, curr->line_num );
+	    PrintNote( NOTE_INCLUDED_BY, tab, "", GetFName( curr->srcfile ), curr->line_num );
 	    tab++;
 	} else {
 	    if (*(curr->mi->macro->name) == NULLC ) {
 		PrintNote( NOTE_ITERATION_MACRO_CALLED_FROM, tab, "", "MacroLoop", curr->line_num, curr->mi->macro->value + 1 );
 	    } else {
-		PrintNote( NOTE_MACRO_CALLED_FROM, tab, "", curr->mi->macro->name, curr->line_num, GetFNamePart( GetFName(((struct dsym *)curr->mi->macro)->e.macroinfo->srcfile)->fname ) ) ;
+		PrintNote( NOTE_MACRO_CALLED_FROM, tab, "", curr->mi->macro->name, curr->line_num, GetFNamePart( GetFName(((struct dsym *)curr->mi->macro)->e.macroinfo->srcfile) ) ) ;
 	    }
 	    tab++;
 	}
     }
-    PrintNote( NOTE_MAIN_LINE_CODE, tab, "", GetFName( curr->srcfile )->fname, curr->line_num );
+    PrintNote( NOTE_MAIN_LINE_CODE, tab, "", GetFName( curr->srcfile ), curr->line_num );
 }
 
 /* Scan the include path for a file!
@@ -470,7 +470,7 @@ FILE *SearchFile( char *path, bool queue )
 	    if ( fl->type == SIT_FILE ) {
 		char *fn2;
 		char *src;
-		src = GetFName( fl->srcfile )->fname;
+		src = GetFName( fl->srcfile );
 		fn2 = GetFNamePart( src );
 		if ( fn2 != src ) {
 		    int i = fn2 - src;
@@ -511,7 +511,7 @@ FILE *SearchFile( char *path, bool queue )
     if ( queue ) {
 	fl = PushSrcItem( SIT_FILE, file );
 	fl->srcfile = AddFile( path );
-	FileCur->string_ptr = GetFName( fl->srcfile )->fname;
+	FileCur->string_ptr = GetFName( fl->srcfile );
 #if FILESEQ
 	if ( Options.line_numbers && Parse_Pass == PASS_1 )
 	    AddFileSeq( fl->srcfile );
@@ -546,7 +546,7 @@ char *GetTextLine( char *buffer )
 	}
 	/* update value of @FileCur variable */
 	for( curr = src_stack; curr->type != SIT_FILE; curr = curr->next );
-	FileCur->string_ptr = GetFName( curr->srcfile)->fname;
+	FileCur->string_ptr = GetFName( curr->srcfile);
 #if FILESEQ
 	if ( Options.line_numbers && Parse_Pass == PASS_1 )
 	    AddFileSeq( curr->srcfile );
@@ -682,7 +682,7 @@ void InputInit( void )
 
     fl = PushSrcItem( SIT_FILE, CurrFile[ASM] );
     fl->srcfile = ModuleInfo.srcfile = AddFile( CurrFName[ASM] );
-    FileCur->string_ptr = GetFName( fl->srcfile )->fname;
+    FileCur->string_ptr = GetFName( fl->srcfile );
 }
 
 /* init for each pass */

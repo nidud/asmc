@@ -68,7 +68,7 @@ timeval ENDS
 timerisset macro tvp
     exitm<0>
     endm
-timercmp macro tvp,uvp,cmp
+timercmp macro tvp,uvp,comp
     exitm<0>
     endm
 timerclear macro tvp

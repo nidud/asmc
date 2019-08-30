@@ -619,7 +619,7 @@ next_item:  /* <--- continue scan if a comma has been detected */
 		    /* v2.23 - use L"Unicode" */
 		    if ( inside_struct ||
 		      !( ( ModuleInfo.strict_masm_compat == 0 ) &&
-			 ( ModuleInfo.aflag & ( _AF_WSTRING | _AF_LSTRING ) ) &&
+			 ( ModuleInfo.xflag & ( OPT_WSTRING | OPT_LSTRING ) ) &&
 			 no_of_bytes == 2) )
 			return( asmerr( 2071 ) );
 		}
@@ -637,7 +637,7 @@ next_item:  /* <--- continue scan if a comma has been detected */
 		    }
 		}
 		else if ( ( ModuleInfo.strict_masm_compat == 0 )
-			&& (ModuleInfo.aflag & ( _AF_WSTRING | _AF_LSTRING ))
+			&& (ModuleInfo.xflag & ( OPT_WSTRING | OPT_LSTRING ))
 			&& no_of_bytes == 2 && string_len > 1 ) {
 		    total += ( string_len - 1 );
 		    sym->isarray = TRUE; /* v2.07: added */
@@ -655,7 +655,7 @@ next_item:  /* <--- continue scan if a comma has been detected */
 		/* v2.22 - unicode */
 		/* v2.23 - use L"Unicode" */
 		if ( ( ModuleInfo.strict_masm_compat == 0 ) &&
-		     ( ModuleInfo.aflag & ( _AF_WSTRING | _AF_LSTRING ) ) &&
+		     ( ModuleInfo.xflag & ( OPT_WSTRING | OPT_LSTRING ) ) &&
 		     string_len > 1 &&
 		     no_of_bytes == 2 ) {
 

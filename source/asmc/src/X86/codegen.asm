@@ -494,7 +494,7 @@ output_opc proc uses edi ebx
                             .endc
                         .endif
                         .if evex == 0x20
-                            add edi,sizeof(instr_item)
+                            add edi,instr_item
                         .endif
                     .case VX_OP3 or VX_OP3V             ;; 0, 0, 1
                         .if !( evex & VX_W1 ) && ( tuple == RWF_T1S || tuple == RWF_QVM )
@@ -529,9 +529,9 @@ output_opc proc uses edi ebx
                         .if evex == 0x20 ;; VMOVQ
                             and bh,not 0x02
                             or  bh,0x01
-                            add edi,sizeof(instr_item)
+                            add edi,instr_item
                             .if [edi].opcode != 0x6E
-                                add edi,sizeof(instr_item)
+                                add edi,instr_item
                             .endif
                         .endif
                         and bl,not VX1_R1
@@ -632,7 +632,7 @@ output_opc proc uses edi ebx
                     .if evex == 0x20                    ;; VMOVQ
                         and bh,not 0x02
                         or  bh,0x01
-                        add edi,sizeof(instr_item)      ;; 7E --> 6E
+                        add edi,instr_item              ;; 7E --> 6E
                     .endif
                     .endc
                 .case VX_OP3 or VX_OP1V                 ;; 1, 0, 0
@@ -1129,8 +1129,7 @@ output_data proc uses edi ebx determinant:int_t, index:int_t
                         ;;
                         ;; v2.11: overflow check for 64-bit added
                         ;;
-                        mov ecx,index
-                        imul ecx,ecx,opnd_item
+                        imul ecx,index,opnd_item
                         mov eax,[esi].opnd[ecx].data32l
                         mov edx,[esi].opnd[ecx].data32h
                         xor ecx,ecx
@@ -1158,8 +1157,7 @@ output_data proc uses edi ebx determinant:int_t, index:int_t
     .endsw
 
     mov edi,ebx
-    mov ebx,index
-    imul ebx,ebx,opnd_item
+    imul ebx,index,opnd_item
 
     .if ( edi )
         .if ( [esi].opnd[ebx].InsFixup )
@@ -1209,7 +1207,7 @@ check_3rd_operand proc uses edi ebx
 
     mov   edi,[esi].pinstr
     movzx eax,[edi].opclsidx
-    imul  ebx,eax,sizeof(opnd_class)
+    imul  ebx,eax,opnd_class
 
     .if( ( opnd_clstab[ebx].opnd_type_3rd == OP3_NONE ) || \
          ( opnd_clstab[ebx].opnd_type_3rd == OP3_HID ) )
@@ -1280,7 +1278,7 @@ output_3rd_operand proc uses edi ebx
 
     mov   edi,[esi].pinstr
     movzx eax,[edi].opclsidx
-    imul  ebx,eax,sizeof(opnd_class)
+    imul  ebx,eax,opnd_class
 
     .if( opnd_clstab[ebx].opnd_type_3rd == OP3_I8_U )
         output_data( OP_I8, OPND3 )
@@ -1317,7 +1315,7 @@ match_phase_3 proc uses edi ebx opnd1:int_t
 
     mov   edi,[esi].pinstr
     movzx eax,[edi].opclsidx
-    imul  ebx,eax,sizeof(opnd_class)
+    imul  ebx,eax,opnd_class
 
     ;; remember first op type
 
@@ -1372,7 +1370,7 @@ match_phase_3 proc uses edi ebx opnd1:int_t
 
         mov     edi,[esi].pinstr
         movzx   eax,[edi].opclsidx
-        imul    eax,eax,sizeof(opnd_class)
+        imul    eax,eax,opnd_class
         mov     eax,opnd_clstab[eax].opnd_type[4] ; OPND2
 
         .switch eax
@@ -1559,7 +1557,7 @@ match_phase_3 proc uses edi ebx opnd1:int_t
                 .endif
 
                 movzx eax,[edi].opclsidx
-                imul eax,eax,sizeof(opnd_class)
+                imul eax,eax,opnd_class
                 .if opnd_clstab[eax].opnd_type_3rd != OP3_NONE && !( [edi].evex & VX_XMMI )
                     output_3rd_operand()
                 .endif
@@ -1575,15 +1573,15 @@ match_phase_3 proc uses edi ebx opnd1:int_t
             .endc
         .endsw
 
-        add   [esi].pinstr,sizeof(instr_item)
+        add   [esi].pinstr,instr_item
         mov   edi,[esi].pinstr
         movzx eax,[edi].opclsidx
-        imul  eax,eax,sizeof(opnd_class)
+        imul  eax,eax,opnd_class
         mov   eax,opnd_clstab[eax].opnd_type[OPND1]
 
     .until !( eax == determinant && !( [edi].flags & II_FIRST ) )
 
-    sub [esi].pinstr,sizeof(instr_item) ;; pointer will be increased in codegen()
+    sub [esi].pinstr,instr_item ;; pointer will be increased in codegen()
     mov eax,ERROR
     ret
 
@@ -1593,8 +1591,7 @@ match_phase_3 endp
 
 add_bytes proc uses edi index:int_t
 
-    mov  eax,index
-    imul eax,eax,opnd_item
+    imul eax,index,opnd_item
     mov  edi,[esi].opnd[eax].InsFixup
 
     .if ( edi && [edi].type == FIX_RELOFF32 )
@@ -1638,9 +1635,9 @@ check_operand_2 proc uses edi ebx opnd1:int_t
 
         .if ( opnd1 == OP_M )
 
-            add   edi,sizeof(instr_item)
+            add   edi,instr_item
             movzx eax,[edi].opclsidx
-            imul  eax,eax,sizeof(opnd_class)
+            imul  eax,eax,opnd_class
 
             .if ( ( opnd_clstab[eax].opnd_type[OPND1] & OP_M ) && !( [edi].flags & II_FIRST ) )
 
@@ -1798,7 +1795,7 @@ codegen proc public uses esi edi ebx CodeInfo:ptr code_info, oldofs:uint_t
                 .return NOT_ERROR
             .endif
         .endif
-        add [esi].pinstr,sizeof(instr_item)
+        add [esi].pinstr,instr_item
         mov edi,[esi].pinstr
     .until [edi].flags & II_FIRST
     asmerr(2070)

@@ -100,9 +100,9 @@ SetStdAssumeTable proc uses esi edi savedstate:ptr, ti:ptr stdassume_typeinfo
     assume esi:ptr stdassume_typeinfo
 
     .for ( ecx = 0: ecx < NUM_STDREGS: ecx++,
-           edi += sizeof(assume_info), esi += sizeof(stdassume_typeinfo) )
+           edi += assume_info, esi += stdassume_typeinfo )
 
-        .if ( [edi].symbol )
+        .if [edi].symbol
 
             mov edx,[edi].symbol
             assume edx:asym_t
@@ -136,7 +136,7 @@ GetStdAssumeTable proc uses esi edi savedstate:ptr, ti:ptr stdassume_typeinfo
     assume edi:ptr stdassume_typeinfo
 
     .for ( ecx = 0: ecx < NUM_STDREGS: ecx++,
-           edi += sizeof(stdassume_typeinfo), esi += sizeof(assume_info) )
+           edi += stdassume_typeinfo, esi += assume_info )
 
         .if ( [esi].symbol )
 
@@ -174,7 +174,7 @@ AssumeInit proc pass:int_t ;; pass may be -1 here!
 
     .for ( edx = &SegAssumeTable,
            eax = 0,
-           ecx = 0 : ecx < NUM_SEGREGS : ecx++, edx += sizeof(assume_info) )
+           ecx = 0 : ecx < NUM_SEGREGS : ecx++, edx += assume_info )
         mov [edx].symbol,eax
         mov [edx].error,al
         mov [edx].is_flat,al
@@ -187,7 +187,7 @@ AssumeInit proc pass:int_t ;; pass may be -1 here!
     .if ( pass <= PASS_1 ) ;; v2.10: just reset assumes in pass one
 
         .for ( edx = &StdAssumeTable,
-               ecx = 0 : ecx < NUM_STDREGS : ecx++, edx += sizeof(assume_info) )
+               ecx = 0 : ecx < NUM_STDREGS : ecx++, edx += assume_info )
 
             mov [edx].symbol,eax
             mov [edx].error,al
@@ -615,8 +615,7 @@ search_assume endp
 
 GetOverrideAssume proc override:int_t
 
-    mov  ecx,override
-    imul edx,ecx,sizeof(assume_info)
+    imul edx,override,assume_info
     mov  eax,SegAssumeTable[edx].symbol
     .if( SegAssumeTable[edx].is_flat )
         mov eax,ModuleInfo.flat_grp

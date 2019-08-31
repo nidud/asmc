@@ -318,8 +318,8 @@ SizeFromMemtype endp
 
 MemtypeFromSize proc size:int_t, ptype:ptr byte
 
-    .for ( ecx = T_BYTE * sizeof(special_item) :,
-           SpecialTable[ecx].type == RWT_STYPE: ecx += sizeof(special_item) )
+    .for ( ecx = T_BYTE * special_item :,
+           SpecialTable[ecx].type == RWT_STYPE: ecx += special_item )
 
         mov al,SpecialTable[ecx].bytval
         and eax,MT_SPECIAL

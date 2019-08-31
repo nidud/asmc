@@ -57,8 +57,14 @@ SaveState PROC
     mov StoreState,eax
     mov UseSavedState,eax
     mov modstate.init,eax
-
-    memcpy(&modstate.modinfo, &ModuleInfo.proc_prologue, sizeof(modstate.modinfo))
+    mov edx,edi
+    mov eax,esi
+    mov ecx,sizeof(modstate.modinfo)
+    lea esi,ModuleInfo.proc_prologue
+    lea edi,modstate.modinfo
+    rep movsb
+    mov esi,eax
+    mov edi,edx
     SegmentSaveState()
     AssumeSaveState()
     ContextSaveState()  ; save pushcontext/popcontext stack
@@ -76,15 +82,13 @@ StoreLine PROC USES esi edi ebx sline:string_t, flags:int_t, lst_position:uint_t
         .if StoreState == eax   ; line store already started?
             SaveState()
         .endif
-        strlen( sline )
-        mov ebx,eax
+        mov ebx,strlen(sline)
         xor eax,eax
         .if flags == 1 && ModuleInfo.CurrComment != eax
             strlen( ModuleInfo.CurrComment )
         .endif
         mov edi,eax
-        lea eax,[eax+ebx+sizeof(line_item)]
-        LclAlloc( eax )
+        LclAlloc( &[eax+ebx+line_item] )
         mov ecx,LineStoreCurr
         mov LineStoreCurr,eax
         mov esi,eax
@@ -95,8 +99,7 @@ StoreLine PROC USES esi edi ebx sline:string_t, flags:int_t, lst_position:uint_t
 
         get_curr_srcfile()
         mov [esi].line_item.srcfile,eax
-        mov eax,MacroLevel
-        mov [esi].line_item.macro_level,eax
+        mov [esi].line_item.macro_level,MacroLevel
         mov eax,lst_position
         .if !eax
             mov eax,list_pos
@@ -163,25 +166,17 @@ SaveVariableState PROC USES esi edi sym:asym_t
 
     mov esi,sym
     or  [esi].asym.flag,S_ISSAVED
-    LclAlloc( sizeof( equ_item ) )
-    mov edi,eax
+    mov edi,LclAlloc(equ_item)
     mov [edi].equ_item.next,0
     mov [edi].equ_item.sym,esi
     mov [edi].equ_item.isdefined,0
     .if [esi].asym.flag & S_ISDEFINED
-
         inc [edi].equ_item.isdefined
     .endif
-
-    mov eax,[esi].asym.value
-    mov [edi].equ_item.lvalue,eax
-    mov eax,[esi].asym.value3264
-    mov [edi].equ_item.hvalue,eax
-    mov al,[esi].asym.mem_type
-    mov [edi].equ_item.mem_type,al
-
+    mov [edi].equ_item.lvalue,[esi].asym.value
+    mov [edi].equ_item.hvalue,[esi].asym.value3264
+    mov [edi].equ_item.mem_type,[esi].asym.mem_type
     .if modstate.tail
-
         mov eax,modstate.tail
         mov [eax].equ_item.next,edi
         mov modstate.tail,edi
@@ -195,40 +190,40 @@ SaveVariableState ENDP
 RestoreState PROC
 
     .if modstate.init
-        ;
+
         ; restore values of assembly time variables
-        ;
+
         mov edx,modstate.head
-        .while  edx
+        .while edx
             mov ecx,[edx].equ_item.sym
-            mov eax,[edx].equ_item.lvalue
-            mov [ecx].asym.value,eax
-            mov eax,[edx].equ_item.hvalue
-            mov [ecx].asym.value3264,eax
-            mov al,[edx].equ_item.mem_type
+            mov [ecx].asym.value,[edx].equ_item.lvalue
+            mov [ecx].asym.value3264,[edx].equ_item.hvalue
             and [ecx].asym.flag,not S_ISDEFINED
             .if [edx].equ_item.isdefined
-
                 and [ecx].asym.flag,not S_ISDEFINED
             .endif
             mov edx,[edx].equ_item.next
         .endw
-        ;
+
         ; fields in module_vars are not to be restored.
         ; v2.10: the module_vars fields are not saved either.
-        ;
+
         ; v2.23: save L"Unicode" flag
-        ;
+
+        push esi
+        mov edx,edi
         mov al,ModuleInfo.xflag
-        push eax
-        memcpy( &ModuleInfo.proc_prologue, &modstate.modinfo, sizeof(modstate.modinfo) )
-        pop eax
-        and eax,OPT_LSTRING
+        mov ecx,sizeof(modstate.modinfo)
+        lea esi,modstate.modinfo
+        lea edi,ModuleInfo.proc_prologue
+        rep movsb
+        mov edi,edx
+        pop esi
+        and al,OPT_LSTRING
         or  ModuleInfo.xflag,al
         SetOfssize()
         SymSetCmpFunc()
     .endif
-
     mov eax,LineStore.head
     ret
 

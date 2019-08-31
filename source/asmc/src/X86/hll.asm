@@ -2304,7 +2304,7 @@ local   rc:         int_t,
     mov esi,ModuleInfo.HllFree
     .if !esi
 
-        mov esi,LclAlloc( sizeof( hll_item ) )
+        mov esi,LclAlloc(hll_item)
     .endif
 
     ExpandCStrings( tokenarray )

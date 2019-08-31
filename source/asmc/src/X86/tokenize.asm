@@ -1162,7 +1162,7 @@ get_id proc fastcall uses esi edi ebx buf:tok_t, p:ptr line_status
             mov eax,[ebx].tokval
             sub eax,SPECIAL_LAST
             movzx eax,optable_idx[eax*2]
-            movzx ecx,InstrTable[eax*sizeof(instr_item)].cpu
+            movzx ecx,InstrTable[eax*instr_item].cpu
             mov eax,ecx
             and eax,P_CPU_MASK
             and ecx,P_EXT_MASK
@@ -1182,16 +1182,9 @@ get_id proc fastcall uses esi edi ebx buf:tok_t, p:ptr line_status
         .return
     .endif
 
-    mov ecx,edx
-    mov edx,sizeof(special_item)
-    mov eax,[ebx].tokval
-    mul edx
-    mov edx,ecx
-    mov esi,eax
-    mov al,SpecialTable[esi].bytval
-    mov [ebx].bytval,al
+    imul esi,[ebx].tokval,special_item
+    mov [ebx].bytval,SpecialTable[esi].bytval
     movzx eax,SpecialTable[esi].type
-
     .switch eax
       .case RWT_REG
         mov ecx,T_REG

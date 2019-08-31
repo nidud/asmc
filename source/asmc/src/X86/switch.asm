@@ -1285,7 +1285,7 @@ SwitchStart proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
     mov esi,ModuleInfo.HllFree
     .if !esi
-        mov esi,LclAlloc( sizeof( hll_item ) )
+        mov esi,LclAlloc( hll_item )
     .endif
     ExpandCStrings(tokenarray)
 
@@ -1672,7 +1672,7 @@ endif
         .if name
             AddLineQueueX("%s:", name )
         .endif
-        LclAlloc(sizeof(hll_item))
+        LclAlloc(hll_item)
         pop ecx
 
         mov edx,esi

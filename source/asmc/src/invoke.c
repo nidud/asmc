@@ -384,7 +384,7 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 		}
 	    } else if ( asize < pushsize ) {
 
-		if ( psize > 4 ) {
+		if ( psize > 4 && pushsize < 8 ) {
 		    asmerr( 2114, reqParam+1 );
 		}
 
@@ -455,6 +455,14 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 			    *r0flags = R0_USED; /* reset R0_H_CLEARED  */
 			}
 			break;
+		    case MT_DWORD:
+		    case MT_SDWORD:
+			if ( pushsize == 8 ) {
+			    AddLineQueueX(" mov eax, %s", fullparam);
+			    AddLineQueueX(" push rax");
+			    *r0flags = R0_USED;
+			    break;
+			}
 		    default:
 			if ( asize == 3 ) { /* added v2.29 */
 			    if ( pushsize > 2 ) {
@@ -524,7 +532,7 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 		if ( asize != psize || asize < ( 2 << Ofssize ) ) {
 		    /* register size doesn't match the needed parameter size.
 		     */
-		    if ( psize > 4 ) {
+		    if ( psize > 4 && pushsize < 8 ) {
 			asmerr( 2114, reqParam+1 );
 		    }
 
@@ -593,7 +601,8 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 			    *r0flags = R0_USED | R0_H_CLEARED | R0_X_CLEARED;
 			}
 
-		    } else if ( pushsize == 8 && asize == psize && psize < 8 ) {
+		    } else if ( pushsize == 8 && ( ( asize == psize && psize < 8 ) ||
+			( asize == 4 && psize == 8 ) ) ) {
 
 			switch ( SizeFromRegister(reg) ) {
 			case 1:
@@ -645,7 +654,7 @@ static int PushInvokeParam( int i, struct asm_tok tokenarray[], struct dsym *pro
 			    if ( (( ModuleInfo.curr_cpu & P_CPU_MASK ) >= P_386) &&
 				( psize == 4 || pushsize == 4 ) ) {
 				reg = reg - T_AL + T_EAX;
-			    } else
+			    } else if ( pushsize < 8 )
 				reg = reg - T_AL + T_AX;
 			}
 		    }

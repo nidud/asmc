@@ -228,7 +228,7 @@ ReturnDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
     mov esi,ModuleInfo.RetStack
     .if !esi
-        mov esi,LclAlloc(sizeof(hll_item))
+        mov esi,LclAlloc(hll_item)
         mov ModuleInfo.RetStack,eax
         xor eax,eax
         mov [esi].next,eax

@@ -315,7 +315,7 @@ WriteModule proc uses esi edi ebx modinfo
 	    asmerr(3020, edi)
 	.else
 	    mov edi,eax
-	    mov esi,SymTables[TAB_EXT*sizeof(symbol_queue)].head
+	    mov esi,SymTables[TAB_EXT*symbol_queue].head
 	    .while  esi
 		mov ebx,[esi].asym.dll
 		.if [esi].asym.flag & S_ISPROC && [esi].asym.dll && [ebx].dll_desc.dname \
@@ -576,7 +576,7 @@ endif
     ;
     .if ModuleInfo.DllQueue
 
-	mov eax,SymTables[TAB_EXT*sizeof(symbol_queue)].head
+	mov eax,SymTables[TAB_EXT*symbol_queue].head
 	.while eax
 
 	    and [eax].asym.flag,not S_IAT_USED
@@ -638,7 +638,7 @@ PassOneChecks proc uses esi edi
     ; Just do a full second pass, the GROUP directive will report
     ; the error.
     ;
-    mov eax,SymTables[TAB_SEG*sizeof(symbol_queue)].head
+    mov eax,SymTables[TAB_SEG*symbol_queue].head
     .while eax
 	.if ![eax].asym._segment
 
@@ -667,7 +667,7 @@ aliases:
     ;
     .if Options.output_format == OFORMAT_COFF || Options.output_format == OFORMAT_ELF
 
-	mov ecx,SymTables[TAB_ALIAS*sizeof(symbol_queue)].head
+	mov ecx,SymTables[TAB_ALIAS*symbol_queue].head
 	.while ecx
 	    mov eax,[ecx].asym.substitute
 	    ;
@@ -692,7 +692,7 @@ aliases:
     ;
     ; scan the EXTERN/EXTERNDEF items
     ;
-    mov edi,SymTables[TAB_EXT*sizeof(symbol_queue)].head
+    mov edi,SymTables[TAB_EXT*symbol_queue].head
     .while edi
 	mov esi,edi
 	mov edi,[esi].dsym.next
@@ -704,7 +704,7 @@ aliases:
 	    ;
 	    ; remove unused EXTERNDEF/PROTO items from queue.
 	    ;
-	    sym_remove_table(&SymTables[TAB_EXT*sizeof(symbol_queue)], esi)
+	    sym_remove_table(&SymTables[TAB_EXT*symbol_queue], esi)
 	    .continue
 	.endif
 	.continue .if [esi].asym.sint_flag & SINT_ISCOM
@@ -887,7 +887,7 @@ ModuleInit proc private
     mov eax,Options.sub_format
     mov ModuleInfo.sub_format,al
     mov eax,Options.output_format
-    mov ecx,sizeof(format_options)
+    mov ecx,format_options
     mul ecx
     lea eax,formatoptions[eax]
     mov ModuleInfo.fmtopt,eax
@@ -914,7 +914,7 @@ ModuleInit proc private
 
     mov edx,edi
     lea edi,SymTables
-    mov ecx,sizeof(symbol_queue) * TAB_LAST
+    mov ecx,symbol_queue * TAB_LAST
     xor eax,eax
     rep stosb
     mov edi,edx
@@ -1248,7 +1248,7 @@ AssembleModule proc uses esi edi ebx source
 	; calculate total size of segments
 	;
 	mov curr_written,eax
-	mov esi,SymTables[TAB_SEG*sizeof(symbol_queue)].head
+	mov esi,SymTables[TAB_SEG*symbol_queue].head
 	.while esi
 
 	    mov eax,[esi].asym.max_offset

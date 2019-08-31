@@ -253,7 +253,7 @@ ms32_param proc uses esi edi ebx pp:dsym_t, index:int_t, param:dsym_t, adr:int_t
                     .endif
                     AddLineQueueX(" %r %r, %s", ecx, ebx, paramvalue)
                 .else
-                    imul eax,ebx,sizeof(special_item)
+                    imul eax,ebx,special_item
                     movzx edi,SpecialTable[eax].bytval
                     AddLineQueueX(" mov %r, %s", &[edi+T_AL], paramvalue)
                     AddLineQueueX(" mov %r, 0",  &[edi+T_AH])

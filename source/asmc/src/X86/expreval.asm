@@ -207,7 +207,8 @@ get_operand proc uses esi edi ebx opnd:expr_t, idx:ptr int_t, tokenarray:tok_t, 
     shl eax,4
     add ebx,eax
 
-    .switch [ebx].token
+    mov al,[ebx].token
+    .switch al
     .case T_NUM
         mov [edi].kind,EXPR_CONST
         _atoow( edi, [ebx].string_ptr, [ebx].numbase, [ebx].itemlen )
@@ -714,14 +715,12 @@ fix_struct_value proc fastcall opnd:expr_t
 fix_struct_value endp
 
 check_direct_reg proc fastcall opnd1:expr_t, opnd2:expr_t
-
     .if [ecx].kind == EXPR_REG && !( [ecx].flags & E_INDIRECT ) || \
         [edx].kind == EXPR_REG && !( [edx].flags & E_INDIRECT )
         .return ERROR
     .endif
     mov eax,NOT_ERROR
     ret
-
 check_direct_reg endp
 
     assume ecx:asym_t

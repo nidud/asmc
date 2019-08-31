@@ -263,15 +263,13 @@ ParseCString PROC PRIVATE USES esi edi ebx lbuf:string_t, buffer:string_t, strin
                 sub edx,[esi].str_item.string
                 .if edx
                     .if Unicode
-
                         add edx,edx
                     .endif
                     sprintf( lbuf, "DS%04X[%d]", eax, edx )
                 .else
                     sprintf( lbuf, "DS%04X", eax )
                 .endif
-                xor eax,eax
-                jmp toend
+                .return 0
             .endif
         .endif
         add edi,1
@@ -279,8 +277,7 @@ ParseCString PROC PRIVATE USES esi edi ebx lbuf:string_t, buffer:string_t, strin
     .endw
 
     sprintf(lbuf, "DS%04X", edi)
-    LclAlloc(&[ebx+sizeof(str_item)+1])
-
+    LclAlloc(&[ebx+str_item+1])
     mov [eax].str_item.count,ebx
     mov [eax].str_item.index,di
     mov cl,Unicode
@@ -289,11 +286,9 @@ ParseCString PROC PRIVATE USES esi edi ebx lbuf:string_t, buffer:string_t, strin
     mov ecx,ModuleInfo.StrStack
     mov [eax].str_item.next,ecx
     mov ModuleInfo.StrStack,eax
-    lea ecx,[eax+sizeof(str_item)]
+    lea ecx,[eax+str_item]
     mov [eax].str_item.string,ecx
-
     strcpy(ecx, &sbuf)
-toend:
     ret
 ParseCString ENDP
 
@@ -368,11 +363,9 @@ local   rc:                     int_t,
             add ebx,16
         .endw
 
-        test eax,eax
-        jz toend
+        .return .if !eax
         xor eax,eax
-        test edx,edx
-        jz toend
+        .return .if !edx
 
         inc eax
         mov rc,eax
@@ -527,8 +520,6 @@ local   rc:                     int_t,
         mov ModuleInfo.line_flags,al
     .endif
     mov eax,rc
-
-toend:
     ret
 GenerateCString ENDP
 

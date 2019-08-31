@@ -207,10 +207,10 @@ ClassDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
       .case T_DOT_COMDEF
       .case T_DOT_CLASS
-        .return asmerr(1011) .if ( ModuleInfo.ComStack )
+        .return asmerr(1011) .if ModuleInfo.ComStack
         lea ebx,[ebx+edx+16]
 
-        mov ModuleInfo.ComStack,LclAlloc( sizeof( com_item ) )
+        mov ModuleInfo.ComStack,LclAlloc( com_item )
         mov ecx,cmd
         mov [eax].com_item.cmd,ecx
         mov [eax].com_item.langtype,0

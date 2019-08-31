@@ -196,10 +196,10 @@ SymSetLocal endp
 SymAlloc proc uses esi edi name:string_t
     mov esi,name
     mov edi,strlen(esi)
-    LclAlloc(&[edi+sizeof(dsym)+1])
+    LclAlloc(&[edi+dsym+1])
     mov [eax].asym.name_size,di
     mov [eax].asym.mem_type,MT_EMPTY
-    lea edx,[eax+sizeof(dsym)]
+    lea edx,[eax+dsym]
     mov [eax].asym.name,edx
     .if ModuleInfo.cref
         or [eax].asym.flag,S_LIST
@@ -681,7 +681,7 @@ endif
         mov ecx,[esi].tmitem.value
         mov [eax].asym.string_ptr,ecx
         mov ecx,[esi].tmitem.store
-        add esi,sizeof(tmitem)
+        add esi,tmitem
         .continue .if !ecx
         mov [ecx],eax
     .endw
@@ -696,7 +696,7 @@ endif
         mov ecx,[esi].eqitem.sfunc_ptr
         mov [eax].asym.sfunc_ptr,ecx
         mov ecx,[esi].eqitem.store
-        add esi,sizeof(eqitem)
+        add esi,eqitem
         .continue .if !ecx
         mov [ecx],eax
     .endw
@@ -824,7 +824,7 @@ QAddItem proc fastcall q:qdesc_t, d:ptr
 
     push ecx
     push edx
-    LclAlloc(sizeof(qnode))
+    LclAlloc(qnode)
     pop edx
     pop ecx
     mov [eax].qnode.elmt,edx

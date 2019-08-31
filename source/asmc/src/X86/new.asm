@@ -89,12 +89,12 @@ AddLocalDir proc uses esi edi ebx i:int_t, tokenarray:tok_t
             .if creat
                 mov [eax].dsym.sym.mem_type,MT_WORD
             .endif
-            mov ti.size,sizeof(word)
+            mov ti.size,word
         .else
             .if creat
                 mov [eax].dsym.sym.mem_type,MT_DWORD
             .endif
-            mov ti.size,sizeof(dword)
+            mov ti.size,dword
         .endif
 
         tokid(++) ; go past name

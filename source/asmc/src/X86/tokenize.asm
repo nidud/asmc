@@ -1339,9 +1339,7 @@ GetToken proc fastcall tokenarray:tok_t, p:ptr line_status
             jmp get_id
         .endif
     .endsw
-
     jmp get_special_symbol
-toend:
     ret
 GetToken ENDP
 

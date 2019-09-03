@@ -1307,14 +1307,12 @@ AssembleModule proc uses esi edi ebx source
 
     LstWriteCRef()
 done:
-    AssembleFini()
 
-    xor eax,eax
-    cmp ModuleInfo.error_count,eax
-    jne toend
-    inc eax
-toend:
+    AssembleFini()
+    .return 0 .if ModuleInfo.error_count
+    mov eax,1
     ret
+
 AssembleModule endp
 
     END

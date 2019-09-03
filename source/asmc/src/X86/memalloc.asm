@@ -43,110 +43,77 @@ include asmc.inc
 ; loop macro lines go to the "fastmem" heap.
 ;
 
-BLKSIZE		equ 80000h
-ALIGNMENT	equ 8
+ALIGNMENT   equ 8
+BLKSIZE     equ 0x80000
 
-MMALLOC MACRO z
-ifdef _LINUX
-	malloc(z)
-else
-	HeapAlloc(hProcessHeap, HEAP_ZERO_MEMORY, z)
-endif
-	ENDM
+.data
 
-MFREE	MACRO p
-ifdef _LINUX
-	free(p)
-else
-	HeapFree(hProcessHeap, 0, p)
-endif
-	ENDM
+pBase       dd 0        ; start list of 512 kB blocks; to be moved to ModuleInfo.g
+pCurr       dd 0        ; points into current block; to be moved to ModuleInfo.g
+currfree    dd 0        ; free memory left in current block; to be moved to ModuleInfo.g
+heaplen     dd 0x80000  ; total memory usage
+hProcessHeap dd 0
 
-	.data
-
-pBase		dd 0		; start list of 512 kB blocks; to be moved to ModuleInfo.g
-pCurr		dd 0		; points into current block; to be moved to ModuleInfo.g
-currfree	dd 0		; free memory left in current block; to be moved to ModuleInfo.g
-heaplen		dd 80000h	; total memory usage
-ifndef _LINUX
-hProcessHeap	dd 0
-endif
-	.code
+.code
 
 MemInit proc
-ifndef _LINUX
-	GetProcessHeap()
-	mov hProcessHeap,eax
-endif
-	xor eax,eax
-	mov pBase,eax
-	mov currfree,eax
-	ret
+    mov hProcessHeap,GetProcessHeap()
+    mov pBase,0
+    mov currfree,0
+    ret
 MemInit endp
 
-MemFini proc
-	push ebx
-	mov ebx,pBase
-	.while ebx
-		mov eax,ebx
-		mov ebx,[ebx]
-		MFREE( eax )
-	.endw
-	mov pBase,ebx
-	pop ebx
-	ret
+MemFini proc uses ebx
+    mov ebx,pBase
+    .while ebx
+        mov eax,ebx
+        mov ebx,[ebx]
+        HeapFree(hProcessHeap, 0, eax)
+    .endw
+    mov pBase,ebx
+    ret
 MemFini endp
 
 .pragma warning(disable: 6004)
 
-LclAlloc proc fastcall len
-	mov eax,pCurr
-	add ecx,ALIGNMENT-1
-	and ecx,-ALIGNMENT
-	cmp ecx,currfree
-	ja  alloc
-done:
-	sub currfree,ecx
-	add pCurr,ecx
-	ret
-alloc:
-	push edx
-	push ecx
-	cmp ecx,BLKSIZE-ALIGNMENT
-	ja  @F
-	mov ecx,BLKSIZE-ALIGNMENT
-@@:
-	mov currfree,ecx
-	add ecx,ALIGNMENT
-	MMALLOC(ecx)
-	test eax,eax
-	jz  mem_error
-ifdef _LINUX
-	mov ecx,currfree
-	add ecx,ALIGNMENT
-	memset(eax, 0, ecx)
-endif
-	mov ecx,pBase
-	mov [eax],ecx
-	mov pBase,eax
-	add eax,ALIGNMENT
-	mov pCurr,eax
-	pop ecx
-	pop edx
-	jmp done
+LclAlloc proc fastcall size
+
+    mov eax,pCurr
+    add ecx,ALIGNMENT-1
+    and ecx,-ALIGNMENT
+    .if ecx > currfree
+        push edx
+        push ecx
+        .if ecx <= (BLKSIZE - ALIGNMENT)
+            mov ecx,(BLKSIZE - ALIGNMENT)
+        .endif
+        mov currfree,ecx
+        add ecx,ALIGNMENT
+        .if HeapAlloc(hProcessHeap, HEAP_ZERO_MEMORY, ecx)
+            mov ecx,pBase
+            mov [eax],ecx
+            mov pBase,eax
+            add eax,ALIGNMENT
+            mov pCurr,eax
+        .endif
+        pop ecx
+        pop edx
+    .endif
+    sub currfree,ecx
+    add pCurr,ecx
+    ret
+
 LclAlloc endp
 
 MemAlloc proc fastcall len
-	malloc( len )
-	test eax,eax
-	jz mem_error
-	ret
+
+    .if !malloc(ecx)
+        mov currfree,eax
+        asmerr(1901)
+    .endif
+    ret
+
 MemAlloc endp
 
-mem_error:
-	mov currfree,eax
-	asmerr( 1901 )
-	ret
-
-	END
+    end
 

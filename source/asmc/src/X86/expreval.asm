@@ -2281,11 +2281,10 @@ calculate proc uses esi edi ebx opnd1:expr_t, opnd2:expr_t, oper:tok_t
             xor edx,edx
             .if [esi].hvalue < [edi].hvalue
                 dec edx
-            .else
-                .ifz
-                    .if [esi].value < [edi].value
-                        dec edx
-                    .endif
+            .elseif ZERO?
+                cmp [esi].value,[edi].value
+                .ifb
+                    dec edx
                 .endif
             .endif
             mov [esi].value,edx
@@ -2295,11 +2294,10 @@ calculate proc uses esi edi ebx opnd1:expr_t, opnd2:expr_t, oper:tok_t
             xor edx,edx
             .if [esi].hvalue < [edi].hvalue
                 dec edx
-            .else
-                .ifz
-                    .if [esi].value <= [edi].value
-                        dec edx
-                    .endif
+            .elseif ZERO?
+                cmp [esi].value,[edi].value
+                .ifna
+                    dec edx
                 .endif
             .endif
             mov [esi].value,edx
@@ -2309,11 +2307,10 @@ calculate proc uses esi edi ebx opnd1:expr_t, opnd2:expr_t, oper:tok_t
             xor edx,edx
             .if [esi].hvalue > [edi].hvalue
                 dec edx
-            .else
-                .ifz
-                    .if [esi].value > [edi].value
-                        dec edx
-                    .endif
+            .elseif ZERO?
+                cmp [esi].value,[edi].value
+                .ifa
+                    dec edx
                 .endif
             .endif
             mov [esi].value,edx
@@ -2323,11 +2320,10 @@ calculate proc uses esi edi ebx opnd1:expr_t, opnd2:expr_t, oper:tok_t
             xor edx,edx
             .if [esi].hvalue > [edi].hvalue
                 dec edx
-            .else
-                .ifz
-                    .if [esi].value >= [edi].value
-                        dec edx
-                    .endif
+            .elseif ZERO?
+                cmp [esi].value,[edi].value
+                .ifnb
+                    dec edx
                 .endif
             .endif
             mov [esi].value,edx
@@ -2419,17 +2415,13 @@ calculate proc uses esi edi ebx opnd1:expr_t, opnd2:expr_t, oper:tok_t
         .endc
     .case T_UNARY_OPERATOR
         .if [ebx].tokval == T_NOT
-            MakeConst( edi )
+            MakeConst(edi)
             .if [edi].kind != EXPR_CONST
-                .return( fnasmerr( 2026 ) )
+                .return fnasmerr(2026)
             .endif
-            TokenAssign( esi, edi )
-            mov eax,[edi].value
-            not eax
-            mov [esi].value,eax
-            mov eax,[edi].hvalue
-            not eax
-            mov [esi].hvalue,eax
+            TokenAssign(esi, edi)
+            not [esi].value
+            not [esi].hvalue
             .endc
         .endif
         imul eax,[ebx].tokval,special_item

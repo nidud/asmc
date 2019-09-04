@@ -198,7 +198,6 @@ AssignValue proc private uses esi edi ebx i:ptr int_t, tokenarray:tok_t, count:i
                 mov reg,T_XMM0
                 mov op,T_MOVSD
                 .endc
-              ;.case MT_REAL10
               .case MT_REAL16
                 mov reg,T_XMM0
                 mov op,T_MOVAPS

@@ -21,6 +21,7 @@ __cvtld_q proc x:ptr, ld:ptr
     shl     rax,64-16
     mov     [rcx],rax
     mov     [rcx+8],rdx
+    mov     rax,rcx
     ret
 
 __cvtld_q endp

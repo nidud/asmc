@@ -47,7 +47,7 @@ _cqcvt proc q:ptr real16, buffer:string_t, ch_type:int_t, precision:int_t, flags
 
         mov byte ptr [eax],'-'
     .else
-        .for ( ecx = eax, dl = [eax] : dl : ecx++ )
+        .for ( ecx = eax, dl = 1 : dl : ecx++ )
 
             mov dl,[ecx+1]
             mov [ecx],dl

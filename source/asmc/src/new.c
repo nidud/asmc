@@ -11,6 +11,7 @@ int AddLocalDir( int i, struct asm_tok tokenarray[] )
 {
   char *p;
   char *name;
+  char *type;
   char constructor[128]; /* class_class */
   struct asym *syma;
   struct dsym *sym;
@@ -19,7 +20,8 @@ int AddLocalDir( int i, struct asm_tok tokenarray[] )
   struct qualified_type ti;
   struct expr opndx;
   int j, q;
-
+  int creat;
+#if 0
     if ( Parse_Pass == PASS_1 ) {
         info = CurrProc->e.procinfo;
         if ( GetRegNo( info->basereg ) == 4 ) {
@@ -27,6 +29,7 @@ int AddLocalDir( int i, struct asm_tok tokenarray[] )
             ProcStatus |= PRST_FPO;
         }
     }
+#endif
     i++;  /* go past directive */
 
     do {
@@ -35,6 +38,7 @@ int AddLocalDir( int i, struct asm_tok tokenarray[] )
             return asmerr(2008, tokenarray[i].string_ptr);
 
         name = tokenarray[i].string_ptr;
+        type = NULL;
 
         ti.symtype = NULL;
         ti.is_ptr = 0;
@@ -46,21 +50,28 @@ int AddLocalDir( int i, struct asm_tok tokenarray[] )
             ti.is_far = FALSE;
         ti.Ofssize = ModuleInfo.Ofssize;
 
-        if ((sym = (struct dsym *)SymFind(name)) == NULL)
+        creat = 0;
+        if ((sym = (struct dsym *)SymFind(name)) == NULL) {
             sym = (struct dsym *)SymLCreate(name);
+            creat = 1;
+        }
 
         if( !sym )
             return( ERROR );
 
-        sym->sym.state = SYM_STACK;
-        sym->sym.isdefined = TRUE;
-        sym->sym.total_length = 1;
+        if ( creat ) {
+            sym->sym.state = SYM_STACK;
+            sym->sym.isdefined = TRUE;
+            sym->sym.total_length = 1;
+        }
 
         if ( ti.Ofssize == USE16 ) {
-            sym->sym.mem_type = MT_WORD;
+            if ( creat )
+                sym->sym.mem_type = MT_WORD;
             ti.size = sizeof( uint_16 );
         } else {
-            sym->sym.mem_type = MT_DWORD;
+            if ( creat )
+                sym->sym.mem_type = MT_DWORD;
             ti.size = sizeof( uint_32 );
         }
 
@@ -95,7 +106,7 @@ int AddLocalDir( int i, struct asm_tok tokenarray[] )
         if( tokenarray[i].token == T_COLON ) {
 
             i++;
-
+            type = tokenarray[i].string_ptr;
             if ( GetQualifiedType( &i, tokenarray, &ti ) == ERROR )
                 return( ERROR );
 
@@ -106,14 +117,17 @@ int AddLocalDir( int i, struct asm_tok tokenarray[] )
                 sym->sym.target_type = ti.symtype;
         }
 
-        sym->sym.is_ptr  = ti.is_ptr;
-        sym->sym.isfar   = ti.is_far;
-        sym->sym.Ofssize = ti.Ofssize;
-        sym->sym.ptr_memtype = ti.ptr_memtype;
-        sym->sym.total_size = ti.size * sym->sym.total_length;
+        if ( creat ) {
+            sym->sym.is_ptr  = ti.is_ptr;
+            sym->sym.isfar   = ti.is_far;
+            sym->sym.Ofssize = ti.Ofssize;
+            sym->sym.ptr_memtype = ti.ptr_memtype;
+            sym->sym.total_size = ti.size * sym->sym.total_length;
+        }
 
-        if ( Parse_Pass == PASS_1 ) {
+        if ( creat && Parse_Pass == PASS_1 ) {
 
+            info = CurrProc->e.procinfo;
             if( info->locallist == NULL ) {
                 info->locallist = sym;
             } else {
@@ -135,18 +149,21 @@ int AddLocalDir( int i, struct asm_tok tokenarray[] )
                 p = tokenarray[i-1].string_ptr;
 
                 i++; /* go past '(' */
-                for ( q = 1; q && tokenarray[i].token != T_FINAL; i++ ) {
+                for ( q = 1; tokenarray[i].token != T_FINAL; i++ ) {
                     if ( tokenarray[i].token == T_OP_BRACKET )
                         q++;
-                    else if ( tokenarray[i].token == T_CL_BRACKET )
+                    else if ( tokenarray[i].token == T_CL_BRACKET ) {
                         q--;
+                        if ( q == 0 )
+                            break;
+                    }
                 }
                 if( tokenarray[i].token == T_CL_BRACKET )
                     i++; /* go past ')' */
                 else
                     return asmerr( 2045 );
 
-                strcat(strcat(strcpy(constructor, p), "_"), p);
+                p = strcat(strcat(strcpy(constructor, p), "_"), p);
 
                 if ( Parse_Pass > PASS_1 ) {
 
@@ -165,14 +182,18 @@ int AddLocalDir( int i, struct asm_tok tokenarray[] )
                 if ( tokenarray[i-2].token == T_OP_BRACKET ) {
                     if ( tokenarray[j-1].token == T_COLON )
                         AddLineQueueX( "%s(&%s)", p, name );
-                    else
+                    else if ( type )
                         AddLineQueueX( "mov %s,%s(0)", name, p );
+                    else
+                        AddLineQueueX( "%s(0)", p );
                 } else {
                     tokenarray[i-1].tokpos[0] = 0;
                     if ( tokenarray[j-1].token == T_COLON )
                         AddLineQueueX( "%s(&%s, %s)", p, name, tokenarray[j+2].tokpos );
-                    else
+                    else if ( type )
                         AddLineQueueX( "mov %s,%s(0, %s)", name, p, tokenarray[j+2].tokpos );
+                    else
+                        AddLineQueueX( "%s(0, %s)", p, tokenarray[j+2].tokpos );
                     tokenarray[i-1].tokpos[0] = ')';
                 }
             } else
@@ -181,7 +202,7 @@ int AddLocalDir( int i, struct asm_tok tokenarray[] )
 
     } while ( i < Token_Count );
 
-    if ( Parse_Pass == PASS_1 )
+    if ( creat && Parse_Pass == PASS_1 )
         SetLocalOffsets(info);
 
     return NOT_ERROR;

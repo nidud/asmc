@@ -707,9 +707,9 @@ endif
                         ;
                         write_multi_char('0', padding, fp, &charsout)
                     .endif
-                    ;
+
                     ; write text
-                    ;
+
                     mov edx,textlen
                     .if bufferiswide && edx
 
@@ -727,9 +727,9 @@ endif
                         write_string(text, edx, fp, &charsout)
                     .endif
                     .if esi & FL_LEFT
-                        ;
+
                         ; pad on right with blanks
-                        ;
+
                         write_multi_char(' ', padding, fp, &charsout)
                     .endif
                 .endif

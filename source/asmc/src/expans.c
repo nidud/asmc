@@ -27,6 +27,10 @@
 #include <condasm.h>
 #include <listing.h>
 
+#ifdef _LIBC
+void _cropzeros( char * );
+#endif
+
 /* TEVALUE_UNSIGNED
  * 1 = the % operator used in an TEXTEQU expression is supposed to
  *     return an UNSIGNED value ( Masm-compatible ).
@@ -305,12 +309,23 @@ int RunMacro( struct dsym *macro, int idx, struct asm_tok tokenarray[],
 			 */
 			if ( EvalOperand( &i, tokenarray, max, &opndx, EXPF_NOUNDEF ) == ERROR )
 			    opndx.llvalue = 0;
-			else if ( opndx.kind != EXPR_CONST ) {
+			else if ( opndx.kind != EXPR_CONST &&
+			       !( opndx.kind == EXPR_FLOAT && opndx.mem_type == MT_REAL16 ) ) {
 			    asmerr( 2026 );
 			    opndx.llvalue = 0;
 			}
 			/* v2.08: accept constant and copy any stuff that's following */
-			myltoa( opndx.uvalue, StringBufferEnd, ModuleInfo.radix, opndx.hvalue < 0, FALSE );
+			if ( opndx.kind == EXPR_CONST ) {
+			    myltoa( opndx.uvalue, StringBufferEnd, ModuleInfo.radix,
+				opndx.hvalue < 0, FALSE );
+#ifdef _LIBC
+			} else if ( opndx.kind == EXPR_FLOAT && opndx.mem_type == MT_REAL16 ) {
+			    sprintf( StringBufferEnd, "%.31llf", opndx.llvalue, opndx.hlvalue );
+			    _cropzeros( StringBufferEnd );
+			    if ( strchr( StringBufferEnd, '.' ) == NULL )
+				strcat( StringBufferEnd, ".0" );
+#endif
+			}
 			if ( i != max ) {
 			    /* the evaluator was unable to evaluate the full expression. the rest
 			     * has to be "copied" */

@@ -65,6 +65,7 @@ static void AssignValue( int *i, struct asm_tok tokenarray[], int count )
 {
     struct  expr opnd;
     int     reg = regax[ModuleInfo.Ofssize];
+    int     op = T_MOV;
     int     retval;
     int     directive;
     int     x, Assign;
@@ -125,24 +126,49 @@ static void AssignValue( int *i, struct asm_tok tokenarray[], int count )
 
             switch ( opnd.mem_type ) {
             case MT_BYTE:
-            case MT_SBYTE: reg = T_AL; break;
+            case MT_SBYTE:
             case MT_WORD:
-            case MT_SWORD: reg = T_AX; break;
+                op = T_MOVZX;
+                if ( reg == T_RAX )
+                    reg = T_EAX;
+                break;
+            case MT_SWORD:
+                if ( reg != T_AX ) {
+                    op = T_MOVSX;
+                    reg = T_EAX;
+                }
+                break;
             case MT_DWORD:
-            case MT_SDWORD: reg = T_EAX; break;
-#if 0
+            case MT_SDWORD:
+                reg = T_EAX;
+                break;
             case MT_OWORD:
+                if ( reg == T_RAX ) {
+                    AddLineQueueX( "mov rax,qword ptr %s", buffer );
+                    AddLineQueueX( "mov rdx,qword ptr %s[8]", buffer );
+                    return;
+                }
+                break;
             case MT_REAL2:
+                reg = T_AX;
+                break;
             case MT_REAL4:
+                reg = T_XMM0;
+                op = T_MOVSS;
+                break;
             case MT_REAL8:
-            case MT_REAL10:
-            case MT_REAL16: reg = T_XMM0; break;
-#endif
+                reg = T_XMM0;
+                op = T_MOVSD;
+                break;
+            case MT_REAL16:
+                reg = T_XMM0;
+                op = T_MOVAPS;
+                break;
             }
         }
 
         if ( Assign )
-            AddLineQueueX( "mov %r,%s", reg, buffer );
+            AddLineQueueX( "%r %r,%s", op, reg, buffer );
     }
 }
 

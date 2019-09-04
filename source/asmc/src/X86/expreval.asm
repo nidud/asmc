@@ -500,6 +500,12 @@ get_operand proc uses esi edi ebx opnd:expr_t, idx:ptr int_t, tokenarray:tok_t, 
                 mov [edi].uvalue,[esi].uvalue
                 mov [edi].hvalue,[esi].value3264
                 mov [edi].mem_type,[esi].mem_type
+                .if al == MT_REAL16 && !ModuleInfo.strict_masm_compat
+                    mov [edi].kind,EXPR_FLOAT
+                    mov [edi].float_tok,NULL
+                    mov dword ptr [edi].hlvalue,[esi].total_length
+                    mov dword ptr [edi].hlvalue[4],[esi].ext_idx
+                .endif
             .elseif [esi].state == SYM_EXTERNAL && [esi].mem_type == MT_EMPTY && \
                  !( [esi].sint_flag & SINT_ISCOM )
                 or  [edi].flags,E_IS_ABS
@@ -1227,6 +1233,7 @@ high_op proc oper:int_t, opnd1:expr_t, opnd2:expr_t, sym:asym_t, name:string_t
 high_op endp
 
 tofloat proc opnd1:expr_t, opnd2:expr_t, size:int_t
+
     mov ecx,opnd1
     mov edx,opnd2
     .if ModuleInfo.strict_masm_compat
@@ -1234,18 +1241,21 @@ tofloat proc opnd1:expr_t, opnd2:expr_t, size:int_t
         mov ecx,eax
         .return 1
     .endif
-    mov eax,[edx].float_tok
-    xor ecx,ecx
-    .if [edx].flags & E_NEGATIVE
-        inc ecx
-    .endif
-    mov opnd1,ecx
-    mov ecx,[eax].asm_tok.string_ptr
     mov [edx].kind,EXPR_CONST
-    mov [edx].float_tok,NULL
-    atofloat(edx, ecx, size, opnd1, [eax].asm_tok.floattype)
-    xor eax,eax
+    mov eax,[edx].float_tok
+    .if eax
+        xor ecx,ecx
+        .if [edx].flags & E_NEGATIVE
+            inc ecx
+        .endif
+        mov opnd1,ecx
+        mov ecx,[eax].asm_tok.string_ptr
+        mov [edx].float_tok,NULL
+        atofloat(edx, ecx, size, opnd1, [eax].asm_tok.floattype)
+        xor eax,eax
+    .endif
     ret
+
 tofloat endp
 
 low32_op proc oper:int_t, opnd1:expr_t, opnd2:expr_t, sym:asym_t, name:string_t
@@ -1254,6 +1264,7 @@ low32_op proc oper:int_t, opnd1:expr_t, opnd2:expr_t, sym:asym_t, name:string_t
         .return ecx .if tofloat(opnd1, edx, 8)
     .endif
     TokenAssign(opnd1, opnd2)
+    mov [ecx].mem_type,MT_DWORD
     .if [edx].kind == EXPR_ADDR && [edx].inst != T_SEG
         mov [ecx].inst,T_LOW32
         mov [ecx].mem_type,MT_EMPTY
@@ -1269,6 +1280,7 @@ high32_op proc oper:int_t, opnd1:expr_t, opnd2:expr_t, sym:asym_t, name:string_t
         .return ecx .if tofloat(opnd1, edx, 8)
     .endif
     TokenAssign(opnd1, opnd2)
+    mov [ecx].mem_type,MT_DWORD
     .if [edx].kind == EXPR_ADDR && [edx].inst != T_SEG
         mov [ecx].inst,T_HIGH32
         mov [ecx].mem_type,MT_EMPTY
@@ -1286,6 +1298,7 @@ low64_op proc oper:int_t, opnd1:expr_t, opnd2:expr_t, sym:asym_t, name:string_t
         .return ecx .if tofloat(opnd1, edx, 16)
     .endif
     TokenAssign(opnd1, opnd2)
+    mov [ecx].mem_type,MT_QWORD
     .if [edx].kind == EXPR_ADDR && [edx].inst != T_SEG
         mov [ecx].inst,T_LOW64
         mov [ecx].mem_type,MT_EMPTY
@@ -1307,6 +1320,7 @@ high64_op proc oper:int_t, opnd1:expr_t, opnd2:expr_t, sym:asym_t, name:string_t
         mov [edx+12],eax
     .endif
     TokenAssign(opnd1, opnd2)
+    mov [ecx].mem_type,MT_QWORD
     .if [edx].kind == EXPR_ADDR && [edx].inst != T_SEG
         mov [ecx].inst,T_HIGH64
         mov [ecx].mem_type,MT_EMPTY

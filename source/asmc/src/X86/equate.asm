@@ -12,6 +12,7 @@ include fastpass.inc
 include listing.inc
 include input.inc
 include fixup.inc
+include atofloat.inc
 
 public  maxintvalues
 public  minintvalues
@@ -38,11 +39,16 @@ SetValue proc private uses edi sym:asym_t, opndx:expr_t
     or  [ecx].flag,S_ISEQUATE or S_ISDEFINED
     and [ecx].flag,not S_ISPROC
 
-    .if [edx].kind == EXPR_CONST
+    .if ( [edx].kind == EXPR_CONST || \
+        ( [edx].kind == EXPR_FLOAT && [edx].float_tok == NULL ) )
 
-        mov [ecx].mem_type,  [edx].mem_type
         mov [ecx].uvalue,    [edx].uvalue
         mov [ecx].value3264, [edx].hvalue
+        mov [ecx].mem_type,  [edx].mem_type
+        .if al == MT_REAL16 && !ModuleInfo.strict_masm_compat
+            mov [ecx].total_length,dword ptr [edx].hlvalue
+            mov [ecx].ext_idx,dword ptr [edx].hlvalue[4]
+        .endif
         mov [ecx]._segment,  NULL
         .return
     .endif
@@ -122,7 +128,7 @@ CreateAssemblyTimeVariable proc private uses esi edi ebx tokenarray:tok_t
 
         _atoow( &opnd, [ebx].string_ptr, [ebx].numbase, [ebx].itemlen )
 
-    check_number:
+check_number:
 
         mov opnd.kind,EXPR_CONST
         mov opnd.mem_type,MT_EMPTY ;; v2.07: added
@@ -171,7 +177,8 @@ CreateAssemblyTimeVariable proc private uses esi edi ebx tokenarray:tok_t
         shl ebx,4
         add ebx,tokenarray
         .if [ebx].token != T_FINAL
-            asmerr(2008, [ebx].string_ptr)
+
+            asmerr( 2008, [ebx].string_ptr )
             .return NULL
         .endif
 
@@ -193,6 +200,21 @@ CreateAssemblyTimeVariable proc private uses esi edi ebx tokenarray:tok_t
                 .if StoreState == FALSE
                     FStoreLine(0) ;; make sure this line is evaluated in pass two
                 .endif
+
+            .elseif !ecx && opnd.kind == EXPR_FLOAT && !ModuleInfo.strict_masm_compat
+
+                mov eax,opnd.float_tok
+                .if eax
+                    .if opnd.flags & E_NEGATIVE
+                        inc ecx
+                    .endif
+                    mov edx,[eax].asm_tok.string_ptr
+                    atofloat(&opnd, edx, 16, ecx, [eax].asm_tok.floattype)
+                    mov opnd.mem_type,MT_REAL16
+                    mov opnd.kind,EXPR_CONST
+                    mov opnd.float_tok,NULL
+                .endif
+                jmp check_float
             .else
                 asmerr(2026)
             .endif
@@ -209,6 +231,8 @@ CreateAssemblyTimeVariable proc private uses esi edi ebx tokenarray:tok_t
             jmp check_number
         .endif
     .endif
+
+check_float:
 
     mov edi,SymSearch(name)
 

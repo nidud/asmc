@@ -19,10 +19,10 @@ _write proc frame uses rdi rsi rbx fh:int_t, buf:ptr, cnt:uint_t
 
   local lfcount:int_t           ; count of line feeds
   local charcount:int_t         ; count of chars written so far
-  local lfbuf[BUF_SIZE]:char_t  ; lf translation buffer
-  local file:char_t
   local dosretval:ulong_t       ; o.s. return value
   local written:int_t           ; count of chars written on this write
+  local lfbuf[BUF_SIZE]:char_t  ; lf translation buffer
+  local file:char_t
 
     mov eax,r8d                 ; cnt
     .return .if !eax            ; nothing to do
@@ -62,29 +62,25 @@ _write proc frame uses rdi rsi rbx fh:int_t, buf:ptr, cnt:uint_t
             .break .if eax >= cnt
 
             lea rdi,lfbuf       ; start at beginning of lfbuf
+            mov rdx,rdi
 
             .while 1            ; fill the lf buf, except maybe last char
 
-                lea rdx,lfbuf
                 mov rax,rdi
                 sub rax,rdx
                 .break .if eax >= BUF_SIZE - 1
-
                 mov rax,rsi
                 sub rax,buf
                 .break .if eax >= cnt
-
                 lodsb
-                .if ( al == LF )
-
+                .if al == LF
                     inc lfcount
-                    mov al,CR
-                    stosb
+                    mov byte ptr [rdi],CR
+                    inc rdi
                 .endif
                 stosb
             .endw
 
-            lea rdx,lfbuf
             mov r8,rdi
             sub r8,rdx
 
@@ -124,11 +120,11 @@ _write proc frame uses rdi rsi rbx fh:int_t, buf:ptr, cnt:uint_t
         ; unless a device and first char was CTRL-Z
 
         mov rdx,buf
-        .if (dosretval != 0)
+        .if ( dosretval != 0 )
 
             ; o.s. error happened, map error
 
-            .if (dosretval == ERROR_ACCESS_DENIED)
+            .if ( dosretval == ERROR_ACCESS_DENIED )
 
                 ; wrong read/write mode should return EBADF, not EACCES
 

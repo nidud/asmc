@@ -458,6 +458,7 @@ unsigned char	pe_subsystem;		/* -cui, -gui */
 unsigned char	win64_flags;		/* -homeparams, -autostack, -alignstack16 */
 unsigned char	chkstack;		/* _chkstk() */
 unsigned char	nolib;			/* skip includelib directives */
+unsigned char	masm_keywords;		/* -Znk */
 };
 
 /* if the structure changes, option.c, SetMZ() might need adjustment! */

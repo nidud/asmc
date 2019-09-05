@@ -2892,6 +2892,10 @@ PublicDirective proto :int_t, :tok_t
 mem2mem proto :uint_t, :uint_t, :tok_t
 NewDirective proto :int_t, :tok_t
 
+externdef CurrEnum:asym_t
+EnumDirective proto :int_t, :tok_t
+
+
     assume ebx:tok_t
     assume esi:tok_t
     assume edi:nothing
@@ -2913,6 +2917,7 @@ ParseLine proc uses esi edi ebx tokenarray:tok_t
     local buffer[MAX_LINE_LEN]:char_t
 
     mov ebx,tokenarray
+    .return EnumDirective(0, ebx) .if CurrEnum
 
     mov i,0
     mov j,0

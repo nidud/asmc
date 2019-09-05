@@ -2294,6 +2294,8 @@ int ProcType( int, struct asm_tok[], char * );
 int PublicDirective( int, struct asm_tok[] );
 int mem2mem( unsigned, unsigned, struct asm_tok tokenarray[] );
 int NewDirective( int, struct asm_tok[] );
+extern struct asym *CurrEnum;
+int EnumDirective( int, struct asm_tok[] );
 
 int ParseLine( struct asm_tok tokenarray[] )
 {
@@ -2311,6 +2313,9 @@ int ParseLine( struct asm_tok tokenarray[] )
     struct expr		opndx[MAX_OPND+1];
     char		hllbuf[MAX_LINE_LEN];
     char		buffer[MAX_LINE_LEN];
+
+    if ( CurrEnum != NULL )
+	return EnumDirective(0, tokenarray);
 
     i = 0;
     j = 0;

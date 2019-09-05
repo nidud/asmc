@@ -365,6 +365,7 @@ pe_subsystem            db ?    ; -cui, -gui
 win64_flags             db ?    ; -homeparams, -autostack, -stackalign
 chkstack                db ?    ; _chkstk()
 nolib                   db ?    ; skip includelib directives
+masm_keywords           db ?    ; -Znk
 global_options          ENDS
 
 M_MODULEVARS            MACRO

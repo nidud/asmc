@@ -81,7 +81,8 @@ struct global_options Options = {
 	0,			// .pe_subsystem
 	0,			// .win64_flags
 	0,			// .chkstack
-	0			// .nolib
+	0,			// .nolib
+	0			// .masm_keywords
 
 };
 
@@ -615,6 +616,9 @@ static void ProcessOption( char **cmdline, char *buffer )
 #endif
     case 'enZ':		// -Zne
 	Options.strict_masm_compat = 1;
+	return;
+    case 'knZ':		// -Znk
+	Options.masm_keywords = 1;
 	return;
     case 'sZ':		// -Zs
 	Options.syntax_check_only = 1;

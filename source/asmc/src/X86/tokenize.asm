@@ -12,8 +12,9 @@ include condasm.inc
 include assume.inc
 include fastpass.inc
 
-extern  token_stringbuf:DWORD
-extern  commentbuffer:DWORD
+externdef token_stringbuf:DWORD
+externdef commentbuffer:DWORD
+externdef CurrEnum:asym_t
 
 .data
 ;
@@ -88,9 +89,14 @@ IsMultiLine proc fastcall tokenarray:tok_t
         ret
 
       .case T_ID
-        ;
+
+        .if CurrEnum
+            xor eax,eax
+            ret
+        .endif
+
         ; don't concat macros
-        ;
+
         .if SymFind([ecx].string_ptr)
 
             .if [eax].asym.state == SYM_MACRO && \

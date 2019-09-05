@@ -945,6 +945,23 @@ include oldkeyw.h
 OLDKCOUNT equ ($ - masmkeyw) / sizeof(MASMKEYW)
 .code
 
+MasmKeywords proc uses ebx disable:int_t
+
+    .if ( disable == 0 )
+	.for( ebx = 0: ebx < OLDKCOUNT: ebx++ )
+	    imul ecx,ebx,sizeof(MASMKEYW)
+	    RenameKeyword( masmkeyw[ecx].token, masmkeyw[ecx].oldname, masmkeyw[ecx].oldlen )
+	.endf
+    .else
+	.for( ebx = 0: ebx < OLDKCOUNT: ebx++ )
+	    imul ecx,ebx,sizeof(MASMKEYW)
+	    RenameKeyword( masmkeyw[ecx].token, masmkeyw[ecx].newname, masmkeyw[ecx].newlen )
+	.endf
+    .endif
+    ret
+
+MasmKeywords endp
+
 endif
 
 EnableKeyword proto :uint_t
@@ -955,23 +972,14 @@ AsmcKeywords proc uses ebx enable:int_t
 	.for ( ebx = T_DOT_IFA : ebx <= T_DOT_ENDSW : ebx++ )
 	    DisableKeyword(ebx)
 	.endf
-ifdef OLDKEYWORDS
-	.for( ebx = 0: ebx < OLDKCOUNT: ebx++ )
-	    imul ecx,ebx,sizeof(MASMKEYW)
-	    RenameKeyword( masmkeyw[ecx].token, masmkeyw[ecx].oldname, masmkeyw[ecx].oldlen )
-	.endf
-endif
     .else
-ifdef OLDKEYWORDS
-	.for( ebx = 0: ebx < OLDKCOUNT: ebx++ )
-	    imul ecx,ebx,sizeof(MASMKEYW)
-	    RenameKeyword( masmkeyw[ecx].token, masmkeyw[ecx].newname, masmkeyw[ecx].newlen )
-	.endf
-endif
 	.for ( ebx = T_DOT_IFA : ebx <= T_DOT_ENDSW : ebx++ )
 	    EnableKeyword(ebx)
 	.endf
     .endif
+ifdef OLDKEYWORDS
+    MasmKeywords(enable)
+endif
     ret
 
 AsmcKeywords endp
@@ -987,6 +995,8 @@ ReswTableInit proc private uses ebx
 	DisableKeyword(T_INCBIN)
 	DisableKeyword(T_FASTCALL)
 	AsmcKeywords(0)
+    .elseif ( Options.masm_keywords == 1 )
+	MasmKeywords(0)
     .endif
     ret
 

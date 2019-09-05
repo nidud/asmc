@@ -160,6 +160,7 @@ res(DOT_COMDEF,	    .comdef,	 DF_CGEN or DF_CEXPR or DF_NOSTRUC or DF_STORE or D
 res(DOT_ENDS,	    .ends,	 DF_CGEN, DRT_CLASS,  0, P_86, 0)
 res(RETM,	    retm,	 DF_STRPARM, DRT_MACINT, 0, P_86, 0)
 res(DOT_NEW,	    .new,	 DF_CGEN or DF_CEXPR or DF_NOSTRUC or DF_STORE or DF_PROC, DRT_NEW, 0, P_86, 0)
+res(DOT_ENUM,	    .enum,	 DF_CGEN or DF_CEXPR or DF_NOSTRUC or DF_STORE or DF_PROC, DRT_ENUM, 0, P_86, 0)
 
 res(DOT_SWITCH,	    .switch,	 DF_CGEN or DF_CEXPR or DF_NOSTRUC or DF_STORE or DF_PROC, DRT_SWITCH, 0, P_86, 0)
 res(DOT_CASE,	    .case,	 DF_CGEN or DF_CEXPR, DRT_SWITCH, 0, P_86, 0)

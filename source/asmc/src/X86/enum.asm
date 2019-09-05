@@ -1,0 +1,121 @@
+; ENUM.ASM--
+;
+; Copyright (c) The Asmc Contributors. All rights reserved.
+; Consult your license regarding permissions and restrictions.
+;
+; .enum [name] {
+;
+
+include stdio.inc
+include string.inc
+include asmc.inc
+include proc.inc
+include hllext.inc
+include parser.inc
+
+public CurrEnum
+
+    .data
+    CurrEnum asym_t 0
+    .code
+
+    assume ebx:tok_t
+    assume esi:asym_t
+
+EnumDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
+
+  local name:string_t
+  local opndx:expr
+  local rc:int_t
+
+    .return NOT_ERROR .if ( Parse_Pass > PASS_1 )
+
+    mov rc,NOT_ERROR
+    mov ebx,tokenarray
+    mov esi,CurrEnum
+
+    .if !esi
+
+        mov esi,LclAlloc(asym)
+        mov CurrEnum,eax
+        mov [esi].name,0
+        mov [esi].value,0
+        mov [esi].mem_type,MT_SDWORD
+        add ebx,16
+        inc i
+        .if ( [ebx].token != T_FINAL )
+            .if ( [ebx].token == T_STRING )
+                mov [esi].name,[ebx].string_ptr
+            .else
+                AddLineQueueX( "%s typedef sdword", [ebx].string_ptr )
+            .endif
+            add ebx,16
+            inc i
+            .if ( [ebx].token == T_STRING )
+                mov [esi].name,[ebx].string_ptr
+                add ebx,16
+                inc i
+            .endif
+        .endif
+        .if ModuleInfo.list
+            LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
+        .endif
+    .endif
+
+    .while ( [ebx].token != T_FINAL )
+
+        mov name,[ebx].string_ptr
+        add ebx,16
+
+        .if ( [ebx-16].token == T_STRING && word ptr [eax] == '}' )
+            mov CurrEnum,NULL
+            .break
+        .endif
+        inc i
+
+        mov edi,[esi].value
+        inc [esi].value
+
+        .if ( [ebx].token == T_DIRECTIVE && [ebx].tokval == T_EQU )
+
+            add ebx,16
+            inc i
+            .for ( ecx = i, edx = ebx : ecx < Token_Count : ecx++, edx += 16 )
+                .break .if [edx].asm_tok.token == T_COMMA
+                .break .if [edx].asm_tok.token == T_FINAL
+            .endf
+            .break .if edx == ebx
+            mov rc,EvalOperand( &i, tokenarray, ecx, &opndx, 0 )
+            .break .if eax == ERROR
+            .if ( opndx.kind != EXPR_CONST )
+                mov rc,asmerr( 2026 )
+                .break
+            .endif
+            mov edi,opndx.value
+            lea eax,[edi+1]
+            mov [esi].value,eax
+            imul ebx,i,asm_tok
+            add ebx,tokenarray
+        .endif
+
+        .if ( [ebx].token == T_COMMA )
+            add ebx,16
+            inc i
+        .elseif ( [ebx].token == T_FINAL && [esi].name == NULL )
+            mov CurrEnum,NULL
+        .endif
+        AddLineQueueX( "%s equ %d", name, edi )
+    .endw
+    .return asmerr(2008, [ebx].tokpos) .if [ebx].token != T_FINAL
+    .if ModuleInfo.line_queue.head
+        mov esi,CurrEnum
+        mov CurrEnum,NULL
+        RunLineQueue()
+        mov CurrEnum,esi
+    .endif
+    mov eax,rc
+    ret
+
+EnumDirective endp
+
+    end

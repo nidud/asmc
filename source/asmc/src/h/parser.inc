@@ -11,49 +11,45 @@ include fixup.inc
 
 ;; define tokens for SpecialTable (registers, operators, ... )
 
-T_NULL	equ 0
-enumval = 1
-
+.enum special_token {
+    T_NULL,
 res macro tok, string, type, value, bytval, flags, cpu, sflags
-    @CatStr(@CatStr(@CatStr(<T_>,@SubStr(<tok>,2)),< equ >),%enumval)
-    enumval = enumval + 1
+    @CatStr(<T_>,@SubStr(<tok>,2)),
     endm
 include special.inc
 undef res
-
 ;; define tokens for SpecialTable (directives)
 res macro token, string, value, bytval, flags, cpu, sflags
-    @CatStr(@CatStr(@CatStr(<T_>,@SubStr(<token>,2)),< equ >),%enumval)
-    enumval = enumval + 1
+    @CatStr(<T_>,@SubStr(<token>,2)),
     endm
 include directve.inc
 undef res
-    @CatStr(<SPECIAL_LAST equ >,%enumval)
+    SPECIAL_LAST
+}
 
 insa macro tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex
-    @CatStr(@CatStr(@CatStr(<T_>,@SubStr(<tok>,2)),< equ >),%enumval)
-    enumval = enumval + 1
+    @CatStr(<T_>,@SubStr(<tok>,2)),
     endm
 insx macro tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex, flgs
-    @CatStr(@CatStr(@CatStr(<T_>,@SubStr(<tok>,2)),< equ >),%enumval)
-    enumval = enumval + 1
+    @CatStr(<T_>,@SubStr(<tok>,2)),
     endm
 insv macro tok, string, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex, flgs, rex
-    @CatStr(@CatStr(@CatStr(<T_>,@SubStr(<tok>,2)),< equ >),%enumval)
-    enumval = enumval + 1
+    @CatStr(<T_>,@SubStr(<tok>,2)),
     endm
 insn macro tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex
     endm
 insm macro tok, suffix, opcls, byte1_info, op_dir, rm_info, opcode, rm_byte, cpu, prefix, evex
     endm
 avxins macro op, tok, string, cpu, flgs
-    @CatStr(@CatStr(@CatStr(<T_>,@SubStr(<tok>,1)),< equ >),%enumval)
-    enumval = enumval + 1
+    @CatStr(<T_>,@SubStr(<tok>,1)),
     endm
 OpCls macro op1, op2, op3
     exitm<OPC_&op1&&op2&&op3&>
     endm
+.enum instr_token {
+    INS_FIRST_1 = SPECIAL_LAST - 1, ;; to ensure tokens are unique
 include instruct.h
+}
 undef insm
 undef insn
 undef insx
@@ -61,7 +57,7 @@ undef insv
 undef insa
 undef avxins
 
-    VEX_START equ T_VBROADCASTSS ; first VEX encoded item
+VEX_START equ T_VBROADCASTSS ; first VEX encoded item
 
 
 ;; queue of symbols
@@ -71,14 +67,15 @@ head		dsym_t ?
 tail		dsym_t ?
 symbol_queue	ENDS
 
-queue_type	typedef SDWORD
-TAB_UNDEF	equ 0
-TAB_EXT		equ 1 ;; externals (EXTERNDEF, EXTERN, COMM, PROTO )
-TAB_SEG		equ 2 ;; SEGMENT items
-TAB_GRP		equ 3 ;; GROUP items
-TAB_PROC	equ 4 ;; PROC items
-TAB_ALIAS	equ 5 ;; ALIAS items
-TAB_LAST	equ 6 ;;
+.enum queue_type {
+   TAB_UNDEF,
+   TAB_EXT,	;; externals (EXTERNDEF, EXTERN, COMM, PROTO )
+   TAB_SEG,	;; SEGMENT items
+   TAB_GRP,	;; GROUP items
+   TAB_PROC,	;; PROC items
+   TAB_ALIAS,	;; ALIAS items
+   TAB_LAST	;;
+}
 
 ;; several lists, see enum queue_type above
 externdef	SymTables:symbol_queue
@@ -89,42 +86,47 @@ externdef	SymTables:symbol_queue
 ;; 010( no_WDS	) -> has rm_byte, but w-bit, d-bit, s-bit of opcode are absent
 ;; 011( R_in_OP ) -> no rm_byte, reg field (if any) is included in opcode
 
-rm_info		typedef SDWORD
-no_RM		equ 0x1
-no_WDS		equ 0x2
-R_in_OP		equ 0x3
+.enum rm_info {
+    no_RM   = 0x1,
+    no_WDS  = 0x2,
+    R_in_OP = 0x3,
+}
 
-;; values for <allowed_prefix> (3 bits)
-allowed_prefix	typedef SDWORD
-;AP_NO_PREFIX	equ 0x00 ;; value 0 means "normal"
-AP_LOCK		equ 0x01
-AP_REP		equ 0x02
-AP_REPxx	equ 0x03
-AP_FWAIT	equ 0x04
-AP_NO_FWAIT	equ 0x05
+;; values for <allowed_prefix> (3 bits) */
+.enum allowed_prefix {
+    ;; AP_NO_PREFIX= 0x00, ;; value 0 means "normal"
+    AP_LOCK	= 0x01,
+    AP_REP	= 0x02,
+    AP_REPxx	= 0x03,
+    AP_FWAIT	= 0x04,
+    AP_NO_FWAIT = 0x05
+}
 
 ;; values for field type in special_item.
 ;; it should match order of T_REGISTER - T_RES_ID in token.h
 
-special_type	typedef SDWORD
-RWT_REG		equ 2 ;; same value as for T_REG
-RWT_DIRECTIVE	equ 3
-RWT_UNARY_OP	equ 4
-RWT_BINARY_OP	equ 5
-RWT_STYPE	equ 6
-RWT_RES_ID	equ 7
+.enum special_type {
+    RWT_REG = 2,  ;; same value as for T_REG
+    RWT_DIRECTIVE,
+    RWT_UNARY_OP,
+    RWT_BINARY_OP,
+    RWT_STYPE,
+    RWT_RES_ID
+}
 
 ;; values for sflags if register
-op1_flags	typedef SDWORD
-SFR_SIZMSK	equ 0x7F
-SFR_IREG	equ 0x80
-SFR_SSBASED	equ 0x100
+.enum op1_flags {
+    SFR_SIZMSK	= 0x7F,	 ;; size in bits 0-4
+    SFR_IREG	= 0x80,
+    SFR_SSBASED = 0x100, ;; v2.11: added
+}
 
-rex_bits	typedef SDWORD
-REX_B		equ 1 ;; regno 0-7 <-> 8-15 of ModR/M or SIB base
-REX_X		equ 2 ;; regno 0-7 <-> 8-15 of SIB index
-REX_R		equ 4 ;; regno 0-7 <-> 8-15 of ModR/M REG
-REX_W		equ 8 ;; wide 32 <-> 64
+.enum rex_bits {
+    REX_B = 1,	;; regno 0-7 <-> 8-15 of ModR/M or SIB base
+    REX_X = 2,	;; regno 0-7 <-> 8-15 of SIB index
+    REX_R = 4,	;; regno 0-7 <-> 8-15 of ModR/M REG
+    REX_W = 8	;; wide 32 <-> 64
+}
 
 ;; operand classes. this table is defined in reswords.c.
 ;; index into this array is member opclsidx in instr_item.
@@ -190,29 +192,30 @@ GetCpuSp macro x
 	 endm
 
 ;; values for <value> if type == RWT_DIRECTIVE
-directive_flags typedef SDWORD
 
-DF_CEXPR	equ 0x01  ;; avoid '<' being used as string delimiter (.IF, ...)
-DF_STRPARM	equ 0x02  ;; directive expects string param(s) (IFB, IFDIF, ...)
-			  ;; enclose strings in <> in macro expansion step
-DF_NOEXPAND	equ 0x04  ;; don't expand params for directive (PURGE, FOR, IFDEF, ...)
-DF_LABEL	equ 0x08  ;; directive requires a label
-DF_NOSTRUC	equ 0x10  ;; directive not allowed inside structs/unions
-DF_NOCONCAT	equ 0x20  ;; don't concat line
-DF_PROC		equ 0x40  ;; directive triggers prologue generation
-DF_STORE	equ 0x80  ;; directive triggers line store
-DF_CGEN		equ 0x100 ;; directive generates lines
-
+.enum directive_flags {
+    DF_CEXPR	= 0x01, ;; avoid '<' being used as string delimiter (.IF, ...)
+    DF_STRPARM	= 0x02, ;; directive expects string param(s) (IFB, IFDIF, ...)
+			;; enclose strings in <> in macro expansion step
+    DF_NOEXPAND = 0x04, ;; don't expand params for directive (PURGE, FOR, IFDEF, ...)
+    DF_LABEL	= 0x08, ;; directive requires a label
+    DF_NOSTRUC	= 0x10, ;; directive not allowed inside structs/unions
+    DF_NOCONCAT = 0x20, ;; don't concat line
+    DF_PROC	= 0x40, ;; directive triggers prologue generation
+    DF_STORE	= 0x80, ;; directive triggers line store
+    DF_CGEN	= 0x100 ;; directive generates lines
+}
 
 ;; values for <bytval> if type == RWT_DIRECTIVE
 
-enumval = 0
 res macro token, function
-    DRT_&token& @CatStr(<equ >, %enumval)
-    enumval = enumval + 1
+    DRT_&token&,
     exitm<>
     endm
+
+.enum directive_type {
 include dirtype.inc
+}
 undef res
 
 MAX_OPND	equ 3

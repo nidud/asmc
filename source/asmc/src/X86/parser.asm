@@ -2917,7 +2917,7 @@ ParseLine proc uses esi edi ebx tokenarray:tok_t
     local buffer[MAX_LINE_LEN]:char_t
 
     mov ebx,tokenarray
-    .return EnumDirective(0, ebx) .if CurrEnum
+    .return EnumDirective(0, ebx) .if ( CurrEnum && [ebx].token == T_ID )
 
     mov i,0
     mov j,0
@@ -3319,6 +3319,7 @@ ParseLine proc uses esi edi ebx tokenarray:tok_t
 
         .elseif ( i != 0 || [ebx].dirtype != '{' )
 
+            .return EnumDirective(0, ebx) .if ( CurrEnum && [ebx].token == T_STRING )
             .return asmerr(2008, [esi].string_ptr )
         .endif
     .endif

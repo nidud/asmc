@@ -58,7 +58,7 @@ GetAlignedPointer macro x, size
     add eax,size_t
     and eax,not ( size_t - 1 )
     add eax,x
-    exitm<eax>
+    retm<eax>
     endm
 
 SkipSpace macro reg, base

@@ -30,23 +30,31 @@ mem2mem proc uses esi edi ebx op1:dword, op2:dword, tokenarray:tok_t
         .break .if ( !eax || !edx )
         .break .if ( ModuleInfo.strict_masm_compat == 1 )
 
-        mov esi,T_RAX
-        mov edi,T_RAX
-        .switch
-          .case eax & OP_M08: mov edi,T_AL  : .endc
-          .case eax & OP_M16: mov edi,T_AX  : .endc
-          .case eax & OP_M32: mov edi,T_EAX : .endc
-        .endsw
-        .switch
-          .case edx & OP_M08: mov esi,T_AL  : .endc
-          .case edx & OP_M16: mov esi,T_AX  : .endc
-          .case edx & OP_M32: mov esi,T_EAX : .endc
-        .endsw
         mov ecx,T_EAX
         .if ModuleInfo.Ofssize == USE64
             mov ecx,T_RAX
         .elseif ModuleInfo.Ofssize == USE16
             mov ecx,T_AX
+        .endif
+        mov esi,ecx
+        mov edi,ecx
+        .switch eax
+          .case OP_MS
+          .case OP_M08: mov edi,T_AL  : .endc
+          .case OP_M16: mov edi,T_AX  : .endc
+          .case OP_M32: mov edi,T_EAX : .endc
+        .endsw
+        .switch edx
+          .case OP_MS
+          .case OP_M08: mov esi,T_AL  : .endc
+          .case OP_M16: mov esi,T_AX  : .endc
+          .case OP_M32: mov esi,T_EAX : .endc
+        .endsw
+        .if esi > edi && eax == OP_MS
+            mov edi,esi
+        .endif
+        .if edi > esi && edx == OP_MS
+            mov esi,edi
         .endif
 
         mov ebx,tokenarray
@@ -75,20 +83,17 @@ mem2mem proc uses esi edi ebx op1:dword, op2:dword, tokenarray:tok_t
             .endif
         .endf
 
-        xchg ebx,edx
-        mov al,[ebx]
-        push eax
-        mov byte ptr [ebx],0
+        mov esi,edx
+        mov edx,ebx
+        mov bl,[esi]
+        mov byte ptr [esi],0
         AddLineQueueX( " %r %s,%r", op, [edx].asm_tok.tokpos, edi )
-        pop eax
-        mov [ebx],al
-
+        mov [esi],bl
         .if ModuleInfo.list
             LstWrite( LSTTYPE_DIRECTIVE, GetCurrOffset(), 0 )
         .endif
         RunLineQueue()
         .return NOT_ERROR
-
     .until 1
     asmerr(2070)
     ret

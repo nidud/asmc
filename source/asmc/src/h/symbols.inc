@@ -11,18 +11,20 @@ __SYMBOLS_INC equ <>
 ;; v2.01: SYM_PROC has been removed.
 ;; v2.01: SYM_LIB has been removed.
 
-SYM_UNDEFINED		equ 0
-SYM_INTERNAL		equ 1	;;  1 internal label
-SYM_EXTERNAL		equ 2	;;  2 external
-SYM_SEG			equ 3	;;  3 segment
-SYM_GRP			equ 4	;;  4 group
-SYM_STACK		equ 5	;;  5 stack variable - in local symbol tables only
-SYM_STRUCT_FIELD	equ 6	;;  6 struct member - not in symbol table - except record fields
-SYM_TYPE		equ 7	;;  7 structure, union, typedef, record
-SYM_ALIAS		equ 8	;;  8 alias name
-SYM_MACRO		equ 9	;;  9 macro
-SYM_TMACRO		equ 10	;; 10 text macro
-SYM_CLASS_LNAME		equ 11	;; 11 lname item for segm class - not in symbol table
+.enum sym_state {
+    SYM_UNDEFINED,
+    SYM_INTERNAL,	;;  1 internal label
+    SYM_EXTERNAL,	;;  2 external
+    SYM_SEG,		;;  3 segment
+    SYM_GRP,		;;  4 group
+    SYM_STACK,		;;  5 stack variable - in local symbol tables only
+    SYM_STRUCT_FIELD,	;;  6 struct member - not in symbol table - except record fields
+    SYM_TYPE,		;;  7 structure, union, typedef, record
+    SYM_ALIAS,		;;  8 alias name
+    SYM_MACRO,		;;  9 macro
+    SYM_TMACRO,		;; 10 text macro
+    SYM_CLASS_LNAME	;; 11 lname item for segm class - not in symbol table
+}
 
 ;; v2.04: MT_SHORT removed
 ;; v2.07: MT_ABS (0xC2) removed
@@ -99,6 +101,8 @@ struct_t	typedef ptr struct_info
 tok_t		typedef ptr asm_tok
 
 CALLBACKC(internal_func, :asym_t, :ptr)
+CALLBACKC(macro_func, :ptr macro_instance, :string_t, :tok_t)
+
 
 debug_info	struct
 start_line	dd ?	;; procs's start line
@@ -133,11 +137,11 @@ SINT_WEAK	equ 0x08
 SINT_ISFAR	equ 0x10
 SINT_ISVARARG	equ 0x20
 
-SMAC_ISVARARG	equ 0x01
-SMAC_ISFUNC	equ 0x02
-SMAC_ALABEL	equ 0x04
-SMAC_MULTILINE	equ 0x08
-SMAC_PURGED	equ 0x10
+M_ISVARARG	equ 0x01
+M_ISFUNC	equ 0x02
+M_LABEL		equ 0x04
+M_MULTILINE	equ 0x08
+M_PURGED	equ 0x10
 
 asym		struct
 nextitem	asym_t ?	; next symbol in hash line
@@ -148,57 +152,65 @@ union
  uvalue		uint_t ?	; v2.01: equates (they are 33-bit!)
  string_ptr	string_t ?	; used by SYM_TMACRO
  substitute	asym_t ?	; v2.04b: used by SYM_ALIAS
- func_ptr	internal_func ? ; used by SYM_MACRO if predefined==1
+ func_ptr	macro_func ?	; used by SYM_MACRO if predefined==1
  classlnameidx	int_t ? ; used by SYM_CLASS_LNAME
 ends
-_segment	asym_t ?
+_segment	asym_t ?	; used by SYM_INTERNAL, SYM_EXTERNAL
 state		uchar_t ?
 mem_type	uchar_t ?
-flag		dw ?	; bitfield
-union
- first_size	uint_t ?
+flag		dw ?		; bitfield
+union				; for SYM_INTERNAL (data labels, memtype != NEAR|FAR), SYM_STRUCT_FIELD
+ first_size	uint_t ?	; size of 1st initializer's dimension in bytes
  struct
-  Ofssize	uchar_t ?
-  is_ptr	uchar_t ?
+  Ofssize	uchar_t ?	; offset size (USE16, USE32)
+  is_ptr	uchar_t ?	; PTR indirection
   union
-   ptr_memtype	uchar_t ?
-   asmpass	uchar_t ?
+   ptr_memtype	uchar_t ?	; pointer target type
+   asmpass	uchar_t ?	; SYM_INTERNAL (mem_type NEAR|FAR)
   ends
   sint_flag	uchar_t ?
  ends
- mac_flag	uint_t ? ; --byte
+ mac_flag	uint_t ?	; for SYM_MACRO -- byte
 ends
-union
- first_length	uint_t ?
- max_mbr_size	uint_t ?
- target_type	asym_t ?
+union				; for SYM_INTERNAL (data labels only), SYM_STRUCT_FIELD
+ first_length	uint_t ?	; size of 1st initializer's dimension in item units
+				; SYM_TYPE (TYPEKIND_STRUCT or TYPEKIND_UNION)
+ max_mbr_size	uint_t ?	; max size members
+				; SYM_STACK, SYM_TYPE (TYPEKIND_TYPEDEF), SYM_EXTERNAL,
+				; SYM_INTERNAL (code labels)
+ target_type	asym_t ?	; set if ptr_memtype is MT_TYPE
 ends
-regist		ushort_t 2 dup(?)
-union
- total_size	uint_t ?
- value3264	int_t ?
- dll		dlldesc_t ?
- max_offset	int_t ?
-ends
-union
- total_length	uint_t ?
- altname	asym_t ? ; SYM_EXTERNAL (comm==0): alternative name
- debuginfo	debug_t ?
- sfunc_ptr	internal_func ?
- struct
-  cvtyperef	ushort_t ?
-  typekind	ushort_t ?
- ends
+regist		ushort_t 2 dup(?) ; SYM_TMACRO (if it's a register variable for FASTCALL)
+union				; for SYM_INTERNAL, SYM_STRUCT_FIELD,
+				; SYM_TYPE, SYM_STACK,
+				; SYM_EXTERNAL (comm=1)
+				; SYM_TMACRO: size of buffer allocated for the text in string_ptr
+ total_size	uint_t ?	; total number of bytes (sizeof)
+				; for SYM_INTERNAL, isequate=1 (numeric equates)
+ value3264	int_t ?		; high bits for equates
+ dll		dlldesc_t ?	; SYM_EXTERNAL (isproc=1)
+ max_offset	int_t ?		; for SYM_SEG; v2.11: moved here to make segment's
+ends				; offset field contain "local start offset" (=0)
+union				; SYM_INTERNAL, SYM_STRUCT_FIELD,
+				; SYM_STACK, SYM_EXTERNAL (comm==1):
+ total_length	uint_t ?	; total number of elements (LENGTHOF)
+ altname	asym_t ?	; SYM_EXTERNAL (comm==0): alternative name
+ debuginfo	debug_t ?	; SYM_INTERNAL (isproc==1): debug info (COFF)
+ sfunc_ptr	internal_func ? ; SYM_INTERNAL+predefined
+ struct				; SYM_TYPE
+  cvtyperef	ushort_t ?	; codeview type index (used after assembly steps)
+  typekind	ushort_t ?	; v2.04: moved from first_length, were it didn't work anymore
+ ends				; since the addition of field max_mbr_size.
 ends
 name_size	ushort_t ?
 langtype	ushort_t ?
-type		asym_t ?
-union
+type		asym_t ?	; set if memtype is MT_TYPE
+union				; SYM_INTERNAL, SYM_UNDEFINED, SYM_EXTERNAL: backpatching fixup
  bp_fixup	fixup_t ?
- ext_idx	uint_t ?
- struct
-  ext_idx1	ushort_t ?
-  ext_idx2	ushort_t ?
+ ext_idx	uint_t ?	; for SYM_EXTERNAL: table index ( for coff and elf )
+ struct				; omf indices are 16-bit only!
+  ext_idx1	ushort_t ?	; omf: (external definition) index
+  ext_idx2	ushort_t ?	; omf: (external definition) index for weak external
  ends
 ends
 asym		ends
@@ -315,7 +327,7 @@ mparm_list	ends
 srcline		struct
 next		srcline_t ?
 ph_count	uchar_t ?	;; placeholders contained in this line
-line		uchar_t ?
+line		char_t 1 dup(?)
 srcline		ends
 
 ;; macro item
@@ -327,7 +339,7 @@ union
  autoexp	ushort_t ?	;; auto-expansion flags if predefined macro
 ends
 parmlist	mparm_t ?	;; array of parameter items
-datap		srcline_t ?	;; prepared macro source lines
+_data		srcline_t ?	;; prepared macro source lines
 srcfile		uint_t ?	;; sourcefile index
 macro_info	ends
 
@@ -417,7 +429,7 @@ SymGetAll	proto :ptr asym_t
 SymEnum		proto :asym_t, :ptr int_t
 SymGetCount	proto
 
-CALLBACK(StrCmpFunc, :ptr, :ptr, :size_t )
+CALLBACKC(StrCmpFunc, :ptr, :ptr, :size_t )
 externdef	SymCmpFunc:StrCmpFunc
 
 SymSetCmpFunc	proto

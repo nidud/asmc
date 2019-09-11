@@ -100,7 +100,7 @@ IsMultiLine proc fastcall tokenarray:tok_t
         .if SymFind([ecx].string_ptr)
 
             .if [eax].asym.state == SYM_MACRO && \
-                !([eax].asym.mac_flag & SMAC_MULTILINE)
+                !([eax].asym.mac_flag & M_MULTILINE)
 
                 xor eax,eax
                 ret
@@ -599,12 +599,12 @@ get_special_symbol proc fastcall uses esi edi ebx buf:tok_t , p:ptr line_status
 
                   .case ( ModuleInfo.strict_masm_compat == 1 )
                     .endc .if edx != SYM_MACRO
-                    .endc .if !([eax].asym.mac_flag & SMAC_ISFUNC)
+                    .endc .if !([eax].asym.mac_flag & M_ISFUNC)
                     and [esi].flags2,not DF_CEXPR
                     .endc
 
                   .case edx == SYM_MACRO
-                    .if [eax].asym.mac_flag & SMAC_ISFUNC
+                    .if [eax].asym.mac_flag & M_ISFUNC
 
                         and [esi].flags2,not DF_CEXPR
                         .if [eax].asym.flag & S_PREDEFINED

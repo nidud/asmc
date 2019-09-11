@@ -1048,7 +1048,7 @@ endif
 	__targv	  array_t 0
 	_tenviron array_t 0
   endif
-	_startup  db 100 dup(0)
+	_startup  db 128 dup(0)
 
 	.code
 

@@ -28,8 +28,6 @@ MAX_STRUCT_NESTING  equ 32  ;; limit for "anonymous structs" only
 MAX_LNAME           equ 255 ;; OMF lnames - length must fit in 1 byte
 LNAME_NULL          equ 0   ;; OMF first entry in lnames array
 
-option fieldalign:4
-
 include symbols.inc
 include errmsg.inc      ;; must be located AFTER #defines lines
 include queue.inc
@@ -505,6 +503,7 @@ CurrWordSize            equ <ModuleInfo.wordsize>
 CurrFile                equ <ModuleInfo.curr_file>
 CurrSeg                 equ <ModuleInfo.currseg>
 CurrFName               equ <ModuleInfo.curr_fname>
+StringBufferEnd         equ <ModuleInfo.stringbufferend>
 
 externdef               Parse_Pass      : uint_t
 externdef               LineStore       : qdesc

@@ -42,7 +42,7 @@
  * The macro is marked "undefined" and cannot be invoked anymore.
  * 0=just delete the macro content.
  */
-#define TRUEPERGE 0
+#define TRUEPURGE 0
 
 extern int  MacroLocals;
 

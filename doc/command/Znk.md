@@ -24,3 +24,6 @@ Asmc allows in addition to **C** the following keywords to be used as identifier
     width     .width
     type      typeof
 
+#### See Also
+
+[Asmc Command-Line Reference](readme.md) | [Disable non Masm extensions](Zne.md)

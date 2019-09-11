@@ -947,7 +947,6 @@ static int RebuildLine( const char *newstring, int i, struct asm_tok tokenarray[
 	*dest++ = '<';
 	for ( src = newstring; *src; src++ ) {
 
-	    //if ( !( ModuleInfo.asmc_syntax & 2 ) )
 	    if ( *src == '<' || *src == '>' || *src == '!' )	/* count '!' operator */
 		*dest++ = '!';
 	    *dest++ = *src;

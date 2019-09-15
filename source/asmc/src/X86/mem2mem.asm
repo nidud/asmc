@@ -71,11 +71,9 @@ mem2mem proc uses esi edi ebx op1:dword, op2:dword, tokenarray:tok_t
                 mov edx,[edx].asm_tok.tokpos
                 push edx
                 mov ecx,T_MOV
-                .if edi > esi
-                    .if esi < T_EAX
-                        mov ecx,T_MOVZX
-                        mov esi,T_EAX
-                    .endif
+                .if edi > esi && esi < T_EAX
+                    mov ecx,T_MOVZX
+                    mov esi,T_EAX
                 .endif
                 AddLineQueueX( " %r %r%s", ecx, esi, edx )
                 pop edx

@@ -123,6 +123,9 @@ SetStdAssumeTable proc uses esi edi savedstate:ptr, ti:ptr stdassume_typeinfo
 
 SetStdAssumeTable endp
 
+    assume esi:ptr assume_info
+    assume edi:ptr stdassume_typeinfo
+
 GetStdAssumeTable proc uses esi edi savedstate:ptr, ti:ptr stdassume_typeinfo
 
     mov edi,savedstate
@@ -132,10 +135,8 @@ GetStdAssumeTable proc uses esi edi savedstate:ptr, ti:ptr stdassume_typeinfo
 
     lea esi,StdAssumeTable
     mov edi,ti
-    assume esi:ptr assume_info
-    assume edi:ptr stdassume_typeinfo
 
-    .for ( ecx = 0: ecx < NUM_STDREGS: ecx++,
+    .for ( : ecx < NUM_STDREGS: ecx++,
            edi += stdassume_typeinfo, esi += assume_info )
 
         .if ( [esi].symbol )
@@ -153,11 +154,12 @@ GetStdAssumeTable proc uses esi edi savedstate:ptr, ti:ptr stdassume_typeinfo
 
         .endif
     .endf
-    assume edi:nothing
-    assume esi:nothing
     ret
 
 GetStdAssumeTable endp
+
+    assume edi:nothing
+    assume esi:nothing
 
 AssumeSaveState proc
 
@@ -561,33 +563,33 @@ AssumeDirective endp
 search_assume proc uses esi sym:asym_t, def:int_t, search_grps:int_t
 
 
-    .return( ASSUME_NOTHING ) .if( sym == NULL )
+    .return( ASSUME_NOTHING ) .if ( sym == NULL )
 
     mov esi,GetGroup(sym)
     mov edx,def
 
     ;; first check the default segment register
 
-    .if( edx != ASSUME_NOTHING )
+    .if ( edx != ASSUME_NOTHING )
 
         mov eax,edx
         mov ecx,sym
-        .return .if( SegAssumeTable[edx*8].symbol == ecx )
+        .return .if ( SegAssumeTable[edx*8].symbol == ecx )
 
-        .if( search_grps && esi )
+        .if ( search_grps && esi )
 
-            .return .if( SegAssumeTable[edx*8].is_flat && esi == ModuleInfo.flat_grp )
-            .return .if( SegAssumeTable[edx*8].symbol == esi )
+            .return .if ( SegAssumeTable[edx*8].is_flat && esi == ModuleInfo.flat_grp )
+            .return .if ( SegAssumeTable[edx*8].symbol == esi )
         .endif
     .endif
 
     ;; now check all segment registers
 
-    .for( ecx = 0: ecx < NUM_SEGREGS: ecx++ )
+    .for ( ecx = 0: ecx < NUM_SEGREGS: ecx++ )
 
         mov eax,searchtab[ecx*4]
         mov edx,SegAssumeTable[eax*8].symbol
-        .return .if( edx == sym )
+        .return .if ( edx == sym )
     .endf
 
     ;; now check the groups
@@ -598,8 +600,8 @@ search_assume proc uses esi sym:asym_t, def:int_t, search_grps:int_t
 
             mov eax,searchtab[ecx*4]
 
-            .return .if( SegAssumeTable[eax*8].is_flat && esi == ModuleInfo.flat_grp )
-            .return .if( SegAssumeTable[eax*8].symbol == esi )
+            .return .if ( SegAssumeTable[eax*8].is_flat && esi == ModuleInfo.flat_grp )
+            .return .if ( SegAssumeTable[eax*8].symbol == esi )
         .endf
     .endif
     mov eax,ASSUME_NOTHING

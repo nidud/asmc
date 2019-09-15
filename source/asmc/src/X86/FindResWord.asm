@@ -10,7 +10,7 @@ ReservedWord    STRUC
 next            dw ?    ; index next entry (used for hash table)
 len             db ?    ; length of reserved word, i.e. 'AX' = 2
 flags           db ?    ; see enum reservedword_flags
-_name           dd ?    ; reserved word (char[])
+name            dd ?    ; reserved word (char[])
 ReservedWord    ENDS
 
 externdef ResWordTable:ReservedWord
@@ -37,7 +37,7 @@ FindResWord proc fastcall w_name:string_t, w_size:uint_t
             .if eax
                 .repeat
                     .if ResWordTable[eax*8].len == 1
-                        mov edx,ResWordTable[eax*8]._name
+                        mov edx,ResWordTable[eax*8].name
                         .break .if cl == [edx]
                     .endif
                     movzx eax,ResWordTable[eax*8].next
@@ -56,7 +56,7 @@ FindResWord proc fastcall w_name:string_t, w_size:uint_t
             .if eax
                 .repeat
                     .if ResWordTable[eax*8].len == 2
-                        mov edx,ResWordTable[eax*8]._name
+                        mov edx,ResWordTable[eax*8].name
                         .break .if cx == [edx]
                     .endif
                     movzx eax,ResWordTable[eax*8].next
@@ -85,7 +85,7 @@ FindResWord proc fastcall w_name:string_t, w_size:uint_t
             .if eax
                 .repeat
                     .if ResWordTable[eax*8].len == 3
-                        mov edx,ResWordTable[eax*8]._name
+                        mov edx,ResWordTable[eax*8].name
                         mov edx,[edx]
                         and edx,0xFFFFFF
                         .break .if ecx == edx
@@ -122,7 +122,7 @@ FindResWord proc fastcall w_name:string_t, w_size:uint_t
             .if eax
                 .repeat
                     .if ResWordTable[eax*8].len == 4
-                        mov edx,ResWordTable[eax*8]._name
+                        mov edx,ResWordTable[eax*8].name
                         .break .if ecx == [edx]
                     .endif
                     movzx eax,ResWordTable[eax*8].next
@@ -155,7 +155,7 @@ FindResWord proc fastcall w_name:string_t, w_size:uint_t
             .if eax
                 .repeat
                     .if ResWordTable[eax*8].len == bl
-                        mov edx,ResWordTable[eax*8]._name
+                        mov edx,ResWordTable[eax*8].name
                         mov ecx,[edi]
                         or  ecx,0x20202020
                         .if ecx == [edx]
@@ -263,7 +263,7 @@ FindResWord proc fastcall w_name:string_t, w_size:uint_t
     .if eax
         .repeat
             .if ResWordTable[eax*8].len == bl
-                mov esi,ResWordTable[eax*8]._name
+                mov esi,ResWordTable[eax*8].name
                 mov ecx,[edi]
                 or  ecx,0x20202020
                 .if ecx == [esi]

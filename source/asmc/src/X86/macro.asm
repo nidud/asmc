@@ -47,7 +47,7 @@ externdef MacroLocals:int_t
 ;; in the macro item is the number of params and locals only.
 
 mname_list struct
-    _label  string_t ?  ;; name of param/local
+    name    string_t ?  ;; name of param/local
     len     dw ?
 mname_list ends
 
@@ -145,11 +145,11 @@ replace_parm proc uses esi edi ebx line:string_t, start:string_t, len:int_t, mna
     mov ebx,mnames
     assume ebx:ptr mname_list
 
-    .for ( count = 1: [ebx]._label: count++, ebx += mname_list )
+    .for ( count = 1: [ebx].name: count++, ebx += mname_list )
 
         .continue .if [ebx].len != len
 
-        .if !SymCmpFunc( start, [ebx]._label, len )
+        .if !SymCmpFunc( start, [ebx].name, len )
 
             ;; found a macro parameter/local!
 
@@ -367,9 +367,9 @@ StoreMacro proc uses esi edi ebx mac:dsym_t, i:int_t, tokenarray:tok_t, store_da
             strlen( token )
             imul ecx,mindex,mname_list
             mov mnames[ecx].len,ax
-            mov mnames[ecx]._label,token
+            mov mnames[ecx].name,token
             inc mindex
-            mov mnames[ecx+mname_list]._label,NULL ;; init next entry
+            mov mnames[ecx+mname_list].name,NULL ;; init next entry
             add ebx,16
 
             ;; now see if it has a default value or is required
@@ -553,8 +553,8 @@ endif
                 alloca(eax)
                 imul ecx,mindex,mname_list
                 mov mnames[ecx].len,di
-                mov mnames[ecx]._label,eax
-                mov mnames[ecx+mname_list]._label,NULL ;; mark end of placeholder array
+                mov mnames[ecx].name,eax
+                mov mnames[ecx+mname_list].name,NULL ;; mark end of placeholder array
                 inc mindex
                 mov ecx,edi
                 mov edi,eax

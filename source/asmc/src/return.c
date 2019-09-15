@@ -45,7 +45,6 @@ static int GetValue( int i, struct asm_tok tokenarray[], int *count, int *direct
                     }
                 }
                 if ( tokenarray[i].token == T_CL_BRACKET ) {
-                    (*count)++;
                     i++;
                 }
             } else {

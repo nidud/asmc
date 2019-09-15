@@ -9,7 +9,7 @@ int EnumDirective(int i, struct asm_tok tokenarray[] )
     char *name;
     struct expr opndx;
     struct asym *sym;
-    int value;
+    int type;
     int x;
 
     if ( Parse_Pass > PASS_1 )
@@ -20,18 +20,51 @@ int EnumDirective(int i, struct asm_tok tokenarray[] )
         CurrEnum = LclAlloc(sizeof(struct asym));
         CurrEnum->name = NULL;
         CurrEnum->value = 0;
+        CurrEnum->total_size = 4;
         CurrEnum->mem_type = MT_SDWORD;
 
         i++;
 
         if ( tokenarray[i].token != T_FINAL ) {
-
-            if ( tokenarray[i].token == T_STRING )
+            if ( tokenarray[i].token == T_STRING ) {
                 CurrEnum->name = tokenarray[i].string_ptr;
-            else
-                AddLineQueueX( "%s typedef sdword", tokenarray[i].string_ptr );
-
-            i++;
+                i++;
+            } else {
+                type = T_SDWORD;
+                name = tokenarray[i].string_ptr;
+                i++;
+                if ( tokenarray[i].token == T_COLON ) {
+                    i++;
+                    x = i + 1;
+                    rc = EvalOperand( &i, tokenarray, x, &opndx, 0 );
+                    if ( rc != ERROR ) {
+                        CurrEnum->total_size = opndx.value;
+                        i++;
+                        if ( opndx.mem_type & MT_SIGNED ) {
+                            if ( opndx.value == 2 ) {
+                                type = T_SWORD;
+                                CurrEnum->mem_type = MT_SWORD;
+                            } else if ( opndx.value == 1 ) {
+                                type = T_SBYTE;
+                                CurrEnum->mem_type = MT_SBYTE;
+                            }
+                        } else {
+                            switch ( opndx.value ) {
+                            case 4:
+                                type = T_DWORD;
+                                CurrEnum->mem_type = MT_DWORD;
+                            case 2:
+                                type = T_WORD;
+                                CurrEnum->mem_type = MT_WORD;
+                            case 1:
+                                type = T_BYTE;
+                                CurrEnum->mem_type = MT_BYTE;
+                            }
+                        }
+                    }
+                }
+                AddLineQueueX( "%s typedef %r", name, type );
+            }
             if ( tokenarray[i].token == T_STRING ) {
                 CurrEnum->name = tokenarray[i].string_ptr;
                 i++;
@@ -50,14 +83,16 @@ int EnumDirective(int i, struct asm_tok tokenarray[] )
             break;
         }
 
-        value = CurrEnum->value;
+        opndx.value = CurrEnum->value;
         CurrEnum->value++;
 
         if ( tokenarray[i].token == T_DIRECTIVE && tokenarray[i].tokval == T_EQU ) {
 
             i++;
             for ( x = i; x < Token_Count; x++ ) {
-                if ( tokenarray[x].token == T_COMMA || tokenarray[x].token == T_FINAL )
+                if ( tokenarray[x].token == T_COMMA ||
+                     tokenarray[x].token == T_STRING ||
+                     tokenarray[x].token == T_FINAL )
                     break;
             }
             if ( x == i - 1 )
@@ -69,16 +104,29 @@ int EnumDirective(int i, struct asm_tok tokenarray[] )
                 rc = asmerr( 2026 );
                 break;
             }
-            value = opndx.value;
-            CurrEnum->value = value + 1;
+            x = 1;
+            if ( opndx.value & 0xFFFF0000 )
+                x = 4;
+            else if ( opndx.value & 0xFF00 )
+                x = 2;
+            if ( opndx.hvalue || x > CurrEnum->total_size ) {
+                if ( opndx.hvalue == -1 )
+                    opndx.value |= 0x80000000;
+                else {
+                    rc = asmerr(2071);
+                    break;
+                }
+            }
+            CurrEnum->value = opndx.value + 1;
         }
-
+        if ( CurrEnum->mem_type & MT_SIGNED )
+            AddLineQueueX("%s equ %d", name, opndx.value);
+        else
+            AddLineQueueX("%s equ %u", name, opndx.value);
         if ( tokenarray[i].token == T_COMMA )
             i++;
         else if ( tokenarray[i].token == T_FINAL && CurrEnum->name == NULL )
             CurrEnum = NULL;
-
-        AddLineQueueX( "%s equ %d", name, value );
     }
     if ( tokenarray[i].token != T_FINAL )
         return asmerr( 2008, tokenarray[i].tokpos );

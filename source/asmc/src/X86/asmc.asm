@@ -100,7 +100,6 @@ AssembleSubdir proc uses esi edi ebx directory, wild
 AssembleSubdir endp
 
 GeneralFailure proc signo
-
     mov eax,signo
 	    .if eax != SIGTERM
 	mov eax,pCurrentException

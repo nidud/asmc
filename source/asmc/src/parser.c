@@ -2175,8 +2175,26 @@ static int check_size( struct code_info *CodeInfo, const struct expr opndx[] )
 	    if( ( ( op1 | op2 ) & ( OP_MMX | OP_XMM | OP_YMM | OP_ZMM | OP_K ) ) ||
 		    CodeInfo->token >= VEX_START ) {
 	    } else if( ( op1_size != 0 ) && ( op2_size != 0 ) ) {
-		//asmerr( 2022, op1_size, op2_size );
-		rc = asmerr( 2022, op1_size, op2_size );//ERROR;
+		rc = 1;
+		if ( CodeInfo->Ofssize > USE16 && ( op1 & OP_MS ) && ( op2 & OP_MS ) ) {
+		    /* v2.30 - Memory to memory operands. */
+		    switch ( CodeInfo->token ) {
+		    case T_MOV:
+		    case T_CMP:
+		    case T_TEST:
+		    case T_ADC:
+		    case T_ADD:
+		    case T_SBB:
+		    case T_SUB:
+		    case T_AND:
+		    case T_OR:
+		    case T_XOR:
+			rc = 0;
+			break;
+		    }
+		}
+		if ( rc )
+		    rc = asmerr(2022, op1_size, op2_size);
 	    }
 	    /* size == 0 is assumed to mean "undefined", but there
 	     * is also the case of an "empty" struct or union. The
@@ -2314,7 +2332,7 @@ int ParseLine( struct asm_tok tokenarray[] )
     char		hllbuf[MAX_LINE_LEN];
     char		buffer[MAX_LINE_LEN];
 
-    if ( CurrEnum != NULL )
+    if ( CurrEnum != NULL && tokenarray[0].token == T_ID )
 	return EnumDirective(0, tokenarray);
 
     i = 0;
@@ -2640,6 +2658,8 @@ int ParseLine( struct asm_tok tokenarray[] )
 
 	} else if ( i != 0 || tokenarray[0].dirtype != '{' ) {
 
+	    if ( CurrEnum && tokenarray[0].token == T_STRING )
+		return EnumDirective(0, tokenarray);
 	    return( asmerr(2008, tokenarray[i].string_ptr ) );
 	}
     }

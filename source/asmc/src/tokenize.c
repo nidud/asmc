@@ -59,6 +59,7 @@ extern struct ReservedWord  ResWordTable[];
 
 extern char *token_stringbuf;  /* start token string buffer */
 extern char *commentbuffer;
+extern struct asym *CurrEnum;
 
 #if !defined(__GNUC__) && !defined(__POCC__)
 #define tolower(c) ((c >= 'A' && c <= 'Z') ? c | 0x20 : c )
@@ -92,6 +93,8 @@ static int IsMultiLine( struct asm_tok tokenarray[] )
     i = ( tokenarray[1].token == T_COLON ? 2 : 0 );
     /* don't concat macros */
     if ( tokenarray[i].token == T_ID ) {
+	if ( CurrEnum != NULL )
+	    return( FALSE );
 	sym = SymSearch( tokenarray[i].string_ptr );
 	if ( sym && ( sym->state == SYM_MACRO )
 	    && sym->mac_multiline == FALSE  /* v2.11: added */

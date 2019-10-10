@@ -252,7 +252,9 @@ AddLocalDir proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
     .if ( creat && Parse_Pass == PASS_1 )
         mov eax,CurrProc
-        SetLocalOffsets([eax].dsym.procinfo)
+        mov ecx,[eax].dsym.procinfo
+        mov [ecx].proc_info.localsize,0
+        SetLocalOffsets(ecx)
     .endif
     mov eax,NOT_ERROR
     ret

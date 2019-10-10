@@ -18,7 +18,7 @@ __ullshr::
     ja  ZERO
     cmp cl,31
     ja  __U63
-    shrd    eax,edx,cl
+    shrd eax,edx,cl
     shr edx,cl
     ret
 __U63:

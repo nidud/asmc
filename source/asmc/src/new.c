@@ -202,8 +202,10 @@ int AddLocalDir( int i, struct asm_tok tokenarray[] )
 
     } while ( i < Token_Count );
 
-    if ( creat && Parse_Pass == PASS_1 )
+    if ( creat && Parse_Pass == PASS_1 ) {
+        info->localsize = 0;
         SetLocalOffsets(info);
+    }
 
     return NOT_ERROR;
 }

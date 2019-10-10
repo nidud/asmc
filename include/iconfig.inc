@@ -3,19 +3,19 @@ __ICONFIG_INC equ <>
 
 include crtdefs.inc
 
-_I_BASE         equ 0x01
-_I_SECTION      equ 0x02
-_I_ENTRY        equ 0x04
-_I_COMMENT      equ 0x08
+C_BASE          equ 0x01
+C_SECTION       equ 0x02
+C_ENTRY         equ 0x04
+C_COMMENT       equ 0x08
 
 config_t        typedef ptr IConfig
 
 .class IConfig
 
-    Flags       uint_t ?
-    Name        string_t ?
-    Next        config_t ?
-    List        intptr_t ?
+    name        string_t ?
+    next        config_t ?
+    list        intptr_t ?
+    type        uint_t ?
 
     Release     proc
     Read        proc :string_t

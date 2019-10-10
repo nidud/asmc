@@ -28,7 +28,12 @@ int EnumDirective(int i, struct asm_tok tokenarray[] )
         if ( tokenarray[i].token != T_FINAL ) {
             if ( tokenarray[i].token == T_STRING ) {
                 CurrEnum->name = tokenarray[i].string_ptr;
+                name = tokenarray[i].tokpos;
                 i++;
+                if ( name[0] == '{' && name[1] ) {
+                    name++;
+                    Token_Count += Tokenize( name, 0, &tokenarray[i], TOK_DEFAULT );
+                }
             } else {
                 type = T_SDWORD;
                 name = tokenarray[i].string_ptr;
@@ -39,7 +44,6 @@ int EnumDirective(int i, struct asm_tok tokenarray[] )
                     rc = EvalOperand( &i, tokenarray, x, &opndx, 0 );
                     if ( rc != ERROR ) {
                         CurrEnum->total_size = opndx.value;
-                        i++;
                         if ( opndx.mem_type & MT_SIGNED ) {
                             if ( opndx.value == 2 ) {
                                 type = T_SWORD;
@@ -67,7 +71,12 @@ int EnumDirective(int i, struct asm_tok tokenarray[] )
             }
             if ( tokenarray[i].token == T_STRING ) {
                 CurrEnum->name = tokenarray[i].string_ptr;
+                name = tokenarray[i].tokpos;
                 i++;
+                if ( name[0] == '{' && name[1] ) {
+                    name++;
+                    Token_Count += Tokenize( name, 0, &tokenarray[i], TOK_DEFAULT );
+                }
             }
         }
         if ( ModuleInfo.list )

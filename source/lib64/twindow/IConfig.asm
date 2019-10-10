@@ -11,21 +11,58 @@ include iconfig.inc
 
 ICMAXLINE equ 256
 
+    .data
+    vtable IConfigVtbl { \
+        IConfig_Release,
+        IConfig_Read,
+        IConfig_Write,
+        IConfig_Find,
+        IConfig_GetEntry,
+        IConfig_Create,
+        IConfig_Delete,
+        IConfig_Unlink }
+
     .code
 
-    assume rcx:config_t
-    assume rbx:config_t
+    option procalign:8
 
+    assume rcx:config_t
+
+IConfig::IConfig proc
+
+    .return .if !malloc(sizeof(IConfig))
+
+    mov rcx,rax
+    mov rdx,this
+    .if rdx
+        mov [rdx],rax
+    .endif
+
+    lea rax,vtable
+    mov [rcx].lpVtbl,rax
+
+    xor eax,eax
+    mov [rcx].next,rax
+    mov [rcx].name,rax
+    mov [rcx].list,rax
+    mov [rcx].type,eax
+
+    mov rax,rcx
+    ret
+
+IConfig::IConfig endp
+
+    assume rbx:config_t
 
 IConfig::Release proc uses rbx
 
     .for ( rbx = rcx : rbx : )
 
-        free([rbx].Name)
+        free([rbx].name)
 
-        .if ( [rbx].Flags & _I_SECTION )
+        .if ( [rbx].type & C_SECTION )
 
-            mov rcx,[rbx].List
+            mov rcx,[rbx].list
             .if rcx
 
                 [rcx].Release()
@@ -33,7 +70,7 @@ IConfig::Release proc uses rbx
         .endif
 
         mov rcx,rbx
-        mov rbx,[rbx].Next
+        mov rbx,[rbx].next
 
         free(rcx)
     .endf
@@ -132,20 +169,20 @@ IConfig::Write proc uses rsi rdi rbx file:string_t
 
     .return .if !fopen(rcx, "wt")
 
-    .for ( rdi = rax : rbx : rbx = [rbx].Next )
+    .for ( rdi = rax : rbx : rbx = [rbx].next )
 
-        .if [rbx].Flags & _I_SECTION
+        .if [rbx].type & C_SECTION
 
-            fprintf(rdi, "\n[%s]\n", [rbx].Name)
+            fprintf(rdi, "\n[%s]\n", [rbx].name)
         .endif
 
-        .for ( rsi = [rbx].List : rsi : rsi = [rsi].IConfig.Next )
+        .for ( rsi = [rbx].list : rsi : rsi = [rsi].IConfig.next )
 
-            mov r8,[rsi].IConfig.Name
-            mov eax,[rsi].IConfig.Flags
-            .if ( eax & _I_ENTRY )
-                fprintf(rdi, "%s=%s\n", r8, [rsi].IConfig.List)
-            .elseif eax & _I_COMMENT
+            mov r8,[rsi].IConfig.name
+            mov eax,[rsi].IConfig.type
+            .if ( eax & C_ENTRY )
+                fprintf(rdi, "%s=%s\n", r8, [rsi].IConfig.list)
+            .elseif eax & C_COMMENT
                 fprintf(rdi, "%s\n", r8)
             .else
                 fprintf(rdi, ";%s\n", r8)
@@ -162,13 +199,13 @@ IConfig::Write endp
 
 IConfig::Find proc uses rsi rdi rbx string:string_t
 
-    .for ( edi = 0, eax = 0, rsi = rdx : rcx : rdi = rcx, rcx = [rcx].Next )
+    .for ( edi = 0, eax = 0, rsi = rdx : rcx : rdi = rcx, rcx = [rcx].next )
 
-        .if ( [rcx].Flags & ( _I_SECTION or _I_ENTRY ) )
+        .if ( [rcx].type & ( C_SECTION or C_ENTRY ) )
 
             mov rbx,rcx
 
-            .ifd !strcmp([rbx].Name, rsi)
+            .ifd !strcmp([rbx].name, rsi)
 
                 mov rdx,rdi
                 mov rcx,rbx
@@ -188,7 +225,7 @@ IConfig::GetEntry proc Section:string_t, Entry:string_t
 
     .if [rcx].Find(rdx)
 
-        mov rax,[rcx].List
+        mov rax,[rcx].list
         .if rax
 
             [rax].IConfig.Find(Entry)
@@ -236,46 +273,46 @@ IConfig::Create proc uses rsi rdi rbx r12 format:string_t, argptr:vararg
         .break .if [rbx].Find(rdx)
         .break .if !IConfig::IConfig(NULL)
 
-        mov ecx,_I_SECTION
-        .if esi
+        mov ecx,C_SECTION
+        .if rsi
             mov byte ptr [rsi-1],'='
-            mov ecx,_I_ENTRY
+            mov ecx,C_ENTRY
         .elseif byte ptr [rdi] == ';'
-            mov ecx,_I_COMMENT
+            mov ecx,C_COMMENT
         .endif
-        mov [rax].IConfig.Flags,ecx
+        mov [rax].IConfig.type,ecx
 
         mov r12,rdi
         mov rdi,rax
 
         .break .if !malloc(&[strlen(r12)+1])
-        mov [rdi].IConfig.Name,strcpy(rax, r12)
+        mov [rdi].IConfig.name,strcpy(rax, r12)
 
-        mov rax,[rbx].Next
-        .if esi && [rbx].Flags & _I_SECTION
+        mov rax,[rbx].next
+        .if rsi && [rbx].type & C_SECTION
 
-            mov rax,[rbx].List
+            mov rax,[rbx].list
             .if !rax
 
-                mov [rbx].List,rdi
+                mov [rbx].list,rdi
                 xor rbx,rbx
             .endif
         .endif
 
         .while rax
             mov rbx,rax
-            mov rax,[rbx].Next
+            mov rax,[rbx].next
         .endw
         .if rbx
-            mov [rbx].Next,rdi
+            mov [rbx].next,rdi
         .endif
 
         mov rbx,rdi
         .if esi
-            .if strchr([rbx].Name, '=')
+            .if strchr([rbx].name, '=')
                 mov byte ptr [rax],0
                 inc rax
-                mov [rbx].List,rax
+                mov [rbx].list,rax
             .endif
         .endif
 
@@ -303,51 +340,13 @@ IConfig::Delete endp
 
 IConfig::Unlink proc Parent:config_t
 
-    mov rax,[rcx].Next
-    mov [rdx].IConfig.Next,rax
+    mov rax,[rcx].next
+    mov [rdx].IConfig.next,rax
     xor eax,eax
-    mov [rcx].Next,rax
+    mov [rcx].next,rax
     [rcx].Release()
     ret
 
 IConfig::Unlink endp
-
-
-    .data
-    IConfig_vtable IConfigVtbl { \
-        IConfig_Release,
-        IConfig_Read,
-        IConfig_Write,
-        IConfig_Find,
-        IConfig_GetEntry,
-        IConfig_Create,
-        IConfig_Delete,
-        IConfig_Unlink }
-
-    .code
-
-IConfig::IConfig proc
-
-    .return .if !malloc(sizeof(IConfig))
-
-    mov rcx,rax
-    mov rdx,this
-    .if rdx
-        mov [rdx],rax
-    .endif
-
-    lea rax,IConfig_vtable
-    mov [rcx].lpVtbl,rax
-
-    xor eax,eax
-    mov [rcx].Next,rax
-    mov [rcx].Name,rax
-    mov [rcx].List,rax
-    mov [rcx].Flags,eax
-
-    mov rax,rcx
-    ret
-
-IConfig::IConfig endp
 
     end

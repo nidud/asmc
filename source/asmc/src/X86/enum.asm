@@ -52,9 +52,14 @@ EnumDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
             .if ( [ebx].token == T_STRING )
 
                 mov [esi].name,[ebx].string_ptr
+                mov eax,[ebx].tokpos
                 add ebx,16
                 inc i
-
+                .if ( byte ptr [eax] == '{' && byte ptr [eax+1] )
+                    inc eax
+                    Tokenize( eax, 0, ebx, TOK_DEFAULT )
+                    add Token_Count,eax
+                .endif
             .else
 
                 mov type,T_SDWORD
@@ -91,8 +96,14 @@ EnumDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
             .if ( [ebx].token == T_STRING )
 
                 mov [esi].name,[ebx].string_ptr
+                mov eax,[ebx].tokpos
                 add ebx,16
                 inc i
+                .if ( byte ptr [eax] == '{' && byte ptr [eax+1] )
+                    inc eax
+                    Tokenize( eax, 0, ebx, TOK_DEFAULT )
+                    add Token_Count,eax
+                .endif
             .endif
         .endif
         .if ModuleInfo.list

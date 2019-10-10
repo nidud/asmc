@@ -175,17 +175,12 @@
     </ASMC>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src/apiemu.c">
-      <IgnoreStandardIncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</IgnoreStandardIncludePath>
-    </ClCompile>
     <ClCompile Include="src/asmc.c" />
     <ClCompile Include="src/asmerr.c" />
     <ClCompile Include="src/assemble.c" />
     <ClCompile Include="src/assert.c" />
     <ClCompile Include="src/assume.c" />
     <ClCompile Include="src/atofloat.c" />
-    <ClCompile Include="src/atoow.c" />
-    <ClCompile Include="src/atoquad.c" />
     <ClCompile Include="src/backptch.c" />
     <ClCompile Include="src/bin.c" />
     <ClCompile Include="src/branch.c" />
@@ -203,12 +198,17 @@
     <ClCompile Include="src/directiv.c" />
     <ClCompile Include="src/elf.c" />
     <ClCompile Include="src/end.c" />
+    <ClCompile Include="src/enum.c" />
     <ClCompile Include="src/equate.c" />
     <ClCompile Include="src/expans.c" />
     <ClCompile Include="src/expreval.c" />
     <ClCompile Include="src/extern.c" />
+    <ClCompile Include="src/fastcall.c" />
+    <ClCompile Include="src/fastpass.c" />
     <ClCompile Include="src/fixup.c" />
+    <ClCompile Include="src/for.c" />
     <ClCompile Include="src/fpfixup.c" />
+    <ClCompile Include="src/hll.c" />
     <ClCompile Include="src/input.c" />
     <ClCompile Include="src/invoke.c" />
     <ClCompile Include="src/label.c" />
@@ -220,33 +220,26 @@
     <ClCompile Include="src/ltype.c" />
     <ClCompile Include="src/macro.c" />
     <ClCompile Include="src/mangle.c" />
+    <ClCompile Include="src/mem2mem.c" />
+    <ClCompile Include="src/memalloc.c" />
+    <ClCompile Include="src/new.c" />
     <ClCompile Include="src/omf.c" />
     <ClCompile Include="src/omffixup.c" />
     <ClCompile Include="src/omfint.c" />
     <ClCompile Include="src/option.c" />
     <ClCompile Include="src/parser.c" />
     <ClCompile Include="src/posndir.c" />
-    <ClCompile Include="src/proc.c" />
-    <ClCompile Include="src/reswords.c" />
-    <ClCompile Include="src/fastcall.c" />
-    <ClCompile Include="src/fastpass.c" />
-    <ClCompile Include="src/FindResWord.c" />
-    <ClCompile Include="src/for.c" />
-    <ClCompile Include="src/get_hash.c" />
-    <ClCompile Include="src/hll.c" />
-    <ClCompile Include="src/mem2mem.c" />
-    <ClCompile Include="src/memalloc.c" />
-    <ClCompile Include="src/new.c" />
-    <ClCompile Include="src/parsevex.c" />
     <ClCompile Include="src/pragma.c" />
     <ClCompile Include="src/preproc.c" />
+    <ClCompile Include="src/proc.c" />
+    <ClCompile Include="src/reswords.c" />
     <ClCompile Include="src/return.c" />
     <ClCompile Include="src/safeseh.c" />
     <ClCompile Include="src/segment.c" />
-    <ClCompile Include="src/switch.c" />
-    <ClCompile Include="src/symbols.c" />
     <ClCompile Include="src/simsegm.c" />
     <ClCompile Include="src/string.c" />
+    <ClCompile Include="src/switch.c" />
+    <ClCompile Include="src/symbols.c" />
     <ClCompile Include="src/tokenize.c" />
     <ClCompile Include="src/types.c" />
     <ClCompile Include="src/undef.c" />

@@ -11,7 +11,6 @@ include twindow.inc
     assume rcx:window_t
     option proc:private
 
-
 OnEnterIdle proc uses rcx hwnd:window_t
 
     Sleep(4)
@@ -20,47 +19,43 @@ OnEnterIdle proc uses rcx hwnd:window_t
 
 OnEnterIdle endp
 
-
 Inside proc hwnd:window_t, pos:COORD
 
   local rc:TRECT
 
     mov eax,[rcx].rc
     .if ( [rcx].Flags & W_CHILD )
-
         mov r10,[rcx].PrevInst
         add ax,word ptr [r10].TWindow.rc
     .endif
     mov rc,eax
-
-    xor     eax,eax
-    mov     dh,rc.x
-    .return .if dl < dh
-
-    add     dh,rc.col
-    .return .if dl >= dh
-
-    shr     edx,16
-    mov     dh,rc.y
-    .return .if dl < dh
-
-    add     dh,rc.row
-    .return .if dl >= dh
-
-    mov     al,dl
-    sub     al,rc.y
-    inc     al
+    xor eax,eax
+    mov dh,rc.x
+    .if dl >= dh
+        add dh,rc.col
+        .if dl < dh
+            shr edx,16
+            mov dh,rc.y
+            .if dl >= dh
+                add dh,rc.row
+                .if dl < dh
+                    mov al,dl
+                    sub al,rc.y
+                    inc al
+                .endif
+            .endif
+        .endif
+    .endif
     ret
 
 Inside endp
-
 
     assume rbx:window_t
     assume rsi:context_t
 
 OnLButtonDown proc uses rsi rdi rbx rcx hwnd:window_t, uiMsg:uint_t, wParam:size_t, lParam:ptr
 
-    .ifd ( Inside(rcx, r8d) == 0 )
+    .ifd Inside(rcx, r8d) == 0
 
         .return [rcx].PostQuit(0) .if !( [rcx].Flags & W_CHILD )
         .return 1
@@ -92,21 +87,21 @@ OnLButtonDown proc uses rsi rdi rbx rcx hwnd:window_t, uiMsg:uint_t, wParam:size
         .endc
 
       .case T_PUSHBUTTON
-        mov     [rsi].State,1
-        mov     rbx,rcx
-        mov     rcx,[rcx].PrevInst
-        movzx   eax,[rbx].rc.x
-        add     al,[rcx].rc.x
-        mov     esi,eax
-        mov     al,[rbx].rc.y
-        add     al,[rcx].rc.y
-        mov     edi,eax
-        mov     al,[rbx].rc.col
-        lea     rcx,[rsi+rax]
+        mov [rsi].State,1
+        mov rbx,rcx
+        mov rcx,[rcx].PrevInst
+        movzx eax,[rbx].rc.x
+        add al,[rcx].rc.x
+        mov esi,eax
+        mov al,[rbx].rc.y
+        add al,[rcx].rc.y
+        mov edi,eax
+        mov al,[rbx].rc.col
+        lea rcx,[rsi+rax]
         _scputc(ecx, edi, 1, ' ')
-        lea     rcx,[rsi+1]
-        movzx   r8d,[rbx].rc.col
-        inc     edi
+        lea rcx,[rsi+1]
+        movzx r8d,[rbx].rc.col
+        inc edi
         _scputc(ecx, edi, r8d, ' ')
         [rbx].SetFocus([rbx].Index)
         .endc
@@ -132,7 +127,6 @@ OnLButtonDown proc uses rsi rdi rbx rcx hwnd:window_t, uiMsg:uint_t, wParam:size
     ret
 
 OnLButtonDown endp
-
 
 OnLButtonUp proc uses rsi rdi rbx rcx hwnd:window_t, uiMsg:uint_t, wParam:size_t, lParam:ptr
 
@@ -199,37 +193,32 @@ OnLButtonUp endp
 
 OnMouseMove proc uses rsi hwnd:window_t, uiMsg:uint_t, wParam:size_t, lParam:ptr
 
-    lea     rsi,[rcx].Context
-    xor     eax,eax
+    lea rsi,[rcx].Context
+    xor eax,eax
 
-    .return .if ( [rsi].State == 0 )
-    .return .if ( [rcx].Flags & W_CHILD )
+    .return .if [rsi].State == 0
+    .return .if [rcx].Flags & W_CHILD
 
-    movzx   edx,[rsi].rc.y
-    shl     edx,16
-    mov     dl,[rsi].rc.x
-    .return .if ( edx == eax )
+    movzx edx,[rsi].rc.y
+    shl edx,16
+    mov dl,[rsi].rc.x
+    .return .if edx == eax
 
-    movsx   eax,[rsi].x
-    movzx   edx,r8b
-
+    movsx eax,[rsi].x
+    movzx edx,r8b
     .if edx >= eax
         sub edx,eax
     .else
         xor edx,edx
     .endif
-
-    shr     r8d,16
-    movsx   eax,[rsi].y
-
+    shr r8d,16
+    movsx eax,[rsi].y
     .if r8d >= eax
         sub r8d,eax
     .else
         xor r8d,r8d
     .endif
-
     [rcx].Move(edx, r8d)
-
     xor eax,eax
     ret
 
@@ -374,21 +363,21 @@ NextItem endp
 
 PrevItem proc uses rbx rcx hwnd:window_t
 
-    test    [rcx].Flags,W_CHILD
-    cmovnz  rcx,[rcx].PrevInst
-    mov     eax,[rcx].Index
+    test [rcx].Flags,W_CHILD
+    cmovnz rcx,[rcx].PrevInst
+    mov eax,[rcx].Index
 
     .for ( rbx = [rcx].Child : rbx : rcx = rbx, rbx = [rbx].Child )
 
         .break .if ( eax == [rbx].Index )
     .endf
-    .return .if !rbx
-    .if !( [rcx].Flags & W_CHILD )
-        .for ( : [rcx].Child : rcx = [rcx].Child )
-
-        .endf
+    .if rbx
+        .if !( [rcx].Flags & W_CHILD )
+            .for : [rcx].Child : rcx = [rcx].Child
+            .endf
+        .endif
+        [rcx].SetFocus([rcx].Index)
     .endif
-    [rcx].SetFocus([rcx].Index)
     ret
 
 PrevItem endp
@@ -467,9 +456,9 @@ OnChar proc uses rcx hwnd:window_t, uiMsg:uint_t, wParam:size_t, lParam:ptr
 
             .if ( eax == [rcx].Index )
 
-                    xor edx,edx
-                   test [rcx].Flags,O_DEXIT
-                  cmovz edx,eax
+                xor edx,edx
+                test [rcx].Flags,O_DEXIT
+                cmovz edx,eax
                 .return [rcx].PostQuit(edx)
             .endif
         .endif
@@ -502,7 +491,6 @@ OnSysChar proc uses rcx hwnd:window_t, uiMsg:uint_t, wParam:size_t, lParam:ptr
             [rcx].SetFocus([rcx].Index)
             .return 0
         .endif
-
     .else
 
         mov rcx,[rcx].Child
@@ -520,9 +508,9 @@ OnSysChar endp
 
 TWindow::GetFocus proc uses rcx
 
-    test    [rcx].Flags,W_CHILD
-    cmovnz  rcx,[rcx].PrevInst
-    mov     eax,[rcx].Index
+    test [rcx].Flags,W_CHILD
+    cmovnz rcx,[rcx].PrevInst
+    mov eax,[rcx].Index
 
     .for ( rcx = [rcx].Child : rcx : rcx = [rcx].Child )
 
@@ -537,7 +525,6 @@ TWindow::GetFocus endp
 TWindow::SetFocus proc uses rbx id:uint_t
 
     mov rbx,rcx
-
     .if [rcx].GetFocus()
 
         mov rcx,rax
@@ -545,15 +532,14 @@ TWindow::SetFocus proc uses rbx id:uint_t
         mov rcx,rbx
     .endif
 
-    test    [rcx].Flags,W_CHILD
-    cmovnz  rcx,[rcx].PrevInst
-    mov     [rcx].Index,id
+    test [rcx].Flags,W_CHILD
+    cmovnz rcx,[rcx].PrevInst
+    mov [rcx].Index,id
 
     .if [rcx].GetFocus()
 
         mov rcx,rax
         [rcx].Send(WM_SETFOCUS, 0, 0)
-
     .endif
     mov rcx,rbx
     xor eax,eax
@@ -579,14 +565,14 @@ TWindow::DefWindowProc proc uiMsg:uint_t, wParam:size_t, lParam:ptr
 
     mov eax,1
     .switch pascal edx
-      .case WM_ENTERIDLE   : OnEnterIdle(rcx)
-      .case WM_SETFOCUS    : OnSetFocus(rcx)
-      .case WM_KILLFOCUS   : OnKillFocus(rcx)
-      .case WM_LBUTTONDOWN : OnLButtonDown(rcx, edx, r8, r9)
-      .case WM_LBUTTONUP   : OnLButtonUp(rcx, edx, r8, r9)
-      .case WM_MOUSEMOVE   : OnMouseMove(rcx, edx, r8, r9)
-      .case WM_SYSCHAR     : OnSysChar(rcx, edx, r8, r9)
-      .case WM_CHAR        : OnChar(rcx, edx, r8, r9)
+      .case WM_ENTERIDLE:   OnEnterIdle(rcx)
+      .case WM_SETFOCUS:    OnSetFocus(rcx)
+      .case WM_KILLFOCUS:   OnKillFocus(rcx)
+      .case WM_LBUTTONDOWN: OnLButtonDown(rcx, edx, r8, r9)
+      .case WM_LBUTTONUP:   OnLButtonUp(rcx, edx, r8, r9)
+      .case WM_MOUSEMOVE:   OnMouseMove(rcx, edx, r8, r9)
+      .case WM_SYSCHAR:     OnSysChar(rcx, edx, r8, r9)
+      .case WM_CHAR:        OnChar(rcx, edx, r8, r9)
     .endsw
     ret
 

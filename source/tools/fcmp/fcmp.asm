@@ -230,6 +230,7 @@ main proc uses esi edi ebx argc:int_t, argv:array_t
 
     .if size1 != size2
         fprintf(fp, "%s(%d), %s(%d): file sizes differ\n", file1, size1, file2, size2)
+        inc unequal
         .if size1 > size2
             mov size1,size2
         .else

@@ -4,6 +4,7 @@
     .x64
     .model flat
     .code
+    option casemap:none
 
     .enum
         y,
@@ -17,6 +18,10 @@
     .enum Day {
          Sat=1, Sun, Mon, Tue, Wed, Thu, Fri }
 
+
+    .enum { a, b }
+    .enum x : byte { A=5, B }
+
     mov al,y
     mov al,n
     mov al,a
@@ -28,5 +33,7 @@
     mov al,Wed
     mov al,Thu
     mov al,Fri
+    mov al,A
+    mov al,B
 
     end

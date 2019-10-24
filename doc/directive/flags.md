@@ -72,7 +72,6 @@ Not Signed (signed)
 
 - **NZ**
 _NE_
-
 Not Zero | _Not Equal_
 
 Note that if used with _condition_ the directive may have a different meaning.

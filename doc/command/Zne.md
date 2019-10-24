@@ -24,9 +24,11 @@ Command-line options **/Zne**
 - [.switch](../directive/dot_switch.md)
 - [.case](../directive/dot_case.md)
 - [.endc](../directive/dot_endc.md)
-- [.gotosw[1|2|3]](../directive/dot_gotosw.md)
+- [.gotosw](../directive/dot_gotosw.md)
 - [.default](../directive/dot_default.md)
 - [.endsw](../directive/dot_endsw.md)
+- [.enum](../directive/dot_enum.md)
+- [.return](../directive/dot_return.md)
 
 Flag conditions
 

@@ -48,7 +48,7 @@ _getch proc uses ebx edi esi
                     .break .if edi
                 .endif
 
-                add ebx,sizeof(INPUT_RECORD)
+                add ebx,INPUT_RECORD
                 dec esi
             .endw
         .endif

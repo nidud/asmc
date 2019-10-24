@@ -772,12 +772,12 @@ TWindow::Open proc uses rsi rdi rbx rcx rc:TRECT, flags:uint_t
     mov edi,edx
     mov esi,r8d
 
-    .return .if !malloc( sizeof(TWindow) )
+    .return .if !malloc(TWindow)
 
     mov r8d,edi
     mov rdx,rax
     mov rdi,rax
-    mov ecx,sizeof(TWindow)/8
+    mov ecx,TWindow/8
     xor eax,eax
     rep stosq
 
@@ -857,18 +857,18 @@ TWindow::TWindow proc uses rsi rdi rbx
   local ci: CONSOLE_SCREEN_BUFFER_INFO
 
     mov rdi,rcx
-    mov rbx,malloc( sizeof(TWindow) + sizeof(APPINFO) + sizeof(TWindowVtbl) )
+    mov rbx,malloc( TWindow + APPINFO + TWindowVtbl )
     .if rdi
         stosq
     .endif
     .return .if !rax
 
     mov rdi,rax
-    mov ecx,(sizeof(TWindow) + sizeof(APPINFO)) / 8
+    mov ecx,(TWindow + APPINFO) / 8
     xor eax,eax
     rep stosq
     mov [rbx].lpVtbl,rdi
-    lea rax,[rbx+sizeof(TWindow)]
+    lea rax,[rbx+TWindow]
     mov [rbx].Class,rax
 
     for q,<TWindow_Open,

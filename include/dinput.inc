@@ -1857,10 +1857,10 @@ DIJOFS_RX		equ FIELD_OFFSET(DIJOYSTATE, lRx)
 DIJOFS_RY		equ FIELD_OFFSET(DIJOYSTATE, lRy)
 DIJOFS_RZ		equ FIELD_OFFSET(DIJOYSTATE, lRz)
 DIJOFS_SLIDER macro n
-	exitm<(FIELD_OFFSET(DIJOYSTATE, rglSlider) + (n) * sizeof(LONG))>
+	exitm<(FIELD_OFFSET(DIJOYSTATE, rglSlider) + (n) * LONG)>
 	endm
 DIJOFS_POV macro n
-	exitm<(FIELD_OFFSET(DIJOYSTATE, rgdwPOV) + (n) * sizeof(DWORD))>
+	exitm<(FIELD_OFFSET(DIJOYSTATE, rgdwPOV) + (n) * DWORD)>
 	endm
 DIJOFS_BUTTON macro n
 	exitm<(FIELD_OFFSET(DIJOYSTATE, rgbButtons) + (n))>

@@ -41,7 +41,7 @@ rcwrite proc uses esi edi ebx rc, wc:PVOID
             add esi,2
             mov [edi],al
             mov [edi+2],ah
-            add edi,sizeof(CHAR_INFO)
+            add edi,CHAR_INFO
         .untilcxz
         mov eax,y
         add eax,row

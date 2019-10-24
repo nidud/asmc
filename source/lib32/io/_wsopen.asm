@@ -26,7 +26,7 @@ _wsopen proc c uses esi edi ebx path:LPWSTR, oflag:SINT, shflag:SINT, args:VARAR
     mov sa.lpSecurityDescriptor,eax
     mov fileflags,al
     mov eax,oflag
-    mov sa.nLength,sizeof(SECURITY_ATTRIBUTES)
+    mov sa.nLength,SECURITY_ATTRIBUTES
 
     .if eax & O_NOINHERIT
         mov fileflags,FH_NOINHERIT

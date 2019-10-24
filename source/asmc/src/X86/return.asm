@@ -85,6 +85,7 @@ AssignValue proc private uses esi edi ebx i:ptr int_t, tokenarray:tok_t, count:i
   local retval:int_t
   local directive:int_t
   local buffer[256]:char_t
+  local address:char_t ; v2.30.24 -- .return &address
 
     movzx ecx,ModuleInfo.Ofssize
     mov reg,regax[ecx*4]
@@ -116,14 +117,36 @@ AssignValue proc private uses esi edi ebx i:ptr int_t, tokenarray:tok_t, count:i
         strcpy(edi, [ebx].string_ptr)
     .endif
 
+    mov address,0
     mov ecx,[esi]
     add ecx,count
+    .if [ebx].token == '(' && [ebx+16].token == '&'
+        .while byte ptr [edi] != '&'
+            inc edi
+        .endw
+        inc edi
+        .for edx = edi : byte ptr [edx] : edx++
+        .endf
+        .if byte ptr [edx-1] == ')'
+            mov byte ptr [edx-1],0
+        .endif
+        inc address
+        add dword ptr [esi],2
+    .elseif byte ptr [edi] == '&'
+        inc edi
+        inc address
+        inc dword ptr [esi]
+    .endif
 
     .if EvalOperand( esi, tokenarray, ecx, &opnd, EXPF_NOUNDEF ) == NOT_ERROR
 
         mov esi,1
 
-        .if ( opnd.kind == EXPR_CONST )
+        .if address
+
+            mov op,T_LEA
+
+        .elseif ( opnd.kind == EXPR_CONST )
 
             mov edx,opnd.hvalue
             mov eax,opnd.value

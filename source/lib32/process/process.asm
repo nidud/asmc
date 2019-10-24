@@ -26,13 +26,13 @@ local PI:PROCESS_INFORMATION, SINFO:STARTUPINFO, ConsoleMode:dword
     mov errorlevel,eax
     lea edi,PI
     mov esi,edi
-    mov ecx,sizeof(PROCESS_INFORMATION)
+    mov ecx,PROCESS_INFORMATION
     rep stosb
     lea edi,SINFO
-    mov ecx,sizeof(STARTUPINFO)
+    mov ecx,STARTUPINFO
     rep stosb
     lea edi,SINFO
-    mov SINFO.cb,sizeof(STARTUPINFO)
+    mov SINFO.cb,STARTUPINFO
 
     SetErrorMode(OldErrorMode)
     GetConsoleMode(hStdInput, &ConsoleMode)

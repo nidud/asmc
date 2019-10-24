@@ -30,7 +30,7 @@ ICMAXLINE equ 256
 
 IConfig::IConfig proc
 
-    .return .if !malloc(sizeof(IConfig))
+    .return .if !malloc(IConfig)
 
     mov rcx,rax
     mov rdx,this

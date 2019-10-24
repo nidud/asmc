@@ -4,7 +4,7 @@ endif
 ifndef __RPCASYNC_H__
 __RPCASYNC_H__ equ <>
 
-RPC_ASYNC_VERSION_1_0	equ sizeof(RPC_ASYNC_STATE)
+RPC_ASYNC_VERSION_1_0	equ RPC_ASYNC_STATE
 
 RpcNotificationTypeNone		equ 0
 RpcNotificationTypeEvent	equ 1

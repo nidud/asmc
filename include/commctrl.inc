@@ -7719,10 +7719,10 @@ DPA_FastDeleteLastPtr macro hdpa
 	exitm<eax>
 	endm
 DPA_GetPtrPtr macro hdpa
-	exitm<BYTE PTR [hdpa+sizeof(PVOID)]>
+	exitm<BYTE PTR [hdpa+PVOID]>
 	endm
 DPA_FastGetPtr macro hdpa, i
-	exitm<BYTE PTR [hdpa+sizeof(PVOID)+i]>
+	exitm<BYTE PTR [hdpa+PVOID+i]>
 	endm
 DPA_AppendPtr macro hdpa, pitem
 	exitm<DPA_InsertPtr(hdpa, DA_LAST, pitem)>

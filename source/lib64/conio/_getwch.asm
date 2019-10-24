@@ -34,7 +34,7 @@ _getwch proc uses rbx rdi rsi
                     movzx edi,[rbx].INPUT_RECORD.KeyEvent.UnicodeChar
                     .break .if edi
                 .endif
-                add rbx,sizeof(INPUT_RECORD)
+                add rbx,INPUT_RECORD
                 dec esi
             .endw
         .endif

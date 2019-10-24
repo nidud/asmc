@@ -11,7 +11,7 @@ include ini.inc
 
 INIAlloc proc
 
-    .if malloc(sizeof(S_INI))
+    .if malloc(S_INI)
 
         mov ecx,0
         mov [eax].S_INI.flags,ecx

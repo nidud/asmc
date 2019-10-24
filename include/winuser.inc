@@ -9729,11 +9729,11 @@ LPRAWINPUT		typedef ptr RAWINPUT
 
 ifdef _WIN64
 RAWINPUT_ALIGN macro x
-	exitm<(((x) + sizeof(QWORD) - 1) AND NOT (sizeof(QWORD) - 1))>
+	exitm<(((x) + QWORD - 1) AND NOT (QWORD - 1))>
 	endm
 else
 RAWINPUT_ALIGN macro x
-	exitm<(((x) + sizeof(DWORD) - 1) AND NOT (sizeof(DWORD) - 1))>
+	exitm<(((x) + DWORD - 1) AND NOT (DWORD - 1))>
 	endm
 endif
 

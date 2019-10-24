@@ -172,7 +172,7 @@ DNS_BYTE_FLIP_HEADER_COUNTS macro pHeader
 	exitm<.err>
 	endm
 
-DNS_OFFSET_TO_QUESTION_NAME equ sizeof(DNS_HEADER)
+DNS_OFFSET_TO_QUESTION_NAME equ DNS_HEADER
 DNS_COMPRESSED_QUESTION_NAME equ 0xC00C
 
 DNS_QUESTION_NAME_FROM_HEADER macro _pHeader_
@@ -901,7 +901,7 @@ PDNS_WINSR_DATA		typedef ptr DNS_WINSR_DATAA
 endif
 
 DNS_TEXT_RECORD_LENGTH macro StringCount
-	exitm<FIELD_OFFSET(DNS_TXT_DATA, pStringArray) + ((StringCount) * sizeof(PCHAR))>
+	exitm<FIELD_OFFSET(DNS_TXT_DATA, pStringArray) + ((StringCount) * PCHAR)>
 	endm
 
 DNS_NULL_RECORD_LENGTH macro ByteCount
@@ -913,7 +913,7 @@ DNS_WKS_RECORD_LENGTH macro ByteCount
 	endm
 
 DNS_WINS_RECORD_LENGTH macro IpCount
-	exitm<FIELD_OFFSET(DNS_WINS_DATA, WinsServers) + ((IpCount) * sizeof(IP4_ADDRESS))>
+	exitm<FIELD_OFFSET(DNS_WINS_DATA, WinsServers) + ((IpCount) * IP4_ADDRESS)>
 	endm
 
 DNS_KEY_RECORD_LENGTH macro ByteCount

@@ -247,7 +247,7 @@ IP_MSFILTER		ENDS
 PIP_MSFILTER		typedef ptr IP_MSFILTER
 
 IP_MSFILTER_SIZE macro NumSources
-	exitm<(sizeof(IP_MSFILTER) - sizeof(IN_ADDR) + (NumSources) * sizeof(IN_ADDR))>
+	exitm<(IP_MSFILTER - IN_ADDR + (NumSources) * IN_ADDR)>
 	endm
 
 IPV6_HOPOPTS		equ 1
@@ -326,7 +326,7 @@ GROUP_FILTER		ENDS
 PGROUP_FILTER		typedef ptr GROUP_FILTER
 
 GROUP_FILTER_SIZE macro numsrc
-	exitm<(sizeof(GROUP_FILTER) - sizeof(SOCKADDR_STORAGE) + (numsrc) * sizeof(SOCKADDR_STORAGE))>
+	exitm<(GROUP_FILTER - SOCKADDR_STORAGE + (numsrc) * SOCKADDR_STORAGE)>
 	endm
 
 endif
@@ -337,7 +337,7 @@ ipi_ifindex		ULONG ?
 IN_PKTINFO		ENDS
 PIN_PKTINFO		typedef ptr IN_PKTINFO
 
-if (sizeof(IN_PKTINFO) NE 8)
+if (IN_PKTINFO NE 8)
     .err<IN_PKTINFO>
 endif
 
@@ -347,7 +347,7 @@ ipi6_ifindex		ULONG ?
 IN6_PKTINFO		ENDS
 PIN6_PKTINFO		typedef ptr IN6_PKTINFO
 
-if (sizeof(IN6_PKTINFO) NE 20)
+if (IN6_PKTINFO NE 20)
     .err<IN6_PKTINFO>
 endif
 
@@ -358,7 +358,7 @@ scope_id		SCOPE_ID <>
 IN_PKTINFO_EX		ENDS
 PIN_PKTINFO_EX		typedef ptr IN_PKTINFO_EX
 
-if (sizeof(IN_PKTINFO_EX) NE 12)
+if (IN_PKTINFO_EX NE 12)
     .err<IN_PKTINFO_EX>
 endif
 
@@ -368,7 +368,7 @@ scope_id		SCOPE_ID <>
 IN6_PKTINFO_EX		ENDS
 PIN6_PKTINFO_EX		typedef ptr IN6_PKTINFO_EX
 
-if (sizeof(IN6_PKTINFO_EX) NE 24)
+if (IN6_PKTINFO_EX NE 24)
     .err<IN6_PKTINFO_EX>
 endif
 

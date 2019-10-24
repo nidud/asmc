@@ -23,7 +23,7 @@ _ALIGN	equ 3
 malloc	PROC byte_count:UINT
 
 	mov	ecx,byte_count
-	add	ecx,sizeof(HEAP)+_GRANULARITY-1
+	add	ecx,HEAP+_GRANULARITY-1
 	and	ecx,-(_GRANULARITY)
 
 	mov	edx,_heap_free
@@ -46,7 +46,7 @@ block_found:
 	mov	[edx+ecx].HEAP.size,eax
 	mov	[edx+ecx].HEAP.type,_FREE
 @@:
-	lea	eax,[edx+sizeof(HEAP)]; return address of memory block
+	lea	eax,[edx+HEAP]		; return address of memory block
 	add	edx,[edx].HEAP.size
 	mov	_heap_free,edx
 toend:
@@ -85,12 +85,12 @@ last:
 
 create_heap:
 	mov	eax,_amblksiz
-	add	eax,sizeof(HEAP)
+	add	eax,HEAP
 	cmp	eax,ecx
 	jae	@F
 	mov	eax,ecx
 @@:
-	add	eax,sizeof(HEAP)
+	add	eax,HEAP
 	push	eax
 	push	ecx
 	push	eax
@@ -102,7 +102,7 @@ create_heap:
 	pop	edx
 	test	eax,eax
 	jz	nomem
-	sub	edx,sizeof(HEAP)
+	sub	edx,HEAP
 	mov	[eax].HEAP.size,edx
 	mov	[eax].HEAP.type,_FREE
 	mov	[eax].HEAP.next,0
@@ -133,7 +133,7 @@ malloc	ENDP
 
 free	proc uses eax maddr:ptr
 	mov	eax,maddr
-	sub	eax,sizeof(HEAP)
+	sub	eax,HEAP
 	js	toend
 	cmp	[eax].HEAP.type,_ALIGN
 	jne	@F

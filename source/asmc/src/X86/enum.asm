@@ -3,7 +3,7 @@
 ; Copyright (c) The Asmc Contributors. All rights reserved.
 ; Consult your license regarding permissions and restrictions.
 ;
-; .enum [name] {
+; .enum [name][:type] [{]
 ;
 
 include stdio.inc

@@ -27,15 +27,15 @@ process proc uses rsi rdi program:LPSTR, command:LPSTR, CreationFlags:DWORD
 
     lea rdi,PI
     mov rsi,rdi
-    mov ecx,sizeof(PROCESS_INFORMATION)
+    mov ecx,PROCESS_INFORMATION
     rep stosb
 
     lea rdi,SINFO
-    mov ecx,sizeof(STARTUPINFO)
+    mov ecx,STARTUPINFO
     rep stosb
 
     lea rdi,SINFO
-    mov SINFO.cb,sizeof(STARTUPINFO)
+    mov SINFO.cb,STARTUPINFO
 
     SetErrorMode(OldErrorMode)
     GetConsoleMode(hStdInput, &ConsoleMode)

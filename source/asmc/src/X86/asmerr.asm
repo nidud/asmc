@@ -17,379 +17,383 @@ extern jmpenv:JMPBUF
 print_source_nesting_structure proto
 GetCurrOffset proto
 
-    .data
-;
-; Internal error
-;
-INTER db "Internal Assembler Error",0
-;
-; Fatal Errors
-;
-A1000   db "cannot open file : %s",0
-A1001   db "I/O error closing file : %s",0
-A1002   db "I/O error writing file : %s",0
-;A1003  db "I/O error reading file",0
-A1005   db "assembler limit : macro parameter name table full",0
-A1006   db "invalid command-line option: %s",0
-A1007   db "nesting level too deep",0
-A1008   db "unmatched macro nesting",0
-A1009   db "line too long",0
-A1010   db "unmatched block nesting : %s",0
-A1011   db "directive must be in control block",0
-A1012   db "error count exceeds 100; stopping assembly",0
-;A1013  db "invalid numerical command-line argument : %d",0
-;A1014  db "too many arguments",0
-;A1015  db "statement too complex",0
-A1017   db "missing source filename",0
-A1901   equ <INTER>
-;
-; Nonfatal Errors
-;
-;A2000  db "memory operand not allowed in context",0
-;A2001  db "immediate operand not allowed",0
-A2002   db "cannot have more than one .ELSE clause per .IF block",0
-;A2003  db "extra characters after statement",0
-A2004   db "symbol type conflict : %s",0
-A2005   db "symbol redefinition : %s",0
-A2006   db "undefined symbol : %s",0
-A2007   db "non-benign record redefinition %s : %s",0
-A2008   db "syntax error : %s",0
-A2009   db "syntax error in expression",0
-A2010   db "invalid type expression",0
-A2011   db "distance invalid for word size of current segment",0
-A2012   db "PROC, MACRO, or macro repeat directive must precede LOCAL",0
-A2013   db ".MODEL must precede this directive",0
-A2014   db "cannot define as public or external : %s",0
-A2015   db "segment attributes cannot change : %s",0
-A2016   db "expression expected",0
-;A2017  db "operator expected",0
-A2018   db "invalid use of external symbol : %s",0
-A2019   db "operand must be RECORD type or field",0
-;A2020  db "identifier not a record : identifier",0
-;A2021  db "record constants cannot span line breaks",0
-A2022   db "instruction operands must be the same size : %d - %d",0
-A2023   db "instruction operand must have size",0
-A2024   db "invalid operand size for instruction",0
-A2025   db "operands must be in same segment",0
-A2026   db "constant expected",0
-;A2027  db "operand must be a memory expression",0
-A2028   db "expression must be a code address",0
-A2029   db "multiple base registers not allowed",0
-A2030   db "multiple index registers not allowed",0
-A2031   db "must be index or base register",0
-A2032   db "invalid use of register",0
-A2033   db "invalid INVOKE argument : %d",0
-A2034   db "must be in segment block",0
-;A2035  db "DUP too complex",0
-A2036   db "too many initial values for structure: %s",0
-A2037   db "statement not allowed inside structure definition",0
-;A2038  db "missing operand for macro operator",0
-A2039   equ <A1009>
-;A2040  db "segment register not allowed in context",0
-A2041   db "string or text literal too long",0
-;A2042  db "statement too complex",0
-A2043   db "identifier too long",0
-;A2044  db "invalid character in file",0
-A2045   db "missing angle bracket or brace in literal",0
-A2046   db "missing single or double quotation mark in string",0
-A2047   db "empty (null) string",0
-A2048   db "nondigit in number : %s",0
-;A2049  db "syntax error in floating-point constant",0
-A2050   db "real or BCD number not allowed",0
-A2051   db "text item required",0
-A2052   db "forced error : %s",0
-A2053   db "forced error : value equal to 0 : %d: %s",0
-A2054   db "forced error : value not equal to 0 : %d: %s",0
-A2055   db "forced error : symbol not defined : %s",0
-A2056   db "forced error : symbol defined : %s",0
-A2057   db "forced error : string blank : %s: %s",0
-A2058   db "forced error : string not blank : <%s>: %s",0
-A2059   db "forced error : strings equal : <%s>: <%s>: %s",0
-A2060   db "forced error : strings not equal : <%s>: <%s>: %s",0
-A2061   db "[[[ELSE]]]IF2/.ERR2 not allowed : single-pass assembler",0
-A2062   db "expression too complex for .UNTILCXZ",0
-A2063   db "can ALIGN only to power of 2 : %u",0
-A2064   db "struct alignment must be 1, 2, 4, 8, 16 or 32",0
-A2065   db "expected : %s",0
-A2066   db "incompatible CPU mode and segment size",0
-;A2067  db "LOCK must be followed by a memory operation",0
-A2068   db "instruction prefix not allowed",0
-;A2069  db "no operands allowed for this instruction",0
-A2070   db "invalid instruction operands",0
-A2071   db "initializer too large for specified size",0
-A2072   db "cannot access symbol in given segment or group: %s",0
-;A2073  db "operands have different frames",0
-A2074   db "cannot access label through segment registers : %s",0
-A2075   db "jump destination too far : by %d bytes",0
-A2076   db "jump destination must specify a label",0
-A2077   db "instruction does not allow NEAR indirect addressing",0
-;A2078  db "instruction does not allow FAR indirect addressing",0
-A2079   db "instruction does not allow FAR direct addressing",0
-A2080   db "jump distance not possible in current CPU mode",0
-A2081   db "missing operand after unary operator",0
-A2082   db "cannot mix 16- and 32-bit registers",0
-A2083   db "invalid scale value",0
-A2084   db "constant value too large",0
-A2085   db "instruction or register not accepted in current CPU mode",0
-A2086   db "reserved word expected",0
-A2087   db "instruction form requires 80386/486",0
-A2088   db "END directive required at end of file",0
-A2089   db "too many bits in RECORD : %s",0
-A2090   db "positive value expected",0
-A2091   db "index value past end of string",0
-A2092   db "count must be positive or zero",0
-A2093   db "count value too large",0
-A2094   db "operand must be relocatable",0
-A2095   db "constant or relocatable label expected",0
-A2096   db "segment, group, or segment register expected",0
-A2097   db "segment expected : %s",0
-A2098   db "invalid operand for OFFSET",0
-;A2099  db "invalid use of external absolute",0
-A2100   db "segment or group not allowed",0
-A2101   db "cannot add two relocatable labels",0
-;A2102  db "cannot add memory expression and code label",0
-A2103   db "segment exceeds 64K limit: %s",0
-A2104   db "invalid type for data declaration : %s",0
-A2105   db "HIGH and LOW require immediate operands",0
-A2107   db "cannot have implicit far jump or call to near label",0
-A2108   db "use of register assumed to ERROR",0
-;A2109  db "only white space or comment can follow backslash",0
-A2110   db "COMMENT delimiter expected",0
-A2111   db "conflicting parameter definition : %s",0
-A2112   db "PROC and prototype calling conventions conflict",0
-A2113   db "invalid radix tag",0
-A2114   db "INVOKE argument type mismatch : %d",0
-;A2115  db "invalid coprocessor register",0
-;A2116  db "instructions and initialized data not allowed in AT segments",0
-;A2117  db "/AT option requires TINY memory model",0
-;A2118  db "cannot have segment address references with TINY model",0
-A2119   db "language type must be specified",0
-A2120   db "PROLOGUE must be macro function",0
-A2121   db "EPILOGUE must be macro procedure : %s",0
-;A2122  db "alternate identifier not allowed with EXTERNDEF",0
-A2123   db "text macro nesting level too deep",0
-A2125   db "missing macro argument",0
-;A2126  db "EXITM used inconsistently",0
-;A2127  db "macro function argument list too long",0
-A2129   db "VARARG parameter must be last parameter",0
-;A2130  db "VARARG parameter not allowed with LOCAL",0
-A2131   db "VARARG parameter requires C calling convention",0
-A2132   db "ORG needs a constant or local offset",0
-A2133   db "register value overwritten by INVOKE",0
-;A2134  db "structure too large to pass with INVOKE : argument number",0
-A2136   db "too many arguments to INVOKE",0
-;A2137  db "too few arguments to INVOKE",0
-;A2138  db "invalid data initializer",0
-;A2140  db "RET operand too large",0
-A2141   db "too many operands to instruction",0
-A2142   equ <A2002>
-A2143   db "expected data label",0
-A2144   db "cannot nest procedures : %s",0
-A2145   db "EXPORT must be FAR : %s",0
-;A2146  db "procedure declared with two visibility attributes : %s",0
-A2147   db "macro label not defined : %s",0
-A2148   db "invalid symbol type in expression : %s",0
-;A2149  db "byte register cannot be first operand",0
-;A2150  db "word register cannot be first operand",0
-A2151   db "special register cannot be first operand",0
-;A2152  db "coprocessor register cannot be first operand",0
-;A2153  db "cannot change size of expression computations",0
-A2154   db "syntax error in control-flow directive",0
-;A2155  db "cannot use 16-bit register with a 32-bit address",0
-A2156   db "constant value out of range",0
-A2157   db "missing right parenthesis",0
-;A2158  db "type is wrong size for register",0
-A2159   db "structure cannot be instanced",0
-;A2160  db "non-benign structure redefinition : label incorrect",0
-;A2161  db "non-benign structure redefinition : too few labels",0
-;A2162  db "OLDSTRUCT/NOOLDSTRUCT state cannot be changed",0
-;A2163  db "non-benign structure redefinition : incorrect initializers",0
-;A2164  db "non-benign structure redefinition : too few initializers",0
-;A2165  db "non-benign structure redefinition : label has incorrect offset",0
-A2166   db "structure field expected",0
-A2167   db "unexpected literal found in expression : %s",0
-A2169   db "divide by zero in expression",0
-A2170   db "directive must appear inside a macro",0
-;A2171  db "cannot expand macro function",0
-A2172   db "too few bits in RECORD : %s",0
-;A2173  db "macro function cannot redefine itself",0
-A2175   db "invalid qualified type",0
-;A2176  db "floating point initializer on an integer variable",0
-;A2177  db "nested structure improperly initialized",0
-A2178   db "invalid use of FLAT",0
-A2179   db "structure improperly initialized",0
-;A2180  db "improper list initialization",0
-A2181   db "initializer must be a string or single item",0
-;A2182  db "initializer must be a single item",0
-;A2183  db "initializer must be a single byte",0
-;A2184  db "improper use of list initializer",0
-;A2185  db "improper literal initialization",0
-;A2186  db "extra characters in literal initialization",0
-A2187   db "must use floating point initializer",0
-;A2188  db "cannot use .EXIT for OS_OS2 with .8086",0
-A2189   db "invalid combination with segment alignment : %d",0
-A2190   db "INVOKE requires prototype for procedure",0
-;A2191  db "cannot include structure in self",0
-A2192   db "symbol language attribute conflict : %s",0
-;A2193  db "non-benign COMM redefinition",0
-;A2194  db "COMM variable exceeds 64K",0
-;A2195  db "parameter or local cannot have void type",0
-;A2196  db "cannot use TINY model with OS_OS2",0
-;A2197  db "expression size must be 32-bits",0
-;A2198  db ".EXIT does not work with 32-bit segments",0
-A2199   db ".STARTUP does not work with 32-bit segments",0
-A2200   db "ORG directive not allowed in unions",0
-;A2201  db "scope state cannot be changed",0
-A2202   db "illegal use of segment register",0
-;A2203  db "cannot declare scoped code label as PUBLIC",0
-;A2204  db ".MSFLOAT directive is obsolete : ignored",0
-;A2205  db "ESC instruction is obsolete : ignored",0
-A2206   db "missing operator in expression",0
-;A2207  db "missing right parenthesis in expression",0
-;A2208  db "missing left parenthesis in expression",0
-;A2209  db "reference to forward macro redefinition",0
-A2214   db "GROUP directive not allowed with /coff option",0
-A2217   db "must be public or external : %s",0
-;A2219  db "bad alignment for offset in unwind code",0
-;
-; Nonfatal Errors -- ASMC
-;
-A3000   db "assembly passes reached: %u",0
-A3001   db "invalid fixup type for %s : %s",0
-A3002   db "/PE option requires FLAT memory model",0
-A3003   db "/bin: invalid start label",0
-A3004   db "cannot use TR%u-TR%u with current CPU setting",0
-A3005   db "no segment information to create fixup: %s",0
-A3006   db "not supported with current output format: %s",0
-A3007   db "missing .ENDPROLOG: %s",0
-A3008   db ".ENDPROLOG found before EH directives",0
-A3009   db "missing FRAME in PROC, no unwind code will be generated",0
-A3010   db "size of prolog too big, must be < 256 bytes",0
-A3011   db "too many unwind codes in FRAME procedure",0
-A3012   db "registers AH-DH may not be used with SPL-DIL or R8-R15",0
-A3013   db "multiple overrides",0
-A3014   db "unknown fixup type: %u at %s.%lX",0
-A3015   db "filename parameter must be enclosed in <> or quotes",0
-A3016   db "literal expected after '='",0
-A3017   db ".SAFESEH argument must be a PROC",0
-A3018   db "invalid operand for %s : %s",0
-A3019   db "invalid fixup type for %s : %u at location %s:%lX",0
-A3020   equ <A1000>
-A3021   equ <A1001>
-A3022   db ".CASE redefinition : %s(%d) : %s(%d)",0
+;; Internal error
 
-;
-; Warnings -- MASM
-;
-;A4000  db "cannot modify READONLY segment",0
-;A4002  db "non-unique STRUCT/UNION field used without qualification",0
-A4003   db "start address on END directive ignored with .STARTUP",0
-;A4004  db "cannot ASSUME CS",0
-A4005   db "unknown default prologue argument",0
-A4006   db "too many arguments in macro call : %s",0
-A4007   db "option untranslated, directive required : %s",0
-A4008   db "invalid command-line option value, default is used : %s",0
-;A4009  db "insufficient memory for /EP : /EP ignored",0
-;A4010  db "expected '>' on text literal",0
-A4011   db "multiple .MODEL directives found : .MODEL ignored",0
-A4012   db "line number information for segment without class 'CODE' : %s",0
-;A4013  db "instructions and initialized data not supported in AT segments",0
-;A4015  db "directive ignored with /coff switch",0
-A4910   equ <A1000> ; cannot open file
-;
-; Warnings -- ASMC
-;
-A8000   equ <A1006>
-A8001   equ <A2167>
-A8002   equ <A2189>
-A8003   equ <A2103>
-A8004   equ <A2004>
-A8005   db "IF[n]DEF expects a plain symbol as argument : %s",0
-A8006   db "instructions and initialized data not supported in %s segments",0
-A8007   db "16bit fixup for 32bit label : %s",0
-A8008   db "displacement out of range: 0x%I64X",0
-A8009   db "no start label defined",0
-A8010   db "no stack defined",0
-A8011   db "for -coff leading underscore required for start label: %s",0
-A8012   db "library name is missing",0
-A8013   db "ELF GNU extensions (8/16-bit relocations) used",0
-A8014   db "LOADDS ignored in flat model",0
-A8015   db "directive ignored without -%s switch",0
-;A8016  db "text macro used prior to definition: %s",0
-A8017   db "ignored: %s",0
-A8018   db "group definition too large, truncated : %s",0
-A8019   db "size not specified, assuming: %s",0
-A8020   db "constant expected",0
-;
-; warning level 3 -- MASM
-;
-;A5000  db "@@: label defined but not referenced",0
-;A5001  db "expression expected, assume value 0",0
-;A5002  db "externdef previously assumed to be external",0
-;A5003  db "length of symbol previously assumed to be different",0
-;A5004  db "symbol previously assumed to not be in a group",0
-;A5005  db "types are different",0
-;A6001  db "no return from procedure",0
-A6003   db "conditional jump lengthened",0
-A6004   db "procedure argument or local not referenced : %s",0
-A6005   db "expression condition may be pass-dependent: %s",0
-;
-; warning level 3 -- ASMC
-;
-A7000   equ <A2192>
-A7001   equ <A2090>
-A7002   equ <A2133>
-A7003   db "far call is converted to near call.",0
-A7004   db "floating-point initializer ignored",0
-A7005   db "directive ignored: %s",0
-A7006   db "parameter/local name is reserved word: %s",0
-A7007   db ".CASE without .ENDC: assumed fall through",0
-A7008   db "cannot delay macro function: %s",0
+    INTER equ <"Internal Assembler Error">
+
+;; Fatal Errors
+
+    A1000 equ <"cannot open file : %s">
+    A1001 equ <"I/O error closing file : %s">
+    A1002 equ <"I/O error writing file : %s">
+    A1003 equ <"I/O error reading file">
+    A1005 equ <"assembler limit : macro parameter name table full">
+    A1006 equ <"invalid command-line option: %s">
+    A1007 equ <"nesting level too deep">
+    A1008 equ <"unmatched macro nesting">
+    A1009 equ <"line too long">
+    A1010 equ <"unmatched block nesting : %s">
+    A1011 equ <"directive must be in control block">
+    A1012 equ <"error count exceeds 100; stopping assembly">
+    A1013 equ <"invalid numerical command-line argument : %d">
+    A1014 equ <"too many arguments">
+    A1015 equ <"statement too complex">
+    A1017 equ <"missing source filename">
+    A1901 equ <"Internal Assembler Error">
+
+;; Nonfatal Errors
+
+    A2000 equ <"memory operand not allowed in context">
+    A2001 equ <"immediate operand not allowed">
+    A2002 equ <"cannot have more than one .ELSE clause per .IF block">
+    A2003 equ <"extra characters after statement">
+    A2004 equ <"symbol type conflict : %s">
+    A2005 equ <"symbol redefinition : %s">
+    A2006 equ <"undefined symbol : %s">
+    A2007 equ <"non-benign record redefinition %s : %s">
+    A2008 equ <"syntax error : %s">
+    A2009 equ <"syntax error in expression">
+    A2010 equ <"invalid type expression">
+    A2011 equ <"distance invalid for word size of current segment">
+    A2012 equ <"PROC, MACRO, or macro repeat directive must precede LOCAL">
+    A2013 equ <".MODEL must precede this directive">
+    A2014 equ <"cannot define as public or external : %s">
+    A2015 equ <"segment attributes cannot change : %s">
+    A2016 equ <"expression expected">
+    A2017 equ <"operator expected">
+    A2018 equ <"invalid use of external symbol : %s">
+    A2019 equ <"operand must be RECORD type or field">
+    A2020 equ <"identifier not a record : identifier">
+    A2021 equ <"record constants cannot span line breaks">
+    A2022 equ <"instruction operands must be the same size : %d - %d">
+    A2023 equ <"instruction operand must have size">
+    A2024 equ <"invalid operand size for instruction">
+    A2025 equ <"operands must be in same segment">
+    A2026 equ <"constant expected">
+    A2027 equ <"operand must be a memory expression">
+    A2028 equ <"expression must be a code address">
+    A2029 equ <"multiple base registers not allowed">
+    A2030 equ <"multiple index registers not allowed">
+    A2031 equ <"must be index or base register">
+    A2032 equ <"invalid use of register">
+    A2033 equ <"invalid INVOKE argument : %d">
+    A2034 equ <"must be in segment block">
+    A2035 equ <"DUP too complex">
+    A2036 equ <"too many initial values for structure: %s">
+    A2037 equ <"statement not allowed inside structure definition">
+    A2038 equ <"missing operand for macro operator">
+    A2039 equ <"line too long">
+    A2040 equ <"segment register not allowed in context">
+    A2041 equ <"string or text literal too long">
+    A2042 equ <"statement too complex">
+    A2043 equ <"identifier too long">
+    A2044 equ <"invalid character in file">
+    A2045 equ <"missing angle bracket or brace in literal">
+    A2046 equ <"missing single or double quotation mark in string">
+    A2047 equ <"empty (null) string">
+    A2048 equ <"nondigit in number : %s">
+    A2049 equ <"syntax error in floating-point constant">
+    A2050 equ <"real or BCD number not allowed">
+    A2051 equ <"text item required">
+    A2052 equ <"forced error : %s">
+    A2053 equ <"forced error : value equal to 0 : %d: %s">
+    A2054 equ <"forced error : value not equal to 0 : %d: %s">
+    A2055 equ <"forced error : symbol not defined : %s">
+    A2056 equ <"forced error : symbol defined : %s">
+    A2057 equ <"forced error : string blank : %s: %s">
+    A2058 equ <"forced error : string not blank : <%s>: %s">
+    A2059 equ <"forced error : strings equal : <%s>: <%s>: %s">
+    A2060 equ <"forced error : strings not equal : <%s>: <%s>: %s">
+    A2061 equ <"[[[ELSE]]]IF2/.ERR2 not allowed : single-pass assembler">
+    A2062 equ <"expression too complex for .UNTILCXZ">
+    A2063 equ <"can ALIGN only to power of 2 : %u">
+    A2064 equ <"struct alignment must be 1, 2, 4, 8, 16 or 32">
+    A2065 equ <"expected : %s">
+    A2066 equ <"incompatible CPU mode and segment size">
+    A2067 equ <"LOCK must be followed by a memory operation">
+    A2068 equ <"instruction prefix not allowed">
+    A2069 equ <"no operands allowed for this instruction">
+    A2070 equ <"invalid instruction operands">
+    A2071 equ <"initializer too large for specified size">
+    A2072 equ <"cannot access symbol in given segment or group: %s">
+    A2073 equ <"operands have different frames">
+    A2074 equ <"cannot access label through segment registers : %s">
+    A2075 equ <"jump destination too far : by %d bytes">
+    A2076 equ <"jump destination must specify a label">
+    A2077 equ <"instruction does not allow NEAR indirect addressing">
+    A2078 equ <"instruction does not allow FAR indirect addressing">
+    A2079 equ <"instruction does not allow FAR direct addressing">
+    A2080 equ <"jump distance not possible in current CPU mode">
+    A2081 equ <"missing operand after unary operator">
+    A2082 equ <"cannot mix 16- and 32-bit registers">
+    A2083 equ <"invalid scale value">
+    A2084 equ <"constant value too large">
+    A2085 equ <"instruction or register not accepted in current CPU mode">
+    A2086 equ <"reserved word expected">
+    A2087 equ <"instruction form requires 80386/486">
+    A2088 equ <"END directive required at end of file">
+    A2089 equ <"too many bits in RECORD : %s">
+    A2090 equ <"positive value expected">
+    A2091 equ <"index value past end of string">
+    A2092 equ <"count must be positive or zero">
+    A2093 equ <"count value too large">
+    A2094 equ <"operand must be relocatable">
+    A2095 equ <"constant or relocatable label expected">
+    A2096 equ <"segment, group, or segment register expected">
+    A2097 equ <"segment expected : %s">
+    A2098 equ <"invalid operand for OFFSET">
+    A2099 equ <"invalid use of external absolute">
+    A2100 equ <"segment or group not allowed">
+    A2101 equ <"cannot add two relocatable labels">
+    A2102 equ <"cannot add memory expression and code label">
+    A2103 equ <"segment exceeds 64K limit: %s">
+    A2104 equ <"invalid type for data declaration : %s">
+    A2105 equ <"HIGH and LOW require immediate operands">
+    A2107 equ <"cannot have implicit far jump or call to near label">
+    A2108 equ <"use of register assumed to ERROR">
+    A2109 equ <"only white space or comment can follow backslash">
+    A2110 equ <"COMMENT delimiter expected">
+    A2111 equ <"conflicting parameter definition : %s">
+    A2112 equ <"PROC and prototype calling conventions conflict">
+    A2113 equ <"invalid radix tag">
+    A2114 equ <"INVOKE argument type mismatch : %d">
+    A2115 equ <"invalid coprocessor register">
+    A2116 equ <"instructions and initialized data not allowed in AT segments">
+    A2117 equ <"/AT option requires TINY memory model">
+    A2118 equ <"cannot have segment address references with TINY model">
+    A2119 equ <"language type must be specified">
+    A2120 equ <"PROLOGUE must be macro function">
+    A2121 equ <"EPILOGUE must be macro procedure : %s">
+    A2122 equ <"alternate identifier not allowed with EXTERNDEF">
+    A2123 equ <"text macro nesting level too deep">
+    A2125 equ <"missing macro argument">
+    A2126 equ <"EXITM used inconsistently">
+    A2127 equ <"macro function argument list too long">
+    A2129 equ <"VARARG parameter must be last parameter">
+    A2130 equ <"VARARG parameter not allowed with LOCAL">
+    A2131 equ <"VARARG parameter requires C calling convention">
+    A2132 equ <"ORG needs a constant or local offset">
+    A2133 equ <"register value overwritten by INVOKE">
+    A2134 equ <"structure too large to pass with INVOKE : argument number">
+    A2136 equ <"too many arguments to INVOKE">
+    A2137 equ <"too few arguments to INVOKE">
+    A2138 equ <"invalid data initializer">
+    A2140 equ <"RET operand too large">
+    A2141 equ <"too many operands to instruction">
+    A2142 equ <"cannot have more than one .ELSE clause per .IF block">
+    A2143 equ <"expected data label">
+    A2144 equ <"cannot nest procedures : %s">
+    A2145 equ <"EXPORT must be FAR : %s">
+    A2146 equ <"procedure declared with two visibility attributes : %s">
+    A2147 equ <"macro label not defined : %s">
+    A2148 equ <"invalid symbol type in expression : %s">
+    A2149 equ <"byte register cannot be first operand">
+    A2150 equ <"word register cannot be first operand">
+    A2151 equ <"special register cannot be first operand">
+    A2152 equ <"coprocessor register cannot be first operand">
+    A2153 equ <"cannot change size of expression computations">
+    A2154 equ <"syntax error in control-flow directive">
+    A2155 equ <"cannot use 16-bit register with a 32-bit address">
+    A2156 equ <"constant value out of range">
+    A2157 equ <"missing right parenthesis">
+    A2158 equ <"type is wrong size for register">
+    A2159 equ <"structure cannot be instanced">
+    A2160 equ <"non-benign structure redefinition : label incorrect">
+    A2161 equ <"non-benign structure redefinition : too few labels">
+    A2162 equ <"OLDSTRUCT/NOOLDSTRUCT state cannot be changed">
+    A2163 equ <"non-benign structure redefinition : incorrect initializers">
+    A2164 equ <"non-benign structure redefinition : too few initializers">
+    A2165 equ <"non-benign structure redefinition : label has incorrect offset">
+    A2166 equ <"structure field expected">
+    A2167 equ <"unexpected literal found in expression : %s">
+    A2169 equ <"divide by zero in expression">
+    A2170 equ <"directive must appear inside a macro">
+    A2171 equ <"cannot expand macro function">
+    A2172 equ <"too few bits in RECORD : %s">
+    A2173 equ <"macro function cannot redefine itself">
+    A2175 equ <"invalid qualified type">
+    A2176 equ <"floating point initializer on an integer variable">
+    A2177 equ <"nested structure improperly initialized">
+    A2178 equ <"invalid use of FL    AT">
+    A2179 equ <"structure improperly initialized">
+    A2180 equ <"improper list initialization">
+    A2181 equ <"initializer must be a string or single item">
+    A2182 equ <"initializer must be a single item">
+    A2183 equ <"initializer must be a single byte">
+    A2184 equ <"improper use of list initializer">
+    A2185 equ <"improper literal initialization">
+    A2186 equ <"extra characters in literal initialization">
+    A2187 equ <"must use floating point initializer">
+    A2188 equ <"cannot use .EXIT for OS_OS2 with .8086">
+    A2189 equ <"invalid combination with segment alignment : %d">
+    A2190 equ <"INVOKE requires prototype for procedure">
+    A2191 equ <"cannot include structure in self">
+    A2192 equ <"symbol language attribute conflict : %s">
+    A2193 equ <"non-benign COMM redefinition">
+    A2194 equ <"COMM variable exceeds 64K">
+    A2195 equ <"parameter or local cannot have void type">
+    A2196 equ <"cannot use TINY model with OS_OS2">
+    A2197 equ <"expression size must be 32-bits">
+    A2198 equ <".EXIT does not work with 32-bit segments">
+    A2199 equ <".STARTUP does not work with 32-bit segments">
+    A2200 equ <"ORG directive not allowed in unions">
+    A2201 equ <"scope state cannot be changed">
+    A2202 equ <"illegal use of segment register">
+    A2203 equ <"cannot declare scoped code label as PUBLIC">
+    A2204 equ <".MSFLOAT directive is obsolete : ignored">
+    A2205 equ <"ESC instruction is obsolete : ignored">
+    A2206 equ <"missing operator in expression">
+    A2207 equ <"missing right parenthesis in expression">
+    A2208 equ <"missing left parenthesis in expression">
+    A2209 equ <"reference to forward macro redefinition">
+    A2214 equ <"GROUP directive not allowed with /coff option">
+    A2217 equ <"must be public or external : %s">
+    A2219 equ <"bad alignment for offset in unwind code">
+
+;; Nonfatal Errors -- ASMC
+
+    A3000 equ <"assembly passes reached: %u">
+    A3001 equ <"invalid fixup type for %s : %s">
+    A3002 equ <"/PE option requires FLAT memory model">
+    A3003 equ <"/bin: invalid start label">
+    A3004 equ <"cannot use TR%u-TR%u with current CPU setting">
+    A3005 equ <"no segment information to create fixup: %s">
+    A3006 equ <"not supported with current output format: %s">
+    A3007 equ <"missing .ENDPROLOG: %s">
+    A3008 equ <".ENDPROLOG found before EH directives">
+    A3009 equ <"missing FRAME in PROC, no unwind code will be generated">
+    A3010 equ <"size of prolog too big, must be < 256 bytes">
+    A3011 equ <"too many unwind codes in FRAME procedure">
+    A3012 equ <"registers AH-DH may not be used with SPL-DIL or R8-R15">
+    A3013 equ <"multiple overrides">
+    A3014 equ <"unknown fixup type: %u at %s.%lX">
+    A3015 equ <"filename parameter must be enclosed in <> or quotes">
+    A3016 equ <"literal expected after '='">
+    A3017 equ <".SAFESEH argument must be a PROC">
+    A3018 equ <"invalid operand for %s : %s">
+    A3019 equ <"invalid fixup type for %s : %u at location %s:%lX">
+    A3020 equ <"cannot open file : %s">
+    A3021 equ <"I/O error closing file : %s">
+    A3022 equ <".CASE redefinition : %s(%d) : %s(%d)">
+
+
+;; Warnings -- MASM
+
+    A4000 equ <"cannot modify READONLY segment">
+    A4002 equ <"non-unique STRUCT/UNION field used without qualification">
+    A4003 equ <"start address on END directive ignored with .STARTUP">
+    A4004 equ <"cannot ASSUME CS">
+    A4005 equ <"unknown default prologue argument">
+    A4006 equ <"too many arguments in macro call : %s">
+    A4007 equ <"option untranslated, directive required : %s">
+    A4008 equ <"invalid command-line option value, default is used : %s">
+    A4009 equ <"insufficient memory for /EP : /EP ignored">
+    A4010 equ <"expected '!>' on text literal">
+    A4011 equ <"multiple .MODEL directives found : .MODEL ignored">
+    A4012 equ <"line number information for segment without class 'CODE' : %s">
+    A4013 equ <"instructions and initialized data not supported in AT segments">
+    A4015 equ <"directive ignored with /coff switch">
+    A4910 equ <"cannot open file : %s">
+
+;; Warnings -- ASMC
+
+    A8000 equ <"invalid command-line option: %s">
+    A8001 equ <"unexpected literal found in expression : %s">
+    A8002 equ <"invalid combination with segment alignment : %d">
+    A8003 equ <"segment exceeds 64K limit: %s">
+    A8004 equ <"symbol type conflict : %s">
+    A8005 equ <"IF[n]DEF expects a plain symbol as argument : %s">
+    A8006 equ <"instructions and initialized data not supported in %s segments">
+    A8007 equ <"16bit fixup for 32bit label : %s">
+    A8008 equ <"displacement out of range: 0x%I64X">
+    A8009 equ <"no start label defined">
+    A8010 equ <"no stack defined">
+    A8011 equ <"for -coff leading underscore required for start label: %s">
+    A8012 equ <"library name is missing">
+    A8013 equ <"ELF GNU extensions (8/16-bit relocations) used">
+    A8014 equ <"LOADDS ignored in flat model">
+    A8015 equ <"directive ignored without -%s switch">
+    A8016 equ <"text macro used prior to definition: %s">
+    A8017 equ <"ignored: %s">
+    A8018 equ <"group definition too large, truncated : %s">
+    A8019 equ <"size not specified, assuming: %s">
+    A8020 equ <"constant expected">
+
+;; warning level 3 -- MASM
+
+    A5000 equ <"@@: label defined but not referenced">
+    A5001 equ <"expression expected, assume value 0">
+    A5002 equ <"externdef previously assumed to be external">
+    A5003 equ <"length of symbol previously assumed to be different">
+    A5004 equ <"symbol previously assumed to not be in a group">
+    A5005 equ <"types are different">
+    A6001 equ <"no return from procedure">
+    A6003 equ <"conditional jump lengthened">
+    A6004 equ <"procedure argument or local not referenced : %s">
+    A6005 equ <"expression condition may be pass-dependent: %s">
+
+;; warning level 3 -- ASMC
+
+    A7000 equ <"symbol language attribute conflict : %s">
+    A7001 equ <"positive value expected">
+    A7002 equ <"register value overwritten by INVOKE">
+    A7003 equ <"far call is converted to near call.">
+    A7004 equ <"floating-point initializer ignored">
+    A7005 equ <"directive ignored: %s">
+    A7006 equ <"parameter/local name is reserved word: %s">
+    A7007 equ <".CASE without .ENDC: assumed fall through">
+    A7008 equ <"cannot delay macro function: %s">
+
+E macro string
+    exitm<@CStr(string)>
+    endm
+
+    .data
 
     align 4
 
-E0  dd A1000,A1001,A1002,INTER,INTER,A1005,A1006,A1007,A1008,A1009
-    dd A1010,A1011,A1012,INTER,INTER,INTER,INTER,A1017
+E0  dd E(A1000),E(A1001),E(A1002),E(INTER),E(INTER),E(A1005),E(A1006),E(A1007),E(A1008),E(A1009)
+    dd E(A1010),E(A1011),E(A1012),E(INTER),E(INTER),E(INTER),E(INTER),E(A1017)
 MAX_E0 equ ($ - E0) / 4
-E1  dd INTER,INTER,INTER,INTER,A2004,A2005,A2006,A2007,A2008,A2009
-    dd A2010,A2011,A2012,A2013,A2014,A2015,A2016,INTER,A2018,A2019
-    dd INTER,INTER,A2022,A2023,A2024,A2025,A2026,INTER,A2028,A2029
-    dd A2030,A2031,A2032,A2033,A2034,INTER,A2036,A2037,INTER,A2039
-    dd INTER,A2041,INTER,A2043,INTER,A2045,A2046,A2047,A2048,INTER
-    dd A2050,A2051,A2052,A2053,A2054,A2055,A2056,A2057,A2058,A2059
-    dd A2060,A2061,A2062,A2063,A2064,A2065,A2066,INTER,A2068,INTER
-    dd A2070,A2071,A2072,INTER,A2074,A2075,A2076,A2077,INTER,A2079
-    dd A2080,A2081,A2082,A2083,A2084,A2085,A2086,A2087,A2088,A2089
-    dd A2090,A2091,A2092,A2093,A2094,A2095,A2096,A2097,A2098,INTER
-    dd A2100,A2101,INTER,A2103,A2104,A2105,INTER,A2107,A2108,INTER
-    dd A2110,A2111,A2112,A2113,A2114,INTER,INTER,INTER,INTER,A2119
-    dd A2120,A2121,INTER,A2123,INTER,A2125,INTER,INTER,INTER,A2129
-    dd INTER,A2131,A2132,A2133,INTER,INTER,A2136,INTER,INTER,INTER
-    dd INTER,A2141,A2142,A2143,A2144,A2145,INTER,A2147,A2148,INTER
-    dd INTER,A2151,INTER,INTER,A2154,INTER,A2156,A2157,INTER,A2159
-    dd INTER,INTER,INTER,INTER,INTER,INTER,A2166,A2167,INTER,A2169
-    dd A2170,INTER,A2172,INTER,INTER,A2175,INTER,INTER,A2178,A2179
-    dd INTER,A2181,INTER,INTER,INTER,INTER,INTER,A2187,INTER,A2189
-    dd A2190,INTER,INTER,INTER,INTER,INTER,INTER,INTER,INTER,A2199
-    dd A2200,INTER,A2202,INTER,INTER,INTER,A2206,INTER,INTER,INTER
-    dd INTER,INTER,INTER,INTER,A2214,INTER,INTER,A2217,INTER,INTER
+E1  dd E(INTER),E(INTER),E(INTER),E(INTER),E(A2004),E(A2005),E(A2006),E(A2007),E(A2008),E(A2009)
+    dd E(A2010),E(A2011),E(A2012),E(A2013),E(A2014),E(A2015),E(A2016),E(INTER),E(A2018),E(A2019)
+    dd E(INTER),E(INTER),E(A2022),E(A2023),E(A2024),E(A2025),E(A2026),E(INTER),E(A2028),E(A2029)
+    dd E(A2030),E(A2031),E(A2032),E(A2033),E(A2034),E(INTER),E(A2036),E(A2037),E(INTER),E(A2039)
+    dd E(INTER),E(A2041),E(INTER),E(A2043),E(INTER),E(A2045),E(A2046),E(A2047),E(A2048),E(INTER)
+    dd E(A2050),E(A2051),E(A2052),E(A2053),E(A2054),E(A2055),E(A2056),E(A2057),E(A2058),E(A2059)
+    dd E(A2060),E(A2061),E(A2062),E(A2063),E(A2064),E(A2065),E(A2066),E(INTER),E(A2068),E(INTER)
+    dd E(A2070),E(A2071),E(A2072),E(INTER),E(A2074),E(A2075),E(A2076),E(A2077),E(INTER),E(A2079)
+    dd E(A2080),E(A2081),E(A2082),E(A2083),E(A2084),E(A2085),E(A2086),E(A2087),E(A2088),E(A2089)
+    dd E(A2090),E(A2091),E(A2092),E(A2093),E(A2094),E(A2095),E(A2096),E(A2097),E(A2098),E(INTER)
+    dd E(A2100),E(A2101),E(INTER),E(A2103),E(A2104),E(A2105),E(INTER),E(A2107),E(A2108),E(INTER)
+    dd E(A2110),E(A2111),E(A2112),E(A2113),E(A2114),E(INTER),E(INTER),E(INTER),E(INTER),E(A2119)
+    dd E(A2120),E(A2121),E(INTER),E(A2123),E(INTER),E(A2125),E(INTER),E(INTER),E(INTER),E(A2129)
+    dd E(INTER),E(A2131),E(A2132),E(A2133),E(INTER),E(INTER),E(A2136),E(INTER),E(INTER),E(INTER)
+    dd E(INTER),E(A2141),E(A2142),E(A2143),E(A2144),E(A2145),E(INTER),E(A2147),E(A2148),E(INTER)
+    dd E(INTER),E(A2151),E(INTER),E(INTER),E(A2154),E(INTER),E(A2156),E(A2157),E(INTER),E(A2159)
+    dd E(INTER),E(INTER),E(INTER),E(INTER),E(INTER),E(INTER),E(A2166),E(A2167),E(INTER),E(A2169)
+    dd E(A2170),E(INTER),E(A2172),E(INTER),E(INTER),E(A2175),E(INTER),E(INTER),E(A2178),E(A2179)
+    dd E(INTER),E(A2181),E(INTER),E(INTER),E(INTER),E(INTER),E(INTER),E(A2187),E(INTER),E(A2189)
+    dd E(A2190),E(INTER),E(INTER),E(INTER),E(INTER),E(INTER),E(INTER),E(INTER),E(INTER),E(A2199)
+    dd E(A2200),E(INTER),E(A2202),E(INTER),E(INTER),E(INTER),E(A2206),E(INTER),E(INTER),E(INTER)
+    dd E(INTER),E(INTER),E(INTER),E(INTER),E(A2214),E(INTER),E(INTER),E(A2217),E(INTER),E(INTER)
 MAX_E1 equ ($ - E1) / 4
-E2  dd A3000,A3001,A3002,A3003,A3004,A3005,A3006,A3007,A3008,A3009
-    dd A3010,A3011,A3012,A3013,A3014,A3015,A3016,A3017,A3018,A3019
-    dd A3020,A3021,A3022
+E2  dd E(A3000),E(A3001),E(A3002),E(A3003),E(A3004),E(A3005),E(A3006),E(A3007),E(A3008),E(A3009)
+    dd E(A3010),E(A3011),E(A3012),E(A3013),E(A3014),E(A3015),E(A3016),E(A3017),E(A3018),E(A3019)
+    dd E(A3020),E(A3021),E(A3022)
 MAX_E2 equ ($ - E2) / 4
-W1  dd INTER,INTER,INTER,A4003,INTER,A4005,A4006,A4007,A4008,INTER
-    dd INTER,A4011,A4012,INTER,A4910
-MAX_W1  equ ($ - W1) / 4
-W2  dd INTER
-MAX_W2  equ ($ - W2) / 4
-W3  dd INTER,INTER,INTER,A6003,A6004,A6005
-MAX_W3  equ ($ - W3) / 4
-W4  dd A7000,A7001,A7002,A7003,A7004,A7005,A7006,A7007,A7008
-MAX_W4  equ ($ - W4) / 4
-W5  dd A8000,A8001,A8002,A8003,A8004,A8005,A8006,A8007,A8008,A8009
-    dd A8010,A8011,A8012,A8013,A8014,A8015,INTER,A8017,A8018,A8019
-    dd A8020
+W1  dd E(INTER),E(INTER),E(INTER),E(A4003),E(INTER),E(A4005),E(A4006),E(A4007),E(A4008),E(INTER)
+    dd E(INTER),E(A4011),E(A4012),E(INTER),E(A4910)
+MAX_W1 equ ($ - W1) / 4
+W2  dd E(INTER)
+MAX_W2 equ ($ - W2) / 4
+W3  dd E(INTER),E(INTER),E(INTER),E(A6003),E(A6004),E(A6005)
+MAX_W3 equ ($ - W3) / 4
+W4  dd E(A7000),E(A7001),E(A7002),E(A7003),E(A7004),E(A7005),E(A7006),E(A7007),E(A7008)
+MAX_W4 equ ($ - W4) / 4
+W5  dd E(A8000),E(A8001),E(A8002),E(A8003),E(A8004),E(A8005),E(A8006),E(A8007),E(A8008),E(A8009)
+    dd E(A8010),E(A8011),E(A8012),E(A8013),E(A8014),E(A8015),E(INTER),E(A8017),E(A8018),E(A8019)
+    dd E(A8020)
 MAX_W5 equ ($ - W5) / 4
 
 table   dd E0,E1,E2,W1,W2,W3,W4,W5
@@ -545,7 +549,7 @@ asmerr proc uses esi edi ebx edx ecx value:int_t, args:vararg
             mov esi,table[ecx*4]
             mov esi,[esi+eax*4]
 
-            .break .if esi == offset INTER
+            .break .if esi == offset E(INTER)
 
             lea edi,format
             strcat(edi, esi)
@@ -587,7 +591,7 @@ asmerr proc uses esi edi ebx edx ecx value:int_t, args:vararg
 
         .until 1
 
-        printf("ASMC : fatal error A1901: %s\n", &INTER)
+        printf("ASMC : fatal error A1901: %s\n", INTER)
         errexit()
 
     .until 1

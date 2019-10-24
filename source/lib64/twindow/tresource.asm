@@ -23,11 +23,11 @@ TWindow::Resource proc uses rsi rdi rbx r12 rcx p:idd_t
     [rbx].Load(&[rsi-2])
     movzx   edi,[rsi].count
     movzx   eax,[rsi].index
-    lea     rsi,[rsi+sizeof(ROBJECT)]
+    lea     rsi,[rsi+ROBJECT]
     inc     eax
     mov     [rbx].Index,eax
 
-    .for ( r12d = 1 : edi : edi--, rsi += sizeof(ROBJECT), r12d++ )
+    .for ( r12d = 1 : edi : edi--, rsi += ROBJECT, r12d++ )
 
         mov     r9w,[rsi].flags
         and     r9d,0x0F

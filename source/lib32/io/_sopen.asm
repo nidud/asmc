@@ -26,7 +26,7 @@ _sopen proc c uses esi edi ebx path:LPSTR, oflag, shflag, args:VARARG
     mov sa.lpSecurityDescriptor,eax
     mov fileflags,al
     mov eax,oflag
-    mov sa.nLength,sizeof(SECURITY_ATTRIBUTES)
+    mov sa.nLength,SECURITY_ATTRIBUTES
 
     .if eax & O_NOINHERIT
         mov fileflags,FH_NOINHERIT

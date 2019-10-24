@@ -68,7 +68,11 @@ static void AssignValue( int *i, struct asm_tok tokenarray[], int count )
     int     retval;
     int     directive;
     int     x, Assign;
+    int     address;
     char    buffer[256];
+    char *  p;
+    char *  q;
+    int     last_id;
 
     if ( ExpandHllProc(buffer, *i, tokenarray) != ERROR ) {
 
@@ -89,11 +93,34 @@ static void AssignValue( int *i, struct asm_tok tokenarray[], int count )
         strcpy(buffer, tokenarray[*i].string_ptr);
     }
 
-    if ( EvalOperand( i, tokenarray, *i + count, &opnd, EXPF_NOUNDEF ) == NOT_ERROR ) {
+    p = buffer;
+    address = 0;
+    last_id = count + *i;
+    if ( tokenarray[*i].token == '(' && tokenarray[*i+1].token == '&' ) {
+        while ( *p != '&' )
+            p++;
+        p++;
+        for ( q = p; *q; q++ ) ;
+        q--;
+        if ( *q == ')' )
+            *q = '\0';
+        address++;
+        (*i) += 2;
+    } else if ( *p == '&' ) {
+        p++;
+        address++;
+        (*i)++;
+    }
+
+    if ( EvalOperand( i, tokenarray, last_id, &opnd, EXPF_NOUNDEF ) == NOT_ERROR ) {
 
         Assign = 1;
 
-        if ( opnd.kind == EXPR_CONST ) {
+        if ( address ) {
+
+            op = T_LEA;
+
+        } else if ( opnd.kind == EXPR_CONST ) {
 
             if ( !opnd.hvalue && opnd.value > 0 ) {
                 x = reg;
@@ -143,8 +170,8 @@ static void AssignValue( int *i, struct asm_tok tokenarray[], int count )
                 break;
             case MT_OWORD:
                 if ( reg == T_RAX ) {
-                    AddLineQueueX( "mov rax,qword ptr %s", buffer );
-                    AddLineQueueX( "mov rdx,qword ptr %s[8]", buffer );
+                    AddLineQueueX( "mov rax,qword ptr %s", p );
+                    AddLineQueueX( "mov rdx,qword ptr %s[8]", p );
                     return;
                 }
                 break;
@@ -167,7 +194,7 @@ static void AssignValue( int *i, struct asm_tok tokenarray[], int count )
         }
 
         if ( Assign )
-            AddLineQueueX( "%r %r,%s", op, reg, buffer );
+            AddLineQueueX( "%r %r,%s", op, reg, p );
     }
 }
 
@@ -235,4 +262,3 @@ int ReturnDirective( int i, struct asm_tok tokenarray[] )
         RunLineQueue();
     return ( NOT_ERROR );
 }
-

@@ -453,7 +453,7 @@ endif
 
 ifndef InitializeObjectAttributes
 InitializeObjectAttributes macro p, n, a, r, s
-    mov p.OBJECT_ATTRIBUTES.Length,sizeof(OBJECT_ATTRIBUTES)
+    mov p.OBJECT_ATTRIBUTES.Length,OBJECT_ATTRIBUTES
     mov p.OBJECT_ATTRIBUTES.RootDirectory,r
     mov p.OBJECT_ATTRIBUTES.Attributes,a
     mov p.OBJECT_ATTRIBUTES.ObjectName,n

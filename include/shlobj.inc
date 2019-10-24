@@ -582,7 +582,7 @@ ILNext macro pidl
 	endm
 
 ILIsAligned macro pidl
-	exitm<(((pidl) AND (sizeof(PVOID) - 1)) EQ 0)>
+	exitm<(((pidl) AND (PVOID - 1)) EQ 0)>
 	endm
 
 ILIsEmpty macro pidl
@@ -3398,7 +3398,7 @@ endif
 SHELLSTATE_SIZE_WIN95	equ FIELD_OFFSET(SHELLSTATE,lParamSort)
 SHELLSTATE_SIZE_NT4	equ FIELD_OFFSET(SHELLSTATE,version)
 SHELLSTATE_SIZE_IE4	equ FIELD_OFFSET(SHELLSTATE,uNotUsed)
-SHELLSTATE_SIZE_WIN2K	equ sizeof(SHELLSTATE)
+SHELLSTATE_SIZE_WIN2K	equ SHELLSTATE
 
 ;SHSTDAPI
 SHGetSetSettings proto WINAPI \

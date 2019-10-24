@@ -84,7 +84,7 @@ TWindow::Send endp
 
 TWindow::Post proc uiMsg:uint_t, wParam:size_t, lParam:ptr
 
-    .return .if !malloc(sizeof(TMESSAGE))
+    .return .if !malloc(TMESSAGE)
 
     mov rdx,rax
     mov [rdx].Next,0

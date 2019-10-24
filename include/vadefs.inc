@@ -36,7 +36,7 @@ _APALIGN macro t,ap
 ifdef _M_IX86
 
 _INTSIZEOF macro n
-	exitm<((sizeof(n) + sizeof(SINT) - 1) and not (sizeof(SINT) - 1))>
+	exitm<((sizeof(n) + SINT - 1) and not (SINT - 1))>
 	endm
 
 __crt_va_start_a macro ap, v

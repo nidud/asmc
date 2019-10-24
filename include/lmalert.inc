@@ -55,7 +55,7 @@ LPUSER_OTHER_INFO	typedef ptr USER_OTHER_INFO
 ALERTER_MAILSLOT	equ <L"\\\\.\\MAILSLOT\\Alerter">
 
 ALERT_OTHER_INFO macro x
-	exitm<((x) + sizeof(STD_ALERT))>
+	exitm<((x) + STD_ALERT)>
 	endm
 
 ALERT_VAR_DATA macro p

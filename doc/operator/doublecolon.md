@@ -18,7 +18,7 @@ The second operator is used in [INVOKE](../directive/invoke.md) to create a 64-b
 
 The third operator is used as a global label within a PROC or as a PUBLIC label outside.
 
-The next two operators is used to define a class member with a hidden (_this) argument of _type_.
+The next two operators is used to define a class member with a hidden (this) argument of _type_.
 
 #### See Also
 

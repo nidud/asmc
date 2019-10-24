@@ -727,7 +727,7 @@ dledit proc uses edi b:LPSTR, rc, bz, oflag
 
     lea edi,t
     xor eax,eax
-    mov ecx,sizeof(TEDIT)
+    mov ecx,TEDIT
     rep stosb
     mov edi,TI
     lea eax,t

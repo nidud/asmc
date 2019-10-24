@@ -141,24 +141,58 @@ GetCOp  endp
 ; render an instruction
 ;
 
+    assume ebx:tok_t
+
 RenderInstr proc private uses esi edi ebx dst:string_t, inst:string_t, start1:uint_t,
         end1:uint_t, start2:uint_t, end2:uint_t, tokenarray:tok_t
 
-    ;
-    ; copy the instruction
-    ;
-    mov esi,inst
-    mov edi,dst
-    strlen( esi )
+  local reg:string_t
 
-    mov ecx,eax
+    mov reg,0
+
+    mov edi,dst
+    mov ebx,tokenarray
+
+    ; v2.30 - test if second operand starts with '&'
+
+    mov ecx,start2
+    .if ecx != EMPTY && ModuleInfo.Ofssize != USE16
+
+        shl ecx,4
+        .if [ebx+ecx].token == T_STRING
+
+            mov eax,[ebx+ecx].string_ptr
+            .if word ptr [eax] == '&'
+
+                lea eax,@CStr("eax")
+                .if ModuleInfo.Ofssize == USE64
+                    lea eax,@CStr("rax")
+                .endif
+                mov reg,eax
+
+                imul edx,end2,asm_tok
+                mov esi,[ebx+edx].tokpos
+                mov dl,[esi]
+                mov byte ptr [esi],0
+                push edx
+                sprintf(edi, "lea %s, %s\n", eax, [ebx+ecx+16].tokpos)
+                add edi,eax
+                pop edx
+                mov [esi],dl
+            .endif
+        .endif
+    .endif
+
+    ; copy the instruction
+
+    mov esi,inst
+    mov ecx,strlen(esi)
     rep movsb
     mov eax,' '
     stosb
-    ;
+
     ; copy the first operand's tokens
-    ;
-    mov ebx,tokenarray
+
     mov ecx,end1
     mov eax,start1
     shl ecx,4
@@ -173,17 +207,22 @@ RenderInstr proc private uses esi edi ebx dst:string_t, inst:string_t, start1:ui
 
     .if eax != EMPTY
 
-        mov WORD PTR [edi],' ,'
+        mov word ptr [edi],' ,'
         add edi,2
-        ;
+
         ; copy the second operand's tokens
-        ;
-        shl ecx,4
-        shl eax,4
-        mov ecx,[ebx+ecx].asm_tok.tokpos
-        mov esi,[ebx+eax].asm_tok.tokpos
-        sub ecx,esi
+        .if reg
+            mov ecx,3
+            mov esi,reg
+        .else
+            shl ecx,4
+            shl eax,4
+            mov ecx,[ebx+ecx].asm_tok.tokpos
+            mov esi,[ebx+eax].asm_tok.tokpos
+            sub ecx,esi
+        .endif
         rep movsb
+
     .elseif ecx != EMPTY
 
         sprintf(edi, ", %d", ecx)
@@ -192,6 +231,7 @@ RenderInstr proc private uses esi edi ebx dst:string_t, inst:string_t, start1:ui
     mov WORD PTR [edi],EOLCHAR
     lea eax,[edi+1]
     ret
+
 RenderInstr endp
 
 GetLabelStr proc l_id:int_t, buff:string_t
@@ -299,8 +339,6 @@ local   op:         int_t,
         op1:        expr,
         op2:        expr,
         _label
-
-    assume ebx:tok_t
 
     mov esi,i
     mov edi,[esi]
@@ -494,6 +532,18 @@ local   op:         int_t,
     ;
     mov edi,[esi]
     mov op2_pos,edi
+
+    ; v2.30 - test if second operand starts with '&'
+
+    imul eax,edi,asm_tok
+    .if [ebx+eax].token == T_STRING
+
+        mov eax,[ebx+eax].string_ptr
+        .if word ptr [eax] == '&'
+            inc dword ptr [esi]
+        .endif
+    .endif
+
     .return .if LGetToken(hll, esi, ebx, &op2) == ERROR
 
     mov eax,op2.kind

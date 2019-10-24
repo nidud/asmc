@@ -550,7 +550,7 @@ endif
 
 .pragma pack(pop)
 
-CHARFORMATDELTA equ (sizeof(CHARFORMAT2) - sizeof(CHARFORMAT))
+CHARFORMATDELTA equ (CHARFORMAT2 - CHARFORMAT)
 
 
 ;; CFM_COLOR mirrors CFE_AUTOCOLOR, a little hack to easily deal with autocolor

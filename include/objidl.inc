@@ -1746,7 +1746,7 @@ FreePropVariantArray proto WINAPI \
 
 _PROPVARIANTINIT_DEFINED_ equ 1
 PropVariantInit macro pvar
-	exitm<memset ( pvar, 0, sizeof(PROPVARIANT) )>
+	exitm<memset ( pvar, 0, PROPVARIANT )>
 	endm
 
 

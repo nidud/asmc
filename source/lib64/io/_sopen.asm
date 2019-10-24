@@ -24,7 +24,7 @@ _sopen proc uses rsi rdi rbx path:LPSTR, oflag:UINT, shflag:UINT, args:VARARG
 
     xor eax,eax
     xor ebx,ebx
-    mov SecurityAttributes.nLength,sizeof(SECURITY_ATTRIBUTES)
+    mov SecurityAttributes.nLength,SECURITY_ATTRIBUTES
     mov SecurityAttributes.bInheritHandle,eax
     mov SecurityAttributes.lpSecurityDescriptor,rax
     mov eax,edx

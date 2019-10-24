@@ -22,7 +22,7 @@ togetbitflag proc uses ebx tobj:ptr S_TOBJ, count, flag
             or al,1
         .endif
         shl eax,1
-        sub edx,sizeof(S_TOBJ)
+        sub edx,S_TOBJ
         dec ecx
     .endw
     shr eax,1

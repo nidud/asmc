@@ -332,7 +332,7 @@ size_resw_strings equ $ - resw_strings
 ;; v2.11: RWF_SPECIAL flag removed:
 ;; { 0, sizeof(#string)-1, RWF_SPECIAL or flags, NULL },
 .data
-align 4
+align 8
 
 ResWordTable ReservedWord { 0, 0, 0, NULL } ;; dummy entry for T_NULL
 res macro tok, string, type, value, bytval, flags, cpu, sflags
@@ -857,6 +857,8 @@ ResWordsFini proc uses esi edi ebx
     ret
 
 ResWordsFini endp
+
+    align 8
 
 FindResWord proc fastcall w_name:string_t, w_size:uint_t
 

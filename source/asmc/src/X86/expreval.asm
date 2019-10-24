@@ -198,8 +198,8 @@ get_operand proc uses esi edi ebx opnd:expr_t, idx:ptr int_t, tokenarray:tok_t, 
     local j:int_t
     local labelbuff[16]:char_t
 
-    mov eax,idx
-    mov eax,[eax]
+    mov edx,idx
+    mov eax,[edx]
     mov i,eax
 
     mov edi,opnd
@@ -208,7 +208,18 @@ get_operand proc uses esi edi ebx opnd:expr_t, idx:ptr int_t, tokenarray:tok_t, 
     add ebx,eax
 
     mov al,[ebx].token
+
     .switch al
+    .case '&' ; v2.30.24 -- mov mem,&mem
+        .if ( Options.strict_masm_compat == FALSE && i > 2 && \
+              [ebx-16].token == T_COMMA && [ebx-32].token != T_REG )
+            inc i
+            inc dword ptr [edx]
+            add ebx,16
+            mov al,[ebx].token
+            .gotosw
+        .endif
+        .return fnasmerr( 2008, [ebx].tokpos )
     .case T_NUM
         mov [edi].kind,EXPR_CONST
         _atoow( edi, [ebx].string_ptr, [ebx].numbase, [ebx].itemlen )

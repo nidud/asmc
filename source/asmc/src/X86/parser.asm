@@ -1988,13 +1988,18 @@ process_address proc private uses esi edi ebx CodeInfo:ptr code_info,
 
         ;; CODE location is converted to OFFSET symbol
         .if [edi].mem_type == MT_NEAR || [edi].mem_type == MT_FAR
-            .if [esi].token == T_LEA
-                .return memory_operand(esi, ebx, edi, TRUE)
-            .elseif [edi].mbr != NULL ;; structure field?
-                .return memory_operand(esi, ebx, edi, TRUE)
-            .else
-                .return idata_fixup(esi, ebx, edi)
+
+            xor eax,eax ; v2.30 - mov mem,&proc
+            mov ecx,[edi].type_tok
+            .if ecx && [esi].Ofssize == USE64
+                .if [ecx-16].asm_tok.token == '&'
+                    inc eax
+                .endif
             .endif
+            .if eax || [esi].token == T_LEA || [edi].mbr != NULL ;; structure field?
+                .return memory_operand(esi, ebx, edi, TRUE)
+            .endif
+            .return idata_fixup(esi, ebx, edi)
         .endif
     .endif
     ;; default processing: memory with fixup

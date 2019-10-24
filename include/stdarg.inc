@@ -23,7 +23,7 @@ va_list typedef ptr sbyte
 ifdef  _M_IX86
 
 _INTSIZEOF macro n
-	exitm<( (sizeof(n) + sizeof(size_t) - 1) and not (sizeof(size_t) - 1) )>
+	exitm<( (sizeof(n) + size_t - 1) and not (size_t - 1) )>
 	endm
 va_start macro ap, v
 	mov ap,v

@@ -33,9 +33,9 @@ realloc proc frame uses rsi rdi pblck:ptr, newsize:size_t
     ; make newsize a valid allocation block size (i.e., round up to the
     ; nearest granularity)
     ;
-    lea rax,[rdx+sizeof(HEAP)+_GRANULARITY-1]
+    lea rax,[rdx+HEAP+_GRANULARITY-1]
     and rax,-(_GRANULARITY)
-    lea r8,[rcx-sizeof(HEAP)]
+    lea r8,[rcx-HEAP]
     mov r9,[r8].HEAP.size
 
     .return rcx .if rax == r9
@@ -45,7 +45,7 @@ realloc proc frame uses rsi rdi pblck:ptr, newsize:size_t
         .if rax < r9
 
             sub r9,rax
-            .return rcx .if r9 <= sizeof(HEAP) + _GRANULARITY
+            .return rcx .if r9 <= HEAP + _GRANULARITY
 
             mov [r8].HEAP.size,rax
             mov [r8+rax].HEAP.size,r9
@@ -68,7 +68,7 @@ realloc proc frame uses rsi rdi pblck:ptr, newsize:size_t
             ; expand block
             ;
             sub r10,rax
-            .if r10 >= sizeof(HEAP)
+            .if r10 >= HEAP
 
                 mov [r8].HEAP.size,rax
                 mov [r8+rax].HEAP.size,r10
@@ -86,8 +86,8 @@ realloc proc frame uses rsi rdi pblck:ptr, newsize:size_t
     .if malloc(rax)
 
         mov rcx,[rsi].HEAP.size
-        sub rcx,sizeof(HEAP)
-        add rsi,sizeof(HEAP)
+        sub rcx,HEAP
+        add rsi,HEAP
         mov rdx,rsi
         mov rdi,rax
         rep movsb

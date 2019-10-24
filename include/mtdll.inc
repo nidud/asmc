@@ -32,7 +32,7 @@ _STREAM_LOCKS		equ 16
 
 _LAST_STREAM_LOCK	equ (_STREAM_LOCKS+_IOB_ENTRIES-1)
 _TOTAL_LOCKS		equ (_LAST_STREAM_LOCK+1)
-_LOCK_BIT_INTS		equ (_TOTAL_LOCKS/(sizeof(uint_t)*8))+1
+_LOCK_BIT_INTS		equ (_TOTAL_LOCKS/(uint_t*8))+1
 
 ifndef __assembler
 

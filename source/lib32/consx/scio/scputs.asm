@@ -78,7 +78,7 @@ scputs proc uses esi edi edx ecx x, y, a, l, string:LPSTR
 
             inc esi
             mov [edi],al
-            add edi,sizeof(CHAR_INFO)
+            add edi,CHAR_INFO
         .untilcxz
 
         sub esi,string

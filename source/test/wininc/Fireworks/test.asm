@@ -518,57 +518,50 @@ WinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPSTR, nSho
   local idThread:UINT
   local rc:RECT
 
-    mov wc.cbSize,SIZEOF WNDCLASSEX
-    mov wc.style,CS_HREDRAW or CS_VREDRAW or CS_BYTEALIGNCLIENT
-    lea rax,WndProc
-    mov wc.lpfnWndProc,rax
+    xor eax,eax
+    mov wc.cbSize,          WNDCLASSEX
+    mov wc.style,           CS_HREDRAW or CS_VREDRAW or CS_BYTEALIGNCLIENT
+    mov wc.cbClsExtra,      eax
+    mov wc.cbWndExtra,      eax
+    mov wc.hInstance,       rcx
+    mov wc.hbrBackground,   COLOR_MENUTEXT
+    mov wc.lpszMenuName,    rax
+    mov wc.lpfnWndProc,     &WndProc
+    mov wc.lpszClassName,   &@CStr("WndClass")
+    mov wc.hIcon,           LoadIcon(0, 500)
+    mov wc.hIconSm,         rax
+    mov wc.hCursor,         LoadCursor(0, IDC_ARROW)
 
-    xor rax,rax
-    mov wc.cbClsExtra,eax
-    mov wc.cbWndExtra,eax
-    mov wc.hInstance,rcx
-    mov wc.hbrBackground,COLOR_MENUTEXT
-    mov wc.lpszMenuName,rax
 
-    lea rax,@CStr("WndClass")
-    mov wc.lpszClassName,rax
-    mov wc.hIcon,LoadIcon(0, 500)
-    mov wc.hIconSm,rax
-    mov wc.hCursor,LoadCursor(0, IDC_ARROW)
+    .return .ifd !RegisterClassEx(&wc)
+    .return .if !CreateWindowEx(WS_EX_OVERLAPPEDWINDOW, "WndClass", "Fireworks",
+                    WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
+                    CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hInstance, 0)
 
-    .repeat
+    mov hwnd,rax
+    GetClientRect(hwnd, &rc)
+    mov eax,rc.right
+    sub eax,rc.left
+    mov edx,rc.bottom
+    sub edx,rc.top
+    and edx,-4
+    mov maxx,edx
+    mov maxy,eax
+    mov bminf.bmiHeader.biWidth,edx
+    neg eax
+    mov bminf.bmiHeader.biHeight,eax
 
-        .break .ifd !RegisterClassEx( &wc )
+    ShowWindow(hwnd, SW_SHOWNORMAL)
+    UpdateWindow(hwnd)
+    CreateThread(NULL, NULL, &ThrdProc, NULL, NORMAL_PRIORITY_CLASS, &idThread)
+    CloseHandle(rax)
 
-        .break .if !CreateWindowEx( WS_EX_OVERLAPPEDWINDOW, "WndClass", "Fireworks",
-            WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
-            CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hInstance, 0 )
+    .while GetMessage(&msg,0,0,0)
 
-        mov hwnd,rax
-        GetClientRect( hwnd, &rc )
-        mov eax,rc.right
-        sub eax,rc.left
-        mov edx,rc.bottom
-        sub edx,rc.top
-        and edx,-4
-        mov maxx,edx
-        mov maxy,eax
-        mov bminf.bmiHeader.biWidth,edx
-        neg eax
-        mov bminf.bmiHeader.biHeight,eax
-
-        ShowWindow(hwnd, SW_SHOWNORMAL)
-        UpdateWindow(hwnd)
-        CreateThread(NULL, NULL, &ThrdProc, NULL, NORMAL_PRIORITY_CLASS, &idThread)
-        CloseHandle(rax)
-
-        .while GetMessage(&msg,0,0,0)
-
-            TranslateMessage(&msg)
-            DispatchMessage(&msg)
-        .endw
-        mov rax,msg.wParam
-    .until 1
+        TranslateMessage(&msg)
+        DispatchMessage(&msg)
+    .endw
+    mov rax,msg.wParam
     ret
 
 WinMain endp

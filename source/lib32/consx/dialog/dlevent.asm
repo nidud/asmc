@@ -33,7 +33,7 @@ PrevItem proc private uses esi
 
         .if ecx
 
-            sub edx,sizeof(S_TOBJ)
+            sub edx,S_TOBJ
             .repeat
 
                 .if !([edx].S_TOBJ.to_flag & _O_DEACT)
@@ -43,7 +43,7 @@ PrevItem proc private uses esi
                     mov eax,1
                     .break(1)
                 .endif
-                sub edx,sizeof(S_TOBJ)
+                sub edx,S_TOBJ
             .untilcxz
             xor ecx,ecx
         .endif
@@ -68,7 +68,7 @@ PrevItem proc private uses esi
                     .break(1)
                 .endif
 
-                sub edx,sizeof(S_TOBJ)
+                sub edx,S_TOBJ
             .untilcxz
         .endif
         xor eax,eax
@@ -102,7 +102,7 @@ NextItem proc private uses esi
             .endif
 
             inc ecx
-            add edx,sizeof(S_TOBJ)
+            add edx,S_TOBJ
         .endw
 
         mov     edx,[esi].S_DOBJ.dl_object
@@ -120,7 +120,7 @@ NextItem proc private uses esi
             .endif
 
             inc ecx
-            add edx,sizeof(S_TOBJ)
+            add edx,S_TOBJ
         .endw
         xor eax,eax
     .until 1
@@ -397,7 +397,7 @@ test_event proc private uses esi edi ebx cmd, extended
                     .endif
                     .break
                 .endif
-                add edx,sizeof(S_TOBJ)
+                add edx,S_TOBJ
                 dec ebx
             .endw
 
@@ -437,7 +437,7 @@ test_event proc private uses esi edi ebx cmd, extended
 
                 mov edx,esi
                 mov eax,[edx].S_TOBJ.to_rect
-                sub edx,sizeof(S_TOBJ) ; prev object
+                sub edx,S_TOBJ ; prev object
                 .repeat
                     .if ah == [edx+5] && al > [edx+4]
 
@@ -448,7 +448,7 @@ test_event proc private uses esi edi ebx cmd, extended
                             .break(1)
                         .endif
                     .endif
-                    sub edx,sizeof(S_TOBJ)
+                    sub edx,S_TOBJ
                 .untilcxz
 
               .case KEY_UP
@@ -800,7 +800,7 @@ test_event proc private uses esi edi ebx cmd, extended
                         call [edx].S_GLCMD.gl_proc
                         .break(1)
                     .endif
-                    add edx,sizeof(S_GLCMD)
+                    add edx,S_GLCMD
                 .endw
             .endif
             xor eax,eax

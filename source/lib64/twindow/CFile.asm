@@ -121,7 +121,7 @@ CFile::Release endp
 
 CFile::CFile proc
 
-    .return .if !malloc(sizeof(CFile))
+    .return .if !malloc(CFile)
 
     lea rcx,CFileVTable
     mov [rax].CFile.lpVtbl,rcx

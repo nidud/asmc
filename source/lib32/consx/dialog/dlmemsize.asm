@@ -17,7 +17,7 @@ dlmemsize proc dobj
     xor eax,eax
     .while ecx
         add al,[edx].S_TOBJ.to_count
-        add edx,sizeof(S_TOBJ)
+        add edx,S_TOBJ
         dec ecx
     .endw
     mov edx,dobj

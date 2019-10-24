@@ -2,7 +2,7 @@ Asmc Macro Assembler Reference
 
 ### OPTION WIN64
 
-**OPTION WIN64:[ RSP | RBP | [NO]ALIGN [NO]SAVE [NO]AUTO [NO]FRAME] ]**
+**OPTION WIN64:[ RSP | RBP | [NO]ALIGN | [NO]SAVE | [NO]AUTO | [NO]FRAME] ]**
 
 The first three flag-bits may be set directly and correspond to SAVE (bit 0), AUTO (bit 1), and ALIGN (bit 2).
 

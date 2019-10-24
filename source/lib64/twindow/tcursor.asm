@@ -23,7 +23,7 @@ TWindow::CursorGet proc uses rsi rdi rbx rcx
     mov rax,[rcx].Cursor
 
     .return .if ( rax != NULL )
-    .return .if !malloc(sizeof(TCURSOR))
+    .return .if !malloc(TCURSOR)
 
     mov [rbx].Cursor,rax
     mov rdi,rax

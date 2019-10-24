@@ -23,7 +23,7 @@ include errno.inc
 malloc proc byte_count:size_t
 
     mov rdx,_heap_free
-    add rcx,sizeof(HEAP)+_GRANULARITY-1
+    add rcx,HEAP+_GRANULARITY-1
     and cl,-(_GRANULARITY)
 
     .repeat
@@ -47,7 +47,7 @@ malloc proc byte_count:size_t
                         mov [rdx+rcx].HEAP.type,_HEAP_FREE
                     .endif
 
-                    lea rax,[rdx+sizeof(HEAP)]
+                    lea rax,[rdx+HEAP]
                     add rdx,[rdx].HEAP.size
                     mov _heap_free,rdx
                     ret
@@ -95,11 +95,11 @@ malloc proc byte_count:size_t
         push rbx
         sub rsp,0x28
         mov ebx,_amblksiz
-        add ebx,sizeof(HEAP)
+        add ebx,HEAP
         .if rbx < rcx
             mov rbx,rcx
         .endif
-        add rbx,sizeof(HEAP)
+        add rbx,HEAP
         HeapAlloc(GetProcessHeap(), 0, rbx)
         add rsp,0x28
         mov rdx,rbx
@@ -112,7 +112,7 @@ malloc proc byte_count:size_t
         .endif
 
         xor r8,r8
-        sub rdx,sizeof(HEAP)
+        sub rdx,HEAP
 
         mov [rax].HEAP.size,rdx
         mov [rax+8],r8
@@ -153,7 +153,7 @@ malloc endp
 ;
 free proc memblock:ptr
 
-    sub rcx,sizeof(HEAP)
+    sub rcx,HEAP
     .ifns
         ;
         ; If memblock is NULL, the pointer is ignored. Attempting to free an

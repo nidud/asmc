@@ -59,7 +59,7 @@ rcxchg proc uses esi edi ebx ecx rc, wc:PVOID
                 mov [edi],al
                 mov [edi+2],ah
                 add esi,2
-                add edi,sizeof(CHAR_INFO)
+                add edi,CHAR_INFO
             .untilcxz
 
             mov eax,y

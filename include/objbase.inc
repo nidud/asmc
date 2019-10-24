@@ -169,7 +169,7 @@ ifdef _WIN64
 	.endif
 	.if rax
 else
-	.if memcmp(rguid1, rguid2, sizeof(GUID))
+	.if memcmp(rguid1, rguid2, GUID)
 endif
 	    xor eax,eax
 	.else

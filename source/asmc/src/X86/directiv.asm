@@ -182,15 +182,9 @@ IncludeLibDirective endp
 
 ;; INCBIN directive
 
-IncBinDirective proc uses ebx i:int_t, tokenarray:tok_t
+IncBinDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
 
-    local file:ptr FILE
-    local fileoffset:uint_t ;; fixme: should be uint_64
-    local sizemax:uint_t
-    local opndx:expr
-
-    mov fileoffset,0 ;; fixme: should be uint_64
-    mov sizemax,-1
+  local opndx:expr
 
     inc i ;; skip the directive
     imul ebx,i,asm_tok
@@ -201,23 +195,31 @@ IncBinDirective proc uses ebx i:int_t, tokenarray:tok_t
     .if ( [ebx].token == T_STRING )
 
         ;; v2.08: use string buffer to avoid buffer overflow if string is > FILENAME_MAX
+        mov edi,StringBufferEnd
         .if ( [ebx].string_delim == '"' || [ebx].string_delim == "'" )
+
             mov ecx,[ebx].stringlen
-            mov StringBufferEnd[ecx],0
-            mov edx,[ebx].string_ptr
-            inc edx
-            memcpy( StringBufferEnd, edx, ecx )
+            mov esi,[ebx].string_ptr
+            inc esi
+            rep movsb
+            mov byte ptr [edi],0
 
         .elseif ( [ebx].string_delim == '<' )
+
             mov ecx,[ebx].stringlen
+            mov esi,[ebx].string_ptr
             inc ecx
-            memcpy( StringBufferEnd, [ebx].string_ptr, ecx )
+            rep movsb
+
         .else
             .return( asmerr( 3015 ) )
         .endif
     .else
         .return( asmerr( 3015 ) );
     .endif
+
+    xor esi,esi    ; fileoffset -- fixme: should be uint_64
+    mov edi,-1     ; sizemax
 
     inc i
     add ebx,16
@@ -227,7 +229,7 @@ IncBinDirective proc uses ebx i:int_t, tokenarray:tok_t
         .return .if EvalOperand( &i, tokenarray, Token_Count, &opndx, 0 ) == ERROR
 
         .if ( opndx.kind == EXPR_CONST )
-            mov fileoffset,opndx.value
+            mov esi,opndx.value
         .elseif ( opndx.kind != EXPR_EMPTY )
             .return( asmerr( 2026 ) )
         .endif
@@ -237,7 +239,7 @@ IncBinDirective proc uses ebx i:int_t, tokenarray:tok_t
             inc i
             .return .if EvalOperand( &i, tokenarray, Token_Count, &opndx, 0 ) == ERROR
             .if ( opndx.kind == EXPR_CONST )
-                mov sizemax,opndx.value
+                mov edi,opndx.value
             .elseif ( opndx.kind != EXPR_EMPTY )
                 .return( asmerr( 2026 ) )
             .endif
@@ -254,20 +256,26 @@ IncBinDirective proc uses ebx i:int_t, tokenarray:tok_t
     .endif
 
     ;; try to open the file
-    mov file,SearchFile( StringBufferEnd, FALSE )
-    .if eax
+
+    .if SearchFile( StringBufferEnd, FALSE )
+
         ;; transfer file content to the current segment.
-        .if fileoffset
-            fseek( file, fileoffset, SEEK_SET ) ;; fixme: use fseek64()
+
+        xchg eax,esi
+        .if eax
+
+            fseek( esi, eax, SEEK_SET ) ;; fixme: use fseek64()
         .endif
-        .for ( : sizemax: sizemax-- )
-            mov ebx,fgetc( file )
-            .if ebx == -1;EOF
-                .break .if feof( file )
+
+        .for ( : edi : edi-- )
+
+            mov ebx,fgetc(esi)
+            .if ebx == -1   ; EOF
+                .break .if feof(esi)
             .endif
-            OutputByte( bl )
+            OutputByte(bl)
         .endf
-        fclose( file )
+        fclose(esi)
     .endif
     mov eax,NOT_ERROR
     ret

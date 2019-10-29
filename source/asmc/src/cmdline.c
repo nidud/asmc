@@ -742,7 +742,7 @@ static void ProcessOption( char **cmdline, char *buffer )
 	    return;
 	}
     }
-    asmerr( 1006, p );
+    asmerr( 1006, p-3 );
 }
 
 char *ParseCmdline( char **cmdline, int *numargs )

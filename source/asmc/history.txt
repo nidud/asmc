@@ -3,6 +3,8 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.31 - xx xxx 2019
+- fixed invalid command-line option error
+- fixed .return(&address) .if ...
 - fixed bug in .new directive - local size not reset for each pass.
 - added address operator [&] for .return, .if, and memory operands.
 - added directive .ENUM [ <name> ] [ : <type> ] [ { ]

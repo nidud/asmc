@@ -4,8 +4,6 @@ Asmc Macro Assembler Reference
 
 Command-line options **/Zne**
 
-[.pragma](../directive/dot_pragma.md) **asmc(push, 0)**
-
 ### Renamed keywords
 
 [Disable non Masm keywords](Znk.md)

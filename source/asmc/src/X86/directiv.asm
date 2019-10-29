@@ -127,11 +127,11 @@ IncludeLibrary proc uses ebx name:string_t
     ;; JWasm, activate the _stricmp() below.
 
     .for ( ebx = ModuleInfo.LibQueue.head: ebx: ebx = [ebx].qitem.next )
-        .if ( strcmp( &[ebx].qitem.value, name ) == 0 )
-            .return( &[ebx].qitem.value )
-        .endif
+
+        .return(&[ebx].qitem.value) .if ( strcmp(&[ebx].qitem.value, name) == 0 )
     .endf
-    mov ebx,LclAlloc( &[sizeof( qitem ) + strlen( name )] )
+
+    mov ebx,LclAlloc( &[strlen( name ) + sizeof( qitem )] )
     strcpy( &[ebx].qitem.value, name )
     QEnqueue( &ModuleInfo.LibQueue, ebx )
     lea eax,[ebx].qitem.value
@@ -306,41 +306,41 @@ AliasDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
     imul ebx,i,asm_tok
     add ebx,tokenarray
 
-    .return asmerr( 2051 ) .if ( [ebx].token != T_STRING || [ebx].string_delim != '<' )
+    .return asmerr(2051) .if ( [ebx].token != T_STRING || [ebx].string_delim != '<' )
 
     ;; check syntax. note that '=' is T_DIRECTIVE && DRT_EQUALSGN
-    .return( asmerr(2008, [ebx+16].string_ptr ) ) \
+    .return( asmerr(2008, [ebx+16].string_ptr) ) \
         .if ( [ebx+16].token != T_DIRECTIVE || [ebx+16].dirtype != DRT_EQUALSGN )
     .return asmerr(2051) .if ( [ebx+32].token != T_STRING || [ebx+32].string_delim != '<' )
     mov subst,[ebx+32].string_ptr
-    .return asmerr(2008, [ebx+48].string_ptr ) .if ( [ebx+48].token != T_FINAL )
+    .return asmerr(2008, [ebx+48].string_ptr) .if ( [ebx+48].token != T_FINAL )
 
     ;; make sure <alias_name> isn't defined elsewhere
-    mov esi,SymSearch( [ebx].string_ptr )
+    mov esi,SymSearch([ebx].string_ptr)
     .if ( esi == NULL || [esi].state == SYM_UNDEFINED )
 
         ;; v2.04b: adjusted to new field <substitute>
-        mov edi,SymSearch( subst )
+        mov edi,SymSearch(subst)
         .if ( edi == NULL )
-            mov edi,SymCreate( subst )
+            mov edi,SymCreate(subst)
             mov [edi].state,SYM_UNDEFINED
-            sym_add_table( &SymTables[TAB_UNDEF*symbol_queue], edi )
+            sym_add_table(&SymTables[TAB_UNDEF*symbol_queue], edi)
         .elseif ( [edi].state != SYM_UNDEFINED && [edi].state != SYM_INTERNAL && \
                   [edi].state != SYM_EXTERNAL )
-            .return( asmerr( 2217, subst ) )
+            .return( asmerr(2217, subst) )
         .endif
         .if ( esi == NULL )
-            mov esi,SymCreate( [ebx].string_ptr )
+            mov esi,SymCreate([ebx].string_ptr)
         .else
-            sym_remove_table( &SymTables[TAB_UNDEF*symbol_queue], esi )
+            sym_remove_table(&SymTables[TAB_UNDEF*symbol_queue], esi)
         .endif
 
         mov [esi].state,SYM_ALIAS
         mov [esi].substitute,edi
         ;; v2.10: copy language type of alias
         mov [esi].langtype,[edi].langtype
-        sym_add_table( &SymTables[TAB_ALIAS*symbol_queue], esi ); ;; add ALIAS
-        .return( NOT_ERROR )
+        sym_add_table(&SymTables[TAB_ALIAS*symbol_queue], esi) ;; add ALIAS
+        .return(NOT_ERROR)
     .endif
     xor eax,eax
     .if ( [esi].state != SYM_ALIAS )
@@ -349,17 +349,17 @@ AliasDirective proc uses esi edi ebx i:int_t, tokenarray:tok_t
         mov edi,[esi].substitute
         strcmp( [edi].name, subst )
     .endif
-    .return( asmerr( 2005, [esi].name ) ) .if eax
+    .return( asmerr(2005, [esi].name) ) .if eax
     ;; for COFF+ELF, make sure <actual_name> is "global" (EXTERNAL or
     ;; public INTERNAL). For OMF, there's no check at all. */
     .if ( Parse_Pass != PASS_1 )
         .if ( Options.output_format == OFORMAT_COFF || Options.output_format == OFORMAT_ELF )
             mov edi,[esi].substitute
             .if ( [edi].state == SYM_UNDEFINED )
-                .return( asmerr( 2006, subst ) )
+                .return( asmerr(2006, subst) )
             .elseif ( [edi].state != SYM_EXTERNAL && \
                        ( [edi].state != SYM_INTERNAL || !( [edi].flag & S_ISPUBLIC ) ) )
-                .return( asmerr( 2217, subst ) )
+                .return( asmerr(2217, subst) )
             .endif
         .endif
     .endif
@@ -370,13 +370,15 @@ AliasDirective endp
 
 ;; the NAME directive is ignored in Masm v6
 
-NameDirective proc uses ebx i:int_t, tokenarray:tok_t
+    assume edx:tok_t
 
-    .return( NOT_ERROR ) .if ( Parse_Pass != PASS_1 )
+NameDirective proc i:int_t, tokenarray:tok_t
+
+    .return(NOT_ERROR) .if ( Parse_Pass != PASS_1 )
 
     inc i ;; skip directive
-    imul ebx,i,asm_tok
-    add ebx,tokenarray
+    imul edx,i,asm_tok
+    add edx,tokenarray
 
     ;; improper use of NAME is difficult to see since it is a nop
     ;; therefore some syntax checks are implemented:
@@ -386,14 +388,14 @@ NameDirective proc uses ebx i:int_t, tokenarray:tok_t
     ;; - no 'name:' label!
 
     .if ( CurrStruct != NULL || \
-        ( [ebx].token == T_DIRECTIVE && \
-        ( [ebx].tokval == T_SEGMENT || \
-          [ebx].tokval == T_STRUCT  || \
-          [ebx].tokval == T_STRUC   || \
-          [ebx].tokval == T_UNION   || \
-          [ebx].tokval == T_TYPEDEF || \
-          [ebx].tokval == T_RECORD ) ) || [ebx].token == T_COLON )
-        .return( asmerr(2008, [ebx-16].tokpos ) )
+        ( [edx].token == T_DIRECTIVE && \
+        ( [edx].tokval == T_SEGMENT || \
+          [edx].tokval == T_STRUCT  || \
+          [edx].tokval == T_STRUC   || \
+          [edx].tokval == T_UNION   || \
+          [edx].tokval == T_TYPEDEF || \
+          [edx].tokval == T_RECORD ) ) || [edx].token == T_COLON )
+        .return( asmerr(2008, [edx-16].tokpos) )
     .endif
 
     ;; don't touch Option fields! if anything at all, ModuleInfo.name may be modified.
@@ -408,27 +410,38 @@ NameDirective endp
 
 RadixDirective proc uses ebx i:int_t, tokenarray:tok_t
 
-    local oldradix:byte
-    local opndx:expr
+  local opndx:expr
 
     ;; to get the .radix parameter, enforce radix 10 and retokenize!
-    mov oldradix,ModuleInfo.radix
+    mov bl,ModuleInfo.radix
     mov ModuleInfo.radix,10
     inc i ;; skip directive token
-    imul ebx,i,asm_tok
-    add ebx,tokenarray
+    imul edx,i,asm_tok
+    add edx,tokenarray
 
-    Tokenize( [ebx].tokpos, i, tokenarray, TOK_RESCAN )
-    mov ModuleInfo.radix,oldradix
+    Tokenize([edx].tokpos, i, tokenarray, TOK_RESCAN)
+    mov ModuleInfo.radix,bl
+
     ;; v2.11: flag NOUNDEF added - no forward ref possible
-    .return .if EvalOperand( &i, tokenarray, Token_Count, &opndx, EXPF_NOUNDEF ) == ERROR
+    .return .if EvalOperand(&i, tokenarray, Token_Count, &opndx, EXPF_NOUNDEF) == ERROR
     .return asmerr(2026) .if ( opndx.kind != EXPR_CONST )
-    imul ebx,i,asm_tok
-    add ebx,tokenarray
-    .return asmerr(2008, [ebx].tokpos) .if ( [ebx].token != T_FINAL )
-    .return asmerr(2113) .if ( opndx.value > 16 || opndx.value < 2 || opndx.hvalue != 0 )
-    mov ModuleInfo.radix,opndx.value
-    mov eax,NOT_ERROR
+
+    imul edx,i,asm_tok
+    add edx,tokenarray
+
+    .if ( [edx].token != T_FINAL )
+
+        asmerr(2008, [edx].tokpos)
+
+    .elseif ( opndx.value > 16 || opndx.value < 2 || opndx.hvalue != 0 )
+
+        asmerr(2113)
+
+    .else
+
+        mov ModuleInfo.radix,opndx.value
+        mov eax,NOT_ERROR
+    .endif
     ret
 
 RadixDirective endp

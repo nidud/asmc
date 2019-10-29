@@ -127,6 +127,10 @@ AssignValue proc private uses esi edi ebx i:ptr int_t, tokenarray:tok_t, count:i
         inc edi
         .for edx = edi : byte ptr [edx] : edx++
         .endf
+        .while byte ptr [edx-1] <= ' '
+            mov byte ptr [edx-1],0
+            dec edx
+        .endw
         .if byte ptr [edx-1] == ')'
             mov byte ptr [edx-1],0
         .endif

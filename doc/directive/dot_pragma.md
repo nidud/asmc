@@ -2,10 +2,8 @@ Asmc Macro Assembler Reference
 
 ### .PRAGMA
 
-**.PRAGMA** ASMC | INIT | EXIT | PACK | LIST | CREF | COMMENT | WARNING
+**.PRAGMA** INIT | EXIT | PACK | LIST | CREF | COMMENT | WARNING
 
-- .**pragma**(asmc(push, <0|1>))
-- .**pragma**(asmc(pop))
 - .**pragma**(cref(push, <0|1>))
 - .**pragma**(cref(pop))
 - .**pragma**(list(push, <0|1>))

@@ -558,16 +558,16 @@ TWindow::PutString proc x:int_t, y:int_t, at:ushort_t, max:int_t, format:string_
         mov highat,al
     .endif
 
-    movzx eax,[rcx].rc.col
-    imul eax,r8d
-    add eax,edx
-    lea rax,[rax*4]
-    add rax,[rcx].Window
-    mov w,rax
-    mov retval,vsprintf(&buffer, format, &argptr)
+    movzx   eax,[rcx].rc.col
+    imul    eax,r8d
+    add     eax,edx
+    lea     rax,[rax*4]
+    add     rax,[rcx].Window
+    mov     w,rax
+    mov     retval,vsprintf(&buffer, format, &argptr)
+    mov     rcx,this
+    mov     r11d,max
 
-    mov rcx,this
-    mov r11d,max
     .if !r11d
 
         mov r11b,[rcx].rc.col
@@ -587,6 +587,9 @@ TWindow::PutString proc x:int_t, y:int_t, at:ushort_t, max:int_t, format:string_
 
             add r10,r9
             mov rdx,r10
+            mov r11b,[rcx].rc.col
+            sub r11d,x
+
         .elseif al == 9
 
             add rdx,4*4

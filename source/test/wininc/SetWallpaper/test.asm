@@ -5,32 +5,37 @@ include windows.inc
 include wininet.inc
 include shlobj.inc
 
-BITMAP0 equ <L"%SystemRoot%\\web\\wallpaper\\Windows\\img0.jpg">
-BITMAP1 equ <L"%AsmcDir%\\source\\test\\wininc\\SetWallpaper\\test.bmp">
-
-ifdef __PE__
-.data
-
-CLSID_ActiveDesktop GUID _CLSID_ActiveDesktop
-IID_IActiveDesktop  GUID _IID_IActiveDesktop
-endif
-
 .code
 
-main proc
+SetBackground proc newbmp:wstring_t, oldbmp:wstring_t
 
   local w:WALLPAPEROPT
   local p:LPACTIVEDESKTOP
 
     CoInitialize(NULL)
     CoCreateInstance(&CLSID_ActiveDesktop, NULL, CLSCTX_INPROC_SERVER, &IID_IActiveDesktop, &p)
-    p.SetWallpaper( BITMAP0, 0 )
-    mov w.dwSize,sizeof(WALLPAPEROPT)
+    .if oldbmp
+        p.GetWallpaper(oldbmp, 256, AD_GETWP_BMP)
+    .endif
+    p.SetWallpaper(newbmp, 0)
+    mov w.dwSize,WALLPAPEROPT
     mov w.dwStyle,WPSTYLE_CENTER
-    p.SetWallpaperOptions( &w, 0 )
-    p.ApplyChanges( AD_APPLY_ALL )
+    p.SetWallpaperOptions(&w, 0)
+    p.ApplyChanges(AD_APPLY_ALL)
     p.Release()
     CoUninitialize()
+    ret
+
+SetBackground endp
+
+main proc
+
+  local oldbmp[256]:WCHAR
+
+    SetBackground(L"%AsmcDir%\\source\\test\\wininc\\SetWallpaper\\test.bmp", &oldbmp)
+    MessageBox(NULL, "A new background image has been installed.\n\n"
+        "Hit OK to reset the old one.", "SetWallpaper", MB_OK)
+    SetBackground(&oldbmp, NULL)
     ret
 
 main endp

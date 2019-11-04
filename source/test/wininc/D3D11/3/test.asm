@@ -115,85 +115,72 @@ WinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPST
 
 WinMain endp
 
+
 ;;--------------------------------------------------------------------------------------
 ;; Register class and create window
 ;;--------------------------------------------------------------------------------------
+
 InitWindow proc uses rsi rdi hInstance:HINSTANCE, nCmdShow:SINT
 
-    local wcex:WNDCLASSEX
-    local rc:RECT
+  local wcex:WNDCLASSEX
+  local rc:RECT
 
     ;; Register class
-    mov wcex.cbSize,sizeof( WNDCLASSEX )
-    mov wcex.style,CS_HREDRAW or CS_VREDRAW
-    lea rax,WndProc
-    mov wcex.lpfnWndProc,rax
-    mov wcex.cbClsExtra,0
-    mov wcex.cbWndExtra,0
-    mov rax,hInstance
-    mov wcex.hInstance,rax
-    mov wcex.hIcon,LoadIcon( hInstance, IDI_APPLICATION )
-    mov wcex.hIconSm,rax
-    mov wcex.hCursor,LoadCursor( NULL, IDC_ARROW )
-    mov wcex.hbrBackground,COLOR_WINDOW + 1
-    mov wcex.lpszMenuName,NULL
-    lea rax,@CStr("TutorialWindowClass")
-    mov wcex.lpszClassName,rax
 
-    .repeat
+    mov wcex.cbSize,        WNDCLASSEX
+    mov wcex.style,         CS_HREDRAW or CS_VREDRAW
+    mov wcex.lpfnWndProc,   &WndProc
+    mov wcex.cbClsExtra,    0
+    mov wcex.cbWndExtra,    0
+    mov wcex.hInstance,     hInstance
+    mov wcex.hIcon,         LoadIcon( hInstance, IDI_APPLICATION )
+    mov wcex.hIconSm,       rax
+    mov wcex.hCursor,       LoadCursor( NULL, IDC_ARROW )
+    mov wcex.hbrBackground, COLOR_WINDOW + 1
+    mov wcex.lpszMenuName,  NULL
+    mov wcex.lpszClassName, &@CStr("TutorialWindowClass")
 
-        .if !RegisterClassEx( &wcex )
+    .return E_FAIL .if !RegisterClassEx( &wcex )
 
-            mov eax,E_FAIL
-            .break
-        .endif
+    ;; Create window
 
-        ;; Create window
-        mov rax,hInstance
-        mov g_hInst,rax
+    mov g_hInst,hInstance
 
-        mov rc.left,0
-        mov rc.top,0
-        mov rc.right,800
-        mov rc.bottom,600
+    mov rc.left,    0
+    mov rc.top,     0
+    mov rc.right,   800
+    mov rc.bottom,  600
 
-        AdjustWindowRect( &rc, WS_OVERLAPPEDWINDOW, FALSE )
+    AdjustWindowRect( &rc, WS_OVERLAPPEDWINDOW, FALSE )
 
-        mov esi,rc.right
-        sub esi,rc.left
-        mov edi,rc.bottom
-        sub edi,rc.top
+    mov esi,rc.right
+    sub esi,rc.left
+    mov edi,rc.bottom
+    sub edi,rc.top
 
-        .if CreateWindow( "TutorialWindowClass",
-                "Direct3D 11 Tutorial 3: Shaders",
-                WS_OVERLAPPED or WS_CAPTION or WS_SYSMENU or WS_MINIMIZEBOX,
-                CW_USEDEFAULT,
-                CW_USEDEFAULT,
-                esi,
-                edi,
-                NULL,
-                NULL,
-                hInstance,
-                NULL )
+    .if CreateWindow( "TutorialWindowClass", "Direct3D 11 Tutorial 3: Shaders",
+            WS_OVERLAPPED or WS_CAPTION or WS_SYSMENU or WS_MINIMIZEBOX,
+            CW_USEDEFAULT, CW_USEDEFAULT, esi, edi, NULL, NULL, hInstance, NULL )
 
-            mov g_hWnd,rax
-            ShowWindow( rax, nCmdShow )
-            mov eax,S_OK
+        mov g_hWnd,rax
+        ShowWindow( rax, nCmdShow )
+        mov eax,S_OK
 
-        .else
+    .else
 
-            mov eax,E_FAIL
-        .endif
-    .until 1
+        mov eax,E_FAIL
+    .endif
     ret
 
 InitWindow endp
+
 
 ;;--------------------------------------------------------------------------------------
 ;; Helper for compiling shaders with D3DCompile
 ;;
 ;; With VS 11, we could load up prebuilt .cso files instead...
 ;;--------------------------------------------------------------------------------------
+
 CompileShaderFromFile proc szFileName:LPWSTR, szEntryPoint:LPCSTR,
     szShaderModel:LPCSTR, ppBlobOut:ptr ptr ID3DBlob
 
@@ -213,82 +200,68 @@ ifdef _DEBUG
     ;; Disable optimizations to further improve shader debugging
     or dwShaderFlags,D3DCOMPILE_SKIP_OPTIMIZATION
 endif
-    .repeat
+    mov pErrorBlob,NULL
 
-        mov pErrorBlob,NULL
+    .ifd D3DCompileFromFile( szFileName, NULL, NULL, szEntryPoint, szShaderModel,
+                dwShaderFlags, 0, ppBlobOut, &pErrorBlob ) != S_OK
 
-        .ifd D3DCompileFromFile(
-                szFileName,
-                NULL,
-                NULL,
-                szEntryPoint,
-                szShaderModel,
-                dwShaderFlags,
-                0,
-                ppBlobOut,
-                &pErrorBlob ) != S_OK
-
-            mov hr,eax
-            .if pErrorBlob
-
-                OutputDebugStringA( pErrorBlob.GetBufferPointer() )
-                pErrorBlob.Release()
-            .endif
-            mov eax,hr
-            .break
-        .endif
-
+        mov hr,eax
         .if pErrorBlob
 
+            OutputDebugStringA( pErrorBlob.GetBufferPointer() )
             pErrorBlob.Release()
         .endif
+        .return hr
+    .endif
 
-        mov eax,S_OK
-    .until 1
+    .if pErrorBlob
+
+        pErrorBlob.Release()
+    .endif
+    mov eax,S_OK
     ret
 
 CompileShaderFromFile endp
 
+
 ;;--------------------------------------------------------------------------------------
 ;; Called every time the application receives a message
 ;;--------------------------------------------------------------------------------------
+
 WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
 
-    local ps:PAINTSTRUCT
-    local hdc:HDC
+  local ps:PAINTSTRUCT
 
-    .repeat
-        .switch( message )
-        .case WM_PAINT
-            mov hdc,BeginPaint( hWnd, &ps )
-            EndPaint( hWnd, &ps )
-            .endc
+    .switch message
+    .case WM_PAINT
+        BeginPaint( hWnd, &ps )
+        EndPaint( hWnd, &ps )
+        .return 0
 
-        .case WM_DESTROY
-            PostQuitMessage( 0 )
-            .endc
+    .case WM_DESTROY
+        PostQuitMessage( 0 )
+        .return 0
 
-            ;; Note that this tutorial does not handle resizing (WM_SIZE) requests,
-            ;; so we created the window without the resize border.
+        ;; Note that this tutorial does not handle resizing (WM_SIZE) requests,
+        ;; so we created the window without the resize border.
 
-        .default
-            DefWindowProc( hWnd, message, wParam, lParam )
-            .break
-        .endsw
-        xor eax,eax
-    .until 1
+    .default
+        .return DefWindowProc( hWnd, message, wParam, lParam )
+    .endsw
     ret
 
 WndProc endp
 
+
 ;;--------------------------------------------------------------------------------------
 ;; Create Direct3D device and swap chain
 ;;--------------------------------------------------------------------------------------
+
 InitDevice proc uses rsi rdi rbx
 
   local hr                  :HRESULT,
         rc                  :RECT,
-        _width              :UINT,
+        width               :UINT,
         height              :UINT,
         vp                  :D3D11_VIEWPORT,
         numFeatureLevels    :UINT,
@@ -315,7 +288,7 @@ InitDevice proc uses rsi rdi rbx
 
     mov eax,rc.right
     sub eax,rc.left
-    mov _width,eax
+    mov width,eax
     mov eax,rc.bottom
     sub eax,rc.top
     mov height,eax
@@ -376,207 +349,206 @@ endif
         .break .if eax == S_OK
     .endf
 
-    .repeat
+    .return .if eax != S_OK
 
-        .break .if eax != S_OK
+    ;; Obtain DXGI factory from device (since we used nullptr for pAdapter above)
 
-        ;; Obtain DXGI factory from device (since we used nullptr for pAdapter above)
-        mov dxgiFactory,NULL
-        mov dxgiDevice,NULL
+    mov dxgiFactory,NULL
+    mov dxgiDevice,NULL
 
-        .ifd g_pd3dDevice.QueryInterface( &IID_IDXGIDevice, &dxgiDevice ) == S_OK
+    .ifd g_pd3dDevice.QueryInterface( &IID_IDXGIDevice, &dxgiDevice ) == S_OK
 
-            mov hr,eax
-            mov adapter,NULL
-            .ifd dxgiDevice.GetAdapter(&adapter) == S_OK
-
-                adapter._GetParent( &IID_IDXGIFactory1, &dxgiFactory )
-                mov hr,eax
-                adapter.Release()
-            .endif
-            dxgiDevice.Release()
-        .else
-            mov hr,eax
-        .endif
-        mov eax,hr
-        .break .if eax != S_OK
-
-        ;; Create swap chain
-
-        mov dxgiFactory2,NULL
-        dxgiFactory.QueryInterface( &IID_IDXGIFactory2, &dxgiFactory2 )
         mov hr,eax
-        .if ( dxgiFactory2 )
+        mov adapter,NULL
+        .ifd dxgiDevice.GetAdapter(&adapter) == S_OK
 
-            ;; DirectX 11.1 or later
-            g_pd3dDevice.QueryInterface( &IID_ID3D11Device1, &g_pd3dDevice1 )
+            adapter._GetParent( &IID_IDXGIFactory1, &dxgiFactory )
             mov hr,eax
-            .if eax == S_OK
-
-                g_pImmediateContext.QueryInterface( &IID_ID3D11DeviceContext1, &g_pImmediateContext1 )
-            .endif
-
-            ZeroMemory(&sd, sizeof(sd))
-            mov eax,_width
-            mov sd._Width,eax
-            mov eax,height
-            mov sd.Height,eax
-            mov sd.Format,DXGI_FORMAT_R8G8B8A8_UNORM
-            mov sd.SampleDesc.Count,1
-            mov sd.SampleDesc.Quality,0
-            mov sd.BufferUsage,DXGI_USAGE_RENDER_TARGET_OUTPUT
-            mov sd.BufferCount,1
-
-            dxgiFactory2.CreateSwapChainForHwnd( g_pd3dDevice, g_hWnd, &sd, NULL, NULL, &g_pSwapChain1 )
-            mov hr,eax
-            .if eax == S_OK
-
-                g_pSwapChain1.QueryInterface( &IID_IDXGISwapChain, &g_pSwapChain )
-            .endif
-
-            dxgiFactory2.Release()
-
-        .else
-
-            ;; DirectX 11.0 systems
-
-            ZeroMemory(&sd2, sizeof(sd2))
-            mov sd2.BufferCount,1
-            mov eax,_width
-            mov sd2.BufferDesc._Width,eax
-            mov eax,height
-            mov sd2.BufferDesc.Height,eax
-            mov sd2.BufferDesc.Format,DXGI_FORMAT_R8G8B8A8_UNORM
-            mov sd2.BufferDesc.RefreshRate.Numerator,60
-            mov sd2.BufferDesc.RefreshRate.Denominator,1
-            mov sd2.BufferUsage,DXGI_USAGE_RENDER_TARGET_OUTPUT
-            mov rax,g_hWnd
-            mov sd2.OutputWindow,rax
-            mov sd2.SampleDesc.Count,1
-            mov sd2.SampleDesc.Quality,0
-            mov sd2.Windowed,TRUE
-
-            dxgiFactory.CreateSwapChain( g_pd3dDevice, &sd2, &g_pSwapChain )
-            mov hr,eax
+            adapter.Release()
         .endif
-
-        ;; Note this tutorial doesn't handle full-screen swapchains so we block
-        ;; the ALT+ENTER shortcut
-        dxgiFactory.MakeWindowAssociation( g_hWnd, DXGI_MWA_NO_ALT_ENTER )
-        dxgiFactory.Release()
-
-        mov eax,hr
-        .break .if eax != S_OK
-
-        ;; Create a render target view
-        mov pBackBuffer,NULL
-        .break .ifd g_pSwapChain.GetBuffer(0, &IID_ID3D11Texture2D, &pBackBuffer ) != S_OK
-
-        g_pd3dDevice.CreateRenderTargetView( pBackBuffer, NULL, &g_pRenderTargetView )
+        dxgiDevice.Release()
+    .else
         mov hr,eax
-        pBackBuffer.Release()
-        mov eax,hr
-        .break .if eax != S_OK
+    .endif
+    mov eax,hr
+    .return .if eax != S_OK
 
-        g_pImmediateContext.OMSetRenderTargets( 1, &g_pRenderTargetView, NULL )
+    ;; Create swap chain
 
-        ;; Setup the viewport
-        cvtsi2ss xmm0,_width
-        movss vp._Width,xmm0
-        cvtsi2ss xmm0,height
-        movss vp.Height,xmm0
-        mov vp.MinDepth,0.0
-        mov vp.MaxDepth,1.0
-        mov vp.TopLeftX,0.0
-        mov vp.TopLeftY,0.0
-        g_pImmediateContext.RSSetViewports( 1, &vp )
+    mov dxgiFactory2,NULL
+    dxgiFactory.QueryInterface( &IID_IDXGIFactory2, &dxgiFactory2 )
+    mov hr,eax
 
-        ;; Compile the vertex shader
-        mov pVSBlob,NULL
-        .ifd CompileShaderFromFile( L"Tutorial03.fx", "VS", "vs_4_0", &pVSBlob ) != S_OK
+    .if ( dxgiFactory2 )
 
-            mov hr,eax
-            MessageBox(
-                NULL,
-                "The FX file cannot be compiled."
-                " Please run this executable from the directory that contains the FX file.",
-                "Error", MB_OK )
-            mov eax,hr
-            .break
-        .endif
+        ;; DirectX 11.1 or later
 
-        ;; Create the vertex shader
-
-        mov rsi,pVSBlob.GetBufferPointer()
-        mov rdi,pVSBlob.GetBufferSize()
-
-        .ifd g_pd3dDevice.CreateVertexShader(
-                rsi, rdi, NULL, &g_pVertexShader ) != S_OK
-
-            pVSBlob.Release()
-            mov eax,hr
-            .break
-        .endif
-
-        ;; Define the input layout
-        mov numElements,1; = ARRAYSIZE( layout );
-
-        ;; Create the input layout
-
-        mov rsi,pVSBlob.GetBufferPointer()
-        mov rdi,pVSBlob.GetBufferSize()
-        g_pd3dDevice.CreateInputLayout( &layout, numElements, rsi, rdi, &g_pVertexLayout )
+        g_pd3dDevice.QueryInterface( &IID_ID3D11Device1, &g_pd3dDevice1 )
         mov hr,eax
+        .if eax == S_OK
+
+            g_pImmediateContext.QueryInterface( &IID_ID3D11DeviceContext1, &g_pImmediateContext1 )
+        .endif
+
+        ZeroMemory(&sd, sizeof(sd))
+        mov sd.Width,width
+        mov sd.Height,height
+        mov sd.Format,DXGI_FORMAT_R8G8B8A8_UNORM
+        mov sd.SampleDesc.Count,1
+        mov sd.SampleDesc.Quality,0
+        mov sd.BufferUsage,DXGI_USAGE_RENDER_TARGET_OUTPUT
+        mov sd.BufferCount,1
+
+        dxgiFactory2.CreateSwapChainForHwnd( g_pd3dDevice, g_hWnd, &sd, NULL, NULL, &g_pSwapChain1 )
+        mov hr,eax
+        .if eax == S_OK
+
+            g_pSwapChain1.QueryInterface( &IID_IDXGISwapChain, &g_pSwapChain )
+        .endif
+
+        dxgiFactory2.Release()
+
+    .else
+
+        ;; DirectX 11.0 systems
+
+        ZeroMemory(&sd2, sizeof(sd2))
+        mov sd2.BufferCount,1
+        mov sd2.BufferDesc.Width,width
+        mov sd2.BufferDesc.Height,height
+        mov sd2.BufferDesc.Format,DXGI_FORMAT_R8G8B8A8_UNORM
+        mov sd2.BufferDesc.RefreshRate.Numerator,60
+        mov sd2.BufferDesc.RefreshRate.Denominator,1
+        mov sd2.BufferUsage,DXGI_USAGE_RENDER_TARGET_OUTPUT
+        mov sd2.OutputWindow,g_hWnd
+        mov sd2.SampleDesc.Count,1
+        mov sd2.SampleDesc.Quality,0
+        mov sd2.Windowed,TRUE
+
+        dxgiFactory.CreateSwapChain( g_pd3dDevice, &sd2, &g_pSwapChain )
+        mov hr,eax
+    .endif
+
+    ;; Note this tutorial doesn't handle full-screen swapchains so we block
+    ;; the ALT+ENTER shortcut
+
+    dxgiFactory.MakeWindowAssociation( g_hWnd, DXGI_MWA_NO_ALT_ENTER )
+    dxgiFactory.Release()
+
+    mov eax,hr
+    .return .if eax != S_OK
+
+    ;; Create a render target view
+
+    mov pBackBuffer,NULL
+    .return .ifd g_pSwapChain.GetBuffer(0, &IID_ID3D11Texture2D, &pBackBuffer ) != S_OK
+
+    g_pd3dDevice.CreateRenderTargetView( pBackBuffer, NULL, &g_pRenderTargetView )
+    mov hr,eax
+    pBackBuffer.Release()
+    mov eax,hr
+    .return .if eax != S_OK
+
+    g_pImmediateContext.OMSetRenderTargets( 1, &g_pRenderTargetView, NULL )
+
+    ;; Setup the viewport
+
+    cvtsi2ss xmm0,width
+    movss vp.Width,xmm0
+    cvtsi2ss xmm0,height
+    movss vp.Height,xmm0
+    mov vp.MinDepth,0.0
+    mov vp.MaxDepth,1.0
+    mov vp.TopLeftX,0.0
+    mov vp.TopLeftY,0.0
+    g_pImmediateContext.RSSetViewports( 1, &vp )
+
+    ;; Compile the vertex shader
+
+    mov pVSBlob,NULL
+    .ifd CompileShaderFromFile( L"Tutorial03.fx", "VS", "vs_4_0", &pVSBlob ) != S_OK
+
+        mov hr,eax
+        MessageBox(
+            NULL,
+            "The FX file cannot be compiled."
+            " Please run this executable from the directory that contains the FX file.",
+            "Error", MB_OK )
+        .return hr
+    .endif
+
+    ;; Create the vertex shader
+
+    mov rsi,pVSBlob.GetBufferPointer()
+    mov rdi,pVSBlob.GetBufferSize()
+
+    .ifd g_pd3dDevice.CreateVertexShader(rsi, rdi, NULL, &g_pVertexShader) != S_OK
+
         pVSBlob.Release()
-        mov eax,hr
-        .break .if eax != S_OK
+        .return hr
+    .endif
 
-        ;; Set the input layout
-        g_pImmediateContext.IASetInputLayout( g_pVertexLayout )
+    ;; Define the input layout
 
-        ;; Compile the pixel shader
-        mov pPSBlob,NULL
-        .ifd CompileShaderFromFile( L"Tutorial03.fx", "PS", "ps_4_0", &pPSBlob ) != S_OK
+    mov numElements,1; = ARRAYSIZE( layout );
 
-            mov hr,eax
-            MessageBox( NULL, "The FX file cannot be compiled."
-                " Please run this executable from the directory that contains the FX file.",
-                "Error", MB_OK )
-            mov eax,hr
-            .break
-        .endif
 
-        ;; Create the pixel shader
+    ;; Create the input layout
 
-        mov rsi,pPSBlob.GetBufferPointer()
-        mov rdi,pPSBlob.GetBufferSize()
-        g_pd3dDevice.CreatePixelShader( rsi, rdi, NULL, &g_pPixelShader )
-        pPSBlob.Release()
-        mov eax,hr
-        .break .if eax != S_OK
+    mov rsi,pVSBlob.GetBufferPointer()
+    mov rdi,pVSBlob.GetBufferSize()
+    g_pd3dDevice.CreateInputLayout( &layout, numElements, rsi, rdi, &g_pVertexLayout )
+    mov hr,eax
+    pVSBlob.Release()
 
-        ;; Create vertex buffer
-        ZeroMemory( &bd, sizeof(bd) )
-        mov bd.Usage,D3D11_USAGE_DEFAULT
-        mov bd.ByteWidth,sizeof(SimpleVertex) * 3
-        mov bd.BindFlags,D3D11_BIND_VERTEX_BUFFER
-        mov bd.CPUAccessFlags,0
+    mov eax,hr
+    .return .if eax != S_OK
 
-        ZeroMemory( &InitData, sizeof(InitData) )
-        lea rax,vertices
-        mov InitData.pSysMem,rax
-        .break .ifd g_pd3dDevice.CreateBuffer( &bd, &InitData, &g_pVertexBuffer ) != S_OK
+    ;; Set the input layout
+    g_pImmediateContext.IASetInputLayout( g_pVertexLayout )
 
-        ;; Set vertex buffer
-        mov stride,sizeof( SimpleVertex )
-        mov offs,0
-        g_pImmediateContext.IASetVertexBuffers( 0, 1, &g_pVertexBuffer, &stride, &offs )
+    ;; Compile the pixel shader
+    mov pPSBlob,NULL
+    .ifd CompileShaderFromFile( L"Tutorial03.fx", "PS", "ps_4_0", &pPSBlob ) != S_OK
 
-        ;; Set primitive topology
-        g_pImmediateContext.IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST )
+        mov hr,eax
+        MessageBox( NULL, "The FX file cannot be compiled."
+            " Please run this executable from the directory that contains the FX file.",
+            "Error", MB_OK )
+        .return hr
+    .endif
 
-        mov eax,S_OK
-    .until 1
+    ;; Create the pixel shader
+
+    mov rsi,pPSBlob.GetBufferPointer()
+    mov rdi,pPSBlob.GetBufferSize()
+    g_pd3dDevice.CreatePixelShader( rsi, rdi, NULL, &g_pPixelShader )
+    pPSBlob.Release()
+    mov eax,hr
+    .return .if eax != S_OK
+
+    ;; Create vertex buffer
+    ZeroMemory( &bd, sizeof(bd) )
+    mov bd.Usage,D3D11_USAGE_DEFAULT
+    mov bd.ByteWidth,sizeof(SimpleVertex) * 3
+    mov bd.BindFlags,D3D11_BIND_VERTEX_BUFFER
+    mov bd.CPUAccessFlags,0
+
+    ZeroMemory( &InitData, sizeof(InitData) )
+    lea rax,vertices
+    mov InitData.pSysMem,rax
+    .return .ifd g_pd3dDevice.CreateBuffer( &bd, &InitData, &g_pVertexBuffer ) != S_OK
+
+    ;; Set vertex buffer
+    mov stride,sizeof( SimpleVertex )
+    mov offs,0
+    g_pImmediateContext.IASetVertexBuffers( 0, 1, &g_pVertexBuffer, &stride, &offs )
+
+    ;; Set primitive topology
+
+    g_pImmediateContext.IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST )
+
+    mov eax,S_OK
     ret
 
 InitDevice endp

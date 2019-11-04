@@ -19,20 +19,18 @@ MyRegisterClass proc hInstance:HINSTANCE
 
   local wcex:WNDCLASSEX
 
-    mov wcex.cbSize,sizeof(WNDCLASSEX)
-    lea rax,WndProc
-    mov wcex.style,CS_HREDRAW or CS_VREDRAW
-    mov wcex.lpfnWndProc,rax
-    mov wcex.cbClsExtra,0
-    mov wcex.cbWndExtra,0
-    mov wcex.hInstance,rcx ; hInstance
-    mov wcex.hIcon,LoadIcon(0, IDI_APPLICATION)
-    mov wcex.hIconSm,rax
-    mov wcex.hCursor,LoadCursor(NULL, IDC_ARROW)
-    mov wcex.hbrBackground,COLOR_WINDOW+1
-    mov wcex.lpszMenuName,NULL
-    lea rax,@CStr(IDC_MTGESTURES)
-    mov wcex.lpszClassName,rax
+    mov wcex.cbSize,        WNDCLASSEX
+    mov wcex.style,         CS_HREDRAW or CS_VREDRAW
+    mov wcex.lpfnWndProc,   &WndProc
+    mov wcex.cbClsExtra,    0
+    mov wcex.cbWndExtra,    0
+    mov wcex.hInstance,     rcx
+    mov wcex.hIcon,         LoadIcon(0, IDI_APPLICATION)
+    mov wcex.hIconSm,       rax
+    mov wcex.hCursor,       LoadCursor(NULL, IDC_ARROW)
+    mov wcex.hbrBackground, COLOR_WINDOW+1
+    mov wcex.lpszMenuName,  NULL
+    mov wcex.lpszClassName, &@CStr(IDC_MTGESTURES)
 
     RegisterClassEx(&wcex)
     ret
@@ -89,62 +87,56 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
   local hdc:HDC
   local gc:GESTURECONFIG
 
-    .repeat
+    .switch (edx)
 
-        .switch (edx)
+    .case WM_GESTURENOTIFY
 
-        .case WM_GESTURENOTIFY
+        mov gc.dwID,0
+        mov gc.dwWant,GC_ALLGESTURES
+        mov gc.dwBlock,0
 
-            mov gc.dwID,0
-            mov gc.dwWant,GC_ALLGESTURES
-            mov gc.dwBlock,0
+        .ifd !SetGestureConfig(hWnd, 0, 1, &gc, sizeof(GESTURECONFIG))
 
-            .ifd !SetGestureConfig(hWnd, 0, 1, &gc, sizeof(GESTURECONFIG))
+            .assert("Error in execution of SetGestureConfig" && 0)
+        .endif
+        .endc
 
-                .assert("Error in execution of SetGestureConfig" && 0)
-            .endif
+    .case WM_GESTURE
+        mov rdx,rcx
+        g_cGestureEngine.WndProc(rdx, r8, r9)
+        .return
+
+    .case WM_SIZE
+        movzx edx,r9w
+        shr r9d,16
+        g_cRect.ResetObject(edx, r9d)
+        .endc
+
+    .case WM_COMMAND
+        movzx eax,r8w ; wParam
+        .switch eax
+        .case IDM_EXIT
+            DestroyWindow(rcx)
             .endc
-
-        .case WM_GESTURE
-            mov rdx,rcx
-            g_cGestureEngine.WndProc(rdx, r8, r9)
-            .break
-
-        .case WM_SIZE
-            movzx edx,r9w
-            shr r9d,16
-            g_cRect.ResetObject(edx, r9d)
-            .endc
-
-        .case WM_COMMAND
-            movzx eax,r8w ; wParam
-            .switch (eax)
-            .case IDM_EXIT
-                DestroyWindow(rcx)
-                .endc
-            .default
-                DefWindowProc(rcx, edx, r8, r9)
-                .break
-            .endsw
-            .endc
-
-        .case WM_PAINT
-            mov hdc,BeginPaint(hWnd, &ps)
-            g_cRect.Paint(hdc)
-            EndPaint(hWnd, &ps)
-            .endc
-
-        .case WM_DESTROY
-            PostQuitMessage(0)
-            .endc
-
         .default
-            DefWindowProc(rcx, edx, r8, r9)
-            .break
+            .return DefWindowProc(rcx, edx, r8, r9)
         .endsw
-        xor eax,eax
+        .endc
 
-    .until 1
+    .case WM_PAINT
+        mov hdc,BeginPaint(hWnd, &ps)
+        g_cRect.Paint(hdc)
+        EndPaint(hWnd, &ps)
+        .endc
+
+    .case WM_DESTROY
+        PostQuitMessage(0)
+        .endc
+
+    .default
+        .return DefWindowProc(rcx, edx, r8, r9)
+    .endsw
+    xor eax,eax
     ret
 
 WndProc endp

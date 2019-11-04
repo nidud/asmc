@@ -1,33 +1,37 @@
 include windows.inc
 include olectl.inc
 include tchar.inc
-ifdef _MSVCRT
+
 .data
+ifdef _MSVCRT
 IID_IPicture IID _IID_IPicture
 endif
+regedit TCHAR @CatStr(<!">, @Environ(SystemRoot),<!">),"\regedit.exe",0
+
 .code
 
-_tWinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPTSTR, nCmdShow:int_t
+_tWinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE,
+        lpCmdLine:LPTSTR, nCmdShow:int_t
 
-  local pd       :PICTDESC,
-        pBitmap  :ptr IPicture,
-        pStream  :ptr IStream,
-        pcbSize  :int_t,
-        hGlobal  :HGLOBAL,
-        IconAddr :ptr_t,
-        hFile    :HANDLE,
-        bWritten :uint_t,
-        retval   :int_t
+  local pd          : PICTDESC,
+        pBitmap     : ptr IPicture,
+        pStream     : ptr IStream,
+        pcbSize     : int_t,
+        hGlobal     : HGLOBAL,
+        IconAddr    : ptr_t,
+        hFile       : HANDLE,
+        bWritten    : uint_t,
+        retval      : int_t
 
     mov retval,1
 
     ;; Extract the first icon stored in the executable file.
 
-    .if ExtractIcon(hInstance, "C:\\Windows\\regedit.exe", 0)
+    .if ExtractIcon(hInstance, &regedit, 0)
 
         ;; initialize the PICTDESC structure
 
-        mov pd.cbSizeofstruct,sizeof(PICTDESC)
+        mov pd.cbSizeofstruct,PICTDESC
         mov pd.picType,PICTYPE_ICON
         mov pd.icon.hicon,rax
 

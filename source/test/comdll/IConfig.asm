@@ -12,14 +12,18 @@ include locals.inc
     QueryInterface  proc :REFIID, :ptr
     AddRef          proc
     Release         proc
+
     CreateInstance  proc :ptr, :REFIID, :ptr
     LockServer      proc :BOOL
+
     .ends
 
-_I_BASE     equ 0x01
-_I_SECTION  equ 0x02
-_I_ENTRY    equ 0x04
-_I_COMMENT  equ 0x08
+
+_I_BASE             equ 0x01
+_I_SECTION          equ 0x02
+_I_ENTRY            equ 0x04
+_I_COMMENT          equ 0x08
+
 
 .comdef CIConfig
 
@@ -36,6 +40,7 @@ _I_COMMENT  equ 0x08
     QueryInterface  proc :REFIID, :ptr
     AddRef          proc
     Release         proc
+
     read            proc :string_t
     write           proc :string_t
     find            proc :string_t
@@ -44,9 +49,12 @@ _I_COMMENT  equ 0x08
     delete          proc :string_t
     new             proc
     unlink          proc :ptr_t
+
     .ends
 
+
     .data
+
     IID_IUnknown    IID _IID_IUnknown
     IID_IConfig     IID _IID_IConfig
     CLSID_IConfig   IID _CLSID_IConfig
@@ -106,6 +114,7 @@ CIConfig::QueryInterface proc riid:LPIID, ppv:ptr ptr
 
 CIConfig::QueryInterface endp
 
+
 CIConfig::AddRef proc
 
     inc [rcx].count
@@ -113,6 +122,7 @@ CIConfig::AddRef proc
     ret
 
 CIConfig::AddRef endp
+
 
     assume rbx:ptr CIConfig
 
@@ -144,6 +154,7 @@ CIConfig::Release proc uses rbx
     ret
 
 CIConfig::Release endp
+
 
 TruncateString proc private string:LPSTR
 
@@ -190,6 +201,7 @@ TruncateString proc private string:LPSTR
 
 TruncateString endp
 
+
 CIConfig::read proc uses rsi rdi rbx r12 file:string_t
 
   local fp:LPFILE, buffer[256]:sbyte
@@ -221,6 +233,7 @@ CIConfig::read proc uses rsi rdi rbx r12 file:string_t
     ret
 
 CIConfig::read endp
+
 
 CIConfig::write proc uses rsi rdi rbx file:string_t
 
@@ -255,6 +268,7 @@ CIConfig::write proc uses rsi rdi rbx file:string_t
     ret
 CIConfig::write endp
 
+
 CIConfig::find proc uses rsi rdi rbx string:string_t
 
     xor edi,edi
@@ -283,6 +297,7 @@ CIConfig::find proc uses rsi rdi rbx string:string_t
 
 CIConfig::find endp
 
+
 CIConfig::getvalue proc uses rsi rdi rbx Section:string_t, Entry:string_t
 
     mov rbx,rcx
@@ -300,6 +315,7 @@ CIConfig::getvalue proc uses rsi rdi rbx Section:string_t, Entry:string_t
     ret
 
 CIConfig::getvalue endp
+
 
 CIConfig::create proc uses rsi rdi rbx r12 format:string_t, argptr:vararg
 
@@ -389,26 +405,27 @@ CIConfig::create proc uses rsi rdi rbx r12 format:string_t, argptr:vararg
 
 CIConfig::create endp
 
+
 CIConfig::new proc
 
-    .repeat
-        .break .if !malloc( sizeof(CIConfig) )
-        mov rcx,rax
-        mov [rcx].count,1
-        lea rax,ConfigVtbl
-        mov [rcx].lpVtbl,rax
-        xor eax,eax
-        mov [rcx].next,rax
-        mov [rcx].name,rax
-        mov [rcx].list,rax
-        mov [rcx].flags,eax
-        lea rax,strcmp
-        mov [rcx].Compare,rax
-        mov rax,rcx
-    .until 1
+    .return .if !malloc(CIConfig)
+
+    mov rcx,rax
+    mov [rcx].count,1
+    lea rax,ConfigVtbl
+    mov [rcx].lpVtbl,rax
+    xor eax,eax
+    mov [rcx].next,rax
+    mov [rcx].name,rax
+    mov [rcx].list,rax
+    mov [rcx].flags,eax
+    lea rax,strcmp
+    mov [rcx].Compare,rax
+    mov rax,rcx
     ret
 
 CIConfig::new endp
+
 
 CIConfig::delete proc SectionName:string_t
 
@@ -422,6 +439,7 @@ CIConfig::delete proc SectionName:string_t
     ret
 
 CIConfig::delete endp
+
 
 CIConfig::unlink proc Parent:ptr
 
@@ -466,6 +484,7 @@ CIClassFactory::QueryInterface proc riid:LPIID, ppv:ptr ptr
 
 CIClassFactory::QueryInterface endp
 
+
 CIClassFactory::AddRef proc
 
     _InterlockedIncrement(&OutstandingObjects)
@@ -473,12 +492,14 @@ CIClassFactory::AddRef proc
 
 CIClassFactory::AddRef endp
 
+
 CIClassFactory::Release proc
 
     _InterlockedDecrement(&OutstandingObjects)
     ret
 
 CIClassFactory::Release endp
+
 
 CIClassFactory::CreateInstance proc uses rdi rdi Unknown:ptr IUnknown, riid:REFIID, ppv:ptr
 
@@ -521,6 +542,7 @@ CIClassFactory::CreateInstance proc uses rdi rdi Unknown:ptr IUnknown, riid:REFI
 
 CIClassFactory::CreateInstance endp
 
+
 CIClassFactory::LockServer proc flock:BOOL
 
     .if edx
@@ -533,6 +555,7 @@ CIClassFactory::LockServer proc flock:BOOL
     ret
 
 CIClassFactory::LockServer endp
+
 
     option win64:rsp nosave noauto
 
@@ -554,6 +577,7 @@ DllGetClassObject proc export frame rclsid:REFCLSID, riid:REFIID, ppv:ptr ptr
 
 DllGetClassObject endp
 
+
 DllCanUnloadNow proc export
 
     mov eax,OutstandingObjects
@@ -566,6 +590,7 @@ DllCanUnloadNow proc export
     ret
 
 DllCanUnloadNow endp
+
 
 DllMain proc frame hinstDLL:HINSTANCE, fdwReason:DWORD, lpvReserved:LPVOID
 

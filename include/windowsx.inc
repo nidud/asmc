@@ -252,7 +252,7 @@ CheckDefDlgRecursion macro pfRecursion
 HANDLE_MSG macro hwnd, message, fn
 	.case message
 	HANDLE_&message&(hwnd, wParam, lParam, fn)
-	.break
+	.return
 	exitm<>
 	endm
 

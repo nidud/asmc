@@ -29,15 +29,14 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 
     .switch uMsg
 
-      .case WM_DESTROY
+    .case WM_DESTROY
         PostQuitMessage(NULL)
         .if TimerID
             KillTimer(hWnd, TimerID)
         .endif
-        xor eax,eax
-        .endc
+        .return 0
 
-      .case WM_CREATE
+    .case WM_CREATE
         mov hwndProgress,CreateWindowEx(NULL, "msctls_progress32", NULL, WS_CHILD or WS_VISIBLE,
             100, 200, 300, 20, hWnd, IDC_PROGRESS, hInstance, NULL)
 
@@ -50,10 +49,9 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
         mov hwndStatus,CreateStatusWindow(WS_CHILD or WS_VISIBLE, NULL, hWnd, IDC_STATUS)
         SetTimer(hWnd, IDC_TIMER, 100, NULL) ; create a timer
         mov TimerID,eax
-        xor eax,eax
-        .endc
+        .return 0
 
-      .case WM_TIMER
+    .case WM_TIMER
         SendMessage(hwndProgress, PBM_STEPIT, 0, 0)
         sub CurrentStep,10
         .if !CurrentStep
@@ -64,10 +62,9 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
             SendMessage(hwndStatus, SB_SETTEXT, 0, 0)
             SendMessage(hwndProgress, PBM_SETPOS, 0, 0)
         .endif
-        xor eax,eax
-        .endc
+        .return 0
 
-      .default
+    .default
         DefWindowProc(hWnd, uMsg, wParam, lParam)
     .endsw
     ret
@@ -79,29 +76,37 @@ _tWinMain proc WINAPI hInst: HINSTANCE,
          lpCmdLine: LPTSTR,
           nShowCmd: SINT
 
-    local wc:WNDCLASSEX
-    local msg:MSG
-    local hwnd:HWND
+  local wc:WNDCLASSEX
+  local msg:MSG
 
-    mov wc.cbSize,sizeof(WNDCLASSEX)
-    mov wc.style,CS_HREDRAW or CS_VREDRAW
-    lea rax,WndProc
-    mov wc.lpfnWndProc,rax
-    push hInst
-    pop wc.hInstance
-    mov wc.cbClsExtra,0
-    mov wc.cbWndExtra,0
-    mov wc.hbrBackground,COLOR_APPWORKSPACE
-    mov wc.lpszMenuName,NULL
-    lea rax,@CStr("CommonControlWinClass")
-    mov wc.lpszClassName,rax
-    mov wc.hIcon,LoadIcon(0, IDI_APPLICATION)
-    mov wc.hIconSm,rax
-    mov wc.hCursor,LoadCursor(0, IDC_ARROW)
+    mov wc.cbSize,          WNDCLASSEX
+    mov wc.style,           CS_HREDRAW or CS_VREDRAW
+    mov wc.lpfnWndProc,     &WndProc
+    mov wc.hInstance,       hInst
+    mov wc.cbClsExtra,      0
+    mov wc.cbWndExtra,      0
+    mov wc.hbrBackground,   COLOR_APPWORKSPACE
+    mov wc.lpszMenuName,    NULL
+    mov wc.lpszClassName,   &@CStr("CommonControlWinClass")
+    mov wc.hIcon,           LoadIcon(0, IDI_APPLICATION)
+    mov wc.hIconSm,         rax
+    mov wc.hCursor,         LoadCursor(0, IDC_ARROW)
+
     RegisterClassEx(&wc)
-    mov hwnd,CreateWindowEx(WS_EX_CLIENTEDGE, CLASSNAME, APPNAME,
+    CreateWindowEx(
+        WS_EX_CLIENTEDGE,
+        CLASSNAME,
+        APPNAME,
         WS_OVERLAPPED or WS_CAPTION or WS_SYSMENU or WS_MINIMIZEBOX or WS_MAXIMIZEBOX or WS_VISIBLE,
-        CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hInst, NULL)
+        CW_USEDEFAULT,
+        CW_USEDEFAULT,
+        CW_USEDEFAULT,
+        CW_USEDEFAULT,
+        NULL,
+        NULL,
+        hInst,
+        NULL
+    )
 
     .while GetMessage(&msg, NULL, 0, 0)
 

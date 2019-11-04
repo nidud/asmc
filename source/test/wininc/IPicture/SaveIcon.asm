@@ -4,6 +4,9 @@
 include windows.inc
 include olectl.inc
 
+    .data
+    regedit TCHAR @CatStr(<!">, @Environ(SystemRoot),<!">),"\regedit.exe",0
+
     .code
 
 WinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPSTR, nCmdShow:int_t
@@ -13,7 +16,7 @@ WinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPST
 
     ;; load the test executable and the associated icon
 
-    .if LoadLibrary("C:\\Windows\\regedit.exe")
+    .if LoadLibrary(&regedit)
 
         ;; initialize the PICTDESC structure
 

@@ -32,6 +32,7 @@ Dispatch proc private uses rcx hwnd:window_t, msg:msg_t
 
 Dispatch endp
 
+
     assume rcx:window_t
 
 Translate proc private uses rdi rcx hwnd:window_t, msg:msg_t
@@ -56,6 +57,7 @@ Translate proc private uses rdi rcx hwnd:window_t, msg:msg_t
 
 Translate endp
 
+
 TWindow::Send proc uses rcx uiMsg:uint_t, wParam:size_t, lParam:ptr
 
     .for ( eax = 1 : rcx : )
@@ -79,6 +81,7 @@ TWindow::Send proc uses rcx uiMsg:uint_t, wParam:size_t, lParam:ptr
     ret
 
 TWindow::Send endp
+
 
     assume r10:class_t
 
@@ -108,6 +111,7 @@ TWindow::Post proc uiMsg:uint_t, wParam:size_t, lParam:ptr
 
 TWindow::Post endp
 
+
     assume r10:nothing
 
 TWindow::PostQuit proc uses rcx retval:int_t
@@ -119,6 +123,7 @@ TWindow::PostQuit proc uses rcx retval:int_t
     ret
 
 TWindow::PostQuit endp
+
 
     assume rdx:nothing
     assume rbx:window_t
@@ -187,13 +192,17 @@ TWindow::Register proc uses rsi rdi rbx tproc:tproc_t
                     xor edx,edx
 
                     .if ( eax != ecx )
-                        .if ( ( ecx & FROM_LEFT_1ST_BUTTON_PRESSED ) && !( eax & FROM_LEFT_1ST_BUTTON_PRESSED ) )
+                        .if ( ( ecx & FROM_LEFT_1ST_BUTTON_PRESSED ) && \
+                             !( eax & FROM_LEFT_1ST_BUTTON_PRESSED ) )
                             mov edx,WM_LBUTTONUP
-                        .elseif ( !( ecx & FROM_LEFT_1ST_BUTTON_PRESSED ) && ( eax & FROM_LEFT_1ST_BUTTON_PRESSED ) )
+                        .elseif ( !( ecx & FROM_LEFT_1ST_BUTTON_PRESSED ) && \
+                                   ( eax & FROM_LEFT_1ST_BUTTON_PRESSED ) )
                             mov edx,WM_LBUTTONDOWN
-                        .elseif ( ( ecx & RIGHTMOST_BUTTON_PRESSED ) && !( eax & RIGHTMOST_BUTTON_PRESSED ) )
+                        .elseif ( ( ecx & RIGHTMOST_BUTTON_PRESSED ) && \
+                                 !( eax & RIGHTMOST_BUTTON_PRESSED ) )
                             mov edx,WM_RBUTTONUP
-                        .elseif ( !( ecx & RIGHTMOST_BUTTON_PRESSED ) && ( eax & RIGHTMOST_BUTTON_PRESSED ) )
+                        .elseif ( !( ecx & RIGHTMOST_BUTTON_PRESSED ) && \
+                                   ( eax & RIGHTMOST_BUTTON_PRESSED ) )
                             mov edx,WM_RBUTTONDOWN
                         .endif
                         mov [rsi].Buttons,[rdi].MouseEvent.dwButtonState

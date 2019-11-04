@@ -318,6 +318,7 @@ _output PROC PUBLIC USES rsi rdi rbx fp:LPFILE, format:LPSTR, arglist:PVOID
                     mov rax,arglist
                     add arglist,8
                     mov edx,[rax]
+                    xor ecx,ecx
                     bsr ecx,edx
                     inc ecx
                     mov textlen,ecx

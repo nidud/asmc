@@ -20,21 +20,18 @@ main proc
         "  7FFEFFFF: 32-bit Windows 2GB minus 64KB\n"
         "  BFFFFFFF: 32-bit Windows 3GB\n"
         "  BB3EFFFF: 32-bit Windows 2995 MB\n"
-        "  FFFEFFFF: 64-bit Windows 2GB minus 64KB/4GB minus 64KB\n" )
-    printf(
+        "  FFFEFFFF: 64-bit Windows 2GB minus 64KB/4GB minus 64KB\n"
         "wProcessorArchitecture:\n"
         "  0: x86\n"
-        "  9: x64 (AMD or Intel)\n\n" )
-    printf(
+        "  9: x64 (AMD or Intel)\n\n"
         "GetSystemInfo():\n"
         "wProcessorArchitecture      %d\n"
-        "lpMaximumApplicationAddress %08X\n",
-        s.wProcessorArchitecture,
-        s.lpMaximumApplicationAddress )
-    printf(
+        "lpMaximumApplicationAddress %08X\n"
         "\nGetNativeSystemInfo():\n"
         "wProcessorArchitecture      %d\n"
         "lpMaximumApplicationAddress %08X\n",
+        s.wProcessorArchitecture,
+        s.lpMaximumApplicationAddress,
         ns.wProcessorArchitecture,
         ns.lpMaximumApplicationAddress )
 

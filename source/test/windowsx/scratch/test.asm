@@ -104,22 +104,18 @@ OnPrintClient endp
 
 WndProc proc hwnd:HWND, uiMsg:UINT, wParam:WPARAM, lParam:LPARAM
 
-    .repeat
+    .switch (uiMsg)
 
-        .switch (uiMsg)
+        HANDLE_MSG(hwnd, WM_CREATE, OnCreate)
+        HANDLE_MSG(hwnd, WM_SIZE, OnSize)
+        HANDLE_MSG(hwnd, WM_DESTROY, OnDestroy)
+        HANDLE_MSG(hwnd, WM_PAINT, OnPaint)
 
-          HANDLE_MSG(hwnd, WM_CREATE, OnCreate)
-          HANDLE_MSG(hwnd, WM_SIZE, OnSize)
-          HANDLE_MSG(hwnd, WM_DESTROY, OnDestroy)
-          HANDLE_MSG(hwnd, WM_PAINT, OnPaint)
-          .case WM_PRINTCLIENT
+        .case WM_PRINTCLIENT
             OnPrintClient(hwnd, wParam)
-            xor eax,eax
-            .break
-        .endsw
-
-        DefWindowProc(hwnd, uiMsg, wParam, lParam)
-    .until 1
+            .return 0
+    .endsw
+    DefWindowProc(hwnd, uiMsg, wParam, lParam)
     ret
 
 WndProc endp
@@ -128,21 +124,18 @@ InitApp proc
 
   local wc:WNDCLASSEX
 
-    mov wc.cbSize,SIZEOF WNDCLASSEX
-    lea rax,WndProc
-    mov wc.lpfnWndProc,rax
-    mov rax,g_hinst
-    mov wc.hInstance,rax
     xor eax,eax
-    mov wc.style,eax
-    mov wc.cbClsExtra,eax
-    mov wc.cbWndExtra,eax
-    mov wc.hIcon,rax
-    mov wc.lpszMenuName,rax
-    mov wc.hCursor,LoadCursor(NULL, IDC_ARROW)
-    mov wc.hbrBackground,(COLOR_WINDOW + 1)
-    lea rax,@CStr("Scratch")
-    mov wc.lpszClassName,rax
+    mov wc.cbSize,          WNDCLASSEX
+    mov wc.style,           eax
+    mov wc.cbClsExtra,      eax
+    mov wc.cbWndExtra,      eax
+    mov wc.hIcon,           rax
+    mov wc.lpszMenuName,    rax
+    mov wc.lpfnWndProc,     &WndProc
+    mov wc.hInstance,       g_hinst
+    mov wc.hCursor,         LoadCursor(NULL, IDC_ARROW)
+    mov wc.hbrBackground,   (COLOR_WINDOW + 1)
+    mov wc.lpszClassName,   &@CStr("Scratch")
 
     .if RegisterClassEx(&wc)
 
@@ -161,12 +154,10 @@ WinMain proc hinst:HINSTANCE, hinstPrev:HINSTANCE,
 
     mov g_hinst,rcx ; hinst
 
-    .repeat
+    .return .if !InitApp()
+    .return .ifsd !SUCCEEDED(CoInitialize(NULL)) ;; In case we use COM
 
-        .break .if !InitApp()
-        .break .ifsd !SUCCEEDED(CoInitialize(NULL)) ;; In case we use COM
-
-        CreateWindowEx(
+    CreateWindowEx(
             0,
             "Scratch",                      ;; Class Name
             "Scratch",                      ;; Title
@@ -178,18 +169,17 @@ WinMain proc hinst:HINSTANCE, hinstPrev:HINSTANCE,
             hinst,                          ;; Instance
             0)                              ;; No special parameters
 
-        mov hwnd,rax
-        ShowWindow(hwnd, nShowCmd)
+    mov hwnd,rax
+    ShowWindow(hwnd, nShowCmd)
 
-        .while GetMessage(&msg, NULL, 0, 0)
-            TranslateMessage(&msg)
-            DispatchMessage(&msg)
-        .endw
+    .while GetMessage(&msg, NULL, 0, 0)
 
-        CoUninitialize()
+        TranslateMessage(&msg)
+        DispatchMessage(&msg)
+    .endw
 
-        xor eax,eax
-    .until 1
+    CoUninitialize()
+    xor eax,eax
     ret
 
 WinMain endp

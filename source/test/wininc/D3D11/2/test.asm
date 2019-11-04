@@ -1,3 +1,4 @@
+
 ;;--------------------------------------------------------------------------------------
 ;; File: Tutorial02.cpp
 ;;
@@ -12,6 +13,7 @@
 ;;
 ;; Copyright (c) Microsoft Corporation. All rights reserved.
 ;;--------------------------------------------------------------------------------------
+
 include windows.inc
 include SpecStrings.inc
 include d3d11_1.inc
@@ -310,7 +312,7 @@ InitDevice proc uses rsi rdi rbx
 
   local hr                  :HRESULT,
         rc                  :RECT,
-        _width              :UINT,
+        width               :UINT,
         height              :UINT,
         vp                  :D3D11_VIEWPORT,
         numFeatureLevels    :UINT,
@@ -337,7 +339,7 @@ InitDevice proc uses rsi rdi rbx
 
     mov eax,rc.right
     sub eax,rc.left
-    mov _width,eax
+    mov width,eax
     mov eax,rc.bottom
     sub eax,rc.top
     mov height,eax
@@ -439,8 +441,8 @@ endif
             .endif
 
             ZeroMemory(&sd, sizeof(sd))
-            mov eax,_width
-            mov sd._Width,eax
+            mov eax,width
+            mov sd.Width,eax
             mov eax,height
             mov sd.Height,eax
             mov sd.Format,DXGI_FORMAT_R8G8B8A8_UNORM
@@ -464,10 +466,8 @@ endif
 
             ZeroMemory(&sd2, sizeof(sd2))
             mov sd2.BufferCount,1
-            mov eax,_width
-            mov sd2.BufferDesc._Width,eax
-            mov eax,height
-            mov sd2.BufferDesc.Height,eax
+            mov sd2.BufferDesc.Width,width
+            mov sd2.BufferDesc.Height,height
             mov sd2.BufferDesc.Format,DXGI_FORMAT_R8G8B8A8_UNORM
             mov sd2.BufferDesc.RefreshRate.Numerator,60
             mov sd2.BufferDesc.RefreshRate.Denominator,1
@@ -503,8 +503,8 @@ endif
         g_pImmediateContext.OMSetRenderTargets( 1, &g_pRenderTargetView, NULL )
 
         ;; Setup the viewport
-        cvtsi2ss xmm0,_width
-        movss vp._Width,xmm0
+        cvtsi2ss xmm0,width
+        movss vp.Width,xmm0
         cvtsi2ss xmm0,height
         movss vp.Height,xmm0
         mov vp.MinDepth,0.0

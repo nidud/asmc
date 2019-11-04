@@ -273,15 +273,20 @@ TOLOWER MACRO p
 ; Read style
 ;
 GetEntry proc file, section, entry, buffer
+
     .if GetPrivateProfileString(section, entry, 0, buffer, MAX_ENTRY, file)
+
         mov ecx,eax
         mov eax,buffer
     .endif
     ret
+
 GetEntry endp
 
 GetEntryID proc file, section, ID, buffer
-local entry[2]
+
+  local entry[2]
+
     xor edx,edx
     mov eax,ID ; 0..99
     .while  al > 9
@@ -299,108 +304,114 @@ local entry[2]
     mov entry[4],0
     GetEntry(file, section, &entry, buffer)
     ret
+
 GetEntryID endp
 
 ReadLabel PROC USES esi edi ebx file, section, buffer, endbuf
 
-local entry[MAX_ENTRY]:byte
-local st_type,i,p,q
+  local entry[MAX_ENTRY]:byte
+  local st_type,i,p,q
+
+    .return .if !GetEntryID( file, section, 0, &entry )
+
+    mov p,eax
+    mov al,[eax]
+    or  al,0x20
+    lea edi,typech
+    mov ecx,sizeof(typech)
+    repnz scasb
+
+    .return .ifnz
+
+    mov eax,edi
+    sub eax,offset typech
+    mov st_type,eax
+
+    mov edi,buffer
+    mov edi,[edi]
+
+    .return .if edi >= endbuf
+
+    stosb           ; store type
+    mov esi,p
+    xor eax,eax
+    mov i,eax
+
+    .repeat
+        add esi,TCHAR
+        mov al,[esi]
+    .until (al == 9 || al == ' ' || al == '_')
 
     .repeat
 
-        .break .if !GetEntryID( file, section, 0, &entry )
+        lodsw
+        .switch
+        .case al == ' '
+            mov eax,esi
+            .endc
+        .case al
+            .continue
+        .default
+            mov i,1
+            .break .if !GetEntryID( file, section, 1, &entry)
+        .endsw
 
+        mov esi,eax
+        add eax,2
         mov p,eax
-        mov al,[eax]
-        or  al,20h
-        lea edi,typech
-        mov ecx,sizeof(typech)
-        repnz scasb
-        .break .ifnz
+        mov al,[esi]
+        sub al,'0'
+        .if al > 9
+            sub al,7
+        .endif
+        stosb ; store attrib
 
-        mov eax,edi
-        sub eax,offset typech
-        mov st_type,eax
-
-        mov edi,buffer
-        mov edi,[edi]
-        .break .if edi >= endbuf
-
-        stosb           ; store type
         mov esi,p
-        xor eax,eax
-        mov i,eax
-
-        .repeat
+        .while TCHAR PTR [esi] == ' '
             add esi,TCHAR
-            mov al,[esi]
-        .until (al == 9 || al == ' ' || al == '_')
+        .endw
 
-        .repeat
-
-            lodsw
-            .switch
-              .case al == ' '
-                mov eax,esi
-                .endc
-              .case al
-                .continue
-              .default
-                mov i,1
-                .break .if !GetEntryID( file, section, 1, &entry)
-            .endsw
-
-            mov esi,eax
-            add eax,2
-            mov p,eax
-            mov al,[esi]
-            sub al,'0'
-            .if al > 9
-                sub al,7
-            .endif
-            stosb ; store attrib
-
-            mov esi,p
-            .while TCHAR PTR [esi] == ' '
-                add esi,TCHAR
-            .endw
+        .while 1
 
             .while 1
-                .while 1
-                    lodsw
-                    .break .if !ax
-                    .break .if edi >= endbuf
-                    cmp  al,' '
-                    sete dl
-                    dec  dl
-                    and  al,dl
-                    stosb
-                .endw
-                .break .if al
-                stosb
-                inc i
-                .break .if i == 100
-                .break .if !GetEntryID( file, section, i, &entry)
-                mov esi,eax
-            .endw
-        .until 1
 
-        xor eax,eax
-        .if [edi-1] != al
+                lodsw
+                .break .if !ax
+                .break .if edi >= endbuf
+                cmp  al,' '
+                sete dl
+                dec  dl
+                and  al,dl
+                stosb
+            .endw
+
+            .break .if al
             stosb
-        .endif
-        stosb
-        mov ecx,buffer
-        mov [ecx],edi
-        inc eax
+            inc i
+            .break .if i == 100
+            .break .if !GetEntryID( file, section, i, &entry)
+
+            mov esi,eax
+        .endw
     .until 1
+
+    xor eax,eax
+    .if [edi-1] != al
+        stosb
+    .endif
+    stosb
+    mov ecx,buffer
+    mov [ecx],edi
+    inc eax
     ret
+
 ReadLabel endp
 
 ReadStyle proc uses esi edi file:ptr
-local buffer:ptr
-local endbuf:ptr
-local entry[MAX_ENTRY]:byte
+
+  local buffer:ptr
+  local endbuf:ptr
+  local entry[MAX_ENTRY]:byte
 
     lea eax,style
     mov buffer,eax
@@ -412,42 +423,46 @@ local entry[MAX_ENTRY]:byte
     rep stosd
     xor esi,esi
     lea edi,entry
+
     .while GetEntryID(file, "Style", esi, edi)
+
         ReadLabel(file, edi, &buffer, endbuf)
         inc esi
     .endw
+
     mov edi,buffer
     xor eax,eax
     stosw
     inc eax
     ret
+
 ReadStyle endp
 
 ;
 ; Read Config
 ;
 lxtol proc string:LPSTR
-    mov edx,string
-    xor eax,eax
-    xor ecx,ecx
-    .while 1
+
+    .for ( edx = string, eax = 0, ecx = 0 :: cl -= 0x10, eax <<= 4, eax += ecx )
+
         mov cl,[edx]
         add edx,2
         and cl,0xDF
+
         .break .if cl < 0x10
         .break .if cl > 'F'
+
         .if cl > 0x19
             .break .if cl < 'A'
             sub cl,'A' - 0x1A
         .endif
-        sub cl,0x10
-        shl eax,4
-        add eax,ecx
-    .endw
+    .endf
     ret
+
 lxtol endp
 
 latol proc string:LPSTR
+
     mov edx,string
     movzx ecx,byte ptr [edx]
     xor eax,eax
@@ -461,43 +476,54 @@ latol proc string:LPSTR
         movzx ecx,byte ptr [edx]
     .endw
     ret
+
 latol endp
 
 ReadConfig proc uses esi edi file:ptr
-local entry[MAX_ENTRY]:byte
+
+  local entry[MAX_ENTRY]:byte
+
     lea edi,entry
     .if GetEntry(file, "Colors", "Text", edi)
-        lxtol(edi)
-        mov TextColor,eax
+
+        mov TextColor,lxtol(edi)
+
         .if GetEntry(file, "Colors", "Back", edi)
-            lxtol(edi)
-            mov BackColor,eax
+
+            mov BackColor,lxtol(edi)
         .endif
+
         xor esi,esi
         .while GetEntryID(file, "Colors", esi, edi)
-            lxtol(edi)
-            mov SyntaxColors[esi*4],eax
+
+            mov SyntaxColors[esi*4],lxtol(edi)
             inc esi
         .endw
     .endif
+
     mov AppFont.lfHeight,24
     mov AppFont.lfWeight,FW_NORMAL
     mov AppFont.lfCharSet,DEFAULT_CHARSET
+
     lstrcpy(&AppFont.lfFaceName, "Courier New")
+
     .if GetEntry(file, "Font", "Face", edi)
+
         lstrcpy(&AppFont.lfFaceName, edi)
     .endif
+
     .if GetEntry(file, "Font", "Height", edi)
         latol(edi)
         shl eax,1
         mov AppFont.lfHeight,eax
     .endif
     ret
+
 ReadConfig endp
 
 SetColor proc
 
-    local cfm:CHARFORMAT2
+  local cfm:CHARFORMAT2
 
     SendMessage(hEdit, EM_GETMODIFY, 0, 0)
     push eax
@@ -521,8 +547,8 @@ SetColor endp
 
 DLGSelectFont proc uses edi hWnd:HWND
 
-    local cfm:CHARFORMAT
-    local Font:CHOOSEFONT
+  local cfm:CHARFORMAT
+  local Font:CHOOSEFONT
 
     lea edi,Font
     xor eax,eax
@@ -554,14 +580,14 @@ DLGSelectFont endp
 
 SetStyle PROC USES esi edi ebx hWnd:HWND
 
-    local endbuf, string
-    local ctype:byte, attrib:byte
-    local hdc:HDC
-    local firstchar
-    local rect:RECT
-    local txtrange:TEXTRANGE
-    local hRgn,hOldRgn
-    local buffer,bufsize
+  local endbuf, string
+  local ctype:byte, attrib:byte
+  local hdc:HDC
+  local firstchar
+  local rect:RECT
+  local txtrange:TEXTRANGE
+  local hRgn,hOldRgn
+  local buffer,bufsize
 
     mov hdc,GetDC(hWnd)
     SetBkMode(hdc, TRANSPARENT)
@@ -924,17 +950,19 @@ SetStyle PROC USES esi edi ebx hWnd:HWND
 SetStyle endp
 
 InitProfile proc uses esi edi ebx
+
     lea edi,Profile
     GetModuleFileName(hInstance, edi, sizeof(Profile))
     lea edi,[edi+eax*TCHAR-3*TCHAR]
     lstrcpy(edi, "ini")
     ret
+
 InitProfile endp
 
 RichEditProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 
     .switch uMsg
-      .case WM_PAINT
+    .case WM_PAINT
         HideCaret(hWnd)
         CallWindowProc(OldWndProc, hWnd, uMsg, wParam, lParam)
         push eax
@@ -942,10 +970,10 @@ RichEditProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
         ShowCaret(hWnd)
         pop eax
         .endc
-      .case WM_CLOSE
+    .case WM_CLOSE
         SetWindowLong(hWnd, GWL_WNDPROC, OldWndProc)
         .endc
-      .default
+    .default
         CallWindowProc(OldWndProc, hWnd, uMsg, wParam, lParam)
     .endsw
     ret
@@ -954,7 +982,7 @@ RichEditProc endp
 
 PrepareEditMenu proc hSubMenu:DWORD
 
-    local chrg:CHARRANGE
+  local chrg:CHARRANGE
     ;
     ; Check whether there is some text in the clipboard. If so,
     ; we enable the paste menuitem
@@ -1000,15 +1028,19 @@ PrepareEditMenu proc hSubMenu:DWORD
 PrepareEditMenu endp
 
 StreamInProc proc hFile:HANDLE, pBuffer:LPSTR, NumBytes:UINT, pBytesRead:LPDWORD
+
     ReadFile(hFile, pBuffer, NumBytes, pBytesRead, 0)
     xor eax,1
     ret
+
 StreamInProc endp
 
 StreamOutProc proc hFile:HANDLE, pBuffer:LPSTR, NumBytes:UINT, pBytesWritten:LPDWORD
+
     WriteFile(hFile, pBuffer, NumBytes, pBytesWritten, 0)
     xor eax,1
     ret
+
 StreamOutProc endp
 
 CheckModifyState proc uses esi hWnd:HWND
@@ -1031,56 +1063,62 @@ CheckModifyState endp
 
 OptionProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 
-    local clr:CHOOSECOLOR
+  local clr:CHOOSECOLOR
 
     mov eax,uMsg
     .switch eax
 
-      .case WM_INITDIALOG
+    .case WM_INITDIALOG
         mov eax,TRUE
         .endc
 
-      .case WM_COMMAND
+    .case WM_COMMAND
+
         mov eax,wParam
         shr eax,16
+
         .if ax == BN_CLICKED
+
             mov eax,wParam
+
             .if ax == IDCANCEL
+
                 SendMessage(hWnd, WM_CLOSE, 0, 0)
+
             .elseif ax == IDC_BACKCOLORBOX
+
                 RtlZeroMemory(&clr, sizeof(clr))
-                mov  clr.lStructSize,sizeof(clr)
-                push hWnd
-                pop  clr.hwndOwner
-                push hInstance
-                pop  clr.hInstance
-                push BackColor
-                pop  clr.rgbResult
-                mov  clr.lpCustColors,offset SyntaxColors
-                mov  clr.Flags,CC_ANYCOLOR or CC_RGBINIT
+
+                mov clr.lStructSize,sizeof(clr)
+                mov clr.hwndOwner,hWnd
+                mov clr.hInstance,hInstance
+                mov clr.rgbResult,BackColor
+                mov clr.lpCustColors,offset SyntaxColors
+                mov clr.Flags,CC_ANYCOLOR or CC_RGBINIT
 
                 .if ChooseColor(&clr)
-                    push clr.rgbResult
-                    pop  BackColor
+
+                    mov BackColor,clr.rgbResult
                     InvalidateRect(GetDlgItem(hWnd, IDC_BACKCOLORBOX), 0, TRUE)
                 .endif
+
             .elseif ax==IDC_TEXTCOLORBOX
+
                 RtlZeroMemory(&clr, sizeof(clr))
-                mov  clr.lStructSize,sizeof(clr)
-                push hWnd
-                pop  clr.hwndOwner
-                push hInstance
-                pop  clr.hInstance
-                push TextColor
-                pop  clr.rgbResult
-                mov  clr.lpCustColors,offset SyntaxColors
-                mov  clr.Flags,CC_ANYCOLOR or CC_RGBINIT
+
+                mov clr.lStructSize,sizeof(clr)
+                mov clr.hwndOwner,hWnd
+                mov clr.hInstance,hInstance
+                mov clr.rgbResult,TextColor
+                mov clr.lpCustColors,offset SyntaxColors
+                mov clr.Flags,CC_ANYCOLOR or CC_RGBINIT
 
                 .if ChooseColor(&clr)
-                    push clr.rgbResult
-                    pop  TextColor
+
+                    mov TextColor,clr.rgbResult
                     InvalidateRect(GetDlgItem(hWnd, IDC_TEXTCOLORBOX), 0, TRUE)
                 .endif
+
             .elseif ax==IDOK
                 ;
                 ; Save the modify state of the richedit control because changing
@@ -1097,7 +1135,7 @@ OptionProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
         mov eax,TRUE
         .endc
 
-      .case WM_CTLCOLORSTATIC
+    .case WM_CTLCOLORSTATIC
         .if GetDlgItem(hWnd, IDC_BACKCOLORBOX) == lParam
             CreateSolidBrush(BackColor)
         .elseif GetDlgItem(hWnd, IDC_TEXTCOLORBOX) == lParam
@@ -1107,12 +1145,12 @@ OptionProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
         .endif
         .endc
 
-      .case WM_CLOSE
+    .case WM_CLOSE
         EndDialog(hWnd, 0)
         mov eax,TRUE
         .endc
 
-      .default
+    .default
         mov eax,FALSE
         .endc
     .endsw
@@ -1125,9 +1163,9 @@ SearchProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
     mov eax,uMsg
     .switch eax
 
-      .case WM_INITDIALOG
-        push hWnd
-        pop  hSearch
+    .case WM_INITDIALOG
+
+        mov hSearch,hWnd
         ;
         ; Select the default search down option
         ;
@@ -1137,8 +1175,10 @@ SearchProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
         .endc
 
       .case WM_COMMAND
+
         mov eax,wParam
         shr eax,16
+
         .if ax==BN_CLICKED
             mov eax,wParam
             .if ax == IDOK
@@ -1151,8 +1191,7 @@ SearchProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
                         or uFlags,FR_DOWN
                         mov eax,findtext.chrg.cpMin
                         .if eax!=findtext.chrg.cpMax
-                            push findtext.chrg.cpMax
-                            pop  findtext.chrg.cpMin
+                            mov findtext.chrg.cpMin,findtext.chrg.cpMax
                         .endif
                         mov findtext.chrg.cpMax,-1
                     .else
@@ -1198,27 +1237,32 @@ SearchProc endp
 
 ReplaceProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 
-    local settext:SETTEXTEX
+  local settext:SETTEXTEX
 
     mov eax,uMsg
     .switch eax
 
       .case WM_INITDIALOG
-        push hWnd
-        pop  hSearch
+        mov hSearch,hWnd
         SetDlgItemText(hWnd, IDC_FINDEDIT,    &FindBuffer)
         SetDlgItemText(hWnd, IDC_REPLACEEDIT, &ReplBuffer)
         mov eax,TRUE
         .endc
 
       .case WM_COMMAND
+
         mov eax,wParam
         shr eax,16
+
         .if ax == BN_CLICKED
+
             mov eax,wParam
             .if ax == IDCANCEL
+
                 SendMessage(hWnd, WM_CLOSE, 0, 0)
+
             .elseif ax==IDOK
+
                 GetDlgItemText(hWnd, IDC_FINDEDIT,    &FindBuffer, sizeof(FindBuffer))
                 GetDlgItemText(hWnd, IDC_REPLACEEDIT, &ReplBuffer, sizeof(ReplBuffer))
                 mov findtext.chrg.cpMin,0
@@ -1226,13 +1270,17 @@ ReplaceProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
                 mov findtext.lpstrText,offset FindBuffer
                 mov settext.flags,ST_SELECTION
                 mov settext.codepage,0;CP_ACP
+
                 .while 1
+
                     .break .if SendMessage(hEdit, EM_FINDTEXTEX, FR_DOWN, &findtext) == -1
                     SendMessage(hEdit, EM_EXSETSEL, 0, &findtext.chrgText)
                     SendMessage(hEdit, EM_SETTEXTEX, &settext, &ReplBuffer)
                 .endw
+
             .endif
         .endif
+
         mov eax,TRUE
         .endc
 
@@ -1257,14 +1305,15 @@ GoToProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
     .switch eax
 
       .case WM_INITDIALOG
-        push hWnd
-        pop  hSearch
+        mov hSearch,hWnd
         mov eax,TRUE
         .endc
 
       .case WM_COMMAND
+
         mov eax,wParam
         shr eax,16
+
         .if ax == BN_CLICKED
             mov eax,wParam
             .if ax == IDCANCEL
@@ -1296,13 +1345,13 @@ GoToProc endp
 
 WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
 
-    local buffer[256]:sbyte
-    local hPopup:HMENU
-    local pt:POINT
-    local ofn:OPENFILENAME
-    local hFile:HANDLE
-    local editstream:EDITSTREAM
-    local chrg:CHARRANGE
+  local buffer[256]:sbyte
+  local hPopup:HMENU
+  local pt:POINT
+  local ofn:OPENFILENAME
+  local hFile:HANDLE
+  local editstream:EDITSTREAM
+  local chrg:CHARRANGE
 
     .switch message
 
@@ -1324,8 +1373,8 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
                 hWnd,
                 RichEditID,
                 hInstance,
-                NULL
-        )
+                NULL )
+
         SendMessage(hEdit, EM_SETTYPOGRAPHYOPTIONS, TO_SIMPLELINEBREAK, TO_SIMPLELINEBREAK)
         SendMessage(hEdit, EM_GETTYPOGRAPHYOPTIONS, 1, 1)
         SendMessage(hEdit, EM_SETEDITSTYLE, SES_EMULATESYSEDIT, SES_EMULATESYSEDIT)
@@ -1415,11 +1464,10 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
               .case IDM_OPEN
 
                 RtlZeroMemory(&ofn, sizeof(ofn))
-                mov  ofn.lStructSize,sizeof(ofn)
-                push hWnd
-                pop  ofn.hwndOwner
-                push hInstance
-                pop  ofn.hInstance
+
+                mov ofn.lStructSize,sizeof(ofn)
+                mov ofn.hwndOwner,hWnd
+                mov ofn.hInstance,hInstance
                 mov ofn.lpstrFilter,offset ASMFilter
                 mov ofn.lpstrFile,offset FileName
                 mov byte ptr [FileName],0
@@ -1514,12 +1562,12 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
                 .endc
 
               .case IDM_SAVEAS
+
                 RtlZeroMemory(&ofn, sizeof(ofn))
+
                 mov ofn.lStructSize,sizeof(ofn)
-                push hWnd
-                pop ofn.hwndOwner
-                push hInstance
-                pop ofn.hInstance
+                mov ofn.hwndOwner,hWnd
+                mov ofn.hInstance,hInstance
                 mov ofn.lpstrFilter,offset ASMFilter
                 mov ofn.lpstrFile,offset AltFileName
                 mov AltFileName,0
@@ -1568,8 +1616,7 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
                     SendMessage(hEdit, EM_EXGETSEL, 0, &findtext.chrg)
                     mov eax,findtext.chrg.cpMin
                     .if eax != findtext.chrg.cpMax
-                        push findtext.chrg.cpMax
-                        pop  findtext.chrg.cpMin
+                        mov findtext.chrg.cpMin,findtext.chrg.cpMax
                     .endif
                     mov findtext.chrg.cpMax,-1
                     mov findtext.lpstrText,offset FindBuffer
@@ -1630,7 +1677,7 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
       .case WM_SIZE
         mov eax,lParam
         mov edx,eax
-        and eax,0FFFFh
+        and eax,0xFFFF
         shr edx,16
         MoveWindow(hEdit, 0, 0, eax, edx, TRUE)
         .endc
@@ -1652,28 +1699,23 @@ WinMain proc WINAPI hInst: HINSTANCE,
          lpCmdLine: LPSTR,
           nShowCmd: SINT
 
-    local wc:WNDCLASSEX
-    local msg:MSG
-    local hwnd:HANDLE
+  local wc:WNDCLASSEX
+  local msg:MSG
+  local hwnd:HANDLE
 
-    mov wc.cbSize,SIZEOF WNDCLASSEX
-    mov wc.style,CS_HREDRAW or CS_VREDRAW
-    mov wc.lpfnWndProc,WndProc
-
-    mov ecx,hInst
-    xor eax,eax
-    mov wc.cbClsExtra,eax
-    mov wc.cbWndExtra,eax
-    mov hInstance,ecx
-    mov wc.hInstance,ecx
-    mov wc.hbrBackground,COLOR_WINDOW+1
-    mov wc.lpszMenuName,IDR_MAINMENU
-
-    lea eax,@CStr("TestClass")
-    mov wc.lpszClassName,eax
-    mov wc.hIcon,LoadIcon(0, IDI_APPLICATION)
-    mov wc.hIconSm,eax
-    mov wc.hCursor,LoadCursor(0, IDC_ARROW)
+    mov wc.cbSize,          WNDCLASSEX
+    mov wc.style,           CS_HREDRAW or CS_VREDRAW
+    mov wc.lpfnWndProc,     &WndProc
+    mov wc.cbClsExtra,      0
+    mov wc.cbWndExtra,      0
+    mov hInstance,          hInst
+    mov wc.hInstance,       hInst
+    mov wc.hbrBackground,   COLOR_WINDOW+1
+    mov wc.lpszMenuName,    IDR_MAINMENU
+    mov wc.lpszClassName,   &@CStr("TestClass")
+    mov wc.hIcon,           LoadIcon(0, IDI_APPLICATION)
+    mov wc.hIconSm,         eax
+    mov wc.hCursor,         LoadCursor(0, IDC_ARROW)
 
     RegisterClassEx(&wc)
 

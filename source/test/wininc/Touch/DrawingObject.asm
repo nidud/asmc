@@ -15,49 +15,40 @@ ROUND_DOUBLE_TO_LONG macro x
     .code
 
     assume rdi:ptr CDrawingObject
+    assume rcx:ptr CDrawingObjectVtbl
 
 CDrawingObject::CDrawingObject proc uses rsi rdi
 
     mov rsi,rcx
 
-    .repeat
+    .return .if !malloc( CDrawingObject + CDrawingObjectVtbl )
+    mov rdi,rax
 
-        .break .if !malloc( sizeof(CDrawingObject) + sizeof(CDrawingObjectVtbl) )
-        mov rdi,rax
+    add rax,CDrawingObject
+    mov [rdi].lpVtbl,rax
 
-        add rax,sizeof(CDrawingObject)
-        mov [rdi].lpVtbl,rax
+    mov [rdi].s_colors[0x00],RGB(0, 0, 0)     ;; black
+    mov [rdi].s_colors[0x04],RGB(255, 255, 0) ;; yellow
+    mov [rdi].s_colors[0x08],RGB(255, 0, 0)   ;; red
+    mov [rdi].s_colors[0x0C],RGB(0, 255, 0)   ;; green
+    mov [rdi].s_colors[0x10],RGB(0, 0, 255)   ;; blue
 
-        mov [rdi].s_colors[0x00],RGB(0, 0, 0)     ;; black
-        mov [rdi].s_colors[0x04],RGB(255, 255, 0) ;; yellow
-        mov [rdi].s_colors[0x08],RGB(255, 0, 0)   ;; red
-        mov [rdi].s_colors[0x0C],RGB(0, 255, 0)   ;; green
-        mov [rdi].s_colors[0x10],RGB(0, 0, 255)   ;; blue
+    mov rcx,rax
 
-        mov rcx,rax
-        lea rax,CDrawingObject_Release
-        mov [rcx+0x00],rax
-        lea rax,CDrawingObject_ResetObject
-        mov [rcx+0x08],rax
-        lea rax,CDrawingObject_Paint
-        mov [rcx+0x10],rax
-        lea rax,CDrawingObject_Move
-        mov [rcx+0x18],rax
-        lea rax,CDrawingObject_ToggleDrawDiagonals
-        mov [rcx+0x20],rax
-        lea rax,CDrawingObject_Zoom
-        mov [rcx+0x28],rax
-        lea rax,CDrawingObject_Rotate
-        mov [rcx+0x30],rax
-        lea rax,CDrawingObject_ShiftColor
-        mov [rcx+0x38],rax
+    mov [rcx].Release,&CDrawingObject_Release
+    mov [rcx].ResetObject,&CDrawingObject_ResetObject
+    mov [rcx].Paint,&CDrawingObject_Paint
+    mov [rcx].Move,&CDrawingObject_Move
+    mov [rcx].ToggleDrawDiagonals,&CDrawingObject_ToggleDrawDiagonals
+    mov [rcx].Zoom,&CDrawingObject_Zoom
+    mov [rcx].Rotate,&CDrawingObject_Rotate
+    mov [rcx].ShiftColor,&CDrawingObject_ShiftColor
 
-        mov rax,rdi
-        mov rcx,rdi
-        .if rsi
-            mov [rsi],rax
-        .endif
-    .until 1
+    mov rax,rdi
+    mov rcx,rdi
+    .if rsi
+        mov [rsi],rax
+    .endif
     ret
 
 CDrawingObject::CDrawingObject endp

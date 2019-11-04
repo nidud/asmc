@@ -62,12 +62,11 @@ SetColor proc
 SetColor endp
 
 RESaveCallback proc dwCookie:DWORD_PTR, lpBuff:LPBYTE, cb:LONG, pcb:PLONG
-    .if WriteFile(rcx, rdx, r8d, r9, NULL)
-        xor eax,eax
-    .else
-        mov eax,-1
-    .endif
+
+    .return 0 .if WriteFile(rcx, rdx, r8d, r9, NULL)
+    dec eax
     ret
+
 RESaveCallback endp
 
 SaveFile proc hwnd:HWND, lpszFileName:ptr TCHAR
@@ -77,7 +76,7 @@ SaveFile proc hwnd:HWND, lpszFileName:ptr TCHAR
     mov fSuccess,FALSE
 
     .if CreateFile(lpszFileName, GENERIC_WRITE, 0, 0, CREATE_ALWAYS,
-        FILE_FLAG_SEQUENTIAL_SCAN, NULL) != INVALID_HANDLE_VALUE
+            FILE_FLAG_SEQUENTIAL_SCAN, NULL) != INVALID_HANDLE_VALUE
 
         mov hFile,rax
         mov ed.dwCookie,rax
@@ -118,57 +117,41 @@ InsertBitmap proc hRichEdit:HWND, hBitmap:HBITMAP, nPosition:DWORD
     mov fm.lindex,-1
     mov fm.tymed,TYMED_GDI
 
-    .repeat
+    SendMessage(hRichEdit, EM_GETOLEINTERFACE, 0, &pRichEditOle)
+    .return 1 .if (pRichEditOle == NULL)
+    CDataObjectCreate(&pDataObject, @ReservedStack)
+    pDataObject.SetData(&fm, &stgm, TRUE)
+    .return 3 .if pRichEditOle.GetClientSite(&pOleClientSite)
 
-        SendMessage(hRichEdit, EM_GETOLEINTERFACE, 0, &pRichEditOle)
-        .if (pRichEditOle == NULL)
+    mov pLockBytes,rax
+    mov pStorage,rax
+    mov pOleObject,rax
 
-            mov eax,1
-            .break
-        .endif
+    .ifd !CreateILockBytesOnHGlobal(NULL, TRUE, &pLockBytes) && pLockBytes
 
-        CDataObjectCreate(&pDataObject, @ReservedStack)
-        pDataObject.SetData(&fm, &stgm, TRUE)
-        .if pRichEditOle.GetClientSite(&pOleClientSite)
+        .ifd !StgCreateDocfileOnILockBytes(pLockBytes, STGM_SHARE_EXCLUSIVE or STGM_CREATE or STGM_READWRITE, 0, &pStorage) && pStorage
 
-            mov eax,3
-            .break
-        .endif
+            .ifd !OleCreateStaticFromData(pDataObject, &IID_IOleObject, OLERENDER_FORMAT, &fm, pOleClientSite, pStorage, &pOleObject) && pOleObject
 
-        mov pLockBytes,rax
-        mov pStorage,rax
-        mov pOleObject,rax
+                .ifd !pOleObject.GetUserClassID(&reobject.clsid)
 
-        .if !CreateILockBytesOnHGlobal(NULL, TRUE, &pLockBytes) && pLockBytes
+                    mov reobject.cbStruct,REOBJECT
+                    mov reobject.cp,nPosition
+                    mov reobject.dvaspect,DVASPECT_CONTENT
+                    mov reobject.poleobj,pOleObject
+                    mov reobject.polesite,pOleClientSite
+                    mov reobject.pstg,pStorage
 
-            .if !StgCreateDocfileOnILockBytes(pLockBytes, STGM_SHARE_EXCLUSIVE or STGM_CREATE or STGM_READWRITE, 0, &pStorage) && pStorage
-
-                .if !OleCreateStaticFromData(pDataObject, &IID_IOleObject, OLERENDER_FORMAT, &fm, pOleClientSite, pStorage, &pOleObject) && pOleObject
-
-                    .if !pOleObject.GetUserClassID(&reobject.clsid)
-
-                        mov reobject.cbStruct,sizeof(REOBJECT)
-
-                        mov eax,nPosition
-                        mov reobject.cp,eax
-                        mov reobject.dvaspect,DVASPECT_CONTENT
-                        mov rax,pOleObject
-                        mov reobject.poleobj,rax
-                        mov rax,pOleClientSite
-                        mov reobject.polesite,rax
-                        mov rax,pStorage
-                        mov reobject.pstg,rax
-                        pRichEditOle.InsertObject(&reobject)
-                    .endif
-                    pOleObject.Release()
+                    pRichEditOle.InsertObject(&reobject)
                 .endif
-                pStorage.Release()
+                pOleObject.Release()
             .endif
-            pLockBytes.Release()
+            pStorage.Release()
         .endif
-        pOleClientSite.Release()
-        xor eax,eax
-    .until 1
+        pLockBytes.Release()
+    .endif
+    pOleClientSite.Release()
+    xor eax,eax
     ret
 
 InsertBitmap endp
@@ -178,8 +161,7 @@ RichEditProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
   local result:int_t
 
     .switch uMsg
-
-      .case WM_COMMAND
+    .case WM_COMMAND
         .if !lParam
             movzx eax,word ptr wParam
             .switch eax
@@ -187,26 +169,23 @@ RichEditProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
                 SendMessage(hWnd, WM_CLOSE, 0, 0)
                 .endc
               .case IDM_INSOBJ
+                ;int 3
                 InsertBitmap(hEdit, hBitmap1, REO_CP_SELECTION)
-                .endc
             .endsw
         .endif
         xor eax,eax
         .endc
-
-      .case WM_PAINT
+    .case WM_PAINT
         HideCaret(hWnd)
         CallWindowProc(OldWndProc, hWnd, uMsg, wParam, lParam)
         mov result,eax
         ShowCaret(hWnd)
         mov eax,result
         .endc
-
-      .case WM_CLOSE
+    .case WM_CLOSE
         SetWindowLongPtr(hWnd, GWL_WNDPROC, OldWndProc)
         .endc
-
-      .default
+    .default
         CallWindowProc(OldWndProc, hWnd, uMsg, wParam, lParam)
     .endsw
     ret
@@ -217,7 +196,7 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
 
     .switch message
 
-      .case WM_CREATE
+    .case WM_CREATE
         .if !LoadLibrary("Msftedit.dll")
             PostQuitMessage(1)
             xor eax,eax
@@ -235,7 +214,7 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
         xor eax,eax
         .endc
 
-      .case WM_COMMAND
+    .case WM_COMMAND
         .if !lParam
             movzx eax,word ptr wParam
             .switch eax
@@ -252,18 +231,18 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
         .endif
         xor eax,eax
         .endc
-      .case WM_SIZE
+    .case WM_SIZE
         mov rax,lParam
         mov edx,eax
         and eax,0xFFFF
         shr edx,16
         MoveWindow(hEdit, 0, 0, eax, edx, TRUE)
         .endc
-      .case WM_DESTROY
+    .case WM_DESTROY
         PostQuitMessage(0)
         xor eax,eax
         .endc
-      .default
+    .default
         DefWindowProc(hWnd, message, wParam, lParam)
     .endsw
     ret
@@ -272,25 +251,21 @@ WndProc endp
 
 _tWinMain proc WINAPI hInst:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPTSTR, nShowCmd:SINT
 
-    local wc:WNDCLASSEX, msg:MSG, hwnd:HANDLE
+  local wc:WNDCLASSEX, msg:MSG, hwnd:HANDLE
 
-    mov wc.cbSize,SIZEOF WNDCLASSEX
-    mov wc.style,CS_HREDRAW or CS_VREDRAW
-    lea rax,WndProc
-    mov wc.lpfnWndProc,rax
-    mov rcx,hInst
-    xor eax,eax
-    mov wc.cbClsExtra,eax
-    mov wc.cbWndExtra,eax
-    mov wc.hInstance,rcx
-    mov hInstance,rcx
-    mov wc.hbrBackground,COLOR_WINDOW+1
-    mov wc.lpszMenuName,IDR_MAINMENU
-    lea rax,@CStr("WndClass")
-    mov wc.lpszClassName,rax
-    mov wc.hIcon,LoadIcon(0, IDI_APPLICATION)
-    mov wc.hIconSm,rax
-    mov wc.hCursor,LoadCursor(0, IDC_ARROW)
+    mov wc.cbSize,          WNDCLASSEX
+    mov wc.style,           CS_HREDRAW or CS_VREDRAW
+    mov wc.lpfnWndProc,     &WndProc
+    mov wc.cbClsExtra,      0
+    mov wc.cbWndExtra,      0
+    mov wc.hInstance,       hInst
+    mov hInstance,          hInst
+    mov wc.hbrBackground,   COLOR_WINDOW+1
+    mov wc.lpszMenuName,    IDR_MAINMENU
+    mov wc.lpszClassName,   &@CStr("WndClass")
+    mov wc.hIcon,           LoadIcon(0, IDI_APPLICATION)
+    mov wc.hIconSm,         rax
+    mov wc.hCursor,         LoadCursor(0, IDC_ARROW)
     RegisterClassEx(&wc)
 
     mov ecx,CW_USEDEFAULT
@@ -313,31 +288,31 @@ _tWinMain endp
 
 CDataObject::GetData proc pformatetcIn:ptr FORMATETC, pmedium:ptr STGMEDIUM
 
-    .if OleDuplicateData([rcx].m_StgMedium.hBitmap, CF_BITMAP, 0)
+    .return E_HANDLE .if !OleDuplicateData([rcx].m_StgMedium.hBitmap, CF_BITMAP, 0)
 
-        mov rdx,pmedium
-        mov [rdx].STGMEDIUM.tymed,TYMED_GDI
-        mov [rdx].STGMEDIUM.hBitmap,rax
-        xor eax,eax
-        mov [rdx].STGMEDIUM.pUnkForRelease,rax
-    .else
-        mov eax,E_HANDLE
-    .endif
+    mov rdx,pmedium
+    mov [rdx].STGMEDIUM.tymed,TYMED_GDI
+    mov [rdx].STGMEDIUM.hBitmap,rax
+    xor eax,eax
+    mov [rdx].STGMEDIUM.pUnkForRelease,rax
     ret
+
 CDataObject::GetData endp
 
     option win64:rsp nosave noauto
 
 CDataObject::SetData proc uses rsi rdi pformatetc:ptr, pmedium:ptr, fRelease:BOOL
+
     mov rsi,rdx
     lea rdi,[rcx].m_FormatEtc
-    mov ecx,sizeof(FORMATETC)
+    mov ecx,FORMATETC
     rep movsb
     mov rsi,r8
-    mov ecx,sizeof(STGMEDIUM)
+    mov ecx,STGMEDIUM
     rep movsb
     mov eax,S_OK
     ret
+
 CDataObject::SetData endp
 
 CDataObject::Release proc

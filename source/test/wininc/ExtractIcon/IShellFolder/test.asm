@@ -1,8 +1,9 @@
 include windows.inc
 include shlobj.inc
 include tchar.inc
-ifdef _MSVCRT
+
 .data
+ifdef _MSVCRT
 ifdef _UNICODE
 IID_IExtractIcon IID _IID_IExtractIconW
 else
@@ -10,6 +11,8 @@ IID_IExtractIcon IID _IID_IExtractIconA
 endif
 IID_IShellFolder IID _IID_IShellFolder
 endif
+windir TCHAR @CatStr(<!">, @Environ(SystemRoot),<!">),0
+
 .code
 
 WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
@@ -28,21 +31,29 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
 
     .switch message
 
-      .case WM_PAINT
+    .case WM_PAINT
+
         mov hDC,BeginPaint(hWnd, &ps)
+
         .ifd !SHGetDesktopFolder(&pDesktop)
 
-            .ifd !pDesktop.ParseDisplayName(NULL, NULL, L"C:\\Windows", NULL, &pIDL, NULL)
+            .ifd !pDesktop.ParseDisplayName(NULL, NULL,
+                    &windir, NULL, &pIDL, NULL)
 
-                .ifd !pDesktop.BindToObject(pIDL, NULL, &IID_IShellFolder, &pSubfolder)
+                .ifd !pDesktop.BindToObject(pIDL, NULL, &IID_IShellFolder,
+                        &pSubfolder)
 
-                    .ifd !pSubfolder.ParseDisplayName(NULL, NULL, L"regedit.exe", NULL, &pIDL, NULL)
+                    .ifd !pSubfolder.ParseDisplayName(NULL, NULL,
+                            L"regedit.exe", NULL, &pIDL, NULL)
 
-                        .ifd !pSubfolder.GetUIObjectOf(hWnd, 1, &pIDL, &IID_IExtractIcon, 0, &pExtractor)
+                        .ifd !pSubfolder.GetUIObjectOf(hWnd, 1, &pIDL,
+                                &IID_IExtractIcon, 0, &pExtractor)
 
-                            .ifd !pExtractor.GetIconLocation(0, &IconFile, _MAX_PATH, &iIndex, &Flags)
+                            .ifd !pExtractor.GetIconLocation(0, &IconFile,
+                                    _MAX_PATH, &iIndex, &Flags)
 
-                                .ifd !pExtractor.Extract(&IconFile, iIndex, &hiconLarge, &hiconSmall, 0x00200010)
+                                .ifd !pExtractor.Extract(&IconFile, iIndex,
+                                        &hiconLarge, &hiconSmall, 0x00200010)
 
                                     DrawIcon(hDC, 100, 75, hiconLarge)
                                     DrawIcon(hDC, 200, 75, hiconSmall)
@@ -54,16 +65,15 @@ WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
                     pSubfolder.Release()
                 .endif
             .endif
+
             pDesktop.Release()
         .endif
         EndPaint(hWnd, &ps)
-        xor eax,eax
-        .endc
+        .return 0
 
       .case WM_DESTROY
         PostQuitMessage(0)
-        xor eax,eax
-        .endc
+        .return 0
 
       .default
         DefWindowProc(hWnd, message, wParam, lParam)
@@ -76,22 +86,19 @@ _tWinMain proc WINAPI hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LP
 
   local wc:WNDCLASSEX, msg:MSG, hwnd:HANDLE
 
-    mov wc.cbSize,SIZEOF WNDCLASSEX
-    mov wc.style,CS_HREDRAW or CS_VREDRAW
-    lea rax,WndProc
-    mov wc.lpfnWndProc,rax
-    mov rcx,hInstance
-    xor eax,eax
-    mov wc.cbClsExtra,eax
-    mov wc.cbWndExtra,eax
-    mov wc.hInstance,rcx
-    mov wc.hbrBackground,COLOR_WINDOW+1
-    mov wc.lpszMenuName,rax
-    lea rax,@CStr("WndClass")
-    mov wc.lpszClassName,rax
-    mov wc.hIcon,LoadIcon(0, IDI_APPLICATION)
-    mov wc.hIconSm,rax
-    mov wc.hCursor,LoadCursor(0, IDC_ARROW)
+    mov wc.cbSize,          WNDCLASSEX
+    mov wc.style,           CS_HREDRAW or CS_VREDRAW
+    mov wc.lpfnWndProc,     &WndProc
+    mov wc.hInstance,       hInstance
+    mov wc.cbClsExtra,      0
+    mov wc.cbWndExtra,      0
+    mov wc.hbrBackground,   COLOR_WINDOW+1
+    mov wc.lpszMenuName,    NULL
+    mov wc.lpszClassName,   &@CStr("WndClass")
+    mov wc.hIcon,           LoadIcon(0, IDI_APPLICATION)
+    mov wc.hIconSm,         rax
+    mov wc.hCursor,         LoadCursor(0, IDC_ARROW)
+
     RegisterClassEx(&wc)
 
     mov ecx,CW_USEDEFAULT

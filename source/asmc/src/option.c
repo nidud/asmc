@@ -797,7 +797,7 @@ int SetWin64( int *pi, struct asm_tok tokenarray[] )
 	return( NOT_ERROR);
     }
 
-    if ( tokenarray[i].string_ptr[0] >= '0' && tokenarray[i].string_ptr[0] <= '9') {
+    if ( tokenarray[i].token == T_NUM ) {
 	if ( EvalOperand( &i, tokenarray, Token_Count, &opndx, 0 ) == ERROR )
 	    return( ERROR );
 	if ( opndx.kind == EXPR_CONST ) {
@@ -813,14 +813,14 @@ int SetWin64( int *pi, struct asm_tok tokenarray[] )
 	    if (tokenarray[i].token != T_COLON &&
 		tokenarray[i].token != T_COMMA) {
 
-		if ( !_stricmp( tokenarray[i].string_ptr, "RSP" ) ) {
+		if ( tokenarray[i].tokval == T_RSP ) {
 		    InitStackBase( T_RSP );
 		    ModuleInfo.win64_flags |= W64F_AUTOSTACKSP;
-		} else if ( !_stricmp( tokenarray[i].string_ptr, "RBP" ) ) {
+		} else if ( tokenarray[i].tokval == T_RBP ) {
 		    InitStackBase( T_RBP );
 		    ModuleInfo.frame_auto = 1;
 		    ModuleInfo.win64_flags |= (W64F_AUTOSTACKSP | W64F_SAVEREGPARAMS);
-		} else if ( !_stricmp( tokenarray[i].string_ptr, "ALIGN" ) ) {
+		} else if ( tokenarray[i].tokval == T_ALIGN ) {
 		    if ( !ModuleInfo.win64_flags )
 			ModuleInfo.win64_flags |= W64F_AUTOSTACKSP;
 		    ModuleInfo.win64_flags |= W64F_STACKALIGN16;
@@ -834,7 +834,7 @@ int SetWin64( int *pi, struct asm_tok tokenarray[] )
 		    ModuleInfo.win64_flags |= W64F_AUTOSTACKSP;
 		} else if ( !_stricmp( tokenarray[i].string_ptr, "NOAUTO" ) ) {
 		    ModuleInfo.win64_flags &= ~W64F_AUTOSTACKSP;
-		} else if ( !_stricmp( tokenarray[i].string_ptr, "FRAME" ) ) {
+		} else if ( tokenarray[i].tokval == T_FRAME ) {
 		    ModuleInfo.frame_auto = 1;
 		} else if ( !_stricmp( tokenarray[i].string_ptr, "NOFRAME" ) ) {
 		    ModuleInfo.frame_auto = 0;

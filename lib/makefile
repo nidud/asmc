@@ -29,6 +29,7 @@ targets = \
 	evr.lib		\
 	gdi32.lib	\
 	glu32.lib	\
+	glut32.lib	\
 	gpedit.lib	\
 	httpapi.lib	\
 	icm32.lib	\

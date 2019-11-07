@@ -633,16 +633,16 @@ check_both endp
 
 index_connect proc fastcall opnd1:expr_t, opnd2:expr_t
 
-    .if [edx].base_reg != NULL
+    mov eax,[edx].base_reg
+    .if eax != NULL
         .if [ecx].base_reg == NULL
-            mov [ecx].base_reg,[edx].base_reg
+            mov [ecx].base_reg,eax
         .elseif [ecx].idx_reg == NULL
-            mov eax,[ecx].base_reg
-            .if [eax].asm_tok.bytval != 4
-                mov [ecx].idx_reg,eax
+            .if [eax].asm_tok.bytval == 4
+                mov [ecx].idx_reg,[ecx].base_reg
                 mov [ecx].base_reg,[edx].base_reg
             .else
-                mov [ecx].idx_reg,[edx].base_reg
+                mov [ecx].idx_reg,eax
             .endif
         .else
             .return fnasmerr(2030)
@@ -1111,7 +1111,10 @@ opattr_op proc uses esi edi ebx oper:int_t, opnd1:expr_t, opnd2:expr_t, sym:asym
     .endif
 
     assume eax:nothing
-    mov eax,[edx].base_reg
+    mov eax,[edx].idx_reg
+    .if eax == 0
+        mov eax,[edx].base_reg
+    .endif
     .if eax
         imul eax,[eax].asm_tok.tokval,special_item
     .endif
@@ -1975,12 +1978,12 @@ CheckAssume proc fastcall uses esi ebx opnd:expr_t
     .endif
 
     xor ebx,ebx
-    .if [esi].base_reg
-        mov eax,[esi].base_reg
+    .if [esi].idx_reg
+        mov eax,[esi].idx_reg
         mov ebx,GetStdAssumeEx( [eax].asm_tok.bytval )
     .endif
-    .if !ebx && [esi].idx_reg
-        mov eax,[esi].idx_reg
+    .if !ebx && [esi].base_reg
+        mov eax,[esi].base_reg
         mov ebx,GetStdAssumeEx( [eax].asm_tok.bytval )
     .endif
 

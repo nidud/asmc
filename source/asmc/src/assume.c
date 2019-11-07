@@ -403,7 +403,6 @@ int AssumeDirective( int i, struct asm_tok tokenarray[] )
 
 enum assume_segreg search_assume( const struct asym *sym,
 		  enum assume_segreg def, bool search_grps )
-/**********************************************************/
 {
     struct asym *grp;
 
@@ -453,7 +452,6 @@ enum assume_segreg search_assume( const struct asym *sym,
 */
 
 struct asym *GetOverrideAssume( enum assume_segreg override )
-/***********************************************************/
 {
     if( SegAssumeTable[override].is_flat ) {
 	return( (struct asym *)ModuleInfo.flat_grp );
@@ -472,8 +470,8 @@ struct asym *GetOverrideAssume( enum assume_segreg override )
  * to be fixed: check if symbols with state==SYM_STACK are handled correctly.
  */
 
-enum assume_segreg GetAssume( const struct asym *override, const struct asym *sym, enum assume_segreg def, struct asym * *passume )
-/*********************************************************************************************************************************/
+enum assume_segreg GetAssume( const struct asym *override, const struct asym *sym,
+	enum assume_segreg def, struct asym * *passume )
 {
     enum assume_segreg	reg;
 

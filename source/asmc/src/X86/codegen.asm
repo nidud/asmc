@@ -333,17 +333,25 @@ output_opc proc uses edi ebx
 
     .if rflags & RWF_VEX
 
-        movzx eax,[esi].token
-        sub eax,VEX_START
-        mov al,vex_flags[eax]
+        movzx edx,[esi].token
+        mov al,vex_flags[edx-VEX_START]
 
         mov vex,al
         xor ebx,ebx
-        and al,VX_RW1
-        mov bh,al
-        mov cl,[esi].evexP3
-        mov al,[edi].byte1_info
 
+        mov cl,[esi].evexP3
+        mov ch,[esi].vflags
+        and al,VX_RW1
+        .switch
+        .case evex
+            .endc
+        .case edx == T_VCVTSI2SD
+        .case edx == T_VMOVQ
+            xor eax,eax
+        .endsw
+        mov bh,al
+
+        mov al,[edi].byte1_info
         .switch al
         .case F_0F38
             mov bl,VX1_R
@@ -371,11 +379,10 @@ output_opc proc uses edi ebx
             .endc
         .endsw
 
-        mov ch,[esi].vflags
         .if ch & VX_OP1V
             or bh,VX2_1
         .endif
-        .if cl & VX3_B
+        .if cl & VX3_B || ( ( cl & VX3_A2 ) && !( ch & VX_OP1V or VX_OP2V or VX_OP3V or VX_ZMM ) )
             or cl,VX3_V
         .endif
         .if ( ( [esi].opnd[OPND1].type & ( OP_YMM or OP_ZMM ) ) || \
@@ -563,7 +570,7 @@ output_opc proc uses edi ebx
                     .switch bl
                     .case 0xC1
                         mov bl,0x91
-                        .endc
+                        .endc .if !( ch & VX_ZMM )
                     .case 0xC5
                         mov bl,0xB1
                         .endc

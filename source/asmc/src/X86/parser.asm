@@ -714,8 +714,9 @@ endif
                 or [esi].opc_or,0x40 ;; YMM/ZMM
             .endif
         .endif
-    .else
-        ;; base != EMPTY && index != EMPTY
+
+    .else ;; base != EMPTY && index != EMPTY
+
         mov base_reg,5
         .if base != T_RIP
             mov base_reg,GetRegNo(base)

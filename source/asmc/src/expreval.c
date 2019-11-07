@@ -553,7 +553,7 @@ static int index_connect( struct expr *opnd1, const struct expr *opnd2 )
 	if ( opnd1->base_reg == NULL )
 	    opnd1->base_reg = opnd2->base_reg;
 	else if ( opnd1->idx_reg == NULL ) {
-	    if ( opnd1->base_reg->bytval != 4 ) {
+	    if ( opnd2->base_reg->bytval == 4 ) {
 		opnd1->idx_reg = opnd1->base_reg;
 		opnd1->base_reg = opnd2->base_reg;
 	    } else {
@@ -861,6 +861,8 @@ enum opattr_bits {
 
 static int opattr_op( int oper, struct expr *opnd1, struct expr *opnd2, struct asym *sym, char *name )
 {
+    struct asm_tok *p;
+
     opnd1->kind = EXPR_CONST;
     opnd1->sym = NULL;
     opnd1->value = 0;
@@ -908,9 +910,11 @@ static int opattr_op( int oper, struct expr *opnd1, struct expr *opnd2, struct a
 	opnd1->value |= OPATTR_REGISTER;
     if ( opnd2->kind != EXPR_ERROR && opnd2->kind != EXPR_FLOAT && ( opnd2->sym == NULL || opnd2->sym->isdefined == 1 ) )
 	opnd1->value |= OPATTR_DEFINED;
+    p = opnd2->idx_reg;
+    if ( p == NULL )
+	p = opnd2->base_reg;
     if ( ( opnd2->sym && opnd2->sym->state == SYM_STACK ) ||
-	( opnd2->indirect && opnd2->base_reg &&
-	 ( SpecialTable[opnd2->base_reg->tokval].sflags & SFR_SSBASED ) ) )
+	( opnd2->indirect && p && ( SpecialTable[p->tokval].sflags & SFR_SSBASED ) ) )
 	opnd1->value |= OPATTR_SSREL;
     if ( opnd2->sym && opnd2->sym->state == SYM_EXTERNAL )
 	opnd1->value |= OPATTR_EXTRNREF;
@@ -1551,10 +1555,10 @@ static void CheckAssume( struct expr *opnd )
 	}
     }
 
-    if ( opnd->base_reg )
-	sym = GetStdAssumeEx( opnd->base_reg->bytval );
-    if (!sym && opnd->idx_reg )
+    if ( opnd->idx_reg )
 	sym = GetStdAssumeEx( opnd->idx_reg->bytval );
+    if (!sym && opnd->base_reg )
+	sym = GetStdAssumeEx( opnd->base_reg->bytval );
 
     if ( sym ) {
 	if ( sym->mem_type == MT_TYPE )

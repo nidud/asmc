@@ -35,7 +35,7 @@ WINAPI_FAMILY_PARTITION macro Partitions
 	exitm<(Partitions)>
 	endm
 
-_WINAPI_DEPRECATED_DECLARATION equ __declspec(deprecated("This API cannot be used in the context of the caller's application type."))
+_WINAPI_DEPRECATED_DECLARATION equ <__declspec(deprecated("This API cannot be used in the context of the caller's application type."))>
 
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP) AND NOT WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 APP_DEPRECATED_HRESULT equ _WINAPI_DEPRECATED_DECLARATION

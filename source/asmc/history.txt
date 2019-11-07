@@ -3,6 +3,7 @@ Change Log File for ASMC
 ========================
 
 Changes in 2.31 - xx xxx 2019
+- fixed bug in indirect addressing (AVX-512)
 - fixed invalid command-line option error
 - fixed .return(&address) .if ...
 - fixed bug in .new directive - local size not reset for each pass.

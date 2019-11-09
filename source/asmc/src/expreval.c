@@ -188,6 +188,8 @@ static int get_precedence( const struct asm_tok *item )
 
 static unsigned int GetTypeSize( unsigned char mem_type, int Ofssize )
 {
+    if ( mem_type == MT_ZWORD )
+	return( 64 );
     if ( (mem_type & MT_SPECIAL) == 0 )
 	return( ( mem_type & MT_SIZE_MASK ) + 1 );
     if ( Ofssize == USE_EMPTY )

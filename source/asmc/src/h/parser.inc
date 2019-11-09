@@ -265,12 +265,16 @@ VX3_A2		equ 0x04 ;; {k1..k7}
 VX3_A1		equ 0x02
 VX3_A0		equ 0x01
 
+;; vflags
+
 VX_OP1V		equ 0x01 ;; set if op1..3 is [z OR y OR x]mm16..31 register
 VX_OP2V		equ 0x02
 VX_OP3V		equ 0x04
 VX_OP3		equ 0x08 ;; more than 2 instruction args used
 VX_ZMM		equ 0x10 ;; ZMM used
 VX_SAE		equ 0x20 ;; {sae} used
+VX_ZMM8		equ 0x40 ;; zmm8..15 used
+VX_ZMM24	equ 0x80 ;; zmm24..31 used
 
 ;; pinstr->evex
 

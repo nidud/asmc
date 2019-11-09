@@ -24,6 +24,11 @@ main proc
     .return f ; xmm0 - movss
     .return d ; xmm0 - movsd
     .return q ; xmm0 - movaps
+
+    ; v2.30.24 - return address
+
+    .return(&b) ; rax - lea
+    .return &b
     nop
     ret
 

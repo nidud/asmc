@@ -268,6 +268,13 @@ static void output_opc( struct code_info *CodeInfo )
 	uint_8 byte2 = vex & VX_RW1;
 	uint_8 byte3 = CodeInfo->evexP3;
 
+	if ( evex == 0 ) {
+
+	    if ( CodeInfo->token == T_VCVTSI2SD ||
+		 CodeInfo->token == T_VMOVQ )
+		byte2 = 0;
+	}
+
 	switch ( ins->byte1_info ) {
 	case F_0F38:
 	    byte1 = VX1_R;
@@ -297,8 +304,8 @@ static void output_opc( struct code_info *CodeInfo )
 
 	if ( vflags & VX_OP1V )
 	    byte2 |= VX2_1;
-
-	if ( byte3 & VX3_B )
+	if ( ( byte3 & VX3_B ) ||
+	     ( ( byte3 & VX3_A2 ) && !( vflags & VX_OP1V | VX_OP2V | VX_OP3V | VX_ZMM ) ) )
 	    byte3 |= VX3_V;
 
 	if ( ( CodeInfo->opnd[OPND1].type & ( OP_YMM | OP_ZMM ) ) ||
@@ -449,7 +456,8 @@ static void output_opc( struct code_info *CodeInfo )
 		    switch ( byte1 ) {
 		    case 0xC1:
 			byte1 = 0x91;
-			break;
+			if ( !( vflags & VX_ZMM ) )
+			    break;
 		    case 0xC5:
 			byte1 = 0xB1;
 			break;

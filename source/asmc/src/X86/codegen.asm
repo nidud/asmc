@@ -342,13 +342,11 @@ output_opc proc uses edi ebx
         mov cl,[esi].evexP3
         mov ch,[esi].vflags
         and al,VX_RW1
-        .switch
-        .case evex
-            .endc
-        .case edx == T_VCVTSI2SD
-        .case edx == T_VMOVQ
-            xor eax,eax
-        .endsw
+        .if evex == 0
+            .if edx == T_VCVTSI2SD || edx == T_VMOVQ
+                xor eax,eax
+            .endif
+        .endif
         mov bh,al
 
         mov al,[edi].byte1_info
@@ -382,7 +380,8 @@ output_opc proc uses edi ebx
         .if ch & VX_OP1V
             or bh,VX2_1
         .endif
-        .if cl & VX3_B || ( ( cl & VX3_A2 ) && !( ch & VX_OP1V or VX_OP2V or VX_OP3V or VX_ZMM ) )
+        .if cl & VX3_B || ( ( cl & VX3_A2 ) && !( ch & VX_ZMM ) && !( ch & VX_OP3 ) ) || \
+            ( ( cl & VX3_A2 ) && ( ch == VX_OP3 ) )
             or cl,VX3_V
         .endif
         .if ( ( [esi].opnd[OPND1].type & ( OP_YMM or OP_ZMM ) ) || \
@@ -440,6 +439,7 @@ output_opc proc uses edi ebx
 
         .if ( [edi].byte1_info >= F_0F38 || ( [esi].rex & ( REX_B or REX_X or REX_W ) ) )
 
+
             .if evex == 0
                 push ecx
                 OutputByte(0xC4)
@@ -482,7 +482,8 @@ output_opc proc uses edi ebx
                 or bh,VX2_W
             .endif
 
-            .if evex
+            mov ah,evex
+            .if ah
 
                 .if ch & VX_OP1V or VX_OP2V or VX_OP3V
 
@@ -496,25 +497,26 @@ output_opc proc uses edi ebx
                     .case VX_OP2V                       ;; 0, 1
                         mov al,bl
                         and al,0x6F
-                        .if evex == 0x08 && al == 0x62
+                        .if ah == 0x08 && al == 0x62
                             or evex,0xE0
                             .endc
                         .endif
-                        .if evex == 0x20
+                        .if ah == 0x20
                             add edi,instr_item
                         .endif
                     .case VX_OP3 or VX_OP3V             ;; 0, 0, 1
-                        .if !( evex & VX_W1 ) && ( tuple == RWF_T1S || tuple == RWF_QVM )
+                        .if !( ah & VX_W1 ) && ( tuple == RWF_T1S || tuple == RWF_QVM )
                             and bl,not VX1_R1
                         .else
                             and bl,not VX1_X
-                            .if !( ch & VX_ZMM ) && !( [esi].sib & 0xC0 )
+                            .if ( ch & VX_ZMM24 && ( [esi].opnd[OPND1].type == OP_ZMM ) ) || \
+                                ( !( ch & VX_ZMM ) && !( [esi].sib & 0xC0 ) )
                                 or bl,VX1_R1
                             .endif
                         .endif
                         .endc
                     .case VX_OP3 or VX_OP1V or VX_OP2V  ;; 1, 1, 0
-                        .if !( evex & VX1_X ) && ( [esi].opnd[OPNI2].type & OP_I || [esi].opnd[OPNI3].type & OP_I )
+                        .if !( ah & VX1_X ) && ( [esi].opnd[OPNI2].type & OP_I || [esi].opnd[OPNI3].type & OP_I )
                             and bl,not VX1_X
                             .if [esi].opnd[OPNI2].type & OP_I
                                 or bl,VX1_R1
@@ -526,14 +528,14 @@ output_opc proc uses edi ebx
                         .endif
                         .endc
                     .case VX_OP3 or VX_OP1V             ;; 1, 0, 0
-                        .if evex == 0x10
+                        .if ah == 0x10
                             or  bl,0x80
                             and bh,not 0x70
                             and cl,not 0x08
                             .endc
                         .endif
                     .case VX_OP1V                       ;; 1, 0
-                        .if evex == 0x20 ;; VMOVQ
+                        .if ah == 0x20 ;; VMOVQ
                             and bh,not 0x02
                             or  bh,0x01
                             add edi,instr_item
@@ -553,7 +555,7 @@ output_opc proc uses edi ebx
                         and bl,not ( VX1_R1 or VX1_X )
                         .endc
                     .case VX_OP3 or VX_OP2V              ;; 0, 1, 0
-                        mov al,evex
+                        mov al,ah
                         and al,0xFD
                         .if ( al != 0x80 && ( ( ch & VX_ZMM || [esi].sib & 0xC0 ) && \
                             !( !( vex & VX_RW1 ) && tuple == RWF_T1S ) ) )
@@ -571,6 +573,10 @@ output_opc proc uses edi ebx
                     .case 0xC1
                         mov bl,0x91
                         .endc .if !( ch & VX_ZMM )
+                        mov bl,0xB1
+                        .endc .if !( ch & VX_ZMM8 )
+                        mov bl,0xD1
+                        .endc
                     .case 0xC5
                         mov bl,0xB1
                         .endc
@@ -615,6 +621,7 @@ output_opc proc uses edi ebx
 
             .else
 
+                mov ah,evex
                 mov al,ch
                 and al,VX_OP1V or VX_OP2V or VX_OP3V or VX_OP3
                 .switch al
@@ -622,7 +629,7 @@ output_opc proc uses edi ebx
                     and cl,not VX3_V
                     .endc
                 .case VX_OP3 or VX_OP1V or VX_OP2V       ;; 1, 1, 0
-                    .if evex & VX1_X || [esi].opnd[OPNI3].type == OP_I8
+                    .if ah & VX1_X || [esi].opnd[OPNI3].type == OP_I8
                         and cl,not VX3_V
                     .endif
                     .endc
@@ -636,30 +643,42 @@ output_opc proc uses edi ebx
                     .endc
                 .case VX_OP2V                           ;; 0, 1
                 .case VX_OP1V                           ;; 1, 0
-                    .if evex == 0x20                    ;; VMOVQ
+                    .if ah == 0x20                      ;; VMOVQ
                         and bh,not 0x02
                         or  bh,0x01
                         add edi,instr_item              ;; 7E --> 6E
+                    .elseif ah == 0xE0 && ( ch & VX_ZMM && \
+                        [esi].opnd[OPND1].type == OP_ZMM && [esi].opnd[OPNI2].type == OP_ZMM )
+                        mov ah,0xB0
                     .endif
                     .endc
                 .case VX_OP3 or VX_OP1V                 ;; 1, 0, 0
-                    .if evex == 0x10
+                    .if ah == 0x10
                         and bh,not 0x70
                         and cl,not 0x08
                     .endif
                     .endc
                 .endsw
 
-                mov al,evex
+                mov al,ah
                 and al,0xF0
                 or  al,0x01
                 or  bl,al
                 .if [esi].rex & REX_R
                     mov bl,0x61
-                    .if [esi].opnd[OPND1].type == OP_R32
+                    .if [esi].opnd[OPND1].type == OP_R32 || ( ch & VX_ZMM8 )
                         or bl,0x10
+                        .if ( ch & VX_OP1V or VX_OP2V or VX_OP3V )
+                            and bl,not 0x40
+                        .endif
                     .elseif evex == 0x10
                         or bl,0xF0
+                    .elseif ( ch & VX_ZMM24 )
+                        mov al,ch
+                        and al,VX_OP1V or VX_OP2V or VX_OP3V
+                        .if al == VX_OP1V or VX_OP2V && !( ch & VX_OP3 )
+                            mov bl,0x21
+                        .endif
                     .endif
                 .elseif ch & VX_OP1V
                     mov bl,0xE1

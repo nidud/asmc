@@ -261,6 +261,9 @@ SizeFromRegister endp
 SizeFromMemtype proc mem_type:uchar_t, Ofssize:int_t, type:asym_t
 
     movzx eax,mem_type
+    .if al == MT_ZWORD
+        .return 64
+    .endif
     mov ecx,eax
     and ecx,MT_SPECIAL
     .ifz
@@ -327,7 +330,9 @@ MemtypeFromSize proc size:int_t, ptype:ptr byte
 
             ;; the size is encoded 0-based in field mem_type
             mov al,SpecialTable[ecx].bytval
-            and eax,MT_SIZE_MASK
+            .if al != MT_ZWORD
+                and eax,MT_SIZE_MASK
+            .endif
             inc eax
             .if eax == size
                 mov edx,ptype
@@ -2072,7 +2077,12 @@ process_register proc private uses esi edi ebx CodeInfo:ptr code_info, CurrOpnd:
             mov ecx,index
             mov edx,1
             shl edx,cl
+            .if eax == OP_ZMM && regno > 23
+                or edx,VX_ZMM24
+            .endif
             or [esi].vflags,dl
+        .elseif eax == OP_ZMM && regno > 7
+            or [esi].vflags,VX_ZMM8
         .endif
     .endif
 
@@ -2871,6 +2881,19 @@ IsType proc private name:string_t
 
 IsType endp
 
+;
+; Handles {modifiers}
+;
+; Rounding
+;  to nearest or even        {rn-sae} - _MM_FROUND_TO_NEAREST_INT
+;  toward negative infinity  {rd-sae} - _MM_FROUND_TO_NEG_INF
+;  toward positive infinity  {ru-sae} - _MM_FROUND_TO_POS_INF
+;  toward zero               {rz-sae} - _MM_FROUND_TO_ZERO
+;
+; Suppress All Exceptions    {sae}    - __MM_FROUND_NO_EXC
+; Merge Mask                 {k1}
+; Zero Mask                  {k1}{z}
+;
 parsevex proc string:string_t, result:ptr uchar_t
 
     mov edx,string

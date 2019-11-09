@@ -124,6 +124,9 @@ get_precedence endp
 
 GetTypeSize proc fastcall mem_type:byte, ofssize:int_t
 
+    .if cl == MT_ZWORD
+        .return 64
+    .endif
     .if !( cl & MT_SPECIAL )
         and ecx,MT_SIZE_MASK
         inc ecx

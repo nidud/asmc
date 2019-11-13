@@ -121,25 +121,22 @@ write_multi_char endp
 
     option win64:3
 
-_output PROC PUBLIC USES rsi rdi rbx fp:LPFILE, format:LPSTR, arglist:PVOID
+_output proc public uses rsi rdi rbx fp:LPFILE, format:string_t, arglist:ptr_t
 
-  local charsout:   sdword,
-        hexoff:     dword,
-        state:      dword,
-        curadix:    dword,
-        prefix[2]:  byte,
-        textlen:    dword,
-        prefixlen:  dword,
-        no_output:  dword,
-        fldwidth:   dword,
-        bufferiswide:dword,
-        padding:    dword,
-        text:       LPSTR,
-        number:     qword,
-        wchar:      wint_t,
-        mbuf[MB_LEN_MAX+1]:wint_t,
-        buffer[BUFFERSIZE]:byte,
-        tmp:REAL16
+  local charsout            : int_t,
+        hexoff              : uint_t,
+        state               : uint_t,
+        curadix             : uint_t,
+        prefix[2]           : uchar_t,
+        textlen             : uint_t,
+        prefixlen           : uint_t,
+        no_output           : uint_t,
+        fldwidth            : uint_t,
+        bufferiswide        : uint_t,
+        padding             : uint_t,
+        text                : string_t,
+        mbuf[MB_LEN_MAX+1]  : wint_t,
+        buffer[BUFFERSIZE]  : char_t
 
     xor eax,eax
     mov textlen,eax
@@ -149,17 +146,17 @@ _output PROC PUBLIC USES rsi rdi rbx fp:LPFILE, format:LPSTR, arglist:PVOID
 
     .while 1
 
-        lea     rbx,__lookuptable
-        mov     rax,format
-        inc     format
-        movzx   eax,BYTE PTR [rax]
-        mov     edx,eax
+        lea rcx,__lookuptable
+        mov rax,format
+        inc format
+        movzx eax,BYTE PTR [rax]
+        mov edx,eax
 
         .break .if !eax || charsout > INT_MAX
 
         .if eax >= ' ' && eax <= 'x'
 
-            mov al,[rbx+rax-32]
+            mov al,[rcx+rax-32]
             and eax,15
         .else
             xor eax,eax
@@ -167,9 +164,9 @@ _output PROC PUBLIC USES rsi rdi rbx fp:LPFILE, format:LPSTR, arglist:PVOID
 
         shl eax,3
         add eax,state
-        mov al,[rbx+rax]
+        mov al,[rcx+rax]
         shr eax,4
-        and eax,0Fh
+        and eax,0x0F
         mov state,eax
 
         .if eax <= 7
@@ -195,8 +192,7 @@ _output PROC PUBLIC USES rsi rdi rbx fp:LPFILE, format:LPSTR, arglist:PVOID
                 mov prefixlen,eax
                 mov bufferiswide,eax
                 xor esi,esi ; flags
-                xor edi,edi ; precision
-                dec edi
+                mov edi,-1  ; precision
                 .endc
 
               .case ST_FLAG
@@ -221,15 +217,11 @@ _output PROC PUBLIC USES rsi rdi rbx fp:LPFILE, format:LPSTR, arglist:PVOID
                     .endif
                     mov fldwidth,eax
                 .else
-                    movsx eax,dl
-                    push rax
-                    mov  eax,fldwidth
-                    mov  edx,10
-                    imul edx
-                    pop rdx
-                    add edx,eax
-                    add edx,-48
-                    mov fldwidth,edx
+                    movsx edx,dl
+                    imul eax,fldwidth,10
+                    add eax,edx
+                    add eax,-48
+                    mov fldwidth,eax
                 .endif
                 .endc
 
@@ -246,56 +238,54 @@ _output PROC PUBLIC USES rsi rdi rbx fp:LPFILE, format:LPSTR, arglist:PVOID
                         mov edi,-1
                     .endif
                 .else
-                    movsx eax,dl
-                    push  rax
-                    mov   eax,edi
-                    mov   edx,10
-                    imul  edx
-                    pop   rdx
-                    add   edx,eax
-                    add   edx,-48
-                    mov   edi,edx
+                    imul eax,edi,10
+                    movsx edi,dl
+                    add edi,eax
+                    add edi,-48
                 .endif
                 .endc
 
               .case ST_SIZE
+
                 .switch edx
+
                   .case 'l'
                     .if !(esi & FL_LONG)
                         or esi,FL_LONG
                         .endc
                     .endif
-                    ;
+
                     ; case ll => long long
-                    ;
+
                     and esi,NOT FL_LONG
                     or  esi,FL_LONGLONG
                     .endc
+
                   .case 'L'
                     or  esi,FL_LONGDOUBLE or FL_I64
                     .endc
+
                   .case 'I'
                     mov rax,format
                     mov cx,[rax]
+
                     .switch cl
+
                       .case '6'
                         .gotosw(2:ST_NORMAL) .if ch != '4'
                         or  esi,FL_I64
                         add rax,2
                         mov format,rax
                         .endc
+
                       .case '3'
                         .gotosw(2:ST_NORMAL) .if ch != '2'
                         and esi,not FL_I64
                         add rax,2
                         mov format,rax
                         .endc
-                      .case 'd'
-                      .case 'i'
-                      .case 'o'
-                      .case 'u'
-                      .case 'x'
-                      .case 'X'
+
+                      .case 'd','i','o','u','x','X'
                         .endc
                       .default
                         .gotosw(2:ST_NORMAL)
@@ -306,14 +296,15 @@ _output PROC PUBLIC USES rsi rdi rbx fp:LPFILE, format:LPSTR, arglist:PVOID
                     .endc
                   .case 'w'
                     or esi,FL_WIDECHAR  ; 'w' => wide character
-                    .endc
                 .endsw
                 .endc
 
               .case ST_TYPE
 
                 mov eax,edx
+
                 .switch eax
+
                   .case 'b'
                     mov rax,arglist
                     add arglist,8
@@ -412,7 +403,7 @@ _output PROC PUBLIC USES rsi rdi rbx fp:LPFILE, format:LPSTR, arglist:PVOID
                         mov no_output,1
                     .endif
                     .endc
-if 1
+
                   .case 'E'
                   .case 'G'
                   .case 'A'
@@ -483,7 +474,7 @@ if 1
                     strlen(text) ; compute length of text
                     mov textlen,eax
                     .endc
-endif
+
                   .case 'd'
                   .case 'i'
                     ;
@@ -555,12 +546,14 @@ endif
                     ; appropriately.
                     ;
                     mov rdx,arglist
-                    add arglist,8
                     mov eax,[rdx]
                     .if esi & (FL_I64 or FL_LONGLONG)
                         mov rax,[rdx]
                     .endif
-                    xor rdx,rdx
+                    add rdx,8
+                    mov arglist,rdx
+
+                    xor edx,edx
                     .if esi & FL_SHORT
 
                         .if esi & FL_SIGNED
@@ -610,53 +603,43 @@ endif
                             or  esi,FL_NEGATIVE
                         .endif
                     .endif
-                    mov number,rax
-                    lea rax,buffer[BUFFERSIZE-1]
-                    mov text,rax
-                    jmp convert_next
 
-                    convert_loop:
-                    mov ecx,curadix
-                    mov rax,number
-                    xor rdx,rdx
-                    div rcx
-                    mov rcx,rdx
-                    xor rdx,rdx
-                    mov number,rax
-                    add cl,'0'
-                    .ifs cl > '9'
-                        add cl,BYTE PTR hexoff
-                    .endif
-                    mov rdx,text
-                    mov [rdx],cl
-                    dec text
-                    convert_next:
-                    mov ecx,edi
-                    dec edi
-                    test ecx,ecx
-                    jg convert_loop
-                    or rax,number
-                    jnz convert_loop
-                    ;
+                    lea rcx,buffer[BUFFERSIZE-1]
+                    mov r9d,curadix
+                    mov r8,rcx
+
+                    .fors ( : rax || edi > 0 : edi-- )
+
+                        xor edx,edx
+                        div r9
+                        add dl,'0'
+                        .ifs dl > '9'
+                            add dl,byte ptr hexoff
+                        .endif
+                        mov [rcx],dl
+                        dec rcx
+                    .endf
+
                     ; compute length of number
-                    ;
-                    lea rax,buffer[BUFFERSIZE-1]
-                    sub rax,text
-                    mov textlen,eax
-                    inc text   ; text points to first digit now
-                    ;
+
+                    mov rax,r8
+                    sub rax,rcx
+                    inc rcx
+
+                    ; text points to first digit now
+
                     ; Force a leading zero if FORCEOCTAL flag set
-                    ;
+
                     .if esi & FL_FORCEOCTAL
-                        mov rdx,text
-                        .if BYTE PTR [rdx] != '0' || textlen == 0
+
+                        .if byte ptr [rcx] != '0' || eax == 0
                             dec rdx
-                            mov text,rdx
-                            mov BYTE PTR [rdx],'0'
-                            inc textlen
+                            mov byte ptr [rcx],'0'
+                            inc eax
                         .endif
                     .endif
-                    .endc
+                    mov text,rcx
+                    mov textlen,eax
                 .endsw
                 ;
                 ; At this point, we have done the specific conversion, and
@@ -745,6 +728,6 @@ endif
     mov eax,charsout ; return value = number of characters written
     ret
 
-_output ENDP
+_output endp
 
-    END
+    end

@@ -203,6 +203,8 @@ int SizeFromRegister( int registertoken )
  */
 int SizeFromMemtype( unsigned char mem_type, int Ofssize, struct asym *type )
 {
+    if ( mem_type == MT_ZWORD )
+	return ( 64 );
     if ( ( mem_type & MT_SPECIAL) == 0 )
 	return ( (mem_type & MT_SIZE_MASK) + 1 );
 
@@ -233,7 +235,8 @@ int MemtypeFromSize( int size, unsigned char *ptype )
     for ( i = T_BYTE; SpecialTable[i].type == RWT_STYPE; i++ ) {
 	if( ( SpecialTable[i].bytval & MT_SPECIAL ) == 0 ) {
 	    /* the size is encoded 0-based in field mem_type */
-	    if( ( ( SpecialTable[i].bytval & MT_SIZE_MASK) + 1 ) == size ) {
+	    if ( ( SpecialTable[i].bytval == MT_ZWORD && size == 64 ) ||
+	       ( ( SpecialTable[i].bytval & MT_SIZE_MASK ) + 1 ) == size ) {
 		*ptype = SpecialTable[i].bytval;
 		return( NOT_ERROR );
 	    }
@@ -1631,8 +1634,12 @@ static int process_register( struct code_info *CodeInfo, unsigned CurrOpnd,
 	CodeInfo->evex = 1;
 	if ( flags == OP_ZMM )
 	    CodeInfo->vflags |= VX_ZMM;
-	if ( regno > 15 )
+	if ( regno > 15 ) {
 	    CodeInfo->vflags |= ( 1 << index );
+	    if ( flags == OP_ZMM && regno > 23 )
+		CodeInfo->vflags |= VX_ZMM24;
+	} else if ( flags == OP_ZMM && regno > 7 )
+	    CodeInfo->vflags |= VX_ZMM8;
     }
 
     if ( flags & OP_R8 ) {

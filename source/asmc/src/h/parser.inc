@@ -267,7 +267,7 @@ VX3_A0		equ 0x01
 
 ;; vflags
 
-VX_OP1V		equ 0x01 ;; set if op1..3 is [z OR y OR x]mm16..31 register
+VX_OP1V		equ 0x01 ;; set if op1..3 is [z|y|x]mm16..31 register
 VX_OP2V		equ 0x02
 VX_OP3V		equ 0x04
 VX_OP3		equ 0x08 ;; more than 2 instruction args used

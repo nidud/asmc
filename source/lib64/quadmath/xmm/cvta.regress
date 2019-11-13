@@ -1,0 +1,42 @@
+include quadmath.inc
+include limits.inc
+include errno.inc
+
+    .assert:on
+
+compare macro string, retval, c
+    local r
+    .data
+    align 16
+    r oword retval
+    .code
+    cvta_q(string, &eptr)
+
+    mov rdx,eptr
+    .assert( byte ptr [rdx] == c )
+
+    movq rax,xmm0
+    movhlps xmm0,xmm0
+    movq rdx,xmm0
+    mov rbx,qword ptr r
+    mov rcx,qword ptr r[8]
+    exitm<.assert( rax == rbx && rdx == rcx )>
+    endm
+
+.code
+
+main proc
+
+  local eptr:string_t
+
+    compare(".", 0.0, '.')
+    compare("-1.0e-0a", -1.0, 'a')
+    compare("-1e-0a", -1.0, 'a')
+    compare("123456789.0", 123456789.0, 0)
+    compare("1.e8192", 0x7FFF0000000000000000000000000000, 0)
+    xor eax,eax
+    ret
+
+main endp
+
+    end

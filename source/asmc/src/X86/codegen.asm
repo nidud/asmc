@@ -334,12 +334,10 @@ output_opc proc uses edi ebx
     .if rflags & RWF_VEX
 
         movzx edx,[esi].token
-        mov al,vex_flags[edx-VEX_START]
-
-        mov vex,al
-        xor ebx,ebx
-
-        mov cl,[esi].evexP3
+        mov vex,vex_flags[edx-VEX_START]
+        xor ebx,ebx         ; P1: R.X.B.R1.0.0.m1.m2
+                            ; P2: W.v3.v2.v1.v0.1.p1.p0
+        mov cl,[esi].evexP3 ; P3: z.L1.L0.b.V1.a2.a1.a0
         mov ch,[esi].vflags
         and al,VX_RW1
         .if evex == 0
@@ -347,7 +345,7 @@ output_opc proc uses edi ebx
                 xor eax,eax
             .endif
         .endif
-        mov bh,al
+        mov bh,al ; P2 (vex & VX_RW1)
 
         mov al,[edi].byte1_info
         .switch al
@@ -413,6 +411,7 @@ output_opc proc uses edi ebx
             shr al,1
             and al,0x60
             or  cl,al
+
             .if cl & VX3_L1 ;; ZMM
                 or cl,VX3_V
             .endif
@@ -423,11 +422,14 @@ output_opc proc uses edi ebx
                     or cl,VX3_V
                 .endif
             .endif
+
         .else
+
             or bh,VX2_V2 or VX2_V3
             .if !( [edi].evex & VX_XMMI )
                 or bh,VX2_V1
             .endif
+
             or cl,VX3_V
             .if ( !( ( ch & VX_OP3 ) && ( evex & 0x04 ) && \
                 ( [esi].opnd[OPNI2].type & ( OP_M128 or OP_M256 or OP_M512 ) ) ) )
@@ -491,13 +493,14 @@ output_opc proc uses edi ebx
 
                     mov al,ch
                     and al,VX_OP1V or VX_OP2V or VX_OP3V or VX_OP3
+
                     .switch al
                     .case VX_OP3 or VX_OP2V or VX_OP3V  ;; 0, 1, 1
                         and cl,not VX3_V
                     .case VX_OP2V                       ;; 0, 1
                         mov al,bl
                         and al,0x6F
-                        .if ah == 0x08 && al == 0x62
+                        .if ax == 0x0862
                             or evex,0xE0
                             .endc
                         .endif
@@ -609,6 +612,7 @@ output_opc proc uses edi ebx
                     .endsw
                 .endif
             .endif
+
         .else
 
             .if !( [esi].rex & REX_R )

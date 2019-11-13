@@ -1,0 +1,32 @@
+include quadmath.inc
+
+    .assert:on
+
+cmpxmm macro x, y, z
+    local r
+    .data
+    align 16
+    r oword z
+    .code
+    atan2q(x, y)
+    movq rax,xmm0
+    movhlps xmm0,xmm0
+    movq rcx,xmm0
+    mov rbx,qword ptr r
+    mov rdx,qword ptr r[8]
+    .assert( rax == rbx && rcx == rdx )
+    exitm<>
+    endm
+
+    .code
+
+main proc
+
+    cmpxmm(0.0, 0.0, 0.0)
+    cmpxmm(0.5, 1.5, 0.3217505543966421934014046143586613)
+    xor eax,eax
+    ret
+
+main endp
+
+    end

@@ -1622,9 +1622,16 @@ static void ProcFini( struct dsym *proc )
 
 ret_code EndpDir( int i, struct asm_tok tokenarray[] )
 {
+    char buffer[128];
+
     if( i != 1 || tokenarray[2].token != T_FINAL ) {
 	return( asmerr(2008, tokenarray[i].tokpos ) );
     }
+    /* v2.30: .return without RET ?
+    if ( ModuleInfo.g.RetStack ) {
+	AddLineQueueX( "ret" );
+	RunLineQueue();
+    }*/
     /* v2.10: "+ 1" added to CurrProc->sym.name_size */
     if( CurrProc &&
        ( SymCmpFunc(CurrProc->sym.name, tokenarray[0].string_ptr, CurrProc->sym.name_size + 1 ) == 0 ) ) {

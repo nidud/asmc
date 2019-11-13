@@ -1,4 +1,4 @@
-
+flags = -nologo -nolib
 win32 = ../../lib/quadmath.lib
 win64 = ../../lib/amd64/quadmath.lib
 elf32 = ../../lib/elf/quadmath.lib
@@ -14,20 +14,22 @@ base32 = \
     ../lib32/fltintrn/_fltscale.asm
 
 base64 = \
-    x64/*.asm \
+    ../lib64/quadmath/*.asm \
     ../lib64/quadmath/const/*.asm \
+    ../lib64/quadmath/fpu/*.asm \
+    ../lib64/quadmath/xmm/*.asm \
     ../lib64/fltintrn/_strtoflt.asm \
     ../lib64/fltintrn/_fltsetflags.asm \
     ../lib64/fltintrn/_destoflt.asm \
     ../lib64/fltintrn/_fltscale.asm
 
 $(win32):
-    asmc -Cs -nolib -coff -safeseh -Zi $(base32)
+    asmc $(flags) -Cs -coff -safeseh -Zi $(base32)
     libw -q -b -n -c -fac $@ *.obj
     del *.obj
 
 $(win64):
-    asmc -Cs -nolib -win64 $(base64)
+    asmc $(flags) -Cs -win64 $(base64)
     libw -q -b -n -c -fac $@ *.obj
     del *.obj
 

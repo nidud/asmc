@@ -14,7 +14,7 @@ _pgmptr string_t 0
 
 .code
 
-Install PROC PRIVATE USES edi
+Install proc private uses edi
 
   local pgname[260]:SBYTE
 
@@ -43,7 +43,7 @@ Install PROC PRIVATE USES edi
     mov _pgmptr,eax
     ret
 
-Install ENDP
+Install endp
 
 .pragma init(Install, 4)
 

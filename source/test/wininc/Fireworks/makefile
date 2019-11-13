@@ -1,7 +1,4 @@
 test.exe:
-    asmc64 -Cs $*.asm
-    linkw system gui_64 file $*
+    asmc64 -Cs -pe -gui $*.asm
     $@
-    del *.obj
-    del *.exe
 

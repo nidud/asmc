@@ -262,6 +262,8 @@ struct opnd_item {
 #define VX_OP3	0x08 /* more than 2 instruction args used */
 #define VX_ZMM	0x10 /* ZMM used */
 #define VX_SAE	0x20 /* {sae} used */
+#define VX_ZMM8 0x40 /* zmm8..15 used */
+#define VX_ZMM24 0x80 /* zmm24..31 used */
 
 /* pinstr->evex */
 #define VX_RXB	0x0F /* P1: R.X.B.R1 */

@@ -202,7 +202,7 @@ tanqf		proto __vectorcall :real16
 
 FLTQ macro value
   local string
-    string textequ <FLT8@>
+    string textequ <FLTQ@>
     forc q,<value>
 	ifidn <q>,<->
 	    string CatStr string, <M>
@@ -225,7 +225,8 @@ FLTQ macro value
 %   ifndef string
 	.data
 	align 16
-	string oword value
+	string label real16
+	oword value
 	.code
     endif
     exitm<string>

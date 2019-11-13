@@ -304,8 +304,10 @@ static void output_opc( struct code_info *CodeInfo )
 
 	if ( vflags & VX_OP1V )
 	    byte2 |= VX2_1;
+
 	if ( ( byte3 & VX3_B ) ||
-	     ( ( byte3 & VX3_A2 ) && !( vflags & VX_OP1V | VX_OP2V | VX_OP3V | VX_ZMM ) ) )
+	     ( ( byte3 & VX3_A2 ) && !( vflags & VX_ZMM ) && !( vflags & VX_OP3 ) ) ||
+	     ( ( byte3 & VX3_A2 ) && vflags == VX_OP3 ) )
 	    byte3 |= VX3_V;
 
 	if ( ( CodeInfo->opnd[OPND1].type & ( OP_YMM | OP_ZMM ) ) ||
@@ -398,7 +400,8 @@ static void output_opc( struct code_info *CodeInfo )
 			    byte1 &= ~VX1_R1;
 			else {
 			    byte1 &= ~VX1_X;
-			    if ( !( vflags & VX_ZMM ) && !( CodeInfo->sib & 0xC0 ) )
+			    if ( ( vflags & VX_ZMM24 && ( CodeInfo->opnd[OPND1].type == OP_ZMM ) ) ||
+				( !( vflags & VX_ZMM ) && !( CodeInfo->sib & 0xC0 ) ) )
 				byte1 |= VX1_R1;
 			}
 			break;
@@ -458,6 +461,11 @@ static void output_opc( struct code_info *CodeInfo )
 			byte1 = 0x91;
 			if ( !( vflags & VX_ZMM ) )
 			    break;
+			byte1 = 0xB1;
+			if ( !( vflags & VX_ZMM8 ) )
+			    break;
+			byte1 = 0xD1;
+			break;
 		    case 0xC5:
 			byte1 = 0xB1;
 			break;
@@ -487,6 +495,8 @@ static void output_opc( struct code_info *CodeInfo )
 
 	    } else {
 
+		tmp = evex;
+
 		switch ( vflags & ( VX_OP1V | VX_OP2V | VX_OP3V | VX_OP3 ) ) {
 		case VX_OP3|VX_OP2V|VX_OP3V:		/* 0, 1, 1 */
 		    byte3 &= ~VX3_V;
@@ -508,6 +518,10 @@ static void output_opc( struct code_info *CodeInfo )
 			byte2 &= ~0x02;
 			byte2 |= 0x01;
 			ins++;	/* 7E --> 6E */
+		    } else if ( evex == 0xE0 && ( vflags & VX_ZMM &&
+			CodeInfo->opnd[OPND1].type == OP_ZMM &&
+			CodeInfo->opnd[OPND2].type == OP_ZMM ) ) {
+			tmp = 0xB0;
 		    }
 		    break;
 		case VX_OP3|VX_OP1V:			/* 1, 0, 0 */
@@ -518,13 +532,21 @@ static void output_opc( struct code_info *CodeInfo )
 		    break;
 		}
 
-		byte1 |= ( ( evex & 0xF0 ) | 0x01 );
+		byte1 |= ( ( tmp & 0xF0 ) | 0x01 );
 		if ( CodeInfo->rex & REX_R ) {
 		    byte1 = 0x61;
-		    if ( CodeInfo->opnd[OPND1].type == OP_R32 )
+		    if ( CodeInfo->opnd[OPND1].type == OP_R32 || ( vflags & VX_ZMM8 ) ) {
 			byte1 |= 0x10;
-		    else if ( evex == 0x10 )
+			if ( vflags & ( VX_OP1V | VX_OP2V | VX_OP3V ) )
+			    byte1 &= ~0x40;
+		    } else if ( evex == 0x10 ) {
 			byte1 |= 0xF0;
+		    } else if ( vflags & VX_ZMM24 ) {
+			if ( ( ( vflags & ( VX_OP1V | VX_OP2V | VX_OP3V ) ) == ( VX_OP1V | VX_OP2V ) )
+			    && !( vflags & VX_OP3 ) ) {
+			    byte1 = 0x21;
+			}
+		    }
 		} else if ( vflags & VX_OP1V ) {
 		    byte1 = 0xE1;
 		    if ( vflags & VX_OP2V ) {

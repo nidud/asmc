@@ -9,54 +9,64 @@ include string.inc
 include malloc.inc
 include winbase.inc
 
-	.code
+    .code
 
-__wsetenvp PROC USES rsi rdi rbx envp:LPWSTR
+__wsetenvp proc uses rsi rdi rbx envp:wstring_t
 
-	.for ( rdi = GetEnvironmentStringsW(),
-	       rsi = rax, rax = 0, rbx = 0,
-	       rcx = -1 : word ptr [rdi] : )
+    .for ( rdi = GetEnvironmentStringsW(),
+           rsi = rax,
+           eax = 0,
+           ebx = 0,
+           ecx = -1 : word ptr [rdi] : )
 
-	    .if ( word ptr [rdi] != '=' )
+        .if ( word ptr [rdi] != '=' )
 
-		mov  rdx,rdi
-		sub  rdx,rsi
-		push rdx
-		inc  rbx
-	    .endif
-	    repnz scasw
-	.endf
-	inc rbx
+            mov  rdx,rdi
+            sub  rdx,rsi
+            push rdx
+            inc  rbx
+        .endif
+        repnz scasw
+    .endf
 
-	sub rdi,rsi
-	lea rax,[rdi+rbx*8]
-	malloc(rax)
-	mov rcx,envp
-	mov [rcx],rax
+    mov eax,ebx ; allocate call-stack
+    and eax,1
+    lea rax,[rax*8+32]
+    sub rsp,rax
 
-	.if rax
+    inc rbx
+    sub rdi,rsi
+    malloc(&[rdi+rbx*8])
 
-	    memcpy(&[rax+rbx*8], rsi, rdi)
-	    xchg rax,rsi
-	    FreeEnvironmentStringsW(rax)
-	    lea rdi,[rsi-8]
-	    std
-	    xor rax,rax
-	    stosq
-	    dec rbx
-	    .while rbx
-		pop rax
-		add rax,rsi
-		stosq
-		dec rbx
-	    .endw
-	    cld
-	    inc rbx
-	    mov rax,envp
-	    mov rax,[rax]
-	.endif
-	ret
+    mov rcx,envp
+    mov [rcx],rax
+    .return .if !rax
 
-__wsetenvp ENDP
+    memcpy(&[rax+rbx*8], rsi, rdi)
+    xchg rax,rsi
+    FreeEnvironmentStringsW(rax)
 
-	END
+    lea rax,[rbx-1] ; reset stack
+    and eax,1
+    lea rsp,[rsp+rax*8+32]
+    lea rdi,[rsi-8]
+    xor eax,eax
+
+    std
+    stosq
+    dec rbx
+    .whilenz
+        pop rax
+        add rax,rsi
+        stosq
+        dec rbx
+    .endw
+    cld
+
+    mov rax,envp
+    mov rax,[rax]
+    ret
+
+__wsetenvp endp
+
+    end

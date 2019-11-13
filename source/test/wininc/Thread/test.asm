@@ -9,23 +9,23 @@ IDM_START_THREAD    equ 1
 IDM_STOP_THREAD     equ 2
 IDM_EXIT            equ 3
 IDR_MAINMENU        equ 30
-WM_FINISH           equ WM_USER+100h
+WM_FINISH           equ WM_USER+0x100
 
 ifdef _WIN64
-APPNAME   equ <"Win64 ASM Event Example">
-CLASSNAME equ <"Win64ASMEventClass">
+APPNAME             equ <"Win64 ASM Event Example">
+CLASSNAME           equ <"Win64ASMEventClass">
 else
-APPNAME   equ <"Win32 ASM Event Example">
-CLASSNAME equ <"Win32ASMEventClass">
+APPNAME             equ <"Win32 ASM Event Example">
+CLASSNAME           equ <"Win32ASMEventClass">
 endif
 
 .data
+hMenu       HANDLE 0
+hwnd        HANDLE 0
+hEventStart HANDLE 0
+hThread     HANDLE 0
+ThreadID    dd 0
 EventStop   BOOL FALSE
-hMenu       HANDLE ?
-hwnd        HANDLE ?
-hEventStart HANDLE ?
-hThread     HANDLE ?
-ThreadID    dd ?
 
 .code
 
@@ -116,33 +116,22 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 
 WndProc endp
 
-_tWinMain proc WINAPI hInst: HINSTANCE,
-     hPrevInstance: HINSTANCE,
-         lpCmdLine: LPTSTR,
-          nShowCmd: SINT
+_tWinMain proc WINAPI hInst:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPTSTR, nShowCmd:SINT
 
-    local wc:WNDCLASSEX
-    local msg:MSG
+  local wc:WNDCLASSEX, msg:MSG
 
-    mov wc.cbSize,SIZEOF WNDCLASSEX
-    mov wc.style,CS_HREDRAW or CS_VREDRAW
-    mov wc.lpfnWndProc,WndProc
-    mov rcx,hInst
-    xor eax,eax
-    mov wc.cbClsExtra,eax
-    mov wc.cbWndExtra,eax
-    mov wc.hInstance,rcx
-    mov wc.hbrBackground,COLOR_WINDOW
-    mov wc.lpszMenuName,IDR_MAINMENU
-ifdef _WIN64
-    lea rax,@CStr("Win64ASMEventClass")
-else
-    lea rax,@CStr("Win32ASMEventClass")
-endif
-    mov wc.lpszClassName,rax
-    mov wc.hIcon,LoadIcon(0, IDI_APPLICATION)
-    mov wc.hIconSm,rax
-    mov wc.hCursor,LoadCursor(0, IDC_ARROW)
+    mov wc.cbSize,          WNDCLASSEX
+    mov wc.style,           CS_HREDRAW or CS_VREDRAW
+    mov wc.lpfnWndProc,     &WndProc
+    mov wc.cbClsExtra,      0
+    mov wc.cbWndExtra,      0
+    mov wc.hInstance,       hInst
+    mov wc.hbrBackground,   COLOR_WINDOW
+    mov wc.lpszMenuName,    IDR_MAINMENU
+    mov wc.lpszClassName,   &@CStr(CLASSNAME)
+    mov wc.hIcon,           LoadIcon(0, IDI_APPLICATION)
+    mov wc.hIconSm,         rax
+    mov wc.hCursor,         LoadCursor(0, IDC_ARROW)
     RegisterClassEx(&wc)
 
     mov hwnd,CreateWindowEx(WS_EX_CLIENTEDGE, CLASSNAME,

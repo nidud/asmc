@@ -13,58 +13,53 @@ include winbase.inc
 
 __wsetenvp proc uses esi edi ebx envp:LPSTR
 
-    mov edi,GetEnvironmentStringsW()
+  local base
 
-    mov esi,eax         ; save start of block in ESI
-    xor eax,eax
-    xor ebx,ebx
-    mov ecx,-1
+    ; size up the environment
 
-    .while word ptr [edi]       ; size up the environment
+    .for ( edi = GetEnvironmentStringsW(),
+           esi = eax, ; save start of block in ESI
+           eax = 0,
+           ebx = 0,
+           ecx = -1 : ax != [edi] : )
 
-        .if word ptr [edi] != '='
+        .if ( word ptr [edi] != '=' )
 
-            mov edx,edi ; save offset of string
-            sub edx,esi
+            mov  edx,edi    ; save offset of string
+            sub  edx,esi
             push edx
-            inc ebx     ; increase count
+            inc  ebx        ; increase count
         .endif
-        repnz scasw     ; next string..
-    .endw
+        repnz scasw         ; next string..
+    .endf
 
-    inc ebx             ; count strings plus NULL
-    sub edi,esi         ; EDI to size
-    lea eax,[edi+ebx*4]     ; pointers plus size of environment
-    malloc(eax)
+    inc ebx                 ; count strings plus NULL
+    sub edi,esi             ; EDI to size
+                            ; pointers plus size of environment
+    malloc(&[edi+ebx*4])
+
     mov ecx,envp            ; return result
     mov [ecx],eax
+    .return .if !eax
+                            ; new adderss of block
+    memcpy(&[eax+ebx*4], esi, edi)
+    xchg eax,esi            ; ESI to block
+    FreeEnvironmentStrings(eax)
 
-    .if eax
-
-        lea eax,[eax+ebx*4] ; new adderss of block
-        memcpy(eax, esi, edi)
-        xchg eax,esi        ; ESI to block
-        FreeEnvironmentStrings( eax )
-        lea edi,[esi-4]     ; EDI to end of pointers array
-
-        std         ; move backwards
-        xor eax,eax     ; set last pointer to NULL
+    lea edi,[esi-4]     ; EDI to end of pointers array
+    std                 ; move backwards
+    xor eax,eax         ; set last pointer to NULL
+    stosd
+    dec ebx
+    .whilenz
+        pop eax         ; pop offset in reverse
+        add eax,esi     ; add address of block
         stosd
         dec ebx
-        .while  ebx
-            pop eax     ; pop offset in reverse
-            add eax,esi ; add address of block
-            stosd
-            dec ebx
-        .endw
-        cld
-
-        inc ebx         ; remove ZERO flag
-        mov eax,envp        ; return address of new _environ
-        mov eax,[eax]
-    .endif
-
-    mov esp,ebp         ; case no mem...
+    .endw
+    cld
+    mov eax,envp        ; return address of new _environ
+    mov eax,[eax]
     ret
 
 __wsetenvp endp

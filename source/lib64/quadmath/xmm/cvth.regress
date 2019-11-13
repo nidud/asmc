@@ -1,0 +1,75 @@
+include quadmath.inc
+include limits.inc
+include errno.inc
+
+    .assert:on
+
+comph macro r, h
+    local b, q, w
+    .data
+    align 16
+    q real16 r
+    b real16 0.0
+    w oword h
+    .code
+    cvth_q(w)
+    movaps b,xmm0
+    mov al,byte ptr b[11]
+    mov edx,dword ptr b[12]
+    mov bl,byte ptr q[11]
+    mov ecx,dword ptr q[12]
+    exitm<.assert( edx == ecx && al == bl )>
+    endm
+
+compqh macro r, h
+    cvtq_h(r)
+    movd eax,xmm0
+    exitm<.assert( ax == h )>
+    endm
+
+errval macro retval, type:vararg
+    mov edx,errno
+    mov errno,0
+    mov eax,edx
+    exitm<.assert( eax == retval )>
+    endm
+
+.code
+
+main proc
+
+    mov errno,0
+
+    errval( 0, comph(0.0, 0))
+    errval( 0, comph(1.0, 0x3C00))
+    errval( 0, comph(1.000976563, 0x3C01))
+    errval( 0, comph(0.0009765625, 0x1400))
+    errval( 0, comph(-2.0, 0xC000))
+    errval( 0, comph(0.33325196, 0x3555))
+    errval( 0, comph(65504.0, 0x7BFF))
+    errval( 0, comph(6.103515625e-05, 0x0400))
+    errval( 0, comph(6.097555161e-05, 0x03FF))
+    errval( 0, comph(5.960464478e-08, 0x0001))
+    errval( 0, comph(1.0/0.0, 0x7C00))
+    errval( 0, comph(-1.0/0.0, 0xFC00))
+    errval( EDOM, comph(0.0/0.0, 0xFFFF))
+
+    errval( 0, compqh(0.0, 0))
+    errval( 0, compqh(1.0, 0x3C00))
+    errval( 0, compqh(1.000976563, 0x3C01))
+    errval( 0, compqh(0.0009765625, 0x1400))
+    errval( 0, compqh(-2.0, 0xC000))
+    errval( 0, compqh(0.33325196, 0x3555))
+    errval( 0, compqh(65504.0, 0x7BFF))
+    errval( 0, compqh(6.103515625e-05, 0x0400))
+    errval( 0, compqh(6.097555161e-05, 0x03FE))
+    errval( ERANGE, compqh(5.960464478e-08, 0x0001))
+    errval( 0, compqh(1.0/0.0, 0x7C00))
+    errval( 0, compqh(-1.0/0.0, 0xFC00))
+    errval( 0, compqh(0.0/0.0, 0xFFFF))
+    xor eax,eax
+    ret
+
+main endp
+
+    end

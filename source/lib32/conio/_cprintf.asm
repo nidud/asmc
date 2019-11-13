@@ -305,6 +305,7 @@ endif
                     mov eax,arglist
                     add arglist,4
                     mov edx,[eax]
+                    xor ecx,ecx
                     bsr ecx,edx
                     inc ecx
                     mov textlen,ecx

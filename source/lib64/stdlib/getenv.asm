@@ -9,31 +9,25 @@ include string.inc
 
     .code
 
-getenv proc uses rsi rdi rbx rcx enval:LPSTR
+getenv proc uses rsi rdi enval:string_t
 
-    mov rbx,rcx
-    .if strlen(rcx)
+    .return .ifd !strlen(rcx)
 
-	mov rdi,rax
-	mov rsi,_environ
+    mov edi,eax
+    mov rsi,_environ
+    lodsq
+
+    .while rax
+
+	.ifd !_strnicmp(rax, enval, edi)
+
+	    mov rax,[rsi-8]
+	    add rax,rdi
+
+	    .return( &[rax+1] ) .if byte ptr [rax] == '='
+	.endif
 	lodsq
-
-	.while rax
-	    .if !_strnicmp(rax, rbx, rdi)
-
-		mov rax,[rsi-8]
-		add rax,rdi
-
-		.if byte ptr [rax] == '='
-
-		    inc rax
-		    .break
-		.endif
-
-	    .endif
-	    lodsq
-	.endw
-    .endif
+    .endw
     ret
 
 getenv endp

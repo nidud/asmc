@@ -9,29 +9,27 @@ include string.inc
 
     .code
 
-getenv proc uses esi edi ecx enval:LPSTR
+getenv proc uses esi edi enval:LPSTR
 
-    .if strlen(enval)
+    .return .if !strlen(enval)
 
-        mov edi,eax
-        mov esi,_environ
+    mov edi,eax
+    mov esi,_environ
+    lodsd
+
+    .while eax
+
+        .if !_strnicmp(eax, enval, edi)
+
+            mov eax,[esi-4]
+            add eax,edi
+
+            .return( &[eax+1] ) .if byte ptr [eax] == '='
+        .endif
         lodsd
-
-        .while eax
-
-            .if !_strnicmp(eax, enval, edi)
-
-                mov eax,[esi-4]
-                add eax,edi
-                .if byte ptr [eax] == '='
-                    inc eax
-                    .break
-                .endif
-            .endif
-            lodsd
-        .endw
-    .endif
+    .endw
     ret
+
 getenv endp
 
     END

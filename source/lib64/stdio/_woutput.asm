@@ -50,6 +50,7 @@ FL_LONGDOUBLE   equ 0x0400  ; long double
 FL_WIDECHAR     equ 0x0800
 FL_LONGLONG     equ 0x1000  ; long long value given
 FL_I64          equ 0x8000  ; 64-bit value given
+FL_CAPEXP       equ 0x10000
 
 ST_NORMAL       equ 0       ; normal state; outputting literal chars
 ST_PERCENT      equ 1       ; just read '%'
@@ -120,45 +121,40 @@ write_multi_char endp
 
     option win64:3
 
-_woutput PROC PUBLIC USES rsi rdi rbx fp:LPFILE, format:LPWSTR, arglist:PVOID
+_woutput proc public uses rsi rdi rbx fp:LPFILE, format:wstring_t, arglist:ptr_t
 
-local   charsout:   sdword
-local   hexoff:     dword
-local   state:      dword
-local   curadix:    dword
-local   prefix[2]:  wint_t
-local   textlen:    dword
-local   prefixlen:  dword
-local   no_output:  dword
-local   fldwidth:   dword
-local   bufferiswide:dword
-local   padding:    dword
-local   text:       LPWSTR
-local   capexp:     dword
-local   number:     qword
-local   wchar:      wint_t
-local   buffer[BUFFERSIZE]:word
-if LONGDOUBLE_IS_DOUBLE
-local   tmp:REAL8
-else
-local   tmp:REAL10
-endif
-    xor eax,eax
-    mov textlen,eax
-    mov charsout,eax
-    mov state,eax
+  local charsout            : int_t,
+        hexoff              : uint_t,
+        state               : uint_t,
+        curadix             : uint_t,
+        prefix[2]           : ushort_t,
+        textlen             : uint_t,
+        prefixlen           : uint_t,
+        no_output           : uint_t,
+        fldwidth            : uint_t,
+        bufferiswide        : uint_t,
+        padding             : uint_t,
+        text                : string_t,
+        mbuf[MB_LEN_MAX+1]  : wint_t,
+        buffer[BUFFERSIZE]  : wchar_t
+
+    mov textlen,0
+    mov charsout,0
+    mov state,0
 
     .while 1
-        lea     rbx,__lookuptable
+
+        lea     rcx,__lookuptable
         mov     rax,format
         add     format,2
         movzx   eax,WORD PTR [rax]
         mov     edx,eax
+
         .break .if !eax || charsout > INT_MAX
 
         .if eax >= ' ' && eax <= 'x'
 
-            mov al,[rbx+rax-32]
+            mov al,[rcx+rax-32]
             and eax,15
         .else
             xor eax,eax
@@ -166,9 +162,9 @@ endif
 
         shl eax,3
         add eax,state
-        mov al,[rbx+rax]
+        mov al,[rcx+rax]
         shr eax,4
-        and eax,0Fh
+        and eax,0x0F
         mov state,eax
 
         .if eax <= 7
@@ -186,11 +182,9 @@ endif
                 mov no_output,eax
                 mov fldwidth,eax
                 mov prefixlen,eax
-                mov capexp,eax
                 mov bufferiswide,eax
-                mov esi,eax ; flags
-                mov edi,eax ; precision
-                dec edi
+                xor esi,esi ; flags
+                mov edi,-1  ; precision
                 .endc
 
               .case ST_FLAG
@@ -215,15 +209,11 @@ endif
                     .endif
                     mov fldwidth,eax
                 .else
-                    movsx eax,dl
-                    push  rax
-                    mov   eax,fldwidth
-                    mov   edx,10
-                    imul  edx
-                    pop   rdx
-                    add   edx,eax
-                    add   edx,-48
-                    mov   fldwidth,edx
+                    movsx edx,dl
+                    imul eax,fldwidth,10
+                    add eax,edx
+                    add eax,-48
+                    mov fldwidth,eax
                 .endif
                 .endc
 
@@ -233,22 +223,17 @@ endif
 
               .case ST_PRECIS
                 .if dl == '*'
-                    mov  rax,arglist
-                    add  arglist,8
-                    mov  edi,[rax]
+                    mov rax,arglist
+                    add arglist,8
+                    mov edi,[rax]
                     .ifs edi < 0
                         mov edi,-1
                     .endif
                 .else
-                    movsx eax,dl
-                    push  rax
-                    mov   eax,edi
-                    mov   edx,10
-                    imul  edx
-                    pop   rdx
-                    add   edx,eax
-                    add   edx,-48
-                    mov   edi,edx
+                    imul eax,edi,10
+                    movsx edi,dl
+                    add edi,eax
+                    add edi,-48
                 .endif
                 .endc
 
@@ -369,7 +354,7 @@ endif
                         mov ecx,INT_MAX
                     .endif
                     .if !rax
-                        lea rax,__nullstring
+                        lea rax,__wnullstring
                     .endif
                     mov text,rax
                     .repeat
@@ -391,12 +376,12 @@ endif
                         mov no_output,1
                     .endif
                     .endc
-if 0
+
                   .case 'E'
                   .case 'G'
                   .case 'A'
-                    mov capexp,1    ; capitalize exponent
-                    add dl,'a' - 'A'; convert format char to lower
+                    or  esi,FL_CAPEXP   ; capitalize exponent
+                    add dl,'a' - 'A'    ; convert format char to lower
                     ;
                     ; DROP THROUGH
                     ;
@@ -408,46 +393,32 @@ if 0
                     ; floating point conversion -- we call cfltcvt routines
                     ; to do the work for us.
                     ;
-                    or  esi,FL_SIGNED ; floating point is signed conversion
-                    lea rax,buffer  ; put result in buffer
+                    or  esi,FL_SIGNED   ; floating point is signed conversion
+                    lea rax,buffer      ; put result in buffer
                     mov text,rax
                     ;
                     ; compute the precision value
                     ;
                     .ifs edi < 0
-                        mov edi,6 ; default precision: 6
+                        mov edi,6       ; default precision: 6
                     .elseif !edi && dl == 'g'
-                        mov edi,1 ; ANSI specified
+                        mov edi,1       ; ANSI specified
                     .endif
-                    mov ecx,arglist
+                    mov rcx,arglist
                     add arglist,8
-                    mov eax,[ecx]
-                    mov DWORD PTR tmp,eax
-                    mov eax,[ecx+4]
-                    mov DWORD PTR tmp[4],eax
+                    mov rax,[rcx]
                     mov ebx,edx
-if (LONGDOUBLE_IS_DOUBLE eq 0)
                     ;
                     ; do the conversion
                     ;
+                    mov r8d,edx
                     .if esi & FL_LONGDOUBLE
-
-                        add arglist,4
-                        mov eax,[ecx+8]
-                        mov WORD PTR tmp[8],ax
-                        ;
-                        ; Note: assumes ch is in ASCII range
-                        ;
-                        _cldcvt(addr tmp, text, edx, edi, capexp)
+                        _cldcvt(rax, text, r8d, edi, esi)
+                    .elseif esi & FL_LONGLONG
+                        _cqcvt(rax, text, r8d, edi, esi)
                     .else
-endif  ; !LONGDOUBLE_IS_DOUBLE
-                        ;
-                        ; Note: assumes ch is in ASCII range
-                        ;
-                        _cfltcvt(addr tmp, text, edx, edi, capexp)
-if (LONGDOUBLE_IS_DOUBLE eq 0)
+                        _cfltcvt(rcx, text, r8d, edi, esi)
                     .endif
-endif
                     ;
                     ; '#' and precision == 0 means force a decimal point
                     ;
@@ -462,20 +433,40 @@ endif
 
                         _cropzeros(text)
                     .endif
-                    ;
+
                     ; check if result was negative, save '-' for later
                     ; and point to positive part (this is for '0' padding)
-                    ;
-                    mov ecx,text
-                    mov al,[ecx]
-                    .if al == '-'
 
+                    mov rcx,text
+                    .if byte ptr [rcx] == '-'
                         or  esi,FL_NEGATIVE
-                        inc text
+                        inc rcx
+                        mov text,rcx
                     .endif
-                    mov textlen,strlen(text) ; compute length of text
+
+                    ; compute length of text
+
+                    mov textlen,strlen(rcx)
+
+                    ; convert to wide string
+
+                    push rsi
+                    push rdi
+                    lea  rcx,[rax+1]
+                    mov  rdx,text
+                    lea  rsi,[rdx+rax]
+                    lea  rdi,[rdx+rax*2]
+                    xor  eax,eax
+                    std
+                    .repeat
+                        lodsb
+                        stosw
+                    .untilcxz
+                    cld
+                    pop rdi
+                    pop rsi
                     .endc
-endif
+
                   .case 'd'
                   .case 'i'
                     ;
@@ -493,6 +484,7 @@ endif
                     ; output in big hex.
                     ;
                     mov edi,size_t * 2
+                    or  esi,FL_I64
                     ;
                     ; DROP THROUGH to hex formatting
                     ;
@@ -546,12 +538,14 @@ endif
                     ; appropriately.
                     ;
                     mov rdx,arglist
-                    add arglist,8
                     mov eax,[rdx]
                     .if esi & (FL_I64 or FL_LONGLONG)
                         mov rax,[rdx]
                     .endif
-                    xor rdx,rdx
+                    add rdx,8
+                    mov arglist,rdx
+
+                    xor edx,edx
                     .if esi & FL_SHORT
 
                         .if esi & FL_SIGNED
@@ -561,6 +555,15 @@ endif
                             movzx rax,ax
                         .endif
                     .elseif esi & FL_SIGNED
+                        .if !(esi & (FL_I64 or FL_LONGLONG))
+                            test eax,eax
+                            .ifs
+                                dec rdx
+                                shl rdx,32
+                                or  rax,rdx
+                                xor edx,edx
+                            .endif
+                        .endif
                         .ifs rax < rdx
                             or esi,FL_NEGATIVE
                         .endif
@@ -592,53 +595,44 @@ endif
                             or  esi,FL_NEGATIVE
                         .endif
                     .endif
-                    mov number,rax
-                    lea rax,buffer[BUFFERSIZE*2-2]
-                    mov text,rax
-                    jmp convert_next
 
-                    convert_loop:
-                    mov ecx,curadix
-                    mov rax,number
-                    xor rdx,rdx
-                    div rcx
-                    mov rcx,rdx
-                    xor rdx,rdx
-                    mov number,rax
-                    add cl,'0'
-                    .ifs cl > '9'
-                        add cl,BYTE PTR hexoff
-                    .endif
-                    mov rdx,text
-                    mov [rdx],cx
-                    sub text,2
-                    convert_next:
-                    mov ecx,edi
-                    dec edi
-                    test ecx,ecx
-                    jg convert_loop
-                    or rax,number
-                    jnz convert_loop
-                    ;
+                    lea rcx,buffer[BUFFERSIZE*2-2]
+                    mov r9d,curadix
+                    mov r8,rcx
+
+                    .fors ( : rax || edi > 0 : edi-- )
+
+                        xor edx,edx
+                        div r9
+                        add dl,'0'
+                        .ifs dl > '9'
+                            add dl,byte ptr hexoff
+                        .endif
+                        mov [rcx],dx
+                        sub rcx,2
+                    .endf
+
                     ; compute length of number
-                    ;
-                    lea rax,buffer[BUFFERSIZE*2-2]
-                    sub rax,text
+
+                    mov rax,r8
+                    sub rax,rcx
                     shr eax,1
-                    mov textlen,eax
-                    add text,2   ; text points to first digit now
-                    ;
+                    add rcx,2
+
+                    ; text points to first digit now
+
                     ; Force a leading zero if FORCEOCTAL flag set
-                    ;
+
                     .if esi & FL_FORCEOCTAL
-                        mov rdx,text
-                        .if WORD PTR [rdx] != '0' || textlen == 0
-                            sub rdx,2
-                            mov text,rdx
-                            mov WORD PTR [rdx],'0'
-                            inc textlen
+
+                        .if word ptr [rcx] != '0' || eax == 0
+                            sub rcx,2
+                            mov word ptr [rcx],'0'
+                            inc eax
                         .endif
                     .endif
+                    mov text,rcx
+                    mov textlen,eax
                     .endc
                 .endsw
                 ;
@@ -706,7 +700,6 @@ endif
                 ;
                 ; we're done!
                 ;
-                .endc
             .endsw
         .endif
     .endw

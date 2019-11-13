@@ -8,8 +8,9 @@ include twindow.inc
 
     .code
 
-    assume rcx:window_t
     option proc:private
+
+    assume rcx:window_t
 
 OnEnterIdle proc uses rcx hwnd:window_t
 
@@ -58,7 +59,7 @@ OnLButtonDown proc uses rsi rdi rbx rcx hwnd:window_t, uiMsg:uint_t, wParam:size
     .ifd Inside(rcx, r8d) == 0
 
         .return [rcx].PostQuit(0) .if !( [rcx].Flags & W_CHILD )
-        .return 1
+        .return TRUE
     .endif
 
     lea rsi,[rcx].Context
@@ -69,7 +70,7 @@ OnLButtonDown proc uses rsi rdi rbx rcx hwnd:window_t, uiMsg:uint_t, wParam:size
         .if ( eax > 1 )
             mov rcx,[rcx].Child
             .return [rcx].Send(WM_LBUTTONDOWN, r8, r9) .if rcx
-            .return 1
+            .return TRUE
         .endif
         mov [rsi].State,1
         mov [rsi].Flags,0

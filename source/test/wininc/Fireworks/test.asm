@@ -414,109 +414,102 @@ ThrdProc endp
 
 WndProc proc hWnd:HWND, message:UINT, wParam:WPARAM, lParam:LPARAM
 
-    .repeat
+    .switch edx
 
-        .switch edx
+    .case WM_MOUSEMOVE
+        .endc .if r8d != MK_CONTROL
+        xor edx,edx
+        mov flash,2400
+        mov eax,r9d
+        movzx r9d,r9w
+        shr eax,16
+        mov lightx,r9d
+        mov lighty,eax
+        .endc
 
-        .case WM_MOUSEMOVE
-            .endc .if r8d != MK_CONTROL
-            xor edx,edx
-            mov flash,2400
-            mov eax,r9d
-            movzx r9d,r9w
-            shr eax,16
-            mov lightx,r9d
-            mov lighty,eax
+    .case WM_SIZE
+        .endc .if r8d == SIZE_MINIMIZED
+        mov eax,r9d
+        movzx edx,ax
+        shr eax,16
+        and edx,-4
+        mov maxx,edx
+        mov maxy,eax
+        mov bminf.bmiHeader.biWidth,edx
+        neg eax
+        mov bminf.bmiHeader.biHeight,eax
+        .endc
+
+    .case WM_KEYDOWN
+        .switch r8d
+        .case VK_SPACE
+            xor GMode,1
             .endc
-
-        .case WM_SIZE
-            .endc .if r8d == SIZE_MINIMIZED
-            mov eax,r9d
-            movzx edx,ax
-            shr eax,16
-            and edx,-4
-            mov maxx,edx
-            mov maxy,eax
-            mov bminf.bmiHeader.biWidth,edx
-            neg eax
-            mov bminf.bmiHeader.biHeight,eax
+        .case VK_RETURN
+            xor EMode,1
+            mov flash,0
             .endc
-
-        .case WM_KEYDOWN
-            .switch r8d
-              .case VK_SPACE
-                xor GMode,1
-                .endc
-              .case VK_RETURN
-                xor EMode,1
-                mov flash,0
-                .endc
-              .case VK_ESCAPE
-                .gotosw(1:WM_CLOSE)
-              .case VK_F1
-                .gotosw(1:WM_RBUTTONDOWN)
-              .case VK_UP
-                .endc .if motion >= 64
-                inc motion
-                .endc
-              .case VK_DOWN
-                .endc .if motion == 1
-                dec motion
-                .endc
-              .case VK_RIGHT
-                xor CMode,1
-                .endc
-            .endsw
+        .case VK_ESCAPE
+            .gotosw(1:WM_CLOSE)
+            .case VK_F1
+            .gotosw(1:WM_RBUTTONDOWN)
+        .case VK_UP
+            .endc .if motion >= 64
+            inc motion
             .endc
-
-        .case WM_RBUTTONDOWN
-            MessageBox(hWnd,
-                "SPACE & ENTER keys toggles 'Gravity and Air' and\n"
-                "'Light and Smoke' effects respectively.\n"
-                "And clicks explode..! close clicks produce more light\n"
-                "UP/DOWN & RIGHT for motion speed and color shift.\n"
-                "Use ESC to exit.",
-                "Fireworks", MB_OK)
+        .case VK_DOWN
+            .endc .if motion == 1
+            dec motion
             .endc
-
-        .case WM_LBUTTONDOWN
-            xor     r10d,r10d
-            mov     r10w,r9w
-            shr     r9d,16
-            mov     r8d,5 - 1
-            mov     ecx,click
-            dec     ecx
-            cmovs   ecx,r8d
-            mov     click,ecx
-            mov     eax,((400 shl 4) + SPARC)
-            imul    ecx
-            add     rax,hFShells
-            Recycle(rax, r10d, r9d)
+        .case VK_RIGHT
+            xor CMode,1
             .endc
-
-        .case WM_CLOSE
-        .case WM_DESTROY
-            mov EventStop,1
-            Sleep(10)
-            PostQuitMessage(0)
-            .endc
-
-        .default
-            DefWindowProc( rcx, edx, r8, r9 )
-            .break
         .endsw
-        xor eax,eax
-    .until 1
+        .endc
+
+    .case WM_RBUTTONDOWN
+        MessageBox(hWnd,
+            "SPACE & ENTER keys toggles 'Gravity and Air' and\n"
+            "'Light and Smoke' effects respectively.\n"
+            "And clicks explode..! close clicks produce more light\n"
+            "UP/DOWN & RIGHT for motion speed and color shift.\n"
+            "Use ESC to exit.",
+            "Fireworks", MB_OK)
+        .endc
+
+    .case WM_LBUTTONDOWN
+        xor     r10d,r10d
+        mov     r10w,r9w
+        shr     r9d,16
+        mov     r8d,5 - 1
+        mov     ecx,click
+        dec     ecx
+        cmovs   ecx,r8d
+        mov     click,ecx
+        mov     eax,((400 shl 4) + SPARC)
+        imul    ecx
+        add     rax,hFShells
+        Recycle(rax, r10d, r9d)
+        .endc
+
+    .case WM_CLOSE
+    .case WM_DESTROY
+        mov EventStop,1
+        Sleep(10)
+        PostQuitMessage(0)
+        .endc
+
+    .default
+        .return DefWindowProc( rcx, edx, r8, r9 )
+    .endsw
+    xor eax,eax
     ret
 
 WndProc endp
 
-WinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPSTR, nShowCmd:SINT
+_tWinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPTSTR, nShowCmd:SINT
 
-  local wc:WNDCLASSEX
-  local msg:MSG
-  local idThread:UINT
-  local rc:RECT
+  local wc:WNDCLASSEX, msg:MSG, idThread:UINT, rc:RECT
 
     xor eax,eax
     mov wc.cbSize,          WNDCLASSEX
@@ -564,6 +557,6 @@ WinMain proc hInstance:HINSTANCE, hPrevInstance:HINSTANCE, lpCmdLine:LPSTR, nSho
     mov rax,msg.wParam
     ret
 
-WinMain endp
+_tWinMain endp
 
     end _tstart

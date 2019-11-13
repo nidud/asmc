@@ -1,0 +1,37 @@
+include quadmath.inc
+include limits.inc
+include errno.inc
+
+    .assert:on
+
+compare macro x, y, z
+    local r
+    .data
+    align 16
+    r oword z
+    .code
+    subq(x, y)
+    movq rax,xmm0
+    movhlps xmm0,xmm0
+    movq rdx,xmm0
+    mov rbx,qword ptr r
+    mov rcx,qword ptr r[8]
+    exitm<.assert( rax == rbx && rdx == rcx )>
+    endm
+
+.code
+
+main proc
+
+    compare(0.0, 0.0, 0.0)
+    compare(1.0, 0.0, 1.0)
+    compare(-1.0, 0.0, -1.0)
+    compare(1.0, 1.0, 0.0)
+    compare(1.1, 1.1, 0.0)
+    compare(10000000.0002, 999999.0001, 9000001.0001 )
+    xor eax,eax
+    ret
+
+main endp
+
+    end

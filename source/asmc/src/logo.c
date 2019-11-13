@@ -10,7 +10,7 @@
 #endif
 
 char cp_logo[] =
- "Asmc Macro Assembler" X64 " Version " ASMC_VERSSTR ".28\n"
+ "Asmc Macro Assembler" X64 " Version " ASMC_VERSSTR ".29\n"
  "Copyright (C) The Asmc Contributors. All Rights Reserved.\n"
  "Portions Copyright (C) 1984-2002 Sybase, Inc. All Rights Reserved.\n\n";
 

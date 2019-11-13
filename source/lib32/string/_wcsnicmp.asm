@@ -6,46 +6,39 @@
 
 include string.inc
 
-	.code
+    .code
 
-_wcsnicmp proc uses esi edi ebx s1:LPWSTR, s2:LPWSTR, count:SIZE_T
-	mov edi,s1
-	mov esi,s2
-	mov edx,count
-	mov ax,-1
-@@:
-	test	ax,ax
-	jz	@F
-	xor	eax,eax
-	test	edx,edx
-	jz	toend
-	mov	ax,[esi]
-	cmp	ax,[edi]
-	lea	esi,[esi+2]
-	lea	edi,[edi+2]
-	lea	edx,[edx-1]
-	je	@B
-	mov	bx,[edi-2]
-	sub	ax,'A'
-	cmp	ax,'Z'-'A'+1
-	sbb	ecx,ecx
-	and	ecx,'a'-'A'
-	add	ax,cx
-	add	ax,'A'
-	sub	bx,'A'
-	cmp	bx,'Z'-'A'+1
-	sbb	ecx,ecx
-	and	ecx,'a'-'A'
-	add	bx,cx
-	add	bx,'A'
-	cmp	bx,ax
-	je	@B
-	sbb	ax,ax
-	sbb	ax,-1
-@@:
-	movsx	eax,ax
-toend:
-	ret
-_wcsnicmp ENDP
+_wcsnicmp proc uses esi edi s1:LPWSTR, s2:LPWSTR, count:SIZE_T
 
-	END
+    mov esi,s1
+    mov edi,s2
+    mov ecx,count
+    mov al,-1
+
+    .repeat
+
+        .break .if !ax
+
+        xor eax,eax
+        .break .if !ecx
+
+        mov ax,[edi]
+        dec ecx
+        add edi,2
+        add esi,2
+        .continue(0) .if ax == [esi-2]
+
+        mov dx,[esi-2]
+        and eax,0xFFDF
+        and edx,0xFFDF
+        .continue(0) .if edx == eax
+
+        sbb ax,ax
+        sbb ax,-1
+    .until 1
+    movsx eax,ax
+    ret
+
+_wcsnicmp endp
+
+    end

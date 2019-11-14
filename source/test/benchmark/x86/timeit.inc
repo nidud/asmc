@@ -17,6 +17,13 @@
     VirtualProtect proto stdcall :ptr, :ptr, :ptr, :ptr
     SetPriorityClass proto stdcall :ptr, :dword
     Sleep proto stdcall :ptr
+    GetModuleHandleA proto stdcall :ptr
+    GetProcAddress proto stdcall :dword, :ptr
+    MEM_COMMIT equ 0x1000
+    MEM_RELEASE equ 0x8000
+    PAGE_READWRITE equ 0x04
+    VirtualAlloc proto stdcall :dword, :dword, :dword, :dword
+    VirtualFree proto stdcall :dword, :dword, :dword
     option dllimport:NONE
 
 .data
@@ -31,6 +38,7 @@ info_p  dd info_0,info_1,info_2,info_3,info_4
 proc_x  dd proc_b
 step_x  dd 0
 nerror  dd 0
+sselevel dd 0
 
 .code
 
@@ -76,7 +84,7 @@ ReadProc endp
 
 TestProc proc uses esi edi ebx count:DWORD, proc_id:DWORD, print:DWORD
 
-  local p
+  local p,s
 
     mov esi,proc_id     ; proc id 0..9
     xor eax,eax
@@ -88,6 +96,7 @@ TestProc proc uses esi edi ebx count:DWORD, proc_id:DWORD, print:DWORD
 
     .repeat
 
+        mov s,esp
         .if !eax
 
             ReadProc( esi )
@@ -104,6 +113,7 @@ TestProc proc uses esi edi ebx count:DWORD, proc_id:DWORD, print:DWORD
         .while ebx
             args_x()
             call p
+            mov esp,s
             dec ebx
         .endw
         ;
@@ -145,6 +155,7 @@ TestProc proc uses esi edi ebx count:DWORD, proc_id:DWORD, print:DWORD
         .while ebx
             args_x()
             call p
+            mov esp,s
             dec ebx
         .endw
 
@@ -251,27 +262,43 @@ GetCycleCount endp
 ; Startup and CPU detection
 ;-------------------------------------------------------------------------------
 
-SSE_MMX         equ 0001h
-SSE_SSE         equ 0002h
-SSE_SSE2        equ 0004h
-SSE_SSE3        equ 0008h
-SSE_SSSE3       equ 0010h
-SSE_SSE41       equ 0020h
-SSE_SSE42       equ 0040h
-SSE_XGETBV      equ 0080h
-SSE_AVX         equ 0100h
-SSE_AVX2        equ 0200h
-SSE_AVXOS       equ 0400h
+SSE_MMX                 equ 0x00000001
+SSE_SSE                 equ 0x00000002
+SSE_SSE2                equ 0x00000004
+SSE_SSE3                equ 0x00000008
+SSE_SSSE3               equ 0x00000010
+SSE_SSE41               equ 0x00000020
+SSE_SSE42               equ 0x00000040
+SSE_XGETBV              equ 0x00000080
+SSE_AVX                 equ 0x00000100
+SSE_AVX2                equ 0x00000200
+SSE_AVX512F             equ 0x00000400
+SSE_AVX512PF            equ 0x00000800
+SSE_AVX512ER            equ 0x00001000
+SSE_AVX512CD            equ 0x00002000
+SSE_AVX512VBMI2         equ 0x00004000
+SSE_AVX512PGFNI         equ 0x00008000
+SSE_AVX512PVAES         equ 0x00010000
+SSE_AVX512PVPCLMULQDQ   equ 0x00020000
+SSE_AVX512VNNI          equ 0x00040000
+SSE_AVX512BITALG        equ 0x00080000
+SSE_AVX512VPOPCNTDQ     equ 0x00100000
+SSE_AVX512VP2INTERSECT  equ 0x00200000
+SSE_AVX512DQ            equ 0x00400000
+SSE_AVX512IFMA          equ 0x00800000
+SSE_AVX5124FMAPS        equ 0x01000000
+SSE_AVX5124VNNIW        equ 0x02000000
+SSE_AVX512VL            equ 0x04000000
+SSE_AVX512VBMI          equ 0x08000000
+SSE_AVX512BW            equ 0x10000000
+SSE_AVX512BF16          equ 0x20000000
+SSE_AVXOS               equ 0x40000000
 
-main proto
-
-start proc uses esi edi ebx
-
-  local lpflOldProtect:qword, sselevel:dword, cpustring[80]:byte
+setsselevel proc uses ebx
 
     pushfd
     pop     eax
-    mov     ecx,200000h
+    mov     ecx,0x200000
     mov     edx,eax
     xor     eax,ecx
     push    eax
@@ -291,49 +318,117 @@ start proc uses esi edi ebx
             .else
                 mov     eax,7
                 xor     ecx,ecx
-                cpuid                   ; check AVX2 support
+                cpuid               ; check AVX2 support
                 xor     eax,eax
-                bt      ebx,5           ; AVX2
-                rcl     eax,1           ; into bit 9
+                bt      ebx,5       ; AVX2
+                adc     eax,eax     ; into bit 9
                 push    eax
                 mov     eax,1
                 cpuid
                 pop     eax
-                bt      ecx,28          ; AVX support by CPU
-                rcl     eax,1           ; into bit 8
-                bt      ecx,27          ; XGETBV supported
-                rcl     eax,1           ; into bit 7
-                bt      ecx,20          ; SSE4.2
-                rcl     eax,1           ; into bit 6
-                bt      ecx,19          ; SSE4.1
-                rcl     eax,1           ; into bit 5
-                bt      ecx,9           ; SSSE3
-                rcl     eax,1           ; into bit 4
-                bt      ecx,0           ; SSE3
-                rcl     eax,1           ; into bit 3
-                bt      edx,26          ; SSE2
-                rcl     eax,1           ; into bit 2
-                bt      edx,25          ; SSE
-                rcl     eax,1           ; into bit 1
-                bt      ecx,0           ; MMX
-                rcl     eax,1           ; into bit 0
+                bt      ecx,28      ; AVX support by CPU
+                adc     eax,eax     ; into bit 8
+                bt      ecx,27      ; XGETBV supported
+                adc     eax,eax     ; into bit 7
+                bt      ecx,20      ; SSE4.2
+                adc     eax,eax     ; into bit 6
+                bt      ecx,19      ; SSE4.1
+                adc     eax,eax     ; into bit 5
+                bt      ecx,9       ; SSSE3
+                adc     eax,eax     ; into bit 4
+                bt      ecx,0       ; SSE3
+                adc     eax,eax     ; into bit 3
+                bt      edx,26      ; SSE2
+                adc     eax,eax     ; into bit 2
+                bt      edx,25      ; SSE
+                adc     eax,eax     ; into bit 1
+                bt      ecx,0       ; MMX
+                adc     eax,eax     ; into bit 0
                 mov     sselevel,eax
             .endif
         .endif
     .endif
 
     .if eax & SSE_XGETBV
-        push eax
+
         xor ecx,ecx
         xgetbv
-        and eax,6 ; AVX support by OS?
-        pop eax
-        .ifnz
+        .if eax & 6 ; AVX support by OS?
             or sselevel,SSE_AVXOS
         .endif
-    .endif
 
-    .if !( eax & SSE_SSE2 )
+        and eax,0xE0
+        .if eax == 0xE0
+
+            xor ecx,ecx
+            mov eax,7
+            cpuid
+
+            .if ebx & 1 shl 16      ; SSE_AVX512F ?
+
+                xor eax,eax
+                bt  ebx,30          ; SSE_AVX512BW
+                adc eax,eax         ; into bit 28
+                bt  ecx,1           ; SSE_AVX512VBMI
+                adc eax,eax         ; into bit 27
+                bt  ebx,31          ; SSE_AVX512VL
+                adc eax,eax         ; into bit 26
+                bt  edx,2           ; SSE_AVX5124VNNIW
+                adc eax,eax         ; into bit 25
+                bt  edx,3           ; SSE_AVX5124FMAPS
+                adc eax,eax         ; into bit 24
+                bt  ebx,21          ; SSE_AVX512IFMA
+                adc eax,eax         ; into bit 23
+                bt  ebx,17          ; SSE_AVX512DQ
+                adc eax,eax         ; into bit 22
+                bt  edx,8           ; SSE_AVX512VP2INTERSECT
+                adc eax,eax         ; into bit 21
+                bt  ecx,14          ; SSE_AVX512VPOPCNTDQ
+                adc eax,eax         ; into bit 20
+                bt  ecx,12          ; SSE_AVX512BITALG
+                adc eax,eax         ; into bit 19
+                bt  ecx,11          ; SSE_AVX512VNNI
+                adc eax,eax         ; into bit 18
+                bt  ecx,10          ; SSE_AVX512PVPCLMULQDQ
+                adc eax,eax         ; into bit 17
+                bt  ecx,9           ; SSE_AVX512PVAES
+                adc eax,eax         ; into bit 16
+                bt  ecx,8           ; SSE_AVX512PGFNI
+                adc eax,eax         ; into bit 15
+                bt  ecx,6           ; SSE_AVX512VBMI2
+                adc eax,eax         ; into bit 14
+                bt  ebx,28          ; SSE_AVX512CD
+                adc eax,eax         ; into bit 13
+                bt  ebx,27          ; SSE_AVX512ER
+                adc eax,eax         ; into bit 12
+                bt  ebx,26          ; SSE_AVX512PF
+                adc eax,eax         ; into bit 11
+                shl eax,11
+                or  eax,SSE_AVX512F ; into bit 10
+                or  sselevel,eax
+
+                mov ecx,1
+                mov eax,7
+                cpuid
+                .if ebx & 1 shl 5
+                    or sselevel,SSE_AVX512BF16
+                .endif
+            .endif
+        .endif
+    .endif
+    ret
+
+setsselevel endp
+
+main proto
+
+start proc uses esi edi ebx
+
+  local lpflOldProtect:qword, cpustring[80]:byte
+
+    setsselevel()
+
+    .if !( sselevel & SSE_SSE2 )
 
         printf("CPU error: Need SSE2 level\n")
         exit(0)
@@ -360,12 +455,13 @@ start proc uses esi edi ebx
     mov eax,sselevel
 
     .switch
-      .case eax & SSE_AVX2:  printf("AVX2")   : .endc
-      .case eax & SSE_AVX:   printf("AVX")    : .endc
-      .case eax & SSE_SSE42: printf("SSE4.2") : .endc
-      .case eax & SSE_SSE41: printf("SSE4.1") : .endc
-      .case eax & SSE_SSSE3: printf("SSSE3")  : .endc
-      .case eax & SSE_SSE3:  printf("SSE3")   : .endc
+      .case eax & SSE_AVX512F: printf("AVX512") : .endc
+      .case eax & SSE_AVX2:    printf("AVX2")   : .endc
+      .case eax & SSE_AVX:     printf("AVX")    : .endc
+      .case eax & SSE_SSE42:   printf("SSE4.2") : .endc
+      .case eax & SSE_SSE41:   printf("SSE4.1") : .endc
+      .case eax & SSE_SSSE3:   printf("SSSE3")  : .endc
+      .case eax & SSE_SSE3:    printf("SSE3")   : .endc
       .default
         printf( "SSE2" )
     .endsw
@@ -373,7 +469,6 @@ start proc uses esi edi ebx
     printf( ")\n----------------------------------------------\n" )
 
     lea eax,proc_b
-    and eax,-64
     mov proc_x,eax
 
     .if !VirtualProtect(proc_x, size_p, PAGE_EXECUTE_READWRITE, &lpflOldProtect)
@@ -385,3 +480,4 @@ start proc uses esi edi ebx
     ret
 
 start endp
+

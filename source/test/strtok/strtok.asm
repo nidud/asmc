@@ -55,7 +55,7 @@ OpCls macro op1, op2, op3
 
 
 table label token
-include ../../asmc/src/h/mktok/directve.inc
+include ../../asmc/src/h/directve.inc
 include ../../asmc/src/h/instruct.h
 
 TOKENCOUNT equ ($ - table) / sizeof(token)
@@ -184,7 +184,7 @@ scanfiles proc uses rsi rdi rbx directory:string_t, fmask:string_t
             .if !( ff.attrib & _A_SUBDIR )
 
                 .ifd _open(
-                        strfcat(&path, directory, &ff._name),
+                        strfcat(&path, directory, &ff.name),
                         O_RDONLY or O_BINARY, NULL) != -1
 
                     mov ebx,eax
@@ -228,12 +228,12 @@ scanfiles proc uses rsi rdi rbx directory:string_t, fmask:string_t
 
             .repeat
 
-                .if word ptr ff._name == '.'
+                .if word ptr ff.name == '.'
 
                     .break .if _findnext(rsi, &ff)
                 .endif
 
-                .if word ptr ff._name == '..' && ff._name[2] == 0
+                .if word ptr ff.name == '..' && ff.name[2] == 0
 
                     .break .if _findnext(rsi, &ff)
                 .endif
@@ -242,7 +242,7 @@ scanfiles proc uses rsi rdi rbx directory:string_t, fmask:string_t
 
                     .if ff.attrib & _A_SUBDIR
 
-                        scanfiles(strfcat(&path, directory, &ff._name), fmask)
+                        scanfiles(strfcat(&path, directory, &ff.name), fmask)
                     .endif
 
                 .until _findnext(rsi, &ff)

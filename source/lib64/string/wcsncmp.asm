@@ -8,33 +8,33 @@
 
 wcsncmp::
 
-    push rsi
-    push rdi
-    xchg rcx,r8
+    push    rsi
+    push    rdi
+    xchg    rcx,r8
+
     .if rcx
-        mov rsi,rcx
-        mov rdi,r8
-        xor eax,eax
-        repnz scasw
-        neg rcx
-        add rcx,rsi
-        mov rdi,r8
-        mov rsi,rdx
-        repz cmpsw
-        mov ax,[rsi-2]
-        xor ecx,ecx
-        cmp ax,[rdi-2]
-        .ifa
-            not rcx
-        .else
-            .ifnz
-                sub ecx,2
-            .endif
+
+        mov     rsi,rcx
+        mov     rdi,r8
+        xor     eax,eax
+        repnz   scasw
+        neg     rcx
+        add     rcx,rsi
+        mov     rdi,r8
+        mov     rsi,rdx
+        repz    cmpsw
+        mov     ax,[rdi-2]
+        xor     ecx,ecx
+        cmp     ax,[rsi-2]
+        .ifnz
+            sbb ecx,ecx
+            sbb ecx,-1
         .endif
     .endif
-    mov eax,ecx
-    pop rdi
-    pop rsi
+
+    mov     eax,ecx
+    pop     rdi
+    pop     rsi
     ret
 
     END

@@ -7,8 +7,7 @@
 
 _wcsnicmp::
 
-    mov r9,rdx
-    mov al,-1
+    mov eax,1
 
     .repeat
 
@@ -17,21 +16,25 @@ _wcsnicmp::
         xor eax,eax
         .break .if !r8d
 
-        mov ax,[r9]
+        mov ax,[rdx]
         dec r8d
-        add r9,2
+        add rdx,2
         add rcx,2
         .continue(0) .if ax == [rcx-2]
 
-        mov dx,[rcx-2]
-        and eax,0xFFDF
-        and edx,0xFFDF
-        .continue(0) .if edx == eax
+        mov r9w,[rcx-2]
+        .if r9w >= 'A' && r9w <= 'Z'
+            or r9b,0x20
+        .endif
+        .if ax >= 'A' && ax <= 'Z'
+            or al,0x20
+        .endif
+        .continue(0) .if r9w == ax
 
-        sbb ax,ax
-        sbb ax,-1
+        sbb al,al
+        sbb al,-1
     .until 1
-    movsx rax,ax
+    movsx eax,al
     ret
 
     end

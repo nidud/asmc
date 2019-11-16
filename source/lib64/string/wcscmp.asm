@@ -8,21 +8,21 @@
 
 wcscmp::
 
-    mov eax,0xFFFF
+    mov eax,0xFF
 
     .repeat
 
         .break .if !eax
 
-        mov ax,[rdx]
-        add rdx,2
-        cmp ax,[rcx]
-        lea rcx,[rcx+2]
+        mov ax,[rcx]
+        add rcx,2
+        cmp ax,[rdx]
+        lea rdx,[rdx+2]
         .continue(0) .ifz
-        sbb ax,ax
-        sbb ax,-1
+        sbb al,al
+        sbb al,-1
     .until 1
-    movsx eax,ax
+    movsx eax,al
     ret
 
     END

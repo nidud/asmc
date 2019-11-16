@@ -8,60 +8,60 @@
 
 strlen::
 
-    xor rax,rax
-    mov r8,rcx
+if defined(__AVX__) or defined(__AVX2__)
 
-    .while 1
-        cmp [rcx],al
-        jz  exit_0
-        cmp [rcx+1],al
-        jz  exit_1
-        cmp [rcx+2],al
-        jz  exit_2
-        cmp [rcx+3],al
-        jz  exit_3
-        cmp [rcx+4],al
-        jz  exit_4
-        cmp [rcx+5],al
-        jz  exit_5
-        cmp [rcx+6],al
-        jz  exit_6
-        cmp [rcx+7],al
-        jz  exit_7
-        add rcx,8
-    .endw
-
-exit_7:
-    lea rax,[rcx+7]
-    sub rax,r8
-    ret
-exit_6:
-    lea rax,[rcx+6]
-    sub rax,r8
-    ret
-exit_5:
-    lea rax,[rcx+5]
-    sub rax,r8
-    ret
-exit_4:
-    lea rax,[rcx+4]
-    sub rax,r8
-    ret
-exit_3:
-    lea rax,[rcx+3]
-    sub rax,r8
-    ret
-exit_2:
-    lea rax,[rcx+2]
-    sub rax,r8
-    ret
-exit_1:
-    lea rax,[rcx+1]
-    sub rax,r8
-    ret
-exit_0:
-    sub rcx,r8
-    add rax,rcx
+    mov     r8,rcx
+    mov     rax,rcx
+    and     rax,-32
+    and     ecx,32-1
+    mov     edx,-1
+    shl     edx,cl
+    pxor    xmm0,xmm0
+    vpcmpeqb ymm1,ymm0,[rax]
+    add     rax,32
+    vpmovmskb ecx,ymm1
+    and     ecx,edx
+    jnz     L2
+L1:
+    vpcmpeqb ymm1,ymm0,[rax]
+    vpmovmskb ecx,ymm1
+    add     rax,32
+    test    ecx,ecx
+    jz      L1
+L2:
+    bsf     ecx,ecx
+    lea     rax,[rax+rcx-32]
+    sub     rax,r8
     ret
 
-    END
+else
+
+    mov     r8,rcx
+    mov     rax,rcx
+    and     rax,-16
+    and     ecx,16-1
+    or      edx,-1
+    shl     edx,cl
+    xorps   xmm0,xmm0
+    pcmpeqb xmm0,[rax]
+    add     rax,16
+    pmovmskb ecx,xmm0
+    xorps   xmm0,xmm0
+    and     ecx,edx
+    jnz     L2
+L1:
+    movaps  xmm1,[rax]
+    pcmpeqb xmm1,xmm0
+    pmovmskb ecx,xmm1
+    add     rax,16
+    test    ecx,ecx
+    jz      L1
+L2:
+    bsf     ecx,ecx
+    lea     rax,[rax+rcx-16]
+    sub     rax,r8
+    ret
+
+endif
+
+    end

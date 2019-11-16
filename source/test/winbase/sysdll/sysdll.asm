@@ -242,7 +242,7 @@ main proc argc:SINT, argv:ptr
 
     .if getenv("windir")
 
-        lea rbx,ff._name
+        lea rbx,ff.name
         lea rdi,path
         sprintf(rdi, "%s\\system32\\%s.dll", rax, &wild)
 

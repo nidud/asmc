@@ -1,5 +1,5 @@
 
-    option  win64:save auto
+    option  win64:3
 
     option  dllimport:<msvcrt>
     printf  proto :ptr byte, :vararg
@@ -17,165 +17,179 @@
     Sleep proto :ptr
     option dllimport:NONE
 
-.data
+    .data
+    PCOUNT = 0
+    procs
+    if x gt PCOUNT
+        PCOUNT = x
+    endif
+    endm
+    PCOUNT = PCOUNT + 1
 
-size_p  equ 4096        ; max proc size
-p_size  dq 10 dup(0)    ; proc size
-result  dq 10 dup(0)    ; time
-total   dq 10 dup(0)    ; time total
-proc_p  dq 10 dup(0)    ; test proc's
-info_p  dq info_0,info_1,info_2,info_3,info_4
-        dq info_5,info_6,info_7,info_8,info_9
-proc_x  dq proc_b
-step_x  dd 0
-nerror  dd 0
-sselevel dd 0
+    size_p  equ 4096         ; max proc size
+    p_size  dq PCOUNT dup(0) ; proc size
+    result  dq PCOUNT dup(0) ; time
+    total   dq PCOUNT dup(0) ; time total
+    proc_p  dq PCOUNT dup(0) ; test proc's
+    proc_x  dq proc_b
+    step_x  dd 0
+    nerror  dd 0
+    sselev  dd 0
+    info_p  label qword
+    INFOID = 0
+    while INFOID lt PCOUNT
+      if INFOID lt 10
+        %dq @CatStr(<info_>, %INFOID)
+      else
+        dq @CatStr(<info_>, @SubStr(<abcdefghijklmnopqrstuvwxyz>, INFOID-9, 1))
+      endif
+      INFOID = INFOID + 1
+    endm
 
-.code
+    .code
 
-align   16
-proc_b  db size_p dup(0)
+    align   16
+    proc_b  db size_p dup(0)
 
 ;-------------------------------------------------------------------------------
 ; Read binary file
 ;-------------------------------------------------------------------------------
 
-ReadProc proc uses rbx rsi rdi ID       ; 0..9
+ReadProc proc uses rbx rsi rdi ID
 
   local file_name:qword, read_size:qword
 
     mov rax,0x6E69622E30 ; 0.bin
     or  al,cl
+    .if cl >9
+        add al,7
+    .endif
     mov file_name,rax
     mov rdi,proc_x
 
-    FlushInstructionCache(GetCurrentProcess(), rdi, size_p)
+    FlushInstructionCache( GetCurrentProcess(), rdi, size_p )
 
-    xor rax,rax
-    mov rcx,size_p/8
+    xor eax,eax
+    mov ecx,size_p/8
     rep stosq
 
-    xor rdi,rdi
-    .if CreateFileA(addr file_name, 80000000h, edi, rdi, 3, edi, rdi) != -1
+    xor edi,edi
+    .ifd CreateFileA( &file_name, 0x80000000, edi, rdi, 3, edi, rdi ) != -1
+
         mov rbx,rax
-        .if ReadFile(rbx, proc_x, size_p, addr read_size, 0)
+        .ifd ReadFile( rbx, proc_x, size_p, &read_size, 0 )
+
             mov rdi,read_size
         .endif
         CloseHandle(rbx)
     .endif
+
     .if !rdi
-        printf("error reading: %s\n", addr file_name)
+
+        printf("error reading: %s\n", &file_name)
     .endif
     mov rax,rdi
     ret
 
 ReadProc endp
 
-TestProc proc uses rsi rdi rbx r12 count:QWORD, proc_id:QWORD
 
-    mov count,rcx
-    mov proc_id,rdx
+TestProc proc uses rsi rdi rbx r12 count, proc_id
 
-    mov rsi,rdx         ; proc id 0..9
-    xor rax,rax
+    mov esi,edx         ; proc id 0..9
+    xor eax,eax
+
     lea rbx,p_size
     lea rbx,[rbx+rdx*8]
     mov [rbx],eax       ; proc size
+
     lea rax,proc_p
     mov rax,[rax+rdx*8] ; proc
 
-    .repeat
+    .if !rax
 
-        .if !rax
+        ReadProc(edx)
+        mov [rbx],eax
+        mov ecx,eax
+        mov rax,proc_x
+        .return .if !ecx
+    .endif
 
-            ReadProc( edx )
-            mov [rbx],eax
-            test eax,eax
-            mov rax,proc_x
-            .break .ifz
-        .endif
-        mov r12,rax
-        ;
-        ; spin up..
-        ;
-        mov ebx,4
-        .while rbx
-            args_x()
-            call r12
-            dec ebx
-        .endw
-        ;
-        ; x64-Version of MichaelW's macros
-        ;
-        HIGH_PRIORITY_CLASS     equ 0x80
-        NORMAL_PRIORITY_CLASS   equ 0x20
-        PAGE_EXECUTE_READ       equ 0x20
-        PAGE_EXECUTE_READWRITE  equ 0x40
+    ; spin up..
 
-        SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS)
+    .for r12 = rax, ebx = 4 : ebx : ebx--
 
-        xor eax,eax
-        cpuid
-        rdtsc
-        mov edi,eax
-        xor eax,eax
-        cpuid
-        mov rcx,count
-        shl ecx,10
-        .while ecx
-            sub ecx,1
-        .endw
+        args_x()
+        call r12
+    .endf
 
-        xor eax,eax
-        cpuid
-        rdtsc
-        sub eax,edi
-        mov edi,eax
-        xor eax,eax
-        cpuid
-        rdtsc
-        mov esi,eax
-        xor rax,rax
-        cpuid
+    ; x64-Version of MichaelW's macros
 
-        mov rbx,count
-        shl rbx,10
-        .while rbx
-            args_x()
-            call r12
-            dec rbx
-        .endw
+    HIGH_PRIORITY_CLASS     equ 0x80
+    NORMAL_PRIORITY_CLASS   equ 0x20
+    PAGE_EXECUTE_READ       equ 0x20
+    PAGE_EXECUTE_READWRITE  equ 0x40
 
-        xor eax,eax
-        cpuid
-        rdtsc
-        sub eax,edi
-        sub eax,esi
-        mov edi,eax
+    SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS)
 
-        SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS)
+    xor eax,eax
+    cpuid
+    rdtsc
+    mov edi,eax
 
-        shr edi,10
-        mov rsi,proc_id
-        lea rcx,result
-        add [rcx+rsi*8],edi
-        lea r9,p_size
-        mov r9,[r9+rsi*8]
-        lea rax,info_p
-        mov rax,[rax+rsi*8]
-        printf("%9i cycles, rep(%i), code(%3i) %i.asm: %s\n", edi, count, r9, esi, rax)
-        mov eax,1
-    .until 1
+    xor eax,eax
+    cpuid
+    .for ecx = count, ecx <<= 10 : ecx : ecx -= 1
+    .endf
+
+    xor eax,eax
+    cpuid
+    rdtsc
+    sub eax,edi
+    mov edi,eax
+
+    xor eax,eax
+    cpuid
+    rdtsc
+    mov esi,eax
+    xor rax,rax
+    cpuid
+
+    .for ebx = count, ebx <<= 10 : ebx : ebx--
+
+        args_x()
+        call r12
+    .endf
+
+    xor eax,eax
+    cpuid
+    rdtsc
+    sub eax,edi
+    sub eax,esi
+    mov edi,eax
+
+    SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS)
+
+    shr edi,10
+    mov esi,proc_id
+    lea rcx,result
+    add [rcx+rsi*8],edi
+    lea r9,p_size
+    mov r9,[r9+rsi*8]
+    lea rax,info_p
+    mov rax,[rax+rsi*8]
+
+    .if esi > 9
+        add esi,7+'a'-'A'
+    .endif
+    add esi,'0'
+    printf("%9i cycles, rep(%i), code(%3i) %c.asm: %s\n", edi, count, r9, esi, rax)
+    mov eax,1
     ret
 
 TestProc endp
 
 GetCycleCount proc uses rsi rdi rbx l1, l2, step, count
-
-    mov l1,ecx
-    mov l2,edx
-    mov step,r8d
-    mov count,r9d
 
     mov rbx,rcx
     mov rdi,rdx
@@ -193,11 +207,13 @@ GetCycleCount proc uses rsi rdi rbx l1, l2, step, count
     lea rsi,result
     lea rdi,total
 
-    .while  1
+    .while 1
+
         xor ebx,ebx
         xor edx,edx
         xor ecx,ecx
         dec rdx
+
         .repeat
             mov rax,[rsi+rcx*8]
             .if eax && eax < edx
@@ -205,9 +221,11 @@ GetCycleCount proc uses rsi rdi rbx l1, l2, step, count
                 mov rbx,rcx
             .endif
             inc rcx
-        .until  ecx == 10
+        .until ecx == PCOUNT
+
         mov eax,[rsi+rbx*8]
         .break .if !eax
+
         add [rdi+rbx*8],eax
         xor eax,eax
         mov [rsi+rbx*8],eax
@@ -216,26 +234,34 @@ GetCycleCount proc uses rsi rdi rbx l1, l2, step, count
     printf("\ntotal [%i .. %i], %i++\n", l1, l2, step)
 
     .while 1
-        xor r8,r8
-        xor rdx,rdx
-        xor rcx,rcx
+
+        xor r8d,r8d
+        xor edx,edx
+        xor ecx,ecx
         dec rdx
+
         .repeat
             mov eax,[rdi+rcx*8]
             .if eax && eax < edx
-                mov rdx,rax
-                mov r8,rcx
+                mov edx,eax
+                mov r8d,ecx
             .endif
             inc ecx
-        .until ecx == 10
+        .until ecx == PCOUNT
 
         mov edx,[rdi+r8*8]
         .break .if !edx
+
         xor eax,eax
         mov [rdi+r8*8],eax
+
         lea rcx,info_p
         mov r9,[rcx+r8*8]
-        printf("%9i cycles %i.asm: %s\n", edx, r8d, r9)
+        .if r8d > 9
+            add r8d,7+'a'-'A'
+        .endif
+        add r8d,'0'
+        printf("%9i cycles %c.asm: %s\n", edx, r8d, r9)
     .endw
 
     printf("hit any key to continue...\r")
@@ -330,7 +356,7 @@ setsselevel proc uses rbx
                 adc     eax,eax     ; into bit 1
                 bt      ecx,0       ; MMX
                 adc     eax,eax     ; into bit 0
-                mov     sselevel,eax
+                mov     sselev,eax
             .endif
         .endif
     .endif
@@ -340,7 +366,7 @@ setsselevel proc uses rbx
         xor ecx,ecx
         xgetbv
         .if eax & 6 ; AVX support by OS?
-            or sselevel,SSE_AVXOS
+            or sselev,SSE_AVXOS
         .endif
 
         and eax,0xE0
@@ -391,20 +417,22 @@ setsselevel proc uses rbx
                 adc eax,eax         ; into bit 11
                 shl eax,11
                 or  eax,SSE_AVX512F ; into bit 10
-                or  sselevel,eax
+                or  sselev,eax
 
                 mov ecx,1
                 mov eax,7
                 cpuid
                 .if ebx & 1 shl 5
-                    or sselevel,SSE_AVX512BF16
+                    or sselev,SSE_AVX512BF16
                 .endif
             .endif
         .endif
     .endif
+    mov eax,sselev
     ret
 
 setsselevel endp
+
 
 main proto
 
@@ -412,53 +440,46 @@ start proc
 
   local lpflOldProtect:qword, cpustring[80]:byte
 
-    setsselevel()
-
-    .if !( sselevel & SSE_SSE2 )
+    .ifd !( setsselevel() & SSE_SSE2 )
 
         printf("CPU error: Need SSE2 level\n")
         exit(0)
     .endif
 
-    lea r8,cpustring
-    xor r9d,r9d
-    .repeat
+    .for ( r8 = &cpustring, r9d = 0 : r9d < 3 : r9d++, r8 += 16 )
+
         lea rax,[r9+0x80000002]
         cpuid
-        mov [r8],eax
-        mov [r8+4],ebx
-        mov [r8+8],ecx
-        mov [r8+12],edx
-        add r8,16
-        inc r9d
-    .until r9d == 3
 
-    .for rax=&cpustring: BYTE PTR [rax] == ' ' : rax++
-
+        mov [r8+0x00],eax
+        mov [r8+0x04],ebx
+        mov [r8+0x08],ecx
+        mov [r8+0x0C],edx
     .endf
 
+    .for rax = &cpustring: byte ptr [rax] == ' ' : rax++
+    .endf
     printf("%s (", rax)
-    mov eax,sselevel
 
+    mov eax,sselev
     .switch
-      .case eax & SSE_AVX512F: printf("AVX512") : .endc
-      .case eax & SSE_AVX2:    printf("AVX2")   : .endc
-      .case eax & SSE_AVX:     printf("AVX")    : .endc
-      .case eax & SSE_SSE42:   printf("SSE4.2") : .endc
-      .case eax & SSE_SSE41:   printf("SSE4.1") : .endc
-      .case eax & SSE_SSSE3:   printf("SSSE3")  : .endc
-      .case eax & SSE_SSE3:    printf("SSE3")   : .endc
-      .default
+    .case eax & SSE_AVX512F: printf("AVX512") : .endc
+    .case eax & SSE_AVX2:    printf("AVX2")   : .endc
+    .case eax & SSE_AVX:     printf("AVX")    : .endc
+    .case eax & SSE_SSE42:   printf("SSE4.2") : .endc
+    .case eax & SSE_SSE41:   printf("SSE4.1") : .endc
+    .case eax & SSE_SSSE3:   printf("SSSE3")  : .endc
+    .case eax & SSE_SSE3:    printf("SSE3")   : .endc
+    .default
         printf( "SSE2" )
     .endsw
-
     printf( ")\n----------------------------------------------\n" )
 
     lea rax,proc_b
     and rax,-64
     mov proc_x,rax
 
-    .if !VirtualProtect(proc_x, size_p, PAGE_EXECUTE_READWRITE, &lpflOldProtect)
+    .ifd !VirtualProtect(proc_x, size_p, PAGE_EXECUTE_READWRITE, &lpflOldProtect)
 
         printf("VirtualProtect error..\n")
         exit(1)

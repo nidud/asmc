@@ -11,6 +11,7 @@
 #endif
 
 extern int banner_printed;
+extern char cp_logo[];
 
 struct global_options Options = {
 	0,			// .quiet
@@ -462,6 +463,10 @@ static void ProcessOption( char **cmdline, char *buffer )
     case 'emoh':	// -homeparams
 	Options.win64_flags |= W64F_SAVEREGPARAMS;
 	return;
+    case 'ogol':	// -logo
+	printf( "%s\n", cp_logo );
+	exit(0);
+
 #ifndef __ASMC64__
     case 'zm':		// -mz
 	Options.output_format = OFORMAT_BIN;

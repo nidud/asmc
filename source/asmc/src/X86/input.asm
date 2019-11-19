@@ -124,8 +124,9 @@ GetExtPart proc fname:string_t
             mov eax,NULL
         .endif
     .endf
-    .return .if eax
-    mov eax,ecx
+    .if !eax
+        mov eax,ecx
+    .endif
     ret
 
 GetExtPart endp
@@ -215,8 +216,9 @@ ClearSrcStack proc uses esi edi
             fclose([esi].file)
         .endif
         mov [esi].next,SrcFree
-        mov SrcFree,ModuleInfo.src_stack
+        mov SrcFree,esi
     .endf
+    mov ModuleInfo.src_stack,esi
     ret
 
 ClearSrcStack endp

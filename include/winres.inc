@@ -87,7 +87,7 @@ RCDIALOG macro CodePage:=<0>
     @CatStr(<$$>, %RCENUM2) label byte
     endm
 
-DLGBEGIN macro flags,items,x,y,w,h,exflags:=<0>,CodePage:=<0>
+DLGBEGIN macro flags,items,x,y,w,h,exflags:=<0>,menu:=<0>,CodePage:=<0>
     RCDIALOG CodePage
     if exflags
      dd 0xFFFF0001, 0x00000000
@@ -98,7 +98,12 @@ DLGBEGIN macro flags,items,x,y,w,h,exflags:=<0>,CodePage:=<0>
      RCENUM3 = 0
     endif
     dw items,x,y,w,h
-    dd 0
+    if menu
+     dw -1
+     dd menu
+    else
+     dd 0
+    endif
     endm
 
 CAPTION macro name

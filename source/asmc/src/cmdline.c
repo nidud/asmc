@@ -493,9 +493,11 @@ static void ProcessOption( char **cmdline, char *buffer )
     case 'tm':		// -mt
 	Options.model = MODEL_TINY;
 	return;
+#endif
     case 'ilon':	// -nolib
 	Options.nolib = TRUE;
 	return;
+#ifndef __ASMC64__
     case 'fmo':		// -omf
 	Options.output_format = OFORMAT_OMF;
 	Options.sub_format = SFORMAT_NONE;

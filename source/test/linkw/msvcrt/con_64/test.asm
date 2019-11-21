@@ -5,7 +5,7 @@ include tchar.inc
 
 main proc argc:int_t, argv:array_t
 
-    printf("dcon_32: Win32 console application\n")
+    printf("dcon_64: Win64 console application\n")
     xor eax,eax
     ret
 

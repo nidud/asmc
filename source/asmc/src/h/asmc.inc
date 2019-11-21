@@ -287,8 +287,9 @@ next            ptr_t ?
 value           db ?
 qitem           ends
 
+srcitem_t       typedef ptr src_item
 src_item        struct
-next            ptr_t ?
+next            srcitem_t ?
 type            dw ?    ; item type ( see enum src_item_type )
 srcfile         dw ?    ; index of file in ModuleInfo.FNames
 union
@@ -382,7 +383,7 @@ FNames                  array_t ?       ; array of input files
 cnt_fnames              uint_t ?        ; items in FNames array
 IncludePath             string_t ?              ;
 line_queue              qdesc <>        ; line queue
-src_stack               ptr_t ?         ; source item (files & macros) stack
+src_stack               srcitem_t ?     ; source item (files & macros) stack
 union
  start_fixup            ptr_t ?         ; OMF only
  start_label            ptr_t ?         ; non-OMF only: start label

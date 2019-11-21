@@ -496,6 +496,7 @@ static void ProcessOption( char **cmdline, char *buffer )
 #endif
     case 'ilon':	// -nolib
 	Options.nolib = TRUE;
+	define_name( "_MSVCRT", "1" );
 	return;
 #ifndef __ASMC64__
     case 'fmo':		// -omf

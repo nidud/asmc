@@ -9,20 +9,17 @@ include string.inc
 
     .code
 
-fputs proc string:LPSTR, fp:LPFILE
+fputs proc uses rdi rdi rbx string:LPSTR, fp:LPFILE
 
-  local buffing:SINT, ndone:UINT, lengt:UINT
+    mov rbx,rcx
+    mov edi,_stbuf(rdx)
+    mov esi,strlen(rbx)
+    mov ebx,fwrite(rbx, 1, eax, fp)
 
-    _stbuf(rdx)
-    mov buffing,eax
-    strlen(string)
-    mov lengt,eax
-    fwrite(string, 1, eax, fp)
-    mov ndone,eax
-    _ftbuf(buffing, fp)
-    mov ecx,lengt
+    _ftbuf(edi, fp)
+    mov ecx,esi
     xor eax,eax
-    .if eax != ndone
+    .if ebx
 	dec rax
     .endif
     ret

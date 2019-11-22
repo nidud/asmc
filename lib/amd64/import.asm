@@ -36,15 +36,25 @@ BuildImportLib proc uses rsi rdi rbx r12 r13 dll:LPSTR, path:LPSTR
             mov r13d,[rbx+rax].IMAGE_EXPORT_DIRECTORY.NumberOfNames
             mov esi,[rbx+rax].IMAGE_EXPORT_DIRECTORY.AddressOfNames
             add rsi,rbx
-
+ifdef __LIB__
+            fprintf(r12, "LIBRARY %s\nEXPORTS\n", rdi)
+endif
             .while r13d
                 lodsd
-                fprintf(r12, "++%s.\'%s.dll\'\n", addr [rax+rbx], rdi)
+ifdef __LIB__
+                fprintf(r12, "%s\n", &[rax+rbx])
+else
+                fprintf(r12, "++%s.\'%s.dll\'\n", &[rax+rbx], rdi)
+endif
                 dec r13d
             .endw
             fclose(r12)
             lea rbx,buffer
+ifdef __LIB__
+            sprintf(rbx, "lib /nologo /machine:x64 /def:%s.def /out:%s\\%s.lib", rdi, path, rdi)
+else
             sprintf(rbx, "libw /n /c /q /b /fac /i6 %s\\%s.lib @%s.def", path, rdi, rdi)
+endif
             system(rbx)
             strcat(rdi, ".def")
             remove(rdi)
